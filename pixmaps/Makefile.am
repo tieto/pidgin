@@ -91,6 +91,7 @@ EXTRA_DIST =	about_small.xpm			\
 		pounce_small.xpm		\
 		prefs_small.xpm			\
 		refresh.xpm			\
+		register.xpm			\
 		sad.xpm				\
 		save.xpm			\
 		scream.xpm			\

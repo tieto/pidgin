@@ -47,11 +47,9 @@ AM_CONDITIONAL(GNOMEAPPLET, test "x$enable_panel" = "xyes")
 AC_ARG_ENABLE(esd,     [  --disable-esd           Turn off ESD (default=auto)],,enable_esd=yes)
 AC_ARG_ENABLE(nas,     [  --enable-nas            Enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
-AC_ARG_ENABLE(jabber,  [  --disable-jabber         compile the jabber plugin (requires libxode and libjabber)],,enable_jabber=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
-AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
 AC_ARG_ENABLE(,,,)
 
 if test "$enable_debug" = yes ; then
@@ -189,18 +187,13 @@ if test "x$enable_plugins" = xyes ; then
 	AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
 	AC_CHECK_FUNCS(bswap_32 bswap_16)
 
-	AC_DEFINE(GAIM_PLUGINS)
-else
-	enable_jabber=no
-fi
-
-if test "$enable_jabber" = yes ; then
-	AC_CHECK_LIB(xode, XML_ParserCreate, , enable_jabber=no)
-	AC_CHECK_LIB(jabber, jid_new, , enable_jabber=no, -lxode)
-	AC_CHECK_FUNCS(snprintf)
+	dnl checks for jabber
+	dnl AC_CHECK_SIZEOF(short)
+	AC_CHECK_FUNCS(snprintf connect)
 	AC_CHECK_LIB(nsl, gethostent)
-	AC_CHECK_FUNCS(connect)
-	AM_CONDITIONAL(JABBER, test "x$enable_jabber" = "xyes")
+
+	AC_DEFINE(GAIM_PLUGINS)
+	AM_CONDITIONAL(PLUGINS, test "x$enable_plugins" = "xyes")
 fi
 
 AC_OUTPUT([Makefile
@@ -229,8 +222,6 @@ echo Build as GNOME applet...... : $enable_panel
 echo
 echo Build with Plugin support.. : $enable_plugins
 echo Build with Perl support.... : $enable_perl
-echo
-echo Build Jabber PRPL.......... : $enable_jabber
 echo
 echo Build with ESD............. : $enable_esd
 echo Build with NAS............. : $enable_nas

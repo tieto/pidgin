@@ -1,0 +1,90 @@
+  libxode README
+  Jabber Documentation Team
+  March 27, 2000
+  ____________________________________________________________
+
+  Table of Contents
+
+
+  1. Introduction
+
+     1.1 General
+     1.2 What This Package Is
+
+  2. Getting Things Installed
+
+     2.1 Dependencies
+     2.2 Compilation and Installation
+     2.3 Problems/Bugs
+
+  3. Jabber Information
+
+     3.1 General Information
+     3.2 Developer Information
+  ______________________________________________________________________
+
+  1.  Introduction
+
+  1.1.  General
+
+  This document gives pointers for information on this package as well
+  as links to learn more about the Jabber project and about
+  participating in the project.
+
+  Copyright information can be found in each package directory in the
+  files "COPYRIGHT" and "COPYING."
+
+  1.2.  What libxode is
+
+  libxode provides a library of XML, memory, and string helper functions.
+
+  Jabber server software uses libxode extensively.
+
+
+  2.  Getting it Installed
+
+  2.1.  Dependencies
+
+  Apart from the standard UNIX fare, this package isn't dependent on
+  anything.
+
+  2.2.  Compilation and Installation
+
+  To install as super user do the following in the libxode root directory:
+
+  ______________________________________________________________________
+  ./configure
+  make
+  (become root)
+  make install
+  ldconfig
+  ______________________________________________________________________
+
+  2.3.  Problems/Bugs
+ 
+  Submit bug reports at http://bugs.jabber.org.
+ 
+  For additional real-time support, many members of the development team
+  frequent jabber groupchat in jdev@conference.jabber.org and irc at
+  irc.openprojects.net in #jabber.
+ 
+
+  3.  Jabber Information
+
+  3.1.  General Information
+
+  For general information about Jabber, including a quick introduction
+  to Jabber concepts, see the FAQ at http://docs.jabber.org/.
+
+  3.2.  Developer Information
+
+  There are many areas of Jabber that developers can contribute to.
+  Jabber encompasses many fields of expertise and anyone that is willing
+  to help can contribute.
+
+  You may want to delve into the internals of the Jabber project at
+  http://docs.jabber.org/ and http://protocol.jabber.org/.
+
+  Or maybe you would like to go ahead become a developer on the project.
+  Just go on over to http://jabber.org/ and register.  You may also
+  sign up for the main Jabber mailing list (JDEV).

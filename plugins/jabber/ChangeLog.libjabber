@@ -1,0 +1,621 @@
+2000-10-30  temas <temas@box5.net> (temas@jabber.org)
+    
+    * src/Makefile.am:  new libtool version info
+
+    * configure.in:  1.2 final version
+
+2000-10-20  jer <jer@jabber.org>
+
+    * jpacket.c: fixed it so that we actually check the full packet name (we shouldn't have been cheating) and flagged when bad addresses were used
+
+2000-10-08  jer <jer@jabber.org>
+
+    * rate.c: renamed to jlimit_*
+
+2000-10-06  madcat <palpa@jabber.org>
+
+    * jconn.c: jab_auth is not automated anymore.
+    * jconn.c: fixed seg fault bug in jab_start() (thanks Marco! :)
+
+2000-06-18  spectre <spectre@portent.net>
+
+    * jconn.c: automated jab_auth, shouldn't be called manually unless
+	       called after registering
+    * jconn.c: added JDEBUG #ifdefs to monitor incoming/outgoing xml stream
+    * jconn.c: added jab_reg, registering of users
+    * jutil.c: added jutil_msgnew, creating of message packets
+    * jabber.h: added message types to use with jutil_msgnew
+    * jabber.h: new state (JCONN_STATE_AUTH) for automated authorizing
+
+2000-06-15  madcat <palpa@jabber.org>
+
+    * jabberx removed from build system, it is now on jabber-x.sourceforge.net
+    * jabber.h: C++ friendlyness (conditionally compiled extern "C" {} stuff)
+
+2000-06-01  madcat <palpa@jabber.org>
+
+    * jconn.c: support for anonymous accounts, and new jab_getid() function
+
+2000-05-24  madcat <palpa@jabber.org>
+
+    * jabberx: new curses gui
+
+2000-05-21  madcat <palpa@jabber.org>
+
+    * jconn.c: new event handler system, they return jpackets now.
+               added comments to the functions
+
+    * jabberx: updated to new api
+
+2000-05-02  temas <temas@box5.net>
+
+    * configure.in:  fixes for the libxode checks
+
+2000-05-01  jer <jeremie@jabber.org>
+
+    * two bug fixes, type=normal and pproxy brokenedness
+
+    * -Wall
+
+    * astyle 4 space indent enforced
+
+2000-04-28  jer <jeremie@jabber.org>
+
+    * jpacket.c: message type=headline
+
+    * pproxy.c: update for pool heaps
+
+2000-04-25  jer <jeremie@jabber.org>
+
+    * jid.c: new jid_cmpx() function to compare by optional parts
+
+    * pproxy.c: dumb bug preventing the use of _primary() and user@host addresses
+
+    * util.c: the register utility was broke after 100 keys :)
+
+2000-04-22  jer <jeremie@jabber.org>
+
+    * by popular demand, the server now eats presence type=available (and normalizes it)
+
+2000-04-18  jer <jeremie@jabber.org>
+
+    * 1.0pre2
+
+2000-04-17  jer <jeremie@jabber.org>
+
+    * jid.c: username limit at 255
+
+    * log.c: zonestr now in libxode
+
+2000-04-12  temas <temas@box5.net>
+
+	* Build fixes for non standard prefixes
+
+2000-04-12  jer <jeremie@jabber.org>
+
+    * roll to 1.0pre1
+
+    * util.c: jutil_regkey to generate and validate registration keys
+
+2000-04-10  jer <jeremie@jabber.org>
+
+    * jid.c: jid_cmp was FUBAR under certian compares, ick, it's better now
+
+    * pproxy.c: I rewrote it all... why?  because it scared me
+
+    * util.c: lots of goodies transferred from jserver to share with all
+
+2000-03-28  temas <temas@box5.net>
+
+	* configure.in:  no more NONE
+
+2000-03-28  jer <jeremie@jabber.org>
+
+    * 0.9!
+
+2000-03-27	e-t	<eliot@landrum.cx>
+
+	* Updated README a bit. Not much changed.
+	* Commited some debian/ files that were missing...
+
+2000-03-27  jer <jeremie@jabber.org>
+
+    * jid.c: space character is illegal too :)
+
+2000-03-19  temas <temas@box5.net>
+
+	* RC
+
+2000-03-19  jer <jeremie@jabber.org>
+
+    * jpacket.c: a little more careful about jpackets now, strict
+
+2000-03-17  temas <temas@box5.net>
+
+	* configure.in:  libxode checks better
+
+	* bump to pre4
+
+2000-03-15  jer <jeremie@jabber.org>
+
+    * jid.c: now EXTRA cautious about the jid, validating the characters and length in the username/hostname
+
+2000-03-13  jer <jeremie@jabber.org>
+
+    * pproxy.c: presence priority is only negative for type=unavailable
+
+2000-03-12  jer <jeremie@jabber.org>
+
+    * jid.c: jid_nodescan() utility to get nodes with matchin jid's, behaving to jid matching rules
+
+    * jid.c: ignore type:, tolower server, better data validity checking, case insensitive username compares, 64 char limit on user/server
+
+2000-02-29  temas <temas@box5.net>
+
+	* Makefile.am:  get rid of common dir
+
+	* src/Makefile.am:  use the libxode stuff better
+
+	* configure.in:  libxode and common dir fixes
+
+	* ChangeLog:  double spaced e-t's entries cause I like it that way =)
+
+2000-02-29  e-t <eliot@jabber.org>
+
+    * README: general cleanup.
+	
+    * AUTHORS: general cleanup.
+	
+    * man/jabber-config.1: added, probably could use a bit more description,
+      but will do for now. (included Makefiles in man/)
+
+    * Makefile.am: added dir man/
+
+2000-02-27  jer <jeremie@jabber.org>
+
+    * jpacket.c: performance tweaks
+
+2000-02-24  jer <jeremie@jabber.org>
+
+    * common transformed to libxode, use that instead
+
+    * jpacket.c: now nulls out data upon a reset to be safer
+
+    * ppdb.c: bug, check data better!  grr
+
+    * jid.c: leaky leaky, handle memory better when appending jid's
+
+2000-02-20  e-t <eliot@jabber.org>
+
+	* README:  Kinda trashed the old one and copied/edited the Jabber standard README.
+
+2000-02-17  temas <temas@box5.net>
+
+	* Makefile.am:  don't have a macros dir anymore
+	* jabber-config.in:  cleanups
+
+	* configure.in:  pre2 roll
+
+2000-02-09  jer <jeremie@jabber.org>
+
+    * jpacket.c: added presence probe subtype
+
+2000-02-01  temas <temas@box5.net>
+
+	* jabber-config is needed for the macro stuff
+
+2000-01-31  jer <jeremie@jabber.org>
+
+    * xmlstream->jabstream: renamed all xmlstream to jabstream symbols, so they don't conflict with etherx's xmlstream
+
+2000-01-25  jer <jeremie@jabber.org>
+
+    * jpacket.c: jpacket_subtype() which breaks down the packet type further and stores it in p->subtype
+
+2000-01-06  jer <jeremie@jabber.org>
+
+    * jid.c: jid_xres() returns an xmlnode (same pool as the jid) representation of the resource and a standard query string,
+	for instance: /resource?name=value&foo=bar is an xmlnode for <resource name="value" foo="bar"/>
+
+    * fixed other header prototype misplacements
+
+2000-01-06  palpa <gozen@isbank.net.tr>
+
+    * bye libjnix, lala libjabber :)
+
+2000-01-04  palpa <gozen@isbank.net.tr>
+
+    * profile.c: from field added to jnixpf struct
+
+2000-01-03  palpa <gozen@isbank.net.tr>
+
+    * profile.c: handles jabber:iq:info queries
+
+2000-01-02  palpa <gozen@isbank.net.tr>
+
+    * jabberx fixed for new api
+
+    * auth.c: _jnix_reg() fixed
+
+    * funcs for updating roster items
+
+    * user field in the roster item struct is changed to (char*)
+      from (jid).
+
+2000-01-02  palpa <gozen@isbank.net.tr>
+
+    * jnixr_removeitem() added
+
+2000-01-01  palpa <gozen@isbank.net.tr>
+
+    * New JNIXC_ROSTER flag automatically requests roster from server.
+
+    * New roster api.
+
+    * Multiclient funcs removed & auth cb changed again.
+
+1999-12-30  scott <quad@jabber.org>
+
+    * continued adding features and breaking up jabberx. Soon, my pretty,
+        soon.
+
+    * well, y2k hath struck in some areas of the world. It's still 30 here,
+        so I'll note I've severely made jabberx awesome. Check it out o-kudasai!
+
+1999-12-30  palpa <gozen@isbank.net.tr>
+
+    * jnixprivate.h added and private defines/prototypes in
+      jnix.h are moved in it.
+
+    * com field in the roster item structure removed
+
+1999-12-29  palpa <gozen@isbank.net.tr>
+
+	* stresstest moved to test dir
+
+	* docs dir added
+
+	* some jabberx fixes
+
+	* user structure added & auth callback changed
+
+	* login(), logoff() funcs for multiclients
+
+1999-12-29  scott <quad@jabber.org>
+
+    * went to lower bandwidth node defaults
+
+    * continued improving jnixtest.
+
+    * Fixed a bit of roster parsing
+
+1999-12-28  scott <quad@jabber.org>
+
+    * Re-vamped connection
+
+    * Re-vamped rosters
+
+    * Added more management
+
+    * Fixed jnixtest to WORK
+
+    * Patched a bunch of miscellaneous bugs.
+
+    * patched a few more memory leaks
+
+1999-12-13  palpa <gozen@isbank.net.tr>
+
+	* new editNode() function
+
+	* id attribute support
+
+	* presence changed for 0.8
+
+1999-12-09  disq <disq@sanane.com>
+
+	* fixed auth/register <result> for 0.8
+
+1999-12-08  palpa <gozen@isbank.net.tr>
+
+	* test/api.html: added (not finished yet)
+
+	* node.c: msg/prs/iq things now use same set of functions
+	          old msg/prs/iq funcs removed
+
+	* jnix.c: now callbacks are global
+
+	* jnixtest.c: changed to new api
+
+1999-12-04  palpa <gozen@isbank.net.tr>
+
+	* xmlstream: removed unnecessary callback, fixed xmlstream_stop()
+
+	* jnix: disconnect() now frees jnixc structure
+
+	* auth: fixed/changed/optimized :)
+
+	* jnixtest: auth callback support
+
+1999-12-03  disq <disq@sanane.com>
+
+	* auth.c: added authorization & registration response callback
+
+	* iq.c: changed jnix_findIQitem, now it takes the jnixqitem as a parameter.
+					this way we can use this function to search attributes
+	* jnix.c: frees iq before we call j->cbRoster
+
+1999-11-25  palpa <gozen@isbank.net.tr>
+
+	* presence.c, iq.c: send functions changed for using spool
+
+1999-11-25  palpa <gozen@isbank.net.tr>
+
+	* message.c: sendMessage() now creates xml with spool functions
+	                           (faster and uses less memory)
+
+1999-11-24  palpa <gozen@isbank.net.tr>
+
+	* iq.c: newIQ() uses vararg arguments
+
+1999-11-24  palpa <gozen@isbank.net.tr>
+
+	* jnix.c: JNIXC_NEWUSER now sends auth request after registration
+
+	* jnixtext.c: new command line option, -n : registers new user
+
+1999-11-23  palpa <gozen@isbank.net.tr>
+
+	* roster.c: parseRoster now correctly gets comment information
+
+	* jnixtext.c: status command renamed to presence
+	              added probe command
+
+1999-11-22  palpa <gozen@isbank.net.tr>
+
+	* i did some api changes :}
+	  nspace field in the jnixq struct renamed to xmlns
+	  connect() now has a flags (int) field
+	  some #define's changed, look jnix.h for them
+	  old newXXX funcs removed, now all newXXX funcs takes vararg parameters
+
+	* if you call connect with JNIXC_NEWUSER flag, it registers
+	  that user (needs some work to send auth request after that :)
+
+	* new addIQitem() function supports query tags with attributes.
+
+	* roster.c and jnixtest.c patched for this changes.
+
+	* this changes are not fully tested, sorry :}
+
+1999-11-22  disq <disq@sanane.com>
+
+	* roster.c: added remaining roster routines, does not work mainly ;)
+	* jnixtest.c: updated
+
+1999-11-22  palpa <gozen@isbank.net.tr>
+
+	* iq.c: parseIQ() now parses attributes of tags too
+
+1999-11-22  palpa <gozen@isbank.net.tr>
+
+	* auth.c: jnix_register() added
+	  (jnix_auth() moved to this file too)
+
+1999-11-22  disq <disq@sanane.com>
+
+	* roster.c: added, parseRoster is there, untested
+
+1999-11-21  palpa <gozen@isbank.net.tr>
+
+	* presence.c: changes for jnixp from field
+
+1999-11-21  palpa <gozen@isbank.net.tr>
+
+	* jnix_auth(jnixc j, char *user, char* pass) added to api
+	  This is for multiclients, jnix_connect() automatically
+	  calls it for first user of that connection.
+
+	* message.c: now fully supports jnixm from field.
+
+	* jnix.c: sends auth request after receiving stream tag.
+
+1999-11-20  tcharron >tcharron@ductape.net
+
+        * More changes to StressTest.
+        * message.c: _jnix_parsenode() Changed so to field is populated
+          by the jnixc user field if not specificaly stated in the message
+
+1999-11-20  palpa <gozen@isbank.net.tr>
+
+	* presence.c: createPresence(int type, ...) added
+
+1999-11-19  temas <temas@box5.net>
+
+	* added the header to files
+
+1999-11-17  palpa <gozen@isbank.net.tr>
+
+	* createMessage() fixes/improvements
+
+1999-11-17  palpa <gozen@isbank.net.tr>
+
+	* createMessage(char *to, ...) added to message api
+
+1999-11-16  TCharron <tcharron@ductape.net>
+
+        * StressTest will now use full threading, and take
+          command line option.
+
+1999-11-15  TCharron <tcharron@ductape.net>
+
+        * Added StressTest directory.  This is going to be a program
+          to put the servers under incredible load.  I'm currently using
+          it to simply login over 900 simo users.  In the future, they'll
+          message eachother, go on and off line, and change status
+          messages.  More to come..
+
+          (PPsst..  No comments..  Shoot me..)
+
+1999-11-15  palpa <gozen@isbank.net.tr>
+
+	* sendIQ completed
+
+1999-11-13  palpa <gozen@isbank.net.tr>
+
+	* parseIQ stuff
+
+1999-11-13  palpa <gozen@isbank.net.tr>
+
+	* jnixm/p/q structures now have 'from' and 'to' fields instead of 'user'
+	  (necessary for multi client support)
+
+1999-11-12  palpa <gozen@isbank.net.tr>
+
+	* id field added to jnixm, jnixp, jnixq structures
+
+	* iq callback partially working
+
+	* sendPresence now sends priority
+
+1999-11-12  palpa <gozen@isbank.net.tr>
+
+	* fixes for new jdebug() stuff
+
+1999-11-09  palpa <gozen@isbank.net.tr>
+
+	* jnix_isOnline() function added
+
+	* jnix now parses priority data in incoming message and presence nodes
+
+1999-11-09  palpa <gozen@isbank.net.tr>
+
+	* establish-close callbacks renamed to online-offline
+
+	* offline callback returns the reason of disconnection
+
+	* jnix prefix added to callback typedefs
+
+	* test client fixed for this changes
+
+1999-11-09  spectre <spectre@winterland.net>
+
+	* added presence stuff, shortcuts and reply cmd to test client
+	
+	* and also some visual improvements
+
+1999-11-09  disq <disq@sanane.com>
+
+	* fixed some /* bug/typo in jnix.h
+
+	* debug(), insane(), _log() now defined even if DEBUG is not defined, but
+		they're empty functions
+
+1999-11-07  palpa <gozen@isbank.net.tr>
+
+	* name of the test client changed to jnixtest
+
+	* presence.c: jnix_sendMessage() added
+
+1999-11-07  disq <disq@sanane.com>
+
+	* fixed typo in presence.c, now compiles
+
+1999-11-07  palpa <gozen@isbank.net.tr>
+
+	* jnix.c: jnix_disconnect() added
+
+	* presence.c: now it parses incoming presence nodes
+
+	* message.c: some fixes
+
+1999-11-07  palpa <gozen@isbank.net.tr>
+
+	* presence.c added for putting presence handling functions in
+
+	* jnix_freeMessage() added
+
+	* jnix.c and xmlstream.c now fully uses memory pools
+
+1999-11-06  palpa <gozen@isbank.net.tr>
+
+	* jnix_newMessage and jnix_chatMessage added
+
+1999-11-06  spectre <spectre@winterland.net>
+
+	* onMessage callback gets jnixm structure now
+	
+	* new ncurses based quick'n'dirty testclient
+
+1999-11-05  temas <temas@box5.net>
+	
+	* test/Makefile.am:  testclient should build..
+
+	* configure.in:  Fixed up some of the checks
+
+	* acconfig.h:  Make this file so we get a config.h
+
+1999-11-05  palpa <gozen@isbank.net.tr>
+
+	* xmlstream api changed
+
+1999-11-04  palpa <gozen@isbank.net.tr>
+
+	* xmlstream.c now uses string pools
+
+1999-11-04  palpa <gozen@isbank.net.tr>
+
+	* parseMessage() is working
+
+1999-11-03  palpa <gozen@isbank.net.tr>
+
+	* simple test client added
+
+	* log stuff fixed
+
+	* TODO file added
+
+1999-11-03  palpa <gozen@isbank.net.tr>
+
+	* connect now takes a jid argument instead of server and user
+
+	* 0.6 stuff removed
+
+1999-11-03  palpa <gozen@isbank.net.tr>
+
+	* jnix_sendMessage (v0.7 protocol)
+
+	* new jnix_auth for v0.7
+
+1999-11-03  palpa <gozen@isbank.net.tr>
+
+	* added message.c for putting message handling functions in
+
+	* connection close/establish and message callbacks are working
+
+1999-11-02  palpa <gozen@isbank.net.tr>
+
+	* connect, poll, setcb and fd functions implemented
+
+	* pth and tstream stuff removed from xmlstream.c
+
+	* configure.in and makefile.am files in include dir fixed
+
+1999-10-31  Jer <jeremie@jabber.org>
+
+	* added xmlstream code from jlib for porting
+
+	* fixing includes for common/include
+
+	* jnix.h: rough API attempt
+
+1999-10-30  temas <temas@box5.net>
+	
+	* now use the common dir
+
+1999-10-29  temas <temas@box5.net>
+
+	* autogen.sh:  this is libjnix not jlib
+
+1999-10-29  Jer <jeremie@jabber.org>
+
+	* birth!  stole most of this from jlib

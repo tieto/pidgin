@@ -4,8 +4,7 @@ version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0
 	* An enormous amount of bug fixes
 	* Even More Protocol Plugins:
-		Jabber (plugins/jabber) [currently requires libxode and
-					 libjabber, which aren't provided]
+		Jabber (plugins/jabber)
 		Napster (plugins/napster.c)
 	* Fixed a segfault with 'Ignore new conversations while away'
 

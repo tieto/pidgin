@@ -47,7 +47,7 @@
 #include "multi.h"
 #include "prpl.h"
 #include "gaim.h"
-#include <jabber/jabber.h>
+#include "jabber.h"
 
 #include "pixmaps/available.xpm"
 
