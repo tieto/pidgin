@@ -142,12 +142,14 @@ gboolean update_applet( gpointer *ap ){
                            icon_offline_pm,
                            icon_offline_bm );
          	       gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
+		       applet_set_tooltips("Offilne. Click to bring up login box.");
       		break;
       		case signing_on:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
                            icon_connect_pm,
                            icon_connect_bm );   
       			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
+			applet_set_tooltips("Attempting to sign on....");
       		break;
       		case online:
       			gtk_pixmap_set( GTK_PIXMAP(icon),
@@ -236,6 +238,12 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
 		GtkAllocation a = get_applet_pos(FALSE);
 		gtk_widget_set_uposition(mainwindow, a.x, a.y);
 	}
+}
+
+void applet_do_signon(AppletWidget *widget, gpointer data) {
+	show_login();
+	if (general_options & OPT_GEN_REMEMBER_PASS)
+		dologin();
 }
 
 void insert_applet_away() {
@@ -335,7 +343,7 @@ void AppletCancelLogon(){
   applet_widget_register_callback(APPLET_WIDGET(applet),
 				  "signon",
 				  _("Signon"),
-				  applet_show_login,
+				  applet_do_signon,
 				  NULL);
 }
 
@@ -512,7 +520,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
         gdk_imlib_init();
         gtk_widget_push_visual(gdk_imlib_get_visual());
         gtk_widget_push_colormap(gdk_imlib_get_colormap());
-        
+
         applet=applet_widget_new("gaim_applet");
         if(!applet) g_error(_("Can't create GAIM applet!"));
 	gtk_widget_set_events(applet, gtk_widget_get_events(applet) |
@@ -539,6 +547,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		
 	icon=gtk_pixmap_new(icon_offline_pm,icon_offline_bm);
 	
+	update_applet(NULL);
 	gtk_timeout_add( 1500, (GtkFunction)update_applet, NULL );
 	
 	vbox = gtk_vbox_new(FALSE,0);
@@ -569,8 +578,6 @@ gint init_applet_mgr(int argc, char *argv[]) {
 	gtk_widget_show( vbox );
 	gtk_widget_show( appletframe );
 	        
-	applet_widget_set_tooltip(APPLET_WIDGET(applet),"GAIM");
-
 	applet_widget_register_stock_callback(APPLET_WIDGET(applet),
 					      "about",
 					      GNOME_STOCK_MENU_ABOUT,
@@ -600,6 +607,10 @@ void set_applet_draw_open(){
 
 void set_applet_draw_closed(){
 	applet_draw_open = FALSE;
+}
+
+void applet_set_tooltips(char *msg) {
+	applet_widget_set_tooltip(APPLET_WIDGET(applet), msg);
 }
 
 #endif /*USE_APPLET*/

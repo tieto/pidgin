@@ -63,6 +63,7 @@ enum gaim_user_states {
 #define GAIM_GNOME_PENGUIN_ONLINE "gaim/gnome/penguin-online.png"
 
 gint init_applet_mgr();
+void applet_do_signon(AppletWidget *, gpointer);
 
 void setUserState( enum gaim_user_states state );
 enum gaim_user_states getUserState();
@@ -76,7 +77,7 @@ void insert_applet_away();
 void remove_applet_away();
 
 void update_pixmaps();
-
+void applet_set_tooltips(char *);
 
 #endif /*USE_APPLET*/
 #endif /*_GAIMGNOMEAPPLETMGR_H_*/

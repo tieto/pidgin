@@ -181,6 +181,7 @@ void gaim_setup() {
 	}
 
 #ifdef USE_APPLET
+	 setUserState(online);
 	 applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
 	 applet_widget_register_callback(APPLET_WIDGET(applet),
 			 "signoff",
@@ -497,7 +498,7 @@ int main(int argc, char *argv[])
         applet_widget_register_callback(APPLET_WIDGET(applet),
 					"signon",
 					_("Signon"),
-					applet_show_login,
+					applet_do_signon,
 					NULL);
 #ifdef GAIM_PLUGINS
         applet_widget_register_callback(APPLET_WIDGET(applet),

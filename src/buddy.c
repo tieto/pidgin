@@ -103,8 +103,13 @@ void update_num_groups()
 	int pres, total;
         char buf[BUF_LONG];
 
+#ifndef USE_APPLET
         if (!(display_options & OPT_DISP_SHOW_GRPNUM))
                 return;
+#else
+	int onl = 0;
+	int all = 0;
+#endif
 
         while(grp) {
 		g = (struct group *)grp->data;
@@ -123,10 +128,18 @@ void update_num_groups()
 
                 g_snprintf(buf, sizeof(buf), "%s  (%d/%d)", g->name, pres, total);
 
+#ifdef USE_APPLET
+		onl += pres;
+		all += total;
+		if (display_options & OPT_DISP_SHOW_GRPNUM)
+#endif
                 gtk_label_set(GTK_LABEL(g->label), buf);
                 grp = grp->next;
         }
-        
+#ifdef USE_APPLET
+	g_snprintf(buf, sizeof(buf), "%d/%d Buddies Online", onl, all);
+	applet_set_tooltips(buf);
+#endif
 }
 
 void update_show_idlepix()
@@ -348,7 +361,7 @@ void signoff()
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "signon",
                 _("Signon"),
-                applet_show_login,
+                applet_do_signon,
                 NULL);
 #else
         show_login();
