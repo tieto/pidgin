@@ -121,7 +121,7 @@ char *grab_url(char *url)
 	if ((sock = connect_address(host->s_addr, website.port)) < 0)
 		return g_strdup(_("g003: Error opening connection.\n"));
 
-	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\n\n", website.page);
+	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", website.page);
 	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
 	debug_print(debug_buff);
 	write(sock, buf, strlen(buf));
