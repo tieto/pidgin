@@ -210,6 +210,8 @@ static void yahoo_login(struct aim_user *user) {
 	set_login_progress(gc, 1, "Connecting");
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 
 	if (!ctxt || !yahoo_connect(ctxt)) {
 		debug_printf("Yahoo: Unable to connect\n");
@@ -223,6 +225,8 @@ static void yahoo_login(struct aim_user *user) {
 	set_login_progress(gc, 3, "Getting Config");
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 
 	yahoo_get_config(ctxt);
 

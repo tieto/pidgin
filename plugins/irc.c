@@ -830,6 +830,8 @@ void irc_login(struct aim_user *user) {
 
 	while (gtk_events_pending())
 		gtk_main_iteration();
+	if (!g_slist_find(connections, gc))
+		return;
 
 	host = gethostbyname(user->proto_opt[0]);
 	if (!host) {
