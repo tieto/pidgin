@@ -3082,7 +3082,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
-	gtk_widget_set_size_request(gtkconv->entry, buddy_chat_size.width,
+	gtk_widget_set_size_request(gtkconv->entry, -1,
 								MAX(buddy_chat_size.entry_height, 25));
 
 	/* Connect the signal handlers. */
@@ -3141,6 +3141,7 @@ setup_im_pane(struct gaim_conversation *conv)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
 										GTK_SHADOW_IN);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
+
 	gtk_widget_set_size_request(gtkconv->sw, conv_size.width, conv_size.height);
 	gtk_widget_show(gtkconv->sw);
 
@@ -3177,7 +3178,7 @@ setup_im_pane(struct gaim_conversation *conv)
 	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
 
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
-	gtk_widget_set_size_request(gtkconv->entry, conv_size.width - 20,
+	gtk_widget_set_size_request(gtkconv->entry, -1,
 								MAX(conv_size.entry_height, 25));
 
 	/* Connect the signal handlers. */
@@ -3591,9 +3592,14 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 	if (gaim_window_get_conversation_count(win) == 1) {
 		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), 0);
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
-				((conv_type == GAIM_CONV_IM && im_options & OPT_IM_ONE_WINDOW) ||
-				(conv_type == GAIM_CONV_CHAT && im_options & OPT_CHAT_ONE_WINDOW)));
+
+		if(conv_type == GAIM_CONV_IM) {
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
+					(im_options & OPT_IM_ONE_WINDOW));
+		} else if(conv_type == GAIM_CONV_CHAT) {
+			gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
+					(chat_options & OPT_CHAT_ONE_WINDOW));
+		}
 	} else {
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
 	}
