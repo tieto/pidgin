@@ -159,8 +159,6 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 				msn_kill_switch(ms);
 				return 0;
 			}
-
-			debug_printf("\n");
 		}
 	} else if (!g_ascii_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
@@ -206,7 +204,7 @@ msn_process_switch(struct msn_switchboard *ms, char *buf)
 			msn_kill_switch(ms);
 
 	} else {
-		debug_printf("Unhandled message!\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "msn", "Unhandled message!\n");
 	}
 
 	return 1;
@@ -353,7 +351,7 @@ msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 			cmd[cmdlen] = 0;
 
-			debug_printf("MSN S: %s", cmd);
+			gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s", cmd);
 			g_strchomp(cmd);
 			cont = msn_process_switch(ms, cmd);
 

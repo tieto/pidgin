@@ -198,8 +198,9 @@ msn_xfer_read(char **buffer, struct gaim_xfer *xfer)
 	}
 
 	if (header[0] != 0) {
-		debug_printf("MSNFTP: Invalid header[0]: %d. Aborting.\n",
-					 header[0]);
+		gaim_debug(GAIM_DEBUG_ERROR, "msn",
+				   "MSNFTP: Invalid header[0]: %d. Aborting.\n",
+				   header[0]);
 		return 0;
 	}
 
@@ -376,7 +377,8 @@ msn_msnftp_connect(gpointer data, gint source, GaimInputCondition cond)
 	xfer_data = (struct msn_xfer_data *)xfer->data;
 
 	if (source == -1 || !g_slist_find(connections, account->gc)) {
-		debug_printf("MSNFTP: Error establishing connection\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "msn",
+				   "MSNFTP: Error establishing connection\n");
 		close(source);
 
 		gaim_xfer_cancel_remote(xfer);
@@ -493,8 +495,9 @@ msn_process_ft_msg(struct msn_switchboard *ms, char *msg)
 
 			if (xfer == NULL)
 			{
-				debug_printf("MSNFTP : Cookie not found. "
-							 "File transfer aborted.\n");
+				gaim_debug(GAIM_DEBUG_ERROR, "msn",
+						   "MSNFTP : Cookie not found. "
+						   "File transfer aborted.\n");
 				return;
 			}
 

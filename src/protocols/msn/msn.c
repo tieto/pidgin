@@ -412,7 +412,6 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			signoff(gc);
 		}
 
-		debug_printf("\n");
 	} else if (!g_ascii_strncasecmp(buf, "FLN", 3)) {
 		char *usr = buf;
 
@@ -484,7 +483,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		} else if (!g_ascii_strcasecmp(which, "AL") && pos) {
 			if (g_slist_find_custom(gc->account->deny, who,
 							(GCompareFunc)strcmp)) {
-				debug_printf("moving from deny to permit: %s", who);
+				gaim_debug(GAIM_DEBUG_INFO, "msn",
+						   "moving from deny to permit: %s", who);
 				gaim_privacy_deny_remove(gc->account, who);
 			}
 			gaim_privacy_permit_add(gc->account, who);
@@ -503,7 +503,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			  denyl = denyl->next;
 			}
 			if(new) {
-				debug_printf("Unresolved MSN RL entry\n");
+				gaim_debug(GAIM_DEBUG_INFO, "msn",
+						   "Unresolved MSN RL entry\n");
 				ap = g_new0(struct msn_add_permit, 1);
 				ap->user = g_strdup(who);
 				ap->friend = g_strdup(friend);
@@ -695,7 +696,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		}
 
 		if( (fd = gaim_mkstemp(&(md->passport))) == NULL ) {
-		  debug_printf("Error opening temp file: %s\n", strerror(errno)); 
+		  gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					 "Error opening temp file: %s\n", strerror(errno)); 
 		}
 		else {
 			fputs("<html>\n"
@@ -722,7 +724,8 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 			fprintf(fd, "</form></body>\n");
 			fprintf(fd, "</html>\n");
 			if (fclose(fd)) {
-				debug_printf("Error closing temp file: %s\n", strerror(errno)); 
+				gaim_debug(GAIM_DEBUG_ERROR, "msn",
+						   "Error closing temp file: %s\n", strerror(errno)); 
 				unlink(md->passport);
 				g_free(md->passport);
 			}
@@ -798,7 +801,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 	} else if (isdigit(*buf)) {
 		handle_errcode(buf, TRUE);
 	} else {
-		debug_printf("Unhandled message!\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "msn", "Unhandled message!\n");
 	}
 
 	return 1;
@@ -932,7 +935,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			}
 			cmd[cmdlen] = 0;
 
-			debug_printf("MSN S: %s", cmd);
+			gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s", cmd);
 			g_strchomp(cmd);
 			cont = msn_process_main(gc, cmd);
 
@@ -1149,7 +1152,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		}
 		cmd[cmdlen] = 0;
 
-		debug_printf("MSN S: %s", cmd);
+		gaim_debug(GAIM_DEBUG_MISC, "msn", "S: %s", cmd);
 		g_strchomp(cmd);
 		cont = msn_process_login(gc, cmd);
 
@@ -1263,7 +1266,7 @@ static int msn_send_im(struct gaim_connection *gc, const char *who, const char *
 		char *send;
 
 		if (ms->txqueue) {
-			debug_printf("appending to queue\n");
+			gaim_debug(GAIM_DEBUG_INFO, "msn", "appending to queue\n");
 			ms->txqueue = g_slist_append(ms->txqueue, g_strdup(message));
 			return 1;
 		}
@@ -1275,7 +1278,6 @@ static int msn_send_im(struct gaim_connection *gc, const char *who, const char *
 		g_free(send);
 		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
 			msn_kill_switch(ms);
-		debug_printf("\n");
 	} else if (strcmp(who, gc->username)) {
 		g_snprintf(buf, MSN_BUF_LEN, "XFR %u SB\r\n", ++md->trId);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
@@ -1314,7 +1316,6 @@ static int msn_chat_send(struct gaim_connection *gc, int id, char *message)
 		msn_kill_switch(ms);
 		return 0;
 	}
-	debug_printf("\n");
 	serv_got_chat_in(gc, id, gc->username, 0, message, time(NULL));
 	return 0;
 }
@@ -1705,7 +1706,7 @@ static void msn_add_permit(struct gaim_connection *gc, const char *who)
 	}
 
 	if (g_slist_find_custom(gc->account->deny, who, (GCompareFunc)strcmp)) {
-		debug_printf("MSN: Moving %s from BL to AL\n", who);
+		gaim_debug(GAIM_DEBUG_INFO, "msn", "Moving %s from BL to AL\n", who);
 		gaim_privacy_deny_remove(gc->account, who);
 		g_snprintf(buf, sizeof(buf), "REM %u BL %s\r\n", ++md->trId, who);
 			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
@@ -1759,7 +1760,7 @@ static void msn_add_deny(struct gaim_connection *gc, const char *who)
 	}
 
 	if (g_slist_find_custom(gc->account->permit, who, (GCompareFunc)strcmp)) {
-		debug_printf("MSN: Moving %s from AL to BL\n", who);
+		gaim_debug(GAIM_DEBUG_INFO, "msn", "Moving %s from AL to BL\n", who);
 		gaim_privacy_permit_remove(gc->account, who);
 		g_snprintf(buf, sizeof(buf), "REM %u AL %s\r\n", ++md->trId, who);
 		if (msn_write(md->fd, buf, strlen(buf)) < 0) {

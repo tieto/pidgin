@@ -25,7 +25,7 @@
 int
 msn_write(int fd, void *data, int len)
 {
-	debug_printf("MSN C: %s", (char *)data);
+	gaim_debug(GAIM_DEBUG_MISC, "msn", "C: %s", (char *)data);
 
 	return write(fd, data, len);
 }

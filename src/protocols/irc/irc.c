@@ -161,7 +161,7 @@ find_dcc_chat (struct gaim_connection *gc, const char *nick)
 static int 
 irc_write(int fd, char *data, int len)
 {
-	debug_printf("IRC C: %s", data);
+	gaim_debug(GAIM_DEBUG_MISC, "irc", "C: %s", data);
 	return write(fd, data, len);
 }
 
@@ -175,8 +175,9 @@ irc_send_convert(struct gaim_connection *gc, const char *string, int maxlen, int
 	
 	conv = g_iconv_open(gc->account->proto_opt[USEROPT_CHARSET], "UTF-8");
 	if (g_iconv(conv, &inptr, &inleft, &outptr, &outleft) == -1) {
-		debug_printf("IRC charset conversion error\n");
-		debug_printf("Sending as UTF-8 (this is a hack!)\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Charset conversion error\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "irc",
+				   "Sending as UTF-8 (this is a hack!)\n");
 		g_free(converted);
 		*done = maxlen;
 		return(g_strndup(string, maxlen));
@@ -196,7 +197,8 @@ irc_recv_convert(struct gaim_connection *gc, char *string)
 	utf8 = g_convert(string, strlen(string), "UTF-8",
 			 gc->account->proto_opt[USEROPT_CHARSET], NULL, NULL, &err);
 	if (err) {
-		debug_printf("IRC recv conversion error: %s\n", err->message);
+		gaim_debug(GAIM_DEBUG_ERROR, "irc",
+				   "recv conversion error: %s\n", err->message);
 		utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
 	}
 	
@@ -482,7 +484,7 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 	gchar buf[128];
 	int n = 0;
 	struct gaim_conversation *convo;
-	debug_printf("THIS IS TOO MUCH EFFORT\n");
+	gaim_debug(GAIM_DEBUG_MISC, "irc", "THIS IS TOO MUCH EFFORT\n");
 	n = read (chat->fd, buffer, IRC_BUF_LEN);
 	if (n > 0) {
 
@@ -491,7 +493,8 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 
 		/* Convert to HTML */
 		if (strlen(buffer)) {
-			debug_printf ("DCC Message from: %s\n", chat->nick);
+			gaim_debug(GAIM_DEBUG_INFO, "irc",
+					   "DCC Message from: %s\n", chat->nick);
 			irc_got_im(chat->gc, chat->nick, buffer, 0, 
 				   time(NULL));
 		}
@@ -553,7 +556,8 @@ dcc_chat_callback (gpointer data, gint source, GaimInputCondition condition) {
 		    _("DCC Chat with %s established"),
 		    chat->nick);
 	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
-	debug_printf ("Chat with %s established\n", chat->nick);
+	gaim_debug(GAIM_DEBUG_INFO, "irc",
+			   "Chat with %s established\n", chat->nick);
 	dcc_chat_list =  g_slist_append (dcc_chat_list, chat);
 	gaim_input_remove(chat->inpa);
 	chat->inpa = gaim_input_add(source, GAIM_INPUT_READ, dcc_chat_in, chat);
@@ -1818,7 +1822,7 @@ irc_callback(gpointer data, gint source, GaimInputCondition condition)
 		len = e - idata->rxqueue + 1;
 		d = g_strndup(idata->rxqueue, len);
 		g_strchomp(d);
-		debug_printf("IRC S: %s\n", d);
+		gaim_debug(GAIM_DEBUG_MISC, "irc", "S: %s\n", d);
 
 		/* REMOVE ME BEFORE SUBMIT! */
 		/*fprintf(stderr, "IRC S: %s\n", d);*/
@@ -1870,7 +1874,8 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	test = g_convert("test", strlen("test"), gc->account->proto_opt[USEROPT_CHARSET],
 			 "UTF-8", NULL, NULL, &err);
 	if (err) {
-		debug_printf("Couldn't initialize %s for IRC charset conversion, using ISO-8859-1\n",
+		gaim_debug(GAIM_DEBUG_ERROR, "irc",
+				   "Couldn't initialize %s for IRC charset conversion, using ISO-8859-1\n",
 			     gc->account->proto_opt[USEROPT_CHARSET]);
 		strcpy(gc->account->proto_opt[USEROPT_CHARSET], "ISO-8859-1");
 	}
@@ -2607,7 +2612,8 @@ dcc_chat_connected(gpointer data, gint source, GdkInputCondition condition)
 	g_snprintf (buf, sizeof buf, _("DCC Chat with %s established"),
 				chat->nick);
 	gaim_conversation_write(convo, NULL, buf, -1, WFLAG_SYSTEM, time(NULL));
-	debug_printf ("Chat with %s established\n", chat->nick);
+	gaim_debug(GAIM_DEBUG_INFO, "irc",
+			   "Chat with %s established\n", chat->nick);
 	dcc_chat_list = g_slist_append (dcc_chat_list, chat);
 }
 #if 0
