@@ -1432,66 +1432,47 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 
 	menu = gtk_menu_new();
 
-	button = gtk_menu_item_new_with_label(_("IM"));
-	g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(menu_chat_im_cb), conv);
+	button = gaim_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
+				G_CALLBACK(menu_chat_im_cb), conv, 0, 0, NULL);
 	g_object_set_data(G_OBJECT(button), "user_data", who);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-	gtk_widget_show(button);
 
 	if (gc && prpl_info && prpl_info->send_file
 			&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
-		button = gtk_menu_item_new_with_label(_("Send File"));
-		g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(menu_chat_send_file_cb), conv);
+		button = gtk_new_item_from_stock(menu, _("Send File"), 
+			GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
+			conv, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
 	}
 
 	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
-		button = gtk_menu_item_new_with_label(_("Un-Ignore"));
+		button = gaim_new_item_from_stock(menu, _("Un-Ignore"), GAIM_STOCK_IGNORE,
+						G_CALLBACK(ignore_cb), conv, 0, 0, NULL);
 	else
-		button = gtk_menu_item_new_with_label(_("Ignore"));
-
-	g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(ignore_cb), conv);
+		button = gaim_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
+						G_CALLBACK(ignore_cb), conv, 0, 0, NULL);
 	g_object_set_data(G_OBJECT(button), "user_data", who);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-	gtk_widget_show(button);
 
 	if (gc && (prpl_info->get_info || prpl_info->get_cb_info)) {
-		button = gtk_menu_item_new_with_label(_("Info"));
-		g_signal_connect(G_OBJECT(button), "activate",
-							 G_CALLBACK(menu_chat_info_cb), conv);
+		button = gaim_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
+						G_CALLBACK(menu_chat_info_cb), conv, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
 	}
 
 	if (gc && prpl_info->get_cb_away) {
-		button = gtk_menu_item_new_with_label(_("Get Away Msg"));
-		g_signal_connect(G_OBJECT(button), "activate",
-							 G_CALLBACK(menu_chat_get_away_cb), conv);
+		button = gaim_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
+					G_CALLBACK(menu_chat_get_away_cb), conv, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
 	}
 
 	/* XXX: jabber can only add buddies from here in certain circumstances */
 	/* Added by Jonas <jonas@birme.se> */
 	if (gc) {
 		if (gaim_find_buddy(gc->account, who))
-			button = gtk_menu_item_new_with_label(_("Remove"));
+			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
+						G_CALLBACK(menu_chat_add_cb), conv, 0, 0, NULL);
 		else
-			button = gtk_menu_item_new_with_label(_("Add"));
-
-		g_signal_connect(G_OBJECT(button), "activate",
-				 G_CALLBACK(menu_chat_add_remove_cb), conv);
-
-		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
+			button = gaim_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
+						G_CALLBACK(menu_chat_add_cb), conv, 0, 0, NULL);
 	}
 	/* End Jonas */
 
@@ -4111,7 +4092,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_widget_show(bbox);
 
 	/* IM */
-	button = gaim_pixbuf_button_from_stock(NULL, GTK_STOCK_REDO,
+	button = gaim_pixbuf_button_from_stock(NULL, GAIM_STOCK_IM,
 										   GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
