@@ -70,7 +70,7 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 {
-	int mflags;
+	GaimLogReadFlags mflags;
 	g_return_val_if_fail(log && log->logger, NULL);
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags ? flags : &mflags);
