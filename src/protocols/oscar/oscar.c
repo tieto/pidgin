@@ -2360,7 +2360,8 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 	/* If the message came from an ICQ user then escape any HTML */
 	if (isdigit(userinfo->sn[0])) {
-		gchar *tmp2 = gaim_escape_html(tmp);
+		gchar *tmp2;
+		gaim_markup_html_to_xhtml(tmp, &tmp2, NULL);
 		g_free(tmp);
 		tmp = tmp2;
 	}
