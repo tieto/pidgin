@@ -1186,6 +1186,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		}
 
 	} else {
+		char buf2[BUF_LONG];
 		if ((clr = strstr(what, "<BODY BGCOLOR=\"#")) != NULL) {
 			sscanf(clr + strlen("<BODY BGCOLOR=\"#"), "%x", &colorv);
 		}
@@ -1227,10 +1228,12 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 					"<B>%s</B></FONT> ", colour, date(), str);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT> ", colour, str);
+		g_snprintf(buf2, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+				"<B>%s</B></FONT> ", colour, date(), str);
 
 		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf2, 0);
 
 		gtk_imhtml_append_text(GTK_IMHTML(c->text), what, gtk_font_options);
 
