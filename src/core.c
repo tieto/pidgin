@@ -78,6 +78,10 @@ gaim_core_init(const char *ui)
 	/* Initialize all static protocols. */
 	static_proto_init();
 
+	/* Since plugins get probed so early we should probably initialize their
+	 * subsystem right away too.
+	 */
+	gaim_plugins_init();
 	gaim_plugins_probe(NULL);
 
 	if (ops != NULL)
@@ -145,6 +149,7 @@ gaim_core_quit(void)
 	if (ops != NULL && ops->quit != NULL)
 		ops->quit();
 
+	gaim_plugins_uninit();
 	gaim_signals_uninit();
 
 	if (core->ui != NULL) {

@@ -33,11 +33,11 @@
 #ifdef _WIN32
 # define PLUGIN_EXT ".dll"
 #else
-#ifdef __hpux
-# define PLUGIN_EXT ".sl"
-#else
-# define PLUGIN_EXT ".so"
-#endif
+# ifdef __hpux
+#  define PLUGIN_EXT ".sl"
+# else
+#  define PLUGIN_EXT ".so"
+# endif
 #endif
 
 typedef struct
@@ -71,16 +71,6 @@ static void (*load_cb)(GaimPlugin *, void *) = NULL;
 static void *load_cb_data = NULL;
 static void (*unload_cb)(GaimPlugin *, void *) = NULL;
 static void *unload_cb_data = NULL;
-
-
-void *
-gaim_plugins_get_handle(void)
-{
-	static int handle;
-
-	return &handle;
-}
-
 
 #ifdef GAIM_PLUGINS
 static gboolean
@@ -787,6 +777,37 @@ gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
 /**************************************************************************
  * Plugins subsystem
  **************************************************************************/
+void *
+gaim_plugins_get_handle(void) {
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_plugins_init(void) {
+	void *handle = gaim_plugins_get_handle();
+
+	gaim_signal_register(handle, "plugin-load",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_PLUGIN));
+	gaim_signal_register(handle, "plugin-unload",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_PLUGIN));
+}
+
+void
+gaim_plugins_uninit(void) {
+	gaim_signals_disconnect_by_handle(gaim_plugins_get_handle());
+}
+
+/**************************************************************************
+ * Plugins API
+ **************************************************************************/
 void
 gaim_plugins_add_search_path(const char *path)
 {
@@ -871,22 +892,8 @@ gaim_plugins_probe(const char *ext)
 	GList *cur;
 	const char *search_path;
 
-	void *handle;
-
 	if (!g_module_supported())
 		return;
-
-	handle = gaim_plugins_get_handle();
-
-	/* TODO: These signals need to be registered in an init function */
-	gaim_debug_info("plugins", "registering plugin-load signal\n");
-	gaim_signal_register(handle, "plugin-load", gaim_marshal_VOID__POINTER, NULL,
-			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
-
-	gaim_debug_info("plugins", "registering plugin-unload signal\n");
-	gaim_signal_register(handle, "plugin-unload", gaim_marshal_VOID__POINTER, NULL,
-			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
-
 
 	/* Probe plugins */
 	for (cur = search_paths; cur != NULL; cur = cur->next)

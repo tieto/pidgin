@@ -193,10 +193,6 @@ struct _GaimPluginAction {
 extern "C" {
 #endif
 
-
-void *gaim_plugins_get_handle(void);
-
-
 /**************************************************************************/
 /** @name Plugin API                                                      */
 /**************************************************************************/
@@ -517,6 +513,29 @@ GList *gaim_plugins_get_all(void);
 
 /*@}*/
 
+/**************************************************************************/
+/** @name Plugins SubSytem API                                            */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the plugin subsystem handle.
+ *
+ * @return The plugin sybsystem handle.
+ */
+void *gaim_plugins_get_handle(void);
+
+/**
+ * Initializes the plugin subsystem
+ */
+void gaim_plugins_init(void);
+
+/**
+ * Uninitializes the plugin subsystem
+ */
+void gaim_plugins_uninit(void);
+
+/*@}*/
 
 /**
  * Allocates and returns a new GaimPluginAction.
