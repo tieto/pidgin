@@ -31,7 +31,7 @@ CFLAGS="$CFLAGS -I/usr/local/include -I/opt/include"
 
 AC_ARG_ENABLE(debug, [  --enable-debug          compile with debugging support],enable_debug=yes,)
 AC_ARG_ENABLE(gnome, [  --enable-gnome          compile as a GNOME applet],enable_gnome=yes,)
-AM_CONDITIONAL(APPLET, test x$enable_gnome = xyes)
+AM_CONDITIONAL(GNOMEAPPLET, test x$enable_gnome = xyes)
 AC_ARG_ENABLE(esd,   [  --disable-esd           Turn off ESD (default=auto)],enable_esd=no,enable_esd=yes)
 AC_ARG_ENABLE(oscar, [  --enable-oscar          Enable Oscar support (experimental)],enable_oscar=yes,)
 AC_ARG_ENABLE(nas,   [  --enable-nas            Enable NAS (Network Audio System) support],enable_nas=yes,)

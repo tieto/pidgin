@@ -54,7 +54,7 @@ enum gaim_user_states {
 #define _MSG_ONLINE_ "Online"
 #define _MSG_FONT_ "-adobe-helvetica-medium-r-normal-*-*-80-*-*-p-*-iso8859-1"
 
-#define GAIM_GNOME_PIXMAP_DIR "/usr/share/pixmaps/gaim/gnome/"
+#define GAIM_GNOME_PIXMAP_DIR "/usr/share/pixmaps/gaim/"
 
 /*this should be configurable instead of hard coded.*/
 #if 0
