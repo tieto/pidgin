@@ -112,7 +112,7 @@ struct gaim_callback {
 struct buddy {
 	int edittype; /* XXX CUI: this is really a GUI function and we need to put this in ui.h */
 	char name[80];
-	char show[80];
+	char show[388]; /* 121 because MSN names can be 387 characters */
         int present;
 	int evil;
 	time_t signon;
