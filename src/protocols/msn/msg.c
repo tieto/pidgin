@@ -214,7 +214,7 @@ msn_message_parse_payload(MsnMessage *msg,
 	else
 	{
 		msg->body_len = payload_len - (tmp - tmp_base);
-		msg->body = g_memdup(tmp, msg->body_len);
+		msg->body = g_memdup(tmp, msg->body_len + 1);
 	}
 
 	g_free(tmp_base);

@@ -83,8 +83,6 @@ struct _MsnSession
 	/* You have no idea how much I hate all that is below. */
 	/* shx: What? ;) */
 
-	GaimPlugin *prpl;
-
 	MsnSync *sync;
 
 	GList *slplinks;

@@ -960,6 +960,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
 		session->passport_info.client_port = ntohs(atoi(value));
+
+	if ((value = msn_message_get_attr(msg, "LoginTime")) != NULL)
+		session->passport_info.sl = atol(value);
 }
 
 static void

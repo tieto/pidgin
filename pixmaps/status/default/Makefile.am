@@ -4,6 +4,7 @@ EXTRA_DIST = \
 	aim.png \
 	aol.png \
 	away.png \
+	blocked.png \
 	dnd.png \
 	extendedaway.png \
 	female.png \
@@ -26,6 +27,7 @@ EXTRA_DIST = \
 	napster.png \
 	notauthorized.png \
 	novell.png \
+	nr.png \
 	occupied.png \
 	offline.png \
 	op.png \

@@ -49,8 +49,6 @@
 
 #define BUDDY_ALIAS_MAXLEN 387
 
-static GaimPlugin *my_protocol = NULL;
-
 typedef struct
 {
 	GaimConnection *gc;
@@ -458,8 +456,15 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	{
 		emblems[0] = "offline";
 	}
-	else if (user->mobile)
-		emblems[i++] = "wireless";
+	else
+	{
+		if (user->mobile)
+			emblems[i++] = "wireless";
+		if (user->list_op & (1 << MSN_LIST_BL))
+			emblems[i++] = "blocked";
+		if (!(user->list_op & (1 << MSN_LIST_RL)))
+			emblems[i++] = "nr";
+	}
 
 	*se = emblems[0];
 	*sw = emblems[1];
@@ -506,6 +511,9 @@ msn_tooltip_text(GaimBuddy *buddy)
 	{
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
 							   (user->list_op & (1 << MSN_LIST_RL)) ?
+							   _("Yes") : _("No"));
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Blocked"),
+							   (user->list_op & (1 << MSN_LIST_BL)) ?
 							   _("Yes") : _("No"));
 	}
 
@@ -679,7 +687,6 @@ msn_login(GaimAccount *account)
 	}
 
 	session = msn_session_new(account, host, port, http_method);
-	session->prpl = my_protocol;
 
 	if (session->http_method)
 		msn_http_session_init(session);
@@ -720,37 +727,36 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			GaimConvImFlags flags)
 {
 	GaimAccount *account;
+	MsnMessage *msg;
+	char *msgformat;
+	char *msgtext;
 
 	account = gaim_connection_get_account(gc);
+
+	msn_import_html(message, &msgformat, &msgtext);
+
+	if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+	{
+		g_free(msgformat);
+		g_free(msgtext);
+
+		return -E2BIG;
+	}
+
+	msg = msn_message_new_plain(msgtext);
+	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+
+	g_free(msgformat);
+	g_free(msgtext);
 
 	if (g_ascii_strcasecmp(who, gaim_account_get_username(account)))
 	{
 		MsnSession *session;
 		MsnSwitchBoard *swboard;
-		MsnMessage *msg;
-		char *msgformat;
-		char *msgtext;
 
 		session = gc->proto_data;
 		swboard = msn_session_get_swboard(session, who);
 
-		msn_import_html(message, &msgformat, &msgtext);
-
-		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
-		{
-			g_free(msgformat);
-			g_free(msgtext);
-
-			return -E2BIG;
-		}
-
-		msg = msn_message_new_plain(msgtext);
-		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
-
-		g_free(msgformat);
-		g_free(msgtext);
-
-		swboard = msn_session_get_swboard(session, who);
 
 		if (!g_queue_is_empty(swboard->im_queue) ||
 			!swboard->user_joined)
@@ -762,17 +768,31 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			msn_switchboard_send_msg(swboard, msg);
 		}
 
-		msn_message_destroy(msg);
 	}
 	else
 	{
+		char *body_str, *body_enc, *pre, *post;
+		const char *format;
 		/*
 		 * In MSN, you can't send messages to yourself, so
 		 * we'll fake like we received it ;)
 		 */
+		body_str = msn_message_to_string(msg);
+		body_enc = gaim_escape_html(body_str);
+		g_free(body_str);
+
+		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+		msn_parse_format(format, &pre, &post);
+		body_str = g_strdup_printf("%s%s%s", pre, body_enc, post);
+		g_free(pre);
+		g_free(post);
+
 		serv_got_typing_stopped(gc, who);
-		serv_got_im(gc, who, message, flags, time(NULL));
+		serv_got_im(gc, who, body_str, flags, time(NULL));
+		g_free(body_str);
 	}
+
+	msn_message_destroy(msg);
 
 	return 1;
 }
@@ -1948,8 +1968,6 @@ init_plugin(GaimPlugin *plugin)
 										  "http_method", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
-
-	my_protocol = plugin;
 
 	gaim_prefs_add_none("/plugins/prpl/msn");
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_close_notice",   TRUE);
