@@ -1070,7 +1070,9 @@ GaimFilterAccountFunc gaim_request_field_account_get_filter(
  * @param default_value The default value.
  * @param multiline     TRUE if the inputted text can span multiple lines.
  * @param masked        TRUE if the inputted text should be masked in some way.
- * @param hint          bleh.
+ * @param hint          Optionally suggest how the input box should appear.
+ *                      Use "html," for example, to allow the user to enter
+ *                      HTML.
  * @param ok_text       The text for the OK button.
  * @param ok_cb         The callback for the OK button.
  * @param cancel_text   The text for the cancel button.
