@@ -1980,6 +1980,50 @@ static void yahoo_get_info(GaimConnection *gc, const char *name)
 	grab_url(url, FALSE, yahoo_got_info, NULL, NULL, 0);
 }
 
+static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
+				   const char *old_group, const char *new_group)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+
+	/* Step 0:  If they aren't on the server list anyway,
+	 *          don't bother letting the server know.
+	 */
+	if (!g_hash_table_lookup(yd->friends, who))
+		return;
+
+	/* Step 1:  Add buddy to new group. */
+	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 7, who);
+	yahoo_packet_hash(pkt, 65, new_group);
+	yahoo_packet_hash(pkt, 14, "");
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+
+	/* Step 2:  Remove buddy from old group */
+	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 7, who);
+	yahoo_packet_hash(pkt, 65, old_group);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+}
+
+static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
+                                                 const char *new_group, GList *whocares)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash(pkt, 65, old_group);
+	yahoo_packet_hash(pkt, 67, new_group);
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -2029,8 +2073,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* get_cb_info */
 	NULL, /* get_cb_away */
 	NULL, /* alias_buddy */
-	NULL, /* change group */
-	NULL, /* rename group */
+	yahoo_change_buddys_group,
+	yahoo_rename_group,
 	NULL, /* buddy_free */
 	NULL, /* convo_closed */
 	NULL, /* normalize */
