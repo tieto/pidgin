@@ -231,7 +231,9 @@ static void docklet_menu() {
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave), NULL);
 #endif
 	gtk_widget_show_all(menu);
-	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 0, gtk_get_current_event_time());
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
+				   ui_ops->position_menu,
+				   NULL, 0, gtk_get_current_event_time());
 }
 
 static gboolean

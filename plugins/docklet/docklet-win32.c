@@ -219,7 +219,8 @@ static struct docklet_ui_ops wgaim_tray_ops =
 	wgaim_tray_create,
 	wgaim_tray_destroy,
 	wgaim_tray_update_icon,
-        wgaim_tray_blank_icon
+	wgaim_tray_blank_icon,
+	NULL
 };
 
 /* Used by docklet's plugin load func */

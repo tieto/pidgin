@@ -124,6 +124,31 @@ docklet_x11_blank_icon()
 }
 
 static void
+docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
+						  gpointer user_data)
+{
+	GtkWidget *widget = GTK_WIDGET(docklet);
+	GtkRequisition req;
+	gint menu_xpos, menu_ypos;
+
+	gtk_widget_size_request(GTK_WIDGET(menu), &req);
+	gdk_window_get_origin(widget->window, &menu_xpos, &menu_ypos);
+
+	menu_xpos += widget->allocation.x;
+	menu_ypos += widget->allocation.y;
+
+	if (menu_ypos > gdk_screen_get_height(gtk_widget_get_screen(widget)) / 2)
+		menu_ypos -= req.height;
+	else
+		menu_ypos += widget->allocation.height;
+
+	*x = menu_xpos;
+	*y = menu_ypos;
+
+	*push_in = TRUE;
+}
+
+static void
 docklet_x11_destroy()
 {
 	docklet_remove(GTK_WIDGET_VISIBLE(docklet));
@@ -181,7 +206,8 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_create,
 	docklet_x11_destroy,
 	docklet_x11_update_icon,
-	docklet_x11_blank_icon
+	docklet_x11_blank_icon,
+	docklet_x11_position_menu
 };
 
 void

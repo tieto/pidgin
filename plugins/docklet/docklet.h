@@ -42,6 +42,7 @@ struct docklet_ui_ops
 	void (*destroy)();
 	void (*update_icon)(enum docklet_status);
 	void (*blank_icon)();
+	GtkMenuPositionFunc position_menu;
 };
 
 /* useful for setting idle callbacks that will be cleaned up */
