@@ -6,8 +6,6 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 MSNSOURCES = \
-	buddyicon.c \
-	buddyicon.h \
 	dispatch.c \
 	dispatch.h \
 	error.c \

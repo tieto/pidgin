@@ -26,7 +26,6 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 
 #include "conversation.h"
 
-#include "buddyicon.h"
 #include "msg.h"
 #include "msnslp.h"
 #include "servconn.h"
@@ -57,8 +56,6 @@ struct _MsnSwitchBoard
 	gboolean hidden;
 
 	MsnSlpSession *slp_session;
-
-	MsnBuddyIconXfer *buddy_icon_xfer;
 };
 
 /**

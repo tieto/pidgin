@@ -36,9 +36,6 @@ send_clientcaps(MsnSwitchBoard *swboard)
 {
 	MsnMessage *msg;
 
-	if (swboard->buddy_icon_xfer != NULL)
-		return TRUE;
-
 	msg = msn_message_new();
 	msn_message_set_content_type(msg, "text/x-clientcaps");
 	msn_message_set_charset(msg, NULL);
@@ -382,6 +379,7 @@ control_msg(MsnServConn *servconn, MsnMessage *msg)
 static gboolean
 clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 {
+#if 0
 	MsnSession *session = servconn->session;
 	MsnSwitchBoard *swboard = servconn->data;
 	MsnUser *user;
@@ -391,12 +389,7 @@ clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 	user = msn_user_new(session, servconn->msg_passport, NULL);
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
-
-	if (swboard->chat == NULL && session->protocol_ver < 8)
-	{
-		if ((value = g_hash_table_lookup(clientcaps, "Buddy-Icons")) != NULL)
-			msn_buddy_icon_invite(swboard);
-	}
+#endif
 
 	return TRUE;
 }
@@ -493,8 +486,6 @@ msn_switchboard_new(MsnSession *session)
 									  clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
 									  clientcaps_msg);
-		msn_servconn_register_msg_type(servconn, "application/x-buddyicon",
-									   msn_buddy_icon_msg);
 		msn_servconn_register_msg_type(servconn, "application/x-msnmsgrp2p",
 									   msn_p2p_msg);
 
