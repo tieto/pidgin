@@ -382,7 +382,7 @@ gaim_xfer_set_read_fnc(struct gaim_xfer *xfer,
 	if (xfer == NULL)
 		return;
 
-	xfer->ops.ft_read = fnc;
+	xfer->ops.read = fnc;
 }
 
 void
@@ -393,7 +393,7 @@ gaim_xfer_set_write_fnc(struct gaim_xfer *xfer,
 	if (xfer == NULL)
 		return;
 
-	xfer->ops.ft_write = fnc;
+	xfer->ops.write = fnc;
 }
 
 void
@@ -459,8 +459,8 @@ gaim_xfer_read(struct gaim_xfer *xfer, char **buffer)
 	else
 		s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
 
-	if (xfer->ops.ft_read != NULL)
-		r = xfer->ops.ft_read(buffer, xfer);
+	if (xfer->ops.read != NULL)
+		r = (xfer->ops.read)(buffer, xfer);
 	else {
 		*buffer = g_malloc0(s);
 
@@ -483,8 +483,8 @@ gaim_xfer_write(struct gaim_xfer *xfer, const char *buffer, size_t size)
 
 	s = MIN(gaim_xfer_get_bytes_remaining(xfer), size);
 
-	if (xfer->ops.ft_write != NULL)
-		r = xfer->ops.ft_write(buffer, s, xfer);
+	if (xfer->ops.write != NULL)
+		r = (xfer->ops.write)(buffer, s, xfer);
 	else
 		r = write(xfer->fd, buffer, s);
 
