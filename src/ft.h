@@ -67,8 +67,6 @@ typedef struct
 {
 	void (*new_xfer)(GaimXfer *xfer);
 	void (*destroy)(GaimXfer *xfer);
-	void (*request_file)(GaimXfer *xfer);
-	void (*ask_cancel)(GaimXfer *xfer);
 	void (*add_xfer)(GaimXfer *xfer);
 	void (*update_progress)(GaimXfer *xfer, double percent);
 	void (*cancel_local)(GaimXfer *xfer);

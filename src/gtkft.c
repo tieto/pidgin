@@ -28,7 +28,6 @@
 #include "notify.h"
 #include "ft.h"
 #include "prpl.h"
-#include "request.h"
 #include "util.h"
 
 #include "gaim-disclosure.h"
@@ -101,11 +100,6 @@ enum
 	NUM_COLUMNS
 };
 
-
-/**************************************************************************
- * Prototype(s)
- **************************************************************************/
-static int choose_file(GaimXfer *xfer);
 
 /**************************************************************************
  * Utility Functions
@@ -1015,158 +1009,6 @@ gaim_gtkxfer_destroy(GaimXfer *xfer)
 }
 
 static void
-choose_file_ok_cb(void *user_data, const char *filename)
-{
-	GaimXfer *xfer;
-	struct stat st;
-
-	xfer = (GaimXfer *)user_data;
-
-	if (stat(filename, &st) != 0) {
-		/* File not found. */
-		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, filename);
-		}
-		else {
-			gaim_notify_error(NULL, NULL,
-							  _("That file does not exist."), NULL);
-
-			gaim_xfer_request_denied(xfer);
-		}
-	}
-	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) &&
-			 (st.st_size == 0)) {
-
-		gaim_notify_error(NULL, NULL,
-						  _("Cannot send a file of 0 bytes."), NULL);
-
-		gaim_xfer_request_denied(xfer);
-	}
-	else {
-		if (S_ISDIR(st.st_mode)) {
-			/* XXX */
-			gaim_xfer_request_denied(xfer);
-		}
-		else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-			gaim_xfer_request_accepted(xfer, filename);
-		}
-		else {
-			gaim_xfer_request_accepted(xfer, filename);
-		}
-	}
-
-	gaim_xfer_unref(xfer);
-}
-
-static void
-choose_file_cancel_cb(void *user_data, const char *filename)
-{
-	GaimXfer *xfer = (GaimXfer *)user_data;
-
-	gaim_xfer_request_denied(xfer);
-}
-
-static int
-choose_file(GaimXfer *xfer)
-{
-	gaim_request_file(xfer, NULL, gaim_xfer_get_filename(xfer),
-					  (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE),
-					  G_CALLBACK(choose_file_ok_cb),
-					  G_CALLBACK(choose_file_cancel_cb), xfer);
-
-	return 0;
-}
-
-static int
-cancel_recv_cb(GaimXfer *xfer)
-{
-	gaim_xfer_request_denied(xfer);
-	gaim_xfer_unref(xfer);
-
-	return 0;
-}
-
-static void
-gaim_gtkxfer_ask_recv(GaimXfer *xfer)
-{
-	char *buf, *size_buf;
-	size_t size;
-
-	/* If we have already accepted the request, ask the destination file
-	   name directly */
-	if (gaim_xfer_get_status(xfer) != GAIM_XFER_STATUS_ACCEPTED) {
-		size = gaim_xfer_get_size(xfer);
-		size_buf = gaim_str_size_to_units(size);
-
-		buf = g_strdup_printf(_("%s wants to send you %s (%s)"),
-				      xfer->who, gaim_xfer_get_filename(xfer),
-				      size_buf);
-		g_free(size_buf);
-
-		gaim_request_accept_cancel(NULL, NULL, buf, NULL, 0, xfer,
-					   G_CALLBACK(choose_file),
-					   G_CALLBACK(cancel_recv_cb));
-		g_free(buf);
-	} else
-		choose_file(xfer);
-}
-
-static int
-ask_accept_ok(GaimXfer *xfer)
-{
-	gaim_xfer_request_accepted(xfer, NULL);
-	gaim_xfer_unref(xfer);
-	return 0;
-}
-
-static int
-ask_accept_cancel(GaimXfer *xfer)
-{
-	gaim_xfer_request_denied(xfer);
-	gaim_xfer_unref(xfer);
-	return 0;
-}
-
-static void
-gaim_gtkxfer_ask_accept(GaimXfer *xfer)
-{
-	char *buf, *buf2 = NULL;
-
-	buf = g_strdup_printf(_("Accept file transfer request from %s?"),
-			      xfer->who);
-	if (gaim_xfer_get_remote_ip(xfer) &&
-	    gaim_xfer_get_remote_port(xfer))
-		buf2 = g_strdup_printf(_("A file is available for download from:\n"
-					 "Remote host: %s\nRemote port: %d"),
-				       gaim_xfer_get_remote_ip(xfer),
-				       gaim_xfer_get_remote_port(xfer));
-	gaim_request_accept_cancel(NULL, NULL, buf, buf2, 0, xfer,
-				   G_CALLBACK(ask_accept_ok),
-				   G_CALLBACK(ask_accept_cancel));
-	g_free(buf);
-	g_free(buf2);
-}
-
-static void
-gaim_gtkxfer_request_file(GaimXfer *xfer)
-{
-	gaim_xfer_ref(xfer);
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		if (gaim_xfer_get_filename(xfer) ||
-		    gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_ACCEPTED)
-			gaim_gtkxfer_ask_recv(xfer);
-		else
-			gaim_gtkxfer_ask_accept(xfer);
-	} else
-		choose_file(xfer);
-}
-
-static void
-gaim_gtkxfer_ask_cancel(GaimXfer *xfer)
-{
-}
-
-static void
 gaim_gtkxfer_add_xfer(GaimXfer *xfer)
 {
 	if (xfer_dialog == NULL)
@@ -1199,8 +1041,6 @@ static GaimXferUiOps ops =
 {
 	gaim_gtkxfer_new_xfer,
 	gaim_gtkxfer_destroy,
-	gaim_gtkxfer_request_file,
-	gaim_gtkxfer_ask_cancel,
 	gaim_gtkxfer_add_xfer,
 	gaim_gtkxfer_update_progress,
 	gaim_gtkxfer_cancel_local,
