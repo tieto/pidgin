@@ -1704,7 +1704,7 @@ void prefs_notebook_init() {
 	struct gaim_plugin *plug;
 #endif
 	prefs_notebook_add_page(_("Interface"), NULL, interface_page(), &p, NULL, notebook_page++);
-	prefs_notebook_add_page(_("Themes"), NULL, theme_page(), &c, &p, notebook_page++);
+	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Fonts"), NULL, font_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Shortcuts"), NULL, hotkeys_page(), &c, &p, notebook_page++);
