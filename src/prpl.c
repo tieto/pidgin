@@ -47,14 +47,14 @@ struct _prompt {
 	void *data;
 };
 
-struct prpl *find_prpl(int prot)
+struct prpl *find_prpl(GaimProtocol type)
 {
 	GSList *e = protocols;
 	struct prpl *r;
 
 	while (e) {
 		r = (struct prpl *)e->data;
-		if (r->protocol == prot)
+		if (r->protocol == type)
 			return r;
 		e = e->next;
 	}
