@@ -857,6 +857,7 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, unsigned
 
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
+#define AIM_GETINFO_CAPABILITIES 0x0004
 
 struct aim_invite_priv {
 	char *sn;
