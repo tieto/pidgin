@@ -1250,7 +1250,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,	/* find_blist_chat */
 	NULL,	/* roomlist_get_list */
 	NULL,	/* roomlist_cancel */
-	NULL	/* roomlist_expand_category */
+	NULL,	/* roomlist_expand_category */
+	NULL,	/* can_receive_file */
+	NULL	/* send_file */
 };
 
 static GaimPluginInfo info =

@@ -2,7 +2,12 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 0.80cvs:
 	Gaim API:
-	* Deprecated PRPL numbers removed
+	* Removed: PRPL numbers : gaim_account_set_protocol(),
+	  gaim_account_get_protocol(), gaim_accounts_find_with_prpl_num,
+	  gaim_prpl_num_to_id(), gaim_prpl_id_to_num(), GaimProtocol
+
+	Protocol Plugin API: v6
+	* Added: can_receive_file & send_file to the GaimPluginProtocolInfo struct
 
 version 0.79 (06/24/2004):
 	Gaim API:

@@ -3370,7 +3370,9 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,
 	NULL,
 	NULL,
-	NULL
+	NULL,
+	NULL,						/* can_receive_file */
+	NULL						/* send_file */
 };
 
 static GaimPluginInfo info = {
