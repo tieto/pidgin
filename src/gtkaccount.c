@@ -2432,7 +2432,7 @@ gaim_gtk_accounts_window_hide(void)
 
 	/* See if we're the main window here. */
 	if (GAIM_GTK_BLIST(gaim_get_blist())->window == NULL &&
-		mainwindow == NULL && gaim_connections_get_all() == NULL) {
+		gaim_connections_get_all() == NULL) {
 
 		gaim_core_quit();
 	}

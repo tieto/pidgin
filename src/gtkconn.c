@@ -82,10 +82,6 @@ static void cancel_login(GtkWidget *button, struct login_meter *meter)
 
 		if (gaim_connections_get_all() == NULL) {
 			gaim_gtkdialogs_destroy_all();
-
-			gaim_blist_destroy();
-
-			show_login();
 		}
 	}
 }
@@ -195,9 +191,6 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		GtkWidget *vbox;
 		GtkWidget *cancel_button;
 
-		if(mainwindow)
-			gtk_widget_hide(mainwindow);
-
 		meter_win = g_new0(struct meter_window, 1);
 		meter_win->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_resizable(GTK_WINDOW(meter_win->window), FALSE);
@@ -270,10 +263,6 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 		return;
 
 	gaim_gtkdialogs_destroy_all();
-
-	gaim_blist_destroy();
-
-	show_login();
 }
 
 static void gaim_gtk_connection_notice(GaimConnection *gc,

@@ -82,7 +82,6 @@ struct smiley_theme {
 };
 
 /* Globals in gtkmain.c */
-extern GtkWidget *mainwindow;
 extern int docklet_count;
 
 /* Globals in gtkthemes.c */
@@ -90,7 +89,6 @@ extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
 /* Functions in gtkmain.c */
-extern void show_login();
 extern void gaim_setup(GaimConnection *);
 
 /* Functions in session.c */

@@ -4421,41 +4421,21 @@ void gaim_gtk_blist_docklet_toggle() {
 	/* Useful for the docklet plugin and also for the win32 tray icon*/
 	/* This is called when one of those is clicked--it will show/hide the
 	   buddy list/login window--depending on which is active */
-	if (gaim_connections_get_all()) {
-		if (gtkblist && gtkblist->window) {
-			if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-				gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
-			} else {
-#if _WIN32
-				wgaim_systray_maximize(gtkblist->window);
-#endif
-				gaim_blist_set_visible(TRUE);
-			}
-		} else {
-			/* we're logging in or something... do nothing */
-			/* or should I make the blist? */
-			gaim_debug_warning("gtkblist",
-					   "docklet_toggle called with gaim_connections_get_all() "
-					   "but no blist!\n");
-		}
-	} else if (mainwindow) {
-		if (GTK_WIDGET_VISIBLE(mainwindow)) {
-			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
-				gtk_window_present(GTK_WINDOW(mainwindow));
-			} else {
-#if _WIN32
-				wgaim_systray_minimize(mainwindow);
-#endif
-				gtk_widget_hide(mainwindow);
-			}
+	if (gtkblist && gtkblist->window) {
+		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
 		} else {
 #if _WIN32
-			wgaim_systray_maximize(mainwindow);
+			wgaim_systray_maximize(gtkblist->window);
 #endif
-			show_login();
+			gaim_blist_set_visible(TRUE);
 		}
 	} else {
-		show_login();
+		/* we're logging in or something... do nothing */
+		/* or should I make the blist? */
+		gaim_debug_warning("gtkblist",
+				   "docklet_toggle called with gaim_connections_get_all() "
+				   "but no blist!\n");
 	}
 }
 
@@ -4468,12 +4448,7 @@ void gaim_gtk_blist_docklet_remove()
 {
 	docklet_count--;
 	if (!docklet_count) {
-		if (gaim_connections_get_all())
 			gaim_blist_set_visible(TRUE);
-		else if (mainwindow)
-			gtk_window_present(GTK_WINDOW(mainwindow));
-		else
-			show_login();
 	}
 }
 

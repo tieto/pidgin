@@ -78,8 +78,6 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
-GtkWidget *mainwindow = NULL;
-
 int opt_away = 0;
 int docklet_count = 0;
 char *opt_away_arg = NULL;
@@ -126,42 +124,6 @@ void gaim_setup(GaimConnection *gc)
 	}
 }
 
-static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null)
-{
-	if (event->button != 2)
-		return FALSE;
-
-	gaim_accounts_auto_login(GAIM_GTK_UI);
-
-	return TRUE;
-}
-
-static void dologin(GtkWidget *widget, GtkWidget *w)
-{
-	GaimAccount *account;
-	GtkWidget *item;
-	const char *password = gtk_entry_get_text(GTK_ENTRY(pass));
-
-	item = gtk_menu_get_active(GTK_MENU(gtk_option_menu_get_menu(GTK_OPTION_MENU(name))));
-	account = g_object_get_data(G_OBJECT(item), "account");
-
-	if (!account) {
-		gaim_notify_error(NULL, NULL, _("Please create an account."), NULL);
-		return;
-	}
-
-	gaim_account_set_password(account, (*password != '\0') ? password : NULL);
-
-	gaim_account_connect(account);
-}
-
-/* <name> is a comma-separated list of names, or NULL
-   if NULL and there is at least one user defined in .gaimrc, try to login.
-   if not NULL, parse <name> into separate strings, look up each one in 
-   .gaimrc and, if it's there, try to login.
-   returns:  0 if successful
-            -1 if no user was found that had a saved password
-*/
 static int dologin_named(char *name)
 {
 	GaimAccount *account;
@@ -185,133 +147,6 @@ static int dologin_named(char *name)
 	}
 
 	return retval;
-}
-
-
-static void combo_changed(GtkWidget *menu, GaimAccount *account, gpointer data)
-{
-	if (account && gaim_account_get_remember_password(account)) {
-		gtk_entry_set_text(GTK_ENTRY(pass), account->password);
-	} else {
-		gtk_entry_set_text(GTK_ENTRY(pass), "");
-	}
-}
-
-
-static void login_window_closed(GtkWidget *w, GdkEvent *ev, gpointer d)
-{
-	if(docklet_count) {
-#ifdef _WIN32
-		wgaim_systray_minimize(mainwindow);
-#endif
-		gtk_widget_hide(mainwindow);
-	} else
-		gaim_core_quit();
-}
-
-void show_login()
-{
-	GtkWidget *image;
-	GtkWidget *vbox;
-	GtkWidget *button;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *vbox2;
-
-	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
-	if (mainwindow) {
-		gtk_window_present(GTK_WINDOW(mainwindow));
-		return;
-	}
-
-	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-	gtk_window_set_role(GTK_WINDOW(mainwindow), "login");
-	gtk_window_set_resizable(GTK_WINDOW(mainwindow), FALSE);
-	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Login"));
-	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
-	g_signal_connect(G_OBJECT(mainwindow), "delete_event",
-					 G_CALLBACK(login_window_closed), mainwindow);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(mainwindow), vbox);
-
-	image = gtk_image_new_from_stock(GAIM_STOCK_LOGO, gtk_icon_size_from_name(GAIM_ICON_SIZE_LOGO));
-	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
-
-	/* why isn't there a gtk_label_new_with_markup? */
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("<b>_Account:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
-
-	name = gaim_gtk_account_option_menu_new(NULL, TRUE, G_CALLBACK(combo_changed), NULL, NULL);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), name);
-
-	gtk_box_pack_start(GTK_BOX(vbox2), name, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
-
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("<b>_Password:</b>"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
-
-	pass = gtk_entry_new();
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), pass);
-	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
-	g_signal_connect(G_OBJECT(pass), "activate",
-					 G_CALLBACK(dologin), mainwindow);
-	gtk_box_pack_start(GTK_BOX(vbox2), pass, FALSE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
-
-	/* Now for the button box */
-	hbox = gtk_hbox_new(TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 5);
-
-	/* And now for the buttons */
-	button = gaim_pixbuf_button_from_stock(_("A_ccounts"), GAIM_STOCK_ACCOUNTS, GAIM_BUTTON_VERTICAL);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_accounts_window_show), mainwindow);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	button = gaim_pixbuf_button_from_stock(_("P_references"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_prefs_show), mainwindow);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	button = gaim_pixbuf_button_from_stock(_("_Log in"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(dologin), mainwindow);
-	g_signal_connect(G_OBJECT(button), "button-press-event", G_CALLBACK(domiddleclick), NULL);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	/* Now grab the focus that we need */
-	if (gaim_accounts_get_all()) {
-		GaimAccount *account = gaim_accounts_get_all()->data;
-
-		if (gaim_account_get_remember_password(account)) {
-			combo_changed(NULL, account, NULL);
-			gtk_widget_grab_focus(button);
-		} else {
-			gtk_widget_grab_focus(pass);
-		}
-	} else {
-		gaim_gtk_accounts_window_show();
-		gtk_widget_grab_focus(button);
-	}
-
-	/* And raise the curtain! */
-	gtk_widget_show_all(mainwindow);
-
 }
 
 static void
@@ -954,10 +789,11 @@ int main(int argc, char *argv[])
 	if (!opt_acct && !opt_nologin)
 		gaim_accounts_auto_login(GAIM_GTK_UI);
 
+	gaim_blist_show();
+	
 	if (opt_acct) {
 		gaim_gtk_accounts_window_show();
-	} else if ((dologin_ret == -1) && !gaim_connections_get_all())
-		show_login();
+	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION
 	startup_notification_complete();
