@@ -122,13 +122,40 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
 
-void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
+static gboolean presence_update_timeout_cb(struct buddy *buddy) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 
-	if (!buddy->present && presence)
-		buddy->present = 2;
-	else if (buddy->present != 2 || !presence)
-		buddy->present = presence;
+	if(buddy->present == GAIM_BUDDY_SIGNING_ON)
+		buddy->present = GAIM_BUDDY_ONLINE;
+	else if(buddy->present == GAIM_BUDDY_SIGNING_OFF)
+		buddy->present = GAIM_BUDDY_OFFLINE;
+
+	buddy->timer = 0;
+
+	if (ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+
+	return FALSE;
+}
+
+void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	gboolean do_timer = FALSE;
+
+	if (!GAIM_BUDDY_IS_ONLINE(buddy) && presence) {
+		buddy->present = GAIM_BUDDY_SIGNING_ON;
+		do_timer = TRUE;
+	} else if(GAIM_BUDDY_IS_ONLINE(buddy) && !presence) {
+		buddy->present = GAIM_BUDDY_SIGNING_OFF;
+		do_timer = TRUE;
+	}
+
+	if(do_timer) {
+		if(buddy->timer > 0)
+			g_source_remove(buddy->timer);
+		buddy->timer = g_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
+	}
+
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 }
@@ -484,7 +511,7 @@ void gaim_blist_remove_account(struct gaim_account *account)
 		buddy = group->child;
 		while (buddy) {
 			if (account == ((struct buddy*)buddy)->account) {
-				((struct buddy*)buddy)->present = 0;
+				((struct buddy*)buddy)->present = GAIM_BUDDY_OFFLINE;
 				if(ops)
 					ops->remove(gaimbuddylist, buddy);
 			}
@@ -1419,7 +1446,7 @@ int gaim_blist_get_group_online_count(struct group *group) {
 	for(node = group->node.child; node; node = node->next) {
 		if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 			struct buddy *b = (struct buddy *)node;
-			if(b->present)
+			if(GAIM_BUDDY_IS_ONLINE(b))
 				count++;
 		}
 	}

@@ -5148,7 +5148,7 @@ static void oscar_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
-	if (b->present == 0)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		emblems[i++] = "offline";
 
 	if (b->name && (b->uc & 0xffff0000) && isdigit(b->name[0])) {
@@ -5512,7 +5512,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	} else {
 		struct buddy *b = gaim_find_buddy(gc->account, who);
 
-		if ((aim_sncmp(gc->username, who)) && b->present) {
+		if ((aim_sncmp(gc->username, who)) && GAIM_BUDDY_IS_ONLINE(b)) {
 			pbm = g_new0(struct proto_buddy_menu, 1);
 			pbm->label = _("Direct IM");
 			pbm->callback = oscar_ask_direct_im;

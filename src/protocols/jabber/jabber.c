@@ -1784,13 +1784,14 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 				int signon = b->signon;
 
 				/*
+				 * FIXME: this ugly hack is no longer needed
 				 * seems rude, but it seems to be the only way...
 				 */
 				gaim_blist_remove_buddy(b);
 				b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 				gaim_blist_add_buddy(b, gaim_find_group(groupname), NULL);
 				gaim_blist_save();
-				if(present) {
+				if(present > 0) {
 					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle,
 							uc);
 				}
@@ -2789,7 +2790,7 @@ static void jabber_list_emblems(struct buddy *b, char **se, char **sw, char **nw
 		}
 	}
 
-	if (b->present == 0) {
+	if (b->present == GAIM_BUDDY_OFFLINE) {
 		*se = "offline";
 	} else {
 		switch (b->uc) {

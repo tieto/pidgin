@@ -411,19 +411,6 @@ static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_a
 	gaim_gtk_blist_refresh(gaim_get_blist());
 }
 
-/* This is called 10 seconds after the buddy logs in.  It removes the "logged in" icon and replaces it with
- * the normal status icon. Make sure they didn't sign off in the mean-time though. */
-
-static gboolean gaim_reset_present_icon (GaimBlistNode *b)
-{
-	if (((struct buddy *)b)->present == 2) {
-		((struct buddy *)b)->present = 1;
-		gaim_gtk_blist_update(NULL, b);
-	}
-
-	return FALSE;
-}
-
 static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 					     GdkDragContext *dc,
 					     GtkSelectionData *data,
@@ -742,7 +729,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       nicktext ? _("\n<b>Nickname:</b>") : "", nicktext ? nicktext : "",
 			       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-			       !b->present ? _("\n<b>Status:</b> Offline") : "",
+			       !GAIM_BUDDY_IS_ONLINE(b) ? _("\n<b>Status:</b> Offline") : "",
 			       statustext ? "\n" : "", statustext ? statustext : "",
 				   !g_ascii_strcasecmp(b->name, "robflynn") ? "\n<b>Description:</b> Spooky" : "");
 	
@@ -761,7 +748,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 
 }
 
-static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size) 
+static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIconSize size)
 {
 	GdkPixbuf *status = NULL;
 	GdkPixbuf *scale = NULL;
@@ -780,27 +767,23 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 
 	if (prpl->list_icon)
 		protoname = prpl->list_icon(b->account, b);
-	if (prpl->list_emblems)
+	if (b->present != GAIM_BUDDY_SIGNING_OFF && prpl->list_emblems)
 		prpl->list_emblems(b, &se, &sw, &nw, &ne);
-	
+
 	if (size == GAIM_STATUS_ICON_SMALL) {
 		scalesize = 15;
 		sw = nw = ne = NULL; /* So that only the se icon will composite */
 	}
 
 
-	if (b->present == 2) {
-		struct gaim_gtk_blist_node *gtknode;
-		/* If b->present is 2, that means this buddy has just signed on.  We use the "login" icon for the
-		 * status, and we set a timeout to change it to a normal icon after 10 seconds. */
+	if (b->present == GAIM_BUDDY_SIGNING_ON) {
 		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
 		status = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
-
-		gtknode = GAIM_GTK_BLIST_NODE((GaimBlistNode*)b);
-		if (gtknode->timer > 0)
-			g_source_remove(gtknode->timer);
-		gtknode->timer = g_timeout_add(10000, (GSourceFunc)gaim_reset_present_icon, b);
+	} else if (b->present == GAIM_BUDDY_SIGNING_OFF) {
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "logout.png", NULL);
+		status = gdk_pixbuf_new_from_file(filename,NULL);
+		g_free(filename);
 
 		/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and
 		   then it will look up protoname from the theme */
@@ -906,7 +889,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 
 
 	/* Idle grey buddies affects the whole row.  This converts the status icon to greyscale. */
-	if (!b->present)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 	else if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
@@ -930,7 +913,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 
 
 	if (buf) {
-		if (!b->present)
+		if (!GAIM_BUDDY_IS_ONLINE(b))
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
@@ -955,7 +938,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if ((b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || b->present == 0) {
+		if ((b->idle && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || !GAIM_BUDDY_IS_ONLINE(b)) {
 			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);
@@ -1026,8 +1009,8 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 					statustext != NULL ? statustext : "",
 					idletime != NULL ? idletime : "", 
 					warning != NULL ? warning : "",
-					!b->present ? _("Offline ") : "");
-	} else if (statustext == NULL && idletime == NULL && warning == NULL && b->present) {
+					!GAIM_BUDDY_IS_ONLINE(b) ? _("Offline ") : "");
+	} else if (statustext == NULL && idletime == NULL && warning == NULL && GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup(esc);
 	} else {
 		text = g_strdup_printf("%s\n"
@@ -1036,7 +1019,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 				       statustext != NULL ? statustext :  "",
 				       idletime != NULL ? idletime : "", 
 				       warning != NULL ? warning : "",
-				       !b->present ? _("Offline ") : "");
+				       !GAIM_BUDDY_IS_ONLINE(b) ? _("Offline ") : "");
 	}
 	if (idletime)
 		g_free(idletime);
@@ -1098,11 +1081,6 @@ static gboolean gaim_gtk_blist_refresh_timer(struct gaim_buddy_list *list)
 static void gaim_gtk_blist_new_list(struct gaim_buddy_list *blist)
 {
 	blist->ui_data = g_new0(struct gaim_gtk_buddy_list, 1);
-}
-
-static void gaim_gtk_blist_new_node(GaimBlistNode *node)
-{
-	node->ui_data = g_new0(struct gaim_gtk_blist_node, 1);
 }
 
 void gaim_gtk_blist_update_columns()
@@ -1400,18 +1378,7 @@ void gaim_gtk_blist_update_toolbar() {
 
 static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
-	struct gaim_gtk_blist_node *gtknode;
 	GtkTreeIter iter;
-
-	if (!node->ui_data)
-		return;
-
-	gtknode = (struct gaim_gtk_blist_node *)node->ui_data;
-
-	if (gtknode->timer > 0) {
-		g_source_remove(gtknode->timer);
-		gtknode->timer = 0;
-	}
 
 	/* For some reason, we're called before we have a buddy list sometimes */
 	if(!gtkblist)
@@ -1489,7 +1456,6 @@ static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 
 static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *node)
 {
-	struct gaim_gtk_blist_node *gtknode;
 	GtkTreeIter iter;
 	GtkTreePath *expand = NULL;
 	gboolean new_entry = FALSE;
@@ -1497,13 +1463,10 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (!gtkblist)
 		return;
 
-	gtknode = GAIM_GTK_BLIST_NODE(node);
-
-
 	if (!get_iter_from_node(node, &iter)) { /* This is a newly added node */
 		new_entry = TRUE;
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			if (((struct buddy*)node)->present || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc)) {
+			if (((struct buddy*)node)->present != GAIM_BUDDY_OFFLINE || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc)) {
 				GtkTreeIter groupiter;
 				GaimBlistNode *oldersibling;
 				GtkTreeIter oldersiblingiter;
@@ -1556,7 +1519,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		}
 	}
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc))) {
+	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present != GAIM_BUDDY_OFFLINE || ((blist_options & OPT_BLIST_SHOW_OFFLINE) && ((struct buddy*)node)->account->gc))) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
 		char *warning = NULL, *idle = NULL;
@@ -1745,7 +1708,7 @@ void gaim_gtk_blist_docklet_remove()
 static struct gaim_blist_ui_ops blist_ui_ops =
 {
 	gaim_gtk_blist_new_list,
-	gaim_gtk_blist_new_node,
+	NULL,
 	gaim_gtk_blist_show,
 	gaim_gtk_blist_update,
 	gaim_gtk_blist_remove,

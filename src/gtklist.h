@@ -72,15 +72,6 @@ struct gaim_gtk_buddy_list {
 	GaimBlistNode *selected_node;   /**< The currently selected node */
 };
 
-/**
- * A GTK+ buddy list node.
- */
-struct gaim_gtk_blist_node
-{
-	unsigned int timer;                      /**< The timer handle.  */
-};
-
-#define GAIM_GTK_BLIST_NODE(node) ((struct gaim_gtk_blist_node *)(node)->ui_data)
 #define GAIM_GTK_BLIST(list) ((struct gaim_gtk_buddy_list *)(list)->ui_data)
 #define GAIM_IS_GTK_BLIST(list) \
 	((list)->ui_ops == gaim_get_gtk_blist_ui_ops())

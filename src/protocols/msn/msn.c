@@ -1593,7 +1593,7 @@ static const char *msn_list_icon(struct gaim_account *a, struct buddy *b)
 
 static void msn_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
-	if (b->present == 0)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";
 	else if (b->uc >> 1 == 2 || b->uc >> 1 == 6)
 		*se = "occupied";
@@ -1643,7 +1643,7 @@ static char *msn_status_text(struct buddy *b) {
 }
 
 static char *msn_tooltip_text(struct buddy *b) {
-	if (b->present)
+	if (GAIM_BUDDY_IS_ONLINE(b))
 		return g_strdup_printf(_("<b>Status:</b> %s"), msn_get_away_text(b->uc >> 1));
 
 	return NULL;

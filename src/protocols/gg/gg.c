@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 5250 2003-03-31 07:19:46Z seanegan $
+ * $Id: gg.c 5419 2003-04-07 23:17:27Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -1251,7 +1251,7 @@ static const char *agg_list_icon(struct gaim_account *a, struct buddy *b)
 static void agg_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
 	int status;
-	if (b->present == 0)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";
 	else if (b->uc == UC_UNAVAILABLE)
 		*se = "away";

@@ -1288,7 +1288,7 @@ static void toc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, c
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
 
-	if (b->present == 0) {
+	if (b->present == GAIM_BUDDY_OFFLINE) {
 		*se = "offline";
 		return;
 	} else {

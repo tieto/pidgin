@@ -40,6 +40,17 @@ enum gaim_blist_node_type {
 #define GAIM_BLIST_NODE_IS_BUDDY(n) ((n)->type == GAIM_BLIST_BUDDY_NODE)
 #define GAIM_BLIST_NODE_IS_GROUP(n) ((n)->type == GAIM_BLIST_GROUP_NODE)
 
+enum gaim_buddy_presence_state {
+	GAIM_BUDDY_SIGNING_OFF = -1,
+	GAIM_BUDDY_OFFLINE = 0,
+	GAIM_BUDDY_ONLINE,
+	GAIM_BUDDY_SIGNING_ON,
+};
+
+#define GAIM_BUDDY_IS_ONLINE(b) ((b)->present == GAIM_BUDDY_ONLINE || \
+		(b)->present == GAIM_BUDDY_SIGNING_ON)
+
+
 /**************************************************************************/
 /* Data Structures                                                        */
 /**************************************************************************/
@@ -52,7 +63,7 @@ struct _GaimBlistNode {
 	enum gaim_blist_node_type type;        /**< The type of node this is       */
 	GaimBlistNode *prev;                   /**< The sibling before this buddy. */
 	GaimBlistNode *next;                   /**< The sibling after this buddy.  */
-        GaimBlistNode *parent;                 /**< The parent of this node        */
+	GaimBlistNode *parent;                 /**< The parent of this node        */
 	GaimBlistNode *child;                  /**< The child of this node         */
 	void          *ui_data;                /**< The UI can put data here.      */
 };
@@ -65,15 +76,16 @@ struct buddy {
 	char *name;                             /**< The screenname of the buddy. */
 	char *alias;                            /**< The user-set alias of the buddy */
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */ 
-	int present;                            /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
+	enum gaim_buddy_presence_state present;                            /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
 						    he has recently signed on */
 	int evil;                               /**< The warning level */
 	time_t signon;                          /**< The time the buddy signed on. */
 	int idle;                               /**< The time the buddy has been idle in minutes. */
-        int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
+	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	struct gaim_account *account;           /**< the account this buddy belongs to */ 
 	GHashTable *settings;                   /**< per-buddy settings from the XML buddy list, set by plugins and the likes. */
+	guint timer;							/**< The timer handle. */
 };
 
 /**

@@ -171,7 +171,7 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 				continue;
 			n = (struct buddy *)bnode;
 			if(n->account == gc->account) {
-				n->present = 0;
+				n->present = GAIM_BUDDY_OFFLINE;
 			}
 		}
 	}

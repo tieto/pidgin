@@ -1022,7 +1022,7 @@ static void yahoo_list_emblems(struct buddy *b, char **se, char **sw, char **nw,
 {
 	int i = 0;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
-	if (b->present == 0) {
+	if (b->present == GAIM_BUDDY_OFFLINE) {
 		*se = "offline";
 		return;
 	} else {

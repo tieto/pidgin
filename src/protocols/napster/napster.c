@@ -559,7 +559,7 @@ static const char* nap_list_icon(struct gaim_account *a, struct buddy *b)
 
 static void nap_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
-	if (b->present == 0)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";
 }
 

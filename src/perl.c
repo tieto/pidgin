@@ -712,7 +712,7 @@ XS (XS_GAIM_online_list)
 			if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 				continue;
 			b = (struct buddy *)bnode;
-			if (b->account == gc->account && b->present) XST_mPV(i++, b->name);
+			if (b->account == gc->account && GAIM_BUDDY_IS_ONLINE(b)) XST_mPV(i++, b->name);
 		}
 	}
 	XSRETURN(i);
@@ -785,7 +785,7 @@ XS (XS_GAIM_user_info)
 		XSRETURN(0);
 	XST_mPV(0, buddy->name);
 	XST_mPV(1, gaim_get_buddy_alias(buddy));
-	XST_mPV(2, buddy->present ? "Online" : "Offline");
+	XST_mPV(2, GAIM_BUDDY_IS_ONLINE(buddy) ? "Online" : "Offline");
 	XST_mIV(3, buddy->evil);
 	XST_mIV(4, buddy->signon);
 	XST_mIV(5, buddy->idle);

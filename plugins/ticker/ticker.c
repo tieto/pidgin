@@ -361,7 +361,7 @@ void BuddyTickerShow()
 		g = (struct group *)grps->data;
 		for( buds = g->members; buds; buds = buds->next ) {
 			b = (struct buddy *)buds->data;
-			if( b->present ) {
+			if(GAIM_BUDDY_IS_ONLINE(b)) {
 				xpm = NULL;
 				if (b->account->gc->prpl->list_icon)
 					xpm = b->account->gc->prpl->list_icon(b->account, b);

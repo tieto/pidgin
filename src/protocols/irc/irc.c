@@ -600,9 +600,9 @@ handle_list(struct gaim_connection *gc, char *list)
 				l = x + strlen(b->name);
 				if (x && (*l != ' ' && *l != 0))
 					x = 0;
-				if (!b->present && x)
+				if (!GAIM_BUDDY_IS_ONLINE(b) && x)
 					serv_got_update(gc, b->name, 1, 0, 0, 0, 0);
-				else if (b->present && !x)
+				else if (GAIM_BUDDY_IS_ONLINE(b) && !x)
 					serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 				g_free(tmp);
 			}
@@ -2458,7 +2458,7 @@ irc_list_icon(struct gaim_account *a, struct buddy *b)
 
 static void irc_list_emblems(struct buddy *b, char **se, char **sw, char **nw, char **ne)
 {
-	if (b->present == 0)
+	if (b->present == GAIM_BUDDY_OFFLINE)
 		*se = "offline";
 }
 
