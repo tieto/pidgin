@@ -430,9 +430,12 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	switch (event) {
 	case event_signon:
 	case event_signoff:
-	case event_away:
-	case event_back:
 		g_snprintf(buf, sizeof buf, "%lu", (unsigned long)arg1);
+		break;
+	case event_away:
+		g_snprintf(buf, sizeof buf, "%lu %s", (unsigned long)arg1,
+				((struct gaim_connection *)arg1)->away ?
+					((struct gaim_connection *)arg1)->away : "");
 		break;
 	case event_im_recv:
 		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
