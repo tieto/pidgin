@@ -1390,9 +1390,10 @@ static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static void msn_add_buddy(struct gaim_connection *gc, char *who)
+static void msn_add_buddy(struct gaim_connection *gc, char *name)
 {
 	struct msn_data *md = gc->proto_data;
+	char *who = msn_normalize(name);
 	char buf[MSN_BUF_LEN];
 	GSList *l = md->fl;
 
