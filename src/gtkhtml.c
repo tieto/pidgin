@@ -169,6 +169,8 @@ static gint html_bit_is_onscreen(GtkHtml * html, GtkHtmlBit * hb);
 static void draw_cursor(GtkHtml * html);
 static void undraw_cursor(GtkHtml * html);
 
+static int get_line_height(GtkHtml *, GtkHtmlBit *);
+
 static GtkWidgetClass *parent_class = NULL;
 
 GtkType gtk_html_get_type(void)
@@ -1837,10 +1839,14 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	GtkStateType selected_state;
 	GtkWidget *widget = GTK_WIDGET(html);
 	GdkRectangle area;
-
+	GList *hbits;
+	GtkHtmlBit *hbit;
+	
 	if (html->frozen > 0)
 		return;
 
+	hbits = g_list_find(html->html_bits, hb);
+	
 	if (hb->type == HTML_BIT_TEXT)
 	{
 
@@ -1864,7 +1870,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 		{
 			selected_state = GTK_STATE_SELECTED;
 		}
-
 
 		gdk_text_extents(hb->font, hb->text, 1, &shift, NULL, NULL, NULL, NULL);
 
@@ -1928,7 +1933,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 			startx += hb->x;
 
-
 			area.x = hb->x - html->xoffset;
 			area.y = hb->y - hb->height + 3 - html->yoffset;
 			area.width = hb->width + 2;
@@ -1956,9 +1960,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 			hb->was_selected = 0;
 		}
-
-
-
 
 		if (selected_state == GTK_STATE_SELECTED && (mypos == epos
 													 || mypos == spos))
@@ -2000,12 +2001,6 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 				else
 					gdk_gc_set_foreground(gc,
 										  &widget->style->fg[selected_state]);
-				if (hb->back != NULL)
-					gdk_gc_set_background(gc, hb->back);
-				else
-					gdk_gc_set_background(gc,
-										  &widget->style->bg[selected_state]);
-
 
 				gdk_gc_set_font(gc, hb->font);
 
@@ -2053,8 +2048,8 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 
 
 			if (hb->text && hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
-				int hwidth, hheight;
-				int hei = gdk_text_height(hb->font, "C", 1);
+				int hwidth, hheight, hei;
+				hei = get_line_height(html, hb);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
 				gdk_gc_set_foreground(gc, hb->back);
 				gdk_draw_rectangle(html->html_area, gc, TRUE /* filled */,
@@ -2066,14 +2061,8 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 				gdk_gc_set_foreground(gc, hb->fore);
 			else
 				gdk_gc_set_foreground(gc, &widget->style->fg[selected_state]);
-			if (hb->back != NULL)
-				gdk_gc_set_background(gc, hb->back);
-			else
-				gdk_gc_set_background(gc, &widget->style->bg[selected_state]);
-
 
 			gdk_gc_set_font(gc, hb->font);
-
 
 			gdk_draw_string(html->html_area, hb->font, gc, shift + hb->x,
 							hb->y - html->yoffset, hb->text);
@@ -2255,7 +2244,7 @@ static void undraw_cursor(GtkHtml * html)
 
 		clear_area(html, &area);
 
-		gtk_html_draw_bit(html, html->cursor_hb, 1);
+		(html, html->cursor_hb, 1);
 
 
 	}
@@ -2281,6 +2270,11 @@ static void expose_html(GtkHtml * html, GdkRectangle * area, gboolean cursor)
 
 	realy = area->y + html->yoffset;
 
+	/* this is needed since background colors draw across the entire window width
+		if anyone knows of a cleaner way to work bg colors, please submit code =) */
+	area->x = 0;
+	area->width = width;
+	
 	clear_area(html, area);
 
 	while (hbits)
@@ -4332,4 +4326,28 @@ void gtk_html_thaw(GtkHtml * html)
 			expose_html(html, &area, TRUE);
 		}
 	}
+}
+
+static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
+{
+	int height, max_height = 0;
+	GList *hbits = html->html_bits;
+	GtkHtmlBit *hbit;
+
+	hbits = g_list_find(hbits, start);
+
+	while (TRUE)
+	{
+		hbit = hbits->data;	
+		if (hbit->font)
+			height = gdk_text_height(hbit->font, "C", 1);	
+
+		if (max_height < height)
+			max_height = height;
+		if (hbit->newline)
+			break;
+		hbits = hbits->next;
+	}
+
+	return max_height;
 }
