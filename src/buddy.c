@@ -1841,7 +1841,6 @@ static struct group_show *new_group_show(char *group)
 
 	gtk_container_add(GTK_CONTAINER(g->item), g->label);
 
-	style = gtk_style_new();
 	style = gtk_style_copy(gtk_widget_get_style(GTK_WIDGET(g->label)));
 
 //	style->font = gdk_font_load("-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*");
@@ -1851,6 +1850,7 @@ static struct group_show *new_group_show(char *group)
 	style->fg[0].blue = 20* 255;
 	
 	gtk_widget_set_style(GTK_WIDGET(g->label), style);
+	gtk_style_unref(style);
 
 
 	shows = g_slist_insert(shows, g, pos);
@@ -1876,12 +1876,14 @@ static struct group_show *new_group_show(char *group)
 	gdk_bitmap_unref(bm);
 
 //	style = gtk_widget_get_style(GTK_TREE_ITEM(g->item)->pixmaps_box);
-	style2 = gtk_style_new();
 	style2 = gtk_style_copy(gtk_widget_get_style(g->item));
-	style = gtk_style_new();
 	style = gtk_style_copy(gtk_widget_get_style(GTK_WIDGET(g->label)));
+
 	style->bg[0] = style2->base[0];
 	gtk_widget_set_style(GTK_TREE_ITEM(g->item)->pixmaps_box, style);
+
+	gtk_style_unref(style);
+	gtk_style_unref(style2);
 
 	/* bad drugs */
 
