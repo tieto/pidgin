@@ -63,7 +63,7 @@
 #define POINT_SIZE(x) (_point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
 static gint _point_sizes [] = { 8, 10, 12, 14, 20, 30, 40 };
 
-#define DEFAULT_PRE_FACE "courier"
+#define DEFAULT_PRE_FACE "sans"
 
 #define BORDER_SIZE 2
 #define TOP_BORDER 10
@@ -690,8 +690,6 @@ draw_text (GtkIMHtml        *imhtml,
 
 	gdk_color_free (bg);
 	gdk_color_free (fg);
-
-	
 
 	gdk_gc_unref (gc);
 }
@@ -2402,16 +2400,16 @@ add_text_renderer (GtkIMHtml    *imhtml,
 	else
 		width = 0;
 
-	metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
-
 	li = g_new0 (struct line_info, 1);
 	li->x = imhtml->x;
 	li->y = imhtml->y;
 	li->width = width;
 	li->height = imhtml->llheight;
-	if (text)
+	if (text) {
+		metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 		li->ascent = MAX (imhtml->llascent, pango_font_metrics_get_ascent(metrics) / PANGO_SCALE);
-	else
+		pango_font_metrics_unref(metrics);
+	} else
 		li->ascent = 0;
 	li->text = text;
 	li->bit = bit;
@@ -2429,8 +2427,6 @@ add_text_renderer (GtkIMHtml    *imhtml,
 
 	bit->chunks = g_list_append (bit->chunks, li);
 	imhtml->line = g_list_append (imhtml->line, li);
-
-	pango_font_metrics_unref(metrics);
 }
 
 static void
@@ -2480,7 +2476,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 	g_return_if_fail (GTK_IS_IMHTML (imhtml));
 	g_return_if_fail (bit != NULL);
 
-	metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 
 	if ( ((bit->type == TYPE_TEXT) ||
 	    ((bit->type == TYPE_SMILEY) && !imhtml->smileys) ||
@@ -2491,6 +2486,7 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		gboolean seenspace = FALSE;
 		gchar *tmp;
 
+		metrics = pango_context_get_metrics(imhtml->context, bit->font, NULL);
 		height = (pango_font_metrics_get_ascent(metrics) + pango_font_metrics_get_descent(metrics)) / PANGO_SCALE;
 		width = string_width (imhtml->context, bit->font, bit->text);
 
@@ -2553,7 +2549,8 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 			}
 		}
 
-		g_free (copy);
+		pango_font_metrics_unref(metrics);
+		g_free(copy);
 	} else if ((bit->type == TYPE_SMILEY) || (bit->type == TYPE_IMG)) {
 	  if (bit->img) {
 			GdkPixbuf *imagepb = bit->img->pb;
@@ -2615,7 +2612,6 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 		add_text_renderer (imhtml, bit, NULL);
 	}
 
-	pango_font_metrics_unref(metrics);
 }
 
 void
@@ -2720,7 +2716,6 @@ gtk_imhtml_new_bit (GtkIMHtml  *imhtml,
 	if (((bit->type == TYPE_TEXT) || (bit->type == TYPE_SMILEY) || (bit->type == TYPE_COMMENT)) &&
 	    (bit->font == NULL))
 		bit->font = pango_font_description_copy (imhtml->default_font);
-//		bit->font = gdk_font_ref (imhtml->default_font);
 
 	if (bg != NULL)
 		bit->bg = gdk_color_copy (bg);
