@@ -301,7 +301,15 @@ void jabber_roster_remove_buddy(GaimConnection *gc, const char *name, const char
 		}
 		jabber_roster_update(gc->proto_data, name, groups);
 	} else {
-		jabber_presence_subscription_set(gc->proto_data, name, "unsubscribe");
+		JabberIq *iq = jabber_iq_new_query(gc->proto_data, JABBER_IQ_SET,
+				"jabber:iq:roster");
+		xmlnode *query = xmlnode_get_child(iq->node, "query");
+		xmlnode *item = xmlnode_new_child(query, "item");
+
+		xmlnode_set_attrib(item, "jid", name);
+		xmlnode_set_attrib(item, "subscription", "remove");
+
+		jabber_iq_send(iq);
 	}
 
 	if(buddies)
