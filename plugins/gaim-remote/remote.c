@@ -650,6 +650,7 @@ open_socket()
 			g_log(NULL, G_LOG_LEVEL_CRITICAL,
 			      "Failed to assign %s to a socket (Error: %s)",	
 			      saddr.sun_path, strerror(errno));
+			umask(m);
 			return -1;
 		}
 		umask(m);

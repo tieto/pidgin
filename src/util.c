@@ -1225,11 +1225,6 @@ int gaim_build_dir (char *path, int mode)
 			g_free(dir);
 			return -1;
 		}
-		/* For some reason, the above mkdir doesn't properly
-		 * set permissions for some people ... and I have NO
-		 * idea why not.  In the meantime, we'll attempt to
-		 * set them explicitly. */
-		chmod(dir, mode);
 	}
 
 	g_strfreev(components);
