@@ -23,6 +23,7 @@ version 0.71
 	  (Robert McQueen)
 	* Implemented another new Yahoo! authentication method
 	* Fixed a bug displaying Chinese MSN messages (Ambrose C. LI).
+	* Additional fixes and checks for the perl build process (Sean Burke).
 	* Massive core/UI splitting.
 	* Re-write of Jabber protocol plugin
 	* Conversation API changes.

@@ -283,79 +283,89 @@ if test "$enable_perl" = yes ; then
 fi
 
 if test "$enable_perl" = yes ; then
-	AC_SUBST(PERL_CFLAGS)
-	AC_SUBST(PERL_LIBS)
-	AM_CONDITIONAL(USE_PERL, test "x$enable_perl" = "xyes")
+	AC_PROG_PERL_MODULES(ExtUtils::MakeMaker, , have_makemaker=no)
 
-	dnl This is almost definitely wrong, but in case there's
-	dnl something I'm missing, I'll leave it in.
-	AC_CHECK_FUNCS(Perl_eval_pv)
-
-	AC_MSG_CHECKING(for old perl)
-	PERL_OLD=`$perlpath -e 'if($]<5.006){printf"yes\n";}else{printf"no\n";}'`
-
-	if test "$PERL_OLD" = "yes"; then
-		AC_DEFINE(OLD_PERL, 1, [Define if old perl is installed.])
-		AC_MSG_RESULT(yes)
+	if test "x$have_makemaker" = "xno"; then
+		enable_perl=no
+		PERL_CFLAGS=
+		PERL_LIBS=
+		AM_CONDITIONAL(USE_PERL, false)
+		AC_MSG_WARN(Compiling perl requires ExtUtils::MakeMaker)
 	else
-		AC_MSG_RESULT(no)
-	fi
+		AC_SUBST(PERL_CFLAGS)
+		AC_SUBST(PERL_LIBS)
+		AM_CONDITIONAL(USE_PERL, test "x$enable_perl" = "xyes")
 
-	if test "x$prefix" != "xNONE"; then
-		prefix=`eval echo $prefix`
-		PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
-	fi
+		dnl This is almost definitely wrong, but in case there's
+		dnl something I'm missing, I'll leave it in.
+		AC_CHECK_FUNCS(Perl_eval_pv)
 
-	AC_ARG_WITH(perl-lib,
-	[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
-	                           Perl libraries for gaim. Default is site.],
-	[
-		if test "x$withval" = xsite; then
-			PERL_MM_PARAMS=""
-		elif test "x$withval" = xvendor; then
-			if test -z "`$perlpath -v | grep '5\.0'`"; then
-				PERL_MM_PARAMS="INSTALLDIRS=vendor"
-			else
-				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
-			fi
+		AC_MSG_CHECKING(for old perl)
+		PERL_OLD=`$perlpath -e 'if($]<5.006){printf"yes\n";}else{printf"no\n";}'`
+
+		if test "x$PERL_OLD" = "xyes"; then
+			AC_DEFINE(OLD_PERL, 1, [Define if old perl is installed.])
+			AC_MSG_RESULT(yes)
 		else
-			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
-		fi
-	])
-
-	AC_SUBST(PERL_MM_PARAMS)
-
-	AC_MSG_CHECKING(for DynaLoader.a)
-	DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
-
-	dnl Don't check libperl.a if dynaloader.a wasn't found.
-	if test -n "$DYNALOADER_A"; then
-		AC_MSG_RESULT(yes)
-
-		dnl Find either libperl.a or libperl.so
-		AC_MSG_CHECKING(for libperl.a or libperl.so)
-		LIBPERL_A=`echo "$PERL_LDFLAGS -L/usr/lib"|$perlpath -e 'foreach (split(/ /, <STDIN>)) { if (/^-L(.*)/) { my $dir=$1; if (\`ls $dir/libperl.so* 2>/dev/null\`) { print "-lperl"; last; }; if (-e "$dir/libperl.a") { print "$dir/libperl.a"; last } } };'`
-		if test -z "$LIBPERL_A"; then
 			AC_MSG_RESULT(no)
-			DYNALOADER_A=
-		else
+		fi
+
+		if test "x$prefix" != "xNONE"; then
+			prefix=`eval echo $prefix`
+			PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$prefix"
+		fi
+
+		AC_ARG_WITH(perl-lib,
+		[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
+								   Perl libraries for gaim. Default is site.],
+		[
+			if test "x$withval" = xsite; then
+				PERL_MM_PARAMS=""
+			elif test "x$withval" = xvendor; then
+				if test -z "`$perlpath -v | grep '5\.0'`"; then
+					PERL_MM_PARAMS="INSTALLDIRS=vendor"
+				else
+					PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=`perl -e 'use Config; print $Config{prefix}'`"
+				fi
+			else
+				PERL_MM_PARAMS="INSTALLDIRS=vendor PREFIX=$withval"
+			fi
+		])
+
+		AC_SUBST(PERL_MM_PARAMS)
+
+		AC_MSG_CHECKING(for DynaLoader.a)
+		DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
+
+		dnl Don't check libperl.a if dynaloader.a wasn't found.
+		if test -n "$DYNALOADER_A"; then
 			AC_MSG_RESULT(yes)
 
-			if test "$LIBPERL_A" = "-lperl"; then
-				LIBPERL_A=
+			dnl Find either libperl.a or libperl.so
+			AC_MSG_CHECKING(for libperl.a or libperl.so)
+			LIBPERL_A=`echo "$PERL_LDFLAGS -L/usr/lib"|$perlpath -e 'foreach (split(/ /, <STDIN>)) { if (/^-L(.*)/) { my $dir=$1; if (\`ls $dir/libperl.so* 2>/dev/null\`) { print "-lperl"; last; }; if (-e "$dir/libperl.a") { print "$dir/libperl.a"; last } } };'`
+			if test -z "$LIBPERL_A"; then
+				AC_MSG_RESULT(no)
+				DYNALOADER_A=
+			else
+				AC_MSG_RESULT(yes)
+
+				if test "$LIBPERL_A" = "-lperl"; then
+					LIBPERL_A=
+				fi
 			fi
+
+			PERL_LIBS=`echo $PERL_LIBS | $perlpath -pe 's/^(.* )*[[^ ]]*DynaLoader\.a/\1libperl_dynaloader.la/'`
+
+			if test -n "$LIBPERL_A"; then
+				PERL_LIBS=`echo $PERL_LDFLAGS | $sedpath -e 's/-lperl /libperl_orig.la /' -e 's/-lperl$/libperl_orig.la$/'`
+			fi
+
+			AC_SUBST(DYNALOADER_A)
+			AC_SUBST(LIBPERL_A)
+		else
+			AC_MSG_RESULT(no)
 		fi
-
-		PERL_LIBS=`echo $PERL_LIBS | $perlpath -pe 's/^(.* )*[[^ ]]*DynaLoader\.a/\1libperl_dynaloader.la/'`
-
-		if test -n "$LIBPERL_A"; then
-			PERL_LIBS=`echo $PERL_LDFLAGS | $sedpath -e 's/-lperl /libperl_orig.la /' -e 's/-lperl$/libperl_orig.la$/'`
-		fi
-
-		AC_SUBST(DYNALOADER_A)
-		AC_SUBST(LIBPERL_A)
-	else
-		AC_MSG_RESULT(no)
 	fi
 else
 	PERL_CFLAGS=
