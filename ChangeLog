@@ -14,7 +14,8 @@ version 0.9.11:
 	* Better support for multiple screen names
 	* Font Properties
 	* Saving of buddylist window position 
-	* Fixed a problem with GAIM and Mozilla
+	* Fixed a problem with GAIM and the Netscape-branded version
+	  of Mozilla 
 	* New Sound Properties
 	* More General Properties
 	* Bigger Text-Entry field (Thanks to CrazyDavy for this one)
