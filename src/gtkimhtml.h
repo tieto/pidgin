@@ -56,6 +56,7 @@ typedef struct {
 	char *start_tag;
 	char *end_tag;
 	GtkTextBuffer *buffer;
+	GtkTextTag *tag;
 } GtkIMHtmlFormatSpan;
 
 struct _GtkIMHtml {
@@ -88,6 +89,8 @@ struct _GtkIMHtml {
 		GtkIMHtmlFormatSpan *bold;
 		GtkIMHtmlFormatSpan *italic;
 		GtkIMHtmlFormatSpan *underline;
+		GtkIMHtmlFormatSpan *forecolor;
+		GtkIMHtmlFormatSpan *backcolor;
 	} edit;
 	GList *format_spans;
 };
@@ -206,6 +209,9 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
+gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
+gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
+
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);

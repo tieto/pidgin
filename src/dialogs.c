@@ -1093,16 +1093,12 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->fg_color = text_color;
-	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">",
+	g_snprintf(open_tag, 23, "#%02X%02X%02X",
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-	gaim_gtk_surround(gtkconv, open_tag, "</FONT>");
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(gtkconv->entry), open_tag);
 
-	gaim_debug(GAIM_DEBUG_MISC, "fgcolor dialog", "#%02X%02X%02X\n",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
 }
@@ -1124,16 +1120,12 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->bg_color = text_color;
-	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">",
+	g_snprintf(open_tag, 25, "#%02X%02X%02X",
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-	gaim_gtk_surround(gtkconv, open_tag, "</BODY>");
-	gaim_debug(GAIM_DEBUG_MISC, "bgcolor dialog", "#%02X%02X%02X\n",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-
+	gtk_imhtml_toggle_backcolor(GTK_IMHTML(gtkconv->entry), open_tag);
+	
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
 }

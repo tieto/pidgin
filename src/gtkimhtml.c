@@ -520,6 +520,9 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->edit.bold = NULL;
 	imhtml->edit.italic = NULL;
 	imhtml->edit.underline = NULL;
+	imhtml->edit.forecolor = NULL;
+	imhtml->edit.backcolor = NULL;
+
 	imhtml->format_spans = NULL;
 	
 	imhtml->scalables = NULL;
@@ -1975,13 +1978,20 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &italic, iter);
 	}
 	
-		
-	if ((span = imhtml->edit.underline)) {
-		GtkTextIter underline;
-		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &underline, span->start);
+	if ((span = imhtml->edit.forecolor)) {
+		GtkTextIter fore;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &fore, span->start);
 		gtk_text_iter_forward_chars(iter, len);
-		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &underline, iter);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &fore, iter);
 	}
+	
+	if ((span = imhtml->edit.backcolor)) {
+		GtkTextIter back;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &back, span->start);
+		gtk_text_iter_forward_chars(iter, len);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &back, iter);
+	}
+	
 }
 
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable) 
@@ -2009,6 +2019,7 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 		span->end = NULL;
 		span->end_tag = g_strdup("</b>");
 		span->buffer = imhtml->text_buffer;
+		span->tag =  gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "BOLD");
 		imhtml->edit.bold = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
@@ -2032,6 +2043,7 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 		span->end = NULL;
 		span->end_tag = g_strdup("</i>");
 		span->buffer = imhtml->text_buffer;
+		span->tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "ITALIC");
 		imhtml->edit.italic = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
@@ -2041,6 +2053,7 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 	}
 	return imhtml->edit.italic != NULL;
 }
+
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 {
 	GtkIMHtmlFormatSpan *span;
@@ -2054,6 +2067,7 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		span->end = NULL;
 		span->end_tag = g_strdup("</u>");
 		span->buffer = imhtml->text_buffer;
+		span->tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), "UNDERLINE");
 		imhtml->edit.underline = span;
 		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
 	} else {
@@ -2062,6 +2076,54 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		imhtml->edit.underline = NULL;
 	}
 	return imhtml->edit.underline != NULL;
+}
+
+gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
+{
+	GtkIMHtmlFormatSpan *span;
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.forecolor) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup_printf("<font color='%s'>", color);
+		span->end = NULL;
+		span->end_tag = g_strdup("</font>");
+		span->buffer = imhtml->text_buffer;
+		span->tag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "foreground", color, NULL);
+		imhtml->edit.forecolor = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.forecolor;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.forecolor = NULL;
+	}
+	return imhtml->edit.forecolor != NULL;
+}
+
+gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
+{
+	GtkIMHtmlFormatSpan *span;
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.backcolor) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup_printf("<body bgcolor='%s'>", color);
+		span->end = NULL;
+		span->end_tag = g_strdup("</font>");
+		span->buffer = imhtml->text_buffer;
+		span->tag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "background", color, NULL);
+		imhtml->edit.backcolor = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.backcolor;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.backcolor = NULL;
+	}
+	return imhtml->edit.backcolor != NULL;
 }
 
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text)
