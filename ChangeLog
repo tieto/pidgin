@@ -4,6 +4,8 @@ version 0.62
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 
 	 Clarke).
 	* Support for Jabber XHTML messages
+	* Updated a number of translations. Thanks to everyone who submitted
+	  a translation updated.
 
 version 0.61 (04/07/2003):
 	* Split the buddy pounce core and UI, and rewrote the UI for it.
