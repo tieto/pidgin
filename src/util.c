@@ -853,6 +853,38 @@ FILE *gaim_mkstemp(gchar **fpath)
 	return fp;
 }
 
+gboolean program_is_valid(const char *program) 
+{
+	GError *error = NULL;
+	char **argv; 
+	gchar *progname;
+	gboolean is_valid = FALSE;
+
+	if (program == NULL || *program == '\0') {
+		return FALSE;
+	}
+
+	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
+				   "Could not parse program '%s': %s\n",
+				   program, error->message);
+		g_error_free(error);
+		return FALSE;
+	}
+
+	if (argv == NULL) {
+		return FALSE;
+	}
+
+	progname = g_find_program_in_path(argv[0]);
+	is_valid = (progname != NULL);
+
+	g_strfreev(argv);
+	g_free(progname);
+	
+	return is_valid;
+}
+
 char *gaim_try_conv_to_utf8(const char *str)
 {
 	gsize converted;

@@ -101,10 +101,6 @@ static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
 
-#ifndef _WIN32
-static gboolean program_is_valid(const char *);
-#endif
-
 void set_default_away(GtkWidget *, gpointer);
 
 static void
@@ -1204,47 +1200,8 @@ GtkWidget *proxy_page() {
 }
 
 #ifndef _WIN32
-static gboolean program_is_valid(const char *program) 
-{
-	GError *error = NULL;
-	char **argv; 
-	gchar *progname;
-	gboolean is_valid = FALSE;
-
-	if (program == NULL || *program == '\0') {
-		return FALSE;
-	}
-
-	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
-				   "Could not parse program '%s': %s\n",
-				   program, error->message);
-		g_error_free(error);
-		return FALSE;
-	}
-
-	if (argv == NULL) {
-		return FALSE;
-	}
-
-	progname = g_find_program_in_path(argv[0]);
-	is_valid = (progname != NULL);
-
-	g_strfreev(argv);
-	g_free(progname);
-	
-	return is_valid;
-}
-
 static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
-
-	if (!program_is_valid(program)) {
-		char *error = g_strdup_printf(_("The entered manual browser "
-						"'%s' is not valid. Hyperlinks will "
-						"not work."), program); 
-		gaim_notify_warning(NULL, NULL, error, NULL);
-	}
 
 	gaim_prefs_set_string("/gaim/gtk/browsers/command", program);
 

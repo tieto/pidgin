@@ -567,11 +567,9 @@ gaim_gtk_notify_uri(const char *uri)
 		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
 
 		if (web_command == NULL || *web_command == '\0') {
-			gaim_notify_error(NULL, NULL,
-							  _("Unable to launch your browser because "
-								"the 'Manual' browser command has been "
-								"chosen, but no command has been set."),
-							  NULL);
+			gaim_notify_error(NULL, NULL, _("Unable to open URL"),
+							  _("The 'Manual' browser command has been "
+								"chosen, but no command has been set."));
 			return NULL;
 		}
 
@@ -586,12 +584,18 @@ gaim_gtk_notify_uri(const char *uri)
 		}
 	}
 
-	if (!g_spawn_command_line_async(command, &error)) {
+	if (!program_is_valid(command)) {
+		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
+						command);
+		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		g_free(tmp);
+
+	} else if (!g_spawn_command_line_async(command, &error)) {
 		char *tmp = g_strdup_printf(
-				_("There was an error launching your chosen browser: %s"),
+				_("Error launching \"command\": %s"),
 				error->message);
 
-		gaim_notify_error(NULL, NULL, tmp, NULL);
+		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 
 		g_free(tmp);
 		g_error_free(error);

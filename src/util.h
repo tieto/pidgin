@@ -261,6 +261,15 @@ time_t get_time(int year, int month, int day,
 FILE *gaim_mkstemp(gchar **path);
 
 /**
+ * Checks if the given program name is valid and executable.
+ *
+ * @parm program The file name of the application.
+ *
+ * @return True if the program is runable.
+ */
+gboolean program_is_valid(const char *program);
+
+/**
  * Attempts to convert a string to UTF-8 from an unknown encoding.
  *
  * This function checks the locale and tries sane defaults.
