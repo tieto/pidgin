@@ -734,7 +734,7 @@ invite_cb(GtkWidget *widget, GaimConversation *conv)
 			_("Invite Buddy Into Chat Room"),
 			GTK_WINDOW(gtkwin->window), 0,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+			GAIM_STOCK_INVITE, GTK_RESPONSE_OK, NULL);
 
 		gtk_dialog_set_default_response(GTK_DIALOG(invite_dialog),
 										GTK_RESPONSE_OK);
