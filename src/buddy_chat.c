@@ -55,17 +55,12 @@ GtkWidget *chat_notebook = NULL;
 
 static void destroy_prev_jc()
 {
-	GList *children, *curr;
-	GtkWidget *w;
 	if (!jc_vbox)
 		return;
 
-	children = g_list_copy(gtk_container_children(GTK_CONTAINER(jc_vbox)));
-	for (curr = children; curr != NULL; curr = g_list_next(curr)) {
-		w = (GtkWidget *)curr->data;
-		gtk_container_remove(GTK_CONTAINER(jc_vbox), w);
-	}
-	g_list_free(children);
+	while (GTK_BOX(jc_vbox)->children)
+		gtk_container_remove(GTK_CONTAINER(jc_vbox),
+				     ((GtkBoxChild *)GTK_BOX(jc_vbox)->children->data)->widget);
 }
 
 static void destroy_join_chat()
