@@ -2161,7 +2161,6 @@ GtkWidget *away_message_page() {
 	GtkTreeSelection *sel;
 	GSList *awy = away_messages;
 	struct away_message *a;
-	GtkWidget *sw2;
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, 18);
@@ -2170,8 +2169,7 @@ GtkWidget *away_message_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
-	away_text = gtk_imhtml_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
@@ -2185,7 +2183,6 @@ GtkWidget *away_message_page() {
 	}
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(prefs_away_store));
 
-
 	rend = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes ("NULL",
 							rend,
@@ -2196,12 +2193,13 @@ GtkWidget *away_message_page() {
 	gtk_widget_show(event_view);
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), event_view);
 
-	sw2 = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2),
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_box_pack_start(GTK_BOX(ret), sw2, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
-	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), away_text);
+	away_text = gtk_imhtml_new(NULL, NULL);
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), away_text);
 	gaim_setup_imhtml(away_text);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
 	g_signal_connect(G_OBJECT(sel), "changed",

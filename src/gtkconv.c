@@ -720,25 +720,21 @@ struct _search {
 	GtkWidget *entry;
 };
 
-static void do_search_cb(GtkWidget *widget, struct _search *s)
+static void do_search_cb(GtkWidget *widget, gint resp, struct _search *s)
 {
-    gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(s->entry)));
-}
+	switch (resp) {
+	case GTK_RESPONSE_OK:
+	    gtk_imhtml_search_find(GTK_IMHTML(s->gtkconv->imhtml), gtk_entry_get_text(GTK_ENTRY(s->entry)));
+		break;
 
-static void find_dlg_set_sensitive(GtkWidget *entry, GtkWidget *button)
-{
-    if(*gtk_entry_get_text(GTK_ENTRY(entry)))
-        gtk_widget_set_sensitive(button, TRUE);
-    else
-        gtk_widget_set_sensitive(button, FALSE);
-}
-
-static gboolean find_dlg_close_cb(GtkWidget *w, struct _search *s)
-{
-    gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
-    s->gtkconv->dialogs.search = NULL;
-    g_free(s);
-    return TRUE;
+	case GTK_RESPONSE_DELETE_EVENT:
+	case GTK_RESPONSE_CLOSE:
+		gtk_imhtml_search_clear(GTK_IMHTML(s->gtkconv->imhtml));
+		gtk_widget_destroy(s->gtkconv->dialogs.search);
+		s->gtkconv->dialogs.search = NULL;
+		g_free(s);
+		break;
+	}
 }
 
 static void
@@ -748,84 +744,54 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimConversation *conv = gaim_conv_window_get_active_conversation(win);
 	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-    GtkWidget *table;
-    GtkWidget *labelbox, *bbox;
-    GtkWidget *button;
+	GtkWidget *hbox;
 	GtkWidget *img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-	GtkWidget *label, *entry;
+	GtkWidget *label;
 	struct _search *s;
-/*
-	gint signal_id;
-	GClosure *closure;
-*/
 
 	if (gtkconv->dialogs.search) {
 		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.search));
 		return;
 	}
 
-    gtkconv->dialogs.search = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(gtkconv->dialogs.search), _("Find"));
-    gtk_window_set_transient_for(GTK_WINDOW(gtkconv->dialogs.search),
-                                 GTK_WINDOW(gtkwin->window));
-    gtk_window_set_destroy_with_parent(GTK_WINDOW(gtkconv->dialogs.search), TRUE);
-    gtk_window_set_position(GTK_WINDOW(gtkconv->dialogs.search), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_container_set_border_width (GTK_CONTAINER(gtkconv->dialogs.search), 12);
-	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
-
-    table = gtk_table_new(2, 2, FALSE);
-    gtk_container_add(GTK_CONTAINER(gtkconv->dialogs.search), table);
-    gtk_table_set_row_spacings(GTK_TABLE(table), 12);
-    gtk_table_set_col_spacings(GTK_TABLE(table), 12);
-
-    labelbox = gtk_hbox_new(FALSE, 12);
-    gtk_box_pack_start(GTK_BOX(labelbox), img, FALSE, FALSE, 0);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-    gtk_table_attach_defaults(GTK_TABLE(table), labelbox, 0, 1, 0, 1);
-
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Search for:"));
-    gtk_box_pack_start(GTK_BOX(labelbox), label, FALSE, FALSE, 0);
-
-	entry = gtk_entry_new();
-	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
-    gtk_table_attach_defaults(GTK_TABLE(table), entry, 1, 2, 0, 1);
-
 	s = g_malloc(sizeof(struct _search));
 	s->gtkconv = gtkconv;
-	s->entry = entry;
 
-    bbox = gtk_hbutton_box_new();
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_EDGE);
-    gtk_box_set_spacing(GTK_BOX(bbox), 12);
-    gtk_table_attach_defaults(GTK_TABLE(table), bbox, 1, 2, 1, 2);
+	gtkconv->dialogs.search = gtk_dialog_new_with_buttons(_("Find"),
+			GTK_WINDOW(gtkwin->window), GTK_DIALOG_DESTROY_WITH_PARENT,
+			GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+			GTK_STOCK_FIND, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK);
+	g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "response",
+					 G_CALLBACK(do_search_cb), s);
 
-    button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-    gtk_container_add(GTK_CONTAINER(bbox), button);
-    GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-    g_signal_connect_swapped(G_OBJECT(button), "clicked",
-                             G_CALLBACK(gtk_widget_destroy), gtkconv->dialogs.search);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkconv->dialogs.search), 6);
+	gtk_window_set_resizable(GTK_WINDOW(gtkconv->dialogs.search), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(gtkconv->dialogs.search), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), 6);
 
-    button = gtk_button_new_from_stock(GTK_STOCK_FIND);
-    gtk_container_add(GTK_CONTAINER(bbox), button);
-    gtk_widget_set_sensitive(button, FALSE);
-    GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
-/*
-	signal_id = g_signal_lookup ("clicked", GTK_TYPE_BUTTON);
-    closure = g_cclosure_new_object (G_CALLBACK (action_widget_activated),
-                                     G_OBJECT (dialog));
-	g_signal_connect_closure_by_id (child, signal_id, 0, closure, FALSE);
-*/
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(do_search_cb), s);
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkconv->dialogs.search)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
-    gtk_window_set_default(GTK_WINDOW(gtkconv->dialogs.search), button);
-    g_signal_connect(G_OBJECT(gtkconv->dialogs.search), "destroy",
-                     G_CALLBACK(find_dlg_close_cb), s);
-	g_signal_connect(G_OBJECT(entry), "changed", 
-					 G_CALLBACK(find_dlg_set_sensitive), button);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_dialog_set_response_sensitive(GTK_DIALOG(gtkconv->dialogs.search), GTK_RESPONSE_OK, FALSE);
+
+ 	label = gtk_label_new(NULL);
+ 	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Search for:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	s->entry = gtk_entry_new();
+ 	gtk_entry_set_activates_default(GTK_ENTRY(s->entry), TRUE);
+ 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(s->entry));
+	g_signal_connect(G_OBJECT(s->entry), "changed",
+					 G_CALLBACK(gaim_gtk_set_sensitive_if_input),
+					 gtkconv->dialogs.search);
+	gtk_box_pack_start(GTK_BOX(hbox), s->entry, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(gtkconv->dialogs.search);
+	gtk_widget_grab_focus(s->entry);
 }
 
 static void
@@ -2109,6 +2075,11 @@ gray_stuff_out(GaimConversation *conv)
 
 	/*
 	 * Handle hiding and showing stuff based on what type of conv this is.
+	 * Stuff that Gaim IMs support in general should be shown for IM 
+	 * conversations.  Stuff that Gaim chats support in gerneal should be 
+	 * shown for chat conversations.  It doesn't matter whether the PRPL 
+	 * supports it or not--that only affects if the button or menu item 
+	 * is sensitive or not.
 	 */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		/* Show stuff that applies to IMs, hide stuff that applies to chats */
@@ -2118,7 +2089,6 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_show(gtkconv->send);
 		gtk_widget_show(gtkconv->u.im->warn);
 		gtk_widget_show(gtkconv->u.im->block);
-		gtk_widget_show(gtkconv->u.im->add);
 
 		/* Deal with the toolbar */
 		gtk_widget_show(gtkconv->toolbar.image);
@@ -2136,9 +2106,13 @@ gray_stuff_out(GaimConversation *conv)
 				    gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
+			gtk_widget_show(gtkconv->add);
+			gtk_widget_hide(gtkconv->remove);
 		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
+			gtk_widget_hide(gtkconv->add);
+			gtk_widget_show(gtkconv->remove);
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
@@ -2167,9 +2141,13 @@ gray_stuff_out(GaimConversation *conv)
 								 gaim_conversation_get_name(conv)) == NULL) {
 			gtk_widget_show(gtkwin->menu.add);
 			gtk_widget_hide(gtkwin->menu.remove);
+			gtk_widget_show(gtkconv->add);
+			gtk_widget_hide(gtkconv->remove);
 		} else {
 			gtk_widget_show(gtkwin->menu.remove);
 			gtk_widget_hide(gtkwin->menu.add);
+			gtk_widget_hide(gtkconv->add);
+			gtk_widget_show(gtkconv->remove);
 		}
 
 		gtk_widget_show(gtkwin->menu.insert_link);
@@ -2184,14 +2162,16 @@ gray_stuff_out(GaimConversation *conv)
 		/* Account is online */
 
 		/* Deal with buttons */
+		gtk_widget_set_sensitive(gtkconv->add, TRUE);
+		gtk_widget_set_sensitive(gtkconv->remove, TRUE);
 		gtk_widget_set_sensitive(gtkconv->info, (prpl_info->get_info != NULL));
+
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-			gtk_widget_set_sensitive(gtkconv->send, TRUE);
+			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->send_im != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->warn,
 									 (prpl_info->warn != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.im->block,
 									 (prpl_info->add_deny != NULL));
-			gtk_widget_set_sensitive(gtkconv->u.im->add, TRUE);
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->send, (prpl_info->chat_send != NULL));
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite,
@@ -2199,6 +2179,7 @@ gray_stuff_out(GaimConversation *conv)
 		}
 
 		/* Deal with the toolbar */
+		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
 		gtk_widget_set_sensitive(gtkconv->toolbar.image,
 								 (prpl_info->options & OPT_PROTO_IM_IMAGE));
 		gtk_widget_set_sensitive(gtkconv->toolbar.bgcolor,
@@ -2236,17 +2217,19 @@ gray_stuff_out(GaimConversation *conv)
 		/* Account is offline */
 
 		/* Deal with buttons */
+		gtk_widget_set_sensitive(gtkconv->add, FALSE);
+		gtk_widget_set_sensitive(gtkconv->remove, FALSE);
 		gtk_widget_set_sensitive(gtkconv->info, FALSE);
 		gtk_widget_set_sensitive(gtkconv->send, FALSE);
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 			gtk_widget_set_sensitive(gtkconv->u.im->warn, FALSE);
 			gtk_widget_set_sensitive(gtkconv->u.im->block, FALSE);
-			gtk_widget_set_sensitive(gtkconv->u.im->add, FALSE);
 		} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			gtk_widget_set_sensitive(gtkconv->u.chat->invite, FALSE);
 		}
 
 		/* Deal with the toolbar */
+		gtk_widget_set_sensitive(gtkconv->toolbar.link, TRUE);
 		gtk_widget_set_sensitive(gtkconv->toolbar.image, FALSE);
 
 		/* Then deal with menu items */
@@ -2259,7 +2242,7 @@ gray_stuff_out(GaimConversation *conv)
 		gtk_widget_set_sensitive(gtkwin->menu.block, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.add, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.remove, FALSE);
-		gtk_widget_set_sensitive(gtkwin->menu.insert_link, FALSE);
+		gtk_widget_set_sensitive(gtkwin->menu.insert_link, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.insert_image, FALSE);
 	}
 
@@ -2274,67 +2257,6 @@ gray_stuff_out(GaimConversation *conv)
 	}
 	gtk_window_set_icon(GTK_WINDOW(gtkwin->window), window_icon);
 	g_object_unref(G_OBJECT(window_icon));
-}
-
-static void
-update_convo_add_button(GaimConversation *conv)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConvWindow *win;
-	GaimGtkWindow *gtkwin;
-	GaimGtkConversation *gtkconv;
-	GaimConnection *gc;
-	GaimConversationType type;
-	GtkWidget *parent;
-
-	gc      = gaim_conversation_get_gc(conv);
-	win     = gaim_conversation_get_window(conv);
-	type    = gaim_conversation_get_type(conv);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkwin  = GAIM_GTK_WINDOW(win);
-	parent  = gtk_widget_get_parent(gtkconv->u.im->add);
-
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (gaim_find_buddy(gc->account, gaim_conversation_get_name(conv))) {
-		gtkconv->u.im->add =
-			gaim_gtk_change_text(_("Remove"), gtkconv->u.im->add,
-								 GTK_STOCK_REMOVE, type);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
-			_("Remove the user from your buddy list"), NULL);
-
-		gtk_widget_set_sensitive(gtkconv->u.im->add,
-			(gc != NULL && prpl_info->remove_buddy != NULL));
-
-		if (gaim_conv_window_get_active_conversation(win) == conv) {
-			gtk_widget_show(gtkwin->menu.remove);
-			gtk_widget_hide(gtkwin->menu.add);
-		}
-	}
-	else {
-		gtkconv->u.im->add =
-			gaim_gtk_change_text(_("Add"), gtkconv->u.im->add,
-								 GTK_STOCK_ADD, type);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->u.im->add,
-			_("Add the user to your buddy list"), NULL);
-
-		gtk_widget_set_sensitive(gtkconv->u.im->add,
-			(gc != NULL && prpl_info->add_buddy != NULL));
-
-		if (gaim_conv_window_get_active_conversation(win) == conv) {
-			gtk_widget_show(gtkwin->menu.add);
-			gtk_widget_hide(gtkwin->menu.remove);
-		}
-	}
-
-	g_signal_connect(G_OBJECT(gtkconv->u.im->add), "clicked",
-					 G_CALLBACK(add_remove_cb), conv);
-
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->u.im->add,
-					   FALSE, FALSE, 0);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->u.im->add, 3);
-	gtk_button_set_relief(GTK_BUTTON(gtkconv->u.im->add), GTK_RELIEF_NONE);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->u.im->add);
 }
 
 static void
@@ -3258,7 +3180,6 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 	gtkconv->send = gaim_gtk_change_text(_("Send"), gtkconv->send,
 										 GAIM_STOCK_SEND, type);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->send, _("Send"), NULL);
-
 	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
 
 	/* Separator */
@@ -3271,76 +3192,75 @@ setup_im_buttons(GaimConversation *conv, GtkWidget *parent)
 
 	/* Now, um, just kind of all over the place. Huh? */
 
-	/* Add button */
-	if (gaim_find_buddy(gaim_conversation_get_account(conv),
-						gaim_conversation_get_name(conv)) == NULL) {
-
-		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
-										  GTK_STOCK_ADD, type);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
-			_("Add the user to your buddy list"), NULL);
-	}
-	else {
-		gtkim->add = gaim_gtk_change_text(_("Remove"), gtkim->add,
-										  GTK_STOCK_REMOVE, type);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
-			_("Remove the user from your buddy list"), NULL);
-	}
-
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->add,
-					   FALSE, FALSE, 0);
-
 	/* Warn button */
 	gtkim->warn = gaim_gtk_change_text(_("Warn"), gtkim->warn,
 									   GAIM_STOCK_WARN, type);
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->warn,
 						 _("Warn the user"), NULL);
-
-	/* Info button */
-	gtkconv->info = gaim_gtk_change_text(_("Info"), gtkconv->info,
-										 GAIM_STOCK_INFO, type);
-	gtk_box_pack_start(GTK_BOX(parent), gtkconv->info, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->info,
-						 _("Get the user's information"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkim->warn, FALSE, FALSE, 0);
 
 	/* Block button */
 	gtkim->block = gaim_gtk_change_text(_("Block"), gtkim->block,
 										GAIM_STOCK_BLOCK, type);
-	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->block,
 						 _("Block the user"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkim->block, FALSE, FALSE, 0);
 
-	gtk_button_set_relief(GTK_BUTTON(gtkconv->info), GTK_RELIEF_NONE);
-	gtk_button_set_relief(GTK_BUTTON(gtkim->add),    GTK_RELIEF_NONE);
+	/* Add button */
+	gtkconv->add = gaim_gtk_change_text(_("Add"), gtkconv->add,
+									  GTK_STOCK_ADD, type);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->add,
+		_("Add the user to your buddy list"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, FALSE, FALSE, 0);
+
+	/* Remove button */
+	gtkconv->remove = gaim_gtk_change_text(_("Remove"), gtkconv->remove,
+									  GTK_STOCK_REMOVE, type);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->remove,
+		_("Remove the user from your buddy list"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, FALSE, FALSE, 0);
+
+	/* Info button */
+	gtkconv->info = gaim_gtk_change_text(_("Info"), gtkconv->info,
+										 GAIM_STOCK_INFO, type);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->info,
+						 _("Get the user's information"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->info, FALSE, FALSE, 0);
+
 	gtk_button_set_relief(GTK_BUTTON(gtkim->warn),   GTK_RELIEF_NONE);
-	gtk_button_set_relief(GTK_BUTTON(gtkconv->send), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkim->block),  GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->add),    GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->remove), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->info), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->send), GTK_RELIEF_NONE);
 
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->info);
-	gtk_size_group_add_widget(gtkconv->sg, gtkim->add);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->warn);
-	gtk_size_group_add_widget(gtkconv->sg, gtkconv->send);
 	gtk_size_group_add_widget(gtkconv->sg, gtkim->block);
+	gtk_size_group_add_widget(gtkconv->sg, gtkconv->add);
+	gtk_size_group_add_widget(gtkconv->sg, gtkconv->remove);
+	gtk_size_group_add_widget(gtkconv->sg, gtkconv->info);
+	gtk_size_group_add_widget(gtkconv->sg, gtkconv->send);
 
-	gtk_box_reorder_child(GTK_BOX(parent), gtkim->warn,   1);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkim->block,  2);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkim->add,    3);
-	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->info, 4);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkim->warn,     1);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkim->block,    2);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->add,    3);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->remove, 4);
+	gtk_box_reorder_child(GTK_BOX(parent), gtkconv->info,   5);
 
 	gaim_gtkconv_update_buttons_by_protocol(conv);
 
-	g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
-					 G_CALLBACK(send_cb), conv);
-	g_signal_connect(G_OBJECT(gtkconv->info), "clicked",
-					 G_CALLBACK(info_cb), conv);
 	g_signal_connect(G_OBJECT(gtkim->warn), "clicked",
 					 G_CALLBACK(warn_cb), conv);
 	g_signal_connect(G_OBJECT(gtkim->block), "clicked",
 					 G_CALLBACK(block_cb), conv);
-
-	/* The add or remove button */
-	update_convo_add_button(conv);
+	g_signal_connect(G_OBJECT(gtkconv->add), "clicked",
+					 G_CALLBACK(add_remove_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->remove), "clicked",
+					 G_CALLBACK(add_remove_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->info), "clicked",
+					 G_CALLBACK(info_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
+					 G_CALLBACK(send_cb), conv);
 }
 
 static void
@@ -3361,7 +3281,6 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 	gtkconv->send = gaim_gtk_change_text(_("Send"), gtkconv->send,
 										 GAIM_STOCK_SEND, GAIM_CONV_CHAT);
 	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->send, _("Send"), NULL);
-
 	gtk_box_pack_end(GTK_BOX(parent), gtkconv->send, FALSE, FALSE, 0);
 
 	/* Separator */
@@ -3376,15 +3295,35 @@ setup_chat_buttons(GaimConversation *conv, GtkWidget *parent)
 						 _("Invite a user"), NULL);
 	gtk_box_pack_end(GTK_BOX(parent), gtkchat->invite, FALSE, FALSE, 0);
 
+	/* Add button */
+	gtkconv->add = gaim_gtk_change_text(_("Add"), gtkconv->add,
+									  GTK_STOCK_ADD, GAIM_CONV_CHAT);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->add,
+		_("Add the chat to your buddy list"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->add, FALSE, FALSE, 0);
+
+	/* Remove button */
+	gtkconv->remove = gaim_gtk_change_text(_("Remove"), gtkconv->remove,
+									  GTK_STOCK_REMOVE, GAIM_CONV_CHAT);
+	gtk_tooltips_set_tip(gtkconv->tooltips, gtkconv->remove,
+		_("Remove the chat from your buddy list"), NULL);
+	gtk_box_pack_start(GTK_BOX(parent), gtkconv->remove, FALSE, FALSE, 0);
+
 	/* Set the relief on these. */
 	gtk_button_set_relief(GTK_BUTTON(gtkchat->invite), GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->add),    GTK_RELIEF_NONE);
+	gtk_button_set_relief(GTK_BUTTON(gtkconv->remove), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(gtkconv->send),   GTK_RELIEF_NONE);
 
 	/* Callbacks */
-	g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
-					 G_CALLBACK(send_cb), conv);
 	g_signal_connect(G_OBJECT(gtkchat->invite), "clicked",
 					 G_CALLBACK(invite_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->add), "clicked",
+					 G_CALLBACK(add_remove_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->remove), "clicked",
+					 G_CALLBACK(add_remove_cb), conv);
+	g_signal_connect(G_OBJECT(gtkconv->send), "clicked",
+					 G_CALLBACK(send_cb), conv);
 }
 
 static GtkWidget *
@@ -3694,11 +3633,6 @@ setup_chat_pane(GaimConversation *conv)
 	col = gtk_tree_view_column_new_with_attributes(NULL, rend,
 												   "text", 1, NULL);
 	gtk_tree_view_column_set_clickable(GTK_TREE_VIEW_COLUMN(col), TRUE);
-
-#if 0
-	g_signal_connect(G_OBJECT(list), "button_press_event",
-					 G_CALLBACK(right_click_chat), conv);
-#endif
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
@@ -4481,9 +4415,6 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	if (gtkconv->dialogs.log != NULL)
 		gtk_widget_destroy(gtkconv->dialogs.log);
 
-	if (gtkconv->dialogs.search != NULL)
-		gtk_widget_destroy(gtkconv->dialogs.search);
-
 	gtk_widget_destroy(gtkconv->tab_cont);
 	g_object_unref(gtkconv->tab_cont);
 
@@ -5178,7 +5109,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE) {
 
-		gaim_gtkconv_update_buttons_by_protocol(conv);
+		gray_stuff_out(gaim_conv_window_get_active_conversation(win));
 		generate_send_as_items(win, NULL);
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
 			update_tab_icon(conv);
@@ -5190,7 +5121,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_UPDATE_ADD ||
 			 type == GAIM_CONV_UPDATE_REMOVE) {
 
-		update_convo_add_button(conv);
+		gray_stuff_out(conv);
 	}
 	else if (type == GAIM_CONV_UPDATE_ICON)
 	{
