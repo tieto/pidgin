@@ -433,6 +433,15 @@ if test "$enable_perl" = yes ; then
 		AC_MSG_CHECKING(for libperl)
 		AC_CHECK_FUNCS(perl_run, [], enable_perl=no)
 		LIBS="$oldLIBS"
+
+		oldCPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $PERL_CFLAGS"
+		AC_CHECK_HEADERS(EXTERN.h)
+		AC_CHECK_HEADERS(perl.h, [], enable_perl=no,
+		[#if HAVE_EXTERN_H
+		 # include <EXTERN.h>
+		 #endif])
+		CPPFLAGS="$oldCPPFLAGS"
 	fi
 fi
 
