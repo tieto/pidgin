@@ -947,6 +947,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		} else if (!g_strcasecmp(which, "BL") && pos) {
 			gc->deny = g_slist_append(gc->deny, g_strdup(who));
 		} else if (!g_strcasecmp(which, "RL")) {
+		    if (pos) {
 			while(perm) {
 				if(!g_strcasecmp(perm->data, who))
 					new = 0;
@@ -967,6 +968,7 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		                g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list",ap->user, url_decode(ap->friend));
 				do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 			}
+		    }
 			
 			if (pos != tot) 
 				return 1; /* this isn't the last one in the RL, so return. */
