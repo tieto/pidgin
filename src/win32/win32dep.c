@@ -18,7 +18,7 @@
 #include "MinimizeToTray.h"
 #include "systray.h"
 #include "winuser_extra.h"
-#include "IdleTracker.h"
+#include "idletrack.h"
 
 /*
  *  DEFINES & MACROS
@@ -287,8 +287,8 @@ void wgaim_init(void) {
 	/*
 	 *  IdleTracker Initialization
 	 */
-	if(!IdleTrackerInit())
-		debug_printf("IdleTracker failed to initialize\n");
+	if(!wgaim_set_idlehooks())
+		debug_printf("Failed to initialize idle tracker\n");
 }
 
 /* Windows Cleanup */
@@ -299,8 +299,8 @@ void wgaim_cleanup(void) {
 	/* winsock cleanup */
 	WSACleanup( );
 
-	/* IdleTracker cleanup */
-	IdleTrackerTerm();
+	/* Idle tracker cleanup */
+	wgaim_remove_idlehooks();
 	
 	/* Remove systray icon */
 	wgaim_systray_cleanup();
