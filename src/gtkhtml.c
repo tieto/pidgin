@@ -2962,7 +2962,7 @@ static void gtk_html_add_text(GtkHtml * html,
 		static int count = 0;
 		count ++;
 		while (pos < num && (!isspace(text[pos]) || text[pos] == '\n')) pos++;
-		if (pos == num) {
+		if (pos >= num - 1) {
 			pos = num/2;
 			while (pos > 0 && (!isspace(text[pos]) || text[pos] == '\n')) pos--;
 			if (!pos) pos = num / 2;
