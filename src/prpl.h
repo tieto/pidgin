@@ -204,6 +204,8 @@ struct prpl
 	
 	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)(struct gaim_connection *gc);
+	/* user_splits is a GList of g_malloc'd struct proto_user_split */
+	GList *user_splits;
 	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
 	GList *user_opts;
 	GList *(* buddy_menu)(struct gaim_connection *, char *);

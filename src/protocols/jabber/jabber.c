@@ -4207,6 +4207,7 @@ static GList *jabber_actions(struct gaim_connection *gc)
 G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 {
 	/* the NULL's aren't required but they're nice to have */
+	struct proto_user_split *pus;
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_JABBER;
 	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
@@ -4254,6 +4255,18 @@ G_MODULE_EXPORT void jabber_init(struct prpl *ret)
 	ret->send_typing = jabber_send_typing;
 	ret->convo_closed = jabber_convo_closed;
 	ret->rename_group = jabber_rename_group;
+
+	pus = g_new0(struct proto_user_split, 1);
+	pus->sep = '@';
+	pus->label = g_strdup(_("Server:"));
+	pus->def = g_strdup("jabber.org");
+	ret->user_splits = g_list_append(ret->user_splits, pus);
+
+	pus = g_new0(struct proto_user_split, 1);
+	pus->sep = '/';
+	pus->label = g_strdup(_("Resource:"));
+	pus->def = g_strdup("Gaim");
+	ret->user_splits = g_list_append(ret->user_splits, pus);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));

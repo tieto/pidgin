@@ -74,6 +74,12 @@ struct gaim_connection {
 /* set this flag on a gc if you want serv_got_im to autoreply when away */
 #define OPT_CONN_AUTO_RESP	0x00000002
 
+struct proto_user_split {
+	char sep;
+	char *label;
+	char *def;
+};
+
 struct proto_user_opt {
 	char *label;
 	char *def;

@@ -114,9 +114,22 @@ void load_protocol(proto_init pi)
 void unload_protocol(struct prpl *p)
 {
 	GList *c;
+	struct proto_user_split *pus;
 	struct proto_user_opt *puo;
 	if (p->name)
 		g_free(p->name);
+
+	c = p->user_splits;
+	while (c) {
+		pus = c->data;
+		g_free(pus->label);
+		g_free(pus->def);
+		g_free(pus);
+		c = c->next;
+	}
+	g_list_free(p->user_splits);
+	p->user_splits = NULL;
+
 	c = p->user_opts;
 	while (c) {
 		puo = c->data;

@@ -57,6 +57,8 @@
 #define USEROPT_PORT      1
 #define USEROPT_CHARSET   2
 
+#define DEFAULT_SERVER "irc.freenode.net"
+
 static struct prpl *my_protocol = NULL;
 
 /* for win32 compatability */
@@ -89,6 +91,8 @@ struct irc_data {
 	int fd;
 	gboolean online;
 	guint32 timer;
+
+	char *server;
 
 	char *rxqueue;
 	int rxlen;
@@ -1791,16 +1795,16 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	}
 
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
-		   g_get_user_name(), hostname, 
-		   gc->account->proto_opt[USEROPT_SERV], 
-		   gc->account->alias && strlen(gc->account->alias) ? gc->account->alias : "gaim");
+		   g_get_user_name(), hostname,
+		   idata->server,
+		   *gc->account->alias ? gc->account->alias : "gaim");
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", gc->username);
+	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", gc->displayname);
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
 		signoff(gc);
@@ -1816,10 +1820,26 @@ irc_login(struct gaim_account *account)
 	char buf[IRC_BUF_LEN];
 	int rc;
 
-	struct gaim_connection *gc = new_gaim_conn(account);
-	struct irc_data *idata = gc->proto_data = g_new0(struct irc_data, 1);
+	struct gaim_connection *gc;
+	struct irc_data *idata;
+	char **parts;
+	if(!strrchr(account->username, '@')) {
+		char *username = g_strdup(account->username);
+		g_snprintf(account->username, sizeof(account->username), "%s@%s",
+				username, *account->proto_opt[USEROPT_SERV] ?
+				account->proto_opt[USEROPT_SERV] : DEFAULT_SERVER);
+		g_free(username);
+		strcpy(account->proto_opt[USEROPT_SERV], "");
+		save_prefs();
+	}
 
-	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", gc->username);
+	gc = new_gaim_conn(account);
+	idata = gc->proto_data = g_new0(struct irc_data, 1);
+
+	parts = g_strsplit(gc->username, "@", 2);
+	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", parts[0]);
+	idata->server = g_strdup(parts[1]);
+	g_strfreev(parts);
 
 	g_snprintf(buf, sizeof(buf), _("Signon: %s"), gc->username);
 	set_login_progress(gc, 2, buf);
@@ -1830,7 +1850,7 @@ irc_login(struct gaim_account *account)
 	idata->str = g_string_new("");
 	idata->fd = -1;
 
-	rc = proxy_connect(account, account->proto_opt[USEROPT_SERV],
+	rc = proxy_connect(account, idata->server,
 				  account->proto_opt[USEROPT_PORT][0] ?
 				  atoi(account->proto_opt[USEROPT_PORT]) : 6667,
 				  irc_login_callback, gc);
@@ -2813,6 +2833,7 @@ irc_buddy_menu(struct gaim_connection *gc, char *who)
 G_MODULE_EXPORT void 
 irc_init(struct prpl *ret)
 {
+	struct proto_user_split *pus;
 	struct proto_user_opt *puo;
 	ret->protocol = PROTO_IRC;
 	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL;
@@ -2842,11 +2863,11 @@ irc_init(struct prpl *ret)
 	ret->file_transfer_cancel =irc_file_transfer_cancel;
 #endif
 
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Server:"));
-	puo->def = g_strdup("irc.freenode.net");
-	puo->pos = USEROPT_SERV;
-	ret->user_opts = g_list_append(ret->user_opts, puo);
+	pus = g_new0(struct proto_user_split, 1);
+	pus->sep = '@';
+	pus->label = g_strdup(_("Server:"));
+	pus->def = g_strdup(DEFAULT_SERVER);
+	ret->user_splits = g_list_append(ret->user_splits, pus);
 
 	puo = g_new0(struct proto_user_opt, 1);
 	puo->label = g_strdup(_("Port:"));
@@ -2859,7 +2880,7 @@ irc_init(struct prpl *ret)
 	puo->def = g_strdup("ISO-8859-1");
 	puo->pos = USEROPT_CHARSET;
 	ret->user_opts = g_list_append(ret->user_opts, puo);
-	
+
 	my_protocol = ret;
 }
 

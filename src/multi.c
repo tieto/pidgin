@@ -59,6 +59,9 @@ struct mod_account {
 	struct gaim_account *account;
 
 	/* these are temporary */
+	char username[64];
+	char show[400];
+	char password[32];
 	int options;
 	int protocol;
 	char proto_opt[7][256];
@@ -71,9 +74,11 @@ struct mod_account {
 	GtkWidget *pwdbox;
 	GtkWidget *pass;
 	GtkWidget *rempass;
+	GtkWidget *login_frame;
 	GtkWidget *user_frame;
 	GtkWidget *proto_frame;
 	GtkSizeGroup *sg;
+	GList *user_split_entries;
 	GList *opt_entries;
 
 	/* stuff for icon selection */
@@ -120,8 +125,6 @@ static struct mod_account *mod_account_find(struct gaim_account *a)
 	}
 	return NULL;
 }
-
-static void generate_protocol_options(struct mod_account *, GtkWidget *);
 
 
 struct gaim_connection *new_gaim_conn(struct gaim_account *account)
@@ -361,12 +364,46 @@ static GtkWidget *acct_button(const char *text, struct mod_account *ma, int opti
 	return button;
 }
 
+static void process_login_opts(struct mod_account *ma) {
+	struct prpl *p = find_prpl(ma->protocol);
+	const char *entry_text;
+	char *username = g_strdup(gtk_entry_get_text(GTK_ENTRY(ma->name)));
+	char *tmp;
+	GList *entries = ma->user_split_entries;
+	GList *user_splits = NULL;
+	if(p)
+		user_splits = p->user_splits;
+	while(user_splits) {
+		GtkWidget *entry = entries->data;
+		struct proto_user_split *pus = user_splits->data;
+		char tmp_sep[2] = " ";
+		entry_text = gtk_entry_get_text(GTK_ENTRY(entry));
+
+		tmp_sep[0] = pus->sep;
+		tmp = g_strconcat(username, tmp_sep, *entry_text ? entry_text : pus->def, NULL);
+		g_free(username);
+		username = tmp;
+
+		entries = entries->next;
+		user_splits = user_splits->next;
+	}
+
+	g_snprintf(ma->username, sizeof(ma->username), "%s", username);
+	g_free(username);
+
+	entry_text = gtk_entry_get_text(GTK_ENTRY(ma->pass));
+	g_snprintf(ma->password, sizeof(ma->password), "%s", entry_text);
+
+	entry_text = gtk_entry_get_text(GTK_ENTRY(ma->alias));
+	g_snprintf(ma->show, sizeof(ma->show), "%s", entry_text);
+}
+
 static void ok_mod(GtkWidget *w, struct mod_account *ma)
 {
 	GList *tmp;
 	const char *txt;
 	struct gaim_account *a;
-	struct prpl *p;
+	struct prpl *p = find_prpl(ma->protocol);
 	GtkTreeIter iter;
 	int proxytype;
 
@@ -378,13 +415,13 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 
 	a->options = ma->options;
 	a->protocol = ma->protocol;
-	txt = gtk_entry_get_text(GTK_ENTRY(ma->name));
-	g_snprintf(a->username, sizeof(a->username), "%s", txt);
-	txt = gtk_entry_get_text(GTK_ENTRY(ma->alias));
-	g_snprintf(a->alias, sizeof(a->alias), "%s", txt);
-	txt = gtk_entry_get_text(GTK_ENTRY(ma->pass));
+
+	process_login_opts(ma);
+	g_snprintf(a->username, sizeof(a->username), "%s", ma->username);
+	g_snprintf(a->alias, sizeof(a->alias), "%s", ma->show);
+
 	if (a->options & OPT_ACCT_REM_PASS)
-		g_snprintf(a->password, sizeof(a->password), "%s", txt);
+		g_snprintf(a->password, sizeof(a->password), "%s", ma->password);
 	else
 		a->password[0] = '\0';
 
@@ -443,7 +480,7 @@ static void ok_mod(GtkWidget *w, struct mod_account *ma)
 	/*
 	 * See if user registration is supported/required
 	 */
-	if((p = find_prpl(ma->protocol)) == NULL) {
+	if(!p) {
 		/* TBD: error dialog here! (This should never happen, you know...) */
 		fprintf(stderr, "dbg: couldn't find protocol for protocol number %d!\n", ma->protocol);
 		fflush(stderr);
@@ -474,42 +511,31 @@ static void cancel_mod(GtkWidget *w, struct mod_account *ma)
 	gtk_widget_destroy(ma->mod);
 }
 
+static void generate_login_options(struct mod_account *ma, GtkWidget *box);
+static void generate_user_options(struct mod_account *ma, GtkWidget *box);
+static void generate_protocol_options(struct mod_account *ma, GtkWidget *box);
+
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct mod_account *ma = g_object_get_data(G_OBJECT(opt), "mod_account");
-	struct prpl *p, *q;
-	q = find_prpl(proto);
+	struct prpl *p;
 	if (ma->protocol != proto) {
 		int i;
+
 		for (i = 0; i < 7; i++)
 			ma->proto_opt[i][0] = '\0';
 		p = find_prpl(ma->protocol);
 
-		if (!(p->options & OPT_PROTO_NO_PASSWORD) && (q->options & OPT_PROTO_NO_PASSWORD)) {
-			gtk_widget_hide(ma->pwdbox);
-			gtk_widget_hide(ma->rempass);
-		} else if ((p->options & OPT_PROTO_NO_PASSWORD) && !(q->options & OPT_PROTO_NO_PASSWORD)) {
-			gtk_widget_show(ma->pwdbox);
-			gtk_widget_show(ma->rempass);
-		}
-		if (!(p->options & OPT_PROTO_MAIL_CHECK) && (q->options & OPT_PROTO_MAIL_CHECK)) {
-			gtk_widget_show(ma->checkmail);
-		} else if ((p->options & OPT_PROTO_MAIL_CHECK) && !(q->options & OPT_PROTO_MAIL_CHECK)) {
-			gtk_widget_hide(ma->checkmail);
-		}
-
-		if (!(p->options & OPT_PROTO_BUDDY_ICON) && (q->options & OPT_PROTO_BUDDY_ICON)) {
-			gtk_widget_show(ma->iconsel);
-		} else if ((p->options & OPT_PROTO_BUDDY_ICON) && !(q->options & OPT_PROTO_BUDDY_ICON)) {
-			gtk_widget_hide(ma->iconsel);
-		}
-
-		if ((q->options & OPT_PROTO_BUDDY_ICON) || (q->options & OPT_PROTO_MAIL_CHECK))
-			gtk_widget_show(ma->user_frame);
-		else
-			gtk_widget_hide(ma->user_frame);
+		process_login_opts(ma);
 
 		ma->protocol = proto;
+
+		if(!ma->account)
+			g_snprintf(ma->username, sizeof(ma->username), "%s",
+					gtk_entry_get_text(GTK_ENTRY(ma->name)));
+
+		generate_login_options(ma, ma->main);
+		generate_user_options(ma, ma->main);
 		generate_protocol_options(ma, ma->main);
 	}
 }
@@ -659,15 +685,24 @@ static GtkWidget *build_icon_selection(struct mod_account *ma, GtkWidget *box)
 
 static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 {
-	GtkWidget *frame, *frame_parent;
+	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	GList *user_splits = NULL;
+	GList *split_entries;
 
 	struct prpl *p;
 
+	char *username = NULL;
+	char *start;
+
+	if(ma->login_frame)
+		gtk_widget_destroy(ma->login_frame);
+	ma->login_frame = NULL;
+
 	frame = make_frame(box, _("Login Options"));
-	frame_parent = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	ma->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -675,6 +710,21 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_widget_show(hbox);
+
+	label = gtk_label_new(_("Protocol:"));
+	gtk_size_group_add_widget(ma->sg, label);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	make_protocol_menu(hbox, ma);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	p = find_prpl(ma->protocol);
+	if(p)
+		user_splits = p->user_splits;
 
 	label = gtk_label_new(_("Screenname:"));
 	gtk_size_group_add_widget(ma->sg, label);
@@ -683,6 +733,30 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 
 	ma->name = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), ma->name, TRUE, TRUE, 0);
+
+	if(ma->user_split_entries) {
+		g_list_free(ma->user_split_entries);
+		ma->user_split_entries = NULL;
+	}
+
+	while(user_splits) {
+		struct proto_user_split *pus = user_splits->data;
+		GtkWidget *entry;
+
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+		label = gtk_label_new(pus->label);
+		gtk_size_group_add_widget(ma->sg, label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		user_splits = user_splits->next;
+
+		entry = gtk_entry_new();
+		gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
+
+		ma->user_split_entries = g_list_append(ma->user_split_entries, entry);
+	}
 
 	ma->pwdbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), ma->pwdbox, FALSE, FALSE, 0);
@@ -707,29 +781,37 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 	ma->alias = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), ma->alias, TRUE, TRUE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new(_("Protocol:"));
-	gtk_size_group_add_widget(ma->sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	make_protocol_menu(hbox, ma);
-
 	ma->rempass = acct_button(_("Remember Password"), ma, OPT_ACCT_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), ma, OPT_ACCT_AUTO, vbox);
 
-	gtk_widget_show_all(frame_parent);
+	gtk_widget_show_all(ma->login_frame);
 
-	if (ma->account) {
-		gtk_entry_set_text(GTK_ENTRY(ma->name), ma->account->username);
-		gtk_entry_set_text(GTK_ENTRY(ma->alias), ma->account->alias);
-		gtk_entry_set_text(GTK_ENTRY(ma->pass), ma->account->password);
+	if(p)
+		user_splits = g_list_last(p->user_splits);
+
+	username = g_strdup(ma->username);
+	split_entries = g_list_last(ma->user_split_entries);
+
+	while(user_splits) {
+		struct proto_user_split *pus = user_splits->data;
+		GtkWidget *entry = split_entries->data;
+		start = strrchr(username, pus->sep);
+		if(start) {
+			*start = '\0';
+			start++;
+			gtk_entry_set_text(GTK_ENTRY(entry), start);
+		} else {
+			gtk_entry_set_text(GTK_ENTRY(entry), pus->def);
+		}
+		user_splits = user_splits->prev;
+		split_entries = split_entries->prev;
 	}
 
-	p = find_prpl(ma->protocol);
+	gtk_entry_set_text(GTK_ENTRY(ma->name), username);
+	gtk_entry_set_text(GTK_ENTRY(ma->alias), ma->show);
+	gtk_entry_set_text(GTK_ENTRY(ma->pass), ma->password);
+	g_free(username);
+
 	if (p && (p->options & OPT_PROTO_NO_PASSWORD)) {
 		gtk_widget_hide(ma->pwdbox);
 		gtk_widget_hide(ma->rempass);
@@ -751,6 +833,10 @@ static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 	GtkWidget *frame;
 
 	struct prpl *p = find_prpl(ma->protocol);
+
+	if(ma->user_frame)
+		gtk_widget_destroy(ma->user_frame);
+	ma->user_frame = NULL;
 
 	frame = make_frame(box, _("User Options"));
 	ma->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
@@ -1071,6 +1157,10 @@ static void show_acct_mod(struct gaim_account *a)
 			else
 				ma->protocol = -1;
 			g_snprintf(ma->iconfile, sizeof(ma->iconfile), "%s", a->iconfile);
+			g_snprintf(ma->username, sizeof(ma->username), "%s", a->username);
+			g_snprintf(ma->show, sizeof(ma->show), "%s", a->alias);
+			g_snprintf(ma->password, sizeof(ma->password), "%s", a->password);
+
 			for (i = 0; i < 7; i++)
 				g_snprintf(ma->proto_opt[i], sizeof(ma->proto_opt[i]), "%s",
 						a->proto_opt[i]);
