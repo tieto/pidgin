@@ -134,7 +134,12 @@ void  gaim_blist_set_visible (gboolean show)
 
 void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 {
-	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	struct gaim_blist_ui_ops *ops;
+
+	if (buddy->uc == status)
+		return;
+
+	ops = gaimbuddylist->ui_ops;
 	buddy->uc = status;
 
 	if(!(status & UC_UNAVAILABLE))
