@@ -374,9 +374,10 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 								    sg->account);
 			if (!convo)
 				continue;
-			gaim_conv_chat_rename_user(GAIM_CONV_CHAT(convo),
-						   client_entry->nickname,
-						   client_entry2->nickname);
+			if (gaim_conv_chat_find_user(GAIM_CONV_CHAT(convo), client_entry->nickname))
+				gaim_conv_chat_rename_user(GAIM_CONV_CHAT(convo),
+										   client_entry->nickname,
+										   client_entry2->nickname);
 		}
 		silc_hash_table_list_reset(&htl);
 
