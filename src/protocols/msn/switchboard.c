@@ -448,7 +448,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (swboard->conv == NULL)
 	{
 		/* This is a helper switchboard */
-		msn_switchboard_disconnect(swboard);
+		msn_switchboard_destroy(swboard);
 	}
 	else if (swboard->current_users > 1)
 	{
@@ -494,7 +494,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		if (str != NULL)
 			msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
 
-		msn_switchboard_disconnect(swboard);
+		msn_switchboard_destroy(swboard);
 	}
 }
 
@@ -920,6 +920,7 @@ msn_switchboard_connect(MsnSwitchBoard *swboard, const char *host, int port)
 	g_return_val_if_fail(swboard != NULL, FALSE);
 
 	msn_servconn_set_connect_cb(swboard->servconn, connect_cb);
+	msn_servconn_set_disconnect_cb(swboard->servconn, disconnect_cb);
 
 	return msn_servconn_connect(swboard->servconn, host, port);
 }
@@ -928,8 +929,6 @@ void
 msn_switchboard_disconnect(MsnSwitchBoard *swboard)
 {
 	g_return_if_fail(swboard != NULL);
-
-	msn_servconn_set_disconnect_cb(swboard->servconn, disconnect_cb);
 
 	msn_servconn_disconnect(swboard->servconn);
 }

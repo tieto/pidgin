@@ -191,7 +191,14 @@ void
 msn_servconn_disconnect(MsnServConn *servconn)
 {
 	g_return_if_fail(servconn != NULL);
-	g_return_if_fail(servconn->connected);
+
+	if (!servconn->connected)
+	{
+		if (servconn->disconnect_cb != NULL)
+			servconn->disconnect_cb(servconn);
+
+		return;
+	}
 
 	if (servconn->inpa > 0)
 	{
