@@ -35,10 +35,10 @@ faim_export int aim_0001_0020(struct aim_session_t *sess, struct aim_conn_t *con
   /* Hummm.... */
   i = aim_putsnac(tx->data, 0x0001, 0x0020, 0x0000, sess->snac_nextid++);
   i += aimutil_put16(tx->data+i, 0x0010);
-  i += aimutil_put32(tx->data+i, 0x469bf5e7);
-  i += aimutil_put32(tx->data+i, 0x01a19b28);
-  i += aimutil_put32(tx->data+i, 0x54c59ea6);
-  i += aimutil_put32(tx->data+i, 0x88eae54a);
+  i += aimutil_put32(tx->data+i, 0x92bd6757);
+  i += aimutil_put32(tx->data+i, 0x3722cbd3);
+  i += aimutil_put32(tx->data+i, 0x2b048ab9);
+  i += aimutil_put32(tx->data+i, 0xd0b1e4ab);
   
   tx->commandlen = i;
   tx->lock = 0;
