@@ -79,6 +79,10 @@ because we request chatnav rights when we sign on, but I'm not entirely sure.
 It could also be because of setting up the buddy list and retrieving who's
 online.
 
+- If you sit idle for too long, sometimes it disconnects you (typically after a
+few minutes). It may not be due to being idle, but keeping the lagometer on
+seems to help.
+
 - If you receive a message that's too large, gaim segfaults. I haven't watched
 this in gdb or gotten a backtrace on it, so I'm not exactly sure what the
 problem is. I think this actually happens on the TOC side of things too.

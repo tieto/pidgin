@@ -1,4 +1,11 @@
 
+Wed Jun 21 19:38:18 UTC 2000 EWarmenhoven
+	- Wow, long time since I've been here. Anyway, libfaim is now
+	  compiled (not only by default; there's no way not to compile it).
+	- Adam's been working on the RVOUS stuff, but I don't think he's
+	  gotten too far with it. I did have a patch to get file transfer to
+	  work for gaim/faim but never applied it.
+
 Fri Jun  9 08:13:36 UTC 2000 EWarmenhoven
 	- OK, so TOC can do ICQ too, but I don't care. Adam's still cool.
 	- Chat is working almost perfectly now. I haven't figured out why it
