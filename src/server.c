@@ -396,6 +396,14 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	struct conversation *cnv;
 	int new_conv = 0;
 
+	/* we should update the conversation window buttons and menu, if it exists. */
+	cnv = find_conversation(name);
+	if (cnv)
+		set_convo_gc(cnv, gc);
+	/* we do the new_conv check here in case any plugins decide to create it */
+	else
+		new_conv = 1;
+
 	/* plugin stuff. we pass a char ** but we don't want to pass what's been given us
 	 * by the prpls. so we create temp holders and pass those instead. it's basically
 	 * just to avoid segfaults. */
@@ -412,14 +420,6 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 	}
 	name = angel;
 	message = buffy;
-
-	/* we should update the conversation window buttons and menu, if it exists. */
-	cnv = find_conversation(name);
-	if (cnv)
-		set_convo_gc(cnv, gc);
-	/* we do the new_conv check here in case any plugins decide to create it */
-	else
-		new_conv = 1;
 
 	/* TiK, using TOC, sends an automated message in order to get your away message. Now,
 	 * this is one of the biggest hacks I think I've seen. But, in order to be nice to
