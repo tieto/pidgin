@@ -118,7 +118,7 @@ accounts_save_cb(gpointer unused)
 static void
 schedule_accounts_save()
 {
-	if (!accounts_save_timer)
+	if (accounts_save_timer == 0)
 		accounts_save_timer = gaim_timeout_add(5000, accounts_save_cb, NULL);
 }
 

@@ -70,8 +70,7 @@ gaim_connection_destroy(GaimConnection *gc)
 		return;
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection",
-			   "Destroying connection %p\n", gc);
+	gaim_debug_info("connection", "Destroying connection %p\n", gc);
 
 	account = gaim_connection_get_account(gc);
 	gaim_account_set_connection(account, NULL);
@@ -85,7 +84,8 @@ gaim_connection_destroy(GaimConnection *gc)
 	g_free(gc);
 }
 
-static void request_pass_ok_cb(GaimAccount *account, const char *entry)
+static void
+request_pass_ok_cb(GaimAccount *account, const char *entry)
 {
 	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
 
@@ -101,7 +101,7 @@ gaim_connection_register(GaimConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection", "Registering.  gc = %p\n", gc);
+	gaim_debug_info("connection", "Registering.  gc = %p\n", gc);
 
 	ops = gaim_connections_get_ui_ops();
 
@@ -112,8 +112,7 @@ gaim_connection_register(GaimConnection *gc)
 		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
 			gaim_account_get_username(gaim_connection_get_account(gc)));
 
-		gaim_debug(GAIM_DEBUG_ERROR, "connection",
-			   "Could not get prpl info for %p\n", gc);
+		gaim_debug_error("connection", "Could not get prpl info for %p\n", gc);
 		gaim_notify_error(NULL, _("Registration Error"),
 				  message, NULL);
 		g_free(message);
@@ -137,7 +136,7 @@ gaim_connection_register(GaimConnection *gc)
 	/* set this so we don't auto-reconnect after registering */
 	gc->wants_to_die = TRUE;
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling register_user\n");
+	gaim_debug_info("connection", "Calling register_user\n");
 
 	prpl_info->register_user(account);
 }
@@ -152,8 +151,7 @@ gaim_connection_connect(GaimConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection",
-			   "Connecting. gc = %p\n", gc);
+	gaim_debug_info("connection", "Connecting. gc = %p\n", gc);
 
 	ops = gaim_connections_get_ui_ops();
 
@@ -163,10 +161,8 @@ gaim_connection_connect(GaimConnection *gc)
 		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
 			gaim_account_get_username(gaim_connection_get_account(gc)));
 
-		gaim_debug(GAIM_DEBUG_ERROR, "connection",
-			   "Could not get prpl info for %p\n", gc);
-		gaim_notify_error(NULL, _("Connection Error"),
-				  message, NULL);
+		gaim_debug_error("connection", "Could not get prpl info for %p\n", gc);
+		gaim_notify_error(NULL, _("Connection Error"), message, NULL);
 		g_free(message);
 		return;
 	}
@@ -183,7 +179,7 @@ gaim_connection_connect(GaimConnection *gc)
 		gchar *escaped;
 		const gchar *username = gaim_account_get_username(account);
 
-		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requesting password\n");
+		gaim_debug_info("connection", "Requesting password\n");
 		gaim_connection_destroy(gc);
 		escaped = g_markup_escape_text(username, strlen(username));
 		primary = g_strdup_printf(_("Enter password for %s (%s)"), escaped,
@@ -203,7 +199,7 @@ gaim_connection_connect(GaimConnection *gc)
 
 	gaim_signal_emit(gaim_connections_get_handle(), "signing-on", gc);
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
+	gaim_debug_info("connection", "Calling serv_login\n");
 
 	serv_login(account);
 }
@@ -224,8 +220,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 		return;
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection",
-			   "Disconnecting connection %p\n", gc);
+	gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
 
 	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
@@ -262,7 +257,7 @@ gaim_connection_disconnect(GaimConnection *gc)
 	}
 
 	if (!gaim_account_get_remember_password(account))
-		gaim_account_set_password(account,NULL);
+		gaim_account_set_password(account, NULL);
 
 	gaim_connection_destroy(gc);
 }
@@ -276,7 +271,7 @@ gaim_connection_disconnect_cb(gpointer data)
 	if (!gaim_account_get_remember_password(account))
 		gaim_account_set_password(account,NULL);
 
-	if (gc)
+	if (gc != NULL)
 		gaim_connection_disconnect(gc);
 
 	return FALSE;
@@ -326,6 +321,21 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		/* Set the time the account came online */
 		time(&gc->login_time);
 
+		/* XXX - STATUS - Need to handle away at login here. */
+		if (gaim_presence_is_online(presence) == FALSE)
+			gaim_presence_set_status_active(presence, "online", TRUE);
+
+		if (gaim_prefs_get_bool("/core/logging/log_system") &&
+		   gaim_prefs_get_bool("/core/logging/log_own_states")){
+			GaimLog *log = gaim_account_get_log(account);
+			char *msg = g_strdup_printf("+++ %s signed on",
+										gaim_account_get_username(account));
+			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+						   gaim_account_get_username(account), gc->login_time,
+						   msg);
+			g_free(msg);
+		}
+
 		if (ops != NULL && ops->connected != NULL)
 			ops->connected(gc);
 
@@ -342,26 +352,10 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
 
-		/* LOG system_log(log_signon, gc, NULL,
-		   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
-		if(gaim_prefs_get_bool("/core/logging/log_system") &&
-		   gaim_prefs_get_bool("/core/logging/log_own_states")){
-			GaimLog *log = gaim_account_get_log(account);
-			char *msg = g_strdup_printf("+++ %s signed on",
-										gaim_account_get_username(account));
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-						   gaim_account_get_username(account), gc->login_time,
-						   msg);
-			g_free(msg);
-		}
-
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
-		/* XXX - STATUS - Need to handle away at login here. */
-		if (gaim_presence_is_online(presence) == FALSE)
-			gaim_presence_set_status_active(presence, "online", TRUE);
-
 		/* let the prpl know what buddies we pulled out of the local list */
+		/* XXX - Remove this and let the prpl take care of it itself? */
 		for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 				continue;
