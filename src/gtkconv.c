@@ -4200,7 +4200,7 @@ gaim_gtkconv_toggle_smileys(void)
 		
 		conv = (struct gaim_conversation *)cl->data;
 
-		if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4221,7 +4221,7 @@ gaim_gtkconv_toggle_timestamps(void)
 		
 		conv = (struct gaim_conversation *)cl->data;
 
-		if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4244,7 +4244,7 @@ gaim_gtkconv_toggle_spellchk(void)
 		
 		conv = (struct gaim_conversation *)cl->data;
 
-		if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4335,7 +4335,7 @@ start_anim(GtkObject *obj, struct gaim_conversation *conv)
 	struct gaim_gtk_conversation *gtkconv;
 	int delay;
 
-	if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4352,7 +4352,7 @@ stop_anim(GtkObject *obj, struct gaim_conversation *conv)
 {
 	struct gaim_gtk_conversation *gtkconv;
 
-	if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4439,8 +4439,7 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	GdkBitmap *bm;
 	int sf = 0;
 
-	if (conv == NULL ||
-		gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops() ||
+	if (conv == NULL || !GAIM_IS_GTK_CONVERSATION(conv) ||
 		gaim_conversation_get_type(conv) != GAIM_CONV_IM) {
 
 		return;
@@ -4575,8 +4574,7 @@ gaim_gtkconv_update_font_buttons(void)
 	for (l = gaim_get_ims(); l != NULL; l = l->next) {
 		conv = (struct gaim_conversation *)l->data;
 
-		if (gaim_conversation_get_ops(conv) !=
-			gaim_get_gtk_conversation_ops())
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4610,7 +4608,7 @@ gaim_gtkconv_update_tabs(void)
 	for (l = gaim_get_windows(); l != NULL; l = l->next) {
 		win = (struct gaim_window *)l->data;
 
-		if (gaim_window_get_ops(win) != gaim_get_gtk_window_ops())
+		if (!GAIM_IS_GTK_WINDOW(win))
 			continue;
 
 		gtkwin = GAIM_GTK_WINDOW(win);
@@ -4641,8 +4639,7 @@ gaim_gtkconv_update_chat_button_style()
 			if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
 				continue;
 			
-			if (gaim_conversation_get_ops(conv) !=
-				gaim_get_gtk_conversation_ops())
+			if (!GAIM_IS_GTK_CONVERSATION(conv))
 				continue;
 
 			gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -4700,7 +4697,7 @@ gaim_gtkconv_update_buttons_by_protocol(struct gaim_conversation *conv)
 	struct gaim_gtk_conversation *gtkconv;
 	struct gaim_connection *gc;
 
-	if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
 	gc      = gaim_conversation_get_gc(conv);
@@ -4795,7 +4792,7 @@ gaim_gtkwin_get_at_xy(int x, int y)
 	for (l = gaim_get_windows(); l != NULL; l = l->next) {
 		win = (struct gaim_window *)l->data;
 
-		if (gaim_window_get_ops(win) != gaim_get_gtk_window_ops())
+		if (!GAIM_IS_GTK_WINDOW(win))
 			continue;
 
 		gtkwin = GAIM_GTK_WINDOW(win);
@@ -4818,7 +4815,7 @@ gaim_gtkconv_get_tab_at_xy(struct gaim_window *win, int x, int y)
 	gint i, page_num = 0;
 	gboolean first_visible = TRUE;
 
-	if (gaim_window_get_ops(win) != gaim_get_gtk_window_ops())
+	if (!GAIM_IS_GTK_WINDOW(win))
 		return -1;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
@@ -4885,7 +4882,7 @@ gaim_gtkconv_get_dest_tab_at_xy(struct gaim_window *win, int x, int y)
 	GtkWidget *tab;
 	gint i, page_num = 0;
 
-	if (gaim_window_get_ops(win) != gaim_get_gtk_window_ops())
+	if (!GAIM_IS_GTK_WINDOW(win))
 		return -1;
 
 	gtkwin   = GAIM_GTK_WINDOW(win);

@@ -184,11 +184,8 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			struct gaim_conversation *conv = cnv->data;
 			
-			if (gaim_conversation_get_ops(conv) ==
-				gaim_get_gtk_conversation_ops()) {
-
+			if (GAIM_IS_GTK_CONVERSATION(conv))
 				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
-			}
 		}
 	}
 

@@ -301,7 +301,7 @@ gaim_gtk_save_icon_dialog(GtkObject *obj, struct gaim_conversation *conv)
 	if (conv == NULL || gaim_conversation_get_type(conv) != GAIM_CONV_IM)
 		return;
 
-	if (gaim_conversation_get_ops(conv) != gaim_get_gtk_conversation_ops())
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);

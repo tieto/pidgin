@@ -66,7 +66,7 @@ void update_log_convs()
 
 		c = (struct gaim_conversation *)cnv->data;
 
-		if (gaim_conversation_get_ops(c) != gaim_get_gtk_conversation_ops())
+		if (!GAIM_IS_GTK_CONVERSATION(c))
 			continue;
 
 		gtkconv = GAIM_GTK_CONVERSATION(c);

@@ -95,7 +95,7 @@ void serv_close(struct gaim_connection *gc)
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
 
 		/* TODO: Nuke the UI-specific code here. */
-		if (gaim_conversation_get_ops(b) == gaim_get_gtk_conversation_ops())
+		if (GAIM_IS_GTK_CONVERSATION(b))
 			gaim_gtkconv_update_buttons_by_protocol(b);
 	}
 
