@@ -35,20 +35,6 @@
 
 #define PATHSIZE 1024
 
-/* TODO: Should use GaimValue instead of this. */
-struct gaim_blist_node_setting {
-	enum {
-		GAIM_BLIST_NODE_SETTING_BOOL,
-		GAIM_BLIST_NODE_SETTING_INT,
-		GAIM_BLIST_NODE_SETTING_STRING
-	} type;
-	union {
-		gboolean boolean;
-		int integer;
-		char *string;
-	} value;
-};
-
 static GaimBlistUiOps *blist_ui_ops = NULL;
 
 static GaimBuddyList *gaimbuddylist = NULL;
@@ -105,32 +91,32 @@ static void _gaim_blist_hbuddy_free_key(struct _gaim_hbuddy *hb)
  *********************************************************************/
 
 static void
-setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
+value_to_xmlnode(gpointer key, gpointer hvalue, gpointer user_data)
 {
 	const char *name;
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 	xmlnode *node, *child;
 	char buf[20];
 
 	name    = (const char *)key;
-	setting = (struct gaim_blist_node_setting *)value;
+	value   = (GaimValue *)hvalue;
 	node    = (xmlnode *)user_data;
 
 	child = xmlnode_new_child(node, "setting");
 	xmlnode_set_attrib(child, "name", name);
 
-	if (setting->type == GAIM_BLIST_NODE_SETTING_INT) {
+	if (gaim_value_get_type(value) == GAIM_TYPE_INT) {
 		xmlnode_set_attrib(child, "type", "int");
-		snprintf(buf, sizeof(buf), "%d", setting->value.integer);
+		snprintf(buf, sizeof(buf), "%d", gaim_value_get_int(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
-	else if (setting->type == GAIM_BLIST_NODE_SETTING_STRING) {
+	else if (gaim_value_get_type(value) == GAIM_TYPE_STRING) {
 		xmlnode_set_attrib(child, "type", "string");
-		xmlnode_insert_data(child, setting->value.string, -1);
+		xmlnode_insert_data(child, gaim_value_get_string(value), -1);
 	}
-	else if (setting->type == GAIM_BLIST_NODE_SETTING_BOOL) {
+	else if (gaim_value_get_type(value) == GAIM_TYPE_BOOLEAN) {
 		xmlnode_set_attrib(child, "type", "bool");
-		snprintf(buf, sizeof(buf), "%d", setting->value.boolean);
+		snprintf(buf, sizeof(buf), "%d", gaim_value_get_boolean(value));
 		xmlnode_insert_data(child, buf, -1);
 	}
 }
@@ -173,7 +159,7 @@ buddy_to_xmlnode(GaimBlistNode *bnode)
 	}
 
 	/* Write buddy settings */
-	g_hash_table_foreach(buddy->node.settings, setting_to_xmlnode, node);
+	g_hash_table_foreach(buddy->node.settings, value_to_xmlnode, node);
 
 	return node;
 }
@@ -207,7 +193,7 @@ contact_to_xmlnode(GaimBlistNode *cnode)
 	}
 
 	/* Write contact settings */
-	g_hash_table_foreach(cnode->settings, setting_to_xmlnode, node);
+	g_hash_table_foreach(cnode->settings, value_to_xmlnode, node);
 
 	return node;
 }
@@ -234,7 +220,7 @@ chat_to_xmlnode(GaimBlistNode *cnode)
 	g_hash_table_foreach(chat->components, chat_component_to_xmlnode, node);
 
 	/* Write chat settings */
-	g_hash_table_foreach(chat->node.settings, setting_to_xmlnode, node);
+	g_hash_table_foreach(chat->node.settings, value_to_xmlnode, node);
 
 	return node;
 }
@@ -252,7 +238,7 @@ group_to_xmlnode(GaimBlistNode *gnode)
 	xmlnode_set_attrib(node, "name", group->name);
 
 	/* Write settings */
-	g_hash_table_foreach(group->node.settings, setting_to_xmlnode, node);
+	g_hash_table_foreach(group->node.settings, value_to_xmlnode, node);
 
 	/* Write contacts and chats */
 	for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
@@ -2319,17 +2305,14 @@ gaim_blist_request_add_group(void)
 		ui_ops->request_add_group();
 }
 
-static void gaim_blist_node_setting_free(struct gaim_blist_node_setting *setting)
+static void
+gaim_blist_node_setting_free(gpointer data)
 {
-	switch(setting->type) {
-		case GAIM_BLIST_NODE_SETTING_BOOL:
-		case GAIM_BLIST_NODE_SETTING_INT:
-			break;
-		case GAIM_BLIST_NODE_SETTING_STRING:
-			g_free(setting->value.string);
-			break;
-	}
-	g_free(setting);
+	GaimValue *value;
+
+	value = (GaimValue *)data;
+
+	gaim_value_destroy(value);
 }
 
 static void gaim_blist_node_initialize_settings(GaimBlistNode *node)
@@ -2352,110 +2335,112 @@ void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key)
 	schedule_blist_save();
 }
 
-void gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean value)
+void
+gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean data)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	setting = g_new0(struct gaim_blist_node_setting, 1);
-	setting->type = GAIM_BLIST_NODE_SETTING_BOOL;
-	setting->value.boolean = value;
+	value = gaim_value_new(GAIM_TYPE_BOOLEAN);
+	gaim_value_set_boolean(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), setting);
+	g_hash_table_replace(node->settings, g_strdup(key), value);
 
 	schedule_blist_save();
 }
 
-gboolean gaim_blist_node_get_bool(GaimBlistNode* node, const char *key)
+gboolean
+gaim_blist_node_get_bool(GaimBlistNode* node, const char *key)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_val_if_fail(node != NULL, FALSE);
 	g_return_val_if_fail(node->settings != NULL, FALSE);
 	g_return_val_if_fail(key != NULL, FALSE);
 
-	setting = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(node->settings, key);
 
-	if (!setting)
+	if (value == NULL)
 		return FALSE;
 
-	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_BOOL, FALSE);
+	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_BOOLEAN, FALSE);
 
-	return setting->value.boolean;
+	return gaim_value_get_boolean(value);
 }
 
-void gaim_blist_node_set_int(GaimBlistNode* node, const char *key, int value)
+void
+gaim_blist_node_set_int(GaimBlistNode* node, const char *key, int data)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	setting = g_new0(struct gaim_blist_node_setting, 1);
-	setting->type = GAIM_BLIST_NODE_SETTING_INT;
-	setting->value.integer = value;
+	value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), setting);
+	g_hash_table_replace(node->settings, g_strdup(key), value);
 
 	schedule_blist_save();
 }
 
-int gaim_blist_node_get_int(GaimBlistNode* node, const char *key)
+int
+gaim_blist_node_get_int(GaimBlistNode* node, const char *key)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_val_if_fail(node != NULL, 0);
 	g_return_val_if_fail(node->settings != NULL, 0);
 	g_return_val_if_fail(key != NULL, 0);
 
-	setting = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(node->settings, key);
 
-	if (!setting)
+	if (value == NULL)
 		return 0;
 
-	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_INT, 0);
+	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_INT, 0);
 
-	return setting->value.integer;
+	return gaim_value_get_int(value);
 }
 
-void gaim_blist_node_set_string(GaimBlistNode* node, const char *key,
-		const char *value)
+void
+gaim_blist_node_set_string(GaimBlistNode* node, const char *key, const char *data)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(node->settings != NULL);
 	g_return_if_fail(key != NULL);
 
-	setting = g_new0(struct gaim_blist_node_setting, 1);
-	setting->type = GAIM_BLIST_NODE_SETTING_STRING;
-	setting->value.string = g_strdup(value);
+	value = gaim_value_new(GAIM_TYPE_STRING);
+	gaim_value_set_string(value, data);
 
-	g_hash_table_replace(node->settings, g_strdup(key), setting);
+	g_hash_table_replace(node->settings, g_strdup(key), value);
 
 	schedule_blist_save();
 }
 
-const char *gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
+const char *
+gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
 {
-	struct gaim_blist_node_setting *setting;
+	GaimValue *value;
 
 	g_return_val_if_fail(node != NULL, NULL);
 	g_return_val_if_fail(node->settings != NULL, NULL);
 	g_return_val_if_fail(key != NULL, NULL);
 
-	setting = g_hash_table_lookup(node->settings, key);
+	value = g_hash_table_lookup(node->settings, key);
 
-	if (!setting)
+	if (value == NULL)
 		return NULL;
 
-	g_return_val_if_fail(setting->type == GAIM_BLIST_NODE_SETTING_STRING, NULL);
+	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_STRING, NULL);
 
-	return setting->value.string;
+	return gaim_value_get_string(value);
 }
 
 GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n)
