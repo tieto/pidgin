@@ -55,13 +55,13 @@ event_im_recv:
 	check that they are not NULL, and try not to leave them as NULL.
 
 event_im_send:
-	char **who, char **text
+	char *who, char **text
 
 	'who' is the username of the person you're sending the message to.
 	'text' is the actual strict text (with HTML tags and all) of the
 		message you're sending.
 
-	Note that you can modify these values. (You are _not_ encouraged to
+	Note that you can modify outgoing text. (You are _not_ encouraged to
 		do so ;-) .)
 
 event_buddy_signon:
