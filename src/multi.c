@@ -1229,6 +1229,7 @@ void hide_login_progress(struct gaim_connection *gc, char *why)
 	k = g_new0(struct kick_dlg, 1);
 	k->user = gc->user;
 	k->dlg = do_error_dialog(buf, _("Signon Error"));
+	kicks = g_slist_append(kicks, k);
 	gtk_signal_connect(GTK_OBJECT(k->dlg), "destroy", GTK_SIGNAL_FUNC(set_kick_null), k);
 	if (meter) {
 		gtk_widget_destroy(meter->window);
