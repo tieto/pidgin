@@ -180,7 +180,7 @@ text_to_stock(const char *text)
 void *
 gaim_gtk_request_input(const char *title, const char *primary,
 					   const char *secondary, const char *default_value,
-					   gboolean multiline,
+					   gboolean multiline, gboolean masked,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
 					   void *user_data)
@@ -288,6 +288,9 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 		if (default_value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), default_value);
+
+		if (masked)
+			gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 	}
 
 	data->u.input.entry = entry;

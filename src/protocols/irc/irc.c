@@ -1097,7 +1097,8 @@ process_numeric(GaimConnection *gc, char *word[], char *word_eol[])
 	case 433:
 		gaim_request_input(gc, NULL, _("That nick is already in use.  "
 									   "Please enter a new nick"),
-						   NULL, gaim_connection_get_display_name(gc), FALSE,
+						   NULL, gaim_connection_get_display_name(gc),
+						   FALSE, FALSE,
 						   _("OK"), G_CALLBACK(irc_change_nick),
 						   _("Cancel"), NULL, gc);
 		break;

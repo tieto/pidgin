@@ -581,7 +581,7 @@ gaim_request_field_choice_get_labels(const GaimRequestField *field)
 void *
 gaim_request_input(void *handle, const char *title, const char *primary,
 				   const char *secondary, const char *default_value,
-				   gboolean multiline,
+				   gboolean multiline, gboolean masked,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
 				   void *user_data)
@@ -601,7 +601,8 @@ gaim_request_input(void *handle, const char *title, const char *primary,
 		info->type      = GAIM_REQUEST_INPUT;
 		info->handle    = handle;
 		info->ui_handle = ops->request_input(title, primary, secondary,
-											 default_value, multiline,
+											 default_value,
+											 multiline, masked,
 											 ok_text, ok_cb,
 											 cancel_text, cancel_cb,
 											 user_data);

@@ -1178,7 +1178,7 @@ static void yahoo_act_id(GaimConnection *gc, const char *entry)
 static void yahoo_show_act_id(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Active which ID?"), NULL,
-					   gaim_connection_get_display_name(gc), FALSE,
+					   gaim_connection_get_display_name(gc), FALSE, FALSE,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL, gc);
 }

@@ -132,7 +132,7 @@ typedef struct
 {
 	void *(*request_input)(const char *title, const char *primary,
 						   const char *secondary, const char *default_value,
-						   gboolean multiline,
+						   gboolean multiline, gboolean masked,
 						   const char *ok_text, GCallback ok_cb,
 						   const char *cancel_text, GCallback cancel_cb,
 						   void *user_data);
@@ -642,6 +642,7 @@ GList *gaim_request_field_choice_get_labels(const GaimRequestField *field);
  * @param secondary     The secondary information.
  * @param default_value The default value.
  * @param multiline     TRUE if the inputted text can span multiple lines.
+ * @param masked        TRUE if the inputted text should be masked in some way.
  * @param ok_text       The text for the OK button.
  * @param ok_cb         The callback for the OK button.
  * @param cancel_text   The text for the cancel button.
@@ -652,7 +653,8 @@ GList *gaim_request_field_choice_get_labels(const GaimRequestField *field);
  */
 void *gaim_request_input(void *handle, const char *title,
 						 const char *primary, const char *secondary,
-						 const char *default_value, gboolean multiline,
+						 const char *default_value,
+						 gboolean multiline, gboolean masked,
 						 const char *ok_text, GCallback ok_cb,
 						 const char *cancel_text, GCallback cancel_cb,
 						 void *user_data);

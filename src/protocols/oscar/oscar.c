@@ -2434,7 +2434,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 
 static void gaim_auth_request_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
-					   NULL, _("Please authorize me!"), TRUE,
+					   NULL, _("Please authorize me!"), TRUE, FALSE,
 					   _("OK"), G_CALLBACK(gaim_auth_request),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
@@ -2514,7 +2514,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 
 static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
 	gaim_request_input(data->gc, NULL, _("Authorization Denied Message:"),
-					   NULL, _("No reason given."), TRUE,
+					   NULL, _("No reason given."), TRUE, FALSE,
 					   _("OK"), G_CALLBACK(gaim_auth_dontgrant),
 					   _("Cancel"), G_CALLBACK(oscar_free_name_data),
 					   data);
@@ -5926,7 +5926,7 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 static void oscar_show_format_screenname(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("New screenname formatting:"), NULL,
-					   gaim_connection_get_display_name(gc), FALSE,
+					   gaim_connection_get_display_name(gc), FALSE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_format_screenname),
 					   _("Cancel"), NULL,
 					   gc);
@@ -5974,7 +5974,8 @@ static void oscar_change_email(GaimConnection *gc, const char *email)
 
 static void oscar_show_change_email(GaimConnection *gc)
 {
-	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL, FALSE,
+	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL,
+					   FALSE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_change_email),
 					   _("Cancel"), NULL,
 					   gc);
@@ -6034,7 +6035,7 @@ static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 static void oscar_show_setavailmsg(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Available Message:"),
-					   NULL, _("Please talk to me, I'm lonely! (and single)"), TRUE,
+					   NULL, _("Please talk to me, I'm lonely! (and single)"), TRUE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_setavailmsg),
 					   _("Cancel"), NULL,
 					   gc);
