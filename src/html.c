@@ -101,11 +101,11 @@ char *grab_url(char *url)
 	char *webdata = NULL;
         int sock;
         int len;
+	int read_rv;
 	int datalen = 0;
 	struct in_addr *host;
 	char buf[256];
 	char data;
-        FILE *sockfile;
         int startsaving = 0;
         GtkWidget *pw = NULL, *pbar = NULL, *label;
 
@@ -123,17 +123,20 @@ char *grab_url(char *url)
 	if ((sock = connect_address(host->s_addr, website.port)) < 0)
 		return g_strdup("g003: Error opening connection.\n");
 
-	sockfile = fdopen(sock, "r+");
-
 	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\n\n", website.page);
 	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
 	debug_print(debug_buff);
-	fputs(buf, sockfile);
+	write(sock, buf, strlen(buf));
 
         webdata = NULL;
         len = 0;
 	
+	/*
+	 * avoid fgetc(), it causes problems on solaris
 	while ((data = fgetc(sockfile)) != EOF) {
+	*/
+	/* read_rv will be 0 on EOF and < 0 on error, so this should be fine */
+	while ((read_rv = read(sock, &data, 1)) > 0) {
 		if (!data)
 			continue;
 		
