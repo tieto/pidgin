@@ -20,6 +20,7 @@ plugindir = $(libdir)/gaim
 
 autorecon_la_LDFLAGS    = -module -avoid-version
 extplacement_la_LDFLAGS = -module -avoid-version
+gaimrc_la_LDFLAGS       = -module -avoid-version
 history_la_LDFLAGS      = -module -avoid-version
 iconaway_la_LDFLAGS     = -module -avoid-version
 idle_la_LDFLAGS         = -module -avoid-version
@@ -34,6 +35,7 @@ if PLUGINS
 plugin_LTLIBRARIES = \
 	autorecon.la     \
 	extplacement.la  \
+	gaimrc.la        \
 	history.la       \
 	iconaway.la      \
 	idle.la          \
@@ -45,6 +47,7 @@ plugin_LTLIBRARIES = \
 
 autorecon_la_SOURCES    = autorecon.c
 extplacement_la_SOURCES = extplacement.c
+gaimrc_la_SOURCES       = gaimrc.c
 history_la_SOURCES      = history.c
 iconaway_la_SOURCES     = iconaway.c
 idle_la_SOURCES         = idle.c
