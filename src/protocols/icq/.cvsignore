@@ -12,7 +12,7 @@ icqbyteorder.lo
 icqevent.lo
 icqlib.lo
 icqpacket.lo
-libgaimicq.la
+libicq.la
 list.lo
 proxy.lo
 queue.lo
