@@ -94,7 +94,7 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 			t->children = g_realloc (t->children, t->values->len * sizeof (GtkSmileyTree *));
 			t->children [index] = g_new0 (GtkSmileyTree, 1);
 		} else
-			index = (int) pos - (int) t->values->str;
+			index = (int) pos - GPOINTER_TO_INT(t->values->str);
 		
 		t = t->children [index];
 		
@@ -600,7 +600,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 
 		pos = strchr (t->values->str, *x);
 		if (pos)
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [(int) pos - GPOINTER_TO_INT(t->values->str)];
 		else
 			break;
 
@@ -685,7 +685,7 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		
 		pos = strchr (t->values->str, *x);
 		if (pos) {
-			t = t->children [(int) pos - (int) t->values->str];
+			t = t->children [(int) pos - GPOINTER_TO_INT(t->values->str)];
 		} else {
 			return sml ? gtk_smiley_tree_image(imhtml, NULL, text) : NULL;
 		}

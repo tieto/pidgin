@@ -231,7 +231,7 @@ common_send(GaimConversation *conv, const char *message)
 			gc,
 			(type == GAIM_CONV_IM
 			 ? gaim_conversation_get_name(conv)
-			 : (void *)gaim_chat_get_id(GAIM_CHAT(conv))),
+			 : GINT_TO_POINTER(gaim_chat_get_id(GAIM_CHAT(conv)))),
 			&buffy);
 
 	if (buffy == NULL) {

@@ -367,7 +367,7 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 
 	gaim_debug(GAIM_DEBUG_MISC, "browser",
 			   "%s: deleting " MOZILLA_LOCK_PROP " \"%s\" from 0x%x\n",
-			   progname, lock_data, (unsigned int)window);
+			   progname, lock_data, window);
 
 	result = gdk_property_get(window, GDKA_MOZILLA_LOCK,
 				  gdk_x11_xatom_to_atom (XA_STRING),
@@ -382,7 +382,7 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 	} else if (!data || !*data) {
 		gaim_debug(GAIM_DEBUG_ERROR, "browser",
 				   "%s: Invalid data on " MOZILLA_LOCK_PROP
-				   " of wnidow 0x%x\n", progname, (unsigned int)window);
+				   " of window 0x%x\n", progname, window);
 		return;
 	} else if (strcmp((char *)data, lock_data)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "browser",
@@ -476,7 +476,7 @@ static void mozilla_remote_command(GdkWindow * window, const char *command, Bool
 
 	gaim_debug(GAIM_DEBUG_MISC, "browser",
 			   "%s: Writing " MOZILLA_COMMAND_PROP " \"%s\" to 0x%x\n",
-			   progname, command, (unsigned int)window);
+			   progname, command, window);
 
 	gdk_property_change(window, GDKA_MOZILLA_COMMAND,
 			    gdk_x11_xatom_to_atom (XA_STRING),

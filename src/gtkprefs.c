@@ -1948,12 +1948,14 @@ void close_sounddialog(GtkWidget *w, GtkWidget *w2)
 	gtk_widget_destroy(dest);
 }
 
-void do_select_sound(GtkWidget *w, int snd)
+void do_select_sound(GtkWidget *w, gpointer data)
 {
 	const char *file;
 	char *pref;
+	int snd;
 
 	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(sounddialog));
+	snd = GPOINTER_TO_INT(data);
 
 	/* If they type in a directory, change there */
 	if (gaim_gtk_check_if_dir(file, GTK_FILE_SELECTION(sounddialog)))
@@ -1994,7 +1996,7 @@ static void sel_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 
 		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->ok_button),
 						 "clicked",
-						 G_CALLBACK(do_select_sound), (int *)sound_row_sel);
+						 G_CALLBACK(do_select_sound), GINT_TO_POINTER(sound_row_sel));
 
 		g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(sounddialog)->cancel_button),
 						 "clicked",
@@ -2543,7 +2545,7 @@ void default_away_menu_init(GtkWidget *omenu)
 		a = (struct away_message *)awy->data;
 		opt = gtk_menu_item_new_with_label(a->name);
 		g_signal_connect(G_OBJECT(opt), "activate",
-						 G_CALLBACK(set_default_away), (gpointer)index);
+						 G_CALLBACK(set_default_away), GINT_TO_POINTER(index));
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
@@ -2577,7 +2579,7 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 {
 	char buf[14];
 
-	if ((int)d == 1) {
+	if (GPOINTER_TO_INT(d) == 1) {
 		GdkColor fgcolor;
 
 		gtk_color_selection_get_current_color(GTK_COLOR_SELECTION
@@ -2609,17 +2611,18 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 	gaim_conversation_foreach(gaim_gtkconv_update_font_colors);
 }
 
-void set_default_away(GtkWidget *w, gpointer i)
+void set_default_away(GtkWidget *w, gpointer data)
 {
 	struct away_message *default_away = NULL;
 	int length = g_slist_length(away_messages);
+	int i = GPOINTER_TO_INT(data);
 
 	if (away_messages == NULL)
 		default_away = NULL;
-	else if ((int)i >= length)
+	else if (i >= length)
 		default_away = g_slist_nth_data(away_messages, length - 1);
 	else
-		default_away = g_slist_nth_data(away_messages, (int)i);
+		default_away = g_slist_nth_data(away_messages, i);
 
 	if(default_away)
 		gaim_prefs_set_string("/core/away/default_message", default_away->name);

@@ -2160,7 +2160,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	struct oscar_data *od = gc->proto_data;
 	char *tmp;
 	int flags = 0;
-	int convlen;
+	gsize convlen;
 	GError *err = NULL;
 	struct buddyinfo *bi;
 	const char *iconfile;
@@ -4278,7 +4278,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
 		struct stat st;
-		int len;
+		gsize len;
 
 		bi = g_hash_table_lookup(od->buddyinfo, normalize(name));
 		if (!bi) {
@@ -4443,7 +4443,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	fu32_t flags = 0;
 	char *text_html = NULL;
 	char *msg = NULL;
-	int msglen = 0;
+	gsize msglen = 0;
 
 	if (od->rights.maxsiglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM profile."),
@@ -4498,7 +4498,7 @@ static void oscar_set_away_aim(GaimConnection *gc, struct oscar_data *od, const 
 	fu32_t flags = 0;
 	gchar *text_html = NULL;
 	char *msg = NULL;
-	int msglen = 0;
+	gsize msglen = 0;
 
 	if (od->rights.maxawaymsglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),

@@ -2827,7 +2827,7 @@ static void jabber_visible_to_buddy(GaimConnection *gc, const char *name)
  */
 static void set_invisible_to_buddy_status(gpointer key, gpointer val, gpointer data) {
 	struct jabber_buddy_data *jbd = val;
-	gboolean invisible = (gboolean) data;
+	gboolean invisible = GPOINTER_TO_INT(data);
 
 	if(jbd) {
 		if(invisible) {
@@ -2854,7 +2854,7 @@ static void invisible_to_all_buddies(GaimConnection *gc, gboolean invisible)
 	struct jabber_data *jd = gc->proto_data;
 
 	if(jd->buddies != NULL)
-		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, (gpointer) invisible);
+		g_hash_table_foreach(jd->buddies, set_invisible_to_buddy_status, GINT_TO_POINTER(invisible));
 }
 
 static const char *jabber_list_icon(GaimAccount *a, struct buddy *b)

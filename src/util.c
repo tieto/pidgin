@@ -857,7 +857,7 @@ FILE *gaim_mkstemp(gchar **fpath)
 
 char *gaim_try_conv_to_utf8(const char *str)
 {
-	int converted;
+	gsize converted;
 	char *utf8;
 
 	if (str == NULL) {

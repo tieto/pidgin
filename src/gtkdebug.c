@@ -105,7 +105,7 @@ static void
 timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
 				   gpointer data)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), (gboolean)value);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), GPOINTER_TO_INT(value));
 }
 
 static DebugWindow *

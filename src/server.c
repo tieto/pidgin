@@ -615,7 +615,7 @@ void serv_chat_invite(GaimConnection *g, int id, const char *message, const char
 	if (g != NULL && g->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
-	gaim_event_broadcast(event_chat_send_invite, g, (void *)id, name, &buffy);
+	gaim_event_broadcast(event_chat_send_invite, g, id, name, &buffy);
 
 	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->chat_invite)
 		prpl_info->chat_invite(g, id, buffy, name);

@@ -72,7 +72,7 @@ base64_enc(const char *data, int len)
 
 static gboolean
 get_buddy_icon_info(GaimAccount *account, char **base64,
-					char **md5sum, int *file_size, int *base64_size)
+					char **md5sum, size_t *file_size, size_t *base64_size)
 {
 	FILE *fp;
 	struct stat sb;
