@@ -4,7 +4,7 @@ version 0.67
 	* Brought back the message notification plugin (Brian Tarricone)
 	  You'll need to reconfigure your settings for this plugin
 	* New Jabber vCard dialog.
-	* New IRC PRPL (Ethan Blanton)
+	* IRC protocol rewritten (Ethan Blanton)
 	* Various dialog rewrites (Jabber vCard, Add Group, Alias Chat,
 	  Rename Group)
 	* Shows "hiptop" icon for AIM buddies using hiptop
