@@ -4,6 +4,7 @@ version 0.72
 	* Fixed a crash in the Add Chat dialog when selecting an
 	  account that doesn't support chats. Closes bug #821606.
 	* If SSL is not enabled, MSN will load, but error on connect.
+	* Disable Jabber SASL auth until the standard stabilizes
 	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.71 (10/09/2003):
