@@ -83,6 +83,7 @@ DLL_C_SRC =		about.c \
 			blist.c \
 			browser.c \
 			buddy_chat.c \
+			buddyicon.c \
 			connection.c \
 			conversation.c \
 			core.c \

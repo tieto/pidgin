@@ -68,8 +68,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			buddyicon.c \
-			dispatch.c \
+C_SRC =			dispatch.c \
 			error.c \
 			group.c \
 			msg.c \
