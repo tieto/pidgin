@@ -210,7 +210,10 @@ static gjconn gjab_new(char *user, char *pass, void *priv)
 	}
 	gjc->p = p;
 
-	gjc->user = jid_new(p, user);
+	if((gjc->user = jid_new(p, user)) == NULL) {
+		pool_free(p);	/* no need for this anymore! */
+		return (NULL);
+	}
 	gjc->pass = pstrdup(p, pass);
 
 	gjc->state = JCONN_STATE_OFF;
@@ -681,6 +684,23 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 	}
 
 	return FALSE;
+}
+
+/*
+ * Remove a buddy from the (gaim) buddylist (if he's on it)
+ */
+static void jabber_remove_gaim_buddy(struct gaim_connection *gc, char *buddyname)
+{
+	struct buddy *b;
+
+	if ((b = find_buddy(gc, buddyname)) != NULL) {
+		struct group *group;
+
+		group = find_group_by_buddy(gc, buddyname);
+		debug_printf("removing buddy [1]: %s, from group: %s\n", buddyname, group->name);
+		remove_buddy(gc, group, b);
+		do_export(gc);
+	}
 }
 
 /*
@@ -1224,7 +1244,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 
 	buddyname = g_strdup_printf("%s@%s", who->user, who->server);
 
-	if((g = xmlnode_get_tag(x, "group")) != NULL && xmlnode_get_datasz(g) > 0) {
+	if((g = xmlnode_get_tag(x, "group")) != NULL) {
 		groupname = xmlnode_get_data(g);
 	}
 
@@ -1266,15 +1286,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			}
 		}
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
-		if ((b = find_buddy(GJ_GC(gjc), buddyname)) != NULL) {
-			struct group *group;
-
-			group = find_group_by_buddy(GJ_GC(gjc), buddyname);
-			debug_printf("removing buddy [1]: %s, from group: %s\n",
-				buddyname, group->name);
-			remove_buddy(GJ_GC(gjc), group, b);
-			do_export(GJ_GC(gjc));
-		}
+		jabber_remove_gaim_buddy(GJ_GC(gjc), buddyname);
 	}
 	g_free(buddyname);
 
@@ -1623,9 +1635,11 @@ static gboolean jabber_free(gpointer data)
 {
 	struct jabber_data *jd = data;
 
-	gjab_delete(jd->gjc);
-	g_free(jd->gjc->sid);
-	jd->gjc = NULL;
+	if(jd->gjc != NULL) {
+		gjab_delete(jd->gjc);
+		g_free(jd->gjc->sid);
+		jd->gjc = NULL;
+	}
 	g_free(jd);
 
 	return FALSE;
@@ -1653,7 +1667,7 @@ static void jabber_close(struct gaim_connection *gc)
 		}
 
 		/* Free-up the pending queries memories and the list */
-		if(jd->gjc->queries != NULL) {
+		if(jd->gjc != NULL && jd->gjc->queries != NULL) {
 			g_hash_table_foreach_remove(jd->gjc->queries, jabber_destroy_hash, NULL);
 			g_hash_table_destroy(jd->gjc->queries);
 			jd->gjc->queries = NULL;
@@ -1664,7 +1678,8 @@ static void jabber_close(struct gaim_connection *gc)
 
 	if(jd) {
 		g_timeout_add(50, jabber_free, jd);
-		xmlnode_free(jd->gjc->current);
+		if(jd->gjc != NULL)
+			xmlnode_free(jd->gjc->current);
 	}
 	gc->proto_data = NULL;
 }
@@ -1787,7 +1802,15 @@ static void jabber_add_buddy(struct gaim_connection *gc, char *name)
 	if (!strchr(name, '@'))
 		realwho = g_strdup_printf("%s@%s", name, gjc->user->server);
 	else {
-		jid who = jid_new(gjc->p, name);
+		jid who;
+		
+		if((who = jid_new(gjc->p, name)) == NULL) {
+			char *msg = g_strdup_printf("%s: \"%s\"", _("Invalid Jabber I.D."), name);
+			do_error_dialog(msg, _("Jabber Error"));
+			g_free(msg);
+			jabber_remove_gaim_buddy(gc, name);
+			return;
+		}
 		if (who->user == NULL) {
 			/* FIXME: transport */
 			return;
@@ -1927,7 +1950,12 @@ static void jabber_join_chat(struct gaim_connection *gc, GList *data)
 			data->next->next->data);
 	debug_printf("%s\n", realwho);
 
-	Jid = jid_new(gjc->p, realwho);
+	if((Jid = jid_new(gjc->p, realwho)) == NULL) {
+		char *msg = g_strdup_printf("%s: \"%s\"", _("Invalid Jabber I.D."), realwho);
+		do_error_dialog(msg, _("Jabber Error"));
+		g_free(msg);
+		return;
+	}
 
 	if((jc = find_any_chat(gc, Jid)) != NULL) {
 		free(Jid);	/* don't need it, after all */
