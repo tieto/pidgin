@@ -85,6 +85,12 @@ struct proto_user_opt {
 	int pos;
 };
 
+struct proto_buddy_menu {
+	char *label;
+	void (*callback)(struct gaim_connection *, char *);
+	struct gaim_connection *gc;
+};
+
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */
 extern GSList *connections;
 

@@ -592,24 +592,29 @@ static char *yahoo_get_status_string(enum yahoo_status a) {
 	}
 }
 
-static void yahoo_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
+static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who) {
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-	GtkWidget *button;
 	struct buddy *b = find_buddy(gc, who); /* this should never be null. if it is,
 						  segfault and get the bug report. */
-	char buf[1024];
+	static char buf[1024];
 
 	if (b->uc & UC_NORMAL)
-		return;
+		return NULL;
 
+	pbm = g_new0(struct proto_buddy_menu, 1);
 	if ((b->uc >> 5) != YAHOO_STATUS_CUSTOM)
 		g_snprintf(buf, sizeof buf, "Status: %s", yahoo_get_status_string(b->uc >> 5));
 	else
 		g_snprintf(buf, sizeof buf, "Custom Status: %s",
 			   (char *)g_hash_table_lookup(yd->hash, b->name));
-	button = gtk_menu_item_new_with_label(buf);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm->label = buf;
+	pbm->callback = NULL;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
 }
 
 static GList *yahoo_away_states() {

@@ -1,7 +1,6 @@
 #include "config.h"
 
 #include <stdlib.h>
-#include <gtk/gtk.h>
 #include <string.h>
 #include <errno.h>
 #include <stdio.h>
@@ -1321,20 +1320,24 @@ static char *msn_get_away_text(int s)
 	}
 }
 
-static void msn_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+static GList *msn_buddy_menu(struct gaim_connection *gc, char *who)
 {
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 	struct buddy *b = find_buddy(gc, who);
-	char buf[MSN_BUF_LEN];
-	GtkWidget *button;
+	static char buf[MSN_BUF_LEN];
 
 	if (!b || !(b->uc >> 5))
-		return;
+		return m;
 
+	pbm = g_new0(struct proto_buddy_menu, 1);
 	g_snprintf(buf, sizeof(buf), "Status: %s", msn_get_away_text(b->uc >> 5));
+	pbm->label = buf;
+	pbm->callback = NULL;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label(buf);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	return m;
 }
 
 static void msn_add_buddy(struct gaim_connection *gc, char *who)

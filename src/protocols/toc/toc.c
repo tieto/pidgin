@@ -976,18 +976,6 @@ static char **toc_list_icon(int uc)
 	return NULL;
 }
 
-static void toc_info(GtkObject * obj, char *who)
-{
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
-	serv_get_info(gc, who);
-}
-
-static void toc_dir_info(GtkObject * obj, char *who)
-{
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
-	serv_get_dir(gc, who);
-}
-
 static void des_jc()
 {
 	join_chat_entry = NULL;
@@ -1029,21 +1017,24 @@ static void toc_draw_join_chat(struct gaim_connection *gc, GtkWidget *fbox) {
 	gtk_widget_show(join_chat_spin);
 }
 
-static void toc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 {
-	GtkWidget *button;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 
-	button = gtk_menu_item_new_with_label(_("Get Info"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(toc_info), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = toc_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label(_("Get Dir Info"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(toc_dir_info), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Dir Info");
+	pbm->callback = toc_get_dir;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
 }
 
 static GList *toc_user_opts()

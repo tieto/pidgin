@@ -4,8 +4,6 @@ THE CORE:
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
 	Moving GTK/GDK and related things out of the prpls
-		All: buddy_menu: pass connection/name, get back glist of char* and
-		     callback, which takes connection and name. easy enough.
 		All: draw_join_chat (haven't thought about this yet)
 		ICQ and Yahoo: checkbox in convo window (haven't though about it)
 		Jabber: user registration (this is buggy anyway and should probably

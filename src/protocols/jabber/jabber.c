@@ -1871,19 +1871,17 @@ static void jabber_get_info(struct gaim_connection *gc, char *who) {
 	
 }
 
-static void jabber_info(GtkObject *obj, char *who) {
-   	serv_get_info(gtk_object_get_user_data(obj), who);
-}
+static GList *jabber_buddy_menu(struct gaim_connection *gc, char *who) {
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 
-static void jabber_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
-	GtkWidget *button;
-	
-	button = gtk_menu_item_new_with_label(_("Get Info"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-	      		   GTK_SIGNAL_FUNC(jabber_info), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = jabber_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
 }
 
 static GList *jabber_away_states() {

@@ -618,6 +618,17 @@ void pressed_alias_bud(GtkWidget *widget, struct buddy *b)
 	alias_dialog_bud(b);
 }
 
+static void menu_click(GtkObject *obj, char *who)
+{
+	GList *list = gtk_object_get_user_data(obj);
+	GList *first = g_list_first(list);
+	struct proto_buddy_menu *pbm = list->data;
+	if (pbm->callback)
+		pbm->callback(pbm->gc, who);
+	g_list_foreach(first, (GFunc)g_free, NULL);
+	g_list_free(first);
+}
+
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
 {
 	if (!b->connlist) return;
@@ -673,6 +684,8 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 			while (cn) {
 				g = (struct gaim_connection *)cn->data;
 				if (g->prpl->buddy_menu) {
+					GList *mo = (*g->prpl->buddy_menu)(g, b->name);
+
 					menuitem = gtk_menu_item_new_with_label(g->username);
 					gtk_menu_append(GTK_MENU(menu), menuitem);
 					gtk_widget_show(menuitem);
@@ -681,14 +694,41 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 					gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), conmenu);
 					gtk_widget_show(conmenu);
 
-					(*g->prpl->buddy_menu)(conmenu, g, b->name);
+					while (mo) {
+						struct proto_buddy_menu *pbm = mo->data;
+						GtkWidget *button;
+
+						button = gtk_menu_item_new_with_label(pbm->label);
+						gtk_signal_connect(GTK_OBJECT(button), "activate",
+								   GTK_SIGNAL_FUNC(menu_click), b->name);
+						gtk_object_set_user_data(GTK_OBJECT(button), mo);
+						gtk_menu_append(GTK_MENU(conmenu), button);
+						gtk_widget_show(button);
+
+						mo = mo->next;
+					}
 				}
 				cn = g_slist_next(cn);
 			}
 		} else {
 			g = (struct gaim_connection *)cn->data;
-			if (g->prpl->buddy_menu)
-				(*g->prpl->buddy_menu)(menu, g, b->name);
+			if (g->prpl->buddy_menu) {
+				GList *mo = (*g->prpl->buddy_menu)(g, b->name);
+
+				while (mo) {
+					struct proto_buddy_menu *pbm = mo->data;
+					GtkWidget *button;
+
+					button = gtk_menu_item_new_with_label(pbm->label);
+					gtk_signal_connect(GTK_OBJECT(button), "activate",
+							   GTK_SIGNAL_FUNC(menu_click), b->name);
+					gtk_object_set_user_data(GTK_OBJECT(button), mo);
+					gtk_menu_append(GTK_MENU(menu), button);
+					gtk_widget_show(button);
+
+					mo = mo->next;
+				}
+			}
 		}
 
 		/* we send the menu widget so we can add menuitems within a plugin */

@@ -781,21 +781,18 @@ static void zephyr_zloc(struct gaim_connection *gc, char *who)
 					g_strdup(zephyr_normalize(who)));
 }
 
-static void info_callback(GtkObject *obj, char *who)
+static GList *zephyr_buddy_menu(struct gaim_connection *gc, char *who)
 {
-	zephyr_zloc(gtk_object_get_user_data(obj), who);
-}
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 
-static void zephyr_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
-{
-	GtkWidget *button;
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("ZLocate");
+	pbm->callback = zephyr_zloc;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label(_("ZLocate"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			   GTK_SIGNAL_FUNC(info_callback), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	return m;
 }
 
 static void zephyr_set_away(struct gaim_connection *gc, char *state, char *msg)

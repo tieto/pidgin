@@ -1039,9 +1039,8 @@ static void nap_draw_new_user(GtkWidget *box)
 }
 
 
-static void nap_send_browse(GtkObject *w, char *who)
+static void nap_send_browse(struct gaim_connection *gc, char *who)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	gchar buf[NAP_BUF_LEN];
 
 	g_snprintf(buf, NAP_BUF_LEN, "%s", who);
@@ -1065,10 +1064,8 @@ static void destroy_window(GtkObject *w, GtkWidget *win)
 	gtk_widget_destroy(win);
 }
 
-static void nap_show_search(GtkObject *w, void *omit)
+static void nap_show_search(struct gaim_connection *gc, char *omit)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
-
 	if (!search_dialog)
 	{
 		GtkWidget *window;
@@ -1149,21 +1146,24 @@ static void nap_show_search(GtkObject *w, void *omit)
 	gtk_widget_show(search_dialog->window);
 }	
 
-static void nap_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
+static GList *nap_buddy_menu(struct gaim_connection *gc, char *who)
 {
-	GtkWidget *button;
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 
-	button = gtk_menu_item_new_with_label("Browse Files");
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(nap_send_browse), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Browse Files");
+	pbm->callback = nap_send_browse;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label("Search Napster");
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(nap_show_search), NULL);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Search Napster");
+	pbm->callback = nap_show_search;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
 }
 
 static char** nap_list_icon(int uc)

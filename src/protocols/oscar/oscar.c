@@ -2891,16 +2891,6 @@ static char **oscar_list_icon(int uc) {
 	return NULL;
 }
 
-static void oscar_info(GtkObject *obj, char *who) {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
-	serv_get_info(gc, who);
-}
-
-static void oscar_away_msg(GtkObject *obj, char *who) {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(obj);
-	serv_get_away_msg(gc, who);
-}
-
 static int gaim_directim_initiate(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;
 	struct gaim_connection *gc = sess->aux_data;
@@ -3048,44 +3038,44 @@ static void oscar_direct_im(GtkObject *obj, struct ask_do_dir_im *data) {
 	}
 }
 
-static void oscar_ask_direct_im(GtkObject *m, gchar *who) {
+static void oscar_ask_direct_im(struct gaim_connection *gc, gchar *who) {
 	char buf[BUF_LONG];
 	struct ask_do_dir_im *data = g_new0(struct ask_do_dir_im, 1);
 	data->who = who;
-	data->gc = gtk_object_get_user_data(m);
+	data->gc = gc;
 	g_snprintf(buf, sizeof(buf),  _("You have selected to open a Direct IM connection with %s."
 					" Doing this will let them see your IP address, and may be"
 					" a security risk. Do you wish to continue?"), who);
 	do_ask_dialog(buf, data, oscar_direct_im, oscar_cancel_direct_im);
 }
 
-static void oscar_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who) {
-	GtkWidget *button;
+static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 	char *n = g_strdup(normalize(gc->username));
 
-	button = gtk_menu_item_new_with_label(_("Get Info"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			   GTK_SIGNAL_FUNC(oscar_info), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = oscar_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label(_("Get Away Msg"));
-	gtk_signal_connect(GTK_OBJECT(button), "activate",
-			   GTK_SIGNAL_FUNC(oscar_away_msg), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Away Msg");
+	pbm->callback = oscar_get_away_msg;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
 	if (strcmp(n, normalize(who))) {
-		button = gtk_menu_item_new_with_label(_("Direct IM"));
-		gtk_signal_connect(GTK_OBJECT(button), "activate",
-				   GTK_SIGNAL_FUNC(oscar_ask_direct_im), who);
-		gtk_object_set_user_data(GTK_OBJECT(button), gc);
-		gtk_menu_append(GTK_MENU(menu), button);
-		gtk_widget_show(button);
+		pbm = g_new0(struct proto_buddy_menu, 1);
+		pbm->label = _("Direct IM");
+		pbm->callback = oscar_ask_direct_im;
+		pbm->gc = gc;
+		m = g_list_append(m, pbm);
 	}
 	g_free(n);
+
+	return m;
 }
 
 static GList *oscar_user_opts()

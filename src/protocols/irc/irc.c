@@ -24,7 +24,6 @@
 
 
 #include <netdb.h>
-#include <gtk/gtk.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -1978,9 +1977,8 @@ static char **irc_list_icon(int uc)
 }
 
 /* Send out a ping request to the specified user */
-static void irc_send_ping(GtkObject *w, char *who)
+static void irc_send_ping(struct gaim_connection *gc, char *who)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	char buf[BUF_LEN];
 
@@ -2003,27 +2001,24 @@ static void irc_get_info(struct gaim_connection *gc, char *who)
 	write(idata->fd, buf, strlen(buf));
 }
 
-static void irc_send_whois(GtkObject *w, char *who)
+static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 {
-	struct gaim_connection *gc = (struct gaim_connection *)gtk_object_get_user_data(w);
-	irc_get_info(gc, who);
-}
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
 
-static void irc_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *who)
-{
-	GtkWidget *button;
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Ping");
+	pbm->callback = irc_send_ping;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label("Ping");
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(irc_send_ping), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Whois");
+	pbm->callback = irc_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
 
-	button = gtk_menu_item_new_with_label("Whois");
-	gtk_signal_connect(GTK_OBJECT(button), "activate", GTK_SIGNAL_FUNC(irc_send_whois), who);
-	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
+	return m;
 }
 
 
