@@ -640,7 +640,7 @@ GtkWidget *logging_page() {
 static GtkWidget *sndcmd = NULL;
 
 #ifndef _WIN32
-static gint sound_cmd_yeah(GtkEntry *entry, GdkEvent *event, gpointer d)
+static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
 	g_snprintf(sound_cmd, sizeof(sound_cmd), "%s", gtk_entry_get_text(GTK_ENTRY(sndcmd)));
 	return TRUE;
@@ -705,7 +705,7 @@ GtkWidget *sound_page() {
 
 	gtk_widget_set_sensitive(sndcmd, (sound_options & OPT_SOUND_CMD));
 	gtk_box_pack_start(GTK_BOX(hbox), sndcmd, TRUE, TRUE, 5);
-	gtk_signal_connect(GTK_OBJECT(sndcmd), "focus_out_event", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
+	gtk_signal_connect(GTK_OBJECT(sndcmd), "changed", GTK_SIGNAL_FUNC(sound_cmd_yeah), NULL);
 #endif /* _WIN32 */
 	gtk_widget_show_all(ret);
 	return ret;
