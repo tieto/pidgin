@@ -419,42 +419,69 @@ msn_list_emblems(GaimBuddy *b, char **se, char **sw,
 }
 
 static char *
-msn_status_text(GaimBuddy *b)
+msn_status_text(GaimBuddy *buddy)
 {
-	if (b->uc & UC_UNAVAILABLE)
-		return g_strdup(msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
+	GaimPresence *presence = gaim_buddy_get_presence(buddy);
+	GaimStatus *status = gaim_presence_get_active_status(presence);
+
+	if (!gaim_status_is_available(status))
+		return g_strdup(gaim_status_get_name(status));
 
 	return NULL;
 }
 
 static char *
-msn_tooltip_text(GaimBuddy *b)
+msn_tooltip_text(GaimBuddy *buddy)
 {
+	GaimPresence *presence = gaim_buddy_get_presence(buddy);
+	GaimStatus *status = gaim_presence_get_active_status(presence);
 	char *text = NULL;
 
-	if (GAIM_BUDDY_IS_ONLINE(b))
+	if (gaim_presence_is_online(presence))
 	{
 		text = g_strdup_printf(_("\n<b>%s:</b> %s"), _("Status"),
-							   msn_away_get_text(MSN_AWAY_TYPE(b->uc)));
+				gaim_status_get_name(status));
 	}
 
 	return text;
 }
 
 static GList *
-msn_away_states(GaimConnection *gc)
+msn_status_types(GaimAccount *account)
 {
-	GList *m = NULL;
+	GaimStatusType *offline;
+	GaimStatusType *online;
+	GaimStatusType *unavail;
+	GList *types = NULL;
 
-	m = g_list_append(m, _("Available"));
-	m = g_list_append(m, _("Away From Computer"));
-	m = g_list_append(m, _("Be Right Back"));
-	m = g_list_append(m, _("Busy"));
-	m = g_list_append(m, _("On The Phone"));
-	m = g_list_append(m, _("Out To Lunch"));
-	m = g_list_append(m, _("Hidden"));
+	offline = gaim_status_type_new(GAIM_STATUS_OFFLINE,
+			"offline", _("Offline"), FALSE);
+	types = g_list_append(types, offline);
 
-	return m;
+	online = gaim_status_type_new(GAIM_STATUS_ONLINE,
+			"online", _("Online"), FALSE);
+	types = g_list_append(types, online);
+
+	gaim_status_type_new(online, GAIM_STATUS_AVAILABLE, "available",
+			_("Available"), FALSE, FALSE, FALSE);
+	unavail = gaim_status_type_new(online, GAIM_STATUS_UNAVAILABLE,
+			"unavailable", _("Unavailable"),
+			FALSE, FALSE, FALSE);
+
+	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "away",
+			_("Away"), FALSE, TRUE, FALSE);
+	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "brb",
+			_("Be Right Back"), FALSE, TRUE, FALSE);
+	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "busy",
+			_("Busy"), FALSE, TRUE, FALSE);
+	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "phone",
+			_("On The Phone"), FALSE, TRUE, FALSE);
+	gaim_status_type_new(unavail, GAIM_STATUS_AWAY, "lunch",
+			_("Out To Lunch"), FALSE, TRUE, FALSE);
+	gaim_status_type_new(unavail, GAIM_STATUS_HIDDEN, "hidden",
+			_("Hidden"), FALSE, TRUE, FALSE);
+
+	return types;
 }
 
 static GList *
@@ -1648,12 +1675,12 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_list_emblems,		/* list_emblems */
 	msn_status_text,		/* status_text */
 	msn_tooltip_text,		/* tooltip_text */
-	msn_away_states,		/* away_states */
-	msn_blist_node_menu,	/* blist_node_menu */
+	msn_status_types,		/* away_states */
+	msn_blist_node_menu,		/* blist_node_menu */
 	NULL,					/* chat_info */
 	NULL,					/* chat_info_defaults */
-	msn_login,				/* login */
-	msn_close,				/* close */
+	msn_login,			/* login */
+	msn_close,			/* close */
 	msn_send_im,			/* send_im */
 	NULL,					/* set_info */
 	msn_send_typing,		/* send_typing */
@@ -1669,7 +1696,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_add_deny,			/* add_deny */
 	msn_rem_permit,			/* rem_permit */
 	msn_rem_deny,			/* rem_deny */
-	msn_set_permit_deny,	/* set_permit_deny */
+	msn_set_permit_deny,		/* set_permit_deny */
 	NULL,					/* warn */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */

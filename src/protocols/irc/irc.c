@@ -41,7 +41,7 @@ static void irc_buddy_append(char *name, struct irc_buddy *ib, GString *string);
 
 static const char *irc_blist_icon(GaimAccount *a, GaimBuddy *b);
 static void irc_blist_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne);
-static GList *irc_away_states(GaimConnection *gc);
+static GList *irc_status_types(GaimAccount *account);
 static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
 static void irc_login(GaimAccount *account);
@@ -606,27 +606,27 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	NO_BUDDY_ICONS,			/* icon_spec */
-	irc_blist_icon,			/* list_icon */
-	irc_blist_emblems,		/* list_emblems */
+	NO_BUDDY_ICONS,		/* icon_spec */
+	irc_blist_icon,		/* list_icon */
+	irc_blist_emblems,	/* list_emblems */
 	NULL,					/* status_text */
 	NULL,					/* tooltip_text */
-	irc_away_states,		/* away_states */
+	irc_status_types,	/* away_states */
 	NULL,					/* blist_node_menu */
-	irc_chat_join_info,		/* chat_info */
+	irc_chat_join_info,	/* chat_info */
 	irc_chat_info_defaults,	/* chat_info_defaults */
-	irc_login,				/* login */
-	irc_close,				/* close */
-	irc_im_send,			/* send_im */
+	irc_login,		/* login */
+	irc_close,		/* close */
+	irc_im_send,		/* send_im */
 	NULL,					/* set_info */
 	NULL,					/* send_typing */
-	irc_get_info,			/* get_info */
-	irc_set_away,			/* set_away */
+	irc_get_info,		/* get_info */
+	irc_set_status,		/* set_status */
 	NULL,					/* set_idle */
 	NULL,					/* change_passwd */
-	irc_add_buddy,			/* add_buddy */
+	irc_add_buddy,		/* add_buddy */
 	NULL,					/* add_buddies */
-	irc_remove_buddy,		/* remove_buddy */
+	irc_remove_buddy,	/* remove_buddy */
 	NULL,					/* remove_buddies */
 	NULL,					/* add_permit */
 	NULL,					/* add_deny */
@@ -634,13 +634,13 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* rem_deny */
 	NULL,					/* set_permit_deny */
 	NULL,					/* warn */
-	irc_chat_join,			/* join_chat */
+	irc_chat_join,		/* join_chat */
 	NULL,					/* reject_chat */
-	irc_get_chat_name,		/* get_chat_name */
-	irc_chat_invite,		/* chat_invite */
-	irc_chat_leave,			/* chat_leave */
+	irc_get_chat_name,	/* get_chat_name */
+	irc_chat_invite,	/* chat_invite */
+	irc_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper */
-	irc_chat_send,			/* chat_send */
+	irc_chat_send,		/* chat_send */
 	NULL,					/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
@@ -654,7 +654,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */
-	irc_chat_set_topic,		/* set_chat_topic */
+	irc_chat_set_topic,	/* set_chat_topic */
 	NULL,					/* find_blist_chat */
 	irc_roomlist_get_list,	/* roomlist_get_list */
 	irc_roomlist_cancel,	/* roomlist_cancel */
