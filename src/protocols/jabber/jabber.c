@@ -3926,8 +3926,7 @@ static void jabber_setup_set_info(struct gaim_connection *gc)
 	}
 
 	b->title = _("Gaim - Edit Jabber vCard");
-	b->wmclass_name = "set_info";
-	b->wmclass_class = "Gaim";
+	b->role = "set_info";
 	b->instructions->text = g_strdup(multi_entry_instructions);
 	b->entries_title = g_strdup(entries_title);
 

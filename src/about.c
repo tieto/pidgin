@@ -81,7 +81,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_window_set_default_size(GTK_WINDOW(about), 450, -1);
 		g_snprintf(abouttitle, sizeof(abouttitle), _("About Gaim v%s"), VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
-		gtk_window_set_wmclass(GTK_WINDOW(about), "about", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(about), "about");
 		gtk_window_set_policy(GTK_WINDOW(about), FALSE, TRUE, TRUE);
 		gtk_widget_realize(about);
 

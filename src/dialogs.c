@@ -1046,7 +1046,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	a->gc = gc ? gc : connections->data;
 
 	GAIM_DIALOG(a->window);
-	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_buddy", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(a->window), "add_buddy");
 	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
 
@@ -1392,7 +1392,7 @@ void show_privacy_options()
 	
 	privacy_win = pwin = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_policy(GTK_WINDOW(pwin), FALSE, TRUE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(pwin), "privacy", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(pwin), "privacy");
 	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
 	gtk_signal_connect(GTK_OBJECT(pwin), "destroy", GTK_SIGNAL_FUNC(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
@@ -1660,7 +1660,7 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "new_bp", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "new_bp");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
@@ -1944,7 +1944,7 @@ void show_set_dir(struct gaim_connection *gc)
 
 	GAIM_DIALOG(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_dir", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "set_dir");
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
@@ -2129,7 +2129,7 @@ void show_change_passwd(struct gaim_connection *gc)
 
 	GAIM_DIALOG(b->window);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "change_passwd", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "change_passwd");
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
@@ -2226,7 +2226,7 @@ void show_set_info(struct gaim_connection *gc)
 	b->user = tmp;
 
 	GAIM_DIALOG(b->window);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "set_info", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "set_info");
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
@@ -2650,7 +2650,7 @@ void show_find_info(struct gaim_connection *gc)
 	b->gc = gc;
 	GAIM_DIALOG(b->window);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_info", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "find_info");
 	gtk_widget_show(b->window);
 
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
@@ -2806,7 +2806,7 @@ void show_find_email(struct gaim_connection *gc)
 		b->gc = gc;
 	GAIM_DIALOG(b->window);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_email", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(b->window), "find_email");
 	gtk_widget_realize(b->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
@@ -2890,7 +2890,7 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 	if (!c->link_dialog) {
 		struct linkdlg *b = g_new0(struct linkdlg, 1);
 		GAIM_DIALOG(c->link_dialog);
-		gtk_window_set_wmclass(GTK_WINDOW(c->link_dialog), "add_link", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(c->link_dialog), "add_link");
 		dialogwindows = g_list_prepend(dialogwindows, c->link_dialog);
 
 		gtk_widget_set_usize(c->link_dialog, 270, 165);
@@ -3470,7 +3470,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GAIM_DIALOG(ca->window);
 	gtk_widget_set_usize(ca->window, -1, 250);
 	gtk_container_border_width(GTK_CONTAINER(ca->window), 5);
-	gtk_window_set_wmclass(GTK_WINDOW(ca->window), "away_mess", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("Gaim - New away message"));
 	gtk_signal_connect(GTK_OBJECT(ca->window), "delete_event",
 			   GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
@@ -3627,7 +3627,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 	GAIM_DIALOG(dialog);
 	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(dialog), "smiley_dialog", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
 	/* setup boxes */
@@ -3712,7 +3712,7 @@ void alias_dialog_bud(struct buddy *b)
 
 	GAIM_DIALOG(aliasdlg);
 	gtk_window_set_policy(GTK_WINDOW(aliasdlg), FALSE, FALSE, TRUE);
-	gtk_window_set_wmclass(GTK_WINDOW(aliasdlg), "alias_dialog", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(aliasdlg), "alias_dialog");
 	gtk_widget_realize(aliasdlg);
 	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
 
@@ -3883,7 +3883,7 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	GtkWidget *hsep;
 
 	GAIM_DIALOG(window);
-	gtk_window_set_wmclass(GTK_WINDOW(window), "dialog", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(window), "dialog");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
@@ -4056,7 +4056,7 @@ void show_log(char *nm)
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_object_set_user_data(GTK_OBJECT(window), name);
 	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_log_win), NULL);
-	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(window), "log");
 	if (name)
 		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
 	else
@@ -4252,7 +4252,7 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 
 	if (!rename_dialog) {
 		GAIM_DIALOG(rename_dialog);
-		gtk_window_set_wmclass(GTK_WINDOW(rename_dialog), "rename_dialog", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(rename_dialog), "rename_dialog");
 		gtk_window_set_policy(GTK_WINDOW(rename_dialog), FALSE, TRUE, TRUE);
 		gtk_window_set_title(GTK_WINDOW(rename_dialog), _("Gaim - Rename Group"));
 		gtk_signal_connect(GTK_OBJECT(rename_dialog), "destroy",
@@ -4357,7 +4357,7 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 
 	if (!rename_bud_dialog) {
 		GAIM_DIALOG(rename_bud_dialog);
-		gtk_window_set_wmclass(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(rename_bud_dialog), "rename_bud_dialog");
 		gtk_window_set_policy(GTK_WINDOW(rename_bud_dialog), FALSE, TRUE, TRUE);
 		gtk_window_set_title(GTK_WINDOW(rename_bud_dialog), _("Gaim - Rename Buddy"));
 		gtk_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
@@ -5078,8 +5078,7 @@ MultiEntryDlg *multi_entry_dialog_new()
  * data == pointer to MultiEntryDlg with the following
  *         initialized:
  *
- *           wmclass_name
- *           wmclass_class
+ *           role
  *           title
  *	     user
  *           multi_entry_items - pointers to MultiEntryData list
@@ -5101,7 +5100,7 @@ void show_multi_entry_dialog(gpointer data)
 
 	GAIM_DIALOG(b->window);
 	gtk_container_set_border_width(GTK_CONTAINER(b->window), 5);
-	gtk_window_set_wmclass(GTK_WINDOW(b->window), b->wmclass_name, b->wmclass_class);
+	gtk_window_set_role(GTK_WINDOW(b->window), b->role);
 	gtk_window_set_title(GTK_WINDOW (b->window), b->title);
 
 	/* Clean up if user dismisses window via window manager! */

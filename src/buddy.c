@@ -2619,7 +2619,7 @@ void make_buddy_list()
 	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_STATIC);
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
-	gtk_window_set_wmclass(GTK_WINDOW(blist), "buddy_list", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(blist), "buddy_list");
 
 	gtk_widget_realize(blist);
 

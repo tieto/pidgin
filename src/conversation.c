@@ -2813,7 +2813,7 @@ void show_conv(struct conversation *c)
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			if ((convo_options & OPT_CONVO_COMBINE) && (chat_options & OPT_CHAT_ONE_WINDOW))
 				all_chats = all_convos;
-			gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
+			gtk_window_set_role(GTK_WINDOW(win), "conversation");
 			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
@@ -2883,7 +2883,7 @@ void show_conv(struct conversation *c)
 		cont = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		c->window = win;
 		gtk_object_set_user_data(GTK_OBJECT(win), c);
-		gtk_window_set_wmclass(GTK_WINDOW(win), "conversation", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(win), "conversation");
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 		gtk_container_border_width(GTK_CONTAINER(win), 0);
 		gtk_widget_realize(win);

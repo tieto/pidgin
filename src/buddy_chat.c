@@ -267,7 +267,7 @@ void join_chat()
 
 	if (!joinchat) {
 		GAIM_DIALOG(joinchat);
-		gtk_window_set_wmclass(GTK_WINDOW(joinchat), "joinchat", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(joinchat), "joinchat");
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, TRUE, TRUE);
 		gtk_widget_realize(joinchat);
 		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
@@ -1203,7 +1203,7 @@ void show_new_buddy_chat(struct conversation *b)
 			win = all_chats = b->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
 				all_convos = all_chats;
-			gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+			gtk_window_set_role(GTK_WINDOW(win), "buddy_chat");
 			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
@@ -1266,7 +1266,7 @@ void show_new_buddy_chat(struct conversation *b)
 		win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 		b->window = win;
 		gtk_object_set_user_data(GTK_OBJECT(win), b);
-		gtk_window_set_wmclass(GTK_WINDOW(win), "buddy_chat", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(win), "buddy_chat");
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 		gtk_container_border_width(GTK_CONTAINER(win), 10);
 		gtk_widget_realize(win);

@@ -94,8 +94,7 @@ BuddyTickerCreateWindow()
         gtk_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
                 GTK_SIGNAL_FUNC (BuddyTickerDestroyWindow), "WM destroy");
         gtk_window_set_title (GTK_WINDOW(tickerwindow), "Gaim - Buddy Ticker");
-        gtk_window_set_wmclass (GTK_WINDOW(tickerwindow), 
-                                "ticker", "Gaim");
+        gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
 	gtk_widget_realize(tickerwindow);
 
         ticker = gtk_ticker_new();

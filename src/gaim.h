@@ -512,8 +512,7 @@ typedef struct multi_text_data {
  */
 typedef struct multi_entry_dlg {
 	GtkWidget *window;			/* dialog main window */
-	gchar *wmclass_name;			/* window name */
-	gchar *wmclass_class;			/* window class */
+	gchar *role;				/* window role */
 	char *title;				/* window title */
 
 	struct aim_user *user;			/* user info - needed for most everything */

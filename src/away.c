@@ -181,7 +181,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 	if (!imaway) {
 		GAIM_DIALOG(imaway);
-		gtk_window_set_wmclass(GTK_WINDOW(imaway), "imaway", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(imaway), "imaway");
 		if (strlen(a->name))
 			 gtk_window_set_title(GTK_WINDOW(imaway), a->name);
 		else

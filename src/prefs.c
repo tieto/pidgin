@@ -1436,7 +1436,7 @@ void show_prefs()
 
 	/* Create the window */
 	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_wmclass(GTK_WINDOW(prefs), "preferences", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_widget_realize(prefs);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
 	gtk_window_set_policy (GTK_WINDOW(prefs), FALSE, FALSE, TRUE);

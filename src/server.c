@@ -1118,7 +1118,7 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	char *url = g_strdup(u);
 
 	GAIM_DIALOG(window);
-	gtk_window_set_wmclass(GTK_WINDOW(window), "popup", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(window), "popup");
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), "Gaim - Popup");
 	gtk_container_set_border_width(GTK_CONTAINER(window), 5);

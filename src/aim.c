@@ -264,7 +264,7 @@ void show_login()
 
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(mainwindow), "login");
 	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 	gtk_widget_realize(mainwindow);

@@ -859,7 +859,7 @@ static void show_acct_mod(struct aim_user *a)
 	}
 
 	u->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_wmclass(GTK_WINDOW(u->mod), "account", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(u->mod), "account");
 	gtk_widget_realize(u->mod);
 	gtk_window_set_title(GTK_WINDOW(u->mod), _("Gaim - Modify Account"));
 	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, FALSE, TRUE);	/* nothing odd here :) */
@@ -1001,7 +1001,7 @@ static void do_pass_dlg(struct aim_user *u)
 	passes = g_slist_append(passes, p);
 
 	GAIM_DIALOG(p->win);
-	gtk_window_set_wmclass(GTK_WINDOW(p->win), "password", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(p->win), "password");
 	gtk_container_border_width(GTK_CONTAINER(p->win), 5);
 	gtk_signal_connect(GTK_OBJECT(p->win), "destroy", GTK_SIGNAL_FUNC(pass_des), p);
 	gtk_widget_realize(p->win);
@@ -1181,7 +1181,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	
 	acctedit = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
-	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
+	gtk_window_set_role(GTK_WINDOW(acctedit), "accounteditor");
 	gtk_widget_realize(acctedit);
 	gtk_widget_set_usize(acctedit, -1, 250);
 	gtk_window_set_default_size(GTK_WINDOW(acctedit), 550, 250);
@@ -1496,7 +1496,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		meter_win->window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		GAIM_DIALOG(meter_win->window);
 		gtk_window_set_policy(GTK_WINDOW(meter_win->window), 0, 0, 1);
-		gtk_window_set_wmclass(GTK_WINDOW(meter_win->window), "signon", "Gaim");
+		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
 		gtk_window_set_title (GTK_WINDOW (meter_win->window), "Gaim Account Signon");
 		gtk_widget_realize(meter_win->window);
