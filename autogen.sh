@@ -62,7 +62,7 @@ if [ $GETTEXT_VER -eq 11 ]; then
 
 	# Gettext is pure evil. It DEMANDS that we press Return no matter
 	# what. This gets rid of their happy "feature" of doom.
-	sed 's:read < /dev/tty::' `which gettextize` > gaim-gettextize
+	sed 's:read .*< /dev/tty::' `which gettextize` > gaim-gettextize
 	chmod +x gaim-gettextize
 	echo n | ./gaim-gettextize --copy --force --intl --no-changelog || abort
 	rm gaim-gettextize
