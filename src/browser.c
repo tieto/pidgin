@@ -581,7 +581,7 @@ void open_url(GtkWidget *w, char *url)
 
 			args[0] = g_strdup("kfmclient");
 			args[1] = g_strdup("openURL");
-			args[2] = url;;
+			args[2] = url;
 			args[3] = NULL;
 
 			execvp(args[0], args);
