@@ -1327,8 +1327,6 @@ void show_new_buddy_chat(struct conversation *b)
 	b->log_dialog = NULL;
 	sprintf(b->fontface, "%s", fontface);
 	b->hasfont = 0;
-	b->fontsize = fontsize;
-	b->hassize = 0;
 	b->bgcol = bgcolor;
 	b->hasbg = 0;
 	b->fgcol = fgcolor;

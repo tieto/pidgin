@@ -841,8 +841,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			strcpy(buf, buf2);
 		}
 
-		if ((font_options & OPT_FONT_SIZE) || c->hassize) {
-			g_snprintf(buf2, limit, "<FONT SIZE=\"%d\">%s</FONT>", c->fontsize, buf);
+		if (font_options & OPT_FONT_SIZE) {
+			g_snprintf(buf2, limit, "<FONT SIZE=\"%d\">%s</FONT>", fontsize, buf);
 			strcpy(buf, buf2);
 		}
 
@@ -2150,8 +2150,6 @@ void show_conv(struct conversation *c)
 	c->log_dialog = NULL;
 	sprintf(c->fontface, "%s", fontface);
 	c->hasfont = 0;
-	c->fontsize = fontsize;
-	c->hassize = 0;
 	c->bgcol = bgcolor;
 	c->hasbg = 0;
 	c->fgcol = fgcolor;

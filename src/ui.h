@@ -113,8 +113,6 @@ struct conversation {
 	int makesound;
 	char fontface[128];
 	int hasfont;
-	int fontsize;
-	int hassize;
 	GdkColor bgcol;
 	int hasbg;
 	GdkColor fgcol;
