@@ -643,6 +643,7 @@ extern void do_big(GtkWidget *, GtkWidget *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 extern void toggle_spellchk();
+extern void update_buttons_by_protocol(struct conversation *);
 
 /* Functions in toc.c */
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);

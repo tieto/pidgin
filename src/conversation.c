@@ -1644,10 +1644,7 @@ static void convo_sel_send(GtkObject * m, struct gaim_connection *c)
 	struct conversation *cnv = gtk_object_get_user_data(m);
 	cnv->gc = c;
 
-	if (cnv->gc->prpl->set_info == NULL)
-		gtk_widget_set_sensitive(cnv->info, FALSE);
-	else
-		gtk_widget_set_sensitive(cnv->info, TRUE);
+	update_buttons_by_protocol(cnv);
 }
 
 void update_convo_add_button(struct conversation *c)
