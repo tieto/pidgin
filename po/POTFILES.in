@@ -197,6 +197,7 @@ src/gtkconv.c
 src/gtkft.c
 src/gtkimhtml.c
 src/gtkpounce.c
+src/gtkprefs.c
 src/gtkutils.c
 src/html.c
 src/idle.c
