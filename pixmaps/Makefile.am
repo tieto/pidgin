@@ -7,6 +7,7 @@ EXTRA_DIST =	add.xpm				\
 		aol_icon.xpm			\
 		away.xpm			\
 		away_icon.xpm			\
+		bgcolor.xpm			\
 		big.xpm				\
 		bigsmile.xpm			\
 		block.xpm			\
@@ -32,6 +33,7 @@ EXTRA_DIST =	add.xpm				\
 		embarrassed.xpm			\
 		exit_small.xpm			\
 		export_small.xpm		\
+		fgcolor.xpm			\
 		fontface.xpm			\
 		fontface2.xpm			\
 		free_icon.xpm			\

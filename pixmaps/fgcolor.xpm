@@ -1,0 +1,23 @@
+/* XPM */
+static char *fgcolor_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 13 4 1",
+"  c Blue",
+". c Magenta",
+"X c Gray60",
+"o c None",
+/* pixels */
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooooooooooo",
+"oooooooo ooooooo",
+"ooooooo   oooooo",
+"ooooooo   oooooo",
+"oooooo  o  ooooo",
+"oooooo     ooooo",
+"ooooo  ooo  oooo",
+"ooooo  ooo  oooo",
+"oooo    o    ooo",
+"oooooooooooooooo",
+};

@@ -45,7 +45,6 @@
 #include "pixmaps/speaker.xpm"
 #include "pixmaps/smile_icon.xpm"
 #include "pixmaps/wood.xpm"
-#include "pixmaps/palette.xpm"
 #include "pixmaps/link.xpm"
 #include "pixmaps/strike.xpm"
 
@@ -71,6 +70,8 @@
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/gnome_add.xpm"
+#include "pixmaps/fgcolor.xpm"
+#include "pixmaps/bgcolor.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/warn.xpm"
 #include "pixmaps/tb_search.xpm"
@@ -703,7 +704,8 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	quiet_set(c->italic, FALSE);
 	quiet_set(c->underline, FALSE);
 	quiet_set(c->font, FALSE);
-	quiet_set(c->palette, FALSE);
+	quiet_set(c->fgcolorbtn, FALSE);
+	quiet_set(c->bgcolorbtn, FALSE);
 	quiet_set(c->link, FALSE);
         
 	if ((general_options & OPT_GEN_BACK_ON_IM) && awaymessage != NULL) {
@@ -1008,11 +1010,11 @@ void check_everything(GtkWidget *entry)
 		quiet_set(c->italic, FALSE);
      
 	if (invert_tags(entry, "<FONT COLOR", "</FONT>", 0))
-		quiet_set(c->palette, TRUE);
+		quiet_set(c->fgcolorbtn, TRUE);
  	else if (count_tag(entry, "<FONT COLOR", "</FONT>"))
-		quiet_set(c->palette, TRUE);
+		quiet_set(c->fgcolorbtn, TRUE);
 	else
-		quiet_set(c->palette, FALSE);
+		quiet_set(c->fgcolorbtn, FALSE);
 	
 	if (invert_tags(entry, "<FONT FACE", "</FONT>", 0))
 		quiet_set(c->font, TRUE);
@@ -1370,9 +1372,9 @@ static void check_spelling( GtkEditable * editable, gchar * new_text,
 
 
 GtkWidget *build_conv_toolbar(struct conversation *c) {
-        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *palette_i, *link_i, *font_i, *smiley_i;
-        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *palette_p, *link_p, *font_p, *smiley_p;
-        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *palette, *link, *font, *smiley;
+        GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *speaker_i, *wood_i, *fgcolor_i, *bgcolor_i, *link_i, *font_i, *smiley_i;
+        GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *speaker_p, *wood_p, *fgcolor_p, *bgcolor_p, *link_p, *font_p, *smiley_p;
+        GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *speaker, *wood, *fgcolorbtn, *bgcolorbtn, *link, *font, *smiley;
         GdkBitmap *mask;
 	GtkWidget *toolbar;
 	GtkWidget *win;
@@ -1383,15 +1385,21 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	entry = c->entry;
 
 	link_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
-	     &win->style->white, bold_xpm );
+	     &win->style->white, link_xpm );
 	link_p = gtk_pixmap_new(link_i, mask);
 	gtk_widget_show(link_p);
 	gdk_bitmap_unref(mask);
 
-	palette_i = gdk_pixmap_create_from_xpm_d (win->window, &mask,
-             &win->style->white, bold_xpm );
-	palette_p = gtk_pixmap_new(palette_i, mask);
-	gtk_widget_show(palette_p);
+	fgcolor_i = gdk_pixmap_create_from_xpm_d (win->window, &mask,
+             &win->style->white, fgcolor_xpm );
+	fgcolor_p = gtk_pixmap_new(fgcolor_i, mask);
+	gtk_widget_show(fgcolor_p);
+	gdk_bitmap_unref(mask);
+
+	bgcolor_i = gdk_pixmap_create_from_xpm_d (win->window, &mask,
+             &win->style->white, bgcolor_xpm );
+	bgcolor_p = gtk_pixmap_new(bgcolor_i, mask);
+	gtk_widget_show(bgcolor_p);
 	gdk_bitmap_unref(mask);
 
 	wood_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask, 
@@ -1485,10 +1493,14 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 						GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Link"), _("Insert Link"),
 						_("Link"), link_p, GTK_SIGNAL_FUNC(toggle_link), c);                 
-	palette = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+	fgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Color"), _("Text Color"),
-				 	    _("Color"), palette_p, GTK_SIGNAL_FUNC(toggle_color), c);
+				 	    _("Color"), fgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
+	bgcolorbtn = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, _("Color"), _("Background Color"),
+				 	    _("Color"), bgcolor_p, GTK_SIGNAL_FUNC(toggle_color), c);
 	wood = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 					    NULL, _("Logging"), _("Enable logging"),
@@ -1522,7 +1534,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 		gtk_button_set_relief(GTK_BUTTON(underline), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(speaker), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(wood), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(palette), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(fgcolorbtn),  GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(bgcolorbtn), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(link), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(font), GTK_RELIEF_NONE);
 		gtk_button_set_relief(GTK_BUTTON(small), GTK_RELIEF_NONE);
@@ -1532,7 +1545,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	gtk_widget_show(toolbar);
 
 	gdk_pixmap_unref(link_i);
-	gdk_pixmap_unref(palette_i);
+	gdk_pixmap_unref(fgcolor_i);
+	gdk_pixmap_unref(bgcolor_i);
 	gdk_pixmap_unref(wood_i);
 	gdk_pixmap_unref(speaker_i);
 	gdk_pixmap_unref(strike_i);
@@ -1550,7 +1564,8 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	c->italic = italic;
 	c->underline = underline;
 	c->log_button = wood;
-	c->palette = palette;
+	c->fgcolorbtn = fgcolorbtn;
+	c->bgcolorbtn = bgcolorbtn;
 	c->link = link;  
 	c->wood = wood;
 	c->font = font;

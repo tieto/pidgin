@@ -286,7 +286,7 @@ static gint delete_event_dialog(GtkWidget *w, GdkEventAny *e, struct conversatio
 	if (GTK_IS_COLOR_SELECTION_DIALOG(w))
 	{
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->palette), FALSE);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->fgcolorbtn), FALSE);
 		set_state_lock(0);
 		c->color_dialog = NULL;
 	}
@@ -2319,10 +2319,10 @@ static GtkWidget *bgcseld = NULL;
 
 void cancel_color(GtkWidget *widget, struct conversation *c)
 {
- 	if (c->palette && widget)
+ 	if (c->fgcolorbtn && widget)
 	{
 		set_state_lock(1);
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->palette), FALSE);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->fgcolorbtn), FALSE);
 		set_state_lock(0);
 	}
 	dialogwindows = g_list_remove(dialogwindows, c->color_dialog);

@@ -265,7 +265,8 @@ struct conversation {
 	GtkWidget *italic;
 	GtkWidget *bold;
 	GtkWidget *underline;
-	GtkWidget *palette;
+	GtkWidget *fgcolorbtn;
+	GtkWidget *bgcolorbtn;
 	GtkWidget *link;
 	GtkWidget *wood;
 	GtkWidget *log_button;
@@ -406,7 +407,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 844 $"
+#define REVISION "gaim:$Revision: 864 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

@@ -1,0 +1,22 @@
+/* XPM */
+static char *bgcolor_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"15 12 4 1",
+"  c None",
+". c Magenta",
+"X c Gray60",
+"o c Blue",
+/* pixels */
+"ooooooooooooooo",
+"ooooooooooooooo",
+"ooooooo ooooooo",
+"oooooo   oooooo",
+"oooooo   oooooo",
+"ooooo  o  ooooo",
+"ooooo     ooooo",
+"oooo  ooo  oooo",
+"oooo  ooo  oooo",
+"ooo    o    ooo",
+"ooooooooooooooo",
+"ooooooooooooooo",
+};
