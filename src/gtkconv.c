@@ -895,6 +895,20 @@ menu_sendfile_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_sendfile_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	GaimConvWindow *win = (GaimConvWindow *)data;
+	GaimConversation *conv;
+	GaimConnection *gc;
+
+	conv = gaim_conv_window_get_active_conversation(win);
+
+	gc = gaim_conversation_get_gc(conv);
+
+	gaim_prpl_ask_send_file (gc, gaim_conversation_get_name (conv));
+}
+
+static void
 menu_warn_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
@@ -2102,6 +2116,15 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtk_widget_set_sensitive(gtkwin->menu.sendfile, FALSE);
 	}
 
+
+	if (gaim_prpl_has_send_file (gc, gaim_conversation_get_name(conv))) {
+		gtk_widget_show(gtkwin->menu.sendfile);
+		gtk_widget_set_sensitive(gtkwin->menu.sendfile, TRUE);
+	} else {
+		gtk_widget_hide(gtkwin->menu.sendfile);
+		gtk_widget_set_sensitive(gtkwin->menu.sendfile, FALSE);
+	}
+
 	/* Update the menubar */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		gtk_widget_show(gtkwin->menu.view_log);
@@ -2963,6 +2986,9 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/Send _File..."), NULL, menu_sendfile_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INVITE },
 
+	{ N_("/Conversation/Send _File..."), NULL, menu_sendfile_cb, 0,
+	  "<StockItem>", GAIM_STOCK_INVITE },
+
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
 
 	{ N_("/Conversation/Insert _URL..."), NULL, menu_insert_link_cb, 0,
@@ -3050,6 +3076,10 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.invite =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/Invite..."));
+
+	gtkwin->menu.sendfile =
+		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
+									N_("/Conversation/Send File..."));
 
 	gtkwin->menu.sendfile =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
