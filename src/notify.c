@@ -34,7 +34,7 @@ typedef struct
 } GaimNotifyInfo;
 
 void *
-gaim_notify_message(void *handle, GaimNotifyType type,
+gaim_notify_message(void *handle, GaimNotifyMsgType type,
 					const char *title, const char *primary,
 					const char *secondary, GCallback cb, void *user_data)
 {
