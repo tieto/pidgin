@@ -37,6 +37,7 @@ extern "C" {
 #define GTK_IS_IMHTML(obj)         (GTK_CHECK_TYPE ((obj), GTK_TYPE_IMHTML))
 #define GTK_IS_IMHTML_CLASS(klass) (GTK_CHECK_CLASS_TYPE ((klass), GTK_TYPE_IMHTML))
 #define GTK_IMHTML_SCALABLE(obj)   ((GtkIMHtmlScalable *)obj)
+#define GTK_IMHTML_COPYABLE(obj)   ((GtkIMHtmlCopyable *)obj)
 
 typedef struct _GtkIMHtml			GtkIMHtml;
 typedef struct _GtkIMHtmlClass		GtkIMHtmlClass;
@@ -46,16 +47,7 @@ typedef struct _GtkIMHtmlSmiley		GtkIMHtmlSmiley;
 typedef struct _GtkIMHtmlScalable	GtkIMHtmlScalable;
 typedef struct _GtkIMHtmlImage		GtkIMHtmlImage;
 typedef struct _GtkIMHtmlHr			GtkIMHtmlHr;
-
-
-typedef struct {
-	GtkTextMark *start;
-	GtkTextMark *end;
-	char *start_tag;
-	char *end_tag;
-	GtkTextBuffer *buffer;
-	GtkTextTag *tag;
-} GtkIMHtmlFormatSpan;
+typedef struct _GtkIMHtmlCopyable       GtkIMHtmlCopyable;
 
 struct _GtkIMHtml {
 	GtkTextView text_view;
@@ -64,7 +56,6 @@ struct _GtkIMHtml {
 	gboolean comments, smileys;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
-	GdkCursor *text_cursor;
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
 
@@ -78,21 +69,9 @@ struct _GtkIMHtml {
 	GList *scalables;
 	GdkRectangle old_rect;
 
-	gchar *search_string;
+	GSList *copyables;
 
-	gboolean editable;
-	struct {
-		GtkIMHtmlFormatSpan *bold;
-		GtkIMHtmlFormatSpan *italic;
-		GtkIMHtmlFormatSpan *underline;
-		GtkIMHtmlFormatSpan *forecolor;
-		GtkIMHtmlFormatSpan *backcolor;
-		GtkIMHtmlFormatSpan *fontface;
-		GtkIMHtmlFormatSpan *sizespan;
-		int fontsize;
-	} edit;
-	char *clipboard_string;
-	GList *format_spans;
+	gchar *search_string;
 };
 
 struct _GtkIMHtmlClass {
@@ -126,6 +105,11 @@ struct _GtkIMHtmlScalable {
 	void (*scale)(struct _GtkIMHtmlScalable *, int, int);
 	void (*add_to)(struct _GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 	void (*free)(struct _GtkIMHtmlScalable *);
+};
+
+struct _GtkIMHtmlCopyable {
+	GtkTextMark *mark;
+	char *text;
 };
 
 struct _GtkIMHtmlImage {
@@ -197,24 +181,6 @@ void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *, GtkIMHtml *, GtkTextIter *);
 /* Search functions */
 gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text);
 void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
-
-/* Editable stuff */
-void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
-gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
-gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
-gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
-gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
-gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
-gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
-gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
-void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
-void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley);
-void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size);
-void gtk_imhtml_font_shrink(GtkIMHtml *imhtml);
-void gtk_imhtml_font_grow(GtkIMHtml *imhtml);
-char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
-char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
-char *gtk_imhtml_get_text(GtkIMHtml *imhtml);
 
 #ifdef __cplusplus
 }

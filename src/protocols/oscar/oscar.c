@@ -5458,17 +5458,6 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(status);
 		}
 
-		/* XXX REMOVE THIS WHOLE CHUNCK OF CODE WHEN WE FIGURE THIS OUT */
-		if (userinfo != NULL) {
-			/* maybe this will help us figure out the rediculous online times */
-			gaim_debug_info("oscar", "time(NULL): %u\n"
-					"user->onlinesince: %u\n"
-					"gc->login_time_official: %u\n"
-					"gc->login_time: %u\n",
-					time(NULL), userinfo->onlinesince, gc->login_time_official,
-					gc->login_time);
-		}
-
 		if ((bi != NULL) && (bi->ipaddr)) {
 			char *tstr =  g_strdup_printf("%hhu.%hhu.%hhu.%hhu",
 							(bi->ipaddr & 0xff000000) >> 24,
