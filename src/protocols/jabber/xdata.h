@@ -26,6 +26,6 @@
 #include "xmlnode.h"
 
 typedef void (*jabber_x_data_cb)(JabberStream *js, xmlnode *result, gpointer user_data);
-void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
+void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
 
 #endif /* _GAIM_JABBER_XDATA_H_ */

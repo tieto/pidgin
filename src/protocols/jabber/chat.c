@@ -229,6 +229,12 @@ void jabber_chat_destroy(JabberChat *chat)
 
 	g_hash_table_remove(js->chats, jabber_normalize(NULL, room_jid));
 	g_free(room_jid);
+}
+
+void jabber_chat_free(JabberChat *chat)
+{
+	if(chat->config_dialog_handle)
+		gaim_request_close(chat->config_dialog_type, chat->config_dialog_handle);
 
 	g_free(chat->room);
 	g_free(chat->server);
@@ -314,7 +320,8 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 				continue;
 
 			if(!strcmp(xmlns, "jabber:x:data")) {
-				jabber_x_data_request(js, x, jabber_chat_room_configure_x_data_cb, chat);
+				chat->config_dialog_type = GAIM_REQUEST_FIELDS;
+				chat->config_dialog_handle = jabber_x_data_request(js, x, jabber_chat_room_configure_x_data_cb, chat);
 				return;
 			}
 		}
@@ -358,6 +365,8 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 	if(!chat)
 		return;
 
+	chat->config_dialog_handle = NULL;
+
 	if(!chat->muc) {
 		gaim_notify_error(chat->js->gc, _("Room Configuration Error"), _("Room Configuration Error"),
 				_("This room is not capable of being configured"));
@@ -385,6 +394,8 @@ void jabber_chat_create_instant_room(JabberChat *chat) {
 
 	if(!chat)
 		return;
+
+	chat->config_dialog_handle = NULL;
 
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
 			"http://jabber.org/protocol/muc#owner");

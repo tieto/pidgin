@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "connection.h"
 #include "conversation.h"
+#include "request.h"
 #include "roomlist.h"
 
 #include "jabber.h"
@@ -38,6 +39,8 @@ typedef struct _JabberChat {
 	GaimConversation *conv;
 	gboolean muc;
 	gboolean xhtml;
+	GaimRequestType config_dialog_type;
+	void *config_dialog_handle;
 } JabberChat;
 
 GList *jabber_chat_info(GaimConnection *gc);
@@ -46,6 +49,7 @@ JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);
 JabberChat *jabber_chat_find_by_id(JabberStream *js, int id);
 void jabber_chat_destroy(JabberChat *chat);
+void jabber_chat_free(JabberChat *chat);
 gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name);
 void jabber_chat_invite(GaimConnection *gc, int id, const char *message,
 		const char *name);

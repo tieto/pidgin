@@ -146,8 +146,9 @@ static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, GaimRequest
 	cb(js, result, user_data);
 }
 
-void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data)
+void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data)
 {
+	void *handle;
 	xmlnode *fn, *x;
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
@@ -332,7 +333,8 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 	if((x = xmlnode_get_child(packet, "instructions")))
 		instructions = xmlnode_get_data(x);
 
-	gaim_request_fields(js->gc, title, title, instructions, fields, _("OK"), G_CALLBACK(jabber_x_data_ok_cb),
+	handle = gaim_request_fields(js->gc, title, title, instructions, fields,
+			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb), data);
 
 	if(title)
@@ -340,6 +342,7 @@ void jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb c
 	if(instructions)
 		g_free(instructions);
 
+	return handle;
 }
 
 

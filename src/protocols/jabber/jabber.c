@@ -400,7 +400,7 @@ jabber_login(GaimAccount *account)
 	js->buddies = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
-			g_free, NULL);
+			g_free, (GDestroyNotify)jabber_chat_free);
 	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
 	js->user = jabber_id_new(gaim_account_get_username(account));
 	js->next_id = g_random_int();

@@ -276,7 +276,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					const char *code = xmlnode_get_attrib(z, "code");
 					if(code && !strcmp(code, "201")) {
 						chat = jabber_chat_find(js, jid->node, jid->domain);
-						gaim_request_action(js->gc, _("Create New Room"),
+						chat->config_dialog_type = GAIM_REQUEST_ACTION;
+						chat->config_dialog_handle =
+							gaim_request_action(js->gc, _("Create New Room"),
 								_("Create New Room"),
 								_("You are creating a new room.  Would you like to "
 									"configure it, or accept the default settings?"),

@@ -53,6 +53,7 @@ version 0.76cvs:
 	* Buddy pounces for an account are removed when the account is
 	  deleted (Gary Kramlich)
 	* Various bug and memory leak fixes (Gary Kramlich)
+	* Assorted SSL crashfixes
 
 	Translations:
 	* Catalan translation updated (Xan (DXpublica))
