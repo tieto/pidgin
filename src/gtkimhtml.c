@@ -1964,7 +1964,14 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml)
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml)
 {
 	GtkIMHtmlFormatSpan *span = NULL;
+	GtkTextIter end;
+
 	gtk_text_iter_forward_chars(iter, len);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
+	gtk_text_iter_forward_char(&end);
+	
+	if (!gtk_text_iter_equal(&end, iter))
+		return;
 
 	if (!imhtml->editable)
 		return;
@@ -1972,7 +1979,6 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 	if ((span = imhtml->edit.bold)) {
 		GtkTextIter bold;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &bold, span->start);
-		gtk_text_iter_forward_chars(iter, len);
 		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &bold, iter);
 	}
 
