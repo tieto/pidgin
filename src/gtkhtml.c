@@ -3422,8 +3422,11 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					if (sscanf(d, "%x", &colorv)
 						&& !(options & HTML_OPTION_NO_COLOURS))
 					{
-						current->bgcol = get_color(colorv, map);
-						current->ownbg = 1;
+						if (colorv == 0xffffff &&
+						    !(display_options & OPT_DISP_IGN_WHITE)) {
+							current->bgcol = get_color(colorv, map);
+							current->ownbg = 1;
+						}
 					}
 				}
 				else if (!strncasecmp(tag, "/FONT", strlen("/FONT")))

@@ -364,6 +364,7 @@ static void convo_page()
 
 	gaim_button(_("Show graphical smileys"), &display_options, OPT_DISP_SHOW_SMILEY, box);
 	gaim_button(_("Ignore incoming colors"), &display_options, OPT_DISP_IGNORE_COLOUR, box);
+	gaim_button(_("Ignore white backgrounds"), &display_options, OPT_DISP_IGN_WHITE, box);
 	gaim_button(_("Show timestamp on messages"), &display_options, OPT_DISP_SHOW_TIME, box);
 
 	sep = gtk_hseparator_new();
