@@ -147,6 +147,8 @@ static void ref_list_callback(gpointer data, char *text)
 
 	if (!text)
 		return;
+	if (!parent)
+		return;
 
 	len = strlen(text);
 
