@@ -13,12 +13,13 @@
 
 #include "stdafx.h"
 #include "resource.h"
+#include "MinimizeToTray.h"
+#include "systray.h"
 
 /*
  *  DEFINES & MACROS
  */
-#define WM_TRAYMESSAGE WM_USER
-#define GAIM_SYSTRAY_HINT "Gaim Instant Messenger"
+
 
 /*
  * LOCALS
@@ -28,56 +29,28 @@ static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
 static int bhide_icon;
 
+
 /*
  *  GLOBALS
  */
 HINSTANCE gaimexe_hInstance = 0;
 HINSTANCE gaimdll_hInstance = 0;
 
+
 /*
  *  STATIC CODE
  */
 
-static void ShowNotifyIcon(HWND hWnd,BOOL bAdd)
-{
-	NOTIFYICONDATA nid;
-	ZeroMemory(&nid,sizeof(nid));
-	nid.cbSize=sizeof(NOTIFYICONDATA);
-	nid.hWnd=hWnd;
-	nid.uID=0;
-	nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
-	nid.uCallbackMessage=WM_TRAYMESSAGE;
-	nid.hIcon=LoadIcon(gaimexe_hInstance,MAKEINTRESOURCE(IDI_ICON2));
-	lstrcpy(nid.szTip,TEXT(GAIM_SYSTRAY_HINT));
-	
-	if(bAdd)
-		Shell_NotifyIcon(NIM_ADD,&nid);
-	else
-		Shell_NotifyIcon(NIM_DELETE,&nid);
-}
 
-static GdkFilterReturn traymsg_filter_func( GdkXEvent *xevent, GdkEvent *event, gpointer data)
-{
-	MSG *msg = (MSG*)xevent;
-
-	if( msg->lParam == WM_LBUTTONDBLCLK ) {
-	  RestoreWndFromTray(msg->hwnd);
-	  bhide_icon = TRUE;
-	  return GDK_FILTER_REMOVE;
-	}
-
-	if( msg->lParam == WM_LBUTTONUP ) {
-		if(bhide_icon) {
-			ShowNotifyIcon(msg->hwnd,FALSE);
-			bhide_icon = FALSE;
-		}
-	}
-	return GDK_FILTER_REMOVE;
-}
 
 /*
  *  PUBLIC CODE
  */
+
+/* Misc Wingaim functions */
+HINSTANCE wgaim_hinstance(void) {
+	return gaimexe_hInstance;
+}
 
 /* Determine Gaim Paths during Runtime */
 
@@ -117,31 +90,6 @@ char* wgaim_locale_dir(void) {
 	return (char*)&locale_dir;
 }
 
-/* Systray related routines */
-
-GdkFilterReturn wgaim_window_filter( GdkXEvent *xevent, GdkEvent *event, gpointer data)
-{
-	MSG *msg = (MSG*)xevent;
-
-	switch( msg->message ) {
-	case WM_SYSCOMMAND:
-		if( msg->wParam == SC_MINIMIZE ) {
-			MinimizeWndToTray(msg->hwnd);
-			ShowNotifyIcon(msg->hwnd,TRUE);
-			
-			SetWindowLong(msg->hwnd,DWL_MSGRESULT,0);
-			return GDK_FILTER_REMOVE;
-		}
-		break;
-	case WM_CLOSE:
-		MinimizeWndToTray(msg->hwnd);
-		ShowNotifyIcon(msg->hwnd,TRUE);
-		return GDK_FILTER_REMOVE;
-	}
-
-	return GDK_FILTER_CONTINUE;
-}
-
 /* Windows Initializations */
 
 void wgaim_init(void) {
@@ -152,6 +100,10 @@ void wgaim_init(void) {
 	char newenv[128];
 
 	debug_printf("wgaim_init\n");
+
+	/* Initialize Wingaim systray icon */
+	wgaim_systray_init();
+
 	/*
 	 *  Winsock init
 	 */
@@ -174,10 +126,6 @@ void wgaim_init(void) {
 		return 1;
 	}
 
-	/* Filter to catch systray events */
-	gdk_add_client_message_filter (GDK_POINTER_TO_ATOM (WM_TRAYMESSAGE),
-				       traymsg_filter_func,
-				       NULL);
 	/* get default locale */
 	locale = g_win32_getlocale();
 	debug_printf("Language profile used: %s\n", locale);
@@ -208,8 +156,12 @@ void wgaim_cleanup(void) {
 
 	/* IdleTracker cleanup */
 	IdleTrackerTerm();
+	
+	/* Remove systray icon */
+	wgaim_systray_cleanup();
 }
 
+/* DLL initializer */
 BOOL WINAPI DllMain( HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved ) {
 	gaimdll_hInstance = hinstDLL;
 	return TRUE;
