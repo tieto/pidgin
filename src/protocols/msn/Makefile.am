@@ -22,10 +22,10 @@ MSNSOURCES = \
 	msg.h \
 	msn.c \
 	msn.h \
-	notification.c \
-	notification.h \
 	nexus.c \
 	nexus.h \
+	notification.c \
+	notification.h \
 	object.c \
 	object.h \
 	page.c \
@@ -50,10 +50,10 @@ MSNSOURCES = \
 	switchboard.h \
 	sync.c \
 	sync.h \
-	transaction.c \
-	transaction.h \
 	table.c \
 	table.h \
+	transaction.c \
+	transaction.h \
 	user.c \
 	user.h \
 	userlist.c \
