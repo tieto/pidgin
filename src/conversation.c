@@ -1643,6 +1643,11 @@ static void convo_sel_send(GtkObject * m, struct gaim_connection *c)
 {
 	struct conversation *cnv = gtk_object_get_user_data(m);
 	cnv->gc = c;
+
+	if (cnv->gc->prpl->set_info == NULL)
+		gtk_widget_set_sensitive(cnv->info, FALSE);
+	else
+		gtk_widget_set_sensitive(cnv->info, TRUE);
 }
 
 void update_convo_add_button(struct conversation *c)
@@ -1714,6 +1719,15 @@ void redo_convo_menus()
 		c = c->next;
 	}
 }
+
+void update_buttons_by_protocol(struct conversation *c)
+{
+	if (c->gc->prpl->set_info == NULL)
+		gtk_widget_set_sensitive(c->info, FALSE);
+	else
+		gtk_widget_set_sensitive(c->info, TRUE);
+}
+
 
 void show_conv(struct conversation *c)
 {
@@ -1867,6 +1881,7 @@ void show_conv(struct conversation *c)
 
 	info = picture_button2(win, _("Info"), tb_search_xpm, dispstyle);
 	c->info = info;
+
 	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
 	gtk_widget_show(info);
@@ -1880,6 +1895,8 @@ void show_conv(struct conversation *c)
 	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
 	gtk_widget_show(send);
+
+	update_buttons_by_protocol(c);
 
 	gtk_widget_show(win);
 }

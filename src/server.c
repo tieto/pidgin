@@ -371,6 +371,7 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, int away
 
 	cnv->gc = gc;
 	gtk_option_menu_set_history(GTK_OPTION_MENU(cnv->menu), g_slist_index(connections, gc));
+	update_buttons_by_protocol(cnv);
 
 
 	if (awaymessage != NULL) {
