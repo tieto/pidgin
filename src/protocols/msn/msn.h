@@ -50,6 +50,10 @@
 
 #define MSN_BUF_LEN 8192
 
+void msn_free(void *ptr, const char *filename, int line);
+
+#define g_free(x) msn_free((x), __FILE__, __LINE__)
+
 #define USEROPT_MSNSERVER 3
 #define MSN_SERVER "messenger.hotmail.com"
 #define USEROPT_MSNPORT 4

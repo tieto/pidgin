@@ -71,16 +71,26 @@ msn_session_destroy(MsnSession *session)
 	while (session->lists.forward)
 		msn_user_destroy(session->lists.forward->data);
 
-	g_slist_free(session->lists.allow);
-	g_slist_free(session->lists.block);
+	if (session->lists.allow != NULL)
+		g_slist_free(session->lists.allow);
+
+	if (session->lists.block != NULL)
+		g_slist_free(session->lists.block);
 
 	msn_groups_destroy(session->groups);
 	msn_users_destroy(session->users);
 
-	g_free(session->passport_info.kv);
-	g_free(session->passport_info.sid);
-	g_free(session->passport_info.mspauth);
-	g_free(session->passport_info.file);
+	if (session->passport_info.kv != NULL)
+		g_free(session->passport_info.kv);
+
+	if (session->passport_info.sid != NULL)
+		g_free(session->passport_info.sid);
+
+	if (session->passport_info.mspauth != NULL)
+		g_free(session->passport_info.mspauth);
+
+	if (session->passport_info.file != NULL)
+		g_free(session->passport_info.file);
 
 	g_free(session);
 }

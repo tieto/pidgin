@@ -134,9 +134,12 @@ msn_ssl_read(GaimSslConnection *gsc, char **dest_buffer)
 		char *new_buffer = g_new(char, size + s + 1);
 
 		if (buffer != NULL)
+		{
 			strncpy(new_buffer, buffer, size);
 
-		g_free(buffer);
+			g_free(buffer);
+		}
+
 		buffer = new_buffer;
 
 		strncpy(buffer + size, temp_buf, s);
@@ -516,8 +519,12 @@ nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
 	}
 
 	g_free(request_str);
-	g_free(session->ssl_url);
-	session->ssl_url = NULL;
+
+	if (session->ssl_url != NULL)
+	{
+		g_free(session->ssl_url);
+		session->ssl_url = NULL;
+	}
 
 	/* Get the PassportURLs line. */
 	if ((s = msn_ssl_read(gsc, &buffer)) <= 0)

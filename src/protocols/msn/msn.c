@@ -19,6 +19,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <glib.h>
+static void (*real_g_free)(gpointer) = g_free;
+
 #include "msn.h"
 #include "accountopt.h"
 #include "msg.h"
@@ -35,6 +38,17 @@
 static GaimPlugin *my_protocol = NULL;
 
 static char *msn_normalize(const char *str);
+
+void
+msn_free(void *ptr, const char *filename, int line)
+{
+	gaim_debug_misc("msn", "Freeing pointer %p at %s:%d\n",
+					ptr, filename, line);
+	if (ptr == NULL)
+		abort();
+
+	real_g_free(ptr);
+}
 
 typedef struct
 {

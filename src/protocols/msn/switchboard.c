@@ -45,7 +45,8 @@ send_clientcaps(MsnSwitchBoard *swboard)
 	msn_message_set_attr(msg, "User-Agent", NULL);
 	msn_message_set_body(msg, MSN_CLIENTINFO);
 
-	if (!msn_switchboard_send_msg(swboard, msg)) {
+	if (!msn_switchboard_send_msg(swboard, msg))
+	{
 		gaim_debug_warning("msn",
 						   "Unable to send clientcaps. "
 						   "Disconnecting from switchboard.\n");
@@ -93,8 +94,7 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	send_clientcaps(swboard);
 
-#if 0
-	if (session->protocol_ver >= 9)
+	if (0 && session->protocol_ver >= 9)
 	{
 		MsnUser *local_user, *remote_user;
 
@@ -111,7 +111,6 @@ ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 											 local_user, remote_user,
 											 msn_user_get_object(remote_user));
 	}
-#endif
 
 	return TRUE;
 }
@@ -639,6 +638,7 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	char *buf;
 	size_t len;
 	int ret;
+	FILE *fp;
 
 	g_return_val_if_fail(swboard != NULL, FALSE);
 	g_return_val_if_fail(msg     != NULL, FALSE);
@@ -658,6 +658,10 @@ msn_switchboard_send_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	}
 
 	ret = msn_servconn_write(swboard->servconn, buf, len);
+
+	fp = fopen("/tmp/msn-msg", "wb");
+	fwrite(buf, 1, len, fp);
+	fclose(fp);
 
 	g_free(buf);
 

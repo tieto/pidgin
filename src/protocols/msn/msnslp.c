@@ -119,6 +119,9 @@ msn_slp_session_send_msg(MsnSlpSession *slpsession, MsnMessage *msg)
 	msn_message_set_attr(msg, "P2P-Dest",
 			msn_user_get_passport(msn_message_get_receiver(msg)));
 
+	if (msg->msnslp_header.session_id == 0)
+		msg->msnslp_footer.app_id = 1;
+
 	msn_switchboard_send_msg(slpsession->swboard, msg);
 }
 
@@ -131,6 +134,8 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	MsnMessage *invite_msg;
 	char *msnobj_data;
 	char *msnobj_base64;
+	char *branch;
+	char *call_id;
 	char *content;
 	char *body;
 	char *c;
@@ -147,8 +152,27 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	if ((c = strchr(msnobj_base64, '=')) != NULL)
 		*c = '\0';
 
-	if (slpsession->session_id == 0)
-		slpsession->session_id = rand() % 0xFFFFFF00;
+	slpsession->session_id = rand() % 0xFFFFFF00 + 4;
+
+	branch = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111,
+							 rand() % 0xAAFF + 0x1111);
+
+	call_id = g_strdup_printf("%4X%4X-%4X-%4X-%4X-%4X%4X%4X",
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111,
+							  rand() % 0xAAFF + 0x1111);
 
 	content = g_strdup_printf(
 		"EUF-GUID: {A4268EEC-FEC5-49E5-95C3-F126696BDBF6}\r\n"
@@ -164,9 +188,9 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		"INVITE MSNMSGR:%s MSNSLP/1.0\r\n"
 		"To: <msnmsgr:%s>\r\n"
 		"From: <msnmsgr:%s>\r\n"
-		"Via: MSNSLP/1.0/TLP ;branch={33517CE4-02FC-4428-B6F4-39927229B722}\r\n"
+		"Via: MSNSLP/1.0/TLP ;branch={%s}\r\n"
 		"CSeq: 0\r\n"
-		"Call-ID: {9D79AE57-1BD5-444B-B14E-3FC9BB2B5D58}\r\n"
+		"Call-ID: {%s}\r\n"
 		"Max-Forwards: 0\r\n"
 		"Content-Type: application/x-msnmsgr-sessionreqbody\r\n"
 		"Content-Length: %d\r\n"
@@ -176,14 +200,19 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 		msn_user_get_passport(remote_user),
 		msn_user_get_passport(remote_user),
 		msn_user_get_passport(local_user),
+		branch,
+		call_id,
 		strlen(content) + 5,
 		content);
 
 	g_free(content);
+	g_free(branch);
+	g_free(call_id);
 
 	gaim_debug_misc("msn", "Message = {%s}\n", body);
 
-	invite_msg = msn_message_new_msnslp();
+	//invite_msg = msn_message_new_msnslp();
+	invite_msg = msn_message_new();
 
 	msn_message_set_sender(invite_msg, local_user);
 	msn_message_set_receiver(invite_msg, remote_user);
