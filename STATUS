@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-01-04 19:32:19 -0500 (Thu, 04 Jan 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-01-20 18:42:11 -0500 (Sat, 20 Jan 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -61,6 +61,11 @@ account editor, and are set up on a per-account basis, in case you were
 wondering. TOC can be used to sign into ICQ; though you should use the ICQ
 plugin as it offers more functionality.
 
+TOC cannot get people's away messages; TOC also cannot make requests to send
+files. It is possible, however, to have an AIM user request to get a file from
+or send a file to you. Support for Direct IM, Buddy Icons, and Voice Chat is
+being worked on.
+
 
 Oscar (Eric)
 =====
@@ -68,6 +73,11 @@ Oscar (Eric)
 Oscar is working reasonably well. Please see gaim/libfaim/README.gaim for more
 details on Oscar. Oscar can be used to sign into ICQ; though you should use the
 ICQ plugin as it offers more functionality.
+
+Oscar can get people's away messages, so you should use it if that's what's
+important to you. Oscar also supports requesting and accepting Direct IM
+connections, but doesn't yet let you send/receive files through this or through
+the Get File/Send File method.
 
 
 Yahoo (Eric)
