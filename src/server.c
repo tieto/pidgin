@@ -510,6 +510,7 @@ void serv_got_im(char *name, char *message, int away)
 	g_free(nname);
 	
         cnv = find_conversation(name);
+	if (away) away = WFLAG_AUTO;
 
 	if (awaymessage != NULL) {
 		if (!(general_options & OPT_GEN_DISCARD_WHEN_AWAY)) {
@@ -521,7 +522,7 @@ void serv_got_im(char *name, char *message, int away)
 		if (cnv != NULL) {
 			if (sound_options & OPT_SOUND_WHEN_AWAY)
 				play_sound(AWAY);
-			write_to_conv(cnv, message, WFLAG_AUTO | WFLAG_RECV);
+			write_to_conv(cnv, message, away | WFLAG_RECV);
 		}
 
 	} else {
@@ -535,7 +536,7 @@ void serv_got_im(char *name, char *message, int away)
 			if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 				play_sound(RECEIVE);
 		}
-		write_to_conv(cnv, message, WFLAG_RECV);
+		write_to_conv(cnv, message, away | WFLAG_RECV);
 	}
 
 

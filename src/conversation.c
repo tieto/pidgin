@@ -701,7 +701,6 @@ void write_to_conv(struct conversation *c, char *what, int flags)
         char *who = NULL;
         FILE *fd;
         char colour[10];
-	struct buddy *b = NULL;
 
         if (flags & WFLAG_SYSTEM) {
 
@@ -734,18 +733,13 @@ void write_to_conv(struct conversation *c, char *what, int flags)
 
                 if (flags & WFLAG_RECV) {
                         strcpy(colour, "#ff0000");
-			b = find_buddy(c->name);
-                        if (b && (b->uc & UC_UNAVAILABLE)) {
-				who = malloc(strlen(c->name) + 24);
-				sprintf(who, "%s: <AUTO-REPLY>", c->name);
-			} else
-				who = c->name;
+			who = c->name;
                 } else if (flags & WFLAG_SEND) {
                         strcpy(colour, "#0000ff");
                         who = current_user->username;
                 }
 
-                if (flags & WFLAG_AUTO && flags & WFLAG_SEND)
+                if (flags & WFLAG_AUTO)
                         sprintf(buf2, " %s", AUTO_RESPONSE);
                 else
                         buf2[0]=0; /* sprintf(buf2, ""); */
@@ -800,8 +794,6 @@ void write_to_conv(struct conversation *c, char *what, int flags)
         
 	g_free(buf);
         g_free(buf2);
-	if (flags & WFLAG_RECV && b != NULL && b->uc & UC_UNAVAILABLE)
-		free(who);
 }
 
 
