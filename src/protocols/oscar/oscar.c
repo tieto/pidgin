@@ -6558,13 +6558,13 @@ static GList *oscar_actions(GaimConnection *gc)
 		m = g_list_append(m, pam);
 
 		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Display Current Registered Address");
+		pam->label = _("Display Currently Registered Address");
 		pam->callback = oscar_show_email;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
 
 		pam = g_new0(struct proto_actions_menu, 1);
-		pam->label = _("Change Current Registered Address...");
+		pam->label = _("Change Currently Registered Address...");
 		pam->callback = oscar_show_change_email;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
