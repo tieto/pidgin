@@ -71,8 +71,17 @@ foreach $index (0 .. $#pos) {
 	$name = $lang{$po};
 	$name = code2language($po) unless $name ne "";
 	$name = "???" unless $name ne "";
-	printf "<tr$color><td>%s(%s.po)</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td><img src='bar_g.gif' height='15' width='%0.0f' /><img src='bar_b.gif' height='15' width='%0.0f' /><img src='bar_r.gif' height='15' width='%0.0f' /><img src='bar_y.gif' height='15' width='%0.0f' /></tr>\n",
-	$name, $po, $trans, $transp, $fuzz, $fuzzp, $untrans, $untransp, $gone, $gonep, $transp*2, $fuzzp*2, $untransp*2, $gonep*2;
+	printf "<tr$color><td>%s(%s.po)</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>",
+	$name, $po, $trans, $transp, $fuzz, $fuzzp, $untrans, $untransp, $gone, $gonep;
+	printf "<img src='bar_g.gif' height='15' width='%0.0f' />", $transp*2
+	unless $transp*2 < 0.5;
+	printf "<img src='bar_b.gif' height='15' width='%0.0f' />", $fuzzp*2
+	unless $fuzzp*2 < 0.5;
+	printf "<img src='bar_r.gif' height='15' width='%0.0f' />", $untransp*2
+	unless $untransp*2 < 0.5;
+	printf "<img src='bar_y.gif' height='15' width='%0.0f' />", $gonep*2
+	unless $gonep*2 < 0.5;
+	print "</tr>\n";
 }
 print "</table></td></tr></table>\n";
 print "Latest gaim.pot generated $now: <a href='gaim.pot'>gaim.pot</a><br />\n";
