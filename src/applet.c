@@ -161,6 +161,7 @@ static GdkPixmap *get_applet_icon(const char *name)
 	if (!scale)
 		return NULL;
 	pb = gdk_pixbuf_scale_simple(scale, sizehint, sizehint, GDK_INTERP_HYPER);
+	gdk_pixbuf_unref(scale);
 
 	dst = g_new0(guchar, sizehint*sizehint*3);
 	make_background(dst);
