@@ -2871,7 +2871,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 			splitmsg = g_strsplit(msg, "\r\n", 0);
 
 			dialog_msg = g_strdup_printf(_("<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"), who, status_msg, g_strjoinv("<BR>", splitmsg));
-			g_show_info_text(gc, who, 2, dialog_msg, NULL);
+			gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, dialog_msg, NULL, NULL);
 
 			g_free(status_msg);
 			g_free(dialog_msg);
@@ -4008,9 +4008,11 @@ static int gaim_icqalias(aim_session_t *sess, aim_frame_t *fr, ...)
 
 static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 {
+	GaimConnection *gc = sess->aux_data;
+	gchar *text;
+	va_list ap;
 	char *msg, *url;
 	fu16_t wid, hei, delay;
-	va_list ap;
 
 	va_start(ap, fr);
 	msg = va_arg(ap, char *);
@@ -4020,12 +4022,15 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 	delay = (fu16_t) va_arg(ap, int);
 	va_end(ap);
 
-	serv_got_popup(msg, url, wid, hei);
+	text = g_strdup_printf("%s<br><a href=\"%s\">%s</a>", msg, url, url);
+	gaim_notify_formatted(gc, NULL, _("Pop-Up Message"), NULL, text, NULL, NULL);
+	g_free(text);
 
 	return 1;
 }
 
-static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
+{
 	GaimConnection *gc = sess->aux_data;
 	gchar *secondary;
 	GString *text;
@@ -5440,8 +5445,18 @@ static char *oscar_status_text(GaimBuddy *b) {
 	if ((b->uc & UC_UNAVAILABLE) || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
 		if (isdigit(b->name[0]))
 			ret = gaim_icq_status((b->uc & 0xffff0000) >> 16);
-		else
-			ret = g_strdup(_("Away"));
+		else {
+			aim_userinfo_t *userinfo = aim_locate_finduserinfo(b->name);
+			if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
+				gchar *away_utf8 = oscar_encoding_to_utf8(userinfo->away_encoding, userinfo->away, userinfo->away_len);
+				if (away_utf8 != NULL) {
+					ret = strip_html(away_utf8);
+					g_free(away_utf8);
+				} else
+					ret = g_strdup(_("Away"));
+			} else
+				ret = g_strdup(_("Away"));
+		}
 	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
 		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 		if (bi->availmsg)
@@ -6246,7 +6261,7 @@ static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 static void oscar_show_setavailmsg(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Available Message:"),
-					   NULL, _("Please talk to me, I'm lonely! (and single)"), TRUE, FALSE,
+					   NULL, "Please talk to me, I'm lonely! (and single)", TRUE, FALSE,
 					   _("OK"), G_CALLBACK(oscar_setavailmsg),
 					   _("Cancel"), NULL,
 					   gc);
