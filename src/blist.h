@@ -131,6 +131,7 @@ struct _GaimContact {
 	int currentsize;	    /**< The number of buddies in this contact corresponding to online accounts */
 	int online;			    /**< The number of buddies in this contact who are currently online */
 	GaimBuddy *priority;    /**< The "top" buddy for this contact */
+	gboolean priority_valid; /**< Is priority valid? */
 };
 
 
@@ -511,14 +512,14 @@ const char *gaim_contact_get_alias(GaimContact *contact);
  */
 gboolean gaim_contact_on_account(GaimContact *contact, GaimAccount *account);
 
-
 /**
- * Re-calculates the priority buddy for a contact.
+ * Invalidates the priority buddy so that the next call to
+ * gaim_contact_get_priority_buddy recomputes it.
  *
- * @param contact The contact.
+ * @param contact  The contact
+ * @return The highest priority buddy
  */
-void gaim_contact_compute_priority_buddy(GaimContact *contact);
-
+void gaim_contact_invalidate_priority_buddy(GaimContact *contact);
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
  *

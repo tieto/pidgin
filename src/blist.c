@@ -121,7 +121,14 @@ static void blist_pref_cb(const char *name, GaimPrefType type, gpointer value, g
 	}
 }
 
-void gaim_contact_compute_priority_buddy(GaimContact *contact)
+void gaim_contact_invalidate_priority_buddy(GaimContact *contact)
+{
+	g_return_if_fail(contact != NULL);
+
+	contact->priority_valid = FALSE;
+}
+
+static void gaim_contact_compute_priority_buddy(GaimContact *contact)
 {
 	GaimBlistNode *bnode;
 	GaimBuddy *new_priority = NULL;
@@ -160,6 +167,7 @@ void gaim_contact_compute_priority_buddy(GaimContact *contact)
 	}
 
 	contact->priority = new_priority;
+	contact->priority_valid = TRUE;
 }
 
 static gboolean blist_save_callback(gpointer data)
@@ -327,7 +335,7 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	 * because something, somewhere changed.  Calling the stuff below
 	 * certainly won't hurt anything.  Unless you're on a K6-2 300.
 	 */
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
@@ -821,7 +829,7 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 		if (!bnode->parent->child) {
 			gaim_blist_remove_contact((GaimContact*)bnode->parent);
 		} else {
-			gaim_contact_compute_priority_buddy((GaimContact*)bnode->parent);
+			gaim_contact_invalidate_priority_buddy((GaimContact*)bnode->parent);
 			ops->update(gaimbuddylist, bnode->parent);
 		}
 	}
@@ -861,7 +869,7 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 
 	g_hash_table_replace(gaimbuddylist->buddies, hb, buddy);
 
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
 
 	schedule_blist_save();
 
@@ -913,7 +921,7 @@ const char *gaim_contact_get_alias(GaimContact* contact)
 	if (contact->alias)
 		return contact->alias;
 
-	return gaim_buddy_get_alias(contact->priority);
+	return gaim_buddy_get_alias(gaim_contact_get_priority_buddy(contact));
 }
 
 gboolean gaim_contact_on_account(GaimContact *c, GaimAccount *account)
@@ -1255,7 +1263,7 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 
 	/* Re-sort the contact */
 	if (contact->priority == buddy) {
-		gaim_contact_compute_priority_buddy(contact);
+		gaim_contact_invalidate_priority_buddy(contact);
 		if (ops && ops->update)
 			ops->update(gaimbuddylist, cnode);
 	}
@@ -1391,6 +1399,9 @@ void gaim_blist_remove_group(GaimGroup *group)
 GaimBuddy *gaim_contact_get_priority_buddy(GaimContact *contact)
 {
 	g_return_val_if_fail(contact != NULL, NULL);
+
+	if (!contact->priority_valid)
+		gaim_contact_compute_priority_buddy(contact);
 
 	return contact->priority;
 }
@@ -1715,7 +1726,7 @@ void gaim_blist_add_account(GaimAccount *account)
 					}
 					if (recompute ||
 							gaim_blist_node_get_bool(cnode, "show_offline")) {
-						gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+						gaim_contact_invalidate_priority_buddy((GaimContact*)cnode);
 						ops->update(gaimbuddylist, cnode);
 					}
 			} else if (GAIM_BLIST_NODE_IS_CHAT(cnode) &&
@@ -1768,7 +1779,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 					}
 				}
 				if (recompute) {
-					gaim_contact_compute_priority_buddy((GaimContact*)cnode);
+					gaim_contact_invalidate_priority_buddy((GaimContact*)cnode);
 					if (ops && ops->update)
 						ops->update(gaimbuddylist, cnode);
 				}
@@ -2323,7 +2334,7 @@ static void blist_write_group(FILE *file, GaimAccount *exp_acct, GaimGroup *grou
 		return;
 
 	if (exp_acct && ! gaim_group_on_account(group, exp_acct))
-		return; 
+		return;
 
 	group_name = g_markup_escape_text(group->name, -1);
 	fprintf(file, "\t\t<group name=\"%s\">\n", group_name);

@@ -1341,7 +1341,7 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 		}
 	}
 
-	gaim_contact_compute_priority_buddy(gaim_buddy_get_contact(buddy));
+	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
 
 	if (ops != NULL && ops->update != NULL)
 		ops->update(gaim_get_blist(), (GaimBlistNode *)buddy);
