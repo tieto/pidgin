@@ -145,7 +145,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	 * them, they just have to use the account editor to sign in 
 	 * the second one */
 
-	account = gaim_accounts_find(username, -1);
+	account = gaim_accounts_find(username, NULL);
 	if (!account) {
 		account = gaim_account_new(username, "prpl-oscar");
 		gaim_account_set_remember_password(account, TRUE);
@@ -173,7 +173,7 @@ static int dologin_named(char *name)
 	if (name !=NULL) {	/* list of names given */
 		names = g_strsplit(name, ",", 32);
 		for (n = names; *n != NULL; n++) {
-			account = gaim_accounts_find(*n, -1);
+			account = gaim_accounts_find(*n, NULL);
 			if (account) {	/* found a user */
 				retval = 0;
 				gaim_account_connect(account);
@@ -203,7 +203,7 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
 	const char *txt = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(combo)->entry));
 	GaimAccount *account;
 
-	account = gaim_accounts_find(txt, -1);
+	account = gaim_accounts_find(txt, NULL);
 
 	if (account && gaim_account_get_remember_password(account)) {
 		gtk_entry_set_text(GTK_ENTRY(pass), account->password);
@@ -463,7 +463,7 @@ static void set_first_user(char *name)
 {
 	GaimAccount *account;
 
-	account = gaim_accounts_find(name, -1);
+	account = gaim_accounts_find(name, NULL);
 
 	if (account == NULL) { /* new user */
 		account = gaim_account_new(name, "prpl-oscar");

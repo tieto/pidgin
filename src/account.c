@@ -128,7 +128,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 	g_return_val_if_fail(username    != NULL, NULL);
 
 	if(protocol_id)
-		account = gaim_accounts_find_with_prpl_id(username, protocol_id);
+		account = gaim_accounts_find(username, protocol_id);
 
 	if (account != NULL)
 		return account;
@@ -1517,8 +1517,8 @@ gaim_accounts_get_all(void)
 	return accounts;
 }
 
-GaimAccount *
-gaim_accounts_find(const char *name, GaimProtocol protocol)
+static GaimAccount *
+gaim_accounts_find_with_prpl_num(const char *name, GaimProtocol protocol)
 {
 	GaimAccount *account = NULL;
 	GList *l;
@@ -1549,7 +1549,7 @@ gaim_accounts_find(const char *name, GaimProtocol protocol)
 }
 
 GaimAccount *
-gaim_accounts_find_with_prpl_id(const char *name, const char *protocol_id)
+gaim_accounts_find(const char *name, const char *protocol_id)
 {
 	GaimAccount *account = NULL;
 	GList *l;
@@ -1563,13 +1563,16 @@ gaim_accounts_find_with_prpl_id(const char *name, const char *protocol_id)
 		account = (GaimAccount *)l->data;
 
 		if (!strcmp(gaim_normalize(gaim_account_get_username(account)), who) &&
-			!strcmp(account->protocol_id, protocol_id)) {
+			(!protocol_id || !strcmp(account->protocol_id, protocol_id))) {
 
 			break;
 		}
 
 		account = NULL;
 	}
+
+	if(!account && protocol_id)
+		account = gaim_accounts_find_with_prpl_num(name, atoi(protocol_id));
 
 	g_free(who);
 

@@ -1598,9 +1598,12 @@ load_pounces()
 	for (l = buddy_pounces; l != NULL; l = l->next) {
 		GaimPounceEvent events = GAIM_POUNCE_NONE;
 		GaimGtkPounceAction actions = GAIM_GTKPOUNCE_NONE;
+		char buf[3];
+
 		ph = (struct pounce_placeholder *)l->data;
 
-		account = gaim_accounts_find(ph->pouncer, ph->protocol);
+		g_snprintf(buf, sizeof(buf), "%d", ph->protocol);
+		account = gaim_accounts_find(ph->pouncer, buf);
 		if (account == NULL)
 			continue;
 

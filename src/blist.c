@@ -31,6 +31,7 @@
 #include "server.h"
 #include "signals.h"
 #include "util.h"
+#include "xmlnode.h"
 
 #define PATHSIZE 1024
 
@@ -1862,349 +1863,169 @@ gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account) {
 
 static gboolean blist_safe_to_write = FALSE;
 
-GaimGroup *blist_parser_group = NULL;
-GaimContact *blist_parser_contact = NULL;
-static char *blist_parser_account_name = NULL;
-static int blist_parser_account_protocol = 0;
-static char *blist_parser_chat_alias = NULL;
-static char *blist_parser_component_name = NULL;
-static char *blist_parser_component_value = NULL;
-static char *blist_parser_buddy_name = NULL;
-static char *blist_parser_buddy_alias = NULL;
-static char *blist_parser_setting_name = NULL;
-static char *blist_parser_setting_value = NULL;
-static GHashTable *blist_parser_buddy_settings = NULL;
-static GHashTable *blist_parser_chat_settings = NULL;
-static GHashTable *blist_parser_group_settings = NULL;
-static GHashTable *blist_parser_chat_components = NULL;
-static int blist_parser_privacy_mode = 0;
-static GList *tag_stack = NULL;
-enum {
-	BLIST_TAG_GAIM,
-	BLIST_TAG_BLIST,
-	BLIST_TAG_GROUP,
-	BLIST_TAG_CHAT,
-	BLIST_TAG_COMPONENT,
-	BLIST_TAG_CONTACT,
-	BLIST_TAG_BUDDY,
-	BLIST_TAG_NAME,
-	BLIST_TAG_ALIAS,
-	BLIST_TAG_SETTING,
-	BLIST_TAG_PRIVACY,
-	BLIST_TAG_ACCOUNT,
-	BLIST_TAG_PERMIT,
-	BLIST_TAG_BLOCK,
-	BLIST_TAG_IGNORE
-};
-static gboolean blist_parser_error_occurred = FALSE;
+static void parse_setting(GaimBlistNode *node, xmlnode *setting)
+{
+	const char *name = xmlnode_get_attrib(setting, "name");
+	char *value = xmlnode_get_data(setting);
 
-static void blist_start_element_handler (GMarkupParseContext *context,
-		const gchar *element_name,
-		const gchar **attribute_names,
-		const gchar **attribute_values,
-		gpointer user_data,
-		GError **error) {
-	int i;
+	/* XXX: replace with generic settings stuff */
+	if(GAIM_BLIST_NODE_IS_GROUP(node))
+		gaim_group_set_setting((GaimGroup*)node, name, value);
+	else if(GAIM_BLIST_NODE_IS_CHAT(node))
+		gaim_chat_set_setting((GaimChat*)node, name, value);
+	else if(GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_buddy_set_setting((GaimBuddy*)node, name, value);
 
-	if(!strcmp(element_name, "gaim")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GAIM));
-	} else if(!strcmp(element_name, "blist")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLIST));
-	} else if(!strcmp(element_name, "group")) {
-		const char *name = NULL;
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_GROUP));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name")) {
-				name = attribute_values[i];
-			}
-		}
-		if(name) {
-			blist_parser_group = gaim_group_new(name);
-			gaim_blist_add_group(blist_parser_group,
-					gaim_blist_get_last_sibling(gaimbuddylist->root));
-		}
-	} else if(!strcmp(element_name, "contact")) {
-		char *alias = NULL;
-		tag_stack = g_list_prepend(tag_stack,
-				GINT_TO_POINTER(BLIST_TAG_CONTACT));
+	g_free(value);
+}
 
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "alias")) {
-				g_free(alias);
-				alias = g_strdup(attribute_values[i]);
-			}
-		}
+static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
+{
+	GaimAccount *account;
+	GaimBuddy *buddy;
+	char *name = NULL, *alias = NULL;
+	const char *acct_name, *proto;
+	xmlnode *x;
 
-		blist_parser_contact = gaim_contact_new();
-		gaim_blist_add_contact(blist_parser_contact, blist_parser_group,
-				gaim_blist_get_last_sibling(((GaimBlistNode*)blist_parser_group)->child));
+	acct_name = xmlnode_get_attrib(bnode, "account");
+	proto = xmlnode_get_attrib(bnode, "protocol");
 
-		if(alias) {
-			gaim_contact_set_alias(blist_parser_contact, alias);
-			g_free(alias);
-		}
-	} else if(!strcmp(element_name, "chat")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_CHAT));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "account")) {
-				g_free(blist_parser_account_name);
-				blist_parser_account_name = g_strdup(attribute_values[i]);
-			} else if(!strcmp(attribute_names[i], "protocol")) {
-				blist_parser_account_protocol = atoi(attribute_values[i]);
-			}
-		}
-	} else if(!strcmp(element_name, "buddy")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BUDDY));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "account")) {
-				g_free(blist_parser_account_name);
-				blist_parser_account_name = g_strdup(attribute_values[i]);
-			} else if(!strcmp(attribute_names[i], "protocol")) {
-				blist_parser_account_protocol = atoi(attribute_values[i]);
-			}
-		}
-	} else if(!strcmp(element_name, "name")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_NAME));
-	} else if(!strcmp(element_name, "alias")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_ALIAS));
-	} else if(!strcmp(element_name, "setting")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_SETTING));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name")) {
-				g_free(blist_parser_setting_name);
-				blist_parser_setting_name = g_strdup(attribute_values[i]);
-			}
-		}
-	} else if(!strcmp(element_name, "component")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_COMPONENT));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "name")) {
-				g_free(blist_parser_component_name);
-				blist_parser_component_name = g_strdup(attribute_values[i]);
-			}
-		}
+	if(!acct_name || !proto)
+		return;
 
-	} else if(!strcmp(element_name, "privacy")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PRIVACY));
-	} else if(!strcmp(element_name, "account")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_ACCOUNT));
-		for(i=0; attribute_names[i]; i++) {
-			if(!strcmp(attribute_names[i], "protocol"))
-				blist_parser_account_protocol = atoi(attribute_values[i]);
-			else if(!strcmp(attribute_names[i], "mode"))
-				blist_parser_privacy_mode = atoi(attribute_values[i]);
-			else if(!strcmp(attribute_names[i], "name")) {
-				g_free(blist_parser_account_name);
-				blist_parser_account_name = g_strdup(attribute_values[i]);
-			}
-		}
-	} else if(!strcmp(element_name, "permit")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_PERMIT));
-	} else if(!strcmp(element_name, "block")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_BLOCK));
-	} else if(!strcmp(element_name, "ignore")) {
-		tag_stack = g_list_prepend(tag_stack, GINT_TO_POINTER(BLIST_TAG_IGNORE));
+	account = gaim_accounts_find(acct_name, proto);
+
+	if(!account)
+		return;
+
+	if((x = xmlnode_get_child(bnode, "name")))
+		name = xmlnode_get_data(x);
+
+	if(!name)
+		return;
+
+	if((x = xmlnode_get_child(bnode, "alias")))
+		alias = xmlnode_get_data(x);
+
+	buddy = gaim_buddy_new(account, name, alias);
+	gaim_blist_add_buddy(buddy, contact, group,
+			gaim_blist_get_last_child((GaimBlistNode*)contact));
+
+	for(x = bnode->child; x; x = x->next) {
+		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "setting"))
+			continue;
+		parse_setting((GaimBlistNode*)buddy, x);
+	}
+
+	g_free(name);
+	if(alias)
+		g_free(alias);
+}
+
+static void parse_contact(GaimGroup *group, xmlnode *cnode)
+{
+	GaimContact *contact = gaim_contact_new();
+	xmlnode *x;
+
+	gaim_blist_add_contact(contact, group,
+			gaim_blist_get_last_child((GaimBlistNode*)group));
+
+	if((x = xmlnode_get_child(cnode, "alias"))) {
+		char *alias = xmlnode_get_data(x);
+		gaim_contact_set_alias(contact, alias);
+		g_free(alias);
+	}
+
+	for(x = cnode->child; x; x = x->next) {
+		if(x->type != NODE_TYPE_TAG)
+			continue;
+		if(!strcmp(x->name, "buddy"))
+			parse_buddy(group, contact, x);
+		else if(strcmp(x->name, "setting"))
+			parse_setting((GaimBlistNode*)contact, x);
 	}
 }
 
-static void blist_end_element_handler(GMarkupParseContext *context,
-		const gchar *element_name, gpointer user_data, GError **error) {
-	if(!strcmp(element_name, "gaim")) {
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "blist")) {
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "group")) {
-		if(blist_parser_group_settings) {
-			g_hash_table_destroy(blist_parser_group->settings);
-			blist_parser_group->settings = blist_parser_group_settings;
-		}
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-		blist_parser_group_settings = NULL;
-		blist_parser_group = NULL;
-	} else if(!strcmp(element_name, "chat")) {
-		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
-				blist_parser_account_protocol);
-		if(account) {
-			GaimChat *chat = gaim_chat_new(account,
-					blist_parser_chat_alias, blist_parser_chat_components);
-			gaim_blist_add_chat(chat,blist_parser_group,
-					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_group));
-			if(blist_parser_chat_settings) {
-				g_hash_table_destroy(chat->settings);
-				chat->settings = blist_parser_chat_settings;
-			}
-		}
-		g_free(blist_parser_chat_alias);
-		blist_parser_chat_alias = NULL;
-		g_free(blist_parser_account_name);
-		blist_parser_account_name = NULL;
-		blist_parser_chat_components = NULL;
-		blist_parser_chat_settings = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "contact")) {
-		if(blist_parser_contact && !blist_parser_contact->node.child)
-			gaim_blist_remove_contact(blist_parser_contact);
-		blist_parser_contact = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "buddy")) {
-		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
-				blist_parser_account_protocol);
-		if(account && !gaim_find_buddy_in_group(account,
-					blist_parser_buddy_name, blist_parser_group)) {
-			GaimBuddy *b = gaim_buddy_new(account, blist_parser_buddy_name,
-					blist_parser_buddy_alias);
-			gaim_blist_add_buddy(b,blist_parser_contact, blist_parser_group,
-					gaim_blist_get_last_child((GaimBlistNode*)blist_parser_contact));
-			if(blist_parser_buddy_settings) {
-				g_hash_table_destroy(b->settings);
-				b->settings = blist_parser_buddy_settings;
-			}
-		}
-		g_free(blist_parser_buddy_name);
-		blist_parser_buddy_name = NULL;
-		g_free(blist_parser_buddy_alias);
-		blist_parser_buddy_alias = NULL;
-		g_free(blist_parser_account_name);
-		blist_parser_account_name = NULL;
-		blist_parser_buddy_settings = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "name")) {
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "alias")) {
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "component")) {
-		if(!blist_parser_chat_components)
-			blist_parser_chat_components = g_hash_table_new_full(g_str_hash,
-					g_str_equal, g_free, g_free);
-		if(blist_parser_component_name && blist_parser_component_value) {
-			g_hash_table_replace(blist_parser_chat_components,
-					g_strdup(blist_parser_component_name),
-					g_strdup(blist_parser_component_value));
-		}
-		g_free(blist_parser_component_name);
-		g_free(blist_parser_component_value);
-		blist_parser_component_name = NULL;
-		blist_parser_component_value = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "setting")) {
-		if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY) {
-			if(!blist_parser_buddy_settings)
-				blist_parser_buddy_settings = g_hash_table_new_full(g_str_hash,
-						g_str_equal, g_free, g_free);
-			if(blist_parser_setting_name && blist_parser_setting_value) {
-				g_hash_table_replace(blist_parser_buddy_settings,
-						g_strdup(blist_parser_setting_name),
-						g_strdup(blist_parser_setting_value));
-			}
-		} else if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_CHAT) {
-			if(!blist_parser_chat_settings)
-				blist_parser_chat_settings = g_hash_table_new_full(g_str_hash,
-						g_str_equal, g_free, g_free);
-			if(blist_parser_setting_name && blist_parser_setting_value) {
-				g_hash_table_replace(blist_parser_chat_settings,
-						g_strdup(blist_parser_setting_name),
-						g_strdup(blist_parser_setting_value));
-			}
-		} else if(GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_GROUP) {
-			if(!blist_parser_group_settings)
-				blist_parser_group_settings = g_hash_table_new_full(g_str_hash,
-						g_str_equal, g_free, g_free);
-			if(blist_parser_setting_name && blist_parser_setting_value) {
-				g_hash_table_replace(blist_parser_group_settings,
-						g_strdup(blist_parser_setting_name),
-						g_strdup(blist_parser_setting_value));
-			}
-		}
-		g_free(blist_parser_setting_name);
-		g_free(blist_parser_setting_value);
-		blist_parser_setting_name = NULL;
-		blist_parser_setting_value = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "privacy")) {
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "account")) {
-		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
-				blist_parser_account_protocol);
-		if(account) {
-			account->perm_deny = blist_parser_privacy_mode;
-		}
-		g_free(blist_parser_account_name);
-		blist_parser_account_name = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "permit")) {
-		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
-				blist_parser_account_protocol);
-		if(account) {
-			gaim_privacy_permit_add(account, blist_parser_buddy_name, TRUE);
-		}
-		g_free(blist_parser_buddy_name);
-		blist_parser_buddy_name = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "block")) {
-		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
-				blist_parser_account_protocol);
-		if(account) {
-			gaim_privacy_deny_add(account, blist_parser_buddy_name, TRUE);
-		}
-		g_free(blist_parser_buddy_name);
-		blist_parser_buddy_name = NULL;
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
-	} else if(!strcmp(element_name, "ignore")) {
-		/* we'll apparently do something with this later */
-		tag_stack = g_list_delete_link(tag_stack, tag_stack);
+static void parse_chat(GaimGroup *group, xmlnode *cnode)
+{
+	GaimChat *chat;
+	GaimAccount *account;
+	const char *acct_name, *proto;
+	xmlnode *x;
+	char *alias = NULL;
+	GHashTable *components;
+
+	acct_name = xmlnode_get_attrib(cnode, "account");
+	proto = xmlnode_get_attrib(cnode, "protocol");
+
+	if(!acct_name || !proto)
+		return;
+
+	account = gaim_accounts_find(acct_name, proto);
+
+	if(!account)
+		return;
+
+	if((x = xmlnode_get_child(cnode, "alias")))
+		alias = xmlnode_get_data(x);
+
+	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+	for(x = cnode->child; x; x = x->next) {
+		const char *name;
+		char *value;
+		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "component"))
+			continue;
+
+		name = xmlnode_get_attrib(x, "name");
+		value = xmlnode_get_data(x);
+		g_hash_table_replace(components, g_strdup(name), value);
+	}
+
+	chat = gaim_chat_new(account, alias, components);
+
+	for(x = cnode->child; x; x = x->next) {
+		if(x->type != NODE_TYPE_TAG || strcmp(x->name, "setting"))
+			continue;
+		parse_setting((GaimBlistNode*)chat, x);
+	}
+
+	if(alias)
+		g_free(alias);
+}
+
+
+static void parse_group(xmlnode *groupnode)
+{
+	const char *name = xmlnode_get_attrib(groupnode, "name");
+	GaimGroup *group;
+	xmlnode *cnode;
+
+	if(!name)
+		name = _("Buddies");
+
+	group = gaim_group_new(name);
+	gaim_blist_add_group(group,
+			gaim_blist_get_last_sibling(gaimbuddylist->root));
+
+	for(cnode = groupnode->child; cnode; cnode = cnode->next) {
+		if(cnode->type != NODE_TYPE_TAG)
+			continue;
+		if(!strcmp(cnode->name, "setting"))
+			parse_setting((GaimBlistNode*)group, cnode);
+		else if(!strcmp(cnode->name, "contact") ||
+				!strcmp(cnode->name, "person"))
+			parse_contact(group, cnode);
+		else if(!strcmp(cnode->name, "chat"))
+			parse_chat(group, cnode);
 	}
 }
-
-static void blist_text_handler(GMarkupParseContext *context, const gchar *text,
-		gsize text_len, gpointer user_data, GError **error) {
-	switch(GPOINTER_TO_INT(tag_stack->data)) {
-		case BLIST_TAG_NAME:
-			blist_parser_buddy_name = g_strndup(text, text_len);
-			break;
-		case BLIST_TAG_ALIAS:
-			if(tag_stack->next &&
-					GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_BUDDY)
-				blist_parser_buddy_alias = g_strndup(text, text_len);
-			else if(tag_stack->next &&
-					GPOINTER_TO_INT(tag_stack->next->data) == BLIST_TAG_CHAT)
-				blist_parser_chat_alias = g_strndup(text, text_len);
-			break;
-		case BLIST_TAG_PERMIT:
-		case BLIST_TAG_BLOCK:
-		case BLIST_TAG_IGNORE:
-			blist_parser_buddy_name = g_strndup(text, text_len);
-			break;
-		case BLIST_TAG_COMPONENT:
-			blist_parser_component_value = g_strndup(text, text_len);
-			break;
-		case BLIST_TAG_SETTING:
-			blist_parser_setting_value = g_strndup(text, text_len);
-			break;
-		default:
-			break;
-	}
-}
-
-static void blist_error_handler(GMarkupParseContext *context, GError *error,
-		gpointer user_data) {
-	blist_parser_error_occurred = TRUE;
-	gaim_debug(GAIM_DEBUG_ERROR, "blist import",
-			   "Error parsing blist.xml: %s\n", error->message);
-}
-
-static GMarkupParser blist_parser = {
-	blist_start_element_handler,
-	blist_end_element_handler,
-	blist_text_handler,
-	NULL,
-	blist_error_handler
-};
 
 static gboolean gaim_blist_read(const char *filename) {
+	GError *error;
 	gchar *contents = NULL;
 	gsize length;
-	GMarkupParseContext *context;
-	GError *error = NULL;
+	xmlnode *gaim, *blist, *privacy;
 
 	gaim_debug(GAIM_DEBUG_INFO, "blist import",
 			   "Reading %s\n", filename);
@@ -2215,27 +2036,66 @@ static gboolean gaim_blist_read(const char *filename) {
 		return FALSE;
 	}
 
-	context = g_markup_parse_context_new(&blist_parser, 0, NULL, NULL);
-
-	if(!g_markup_parse_context_parse(context, contents, length, NULL)) {
-		g_markup_parse_context_free(context);
-		g_free(contents);
-		return FALSE;
-	}
-
-	if(!g_markup_parse_context_end_parse(context, NULL)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "blist import",
-				   "Error parsing %s\n", filename);
-		g_markup_parse_context_free(context);
-		g_free(contents);
-		return FALSE;
-	}
-
-	g_markup_parse_context_free(context);
+	gaim = xmlnode_from_str(contents, length);
 	g_free(contents);
 
-	if(blist_parser_error_occurred)
+	if(!gaim) {
+		gaim_debug(GAIM_DEBUG_ERROR, "blist import", "Error parsing %s\n",
+				filename);
 		return FALSE;
+	}
+
+	blist = xmlnode_get_child(gaim, "blist");
+	if(blist) {
+		xmlnode *groupnode;
+		for(groupnode = blist->child;  groupnode; groupnode = groupnode->next) {
+			if(groupnode->type != NODE_TYPE_TAG ||
+					strcmp(groupnode->name, "group"))
+				continue;
+
+			parse_group(groupnode);
+		}
+	}
+
+	privacy = xmlnode_get_child(gaim, "privacy");
+	if(privacy) {
+		xmlnode *anode;
+		for(anode = privacy->child; anode; anode = anode->next) {
+			xmlnode *x;
+			GaimAccount *account;
+			const char *acct_name, *proto, *mode;
+
+			acct_name = xmlnode_get_attrib(anode, "name");
+			proto = xmlnode_get_attrib(anode, "protocol");
+			mode = xmlnode_get_attrib(anode, "mode");
+
+			if(!acct_name || !proto || !mode)
+				continue;
+
+			account = gaim_accounts_find(acct_name, proto);
+
+			if(!account)
+				continue;
+
+			account->perm_deny = atoi(mode);
+
+			for(x = anode->child; x; x = x->next) {
+				char *name;
+				if(x->type != NODE_TYPE_TAG)
+					continue;
+
+				if(!strcmp(x->name, "permit")) {
+					name = xmlnode_get_data(x);
+					gaim_privacy_permit_add(account, name, TRUE);
+					g_free(name);
+				} else if(!strcmp(x->name, "block")) {
+					name = xmlnode_get_data(x);
+					gaim_privacy_deny_add(account, name, TRUE);
+					g_free(name);
+				}
+			}
+		}
+	}
 
 	gaim_debug(GAIM_DEBUG_INFO, "blist import", "Finished reading %s\n",
 			   filename);

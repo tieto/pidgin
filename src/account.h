@@ -609,22 +609,11 @@ GList *gaim_accounts_get_all(void);
  * Finds an account with the specified name and protocol number.
  *
  * @param name     The account username.
- * @param protocol The account protocol number.
+ * @param protocol The account protocol ID or number.
  *
  * @return The account, if found, or @c FALSE otherwise.
  */
-GaimAccount *gaim_accounts_find(const char *name, GaimProtocol protocol);
-
-/**
- * Finds an account with the specified name and protocol ID.
- *
- * @param name        The account username.
- * @param protocol_id The account protocol ID.
- *
- * @return The account, if found, or @c FALSE otherwise.
- */
-GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
-											 const char *protocol_id);
+GaimAccount *gaim_accounts_find(const char *name, const char *protocol);
 
 /*@}*/
 

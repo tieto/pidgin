@@ -586,23 +586,9 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->param_name = NULL;
 	}
 	else if (!strcmp(element_name, "events")) {
-		GList *l;
 		GaimAccount *account;
-		GaimProtocol protocol = -1;
 
-		for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
-			GaimPlugin *plugin = (GaimPlugin *)l->data;
-
-			if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
-				if (!strcmp(plugin->info->id, data->protocol_id)) {
-					protocol = GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol;
-
-					break;
-				}
-			}
-		}
-
-		account = gaim_accounts_find(data->account_name, protocol);
+		account = gaim_accounts_find(data->account_name, data->protocol_id);
 
 		g_free(data->account_name);
 		g_free(data->protocol_id);
