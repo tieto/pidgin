@@ -11,6 +11,8 @@ version 0.67
 	* Shows "hiptop" icon for AIM buddies using hiptop
 	  devices (Robey Pointer)
 	* Privacy core/UI split.
+	* Events in a conversation (user logged in, logged out, window closed,
+	  etc.) now grey the tab.
 	* Various bug fixes (larne from irc, Tim Ringenbach, Bjoern 
 	  Voigt, Paul A (darkrain))
 	* British English "translation" updated (Sam Halliday)
