@@ -8,11 +8,8 @@
 # PATHS
 #
 
-INCLUDE_DIR :=		.
-
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
-TRANSPARENCY_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
@@ -22,15 +19,16 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
 TARGET = win2ktrans
 
+CC = gcc.exe
+
 VERSION := $(shell cat $(GAIM_TOP)/VERSION)
 
 # Compiler Options
 
-CC = gcc.exe
+CFLAGS = -O2 -Wall -Werror -mno-cygwin -fnative-struct
 
-CFLAGS = -O2 -Werror -Wall -mno-cygwin -fnative-struct
-
-DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
+DEFINES =	-DVERSION=\"$(VERSION)\" \
+		-DGTK_ENABLE_BROKEN
 
 
 ##
@@ -42,7 +40,7 @@ DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
 ## INCLUDE PATHS
 ##
 
-INCLUDE_PATHS +=	-I$(TRANSPARENCY_ROOT) \
+INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
@@ -56,16 +54,14 @@ INCLUDE_PATHS +=	-I$(TRANSPARENCY_ROOT) \
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_TOP)/src \
-			-L$(TRANSPARENCY_ROOT)
+			-L$(GAIM_TOP)/src
 
 
 ##
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			win2ktrans.c \
-			wintransparency.c
+C_SRC =			win2ktrans.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -75,7 +71,14 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgmodule-2.0 -lgobject-2.0 -lws2_32 -lintl -lgaim -llibwintransparency
+LIBS =			-lgtk-win32-2.0 \
+			-lglib-2.0 \
+			-lgdk-win32-2.0 \
+			-lgmodule-2.0 \
+			-lgobject-2.0 \
+			-lws2_32 \
+			-lintl \
+			-lgaim
 
 
 ##
@@ -93,10 +96,10 @@ LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgmodule-2.0 -lgobject-2.0 -l
 
 .PHONY: all clean
 
-all: libwintransparency.lib $(TARGET).dll
+all: $(TARGET).dll
 
 install:
-	cp $(TRANSPARENCY_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
 
 ##
@@ -127,9 +130,6 @@ $(TARGET).dll: $(OBJECTS) $(TARGET).exp $(GAIM_TOP)/src/gaim.lib
 	gcc -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
 	rm -rf $(TARGET).exp
 
-libwintransparency.lib: $(OBJECTS)
-	dlltool -k -l liblibwintransparency.a -d wintransparency.def
-
 
 ##
 ## CLEAN RULES
@@ -139,4 +139,3 @@ clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).def
-	rm -rf libwintransparency.a

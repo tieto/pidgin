@@ -1,7 +1,9 @@
 /*
  * win2ktrans
  *
- * copyright (c) 1998-2002, rob flynn <rob@marko.net> 
+ * copyright (c) 1998-2002, rob flynn <rob@marko.net>
+ *
+ * Contributions by Herman Bloggs <hermanator12002@yahoo.com>
  *
  * this program is free software; you can redistribute it and/or modify
  * it under the terms of the gnu general public license as published by
@@ -21,25 +23,258 @@
 #define GAIM_PLUGINS
 
 #include <gtk/gtk.h>
-#include "wintransparency.h"
+#include <gdk/gdkwin32.h>
+/*#include "wintransparency.h"*/
 #include "gaim.h"
+#include "win32dep.h"
 
-int alpha = 255;
+/*
+ *  MACROS & DEFINES
+ */
+#define WINTRANS_VERSION 1
 
-static void gaim_new_conversation(char *who) {
-	struct conversation *c = find_conversation(who);
+/* These defines aren't found in mingw's winuser.h */
+#ifndef LWA_ALPHA
+#define LWA_ALPHA               0x00000002
+#endif
 
-	if (!c || alpha == 255)
-		return;
+#ifndef WS_EX_LAYERED
+#define WS_EX_LAYERED           0x00080000
+#endif
 
-	gdk_window_add_filter (GTK_WIDGET(c->window)->window, wgaim_window_filter, c);
+/* Transparency plugin configuration */
+#define OPT_WGAIM_IMTRANS               0x00000001
+#define OPT_WGAIM_SHOW_IMTRANS          0x00000002
+
+/*
+ *  GLOBALS
+ */
+G_MODULE_IMPORT guint im_options;
+G_MODULE_IMPORT GtkWidget *all_convos;
+
+/*
+ *  LOCALS
+ */
+static GtkWidget *slider_box=NULL;
+static int imalpha = 255;
+guint trans_options=0;
+
+/*
+ *  PROTOS
+ */
+BOOL (*MySetLayeredWindowAttributes)(HWND hwnd, COLORREF crKey, BYTE bAlpha, DWORD dwFlags)=NULL;
+extern GtkWidget *gaim_button(const char*, guint*, int, GtkWidget*);
+static void save_trans_prefs();
+
+/*
+ *  CODE
+ */
+/* Set window transparency level */
+void set_wintrans(GtkWidget *window, int trans) {
+	if(MySetLayeredWindowAttributes) {
+		HWND hWnd = GDK_WINDOW_HWND(window->window);
+		SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE) | WS_EX_LAYERED);
+		MySetLayeredWindowAttributes(hWnd,0,trans,LWA_ALPHA);
+	}
 }
 
+static void change_im_alpha(GtkWidget *w, gpointer data) {
+	set_wintrans(GTK_WIDGET(data), gtk_range_get_value(GTK_RANGE(w)));
+}
+
+int has_transparency() {
+	return MySetLayeredWindowAttributes ? TRUE : FALSE;
+}
+
+GtkWidget *wintrans_slider(GtkWidget *win) {
+	GtkWidget *hbox;
+	GtkWidget *label, *slider;
+	GtkWidget *frame;
+
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_OUT);
+	gtk_widget_show(frame);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
+
+	label = gtk_label_new(_("Opacity:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(hbox);
+
+	slider = gtk_hscale_new_with_range(50,255,1);
+	gtk_range_set_value(GTK_RANGE(slider), imalpha);
+	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
+
+	/* On slider val change, update window's transparency level */
+	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(change_im_alpha), win);
+
+	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
+
+	/* Set the initial transparency level */
+	set_wintrans(win, imalpha);
+
+	gtk_widget_show_all(hbox);
+
+	return frame;
+}
+
+static void gaim_del_conversation(char *who) {
+	if(!all_convos)
+		slider_box = NULL;
+}
+
+static void gaim_new_conversation(char *who) {
+	GList *wl, *wl1;
+	GtkWidget *vbox=NULL;
+
+	struct conversation *c = find_conversation(who);
+
+	/* Single convo window */
+	if((im_options & OPT_IM_ONE_WINDOW)) {
+		/* check prefs to see if we want trans */
+		if ((trans_options & OPT_WGAIM_IMTRANS) &&
+		    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+			if(!slider_box) {
+				/* Get vbox which to add slider to.. */
+				for ( wl1 = wl = gtk_container_children(GTK_CONTAINER(c->window));
+				      wl != NULL;
+				      wl = wl->next ) {
+					if ( GTK_IS_VBOX(GTK_OBJECT(wl->data)) )
+						vbox = GTK_WIDGET(wl->data);
+					else
+						debug_printf("no vbox found\n");
+				}
+				g_list_free(wl1);
+				
+				slider_box = wintrans_slider(c->window);
+				gtk_box_pack_start(GTK_BOX(vbox),
+						   slider_box,
+						   FALSE, FALSE, 0);
+			}
+		}
+	}
+	/* One window per convo */
+	else {
+		if ((trans_options & OPT_WGAIM_IMTRANS) &&
+		    (trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+			GtkWidget *paned;
+
+			/* Get container which to add slider to.. */
+			wl = gtk_container_children(GTK_CONTAINER(c->window));
+			paned = GTK_WIDGET(wl->data);
+			g_list_free(wl);
+			wl = gtk_container_children(GTK_CONTAINER(paned));
+			/* 2nd child */
+			vbox = GTK_WIDGET((wl->next)->data);
+			g_list_free(wl);
+			
+			if(!GTK_IS_VBOX(vbox))
+				debug_printf("vbox isn't a vbox widget\n");
+			
+			gtk_box_pack_start(GTK_BOX(vbox),
+					   wintrans_slider(c->window),
+					   FALSE, FALSE, 0);
+		}
+	}
+
+	if((trans_options & OPT_WGAIM_IMTRANS) &&
+	   !(trans_options & OPT_WGAIM_SHOW_IMTRANS)) {
+		set_wintrans(c->window, imalpha);
+	}
+}
+
+static void im_alpha_change(GtkWidget *w, gpointer data) {
+	imalpha = gtk_range_get_value(GTK_RANGE(w));
+}
+
+/* Load options */
+static void load_trans_prefs() {
+	FILE *f;
+	char buf[1024];
+	int ver=0;
+	char tag[256];
+
+	if (gaim_home_dir())
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaim" G_DIR_SEPARATOR_S "wintransrc", gaim_home_dir());
+	else
+		return;
+
+	if ((f = fopen(buf, "r"))) {
+		fgets(buf, sizeof(buf), f);
+		sscanf(buf, "# wintransrc v%d", &ver);
+		if ((ver > 1) || (buf[0] != '#'))
+			return;
+
+		while (!feof(f)) {
+			fgets(buf, sizeof(buf), f);
+			sscanf(buf, "%s {", tag);
+			if (strcmp(tag, "options")==0) {
+				fgets(buf, sizeof(buf), f);
+				sscanf(buf, "\ttrans_options { %d", &trans_options);
+				continue;
+			} else if (strcmp(tag, "trans")==0) {
+				fgets(buf, sizeof(buf), f);
+				sscanf(buf, "\timalpha { %d", &imalpha);
+				continue;
+			}
+		}
+	}
+	else
+		save_trans_prefs();
+}
+
+/* Save options */
+
+static void write_options(FILE *f) {
+	fprintf(f, "options {\n");
+	fprintf(f, "\ttrans_options { %u }\n", trans_options);
+	fprintf(f, "}\n");
+}
+
+static void write_trans(FILE *f)
+{
+	fprintf(f, "trans {\n");
+	fprintf(f, "\timalpha { %d }\n", imalpha);
+	fprintf(f, "}\n");
+}
+
+static void save_trans_prefs() {
+	FILE *f;
+	char buf[1024];
+
+	if (gaim_home_dir()) {
+		g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S ".gaim" G_DIR_SEPARATOR_S "wintransrc", gaim_home_dir());
+	}
+	else {
+		return;
+	}
+
+	if ((f = fopen(buf, "w"))) {
+		fprintf(f, "# wintransrc v%d\n", WINTRANS_VERSION);
+		write_trans(f);
+		write_options(f);
+		fclose(f);
+	}
+	else
+		debug_printf("Error opening wintransrc\n");
+}
+
+static void set_trans_option(GtkWidget *w, int option)
+{
+	trans_options ^= option;
+	save_trans_prefs();
+}
+
+/*
+ *  EXPORTED FUNCTIONS
+ */
 
 G_MODULE_EXPORT char *gaim_plugin_init(GModule *handle) {
-
-
 	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL); 
+	gaim_signal_connect(handle, event_del_conversation, gaim_del_conversation, NULL); 
+	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
+	load_trans_prefs();
 
 	return NULL;
 }
@@ -67,29 +302,58 @@ G_MODULE_EXPORT char *description() {
 	return _("This plugin enables variable alpha transparency on conversation windows.\n\n* Note: This plugin requires Win2000 or WinXP.");
 }
 
-void alpha_value_changed(GtkWidget *w, gpointer data)
-{
-	alpha = gtk_range_get_value(GTK_RANGE(w));
-}
-
 G_MODULE_EXPORT GtkWidget *gaim_plugin_config_gtk() {
+	GtkWidget *ret;
+	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label, *slider;
+	GtkWidget *button;
+	GtkWidget *trans_box;
 
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+
+	/* transparency options */
+	vbox = make_frame (ret, _("Transparency"));
+	button = gaim_button(_("_IM window transparency"), &trans_options, OPT_WGAIM_IMTRANS, vbox);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_IMTRANS);
+
+	trans_box =  gtk_vbox_new(FALSE, 18);
+	if (!(trans_options & OPT_WGAIM_IMTRANS))
+		gtk_widget_set_sensitive(GTK_WIDGET(trans_box), FALSE);
+	gtk_widget_show(trans_box);
+
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive),  trans_box);
+	
+	button = gaim_button(_("_Show slider bar in IM window"), &trans_options, OPT_WGAIM_SHOW_IMTRANS, trans_box);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(set_trans_option), (int *)OPT_WGAIM_SHOW_IMTRANS);
+
+	gtk_box_pack_start(GTK_BOX(vbox), trans_box, FALSE, FALSE, 5);
+
+	/* transparency slider */
 	hbox = gtk_hbox_new(FALSE, 5);
 
-	label = gtk_label_new(_("Opacity:"));
+	label = gtk_label_new(_("Default Opacity:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
 
 	slider = gtk_hscale_new_with_range(50,255,1);
-	gtk_range_set_value(GTK_RANGE(slider), 255);
+	gtk_range_set_value(GTK_RANGE(slider), imalpha);
 	gtk_widget_set_usize(GTK_WIDGET(slider), 200, -1);
-
-	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(alpha_value_changed), NULL);
+	
+	gtk_signal_connect(GTK_OBJECT(slider), "value-changed", GTK_SIGNAL_FUNC(im_alpha_change), NULL);
+	gtk_signal_connect(GTK_OBJECT(slider), "focus-out-event", GTK_SIGNAL_FUNC(save_trans_prefs), NULL);
 
 	gtk_box_pack_start(GTK_BOX(hbox), slider, FALSE, TRUE, 5);
 
 	gtk_widget_show_all(hbox);
 
-	return hbox;
+	gtk_box_pack_start(GTK_BOX(trans_box), hbox, FALSE, FALSE, 5);
+	
+	/* If this version of Windows dosn't support Transparency, grey out options */
+	if(!has_transparency()) {
+		gtk_widget_set_sensitive(GTK_WIDGET(vbox), FALSE);
+	}
+
+	gtk_widget_show_all(ret);
+	return ret;
 }
