@@ -36,6 +36,7 @@ typedef struct {
 
 static GList *tickerbuds = (GList *) NULL;
 static gboolean userclose = FALSE;
+static GtkWidget *msgw;
 
 void BuddyTickerDestroyWindow( GtkWidget *window );
 void BuddyTickerCreateWindow( void );
@@ -45,6 +46,7 @@ void BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm );
 void BuddyTickerClearList( void );
 void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
+int BuddyTickerMessageRemove( gpointer data );
 
 void
 BuddyTickerDestroyWindow( GtkWidget *window )
@@ -56,6 +58,8 @@ BuddyTickerDestroyWindow( GtkWidget *window )
 	userclose = TRUE;
 }
 
+static char *msg = "Welcome to GAIM 0.9.20, brought to you by Rob Flynn (maintainer), Eric Warmenhoven, Mark Spencer, Jeramey Crawford, Jim Duchek, and Syd Logan"; 
+
 void
 BuddyTickerCreateWindow()
 {
@@ -64,17 +68,22 @@ BuddyTickerCreateWindow()
         tickerwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
         gtk_signal_connect (GTK_OBJECT(tickerwindow), "destroy",
                 GTK_SIGNAL_FUNC (BuddyTickerDestroyWindow), "WM destroy");
-        gtk_window_set_title (GTK_WINDOW(tickerwindow), "Buddy Ticker");
+        gtk_window_set_title (GTK_WINDOW(tickerwindow), "GAIM - Buddy Ticker");
 
         ticker = gtk_ticker_new();
-        gtk_container_add( GTK_CONTAINER( tickerwindow ), ticker );
         gtk_ticker_set_spacing( GTK_TICKER( ticker ), 20 );
-        gtk_widget_set_usize( ticker, 200, -1 );
-        gtk_widget_show (ticker);
-
+        gtk_widget_set_usize( ticker, 500, -1 );
+        gtk_container_add( GTK_CONTAINER( tickerwindow ), ticker );
         gtk_ticker_set_interval( GTK_TICKER( ticker ), 500 );
         gtk_ticker_set_scootch( GTK_TICKER( ticker ), 10 );
+	msgw = gtk_label_new( msg );
+	gtk_ticker_add( GTK_TICKER( ticker ), msgw );
         gtk_ticker_start_scroll( GTK_TICKER( ticker ) );
+
+	gtk_timeout_add( 60000, BuddyTickerMessageRemove, (gpointer)  NULL );
+
+        gtk_widget_show_all (ticker);
+
 }
 
 void
@@ -161,10 +170,17 @@ BuddyTickerFindUser( char *name )
 }
 
 int
+BuddyTickerMessageRemove( gpointer data )
+{
+	if ( userclose == TRUE )
+		return;
+	gtk_ticker_remove( GTK_TICKER( ticker ), msgw );
+	return FALSE;
+}
+
+int
 BuddyTickerLogonTimeout( gpointer data )
 {
-	// XXX
-
 	return FALSE;
 }
 
