@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Thu Sep 14 00:54:48 UTC 2000
+   - Added create room callback
+
  - Wed Sep 13 22:01:35 UTC 2000
    - Remove references to "new" and "class" for dumb C++ compilers
    - Renamed userinfo->class to userinfo->flags both for clarity and C++
