@@ -155,6 +155,7 @@ struct buddyinfo {
 	int caps;
 	gboolean typingnot;
 	gchar *availmsg;
+	fu32_t ipaddr;
 
 	unsigned long ico_me_len;
 	unsigned long ico_me_csum;
@@ -1817,6 +1818,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
+	bi->ipaddr = info->icqinfo.ipaddr;
+
+	/* Available message stuff */
 	free(bi->availmsg);
 	if (info->availmsg)
 		if (info->availmsg_encoding) {
@@ -5444,6 +5448,18 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			yay = g_strconcat(tmp, _("<b>Logged In:</b> "), tstr, "\n", NULL);
 			free(tmp);
 			free(tstr);
+
+			if (bi->ipaddr) {
+				char *tstr =  g_strdup_printf("%hhd.%hhd.%hhd.%hhd",
+								(bi->ipaddr & 0xff000000) >> 24,
+								(bi->ipaddr & 0x00ff0000) >> 16,
+								(bi->ipaddr & 0x0000ff00) >> 8,
+								(bi->ipaddr & 0x000000ff));
+				tmp = yay;
+				yay = g_strconcat(tmp, _("<b>IP Address:</b> "), tstr, "\n", NULL);
+				free(tmp);
+				free(tstr);
+			}
 
 			if (bi->caps) {
 				char *caps = caps_string(bi->caps);
