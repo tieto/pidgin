@@ -693,6 +693,8 @@ void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)
 			strcpy(dest, "<BR>");
 			src++;
 			dest += 4;
+		} else if(*src == '\r') {
+			src++;
 		} else {
 			*dest++ = *src;
 			if (*src == '\0')
