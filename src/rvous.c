@@ -73,11 +73,14 @@ static void info_callback(GtkWidget *widget, struct file_transfer *ft)
 
 static void cancel_callback(GtkWidget *widget, struct file_transfer *ft)
 {
+	char buf[MSG_LEN];
+
 	if (ft->accepted) {
 		return;
 	}
 	
-	serv_rvous_cancel(ft->gc, ft->user, ft->cookie, ft->UID);
+	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, ft->UID);
+	sflap_send(ft->gc, buf, -1, TYPE_DATA);
 
 	free_ft(ft);
 }
@@ -210,6 +213,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
 	char buf[BUF_LONG];
 	char *buf2;
+	char tmp_buf[MSG_LEN];
 	struct file_header header;
 	int read_rv;
 	guint32 rcv;
@@ -233,7 +237,9 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
+	g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, ft->UID);
+	sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
+
 
 
 	/* XXX is ft->port in host order or network order? */
@@ -332,7 +338,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-		serv_rvous_cancel(ft->gc, ft->user, tmp, ft->UID);
+		g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, ft->UID);
+		sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -466,7 +473,9 @@ static void send_file_callback(gpointer data, gint source,
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
-		serv_rvous_cancel(ft->gc, ft->user, tmp, ft->UID);
+		char tmp_buf[MSG_LEN];
+		g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_cancel %s %s %s", ft->user, ft->cookie, ft->UID);
+		sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -485,6 +494,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *file = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window)));
 	char buf[BUF_LONG];
 	char *buf2;
+	char tmp_buf[MSG_LEN];
 	int read_rv;
 	struct file_header fhdr;
 	guint32 rcv = 0;
@@ -512,7 +522,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 
 	gtk_widget_destroy(ft->window);
 	ft->window = NULL;
-	serv_rvous_accept(ft->gc, ft->user, ft->cookie, ft->UID);
+	g_snprintf(tmp_buf, MSG_LEN, "toc_rvous_accept %s %s %s", ft->user, ft->cookie, ft->UID);
+	sflap_send(ft->gc, tmp_buf, -1, TYPE_DATA);
 
 
 	/* XXX is ft->port in host order or network order? */

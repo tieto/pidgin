@@ -142,26 +142,16 @@ void serv_get_dir(struct gaim_connection *g, char *name)
 		(*g->prpl->get_dir)(g, name);
 }
 
-void serv_set_dir(char *first, char *middle, char *last, char *maiden,
+void serv_set_dir(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
-	/* FIXME */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-
 	if (g && g->prpl && g->prpl->set_dir)
 		(*g->prpl->set_dir)(g, first, middle, last, maiden, city, state, country, web);
 }
 
-void serv_dir_search(char *first, char *middle, char *last, char *maiden,
+void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char *last, char *maiden,
 		     char *city, char *state, char *country, char *email)
 {
-	/* FIXME */
-	struct gaim_connection *g;
-	if (!connections) return;
-	g = connections->data;
-
 	if (g && g->prpl && g->prpl->dir_search)
 		(*g->prpl->dir_search)(g, first, middle, last, maiden, city, state, country, email);
 }
@@ -706,23 +696,6 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
                 w = 0;
 
         chat_write(b, who, w, message);
-}
-
-void serv_rvous_accept(struct gaim_connection *g, char *name, char *cookie, char *uid)
-{
-	/* Oscar doesn't matter here because this won't ever be called for it */
-	char buf[MSG_LEN];
-	g_snprintf(buf, MSG_LEN, "toc_rvous_accept %s %s %s", normalize(name),
-			cookie, uid);
-	sflap_send(g, buf, -1, TYPE_DATA);
-}
-
-void serv_rvous_cancel(struct gaim_connection *g, char *name, char *cookie, char *uid)
-{
-	char buf[MSG_LEN];
-	g_snprintf(buf, MSG_LEN, "toc_rvous_cancel %s %s %s", normalize(name),
-			cookie, uid);
-	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
 void send_keepalive(gpointer d) {

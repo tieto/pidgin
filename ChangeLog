@@ -1,15 +1,16 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.11.0:
-	* multiple connections
-	* logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
-	* protocol plugins
-	* user configurable sounds
-	* scroll bar now functions properly in chat room user lists
+	* Multiple connections
+	* Protocol plugins (IRC (plugins/irc.c), Yahoo (plugins/yay))
+	* Logs now stored to ~/.gaim/logs rather than ~/.gaim/SN/
+	* User configurable sounds
+	* Scroll bar now functions properly in chat room user lists
 	* X-Idle support added (thanks bmiller and bryner)
 	* small change in the way away messages are displayed
 	  (Thanks Ryan C. Gordon)
-	* plugin system uses GModule now (improves portability, adds features)
+	* Plugin system uses GModule now (improves portability, adds features)
+	* Perl got updates (reread plugins/PERL-HOWTO)
 
 version 0.10.3 (10/09/2000):
 	* Segfault when viewing user info fixed

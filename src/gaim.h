@@ -649,8 +649,8 @@ extern void serv_rem_permit(struct gaim_connection *, char *);
 extern void serv_rem_deny(struct gaim_connection *, char *);
 extern void serv_set_permit_deny(struct gaim_connection *);
 extern void serv_warn(struct gaim_connection *, char *, int);
-extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
-extern void serv_dir_search(char *, char *, char *, char *, char *, char *, char *, char *);
+extern void serv_set_dir(struct gaim_connection *, char *, char *, char *, char *, char *, char *, char *, int);
+extern void serv_dir_search(struct gaim_connection *, char *, char *, char *, char *, char *, char *, char *, char *);
 extern void serv_accept_chat(struct gaim_connection *, int);
 extern void serv_join_chat(struct gaim_connection *, int, char *);
 extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
@@ -666,8 +666,6 @@ extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, 
 extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
 extern void serv_got_chat_left(struct gaim_connection *, int);
 extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *);
-extern void serv_rvous_accept(struct gaim_connection *, char *, char *, char *);
-extern void serv_rvous_cancel(struct gaim_connection *, char *, char *, char *);
 
 /* Functions in conversation.c */
 extern void update_convo_add_button(struct conversation *);

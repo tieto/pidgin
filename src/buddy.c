@@ -416,6 +416,7 @@ void pressed_alias(GtkWidget *widget, struct buddy_show *b)
 
 void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_show *b)
 {
+	if (!b->connlist) return;
         if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
                 struct conversation *c;
 

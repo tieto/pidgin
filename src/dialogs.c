@@ -1180,7 +1180,9 @@ void do_set_dir(GtkWidget *widget, struct set_dir_dlg *b)
 	char *country = gtk_entry_get_text(GTK_ENTRY(b->country));
 
 
-        serv_set_dir(first, middle, last, maiden, city, state, country, web);
+	/* FIXME */
+        if (connections)
+		serv_set_dir(connections->data, first, middle, last, maiden, city, state, country, web);
 
         destroy_dialog(NULL, b->window);
 	g_free(b);
@@ -1939,7 +1941,9 @@ void do_find_info(GtkWidget *w, struct findbyinfo *b)
 	state = gtk_entry_get_text(GTK_ENTRY(b->stateentry)); 
 	country = gtk_entry_get_text(GTK_ENTRY(b->countryentry)); 
 
-        serv_dir_search(first, middle, last, maiden, city, state, country, "");
+	/* FIXME */
+	if (connections)
+		serv_dir_search(connections->data, first, middle, last, maiden, city, state, country, "");
         destroy_dialog(NULL, b->window);
 } 
 
@@ -1949,7 +1953,9 @@ void do_find_email(GtkWidget *w, struct findbyemail *b)
 
 	email = gtk_entry_get_text(GTK_ENTRY(b->emailentry));
 	
-        serv_dir_search("","","","","","","", email);
+	/* FIXME */
+	if (connections)
+		serv_dir_search(connections->data, "","","","","","","", email);
  
 	destroy_dialog(NULL, b->window);
 }
