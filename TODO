@@ -20,11 +20,6 @@ THE CORE:
 			it (and also move Yahoo/MSN dialog to prpl.c and have both of
 			them use it (is this doable? Yahoo only gives message count,
 			what does MSN give?))
-	Ha. Maybe we should also add OPT_GEN_MAILCHECK to check $MAIL (or
-		/var/spool/mail/$USER if that fails). If we did that I could get rid
-		of one more applet on my gnome panel and make it almost completely
-		for the sole purpose of gaim_applet. (Maybe this could be a plugin?
-		What should the UI be for this?)
 	Away needs to be modified to include "show" and "status", i.e. you can have
 		an away state, and an away message. This is exactly what ICQ does -
 		you're "N/A" (show in Jabber) and your away message is "I'm gone."
