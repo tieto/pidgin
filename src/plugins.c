@@ -57,6 +57,8 @@ static GtkWidget *pluglist;
 static GtkWidget *plugtext;
 static GtkWidget *plugwindow;
 
+static GtkWidget *config;
+
 /* --------------- Function Declarations --------------------- */
 
        void load_plugin  (GtkWidget *, gpointer);
@@ -224,6 +226,10 @@ void show_plugins(GtkWidget *w, gpointer data) {
 			   GTK_SIGNAL_FUNC(load_plugin), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
 
+	config = gtk_button_new_with_label("Configure Plugin");
+	gtk_widget_set_sensitive(config, 0);
+	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, FALSE, 5);
+
 	remove = gtk_button_new_with_label("Unload Plugin");
 	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
 			   GTK_SIGNAL_FUNC(unload), pluglist);
@@ -269,6 +275,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_widget_show(pluglist);
 	gtk_widget_show(plugtext);
 	gtk_widget_show(add);
+	gtk_widget_show(config);
 	gtk_widget_show(remove);
 	gtk_widget_show(close);
 
@@ -343,6 +350,8 @@ void unload(GtkWidget *w, gpointer data) {
 void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	gchar buffer[2048];
 	guint text_len;
+	void (*gaim_plugin_config)();
+	char *error;
 
 	text_len = gtk_text_get_length(GTK_TEXT(plugtext));
 	gtk_text_set_point(GTK_TEXT(plugtext), 0);
@@ -350,6 +359,15 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 
 	g_snprintf(buffer, sizeof buffer, "%s\n%s", p->name, p->description);
 	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, buffer, -1);
+
+	gaim_plugin_config = dlsym(p->handle, "gaim_plugin_config");
+	if ((error = dlerror()) == NULL) {
+		gtk_signal_connect(GTK_OBJECT(config), "clicked",
+				   GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
+		gtk_widget_set_sensitive(config, 1);
+	} else {
+		gtk_widget_set_sensitive(config, 0);
+	}
 }
 
 void hide_plugins(GtkWidget *w, gpointer data) {

@@ -15,6 +15,10 @@ void gaim_plugin_remove() {
 	handle = NULL;
 }
 
+void gaim_plugin_config() {
+	printf("configuring plugin.\n");
+}
+
 char *name() {
 	return "Simple Plugin Version 1.0";
 }
