@@ -147,9 +147,6 @@ extern void unload_protocol(struct prpl *);
 extern struct prpl *find_prpl(int);
 extern void do_proto_menu();
 
-extern void register_user(gpointer, gpointer);
-extern void prepare_regbox_for_next();
-
 extern void do_ask_dialog(const char *, void *, void *, void *);
 extern void do_prompt_dialog(const char *, void *, void *, void *);
 

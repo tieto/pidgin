@@ -270,7 +270,7 @@ void handle_buddy_rename(struct buddy *b, char *prevname) {
 		return;
 	}
 	
-	if (strcmp(b->name, prevname)) {
+	if (g_strcasecmp(b->name, prevname)) {
 		bs->connlist = g_slist_remove(bs->connlist, b->gc);
 		if (!bs->connlist) {
 			gs->members = g_slist_remove(gs->members, bs);
