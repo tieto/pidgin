@@ -30,6 +30,9 @@ void
 gaim_account_set_user_info(account, user_info)
 	Gaim::Account account
 	const char *user_info
+CODE:
+	gaim_account_set_user_info(account, user_info);
+	serv_set_info(gaim_account_get_connection(account), user_info);
 
 void
 gaim_account_set_buddy_icon(account, buddy_icon)

@@ -140,7 +140,7 @@ perl_init(void)
 		  "eval $strin;"
 		  "if($@){"
 		    /*"  #something went wrong\n"*/
-		    "GAIM::print(\"Errors loading file $f_name:\\n\",\"$@\");"
+		    "Gaim::debug(\"perl\", \"Errors loading file $f_name:\\n\",\"$@\");"
 		    "return 1;"
 		  "}"
 		  "return 0;"

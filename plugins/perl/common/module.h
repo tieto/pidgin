@@ -14,6 +14,7 @@ typedef struct group *Gaim__Group;
 #include "account.h"
 #include "connection.h"
 #include "debug.h"
+#include "server.h"
 
 typedef GaimAccount *Gaim__Account;
 typedef GaimConnection *Gaim__Connection;
