@@ -77,6 +77,8 @@ rm -r $RPM_BUILD_ROOT
 - Split the buddy pounce core and UI, and rewrote the UI for it.
 - Removed folder icons and excess space from the buddy list (Thanks Dave Camp)
 - Fixed a bug involving dragging buddies and groups
+- Re-implemented the logout icons.
+- New icons for "away" and "aol" (Thanks, Moses Lei)
 
 * Fri Apr 04 2003 Rob Flynn <rob@marko.net> (0.60 release)
 -Core:
