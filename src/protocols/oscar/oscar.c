@@ -3037,10 +3037,12 @@ static int gaim_parse_locerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	destn = va_arg(ap, char *);
 	va_end(ap);
 
-	buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-	gaim_notify_error(sess->aux_data, NULL, buf,
-					  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
-	g_free(buf);
+	if (destn != NULL) {
+		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
+		gaim_notify_error(sess->aux_data, NULL, buf,
+						  (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("No reason given."));
+		g_free(buf);
+	}
 
 	return 1;
 }
