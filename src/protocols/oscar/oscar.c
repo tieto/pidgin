@@ -59,8 +59,8 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
-static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE;
+static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
+static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
@@ -3122,7 +3122,7 @@ static char *caps_string(guint caps)
 				tmp = _("Hiptop");
 				break;
 			case AIM_CAPS_SECUREIM:
-				tmp = _("Secure IM");
+				tmp = _("Security Enabled");
 				break;
 			default:
 				tmp = NULL;
@@ -3678,7 +3678,7 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_reqpersonalinfo(sess, fr->conn);
 
 #ifndef NOSSI
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: requesting ssi list\n");
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "ssi: requesting rights and list\n");
 	aim_ssi_reqrights(sess);
 	aim_ssi_reqdata(sess);
 #endif
@@ -3686,9 +3686,11 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_locate_reqrights(sess);
 	aim_buddylist_reqrights(sess, fr->conn);
 	aim_im_reqparams(sess);
-	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi? */
+	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi */
 
 #ifdef NOSSI
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "bos: requesting rights\n");
+	aim_bos_reqrights(sess, fr->conn);
 	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
 	aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
 #endif
@@ -3789,9 +3791,10 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	od->rights.maxsiglen = od->rights.maxawaymsglen = (guint)maxsiglen;
 
 	if (od->icq)
-		aim_locate_setprofile(sess, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
+		aim_locate_setcaps(od->sess, caps_icq);
 	else
-		oscar_set_info(gc, gc->account->user_info);
+		aim_locate_setcaps(od->sess, caps_aim);
+	oscar_set_info(gc, gc->account->user_info);
 
 	return 1;
 }
@@ -3817,10 +3820,10 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
-	fu16_t maxpermits, maxdenies;
-	va_list ap;
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
+	va_list ap;
+	fu16_t maxpermits, maxdenies;
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t) va_arg(ap, unsigned int);
@@ -4415,43 +4418,38 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 							  "Your profile remains unset; try setting it "
 							  "again when you are fully connected."));
 
-	if (od->icq)
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
-	else {
-		if (!text) {
-			aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, NULL, 0, caps_aim);
-			return;
-		}
-		
-		text_html = gaim_strdup_withhtml(text);
-		flags = oscar_encoding_check(text_html);
-		if (flags & AIM_IMFLAGS_UNICODE) {
-			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-			aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
-			g_free(msg);
-		} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
-			msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-			aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
-			g_free(msg);
-		} else {
-			msglen = strlen(text_html);
-			aim_locate_setprofile(od->sess, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0, caps_aim);
-		}
-
-		if (msglen > od->rights.maxsiglen) {
-			gchar *errstr;
-			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
-									 "has been exceeded.  Gaim has truncated it for you.",
-									 "The maximum profile length of %d bytes "
-									 "has been exceeded.  Gaim has truncated it for you.",
-									 od->rights.maxsiglen), od->rights.maxsiglen);
-			gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
-			g_free(errstr);
-		}
-
-		g_free(text_html);
-
+	if (!text) {
+		aim_locate_setprofile(od->sess, NULL, "", 0, NULL, NULL, 0);
+		return;
 	}
+		
+	text_html = gaim_strdup_withhtml(text);
+	flags = oscar_encoding_check(text_html);
+	if (flags & AIM_IMFLAGS_UNICODE) {
+		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
+		aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
+		g_free(msg);
+	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
+		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
+		aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
+		g_free(msg);
+	} else {
+		msglen = strlen(text_html);
+		aim_locate_setprofile(od->sess, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
+	}
+
+	if (msglen > od->rights.maxsiglen) {
+		gchar *errstr;
+		errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
+								 "has been exceeded.  Gaim has truncated it for you.",
+								 "The maximum profile length of %d bytes "
+								 "has been exceeded.  Gaim has truncated it for you.",
+								 od->rights.maxsiglen), od->rights.maxsiglen);
+		gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
+		g_free(errstr);
+	}
+
+	g_free(text_html);
 
 	return;
 }
@@ -4477,7 +4475,7 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *te
 	}
 
 	if (!text) {
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0, caps_aim);
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 		return;
 	}
 
@@ -4486,19 +4484,19 @@ static void oscar_set_away_aim(GaimConnection *gc, OscarData *od, const char *te
 	if (flags & AIM_IMFLAGS_UNICODE) {
 		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
 		gc->away = g_strndup(text, od->rights.maxawaymsglen/2);
 	} else if (flags & AIM_IMFLAGS_ISO_8859_1) {
 		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		g_free(msg);
 		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	} else {
 		msglen = strlen(text_html);
 		aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html, 
-			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen), caps_aim);
+			(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
 		gc->away = g_strndup(text_html, od->rights.maxawaymsglen);
 	}
 
@@ -4628,13 +4626,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
-			GaimBuddy *buddy = gaim_find_buddy(gc->account, (const char *)buddies->data);
-			GaimGroup *group = gaim_find_buddys_group(buddy);
-			if (buddy && group) {
-				gaim_debug(GAIM_DEBUG_INFO, "oscar",
-						   "ssi: adding buddy %s to group %s\n", (const char *)buddies->data, group->name);
-				aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_get_buddy_alias_only(buddy), NULL, NULL, 0);
-			}
+			oscar_add_buddy(gc, (const char *)buddies->data, NULL);
 			buddies = buddies->next;
 		}
 	}
@@ -5323,16 +5315,23 @@ static const char *oscar_list_icon(GaimAccount *a, GaimBuddy *b) {
 
 static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, char **ne)
 {
+	GaimAccount *account = NULL;
+	GaimConnection *gc = NULL;
+	OscarData *od = NULL;
 	char *emblems[4] = {NULL,NULL,NULL,NULL};
 	int i = 0;
+	aim_userinfo_t *userinfo = NULL;
+
+	if (b != NULL)
+		account = b->account;
+	if (account != NULL)
+		gc = account->gc;
+	if (gc != NULL)
+		od = gc->proto_data;
 
 	if (!GAIM_BUDDY_IS_ONLINE(b)) {
-		GaimAccount *account;
-		GaimConnection *gc;
-		OscarData *od;
 		char *gname;
-		if ((b->name) && (account = b->account) && (gc = account->gc) && 
-			(od = gc->proto_data) && (od->sess->ssi.received_data) && 
+		if ((b->name) && (od) && (od->sess->ssi.received_data) && 
 			(gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name)) && 
 			(aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))) {
 			emblems[i++] = "notauthorized";
@@ -5371,6 +5370,13 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 		emblems[i++] = "hiptop";
 /*	if (b->uc & UC_UNCONFIRMED && i < 4)
 		emblems[i++] = "unconfirmed"; */
+
+	if ((i < 4) && (od != NULL)) {
+		userinfo = aim_locate_finduserinfo(od->sess, b->name);
+		if ((userinfo != NULL) && (userinfo->capabilities & AIM_CAPS_SECUREIM))
+			emblems[i++] = "secure";
+	}
+
 	*se = emblems[0];
 	*sw = emblems[1];
 	*nw = emblems[2];
@@ -5500,6 +5506,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t type;
 	fu8_t flags = 0, length = 0;
 	char *md5 = NULL;
+
 
 	va_start(ap, fr);
 	type = va_arg(ap, int);
@@ -6343,7 +6350,7 @@ static void oscar_show_find_email(GaimConnection *gc)
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
-	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0, 0);
+	aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
 	aim_srv_setavailmsg(od->sess, text);
 }
 

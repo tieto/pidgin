@@ -1676,7 +1676,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 * The next 16bytes are a capability block so we can
 	 * identify what type of rendezvous this is.
 	 */
-	args.reqclass = aim_getcap(sess, &bbs, 0x10);
+	args.reqclass = aim_locate_getcaps(sess, &bbs, 0x10);
 
 	/* 
 	 * What follows may be TLVs or nothing, depending on the

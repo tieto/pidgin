@@ -323,11 +323,7 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const c
 	return NULL;
 }
 
-/*
- * This still takes a length parameter even with a bstream because capabilities
- * are not naturally bounded.
- */
-faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
+faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len)
 {
 	fu32_t flags = 0;
 	int offset;
@@ -339,16 +335,14 @@ faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
 		cap = aimbs_getraw(bs, 0x10);
 
 		for (i = 0, identified = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++) {
-
 			if (memcmp(&aim_caps[i].data, cap, 0x10) == 0) {
 				flags |= aim_caps[i].flag;
 				identified++;
 				break; /* should only match once... */
-
 			}
 		}
 
-		if (!identified) {
+		if (!identified)
 			faimdprintf(sess, 0, "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
 					cap[0], cap[1], cap[2], cap[3],
 					cap[4], cap[5],
@@ -356,7 +350,34 @@ faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len)
 					cap[8], cap[9],
 					cap[10], cap[11], cap[12], cap[13],
 					cap[14], cap[15]);
+
+		free(cap);
+	}
+
+	return flags;
+}
+
+faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len)
+{
+	fu32_t flags = 0;
+	int offset;
+
+	for (offset = 0; aim_bstream_empty(bs) && (offset < len); offset += 0x02) {
+		fu8_t *cap;
+		int i, identified;
+
+		cap = aimbs_getraw(bs, 0x02);
+
+		for (i = 0, identified = 0; !(aim_caps[i].flag & AIM_CAPS_LAST); i++) {
+			if (memcmp(&aim_caps[i].data[2], cap, 0x02) == 0) {
+				flags |= aim_caps[i].flag;
+				identified++;
+				break; /* should only match once... */
+			}
 		}
+
+		if (!identified)
+			faimdprintf(sess, 0, "unknown short capability: {%02x%02x}\n", cap[0], cap[1]);
 
 		free(cap);
 	}
@@ -585,7 +606,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			 * OSCAR Capability information.
 			 *
 			 */
-			outinfo->capabilities = aim_getcap(sess, bs, length);
+			outinfo->capabilities |= aim_locate_getcaps(sess, bs, length);
 			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x000e) {
@@ -618,6 +639,8 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			 * OSCAR short capability information.  A shortened 
 			 * form of the normal capabilities.
 			 */
+			outinfo->capabilities |= aim_locate_getcaps_short(sess, bs, length);
+			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x001b) {
 			/*
@@ -896,8 +919,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  */
 faim_export int aim_locate_setprofile(aim_session_t *sess,
 				  const char *profile_encoding, const char *profile, const int profile_len,
-				  const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len,
-				  fu32_t caps)
+				  const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -948,8 +970,34 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 			aim_tlvlist_add_noval(&tl, 0x0004);
 	}
 
-	if (caps != 0x00000000)
-		aim_tlvlist_add_caps(&tl, 0x0005, caps);
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0002, 0x0004, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0002, 0x004, 0x0000, snacid);
+
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/*
+ * Subtype 0x0004 - Set your client's capabilities.
+ */
+faim_export int aim_locate_setcaps(aim_session_t *sess, fu32_t caps)
+{
+	aim_conn_t *conn;
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+
+	if (!sess || !(conn = aim_conn_findbygroup(sess, AIM_CB_FAM_LOC)))
+		return -EINVAL;
+
+	aim_tlvlist_add_caps(&tl, 0x0005, caps);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + aim_tlvlist_size(&tl))))
 		return -ENOMEM;
@@ -1032,7 +1080,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	if ((tlv = aim_tlv_gettlv(tlvlist, 0x0005, 1))) {
 		aim_bstream_t cbs;
 		aim_bstream_init(&cbs, tlv->value, tlv->length);
-		userinfo->capabilities = aim_getcap(sess, &cbs, tlv->length);
+		userinfo->capabilities = aim_locate_getcaps(sess, &cbs, tlv->length);
 		userinfo->present = AIM_USERINFO_PRESENT_CAPABILITIES;
 	}
 	aim_tlvlist_free(&tlvlist);

@@ -198,7 +198,8 @@ faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie);
 
 /* 0x0002 - locate.c */
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn);
-faim_internal fu32_t aim_getcap(aim_session_t *sess, aim_bstream_t *bs, int len);
+faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len);
+faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len);
 faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps);
 faim_internal void aim_info_free(aim_userinfo_t *);
 faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *);
