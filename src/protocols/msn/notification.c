@@ -322,12 +322,15 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	char *username, *password;
 	char *request_str;
 	char *buffer = NULL;
+	char *tpf;
 	size_t s;
 
 	username =
 		g_strdup(gaim_url_encode(gaim_account_get_username(session->account)));
 	password =
 		g_strdup(gaim_url_encode(gaim_account_get_password(session->account)));
+
+	tpf = (char *)g_hash_table_lookup(session->ssl_challenge_data, "tpf");
 
 	request_str = g_strdup_printf(
 		"GET %s HTTP/1.1\r\n"
@@ -349,7 +352,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kpp"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "kv"),
 		(char *)g_hash_table_lookup(session->ssl_challenge_data, "ver"),
-		(char *)g_hash_table_lookup(session->ssl_challenge_data, "tpf"),
+		(tpf == NULL ? "" : tpf),
 		session->ssl_login_host);
 
 	gaim_debug(GAIM_DEBUG_MISC, "msn", "Sending: {%s}\n", request_str);
