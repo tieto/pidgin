@@ -17,10 +17,8 @@ the most part things should be written in Perl. It's more stable than
 plugins.
 
 Right now, the only way to test that your script is working correctly is to
-load the perl plugin and load the script through that. Though, right now
-there really isn't much point in writing a script, since the two major
-functions in the AIM module (message_handler and command_handler) haven't
-been implemented yet.
+load the perl plugin and load the script through that. (This is also the only
+way I have of knowing that the interface is working correctly.)
 
 Everything available in normal perl scripts should be available in gaim's
 perl interface, so I'm not going to bother describing that. The important
@@ -97,11 +95,21 @@ AIM::print_to_conv(who, what)
 AIM::print_to_chat(room, what)
 	This should be just as obvious as the last command.
 
-AIM::add_message_handler
-	This actually hasn't been implemented yet, so don't worry about it
+AIM::add_event_handler(event, function)
+	This is the most important of them all. This is basically exactly like
+	gaim_signal_connect. You pass which event you want to connect to (a string
+	with the same name as the events for plugins, see SIGNALS), and a string
+	with the name of the function you want called. Simple enough?
 
-AIM::add_command_handler
-	This hasn't been implemented yet either. Pay no attention.
+	When this is triggered, the same arguments will be passed in @_ and are not
+	broken into a list, but left as one long string. You'll have to parse those
+	yourself with split. (Sounding exactly like X-Chat yet?) The arguments are
+	the exact same as those passed to the plugins, and are passed after the
+	plugins have had their way with them. Perl scripts cannot modify the values
+	so that gaim knows what the changes are. Unlike X-Chat, perl scripts cannot
+	short-circut gaim (that is, your script will be called in order it was added,
+	despite what other scripts do, and afterwards, execution will continue as
+	normal).
 
 AIM::add_timeout_handler(integer, function)
 	This calls function after integer number of seconds. It only calls function

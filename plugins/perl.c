@@ -21,7 +21,6 @@ char *description() {
 }
 
 int gaim_plugin_init(void *h) {
-	perl_init();
 }
 
 static GtkWidget *config = NULL;
@@ -102,5 +101,4 @@ void gaim_plugin_config() {
 
 void gaim_plugin_remove() {
 	if (config) gtk_widget_destroy(config);
-	perl_end();
 }
