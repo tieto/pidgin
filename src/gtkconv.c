@@ -4344,67 +4344,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gaim_window_show(win);
 	}
 
-	if (flags & GAIM_MESSAGE_IMAGES) {
-		GData *attribs;
-		GdkPixbuf *broken;
-		const char *tmp, *start, *end;
-
-		broken = gtk_widget_render_icon(GTK_WIDGET(gtkconv->imhtml),
-				GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_BUTTON,
-				"gaim-missing-image");
-
-		tmp = message;
-		while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
-			GaimStoredImage *image = NULL;
-			GdkPixbufLoader *loader;
-			GError *error = NULL;
-			char *id = NULL;
-
-			tmp = end + 1;
-
-			id = g_datalist_get_data(&attribs, "id");
-
-			if (id)
-				image = gaim_imgstore_get(atoi(id));
-
-			g_datalist_clear(&attribs);
-
-			if (!image) {
-				g_object_ref(G_OBJECT(broken));
-				images = g_slist_append(images, broken);
-				continue;
-			}
-
-			loader = gdk_pixbuf_loader_new();
-
-			if (!gdk_pixbuf_loader_write(loader, image->data, image->size, &error)) {
-				if (error) {
-					gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
-							"Failed to make pixbuf for IM Image: %s\n",
-							error->message);
-					g_error_free(error);
-				}
-				g_object_ref(G_OBJECT(broken));
-				images = g_slist_append(images, broken);
-			} else {
-				GdkPixbuf *pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-				if (pixbuf) {
-					if (image->filename)
-						g_object_set_data_full(G_OBJECT(pixbuf), "filename",
-								g_strdup(image->filename), g_free);
-					g_object_ref(G_OBJECT(pixbuf));
-					images = g_slist_append(images, pixbuf);
-				} else {
-					g_object_ref(G_OBJECT(broken));
-					images = g_slist_append(images, broken);
-				}
-			}
-
-			gdk_pixbuf_loader_close(loader, NULL);
-		}
-
-		g_object_unref(G_OBJECT(broken));
-	}
+	if (flags & GAIM_MESSAGE_IMAGES)
+		gaim_gtk_find_images(message, &images);
 
 	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
 		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
@@ -4675,13 +4616,14 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		g_free(sml_attrib);
 
 	if (images) {
-		GSList *tmp = images;
-		GdkPixbuf *pixbuf;
-		while (tmp) {
-			pixbuf = tmp->data;
-			g_object_unref(G_OBJECT(pixbuf));
-			tmp = tmp->next;
+		GSList *tmp;
+
+		for (tmp = images; tmp; tmp = tmp->next) {
+			GdkPixbuf *pixbuf = tmp->data;
+			if(pixbuf)
+				g_object_unref(pixbuf);
 		}
+
 		g_slist_free(images);
 	}
 }

@@ -1003,7 +1003,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 	gboolean found = FALSE;
 	gboolean in_tag = FALSE;
 	gboolean in_attr = FALSE;
-	gboolean in_quotes = FALSE;
+	char *in_quotes = NULL;
 	size_t needlelen = strlen(needle);
 
 	g_datalist_init(&attribs);
@@ -1013,7 +1013,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 			if (in_quotes) {
 				const char *close = cur;
 
-				while (*close && *close != '"')
+				while (*close && *close != *in_quotes)
 					close++;
 
 				/* if we got the close quote, store the value and carry on from    *
@@ -1030,7 +1030,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 						name = NULL;
 					}
 
-					in_quotes = FALSE;
+					in_quotes = NULL;
 					cur = close + 1;
 				} else {
 					cur = close;
@@ -1038,7 +1038,8 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 			} else if (in_attr) {
 				const char *close = cur;
 
-				while (*close && *close != '>' && *close != '"' && *close != ' ' && *close != '=')
+				while (*close && *close != '>' && *close != '"' &&
+						*close != '\'' && *close != ' ' && *close != '=')
 					close++;
 
 				/* if we got the equals, store the name of the attribute. if we got
@@ -1047,7 +1048,8 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 				 * so we can get outta here */
 				switch (*close) {
 				case '"':
-					in_quotes = TRUE;
+				case '\'':
+					in_quotes = close;
 				case '=':
 					{
 						size_t len = close - cur;
@@ -1082,7 +1084,8 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 					*end = cur;
 					break;
 				case '"':
-					in_quotes = TRUE;
+				case '\'':
+					in_quotes = cur;
 				default:
 					cur++;
 					break;

@@ -270,6 +270,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GtkWidget *button;
 	GtkWidget *imhtml;
 	GtkWidget *sw;
+	GSList *images = NULL;
 	int options = 0;
 	char label_text[2048];
 
@@ -340,7 +341,20 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_NEWLINE;
 	options ^= GTK_IMHTML_NO_SCROLL;
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), text, options);
+	gaim_gtk_find_images(text, &images);
+	gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
+
+	if (images) {
+		GSList *tmp;
+
+		for (tmp = images; tmp; tmp = tmp->next) {
+			GdkPixbuf *pixbuf = tmp->data;
+			if(pixbuf)
+				g_object_unref(pixbuf);
+		}
+
+		g_slist_free(images);
+	}
 
 	/* Show the window */
 	gtk_widget_show(window);

@@ -33,6 +33,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "debug.h"
+#include "imgstore.h"
 #include "notify.h"
 #include "prefs.h"
 #include "prpl.h"
@@ -1047,5 +1048,56 @@ void show_usage(int mode, const char *name)
 	case 1:		/* short message */
 		printf(_("Gaim %s. Try `%s -h' for more information.\n"), VERSION, name);
 		break;
+	}
+}
+
+void gaim_gtk_find_images(const char *message, GSList **list) {
+	GData *attribs;
+	const char *tmp, *start, *end;
+
+	tmp = message;
+	while (gaim_markup_find_tag("img", tmp, &start, &end, &attribs)) {
+		GaimStoredImage *image = NULL;
+		GdkPixbufLoader *loader = NULL;
+		GdkPixbuf *pixbuf = NULL;
+		GError *error = NULL;
+		char *id = g_datalist_get_data(&attribs, "id");
+
+		tmp = end + 1;
+
+		if (id)
+			image = gaim_imgstore_get(atoi(id));
+
+		g_datalist_clear(&attribs);
+
+		if (!image) {
+			*list = g_slist_append(*list, NULL);
+			continue;
+		}
+
+		loader = gdk_pixbuf_loader_new();
+
+		if (gdk_pixbuf_loader_write(loader, image->data, image->size, &error)
+			&& (pixbuf = gdk_pixbuf_loader_get_pixbuf(loader))) {
+
+			if (image->filename)
+				g_object_set_data_full(G_OBJECT(pixbuf), "filename",
+					g_strdup(image->filename), g_free);
+			g_object_ref(G_OBJECT(pixbuf));
+			*list = g_slist_append(*list, pixbuf);
+		} else {
+			if (error) {
+				gaim_debug(GAIM_DEBUG_ERROR, "gtkutils",
+						"Failed to make pixbuf from image store: %s\n",
+						error->message);
+				g_error_free(error);
+			} else {
+				gaim_debug(GAIM_DEBUG_ERROR, "gtkutils",
+						"Failed to make pixbuf from image store: unknown reason\n");
+			}
+			*list = g_slist_append(*list, NULL);
+		}
+
+		gdk_pixbuf_loader_close(loader, NULL);
 	}
 }
