@@ -200,31 +200,40 @@ static int unnotify_cb(GtkWidget *widget, gpointer data) {
 }
 
 static gboolean
-chat_recv_im(GaimAccount *account, GaimConversation *conv, char **who,
-			 char **text)
+chat_recv_im(GaimAccount *account, char **who, char **text, int id, void *m)
 {
+	GaimConversation *conv = gaim_find_chat(
+								gaim_account_get_connection(account),
+								id);
 	if (conv)
 		notify(conv);
 
 	return FALSE;
 }
 
-static void chat_sent_im(GaimConversation *c, char **text) {
-	if (c)
-		unnotify(c);
+static void chat_sent_im(GaimAccount *account, char *text, int id, void *m) {
+	GaimConversation *conv = gaim_find_chat(
+								gaim_account_get_connection(account),
+								id);
+	
+	if (conv)
+		unnotify(conv);
 }
 
 static gboolean
-im_recv_im(GaimAccount *account, GaimConversation *conv, char **who,
-		   char **what, int *flags, void *m)
+im_recv_im(GaimAccount *account, char **who, char **what, int *flags, void *m)
 {
+	GaimConversation *conv = gaim_find_conversation_with_account(*who, account);
+	
 	if (conv)
 		notify(conv);
 
 	return FALSE;
 }
 
-static void im_sent_im(GaimConversation *conv, char **what, void *m) {
+static void im_sent_im(GaimAccount *account, char *who, void *m) {
+	GaimConversation *conv = gaim_find_conversation_with_account(who, account);
+
 	if (conv)
 		unnotify(conv);
 }
