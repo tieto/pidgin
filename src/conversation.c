@@ -552,12 +552,14 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		if (general_options & OPT_GEN_CTL_CHARS) {
 			switch (event->keyval) {
 			case 'i':
+			case 'I':
 				quiet_set(c->italic,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
 				do_italic(c->italic, c->entry);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 'u':	/* ctl-u is GDK_Clear, which clears the line */
+			case 'U':
 				quiet_set(c->underline,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON
 									(c->underline)));
@@ -565,12 +567,14 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 'b':	/* ctl-b is GDK_Left, which moves backwards */
+			case 'B':
 				quiet_set(c->bold,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->bold)));
 				do_bold(c->bold, c->entry);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				break;
 			case 's':
+			case 'S':
 				quiet_set(c->strike,
 					  !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->strike)));
 				do_strike(c->strike, c->entry);
@@ -692,6 +696,10 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			}
 		}
+	} else if ((display_options & OPT_DISP_ONE_WINDOW) && (event->state & GDK_MOD1_MASK) &&
+			isdigit(event->keyval) && (event->keyval > '0')) {
+		gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), event->keyval - '1');
+		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
 
 	return TRUE;
