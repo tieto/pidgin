@@ -3507,8 +3507,15 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 				if (t) { /* This is an offline message */
 					/* The timestamp is UTC-ish, so we need to get the offset */
+#ifdef HAVE_TM_GMTOFF
+					struct tm tm;
+					t += tm.tm_gmtoff;
+#else
+#	ifdef HAVE_TIMEZONE
 					tzset();
 					t -= timezone;
+#	endif
+#endif
 					serv_got_im(gc, uin, tmp, 0, t);
 				} else { /* This is a message from MacICQ/Miranda */
 					serv_got_im(gc, uin, tmp, 0, time(NULL));
