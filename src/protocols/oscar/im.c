@@ -83,11 +83,11 @@ faim_export fu16_t aim_im_fingerprint(const fu8_t *msghdr, int len)
 		fu8_t data[10];
 	} fingerprints[] = {
 		/* AOL Mobile Communicator, WinAIM 1.0.414 */
-		{ AIM_CLIENTTYPE_MC, 
+		{ AIM_CLIENTTYPE_MC,
 		  3, {0x01, 0x01, 0x01}},
 
 		/* WinAIM 2.0.847, 2.1.1187, 3.0.1464, 4.3.2229, 4.4.2286 */
-		{ AIM_CLIENTTYPE_WINAIM, 
+		{ AIM_CLIENTTYPE_WINAIM,
 		  3, {0x01, 0x01, 0x02}},
 
 		/* WinAIM 4.1.2010, libfaim */
@@ -144,10 +144,10 @@ faim_export int aim_im_setparams(aim_session_t *sess, struct aim_icbmparameters 
 	aimbs_put16(&fr->data, 0x0000);
 
 	/* These are all read-write */
-	aimbs_put32(&fr->data, params->flags); 
+	aimbs_put32(&fr->data, params->flags);
 	aimbs_put16(&fr->data, params->maxmsglen);
-	aimbs_put16(&fr->data, params->maxsenderwarn); 
-	aimbs_put16(&fr->data, params->maxrecverwarn); 
+	aimbs_put16(&fr->data, params->maxsenderwarn);
+	aimbs_put16(&fr->data, params->maxrecverwarn);
 	aimbs_put32(&fr->data, params->minmsginterval);
 
 	aim_tx_enqueue(sess, fr);
@@ -184,7 +184,7 @@ static int aim_im_paraminfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
 	params.maxsenderwarn = aimbs_get16(bs);
 	params.maxrecverwarn = aimbs_get16(bs);
 	params.minmsginterval = aimbs_get32(bs);
-	
+
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		return userfunc(sess, rx, &params);
 
@@ -282,7 +282,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, msgtlvlen+128)))
 		return -ENOMEM;
 
-	/* XXX - should be optional */	
+	/* XXX - should be optional */
 	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, args->destsn, strlen(args->destsn)+1);
 	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
@@ -432,7 +432,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 	fu8_t *hdr;
 	int hdrlen;
 	aim_bstream_t hdrbs;
-	
+
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
@@ -490,7 +490,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 	aim_tlvlist_add_raw(&itl, 0x000c, strlen(msg), msg);
 	aim_tlvlist_add_chatroom(&itl, 0x2711, exchange, roomname, instance);
 	aim_tlvlist_write(&hdrbs, &itl);
-	
+
 	aim_tlvlist_add_raw(&otl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
 
 	aim_tlvlist_write(&fr->data, &otl);
@@ -498,7 +498,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 	free(hdr);
 	aim_tlvlist_free(&itl);
 	aim_tlvlist_free(&otl);
-	
+
 	aim_tx_enqueue(sess, fr);
 
 	return 0;
@@ -731,7 +731,7 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, fu
 	aim_tlvlist_add_raw(&itl, 0x0003, 4, ip);
 	aim_tlvlist_add_16(&itl, 0x0005, port);
 	aim_tlvlist_add_noval(&itl, 0x000f);
-	
+
 	aim_tlvlist_write(&hdrbs, &itl);
 
 	aim_tlvlist_add_raw(&tl, 0x0005, aim_bstream_curpos(&hdrbs), hdr);
@@ -1202,8 +1202,8 @@ faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm)
 
 static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
 {
-	aim_mpmsg_section_t *sec; 
-	
+	aim_mpmsg_section_t *sec;
+
 	if (!(sec = malloc(sizeof(aim_mpmsg_section_t))))
 		return -1;
 
@@ -1249,7 +1249,7 @@ faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const 
 {
 	fu8_t *dup;
 
-	if (!(dup = strdup(ascii))) 
+	if (!(dup = strdup(ascii)))
 		return -1;
 
 	if (mpmsg_addsection(sess, mpm, 0x0000, 0x0000, dup, strlen(ascii)) == -1) {
@@ -1279,7 +1279,7 @@ faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, cons
 		free(buf);
 		return -1;
 	}
-	
+
 	return 0;
 }
 
@@ -1289,13 +1289,13 @@ faim_export void aim_mpmsg_free(aim_session_t *sess, aim_mpmsg_t *mpm)
 
 	for (cur = mpm->parts; cur; ) {
 		aim_mpmsg_section_t *tmp;
-		
+
 		tmp = cur->next;
 		free(cur->data);
 		free(cur);
 		cur = tmp;
 	}
-	
+
 	mpm->numparts = 0;
 	mpm->parts = NULL;
 
@@ -1838,7 +1838,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 */
 	if (aim_tlv_gettlv(list2, 0x000d, 1))
 		args.encoding = aim_tlv_getstr(list2, 0x000d, 1);
-	
+
 	/*
 	 * Language.
 	 */
@@ -2069,7 +2069,7 @@ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *s
 	snacid = aim_cachesnac(sess, 0x0004, 0x0008, 0x0000, sn, strlen(sn)+1);
 	aim_putsnac(&fr->data, 0x0004, 0x0008, 0x0000, snacid);
 
-	aimbs_put16(&fr->data, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000); 
+	aimbs_put16(&fr->data, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000);
 	aimbs_put8(&fr->data, strlen(sn));
 	aimbs_putraw(&fr->data, sn, strlen(sn));
 
@@ -2086,7 +2086,7 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	fu16_t channel, nummissed, reason;
 	aim_userinfo_t userinfo;
 
-	while (aim_bstream_empty(bs)) {	
+	while (aim_bstream_empty(bs)) {
 
 		channel = aimbs_get16(bs);
 		aim_info_extract(sess, bs, &userinfo);
@@ -2117,7 +2117,7 @@ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, con
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
-	
+
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
@@ -2126,7 +2126,7 @@ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, con
 
 	snacid = aim_cachesnac(sess, 0x0004, 0x000b, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0004, 0x000b, 0x0000, snacid);
-	
+
 	aimbs_putraw(&fr->data, cookie, 8);
 
 	aimbs_put16(&fr->data, 0x0002); /* channel */
