@@ -366,8 +366,8 @@ void toc_callback( gpointer          data,
 	char *c;
         char *l;
 
-        buf = g_malloc(BUF_LONG);
-        if (wait_reply(buf, BUF_LONG) < 0) {
+        buf = g_malloc(2 * BUF_LONG);
+        if (wait_reply(buf, 2 * BUF_LONG) < 0) {
                 signoff();
                 hide_login_progress("Connection Closed");
                 g_free(buf);
