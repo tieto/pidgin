@@ -569,17 +569,22 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 {
 	struct PHB *phb = data;
 	unsigned int len;
-	int error = ETIMEDOUT;
+	int error=0;
+	int ret=0;
 
 	debug_printf("Connected\n");
 
 	len = sizeof(error);
-	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
+
+	ret = getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len);
+	if (ret < 0 || error != 0) {
 		close(source);
 		gaim_input_remove(phb->inpa);
 		phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
+                debug_printf("getsockopt SO_ERROR check: %s\n", 
+			     strerror(((ret<0) ? errno : error)));
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
