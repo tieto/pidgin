@@ -1,7 +1,7 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 0.71 (10/09/2003):
 	Rob: It's been a while since I've commited some news.  I've had a
-      	very hectic few weeks/months.  Thing are finally coming together
+	very hectic few weeks/months.  Thing are finally coming together
 	again for me.  This release features much copying and pasting. Yeah.
 
 	Sean: I can't wait for everything to be core/ui split!
@@ -23,10 +23,10 @@
 	of Christian.  Nothing new for Win Gaim users other than a fix for
 	missing aim buddy icons, and removal of gtk-wimp (until it matures).
 
-	Mark: People are going to make a voodoo doll of me and shower it with 
-	kisses and chocolate women: When an AIM user is away, you can now view 
-	the person's away message in their tooltip.  This is very similar to 
-	what iChat does, only our tooltip will wrap lines rather than displaying 
+	Mark: People are going to make a voodoo doll of me and shower it with
+	kisses and chocolate women: When an AIM user is away, you can now view
+	the person's away message in their tooltip.  This is very similar to
+	what iChat does, only our tooltip will wrap lines rather than displaying
 	off your screen :-)
 
 	Nathan: Chocolate women are cool, but I'm a bigger fan of the real kind.
@@ -48,10 +48,10 @@
 	didn't fix them, mind you, I just closed them.  With abandon.
 	Don't tell Luke.
 
-	Luke: Mmmm, I probly did even less than Ethan, except I closed rather 
-	more bugs for other reasons. Lots of you submitting duplicate bugs. 
+	Luke: Mmmm, I probly did even less than Ethan, except I closed rather
+	more bugs for other reasons. Lots of you submitting duplicate bugs.
 	This should be a pretty good release. We still have a couple crashes
-	in ssl stuff, but we fixed a number of the bugs in the tracker, and 
+	in ssl stuff, but we fixed a number of the bugs in the tracker, and
 	the code cleaning helps alot as well. Enjoy!
 
 0.70 (9/28/2003):
