@@ -96,7 +96,7 @@ gaim_LDADD = \
 
 gaim_remote_SOURCES = gaim-remote.c socket.c
 gaim_remote_DEPENDENCIES = @LIBOBJS@
-gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS)
+gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS)
 
 AM_CPPFLAGS = \
 	$(GTKSPELL_CFLAGS) \
