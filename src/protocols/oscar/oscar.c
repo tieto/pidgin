@@ -4024,7 +4024,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	len = num * (MAXSNLEN + 1) + 1024;
 	buf = g_malloc(len);
-	at += g_snprintf(buf + at, len - at, "<B>%s has the following screen names:</B><BR>", address);
+	at += g_snprintf(buf + at, len - at, _("<B>%s has the following screen names:</B><BR>"), address);
 	for (i = 0; i < num; i++)
 		at += g_snprintf(buf + at, len - at, "%s<BR>", &SNs[i * (MAXSNLEN + 1)]);
 	g_show_info_text(NULL, NULL, 2, buf, NULL);
@@ -4042,7 +4042,7 @@ static int gaim_parse_searcherror(aim_session_t *sess, aim_frame_t *fr, ...) {
 	address = va_arg(ap, char *);
 	va_end(ap);
 
-	g_snprintf(buf, sizeof(buf), "No results found for email address %s", address);
+	g_snprintf(buf, sizeof(buf), _("No results found for email address %s"), address);
 	do_error_dialog(buf, NULL, GAIM_ERROR);
 
 	return 1;
@@ -4062,7 +4062,7 @@ static int gaim_account_confirm(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "account confirmation returned status 0x%04x (%s)\n", status,
 			status ? "unknown" : "email sent");
 	if (!status) {
-		g_snprintf(msg, sizeof(msg), "You should receive an email asking to confirm %s.",
+		g_snprintf(msg, sizeof(msg), _("You should receive an email asking to confirm %s."),
 				gc->username);
 		do_error_dialog(_("Account Confirmation Requested"), msg, GAIM_INFO);
 	}
