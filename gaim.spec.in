@@ -45,6 +45,6 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 %doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog
 %{prefix}/lib/gaim/*
 %{prefix}/share/pixmaps/gaim.xpm
-
+%{prefix}/share/gnome/apps/Internet/gaim.desktop
 %clean
 rm -r $RPM_BUILD_ROOT
