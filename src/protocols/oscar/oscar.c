@@ -191,6 +191,8 @@ struct buddyinfo {
 
 	fu16_t iconcsumlen;
 	fu8_t iconcsum[30];
+
+	double shoesize;
 };
 
 struct name_data {
@@ -1787,6 +1789,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		free(b16);
 	}
 
+	bi->shoesize = (rand()%5)+7;
+	if (rand()%2)  bi->shoesize+=0.5;
+
 	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon, time_idle, type);
 
 	return 1;
@@ -3032,6 +3037,14 @@ static char *oscar_tooltip_text(struct buddy *b) {
 			g_free(tmp);
 			g_free(status);
 		}
+
+		{
+			char *tmp;
+			tmp = yay;
+			yay = g_strdup_printf("%s\n<b>Shoe Size:</b> %2.1f", tmp, bi->shoesize);
+			g_free(tmp);
+		}
+
 		return yay;
 	} else {
 		return NULL;
