@@ -149,7 +149,7 @@ AM_PATH_GTK_2_0(2.0.0,,AC_MSG_ERROR([
 AC_PATH_PROG(gaimpath, gaim)
 CFLAGS="$CFLAGS $GTK_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 
-AC_PATH_X
+AC_PATH_XTRA
 
 dnl Check for XScreenSaver
 if test "x$enable_xss" = "xyes" ; then
@@ -157,14 +157,15 @@ if test "x$enable_xss" = "xyes" ; then
 	LIBS="$LIBS $GTK_LIBS -L$x_libraries"
 	XSS_LIBS="no"
 	XSS_HEADERS="no"
-	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries"],[],[-lX11 -lXext -lm])
-	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="-L$x_libraries -lXss"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xext, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_EXTRA_LIBS"],[],[-lX11 -lXext -lm])
+	AC_CHECK_LIB(Xss, XScreenSaverRegister,[XSS_LIBS="$X_LIBS $X_PRE_LIBS -lX11 -lXext $X_LIBS $X_EXTRA_LIBS -lXss"],[],[-lX11 -lXext -lm])
 	if test \! "$XSS_LIBS" = "no"; then
 		AC_TRY_COMPILE([
+#include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
-				],[],[enable_xss=no],[
-				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])
-				])
+				],[],[
+				AC_DEFINE(USE_SCREENSAVER, 1, [Define if we're using XScreenSaver.])],[enable_xss=no]
+				)
 	else
 	       XSS_LIBS=""
 	       enable_xss=no
