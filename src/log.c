@@ -62,16 +62,16 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 {
 	g_return_if_fail(log);
 	g_return_if_fail(log->logger);
-	g_return_if_fail((log->logger->write));
+	g_return_if_fail(log->logger->write);
 
-	log->logger->write(log, type, from, time, message);
+	(log->logger->write)(log, type, from, time, message);
 }
 
 char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 {
 	g_return_val_if_fail(log && log->logger, NULL);
-	if ((log->logger->read))
-		return log->logger->read(log, flags);
+	if (log->logger->read)
+		return (log->logger->read)(log, flags);
 	return (_("<b><font color\"=red\">The logger has no read function</font></b>"));
 }
 
