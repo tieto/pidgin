@@ -6,6 +6,7 @@ version 0.9.12:
 	* Small internal change to the way prefs work
 	* GNOME Applet support works better
 	  (thanks to Eric Warmenhoven for the patch)
+	* Support for displaying true type fonts
 	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)
