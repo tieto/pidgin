@@ -419,9 +419,9 @@ help_arg_command_cb(GaimConversation *conv,
 	if (help) {
 		for (l = help; l; l = l->next)
 			if (l->next)
-				g_string_append_printf(s, "%s\n", (char *)l->data);
+				g_string_append_printf(s, "/%s\n", (char *)l->data);
 			else
-				g_string_append_printf(s, "%s", (char *)l->data);
+				g_string_append_printf(s, "/%s", (char *)l->data);
 	} else {
 		g_string_append(s, _("No such command (in this context)."));
 	}
@@ -6075,18 +6075,18 @@ gaim_gtk_conversations_init(void)
 	 **********************************************************************/
 	gaim_cmd_register("me", "S", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-	                  me_command_cb, _("Send an IRC style action to a buddy or chat."));
+	                  me_command_cb, _("me &lt;action&gt;:  Send an IRC style action to a buddy or chat."));
 	gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-	                  debug_command_cb, _("Send various debug information to the current conversation."));
+	                  debug_command_cb, _("debug &lt;option&gt;:  Send various debug information to the current conversation."));
 
 	gaim_cmd_register("help", "", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-	                  help_command_cb, _("/help:  List available commands."));
+	                  help_command_cb, _("help:  List available commands."));
 
 	gaim_cmd_register("help", "w", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
-	                  help_arg_command_cb, _("/help &lt;command&gt;:  Help on a specific command."));
+	                  help_arg_command_cb, _("help &lt;command&gt;:  Help on a specific command."));
 }
 
 void

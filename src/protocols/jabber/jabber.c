@@ -1397,45 +1397,45 @@ static void jabber_register_commands(void)
 {
 	gaim_cmd_register("config", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
-			jabber_cmd_chat_config, _("Configure a chat room"));
+			jabber_cmd_chat_config, _("config:  Configure a chat room."));
 	gaim_cmd_register("configure", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
-			jabber_cmd_chat_config, _("Configure a chat room"));
+			jabber_cmd_chat_config, _("configure:  Configure a chat room."));
 	gaim_cmd_register("nick", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
-			jabber_cmd_chat_nick, _("Change your nickname"));
+			jabber_cmd_chat_nick, _("nick &ltnew nickname&gt;:  Change your nickname."));
 	gaim_cmd_register("part", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_part, _("Leave the room"));
+			jabber_cmd_chat_part, _("part [room]:  Leave the room."));
 	gaim_cmd_register("register", "", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY, "prpl-jabber",
-			jabber_cmd_chat_register, _("Register with a chat room"));
+			jabber_cmd_chat_register, _("register:  Register with a chat room."));
 	/* XXX: there needs to be a core /topic cmd, methinks */
 	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_topic, _("View or change the topic"));
+			jabber_cmd_chat_topic, _("topic [new topic]:  View or change the topic."));
 	gaim_cmd_register("ban", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_ban, _("Ban a user from the room"));
+			jabber_cmd_chat_ban, _("ban &lt;user&gt; [room]:  Ban a user from the room."));
 	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_invite, _("Invite a user to the room"));
+			jabber_cmd_chat_invite, _("invite &lt;user&gt; [room]:  Invite a user to the room."));
 	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_join, _("Join a chat on this server"));
+			jabber_cmd_chat_join, _("join: &lt;room&gt; [server]:  Join a chat on this server."));
 	gaim_cmd_register("kick", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-			jabber_cmd_chat_kick, _("Kick a user from the room"));
+			jabber_cmd_chat_kick, _("kick &lt;user&gt; [room]:  Kick a user from the room."));
 	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
 			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			"prpl-jabber",
-			jabber_cmd_chat_msg, _("Send a private message to another user"));
+			jabber_cmd_chat_msg, _("msg &lt;user&gt; [room]:  Send a private message to another user.")); /* XXX is this right? */
 }
 
 static GaimPluginPrefFrame *

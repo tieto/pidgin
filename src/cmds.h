@@ -111,7 +111,11 @@ extern "C" {
  *          be called.
  * @param prpl_id This is the prpl's id string. This is only meaningful is the proper flag is set.
  * @param func This is the function to call when someone enters this command.
- * @param helpstr This is a string describing how to use the command.
+ * @param helpstr This is a whitespace sensitive, UTF-8, HTML string describing how to use the command.
+ *                The prefered format of this string shall be the commands name, followed by a space
+ *                and any arguments it accpets (if it takes any arguments, otherwise no space), follow
+ *                by a colon, two spaces, and a description of the command in sentense form. No slash
+ *                before the command name.
  * @return A pointer to a GaimCmdId. This is only used for calling gaim_cmd_unregister, which frees it.
  *         Returns @c NULL on failure.
  */
