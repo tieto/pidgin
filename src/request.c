@@ -337,6 +337,7 @@ gaim_request_field_string_new(const char *id, const char *text,
 	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_STRING);
 
 	field->u.string.multiline = multiline;
+	field->u.string.editable  = TRUE;
 
 	gaim_request_field_string_set_default_value(field, default_value);
 

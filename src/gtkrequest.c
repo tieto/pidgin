@@ -634,6 +634,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 							gtk_text_buffer_set_text(buffer, value, -1);
 						}
 
+						gtk_text_view_set_editable(GTK_TEXT_VIEW(widget),
+							gaim_request_field_string_is_editable(field));
+
 						g_signal_connect(G_OBJECT(textview), "focus-out-event",
 										 G_CALLBACK(field_string_focus_out_cb),
 										 field);
@@ -643,6 +646,12 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 						if (value != NULL)
 							gtk_entry_set_text(GTK_ENTRY(widget), value);
+
+						gtk_entry_set_visibility(GTK_ENTRY(widget),
+							!gaim_request_field_string_is_masked(field));
+
+						gtk_editable_set_editable(GTK_EDITABLE(widget),
+							gaim_request_field_string_is_editable(field));
 
 						g_signal_connect(G_OBJECT(widget), "focus-out-event",
 										 G_CALLBACK(field_string_focus_out_cb),
