@@ -625,6 +625,9 @@ char *event_name(enum gaim_event event)
 	case event_set_info:
 		sprintf(buf, "event_set_info");
 		break;
+	case event_draw_menu:
+		sprintf(buf, "event_draw_menu");
+		break;
 	default:
 		sprintf(buf, "event_unknown");
 		break;
@@ -748,6 +751,13 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 					(*function)((int)arg1, g->data);
 				}
 				break;
+			/* GtkWidget *, char * */
+			case event_draw_menu:
+				{
+					void(*function)(GtkWidget *, char *) = g->function;
+					(*function)(arg1, arg2);
+				}
+				break;
 
 			default:
 				debug_printf("unknown event %d\n", event);
@@ -842,6 +852,9 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		break;
 	case event_new_conversation:
 		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+		break;
+	case event_draw_menu:
+		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 		break;
 	default:
 		break;

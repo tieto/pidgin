@@ -697,7 +697,10 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 			if (g->prpl->buddy_menu)
 				(*g->prpl->buddy_menu)(menu, g, b->name);
 		}
-		
+
+		/* we send the menu widget so we can add menuitems within a plugin */
+		plugin_event (event_draw_menu, menu, b->name, 0, 0);
+	
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 			       event->button, event->time);
 
