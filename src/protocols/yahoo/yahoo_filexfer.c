@@ -41,10 +41,8 @@ struct yahoo_xfer_data {
 	GaimConnection *gc;
 	long expires;
 	gboolean started;
-	guint length;
 	gchar *rxqueue;
 	guint rxlen;
-	guint bytes_in;
 };
 
 static void yahoo_xfer_data_free(struct yahoo_xfer_data *xd)
@@ -249,11 +247,12 @@ guint calculate_length(const gchar *l, size_t len)
 
 size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 {
-	gchar buf[1024];
+	gchar buf[4096];
 	ssize_t len;
 	gchar *start = NULL;
 	gchar *length;
 	gchar *end;
+	int filelen;
 	struct yahoo_xfer_data *xd = xfer->data;
 
 	if (gaim_xfer_get_type(xfer) != GAIM_XFER_RECEIVE) {
@@ -263,7 +262,8 @@ size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 	len = read(xfer->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		if (xd->length && (xd->length == xd->bytes_in))
+		if ((gaim_xfer_get_size(xfer) > 0) &&
+		   (gaim_xfer_get_bytes_sent(xfer) >= gaim_xfer_get_size(xfer)))
 			gaim_xfer_set_completed(xfer, TRUE);
 		else
 			gaim_xfer_cancel_remote(xfer);
@@ -281,8 +281,8 @@ size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 			end = g_strstr_len(length, length - xd->rxqueue, "\r\n");
 			if (!end)
 				return 0;
-			if ((xd->length = calculate_length(length, len - (length - xd->rxqueue))))
-				gaim_xfer_set_size(xfer, xd->length);
+			if ((filelen = calculate_length(length, len - (length - xd->rxqueue))))
+				gaim_xfer_set_size(xfer, filelen);
 		}
 		start = g_strstr_len(xd->rxqueue, len, "\r\n\r\n");
 		if (start)
@@ -303,13 +303,12 @@ size_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 		memcpy(*buffer, buf, len);
 	}
 
-	xd->bytes_in += len;
 	return len;
 }
 
 size_t yahoo_xfer_write(const char *buffer, size_t size, GaimXfer *xfer)
 {
-	size_t len;
+	ssize_t len;
 	struct yahoo_xfer_data *xd = xfer->data;
 
 	if (!xd)
@@ -321,12 +320,18 @@ size_t yahoo_xfer_write(const char *buffer, size_t size, GaimXfer *xfer)
 
 	len = write(xfer->fd, buffer, size);
 
-	xd->bytes_in += len;
-	if (xd->bytes_in >= gaim_xfer_get_size(xfer))
+	if (len == -1) {
+		if (gaim_xfer_get_bytes_sent(xfer) >= gaim_xfer_get_size(xfer))
+			gaim_xfer_set_completed(xfer, TRUE);
+		if ((errno != EAGAIN) && (errno != EINTR))
+			gaim_xfer_cancel_remote(xfer);
+		return 0;
+	}
+
+	if ((gaim_xfer_get_bytes_sent(xfer) + len) >= gaim_xfer_get_size(xfer))
 		gaim_xfer_set_completed(xfer, TRUE);
 
 	return len;
-
 }
 
 static void yahoo_xfer_cancel_send(GaimXfer *xfer)
