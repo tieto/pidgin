@@ -1,8 +1,8 @@
-#include "gtkinternal.h"
-
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
+
+#include "gtkgaim.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 

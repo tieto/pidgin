@@ -19,14 +19,14 @@
  * 02111-1307, USA.
  */
 #include "internal.h"
-#include "gtkinternal.h"
-#include "gtkblist.h"
+#include "gtkgaim.h"
 
 #include "connection.h"
 #include "debug.h"
 #include "prefs.h"
 #include "signals.h"
 
+#include "gtkblist.h"
 #include "gtkconv.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"

@@ -1,5 +1,4 @@
 #include "internal.h"
-#include "gtkinternal.h"
 
 #include "blist.h"
 #include "conversation.h"
@@ -8,6 +7,7 @@
 #include "sound.h"
 
 #include "gtkblist.h"
+#include "gtkgaim.h"
 #include "gtkplugin.h"
 #include "gtksound.h"
 

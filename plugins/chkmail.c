@@ -14,6 +14,10 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <pthread.h>
+
+#include "internal.h"
+#include "gtkgaim.h"
+
 #include "gaim.h"
 
 char username[] = "";
