@@ -123,26 +123,6 @@ static void process_packet_message(struct gaim_connection *gc, struct yahoo_pack
 	}
 }
 
-static void process_packet_conf_invite(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-}
-
-static void process_packet_conf_add_invite(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-}
-
-static void process_packet_conf_msg(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-}
-
-static void process_packet_conf_logon(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-}
-
-static void process_packet_conf_logoff(struct gaim_connection *gc, struct yahoo_packet *pkt) {
-	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
-}
-
 static void process_packet_newmail(struct gaim_connection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char buf[2048];
@@ -195,24 +175,17 @@ static void yahoo_callback(gpointer data, gint source, GdkInputCondition conditi
 					process_packet_message(gc, pkt);
 				else
 					process_packet_status(gc, pkt);
-				break;
-			case YAHOO_SERVICE_CONFINVITE:
-				process_packet_conf_invite(gc, pkt);
-				break;
-			case YAHOO_SERVICE_CONFADDINVITE:
-				process_packet_conf_add_invite(gc, pkt);
-				break;
-			case YAHOO_SERVICE_CONFMSG:
-				process_packet_conf_msg(gc, pkt);
-				break;
-			case YAHOO_SERVICE_CONFLOGON:
-				process_packet_conf_logon(gc, pkt);
-				break;
-			case YAHOO_SERVICE_CONFLOGOFF:
-				process_packet_conf_logoff(gc, pkt);
+				if (pkt->msg_id && !find_buddy(gc, pkt->msg_id)) {
+					char buf[1024];
+					g_snprintf(buf, sizeof buf, "%s on Yahoo has made you "
+								"their friend", pkt->msg_id);
+					do_error_dialog(buf, "Yahoo");
+					show_add_buddy(gc, pkt->msg_id, NULL);
+				}
 				break;
 			case YAHOO_SERVICE_NEWMAIL:
 			case YAHOO_SERVICE_NEWPERSONALMAIL:
+				/* do we really want to do this? */
 				process_packet_newmail(gc, pkt);
 				break;
 			default:
