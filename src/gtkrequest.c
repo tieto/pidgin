@@ -379,7 +379,6 @@ gaim_gtk_request_action(const char *title, const char *primary,
 
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, 12);
-
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -415,12 +414,14 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	GaimGtkRequestData *data;
 	GtkWidget *win;
 	GtkWidget *vbox;
+	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *frame;
 	GtkWidget *label;
 	GtkWidget *table;
 	GtkWidget *sep;
 	GtkWidget *button;
+	GtkWidget *img;
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
 	GaimRequestFieldGroup *group;
@@ -441,19 +442,28 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	data->dialog = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-#if 0
-	/* HIG says no to this :( */
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(win), title);
-#endif
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
+	/* Setup the main horizontal box */
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(win), hbox);
+	gtk_widget_show(hbox);
+
+	/* Dialog icon. */
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION,
+								   GTK_ICON_SIZE_DIALOG);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_widget_show(img);
+
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(win), vbox);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
