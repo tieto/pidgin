@@ -2559,7 +2559,7 @@ gaim_str_size_to_units(size_t size)
 	else {
 		size_mag = (float)size;
 
-		while ((size_index < 4) && (size_mag > 1024)) {
+		while ((size_index < 3) && (size_mag > 1024)) {
 			size_mag /= 1024;
 			size_index++;
 		}
