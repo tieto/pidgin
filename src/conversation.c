@@ -1322,6 +1322,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	char buf2[BUF_LONG];
 	char mdate[64];
 
+	if (!g_list_find(conversations, c))
+		return;
+
 	strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
 
 	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
