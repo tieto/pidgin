@@ -71,13 +71,13 @@
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
 
-#include "pixmaps/aol_icon.xpm"
-#include "pixmaps/free_icon.xpm"
-#include "pixmaps/dt_icon.xpm"
-#include "pixmaps/admin_icon.xpm"
-#include "pixmaps/ab.xpm"
-#include "pixmaps/wireless_icon.xpm"
-#include "pixmaps/gnomeicu-online.xpm"
+#include "pixmaps/protocols/oscar/aol_icon.xpm"
+#include "pixmaps/protocols/oscar/free_icon.xpm"
+#include "pixmaps/protocols/oscar/dt_icon.xpm"
+#include "pixmaps/protocols/oscar/admin_icon.xpm"
+#include "pixmaps/protocols/oscar/ab.xpm"
+#include "pixmaps/protocols/oscar/wireless_icon.xpm"
+#include "pixmaps/protocols/oscar/gnomeicu-online.xpm"
 
 #define PATHSIZE 1024
 

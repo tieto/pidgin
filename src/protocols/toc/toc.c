@@ -42,12 +42,12 @@
 #include "gaim.h"
 #include "proxy.h"
 
-#include "pixmaps/admin_icon.xpm"
-#include "pixmaps/aol_icon.xpm"
-#include "pixmaps/away_icon.xpm"
-#include "pixmaps/dt_icon.xpm"
-#include "pixmaps/free_icon.xpm"
-#include "pixmaps/wireless_icon.xpm"
+#include "pixmaps/protocols/oscar/admin_icon.xpm"
+#include "pixmaps/protocols/oscar/aol_icon.xpm"
+#include "pixmaps/protocols/oscar/away_icon.xpm"
+#include "pixmaps/protocols/oscar/dt_icon.xpm"
+#include "pixmaps/protocols/oscar/free_icon.xpm"
+#include "pixmaps/protocols/oscar/wireless_icon.xpm"
 
 #define REVISION "penguin"
 
