@@ -52,8 +52,10 @@
 
 #define TOOLTIP_TIMEOUT 500
 
-static gint gtk_imhtml_tip (gpointer data);
+static gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
 
+
+static gint gtk_imhtml_tip (gpointer data);
 
 /* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
  * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
@@ -1236,7 +1238,7 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 	gtk_paint_layout (imhtml->tip_window->style, imhtml->tip_window->window, GTK_STATE_NORMAL,
 					  FALSE, NULL, imhtml->tip_window, NULL, 4, 4, layout);
 
-	g_free(layout);
+	g_object_unref(layout);
 	return FALSE;
 }
 
@@ -1308,7 +1310,7 @@ gtk_imhtml_tip (gpointer data)
 	gtk_window_move (GTK_WINDOW(imhtml->tip_window), x, y);
 
 	pango_font_metrics_unref(font);
-	g_free(layout);
+	g_object_unref (layout);
 
 	return FALSE;
 }

@@ -118,7 +118,6 @@ void       gtk_imhtml_page_up          (GtkIMHtml        *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml        *imhtml);
 void       gtk_imhtml_to_bottom        (GtkIMHtml        *imhtml);
 
-gboolean       gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer user_data);
 #ifdef __cplusplus
 }
 #endif
