@@ -609,7 +609,21 @@ gaim_gtk_notify_uri(const char *uri)
 	g_free(command);
 
 #else /* !_WIN32 */
-	ShellExecute(NULL, NULL, uri, NULL, ".\\", 0);
+	/**
+	 * Since this could be potentially dangerous,
+	 * allowing a URI to try to perform some sort of malicious operation,
+	 * we only allow execution when the URI starts with
+	 * "http://", "https://", "ftp://", "mailto:"
+	 */
+	if (g_ascii_strncasecmp(uri, "http://", 7) == 0
+			|| g_ascii_strncasecmp(uri, "mailto:", 7) == 0
+			|| g_ascii_strncasecmp(uri, "https://", 8) == 0
+			|| g_ascii_strncasecmp(uri, "ftp://", 6) == 0
+		) {
+		ShellExecute(NULL, NULL, uri, NULL, ".\\", 0);
+	} else {
+		gaim_debug_misc("gtknotify", "Ignoring '%s' URI as it is not recognized as a secure URI.\n", uri);
+	}
 #endif /* !_WIN32 */
 
 	return NULL;
