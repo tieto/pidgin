@@ -75,7 +75,7 @@ msgstr "Recibiendo datos"
 
 #: src/protocols/gg/gg.c:468
 msgid "Balancer handshake"
-msgstr ""
+msgstr "Saludo del balanceador"
 
 #: src/protocols/gg/gg.c:471
 msgid "Reading server key"
@@ -108,7 +108,7 @@ msgstr "El UIN especificado es inválido"
 #: src/protocols/gg/gg.c:570
 #, c-format
 msgid "Connect to %s failed"
-msgstr "Falló la connexón %s"
+msgstr "Falló la connexón a %s"
 
 #: src/protocols/gg/gg.c:594
 #, fuzzy
@@ -309,6 +309,7 @@ msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
 msgstr ""
+"%s ha solicitado un IM privado. Desearía establecer la conexión directa?"
 
 #: src/protocols/irc/irc.c:1001
 msgid "Unable to write"
@@ -362,16 +363,16 @@ msgstr "Conectado"
 
 #: src/protocols/jabber/jabber.c:707
 msgid "Extended Away"
-msgstr ""
+msgstr "Ausencia Extendida"
 
 #: src/protocols/jabber/jabber.c:709
 msgid "Do Not Disturb"
-msgstr ""
+msgstr "No Molestar"
 
 #: src/protocols/jabber/jabber.c:1042
 #, fuzzy
 msgid "No such user"
-msgstr "No existe el servidor"
+msgstr "No existe el usuario"
 
 #: src/protocols/jabber/jabber.c:1044
 #, fuzzy
@@ -385,7 +386,7 @@ msgstr "Amigos"
 #: src/protocols/jabber/jabber.c:1188
 #, fuzzy
 msgid "Authenticating"
-msgstr "Falló la Autorización"
+msgstr "Autorizando"
 
 #: src/protocols/jabber/jabber.c:1225
 #, fuzzy
@@ -406,7 +407,7 @@ msgstr "No se pudo conectar."
 #: src/protocols/jabber/jabber.c:1463
 #, fuzzy
 msgid "Connected"
-msgstr "Desconectado."
+msgstr "Conectado"
 
 #: src/protocols/jabber/jabber.c:1466
 #, fuzzy
@@ -417,7 +418,7 @@ msgstr "Falló la Autorización"
 #: src/protocols/jabber/jabber.c:1484
 #, fuzzy
 msgid "Connecting"
-msgstr "Conexión Cerrada"
+msgstr "Conectando"
 
 #: src/protocols/jabber/jabber.c:1783
 msgid "Room:"
@@ -434,7 +435,7 @@ msgstr "Gestor:"
 #: src/protocols/jabber/jabber.c:2062 src/protocols/jabber/jabber.c:2401
 #, fuzzy
 msgid "Unknown"
-msgstr "ICQ Desconocido"
+msgstr "Desconocido"
 
 #: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2117
 #: src/protocols/oscar/oscar.c:3443
@@ -444,7 +445,7 @@ msgstr "Mensaje de Ausencia"
 #: src/protocols/jabber/jabber.c:2299
 #, fuzzy
 msgid "Full Name"
-msgstr "Nombre"
+msgstr "Nombre Completo"
 
 #: src/protocols/jabber/jabber.c:2300
 #, fuzzy
@@ -467,23 +468,23 @@ msgstr "URL"
 
 #: src/protocols/jabber/jabber.c:2304
 msgid "Street Address"
-msgstr ""
+msgstr "Calle"
 
 #: src/protocols/jabber/jabber.c:2305
 msgid "Extended Address"
-msgstr ""
+msgstr "Dirección extendida"
 
 #: src/protocols/jabber/jabber.c:2306
 msgid "Locality"
-msgstr ""
+msgstr "Localidad"
 
 #: src/protocols/jabber/jabber.c:2307
 msgid "Region"
-msgstr ""
+msgstr "Región"
 
 #: src/protocols/jabber/jabber.c:2308
 msgid "Postal Code"
-msgstr ""
+msgstr "Código postal"
 
 #. Line 7
 #: src/dialogs.c:1604 src/dialogs.c:2312 src/protocols/jabber/jabber.c:2309
@@ -493,7 +494,7 @@ msgstr "País"
 #: src/protocols/jabber/jabber.c:2310
 #, fuzzy
 msgid "Telephone"
-msgstr "No Seleccionar Nada"
+msgstr "Numero de telefono"
 
 #: src/dialogs.c:2388 src/protocols/jabber/jabber.c:2311
 msgid "Email"
@@ -501,11 +502,11 @@ msgstr "Correo Electrónico"
 
 #: src/protocols/jabber/jabber.c:2312
 msgid "Organization Name"
-msgstr ""
+msgstr "Nombre de empresa"
 
 #: src/protocols/jabber/jabber.c:2313
 msgid "Organization Unit"
-msgstr ""
+msgstr "Grupo de trabajo"
 
 #: src/prefs.c:1988 src/protocols/jabber/jabber.c:2314
 msgid "Title"
@@ -514,7 +515,7 @@ msgstr "Título"
 #: src/protocols/jabber/jabber.c:2315
 #, fuzzy
 msgid "Role"
-msgstr "Quitar"
+msgstr "Papel"
 
 #: src/protocols/jabber/jabber.c:2316
 #, fuzzy
@@ -531,6 +532,8 @@ msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
+"Todos los campos siguientes son opcionales. Introduzca solo la información"
+"que siente confortable compartir"
 
 #: src/protocols/jabber/jabber.c:2343
 #, fuzzy
@@ -539,15 +542,15 @@ msgstr "Información de Usuario"
 
 #: src/protocols/jabber/jabber.c:2759
 msgid "Gaim - Edit Jabber vCard"
-msgstr ""
+msgstr "Gaim - Editar datos en Jabber"
 
 #: src/protocols/jabber/jabber.c:2833
 msgid "Server Registration successful!"
-msgstr ""
+msgstr "Registro en el servidor efectuado exitosamente"
 
 #: src/protocols/jabber/jabber.c:2860
 msgid "Unknown registration error"
-msgstr ""
+msgstr "Error desconocido al registrar"
 
 #: src/protocols/jabber/jabber.c:2969 src/protocols/jabber/jabber.c:2984
 #, fuzzy
@@ -622,7 +625,7 @@ msgstr "Salí a comer"
 
 #: src/protocols/msn/msn.c:1921
 msgid "Hidden"
-msgstr "Sin conexión"
+msgstr "Oculto"
 
 #: src/protocols/msn/msn.c:2037
 msgid "Reset friendly name"
@@ -796,7 +799,7 @@ msgstr "Desconectado."
 #: src/protocols/oscar/oscar.c:397 src/protocols/toc/toc.c:761
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Has sido desconectado de la sala: %s"
+msgstr "Ha sido desconectado de la sala: %s"
 
 #: src/protocols/oscar/oscar.c:398
 msgid "Chat Error!"
@@ -816,7 +819,7 @@ msgstr "No se pudo conectar al host"
 
 #: src/protocols/oscar/oscar.c:478
 msgid "Password sent, waiting for response\n"
-msgstr "Contraseña mandada, esperando respuesta\n"
+msgstr "Contraseña enviada, esperando respuesta\n"
 
 #: src/protocols/oscar/oscar.c:511
 msgid "internal connection error\n"
@@ -851,7 +854,7 @@ msgstr "Nombre de cuenta o contraseña incorrecta."
 #. Suspended account
 #: src/protocols/oscar/oscar.c:647
 msgid "Your account is currently suspended."
-msgstr "Tu cuenta está deshabilitada actualmente."
+msgstr "Su cuenta está deshabilitada actualmente."
 
 #. connecting too frequently
 #: src/protocols/oscar/oscar.c:651
@@ -890,24 +893,27 @@ msgid ""
 "following reason:\n"
 "\n"
 msgstr ""
+"El usuario %d ha negado su petición de añadirlo a su lista de contactos por la"
+"Siguiente razon:\n"
+"\n"
 
 #: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
 #, fuzzy
 msgid "No reason given."
-msgstr "No se indicó un apodo"
+msgstr "No se indicó una razón"
 
 #: src/protocols/oscar/oscar.c:1497 src/protocols/oscar/oscar.c:2372
 msgid "Gaim - ICQ Authorization Denied"
-msgstr ""
+msgstr "Gaim - Autorización ICQ negada"
 
 #: src/protocols/oscar/oscar.c:1503 src/protocols/oscar/oscar.c:2378
 #, c-format
 msgid "The user %d has granted your request to add them to your contact list."
-msgstr ""
+msgstr "El usuario %d ha autorizado su petición de añadirlo a su lista de contactos"
 
 #: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2379
 msgid "Gaim - ICQ Authorization Granted"
-msgstr ""
+msgstr "Gaim - Autorizacion ICQ aceptada"
 
 #: src/protocols/oscar/oscar.c:1577
 #, c-format
@@ -1079,7 +1085,9 @@ msgstr ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Leyenda:</I><br><br><IMG "
 "SRC=\"free_icon.gif\"> : Usuario Normal de AIM<br><IMG SRC=\"aol_icon.gif\"> "
 ": Usuario de AOL<br><IMG SRC=\"dt_icon.gif\"> : Usuario de prueba de "
-"AIM<br><IMG SRC=\"admin_icon.gif\"> : Administrador"
+"AIM<br><IMG SRC=\"admin_icon.gif\"> : Administrador <br><IMG SRC=\"ab_icon.gif\"> : "
+"Agente Interactivo de ActiveBuddy<br><IMG SRC=\"wireless_icon.gif\"> : Usuario de"
+"dispositivo inalámbrico"
 
 #: src/protocols/oscar/oscar.c:1829
 #, fuzzy
@@ -1089,11 +1097,9 @@ msgid ""
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 msgstr ""
-"Nombre de usuario: <B>%s</B>\n"
-"<BR>Nivel de Aviso : <B>%d %%</B>\n"
-"<BR>Conectado desde : <B>%s</B>\n"
-"<BR>Minutos Inactivo: <B>%d</B>\n"
-"<BR>\n"
+"Nombre de usuario: <B>%s</B> %s <BR>\n"
+"Nivel de Aviso : <B>%d %%</B><BR>\n"
+"%s%s%s<BR>\n"
 "<HR><BR>\n"
 
 #: src/protocols/oscar/oscar.c:1861
@@ -1102,7 +1108,7 @@ msgstr "<i>El usuario no tiene mensaje de ausencia</i>"
 
 #: src/protocols/oscar/oscar.c:1873
 msgid "Client Capabilities: "
-msgstr "Funcionalidaesde del Cliente: "
+msgstr "Funcionalidades del Cliente: "
 
 #: src/protocols/oscar/oscar.c:1881
 msgid "<i>No Information Provided</i>"
@@ -1148,7 +1154,7 @@ msgid ""
 "continue?"
 msgstr ""
 "Ha seleccionado abrir una conexión IM directa con %s. AL hacerlo, se le "
-"permitirá ver su dirección IP y puede ser un riesgo de sguridad. ¿Desea "
+"permitirá ver su dirección IP y puede ser un riesgo de seguridad. ¿Desea "
 "continuar?"
 
 #: src/protocols/oscar/oscar.c:3450
@@ -1253,7 +1259,7 @@ msgstr "Fallo desconocido: %s."
 
 #: src/protocols/toc/toc.c:462
 msgid "The service is temporarily unavailable."
-msgstr "Servicio no disponible temporalmente."
+msgstr "Servicio temporalmente no disponible."
 
 #: src/protocols/toc/toc.c:465
 msgid "Your warning level is currently too high to log in."
@@ -1341,12 +1347,12 @@ msgstr "Gaim - Guardar Como..."
 #: src/protocols/toc/toc.c:1959
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
-msgstr "%s le pide que acepte el archivo %d: %s (%2f%s )%s%s"
+msgstr "%s le pide a %s que acepte el archivo %d: %s (%.2f %s)%s%s"
 
 #: src/protocols/toc/toc.c:1960
 #, c-format
 msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr "%s le pide que acepte %d archivos: %s (%.2f %s)%s%s"
+msgstr "%s le pide a %s que acepte %d archivos: %s (%.2f %s)%s%s"
 
 #: src/protocols/toc/toc.c:1965
 #, c-format
@@ -1387,8 +1393,8 @@ msgid ""
 "URL: "
 msgstr ""
 "Gaim es un cliente que funciona con el protocolo de Mensajería Instantánea "
-"deAOL.\n"
-"Se escribió en Gtk+ y tiene la licencia GPL.\n"
+"de AOL.\n"
+"Se escribió utilizando Gtk+ y esta licenciado bajo la licencia GPL.\n"
 "\n"
 "URL: "
 
@@ -1422,12 +1428,14 @@ msgstr ""
 "===================\n"
 "Benjamin Miller\n"
 "Decklin Foster\n"
+"Nathan Walp\n"
+"Mark Doliner\n"
 "\n"
 "Desarrolladores Retirados\n"
 "===================\n"
 "Jim Duchek\n"
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (autor original)      [ markster@marko]"
+"Mark Spencer (autor original)      [ markster@marko.net ]"
 
 #: src/about.c:155 src/aim.c:318 src/buddy.c:2633 src/buddy_chat.c:1311
 #: src/buddy_chat.c:1408 src/buddy_chat.c:1438 src/conversation.c:2795
@@ -1608,7 +1616,7 @@ msgstr "Quitar Aviso de Amigo"
 
 #: src/buddy.c:1707
 msgid "[Click to edit]"
-msgstr ""
+msgstr "[Haga click para editar]"
 
 #: src/buddy.c:2183
 #, c-format
@@ -1864,7 +1872,7 @@ msgstr "Gaim - Guardar Conversación"
 #: src/conversation.c:474
 #, fuzzy
 msgid "Gaim - Insert Image"
-msgstr "Gaim - Usuario de IM"
+msgstr "Gaim - Insertar Imagen"
 
 #: src/conversation.c:1278
 msgid "Unable to send message: too large"
@@ -1881,7 +1889,7 @@ msgstr "No se pudo enviar el mensaje: Motivo desconocido"
 #: src/conversation.c:1501
 #, fuzzy, c-format
 msgid "Currently at %d, "
-msgstr "Actualmente en %d\n"
+msgstr "Actualmente en %d, "
 
 #: src/conversation.c:1509
 #, c-format
@@ -1988,7 +1996,7 @@ msgstr "Imagen de IM"
 #: src/conversation.c:2165
 #, fuzzy
 msgid "Image"
-msgstr "Imagen de IM"
+msgstr "Imagen"
 
 #: src/conversation.c:2172
 msgid "Enable logging"
@@ -2041,7 +2049,7 @@ msgstr "Ocultar Icono"
 
 #: src/conversation.c:3417
 msgid "Save Icon As..."
-msgstr "Gaim - Guardar Icono Como..."
+msgstr "Guardar Icono Como..."
 
 #: src/dialogs.c:413
 msgid "Gaim - Warn user?"
@@ -2079,7 +2087,7 @@ msgstr "Borrar Amigo"
 msgid ""
 "You are about to remove '%s' from\n"
 "your buddylist. Do you want to continue?"
-msgstr "Está a punto de borrar a '%s' de su lista de amigos. ¿Desea continuar?"
+msgstr "Está a punto de borrar a '%s' \nde su lista de amigos. ¿Desea continuar?"
 
 #: src/dialogs.c:530 src/prpl.c:154 src/prpl.c:228
 msgid "Accept"
@@ -2176,7 +2184,7 @@ msgstr "Aviso al dejar de estar inactivo"
 #: src/dialogs.c:1313
 #, fuzzy
 msgid "Pounce when buddy is typing to you"
-msgstr "Sonido cuando se conecte un amigo"
+msgstr "Aviso cuando el amigo le esté escribiendo"
 
 #. </pounce type="when">
 #. <pounce type="action">
@@ -2186,7 +2194,7 @@ msgstr "Acción del Aviso"
 
 #: src/dialogs.c:1334
 msgid "Open IM Window"
-msgstr "Abrir Ventana de Mensage cuando se conecte este amigo"
+msgstr "Abrir Ventana de Mensage"
 
 #: src/dialogs.c:1343
 msgid "Popup Notification"
@@ -2202,7 +2210,7 @@ msgstr "Ejecutar orden para avisar"
 
 #: src/dialogs.c:1395
 msgid "Play sound on pounce"
-msgstr "Sonido para avisar"
+msgstr "Avisar mediante sonido"
 
 #. </pounce type="action">
 #: src/dialogs.c:1417
@@ -2304,7 +2312,7 @@ msgstr "Buscar un Amigo"
 
 #: src/dialogs.c:2346
 msgid "Gaim - Find Buddy By Info"
-msgstr "Gaim - Encontrar amgio por información"
+msgstr "Gaim - Encontrar amigo por información"
 
 #: src/dialogs.c:2375
 msgid "Gaim - Find Buddy By Email"
@@ -2420,7 +2428,7 @@ msgstr "Gaim - Renombrar Amigo"
 
 #: src/dialogs.c:4056
 msgid "Rename Buddy"
-msgstr "Gaim - Renombrar Amigo"
+msgstr "Renombrar Amigo"
 
 #. Below is basically stolen from plugins.c
 #: src/dialogs.c:4140
@@ -2483,7 +2491,7 @@ msgstr "Notificaciones de Correo Nuevo"
 
 #: src/multi.c:694
 msgid "Register with server"
-msgstr ""
+msgstr "Registrarse en el servidor"
 
 #: src/multi.c:752
 msgid "Gaim - Modify Account"
@@ -2564,7 +2572,7 @@ msgstr "%s no pudo conectarse"
 #: src/multi.c:1409
 #, fuzzy
 msgid "Connection Error"
-msgstr "Conexión Cerrada"
+msgstr "Error de Conexión"
 
 #: src/perl.c:856
 msgid "Perl Scripts"
@@ -2593,7 +2601,7 @@ msgstr "Cargar"
 
 #: src/plugins.c:259
 msgid "Load a plugin from a file"
-msgstr "Cargar añadido de un archivo"
+msgstr "Cargar plugin desde un archivo"
 
 #: src/plugins.c:261
 msgid "Configure"
@@ -2601,7 +2609,7 @@ msgstr "Configurar"
 
 #: src/plugins.c:264
 msgid "Configure settings of the selected plugin"
-msgstr "Configurar añadido"
+msgstr "Configurar propiedades del plugin"
 
 #: src/plugins.c:266
 msgid "Reload"
@@ -2609,7 +2617,7 @@ msgstr "Recargar"
 
 #: src/plugins.c:270
 msgid "Reload the selected plugin"
-msgstr "Quitar el añadido seleccionado"
+msgstr "Recargar en plugin seleccionado"
 
 #: src/plugins.c:272
 msgid "Unload"
@@ -2617,7 +2625,7 @@ msgstr "Descargar"
 
 #: src/plugins.c:275
 msgid "Unload the selected plugin"
-msgstr "Descargar el añadido seleccionado"
+msgstr "Descargar el plugin seleccionado"
 
 #: src/plugins.c:280
 msgid "Close this window"
@@ -2644,7 +2652,7 @@ msgstr "Usar botones sin bordes"
 
 #: src/prefs.c:224
 msgid "Show Buddy Ticker"
-msgstr "Mostrar dibujos de los tipos de amigos"
+msgstr "Mostrar ventana de noticias"
 
 #: src/prefs.c:229
 msgid "Show Debug Window"
@@ -2653,7 +2661,7 @@ msgstr "Mostrar ventana de Depuración"
 #. Preferences should be positive
 #: src/prefs.c:233
 msgid "Notify buddies that you are typing to them"
-msgstr ""
+msgstr "Notificar a los amigos cuando les este escribiendo"
 
 #: src/prefs.c:240
 msgid "Report Idle Times"
@@ -2677,7 +2685,7 @@ msgstr "Guardar todas las conversaciones"
 
 #: src/prefs.c:263
 msgid "Strip HTML from logs"
-msgstr "Quitar HTML de todas las conversaciones guardadas"
+msgstr "Quitar HTML de los registros"
 
 #: src/prefs.c:269
 msgid "Log when buddies sign on/sign off"
@@ -2689,7 +2697,7 @@ msgstr "Registrar cuándo los amigos están activos/inactivos"
 
 #: src/prefs.c:273
 msgid "Log when buddies go away/come back"
-msgstr "Registrar cuándo los amigos están ausentes o vuelven"
+msgstr "Registrar cuándo los amigos se ausentan o regresan"
 
 #: src/prefs.c:274
 msgid "Log your own signons/idleness/awayness"
@@ -2697,7 +2705,7 @@ msgstr "Registrar sus propias conexiones/ausencias/inactividades"
 
 #: src/prefs.c:276
 msgid "Individual log file for each buddy's signons"
-msgstr "Un archivo para la conexión de cada Amigo"
+msgstr "Un archivo de registro para la conexión de cada Amigo"
 
 #: src/prefs.c:279
 msgid "Browser"
@@ -2914,7 +2922,7 @@ msgstr "El envío de un mensaje quita el estado de ausencia"
 
 #: src/prefs.c:710 src/prefs.c:1924
 msgid "Queue new messages when away"
-msgstr "Encolar nuevas conversaciones durante las ausencias"
+msgstr "Encolar nuevos mensajes durante las ausencias"
 
 #: src/prefs.c:716
 msgid "Ignore colors"
@@ -2966,7 +2974,7 @@ msgstr "Mostar todas las conversaciones en una ventana con pestañas"
 
 #: src/prefs.c:957
 msgid "Show chats in the same tabbed window"
-msgstr "Mostar todas los chats en una ventana con pestañas"
+msgstr "Mostar todas los chats en una unica ventana con pestañas"
 
 #: src/prefs.c:964 src/prefs.c:1116
 msgid "Raise windows on events"
@@ -2998,7 +3006,7 @@ msgstr "Alto de la nueva ventana:"
 
 #: src/prefs.c:979 src/prefs.c:1129
 msgid "Entry widget height:"
-msgstr "Alto del campo de texto"
+msgstr "Alto del campo de texto:"
 
 #: src/prefs.c:981 src/prefs.c:1131
 msgid "Tab Placement"
@@ -3035,11 +3043,11 @@ msgstr "Ventana del Chat en Grupo"
 
 #: src/prefs.c:1107
 msgid "Show all chats in one tabbed window"
-msgstr "Mostar todos los Chats en una ventana con pesatañas"
+msgstr "Mostar todos los Chats en una ventana con pestañas"
 
 #: src/prefs.c:1109
 msgid "Show conversations in the same tabbed window"
-msgstr "Mostar todas las conversaciones en una ventana con pesatañas"
+msgstr "Mostar todas las conversaciones en una ventana con pestañas"
 
 #: src/prefs.c:1117
 msgid "Show people joining/leaving in window"
@@ -3079,12 +3087,12 @@ msgstr "Tamaño de Fuente para el Texto"
 
 #: src/prefs.c:1505
 msgid "Gaim - Sound Configuration"
-msgstr "Gaim - COnfiguración del Sonido"
+msgstr "Gaim - Configuración del Sonido"
 
 #: src/prefs.c:1540
 #, fuzzy
 msgid "Test"
-msgstr "Texto"
+msgstr "Probar"
 
 #: src/prefs.c:1550
 msgid "Choose..."
@@ -3105,7 +3113,7 @@ msgstr "Sonidos mientras se está ausente"
 #: src/prefs.c:1651
 #, fuzzy
 msgid "Sound method"
-msgstr "Eventos de Sonido"
+msgstr "Metodo para reprodución de Sonido"
 
 #: src/prefs.c:1725
 #, c-format
@@ -3113,11 +3121,13 @@ msgid ""
 "Sound command\n"
 "(%s for filename)"
 msgstr ""
+"Comando para sonido\n"
+"(%s para nombre de archivo"
 
 #: src/prefs.c:1737
 #, fuzzy
 msgid "Sound played when:"
-msgstr "Reproductor de Sonidos:"
+msgstr "Reproducir Sonidos en:"
 
 #: src/prefs.c:1881 src/prefs.c:2939
 msgid "Away Messages"
@@ -3295,7 +3305,7 @@ msgstr "Por favor, indique su contraseña"
 #: src/server.c:585
 #, c-format
 msgid "(%d messages)"
-msgstr "%d mensajes)"
+msgstr "(%d mensajes)"
 
 #: src/server.c:591
 msgid "(1 message)"
