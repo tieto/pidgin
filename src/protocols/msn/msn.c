@@ -404,7 +404,8 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	else if (gaim_presence_is_status_active(presence, "busy") ||
 			 gaim_presence_is_status_active(presence, "phone"))
 		emblems[i++] = "occupied";
-	else if (gaim_presence_is_status_active(presence, "away"))
+	else if (gaim_presence_is_status_active(presence, "away") ||
+			 gaim_presence_is_idle(presence))
 		emblems[i++] = "away";
 
 	if (user == NULL)
@@ -423,20 +424,36 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 static char *
 msn_status_text(GaimBuddy *buddy)
 {
-	GString *s;
 	GaimPresence *presence;
 	GaimStatus *status;
-	MsnUser *user;
 
-	s = g_string_new("");
-	user = buddy->proto_data;
 	presence = gaim_buddy_get_presence(buddy);
 	status = gaim_presence_get_active_status(presence);
 
-	if (!gaim_status_is_available(status))
+	if (!gaim_presence_is_available(presence) && !gaim_presence_is_idle(presence))
+	{
+		return g_strdup(gaim_status_get_name(status));
+	}
+
+	return NULL;
+}
+
+static char *
+msn_tooltip_text(GaimBuddy *buddy)
+{
+	MsnUser *user;
+	GaimPresence *presence = gaim_buddy_get_presence(buddy);
+	GaimStatus *status = gaim_presence_get_active_status(presence);
+	GString *s;
+
+	user = buddy->proto_data;
+
+	s = g_string_new("");
+	if (gaim_presence_is_online(presence))
 	{
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"),
-							   gaim_status_get_name(status));
+							   gaim_presence_is_idle(presence) ?
+							   _("Idle") : gaim_status_get_name(status));
 	}
 
 	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
@@ -446,43 +463,22 @@ msn_status_text(GaimBuddy *buddy)
 	return g_string_free(s, FALSE);
 }
 
-static char *
-msn_tooltip_text(GaimBuddy *buddy)
-{
-	GaimPresence *presence = gaim_buddy_get_presence(buddy);
-	GaimStatus *status = gaim_presence_get_active_status(presence);
-	char *text = NULL;
-
-	if (gaim_presence_is_online(presence))
-	{
-		text = g_strdup_printf(_("\n<b>%s:</b> %s"), _("Status"),
-				gaim_status_get_name(status));
-	}
-
-	return text;
-}
-
 static GList *
 msn_status_types(GaimAccount *account)
 {
 	GaimStatusType *status;
 	GList *types = NULL;
 
-	status = gaim_status_type_new(GAIM_STATUS_OFFLINE,
-			"offline", _("Offline"), FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+			"offline", _("Offline"), FALSE, FALSE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new(GAIM_STATUS_ONLINE,
-			"online", _("Online"), FALSE);
+	status = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
+			"online", _("Online"), FALSE, FALSE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-			"available", _("Available"), FALSE, FALSE, FALSE);
-	types = g_list_append(types, status);
-
-	status = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE,
-			"unavailable", _("Unavailable"),
-			FALSE, FALSE, FALSE);
+			"available", _("Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away",

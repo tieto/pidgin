@@ -495,11 +495,6 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status = "busy";
-	else if (!g_ascii_strcasecmp(state, "IDL"))
-	{
-		/* XXX - Do something about idle time? */
-		status = "idle";
-	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
 		status = "brb";
 	else if (!g_ascii_strcasecmp(state, "AWY"))
@@ -512,6 +507,11 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		status = "available";
 
 	gaim_prpl_got_user_status(account, passport, status, NULL);
+
+	if (!g_ascii_strcasecmp(state, "IDL"))
+		gaim_prpl_got_user_idle(account, passport, TRUE, -1);
+	else
+		gaim_prpl_got_user_idle(account, passport, FALSE, 0);
 }
 
 static void
@@ -573,11 +573,6 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!g_ascii_strcasecmp(state, "BSY"))
 		status = "busy";
-	else if (!g_ascii_strcasecmp(state, "IDL"))
-	{
-		/* XXX - Do something about idle time? */
-		status = "idle";
-	}
 	else if (!g_ascii_strcasecmp(state, "BRB"))
 		status = "brb";
 	else if (!g_ascii_strcasecmp(state, "AWY"))
@@ -590,6 +585,11 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		status = "available";
 
 	gaim_prpl_got_user_status(account, passport, status, NULL);
+
+	if (!g_ascii_strcasecmp(state, "IDL"))
+		gaim_prpl_got_user_idle(account, passport, TRUE, -1);
+	else
+		gaim_prpl_got_user_idle(account, passport, FALSE, 0);
 }
 
 static void
