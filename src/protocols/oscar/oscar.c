@@ -5438,6 +5438,7 @@ static void oscar_list_emblems(GaimBuddy *b, char **se, char **sw, char **nw, ch
 static char *oscar_tooltip_text(GaimBuddy *b) {
 	GaimConnection *gc = b->account->gc;
 	OscarData *od = gc->proto_data;
+	GaimGroup *g = gaim_find_buddys_group(b);
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 	aim_userinfo_t *userinfo = aim_locate_finduserinfo(od->sess, b->name);
 	gchar *tmp = NULL, *ret = g_strdup("");
@@ -5478,6 +5479,17 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			tmp = ret;
 			ret = g_strconcat(tmp, _("<b>Capabilities:</b> "), caps, "\n", NULL);
 			g_free(tmp);
+		}
+
+		if (g && g->name) {
+			char *comment = NULL;
+			comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
+			if (comment != NULL) {
+				tmp = ret;
+				ret = g_strconcat(tmp, _("<b>Buddy Comment:</b> "), comment, "\n", NULL);
+				free(tmp);
+				free(comment);
+			}
 		}
 
 		if ((bi != NULL) && (bi->availmsg != NULL) && !(b->uc & UC_UNAVAILABLE)) {
