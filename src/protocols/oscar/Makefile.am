@@ -23,17 +23,21 @@ liboscar_a_SOURCES = 	admin.c		\
 			ft.c		\
 			im.c		\
 			info.c		\
+			invite.c	\
 			login.c		\
 			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
+			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\
 			search.c	\
 			snac.c		\
+			ssi.c		\
 			stats.c		\
 			tlv.c		\
+			translate.c	\
 			txqueue.c	\
 			util.c		\
 			oscar.c
@@ -56,17 +60,21 @@ liboscar_la_SOURCES = 	admin.c		\
 			ft.c		\
 			im.c		\
 			info.c		\
+			invite.c	\
 			login.c		\
 			md5.c		\
 			meta.c		\
 			misc.c		\
 			msgcookie.c	\
+			popups.c	\
 			rxhandlers.c	\
 			rxqueue.c	\
 			search.c	\
 			snac.c		\
+			ssi.c		\
 			stats.c		\
 			tlv.c		\
+			translate.c	\
 			txqueue.c	\
 			util.c		\
 			oscar.c

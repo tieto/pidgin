@@ -77,39 +77,12 @@ faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0007;
-	mod->version = 0x0000;
+	mod->version = 0x0001;
+	mod->toolid = AIM_TOOL_NEWWIN;
+	mod->toolversion = 0x0361; /* XXX this and above aren't right */
 	mod->flags = 0;
 	strncpy(mod->name, "admin", sizeof(mod->name));
 	mod->snachandler = snachandler;
-
-	return 0;
-}
-
-faim_export int aim_auth_clientready(aim_session_t *sess, aim_conn_t *conn)
-{
-	static const struct aim_tool_version tools[] = {
-		{0x0001, 0x0003,    AIM_TOOL_NEWWIN, 0x0361},
-		{0x0007, 0x0001,    AIM_TOOL_NEWWIN, 0x0361},
-	};
-	int j;
-	aim_frame_t *tx;
-	int toolcount = sizeof(tools) / sizeof(struct aim_tool_version);
-	aim_snacid_t snacid;
-
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0002, 1152)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0001, 0x0002, 0x0000, snacid);
-
-	for (j = 0; j < toolcount; j++) {
-		aimbs_put16(&tx->data, tools[j].group);
-		aimbs_put16(&tx->data, tools[j].version);
-		aimbs_put16(&tx->data, tools[j].tool);
-		aimbs_put16(&tx->data, tools[j].toolversion);
-	}
-
-	aim_tx_enqueue(sess, tx);
 
 	return 0;
 }
@@ -134,28 +107,6 @@ faim_export int aim_auth_changepasswd(aim_session_t *sess, aim_conn_t *conn, con
 
 	aim_writetlvchain(&tx->data, &tl);
 	aim_freetlvchain(&tl);
-
-	aim_tx_enqueue(sess, tx);
-
-	return 0;
-}
-
-faim_export int aim_auth_setversions(aim_session_t *sess, aim_conn_t *conn)
-{
-	aim_frame_t *tx;
-	aim_snacid_t snacid;
-
-	if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 18)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
-	aim_putsnac(&tx->data, 0x0001, 0x0017, 0x0000, snacid);
-
-	aimbs_put16(&tx->data, 0x0001);
-	aimbs_put16(&tx->data, 0x0003);
-
-	aimbs_put16(&tx->data, 0x0007);
-	aimbs_put16(&tx->data, 0x0001);
 
 	aim_tx_enqueue(sess, tx);
 

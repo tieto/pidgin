@@ -1626,7 +1626,9 @@ faim_internal int msg_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x0004;
-	mod->version = 0x0000;
+	mod->version = 0x0001;
+	mod->toolid = 0x0110;
+	mod->toolversion = 0x047b;
 	mod->flags = 0;
 	strncpy(mod->name, "messaging", sizeof(mod->name));
 	mod->snachandler = snachandler;

@@ -109,7 +109,9 @@ faim_internal int search_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000a;
-	mod->version = 0x0000;
+	mod->version = 0x0001;
+	mod->toolid = 0x0110;
+	mod->toolversion = 0x047b;
 	mod->flags = 0;
 	strncpy(mod->name, "search", sizeof(mod->name));
 	mod->snachandler = snachandler;

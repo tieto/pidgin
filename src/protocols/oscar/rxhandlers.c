@@ -18,7 +18,19 @@ struct aim_rxcblist_s {
 	struct aim_rxcblist_s *next;
 };
 
-static aim_module_t *findmodule(aim_session_t *sess, const char *name)
+faim_internal aim_module_t *aim__findmodulebygroup(aim_session_t *sess, fu16_t group)
+{
+	aim_module_t *cur;
+
+	for (cur = (aim_module_t *)sess->modlistv; cur; cur = cur->next) {
+		if (cur->family == group)
+			return cur;
+	}
+
+	return NULL;
+}
+
+faim_internal aim_module_t *aim__findmodule(aim_session_t *sess, const char *name)
 {
 	aim_module_t *cur;
 
@@ -46,7 +58,7 @@ faim_internal int aim__registermodule(aim_session_t *sess, int (*modfirst)(aim_s
 		return -1;
 	}
 
-	if (findmodule(sess, mod->name)) {
+	if (aim__findmodule(sess, mod->name)) {
 		if (mod->shutdown)
 			mod->shutdown(sess, mod);
 		free(mod);
@@ -56,7 +68,7 @@ faim_internal int aim__registermodule(aim_session_t *sess, int (*modfirst)(aim_s
 	mod->next = (aim_module_t *)sess->modlistv;
 	(aim_module_t *)sess->modlistv = mod;
 
-	faimdprintf(sess, 1, "registered module %s (family 0x%04x)\n", mod->name, mod->family);
+	faimdprintf(sess, 1, "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
 
 	return 0;
 }

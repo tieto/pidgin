@@ -862,17 +862,24 @@ faim_export void aim_session_init(aim_session_t *sess, fu32_t flags, int debugle
 	 * Register all the modules for this session...
 	 */
 	aim__registermodule(sess, misc_modfirst); /* load the catch-all first */
+	aim__registermodule(sess, general_modfirst);
+	aim__registermodule(sess, locate_modfirst);
 	aim__registermodule(sess, buddylist_modfirst);
+	aim__registermodule(sess, msg_modfirst);
+	aim__registermodule(sess, adverts_modfirst);
+	aim__registermodule(sess, invite_modfirst);
 	aim__registermodule(sess, admin_modfirst);
+	aim__registermodule(sess, popups_modfirst);
 	aim__registermodule(sess, bos_modfirst);
 	aim__registermodule(sess, search_modfirst);
 	aim__registermodule(sess, stats_modfirst);
-	aim__registermodule(sess, auth_modfirst);
-	aim__registermodule(sess, msg_modfirst);
+	aim__registermodule(sess, translate_modfirst);
 	aim__registermodule(sess, chatnav_modfirst);
 	aim__registermodule(sess, chat_modfirst);
-	aim__registermodule(sess, locate_modfirst);
-	aim__registermodule(sess, general_modfirst);
+	/* missing 0x0f - 0x12 */
+	aim__registermodule(sess, ssi_modfirst);
+	/* missing 0x14 - 0x16 */
+	aim__registermodule(sess, auth_modfirst);
 
 	return;
 }

@@ -215,23 +215,15 @@ faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const 
  * Send Client Ready.  
  *
  */
-faim_export int aim_bos_clientready(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
 {
-	struct aim_tool_version tools[] = {
-		{0x0001, 0x0003,    AIM_TOOL_WIN32, 0x0686},
-		{0x0002, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-		{0x0003, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-		{0x0004, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-		{0x0006, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-		{0x0008, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-		{0x0009, 0x0001,    AIM_TOOL_WIN32, 0x0001}, 
-		{0x000a, 0x0001,    AIM_TOOL_WIN32, 0x0001},
-		{0x000b, 0x0001,    AIM_TOOL_WIN32, 0x0001}
-	};
-	int j;
+	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
+	struct snacgroup *sg;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
-	int toolcount = sizeof(tools)/sizeof(struct aim_tool_version);
+
+	if (!ins)
+		return -EINVAL;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
@@ -239,11 +231,20 @@ faim_export int aim_bos_clientready(aim_session_t *sess, aim_conn_t *conn)
 	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
 
-	for (j = 0; j < toolcount; j++) {
-		aimbs_put16(&fr->data, tools[j].group);
-		aimbs_put16(&fr->data, tools[j].version);
-		aimbs_put16(&fr->data, tools[j].tool);
-		aimbs_put16(&fr->data, tools[j].toolversion);
+	/*
+	 * Send only the tool versions that the server cares about (that it
+	 * marked as supporting in the server ready SNAC).  
+	 */
+	for (sg = ins->groups; sg; sg = sg->next) {
+		aim_module_t *mod;
+
+		if ((mod = aim__findmodulebygroup(sess, sg->group))) {
+			aimbs_put16(&fr->data, mod->family);
+			aimbs_put16(&fr->data, mod->version);
+			aimbs_put16(&fr->data, mod->toolid);
+			aimbs_put16(&fr->data, mod->toolversion);
+		} else
+			faimdprintf(sess, 1, "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
 	aim_tx_enqueue(sess, fr);
@@ -255,7 +256,7 @@ faim_export int aim_bos_clientready(aim_session_t *sess, aim_conn_t *conn)
  *  Request Rate Information.
  * 
  */
-faim_export int aim_bos_reqrate(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_reqrates(aim_session_t *sess, aim_conn_t *conn)
 {
 	return aim_genericreq_n(sess, conn, 0x0001, 0x0006);
 }
@@ -264,7 +265,7 @@ faim_export int aim_bos_reqrate(aim_session_t *sess, aim_conn_t *conn)
  *  Rate Information Response Acknowledge.
  *
  */
-faim_export int aim_bos_ackrateresp(aim_session_t *sess, aim_conn_t *conn)
+faim_export int aim_ratesack(aim_session_t *sess, aim_conn_t *conn)
 {
 	aim_frame_t *fr;	
 	aim_snacid_t snacid;
@@ -275,6 +276,8 @@ faim_export int aim_bos_ackrateresp(aim_session_t *sess, aim_conn_t *conn)
 	snacid = aim_cachesnac(sess, 0x0001, 0x0008, 0x0000, NULL, 0);
 	
 	aim_putsnac(&fr->data, 0x0001, 0x0008, 0x0000, snacid);
+
+	/* XXX store the rate info in the inside struct, make this dynamic */
 	aimbs_put16(&fr->data, 0x0001); 
 	aimbs_put16(&fr->data, 0x0002);
 	aimbs_put16(&fr->data, 0x0003);
@@ -311,37 +314,32 @@ faim_export int aim_bos_reqpersonalinfo(aim_session_t *sess, aim_conn_t *conn)
 
 faim_export int aim_setversions(aim_session_t *sess, aim_conn_t *conn)
 {
+	aim_conn_inside_t *ins = (aim_conn_inside_t *)conn->inside;
+	struct snacgroup *sg;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
-	static const struct version {
-		fu16_t group;
-		fu16_t version;
-	} versions[] = {
-		{0x0001, 0x0003},
-		{0x0002, 0x0001},
-		{0x0003, 0x0001},
-		{0x0004, 0x0001},
-		{0x0006, 0x0001},
-		{0x0008, 0x0001},
-		{0x0009, 0x0001},
-		{0x000a, 0x0001},
-		{0x000b, 0x0002},
-		{0x000c, 0x0001},
-		{0x0013, 0x0001},
-		{0x0015, 0x0001},
-	};
-	int numversions = sizeof(versions) / sizeof(struct version);
-	int i;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + (4*numversions))))
+	if (!ins)
+		return -EINVAL;
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
-
 	aim_putsnac(&fr->data, 0x0001, 0x0017, 0x0000, snacid);
-	for (i = 0; i < numversions; i++) {
-		aimbs_put16(&fr->data, versions[i].group);
-		aimbs_put16(&fr->data, versions[i].version);
+
+	/*
+	 * Send only the versions that the server cares about (that it
+	 * marked as supporting in the server ready SNAC).  
+	 */
+	for (sg = ins->groups; sg; sg = sg->next) {
+		aim_module_t *mod;
+
+		if ((mod = aim__findmodulebygroup(sess, sg->group))) {
+			aimbs_put16(&fr->data, mod->family);
+			aimbs_put16(&fr->data, mod->version);
+		} else
+			faimdprintf(sess, 1, "aim_setversions: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
 	aim_tx_enqueue(sess, fr);

@@ -18,34 +18,6 @@ faim_export int aim_chatnav_reqrights(aim_session_t *sess, aim_conn_t *conn)
 	return aim_genericreq_n_snacid(sess, conn, 0x000d, 0x0002);
 }
 
-faim_export int aim_chatnav_clientready(aim_session_t *sess, aim_conn_t *conn)
-{
-	aim_frame_t *fr;
-	aim_snacid_t snacid;
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 0x20)))
-		return -ENOMEM;
-
-	snacid = aim_cachesnac(sess, 0x0001, 0x0002, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0001, 0x0002, 0x0000, snacid);
-
-	aimbs_put16(&fr->data, 0x000d);
-	aimbs_put16(&fr->data, 0x0001);
-
-	aimbs_put16(&fr->data, 0x0004);
-	aimbs_put16(&fr->data, 0x0001);
-
-	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put16(&fr->data, 0x0003);
-
-	aimbs_put16(&fr->data, 0x0004);
-	aimbs_put16(&fr->data, 0x0686);
-
-	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
 faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, const char *name, fu16_t exchange)
 {
 	aim_frame_t *fr;
@@ -390,7 +362,9 @@ faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000d;
-	mod->version = 0x0000;
+	mod->version = 0x0001;
+	mod->toolid = 0x0004; /* XXX this doesn't look right */
+	mod->toolversion = 0x0001; /* XXX nor does this */
 	mod->flags = 0;
 	strncpy(mod->name, "chatnav", sizeof(mod->name));
 	mod->snachandler = snachandler;

@@ -28,7 +28,9 @@ faim_internal int stats_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
 	mod->family = 0x000b;
-	mod->version = 0x0000;
+	mod->version = 0x0001;
+	mod->toolid = 0x0104;
+	mod->toolversion = 0x0001;
 	mod->flags = 0;
 	strncpy(mod->name, "stats", sizeof(mod->name));
 	mod->snachandler = snachandler;

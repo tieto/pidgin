@@ -859,8 +859,8 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int server_ready_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
 
-	aim_auth_setversions(sess, fr->conn);
-	aim_bos_reqrate(sess, fr->conn);
+	aim_setversions(sess, fr->conn);
+	aim_reqrates(sess, fr->conn);
 	debug_printf("done with AUTH ServerReady\n");
 
 	return 1;
@@ -868,7 +868,7 @@ static int server_ready_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int server_ready_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_setversions(sess, fr->conn);
-	aim_bos_reqrate(sess, fr->conn); /* request rate info */
+	aim_reqrates(sess, fr->conn); /* request rate info */
 	debug_printf("done with BOS ServerReady\n");
 
 	return 1;
@@ -879,8 +879,8 @@ static int rateresp_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_bos_ackrateresp(sess, fr->conn);
-	aim_chat_clientready(sess, fr->conn);
+	aim_ratesack(sess, fr->conn);
+	aim_clientready(sess, fr->conn);
 	chatcon = find_oscar_chat_by_conn(gc, fr->conn);
 	chatcon->id = id;
 	chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
@@ -890,8 +890,8 @@ static int rateresp_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int rateresp_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 
-	aim_bos_ackrateresp(sess, fr->conn);
-	aim_chatnav_clientready(sess, fr->conn);
+	aim_ratesack(sess, fr->conn);
+	aim_clientready(sess, fr->conn);
 	aim_chatnav_reqrights(sess, fr->conn);
 
 	return 1;
@@ -901,7 +901,7 @@ static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 	debug_printf("chatnav: got server ready\n");
 	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chatnav, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
-	aim_bos_reqrate(sess, fr->conn);
+	aim_reqrates(sess, fr->conn);
 
 	return 1;
 }
@@ -914,7 +914,7 @@ static int server_ready_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
-	aim_bos_reqrate(sess, fr->conn);
+	aim_reqrates(sess, fr->conn);
 
 	return 1;
 }
@@ -1935,7 +1935,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
-	aim_bos_ackrateresp(sess, fr->conn);
+	aim_ratesack(sess, fr->conn);
 	aim_bos_reqpersonalinfo(sess, fr->conn);
 	aim_bos_reqlocaterights(sess, fr->conn);
 	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
@@ -1963,8 +1963,8 @@ static int rateresp_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 
-	aim_bos_ackrateresp(sess, fr->conn);
-	aim_auth_clientready(sess, fr->conn);
+	aim_ratesack(sess, fr->conn);
+	aim_clientready(sess, fr->conn);
 	debug_printf("connected to auth (admin)\n");
 
 	if (od->chpass) {
@@ -2039,7 +2039,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
 
-	aim_bos_clientready(sess, fr->conn);
+	aim_clientready(sess, fr->conn);
 
 	aim_bos_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
 

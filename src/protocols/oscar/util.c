@@ -4,6 +4,7 @@
  *
  */
 
+#define FAIM_INTERNAL
 #include <aim.h>
 #include <ctype.h>
 

@@ -17,9 +17,11 @@ typedef struct {
 #define AIM_MODULENAME_MAXLEN 16
 #define AIM_MODFLAG_MULTIFAMILY 0x0001
 typedef struct aim_module_s {
-	unsigned short family;
-	unsigned short flags;
-	unsigned short version;
+	fu16_t family;
+	fu16_t version;
+	fu16_t toolid;
+	fu16_t toolversion;
+	fu16_t flags;
 	char name[AIM_MODULENAME_MAXLEN+1];
 	int (*snachandler)(aim_session_t *sess, struct aim_module_s *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs);
 	void (*shutdown)(aim_session_t *sess, struct aim_module_s *mod);
@@ -29,7 +31,8 @@ typedef struct aim_module_s {
 
 faim_internal int aim__registermodule(aim_session_t *sess, int (*modfirst)(aim_session_t *, aim_module_t *));
 faim_internal void aim__shutdownmodules(aim_session_t *sess);
-
+faim_internal aim_module_t *aim__findmodulebygroup(aim_session_t *sess, fu16_t group);
+faim_internal aim_module_t *aim__findmodule(aim_session_t *sess, const char *name);
 
 faim_internal int buddylist_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int admin_modfirst(aim_session_t *sess, aim_module_t *mod);
@@ -43,6 +46,11 @@ faim_internal int chatnav_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int chat_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int locate_modfirst(aim_session_t *sess, aim_module_t *mod);
 faim_internal int general_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int ssi_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int invite_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int translate_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int popups_modfirst(aim_session_t *sess, aim_module_t *mod);
+faim_internal int adverts_modfirst(aim_session_t *sess, aim_module_t *mod);
 
 faim_internal int aim_genericreq_n(aim_session_t *, aim_conn_t *conn, fu16_t family, fu16_t subtype);
 faim_internal int aim_genericreq_n_snacid(aim_session_t *, aim_conn_t *conn, fu16_t family, fu16_t subtype);
