@@ -34,7 +34,7 @@ gaim_timeout_add(guint interval, GSourceFunc function, gpointer data)
 	return ops->timeout_add(interval, function, data);
 }
 
-void
+guint
 gaim_timeout_remove(guint tag)
 {
 	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();

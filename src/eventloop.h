@@ -92,8 +92,10 @@ guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
  * Removes a timeout handler.
  *
  * @param handle The handle, as returned by gaim_timeout_add.
+ *
+ * @return Something.
  */
-void gaim_timeout_remove(guint handle);
+guint gaim_timeout_remove(guint handle);
 
 /**
  * Adds an input handler.
