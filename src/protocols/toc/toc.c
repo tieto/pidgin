@@ -1666,7 +1666,6 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft)
 {
 	struct file_transfer *ft;
 	const char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
-	int fd;
 	struct aim_user *user;
 	char buf[BUF_LEN * 2];
 

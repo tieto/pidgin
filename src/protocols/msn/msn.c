@@ -1961,12 +1961,11 @@ static void msn_login_connect(gpointer data, gint source, GaimInputCondition con
 static void msn_login(struct aim_user *user)
 {
 	struct gaim_connection *gc = new_gaim_conn(user);
-	struct msn_data *md = gc->proto_data = g_new0(struct msn_data, 1);
 
 	set_login_progress(gc, 1, _("Connecting"));
 
 	g_snprintf(gc->username, sizeof(gc->username), "%s", msn_normalize(gc->username));
-	
+
 	if (proxy_connect(user->proto_opt[USEROPT_MSNSERVER][0] ? user->proto_opt[USEROPT_MSNSERVER] : MSN_SERVER, 
 			       user->proto_opt[USEROPT_MSNPORT][0] ? atoi(user->proto_opt[USEROPT_MSNPORT]) : MSN_PORT,
 			       msn_login_connect, gc) != 0) {
