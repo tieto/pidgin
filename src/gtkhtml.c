@@ -3428,6 +3428,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 					/*
 					 * Ditch trailing \" 
 					 */
+					current = push_state(current);
 					tag[strlen(tag) - 1] = 0;
 					if (sscanf(tag + strlen("BODY BGCOLOR=\"#"), "%x", &colorv)
 						&& !(options & HTML_OPTION_NO_COLOURS))
