@@ -215,6 +215,7 @@ AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
+	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/plugins \
 	$(AUDIOFILE_CFLAGS) \
 	$(AO_CFLAGS) \

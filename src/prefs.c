@@ -912,12 +912,7 @@ gboolean gaim_prefs_load() {
 
 		error = NULL;
 
-		/*
-		 * We're hard-coding /etc here, which may not be great, but for
-		 * now it works. This was requested by the Fedora guys for the
-		 * upcoming FC2 release.
-		 */
-		filename = g_build_filename("/etc", "gaim", "prefs.xml", NULL);
+		filename = g_build_filename(SYSCONFDIR, "gaim", "prefs.xml", NULL);
 
 		gaim_debug(GAIM_DEBUG_INFO, "prefs", "Reading %s\n", filename);
 
