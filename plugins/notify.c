@@ -261,7 +261,7 @@ void save_notify_prefs() {
 
 	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
 	if (!(fp = fopen(buf, "w"))) {
-		do_eror_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
+		do_error_dialog(_("Unable to write to config file"), _("Notify plugin"), GAIM_ERROR);
 		return;
 	}
 
