@@ -356,12 +356,15 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 		gpointer data)
 {
 	GaimConnection *gc = data;
+	JabberStream *js = gc->proto_data;
 
 	switch(error) {
 		case GAIM_SSL_HANDSHAKE_FAILED:
 			gaim_connection_error(gc, _("SSL Handshake Failed"));
 			break;
 	}
+
+	js->gsc = NULL;
 }
 
 static void tls_init(JabberStream *js)
@@ -778,7 +781,7 @@ static void jabber_close(GaimConnection *gc)
 
 	if(js->gsc) {
 		gaim_ssl_close(js->gsc);
-	} else {
+	} else if (js->fd > 0) {
 		if(js->gc->inpa)
 			gaim_input_remove(js->gc->inpa);
 		close(js->fd);
