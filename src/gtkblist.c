@@ -2425,14 +2425,14 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			accounttext = g_markup_escape_text(b->account->username, -1);
 
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-				       "%s %s"     /* Account */
+				       "%s %s"  /* Account */
 				       "%s %s"  /* Contact Alias */
 				       "%s %s"  /* Alias */
 				       "%s %s"  /* Nickname */
-				       "%s %s"     /* Logged In */
-				       "%s %s"     /* Idle */
-				       "%s %s"     /* Warning */
-				       "%s%s"     /* Status */
+				       "%s %s"  /* Logged In */
+				       "%s %s"  /* Idle */
+				       "%s %s"  /* Warning */
+				       "%s"     /* Status */
 				       "%s",
 				       b->name,
 				       accounttext ? _("\n<b>Account:</b>") : "", accounttext ? accounttext : "",
@@ -2442,7 +2442,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				       loggedin ? _("\n<b>Logged In:</b>") : "", loggedin ? loggedin : "",
 				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
-				       statustext ? "" : "", statustext ? statustext : "",
+				       statustext ? statustext : "",
 				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
 				       !g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
 				       !g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
