@@ -596,7 +596,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status);
 #define AIM_CLIENTTYPE_WINAIM   0x0002
 #define AIM_CLIENTTYPE_WINAIM41 0x0003
 #define AIM_CLIENTTYPE_AOL_TOC  0x0004
-faim_export unsigned short aim_im_fingerprint(const fu8_t *msghdr, int len);
+faim_export fu16_t aim_im_fingerprint(const fu8_t *msghdr, int len);
 
 #define AIM_RATE_CODE_CHANGE     0x0001
 #define AIM_RATE_CODE_WARNING    0x0002
@@ -1415,9 +1415,6 @@ faim_export char *aimutil_itemidx(char *toSearch, int index, char dl);
 
 faim_export int aim_snlen(const char *sn);
 faim_export int aim_sncmp(const char *sn1, const char *sn2);
-
-/* for libc's that dont have it */
-faim_export char *aim_strsep(char **pp, const char *delim);
 
 #include <aim_internal.h>
 
