@@ -775,7 +775,7 @@ void serv_got_typing(struct gaim_connection *gc, char *name, int timeout) {
 
 void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 	struct conversation *c = find_conversation(name);
-	if (c->typing_timeout) {
+	if (c && c->typing_timeout) {
 		gtk_timeout_remove (c->typing_timeout);
 	}
 	reset_typing(g_strdup(name));
