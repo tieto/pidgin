@@ -985,7 +985,7 @@ static void jabber_change_passwd(GaimConnection *gc, const char *old, const char
 	else if(!strcmp(old, new))
 	{
 		gaim_notify_error(gc, NULL,
-						  _("Unable to change password"),
+						  _("Unable to change password."),
 						  _("The new password you entered is the same as "
 							"your current password.  "
 							"Your password remains the same."));

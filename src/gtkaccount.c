@@ -1575,7 +1575,7 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 
 	/* Screen name column */
 	column = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(column, _("Screenname"));
+	gtk_tree_view_column_set_title(column, _("Screen Name"));
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 
 	/* Icon */

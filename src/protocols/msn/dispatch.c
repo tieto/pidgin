@@ -48,7 +48,7 @@ ver_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (!msn_servconn_send_command(servconn, "INF", NULL)) {
-		gaim_connection_error(gc, _("Unable to request INF\n"));
+		gaim_connection_error(gc, _("Unable to request INF"));
 
 		return FALSE;
 	}
@@ -74,7 +74,7 @@ inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 			   gaim_account_get_username(account));
 
 	if (!msn_servconn_send_command(servconn, "USR", outparams)) {
-		gaim_connection_error(gc, _("Unable to send USR\n"));
+		gaim_connection_error(gc, _("Unable to send USR"));
 
 		return FALSE;
 	}
@@ -96,7 +96,7 @@ xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	char *c;
 
 	if (param_count < 2 || strcmp(params[1], "NS")) {
-		gaim_connection_error(gc, _("Got invalid XFR\n"));
+		gaim_connection_error(gc, _("Got invalid XFR"));
 
 		return FALSE;
 	}

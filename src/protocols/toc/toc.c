@@ -658,7 +658,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				strtok(buf + sizeof(struct sflap_hdr), ":");
 				gaim_connection_error(gc, show_error_message());
 			} else
-				gaim_connection_error(gc, _("Authentication Failed"));
+				gaim_connection_error(gc, _("Authentication failed"));
 			return;
 		}
 		/* we're supposed to check that it's really TOC v1 here but we know it is ;) */

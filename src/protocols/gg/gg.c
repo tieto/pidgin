@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7146 2003-08-25 14:12:28Z lschiere $
+ * $Id: gg.c 7147 2003-08-25 15:42:39Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -673,7 +673,7 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 			break;
 		case 3:
 			ibuf =
-			    g_strconcat(oldibuf, "<B>", _("Second Name"), ":</B> ", p, "<BR>\n", NULL);
+			    g_strconcat(oldibuf, "<B>", _("Last Name"), ":</B> ", p, "<BR>\n", NULL);
 			g_free(oldibuf);
 			break;
 		case 4:

@@ -1282,7 +1282,7 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 	/* if we were able to fetch a homepage url earlier, stick it in there */
 	if(user_url)
 	{
-		g_snprintf(buf,sizeof(buf),"<b>%s:</b><br><a href=\"%s\">%s</a><br>\n",_("Home Page"),user_url,user_url);
+		g_snprintf(buf,sizeof(buf),"<b>%s:</b><br><a href=\"%s\">%s</a><br>\n",_("Homepage"),user_url,user_url);
 		strcat(url_text,buf);
 	}
 

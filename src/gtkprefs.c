@@ -983,7 +983,7 @@ GtkWidget *im_page() {
 	prefs_labeled_spin_button(vbox, _("_Entry field height:"),
 							  "/gaim/gtk/conversations/im/entry_height",
 							  25, 9999, sg);
-	prefs_checkbox(_("_Raise windows on events"),
+	prefs_checkbox(_("_Raise window on events"),
 				  "/gaim/gtk/conversations/im/raise_on_events", vbox);
 	prefs_checkbox(_("Hide window on _send"),
 				  "/gaim/gtk/conversations/im/hide_on_send", vbox);
@@ -1039,7 +1039,7 @@ GtkWidget *chat_page() {
 	prefs_labeled_spin_button(vbox, _("_Entry field height:"),
 							  "/gaim/gtk/conversations/chat/entry_height",
 							  25, 9999, sg);
-	prefs_checkbox(_("_Raise windows on events"),
+	prefs_checkbox(_("_Raise window on events"),
 				  "/gaim/gtk/conversations/chat/raise_on_events", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Tab Completion"));

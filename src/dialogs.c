@@ -3357,7 +3357,7 @@ void show_log(char *nm)
 		char *tmp = gaim_user_dir();
 		g_snprintf(filename, 256, "%s" G_DIR_SEPARATOR_S "logs" G_DIR_SEPARATOR_S "%s.log", tmp, normalize(name));
 		if ((fp = fopen(filename, "r")) == NULL) {
-			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s"), filename);
+			g_snprintf(buf, BUF_LONG, _("Couldn't open log file %s."), filename);
 			gaim_notify_error(NULL, NULL, buf, strerror(errno));
 			return;
 		}

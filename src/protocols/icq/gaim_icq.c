@@ -341,7 +341,7 @@ static void icq_login(struct gaim_account *account) {
 	icq_ContactClear(id->link);
 
 	if (icq_Connect(link, "icq.mirabilis.com", 4000) < 1) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		signoff(gc);
 		return;
 	}

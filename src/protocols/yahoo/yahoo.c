@@ -1457,7 +1457,7 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* extract their RealName and put it in */
 	info_extract_field(stripped, url_text, "RealName:", 1, "\n", '\n',
-			NULL, _("Real Name"), 0, NULL);
+			NULL, _("Realname"), 0, NULL);
 
 	/* extract their Location and put it in */
 	info_extract_field(stripped, url_text, "Location:", 2, "\n", '\n',
