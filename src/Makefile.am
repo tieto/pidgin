@@ -24,21 +24,21 @@ EXTRA_DIST = \
 		win32/wspell.c \
 		win32/wspell.h \
 		win32/mingw_plus/winuser_extra.h \
-		win32/nsis/AddToPath.nsi \
 		win32/nsis/gaim-header.bmp \
 		win32/nsis/gaim-intro.bmp \
-		win32/nsis/gtkInstall.ini \
-		win32/nsis/translations/dutch.nsh \
+		win32/nsis/langmacros.nsh \
 		win32/nsis/translations/bulgarian.nsh \
+		win32/nsis/translations/dutch.nsh \
 		win32/nsis/translations/english.nsh \
 		win32/nsis/translations/french.nsh \
 		win32/nsis/translations/german.nsh \
 		win32/nsis/translations/hungarian.nsh \
 		win32/nsis/translations/italian.nsh \
-		win32/nsis/translations/portuguese-br.nsh \
 		win32/nsis/translations/portuguese.nsh \
+		win32/nsis/translations/portuguese-br.nsh \
 		win32/nsis/translations/serbian-latin.nsh \
 		win32/nsis/translations/simp-chinese.nsh \
+		win32/nsis/translations/spanish.nsh \
 		win32/nsis/translations/swedish.nsh \
 		win32/nsis/translations/trad-chinese.nsh \
 		win32/nsis/translations/korean.nsh \
