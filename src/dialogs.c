@@ -192,7 +192,7 @@ void show_warn_dialog(GaimConnection *gc, const char *who)
 	w->window = gtk_dialog_new_with_buttons(_("Warn User"),
 			GTK_WINDOW(GAIM_GTK_WINDOW(c->window)->window), 0,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			_("_Warn"), GTK_RESPONSE_OK, NULL);
+			GAIM_STOCK_WARN, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(do_warn), w);
 

@@ -84,7 +84,8 @@ const GtkStockItem stock_items[] =
 {
 	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
 	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL },
-	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL }
+	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL },
+	{ GAIM_STOCK_WARN,      N_("_Warn"),      0, 0, NULL }
 };
 
 static gint stock_icon_count = sizeof(stock_icons) / sizeof(*stock_icons);
