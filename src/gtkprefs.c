@@ -296,7 +296,8 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
 		if ((type == GAIM_PREF_INT && stored_int == int_value) ||
-			(type == GAIM_PREF_STRING && !strcmp(stored_str, str_value)) ||
+			(type == GAIM_PREF_STRING && stored_str != NULL &&
+			 !strcmp(stored_str, str_value)) ||
 			(type == GAIM_PREF_BOOLEAN && gaim_prefs_get_bool(bool_key))) {
 
 			gtk_menu_set_active(GTK_MENU(menu), o);
