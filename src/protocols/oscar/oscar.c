@@ -498,11 +498,10 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	const gchar *charsetstr;
 	gsize msglen;
 
-	*charset = oscar_charset_check(from);
-
 	/* Attempt to send as ASCII */
-	if (*charset == AIM_CHARSET_ASCII) {
+	if (oscar_charset_check(from) == AIM_CHARSET_ASCII) {
 		*msg = g_convert(from, strlen(from), "ASCII", "UTF-8", NULL, &msglen, NULL);
+		*charset = AIM_CHARSET_ASCII;
 		*charsubset = 0x0000;
 		*msglen_int = msglen;
 		return;
