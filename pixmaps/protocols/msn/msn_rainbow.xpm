@@ -1,6 +1,6 @@
 /* XPM */
 static char * msn_rainbow[] = {
-"22 14 136 2",
+"21 21 136 2",
 "  	c None",
 ". 	c #C0A0A0",
 "+ 	c #BF8F8F",
@@ -137,6 +137,8 @@ static char * msn_rainbow[] = {
 "c.	c #8F8F60",
 "d.	c #907060",
 "e.	c #907F7F",
+"                                            ",
+"                                            ",
 "                                            ",
 "                  . + + @                   ",
 "              # $ % & * = - ;               ",

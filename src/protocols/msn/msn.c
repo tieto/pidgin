@@ -2121,7 +2121,7 @@ GSList *msn_smiley_list()
 	smilies = add_smiley(smilies, "(f)", msn_flower, 0);
 	smilies = add_smiley(smilies, "(G)", msn_gift, 1);
 	smilies = add_smiley(smilies, "(g)", msn_gift, 0);
-	smilies = add_smiley(smilies, "(X)", msn_girl, 0);
+	smilies = add_smiley(smilies, "(X)", msn_girl, 1);
 	smilies = add_smiley(smilies, "(x)", msn_girl, 0);
 	smilies = add_smiley(smilies, "(%)", msn_handcuffs, 1);
 	smilies = add_smiley(smilies, "(L)", msn_heart, 1);
@@ -2149,10 +2149,10 @@ GSList *msn_smiley_list()
 	smilies = add_smiley(smilies, ":o", msn_ooooh, 0);
 	smilies = add_smiley(smilies, "(T)", msn_phone, 1);
 	smilies = add_smiley(smilies, "(t)", msn_phone, 0);
-	smilies = add_smiley(smilies, "(P)", msn_photo, 0);
+	smilies = add_smiley(smilies, "(P)", msn_photo, 1);
 	smilies = add_smiley(smilies, "(p)", msn_photo, 0);
 	smilies = add_smiley(smilies, "(?)", msn_question, 1);
-	smilies = add_smiley(smilies, "(r)", msn_rainbow, 0);
+	smilies = add_smiley(smilies, "(r)", msn_rainbow, 1);
 	smilies = add_smiley(smilies, "(R)", msn_rainbow, 0);
 	smilies = add_smiley(smilies, "({)", msn_run, 1);
 	smilies = add_smiley(smilies, "(})", msn_runback, 1);
