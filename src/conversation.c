@@ -540,10 +540,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	struct buddy *b = find_buddy(c->gc, c->name);
 	if (b) {
-		if (im_options & OPT_IM_DONT_CONFIRM_DEL)
-			show_confirm_del(c->gc, c->name);
-		else
-			do_remove_buddy(NULL, b);
+		show_confirm_del(c->gc, c->name);
 	} else if (c->gc)
 		show_add_buddy(c->gc, c->name, NULL, NULL);
 

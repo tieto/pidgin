@@ -101,7 +101,6 @@ struct confirm_del {
 	GtkWidget *label;
 	GtkWidget *ok;
 	GtkWidget *cancel;
-	GtkWidget *checkbox;	
 	char name[1024];
 	struct gaim_connection *gc;
 };
@@ -502,12 +501,6 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 	gtk_label_set_justify(GTK_LABEL(b->label), GTK_JUSTIFY_LEFT);
 	gtk_box_pack_start(GTK_BOX(fbox), b->label, FALSE, FALSE, 0);
 	gtk_widget_show(b->label);
-
-	b->checkbox = gtk_check_button_new_with_label(_("Do not ask me this question again"));
-	gtk_signal_connect(GTK_OBJECT(b->checkbox), "clicked",
-			   GTK_SIGNAL_FUNC(toggle_confirm_del_cb), (int *)OPT_IM_DONT_CONFIRM_DEL);
-	gtk_box_pack_start(GTK_BOX(fbox), b->checkbox, FALSE, FALSE, 0);
-	gtk_widget_show(b->checkbox);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
