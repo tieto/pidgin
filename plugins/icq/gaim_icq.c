@@ -123,19 +123,9 @@ static void icq_msg_incoming(ICQLINK *link, unsigned long uin, unsigned char hou
 			unsigned char day, unsigned char month, unsigned short year, const char *data) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char buf[256], *tmp = g_malloc(BUF_LONG);
-	struct tm t;
-	time_t e;
 	g_snprintf(tmp, BUF_LONG, "%s", data);
 	g_snprintf(buf, sizeof buf, "%lu", uin);
-	time(&e);
-	t.tm_sec = e % 60; /* suuuuurrrre.... */
-	t.tm_min = minute;
-	t.tm_hour = hour;
-	t.tm_mday = day;
-	t.tm_mon = month;
-	t.tm_year = year;
-	e = mktime(&t);
-	serv_got_im(gc, buf, tmp, 0, e);
+	serv_got_im(gc, buf, tmp, 0, time((time_t)NULL));
 	g_free(tmp);
 }
 
@@ -188,19 +178,9 @@ static void icq_url_incoming(struct icq_link *link, unsigned long uin, unsigned 
 				unsigned short year, const char *url, const char *descr) {
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char *msg = g_malloc(BUF_LONG), buf[256];
-	struct tm t;
-	time_t e;
 	g_snprintf(msg, BUF_LONG, "<A HREF=\"%s\">%s</A>", url, descr);
 	g_snprintf(buf, 256, "%lu", uin);
-	time(&e);
-	t.tm_sec = e % 60; /* suuuuurrrre.... */
-	t.tm_min = minute;
-	t.tm_hour = hour;
-	t.tm_mday = day;
-	t.tm_mon = month;
-	t.tm_year = year;
-	e = mktime(&t);
-	serv_got_im(gc, buf, msg, 0, e);
+	serv_got_im(gc, buf, msg, 0, time((time_t)NULL));
 	g_free(msg);
 }
 
@@ -238,18 +218,8 @@ static void icq_web_pager(struct icq_link *link, unsigned char hour, unsigned ch
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char *who = g_strdup_printf("ICQ Web Pager: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
-	struct tm t;
-	time_t e;
 	g_snprintf(what, BUF_LONG, "%s", msg);
-	time(&e);
-	t.tm_sec = e % 60; /* suuuuurrrre.... */
-	t.tm_min = minute;
-	t.tm_hour = hour;
-	t.tm_mday = day;
-	t.tm_mon = month;
-	t.tm_year = year;
-	e = mktime(&t);
-	serv_got_im(gc, who, what, 0, e);
+	serv_got_im(gc, who, what, 0, time((time_t)NULL));
 	g_free(who);
 	g_free(what);
 }
@@ -260,18 +230,8 @@ static void icq_mail_express(struct icq_link *link, unsigned char hour, unsigned
 	struct gaim_connection *gc = find_gaim_conn_by_icq_link(link);
 	char *who = g_strdup_printf("ICQ Mail Express: %s (%s)", nick, email);
 	char *what = g_malloc(BUF_LONG);
-	struct tm t;
-	time_t e;
 	g_snprintf(what, BUF_LONG, "%s", msg);
-	time(&e);
-	t.tm_sec = e % 60; /* suuuuurrrre.... */
-	t.tm_min = minute;
-	t.tm_hour = hour;
-	t.tm_mday = day;
-	t.tm_mon = month;
-	t.tm_year = year;
-	e = mktime(&t);
-	serv_got_im(gc, who, what, 0, e);
+	serv_got_im(gc, who, what, 0, time((time_t)NULL));
 	g_free(who);
 	g_free(what);
 }
