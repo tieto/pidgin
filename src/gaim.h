@@ -459,9 +459,6 @@ struct signon {
 extern GtkWidget *applet;
 #endif /* USE_APPLET */
 
-/* Globals in server.c */
-extern int correction_time;
-
 /* Globals in dialog.c */
 extern char fontface[64];
 extern GdkColor bgcolor;

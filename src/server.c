@@ -44,8 +44,6 @@ extern int gaim_caps;
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
 
-int correction_time = 0;
-
 void serv_login(struct aim_user *user)
 {
 	struct prpl *p = find_prpl(user->protocol);
@@ -412,7 +410,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	struct gaim_connection *g = find_gaim_conn_by_name(name);
                      
         if (g) {
-                correction_time = (int)(signon - g->login_time);
+                gc->correction_time = (int)(signon - g->login_time);
                 if (!b) {
                         return;
 		}

@@ -1420,12 +1420,56 @@ static int log_timeout(struct buddy_show *b) {
 	return FALSE;
 }
 
+static char *caps_string(gushort caps)
+{
+	static char buf[256], *tmp;
+	int count = 0, i = 0;
+	gushort bit = 1;
+	while (bit <= 0x20) {
+		if (bit & caps) {
+			switch (bit) {
+				case 0x1:
+					tmp = _("Buddy Icon");
+					break;
+				case 0x2:
+					tmp = _("Voice");
+					break;
+				case 0x4:
+					tmp = _("IM Image");
+					break;
+				case 0x8:
+					tmp = _("Chat");
+					break;
+				case 0x10:
+					tmp = _("Get File");
+					break;
+				case 0x20:
+					tmp = _("Send File");
+					break;
+				default:
+					tmp = NULL;
+					break;
+			}
+			if (tmp)
+				i += g_snprintf(buf+i, sizeof(buf)-i, "%s%s", (count ? ", " : ""), tmp);
+			count++;
+		}
+		bit <<= 1;
+	}
+	return buf;
+}
+
 static void update_idle_time(struct buddy_show *bs) {
 	char idlet[16];
 	time_t t;
 	int ihrs, imin;
 	struct buddy *b;
 	GSList *c;
+
+	char infotip[256];
+	char warn[256];
+	char caps[256];
+	char *sotime, *itime;
 
 	time(&t);
 	if (g_slist_length(bs->connlist) == 1) {
@@ -1445,6 +1489,37 @@ static void update_idle_time(struct buddy_show *bs) {
 			gtk_label_set(GTK_LABEL(bs->idle), "");
 		if (display_options & OPT_DISP_SHOW_IDLETIME)
 			gtk_widget_show(bs->idle);
+
+		/* now we do the tooltip */
+		sotime = sec_to_text(t - b->signon +
+				((struct gaim_connection *)bs->connlist->data)->correction_time);
+
+		if (b->idle)
+			itime = sec_to_text(t - b->idle);
+		else {
+			itime = g_malloc(1); itime[0] = 0;
+		}
+
+		if (b->evil)
+			g_snprintf(warn, sizeof warn, _("Warnings: %d%%\n"), b->evil);
+		else
+			warn[0] = '\0';
+
+		if (b->caps)
+			g_snprintf(caps, sizeof caps, _("Capabilities: %s\n"), caps_string(b->caps));
+		else
+			caps[0] = '\0';
+
+		g_snprintf(infotip, sizeof infotip, _("Alias: %s               \nScreen Name: %s\n"
+							"Logged in: %s\n%s%s%s%s%s"),
+							b->show, b->name, sotime, warn,
+							(b->idle ? _("Idle: ") : ""), itime,
+							(b->idle ? "\n" : ""), caps);
+
+		gtk_tooltips_set_tip(tips, GTK_WIDGET(bs->item), infotip, "");
+
+		g_free(sotime);
+		g_free(itime);
 	} else {
 		/* FIXME */
 	}
