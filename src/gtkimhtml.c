@@ -1799,6 +1799,25 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 	layout_class->set_scroll_adjustments = gtk_imhtml_set_scroll_adjustments;
 }
 
+/* the font stuff is the most insane stuff. i don't understand it half
+ * the time. so we're going to comment it. isn't that wonderful. */
+
+/* when you g_strsplit a valid font name, these are the positions of all the various parts of it. */
+#define FNDRY 1
+#define FMLY 2
+#define WGHT 3
+#define SLANT 4
+#define SWDTH 5
+#define ADSTYL 6
+#define PXLSZ 7
+#define PTSZ 8
+#define RESX 9
+#define RESY 10
+#define SPC 11
+#define AVGWDTH 12
+#define RGSTRY 13
+#define ENCDNG 14
+
 static gchar*
 gtk_imhtml_get_font_name (GdkFont *font)
 {
@@ -1822,6 +1841,27 @@ gtk_imhtml_get_font_name (GdkFont *font)
 				g_strfreev (xflds); \
 				g_strfreev (names); \
 				return ret_font; \
+			} else if (newvals [RGSTRY][0] != '*') { \
+				/* if the registry isn't "*" then try it as "*". this is evil. */ \
+				gchar *reg = newvals [RGSTRY]; \
+				gchar *enc = newvals [ENCDNG]; \
+				newvals [RGSTRY] = "*"; \
+				newvals [ENCDNG] = "*"; \
+				tmp = g_strjoinv ("-", newvals); \
+				if (default_font->type == GDK_FONT_FONT) \
+					ret_font = gdk_font_load (tmp); \
+				else \
+					ret_font = gdk_fontset_load (tmp); \
+				g_free (tmp); \
+				if (ret_font) { \
+					g_free (newvals); \
+					g_strfreev (xnames); \
+					g_strfreev (xflds); \
+					g_strfreev (names); \
+					return ret_font; \
+				} \
+				newvals [RGSTRY] = reg; \
+				newvals [ENCDNG] = enc; \
 			}
 
 
@@ -1837,12 +1877,15 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 	gchar **xnames;
 	gchar **pos;
 
+	/* if we're not changing anything, use the default. this is the common case */
 	if (!name && !bold && !italics && !fontsize)
 		return gdk_font_ref (default_font);
 
+	/* base things off of the default font name */
 	default_name = gtk_imhtml_get_font_name (default_font);
-	xnames = g_strsplit (default_name, ",", -1);
 
+	/* the default font name can actually be several names separated by ','. */
+	xnames = g_strsplit (default_name, ",", -1);
 	for (pos = xnames; pos && *pos; pos++) {
 		gchar *xname;
 		gchar **xflds;
@@ -1861,21 +1904,8 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 		xflds = g_strsplit (xname, "-", -1);
 
-#define FNDRY 1
-#define FMLY 2
-#define WGHT 3
-#define SLANT 4
-#define SWDTH 5
-#define ADSTYL 6
-#define PXLSZ 7
-#define PTSZ 8
-#define RESX 9
-#define RESY 10
-#define SPC 11
-#define AVGWDTH 12
-#define RGSTRY 13
-#define ENCDNG 14
-
+		/* figure out if we have a valid name. i wish there were an
+		 * easier way for determining how many values g_strplit gave */
 		for (i = 0; xflds [i]; i++);
 		if (i != 15) {
 			int tmp;
@@ -1886,11 +1916,14 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		} else
 			newvals = g_memdup (xflds, 16 * sizeof (xflds));
 
+		/* we force foundry as "*" because i hate them. i should give a better reason. */
 		newvals [FNDRY] = "*";
 
+		/* if it's "*" then it defaults to (nil) anyway. some fonts don't want (nil) */
 		if ((i > ADSTYL) && !xflds [ADSTYL][0])
 			newvals [ADSTYL] = "*";
 
+		/* right. */
 		if (bold)
 			newvals [WGHT] = "bold";
 		if (italics)
@@ -1901,21 +1934,34 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			newvals [PTSZ] = fs;
 		}
 
-		if (name)
-			names = g_strsplit (name, ",", -1);
-		else if (i > FMLY) {
+		if (name) {
+			/* we got passed a name. it might be a list of names. */
+			gchar **tmp_nms = g_strsplit (name, ",", -1);
+			/* we do a bunch of weird things to also use the gtk font name as an option. */
+			for (j = 0; tmp_nms [j]; j++);
+			names = g_new0 (char *, j + 2);
+			for (j = 0; tmp_nms [j]; j++)
+				names [j] = tmp_nms [j];
+			g_free (tmp_nms);
+			if (i > FMLY)
+				names [j] = g_strdup (xflds [FMLY]);
+		} else if (i > FMLY) {
+			/* we didn't get a name. we come here if the gtk font name is valid */
 			names = g_new0 (gchar *, 2);
 			names [0] = g_strdup (xflds [FMLY]);
 		} else {
+			/* we got fucked */
 			names = g_new0 (gchar *, 2);
 			names [0] = g_strdup ("*");
 		}
 
+		/* for each name, try it */
 		for (j = 0; names [j]; j++) {
 			newvals [FMLY] = names [j];
 			TRY_FONT;
 		}
 
+		/* if italics is set, try various italics options for each name, including no italics */
 		for (j = 0; italics && names [j]; j++) {
 			newvals [FMLY] = names [j];
 
@@ -1929,6 +1975,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			TRY_FONT;
 		}
 
+		/* if font size was set, try ignoring font size. for each name. */
 		for (j = 0; fontsize && names [j]; j++) {
 			newvals [FMLY] = names [j];
 
@@ -1942,6 +1989,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 			TRY_FONT;
 		}
 
+		/* abandon bold */
 		for (j = 0; bold && names [j]; j++) {
 			newvals [FMLY] = names [j];
 
@@ -1960,6 +2008,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 
 	g_strfreev (xnames);
 
+	/* we couldn't get anything. so, we quit. you get the default. */
 	return gdk_font_ref (default_font);
 }
 
