@@ -435,7 +435,9 @@ static void do_remove_contact(GaimContact *c)
 void do_remove_group(GaimGroup *g)
 {
 	GaimBlistNode *cnode, *bnode;
+
 	cnode = ((GaimBlistNode*)g)->child;
+
 	while(cnode) {
 		if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
 			bnode = cnode->child;
@@ -467,6 +469,7 @@ void do_remove_group(GaimGroup *g)
 			cnode = cnode->next;
 		}
 	}
+
 	gaim_blist_remove_group(g);
 	gaim_blist_save();
 }

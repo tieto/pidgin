@@ -1191,6 +1191,29 @@ msn_normalize(const char *str)
 }
 
 static void
+msn_remove_group(GaimConnection *gc, const char *name)
+{
+	MsnSession *session = (MsnSession *)gc->proto_data;
+	MsnGroup *group;
+
+	if ((group = msn_groups_find_with_name(session->groups, name)) != NULL)
+	{
+		char outparams[MSN_BUF_LEN];
+
+		g_snprintf(outparams, sizeof(outparams), "%d",
+				   msn_group_get_id(group));
+
+		if (!msn_servconn_send_command(session->notification_conn,
+									   "RMG", outparams))
+		{
+			gaim_connection_error(gc, _("Write error"));
+
+			return;
+		}
+	}
+}
+
+static void
 msn_got_info(gpointer data, char *url_text, unsigned long len)
 {
 	char *stripped, *p, *q;
@@ -1460,7 +1483,9 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_rename_group,
 	msn_buddy_free,
 	msn_convo_closed,
-	msn_normalize
+	msn_normalize,
+	NULL,
+	msn_remove_group
 };
 
 static GaimPluginInfo info =

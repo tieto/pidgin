@@ -303,12 +303,13 @@ struct _GaimPluginProtocolInfo
 
 	void (*buddy_free)(GaimBuddy *);
 
-	/* this is really bad. */
 	void (*convo_closed)(GaimConnection *, const char *who);
 
 	char *(*normalize)(const char *);
 
 	void (*set_buddy_icon)(GaimConnection *, const char *filename);
+
+	void (*remove_group)(GaimConnection *gc, const char *group);
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

@@ -490,6 +490,21 @@ void serv_remove_buddy(GaimConnection *g, const char *name, const char *group)
 		prpl_info->remove_buddy(g, name, group);
 }
 
+void
+serv_remove_group(GaimConnection *gc, const char *name)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
+		prpl_info->remove_group)
+	{
+		prpl_info->remove_group(gc, name);
+	}
+}
+
 void serv_remove_buddies(GaimConnection *gc, GList *g, const char *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

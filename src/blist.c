@@ -1102,6 +1102,7 @@ void  gaim_blist_remove_group (GaimGroup *group)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	GaimBlistNode *node = (GaimBlistNode*)group;
+	GList *l;
 
 	if(node->child) {
 		char *buf;
@@ -1133,6 +1134,14 @@ void  gaim_blist_remove_group (GaimGroup *group)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
+
+	for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+	{
+		GaimConnection *gc = (GaimConnection *)l->data;
+
+		if (gaim_connection_get_state(gc) == GAIM_CONNECTED)
+			serv_remove_group(gc, group->name);
+	}
 
 	ops->remove(gaimbuddylist, node);
 	g_free(group->name);
