@@ -697,7 +697,7 @@ GtkWidget *font_page() {
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	button = prefs_checkbox(_("Use custom si_ze"),
-						   "/gaim/gtk/conversations/use_custom_font", hbox);
+						   "/gaim/gtk/conversations/use_custom_size", hbox);
 	gtk_size_group_add_widget(sg, button);
 	select = prefs_labeled_spin_button(hbox, NULL,
 									   "/gaim/gtk/conversations/font_size",

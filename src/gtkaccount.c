@@ -91,6 +91,7 @@ typedef struct
 	GtkWidget *top_vbox;
 	GtkWidget *bottom_vbox;
 	GtkWidget *ok_button;
+	GtkWidget *register_button;
 
 	/* Login Options */
 	GtkWidget *login_frame;
@@ -190,6 +191,11 @@ set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
+
+	if (dialog->prpl_info->register_user == NULL)
+		gtk_widget_hide(dialog->register_button);
+	else
+		gtk_widget_show(dialog->register_button);
 }
 
 static void
@@ -1186,15 +1192,18 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
 
-	if (dialog->prpl_info->register_user != NULL) {
-		/* Register button */
-		button = gtk_button_new_with_label(_("Register"));
-		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-		gtk_widget_show(button);
+	/* Register button */
+	button = gtk_button_new_with_label(_("Register"));
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
 
-		g_signal_connect(G_OBJECT(button), "clicked",
-						 G_CALLBACK(register_account_prefs_cb), dialog);
-	}
+	g_signal_connect(G_OBJECT(button), "clicked",
+			G_CALLBACK(register_account_prefs_cb), dialog);
+
+	dialog->register_button = button;
+
+	if (dialog->prpl_info->register_user == NULL)
+		gtk_widget_hide(button);
 
 	/* Cancel button */
 	button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);

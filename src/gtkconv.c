@@ -111,9 +111,6 @@ typedef struct
 
 } InviteBuddyInfo;
 
-char fontface[128] = { 0 };
-int fontsize = 3;
-
 static GtkWidget *invite_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
@@ -411,7 +408,9 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_size")) {
 			g_snprintf(buf2, limit,
-					   "<FONT SIZE=\"%d\">%s</FONT>", fontsize, buf);
+					   "<FONT SIZE=\"%d\">%s</FONT>",
+					   gaim_prefs_get_int("/gaim/gtk/conversations/font_size"),
+					   buf);
 			strcpy(buf, buf2);
 		}
 
@@ -5226,13 +5225,15 @@ void
 gaim_gtkconv_update_font_face(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
-	
+
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
-	
+
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	strncpy(gtkconv->fontface, fontface, 128);
+	strncpy(gtkconv->fontface,
+			gaim_prefs_get_string("/gaim/gtk/conversations/font_face"),
+			sizeof(gtkconv->fontface));
 }
 
 void
