@@ -9,17 +9,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <glib.h>
+#include <gdk/gdkwin32.h>
 #include "gaim.h"
 
 #include "stdafx.h"
 #include "resource.h"
 #include "MinimizeToTray.h"
 #include "systray.h"
+#include "winuser_extra.h"
+#include "IdleTracker.h"
 
 /*
  *  DEFINES & MACROS
  */
-
 
 /*
  * LOCALS
@@ -35,7 +37,6 @@ static int bhide_icon;
  */
 HINSTANCE gaimexe_hInstance = 0;
 HINSTANCE gaimdll_hInstance = 0;
-
 
 /*
  *  STATIC CODE
@@ -88,6 +89,19 @@ char* wgaim_locale_dir(void) {
 	strcpy(locale_dir, wgaim_install_dir());
 	strcat(locale_dir, G_DIR_SEPARATOR_S "locale");
 	return (char*)&locale_dir;
+}
+
+/* Miscellaneous */
+
+/* FlashWindowEx is only supported by Win98+ and WinNT5+ */
+void wgaim_im_blink(GtkWidget *window) {
+	FLASHWINFO info;
+
+	info.cbSize = sizeof(FLASHWINFO);
+	info.hwnd = GDK_WINDOW_HWND(window->window);
+	info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
+	info.dwTimeout = 0;
+	FlashWindowEx(&info);
 }
 
 /* Windows Initializations */

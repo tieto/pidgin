@@ -20,6 +20,7 @@
  **/
 /* Misc */
 HINSTANCE wgaim_hinstance(void);
+extern void wgaim_im_blink(GtkWidget*);
 
 /* Determine Gaim paths */
 extern char* wgaim_install_dir(void);
