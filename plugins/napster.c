@@ -335,6 +335,14 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 		return;
 	}
 
+	if (command == 0x2ec) {
+		/* Looks like someone logged in as us! =-O */
+		free(buf);
+
+		signoff(gc);
+		return;
+	}
+
 	printf("NAP: [COMMAND: 0x%04x] %s\n", command, buf);
 }
 
