@@ -11,9 +11,6 @@ GAIM_PLUGINS = ./plugins
 GAIM_PIXMAPS = ./pixmaps
 GAIM_SOUNDS = ./sounds
 GAIM_INSTALL_DIR = ./win32-install-dir
-GTK_TOP = ../win32-dev/gtk_2_0
-GTK_LIBS = $(GTK_TOP)/lib
-GTK_BIN = $(GTK_TOP)/bin
 PERL_TOP = ../win32-dev/perl56
 GTKSPELL_TOP = ../win32-dev/gtkspell-2.0.4/gtkspell
 IDLETRACK_TOP = $(GAIM_SRC)/win32/IdleTracker
@@ -30,38 +27,9 @@ PO = ./po
 
 VERSION := $(shell cat ./VERSION)
 
-NEEDED_DLLS = 		$(GTK_BIN)/libgdk-win32-2.0-0.dll \
-			$(GTK_BIN)/libglib-2.0-0.dll \
-			$(GTK_BIN)/libintl-1.dll \
-			$(GTK_BIN)/iconv.dll \
-			$(GTK_BIN)/libgmodule-2.0-0.dll \
-			$(GTK_BIN)/libgtk-win32-2.0-0.dll \
-			$(GTK_BIN)/libgdk_pixbuf-2.0-0.dll \
-			$(GTK_BIN)/libgobject-2.0-0.dll \
-			$(GTK_BIN)/libgthread-2.0-0.dll \
-			$(GTK_BIN)/libjpeg.dll \
-			$(GTK_BIN)/libpng.dll \
-			$(GTK_BIN)/libtiff.dll \
-			$(GTK_BIN)/zlib.dll \
-			$(GTK_BIN)/libpango-1.0-0.dll \
-			$(GTK_BIN)/libpangoft2-1.0-0.dll \
-			$(GTK_BIN)/libpangowin32-1.0-0.dll \
-			$(GTK_BIN)/libatk-1.0-0.dll \
-			$(PERL_TOP)/perl56.dll \
+NEEDED_DLLS =		$(PERL_TOP)/perl56.dll \
 			$(GTKSPELL_TOP)/libgtkspell.dll \
 			$(IDLETRACK_TOP)/idletrack.dll 
-
-# For Gtk 2.0.3
-#			$(GTK_BIN)/libjpeg6b.dll \
-#			$(GTK_BIN)/libpng-3.dll \
-#			$(GTK_BIN)/libtiff.dll \
-#			$(GTK_BIN)/libz.dll \
-
-# For Gtk 2.0.6
-#			$(GTK_BIN)/libjpeg.dll \
-#			$(GTK_BIN)/libpng.dll \
-#			$(GTK_BIN)/libtiff.dll \
-#			$(GTK_BIN)/zlib.dll \
 
 
 SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
@@ -114,11 +82,6 @@ install: all
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
-	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0
-	cp -R $(GTK_LIBS)/gtk-2.0/2.2.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
-	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
-	cp -R $(GTK_TOP)/etc $(GAIM_INSTALL_DIR)
-	cp $(GAIM_SRC)/win32/themes/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
 
 installer:
 	makensis.exe /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
