@@ -40,7 +40,7 @@
 #include "proxy.h"
 
 #define GAIM_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR)
+#define GAIM_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
 char proxyhost[128] = { 0 };
 int  proxyport = 0;
