@@ -312,8 +312,7 @@ void play_file(char *filename)
 		return;
 	else if (pid == 0) {
 		if (sound_options & OPT_SOUND_BEEP) {
-			printf("\a");
-			fflush(stdout);
+			g_print("\a");
 			_exit(0);
 		}
 
@@ -363,8 +362,7 @@ void play(unsigned char *data, int size)
 		return;
 	else if (pid == 0) {
 		if (sound_options & OPT_SOUND_BEEP) {
-			printf("\a");
-			fflush(stdout);
+			g_print("\a");
 			_exit(0);
 		}
 #ifdef ESD_SOUND

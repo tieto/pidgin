@@ -1153,13 +1153,11 @@ int do_auto_login(char *name)
 	if (name !=NULL) {	/* list of names given */
 		names = g_strsplit(name, ",", 32);
 		for (n = names; *n != NULL; n++) {
-			printf("user %s...\n", *n);
 			u = find_user(*n, -1);
 			if (u) {	/* found a user */
 				if (first == NULL)
 					first = g_strdup(*n);
 				if (u->options & OPT_USR_REM_PASS) {
-					printf("got user %s\n", *n);
 					retval = 0;
 					serv_login(u);
 				}

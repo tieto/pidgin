@@ -379,6 +379,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	} while (buf[i++] != '\n');
 
 	buf[--i] = '\0';
+	g_print("%s\n", buf);
 
 	/* Check for errors */
 
@@ -388,7 +389,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar *u_errormsg;
 
 		/* Let's get our error message */
-		u_errormsg = strdup(buf + 7);
+		u_errormsg = g_strdup(buf + 7);
 
 		/* We got our error message.  Now, let's reaise an
 		 * error dialog */
@@ -396,7 +397,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		do_error_dialog(u_errormsg, "Gaim: IRC Error");
 
 		/* And our necessary garbage collection */
-		free(u_errormsg);
+		g_free(u_errormsg);
 	}
 
 	/* Parse the list of names that we receive when we first sign on to
@@ -453,16 +454,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		/* Now that we've parsed the hell out of this big
 		 * mess, let's try to split up the names properly */
 
-		for (i = 0; buf2[i] != NULL; i++) {
-			/* We shouldnt play with ourselves */
-			if (g_strcasecmp(buf2[i], gc->username) != 0) {
-				/* Add the person to the list */
-
-				/* FIXME: These really should be in alphabetical order and OPS and Voice first */
-
-				add_chat_buddy(convo, buf2[i]);
-			}
-		}
+		for (i = 0; buf2[i] != NULL; i++)
+			add_chat_buddy(convo, buf2[i]);
 
 		/* And free our pointers */
 		g_strfreev(buf2);
@@ -957,9 +950,8 @@ static void irc_login_callback(gpointer data, gint source, GdkInputCondition con
 	if (bud_list_cache_exists(gc))
 		do_import(NULL, gc);
 
+	/* we don't call this now because otherwise some IRC servers might not like us */
 	idata->timer = gtk_timeout_add(20000, (GtkFunction)irc_request_buddy_update, gc);
-
-	irc_request_buddy_update(gc);
 }
 
 static void irc_login(struct aim_user *user)
