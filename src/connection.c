@@ -137,6 +137,7 @@ gaim_connection_connect(GaimConnection *gc)
 		const gchar *username = gaim_account_get_username(account);
 
 		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requesting password\n");
+		gaim_connection_destroy(gc);
 		escaped = g_markup_escape_text(username, strlen(username));
 		primary = g_strdup_printf(_("Enter password for %s"), escaped);
 		gaim_request_input(gc, NULL, primary, NULL, NULL, FALSE, TRUE,
@@ -144,7 +145,6 @@ gaim_connection_connect(GaimConnection *gc)
 						   _("Cancel"), NULL, account);
 		g_free(primary);
 		g_free(escaped);
-		gaim_connection_destroy(gc);
 
 		return;
 	}
