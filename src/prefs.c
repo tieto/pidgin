@@ -1780,7 +1780,7 @@ void debug_print(char *chars)
 	if (general_options & OPT_GEN_DEBUG && dw)
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, chars, strlen(chars));
 #ifdef DEBUG
-        printf("%s\n", chars);
+        printf("%s", chars);
 #endif
 }
 
