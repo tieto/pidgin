@@ -564,6 +564,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				gaim_debug(GAIM_DEBUG_ERROR, "oscar",
 						   "connection error (rendezvous listener)\n");
 				aim_conn_kill(od->sess, &conn);
+				/* AAA - Don't we need to gaim_xfer_cancel here? --marv */
 			}
 		} else {
 			if (aim_get_command(od->sess, conn) >= 0) {
@@ -877,145 +878,10 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
 
-/* XXX - This function is pretty ugly */
-static void oscar_xfer_init(GaimXfer *xfer)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		int listenfd;
-
-		xfer->filename = g_path_get_basename(xfer->local_filename);
-		strncpy(oft_info->fh.name, xfer->filename, 64);
-		oft_info->fh.totsize = gaim_xfer_get_size(xfer);
-		oft_info->fh.size = gaim_xfer_get_size(xfer);
-		oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
-
-		/* Create a listening socket and an associated libfaim conn */
-		if ((listenfd = gaim_network_listen_range(5190, 5199)) < 0)
-			return;
-		xfer->local_port = gaim_network_get_port_from_fd(listenfd);
-		oft_info->port = xfer->local_port;
-		aim_sendfile_listen(od->sess, oft_info, listenfd);
-		gaim_debug(GAIM_DEBUG_MISC, "oscar",
-				   "port is %d, ip is %s\n",
-				   xfer->local_port, oft_info->clientip);
-		if (oft_info->conn) {
-			xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
-			aim_im_sendch2_sendfile_ask(od->sess, oft_info);
-			aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_estblsh, 0);
-		} else {
-			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-							  _("Unable to establish listener socket."));
-			/* XXX - The below line causes a crash because the transfer is canceled before the "Ok" callback on the file selection thing exists, I think */
-			/* gaim_xfer_cancel_remote(xfer); */
-		}
-	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
-		if (oft_info->conn) {
-			oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
-			aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
-			oft_info->conn->fd = xfer->fd = gaim_proxy_connect(gaim_connection_get_account(gc), xfer->remote_ip, xfer->remote_port, 
-								      oscar_sendfile_connected, xfer);
-			if (xfer->fd == -1) {
-				gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-								  _("Unable to establish file descriptor."));
-				/* gaim_xfer_cancel_remote(xfer); */
-			}
-		} else {
-			gaim_notify_error(gc, NULL, _("File Transfer Aborted"),
-							  _("Unable to create new connection."));
-			/* gaim_xfer_cancel_remote(xfer); */
-			/* Try a different port? Ask them to connect to us? */
-		}
-
-	}
-}
-
-static void oscar_xfer_start(GaimXfer *xfer)
-{
-
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_start\n");
-	/* I'm pretty sure we don't need to do jack here.  Nor Jill. */
-}
-
-static void oscar_xfer_end(GaimXfer *xfer)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
-
-	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_end\n");
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		oft_info->fh.nrecvd = gaim_xfer_get_bytes_sent(xfer);
-		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_DONE, oft_info);
-	}
-
-	aim_conn_kill(oft_info->sess, &oft_info->conn);
-	aim_oft_destroyinfo(oft_info);
-	xfer->data = NULL;
-	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
-}
-
-static void oscar_xfer_cancel_send(GaimXfer *xfer)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
-
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
-			   "AAA - in oscar_xfer_cancel_send\n");
-
-	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
-
-	aim_conn_kill(oft_info->sess, &oft_info->conn);
-	aim_oft_destroyinfo(oft_info);
-	xfer->data = NULL;
-	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
-}
-
-static void oscar_xfer_cancel_recv(GaimXfer *xfer)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-	GaimConnection *gc = oft_info->sess->aux_data;
-	OscarData *od = gc->proto_data;
-
-	gaim_debug(GAIM_DEBUG_INFO, "oscar",
-			   "AAA - in oscar_xfer_cancel_recv\n");
-
-	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
-
-	aim_conn_kill(oft_info->sess, &oft_info->conn);
-	aim_oft_destroyinfo(oft_info);
-	xfer->data = NULL;
-	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
-}
-
-static void oscar_xfer_ack(GaimXfer *xfer, const char *buffer, size_t size)
-{
-	struct aim_oft_info *oft_info = xfer->data;
-
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_SEND) {
-		/*
-		 * If we're done sending, intercept the socket from the core ft code
-		 * and wait for the other guy to send the "done" OFT packet.
-		 */
-		if (gaim_xfer_get_bytes_remaining(xfer) <= 0) {
-			gaim_input_remove(xfer->watcher);
-			xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
-			xfer->fd = 0;
-			gaim_xfer_set_completed(xfer, TRUE);
-		}
-	} else if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-		/* Update our rolling checksum.  Like Walmart, yo. */
-		oft_info->fh.recvcsum = aim_oft_checksum_chunk(buffer, size, oft_info->fh.recvcsum);
-	}
-}
-
-static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
+/*
+ * Miscellaneous xfer functions
+ */
+static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const fu8_t *ck)
 {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
@@ -1024,7 +890,7 @@ static GaimXfer *oscar_find_xfer_by_cookie(GSList *fts, const char *ck)
 		xfer = fts->data;
 		oft_info = xfer->data;
 
-		if (oft_info && !strcmp(ck, oft_info->cookie))
+		if (oft_info && !memcmp(ck, oft_info->cookie, 8))
 			return xfer;
 
 		fts = g_slist_next(fts);
@@ -1051,6 +917,170 @@ static GaimXfer *oscar_find_xfer_by_conn(GSList *fts, aim_conn_t *conn)
 	return NULL;
 }
 
+static void oscar_xfer_end(GaimXfer *xfer)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+	GaimConnection *gc = oft_info->sess->aux_data;
+	OscarData *od = gc->proto_data;
+
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_end\n");
+
+	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		oft_info->fh.nrecvd = gaim_xfer_get_bytes_sent(xfer);
+		aim_oft_sendheader(oft_info->sess, AIM_CB_OFT_DONE, oft_info);
+	}
+
+	aim_conn_kill(oft_info->sess, &oft_info->conn);
+	aim_oft_destroyinfo(oft_info);
+	xfer->data = NULL;
+	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+}
+
+/*
+ * xfer functions used when receiving files
+ */
+
+static void oscar_xfer_init_recv(GaimXfer *xfer)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+	GaimConnection *gc = oft_info->sess->aux_data;
+	OscarData *od = gc->proto_data;
+
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_recv_init\n");
+
+	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
+	if (oft_info->conn) {
+		oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
+		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
+		oft_info->conn->fd = xfer->fd = gaim_proxy_connect(gaim_connection_get_account(gc),
+					xfer->remote_ip, xfer->remote_port,	oscar_sendfile_connected, xfer);
+		if (xfer->fd == -1) {
+			gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who,
+							_("Unable to establish file descriptor."));
+			gaim_xfer_cancel_local(xfer);
+		}
+	} else {
+		gaim_xfer_error(GAIM_XFER_RECEIVE, xfer->who,
+						_("Unable to create new connection."));
+		gaim_xfer_cancel_local(xfer);
+		/* Try a different port? Ask them to connect to us? /join #gaim and whine? */
+	}
+
+}
+
+static void oscar_xfer_cancel_recv(GaimXfer *xfer)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+	GaimConnection *gc = oft_info->sess->aux_data;
+	OscarData *od = gc->proto_data;
+
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_cancel_recv\n");
+
+	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+
+	aim_conn_kill(oft_info->sess, &oft_info->conn);
+	aim_oft_destroyinfo(oft_info);
+	xfer->data = NULL;
+	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+}
+
+static void oscar_xfer_ack_recv(GaimXfer *xfer, const char *buffer, size_t size)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+
+	/* Update our rolling checksum.  Like Walmart, yo. */
+	oft_info->fh.recvcsum = aim_oft_checksum_chunk(buffer, size, oft_info->fh.recvcsum);
+}
+
+/*
+ * xfer functions used when sending files
+ */
+
+static void oscar_xfer_init_send(GaimXfer *xfer)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+	GaimConnection *gc = oft_info->sess->aux_data;
+	OscarData *od = gc->proto_data;
+	int listenfd;
+
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_send_init\n");
+
+	xfer->filename = g_path_get_basename(xfer->local_filename);
+	strncpy(oft_info->fh.name, xfer->filename, 64);
+	oft_info->fh.name[63] = '\0';
+	oft_info->fh.totsize = gaim_xfer_get_size(xfer);
+	oft_info->fh.size = gaim_xfer_get_size(xfer);
+	oft_info->fh.checksum = aim_oft_checksum_file(xfer->local_filename);
+
+	/* Create a listening socket and an associated libfaim conn */
+	if ((listenfd = gaim_network_listen_range(5190, 5199)) < 0) {
+		gaim_xfer_cancel_local(xfer);
+		return;
+	}
+	xfer->local_port = gaim_network_get_port_from_fd(listenfd);
+	oft_info->port = xfer->local_port;
+	if (aim_sendfile_listen(od->sess, oft_info, listenfd) != 0) {
+		gaim_xfer_cancel_local(xfer);
+		return;
+	}
+	gaim_debug(GAIM_DEBUG_MISC, "oscar",
+			   "port is %hu, ip is %s\n",
+			   xfer->local_port, oft_info->clientip);
+	if (oft_info->conn) {
+		xfer->watcher = gaim_input_add(oft_info->conn->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
+		aim_im_sendch2_sendfile_ask(od->sess, oft_info);
+		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_ESTABLISHED, oscar_sendfile_estblsh, 0);
+	} else {
+		gaim_xfer_error(GAIM_XFER_SEND, xfer->who,
+						_("Unable to establish listener socket."));
+		gaim_xfer_cancel_local(xfer);
+	}
+}
+
+static void oscar_xfer_cancel_send(GaimXfer *xfer)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+	GaimConnection *gc = oft_info->sess->aux_data;
+	OscarData *od = gc->proto_data;
+
+	gaim_debug(GAIM_DEBUG_INFO, "oscar", "AAA - in oscar_xfer_cancel_send\n");
+
+	aim_im_sendch2_sendfile_cancel(oft_info->sess, oft_info);
+
+	aim_conn_kill(oft_info->sess, &oft_info->conn);
+	aim_oft_destroyinfo(oft_info);
+	xfer->data = NULL;
+	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
+}
+
+static void oscar_xfer_ack_send(GaimXfer *xfer, const char *buffer, size_t size)
+{
+	struct aim_oft_info *oft_info = xfer->data;
+
+	/* I'm not sure I like how we do this. --marv
+	 * I do.  AIM file transfers aren't really meant to be thought
+	 * of as a transferring just a single file.  The rendezvous
+	 * establishes a connection between two computers, and then
+	 * those computers can use the same connection for transferring
+	 * multiple files.  So we don't want the Gaim core up and closing
+	 * the socket all willy-nilly.  We want to do that in the oscar
+	 * prpl, whenever one side or the other says they're finished
+	 * using the connection.  There might be a better way to intercept
+	 * the socket from the core, however...  --KingAnt
+	 */
+
+	/*
+	 * If we're done sending, intercept the socket from the core ft code
+	 * and wait for the other guy to send the "done" OFT packet.
+	 */
+	if (gaim_xfer_get_bytes_remaining(xfer) <= 0) {
+		gaim_input_remove(xfer->watcher);
+		xfer->watcher = gaim_input_add(xfer->fd, GAIM_INPUT_READ, oscar_callback, oft_info->conn);
+		xfer->fd = 0;
+		gaim_xfer_set_completed(xfer, TRUE);
+	}
+}
+
 static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -1069,12 +1099,11 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 	xfer->data = oft_info;
 
 	 /* Setup our I/O op functions */
-	gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
-	gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
+	gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_send);
 	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
 	gaim_xfer_set_cancel_send_fnc(xfer, oscar_xfer_cancel_send);
-	gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
-	gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
+	gaim_xfer_set_request_denied_fnc(xfer, oscar_xfer_cancel_send);
+	gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack_send);
 
 	/* Keep track of this transfer for later */
 	od->file_transfers = g_slist_append(od->file_transfers, xfer);
@@ -2037,8 +2066,10 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 		return;
 	if (!(oft_info = xfer->data))
 		return;
-	if (source < 0)
+	if (source < 0) {
+		gaim_xfer_cancel_remote(xfer);
 		return;
+	}
 
 	xfer->fd = source;
 	oft_info->conn->fd = source;
@@ -2391,6 +2422,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 				if (tmp && (tmp[1] == '*')) {
 					tmp[0] = '\0';
 				}
+				gaim_debug(GAIM_DEBUG_WARNING, "oscar",
+						   "We're receiving a whole directory! What fun! "
+						   "Especially since we don't support that!\n");
 			}
 
 			/* Build the file transfer handle */
@@ -2409,12 +2443,11 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			xfer->data = oft_info;
 
 			 /* Setup our I/O op functions */
-			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init);
-			gaim_xfer_set_start_fnc(xfer, oscar_xfer_start);
+			gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_recv);
 			gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
-			gaim_xfer_set_cancel_send_fnc(xfer, oscar_xfer_cancel_send);
+			gaim_xfer_set_request_denied_fnc(xfer, oscar_xfer_cancel_recv);
 			gaim_xfer_set_cancel_recv_fnc(xfer, oscar_xfer_cancel_recv);
-			gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack);
+			gaim_xfer_set_ack_fnc(xfer, oscar_xfer_ack_recv);
 
 			/*
 			 * XXX - Should do something with args->msg, args->encoding, and args->language

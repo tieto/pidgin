@@ -175,7 +175,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 	int ret = 0;
 	aim_conn_t *newconn;
 	char ip[20];
-	int port;
+	unsigned short int port;
 
 	if ((acceptfd = accept(cur->fd, &addr, &addrlen)) == -1)
 		return 0; /* not an error */
@@ -204,7 +204,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 
 		priv = (struct aim_odc_intdata *)(newconn->internal = cur->internal);
 		cur->internal = NULL;
-		snprintf(priv->ip, sizeof(priv->ip), "%s:%u", ip, port);
+		snprintf(priv->ip, sizeof(priv->ip), "%s:%hu", ip, port);
 
 		if ((userfunc = aim_callhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED)))
 			ret = userfunc(sess, NULL, newconn, cur);
@@ -648,8 +648,10 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	new->fh.rfcsum = 0xffff0000;
 	new->fh.recvcsum = 0xffff0000;
 	strncpy(new->fh.idstring, "OFT_Windows ICBMFT V1.1 32", 31);
-	if (filename)
+	if (filename) {
 		strncpy(new->fh.name, filename, 63);
+		new->fh.name[63] = '\0';
+	}
 
 	new->next = sess->oft_info;
 	sess->oft_info = new;
@@ -760,6 +762,7 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
 	fh->nencode = aimbs_get16(bs);
 	fh->nlanguage = aimbs_get16(bs);
 	aimbs_getrawbuf(bs, fh->name, 64); /* XXX - filenames longer than 64B */
+	fh->name[63] = '\0';
 
 	return fh;
 } 
