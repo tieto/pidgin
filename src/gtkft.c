@@ -563,11 +563,13 @@ gaim_gtkxfer_dialog_new(void)
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(window), "file transfer");
-	gtk_window_set_title(GTK_WINDOW(window), _("File Transfers - Gaim"));
-//	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
-//	gtk_window_set_default_size(GTK_WINDOW(window), 390, 400);
-//	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_container_border_width(GTK_CONTAINER(window), 12);
+	gtk_window_set_title(GTK_WINDOW(window), _("File Transfers"));
+#if 0
+	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
+	gtk_window_set_default_size(GTK_WINDOW(window), 390, 400);
+#endif
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
 	gtk_widget_realize(window);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
