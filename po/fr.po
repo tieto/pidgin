@@ -54,7 +54,7 @@ msgstr "Enregistrement à Napster est encore en développement"
 #: src/about.c:87
 #, c-format
 msgid "About Gaim v%s"
-msgstr "A propos de Gaim v%s"
+msgstr "À propos de Gaim v%s"
 
 #: src/about.c:124
 msgid ""
@@ -160,7 +160,7 @@ msgstr "Impossible de créer l'applet Gaim"
 
 #: src/applet.c:352
 msgid "About..."
-msgstr "A Propos..."
+msgstr "À Propos..."
 
 #: src/away.c:153
 msgid "Gaim - Away!"
@@ -424,7 +424,7 @@ msgstr "Aide"
 #: src/buddy.c:2708
 #, fuzzy
 msgid "About Gaim"
-msgstr "A propos..."
+msgstr "À propos..."
 
 #: src/buddy.c:2727 src/prefs.c:2671
 msgid "Buddy List"
