@@ -137,6 +137,7 @@ struct direct_im {
 	char name[80];
 	int watcher;
 	aim_conn_t *conn;
+	gboolean connected;
 };
 
 struct ask_direct {
@@ -317,7 +318,11 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	od->direct_ims = g_slist_remove(od->direct_ims, dim);
 	gaim_input_remove(dim->watcher);
 
-	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
+	if (dim->connected)
+		g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
+	else 
+		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), sn);
+		
 	if ((cnv = find_conversation(sn)))
 		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 	update_progress(cnv, 100);
@@ -1207,7 +1212,9 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 	struct oscar_data *od = gc->proto_data;
 	struct conversation *cnv;
 	char buf[256];
-
+	struct sockaddr name;
+	socklen_t name_len = 1;
+	
 	if (!g_slist_find(connections, gc)) {
 		g_free(dim);
 		return;
@@ -1220,17 +1227,20 @@ static void oscar_directim_callback(gpointer data, gint source, GaimInputConditi
 
 	if (dim->conn->fd != source)
 		dim->conn->fd = source;
-
 	aim_conn_completeconnect(od->sess, dim->conn);
 	if (!(cnv = find_conversation(dim->name))) 
 		cnv = new_conversation(dim->name);
-	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
-	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 
+	/* This is the best way to see if we're connected or not */
+	if (getpeername(source, &name, &name_len) == 0) {
+		g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), dim->name);
+		dim->connected = TRUE;
+		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+	}
 	od->direct_ims = g_slist_append(od->direct_ims, dim);
-
+	
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
-					oscar_callback, dim->conn);
+				      oscar_callback, dim->conn);
 }
 
 static int accept_direct_im(gpointer w, struct ask_direct *d) {
@@ -2418,60 +2428,62 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	struct direct_im *dim = find_direct_im(odata, name);
 	int ret = 0;
 	if (dim) {
-		ret = aim_send_im_direct(odata->sess, dim->conn, message);
-	} else {
-		if (imflags & IM_FLAG_AWAY) {
-			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
-		} else {
-			struct aim_sendimext_args args;
-			GSList *h = odata->hasicons;
-			struct icon_req *ir = NULL;
-			char *who = normalize(name);
-			struct stat st;
-
-			args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
-			if (odata->icq)
-				args.flags |= AIM_IMFLAGS_OFFLINE;
-
-			args.features = gaim_features;
-			args.featureslen = sizeof(gaim_features);
-
-			while (h) {
-				ir = h->data;
-				if (ir->request && !strcmp(who, ir->user))
-					break;
-				h = h->next;
-			}
-			if (h) {
-				ir->request = FALSE;
-				args.flags |= AIM_IMFLAGS_BUDDYREQ;
-				debug_printf("sending buddy icon request with message\n");
-			}
-
-			if (gc->user->iconfile[0] && !stat(gc->user->iconfile, &st)) {
-				FILE *file = fopen(gc->user->iconfile, "r");
-				if (file) {
-					char *buf = g_malloc(st.st_size);
-					fread(buf, 1, st.st_size, file);
-
-					args.iconlen   = st.st_size;
-					args.iconsum   = aim_iconsum(buf, st.st_size);
-					args.iconstamp = st.st_mtime;
-
-					args.flags |= AIM_IMFLAGS_HASICON;
-					debug_printf("Claiming to have an icon.\n");
-
-					fclose(file);
-					g_free(buf);
-				}
-			}
-
-			args.destsn = name;
-			args.msg    = message;
-			args.msglen = strlen(message);
-
-			ret = aim_send_im_ext(odata->sess, &args);
+		if (dim->connected)   /* If we're not connected yet, send through server */
+			return  aim_send_im_direct(odata->sess, dim->conn, message);
+		debug_printf("Direct IM pending, but not connected; sending through server\n");
 		}
+	if (imflags & IM_FLAG_AWAY) {
+		ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
+	} else {
+		struct aim_sendimext_args args;
+		GSList *h = odata->hasicons;
+		struct icon_req *ir = NULL;
+		char *who = normalize(name);
+		struct stat st;
+		
+		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+		if (odata->icq)
+			args.flags |= AIM_IMFLAGS_OFFLINE;
+		
+		args.features = gaim_features;
+		args.featureslen = sizeof(gaim_features);
+		
+		while (h) {
+			ir = h->data;
+			if (ir->request && !strcmp(who, ir->user))
+				break;
+			h = h->next;
+			}
+		if (h) {
+			ir->request = FALSE;
+			args.flags |= AIM_IMFLAGS_BUDDYREQ;
+			debug_printf("sending buddy icon request with message\n");
+		}
+		
+		if (gc->user->iconfile[0] && !stat(gc->user->iconfile, &st)) {
+			FILE *file = fopen(gc->user->iconfile, "r");
+			if (file) {
+				char *buf = g_malloc(st.st_size);
+				fread(buf, 1, st.st_size, file);
+				
+				args.iconlen   = st.st_size;
+				args.iconsum   = aim_iconsum(buf, st.st_size);
+				args.iconstamp = st.st_mtime;
+
+				args.flags |= AIM_IMFLAGS_HASICON;
+				debug_printf("Claiming to have an icon.\n");
+
+				fclose(file);
+				g_free(buf);
+			}
+		}
+		
+		args.destsn = name;
+		args.msg    = message;
+		args.msglen = strlen(message);
+		
+		ret = aim_send_im_ext(odata->sess, &args);
+		
 	}
 	if (ret >= 0)
 		return 1;
@@ -3118,6 +3130,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 					oscar_callback, dim->conn);
+	dim->connected = TRUE;
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s established"), sn);
 	g_free(sn);
 	write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
@@ -3126,7 +3139,7 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gaim_directim_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_directim_typing, 0);
-	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
+	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
 			    gaim_update_ui, 0);
 	return 1;
 }
@@ -3211,8 +3224,15 @@ static void oscar_direct_im(gpointer obj, struct ask_do_dir_im *data) {
 
 	dim = find_direct_im(od, data->who);
 	if (dim) {
-		do_error_dialog("Direct IM request already pending.", "Unable");
-		return;
+		if (!(dim->connected)) {  /* We'll free the old, unconnected dim, and start over */
+			od->direct_ims = g_slist_remove(od->direct_ims, dim);
+			gaim_input_remove(dim->watcher);
+			g_free(dim);
+			debug_printf("Gave up on old direct IM, trying again\n");
+		} else {
+			do_error_dialog("DirectIM already open.", "Gaim");
+			return;
+		}
 	}
 	dim = g_new0(struct direct_im, 1);
 	dim->gc = gc;
