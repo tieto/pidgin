@@ -4,14 +4,90 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.56\n"
-"POT-Creation-Date: 2002-05-20 19:16-0400\n"
-"PO-Revision-Date: 2002-05-21 12:30+0200\n"
+"Project-Id-Version: gaim 0.57\n"
+"POT-Creation-Date: 2002-05-22 20:45-0400\n"
+"PO-Revision-Date: 2002-05-23 08:01+0200\n"
 "Last-Translator: Przemys³aw Su³ek <pbs@linux.net.pl>\n"
 "Language-Team: POLISH <pl@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: plugins/chatlist.c:67 src/buddy_chat.c:272
+msgid "Buddy Chat"
+msgstr "Czat z kumplem"
+
+#: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
+#: plugins/chatlist.c:409
+msgid "Gaim Chat"
+msgstr "Gaim Czat"
+
+#: plugins/chatlist.c:339 src/about.c:164 src/aim.c:319 src/buddy.c:2687
+#: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
+#: src/conversation.c:2839 src/dialogs.c:567 src/dialogs.c:3899
+#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2537 src/prpl.c:438
+#: src/prpl.c:679 src/server.c:1072
+msgid "Close"
+msgstr "Zamknij"
+
+#: plugins/chatlist.c:344
+msgid "Chat Rooms"
+msgstr "Pokoje czat"
+
+#: plugins/chatlist.c:363
+msgid "Refresh"
+msgstr "Od¶wie¿"
+
+#. Put the buttons in the box
+#: plugins/chatlist.c:364 src/buddy.c:489 src/buddy.c:2798
+#: src/buddy_chat.c:1454 src/conversation.c:2372 src/conversation.c:2854
+#: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
+#: src/prefs.c:2031 src/prefs.c:2373 src/prefs.c:2407
+msgid "Add"
+msgstr "Dodaj"
+
+#: plugins/chatlist.c:365 src/buddy.c:491 src/buddy.c:2800
+#: src/buddy_chat.c:1456 src/conversation.c:2358 src/conversation.c:2851
+#: src/prefs.c:2045 src/prefs.c:2377 src/prefs.c:2411
+msgid "Remove"
+msgstr "Usuñ"
+
+#: plugins/chatlist.c:388
+msgid "List of available chats"
+msgstr "Lista dostêpnych czatów"
+
+#: plugins/chatlist.c:398
+msgid "List of subscribed chats"
+msgstr "Lista subskrybowanych czatów"
+
+#: plugins/gtik.c:699
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:711
+msgid "Update Frequency in min"
+msgstr "Od¶wie¿anie w minutach"
+
+#: plugins/gtik.c:727
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr "Wprowad¼ symbole w oknie poni¿ej rozdzielaj±c je \"+\""
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:737
+msgid "Check this box to display only symbols and price:"
+msgstr "Zaznacz to by wy¶wietlaæ tylko symbole i cenê:"
+
+#: plugins/gtik.c:738
+msgid "Check this box to scroll left to right:"
+msgstr "Zaznacz to by przewijaæ od lewej do prawej"
+
+#: plugins/gtik.c:974
+msgid "(No"
+msgstr "(Nie"
+
+#: plugins/gtik.c:975
+msgid "Change"
+msgstr "Zmieñ"
 
 #: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1915
 msgid "Available"
@@ -296,7 +372,7 @@ msgid "Send message through server"
 msgstr "Wy¶lij wiadomo¶æ poprzez serwer"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2323 src/protocols/oscar/oscar.c:3580
+#: src/protocols/jabber/jabber.c:2323 src/protocols/oscar/oscar.c:3583
 #: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "Pobierz informacjê"
@@ -333,7 +409,7 @@ msgstr "Nie podano nicka"
 msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
-msgstr "%s za¿±da³ chatu DCC. Czy chcesz ustanowiæ po³±czenie bezpo¶rednie?"
+msgstr "%s za¿±da³ czatu DCC. Czy chcesz ustanowiæ po³±czenie bezpo¶rednie?"
 
 #: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:310
 msgid "Unable to write"
@@ -483,7 +559,7 @@ msgid "Unknown"
 msgstr "Nieznany"
 
 #: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2328
-#: src/protocols/oscar/oscar.c:3593
+#: src/protocols/oscar/oscar.c:3596
 msgid "Get Away Msg"
 msgstr "Pobierz wiadomo¶æ Zajêty"
 
@@ -841,7 +917,7 @@ msgstr "Wyczy¶æ wszystkie przyjazne nazwy"
 msgid "Invalid name"
 msgstr "Niepoprawna nazwa"
 
-#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3196
+#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3199
 #: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "Do jakiej grupy przy³±czyæ:"
@@ -876,15 +952,15 @@ msgstr "Zosta³e¶ roz³±czony z pokojem %s."
 
 #: src/protocols/oscar/oscar.c:395
 msgid "Chat Error!"
-msgstr "B³±d Chat!"
+msgstr "B³±d Czat!"
 
 #: src/protocols/oscar/oscar.c:407
 msgid "Chat is currently unavailable"
-msgstr "Chat jest w tej chwili niedostêpny"
+msgstr "Czat jest w tej chwili niedostêpny"
 
 #: src/protocols/oscar/oscar.c:408
 msgid "Gaim - Chat"
-msgstr "Gaim - Chat"
+msgstr "Gaim - Czat"
 
 #: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
 msgid "Couldn't connect to host"
@@ -952,7 +1028,7 @@ msgstr "Autoryzacja nie powiod³a siê"
 msgid "Internal Error"
 msgstr "B³±d wewnêtrzny"
 
-#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3407
+#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3410
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Ustanowiono bezpo¶redni IM z %s"
@@ -964,8 +1040,8 @@ msgid ""
 "the following reason:\n"
 "%s"
 msgstr ""
-"U¿ytkownik %lu odrzuci³ Twoj± pro¶bê o dodanie go do Twojej listy u¿ytkowników "
-"z nastêpuj±cego powodu:\n"
+"U¿ytkownik %lu odrzuci³ Twoj± pro¶bê o dodanie go do Twojej listy "
+"u¿ytkowników z nastêpuj±cego powodu:\n"
 "%s"
 
 #: src/protocols/oscar/oscar.c:1494 src/protocols/oscar/oscar.c:2446
@@ -980,7 +1056,8 @@ msgstr "Gaim - Odmowa autoryzacji ICQ"
 #, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
 msgstr ""
-"U¿ytkownik %lu zaakceptowa³ Twoj± pro¶bê o dodanie go do Twojej listy u¿ytkowników."
+"U¿ytkownik %lu zaakceptowa³ Twoj± pro¶bê o dodanie go do Twojej listy "
+"u¿ytkowników."
 
 #: src/protocols/oscar/oscar.c:1502 src/protocols/oscar/oscar.c:2454
 msgid "Gaim - ICQ Authorization Granted"
@@ -1101,7 +1178,7 @@ msgstr "Obraz IM"
 #: src/buddy.c:495 src/buddy.c:2111 src/buddy.c:2552 src/prefs.c:2914
 #: src/protocols/oscar/oscar.c:1801
 msgid "Chat"
-msgstr "Chat"
+msgstr "Czat"
 
 #: src/buddy.c:2114 src/protocols/oscar/oscar.c:1804
 msgid "Get File"
@@ -1160,10 +1237,11 @@ msgid ""
 "Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"
 msgstr ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Opis:</I><br><br><IMG SRC=\"free_icon.gif"
-"\"> : Zwyk³y u¿ytkownik AIM<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC="
-"\"dt_icon.gif\"> : Testowy u¿ytkownik AIM <br><IMG SRC=\"admin_icon.gif\"> : "
-"Administrator <br><IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive "
-"Agent<br><IMG SRC=\"wireless_icon.gif\"> :  U¿ytkownik urz±dzenia bezprzewodowego<br>"
+"\"> : Zwyk³y u¿ytkownik AIM<br><IMG SRC=\"aol_icon.gif\"> : AOL User "
+"<br><IMG SRC=\"dt_icon.gif\"> : Testowy u¿ytkownik AIM <br><IMG SRC="
+"\"admin_icon.gif\"> : Administrator <br><IMG SRC=\"ab_icon.gif\"> : "
+"ActiveBuddy Interactive Agent<br><IMG SRC=\"wireless_icon.gif\"> :  "
+"U¿ytkownik urz±dzenia bezprzewodowego<br>"
 
 #: src/protocols/oscar/oscar.c:1904
 #, c-format
@@ -1206,36 +1284,37 @@ msgstr ""
 "Ostatnia wiadomo¶æ nie zosta³a wys³ana poniewa¿ przekroczy³e¶ limit "
 "prêdko¶ci. Zaczekaj 10 sekund i spróbuj ponownie."
 
-#: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2576
-#: src/protocols/oscar/oscar.c:3528 src/protocols/toc/toc.c:1564
+#: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2579
+#: src/protocols/oscar/oscar.c:3531 src/protocols/toc/toc.c:1564
 #: src/protocols/toc/toc.c:1581 src/protocols/toc/toc.c:1641
 #: src/protocols/toc/toc.c:1683 src/protocols/toc/toc.c:1802
 #: src/protocols/toc/toc.c:1832 src/protocols/toc/toc.c:1888
 msgid "Error"
 msgstr "B³±d"
 
-#: src/protocols/oscar/oscar.c:3179
+#: src/protocols/oscar/oscar.c:3182
 #, c-format
 msgid ""
 "The maximum number of buddies allowed in your buddy list is %d, and you have "
 "%d.  Until you are below the limit, some buddies will not show up as online."
 msgstr ""
 "Maksymalna dopuszczalna liczba kumpli na Twojej li¶cie to %d, a masz ich %d. "
-"Dopóki przekraczasz limit niektórzy kolesie nie bêd± pokazywani jako dostêpni."
+"Dopóki przekraczasz limit niektórzy kolesie nie bêd± pokazywani jako "
+"dostêpni."
 
-#: src/protocols/oscar/oscar.c:3182
+#: src/protocols/oscar/oscar.c:3185
 msgid "Gaim - Warning"
 msgstr "Gaim - Ostrze¿enie"
 
-#: src/protocols/oscar/oscar.c:3200 src/protocols/toc/toc.c:1108
+#: src/protocols/oscar/oscar.c:3203 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
 msgstr "Wymiana:"
 
-#: src/protocols/oscar/oscar.c:3528
+#: src/protocols/oscar/oscar.c:3531
 msgid "Unable to open Direct IM"
 msgstr "Nie mo¿na otworzyæ bezpo¶redniego IM"
 
-#: src/protocols/oscar/oscar.c:3538
+#: src/protocols/oscar/oscar.c:3541
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
@@ -1246,7 +1325,7 @@ msgstr ""
 "zobaczyæ twój adres IP i mo¿e to byæ ryzykiem zabezpieczeñ. Czy chcesz "
 "kontynuowaæ?"
 
-#: src/protocols/oscar/oscar.c:3555
+#: src/protocols/oscar/oscar.c:3558
 #, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
@@ -1255,7 +1334,7 @@ msgstr ""
 "<B>UIN:</B> %s<BR><B>Stan:</B> %s<BR><HR><BR><I>Zdalny klient nie potrafi "
 "wysy³aæ wiadomo¶ci o stanie.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3562
+#: src/protocols/oscar/oscar.c:3565
 #, c-format
 msgid ""
 "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
@@ -1264,15 +1343,15 @@ msgstr ""
 "<B>UIN:</B> %s<BR><B>Stan:</B> %s<BR><HR><BR><I>U¿ytkownik nie ma wiadomo¶ci "
 "o stanie.</I><BR>"
 
-#: src/protocols/oscar/oscar.c:3587
+#: src/protocols/oscar/oscar.c:3590
 msgid "Get Status Msg"
 msgstr "Pobierz wiadomo¶æ o stanie"
 
-#: src/protocols/oscar/oscar.c:3600
+#: src/protocols/oscar/oscar.c:3603
 msgid "Direct IM"
 msgstr "Bezpo¶rednia IM"
 
-#: src/protocols/oscar/oscar.c:3608
+#: src/protocols/oscar/oscar.c:3611
 msgid "Get Capabilities"
 msgstr "Pobierz uprawnienia: "
 
@@ -1308,7 +1387,7 @@ msgstr "Wiadomo¶æ zosta³a odrzucona, przekraczasz limit prêdko¶ci serwera."
 #: src/protocols/toc/toc.c:416
 #, c-format
 msgid "Chat in %s is not available."
-msgstr "Chat w %s jest niedostêpny."
+msgstr "Czat w %s jest niedostêpny."
 
 #: src/protocols/toc/toc.c:419
 #, c-format
@@ -1411,7 +1490,7 @@ msgstr "Wznów TOC"
 
 #: src/protocols/toc/toc.c:763
 msgid "Chat Error"
-msgstr "B³±d Chat"
+msgstr "B³±d Czat"
 
 #: src/protocols/toc/toc.c:782
 msgid "Password Change Successful"
@@ -1516,6 +1595,7 @@ msgstr ""
 "IRC: #gaim na irc.openprojects.net"
 
 #: src/about.c:146
+#, fuzzy
 msgid ""
 "Active Developers\n"
 "====================\n"
@@ -1533,12 +1613,12 @@ msgid ""
 "===================\n"
 "Jim Duchek\n"
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (author orygina³u)   [ markster@marko.net ]"
+"Mark Spencer (original author)   [ markster@marko.net ]"
 msgstr ""
 "Aktywni Deweloperzy\n"
 "====================\n"
-"Rob Flynn (maintainer) [ rob@marko.net ]\n"
-"Sean Egan (coder)      [ bj91704@binghamton.edu ]\n"
+"Rob Flynn (opiekun)    [ rob@marko.net ]\n"
+"Sean Egan (koder)      [ bj91704@binghamton.edu ]\n"
 "\n"
 "Autorzy Szalonych £atek\n"
 "===================\n"
@@ -1551,14 +1631,7 @@ msgstr ""
 "===================\n"
 "Jim Duchek\n"
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-"Mark Spencer (original author)   [ markster@marko.net ]"
-
-#: src/about.c:164 src/aim.c:319 src/buddy.c:2687 src/buddy_chat.c:1322
-#: src/buddy_chat.c:1419 src/buddy_chat.c:1449 src/conversation.c:2839
-#: src/dialogs.c:567 src/dialogs.c:3899 src/multi.c:1069 src/plugins.c:277
-#: src/prefs.c:2537 src/prpl.c:438 src/prpl.c:679 src/server.c:1072
-msgid "Close"
-msgstr "Zamknij"
+"Mark Spencer (autor orygina³u)     [ markster@marko.net ]"
 
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
@@ -1668,23 +1741,9 @@ msgstr "Usuñ wiadomo¶æ Zajêty"
 msgid "Set All Away"
 msgstr "Ustaw wszystkie Zajêty"
 
-#. Put the buttons in the box
-#: src/buddy.c:489 src/buddy.c:2798 src/buddy_chat.c:1454
-#: src/conversation.c:2372 src/conversation.c:2854 src/dialogs.c:932
-#: src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053 src/prefs.c:2031
-#: src/prefs.c:2373 src/prefs.c:2407
-msgid "Add"
-msgstr "Dodaj"
-
 #: src/buddy.c:490 src/buddy.c:2799 src/dialogs.c:942 src/dialogs.c:1089
 msgid "Group"
 msgstr "Grupa"
-
-#: src/buddy.c:491 src/buddy.c:2800 src/buddy_chat.c:1456
-#: src/conversation.c:2358 src/conversation.c:2851 src/prefs.c:2045
-#: src/prefs.c:2377 src/prefs.c:2411
-msgid "Remove"
-msgstr "Usuñ"
 
 #: src/buddy.c:496 src/buddy.c:661 src/buddy.c:825 src/buddy.c:2550
 #: src/buddy_chat.c:861 src/buddy_chat.c:1278
@@ -1784,7 +1843,7 @@ msgstr "Wy¶lij IM"
 
 #: src/buddy.c:2587
 msgid "Start/join a Buddy Chat"
-msgstr "Rozpocznij/przy³±cz do chatu kumpla"
+msgstr "Rozpocznij/przy³±cz do czatu kumpla"
 
 #: src/buddy.c:2588
 msgid "Activate Away Message"
@@ -1800,7 +1859,7 @@ msgstr "Dodaj kumpla"
 
 #: src/buddy.c:2666
 msgid "Join A Chat"
-msgstr "Przy³±cz do chatu"
+msgstr "Przy³±cz do czatu"
 
 #: src/buddy.c:2668
 msgid "New Instant Message"
@@ -1884,15 +1943,11 @@ msgstr "Gaim - lista kumpli"
 
 #: src/buddy_chat.c:265
 msgid "Join Chat"
-msgstr "Przy³±cz do chatu"
-
-#: src/buddy_chat.c:272
-msgid "Buddy Chat"
-msgstr "Chat z kumplem"
+msgstr "Przy³±cz do czatu"
 
 #: src/buddy_chat.c:283
 msgid "Join Chat As:"
-msgstr "Przy³±cz do chatu jako:"
+msgstr "Przy³±cz do czatu jako:"
 
 #: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:449
 #: src/dialogs.c:539 src/dialogs.c:715 src/dialogs.c:816 src/dialogs.c:934
@@ -1923,7 +1978,7 @@ msgstr "Wiadomo¶æ"
 
 #: src/buddy_chat.c:454
 msgid "Gaim - Invite Buddy Into Chat Room"
-msgstr "Gaim - zawo³aj kumpla do pokoju chat"
+msgstr "Gaim - zawo³aj kumpla do pokoju czat"
 
 #: src/buddy_chat.c:868
 msgid "Un-Ignore"
@@ -1962,7 +2017,7 @@ msgstr "%s wyszed³ z pokoju"
 
 #: src/buddy_chat.c:1155
 msgid "Gaim - Group Chats"
-msgstr "Gaim - grupy chatów"
+msgstr "Gaim - grupy czatów"
 
 #: src/buddy_chat.c:1218
 msgid "Topic:"
@@ -1970,7 +2025,7 @@ msgstr "Temat:"
 
 #: src/buddy_chat.c:1259
 msgid "0 people in room"
-msgstr "0 ludzi w pokoju"
+msgstr "Nie ma ludzi w pokoju"
 
 #: src/buddy_chat.c:1333 src/buddy_chat.c:1417
 msgid "Whisper"
@@ -2580,6 +2635,10 @@ msgstr "Odebrano: '%s'\n"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: B³±d otwierania po³±czenia.\n"
 
+#: src/module.c:106 src/module.c:112 src/module.c:122
+msgid "Plugin Error"
+msgstr "B³±d wtyczki"
+
 #: src/multi.c:454
 msgid "Gaim - Load Buddy Icon"
 msgstr "Gaim - wczytaj ikonê u¿ytkownika"
@@ -2942,7 +3001,7 @@ msgstr "Dó³"
 
 #: src/prefs.c:585
 msgid "Hide IM/Info/Chat buttons"
-msgstr "Ukryj przyciski IM/Info/Chat"
+msgstr "Ukryj przyciski IM/Info/Czat"
 
 #: src/prefs.c:587
 msgid "Automatically show buddy list on sign on"
@@ -3110,7 +3169,7 @@ msgstr "Poka¿ wszystkie rozmowy w jednym oknie z zak³adkami"
 
 #: src/prefs.c:959
 msgid "Show chats in the same tabbed window"
-msgstr "Poka¿ wszystkie chaty w jednym oknie z zak³adkami"
+msgstr "Poka¿ wszystkie czaty w jednym oknie z zak³adkami"
 
 #: src/prefs.c:966 src/prefs.c:1118
 msgid "Raise windows on events"
@@ -3170,15 +3229,15 @@ msgstr "Wy³±cz animacjê ikon kumpli"
 
 #: src/prefs.c:1062
 msgid "Chat Options"
-msgstr "Opcje chatu"
+msgstr "Opcje czatu"
 
 #: src/prefs.c:1074
 msgid "Group Chat Window"
-msgstr "Okno grupy chatu"
+msgstr "Okno grupy czatu"
 
 #: src/prefs.c:1109
 msgid "Show all chats in one tabbed window"
-msgstr "Poka¿ wszystkie chaty w jednym oknie z zak³adkami"
+msgstr "Poka¿ wszystkie czaty w jednym oknie z zak³adkami"
 
 #: src/prefs.c:1111
 msgid "Show conversations in the same tabbed window"
@@ -3462,20 +3521,51 @@ msgstr "Nie"
 msgid "More Info"
 msgstr "Wiêcej informacji"
 
+#: src/sound.c:59
+msgid "Buddy logs in"
+msgstr "Kumpel loguje siê"
+
+#: src/sound.c:60
+msgid "Buddy logs out"
+msgstr "Kumpel wylogowuje siê"
+
+#: src/sound.c:61
+msgid "Message received"
+msgstr "Odebrano wiadomo¶æ"
+
+#: src/sound.c:62
+msgid "Message received begins conversation"
+msgstr "Odebrana wiadomo¶æ rozpoczyna rozmowê"
+
+#: src/sound.c:63
+msgid "Message sent"
+msgstr "Wiadomo¶æ wys³ana"
+
+#: src/sound.c:64
+msgid "Person enters chat"
+msgstr "Osoba wchodzi na czat"
+
+#: src/sound.c:65
+msgid "Person leaves chat"
+msgstr "Osoba opuszcza czat"
+
+#: src/sound.c:66
+msgid "You talk in chat"
+msgstr "Móiwsz na czacie"
+
+#: src/sound.c:67
+msgid "Others talk in chat"
+msgstr "Inni mówi± na czacie"
+
+#: src/sound.c:69
+msgid "Someone says your name in chat"
+msgstr "Kto¶ wymawia Twoje imiê na czacie"
+
 #~ msgid "Events"
 #~ msgstr "Zdarzenia"
 
 #~ msgid "Sound when buddy logs in"
 #~ msgstr "D¼wiêk gdy kole¶ siê loguje"
-
-#~ msgid "Sound when buddy logs out"
-#~ msgstr "D¼wiêk gdy kole¶ siê wylogowuje"
-
-#~ msgid "Sound when received message begins conversation"
-#~ msgstr "D¼wiêk gdy odebrana wiadomo¶æ rozpoczyna rozmowê"
-
-#~ msgid "Sound when message is received"
-#~ msgstr "D¼wiêk gdy odebrano wiadomo¶æ"
 
 #~ msgid "Sound when message is sent"
 #~ msgstr "D¼wiêk gdy wiadomo¶æ wys³ana"
