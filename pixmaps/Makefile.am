@@ -27,6 +27,7 @@ EXTRA_DIST =	ab.xpm				\
 		crossedlips.xpm			\
 		cry.xpm				\
 		dt_icon.xpm			\
+		download.xpm			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
 		fgcolor.xpm			\
