@@ -261,6 +261,10 @@ save_destroy_cb(GtkWidget *widget, DebugWindow *win)
 static void
 save_cb(GtkWidget *w, DebugWindow *win)
 {
+#if !GTK_CHECK_VERSION(2,4,0)
+	gchar *buf;
+#endif
+
 	if (win->save != NULL) {
 		gtk_window_present(GTK_WINDOW(win->save));
 		return;
@@ -279,8 +283,6 @@ save_cb(GtkWidget *w, DebugWindow *win)
 	g_signal_connect(G_OBJECT(win->save), "response",
 					 G_CALLBACK(save_checkfile_cb), win);
 #else /* FILECHOOSER */
-	gchar *buf;
-
 	win->save = gtk_file_selection_new(_("Save Debug Log"));
 	buf = g_strdup_printf("%s" G_DIR_SEPARATOR_S "gaim-debug.log",
 						  gaim_home_dir());
