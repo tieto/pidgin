@@ -440,6 +440,7 @@ static void rendezvous_send_online(GaimConnection *gc)
 		for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 			cur = (GaimAccount *)l->data;
 			if (!strcmp(gaim_account_get_protocol_id(cur), "prpl-oscar")) {
+				/* XXX - Should the name be normalized? */
 				rendezvous_add_to_txt(rd, "AIM", gaim_account_get_username(cur));
 				break;
 			}

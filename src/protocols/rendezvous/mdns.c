@@ -173,19 +173,13 @@ mdns_getlength_RR_rdata(unsigned short type, const void *rdata)
 static int
 mdns_getlength_RR(ResourceRecord *rr)
 {
-	int ret = 0;
-
 	rr->rdlength = mdns_getlength_RR_rdata(rr->type, rr->rdata);
 
-	ret += strlen(rr->name) + 2;
-	ret += 10;
-	ret += rr->rdlength;
-
-	return ret;
+	return mdns_getlength_name(rr->name) + 10 + rr->rdlength;
 }
 
 static int
-mdns_put_name(char *data, int datalen, int offset, const char *name)
+mdns_put_name(char *data, unsigned int datalen, unsigned int offset, const char *name)
 {
 	int i = 0;
 	char *b, *c;
@@ -205,7 +199,7 @@ mdns_put_name(char *data, int datalen, int offset, const char *name)
 }
 
 static int
-mdns_put_RR(char *data, int datalen, int offset, const ResourceRecord *rr)
+mdns_put_RR(char *data, unsigned int datalen, unsigned int offset, const ResourceRecord *rr)
 {
 	int i = 0;
 
@@ -260,7 +254,7 @@ mdns_send_dns(int fd, const DNSPacket *dns)
 	int ret;
 	unsigned int datalen;
 	unsigned char *data;
-	int offset;
+	unsigned int offset;
 	int i;
 
 	/* Calculate the length of the buffer we'll need to hold the DNS packet */
@@ -312,7 +306,8 @@ mdns_send_dns(int fd, const DNSPacket *dns)
 		offset += mdns_put_RR(data, datalen, offset, &dns->additional[i]);
 
 	/* Send the datagram */
-	ret = mdns_send_raw(fd, datalen, data);
+	/* Offset can be shorter than datalen because of name compression */
+	ret = mdns_send_raw(fd, offset, data);
 
 	g_free(data);
 
@@ -443,7 +438,7 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 
 	rdata = g_malloc(sizeof(ResourceRecordRDataSRV));
 	rdata->port = port;
-	rdata->target = target;
+	rdata->target = g_strdup(target);
 
 	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
 	dns->header.id = 0x0000;
@@ -467,9 +462,6 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 
 	mdns_send_dns(fd, dns);
 
-	g_free(dns->answers[0].rdata);
-	dns->answers[0].rdata = NULL;
-
 	mdns_free(dns);
 
 	return ret;
@@ -480,9 +472,6 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 /***************************************/
 
 /*
- * XXX - Needs bounds checking!
- * XXX - Also make sure you don't backtrack and infinitely loop.
- *
  * Read in a domain name from the given buffer starting at the given
  * offset.  This handles using domain name compression to jump around
  * the data buffer, if needed.
@@ -491,19 +480,22 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
  *         This should be g_free'd when no longer needed.
  */
 static gchar *
-mdns_read_name(const char *data, int datalen, int dataoffset)
+mdns_read_name(const char *data, int datalen, unsigned int offset)
 {
 	GString *ret = g_string_new("");
-	unsigned char tmp;
+	unsigned char tmp, newoffset;
 
-	while ((tmp = util_get8(&data[dataoffset])) != 0) {
-		dataoffset++;
+	while ((offset <= datalen) && ((tmp = util_get8(&data[offset])) != 0)) {
+		offset++;
 
 		if ((tmp & 0xc0) == 0) { /* First two bits are 00 */
-			if (*ret->str)
+			if (offset + tmp > datalen)
+				/* Attempt to read past end of data! Bailing! */
+				return g_string_free(ret, TRUE);
+			if (*ret->str != '\0')
 				g_string_append_c(ret, '.');
-			g_string_append_len(ret, &data[dataoffset], tmp);
-			dataoffset += tmp;
+			g_string_append_len(ret, &data[offset], tmp);
+			offset += tmp;
 
 		} else if ((tmp & 0x40) == 0) { /* First two bits are 10 */
 			/* Reserved for future use */
@@ -513,8 +505,11 @@ mdns_read_name(const char *data, int datalen, int dataoffset)
 
 		} else { /* First two bits are 11 */
 			/* Jump to another position in the data */
-			dataoffset = util_get8(&data[dataoffset]);
-
+			newoffset = util_get8(&data[offset]);
+			if (newoffset >= offset)
+				/* Invalid pointer!  Could lead to infinite recursion! Bailing! */
+				g_string_free(ret, TRUE);
+			offset = newoffset;
 		}
 	}
 
@@ -522,8 +517,6 @@ mdns_read_name(const char *data, int datalen, int dataoffset)
 }
 
 /*
- * XXX - Needs bounds checking!
- *
  * Determine how many bytes long a portion of the domain name is
  * at the given offset.  This does NOT jump around the data array
  * in the case of domain name compression.
@@ -531,15 +524,19 @@ mdns_read_name(const char *data, int datalen, int dataoffset)
  * @return The length of the portion of the domain name.
  */
 static int
-mdns_read_name_len(const char *data, int datalen, int dataoffset)
+mdns_read_name_len(const char *data, unsigned int datalen, unsigned int offset)
 {
-	int startoffset = dataoffset;
+	int startoffset = offset;
 	unsigned char tmp;
 
-	while ((tmp = util_get8(&data[dataoffset++])) != 0) {
+	while ((offset <= datalen) && ((tmp = util_get8(&data[offset])) != 0)) {
+		offset++;
 
 		if ((tmp & 0xc0) == 0) { /* First two bits are 00 */
-			dataoffset += tmp;
+			if (offset + tmp > datalen)
+				/* Attempt to read past end of data! Bailing! */
+				return 0;
+			offset += tmp;
 
 		} else if ((tmp & 0x40) == 0) { /* First two bits are 10 */
 			/* Reserved for future use */
@@ -549,13 +546,12 @@ mdns_read_name_len(const char *data, int datalen, int dataoffset)
 
 		} else { /* First two bits are 11 */
 			/* End of this portion of the domain name */
-			dataoffset++;
 			break;
 
 		}
 	}
 
-	return dataoffset - startoffset;
+	return offset - startoffset + 1;
 }
 
 /*
@@ -563,15 +559,15 @@ mdns_read_name_len(const char *data, int datalen, int dataoffset)
  *
  */
 static Question *
-mdns_read_questions(int numquestions, const char *data, int datalen, int *offset)
+mdns_read_questions(int numquestions, const char *data, unsigned int datalen, int *offset)
 {
 	Question *ret;
 	int i;
 
 	ret = (Question *)g_malloc0(numquestions * sizeof(Question));
 	for (i = 0; i < numquestions; i++) {
-		ret[i].name = mdns_read_name(data, 0, *offset);
-		*offset += mdns_read_name_len(data, 0, *offset);
+		ret[i].name = mdns_read_name(data, datalen, *offset);
+		*offset += mdns_read_name_len(data, datalen, *offset);
 		ret[i].type = util_get16(&data[*offset]); /* QTYPE */
 		*offset += 2;
 		ret[i].class = util_get16(&data[*offset]); /* QCLASS */
@@ -586,7 +582,7 @@ mdns_read_questions(int numquestions, const char *data, int datalen, int *offset
  *
  */
 static unsigned char *
-mdns_read_rr_rdata_null(const char *data, int datalen, int offset, unsigned short rdlength)
+mdns_read_rr_rdata_null(const char *data, unsigned int datalen, unsigned int offset, unsigned short rdlength)
 {
 	unsigned char *ret = NULL;
 
@@ -604,7 +600,7 @@ mdns_read_rr_rdata_null(const char *data, int datalen, int offset, unsigned shor
  *
  */
 static char *
-mdns_read_rr_rdata_ptr(const char *data, int datalen, int offset)
+mdns_read_rr_rdata_ptr(const char *data, unsigned int datalen, unsigned int offset)
 {
 	char *ret = NULL;
 
@@ -618,7 +614,7 @@ mdns_read_rr_rdata_ptr(const char *data, int datalen, int offset)
  *
  */
 static GHashTable *
-mdns_read_rr_rdata_txt(const char *data, int datalen, int offset, unsigned short rdlength)
+mdns_read_rr_rdata_txt(const char *data, unsigned int datalen, unsigned int offset, unsigned short rdlength)
 {
 	GHashTable *ret = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	int endoffset = offset + rdlength;
@@ -667,7 +663,7 @@ mdns_read_rr_rdata_txt(const char *data, int datalen, int offset, unsigned short
  *
  */
 static ResourceRecordSRV *
-mdns_read_rr_rdata_srv(const char *data, int datalen, int offset, unsigned short rdlength)
+mdns_read_rr_rdata_srv(const char *data, unsigned int datalen, unsigned int offset, unsigned short rdlength)
 {
 	ResourceRecordSRV *ret = NULL;
 	int endoffset = offset + rdlength;
@@ -704,15 +700,15 @@ mdns_read_rr_rdata_srv(const char *data, int datalen, int offset, unsigned short
  *
  */
 static ResourceRecord *
-mdns_read_rr(int numrecords, const char *data, int datalen, int *offset)
+mdns_read_rr(int numrecords, const char *data, unsigned int datalen, int *offset)
 {
 	ResourceRecord *ret;
 	int i;
 
 	ret = (ResourceRecord *)g_malloc0(numrecords * sizeof(ResourceRecord));
 	for (i = 0; i < numrecords; i++) {
-		ret[i].name = mdns_read_name(data, 0, *offset); /* NAME */
-		*offset += mdns_read_name_len(data, 0, *offset);
+		ret[i].name = mdns_read_name(data, datalen, *offset); /* NAME */
+		*offset += mdns_read_name_len(data, datalen, *offset);
 		ret[i].type = util_get16(&data[*offset]); /* TYPE */
 		*offset += 2;
 		ret[i].class = util_get16(&data[*offset]); /* CLASS */
@@ -762,7 +758,7 @@ mdns_read(int fd)
 	/* XXX - Find out what to use as a maximum incoming UDP packet size */
 	/* char data[512]; */
 	char data[10096];
-	int datalen;
+	unsigned int datalen;
 	struct sockaddr_in addr;
 	socklen_t addrlen;
 
@@ -845,7 +841,7 @@ mdns_free_rr_rdata(unsigned short type, void *rdata)
 			break;
 
 			case RENDEZVOUS_RRTYPE_SRV:
-				g_free(((ResourceRecordSRV *)rdata)->target);
+				g_free(((ResourceRecordRDataSRV *)rdata)->target);
 				g_free(rdata);
 			break;
 	}

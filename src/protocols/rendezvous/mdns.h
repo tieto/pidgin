@@ -98,7 +98,7 @@ typedef GSList ResourceRecordRDataTXT;
 
 typedef struct _ResourceRecordRDataSRV {
 	unsigned short port;
-	const char *target;
+	char *target;
 } ResourceRecordRDataSRV;
 
 typedef struct _ResourceRecordSRV {
