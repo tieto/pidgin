@@ -1537,11 +1537,13 @@ static GList *toc_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
+#if 0
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Set Dir Info");
 	pam->callback = show_set_dir;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
+#endif
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");

@@ -6250,6 +6250,22 @@ static void oscar_show_awaitingauth(GaimConnection *gc)
 	g_free(text);
 }
 
+static void search_by_email_cb(GaimConnection *gc, const char *email)
+{
+	serv_dir_search(gc, "", "", "", "", "", "", "", email);
+}
+
+static void oscar_show_find_email(GaimConnection *gc)
+{
+	gaim_request_input(gc, _("Find Buddy by E-mail"),
+					   _("Search for a buddy by e-mail address"),
+					   _("Type the e-mail address of the buddy you are "
+						 "searching for."),
+					   NULL, FALSE, FALSE,
+					   _("Search"), G_CALLBACK(search_by_email_cb),
+					   _("Cancel"), NULL, gc);
+}
+
 #if 0
 static void oscar_setavailmsg(GaimConnection *gc, char *text) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
@@ -6406,7 +6422,7 @@ static GList *oscar_actions(GaimConnection *gc)
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Search for Buddy by Email");
-	pam->callback = show_find_email;
+	pam->callback = oscar_show_find_email;
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
