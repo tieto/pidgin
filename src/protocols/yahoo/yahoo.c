@@ -174,6 +174,8 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 		case 8: /* how many online buddies we have */
 			break;
 		case 7: /* the current buddy */
+			if (name && f) /* update the previous buddy before changing the variables */
+				yahoo_update_status(gc, name, f);
 			name = pair->value;
 			if (name && g_utf8_validate(name, -1, NULL))
 				f = yahoo_friend_find_or_new(gc, name);
@@ -251,9 +253,6 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_prpl_got_user_status(account, name, "offline", NULL);
 				break;
 			}
-
-			if (f)
-				yahoo_update_status(gc, name, f);
 			break;
 		case 60: /* SMS */
 			if (f) {
@@ -320,6 +319,9 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		l = l->next;
 	}
+
+	if (name && f) /* update the last buddy */
+		yahoo_update_status(gc, name, f);
 }
 
 static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const char *name, const char *group)
