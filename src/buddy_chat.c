@@ -18,7 +18,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#include "internal.h"
+#include "gtkinternal.h"
 
 #include "debug.h"
 #include "multi.h"
@@ -26,24 +26,33 @@
 #include "prpl.h"
 #include "server.h"
 
+#include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
+#include "stock.h"
 #include "ui.h"
 
-static GList *chatentries = NULL;
-static GtkWidget *joinchat = NULL;
-static GtkWidget *jc_vbox = NULL;
-static GaimConnection *joinchatgc;
+typedef struct
+{
+	GaimAccount *account;
+
+	GtkWidget *window;
+	GtkWidget *account_menu;
+	GtkWidget *entries_box;
+	GtkSizeGroup *sg;
+
+	GList *entries;
+} GaimGtkJoinChatData;
 
 static void
-do_join_chat()
+do_join_chat(GaimGtkJoinChatData *data)
 {
-	if (joinchat) {
+	if (data) {
 		GHashTable *components = g_hash_table_new_full(g_str_hash, g_str_equal,
 				g_free, g_free);
 		GList *tmp;
 
-		for (tmp = chatentries; tmp != NULL; tmp = tmp->next) {
+		for (tmp = data->entries; tmp != NULL; tmp = tmp->next) {
 			if (g_object_get_data(tmp->data, "is_spin")) {
 				g_hash_table_replace(components,
 						g_strdup(g_object_get_data(tmp->data, "identifier")),
@@ -57,75 +66,66 @@ do_join_chat()
 			}
 		}
 
-		serv_join_chat(joinchatgc, components);
+		serv_join_chat(gaim_account_get_connection(data->account), components);
 
 		g_hash_table_destroy(components);
-
-		gtk_widget_destroy(joinchat);
-
-		if (chatentries)
-			g_list_free(chatentries);
-
-		chatentries = NULL;
-		joinchat = NULL;
 	}
 }
 
 static void
-rebuild_jc()
+rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 {
+	GaimConnection *gc;
 	GList *list, *tmp;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
 
-	if (!joinchatgc)
-		return;
+	gc = gaim_account_get_connection(data->account);
 
-	while (GTK_BOX(jc_vbox)->children)
-		gtk_container_remove(GTK_CONTAINER(jc_vbox),
-				     ((GtkBoxChild *)GTK_BOX(jc_vbox)->children->data)->widget);
+	while (GTK_BOX(data->entries_box)->children) {
+		gtk_container_remove(GTK_CONTAINER(data->entries_box),
+				((GtkBoxChild *)GTK_BOX(data->entries_box)->children->data)->widget);
+	}
 
-	if (chatentries)
-		g_list_free(chatentries);
+	if (data->entries != NULL)
+		g_list_free(data->entries);
 
-	chatentries = NULL;
+	data->entries = NULL;
 
-	list = GAIM_PLUGIN_PROTOCOL_INFO(joinchatgc->prpl)->chat_info(joinchatgc);
+	list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
 
-	for (tmp = list; tmp != NULL; tmp = tmp->next) {
+	for (tmp = list; tmp; tmp = tmp->next)
+	{
 		GtkWidget *label;
 		GtkWidget *rowbox;
 
 		pce = tmp->data;
 
 		rowbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(jc_vbox), rowbox, TRUE, TRUE, 0);
-		gtk_widget_show(rowbox);
+		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
 
 		label = gtk_label_new(pce->label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_size_group_add_widget(data->sg, label);
 		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
 
 		if (pce->is_int) {
 			GtkObject *adjust;
 			GtkWidget *spin;
-			adjust = gtk_adjustment_new(pce->min, pce->min,
-										pce->max, 1, 10, 10);
+			adjust = gtk_adjustment_new(pce->min, pce->min, pce->max,
+										1, 10, 10);
 			spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
 			g_object_set_data(G_OBJECT(spin), "is_spin", GINT_TO_POINTER(TRUE));
 			g_object_set_data(G_OBJECT(spin), "identifier", pce->identifier);
-			chatentries = g_list_append(chatentries, spin);
+			data->entries = g_list_append(data->entries, spin);
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
-			gtk_widget_show(spin);
-		}
-		else {
-			GtkWidget *entry;
+		} else {
+			GtkWidget *entry = gtk_entry_new();
 
-			entry = gtk_entry_new();
-			gtk_box_pack_end(GTK_BOX(rowbox), entry, FALSE, FALSE, 0);
-
-			chatentries = g_list_append(chatentries, entry);
+			gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
+			data->entries = g_list_append(data->entries, entry);
 
 			if (pce->def)
 				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
@@ -135,168 +135,67 @@ rebuild_jc()
 				focus = FALSE;
 			}
 
-			g_signal_connect(G_OBJECT(entry), "activate",
-							 G_CALLBACK(do_join_chat), NULL);
-			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
+			if (pce->secret)
+				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
-			gtk_widget_show(entry);
+			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
 		}
 
 		g_free(pce);
 	}
 
 	g_list_free(list);
+
+	gtk_widget_show_all(data->entries_box);
 }
 
 static void
-joinchat_choose(GtkWidget *w, GaimConnection *g)
+join_chat_select_account_cb(GObject *w, GaimAccount *account, GaimGtkJoinChatData *data)
 {
-	if (joinchatgc == g)
-		return;
-
-	if (gaim_account_get_protocol(joinchatgc->account) ==
-		gaim_account_get_protocol(g->account)) {
-
-		joinchatgc = g;
+	if (gaim_account_get_protocol(data->account) ==
+			gaim_account_get_protocol(account)) {
+		data->account = account;
 	} else {
-		joinchatgc = g;
-		rebuild_jc();
+		data->account = account;
+		rebuild_joinchat_entries(data);
 	}
 }
 
-static void
-create_joinchat_menu(GtkWidget *box)
+static gboolean
+join_chat_check_account_func(GaimAccount *account)
 {
-	GaimAccount *account;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *optmenu;
-	GtkWidget *menu;
-	GtkWidget *opt;
-	GtkWidget *image;
-	GdkPixbuf *pixbuf;
-	GdkPixbuf *scale;
-	GtkSizeGroup *sg;
-	GList *c;
-	GaimConnection *g;
-	const char *proto_name;
-	char *filename;
-	char buf[2048];
+	GaimConnection *gc = gaim_account_get_connection(account);
 
-	optmenu = gtk_option_menu_new();
-	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 0);
+	return (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL);
+}
 
-	menu = gtk_menu_new();
-	joinchatgc = NULL;
+static void do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
+{
+	switch(id) {
+	case GTK_RESPONSE_OK:
+			do_join_chat(info);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
-		GaimPluginProtocolInfo *prpl_info = NULL;
-		GaimPlugin *plugin;
-
-		g = (GaimConnection *)c->data;
-
-		plugin = g->prpl;
-
-		if (plugin == NULL)
-			continue;
-
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-
-		if (prpl_info == NULL || prpl_info->join_chat == NULL)
-			continue;
-
-		if (!joinchatgc)
-			joinchatgc = g;
-
-		account = gaim_connection_get_account(g);
-
-		opt = gtk_menu_item_new();
-
-		/* Create the hbox. */
-		hbox = gtk_hbox_new(FALSE, 4);
-		gtk_container_add(GTK_CONTAINER(opt), hbox);
-		gtk_widget_show(hbox);
-
-		/* Load the image. */
-		if (prpl_info != NULL) {
-			proto_name = prpl_info->list_icon(NULL, NULL);
-			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
-
-			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-										"default", buf, NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
-
-			if (pixbuf != NULL) {
-				/* Scale and insert the image */
-				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-												GDK_INTERP_BILINEAR);
-				image = gtk_image_new_from_pixbuf(scale);
-
-				g_object_unref(G_OBJECT(pixbuf));
-				g_object_unref(G_OBJECT(scale));
-			}
-			else
-				image = gtk_image_new();
-		}
-		else
-			image = gtk_image_new();
-
-		gtk_size_group_add_widget(sg, image);
-
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		gtk_widget_show(image);
-
-		g_snprintf(buf, sizeof(buf), "%s (%s)",
-				   gaim_account_get_username(account), plugin->info->name);
-
-		/* Create the label. */
-		label = gtk_label_new(buf);
-		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_widget_show(label);
-
-		g_object_set_data(G_OBJECT(opt), "gaim_connection", g);
-
-		g_signal_connect(G_OBJECT(opt), "activate",
-						 G_CALLBACK(joinchat_choose), g);
-
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
-		gtk_widget_show(opt);
+		break;
 	}
 
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
-
-	g_object_unref(sg);
+	gtk_widget_destroy(GTK_WIDGET(dialog));
+	g_list_free(info->entries);
+	g_free(info);
 }
 
-static void
-destroy_join_chat()
-{
-	if (joinchat)
-		gtk_widget_destroy(joinchat);
-
-	joinchat = NULL;
-}
 
 void
 join_chat()
 {
-	GtkWidget *mainbox;
-	GtkWidget *frame;
-	GtkWidget *fbox;
+	GtkWidget *hbox, *mainbox;
 	GtkWidget *rowbox;
 	GtkWidget *bbox;
-	GtkWidget *join;
-	GtkWidget *cancel;
 	GtkWidget *label;
-	GtkWidget *sep;
 	GList *c;
+	GaimGtkBuddyList *gtkblist;
 	GaimConnection *gc = NULL;
+	GaimGtkJoinChatData *data = NULL;
+	GtkWidget *img = NULL;
 
 	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
@@ -316,61 +215,61 @@ join_chat()
 		return;
 	}
 
-	if (!joinchat) {
-		GAIM_DIALOG(joinchat);
-		gtk_window_set_role(GTK_WINDOW(joinchat), "joinchat");
-		gtk_window_set_resizable(GTK_WINDOW(joinchat), TRUE);
-		gtk_widget_realize(joinchat);
-		g_signal_connect(G_OBJECT(joinchat), "delete_event",
-				   G_CALLBACK(destroy_join_chat), joinchat);
-		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
+	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+	data = g_new0(GaimGtkJoinChatData, 1);
+	data->account = gaim_connection_get_account(gc);
 
-		mainbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-		gtk_container_add(GTK_CONTAINER(joinchat), mainbox);
+	data->window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
+											   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+											   GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
+	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
+	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(data->window), FALSE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
 
-		frame = gaim_gtk_make_frame(mainbox, _("Buddy Chat"));
+	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-		fbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-		gtk_container_add(GTK_CONTAINER(frame), fbox);
+	hbox = gtk_hbox_new(FALSE, 12);
+    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
+    gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+    gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-		rowbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(fbox), rowbox, TRUE, TRUE, 0);
+	mainbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
+	gtk_container_add(GTK_CONTAINER(hbox), mainbox);
 
-		label = gtk_label_new(_("Join Chat As:"));
-		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(mainbox), rowbox, TRUE, TRUE, 0);
 
-		create_joinchat_menu(rowbox);
+	label = gtk_label_new(_("Join Chat As:"));
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(data->sg, label);
 
-		jc_vbox = gtk_vbox_new(FALSE, 5);
-		gtk_container_add(GTK_CONTAINER(fbox), jc_vbox);
-		gtk_container_set_border_width(GTK_CONTAINER(jc_vbox), 0);
+	data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
+			G_CALLBACK(join_chat_select_account_cb),
+			join_chat_check_account_func, data);
+	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 
-		rebuild_jc();
-		/* buttons */
+	data->entries_box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(mainbox), data->entries_box);
+	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
 
-		sep = gtk_hseparator_new();
-		gtk_widget_show(sep);
-		gtk_box_pack_start(GTK_BOX(mainbox), sep, FALSE, FALSE, 0);
 
-		bbox = gtk_hbox_new(FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
+	rebuild_joinchat_entries(data);
 
-		/* Join button. */
-		join = gaim_pixbuf_button_from_stock(_("Join"), GTK_STOCK_JUMP_TO,
-							 GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(join), "clicked",
-				 G_CALLBACK(do_join_chat), NULL);
-		/* Cancel button. */
-		cancel = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL,
-							 GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
-		g_signal_connect(G_OBJECT(cancel), "clicked",
-				 G_CALLBACK(destroy_join_chat), joinchat);
 
-	}
+	bbox = gtk_hbutton_box_new();
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_set_spacing(GTK_BOX(bbox), 12);
+	gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 6);
 
-	gtk_widget_show_all(joinchat);
+	g_signal_connect(G_OBJECT(data->window), "response", G_CALLBACK(do_joinchat), data);
+
+	g_object_unref(data->sg);
+
+	gtk_widget_show_all(data->window);
 }

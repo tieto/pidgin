@@ -753,8 +753,10 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	GtkWidget *label, *entry;
 	struct _search *s;
 
-	if (gtkconv->dialogs.search)
+	if (gtkconv->dialogs.search) {
+		gtk_window_present(GTK_WINDOW(gtkconv->dialogs.search));
 		return;
+	}
 
 	gtkconv->dialogs.search = gtk_dialog_new_with_buttons(_("Find"), GTK_WINDOW(gtkwin->window),
 							      GTK_DIALOG_DESTROY_WITH_PARENT,
