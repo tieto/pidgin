@@ -444,7 +444,7 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 		urlbut = picture_button(mn->email_win, _("Open Mail"), tb_forward_xpm);
 		gtk_box_pack_end(GTK_BOX(hbox), urlbut, 0, 0, 5);
 		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(open_url_nw), mn->url);
-		gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
+		gtk_signal_connect(GTK_OBJECT(urlbut), "clicked", GTK_SIGNAL_FUNC(des_email_win), mn);
 	}
 
 	gtk_widget_show(mn->email_win);
