@@ -3551,7 +3551,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		tm.tm_mday = (int)info->birthday;
 		tm.tm_mon = (int)info->birthmonth-1;
 		tm.tm_year = (int)info->birthyear-1900;
-		strftime(date, sizeof(date), "%e %B %Y", &tm);
+		strftime(date, sizeof(date), "%x", &tm);
 		tmp = buf;  buf = g_strconcat(tmp, "\n<br><b>Birthday:</b> ", date, NULL);  g_free(tmp);
 	}
 	if (info->age) {
