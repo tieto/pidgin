@@ -60,6 +60,11 @@
 G_MODULE_IMPORT GSList *connections;
 
 
+static void irc_start_chat(struct gaim_connection *gc, char *who);
+static void irc_ctcp_clientinfo(struct gaim_connection *gc, char *who);
+static void irc_ctcp_userinfo(struct gaim_connection *gc, char *who);
+static void irc_ctcp_version(struct gaim_connection *gc, char *who);
+
 struct dcc_chat
 {
 	struct gaim_connection *gc;	
@@ -458,20 +463,18 @@ dcc_chat_in (gpointer data, gint source, GaimInputCondition condition)
 #else
 	n = recv (chat->fd, buffer, IRC_BUF_LEN, 0);
 #endif
-	if (n > 0)
-	  {
-		  
-		  /* Strip the terminating \n */
-		  l = 0;
-		  while (buffer[l] && buffer[l] != '\n' && l <= n) 
-			  l++;
-		  buffer[l] = '\000';
-		  
-		  /* Convert to HTML */
-		  debug_printf ("DCC Message from: %s\n", chat->nick);
-		  irc_got_im(chat->gc, chat->nick, buffer, 0, time(NULL));
-	  }
-	
+	if (n > 0) {
+
+		buffer[n] = 0;
+		g_strstrip(buffer);
+
+		/* Convert to HTML */
+		if (strlen(buffer)) {
+			debug_printf ("DCC Message from: %s\n", chat->nick);
+			irc_got_im(chat->gc, chat->nick, buffer, 0, 
+				   time(NULL));
+		}
+	}	
 	else	{
 		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
 			    chat->nick);
@@ -632,6 +635,16 @@ static void handle_names(struct gaim_connection *gc, char *chan, char *names)
 	g_strfreev(buf);
 }
 
+static void handle_notopic(struct gaim_connection *gc, char *text)
+{
+	struct conversation *c;
+	if ((c = irc_find_chat(gc, text))) {
+		char buf[IRC_BUF_LEN];
+		g_snprintf(buf, sizeof(buf), _("No topic is set"));
+		chat_set_topic(c, NULL, buf);
+	}
+}
+
 static void handle_topic(struct gaim_connection *gc, char *text)
 {
 	struct conversation *c;
@@ -688,9 +701,9 @@ static void irc_chan_mode(struct gaim_connection *gc, char *room, char sign, cha
 	char buf[IRC_BUF_LEN];
 	char *nick = g_strndup(who, strchr(who, '!') - who);
 
-	g_snprintf(buf, sizeof(buf), "%s sets mode %c%c %s on %s", 
-		   nick, sign, mode, strlen(argstr) ? argstr : "",
-		   room);
+	g_snprintf(buf, sizeof(buf), "-:- mode/%s [%c%c %s] by %s", 
+		   room, sign, mode, strlen(argstr) ? argstr : "",
+		   nick);
 	g_free(nick);
 	write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time((time_t)NULL), -1);
 }
@@ -839,25 +852,30 @@ static void handle_whois(struct gaim_connection *gc, char *word[], char *word_eo
 	}
 
 	switch (num) {
-		case 311:
-			id->liststr = g_string_append(id->liststr, "<b>User: </b>");
-			break;
-		case 312:
-			id->liststr = g_string_append(id->liststr, "<b>Server: </b>");
-			break;
-		case 313:
-			g_snprintf(tmp, sizeof(tmp), "<b>IRC Operator:</b> %s ", word[4]);
-			id->liststr = g_string_append(id->liststr, tmp);
-			break;
-
-		case 317:
-			id->liststr = g_string_append(id->liststr, "<b>Idle Time: </b>");
-			break;
-		case 319:
-			id->liststr = g_string_append(id->liststr, "<b>Channels: </b>");
-			break;
-		default:
-			break;
+	case 311:
+		id->liststr = g_string_append(id->liststr, "<b>User: </b>");
+		break;
+	case 312:
+		id->liststr = g_string_append(id->liststr, "<b>Server: </b>");
+		break;
+	case 313:
+		g_snprintf(tmp, sizeof(tmp), "<b>IRC Operator:</b> %s ", word[4]);
+		id->liststr = g_string_append(id->liststr, tmp);
+		break;
+	case 314:
+		id->liststr = g_string_append(id->liststr, "<b>User: </b>");
+		g_snprintf(tmp, sizeof(tmp), "<b>%s</b> (%s@%s) %s",
+			   word[4], word[5], word[6], word_eol[8]);
+		id->liststr = g_string_append(id->liststr, tmp);
+		return;
+	case 317:
+		id->liststr = g_string_append(id->liststr, "<b>Idle Time: </b>");
+		break;
+	case 319:
+		id->liststr = g_string_append(id->liststr, "<b>Channels: </b>");
+		break;
+	default:
+		break;
 	}
 
 	if (word_eol[5][0] == ':')
@@ -909,6 +927,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	if (*text == ':')
 		text++;
 
+	/* RPL_ and ERR_ */
 	switch (n) {
 	case 4:
 		if (!strncmp(word[5], "u2.10", 5))
@@ -919,7 +938,7 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 5:
 		handle_005(gc, word, word_eol);
 		break;
-	case 301:
+	case 301: /* RPL_AWAY */
 		if (id->in_whois) {
 			id->liststr = g_string_append(id->liststr, "<BR><b>Away: </b>");
 
@@ -930,23 +949,24 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		} else
 			irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
 		break;
-	case 303:
+	case 303: /* RPL_ISON */
 		handle_list(gc, &word_eol[4][1]);
 		break;
-	case 311:
-	case 312:
-	case 313:
-	case 317:
-	case 319:		
+	case 311: /* RPL_WHOISUSER */
+	case 312: /* RPL_WHOISSERVER */
+	case 313: /* RPL_WHOISOPERATOR */
+	case 314: /* RPL_WHOWASUSER */
+	case 317: /* RPL_WHOISIDLE */
+	case 319: /* RPL_WHOISCHANNELS */
 		handle_whois(gc, word, word_eol, n);
 		break;
-	case 322:
+	case 322: /* RPL_LIST */
 		handle_roomlist(gc, word, word_eol);
 		break;
-	/* End of replies */
-	case 323:
-	case 318:
-	case 315:
+	case 315: /* RPL_ENDOFWHO */
+	case 318: /* RPL_ENDOFWHOIS */
+	case 323: /* RPL_LISTEND */
+	case 369: /* RPL_ENDOFWHOWAS */
 		if ((id->in_whois || id->in_list) && id->liststr) {
 			GString *str = decode_html(id->liststr->str);
 			g_show_info_text(gc, NULL, 2, str->str, NULL);
@@ -957,36 +977,46 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 			id->in_list = FALSE;
 		}
 		break;
-	case 324:
+	case 324: /* RPL_CHANNELMODEIS */
 		handle_mode(gc, word, word_eol, TRUE);
 		break;
-	case 332:
+	case 331: /* RPL_NOTOPIC */
+		handle_notopic(gc, text);
+		break;
+	case 332: /* RPL_TOPIC */
 		handle_topic(gc, text);
 		break;
-	case 351:
+	case 351: /* RPL_VERSION */
 		handle_version(gc, word, word_eol, n);
 		break;
-	case 352:
-		handle_who(gc, word, word_eol, n);
-		break;
-	case 353:
+	case 352: /* RPL_WHOREPLY */
+	       handle_who(gc, word, word_eol, n);
+	       break;
+	case 353: /* RPL_NAMREPLY */
 		handle_names(gc, word[5], word_eol[6]);
 		break;
-	case 376:
+	case 376: /* RPL_ENDOFMOTD */
 		irc_request_buddy_update(gc);
 		break;
-	case 401:
-		do_error_dialog(_("There is no such nick or channel on this IRC channel."), NULL, GAIM_ERROR);
+	case 382: /* RPL_REHASHING */
+		do_error_dialog(_("Rehashing server"), _("IRC Operator"), GAIM_ERROR);
 		break;
-	case 402:
-		do_error_dialog(_("There is no such IRC Server"), NULL, GAIM_ERROR);
-	case 431:
-		do_error_dialog(_("No IRC nickname given"), NULL, GAIM_ERROR);
+	case 401: /* ERR_NOSUCHNICK */
+		do_error_dialog(_("No such nick/channel"), _("IRC Error"), GAIM_ERROR);
 		break;
+	case 402: /* ERR_NOSUCHSERVER */
+		do_error_dialog(_("No such server"), _("IRC Error"), GAIM_ERROR);
+	case 431: /* ERR_NONICKNAMEGIVEN */
+		do_error_dialog(_("No nickname given"), _("IRC Error"), GAIM_ERROR);
+		break;
+	case 481: /* ERR_NOPRIVILEGES */
+		do_error_dialog(_("You're not an IRC operator!"), _("IRC Error"), GAIM_ERROR);
+		break;		
 	case 433:
 		do_prompt_dialog(_("That nick is already in use.  Please enter a new nick"), gc->displayname, gc, irc_change_nick, NULL);
 		break;
 	default:
+		/* Other error messages */
 		if (n > 400 && n < 502) {
 			char errmsg[IRC_BUF_LEN];
 			char *errmsg1 = strrchr(text, ':');
@@ -1125,6 +1155,14 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 					     "Multi-protocol Messaging Client: " WEBSITE "\001\r\n", nick);
 		irc_write(id->fd, buf, strlen(buf));
 	}
+	if (!g_strncasecmp(msg, "CLIENTINFO", 10)) {
+		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001CLIENTINFO USERINFO CLIENTINFO VERSION\001\r\n", nick);
+		irc_write(id->fd, buf, strlen(buf));
+	}
+	if (!g_strncasecmp(msg, "USERINFO", 8)) {
+		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001USERINFO Alias: %s\001\r\n", nick, gc->user->alias);
+		irc_write(id->fd, buf, strlen(buf));
+	}
 	if (!g_strncasecmp(msg, "ACTION", 6)) {
 		char *po = strchr(msg + 6, 1);
 		char *tmp;
@@ -1136,7 +1174,7 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	if (!g_strncasecmp(msg, "DCC CHAT", 8)) {
 		char **chat_args = g_strsplit(msg, " ", 5);
 		char ask[1024];
-		struct dcc_chat * dccchat = g_new0(struct dcc_chat, 1);
+		struct dcc_chat *dccchat = g_new0(struct dcc_chat, 1);
 		dccchat->gc = gc;	
 		g_snprintf(dccchat->ip_address, sizeof(dccchat->ip_address), chat_args[3]);	
 		printf("DCC CHAT DEBUG CRAP: %s\n", dccchat->ip_address);
@@ -1258,9 +1296,14 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 				return FALSE;
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
+			/*
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s by %s:"),
 				   word[3], nick);
 			do_error_dialog(outbuf, *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5], GAIM_INFO);
+			*/
+			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
+				   word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
+			do_error_dialog(outbuf, _("IRC Error"), GAIM_ERROR);
 		} else {
 			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
 			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
@@ -1276,9 +1319,31 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", new);
 		irc_change_name(gc, nick, new);
 	} else if (!strcmp(cmd, "NOTICE")) {
-		if (*word_eol[4] == ':') word_eol[4]++;
-		if (ex)
-			irc_got_im(gc, nick, word_eol[4], 0, time(NULL));
+		char buf[IRC_BUF_LEN];
+		if (!g_strcasecmp(word[4], ":\001CLIENTINFO")) {
+			char *p = strrchr(word_eol[5], '\001');
+			*p = 0;
+			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s",
+				   word_eol[5]);
+			do_error_dialog(buf, _("CTCP ClientInfo"), GAIM_INFO);
+		} else if (!g_strcasecmp(word[4], ":\001USERINFO")) {
+			char *p = strrchr(word_eol[5], '\001');
+			*p = 0;
+			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", 
+				   word_eol[5]);
+			do_error_dialog(buf, _("CTCP UserInfo"), GAIM_INFO);
+		} else if (!g_strcasecmp(word[4], ":\001VERSION")) {
+			char *p = strrchr(word_eol[5], '\001');
+			*p = 0;
+			g_snprintf(buf, sizeof(buf), "CTCP Answer: %s", 
+				   word_eol[5]);
+			do_error_dialog(buf, _("CTCP Version"), GAIM_INFO);
+		} else {
+			if (*word_eol[4] == ':') word_eol[4]++;
+			if (ex)
+				irc_got_im(gc, nick, word_eol[4], 0, 
+					   time(NULL));		
+		}
 	} else if (!strcmp(cmd, "PART")) {
 		char *chan = cmd + 5;
 		struct conversation *c;
@@ -1335,7 +1400,10 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 					nick, topic);
 			write_to_conv(c, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
 		}
-	} else if (!strcmp(cmd, "WALLOPS")) { /* */
+	} else if (!strcmp(cmd, "WALLOPS")) { /* Don't know if a dialog box is the right way? */
+		char *msg = strrchr(word_eol[0], ':');
+		if (msg)
+			do_error_dialog(msg+1, _("IRC Operator"), GAIM_ERROR);
 	}
 
 	return FALSE;
@@ -1376,7 +1444,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		d = g_strndup(idata->rxqueue, len);
 		g_strchomp(d);
 		debug_printf("IRC S: %s\n", d);
-		
+
 		idata->rxlen -= len;
 		if (idata->rxlen) {
 			char *tmp = g_strdup(e + 1);
@@ -1802,10 +1870,13 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
-			do_error_dialog(buf, NULL, GAIM_INFO);
+			do_error_dialog(buf, _("IRC Part"), GAIM_INFO);
 		}
 	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
 		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);
+		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "WHOWAS")) {
+		g_snprintf(buf, sizeof(buf), "WHOWAS %s\r\n", word_eol[2]);
 		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "LIST")) {
 		g_snprintf(buf, sizeof(buf), "LIST\r\n");
@@ -1820,6 +1891,40 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 	} else if (!g_strcasecmp(pdibuf, "W")) {
 		g_snprintf(buf, sizeof(buf), "WHO *\r\n");
 		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "REHASH")) {
+		g_snprintf(buf, sizeof(buf), "REHASH\r\n");
+		irc_write(id->fd, buf, strlen(buf));		
+	} else if (!g_strcasecmp(pdibuf, "RESTART")) {
+		g_snprintf(buf, sizeof(buf), "RESTART\r\n");
+		irc_write(id->fd, buf, strlen(buf));
+	} else if (!g_strcasecmp(pdibuf, "CTCP")) {
+		if (!g_strcasecmp(word[2], "CLIENTINFO")) {
+			if (word[3])
+				irc_ctcp_clientinfo(gc, word[3]);
+		} else if (!g_strcasecmp(word[2], "USERINFO")) {
+			if (word[3])
+				irc_ctcp_userinfo(gc, word[3]);
+		} else if (!g_strcasecmp(word[2], "VERSION")) {
+			if (word[3])
+				irc_ctcp_version(gc, word[3]);
+		}
+	} else if (!g_strcasecmp(pdibuf, "DCC")) {
+		struct conversation *c = NULL;
+		if (!g_strcasecmp(word[2], "CHAT")) {
+			if (word[3])
+				irc_start_chat(gc, word[3]);
+			
+			if (is_channel(gc, who)) {
+				c = irc_find_chat(gc, who);
+			} else {
+				c = find_conversation(who);
+			}
+			if (c) {
+				write_to_conv(c, "<I>Requesting DCC CHAT</I>",
+					      WFLAG_SYSTEM, NULL, 
+					      time(NULL), -1);
+			}
+		}
 	} else if (!g_strcasecmp(pdibuf, "HELP")) {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1831,13 +1936,32 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_free(what);
 			return -EINVAL;
 		}
-		write_to_conv(c, "<B>Currently supported commands:<BR>"
-				 "WHOIS INVITE NICK LIST<BR>"
-				 "JOIN PART TOPIC KICK<BR>"
-				 "OP DEOP VOICE DEVOICE<BR>"
-				 "ME MSG QUOTE SAY QUIT<BR>"
-			         "MODE VERSION W</B>",
-				 WFLAG_NOLOG, NULL, time(NULL), -1);
+		if (!g_strcasecmp(word[2], "OPER")) {
+			write_to_conv(c, "<B>Operator commands:<BR>"
+				      "REHASH RESTART</B>",
+				      WFLAG_NOLOG, NULL, time(NULL), -1);
+		} else if (!g_strcasecmp(word[2], "CTCP")) {
+			write_to_conv(c, "<B>CTCP commands:<BR>"
+				      "CLIENTINFO <nick><BR>"
+				      "USERINFO <nick><BR>"
+				      "VERSION <nick></B>",
+				      WFLAG_NOLOG, NULL, time(NULL), -1);
+		} else if (!g_strcasecmp(word[2], "DCC")) {
+			write_to_conv(c, "<B>DCC commands:<BR>"
+				      "CHAT <nick></B>",
+				      WFLAG_NOLOG, NULL, time(NULL), -1);
+		} else {
+			write_to_conv(c, "<B>Currently supported commands:<BR>"
+				      "WHOIS INVITE NICK LIST<BR>"
+				      "JOIN PART TOPIC KICK<BR>"
+				      "OP DEOP VOICE DEVOICE<BR>"
+				      "ME MSG QUOTE SAY QUIT<BR>"
+				      "MODE VERSION W WHOWAS</B><BR>"
+				      "Type /HELP OPER for operator commands<BR>"
+				      "Type /HELP CTCP for CTCP commands<BR>"
+				      "Type /HELP DCC for DCC commands",
+				      WFLAG_NOLOG, NULL, time(NULL), -1);
+		}
 	} else {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -2010,16 +2134,15 @@ static void dcc_chat_connected(gpointer data, gint source, GdkInputCondition con
 	addr.sin_port = htons (chat->port);
 	addr.sin_addr.s_addr = INADDR_ANY;
 	chat->fd = accept (chat->fd, (struct sockaddr *) (&addr), &addrlen);
-	if (!chat->fd)
-	  {
-		  dcc_chat_cancel (NULL,chat);
-		  convo = new_conversation (chat->nick);
-		  g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
-			      chat->nick);
-		  write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
-				 time ((time_t) NULL), -1);
-		  return;
-	  }
+	if (!chat->fd) {
+		dcc_chat_cancel (NULL,chat);
+		convo = new_conversation (chat->nick);
+		g_snprintf (buf, sizeof buf, _("DCC Chat with %s closed"),
+			    chat->nick);
+		write_to_conv (convo, buf, WFLAG_SYSTEM, NULL,
+			       time ((time_t) NULL), -1);
+		return;
+	}
 	chat->inpa =
 		gaim_input_add (chat->fd, GAIM_INPUT_READ, dcc_chat_in, chat);
 	convo = new_conversation (chat->nick);
@@ -2155,6 +2278,27 @@ static void irc_file_transfer_in(struct gaim_connection *gc,
 	proxy_connect(ift->ip, ift->port, dcc_recv_callback, ift);
 }
 
+static void irc_ctcp_clientinfo(struct gaim_connection *gc, char *who)
+{
+	char buf[200];
+	snprintf (buf, sizeof buf, "\001CLIENTINFO\001\n");
+	irc_send_im (gc, who, buf, -1, 0);
+}
+
+static void irc_ctcp_userinfo(struct gaim_connection *gc, char *who)
+{
+	char buf[200];
+	snprintf (buf, sizeof buf, "\001USERINFO\001\n");
+	irc_send_im (gc, who, buf, -1, 0);
+}
+
+static void irc_ctcp_version(struct gaim_connection *gc, char *who)
+{
+	char buf[200];
+	snprintf (buf, sizeof buf, "\001VERSION\001\n");
+	irc_send_im (gc, who, buf, -1, 0);
+}
+
 static void irc_start_chat(struct gaim_connection *gc, char *who) {
 	struct dcc_chat *chat;
 	int len;
@@ -2224,6 +2368,25 @@ static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 */
+	
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("CTCP ClientInfo");
+	pbm->callback = irc_ctcp_clientinfo;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+	
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("CTCP UserInfo");
+	pbm->callback = irc_ctcp_userinfo;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("CTCP Version");
+	pbm->callback = irc_ctcp_version;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
 	return m;
 }
 
