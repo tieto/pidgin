@@ -423,10 +423,6 @@ faim_export const char *aim_odc_getcookie(aim_conn_t *conn)
 	if (!conn || !conn->internal)
 		return NULL;
 
-	if ((conn->type != AIM_CONN_TYPE_RENDEZVOUS) ||
-			(conn->subtype != AIM_CONN_SUBTYPE_OFT_DIRECTIM))
-		return NULL;
-
 	intdata = (struct aim_odc_intdata *)conn->internal;
 
 	return intdata->cookie;

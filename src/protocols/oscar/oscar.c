@@ -3141,9 +3141,16 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 }
 
 static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch2_args *args) {
-	GaimConnection *gc = sess->aux_data;
-	OscarData *od = gc->proto_data;
-	const char *username = gaim_account_get_username(gaim_connection_get_account(gc));
+	GaimConnection *gc;
+	OscarData *od;
+	const char *username;
+
+	g_return_val_if_fail(sess != NULL, 0);
+	g_return_val_if_fail(sess->aux_data != NULL, 0);
+
+	gc = sess->aux_data;
+	od = gc->proto_data;
+	username = gaim_account_get_username(gaim_connection_get_account(gc));
 
 	if (!args)
 		return 0;
@@ -3283,7 +3290,9 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		 * and then ask them to connect to us. */
 		snprintf(d->ip, sizeof(d->ip), "%s:%d", args->clientip, args->port?args->port:5190);
 		memcpy(d->cookie, args->cookie, 8);
-		if (dim && !dim->connected && (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
+		if (dim && !dim->connected && aim_odc_getcookie(dim->conn) && args->cookie &&
+		    (!memcmp(aim_odc_getcookie(dim->conn), args->cookie, 8))) {
+
 			oscar_direct_im_destroy(od, dim);
 			d->donttryagain = TRUE;
 			accept_direct_im_request(d);
@@ -3757,7 +3766,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_
 			struct oscar_direct_im *dim;
 
 			gaim_debug_info("oscar",
-					   "AAA - Other user declined some sort of direct"
+					   "AAA - Other user declined some sort of direct "
 					   "connect attempt (automaticly?)\n");
 			if ((xfer = oscar_find_xfer_by_cookie(od->file_transfers, cookie)))
 				gaim_xfer_cancel_remote(xfer);
