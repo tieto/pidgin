@@ -2919,13 +2919,14 @@ void show_export_dialog()
 
 void do_import(GtkWidget *w, struct gaim_connection *gc)
 {
-        char *buf = g_malloc(BUF_LONG);
+        char *buf = g_malloc(BUF_LONG * 2);
         char *buf2;
         char *first = g_malloc(64);
 	char *file;
 	char path[PATHSIZE];
 	char *g_screenname;
 	int i;
+	int len;
         FILE *f;
 	gboolean from_dialog = FALSE;
 
@@ -2993,7 +2994,8 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	/* GAIM buddy list - no translation */
         } else if (first[0] == 'm') {
 		rewind(f);
-		fread(buf, BUF_LONG, 1, f);
+		len = fread(buf, 1, BUF_LONG * 2, f);
+		buf[len] = '\0';
 		buf2 = buf;
 		buf = g_malloc(8193);
                 g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
