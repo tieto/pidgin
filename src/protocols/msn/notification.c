@@ -767,7 +767,7 @@ static void
 ipg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	cmdproc->payload_cb = NULL;
-	cmdproc->servconn->payload_len = atoi(cmd->params[2]);
+	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
 }
 
 static void
@@ -1180,7 +1180,7 @@ static void
 not_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	cmdproc->payload_cb  = NULL;
-	cmdproc->servconn->payload_len = atoi(cmd->params[1]);
+	cmdproc->servconn->payload_len = atoi(cmd->params[0]);
 }
 
 static void
