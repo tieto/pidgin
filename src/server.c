@@ -1055,7 +1055,27 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	g_free(message);
 }
 
+/*
+ * NOTE: This is a bit hacky, but needed for core support for the
+ *       buddy-idle-updated signal. It's temporary, and will be replaced
+ *       with better code in the status rewrite.
+ */
+static GList *idle_buddies = NULL;
+static guint idle_buddy_timeout_id = 0;
 
+static gboolean
+idle_timeout_cb(void)
+{
+	GList *l;
+
+	for (l = idle_buddies; l != NULL; l = l->next)
+	{
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated",
+						 l->data);
+	}
+
+	return TRUE;
+}
 
 void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 					 int evil, time_t signon, time_t idle, int type)
@@ -1219,14 +1239,26 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	if (!old_idle && idle)
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", b);
+
+		idle_buddies = g_list_append(idle_buddies, b);
+
+		if (idle_buddy_timeout_id == 0)
+		{
+			idle_buddy_timeout_id = gaim_timeout_add(10000,
+				(GSourceFunc)idle_timeout_cb, NULL);
+		}
 	}
 	else if (old_idle && !idle)
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", b);
-	}
-	else if (old_idle != idle)
-	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-updated", b);
+
+		idle_buddies = g_list_remove(idle_buddies, b);
+
+		if (idle_buddies == NULL)
+		{
+			gaim_timeout_remove(idle_buddy_timeout_id);
+			idle_buddy_timeout_id = 0;
+		}
 	}
 
 	if (c != NULL)
