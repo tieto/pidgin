@@ -278,7 +278,8 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), u->protocol);
 		u->tmp_protocol = u->protocol;
 	} else {
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), PROTO_TOC);
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
+				((struct prpl *)protocols->data)->protocol);
 	}
 
 	return optmenu;
