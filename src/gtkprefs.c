@@ -1270,6 +1270,7 @@ static GList *get_available_browsers()
 
 	GList *browsers = NULL;
 	int i = 0;
+	char *browser_setting = (char *)gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 
 	browsers = g_list_prepend(browsers, "custom");
 	browsers = g_list_prepend(browsers, _("Manual"));
@@ -1279,8 +1280,13 @@ static GList *get_available_browsers()
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, _(possible_browsers[i].name));
+			if(!strcmp(possible_browsers[i].command, browser_setting))
+				browser_setting = NULL;
 		}
 	}
+
+	if(browser_setting)
+		gaim_prefs_set_string("/gaim/gtk/browsers/browser", "custom");
 
 	return browsers;
 }
