@@ -1206,9 +1206,6 @@ void *gaim_request_fields(void *handle, const char *title,
 /**
  * Closes a request.
  *
- * This should be used only by the UI operation functions and part of the
- * core.
- *
  * @param type     The request type.
  * @param uihandle The request UI handle.
  */
