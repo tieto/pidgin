@@ -85,7 +85,6 @@ DLL_C_SRC =		aim.c \
 			ft.c \
 			gaimrc.c \
 			gtkimhtml.c \
-			gtkspell.c \
 			html.c \
 			idle.c \
 			list.c \
