@@ -187,26 +187,25 @@ static void do_joinchat(GtkWidget *dialog, int id, GaimGtkJoinChatData *info)
 void
 join_chat()
 {
-	GtkWidget *hbox, *mainbox;
+	GtkWidget *hbox, *vbox;
 	GtkWidget *rowbox;
-	GtkWidget *bbox;
 	GtkWidget *label;
 	GList *c;
 	GaimGtkBuddyList *gtkblist;
+	GtkWidget *img = NULL;
 	GaimConnection *gc = NULL;
 	GaimGtkJoinChatData *data = NULL;
-	GtkWidget *img = NULL;
+	int numaccounts = 0;
 
+	/* Count how many protocols support chat */
 	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
 
 		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->join_chat)
-			break;
-
-		gc = NULL;
+			numaccounts++;
 	}
 
-	if (gc == NULL) {
+	if (numaccounts <= 0) {
 		gaim_notify_error(NULL, NULL,
 						  _("You are not currently signed on with any "
 							"protocols that have the ability to chat."),
@@ -218,9 +217,8 @@ join_chat()
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
 	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	data = g_new0(GaimGtkJoinChatData, 1);
-	data->account = gaim_connection_get_account(gc);
 
-	data->window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
+	data->window = gtk_dialog_new_with_buttons(_("Join Chat"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 											   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 											   "Join", GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
@@ -230,42 +228,45 @@ join_chat()
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), 12);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
 
-	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
 	hbox = gtk_hbox_new(FALSE, 12);
     gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
     gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
     gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	mainbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
-	gtk_container_add(GTK_CONTAINER(hbox), mainbox);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	label = gtk_label_new(_("Please enter the appropriate information about the chat you would like to join.\n"));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(mainbox), rowbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, TRUE, TRUE, 0);
 
-	label = gtk_label_new(_("Join Chat As:"));
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(data->sg, label);
+	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
-			G_CALLBACK(join_chat_select_account_cb),
-			join_chat_check_account_func, data);
-	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
+	if (numaccounts > 1) {
+		label = gtk_label_new(_("Join Chat As:"));
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
+		gtk_size_group_add_widget(data->sg, label);
+
+		data->account_menu = gaim_gtk_account_option_menu_new(NULL, FALSE,
+				G_CALLBACK(join_chat_select_account_cb),
+				join_chat_check_account_func, data);
+		gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
+	}
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(mainbox), data->entries_box);
+	gtk_container_add(GTK_CONTAINER(vbox), data->entries_box);
 	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
 
 
+	data->account = gaim_connection_get_account(gaim_connections_get_all()->data);
 	rebuild_joinchat_entries(data);
 
-
-	bbox = gtk_hbutton_box_new();
-	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
-	gtk_box_set_spacing(GTK_BOX(bbox), 12);
-	gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 6);
 
 	g_signal_connect(G_OBJECT(data->window), "response", G_CALLBACK(do_joinchat), data);
 
