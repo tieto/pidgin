@@ -66,6 +66,7 @@ static GtkWidget *icondlg;
 static GtkWidget *alias_dialog = NULL;
 static GtkWidget *rename_dialog = NULL;
 static GtkWidget *rename_bud_dialog = NULL;
+static GtkWidget *fontseld = NULL;
 
 
 struct confirm_del {
@@ -3279,7 +3280,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 	}
 
 	save_prefs();
-	do_away_menu();
+	do_away_menu(NULL);
 
 	return am;
 }

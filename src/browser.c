@@ -540,67 +540,69 @@ void open_url(GtkWidget *w, char *url)
 {
 	char *command = NULL;
 	GError *error = NULL;
+	const char *web_browser;
+	
+	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 
-	switch (web_browser) {
-		case BROWSER_NETSCAPE: {
-			char *args = NULL;
+	if (!strcmp(web_browser, "netscape")) {
+		char *args = NULL;
 
-			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-				args = g_strdup_printf("OpenURL(%s, new-window)", url);
-			else
-				args = g_strdup_printf("OpenURL(%s)", url);
+		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+			args = g_strdup_printf("OpenURL(%s, new-window)", url);
+		else
+			args = g_strdup_printf("OpenURL(%s)", url);
 
-			if (netscape_command(args)) {
-				g_free(args);
-				return;
-			}
-
-			/* if netscape is running ...
-			command = g_strdup_printf("netscape -remote %s", args); */
-
-			command = g_strdup_printf("netscape \"%s\"", url);
+		if (netscape_command(args)) {
 			g_free(args);
-			} break;
+			return;
+		}
 
-		case BROWSER_OPERA:
-			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-				command = g_strdup_printf("opera -newwindow \"%s\"", url);
-			else
-				command = g_strdup_printf("opera \"%s\"", url);
-			break;
+		/* if netscape is running ...
+		command = g_strdup_printf("netscape -remote %s", args); */
 
-		case BROWSER_KONQ:
-			command = g_strdup_printf("kfmclient openURL \"%s\"", url);
-			break;
+		command = g_strdup_printf("netscape \"%s\"", url);
+		g_free(args);
+	}
+	else if (!strcmp(web_browser, "opera")) {
+		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+			command = g_strdup_printf("opera -newwindow \"%s\"", url);
+		else
+			command = g_strdup_printf("opera \"%s\"", url);
+	}
+	else if (!strcmp(web_browser, "kfmclient")) {
+		command = g_strdup_printf("kfmclient openURL \"%s\"", url);
+	}
+	else if (!strcmp(web_browser, "galeon")) {
+		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+			command = g_strdup_printf("galeon -w \"%s\"", url);
+		else
+			command = g_strdup_printf("galeon \"%s\"", url);
+	}
+	else if (!strcmp(web_browser, "mozilla")) {
+		command = g_strdup_printf("mozilla \"%s\"", url);
+	}
+	else if (!strcmp(web_browser, "custom")) {
+		const char *web_command;
 
-		case BROWSER_GALEON:
-			if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-				command = g_strdup_printf("galeon -w \"%s\"", url);
-			else
-				command = g_strdup_printf("galeon \"%s\"", url);
-			break;
 
-		case BROWSER_MOZILLA:
-			command = g_strdup_printf("mozilla \"%s\"", url);
-			break;
+		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
 
-		case BROWSER_MANUAL: {
-			if (!web_command[0]) {
-				gaim_notify_error(NULL, NULL,
-								  _("Unable to launch your browser because "
-									"the 'Manual' browser command has been "
-									"chosen, but no command has been set."),
-								  NULL);
-				return;
-			}
+		if (web_command == NULL || *web_command == '\0') {
+			gaim_notify_error(NULL, NULL,
+							  _("Unable to launch your browser because "
+								"the 'Manual' browser command has been "
+								"chosen, but no command has been set."),
+							  NULL);
+			return;
+		}
 
-			if (strstr(web_command, "%s"))
-				command = gaim_strreplace(web_command, "%s", url);
-			else
-				/* There is no "%s" in the browser command.  Assume the user
-				 * wanted the URL tacked on to the end of the command. */
-				command = g_strdup_printf("%s %s", web_command, url);
-		} break;
+		if (strstr(web_command, "%s"))
+			command = gaim_strreplace(web_command, "%s", url);
+		else {
+			/* There is no "%s" in the browser command.  Assume the user
+			 * wanted the URL tacked on to the end of the command. */
+			command = g_strdup_printf("%s %s", web_command, url);
+		}
 	}
 
 	if (g_spawn_command_line_async(command, &error) == FALSE) {
@@ -615,7 +617,11 @@ void open_url(GtkWidget *w, char *url)
 
 void add_bookmark(GtkWidget *w, char *url)
 {
-	if (web_browser == BROWSER_NETSCAPE) {
+	const char *web_browser;
+
+	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
+
+	if (!strcmp(web_browser, "netscape")) {
 		char *command = g_strdup_printf("AddBookmark(%s)", url);
 
 		netscape_command(command);
@@ -623,7 +629,7 @@ void add_bookmark(GtkWidget *w, char *url)
 	}
 }
 
-#else
+#else /* _WIN32 */
 
 /* Sooner or later, I shall support Windows clicking! */
 
@@ -634,6 +640,5 @@ void open_url(GtkWidget *w, char *url)
 {
 	ShellExecute(NULL, NULL, url, NULL, ".\\", 0);
 }
-
 
 #endif /* _WIN32 */

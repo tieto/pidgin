@@ -59,10 +59,12 @@
 #define PROXYUSER 3
 #define PROXYPASS 4
 
-static GtkWidget *tree_v = NULL;
-static GtkWidget *prefs_away_menu = NULL;
+/* XXX This needs to be made static after we solve the away.c mess. */
+GtkListStore *prefs_away_store = NULL;
+GtkWidget *prefs_away_menu = NULL;
 
-static GtkListStore *prefs_away_store = NULL;
+static GtkWidget *tree_v = NULL;
+
 
 static int sound_row_sel = 0;
 static char *last_sound_dir = NULL;
@@ -866,7 +868,6 @@ GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *button, *warn_checkbox, *idle_checkbox;
-	gboolean fnd = FALSE;
 	GList *l= NULL;
 	GSList *sl = gaim_gtk_blist_sort_methods;
 	ret = gtk_vbox_new(FALSE, 18);
@@ -875,11 +876,10 @@ GtkWidget *list_page() {
 	
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
 	while (sl) {
-		l = g_list_append(l, ((struct gaim_gtk_blist_sort_method*)sl->data)->name);
-		l = g_list_append(l, ((struct gaim_gtk_blist_sort_method*)sl->data)->name);
-		if (!fnd && !gaim_utf8_strcasecmp(((struct gaim_gtk_blist_sort_method*)sl->data)->name, sort_method))
-			fnd = TRUE;
-			sl = sl->next;
+		char *name = ((struct gaim_gtk_blist_sort_method*)sl->data)->name;
+
+		l = g_list_append(l, name);
+		l = g_list_append(l, name);
 	}
 
 	prefs_dropdown_from_list(vbox, _("Sorting:"), GAIM_PREF_STRING,
@@ -1198,7 +1198,7 @@ static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpoin
 		gaim_notify_warning(NULL, NULL, error, NULL);
 	}
 
-	g_strlcpy(web_command, program, sizeof(web_command));
+	gaim_prefs_set_string("/gaim/gtk/browsers/command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1270,12 +1270,16 @@ GtkWidget *browser_page() {
 
 	browser_entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), browser_entry);
-	if (web_browser != BROWSER_MANUAL)
+
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
+
 	gtk_box_pack_start (GTK_BOX (hbox), browser_entry, FALSE, FALSE, 0);
 
-	gtk_entry_set_text(GTK_ENTRY(browser_entry), web_command);
-	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event", G_CALLBACK(manual_browser_set), NULL);
+	gtk_entry_set_text(GTK_ENTRY(browser_entry),
+					   gaim_prefs_get_string("/gaim/gtk/browsers/command"));
+	g_signal_connect(G_OBJECT(browser_entry), "focus-out-event",
+					 G_CALLBACK(manual_browser_set), NULL);
 
 	if (browsers != NULL) {
 		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
@@ -2671,6 +2675,7 @@ gaim_gtk_prefs_init(void)
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
 	gaim_prefs_add_bool("/gaim/gtk/browsers/new_window", FALSE);
+	gaim_prefs_add_string("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 
 	/* Buddy List */
@@ -2686,6 +2691,10 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_warning_level", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "");
+	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
+	gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
 
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");

@@ -952,7 +952,9 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 			qar->sent_away = 0;
 			away_time_queue = g_slist_append(away_time_queue, qar);
 		}
-		if ((t - qar->sent_away) < away_resend) {
+		if ((t - qar->sent_away) <
+			gaim_prefs_get_int("/core/away/auto_response/sec_before_resend")) {
+
 			g_free(name);
 			g_free(message);
 			return;

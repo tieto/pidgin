@@ -1732,7 +1732,7 @@ void account_online(struct gaim_connection *gc)
 	gaim_blist_show();
 
 	update_privacy_connections();
-	do_away_menu();
+	do_away_menu(NULL);
 	do_proto_menu();
 
 	gaim_blist_add_account(gc->account);

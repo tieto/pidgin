@@ -187,7 +187,6 @@ extern GtkWidget *bpmenu;
 
 /* Globals in prefs.c */
 extern struct debug_window *dw;
-extern GtkWidget *fontseld;
 
 /* Globals in prpl.c */
 extern GtkWidget *protomenu;

@@ -72,9 +72,6 @@
 #define OPT_LOG_INDIVIDUAL		0x00000040
 #define OPT_LOG_CHATS			0x00000100
 
-/* #define OPT_BLIST_APP_BUDDY_SHOW	0x00000001
-#define OPT_BLIST_SAVED_WINDOWS		0x00000002
-#define OPT_BLIST_NEAR_APPLET		0x00000004 */
 #define OPT_BLIST_SHOW_GRPNUM		0x00000008
 #define OPT_BLIST_SHOW_PIXMAPS		0x00000010
 #define OPT_BLIST_SHOW_IDLETIME		0x00000020
@@ -83,7 +80,6 @@
 #define OPT_BLIST_NO_MT_GRP		0x00000100
 #define OPT_BLIST_SHOW_WARN		0x00000200
 #define OPT_BLIST_GREY_IDLERS		0x00000400
-/* define OPT_BLIST_TOMBSTONE		0x00000800 */
 #define OPT_BLIST_POPUP                 0x00001000
 #define OPT_BLIST_SHOW_ICONS            0x00002000 
 #define OPT_BLIST_SHOW_OFFLINE          0x00004000
@@ -149,7 +145,6 @@
 #define OPT_SOUND_CHAT_NICK             0x00040000
 
 #define OPT_AWAY_BACK_ON_IM		0x00000002
-/* #define OPT_AWAY_TOMBSTONE		0x00000004 */
 #define OPT_AWAY_AUTO			0x00000008
 #define OPT_AWAY_NO_AUTO_RESP		0x00000010
 #define OPT_AWAY_QUEUE			0x00000020
@@ -334,41 +329,6 @@ static int gaimrc_parse_tag(FILE *f)
 	return -1;
 }
 
-static char *escape_text2(const char *msg)
-{
-	char *c, *cpy;
-	char *woo;
-	int cnt = 0;
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
-
-	woo = malloc(strlen(msg) * 4 + 1);
-	cpy = g_strndup(msg, 2048);
-	c = cpy;
-	while (*c) {
-		switch (*c) {
-		case '\n':
-			woo[cnt++] = '<';
-			woo[cnt++] = 'B';
-			woo[cnt++] = 'R';
-			woo[cnt++] = '>';
-			break;
-		case '{':
-		case '}':
-		case '\\':
-		case '"':
-			woo[cnt++] = '\\';
-			/* Fall through */
-		default:
-			woo[cnt++] = *c;
-		}
-		c++;
-	}
-	woo[cnt] = '\0';
-
-	g_free(cpy);
-	return woo;
-}
-
 static void gaimrc_read_away(FILE *f)
 {
 	struct parse parse_buffer;
@@ -407,40 +367,6 @@ static void gaimrc_read_away(FILE *f)
 	}
 }
 
-static void gaimrc_write_away(FILE *f)
-{
-	GSList *awy = away_messages;
-	struct away_message *a;
-
-	fprintf(f, "away {\n");
-
-	if (awy) {
-		while (awy) {
-			char *str1, *str2;
-
-			a = (struct away_message *)awy->data;
-
-			str1 = escape_text2(a->name);
-			str2 = escape_text2(a->message);
-
-			fprintf(f, "\tmessage { %s } { %s }\n", str1, str2);
-
-			/* escape_text2 uses malloc(), so we don't want to g_free these */
-			free(str1);
-			free(str2);
-
-			awy = g_slist_next(awy);
-		}
-		fprintf(f, "\tauto { %d } { %d }\n", auto_away,
-			g_slist_index(away_messages, default_away));
-	} else {
-		fprintf(f, "\tmessage { %s } { %s }\n", _("boring default"), BORING_DEFAULT_AWAY_MSG);
-		fprintf(f, "\tauto { 0 } { 0 }\n");
-	}
-
-	fprintf(f, "}\n");
-}
-
 /*
  * This is temporary, and we're using it to translate the new event
  * and action values into the old ones. We're also adding entries for
@@ -477,39 +403,6 @@ static int pounce_evt_trans_table_size =
 
 static int pounce_act_trans_table_size =
 	(sizeof(pounce_act_trans_table) / sizeof(*pounce_act_trans_table));
-
-static int
-new_pounce_opts_to_old(struct gaim_pounce *pounce)
-{
-	struct gaim_gtkpounce_data *gtkpounce;
-
-	int opts = 0;
-	int i;
-
-	gtkpounce = GAIM_GTKPOUNCE(pounce);
-
-	/* First, convert events */
-	for (i = 0; i < pounce_evt_trans_table_size; i += 2)
-	{
-		GaimPounceEvent evt = pounce_evt_trans_table[i + 1];
-
-		if ((gaim_pounce_get_events(pounce) & evt) == evt)
-			opts |= pounce_evt_trans_table[i];
-	}
-
-	for (i = 0; i < pounce_act_trans_table_size; i += 2)
-	{
-		GaimGtkPounceAction act = pounce_act_trans_table[i + 1];
-
-		if ((gtkpounce->actions & act) == act)
-			opts |= pounce_act_trans_table[i];
-	}
-
-	if (gtkpounce->save)
-		opts |= 0x100;
-
-	return opts;
-}
 
 static void
 old_pounce_opts_to_new(int opts, GaimPounceEvent *events,
@@ -574,97 +467,6 @@ gaimrc_read_pounce(FILE *f)
 			buddy_pounces = g_list_append(buddy_pounces, b);
 		}
 	}
-}
-
-static void
-gaimrc_write_pounce(FILE *f)
-{
-	GList *pnc;
-	struct gaim_pounce *pounce;
-	struct gaim_gtkpounce_data *pounce_data;
-
-	fprintf(f, "pounce {\n");
-
-	for (pnc = gaim_get_pounces(); pnc != NULL; pnc = pnc->next) {
-		char *str1, *str2, *str3, *str4;
-		struct gaim_account *account;
-
-		pounce      = (struct gaim_pounce *)pnc->data;
-		pounce_data = GAIM_GTKPOUNCE(pounce);
-		account     = gaim_pounce_get_pouncer(pounce);
-
-		/* Pouncee name */
-		str1 = escape_text2(gaim_pounce_get_pouncee(pounce));
-
-		if (pounce_data == NULL)
-		{
-			fprintf(f, "\tentry { %s } {  } {  } { %d } { %s } { %d } {  }\n",
-					str1, new_pounce_opts_to_old(pounce),
-					account->username, account->protocol);
-
-			free(str1);
-
-			continue;
-		}
-
-		/* Message */
-		if (pounce_data->message != NULL)
-			str2 = escape_text2(pounce_data->message);
-		else {
-			str2 = malloc(1);
-			*str2 = '\0';
-		}
-
-		/* Command */
-		if (pounce_data->command != NULL)
-			str3 = escape_text2(pounce_data->command);
-		else {
-			str3 = malloc(1);
-			*str3 = '\0';
-		}
-
-		/* Sound file */
-		if (pounce_data->sound != NULL)
-			str4 = escape_text2(pounce_data->sound);
-		else {
-			str4 = malloc(1);
-			*str4 = '\0';
-		}
-
-		fprintf(f, "\tentry { %s } { %s } { %s } { %d } { %s } { %d } { %s }\n",
-				str1, str2, str3, new_pounce_opts_to_old(pounce),
-				account->username, account->protocol, str4);
-
-		/* escape_text2 uses malloc(), so we don't want to g_free these */
-		free(str1);
-		free(str2);
-		free(str3);
-		free(str4);
-	}
-
-	fprintf(f, "}\n");
-}
-
-static void gaimrc_write_plugins(FILE *f)
-{
-	GList *pl;
-	GaimPlugin *p;
-
-	fprintf(f, "plugins {\n");
-
-	for (pl = gaim_plugins_get_loaded(); pl != NULL; pl = pl->next) {
-		char *path;
-
-		p = (GaimPlugin *)pl->data;
-
-		if (p->info->type != GAIM_PLUGIN_PROTOCOL) {
-			path = escape_text2(p->path);
-			fprintf(f, "\tplugin { %s }\n", path);
-			free(path);
-		}
-	}
-
-	fprintf(f, "}\n");
 }
 
 static void gaimrc_read_plugins(FILE *f)
@@ -821,66 +623,6 @@ static struct gaim_account *gaimrc_read_user(FILE *f)
 
 }
 
-static void gaimrc_write_user(FILE *f, struct gaim_account *account)
-{
-	char *c, *d;
-	int nl = 1, i;
-
-	if (account->options & OPT_ACCT_REM_PASS) {
-		fprintf(f, "\t\tident { %s } { %s }\n", (d = escape_text2(account->username)), (c = escape_text2(account->password)));
-		free(c);
-		free(d);
-	} else {
-		fprintf(f, "\t\tident { %s } {  }\n", (d = escape_text2(account->username)));
-		free(d);
-	}
-	fprintf(f, "\t\tuser_info {");
-	c = account->user_info;
-	while (*c) {
-		/* This is not as silly as it looks. */
-		if (*c == '\n') {
-			nl++;
-		} else {
-			if (nl) {
-				while (nl) {
-					fprintf(f, "\n\t\t\t");
-					nl--;
-				}
-			}
-			fprintf(f, "%c", *c);
-		}
-		c++;
-	}
-	fprintf(f, "\n\t\t}\n");
-	fprintf(f, "\t\tuser_opts { %d } { %d }\n", account->options, account->protocol);
-	fprintf(f, "\t\tproto_opts");
-	for (i = 0; i < 7; i++)
-		fprintf(f, " { %s }", account->proto_opt[i]);
-	fprintf(f, "\n");
-#ifndef _WIN32
-	fprintf(f, "\t\ticonfile { %s }\n", account->iconfile);
-#else
-	{
-		/* Make sure windows dir speparators arn't swallowed up when
-		   path is read back in from resource file */
-		char* tmp=wgaim_escape_dirsep(account->iconfile);
-		fprintf(f, "\t\ticonfile { %s }\n", tmp);
-		g_free(tmp);
-	}
-#endif
-	fprintf(f, "\t\talias { %s }\n", account->alias);
-	fprintf(f, "\t\tproxy_opts ");
-	if(account->gpi) {
-		fprintf(f, "{ %d } { %s } { %d } { %s } { %s }\n",
-				account->gpi->proxytype, account->gpi->proxyhost,
-				account->gpi->proxyport, account->gpi->proxyuser,
-				(c = escape_text2(account->gpi->proxypass)));
-		free(c);
-	} else {
-		fprintf(f, "{ %d }\n", PROXY_USE_GLOBAL);
-	}
-}
-
 static void gaimrc_read_users(FILE *f)
 {
 	char buf[2048];
@@ -911,26 +653,6 @@ static void gaimrc_read_users(FILE *f)
 	}
 }
 
-static void gaimrc_write_users(FILE *f)
-{
-	GSList *usr = gaim_accounts;
-	struct gaim_account *account;
-
-	fprintf(f, "users {\n");
-
-	while (usr) {
-		account = (struct gaim_account *)usr->data;
-		fprintf(f, "\tuser {\n");
-		gaimrc_write_user(f, account);
-
-		fprintf(f, "\t}\n");
-
-		usr = usr->next;
-	}
-
-	fprintf(f, "}\n");
-}
-
 struct replace {
 	int old;
 	guint *val;
@@ -939,13 +661,10 @@ struct replace {
 
 static struct replace gen_replace[] = {
 { /* OPT_GEN_ENTER_SENDS */		0x00000001, &convo_options, OPT_CONVO_ENTER_SENDS },
-{ /* OPT_GEN_APP_BUDDY_SHOW */		0x00000010, &blist_options, OPT_BLIST_APP_BUDDY_SHOW },
 { /* OPT_GEN_POPUP_WINDOWS */		0x00000020,    &im_options, OPT_IM_POPUP },
 { /* OPT_GEN_SEND_LINKS */		0x00000040, &convo_options, OPT_CONVO_SEND_LINKS },
 { /* OPT_GEN_DEBUG */			0x00000100,  &misc_options, OPT_MISC_DEBUG },
 { /* OPT_GEN_BROWSER_POPUP */		0x00000800,  &misc_options, OPT_MISC_BROWSER_POPUP },
-{ /* OPT_GEN_SAVED_WINDOWS */		0x00001000, &blist_options, OPT_BLIST_SAVED_WINDOWS },
-{ /* OPT_GEN_NEAR_APPLET */		0x00004000, &blist_options, OPT_BLIST_NEAR_APPLET },
 { /* OPT_GEN_CHECK_SPELLING */		0x00008000, &convo_options, OPT_CONVO_CHECK_SPELLING },
 { /* OPT_GEN_POPUP_CHAT */		0x00010000,  &chat_options, OPT_CHAT_POPUP },
 { /* OPT_GEN_BACK_ON_IM */		0x00020000,  &away_options, OPT_AWAY_BACK_ON_IM },
@@ -1114,7 +833,7 @@ static void gaimrc_read_options(FILE *f)
 			blist_pos.width = atoi(p->value[2]);
 			blist_pos.height = atoi(p->value[3]);
 		} else if (!strcmp(p->option, "sort_method")) {
-			strcpy(sort_method, p->value[0]);
+			gaim_prefs_set_string("/gaim/gtk/blist/sort_type", p->value[0]);
 		}
 
 	}
@@ -1183,49 +902,6 @@ static void gaimrc_read_options(FILE *f)
 	} 
 }
 
-static void gaimrc_write_options(FILE *f)
-{
-
-	fprintf(f, "options {\n");
-
-	fprintf(f, "\tmisc_options { %u }\n", misc_options);
-	fprintf(f, "\tlogging_options { %u }\n", logging_options);
-	fprintf(f, "\tblist_options { %u }\n", blist_options);
-	fprintf(f, "\tconvo_options { %u }\n", convo_options);
-	fprintf(f, "\tim_options { %u }\n", im_options);
-	fprintf(f, "\tconv_placement { %u }\n", conv_placement_option);
-	fprintf(f, "\tchat_options { %u }\n", chat_options);
-	fprintf(f, "\tfont_options { %u }\n", font_options);
-	fprintf(f, "\tsound_options { %u }\n", sound_options);
-	fprintf(f, "\taway_options { %u } { %u }\n", away_options, away_resend);
-	fprintf(f, "\tfont_face { %s }\n", gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
-	fprintf(f, "\tfont_size { %d }\n", gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
-	fprintf(f, "\tforeground { %d } { %d } { %d }\n", fgcolor.red, fgcolor.green, fgcolor.blue);
-	fprintf(f, "\tbackground { %d } { %d } { %d }\n", bgcolor.red, bgcolor.green, bgcolor.blue);
-	fprintf(f, "\treport_idle { %d }\n", report_idle);
-	fprintf(f, "\tweb_browser { %d }\n", web_browser);
-	fprintf(f, "\tweb_command { %s }\n", web_command);
-	fprintf(f, "\tsort_method { %s }\n", sort_method);
-	if (current_smiley_theme) {
-#ifndef _WIN32
-		fprintf(f, "\tsmiley_theme { %s }\n", current_smiley_theme->path);
-#else
-		char* tmp=wgaim_escape_dirsep(current_smiley_theme->path);
-		fprintf(f, "\tsmiley_theme { %s }\n", tmp);
-		g_free(tmp);
-#endif
-	}
-	fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d }\n",
-		blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height);
-	fprintf(f, "\tconv_size { %d } { %d } { %d }\n",
-		conv_size.width, conv_size.height, conv_size.entry_height);
-	fprintf(f, "\tbuddy_chat_size { %d } { %d } { %d }\n",
-		buddy_chat_size.width, buddy_chat_size.height, buddy_chat_size.entry_height);
-
-	fprintf(f, "}\n");
-}
-
-
 static void gaimrc_read_sounds(FILE *f)
 {
 	int i;
@@ -1258,39 +934,6 @@ static void gaimrc_read_sounds(FILE *f)
 				gaim_sound_set_event_file(i, p->value[0]);
 		}
 	}
-}
-
-static void gaimrc_write_sounds(FILE *f)
-{
-	int i;
-#ifndef _WIN32
-	char *cmd;
-#endif
-	fprintf(f, "sound_files {\n");
-	for (i = 0; i < GAIM_NUM_SOUNDS; i++) {
-		char *file = gaim_sound_get_event_file(i);
-		if (file) {
-#ifndef _WIN32
-			fprintf(f, "\tsound%c { %s }\n", i + 'A', file);
-#else
-			/* Make sure windows dir speparators arn't swallowed up when
-			   path is read back in from resource file */
-			char* tmp=wgaim_escape_dirsep(file);
-			fprintf(f, "\tsound%c { %s }\n", i + 'A', tmp);
-			g_free(tmp);
-#endif
-		}
-		else
-			fprintf(f, "\tsound%c {  }\n", i + 'A');
-	}
-#ifndef _WIN32
-	cmd = gaim_sound_get_command();
-	if(cmd)
-		fprintf(f, "\tsound_cmd { %s }\n", cmd);
-	else
-		fprintf(f, "\tsound_cmd {  }\n");
-#endif
-	fprintf(f, "}\n");
 }
 
 static gboolean gaimrc_parse_proxy_uri(const char *proxy)
@@ -1494,29 +1137,6 @@ static void gaimrc_read_proxy(FILE *f)
 	}
 }
 
-static void gaimrc_write_proxy(FILE *f)
-{
-	char *str;
-
-	fprintf(f, "proxy {\n");
-	if (proxy_info_is_from_gaimrc) {
-		fprintf(f, "\thost { %s }\n", global_proxy_info.proxyhost);
-		fprintf(f, "\tport { %d }\n", global_proxy_info.proxyport);
-		fprintf(f, "\ttype { %d }\n", global_proxy_info.proxytype);
-		fprintf(f, "\tuser { %s }\n", global_proxy_info.proxyuser);
-		fprintf(f, "\tpass { %s }\n",
-				(str = escape_text2(global_proxy_info.proxypass)));
-		free(str);
-	} else {
-		fprintf(f, "\thost { %s }\n", "");
-		fprintf(f, "\tport { %d }\n", 0);
-		fprintf(f, "\ttype { %d }\n", 0);
-		fprintf(f, "\tuser { %s }\n", "");
-		fprintf(f, "\tpass { %s }\n", "");
-	}
-	fprintf(f, "}\n");
-}
-
 static void set_defaults()
 {
 	int i;
@@ -1528,9 +1148,6 @@ static void set_defaults()
 	logging_options = 0;
 
 	blist_options =
-		OPT_BLIST_APP_BUDDY_SHOW |
-		OPT_BLIST_SAVED_WINDOWS |
-		OPT_BLIST_NEAR_APPLET |
 		OPT_BLIST_SHOW_GRPNUM |
 		OPT_BLIST_SHOW_PIXMAPS |
 		OPT_BLIST_SHOW_IDLETIME |
@@ -1701,72 +1318,7 @@ void load_prefs()
 
 void save_prefs()
 {
-	FILE *f;
-	gchar *filename;
-	gchar *filename_temp;
-
-	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Entering save_prefs\n");
-	if (!prefs_initial_load)
-		return;
-
-	if (is_loading_prefs) {
-		request_save_prefs = 1;
-		gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
-				   "Currently loading. Will request save.\n");
-		return;
-	}
-
-	if (opt_rcfile_arg)
-		filename = g_build_filename(opt_rcfile_arg, NULL);
-	else if (gaim_home_dir())
-		filename = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
-	else
-		return;
-	filename_temp = g_strdup_printf("%s.save", filename);
-
-	if ((f = fopen(filename_temp, "w"))) {
-		chmod(filename_temp, S_IRUSR | S_IWUSR);
-		is_saving_prefs = 1;
-		fprintf(f, "# .gaimrc v%d\n", 4);
-		gaimrc_write_users(f);
-		gaimrc_write_options(f);
-		gaimrc_write_sounds(f);
-		gaimrc_write_away(f);
-		gaimrc_write_pounce(f);
-
-		if (gaim_plugins_enabled())
-			gaimrc_write_plugins(f);
-
-		gaimrc_write_proxy(f);
-		if (fprintf(f, "\n") == 1) {
-			fclose(f);
-			if (rename(filename_temp, filename) < 0)
-				gaim_debug(GAIM_DEBUG_ERROR, "gaimrc", 
-					   "Error renaming %s to %s\n", filename_temp, filename);
-		} else {
-			fclose(f);
-			gaim_notify_error(NULL, NULL,
-							  _("Unable to Save Preferences"),
-							  _("Gaim was unable to save your preferences. "
-								"Please verify that you have enough "
-								"free space."));
-		}
-		is_saving_prefs = 0;
-	} else
-		gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
-				   "Error opening %s\n", filename_temp);
-
-	if (request_load_prefs) {
-		gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
-				   "Loading preferences on request.\n");
-		load_prefs();
-		request_load_prefs = 0;
-	}
-
-	g_free(filename);
-	g_free(filename_temp);
-
-	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Exiting save_prefs\n");
+	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "save_prefs() called. Rejected!\n");
 }
 
 

@@ -25,6 +25,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
@@ -46,6 +47,7 @@
 
 gint check_idle(gpointer data)
 {
+	const char *report_idle;
 	struct gaim_connection *gc = data;
 	time_t t;
 #ifdef USE_SCREENSAVER
@@ -59,9 +61,10 @@ gint check_idle(gpointer data)
 
 	time(&t);
 
+	report_idle = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
 
 #ifdef USE_SCREENSAVER
-	if (report_idle == IDLE_SCREENSAVER) {
+	if (!strcmp(report_idle, "system")) {
 #ifndef _WIN32
 		int event_base, error_base;
 		if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
@@ -79,7 +82,9 @@ gint check_idle(gpointer data)
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
 
-	if (gaim_prefs_get_bool("/core/away/away_when_idle") && (idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
+	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
+		(idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
+
 		if (!gc->away) {
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
 					   "Making %s away automatically\n", gc->username);
@@ -117,9 +122,9 @@ gint check_idle(gpointer data)
 	/* If we're not reporting idle times to the server, still use Gaim
 	   usage for auto-away, but quit here so we don't report to the 
 	   server */
-	if (report_idle == IDLE_NONE) {
+
+	if (!strcmp(report_idle, "none"))
 		return TRUE;
-	}
 
 	if (idle_time >= IDLEMARK && !gc->is_idle) {
 		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s idle %d seconds\n",

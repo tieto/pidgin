@@ -339,6 +339,10 @@ static void set_gc_state(GObject *obj, struct gaim_connection *gc)
 	serv_set_away(gc, awy, NULL);
 }
 
+/* XXX This needs to be fixed, NOW! */
+extern GtkListStore *prefs_away_store;
+extern GtkWidget *prefs_away_menu;
+
 void do_away_menu()
 {
 	GtkWidget *menuitem;
@@ -622,6 +626,7 @@ void do_away_menu()
 			}
 		}
 	}
+
 	if (prefs_away_menu) {
 		l = gtk_container_get_children(GTK_CONTAINER(prefs_away_menu));
 		while (l) {

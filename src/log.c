@@ -289,10 +289,13 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 	FILE *fd;
 	char text[256], html[256];
 
-	if ((logging_options & why) != why)
-		return;
+	if (((why & OPT_LOG_MY_SIGNON) &&
+		 !gaim_prefs_get_bool("/gaim/gtk/logging/log_own_states"))) {
 
-	if (logging_options & OPT_LOG_INDIVIDUAL) {
+		return;
+	}
+
+	if (gaim_prefs_get_bool("/gaim/gtk/logging/individual_logs")) {
 		if (why & OPT_LOG_MY_SIGNON)
 			fd = open_system_log_file(gc ? gc->username : NULL);
 		else
@@ -418,14 +421,12 @@ void system_log(enum log_event what, struct gaim_connection *gc,
 		}
 	}
 
-	if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html")) {
+	if (gaim_prefs_get_bool("/gaim/gtk/logging/strip_html"))
 		fprintf(fd, "---- %s ----\n", text);
-	} else {
-		if (logging_options & OPT_LOG_INDIVIDUAL)
-			fprintf(fd, "<HR>%s<BR><HR><BR>\n", html);
-		else
-			fprintf(fd, "%s<BR>\n", html);
-	}
+	else if (gaim_prefs_get_bool("/gaim/gtk/logging/individual_logs"))
+		fprintf(fd, "<HR>%s<BR><HR><BR>\n", html);
+	else
+		fprintf(fd, "%s<BR>\n", html);
 
 	fclose(fd);
 }

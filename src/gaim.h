@@ -198,17 +198,10 @@ extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
 extern int opt_debug;
 
-extern guint away_resend;
-extern int report_idle;
-extern int web_browser;
 extern GSList *gaim_accounts;
 extern GSList *message_queue;
 extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
-extern char web_command[2048];
-extern char sort_method[64];
-extern struct save_pos blist_pos;
-extern struct window_size conv_size, buddy_chat_size;
 
 /* Functions in main.c */
 extern void do_quit();
