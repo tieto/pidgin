@@ -56,6 +56,66 @@ gaim_debug(GaimDebugLevel level, const char *category,
 }
 
 void
+gaim_debug_misc(const char *category, const char *format, ...)
+{
+	va_list args;
+
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	gaim_debug_vargs(GAIM_DEBUG_MISC, category, format, args);
+	va_end(args);
+}
+
+void
+gaim_debug_info(const char *category, const char *format, ...)
+{
+	va_list args;
+
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	gaim_debug_vargs(GAIM_DEBUG_INFO, category, format, args);
+	va_end(args);
+}
+
+void
+gaim_debug_warning(const char *category, const char *format, ...)
+{
+	va_list args;
+
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	gaim_debug_vargs(GAIM_DEBUG_WARNING, category, format, args);
+	va_end(args);
+}
+
+void
+gaim_debug_error(const char *category, const char *format, ...)
+{
+	va_list args;
+
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	gaim_debug_vargs(GAIM_DEBUG_ERROR, category, format, args);
+	va_end(args);
+}
+
+void
+gaim_debug_fatal(const char *category, const char *format, ...)
+{
+	va_list args;
+
+	g_return_if_fail(format != NULL);
+
+	va_start(args, format);
+	gaim_debug_vargs(GAIM_DEBUG_FATAL, category, format, args);
+	va_end(args);
+}
+
+void
 gaim_set_debug_ui_ops(GaimDebugUiOps *ops)
 {
 	debug_ui_ops = ops;

@@ -31,7 +31,7 @@
 typedef enum
 {
 	GAIM_DEBUG_ALL = 0,  /**< All debug levels.              */
-	GAIM_DEBUG_MISC,  /**< General chatter.               */
+	GAIM_DEBUG_MISC,     /**< General chatter.               */
 	GAIM_DEBUG_INFO,     /**< General operation Information. */
 	GAIM_DEBUG_WARNING,  /**< Warnings.                      */
 	GAIM_DEBUG_ERROR,    /**< Errors.                        */
@@ -80,6 +80,71 @@ void gaim_debug_vargs(GaimDebugLevel level, const char *category,
  */
 void gaim_debug(GaimDebugLevel level, const char *category,
 				const char *format, ...);
+
+/**
+ * Outputs misc. level debug information.
+ *
+ * This is a wrapper for gaim_debug(), and uses GAIM_DEBUG_MISC as
+ * the level.
+ *
+ * @param category The category (or @c NULL).
+ * @param format   The format string.
+ *
+ * @see gaim_debug()
+ */
+void gaim_debug_misc(const char *category, const char *format, ...);
+
+/**
+ * Outputs info level debug information.
+ *
+ * This is a wrapper for gaim_debug(), and uses GAIM_DEBUG_INFO as
+ * the level.
+ *
+ * @param category The category (or @c NULL).
+ * @param format   The format string.
+ *
+ * @see gaim_debug()
+ */
+void gaim_debug_info(const char *category, const char *format, ...);
+
+/**
+ * Outputs warning level debug information.
+ *
+ * This is a wrapper for gaim_debug(), and uses GAIM_DEBUG_WARNING as
+ * the level.
+ *
+ * @param category The category (or @c NULL).
+ * @param format   The format string.
+ *
+ * @see gaim_debug()
+ */
+void gaim_debug_warning(const char *category, const char *format, ...);
+
+/**
+ * Outputs error level debug information.
+ *
+ * This is a wrapper for gaim_debug(), and uses GAIM_DEBUG_ERROR as
+ * the level.
+ *
+ * @param category The category (or @c NULL).
+ * @param format   The format string.
+ *
+ * @see gaim_debug()
+ */
+void gaim_debug_error(const char *category, const char *format, ...);
+
+/**
+ * Outputs fatal error level debug information.
+ *
+ * This is a wrapper for gaim_debug(), and uses GAIM_DEBUG_ERROR as
+ * the level.
+ *
+ * @param category The category (or @c NULL).
+ * @param format   The format string.
+ *
+ * @see gaim_debug()
+ */
+void gaim_debug_fatal(const char *category, const char *format, ...);
 
 /*@}*/
 
