@@ -1187,6 +1187,7 @@ faim_export int aim_ssi_delbuddy(aim_session_t *sess, aim_conn_t *conn, const ch
 faim_export int aim_ssi_delpermit(aim_session_t *sess, aim_conn_t *conn, const char *name);
 faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const char *name);
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn, const char *sn);
+faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char *sn, const char *alias);
 faim_export int aim_ssi_rename_group(aim_session_t *sess, aim_conn_t *conn, const char *oldgn, const char *newgn);
 faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn);

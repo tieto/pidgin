@@ -336,7 +336,7 @@ void serv_remove_buddies(struct gaim_connection *gc, GList *g, char *group)
 void serv_alias_buddy(struct buddy *b)
 {
 	if(b && b->gc && b->gc->prpl && b->gc->prpl->alias_buddy) {
-		b->gc->prpl->alias_buddy(b->gc, b->name);
+		b->gc->prpl->alias_buddy(b->gc, b->name, b->alias);
 	}
 }
 

@@ -889,6 +889,43 @@ faim_export int aim_ssi_movebuddy(aim_session_t *sess, aim_conn_t *conn, const c
 }
 
 /**
+ * Change the alias stored on the server for a given buddy.
+ *
+ * @param sess The oscar session.
+ * @param conn The bos connection for this session.
+ * @param gn The group that the buddy is currently in.
+ * @param sn The screen name of the buddy.
+ * @param alias The new alias for the buddy.
+ * @return Return 0 if no errors, otherwise return the error number.
+ */
+faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, aim_conn_t *conn, const char *gn, const char *sn, const char *alias)
+{
+	struct aim_ssi_item *tmp;
+	aim_tlvlist_t *data = NULL;
+
+	if (!sess || !conn || !gn || !sn)
+		return -EINVAL;
+
+	if (!(tmp = aim_ssi_itemlist_finditem(sess->ssi.local, gn, sn, AIM_SSI_TYPE_BUDDY)))
+		return -EINVAL;
+
+	if (alias && !strlen(alias))
+		alias = NULL;
+
+	/* Need to add the x0131 TLV to the TLV chain */
+	if (alias)
+		aim_addtlvtochain_raw(&data, 0x0131, strlen(alias), alias);
+
+	aim_freetlvchain(&tmp->data);
+	tmp->data = data;
+
+	/* Sync our local list with the server list */
+	aim_ssi_sync(sess, conn);
+
+	return 0;
+}
+
+/**
  * Rename a group.
  *
  * @param sess The oscar session.

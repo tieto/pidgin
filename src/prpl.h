@@ -166,7 +166,7 @@ struct prpl {
 	void (* get_cb_away)	(struct gaim_connection *, int, char *who);
 
 	/* save/store buddy's alias on server list/roster */
-	void (* alias_buddy)	(struct gaim_connection *, char *who);
+	void (* alias_buddy)	(struct gaim_connection *, const char *who, const char *alias);
 
 	/* change a buddy's group on a server list/roster */
 	void (* group_buddy)	(struct gaim_connection *, const char *who, const char *old_group, const char *new_group);

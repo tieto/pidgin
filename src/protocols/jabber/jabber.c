@@ -2575,9 +2575,9 @@ static void jabber_roster_update(struct gaim_connection *gc, const char *name, c
  *
  * This is just a roster update using existing, local buddylist data
  */
-static void jabber_alias_buddy(struct gaim_connection *gc, char *name)
+static void jabber_alias_buddy(struct gaim_connection *gc, const char *name, const char *alias)
 {
-	jabber_roster_update(gc, name, NULL, NULL);
+	jabber_roster_update(gc, name, alias, NULL);
 }
 
 /*
