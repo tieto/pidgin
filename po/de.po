@@ -479,7 +479,7 @@ msgstr ""
 
 #: src/conversation.c:1216 src/conversation.c:1217
 msgid "Logging"
-msgstr Mitschnitte an/aus""
+msgstr "Mitschnitte an/aus"
 
 #: src/conversation.c:1216
 msgid "Enable logging"
