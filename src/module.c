@@ -514,7 +514,7 @@ int plugin_event(enum gaim_event event, ...)
 		*arg5 = NULL;
 
 
-	debug_printf("%s\n", event_name(event));
+	/*	debug_printf("%s\n", event_name(event)); */
 
 #ifdef GAIM_PLUGINS
 	while (c) {
