@@ -66,6 +66,8 @@ void show_remote_usage(char *name)
 
 	     "    COMMANDS:\n"
 	     "       uri                      Handle AIM: URI\n"
+             "       away                     Popup the away dialog with the default message\n"
+             "       back                     Remove the away dialog\n"
 	     "       quit                     Close running copy of Gaim\n\n"
 
 	     "    OPTIONS:\n"
@@ -197,6 +199,39 @@ int command_quit() {
 	return 0;
 }
 
+int command_away()
+{
+	int fd = 0;
+	GaimRemotePacket *p = NULL;
+	fd = gaim_remote_session_connect(0);
+	if (fd<0) {
+		message(_("Gaim not running (on session 0)\n"),2);
+		return 1;
+	}
+	p = gaim_remote_packet_new(CUI_TYPE_USER, CUI_USER_AWAY);
+	gaim_remote_session_send_packet(fd, p);
+	close(fd);
+	gaim_remote_packet_free(p);
+	return 0;
+}
+
+int command_back()
+{
+	int fd = 0;
+	GaimRemotePacket *p = NULL;
+	fd = gaim_remote_session_connect(0);
+	if (fd<0) {
+		message(_("Gaim not running (on session 0)\n"),2);
+		return 1;
+	}
+	p = gaim_remote_packet_new(CUI_TYPE_USER, CUI_USER_BACK);
+	gaim_remote_session_send_packet(fd, p);
+	close(fd);
+	gaim_remote_packet_free(p);
+	return 0;
+}
+
+
 void show_longhelp_uri( char *name, char *command)
 {
 	if(!strcmp(command, "uri")) {
@@ -256,6 +291,10 @@ int main (int argc, char *argv[])
 		}
 /*	} else if (!strcmp(opts.command, "info")) {
 		return command_info();*/
+        } else if (!strcmp(opts.command, "away")) {
+                return command_away();
+        } else if (!strcmp(opts.command, "back")) {
+                return command_back();
 	} else if (!strcmp(opts.command, "quit")) {
 		if(opts.help){
 			show_longhelp_uri(argv[0], "quit");

@@ -42,6 +42,7 @@
 #include "gtkplugin.h"
 #include "gaim.h"
 #include "ui.h"
+#include "prefs.h"
 
 #include <gaim-remote/remote.h>
 
@@ -394,6 +395,22 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 			gaim_account_connect(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
+       case CUI_USER_AWAY:
+                {
+                    GSList* l;
+                    const char* default_away_name = gaim_prefs_get_string("/core/away/default_message");
+
+                    for(l = away_messages; l; l = l->next) {
+                        if(!strcmp(default_away_name, ((struct away_message *)l->data)->name)) {
+                            do_away_message(NULL, l->data);
+                            break;
+                        }
+                    }
+                }
+                break;
+       case CUI_USER_BACK:
+                do_im_back(NULL, NULL);
+                break;
 	default:
 		gaim_debug(GAIM_DEBUG_WARNING, "cui",
 				   "Unhandled user subtype %d\n", subtype);

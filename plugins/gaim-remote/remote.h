@@ -59,6 +59,8 @@
 #define CUI_USER_REMOVE		3
 #define CUI_USER_MODIFY		4	/* this handles moving them in the list too */
 #define CUI_USER_SIGNON		5
+#define CUI_USER_AWAY		6
+#define CUI_USER_BACK		7
 
 #define CUI_CONN_LIST		1
 #define CUI_CONN_PROGRESS	2
