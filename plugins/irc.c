@@ -889,8 +889,6 @@ void irc_login(struct aim_user *user) {
 
 	/* This is where we will attempt to sign on */
 	
-	/* FIXME: This should be their servername, not their username. im just lazy right now */
-
 	g_snprintf(buf, 4096, "NICK %s\n USER %s localhost %s :GAIM (www.marko.net/gaim)\n", gc->username, getenv("USER"), user->proto_opt[0]);
 
 	printf("Sending: %s\n", buf);
