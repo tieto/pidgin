@@ -2099,7 +2099,7 @@ GtkWidget *sound_events_page() {
 	return ret;
 }
 
-void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
+static void away_message_sel_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	GtkTreeIter  iter;
 	GValue val = { 0, };
@@ -2121,6 +2121,18 @@ void away_message_sel(GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(tmp);
 	g_value_unset (&val);
 
+}
+
+static gboolean away_message_click_cb(GtkWidget *tv, GdkEventButton *event, gpointer null)
+{
+	/* Only respond to double click on button 1 */
+	if ((event->button != 1) || (event->type != GDK_2BUTTON_PRESS))
+		return FALSE;
+
+	/* Show the edit away message dialog */
+	create_away_mess(NULL, tv);
+
+	return FALSE;
 }
 
 void remove_away_message(GtkWidget *widget, GtkTreeView *tv) {
@@ -2161,9 +2173,6 @@ GtkWidget *away_message_page() {
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	away_text = gtk_imhtml_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-	/*
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-	*/
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
 	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
@@ -2196,9 +2205,10 @@ GtkWidget *away_message_page() {
 	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), away_text);
 	gaim_setup_imhtml(away_text);
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
-	g_signal_connect (G_OBJECT (sel), "changed",
-			  G_CALLBACK (away_message_sel),
-			  NULL);
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(away_message_sel_cb), NULL);
+	g_signal_connect(G_OBJECT(event_view), "button-press-event",
+					 G_CALLBACK(away_message_click_cb), NULL);
 	hbox = gtk_hbox_new(TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(ret), hbox, FALSE, FALSE, 0);
 	button = gtk_button_new_from_stock (GTK_STOCK_ADD);
