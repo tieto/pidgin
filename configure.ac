@@ -396,6 +396,9 @@ AC_OUTPUT([Makefile
 	   intl/Makefile
            m4/Makefile
            pixmaps/Makefile
+	   pixmaps/protocols/Makefile
+           pixmaps/protocols/msn/Makefile
+           pixmaps/protocols/yahoo/Makefile
 	   plugins/Makefile
 	   po/Makefile.in 
            sounds/Makefile
