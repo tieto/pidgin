@@ -285,7 +285,7 @@ void theme_install_theme(char *path, char *extn) {
 	 * other platforms, if need be */
 	if (!g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz")) {
 #ifndef _WIN32
-		command = g_strdup_printf("tar > /dev/null xzf \"%s\" -C %s", path, destdir);
+		command = g_strdup_printf("tar > /dev/null xzf \"%s\" -C %s", tmp, destdir);
 #else
 		if(!wgaim_gz_untar(tmp, destdir)) {
 			g_free(destdir);
