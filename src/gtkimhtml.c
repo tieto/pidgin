@@ -112,6 +112,7 @@ gboolean gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
+		g_free (t->image);
 		g_free (t);
 	}
 	return TRUE;
