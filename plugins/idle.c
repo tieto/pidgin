@@ -18,7 +18,7 @@ static GaimConnection *gc = NULL;
 
 static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	time_t t;
-	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXINT);
+	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXSHORT);
 	GaimAccount *account;
 
 	if (!gc)
