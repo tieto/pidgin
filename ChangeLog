@@ -12,6 +12,7 @@ version 0.62
 	* Bug causing 'Hide on Send' windows to be lost forever fixed.
 	* Iconified windows are now raised properly.
 	* Dates printed for old/offline messages.
+	* Some assorted crash bugs fixed.
 
 version 0.61 (04/07/2003):
 	* Split the buddy pounce core and UI, and rewrote the UI for it.
