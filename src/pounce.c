@@ -376,7 +376,8 @@ gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!g_strcasecmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
+			!g_strncasecmp(gaim_pounce_get_pouncee(pounce), pouncee,
+						   strlen(pouncee))) {
 
 			handler = g_hash_table_lookup(pounce_handlers, pounce->ui_type);
 
@@ -406,7 +407,8 @@ gaim_find_pounce(const GaimAccount *pouncer, const char *pouncee,
 
 		if ((gaim_pounce_get_events(pounce) & events) &&
 			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
-			!g_strcasecmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
+			!g_strncasecmp(gaim_pounce_get_pouncee(pounce), pouncee,
+						   strlen(pouncee))) {
 
 			return pounce;
 		}
