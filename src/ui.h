@@ -64,24 +64,6 @@
 
 #define DEFAULT_FONT_FACE "Helvetica"
 
-#define FACE_ANGEL 0
-#define FACE_BIGSMILE 1
-#define FACE_BURP 2
-#define FACE_CROSSEDLIPS 3
-#define FACE_CRY 4
-#define FACE_EMBARRASSED 5
-#define FACE_KISS 6
-#define FACE_MONEYMOUTH 7
-#define FACE_SAD 8
-#define FACE_SCREAM 9
-#define FACE_SMILE 10
-#define FACE_SMILE8 11
-#define FACE_THINK 12
-#define FACE_TONGUE 13
-#define FACE_WINK 14
-#define FACE_YELL 15
-#define FACE_TOTAL 16
-
 #define GAIM_LOGO 0
 #define GAIM_ERROR 1
 #define GAIM_WARNING 2
@@ -137,7 +119,6 @@ extern GtkListStore *awayqueuestore;
 
 /* Globals in dialog.c */
 extern char fontxfld[256];
-extern int smiley_array[FACE_TOTAL];
 extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
 
@@ -151,7 +132,6 @@ extern GSList *smiley_themes;
 
 /* Functions in about.c */
 extern void show_about(GtkWidget *, void *);
-extern void gaim_help(GtkWidget *, void *);
 
 /* Functions in main.c */
 extern void show_login();
