@@ -538,26 +538,34 @@ gaim_gtk_notify_uri(const char *uri)
 			 !strcmp(web_browser, "mozilla-firebird") ||
 			 !strcmp(web_browser, "firefox"))
 	{
+		char *args = "";
+
 		command = g_strdup_printf("%s \"%s\"", web_browser, uri);
 
+		/*
+		 * Firefox 0.9 and higher require a "-a firefox" option when
+		 * using -remote commands.  This breaks older versions of
+		 * mozilla.  So we include this other handly little string
+		 * when calling firefox.  If the API for remote calls changes
+		 * any more in firefox then firefox should probably be split
+		 * apart from mozilla-firebird and mozilla... but this is good
+		 * for now.
+		 */
+		if (!strcmp(web_browser, "firefox"))
+			args = "-a firefox";
+
 		if (place == GAIM_BROWSER_NEW_WINDOW)
-		{
-			remote_command = g_strdup_printf("%s -a firefox -remote "
+			remote_command = g_strdup_printf("%s %s -remote "
 											 "\"openURL(\"%s\",new-window)\"",
-											 web_browser, uri);
-		}
+											 web_browser, args, uri);
 		else if (place == GAIM_BROWSER_NEW_TAB)
-		{
-			remote_command = g_strdup_printf("%s -a firefox -remote "
+			remote_command = g_strdup_printf("%s %s -remote "
 											 "\"openURL(\"%s\",new-tab)\"",
-											 web_browser, uri);
-		}
+											 web_browser, args, uri);
 		else if (place == GAIM_BROWSER_CURRENT)
-		{
-			remote_command = g_strdup_printf("%s -a firefox -remote "
+			remote_command = g_strdup_printf("%s %s -remote "
 											 "\"openURL(\"%s\")\"",
-											 web_browser, uri);
-		}
+											 web_browser, args, uri);
 	}
 	else if (!strcmp(web_browser, "custom"))
 	{
