@@ -99,6 +99,14 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Jan 10 (01/10/2002):
+- Arrow buttons in log viewer and some other dialogs work (thanks Ben Miller)
+- Option to only send auto-response while idle (thanks Sean Egan)
+- Control time between sending auto-responses (thanks Mark Doliner)
+- Should be able to sign on to Oscar using Mac OS X (thanks Fingolfin, Vincas Ciziunas, et al.)
+- Finnish translation added (Thanks Tero Kuusela)
+- Updated French Translation (Thanks sebfrance)
+
 * Thu Dec 13 2001 Rob Flynn <rob@marko.net> (0.50 release)
 - Updated polish translation (Thanks Przemyslaw Sulek)
 - Able to import GnomeICU contact lists

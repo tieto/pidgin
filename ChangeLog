@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.51:
+version 0.51 (01/10/2002):
 	* Arrow buttons in log viewer and some other dialogs
 	  work (thanks Ben Miller)
 	* Option to only send auto-response while idle (thanks
@@ -10,7 +10,7 @@ version 0.51:
 	* Should be able to sign on to Oscar using Mac OS X
 	  (thanks Fingolfin, Vincas Ciziunas, et al.)
 	* Finnish translation added (Thanks Tero Kuusela)
-	* Updated French Translation (Thanks sebfrance)`
+	* Updated French Translation (Thanks sebfrance)
 
 version 0.50 (12/14/2001):
 	* Updated polish translation (Thanks Przemyslaw Sulek)
