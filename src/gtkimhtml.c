@@ -438,6 +438,10 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 
 	if (selection_data->length < 0) {
 		text = gtk_clipboard_wait_for_text(clipboard);
+
+		if (text == NULL)
+			return;
+
 	} else {
 		text = g_malloc((selection_data->format / 8) * selection_data->length);
 		memcpy(text, selection_data->data, selection_data->length * (selection_data->format / 8));
