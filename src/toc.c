@@ -872,10 +872,12 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 	int how_many = 0;
 
         /* Clean out the permit/deny list!*/
+	/* why? if we're going to merge things, then these should stay
         g_list_free(permit);
         g_list_free(deny);
         permit = NULL;
 	deny = NULL;
+	*/
 	bud = NULL;
         
         /* skip "CONFIG:" (if it exists)*/
@@ -897,13 +899,31 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 			how_many++;
 			bud = g_list_append(bud, c+2);
         } else if (*c == 'p') {
+	    GList *d = deny;
             name = g_malloc(strlen(c+2) + 2);
             g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
-            permit = g_list_append(permit, name);
+	    while (d) {
+	        char *n = g_strdup(normalize(name));
+	    	if (!strcmp(n, normalize(d->data)))
+			break;
+		d = d->next;
+		g_free(n);
+	    }
+	    if (!d)
+	            permit = g_list_append(permit, name);
         } else if (*c == 'd') {
+	    GList *d = permit;
             name = g_malloc(strlen(c+2) + 2);
             g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
-            deny = g_list_append(deny, name);
+	    while (d) {
+	        char *n = g_strdup(normalize(name));
+	    	if (!strcmp(n, normalize(d->data)))
+			break;
+		d = d->next;
+		g_free(n);
+	    }
+	    if (!d)
+		    deny = g_list_append(deny, name);
         } else if (*c == 'm') {
         	sscanf(c + strlen(c) - 1, "%d", &permdeny);
         	if (permdeny == 0)

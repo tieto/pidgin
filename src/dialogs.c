@@ -1722,11 +1722,31 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
         }
 
         if (d) {
-                deny = g_list_append(deny, name);
-                serv_add_deny(name);
+		GList *d = deny;
+		while (d) {
+			char *n = g_strdup(normalize(name));
+			if (!strcmp(n, normalize(d->data)))
+				break;
+			d = d->next;
+			g_free(n);
+		}
+		if (!d) {
+	                deny = g_list_append(deny, name);
+        	        serv_add_deny(name);
+		}
         } else {
-                permit = g_list_append(permit, name);
-                serv_add_permit(name);
+		GList *d = permit;
+		while (d) {
+			char *n = g_strdup(normalize(name));
+			if (!strcmp(n, normalize(d->data)))
+				break;
+			d = d->next;
+			g_free(n);
+		}
+		if (!d) {
+			permit = g_list_append(permit, name);
+			serv_add_permit(name);
+		}
         }
 
 
@@ -2285,6 +2305,9 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 /* Color Selection Dialog                               */
 /*------------------------------------------------------*/
 
+static GtkWidget *fgcseld = NULL;
+static GtkWidget *bgcseld = NULL;
+
 void cancel_color(GtkWidget *widget, struct conversation *c)
 {
  	if (c->palette && widget)
@@ -2324,10 +2347,57 @@ void do_color(GtkWidget *widget, GtkColorSelection *colorsel)
 	cancel_color(NULL, c);
 }
 
+static void destroy_colorsel(GtkWidget *w, gpointer d)
+{
+	if (d) {
+		gtk_widget_destroy(fgcseld);
+		fgcseld = NULL;
+	} else {
+		gtk_widget_destroy(bgcseld);
+		bgcseld = NULL;
+	}
+}
+
+static void apply_color_dlg(GtkWidget *w, gpointer d)
+{
+	gdouble color[3];
+	if ((int)d == 1) {
+		gtk_color_selection_get_color(GTK_COLOR_SELECTION(fgcseld), color);
+		destroy_colorsel(NULL, (void *)1);
+	} else {
+		gtk_color_selection_get_color(GTK_COLOR_SELECTION(bgcseld), color);
+		destroy_colorsel(NULL, (void *)2);
+	}
+	/* FIXME ! here we need to set the preferences, etc */
+}
 
 void show_color_dialog(struct conversation *c, GtkWidget *color)
 {
 	GtkWidget *colorsel;
+
+	if ((int)color == 1) { /* foreground */
+		if (fgcseld) return;
+		fgcseld = gtk_color_selection_dialog_new(_("Select Text Color"));
+		gtk_signal_connect(GTK_OBJECT(fgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), (void *)1);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_color_dlg), (void *)1);
+		gtk_widget_realize(fgcseld);
+		aol_icon(fgcseld->window);
+		gtk_widget_show(fgcseld);
+		gdk_window_raise(fgcseld->window);
+		return;
+	} else if ((int)color == 2) { /* background */
+		if (bgcseld) return;
+		bgcseld = gtk_color_selection_dialog_new(_("Select Background Color"));
+		gtk_signal_connect(GTK_OBJECT(bgcseld), "delete_event", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->cancel_button), "clicked", GTK_SIGNAL_FUNC(destroy_colorsel), NULL);
+		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked", GTK_SIGNAL_FUNC(apply_color_dlg), (void *)2);
+		gtk_widget_realize(bgcseld);
+		aol_icon(bgcseld->window);
+		gtk_widget_show(bgcseld);
+		gdk_window_raise(bgcseld->window);
+		return;
+	}
 
     if (!c->color_dialog)
 	{
@@ -2659,11 +2729,13 @@ void do_import(GtkWidget *w, void *dummy)
 
         grp = groups;
 	
+	/* why is this being done? if we merge them than this shouldn't happen
         while(grp) {
                 grp2 = grp->next;
 		remove_group((struct group *)grp->data);
 		grp = grp2;
         }
+	*/
         
         parse_toc_buddy_list(buf, 1);
 
