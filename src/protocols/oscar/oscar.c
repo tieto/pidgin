@@ -2991,11 +2991,13 @@ static char *oscar_tooltip_text(struct buddy *b) {
 	struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, normalize(b->name));
 
 	if (bi) {
+		gchar *yay;
 		char *caps = caps_string(bi->caps);
 		char *tstr = sec_to_text(time(NULL) - bi->signon);
-		return g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), 
-				       tstr, 
+		yay = g_strdup_printf(_("<b>Logged In:</b> %s%s%s"), tstr, 
 				       caps ? _("\n<b>Capabilities:</b> ") : "", caps ? caps : "");
+		free(tstr);
+		return yay;
 	} else {
 		return NULL;
 	}
