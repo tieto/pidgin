@@ -13,7 +13,7 @@ LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 
 
-ALL_LINGUAS="de es fr ko ru zh_CN pl nl sv fi"
+ALL_LINGUAS="de es fr ko ru zh_CN pl nl sv fi sk"
 AM_GNU_GETTEXT
 
 AC_CYGWIN
