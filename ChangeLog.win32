@@ -1,6 +1,7 @@
 version 0.76:
 	* Ability to open files directly from file transfer window.
-	* Installer translations for: Russian, Polish, Finnish, Japanese.
+	* Installer translations for: Russian, Polish, Finnish, Japanese and
+	  Hebrew.
 
 version 0.75 (01/09/2004):
 	* TCL plugin loader now working. Thanks Daniel Atallah.
