@@ -423,13 +423,27 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 static char *
 msn_status_text(GaimBuddy *buddy)
 {
-	GaimPresence *presence = gaim_buddy_get_presence(buddy);
-	GaimStatus *status = gaim_presence_get_active_status(presence);
+	GString *s;
+	GaimPresence *presence;
+	GaimStatus *status;
+	MsnUser *user;
+
+	s = g_string_new("");
+	user = buddy->proto_data;
+	presence = gaim_buddy_get_presence(buddy);
+	status = gaim_presence_get_active_status(presence);
 
 	if (!gaim_status_is_available(status))
-		return g_strdup(gaim_status_get_name(status));
+	{
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"),
+							   gaim_status_get_name(status));
+	}
 
-	return NULL;
+	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Has you"),
+						   (user->list_op & (1 << MSN_LIST_RL)) ?
+						   _("Yes") : _("No"));
+
+	return g_string_free(s, FALSE);
 }
 
 static char *
@@ -611,7 +625,7 @@ msn_login(GaimAccount *account)
 		gaim_debug_info("msn", "using http method\n");
 
 		host = "gateway.messenger.hotmail.com";
-		port   = 80;
+		port = 80;
 	}
 	else
 	{
@@ -801,6 +815,54 @@ msn_set_idle(GaimConnection *gc, int idle)
 }
 
 static void
+fake_userlist_add_buddy(MsnUserList *userlist,
+					   const char *who, int list_id,
+					   const char *group_name)
+{
+	MsnUser *user;
+	static int group_id_c = 1;
+	int group_id;
+
+	group_id = -1;
+
+	if (group_name != NULL)
+	{
+		MsnGroup *group;
+		group = msn_group_new(userlist, group_id_c, group_name);
+		group_id = group_id_c++;
+	}
+
+	user = msn_userlist_find_user(userlist, who);
+
+	if (user == NULL)
+	{
+		user = msn_user_new(userlist, who, NULL);
+		msn_userlist_add_user(userlist, user);
+	}
+	else
+		if (user->list_op & (1 << list_id))
+		{
+			if (list_id == MSN_LIST_FL)
+			{
+				if (group_id >= 0)
+					if (g_list_find(user->group_ids,
+									GINT_TO_POINTER(group_id)))
+						return;
+			}
+			else
+				return;
+		}
+
+	if (group_id >= 0)
+	{
+		user->group_ids = g_list_append(user->group_ids,
+										GINT_TO_POINTER(group_id));
+	}
+
+	user->list_op |= (1 << list_id);
+}
+
+static void
 msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	MsnSession *session;
@@ -812,12 +874,19 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	who = msn_normalize(gc->account, buddy->name);
 
 	if (!session->logged_in)
-		return;
+	{
+		fake_userlist_add_buddy(session->sync_userlist, who, MSN_LIST_FL,
+								group ? group->name : NULL);
 
+		return;
+	}
+
+#if 0
 	if (group != NULL && group->name != NULL)
 		gaim_debug_info("msn", "msn_add_buddy: %s, %s\n", who, group->name);
 	else
 		gaim_debug_info("msn", "msn_add_buddy: %s\n", who);
+#endif
 
 #if 0
 	/* Which is the max? */
@@ -830,7 +899,9 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	}
 #endif
 
-	/* XXX - Would group ever be NULL here?  I don't think so... */
+	/* XXX - Would group ever be NULL here?  I don't think so...
+	 * shx: Yes it should; MSN handles non-grouped buddies, and this is only
+	 * internal. */
 	msn_userlist_add_buddy(userlist, who, MSN_LIST_FL,
 						   group ? group->name : NULL);
 }
@@ -1147,53 +1218,78 @@ msn_remove_group(GaimConnection *gc, GaimGroup *group)
 }
 
 static char *
-msn_tooltip_info_text(MsnGetInfoData *info_data) {
-	GString *s = g_string_sized_new(80); /* wild guess */
+msn_tooltip_info_text(MsnGetInfoData *info_data)
+{
+	GString *s;
 	GString *name;
 	GaimBuddy *b;
 	const char *p;
 
+	s = g_string_sized_new(80); /* wild guess */
+
 	/* Try to not display the MSN screen name as an email address */
 	p = strrchr(info_data->name, '@');
-	if (p) {
+	if (p)
+	{
 		name = g_string_new_len(info_data->name, p - info_data->name);
 		g_string_append_printf(name, "&#64;%s", p + 1);
-	} else { /* This should never happen */
+	}
+	else
+	{
+		/* This should never happen */
 		name = g_string_new(info_data->name);
 	}
+
 	g_string_printf(s, "<span style=\"font-size: larger\"><b>%s</b></span><br>",
-			name->str);
+					name->str);
 	g_string_free(name, TRUE);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
-			info_data->name);
+						info_data->name);
 
-	if (b) {
+	if (b)
+	{
+		MsnUser *user;
 		GaimPresence *presence;
 		char *statustext = msn_tooltip_text(b);
+
 		presence = gaim_buddy_get_presence(b);
-		if(b->alias && b->alias[0]) {
+
+		if (b->alias && b->alias[0])
+		{
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			g_string_append_printf(s, _("<b>Alias:</b> %s<br>"), aliastext);
 			g_free(aliastext);
 		}
-		if(b->server_alias) {
+
+		if (b->server_alias)
+		{
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
 			g_string_append_printf(s, _("<b>%s:</b> "), _("Nickname"));
 			g_string_append_printf(s, "<font sml=\"msn\">%s</font><br>",
 					nicktext);
 			g_free(nicktext);
 		}
-		if (gaim_presence_is_idle(presence)) {
+
+		if (gaim_presence_is_idle(presence))
+		{
 			char *idletime = gaim_str_seconds_to_string(time(NULL) -
 										gaim_presence_get_idle_time(presence));
 			g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Idle"),
 					idletime);
 			g_free(idletime);
 		}
-		if (statustext) {
+
+		if (statustext)
+		{
 			g_string_append_printf(s, "%s<br>", statustext);
 			g_free(statustext);
 		}
+
+		user = b->proto_data;
+
+		g_string_append_printf(s, _("<b>%s:</b> %s<br>"), _("Has you"),
+							   (user->list_op & (1 << MSN_LIST_RL)) ? 
+							   _("yes") : _("no"));
 	}
 
 	return g_string_free(s, FALSE);
@@ -1201,25 +1297,32 @@ msn_tooltip_info_text(MsnGetInfoData *info_data) {
 
 #if PHOTO_SUPPORT
 
-static char *msn_get_photo_url(const char *url_text) {
+static char *
+msn_get_photo_url(const char *url_text)
+{
 	char *p;
 	char *it = NULL;
 
 	p = strstr(url_text, " title=\"Click to see the full-size photo.\">");
 
-	if (p) {
+	if (p)
+	{
 		/* Search backwards for "http://". This is stupid, but it works. */
-		for (; !it && p > url_text; p -= 1) {
-			if (strncmp(p, "\"http://", 8) == 0) {
+		for (; !it && p > url_text; p -= 1)
+		{
+			if (strncmp(p, "\"http://", 8) == 0)
+			{
 				char *q;
 				p += 1; /* skip only the " */
 				q = strchr(p, '"');
-				if (q) {
+				if (q)
+				{
 					it = g_strndup(p, q - p);
 				}
 			}
 		}
 	}
+
 	return it;
 }
 
@@ -1541,16 +1644,20 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	info2_data->title = title;
 
 	/* Try to put the photo in there too, if there's one */
-	if (photo_url_text) {
+	if (photo_url_text)
+	{
 		gaim_url_fetch(photo_url_text, FALSE, NULL, FALSE, msn_got_photo,
-				info2_data);
-	} else {
+					   info2_data);
+	}
+	else
+	{
 		/* Emulate a callback */
 		msn_got_photo(info2_data, NULL, 0);
 	}
 }
 
-static void msn_got_photo(void *data, const char *url_text, size_t len)
+static void
+msn_got_photo(void *data, const char *url_text, size_t len)
 {
 	MsnGetInfoStepTwoData *info2_data = (MsnGetInfoStepTwoData *)data;
 	int id = -1;
@@ -1565,14 +1672,18 @@ static void msn_got_photo(void *data, const char *url_text, size_t len)
 	const char *title = info2_data->title;
 
 	/* Try to put the photo in there too, if there's one and is readable */
-	if (data && url_text && len != 0) {
+	if (data && url_text && len != 0)
+	{
 		if (strstr(url_text, "400 Bad Request")
-				|| strstr(url_text, "403 Forbidden")
-				|| strstr(url_text, "404 Not Found")) {
+			|| strstr(url_text, "403 Forbidden")
+			|| strstr(url_text, "404 Not Found"))
+		{
 
 			gaim_debug_info("msn", "Error getting %s: %s\n",
 					photo_url_text, url_text);
-		} else {
+		}
+		else
+		{
 			char buf[1024];
 			gaim_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
 			id = gaim_imgstore_add(url_text, len, NULL);
@@ -1640,7 +1751,8 @@ static gboolean msn_unload(GaimPlugin *plugin)
 }
 
 static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin) {
+get_plugin_pref_frame(GaimPlugin *plugin)
+{
 	GaimPluginPrefFrame *frame;
 	GaimPluginPref *ppref;
 

@@ -110,24 +110,14 @@ static void
 lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	GaimAccount *account = session->account;
-	GaimConnection *gc = gaim_account_get_connection(account);
 	char *passport = NULL;
 	const char *friend = NULL;
 	int list_op;
 	MsnUser *user;
 
-	passport   = cmd->params[0];
-	friend     = gaim_url_decode(cmd->params[1]);
-	list_op    = atoi(cmd->params[2]);
-
-#if 0
-	gaim_debug_misc("msn", "Got list op = %d\n", list_op);
-	gaim_debug_misc("msn", "FL = %d\n", (list_op & MSN_LIST_FL_OP));
-	gaim_debug_misc("msn", "AL = %d\n", (list_op & MSN_LIST_AL_OP));
-	gaim_debug_misc("msn", "BL = %d\n", (list_op & MSN_LIST_BL_OP));
-	gaim_debug_misc("msn", "RL = %d\n", (list_op & MSN_LIST_RL_OP));
-#endif
+	passport = cmd->params[0];
+	friend   = gaim_url_decode(cmd->params[1]);
+	list_op  = atoi(cmd->params[2]);
 
 	user = msn_user_new(session->userlist, passport, friend);
 
@@ -175,15 +165,7 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		cmdproc->cbs_table = session->sync->old_cbs_table;
 
-		msn_user_set_buddy_icon(session->user,
-								gaim_account_get_buddy_icon(session->account));
-
-		msn_change_status(session, MSN_ONLINE);
-
-		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		session->logged_in = TRUE;
-
-		serv_finish_login(gc);
+		msn_session_finish_login(session);
 
 		msn_sync_destroy(session->sync);
 		session->sync = NULL;

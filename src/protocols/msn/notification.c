@@ -317,8 +317,6 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (user == NULL)
 	{
-		gaim_debug_info("msn", "Creating new user. '%s' was not found.\n",
-						passport);
 		user = msn_user_new(session->userlist, passport, friendly);
 		msn_userlist_add_user(session->userlist, user);
 	}
@@ -409,7 +407,6 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	g_strfreev(params);
 }
-
 
 static void
 adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
@@ -711,19 +708,14 @@ static void
 syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimConnection *gc;
 	int total_users;
 
 	session = cmdproc->session;
-	gc = gaim_account_get_connection(session->account);
 	total_users  = atoi(cmd->params[2]);
 
 	if (total_users == 0)
 	{
-		gaim_connection_set_state(gc, GAIM_CONNECTED);
-		session->logged_in = TRUE;
-		
-		serv_finish_login(gc);
+		msn_session_finish_login(session);
 	}
 	else
 	{

@@ -70,6 +70,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =			cmdproc.c \
 			command.c \
+			dialog.c \
 			directconn.c \
 			error.c \
 			group.c \

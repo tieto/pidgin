@@ -60,6 +60,7 @@ struct _MsnSession
 	gint http_poll_timer;
 
 	MsnUserList *userlist;
+	MsnUserList *sync_userlist;
 
 	int servconns_count;
 	GList *switches;
@@ -140,5 +141,7 @@ MsnSwitchBoard *msn_session_find_swboard(MsnSession *session,
 										 const char *username);
 MsnSwitchBoard *msn_session_get_swboard(MsnSession *session,
 										const char *username);
+
+void msn_session_finish_login(MsnSession *session);
 
 #endif /* _MSN_SESSION_H_ */

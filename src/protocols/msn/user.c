@@ -210,7 +210,7 @@ msn_user_add_group_id(MsnUser *user, int id)
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id > -1);
+	g_return_if_fail(id >= 0);
 
 	user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
 
@@ -238,7 +238,7 @@ void
 msn_user_remove_group_id(MsnUser *user, int id)
 {
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id > -1);
+	g_return_if_fail(id >= 0);
 
 	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
 }

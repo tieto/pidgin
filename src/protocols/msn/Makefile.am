@@ -8,6 +8,8 @@ MSNSOURCES = \
 	cmdproc.h \
 	command.c \
 	command.h \
+	dialog.c \
+	dialog.h \
 	directconn.c \
 	directconn.h \
 	error.c \

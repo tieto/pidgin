@@ -605,13 +605,14 @@ msn_switchboard_new(MsnSession *session)
 	swboard->servconn = servconn = msn_servconn_new(session, MSN_SERVER_SB);
 	cmdproc = servconn->cmdproc;
 
-	msn_servconn_set_connect_cb(servconn, connect_cb);
-	msn_servconn_set_disconnect_cb(servconn, disconnect_cb);
-
 	swboard->im_queue = g_queue_new();
 
 	if (session->http_method)
 		servconn->http_data->server_type = "SB";
+	else
+		msn_servconn_set_connect_cb(servconn, connect_cb);
+
+	msn_servconn_set_disconnect_cb(servconn, disconnect_cb);
 
 	servconn->data = swboard;
 
@@ -799,7 +800,39 @@ got_swboard(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_parse_socket(cmd->params[2], &host, &port);
 
 	if (swboard->session->http_method)
+	{
+		GaimAccount *account;
+		MsnSession *session;
+		MsnServConn *servconn;
+
 		port = 80;
+
+		session = swboard->session;
+		servconn = swboard->servconn;
+		account = session->account;
+
+		swboard->user_joined = TRUE;
+
+		servconn->http_data->gateway_host = g_strdup(host);
+
+#if 0
+		servconn->connected = TRUE;
+		servconn->cmdproc->ready = TRUE;
+#endif
+
+		if (msn_switchboard_is_invited(swboard))
+		{
+			msn_cmdproc_send(servconn->cmdproc, "ANS", "%s %s %s",
+							 gaim_account_get_username(account),
+							 swboard->auth_key, swboard->session_id);
+		}
+		else
+		{
+			msn_cmdproc_send(servconn->cmdproc, "USR", "%s %s",
+							 gaim_account_get_username(account),
+							 swboard->auth_key);
+		}
+	}
 
 	msn_switchboard_connect(swboard, host, port);
 }

@@ -27,6 +27,8 @@
 
 #include "slplink.h"
 
+#include "dialog.h"
+
 MsnSession *
 msn_session_new(GaimAccount *account, const char *host, int port,
 				gboolean http_method)
@@ -44,6 +46,7 @@ msn_session_new(GaimAccount *account, const char *host, int port,
 
 	session->notification = msn_notification_new(session);
 	session->userlist = msn_userlist_new(session);
+	session->sync_userlist = msn_userlist_new(session);
 
 	session->protocol_ver = 9;
 
@@ -71,6 +74,9 @@ msn_session_destroy(MsnSession *session)
 		msn_slplink_destroy(session->slplinks->data);
 
 	msn_userlist_destroy(session->userlist);
+
+	if (session->sync_userlist != NULL)
+		msn_userlist_destroy(session->sync_userlist);
 
 	if (session->passport_info.kv != NULL)
 		g_free(session->passport_info.kv);
@@ -185,4 +191,98 @@ msn_session_get_swboard(MsnSession *session, const char *username)
 	}
 
 	return swboard;
+}
+
+static void
+msn_session_sync_users(MsnSession *session)
+{
+	GList *l;
+
+	l = session->sync_userlist->users;
+
+	while (l != NULL)
+	{
+		MsnUser *local_user;
+
+		local_user = (MsnUser *)l->data;
+
+		if (local_user->passport != NULL)
+		{
+			MsnUser *remote_user;
+
+			remote_user = msn_userlist_find_user(session->userlist,
+												 local_user->passport);
+
+			if (remote_user == NULL ||
+				((local_user->list_op & ( 1 << MSN_LIST_FL)) &&
+				 !(remote_user->list_op & ( 1 << MSN_LIST_FL))))
+			{
+				/* The user was not on the server list */
+				msn_show_sync_issue(session, local_user->passport, NULL);
+			}
+			else
+			{
+				GList *l;
+
+				for (l = local_user->group_ids; l != NULL; l = l->next)
+				{
+					const char *group_name;
+					int gid;
+					gboolean found = FALSE;
+					GList *l2;
+
+					group_name =
+						msn_userlist_find_group_name(local_user->userlist,
+													 (int)l->data);
+
+					gid = msn_userlist_find_group_id(remote_user->userlist,
+													 group_name);
+
+					for (l2 = remote_user->group_ids; l2 != NULL; l2 = l2->next)
+					{
+						if ((int)l2->data == gid)
+						{
+							found = TRUE;
+							break;
+						}
+					}
+
+					if (!found)
+					{
+						/* The user was not on that group on the server list */
+						msn_show_sync_issue(session, local_user->passport,
+											group_name);
+					}
+				}
+			}
+		}
+
+		l = l->next;
+	}
+
+	msn_userlist_destroy(session->sync_userlist);
+	session->sync_userlist = NULL;
+}
+
+void
+msn_session_finish_login(MsnSession *session)
+{
+	GaimAccount *account;
+	GaimConnection *gc;
+
+	account = session->account;
+	gc = gaim_account_get_connection(account);
+
+	msn_user_set_buddy_icon(session->user,
+							gaim_account_get_buddy_icon(session->account));
+
+	msn_change_status(session, MSN_ONLINE);
+
+	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	session->logged_in = TRUE;
+
+	/* Sync users */
+	msn_session_sync_users(session);
+
+	serv_finish_login(gc);
 }
