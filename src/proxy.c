@@ -48,7 +48,10 @@ struct PHB {
 	gint inpa;
 	GaimProxyInfo *gpi;
 	GaimAccount *account;
+	GSList *hosts;
 };
+
+static void try_connect(struct PHB *);
 
 const char* socks5errors[] = {
 	"succeeded\n",
@@ -242,7 +245,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 				   "DNS child %d no longer exists\n", req->dns_pid);
 		return -1;
 	}
-	
+
 	/* Let's contact this lost child! */
 	rc = write(req->fd_in, dns_params, sizeof(*dns_params));
 	if(rc<0) {
@@ -252,9 +255,9 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 		close(req->fd_in);
 		return -1;
 	}
-	
+
 	g_return_val_if_fail(rc == sizeof(*dns_params), -1);
-	
+
 	/* Did you hear me? (This avoids some race conditions) */
 	rc = read(req->fd_out, &ch, 1);
 	if(rc != 1 || ch!='Y') {
@@ -368,12 +371,6 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 
 	req->callback(hosts, req->data, NULL);
 
-	while(hosts) {
-		hosts = g_slist_remove(hosts, hosts->data);
-		g_free(hosts->data);
-		hosts = g_slist_remove(hosts, hosts->data);
-	}
-
 	release_dns_child(req);
 }
 
@@ -424,24 +421,24 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 {
 	pending_dns_request_t *req = NULL;
 	dns_params_t dns_params;
-	
+
 	strncpy(dns_params.hostname, hostname, sizeof(dns_params.hostname)-1);
 	dns_params.hostname[sizeof(dns_params.hostname)-1] = '\0';
 	dns_params.port = port;
-	
+
 	/* Is there a free available child? */
 	while(free_dns_children && !req) {
 		GSList *l = free_dns_children;
 		free_dns_children = g_slist_remove_link(free_dns_children, l);
 		req = l->data;
 		g_slist_free(l);
-		
+
 		if(send_dns_request_to_child(req, &dns_params) != 0) {
 			req_free(req);
 			req = NULL;
 			continue;
 		}
-		
+
 	}
 
 	if(!req) {
@@ -694,17 +691,10 @@ no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 		close(source);
 		gaim_input_remove(phb->inpa);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
-
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
 			   "getsockopt SO_ERROR check: %s\n", strerror(error));
+
+		try_connect(phb);
 		return;
 	}
 
@@ -793,10 +783,13 @@ static void
 http_complete(struct PHB *phb, gint source)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "http proxy", "proxy connection established\n");
-	if(!phb->account || phb->account->gc)
+	if(source < 0) {
+		try_connect(phb);
+	} else if(!phb->account || phb->account->gc) {
 		phb->func(phb->data, source, GAIM_INPUT_READ);
-	g_free(phb->host);
-	g_free(phb);
+		g_free(phb->host);
+		g_free(phb);
+	}
 }
 
 
@@ -836,7 +829,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 			}
 		}
 	}
-	
+
 	if(error) {
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
 				   "Unable to parse proxy's response: %s\n", inputline);
@@ -846,9 +839,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	else if(status!=200) {
 		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
 				   "Proxy server replied with:\n%s\n", p);
- 		close(source);
+		close(source);
 		source = -1;
-		
+
+		/* XXX: why in the hell are we calling gaim_connection_error() here? */
 		if ( status == 403 /* Forbidden */ ) {
 			gchar *msg = g_strdup_printf(_("Access denied: proxy server forbids port %d tunnelling."), phb->port);
 			gaim_connection_error(phb->account->gc, msg);
@@ -858,11 +852,11 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 			gaim_connection_error(phb->account->gc, msg);
 			g_free(msg);
 		}
-		
+
 	} else {
 		http_complete(phb, source);
 	}
-	
+
 	return;
 }
 
@@ -885,14 +879,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -923,14 +910,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (write(source, request, request_len) < 0) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1015,14 +995,7 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	close(source);
 
-	if (phb->account == NULL ||
-		gaim_account_get_connection(phb->account) != NULL) {
-
-		phb->func(phb->data, -1, GAIM_INPUT_READ);
-	}
-
-	g_free(phb->host);
-	g_free(phb);
+	try_connect(phb);
 }
 
 static void
@@ -1044,14 +1017,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
@@ -1060,14 +1026,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (!(hp = gethostbyname(phb->host))) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1084,14 +1043,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	if (write(source, packet, 9) != 9) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1158,14 +1110,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 		gaim_debug(GAIM_DEBUG_WARNING, "socks5 proxy", "or not...\n");
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, source, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
@@ -1175,14 +1120,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 			gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1234,14 +1172,7 @@ s5_sendconnect(gpointer data, gint source)
 	if (write(source, buf, (5 + strlen(phb->host) + 2)) < (5 + strlen(phb->host) + 2)) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1260,28 +1191,14 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	if (read(source, buf, 2) < 2) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
 	if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1300,34 +1217,20 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	if (read(source, buf, 2) < 2) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, source, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
 	if (buf[1] == 0x02) {
 		unsigned int i, j;
-		
+
 		i = strlen(gaim_proxy_info_get_username(phb->gpi));
 		j = strlen(gaim_proxy_info_get_password(phb->gpi));
 
@@ -1340,14 +1243,7 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
 
-			if (phb->account == NULL ||
-				gaim_account_get_connection(phb->account) != NULL) {
-
-				phb->func(phb->data, -1, GAIM_INPUT_READ);
-			}
-
-			g_free(phb->host);
-			g_free(phb);
+			try_connect(phb);
 			return;
 		}
 
@@ -1375,14 +1271,8 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 		close(source);
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
 
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
@@ -1406,14 +1296,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Unable to write\n");
 		close(source);
 
-		if (phb->account == NULL ||
-			gaim_account_get_connection(phb->account) != NULL) {
-
-			phb->func(phb->data, -1, GAIM_INPUT_READ);
-		}
-
-		g_free(phb->host);
-		g_free(phb);
+		try_connect(phb);
 		return;
 	}
 
@@ -1469,23 +1352,19 @@ proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 	return fd;
 }
 
-static void
-connection_host_resolved(GSList *hosts, gpointer data,
-						 const char *error_message)
+static void try_connect(struct PHB *phb)
 {
-	struct PHB *phb = (struct PHB*)data;
 	size_t addrlen;
 	struct sockaddr *addr;
 	int ret = -1;
 
-	while (hosts) {
-		addrlen = GPOINTER_TO_INT(hosts->data);
-		hosts = hosts->next;
-		addr = hosts->data;
-		hosts = hosts->next;
+	while (phb->hosts) {
+		addrlen = GPOINTER_TO_INT(phb->hosts->data);
+		phb->hosts = g_slist_remove(phb->hosts, phb->hosts->data);
+		addr = phb->hosts->data;
+		phb->hosts = g_slist_remove(phb->hosts, phb->hosts->data);
 
-		switch (gaim_proxy_info_get_type(phb->gpi))
-		{
+		switch (gaim_proxy_info_get_type(phb->gpi)) {
 			case GAIM_PROXY_NONE:
 				ret = proxy_connect_none(phb, addr, addrlen);
 				break;
@@ -1510,6 +1389,8 @@ connection_host_resolved(GSList *hosts, gpointer data,
 				break;
 		}
 
+		g_free(addr);
+
 		if (ret > 0)
 			break;
 	}
@@ -1524,6 +1405,17 @@ connection_host_resolved(GSList *hosts, gpointer data,
 		g_free(phb->host);
 		g_free(phb);
 	}
+}
+
+static void
+connection_host_resolved(GSList *hosts, gpointer data,
+						 const char *error_message)
+{
+	struct PHB *phb = (struct PHB*)data;
+
+	phb->hosts = hosts;
+
+	try_connect(phb);
 }
 
 int
@@ -1559,8 +1451,8 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 			char *proxyhost,*proxypath;
 			int proxyport;
 
-			/* http_proxy-format: 
-			 * export http_proxy="http://your.proxy.server:port/" 
+			/* http_proxy-format:
+			 * export http_proxy="http://your.proxy.server:port/"
 			 */
 			if(gaim_url_parse(tmp, &proxyhost, &proxyport, &proxypath)) {
 				gaim_proxy_info_set_host(phb->gpi, proxyhost);
@@ -1568,12 +1460,12 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 				g_free(proxypath);
 
 				/* only for backward compatibility */
-				if (proxyport == 80 && 
+				if (proxyport == 80 &&
 				    ((tmp = g_getenv("HTTP_PROXY_PORT")) != NULL ||
 				     (tmp = g_getenv("http_proxy_port")) != NULL ||
 				     (tmp = g_getenv("HTTPPROXYPORT")) != NULL))
 				    proxyport = atoi(tmp);
-				
+
 				gaim_proxy_info_set_port(phb->gpi, proxyport);
 			}
 		}
