@@ -327,6 +327,13 @@ static void oscar_callback(gpointer data, gint source,
 						gdk_input_remove(odata->cnpa);
 					odata->cnpa = 0;
 					debug_printf("removing chatnav input watcher\n");
+					if (odata->create_exchange) {
+						odata->create_exchange = 0;
+						g_free(odata->create_name);
+						odata->create_name = NULL;
+						do_error_dialog(_("Chat is currently unavailable"),
+								_("Gaim - Chat"));
+					}
 					aim_conn_kill(odata->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_AUTH) {
 					if (odata->paspa > 0)
