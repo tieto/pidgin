@@ -2075,13 +2075,16 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	GtkTreeIter iter;
 	GaimBlistNode *node;
 	GValue val = {0};
-	int scr_w, scr_h, w, h, x, y, mon_num;
+	int scr_w, scr_h, w, h, x, y;
+#if GTK_CHECK_VERSION(2,2,0)
+	int mon_num;
+	GdkScreen *screen = NULL;
+#endif
 	PangoLayout *layout;
 	gboolean tooltip_top = FALSE;
 	char *tooltiptext = NULL;
 	struct _gaim_gtk_blist_node *gtknode;
 	GdkRectangle mon_size;
-	GdkScreen *screen = NULL;
 #ifdef WANT_DROP_SHADOW
 	GdkWindowAttr attr;
 #endif
@@ -2189,12 +2192,20 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
 	pango_layout_get_size (layout, &w, &h);
 
+#if GTK_CHECK_VERSION(2,2,0)
 	gdk_display_get_pointer(gdk_display_get_default(), &screen, &x, &y, NULL);
 	mon_num = gdk_screen_get_monitor_at_point(screen, x, y);
 	gdk_screen_get_monitor_geometry(screen, mon_num, &mon_size);
 
 	scr_w = mon_size.width + mon_size.x;
 	scr_h = mon_size.height + mon_size.y;
+#else
+	scr_w = gdk_screen_width();
+	scr_h = gdk_screen_height();
+	gdk_window_get_pointer(NULL, &x, &y, NULL);
+	mon_size.x = 0;
+	mon_size.y = 0;
+#endif
 
 	w = PANGO_PIXELS(w) + 8;
 	h = PANGO_PIXELS(h) + 8;
@@ -2204,11 +2215,13 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	w = w + 38;
 	h = MAX(h, 38);
 
+#if GTK_CHECK_VERSION(2,2,0)
 	if( w > mon_size.width )
 	  w = mon_size.width - 10;
 
 	if( h > mon_size.height )
 	  h = mon_size.height - 10;
+#endif
 
 	if (GTK_WIDGET_NO_WINDOW(gtkblist->window))
 		y+=gtkblist->window->allocation.y;
