@@ -142,8 +142,10 @@ extern "C" {
 	/**
 	 * Reads from a log
 	 *
-	 * @param log        The log to read from
-	 * @return           The contents of this log in Gaim Markup.
+	 * @param log   The log to read from
+	 * @param flags The returned logging flags.
+	 *
+	 * @return The contents of this log in Gaim Markup.
 	 */
 	char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags);
 
@@ -164,9 +166,13 @@ extern "C" {
 	/**
 	 * Creates a new logger
 	 *
-	 * @param new          The logger's new function
-	 * @param write        The logger's write function
-	 * @return             The new logger
+	 * @param create   The logger's new function.
+	 * @param write    The logger's write function.
+	 * @param finalize The logger's finalize function.
+	 * @param list     The logger's list function.
+	 * @param read     The logger's read function.
+	 *
+	 * @return The new logger
 	 */
 	GaimLogLogger *gaim_log_logger_new(void(*create)(GaimLog *),
 					   void(*write)(GaimLog *, GaimMessageFlags,
