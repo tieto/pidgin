@@ -63,7 +63,6 @@ struct translator {
 };
 
 static struct developer developers[] = {
-	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Sean Egan",					N_("lead developer"), "sean.egan@binghamton.edu"},
 	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
@@ -90,6 +89,7 @@ static struct developer patch_writers[] = {
 };
 
 static struct developer retired_developers[] = {
+	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Adam Fritzler",		N_("former libfaim maintainer"), NULL},
 	{"Eric Warmenhoven",	N_("former lead developer"), "warmenhoven@yahoo.com"},
 	{"Jim Duchek",			N_("former maintainer"), NULL},
