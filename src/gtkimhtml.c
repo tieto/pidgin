@@ -3088,8 +3088,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			pos += tlen;
 		} else if (*c == '\n') {
 			if (!(options & GTK_IMHTML_NO_NEWLINE)) {
-				ws [wpos] = 0;
-				wpos = 0;
 				NEW_BIT (NEW_TEXT_BIT);
 				NEW_BIT (NEW_BR_BIT);
 			}
@@ -3110,7 +3108,6 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 		}
 	}
 
-	ws [wpos] = 0;
 	NEW_BIT (NEW_TEXT_BIT);
 
 	while (newbits) {
