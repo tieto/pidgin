@@ -71,7 +71,7 @@ static void
 input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
 	const char *value;
-	char *multiline_value;
+	char *multiline_value = NULL;
 
 	if (data->u.input.multiline) {
 		GtkTextIter start_iter, end_iter;
