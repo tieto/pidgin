@@ -55,6 +55,7 @@
 #include "pixmaps/available-chat.xpm"
 #include "pixmaps/available-xa.xpm"
 #include "pixmaps/available-dnd.xpm"
+#include "pixmaps/available-error.xpm"
 
 /* The priv member of gjconn's is a gaim_connection for now. */
 #define GJ_GC(x) ((struct gaim_connection *)(x)->priv)
@@ -65,10 +66,11 @@
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
 
-#define UC_AWAY (0x02 | UC_UNAVAILABLE)
-#define UC_CHAT  0x04
-#define UC_XA   (0x08 | UC_UNAVAILABLE)
-#define UC_DND  (0x10 | UC_UNAVAILABLE)
+#define UC_AWAY   (0x02 | UC_UNAVAILABLE)
+#define UC_CHAT    0x04
+#define UC_XA     (0x08 | UC_UNAVAILABLE)
+#define UC_DND    (0x10 | UC_UNAVAILABLE)
+#define UC_ERROR  (0x20 | UC_UNAVAILABLE)
 
 #define DEFAULT_SERVER "jabber.org"
 #define DEFAULT_GROUPCHAT "conference.jabber.org"
@@ -773,7 +775,18 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 		}
 	}
 
-	status = xmlnode_get_tag_data(p->x, "status");
+	if (type && (strcasecmp(type, "error") == 0)) {
+		xmlnode enode;
+		
+		if((enode = xmlnode_get_tag(p->x, "error")) != NULL) {
+			status = g_strdup_printf(_("Error %s: %s"),
+				xmlnode_get_attrib(enode, "code"), xmlnode_get_data(enode));
+		} else {
+			status = g_strdup(_("Unknown Error in presence"));
+		}
+	} else {
+		status = g_strdup(xmlnode_get_tag_data(p->x, "status"));
+	}
 
 	if(vshow != NULL || status != NULL ) {
 		/* kinda hokey, but it works :-) */
@@ -784,6 +797,8 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name, char *type)
 	} else {
 		msg = g_strdup(_("Online"));
 	}
+
+	g_free(status);
 
 	if (val) {
 		g_free(val);
@@ -1006,21 +1021,25 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 	from = xmlnode_get_attrib(p->x, "from");
 	type = xmlnode_get_attrib(p->x, "type");
 	
-	if ((y = xmlnode_get_tag(p->x, "show"))) {
-		show = xmlnode_get_data(y);
-		if (!show) {
-			state = 0;
-		} else if (!strcasecmp(show, "away")) {
-			state = UC_AWAY;
-		} else if (!strcasecmp(show, "chat")) {
-			state = UC_CHAT;
-		} else if (!strcasecmp(show, "xa")) {
-			state = UC_XA;
-		} else if (!strcasecmp(show, "dnd")) {
-			state = UC_DND;
-		}
+	if(type && !strcasecmp(type, "error")) {
+		state = UC_ERROR;
 	} else {
-		state = 0;
+		if ((y = xmlnode_get_tag(p->x, "show"))) {
+			show = xmlnode_get_data(y);
+			if (!show) {
+				state = 0;
+			} else if (!strcasecmp(show, "away")) {
+				state = UC_AWAY;
+			} else if (!strcasecmp(show, "chat")) {
+				state = UC_CHAT;
+			} else if (!strcasecmp(show, "xa")) {
+				state = UC_XA;
+			} else if (!strcasecmp(show, "dnd")) {
+				state = UC_DND;
+			}
+		} else {
+			state = 0;
+		}
 	}
 
 	who = jid_new(gjc->p, from);
@@ -1051,7 +1070,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		res = who->resource;
 		if (res)
 			while (resources) {
-				if (!strcmp(res, resources->data))
+				if (resources->data && !strcmp(res, resources->data))
 					break;
 				resources = resources->next;
 			}
@@ -1059,16 +1078,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 		/* keep track of away msg same as yahoo plugin */
 		jabber_track_away(gjc, p, normalize(b->name), type);
 
-		/*
-		 * JFIXME: The check for "error" is a temporary fix.  We don't want to show the
-		 * buddy on-line in this case.  Ultimately what we'll want to do is process
-		 * "error" the same way as "away" type status and probably have the GUI show,
-		 * say, a broken lightbulb?
-		 *
-		 * Note that there's another check just like this one, below.
-		 */
-		if (type && ((strcasecmp(type, "unavailable") == 0) ||
-				     (strcasecmp(type, "error") == 0))) {
+		if (type && (strcasecmp(type, "unavailable") == 0)) {
 			if (resources) {
 				g_free(resources->data);
 				b->proto_data = g_slist_remove(b->proto_data, resources->data);
@@ -1092,11 +1102,7 @@ static void jabber_handlepresence(gjconn gjc, jpacket p)
 			jabber_track_away(gjc, p, buf, type);
 			g_free(buf);
 
-			/*
-			 * JFIXME: Here's the other place we have temporary handling of a
-			 * presence "error."
-			 */
-			if (type && (!strcasecmp(type, "unavailable") || !strcasecmp(type, "error"))) {
+			if (type && (!strcasecmp(type, "unavailable"))) {
 				struct jabber_data *jd;
 				if (!jc && !(jc = find_existing_chat(GJ_GC(gjc), who))) {
 					g_free(buddy);
@@ -1922,6 +1928,8 @@ static char **jabber_list_icon(int uc)
 		return available_xa_xpm;
 	case UC_DND:
 		return available_dnd_xpm;
+	case UC_ERROR:
+		return available_error_xpm;
 	default:
 		return available_xpm;
 	}

@@ -12,6 +12,7 @@ EXTRA_DIST =	ab.xpm				\
 		available-away.xpm		\
 		available-chat.xpm		\
 		available-dnd.xpm		\
+		available-error.xpm		\
 		available-xa.xpm		\
 		available.xpm			\
 		away.png			\

@@ -8,6 +8,11 @@ version 0.59
 	* Fixed a significant applet leak
 	* Can now change Jabber password on server (Thanks,
 	  Nathan Walp)
+	* Certain types of Jabber presence errors no longer
+	  falsely show a buddy on-line.  Instead now a "broken
+	  light-bulb" icon is shown and the error status is
+	  available via "Get Away Msg"  (Thanks and a tip o'
+	  the hat to Christian Hammond for the graphic)
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
