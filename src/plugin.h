@@ -24,6 +24,8 @@
 #define _GAIM_PLUGIN_H_
 
 #include <gmodule.h>
+#include "signals.h"
+#include "value.h"
 
 typedef struct _GaimPlugin     GaimPlugin;         /**< GaimPlugin       */
 typedef struct _GaimPluginInfo GaimPluginInfo;     /**< GaimPluginInfo   */
@@ -88,8 +90,6 @@ struct _GaimPluginLoaderInfo
 	gboolean (*load)(GaimPlugin *plugin);
 	gboolean (*unload)(GaimPlugin *plugin);
 	void     (*destroy)(GaimPlugin *plugin);
-
-	/* XXX GaimSignalBroadcastFunc broadcast; */
 };
 
 /**
@@ -103,6 +103,7 @@ struct _GaimPlugin
 	char *path;                            /**< The path to the plugin.   */
 	GaimPluginInfo *info;                  /**< The plugin information.   */
 	char *error;
+	void *ipc_data;                        /**< IPC data.                 */
 	void *extra;                           /**< Plugin-specific data.     */
 };
 
@@ -221,6 +222,76 @@ void gaim_plugin_destroy(GaimPlugin *plugin);
  * @return TRUE if loaded, or FALSE otherwise.
  */
 gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Plugin IPC API                                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Registers an IPC command in a plugin.
+ *
+ * @param plugin     The plugin to register the command with.
+ * @param command    The name of the command.
+ * @param func       The function to execute.
+ * @param marshal    The marshalling function.
+ * @param ret_value  The return value type.
+ * @param num_values The number of parameters.
+ * @param ...        The parameter types.
+ *
+ * @return TRUE if the function was registered successfully, or
+ *         FALSE otherwise.
+ */
+gboolean gaim_plugin_ipc_register(GaimPlugin *plugin, const char *command,
+								  GaimCallback func,
+								  GaimSignalMarshalFunc marshal,
+								  GaimValue *ret_value, int num_params, ...);
+
+/**
+ * Unregisters an IPC command in a plugin.
+ *
+ * @param plugin  The plugin to unregister the command from.
+ * @param command The name of the command.
+ */
+void gaim_plugin_ipc_unregister(GaimPlugin *plugin, const char *command);
+
+/**
+ * Unregisters all IPC commands in a plugin.
+ *
+ * @param plugin The plugin to unregister the commands from.
+ */
+void gaim_plugin_ipc_unregister_all(GaimPlugin *plugin);
+
+/**
+ * Returns a list of value types used for an IPC command.
+ *
+ * @param plugin     The plugin.
+ * @param command    The name of the command.
+ * @param ret_value  The returned return value.
+ * @param num_params The returned number of parameters.
+ * @param params     The returned list of parameters.
+ *
+ * @return TRUE if the command was found, or FALSE otherwise.
+ */
+gboolean gaim_plugin_ipc_get_params(GaimPlugin *plugin, const char *command,
+									GaimValue **ret_value, int *num_params,
+									GaimValue ***params);
+
+/**
+ * Executes an IPC command.
+ *
+ * @param plugin  The plugin to execute the command on.
+ * @param command The name of the command.
+ * @param ok      TRUE if the call was successful, or FALSE otherwise.
+ * @param ...     The parameters to pass.
+ *
+ * @return The return value, which will be NULL if the command doesn't
+ *         return a value.
+ */
+void *gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
+						   gboolean *ok, ...);
 
 /*@}*/
 

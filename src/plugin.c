@@ -17,23 +17,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
-/*
- * ----------------
- * The Plug-in plugin
- *
- * Plugin support is currently being maintained by Mike Saraf
- * msaraf@dwc.edu
- *
- * Well, I didn't see any work done on it for a while, so I'm going to try
- * my hand at it. - Eric warmenhoven@yahoo.com
- *
- * Mike is my roomate.  I can assure you that he's lazy :-P
- * -- Rob rob@marko.net
- *
- * Yeah, well now I'm re-writing a good portion of it! The perl stuff was
- * a hack. Tsk tsk! -- Christian <chipx86@gnupdate.org>
- */
 #include "internal.h"
 
 #include "accountopt.h"
@@ -53,6 +36,24 @@
 # define PLUGIN_EXT ".so"
 #endif
 #endif
+
+typedef struct
+{
+	GHashTable *commands;
+	size_t command_count;
+
+} GaimPluginIpcInfo;
+
+typedef struct
+{
+	GaimCallback func;
+	GaimSignalMarshalFunc marshal;
+
+	int num_params;
+	GaimValue **params;
+	GaimValue *ret_value;
+
+} GaimPluginIpcCommand;
 
 static GList *loaded_plugins = NULL;
 static GList *plugins = NULL;
@@ -395,6 +396,7 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	}
 
 	gaim_signals_disconnect_by_handle(plugin);
+	gaim_plugin_ipc_unregister_all(plugin);
 
 	/* TODO */
 	if (unload_cb != NULL)
@@ -499,6 +501,201 @@ gaim_plugin_is_loaded(const GaimPlugin *plugin)
 	return plugin->loaded;
 }
 
+/**************************************************************************
+ * Plugin IPC
+ **************************************************************************/
+static void
+destroy_ipc_info(void *data)
+{
+	GaimPluginIpcCommand *ipc_command = (GaimPluginIpcCommand *)data;
+	int i;
+
+	for (i = 0; i < ipc_command->num_params; i++)
+		gaim_value_destroy(ipc_command->params[i]);
+
+	if (ipc_command->ret_value != NULL)
+		gaim_value_destroy(ipc_command->ret_value);
+
+	g_free(ipc_command);
+}
+
+gboolean
+gaim_plugin_ipc_register(GaimPlugin *plugin, const char *command,
+						 GaimCallback func, GaimSignalMarshalFunc marshal,
+						 GaimValue *ret_value, int num_params, ...)
+{
+	GaimPluginIpcInfo *ipc_info;
+	GaimPluginIpcCommand *ipc_command;
+
+	g_return_val_if_fail(plugin  != NULL, FALSE);
+	g_return_val_if_fail(command != NULL, FALSE);
+	g_return_val_if_fail(func    != NULL, FALSE);
+	g_return_val_if_fail(marshal != NULL, FALSE);
+
+	if (plugin->ipc_data == NULL)
+	{
+		ipc_info = plugin->ipc_data = g_new0(GaimPluginIpcInfo, 1);
+		ipc_info->commands = g_hash_table_new_full(g_str_hash, g_str_equal,
+												   g_free, destroy_ipc_info);
+	}
+	else
+		ipc_info = (GaimPluginIpcInfo *)plugin->ipc_data;
+
+	ipc_command = g_new0(GaimPluginIpcCommand, 1);
+	ipc_command->func       = func;
+	ipc_command->marshal    = marshal;
+	ipc_command->num_params = num_params;
+	ipc_command->ret_value  = ret_value;
+
+	if (num_params > 0)
+	{
+		va_list args;
+		int i;
+
+		ipc_command->params = g_new0(GaimValue *, num_params);
+
+		va_start(args, num_params);
+
+		for (i = 0; i < num_params; i++)
+			ipc_command->params[i] = va_arg(args, GaimValue *);
+
+		va_end(args);
+	}
+
+	g_hash_table_replace(ipc_info->commands, g_strdup(command), ipc_command);
+
+	ipc_info->command_count++;
+
+	return TRUE;
+}
+
+void
+gaim_plugin_ipc_unregister(GaimPlugin *plugin, const char *command)
+{
+	GaimPluginIpcInfo *ipc_info;
+
+	g_return_if_fail(plugin  != NULL);
+	g_return_if_fail(command != NULL);
+
+	ipc_info = (GaimPluginIpcInfo *)plugin->ipc_data;
+
+	if (ipc_info == NULL ||
+		g_hash_table_lookup(ipc_info->commands, command) == NULL)
+	{
+		gaim_debug_error("plugins",
+						 "IPC command '%s' was not registered for plugin %s\n",
+						 command, plugin->info->name);
+		return;
+	}
+
+	g_hash_table_remove(ipc_info->commands, command);
+
+	ipc_info->command_count--;
+
+	if (ipc_info->command_count == 0)
+	{
+		g_hash_table_destroy(ipc_info->commands);
+		g_free(ipc_info);
+
+		plugin->ipc_data = NULL;
+	}
+}
+
+void
+gaim_plugin_ipc_unregister_all(GaimPlugin *plugin)
+{
+	GaimPluginIpcInfo *ipc_info;
+
+	g_return_if_fail(plugin != NULL);
+
+	if (plugin->ipc_data == NULL)
+		return; /* Silently ignore it. */
+
+	ipc_info = (GaimPluginIpcInfo *)plugin->ipc_data;
+
+	g_hash_table_destroy(ipc_info->commands);
+	g_free(ipc_info);
+
+	plugin->ipc_data = NULL;
+}
+
+gboolean
+gaim_plugin_ipc_get_params(GaimPlugin *plugin, const char *command,
+						   GaimValue **ret_value, int *num_params,
+						   GaimValue ***params)
+{
+	GaimPluginIpcInfo *ipc_info;
+	GaimPluginIpcCommand *ipc_command;
+
+	g_return_val_if_fail(plugin  != NULL, FALSE);
+	g_return_val_if_fail(command != NULL, FALSE);
+
+	ipc_info = (GaimPluginIpcInfo *)plugin->ipc_data;
+
+	if (ipc_info == NULL ||
+		(ipc_command = g_hash_table_lookup(ipc_info->commands,
+										   command)) == NULL)
+	{
+		gaim_debug_error("plugins",
+						 "IPC command '%s' was not registered for plugin %s\n",
+						 command, plugin->info->name);
+
+		return FALSE;
+	}
+
+	if (num_params != NULL)
+		*num_params = ipc_command->num_params;
+
+	if (params != NULL)
+		*params = ipc_command->params;
+
+	if (ret_value != NULL)
+		*ret_value = ipc_command->ret_value;
+
+	return TRUE;
+}
+
+void *
+gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
+					 gboolean *ok, ...)
+{
+	GaimPluginIpcInfo *ipc_info;
+	GaimPluginIpcCommand *ipc_command;
+	va_list args;
+	void *ret_value;
+
+	if (ok != NULL)
+		*ok = FALSE;
+
+	g_return_val_if_fail(plugin  != NULL, NULL);
+	g_return_val_if_fail(command != NULL, NULL);
+
+	ipc_info = (GaimPluginIpcInfo *)plugin->ipc_data;
+
+	if (ipc_info == NULL ||
+		(ipc_command = g_hash_table_lookup(ipc_info->commands,
+										   command)) == NULL)
+	{
+		gaim_debug_error("plugins",
+						 "IPC command '%s' was not registered for plugin %s\n",
+						 command, plugin->info->name);
+
+		return NULL;
+	}
+
+	va_start(args, ok);
+	ipc_command->marshal(ipc_command->func, args, NULL, &ret_value);
+	va_end(args);
+
+	if (ok != NULL)
+		*ok = TRUE;
+
+	return ret_value;
+}
+
+/**************************************************************************
+ * Plugins subsystem
+ **************************************************************************/
 void
 gaim_plugins_set_search_paths(size_t count, char **paths)
 {

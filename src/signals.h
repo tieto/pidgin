@@ -213,6 +213,10 @@ void gaim_signals_uninit();
 
 void gaim_marshal_VOID(
 		GaimCallback cb, va_list args, void *data, void **return_val);
+void gaim_marshal_VOID__INT(
+		GaimCallback cb, va_list args, void *data, void **return_val);
+void gaim_marshal_VOID__INT_INT(
+		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_VOID__POINTER(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_VOID__POINTER_POINTER(
@@ -226,6 +230,11 @@ void gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER(
 void gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT(
+		GaimCallback cb, va_list args, void *data, void **return_val);
+
+void gaim_marshal_INT__INT(
+		GaimCallback cb, va_list args, void *data, void **return_val);
+void gaim_marshal_INT__INT_INT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 
 void gaim_marshal_BOOLEAN__POINTER(

@@ -41,6 +41,7 @@ text_sent_cb(GtkEntry *entry)
 
 	txt = gtk_entry_get_text(entry);
 
+	gaim_debug_misc("raw", "prpl num = %d\n", gaim_account_get_protocol(account));
 	switch (gaim_account_get_protocol(account)) {
 		case GAIM_PROTO_TOC:
 			{
@@ -76,6 +77,8 @@ text_sent_cb(GtkEntry *entry)
 			break;
 
 		default:
+			gaim_debug_error("raw", "Unknown protocol ID %d\n",
+							 gaim_account_get_protocol(account));
 			break;
 	}
 
