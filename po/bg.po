@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.60\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-20 21:45-0400\n"
+"POT-Creation-Date: 2004-04-22 22:29-0400\n"
 "PO-Revision-Date: 2002-04-16 04:54+0200\n"
 "Last-Translator: Hristo Todorov <igel@bofh.bg>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
@@ -156,11 +156,11 @@ msgstr "Присъединяване към чат"
 msgid "New..."
 msgstr ""
 
-#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1626 src/protocols/gg/gg.c:51
+#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1637 src/protocols/gg/gg.c:51
 #: src/protocols/irc/msgs.c:187 src/protocols/jabber/jabber.c:952
 #: src/protocols/jabber/jutil.c:32 src/protocols/jabber/presence.c:63
-#: src/protocols/jabber/presence.c:119 src/protocols/novell/novell.c:2144
-#: src/protocols/novell/novell.c:2259 src/protocols/novell/novell.c:2311
+#: src/protocols/jabber/presence.c:119 src/protocols/novell/novell.c:2147
+#: src/protocols/novell/novell.c:2262 src/protocols/novell/novell.c:2314
 #: src/protocols/oscar/oscar.c:520 src/protocols/oscar/oscar.c:4825
 #: src/protocols/oscar/oscar.c:5808 src/protocols/oscar/oscar.c:6426
 msgid "Away"
@@ -188,7 +188,7 @@ msgstr "Не мога да пиша"
 msgid "Accounts"
 msgstr "Акаунт"
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2576 src/main.c:292
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2594 src/main.c:292
 #, fuzzy
 msgid "Preferences"
 msgstr "Настройки"
@@ -389,21 +389,21 @@ msgid ""
 msgstr ""
 
 #: plugins/gevolution/add_buddy_dialog.c:136
-#: plugins/gevolution/assoc-buddy.c:76
+#: plugins/gevolution/assoc-buddy.c:74
 #, fuzzy
 msgid "Local Addressbook"
 msgstr "Улица"
 
 #: plugins/gevolution/add_buddy_dialog.c:146
 #: plugins/gevolution/add_buddy_dialog.c:157
-#: plugins/gevolution/assoc-buddy.c:86 plugins/gevolution/assoc-buddy.c:97
-#: src/gtkblist.c:2964 src/gtkprefs.c:873 src/gtkprefs.c:1654
+#: plugins/gevolution/assoc-buddy.c:84 plugins/gevolution/assoc-buddy.c:95
+#: src/gtkblist.c:2964 src/gtkprefs.c:884 src/gtkprefs.c:1665
 #: src/protocols/jabber/jabber.c:916
 msgid "None"
 msgstr "Не показва"
 
 #: plugins/gevolution/add_buddy_dialog.c:190
-#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:1991
+#: plugins/gevolution/assoc-buddy.c:178 src/gtkprefs.c:2006
 #: src/gtkroomlist.c:561 src/protocols/jabber/jabber.c:591
 #: src/protocols/msn/msn.c:1395 src/protocols/trepia/trepia.c:398
 #, fuzzy
@@ -422,7 +422,7 @@ msgstr ""
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:495
-#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6697
+#: plugins/gevolution/assoc-buddy.c:383 src/protocols/oscar/oscar.c:6697
 msgid "Search"
 msgstr ""
 
@@ -435,7 +435,7 @@ msgstr "Група"
 
 #. "New Person" button
 #: plugins/gevolution/add_buddy_dialog.c:592
-#: plugins/gevolution/assoc-buddy.c:488
+#: plugins/gevolution/assoc-buddy.c:486
 msgid "New Person"
 msgstr ""
 
@@ -446,24 +446,24 @@ msgid "Select Buddy"
 msgstr "Избор"
 
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:372
+#: plugins/gevolution/assoc-buddy.c:370
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
 msgstr ""
 
 #. Add the disclosure
-#: plugins/gevolution/assoc-buddy.c:451
+#: plugins/gevolution/assoc-buddy.c:449
 #, fuzzy
 msgid "Show user details"
 msgstr "Прокси"
 
-#: plugins/gevolution/assoc-buddy.c:452
+#: plugins/gevolution/assoc-buddy.c:450
 msgid "Hide user details"
 msgstr ""
 
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:505
+#: plugins/gevolution/assoc-buddy.c:503
 #, fuzzy
 msgid "_Associate Buddy"
 msgstr "Прякор"
@@ -784,14 +784,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:530
+#: plugins/perl/perl.c:531
 msgid "Perl Plugin Loader"
 msgstr ""
 
 #. *< name
 #. *< version
 #. *< summary
-#: plugins/perl/perl.c:532 plugins/perl/perl.c:533
+#: plugins/perl/perl.c:533 plugins/perl/perl.c:534
 msgid "Provides support for loading perl plugins."
 msgstr ""
 
@@ -1033,12 +1033,12 @@ msgid ""
 "idle."
 msgstr ""
 
-#: plugins/tcl/tcl.c:349
+#: plugins/tcl/tcl.c:350
 #, fuzzy
 msgid "Tcl Plugin Loader"
 msgstr "Грешка при влизане"
 
-#: plugins/tcl/tcl.c:351 plugins/tcl/tcl.c:352
+#: plugins/tcl/tcl.c:352 plugins/tcl/tcl.c:353
 msgid "Provides support for loading Tcl plugins"
 msgstr ""
 
@@ -1119,7 +1119,7 @@ msgid "_Show slider bar in IM window"
 msgstr "Показва влизанията в прозореца"
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:876
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:887
 msgid "Buddy List Window"
 msgstr "Прозорец на листа"
 
@@ -1151,59 +1151,59 @@ msgid ""
 "* Note: This plugin requires Win2000 or WinXP."
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:348
+#: plugins/win32/winprefs/winprefs.c:344
 msgid "GTK+ Runtime Version"
 msgstr ""
 
 #. Autostart
-#: plugins/win32/winprefs/winprefs.c:356
+#: plugins/win32/winprefs/winprefs.c:352
 #, fuzzy
 msgid "Startup"
 msgstr "Състояние"
 
-#: plugins/win32/winprefs/winprefs.c:357
+#: plugins/win32/winprefs/winprefs.c:353
 msgid "_Start Gaim on Windows startup"
 msgstr ""
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:3005
-#: src/gtkprefs.c:2490
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3005
+#: src/gtkprefs.c:2505
 msgid "Buddy List"
 msgstr "Лист"
 
-#: plugins/win32/winprefs/winprefs.c:367
+#: plugins/win32/winprefs/winprefs.c:363
 #, fuzzy
 msgid "_Dockable Buddy List"
 msgstr "Изпрати листата"
 
 #. Docked Blist On Top
-#: plugins/win32/winprefs/winprefs.c:371
+#: plugins/win32/winprefs/winprefs.c:367
 #, fuzzy
 msgid "Docked _Buddy List is always on top"
 msgstr "Прозорец на листа"
 
 #. Blist On Top
-#: plugins/win32/winprefs/winprefs.c:381
+#: plugins/win32/winprefs/winprefs.c:377
 #, fuzzy
 msgid "_Keep Buddy List window on top"
 msgstr "Прозорец на листа"
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:914
-#: src/gtkprefs.c:2491 src/protocols/msn/msn.c:1621
+#: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:925
+#: src/gtkprefs.c:2506 src/protocols/msn/msn.c:1621
 msgid "Conversations"
 msgstr "Разговори"
 
-#: plugins/win32/winprefs/winprefs.c:387
+#: plugins/win32/winprefs/winprefs.c:383
 msgid "_Flash Window when messages are received"
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:409
+#: plugins/win32/winprefs/winprefs.c:405
 #, fuzzy
 msgid "WinGaim Options"
 msgstr "Шрифт"
 
-#: plugins/win32/winprefs/winprefs.c:411 plugins/win32/winprefs/winprefs.c:412
+#: plugins/win32/winprefs/winprefs.c:407 plugins/win32/winprefs/winprefs.c:408
 msgid "Options specific to Windows Gaim."
 msgstr ""
 
@@ -1539,7 +1539,7 @@ msgstr "Махане съобщение за отсъствие"
 msgid "Set All Away"
 msgstr "Всички -> отсъствие"
 
-#: src/blist.c:590 src/gtkprefs.c:2493
+#: src/blist.c:590 src/gtkprefs.c:2508
 #, fuzzy
 msgid "Chats"
 msgstr "Чат"
@@ -1559,8 +1559,8 @@ msgstr[1] ""
 msgid "Group not removed"
 msgstr ""
 
-#: src/blist.c:1251 src/gtkaccount.c:164 src/gtkft.c:153 src/gtkutils.c:860
-#: src/protocols/jabber/buddy.c:569 src/protocols/novell/novell.c:2156
+#: src/blist.c:1251 src/gtkaccount.c:164 src/gtkft.c:153 src/gtkutils.c:696
+#: src/protocols/jabber/buddy.c:569 src/protocols/novell/novell.c:2159
 msgid "Unknown"
 msgstr "Непознато"
 
@@ -1652,7 +1652,7 @@ msgstr "%s напусна стая (%s)."
 msgid "Last created window"
 msgstr ""
 
-#: src/conversation.c:2469 src/gtkprefs.c:1402
+#: src/conversation.c:2469 src/gtkprefs.c:1413
 #, fuzzy
 msgid "New window"
 msgstr "Ширина на прозореца"
@@ -2039,7 +2039,7 @@ msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:808 src/gtkaccount.c:860 src/gtkprefs.c:1203
+#: src/gtkaccount.c:808 src/gtkaccount.c:860 src/gtkprefs.c:1214
 msgid "Use Environmental Settings"
 msgstr ""
 
@@ -2056,17 +2056,17 @@ msgstr ""
 msgid "Proxy Options"
 msgstr "Уединие"
 
-#: src/gtkaccount.c:937 src/gtkprefs.c:1197
+#: src/gtkaccount.c:937 src/gtkprefs.c:1208
 #, fuzzy
 msgid "Proxy _type:"
 msgstr "Тип Proxy"
 
-#: src/gtkaccount.c:946 src/gtkprefs.c:1227
+#: src/gtkaccount.c:946 src/gtkprefs.c:1238
 #, fuzzy
 msgid "_Host:"
 msgstr "Хост"
 
-#: src/gtkaccount.c:950 src/gtkprefs.c:1245
+#: src/gtkaccount.c:950 src/gtkprefs.c:1256
 #, fuzzy
 msgid "_Port:"
 msgstr "Порт"
@@ -2076,7 +2076,7 @@ msgstr "Порт"
 msgid "_Username:"
 msgstr "Потребител"
 
-#: src/gtkaccount.c:963 src/gtkprefs.c:1282
+#: src/gtkaccount.c:963 src/gtkprefs.c:1293
 #, fuzzy
 msgid "Pa_ssword:"
 msgstr "Парола"
@@ -2158,8 +2158,8 @@ msgid "Add buddy to your list?"
 msgstr ""
 
 #. Add button
-#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1107
-#: src/gtkconv.c:3338 src/gtkconv.c:3429 src/gtkrequest.c:240
+#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1113
+#: src/gtkconv.c:3332 src/gtkconv.c:3423 src/gtkrequest.c:240
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:3004
 msgid "Add"
 msgstr "Добавяне"
@@ -2259,7 +2259,7 @@ msgstr "Затваряне"
 msgid "_Expand"
 msgstr ""
 
-#: src/gtkblist.c:1964 src/gtkconv.c:3916
+#: src/gtkblist.c:1964 src/gtkconv.c:3911
 #, fuzzy
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
@@ -2691,326 +2691,326 @@ msgstr "Криене на икона"
 msgid "_Search for:"
 msgstr "Търсене"
 
-#: src/gtkconv.c:1065
+#: src/gtkconv.c:1071
 msgid "IM"
 msgstr "Съобщение"
 
-#: src/gtkconv.c:1073
+#: src/gtkconv.c:1079
 msgid "Un-Ignore"
 msgstr "Не-игнориране"
 
-#: src/gtkconv.c:1075 src/gtkprefs.c:806
+#: src/gtkconv.c:1081 src/gtkprefs.c:817
 msgid "Ignore"
 msgstr "Игнориране"
 
 #. Info button
-#: src/gtkconv.c:1084 src/gtkconv.c:3352
+#: src/gtkconv.c:1090 src/gtkconv.c:3346
 msgid "Info"
 msgstr "Инфо"
 
-#: src/gtkconv.c:1093
+#: src/gtkconv.c:1099
 msgid "Get Away Msg"
 msgstr "Вземи away текст"
 
 #. Remove button
-#: src/gtkconv.c:1105 src/gtkconv.c:3345 src/gtkconv.c:3436
+#: src/gtkconv.c:1111 src/gtkconv.c:3339 src/gtkconv.c:3430
 #: src/gtkrequest.c:241
 msgid "Remove"
 msgstr "Премахване"
 
-#: src/gtkconv.c:2207
+#: src/gtkconv.c:2201
 #, fuzzy
 msgid "Animate"
 msgstr "Покана"
 
-#: src/gtkconv.c:2212
+#: src/gtkconv.c:2206
 msgid "Hide Icon"
 msgstr "Криене на икона"
 
-#: src/gtkconv.c:2218
+#: src/gtkconv.c:2212
 msgid "Save Icon As..."
 msgstr "Съхранение на иконата като..."
 
-#: src/gtkconv.c:2585
+#: src/gtkconv.c:2579
 msgid "User is typing..."
 msgstr ""
 
-#: src/gtkconv.c:2593
+#: src/gtkconv.c:2587
 msgid "User has typed something and paused"
 msgstr ""
 
 #. Build the Send As menu
-#: src/gtkconv.c:2696
+#: src/gtkconv.c:2690
 #, fuzzy
 msgid "_Send As"
 msgstr "Пращане"
 
-#: src/gtkconv.c:3116
+#: src/gtkconv.c:3110
 #, fuzzy
 msgid "Save Conversation"
 msgstr "Запис на разгово"
 
 #. Conversation menu
-#: src/gtkconv.c:3133
+#: src/gtkconv.c:3127
 #, fuzzy
 msgid "/_Conversation"
 msgstr "Разговор"
 
-#: src/gtkconv.c:3135
+#: src/gtkconv.c:3129
 #, fuzzy
 msgid "/Conversation/New Instant _Message..."
 msgstr "Изпращане на образ"
 
-#: src/gtkconv.c:3140
+#: src/gtkconv.c:3134
 #, fuzzy
 msgid "/Conversation/_Find..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3142
+#: src/gtkconv.c:3136
 #, fuzzy
 msgid "/Conversation/View _Log"
 msgstr "Разговор"
 
-#: src/gtkconv.c:3143
+#: src/gtkconv.c:3137
 #, fuzzy
 msgid "/Conversation/_Save As..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3148
+#: src/gtkconv.c:3142
 #, fuzzy
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "Ново известие"
 
-#: src/gtkconv.c:3150
+#: src/gtkconv.c:3144
 #, fuzzy
 msgid "/Conversation/_Get Info"
 msgstr "Разговор"
 
-#: src/gtkconv.c:3152
+#: src/gtkconv.c:3146
 #, fuzzy
 msgid "/Conversation/_Warn..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3154
+#: src/gtkconv.c:3148
 #, fuzzy
 msgid "/Conversation/In_vite..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3159
+#: src/gtkconv.c:3153
 #, fuzzy
 msgid "/Conversation/A_lias..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3161
+#: src/gtkconv.c:3155
 #, fuzzy
 msgid "/Conversation/_Block..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3163
+#: src/gtkconv.c:3157
 #, fuzzy
 msgid "/Conversation/_Add..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3165
+#: src/gtkconv.c:3159
 #, fuzzy
 msgid "/Conversation/_Remove..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3170
+#: src/gtkconv.c:3164
 #, fuzzy
 msgid "/Conversation/Insert Lin_k..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3172
+#: src/gtkconv.c:3166
 #, fuzzy
 msgid "/Conversation/Insert Imag_e..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3177
+#: src/gtkconv.c:3171
 #, fuzzy
 msgid "/Conversation/_Close"
 msgstr "Разговори"
 
 #. Options
-#: src/gtkconv.c:3181
+#: src/gtkconv.c:3175
 #, fuzzy
 msgid "/_Options"
 msgstr "Опции"
 
-#: src/gtkconv.c:3182
+#: src/gtkconv.c:3176
 #, fuzzy
 msgid "/Options/Enable _Logging"
 msgstr "Позволяване на логванe"
 
-#: src/gtkconv.c:3183
+#: src/gtkconv.c:3177
 #, fuzzy
 msgid "/Options/Enable _Sounds"
 msgstr "Позволяване на звука"
 
-#: src/gtkconv.c:3184
+#: src/gtkconv.c:3178
 msgid "/Options/Show Formatting _Toolbar"
 msgstr ""
 
-#: src/gtkconv.c:3226
+#: src/gtkconv.c:3220
 #, fuzzy
 msgid "/Conversation/View Log"
 msgstr "Разговор"
 
-#: src/gtkconv.c:3231
+#: src/gtkconv.c:3225
 #, fuzzy
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "Ново известие"
 
-#: src/gtkconv.c:3237
+#: src/gtkconv.c:3231
 #, fuzzy
 msgid "/Conversation/Get Info"
 msgstr "Разговор"
 
-#: src/gtkconv.c:3241
+#: src/gtkconv.c:3235
 #, fuzzy
 msgid "/Conversation/Warn..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3245
+#: src/gtkconv.c:3239
 #, fuzzy
 msgid "/Conversation/Invite..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3251
+#: src/gtkconv.c:3245
 #, fuzzy
 msgid "/Conversation/Alias..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3255
+#: src/gtkconv.c:3249
 #, fuzzy
 msgid "/Conversation/Block..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3259
+#: src/gtkconv.c:3253
 #, fuzzy
 msgid "/Conversation/Add..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3263
+#: src/gtkconv.c:3257
 #, fuzzy
 msgid "/Conversation/Remove..."
 msgstr "Разговор"
 
-#: src/gtkconv.c:3269
+#: src/gtkconv.c:3263
 #, fuzzy
 msgid "/Conversation/Insert Link..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3273
+#: src/gtkconv.c:3267
 #, fuzzy
 msgid "/Conversation/Insert Image..."
 msgstr "Разговори"
 
-#: src/gtkconv.c:3279
+#: src/gtkconv.c:3273
 #, fuzzy
 msgid "/Options/Enable Logging"
 msgstr "Позволяване на логванe"
 
-#: src/gtkconv.c:3282
+#: src/gtkconv.c:3276
 #, fuzzy
 msgid "/Options/Enable Sounds"
 msgstr "Позволяване на звука"
 
-#: src/gtkconv.c:3285
+#: src/gtkconv.c:3279
 msgid "/Options/Show Formatting Toolbar"
 msgstr ""
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3308 src/gtkconv.c:3310 src/gtkconv.c:3408 src/gtkconv.c:3410
+#: src/gtkconv.c:3302 src/gtkconv.c:3304 src/gtkconv.c:3402 src/gtkconv.c:3404
 msgid "Send"
 msgstr "Пращане"
 
 #. Now, um, just kind of all over the place. Huh?
 #. Warn button
-#: src/gtkconv.c:3324
+#: src/gtkconv.c:3318
 msgid "Warn"
 msgstr "Предуреждение"
 
-#: src/gtkconv.c:3327
+#: src/gtkconv.c:3321
 msgid "Warn the user"
 msgstr ""
 
 #. Block button
-#: src/gtkconv.c:3331 src/gtkprivacy.c:612 src/gtkprivacy.c:623
+#: src/gtkconv.c:3325 src/gtkprivacy.c:612 src/gtkprivacy.c:623
 msgid "Block"
 msgstr "Блокиране"
 
-#: src/gtkconv.c:3334
+#: src/gtkconv.c:3328
 #, fuzzy
 msgid "Block the user"
 msgstr "Блокирай потребителите по-долу"
 
-#: src/gtkconv.c:3341
+#: src/gtkconv.c:3335
 #, fuzzy
 msgid "Add the user to your buddy list"
 msgstr "Позволи само потребителите по долу"
 
-#: src/gtkconv.c:3348
+#: src/gtkconv.c:3342
 #, fuzzy
 msgid "Remove the user from your buddy list"
 msgstr "Премахване на '%s' от листа.\n"
 
-#: src/gtkconv.c:3355 src/gtkconv.c:3677
+#: src/gtkconv.c:3349 src/gtkconv.c:3671
 msgid "Get the user's information"
 msgstr ""
 
 #. Invite
-#: src/gtkconv.c:3422
+#: src/gtkconv.c:3416
 msgid "Invite"
 msgstr "Покана"
 
-#: src/gtkconv.c:3425
+#: src/gtkconv.c:3419
 #, fuzzy
 msgid "Invite a user"
 msgstr "Невалидно име"
 
-#: src/gtkconv.c:3432
+#: src/gtkconv.c:3426
 #, fuzzy
 msgid "Add the chat to your buddy list"
 msgstr "Позволи само потребителите по долу"
 
-#: src/gtkconv.c:3439
+#: src/gtkconv.c:3433
 #, fuzzy
 msgid "Remove the chat from your buddy list"
 msgstr "Премахване на '%s' от листа.\n"
 
-#: src/gtkconv.c:3539
+#: src/gtkconv.c:3533
 msgid "Topic:"
 msgstr "Заглавие:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3599
+#: src/gtkconv.c:3593
 msgid "0 people in room"
 msgstr "0 човека в стаята"
 
-#: src/gtkconv.c:3654
+#: src/gtkconv.c:3648
 msgid "IM the user"
 msgstr ""
 
-#: src/gtkconv.c:3666
+#: src/gtkconv.c:3660
 #, fuzzy
 msgid "Ignore the user"
 msgstr "Пренебрегва размерите на шрифта"
 
-#: src/gtkconv.c:4207
+#: src/gtkconv.c:4202
 #, fuzzy
 msgid "Close conversation"
 msgstr "Разговор"
 
-#: src/gtkconv.c:4752 src/gtkconv.c:4784 src/gtkconv.c:4905 src/gtkconv.c:4972
+#: src/gtkconv.c:4747 src/gtkconv.c:4779 src/gtkconv.c:4900 src/gtkconv.c:4967
 #, fuzzy, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d %s в стаята"
 msgstr[1] "%d %s в стаята"
 
-#: src/gtkconv.c:5491 src/gtkconv.c:5494
+#: src/gtkconv.c:5484 src/gtkconv.c:5487
 #, fuzzy
 msgid "<main>/Conversation/Close"
 msgstr "Разговори"
@@ -3176,35 +3176,35 @@ msgid ""
 "Remote port: %d"
 msgstr ""
 
-#: src/gtkimhtml.c:1131
+#: src/gtkimhtml.c:1139
 msgid "_Copy E-Mail Address"
 msgstr ""
 
-#: src/gtkimhtml.c:1143
+#: src/gtkimhtml.c:1151
 msgid "_Copy Link Location"
 msgstr ""
 
-#: src/gtkimhtml.c:1153
+#: src/gtkimhtml.c:1161
 msgid "_Open Link in Browser"
 msgstr ""
 
-#: src/gtkimhtml.c:2635
+#: src/gtkimhtml.c:2643
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:2643
+#: src/gtkimhtml.c:2651
 #, c-format
 msgid "Error saving image: %s"
 msgstr ""
 
-#: src/gtkimhtml.c:2652
+#: src/gtkimhtml.c:2660
 #, fuzzy
 msgid "Save Image"
 msgstr "IM образ"
 
-#: src/gtkimhtml.c:2675
+#: src/gtkimhtml.c:2683
 #, fuzzy
 msgid "_Save Image..."
 msgstr "Съхранение на иконата като..."
@@ -3535,47 +3535,47 @@ msgstr "%s излезе"
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
 
-#: src/gtkprefs.c:388
+#: src/gtkprefs.c:399
 #, fuzzy
 msgid "Interface Options"
 msgstr "Общи"
 
-#: src/gtkprefs.c:390
+#: src/gtkprefs.c:401
 msgid "D_isplay remote nicknames if no alias is set"
 msgstr ""
 
-#: src/gtkprefs.c:584
+#: src/gtkprefs.c:595
 msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
 
-#: src/gtkprefs.c:619
+#: src/gtkprefs.c:630
 #, fuzzy
 msgid "Icon"
 msgstr "Икона"
 
-#: src/gtkprefs.c:626 src/gtkprefs.c:2028 src/protocols/jabber/buddy.c:265
+#: src/gtkprefs.c:637 src/gtkprefs.c:2043 src/protocols/jabber/buddy.c:265
 #: src/protocols/jabber/buddy.c:748 src/protocols/jabber/chat.c:684
 msgid "Description"
 msgstr "Описание"
 
-#: src/gtkprefs.c:693
+#: src/gtkprefs.c:704
 #, fuzzy
 msgid "Style"
 msgstr "Състояние"
 
-#: src/gtkprefs.c:694
+#: src/gtkprefs.c:705
 #, fuzzy
 msgid "_Bold"
 msgstr "Удебелен"
 
-#: src/gtkprefs.c:696
+#: src/gtkprefs.c:707
 #, fuzzy
 msgid "_Italic"
 msgstr "Наклонен"
 
-#: src/gtkprefs.c:698
+#: src/gtkprefs.c:709
 #, fuzzy
 msgid "_Underline"
 msgstr "Подчертан"
@@ -3587,553 +3587,553 @@ msgstr "Подчертан"
 #. *
 #. * remove this after string freeze ends
 #.
-#: src/gtkprefs.c:708
+#: src/gtkprefs.c:719
 #, fuzzy
 msgid "_Strikethrough"
 msgstr "Пресечен през текста"
 
-#: src/gtkprefs.c:711
+#: src/gtkprefs.c:722
 #, fuzzy
 msgid "Face"
 msgstr "Отмяна"
 
-#: src/gtkprefs.c:714
+#: src/gtkprefs.c:725
 #, fuzzy
 msgid "Use custo_m face"
 msgstr "Вмъкване на гримаса"
 
-#: src/gtkprefs.c:731
+#: src/gtkprefs.c:742
 #, fuzzy
 msgid "Use custom si_ze"
 msgstr "Вмъкване на гримаса"
 
-#: src/gtkprefs.c:743
+#: src/gtkprefs.c:754
 msgid "Color"
 msgstr "Цвят"
 
-#: src/gtkprefs.c:747
+#: src/gtkprefs.c:758
 #, fuzzy
 msgid "_Text color"
 msgstr "Цвят на текст"
 
-#: src/gtkprefs.c:766
+#: src/gtkprefs.c:777
 #, fuzzy
 msgid "Bac_kground color"
 msgstr "Фонов цвят"
 
-#: src/gtkprefs.c:794 src/gtkprefs.c:1026 src/gtkprefs.c:1074
+#: src/gtkprefs.c:805 src/gtkprefs.c:1037 src/gtkprefs.c:1085
 #, fuzzy
 msgid "Display"
 msgstr "Авери - показване"
 
-#: src/gtkprefs.c:795
+#: src/gtkprefs.c:806
 #, fuzzy
 msgid "Show graphical _smileys"
 msgstr "Графични гримаси"
 
-#: src/gtkprefs.c:797
+#: src/gtkprefs.c:808
 #, fuzzy
 msgid "Show _timestamp on messages"
 msgstr "Показва време на съобщение"
 
-#: src/gtkprefs.c:799
+#: src/gtkprefs.c:810
 #, fuzzy
 msgid "Show _URLs as links"
 msgstr "Показва URL като връзки"
 
-#: src/gtkprefs.c:803
+#: src/gtkprefs.c:814
 #, fuzzy
 msgid "_Highlight misspelled words"
 msgstr "Осветя збъркани думи"
 
-#: src/gtkprefs.c:807
+#: src/gtkprefs.c:818
 #, fuzzy
 msgid "Ignore c_olors"
 msgstr "Пренебрегва цвят"
 
-#: src/gtkprefs.c:809
+#: src/gtkprefs.c:820
 #, fuzzy
 msgid "Ignore font _faces"
 msgstr "Пренебрегва шрифт"
 
-#: src/gtkprefs.c:811
+#: src/gtkprefs.c:822
 #, fuzzy
 msgid "Ignore font si_zes"
 msgstr "Пренебрегва размерите на шрифта"
 
-#: src/gtkprefs.c:824
+#: src/gtkprefs.c:835
 msgid "Send Message"
 msgstr "Изпращане на съобщение"
 
-#: src/gtkprefs.c:825
+#: src/gtkprefs.c:836
 #, fuzzy
 msgid "Enter _sends message"
 msgstr "Enter изпраща съобщение"
 
-#: src/gtkprefs.c:827
+#: src/gtkprefs.c:838
 #, fuzzy
 msgid "C_ontrol-Enter sends message"
 msgstr "Ctrl-Enter изпраща съобщение"
 
-#: src/gtkprefs.c:830
+#: src/gtkprefs.c:841
 #, fuzzy
 msgid "Window Closing"
 msgstr "Прозорец за съобщения"
 
-#: src/gtkprefs.c:831
+#: src/gtkprefs.c:842
 #, fuzzy
 msgid "_Escape closes window"
 msgstr "Esc затваря прозорец"
 
-#: src/gtkprefs.c:834
+#: src/gtkprefs.c:845
 #, fuzzy
 msgid "Insertions"
 msgstr "Вмъкване на връзка"
 
-#: src/gtkprefs.c:835
+#: src/gtkprefs.c:846
 #, fuzzy
 msgid "Control-{B/I/U} inserts _HTML tags"
 msgstr "Ctrl-{B/I/U/S} вмъква HTML таг"
 
-#: src/gtkprefs.c:837
+#: src/gtkprefs.c:848
 #, fuzzy
 msgid "Control-(number) _inserts smileys"
 msgstr "Ctrl-(цифра) вмъква гримаса"
 
-#: src/gtkprefs.c:853
+#: src/gtkprefs.c:864
 #, fuzzy
 msgid "Buddy List Sorting"
 msgstr "Лист авери"
 
-#: src/gtkprefs.c:862
+#: src/gtkprefs.c:873
 #, fuzzy
 msgid "_Sorting:"
 msgstr "Порт"
 
-#: src/gtkprefs.c:867
+#: src/gtkprefs.c:878
 #, fuzzy
 msgid "Buddy List Toolbar"
 msgstr "Лист"
 
-#: src/gtkprefs.c:868 src/gtkprefs.c:999 src/gtkprefs.c:1050
+#: src/gtkprefs.c:879 src/gtkprefs.c:1010 src/gtkprefs.c:1061
 #, fuzzy
 msgid "Show _buttons as:"
 msgstr "Бутоните като:"
 
-#: src/gtkprefs.c:870 src/gtkprefs.c:1001 src/gtkprefs.c:1052
+#: src/gtkprefs.c:881 src/gtkprefs.c:1012 src/gtkprefs.c:1063
 msgid "Pictures"
 msgstr "Картини"
 
-#: src/gtkprefs.c:871 src/gtkprefs.c:1002 src/gtkprefs.c:1053
+#: src/gtkprefs.c:882 src/gtkprefs.c:1013 src/gtkprefs.c:1064
 msgid "Text"
 msgstr "Текст"
 
-#: src/gtkprefs.c:872 src/gtkprefs.c:1003 src/gtkprefs.c:1054
+#: src/gtkprefs.c:883 src/gtkprefs.c:1014 src/gtkprefs.c:1065
 #, fuzzy
 msgid "Pictures and text"
 msgstr "Картини и текст"
 
-#: src/gtkprefs.c:877 src/gtkprefs.c:1014 src/gtkprefs.c:1065
+#: src/gtkprefs.c:888 src/gtkprefs.c:1025 src/gtkprefs.c:1076
 #, fuzzy
 msgid "_Raise window on events"
 msgstr "Повдига прозорец при събитие"
 
-#: src/gtkprefs.c:880
+#: src/gtkprefs.c:891
 #, fuzzy
 msgid "Group Display"
 msgstr "Групи"
 
-#: src/gtkprefs.c:881
+#: src/gtkprefs.c:892
 #, fuzzy
 msgid "Show _numbers in groups"
 msgstr "Показва броя в групата"
 
-#: src/gtkprefs.c:884
+#: src/gtkprefs.c:895
 #, fuzzy
 msgid "Buddy Display"
 msgstr "Авери - показване"
 
-#: src/gtkprefs.c:885 src/gtkprefs.c:1021
+#: src/gtkprefs.c:896 src/gtkprefs.c:1032
 #, fuzzy
 msgid "Show buddy _icons"
 msgstr "Показва типови икони"
 
-#: src/gtkprefs.c:887
+#: src/gtkprefs.c:898
 #, fuzzy
 msgid "Show _warning levels"
 msgstr "Показва нива на предупреждение"
 
-#: src/gtkprefs.c:889
+#: src/gtkprefs.c:900
 #, fuzzy
 msgid "Show idle _times"
 msgstr "Покава време на бездействие"
 
-#: src/gtkprefs.c:891
+#: src/gtkprefs.c:902
 #, fuzzy
 msgid "Dim i_dle buddies"
 msgstr "Посивява бездайстващи авери"
 
-#: src/gtkprefs.c:893
+#: src/gtkprefs.c:904
 msgid "_Automatically expand contacts"
 msgstr ""
 
-#: src/gtkprefs.c:918
+#: src/gtkprefs.c:929
 #, fuzzy
 msgid "_Placement:"
 msgstr "Поставяне на етикети:"
 
-#: src/gtkprefs.c:925
+#: src/gtkprefs.c:936
 #, fuzzy
 msgid "Send _URLs as links"
 msgstr "Показва URL като връзки"
 
-#: src/gtkprefs.c:928
+#: src/gtkprefs.c:939
 msgid "Show _formatting toolbar"
 msgstr ""
 
-#: src/gtkprefs.c:931
+#: src/gtkprefs.c:942
 #, fuzzy
 msgid "Show a_liases in tabs/titles"
 msgstr "Показва прякор в етикети/заглавия"
 
-#: src/gtkprefs.c:934
+#: src/gtkprefs.c:945
 #, fuzzy
 msgid "Tab Options"
 msgstr "Чат"
 
-#: src/gtkprefs.c:936
+#: src/gtkprefs.c:947
 #, fuzzy
 msgid "_Tab Placement:"
 msgstr "Постявяне на етикети"
 
-#: src/gtkprefs.c:938
+#: src/gtkprefs.c:949
 msgid "Top"
 msgstr "Горе"
 
-#: src/gtkprefs.c:939
+#: src/gtkprefs.c:950
 #, fuzzy
 msgid "Bottom"
 msgstr "Долу"
 
-#: src/gtkprefs.c:940
+#: src/gtkprefs.c:951
 msgid "Left"
 msgstr "Ляво"
 
-#: src/gtkprefs.c:941
+#: src/gtkprefs.c:952
 msgid "Right"
 msgstr "Дясно"
 
-#: src/gtkprefs.c:947
+#: src/gtkprefs.c:958
 #, fuzzy
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "Чат-овете в един прозорец с етикети"
 
-#: src/gtkprefs.c:950
+#: src/gtkprefs.c:961
 #, fuzzy
 msgid "Show IMs and chats in _same tabbed window"
 msgstr "Чат-овете в един прозорец с етикети"
 
-#: src/gtkprefs.c:960
+#: src/gtkprefs.c:971
 #, fuzzy
 msgid "Show _close button on tabs"
 msgstr "Бутоните като:"
 
-#: src/gtkprefs.c:971
+#: src/gtkprefs.c:982
 #, fuzzy
 msgid "Show status _icons on tabs"
 msgstr "Бутоните като:"
 
-#: src/gtkprefs.c:998 src/gtkprefs.c:1049
+#: src/gtkprefs.c:1009 src/gtkprefs.c:1060
 #, fuzzy
 msgid "Window"
 msgstr "Прозорец за съобщения"
 
-#: src/gtkprefs.c:1008 src/gtkprefs.c:1059
+#: src/gtkprefs.c:1019 src/gtkprefs.c:1070
 #, fuzzy
 msgid "New window _width:"
 msgstr "Ширина на прозореца"
 
-#: src/gtkprefs.c:1010 src/gtkprefs.c:1061
+#: src/gtkprefs.c:1021 src/gtkprefs.c:1072
 #, fuzzy
 msgid "New window _height:"
 msgstr "Височина на прозореца"
 
-#: src/gtkprefs.c:1012 src/gtkprefs.c:1063
+#: src/gtkprefs.c:1023 src/gtkprefs.c:1074
 #, fuzzy
 msgid "_Entry field height:"
 msgstr "Височина на полето за писане"
 
-#: src/gtkprefs.c:1016
+#: src/gtkprefs.c:1027
 #, fuzzy
 msgid "Hide window on _send"
 msgstr "Криене на прозореца след изпращане"
 
-#: src/gtkprefs.c:1020
+#: src/gtkprefs.c:1031
 msgid "Buddy Icons"
 msgstr "Икони"
 
-#: src/gtkprefs.c:1023
+#: src/gtkprefs.c:1034
 #, fuzzy
 msgid "Enable buddy icon a_nimation"
 msgstr "Забрана анимацията на икони"
 
-#: src/gtkprefs.c:1027
+#: src/gtkprefs.c:1038
 #, fuzzy
 msgid "Show _logins in window"
 msgstr "Показва влизанията в прозореца"
 
-#: src/gtkprefs.c:1030
+#: src/gtkprefs.c:1041
 #, fuzzy
 msgid "Typing Notification"
 msgstr "Показващо се известяване"
 
-#: src/gtkprefs.c:1031
+#: src/gtkprefs.c:1042
 #, fuzzy
 msgid "Notify buddies that you are _typing to them"
 msgstr "Оповестява дригия при писане"
 
-#: src/gtkprefs.c:1068
+#: src/gtkprefs.c:1079
 msgid "Tab Completion"
 msgstr "Етикетно допълване"
 
-#: src/gtkprefs.c:1069
+#: src/gtkprefs.c:1080
 #, fuzzy
 msgid "_Tab-complete nicks"
 msgstr "Tab - допълва прякор"
 
-#: src/gtkprefs.c:1071
+#: src/gtkprefs.c:1082
 #, fuzzy
 msgid "_Old-style tab completion"
 msgstr "Стар стил допълване на прякора"
 
-#: src/gtkprefs.c:1075
+#: src/gtkprefs.c:1086
 #, fuzzy
 msgid "_Show people joining in window"
 msgstr "Показва влизащи/излизащи хора в прозореца "
 
-#: src/gtkprefs.c:1077
+#: src/gtkprefs.c:1088
 #, fuzzy
 msgid "_Show people leaving in window"
 msgstr "Показва влизащи/излизащи хора в прозореца "
 
-#: src/gtkprefs.c:1079
+#: src/gtkprefs.c:1090
 #, fuzzy
 msgid "Co_lorize screen names"
 msgstr "Номер:"
 
-#: src/gtkprefs.c:1100 src/protocols/oscar/oscar.c:584
+#: src/gtkprefs.c:1111 src/protocols/oscar/oscar.c:584
 #: src/protocols/oscar/oscar.c:4220
 #, fuzzy
 msgid "IP Address"
 msgstr "Улица"
 
-#: src/gtkprefs.c:1102
+#: src/gtkprefs.c:1113
 #, fuzzy
 msgid "_Autodetect IP Address"
 msgstr "Улица"
 
-#: src/gtkprefs.c:1111
+#: src/gtkprefs.c:1122
 msgid "Public _IP:"
 msgstr ""
 
-#: src/gtkprefs.c:1135
+#: src/gtkprefs.c:1146
 #, fuzzy
 msgid "Ports"
 msgstr "Порт"
 
-#: src/gtkprefs.c:1138
+#: src/gtkprefs.c:1149
 msgid "_Manually specify range of ports to listen on"
 msgstr ""
 
-#: src/gtkprefs.c:1141
+#: src/gtkprefs.c:1152
 #, fuzzy
 msgid "_Start Port:"
 msgstr "Порт"
 
-#: src/gtkprefs.c:1148
+#: src/gtkprefs.c:1159
 #, fuzzy
 msgid "_End Port:"
 msgstr "Порт"
 
-#: src/gtkprefs.c:1196
+#: src/gtkprefs.c:1207
 msgid "Proxy Type"
 msgstr "Тип Proxy"
 
-#: src/gtkprefs.c:1199
+#: src/gtkprefs.c:1210
 #, fuzzy
 msgid "No proxy"
 msgstr "Без прокси"
 
-#: src/gtkprefs.c:1206
+#: src/gtkprefs.c:1217
 msgid "Proxy Server"
 msgstr "Proxy сървър"
 
-#: src/gtkprefs.c:1264
+#: src/gtkprefs.c:1275
 #, fuzzy
 msgid "_User:"
 msgstr "Потребител:"
 
-#: src/gtkprefs.c:1320
+#: src/gtkprefs.c:1331
 msgid "Opera"
 msgstr "Opera"
 
-#: src/gtkprefs.c:1321
+#: src/gtkprefs.c:1332
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/gtkprefs.c:1322
+#: src/gtkprefs.c:1333
 msgid "Mozilla"
 msgstr ""
 
-#: src/gtkprefs.c:1323
+#: src/gtkprefs.c:1334
 msgid "Konqueror"
 msgstr ""
 
-#: src/gtkprefs.c:1324
+#: src/gtkprefs.c:1335
 msgid "Galeon"
 msgstr "Галеон"
 
-#: src/gtkprefs.c:1325
+#: src/gtkprefs.c:1336
 msgid "Firebird"
 msgstr ""
 
-#: src/gtkprefs.c:1326
+#: src/gtkprefs.c:1337
 msgid "Firefox"
 msgstr ""
 
-#: src/gtkprefs.c:1327
+#: src/gtkprefs.c:1338
 msgid "Gnome Default"
 msgstr ""
 
-#: src/gtkprefs.c:1336
+#: src/gtkprefs.c:1347
 msgid "Manual"
 msgstr "Ръчно"
 
-#: src/gtkprefs.c:1387
+#: src/gtkprefs.c:1398
 msgid "Browser Selection"
 msgstr ""
 
-#: src/gtkprefs.c:1391
+#: src/gtkprefs.c:1402
 #, fuzzy
 msgid "_Browser:"
 msgstr "Браузър"
 
-#: src/gtkprefs.c:1398
+#: src/gtkprefs.c:1409
 #, fuzzy
 msgid "_Open link in:"
 msgstr "Онлайн"
 
-#: src/gtkprefs.c:1400
+#: src/gtkprefs.c:1411
 #, fuzzy
 msgid "Browser default"
 msgstr "Браузър"
 
-#: src/gtkprefs.c:1401
+#: src/gtkprefs.c:1412
 #, fuzzy
 msgid "Existing window"
 msgstr "Затворяне на прозореца"
 
-#: src/gtkprefs.c:1403
+#: src/gtkprefs.c:1414
 msgid "New tab"
 msgstr ""
 
-#: src/gtkprefs.c:1417
+#: src/gtkprefs.c:1428
 #, c-format
 msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
 
-#: src/gtkprefs.c:1454
+#: src/gtkprefs.c:1465
 #, fuzzy
 msgid "Message Logs"
 msgstr "Съобщения"
 
-#: src/gtkprefs.c:1457
+#: src/gtkprefs.c:1468
 msgid "Log _Format:"
 msgstr ""
 
-#: src/gtkprefs.c:1460
+#: src/gtkprefs.c:1471
 #, fuzzy
 msgid "_Log all instant messages"
 msgstr "Ново съобщение"
 
-#: src/gtkprefs.c:1462
+#: src/gtkprefs.c:1473
 #, fuzzy
 msgid "Log all c_hats"
 msgstr "Логва всички разговори"
 
-#: src/gtkprefs.c:1465
+#: src/gtkprefs.c:1476
 #, fuzzy
 msgid "System Logs"
 msgstr "Системен лог"
 
-#: src/gtkprefs.c:1467
+#: src/gtkprefs.c:1478
 msgid "_Enable system log"
 msgstr ""
 
-#: src/gtkprefs.c:1470
+#: src/gtkprefs.c:1481
 #, fuzzy
 msgid "Log when buddies _sign on/sign off"
 msgstr "Логва авера при влизане/излизане"
 
-#: src/gtkprefs.c:1476
+#: src/gtkprefs.c:1487
 #, fuzzy
 msgid "Log when buddies become _idle/un-idle"
 msgstr "Логва авера при бездействие/връщане"
 
-#: src/gtkprefs.c:1482
+#: src/gtkprefs.c:1493
 #, fuzzy
 msgid "Log when buddies go away/come _back"
 msgstr "Логва авера при смяна остсъствие/връщане"
 
-#: src/gtkprefs.c:1488
+#: src/gtkprefs.c:1499
 #, fuzzy
 msgid "Log your _own signons/idleness/awayness"
 msgstr "Логва собствено влизане/бездействие/остсъствие"
 
-#: src/gtkprefs.c:1539
+#: src/gtkprefs.c:1550
 msgid "Sound Options"
 msgstr "Звук"
 
-#: src/gtkprefs.c:1540
+#: src/gtkprefs.c:1551
 #, fuzzy
 msgid "Sounds when you _log in"
 msgstr "Без звук при мое влизане"
 
-#: src/gtkprefs.c:1542
+#: src/gtkprefs.c:1553
 #, fuzzy
 msgid "Sounds when conversation has _focus"
 msgstr "Разговор"
 
-#: src/gtkprefs.c:1544
+#: src/gtkprefs.c:1555
 #, fuzzy
 msgid "_Sounds while away"
 msgstr "Звук при отсъствие"
 
-#: src/gtkprefs.c:1548
+#: src/gtkprefs.c:1559
 #, fuzzy
 msgid "Sound Method"
 msgstr "Звуков метод"
 
-#: src/gtkprefs.c:1549
+#: src/gtkprefs.c:1560
 #, fuzzy
 msgid "_Method:"
 msgstr "Звуков метод"
 
-#: src/gtkprefs.c:1551
+#: src/gtkprefs.c:1562
 msgid "Console beep"
 msgstr ""
 
-#: src/gtkprefs.c:1553
+#: src/gtkprefs.c:1564
 msgid "Automatic"
 msgstr ""
 
-#: src/gtkprefs.c:1560
+#: src/gtkprefs.c:1571
 msgid "Command"
 msgstr ""
 
-#: src/gtkprefs.c:1570
+#: src/gtkprefs.c:1581
 #, fuzzy, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -4142,85 +4142,85 @@ msgstr ""
 "Звукова команда\n"
 "(%s за файла)"
 
-#: src/gtkprefs.c:1627
+#: src/gtkprefs.c:1638
 #, fuzzy
 msgid "_Sending messages removes away status"
 msgstr "Изпращането премахва отсъствие"
 
-#: src/gtkprefs.c:1629
+#: src/gtkprefs.c:1640
 #, fuzzy
 msgid "_Queue new messages when away"
 msgstr "Съобщенията в опашка при отсъствие"
 
-#: src/gtkprefs.c:1632
+#: src/gtkprefs.c:1643
 #, fuzzy
 msgid "Auto-response"
 msgstr "Не изпраща авто-орговори"
 
-#: src/gtkprefs.c:1635
+#: src/gtkprefs.c:1646
 msgid "Seconds before _resending:"
 msgstr ""
 
-#: src/gtkprefs.c:1638
+#: src/gtkprefs.c:1649
 #, fuzzy
 msgid "_Send auto-response"
 msgstr "Не изпраща авто-орговори"
 
-#: src/gtkprefs.c:1640
+#: src/gtkprefs.c:1651
 #, fuzzy
 msgid "_Only send auto-response when idle"
 msgstr "Авто-отговори само при бездействие"
 
-#: src/gtkprefs.c:1642
+#: src/gtkprefs.c:1653
 #, fuzzy
 msgid "Send auto-response in _active conversations"
 msgstr "Не изпраща авто-орговори"
 
-#: src/gtkprefs.c:1651 src/protocols/msn/state.c:30
-#: src/protocols/novell/novell.c:2150 src/protocols/oscar/oscar.c:3378
+#: src/gtkprefs.c:1662 src/protocols/msn/state.c:30
+#: src/protocols/novell/novell.c:2153 src/protocols/oscar/oscar.c:3378
 #: src/protocols/yahoo/yahoo.c:2295
 #, fuzzy
 msgid "Idle"
 msgstr "Бездейства:"
 
-#: src/gtkprefs.c:1652
+#: src/gtkprefs.c:1663
 msgid "Idle _time reporting:"
 msgstr ""
 
-#: src/gtkprefs.c:1655
+#: src/gtkprefs.c:1666
 #, fuzzy
 msgid "Gaim usage"
 msgstr "Използване на Gaim"
 
-#: src/gtkprefs.c:1658
+#: src/gtkprefs.c:1669
 #, fuzzy
 msgid "X usage"
 msgstr "Използване на X"
 
-#: src/gtkprefs.c:1660
+#: src/gtkprefs.c:1671
 #, fuzzy
 msgid "Windows usage"
 msgstr "Прозорец за съобщения"
 
-#: src/gtkprefs.c:1668
+#: src/gtkprefs.c:1679
 #, fuzzy
 msgid "Auto-away"
 msgstr "Отсъствие"
 
-#: src/gtkprefs.c:1669
+#: src/gtkprefs.c:1680
 msgid "Set away _when idle"
 msgstr ""
 
-#: src/gtkprefs.c:1673
+#: src/gtkprefs.c:1684
 msgid "_Minutes before setting away:"
 msgstr ""
 
-#: src/gtkprefs.c:1681
+#: src/gtkprefs.c:1692
 #, fuzzy
 msgid "Away m_essage:"
 msgstr "Съобщение за отсъствие"
 
-#: src/gtkprefs.c:1756
+#: src/gtkprefs.c:1767
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -4230,7 +4230,7 @@ msgid ""
 "<span weight=\"bold\">File name:</span>\t%s"
 msgstr ""
 
-#: src/gtkprefs.c:1761
+#: src/gtkprefs.c:1772
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -4240,118 +4240,118 @@ msgid ""
 "<span weight=\"bold\">File name:</span>  %s"
 msgstr ""
 
-#: src/gtkprefs.c:1984
+#: src/gtkprefs.c:1999
 msgid "Load"
 msgstr "Зареждане"
 
-#: src/gtkprefs.c:1998
+#: src/gtkprefs.c:2013
 msgid "Summary"
 msgstr ""
 
-#: src/gtkprefs.c:2046
+#: src/gtkprefs.c:2061
 msgid "Details"
 msgstr ""
 
-#: src/gtkprefs.c:2173
+#: src/gtkprefs.c:2188
 #, fuzzy
 msgid "Sound Selection"
 msgstr "Звук"
 
-#: src/gtkprefs.c:2280
+#: src/gtkprefs.c:2295
 msgid "Play"
 msgstr ""
 
-#: src/gtkprefs.c:2287
+#: src/gtkprefs.c:2302
 msgid "Event"
 msgstr ""
 
-#: src/gtkprefs.c:2306
+#: src/gtkprefs.c:2321
 msgid "Test"
 msgstr "Тест"
 
-#: src/gtkprefs.c:2310
+#: src/gtkprefs.c:2325
 msgid "Reset"
 msgstr "Подразбиране"
 
-#: src/gtkprefs.c:2314
+#: src/gtkprefs.c:2329
 msgid "Choose..."
 msgstr "Избор..."
 
-#: src/gtkprefs.c:2449
+#: src/gtkprefs.c:2464
 #, fuzzy
 msgid "_Edit"
 msgstr "Редактиране"
 
-#: src/gtkprefs.c:2485
+#: src/gtkprefs.c:2500
 #, fuzzy
 msgid "Interface"
 msgstr "Инстанция:"
 
-#: src/gtkprefs.c:2486
+#: src/gtkprefs.c:2501
 #, fuzzy
 msgid "Smiley Themes"
 msgstr "Вмъкване на гримаса"
 
-#: src/gtkprefs.c:2487
+#: src/gtkprefs.c:2502
 #, fuzzy
 msgid "Fonts"
 msgstr "Шрифт"
 
-#: src/gtkprefs.c:2488
+#: src/gtkprefs.c:2503
 #, fuzzy
 msgid "Message Text"
 msgstr "Съобщения"
 
-#: src/gtkprefs.c:2489
+#: src/gtkprefs.c:2504
 msgid "Shortcuts"
 msgstr ""
 
-#: src/gtkprefs.c:2492
+#: src/gtkprefs.c:2507
 #, fuzzy
 msgid "IMs"
 msgstr "Съобщение"
 
-#: src/gtkprefs.c:2494
+#: src/gtkprefs.c:2509
 msgid "Network"
 msgstr ""
 
-#: src/gtkprefs.c:2495
+#: src/gtkprefs.c:2510
 msgid "Proxy"
 msgstr "Прокси"
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2498
+#: src/gtkprefs.c:2513
 msgid "Browser"
 msgstr "Браузър"
 
-#: src/gtkprefs.c:2500
+#: src/gtkprefs.c:2515
 msgid "Logging"
 msgstr "Архив"
 
-#: src/gtkprefs.c:2501
+#: src/gtkprefs.c:2516
 msgid "Sounds"
 msgstr "Звук"
 
-#: src/gtkprefs.c:2502
+#: src/gtkprefs.c:2517
 #, fuzzy
 msgid "Sound Events"
 msgstr "Звук"
 
-#: src/gtkprefs.c:2503
+#: src/gtkprefs.c:2518
 #, fuzzy
 msgid "Away / Idle"
 msgstr "Заглавие на отсъствие"
 
-#: src/gtkprefs.c:2504
+#: src/gtkprefs.c:2519
 msgid "Away Messages"
 msgstr "Съобщение за отсъствие"
 
-#: src/gtkprefs.c:2507
+#: src/gtkprefs.c:2522
 #, fuzzy
 msgid "Protocols"
 msgstr "Протокол:"
 
-#: src/gtkprefs.c:2508
+#: src/gtkprefs.c:2523
 msgid "Plugins"
 msgstr "Плъгини"
 
@@ -4542,11 +4542,11 @@ msgid ""
 "launched: %s"
 msgstr ""
 
-#: src/gtkutils.c:297
+#: src/gtkutils.c:133
 msgid "Can't save icon file to disk."
 msgstr ""
 
-#: src/gtkutils.c:332
+#: src/gtkutils.c:168
 #, fuzzy
 msgid "Save Icon"
 msgstr "Съхранение на иконата като..."
@@ -4646,19 +4646,19 @@ msgstr ""
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr ""
 
-#: src/plugin.c:269
+#: src/plugin.c:277
 #, c-format
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
 msgstr ""
 
-#: src/plugin.c:274 src/plugin.c:302
+#: src/plugin.c:282 src/plugin.c:310
 #, fuzzy
 msgid "Gaim was unable to load your plugin."
 msgstr "Gaim не успя да изпрати съобщение"
 
-#: src/plugin.c:298
+#: src/plugin.c:306
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr ""
@@ -4670,8 +4670,8 @@ msgstr ""
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:44
 #: src/protocols/msn/msn.c:360 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36 src/protocols/novell/novell.c:2141
-#: src/protocols/novell/novell.c:2258 src/protocols/novell/novell.c:2309
+#: src/protocols/msn/state.c:36 src/protocols/novell/novell.c:2144
+#: src/protocols/novell/novell.c:2261 src/protocols/novell/novell.c:2312
 #: src/protocols/oscar/oscar.c:603 src/protocols/yahoo/yahoo.c:2599
 #: src/protocols/yahoo/yahoo.c:2714
 #, fuzzy
@@ -4833,7 +4833,7 @@ msgstr "Име"
 msgid "Last Name"
 msgstr "Фамилно име"
 
-#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1392
+#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1393
 #: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:4213
 msgid "Nick"
 msgstr "Псевдоним"
@@ -5003,7 +5003,7 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/gg/gg.c:1373 src/protocols/gg/gg.c:1375
+#: src/protocols/gg/gg.c:1374 src/protocols/gg/gg.c:1376
 #, fuzzy
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Търсеща машина Gadu-Gadu"
@@ -5163,34 +5163,34 @@ msgstr "Заглавие:"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:612
+#: src/protocols/irc/irc.c:613
 #, fuzzy
 msgid "IRC Protocol Plugin"
 msgstr "Действия на протокола"
 
 #. *  summary
-#: src/protocols/irc/irc.c:613
+#: src/protocols/irc/irc.c:614
 #, fuzzy
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "Действия на протокола"
 
-#: src/protocols/irc/irc.c:630 src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1382 src/protocols/napster/napster.c:657
+#: src/protocols/irc/irc.c:631 src/protocols/irc/msgs.c:197
+#: src/protocols/jabber/jabber.c:1383 src/protocols/napster/napster.c:658
 #, fuzzy
 msgid "Server"
 msgstr "Сървър:"
 
-#: src/protocols/irc/irc.c:633 src/protocols/jabber/jabber.c:1403
-#: src/protocols/msn/msn.c:1741 src/protocols/napster/napster.c:662
-#: src/protocols/trepia/trepia.c:1306
+#: src/protocols/irc/irc.c:634 src/protocols/jabber/jabber.c:1404
+#: src/protocols/msn/msn.c:1742 src/protocols/napster/napster.c:663
+#: src/protocols/trepia/trepia.c:1307
 msgid "Port"
 msgstr "Порт"
 
-#: src/protocols/irc/irc.c:636 src/protocols/zephyr/zephyr.c:1400
+#: src/protocols/irc/irc.c:637 src/protocols/zephyr/zephyr.c:1401
 msgid "Encoding"
 msgstr ""
 
-#: src/protocols/irc/irc.c:639 src/protocols/irc/msgs.c:191
+#: src/protocols/irc/irc.c:640 src/protocols/irc/msgs.c:191
 #: src/protocols/jabber/jabber.c:581
 #, fuzzy
 msgid "Username"
@@ -5519,7 +5519,7 @@ msgstr "Jabber грешка"
 msgid "Status"
 msgstr "Статус: %s"
 
-#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1385
+#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1386
 #, fuzzy
 msgid "Resource"
 msgstr "Подразбиране"
@@ -6142,24 +6142,24 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/jabber/jabber.c:1361 src/protocols/jabber/jabber.c:1363
+#: src/protocols/jabber/jabber.c:1362 src/protocols/jabber/jabber.c:1364
 msgid "Jabber Protocol Plugin"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1388
+#: src/protocols/jabber/jabber.c:1389
 #, fuzzy
 msgid "Use TLS if available"
 msgstr "Недостъпен"
 
-#: src/protocols/jabber/jabber.c:1393
+#: src/protocols/jabber/jabber.c:1394
 msgid "Force old SSL"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1398
+#: src/protocols/jabber/jabber.c:1399
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1407
+#: src/protocols/jabber/jabber.c:1408
 #, fuzzy
 msgid "Connect server"
 msgstr "Свързан"
@@ -6624,8 +6624,8 @@ msgid "Be Right Back"
 msgstr ""
 
 #: src/protocols/msn/msn.c:363 src/protocols/msn/msn.c:666
-#: src/protocols/msn/state.c:29 src/protocols/novell/novell.c:2147
-#: src/protocols/novell/novell.c:2260 src/protocols/novell/novell.c:2314
+#: src/protocols/msn/state.c:29 src/protocols/novell/novell.c:2150
+#: src/protocols/novell/novell.c:2263 src/protocols/novell/novell.c:2317
 #: src/protocols/yahoo/yahoo.c:2277 src/protocols/yahoo/yahoo.c:2603
 #: src/protocols/yahoo/yahoo.c:2716
 #, fuzzy
@@ -6804,17 +6804,17 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1716 src/protocols/msn/msn.c:1718
+#: src/protocols/msn/msn.c:1717 src/protocols/msn/msn.c:1719
 #, fuzzy
 msgid "MSN Protocol Plugin"
 msgstr "Действия на протокола"
 
-#: src/protocols/msn/msn.c:1736 src/protocols/trepia/trepia.c:1301
+#: src/protocols/msn/msn.c:1737 src/protocols/trepia/trepia.c:1302
 #, fuzzy
 msgid "Login server"
 msgstr "Грешка при влизане"
 
-#: src/protocols/msn/msn.c:1745
+#: src/protocols/msn/msn.c:1746
 msgid "Use HTTP Method"
 msgstr ""
 
@@ -6995,7 +6995,7 @@ msgstr "Група"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/napster/napster.c:639 src/protocols/napster/napster.c:641
+#: src/protocols/napster/napster.c:640 src/protocols/napster/napster.c:642
 msgid "NAPSTER Protocol Plugin"
 msgstr ""
 
@@ -7146,28 +7146,25 @@ msgstr ""
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 
-#: src/protocols/novell/novell.c:2153 src/protocols/oscar/oscar.c:574
+#: src/protocols/novell/novell.c:2156 src/protocols/oscar/oscar.c:574
 #: src/protocols/oscar/oscar.c:5818 src/protocols/yahoo/yahoo.c:2297
 #, fuzzy
 msgid "Offline"
 msgstr "Онлайн"
 
-#: src/protocols/novell/novell.c:2161
+#: src/protocols/novell/novell.c:2164
 #, fuzzy, c-format
 msgid ""
-"\n"
 "<b>Status:</b> %s\n"
 "<b>Message:</b> %s"
 msgstr "Статус: %s"
 
-#: src/protocols/novell/novell.c:2165
+#: src/protocols/novell/novell.c:2168
 #, fuzzy, c-format
-msgid ""
-"\n"
-"<b>Status:</b> %s"
+msgid "<b>Status:</b> %s"
 msgstr "Статус: %s"
 
-#: src/protocols/novell/novell.c:2261 src/protocols/novell/novell.c:2317
+#: src/protocols/novell/novell.c:2264 src/protocols/novell/novell.c:2320
 #, fuzzy
 msgid "Appear Offline"
 msgstr "Онлайн"
@@ -7183,16 +7180,16 @@ msgstr "Онлайн"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/novell/novell.c:2405 src/protocols/novell/novell.c:2407
+#: src/protocols/novell/novell.c:2409 src/protocols/novell/novell.c:2411
 msgid "Novell GroupWise Messenger Protocol Plugin"
 msgstr ""
 
-#: src/protocols/novell/novell.c:2424
+#: src/protocols/novell/novell.c:2428
 #, fuzzy
 msgid "Server address"
 msgstr "Улица"
 
-#: src/protocols/novell/novell.c:2428
+#: src/protocols/novell/novell.c:2432
 #, fuzzy
 msgid "Server port"
 msgstr "Сървър:"
@@ -8312,15 +8309,15 @@ msgstr "Търсене"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7001 src/protocols/oscar/oscar.c:7003
+#: src/protocols/oscar/oscar.c:7002 src/protocols/oscar/oscar.c:7004
 msgid "AIM/ICQ Protocol Plugin"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:7020
+#: src/protocols/oscar/oscar.c:7021
 msgid "Auth host"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:7025
+#: src/protocols/oscar/oscar.c:7026
 msgid "Auth port"
 msgstr ""
 
@@ -8531,17 +8528,17 @@ msgstr "%s изиква да му изпратите файл"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/toc/toc.c:2167 src/protocols/toc/toc.c:2169
+#: src/protocols/toc/toc.c:2168 src/protocols/toc/toc.c:2170
 #, fuzzy
 msgid "TOC Protocol Plugin"
 msgstr "Действия на протокола"
 
-#: src/protocols/toc/toc.c:2186
+#: src/protocols/toc/toc.c:2187
 #, fuzzy
 msgid "TOC host"
 msgstr "Порт"
 
-#: src/protocols/toc/toc.c:2190
+#: src/protocols/toc/toc.c:2191
 #, fuzzy
 msgid "TOC port"
 msgstr "Порт"
@@ -8633,7 +8630,7 @@ msgstr "Архив"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/trepia/trepia.c:1282 src/protocols/trepia/trepia.c:1284
+#: src/protocols/trepia/trepia.c:1283 src/protocols/trepia/trepia.c:1285
 msgid "Trepia Protocol Plugin"
 msgstr ""
 
@@ -8868,29 +8865,29 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3294 src/protocols/yahoo/yahoo.c:3296
+#: src/protocols/yahoo/yahoo.c:3295 src/protocols/yahoo/yahoo.c:3297
 msgid "Yahoo Protocol Plugin"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3313
+#: src/protocols/yahoo/yahoo.c:3314
 msgid "Pager host"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3316
+#: src/protocols/yahoo/yahoo.c:3317
 msgid "Pager port"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3319
+#: src/protocols/yahoo/yahoo.c:3320
 #, fuzzy
 msgid "File transfer host"
 msgstr "Не мога да пиша"
 
-#: src/protocols/yahoo/yahoo.c:3322
+#: src/protocols/yahoo/yahoo.c:3323
 #, fuzzy
 msgid "File transfer port"
 msgstr "Не мога да пиша"
 
-#: src/protocols/yahoo/yahoo.c:3325
+#: src/protocols/yahoo/yahoo.c:3326
 #, fuzzy
 msgid "Chat Room List Url"
 msgstr "Чат"
@@ -9023,19 +9020,19 @@ msgstr "Получател:"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/zephyr/zephyr.c:1372 src/protocols/zephyr/zephyr.c:1374
+#: src/protocols/zephyr/zephyr.c:1373 src/protocols/zephyr/zephyr.c:1375
 msgid "Zephyr Protocol Plugin"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1391
+#: src/protocols/zephyr/zephyr.c:1392
 msgid "Export to .anyone"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1394
+#: src/protocols/zephyr/zephyr.c:1395
 msgid "Export to .zephyr.subs"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1397
+#: src/protocols/zephyr/zephyr.c:1398
 msgid "Exposure"
 msgstr ""
 
@@ -9060,7 +9057,7 @@ msgid ""
 msgstr ""
 
 #. * Custom away message.
-#: src/prpl.h:194
+#: src/prpl.h:195
 msgid "Custom"
 msgstr ""
 

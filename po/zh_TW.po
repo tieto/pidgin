@@ -24,7 +24,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.77\n"
-"POT-Creation-Date: 2004-04-22 00:02-0400\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2004-04-22 22:29-0400\n"
 "PO-Revision-Date: 2004-04-22 11:18+0800\n"
 "Last-Translator: Paladin R. Liu <paladin@ms1.hinet.net>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -62,6 +63,7 @@ msgstr "自動重新連線"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/autorecon.c:113 plugins/autorecon.c:115
 msgid "When you are kicked offline, this reconnects you."
 msgstr "當你斷線時，系統會自動幫你重新連線。"
@@ -278,6 +280,7 @@ msgstr "Gaim 檔案控制"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/filectl.c:225 plugins/filectl.c:227
 msgid "Allows you to control Gaim by entering commands in a file."
 msgstr "允許您在檔案中輸入指令以控制 Gaim。"
@@ -427,13 +430,13 @@ msgstr ""
 #  NOTE http://developer.gnome.org/projects/gtp/status/gnome-2.6/PO/evolution.HEAD.zh_TW.po
 #  NOTE 譯文更動 by Ambrose
 #: plugins/gevolution/add_buddy_dialog.c:136
-#: plugins/gevolution/assoc-buddy.c:76
+#: plugins/gevolution/assoc-buddy.c:74
 msgid "Local Addressbook"
 msgstr "本地端目錄服務"
 
 #: plugins/gevolution/add_buddy_dialog.c:146
 #: plugins/gevolution/add_buddy_dialog.c:157
-#: plugins/gevolution/assoc-buddy.c:86 plugins/gevolution/assoc-buddy.c:97
+#: plugins/gevolution/assoc-buddy.c:84 plugins/gevolution/assoc-buddy.c:95
 #: src/gtkblist.c:2964 src/gtkprefs.c:884 src/gtkprefs.c:1665
 #: src/protocols/jabber/jabber.c:916
 msgid "None"
@@ -441,7 +444,7 @@ msgstr "無"
 
 # NOTE 只能譯「名稱」，因為同時解作「人名」及「模組名稱」
 #: plugins/gevolution/add_buddy_dialog.c:190
-#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:2006
+#: plugins/gevolution/assoc-buddy.c:178 src/gtkprefs.c:2006
 #: src/gtkroomlist.c:561 src/protocols/jabber/jabber.c:591
 #: src/protocols/msn/msn.c:1395 src/protocols/trepia/trepia.c:398
 msgid "Name"
@@ -461,7 +464,7 @@ msgstr "請在下面從目錄服務選擇連絡人，或新增一個連絡人。
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:495
-#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6697
+#: plugins/gevolution/assoc-buddy.c:383 src/protocols/oscar/oscar.c:6697
 msgid "Search"
 msgstr "搜尋"
 
@@ -474,7 +477,7 @@ msgstr "群組："
 #  NOTE 對應 evolution PO 檔之譯法，詳見上面「Local Addressbook」條
 #. "New Person" button
 #: plugins/gevolution/add_buddy_dialog.c:592
-#: plugins/gevolution/assoc-buddy.c:488
+#: plugins/gevolution/assoc-buddy.c:486
 msgid "New Person"
 msgstr "新增連絡人"
 
@@ -485,7 +488,7 @@ msgstr "選擇好友"
 
 #  NOTE 對應 evolution PO 檔之譯法，詳見上面「Local Addressbook」條
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:372
+#: plugins/gevolution/assoc-buddy.c:370
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
@@ -495,18 +498,18 @@ msgstr ""
 
 # XXX 暫譯
 #. Add the disclosure
-#: plugins/gevolution/assoc-buddy.c:451
+#: plugins/gevolution/assoc-buddy.c:449
 msgid "Show user details"
 msgstr "顯示使用者細節"
 
 # XXX 暫譯
-#: plugins/gevolution/assoc-buddy.c:452
+#: plugins/gevolution/assoc-buddy.c:450
 msgid "Hide user details"
 msgstr "隱藏使用者細節"
 
 # XXX 暫譯
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:505
+#: plugins/gevolution/assoc-buddy.c:503
 msgid "_Associate Buddy"
 msgstr "聯結好友 (_A)"
 
@@ -555,6 +558,7 @@ msgstr "Evolution 整合"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/gevolution/gevolution.c:464 plugins/gevolution/gevolution.c:466
 msgid "Provides integration with Ximian Evolution."
 msgstr "提供和 Ximian Evolution 的整合。"
@@ -627,6 +631,7 @@ msgstr "離開時最小化"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/iconaway.c:83 plugins/iconaway.c:85
 msgid "Iconifies the buddy list and your conversations when you go away."
 msgstr "在您離開時，最小化好友清單及各交談視窗。"
@@ -809,6 +814,7 @@ msgstr "訊息通知"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/notify.c:765 plugins/notify.c:767
 msgid "Provides a variety of ways of notifying you of unread messages."
 msgstr "提供多種方式來通知您有未讀取的訊息。"
@@ -820,13 +826,14 @@ msgstr "提供多種方式來通知您有未讀取的訊息。"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:530
+#: plugins/perl/perl.c:531
 msgid "Perl Plugin Loader"
 msgstr "Perl 模組載入器"
 
 #. *< name
 #. *< version
-#: plugins/perl/perl.c:532 plugins/perl/perl.c:533
+#. *< summary
+#: plugins/perl/perl.c:533 plugins/perl/perl.c:534
 msgid "Provides support for loading perl plugins."
 msgstr "提供讀入 Perl 模組的支援。"
 
@@ -923,6 +930,7 @@ msgstr "信號測試"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/signals-test.c:468 plugins/signals-test.c:470
 msgid "Test to see that all signals are working properly."
 msgstr "檢查各種信號是否都能正常運作。"
@@ -941,6 +949,7 @@ msgstr "簡易模組"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/simple.c:34 plugins/simple.c:36
 msgid "Tests to see that most things are working."
 msgstr "用來測試是否大部份的東西都能正常運作。"
@@ -991,6 +1000,7 @@ msgstr "GNUTLS"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/ssl/ssl-gnutls.c:226 plugins/ssl/ssl-gnutls.c:228
 msgid "Provides SSL support through GNUTLS."
 msgstr "透過 GNUTLS 提供 SSL 的支援。"
@@ -1009,6 +1019,7 @@ msgstr "NSS"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/ssl/ssl-nss.c:315 plugins/ssl/ssl-nss.c:317
 msgid "Provides SSL support through Mozilla NSS."
 msgstr "透過 Mozilla 的 NSS 提供 SSL 的支援。"
@@ -1027,6 +1038,7 @@ msgstr "SSL"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/ssl/ssl.c:94 plugins/ssl/ssl.c:96
 msgid "Provides a wrapper around SSL support libraries."
 msgstr "為支援 SSL 的函式庫提供一個 Wrapper。"
@@ -1065,17 +1077,18 @@ msgstr "好友狀態通知"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/statenotify.c:81 plugins/statenotify.c:84
 msgid ""
 "Notifies in a conversation window when a buddy goes or returns from away or "
 "idle."
 msgstr "在交談視窗中顯示好友離開或是由離開（閒置）返回的通知訊息。"
 
-#: plugins/tcl/tcl.c:349
+#: plugins/tcl/tcl.c:350
 msgid "Tcl Plugin Loader"
 msgstr "Tcl 模組載入器"
 
-#: plugins/tcl/tcl.c:351 plugins/tcl/tcl.c:352
+#: plugins/tcl/tcl.c:352 plugins/tcl/tcl.c:353
 msgid "Provides support for loading Tcl plugins"
 msgstr "提供讀入 Tcl 模組的支援"
 
@@ -1093,6 +1106,7 @@ msgstr "好友跑馬燈"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/ticker/ticker.c:331 plugins/ticker/ticker.c:333
 msgid "A horizontal scrolling version of the buddy list."
 msgstr "好友清單的水平捲動版本"
@@ -1123,6 +1137,7 @@ msgstr "時間戳記"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/timestamp.c:176 plugins/timestamp.c:178
 msgid "Adds iChat-style timestamps to conversations every N minutes."
 msgstr "每隔 N 分鐘加入 iChat 風格的時間戳記到交談中。"
@@ -1169,6 +1184,7 @@ msgstr "透明度"
 #. *< name
 #. *< version
 #. *  summary
+#. *  description
 #: plugins/win32/transparency/win2ktrans.c:425
 #: plugins/win32/transparency/win2ktrans.c:427
 msgid ""
@@ -1180,54 +1196,54 @@ msgstr ""
 "\n"
 "* 請注意：這個模組需要 Win2000 或 WinXP 才能產生效果。"
 
-#: plugins/win32/winprefs/winprefs.c:348
+#: plugins/win32/winprefs/winprefs.c:344
 msgid "GTK+ Runtime Version"
 msgstr "GTK+ Runtime 版本"
 
 #. Autostart
-#: plugins/win32/winprefs/winprefs.c:356
+#: plugins/win32/winprefs/winprefs.c:352
 msgid "Startup"
 msgstr "啟動"
 
-#: plugins/win32/winprefs/winprefs.c:357
+#: plugins/win32/winprefs/winprefs.c:353
 msgid "_Start Gaim on Windows startup"
 msgstr "當 Windows 啟動時同時執行 Gaim(_S)"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:3005
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3005
 #: src/gtkprefs.c:2505
 msgid "Buddy List"
 msgstr "好友清單"
 
-#: plugins/win32/winprefs/winprefs.c:367
+#: plugins/win32/winprefs/winprefs.c:363
 msgid "_Dockable Buddy List"
 msgstr "可停駐的好友清單(_D)"
 
 #. Docked Blist On Top
-#: plugins/win32/winprefs/winprefs.c:371
+#: plugins/win32/winprefs/winprefs.c:367
 msgid "Docked _Buddy List is always on top"
 msgstr "停駐了的好友清單保持在桌面的最上層(_B)"
 
 #. Blist On Top
-#: plugins/win32/winprefs/winprefs.c:381
+#: plugins/win32/winprefs/winprefs.c:377
 msgid "_Keep Buddy List window on top"
 msgstr "將好友清單視窗保持在桌面的最上層(_K)"
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:925
+#: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:925
 #: src/gtkprefs.c:2506 src/protocols/msn/msn.c:1621
 msgid "Conversations"
 msgstr "交談"
 
-#: plugins/win32/winprefs/winprefs.c:387
+#: plugins/win32/winprefs/winprefs.c:383
 msgid "_Flash Window when messages are received"
 msgstr "收到訊息後閃動視窗(_F)"
 
-#: plugins/win32/winprefs/winprefs.c:409
+#: plugins/win32/winprefs/winprefs.c:405
 msgid "WinGaim Options"
 msgstr "WinGaim 選項"
 
-#: plugins/win32/winprefs/winprefs.c:411 plugins/win32/winprefs/winprefs.c:412
+#: plugins/win32/winprefs/winprefs.c:407 plugins/win32/winprefs/winprefs.c:408
 msgid "Options specific to Windows Gaim."
 msgstr "Windows Gaim 的相關選項。"
 
@@ -2182,8 +2198,8 @@ msgid "Add buddy to your list?"
 msgstr "將使用者加入您的好友清單？"
 
 #. Add button
-#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1107
-#: src/gtkconv.c:3348 src/gtkconv.c:3439 src/gtkrequest.c:240
+#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1113
+#: src/gtkconv.c:3332 src/gtkconv.c:3423 src/gtkrequest.c:240
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:3004
 msgid "Add"
 msgstr "加入"
@@ -2270,7 +2286,7 @@ msgid "_Expand"
 msgstr "展開(_E)"
 
 # XXX 暫譯
-#: src/gtkblist.c:1964 src/gtkconv.c:3926
+#: src/gtkblist.c:1964 src/gtkconv.c:3911
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "您並未登入任何一個可供您新增哪個好友的通訊協定。"
@@ -2680,285 +2696,285 @@ msgstr "搜尋"
 msgid "_Search for:"
 msgstr "搜尋(_S)："
 
-#: src/gtkconv.c:1065
+#: src/gtkconv.c:1071
 msgid "IM"
 msgstr "即時訊息"
 
-#: src/gtkconv.c:1073
+#: src/gtkconv.c:1079
 msgid "Un-Ignore"
 msgstr "取消忽略使用者"
 
-#: src/gtkconv.c:1075 src/gtkprefs.c:817
+#: src/gtkconv.c:1081 src/gtkprefs.c:817
 msgid "Ignore"
 msgstr "忽略使用者"
 
 # XXX「Info」的作用似乎係取得使用者資訊，但不肯定，看了其他po檔仍是不肯定這是什麼
 # XXX javajsp (Ka-Hing CHEUNG) 見過的「Info」按紐全都是「取得使用者資訊」
 #. Info button
-#: src/gtkconv.c:1084 src/gtkconv.c:3362
+#: src/gtkconv.c:1090 src/gtkconv.c:3346
 msgid "Info"
 msgstr "取得資訊"
 
-#: src/gtkconv.c:1093
+#: src/gtkconv.c:1099
 msgid "Get Away Msg"
 msgstr "取得離線訊息"
 
 #. Remove button
-#: src/gtkconv.c:1105 src/gtkconv.c:3355 src/gtkconv.c:3446
+#: src/gtkconv.c:1111 src/gtkconv.c:3339 src/gtkconv.c:3430
 #: src/gtkrequest.c:241
 msgid "Remove"
 msgstr "移除"
 
-#: src/gtkconv.c:2217
+#: src/gtkconv.c:2201
 msgid "Animate"
 msgstr "動畫"
 
-#: src/gtkconv.c:2222
+#: src/gtkconv.c:2206
 msgid "Hide Icon"
 msgstr "隱藏圖示"
 
-#: src/gtkconv.c:2228
+#: src/gtkconv.c:2212
 msgid "Save Icon As..."
 msgstr "儲存圖示為..."
 
-#: src/gtkconv.c:2595
+#: src/gtkconv.c:2579
 msgid "User is typing..."
 msgstr "使用者正在輸入..."
 
-#: src/gtkconv.c:2603
+#: src/gtkconv.c:2587
 msgid "User has typed something and paused"
 msgstr "使用者輸入了些東西，不過目前暫停輸入"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2706
+#: src/gtkconv.c:2690
 msgid "_Send As"
 msgstr "使用帳號(_S)"
 
-#: src/gtkconv.c:3126
+#: src/gtkconv.c:3110
 msgid "Save Conversation"
 msgstr "儲存聊天內容"
 
 #. Conversation menu
-#: src/gtkconv.c:3143
+#: src/gtkconv.c:3127
 msgid "/_Conversation"
 msgstr "/交談(_C)"
 
-#: src/gtkconv.c:3145
+#: src/gtkconv.c:3129
 msgid "/Conversation/New Instant _Message..."
 msgstr "/好友/新即時訊息(_M)..."
 
-#: src/gtkconv.c:3150
+#: src/gtkconv.c:3134
 msgid "/Conversation/_Find..."
 msgstr "/交談/搜尋(_F)..."
 
-#: src/gtkconv.c:3152
+#: src/gtkconv.c:3136
 msgid "/Conversation/View _Log"
 msgstr "/交談/觀看歷史記錄(_L)"
 
-#: src/gtkconv.c:3153
+#: src/gtkconv.c:3137
 msgid "/Conversation/_Save As..."
 msgstr "/交談/另存新檔(_S)..."
 
-#: src/gtkconv.c:3158
+#: src/gtkconv.c:3142
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/交談/新增好友狀態捕捉(_P)..."
 
-#: src/gtkconv.c:3160
+#: src/gtkconv.c:3144
 msgid "/Conversation/_Get Info"
 msgstr "/交談/取得資訊(_G)"
 
-#: src/gtkconv.c:3162
+#: src/gtkconv.c:3146
 msgid "/Conversation/_Warn..."
 msgstr "/交談/警告(_W)..."
 
-#: src/gtkconv.c:3164
+#: src/gtkconv.c:3148
 msgid "/Conversation/In_vite..."
 msgstr "/交談/邀請(_V)..."
 
-#: src/gtkconv.c:3169
+#: src/gtkconv.c:3153
 msgid "/Conversation/A_lias..."
 msgstr "/交談/別名(_L)..."
 
-#: src/gtkconv.c:3171
+#: src/gtkconv.c:3155
 msgid "/Conversation/_Block..."
 msgstr "/交談/封鎖(_B)..."
 
-#: src/gtkconv.c:3173
+#: src/gtkconv.c:3157
 msgid "/Conversation/_Add..."
 msgstr "/交談/新增(_A)..."
 
-#: src/gtkconv.c:3175
+#: src/gtkconv.c:3159
 msgid "/Conversation/_Remove..."
 msgstr "/交談/移除(_R)..."
 
-#: src/gtkconv.c:3180
+#: src/gtkconv.c:3164
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/交談/插入連結(_k)..."
 
-#: src/gtkconv.c:3182
+#: src/gtkconv.c:3166
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/交談/插入影像(_E)..."
 
-#: src/gtkconv.c:3187
+#: src/gtkconv.c:3171
 msgid "/Conversation/_Close"
 msgstr "/交談/關閉(_C)"
 
 #. Options
-#: src/gtkconv.c:3191
+#: src/gtkconv.c:3175
 msgid "/_Options"
 msgstr "/選項(_O)"
 
-#: src/gtkconv.c:3192
+#: src/gtkconv.c:3176
 msgid "/Options/Enable _Logging"
 msgstr "/選項/開始記錄日誌(_L)"
 
-#: src/gtkconv.c:3193
+#: src/gtkconv.c:3177
 msgid "/Options/Enable _Sounds"
 msgstr "/選項/開啟音效(_S)"
 
-#: src/gtkconv.c:3194
+#: src/gtkconv.c:3178
 msgid "/Options/Show Formatting _Toolbar"
 msgstr "/選項/顯示格式工具列(_T)"
 
-#: src/gtkconv.c:3236
+#: src/gtkconv.c:3220
 msgid "/Conversation/View Log"
 msgstr "/交談/觀看歷史記錄"
 
-#: src/gtkconv.c:3241
+#: src/gtkconv.c:3225
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/交談/新增好友狀態捕捉..."
 
-#: src/gtkconv.c:3247
+#: src/gtkconv.c:3231
 msgid "/Conversation/Get Info"
 msgstr "/交談/取得資訊"
 
-#: src/gtkconv.c:3251
+#: src/gtkconv.c:3235
 msgid "/Conversation/Warn..."
 msgstr "/交談/警告..."
 
-#: src/gtkconv.c:3255
+#: src/gtkconv.c:3239
 msgid "/Conversation/Invite..."
 msgstr "/交談/邀請..."
 
-#: src/gtkconv.c:3261
+#: src/gtkconv.c:3245
 msgid "/Conversation/Alias..."
 msgstr "/交談/別名..."
 
-#: src/gtkconv.c:3265
+#: src/gtkconv.c:3249
 msgid "/Conversation/Block..."
 msgstr "/交談/封鎖..."
 
-#: src/gtkconv.c:3269
+#: src/gtkconv.c:3253
 msgid "/Conversation/Add..."
 msgstr "/交談/新增..."
 
-#: src/gtkconv.c:3273
+#: src/gtkconv.c:3257
 msgid "/Conversation/Remove..."
 msgstr "/交談/移除..."
 
-#: src/gtkconv.c:3279
+#: src/gtkconv.c:3263
 msgid "/Conversation/Insert Link..."
 msgstr "/交談/插入連結..."
 
-#: src/gtkconv.c:3283
+#: src/gtkconv.c:3267
 msgid "/Conversation/Insert Image..."
 msgstr "/交談/插入影像..."
 
-#: src/gtkconv.c:3289
+#: src/gtkconv.c:3273
 msgid "/Options/Enable Logging"
 msgstr "/選項/開始記錄日誌"
 
-#: src/gtkconv.c:3292
+#: src/gtkconv.c:3276
 msgid "/Options/Enable Sounds"
 msgstr "/選項/開啟音效"
 
-#: src/gtkconv.c:3295
+#: src/gtkconv.c:3279
 msgid "/Options/Show Formatting Toolbar"
 msgstr "/選項/顯示格式工具列"
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3318 src/gtkconv.c:3320 src/gtkconv.c:3418 src/gtkconv.c:3420
+#: src/gtkconv.c:3302 src/gtkconv.c:3304 src/gtkconv.c:3402 src/gtkconv.c:3404
 msgid "Send"
 msgstr "送出"
 
 #. Now, um, just kind of all over the place. Huh?
 #. Warn button
-#: src/gtkconv.c:3334
+#: src/gtkconv.c:3318
 msgid "Warn"
 msgstr "警告"
 
-#: src/gtkconv.c:3337
+#: src/gtkconv.c:3321
 msgid "Warn the user"
 msgstr "警告使用者"
 
 #. Block button
-#: src/gtkconv.c:3341 src/gtkprivacy.c:612 src/gtkprivacy.c:623
+#: src/gtkconv.c:3325 src/gtkprivacy.c:612 src/gtkprivacy.c:623
 msgid "Block"
 msgstr "封鎖"
 
-#: src/gtkconv.c:3344
+#: src/gtkconv.c:3328
 msgid "Block the user"
 msgstr "封鎖使用者"
 
-#: src/gtkconv.c:3351
+#: src/gtkconv.c:3335
 msgid "Add the user to your buddy list"
 msgstr "將使用者加入您的好友清單"
 
-#: src/gtkconv.c:3358
+#: src/gtkconv.c:3342
 msgid "Remove the user from your buddy list"
 msgstr "將使用者自您的好友清單中移除"
 
-#: src/gtkconv.c:3365 src/gtkconv.c:3687
+#: src/gtkconv.c:3349 src/gtkconv.c:3671
 msgid "Get the user's information"
 msgstr "取得使用者資訊"
 
 #. Invite
-#: src/gtkconv.c:3432
+#: src/gtkconv.c:3416
 msgid "Invite"
 msgstr "邀請"
 
-#: src/gtkconv.c:3435
+#: src/gtkconv.c:3419
 msgid "Invite a user"
 msgstr "邀請使用者"
 
-#: src/gtkconv.c:3442
+#: src/gtkconv.c:3426
 msgid "Add the chat to your buddy list"
 msgstr "將這個聊天室加入您的好友清單"
 
-#: src/gtkconv.c:3449
+#: src/gtkconv.c:3433
 msgid "Remove the chat from your buddy list"
 msgstr "將這個聊天室自您的好友清單中移除"
 
-#: src/gtkconv.c:3549
+#: src/gtkconv.c:3533
 msgid "Topic:"
 msgstr "主題："
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3609
+#: src/gtkconv.c:3593
 msgid "0 people in room"
 msgstr "沒有人在這個房間"
 
-#: src/gtkconv.c:3664
+#: src/gtkconv.c:3648
 msgid "IM the user"
 msgstr "送出即時訊息給使用者"
 
-#: src/gtkconv.c:3676
+#: src/gtkconv.c:3660
 msgid "Ignore the user"
 msgstr "忽略使用者"
 
-#: src/gtkconv.c:4217
+#: src/gtkconv.c:4202
 msgid "Close conversation"
 msgstr "關閉交談"
 
-#: src/gtkconv.c:4762 src/gtkconv.c:4794 src/gtkconv.c:4915 src/gtkconv.c:4982
+#: src/gtkconv.c:4747 src/gtkconv.c:4779 src/gtkconv.c:4900 src/gtkconv.c:4967
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d 個人在這個房間"
 msgstr[1] "%d 個人在這個房間"
 
-#: src/gtkconv.c:5501 src/gtkconv.c:5504
+#: src/gtkconv.c:5484 src/gtkconv.c:5487
 msgid "<main>/Conversation/Close"
 msgstr "<mail>/交談/關閉"
 
@@ -4466,18 +4482,18 @@ msgstr ""
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr "Gaim %s。執行「%s -h」以獲得更進一步的資訊。\n"
 
-#: src/plugin.c:269
+#: src/plugin.c:277
 #, c-format
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
 msgstr "找不到需要的模組「%s」。請重新安裝這個模組之後重試。"
 
-#: src/plugin.c:274 src/plugin.c:302
+#: src/plugin.c:282 src/plugin.c:310
 msgid "Gaim was unable to load your plugin."
 msgstr "Gaim 無法讀入您所提供的模組。"
 
-#: src/plugin.c:298
+#: src/plugin.c:306
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr "無法載入需要的模組「%s」。"
@@ -4653,7 +4669,7 @@ msgstr "名"
 msgid "Last Name"
 msgstr "姓"
 
-#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1392
+#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1393
 #: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:4213
 msgid "Nick"
 msgstr "暱稱"
@@ -4675,6 +4691,7 @@ msgid "City"
 msgstr "城市"
 
 #. res[0] == username
+#. show it to the user
 #: src/protocols/gg/gg.c:725 src/protocols/msn/msn.c:1331
 #: src/protocols/msn/msn.c:1575 src/protocols/napster/napster.c:393
 #: src/protocols/oscar/oscar.c:3190 src/protocols/oscar/oscar.c:3406
@@ -4818,7 +4835,8 @@ msgstr ""
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/gg/gg.c:1373 src/protocols/gg/gg.c:1375
+#. *  description
+#: src/protocols/gg/gg.c:1374 src/protocols/gg/gg.c:1376
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu 協定模組"
 
@@ -4978,31 +4996,31 @@ msgstr "主題"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:612
+#: src/protocols/irc/irc.c:613
 msgid "IRC Protocol Plugin"
 msgstr "IRC 協定模組"
 
 #. *  summary
-#: src/protocols/irc/irc.c:613
+#: src/protocols/irc/irc.c:614
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "較好的 IRC 協定模組"
 
-#: src/protocols/irc/irc.c:630 src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1382 src/protocols/napster/napster.c:657
+#: src/protocols/irc/irc.c:631 src/protocols/irc/msgs.c:197
+#: src/protocols/jabber/jabber.c:1383 src/protocols/napster/napster.c:658
 msgid "Server"
 msgstr "伺服器"
 
-#: src/protocols/irc/irc.c:633 src/protocols/jabber/jabber.c:1403
-#: src/protocols/msn/msn.c:1741 src/protocols/napster/napster.c:662
-#: src/protocols/trepia/trepia.c:1306
+#: src/protocols/irc/irc.c:634 src/protocols/jabber/jabber.c:1404
+#: src/protocols/msn/msn.c:1742 src/protocols/napster/napster.c:663
+#: src/protocols/trepia/trepia.c:1307
 msgid "Port"
 msgstr "通訊埠"
 
-#: src/protocols/irc/irc.c:636 src/protocols/zephyr/zephyr.c:1400
+#: src/protocols/irc/irc.c:637 src/protocols/zephyr/zephyr.c:1401
 msgid "Encoding"
 msgstr "編碼"
 
-#: src/protocols/irc/irc.c:639 src/protocols/irc/msgs.c:191
+#: src/protocols/irc/irc.c:640 src/protocols/irc/msgs.c:191
 #: src/protocols/jabber/jabber.c:581
 msgid "Username"
 msgstr "使用者"
@@ -5322,7 +5340,7 @@ msgstr "狀態"
 # NOTE Jabber 協定的「Resource」一詞通常係指一種使用者自定的字串，
 # NOTE 用以表示在多處地方同時登入了的情形下，目前的實在位置
 # NOTE 見 http://www.jabber.org/user/userguide.html
-#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1385
+#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1386
 msgid "Resource"
 msgstr ""
 
@@ -5945,25 +5963,26 @@ msgstr "隱藏作業系統"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/jabber/jabber.c:1361 src/protocols/jabber/jabber.c:1363
+#. *  description
+#: src/protocols/jabber/jabber.c:1362 src/protocols/jabber/jabber.c:1364
 msgid "Jabber Protocol Plugin"
 msgstr "Jabber 協定模組"
 
 # XXX 暫譯
-#: src/protocols/jabber/jabber.c:1388
+#: src/protocols/jabber/jabber.c:1389
 msgid "Use TLS if available"
 msgstr "TLS 可用則用"
 
-#: src/protocols/jabber/jabber.c:1393
+#: src/protocols/jabber/jabber.c:1394
 msgid "Force old SSL"
 msgstr "強迫使用舊式 SSL"
 
 #  NOTE 譯文更動 by Ambrose
-#: src/protocols/jabber/jabber.c:1398
+#: src/protocols/jabber/jabber.c:1399
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "允許使用純文字模式，在未經加密的串流上進行認證"
 
-#: src/protocols/jabber/jabber.c:1407
+#: src/protocols/jabber/jabber.c:1408
 msgid "Connect server"
 msgstr "連結伺服器"
 
@@ -6573,15 +6592,16 @@ msgstr "顯示「交談已逾時」的通知"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/msn/msn.c:1716 src/protocols/msn/msn.c:1718
+#. *  description
+#: src/protocols/msn/msn.c:1717 src/protocols/msn/msn.c:1719
 msgid "MSN Protocol Plugin"
 msgstr "MSN 協定模組"
 
-#: src/protocols/msn/msn.c:1736 src/protocols/trepia/trepia.c:1301
+#: src/protocols/msn/msn.c:1737 src/protocols/trepia/trepia.c:1302
 msgid "Login server"
 msgstr "登入伺服器"
 
-#: src/protocols/msn/msn.c:1745
+#: src/protocols/msn/msn.c:1746
 msgid "Use HTTP Method"
 msgstr "使用 HTTP 方式"
 
@@ -6758,7 +6778,8 @@ msgstr "群組(_G)："
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/napster/napster.c:639 src/protocols/napster/napster.c:641
+#. *  description
+#: src/protocols/napster/napster.c:640 src/protocols/napster/napster.c:642
 msgid "NAPSTER Protocol Plugin"
 msgstr "NAPSTER 協定模組"
 
@@ -6950,15 +6971,16 @@ msgstr "離線"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/novell/novell.c:2408 src/protocols/novell/novell.c:2410
+#. *  description
+#: src/protocols/novell/novell.c:2409 src/protocols/novell/novell.c:2411
 msgid "Novell GroupWise Messenger Protocol Plugin"
 msgstr "Novell GroupWise Messenger 協定模組"
 
-#: src/protocols/novell/novell.c:2427
+#: src/protocols/novell/novell.c:2428
 msgid "Server address"
 msgstr "伺服器位址"
 
-#: src/protocols/novell/novell.c:2431
+#: src/protocols/novell/novell.c:2432
 msgid "Server port"
 msgstr "伺服器通訊埠"
 
@@ -8064,15 +8086,16 @@ msgstr "依照資訊尋找好友"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/oscar/oscar.c:7001 src/protocols/oscar/oscar.c:7003
+#. *  description
+#: src/protocols/oscar/oscar.c:7002 src/protocols/oscar/oscar.c:7004
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ 協定模組"
 
-#: src/protocols/oscar/oscar.c:7020
+#: src/protocols/oscar/oscar.c:7021
 msgid "Auth host"
 msgstr "認證伺服器"
 
-#: src/protocols/oscar/oscar.c:7025
+#: src/protocols/oscar/oscar.c:7026
 msgid "Auth port"
 msgstr "認證通訊埠"
 
@@ -8278,15 +8301,16 @@ msgstr "%s 要求您傳送檔案給他（她）。"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/toc/toc.c:2167 src/protocols/toc/toc.c:2169
+#. *  description
+#: src/protocols/toc/toc.c:2168 src/protocols/toc/toc.c:2170
 msgid "TOC Protocol Plugin"
 msgstr "TOC 協定模組"
 
-#: src/protocols/toc/toc.c:2186
+#: src/protocols/toc/toc.c:2187
 msgid "TOC host"
 msgstr "TOC 伺服器"
 
-#: src/protocols/toc/toc.c:2190
+#: src/protocols/toc/toc.c:2191
 msgid "TOC port"
 msgstr "TOC 通訊埠"
 
@@ -8373,7 +8397,8 @@ msgstr "登入中"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/trepia/trepia.c:1282 src/protocols/trepia/trepia.c:1284
+#. *  description
+#: src/protocols/trepia/trepia.c:1283 src/protocols/trepia/trepia.c:1285
 msgid "Trepia Protocol Plugin"
 msgstr "Trepia 協定模組"
 
@@ -8608,27 +8633,28 @@ msgstr "酷連結(三)"
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/yahoo/yahoo.c:3294 src/protocols/yahoo/yahoo.c:3296
+#. *  description
+#: src/protocols/yahoo/yahoo.c:3295 src/protocols/yahoo/yahoo.c:3297
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo 協定模組"
 
-#: src/protocols/yahoo/yahoo.c:3313
+#: src/protocols/yahoo/yahoo.c:3314
 msgid "Pager host"
 msgstr "傳呼系統伺服器"
 
-#: src/protocols/yahoo/yahoo.c:3316
+#: src/protocols/yahoo/yahoo.c:3317
 msgid "Pager port"
 msgstr "傳呼系統通訊埠"
 
-#: src/protocols/yahoo/yahoo.c:3319
+#: src/protocols/yahoo/yahoo.c:3320
 msgid "File transfer host"
 msgstr "檔案傳輸主機"
 
-#: src/protocols/yahoo/yahoo.c:3322
+#: src/protocols/yahoo/yahoo.c:3323
 msgid "File transfer port"
 msgstr "檔案傳輸通訊埠"
 
-#: src/protocols/yahoo/yahoo.c:3325
+#: src/protocols/yahoo/yahoo.c:3326
 msgid "Chat Room List Url"
 msgstr "聊天室清單所在網址"
 
@@ -8765,7 +8791,8 @@ msgstr "接受者(_R)："
 #. *< name
 #. *< version
 #. *  summary
-#: src/protocols/zephyr/zephyr.c:1372 src/protocols/zephyr/zephyr.c:1374
+#. *  description
+#: src/protocols/zephyr/zephyr.c:1373 src/protocols/zephyr/zephyr.c:1375
 msgid "Zephyr Protocol Plugin"
 msgstr "Zephyr 協定模組"
 
@@ -8775,18 +8802,18 @@ msgstr "Zephyr 協定模組"
 # NOTE: gaim to write to .anyone upon logout. Some people use multiple
 # NOTE: clients and prefer to have separate buddylists for separate clients.
 # NOTE: Similarly, .zephyr.subs controls the chats that a person subs.
-#: src/protocols/zephyr/zephyr.c:1391
+#: src/protocols/zephyr/zephyr.c:1392
 msgid "Export to .anyone"
 msgstr "匯出至 .anyone 檔"
 
-#: src/protocols/zephyr/zephyr.c:1394
+#: src/protocols/zephyr/zephyr.c:1395
 msgid "Export to .zephyr.subs"
 msgstr "匯出至 .zephyr.subs 檔"
 
 # FIXME 暫譯；譯得很差，有待改進
 # NOTE: Zephyr 的「Exposure」指隱身至現身之間的各種狀態
 # NOTE: aatharuv: exposure in zephyr controls your visibility.
-#: src/protocols/zephyr/zephyr.c:1397
+#: src/protocols/zephyr/zephyr.c:1398
 msgid "Exposure"
 msgstr "現身程度"
 
@@ -8812,7 +8839,7 @@ msgstr ""
 "對於您目前所設定的代理伺服器型態來說，您所給定的伺服器名稱及通訊埠是無效的"
 
 #. * Custom away message.
-#: src/prpl.h:194
+#: src/prpl.h:195
 msgid "Custom"
 msgstr "使用者自定"
 

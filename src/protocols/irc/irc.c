@@ -232,8 +232,10 @@ static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond)
 	const char *username;
 	GList *connections = gaim_connections_get_all();
 
-	if (source < 0)
+	if (source < 0) {
+		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
+	}
 
 	if (!g_list_find(connections, gc)) {
 		close(source);

@@ -270,6 +270,11 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 	GaimConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
+	if (source < 0) {
+		gaim_connection_error(gc, _("Couldn't connect to host"));
+		return;
+	}
+
 	if(!g_list_find(gaim_connections_get_all(), gc)) {
 		gaim_ssl_close(gsc);
 		return;

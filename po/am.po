@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.60 \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-20 21:45-0400\n"
+"POT-Creation-Date: 2004-04-22 22:29-0400\n"
 "PO-Revision-Date: 2003-04-08 09:23:11+EDT\n"
 "Last-Translator: Ge'ez Frontier Foundation <locales@geez.org>\n"
 "Language-Team: Amharic <locales@geez.org>\n"
@@ -148,11 +148,11 @@ msgstr "ውሪ አገጣጥም..."
 msgid "New..."
 msgstr "አዲስ.."
 
-#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1626 src/protocols/gg/gg.c:51
+#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1637 src/protocols/gg/gg.c:51
 #: src/protocols/irc/msgs.c:187 src/protocols/jabber/jabber.c:952
 #: src/protocols/jabber/jutil.c:32 src/protocols/jabber/presence.c:63
-#: src/protocols/jabber/presence.c:119 src/protocols/novell/novell.c:2144
-#: src/protocols/novell/novell.c:2259 src/protocols/novell/novell.c:2311
+#: src/protocols/jabber/presence.c:119 src/protocols/novell/novell.c:2147
+#: src/protocols/novell/novell.c:2262 src/protocols/novell/novell.c:2314
 #: src/protocols/oscar/oscar.c:520 src/protocols/oscar/oscar.c:4825
 #: src/protocols/oscar/oscar.c:5808 src/protocols/oscar/oscar.c:6426
 msgid "Away"
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Accounts"
 msgstr ""
 
-#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2576 src/main.c:292
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2594 src/main.c:292
 msgid "Preferences"
 msgstr "ምርጫዎች"
 
@@ -371,21 +371,21 @@ msgid ""
 msgstr ""
 
 #: plugins/gevolution/add_buddy_dialog.c:136
-#: plugins/gevolution/assoc-buddy.c:76
+#: plugins/gevolution/assoc-buddy.c:74
 #, fuzzy
 msgid "Local Addressbook"
 msgstr "ኢሜያል አድራሻ"
 
 #: plugins/gevolution/add_buddy_dialog.c:146
 #: plugins/gevolution/add_buddy_dialog.c:157
-#: plugins/gevolution/assoc-buddy.c:86 plugins/gevolution/assoc-buddy.c:97
-#: src/gtkblist.c:2964 src/gtkprefs.c:873 src/gtkprefs.c:1654
+#: plugins/gevolution/assoc-buddy.c:84 plugins/gevolution/assoc-buddy.c:95
+#: src/gtkblist.c:2964 src/gtkprefs.c:884 src/gtkprefs.c:1665
 #: src/protocols/jabber/jabber.c:916
 msgid "None"
 msgstr "ምንም"
 
 #: plugins/gevolution/add_buddy_dialog.c:190
-#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:1991
+#: plugins/gevolution/assoc-buddy.c:178 src/gtkprefs.c:2006
 #: src/gtkroomlist.c:561 src/protocols/jabber/jabber.c:591
 #: src/protocols/msn/msn.c:1395 src/protocols/trepia/trepia.c:398
 msgid "Name"
@@ -402,7 +402,7 @@ msgstr ""
 
 #. "Search"
 #: plugins/gevolution/add_buddy_dialog.c:495
-#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6697
+#: plugins/gevolution/assoc-buddy.c:383 src/protocols/oscar/oscar.c:6697
 msgid "Search"
 msgstr ""
 
@@ -415,7 +415,7 @@ msgstr "መድረክ፦ (_G)"
 
 #. "New Person" button
 #: plugins/gevolution/add_buddy_dialog.c:592
-#: plugins/gevolution/assoc-buddy.c:488
+#: plugins/gevolution/assoc-buddy.c:486
 #, fuzzy
 msgid "New Person"
 msgstr "<አዲስ ተጠቃሚ>"
@@ -427,23 +427,23 @@ msgid "Select Buddy"
 msgstr "የፊደል ቅርጽ ምረጡ"
 
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:372
+#: plugins/gevolution/assoc-buddy.c:370
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
 msgstr ""
 
 #. Add the disclosure
-#: plugins/gevolution/assoc-buddy.c:451
+#: plugins/gevolution/assoc-buddy.c:449
 msgid "Show user details"
 msgstr ""
 
-#: plugins/gevolution/assoc-buddy.c:452
+#: plugins/gevolution/assoc-buddy.c:450
 msgid "Hide user details"
 msgstr ""
 
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:505
+#: plugins/gevolution/assoc-buddy.c:503
 msgid "_Associate Buddy"
 msgstr ""
 
@@ -753,14 +753,14 @@ msgstr ""
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:530
+#: plugins/perl/perl.c:531
 msgid "Perl Plugin Loader"
 msgstr ""
 
 #. *< name
 #. *< version
 #. *< summary
-#: plugins/perl/perl.c:532 plugins/perl/perl.c:533
+#: plugins/perl/perl.c:533 plugins/perl/perl.c:534
 msgid "Provides support for loading perl plugins."
 msgstr ""
 
@@ -994,11 +994,11 @@ msgid ""
 "idle."
 msgstr ""
 
-#: plugins/tcl/tcl.c:349
+#: plugins/tcl/tcl.c:350
 msgid "Tcl Plugin Loader"
 msgstr ""
 
-#: plugins/tcl/tcl.c:351 plugins/tcl/tcl.c:352
+#: plugins/tcl/tcl.c:352 plugins/tcl/tcl.c:353
 msgid "Provides support for loading Tcl plugins"
 msgstr ""
 
@@ -1072,7 +1072,7 @@ msgid "_Show slider bar in IM window"
 msgstr ""
 
 #. Buddy List trans options
-#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:876
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:887
 msgid "Buddy List Window"
 msgstr ""
 
@@ -1103,54 +1103,54 @@ msgid ""
 "* Note: This plugin requires Win2000 or WinXP."
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:348
+#: plugins/win32/winprefs/winprefs.c:344
 msgid "GTK+ Runtime Version"
 msgstr ""
 
 #. Autostart
-#: plugins/win32/winprefs/winprefs.c:356
+#: plugins/win32/winprefs/winprefs.c:352
 msgid "Startup"
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:357
+#: plugins/win32/winprefs/winprefs.c:353
 msgid "_Start Gaim on Windows startup"
 msgstr ""
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:3005
-#: src/gtkprefs.c:2490
+#: plugins/win32/winprefs/winprefs.c:362 src/gtkblist.c:3005
+#: src/gtkprefs.c:2505
 msgid "Buddy List"
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:367
+#: plugins/win32/winprefs/winprefs.c:363
 msgid "_Dockable Buddy List"
 msgstr ""
 
 #. Docked Blist On Top
-#: plugins/win32/winprefs/winprefs.c:371
+#: plugins/win32/winprefs/winprefs.c:367
 msgid "Docked _Buddy List is always on top"
 msgstr ""
 
 #. Blist On Top
-#: plugins/win32/winprefs/winprefs.c:381
+#: plugins/win32/winprefs/winprefs.c:377
 msgid "_Keep Buddy List window on top"
 msgstr ""
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:914
-#: src/gtkprefs.c:2491 src/protocols/msn/msn.c:1621
+#: plugins/win32/winprefs/winprefs.c:382 src/gtkprefs.c:925
+#: src/gtkprefs.c:2506 src/protocols/msn/msn.c:1621
 msgid "Conversations"
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:387
+#: plugins/win32/winprefs/winprefs.c:383
 msgid "_Flash Window when messages are received"
 msgstr ""
 
-#: plugins/win32/winprefs/winprefs.c:409
+#: plugins/win32/winprefs/winprefs.c:405
 msgid "WinGaim Options"
 msgstr "የWinGaim ምርጫዎች"
 
-#: plugins/win32/winprefs/winprefs.c:411 plugins/win32/winprefs/winprefs.c:412
+#: plugins/win32/winprefs/winprefs.c:407 plugins/win32/winprefs/winprefs.c:408
 msgid "Options specific to Windows Gaim."
 msgstr ""
 
@@ -1479,7 +1479,7 @@ msgstr ""
 msgid "Set All Away"
 msgstr ""
 
-#: src/blist.c:590 src/gtkprefs.c:2493
+#: src/blist.c:590 src/gtkprefs.c:2508
 msgid "Chats"
 msgstr ""
 
@@ -1498,8 +1498,8 @@ msgstr[1] ""
 msgid "Group not removed"
 msgstr ""
 
-#: src/blist.c:1251 src/gtkaccount.c:164 src/gtkft.c:153 src/gtkutils.c:860
-#: src/protocols/jabber/buddy.c:569 src/protocols/novell/novell.c:2156
+#: src/blist.c:1251 src/gtkaccount.c:164 src/gtkft.c:153 src/gtkutils.c:696
+#: src/protocols/jabber/buddy.c:569 src/protocols/novell/novell.c:2159
 msgid "Unknown"
 msgstr "ያልታወቀ"
 
@@ -1587,7 +1587,7 @@ msgstr ""
 msgid "Last created window"
 msgstr ""
 
-#: src/conversation.c:2469 src/gtkprefs.c:1402
+#: src/conversation.c:2469 src/gtkprefs.c:1413
 msgid "New window"
 msgstr "አዲስ መስኮት"
 
@@ -1950,7 +1950,7 @@ msgid "SOCKS 5"
 msgstr ""
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:808 src/gtkaccount.c:860 src/gtkprefs.c:1203
+#: src/gtkaccount.c:808 src/gtkaccount.c:860 src/gtkprefs.c:1214
 msgid "Use Environmental Settings"
 msgstr ""
 
@@ -1966,15 +1966,15 @@ msgstr ""
 msgid "Proxy Options"
 msgstr ""
 
-#: src/gtkaccount.c:937 src/gtkprefs.c:1197
+#: src/gtkaccount.c:937 src/gtkprefs.c:1208
 msgid "Proxy _type:"
 msgstr ""
 
-#: src/gtkaccount.c:946 src/gtkprefs.c:1227
+#: src/gtkaccount.c:946 src/gtkprefs.c:1238
 msgid "_Host:"
 msgstr "እንግዳ ተቀባይ፦ (_H)"
 
-#: src/gtkaccount.c:950 src/gtkprefs.c:1245
+#: src/gtkaccount.c:950 src/gtkprefs.c:1256
 #, fuzzy
 msgid "_Port:"
 msgstr "ፖርት፦"
@@ -1984,7 +1984,7 @@ msgstr "ፖርት፦"
 msgid "_Username:"
 msgstr "ተጠቃሚ፦ (_U)"
 
-#: src/gtkaccount.c:963 src/gtkprefs.c:1282
+#: src/gtkaccount.c:963 src/gtkprefs.c:1293
 msgid "Pa_ssword:"
 msgstr "ሚስጢራዊ ቃል፦ (_S)"
 
@@ -2056,8 +2056,8 @@ msgid "Add buddy to your list?"
 msgstr ""
 
 #. Add button
-#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1107
-#: src/gtkconv.c:3338 src/gtkconv.c:3429 src/gtkrequest.c:240
+#: src/gtkaccount.c:2234 src/gtkblist.c:4348 src/gtkconv.c:1113
+#: src/gtkconv.c:3332 src/gtkconv.c:3423 src/gtkrequest.c:240
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:3004
 msgid "Add"
 msgstr "ጨምር"
@@ -2144,7 +2144,7 @@ msgstr ""
 msgid "_Expand"
 msgstr ""
 
-#: src/gtkblist.c:1964 src/gtkconv.c:3916
+#: src/gtkblist.c:1964 src/gtkconv.c:3911
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr ""
@@ -2556,283 +2556,283 @@ msgstr "መስኮት"
 msgid "_Search for:"
 msgstr ""
 
-#: src/gtkconv.c:1065
+#: src/gtkconv.c:1071
 msgid "IM"
 msgstr ""
 
-#: src/gtkconv.c:1073
+#: src/gtkconv.c:1079
 msgid "Un-Ignore"
 msgstr ""
 
-#: src/gtkconv.c:1075 src/gtkprefs.c:806
+#: src/gtkconv.c:1081 src/gtkprefs.c:817
 msgid "Ignore"
 msgstr "ተዉት"
 
 #. Info button
-#: src/gtkconv.c:1084 src/gtkconv.c:3352
+#: src/gtkconv.c:1090 src/gtkconv.c:3346
 msgid "Info"
 msgstr "መረጃ"
 
-#: src/gtkconv.c:1093
+#: src/gtkconv.c:1099
 msgid "Get Away Msg"
 msgstr ""
 
 #. Remove button
-#: src/gtkconv.c:1105 src/gtkconv.c:3345 src/gtkconv.c:3436
+#: src/gtkconv.c:1111 src/gtkconv.c:3339 src/gtkconv.c:3430
 #: src/gtkrequest.c:241
 msgid "Remove"
 msgstr "አስወግድ"
 
-#: src/gtkconv.c:2207
+#: src/gtkconv.c:2201
 msgid "Animate"
 msgstr ""
 
-#: src/gtkconv.c:2212
+#: src/gtkconv.c:2206
 msgid "Hide Icon"
 msgstr "ምልክትን ደብቅ"
 
-#: src/gtkconv.c:2218
+#: src/gtkconv.c:2212
 msgid "Save Icon As..."
 msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
 
-#: src/gtkconv.c:2585
+#: src/gtkconv.c:2579
 msgid "User is typing..."
 msgstr ""
 
-#: src/gtkconv.c:2593
+#: src/gtkconv.c:2587
 msgid "User has typed something and paused"
 msgstr ""
 
 #. Build the Send As menu
-#: src/gtkconv.c:2696
+#: src/gtkconv.c:2690
 msgid "_Send As"
 msgstr ""
 
-#: src/gtkconv.c:3116
+#: src/gtkconv.c:3110
 msgid "Save Conversation"
 msgstr ""
 
 #. Conversation menu
-#: src/gtkconv.c:3133
+#: src/gtkconv.c:3127
 msgid "/_Conversation"
 msgstr ""
 
-#: src/gtkconv.c:3135
+#: src/gtkconv.c:3129
 msgid "/Conversation/New Instant _Message..."
 msgstr ""
 
-#: src/gtkconv.c:3140
+#: src/gtkconv.c:3134
 msgid "/Conversation/_Find..."
 msgstr ""
 
-#: src/gtkconv.c:3142
+#: src/gtkconv.c:3136
 msgid "/Conversation/View _Log"
 msgstr ""
 
-#: src/gtkconv.c:3143
+#: src/gtkconv.c:3137
 msgid "/Conversation/_Save As..."
 msgstr ""
 
-#: src/gtkconv.c:3148
+#: src/gtkconv.c:3142
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr ""
 
-#: src/gtkconv.c:3150
+#: src/gtkconv.c:3144
 msgid "/Conversation/_Get Info"
 msgstr ""
 
-#: src/gtkconv.c:3152
+#: src/gtkconv.c:3146
 msgid "/Conversation/_Warn..."
 msgstr ""
 
-#: src/gtkconv.c:3154
+#: src/gtkconv.c:3148
 msgid "/Conversation/In_vite..."
 msgstr ""
 
-#: src/gtkconv.c:3159
+#: src/gtkconv.c:3153
 msgid "/Conversation/A_lias..."
 msgstr ""
 
-#: src/gtkconv.c:3161
+#: src/gtkconv.c:3155
 msgid "/Conversation/_Block..."
 msgstr ""
 
-#: src/gtkconv.c:3163
+#: src/gtkconv.c:3157
 msgid "/Conversation/_Add..."
 msgstr ""
 
-#: src/gtkconv.c:3165
+#: src/gtkconv.c:3159
 msgid "/Conversation/_Remove..."
 msgstr ""
 
-#: src/gtkconv.c:3170
+#: src/gtkconv.c:3164
 msgid "/Conversation/Insert Lin_k..."
 msgstr ""
 
-#: src/gtkconv.c:3172
+#: src/gtkconv.c:3166
 msgid "/Conversation/Insert Imag_e..."
 msgstr ""
 
-#: src/gtkconv.c:3177
+#: src/gtkconv.c:3171
 msgid "/Conversation/_Close"
 msgstr ""
 
 #. Options
-#: src/gtkconv.c:3181
+#: src/gtkconv.c:3175
 msgid "/_Options"
 msgstr "/ምርጫዎች (_O)"
 
-#: src/gtkconv.c:3182
+#: src/gtkconv.c:3176
 msgid "/Options/Enable _Logging"
 msgstr ""
 
-#: src/gtkconv.c:3183
+#: src/gtkconv.c:3177
 msgid "/Options/Enable _Sounds"
 msgstr ""
 
-#: src/gtkconv.c:3184
+#: src/gtkconv.c:3178
 msgid "/Options/Show Formatting _Toolbar"
 msgstr ""
 
-#: src/gtkconv.c:3226
+#: src/gtkconv.c:3220
 msgid "/Conversation/View Log"
 msgstr ""
 
-#: src/gtkconv.c:3231
+#: src/gtkconv.c:3225
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr ""
 
-#: src/gtkconv.c:3237
+#: src/gtkconv.c:3231
 msgid "/Conversation/Get Info"
 msgstr ""
 
-#: src/gtkconv.c:3241
+#: src/gtkconv.c:3235
 msgid "/Conversation/Warn..."
 msgstr ""
 
-#: src/gtkconv.c:3245
+#: src/gtkconv.c:3239
 msgid "/Conversation/Invite..."
 msgstr ""
 
-#: src/gtkconv.c:3251
+#: src/gtkconv.c:3245
 msgid "/Conversation/Alias..."
 msgstr ""
 
-#: src/gtkconv.c:3255
+#: src/gtkconv.c:3249
 msgid "/Conversation/Block..."
 msgstr ""
 
-#: src/gtkconv.c:3259
+#: src/gtkconv.c:3253
 msgid "/Conversation/Add..."
 msgstr ""
 
-#: src/gtkconv.c:3263
+#: src/gtkconv.c:3257
 msgid "/Conversation/Remove..."
 msgstr ""
 
-#: src/gtkconv.c:3269
+#: src/gtkconv.c:3263
 msgid "/Conversation/Insert Link..."
 msgstr ""
 
-#: src/gtkconv.c:3273
+#: src/gtkconv.c:3267
 msgid "/Conversation/Insert Image..."
 msgstr ""
 
-#: src/gtkconv.c:3279
+#: src/gtkconv.c:3273
 msgid "/Options/Enable Logging"
 msgstr ""
 
-#: src/gtkconv.c:3282
+#: src/gtkconv.c:3276
 msgid "/Options/Enable Sounds"
 msgstr ""
 
-#: src/gtkconv.c:3285
+#: src/gtkconv.c:3279
 msgid "/Options/Show Formatting Toolbar"
 msgstr ""
 
 #. From right to left...
 #. Send button
-#: src/gtkconv.c:3308 src/gtkconv.c:3310 src/gtkconv.c:3408 src/gtkconv.c:3410
+#: src/gtkconv.c:3302 src/gtkconv.c:3304 src/gtkconv.c:3402 src/gtkconv.c:3404
 msgid "Send"
 msgstr "ላክ"
 
 #. Now, um, just kind of all over the place. Huh?
 #. Warn button
-#: src/gtkconv.c:3324
+#: src/gtkconv.c:3318
 msgid "Warn"
 msgstr ""
 
-#: src/gtkconv.c:3327
+#: src/gtkconv.c:3321
 msgid "Warn the user"
 msgstr ""
 
 #. Block button
-#: src/gtkconv.c:3331 src/gtkprivacy.c:612 src/gtkprivacy.c:623
+#: src/gtkconv.c:3325 src/gtkprivacy.c:612 src/gtkprivacy.c:623
 msgid "Block"
 msgstr ""
 
-#: src/gtkconv.c:3334
+#: src/gtkconv.c:3328
 msgid "Block the user"
 msgstr ""
 
-#: src/gtkconv.c:3341
+#: src/gtkconv.c:3335
 msgid "Add the user to your buddy list"
 msgstr ""
 
-#: src/gtkconv.c:3348
+#: src/gtkconv.c:3342
 msgid "Remove the user from your buddy list"
 msgstr ""
 
-#: src/gtkconv.c:3355 src/gtkconv.c:3677
+#: src/gtkconv.c:3349 src/gtkconv.c:3671
 msgid "Get the user's information"
 msgstr ""
 
 #. Invite
-#: src/gtkconv.c:3422
+#: src/gtkconv.c:3416
 msgid "Invite"
 msgstr ""
 
-#: src/gtkconv.c:3425
+#: src/gtkconv.c:3419
 msgid "Invite a user"
 msgstr ""
 
-#: src/gtkconv.c:3432
+#: src/gtkconv.c:3426
 msgid "Add the chat to your buddy list"
 msgstr ""
 
-#: src/gtkconv.c:3439
+#: src/gtkconv.c:3433
 msgid "Remove the chat from your buddy list"
 msgstr ""
 
-#: src/gtkconv.c:3539
+#: src/gtkconv.c:3533
 msgid "Topic:"
 msgstr "ጉዳዩ፦"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3599
+#: src/gtkconv.c:3593
 msgid "0 people in room"
 msgstr ""
 
-#: src/gtkconv.c:3654
+#: src/gtkconv.c:3648
 msgid "IM the user"
 msgstr ""
 
-#: src/gtkconv.c:3666
+#: src/gtkconv.c:3660
 msgid "Ignore the user"
 msgstr ""
 
-#: src/gtkconv.c:4207
+#: src/gtkconv.c:4202
 msgid "Close conversation"
 msgstr ""
 
-#: src/gtkconv.c:4752 src/gtkconv.c:4784 src/gtkconv.c:4905 src/gtkconv.c:4972
+#: src/gtkconv.c:4747 src/gtkconv.c:4779 src/gtkconv.c:4900 src/gtkconv.c:4967
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/gtkconv.c:5491 src/gtkconv.c:5494
+#: src/gtkconv.c:5484 src/gtkconv.c:5487
 msgid "<main>/Conversation/Close"
 msgstr ""
 
@@ -2987,36 +2987,36 @@ msgid ""
 "Remote port: %d"
 msgstr ""
 
-#: src/gtkimhtml.c:1131
+#: src/gtkimhtml.c:1139
 #, fuzzy
 msgid "_Copy E-Mail Address"
 msgstr "ኢሜያል አድራሻ"
 
-#: src/gtkimhtml.c:1143
+#: src/gtkimhtml.c:1151
 msgid "_Copy Link Location"
 msgstr "አያያዝ ቦታ ቅጂ"
 
-#: src/gtkimhtml.c:1153
+#: src/gtkimhtml.c:1161
 msgid "_Open Link in Browser"
 msgstr ""
 
-#: src/gtkimhtml.c:2635
+#: src/gtkimhtml.c:2643
 msgid ""
 "Unable to guess the image type based on the file extension supplied.  "
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:2643
+#: src/gtkimhtml.c:2651
 #, c-format
 msgid "Error saving image: %s"
 msgstr ""
 
-#: src/gtkimhtml.c:2652
+#: src/gtkimhtml.c:2660
 #, fuzzy
 msgid "Save Image"
 msgstr "ምስሉን አስቀምጥ... (_S)"
 
-#: src/gtkimhtml.c:2675
+#: src/gtkimhtml.c:2683
 msgid "_Save Image..."
 msgstr "ምስሉን አስቀምጥ... (_S)"
 
@@ -3320,43 +3320,43 @@ msgstr ""
 msgid "Unknown pounce event. Please report this!"
 msgstr ""
 
-#: src/gtkprefs.c:388
+#: src/gtkprefs.c:399
 msgid "Interface Options"
 msgstr ""
 
-#: src/gtkprefs.c:390
+#: src/gtkprefs.c:401
 msgid "D_isplay remote nicknames if no alias is set"
 msgstr ""
 
-#: src/gtkprefs.c:584
+#: src/gtkprefs.c:595
 msgid ""
 "Select a smiley theme that you would like to use from the list below. New "
 "themes can be installed by dragging and dropping them onto the theme list."
 msgstr ""
 
-#: src/gtkprefs.c:619
+#: src/gtkprefs.c:630
 msgid "Icon"
 msgstr "ምልክት"
 
-#: src/gtkprefs.c:626 src/gtkprefs.c:2028 src/protocols/jabber/buddy.c:265
+#: src/gtkprefs.c:637 src/gtkprefs.c:2043 src/protocols/jabber/buddy.c:265
 #: src/protocols/jabber/buddy.c:748 src/protocols/jabber/chat.c:684
 msgid "Description"
 msgstr "መግለጫ"
 
-#: src/gtkprefs.c:693
+#: src/gtkprefs.c:704
 msgid "Style"
 msgstr "ዓይነት"
 
-#: src/gtkprefs.c:694
+#: src/gtkprefs.c:705
 msgid "_Bold"
 msgstr "ደማቅ (_B)"
 
-#: src/gtkprefs.c:696
+#: src/gtkprefs.c:707
 #, fuzzy
 msgid "_Italic"
 msgstr "አይታሊክ ማድረጊያ (_I)"
 
-#: src/gtkprefs.c:698
+#: src/gtkprefs.c:709
 msgid "_Underline"
 msgstr "የስር መስመር (_U)"
 
@@ -3367,556 +3367,556 @@ msgstr "የስር መስመር (_U)"
 #. *
 #. * remove this after string freeze ends
 #.
-#: src/gtkprefs.c:708
+#: src/gtkprefs.c:719
 msgid "_Strikethrough"
 msgstr "ስርዝ (_S)"
 
-#: src/gtkprefs.c:711
+#: src/gtkprefs.c:722
 msgid "Face"
 msgstr "የፊደል ቅርጽ ዘይቤ"
 
-#: src/gtkprefs.c:714
+#: src/gtkprefs.c:725
 msgid "Use custo_m face"
 msgstr ""
 
-#: src/gtkprefs.c:731
+#: src/gtkprefs.c:742
 msgid "Use custom si_ze"
 msgstr ""
 
-#: src/gtkprefs.c:743
+#: src/gtkprefs.c:754
 msgid "Color"
 msgstr "ቀለም"
 
-#: src/gtkprefs.c:747
+#: src/gtkprefs.c:758
 msgid "_Text color"
 msgstr "የጽሑፍ ቀለም (_T)"
 
-#: src/gtkprefs.c:766
+#: src/gtkprefs.c:777
 msgid "Bac_kground color"
 msgstr "የመደቡ ቀለም (_K)"
 
-#: src/gtkprefs.c:794 src/gtkprefs.c:1026 src/gtkprefs.c:1074
+#: src/gtkprefs.c:805 src/gtkprefs.c:1037 src/gtkprefs.c:1085
 msgid "Display"
 msgstr "አሳይ"
 
-#: src/gtkprefs.c:795
+#: src/gtkprefs.c:806
 msgid "Show graphical _smileys"
 msgstr ""
 
-#: src/gtkprefs.c:797
+#: src/gtkprefs.c:808
 msgid "Show _timestamp on messages"
 msgstr ""
 
-#: src/gtkprefs.c:799
+#: src/gtkprefs.c:810
 msgid "Show _URLs as links"
 msgstr ""
 
-#: src/gtkprefs.c:803
+#: src/gtkprefs.c:814
 msgid "_Highlight misspelled words"
 msgstr ""
 
-#: src/gtkprefs.c:807
+#: src/gtkprefs.c:818
 msgid "Ignore c_olors"
 msgstr ""
 
-#: src/gtkprefs.c:809
+#: src/gtkprefs.c:820
 msgid "Ignore font _faces"
 msgstr ""
 
-#: src/gtkprefs.c:811
+#: src/gtkprefs.c:822
 msgid "Ignore font si_zes"
 msgstr ""
 
-#: src/gtkprefs.c:824
+#: src/gtkprefs.c:835
 msgid "Send Message"
 msgstr ""
 
-#: src/gtkprefs.c:825
+#: src/gtkprefs.c:836
 msgid "Enter _sends message"
 msgstr ""
 
-#: src/gtkprefs.c:827
+#: src/gtkprefs.c:838
 msgid "C_ontrol-Enter sends message"
 msgstr ""
 
-#: src/gtkprefs.c:830
+#: src/gtkprefs.c:841
 msgid "Window Closing"
 msgstr ""
 
-#: src/gtkprefs.c:831
+#: src/gtkprefs.c:842
 msgid "_Escape closes window"
 msgstr ""
 
-#: src/gtkprefs.c:834
+#: src/gtkprefs.c:845
 #, fuzzy
 msgid "Insertions"
 msgstr "አያያዝ አስገባ"
 
-#: src/gtkprefs.c:835
+#: src/gtkprefs.c:846
 msgid "Control-{B/I/U} inserts _HTML tags"
 msgstr ""
 
-#: src/gtkprefs.c:837
+#: src/gtkprefs.c:848
 msgid "Control-(number) _inserts smileys"
 msgstr ""
 
-#: src/gtkprefs.c:853
+#: src/gtkprefs.c:864
 msgid "Buddy List Sorting"
 msgstr ""
 
-#: src/gtkprefs.c:862
+#: src/gtkprefs.c:873
 #, fuzzy
 msgid "_Sorting:"
 msgstr "ፖርት፦"
 
-#: src/gtkprefs.c:867
+#: src/gtkprefs.c:878
 msgid "Buddy List Toolbar"
 msgstr ""
 
-#: src/gtkprefs.c:868 src/gtkprefs.c:999 src/gtkprefs.c:1050
+#: src/gtkprefs.c:879 src/gtkprefs.c:1010 src/gtkprefs.c:1061
 msgid "Show _buttons as:"
 msgstr ""
 
-#: src/gtkprefs.c:870 src/gtkprefs.c:1001 src/gtkprefs.c:1052
+#: src/gtkprefs.c:881 src/gtkprefs.c:1012 src/gtkprefs.c:1063
 msgid "Pictures"
 msgstr "ሥዕሎች"
 
-#: src/gtkprefs.c:871 src/gtkprefs.c:1002 src/gtkprefs.c:1053
+#: src/gtkprefs.c:882 src/gtkprefs.c:1013 src/gtkprefs.c:1064
 msgid "Text"
 msgstr "ጽሑፍ"
 
-#: src/gtkprefs.c:872 src/gtkprefs.c:1003 src/gtkprefs.c:1054
+#: src/gtkprefs.c:883 src/gtkprefs.c:1014 src/gtkprefs.c:1065
 msgid "Pictures and text"
 msgstr ""
 
-#: src/gtkprefs.c:877 src/gtkprefs.c:1014 src/gtkprefs.c:1065
+#: src/gtkprefs.c:888 src/gtkprefs.c:1025 src/gtkprefs.c:1076
 msgid "_Raise window on events"
 msgstr ""
 
-#: src/gtkprefs.c:880
+#: src/gtkprefs.c:891
 msgid "Group Display"
 msgstr ""
 
-#: src/gtkprefs.c:881
+#: src/gtkprefs.c:892
 msgid "Show _numbers in groups"
 msgstr ""
 
-#: src/gtkprefs.c:884
+#: src/gtkprefs.c:895
 msgid "Buddy Display"
 msgstr ""
 
-#: src/gtkprefs.c:885 src/gtkprefs.c:1021
+#: src/gtkprefs.c:896 src/gtkprefs.c:1032
 msgid "Show buddy _icons"
 msgstr ""
 
-#: src/gtkprefs.c:887
+#: src/gtkprefs.c:898
 msgid "Show _warning levels"
 msgstr ""
 
-#: src/gtkprefs.c:889
+#: src/gtkprefs.c:900
 msgid "Show idle _times"
 msgstr ""
 
-#: src/gtkprefs.c:891
+#: src/gtkprefs.c:902
 msgid "Dim i_dle buddies"
 msgstr ""
 
-#: src/gtkprefs.c:893
+#: src/gtkprefs.c:904
 msgid "_Automatically expand contacts"
 msgstr ""
 
-#: src/gtkprefs.c:918
+#: src/gtkprefs.c:929
 msgid "_Placement:"
 msgstr ""
 
-#: src/gtkprefs.c:925
+#: src/gtkprefs.c:936
 msgid "Send _URLs as links"
 msgstr ""
 
-#: src/gtkprefs.c:928
+#: src/gtkprefs.c:939
 msgid "Show _formatting toolbar"
 msgstr ""
 
-#: src/gtkprefs.c:931
+#: src/gtkprefs.c:942
 msgid "Show a_liases in tabs/titles"
 msgstr ""
 
-#: src/gtkprefs.c:934
+#: src/gtkprefs.c:945
 msgid "Tab Options"
 msgstr "የመክፈቻዎች ምርጫዎች"
 
-#: src/gtkprefs.c:936
+#: src/gtkprefs.c:947
 msgid "_Tab Placement:"
 msgstr ""
 
-#: src/gtkprefs.c:938
+#: src/gtkprefs.c:949
 msgid "Top"
 msgstr "ወደ ላይ"
 
-#: src/gtkprefs.c:939
+#: src/gtkprefs.c:950
 msgid "Bottom"
 msgstr "ወደ ታች"
 
-#: src/gtkprefs.c:940
+#: src/gtkprefs.c:951
 msgid "Left"
 msgstr "ግራ"
 
-#: src/gtkprefs.c:941
+#: src/gtkprefs.c:952
 msgid "Right"
 msgstr "ቀኝ"
 
-#: src/gtkprefs.c:947
+#: src/gtkprefs.c:958
 msgid "Show IMs and chats in _tabbed windows"
 msgstr ""
 
-#: src/gtkprefs.c:950
+#: src/gtkprefs.c:961
 msgid "Show IMs and chats in _same tabbed window"
 msgstr ""
 
-#: src/gtkprefs.c:960
+#: src/gtkprefs.c:971
 msgid "Show _close button on tabs"
 msgstr ""
 
-#: src/gtkprefs.c:971
+#: src/gtkprefs.c:982
 msgid "Show status _icons on tabs"
 msgstr ""
 
-#: src/gtkprefs.c:998 src/gtkprefs.c:1049
+#: src/gtkprefs.c:1009 src/gtkprefs.c:1060
 msgid "Window"
 msgstr "መስኮት"
 
-#: src/gtkprefs.c:1008 src/gtkprefs.c:1059
+#: src/gtkprefs.c:1019 src/gtkprefs.c:1070
 msgid "New window _width:"
 msgstr ""
 
-#: src/gtkprefs.c:1010 src/gtkprefs.c:1061
+#: src/gtkprefs.c:1021 src/gtkprefs.c:1072
 msgid "New window _height:"
 msgstr ""
 
-#: src/gtkprefs.c:1012 src/gtkprefs.c:1063
+#: src/gtkprefs.c:1023 src/gtkprefs.c:1074
 msgid "_Entry field height:"
 msgstr ""
 
-#: src/gtkprefs.c:1016
+#: src/gtkprefs.c:1027
 msgid "Hide window on _send"
 msgstr ""
 
-#: src/gtkprefs.c:1020
+#: src/gtkprefs.c:1031
 msgid "Buddy Icons"
 msgstr ""
 
-#: src/gtkprefs.c:1023
+#: src/gtkprefs.c:1034
 msgid "Enable buddy icon a_nimation"
 msgstr ""
 
-#: src/gtkprefs.c:1027
+#: src/gtkprefs.c:1038
 msgid "Show _logins in window"
 msgstr ""
 
-#: src/gtkprefs.c:1030
+#: src/gtkprefs.c:1041
 msgid "Typing Notification"
 msgstr ""
 
-#: src/gtkprefs.c:1031
+#: src/gtkprefs.c:1042
 msgid "Notify buddies that you are _typing to them"
 msgstr ""
 
-#: src/gtkprefs.c:1068
+#: src/gtkprefs.c:1079
 msgid "Tab Completion"
 msgstr ""
 
-#: src/gtkprefs.c:1069
+#: src/gtkprefs.c:1080
 msgid "_Tab-complete nicks"
 msgstr ""
 
-#: src/gtkprefs.c:1071
+#: src/gtkprefs.c:1082
 msgid "_Old-style tab completion"
 msgstr ""
 
-#: src/gtkprefs.c:1075
+#: src/gtkprefs.c:1086
 msgid "_Show people joining in window"
 msgstr ""
 
-#: src/gtkprefs.c:1077
+#: src/gtkprefs.c:1088
 msgid "_Show people leaving in window"
 msgstr ""
 
-#: src/gtkprefs.c:1079
+#: src/gtkprefs.c:1090
 #, fuzzy
 msgid "Co_lorize screen names"
 msgstr "እስክሪን ስም፦ (_S)"
 
-#: src/gtkprefs.c:1100 src/protocols/oscar/oscar.c:584
+#: src/gtkprefs.c:1111 src/protocols/oscar/oscar.c:584
 #: src/protocols/oscar/oscar.c:4220
 #, fuzzy
 msgid "IP Address"
 msgstr "አድራሻ፦"
 
-#: src/gtkprefs.c:1102
+#: src/gtkprefs.c:1113
 msgid "_Autodetect IP Address"
 msgstr ""
 
-#: src/gtkprefs.c:1111
+#: src/gtkprefs.c:1122
 msgid "Public _IP:"
 msgstr ""
 
-#: src/gtkprefs.c:1135
+#: src/gtkprefs.c:1146
 #, fuzzy
 msgid "Ports"
 msgstr "ፖርት"
 
-#: src/gtkprefs.c:1138
+#: src/gtkprefs.c:1149
 msgid "_Manually specify range of ports to listen on"
 msgstr ""
 
-#: src/gtkprefs.c:1141
+#: src/gtkprefs.c:1152
 #, fuzzy
 msgid "_Start Port:"
 msgstr "ፖርት፦"
 
-#: src/gtkprefs.c:1148
+#: src/gtkprefs.c:1159
 #, fuzzy
 msgid "_End Port:"
 msgstr "ፖርት፦"
 
-#: src/gtkprefs.c:1196
+#: src/gtkprefs.c:1207
 msgid "Proxy Type"
 msgstr ""
 
-#: src/gtkprefs.c:1199
+#: src/gtkprefs.c:1210
 msgid "No proxy"
 msgstr ""
 
-#: src/gtkprefs.c:1206
+#: src/gtkprefs.c:1217
 msgid "Proxy Server"
 msgstr ""
 
-#: src/gtkprefs.c:1264
+#: src/gtkprefs.c:1275
 #, fuzzy
 msgid "_User:"
 msgstr "ተጠቃሚ (_U)"
 
-#: src/gtkprefs.c:1320
+#: src/gtkprefs.c:1331
 msgid "Opera"
 msgstr "ኦፔራ"
 
-#: src/gtkprefs.c:1321
+#: src/gtkprefs.c:1332
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/gtkprefs.c:1322
+#: src/gtkprefs.c:1333
 msgid "Mozilla"
 msgstr "ሞዚላ"
 
-#: src/gtkprefs.c:1323
+#: src/gtkprefs.c:1334
 msgid "Konqueror"
 msgstr ""
 
-#: src/gtkprefs.c:1324
+#: src/gtkprefs.c:1335
 msgid "Galeon"
 msgstr "ጋልዮን"
 
-#: src/gtkprefs.c:1325
+#: src/gtkprefs.c:1336
 msgid "Firebird"
 msgstr ""
 
-#: src/gtkprefs.c:1326
+#: src/gtkprefs.c:1337
 msgid "Firefox"
 msgstr ""
 
-#: src/gtkprefs.c:1327
+#: src/gtkprefs.c:1338
 msgid "Gnome Default"
 msgstr ""
 
-#: src/gtkprefs.c:1336
+#: src/gtkprefs.c:1347
 msgid "Manual"
 msgstr ""
 
-#: src/gtkprefs.c:1387
+#: src/gtkprefs.c:1398
 msgid "Browser Selection"
 msgstr ""
 
-#: src/gtkprefs.c:1391
+#: src/gtkprefs.c:1402
 #, fuzzy
 msgid "_Browser:"
 msgstr "መቃኛ (_B)"
 
-#: src/gtkprefs.c:1398
+#: src/gtkprefs.c:1409
 #, fuzzy
 msgid "_Open link in:"
 msgstr "ኦንላይን"
 
-#: src/gtkprefs.c:1400
+#: src/gtkprefs.c:1411
 #, fuzzy
 msgid "Browser default"
 msgstr "መቃኛ"
 
-#: src/gtkprefs.c:1401
+#: src/gtkprefs.c:1412
 msgid "Existing window"
 msgstr ""
 
-#: src/gtkprefs.c:1403
+#: src/gtkprefs.c:1414
 #, fuzzy
 msgid "New tab"
 msgstr "አዲስ"
 
-#: src/gtkprefs.c:1417
+#: src/gtkprefs.c:1428
 #, c-format
 msgid ""
 "_Manual:\n"
 "(%s for URL)"
 msgstr ""
 
-#: src/gtkprefs.c:1454
+#: src/gtkprefs.c:1465
 msgid "Message Logs"
 msgstr ""
 
-#: src/gtkprefs.c:1457
+#: src/gtkprefs.c:1468
 msgid "Log _Format:"
 msgstr ""
 
-#: src/gtkprefs.c:1460
+#: src/gtkprefs.c:1471
 msgid "_Log all instant messages"
 msgstr ""
 
-#: src/gtkprefs.c:1462
+#: src/gtkprefs.c:1473
 msgid "Log all c_hats"
 msgstr ""
 
-#: src/gtkprefs.c:1465
+#: src/gtkprefs.c:1476
 msgid "System Logs"
 msgstr ""
 
-#: src/gtkprefs.c:1467
+#: src/gtkprefs.c:1478
 msgid "_Enable system log"
 msgstr ""
 
-#: src/gtkprefs.c:1470
+#: src/gtkprefs.c:1481
 msgid "Log when buddies _sign on/sign off"
 msgstr ""
 
-#: src/gtkprefs.c:1476
+#: src/gtkprefs.c:1487
 msgid "Log when buddies become _idle/un-idle"
 msgstr ""
 
-#: src/gtkprefs.c:1482
+#: src/gtkprefs.c:1493
 msgid "Log when buddies go away/come _back"
 msgstr ""
 
-#: src/gtkprefs.c:1488
+#: src/gtkprefs.c:1499
 msgid "Log your _own signons/idleness/awayness"
 msgstr ""
 
-#: src/gtkprefs.c:1539
+#: src/gtkprefs.c:1550
 msgid "Sound Options"
 msgstr "የድምፅ ምርጫዎች"
 
-#: src/gtkprefs.c:1540
+#: src/gtkprefs.c:1551
 msgid "Sounds when you _log in"
 msgstr ""
 
-#: src/gtkprefs.c:1542
+#: src/gtkprefs.c:1553
 msgid "Sounds when conversation has _focus"
 msgstr ""
 
-#: src/gtkprefs.c:1544
+#: src/gtkprefs.c:1555
 msgid "_Sounds while away"
 msgstr ""
 
-#: src/gtkprefs.c:1548
+#: src/gtkprefs.c:1559
 msgid "Sound Method"
 msgstr ""
 
-#: src/gtkprefs.c:1549
+#: src/gtkprefs.c:1560
 msgid "_Method:"
 msgstr ""
 
-#: src/gtkprefs.c:1551
+#: src/gtkprefs.c:1562
 msgid "Console beep"
 msgstr ""
 
-#: src/gtkprefs.c:1553
+#: src/gtkprefs.c:1564
 msgid "Automatic"
 msgstr "አውቶማቲክ"
 
-#: src/gtkprefs.c:1560
+#: src/gtkprefs.c:1571
 msgid "Command"
 msgstr "ትእዛዝ"
 
-#: src/gtkprefs.c:1570
+#: src/gtkprefs.c:1581
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
 
-#: src/gtkprefs.c:1627
+#: src/gtkprefs.c:1638
 msgid "_Sending messages removes away status"
 msgstr ""
 
-#: src/gtkprefs.c:1629
+#: src/gtkprefs.c:1640
 msgid "_Queue new messages when away"
 msgstr ""
 
-#: src/gtkprefs.c:1632
+#: src/gtkprefs.c:1643
 msgid "Auto-response"
 msgstr ""
 
-#: src/gtkprefs.c:1635
+#: src/gtkprefs.c:1646
 msgid "Seconds before _resending:"
 msgstr ""
 
-#: src/gtkprefs.c:1638
+#: src/gtkprefs.c:1649
 msgid "_Send auto-response"
 msgstr ""
 
-#: src/gtkprefs.c:1640
+#: src/gtkprefs.c:1651
 msgid "_Only send auto-response when idle"
 msgstr ""
 
-#: src/gtkprefs.c:1642
+#: src/gtkprefs.c:1653
 msgid "Send auto-response in _active conversations"
 msgstr ""
 
-#: src/gtkprefs.c:1651 src/protocols/msn/state.c:30
-#: src/protocols/novell/novell.c:2150 src/protocols/oscar/oscar.c:3378
+#: src/gtkprefs.c:1662 src/protocols/msn/state.c:30
+#: src/protocols/novell/novell.c:2153 src/protocols/oscar/oscar.c:3378
 #: src/protocols/yahoo/yahoo.c:2295
 msgid "Idle"
 msgstr ""
 
-#: src/gtkprefs.c:1652
+#: src/gtkprefs.c:1663
 msgid "Idle _time reporting:"
 msgstr ""
 
-#: src/gtkprefs.c:1655
+#: src/gtkprefs.c:1666
 msgid "Gaim usage"
 msgstr "የጌም አጠቃቀም"
 
-#: src/gtkprefs.c:1658
+#: src/gtkprefs.c:1669
 msgid "X usage"
 msgstr "የX አጠቃቀም"
 
-#: src/gtkprefs.c:1660
+#: src/gtkprefs.c:1671
 msgid "Windows usage"
 msgstr "የWindows አጠቃቀም"
 
-#: src/gtkprefs.c:1668
+#: src/gtkprefs.c:1679
 msgid "Auto-away"
 msgstr ""
 
-#: src/gtkprefs.c:1669
+#: src/gtkprefs.c:1680
 msgid "Set away _when idle"
 msgstr ""
 
-#: src/gtkprefs.c:1673
+#: src/gtkprefs.c:1684
 msgid "_Minutes before setting away:"
 msgstr ""
 
-#: src/gtkprefs.c:1681
+#: src/gtkprefs.c:1692
 msgid "Away m_essage:"
 msgstr ""
 
-#: src/gtkprefs.c:1756
+#: src/gtkprefs.c:1767
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3926,7 +3926,7 @@ msgid ""
 "<span weight=\"bold\">File name:</span>\t%s"
 msgstr ""
 
-#: src/gtkprefs.c:1761
+#: src/gtkprefs.c:1772
 #, c-format
 msgid ""
 "<span size=\"larger\">%s %s</span>\n"
@@ -3936,109 +3936,109 @@ msgid ""
 "<span weight=\"bold\">File name:</span>  %s"
 msgstr ""
 
-#: src/gtkprefs.c:1984
+#: src/gtkprefs.c:1999
 msgid "Load"
 msgstr "ጫን"
 
-#: src/gtkprefs.c:1998
+#: src/gtkprefs.c:2013
 msgid "Summary"
 msgstr ""
 
-#: src/gtkprefs.c:2046
+#: src/gtkprefs.c:2061
 msgid "Details"
 msgstr "ዝርዝሮች"
 
-#: src/gtkprefs.c:2173
+#: src/gtkprefs.c:2188
 msgid "Sound Selection"
 msgstr ""
 
-#: src/gtkprefs.c:2280
+#: src/gtkprefs.c:2295
 msgid "Play"
 msgstr "አጫውት"
 
-#: src/gtkprefs.c:2287
+#: src/gtkprefs.c:2302
 msgid "Event"
 msgstr "ኩነት"
 
-#: src/gtkprefs.c:2306
+#: src/gtkprefs.c:2321
 msgid "Test"
 msgstr "ፈተና"
 
-#: src/gtkprefs.c:2310
+#: src/gtkprefs.c:2325
 msgid "Reset"
 msgstr "እንደነበረ አድረግ"
 
-#: src/gtkprefs.c:2314
+#: src/gtkprefs.c:2329
 msgid "Choose..."
 msgstr "ምረጡ..."
 
-#: src/gtkprefs.c:2449
+#: src/gtkprefs.c:2464
 msgid "_Edit"
 msgstr "አስተካክል (_E)"
 
-#: src/gtkprefs.c:2485
+#: src/gtkprefs.c:2500
 msgid "Interface"
 msgstr ""
 
-#: src/gtkprefs.c:2486
+#: src/gtkprefs.c:2501
 msgid "Smiley Themes"
 msgstr ""
 
-#: src/gtkprefs.c:2487
+#: src/gtkprefs.c:2502
 msgid "Fonts"
 msgstr "የፊደል ቅርጾች"
 
-#: src/gtkprefs.c:2488
+#: src/gtkprefs.c:2503
 msgid "Message Text"
 msgstr ""
 
-#: src/gtkprefs.c:2489
+#: src/gtkprefs.c:2504
 msgid "Shortcuts"
 msgstr "አቋራጮች"
 
-#: src/gtkprefs.c:2492
+#: src/gtkprefs.c:2507
 msgid "IMs"
 msgstr ""
 
-#: src/gtkprefs.c:2494
+#: src/gtkprefs.c:2509
 #, fuzzy
 msgid "Network"
 msgstr "አዲስ"
 
-#: src/gtkprefs.c:2495
+#: src/gtkprefs.c:2510
 msgid "Proxy"
 msgstr ""
 
 #. We use the registered default browser in windows
-#: src/gtkprefs.c:2498
+#: src/gtkprefs.c:2513
 msgid "Browser"
 msgstr "መቃኛ"
 
-#: src/gtkprefs.c:2500
+#: src/gtkprefs.c:2515
 msgid "Logging"
 msgstr ""
 
-#: src/gtkprefs.c:2501
+#: src/gtkprefs.c:2516
 msgid "Sounds"
 msgstr "ድምፆች"
 
-#: src/gtkprefs.c:2502
+#: src/gtkprefs.c:2517
 msgid "Sound Events"
 msgstr ""
 
-#: src/gtkprefs.c:2503
+#: src/gtkprefs.c:2518
 msgid "Away / Idle"
 msgstr ""
 
-#: src/gtkprefs.c:2504
+#: src/gtkprefs.c:2519
 msgid "Away Messages"
 msgstr ""
 
-#: src/gtkprefs.c:2507
+#: src/gtkprefs.c:2522
 msgid "Protocols"
 msgstr ""
 
-#: src/gtkprefs.c:2508
+#: src/gtkprefs.c:2523
 msgid "Plugins"
 msgstr "ተጨማሪ ፕሮግራሞች (Plugins)"
 
@@ -4218,11 +4218,11 @@ msgid ""
 "launched: %s"
 msgstr ""
 
-#: src/gtkutils.c:297
+#: src/gtkutils.c:133
 msgid "Can't save icon file to disk."
 msgstr ""
 
-#: src/gtkutils.c:332
+#: src/gtkutils.c:168
 #, fuzzy
 msgid "Save Icon"
 msgstr "ምልክትን በሌላ ስም አስቀምጥ..."
@@ -4319,18 +4319,18 @@ msgstr ""
 msgid "Gaim %s. Try `%s -h' for more information.\n"
 msgstr ""
 
-#: src/plugin.c:269
+#: src/plugin.c:277
 #, c-format
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
 "again."
 msgstr ""
 
-#: src/plugin.c:274 src/plugin.c:302
+#: src/plugin.c:282 src/plugin.c:310
 msgid "Gaim was unable to load your plugin."
 msgstr ""
 
-#: src/plugin.c:298
+#: src/plugin.c:306
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr ""
@@ -4342,8 +4342,8 @@ msgstr ""
 #: src/protocols/gg/gg.c:49 src/protocols/jabber/jutil.c:44
 #: src/protocols/msn/msn.c:360 src/protocols/msn/state.c:27
 #: src/protocols/msn/state.c:28 src/protocols/msn/state.c:35
-#: src/protocols/msn/state.c:36 src/protocols/novell/novell.c:2141
-#: src/protocols/novell/novell.c:2258 src/protocols/novell/novell.c:2309
+#: src/protocols/msn/state.c:36 src/protocols/novell/novell.c:2144
+#: src/protocols/novell/novell.c:2261 src/protocols/novell/novell.c:2312
 #: src/protocols/oscar/oscar.c:603 src/protocols/yahoo/yahoo.c:2599
 #: src/protocols/yahoo/yahoo.c:2714
 msgid "Available"
@@ -4503,7 +4503,7 @@ msgstr "ስም፦"
 msgid "Last Name"
 msgstr "የአባት ስም"
 
-#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1392
+#: src/protocols/gg/gg.c:680 src/protocols/gg/gg.c:1393
 #: src/protocols/irc/msgs.c:183 src/protocols/oscar/oscar.c:4213
 msgid "Nick"
 msgstr "ቅጽል"
@@ -4664,7 +4664,7 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/gg/gg.c:1373 src/protocols/gg/gg.c:1375
+#: src/protocols/gg/gg.c:1374 src/protocols/gg/gg.c:1376
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr ""
 
@@ -4818,33 +4818,33 @@ msgstr "ጉዳዩ፦"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:612
+#: src/protocols/irc/irc.c:613
 msgid "IRC Protocol Plugin"
 msgstr ""
 
 #. *  summary
-#: src/protocols/irc/irc.c:613
+#: src/protocols/irc/irc.c:614
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr ""
 
-#: src/protocols/irc/irc.c:630 src/protocols/irc/msgs.c:197
-#: src/protocols/jabber/jabber.c:1382 src/protocols/napster/napster.c:657
+#: src/protocols/irc/irc.c:631 src/protocols/irc/msgs.c:197
+#: src/protocols/jabber/jabber.c:1383 src/protocols/napster/napster.c:658
 #, fuzzy
 msgid "Server"
 msgstr "ሰርቨር፦"
 
-#: src/protocols/irc/irc.c:633 src/protocols/jabber/jabber.c:1403
-#: src/protocols/msn/msn.c:1741 src/protocols/napster/napster.c:662
-#: src/protocols/trepia/trepia.c:1306
+#: src/protocols/irc/irc.c:634 src/protocols/jabber/jabber.c:1404
+#: src/protocols/msn/msn.c:1742 src/protocols/napster/napster.c:663
+#: src/protocols/trepia/trepia.c:1307
 msgid "Port"
 msgstr "ፖርት"
 
-#: src/protocols/irc/irc.c:636 src/protocols/zephyr/zephyr.c:1400
+#: src/protocols/irc/irc.c:637 src/protocols/zephyr/zephyr.c:1401
 #, fuzzy
 msgid "Encoding"
 msgstr "የሆሄያት ኮድ፦"
 
-#: src/protocols/irc/irc.c:639 src/protocols/irc/msgs.c:191
+#: src/protocols/irc/irc.c:640 src/protocols/irc/msgs.c:191
 #: src/protocols/jabber/jabber.c:581
 #, fuzzy
 msgid "Username"
@@ -5158,7 +5158,7 @@ msgstr ""
 msgid "Status"
 msgstr "ሁኔታ፦"
 
-#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1385
+#: src/protocols/jabber/buddy.c:578 src/protocols/jabber/jabber.c:1386
 #, fuzzy
 msgid "Resource"
 msgstr "ቀጥል (_R)"
@@ -5748,23 +5748,23 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/jabber/jabber.c:1361 src/protocols/jabber/jabber.c:1363
+#: src/protocols/jabber/jabber.c:1362 src/protocols/jabber/jabber.c:1364
 msgid "Jabber Protocol Plugin"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1388
+#: src/protocols/jabber/jabber.c:1389
 msgid "Use TLS if available"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1393
+#: src/protocols/jabber/jabber.c:1394
 msgid "Force old SSL"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1398
+#: src/protocols/jabber/jabber.c:1399
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:1407
+#: src/protocols/jabber/jabber.c:1408
 #, fuzzy
 msgid "Connect server"
 msgstr "ተገናኝቷል"
@@ -6194,8 +6194,8 @@ msgid "Be Right Back"
 msgstr ""
 
 #: src/protocols/msn/msn.c:363 src/protocols/msn/msn.c:666
-#: src/protocols/msn/state.c:29 src/protocols/novell/novell.c:2147
-#: src/protocols/novell/novell.c:2260 src/protocols/novell/novell.c:2314
+#: src/protocols/msn/state.c:29 src/protocols/novell/novell.c:2150
+#: src/protocols/novell/novell.c:2263 src/protocols/novell/novell.c:2317
 #: src/protocols/yahoo/yahoo.c:2277 src/protocols/yahoo/yahoo.c:2603
 #: src/protocols/yahoo/yahoo.c:2716
 msgid "Busy"
@@ -6371,16 +6371,16 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/msn/msn.c:1716 src/protocols/msn/msn.c:1718
+#: src/protocols/msn/msn.c:1717 src/protocols/msn/msn.c:1719
 msgid "MSN Protocol Plugin"
 msgstr ""
 
-#: src/protocols/msn/msn.c:1736 src/protocols/trepia/trepia.c:1301
+#: src/protocols/msn/msn.c:1737 src/protocols/trepia/trepia.c:1302
 #, fuzzy
 msgid "Login server"
 msgstr "ሰርቨርን የለም"
 
-#: src/protocols/msn/msn.c:1745
+#: src/protocols/msn/msn.c:1746
 msgid "Use HTTP Method"
 msgstr ""
 
@@ -6550,7 +6550,7 @@ msgstr "መድረክ፦ (_G)"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/napster/napster.c:639 src/protocols/napster/napster.c:641
+#: src/protocols/napster/napster.c:640 src/protocols/napster/napster.c:642
 msgid "NAPSTER Protocol Plugin"
 msgstr ""
 
@@ -6696,28 +6696,25 @@ msgstr ""
 msgid "This conference has been closed. No more messages can be sent."
 msgstr ""
 
-#: src/protocols/novell/novell.c:2153 src/protocols/oscar/oscar.c:574
+#: src/protocols/novell/novell.c:2156 src/protocols/oscar/oscar.c:574
 #: src/protocols/oscar/oscar.c:5818 src/protocols/yahoo/yahoo.c:2297
 #, fuzzy
 msgid "Offline"
 msgstr "ኦንላይን"
 
-#: src/protocols/novell/novell.c:2161
+#: src/protocols/novell/novell.c:2164
 #, fuzzy, c-format
 msgid ""
-"\n"
 "<b>Status:</b> %s\n"
 "<b>Message:</b> %s"
 msgstr "<b>ሁኔታ፦</b> %s%s%s"
 
-#: src/protocols/novell/novell.c:2165
+#: src/protocols/novell/novell.c:2168
 #, fuzzy, c-format
-msgid ""
-"\n"
-"<b>Status:</b> %s"
+msgid "<b>Status:</b> %s"
 msgstr "<b>ሁኔታ፦</b> %s"
 
-#: src/protocols/novell/novell.c:2261 src/protocols/novell/novell.c:2317
+#: src/protocols/novell/novell.c:2264 src/protocols/novell/novell.c:2320
 #, fuzzy
 msgid "Appear Offline"
 msgstr "ኦንላይን"
@@ -6733,16 +6730,16 @@ msgstr "ኦንላይን"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/novell/novell.c:2405 src/protocols/novell/novell.c:2407
+#: src/protocols/novell/novell.c:2409 src/protocols/novell/novell.c:2411
 msgid "Novell GroupWise Messenger Protocol Plugin"
 msgstr ""
 
-#: src/protocols/novell/novell.c:2424
+#: src/protocols/novell/novell.c:2428
 #, fuzzy
 msgid "Server address"
 msgstr "የቤት አድራሻ፦"
 
-#: src/protocols/novell/novell.c:2428
+#: src/protocols/novell/novell.c:2432
 #, fuzzy
 msgid "Server port"
 msgstr "ሰርቨር፦"
@@ -7800,15 +7797,15 @@ msgstr "የቢሮ መረጃ፦"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:7001 src/protocols/oscar/oscar.c:7003
+#: src/protocols/oscar/oscar.c:7002 src/protocols/oscar/oscar.c:7004
 msgid "AIM/ICQ Protocol Plugin"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:7020
+#: src/protocols/oscar/oscar.c:7021
 msgid "Auth host"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:7025
+#: src/protocols/oscar/oscar.c:7026
 msgid "Auth port"
 msgstr ""
 
@@ -8011,16 +8008,16 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/toc/toc.c:2167 src/protocols/toc/toc.c:2169
+#: src/protocols/toc/toc.c:2168 src/protocols/toc/toc.c:2170
 msgid "TOC Protocol Plugin"
 msgstr ""
 
-#: src/protocols/toc/toc.c:2186
+#: src/protocols/toc/toc.c:2187
 #, fuzzy
 msgid "TOC host"
 msgstr "የTOC እንግዳ ተቀባይ"
 
-#: src/protocols/toc/toc.c:2190
+#: src/protocols/toc/toc.c:2191
 #, fuzzy
 msgid "TOC port"
 msgstr "የTOC ፖርት፦"
@@ -8109,7 +8106,7 @@ msgstr "የዝምብለህ ይግባ መርጫዎች"
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/trepia/trepia.c:1282 src/protocols/trepia/trepia.c:1284
+#: src/protocols/trepia/trepia.c:1283 src/protocols/trepia/trepia.c:1285
 msgid "Trepia Protocol Plugin"
 msgstr ""
 
@@ -8333,27 +8330,27 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3294 src/protocols/yahoo/yahoo.c:3296
+#: src/protocols/yahoo/yahoo.c:3295 src/protocols/yahoo/yahoo.c:3297
 msgid "Yahoo Protocol Plugin"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3313
+#: src/protocols/yahoo/yahoo.c:3314
 msgid "Pager host"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3316
+#: src/protocols/yahoo/yahoo.c:3317
 msgid "Pager port"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3319
+#: src/protocols/yahoo/yahoo.c:3320
 msgid "File transfer host"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3322
+#: src/protocols/yahoo/yahoo.c:3323
 msgid "File transfer port"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3325
+#: src/protocols/yahoo/yahoo.c:3326
 #, fuzzy
 msgid "Chat Room List Url"
 msgstr "የውሪ ቤቶች"
@@ -8479,19 +8476,19 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/zephyr/zephyr.c:1372 src/protocols/zephyr/zephyr.c:1374
+#: src/protocols/zephyr/zephyr.c:1373 src/protocols/zephyr/zephyr.c:1375
 msgid "Zephyr Protocol Plugin"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1391
+#: src/protocols/zephyr/zephyr.c:1392
 msgid "Export to .anyone"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1394
+#: src/protocols/zephyr/zephyr.c:1395
 msgid "Export to .zephyr.subs"
 msgstr ""
 
-#: src/protocols/zephyr/zephyr.c:1397
+#: src/protocols/zephyr/zephyr.c:1398
 msgid "Exposure"
 msgstr ""
 
@@ -8516,7 +8513,7 @@ msgid ""
 msgstr ""
 
 #. * Custom away message.
-#: src/prpl.h:194
+#: src/prpl.h:195
 msgid "Custom"
 msgstr "የተለየ"
 
