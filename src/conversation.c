@@ -166,8 +166,7 @@ send_typed(gpointer data)
 	if (conv != NULL && gc != NULL && name != NULL) {
 		gaim_im_set_type_again(GAIM_IM(conv), TRUE);
 
-		/* XXX Somebody add const stuff! */
-		serv_send_typing(gc, (char *)name, GAIM_TYPED);
+		serv_send_typing(gc, name, GAIM_TYPED);
 
 		gaim_debug(GAIM_DEBUG_MISC, "conversation", "typed...\n");
 	}
@@ -450,7 +449,7 @@ gaim_window_new(void)
 {
 	GaimWindow *win;
 
-	win = g_malloc0(sizeof(GaimWindow));
+	win = g_new0(GaimWindow, 1);
 
 	windows = g_list_append(windows, win);
 
@@ -873,7 +872,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	if ((conv = gaim_find_conversation_with_account(name, account)) != NULL)
 		return conv;
 
-	conv = g_malloc0(sizeof(GaimConversation));
+	conv = g_new0(GaimConversation, 1);
 
 	conv->type         = type;
 	conv->account      = account;
@@ -886,7 +885,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 	if (type == GAIM_CONV_IM)
 	{
-		conv->u.im = g_malloc0(sizeof(GaimIm));
+		conv->u.im = g_new0(GaimIm, 1);
 		conv->u.im->conv = conv;
 
 		ims = g_list_append(ims, conv);
@@ -896,7 +895,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
-		conv->u.chat = g_malloc0(sizeof(GaimChat));
+		conv->u.chat = g_new0(GaimChat, 1);
 		conv->u.chat->conv = conv;
 
 		chats = g_list_append(chats, conv);
