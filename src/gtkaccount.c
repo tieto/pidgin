@@ -274,8 +274,8 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		 l != NULL && l2 != NULL;
 		 l = l->prev, l2 = l2->prev) {
 
-		GaimAccountUserSplit *split = l->data;
-		GtkWidget *entry = l2->data;
+		GtkWidget *entry = l->data;
+		GaimAccountUserSplit *split = l2->data;
 		const char *value = NULL;
 		char *c;
 
