@@ -126,8 +126,19 @@ GaimAccount *
 gaim_account_new(const char *username, GaimProtocol protocol)
 {
 	GaimAccount *account;
+	GList *l;
 
 	g_return_val_if_fail(username != NULL, NULL);
+
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+		account = l->data;
+
+		if (!strcmp(gaim_account_get_username(account), username) &&
+			gaim_account_get_protocol(account) == protocol) {
+
+			return account;
+		}
+	}
 
 	account = g_new0(GaimAccount, 1);
 
@@ -1191,6 +1202,9 @@ void
 gaim_accounts_add(GaimAccount *account)
 {
 	g_return_if_fail(account != NULL);
+
+	if (g_list_find(accounts, account) != NULL)
+		return;
 
 	accounts = g_list_append(accounts, account);
 
