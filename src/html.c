@@ -424,7 +424,6 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 				ALLOW_TAG_ALT("b", "strong");
 				ALLOW_TAG("blockquote");
 				ALLOW_TAG_ALT("bold", "strong");
-				ALLOW_TAG("br");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
 				ALLOW_TAG("em");
@@ -434,7 +433,6 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 				ALLOW_TAG("h4");
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
-				ALLOW_TAG("hr"); /* FIXME: not valid, need to skip?? */
 				ALLOW_TAG("html");
 				ALLOW_TAG_ALT("i", "em");
 				ALLOW_TAG_ALT("italic", "em");
@@ -447,7 +445,22 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
 
-				if(!g_ascii_strncasecmp(c, "<u>", 2) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
+				/* we skip <HR> because it's not legal in XHTML-IM.  However,
+				 * we still want to send something sensible, so we put a
+				 * linebreak in its place. <BR> also needs special handling
+				 * because putting a </BR> to close it would just be dumb. */
+				if((!g_ascii_strncasecmp(c, "<br", 3)
+							|| !g_ascii_strncasecmp(c, "<hr", 3))
+						&& (*(c+3) == '>' ||
+							!g_ascii_strncasecmp(c+3, "/>", 2) ||
+							!g_ascii_strncasecmp(c+3, " />", 3))) {
+					c = strchr(c, '>') + 1;
+					xhtml = g_string_append(xhtml, "<br/>");
+					if(*c != '\n')
+						plain = g_string_append_c(plain, '\n');
+					continue;
+				}
+				if(!g_ascii_strncasecmp(c, "<u>", 3) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
 					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "u" : "underline";
 					pt->dest_tag = "span";
@@ -456,7 +469,7 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 					xhtml = g_string_append(xhtml, "<span style='text-decoration: underline;'>");
 					continue;
 				}
-				if(!g_ascii_strncasecmp(c, "<s>", 2) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
+				if(!g_ascii_strncasecmp(c, "<s>", 3) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
 					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "s" : "strike";
 					pt->dest_tag = "span";

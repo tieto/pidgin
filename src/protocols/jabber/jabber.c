@@ -2290,6 +2290,8 @@ static void jabber_login(struct gaim_account *account)
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
 	char *loginname = create_valid_jid(account->username, DEFAULT_SERVER, "Gaim");
 
+	gc->flags |= OPT_CONN_HTML;
+
 	jd->buddies = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
 
@@ -3381,11 +3383,18 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 		/* oh goody. Gaim is telling us what to do. */
 		if (message) {
 			/* Gaim wants us to be away */
+			char *stripped;
+
+			/* Jabber supports XHTML in IMs, but not in away messages. */
+			html_to_xhtml(message, NULL, &stripped);
+
 			y = xmlnode_insert_tag(x, "show");
 			xmlnode_insert_cdata(y, "away", -1);
 			y = xmlnode_insert_tag(x, "status");
-			xmlnode_insert_cdata(y, message, -1);
-			gc->away = g_strdup(message);
+			xmlnode_insert_cdata(y, stripped, -1);
+
+			gc->away = g_strdup(stripped);
+			g_free(stripped);
 		} else {
 			/* Gaim wants us to not be away */
 			/* but for Jabber, we can just send presence with no other information. */

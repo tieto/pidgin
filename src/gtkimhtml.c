@@ -730,6 +730,7 @@ gtk_imhtml_is_tag (const gchar *string,
 
 	VALID_OPT_TAG ("SPAN");
 	VALID_TAG ("/SPAN");
+	VALID_TAG ("BR/"); /* hack until gtkimhtml handles things better */
 
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
@@ -1006,6 +1007,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					}
 					break;
 				case 25:	/* BR */
+				case 58:	/* BR/ */
 					ws[wpos] = '\n';
 					wpos++;
 					NEW_BIT (NEW_TEXT_BIT);
@@ -1199,7 +1201,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 56:	/* SPAN */
 				case 57:	/* /SPAN */
 					break;
-				case 58:	/* comment */
+				case 59:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
