@@ -2105,6 +2105,11 @@ gaim_str_seconds_to_string(guint sec)
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/
+/*
+ * XXX - Make this also support extracting a username and password?
+ * Would be nice when dissecting an environmental variable
+ * that specifies proxy information.
+ */
 gboolean
 gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path)
