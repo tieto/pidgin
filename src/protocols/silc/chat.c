@@ -1,0 +1,1294 @@
+/*
+
+  silcgaim_chat.c
+
+  Author: Pekka Riikonen <priikone@silcnet.org>
+
+  Copyright (C) 2004 Pekka Riikonen
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; version 2 of the License.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+*/
+
+#include "silcincludes.h"
+#include "silcclient.h"
+#include "silcgaim.h"
+
+/***************************** Channel Routines ******************************/
+
+GList *silcgaim_chat_info(GaimConnection *gc)
+{
+	GList *ci = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("_Channel:");
+	pce->identifier = "channel";
+	ci = g_list_append(ci, pce);
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("_Passphrase:");
+	pce->identifier = "passphrase";
+	pce->secret = TRUE;
+	ci = g_list_append(ci, pce);
+
+	return ci;
+}
+
+static void
+silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components);
+
+static void
+silcgaim_chat_getinfo_res(SilcClient client,
+			  SilcClientConnection conn,
+			  SilcChannelEntry *channels,
+			  SilcUInt32 channels_count,
+			  void *context)
+{
+	GHashTable *components = context;
+	GaimConnection *gc = client->application;
+	const char *chname;
+	char tmp[256];
+
+	chname = g_hash_table_lookup(components, "channel");
+	if (!chname)
+		return;
+
+	if (!channels) {
+		g_snprintf(tmp, sizeof(tmp),
+			   _("Channel %s does not exist in the network"), chname);
+		gaim_notify_error(gc, _("Channel Information"),
+				  _("Cannot get channel information"), tmp);
+		return;
+	}
+
+	silcgaim_chat_getinfo(gc, components);
+}
+
+static void
+silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	const char *chname;
+	char *buf, tmp[256];
+	GString *s;
+	SilcChannelEntry channel;
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+
+	if (!components)
+		return;
+
+	chname = g_hash_table_lookup(components, "channel");
+	if (!chname)
+		return;
+	channel = silc_client_get_channel(sg->client, sg->conn,
+					  (char *)chname);
+	if (!channel) {
+		silc_client_get_channel_resolve(sg->client, sg->conn,
+						(char *)chname,
+						silcgaim_chat_getinfo_res,
+						components);
+		return;
+	}
+
+	s = g_string_new("");
+	g_string_append_printf(s, "Channel Name:\t\t%s\n", channel->channel_name);
+	if (channel->user_list && silc_hash_table_count(channel->user_list))
+		g_string_append_printf(s, "User Count:\t\t%d\n",
+				       (int)silc_hash_table_count(channel->user_list));
+
+	silc_hash_table_list(channel->user_list, &htl);
+	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
+			g_string_append_printf(s, "Channel Founder:\t%s\n",
+					       chu->client->nickname);
+			break;
+		}
+	}
+	silc_hash_table_list_reset(&htl);
+
+	if (channel->channel_key)
+		g_string_append_printf(s, "Channel Cipher:\t\t%s\n",
+				       silc_cipher_get_name(channel->channel_key));
+	if (channel->hmac)
+		g_string_append_printf(s, "Channel HMAC:\t\t%s\n",
+				       silc_hmac_get_name(channel->hmac));
+
+	if (channel->topic)
+		g_string_append_printf(s, "\nChannel Topic:\n\%s\n", channel->topic);
+
+	if (channel->mode) {
+		g_string_append_printf(s, "\nChannel Modes:\n");
+		silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
+		g_string_append_printf(s, tmp);
+		g_string_append_printf(s, "\n");
+	}
+
+	if (channel->founder_key) {
+		char *fingerprint, *babbleprint;
+		unsigned char *pk;
+		SilcUInt32 pk_len;
+		pk = silc_pkcs_public_key_encode(channel->founder_key, &pk_len);
+		fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
+		babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
+
+		g_string_append_printf(s, "\nFounder Key Fingerprint:\n%s\n\n", fingerprint);
+		g_string_append_printf(s, "Founder Key Babbleprint:\n%s", babbleprint);
+
+		silc_free(fingerprint);
+		silc_free(babbleprint);
+		silc_free(pk);
+	}
+
+	buf = g_string_free(s, FALSE);
+	gaim_notify_message(NULL, GAIM_NOTIFY_MSG_INFO,
+			    _("Channel Information"),
+			    _("Channel Information"),
+			    buf, NULL, NULL);
+	g_free(buf);
+}
+
+
+#if 0   /* XXX For now these are not implemented.  We need better
+	   listview dialog from Gaim for these. */
+/************************** Channel Invite List ******************************/
+
+static void
+silcgaim_chat_invitelist(GaimConnection *gc, GHashTable *components)
+{
+
+}
+
+
+/**************************** Channel Ban List *******************************/
+
+static void
+silcgaim_chat_banlist(GaimConnection *gc, GHashTable *components)
+{
+
+}
+#endif
+
+
+/************************* Channel Authentication ****************************/
+
+typedef struct {
+	SilcGaim sg;
+	SilcChannelEntry channel;
+	GaimChat *c;
+	SilcBuffer pubkeys;
+} *SilcGaimChauth;
+
+static void
+silcgaim_chat_chpk_add(void *user_data, const char *name)
+{
+	SilcGaimChauth sgc = (SilcGaimChauth)user_data;
+	SilcGaim sg = sgc->sg;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcPublicKey public_key;
+	SilcBuffer chpks, pk, chidp;
+	unsigned char mode[4];
+	SilcUInt32 m;
+
+	/* Load the public key */
+	if (!silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_PEM) &&
+	    !silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_BIN)) {
+		silcgaim_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
+		silc_buffer_free(sgc->pubkeys);
+		silc_free(sgc);
+		gaim_notify_error(client->application,
+				  _("Add Channel Public Key"),
+				  _("Could not load public key"), NULL);
+		return;
+	}
+
+	pk = silc_pkcs_public_key_payload_encode(public_key);
+	chpks = silc_buffer_alloc_size(2);
+	SILC_PUT16_MSB(1, chpks->head);
+	chpks = silc_argument_payload_encode_one(chpks, pk->data,
+						 pk->len, 0x00);
+	silc_buffer_free(pk);
+
+	m = sgc->channel->mode;
+	m |= SILC_CHANNEL_MODE_CHANNEL_AUTH;
+
+	/* Send CMODE */
+	SILC_PUT32_MSB(m, mode);
+	chidp = silc_id_payload_encode(sgc->channel->id, SILC_ID_CHANNEL);
+	silc_client_command_send(client, conn, SILC_COMMAND_CMODE,
+				 ++conn->cmd_ident, 3,
+				 1, chidp->data, chidp->len,
+				 2, mode, sizeof(mode),
+				 9, chpks->data, chpks->len);
+	silc_buffer_free(chpks);
+	silc_buffer_free(chidp);
+	silc_buffer_free(sgc->pubkeys);
+	silc_free(sgc);
+}
+
+static void
+silcgaim_chat_chpk_cancel(void *user_data, const char *name)
+{
+	SilcGaimChauth sgc = (SilcGaimChauth)user_data;
+	silcgaim_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
+	silc_buffer_free(sgc->pubkeys);
+	silc_free(sgc);
+}
+
+static void
+silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
+{
+	SilcGaim sg = sgc->sg;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	GaimRequestField *f;
+	const GList *list;
+	SilcPublicKey public_key;
+	SilcBuffer chpks, pk, chidp;
+	SilcUInt16 c = 0, ct;
+	unsigned char mode[4];
+	SilcUInt32 m;
+
+	f = gaim_request_fields_get_field(fields, "list");
+	if (!gaim_request_field_list_get_selected(f)) {
+		/* Add new public key */
+		gaim_request_file(NULL, _("Open Public Key..."), _(""),
+				  G_CALLBACK(silcgaim_chat_chpk_add),
+				  G_CALLBACK(silcgaim_chat_chpk_cancel), sgc);
+		return;
+	}
+
+	list = gaim_request_field_list_get_items(f);
+	chpks = silc_buffer_alloc_size(2);
+
+	for (ct = 0; list; list = list->next, ct++) {
+		public_key = gaim_request_field_list_get_data(f, list->data);
+		if (gaim_request_field_list_is_selected(f, list->data)) {
+			/* Delete this public key */
+			pk = silc_pkcs_public_key_payload_encode(public_key);
+			chpks = silc_argument_payload_encode_one(chpks, pk->data,
+								 pk->len, 0x01);
+			silc_buffer_free(pk);
+			c++;
+		}
+		silc_pkcs_public_key_free(public_key);
+	}
+	if (!c) {
+		silc_buffer_free(chpks);
+		return;
+	}
+	SILC_PUT16_MSB(c, chpks->head);
+
+	m = sgc->channel->mode;
+	if (ct == c)
+		m &= ~SILC_CHANNEL_MODE_CHANNEL_AUTH;
+
+	/* Send CMODE */
+	SILC_PUT32_MSB(m, mode);
+	chidp = silc_id_payload_encode(sgc->channel->id, SILC_ID_CHANNEL);
+	silc_client_command_send(client, conn, SILC_COMMAND_CMODE,
+				 ++conn->cmd_ident, 3,
+				 1, chidp->data, chidp->len,
+				 2, mode, sizeof(mode),
+				 9, chpks->data, chpks->len);
+	silc_buffer_free(chpks);
+	silc_buffer_free(chidp);
+	silc_buffer_free(sgc->pubkeys);
+	silc_free(sgc);
+}
+
+static void
+silcgaim_chat_chauth_ok(SilcGaimChauth sgc, GaimRequestFields *fields)
+{
+	SilcGaim sg = sgc->sg;
+	GaimRequestField *f;
+	const char *curpass, *val;
+	int set;
+
+	f = gaim_request_fields_get_field(fields, "passphrase");
+	val = gaim_request_field_string_get_value(f);
+	curpass = gaim_blist_node_get_string((GaimBlistNode *)sgc->c, "passphrase");
+
+	if (!val && curpass)
+		set = 0;
+	else if (val && !curpass)
+		set = 1;
+	else if (val && curpass && strcmp(val, curpass))
+		set = 1;
+	else
+		set = -1;
+
+	if (set == 1) {
+		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+					 sgc->channel->channel_name, "+a", val, NULL);
+		gaim_blist_node_set_string((GaimBlistNode *)sgc->c, "passphrase", val);
+		gaim_blist_save();
+	} else if (set == 0) {
+		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+					 sgc->channel->channel_name, "-a", NULL);
+		gaim_blist_node_remove_setting((GaimBlistNode *)sgc->c, "passphrase");
+		gaim_blist_save();
+	}
+
+	silc_buffer_free(sgc->pubkeys);
+	silc_free(sgc);
+}
+
+void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
+			       SilcBuffer channel_pubkeys)
+{
+	SilcUInt16 argc;
+	SilcArgumentPayload chpks;
+	unsigned char *pk;
+	SilcUInt32 pk_len, type;
+	char *fingerprint, *babbleprint;
+	SilcPublicKey pubkey;
+	SilcPublicKeyIdentifier ident;
+	char tmp2[1024], t[512];
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *g;
+	GaimRequestField *f;
+	SilcGaimChauth sgc;
+	const char *curpass = NULL;
+
+	sgc = silc_calloc(1, sizeof(*sgc));
+	if (!sgc)
+		return;
+	sgc->sg = sg;
+	sgc->channel = channel;
+
+	fields = gaim_request_fields_new();
+
+	if (sgc->c)
+	  curpass = gaim_blist_node_get_string((GaimBlistNode *)sgc->c, "passphrase");
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_string_new("passphrase", _("Channel Passphrase"),
+					  curpass, FALSE);
+	gaim_request_field_string_set_masked(f, TRUE);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_label_new("l1", _("Channel Public Keys List"));
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	g_snprintf(t, sizeof(t),
+		   _("Channel authentication is used to secure the channel from "
+		     "unauthorized access. The authentication may be based on "
+		     "passphrase and digital signatures. If passphrase is set, it "
+		     "is required to be able to join. If channel public keys are set "
+		     "then only users whose public keys are listed are able to join."));
+
+	if (!channel_pubkeys) {
+		f = gaim_request_field_list_new("list", NULL);
+		gaim_request_field_group_add_field(g, f);
+		gaim_request_fields(NULL, _("Channel Authentication"),
+				    _("Channel Authentication"), t, fields,
+				    "Add / Remove", G_CALLBACK(silcgaim_chat_chpk_cb),
+				    "OK", G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+		return;
+	}
+	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_list_new("list", NULL);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	SILC_GET16_MSB(argc, channel_pubkeys->data);
+	chpks = silc_argument_payload_parse(channel_pubkeys->data + 2,
+					    channel_pubkeys->len - 2, argc);
+	if (!chpks)
+		return;
+
+	pk = silc_argument_get_first_arg(chpks, &type, &pk_len);
+	while (pk) {
+		fingerprint = silc_hash_fingerprint(NULL, pk + 4, pk_len - 4);
+		babbleprint = silc_hash_babbleprint(NULL, pk + 4, pk_len - 4);
+		silc_pkcs_public_key_payload_decode(pk, pk_len, &pubkey);
+		ident = silc_pkcs_decode_identifier(pubkey->identifier);
+
+		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
+			   ident->realname ? ident->realname : ident->username ?
+			   ident->username : "", fingerprint, babbleprint);
+		gaim_request_field_list_add(f, tmp2, pubkey);
+
+		silc_free(fingerprint);
+		silc_free(babbleprint);
+		silc_pkcs_free_identifier(ident);
+		pk = silc_argument_get_next_arg(chpks, &type, &pk_len);
+	}
+
+	gaim_request_field_list_set_multi_select(f, FALSE);
+	gaim_request_fields(NULL, _("Channel Authentication"),
+			    _("Channel Authentication"), t, fields,
+			    "Add / Remove", G_CALLBACK(silcgaim_chat_chpk_cb),
+			    "OK", G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+
+	silc_argument_payload_free(chpks);
+}
+
+static void
+silcgaim_chat_chauth(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "+C", NULL);
+}
+
+
+/************************** Channel Private Groups **************************/
+
+/* Private groups are "virtual" channels.  They are groups inside a channel.
+   This is implemented by using channel private keys.  By knowing a channel
+   private key user becomes part of that group and is able to talk on that
+   group.  Other users, on the same channel, won't be able to see the
+   messages of that group.  It is possible to have multiple groups inside
+   a channel - and thus having multiple private keys on the channel. */
+
+typedef struct {
+	SilcGaim sg;
+	GaimChat *c;
+	const char *channel;
+} *SilcGaimCharPrv;
+
+static void
+silcgaim_chat_prv_add(SilcGaimCharPrv p, GaimRequestFields *fields)
+{
+	SilcGaim sg = p->sg;
+	char tmp[512];
+	GaimRequestField *f;
+	const char *name, *passphrase, *alias;
+	GHashTable *comp;
+	GaimGroup *g;
+	GaimChat *cn;
+
+	f = gaim_request_fields_get_field(fields, "name");
+	name = gaim_request_field_string_get_value(f);
+	if (!name) {
+		silc_free(p);
+		return;
+	}
+	f = gaim_request_fields_get_field(fields, "passphrase");
+	passphrase = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "alias");
+	alias = gaim_request_field_string_get_value(f);
+
+	/* Add private group to buddy list */
+	g_snprintf(tmp, sizeof(tmp), "%s [Private Group]", name);
+	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	g_hash_table_replace(comp, g_strdup("channel"), g_strdup(tmp));
+	g_hash_table_replace(comp, g_strdup("passphrase"), g_strdup(passphrase));
+
+	cn = gaim_chat_new(sg->account, alias, comp);
+	g = (GaimGroup *)p->c->node.parent;
+	gaim_blist_add_chat(cn, g, (GaimBlistNode *)p->c);
+
+	/* Associate to a real channel */
+	gaim_blist_node_set_string((GaimBlistNode *)cn, "parentch", p->channel);
+	gaim_blist_save();
+
+	/* Join the group */
+	silcgaim_chat_join(sg->gc, comp);
+
+	silc_free(p);
+}
+
+static void
+silcgaim_chat_prv_cancel(SilcGaimCharPrv p, GaimRequestFields *fields)
+{
+	silc_free(p);
+}
+
+static void
+silcgaim_chat_prv(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcGaimCharPrv p;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *g;
+	GaimRequestField *f;
+	char tmp[512];
+
+	p = silc_calloc(1, sizeof(*p));
+	if (!p)
+		return;
+	p->sg = sg;
+
+	p->channel = g_hash_table_lookup(components, "channel");
+	p->c = gaim_blist_find_chat(sg->account, p->channel);
+
+	fields = gaim_request_fields_new();
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_string_new("name", _("Group Name"),
+					  NULL, FALSE);
+	gaim_request_field_group_add_field(g, f);
+
+	f = gaim_request_field_string_new("passphrase", _("Passphrase"),
+					  NULL, FALSE);
+	gaim_request_field_string_set_masked(f, TRUE);
+	gaim_request_field_group_add_field(g, f);
+
+	f = gaim_request_field_string_new("alias", _("Alias"),
+					  NULL, FALSE);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	g_snprintf(tmp, sizeof(tmp),
+		   _("Please enter the %s channel private group name and passphrase."),
+		   p->channel);
+	gaim_request_fields(NULL, _("Add Channel Private Group"), NULL, tmp, fields,
+			    "Add", G_CALLBACK(silcgaim_chat_prv_add),
+			    "Cancel", G_CALLBACK(silcgaim_chat_prv_cancel), p);
+}
+
+
+/****************************** Channel Modes ********************************/
+
+static void
+silcgaim_chat_permanent_reset(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "-f", NULL);
+}
+
+static void
+silcgaim_chat_permanent(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	const char *channel;
+
+	if (!sg->conn)
+		return;
+
+	/* XXX we should have ability to define which founder
+	   key to use.  Now we use the user's own public key
+	   (default key). */
+
+	/* Call CMODE */
+	channel = g_hash_table_lookup(components, "channel");
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE", channel,
+				 "+f", NULL);
+}
+
+typedef struct {
+	SilcGaim sg;
+	const char *channel;
+} *SilcGaimChatInput;
+
+static void
+silcgaim_chat_ulimit_cb(SilcGaimChatInput s, const char *limit)
+{
+	SilcChannelEntry channel;
+	int ulimit = 0;
+
+	channel = silc_client_get_channel(s->sg->client, s->sg->conn,
+					  (char *)s->channel);
+	if (!channel)
+		return;
+	if (limit)
+		ulimit = atoi(limit);
+
+	if (!limit || !(*limit) || *limit == '0') {
+		if (limit && ulimit == channel->user_limit) {
+			silc_free(s);
+			return;
+		}
+		silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
+					 s->channel, "-l", NULL);
+
+		silc_free(s);
+		return;
+	}
+
+	if (ulimit == channel->user_limit) {
+		silc_free(s);
+		return;
+	}
+
+	/* Call CMODE */
+	silc_client_command_call(s->sg->client, s->sg->conn, NULL, "CMODE",
+				 s->channel, "+l", limit, NULL);
+
+	silc_free(s);
+}
+
+static void
+silcgaim_chat_ulimit(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcGaimChatInput s;
+	SilcChannelEntry channel;
+	const char *ch;
+	char tmp[32];
+
+	if (!sg->conn)
+		return;
+
+	ch = g_strdup(g_hash_table_lookup(components, "channel"));
+	channel = silc_client_get_channel(sg->client, sg->conn, (char *)ch);
+	if (!channel)
+		return;
+
+	s = silc_calloc(1, sizeof(*s));
+	if (!s)
+		return;
+	s->channel = ch;
+	s->sg = sg;
+	g_snprintf(tmp, sizeof(tmp), "%d", (int)channel->user_limit);
+	gaim_request_input(NULL, _("User Limit"), NULL,
+			   _("Set user limit on channel. Set to zero to reset user limit."),
+			   tmp, FALSE, FALSE, NULL,
+			   _("OK"), G_CALLBACK(silcgaim_chat_ulimit_cb),
+			   _("Cancel"), G_CALLBACK(silcgaim_chat_ulimit_cb), s);
+}
+
+static void
+silcgaim_chat_resettopic(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "-t", NULL);
+}
+
+static void
+silcgaim_chat_settopic(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "+t", NULL);
+}
+
+static void
+silcgaim_chat_resetprivate(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "-p", NULL);
+}
+
+static void
+silcgaim_chat_setprivate(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "+p", NULL);
+}
+
+static void
+silcgaim_chat_resetsecret(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "-s", NULL);
+}
+
+static void
+silcgaim_chat_setsecret(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
+				 g_hash_table_lookup(components, "channel"),
+				 "+s", NULL);
+}
+
+GList *silcgaim_chat_menu(GaimConnection *gc, GHashTable *components)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClientConnection conn = sg->conn;
+	GList *m = NULL;
+	struct proto_chat_menu *pcm;
+	const char *chname = NULL;
+	SilcChannelEntry channel = NULL;
+	SilcChannelUser chu = NULL;
+	SilcUInt32 mode = 0;
+
+	if (components)
+		chname = g_hash_table_lookup(components, "channel");
+	if (chname)
+		channel = silc_client_get_channel(sg->client, sg->conn,
+						  (char *)chname);
+	if (channel) {
+		chu = silc_client_on_channel(channel, conn->local_entry);
+		if (chu)
+			mode = chu->mode;
+	}
+
+	if (strstr(chname, "[Private Group]"))
+		return NULL;
+
+	pcm = g_new0(struct proto_chat_menu, 1);
+	pcm->label = _("Get Info");
+	pcm->callback = silcgaim_chat_getinfo;
+	pcm->gc = gc;
+	m = g_list_append(m, pcm);
+
+#if 0   /* XXX For now these are not implemented.  We need better
+	   listview dialog from Gaim for these. */
+	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
+		pcm = g_new0(struct proto_chat_menu, 1);
+		pcm->label = _("Invite List");
+		pcm->callback = silcgaim_chat_invitelist;
+		pcm->gc = gc;
+		m = g_list_append(m, pcm);
+
+		pcm = g_new0(struct proto_chat_menu, 1);
+		pcm->label = _("Ban List");
+		pcm->callback = silcgaim_chat_banlist;
+		pcm->gc = gc;
+		m = g_list_append(m, pcm);
+	}
+#endif
+
+	if (chu) {
+		pcm = g_new0(struct proto_chat_menu, 1);
+		pcm->label = _("Add Private Group");
+		pcm->callback = silcgaim_chat_prv;
+		pcm->gc = gc;
+		m = g_list_append(m, pcm);
+	}
+
+	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
+		pcm = g_new0(struct proto_chat_menu, 1);
+		pcm->label = _("Channel Authentication");
+		pcm->callback = silcgaim_chat_chauth;
+		pcm->gc = gc;
+		m = g_list_append(m, pcm);
+
+		if (channel->mode & SILC_CHANNEL_MODE_FOUNDER_AUTH) {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Reset Permanent");
+			pcm->callback = silcgaim_chat_permanent_reset;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		} else {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Set Permanent");
+			pcm->callback = silcgaim_chat_permanent;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		}
+	}
+
+	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
+		pcm = g_new0(struct proto_chat_menu, 1);
+		pcm->label = _("Set User Limit");
+		pcm->callback = silcgaim_chat_ulimit;
+		pcm->gc = gc;
+		m = g_list_append(m, pcm);
+
+		if (channel->mode & SILC_CHANNEL_MODE_TOPIC) {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Reset Topic Restriction");
+			pcm->callback = silcgaim_chat_resettopic;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		} else {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Set Topic Restriction");
+			pcm->callback = silcgaim_chat_settopic;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		}
+
+		if (channel->mode & SILC_CHANNEL_MODE_PRIVATE) {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Reset Private Channel");
+			pcm->callback = silcgaim_chat_resetprivate;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		} else {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Set Private Channel");
+			pcm->callback = silcgaim_chat_setprivate;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		}
+
+		if (channel->mode & SILC_CHANNEL_MODE_SECRET) {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Reset Secret Channel");
+			pcm->callback = silcgaim_chat_resetsecret;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		} else {
+			pcm = g_new0(struct proto_chat_menu, 1);
+			pcm->label = _("Set Secret Channel");
+			pcm->callback = silcgaim_chat_setsecret;
+			pcm->gc = gc;
+			m = g_list_append(m, pcm);
+		}
+	}
+
+	return m;
+}
+
+
+/******************************* Joining Etc. ********************************/
+
+void silcgaim_chat_join_done(SilcClient client,
+			     SilcClientConnection conn,
+			     SilcClientEntry *clients,
+			     SilcUInt32 clients_count,
+			     void *context)
+{
+	GaimConnection *gc = client->application;
+	SilcGaim sg = gc->proto_data;
+	SilcChannelEntry channel = context;
+	GaimConversation *convo;
+	SilcUInt32 retry = SILC_PTR_TO_32(channel->context);
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+	GList *users = NULL;
+	char tmp[256];
+
+	if (!clients && retry < 1) {
+		/* Resolving users failed, try again. */
+		channel->context = SILC_32_TO_PTR(retry + 1);
+		silc_client_get_clients_by_channel(client, conn, channel,
+						   silcgaim_chat_join_done, channel);
+		return;
+	}
+
+	/* Add channel to Gaim */
+	channel->context = SILC_32_TO_PTR(++sg->channel_ids);
+	serv_got_joined_chat(gc, sg->channel_ids, channel->channel_name);
+	convo = gaim_find_conversation_with_account(channel->channel_name,
+						    sg->account);
+	if (!convo)
+		return;
+
+	/* Add all users to channel */
+	silc_hash_table_list(channel->user_list, &htl);
+	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		if (!chu->client->nickname)
+			continue;
+		chu->context = SILC_32_TO_PTR(sg->channel_ids);
+
+#if 0   /* XXX don't append mode char to nick because Gaim doesn't
+	   give a way to change it afterwards when mode changes. */
+		tmp2 = silc_client_chumode_char(chu->mode);
+		if (tmp2)
+			g_snprintf(tmp, sizeof(tmp), _("%s%s"), tmp2,
+				   chu->client->nickname);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("%s"),
+				   chu->client->nickname);
+		silc_free(tmp2);
+
+		users = g_list_append(users, g_strdup(tmp));
+#else
+		users = g_list_append(users, g_strdup(chu->client->nickname));
+#endif
+
+		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO) {
+			if (chu->client == conn->local_entry)
+				g_snprintf(tmp, sizeof(tmp),
+					   _("You are channel founder on <I>%s</I>"),
+					   channel->channel_name);
+			else
+				g_snprintf(tmp, sizeof(tmp),
+					   _("Channel founder on <I>%s</I> is <I>%s</I>"),
+					   channel->channel_name, chu->client->nickname);
+
+			gaim_conversation_write(convo, NULL, tmp,
+						GAIM_MESSAGE_SYSTEM, time(NULL));
+
+		}
+	}
+	silc_hash_table_list_reset(&htl);
+
+	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users);
+	g_list_free(users);
+
+	/* Set topic */
+	if (channel->topic)
+		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, channel->topic);
+}
+
+void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	const char *channel, *passphrase, *parentch;
+
+	if (!conn)
+		return;
+
+	channel = g_hash_table_lookup(data, "channel");
+	passphrase = g_hash_table_lookup(data, "passphrase");
+
+	/* Check if we are joining a private group.  Handle it
+	   purely locally as it's not a real channel */
+	if (strstr(channel, "[Private Group]")) {
+		SilcChannelEntry channel_entry;
+		SilcChannelPrivateKey key;
+		GaimChat *c;
+		SilcGaimPrvgrp grp;
+
+		c = gaim_blist_find_chat(sg->account, channel);
+		parentch = gaim_blist_node_get_string((GaimBlistNode *)c, "parentch");
+		if (!parentch)
+			return;
+
+		channel_entry = silc_client_get_channel(sg->client, sg->conn,
+							(char *)parentch);
+		if (!channel_entry ||
+		    !silc_client_on_channel(channel_entry, sg->conn->local_entry)) {
+			char tmp[512];
+			g_snprintf(tmp, sizeof(tmp),
+				   _("You have to join the %s channel before you are "
+				     "able to join the private group"), parentch);
+			gaim_notify_error(gc, _("Join Private Group"),
+					  _("Cannot join private group"), tmp);
+			return;
+		}
+
+		/* Add channel private key */
+		if (!silc_client_add_channel_private_key(client, conn,
+							 channel_entry, channel,
+							 NULL, NULL,
+							 (unsigned char *)passphrase,
+							 strlen(passphrase), &key))
+			return;
+
+		/* Join the group */
+		grp = silc_calloc(1, sizeof(*grp));
+		if (!grp)
+			return;
+		grp->id = ++sg->channel_ids + SILCGAIM_PRVGRP;
+		grp->chid = SILC_PTR_TO_32(channel_entry->context);
+		grp->parentch = parentch;
+		grp->channel = channel;
+		grp->key = key;
+		sg->grps = g_list_append(sg->grps, grp);
+		serv_got_joined_chat(gc, grp->id, channel);
+		return;
+	}
+
+	/* XXX We should have other properties here as well:
+	   1. whether to try to authenticate to the channel
+	     1a. with default key,
+	     1b. with specific key.
+	   2. whether to try to authenticate to become founder.
+	     2a. with default key,
+	     2b. with specific key.
+
+	   Since now such variety is not possible in the join dialog
+	   we always use -founder and -auth options, which try to
+	   do both 1 and 2 with default keys. */
+
+	/* Call JOIN */
+	if (passphrase)
+		silc_client_command_call(client, conn, NULL, "JOIN",
+					 channel, passphrase, "-auth", "-founder", NULL);
+	else
+		silc_client_command_call(client, conn, NULL, "JOIN",
+					 channel, "-auth", "-founder", NULL);
+}
+
+void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
+			  const char *name)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+	gboolean found = FALSE;
+
+	if (!conn)
+		return;
+
+	/* See if we are inviting on a private group.  Invite
+	   to the actual channel */
+	if (id > SILCGAIM_PRVGRP) {
+		GList *l;
+		SilcGaimPrvgrp prv;
+
+		for (l = sg->grps; l; l = l->next)
+			if (((SilcGaimPrvgrp)l->data)->id == id)
+				break;
+		if (!l)
+			return;
+		prv = l->data;
+		id = prv->chid;
+	}
+
+	/* Find channel by id */
+	silc_hash_table_list(conn->local_entry->channels, &htl);
+	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+			found = TRUE;
+			break;
+		}
+	}
+	silc_hash_table_list_reset(&htl);
+	if (!found)
+		return;
+
+	/* Call INVITE */
+	silc_client_command_call(client, conn, NULL, "INVITE",
+				 chu->channel->channel_name,
+				 name);
+}
+
+void silcgaim_chat_leave(GaimConnection *gc, int id)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+	gboolean found = FALSE;
+	GList *l;
+	SilcGaimPrvgrp prv;
+
+	if (!conn)
+		return;
+
+	/* See if we are leaving a private group */
+	if (id > SILCGAIM_PRVGRP) {
+		SilcChannelEntry channel;
+
+		for (l = sg->grps; l; l = l->next)
+			if (((SilcGaimPrvgrp)l->data)->id == id)
+				break;
+		if (!l)
+			return;
+		prv = l->data;
+		channel = silc_client_get_channel(sg->client, sg->conn,
+						  (char *)prv->parentch);
+		if (!channel)
+			return;
+		silc_client_del_channel_private_key(client, conn,
+						    channel, prv->key);
+		silc_free(prv);
+		sg->grps = g_list_remove(sg->grps, prv);
+		serv_got_chat_left(gc, id);
+		return;
+	}
+
+	/* Find channel by id */
+	silc_hash_table_list(conn->local_entry->channels, &htl);
+	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+			found = TRUE;
+			break;
+		}
+	}
+	silc_hash_table_list_reset(&htl);
+	if (!found)
+		return;
+
+	/* Call LEAVE */
+	silc_client_command_call(client, conn, NULL, "LEAVE",
+				 chu->channel->channel_name, NULL);
+
+	serv_got_chat_left(gc, id);
+
+	/* Leave from private groups on this channel as well */
+	for (l = sg->grps; l; l = l->next)
+		if (((SilcGaimPrvgrp)l->data)->chid == id) {
+			prv = l->data;
+			silc_client_del_channel_private_key(client, conn,
+							    chu->channel,
+							    prv->key);
+			serv_got_chat_left(gc, prv->id);
+			silc_free(prv);
+			sg->grps = g_list_remove(sg->grps, prv);
+			if (!sg->grps)
+				break;
+		}
+}
+
+int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+	SilcChannelEntry channel = NULL;
+	SilcChannelPrivateKey key = NULL;
+	SilcUInt32 flags;
+	int ret;
+	gboolean found = FALSE;
+	gboolean sign = gaim_prefs_get_bool("/plugins/prpl/silc/sign_chat");
+
+	if (!msg || !conn)
+		return 0;
+
+	/* See if command */
+	if (strlen(msg) > 1 && msg[0] == '/') {
+		if (!silc_client_command_call(client, conn, msg + 1))
+			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
+					  _("Unknown command"));
+		return 0;
+	}
+
+	flags = SILC_MESSAGE_FLAG_UTF8;
+	if (sign)
+		flags |= SILC_MESSAGE_FLAG_SIGNED;
+
+	/* Get the channel private key if we are sending on
+	   private group */
+	if (id > SILCGAIM_PRVGRP) {
+		GList *l;
+		SilcGaimPrvgrp prv;
+
+		for (l = sg->grps; l; l = l->next)
+			if (((SilcGaimPrvgrp)l->data)->id == id)
+				break;
+		if (!l)
+			return 0;
+		prv = l->data;
+		channel = silc_client_get_channel(sg->client, sg->conn,
+						  (char *)prv->parentch);
+		if (!channel)
+			return 0;
+		key = prv->key;
+	}
+
+	if (!channel) {
+		/* Find channel by id */
+		silc_hash_table_list(conn->local_entry->channels, &htl);
+		while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+			if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+				found = TRUE;
+				break;
+			}
+		}
+		silc_hash_table_list_reset(&htl);
+		if (!found)
+			return 0;
+		channel = chu->channel;
+	}
+
+	/* Send channel message */
+	ret = silc_client_send_channel_message(client, conn, channel, key,
+					       flags, (unsigned char *)msg,
+					       strlen(msg), TRUE);
+	if (ret)
+		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, msg,
+				 time(NULL));
+
+	return ret;
+}
+
+void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	SilcHashTableList htl;
+	SilcChannelUser chu;
+	gboolean found = FALSE;
+
+	if (!topic || !conn)
+		return;
+
+	/* See if setting topic on private group.  Set it
+	   on the actual channel */
+	if (id > SILCGAIM_PRVGRP) {
+		GList *l;
+		SilcGaimPrvgrp prv;
+
+		for (l = sg->grps; l; l = l->next)
+			if (((SilcGaimPrvgrp)l->data)->id == id)
+				break;
+		if (!l)
+			return;
+		prv = l->data;
+		id = prv->chid;
+	}
+
+	/* Find channel by id */
+	silc_hash_table_list(conn->local_entry->channels, &htl);
+	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
+		if (SILC_PTR_TO_32(chu->channel->context) == id ) {
+			found = TRUE;
+			break;
+		}
+	}
+	silc_hash_table_list_reset(&htl);
+	if (!found)
+		return;
+
+	/* Call TOPIC */
+	silc_client_command_call(client, conn, NULL, "TOPIC",
+				 chu->channel->channel_name, topic, NULL);
+}
+
+GaimRoomlist *silcgaim_roomlist_get_list(GaimConnection *gc)
+{
+	SilcGaim sg = gc->proto_data;
+	SilcClient client = sg->client;
+	SilcClientConnection conn = sg->conn;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
+
+	if (!conn)
+		return NULL;
+
+	if (sg->roomlist)
+		gaim_roomlist_unref(sg->roomlist);
+
+	sg->roomlist_canceled = FALSE;
+
+	sg->roomlist = gaim_roomlist_new(gaim_connection_get_account(gc));
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
+	fields = g_list_append(fields, f);
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT,
+				    _("Users"), "users", FALSE);
+	fields = g_list_append(fields, f);
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING,
+				    _("Topic"), "topic", FALSE);
+	fields = g_list_append(fields, f);
+	gaim_roomlist_set_fields(sg->roomlist, fields);
+
+	/* Call LIST */
+	silc_client_command_call(client, conn, "LIST");
+
+	gaim_roomlist_set_in_progress(sg->roomlist, TRUE);
+
+	return sg->roomlist;
+}
+
+void silcgaim_roomlist_cancel(GaimRoomlist *list)
+{
+	GaimConnection *gc = gaim_account_get_connection(list->account);
+	SilcGaim sg;
+
+	if (!gc)
+		return;
+	sg = gc->proto_data;
+
+	gaim_roomlist_set_in_progress(list, FALSE);
+	if (sg->roomlist == list) {
+		gaim_roomlist_unref(sg->roomlist);
+		sg->roomlist = NULL;
+		sg->roomlist_canceled = TRUE;
+	}
+}
