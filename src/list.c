@@ -124,9 +124,10 @@ void  gaim_blist_update_buddy_status (struct buddy *buddy, int status)
 
 void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+
 	if (!buddy->present && presence)
 		buddy->present = 2;
-	else if (buddy->present != 2)
+	else if (buddy->present != 2 || !presence)
 		buddy->present = presence;
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
