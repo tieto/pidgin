@@ -141,13 +141,13 @@ static void rebuild_jc()
 			gtk_object_set_user_data(GTK_OBJECT(spin), (void *)1);
 			chatentries = g_list_append(chatentries, spin);
 			gtk_widget_set_usize(spin, 50, -1);
-			gtk_box_pack_start(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
+			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
 			gtk_widget_show(spin);
 		} else {
 			GtkWidget *entry;
 			entry = gtk_entry_new();
 			chatentries = g_list_append(chatentries, entry);
-			gtk_box_pack_start(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
+			gtk_box_pack_end(GTK_BOX(rowbox), entry, FALSE, FALSE, 0);
 			if (pce->def)
 				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
 			if (focus) {
