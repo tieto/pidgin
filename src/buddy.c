@@ -814,9 +814,8 @@ void ui_remove_buddy(struct buddy *rem_b)
 					remove_buddy_show(gs, bs);
 					g_free(bs->name);
 					g_free(bs);
-					if ((!g_slist_length(gs->members) &&
-					    (blist_options & OPT_BLIST_NO_MT_GRP)) ||
-							gaim_group_on_account(rem_g, NULL)) {
+					if (!g_slist_length(gs->members) &&
+					    (blist_options & OPT_BLIST_NO_MT_GRP)) {
 						shows = g_slist_remove(shows, gs);
 						gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 						g_free(gs->name);
