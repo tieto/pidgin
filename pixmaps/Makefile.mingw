@@ -22,9 +22,9 @@ install:
 	  mkdir -p $(gaimdialogpixdir); \
 	  cp $(gaimdialogpix_DATA) $(gaimdialogpixdir); \
 	fi;
-	if test '$(gaimmenupix_DATA)'; then \
-	  mkdir -p $(gaimmenupixdir); \
-	  cp $(gaimmenupix_DATA) $(gaimmenupixdir); \
+	if test '$(gaimiconpix_DATA)'; then \
+	  mkdir -p $(gaimiconpixdir); \
+	  cp $(gaimiconpix_DATA) $(gaimiconpixdir); \
 	fi;
 	if test '$(gaimdistpix_DATA)'; then \
 	  mkdir -p $(gaimdistpixdir); \
