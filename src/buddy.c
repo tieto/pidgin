@@ -1410,13 +1410,8 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 
 	if (get_iter_from_node(node, &iter)) {
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
-		if(GAIM_BLIST_NODE_IS_BUDDY(node) &&
-		   !(blist_options & OPT_BLIST_SHOW_OFFLINE) &&
-		   (blist_options & OPT_BLIST_NO_MT_GRP) &&
-		   !gaim_blist_get_group_online_count((struct group *)node->parent)) {
-			GtkTreeIter groupiter;
-			if(get_iter_from_node(node->parent, &groupiter))
-				gtk_tree_store_remove(gtkblist->treemodel, &groupiter);
+		if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
+			gaim_gtk_blist_update(list, node->parent);
 		}
 	}
 }

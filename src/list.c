@@ -208,7 +208,7 @@ struct buddy *gaim_buddy_new(struct gaim_account *account, const char *screennam
 }
 void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistNode *node)
 {
-	GaimBlistNode *n = node, *node2, *node3;
+	GaimBlistNode *n = node, *bnode = (GaimBlistNode*)buddy;
 	struct group *g = group;
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
 	gboolean save = FALSE;
@@ -224,28 +224,30 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	}
 
 	/* if we're moving to overtop of ourselves, do nothing */
-	if((GaimBlistNode*)buddy == n)
+	if(bnode == n)
 		return;
 
-	if (((GaimBlistNode*)buddy)->parent) {
+	if (bnode->parent) {
 		/* This buddy was already in the list and is
 		 * being moved.
 		 */
-		ops->remove(gaimbuddylist, (GaimBlistNode*)buddy);
-		node2 = ((GaimBlistNode*)buddy)->next;
-		node3 = ((GaimBlistNode*)buddy)->prev;
+		if(bnode->next)
+			bnode->next->prev = bnode->prev;
+		if(bnode->prev)
+			bnode->prev->next = bnode->next;
+		if(bnode->parent->child == bnode)
+			bnode->parent->child = bnode->next;
 
-		if (node2)
-			node2->prev = node3;
-		if (node3)
-			node3->next = node2;
+		ops->remove(gaimbuddylist, bnode);
 
-		if (((GaimBlistNode*)buddy)->parent != ((GaimBlistNode*)g))
-			serv_move_buddy(buddy, (struct group*)((GaimBlistNode*)buddy)->parent, g);
+		if (bnode->parent != ((GaimBlistNode*)g))
+			serv_move_buddy(buddy, (struct group*)bnode->parent, g);
 		save = TRUE;
 	}
 
 	if (n) {
+		if(n->next)
+			n->next->prev = (GaimBlistNode*)buddy;
 		((GaimBlistNode*)buddy)->next = n->next;
 		((GaimBlistNode*)buddy)->prev = n;
 		((GaimBlistNode*)buddy)->parent = n->parent;
