@@ -50,11 +50,25 @@ struct _GaimGtkWindow
 		GtkWidget *menubar;
 
 		GtkWidget *view_log;
+
+		GtkWidget *add_pounce;
+		GtkWidget *alias;
+		GtkWidget *get_info;
+		GtkWidget *invite;
+
+		GtkWidget *warn;
+		GtkWidget *block;
+		GtkWidget *add;
+		GtkWidget *remove;
+
 		GtkWidget *insert_link;
 		GtkWidget *insert_image;
+
 		GtkWidget *logging;
 		GtkWidget *sounds;
+
 		GtkWidget *send_as;
+
 		GtkWidget *typing_icon;
 
 		GtkItemFactory *item_factory;
