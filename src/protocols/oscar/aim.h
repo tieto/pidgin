@@ -1303,6 +1303,7 @@ struct aim_icq_info {
 
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
+faim_export int aim_icq_hideip(aim_session_t *sess);
 faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd);
 faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
 faim_export int aim_icq_getallinfo(aim_session_t *sess, const char *uin);

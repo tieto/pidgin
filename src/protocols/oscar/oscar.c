@@ -3481,8 +3481,10 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	/* XXX - Should call aim_bos_setidle with 0x0000 */
 
-	/* XXX - Should only call reqofflinemsgs when using ICQ? */
-	aim_icq_reqofflinemsgs(sess);
+	if (od->icq) {
+		aim_icq_reqofflinemsgs(sess);
+		aim_icq_hideip(sess);
+	}
 
 	aim_reqservice(sess, fr->conn, AIM_CONN_TYPE_CHATNAV);
 	if (sess->authinfo->email)
@@ -3530,6 +3532,9 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_icq_info *);
 	va_end(ap);
+
+	if (!info->uin)
+		return 0;
 
 	g_snprintf(who, sizeof(who), "%lu", info->uin);
 	buf = g_strdup_printf("<b>UIN:</b> %s", who);
