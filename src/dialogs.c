@@ -3146,6 +3146,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	dialog = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(dialog), FALSE, FALSE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(dialog), "smiley_dialog", "Gaim");
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
 	/* setup boxes */
 	vbox = gtk_vbox_new(TRUE, 5);
