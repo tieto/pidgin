@@ -953,8 +953,9 @@ GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
-	GtkWidget *close_checkbox;/*, *icons_checkbox;*/
-	GtkWidget *tabs_checkbox, *same_checkbox, *tab_placement;
+	GtkWidget *close_checkbox;
+	GtkWidget *tabs_checkbox, *tab_placement;
+	/* GtkWidget *same_checkbox, *icons_checkbox; */
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
@@ -1657,12 +1658,12 @@ GtkWidget *sound_page() {
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
 	GtkTreePath *path;
+	GtkWidget *hbox;
 	int j;
 	const char *file;
 	char *pref;	
 #ifndef _WIN32
 	GtkWidget *dd;
-	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *entry;
 	const char *cmd;
