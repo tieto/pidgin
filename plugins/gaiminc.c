@@ -45,3 +45,15 @@ void gaim_plugin_init(void *handle) {
 	/* this is for doing something fun when a buddy comes online */
 	gaim_signal_connect(handle, event_buddy_signon, bud, NULL);
 }
+
+char *name() {
+	return "Gaim Demonstration Plugin";
+}
+
+char *description() {
+	return "This is a really cool plugin that does a lot of stuff:\n"
+		"- It tells you who wrote the program when you log in\n"
+		"- It reverses all incoming text\n"
+		"- It sends a message to people on your list immediately"
+		" when they sign on";
+}

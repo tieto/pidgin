@@ -179,6 +179,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	GtkWidget *sw2;
 	GtkWidget *add;
 	GtkWidget *remove;
+	GtkWidget *close;
 	GList     *plugs = plugins;
 	struct gaim_plugin *p;
 	gchar buffer[1024];
@@ -228,6 +229,11 @@ void show_plugins(GtkWidget *w, gpointer data) {
 			   GTK_SIGNAL_FUNC(unload), pluglist);
 	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, FALSE, 5);
 
+	close = gtk_button_new_with_label("Close");
+	gtk_signal_connect(GTK_OBJECT(close), "clicked",
+			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
+	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, FALSE, 5);
+
 	gtk_box_pack_start(GTK_BOX(page), topbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(page), botbox, FALSE, FALSE, 0);
 
@@ -264,6 +270,7 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_widget_show(plugtext);
 	gtk_widget_show(add);
 	gtk_widget_show(remove);
+	gtk_widget_show(close);
 
 	gtk_container_add(GTK_CONTAINER(plugwindow), page);
 	gtk_widget_show(plugwindow);

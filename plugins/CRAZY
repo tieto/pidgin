@@ -54,4 +54,7 @@ Other useful ideas I came up with later:
 
 There's going to be a few plugins that are going to ship with gaim by default
 eventually, probably. This would be a good thing to put in the PATCHES thing
-over at sourceforge.net
+over at sourceforge.net, if you write one. Most plugins are probably only going
+to be one short file, which is probably how most of them should be (some short
+little hack to do the auto-reconnect thing, for example. That can probably be
+done in about 10-15 lines).

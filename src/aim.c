@@ -239,8 +239,12 @@ static GList *combo_user_names()
 void show_login()
 {
 	GtkWidget *options;
+#ifdef GAIM_PLUGINS
+	GtkWidget *plugs;
+#endif
 	GtkWidget *reg;
 	GtkWidget *bbox;
+	GtkWidget *hbox;
 	GtkWidget *sbox;
 	GtkWidget *label;
 	GtkWidget *table;
@@ -263,6 +267,9 @@ void show_login()
 	cancel   = gtk_button_new_with_label("Cancel");
 	reg      = gtk_button_new_with_label("Register");
 	options  = gtk_button_new_with_label("Options");
+#ifdef GAIM_PLUGINS
+	plugs    = gtk_button_new_with_label("Plugins");
+#endif
 	table    = gtk_table_new(8, 2, FALSE);
 	name     = gtk_combo_new();
 	pass     = gtk_entry_new();
@@ -280,6 +287,11 @@ void show_login()
 	/* Allow user to change prefs before logging in */
 	gtk_signal_connect(GTK_OBJECT(options), "clicked",
 			   GTK_SIGNAL_FUNC(show_prefs), NULL);
+#ifdef GAIM_PLUGINS
+	/* Allow user to control plugins before logging in */
+	gtk_signal_connect(GTK_OBJECT(plugs), "clicked",
+			   GTK_SIGNAL_FUNC(show_plugins), NULL);
+#endif
 
 	/* Register opens the right URL */
 	gtk_signal_connect(GTK_OBJECT(reg), "clicked",
@@ -298,14 +310,20 @@ void show_login()
 			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	/* Homogenous spacing, 10 padding */
 	bbox = gtk_hbox_new(TRUE, 10);
+	hbox = gtk_hbox_new(TRUE, 10);
 	sbox = gtk_vbox_new(TRUE, 10);
 	
 	gtk_box_pack_start(GTK_BOX(bbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
-	
+
+	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
+#ifdef GAIM_PLUGINS
+	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
+#endif
+
 	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(sbox), options, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 
 	/* Labels for selectors and text boxes */
 #if 0	
@@ -324,6 +342,9 @@ void show_login()
 	gtk_widget_show(remember);
 
 	gtk_widget_show(options);
+#ifdef GAIM_PLUGINS
+	gtk_widget_show(plugs);
+#endif
 	
         /* Adjust sizes of inputs */
 	gtk_widget_set_usize(name,95,0);
@@ -346,6 +367,7 @@ void show_login()
 	gtk_widget_show(cancel);
 	gtk_widget_show(reg);
 	gtk_widget_show(bbox);
+	gtk_widget_show(hbox);
 	gtk_widget_show(sbox);
 	gtk_table_attach(GTK_TABLE(table), sbox, 0,2,7,8,0,0, 5, 5);
 	
@@ -441,6 +463,11 @@ int main(int argc, char *argv[])
 					"signon",
 					_("Signon"),
 					applet_show_login,
+					NULL);
+        applet_widget_register_callback(APPLET_WIDGET(applet),
+					"plugins",
+					_("Plugins"),
+					GTK_SIGNAL_FUNC(show_plugins),
 					NULL);
 
         if((general_options & OPT_GEN_AUTO_LOGIN) &&

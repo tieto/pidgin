@@ -2,10 +2,9 @@ CC = gcc
 CFLAGS = -Wall `gnome-config --cflags gtk` -I../src
 LDFLAGS = -ggdb `gnome-config --libs gtk` -shared
 
-all: simple.so gaiminc.so
+all: simple.so gaiminc.so file_control.so
 
-simple.so: simple.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-soname,$@ -o $@ $<
+.SUFFIXES: .c .so
 
-gaiminc.so: gaiminc.c
+.c.so:
 	$(CC) $(CFLAGS) $(LDFLAGS) -Wl,-soname,$@ -o $@ $<
