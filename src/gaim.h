@@ -73,6 +73,7 @@
 #define REG_SRVR "blueridge.net"
 #define REG_PORT 25
 
+#ifndef USE_APPLET
 #ifdef ENABLE_NLS
 #  include <libintl.h>
 #  define _(x) gettext(x)
@@ -84,6 +85,7 @@
 #else
 #  define N_(String) (String)
 #  define _(x) (x)
+#endif
 #endif
 
 extern struct prefs_data *pd;
@@ -370,7 +372,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 355 $"
+#define REVISION "gaim:$Revision: 358 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
