@@ -2197,7 +2197,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							break;
 
 						id = gtk_imhtml_get_html_opt(tag, "ID=");
-
+						if (!id)
+							break;
 						gtk_imhtml_insert_image_at_iter(imhtml, atoi(id), iter);
 						break;
 					}
