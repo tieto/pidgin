@@ -14,7 +14,8 @@ version 0.11.0-pre11:
 	  (thanks Neil Sanchala)
 	* Some perl updates (thanks to Sean Egan)
 	* IRC got the following slash commands:
-      op, deop, voice, devoice, mode, raw, quote, and kick
+      op, deop, voice, devoice, mode, raw, quote, and kick (thanks
+	  to Sean Egan)
 
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes
