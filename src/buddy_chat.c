@@ -279,12 +279,13 @@ void chat_write(struct buddy_chat *b, char *who, int flag, char *message)
 
 static void close_callback(GtkWidget *widget, struct buddy_chat *b)
 {
-        serv_chat_leave(b->id);
-        
         if (b->window)
                 gtk_widget_destroy(b->window);
         b->window = NULL;
+        
+        serv_chat_leave(b->id);
 }
+
 
 
 static void whisper_callback(GtkWidget *widget, struct buddy_chat *b)

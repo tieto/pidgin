@@ -548,8 +548,10 @@ void serv_chat_leave(int id)
 	GList *bcs = buddy_chats;
 	struct buddy_chat *b = NULL;
 	struct chat_connection *c = NULL;
+	int count = 0;
 
 	while (bcs) {
+		count++;
 		b = (struct buddy_chat *)bcs->data;
 		if (id == b->id)
 			break;
@@ -560,6 +562,10 @@ void serv_chat_leave(int id)
 	if (!b)
 		return;
 
+	sprintf(debug_buff, "Attempting to leave room %s (currently in %d rooms)\n",
+				b->name, count);
+	debug_print(debug_buff);
+
 	aim_chat_leaveroom(gaim_sess, b->name);
 	c = find_oscar_chat(b->name);
 	if (c != NULL) {
@@ -568,6 +574,8 @@ void serv_chat_leave(int id)
 		g_free(c->name);
 		g_free(c);
 	}
+	/* we do this because with Oscar it doesn't tell us we left */
+	serv_got_chat_left(b->id);
 #endif
 }
 
@@ -950,8 +958,8 @@ void serv_got_chat_left(int id)
         if (!b)
                 return;
 
-        if (b->window)
-                gtk_widget_destroy(GTK_WIDGET(b->window));
+	sprintf(debug_buff, "Leaving room %s.\n", b->name);
+	debug_print(debug_buff);
 
         buddy_chats = g_list_remove(buddy_chats, b);
 
