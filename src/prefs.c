@@ -271,37 +271,46 @@ void gaim_prefs_set_generic(const char *name, gpointer value) {
 void gaim_prefs_set_bool(const char *name, gboolean value) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_if_fail(pref != NULL);
-	g_return_if_fail(pref->type == GAIM_PREF_BOOLEAN);
+	if(pref) {
+		g_return_if_fail(pref->type == GAIM_PREF_BOOLEAN);
 
-	if(pref->value.boolean != value) {
-		pref->value.boolean = value;
-		do_callbacks(name, pref);
+		if(pref->value.boolean != value) {
+			pref->value.boolean = value;
+			do_callbacks(name, pref);
+		}
+	} else {
+		gaim_prefs_add_bool(name, value);
 	}
 }
 
 void gaim_prefs_set_int(const char *name, int value) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_if_fail(pref != NULL);
-	g_return_if_fail(pref->type == GAIM_PREF_INT);
+	if(pref) {
+		g_return_if_fail(pref->type == GAIM_PREF_INT);
 
-	if(pref->value.integer != value) {
-		pref->value.integer = value;
-		do_callbacks(name, pref);
+		if(pref->value.integer != value) {
+			pref->value.integer = value;
+			do_callbacks(name, pref);
+		}
+	} else {
+		gaim_prefs_add_int(name, value);
 	}
 }
 
 void gaim_prefs_set_string(const char *name, const char *value) {
 	struct gaim_pref *pref = find_pref(name);
 
-	g_return_if_fail(pref != NULL);
-	g_return_if_fail(pref->type == GAIM_PREF_STRING);
+	if(pref) {
+		g_return_if_fail(pref->type == GAIM_PREF_STRING);
 
-	if(strcmp(pref->value.string, value)) {
-		g_free(pref->value.string);
-		pref->value.string = g_strdup(value);
-		do_callbacks(name, pref);
+		if(strcmp(pref->value.string, value)) {
+			g_free(pref->value.string);
+			pref->value.string = g_strdup(value);
+			do_callbacks(name, pref);
+		}
+	} else {
+		gaim_prefs_add_string(name, value);
 	}
 }
 
@@ -521,35 +530,18 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 
 	pref_name_full = g_string_prepend_c(pref_name_full, '/');
 
-	if(!find_pref(pref_name_full->str)) {
-		switch(pref_type) {
-			case GAIM_PREF_NONE:
-				gaim_prefs_add_none(pref_name_full->str);
-				break;
-			case GAIM_PREF_BOOLEAN:
-				gaim_prefs_add_bool(pref_name_full->str, atoi(pref_value));
-				break;
-			case GAIM_PREF_INT:
-				gaim_prefs_add_int(pref_name_full->str, atoi(pref_value));
-				break;
-			case GAIM_PREF_STRING:
-				gaim_prefs_add_string(pref_name_full->str, pref_value);
-				break;
-		}
-	} else {
-		switch(pref_type) {
-			case GAIM_PREF_NONE:
-				break;
-			case GAIM_PREF_BOOLEAN:
-				gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
-				break;
-			case GAIM_PREF_INT:
-				gaim_prefs_set_int(pref_name_full->str, atoi(pref_value));
-				break;
-			case GAIM_PREF_STRING:
-				gaim_prefs_set_string(pref_name_full->str, pref_value);
-				break;
-		}
+	switch(pref_type) {
+		case GAIM_PREF_NONE:
+			break;
+		case GAIM_PREF_BOOLEAN:
+			gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
+			break;
+		case GAIM_PREF_INT:
+			gaim_prefs_set_int(pref_name_full->str, atoi(pref_value));
+			break;
+		case GAIM_PREF_STRING:
+			gaim_prefs_set_string(pref_name_full->str, pref_value);
+			break;
 	}
 
 	prefs_stack = g_list_prepend(prefs_stack, g_strdup(pref_name));
