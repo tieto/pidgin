@@ -25,9 +25,6 @@
 
 #include "gevolution.h"
 
-#include <libebook/e-book-async.h>
-#include <libedataserver/e-source-list.h>
-
 static GtkWidget *
 add_pref_box(GtkSizeGroup *sg, GtkWidget *parent, const char *text,
 			 GtkWidget *widget)

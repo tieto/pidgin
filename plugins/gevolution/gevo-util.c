@@ -22,8 +22,6 @@
 #include "gtkblist.h"
 #include "gtkutils.h"
 
-#include <libebook/e-book.h>
-
 #include "gevolution.h"
 
 void

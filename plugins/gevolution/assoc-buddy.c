@@ -30,9 +30,6 @@
 
 #include <stdlib.h>
 #include <bonobo/bonobo-main.h>
-#include <libebook/e-book.h>
-#include <libebook/e-book-async.h>
-#include <libedataserver/e-source-list.h>
 
 enum
 {

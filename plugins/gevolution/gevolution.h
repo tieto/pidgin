@@ -25,7 +25,17 @@
 # include "config.h"
 #endif
 
+#define EBOOK_CHECK_VERSION(major, minor, micro) \
+	(LIBEBOOK_MAJOR_VER > (major) || \
+	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER > (minor)) || \
+	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER == (minor) && \
+	  LIBEBOOK_MICRO_VER >= (micro)))
+
 #include <libebook/e-book.h>
+
+#if !EBOOK_CHECK_VERSION(0, 0, 95)
+# include <libebook/e-book-async.h>
+#endif
 
 typedef struct
 {
@@ -86,12 +96,6 @@ typedef struct
 	GList *contacts;
 
 } GevoAssociateBuddyDialog;
-
-#define EBOOK_CHECK_VERSION(major, minor, micro) \
-	(LIBEBOOK_MAJOR_VER > (major) || \
-	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER > (minor)) || \
-	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER == (minor) && \
-	  LIBEBOOK_MICRO_VER >= (micro)))
 
 void gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
 								const char *group, const char *alias);
