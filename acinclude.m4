@@ -388,3 +388,5 @@ main ()
   AC_SUBST(GTK_LIBS)
   rm -f conf.gtktest
 ])
+
+AC_DEFUN([AM_GNU_GETTEXT_VERSION], [])
