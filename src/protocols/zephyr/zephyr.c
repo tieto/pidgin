@@ -37,6 +37,8 @@
 
 #include <strings.h>
 
+#define ZEPHYR_FALLBACK_CHARSET "ISO-8859-1"
+
 extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
 extern Code_t ZUnsetLocation();
@@ -179,6 +181,25 @@ static zephyr_triple *find_sub_by_id(int id)
 		curr = curr->next;
 	}
 	return NULL;
+}
+
+static gchar *zephyr_recv_convert(char *string, int len)
+{
+	gchar *utf8;
+	GError *err = NULL;
+	if (g_utf8_validate(string,len,NULL)) {
+                return g_strdup(string);
+        } else {
+                utf8 = g_convert(string, len, "UTF-8",
+                                 gaim_account_get_string(zgc->account, "encoding", ZEPHYR_FALLBACK_CHARSET),
+                                 NULL, NULL, &err);
+                if (err) {
+                        gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "recv conversion error: %s\n", err->message);
+                        utf8 = g_strdup(_("(There was an error converting this message.  Check the 'Encoding' option in the Account Editor)"));
+                }
+                
+                return utf8;
+        }
 }
 
 /* utility macros that are useful for zephyr_to_html */
@@ -551,7 +572,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 			free(user);
 		}
 	} else {
-		char *buf, *buf2;
+		char *buf, *buf2, *buf3;
 		char *send_inst;
 		char *realmptr;
                 GaimConversation *gconv1;
@@ -562,18 +583,21 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		GaimConvImFlags flags = 0;
 		if (len > 0) {
                        gchar* tmpescape;
-			buf = g_malloc(len + 1);
-			g_snprintf(buf, len + 1, "%s", ptr);
-			g_strchomp(buf);
+                       buf = g_malloc(len + 1);
+                       g_snprintf(buf, len + 1, "%s", ptr);
+                       g_strchomp(buf);
                        tmpescape = gaim_escape_html(buf);
-			buf2 = zephyr_to_html(tmpescape);
-			g_free(buf);
+                       buf2 = zephyr_to_html(tmpescape);
+                       buf3 = zephyr_recv_convert(buf2,strlen(buf2));
+                       g_free(buf2);
+                       g_free(buf);
                        g_free(tmpescape);
+
 			if (!g_ascii_strcasecmp(notice.z_class, "MESSAGE") &&
                             !g_ascii_strcasecmp(notice.z_class_inst, "PERSONAL")) {
 				if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 					flags |= GAIM_CONV_IM_AUTO_RESP;
-				serv_got_im(zgc, notice.z_sender, buf2, flags, time(NULL));
+				serv_got_im(zgc, notice.z_sender, buf3, flags, time(NULL));
 			} else {
 				zephyr_triple *zt1, *zt2;
 				zt1 = new_triple(notice.z_class, notice.z_class_inst,
@@ -610,7 +634,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 						send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);
 					}
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
-                                                         buf2, time(NULL));
+                                                         buf3, time(NULL));
 
                                         gconv1 = gaim_find_conversation_with_account(zt2->name,zgc->account);
                                         gcc = gaim_conversation_get_chat_data(gconv1);
@@ -634,7 +658,7 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				}
 				free_triple(zt1);
 			}
-			g_free(buf2);
+			g_free(buf3);
 		}
 	}
 }
@@ -1395,6 +1419,9 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
 
         option = gaim_account_option_string_new(_("Exposure"),"exposure_level",tmp?tmp:EXPOSE_REALMVIS);
+        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+
+        option = gaim_account_option_string_new(_("Encoding"),"encoding",ZEPHYR_FALLBACK_CHARSET);
         prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
 
 	my_protocol = plugin;
