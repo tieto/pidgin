@@ -415,19 +415,20 @@ map_shadow_windows (gpointer data)
 		blist->south = pixbuf;
 	}
 
-    gdk_window_move_resize (blist->east_shadow,
-			  x + widget->allocation.width, y,
-			  5, widget->allocation.height);
+	gdk_window_move_resize (blist->east_shadow,
+				x + widget->allocation.width, MAX(0,y),
+				5, MIN(widget->allocation.height, gdk_screen_height()));
+	
+	gdk_window_move_resize (blist->south_shadow,
+				MAX(0,x), y + widget->allocation.height,
+				MIN(widget->allocation.width + 5, gdk_screen_width()), 5);
 
-  gdk_window_move_resize (blist->south_shadow,
-			  x, y + widget->allocation.height,
-			  widget->allocation.width + 5, 5);
-  gdk_window_show (blist->east_shadow);
-  gdk_window_show (blist->south_shadow);
-   shadow_paint(blist, NULL, EAST_SIDE);
-  shadow_paint(blist, NULL, SOUTH_SIDE);
+	gdk_window_show (blist->east_shadow);
+	gdk_window_show (blist->south_shadow);
+	shadow_paint(blist, NULL, EAST_SIDE);
+	shadow_paint(blist, NULL, SOUTH_SIDE);
 
-  return FALSE;
+	return FALSE;
 }
 
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
