@@ -3539,7 +3539,7 @@ setup_chat_pane(GaimConversation *conv)
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
-	GList *focus_chain;
+	GList *focus_chain = NULL;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
@@ -3781,8 +3781,15 @@ setup_chat_pane(GaimConversation *conv)
 
 	setup_chat_buttons(conv, gtkconv->bbox);
 
-	focus_chain = g_list_prepend (NULL, sw);
-	gtk_container_set_focus_chain (GTK_CONTAINER(vbox), focus_chain);
+	/*
+	 * Focus for chat windows should be as follows:
+	 * Tab title -> chat topic -> conversation scrollback -> user list ->
+	 *   user list buttons -> entry -> buttons at bottom
+	 */
+	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
+	focus_chain = g_list_prepend(focus_chain, gtkconv->entrybox);
+	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
+
 	return vpaned;
 }
 
@@ -3796,7 +3803,7 @@ setup_im_pane(GaimConversation *conv)
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *sw;
-	GList *focus_chain;
+	GList *focus_chain = NULL;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
@@ -3919,8 +3926,13 @@ setup_im_pane(GaimConversation *conv)
 	setup_im_buttons(conv, gtkconv->bbox);
 	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 
-	focus_chain = g_list_prepend (NULL, sw);
-	gtk_container_set_focus_chain (GTK_CONTAINER(vbox2), focus_chain);
+	/*
+	 * Focus for IM windows should be as follows:
+	 * Tab title -> conversation scrollback -> entry -> buttons at bottom
+	 */
+	focus_chain = g_list_prepend(focus_chain, gtkconv->bbox);
+	focus_chain = g_list_prepend(focus_chain, gtkconv->entrybox);
+	gtk_container_set_focus_chain(GTK_CONTAINER(vbox2), focus_chain);
 
 	return paned;
 }
@@ -4234,8 +4246,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 			gtk_widget_show(gtkconv->toolbar);
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
-					G_CALLBACK(gtk_widget_grab_focus),
-					gtkconv->entry);
+								 G_CALLBACK(gtk_widget_grab_focus),
+								 gtkconv->entry);
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 6);
