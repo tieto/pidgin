@@ -56,7 +56,6 @@ typedef struct
 {
 	GaimConnection *gc;
 
-	int inpa;
 	int fd;
 
 	GString *rxqueue;
@@ -92,23 +91,25 @@ trepia_write(int fd, const char *data, size_t len)
 }
 
 static void
-__clear_user_list(GaimAccount *account)
+_remove_user_fnc(gpointer key, gpointer value, gpointer user_data)
 {
-	struct gaim_buddy_list *blist;
-	GaimBlistNode *group, *buddy, *next_buddy;
+	TrepiaSession *session;
+	TrepiaProfile *profile;
+	const char *name;
 
-	blist = gaim_get_blist();
+	name    = (const char *)key;
+	profile = (TrepiaProfile *)value;
+	session = (TrepiaSession *)user_data;
 
-	for (group = blist->root; group != NULL; group = group->next) {
-		for (buddy = group->child; buddy != NULL; buddy = next_buddy) {
-			struct buddy *b = (struct buddy *)buddy;
+	gaim_blist_remove_buddy(profile->buddy);
+}
 
-			next_buddy = buddy->next;
-
-			if (b->account == account)
-				gaim_blist_remove_buddy(b);
-		}
-	}
+static void
+__clear_user_list(TrepiaSession *session)
+{
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Clearing user list\n");
+	g_hash_table_foreach(session->user_profiles, _remove_user_fnc, session);
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Done clearing user list\n");
 }
 
 #if 0
@@ -621,6 +622,8 @@ __parse_data(TrepiaSession *session, char *buf)
 					gaim_blist_add_buddy(b, g, NULL);
 				}
 
+				profile->buddy = b;
+
 				b->proto_data = profile;
 
 				session->pending_users = g_list_remove(session->pending_users,
@@ -664,7 +667,8 @@ __parse_data(TrepiaSession *session, char *buf)
 					break;
 
 				g_hash_table_remove(session->user_profiles, &id);
-				b = gaim_find_buddy(account, trepia_profile_get_login(profile));
+
+				b = profile->buddy;
 
 				if (b != NULL)
 					serv_got_update(session->gc,
@@ -796,7 +800,7 @@ __login_cb(gpointer data, gint source, GaimInputCondition cond)
 		"<b1>%s</b1>\n"
 		"<c>%s</c>\n"
 		"<d>%s</d>\n"
-		"<e>2.0</e>\n"
+		"<e>2.02</e>\n"
 		"</C>",
 		mac, gateway_mac, gaim_account_get_username(account),
 		md5_password);
@@ -835,7 +839,7 @@ trepia_login(GaimAccount *account)
 	session->user_profiles = g_hash_table_new_full(g_int_hash, g_int_equal,
 												   g_free, NULL);
 
-	__clear_user_list(account);
+	__clear_user_list(session);
 
 	i = gaim_proxy_connect(account, server, port, __login_cb, session);
 
@@ -848,22 +852,26 @@ trepia_close(GaimConnection *gc)
 {
 	TrepiaSession *session = gc->proto_data;
 
-	__clear_user_list(gaim_connection_get_account(gc));
+	__clear_user_list(session);
 
 	if (session->rxqueue != NULL)
 		g_string_free(session->rxqueue, TRUE);
 
-	if (session->inpa)
-		gaim_input_remove(session->inpa);
+	if (session->gc->inpa)
+		gaim_input_remove(session->gc->inpa);
 
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Destroying user_profiles\n");
 	g_hash_table_destroy(session->user_profiles);
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Destroying pending_users\n");
 	g_list_free(session->pending_users);
 
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Closing socket\n");
 	close(session->fd);
 
 	g_free(session);
 
 	gc->proto_data = NULL;
+	gaim_debug(GAIM_DEBUG_INFO, "trepia", "Leaving trepia_close\n");
 }
 
 static int

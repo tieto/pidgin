@@ -24,9 +24,12 @@
 
 #include <glib.h>
 #include <time.h>
+#include "blist.h"
 
 typedef struct
 {
+	struct buddy *buddy;
+
 	int type;           /* c */
 
 	int id;             /* a */
