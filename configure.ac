@@ -345,40 +345,130 @@ dnl #######################################################################
 
 dnl These two are inverses of each other <-- stolen from evolution!
 
-AC_ARG_ENABLE(ssl,
-	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=yes]],
-	[enable_nss="$enableval"],
-	[enable_nss="yes"])
-
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no,static]    Attempt to use GNUTLS for SSL support [default=no]],
+	[  --enable-gnutls=[yes,no]    Attempt to use GNUTLS for SSL support [default=yes]],
 	[enable_gnutls="$enableval"],
-	[enable_gnutls="no"])
+	[enable_gnutls="yes"])
 
-if test "x$enable_gnutls" = "xyes"; then
-	enable_nss="no"
-	AC_MSG_WARN([GNUTLS enabled. Disabling NSS.])
+AC_ARG_ENABLE(nss,
+	[  --enable-nss=[yes,no,static]    Attempt to use Mozilla libnss for SSL support [default=no]],
+	[enable_nss="$enableval"],
+	[enable_nss="no"])
+
+if test "x$enable_nss" = "xyes"; then
+	enable_gnutls="no"
+	AC_MSG_WARN([NSS enabled. Disabling GNUTLS.])
 fi
-
-AC_ARG_WITH(nspr-includes,
-	[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
-	[with_nspr_includes="$withval"])
-
-AC_ARG_WITH(nspr-libs,
-	[  --with-nspr-libs=PREFIX         Specify location of Mozilla nsp4 libs.],
-	[with_nspr_libs="$withval"])
-
-AC_ARG_WITH(nss-includes,
-	[  --with-nss-includes=PREFIX      Specify location of Mozilla nss3 includes.],
-	[with_nss_includes="$withval"])
-
-AC_ARG_WITH(nss-libs,
-	[  --with-nss-libs=PREFIX          Specify location of Mozilla nss3 libs.],
-	[with_nss_libs="$withval"])
 
 msg_ssl="no"
 
-if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
+dnl #
+dnl # Check for GNUTLS if it's specified.
+dnl #
+if test "x$enable_gnutls" != "xno"; then
+	enable_gnutls="no"
+	prefix=`eval echo $prefix`
+
+	AC_ARG_WITH(gnutls-includes,
+		[  --with-gnutls-includes=PREFIX   Location of GNUTLS includes.],
+		[ with_gnutls_includes="$withval" ],
+		[ with_gnutls_includes="$prefix/include" ])
+
+	have_gnutls_includes="no"
+
+	if test "x$with_gnutls_includes" != "xno"; then
+		CPPFLAGS_save="$CPPFLAGS"
+
+		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_RESULT("")
+
+		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
+		AC_CHECK_HEADERS(gnutls/gnutls.h, [ gnutls_includes="yes" ])
+		CPPFLAGS="$CPPFLAGS_save"
+
+		if test "x$gnutls_includes" != "xno" -a \
+		        "x$gnutls_includes" != "x"; then
+			have_gnutls_includes="yes"
+
+			GNUTLS_CFLAGS="-I$with_gnutls_includes"
+		else
+			GNUTLS_CFLAGS=""
+		fi
+	else
+		AC_MSG_CHECKING(for GNUTLS includes)
+		AC_MSG_RESULT(no)
+	fi
+
+	AC_ARG_WITH(gnutls-libs,
+		[  --with-gnutls-libs=PREFIX       Location of GNUTLS libraries.],
+		[ with_gnutls_libs="$withval" ])
+
+	if test "x$with_gnutls_libs"     != "xno" -a \
+	        "x$have_gnutls_includes" != "xno"; then
+
+		LDFLAGS_save="$LDFLAGS"
+
+		case $with_gnutls_libs in
+			""|-L*) ;;
+			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
+		esac
+
+		AC_CACHE_CHECK([for GNUTLS libraries], gnutls_libs,
+		[
+			LDFLAGS="$LDFLAGS $with_gnutls_libs -lgnutls -lgcrypt"
+			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
+			LDFLAGS="$LDFLAGS_save"
+		])
+
+		if test "x$gnutls_libs" != "xno"; then
+			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
+			AC_DEFINE(HAVE_SSL)
+			msg_ssl="yes (GNUTLS)"
+			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
+
+			enable_gnutls="yes"
+		else
+			GNUTLS_CFLAGS=""
+			GNUTLS_LIBS=""
+		fi
+	else
+		AC_MSG_CHECKING(for GNUTLS libraries)
+		AC_MSG_RESULT(no)
+	fi
+else
+	GNUTLS_CFLAGS=""
+	GNUTLS_LIBS=""
+fi
+
+AC_SUBST(GNUTLS_CFLAGS)
+AC_SUBST(GNUTLS_LIBS)
+
+AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
+
+
+dnl #
+dnl # Check for NSS if it's specified, or if GNUTLS checks failed.
+dnl #
+if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
+        "x$msg_ssl" = "xno"; then
+
+	AC_ARG_WITH(nspr-includes,
+		[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
+		[with_nspr_includes="$withval"])
+
+	AC_ARG_WITH(nspr-libs,
+		[  --with-nspr-libs=PREFIX         Specify location of Mozilla nsp4 libs.],
+		[with_nspr_libs="$withval"])
+
+	AC_ARG_WITH(nss-includes,
+		[  --with-nss-includes=PREFIX      Specify location of Mozilla nss3 includes.],
+		[with_nss_includes="$withval"])
+
+	AC_ARG_WITH(nss-libs,
+		[  --with-nss-libs=PREFIX          Specify location of Mozilla nss3 libs.],
+		[with_nss_libs="$withval"])
+
+
 	if test -n "$with_nspr_includes" || test -n "$with_nspr_libs" || \
 	   test -n "$with_nss_includes"  || test -n "$with_nss_libs"  ||
 	   test "x$enable_nss" = "xstatic"; then
@@ -596,90 +686,6 @@ if test "x$enable_nss" = "xyes" || test "x$enable_nss" = "xstatic"; then
 fi
 
 AM_CONDITIONAL(USE_NSS, test "x$enable_nss" = "xyes")
-
-dnl #
-dnl # Check for GNUTLS if it's specified or if NSS failed.
-dnl #
-if test "x$msg_ssl" = "xno" -o "x$enable_gnutls" != "xno"; then
-
-	enable_gnutls="no"
-	prefix=`eval echo $prefix`
-
-	AC_ARG_WITH(gnutls-includes,
-		[  --with-gnutls-includes=PREFIX   Location of GNUTLS includes.],
-		[ with_gnutls_includes="$withval" ],
-		[ with_gnutls_includes="$prefix/include" ])
-
-	have_gnutls_includes="no"
-
-	if test "x$with_gnutls_includes" != "xno"; then
-		CPPFLAGS_save="$CPPFLAGS"
-
-		AC_MSG_CHECKING(for GNUTLS includes)
-		AC_MSG_RESULT("")
-
-		CPPFLAGS="$CPPFLAGS -I$with_gnutls_includes"
-		AC_CHECK_HEADERS(gnutls/gnutls.h, [ gnutls_includes="yes" ])
-		CPPFLAGS="$CPPFLAGS_save"
-
-		if test "x$gnutls_includes" != "xno" -a \
-		        "x$gnutls_includes" != "x"; then
-			have_gnutls_includes="yes"
-
-			GNUTLS_CFLAGS="-I$with_gnutls_includes"
-		else
-			GNUTLS_CFLAGS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GNUTLS includes)
-		AC_MSG_RESULT(no)
-	fi
-
-	AC_ARG_WITH(gnutls-libs,
-		[  --with-gnutls-libs=PREFIX       Location of GNUTLS libraries.],
-		[ with_gnutls_libs="$withval" ])
-
-	if test "x$with_gnutls_libs"     != "xno" -a \
-	        "x$have_gnutls_includes" != "xno"; then
-
-		LDFLAGS_save="$LDFLAGS"
-
-		case $with_gnutls_libs in
-			""|-L*) ;;
-			*) with_gnutls_libs="-L$with_gnutls_libs" ;;
-		esac
-
-		AC_CACHE_CHECK([for GNUTLS libraries], gnutls_libs,
-		[
-			LDFLAGS="$LDFLAGS $with_gnutls_libs -lgnutls -lgcrypt"
-			AC_TRY_LINK_FUNC(gnutls_init, gnutls_libs="yes", gnutls_libs="no")
-			LDFLAGS="$LDFLAGS_save"
-		])
-
-		if test "x$gnutls_libs" != "xno"; then
-			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
-			AC_DEFINE(HAVE_SSL)
-			msg_ssl="yes (GNUTLS)"
-			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
-
-			enable_gnutls="yes"
-		else
-			GNUTLS_CFLAGS=""
-			GNUTLS_LIBS=""
-		fi
-	else
-		AC_MSG_CHECKING(for GNUTLS libraries)
-		AC_MSG_RESULT(no)
-	fi
-else
-	GNUTLS_CFLAGS=""
-	GNUTLS_LIBS=""
-fi
-
-AC_SUBST(GNUTLS_CFLAGS)
-AC_SUBST(GNUTLS_LIBS)
-
-AM_CONDITIONAL(USE_GNUTLS, test "x$enable_gnutls" = "xyes")
 
 dnl Check for Tcl
 if test "$enable_tcl" = yes; then
