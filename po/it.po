@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
-"POT-Creation-Date: 2003-07-20 23:43+0200\n"
-"PO-Revision-Date: 2003-07-20 23:00--100\n"
+"POT-Creation-Date: 2003-07-22 17:26+0200\n"
+"PO-Revision-Date: 2003-07-22 23:00--100\n"
 "Last-Translator: Claudio Satriano <satriano@na.infn.it>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -50,7 +50,7 @@ msgstr "Tornato"
 msgid "Mute Sounds"
 msgstr "Nessun Suono"
 
-#: plugins/docklet/docklet.c:170 src/gtkft.c:557
+#: plugins/docklet/docklet.c:170 src/gtkft.c:559
 msgid "File Transfers"
 msgstr "Trasferimento File"
 
@@ -115,15 +115,15 @@ msgstr ""
 #. *  DEFINES, MACROS & DATA TYPES
 #.
 #: plugins/docklet/docklet-win32.c:44
-msgid "Gaim Instant Messenger"
+msgid "Gaim Instant Messengnger"
 msgstr "Gaim "
 
 #: plugins/docklet/docklet-win32.c:45
-msgid "Gaim Instant Messenger - Signed off"
+msgid "Gaim Instant Messenging - Signed off"
 msgstr "Gaim - Non Connesso"
 
 #: plugins/docklet/docklet-win32.c:46
-msgid "Gaim Instant Messenger - Away"
+msgid "Gaim Instant Messenging - Away"
 msgstr "Gaim - Assente"
 
 #. *< api_version
@@ -1089,7 +1089,7 @@ msgid "Gaim encountered an error communicating with the ICQ server."
 msgstr "Gaim ha incontrato un errore di comunicazione con il server ICQ."
 
 #: src/protocols/icq/gaim_icq.c:277 src/protocols/oscar/oscar.c:2673
-#: src/dialogs.c:2452 src/gtkconv.c:1112 src/gtkconv.c:2963 src/gtkconv.c:4123
+#: src/dialogs.c:2452 src/gtkconv.c:1112 src/gtkconv.c:2963 src/gtkconv.c:4124
 #: src/gtkrequest.c:175 src/prpl.c:312
 msgid "Add"
 msgstr "Aggiungi"
@@ -1104,11 +1104,12 @@ msgstr "Aggiungi"
 #: src/protocols/oscar/oscar.c:5721 src/protocols/oscar/oscar.c:5936
 #: src/protocols/oscar/oscar.c:5985 src/protocols/oscar/oscar.c:6045
 #: src/protocols/trepia/trepia.c:380 src/protocols/yahoo/yahoo.c:1188
-#: src/buddy_chat.c:375 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
-#: src/dialogs.c:2092 src/dialogs.c:2207 src/dialogs.c:2273 src/dialogs.c:2441
-#: src/dialogs.c:2626 src/dialogs.c:2775 src/dialogs.c:3447 src/dialogs.c:3941
-#: src/dialogs.c:4883 src/gtkaccount.c:1478 src/gtkconn.c:147
-#: src/gtkrequest.c:171 src/prpl.c:313 src/request.h:813 src/request.h:823
+#: src/buddy_chat.c:375 src/connection.c:141 src/dialogs.c:459
+#: src/dialogs.c:471 src/dialogs.c:484 src/dialogs.c:2092 src/dialogs.c:2207
+#: src/dialogs.c:2273 src/dialogs.c:2441 src/dialogs.c:2626 src/dialogs.c:2775
+#: src/dialogs.c:3447 src/dialogs.c:3941 src/dialogs.c:4883
+#: src/gtkaccount.c:1478 src/gtkconn.c:147 src/gtkrequest.c:171 src/prpl.c:313
+#: src/request.h:813 src/request.h:823
 msgid "Cancel"
 msgstr "Annulla"
 
@@ -1258,8 +1259,8 @@ msgstr "Il nick è già in uso. Scegline un altro."
 #: src/protocols/msn/msn.c:204 src/protocols/oscar/oscar.c:2440
 #: src/protocols/oscar/oscar.c:2520 src/protocols/oscar/oscar.c:5935
 #: src/protocols/oscar/oscar.c:5984 src/protocols/oscar/oscar.c:6044
-#: src/protocols/yahoo/yahoo.c:1187 src/dialogs.c:2203 src/dialogs.c:2341
-#: src/dialogs.c:2625 src/dialogs.c:2771 src/dialogs.c:3934
+#: src/protocols/yahoo/yahoo.c:1187 src/connection.c:140 src/dialogs.c:2203
+#: src/dialogs.c:2341 src/dialogs.c:2625 src/dialogs.c:2771 src/dialogs.c:3934
 #: src/gtkrequest.c:170 src/request.h:813
 msgid "OK"
 msgstr "OK"
@@ -1862,11 +1863,11 @@ msgstr "L'utente è offline"
 
 #: src/protocols/msn/error.c:68
 msgid "Already in the mode"
-msgstr ""
+msgstr "Già nella modalità"
 
 #: src/protocols/msn/error.c:71
 msgid "Already in opposite list"
-msgstr ""
+msgstr "Già nella lista opposta"
 
 #: src/protocols/msn/error.c:75
 msgid "Tried to add a contact to a group that doesn't exist"
@@ -3962,24 +3963,24 @@ msgstr ""
 msgid "Group not removed"
 msgstr "Gruppo non rimosso"
 
-#: src/blist.c:947
+#: src/blist.c:964
 msgid "Invalid Groupname"
 msgstr "Nome del Gruppo non valido"
 
-#: src/blist.c:1703
+#: src/blist.c:1720
 msgid ""
 "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
 "Si è verificato un errore nell'analisi della tua lista contatti. Per questo "
 "motivo non è stata caricata."
 
-#: src/blist.c:1705
+#: src/blist.c:1722
 msgid "Buddy List Error"
 msgstr "Errore della Lista Contatti"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
-#: src/blist.c:1713
+#: src/blist.c:1730
 #, c-format
 msgid ""
 "Gaim is converting your old buddy lists to a new format, which will now be "
@@ -3988,7 +3989,7 @@ msgstr ""
 "Gaim sta convertendo la tua vecchia lista contatti in un nuovo formato che "
 "si trova ora in %s"
 
-#: src/blist.c:1716
+#: src/blist.c:1733
 msgid "Converting Buddy List"
 msgstr "Sto convertendo la Lista Contatti"
 
@@ -4034,6 +4035,29 @@ msgstr "Entra come:"
 #: src/buddy_chat.c:369
 msgid "Join"
 msgstr "Entra"
+
+#: src/connection.c:113
+#, c-format
+msgid "Missing protocol plugin for %s"
+msgstr "Manca il plugin per il protocollo %s"
+
+#: src/connection.c:118 src/connection.c:408
+msgid "Connection Error"
+msgstr "Errore di connessione"
+
+#: src/connection.c:138
+#, c-format
+msgid "Enter password for %s"
+msgstr "Inserisci la password per %s"
+
+#: src/connection.c:404
+#, c-format
+msgid "%s has been disconnected"
+msgstr "%s si è disconnesso"
+
+#: src/connection.c:407
+msgid "Reason Unknown."
+msgstr "Motivo Sconosciuto."
 
 #: src/conversation.c:405
 msgid "Unable to send message. The message is too large."
@@ -4520,22 +4544,22 @@ msgstr "Rinomina il Gruppo"
 msgid "Please enter a new name for the selected group.\n"
 msgstr "Inserire un nuovo nome per il gruppo selezionato.\n"
 
-#: src/ft.c:121
+#: src/ft.c:128
 #, c-format
 msgid "%s is not a valid filename.\n"
 msgstr "%s non é un nome di file valido.\n"
 
-#: src/ft.c:135
+#: src/ft.c:142
 #, c-format
 msgid "%s was not found.\n"
 msgstr "%s non è stato trovato.\n"
 
-#: src/ft.c:727
+#: src/ft.c:698
 #, c-format
 msgid "File transfer to %s aborted.\n"
 msgstr "Trasferimento file a %s annullato.\n"
 
-#: src/ft.c:729
+#: src/ft.c:700
 #, c-format
 msgid "File transfer from %s aborted.\n"
 msgstr "Trasferimento file da %s annullato.\n"
@@ -5164,7 +5188,7 @@ msgstr "Ignora"
 msgid "Info"
 msgstr "Info"
 
-#: src/gtkconv.c:1110 src/gtkconv.c:2969 src/gtkconv.c:4108
+#: src/gtkconv.c:1110 src/gtkconv.c:2969 src/gtkconv.c:4109
 #: src/gtkrequest.c:176
 msgid "Remove"
 msgstr "Rimuovi"
@@ -5311,15 +5335,15 @@ msgstr "/Opzioni/Abilita i Suoni"
 #. From right to left...
 #. Send button
 #: src/gtkconv.c:2943 src/gtkconv.c:2945 src/gtkconv.c:3043 src/gtkconv.c:3045
-#: src/gtkconv.c:5684
+#: src/gtkconv.c:5685
 msgid "Send"
 msgstr "Invia"
 
-#: src/gtkconv.c:2966 src/gtkconv.c:4126
+#: src/gtkconv.c:2966 src/gtkconv.c:4127
 msgid "Add the user to your buddy list"
 msgstr "Aggiungi l'utente alla tua lista dei contatti"
 
-#: src/gtkconv.c:2972 src/gtkconv.c:4111
+#: src/gtkconv.c:2972 src/gtkconv.c:4112
 msgid "Remove the user from your buddy list"
 msgstr "Rimuovi l'utente dalla lista dei contatti"
 
@@ -5346,7 +5370,7 @@ msgid "Block the user"
 msgstr "Blocca l'utente"
 
 #. Invite
-#: src/gtkconv.c:3055 src/gtkconv.c:5687
+#: src/gtkconv.c:3055 src/gtkconv.c:5688
 msgid "Invite"
 msgstr "Invita"
 
@@ -5419,40 +5443,40 @@ msgstr "Invia un messaggio immediato all'utente"
 msgid "Ignore the user"
 msgstr "Ignora l'utente"
 
-#: src/gtkconv.c:3910 src/server.c:1298
+#: src/gtkconv.c:3911 src/server.c:1298
 #, c-format
 msgid "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n"
 msgstr "<HR><BR><H3 Align=Center> ---- Nuova Conversazione %s ----</H3><BR>\n"
 
-#: src/gtkconv.c:3914 src/server.c:1301
+#: src/gtkconv.c:3915 src/server.c:1301
 #, c-format
 msgid "---- New Conversation @ %s ----\n"
 msgstr "---- Nuova Conversazione %s ----\n"
 
-#: src/gtkconv.c:3946
+#: src/gtkconv.c:3947
 msgid "Close conversation"
 msgstr "Chiudi la conversazione"
 
-#: src/gtkconv.c:4604 src/gtkconv.c:4726
+#: src/gtkconv.c:4605 src/gtkconv.c:4727
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d persona nella stanza"
 msgstr[1] "%d persone nella stanza"
 
-#: src/gtkconv.c:5000
+#: src/gtkconv.c:5001
 msgid "Disable Animation"
 msgstr "Disabilita le Animazioni"
 
-#: src/gtkconv.c:5009
+#: src/gtkconv.c:5010
 msgid "Enable Animation"
 msgstr "Abilita le Animazioni"
 
-#: src/gtkconv.c:5016
+#: src/gtkconv.c:5017
 msgid "Hide Icon"
 msgstr "Nascondi l'Icona"
 
-#: src/gtkconv.c:5022
+#: src/gtkconv.c:5023
 msgid "Save Icon As..."
 msgstr "Salva l'Icona con nome..."
 
@@ -5461,11 +5485,11 @@ msgstr "Salva l'Icona con nome..."
 msgid "%.2f KB/s"
 msgstr "%.2f KB/s"
 
-#: src/gtkft.c:201
+#: src/gtkft.c:200
 msgid "<b>Receiving From:</b>"
 msgstr "<b>Sto ricevendo da:</b>"
 
-#: src/gtkft.c:204
+#: src/gtkft.c:203
 msgid "<b>Sending To:</b>"
 msgstr "<b>Sto inviando a:</b>"
 
@@ -5505,34 +5529,34 @@ msgstr "Tempo Trascorso:"
 msgid "Time Remaining:"
 msgstr "Tempo Rimanente:"
 
-#: src/gtkft.c:586
+#: src/gtkft.c:588
 msgid "_Keep the dialog open"
 msgstr "_Mantieni la finestra aperta"
 
-#: src/gtkft.c:596
+#: src/gtkft.c:598
 msgid "_Clear finished transfers"
 msgstr "_Pulisci i trasferimenti ultimati"
 
 #. "Download Details" arrow
-#: src/gtkft.c:605
+#: src/gtkft.c:607
 msgid "Show download details"
 msgstr "Mostra i dettagli del download"
 
-#: src/gtkft.c:606
+#: src/gtkft.c:608
 msgid "Hide download details"
 msgstr "Nascondi i dettagli del download"
 
 #. Pause button
-#: src/gtkft.c:648 src/stock.c:86
+#: src/gtkft.c:650 src/stock.c:86
 msgid "_Pause"
 msgstr "_Pausa"
 
 #. Resume button
-#: src/gtkft.c:658
+#: src/gtkft.c:660
 msgid "_Resume"
 msgstr "_Riprendi"
 
-#: src/gtkft.c:1013
+#: src/gtkft.c:1011
 msgid "That file does not exist."
 msgstr "Il file non esiste."
 
@@ -5736,7 +5760,7 @@ msgstr "%s è tornato attivo"
 #: src/gtkpounce.c:838
 #, c-format
 msgid "%s has returned from being away"
-msgstr "% è di nuovo presente"
+msgstr "%s è di nuovo presente"
 
 #: src/gtkpounce.c:839
 #, c-format
@@ -5746,17 +5770,17 @@ msgstr "%s ha smesso di scriverti"
 #: src/gtkpounce.c:840
 #, c-format
 msgid "%s has signed off"
-msgstr "% si è disconnesso"
+msgstr "%s si è disconnesso"
 
 #: src/gtkpounce.c:841
 #, c-format
 msgid "%s has become idle"
-msgstr "% è diventato inattivo"
+msgstr "%s è diventato inattivo"
 
 #: src/gtkpounce.c:842
 #, c-format
 msgid "%s has gone away."
-msgstr "% è andato via"
+msgstr "%s è andato via"
 
 #: src/gtkpounce.c:843
 msgid "Unknown pounce event. Please report this!"
