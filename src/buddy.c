@@ -737,7 +737,7 @@ static char *gaim_get_tooltip_text(struct buddy *b)
 			       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 			       !b->present ? _("\n<b>Status:</b> Offline") : "",
 			       statustext ? "\n" : "", statustext ? statustext : "",
-				   !g_strcasecmp(b->name, "robflynn") ? "\n<b>Description:</b> Spooky" : "");
+				   !g_ascii_strcasecmp(b->name, "robflynn") ? "\n<b>Description:</b> Spooky" : "");
 	
 	if(warning)
 		g_free(warning);
@@ -1289,6 +1289,9 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_tooltips_set_tip(GTK_TOOLTIPS(tooltips), button, _("Set an away message"), NULL);
 	gtk_widget_show(button);
 
+	/* we're done setting tooltips */
+	gtk_object_sink(GTK_OBJECT(tooltips));
+
 	/* this will show the right image/label widgets for us */
 	gaim_gtk_blist_update_toolbar();
 
@@ -1445,29 +1448,22 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 	g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
 }
 
-static int gaim_blist_node_count_children(GaimBlistNode *node)
-{
-	int count = 0;
-	GaimBlistNode *n = node->child;
-
-	while(n) {
-		count++;
-		n = n->next;
-	}
-
-	return count;
-}
-
 static void make_a_group(GaimBlistNode *node, GtkTreeIter *iter) {
 	GaimBlistNode *sibling;
 	GtkTreeIter siblingiter;
 	GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
 			GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
-	int num_online = gaim_blist_get_group_online_count((struct group *)node);
-	int num_total = gaim_blist_node_count_children(node);
-	char *esc = g_markup_escape_text(((struct group*)node)->name, -1);
-	char *mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)", esc, num_online, num_total);
+	struct group *group = (struct group *)node;
+	char *esc = g_markup_escape_text(group->name, -1);
+	char *mark;
+
+	if(blist_options & OPT_BLIST_SHOW_GRPNUM)
+		mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)", esc, gaim_blist_get_group_online_count(group), gaim_blist_get_group_size(group, FALSE));
+	else
+		mark = g_strdup_printf("<span weight='bold'>%s</span>", esc);
+
 	g_free(esc);
+
 	sibling = node->prev;
 	while (sibling && !get_iter_from_node(sibling, &siblingiter)) {
 		sibling = sibling->prev;
@@ -1535,10 +1531,15 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				(!gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter) && !(blist_options & OPT_BLIST_SHOW_OFFLINE))) {
 			gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		} else {
-			int num_online = gaim_blist_get_group_online_count((struct group *)node);
-			int num_total = gaim_blist_node_count_children(node);
-			char *esc = g_markup_escape_text(((struct group*)node)->name, -1);
-			char *mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)", esc, num_online, num_total);
+			struct group *group = (struct group *)node;
+			char *esc = g_markup_escape_text(group->name, -1);
+			char *mark;
+
+			if(blist_options & OPT_BLIST_SHOW_GRPNUM)
+				mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)", esc, gaim_blist_get_group_online_count(group), gaim_blist_get_group_size(group, FALSE));
+			else
+				mark = g_strdup_printf("<span weight='bold'>%s</span>", esc);
+
 			g_free(esc);
 			gtk_tree_store_set(gtkblist->treemodel, &iter,
 					NAME_COLUMN, mark,
@@ -1618,40 +1619,17 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		gaim_gtk_blist_remove(list, node);
 		if (blist_options & OPT_BLIST_POPUP)
 			gtk_window_present(GTK_WINDOW(gtkblist->window));
-	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		GaimBlistNode *afsad = node->child;
-		while (afsad) {
-			gaim_gtk_blist_update(list, afsad);
-			afsad = afsad->next;
-		}
-
-		gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
 	}
+	gtk_tree_view_columns_autosize(GTK_TREE_VIEW(gtkblist->treeview));
 
-	/* let the containing group know we are here (or not here, for that matter) */		
-	if(GAIM_BLIST_NODE_IS_BUDDY(node) && GAIM_BLIST_NODE_IS_GROUP(node->parent)) {
-		/* i would just call gaim_gtk_blist_update() on the parent,
-		* but that would unfortunately cause it to recursively call
-		* itself ad infinitum since below we have group nodes call
-		* this function on all its children */
-		GtkTreeIter iter1;
-		if(get_iter_from_node(node->parent, &iter1)) {
-			int num_online = gaim_blist_get_group_online_count((struct group *)node->parent);
-			int num_total = gaim_blist_node_count_children(node->parent);
-			char *esc = g_markup_escape_text(((struct group*)node->parent)->name, -1);
-			char *mark = g_strdup_printf("<span weight='bold'>%s</span> (%d/%d)", esc, num_online, num_total);
-			g_free(esc);
-			gtk_tree_store_set(gtkblist->treemodel, &iter1,
-					NAME_COLUMN, mark,
-					-1);
-			g_free(mark);
-		}
-	}
 
 	if(expand) {
 		gtk_tree_view_expand_row(GTK_TREE_VIEW(gtkblist->treeview), expand, TRUE);
 		gtk_tree_path_free(expand);
 	}
+
+	if(GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_gtk_blist_update(list, node->parent);
 }
 
 static void gaim_gtk_blist_destroy(struct gaim_buddy_list *list)
