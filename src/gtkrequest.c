@@ -108,9 +108,9 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Create the dialog. */
 	dialog = gtk_dialog_new_with_buttons("", NULL, 0,
-										 __text_to_stock(ok_text),     0,
-										 __text_to_stock(cancel_text), 1,
-										 NULL);
+					     __text_to_stock(cancel_text), 1,
+					     __text_to_stock(ok_text),     0,
+					     NULL);
 	data->dialog = dialog;
 
 	g_signal_connect(G_OBJECT(dialog), "response",
