@@ -59,6 +59,7 @@ static void prefs_build_deny();
 static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
+void set_font_option(GtkWidget *w, int *option);
 
 static GtkWidget *sounddialog = NULL;
 static GtkWidget *prefdialog = NULL;
@@ -1152,6 +1153,7 @@ static void font_page()
 	GtkObject *adjust;
 	GtkWidget *frame;
 	GtkWidget *fbox;
+	GtkWidget *table;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -1169,17 +1171,39 @@ static void font_page()
 	gtk_widget_show(label);
 
 	frame = gtk_frame_new("Font Style");
-	fbox = gtk_vbox_new(FALSE, 5);
 
-	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, fbox);
-	gaim_button(_("Italics Text"), &font_options, OPT_FONT_ITALIC, fbox);
-	gaim_button(_("Underlined Text"), &font_options, OPT_FONT_UNDERLINE, fbox);
-	gaim_button(_("Strike Text"), &font_options, OPT_FONT_STRIKE, fbox);
+	table = gtk_table_new(2, 2, FALSE);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+	gtk_container_add(GTK_CONTAINER(frame), table);
 
-	gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);
-	gtk_container_add(GTK_CONTAINER(frame), fbox);
+	button = gtk_check_button_new_with_label(_("Bold Text"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_BOLD));
+	gtk_table_attach(GTK_TABLE(table), button, 0, 1, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_BOLD);
 
-	gtk_widget_show(fbox);
+	button = gtk_check_button_new_with_label(_("Italic Text"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_ITALIC));
+	gtk_table_attach(GTK_TABLE(table), button, 0, 1, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_ITALIC);
+
+	button = gtk_check_button_new_with_label(_("Underline Text"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_UNDERLINE));
+	gtk_table_attach(GTK_TABLE(table), button, 1, 2, 0, 1, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_UNDERLINE);
+
+	button = gtk_check_button_new_with_label(_("Strike through Text"));
+	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (font_options & OPT_FONT_STRIKE));
+	gtk_table_attach(GTK_TABLE(table), button, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked",
+			   GTK_SIGNAL_FUNC(set_font_option), (int*)OPT_FONT_STRIKE);
+
+
+	gtk_widget_show_all(table);
 	gtk_widget_show(frame);
 
 	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
