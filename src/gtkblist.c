@@ -3044,8 +3044,8 @@ static const char *require_connection[] =
 	N_("/Buddies/Log Out")
 };
 
-/* There's got to be a cleaner way to do this...? */
-#define SIZEOF_REQUIRE_CONNECTION 7
+static const int require_connection_size = sizeof(require_connection)
+											/ sizeof(*require_connection);
 
 /**
  * Rebuild dynamic menus and make menu items sensitive/insensitive
@@ -3065,9 +3065,7 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 
 	sensitive = (gaim_connections_get_all() != NULL);
 
-	gtk_widget_set_sensitive(gtkblist->treeview, sensitive);
-
-	for (i = 0; i < SIZEOF_REQUIRE_CONNECTION; i++)
+	for (i = 0; i < require_connection_size; i++)
 	{
 		widget = gtk_item_factory_get_widget(gtkblist->ift, require_connection[i]);
 		gtk_widget_set_sensitive(widget, sensitive);
