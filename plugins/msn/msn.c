@@ -122,6 +122,27 @@ static char *url_encode(const char *msg)
 	return buf;
 }
 
+static char *url_decode(const char *msg)
+{
+	static char buf[MSN_BUF_LEN];
+	int i, j = 0;
+
+	bzero(buf, sizeof(buf));
+	for (i = 0; i < strlen(msg); i++) {
+		char hex[3];
+		if (msg[i] != '%') {
+			buf[j++] = msg[i];
+			continue;
+		}
+		g_snprintf(hex, sizeof(hex), "%s", msg + ++i);
+		i++;
+		sscanf(hex, "%x", (unsigned int *)&buf[j++]);
+	}
+	buf[j] = 0;
+
+	return buf;
+}
+
 static char *handle_errcode(char *buf, gboolean show)
 {
 	int errcode;
@@ -481,6 +502,32 @@ static void msn_ss_xfr_connect(gpointer data, gint source, GdkInputCondition con
 	ms->inpa = gdk_input_add(ms->fd, GDK_INPUT_READ, msn_switchboard_callback, ms);
 }
 
+struct msn_add_permit {
+	struct gaim_connection *gc;
+	char *user;
+	char *friend;
+};
+
+static void msn_accept_add(gpointer w, struct msn_add_permit *map)
+{
+	struct msn_data *md = map->gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "ADD %d AL %s %s\n", ++md->trId, map->user, map->friend);
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		hide_login_progress(map->gc, "Write error");
+		signoff(map->gc);
+		return;
+	}
+}
+
+static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
+{
+	g_free(map->user);
+	g_free(map->friend);
+	g_free(map);
+}
+
 static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct gaim_connection *gc = data;
@@ -502,6 +549,32 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition cond)
 	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "ADD", 3)) {
+		char *list, *user, *friend, *tmp = buf;
+		struct msn_add_permit *ap = g_new0(struct msn_add_permit, 1);
+		char msg[MSN_BUF_LEN];
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		list = tmp;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		user = tmp;
+
+		GET_NEXT(tmp);
+		friend = tmp;
+
+		if (g_strcasecmp(list, "RL"))
+			return;
+
+		ap->user = g_strdup(user);
+		ap->friend = g_strdup(url_decode(friend));
+		ap->gc = gc;
+
+		g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list.",
+				ap->user, ap->friend);
+
+		do_ask_dialog(msg, ap, msn_accept_add, msn_cancel_add);
 	} else if (!g_strncasecmp(buf, "BLP", 3)) {
 	} else if (!g_strncasecmp(buf, "BPR", 3)) {
 	} else if (!g_strncasecmp(buf, "CHG", 3)) {
