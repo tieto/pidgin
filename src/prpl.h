@@ -103,12 +103,13 @@ typedef enum
 /**
  * A description of a Buddy Icon specification.  This tells Gaim what kind of image file
  * it should give this prpl, and what kind of image file it should expect back.
+ * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct {
 	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported. 
 					     * The core nor the prpl will actually check to see if the data it's given matches this, it's entirely
 					     * up to the UI to do what it wants */
-	int width;                          /**< The width of this icon */
+	int width;                          /**< The width of this icon  */
 	int height;                         /**< The height of this icon */
 } GaimBuddyIconSpec;
 
