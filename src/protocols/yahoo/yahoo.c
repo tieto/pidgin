@@ -379,6 +379,12 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 		case 47: /* is custom status away or not? 2=idle*/
 			if (!f)
 				break;
+
+			/* I have no idea what it means when this is
+			 * set when someone's available, but it doesn't
+			 * mean idle. */
+			if (f->status == YAHOO_STATUS_AVAILABLE)
+				break;
 			f->away = strtol(pair->value, NULL, 10);
 			if (f->away == 2)
 				f->idle = time(NULL);
