@@ -73,6 +73,11 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Mon Apr 07 2003 Rob Flynn <rob@marko.net> (0.61 release)
+- Split the buddy pounce core and UI, and rewrote the UI for it.
+- Removed folder icons and excess space from the buddy list (Thanks Dave Camp)
+- Fixed a bug involving dragging buddies and groups
+
 * Fri Apr 04 2003 Rob Flynn <rob@marko.net> (0.60 release)
 -Core:
 - Auto-loading protocol plugins.
