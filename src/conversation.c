@@ -568,22 +568,16 @@ gaim_window_set_ui_ops(struct gaim_window *win, struct gaim_window_ui_ops *ops)
 	if (win == NULL || win->ui_ops == ops)
 		return;
 
-	if (ops != NULL) {
-		if (ops->get_conversation_ui_ops != NULL)
-			conv_ops = ops->get_conversation_ui_ops();
-	}
+	if (ops != NULL && ops->get_conversation_ui_ops != NULL)
+		conv_ops = ops->get_conversation_ui_ops();
 
-	if (win->ui_ops != NULL) {
-		if (win->ui_ops->destroy_window != NULL)
-			win->ui_ops->destroy_window(win);
-	}
+	if (win->ui_ops != NULL && win->ui_ops->destroy_window != NULL)
+		win->ui_ops->destroy_window(win);
 
 	win->ui_ops = ops;
 
-	if (win->ui_ops != NULL) {
-		if (win->ui_ops->new_window != NULL)
-			win->ui_ops->new_window(win);
-	}
+	if (win->ui_ops != NULL && win->ui_ops->new_window != NULL)
+		win->ui_ops->new_window(win);
 
 	for (l = gaim_window_get_conversations(win);
 		 l != NULL;
@@ -874,7 +868,7 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 	conv->title        = g_strdup(name);
 	conv->send_history = g_list_append(NULL, NULL);
 	conv->history      = g_string_new("");
-	conv->data  = g_hash_table_new_full(g_str_hash, g_str_equal,
+	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 
 	if (type == GAIM_CONV_IM)
@@ -907,8 +901,8 @@ gaim_conversation_new(GaimConversationType type, struct gaim_account *account,
 	 * created window.
 	 */
 	if (windows == NULL ||
-			(type == GAIM_CONV_IM && !(im_options & OPT_IM_ONE_WINDOW)) ||
-			(type == GAIM_CONV_CHAT && !(chat_options & OPT_CHAT_ONE_WINDOW))) {
+		(type == GAIM_CONV_IM && !(im_options & OPT_IM_ONE_WINDOW)) ||
+		(type == GAIM_CONV_CHAT && !(chat_options & OPT_CHAT_ONE_WINDOW))) {
 		struct gaim_window *win;
 
 		win = gaim_window_new();

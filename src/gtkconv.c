@@ -326,7 +326,8 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_window_get_active_conversation(win);
 
-	gaim_conversation_set_logging(conv, !gaim_conversation_is_logging(conv));
+	gaim_conversation_set_logging(conv,
+			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
 
 static void
@@ -343,7 +344,8 @@ menu_sounds_cb(gpointer data, guint action, GtkWidget *widget)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtkconv->make_sound = !gtkconv->make_sound;
+	gtkconv->make_sound =
+		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
 }
 
 static gboolean
@@ -1662,7 +1664,9 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e,
 
 			new_win = gaim_window_new();
 
-			gaim_window_add_conversation(new_win, gaim_window_remove_conversation(win, gaim_conversation_get_index(conv)));
+			gaim_window_add_conversation(new_win,
+					gaim_window_remove_conversation(win,
+							gaim_conversation_get_index(conv)));
 
 			gtkconv->make_sound = noisy;
 
@@ -3684,8 +3688,10 @@ gaim_gtk_remove_conversation(struct gaim_window *win,
 	/* go back to tabless if need be */
 	if (gaim_window_get_conversation_count(win) <= 2) {
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook),
-				((conv_type == GAIM_CONV_IM && im_options & OPT_IM_ONE_WINDOW) ||
-				(conv_type == GAIM_CONV_CHAT && im_options & OPT_CHAT_ONE_WINDOW)));
+				((conv_type == GAIM_CONV_IM &&
+				  (im_options & OPT_IM_ONE_WINDOW)) ||
+				(conv_type == GAIM_CONV_CHAT &&
+				 (im_options & OPT_CHAT_ONE_WINDOW))));
 	}
 
 
