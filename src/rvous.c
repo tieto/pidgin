@@ -378,7 +378,6 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	while (*(c - 1) != '/') c--;
 	buf = frombase64(ft->cookie);
 	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
-	printf("%s", buf); fflush(stdout);
 	debug_print(debug_buff);
 	fhdr->hdrtype = 0x1108;
 	snprintf(fhdr->bcookie, 8, "%s", buf);
@@ -389,11 +388,11 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->filesleft = 1;
 	fhdr->totparts = 1;
 	fhdr->partsleft = 1;
-	fhdr->totsize = (long)st.st_size; /* ? */
+	fhdr->totsize = (long)st.st_size; /* total size of all available files */
 	/* size = 10 (date) + 1 + 5 (time) + 1 + 8 (size) + 1 + name + 2 = 30 + name */
 	fhdr->size = 30 + strlen(c); /* size of listing.txt */
 	fhdr->modtime = time(NULL); /* time since UNIX epoch */
-	fhdr->checksum = 0x89f70000; /* ? */
+	fhdr->checksum = 0x10110000; /* ? */
 	fhdr->rfrcsum = 0;
 	fhdr->rfsize = 0;
 	fhdr->cretime = 0;
@@ -401,15 +400,15 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->nrecvd = 0;
 	fhdr->recvcsum = 0;
 	snprintf(fhdr->idstring, 32, "Gaim");
-	fhdr->flags = 0x20;		/* don't ask me why */
+	fhdr->flags = 0x02;		/* don't ask me why */
 	fhdr->lnameoffset = 0x1A;	/* ? still no clue */
 	fhdr->lsizeoffset = 0x10;	/* whatever */
-	fhdr->dummy[0] = 0;
-	fhdr->macfileinfo[0] = 0;
+	memset(fhdr->dummy, 0, 69);
+	memset(fhdr->macfileinfo, 0, 16);
 	fhdr->nencode = 0;
 	fhdr->nlanguage = 0;
 	snprintf(fhdr->name, 64, "listing.txt");
-	snprintf(bmagic, 7, "OFT2\001\000");
+	snprintf(bmagic, 6, "TFT1\001");
 	read_rv = write(ft->fd, bmagic, 6);
 	if (read_rv <= -1) {
 		sprintf(debug_buff, "Couldn't write opening header \n");
