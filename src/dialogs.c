@@ -964,7 +964,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
 	gtk_container_add(GTK_CONTAINER(frame), table);
 
-        label = gtk_label_new(_("Buddy"));
+        label = gtk_label_new(_("Contact"));
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 
         a->entry = gtk_entry_new();
