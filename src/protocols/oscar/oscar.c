@@ -3187,6 +3187,7 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 	GdkPixbufLoader *load;
 	GList *frames;
 	GdkPixbuf *buf;
+	GdkPixbuf *scale;
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
@@ -3208,7 +3209,14 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 	if (ir->anim) {
 		frames = gdk_pixbuf_animation_get_frames(ir->anim);
 		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-		gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+		scale = gdk_pixbuf_scale_simple(buf,
+				gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(ir->anim),
+				gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(ir->anim),
+				GDK_INTERP_NEAREST);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_unref(scale);
 
 		if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
 			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
@@ -3221,7 +3229,10 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 			gdk_pixbuf_loader_close(load);
 			return;
 		}
-		gdk_pixbuf_render_pixmap_and_mask(ir->unanim, &pm, &bm, 0);
+		scale = gdk_pixbuf_scale_simple(ir->unanim, SCALE, SCALE,
+				GDK_INTERP_NEAREST);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_unref(scale);
 	}
 
 	ir->pix = gtk_pixmap_new(pm, bm);
