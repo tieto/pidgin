@@ -1105,6 +1105,7 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu),
 			g_list_index(aim_users, ((struct gaim_connection *)connections->data)->user));
+	b->user = ((struct gaim_connection *)connections->data)->user;
 
 	b->menu = optmenu;
 }

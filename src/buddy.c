@@ -1313,11 +1313,10 @@ void do_pounce(char *name)
 		u = find_user(b->pouncer, b->protocol); /* find our user */
 		if (u == NULL) continue;
 
+		/* check and see if we're signed on as the pouncer */
+		if (u->gc == NULL) continue;
+		
                 if (!strcasecmp(who, normalize(b->name))) { /* find someone to pounce */
-			/* check and see if we're signed on as the pouncer */
-
-			if (u->gc == NULL) continue;
-			
 			if (b->popup == 1)
 			{
 				c = find_conversation(name);
