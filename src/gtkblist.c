@@ -2656,9 +2656,10 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBuddy *b)
 	data = gaim_buddy_icon_get_data(icon, &len);
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
-
+	if (buf)
+		g_object_ref(G_OBJECT(buf));
 	gdk_pixbuf_loader_close(loader, NULL);
-
+	g_object_unref(G_OBJECT(loader));
 
 	if (buf) {
 		if (!GAIM_BUDDY_IS_ONLINE(b))

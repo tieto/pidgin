@@ -479,7 +479,7 @@ convert_and_set_buddy_icon(GaimAccount *account, const char *path)
 	height = gdk_pixbuf_get_height(pixbuf);
 	format = gdk_pixbuf_loader_get_format(loader);
 	gdk_pixbuf_loader_close(loader, NULL);
-	g_object_unref(G_OBJECT(pixbuf));
+	g_object_unref(G_OBJECT(loader));
 #endif
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
