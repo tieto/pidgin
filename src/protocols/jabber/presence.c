@@ -454,7 +454,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				chat->id = i++;
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
-				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), jid->resource);
+				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), chat->handle);
 
 				/* <iq to='room@server'
 				   type='get'>
