@@ -1851,7 +1851,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -1882,7 +1882,7 @@ static void yahoo_got_web_connected(gpointer data, gint source, GaimInputConditi
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -1945,7 +1945,7 @@ static void yahoo_got_cookies(gpointer data, gint source, GaimInputCondition con
 	GaimConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect"));
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 	write(source, yd->auth, strlen(yd->auth));
@@ -2703,13 +2703,17 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 
 	if (!yd->logged_in)
 		return;
+	/* It seems to work better without this */
 
-	if (gc->account->perm_deny != 4)
-		return;
 
-	if (!who || who[0] == '\0')
-		return;
-
+	/* 
+	 * if (gc->account->perm_deny != 4)
+	 *	return;
+ 	 *
+	 * if (!who || who[0] == '\0')
+	 *		return;
+	 */
+    
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
