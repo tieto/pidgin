@@ -62,13 +62,13 @@ gboolean mute_sounds = 0;
  * it has no option bit, set it to 0. the order here has to match *
  * the defines in gaim.h.                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
-	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "buddyarrive.wav"},
-	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "buddyleave.wav"},
+	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "arrive.wav"},
+	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "leave.wav"},
 	{N_("Message received"), OPT_SOUND_RECV, "receive.wav"},
 	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "receive.wav"},
 	{N_("Message sent"), OPT_SOUND_SEND, "send.wav"},
-	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "buddyarrive.wav"},
-	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "buddyleave.wav"},
+	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "arrive.wav"},
+	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "leave.wav"},
 	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "send.wav"},
 	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */

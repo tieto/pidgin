@@ -1,5 +1,5 @@
-EXTRA_DIST =	buddyarrive.wav \
-		buddyleave.wav \
+EXTRA_DIST =	arrive.wav \
+		leave.wav \
 		receive.wav \
 		redalert.wav \
 		send.wav
