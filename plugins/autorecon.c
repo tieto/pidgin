@@ -20,8 +20,9 @@ char *description() {
 void do_signon(char *name) {
 	struct aim_user *u = find_user(name, -1);
 	g_free(name);
-	serv_login(u);
 	gtk_timeout_remove(recon);
+	if (!u) return;
+	serv_login(u);
 	forced_off = 0;
 	if (away_state) do_away_message(NULL, last_away);
 }
