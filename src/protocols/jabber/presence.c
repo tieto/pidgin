@@ -274,6 +274,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_attrib(y, "xmlns");
 			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
+				/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 				delayed = TRUE;
 			} else if(xmlns && !strcmp(xmlns, "http://jabber.org/protocol/muc#user")) {
 				xmlnode *z;
