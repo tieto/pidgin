@@ -100,6 +100,7 @@ struct addbuddy {
         GtkWidget *window;
         GtkWidget *combo;
         GtkWidget *entry;
+        GtkWidget *entry_for_alias;
 	struct gaim_connection *gc;
 };
 
@@ -786,18 +787,19 @@ extern void add_callback(GtkWidget *, struct conversation *);
 
 void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 {
-	char *grp, *who;
+	char *grp, *who, *whoalias;
         struct conversation *c;
 	GSList *n = connections;
 	struct gaim_connection *g;
         
 	who = gtk_entry_get_text(GTK_ENTRY(a->entry));
         grp = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry));
+        whoalias = gtk_entry_get_text(GTK_ENTRY(a->entry_for_alias));
 
         c = find_conversation(who);
 
-	if (a->gc) add_buddy(a->gc, grp, who, NULL);
-	else if (connections) add_buddy(connections->data, grp, who, NULL);
+	if (a->gc) add_buddy(a->gc, grp, who, whoalias);
+	else if (connections) add_buddy(connections->data, grp, who, whoalias);
 
         if (c != NULL) {
 		update_convo_add_button(c);
@@ -943,6 +945,8 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	GtkWidget *bbox;
 	GtkWidget *vbox;
         GtkWidget *topbox;
+        GtkWidget *topbox1;
+        GtkWidget *topbox2;
 	GtkWidget *frame;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
@@ -950,77 +954,85 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
         
         a->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(a->window), "add_buddy", "Gaim");
-	gtk_widget_set_usize(a->window, 480, 105);
 	gtk_window_set_policy(GTK_WINDOW(a->window), FALSE, FALSE, TRUE);
+        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
+	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
 	gtk_widget_realize(a->window);
-	dialogwindows = g_list_prepend(dialogwindows, a->window);
-
-	bbox = gtk_hbox_new(TRUE, 10);
-        topbox = gtk_hbox_new(FALSE, 5);
-        vbox = gtk_vbox_new(FALSE, 5);
-
-        a->entry = gtk_entry_new();
-        a->combo = gtk_combo_new();
-        /* Fix the combo box */
-        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(gc ? gc : connections->data));
-        /* Put the buttons in the box */
-
-	add = picture_button(a->window, _("Add"), add_xpm);
-	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
-	
-        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
-        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
-
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_label(GTK_FRAME(frame), _("Add Buddy"));
-
-        label = gtk_label_new(_("Buddy"));
-        gtk_widget_show(label);
-        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
-        if (buddy != NULL)
-                gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
-
-        label = gtk_label_new(_("Group"));
-        gtk_widget_show(label);
-        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-        gtk_box_pack_start(GTK_BOX(topbox), a->combo, FALSE, FALSE, 5);
-
-        if (group != NULL)
-                gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
-
-        /* And the boxes in the box */
-        gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
-
-        /* Handle closes right */
+        aol_icon(a->window->window);
         gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
                            GTK_SIGNAL_FUNC(destroy_dialog), a->window);
 	gtk_signal_connect(GTK_OBJECT(a->window), "destroy",
 			   GTK_SIGNAL_FUNC(free_dialog), a);
-        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-                           GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-        gtk_signal_connect(GTK_OBJECT(add), "clicked",
-                           GTK_SIGNAL_FUNC(do_add_buddy), a);
+	dialogwindows = g_list_prepend(dialogwindows, a->window);
+
+	frame = gtk_frame_new(_("Add Buddy"));
+        gtk_container_add(GTK_CONTAINER(a->window), frame);
+	gtk_widget_show(frame);
+
+        vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+        gtk_widget_show(vbox);
+
+        topbox = gtk_hbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
+        gtk_widget_show(topbox);
+
+        label = gtk_label_new(_("Buddy"));
+        gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
+        gtk_widget_show(label);
+
+        a->entry = gtk_entry_new();
+        gtk_box_pack_end(GTK_BOX(topbox), a->entry, FALSE, FALSE, 5);
+        gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
+        if (buddy != NULL)
+                gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
         gtk_signal_connect(GTK_OBJECT(a->entry), "activate",
                            GTK_SIGNAL_FUNC(do_add_buddy), a);
-        /* Finish up */
-        gtk_widget_show(add);
-        gtk_widget_show(cancel);
-        gtk_widget_show(a->combo);
         gtk_widget_show(a->entry);
-        gtk_widget_show(topbox);
-        gtk_widget_show(bbox);
-        gtk_widget_show(vbox);
-	gtk_widget_show(frame);
-        gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
-        gtk_window_set_focus(GTK_WINDOW(a->window), a->entry);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-        gtk_container_add(GTK_CONTAINER(a->window), frame);
-	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
-        gtk_widget_realize(a->window);
-        aol_icon(a->window->window);
 
+        topbox1 = gtk_hbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), topbox1, TRUE, TRUE, 5);
+        gtk_widget_show(topbox1);
+
+        label = gtk_label_new(_("Alias"));
+        gtk_box_pack_start(GTK_BOX(topbox1), label, FALSE, FALSE, 5);
+        gtk_widget_show(label);
+
+        a->entry_for_alias = gtk_entry_new();
+        gtk_box_pack_end(GTK_BOX(topbox1), a->entry_for_alias, FALSE, FALSE, 5);
+        gtk_widget_show(a->entry_for_alias);
+
+        topbox2 = gtk_hbox_new(FALSE, 5);
+        gtk_box_pack_start(GTK_BOX(vbox), topbox2, TRUE, TRUE, 5);
+        gtk_widget_show(topbox2);
+
+        label = gtk_label_new(_("Group"));
+        gtk_box_pack_start(GTK_BOX(topbox2), label, FALSE, FALSE, 5);
+        gtk_widget_show(label);
+
+        a->combo = gtk_combo_new();
+        gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree(gc ? gc : connections->data));
+        if (group != NULL)
+                gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
+        gtk_box_pack_end(GTK_BOX(topbox2), a->combo, FALSE, FALSE, 5);
+        gtk_widget_show(a->combo);
+
+	bbox = gtk_hbox_new(TRUE, 10);
+        gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
+        gtk_widget_show(bbox);
+
+	add = picture_button(a->window, _("Add"), add_xpm);
+        gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+        gtk_signal_connect(GTK_OBJECT(add), "clicked",
+                           GTK_SIGNAL_FUNC(do_add_buddy), a);
+        gtk_widget_show(add);
+
+	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
+        gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+        gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
+                           GTK_SIGNAL_FUNC(destroy_dialog), a->window);
+        gtk_widget_show(cancel);
+	
 	gtk_widget_show(a->window);
 }
 
