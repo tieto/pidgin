@@ -1051,6 +1051,25 @@ append_to_sel (GString          *string,
 	return new_string;
 }
 
+static void
+chunk_select_words (struct line_info *chunk)
+{
+	char *start, *end;
+
+	start = chunk->sel_start;
+	end = chunk->sel_end;
+
+	if (start != chunk->text)
+		while (start > chunk->text && *(start-1) != ' ')
+			start--;
+	chunk->sel_start = start;
+
+	if (end != NULL)
+		while (*end != '\0' && *end != ' ')
+			end++;
+	chunk->sel_end = end;
+}
+
 #define COORDS_IN_CHUNK(xx, yy) (((xx) < chunk->x + chunk->width) && \
 				 ((yy) < chunk->y + chunk->height))
 
@@ -1068,6 +1087,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 	      endy   = imhtml->sel_endy;
 	gchar *new_pos;
 	gint selection = 0;
+	guint mode = imhtml->sel_mode;
 	gboolean smileys = imhtml->smileys;
 	gboolean redraw = FALSE;
 	gboolean got_start = FALSE;
@@ -1083,6 +1103,9 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 		imhtml->selected_text = g_string_new ("");
 	}
 
+	if (mode == 2)
+		startx = endx = 0;
+
 	bits = imhtml->bits;
 	while (bits) {
 		bit = bits->data;
@@ -1095,7 +1118,7 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 			case 0:
 				if (COORDS_IN_CHUNK (startx, starty)) {
 					new_pos = get_position (chunk, startx, smileys);
-					if ( !chunk->selected ||
+					if (!chunk->selected ||
 					    (chunk->sel_start != new_pos) ||
 					    (chunk->sel_end != NULL))
 						redraw = TRUE;
@@ -1104,6 +1127,10 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					chunk->sel_end = NULL;
 					selection++;
 					got_start = TRUE;
+					if (mode == 2)
+						endy += chunk->height;
+					if (mode == 1)
+						chunk_select_words (chunk);
 				}
 
 				if (COORDS_IN_CHUNK (endx, endy)) {
@@ -1119,6 +1146,8 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 						selection = 2;
 						imhtml->sel_endchunk = chunk;
 						got_end = TRUE;
+						if (mode == 1)
+							chunk_select_words (chunk);
 					} else {
 						new_pos = get_position (chunk, endx, smileys);
 						if ( !chunk->selected ||
@@ -1131,6 +1160,10 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 						selection++;
 						imhtml->sel_endchunk = chunk;
 						got_end = TRUE;
+						if (mode == 2)
+							starty += chunk->height;
+						if (mode == 1)
+							chunk_select_words (chunk);
 					}
 				} else if (!COORDS_IN_CHUNK (startx, starty) && !got_start) {
 					if (chunk->selected)
@@ -1153,6 +1186,8 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					chunk->sel_end = new_pos;
 					selection++;
 					got_start = TRUE;
+					if (mode == 1)
+						chunk_select_words (chunk);
 				} else if (!got_end && COORDS_IN_CHUNK (endx, endy)) {
 					new_pos = get_position (chunk, endx, smileys);
 					if ( !chunk->selected ||
@@ -1165,6 +1200,8 @@ gtk_imhtml_select_bits (GtkIMHtml *imhtml)
 					selection++;
 					imhtml->sel_endchunk = chunk;
 					got_end = TRUE;
+					if (mode == 1)
+						chunk_select_words (chunk);
 				} else {
 					if ( !chunk->selected ||
 					    (chunk->sel_end != NULL) ||
@@ -1402,7 +1439,8 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 			    (x < chunk->x) ||
 			    (x > chunk->x + chunk->width) ||
 			    (y < chunk->y) ||
-			    (y > chunk->y + chunk->height))
+			    (y > chunk->y + chunk->height) ||
+			    (imhtml->sel_mode > 0))
 				gtk_imhtml_select_bits (imhtml);
 			else
 				gtk_imhtml_select_in_chunk (imhtml, chunk);
@@ -1509,10 +1547,19 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 	y = event->y + vadj->value;
 
 	if (event->button == 1) {
-		imhtml->sel_startx = x;
-		imhtml->sel_starty = y;
+		imhtml->sel_startx = imhtml->sel_endx = x;
+		imhtml->sel_starty = imhtml->sel_endy = y;
 		imhtml->selection = TRUE;
-		gtk_imhtml_select_none (imhtml);
+		if (event->type == GDK_BUTTON_PRESS) {
+			imhtml->sel_mode = 0; /* select by letter */
+			gtk_imhtml_select_none (imhtml);
+		} else if (event->type == GDK_2BUTTON_PRESS) {
+			imhtml->sel_mode = 1; /* select by word */
+			gtk_imhtml_select_none (imhtml);
+		} else if (event->type == GDK_3BUTTON_PRESS) {
+			imhtml->sel_mode = 2; /* select by line */
+			gtk_imhtml_select_bits (imhtml);
+		}
 	}
 
 	if (event->button == 3) {
@@ -1574,7 +1621,8 @@ gtk_imhtml_button_release_event (GtkWidget      *widget,
 	y = event->y + vadj->value;
 
 	if ((event->button == 1) && imhtml->selection) {
-		if ((x == imhtml->sel_startx) && (y == imhtml->sel_starty)) {
+		if ((x == imhtml->sel_startx) && (y == imhtml->sel_starty) &&
+		    (imhtml->sel_mode == 0)) {
 			imhtml->sel_startx = imhtml->sel_starty = 0;
 			imhtml->selection = FALSE;
 			gtk_imhtml_select_none (imhtml);

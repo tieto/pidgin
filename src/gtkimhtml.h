@@ -61,6 +61,7 @@ struct _GtkIMHtml {
 	guint sel_startx, sel_starty;
 	guint sel_endx, sel_endy;
 	gboolean selection;
+	guint sel_mode;
 	GString *selected_text;
 	struct line_info *sel_endchunk;
 	guint scroll_timer;
