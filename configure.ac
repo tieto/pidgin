@@ -576,7 +576,12 @@ dnl Check for Tcl
 if test "$enable_tcl" = yes; then
 	AC_MSG_CHECKING([for tclConfig.sh])
         TCLCONFIG=no
-	for dir in $with_tclconfig /usr/lib /usr/local/lib; do
+	TCLCONFIGDIRS="/usr/lib \
+		       /usr/lib/tcl8.4 \
+		       /usr/lib/tcl8.3 \
+		       /usr/lib/tcl8.2 \
+		       /usr/local/lib"
+	for dir in $with_tclconfig $TCLCONFIGDIRS; do
 		if test -f $dir/tclConfig.sh; then
 			TCLCONFIG=$dir/tclConfig.sh
 			AC_MSG_RESULT([yes ($TCLCONFIG)])
@@ -638,6 +643,8 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 			    [AC_MSG_RESULT([no]);enable_tk=no])
 		LIBS="$oldLIBS"
 	fi
+else
+	enable_tk=no
 fi
 
 if test "$enable_tk" = yes; then
