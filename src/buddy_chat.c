@@ -719,12 +719,14 @@ void chat_write(struct conversation *b, char *who, int flag, char *message, time
 		g_free(str);
 	}
 
-	if (flag & WFLAG_RECV && b->makesound) {
-	     	if (sound_options & OPT_SOUND_CHAT_NICK)
+	if (flag & WFLAG_RECV && b->makesound) 
+	{
+		if (sound_options & OPT_SOUND_CHAT_NICK && find_nick(b->gc, message))
 			play_sound(SND_CHAT_NICK);
 		else
 			play_sound(SND_CHAT_SAY);
-		flag |= WFLAG_NICK;
+		if(find_nick(b->gc, message))
+			flag |= WFLAG_NICK;
 	}
 	write_to_conv(b, message, flag, who, mtime, -1);
 }
