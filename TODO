@@ -44,6 +44,7 @@ Yahoo:
 	Offline Messaging
 
 ICQ:
+	Authorization (is requesting Auth necessary?)
 	Chat
 	File Transfer
 	New User Registration

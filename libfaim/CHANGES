@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Wed Apr 25 11:51:39 PDT 2001
+  - I think this was a bug.
+
  - Tue Apr 24 17:36:03 PDT 2001
   - Let Eric generate the hash if he wants.
 

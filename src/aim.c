@@ -603,7 +603,6 @@ int main(int argc, char *argv[])
 
 	set_defaults(FALSE);
 	load_prefs();
-	SetTickerPrefs();
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {

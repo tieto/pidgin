@@ -26,6 +26,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "gaim.h"
+#include "prpl.h"
+#include "pixmaps/no_icon.xpm"
 
 GtkWidget *tickerwindow = NULL;
 GtkWidget *ticker;
@@ -52,18 +54,9 @@ void BuddyTickerSignOff( void );
 GList * BuddyTickerFindUser( char *name );
 int BuddyTickerMessageRemove( gpointer data );
 extern void pressed_ticker(char *);
-
-// this pref is startup only, so make a shadow here of settings at startup
-// code uses this variable, not display_prefs
+void BuddyTickerShow();
 
 extern int display_options;
-int ticker_prefs;
-
-void
-SetTickerPrefs( void ) 
-{
-	ticker_prefs = display_options;
-}
 
 void
 BuddyTickerDestroyWindow( GtkWidget *window )
@@ -185,7 +178,7 @@ BuddyTickerRemoveUser( char *name )
 void
 BuddyTickerSetPixmap( char *name, GdkPixmap *pm, GdkBitmap *bm )
 {
-	GList *p; 
+	GList *p;
 	TickerData *data;
 
 	if ( userclose == TRUE )
@@ -275,4 +268,38 @@ BuddyTickerClearList( void )
 	tickerbuds = (GList *) NULL;
 }
 
+void BuddyTickerShow()
+{
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+	struct gaim_connection *gc;
+	struct group *g;
+	struct buddy *b;
+	GSList *gcons, *grps, *buds;
+	char **xpm;
+	
+	if( !(display_options & OPT_DISP_SHOW_BUDDYTICKER) ) {
+		BuddyTickerSignoff();
+		display_options &= ~OPT_DISP_SHOW_BUDDYTICKER;
+		return;
+	}
 
+	for( gcons = connections; gcons; gcons = gcons->next ) {
+		gc = (struct gaim_connection *)gcons->data;
+		for( grps = gc->groups; grps; grps = grps->next ) {
+			g = (struct group *)grps->data;
+			for( buds = g->members; buds; buds = buds->next ) {
+				b = (struct buddy *)buds->data;
+				if( b->present ) {
+					xpm = NULL;
+					if (gc->prpl->list_icon)
+						xpm = (*gc->prpl->list_icon)(b->uc);
+					if (xpm == NULL)
+						xpm = (char **)no_icon_xpm;
+					pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);
+					BuddyTickerAddUser( b->name, pm, bm );
+				}
+			}
+		}
+	}
+}

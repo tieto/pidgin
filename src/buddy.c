@@ -81,8 +81,6 @@ static GtkWidget *edittree;
 static GtkWidget *imbutton, *infobutton, *chatbutton;
 static GtkWidget *addbutton, *groupbutton, *rembutton;
 
-extern int ticker_prefs;
-
 GtkWidget *blist = NULL;
 GtkWidget *bpmenu;
 GtkWidget *buddies;
@@ -534,7 +532,7 @@ void signoff(struct gaim_connection *gc)
 #else
         show_login();
 #endif /* USE_APPLET */
-	if ( ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER )
+	if ( display_options & OPT_DISP_SHOW_BUDDYTICKER )
 		BuddyTickerSignoff();
 }
 
@@ -2083,7 +2081,7 @@ static gint log_timeout(struct buddy_show *b) {
 		gtk_widget_show(b->pix);
 		if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
 			gtk_widget_hide(b->pix);
-		if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
+		if (display_options & OPT_DISP_SHOW_BUDDYTICKER)
 			BuddyTickerSetPixmap(b->name, pm, bm);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
@@ -2261,7 +2259,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_hide(bs->pix);
 			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 			gtk_widget_show(bs->pix);
-			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER) {
+			if (display_options & OPT_DISP_SHOW_BUDDYTICKER) {
 				BuddyTickerAddUser(b->name, pm, bm);
 				gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogonTimeout, b->name);
 			}
@@ -2292,7 +2290,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			gtk_widget_show(bs->pix);
 			if (!(display_options & OPT_DISP_SHOW_PIXMAPS))
 				gtk_widget_hide(bs->pix);
-			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
+			if (display_options & OPT_DISP_SHOW_BUDDYTICKER)
 				BuddyTickerSetPixmap(b->name, pm, bm);
 			gdk_pixmap_unref(pm);
 			gdk_bitmap_unref(bm);
@@ -2318,7 +2316,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 		gtk_widget_hide(bs->pix);
 		gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
 		gtk_widget_show(bs->pix);
-		if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER) {
+		if (display_options & OPT_DISP_SHOW_BUDDYTICKER) {
 			BuddyTickerSetPixmap(b->name, pm, bm);
 			gtk_timeout_add(10000, (GtkFunction)BuddyTickerLogoutTimeout, b->name);
 		}

@@ -768,7 +768,7 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
   struct command_tx_struct *tx;
   int i = 0;
 
-  if (!sess || !conn || ((offset == 0) && !buf))
+  if (!sess || !conn)
     return 0;
 
   if (!(tx = aim_tx_new(sess, conn, AIM_FRAMETYPE_OSCAR, 0x0002, 10+2+16)))
