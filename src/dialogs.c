@@ -1096,6 +1096,7 @@ void show_change_passwd()
 	gtk_widget_show(label);
 	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
 	b->original = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(b->original), FALSE);
 	gtk_widget_show(b->original);
 	gtk_table_attach_defaults(GTK_TABLE(table), b->original, 1, 2, 0, 1);
 
@@ -1103,6 +1104,7 @@ void show_change_passwd()
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
         b->new1 = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(b->new1), FALSE);
         gtk_widget_show(b->new1);
         gtk_table_attach_defaults(GTK_TABLE(table), b->new1, 1, 2, 1, 2);
 
@@ -1110,6 +1112,7 @@ void show_change_passwd()
         gtk_widget_show(label);
         gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 2, 3);
         b->new2 = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(b->new2), FALSE);
         gtk_widget_show(b->new2);
         gtk_table_attach_defaults(GTK_TABLE(table), b->new2, 1, 2, 2, 3);
 
