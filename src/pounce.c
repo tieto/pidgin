@@ -567,9 +567,11 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 
 	if (!strcmp(element_name, "account")) {
+		g_free(data->account_name);
 		data->account_name = g_strdup(buffer);
 	}
 	else if (!strcmp(element_name, "pouncee")) {
+		g_free(data->pouncee);
 		data->pouncee = g_strdup(buffer);
 	}
 	else if (!strcmp(element_name, "event")) {
@@ -594,15 +596,19 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->event_type = NULL;
 	}
 	else if (!strcmp(element_name, "action")) {
-		gaim_pounce_action_register(data->pounce, data->action_name);
-		gaim_pounce_action_set_enabled(data->pounce, data->action_name, TRUE);
+		if (data->pounce != NULL) {
+			gaim_pounce_action_register(data->pounce, data->action_name);
+			gaim_pounce_action_set_enabled(data->pounce, data->action_name, TRUE);
+		}
 
 		g_free(data->action_name);
 		data->action_name = NULL;
 	}
 	else if (!strcmp(element_name, "param")) {
-		gaim_pounce_action_set_attribute(data->pounce, data->action_name,
-										 data->param_name, buffer);
+		if (data->pounce != NULL) {
+			gaim_pounce_action_set_attribute(data->pounce, data->action_name,
+											 data->param_name, buffer);
+		}
 
 		g_free(data->param_name);
 		data->param_name = NULL;
