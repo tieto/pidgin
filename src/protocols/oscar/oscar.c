@@ -3446,11 +3446,8 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (emailinfo) {
 		gchar *to = g_strdup_printf("%s@%s", gc->username, emailinfo->domain);
-		if (emailinfo->unread) {
-			if (havenewmail)
-				gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
-		} else
-			gaim_notify_emails(gc, 0, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
+		if (emailinfo->unread && havenewmail)
+			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
 		g_free(to);
 	}
 
@@ -4498,11 +4495,11 @@ static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od
 	}
 
 	if (strcmp(state, _("Invisible"))) {
-		if (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->account->permdeny)
+		if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != gc->account->permdeny))
 			aim_ssi_setpermdeny(od->sess, gc->account->permdeny, 0xffffffff);
 		gc->account->permdeny = 4;
 	} else {
-		if (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03)
+		if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != 0x03))
 			aim_ssi_setpermdeny(od->sess, 0x03, 0xffffffff);
 		gc->account->permdeny = 3;
 	}
