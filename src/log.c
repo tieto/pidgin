@@ -27,6 +27,7 @@
 #include "log.h"
 #include "prefs.h"
 #include "util.h"
+#include "stringref.h"
 
 static GaimLogLogger html_logger;
 static GaimLogLogger txt_logger;
@@ -696,7 +697,7 @@ static GaimLogLogger txt_logger = {
  */
 
 struct old_logger_data {
-	char *path;
+	GaimStringref *pathref;
 	int offset;
 	int length;
 };
@@ -709,7 +710,8 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	char month[4];
 	struct old_logger_data *data = NULL;
 	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
-	char *path = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
+	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
+	GaimStringref *pathref = gaim_stringref_new(pathstr);
 	char *newlog;
 	int logfound = 0;
 	int lastoff = 0;
@@ -720,9 +722,10 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 	GList *list = NULL;
 
 	g_free(logfile);
+	g_free(pathstr);
 
-	if (!(file = fopen(path, "rb"))) {
-		g_free(path);
+	if (!(file = fopen(gaim_stringref_value(pathref), "rb"))) {
+		gaim_stringref_unref(pathref);
 		return NULL;
 	}
 
@@ -763,7 +766,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 					data = g_new0(struct old_logger_data, 1);
 					data->offset = lastoff;
 					data->length = newlen;
-					data->path = g_strdup(path);
+					data->pathref = gaim_stringref_ref(pathref);
 					log->logger_data = data;
 					list = g_list_append(list, log);
 				}
@@ -814,13 +817,13 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 			data = g_new0(struct old_logger_data, 1);
 			data->offset = lastoff;
 			data->length = newlen;
-			data->path = g_strdup(path);
+			data->pathref = gaim_stringref_ref(pathref);
 			log->logger_data = data;
 			list = g_list_append(list, log);
 		}
 	}
 
-	g_free(path);
+	gaim_stringref_unref(pathref);
 	fclose(file);
 	return list;
 }
@@ -828,7 +831,7 @@ static GList *old_logger_list(const char *sn, GaimAccount *account)
 static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
-	FILE *file = fopen(data->path, "rb");
+	FILE *file = fopen(gaim_stringref_value(data->pathref), "rb");
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
@@ -848,7 +851,7 @@ static int old_logger_size (GaimLog *log)
 static void old_logger_finalize(GaimLog *log)
 {
 	struct old_logger_data *data = log->logger_data;
-	g_free(data->path);
+	gaim_stringref_unref(data->pathref);
 	g_free(data);
 }
 
