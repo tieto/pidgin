@@ -47,7 +47,7 @@ gint check_idle(struct gaim_connection *gc)
 #endif
 
         /* Not idle, really...  :) */
-        update_all_buddies();
+	update_all_buddies();
 
 	plugin_event(event_blist_update, 0, 0, 0, 0);
         
@@ -55,12 +55,6 @@ gint check_idle(struct gaim_connection *gc)
 
 	if (report_idle == 0)
                 return TRUE;
-	/*
-	if (gc->is_idle) {
-		fprintf (stderr, "\tgc->is_idle\n");
-		return TRUE;
-	}
-	*/
 
 #ifdef USE_SCREENSAVER
 	if (report_idle == IDLE_SCREENSAVER) {
@@ -75,11 +69,14 @@ gint check_idle(struct gaim_connection *gc)
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
 
-	if (idle_time > 600) { /* 10 minutes! */
+	if (idle_time > 600 && !gc->is_idle) { /* 10 minutes! */
+		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
-        } else
+        } else if (idle_time < 600 && gc->is_idle) {
+		debug_printf("setting %s unidle\n", gc->username);
 		serv_touch_idle(gc);
+	}
 
 	return TRUE;
 
