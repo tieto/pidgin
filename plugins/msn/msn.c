@@ -105,6 +105,7 @@ static void msn_add_permit(struct gaim_connection *gc, char *who);
 static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata);
 void msn_des_win(GtkWidget *a, GtkWidget *b);
 void msn_newmail_dialog(const char *text);
+static char *msn_normalize(const char *s);
 
 char tochar(char *h)
 {
@@ -294,7 +295,7 @@ void msn_add_request(struct gaim_connection *gc, char *buf)
 		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
 
 		ap->user = g_strdup(res[4]);
-		ap->friendly = url_decode(res[5]);
+		ap->friendly = g_strdup(url_decode(res[5]));
 		ap->gc = gc;
 
 		do_ask_dialog(buf, ap, (GtkFunction) msn_accept_add_permit, (GtkFunction) msn_cancel_add_permit);
@@ -310,7 +311,7 @@ static void msn_answer_callback(gpointer data, gint source, GdkInputCondition co
 
 	fcntl(source, F_SETFL, 0);
 
-	g_snprintf(buf, MSN_BUF_LEN, "ANS 1 %s %s %s\n", mc->gc->username, mc->secret, mc->session);
+	g_snprintf(buf, MSN_BUF_LEN, "ANS 1 %s %s %s\n",mc->gc->username, mc->secret, mc->session);
 	msn_write(mc->fd, buf);
 
 	gdk_input_remove(mc->inpa);
@@ -713,7 +714,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		{
 			/* Looks like we were transfered here.  Just send a sign on */
 			set_login_progress(gc, 3, "Signing On");
-			g_snprintf(buf, MSN_BUF_LEN, "USR %d %s I %s\n", md->last_trid, md->policy, gc->username);
+			g_snprintf(buf, MSN_BUF_LEN, "USR %d %s I %s\n", md->last_trid, md->policy, gc->username);			
 			msn_write(md->fd, buf);
 		
 			/* Reset this bit */
@@ -834,7 +835,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 			}
 			else
 			{
-				md->friendly = url_decode(res[4]);
+				md->friendly = g_strdup(url_decode(res[4]));
 
 				/* Ok, ok.  Your account is FINALLY online.  Ya think Microsoft
 				 * could have had any more steps involved? */
@@ -958,6 +959,8 @@ void msn_login(struct aim_user *user)
 		signoff(gc);
 		return;
 	}
+
+	sprintf(gc->username, "%s", msn_normalize(gc->username));
 
 	md->inpa = gdk_input_add(md->fd, GDK_INPUT_WRITE, msn_login_callback, gc);
 
@@ -1323,6 +1326,38 @@ static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata)
 	}
 }
 
+static char *msn_normalize(const char *s)
+{
+	static char buf[BUF_LEN];
+	char *t, *u;
+	int x = 0;
+
+	g_return_val_if_fail((s != NULL), NULL);
+
+	u = t = g_strdup(s);
+
+	g_strdown(t);
+
+	while (*t && (x < BUF_LEN - 1)) {
+		if (*t != ' ')
+			buf[x++] = *t;
+		t++;
+	}
+	buf[x] = '\0';
+	g_free(u);
+
+	if (!strchr(buf, '@')) {
+		strcat(buf, "@hotmail.com"); /* if they don't specify something, it will be hotmail.com.  msn.com
+										is valid too, but hey, if they wanna use it, they gotta enter it
+										themselves. */
+	} else if ((u = strchr(strchr(buf, '@'), '/')) != NULL) {
+		*u = '\0';
+	}
+
+	return buf;
+}
+
+
 static char **msn_list_icon(int uc)
 {
 	if (uc == UC_UNAVAILABLE)
@@ -1370,6 +1405,7 @@ void msn_init(struct prpl *ret)
 	ret->chat_whisper = NULL;
 	ret->chat_send = NULL;
 	ret->keepalive = NULL;
+	ret->normalize = msn_normalize;
 
 	my_protocol = ret;
 }
