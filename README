@@ -44,7 +44,8 @@ places, but the Makefile/configure script should figure things out for you.
 Make sure to enable GNOME sounds if you want gaim sounds for the applet.
 
 Send me bug reports.  The web page is http://www.marko.net/gaim and the ftp
-site is ftp://ftp.marko.net/pub/gaim
+site is ftp://ftp.marko.net/pub/gaim. We also have a sourceforge page at
+http://sourceforge.net/projects/gaim/
 
 Keep your eyes out for updates, and I'll try to keep the program maintained.
 Other contributors and patches are welcomed.  Please read the FAQ first.

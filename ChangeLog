@@ -20,6 +20,7 @@ version 0.10.0:
 	* ICQ-style aliases. This lets you change the name you see your buddy
 	  as. For example, if your buddy's SN is 'CouldntGetMyName', you can
 	  alias him as 'Loser'.
+	* Compile with GNOME bits if available
 	* Added GNOME Url Handler as an available web-browser 
 	* Added the S html tag. 		
 	* Optionally Ignore TiK's Automated Messages

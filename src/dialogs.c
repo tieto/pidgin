@@ -1017,6 +1017,7 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
         do_bp_menu();
         
         destroy_dialog(NULL, b->window);
+	save_prefs();
         g_free(b);
 }
 
