@@ -1,5 +1,11 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
+version 0.82:
+	Bug Fixes:
+	* Fix the double screen names that sometimes appear when viewing text
+	  from a Windows AIM user that was copy and pasted fromn another
+	  conversation (Jon Oberheide)
+
 version 0.81 (08/05/2004):
 	New Features:
 	* The autorecon plugin will somewhat remember state information(Yosef

@@ -1739,6 +1739,7 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
+			*type = -1;
 			*len = e - string + strlen ("-->");
 			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
 			return TRUE;
