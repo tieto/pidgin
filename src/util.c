@@ -1518,8 +1518,12 @@ gaim_markup_linkify(const char *text)
 						*d = '\0';
 
 					tmpurlbuf = gaim_unescape_html(url_buf);
-					g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
-							tmpurlbuf, url_buf);
+					if (gaim_email_is_valid(tmpurlbuf)) {
+						g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
+								tmpurlbuf, url_buf);
+					} else {
+						g_string_append(ret, url_buf);
+					}
 					g_free(tmpurlbuf);
 					c = t;
 
@@ -2581,6 +2585,47 @@ gaim_url_encode(const char *str)
 	buf[j] = '\0';
 
 	return buf;
+}
+
+/* lifted from http://www.oreillynet.com/pub/a/network/excerpt/spcookbook_chap03/index3.html */
+gboolean
+gaim_email_is_valid(const char *address)
+{
+	int count = 0;
+	const char *c, *domain;
+	static char *rfc822_specials = "()<>@,;:\\\"[]";
+
+	/* first we validate the name portion (name@domain) */
+	for (c = address;  *c;  c++) {
+		if (*c == '\"' && (c == address || *(c - 1) == '.' || *(c - 1) == '\"')) {
+			while (*++c) {
+				if (*c == '\"') break;
+				if (*c == '\\' && (*++c == ' ')) continue;
+				if (*c <= ' ' || *c >= 127) return FALSE;
+			}
+			if (!*c++) return FALSE;
+			if (*c == '@') break;
+			if (*c != '.') return FALSE;
+			continue;
+		}
+		if (*c == '@') break;
+		if (*c <= ' ' || *c >= 127) return FALSE;
+		if (strchr(rfc822_specials, *c)) return FALSE;
+	}
+	if (c == address || *(c - 1) == '.') return FALSE;
+
+	/* next we validate the domain portion (name@domain) */
+	if (!*(domain = ++c)) return FALSE;
+	do {
+		if (*c == '.') {
+			if (c == domain || *(c - 1) == '.') return FALSE;
+			count++;
+		}
+		if (*c <= ' ' || *c >= 127) return FALSE;
+		if (strchr(rfc822_specials, *c)) return FALSE;
+	} while (*++c);
+
+	return (count >= 1 ? TRUE : FALSE);
 }
 
 /**************************************************************************

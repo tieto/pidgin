@@ -579,6 +579,15 @@ const char *gaim_url_decode(const char *str);
  */
 const char *gaim_url_encode(const char *str);
 
+/**
+ * Checks if the given email address is syntactically valid.
+ *
+ * @param address The email address to validate.
+ *
+ * @return True if the email address is syntactically correct.
+ */
+gboolean gaim_email_is_valid(const char *address);
+
 /*@}*/
 
 /**************************************************************************
