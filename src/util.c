@@ -927,6 +927,8 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_widget_show(button_box_2);
 	gtk_widget_show(button_box_3);
 	gtk_widget_show(button_box);
+
+	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
 		
@@ -947,7 +949,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm)
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
-	button_box = gtk_hbox_new(FALSE, 5);
+	button_box = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
 
 	button_box_2 = gtk_hbox_new(FALSE, 0);

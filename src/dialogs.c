@@ -1665,7 +1665,7 @@ void g_show_info_text(char *info)
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(bbox), ok, TRUE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 0);
 /*	gtk_box_pack_start(GTK_BOX(button_box), ok, FALSE, FALSE, 0);*/
 
 	aol_icon(b->window->window);
@@ -2211,6 +2211,9 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 
 		b->ok = picture_button(c->link_dialog, _("OK"), ok_xpm);
 		b->cancel = picture_button(c->link_dialog, _("Cancel"), cancel_xpm);
+
+		gtk_widget_set_usize(b->ok, 75, 30);
+		gtk_widget_set_usize(b->cancel, 75, 30);
 
 		gtk_box_pack_start(GTK_BOX(bbox), b->ok, FALSE, FALSE, 10);
 		gtk_box_pack_end(GTK_BOX(bbox), b->cancel, FALSE, FALSE, 10);
