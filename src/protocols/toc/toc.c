@@ -130,7 +130,6 @@ struct signon {
 
 static void toc_login_callback(gpointer, gint, GaimInputCondition);
 static void toc_callback(gpointer, gint, GaimInputCondition);
-static unsigned char *roast_password(char *);
 static void accept_file_dialog(struct ft_request *);
 
 /* ok. this function used to take username/password, and return 0 on success.
@@ -514,6 +513,9 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		}
 
 		debug_printf("* Client sends TOC \"toc_signon\" message\n");
+		/* i hate icq. */
+		if (gc->username[0] >= '0' && gc->username[0] <= '9')
+			gc->password[9] = '\0';
 		g_snprintf(snd, sizeof snd, "toc_signon %s %d  %s %s %s \"%s\"",
 			   AUTH_HOST, AUTH_PORT, normalize(gc->username),
 			   roast_password(gc->password), LANGUAGE, REVISION);
