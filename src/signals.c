@@ -288,7 +288,7 @@ signal_connect_common(void *instance, const char *signal, void *handle,
 	handler_data->data      = data;
 	handler_data->use_vargs = use_vargs;
 	handler_data->priority = priority;
-	
+
 	signal_data->handlers = g_list_insert_sorted(signal_data->handlers, handler_data, (GCompareFunc)handler_priority);
 	signal_data->handler_count++;
 	signal_data->next_handler_id++;

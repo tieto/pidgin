@@ -125,9 +125,9 @@ extern "C" {
  * have called gaim_account_set_status(account, "away").
  * (And this will call gaim_account_connect() automatically).
  *
- * @param account The account the connection should be connecting to.
- * @param register Whether we are registering a new account or just
- *        trying to do a normal signon.
+ * @param account  The account the connection should be connecting to.
+ * @param regist   Whether we are registering a new account or just
+ *                 trying to do a normal signon.
  * @param password The password to use.
  */
 void gaim_connection_new(GaimAccount *account, gboolean regist,

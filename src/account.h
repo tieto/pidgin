@@ -297,7 +297,7 @@ void gaim_account_set_status(GaimAccount *account, const char *status_id,
  * @param account   The account.
  * @param status_id The ID of the status.
  * @param active    The active state.
- * @param vargs     The va_list of attributes.
+ * @param args      The va_list of attributes.
  */
 void gaim_account_set_status_vargs(GaimAccount *account,
 								   const char *status_id,

@@ -767,12 +767,19 @@ request_password_ok_cb(GaimAccount *account, const char *entry)
 	gaim_connection_new(account, FALSE, entry);
 }
 
+/*
+ * TODO: Make the entry box a required field, and add a
+ *       "save password" checkbox.
+ */
 static void
 request_password(GaimAccount *account)
 {
 	gchar *primary;
 	gchar *escaped;
 	const gchar *username;
+
+	/* Close any previous password request windows */
+	gaim_request_close_with_handle(account);
 
 	username = gaim_account_get_username(account);
 	escaped = g_markup_escape_text(username, strlen(username));
@@ -805,7 +812,7 @@ gaim_account_connect(GaimAccount *account)
 
 		message = g_strdup_printf(_("Missing protocol plugin for %s"),
 			gaim_account_get_username(account));
-		gaim_notify_error(NULL, _("Connection Error"), message, NULL);
+		gaim_notify_error(account, _("Connection Error"), message, NULL);
 		g_free(message);
 		return;
 	}
@@ -866,7 +873,7 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 
 	if (g_utf8_collate(new_pass_1, new_pass_2))
 	{
-		gaim_notify_error(NULL, NULL,
+		gaim_notify_error(account, NULL,
 						  _("New passwords do not match."), NULL);
 
 		return;
@@ -875,7 +882,7 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 	if (orig_pass == NULL || new_pass_1 == NULL || new_pass_2 == NULL ||
 		*orig_pass == '\0' || *new_pass_1 == '\0' || *new_pass_2 == '\0')
 	{
-		gaim_notify_error(NULL, NULL,
+		gaim_notify_error(account, NULL,
 						  _("Fill out all fields completely."), NULL);
 		return;
 	}
@@ -1696,6 +1703,9 @@ gaim_accounts_delete(GaimAccount *account)
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	g_return_if_fail(account != NULL);
+
+	gaim_notify_close_with_handle(account);
+	gaim_request_close_with_handle(account);
 
 	gaim_accounts_remove(account);
 
