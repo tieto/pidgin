@@ -45,6 +45,16 @@ typedef enum
 
 } GaimButtonStyle;
 
+#ifndef _WIN32
+typedef enum
+{
+	GAIM_BROWSER_DEFAULT = 0,
+	GAIM_BROWSER_CURRENT,
+	GAIM_BROWSER_NEW_WINDOW,
+	GAIM_BROWSER_NEW_TAB
+} GaimBrowserPlace;
+#endif /* _WIN32 */
+
 typedef gboolean (*GaimCheckAccountFunc)(GaimAccount *account);
 
 extern guint accels_save_timer;

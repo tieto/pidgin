@@ -288,7 +288,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GSList *images = NULL;
 	int options = 0;
 	char label_text[2048];
-    char *linked_text;
+	char *linked_text;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -361,12 +361,12 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	options ^= GTK_IMHTML_NO_SCROLL;
 
 	gaim_gtk_find_images(text, &images);
-    if(gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")){
-        linked_text = gaim_markup_linkify(text);
-        gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
+	if(gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links")){
+		linked_text = gaim_markup_linkify(text);
+		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), linked_text,
 										   options, images);
-        g_free(linked_text);
-    } else
+		g_free(linked_text);
+	} else
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(imhtml), text, options, images);
 
 	if (images) {
@@ -402,36 +402,106 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 		gtk_widget_destroy(GTK_WIDGET(ui_handle));
 }
 
+#ifndef _WIN32
+static gint
+uri_command(const char *command, const gboolean sync)
+{
+	GError *error = NULL;
+	gint ret = 0;
+
+	if (!gaim_program_is_valid(command)) {
+		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
+						command);
+		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		g_free(tmp);
+
+	} else if (sync) {
+		gint status;
+ 
+		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error)) {
+			char *tmp = g_strdup_printf(
+				_("Error launching \"command\": %s"),
+				error->message);
+
+			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+
+			g_free(tmp);
+			g_error_free(error);
+		} else {
+			ret = status;
+		}
+
+	} else {
+		if (!g_spawn_command_line_async(command, &error)) {
+			char *tmp = g_strdup_printf(
+				_("Error launching \"command\": %s"),
+				error->message);
+
+			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+
+			g_free(tmp);
+			g_error_free(error);
+		}
+	}
+
+	printf("command: %d = %s\n", ret, command);
+	return ret;
+}
+#endif
+
 static void *
 gaim_gtk_notify_uri(const char *uri)
 {
 #ifndef _WIN32
 	char *command = NULL;
-	GError *error = NULL;
+	char *remote_command = NULL;
 	const char *web_browser;
+	int place;
 
 	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
+	place = gaim_prefs_get_int("/gaim/gtk/browsers/place");
 
 	if (!strcmp(web_browser, "netscape")) {
 		command = g_strdup_printf("netscape \"%s\"", uri);
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+			remote_command = g_strdup_printf("netscape -remote \"openURL(\"%s\",new-window)\"", uri);
+		else if (place == GAIM_BROWSER_CURRENT)
+			remote_command = g_strdup_printf("netscape -remote \"openURL(\"%s\")\"", uri);
+
 	} else if (!strcmp(web_browser, "opera")) {
-		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+		if (place == GAIM_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
-		else
+		else if (place == GAIM_BROWSER_NEW_TAB)
+			command = g_strdup_printf("opera -newpage \"%s\"", uri);
+		else if (place == GAIM_BROWSER_CURRENT) {
+			remote_command = g_strdup_printf("opera -remote \"openURL(\"%s\")\"", uri);
 			command = g_strdup_printf("opera \"%s\"", uri);
+		} else
+			command = g_strdup_printf("opera \"%s\"", uri);
+
 	} else if (!strcmp(web_browser, "kfmclient")) {
 		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
+		/* does Konqueror have options to open in new tab and/or current window? */
+
 	} else if (!strcmp(web_browser, "galeon")) {
-		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
+		if (place == GAIM_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("galeon -w \"%s\"", uri);
+		else if (place == GAIM_BROWSER_NEW_TAB)
+			command = g_strdup_printf("galeon -n \"%s\"", uri);
 		else
 			command = g_strdup_printf("galeon \"%s\"", uri);
-	} else if (!strcmp(web_browser, "mozilla")) {
-		command = g_strdup_printf("mozilla \"%s\"", uri);
-	} else if (!strcmp(web_browser, "mozilla-firebird")) {
-		command = g_strdup_printf("mozilla-firebird \"%s\"", uri);
-	} else if (!strcmp(web_browser, "firefox")) {
-		command = g_strdup_printf("firefox \"%s\"", uri);
+
+	} else if (!strcmp(web_browser, "mozilla") || 
+			   !strcmp(web_browser, "mozilla-firebird") ||
+			   !strcmp(web_browser, "firefox")) {
+		command = g_strdup_printf("%s \"%s\"", web_browser, uri);
+		if (place == GAIM_BROWSER_NEW_WINDOW)
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\",new-window)\"", web_browser, uri);
+		else if (place == GAIM_BROWSER_NEW_TAB)
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\",new-tab)\"", web_browser, uri);
+		else if (place == GAIM_BROWSER_CURRENT)
+			remote_command = g_strdup_printf("%s -remote \"openURL(\"%s\")\"", web_browser, uri);
+
 	} else if (!strcmp(web_browser, "custom")) {
 		const char *web_command;
 
@@ -455,21 +525,13 @@ gaim_gtk_notify_uri(const char *uri)
 		}
 	}
 
-	if (!gaim_program_is_valid(command)) {
-		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
-						command);
-		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-		g_free(tmp);
-
-	} else if (!g_spawn_command_line_async(command, &error)) {
-		char *tmp = g_strdup_printf(
-				_("Error launching \"command\": %s"),
-				error->message);
-
-		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
-
-		g_free(tmp);
-		g_error_free(error);
+	if (remote_command != NULL) {
+		/* try the remote command first */
+		if (uri_command(remote_command, TRUE) != 0)
+			uri_command(command, FALSE);
+		g_free(remote_command);
+	} else {
+		uri_command(command, FALSE);
 	}
 
 	g_free(command);

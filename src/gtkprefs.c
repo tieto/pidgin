@@ -1333,7 +1333,6 @@ GtkWidget *browser_page() {
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkWidget *checkbox;
 	GtkWidget *entry;
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
@@ -1379,9 +1378,13 @@ GtkWidget *browser_page() {
 
 	if (browsers != NULL) {
 		vbox = gaim_gtk_make_frame (ret, _("Browser Options"));
-		checkbox = gaim_gtk_prefs_checkbox(_("Open new _window by default"),
-										   "/gaim/gtk/browsers/new_window",
-										   vbox);
+		gaim_gtk_prefs_dropdown(vbox, _("_Open link in:"), GAIM_PREF_INT,
+			"/gaim/gtk/browsers/place",
+			_("Browser default"), GAIM_BROWSER_DEFAULT,
+			_("Existing window"), GAIM_BROWSER_CURRENT,
+			_("New window"), GAIM_BROWSER_NEW_WINDOW,
+			_("New tab"), GAIM_BROWSER_NEW_TAB,
+			NULL);
 	}
 
 	gtk_widget_show_all(ret);
@@ -2910,7 +2913,7 @@ gaim_gtk_prefs_init(void)
 
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
-	gaim_prefs_add_bool("/gaim/gtk/browsers/new_window", FALSE);
+	gaim_prefs_add_int("/gaim/gtk/browsers/place", GAIM_BROWSER_DEFAULT);
 	gaim_prefs_add_string("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 

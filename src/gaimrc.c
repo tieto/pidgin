@@ -883,8 +883,9 @@ static void gaimrc_read_options(FILE *f)
 					general_options & OPT_GEN_SEND_LINKS);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
 					general_options & OPT_GEN_DEBUG);
-			gaim_prefs_set_bool("/gaim/gtk/browsers/new_window",
-					general_options & OPT_GEN_BROWSER_POPUP);
+			gaim_prefs_set_int("/gaim/gtk/browsers/place",
+					(general_options & OPT_GEN_BROWSER_POPUP) ? 
+					GAIM_BROWSER_NEW_WINDOW : GAIM_BROWSER_DEFAULT );
 			gaim_prefs_set_bool("/gaim/gtk/conversations/spellecheck",
 					general_options & OPT_GEN_CHECK_SPELLING);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",
@@ -955,8 +956,6 @@ static void gaimrc_read_options(FILE *f)
 			misc_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
 					misc_options & OPT_MISC_DEBUG);
-			gaim_prefs_set_bool("/gaim/gtk/browsers/new_window",
-					misc_options & OPT_MISC_BROWSER_POPUP);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/im/send_typing",
 					!(misc_options & OPT_MISC_STEALTH_TYPING));
 			gaim_prefs_set_bool("/gaim/gtk/buddies/use_server_alias",
