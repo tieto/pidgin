@@ -1585,9 +1585,23 @@ proxy_pref_cb(const char *name, GaimPrefType type, gpointer value,
 {
 	GaimProxyInfo *info = gaim_global_proxy_get_info();
 
-	if (!strcmp(name, "/core/proxy/type"))
-		gaim_proxy_info_set_type(info, GPOINTER_TO_INT(value));
-	else if (!strcmp(name, "/core/proxy/host"))
+	if (!strcmp(name, "/core/proxy/type")) {
+		int proxytype;
+		char *type = value;
+
+		if (!strcmp(type, "none"))
+			proxytype = GAIM_PROXY_NONE;
+		else if (!strcmp(type, "http"))
+			proxytype = GAIM_PROXY_HTTP;
+		else if (!strcmp(type, "socks4"))
+			proxytype = GAIM_PROXY_SOCKS4;
+		else if (!strcmp(type, "socks5"))
+			proxytype = GAIM_PROXY_SOCKS5;
+		else
+			proxytype = -1;
+
+		gaim_proxy_info_set_type(info, proxytype);
+	} else if (!strcmp(name, "/core/proxy/host"))
 		gaim_proxy_info_set_host(info, value);
 	else if (!strcmp(name, "/core/proxy/port"))
 		gaim_proxy_info_set_port(info, GPOINTER_TO_INT(value));

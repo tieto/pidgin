@@ -79,6 +79,7 @@ static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
 
 static guint browser_pref_id = 0;
+static guint proxy_pref_id = 0;
 
 /*
  * PROTOTYPES
@@ -368,6 +369,7 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 	/* Unregister callbacks. */
 	gaim_prefs_disconnect_callback(browser_pref_id);
+	gaim_prefs_disconnect_callback(proxy_pref_id);
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
 		plug = l->data;
@@ -387,16 +389,14 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
-	GaimProxyInfo *info = gaim_global_proxy_get_info();
-
 	if (entrynum == PROXYHOST)
-		gaim_proxy_info_set_host(info, gtk_entry_get_text(entry));
+		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
-		gaim_proxy_info_set_port(info, atoi(gtk_entry_get_text(entry)));
+		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
 	else if (entrynum == PROXYUSER)
-		gaim_proxy_info_set_username(info, gtk_entry_get_text(entry));
+		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
-		gaim_proxy_info_set_password(info, gtk_entry_get_text(entry));
+		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
 
 	/* If the user specifies it, we want to save it. */
 	gaim_global_proxy_set_from_prefs(TRUE);
@@ -1112,6 +1112,16 @@ GtkWidget *chat_page() {
 	return ret;
 }
 
+static void
+proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	GtkWidget *frame = data;
+	const char *proxy = value;
+
+	gtk_widget_set_sensitive(frame, strcmp(proxy, "none"));
+}
+
 GtkWidget *proxy_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -1141,8 +1151,11 @@ GtkWidget *proxy_page() {
 	if (proxy_info == NULL ||
 		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE) {
 
-		gtk_widget_set_sensitive(GTK_WIDGET(vbox), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
 	}
+
+	proxy_pref_id = gaim_prefs_connect_callback("/core/proxy/type",
+												  proxy_changed_cb, prefs_proxy_frame);
 
 	table = gtk_table_new(2, 4, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);

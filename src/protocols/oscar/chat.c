@@ -532,7 +532,7 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	/*
 	 * SubTLV: Type 1: Message
 	 */
-	aim_addtlvtochain_raw(&itl, 0x0001, strlen(msg), msg);
+	aim_addtlvtochain_raw(&itl, 0x0001, msglen, msg);
 
 	/*
 	 * Type 5: Message block.  Contains more TLVs.
