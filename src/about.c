@@ -103,7 +103,7 @@ void show_about(GtkWidget *w, void *null)
 		gtk_container_add(GTK_CONTAINER(about), vbox);
 		gtk_widget_show(vbox);
 
-		frame = gtk_frame_new("Gaim " VERSION);
+		frame = gtk_frame_new("Gaim v" VERSION);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
 
