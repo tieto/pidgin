@@ -421,15 +421,14 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
 
-		/* FIXME: for now, we're not going to do buddy pounces from the menu,
+		/* ddFIXME: for now, we're not going to do buddy pounces from the menu,
 		 * since the person is already online. when we do per-connection pounces,
-		 * then this'll come back
+		 * then this'll come back */
 		button = gtk_menu_item_new_with_label(_("Add Buddy Pounce"));
 		gtk_signal_connect(GTK_OBJECT(button), "activate",
 				   GTK_SIGNAL_FUNC(new_bp_callback), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
-		*/
 
 		if (g_slist_length(cn) > 1) {
 			while (cn) {

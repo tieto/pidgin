@@ -1117,6 +1117,12 @@ static void pounce_user_menu(struct addbp *b, GtkWidget *box)
 
 	menu = gtk_menu_new();
 
+	/* We should go ahead and set this in order to prevent problems */
+	if (u) {
+		a = (struct aim_user *)u->data;
+		b->user = a;
+	}
+
 	while (u) {
 		a = (struct aim_user *)u->data;
 		opt = gtk_menu_item_new_with_label(a->username);
