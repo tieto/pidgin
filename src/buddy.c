@@ -56,9 +56,7 @@
 #include "pixmaps/plugins_small.xpm"
 #endif
 #include "pixmaps/prefs_small.xpm"
-#ifdef NO_MULTI
 #include "pixmaps/search_small.xpm"
-#endif
 #ifdef USE_APPLET
 #include "pixmaps/close_small.xpm"
 #else
@@ -2361,6 +2359,8 @@ void show_buddy_list()
 				  GTK_SIGNAL_FUNC(chat_callback), 'c', GDK_CONTROL_MASK, "Ctl+C");
 	gaim_new_item_with_pixmap(menu, _("New Instant Message"), send_small_xpm,
 				  GTK_SIGNAL_FUNC(show_im_dialog), 'i', GDK_CONTROL_MASK, "Ctl+I");
+	gaim_new_item_with_pixmap(menu, _("Get User Info"), search_small_xpm,
+				  GTK_SIGNAL_FUNC(show_info_dialog), 'j', GDK_CONTROL_MASK, "Ctl+J");
 
 	gaim_separator(menu);
 
