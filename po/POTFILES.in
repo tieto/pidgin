@@ -196,6 +196,7 @@ src/gtkcellrendererprogress.c
 src/gtkconv.c
 src/gtkft.c
 src/gtkimhtml.c
+src/gtknotify.c
 src/gtkpounce.c
 src/gtkprefs.c
 src/gtkutils.c

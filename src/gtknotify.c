@@ -195,17 +195,17 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 
 		if (froms != NULL) {
 			from_text = g_strdup_printf(
-				"<span weight=\"bold\">From:</span> %s\n", *froms);
+				_("<span weight=\"bold\">From:</span> %s\n"), *froms);
 		}
 
 		if (subjects != NULL) {
 			subject_text = g_strdup_printf(
-				"<span weight=\"bold\">Subject:</span> %s\n", *subjects);
+				_("<span weight=\"bold\">Subject:</span> %s\n"), *subjects);
 		}
 
 		label_text = g_strdup_printf(
-			"<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-			"\n\n%s%s%s%s",
+			_("<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+			"\n\n%s%s%s%s"),
 			detail_text,
 			(from_text == NULL && subject_text == NULL ? "" : "\n\n"),
 			(from_text == NULL ? "" : from_text),
@@ -219,8 +219,8 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	}
 	else {
 		label_text = g_strdup_printf(
-			"<span weight=\"bold\" size=\"larger\">You have mail!</span>"
-			"\n\n%s", detail_text);
+			_("<span weight=\"bold\" size=\"larger\">You have mail!</span>"
+			"\n\n%s"), detail_text);
 	}
 
 	g_free(detail_text);
