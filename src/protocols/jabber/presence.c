@@ -45,6 +45,35 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	jabber_send(chat->js, presence);
 }
 
+static int show_to_state(const char *show) {
+	if(!show)
+		return 0;
+	else if(!strcmp(show, "away") || !strcmp(show, _("Away")))
+		return JABBER_STATE_AWAY;
+	else if(!strcmp(show, "chat") || !strcmp(show, _("Chatty")))
+		return JABBER_STATE_CHAT;
+	else if(!strcmp(show, "xa") || !strcmp(show, _("Extended Away")))
+		return JABBER_STATE_XA;
+	else if(!strcmp(show, "dnd") || !strcmp(show, _("Do Not Disturb")))
+		return JABBER_STATE_DND;
+	return 0;
+}
+
+void jabber_presence_fake_to_self(JabberStream *js, const char *show, const char *status) {
+	char *my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+	if(gaim_find_buddy(js->gc->account, my_base_jid)) {
+		JabberBuddy *jb;
+		JabberBuddyResource *jbr;
+		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
+			jabber_buddy_track_resource(jb, js->user->resource, 0,
+					show_to_state(show), (status && *status) ? status : NULL);
+			if((jbr = jabber_buddy_find_resource(jb, NULL)))
+				serv_got_update(js->gc, my_base_jid, 1, 0, 0, 0, jbr->state);
+		}
+	}
+	g_free(my_base_jid);
+}
+
 
 void jabber_presence_send(GaimConnection *gc, const char *state,
 		const char *msg)
@@ -64,10 +93,12 @@ void jabber_presence_send(GaimConnection *gc, const char *state,
 		g_free(gc->away);
 	gc->away = stripped;
 
-	presence = jabber_presence_create(state, msg);
+	presence = jabber_presence_create(state, stripped);
 	jabber_send(js, presence);
 	g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
 	xmlnode_free(presence);
+
+	jabber_presence_fake_to_self(js, state, stripped);
 }
 
 xmlnode *jabber_presence_create(const char *state, const char *msg)
@@ -199,17 +230,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	} else {
 		if((y = xmlnode_get_child(packet, "show"))) {
 			char *show = xmlnode_get_data(y);
-			if(!show) {
-				state = 0;
-			} else if(!strcasecmp(show, "away")) {
-				state = JABBER_STATE_AWAY;
-			} else if(!strcasecmp(show, "chat")) {
-				state = JABBER_STATE_CHAT;
-			} else if(!strcasecmp(show, "xa")) {
-				state = JABBER_STATE_XA;
-			} else if(!strcasecmp(show, "dnd")) {
-				state = JABBER_STATE_DND;
-			}
+			state = show_to_state(show);
 			g_free(show);
 		} else {
 			state = 0;

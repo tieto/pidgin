@@ -176,9 +176,6 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			jb->subscription &= ~JABBER_SUB_PENDING;
 
 		if(jb->subscription == JABBER_SUB_NONE) {
-			jb = jabber_buddy_find(js, jid, FALSE);
-			if(jb)
-				jb->subscription = JABBER_SUB_NONE;
 			remove_gaim_buddies(js, jid);
 		} else {
 			GSList *groups = NULL;
@@ -191,6 +188,14 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 				groups = g_slist_append(groups, group_name);
 			}
 			add_gaim_buddies_in_groups(js, jid, name, groups);
+
+			if(jb->subscription == JABBER_SUB_BOTH) {
+				char *my_bare_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+				if(!strcmp(jid, my_bare_jid)) {
+					jabber_presence_fake_to_self(js, js->gc->away_state, js->gc->away);
+				}
+				g_free(my_bare_jid);
+			}
 		}
 	}
 

@@ -912,7 +912,9 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 
 	*/
 
-	if(js->protocol_version == JABBER_PROTO_0_9) {
+	/* XXX: fix the NOT ME below */
+
+	if(js->protocol_version == JABBER_PROTO_0_9 /* && NOT ME */) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		if(jb->invisible & JABBER_INVIS_BUDDY) {
 			pbm->label = _("Un-hide From");
@@ -925,7 +927,7 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 		m = g_list_append(m, pbm);
 	}
 
-	if(jb->subscription & JABBER_SUB_FROM) {
+	if(jb->subscription & JABBER_SUB_FROM /* && NOT ME */) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Cancel Presence Notification");
 		pbm->callback = jabber_buddy_cancel_presence_notification;
@@ -939,7 +941,7 @@ GList *jabber_buddy_menu(GaimConnection *gc, const char *name)
 		pbm->callback = jabber_buddy_rerequest_auth;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
-	} else {
+	} else /* if(NOT ME) */{
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label = _("Unsubscribe");
 		pbm->callback = jabber_buddy_unsubscribe;
