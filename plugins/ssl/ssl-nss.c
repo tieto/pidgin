@@ -22,7 +22,7 @@
 #include "internal.h"
 #include "plugin.h"
 
-#define SSL_GNUTLS_PLUGIN_ID "ssl-nss"
+#define SSL_NSS_PLUGIN_ID "ssl-nss"
 
 #ifdef HAVE_NSS
 
@@ -279,7 +279,7 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	SSL_GNUTLS_PLUGIN_ID,                             /**< id             */
+	SSL_NSS_PLUGIN_ID,                             /**< id             */
 	N_("NSS"),                                        /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
