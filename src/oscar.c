@@ -136,7 +136,9 @@ static void oscar_callback(gpointer data, gint source,
 					debug_print("connection error for chat...\n");
 					aim_conn_kill(gaim_sess, &conn);
 				} else {
-					debug_print("holy crap! generic connection error!\n");
+					sprintf(debug_buff, "holy crap! generic connection error! %d\n",
+							conn->type);
+					debug_print(debug_buff);
 					aim_conn_kill(gaim_sess, &conn);
 				}
 			}
