@@ -41,16 +41,16 @@ EXTRA_DIST = \
 		smileys/none/Makefile.mingw	\
 		status/default/Makefile.mingw	\
 		status/Makefile.mingw		\
-                gaim-install.ico		\
-                gaim.ico			\
-                gaim_4bit_16.ico		\
-                gaim_away.ico			\
-                gaim_away_4bit_16.ico		\
-                gaim_msgpend_4bit_16.ico	\
-                gaim_msgunread_4bit_16.ico	\
-                gaim_offline.ico		\
-                gaim_offline_4bit_16.ico	\
-		gaim_blank_4bit_16.ico
+		gaim-install.ico		\
+		gaim.ico			\
+		gaim_away.ico			\
+		gaim_offline.ico		\
+		gaim_16.ico			\
+		gaim_away_16.ico		\
+		gaim_blank_4bit_16.ico		\
+		gaim_msgpend_16.ico		\
+		gaim_msgunread_16.ico		\
+		gaim_offline_16.ico
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
