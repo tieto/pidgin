@@ -1658,8 +1658,16 @@ void update_convo_add_button(struct conversation *c)
 
 	if (c->gc && find_buddy(c->gc, c->name)) {
 		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
+		if (c->gc->prpl->remove_buddy == NULL)
+			gtk_widget_set_sensitive(c->add, FALSE);
+		else
+			gtk_widget_set_sensitive(c->add, TRUE);
 	} else {
 		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
+		if (c->gc->prpl->add_buddy == NULL)
+			gtk_widget_set_sensitive(c->add, FALSE);
+		else
+			gtk_widget_set_sensitive(c->add, TRUE);
 	}
 	gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
 	gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
@@ -1726,6 +1734,23 @@ void update_buttons_by_protocol(struct conversation *c)
 		gtk_widget_set_sensitive(c->info, FALSE);
 	else
 		gtk_widget_set_sensitive(c->info, TRUE);
+
+	if (c->gc->prpl->send_im == NULL)
+		gtk_widget_set_sensitive(c->send, FALSE);
+	else
+		gtk_widget_set_sensitive(c->send, TRUE);
+
+	if (c->gc->prpl->warn == NULL)
+		gtk_widget_set_sensitive(c->warn, FALSE);
+	else
+		gtk_widget_set_sensitive(c->warn, TRUE);
+
+	if (c->gc->prpl->add_permit == NULL)
+		gtk_widget_set_sensitive(c->block, FALSE);
+	else
+		gtk_widget_set_sensitive(c->block, TRUE);
+
+	update_convo_add_button(c);
 }
 
 
