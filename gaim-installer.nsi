@@ -39,26 +39,36 @@ Section "" ; (default section)
   ; Install Aspell
   SetOutPath "$INSTDIR"
   File ..\win32-dev\aspell-15\bin\aspell-0.50.2.exe
-  ExecWait "$INSTDIR\aspell-0.50.2.exe"
+  ExecWait "$INSTDIR\aspell-0.50.2.exe" $R0
+  ; Check if user canceled aspell installation
+  StrCmp $R0 "0" no_exit
+    MessageBox MB_OK "Gaim can not be installed without first installing Aspell." IDOK
+    RMDir /r "$INSTDIR"
+    Quit
+  no_exit:
 
   SetOutPath "$INSTDIR"
   ; Gaim files
   File /r .\win32-install-dir\*.*
 
   ; Gaim Registry Settings
+  ; Read in Aspell install path
+  ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\Aspell" ""
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "0.60a3"
+  ; Keep track of aspell install path, for when we uninstall
+  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "AspellPath" $R0
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "UninstallString" '"$INSTDIR\gaim-uninst.exe"'
-  ; Set App path to include aspell dir
+  ; Set App path to include aspell dir (so Gaim can find aspell dlls)
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe" "" "$INSTDIR\gaim.exe"
-  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe" "Path" "$PROGRAMFILES\aspell"
+  WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe" "Path" $R0
   ; Increase refrence count for aspell dlls
-  Push "C:\Program Files\aspell\aspell-15.dll"
+  Push "$R0\aspell-15.dll"
   Call AddSharedDLL
-  Push "C:\Program Files\aspell\aspell-common-0-50-2.dll"
+  Push "$R0\aspell-common-0-50-2.dll"
   Call AddSharedDLL
-  Push "C:\Program Files\aspell\pspell-15.dll"
+  Push "$R0\pspell-15.dll"
   Call AddSharedDLL
 
   ; Set Start Menu icons
@@ -83,21 +93,24 @@ Section Uninstall
   RMDir /r "$INSTDIR"
   RMDir /r "$SMPROGRAMS\Gaim"
 
+  ; Read in Aspell install path
+  ReadRegStr $R0 HKEY_LOCAL_MACHINE "Software\Gaim" "AspellPath"
+
   ; Delete Gaim Registry Settings
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Gaim"
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
   DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
 
   ; Decrease refrence count for Aspell dlls
-  Push "C:\Program Files\aspell\aspell-15.dll"
+  Push "$R0\aspell-15.dll"
   Call un.RemoveSharedDLL
-  Push "C:\Program Files\aspell\aspell-common-0-50-2.dll"
+  Push "$R0\aspell-common-0-50-2.dll"
   Call un.RemoveSharedDLL
-  Push "C:\Program Files\aspell\pspell-15.dll"
+  Push "$R0\pspell-15.dll"
   Call un.RemoveSharedDLL
 
   ; Delete aspell dir if its empty
-  RMDir "C:\Program Files\aspell"
+  RMDir "$R0"
 SectionEnd ; end of uninstall section
 
 ;;;
