@@ -51,7 +51,7 @@
 #include "win32dep.h"
 #endif
 
-extern char *yahoo_crypt(char *, char *);
+extern char *yahoo_crypt(const char *, const char *);
 
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
@@ -368,7 +368,7 @@ static void yahoo_packet_free(struct yahoo_packet *pkt)
 	g_free(pkt);
 }
 
-static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
@@ -385,9 +385,9 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			break;
 		case 1: /* we don't get the full buddy list here. */
 			if (!yd->logged_in) {
-				account_online(gc);
+				gaim_connection_set_state(gc, GAIM_CONNECTED);
 				serv_finish_login(gc);
-				g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", pair->value);
+				gaim_connection_set_display_name(gc, pair->value);
 				yd->logged_in = TRUE;
 
 				/* this requests the list. i have a feeling that this is very evil
@@ -458,7 +458,7 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 	}
 }
 
-static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
@@ -507,7 +507,7 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		gaim_blist_save();
 }
 
-static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	char *msg = NULL;
 	char *from = NULL;
@@ -565,7 +565,7 @@ static void yahoo_process_notify(struct gaim_connection *gc, struct yahoo_packet
 	}
 }
 
-static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	char *msg = NULL;
 	char *from = NULL;
@@ -607,7 +607,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 }
 
 
-static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	char *id = NULL;
@@ -658,15 +658,16 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 	}
 }
 
-static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	char *who = NULL;
 	char *email = NULL;
 	char *subj = NULL;
 	int count = 0;
 	GSList *l = pkt->hash;
 
-	if (!GAIM_ACCOUNT_CHECK_MAIL(gc->account))
+	if (!gaim_account_get_check_mail(account))
 		return;
 
 	while (l) {
@@ -685,12 +686,12 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 	if (who && subj && email && *email) {
 		char *from = g_strdup_printf("%s (%s)", who, email);
 
-		gaim_notify_email(gc, subj, from, gc->username,
+		gaim_notify_email(gc, subj, from, gaim_account_get_username(account),
 						  "http://mail.yahoo.com/", NULL, NULL);
 
 		g_free(from);
 	} else if (count > 0) {
-		const char *to = gc->username;
+		const char *to = gaim_account_get_username(account);
 		const char *url = "http://mail.yahoo.com/";
 
 		gaim_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
@@ -728,7 +729,7 @@ void to_y64(unsigned char *out, const unsigned char *in, int inlen)
 	*out = '\0';
 }
 
-static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	char *seed = NULL;
 	char *sn   = NULL;
@@ -746,7 +747,10 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 	
 	if (seed) {
 		struct yahoo_packet *pack;
-	
+		GaimAccount *account = gaim_connection_get_account(gc);
+		const char *name = gaim_account_get_username(account);
+		const char *pass = gaim_account_get_password(account);
+
 		/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
 		 * will soon do so in the rest of the world.
 		 * 
@@ -760,9 +764,10 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		
 		md5_byte_t result[16];
 		md5_state_t ctx;
+		
 		char *crypt_result;
-		char *password_hash = g_malloc(25);
-		char *crypt_hash = g_malloc(25);
+		char password_hash[25];
+		char crypt_hash[25];
 		char *hash_string_p = g_malloc(50 + strlen(sn));
 		char *hash_string_c = g_malloc(50 + strlen(sn));
 		
@@ -770,19 +775,19 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		
 		int sv;
 		
-		char *result6 = g_malloc(25);
-		char *result96 = g_malloc(25);
+		char result6[25];
+		char result96[25];
 
 		sv = seed[15];
 		sv = sv % 8;
 
 		md5_init(&ctx);
-		md5_append(&ctx, gc->password, strlen(gc->password));
+		md5_append(&ctx, pass, strlen(pass));
 		md5_finish(&ctx, result);
 		to_y64(password_hash, result, 16);
 		
 		md5_init(&ctx);
-		crypt_result = yahoo_crypt(gc->password, "$1$_2S43d5f$");  
+		crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");  
 		md5_append(&ctx, crypt_result, strlen(crypt_result));
 		md5_finish(&ctx, result);
 		to_y64(crypt_hash, result, 16);
@@ -792,39 +797,39 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		case 6:
 			checksum = seed[seed[9] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, gc->username, seed, password_hash);
+                                   "%c%s%s%s", checksum, name, seed, password_hash);
                         g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, gc->username, seed, crypt_hash);
+				   "%c%s%s%s", checksum, name, seed, crypt_hash);
 			break;
 		case 2:
 		case 7:
 			checksum = seed[seed[15] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, seed, password_hash, gc->username);
+                                   "%c%s%s%s", checksum, seed, password_hash, name);
                         g_snprintf(hash_string_c, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, seed, crypt_hash, gc->username);
+                                   "%c%s%s%s", checksum, seed, crypt_hash, name);
 			break;
 		case 3:
 			checksum = seed[seed[1] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, gc->username, password_hash, seed);
+                                   "%c%s%s%s", checksum, name, password_hash, seed);
                         g_snprintf(hash_string_c, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, gc->username, crypt_hash, seed);
+                                   "%c%s%s%s", checksum, name, crypt_hash, seed);
 			break;
 		case 4:
 			checksum = seed[seed[3] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, password_hash, seed, gc->username);
+				   "%c%s%s%s", checksum, password_hash, seed, name);
 			g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, crypt_hash, seed, gc->username);
+				   "%c%s%s%s", checksum, crypt_hash, seed, name);
 			break;
 		case 0:
 		case 5:
 			checksum = seed[seed[7] % 16];
 			g_snprintf(hash_string_p, strlen(sn) + 50,
-                                   "%c%s%s%s", checksum, password_hash, gc->username, seed);
+                                   "%c%s%s%s", checksum, password_hash, name, seed);
                         g_snprintf(hash_string_c, strlen(sn) + 50,
-				   "%c%s%s%s", checksum, crypt_hash, gc->username, seed);
+				   "%c%s%s%s", checksum, crypt_hash, name, seed);
 			break;
 		}
 		
@@ -839,17 +844,13 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 		to_y64(result96, result, 16);
 
 		pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP, YAHOO_STATUS_AVAILABLE, 0);
-		yahoo_packet_hash(pack, 0, gc->username);
+		yahoo_packet_hash(pack, 0, name);
 		yahoo_packet_hash(pack, 6, result6);
 		yahoo_packet_hash(pack, 96, result96);
-		yahoo_packet_hash(pack, 1, gc->username);
+		yahoo_packet_hash(pack, 1, name);
 		
 		yahoo_send_packet(yd, pack);
 		
-		g_free(result6);
-		g_free(result96);
-		g_free(password_hash);
-		g_free(crypt_hash);
 		g_free(hash_string_p);
 		g_free(hash_string_c);
 
@@ -857,7 +858,7 @@ static void yahoo_process_auth(struct gaim_connection *gc, struct yahoo_packet *
 	}
 }
 
-static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet *pkt)
+static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service)
 	{
@@ -897,7 +898,7 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 
 static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 	char buf[1024];
 	int len;
@@ -905,8 +906,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 	len = read(yd->fd, buf, sizeof(buf));
 
 	if (len <= 0) {
-		hide_login_progress_error(gc, "Unable to read");
-		signoff(gc);
+		gaim_connection_error(gc, "Unable to read");
 		return;
 	}
 
@@ -964,7 +964,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition cond)
 {
-	struct gaim_connection *gc = data;
+	GaimConnection *gc = data;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
@@ -974,8 +974,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	}
 
 	if (source < 0) {
-		hide_login_progress(gc, "Unable to connect");
-		signoff(gc);
+		gaim_connection_error(gc, "Unable to connect");
 		return;
 	}
 
@@ -984,7 +983,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
 
-	yahoo_packet_hash(pkt, 1, gc->username);
+	yahoo_packet_hash(pkt, 1, gaim_account_get_username(gaim_connection_get_account(gc)));
 	yahoo_send_packet(yd, pkt);
 
 	yahoo_packet_free(pkt);
@@ -992,34 +991,20 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_login(struct gaim_account *account) {
-	struct gaim_connection *gc = new_gaim_conn(account);
+static void yahoo_login(GaimAccount *account) {
+	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
 
-	set_login_progress(gc, 1, _("Connecting"));
+	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	yd->fd = -1;
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
-
-	if (!g_ascii_strncasecmp(account->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
-		/* Figured out the new auth method -- cs.yahoo.com likes to disconnect on buddy remove and add now */
-		gaim_debug(GAIM_DEBUG_INFO, "yahoo",
-				   "Setting new Yahoo! server.\n");
-		g_snprintf(account->proto_opt[USEROPT_PAGERHOST],
-				   strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
-		save_prefs();
-	}
-
-
-	if (proxy_connect(account, account->proto_opt[USEROPT_PAGERHOST][0] ?
-				account->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
-				account->proto_opt[USEROPT_PAGERPORT][0] ?
-				atoi(account->proto_opt[USEROPT_PAGERPORT]) : YAHOO_PAGER_PORT,
-				yahoo_got_connected, gc) != 0) {
-		hide_login_progress(gc, "Connection problem");
-		signoff(gc);
+	if (proxy_connect(account, gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
+			  gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+			  yahoo_got_connected, gc) != 0) {
+		gaim_connection_error(gc, "Connection problem");
 		return;
 	}
 
@@ -1032,7 +1017,7 @@ static gboolean yahoo_destroy_hash(gpointer key, gpointer val, gpointer data)
 	return TRUE;
 }
 
-static void yahoo_close(struct gaim_connection *gc) {
+static void yahoo_close(GaimConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	g_hash_table_foreach_remove(yd->hash, yahoo_destroy_hash, NULL);
 	g_hash_table_destroy(yd->hash);
@@ -1049,7 +1034,7 @@ static void yahoo_close(struct gaim_connection *gc) {
 	g_free(yd);
 }
 
-static const char *yahoo_list_icon(struct gaim_account *a, struct buddy *b)
+static const char *yahoo_list_icon(GaimAccount *a, struct buddy *b)
 {
 	return "yahoo";
 }
@@ -1103,7 +1088,7 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
-static void yahoo_game(struct gaim_connection *gc, const char *name) {
+static void yahoo_game(GaimConnection *gc, const char *name) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	char *game = g_hash_table_lookup(yd->games, name);
 	char *t;
@@ -1159,7 +1144,7 @@ static char *yahoo_tooltip_text(struct buddy *b)
 	return NULL;
 }
 
-static GList *yahoo_buddy_menu(struct gaim_connection *gc, const char *who)
+static GList *yahoo_buddy_menu(GaimConnection *gc, const char *who)
 {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
@@ -1195,7 +1180,7 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static void yahoo_act_id(struct gaim_connection *gc, const char *entry)
+static void yahoo_act_id(GaimConnection *gc, const char *entry)
 {
 	struct yahoo_data *yd = gc->proto_data;
 
@@ -1204,18 +1189,18 @@ static void yahoo_act_id(struct gaim_connection *gc, const char *entry)
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
 
-	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", entry);
+	gaim_connection_set_display_name(gc, entry);
 }
 
-static void yahoo_show_act_id(struct gaim_connection *gc)
+static void yahoo_show_act_id(GaimConnection *gc)
 {
 	gaim_request_input(gc, NULL, _("Active which ID?"), NULL,
-					   gc->displayname, FALSE,
+					   gaim_connection_get_display_name(gc), FALSE,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL, gc);
 }
 
-static GList *yahoo_actions(struct gaim_connection *gc) {
+static GList *yahoo_actions(GaimConnection *gc) {
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
 
@@ -1228,13 +1213,13 @@ static GList *yahoo_actions(struct gaim_connection *gc) {
 	return m;
 }
 
-static int yahoo_send_im(struct gaim_connection *gc, const char *who, const char *what, int len, int flags)
+static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, int len, int flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
 	char *msg = g_strdup(what);
 
-	yahoo_packet_hash(pkt, 1, gc->displayname);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 14, msg);
 
@@ -1245,12 +1230,12 @@ static int yahoo_send_im(struct gaim_connection *gc, const char *who, const char
 	return 1;
 }
 
-int yahoo_send_typing(struct gaim_connection *gc, char *who, int typ)
+int yahoo_send_typing(GaimConnection *gc, char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
 	yahoo_packet_hash(pkt, 49, "TYPING");
-	yahoo_packet_hash(pkt, 1, gc->displayname);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 14, " ");
 	yahoo_packet_hash(pkt, 13, typ == TYPING ? "1" : "0");
 	yahoo_packet_hash(pkt, 5, who);
@@ -1263,7 +1248,7 @@ int yahoo_send_typing(struct gaim_connection *gc, char *who, int typ)
 	return 0;
 }
 
-static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
+static void yahoo_set_away(GaimConnection *gc, char *state, char *msg)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -1333,7 +1318,7 @@ static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_set_idle(struct gaim_connection *gc, int idle)
+static void yahoo_set_idle(GaimConnection *gc, int idle)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
@@ -1355,7 +1340,7 @@ static void yahoo_set_idle(struct gaim_connection *gc, int idle)
 	}
 }
 
-static GList *yahoo_away_states(struct gaim_connection *gc)
+static GList *yahoo_away_states(GaimConnection *gc)
 {
 	GList *m = NULL;
 
@@ -1375,7 +1360,7 @@ static GList *yahoo_away_states(struct gaim_connection *gc)
 	return m;
 }
 
-static void yahoo_keepalive(struct gaim_connection *gc)
+static void yahoo_keepalive(GaimConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
@@ -1383,7 +1368,7 @@ static void yahoo_keepalive(struct gaim_connection *gc)
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_add_buddy(struct gaim_connection *gc, const char *who)
+static void yahoo_add_buddy(GaimConnection *gc, const char *who)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -1400,19 +1385,19 @@ static void yahoo_add_buddy(struct gaim_connection *gc, const char *who)
 		group = "Buddies";
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gc->displayname);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
 	yahoo_packet_hash(pkt, 65, group);
 	yahoo_send_packet(yd, pkt);
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_remove_buddy(struct gaim_connection *gc, char *who, char *group)
+static void yahoo_remove_buddy(GaimConnection *gc, char *who, char *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, 1, gc->displayname);
+	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
 	yahoo_packet_hash(pkt, 65, group);
 	yahoo_send_packet(yd, pkt);

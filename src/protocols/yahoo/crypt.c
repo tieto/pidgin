@@ -37,7 +37,7 @@ static const char md5_salt_prefix[] = "$1$";
 static const char b64t[64] =
 "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-char *yahoo_crypt(char *key, char *salt)
+char *yahoo_crypt(const char *key, const char *salt)
 {
 	static char *buffer = NULL;
 	static int buflen = 0;
