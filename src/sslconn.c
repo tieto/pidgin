@@ -32,8 +32,7 @@ static gboolean
 ssl_init(void)
 {
 	GaimPlugin *plugin;
-	GaimSslOps *ops = gaim_ssl_get_ops();
-	gboolean success = FALSE;
+	GaimSslOps *ops;
 
 	if (_ssl_initialized)
 		return FALSE;
@@ -43,12 +42,11 @@ ssl_init(void)
 	if (plugin != NULL && !gaim_plugin_is_loaded(plugin))
 		gaim_plugin_load(plugin);
 
+	ops = gaim_ssl_get_ops();
 	if (ops != NULL && ops->init != NULL)
-		success = ops->init();
-
-	_ssl_initialized = success;
-
-	return success;
+		return ops->init();
+	else
+		return FALSE;
 }
 
 gboolean
