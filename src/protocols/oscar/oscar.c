@@ -1302,7 +1302,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 		ir->timestamp = args->iconstamp;
 	}
 
-	if (gc->user->iconfile && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
+	if (gc->user->iconfile[0] && (args->icbmflags & AIM_IMFLAGS_BUDDYREQ)) {
 		FILE *file;
 		struct stat st;
 
@@ -1311,12 +1311,15 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, struct aim_us
 			file = fopen(gc->user->iconfile, "r");
 			if (file) {
 				fread(buf, 1, st.st_size, file);
+				debug_printf("Sending buddy icon to %d\n", userinfo->sn);
 				aim_send_icon(sess, conn, userinfo->sn, buf, st.st_size,
 					      st.st_mtime, aim_iconsum(buf, st.st_size));
 				fclose(file);
-			}
+			} else
+				debug_printf("Can't open buddy icon file!\n");
 			g_free(buf);
-		}
+		} else
+			debug_printf("Can't stat buddy icon file!\n");
 	}
 
 	/*
@@ -2111,7 +2114,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 				debug_printf("sending buddy icon request with message\n");
 			}
 
-			if (gc->user->iconfile && !stat(gc->user->iconfile, &st)) {
+			if (gc->user->iconfile[0] && !stat(gc->user->iconfile, &st)) {
 				FILE *file = fopen(gc->user->iconfile, "r");
 				if (file) {
 					char *buf = g_malloc(st.st_size);
@@ -2122,6 +2125,7 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 					args.iconstamp = st.st_mtime;
 
 					args.flags |= AIM_IMFLAGS_HASICON;
+					debug_printf("Claiming to have an icon.\n");
 
 					fclose(file);
 					g_free(buf);
