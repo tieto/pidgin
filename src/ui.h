@@ -64,10 +64,6 @@
 
 #define DEFAULT_FONT_FACE "Helvetica"
 
-#define GAIM_LOGO 0
-#define GAIM_ERROR 1
-#define GAIM_WARNING 2
-#define GAIM_INFO 3
 
 /* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these
@@ -100,11 +96,6 @@ struct smiley_theme {
 	
 	struct smiley_list *list;
 };
-
-
-#define EDIT_GC    0
-#define EDIT_GROUP 1
-#define EDIT_BUDDY 2
 
 /* Globals in aim.c */
 extern GSList *away_messages; /* this should be moved to away.c */
