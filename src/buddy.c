@@ -900,7 +900,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 
 
 	/* Idle grey buddies affects the whole row.  This converts the status icon to greyscale. */
-	if (!b->present && blist_options & OPT_BLIST_SHOW_OFFLINE)
+	if (!b->present)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 	else if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
@@ -924,7 +924,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 
 
 	if (buf) {
-		if (!b->present && blist_options & OPT_BLIST_SHOW_OFFLINE)
+		if (!b->present)
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
