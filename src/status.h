@@ -246,6 +246,15 @@ gboolean gaim_status_type_is_user_settable(const GaimStatusType *status_type);
 gboolean gaim_status_type_is_independent(const GaimStatusType *status_type);
 
 /**
+ * Returns whether or not the status type is exlusive.
+ *
+ * @param status_type The status type.
+ *
+ * @return TRUE if the status type is exclusive, FALSE otherwise.
+ */
+gboolean gaim_status_type_is_exclusive(const GaimStatusType *status_type);
+
+/**
  * Returns whether or not a status type is available.
  *
  * Available status types are online and possibly hidden, but not away.
@@ -456,6 +465,18 @@ const char *gaim_status_get_name(const GaimStatus *status);
  * @return TRUE if the status is independent, or FALSE otherwise.
  */
 gboolean gaim_status_is_independent(const GaimStatus *status);
+
+/**
+ * Returns whether or not a status is exclusive.
+ *
+ * This is a convenience method for
+ * gaim_status_type_is_exclusive(gaim_status_get_type(status)).
+ *
+ * @param status The status.
+ *
+ * @return TRUE if the status is exclusive, FALSE otherwise.
+ */
+gboolean gaim_status_is_exclusive(const GaimStatus *status);
 
 /**
  * Returns whether or not a status is available.

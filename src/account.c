@@ -568,7 +568,7 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 		return;
 	}
 
-	if (!active && gaim_status_is_independent(status))
+	if (!active && gaim_status_is_exclusive(status))
 	{
 		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
 				   "Cannot deactivate an exclusive status.\n");

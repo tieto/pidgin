@@ -1,5 +1,5 @@
 /**
- * @file status.h Status API
+ * @file status.c Status API
  * @ingroup core
  *
  * gaim
@@ -372,6 +372,14 @@ gaim_status_type_is_independent(const GaimStatusType *status_type)
 }
 
 gboolean
+gaim_status_type_is_exclusive(const GaimStatusType *status_type)
+{
+	g_return_val_if_fail(status_type != NULL, FALSE);
+
+	return !status_type->independent;
+}
+
+gboolean
 gaim_status_type_is_available(const GaimStatusType *status_type)
 {
 	GaimStatusPrimitive primitive;
@@ -619,7 +627,7 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 
 	status_type = gaim_status_get_type(status);
 
-	if (!active && !gaim_status_type_is_independent(status_type))
+	if (!active && gaim_status_type_is_exclusive(status_type))
 	{
 		gaim_debug_error("status",
 				   "Cannot deactivate an exclusive status (%s).\n",
@@ -630,7 +638,7 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 	presence   = gaim_status_get_presence(status);
 	old_status = gaim_presence_get_active_status(presence);
 
-	if (!gaim_status_type_is_independent(status_type))
+	if (gaim_status_type_is_exclusive(status_type))
 	{
 		const GList *l;
 
@@ -770,6 +778,14 @@ gaim_status_is_independent(const GaimStatus *status)
 	g_return_val_if_fail(status != NULL, FALSE);
 
 	return gaim_status_type_is_independent(gaim_status_get_type(status));
+}
+
+gboolean
+gaim_status_is_exclusive(const GaimStatus *status)
+{
+	g_return_val_if_fail(status != NULL, FALSE);
+
+	return gaim_status_type_is_exclusive(gaim_status_get_type(status));
 }
 
 gboolean
@@ -1080,7 +1096,7 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 
 	g_return_if_fail(status != NULL);
 
-	if (!gaim_status_is_independent(status))
+	if (gaim_status_is_exclusive(status))
 	{
 		if (!active)
 		{
