@@ -892,7 +892,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		ims = g_list_append(ims, conv);
 
 		gaim_conversation_set_logging(conv,
-				gaim_prefs_get_bool("/gaim/gtk/logging/log_conversations"));
+				gaim_prefs_get_bool("/gaim/gtk/logging/log_ims"));
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
