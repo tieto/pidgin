@@ -487,12 +487,16 @@ static void rendezvous_send_online(GaimConnection *gc)
 	GaimAccount *account = gaim_connection_get_account(gc);
 	const gchar *me;
 	gchar *myname, *mycomp;
-	const unsigned char *myip;
+	unsigned char myip[4];
 
 	me = gaim_account_get_username(account);
 	myname = g_strdup_printf("%s._presence._tcp.local", me);
 	mycomp = g_strdup_printf("%s.local", strchr(me, '@') + 1);
-	myip = gaim_network_ip_atoi(gaim_network_get_local_system_ip(rd->fd));
+	/* myip = gaim_network_ip_atoi(gaim_network_get_local_system_ip(-1)); */
+	myip[0] = 192;
+	myip[1] = 168;
+	myip[2] = 1;
+	myip[3] = 41;
 
 	mdns_advertise_a(rd->fd, mycomp, myip);
 	mdns_advertise_ptr(rd->fd, "_presence._tcp.local", myname);

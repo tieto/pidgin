@@ -514,7 +514,12 @@ mdns_getlength_rr_rdata(unsigned short type, const void *rdata)
 static int
 mdns_getlength_rr(const ResourceRecord *rr)
 {
-	return mdns_getlength_name(rr->name) + 10 + rr->rdlength;
+	int rdlength = mdns_getlength_rr_rdata(rr->type, rr->rdata);
+
+	if ((rdlength == 0) && (rr->rdata != NULL))
+		rdlength = rr->rdlength;
+
+	return mdns_getlength_name(rr->name) + 10 + rdlength;
 }
 
 /**
@@ -808,9 +813,8 @@ mdns_advertise_null(int fd, const char *name, const char *rdata, unsigned short 
 	int ret;
 	ResourceRecord *rr;
 
-	if ((name == NULL) || (strlen(name) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
 
 	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
 	rr->name = g_strdup(name);
@@ -833,9 +837,10 @@ mdns_advertise_ptr(int fd, const char *name, const char *domain)
 	int ret;
 	ResourceRecord *rr;
 
-	if ((name == NULL) || (strlen(name) > 255) || (domain == NULL) || (strlen(domain) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
+	g_return_val_if_fail(domain != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(domain) <= 255, -EINVAL);
 
 	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
 	rr->name = g_strdup(name);
@@ -858,9 +863,8 @@ mdns_advertise_txt(int fd, const char *name, const GSList *rdata)
 	int ret;
 	ResourceRecord *rr;
 
-	if ((name == NULL) || (strlen(name) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
 
 	rr = (ResourceRecord *)g_malloc(sizeof(ResourceRecord));
 	rr->name = g_strdup(name);
@@ -885,9 +889,8 @@ mdns_advertise_aaaa(int fd, const char *name, const unsigned char *ip)
 	ResourceRecordRDataA *rdata;
 	int i;
 
-	if ((name == NULL) || (strlen(name) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
 
 	rdata = g_malloc(16);
 	for (i = 0; i < 16; i++)
@@ -915,9 +918,8 @@ mdns_advertise_srv(int fd, const char *name, unsigned short port, const char *ta
 	ResourceRecord *rr;
 	ResourceRecordRDataSRV *rdata;
 
-	if ((target == NULL) || (strlen(target) > 255)) {
-		return -EINVAL;
-	}
+	g_return_val_if_fail(name != NULL, -EINVAL);
+	g_return_val_if_fail(strlen(name) <= 255, -EINVAL);
 
 	rdata = g_malloc(sizeof(ResourceRecordRDataSRV));
 	rdata->port = port;

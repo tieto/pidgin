@@ -84,6 +84,7 @@ void
 mdns_cache_remove_all()
 {
 	mdns_free_rrs(rrs);
+	rrs = NULL;
 }
 
 void
@@ -97,9 +98,9 @@ mdns_cache_respond(int fd, const Question *q)
 
 	for (slist = rrs; slist != NULL; slist = slist->next) {
 		cur = slist->data;
-		if ((q->type == cur->type) && (!strcmp(q->name, cur->name))) {
+		if (((q->type == RENDEZVOUS_RRTYPE_ALL) || (q->type == cur->type)) && (!strcmp(q->name, cur->name))) {
 			printf("responding to cur->type=%d, cur->name=%s\n", cur->type, cur->name);
-			//mdns_send_rr(fd, cur);
+			mdns_send_rr(fd, cur);
 		}
 	}
 }

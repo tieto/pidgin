@@ -83,7 +83,7 @@ gaim_network_get_local_ip_from_fd(int fd)
 	static char ip[16];
 	const char *tmp;
 
-	g_return_val_if_fail(fd > 0, NULL);
+	g_return_val_if_fail(fd >= 0, NULL);
 
 	len = sizeof(addr);
 	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
@@ -106,7 +106,7 @@ gaim_network_get_local_system_ip(int fd)
 	static char ip[46];
 	const char *tmp = NULL;
 
-	if (fd != -1)
+	if (fd >= 0)
 		tmp = gaim_network_get_local_ip_from_fd(fd);
 
 	if (tmp)
