@@ -43,6 +43,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/socket.h>
+#include <sys/utsname.h>
 #include <sys/stat.h>
 #include "multi.h"
 #include "prpl.h"
@@ -117,6 +118,7 @@ struct jabber_data {
 	GSList *pending_chats;
 	GSList *existing_chats;
 	GHashTable *hash;
+	time_t idle;
 };
 
 struct jabber_chat {
@@ -924,6 +926,84 @@ static void jabber_handlevcard(gjconn j, xmlnode querynode, char *from) {
 	g_free(buddy);
 }
 
+static void jabber_handleversion(gjconn j, xmlnode iqnode) {
+	xmlnode querynode, x;
+	char *id, *from;
+	char os[1024];
+	struct utsname osinfo;
+
+	uname(&osinfo);
+	g_snprintf(os, sizeof os, "%s %s %s", osinfo.sysname, osinfo.release, osinfo.machine);
+
+	id = xmlnode_get_attrib(iqnode, "id");
+	from = xmlnode_get_attrib(iqnode, "from");
+
+	x = jutil_iqnew(JPACKET__RESULT, NS_VERSION);
+
+	xmlnode_put_attrib(x, "to", from);
+	xmlnode_put_attrib(x, "id", id);
+	querynode = xmlnode_get_tag(x, "query");
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "name"), PACKAGE, -1);
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "version"), VERSION, -1);
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "os"), os, -1);
+
+	gjab_send(j, x);
+
+	xmlnode_free(x);
+}
+
+static void jabber_handletime(gjconn j, xmlnode iqnode) {
+	xmlnode querynode, x;
+	char *id, *from;
+	time_t *now_t; 
+	struct tm *now;
+	char buf[1024];
+
+	time(now_t);
+	now = localtime(now_t);
+
+	id = xmlnode_get_attrib(iqnode, "id");
+	from = xmlnode_get_attrib(iqnode, "from");
+
+	x = jutil_iqnew(JPACKET__RESULT, NS_TIME);
+
+	xmlnode_put_attrib(x, "to", from);
+	xmlnode_put_attrib(x, "id", id);
+	querynode = xmlnode_get_tag(x, "query");
+
+	strftime(buf, 1024, "%Y%m%dT%T", now);
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "utc"), buf, -1);
+	strftime(buf, 1024, "%Z", now);
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "tz"), buf, -1);
+	strftime(buf, 1024, "%d %b %Y %T", now);
+	xmlnode_insert_cdata(xmlnode_insert_tag(querynode, "display"), buf, -1);
+	
+	gjab_send(j, x);
+
+	xmlnode_free(x);
+}
+
+static void jabber_handlelast(gjconn j, xmlnode iqnode) {
+   	xmlnode x, querytag;
+	char *id, *from;
+	struct jabber_data *jd = GJ_GC(j)->proto_data;
+	char idle_time[32];
+	
+	id = xmlnode_get_attrib(iqnode, "id");
+	from = xmlnode_get_attrib(iqnode, "from");
+
+	x = jutil_iqnew(JPACKET__RESULT, "jabber:iq:last");
+
+	xmlnode_put_attrib(x, "to", from);
+	xmlnode_put_attrib(x, "id", id);
+	querytag = xmlnode_get_tag(x, "query");
+	g_snprintf(idle_time, sizeof idle_time, "%i", jd->idle ? time(NULL) - jd->idle : 0);
+	xmlnode_put_attrib(querytag, "seconds", idle_time);
+
+	gjab_send(j, x);
+	xmlnode_free(x);
+}
+
 static void jabber_handlepacket(gjconn j, jpacket p)
 {
 	switch (p->type) {
@@ -938,6 +1018,16 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 
 		if (jpacket_subtype(p) == JPACKET__SET) {
 		} else if (jpacket_subtype(p) == JPACKET__GET) {
+		   	xmlnode querynode;
+			char *xmlns, *from;
+			querynode = xmlnode_get_tag(p->x, "query");
+		   	if(NSCHECK(querynode, NS_VERSION)) {
+			   	jabber_handleversion(j, p->x);
+			} else if (NSCHECK(querynode, NS_TIME)) {
+			   	jabber_handletime(j, p->x);
+			} else if (NSCHECK(querynode, "jabber:iq:last")) {
+			   	jabber_handlelast(j, p->x);
+			}
 		} else if (jpacket_subtype(p) == JPACKET__RESULT) {
 			xmlnode querynode, vcard;
 			char *xmlns, *from;
@@ -1750,6 +1840,12 @@ static void jabber_set_away(struct gaim_connection *gc, char *state, char *messa
 	xmlnode_free(x);
 }
 
+static void jabber_set_idle(struct gaim_connection *gc, int idle) {
+	struct jabber_data *jd = (struct jabber_data *)gc->proto_data;
+	debug_printf("jabber_set_idle: setting idle %i\n", idle);
+   	jd->idle = idle ? time(NULL) - idle : idle;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret)
@@ -1774,7 +1870,7 @@ void Jabber_init(struct prpl *ret)
 	ret->set_dir = NULL;
 	ret->get_dir = NULL;
 	ret->dir_search = NULL;
-	ret->set_idle = NULL;
+	ret->set_idle = jabber_set_idle;
 	ret->change_passwd = NULL;
 	ret->add_buddy = jabber_add_buddy;
 	ret->add_buddies = NULL;
