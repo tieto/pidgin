@@ -786,7 +786,6 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 void account_online(struct gaim_connection *gc)
 {
 	int i;
-	gboolean blist_existed;
 
 	/* first we hide the login progress meter */
 	if (gc->meter)
@@ -797,18 +796,24 @@ void account_online(struct gaim_connection *gc)
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
-	blist_existed = blist ? TRUE : FALSE;
-	show_buddy_list();
-	refresh_buddy_window();
 #ifdef USE_APPLET
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
+		show_buddy_list();
+		refresh_buddy_window();
 		createOnlinePopup();
 		applet_buddy_show = TRUE;
-	} else if (!blist_existed) {
+	} else if (!blist) {
+		show_buddy_list();
+		build_edit_tree();
 		gtk_widget_hide(blist);
 		applet_buddy_show = FALSE;
+	} else {
+		build_edit_tree();
 	}
 	set_user_state(online);
+#else
+	show_buddy_list();
+	refresh_buddy_window();
 #endif
 	setup_buddy_chats();
 
