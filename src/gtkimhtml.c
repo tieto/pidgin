@@ -757,7 +757,7 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 			  gchar       **replace,
 			  gint        *length)
 {
-	static char buf[6];
+	static char buf[7];
 	g_return_val_if_fail (string != NULL, FALSE);
 	g_return_val_if_fail (replace != NULL, FALSE);
 	g_return_val_if_fail (length != NULL, FALSE);
@@ -789,9 +789,11 @@ gtk_imhtml_is_amp_escape (const gchar *string,
 	} else if (*(string + 1) == '#') {
 		guint pound = 0;
 		if ((sscanf (string, "&#%u;", &pound) == 1) && pound != 0) {
+			int buflen;
 			if (*(string + 3 + (gint)log10 (pound)) != ';')
 				return FALSE;
-			g_unichar_to_utf8((gunichar)pound, buf);
+			buflen = g_unichar_to_utf8((gunichar)pound, buf);
+			buf[buflen] = '\0';
 			*replace = buf;
 			*length = 2;
 			while (isdigit ((gint) string [*length])) (*length)++;

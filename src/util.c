@@ -790,6 +790,53 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				plain = g_string_append_c(plain, '<');
 				c++;
 			}
+		} else if(*c == '&') {
+			char buf[7];
+			char *pln;
+			int len = 1;
+			guint pound;
+			if(!g_ascii_strncasecmp(c, "&amp;", 5)) {
+				pln = "&";
+				len = 5;
+			} else if(!g_ascii_strncasecmp(c, "&lt;", 4)) {
+				pln = "<";
+				len = 4;
+			} else if(!g_ascii_strncasecmp(c, "&gt;", 4)) {
+				pln = ">";
+				len = 4;
+			} else if(!g_ascii_strncasecmp(c, "&nbsp;", 6)) {
+				pln = " ";
+				len = 6;
+			} else if(!g_ascii_strncasecmp(c, "&copy;", 6)) {
+				pln = "©";
+				len = 6;
+			} else if(!g_ascii_strncasecmp(c, "&quot;", 6)) {
+				pln = "\"";
+				len = 6;
+			} else if(!g_ascii_strncasecmp(c, "&reg;", 5)) {
+				pln = "®";
+				len = 5;
+			} else if(!g_ascii_strncasecmp(c, "&apos;", 6)) {
+				pln = "\'";
+				len = 6;
+			} else if(*(c+1) == '#' && (sscanf(c, "&#%u;", &pound) == 1) &&
+					pound != 0 && *(c+3+(gint)log10(pound)) == ';') {
+				int buflen = g_unichar_to_utf8((gunichar)pound, buf);
+				buf[buflen] = '\0';
+				pln = buf;
+
+
+				len = 2;
+				while(isdigit((gint) c [len])) len++;
+				if(c [len] == ';') len++;
+			} else {
+				len = 1;
+				g_snprintf(buf, sizeof(buf), "%c", *c);
+				pln = buf;
+			}
+			xhtml = g_string_append_len(xhtml, c, len);
+			plain = g_string_append(plain, pln);
+			c += len;
 		} else {
 			xhtml = g_string_append_c(xhtml, *c);
 			plain = g_string_append_c(plain, *c);
