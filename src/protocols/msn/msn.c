@@ -32,7 +32,7 @@
 #include "multi.h"
 #include "util.h"
 
-#define BUDDY_ALIAS_MAXLEN 388
+#define BUDDY_ALIAS_MAXLEN 387
 
 static GaimPlugin *my_protocol = NULL;
 
@@ -65,7 +65,8 @@ msn_act_id(GaimConnection *gc, const char *entry)
 	else
 		alias = g_strdup(entry);
 
-	if (strlen(alias) >= BUDDY_ALIAS_MAXLEN) {
+	if (strlen(alias) > BUDDY_ALIAS_MAXLEN)
+	{
 		gaim_notify_error(gc, NULL,
 						  _("Your new MSN friendly name is too long."), NULL);
 		return;
