@@ -2632,18 +2632,6 @@ void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 	imhtml->show_comments = show;
 }
 
-void       gtk_imhtml_html_shortcuts   (GtkIMHtml        *imhtml,
-                    gboolean allow)
-{
-	imhtml->html_shortcuts = allow;
-}
-
-void       gtk_imhtml_smiley_shortcuts (GtkIMHtml        *imhtml,
-                    gboolean allow)
-{
-	imhtml->smiley_shortcuts = allow;
-}
-
 void
 gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name) {
 	if (imhtml->protocol_name)

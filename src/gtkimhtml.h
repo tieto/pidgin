@@ -84,9 +84,6 @@ struct _GtkIMHtml {
 
 	gboolean show_comments;
 
-	gboolean html_shortcuts;
-	gboolean smiley_shortcuts;
-
 	GtkWidget *tip_window;
 	char *tip;
 	guint tip_timer;
@@ -282,22 +279,6 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f);
  * @param show   @c TRUE if comments should be shown, or @c FALSE otherwise.
  */
 void gtk_imhtml_show_comments(GtkIMHtml *imhtml, gboolean show);
-
-/**
- * Enables or disables formatting shortcut keys in a GTK IM/HTML.
- *
- * @param imhtml The GTK IM/HTML.
- * @param allow  @c TRUE if shortcut keys are allowed, or @c FALSE otherwise.
- */
-void gtk_imhtml_html_shortcuts(GtkIMHtml *imhtml, gboolean allow);
-
-/**
- * Enables or disables smiley insertion shortcut keys in a GTK IM/HTML.
- *
- * @param imhtml The GTK IM/HTML.
- * @param allow  @c TRUE if shortcut keys are allowed, or @c FALSE otherwise.
- */
-void gtk_imhtml_smiley_shortcuts(GtkIMHtml *imhtml, gboolean allow);
 
 /**
  * Associates a protocol name with a GTK IM/HTML.
