@@ -57,8 +57,8 @@ GaimRoomlist *gaim_roomlist_new(GaimAccount *account)
 	list->fields = NULL;
 	list->ref = 1;
 
-	if (ops && ops->new)
-		ops->new(list);
+	if (ops && ops->create)
+		ops->create(list);
 
 	return list;
 }

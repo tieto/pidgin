@@ -100,7 +100,7 @@ struct _GaimRoomlistField {
  */
 struct _GaimRoomlistUiOps {
 	void (*show_with_account)(GaimAccount *account); /**< Force the ui to pop up a dialog and get the list */
-	void (*new)(GaimRoomlist *list); /**< A new list was created. */
+	void (*create)(GaimRoomlist *list); /**< A new list was created. */
 	void (*set_fields)(GaimRoomlist *list, GList *fields); /**< Sets the columns. */
 	void (*add_room)(GaimRoomlist *list, GaimRoomlistRoom *room); /**< Add a room to the list. */
 	void (*in_progress)(GaimRoomlist *list, gboolean flag); /**< Are we fetching stuff still? */
