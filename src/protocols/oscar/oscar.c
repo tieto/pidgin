@@ -233,6 +233,7 @@ static int gaim_chat_incoming_msg(aim_session_t *, aim_frame_t *, ...);
 static int gaim_email_parseupdate(aim_session_t *, aim_frame_t *, ...);
 static int gaim_icon_error       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icon_parseicon   (aim_session_t *, aim_frame_t *, ...);
+static int oscar_icon_req        (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgack     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_ratechange (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
@@ -282,8 +283,6 @@ static int oscar_sendfile_estblsh(aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_prompt (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_ack    (aim_session_t *, aim_frame_t *, ...);
 static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
-
-static int gaim_buddyiconreq (aim_session_t *, aim_frame_t *, ...);
 
 /* for icons */
 static gboolean gaim_icon_timerfunc(gpointer data);
@@ -1147,7 +1146,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0001, gaim_parse_genericerr, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x001f, gaim_memrequest, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
-	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0021, gaim_buddyiconreq,0);
+	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0021, oscar_icon_req,0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
@@ -3554,10 +3553,10 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 				char *buf = g_malloc(st.st_size);
 				file = fopen(iconfile, "rb");
 				if (file) {
-					int len = fread(buf, 1, st.st_size, file);
+					fread(buf, 1, st.st_size, file);
 					gaim_debug(GAIM_DEBUG_INFO, "oscar",
 						   "Uploading icon to icon server\n");
-					aim_icon_upload(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON), buf, st.st_size);
+					aim_icon_upload(od->sess, buf, st.st_size);
 					fclose(file);
 				} else
 					gaim_debug(GAIM_DEBUG_ERROR, "oscar",
@@ -5456,7 +5455,7 @@ static char *oscar_status_text(struct buddy *b) {
 }
 
 
-static int gaim_buddyiconreq (aim_session_t *sess, aim_frame_t *fr, ...) {
+static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 
@@ -5490,10 +5489,10 @@ static int gaim_buddyiconreq (aim_session_t *sess, aim_frame_t *fr, ...) {
 					char *buf = g_malloc(st.st_size);
 					file = fopen(iconfile, "rb");
 					if (file) {
-						int len = fread(buf, 1, st.st_size, file);
+						fread(buf, 1, st.st_size, file);
 						gaim_debug(GAIM_DEBUG_INFO, "oscar",
 							   "Uploading icon to icon server\n");
-						aim_icon_upload(od->sess, aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON), buf, st.st_size);
+						aim_icon_upload(od->sess, buf, st.st_size);
 						fclose(file);
 					} else
 						gaim_debug(GAIM_DEBUG_ERROR, "oscar",
@@ -5506,6 +5505,8 @@ static int gaim_buddyiconreq (aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	} else if (cached == 0x81)
 		aim_ssi_seticon(od->sess, md5, length);
+
+	return 0;
 }
 			    
 			    
@@ -6016,12 +6017,11 @@ static void oscar_show_chpassurl(GaimConnection *gc)
 
 static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 {
-	struct oscar_data *od;
-	aim_session_t *sess;
-	od = gc->proto_data;
+	struct oscar_data *od = gc->proto_data;
+	aim_session_t *sess = od->sess;
 	FILE *file;
 	struct stat st;
-	sess = od->sess;
+
 	if (!stat(iconfile, &st)) {
 		char *buf = g_malloc(st.st_size);
 		file = fopen(iconfile, "rb");
@@ -6077,7 +6077,7 @@ static GList *oscar_actions(GaimConnection *gc)
 
 	       	pam = g_new0(struct proto_actions_menu, 1);
 		pam->label = _("Format Screenname");
-		pam->callback = oscar_format_screenname;
+		pam->callback = oscar_show_format_screenname;
 		pam->gc = gc;
 		m = g_list_append(m, pam);
 

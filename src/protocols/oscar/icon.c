@@ -18,7 +18,7 @@
  * @param iconlen Length of the raw data of the icon image file.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_icon_upload(aim_session_t *sess, aim_conn_t *conn, const fu8_t *icon, fu16_t iconlen)
+faim_export int aim_icon_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;

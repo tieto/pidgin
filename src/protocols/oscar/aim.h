@@ -1107,7 +1107,7 @@ faim_export int aim_usersearch_interest(aim_session_t *, const char *, const cha
 
 
 /* 0x0010 - icon.c */
-faim_export int aim_icon_upload(aim_session_t *sess, aim_conn_t *conn, const fu8_t *icon, fu16_t iconlen);
+faim_export int aim_icon_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen);
 faim_export int aim_icon_request(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
 
 
