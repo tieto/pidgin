@@ -23,6 +23,12 @@
 	cool for next release, I'm going to promise that the cpw's will
 	code cool things for next release, and I might apply some of them.
 
+	Luke: I've been doing what I always do, committing patches, some
+	better than others, and bugging other people to code stuff. Oh
+	and closing some bugs. Thanks to Dave West for joining the cpws
+	in helping to handle triage. This is mostly a bug fix release,
+	so PLEASE upgrade to it before submitting new bugs.
+
 0.81 (08/05/2004):
 	Sean: Three weeks again!  Sticking to schedules is awesome!  Just
 	like Gaim v0.81.  This is what we in the industry call a "bugfix
