@@ -33,7 +33,7 @@ when you're ready to make your patch, simply run 'cvs diff -u >my.patch'
 and send it off.
 
 This file was last modified by $Author: warmenhoven $ on
-$Date: 2001-08-26 15:18:39 -0400 (Sun, 26 Aug 2001) $.
+$Date: 2001-09-20 04:20:32 -0400 (Thu, 20 Sep 2001) $.
 
 
 CODING STYLE
@@ -264,13 +264,6 @@ proxy.c:
   which figures out which proxy you want to use (if you want to use one
   at all) and passes off the data to the appropriate function. This file
   should be pretty straight-forward.
-
-rvous.c:
-  This was originally going to be the stuff for all of the Buddy Icon
-  and Voice Chat stuff, but I got really sick of protocol hacking really
-  quick.  Now it only houses the file transfer stuff, which only works
-  for TOC. ("Works" being a very subjective statement. This file needs
-  to be rewritten.)
 
 server.c:
   This is where all of the differentiation between the different protocols
