@@ -166,7 +166,7 @@ sighandler(int sig)
 			"and post the backtrace from the core file. If you do not know\n"
 			"how to get the backtrace, please get instructions at\n"
 			GAIM_WEBSITE "gdb.php. If you need further\n"
-			"assistance, please IM either RobFlynn or SeanEgn and\n"
+			"assistance, please IM either SeanEgn or LSchiere and\n"
 			"they can help you.\n");
 #else
 		fprintf(stderr, "Hi, user.  We need to talk.\n"
