@@ -122,6 +122,14 @@ void gaim_prefs_remove(const char *name);
 void gaim_prefs_rename(const char *oldname, const char *newname);
 
 /**
+ * Rename a boolean pref, toggling it's value
+ *
+ * @param oldname The old name of the pref
+ * @param newname The new name for the pref
+ */
+void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname);
+
+/**
  * Remove all prefs.
  */
 void gaim_prefs_destroy();
@@ -231,11 +239,6 @@ gboolean gaim_prefs_load();
  * Force an immediate write of preferences
  */
 void gaim_prefs_sync();
-
-/**
- * Rename legacy prefs
- */
-void gaim_prefs_rename_old();
 
 /*@}*/
 

@@ -626,11 +626,27 @@ void gaim_prefs_rename(const char *oldname, const char *newname) {
 	remove_pref(oldpref);
 }
 
-void gaim_prefs_rename_old() {
-	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
-	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
-	gaim_prefs_rename("/core/conversations/placement",
-					  "/gaim/gtk/conversations/placement");
+void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname) {
+		struct gaim_pref *oldpref, *newpref;
+		
+		gaim_debug_info("prefs", "Attempting to rename and toggle %s to %s\n", oldname, newname);
+
+		oldpref = find_pref(oldname);
+		newpref = find_pref(newname);
+
+		/* it's already been renamed, call off the cats */
+		if(!oldpref)
+			return;
+
+		g_return_if_fail(newpref != NULL); /* the new one needs to be created */
+		g_return_if_fail(oldpref->type == newpref->type);
+		g_return_if_fail(oldpref->type == GAIM_PREF_BOOLEAN);
+		g_return_if_fail(oldpref->first_child == NULL); /* can't rename parents */
+		
+		gaim_prefs_set_bool(newname, !(oldpref->value.boolean));
+
+		remove_pref(oldpref);
+
 }
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)

@@ -107,7 +107,7 @@ static void gaim_gtk_sound_init(void)
 	gaim_prefs_add_string("/gaim/gtk/sound/file/nick_said", "");
 	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/pounce_default", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/sound/file/pounce_default", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/silent_signon", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/sound/signon", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/sound/conv_focus", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/sound/command", "");
 	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");

@@ -124,7 +124,7 @@ static gboolean sound_timeout(gpointer data)
 void gaim_setup(GaimConnection *gc)
 {
 	if (gaim_prefs_get_bool("/gaim/gtk/sound/enabled/login")
-			&& gaim_prefs_get_bool("/gaim/gtk/sound/silent_signon")) {
+			&& !gaim_prefs_get_bool("/gaim/gtk/sound/signon")) {
 		if(snd_tmout) {
 			g_source_remove(snd_tmout);
 		}
@@ -851,7 +851,7 @@ int main(int argc, char *argv[])
 		gaim_prefs_sync();
 	}
 
-	gaim_prefs_rename_old();
+	gaim_gtk_prefs_rename_old();
 
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
