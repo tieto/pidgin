@@ -1673,7 +1673,6 @@ void do_add_link(GtkWidget *widget, struct linkdlg *b)
 	surround(b->entry, open_tag, "</A>");
 
 	g_free(open_tag);
-
 	destroy_dialog(NULL, b->window);
 }
 

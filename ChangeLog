@@ -11,6 +11,7 @@ version 0.9.14:
 	  that was used last.
 	* FONT sizes now work correctly.
 	* PLUGIN SUPPORT!! (Lots of cool goodies here)
+	* Fixed another leak or two
 
 version 0.9.13 (03/27/2000):
 	* Dialog Box Segfault Fixed (When You Click A Toggle Then Cancel)

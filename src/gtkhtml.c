@@ -3020,8 +3020,8 @@ static void gtk_html_add_text(GtkHtml * html,
 	}
 
 	g_free(text);
-
-
+	if (url != NULL)
+		g_free(fore);
 }
 
 static char * html_strtok( char * input, char delim )
