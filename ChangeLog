@@ -8,7 +8,9 @@ version 0.77cvs
 	* Added the -c option to specify location of the .gaim directory, removed
 	  the outdated -f option that no longer had any effect (Daniel Atallah)
 	* Novell GroupWise protocol support added (Novell)
-
+	* WYSIWYG improvements (Tim Ringenbach)
+	* Rich-text copy and paste
+	
 	Bug Fixes:
 	* TOC has been removed from the default build list. I do not support
 	  it, as no one is making sure that the updated code to keep it
