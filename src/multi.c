@@ -835,7 +835,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 void hide_login_progress(struct gaim_connection *gc, char *why)
 {
 	char buf[2048];
-	sprintf(buf, _("%s was unable to sign on: %s"), gc->username, why);
+	sprintf(buf, _("%s\n%s was unable to sign on: %s"), full_date(), gc->username, why);
 	do_error_dialog(buf, _("Signon Error"));
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
