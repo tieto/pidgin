@@ -115,6 +115,7 @@ struct addbuddy {
 	GtkWidget *combo;
 	GtkWidget *entry;
 	GtkWidget *entry_for_alias;
+	GtkWidget *account;
 	struct gaim_connection *gc;
 };
 
@@ -810,6 +811,59 @@ void show_add_group(struct gaim_connection *gc)
 	gtk_widget_show(a->window);
 }
 
+static void addbuddy_select_account(GtkObject *w, struct gaim_connection *gc)
+{
+	struct addbuddy *b = gtk_object_get_user_data(w);
+
+	b->gc = gc;
+}
+
+static void create_online_user_names(struct addbuddy *b)
+{
+	char buf[2048]; /* Never hurts to be safe ;-) */
+	GSList *g = connections;
+	struct gaim_connection *c;
+	GtkWidget *menu, *opt;
+	int count = 0;
+	int place = 0;
+
+	menu = gtk_menu_new();
+
+	while (g) {
+		c = (struct gaim_connection *)g->data;
+		g_snprintf(buf, sizeof(buf), "%s (%s)", 
+				c->username, (*c->prpl->name)());
+		opt = gtk_menu_item_new_with_label(buf);
+		gtk_object_set_user_data(GTK_OBJECT(opt), b);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate",
+				GTK_SIGNAL_FUNC(addbuddy_select_account),
+				c);
+		gtk_widget_show(opt);
+		gtk_menu_append(GTK_MENU(menu), opt);
+
+		/* Now check to see if it's our current menu */
+		if (c == b->gc) {
+			place = count;
+			gtk_menu_item_activate(GTK_MENU_ITEM(opt));
+			gtk_option_menu_set_history(GTK_OPTION_MENU(b->account), count);
+
+			/* Do the cha cha cha */
+		}
+
+		count++;
+
+		g = g->next;
+	}
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(b->account));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(b->account), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(b->account), place);
+
+	gtk_widget_show(b->account);
+	gtk_widget_show(b->account->parent);
+
+}
+
 void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 {
 	GtkWidget *mainbox;
@@ -819,6 +873,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	GtkWidget *cancel;
 	GtkWidget *add;
 	GtkWidget *label;
+	GList *tmp;
 
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc;
@@ -842,7 +897,7 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	gtk_box_pack_start(GTK_BOX(mainbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	table = gtk_table_new(3, 2, FALSE);
+	table = gtk_table_new(3, 3, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
@@ -872,6 +927,17 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	if (group != NULL)
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 	gtk_table_attach_defaults(GTK_TABLE(table), a->combo, 1, 2, 2, 3);
+
+	/* Set up stuff for the account box */
+	label = gtk_label_new(_("Add To"));
+	gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 3, 4);
+
+	a->account = gtk_option_menu_new();
+	gtk_table_attach_defaults(GTK_TABLE(table), a->account, 1, 2, 3, 4);
+
+	create_online_user_names(a);
+	
+	/* End of account box */
 
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(mainbox), bbox, TRUE, TRUE, 0);
