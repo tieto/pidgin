@@ -1877,7 +1877,7 @@ static char *caps_string(gushort caps)
 	static char buf[256], *tmp;
 	int count = 0, i = 0;
 	gushort bit = 1;
-	while (bit <= 0x80) {
+	while (bit <= 0x400) {
 		if (bit & caps) {
 			switch (bit) {
 			case 0x1:
@@ -1899,10 +1899,14 @@ static char *caps_string(gushort caps)
 				tmp = _("Send File");
 				break;
 			case 0x40:
+			case 0x200:
 				tmp = _("Games");
 				break;
 			case 0x80:
 				tmp = _("Stocks");
+				break;
+			case 0x400:
+				tmp = _("EveryBuddy Bug");
 				break;
 			default:
 				tmp = NULL;

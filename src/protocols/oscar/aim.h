@@ -809,6 +809,7 @@ faim_export int aim_oft_getfile_end(aim_session_t *sess, aim_conn_t *conn);
 #define AIM_CAPS_SAVESTOCKS     0x0080
 #define AIM_CAPS_SENDBUDDYLIST  0x0100
 #define AIM_CAPS_GAMES2         0x0200
+#define AIM_CAPS_EVERYBUDDY     0x0400
 #define AIM_CAPS_LAST           0x8000
 
 faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char *sn);
