@@ -148,7 +148,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 			Tcl_WrongNumArgs(interp, 2, objv, "username protocol");
 			return TCL_ERROR;
 		}
-		Tcl_SetIntObj(result, (int)gaim_accounts_find_with_prpl_id(Tcl_GetString(objv[2]),
+		Tcl_SetIntObj(result, (int)gaim_accounts_find(Tcl_GetString(objv[2]),
 									   Tcl_GetString(objv[3])));
 		break;
 	case CMD_ACCOUNT_HANDLE:
@@ -467,7 +467,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	GaimConversationType type;
 	GList *cur;
 	char *opt, *from, *what;
-	int error, argsused, flags;
+	int error, argsused, flags = 0;
 
 	if (objc < 2) {
 		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");

@@ -130,7 +130,6 @@ static GList *irc_away_states(GaimConnection *gc)
 
 static GList *irc_actions(GaimConnection *gc)
 {
-	struct irc_conn *irc = gc->proto_data;
 	struct proto_actions_menu *pam;
 	GList *list = NULL;
 
