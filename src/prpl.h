@@ -100,4 +100,5 @@ void unload_protocol(struct prpl *);
 
 struct prpl *find_prpl(int);
 
+void do_ask_dialog(const char *, void *, void *, void *);
 #endif

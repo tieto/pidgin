@@ -50,8 +50,6 @@
 #include "pixmaps/away_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
-#include "pixmaps/ok.xpm"
-#include "pixmaps/cancel.xpm"
 
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE |
 		AIM_CAPS_VOICE | AIM_CAPS_IMIMAGE | AIM_CAPS_BUDDYICON;
@@ -76,6 +74,19 @@ struct direct_im {
 	struct conversation *cnv;
 	int watcher;
 	struct aim_conn_t *conn;
+};
+
+struct ask_direct {
+	struct gaim_connection *gc;
+	char *sn;
+	struct aim_directim_priv *priv;
+};
+
+struct ask_getfile {
+	struct gaim_connection *gc;
+	char *sn;
+	char *cookie;
+	char *ip;
 };
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
@@ -661,20 +672,14 @@ int gaim_parse_offgoing(struct aim_session_t *sess,
 	return 1;
 }
 
-struct ask_direct {
-	GtkWidget *window;
-	struct gaim_connection *gc;
-	char *sn;
-	struct aim_directim_priv *priv;
-};
+static void cancel_direct_im(gpointer w, struct ask_direct *d) {
+	debug_printf("Freeing DirectIM prompts.\n");
 
-static void cancel_direct_im(GtkWidget *w, struct ask_direct *d) {
-	gtk_widget_destroy(d->window);
 	g_free(d->sn);
 	g_free(d);
 }
 
-static void delete_direct_im(GtkWidget *w, struct direct_im *d) {
+static void delete_direct_im(gpointer w, struct direct_im *d) {
 	struct oscar_data *od = (struct oscar_data *)d->gc->proto_data;
 
 	od->direct_ims = g_slist_remove(od->direct_ims, d);
@@ -683,14 +688,15 @@ static void delete_direct_im(GtkWidget *w, struct direct_im *d) {
 	g_free(d);
 }
 
-static void accept_direct_im(GtkWidget *w, struct ask_direct *d) {
+static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	struct gaim_connection *gc = d->gc;
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim;
 
+	debug_printf("Accepted DirectIM.\n");
+
 	dim = find_direct_im(od, d->sn);
 	if (dim) {
-		gtk_widget_show(dim->cnv->window);
 		cancel_direct_im(w, d); /* 40 */
 		return;
 	}
@@ -719,52 +725,34 @@ static void accept_direct_im(GtkWidget *w, struct ask_direct *d) {
 				gaim_directim_typing, 0);
 
 	cancel_direct_im(w, d);
+
+	return TRUE;
 }
 
-static void ask_direct_im(struct gaim_connection *gc, struct aim_userinfo_s *info,
-		struct aim_directim_priv *priv) {
-	struct ask_direct *d = g_new0(struct ask_direct, 1);
-	GtkWidget *window;
-	GtkWidget *box;
-	GtkWidget *label;
-	GtkWidget *hbox;
-	GtkWidget *button;
-	char buf[256];
+static void cancel_getfile(gpointer w, struct ask_getfile *g) {
+	g_free(g->ip);
+	g_free(g->cookie);
+	g_free(g->sn);
+	g_free(g);
+}
 
-	d->gc = gc;
-	d->sn = g_strdup(info->sn);
-	d->priv = priv;
+static int accept_getfile(gpointer w, struct ask_getfile *g) {
+	struct gaim_connection *gc = g->gc;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct aim_conn_t *newconn;
 
-	window = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_window_set_wmclass(GTK_WINDOW(window), "directim", "Gaim");
-	gtk_window_set_policy(GTK_WINDOW(window), 0, 0, 1);
-	gtk_window_set_title(GTK_WINDOW(window), _("Accept Direct IM?"));
-	gtk_widget_realize(window);
-	aol_icon(window->window);
-	d->window = window;
+	/*
+	if ((newconn = aim_accepttransfer(od->sess, od->conn, g->sn, g->cookie, g->ip, od->sess->oft.listing, AIM_CAPS_GETFILE)) == NULL) {
+		cancel_getfile(w, g);
+		return;
+	}
+	*/
 
-	box = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(window), box);
-	gtk_widget_show(box);
+	do_error_dialog("getfile FIXME", "ha");
 
-	g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.", info->sn, gc->username);
-	label = gtk_label_new(buf);
-	gtk_box_pack_start(GTK_BOX(box), label, 0, 0, 5);
-	gtk_widget_show(label);
+	cancel_getfile(w, g);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), hbox, 0, 0, 1);
-	gtk_widget_show(hbox);
-
-	button = picture_button(window, _("Accept"), ok_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(accept_direct_im), d);
-
-	button = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_direct_im), d);
-
-	gtk_widget_show(window);
+	return TRUE;
 }
 
 int gaim_parse_incoming_im(struct aim_session_t *sess,
@@ -815,10 +803,32 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					     msg);
 		} else if (rendtype & AIM_CAPS_SENDFILE) {
 		} else if (rendtype & AIM_CAPS_GETFILE) {
+			char *ip, *cookie;
+			struct aim_conn_t *newconn;
+			struct ask_getfile *g = g_new0(struct ask_getfile, 1);
+			char buf[256];
+
+			userinfo = va_arg(ap, struct aim_userinfo_s *);
+			ip = va_arg(ap, char *);
+			cookie = va_arg(ap, char *);
+			va_end(ap);
+
+			debug_printf("%s received getfile request from %s (%s)\n",
+					gc->username, userinfo->sn, ip);
+
+			g->gc = gc;
+			g->sn = g_strdup(userinfo->sn);
+			g->cookie = g_strdup(cookie);
+			g->ip = g_strdup(ip);
+			g_snprintf(buf, sizeof buf, "%s has just asked to get a file from %s.",
+					userinfo->sn, gc->username);
+			do_ask_dialog(buf, g, accept_getfile, cancel_getfile);
 		} else if (rendtype & AIM_CAPS_VOICE) {
 		} else if (rendtype & AIM_CAPS_BUDDYICON) {
 		} else if (rendtype & AIM_CAPS_IMIMAGE) {
 			struct aim_directim_priv *priv;
+			struct ask_direct *d = g_new0(struct ask_direct, 1);
+			char buf[256];
 
 			userinfo = va_arg(ap, struct aim_userinfo_s *);
 			priv = va_arg(ap, struct aim_directim_priv *);
@@ -827,7 +837,12 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			debug_printf("%s received direct im request from %s (%s)\n",
 					gc->username, userinfo->sn, priv->ip);
 
-			ask_direct_im(gc, userinfo, priv);
+			d->gc = gc;
+			d->sn = g_strdup(userinfo->sn);
+			d->priv = priv;
+			g_snprintf(buf, sizeof buf, "%s has just asked to directly connect to %s.",
+					userinfo->sn, gc->username);
+			do_ask_dialog(buf, d, accept_direct_im, cancel_direct_im);
 		} else {
 			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
 			debug_print(debug_buff);
@@ -1608,7 +1623,7 @@ static void oscar_direct_im(GtkObject *obj, char *who) {
 
 	dim = find_direct_im(od, who);
 	if (dim) {
-		gtk_widget_show(dim->cnv->window);
+		do_error_dialog("Direct IM request already pending.", "Unable");
 		return;
 	}
 	dim = g_new0(struct direct_im, 1);
