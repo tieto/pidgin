@@ -47,7 +47,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1244 $"
+#define REVISION "gaim:$Revision: 1260 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -736,14 +736,12 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 					gc->deny = g_slist_append(gc->deny, name);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
-				sprintf(debug_buff, "permdeny: %d\n", gc->permdeny);
-				debug_print(debug_buff);
+				debug_printf("permdeny: %d\n", gc->permdeny);
 				if (gc->permdeny == 0)
 					gc->permdeny = 1;
 			} else if (*c == 'm') {
 				sscanf(c + 2, "%d", &gc->permdeny);
-				sprintf(debug_buff, "permdeny: %d\n", gc->permdeny);
-				debug_print(debug_buff);
+				debug_printf("permdeny: %d\n", gc->permdeny);
 				if (gc->permdeny == 0)
 					gc->permdeny = 1;
 			}
@@ -817,9 +815,8 @@ static void toc_dir_search(struct gaim_connection *g, char *first, char *middle,
 	char buf[BUF_LONG];
 	g_snprintf(buf, sizeof(buf)/2, "toc_dir_search %s:%s:%s:%s:%s:%s:%s:%s", first, middle,
 			last, maiden, city, state, country, email);
-	sprintf(debug_buff,"Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden,
+	debug_printf("Searching for: %s,%s,%s,%s,%s,%s,%s\n", first, middle, last, maiden,
 			city, state, country);
-	debug_print(debug_buff);
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
@@ -1031,22 +1028,23 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
 	GtkWidget *entry;
 	GtkWidget *first, *opt;
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
 			gtk_label_new("TOC Options"));
 	gtk_widget_show(vbox);
 
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("TOC Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(toc_print_option), user);
@@ -1058,16 +1056,16 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_widget_show(entry);
 
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 
 	label = gtk_label_new("TOC Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(toc_print_option), user);
@@ -1081,15 +1079,15 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
 
 
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Proxy Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(toc_print_option), user);
@@ -1101,15 +1099,15 @@ static void toc_user_opts(GtkWidget *book, struct aim_user *user) {
 
 
 	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Proxy Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(toc_print_option), user);

@@ -1884,8 +1884,6 @@ void show_prefs()
 	gtk_widget_show(prefs);
 }
 
-char debug_buff[BUF_LONG];
-
 static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 {
 	if (debugbutton)
@@ -1939,15 +1937,6 @@ void show_debug(GtkObject *obj)
 	}
 }
 
-void debug_print(char *chars)
-{
-	if (general_options & OPT_GEN_DEBUG && dw)
-		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, chars, strlen(chars));
-#ifdef DEBUG
-        printf("%s", chars);
-#endif
-}
-
 void debug_printf(char *fmt, ...)
 {
 	va_list ap;
@@ -1959,6 +1948,9 @@ void debug_printf(char *fmt, ...)
 		va_end(ap);
 
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
+#ifdef DEBUG
+        printf("%s", chars);
+#endif
 		g_free(s);
 	}
 }

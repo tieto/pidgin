@@ -38,10 +38,12 @@
 GSList *connections;
 
 static GtkWidget *acctedit = NULL;
-static GtkWidget *list = NULL; /* the clist of names in the accteditor */
-static GtkWidget *newmod = NULL; /* the dialog for creating a new account */
-static GtkWidget *newmain = NULL; /* the frame that holds the possible notebook for options */
+static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
+static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
+static GtkWidget *newmain = NULL;	/* the notebook that holds options */
 static struct aim_user tmpusr;
+
+static void generate_prpl_options(struct aim_user *, GtkWidget *);
 
 struct mod_usr_opt {
 	struct aim_user *user;
@@ -97,7 +99,8 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 #endif
 }
 
-struct gaim_connection *find_gaim_conn_by_name(char *name) {
+struct gaim_connection *find_gaim_conn_by_name(char *name)
+{
 	char *who = g_strdup(normalize(name));
 	GSList *c = connections;
 	struct gaim_connection *g = NULL;
@@ -146,14 +149,14 @@ static char *proto_name(int proto)
 static GtkWidget *generate_list()
 {
 	GtkWidget *win;
-	char *titles[4] = {"Screenname", "Currently Online", "Auto-login", "Protocol"};
+	char *titles[4] = { "Screenname", "Currently Online", "Auto-login", "Protocol" };
 	GList *u = aim_users;
 	struct aim_user *a;
 	int i;
 
 	win = gtk_scrolled_window_new(0, 0);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(win), GTK_POLICY_AUTOMATIC,
-					GTK_POLICY_ALWAYS);
+				       GTK_POLICY_ALWAYS);
 
 	list = gtk_clist_new_with_titles(4, titles);
 	gtk_clist_set_column_width(GTK_CLIST(list), 0, 90);
@@ -196,7 +199,8 @@ static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
 	}
 }
 
-static void free_muo(GtkWidget *b, struct mod_usr_opt *m) {
+static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
+{
 	g_free(m);
 }
 
@@ -211,7 +215,8 @@ static GtkWidget *acct_button(const char *text, struct aim_user *u, int option, 
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (tmpusr.options & option));
 	}
 	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-	muo->user = u; muo->opt = option;
+	muo->user = u;
+	muo->opt = option;
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_opt), muo);
 	gtk_signal_connect(GTK_OBJECT(button), "destroy", GTK_SIGNAL_FUNC(free_muo), muo);
 	gtk_widget_show(button);
@@ -232,7 +237,8 @@ static void ok_mod(GtkWidget *w, struct aim_user *u)
 			u->password[0] = '\0';
 		gtk_widget_destroy(u->mod);
 		i = gtk_clist_find_row_from_data(GTK_CLIST(list), u);
-		gtk_clist_set_text(GTK_CLIST(list), i, 2, (u->options & OPT_USR_AUTO) ? "True" : "False");
+		gtk_clist_set_text(GTK_CLIST(list), i, 2,
+				   (u->options & OPT_USR_AUTO) ? "True" : "False");
 		gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(u->protocol));
 	} else {
 		char *titles[4];
@@ -267,8 +273,6 @@ static void cancel_mod(GtkWidget *w, struct aim_user *u)
 	}
 }
 
-static void generate_options(struct aim_user *, GtkWidget *);
-
 static void set_prot(GtkWidget *opt, int proto)
 {
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
@@ -277,17 +281,17 @@ static void set_prot(GtkWidget *opt, int proto)
 		for (i = 0; i < 6; i++)
 			u->proto_opt[i][0] = '\0';
 		u->tmp_protocol = proto;
-		generate_options(u, u->main);
+		generate_prpl_options(u, u->main);
 	} else if (tmpusr.tmp_protocol != proto) {
 		int i;
 		for (i = 0; i < 6; i++)
 			tmpusr.proto_opt[i][0] = '\0';
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
-		generate_options(NULL, newmain);
+		generate_prpl_options(NULL, newmain);
 	}
 }
 
-static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u, GtkWidget *frame)
+static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u)
 {
 	GtkWidget *optmenu;
 	GtkWidget *menu;
@@ -334,97 +338,45 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct aim_user *u, GtkWidg
 	return optmenu;
 }
 
-static void generate_options(struct aim_user *u, GtkWidget *frame) {
-	GList *tmp;
-	GtkWidget *book;
+static void generate_general_options(struct aim_user *u, GtkWidget *book)
+{
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *name;
 	GtkWidget *pass;
-	struct prpl *p;
 
-	tmp = gtk_container_children(GTK_CONTAINER(frame));
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new(_("General Options")));
 
-	if (u)
-		p = find_prpl(u->tmp_protocol);
-	else
-		p = find_prpl(tmpusr.protocol);
-
-	if (p && p->user_opts) {
-		if (tmp && !GTK_IS_NOTEBOOK(tmp->data)) {
-			gtk_widget_destroy(tmp->data);
-			tmp = NULL;
-		}
-		
-		if (!tmp) {
-			book = gtk_notebook_new();
-			gtk_container_add(GTK_CONTAINER(frame), book);
-			gtk_widget_show(book);
-
-			vbox = gtk_vbox_new(FALSE, 0);
-			gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
-					gtk_label_new(_("General Options")));
-			gtk_widget_show(vbox);
-
-			if (u)
-				(*p->user_opts)(book, u);
-			else
-				(*p->user_opts)(book, &tmpusr);
-		} else {
-			book = (GtkWidget *)tmp->data;
-			gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
-			if (u)
-				(*p->user_opts)(book, u);
-			else
-				(*p->user_opts)(book, &tmpusr);
-			return;
-		}
-	} else {
-		if (tmp && GTK_IS_NOTEBOOK(tmp->data)) {
-			gtk_widget_destroy(tmp->data);
-			tmp = NULL;
-		}
-
-		if (!tmp) {
-			vbox = gtk_vbox_new(FALSE, 0);
-			gtk_container_add(GTK_CONTAINER(frame), vbox);
-			gtk_widget_show(vbox);
-		} else {
-			return;
-		}
-	}
-
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Screenname:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	name = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), name, FALSE, FALSE, 5);
-	gtk_widget_show(name);
+	gtk_box_pack_start(GTK_BOX(hbox), name, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new(_("Password:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	pass = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), pass, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), pass, TRUE, TRUE, 0);
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
-	gtk_widget_show(pass);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	make_protocol_menu(hbox, u, frame);
+	label = gtk_label_new(_("Protocol:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	make_protocol_menu(hbox, u);
 
 	acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
@@ -440,6 +392,30 @@ static void generate_options(struct aim_user *u, GtkWidget *frame) {
 		tmpusr.name = name;
 		tmpusr.pass = pass;
 	}
+
+	gtk_widget_show_all(vbox);
+}
+
+static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
+{
+	struct prpl *p;
+
+	if (u)
+		p = find_prpl(u->tmp_protocol);
+	else
+		p = find_prpl(tmpusr.protocol);
+
+	/* page 0 is general, keep it. page 1 is options for our
+	 * particular protocol, so clear it out and make a new one. */
+
+	gtk_notebook_remove_page(GTK_NOTEBOOK(book), 1);
+
+	if (p && p->user_opts) {
+		if (u)
+			(*p->user_opts)(book, u);
+		else
+			(*p->user_opts)(book, &tmpusr);
+	}
 }
 
 static void show_acct_mod(struct aim_user *u)
@@ -452,7 +428,7 @@ static void show_acct_mod(struct aim_user *u)
 	 * to use. make sure to account for the possibility of protocol plugins. */
 	GtkWidget *mod;
 	GtkWidget *box;
-	GtkWidget *frame;
+	GtkWidget *book;
 	GtkWidget *hbox;
 	GtkWidget *button;
 
@@ -469,48 +445,45 @@ static void show_acct_mod(struct aim_user *u)
 	gtk_window_set_wmclass(GTK_WINDOW(mod), "account", "Gaim");
 	gtk_widget_realize(mod);
 	aol_icon(mod->window);
-	gtk_container_border_width(GTK_CONTAINER(mod), 10);
 	gtk_window_set_title(GTK_WINDOW(mod), _("Gaim - Modify Account"));
-	gtk_window_set_policy(GTK_WINDOW(mod), 0, 1, 1); /* i know, i'm odd */
-	gtk_signal_connect(GTK_OBJECT(mod), "destroy",
-			   GTK_SIGNAL_FUNC(delmod), u);
+	gtk_window_set_policy(GTK_WINDOW(mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
+	gtk_signal_connect(GTK_OBJECT(mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
 
-	box = gtk_vbox_new(FALSE, 0);
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_border_width(GTK_CONTAINER(mod), 5);
 	gtk_container_add(GTK_CONTAINER(mod), box);
-	gtk_widget_show(box);
 
-	frame = gtk_frame_new(_("Modify Account"));
-	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
-	gtk_widget_show(frame);
+	book = gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(box), book, FALSE, FALSE, 0);
 
-	if (u) u->tmp_protocol = u->protocol;
-	else tmpusr.tmp_protocol = tmpusr.protocol;
-	generate_options(u, frame);
+	if (u)
+		u->tmp_protocol = u->protocol;
+	else
+		tmpusr.tmp_protocol = tmpusr.protocol;
+	generate_general_options(u, book);
+	generate_prpl_options(u, book);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 
 	button = picture_button(mod, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
-	gtk_widget_show(button);
 
 	button = picture_button(mod, _("OK"), ok_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(ok_mod), u);
-	gtk_widget_show(button);
 
 	if (u) {
 		u->mod = mod;
-		u->main = frame; /* ha, get it? :) */
+		u->main = book;	/* sorry, i think i broke the joke :) */
 		u->tmp_options = u->options;
 	} else {
 		newmod = mod;
-		newmain = frame;
+		newmain = book;
 	}
 
-	gtk_widget_show(mod);
+	gtk_widget_show_all(mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
@@ -565,7 +538,10 @@ static void do_pass_dlg(struct aim_user *u)
 	GtkWidget *label;
 	GtkWidget *button;
 
-	if (u->passprmt) { gtk_widget_show(u->passprmt); return; }
+	if (u->passprmt) {
+		gtk_widget_show(u->passprmt);
+		return;
+	}
 	u->passprmt = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_wmclass(GTK_WINDOW(u->passprmt), "password", "Gaim");
 	gtk_container_border_width(GTK_CONTAINER(u->passprmt), 5);
@@ -635,7 +611,7 @@ static void acct_signin(GtkWidget *w, gpointer d)
 		}
 	}
 }
-		
+
 static void del_acct(GtkWidget *w, gpointer d)
 {
 	int row = -1;
@@ -657,60 +633,55 @@ static void del_acct(GtkWidget *w, gpointer d)
 void account_editor(GtkWidget *w, GtkWidget *W)
 {
 	/* please kill me */
-	GtkWidget *frame;
-	GtkWidget *box;
-	GtkWidget *list;
+	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *button; /* used for many things */
+	GtkWidget *list;
+	GtkWidget *button;	/* used for many things */
 
-	if (acctedit) { gtk_widget_show(acctedit); return; }
+	if (acctedit) {
+		gtk_widget_show(acctedit);
+		return;
+	}
 
 	acctedit = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
 	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
 	gtk_widget_realize(acctedit);
 	aol_icon(acctedit->window);
-	gtk_container_border_width(GTK_CONTAINER(acctedit), 10);
 	gtk_widget_set_usize(acctedit, -1, 200);
-	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy",
-			   GTK_SIGNAL_FUNC(delete_acctedit), W);
+	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy", GTK_SIGNAL_FUNC(delete_acctedit), W);
 
-	frame = gtk_frame_new(_("Account Editor"));
-	gtk_container_add(GTK_CONTAINER(acctedit), frame);
-	gtk_widget_show(frame);
-
-	box = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), box);
-	gtk_widget_show(box);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(acctedit), vbox);
 
 	list = generate_list();
-	gtk_box_pack_start(GTK_BOX(box), list, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
 
 	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_end(GTK_BOX(box), hbox, FALSE, FALSE, 5);
-	gtk_widget_show(hbox);
+	gtk_box_pack_end(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	button = picture_button(acctedit, _("Add"), gnome_add_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(add_acct), NULL);
 
 	button = picture_button(acctedit, _("Modify"), gnome_preferences_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_acct), NULL);
 
 	button = picture_button(acctedit, _("Sign On/Off"), join_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acct_signin), NULL);
 
 	button = picture_button(acctedit, _("Delete"), gnome_remove_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(del_acct), NULL);
 
 	button = picture_button(acctedit, _("Close"), gnome_close_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
 
-	gtk_widget_show(acctedit);
+	gtk_widget_show_all(acctedit);
 }
 
 void account_online(struct gaim_connection *gc)
@@ -721,12 +692,12 @@ void account_online(struct gaim_connection *gc)
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;
-	
+
 	/* then we do the buddy list stuff */
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 	show_buddy_list();
-	
+
 #ifdef USE_APPLET
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
 		refresh_buddy_window();
@@ -749,7 +720,8 @@ void account_online(struct gaim_connection *gc)
 	plugin_event(event_signon, gc, 0, 0, 0);
 
 	/* everything for the account editor */
-	if (!acctedit) return;
+	if (!acctedit)
+		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
 	gtk_clist_set_text(GTK_CLIST(list), i, 3, proto_name(gc->protocol));
@@ -763,8 +735,9 @@ void account_offline(struct gaim_connection *gc)
 	if (gc->meter)
 		gtk_widget_destroy(gc->meter);
 	gc->meter = NULL;
-	gc->user->gc = NULL; /* wasn't that awkward? */
-	if (!acctedit) return;
+	gc->user->gc = NULL;	/* wasn't that awkward? */
+	if (!acctedit)
+		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
 	redo_convo_menus();
@@ -787,15 +760,18 @@ void auto_login()
 	}
 }
 
-static void cancel_signon(GtkWidget *button, struct gaim_connection *gc) {
+static void cancel_signon(GtkWidget *button, struct gaim_connection *gc)
+{
 	signoff(gc);
 }
 
-static gint meter_destroy(GtkWidget *meter, GdkEvent *evt, struct gaim_connection *gc) {
+static gint meter_destroy(GtkWidget *meter, GdkEvent *evt, struct gaim_connection *gc)
+{
 	return TRUE;
 }
 
-void set_login_progress(struct gaim_connection *gc, float howfar, char *message) {
+void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
+{
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 

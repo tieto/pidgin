@@ -292,7 +292,7 @@ static void oscar_callback(gpointer data, gint source,
 	if (!g_slist_find(connections, gc)) {
 		/* oh boy. this is probably bad. i guess the only thing we can really do
 		 * is return? */
-		debug_print("oscar callback for closed connection.\n");
+		debug_printf("oscar callback for closed connection.\n");
 		return;
 	}
 
@@ -303,9 +303,9 @@ static void oscar_callback(gpointer data, gint source,
 	}
 	if (condition & GDK_INPUT_READ) {
 		if (conn->type == AIM_CONN_TYPE_RENDEZVOUS_OUT) {
-			debug_print("got information on rendezvous\n");
+			debug_printf("got information on rendezvous\n");
 			if (aim_handlerendconnect(odata->sess, conn) < 0) {
-				debug_print(_("connection error (rend)\n"));
+				debug_printf(_("connection error (rend)\n"));
 			}
 		} else {
 			if (aim_get_command(odata->sess, conn) >= 0) {
@@ -313,14 +313,13 @@ static void oscar_callback(gpointer data, gint source,
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(odata->sess, AIM_CONN_TYPE_BOS))) {
-					debug_print(_("major connection error\n"));
+					debug_printf(_("major connection error\n"));
 					hide_login_progress(gc, _("Disconnected."));
 					signoff(gc);
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
 					char buf[BUF_LONG];
-					sprintf(debug_buff, "disconnected from chat room %s\n", c->name);
-					debug_print(debug_buff);
+					debug_printf("disconnected from chat room %s\n", c->name);
 					c->conn = NULL;
 					if (c->inpa > -1)
 						gdk_input_remove(c->inpa);
@@ -333,16 +332,15 @@ static void oscar_callback(gpointer data, gint source,
 					if (odata->cnpa > -1)
 						gdk_input_remove(odata->cnpa);
 					odata->cnpa = -1;
-					debug_print("removing chatnav input watcher\n");
+					debug_printf("removing chatnav input watcher\n");
 					aim_conn_kill(odata->sess, &conn);
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					debug_printf("No handler for rendezvous disconnect (%d).\n",
 							source);
 					aim_conn_kill(odata->sess, &conn);
 				} else {
-					sprintf(debug_buff, "holy crap! generic connection error! %d\n",
+					debug_printf("holy crap! generic connection error! %d\n",
 							conn->type);
-					debug_print(debug_buff);
 					aim_conn_kill(odata->sess, &conn);
 				}
 			}
@@ -359,8 +357,7 @@ void oscar_login(struct aim_user *user) {
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
 	odata->create_exchange = 0;
 
-	sprintf(debug_buff, _("Logging in %s\n"), user->username);
-	debug_print(debug_buff);
+	debug_printf(_("Logging in %s\n"), user->username);
 
 	sess = g_new0(struct aim_session_t, 1);
 
@@ -396,19 +393,19 @@ void oscar_login(struct aim_user *user) {
                 g_free(finalauth);
 
 	if (conn == NULL) {
-		debug_print(_("internal connection error\n"));
+		debug_printf(_("internal connection error\n"));
 		hide_login_progress(gc, _("Unable to login to AIM"));
 		signoff(gc);
 		return;
 	} else if (conn->fd == -1) {
 		if (conn->status & AIM_CONN_STATUS_RESOLVERR) {
-			sprintf(debug_buff, _("couldn't resolve host"));
-			debug_print(debug_buff); debug_print("\n");
-			hide_login_progress(gc, debug_buff);
+			char *crh = _("couldn't resolve host");
+			debug_printf("%s\n", crh);
+			hide_login_progress(gc, crh);
 		} else if (conn->status & AIM_CONN_STATUS_CONNERR) {
-			sprintf(debug_buff, _("couldn't connect to host"));
-			debug_print(debug_buff); debug_print("\n");
-			hide_login_progress(gc, debug_buff);
+			char *cch = _("couldn't connect to host");
+			debug_printf("%s\n", cch);
+			hide_login_progress(gc, cch);
 		}
 		signoff(gc);
 		return;
@@ -423,7 +420,7 @@ void oscar_login(struct aim_user *user) {
 	gc->inpa = gdk_input_add(conn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, conn);
 
-	debug_print(_("Password sent, waiting for response\n"));
+	debug_printf(_("Password sent, waiting for response\n"));
 }
 
 void oscar_close(struct gaim_connection *gc) {
@@ -448,7 +445,7 @@ void oscar_close(struct gaim_connection *gc) {
 	aim_logoff(odata->sess);
 	g_free(odata->sess);
 	g_free(gc->proto_data);
-	debug_print(_("Signed off.\n"));
+	debug_printf(_("Signed off.\n"));
 }
 
 int gaim_parse_auth_resp(struct aim_session_t *sess,
@@ -486,8 +483,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 
 	va_end(ap);
 
-	sprintf(debug_buff, "inside auth_resp (Screen name: %s)\n", sn);
-	debug_print(debug_buff);
+	debug_printf("inside auth_resp (Screen name: %s)\n", sn);
 
 	if (errorcode || !bosip || !cookie) {
 		switch (errorcode) {
@@ -608,10 +604,10 @@ int gaim_server_ready(struct aim_session_t *sess,
 	case AIM_CONN_TYPE_BOS:
 		aim_setversions(sess, command->conn);
 		aim_bos_reqrate(sess, command->conn); /* request rate info */
-		debug_print("done with BOS ServerReady\n");
+		debug_printf("done with BOS ServerReady\n");
 		break;
 	case AIM_CONN_TYPE_CHATNAV:
-		debug_print("chatnav: got server ready\n");
+		debug_printf("chatnav: got server ready\n");
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
@@ -619,7 +615,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chatnav_reqrights(sess, command->conn);
 		break;
 	case AIM_CONN_TYPE_CHAT:
-		debug_print("chat: got server ready\n");
+		debug_printf("chat: got server ready\n");
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
@@ -634,8 +630,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 	case AIM_CONN_TYPE_RENDEZVOUS:
 		break;
 	default: /* huh? */
-		sprintf(debug_buff, "server ready: got unexpected connection type %04x\n", command->conn->type);
-		debug_print(debug_buff);
+		debug_printf("server ready: got unexpected connection type %04x\n", command->conn->type);
 		break;
 	}
 	return 1;
@@ -657,11 +652,11 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 
 	switch(serviceid) {
 	case 0x7: /* Authorizer */
-		debug_print("Reconnecting with authorizor...\n");
+		debug_printf("Reconnecting with authorizor...\n");
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, ip);
 		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR)
-			debug_print("unable to reconnect with authorizer\n");
+			debug_printf("unable to reconnect with authorizer\n");
 		else {
 			odata->paspa = gdk_input_add(tstconn->fd,
 					GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
@@ -674,7 +669,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, ip);
 		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
-			debug_print("unable to connect to chatnav server\n");
+			debug_printf("unable to connect to chatnav server\n");
 			return 1;
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
@@ -682,7 +677,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 					oscar_callback, tstconn);
 		}
-		debug_print("chatnav: connected\n");
+		debug_printf("chatnav: connected\n");
 		break;
 	case 0xe: /* Chat */
 		{
@@ -691,11 +686,10 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		int exchange = va_arg(ap, int);
 		struct chat_connection *ccon;
 		if (tstconn == NULL || tstconn->status & AIM_CONN_STATUS_RESOLVERR) {
-			debug_print("unable to connect to chat server\n");
+			debug_printf("unable to connect to chat server\n");
 			return 1;
 		}
-		sprintf(debug_buff, "Connected to chat room %s exchange %d\n", roomname, exchange);
-		debug_print(debug_buff);
+		debug_printf("Connected to chat room %s exchange %d\n", roomname, exchange);
 
 		ccon = g_new0(struct chat_connection, 1);
 		ccon->conn = tstconn;
@@ -715,9 +709,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		break;
 	default: /* huh? */
-		sprintf(debug_buff, "got redirect for unknown service 0x%04x\n",
-				serviceid);
-		debug_print(debug_buff);
+		debug_printf("got redirect for unknown service 0x%04x\n", serviceid);
 		break;
 	}
 
@@ -1204,8 +1196,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					userinfo->sn, gc->username);
 			do_ask_dialog(buf, d, accept_direct_im, cancel_direct_im);
 		} else {
-			sprintf(debug_buff, "Unknown rendtype %d\n", rendtype);
-			debug_print(debug_buff);
+			debug_printf("Unknown rendtype %d\n", rendtype);
 		}
 	}
 
@@ -1334,11 +1325,8 @@ int gaim_parse_motd(struct aim_session_t *sess,
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(debug_buff, "MOTD: %s (%d)\n", msg, id);
-	debug_print(debug_buff);
-	sprintf(debug_buff, "Gaim %s / Libfaim %s\n",
-			VERSION, aim_getbuildstring());
-	debug_print(debug_buff);
+	debug_printf("MOTD: %s (%d)\n", msg, id);
+	debug_printf("Gaim %s / Libfaim %s\n", VERSION, aim_getbuildstring());
 	if (id != 4)
 		do_error_dialog(_("Your connection may be lost."),
 				_("AOL error"));
@@ -1367,11 +1355,9 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			exchanges = va_arg(ap, struct aim_chat_exchangeinfo *);
 			va_end(ap);
 
-			debug_print("chat info: Chat Rights:\n");
-			sprintf(debug_buff, "chat info: \tMax Concurrent Rooms: %d\n", maxrooms);
-			debug_print(debug_buff);
-			sprintf(debug_buff, "chat info: \tExchange List: (%d total)\n", exchangecount);
-			debug_print(debug_buff);
+			debug_printf("chat info: Chat Rights:\n");
+			debug_printf("chat info: \tMax Concurrent Rooms: %d\n", maxrooms);
+			debug_printf("chat info: \tExchange List: (%d total)\n", exchangecount);
 			while (i < exchangecount)
 				debug_printf("chat info: \t\t%d\n", exchanges[i++].number);
 			if (odata->create_exchange) {
@@ -1414,8 +1400,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			break;
 		default:
 			va_end(ap);
-			sprintf(debug_buff, "chatnav info: unknown type (%04x)\n", type);
-			debug_print(debug_buff);
+			debug_printf("chatnav info: unknown type (%04x)\n", type);
 			break;
 	}
 	return 1;
@@ -1485,7 +1470,7 @@ int gaim_chat_leave(struct aim_session_t *sess,
 
 int gaim_chat_info_update(struct aim_session_t *sess,
 			  struct command_rx_struct *command, ...) {
-	debug_print("inside chat_info_update\n");
+	debug_printf("inside chat_info_update\n");
 	return 1;
 }
 
@@ -1531,8 +1516,7 @@ int gaim_parse_msgack(struct aim_session_t *sess, struct command_rx_struct *comm
 	sn = va_arg(ap, char *);
 	va_end(ap);
 
-	sprintf(debug_buff, "Sent message to %s.\n", sn);
-	debug_print(debug_buff);
+	debug_printf("Sent message to %s.\n", sn);
 
 	return 1;
 }
@@ -1545,8 +1529,7 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 	newrate = va_arg(ap, unsigned long);
 	va_end(ap);
 
-	sprintf(debug_buff, "ratechange: %lu\n", newrate);
-	debug_print(debug_buff);
+	debug_printf("ratechange: %lu\n", newrate);
 
 	return 1;
 }
@@ -1581,7 +1564,7 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		if (bud_list_cache_exists(gc))
 			do_import(NULL, gc);
 
-		debug_print("buddy list loaded\n");
+		debug_printf("buddy list loaded\n");
 
 		aim_addicbmparam(sess, command->conn);
 		aim_bos_reqicbmparaminfo(sess, command->conn);
@@ -1593,9 +1576,8 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 
 		break;
 	default:
-		sprintf(debug_buff, "got rate response for unhandled connection type %04x\n",
+		debug_printf("got rate response for unhandled connection type %04x\n",
 				command->conn->type);
-		debug_print(debug_buff);
 		break;
 	}
 
@@ -1604,10 +1586,9 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 
 int gaim_reportinterval(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	if (command->data) {
-		sprintf(debug_buff, "minimum report interval: %d (seconds?)\n", aimutil_get16(command->data+10));
-		debug_print(debug_buff);
+		debug_printf("minimum report interval: %d (seconds?)\n", aimutil_get16(command->data+10));
 	} else
-		debug_print("NULL minimum report interval!\n");
+		debug_printf("NULL minimum report interval!\n");
 	return 1;
 }
 
@@ -1620,8 +1601,7 @@ int gaim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct 
 	maxwatchers = (u_short)va_arg(ap, u_int);
 	va_end(ap);
 
-	sprintf(debug_buff, "buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
-	debug_print(debug_buff);
+	debug_printf("buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
 
 	return 1;
 }
@@ -1635,8 +1615,7 @@ int gaim_bosrights(struct aim_session_t *sess, struct command_rx_struct *command
 	maxdenies = (u_short)va_arg(ap, u_int);
 	va_end(ap);
 
-	sprintf(debug_buff, "BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
-	debug_print(debug_buff);
+	debug_printf("BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
 
 	aim_bos_clientready(sess, command->conn);
 
@@ -1746,14 +1725,13 @@ static void oscar_remove_buddy(struct gaim_connection *g, char *name) {
 static void oscar_join_chat(struct gaim_connection *g, int exchange, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	struct aim_conn_t *cur = NULL;
-	sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
-	debug_print(debug_buff);
+	debug_printf("Attempting to join chat room %s.\n", name);
 	if ((cur = aim_getconn_type(odata->sess, AIM_CONN_TYPE_CHATNAV))) {
-		debug_print("chatnav exists, creating room\n");
+		debug_printf("chatnav exists, creating room\n");
 		aim_chatnav_createroom(odata->sess, cur, name, exchange);
 	} else {
 		/* this gets tricky */
-		debug_print("chatnav does not exist, opening chatnav\n");
+		debug_printf("chatnav does not exist, opening chatnav\n");
 		odata->create_exchange = exchange;
 		odata->create_name = g_strdup(name);
 		aim_bos_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
@@ -1799,9 +1777,7 @@ static void oscar_chat_leave(struct gaim_connection *g, int id) {
 	if (!b)
 		return;
 
-	sprintf(debug_buff, "Attempting to leave room %s (currently in %d rooms)\n",
-				b->name, count);
-	debug_print(debug_buff);
+	debug_printf("Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
 	
 	c = find_oscar_chat(g, b->id);
 	if (c != NULL) {
@@ -2057,21 +2033,22 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 	GtkWidget *label;
 	GtkWidget *entry;
 
-	vbox = gtk_vbox_new(FALSE, 0);
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
 	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
 			gtk_label_new("OSCAR Options"));
 	gtk_widget_show(vbox);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Authorizer:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_AUTH);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(oscar_print_option), user);
@@ -2082,16 +2059,16 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 		gtk_entry_set_text(GTK_ENTRY(entry), "login.oscar.aol.com");
 	gtk_widget_show(entry);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("Authorizer Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)1);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(oscar_print_option), user);
@@ -2102,16 +2079,16 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 		gtk_entry_set_text(GTK_ENTRY(entry), "5190");
 	gtk_widget_show(entry);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("SOCKS5 Host:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSHOST);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(oscar_print_option), user);
@@ -2121,16 +2098,16 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 	}
 	gtk_widget_show(entry);
 
-	hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new("SOCKS5 Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
 	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SOCKSPORT);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed",
 			   GTK_SIGNAL_FUNC(oscar_print_option), user);

@@ -507,7 +507,6 @@ extern int web_browser;
 extern GList *aim_users;
 extern char sound_cmd[2048];
 extern char web_command[2048];
-extern char debug_buff[BUF_LONG];
 extern struct save_pos blist_pos;
 extern char latest_ver[25];
 
@@ -710,7 +709,6 @@ extern char *event_name(enum gaim_event);
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
 
 /* Functions in prefs.c */
-extern void debug_print( char * chars );
 extern void debug_printf( char * fmt, ... );
 extern void set_general_option(GtkWidget *, int *);
 extern void set_option(GtkWidget *, int *);

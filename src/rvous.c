@@ -295,8 +295,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		return;
 	}
 
-	sprintf(debug_buff, "header length %d\n", header.hdrlen);
-	debug_print(debug_buff);
+	debug_printf("header length %d\n", header.hdrlen);
 
 	header.hdrtype = 0x202;
 	
@@ -307,8 +306,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	header.encrypt = 0; header.compress = 0;
 	header.totparts = 1; header.partsleft = 1;
 
-	sprintf(debug_buff, "sending confirmation\n");
-	debug_print(debug_buff);
+	debug_printf("sending confirmation\n");
 	write_file_header(ft->fd, &header);
 
 	rcv = 0;
@@ -335,9 +333,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
 
-	sprintf(debug_buff, "Receiving %s from %s (%d bytes)\n", ft->filename,
-			ft->user, ft->size);
-	debug_print(debug_buff);
+	debug_printf("Receiving %s from %s (%d bytes)\n", ft->filename, ft->user, ft->size);
 
 	fcntl(ft->fd, F_SETFL, O_NONBLOCK);
 
@@ -380,8 +376,7 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 		return;
 	}
 
-	sprintf(debug_buff, "Download complete.\n");
-	debug_print(debug_buff);
+	debug_printf("Download complete.\n");
 
 	header.hdrtype = 0x402;
 	header.totparts = 0; header.partsleft = 0;
@@ -431,9 +426,7 @@ static void send_file_callback(gpointer data, gint source,
 	}
 
 	if (fhdr.hdrtype != 0xc12) {
-		sprintf(debug_buff, "%s decided to cancel. (%x)\n", ft->user,
-				fhdr.hdrtype);
-		debug_print(debug_buff);
+		debug_printf("%s decided to cancel. (%x)\n", ft->user, fhdr.hdrtype);
 		fclose(ft->f);
 		close(ft->fd);
 		free_ft(ft);
@@ -472,9 +465,7 @@ static void send_file_callback(gpointer data, gint source,
 	aol_icon(fw->window);
 	gtk_widget_show(fw);
 
-	sprintf(debug_buff, "Sending %s to %s (%ld bytes)\n", fhdr.name,
-			ft->user, fhdr.totsize);
-	debug_print(debug_buff);
+	debug_printf("Sending %s to %s (%ld bytes)\n", fhdr.name, ft->user, fhdr.totsize);
 
 	rcv = 0; cont = 1;
 	while (rcv != ntohl(fhdr.totsize) && cont) {
@@ -515,8 +506,7 @@ static void send_file_callback(gpointer data, gint source,
 		return;
 	}
 
-	sprintf(debug_buff, "Upload complete.\n");
-	debug_print(debug_buff);
+	debug_printf("Upload complete.\n");
 
 	read_file_header(ft->fd, &fhdr);
 
@@ -583,8 +573,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	c = file + strlen(file);
 	while (*(c - 1) != '/') c--;
 	buf2 = frombase64(ft->cookie);
-	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf2);
-	debug_print(debug_buff);
+	debug_printf("Building header to send %s (cookie: %s)\n", file, buf2);
 	fhdr.magic[0] = 'O'; fhdr.magic[1] = 'F';
 	fhdr.magic[2] = 'T'; fhdr.magic[3] = '2';
 	fhdr.hdrlen = htons(256);
@@ -619,20 +608,17 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	snprintf(fhdr.name, 64, "listing.txt");
 	read_rv = write_file_header(ft->fd, &fhdr);
 	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write opening header\n");
-		debug_print(debug_buff);
+		debug_printf("Couldn't write opening header\n");
 		close(ft->fd);
 		free_ft(ft);
 		return;
 	}
 
 	/* 2. receive header */
-	sprintf(debug_buff, "Receiving header\n");
-	debug_print(debug_buff);
+	debug_printf("Receiving header\n");
 	read_rv = read_file_header(ft->fd, &fhdr);
 	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read header\n");
-		debug_print(debug_buff);
+		debug_printf("Couldn't read header\n");
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -641,34 +627,28 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	/* 3. send listing file */
 	/* mm/dd/yyyy hh:mm sizesize name.ext\r\n */
 	/* creation date ^ */
-	sprintf(debug_buff, "Sending file\n");
-	debug_print(debug_buff);
+	debug_printf("Sending file\n");
 	fortime = localtime(&st.st_ctime);
 	at = g_snprintf(buf, ntohl(fhdr.size) + 1, "%2d/%2d/%4d %2d:%2d %8ld ",
 			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 			fortime->tm_hour + 1, fortime->tm_min + 1,
 			(long)st.st_size);
 	g_snprintf(buf + at, ntohl(fhdr.size) + 1 - at, "%s\r\n", c);
-	sprintf(debug_buff, "Sending listing.txt (%d bytes) to %s\n",
-			ntohl(fhdr.size) + 1, ft->user);
-	debug_print(debug_buff);
+	debug_printf("Sending listing.txt (%d bytes) to %s\n", ntohl(fhdr.size) + 1, ft->user);
 
 	read_rv = write(ft->fd, buf, ntohl(fhdr.size));
 	if (read_rv <= -1) {
-		sprintf(debug_buff, "Could not send file, wrote %d\n", rcv);
-		debug_print(debug_buff);
+		debug_printf("Could not send file, wrote %d\n", rcv);
 		close(ft->fd);
 		free_ft(ft);
 		return;
 	}
 
 	/* 4. receive header */
-	sprintf(debug_buff, "Receiving closing header\n");
-	debug_print(debug_buff);
+	debug_printf("Receiving closing header\n");
 	read_rv = read_file_header(ft->fd, &fhdr);
 	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't read closing header\n");
-		debug_print(debug_buff);
+		debug_printf("Couldn't read closing header\n");
 		close(ft->fd);
 		free_ft(ft);
 		return;

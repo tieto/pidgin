@@ -71,7 +71,7 @@ GList *chat_rooms = NULL;
 
 GtkWidget *mainwindow = NULL;
 
-void BuddyTickerCreateWindow( void );
+void BuddyTickerCreateWindow(void);
 
 void cancel_logon(void)
 {
@@ -93,7 +93,7 @@ void cancel_logon(void)
 	while (c) {
 		p = (struct gaim_plugin *)c->data;
 		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-			(*gaim_plugin_remove)();
+			 (*gaim_plugin_remove)();
 		/* we don't need to worry about removing callbacks since
 		 * there won't be any more chance to call them back :) */
 		g_free(p);
@@ -110,7 +110,8 @@ void cancel_logon(void)
 
 static int snd_tmout;
 int logins_not_muted = 1;
-static void sound_timeout() {
+static void sound_timeout()
+{
 	logins_not_muted = 1;
 	gtk_timeout_remove(snd_tmout);
 }
@@ -118,21 +119,16 @@ static void sound_timeout() {
 /* we need to do this for Oscar because serv_login only starts the login
  * process, it doesn't end there. gaim_setup will be called later from
  * oscar.c, after the buddy list is made and serv_finish_login is called */
-void gaim_setup(struct gaim_connection *gc) {
-	if (sound_options & OPT_SOUND_LOGIN &&
-		sound_options & OPT_SOUND_SILENT_SIGNON) {
+void gaim_setup(struct gaim_connection *gc)
+{
+	if ((sound_options & OPT_SOUND_LOGIN) && (sound_options & OPT_SOUND_SILENT_SIGNON)) {
 		logins_not_muted = 0;
-		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout,
-				NULL);
+		snd_tmout = gtk_timeout_add(10000, (GtkFunction)sound_timeout, NULL);
 	}
-
 #ifdef USE_APPLET
 	set_user_state(online);
 	applet_widget_register_callback(APPLET_WIDGET(applet),
-			"signoff",
-			_("Signoff"),
-			(AppletCallbackFunc)signoff_all,
-			NULL);
+					"signoff", _("Signoff"), (AppletCallbackFunc)signoff_all, NULL);
 #endif /* USE_APPLET */
 }
 
@@ -238,37 +234,35 @@ void show_login()
 	GtkStyle *style;
 	GdkBitmap *mask;
 
-        if (mainwindow) {
-                gtk_widget_show(mainwindow);
-                return;
-        }
-       
+	if (mainwindow) {
+		gtk_widget_show(mainwindow);
+		return;
+	}
+
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        /* Set the WM name and class */
-        gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login",
-                               "Gaim");
-        /* Disallow resizing */
-        gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
+	/* Set the WM name and class */
+	gtk_window_set_wmclass(GTK_WINDOW(mainwindow), "login", "Gaim");
+	/* Disallow resizing */
+	gtk_window_set_policy(GTK_WINDOW(mainwindow), FALSE, FALSE, TRUE);
 	gtk_widget_realize(mainwindow);
 
-	signon   = gtk_button_new_with_label(_("Signon"));
+	signon = gtk_button_new_with_label(_("Signon"));
 #ifndef NO_MULTI
-	accts    = gtk_button_new_with_label(_("Accounts"));
+	accts = gtk_button_new_with_label(_("Accounts"));
 #endif
-	cancel   = gtk_button_new_with_label(_("Cancel"));
-	reg      = gtk_button_new_with_label(_("Register"));
-	options  = gtk_button_new_with_label(_("Options"));
+	cancel = gtk_button_new_with_label(_("Cancel"));
+	reg = gtk_button_new_with_label(_("Register"));
+	options = gtk_button_new_with_label(_("Options"));
 #ifdef GAIM_PLUGINS
-	plugs    = gtk_button_new_with_label(_("Plugins")); 
+	plugs = gtk_button_new_with_label(_("Plugins"));
 #endif
-	table    = gtk_table_new(8, 2, FALSE);
-	name     = gtk_combo_new();
-	pass     = gtk_entry_new();
+	table = gtk_table_new(8, 2, FALSE);
+	name = gtk_combo_new();
+	pass = gtk_entry_new();
 
 	gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-	{
+	if (display_options & OPT_DISP_COOL_LOOK) {
 		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
 #ifndef NO_MULTI
 		gtk_button_set_relief(GTK_BUTTON(accts), GTK_RELIEF_NONE);
@@ -283,26 +277,22 @@ void show_login()
 
 	/* Make the buttons do stuff */
 	/* Clicking the button initiates a login */
-	gtk_signal_connect(GTK_OBJECT(signon), "clicked",
-			   GTK_SIGNAL_FUNC(dologin), mainwindow);
+	gtk_signal_connect(GTK_OBJECT(signon), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
 #ifndef NO_MULTI
-	gtk_signal_connect(GTK_OBJECT(accts), "clicked",
-			   GTK_SIGNAL_FUNC(account_editor), mainwindow);
+	gtk_signal_connect(GTK_OBJECT(accts), "clicked", GTK_SIGNAL_FUNC(account_editor), mainwindow);
 #endif
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	/* Allow user to change prefs before logging in */
-	gtk_signal_connect(GTK_OBJECT(options), "clicked",
-			   GTK_SIGNAL_FUNC(show_prefs), NULL);
+	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
 #ifdef GAIM_PLUGINS
 	/* Allow user to control plugins before logging in */
-	gtk_signal_connect(GTK_OBJECT(plugs), "clicked",
-			   GTK_SIGNAL_FUNC(show_plugins), NULL);
+	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif
 
 	/* Register opens the right URL */
 	gtk_signal_connect(GTK_OBJECT(reg), "clicked",
-			   GTK_SIGNAL_FUNC(open_url), "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
+			   GTK_SIGNAL_FUNC(open_url),
+			   "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
 	/* Enter in the username clears the password and sets
 	   the pointer in the password field */
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",
@@ -310,15 +300,14 @@ void show_login()
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
 			   GTK_SIGNAL_FUNC(combo_changed), name);
 
-	gtk_signal_connect(GTK_OBJECT(pass), "activate",
-			   GTK_SIGNAL_FUNC(doenter), mainwindow);
+	gtk_signal_connect(GTK_OBJECT(pass), "activate", GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(mainwindow), "delete_event",
 			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	/* Homogenous spacing, 10 padding */
 	bbox = gtk_hbox_new(TRUE, 10);
 	hbox = gtk_hbox_new(TRUE, 10);
 	sbox = gtk_vbox_new(TRUE, 5);
-	
+
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
 #ifndef NO_MULTI
 	gtk_box_pack_start(GTK_BOX(bbox), accts, TRUE, TRUE, 0);
@@ -336,10 +325,10 @@ void show_login()
 
 	/* Labels for selectors and text boxes */
 	label = gtk_label_new(_("Screen Name: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0,1,2,3,0,0, 5, 5);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 2, 3, 0, 0, 5, 5);
 	gtk_widget_show(label);
 	label = gtk_label_new(_("Password: "));
-	gtk_table_attach(GTK_TABLE(table), label, 0,1,3,4,0,0, 5, 5);
+	gtk_table_attach(GTK_TABLE(table), label, 0, 1, 3, 4, 0, 0, 5, 5);
 	gtk_widget_show(label);
 
 	gtk_widget_show(options);
@@ -348,10 +337,10 @@ void show_login()
 #endif
 
 	/* Adjust sizes of inputs */
-	gtk_widget_set_usize(name,100,0);
-	gtk_widget_set_usize(pass,100,0);
+	gtk_widget_set_usize(name, 100, 0);
+	gtk_widget_set_usize(pass, 100, 0);
 
-	
+
 	/* Attach the buttons at the bottom */
 	gtk_widget_show(signon);
 	gtk_widget_show(cancel);
@@ -362,27 +351,26 @@ void show_login()
 	gtk_widget_show(bbox);
 	gtk_widget_show(hbox);
 	gtk_widget_show(sbox);
-	gtk_table_attach(GTK_TABLE(table), sbox, 0,2,7,8,0,0, 5, 5);
-	
+	gtk_table_attach(GTK_TABLE(table), sbox, 0, 2, 7, 8, 0, 0, 5, 5);
+
 	/* Text fields */
-	
-	gtk_table_attach(GTK_TABLE(table),name,1,2,2,3,0,0,5,5);
+
+	gtk_table_attach(GTK_TABLE(table), name, 1, 2, 2, 3, 0, 0, 5, 5);
 	gtk_widget_show(name);
-	gtk_table_attach(GTK_TABLE(table),pass,1,2,3,4,0,0,5,5);
+	gtk_table_attach(GTK_TABLE(table), pass, 1, 2, 3, 4, 0, 0, 5, 5);
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	gtk_widget_show(pass);
-	
-	gtk_container_border_width(GTK_CONTAINER(sbox), 10);	 
-	
-	gtk_container_add(GTK_CONTAINER(mainwindow),table );
-	
+
+	gtk_container_border_width(GTK_CONTAINER(sbox), 10);
+
+	gtk_container_add(GTK_CONTAINER(mainwindow), table);
+
 	gtk_widget_show(table);
-        gtk_window_set_title(GTK_WINDOW(mainwindow),_("Gaim - Login"));
+	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 
 
 	if (aim_users) {
 		struct aim_user *c = (struct aim_user *)aim_users->data;
-		sprintf(debug_buff, "First user is %s\n", c->username);
 		if (c->options & OPT_USR_REM_PASS) {
 			combo_changed(NULL, name);
 			gtk_widget_grab_focus(signon);
@@ -393,29 +381,29 @@ void show_login()
 		gtk_widget_grab_focus(name);
 	}
 
-        gtk_widget_realize(mainwindow);
+	gtk_widget_realize(mainwindow);
 
 	/* Logo at the top */
 	style = gtk_widget_get_style(mainwindow);
 	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
-		&style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
-	pmw = gtk_pixmap_new( pm, mask);
-	gtk_table_attach(GTK_TABLE(table), pmw, 0,2,0,1,0,0,5,5);
+					  &style->bg[GTK_STATE_NORMAL], (gchar **) aol_logo);
+	pmw = gtk_pixmap_new(pm, mask);
+	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
 	gtk_widget_show(pmw);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(mask);
 
-        
-        aol_icon(mainwindow->window);
+
+	aol_icon(mainwindow->window);
 #ifndef _WIN32
-        gdk_window_set_group(mainwindow->window, mainwindow->window);
+	gdk_window_set_group(mainwindow->window, mainwindow->window);
 #endif
 
-        
-        gtk_widget_show(mainwindow);
+
+	gtk_widget_show(mainwindow);
 
 	SetTickerPrefs();
-	
+
 }
 
 extern void show_debug(GtkObject *);
@@ -424,7 +412,7 @@ extern void show_debug(GtkObject *);
 void sighandler(int sig)
 {
 	fprintf(stderr, "God damn, I tripped.\n");
-	exit(11); /* signal 11 */
+	exit(11);		/* signal 11 */
 }
 #endif
 
@@ -432,31 +420,28 @@ void sighandler(int sig)
 int main(int argc, char *argv[])
 {
 	char opt;
-	int opt_acct = 0, opt_help = 0, opt_version = 0,
-	    opt_user = 0, opt_login = 0, do_login_ret = -1;
+	int opt_acct = 0, opt_help = 0, opt_version = 0, opt_user = 0, opt_login = 0, do_login_ret = -1;
 	char *opt_user_arg = NULL, *opt_login_arg = NULL;
 
 #ifdef USE_GNOME
 	int i;
 	poptContext popt_context;
-	struct poptOption popt_options[] =
-	{
-		{"acct",    'a', POPT_ARG_NONE,   &opt_acct,     'a', 
+	struct poptOption popt_options[] = {
+		{"acct", 'a', POPT_ARG_NONE, &opt_acct, 'a',
 		 "Display account editor window", NULL},
-		{"login",   'l', POPT_ARG_STRING,   NULL,        'l',
+		{"login", 'l', POPT_ARG_STRING, NULL, 'l',
 		 "Automatically login (optional argument NAME specifies account(s) to use)", "[NAME]"},
-		{"user",    'u', POPT_ARG_STRING, &opt_user_arg, 'u',
+		{"user", 'u', POPT_ARG_STRING, &opt_user_arg, 'u',
 		 "Use account NAME", "NAME"},
 		{0, 0, 0, 0, 0, 0, 0}
 	};
 #else
-	struct option long_options[] = 
-	{
-		{"acct",    no_argument,	 NULL, 'a'},
-		{"help",    no_argument,	 NULL, 'h'},
-		{"login",   optional_argument, NULL, 'l'},
-		{"user",    required_argument, NULL, 'u'}, 
-		{"version", no_argument,	 NULL, 'v'},
+	struct option long_options[] = {
+		{"acct", no_argument, NULL, 'a'},
+		{"help", no_argument, NULL, 'h'},
+		{"login", optional_argument, NULL, 'l'},
+		{"user", required_argument, NULL, 'u'},
+		{"version", no_argument, NULL, 'v'},
 		{0, 0, 0, 0}
 	};
 #endif /* USE_GNOME */
@@ -474,63 +459,62 @@ int main(int argc, char *argv[])
 
 
 #ifdef USE_APPLET
-        init_applet_mgr(argc, argv);
+	init_applet_mgr(argc, argv);
 #elif defined USE_GNOME
 	for (i = 0; i < argc; i++) {
 		/* --login option */
-		if (strstr (argv[i], "--l") == argv[i]) { 
+		if (strstr(argv[i], "--l") == argv[i]) {
 			char *equals;
 			opt_login = 1;
 			if ((equals = strchr(argv[i], '=')) != NULL) {
 				/* --login=NAME */
-				opt_login_arg = g_strdup (equals+1);
-			} else if (i+1 < argc && argv[i+1][0] != '-') { 
+				opt_login_arg = g_strdup(equals + 1);
+			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
 				/* --login NAME */
-				opt_login_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
+				opt_login_arg = g_strdup(argv[i + 1]);
+				strcpy(argv[i + 1], " ");
 			}
-			strcpy (argv[i], " ");
+			strcpy(argv[i], " ");
 		}
 		/* -l option */
-		else if (strstr (argv[i], "-l") == argv[i]) {
+		else if (strstr(argv[i], "-l") == argv[i]) {
 			opt_login = 1;
-			if (strlen (argv[i]) > 2) {
+			if (strlen(argv[i]) > 2) {
 				/* -lNAME */
-				opt_login_arg = g_strdup (argv[i]+2);
-			} else if (i+1 < argc && argv[i+1][0] != '-') {
+				opt_login_arg = g_strdup(argv[i] + 2);
+			} else if (i + 1 < argc && argv[i + 1][0] != '-') {
 				/* -l NAME */
-				opt_login_arg = g_strdup (argv[i+1]);
-				strcpy (argv[i+1], " ");
+				opt_login_arg = g_strdup(argv[i + 1]);
+				strcpy(argv[i + 1], " ");
 			}
-			strcpy (argv[i], " ");
+			strcpy(argv[i], " ");
 		}
-	}	
+	}
 
-        gnome_init_with_popt_table(PACKAGE,VERSION,argc,argv,
-				   popt_options,0,NULL);
+	gnome_init_with_popt_table(PACKAGE, VERSION, argc, argv, popt_options, 0, NULL);
 #else
-        gtk_init(&argc, &argv);
+	gtk_init(&argc, &argv);
 
 	/* scan command-line options */
 	opterr = 1;
-	while ((opt = getopt_long (argc, argv, /*"ahl::u:v"*/"ahl::u:v",
-				   long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, /*"ahl::u:v" */ "ahl::u:v",
+				  long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'u': /* set user */
+		case 'u':	/* set user */
 			opt_user = 1;
-			opt_user_arg = g_strdup (optarg);
+			opt_user_arg = g_strdup(optarg);
 			break;
 		case 'l':
 			opt_login = 1;
-			opt_login_arg = g_strdup (optarg);
+			opt_login_arg = g_strdup(optarg);
 			break;
-		case 'a': /* account editor */
+		case 'a':	/* account editor */
 			opt_acct = 1;
 			break;
-		case 'v': /* version */
+		case 'v':	/* version */
 			opt_version = 1;
 			break;
-		case 'h': /* help */
+		case 'h':	/* help */
 			opt_help = 1;
 			break;
 		case '?':
@@ -551,7 +535,7 @@ int main(int argc, char *argv[])
 	/* show version window */
 	if (opt_version) {
 		gtk_init(&argc, &argv);
-		set_defaults(FALSE); /* needed for open_url_nw */
+		set_defaults(FALSE);	/* needed for open_url_nw */
 		load_prefs();
 		show_about(0, (void *)2);
 		gtk_main();
@@ -559,14 +543,14 @@ int main(int argc, char *argv[])
 	}
 
 
-        set_defaults(FALSE);
-        load_prefs();
+	set_defaults(FALSE);
+	load_prefs();
 
 	/* set the default username */
 	if (opt_user_arg != NULL) {
-		set_first_user (opt_user_arg);
+		set_first_user(opt_user_arg);
 #ifndef USE_GNOME
-		g_free (opt_user_arg);
+		g_free(opt_user_arg);
 		opt_user_arg = NULL;
 #endif /* USE_GNOME */
 	}
@@ -583,9 +567,9 @@ int main(int argc, char *argv[])
 
 	/* deal with --login */
 	if (opt_login) {
-		do_login_ret = do_auto_login (opt_login_arg);
+		do_login_ret = do_auto_login(opt_login_arg);
 		if (opt_login_arg != NULL) {
-			g_free (opt_login_arg);
+			g_free(opt_login_arg);
 			opt_login_arg = NULL;
 		}
 	}
@@ -595,39 +579,31 @@ int main(int argc, char *argv[])
 
 #ifdef USE_APPLET
 	applet_widget_register_callback(APPLET_WIDGET(applet),
-					"prefs",
-					_("Preferences"),
-					show_prefs,
-					NULL);
-        applet_widget_register_callback(APPLET_WIDGET(applet),
+					"prefs", _("Preferences"), show_prefs, NULL);
+	applet_widget_register_callback(APPLET_WIDGET(applet),
 					"accounts",
-					_("Accounts"),
-					(AppletCallbackFunc)account_editor,
-					(void *)1);
+					_("Accounts"), (AppletCallbackFunc)account_editor, (void *)1);
 #ifdef GAIM_PLUGINS
-        applet_widget_register_callback(APPLET_WIDGET(applet),
-					"plugins",
-					_("Plugins"),
-					GTK_SIGNAL_FUNC(show_plugins),
-					NULL);
+	applet_widget_register_callback(APPLET_WIDGET(applet),
+					"plugins", _("Plugins"), GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif /* GAIM_PLUGINS */
 
 	update_pixmaps();
-	
+
 	applet_widget_gtk_main();
 #else
 
 	if (opt_acct) {
-		account_editor (NULL, NULL);
+		account_editor(NULL, NULL);
 	} else if (do_login_ret == -1)
 		show_login();
 
-        gtk_main();
-        
+	gtk_main();
+
 #endif /* USE_APPLET */
-        
+
 	gtkspell_stop();
 
 	return 0;
-	
+
 }

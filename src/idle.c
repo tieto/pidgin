@@ -48,11 +48,11 @@ gint check_idle(struct gaim_connection *gc)
 #endif
 	time_t idle_time;
 
-        /* Not idle, really...  :) */
+	/* Not idle, really...  :) */
 	update_idle_times();
 
 	plugin_event(event_blist_update, 0, 0, 0, 0);
-        
+
 	time(&t);
 
 
@@ -61,27 +61,25 @@ gint check_idle(struct gaim_connection *gc)
 		if (!d)
 			d = XOpenDisplay((char *)NULL);
 		if (mit_info == NULL) {
-			mit_info = XScreenSaverAllocInfo ();
+			mit_info = XScreenSaverAllocInfo();
 		}
-		XScreenSaverQueryInfo (d, DefaultRootWindow(d), mit_info);
-		idle_time = (mit_info->idle)/1000;
+		XScreenSaverQueryInfo(d, DefaultRootWindow(d), mit_info);
+		idle_time = (mit_info->idle) / 1000;
 	} else
 #endif /* USE_SCREENSAVER */
 		idle_time = t - gc->lastsent;
 
-	if ((general_options & OPT_GEN_AUTO_AWAY) && 
-	    (idle_time > (60 * auto_away)) &&
-	    (awaymessage == NULL) &&
-	    (auto_is_away == 0)) {
+	if ((general_options & OPT_GEN_AUTO_AWAY) &&
+	    (idle_time > (60 * auto_away)) && (awaymessage == NULL) && (auto_is_away == 0)) {
 		struct away_message *a;
-		set_default_away((GtkWidget*)NULL, (gpointer)default_away);
+		set_default_away((GtkWidget *)NULL, (gpointer)default_away);
 		a = g_slist_nth_data(away_messages, default_away);
-		do_away_message((GtkWidget*)NULL, a);
+		do_away_message((GtkWidget *)NULL, a);
 		auto_is_away = 1;
-	} else if (auto_is_away == 1 && idle_time < 60*auto_away) {
+	} else if (auto_is_away == 1 && idle_time < 60 * auto_away) {
 		auto_is_away = 0;
 		if (awaymessage != NULL)
-			do_im_back((GtkWidget*)NULL, (GtkWidget*)NULL);
+			do_im_back((GtkWidget *)NULL, (GtkWidget *)NULL);
 	}
 
 
@@ -92,11 +90,11 @@ gint check_idle(struct gaim_connection *gc)
 		return TRUE;
 	}
 
-	if (idle_time > 600 && !gc->is_idle) { /* 10 minutes! */
+	if (idle_time > 600 && !gc->is_idle) {	/* 10 minutes! */
 		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
-        } else if (idle_time < 600 && gc->is_idle) {
+	} else if (idle_time < 600 && gc->is_idle) {
 		debug_printf("setting %s unidle\n", gc->username);
 		serv_touch_idle(gc);
 	}

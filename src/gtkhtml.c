@@ -3655,7 +3655,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 			else if (*(c + 1) == '#')
 			{
 				int pound = 0;
-				debug_print("got &#;\n");
+				debug_printf("got &#;\n");
 				if (sscanf(c, "&#%d;", &pound) > 0) {
 					ws[wpos++] = (char)pound;
 					c += 2;

@@ -403,8 +403,7 @@ FILE *open_log_file (char *name)
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
 
-        sprintf(debug_buff,"Logging to: \"%s\"\n", log_all_file);
-        debug_print(debug_buff);
+        debug_printf("Logging to: \"%s\"\n", log_all_file);
 
         fd = fopen(log_all_file, "a");
 
@@ -428,8 +427,7 @@ int escape_message(char *msg)
 	int cnt=0;
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
 	if (strlen(msg) > BUF_LEN) {
-		sprintf(debug_buff, "Warning:  truncating message to 2048 bytes\n");
-		debug_print(debug_buff);
+		debug_printf("Warning:  truncating message to 2048 bytes\n");
 		msg[2047]='\0';
 	}
 

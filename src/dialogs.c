@@ -2474,8 +2474,7 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c->hasfg = 1;
 	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
 	surround(c->entry, open_tag, "</FONT>");
-	sprintf(debug_buff,"#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
-	debug_print(debug_buff);
+	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
 }
@@ -2502,8 +2501,7 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	c->hasbg = 1;
 	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">", text_color.red, text_color.green, text_color.blue);
 	surround(c->entry, open_tag, "</BODY>");
-	sprintf(debug_buff,"#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
-	debug_print(debug_buff);
+	debug_printf("#%02X%02X%02X\n", text_color.red, text_color.green, text_color.blue);
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
 }
@@ -2657,8 +2655,7 @@ void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 		}
 		font[k] = '\0';
 
-		sprintf(debug_buff, "Setting font face %s\n", font);
-		debug_print(debug_buff);
+		debug_printf("Setting font face %s\n", font);
 
 		set_font_face(font, c);
 	}
@@ -2772,12 +2769,10 @@ bud_list_cache_exists(struct gaim_connection *gc)
 	if ( file != (char *) NULL ) {
 		sprintf(path, "%s/%s.blist", file, g_screenname); 
 		if ( !stat(path, &sbuf) ) {
-			sprintf(debug_buff, "%s exists.\n", path);
-			debug_print(debug_buff);
+			debug_printf("%s exists.\n", path);
 			ret = TRUE;
 		} else {
-			sprintf(debug_buff, "%s does not exist.\n", path);
-			debug_print(debug_buff);
+			debug_printf("%s does not exist.\n", path);
 		}
 		g_free(file);
 	}
@@ -2837,15 +2832,13 @@ void do_export(GtkWidget *w, void *dummy)
 				g_screenname[i] = '\0';
 				sprintf(path, "%s/%s.blist", file, g_screenname);
 				if ((f = fopen(path,"w"))) {
-					sprintf(debug_buff, "writing %s\n", path);
-					debug_print(debug_buff);
+					debug_printf("writing %s\n", path);
 					toc_build_config(g, buf, 8192 - 1, TRUE);
 					fprintf(f, "%s\n", buf);
 					fclose(f);
 					chmod(buf, S_IRUSR | S_IWUSR);
 				} else {
-					sprintf(debug_buff, "unable to write %s\n", path);
-					debug_print(debug_buff);
+					debug_printf("unable to write %s\n", path);
 				}
 
 				c = c->next;
@@ -2936,8 +2929,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
 		}
-		sprintf(debug_buff, "Unable to open %s.\n", path);
-		debug_print(debug_buff);
+		debug_printf("Unable to open %s.\n", path);
                 g_free(buf);
 		g_free(first);
                 return;
@@ -2947,22 +2939,20 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 
 	/* AIM 4 buddy list */
 	if (!strcasecmp(first, "Config {\n")) {
-		debug_print("aim 4\n");
+		debug_printf("aim 4\n");
 		rewind(f);
 		translate_blt (f, buf);
-		sprintf(debug_buff, "%s\n", buf);
-		debug_print(debug_buff);
+		debug_printf("%s\n", buf);
 		buf2 = buf;
 		buf = g_malloc(8193);
                 g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
                 g_free(buf2);
 	/* AIM 3 buddy list */
 	} else if (strstr(first, "group") != NULL) {
-		debug_print("aim 3\n");
+		debug_printf("aim 3\n");
 		rewind(f);
 		translate_lst (f, buf);
-		sprintf(debug_buff, "%s\n", buf);
-		debug_print(debug_buff);
+		debug_printf("%s\n", buf);
 		buf2 = buf;
 		buf = g_malloc(8193);
                 g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);

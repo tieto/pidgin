@@ -339,13 +339,13 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (c->is_chat && (widget == c->close)) {
 		GtkWidget *tmp = c->window;
-		debug_print("chat clicked close button\n");
+		debug_printf("chat clicked close button\n");
 		c->window = NULL;
 		gtk_widget_destroy(tmp);
 		return FALSE;
 	}
 
-	debug_print("conversation close callback\n");
+	debug_printf("conversation close callback\n");
 
 	if (general_options & OPT_GEN_CHECK_SPELLING)
 		gtkspell_detach(GTK_TEXT(c->entry));
@@ -424,8 +424,7 @@ static gint delete_event_convo(GtkWidget *w, GdkEventAny *e, struct conversation
 void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (c->gc && find_buddy(c->gc, c->name) != NULL) {
-		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
-		debug_print(debug_buff);
+		debug_printf(_("Removing '%s' from buddylist.\n"), c->name);
 		remove_buddy(c->gc, find_group_by_buddy(c->gc, c->name), find_buddy(c->gc, c->name));
 		build_edit_tree();
 		update_convo_add_button(c);
@@ -900,8 +899,7 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 		return;
 	s = gtk_editable_get_chars(GTK_EDITABLE(entry), 0, -1);
 	pos = GTK_EDITABLE(entry)->current_pos;
-	sprintf(debug_buff, _("Currently at %d, "), pos);
-	debug_print(debug_buff);
+	debug_printf(_("Currently at %d, "), pos);
 	s2= strstr(&s[pos], post);
 	if (s2) {
 		pos = s2 - s + strlen(post);
@@ -909,8 +907,7 @@ void advance_past(GtkWidget *entry, char *pre, char *post)
 		gtk_editable_insert_text(GTK_EDITABLE(entry), post, strlen(post), &pos);
 	}
 	g_free(s);
-	sprintf(debug_buff, _("Setting position to %d\n"), pos);
-	debug_print(debug_buff);
+	debug_printf(_("Setting position to %d\n"), pos);
 	gtk_editable_set_position(GTK_EDITABLE(entry), pos);
 	gtk_widget_grab_focus(entry);
 }

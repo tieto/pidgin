@@ -412,8 +412,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
         }
         
         if (!b) {
-                sprintf(debug_buff,"Error, no such person\n");
-				debug_print(debug_buff);
+                debug_printf("Error, no such person\n");
                 return;
         }
 
@@ -661,8 +660,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 
 	plugin_event(event_chat_leave, g, b->name, 0, 0);
 
-	sprintf(debug_buff, "Leaving room %s.\n", b->name);
-	debug_print(debug_buff);
+	debug_printf("Leaving room %s.\n", b->name);
 
         g->buddy_chats = g_slist_remove(g->buddy_chats, b);
 
@@ -711,10 +709,10 @@ void send_keepalive(gpointer d) {
 
 void update_keepalive(struct gaim_connection *gc, gboolean on) {
 	if (on && !gc->keepalive && blist) {
-		debug_print("allowing NOP\n");
+		debug_printf("allowing NOP\n");
 		gc->keepalive = gtk_timeout_add(60000, (GtkFunction)send_keepalive, gc);
 	} else if (!on && gc->keepalive > 0) {
-		debug_print("removing NOP\n");
+		debug_printf("removing NOP\n");
 		gtk_timeout_remove(gc->keepalive);
 		gc->keepalive = 0;
 	}

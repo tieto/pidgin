@@ -564,8 +564,7 @@ XS (XS_GAIM_add_event_handler)
 	handler->event_type = g_strdup(SvPV(ST(0), junk));
 	handler->handler_name = g_strdup(SvPV(ST(1), junk));
 	perl_event_handlers = g_list_append(perl_event_handlers, handler);
-	sprintf(debug_buff, "registered perl event handler for %s\n", handler->event_type);
-	debug_print(debug_buff);
+	debug_printf("registered perl event handler for %s\n", handler->event_type);
 	XSRETURN_EMPTY;
 }
 

@@ -198,9 +198,7 @@ void load_plugin(char *filename) {
 			g = (struct gaim_callback *)c->data;
 			if (g->handle == plug->handle) {
 				callbacks = g_list_remove(callbacks, c->data);
-				sprintf(debug_buff, "Removing callback, %d remain\n",
-						g_list_length(callbacks));
-				debug_print(debug_buff);
+				debug_printf("Removing callback, %d remain\n", g_list_length(callbacks));
 				c = callbacks;
 				if (c == NULL) {
 					break;
@@ -419,20 +417,16 @@ static void unload_for_real(void *handle) {
 	if (!p)
 		return;
 
-	sprintf(debug_buff, "Unloading %s\n", g_module_name(p->handle));
-	debug_print(debug_buff);
+	debug_printf("Unloading %s\n", g_module_name(p->handle));
 
-	sprintf(debug_buff, "%d callbacks to search\n", g_list_length(callbacks));
-	debug_print(debug_buff);
+	debug_printf("%d callbacks to search\n", g_list_length(callbacks));
 
 	while (c) {
 		g = (struct gaim_callback *)c->data;
 		if (g->handle == p->handle) {
 			callbacks = g_list_remove(callbacks, c->data);
 			g_free(g);
-			sprintf(debug_buff, "Removing callback, %d remain\n",
-					g_list_length(callbacks));
-			debug_print(debug_buff);
+			debug_printf("Removing callback, %d remain\n", g_list_length(callbacks));
 			c = callbacks;
 			if (c == NULL) {
 				break;
@@ -507,8 +501,7 @@ void gaim_signal_connect(GModule *handle, enum gaim_event which,
 	call->data = data;
 
 	callbacks = g_list_append(callbacks, call);
-	sprintf(debug_buff, "Adding callback %d\n", g_list_length(callbacks));
-	debug_print(debug_buff);
+	debug_printf("Adding callback %d\n", g_list_length(callbacks));
 }
 
 void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func) {
@@ -726,8 +719,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 				break;
 
 			default:
-				sprintf(debug_buff, "unknown event %d\n", event);
-				debug_print(debug_buff);
+				debug_printf("unknown event %d\n", event);
 				break;
 			}
 		}
@@ -812,8 +804,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			break;
 	}
 	tmp = event_name(event);
-	g_snprintf(debug_buff, sizeof debug_buff, "%s: %s\n", tmp, buf);
-	debug_print(debug_buff);
+	debug_printf("%s: %s\n", tmp, buf);
 	return perl_event(tmp, buf);
 #else
 	return 0;

@@ -321,8 +321,7 @@ void signoff(struct gaim_connection *gc)
 		shows = NULL;
 	}
 
-	sprintf(debug_buff, "date: %s\n", full_date());
-	debug_print(debug_buff);
+	debug_printf("date: %s\n", full_date());
         destroy_all_dialogs();
         destroy_buddy();
 #ifdef USE_APPLET

@@ -39,27 +39,22 @@
 #include <errno.h>
 #include "proxy.h"
 
-gchar * strip_html(gchar * text)
+gchar *strip_html(gchar *text)
 {
 	int i, j;
 	int visible = 1;
 	gchar *text2 = g_malloc(strlen(text) + 1);
-	
+
 	strcpy(text2, text);
-	for (i = 0, j = 0;text2[i]; i++)
-	{
-		if(text2[i]=='<')
-		{	
+	for (i = 0, j = 0; text2[i]; i++) {
+		if (text2[i] == '<') {
 			visible = 0;
 			continue;
-		}
-		else if(text2[i]=='>')
-		{
+		} else if (text2[i] == '>') {
 			visible = 1;
 			continue;
 		}
-		if(visible)
-		{
+		if (visible) {
 			text2[j++] = text2[i];
 		}
 	}
@@ -75,24 +70,28 @@ struct g_url parse_url(char *url)
 	int f;
 
 	if (strstr(url, "http://"))
-		g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+		g_snprintf(scan_info, sizeof(scan_info),
+			   "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
 	else
-		g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
+		g_snprintf(scan_info, sizeof(scan_info),
+			   "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?]");
 	f = sscanf(url, scan_info, test.address, port, test.page);
 	if (f == 1) {
 		if (strstr(url, "http://"))
-			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+			g_snprintf(scan_info, sizeof(scan_info),
+				   "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
 		else
-			g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
-        f = sscanf(url, scan_info, test.address, test.page);
-        g_snprintf(port, sizeof(test.port), "80");
-        port[2] = 0;
+			g_snprintf(scan_info, sizeof(scan_info),
+				   "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?]");
+		f = sscanf(url, scan_info, test.address, test.page);
+		g_snprintf(port, sizeof(test.port), "80");
+		port[2] = 0;
 	}
 	if (f == 1) {
 		if (strstr(url, "http://"))
 			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]");
-        else
-		g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]");
+		else
+			g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]");
 		f = sscanf(url, scan_info, test.address);
 		g_snprintf(test.page, sizeof(test.page), "%c", '\0');
 	}
@@ -105,20 +104,20 @@ char *grab_url(struct aim_user *user, char *url)
 {
 	struct g_url website;
 	char *webdata = NULL;
-        int sock;
-        int len;
+	int sock;
+	int len;
 	int read_rv;
 	int datalen = 0;
 	char buf[256];
 	char data;
-        int startsaving = 0;
-        GtkWidget *pw = NULL, *pbar = NULL, *label;
+	int startsaving = 0;
+	GtkWidget *pw = NULL, *pbar = NULL, *label;
 
-        website = parse_url(url);
+	website = parse_url(url);
 
 	if (user) {
 		if ((sock = proxy_connect(website.address, website.port, user->proto_opt[2],
-					atoi(user->proto_opt[3]), atoi(user->proto_opt[4]))) < 0)
+					  atoi(user->proto_opt[3]), atoi(user->proto_opt[4]))) < 0)
 			return g_strdup(_("g003: Error opening connection.\n"));
 	} else {
 		if ((sock = proxy_connect(website.address, website.port, NULL, 0, -1)) < 0)
@@ -126,18 +125,17 @@ char *grab_url(struct aim_user *user, char *url)
 	}
 
 	g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.0\r\n\r\n", website.page);
-	g_snprintf(debug_buff, sizeof(debug_buff), "Request: %s\n", buf);
-	debug_print(debug_buff);
+	debug_printf("Request: %s\n", buf);
 	write(sock, buf, strlen(buf));
 	fcntl(sock, F_SETFL, O_NONBLOCK);
 
-        webdata = NULL;
-        len = 0;
-	
+	webdata = NULL;
+	len = 0;
+
 	/*
 	 * avoid fgetc(), it causes problems on solaris
-	while ((data = fgetc(sockfile)) != EOF) {
-	*/
+	 while ((data = fgetc(sockfile)) != EOF) {
+	 */
 	/* read_rv will be 0 on EOF and < 0 on error, so this should be fine */
 	while ((read_rv = read(sock, &data, 1)) > 0 || errno == EWOULDBLOCK) {
 		if (errno == EWOULDBLOCK) {
@@ -147,7 +145,7 @@ char *grab_url(struct aim_user *user, char *url)
 
 		if (!data)
 			continue;
-		
+
 		if (!startsaving && data == '<') {
 #ifdef HAVE_STRSTR
 			char *cs = strstr(webdata, "Content-Length");
@@ -155,26 +153,26 @@ char *grab_url(struct aim_user *user, char *url)
 				char tmpbuf[1024];
 				sscanf(cs, "Content-Length: %d", &datalen);
 
-                                g_snprintf(tmpbuf, 1024, _("Getting %d bytes from %s"), datalen, url);
-                                pw = gtk_dialog_new();
+				g_snprintf(tmpbuf, 1024, _("Getting %d bytes from %s"), datalen, url);
+				pw = gtk_dialog_new();
 
 				label = gtk_label_new(tmpbuf);
 				gtk_widget_show(label);
 				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->vbox),
 						   label, FALSE, FALSE, 5);
-				
+
 				pbar = gtk_progress_bar_new();
 				gtk_box_pack_start(GTK_BOX(GTK_DIALOG(pw)->action_area),
 						   pbar, FALSE, FALSE, 5);
-                                gtk_widget_show(pbar);
-                                
-                                gtk_window_set_title(GTK_WINDOW(pw), _("Getting Data"));
-                                
-                                gtk_widget_realize(pw);
-                                aol_icon(pw->window);
+				gtk_widget_show(pbar);
 
-                                gtk_widget_show(pw);
-                        } else
+				gtk_window_set_title(GTK_WINDOW(pw), _("Getting Data"));
+
+				gtk_widget_realize(pw);
+				aol_icon(pw->window);
+
+				gtk_widget_show(pw);
+			} else
 				datalen = 0;
 #else
 			datalen = 0;
@@ -190,22 +188,20 @@ char *grab_url(struct aim_user *user, char *url)
 		webdata[len - 1] = data;
 
 		if (pbar)
-			gtk_progress_bar_update(GTK_PROGRESS_BAR(pbar),
-                                                ((100 * len) / datalen) / 100.0);
-		
+			gtk_progress_bar_update(GTK_PROGRESS_BAR(pbar), ((100 * len) / datalen) / 100.0);
+
 		while (gtk_events_pending())
 			gtk_main_iteration();
 	}
 
-        webdata = g_realloc(webdata, len+1);
-        webdata[len] = 0;
+	webdata = g_realloc(webdata, len + 1);
+	webdata[len] = 0;
 
 
-        g_snprintf(debug_buff, sizeof(debug_buff), _("Receieved: '%s'\n"), webdata);
-        debug_print(debug_buff);
+	debug_printf(_("Receieved: '%s'\n"), webdata);
 
-        if (pw)
-                gtk_widget_destroy(pw);
+	if (pw)
+		gtk_widget_destroy(pw);
 
 	close(sock);
 	return webdata;
