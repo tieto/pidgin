@@ -1879,6 +1879,7 @@ void do_import(GtkWidget *w, void *dummy)
                 destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
                 g_free(buf);
+		g_free(first);
                 return;
         }
                 
@@ -1888,6 +1889,7 @@ void do_import(GtkWidget *w, void *dummy)
                 destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
 		g_free(buf);
+		g_free(first);
                 return;
         } else if (buf[0] == 'm') {
                 buf2 = buf;
@@ -1920,7 +1922,8 @@ void do_import(GtkWidget *w, void *dummy)
         importdialog = NULL;
         
         g_free(buf);
-        
+        g_free(first);
+	
 }
 
 void show_import_dialog()
