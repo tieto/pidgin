@@ -2395,25 +2395,6 @@ static void info_dlg_free(GtkWidget *b, struct info_dlg *d)
 	g_free(d);
 }
 
-gchar **info_img_handler(gchar *url)
-{
-	if (!g_strcasecmp(url, "free_icon.gif"))
-		return free_icon_xpm;
-	if (!g_strcasecmp(url, "aol_icon.gif"))
-		return aol_icon_xpm;
-	if (!g_strcasecmp(url, "dt_icon.gif"))
-		return dt_icon_xpm;
-	if (!g_strcasecmp(url, "admin_icon.gif"))
-		return admin_icon_xpm;
-	if (!g_strcasecmp(url, "ab_icon.gif"))
-		return ab_xpm;
-	if (!g_strcasecmp(url, "wireless_icon.gif"))
-		return wireless_icon_xpm;
-	if (!g_strcasecmp(url, "icq_icon.gif"))
-		return icon_online_xpm;
-	return NULL;
-}
-
 /* if away is 0, show regardless and try to get away message
  *            1, don't show if regular info isn't shown
  *            2, show regardless but don't try to get away message
@@ -2461,7 +2442,6 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		b->text = text;
 		gtk_container_add(GTK_CONTAINER(sw), text);
 		gtk_widget_set_usize(sw, 300, 250);
-		gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
 		gaim_setup_imhtml(text);
 
 		ok = picture_button(b->window, _("OK"), ok_xpm);

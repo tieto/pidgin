@@ -89,9 +89,6 @@ void       gtk_imhtml_set_adjustments  (GtkIMHtml        *imhtml,
 					GtkAdjustment    *hadj,
 					GtkAdjustment    *vadj);
 
-void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
-					GtkIMHtmlImage    handler);
-
 void       gtk_imhtml_associate_smiley (GtkIMHtml        *imhtml,
 					gchar            *sml,
 					GtkIMHtmlSmiley  *smiley);

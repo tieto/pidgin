@@ -1014,9 +1014,6 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	return str;
 }
 
-void       gtk_imhtml_set_img_handler  (GtkIMHtml        *imhtml,
-	GtkIMHtmlImage    handler){}
-
 void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml) 
 { 
 	g_hash_table_destroy(imhtml->smiley_data);
