@@ -253,8 +253,20 @@ gaim_plugin_load(GaimPlugin *plugin)
 		return TRUE;
 
 	if (plugin->native_plugin) {
-		if (plugin->info != NULL && plugin->info->load != NULL)
-			plugin->info->load(plugin);
+		if (plugin->info != NULL) {
+			if (plugin->info->load != NULL)
+				plugin->info->load(plugin);
+
+			if (plugin->info->type == GAIM_PLUGIN_LOADER) {
+				GaimPluginLoaderInfo *loader_info;
+
+				loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
+
+				if (loader_info->broadcast != NULL)
+					gaim_signals_register_broadcast_func(loader_info->broadcast,
+														 NULL);
+			}
+		}
 	}
 	else {
 		GaimPlugin *loader;
@@ -335,6 +347,14 @@ gaim_plugin_unload(GaimPlugin *plugin)
 			}
 
 			g_list_free(prpl_info->user_opts);
+		}
+		else if (plugin->info->type == GAIM_PLUGIN_LOADER) {
+			GaimPluginLoaderInfo *loader_info;
+
+			loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
+
+			if (loader_info->broadcast != NULL)
+				gaim_signals_unregister_broadcast_func(loader_info->broadcast);
 		}
 	}
 	else {
