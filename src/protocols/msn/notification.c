@@ -129,7 +129,7 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 		}
 
 		gaim_privacy_permit_add(pa->gc->account,
-								msn_user_get_passport(pa->user));
+								msn_user_get_passport(pa->user), TRUE);
 		show_got_added(pa->gc, NULL, msn_user_get_passport(pa->user),
 					   msn_user_get_name(pa->user), NULL);
 	}
@@ -156,7 +156,7 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
 		}
 
 		gaim_privacy_deny_add(pa->gc->account,
-							  msn_user_get_passport(pa->user));
+							  msn_user_get_passport(pa->user), TRUE);
 	}
 
 	msn_user_destroy(pa->user);
@@ -699,14 +699,14 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 					   "Moving user from deny list to permit: %s (%s)\n",
 					   passport, friend);
 
-			gaim_privacy_deny_remove(gc->account, passport);
+			gaim_privacy_deny_remove(gc->account, passport, TRUE);
 		}
 
-		gaim_privacy_permit_add(gc->account, passport);
+		gaim_privacy_permit_add(gc->account, passport, TRUE);
 	}
 	else if (!g_ascii_strcasecmp(type, "BL") && user_num != 0) {
 		/* These are users who are not allowed to see our status. */
-		gaim_privacy_deny_add(gc->account, passport);
+		gaim_privacy_deny_add(gc->account, passport, TRUE);
 	}
 	else if (!g_ascii_strcasecmp(type, "RL")) {
 		/* These are users who have us on their contact list. */
