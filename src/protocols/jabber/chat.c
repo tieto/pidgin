@@ -190,6 +190,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	chat->room = g_strdup(room);
 	chat->server = g_strdup(server);
+	chat->handle = g_strdup(handle);
 
 	g_hash_table_insert(js->chats, room_jid, chat);
 

@@ -35,6 +35,7 @@ typedef struct _JabberChat {
 	JabberStream *js;
 	char *room;
 	char *server;
+	char *handle;
 	int id;
 	GaimConversation *conv;
 	gboolean muc;

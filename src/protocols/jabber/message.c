@@ -87,8 +87,13 @@ static void handle_chat(JabberMessage *jm)
 		else
 			serv_got_typing_stopped(jm->js->gc, from);
 	} else {
-		if(jbr && jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
-			jbr->capabilities |= JABBER_CAP_COMPOSING;
+		if(jbr) {
+			if(jm->events & JABBER_MESSAGE_EVENT_COMPOSING)
+				jbr->capabilities |= JABBER_CAP_COMPOSING;
+			if(jbr->thread_id)
+				g_free(jbr->thread_id);
+			jbr->thread_id = g_strdup(jbr->thread_id);
+		}
 		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
 				jm->sent);
 	}
@@ -265,6 +270,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		if(!strcmp(child->name, "subject")) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
+		} else if(!strcmp(child->name, "thread")) {
+			if(!jm->thread_id)
+				jm->thread_id = xmlnode_get_data(child);
 		} else if(!strcmp(child->name, "body")) {
 			if(!jm->body)
 				jm->body = xmlnode_to_str(child, NULL);
@@ -385,6 +393,11 @@ void jabber_message_send(JabberMessage *jm)
 
 	xmlnode_set_attrib(message, "to", jm->to);
 
+	if(jm->thread_id) {
+		child = xmlnode_new_child(message, "thread");
+		xmlnode_insert_data(child, jm->thread_id, -1);
+	}
+
 	if(jm->events || (!jm->body && !jm->xhtml && !jm->subject)) {
 		child = xmlnode_new_child(message, "x");
 		xmlnode_set_attrib(child, "xmlns", "jabber:x:event");
@@ -443,6 +456,8 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	jm->type = JABBER_MESSAGE_CHAT;
 	jm->events = JABBER_MESSAGE_EVENT_COMPOSING;
 	jm->to = g_strdup(who);
+	if(jbr && jbr->thread_id)
+		jm->thread_id = jbr->thread_id;
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
 

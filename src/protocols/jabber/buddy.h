@@ -49,6 +49,7 @@ typedef struct _JabberBuddyResource {
 	int state;
 	char *status;
 	JabberCapabilities capabilities;
+	char *thread_id;
 } JabberBuddyResource;
 
 void jabber_buddy_free(JabberBuddy *jb);

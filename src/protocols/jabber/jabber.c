@@ -1169,6 +1169,27 @@ static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
 	return NULL;
 }
 
+static void jabber_convo_closed(GaimConnection *gc, const char *who)
+{
+	JabberStream *js = gc->proto_data;
+	JabberID *jid;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+
+	if(!(jid = jabber_id_new(who)))
+		return;
+
+	if((jb = jabber_buddy_find(js, who, TRUE)) &&
+			(jbr = jabber_buddy_find_resource(jb, jid->resource))) {
+		if(jbr->thread_id) {
+			g_free(jbr->thread_id);
+			jbr->thread_id = NULL;
+		}
+	}
+
+	jabber_id_free(jid);
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
@@ -1219,7 +1240,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roster_group_change,
 	jabber_roster_group_rename,
 	NULL,
-	NULL, /* convo_closed */
+	jabber_convo_closed,
 	jabber_normalize,
 	NULL, /* set_buddy_icon */
 	NULL, /* remove_group */

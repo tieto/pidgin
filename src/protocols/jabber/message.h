@@ -44,6 +44,7 @@ typedef struct _JabberMessage {
 	char *xhtml;
 	char *password;
 	char *error;
+	char *thread_id;
 	enum {
 		JABBER_MESSAGE_EVENT_COMPOSING = 1 << 1
 	} events;

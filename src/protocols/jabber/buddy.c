@@ -122,6 +122,8 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 	g_free(jbr->name);
 	if(jbr->status)
 		g_free(jbr->status);
+	if(jbr->thread_id)
+		g_free(jbr->thread_id);
 	g_free(jbr);
 }
 
