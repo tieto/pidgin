@@ -29,6 +29,7 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "gtkimhtml.h"
 
 static GtkWidget *about = NULL;
 
@@ -45,11 +46,6 @@ static void version_exit()
 	gtk_main_quit();
 }
 
-
-static void about_click(GtkWidget *w, gpointer m)
-{
-	open_url(NULL, WEBSITE);
-}
 
 char *name()
 {
@@ -71,13 +67,9 @@ void show_about(GtkWidget *w, void *null)
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *fbox;
-	GtkStyle *style;
 	GtkWidget *hbox;
 	GtkWidget *button;
-	GtkWidget *view;
-	GtkTextBuffer *buffer;
-	GtkTextIter iter;
-	GtkTextTag *tag;
+	GtkWidget *text;
 	GtkWidget *sw;
 	GtkWidget *logo;
 
@@ -107,68 +99,77 @@ void show_about(GtkWidget *w, void *null)
 		gtk_container_add(GTK_CONTAINER(frame), fbox);
 		gtk_widget_show(fbox);
 
-		/* Left side, TOP */
-		style = gtk_widget_get_style(about);
-
 		logo = gaim_pixmap(NULL, "logo.png");
 		gtk_box_pack_start(GTK_BOX(fbox), logo, FALSE, FALSE, 0);
 		gtk_widget_show(logo);
 
-		view = gtk_text_view_new ();
-		gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
-		gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(view), FALSE);
-
-		buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (view));
-
-		gtk_text_buffer_set_text(buffer, "", -1);
-		gtk_text_buffer_get_start_iter(buffer, &iter);
-
-		tag = gtk_text_buffer_create_tag(buffer, "title", "weight", PANGO_WEIGHT_BOLD, "scale", PANGO_SCALE_LARGE, NULL);
-		tag = gtk_text_buffer_create_tag(buffer, "email", "scale", PANGO_SCALE_SMALL, "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
-		tag = gtk_text_buffer_create_tag(buffer, "url", "foreground", "blue", "underline", PANGO_UNDERLINE_SINGLE, NULL);
-
-		gtk_text_buffer_insert(buffer, &iter,
-				  _("Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
-				   "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
-				    "It is written using Gtk+ and is licensed under the GPL.\n\n"), -1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "URL: ", -1, "title", NULL);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, WEBSITE "\n\n", -1, "url", NULL);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "IRC: ", -1, "title", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "IRC: #gaim on irc.freenode.net\n", -1);
-
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nActive Developers:\n"), -1, "title", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Rob Flynn (maintainer) ", -1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "rob@marko.net\n", -1, "email", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Sean Egan (coder) ",-1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "bj91704@binghamton.edu\n", -1, "email", NULL);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nCrazy Patch Writers:\n"), -1, "title", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Benjamin Miller\n", -1);
-		gtk_text_buffer_insert(buffer, &iter, "  Decklin Foster\n", -1);
-		gtk_text_buffer_insert(buffer, &iter, "  Nathan Walp\n", -1);
-		gtk_text_buffer_insert(buffer, &iter, "  Mark Doliner\n", -1);
-
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nWin32 Port:\n"), -1, "title", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Herman Bloggs ", -1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "hermanator12002@yahoo.com\n", -1, "email", NULL);
-
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, _("\nRetired Developers:\n"), -1, "title", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Jim Duchek\n", -1);
-		gtk_text_buffer_insert(buffer, &iter, "  Eric Warmenhoven ", -1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "warmenhoven@yahoo.com\n", -1, "email", NULL);
-		gtk_text_buffer_insert(buffer, &iter, "  Mark Spencer (original author) ", -1);
-		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "markster@marko.net\n", -1, "email", NULL);
-
 		sw = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+				GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
+
+		text = gtk_imhtml_new(NULL, NULL);
+		gtk_container_add(GTK_CONTAINER(sw), text);
+		gtk_widget_set_usize(sw, -1, 350);
+		gaim_setup_imhtml(text);
 
 
-		gtk_container_add(GTK_CONTAINER(sw), view);
-		gtk_widget_set_usize(GTK_WIDGET(sw), -1, 350);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				  _("Gaim is a modular Instant Messaging client capable of "
+					  "using AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, "
+					  "Zephyr, and Gadu-Gadu all at once.  It is written using "
+					  "Gtk+ and is licensed under the GPL.<BR><BR>"), -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				"<FONT SIZE=\"3\">URL:</FONT> <A HREF=\"" WEBSITE "\">"
+				WEBSITE "</A><BR><BR>", -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				"<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net"
+				"<BR><BR>", -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+			_("<FONT SIZE=\"3\">Active Developers:</FONT><BR>"), -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+			"  Rob Flynn (maintainer) "
+			"&lt;<A HREF=\"mailto:rob@marko.net\">rob@marko.net</A>&gt;<BR>"
+			"  Sean Egan (coder) "
+			"&lt;<A HREF=\"mailto:bj91704@binghamton.edu\">"
+			"bj91704@binghamton.edu</A>&gt;"
+			"<BR><BR>", -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+			_("<FONT SIZE=\"3\">Crazy Patch Writers:</FONT><BR>"), -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+			"  Benjamin Miller<BR>"
+			"  Decklin Foster<BR>"
+			"  Nathan Walp<BR>"
+			"  Mark Doliner<BR><BR>", -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_("<FONT SIZE=\"3\">Win32 Port:</FONT><BR>"), -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				"  Herman Bloggs "
+				"&lt;<A HREF=\"mailto:hermanator12002@yahoo.com\">"
+				"hermanator12002@yahoo.com</A>&gt;<BR><BR>", -1, 0);
+
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				_("<FONT SIZE=\"3\">Retired Developers:</FONT><BR>"), -1, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(text),
+				"  Jim Duchek<BR>"
+				"  Eric Warmenhoven "
+				"&lt;<A HREF=\"mailto:warmenhoven@yahoo.com\">"
+				"warmenhoven@yahoo.com</A>&gt;<BR>"
+				"  Mark Spencer (original author) "
+				"&lt;<A HREF=\"mailto:markster@marko.net\">"
+				"markster@marko.net</A>&gt;"
+				"<BR><BR>", -1, 0);
+
+		gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
+
+		gtk_widget_show(text);
 		gtk_widget_show(sw);
 
-		gtk_box_pack_start(GTK_BOX(fbox), sw, TRUE, TRUE, 0);
-		gtk_widget_show(view);
 
 		/* Close Button */
 
@@ -197,9 +198,6 @@ void show_about(GtkWidget *w, void *null)
 		/* GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT); */
 		/* gtk_widget_grab_default(button); */
 
-		button = gaim_pixbuf_button_from_stock(_("Web Site"), GTK_STOCK_HOME, GAIM_BUTTON_HORIZONTAL);
-		gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(about_click), NULL);
 		gtk_widget_show(button);
 	}
 
