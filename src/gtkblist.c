@@ -52,6 +52,10 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+#if (GTK_CHECK_VERSION(2,2,0) && !(defined(__APPLE__) && defined(__MACH__)))
+#define WANT_DROP_SHADOW
+#endif
+
 typedef struct
 {
 	GaimAccount *account;
@@ -113,7 +117,7 @@ struct _gaim_gtk_blist_node {
 	gboolean contact_expanded;
 };
 
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
 /* This is based on a patch for drop shadows in GTK menus available at http://www.xfce.org/gtkmenu-shadow/ */
 
@@ -1291,7 +1295,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	g_object_unref (layout);
 	g_free(tooltiptext);
 
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 	shadow_paint(gtkblist, NULL, EAST_SIDE);	
 	shadow_paint(gtkblist, NULL, SOUTH_SIDE);	
 #endif
@@ -1310,7 +1314,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gboolean tooltip_top = FALSE;
 	char *tooltiptext = NULL;
 	struct _gaim_gtk_blist_node *gtknode;
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 	GdkWindowAttr attr;
 #endif
 
@@ -1367,7 +1371,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 			G_CALLBACK(gaim_gtk_blist_paint_tip), node);
 	gtk_widget_ensure_style (gtkblist->tipwindow);
 	
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 	attr.window_type = GDK_WINDOW_TEMP;
 	attr.override_redirect = TRUE;
 	attr.x = gtkblist->tipwindow->allocation.x;
@@ -1430,7 +1434,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 	gtk_widget_show(gtkblist->tipwindow);
 
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 	map_shadow_windows(gtkblist);
 #endif
 
@@ -1446,7 +1450,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 		/* We've left the cell.  Remove the timeout and create a new one below */
 		if (gtkblist->tipwindow) {
 			gtk_widget_destroy(gtkblist->tipwindow);
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 			  gdk_window_set_user_data (gtkblist->east_shadow, NULL);
 			  gdk_window_destroy (gtkblist->east_shadow);
 			  gtkblist->east_shadow = NULL;
@@ -1485,7 +1489,7 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 	}
 	if (gtkblist->tipwindow) {
 		gtk_widget_destroy(gtkblist->tipwindow);
-#if GTK_CHECK_VERSION(2,2,0)
+#ifdef WANT_DROP_SHADOW
 		 gdk_window_set_user_data (gtkblist->east_shadow, NULL);
 			  gdk_window_destroy (gtkblist->east_shadow);
 			  gtkblist->east_shadow = NULL;
