@@ -34,7 +34,6 @@ dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
-
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , ,
 AC_LIBOBJ(getopt)
@@ -469,9 +468,9 @@ elif test "x$enable_gtk2" = "xyes" ; then
 else
 	echo UI Library.................... : GTK+ 1.2
 fi
-if test "x$enable_gtk2" = "xyes" ; then
-	echo Use GdkPixbuf................. : yes
-else
+if test "x$enable_gtk2" = "xno" ; then
+dnl	echo Use GdkPixbuf................. : yes
+dnl else
 	echo Use GdkPixbuf................. : $use_pixbuf
 fi
 echo
