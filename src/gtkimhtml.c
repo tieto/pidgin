@@ -2560,39 +2560,57 @@ void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons
 	g_object_unref(object);
 }
 
-void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gint offset,
-								   gboolean *bold, gboolean *italic,
-								   gboolean *underline)
+static gboolean 
+gtk_imhtml_has_open_tags(GtkIMHtml *imhtml) {
+	if(imhtml->edit.bold && imhtml->edit.bold->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.italic && imhtml->edit.italic->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.underline && imhtml->edit.underline->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.forecolor && imhtml->edit.forecolor->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.backcolor && imhtml->edit.backcolor->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.fontface && imhtml->edit.fontface->end == NULL)
+			return TRUE;
+
+	if(imhtml->edit.sizespan && imhtml->edit.sizespan->end == NULL)
+			return TRUE;
+
+	return FALSE;
+}
+
+void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold,
+								   gboolean *italic, gboolean *underline)
 {
 	GtkTextMark *ins_mark;
-	GtkTextIter ins_iter, adj_iter, end_iter;
+	GtkTextIter ins_iter;
 	GSList *tags;
-	gint position, length, adjusted;
-	
-	/* grab the current cursor position compensate for the way that the
-	 * direction that the cursor was moved so that we get all the tags
-	 * for that current location
-	 */
+
 	ins_mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &ins_iter, ins_mark);
-	position = gtk_text_iter_get_offset(&ins_iter);
-	
-	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end_iter);
-	length = gtk_text_iter_get_offset(&end_iter);
-	
-	adjusted = position + offset;
-	if(offset < 0) { /* moving left or up */
-		if(adjusted <= 0)
-			adjusted = 1;
-	} else if(offset > 0) { /* moving right or down */
-		if(adjusted >= length)
-			adjusted = length - 1;
-	}
-	
-	gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &adj_iter, adjusted);
 
-	/* grab the tags that apply to the cursor location */
-	for(tags = gtk_text_iter_get_tags(&adj_iter);
+	if(gtk_imhtml_has_open_tags(imhtml)) {
+		GtkTextIter end_iter;
+		gint position, length;
+
+		position = gtk_text_iter_get_offset(&ins_iter);
+
+		gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end_iter);
+		length = gtk_text_iter_get_offset(&end_iter);
+
+		if(position == length)
+			gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &ins_iter,
+											   length - 1);
+	}
+
+	for(tags = gtk_text_iter_get_tags(&ins_iter);
 		tags != NULL; tags = tags->next)
 	{
 		GtkTextTag *tag = GTK_TEXT_TAG(tags->data);

@@ -232,7 +232,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml);
 /* Editable stuff */
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable);
 void gtk_imhtml_set_format_functions(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons);
-void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gint offset, gboolean *bold, gboolean *italic, gboolean *underline);
+void gtk_imhtml_get_current_format(GtkIMHtml *imhtml, gboolean *bold, gboolean *italic, gboolean *underline);
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);

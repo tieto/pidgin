@@ -701,46 +701,38 @@ static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   FALSE, toolbar);
 }
-static void update_format_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
-{
+
+static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	gboolean bold, italic, underline;
 	
 	bold = italic = underline = FALSE;
-	gtk_imhtml_get_current_format(imhtml, -1, &bold, &italic, &underline);
+	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
+								  &bold, &italic, &underline);
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
 									   toolbar);
-	
+
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
 									   toolbar);
-	
+
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   underline, toolbar);	
 }
 
-static void cursor_moved_cb(GtkIMHtml *imhtml, GtkMovementStep step,
-							gint change, gboolean selected,
-							GtkIMHtmlToolbar *toolbar)
+static void update_format_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar) {
+	update_buttons(toolbar);
+}
+
+static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *location,
+						GtkTextMark *mark, GtkIMHtmlToolbar *toolbar)
 {
-	gboolean bold, italic, underline;
+	if(mark != gtk_text_buffer_get_insert(buffer))
+		return;
 
-	bold = italic = underline = FALSE;
-	gtk_imhtml_get_current_format(imhtml, change, &bold, &italic, &underline);	
-
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
-									   toolbar);
-	
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
-									   toolbar);
-	
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
-									   underline, toolbar);
+	update_buttons(toolbar);
 }
 
 enum {
@@ -1002,11 +994,11 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(reset_buttons_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
-	g_signal_connect_after(G_OBJECT(imhtml), "move_cursor", G_CALLBACK(cursor_moved_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
 
 	bold = italic = underline = FALSE;
 
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), 0, &bold, &italic, &underline);
+	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
 	
 	if(bold)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
