@@ -95,7 +95,12 @@ AC_TRY_COMPILE([
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
+DYNAMIC_PRPLS=all
 AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="")
+if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
+	DYNAMIC_PRPLS=""
+fi
+
 if test "x$STATIC_PRPLS" = "xall" ; then
 	STATIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
 fi
@@ -135,7 +140,7 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
-AC_ARG_WITH(dynamic_prpls,   [ --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],DYNAMIC_PRPLS="all")
+AC_ARG_WITH(dynamic_prpls,   [ --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
 fi
