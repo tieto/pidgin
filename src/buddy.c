@@ -2092,7 +2092,7 @@ void show_buddy_list()
 	// gaim_new_item(menu, _("Add A Buddy"), GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item_with_pixmap(menu, _("Add A Buddy"), add_small_xpm, GTK_SIGNAL_FUNC(add_buddy_callback));
 	gaim_new_item_with_pixmap(menu, _("Join A Chat"), pounce_small_xpm, GTK_SIGNAL_FUNC(chat_callback));
-	gaim_new_item_with_pixmap(menu, _("New Insant Message"), send_small_xpm, GTK_SIGNAL_FUNC(show_im_dialog));
+	gaim_new_item_with_pixmap(menu, _("New Instant Message"), send_small_xpm, GTK_SIGNAL_FUNC(show_im_dialog));
         gaim_seperator(menu);
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm, GTK_SIGNAL_FUNC(import_callback));
         gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,GTK_SIGNAL_FUNC(export_callback));
