@@ -239,9 +239,6 @@ extern void build_block_list();
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
 
-/* Functions in prpl.c */
-extern void register_dialog();
-
 /* Functions in server.c */
 /* server.c is in desperate need need of a split */
 extern int find_queue_total_by_name(char *);
