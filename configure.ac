@@ -1016,6 +1016,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/napster/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/toc/Makefile
+		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
 		   src/protocols/zephyr/Makefile
 		   gaim.spec
