@@ -1555,7 +1555,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				   "oscar callback for closed connection (1).\n");
 		return;
 	}
-      
+ 
 	od = (OscarData *)gc->proto_data;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
@@ -1586,9 +1586,10 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				}
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
-					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS))) {
-					gaim_debug_error("oscar",
-							   "major connection error\n");
+					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS)))
+				{
+					gaim_debug_error("oscar", "Major connection error.  i.e. "
+						"invalid data was received on the oscar TCP stream\n");
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *c = find_oscar_chat_by_conn(gc, conn);
@@ -1603,7 +1604,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 					c->fd = -1;
 					aim_conn_kill(od->sess, &conn);
 					buf = g_strdup_printf(_("You have been disconnected from chat room %s."), c->name);
-					if (conv) 
+					if (conv)
 						gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_ERROR, time(NULL));
 					else
 						gaim_notify_error(gc, NULL, buf, NULL);
@@ -1706,7 +1707,9 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 	ck[1] = 0x65;
 }
 
-static void oscar_login(GaimAccount *account, GaimStatus *status) {
+static void
+oscar_login(GaimAccount *account, GaimStatus *status)
+{
 	aim_session_t *sess;
 	aim_conn_t *conn;
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -1718,7 +1721,7 @@ static void oscar_login(GaimAccount *account, GaimStatus *status) {
 	primitive = gaim_status_type_get_primitive(status_type);
 
 	gaim_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
-	
+
 	if (primitive == GAIM_STATUS_OFFLINE)
 		return;
 
@@ -1753,8 +1756,7 @@ static void oscar_login(GaimAccount *account, GaimStatus *status) {
 
 	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
 	if (conn == NULL) {
-		gaim_debug_error("oscar",
-				   "internal connection error\n");
+		gaim_debug_error("oscar", "internal connection error\n");
 		gaim_connection_error(gc, _("Unable to login to AIM"));
 		return;
 	}
