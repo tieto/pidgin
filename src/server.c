@@ -154,7 +154,7 @@ void serv_get_away_msg(char *name)
 	struct gaim_connection *g = connections->data;
 
 	if (g->prpl && g->prpl->get_info)
-		(*g->prpl->get_info)(g, name);
+		(*g->prpl->get_away_msg)(g, name);
 }
 
 void serv_get_dir(char *name)
