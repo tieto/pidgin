@@ -1,24 +1,28 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.76cvs:
+	New Features:
 	* WYSIWYG text input
-	* Ability to be "Invisible" on AIM
+	* Ability to be invisible on AIM
 	* Chatroom list support (Tim Ringenbach)
+	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
 	* Improved accessibility support for screen readers and other
 	  accessibility tools (Marc Mulcahy)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
 	* Keyboard access to context menus via Shift+F10 (Marc Mulcahy)
-	* Non-ascii character support in AIM chats (Uli Luckas and Marco Ziech)
+	* Local IP address information can be changed in Preferences
+	  (Tim Ringenbach)
 	* Improved local IP address detection (Tim Ringenbach)
+	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
+	* Tabs now stay green when they are supposed to (Etan Reisner)
+
+	Bug Fixes:
+	* Various buffer overflow fixes (Stefan Esser)
 	* Fixed a bug where only the first user in a chat room list was removed
 	  sometimes when trying to remove a group of users (Tim Ringenbach)
 	* Improved chat parting logic (Tim Ringenbach)
-	* Local IP address information can be changed in Preferences
-	  (Tim Ringenbach)
 	* Yet Another IRC channel user duplication bugfix (Tim Ringenbach)
 	* TCL Plugin API changed
-	* Tabs now stay green when they are supposed to (Etan Reisner)
-	* Offline accounts in account drop-down lists are now greyed (Etan Reisner)
 	* The mobile icon on MSN users is now removed when the person disables
 	  mobile paging (Stu Tomlinson)
 	* Added new MSN error codes and fixed an incorrect one (Stu Tomlinson)
@@ -26,6 +30,8 @@ version 0.76cvs:
 	* Buddy pounces for an account are removed when the account is
 	  deleted (Gary Kramlich)
 	* Various bug and memory leak fixes (Gary Kramlich)
+
+	Translations:
 	* Catalan translation updated (Xan (DXpublica))
 	* Danish translation updated (Morten Brix Pedersen (mbrix))
 	* English (British) translation updated (Luke Ross (lukeross))
