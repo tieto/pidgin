@@ -1296,10 +1296,15 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_string_append_len(newmsg, msg, len);
 	}
 
-	/* XXX - I imagine Paco-Paco will want to do some voodoo with the encoding here */
-	serv_got_im(gc, sn, newmsg->str, imflags, time(NULL));
+	/* Convert to UTF8 */
+	/* (This hasn't been tested very much) */
+	utf8 = gaim_plugin_oscar_decode_im_part(gc->account, sn, encoding, 0x0000, newmsg->str, len);
+	if (utf8 != NULL) {
+		serv_got_im(gc, sn, utf8, imflags, time(NULL));
+		g_free(utf8);
+	}
 
-	/* free up the message */
+	/* free the message */
 	g_string_free(newmsg, TRUE);
 
 	/* unref any images we allocated */
