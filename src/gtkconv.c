@@ -171,8 +171,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtk_imhtml_scroll_to_end((GtkIMHtml *)gtkconv->imhtml);
-
 	/* we only save the new height if the formatting toolbar visibility matches the pref */
 	saveheight = (gtkconv->show_formatting_toolbar == gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
 
