@@ -710,6 +710,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
+	GaimConversation *conv;
 	GSList *chats;
 	char *nick = irc_mask_nick(from);
 
@@ -730,6 +731,12 @@ void irc_msg_nick(struct irc_conn *irc, const char *name, const char *from, char
 			gaim_conv_chat_rename_user(chat, nick, args[0]);
 		chats = chats->next;
 	}
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, nick,
+						   irc->account);
+	if (conv != NULL)
+		gaim_conversation_set_name(conv, args[0]);
+
 	g_free(nick);
 }
 
