@@ -17,6 +17,11 @@ void reverse(char **who, char **message, void *m) {
 	 * the text of the message (HTML and all) will be reversed. */
 	int i, l;
 	char tmp;
+
+	/* this check is necessary in case bad plugins do bad things */
+	if (message == NULL || *message == NULL)
+		return;
+
 	l = strlen(*message);
 
 	if (!strcmp(*who, current_user->username))
