@@ -3210,6 +3210,10 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 	static struct font_state *current = NULL,
 	 *tmp;
 	static struct font_state def_state = { 3, 0, 0, "", NULL, NULL, NULL };
+	gboolean scrolldown = TRUE;
+
+	if (html->vadj->upper > (html->vadj->value + html->vadj->page_size))
+		scrolldown = FALSE;
 
 	if (text == NULL) {
 		bold = 0;
@@ -3699,7 +3703,8 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 
 	gdk_window_get_size(html->html_area, NULL, &height);
 	area.height = height;
-	gtk_adjustment_set_value(html->vadj, html->vadj->upper - area.height);
+	if (scrolldown)
+		gtk_adjustment_set_value(html->vadj, html->vadj->upper - area.height);
 
 	return;
 }
