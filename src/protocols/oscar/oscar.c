@@ -82,8 +82,7 @@ struct oscar_data {
 	guint cnpa;
 	guint paspa;
 
-	int create_exchange;
-	char *create_name;
+	GSList *create_rooms;
 
 	gboolean conf;
 	gboolean reqemail;
@@ -100,6 +99,11 @@ struct oscar_data {
 	gboolean killme;
 	gboolean icq;
 	GSList *evilhack;
+};
+
+struct create_room {
+	char *name;
+	int exchange;
 };
 
 struct chat_connection {
@@ -365,10 +369,12 @@ static void oscar_callback(gpointer data, gint source,
 						gaim_input_remove(odata->cnpa);
 					odata->cnpa = 0;
 					debug_printf("removing chatnav input watcher\n");
-					if (odata->create_exchange) {
-						odata->create_exchange = 0;
-						g_free(odata->create_name);
-						odata->create_name = NULL;
+					while (odata->create_rooms) {
+						struct create_room *cr = odata->create_rooms->data;
+						g_free(cr->name);
+						odata->create_rooms =
+							g_slist_remove(odata->create_rooms, cr);
+						g_free(cr);
 						do_error_dialog(_("Chat is currently unavailable"),
 								_("Gaim - Chat"));
 					}
@@ -446,7 +452,6 @@ static void oscar_login(struct aim_user *user) {
 	char buf[256];
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct oscar_data *odata = gc->proto_data = g_new0(struct oscar_data, 1);
-	odata->create_exchange = 0;
 
 	if (isdigit(*user->username)) {
 		odata->icq = TRUE;
@@ -526,8 +531,12 @@ static void oscar_close(struct gaim_connection *gc) {
 		g_free(odata->evilhack->data);
 		odata->evilhack = g_slist_remove(odata->evilhack, odata->evilhack->data);
 	}
-	if (odata->create_name)
-		g_free(odata->create_name);
+	while (odata->create_rooms) {
+		struct create_room *cr = odata->create_rooms->data;
+		g_free(cr->name);
+		odata->create_rooms = g_slist_remove(odata->create_rooms, cr);
+		g_free(cr);
+	}
 	if (odata->email)
 		g_free(odata->email);
 	if (odata->newp)
@@ -1680,13 +1689,13 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			debug_printf("chat info: \tExchange List: (%d total)\n", exchangecount);
 			for (i = 0; i < exchangecount; i++)
 				debug_printf("chat info: \t\t%d\n", exchanges[i].number);
-			if (odata->create_exchange) {
-				debug_printf("creating room %s\n", odata->create_name);
-				aim_chatnav_createroom(sess, fr->conn, odata->create_name,
-						odata->create_exchange);
-				odata->create_exchange = 0;
-				g_free(odata->create_name);
-				odata->create_name = NULL;
+			while (odata->create_rooms) {
+				struct create_room *cr = odata->create_rooms->data;
+				debug_printf("creating room %s\n", cr->name);
+				aim_chatnav_createroom(sess, fr->conn, cr->name, cr->exchange);
+				g_free(cr->name);
+				odata->create_rooms = g_slist_remove(odata->create_rooms, cr);
+				g_free(cr);
 			}
 			}
 			break;
@@ -2452,9 +2461,11 @@ static void oscar_join_chat(struct gaim_connection *g, GList *data) {
 		aim_chatnav_createroom(odata->sess, cur, name, *exchange);
 	} else {
 		/* this gets tricky */
+		struct create_room *cr = g_new0(struct create_room, 1);
 		debug_printf("chatnav does not exist, opening chatnav\n");
-		odata->create_exchange = *exchange;
-		odata->create_name = g_strdup(name);
+		cr->exchange = *exchange;
+		cr->name = g_strdup(name);
+		odata->create_rooms = g_slist_append(odata->create_rooms, cr);
 		aim_reqservice(odata->sess, odata->conn, AIM_CONN_TYPE_CHATNAV);
 	}
 }
