@@ -47,7 +47,11 @@
 #ifdef _WIN32
 # define PLUGIN_EXT ".dll"
 #else
+#ifdef __hpux
+# define PLUGIN_EXT ".sl"
+#else
 # define PLUGIN_EXT ".so"
+#endif
 #endif
 
 static GList *loaded_plugins = NULL;
