@@ -388,8 +388,6 @@ extern void show_debug(GtkObject *);
 #if HAVE_SIGNAL_H
 void sighandler(int sig)
 {
-	debug_printf("caught signal %d\n", sig);
-	gtkspell_stop();
 	switch (sig) {
 	case SIGSEGV:
 		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
@@ -402,6 +400,8 @@ void sighandler(int sig)
 		abort();
 		break;
 	default:
+		gtkspell_stop();
+		debug_printf("caught signal %d\n", sig);
 		if (gtk_main_level())
 			gtk_main_quit();
 		exit(0);
