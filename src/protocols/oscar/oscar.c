@@ -1591,7 +1591,7 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 		 * -- wtm */
 		struct sigaction act;
 		act.sa_handler = oscar_sendfile_timeout;
-		act.sa_flags = SA_ONESHOT;
+		act.sa_flags = SA_RESETHAND;
 		sigemptyset (&act.sa_mask);
 		sigaction(SIGALRM, &act, NULL);
 		alarm(OFT_TIMEOUT);
