@@ -263,7 +263,6 @@ void join_chat()
 		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
 				   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
 		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
-		aol_icon(joinchat->window);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
@@ -455,7 +454,6 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		gtk_window_set_focus(GTK_WINDOW(invite), GTK_WIDGET(GTK_COMBO(inviteentry)->entry));
 		gtk_container_add(GTK_CONTAINER(invite), vbox);
 
-		aol_icon(invite->window);
 
 	}
 	gtk_widget_show(invite);
@@ -1184,7 +1182,6 @@ void show_new_buddy_chat(struct conversation *b)
 			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
-			aol_icon(win->window);
 			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Group Chats"));
 			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
@@ -1230,7 +1227,6 @@ void show_new_buddy_chat(struct conversation *b)
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 		gtk_container_border_width(GTK_CONTAINER(win), 10);
 		gtk_widget_realize(win);
-		aol_icon(win->window);
 		g_snprintf(buf, sizeof(buf), "Gaim - %s (chat)", b->name);
 		gtk_window_set_title(GTK_WINDOW(win), buf);
 		gtk_signal_connect(GTK_OBJECT(win), "destroy", GTK_SIGNAL_FUNC(close_callback), b);

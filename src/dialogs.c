@@ -71,8 +71,6 @@
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
 
-#include "pixmaps/aimicon.xpm"
-
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 #include "pixmaps/dt_icon.xpm"
@@ -414,7 +412,6 @@ void show_warn_dialog(struct gaim_connection *gc, char *who)
 			   GTK_SIGNAL_FUNC(destroy_dialog), w->window);
 	gtk_signal_connect(GTK_OBJECT(w->window), "delete_event", GTK_SIGNAL_FUNC(free_warn_data), w);
 	gtk_widget_realize(w->window);
-	aol_icon(w->window->window);
 
 	fbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(w->window), fbox);
@@ -607,7 +604,6 @@ GtkWidget *do_error_dialog(const char *primary, const char *secondary, int type)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	gtk_widget_show(hbox);
-	aol_icon(d->window);
 
 	gtk_widget_show(d);
 	return d;
@@ -700,7 +696,6 @@ void show_ee_dialog(int ee)
 
 	gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), eedialog);
 	gtk_widget_realize(eedialog);
-	aol_icon(eedialog->window);
 
 	gtk_widget_show(eedialog);
 }
@@ -723,7 +718,6 @@ void show_im_dialog()
 		gtk_signal_connect(GTK_OBJECT(imdialog), "destroy",
 				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
 		gtk_widget_realize(imdialog);
-		aol_icon(imdialog->window);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
@@ -861,7 +855,6 @@ void show_info_dialog()
 	gtk_window_set_title(GTK_WINDOW(info->window), _("Gaim - Get User Info"));
 	gtk_widget_grab_focus(info->entry);
 
-	aol_icon(info->window->window);
 	gtk_widget_show_all(info->window);
 }
 
@@ -1003,7 +996,6 @@ void show_add_group(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(a->window), frame);
 	gtk_container_set_border_width(GTK_CONTAINER(a->window), 5);
 	gtk_widget_realize(a->window);
-	aol_icon(a->window->window);
 
 	gtk_widget_show(a->window);
 }
@@ -1084,7 +1076,6 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	gtk_window_set_title(GTK_WINDOW(a->window), _("Gaim - Add Buddy"));
 
 	gtk_widget_realize(a->window);
-	aol_icon(a->window->window);
 	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
 	gtk_signal_connect(GTK_OBJECT(a->window), "destroy", GTK_SIGNAL_FUNC(free_dialog), a);
 	dialogwindows = g_list_prepend(dialogwindows, a->window);
@@ -1427,7 +1418,6 @@ void show_privacy_options()
 	gtk_window_set_title(GTK_WINDOW(pwin), _("Gaim - Privacy"));
 	gtk_signal_connect(GTK_OBJECT(pwin), "destroy", GTK_SIGNAL_FUNC(destroy_privacy), NULL);
 	gtk_widget_realize(pwin);
-	aol_icon(pwin->window);
 
 	gtk_widget_set_usize(pwin, 0, 400);
 
@@ -1692,7 +1682,6 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - New Buddy Pounce"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -1967,7 +1956,6 @@ void show_set_dir(struct gaim_connection *gc)
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set Dir Info"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	fbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(b->window), fbox);
@@ -2152,7 +2140,6 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Password Change"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 
 	fbox = gtk_vbox_new(FALSE, 5);
@@ -2251,7 +2238,6 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -2355,7 +2341,6 @@ void g_show_info_text(struct gaim_connection *gc, char *who, int away, char *inf
 		gtk_container_border_width(GTK_CONTAINER(b->window), 5);
 		gtk_widget_realize(GTK_WIDGET(b->window));
 		gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(info_dlg_free), b);
-		aol_icon(b->window->window);
 
 		bbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_add(GTK_CONTAINER(b->window), bbox);
@@ -2545,7 +2530,6 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 	gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
 	gtk_container_add(GTK_CONTAINER(p->window), frame);
 	gtk_widget_realize(p->window);
-	aol_icon(p->window->window);
 
 	gtk_widget_show(p->window);
 }
@@ -2812,7 +2796,6 @@ void show_find_info(struct gaim_connection *gc)
 	gtk_container_add(GTK_CONTAINER(b->window), fbox);
 	gtk_container_border_width(GTK_CONTAINER(b->window), 5);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	gtk_widget_show(b->window);
 }
@@ -2833,7 +2816,6 @@ void show_find_email(struct gaim_connection *gc)
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, TRUE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "find_email", "Gaim");
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Find Buddy By Email"));
@@ -2982,7 +2964,6 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 		b->toggle = linky;
 		b->entry = c->entry;
 		gtk_widget_realize(c->link_dialog);
-		aol_icon(c->link_dialog->window);
 
 	}
 
@@ -3100,7 +3081,6 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(fgcseld)->ok_button), "clicked",
 				   GTK_SIGNAL_FUNC(apply_color_dlg), (void *)1);
 		gtk_widget_realize(fgcseld);
-		aol_icon(fgcseld->window);
 		gtk_widget_show(fgcseld);
 		gdk_window_raise(fgcseld->window);
 		return;
@@ -3125,7 +3105,6 @@ void show_fgcolor_dialog(struct conversation *c, GtkWidget *color)
 				   "clicked", GTK_SIGNAL_FUNC(cancel_fgcolor), c);
 
 		gtk_widget_realize(c->fg_color_dialog);
-		aol_icon(c->fg_color_dialog->window);
 	}
 
 	gtk_widget_show(c->fg_color_dialog);
@@ -3154,7 +3133,6 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 		gtk_signal_connect(GTK_OBJECT(GTK_COLOR_SELECTION_DIALOG(bgcseld)->ok_button), "clicked",
 				   GTK_SIGNAL_FUNC(apply_color_dlg), (void *)2);
 		gtk_widget_realize(bgcseld);
-		aol_icon(bgcseld->window);
 		gtk_widget_show(bgcseld);
 		gdk_window_raise(bgcseld->window);
 		return;
@@ -3179,7 +3157,6 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 				   "clicked", GTK_SIGNAL_FUNC(cancel_bgcolor), c);
 
 		gtk_widget_realize(c->bg_color_dialog);
-		aol_icon(c->bg_color_dialog->window);
 	}
 
 	gtk_widget_show(c->bg_color_dialog);
@@ -3259,7 +3236,6 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 		gtk_signal_connect(GTK_OBJECT(GTK_FONT_SELECTION_DIALOG(fontseld)->ok_button), "clicked",
 				   GTK_SIGNAL_FUNC(apply_font_dlg), fontseld);
 		gtk_widget_realize(fontseld);
-		aol_icon(fontseld->window);
 		gtk_widget_show(fontseld);
 		gdk_window_raise(fontseld->window);
 		return;
@@ -3291,7 +3267,6 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 
 		gtk_widget_realize(c->font_dialog);
 
-		aol_icon(c->font_dialog->window);
 	}
 	gtk_widget_show(c->font_dialog);
 	gdk_window_raise(c->font_dialog->window);
@@ -3510,7 +3485,6 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_signal_connect(GTK_OBJECT(ca->window), "delete_event",
 			   GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 	gtk_widget_realize(ca->window);
-	aol_icon(ca->window->window);
 
 	tbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(ca->window), tbox);
@@ -3870,7 +3844,6 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_container_add(GTK_CONTAINER(aliasdlg), frame);
 	gtk_container_set_border_width(GTK_CONTAINER(aliasdlg), 5);
 	gtk_widget_realize(aliasdlg);
-	aol_icon(aliasdlg->window);
 
 	gtk_widget_show(aliasdlg);
 }
@@ -3949,7 +3922,6 @@ static void show_save_log(GtkWidget *w, gchar *name)
 	gtk_object_set_user_data(GTK_OBJECT(filesel), name);
 
 	gtk_widget_realize(filesel);
-	aol_icon(filesel->window);
 	gtk_widget_show(filesel);
 
 	return;
@@ -3991,7 +3963,6 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, TRUE);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
 	gtk_widget_realize(window);
-	aol_icon(window->window);
 
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), box);
@@ -4159,7 +4130,6 @@ void show_log(char *nm)
 	block = gtk_signal_connect(GTK_OBJECT(window), "delete_event",
 				   GTK_SIGNAL_FUNC(dont_destroy), window);
 	gtk_widget_realize(window);
-	aol_icon(window->window);
 
 	layout = gtk_imhtml_new(NULL, NULL);
 	bbox = gtk_hbox_new(FALSE, 0);
@@ -4354,7 +4324,6 @@ void show_rename_group(GtkWidget *unused, struct group *g)
 		gtk_signal_connect(GTK_OBJECT(rename_dialog), "destroy",
 				   GTK_SIGNAL_FUNC(destroy_dialog), rename_dialog);
 		gtk_widget_realize(rename_dialog);
-		aol_icon(rename_dialog->window);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
@@ -4460,7 +4429,6 @@ void show_rename_buddy(GtkWidget *unused, struct buddy *b)
 		gtk_signal_connect(GTK_OBJECT(rename_bud_dialog), "destroy",
 				   GTK_SIGNAL_FUNC(destroy_dialog), rename_bud_dialog);
 		gtk_widget_realize(rename_bud_dialog);
-		aol_icon(rename_bud_dialog->window);
 
 		mainbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
@@ -4578,21 +4546,6 @@ void load_perl_script()
 }
 
 #endif /* USE_PERL */
-
-static GdkPixmap *icon_pm = NULL;
-static GdkBitmap *icon_bm = NULL;
-
-void aol_icon(GdkWindow *w)
-{
-#ifndef _WIN32
-	if (icon_pm == NULL) {
-		icon_pm = gdk_pixmap_create_from_xpm_d(w, &icon_bm, NULL, (gchar **)aimicon_xpm);
-	}
-	gdk_window_set_icon(w, NULL, icon_pm, icon_bm);
-	if (mainwindow)
-		gdk_window_set_group(w, mainwindow->window);
-#endif
-}
 
 GtkWidget *pixbuf_button(char *text, char *iconfile)
 {
@@ -5144,7 +5097,6 @@ void show_multi_entry_dialog(gpointer data)
 	/* Clean up if user dismisses window via window manager! */
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy", GTK_SIGNAL_FUNC(b->cancel), (gpointer) b);
 	gtk_widget_realize(b->window);
-	aol_icon(b->window->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER (b->window), vbox);

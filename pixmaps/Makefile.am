@@ -4,7 +4,6 @@ EXTRA_DIST =	ab.xpm				\
 		add.xpm				\
 		add_small.xpm			\
 		admin_icon.xpm			\
-		aimicon.xpm			\
 		angel.xpm			\
 		arrow_down.xpm			\
 		arrow_right.xpm			\
@@ -45,7 +44,6 @@ EXTRA_DIST =	ab.xpm				\
 		fontface2.xpm			\
 		free_icon.xpm			\
 		gaim.png			\
-		gaim.xpm			\
 		gaim_error.png			\
 		gaim_info.png			\
 		gaim_question.png		\

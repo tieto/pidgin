@@ -2767,7 +2767,6 @@ void show_conv(struct conversation *c)
 			gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, FALSE);
 			gtk_container_border_width(GTK_CONTAINER(win), 0);
 			gtk_widget_realize(win);
-			aol_icon(win->window);
 			gtk_window_set_title(GTK_WINDOW(win), _("Gaim - Conversations"));
 			gtk_signal_connect(GTK_OBJECT(win), "delete_event",
 					   GTK_SIGNAL_FUNC(delete_all_convo), NULL);
@@ -2815,7 +2814,6 @@ void show_conv(struct conversation *c)
 		gtk_window_set_policy(GTK_WINDOW(win), TRUE, TRUE, TRUE);
 		gtk_container_border_width(GTK_CONTAINER(win), 10);
 		gtk_widget_realize(win);
-		aol_icon(win->window);
 		gtk_signal_connect(GTK_OBJECT(win), "delete_event",
 				   GTK_SIGNAL_FUNC(delete_event_convo), c);
 	}

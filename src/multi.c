@@ -756,7 +756,6 @@ static void show_acct_mod(struct aim_user *a)
 	u->mod = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_wmclass(GTK_WINDOW(u->mod), "account", "Gaim");
 	gtk_widget_realize(u->mod);
-	aol_icon(u->mod->window);
 	gtk_window_set_title(GTK_WINDOW(u->mod), _("Gaim - Modify Account"));
 	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
 	gtk_signal_connect(GTK_OBJECT(u->mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
@@ -871,7 +870,6 @@ static void do_pass_dlg(struct aim_user *u)
 	gtk_container_border_width(GTK_CONTAINER(p->win), 5);
 	gtk_signal_connect(GTK_OBJECT(p->win), "destroy", GTK_SIGNAL_FUNC(pass_des), p);
 	gtk_widget_realize(p->win);
-	aol_icon(p->win->window);
 
 	frame = gtk_frame_new(_("Enter Password"));
 	gtk_container_add(GTK_CONTAINER(p->win), frame);
@@ -1014,7 +1012,6 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_window_set_title(GTK_WINDOW(acctedit), _("Gaim - Account Editor"));
 	gtk_window_set_wmclass(GTK_WINDOW(acctedit), "accounteditor", "Gaim");
 	gtk_widget_realize(acctedit);
-	aol_icon(acctedit->window);
 	gtk_widget_set_usize(acctedit, -1, 200);
 	gtk_signal_connect(GTK_OBJECT(acctedit), "destroy", GTK_SIGNAL_FUNC(delete_acctedit), W);
 
@@ -1314,7 +1311,6 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
 		gtk_window_set_title (GTK_WINDOW (meter_win->window), "Gaim Account Signon");
 		gtk_widget_realize(meter_win->window);
-		aol_icon(meter_win->window->window);
 		
 		vbox = gtk_vbox_new (FALSE, 0);
 		gtk_container_add (GTK_CONTAINER (meter_win->window), GTK_WIDGET (vbox));

@@ -95,7 +95,6 @@ void show_about(GtkWidget *w, void *null)
 		gtk_window_set_wmclass(GTK_WINDOW(about), "about", "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(about), FALSE, TRUE, TRUE);
 		gtk_widget_realize(about);
-		aol_icon(about->window);
 
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);

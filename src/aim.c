@@ -226,7 +226,7 @@ void show_login()
 	GList *tmp;
 
 	if (mainwindow) {
-		gtk_widget_show(mainwindow);
+		gtk_window_present(GTK_WINDOW(mainwindow));
 		return;
 	}
 
@@ -237,7 +237,6 @@ void show_login()
 			   GTK_SIGNAL_FUNC(cancel_logon), mainwindow);
 	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Gaim - Login"));
 	gtk_widget_realize(mainwindow);
-	aol_icon(mainwindow->window);
 	gdk_window_set_group(mainwindow->window, mainwindow->window);
 
 	table = gtk_table_new(8, 2, FALSE);
@@ -492,6 +491,18 @@ static int ui_main()
 	GIOChannel *channel;
 	int UI_fd;
 	char name[256];
+	GList *icons = NULL;
+	GdkPixbuf *icon = NULL;
+
+	/* use the nice PNG icon for all the windows */
+	icon = gdk_pixbuf_new_from_file(DATADIR "/pixmaps/gaim.png",NULL);
+	if (icon) {
+		icons = g_list_append(icons,icon);
+		gtk_window_set_default_icon_list(icons);
+		g_object_unref(G_OBJECT(icon));
+	} else {
+		debug_printf("Failed to load icon from %s/pixmaps/gaim.png\n",DATADIR);
+	}
 
 	g_snprintf(name, sizeof(name), "%s/gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), getpid());
 
@@ -712,12 +723,9 @@ int main(int argc, char *argv[])
 		show_usage(0, argv[0]);
 		return 0;
 	}
-	/* show version window */
+	/* show version message */
 	if (opt_version) {
-		gtk_init(&argc, &argv);
-		load_prefs();
-		show_about(0, (void *)2);
-		gtk_main();
+		printf("Gaim %s\n",VERSION);
 		return 0;
 	}
 

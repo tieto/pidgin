@@ -188,7 +188,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 			gtk_window_set_title(GTK_WINDOW(imaway), _("Gaim - Away!"));
 		gtk_signal_connect(GTK_OBJECT(imaway), "destroy", GTK_SIGNAL_FUNC(do_im_back), imaway);
 		gtk_widget_realize(imaway);
-		aol_icon(imaway->window);
 
 		vbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_add(GTK_CONTAINER(imaway), vbox);

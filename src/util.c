@@ -770,7 +770,8 @@ void show_usage(int mode, char *name)
 {
 	switch (mode) {
 	case 0:		/* full help text */
-		printf("Usage: %s [OPTION]...\n\n"
+		printf("Gaim %s\n"
+		       "Usage: %s [OPTION]...\n\n"
 		       "  -a, --acct          display account editor window\n"
 		       "  -w, --away[=MESG]   make away on signon (optional argument MESG specifies\n"
 		       "                      name of away message to use)\n"
@@ -779,11 +780,11 @@ void show_usage(int mode, char *name)
 		       "  -u, --user=NAME     use account NAME\n"
 		       "  -f, --file=FILE     use FILE as config\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
-		       "  -v, --version       display version information window\n"
-		       "  -h, --help          display this help and exit\n", name);
+		       "  -v, --version       display the current version and exit\n"
+		       "  -h, --help          display this help and exit\n", VERSION, name);
 		break;
 	case 1:		/* short message */
-		printf("Try `%s -h' for more information.\n", name);
+		printf("Gaim %s. Try `%s -h' for more information.\n", VERSION, name);
 		break;
 	}
 }

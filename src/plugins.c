@@ -193,7 +193,6 @@ void show_plugins(GtkWidget *w, gpointer data)
 	GAIM_DIALOG(plugwindow);
 	gtk_window_set_wmclass(GTK_WINDOW(plugwindow), "plugins", "Gaim");
 	gtk_widget_realize(plugwindow);
-	aol_icon(plugwindow->window);
 	gtk_window_set_title(GTK_WINDOW(plugwindow), _("Gaim - Plugins"));
 	gtk_signal_connect(GTK_OBJECT(plugwindow), "destroy", GTK_SIGNAL_FUNC(hide_plugins), NULL);
 

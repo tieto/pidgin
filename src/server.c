@@ -887,7 +887,6 @@ void serv_got_chat_invite(struct gaim_connection *g, char *name, char *who, char
 
 	d = gtk_dialog_new();
 	gtk_widget_realize(d);
-	aol_icon(d->window);
 
 
 	label = gtk_label_new(buf2);
@@ -1069,7 +1068,6 @@ void serv_got_popup(char *msg, char *u, int wid, int hei)
 	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_popup), window);
 	gtk_object_set_user_data(GTK_OBJECT(window), url);
 	gtk_widget_realize(window);
-	aol_icon(window->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), vbox);

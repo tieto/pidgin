@@ -2661,7 +2661,6 @@ void show_buddy_list()
 	gtk_window_set_wmclass(GTK_WINDOW(blist), "buddy_list", "Gaim");
 
 	gtk_widget_realize(blist);
-	aol_icon(blist->window);
 
 	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
 

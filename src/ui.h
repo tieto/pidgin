@@ -448,7 +448,6 @@ extern void set_color_selection(GtkWidget *selection, GdkColor color);
 extern void show_rename_group(GtkWidget *, struct group *);
 extern void show_rename_buddy(GtkWidget *, struct buddy *);
 extern void load_perl_script();
-extern void aol_icon(GdkWindow *);
 extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
 extern GtkWidget *pixbuf_button(char *, char *);

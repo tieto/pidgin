@@ -144,7 +144,6 @@ void do_ask_dialog(const char *text, void *data, void *doit, void *dont)
 	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
 	gtk_window_set_title(GTK_WINDOW(window), _("Accept?"));
 	gtk_widget_realize(window);
-	aol_icon(window->window);
 	if (dont)
 		gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(dont), data);
 
@@ -211,7 +210,6 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	gtk_window_set_title(GTK_WINDOW(window), _("Gaim - Prompt"));
 	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_prompt), p);
 	gtk_widget_realize(window);
-	aol_icon(window->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -431,7 +429,6 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	gtk_window_set_title(GTK_WINDOW(mn->email_win), _("Gaim - New Mail"));
 	gtk_signal_connect(GTK_OBJECT(mn->email_win), "destroy", GTK_SIGNAL_FUNC(des_email_win), mn);
 	gtk_widget_realize(mn->email_win);
-	aol_icon(mn->email_win->window);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -670,7 +667,6 @@ void register_dialog()
 	gtk_window_set_title(GTK_WINDOW(regdlg), _("Gaim - Registration"));
 	gtk_window_set_wmclass(GTK_WINDOW(regdlg), "register", "Gaim");
 	gtk_widget_realize(regdlg);
-	aol_icon(regdlg->window);
 	gtk_signal_connect(GTK_OBJECT(regdlg), "destroy", GTK_SIGNAL_FUNC(delete_regdlg), NULL);
 
 	vbox = gtk_vbox_new(FALSE, 5);
