@@ -1072,6 +1072,7 @@ faim_export int aim_ssi_seticon(aim_session_t *sess, fu8_t *iconsum, fu16_t icon
  *
  * @param sess The oscar session.
  * @param presence I think it's a bitmask, but I only know what one of the bits is:
+ *        0x00000002 - Hide wireless?
  *        0x00000400 - Allow others to see your idle time
  * @return Return 0 if no errors, otherwise return the error number.
  */
