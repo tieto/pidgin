@@ -1024,8 +1024,6 @@ gaim_conversation_destroy(struct gaim_conversation *conv)
 		if (conv->u.chat->topic != NULL)
 			g_free(conv->u.chat->topic);
 
-		g_free(conv->u.chat->who);
-		g_free(conv->u.chat->topic);
 		g_free(conv->u.chat);
 
 		chats = g_list_remove(chats, conv);
