@@ -36,7 +36,7 @@ struct _GaimGtkStatusSelectorPrivate
 {
 	GtkWidget *combo;
 	GtkWidget *entry;
-	GtkWidget *sw;
+	GtkWidget *frame;
 
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *model;
@@ -111,7 +111,8 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 {
 	GtkWidget *combo;
 	GtkWidget *entry;
-	GtkWidget *sw;
+	GtkWidget *toolbar;
+	GtkWidget *frame;
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkCellRenderer *renderer;
 #endif
@@ -150,23 +151,12 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 	gtk_widget_show(combo);
 	gtk_box_pack_start(GTK_BOX(selector), combo, FALSE, FALSE, 0);
 
-	selector->priv->sw = sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(selector), sw, TRUE, TRUE, 0);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER,
-								   GTK_POLICY_AUTOMATIC);
-
-	selector->priv->entry = entry = gtk_imhtml_new(NULL, NULL);
-	gtk_widget_show(entry);
-	gtk_container_add(GTK_CONTAINER(sw), entry);
-	gtk_widget_set_name(entry, "gaim_gtk_status_selector_imhtml");
-	gtk_imhtml_set_editable(GTK_IMHTML(entry), TRUE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(entry), GTK_WRAP_WORD_CHAR);
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
+	frame = gaim_gtk_create_imhtml(TRUE, &entry, &toolbar);
+	selector->priv->entry = entry;
+	selector->priv->frame = frame;
+	gtk_widget_set_name(entry, "gaim_gtkstatusselector_imhtml");
+	gtk_box_pack_start(GTK_BOX(selector), frame, TRUE, TRUE, 0);
+	gtk_widget_hide(toolbar);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						selector, GAIM_CALLBACK(signed_on_off_cb),
@@ -215,7 +205,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 {
 	GtkTreeIter iter;
 	const char *status_type_id;
-	char *text;
+	const char *text;
 	GList *l;
 
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(selector->priv->combo),
@@ -229,11 +219,18 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 					   COLUMN_STATUS_TYPE_ID, &status_type_id,
 					   -1);
 
-	if (!strcmp(text, _("New status")))
+	if (status_type_id == NULL)
+	{
+		if (!strcmp(text, _("New Status")))
+		{
+			/* TODO */
+		}
+	}
+	else if (!strcmp(status_type_id, "available"))
 	{
 		/* TODO */
 	}
-	else
+	else if (!strcmp(status_type_id, "away"))
 	{
 		const char *message = "";
 		GtkTextBuffer *buffer;
@@ -274,9 +271,9 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 		}
 
 		if (allow_message)
-			gtk_widget_show(selector->priv->sw);
+			gtk_widget_show(selector->priv->frame);
 		else
-			gtk_widget_hide(selector->priv->sw);
+			gtk_widget_hide(selector->priv->frame);
 	}
 }
 
@@ -404,6 +401,8 @@ rebuild_list(GaimGtkStatusSelector *selector)
 				 load_icon("online.png"));
 		add_item(selector, "away", _("Away"), load_icon("away.png"));
 	}
+
+	/* TODO: Add saved statuses here? */
 
 	add_item(selector, NULL, _("New Status"),
 			 gtk_widget_render_icon(GTK_WIDGET(selector), GTK_STOCK_NEW,
