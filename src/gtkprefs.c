@@ -2424,12 +2424,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/plugins/gtk/docklet");
 	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 
-	/* Accounts Dialog */
-	gaim_prefs_add_none("/gaim/gtk/accounts");
-	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 250);
-
 	/* Away Queueing */
 	gaim_prefs_add_none("/gaim/gtk/away");
 	gaim_prefs_add_bool("/gaim/gtk/away/queue_messages", FALSE);

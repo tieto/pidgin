@@ -2533,7 +2533,13 @@ gaim_gtk_account_get_handle() {
 }
 
 void
-gaim_gtk_account_init(void) {
+gaim_gtk_account_init(void)
+{
+	gaim_prefs_add_none("/gaim/gtk/accounts");
+	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
+	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
+	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 250);
+
 	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
@@ -2541,6 +2547,7 @@ gaim_gtk_account_init(void) {
 }
 
 void
-gaim_gtk_account_uninit(void) {
+gaim_gtk_account_uninit(void)
+{
 	gaim_signals_unregister_by_instance(gaim_gtk_account_get_handle());
 }
