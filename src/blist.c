@@ -396,8 +396,6 @@ void  gaim_blist_server_alias_buddy (GaimBuddy *buddy, const char *alias)
 
 	if (conv)
 		gaim_conversation_autoset_title(conv);
-
-	gaim_blist_save();
 }
 
 void gaim_blist_rename_group(GaimGroup *group, const char *name)
@@ -1937,7 +1935,7 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 {
 	GaimAccount *account;
 	GaimBuddy *buddy;
-	char *name = NULL, *alias = NULL, *server_alias = NULL;
+	char *name = NULL, *alias = NULL;
 	const char *acct_name, *proto, *protocol;
 	xmlnode *x;
 
@@ -1962,9 +1960,6 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	if((x = xmlnode_get_child(bnode, "alias")))
 		alias = xmlnode_get_data(x);
 
-	if((x = xmlnode_get_child(bnode, "server_alias")))
-		server_alias = xmlnode_get_data(x);
-
 	buddy = gaim_buddy_new(account, name, alias);
 	gaim_blist_add_buddy(buddy, contact, group,
 			gaim_blist_get_last_child((GaimBlistNode*)contact));
@@ -1978,9 +1973,6 @@ static void parse_buddy(GaimGroup *group, GaimContact *contact, xmlnode *bnode)
 	g_free(name);
 	if(alias)
 		g_free(alias);
-
-	if(server_alias)
-		g_free(server_alias);
 }
 
 static void parse_contact(GaimGroup *group, xmlnode *cnode)
@@ -2310,13 +2302,10 @@ static void blist_print_chat_components(gpointer key, gpointer data,
 static void print_buddy(FILE *file, GaimBuddy *buddy) {
 	char *bud_name = g_markup_escape_text(buddy->name, -1);
 	char *bud_alias = NULL;
-	char *bud_server_alias = NULL;
 	char *acct_name = g_markup_escape_text(buddy->account->username, -1);
 	int proto_num = gaim_account_get_protocol(buddy->account);
 	if(buddy->alias)
 		bud_alias= g_markup_escape_text(buddy->alias, -1);
-	if(buddy->server_alias)
-		bud_server_alias= g_markup_escape_text(buddy->server_alias, -1);
 	fprintf(file, "\t\t\t\t<buddy account=\"%s\" proto=\"%s\"", acct_name,
 			gaim_account_get_protocol_id(buddy->account));
 	if(proto_num != -1)
@@ -2327,15 +2316,11 @@ static void print_buddy(FILE *file, GaimBuddy *buddy) {
 	if(bud_alias) {
 		fprintf(file, "\t\t\t\t\t<alias>%s</alias>\n", bud_alias);
 	}
-	if(bud_server_alias) {
-		fprintf(file, "\t\t\t\t\t<server_alias>%s</server_alias>\n", bud_server_alias);
-	}
 	g_hash_table_foreach(buddy->node.settings, blist_print_buddy_settings, file);
 	fprintf(file, "\t\t\t\t</buddy>\n");
 	g_free(bud_name);
 	g_free(bud_alias);
 	g_free(acct_name);
-	g_free(bud_server_alias);
 }
 
 static void gaim_blist_write(FILE *file, GaimAccount *exp_acct) {
