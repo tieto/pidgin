@@ -657,69 +657,46 @@ open_socket()
 }
 #endif /*! _WIN32*/
 
-static int
-core_main()
+static gboolean
+plugin_load(GaimPlugin *plugin)
 {
-	/*
-	GMainLoop *loop;
-	 */
 #ifndef _WIN32
 	GIOChannel *channel;
-#endif
 
-	gaim_set_blist(gaim_blist_new());
-	gaim_blist_load();
-
-#ifndef _WIN32
-
-	UI_fd = open_socket();
-	if (UI_fd < 0)
-		return 1;
+	if ((UI_fd = open_socket()) < 0)
+		return FALSE;
 
 	channel = g_io_channel_unix_new(UI_fd);
 	watcher = g_io_add_watch(channel, G_IO_IN, socket_readable, NULL);
 	g_io_channel_unref(channel);
+
+	return TRUE;
+#else
+	return FALSE;
 #endif
-
-	/*
-	loop = g_main_new(TRUE);
-	g_main_run(loop);
-	 */
-
-	return 0;
 }
 
-static void
-core_quit()
+static gboolean
+plugin_unload(GaimPlugin *plugin)
 {
 	/* don't save prefs after plugins are gone... */
 #ifndef _WIN32
 	char buf[1024];
+
 	g_source_remove(watcher);
 	close(UI_fd);
+
 	g_snprintf(buf, sizeof(buf), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d",
 			g_get_tmp_dir(), g_get_user_name(), gaim_session);
 
 	unlink(buf);
 
 	gaim_debug(GAIM_DEBUG_MISC, "core", "Removed core\n");
+
+	return TRUE;
+#else
+	return FALSE;
 #endif
-}
-
-static gboolean
-plugin_load(GaimPlugin *plugin)
-{
-	core_main();
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(GaimPlugin *plugin)
-{
-	core_quit();
-
-	return TRUE;
 }
 
 static GaimPluginInfo info =
@@ -755,4 +732,5 @@ __init_plugin(GaimPlugin *plugin)
 {
 }
 
+/* This may be horribly wrong. Oh the mayhem! */
 GAIM_INIT_PLUGIN(remote, __init_plugin, info)
