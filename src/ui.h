@@ -42,6 +42,8 @@
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GdkWindowPrivate GdkWindowObject
 #define gtk_toolbar_new(x,y) gtk_toolbar_new()
+#define gtk_accel_group_attach(x, y) _gtk_accel_group_attach(x, y)
+#define gtk_widget_lock_accelerators(x)
 #else
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_DIALOG)
 #define GTK_OLD_EDITABLE(x) GTK_EDITABLE(x)
