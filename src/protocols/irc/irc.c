@@ -33,6 +33,7 @@
 #include "prpl.h"
 #include "plugin.h"
 #include "util.h"
+#include "privacy.h"
 
 #include "irc.h"
 
@@ -331,6 +332,35 @@ static void irc_get_info(GaimConnection *gc, const char *who)
 	irc_cmd_whois(irc, "whois", NULL, args);
 }
 
+static void irc_add_deny(GaimConnection *gc, const char *who)
+{
+        gaim_privacy_deny_add(gc->account,who,1);
+}
+
+static void irc_rem_deny(GaimConnection *gc, const char *who)
+{
+        gaim_privacy_deny_remove(gc->account,who,1);
+}
+
+static void
+irc_add_permit(GaimConnection *gc, const char *who)
+{
+        gaim_privacy_permit_add(gc->account,who,1);
+}
+
+static void
+irc_rem_permit(GaimConnection *gc, const char *who)
+{
+        gaim_privacy_permit_remove(gc->account,who,1);
+}
+
+static void
+irc_set_permit_deny(GaimConnection *gc)
+{
+  /* This only has to exist */
+        return;
+}
+
 static void irc_set_away(GaimConnection *gc, const char *state, const char *msg)
 {
 	struct irc_conn *irc = gc->proto_data;
@@ -592,11 +622,11 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	irc_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* rem_permit */
-	NULL,					/* rem_deny */
-	NULL,					/* set_permit_deny */
+	irc_add_permit,					/* add_permit */
+	irc_add_deny,					/* add_deny */
+	irc_rem_permit,					/* rem_permit */
+	irc_rem_deny,					/* rem_deny */
+	irc_set_permit_deny,					/* set_permit_deny */
 	NULL,					/* warn */
 	irc_chat_join,			/* join_chat */
 	NULL,					/* reject_chat */

@@ -28,6 +28,7 @@
 #include "util.h"
 #include "debug.h"
 #include "irc.h"
+#include "privacy.h"
 
 #include <stdio.h>
 
@@ -846,6 +847,8 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	GaimConversation *convo;
 	char *nick = irc_mask_nick(from), *tmp, *msg;
 	int notice = 0;
+	GSList* l;
+	gboolean in_deny=0;
 
 	if (!args || !args[0] || !args[1] || !gc) {
 		g_free(nick);
@@ -859,6 +862,40 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 	}
 
+	 
+	switch (gc->account->perm_deny) {
+	case GAIM_PRIVACY_ALLOW_ALL: 
+		in_deny = 0; break;
+	case GAIM_PRIVACY_DENY_ALL: 
+		in_deny = 1; break;
+	case GAIM_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
+		in_deny = 1;
+		for(l=gc->account->permit;l!=NULL;l=l->next) {
+			if (!gaim_utf8_strcasecmp(nick, gaim_normalize(gc->account, (char *)l->data))) {
+				in_deny=0;
+				break;
+			} 
+		}
+		break;
+	case GAIM_PRIVACY_DENY_USERS: /* See if nick is in gc->account->deny and deny if so */ 
+		in_deny = 0;
+		for(l=gc->account->deny;l!=NULL;l=l->next) {
+			if (!gaim_utf8_strcasecmp(nick, gaim_normalize(gc->account, (char *)l->data))) {
+				in_deny=1;
+				break;
+			} 
+		}
+		break;
+	case GAIM_PRIVACY_ALLOW_BUDDYLIST: 
+		in_deny = 1;
+		if (gaim_find_buddy(gc->account,nick)!=NULL) {
+			in_deny = 0;
+		}
+		break;
+	default: 
+		in_deny=0; break;
+	}
+	 
 	msg = gaim_escape_html(tmp);
 	g_free(tmp);
 
@@ -872,9 +909,13 @@ void irc_msg_privmsg(struct irc_conn *irc, const char *name, const char *from, c
 	}
 
 	if (!gaim_utf8_strcasecmp(args[0], gaim_connection_get_display_name(gc))) {
+		if (!in_deny) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
+		}
 	} else if (notice) {
+		if(!in_deny) {
 		serv_got_im(gc, nick, msg, 0, time(NULL));
+		}
 	} else {
 		convo = gaim_find_conversation_with_account(args[0], irc->account);
 		if (convo)
