@@ -24,9 +24,28 @@
 
 typedef struct _MsnMessage MsnMessage;
 
-#include "msnslp.h"
 #include "session.h"
 #include "user.h"
+
+typedef struct
+{
+	long session_id;
+	long id;
+	long offset;
+	long total_size;
+	long length;
+	long flags;
+	long ack_session_id;
+	long ack_unique_id;
+	long ack_length;
+
+} MsnSlpHeader;
+
+typedef struct
+{
+	long app_id;
+
+} MsnSlpFooter;
 
 /**
  * A message.

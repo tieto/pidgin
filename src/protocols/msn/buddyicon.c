@@ -487,11 +487,13 @@ msn_buddy_icon_invite(MsnSwitchBoard *swboard)
 		return; /* We don't have an icon to send. */
 
 	if (!get_buddy_icon_info(account, NULL, &md5sum,
-							   &file_size, &base64_size)) {
+							 &file_size, &base64_size))
+	{
 		return;
 	}
 
-	if (file_size > MAX_BUDDY_ICON_FILE_SIZE) {
+	if (file_size > MAX_BUDDY_ICON_FILE_SIZE)
+	{
 		gaim_debug(GAIM_DEBUG_ERROR, "msn",
 				   "The buddy icon is too large to send. Must be no more "
 				   "than %d bytes!\n", MAX_BUDDY_ICON_FILE_SIZE);

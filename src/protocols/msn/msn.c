@@ -1028,16 +1028,17 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 				const char *old_group_name, const char *new_group_name)
 {
 	MsnSession *session = gc->proto_data;
+	MsnGroup *old_group, *new_group;
 	MsnUser *user;
 	char outparams[MSN_BUF_LEN];
-	MsnGroup *old_group, *new_group;
 
 	old_group = msn_groups_find_with_name(session->groups, old_group_name);
 	new_group = msn_groups_find_with_name(session->groups, new_group_name);
 
 	user = msn_users_find_with_passport(session->users, who);
 
-	msn_user_remove_group_id(user, msn_group_get_id(old_group));
+	if (old_group != NULL)
+		msn_user_remove_group_id(user, msn_group_get_id(old_group));
 
 	if (new_group == NULL) {
 		g_snprintf(outparams, sizeof(outparams), "%s 0",

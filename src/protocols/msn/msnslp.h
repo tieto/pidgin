@@ -22,38 +22,23 @@
 #ifndef _MSN_SLP_H_
 #define _MSN_SLP_H_
 
-typedef struct
-{
-	long session_id;
-	long id;
-	long offset;
-	long total_size;
-	long length;
-	long flags;
-	long prev_id;
-	long prev_f9;
-	long prev_total_size;
+typedef struct _MsnSlpSession MsnSlpSession;
 
-} MsnSlpHeader;
-
-typedef struct
-{
-	long app_id;
-
-} MsnSlpFooter;
+#include "msnobject.h"
+#include "user.h"
 
 #include "switchboard.h"
 
-typedef struct
+struct _MsnSlpSession
 {
 	gboolean local_initiated;
 
 	MsnSwitchBoard *swboard;
 
-	int session_id;
-	int prev_msg_id;
-
-} MsnSlpSession;
+	long session_id;
+	long base_id;
+	long prev_msg_id;
+};
 
 /**
  * Creates a MSNSLP session.
@@ -76,11 +61,45 @@ MsnSlpSession *msn_slp_session_new(MsnSwitchBoard *swboard,
 void msn_slp_session_destroy(MsnSlpSession *slpsession);
 
 /**
+ * Notifies the MSNSLP session handle that a message was received.
+ *
+ * @param slpsession The MSNSLP session.
+ * @param msg        The message.
+ *
+ * @return TRUE if the session was closed, or FALSE otherwise.
+ */
+gboolean msn_slp_session_msg_received(MsnSlpSession *slpsession,
+									  MsnMessage *msg);
+
+/**
  * Sends a message over a MSNSLP session.
  *
  * @param slpsession The MSNSLP session to send the message over.
  * @param msg        The message to send.
  */
 void msn_slp_session_send_msg(MsnSlpSession *session, MsnMessage *msg);
+
+/**
+ * Requests a User Display image over a MSNSLP session.
+ *
+ * @param slpsession The MSNSLP session to request the image over.
+ * @param localUser  The local user initiating the invite.
+ * @param remoteUser The remote user the invite is sent to.
+ * @param obj        The MSNObject representing the user display info.
+ */
+void msn_slp_session_request_user_display(MsnSlpSession *session,
+										  const MsnUser *localUser,
+										  const MsnUser *remoteUser,
+										  const MsnObject *obj);
+
+/**
+ * Processes application/x-msnmsgrp2p messages.
+ *
+ * @param servconn The server connection.
+ * @param msg      The message.
+ *
+ * @return TRUE
+ */
+gboolean msn_p2p_msg(MsnServConn *servconn, MsnMessage *msg);
 
 #endif /* _MSN_SLP_H_ */

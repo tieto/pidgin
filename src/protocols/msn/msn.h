@@ -71,8 +71,7 @@
 
 #define MSN_CLIENTINFO \
 	"Client-Name: Gaim/" VERSION "\r\n" \
-	"Chat-Logging: Y\r\n" \
-	"Buddy-Icons: 1\r\n"
+	"Chat-Logging: Y\r\n"
 
 
 typedef enum

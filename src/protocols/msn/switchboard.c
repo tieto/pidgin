@@ -20,6 +20,7 @@
 * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
+#include "msnslp.h"
 #include "prefs.h"
 #include "switchboard.h"
 #include "utils.h"
@@ -362,7 +363,8 @@ clientcaps_msg(MsnServConn *servconn, MsnMessage *msg)
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 
-	if (swboard->chat == NULL) {
+	if (swboard->chat == NULL && session->protocol_ver < 8)
+	{
 		if ((value = g_hash_table_lookup(clientcaps, "Buddy-Icons")) != NULL)
 			msn_buddy_icon_invite(swboard);
 	}
@@ -464,6 +466,8 @@ msn_switchboard_new(MsnSession *session)
 									  clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "application/x-buddyicon",
 									   msn_buddy_icon_msg);
+		msn_servconn_register_msg_type(servconn, "application/x-msnmsgrp2p",
+									   msn_p2p_msg);
 
 		/* Save these for future use. */
 		switchboard_commands  = servconn->commands;

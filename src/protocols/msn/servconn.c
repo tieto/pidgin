@@ -278,9 +278,6 @@ msn_servconn_destroy(MsnServConn *servconn)
 	if (servconn->server != NULL)
 		g_free(servconn->server);
 
-	g_hash_table_destroy(servconn->commands);
-	g_hash_table_destroy(servconn->msg_types);
-
 	g_free(servconn);
 }
 

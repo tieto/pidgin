@@ -26,10 +26,11 @@ typedef struct _MsnSwitchBoard MsnSwitchBoard;
 
 #include "conversation.h"
 
-#include "servconn.h"
-#include "msg.h"
-#include "user.h"
 #include "buddyicon.h"
+#include "msg.h"
+#include "msnslp.h"
+#include "servconn.h"
+#include "user.h"
 
 struct _MsnSwitchBoard
 {
@@ -54,6 +55,8 @@ struct _MsnSwitchBoard
 	int trId;
 
 	gboolean hidden;
+
+	MsnSlpSession *slp_session;
 
 	MsnBuddyIconXfer *buddy_icon_xfer;
 };

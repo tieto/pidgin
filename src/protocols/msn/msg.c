@@ -190,17 +190,20 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 		memcpy(&msg->msnslp_header.total_size,      tmp, 4); tmp += 8;
 		memcpy(&msg->msnslp_header.length,          tmp, 4); tmp += 4;
 		memcpy(&msg->msnslp_header.flags,           tmp, 4); tmp += 4;
-		memcpy(&msg->msnslp_header.prev_id,         tmp, 4); tmp += 4;
-		memcpy(&msg->msnslp_header.prev_f9,         tmp, 4); tmp += 4;
-		memcpy(&msg->msnslp_header.prev_total_size, tmp, 4); tmp += 8;
+		memcpy(&msg->msnslp_header.ack_session_id,  tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.ack_unique_id,   tmp, 4); tmp += 4;
+		memcpy(&msg->msnslp_header.ack_length,      tmp, 4); tmp += 8;
 
 		/* Convert to the right endianness */
-		msg->msnslp_header.session_id = ntohs(msg->msnslp_header.session_id);
-		msg->msnslp_header.id         = ntohs(msg->msnslp_header.id);
-		msg->msnslp_header.length     = ntohs(msg->msnslp_header.length);
-		msg->msnslp_header.flags      = ntohs(msg->msnslp_header.flags);
-		msg->msnslp_header.prev_id    = ntohs(msg->msnslp_header.prev_id);
-		msg->msnslp_header.prev_f9    = ntohs(msg->msnslp_header.prev_f9);
+		msg->msnslp_header.session_id = ntohl(msg->msnslp_header.session_id);
+		msg->msnslp_header.id         = ntohl(msg->msnslp_header.id);
+		msg->msnslp_header.length     = ntohl(msg->msnslp_header.length);
+		msg->msnslp_header.flags      = ntohl(msg->msnslp_header.flags);
+		msg->msnslp_header.ack_length = ntohl(msg->msnslp_header.ack_length);
+		msg->msnslp_header.ack_session_id =
+			ntohl(msg->msnslp_header.ack_session_id);
+		msg->msnslp_header.ack_unique_id =
+			ntohl(msg->msnslp_header.ack_unique_id);
 
 		/* Import the footer. */
 		msg->msnslp_footer.app_id = (long)footer;
@@ -351,22 +354,22 @@ msn_message_build_string(const MsnMessage *msg)
 	{
 		char *c;
 		char blank[4];
-		int session_id, id, offset, total_size, length, flags;
-		int prev_id, prev_f9, prev_total_size;
+		long session_id, id, offset, total_size, length, flags;
+		long ack_session_id, ack_unique_id, ack_length;
 
 		memcpy(blank, 0, 4);
 
 		c = str + strlen(str);
 
-		session_id      = htons(msg->msnslp_header.session_id);
-		id              = htons(msg->msnslp_header.id);
-		offset          = htons(msg->msnslp_header.offset);
-		total_size      = htons(msg->msnslp_header.total_size);
-		length          = htons(msg->msnslp_header.length);
-		flags           = htons(msg->msnslp_header.flags);
-		prev_id         = htons(msg->msnslp_header.prev_id);
-		prev_f9         = htons(msg->msnslp_header.prev_f9);
-		prev_total_size = htons(msg->msnslp_header.prev_total_size);
+		session_id      = htonl(msg->msnslp_header.session_id);
+		id              = htonl(msg->msnslp_header.id);
+		offset          = htonl(msg->msnslp_header.offset);
+		total_size      = htonl(msg->msnslp_header.total_size);
+		length          = htonl(msg->msnslp_header.length);
+		flags           = htonl(msg->msnslp_header.flags);
+		ack_session_id  = htonl(msg->msnslp_header.ack_session_id);
+		ack_unique_id   = htonl(msg->msnslp_header.ack_unique_id);
+		ack_length      = htonl(msg->msnslp_header.ack_length);
 
 		memcpy(c, &session_id,      4); c += 4;
 		memcpy(c, &id,              4); c += 4;
@@ -376,9 +379,9 @@ msn_message_build_string(const MsnMessage *msg)
 		memcpy(c, blank,            4); c += 4;
 		memcpy(c, &length,          4); c += 4;
 		memcpy(c, &flags,           4); c += 4;
-		memcpy(c, &prev_id,         4); c += 4;
-		memcpy(c, &prev_f9,         4); c += 4;
-		memcpy(c, &prev_total_size, 4); c += 4;
+		memcpy(c, &ack_session_id,  4); c += 4;
+		memcpy(c, &ack_unique_id,   4); c += 4;
+		memcpy(c, &ack_length,      4); c += 4;
 		memcpy(c, blank,            4); c += 4;
 
 		strncpy(c, msn_message_get_body(msg), len);
