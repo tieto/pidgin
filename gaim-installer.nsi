@@ -10,7 +10,11 @@
 !ifdef WITH_GTK
 OutFile "gaim-${GAIM_VERSION}.exe"
 !else
+!ifdef DEBUG
+OutFile "gaim-${GAIM_VERSION}-debug.exe"
+!else
 OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
+!endif
 !endif
 SetCompressor bzip2
 
@@ -402,6 +406,9 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     ; Gaim files
     SetOverwrite on
     File /r .\win32-install-dir\*.*
+    !ifdef DEBUG
+    File ..\win32-dev\drmingw\exchndl.dll
+    !endif
 
     ; If we don't have install rights and no hklm GTK install.. then Start in lnk property should
     ; remain gaim dir.. otherwise it should be set to the GTK lib dir. (to avoid dll hell)

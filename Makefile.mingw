@@ -29,7 +29,7 @@ VERSION := $(shell cat ./VERSION)
 
 NEEDED_DLLS =		$(PERL_TOP)/perl56.dll \
 			$(GTKSPELL_TOP)/libgtkspell.dll \
-			$(IDLETRACK_TOP)/idletrack.dll 
+			$(IDLETRACK_TOP)/idletrack.dll
 
 
 SOUNDS =		$(GAIM_SOUNDS)/leave.wav \
@@ -89,7 +89,11 @@ installer:
 installer_nogtk:
 	makensis.exe /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
 
+installer_debug:
+	makensis.exe /DGAIM_VERSION="$(VERSION)" /DDEBUG gaim-installer.nsi
+
 installers: installer installer_nogtk
+
 
 clean:
 	$(MAKE) -C $(PO) -f Makefile.mingw clean
