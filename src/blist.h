@@ -740,6 +740,12 @@ void gaim_blist_parse_toc_buddy_list(GaimAccount *account, char *config);
 void gaim_blist_load();
 
 /**
+ * Force an immediate write of the buddy list.  Normally the buddy list is
+ * saved automatically a few seconds after a change is made.
+ */
+void gaim_blist_sync();
+
+/**
  * Requests from the user information needed to add a buddy to the
  * buddy list.
  *
