@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 	int offset = 0, cnt;
 
 	if (argc != 3) {
-		fprintf(stderr, "Too few arguments! Are you using gmake?\n");
+		fprintf(stderr, "Too few arguments! Are you using gmake? If you're not, then you really should. :-) \n");
 		exit(1);
 	}
 
