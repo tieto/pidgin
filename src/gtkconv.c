@@ -38,7 +38,6 @@
 #ifdef USE_GTKSPELL
 #include <gtkspell/gtkspell.h>
 #endif
-#include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
 #include "prpl.h"
 #include "gtkimhtml.h"
