@@ -2176,9 +2176,7 @@ GtkWidget *away_message_page() {
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 
-	prefs_away_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(prefs_away_store),
-										 0, GTK_SORT_ASCENDING);
+	prefs_away_store = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 	while (awy) {
 		a = (struct away_message *)awy->data;
 		gtk_list_store_append (prefs_away_store, &iter);
