@@ -23,6 +23,15 @@
 	ming  sessions.   It was extremely extreme.  Look for some hard crypto
 	lovin' from yet another crazy contributor in the near future...
 
+	Ka-Hing: I actually did something for this release... or rather, the
+	previous release, but LSchiere2 didn't commit that until this release.
+	So blame him. System logging is back, so you can log people's signon/
+	off/away/idle-ness again. There may be bugs with it, I don't know, not
+	like I use it. I will try to work on something that I will actually use
+	for the next release.
+
+	Etan: Looking for someone to pair program with.
+
 0.76 (04/01/2004):
 	Sean: Yeah, it's been a long time since the last release, and despite
 	what others may tell you, we were just really lazy.  This is pretty
