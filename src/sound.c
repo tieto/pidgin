@@ -499,7 +499,7 @@ void play(unsigned char *data, int size)
 #endif
 
 		/* Lastly, we can try just plain old /dev/audio */
-		else if (sound_options & OPT_SOUND_NORMAL) {
+		if (sound_options & OPT_SOUND_NORMAL) {
 			if (can_play_audio()) {
 				play_audio(data, size);
 				_exit(0);
