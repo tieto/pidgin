@@ -517,8 +517,8 @@ static void generate_general_options(struct mod_user *u, GtkWidget *book)
 	if (u->user) {
 		gtk_entry_set_text(GTK_ENTRY(name), u->user->username);
 		gtk_entry_set_text(GTK_ENTRY(pass), u->user->password);
+		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
 	}
-	gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
 }
 
 static void generate_prpl_options(struct mod_user *u, GtkWidget *book)
