@@ -2022,12 +2022,16 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 void update_buttons_by_protocol(struct conversation *c)
 {
 	if (!c->gc) {
-		gtk_widget_set_sensitive(c->info, FALSE);
-		gtk_widget_set_sensitive(c->send, FALSE);
-		gtk_widget_set_sensitive(c->warn, FALSE);
-		gtk_widget_set_sensitive(c->block, FALSE);
-		gtk_widget_set_sensitive(c->add, FALSE);
-
+		if (c->info)
+			gtk_widget_set_sensitive(c->info, FALSE);
+		if (c->send)
+			gtk_widget_set_sensitive(c->send, FALSE);
+		if (c->warn)
+			gtk_widget_set_sensitive(c->warn, FALSE);
+		if (c->block)
+			gtk_widget_set_sensitive(c->block, FALSE);
+		if (c->add)
+			gtk_widget_set_sensitive(c->add, FALSE);
 		if (c->whisper)
 			gtk_widget_set_sensitive(c->whisper, FALSE);
 		if (c->invite)

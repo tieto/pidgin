@@ -59,6 +59,9 @@ struct irc_data {
 	char *chanmodes;
 	char *nickmodes;
 	gboolean six_modes;
+
+	gboolean in_whois;
+	GString *whois_str;
 };
 
 static char *irc_name()
@@ -563,10 +566,40 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		handle_005(gc, word, word_eol);
 		break;
 	case 301:
-		irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
+		if (id->in_whois) {
+			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
+			id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		} else
+			irc_got_im(gc, word[4], word_eol[5], IM_FLAG_AWAY, time(NULL));
 		break;
 	case 303:
 		handle_list(gc, &word_eol[4][1]);
+		break;
+	case 311:
+	case 312:
+	case 313:
+	case 317:
+	case 319:
+		if (!id->in_whois) {
+			id->in_whois = TRUE;
+			id->whois_str = g_string_new("");
+		} else {
+			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
+			id->in_whois = TRUE;
+		}
+		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		break;
+	case 318:
+		id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
+		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		{
+			GString *str = decode_html(id->whois_str->str);
+			g_show_info_text(str->str);
+			g_string_free(str, TRUE);
+		}
+		g_string_free(id->whois_str, TRUE);
+		id->whois_str = NULL;
+		id->in_whois = FALSE;
 		break;
 	case 324:
 		handle_mode(gc, word, word_eol, TRUE);
@@ -579,6 +612,18 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		break;
 	case 376:
 		irc_request_buddy_update(gc);
+		break;
+	case 401:
+	case 402:
+	case 431:
+		if (!id->in_whois) {
+			id->in_whois = TRUE;
+			id->whois_str = g_string_new("");
+		} else {
+			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
+			id->in_whois = TRUE;
+		}
+		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
 		break;
 	}
 }
@@ -951,6 +996,8 @@ static void irc_close(struct gaim_connection *gc)
 	g_free(idata->nickmodes);
 
 	g_string_free(idata->str, TRUE);
+	if (idata->whois_str)
+		g_string_free(idata->whois_str, TRUE);
 
 	if (idata->timer)
 		g_source_remove(idata->timer);
@@ -1166,8 +1213,6 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		else
 			g_snprintf(buf, sizeof(buf), "KICK %s %s\r\n", who, word[2]);
 		irc_write(id->fd, buf, strlen(buf));
-	} else if (!g_strcasecmp(pdibuf, "BAN")) {
-	} else if (!g_strcasecmp(pdibuf, "KICKBAN")) {
 	} else if (!g_strcasecmp(pdibuf, "JOIN")) {
 		if (!*word[2])
 			return -EINVAL;
@@ -1193,6 +1238,9 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 			g_snprintf(buf, sizeof(buf), _("You have left %s"), chan);
 			do_error_dialog(buf, _("IRC Part"));
 		}
+	} else if (!g_strcasecmp(pdibuf, "WHOIS")) {
+		g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", word_eol[2]);
+		irc_write(id->fd, buf, strlen(buf));
 	} else if (!g_strcasecmp(pdibuf, "HELP")) {
 		struct conversation *c = NULL;
 		if (is_channel(gc, who)) {
@@ -1203,7 +1251,7 @@ static int handle_command(struct gaim_connection *gc, char *who, char *what)
 		if (!c)
 			return -EINVAL;
 		write_to_conv(c, "<B>Currently supported commands:<BR>"
-				 "JOIN PART TOPIC<BR>"
+				 "JOIN PART TOPIC WHOIS<BR>"
 				 "OP DEOP VOICE DEVOICE KICK<BR>"
 				 "NICK ME MSG QUOTE SAY</B>",
 				 WFLAG_NOLOG, NULL, time(NULL));
@@ -1335,6 +1383,29 @@ static char **irc_list_icon(int uc)
 	return irc_icon_xpm;
 }
 
+static void irc_get_info(struct gaim_connection *gc, char *who)
+{
+	struct irc_data *idata = gc->proto_data;
+	char buf[IRC_BUF_LEN];
+
+	g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", who);
+	irc_write(idata->fd, buf, strlen(buf));
+}
+
+static GList *irc_buddy_menu(struct gaim_connection *gc, char *who)
+{
+	GList *m = NULL;
+	struct proto_buddy_menu *pbm;
+
+	pbm = g_new0(struct proto_buddy_menu, 1);
+	pbm->label = _("Get Info");
+	pbm->callback = irc_get_info;
+	pbm->gc = gc;
+	m = g_list_append(m, pbm);
+
+	return m;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void irc_init(struct prpl *ret)
@@ -1355,6 +1426,8 @@ void irc_init(struct prpl *ret)
 	ret->chat_send = irc_chat_send;
 	ret->away_states = irc_away_states;
 	ret->set_away = irc_set_away;
+	ret->get_info = irc_get_info;
+	ret->buddy_menu = irc_buddy_menu;
 	my_protocol = ret;
 }
 
