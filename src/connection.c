@@ -32,7 +32,6 @@
 #include "request.h"
 #include "server.h"
 #include "signals.h"
-#include "sound.h"
 #include "util.h"
 
 static GList *connections = NULL;

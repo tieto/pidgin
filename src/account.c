@@ -677,10 +677,13 @@ gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 gboolean
 gaim_account_is_connected(const GaimAccount *account)
 {
+	GaimConnection *gc;
+
 	g_return_val_if_fail(account != NULL, FALSE);
 
-	return (account->gc != NULL &&
-			gaim_connection_get_state(account->gc) != GAIM_DISCONNECTED);
+	gc = gaim_account_get_connection(account);
+
+	return ((gc != NULL) && GAIM_CONNECTION_IS_CONNECTED(gc));
 }
 
 const char *

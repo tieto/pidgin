@@ -190,6 +190,14 @@ void gaim_connection_set_display_name(GaimConnection *gc, const char *name);
 GaimConnectionState gaim_connection_get_state(const GaimConnection *gc);
 
 /**
+ * Returns TRUE if the account is connected, otherwise returns FALSE.
+ *
+ * @return TRUE if the account is connected, otherwise returns FALSE.
+ */
+#define GAIM_CONNECTION_IS_CONNECTED(gc) \
+	(gc->state == GAIM_CONNECTED)
+
+/**
  * Returns the connection's account.
  *
  * @param gc The connection.

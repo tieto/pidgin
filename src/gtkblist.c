@@ -4977,9 +4977,10 @@ gaim_gtk_blist_update_protocol_actions(void)
 	GaimPlugin *plugin = NULL;
 	int count = 0;
 
-	if (! protomenu)
+	if (protomenu == NULL)
 		return;
 
+	/* Clear the old Account Actions menu */
 	for (l = gtk_container_get_children(GTK_CONTAINER(protomenu)); l; l = l->next) {
 		GaimPluginAction *action;
 		
@@ -4991,28 +4992,39 @@ gaim_gtk_blist_update_protocol_actions(void)
 		gtk_container_remove(GTK_CONTAINER(protomenu), GTK_WIDGET(menuitem));
 	}
 
+	/* Count the number of accounts with actions */
 	for (l = gaim_connections_get_all(); l; l = l->next) {
 		gc = l->data;
 		plugin = gc->prpl;
 
+		if (GAIM_CONNECTION_IS_CONNECTED(gc) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			count++;
+
 		/* no need to count past 2, so don't */
-		if (gc->login_time && GAIM_PLUGIN_HAS_ACTIONS(plugin) && count++)
+		if (count > 1)
 			break;
 	}
 
-	
 	if (count == 0) {
 		menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(protomenu), menuitem);
 		gtk_widget_set_sensitive(menuitem, FALSE);
 		gtk_widget_show(menuitem);
-
 	}
-	else
-	if (count == 1) {
-		/* plugin and gc will be set from the counting loop already */
+
+	else if (count == 1) {
+		/* Find the one account that has actions */
+		for (l = gaim_connections_get_all(); l; l = l->next) {
+			gc = l->data;
+			plugin = gc->prpl;
+
+			if (GAIM_CONNECTION_IS_CONNECTED(gc) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
+				break;
+		}
+
 		build_plugin_actions(protomenu, plugin, gc);
 	}
+
 	else {
 		for (l = gaim_connections_get_all(); l; l = l->next) {
 			GaimAccount *account;
@@ -5023,7 +5035,7 @@ gaim_gtk_blist_update_protocol_actions(void)
 			gc = l->data;
 			plugin = gc->prpl;
 
-			if (gc->login_time == 0	|| !GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			if (!GAIM_CONNECTION_IS_CONNECTED(gc) || !GAIM_PLUGIN_HAS_ACTIONS(plugin))
 				continue;
 
 			account = gaim_connection_get_account(gc);
@@ -5033,7 +5045,7 @@ gaim_gtk_blist_update_protocol_actions(void)
 			g_free(buf);
 
 			pixbuf = create_prpl_icon(account);
-			if(pixbuf) {
+			if (pixbuf) {
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 						GDK_INTERP_BILINEAR);
 				image = gtk_image_new_from_pixbuf(scale);
@@ -5064,9 +5076,10 @@ gaim_gtk_blist_update_plugin_actions(void)
 	GList *l;
 	int count = 0;
 
-	if (! pluginmenu)
+	if (pluginmenu == NULL)
 		return;
 
+	/* Clear the old Account Actions menu */
 	for (l = gtk_container_get_children(GTK_CONTAINER(pluginmenu)); l; l = l->next) {
 		GaimPluginAction *action;
 
@@ -5077,11 +5090,15 @@ gaim_gtk_blist_update_plugin_actions(void)
 		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(menuitem));
 	}
 
+	/* Count the number of plugins with actions */
 	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
 		plugin = (GaimPlugin *) l->data;
 
-		if( !GAIM_IS_PROTOCOL_PLUGIN(plugin) &&
-				GAIM_PLUGIN_HAS_ACTIONS(plugin) && count++)
+		if (!GAIM_IS_PROTOCOL_PLUGIN(plugin) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			count++;
+
+		/* no need to count past 2, so don't */
+		if (count > 1)
 			break;
 	}
 
@@ -5090,13 +5107,20 @@ gaim_gtk_blist_update_plugin_actions(void)
 		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
 		gtk_widget_set_sensitive(menuitem, FALSE);
 		gtk_widget_show(menuitem);
-
 	}
-	else
-	if (count == 1) {
-		/* plugin is already set */
+
+	else if (count == 1) {
+		/* Find the one plugin that has actions */
+		for (l = gaim_plugins_get_loaded(); l; l = l->next) {
+			plugin = (GaimPlugin *) l->data;
+
+			if (!GAIM_IS_PROTOCOL_PLUGIN(plugin) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
+				break;
+		}
+
 		build_plugin_actions(pluginmenu, plugin, NULL);
 	}
+
 	else {
 		for (l = gaim_plugins_get_loaded(); l; l = l->next) {
 			plugin = (GaimPlugin *) l->data;
@@ -5104,7 +5128,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 			if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
 				continue;
 
-			if (! GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
 				continue;
 
 			menuitem = gtk_image_menu_item_new_with_label(plugin->info->name);
@@ -5119,4 +5143,3 @@ gaim_gtk_blist_update_plugin_actions(void)
 		}
 	}
 }
-
