@@ -65,6 +65,7 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
 %{_datadir}/sounds/*
+%{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 
 %clean
