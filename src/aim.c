@@ -54,7 +54,7 @@
 #include "locale.h"
 #include "gtkticker.h"
 #include "gtkspell.h"
-#ifndef USE_GNOME
+#ifndef USE_APPLET
 #include <getopt.h>
 #endif
 
