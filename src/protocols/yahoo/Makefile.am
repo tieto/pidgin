@@ -6,6 +6,8 @@ pkgdir = $(libdir)/gaim
 YAHOOSOURCES = \
 	crypt.c \
 	yahoo.h \
+	yahoo_auth.c \
+	yahoo_auth.h \
 	yahoochat.h \
 	yahoo.c \
 	yahoochat.c \

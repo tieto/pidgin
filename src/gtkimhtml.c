@@ -2610,7 +2610,6 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		return;
 
 	imhtml->edit.fontsize++;
-
 	if (imhtml->edit.sizespan) {
 		GtkTextIter iter2;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter2, imhtml->edit.sizespan->start);
