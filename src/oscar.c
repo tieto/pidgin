@@ -2376,30 +2376,6 @@ static void oscar_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_widget_show(entry);
 }
 
-static void oscar_add_permit(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	if (gc->permdeny != 3) return;
-	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, who);
-}
-
-static void oscar_add_deny(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	if (gc->permdeny != 4) return;
-	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, who);
-}
-
-static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	if (gc->permdeny != 3) return;
-	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITREMOVE, who);
-}
-
-static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	if (gc->permdeny != 4) return;
-	aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYREMOVE, who);
-}
-
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	GSList *list;
@@ -2415,18 +2391,18 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 		break;
 	case 3:
 		list = gc->permit;
-		at = g_snprintf(buf, sizeof(buf), "%s", gc->username);
+		at = 0;
 		while (list) {
-			at += g_snprintf(buf + at, sizeof(buf) - at, "&%s", (char *)list->data);
+			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
 			list = list->next;
 		}
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
 		break;
 	case 4:
 		list = gc->deny;
-		at = g_snprintf(buf, sizeof(buf), "%s", gc->username);
+		at = 0;
 		while (list) {
-			at += g_snprintf(buf + at, sizeof(buf) - at, "&%s", (char *)list->data);
+			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
 			list = list->next;
 		}
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
@@ -2434,6 +2410,30 @@ static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	default:
 		break;
 	}
+}
+
+static void oscar_add_permit(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 3) return;
+	oscar_set_permit_deny(gc);
+}
+
+static void oscar_add_deny(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 4) return;
+	oscar_set_permit_deny(gc);
+}
+
+static void oscar_rem_permit(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 3) return;
+	oscar_set_permit_deny(gc);
+}
+
+static void oscar_rem_deny(struct gaim_connection *gc, char *who) {
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	if (gc->permdeny != 4) return;
+	oscar_set_permit_deny(gc);
 }
 
 static void oscar_draw_new_user(GtkWidget *box)

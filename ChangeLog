@@ -7,6 +7,7 @@ version 0.11.0-pre8 (03/23/2001):
 	* Jabber fixes, Oscar fixes (!), Yahoo fixes, TOC fixes
 	* Can use Alt to access menu, and Ctl-char for certain actions
 	  (thanks baldnik)
+	* Oscar blocking works (?)
 
 version 0.11.0-pre7 (03/16/2001):
 	* Can build RPMs as non-root

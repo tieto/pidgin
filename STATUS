@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2001-03-23 06:37:41 -0500 (Fri, 23 Mar 2001) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2001-03-23 07:15:02 -0500 (Fri, 23 Mar 2001) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -76,7 +76,7 @@ you should use the ICQ plugin as it offers more functionality.
 Oscar can get people's away messages, so you should use it if that's what's
 important to you. Oscar also supports requesting and accepting Direct IM
 connections, but doesn't yet let you send/receive files through this or through
-the Get File/Send File method.
+the Get File/Send File method. Permit/Deny lists should work properly now.
 
 
 Yahoo (Eric)
