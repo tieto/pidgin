@@ -933,6 +933,24 @@ void serv_got_joined_chat(int id, char *name)
         b->in_room = NULL;
         b->id = id;
         g_snprintf(b->name, 80, "%s", name);
+
+	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(b->name)) {
+		FILE *fd;
+		char *filename;
+
+		filename = (char *)malloc(100);
+		snprintf(filename, 100, "%s.chat", b->name);
+		
+		fd = open_log_file(filename);
+		if (!(general_options & OPT_GEN_STRIP_HTML))
+			fprintf(fd, "<HR><BR><H3 Align=Center> ---- New Conversation @ %s ----</H3><BR>\n", full_date());
+		else
+			fprintf(fd, "---- New Conversation @ %s ----\n", full_date());
+		
+		fclose(fd);
+		free(filename);
+	}
+	
         show_new_buddy_chat(b);
 }
 
