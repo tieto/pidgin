@@ -1279,6 +1279,15 @@ static void irc_set_away(struct gaim_connection *gc, char *state, char *msg)
 	write(idata->fd, buf, strlen(buf));
 }
 
+static void irc_fake_buddy(struct gaim_connection *gc, char *who)
+{
+	/* Heh, there is no buddy list. We fake it.
+	 * I just need this here so the add and remove buttons will
+	 * show up */
+}
+
+
+
 static struct prpl *my_protocol = NULL;
 
 static void irc_init(struct prpl *ret)
@@ -1296,6 +1305,8 @@ static void irc_init(struct prpl *ret)
 	ret->chat_send = irc_chat_send;
 	ret->get_info = irc_get_info;
 	ret->set_away = irc_set_away;
+	ret->add_buddy = irc_fake_buddy;
+	ret->remove_buddy = irc_fake_buddy;
 
 	my_protocol = ret;
 }

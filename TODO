@@ -48,4 +48,6 @@
 	normalized). Then finding buddies (in your buddy list and such) should
 	work based off of that. Adding buddies similarly, you get the real name
 	before you complete the adding process. Returning NULL will be for an
-	invalid name (such as a non-numeric name in ICQ).
+	invalid name (such as a non-numeric name in ICQ).  It will also be handy
+	in IRC for removing the @ and + from the front of ops and those with +V
+	status.
