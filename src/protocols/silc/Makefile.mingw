@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of libsilcgaim
+# Description: Makefile for win32 (mingw) version of libsilc protocol plugin
 #
 
 #
@@ -11,18 +11,18 @@
 INCLUDE_DIR :=		.
 GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
-SILC_ROOT :=		.
+SILC_TOP :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-SILC_TOP :=		../../../../win32-dev/silc-toolkit-0.9.12
+SILC_TOOLKIT :=		../../../../win32-dev/silc-toolkit-0.9.12
 
 ##
 ## VARIABLE DEFINITIONS
 ##
 
-TARGET = libsilcgaim
+TARGET = libsilc
 
-NEEDED_DLLS =		$(SILC_TOP)/win32/libsilc/Release/libsilc.dll \
-			$(SILC_TOP)/win32/libsilcclient/Release/libsilcclient.dll
+NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
+			$(SILC_TOOLKIT)/lib/silcclient.dll
 
 # Compiler Options
 
@@ -51,7 +51,7 @@ include $(GAIM_TOP)/src/win32/global.mak
 ## INCLUDE PATHS
 ##
 
-INCLUDE_PATHS +=	-I$(SILC_ROOT) \
+INCLUDE_PATHS +=	-I$(SILC_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
@@ -62,14 +62,12 @@ INCLUDE_PATHS +=	-I$(SILC_ROOT) \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP) \
-			-I$(SILC_TOP)/win32 \
-			-I$(SILC_TOP)/win32/include
+			-I$(SILC_TOOLKIT)/include
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_TOP)/src \
-			-L$(SILC_TOP)/win32/libsilc/Release \
-			-L$(SILC_TOP)/win32/libsilcclient/Release \
+			-L$(SILC_TOOLKIT)/lib
 
 
 ##
@@ -100,9 +98,8 @@ LIBS =			-lgtk-win32-2.0 \
 			-lws2_32 \
 			-lintl \
 			-lgaim \
-			-llibsilc \
-			-llibsilcclient \
-			-lwsock32
+			-lsilc \
+			-lsilcclient
 
 
 ##
@@ -123,7 +120,7 @@ LIBS =			-lgtk-win32-2.0 \
 all: $(TARGET).dll
 
 install:
-	cp $(SILC_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(SILC_TOP)/$(TARGET).dll $(DLL_INSTALL_DIR)
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
 

@@ -24,6 +24,7 @@ NAPSTER = $(GAIM_PROTOS)/napster
 TREPIA = $(GAIM_PROTOS)/trepia
 GG = $(GAIM_PROTOS)/gg
 NOVELL = $(GAIM_PROTOS)/novell
+SILC = $(GAIM_PROTOS)/silc
 PO = ./po
 
 VERSION := $(shell cat ./VERSION)
@@ -31,7 +32,7 @@ VERSION := $(shell cat ./VERSION)
 NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
 			$(IDLETRACK_TOP)/idletrack.dll
 
-SOUNDS =	$(GAIM_SOUNDS)/alert.wav \
+SOUNDS =		$(GAIM_SOUNDS)/alert.wav \
 			$(GAIM_SOUNDS)/login.wav \
 			$(GAIM_SOUNDS)/logout.wav \
 			$(GAIM_SOUNDS)/receive.wav \
@@ -53,6 +54,7 @@ NAPSTER_TYPE = PLUGIN
 GG_TYPE = PLUGIN
 NOVELL_TYPE = PLUGIN
 TREPIA_TYPE = PLUGIN
+SILC_TYPE = PLUGIN
 
 all:
 	cp config.h.mingw config.h
@@ -64,6 +66,7 @@ all:
 	$(MAKE) TYPE='$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw
+	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
@@ -83,6 +86,7 @@ install: all
 	$(MAKE) TYPE='$(NAPSTER_TYPE)' -C $(NAPSTER) -f Makefile.mingw install
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw install
+	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
@@ -108,6 +112,7 @@ clean:
 	$(MAKE) -C $(NAPSTER) -f Makefile.mingw clean
 	$(MAKE) -C $(GG) -f Makefile.mingw clean
 	$(MAKE) -C $(NOVELL) -f Makefile.mingw clean
+	$(MAKE) -C $(SILC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)
