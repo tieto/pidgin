@@ -634,20 +634,14 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		handle_whois(gc, word, word_eol, n);
 		break;
 	case 318:
-		/*
-		id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
-		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
-		*/
-
-		{
+		if (id->in_whois && id->whois_str) {
 			GString *str = decode_html(id->whois_str->str);
 			g_show_info_text(str->str, NULL);
 			g_string_free(str, TRUE);
+			g_string_free(id->whois_str, TRUE);
+			id->whois_str = NULL;
+			id->in_whois = FALSE;
 		}
-
-		g_string_free(id->whois_str, TRUE);
-		id->whois_str = NULL;
-		id->in_whois = FALSE;
 		break;
 	case 324:
 		handle_mode(gc, word, word_eol, TRUE);
@@ -662,16 +656,12 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 		irc_request_buddy_update(gc);
 		break;
 	case 401:
+		do_error_dialog(_("No such nick/channel"), _("IRC Error"));
+		break;
 	case 402:
+		do_error_dialog(_("No such server"), _("IRC Error"));
 	case 431:
-		if (!id->in_whois) {
-			id->in_whois = TRUE;
-			id->whois_str = g_string_new("");
-		} else {
-			id->whois_str = g_string_append(id->whois_str, "<BR><BR>");
-			id->in_whois = TRUE;
-		}
-		id->whois_str = g_string_append(id->whois_str, word_eol[4]);
+		do_error_dialog(_("No nickname given"), _("IRC Error"));
 		break;
 	}
 }
