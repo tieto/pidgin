@@ -39,6 +39,7 @@ gtk2/new prefs
 
 GAIM-REMOTE:
 	need a doc written up for gaim-remote on usage
+	need to implement everything listed in gaim-remote --help
 
 PORTABILITY/i18n
 icq i18n
@@ -82,6 +83,8 @@ DISCUSSION:
 
 
 IN GENERAL:
+	prefs need to be saved when set, get rid of apply button.
+	add a way for a plugin to store/retrive config values
 	segfault on pressing back with messages in queue if coming back
 		for the second time in a given instance of gaim
 	stack trace should exit instead of just sitting there
@@ -89,7 +92,7 @@ IN GENERAL:
 	check to make sure gaimrc properly unescapes things like a " in 
 		a password as the .gaimrc file is read in.
 	PERMIT ONLY PEOPLE ON MY LIST TO IM ME IS NEEDED ASAP!!!!!!!!
-		this is now possible for aim, but not for icq et al
+		this is now possible for aim, but not for yahoo et al
 	automake 1.4 support bug, non-root users can't get gaim to compile
 		by putting the gtk2 and glib2 m4 files in the m4 dir
 	automake 1.6 support not perfect.
@@ -119,13 +122,12 @@ IN GENERAL:
 	statusimage plugin
 	status report w/out being on own list
 	SEARCH FUNCTION FOR LOG FILES
-	preference to set logfile path.
+	preference to set logfile path. (i think there is a patch to add this)
 	gzip storage of logs
-	shift-enter works wrong when last character is punctuation (same as bug #547284)
 	fix crash when someone writes just as you close the chat window.
 	make the option to have escape close a window be global (error messages, account editor, ect)
 	throw-away away message (unsaved) for single account (vrs set all away)
-	paste deletes last space before pasted text. 
+
 ----
 THE CORE:
 	Need to write the core side of the core-ui protocol
