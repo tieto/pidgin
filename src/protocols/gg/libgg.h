@@ -1,4 +1,4 @@
-/* $Id: libgg.h 2859 2001-12-05 09:48:56Z warmenhoven $ */
+/* $Id: libgg.h 2897 2001-12-14 18:24:10Z warmenhoven $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -164,12 +164,20 @@ struct gg_notify_reply {
 	unsigned short remote_port;	/* port, na którym s³ucha klient */
 	unsigned long version;		/* == 0x0b */
 	unsigned short dunno2;		/* znowu port? */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 struct gg_status {
 	uin_t uin;			/* numerek */
 	unsigned long status;		/* nowy stan */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 enum {
 	GG_EVENT_NONE = 0,
@@ -383,13 +391,21 @@ int gg_http_hash(unsigned char *email, unsigned char *password);
 struct gg_header {
 	unsigned long type;		/* typ pakietu */
 	unsigned long length;		/* d³ugo¶æ reszty pakietu */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_WELCOME 0x0001
 
 struct gg_welcome {
 	unsigned long key;		/* klucz szyfrowania has³a */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 	
 #define GG_LOGIN 0x000c
 
@@ -400,7 +416,11 @@ struct gg_login {
 	unsigned long dunno;		/* == 0x0b */
 	unsigned long local_ip;		/* mój adres ip */
 	unsigned short local_port;	/* port, na którym s³ucham */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_LOGIN_OK 0x0003
 
@@ -417,14 +437,22 @@ struct gg_login {
 
 struct gg_new_status {
 	unsigned long status;			/* na jaki zmieniæ? */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_NOTIFY 0x0010
 	
 struct gg_notify {
 	uin_t uin;		/* numerek danej osoby */
 	char dunno1;		/* == 3 */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 	
 #define GG_NOTIFY_REPLY 0x000c	/* tak, to samo co GG_LOGIN */
 	
@@ -436,7 +464,11 @@ struct gg_notify {
 struct gg_add_remove {
 	uin_t uin;		/* numerek */
 	char dunno1;		/* == 3 */
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_STATUS 0x0002
 
@@ -453,7 +485,11 @@ struct gg_send_msg {
 	unsigned long recipient;
 	unsigned long seq;
 	unsigned long msgclass;
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_SEND_MSG_ACK 0x0005
 
@@ -464,7 +500,11 @@ struct gg_send_msg_ack {
 	unsigned long status;
 	unsigned long recipient;
 	unsigned long seq;
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_RECV_MSG 0x000a
 	
@@ -473,7 +513,11 @@ struct gg_recv_msg {
 	unsigned long seq;
 	unsigned long time;
 	unsigned long msgclass;
-} __attribute__ ((packed));
+}
+#ifdef __GNUC__
+__attribute__ ((packed))
+#endif
+;
 
 #define GG_PING 0x0008
 	
