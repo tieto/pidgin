@@ -84,7 +84,7 @@ rm -rf %{buildroot}
 %files devel
 
 %doc plugins/SIGNALS plugins/HOWTO plugins/PERL-HOWTO 
-%doc HACKING PROGRAMMING_NOTES TODO
+%doc HACKING PROGRAMMING_NOTES
 
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
 %dir %{_includedir}/gaim-remote
