@@ -48,6 +48,7 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
+#include "wspell.h"
 #endif
 
 static char nick_colors[][8] = {
@@ -4446,6 +4447,7 @@ gaim_gtkconv_toggle_spellchk(void)
 	struct gaim_gtk_conversation *gtkconv;
 	GtkSpell *spell;
 
+	debug_printf("gaim_gtkconv_toggle_spellchk\n");
 	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
 		
 		conv = (struct gaim_conversation *)cl->data;

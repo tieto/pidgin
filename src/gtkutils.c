@@ -47,6 +47,9 @@
 #include "prpl.h"
 #include "ui.h"
 
+#ifdef _WIN32
+#include "wspell.h"
+#endif
 
 void
 gaim_setup_imhtml(GtkWidget *imhtml)
