@@ -44,6 +44,8 @@
 #include "pixmaps/strike.xpm"
 #include "pixmaps/speaker.xpm"
 #include "pixmaps/wood.xpm"
+#include "pixmaps/join.xpm"
+#include "pixmaps/cancel.xpm"
 
 /*
 #include "pixmaps/smile_happy.xpm"
@@ -98,19 +100,67 @@ void join_chat()
 	GtkWidget *bbox;
 	GtkWidget *vbox;
 	GtkWidget *topbox;
+	GtkWidget *button_box;
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+
 	if (!joinchat) {
 		joinchat = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-		cancel = gtk_button_new_with_label(_("Cancel"));
-		join = gtk_button_new_with_label(_("Join"));
+		gtk_widget_set_usize(joinchat, 280, 85);
+		gtk_widget_show(joinchat);
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
 		vbox = gtk_vbox_new(FALSE, 5);
 		entry = gtk_entry_new();
 
-		/* Put the buttons in the box */
-		gtk_box_pack_start(GTK_BOX(bbox), join, TRUE, TRUE, 10);
-		gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 10);
-		
+       /* Build Join Button */
+
+        join = gtk_button_new();
+
+        button_box = gtk_hbox_new(FALSE, 5);
+        icon = gdk_pixmap_create_from_xpm_d (joinchat->window, &mask, NULL, join_xpm);
+        icon_i = gtk_pixmap_new(icon, mask);
+
+        label = gtk_label_new(_("Join"));
+
+        gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+        gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+        gtk_widget_show(label);
+        gtk_widget_show(icon_i);
+
+        gtk_widget_show(button_box);
+
+        gtk_container_add(GTK_CONTAINER(join), button_box);
+
+        /* End of OK Button */
+
+        /* Build Cancel Button */
+
+        cancel = gtk_button_new();
+
+        button_box = gtk_hbox_new(FALSE, 5);
+        icon = gdk_pixmap_create_from_xpm_d ( joinchat->window, &mask, NULL, cancel_xpm);
+        icon_i = gtk_pixmap_new(icon, mask);
+
+        label = gtk_label_new(_("Cancel"));
+
+        gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+        gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+        gtk_widget_show(label);
+        gtk_widget_show(icon_i);
+
+        gtk_widget_show(button_box);
+
+        gtk_container_add(GTK_CONTAINER(cancel), button_box);
+
+        /* End of Cancel Button */
+
+	gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+
 		label = gtk_label_new(_("Join what group:"));
 		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
