@@ -2302,20 +2302,26 @@ static void build_debug()
 	if (!dw)
 		dw = g_new0(struct debug_window, 1);
 
-	box = gtk_hbox_new(FALSE, 0);
 	dw->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_title(GTK_WINDOW(dw->window), _("GAIM debug output window"));
 	gtk_window_set_wmclass(GTK_WINDOW(dw->window), "debug_out", "Gaim");
-	gtk_container_add(GTK_CONTAINER(dw->window), box);
-	dw->entry = gtk_text_new(NULL, NULL);
-	gtk_widget_set_usize(dw->entry, 500, 200);
-	scroll = gtk_vscrollbar_new(GTK_TEXT(dw->entry)->vadj);
-	gtk_box_pack_start(GTK_BOX(box), dw->entry, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(box), scroll, FALSE, FALSE, 0);
-	gtk_widget_show(dw->entry);
-	gtk_widget_show(scroll);
-	gtk_widget_show(box);
 	gtk_signal_connect(GTK_OBJECT(dw->window), "delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);
+
+	box = gtk_hbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(dw->window), box);
+	gtk_widget_show(box);
+
+	dw->entry = gtk_text_new(NULL, NULL);
+	gtk_text_set_word_wrap(GTK_TEXT(dw->entry), TRUE);
+	gtk_text_set_editable(GTK_TEXT(dw->entry), FALSE);
+	gtk_container_add(GTK_CONTAINER(box), dw->entry);
+	gtk_widget_set_usize(dw->entry, 500, 200);
+	gtk_widget_show(dw->entry);
+
+	scroll = gtk_vscrollbar_new(GTK_TEXT(dw->entry)->vadj);
+	gtk_box_pack_start(GTK_BOX(box), scroll, FALSE, FALSE, 0);
+	gtk_widget_show(scroll);
+
 	gtk_widget_show(dw->window);
 }
 
@@ -2343,7 +2349,15 @@ void debug_printf(char *fmt, ...)
 	va_end(ap);
 
 	if (general_options & OPT_GEN_DEBUG && dw) {
+		GtkAdjustment *adj = GTK_TEXT(dw->entry)->vadj;
+		gboolean scroll = (adj->value == adj->upper - adj->lower - adj->page_size);
+
+		gtk_text_freeze(GTK_TEXT(dw->entry));
 		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
+		gtk_text_thaw(GTK_TEXT(dw->entry));
+
+		if (scroll)
+			gtk_adjustment_set_value(adj, adj->upper - adj->lower - adj->page_size);
 	}
 
 #ifdef DEBUG
