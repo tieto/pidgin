@@ -272,8 +272,11 @@ static void
 menu_view_history_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	struct gaim_window *win = (struct gaim_window *)data;
+	struct gaim_conversation *conv;
 
-	conv_show_log(NULL, gaim_window_get_active_conversation(win));
+	conv = gaim_window_get_active_conversation(win);
+
+	conv_show_log(NULL, (char *)gaim_conversation_get_name(conv));
 }
 static void
 menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
