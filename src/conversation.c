@@ -837,6 +837,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 			return;
 		}
 		if (plugin_return) {
+			gtk_editable_delete_text(GTK_EDITABLE(c->entry), 0, -1);
 			g_free(buffy);
 			g_free(buf2);
 			g_free(buf);
