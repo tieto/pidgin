@@ -292,6 +292,9 @@ void serv_dir_search(struct gaim_connection *g, const char *first,
 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
+	if (!strcmp(gc->away_state, state) && !strcmp(gc->away, message))
+		return;
+
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	if (gc != NULL && gc->prpl != NULL)
@@ -1164,6 +1167,9 @@ void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
 		return;
 
 	im = GAIM_IM(c);
+
+	if (im->typing_state == NOT_TYPING)
+		return;
 
 	gaim_im_stop_typing_timeout(im);
 	gaim_im_set_typing_state(im, NOT_TYPING);
