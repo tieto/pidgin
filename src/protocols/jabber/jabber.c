@@ -1964,15 +1964,28 @@ static void jabber_http_recv_callback(gpointer data, gint source, GaimInputCondi
 		char buf[1024];
 		g_snprintf(buf, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n", jft->url->page, jft->url->address);
 		write(source, buf, strlen(buf));
+#ifndef _WIN32
 		fcntl(source, F_SETFL, O_NONBLOCK);
+#else
+		{
+			u_long imode = 1;
+			ioctlsocket(source, FIONBIO, (u_long*)&imode);
+		}
+#endif
 		jft->sentreq = TRUE;
 		jft->watcher = gaim_input_add(source, GAIM_INPUT_READ, jabber_http_recv_callback,data);
 		return;
 	}
 
 	if(!jft->startsaving) {
+#ifndef _WIN32
 		if(read(source, &test, sizeof(test)) > 0 || errno == EWOULDBLOCK) {
-			if(errno == EWOULDBLOCK) {
+			if(errno == EWOULDBLOCK)
+#else
+		if(recv(source, &test, sizeof(test), 0) > 0 || WSAGetLastError() == WSAEWOULDBLOCK) {
+			if(WSAEWOULDBLOCK == WSAGetLastError())
+#endif
+			{
 				errno = 0;
 				return;
 			}
