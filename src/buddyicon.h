@@ -1,5 +1,5 @@
 /**
- * @file icon.h Buddy Icon API
+ * @file buddyicon.h Buddy Icon API
  * @ingroup core
  *
  * gaim
