@@ -526,6 +526,9 @@ bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	struct buddy *b;
 	MsnUser *user;
 
+	if (param_count < 4)
+		return TRUE;
+
 	passport = params[1];
 	type     = params[2];
 	value    = params[3];
@@ -607,7 +610,7 @@ static gboolean
 ipg_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	/* GaimConnection *gc = servconn->session->account->gc; */
 
 	servconn->parsing_multiline = TRUE;
 	servconn->multiline_type    = MSN_MULTILINE_IPG;
@@ -830,7 +833,7 @@ static gboolean
 not_cmd(MsnServConn *servconn, const char *command, const char **params,
 		size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	/* GaimConnection *gc = servconn->session->account->gc; */
 
 	servconn->parsing_multiline = TRUE;
 	servconn->multiline_type    = MSN_MULTILINE_NOT;
