@@ -69,7 +69,7 @@ version 0.60:
 	* /topic with no argument displays the current topic (Thanks Mark 
 	  Doliner)
 	* i18n fixes (Thanks Matt Wilson)
-	* Changed Ctrl-C color removed
+	* Removed Ctrl-C binding for color
 	* Docklet plugin--replaces the old GNOME applet.  You'll need the
 	  Panel Notification Area applet for GNOME 2, or the patch from
 	  RedHat for KDE 3. (Thanks Robert McQueen)
