@@ -21,6 +21,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "debug.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <glib.h>
 
@@ -39,6 +40,12 @@ gaim_debug_vargs(GaimDebugLevel level, const char *category,
 
 	if (ops != NULL && ops->print != NULL)
 		ops->print(level, category, format, args);
+        else {
+                /* fallback for pre ops init period */
+                char *str = g_strdup_vprintf(format, args);
+                printf("%s%s%s", category?category:"", category?": ":"",str);
+                g_free(str);
+        }
 }
 
 void
