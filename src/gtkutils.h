@@ -27,6 +27,22 @@
 #include "gtkconv.h"
 #include "prpl.h"
 
+typedef enum
+{
+	GAIM_BUTTON_HORIZONTAL,
+	GAIM_BUTTON_VERTICAL
+
+} GaimButtonOrientation;
+
+typedef enum
+{
+	GAIM_BUTTON_NONE = 0,
+	GAIM_BUTTON_TEXT,
+	GAIM_BUTTON_IMAGE,
+	GAIM_BUTTON_TEXT_IMAGE
+
+} GaimButtonStyle;
+
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
  * default signal handlers.
@@ -166,6 +182,27 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str,
 									const char *icon, GtkSignalFunc sf,
 									gpointer data, guint accel_key,
 									guint accel_mods, char *mod);
+
+/**
+ * Creates a button with the specified text and stock icon.
+ *
+ * @param text  The text for the button.
+ * @param icon  The stock icon name.
+ * @param style The orientation of the button.
+ *
+ * @return The button.
+ */
+GtkWidget *gaim_pixbuf_button_from_stock(const char *text, const char *icon,
+										 GaimButtonOrientation style);
+
+/**
+ * Creates a toolbar button with the stock icon.
+ *
+ * @param icon  The stock icon name.
+ *
+ * @return The button.
+ */
+GtkWidget *gaim_pixbuf_toolbar_button_from_stock(const char *stock);
 
 /**
  * Creates a HIG preferences frame.

@@ -38,6 +38,7 @@
 #include "gtkpounce.h"
 #include "gtksound.h"
 #include "gtkplugin.h"
+#include "gtkutils.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")

@@ -87,22 +87,6 @@
 #define GAIM_WARNING 2
 #define GAIM_INFO 3
 
-typedef enum
-{
-	GAIM_BUTTON_HORIZONTAL,
-	GAIM_BUTTON_VERTICAL
-
-} GaimButtonOrientation;
-
-typedef enum
-{
-	GAIM_BUTTON_NONE = 0,
-	GAIM_BUTTON_TEXT,
-	GAIM_BUTTON_IMAGE,
-	GAIM_BUTTON_TEXT_IMAGE
-
-} GaimButtonStyle;
-
 /* XXX CUI: away messages aren't really anything more than char* but we need two char*'s
  * for the UI so that people can name their away messages when they save them. So these
  * are really a UI function and struct away_message should be removed from the core. */
@@ -220,9 +204,6 @@ extern void show_font_dialog(GaimConversation *c, GtkWidget *font);
 extern void cancel_font(GtkWidget *widget, GaimConversation *c);
 extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
 extern void show_rename_group(GtkWidget *, struct group *);
-extern GtkWidget *gaim_pixbuf_button(char *, char *, GaimButtonOrientation);
-extern GtkWidget *gaim_pixbuf_button_from_stock(const char *, const char *, GaimButtonOrientation);
-extern GtkWidget *gaim_pixbuf_toolbar_button_from_stock(char *);
 extern void destroy_fontsel(GtkWidget *w, gpointer d);
 extern void join_chat();
 
