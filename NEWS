@@ -10,6 +10,16 @@
 	of the important / commands will be added before the final release. Also, if someone could
 	send me some good buddylist pixmaps for the irc plugin then I'd much appreciate it.  
 
+	Eric: So what was Yay! For Gaim!? Yay was the codename for the Yahoo plugin. The whole
+	point of all of these changes was I wanted to make a proof-of-concept plugin that would
+	let Gaim sign into Yahoo. It turned out to be pretty much impossible with the old code. So,
+	Rob and I hacked gaim so we could do just that. There's now a whole new class of plugins,
+	Protocol Plugins, that let users dynamically add new protocols to Gaim. Just load the
+	plugin, and create a new account that uses that protocol, and you're set! Yay! (Oscar and
+	TOC are both still static. Gaim is, after all, primarily an AIM client.)
+
+	Lots of people have been very generous and contributed a lot of time and effort to writing
+	some really nice patches for gaim since the last release. To all of you, a big thanks.
 
 0.10.3 (10/09/2000):
 	Rob: I am dumb.
