@@ -118,7 +118,6 @@ static void destroy_dialog(GtkWidget *w, GtkWidget *w2)
 	gtk_widget_destroy(dest);
 }
 
-
 void destroy_all_dialogs()
 {
 	while (dialogwindows)
@@ -647,6 +646,17 @@ void show_font_dialog(GaimConversation *c, GtkWidget *font)
 /*  The dialog for new away messages                                      */
 /*------------------------------------------------------------------------*/
 
+static void away_mess_destroy(GtkWidget *widget, struct create_away *ca)
+{
+	destroy_dialog(NULL, ca->window);
+	g_free(ca);
+}
+
+static void away_mess_destroy_ca(GtkWidget *widget, GdkEvent *event, struct create_away *ca)
+{
+	away_mess_destroy(NULL, ca);
+}
+
 static struct away_message *save_away_message(struct create_away *ca)
 {
 	struct away_message *am;
@@ -675,7 +685,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 
 int check_away_mess(struct create_away *ca, int type)
 {
-	char *msg;
+	gchar *msg;
 	if ((strlen(gtk_entry_get_text(GTK_ENTRY(ca->entry))) == 0) && (type == 1)) {
 		/* We shouldn't allow a blank title */
 		gaim_notify_error(NULL, NULL,
@@ -686,9 +696,9 @@ int check_away_mess(struct create_away *ca, int type)
 		return 0;
 	}
 
-	msg = gtk_imhtml_get_markup(GTK_IMHTML(ca->text));
+	msg = gtk_imhtml_get_text(GTK_IMHTML(ca->text));
 
-	if (!msg && (type <= 1)) {
+	if ((type <= 1) && ((msg == NULL) || (*msg == '\0'))) {
 		/* We shouldn't allow a blank message */
 		gaim_notify_error(NULL, NULL,
 						  _("You cannot create an empty away message"), NULL);
@@ -706,8 +716,8 @@ void save_away_mess(GtkWidget *widget, struct create_away *ca)
 		return;
 
 	save_away_message(ca);
-	destroy_dialog(NULL, ca->window);
-	g_free(ca);
+
+	away_mess_destroy(NULL, ca);
 }
 
 void use_away_mess(GtkWidget *widget, struct create_away *ca)
@@ -726,17 +736,17 @@ void use_away_mess(GtkWidget *widget, struct create_away *ca)
 
 	do_away_message(NULL, &am);
 
-	destroy_dialog(NULL, ca->window);
-	g_free(ca);
+	away_mess_destroy(NULL, ca);
 }
 
 void su_away_mess(GtkWidget *widget, struct create_away *ca)
 {
 	if (!check_away_mess(ca, 1))
 		return;
+
 	do_away_message(NULL, save_away_message(ca));
-	destroy_dialog(NULL, ca->window);
-	g_free(ca);
+
+	away_mess_destroy(NULL, ca);
 }
 
 void create_away_mess(GtkWidget *widget, void *dummy)
@@ -755,7 +765,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_window_set_role(GTK_WINDOW(ca->window), "away_mess");
 	gtk_window_set_title(GTK_WINDOW(ca->window), _("New away message"));
 	g_signal_connect(G_OBJECT(ca->window), "delete_event",
-			   G_CALLBACK(destroy_dialog), ca->window);
+			   G_CALLBACK(away_mess_destroy_ca), ca);
 
 	/*
 	 * This would be higgy... but I think it's pretty ugly  --Mark
@@ -839,7 +849,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(destroy_dialog), ca->window);
+	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(away_mess_destroy), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(ca->window);
