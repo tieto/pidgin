@@ -51,6 +51,7 @@ gint font_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 #define BORDER_SIZE 3
 #define MIN_HEIGHT 20
 #define HR_HEIGHT 2
+#define TOOLTIP_TIMEOUT 500
 
 #define DIFF(a, b) (((a) > (b)) ? ((a) - (b)) : ((b) - (a)))
 #define COLOR_MOD  0x8000
@@ -113,7 +114,7 @@ struct url_widget {
 	gint y;
 	gint width;
 	gint height;
-	gchar *url;
+	GtkIMHtmlBit *bit;
 };
 
 static GtkLayoutClass *parent_class = NULL;
@@ -982,6 +983,94 @@ scroll_timeout (GtkIMHtml *imhtml)
 }
 
 static gint
+gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
+{
+	GtkStyle *style;
+	gint y, baseline_skip, gap;
+
+	style = imhtml->tip_window->style;
+
+	gap = (style->font->ascent + style->font->descent) / 4;
+	if (gap < 2)
+		gap = 2;
+	baseline_skip = style->font->ascent + style->font->descent + gap;
+
+	if (!imhtml->tip_bit)
+		return FALSE;
+
+	gtk_paint_flat_box(style, imhtml->tip_window->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+			   NULL, imhtml->tip_window, "tooltip", 0, 0, -1, -1);
+
+	y = style->font->ascent + 4;
+	gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
+			  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->url);
+
+	return FALSE;
+}
+
+static gint
+gtk_imhtml_tip (gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	GtkWidget *widget = GTK_WIDGET (imhtml);
+	GtkStyle *style;
+	gint gap, x, y, w, h, scr_w, scr_h, baseline_skip;
+
+	if (!imhtml->tip_bit || !GTK_WIDGET_DRAWABLE (widget)) {
+		imhtml->tip_timer = 0;
+		return FALSE;
+	}
+
+	if (imhtml->tip_window)
+		gtk_widget_destroy (imhtml->tip_window);
+
+	imhtml->tip_window = gtk_window_new (GTK_WINDOW_POPUP);
+	gtk_widget_set_app_paintable (imhtml->tip_window, TRUE);
+	gtk_window_set_policy (GTK_WINDOW (imhtml->tip_window), FALSE, FALSE, TRUE);
+	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
+	gtk_signal_connect_object (GTK_OBJECT (imhtml->tip_window), "expose_event",
+				   GTK_SIGNAL_FUNC (gtk_imhtml_tip_paint), GTK_OBJECT (imhtml));
+	gtk_signal_connect_object (GTK_OBJECT (imhtml->tip_window), "draw",
+				   GTK_SIGNAL_FUNC (gtk_imhtml_tip_paint), GTK_OBJECT (imhtml));
+
+	gtk_widget_ensure_style (imhtml->tip_window);
+	style = imhtml->tip_window->style;
+
+	scr_w = gdk_screen_width ();
+	scr_h = gdk_screen_height ();
+
+	gap = (style->font->ascent + style->font->descent) / 4;
+	if (gap < 2)
+		gap = 2;
+	baseline_skip = style->font->ascent + style->font->descent + gap;
+
+	w = 8 + gdk_string_width (style->font, imhtml->tip_bit->url);
+	h = 8 - gap + baseline_skip;
+
+	gdk_window_get_pointer (NULL, &x, &y, NULL);
+	if (GTK_WIDGET_NO_WINDOW (widget))
+		y += widget->allocation.y;
+
+	x -= ((w >> 1) + 4);
+
+	if ((x + w) > scr_w)
+		x -= (x + w) - scr_w;
+	else if (x < 0)
+		x = 0;
+
+	if ((y + h + + 4) > scr_h)
+		y = y - imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
+	else
+		y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
+
+	gtk_widget_set_usize (imhtml->tip_window, w, h);
+	gtk_widget_popup (imhtml->tip_window, x, y);
+
+	imhtml->tip_timer = 0;
+	return FALSE;
+}
+
+static gint
 gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 				GdkEventMotion *event)
 {
@@ -1036,6 +1125,18 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 			uw = (struct url_widget *) urls->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
+				if (imhtml->tip_bit != uw->bit) {
+					imhtml->tip_bit = uw->bit;
+					if (imhtml->tip_timer != 0)
+						gtk_timeout_remove (imhtml->tip_timer);
+					if (imhtml->tip_window) {
+						gtk_widget_destroy (imhtml->tip_window);
+						imhtml->tip_window = NULL;
+					}
+					imhtml->tip_timer = gtk_timeout_add (TOOLTIP_TIMEOUT,
+									     gtk_imhtml_tip,
+									     imhtml);
+				}
 				gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window,
 						       imhtml->hand_cursor);
 				return TRUE;
@@ -1043,6 +1144,16 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 			urls = g_list_next (urls);
 		}
 	}
+
+	if (imhtml->tip_timer) {
+		gtk_timeout_remove (imhtml->tip_timer);
+		imhtml->tip_timer = 0;
+	}
+	if (imhtml->tip_window) {
+		gtk_widget_destroy (imhtml->tip_window);
+		imhtml->tip_window = NULL;
+	}
+	imhtml->tip_bit = NULL;
 
 	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
 
@@ -1105,7 +1216,8 @@ gtk_imhtml_button_release_event (GtkWidget      *widget,
 			uw = (struct url_widget *) urls->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height)) {
-				gtk_signal_emit (GTK_OBJECT (imhtml), signals [URL_CLICKED], uw->url);
+				gtk_signal_emit (GTK_OBJECT (imhtml), signals [URL_CLICKED],
+						 uw->bit->url);
 				return TRUE;
 			}
 			urls = g_list_next (urls);
@@ -1616,7 +1728,7 @@ add_text_renderer (GtkIMHtml    *imhtml,
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
-		uw->url = bit->url;
+		uw->bit = bit;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
 	}
 
@@ -1648,7 +1760,7 @@ add_img_renderer (GtkIMHtml    *imhtml,
 		uw->y = imhtml->y;
 		uw->width = width;
 		uw->height = imhtml->llheight;
-		uw->url = bit->url;
+		uw->bit = bit;
 		imhtml->urls = g_list_append (imhtml->urls, uw);
 	}
 

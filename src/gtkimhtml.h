@@ -52,6 +52,9 @@ struct _GtkIMHtml {
 
 	GList *bits;
 	GList *urls;
+	struct _GtkIMHtmlBit *tip_bit;
+	GtkWidget *tip_window;
+	guint tip_timer;
 
 	guint sel_startx, sel_starty;
 	guint sel_endx, sel_endy;
