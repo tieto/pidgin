@@ -184,8 +184,7 @@ void gaim_blist_update_buddy_presence(struct buddy *buddy, int presence) {
 		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_event_broadcast(event_buddy_signoff, buddy->account->gc, buddy->name);
 		do_timer = TRUE;
-		if( ((struct group *)((GaimBlistNode *)buddy)->parent)->online > 0)
-			((struct group *)((GaimBlistNode *)buddy)->parent)->online--;
+		((struct group *)((GaimBlistNode *)buddy)->parent)->online--;
 	}
 
 	if(do_timer) {
@@ -451,11 +450,10 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		/* This buddy was already in the list and is
 		 * being moved.
 		 */
-		if( ((struct group *)bnode->parent)->totalsize > 0)
-			((struct group *)bnode->parent)->totalsize--;
-		if (buddy->account->gc && ( ((struct group*)bnode->parent)->currentsize > 0) )
+		((struct group *)bnode->parent)->totalsize--;
+		if (buddy->account->gc)
 			((struct group *)bnode->parent)->currentsize--;
-		if (buddy->present && ( ((struct group *)bnode->parent)->online > 0) )
+		if (GAIM_BUDDY_IS_ONLINE(buddy))
 			((struct group *)bnode->parent)->online--;
 
 		if(bnode->next)
@@ -483,7 +481,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		((struct group *)n->parent)->totalsize++;
 		if (buddy->account->gc)
 			((struct group *)n->parent)->currentsize++;
-		if (buddy->present)
+		if (GAIM_BUDDY_IS_ONLINE(buddy))
 			((struct group *)n->parent)->online++;
 	} else {
 		((GaimBlistNode*)g)->child = (GaimBlistNode*)buddy;
@@ -493,7 +491,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 		g->totalsize++;
 		if (buddy->account->gc)
 			g->currentsize++;
-		if (buddy->present)
+		if (GAIM_BUDDY_IS_ONLINE(buddy))
 			g->online++;
 	}
 
@@ -609,10 +607,11 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 		node->prev->next = node->next;
 	if (node->next)
 		node->next->prev = node->prev;
-	if(group->totalsize >0)
-		group->totalsize--;
-	if (buddy->account->gc && group->currentsize > 0)
+	group->totalsize--;
+	if (buddy->account->gc)
 		group->currentsize--;
+	if (GAIM_BUDDY_IS_ONLINE(buddy))
+		group->online--;
 
 	hb.name = normalize(buddy->name);
 	hb.account = buddy->account;
@@ -649,8 +648,10 @@ void  gaim_blist_remove_chat (struct chat *chat)
 	if (node->next)
 		node->next->prev = node->prev;
 	group->totalsize--;
-	if (chat->account->gc)
+	if (chat->account->gc) {
 		group->currentsize--;
+		group->online--;
+	}
 
 	ops->remove(gaimbuddylist, node);
 	g_hash_table_destroy(chat->components);
@@ -805,11 +806,10 @@ void gaim_blist_remove_account(struct gaim_account *account)
 		for(buddy = group->child; buddy; buddy = buddy->next) {
 			if(GAIM_BLIST_NODE_IS_BUDDY(buddy)) {
 				if (account == ((struct buddy*)buddy)->account) {
-					if (((struct buddy *)buddy)->present > 0)
+					if (GAIM_BUDDY_IS_ONLINE((struct buddy*)buddy))
 						((struct group *)group)->online--;
 					((struct buddy*)buddy)->present = GAIM_BUDDY_OFFLINE;
-					if ( ((struct group*)buddy->parent)->currentsize > 0)
-						((struct group *)group)->currentsize--;
+					((struct group *)group)->currentsize--;
 					if(ops)
 						ops->remove(gaimbuddylist, buddy);
 				}
