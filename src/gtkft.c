@@ -82,6 +82,7 @@ typedef struct
 	GtkWidget *filesel;
 	GtkTreeIter iter;
 	time_t start_time;
+	time_t end_time;
 	gboolean in_list;
 
 	char *name;
@@ -121,7 +122,14 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 
 	data = GAIM_GTKXFER(xfer);
 
-	now = time(NULL);
+	if (data->end_time == -1 &&
+		(gaim_xfer_is_canceled(xfer) || gaim_xfer_is_completed(xfer)))
+		data->end_time = time(NULL);
+
+	if (data->end_time != -1)
+		now = data->end_time;
+	else
+		now = time(NULL);
 
 	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
 	kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
@@ -154,6 +162,12 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 		}
 		else if (gaim_xfer_is_completed(xfer)) {
 			*time_remaining = g_strdup(_("Finished"));
+		}
+		else if (gaim_xfer_is_canceled(xfer)) {
+			*time_remaining = g_strdup(_("Canceled"));
+		}
+		else if (kb_sent <= 0) {
+			*time_remaining = g_strdup(_("Waiting for transfer to begin"));
 		}
 		else {
 			int h, m, s;
@@ -805,6 +819,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	gaim_gtkxfer_dialog_show(dialog);
 
 	data->start_time = time(NULL);
+	data->end_time = -1;
 
 	type = gaim_xfer_get_type(xfer);
 
@@ -899,6 +914,8 @@ gaim_gtkxfer_dialog_cancel_xfer(GaimGtkXferDialog *dialog,
 	}
 
 	data = GAIM_GTKXFER(xfer);
+
+	update_detailed_info(dialog, xfer);
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
 									GAIM_STOCK_FILE_CANCELED,
