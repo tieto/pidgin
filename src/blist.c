@@ -70,6 +70,7 @@ static GaimBlistNode *gaim_blist_get_last_child(GaimBlistNode *node)
 struct _gaim_hbuddy {
 	char *name;
 	GaimAccount *account;
+	GaimBlistNode *group;
 };
 
 static guint _gaim_blist_hbuddy_hash (struct _gaim_hbuddy *hb)
@@ -79,7 +80,7 @@ static guint _gaim_blist_hbuddy_hash (struct _gaim_hbuddy *hb)
 
 static guint _gaim_blist_hbuddy_equal (struct _gaim_hbuddy *hb1, struct _gaim_hbuddy *hb2)
 {
-	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account);
+	return ((!strcmp(hb1->name, hb2->name)) && hb1->account == hb2->account && hb1->group == hb2->group);
 }
 
 /*****************************************************************************
@@ -506,6 +507,7 @@ void  gaim_blist_add_buddy (struct buddy *buddy, struct group *group, GaimBlistN
 	hb = g_malloc(sizeof(struct _gaim_hbuddy));
 	hb->name = g_strdup(normalize(buddy->name));
 	hb->account = buddy->account;
+	hb->group = ((GaimBlistNode*)buddy)->parent;
 
 	if (g_hash_table_lookup(gaimbuddylist->buddies, (gpointer)hb)) {
 		/* This guy already exists */
@@ -628,6 +630,7 @@ void  gaim_blist_remove_buddy (struct buddy *buddy)
 
 	hb.name = normalize(buddy->name);
 	hb.account = buddy->account;
+	hb.group = ((GaimBlistNode*)buddy)->parent;
 	if (g_hash_table_lookup_extended(gaimbuddylist->buddies, &hb, (gpointer *)&key, (gpointer *)&val)) {
 		g_hash_table_remove(gaimbuddylist->buddies, &hb);
 		g_free(key->name);
@@ -736,17 +739,33 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 
 struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
 {
-	struct buddy *buddy;
+	static struct buddy *buddy = NULL;
 	struct _gaim_hbuddy hb;
+	GaimBlistNode *group;
+	const char *n = NULL;
 
 	if (!gaimbuddylist)
 		return NULL;
+	
+	if (!name && !buddy);
 
-	hb.name = normalize(name);
-	hb.account = account;
-	buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb);
+	if (name) {
+		group = gaimbuddylist->root;
+		n = name;
+	} else {
+		group = ((GaimBlistNode*)buddy)->parent->next;
+		n = buddy->name;
+	}
 
-	return buddy;
+	while (group) {
+		hb.name = normalize(n);
+		hb.account = account;
+		hb.group = group;
+		if (buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb))
+			return buddy;
+		group = ((GaimBlistNode*)group)->next;
+	}
+	return NULL;
 }
 
 struct group *gaim_find_group(const char *name)

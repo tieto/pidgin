@@ -384,7 +384,8 @@ char *gaim_get_buddy_alias(struct buddy *buddy);
 /**
  * Finds the buddy struct given a screenname and an account
  *
- * @param name    The buddy's screenname
+ * @param name    The buddy's screenname or NULL to search for more buddies with the same screenname
+ *                as the previous search
  * @param account The account this buddy belongs to
  * @return        The buddy or NULL if the buddy does not exist
  */
