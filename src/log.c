@@ -28,6 +28,19 @@ void rm_log(struct log_conversation *a)
 {
 	struct gaim_conversation *cnv = gaim_find_conversation(a->name);
 
+	/* Added the following if statements for sanity check */
+	if (!a)
+	{
+		gaim_notify_error (NULL, NULL, _("Error in specifying buddy conversation."), NULL);
+		return;
+	}
+	cnv = gaim_find_conversation(a->name);
+	if (!cnv)
+	{
+		gaim_notify_error (NULL, NULL, _("Unable to find conversation log"), NULL);
+		return;
+	}
+
 	log_conversations = g_list_remove(log_conversations, a);
 
 	save_prefs();
