@@ -1038,8 +1038,17 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
 	gconv1 = gaim_find_conversation_with_account(zt->name, zgc->account);
 	gcc = gaim_conversation_get_chat_data(gconv1);
 
+	/* This patently does not make sense ... if inst is not set by
+	 * gaim_conv_chat_get_topic, we set it to the uninitialized
+	 * value of notice.z_class_inst, only to set notice.z_class_inst
+	 * back to inst in a half a dozen lines.  I'm just going to let
+	 * it remain NULL instead.
+	 * 
 	if (!(inst = (char *)gaim_conv_chat_get_topic(gcc)))
 		inst = (char *)notice.z_class_inst;
+	 */
+	inst = (char *)gaim_conv_chat_get_topic(gcc);
+	/* There, now isn't that better? */
 
 	bzero((char *)&notice, sizeof(notice));
 	notice.z_kind = ACKED;
