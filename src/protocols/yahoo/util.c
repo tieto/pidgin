@@ -592,16 +592,28 @@ char *yahoo_html_to_codes(const char *src)
 							i = t - src;
 							break;
 						}
-					} else if (!g_ascii_strncasecmp(&src[i+1], "A", j - i - 1)) {
-					    while (1) {
-						    if (++j >= len) {
-							    g_string_append(dest, &src[i]);
+					} else if (!g_ascii_strncasecmp(&src[i+1], "A HREF=\"", j - i - 1)) {
+						j += 7;
+						g_string_append(dest, "\033[lm");
+						while (1) {
+							g_string_append_c(dest, src[j]);
+							if (++j >= len) {
 								i = len;
 								break;
 							}
-							if (src[j] == '>') {
-							    g_string_append(dest, "\033[lm");
-							    i = j;
+							if (src[j] == '"') {
+								g_string_append(dest, "\033[xlm");
+								while (1) {
+									if (++j >= len) {
+										i = len;
+										break;
+									}
+									if (!g_ascii_strncasecmp(&src[j], "</A>", 4)) {
+										j += 3;
+										break;
+									}
+								}
+								i = j;
 								break;
 							}
 						}
