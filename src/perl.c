@@ -76,6 +76,7 @@ static GList *perl_list = NULL; /* should probably extern this at some point */
 static GList *perl_timeout_handlers = NULL;
 static GList *perl_event_handlers = NULL;
 static PerlInterpreter *my_perl = NULL;
+static char* last_dir = NULL;
 
 /* dealing with gaim */
 XS(XS_GAIM_register); /* set up hooks for script */
@@ -594,8 +595,7 @@ XS (XS_GAIM_add_timeout_handler)
 	XSRETURN_EMPTY;
 }
 
-static GtkWidget *config = NULL;
-static GtkWidget *entry = NULL;
+static GtkWidget *config = NULL; 
 
 static void cfdes(GtkWidget *m, gpointer n) {
 	if (config) gtk_widget_destroy(config);
@@ -603,73 +603,64 @@ static void cfdes(GtkWidget *m, gpointer n) {
 }
 
 static void do_load(GtkWidget *m, gpointer n) {
-	char *file = gtk_entry_get_text(GTK_ENTRY(entry));
+	gchar* file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(config));
 	if (!file || !strlen(file)) {
 		perl_end();
 		perl_init();
 		return;
 	}
+	
+	if (file_is_dir(file, config)) {
+		return;
+	}
+	
+	if (last_dir) {
+		g_free(last_dir);
+	}
+	last_dir = g_dirname(file);
+
+	debug_printf("Loading perl script: %s\n", file);
+	
 	perl_load_file(file);
-	gtk_widget_destroy(config);
+	cfdes(config, NULL);
 }
 
 void load_perl_script(GtkWidget *w, gpointer d)
 {
-	GtkWidget *frame;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *ok;
-	GtkWidget *cancel;
+	char *buf, *temp;
 
 	if (config) {
 		gtk_widget_show(config);
+		gdk_window_raise(config->window);
 		return;
 	}
 
-	config = gtk_window_new(GTK_WINDOW_DIALOG);
-	gtk_window_set_policy(GTK_WINDOW(config), TRUE, TRUE, FALSE);
-	gtk_window_set_wmclass(GTK_WINDOW(config), "perl_script", "Gaim");
-	gtk_window_set_title(GTK_WINDOW(config), "Gaim - Add Perl Script");
-	gtk_container_set_border_width(GTK_CONTAINER(config), 5);
-	gtk_signal_connect(GTK_OBJECT(config), "destroy", GTK_SIGNAL_FUNC(cfdes), 0);
-	gtk_widget_realize(config);
-	aol_icon(config->window);
+	/* Below is basically stolen from plugins.c */
+	config = gtk_file_selection_new(_("Gaim - Select Perl Script"));
 
-	frame = gtk_frame_new("Load Script");
-	gtk_container_add(GTK_CONTAINER(config), frame);
-	gtk_widget_show(frame);
+	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(config));
 
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_widget_show(vbox);
+	if (!last_dir) {
+		buf = g_strjoin(NULL, g_get_home_dir(), G_DIR_SEPARATOR_S, ".gaim", 
+					G_DIR_SEPARATOR_S, NULL);
+	} else {
+		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
+	}
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
-	gtk_widget_show(hbox);
+	gtk_file_selection_set_filename(GTK_FILE_SELECTION(config), buf);
+	gtk_file_selection_complete(GTK_FILE_SELECTION(config), "*.pl"); 
+	gtk_signal_connect(GTK_OBJECT(config), "destroy",  GTK_SIGNAL_FUNC(cfdes),
+			config);
 
-	label = gtk_label_new("File Name:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-	gtk_widget_show(label);
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(config)->ok_button),
+			"clicked", GTK_SIGNAL_FUNC(do_load), NULL);
+    
+	gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(config)->cancel_button),
+			"clicked", GTK_SIGNAL_FUNC(cfdes), NULL);
 
-	entry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(do_load), 0);
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(TRUE, 10);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
-	gtk_widget_show(hbox);
-
-	ok = picture_button(config, "Load", add_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), ok, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(ok), "clicked", GTK_SIGNAL_FUNC(do_load), 0);
-
-	cancel = picture_button(config, "Cancel", cancel_xpm);
-	gtk_box_pack_start(GTK_BOX(hbox), cancel, FALSE, FALSE, 5);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(cfdes), 0);
-
+	g_free(buf);
 	gtk_widget_show(config);
+	gdk_window_raise(config->window);
 }
 
 extern void unload_perl_scripts(GtkWidget *w, gpointer d)
