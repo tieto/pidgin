@@ -44,8 +44,6 @@ enum
 static gint
 delete_win_cb(GtkWidget *w, GdkEvent *event, GevoAssociateBuddyDialog *dialog)
 {
-	GList *l;
-
 	gtk_widget_destroy(dialog->win);
 
 	g_list_foreach(dialog->contacts, (GFunc)g_free, NULL);

@@ -6919,6 +6919,7 @@ static void oscar_convo_closed(GaimConnection *gc, const char *who)
 
 static GaimPluginProtocolInfo prpl_info =
 {
+	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE,
 	NULL,
 	NULL,
@@ -6987,7 +6988,7 @@ static GaimPluginProtocolInfo prpl_info =
 
 static GaimPluginInfo info =
 {
-	2,                                                /**< api_version    */
+	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

@@ -230,6 +230,13 @@ gaim_plugin_probe(const char *filename)
 		return NULL;
 	}
 
+	if (plugin->info->api_version != GAIM_PLUGIN_API_VERSION)
+	{
+		gaim_plugin_destroy(plugin);
+
+		return NULL;
+	}
+
 	return plugin;
 #else
 	return NULL;
@@ -460,27 +467,39 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 	if (plugin->info != NULL && plugin->info->dependencies != NULL)
 		g_list_free(plugin->info->dependencies);
 
-	if (plugin->native_plugin) {
-
-		if (plugin->info != NULL && plugin->info->type == GAIM_PLUGIN_LOADER) {
+	if (plugin->native_plugin)
+	{
+		if (plugin->info != NULL && plugin->info->type == GAIM_PLUGIN_LOADER)
+		{
+			GaimPluginLoaderInfo *loader_info;
 			GList *exts, *l, *next_l;
 			GaimPlugin *p2;
 
-			for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
-				 exts != NULL;
-				 exts = exts->next) {
+			loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
 
-				for (l = gaim_plugins_get_all(); l != NULL; l = next_l) {
-					next_l = l->next;
+			if (loader_info != NULL && plugin->info->api_version >= 3 &&
+				loader_info->exts != NULL)
+			{
+				for (exts = GAIM_PLUGIN_LOADER_INFO(plugin)->exts;
+					 exts != NULL;
+					 exts = exts->next) {
 
-					p2 = l->data;
+					for (l = gaim_plugins_get_all(); l != NULL; l = next_l)
+					{
+						next_l = l->next;
 
-					if (p2->path != NULL && is_so_file(p2->path, exts->data))
-						gaim_plugin_destroy(p2);
+						p2 = l->data;
+
+						if (p2->path != NULL &&
+							is_so_file(p2->path, exts->data))
+						{
+							gaim_plugin_destroy(p2);
+						}
+					}
 				}
-			}
 
-			g_list_free(GAIM_PLUGIN_LOADER_INFO(plugin)->exts);
+				g_list_free(loader_info->exts);
+			}
 
 			plugin_loaders = g_list_remove(plugin_loaders, plugin);
 		}
@@ -491,13 +510,15 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 		if (plugin->handle != NULL)
 			g_module_close(plugin->handle);
 	}
-	else {
+	else
+	{
 		GaimPlugin *loader;
 		GaimPluginLoaderInfo *loader_info;
 
 		loader = find_loader_for_plugin(plugin);
 
-		if (loader != NULL) {
+		if (loader != NULL)
+		{
 			loader_info = GAIM_PLUGIN_LOADER_INFO(loader);
 
 			if (loader_info->destroy != NULL)
@@ -870,7 +891,6 @@ gaim_plugins_probe(const char *ext)
 		}
 		else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
 		{
-
 			/* We'll just load this right now. */
 			if (!gaim_plugin_load(plugin))
 			{
@@ -912,10 +932,32 @@ gaim_plugin_register(GaimPlugin *plugin)
 	if (g_list_find(plugins, plugin))
 		return TRUE;
 
-	if (plugin->info->type == GAIM_PLUGIN_LOADER ||
-		plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+	if (plugin->info->type == GAIM_PLUGIN_LOADER)
 	{
-		/* Special exception for loader plugins. We want them loaded NOW! */
+		GaimPluginLoaderInfo *loader_info;
+
+		loader_info = GAIM_PLUGIN_LOADER_INFO(plugin);
+
+		if (loader_info == NULL ||
+			loader_info->api_version != GAIM_LOADER_API_VERSION)
+		{
+			return FALSE;
+		}
+
+		load_queue = g_list_append(load_queue, plugin);
+	}
+	else if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+	{
+		GaimPluginProtocolInfo *prpl_info;
+
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		if (prpl_info == NULL ||
+			prpl_info->api_version != GAIM_PRPL_API_VERSION)
+		{
+			return FALSE;
+		}
+
 		load_queue = g_list_append(load_queue, plugin);
 	}
 

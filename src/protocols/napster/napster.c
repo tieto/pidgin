@@ -563,6 +563,7 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
+	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC,
 	NULL,
 	NULL,
@@ -625,7 +626,7 @@ static GaimPluginProtocolInfo prpl_info =
 
 static GaimPluginInfo info =
 {
-	2,                                                /**< api_version    */
+	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

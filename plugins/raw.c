@@ -144,7 +144,7 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginInfo info =
 {
-	2,
+	GAIM_PLUGIN_API_VERSION,
 	GAIM_PLUGIN_STANDARD,
 	GAIM_GTK_PLUGIN_TYPE,
 	0,

@@ -16,6 +16,10 @@ version 0.77cvs
 	* Plugins can now add preferences (Gary Kramlich)
 	* The TOC protocol is no longer built by default. The plugin is not
 	  being properly tested and is no longer officially supported.
+	* Bumped up the plugin API version number, and added version numbers
+	  for loader plugins and protocol plugins. Authors will want to
+	  update their plugins, and possibly use GAIM_PLUGIN_API_VERSION,
+	  GAIM_PRPL_API_VERSION, and GAIM_LOADER_API_VERSION constants.
 
 	Bug Fixes:
 	* Formatting in the Log viewer is fixed (Kevin Stange)

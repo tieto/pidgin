@@ -1297,6 +1297,7 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info = {
+	GAIM_PRPL_API_VERSION,
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
 	NULL,
 	NULL,
@@ -1358,7 +1359,7 @@ static GaimPluginProtocolInfo prpl_info = {
 };
 
 static GaimPluginInfo info = {
-	2,							  /**< api_version    */
+	GAIM_PLUGIN_API_VERSION,			  /**< api_version    */
 	GAIM_PLUGIN_PROTOCOL,				  /**< type           */
 	NULL,						  /**< ui_requirement */
 	0,							  /**< flags          */

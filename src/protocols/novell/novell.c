@@ -2339,6 +2339,7 @@ novell_set_away(GaimConnection * gc, const char *state, const char *msg)
 }
 
 static GaimPluginProtocolInfo prpl_info = {
+	GAIM_PRPL_API_VERSION,
 	0,
 	NULL,
 	NULL,
@@ -2394,7 +2395,7 @@ static GaimPluginProtocolInfo prpl_info = {
 };
 
 static GaimPluginInfo info = {
-	2,												  /**< api_version    */
+	GAIM_PLUGIN_API_VERSION,						  /**< api_version    */
 	GAIM_PLUGIN_PROTOCOL,							  /**< type           */
 	NULL,											  /**< ui_requirement */
 	0,												  /**< flags          */

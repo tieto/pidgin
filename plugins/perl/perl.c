@@ -509,6 +509,7 @@ plugin_unload(GaimPlugin *plugin)
 
 static GaimPluginLoaderInfo loader_info =
 {
+	GAIM_LOADER_API_VERSION,                          /**< api_version    */
 	NULL,                                             /**< exts           */
 
 	probe_perl_plugin,                                /**< probe          */
@@ -519,7 +520,7 @@ static GaimPluginLoaderInfo loader_info =
 
 static GaimPluginInfo info =
 {
-	2,                                                /**< api_version    */
+	GAIM_PLUGIN_API_VERSION,                          /**< api_version    */
 	GAIM_PLUGIN_LOADER,                               /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */

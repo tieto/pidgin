@@ -29,9 +29,9 @@
 #include "signals.h"
 #include "value.h"
 
-typedef struct _GaimPlugin           GaimPlugin;         /**< GaimPlugin       */
-typedef struct _GaimPluginInfo       GaimPluginInfo;     /**< GaimPluginInfo   */
-typedef struct _GaimPluginUiInfo     GaimPluginUiInfo;   /**< GaimPluginUiInfo */
+typedef struct _GaimPlugin           GaimPlugin;
+typedef struct _GaimPluginInfo       GaimPluginInfo;
+typedef struct _GaimPluginUiInfo     GaimPluginUiInfo;
 typedef struct _GaimPluginLoaderInfo GaimPluginLoaderInfo;
 
 typedef int GaimPluginPriority; /**< Plugin priority. */
@@ -55,6 +55,9 @@ typedef enum
 #define GAIM_PRIORITY_LOWEST  -9999
 
 #define GAIM_PLUGIN_FLAG_INVISIBLE 0x01
+
+#define GAIM_PLUGIN_API_VERSION 3
+#define GAIM_LOADER_API_VERSION 2
 
 /**
  * Detailed information about a plugin.
@@ -92,6 +95,8 @@ struct _GaimPluginInfo
  */
 struct _GaimPluginLoaderInfo
 {
+	unsigned int api_version;
+
 	GList *exts;
 
 	gboolean (*probe)(GaimPlugin *plugin);
