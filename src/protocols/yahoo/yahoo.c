@@ -474,7 +474,7 @@ static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packe
 		l = l->next;
 	}
 
-	if (pkt->status == 1) {
+	if (pkt->status <= 1) {
 		char *m;
 		int i, j;
 		strip_linefeed(msg);
