@@ -281,30 +281,18 @@ static void
 send_cb(GtkWidget *widget, GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
-	char *buf;
-	GaimConnection *gc = gaim_conversation_get_gc(conv);
+	char *buf, *clean;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
+	clean = gaim_markup_strip_html(buf);
 
-	/*	set_toggle(gtkconv->toolbar.bold,        FALSE);
-	set_toggle(gtkconv->toolbar.italic,      FALSE);
-	set_toggle(gtkconv->toolbar.underline,   FALSE);
-	set_toggle(gtkconv->toolbar.larger_size, FALSE);
-	set_toggle(gtkconv->toolbar.normal_size, FALSE);
-	set_toggle(gtkconv->toolbar.smaller_size,FALSE);
-	set_toggle(gtkconv->toolbar.font,        FALSE);
-	set_toggle(gtkconv->toolbar.fgcolor,     FALSE);
-	set_toggle(gtkconv->toolbar.bgcolor,     FALSE);
-	set_toggle(gtkconv->toolbar.link,        FALSE);
-	*/
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	if (strlen(buf) == 0) {
+	if (strlen(clean) == 0) {
+		g_free(clean);
 		g_free(buf);
-
 		return;
 	}
 
@@ -317,6 +305,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 		gaim_conv_window_hide(gaim_conversation_get_window(conv));
 
 	g_free(buf);
+	g_free(clean);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 	default_formatize(conv);
