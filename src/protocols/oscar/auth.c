@@ -179,7 +179,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)ci->minor);
 	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)ci->point);
 	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)ci->build);
-	aim_addtlvtochain32(&tl, 0x0014, 0x00000055); /* distribution chan */
+	aim_addtlvtochain32(&tl, 0x0014, (fu32_t)ci->distrib); /* distribution chan */
 	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
 	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 
@@ -201,46 +201,6 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
  * NOTE!! If you want/need to make use of the aim_sendmemblock() function,
  * then the client information you send here must exactly match the
  * executable that you're pulling the data from.
- *
- * WinAIM 4.8.2540
- *   clientstring = "AOL Instant Messenger (SM), version 4.8.2540/WIN32"
- *   clientid = 0x0109
- *   major = 0x0004
- *   minor = 0x0008
- *   point = 0x0000
- *   build = 0x09ec
- *   t(0x0014) = 0x000000af
- *   t(0x004a) = 0x01
- *
- * WinAIM 4.3.2188:
- *   clientstring = "AOL Instant Messenger (SM), version 4.3.2188/WIN32"
- *   clientid = 0x0109
- *   major = 0x0400
- *   minor = 0x0003
- *   point = 0x0000
- *   build = 0x088c
- *   unknown = 0x00000086
- *   lang = "en"
- *   country = "us"
- *   unknown4a = 0x01
- *
- * Latest WinAIM that libfaim can emulate without server-side buddylists:
- *   clientstring = "AOL Instant Messenger (SM), version 4.1.2010/WIN32"
- *   clientid = 0x0004
- *   major  = 0x0004
- *   minor  = 0x0001
- *   point = 0x0000
- *   build  = 0x07da
- *   unknown= 0x0000004b
- *
- * WinAIM 3.5.1670:
- *   clientstring = "AOL Instant Messenger (SM), version 3.5.1670/WIN32"
- *   clientid = 0x0004
- *   major =  0x0003
- *   minor =  0x0005
- *   point = 0x0000
- *   build =  0x0686
- *   unknown =0x0000002a
  *
  * Java AIM 1.1.19:
  *   clientstring = "AOL Instant Messenger (TM) version 1.1.19 for Java built 03/24/98, freeMem 215871 totalMem 1048567, i686, Linus, #2 SMP Sun Feb 11 03:41:17 UTC 2001 2.4.1-ac9, IBM Corporation, 1.1.8, 45.3, Tue Mar 27 12:09:17 PST 2001"
@@ -303,6 +263,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_addtlvtochain16(&tl, 0x0018, (fu16_t)ci->minor);
 	aim_addtlvtochain16(&tl, 0x0019, (fu16_t)ci->point);
 	aim_addtlvtochain16(&tl, 0x001a, (fu16_t)ci->build);
+	aim_addtlvtochain32(&tl, 0x0014, (fu32_t)ci->distrib);
 	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
 

@@ -129,78 +129,115 @@ typedef fu16_t flap_seqnum_t;
 struct client_info_s {
 	const char *clientstring;
 	fu16_t clientid;
-	int major;
-	int minor;
-	int point;
-	int build;
+	fu16_t major;
+	fu16_t minor;
+	fu16_t point;
+	fu16_t build;
+	fu32_t distrib;
 	const char *country; /* two-letter abbrev */
 	const char *lang; /* two-letter abbrev */
 };
 
+/* Needs to be checked */
 #define CLIENTINFO_AIM_3_5_1670 { \
 	"AOL Instant Messenger (SM), version 3.5.1670/WIN32", \
 	0x0004, \
-	0x0003, \
-	0x0005, \
-	0x0000, \
-	0x0686, \
-	"us", \
-	"en", \
+	0x0003, 0x0005, \
+	0x0000, 0x0686, \
+	0x0000002a, \
+	"us", "en", \
 }
 
+/* Needs to be checked */
+/* Latest winaim without ssi */
 #define CLIENTINFO_AIM_4_1_2010 { \
-	  "AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
-	  0x0004, \
-	  0x0004, \
-	  0x0001, \
-	  0x0000, \
-	  0x07da, \
-	  "us", \
-	  "en", \
+	"AOL Instant Messenger (SM), version 4.1.2010/WIN32", \
+	0x0004, \
+	0x0004, 0x0001, \
+	0x0000, 0x07da, \
+	0x0000004b, \
+	"us", "en", \
 }
 
+/* Needs to be checked */
+#define CLIENTINFO_AIM_4_3_2188 { \
+	"AOL Instant Messenger (SM), version 4.3.2188/WIN32", \
+	0x0109, \
+	0x0400, 0x0003, \
+	0x0000, 0x088c, \
+	0x00000086, \
+	"us", "en", \
+}
+
+/* Needs to be checked */
+#define CLIENTINFO_AIM_4_8_2540 { \
+	"AOL Instant Messenger (SM), version 4.8.2540/WIN32", \
+	0x0109, \
+	0x0004, 0x0008, \
+	0x0000, 0x09ec, \
+	0x000000af, \
+	"us", "en", \
+}
+
+/* Needs to be checked */
 #define CLIENTINFO_AIM_5_0_2938 { \
-	  "AOL Instant Messenger, version 5.0.2938/WIN32", \
-	  0x0109, \
-	  0x0005, \
-	  0x0000, \
-	  0x0000, \
-	  0x0b7a, \
-	  "us", \
-	  "en", \
+	"AOL Instant Messenger, version 5.0.2938/WIN32", \
+	0x0109, \
+	0x0005, 0x0000, \
+	0x0000, 0x0b7a, \
+	0x00000000, \
+	"us", "en", \
 }
 
+#define CLIENTINFO_AIM_5_1_3036 { \
+	"AOL Instant Messenger, version 5.1.3036/WIN32", \
+	0x0109, \
+	0x0005, 0x0001, \
+	0x0000, 0x0bdc, \
+	0x000000d2, \
+	"us", "en", \
+}
+
+/* Needs to be checked */
 #define CLIENTINFO_ICQ_4_65_3281 { \
 	"ICQ Inc. - Product of ICQ (TM) 2000b.4.65.1.3281.85", \
 	0x010a, \
-	0x0004, \
-	0x0041, \
-	0x0001, \
-	0x0cd1, \
-	"us", \
-	"en", \
+	0x0004, 0x0041, \
+	0x0001, 0x0cd1, \
+	0x00000055, \
+	"us", "en", \
 }
 
+/* Needs to be checked */
 #define CLIENTINFO_ICQ_5_34_3728 { \
 	"ICQ Inc. - Product of ICQ (TM).2002a.5.34.1.3728.85", \
 	0x010a, \
-	0x0005, \
-	0x0022, \
-	0x0001, \
-	0x0e8f, \
-	"us", \
-	"en", \
+	0x0005, 0x0022, \
+	0x0001, 0x0e8f, \
+	0x00000055, \
+	"us", "en", \
 }
 
-/*
- * I would make 4.1.2010 the default, but they seem to have found
- * an alternate way of breaking that one. 
- *
- * 3.5.1670 should work fine, however, you will be subjected to the
- * memory test, which may require you to have a WinAIM binary lying 
- * around. (see login.c::memrequest())
- */
+#define CLIENTINFO_ICQ_5_45_1_3777_85 { \
+	"ICQ Inc. - Product of ICQ (TM).2003a.5.45.1.3777.85", \
+	0x010a, \
+	0x0005, 0x002d, \
+	0x0001, 0x0ec1, \
+	0x00000055, \
+	"us", "en", \
+}
+
+#define CLIENTINFO_ICQBasic_14_3_1068 { \
+	"ICQBasic", \
+	0x010a, \
+	0x0014, 0x0003, \
+	0x0000, 0x042c, \
+	0x0000043d, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_3_5_1670
+/* define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036 */
 #define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_4_65_3281
 
 #ifndef TRUE
