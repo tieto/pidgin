@@ -11,7 +11,7 @@ version 0.11.0:
 	* Command-line option to automatically be away on signon (thanks bmiller)
 	* Buddy list backups now stored in ~/.gaim/SN.protocol.blist (gaim will
 	  move the old file for you). Needed for when you have the same name on
-	  two different protocols.
+	  two different protocols. (Oscar and TOC share the same file.)
 
 version 0.11.0-pre2 (12/04/2000):
 	* Fixed a segfault with a bad util.c 
