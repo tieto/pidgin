@@ -1145,7 +1145,7 @@ gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIte
 	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
 	if (event->type == GDK_BUTTON_RELEASE) {
-		if (event_button->button == 1) {
+		if ((event_button->button == 1) || (event_button->button == 2)) {
 			GtkTextIter start, end;
 			/* we shouldn't open a URL if the user has selected something: */
 			if (gtk_text_buffer_get_selection_bounds(
