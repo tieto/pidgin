@@ -157,9 +157,9 @@ void gaim_gtk_set_sensitive_if_input(GtkWidget *entry, GtkWidget *dialog);
 void gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 
 /**
- * Adds a seperator to a menu.
+ * Adds a separator to a menu.
  *
- * @param menu The menu to add a seperator to.
+ * @param menu The menu to add a separator to.
  */
 void gaim_separator(GtkWidget *menu);
 

@@ -1,4 +1,4 @@
-/**
+ /**
  * @file internal.h Internal definitions and includes
  * @ingroup core
  *
@@ -55,7 +55,7 @@
 
 #define MSG_LEN 2048
 /* The above should normally be the same as BUF_LEN,
- * but just so we're explictly asking for the max message
+ * but just so we're explicitly asking for the max message
  * length. */
 #define BUF_LEN MSG_LEN
 #define BUF_LONG BUF_LEN * 2

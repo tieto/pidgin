@@ -90,7 +90,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	/* See if we already have some info associated with this cookie */
 	for (new=sess->emailinfo; (new && strncmp(cookie16, new->cookie16, 16)); new=new->next);
 	if (new) {
-		/* Free some of the old info, if existant */
+		/* Free some of the old info, if it exists */
 		free(new->cookie8);
 		free(new->cookie16);
 		free(new->url);
@@ -115,7 +115,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 			havenewmail = 1;
 		new->nummsgs = tmp;
 	} else {
-		/* If they don't send a 0x0080 TLV, it means we definately have new mail */
+		/* If they don't send a 0x0080 TLV, it means we definitely have new mail */
 		/* (ie. this is not just another status update) */
 		havenewmail = 1;
 		new->nummsgs++; /* We know we have at least 1 new email */

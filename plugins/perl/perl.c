@@ -134,7 +134,7 @@ perl_init(void)
 	{
 		/* We use to function one to load a file the other to
 		   execute the string obtained from the first and holding
-		   the file conents. This allows to have a realy local $/
+		   the file contents. This allows to have a really local $/
 		   without introducing temp variables to hold the old
 		   value. Just a question of style:) */
 		"package Gaim::PerlLoader;"

@@ -305,7 +305,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 }
 
 
-/* this is a comfirmation of yahoo_chat_online(); */
+/* this is a confirmation of yahoo_chat_online(); */
 void yahoo_process_chat_online(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
@@ -378,7 +378,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 13: /* this is 1. maybe its the type of room? (normal, user created, private, etc?) */
 			break;
-		case 61: /*this looks similiar to 130 */
+		case 61: /*this looks similar to 130 */
 			break;
 
 		/* the previous section was just room info. this next section is

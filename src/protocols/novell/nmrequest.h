@@ -86,7 +86,7 @@ void nm_request_set_data(NMRequest * req, gpointer data);
 void nm_request_set_user_define(NMRequest * req, gpointer user_define);
 
 /**
- *	Set the return code. This is the return code that we recieved in
+ *	Set the return code. This is the return code that we received in
  *  the server response fields.
  *
  *	@param	req			The request object

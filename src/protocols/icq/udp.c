@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: udp.c 2487 2001-10-10 19:58:11Z warmenhoven $
+ * $Id: udp.c 9490 2004-04-21 01:34:26Z chipx86 $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -403,7 +403,7 @@ void icq_Logout(icq_Link *icqlink) /* V5 */
 }
 
 /*******************************
-This routine sends the aknowlegement cmd to the
+This routine sends the acknowlegement cmd to the
 server it appears that this must be done after
 everything the server sends us
 *******************************/

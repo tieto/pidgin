@@ -94,7 +94,7 @@
 #define AIM_CB_BUD_DEFAULT 0xffff
 
 /*
- * SNAC Family: Messeging Services.
+ * SNAC Family: Messaging Services.
  */ 
 #define AIM_CB_MSG_ERROR 0x0001
 #define AIM_CB_MSG_PARAMINFO 0x0005
@@ -288,7 +288,7 @@
 /*
  * SNAC Family: Internal Messages
  *
- * This isn't truely a SNAC family either, but using
+ * This isn't truly a SNAC family either, but using
  * these, we can integrated non-SNAC services into
  * the SNAC-centered libfaim callback structure.
  *

@@ -512,7 +512,7 @@ const char *gaim_request_field_get_type_hint(const GaimRequestField *field);
  *
  * @param field The field.
  *
- * @return TRUE if the fiels is required, or FALSE.
+ * @return TRUE if the field is required, or FALSE.
  */
 gboolean gaim_request_field_is_required(const GaimRequestField *field);
 

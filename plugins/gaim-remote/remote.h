@@ -38,7 +38,7 @@
 					 * like "Open new conversation" or "send IM".
 					 * Even though there's much redundancy with the
 					 * other CUI_TYPES, we're better keeping this stuff
-					 * seperate because it's intended use is so different */
+					 * separate because it's intended use is so different */
 
 #define CUI_META_LIST		1	
 					/* 1 is always list; this is ignored by the core.

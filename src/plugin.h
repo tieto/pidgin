@@ -380,7 +380,7 @@ void gaim_plugins_unregister_probe_notify_cb(void (*func)(void *));
 /**
  * Registers a function that will be called when a plugin is loaded.
  *
- * @param func The callback functino.
+ * @param func The callback function.
  * @param data Data to pass to the callback.
  */
 void gaim_plugins_register_load_notify_cb(void (*func)(GaimPlugin *, void *),
@@ -389,14 +389,14 @@ void gaim_plugins_register_load_notify_cb(void (*func)(GaimPlugin *, void *),
 /**
  * Unregisters a function that would be called when a plugin is loaded.
  *
- * @param func The callback functino.
+ * @param func The callback function.
  */
 void gaim_plugins_unregister_load_notify_cb(void (*func)(GaimPlugin *, void *));
 
 /**
  * Registers a function that will be called when a plugin is unloaded.
  *
- * @param func The callback functino.
+ * @param func The callback function.
  * @param data Data to pass to the callback.
  */
 void gaim_plugins_register_unload_notify_cb(void (*func)(GaimPlugin *, void *),
@@ -405,7 +405,7 @@ void gaim_plugins_register_unload_notify_cb(void (*func)(GaimPlugin *, void *),
 /**
  * Unregisters a function that would be called when a plugin is unloaded.
  *
- * @param func The callback functino.
+ * @param func The callback function.
  */
 void gaim_plugins_unregister_unload_notify_cb(void (*func)(GaimPlugin *,
 														   void *));

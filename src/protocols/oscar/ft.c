@@ -108,7 +108,7 @@ static void aim_oft_dirconvert_fromstupid(char *name)
  * which is simpler and should be more accurate than Josh Myer's original 
  * code. -- wtm
  *
- * This algorithim works every time I have tried it.  The other fails 
+ * This algorithm works every time I have tried it.  The other fails 
  * sometimes.  So, AOL who thought this up?  It has got to be the weirdest 
  * checksum I have ever seen.
  *

@@ -2,7 +2,7 @@
  * Family 0x0004 - Routines for sending/receiving Instant Messages.
  *
  * Note the term ICBM (Inter-Client Basic Message) which blankets
- * all types of genericly routed through-server messages.  Within
+ * all types of generically routed through-server messages.  Within
  * the ICBM types (family 4), a channel is defined.  Each channel
  * represents a different type of message.  Channel 1 is used for
  * what would commonly be called an "instant message".  Channel 2
@@ -118,7 +118,7 @@ faim_export fu16_t aim_im_fingerprint(const fu8_t *msghdr, int len)
 /** 
  * Subtype 0x0002 - Set ICBM parameters.
  *
- * I definitly recommend sending this.  If you don't, you'll be stuck
+ * I definitely recommend sending this.  If you don't, you'll be stuck
  * with the rather unreasonable defaults.
  * 
  */
@@ -217,7 +217,7 @@ static int aim_im_paraminfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t 
  * notably when the (r) symbol is used), you must use the full UNICODE
  * encoding for your message.  In UNICODE mode, _all_ characters must
  * occupy 16bits, including ones that are not special.  (Remember that
- * the first 128 UNICODE symbols are equivelent to ASCII7, however they
+ * the first 128 UNICODE symbols are equivalent to ASCII7, however they
  * must be prefixed with a zero high order byte.)
  *
  * I strongly discourage the use of UNICODE mode, mainly because none
@@ -380,7 +380,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 
 	/*
 	 * Set the Buddy Icon Requested flag.
-	 * XXX - Everytime?  Surely not...
+	 * XXX - Every time?  Surely not...
 	 */
 	if (args->flags & AIM_IMFLAGS_BUDDYREQ) {
 		aimbs_put16(&fr->data, 0x0009);
@@ -1189,7 +1189,7 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  * open source clients (like encryption or something) -- see faimtest for
  * examples of how to do this.
  *
- * I would definitly recommend avoiding this feature unless you really
+ * I would definitely recommend avoiding this feature unless you really
  * know what you are doing, and/or you have something neat to do with it.
  *
  */
@@ -1516,7 +1516,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		/*
 		 * This is here to protect ourselves from ourselves.  That
-		 * is, if something above doesn't completly parse its value
+		 * is, if something above doesn't completely parse its value
 		 * section, or, worse, overparses it, this will set the
 		 * stream where it needs to be in order to land on the next
 		 * TLV when the loop continues.
@@ -1985,7 +1985,7 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	 * Channel 0x0001 is the message channel.  It is 
 	 * used to send basic ICBMs.
 	 *
-	 * Channel 0x0002 is the Rendevous channel, which
+	 * Channel 0x0002 is the Rendezvous channel, which
 	 * is where Chat Invitiations and various client-client
 	 * connection negotiations come from.
 	 *
@@ -2003,7 +2003,7 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	 * Note that although this contains TLVs that appear contiguous
 	 * with the TLVs read below, they are two different pieces.  The
 	 * userinfo block contains the number of TLVs that contain user
-	 * information, the rest are not even though there is no seperation.
+	 * information, the rest are not even though there is no separation.
 	 * You can start reading the message TLVs after aim_info_extract() 
 	 * parses out the standard userinfo block.
 	 *

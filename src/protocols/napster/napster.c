@@ -170,7 +170,7 @@ static void nap_join_chat(GaimConnection *gc, GHashTable *data)
 
 	name = g_hash_table_lookup(data, "group");
 
-	/* Make sure the name has a # preceeding it */
+	/* Make sure the name has a # preceding it */
 	if (name[0] != '#')
 		nap_write_packet(gc, 400, "#%s", name);
 	else

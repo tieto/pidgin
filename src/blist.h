@@ -723,9 +723,9 @@ void gaim_blist_request_add_group(void);
 void gaim_blist_node_set_bool(GaimBlistNode *node, const char *key, gboolean value);
 
 /**
- * Retreives a named boolean setting from a node in the buddy list
+ * Retrieves a named boolean setting from a node in the buddy list
  *
- * @param node  The node to retreive the data from
+ * @param node  The node to retrieve the data from
  * @param key   The identifier of the data
  *
  * @return The value, or FALSE if there is no setting
@@ -742,9 +742,9 @@ gboolean gaim_blist_node_get_bool(GaimBlistNode *node, const char *key);
 void gaim_blist_node_set_int(GaimBlistNode *node, const char *key, int value);
 
 /**
- * Retreives a named integer setting from a node in the buddy list
+ * Retrieves a named integer setting from a node in the buddy list
  *
- * @param node  The node to retreive the data from
+ * @param node  The node to retrieve the data from
  * @param key   The identifier of the data
  *
  * @return The value, or 0 if there is no setting
@@ -762,9 +762,9 @@ void gaim_blist_node_set_string(GaimBlistNode *node, const char *key,
 		const char *value);
 
 /**
- * Retreives a named string setting from a node in the buddy list
+ * Retrieves a named string setting from a node in the buddy list
  *
- * @param node  The node to retreive the data from
+ * @param node  The node to retrieve the data from
  * @param key   The identifier of the data
  *
  * @return The value, or NULL if there is no setting

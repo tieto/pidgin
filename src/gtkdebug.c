@@ -281,7 +281,7 @@ gaim_gtk_debug_init(void)
 	 * NOTE: This must be set before prefs are loaded, and the callbacks
 	 *       set after they are loaded, since prefs sets the enabled
 	 *       preference here and that loads the window, which calls the
-	 *       configure event, which overrrides the width and height! :P
+	 *       configure event, which overrides the width and height! :P
 	 */
 
 	gaim_prefs_add_none("/gaim/gtk/debug");

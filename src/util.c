@@ -323,7 +323,7 @@ gaim_mime_decode_field(const char *str)
 				}
 			}
 #if 0
-			/* I think this is rarely going to happend, if at all */
+			/* I think this is rarely going to happen, if at all */
 			else if ((num < 2) && (strchr("()<>@,;:/[]", *cur)))
 				/* There can't be these characters in the first two tokens. */
 				break;
@@ -1970,7 +1970,7 @@ gaim_strcasereplace(const char *string, const char *delimiter,
 
 	/* Count how many times the delimiter appears */
 	i = 0; /* position in the source string */
-	j = 0; /* number of occurences of "delimiter" */
+	j = 0; /* number of occurrences of "delimiter" */
 	while (string[i] != '\0') {
 		if (!strncasecmp(&string[i], delimiter, length_del)) {
 			i += length_del;

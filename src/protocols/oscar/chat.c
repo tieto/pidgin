@@ -115,7 +115,7 @@ faim_export int aim_chat_leaveroom(aim_session_t *sess, const char *name)
 /*
  * Subtype 0x0002 - General room information.  Lots of stuff.
  *
- * Values I know are in here but I havent attached
+ * Values I know are in here but I haven't attached
  * them to any of the 'Unknown's:
  *	- Language (English)
  *

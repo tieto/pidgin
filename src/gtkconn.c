@@ -311,7 +311,7 @@ static void disconnect_window_hide()
  * shown or hidden.  Also make sure the label on the Reconnect 
  * button is correctly set to either Reconnect or Remove.  If there 
  * is more than one account then make sure the GtkTreeView is shown.  
- * If there are no accounts disconnectd then hide the dialog.
+ * If there are no accounts disconnected then hide the dialog.
  */
 static void disconnect_window_update_buttons(GtkTreeModel *model)
 {

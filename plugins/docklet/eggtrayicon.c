@@ -254,7 +254,7 @@ egg_tray_icon_new_for_xscreen (Screen *xscreen, const char *name)
 #if HAVE_GTK_MULTIHEAD
   /* FIXME: this code does not compile, screen is undefined. Now try
    * getting the GdkScreen from xscreen (:. Dunno how to solve this
-   * (there is prolly some easy way I cant think of right now)
+   * (there is probably some easy way I cant think of right now)
    */
   gtk_plug_construct_for_display (GTK_PLUG (icon),
 				  gdk_screen_get_display (screen), 0);

@@ -210,7 +210,7 @@ execute_perl(const char *function, int argc, char **args)
 			/*
 			 * Shizzel.  So the perl script changed one of the parameters,
 			 * and we want this change to affect the original parameters.
-			 * args[i] is just a tempory little list of pointers.  We don't
+			 * args[i] is just a temporary little list of pointers.  We don't
 			 * want to free args[i] here because the new parameter doesn't
 			 * overwrite the data that args[i] points to.  That is done by
 			 * the function that called execute_perl.  I'm not explaining this

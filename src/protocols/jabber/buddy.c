@@ -270,7 +270,7 @@ struct vcard_template {
 };
 
 /*
- * The "vCard" tag's attibute list...
+ * The "vCard" tag's attribute list...
  */
 struct tag_attr {
 	char *attr;

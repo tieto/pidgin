@@ -49,7 +49,7 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
 }
 
 /* 
- * Subtype 0x0004 - Set group permisson mask.
+ * Subtype 0x0004 - Set group permission mask.
  *
  * Normally 0x1f (all classes).
  *

@@ -1,5 +1,5 @@
 /**
- * @file state.h State functinos and definitions
+ * @file state.h State functions and definitions
  *
  * gaim
  *

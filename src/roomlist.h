@@ -126,7 +126,7 @@ void gaim_roomlist_show_with_account(GaimAccount *account);
 /**
  * Returns a newly created room list object.
  *
- * It has an inital reference count of 1.
+ * It has an initial reference count of 1.
  *
  * @param account The account that's listing rooms.
  * @return The new room list handle.
@@ -156,7 +156,7 @@ void gaim_roomlist_unref(GaimRoomlist *list);
  * This must be called before gaim_roomlist_room_add().
  *
  * @param list The room list.
- * @param fields A GList of GaimRoomlistField's. UI's are encourged
+ * @param fields A GList of GaimRoomlistField's. UI's are encouraged
  *               to default to displaying them in the order given.
  */
 void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields);
@@ -164,7 +164,7 @@ void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields);
 /**
  * Set the "in progress" state of the room list.
  *
- * The UI is encourged to somehow hint to the user
+ * The UI is encouraged to somehow hint to the user
  * whether or not we're busy downloading a room list or not.
  *
  * @param list The room list.
@@ -175,7 +175,7 @@ void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress);
 /**
  * Gets the "in progress" state of the room list.
  *
- * The UI is encourged to somehow hint to the user
+ * The UI is encouraged to somehow hint to the user
  * whether or not we're busy downloading a room list or not.
  *
  * @param list The room list.

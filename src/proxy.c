@@ -870,7 +870,7 @@ http_uri_get_host(const char *uri)
 		c++;
 	}
 
-	/* NOTE: HTTP_PROXY takes precendence. */
+	/* NOTE: HTTP_PROXY takes precedence. */
 	info = gaim_global_proxy_get_info();
 
 	if (*host) gaim_proxy_info_set_host(info, host);

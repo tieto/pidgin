@@ -1417,7 +1417,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	/* If ALT (or whatever) was held down... */
 	else if (event->state & GDK_MOD1_MASK)
 	{
-		/* XXX - Make sure the conv exists befeore switching to it */
+		/* XXX - Make sure the conv exists before switching to it */
 		if (event->keyval > '0' && event->keyval <= '9') {
 			int switchto = event->keyval - '1';
 			if (switchto < numconvs)
@@ -2229,7 +2229,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
 
 /*
  * Makes sure all the menu items and all the buttons are hidden/shown and
- * sensitive/insensitve.  This is called after changing tabs and when an
+ * sensitive/insensitive.  This is called after changing tabs and when an
  * account signs on or off.
  */
 static void
@@ -2257,7 +2257,7 @@ gray_stuff_out(GaimConversation *conv)
 	/*
 	 * Handle hiding and showing stuff based on what type of conv this is.
 	 * Stuff that Gaim IMs support in general should be shown for IM
-	 * conversations.  Stuff that Gaim chats support in gerneal should be
+	 * conversations.  Stuff that Gaim chats support in general should be
 	 * shown for chat conversations.  It doesn't matter whether the PRPL
 	 * supports it or not--that only affects if the button or menu item
 	 * is sensitive or not.

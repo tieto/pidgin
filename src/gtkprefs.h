@@ -74,7 +74,7 @@ GtkWidget *gaim_gtk_prefs_checkbox(const char *title, const char *key,
  * @param max   The maximum value of the spin button
  * @param sg    If not NULL, the size group to which the spin button will be added
  * @return      An hbox containing both the label and the spinner.  Can be
- *              used to set the widgets to sensitive or insensitve based on the 
+ *              used to set the widgets to sensitive or insensitive based on the 
  *              value of a checkbox.
  */
 GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,

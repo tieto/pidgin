@@ -240,7 +240,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 }
 
 /*
- * Purge recieve queue of all handled commands (->handled==1).
+ * Purge receive queue of all handled commands (->handled==1).
  *
  */
 faim_export void aim_purge_rxqueue(aim_session_t *sess)

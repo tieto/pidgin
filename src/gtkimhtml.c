@@ -3072,7 +3072,7 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
  * (12:45:27) ?? ???: secondary_cursor_color = (rgb(background) + rgb(primary_cursor_color) ) / 2
  * (12:45:55) ?? ???: understand?
  * (12:46:14) Tim: yeah. i didn't know there was an exact formula
- * (12:46:56) ?? ???: u might need to exactract separate each color from RGB
+ * (12:46:56) ?? ???: u might need to extract separate each color from RGB
  */
 
 static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark,
@@ -3524,7 +3524,7 @@ static gboolean tag_ends_here(GtkTextTag *tag, GtkTextIter *iter, GtkTextIter *n
  * as smileys and IM images are represented by the Unicode "unknown" character.  Handle them.  Else
  * check for tags that are toggled on, insert their html form, and  push them on the queue. Then insert
  * the actual text. Then check for tags that are toggled off and insert them, after checking the queue.
- * Finally, replace <, >, &, and " with their HTML equivilent.
+ * Finally, replace <, >, &, and " with their HTML equivalent.
  */
 char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
 {

@@ -152,7 +152,7 @@ int mdns_send_dns(int fd, const DNSPacket *dns);
  *        be used for sending the outgoing mDNS datagram.
  * @param domain This is the domain name you wish to query.  It should 
  *        be of the format "_presence._tcp.local" for example.
- * @return 0 if sucessful.
+ * @return 0 if successful.
  */
 int mdns_query(int fd, const char *domain, unsigned short type);
 

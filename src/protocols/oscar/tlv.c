@@ -39,7 +39,7 @@ static void freetlv(aim_tlv_t **oldtlv)
  * XXX There should be a flag setable here to have the tlvlist contain
  * bstream references, so that at least the ->value portion of each 
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
- * just as effecient as the in-place TLV parsing used in a couple places
+ * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
  * @param bs Input bstream
@@ -60,7 +60,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
 		 * type 0x0013 can only be two bytes, despite
 		 * what the actual given length is.  So here 
 		 * we dump any invalid TLVs of that sort.  Hopefully
-		 * theres no special cases to this special case.
+		 * there's no special cases to this special case.
 		 *   - mid (30jun2000)
 		 */
 		if ((type == 0x0013) && (length != 0x0002))
@@ -119,14 +119,14 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
  * XXX There should be a flag setable here to have the tlvlist contain
  * bstream references, so that at least the ->value portion of each 
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
- * just as effecient as the in-place TLV parsing used in a couple places
+ * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
  * @param bs Input bstream
  * @param num The max number of TLVs that will be read, or -1 if unlimited.  
  *        There are a number of places where you want to read in a tlvchain, 
  *        but the chain is not at the end of the SNAC, and the chain is 
- *        preceeded by the number of TLVs.  So you can limit that with this.
+ *        preceded by the number of TLVs.  So you can limit that with this.
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, fu16_t num)
 {
@@ -187,14 +187,14 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readnum(aim_bstream_t *bs, fu16_t num)
  * XXX There should be a flag setable here to have the tlvlist contain
  * bstream references, so that at least the ->value portion of each 
  * element doesn't need to be malloc/memcpy'd.  This could prove to be
- * just as effecient as the in-place TLV parsing used in a couple places
+ * just as efficient as the in-place TLV parsing used in a couple places
  * in libfaim.
  *
  * @param bs Input bstream
  * @param len The max length in bytes that will be read.
  *        There are a number of places where you want to read in a tlvchain, 
  *        but the chain is not at the end of the SNAC, and the chain is 
- *        preceeded by the length of the TLVs.  So you can limit that with this.
+ *        preceded by the length of the TLVs.  So you can limit that with this.
  */
 faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, fu16_t len)
 {
@@ -245,7 +245,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_readlen(aim_bstream_t *bs, fu16_t len)
 
 /**
  * Duplicate a TLV chain.
- * This is pretty pelf exslanatory.
+ * This is pretty self explanatory.
  *
  * @param orig The TLV chain you want to make a copy of.
  * @return A newly allocated TLV chain.
@@ -268,7 +268,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig)
  *
  * @param one One of the TLV chains to compare.
  * @param two The other TLV chain to compare.
- * @preturn Retrun 0 if the lists are the same, return 1 if they are different.
+ * @preturn Return 0 if the lists are the same, return 1 if they are different.
  */
 faim_internal int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 {
@@ -375,7 +375,7 @@ faim_internal int aim_tlvlist_size(aim_tlvlist_t **list)
  * @param type TLV type.
  * @length Length of string to add (not including %NULL).
  * @value String to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t length, const fu8_t *value)
 {
@@ -414,7 +414,7 @@ faim_internal int aim_tlvlist_add_raw(aim_tlvlist_t **list, const fu16_t type, c
  * @param list Destination chain.
  * @param type TLV type to add.
  * @param value Value to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value)
 {
@@ -431,7 +431,7 @@ faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const fu16_t type, con
  * @param list Destination chain.
  * @param type TLV type to add.
  * @param value Value to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const fu16_t type, const fu16_t value)
 {
@@ -448,7 +448,7 @@ faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const fu16_t type, co
  * @param list Destination chain.
  * @param type TLV type to add.
  * @param value Value to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value)
 {
@@ -473,7 +473,7 @@ faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, co
  * @param list Destination chain
  * @param type TLV type to add
  * @param caps Bitfield of capability flags to send
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, const fu32_t caps)
 {
@@ -495,7 +495,7 @@ faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, 
  *
  * @param list Destination chain.
  * @param type TLV type to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *userinfo)
 {
@@ -516,7 +516,7 @@ faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, ai
  * @param type TLV type to add.
  * @param roomname The name of the chat.
  * @param instance The instance.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu16_t exchange, const char *roomname, fu16_t instance)
 {
@@ -548,7 +548,7 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu
  *
  * @param list Destination chain.
  * @param type TLV type to add.
- * @retun The size of the value added.
+ * @return The size of the value added.
  */
 faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const fu16_t type)
 {

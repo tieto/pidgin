@@ -1,7 +1,7 @@
 /*
  * txqueue.c
  *
- * Herein lies all the mangement routines for the transmit (Tx) queue.
+ * Herein lies all the management routines for the transmit (Tx) queue.
  *
  */
 
@@ -92,7 +92,7 @@ static flap_seqnum_t aim_get_next_txseqnum(aim_conn_t *conn)
 /*
  * The overall purpose here is to enqueue the passed in command struct
  * into the outgoing (tx) queue.  Basically...
- *   1) Make a scope-irrelevent copy of the struct
+ *   1) Make a scope-irrelevant copy of the struct
  *   3) Mark as not-sent-yet
  *   4) Enqueue the struct into the list
  *   6) Return
@@ -179,7 +179,7 @@ faim_internal int aim_tx_enqueue(aim_session_t *sess, aim_frame_t *fr)
 {
 	
 	/*
-	 * If we want to send on a connection that is inprogress, we have to force
+	 * If we want to send on a connection that is in progress, we have to force
 	 * them to use the queue based version. Otherwise, use whatever they
 	 * want.
 	 */
@@ -353,7 +353,7 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
 		 */
 		if ((cur->conn->lastactivity + cur->conn->forcedlatency) >= time(NULL)) {
 			/* 
-			 * XXX should be a break! we dont want to block the 
+			 * XXX should be a break! we don't want to block the 
 			 * upper layers
 			 *
 			 * XXX or better, just do this right.

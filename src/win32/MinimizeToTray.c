@@ -9,7 +9,7 @@
  *
  * 1.0 29.06.2000 Initial version
  * 1.1 01.07.2000 The window retains it's place in the Z-order of windows
- *     when minimized/hidden. This means that when restored/shown, it doen't
+ *     when minimized/hidden. This means that when restored/shown, it doesn't
  *     always appear as the foreground window unless we call SetForegroundWindow
  *
  * Copyright 2000 Matthew Ellis <m.t.ellis@bigfoot.com>

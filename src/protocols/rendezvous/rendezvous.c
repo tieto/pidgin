@@ -325,7 +325,7 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 }
 
 /****************************/
-/* Icon and Emblem Funtions */
+/* Icon and Emblem Functions */
 /****************************/
 static const char* rendezvous_prpl_list_icon(GaimAccount *a, GaimBuddy *b)
 {
@@ -385,7 +385,7 @@ static gchar *rendezvous_prpl_tooltip_text(GaimBuddy *b)
 }
 
 /****************************/
-/* Connection Funtions      */
+/* Connection Functions      */
 /****************************/
 static void rendezvous_callback(gpointer data, gint source, GaimInputCondition condition)
 {

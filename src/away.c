@@ -59,7 +59,7 @@ static void dequeue_message(GtkTreeIter *iter)
 
 	gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), iter, 0, &name, -1);
 
-	gaim_debug(GAIM_DEBUG_INFO, "away", "Unqueueing messages from %s.\n",
+	gaim_debug(GAIM_DEBUG_INFO, "away", "Dequeueing messages from %s.\n",
 			   name);
 
 	templist = message_queue;
@@ -138,7 +138,7 @@ gint dequeue_cb(GtkWidget *treeview, GdkEventButton *event, gpointer data) {
 	GtkTreeSelection *select;
 
 	if(!(event->type == GDK_2BUTTON_PRESS && event->button == 1))
-		return FALSE; /* Double clicking on the list will unqueue that user's messages. */
+		return FALSE; /* Double clicking on the list will dequeue that user's messages. */
 
 	select = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	if(gtk_tree_selection_get_selected(select, NULL, &iter))

@@ -4,7 +4,7 @@
  *
  * outstanding_snacs is a list of aim_snac_t structs.  A SNAC should be added
  * whenever a new SNAC is sent and it should remain in the list until the
- * response for it has been receieved.  
+ * response for it has been received.  
  *
  * cleansnacs() should be called periodically by the client in order
  * to facilitate the aging out of unreplied-to SNACs. This can and does
@@ -103,7 +103,7 @@ faim_internal aim_snac_t *aim_remsnac(aim_session_t *sess, aim_snacid_t id)
 
 /*
  * This is for cleaning up old SNACs that either don't get replies or
- * a reply was never received for.  Garabage collection. Plain and simple.
+ * a reply was never received for.  Garbage collection. Plain and simple.
  *
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *

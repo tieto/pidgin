@@ -87,7 +87,7 @@ typedef fu16_t flap_seqnum_t;
  * Current Maximum Length for Screen Names (not including NULL) 
  *
  * Currently only names up to 16 characters can be registered
- * however it is aparently legal for them to be larger.
+ * however it is apparently legal for them to be larger.
  */
 #define MAXSNLEN 97
 

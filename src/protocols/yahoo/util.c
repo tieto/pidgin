@@ -91,7 +91,7 @@ char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
 
 /*
  * I found these on some website but i don't know that they actually
- * work (or are supposed to work). I didn't impliment them yet.
+ * work (or are supposed to work). I didn't implement them yet.
  * 
      * [0;30m ---black
      * [1;37m ---white

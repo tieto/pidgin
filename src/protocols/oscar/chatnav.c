@@ -48,7 +48,7 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	 * here, is set to "create".  
 	 *
 	 * Either this goes on the "list of questions concerning
-	 * why-the-hell-did-you-do-that", or this value is completly
+	 * why-the-hell-did-you-do-that", or this value is completely
 	 * ignored.  Without experimental evidence, but a good knowledge of
 	 * AOL style, I'm going to guess that it is the latter, and that
 	 * the value of the room name in create requests is ignored.

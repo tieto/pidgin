@@ -122,7 +122,7 @@ extern "C" {
 	 * @param type        The type of log this is.
 	 * @param name        The name of this conversation (Screenname, chat name,
 	 *                    etc.)
-	 * @param account     The account the conversation is occuring on
+	 * @param account     The account the conversation is occurring on
 	 * @param time        The time this conversation started
 	 * @return            The new log
 	 */

@@ -38,7 +38,7 @@ typedef struct _GaimConnection GaimConnection;
 typedef enum
 {
 	GAIM_CONNECTION_HTML       = 0x0001, /**< Connection sends/receives in 'HTML'. */
-	GAIM_CONNECTION_NO_BGCOLOR = 0x0002, /**< Connection does not send/recieve
+	GAIM_CONNECTION_NO_BGCOLOR = 0x0002, /**< Connection does not send/receive
 					           background colors.                  */
 	GAIM_CONNECTION_AUTO_RESP  = 0x0004,  /**< Send auto responses when away.       */
 	GAIM_CONNECTION_FORMATTING_WBFO = 0x0008, /**< The text buffer must be formatted as a whole */

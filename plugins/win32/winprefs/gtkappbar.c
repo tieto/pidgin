@@ -25,7 +25,7 @@
 /*
  *  TODO:
  *  - Move 'App on top' feature from Trans plugin to here
- *  - Bug: Multiple Show/Hide Desktop calls causes client area to disapear
+ *  - Bug: Multiple Show/Hide Desktop calls causes client area to disappear
  */
 #include <windows.h>
 #include <winver.h>

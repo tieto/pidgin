@@ -1371,7 +1371,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		url_buffer[strlen(url_buffer) - 1] = '\0';
 	}
 
-	/* MSN always puts in &#39; for apostrophies...replace them */
+	/* MSN always puts in &#39; for apostrophes...replace them */
 	while ((p = strstr(url_buffer, "&#39;")) != NULL)
 	{
 		*p = '\'';

@@ -32,7 +32,7 @@
  *
  * @param account    The optional account to use.
  * @param name       The optional name to pounce on.
- * @param cur_pounce The current buddy pounce, if editting an existing one.
+ * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
 void gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 								GaimPounce *cur_pounce);

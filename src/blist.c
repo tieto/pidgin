@@ -2653,7 +2653,7 @@ const char *gaim_blist_node_get_string(GaimBlistNode* node, const char *key)
 }
 
 
-/* XXX: this is compatability stuff.  Remove after.... oh, I dunno... 0.77 or so */
+/* XXX: this is compatibility stuff.  Remove after.... oh, I dunno... 0.77 or so */
 
 void gaim_group_set_setting(GaimGroup *g, const char *key, const char *value)
 {

@@ -175,10 +175,10 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
         case 1027: return "ca"; /* catalan */
         case 1050: return "hr"; /* croation */
         case 1029: return "cs"; /* czech */
-        case 1030: return "da"; /* danaish */
+        case 1030: return "da"; /* danish */
         case 1043: return "nl"; /* dutch - netherlands */
         case 1033: return "en"; /* english - us */
-        case 1035: return "fi"; /* finish */
+        case 1035: return "fi"; /* finnish */
         case 1036: return "fr"; /* french - france */
         case 1031: return "de"; /* german - germany */
         case 1032: return "el"; /* greek */

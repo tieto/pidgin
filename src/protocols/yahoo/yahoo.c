@@ -1013,7 +1013,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	 * will soon do so in the rest of the world.
 	 *
 	 * The new clients use this authentication method.  I warn you in advance, it's
-	 * bizzare, convoluted, inordinately complicated.  It's also no more secure than
+	 * bizarre, convoluted, inordinately complicated.  It's also no more secure than
 	 * crypt() was.  The only purpose this scheme could serve is to prevent third
 	 * part clients from connecting to their servers.
 	 *

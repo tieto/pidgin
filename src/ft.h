@@ -165,7 +165,7 @@ void gaim_xfer_ref(GaimXfer *xfer);
  * Decreases the reference count on a GaimXfer.
  * If the reference reaches 0, gaim_xfer_destroy (an internal function)
  * will destroy the xfer. It calls the ui destroy cb first.
- * Since the core keeps a ref on the xfer, only an erronous call to
+ * Since the core keeps a ref on the xfer, only an erroneous call to
  * this function will destroy the xfer while still in use.
  *
  * @param xfer A file transfer handle.

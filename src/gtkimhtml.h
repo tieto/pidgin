@@ -250,7 +250,7 @@ void gtk_imhtml_font_shrink(GtkIMHtml *imhtml);
 void gtk_imhtml_font_grow(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);
-/* returns a null terminated array of pointers to null ternimated strings, each string for each line */
+/* returns a null terminated array of pointers to null terminated strings, each string for each line */
 /* g_strfreev() should be called on it */
 char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *stop);

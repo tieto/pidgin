@@ -282,7 +282,7 @@ faim_export void aim_locate_dorequest(aim_session_t *sess) {
 }
 
 /**
- * Remove this screen name from our queue.  If this info was resquested 
+ * Remove this screen name from our queue.  If this info was requested 
  * by our info request queue, then pop the next element off of the queue.
  *
  * @param sess The aim session.

@@ -345,7 +345,7 @@ static gchar *oscar_encoding_extract(const char *encoding)
 	gchar *ret = NULL;
 	char *begin, *end;
 
-	/* Make sure encoding begings with charset= */
+	/* Make sure encoding begins with charset= */
 	if (strncmp(encoding, "text/aolrtf; charset=", 21))
 		return NULL;
 
@@ -1049,7 +1049,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
  *
  * The series of events for a file send is:
  *  -Create xfer and call gaim_xfer_request (this happens in oscar_ask_sendfile)
- *  -User chooses a file and oscar_xfer_init is called.  It establishs a 
+ *  -User chooses a file and oscar_xfer_init is called.  It establishes a 
  *   listening socket, then asks the remote user to connect to us (and 
  *   gives them the file name, port, IP, etc.)
  *  -They connect to us and we send them an AIM_CB_OFT_PROMPT (this happens 
@@ -1068,7 +1068,7 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
  *   them an AIM_CB_OFT_ACK.
  *  -They begin to send us lots of raw data.
  *  -When they finish sending data we send an AIM_CB_OFT_DONE and then close 
- *   the connectionn.
+ *   the connection.
  */
 static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondition condition);
 
@@ -2625,7 +2625,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 			if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR) {
 				/* last char of the ft req is a star, they are sending us a
-				 * directory -- remove the star and trailing slash so we dont save
+				 * directory -- remove the star and trailing slash so we don't save
 				 * directories that look like 'dirname\*'  -- arl */
 				char *tmp = strrchr(args->info.sendfile.filename, '\\');
 				if (tmp && (tmp[1] == '*')) {
@@ -3043,7 +3043,7 @@ static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
 			ret = incomingim_chan1(sess, fr->conn, userinfo, args);
 		} break;
 
-		case 2: { /* rendevous */
+		case 2: { /* rendezvous */
 			struct aim_incomingim_ch2_args *args;
 			args = va_arg(ap, struct aim_incomingim_ch2_args *);
 			ret = incomingim_chan2(sess, fr->conn, userinfo, args);
@@ -5973,7 +5973,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
  * This function rips out all the data chunks and creates an imgstore for 
  * each one.  In order to do this, it first goes through the IM and takes 
  * out all the IMG tags.  When doing so, it rewrites the original IMG tag 
- * with one compatable with the imgstore Gaim core code. For each one, we 
+ * with one compatible with the imgstore Gaim core code. For each one, we 
  * then read in chunks of data from the end of the message and actually 
  * create the img store using the given data.
  *

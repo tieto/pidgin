@@ -150,7 +150,7 @@ struct _NMUser
  *	@param	server			IP Address of server
  *	@param	port			Port to connect to on the server
  *  @param 	data			Client data to associate with the user
- *	@param	event_callback	Function to call when we recieve an event
+ *	@param	event_callback	Function to call when we receive an event
  *
  *	@return The initialized user object. Must be freed by calling
  *			nm_deinitialize_user
