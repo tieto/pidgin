@@ -35,6 +35,8 @@
 #include <stdio.h>
 #include <time.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
@@ -46,7 +48,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1469 $"
+#define REVISION "gaim:$Revision: 1476 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -1302,14 +1304,6 @@ struct file_transfer {
 	gint inpa;
 };
 
-static void toc_get_file(gpointer a, struct file_transfer *ft) {
-	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(ft->window));
-
-	if (file_is_dir(dirname, ft->window))
-		return;
-	gtk_widget_destroy(ft->window);
-}
-
 static void debug_header(struct file_transfer *ft) {
 	struct file_header *f = (struct file_header *)ft;
 	debug_printf("TOC FT HEADER:\n"
@@ -1336,7 +1330,8 @@ static void debug_header(struct file_transfer *ft) {
 			f->name);
 }
 
-static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition cond) {
+static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition cond)
+{
 	char buf[BUF_LONG];
 	int rt, i;
 
@@ -1444,7 +1439,8 @@ static void toc_send_file_callback(gpointer data, gint source, GdkInputCondition
 	}
 }
 
-static void toc_send_file(gpointer a, struct file_transfer *old_ft) {
+static void toc_send_file(gpointer a, struct file_transfer *old_ft)
+{
 	struct file_transfer *ft;
 	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
 	int fd;
@@ -1487,6 +1483,212 @@ static void toc_send_file(gpointer a, struct file_transfer *old_ft) {
 	}
 
 	ft->inpa = gdk_input_add(fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_send_file_callback, ft);
+}
+
+static void toc_get_file_callback(gpointer data, gint source, GdkInputCondition cond)
+{
+	char buf[BUF_LONG];
+
+	struct file_transfer *ft = data;
+
+	if (cond & GDK_INPUT_EXCEPTION) {
+		gdk_input_remove(ft->inpa);
+		close(source);
+		g_free(ft->filename);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft->cookie);
+		if (ft->file)
+			fclose(ft->file);
+		g_free(ft);
+		return;
+	}
+
+	if (cond & GDK_INPUT_WRITE) {
+		int remain = MIN(ntohl(ft->hdr.totsize) - ft->recvsize, 1024);
+		int i;
+		for (i = 0; i < remain; i++)
+			fscanf(ft->file, "%c", &buf[i]);
+		write(source, buf, remain);
+		ft->recvsize += remain;
+		if (ft->recvsize == ntohl(ft->hdr.totsize)) {
+			gdk_input_remove(ft->inpa);
+			ft->inpa = gdk_input_add(source, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+						 toc_get_file_callback, ft);
+		}
+		return;
+	}
+
+	if (ft->hdr.hdrtype == 0x0811) {
+		struct tm *fortime;
+		struct stat st;
+
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+
+		stat(ft->filename, &st);
+		fortime = localtime(&st.st_mtime);
+		g_snprintf(buf, sizeof(buf), "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+				fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
+				fortime->tm_hour + 1, fortime->tm_min + 1, (long)st.st_size,
+				g_basename(ft->filename));
+		write(source, ft, 256);
+		return;
+	}
+
+	if (ft->hdr.hdrtype == 0x0912) {
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+		return;
+	}
+
+	if (ft->hdr.hdrtype == 0x0b12) {
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+
+		if (ft->hdr.hdrtype != 0xc12) {
+			g_snprintf(buf, sizeof(buf), "%s decided to cancel the transfer", ft->user);
+			gdk_input_remove(ft->inpa);
+			close(source);
+			g_free(ft->filename);
+			g_free(ft->user);
+			g_free(ft->ip);
+			g_free(ft->cookie);
+			if (ft->file)
+				fclose(ft->file);
+			g_free(ft);
+			return;
+		}
+
+		ft->hdr.hdrtype = 0x0101;
+		ft->hdr.totfiles = htons(1); ft->hdr.filesleft = htons(1);
+		ft->hdr.flags = 0x20;
+		write(source, ft, 256);
+		return;
+	}
+
+	if (ft->hdr.hdrtype == 0x0101) {
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+
+		gdk_input_remove(ft->inpa);
+		ft->inpa = gdk_input_add(source, GDK_INPUT_WRITE | GDK_INPUT_EXCEPTION,
+					 toc_get_file_callback, ft);
+		return;
+	}
+
+	if (ft->hdr.hdrtype == 0x0202) {
+		read(source, ft, 8);
+		read(source, &ft->hdr.bcookie, MIN(256 - 8, ntohs(ft->hdr.hdrlen) - 8));
+		debug_header(ft);
+
+		gdk_input_remove(ft->inpa);
+		close(source);
+		g_free(ft->filename);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft->cookie);
+		if (ft->file)
+			fclose(ft->file);
+		g_free(ft);
+		return;
+	}
+}
+
+static void toc_get_file(gpointer a, struct file_transfer *old_ft)
+{
+	struct file_transfer *ft;
+	struct file_header *hdr;
+	char *dirname = gtk_file_selection_get_filename(GTK_FILE_SELECTION(old_ft->window));
+	int fd;
+	struct aim_user *user;
+	char *buf;
+	struct stat st;
+
+	if (file_is_dir(dirname, old_ft->window))
+		return;
+	ft = g_new0(struct file_transfer, 1);
+	ft->filename = g_strdup(dirname);
+	ft->file = fopen(ft->filename, "r");
+	if (!ft->file) {
+		buf = g_strdup_printf("Unable to open %s for transfer!", ft->filename);
+		do_error_dialog(buf, "Error");
+		g_free(buf);
+		g_free(ft->filename);
+		g_free(ft);
+		return;
+	}
+	if (stat(dirname, &st)) {
+		buf = g_strdup_printf("Unable to examine %s!", dirname);
+		do_error_dialog(buf, "Error");
+		g_free(buf);
+		g_free(ft->filename);
+		g_free(ft);
+		return;
+	}
+	ft->cookie = g_strdup(old_ft->cookie);
+	ft->user = g_strdup(old_ft->user);
+	ft->ip = g_strdup(old_ft->ip);
+	ft->port = old_ft->port;
+	ft->gc = old_ft->gc;
+	user = ft->gc->user;
+	gtk_widget_destroy(old_ft->window);
+
+	buf = g_strdup_printf("toc_rvous_accept %s %s %s", ft->user, ft->cookie, FILE_GET_UID);
+	sflap_send(ft->gc, buf, -1, TYPE_DATA);
+	g_free(buf);
+
+	fd =
+	    proxy_connect(ft->ip, ft->port,
+			  user->proto_opt[USEROPT_SOCKSHOST],
+			  atoi(user->proto_opt[USEROPT_SOCKSPORT]),
+			  atoi(user->proto_opt[USEROPT_PROXYTYPE]));
+	if (fd < 0) {
+		do_error_dialog(_("Could not connect for transfer!"), _("Error"));
+		fclose(ft->file);
+		g_free(ft->filename);
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	hdr = (struct file_header *)ft;
+	hdr->magic[0] = 'O'; hdr->magic[1] = 'F'; hdr->magic[2] = 'T'; hdr->magic[3] = '2';
+	hdr->hdrlen = htons(256);
+	hdr->hdrtype = 0x0811;
+	buf = frombase64(ft->cookie);
+	g_snprintf(hdr->bcookie, 8, "%s", buf);
+	g_free (buf);
+	hdr->totfiles = htons(1); hdr->filesleft = htons(1);
+	hdr->totparts = htons(1); hdr->partsleft = htons(1);
+	hdr->totsize = htonl((long)st.st_size); /* combined size of all files */
+	/* size = strlen("mm/dd/yyyy hh:mm sizesize 'name'\r\n") */
+	hdr->size = htonl(28 + strlen(g_basename(ft->filename))); /* size of listing.txt */
+	hdr->modtime = htonl(st.st_mtime);
+	hdr->checksum = htonl(0x89f70000); /* uh... */
+	g_snprintf(hdr->idstring, 32, "OFT_Windows ICBMFT V1.1 32");
+	hdr->flags = 0x02;
+	hdr->lnameoffset = 0x1A;
+	hdr->lsizeoffset = 0x10;
+	g_snprintf(hdr->name, 64, "listing.txt");
+	if (write(fd, hdr, 256) < 0) {
+		do_error_dialog(_("Could not write file header!"), _("Error"));
+		fclose(ft->file);
+		g_free(ft->filename);
+		g_free(ft->cookie);
+		g_free(ft->user);
+		g_free(ft->ip);
+		g_free(ft);
+		return;
+	}
+
+	ft->inpa = gdk_input_add(fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, toc_get_file_callback, ft);
 }
 
 static void cancel_callback(gpointer a, struct file_transfer *ft) {

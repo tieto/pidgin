@@ -11,6 +11,9 @@ version 0.11.0:
 	* Fixed hanging trees
 	* Can close windows by hitting 'Esc' (optional)
 	* Better HTML Widget
+	* Can toggle timestamps by hitting F2 (optional)
+	* Rewritten file transfer for TOC
+	* Jabber got chat
 
 version 0.11.0-pre4:
 	* ICQ upgraded to use icqlib 1.1.0
