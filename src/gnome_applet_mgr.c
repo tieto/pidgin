@@ -108,50 +108,46 @@ static void applet_change_pixel_size(GtkWidget *w, int size, gpointer data)
 }
 #endif
 
-static gboolean update_applet(gboolean force_update){
-	static enum gaim_user_states old_user_status = offline;
+static gboolean update_applet(){
 	char buf[BUF_LONG];
 	GSList *c = connections;
 
-	if( MRI_user_status != old_user_status || force_update) {
-
-		switch( MRI_user_status ){
-		case offline:
-			gtk_pixmap_set( GTK_PIXMAP(icon),
-					icon_offline_pm,
-					icon_offline_bm );
-			gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
-			applet_set_tooltips(_("Offilne. Click to bring up login box."));
-			break;
-		case signing_on:
-			gtk_pixmap_set( GTK_PIXMAP(icon),
-					icon_connect_pm,
-					icon_connect_bm );   
-			gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
-			applet_set_tooltips(_("Attempting to sign on...."));
-			break;
-		case online:
-			gtk_pixmap_set( GTK_PIXMAP(icon),
-					icon_online_pm,
-					icon_online_bm );                
-			gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
-			g_snprintf(buf, sizeof buf, "Online: ");
-			while (c) {
-				strcat(buf, ((struct gaim_connection *)c->data)->username);
-				c = g_slist_next(c);
-				if (c) strcat(buf, ", ");
-			}
-			applet_set_tooltips(buf);
-			break;
-		case away:
-			gtk_pixmap_set( GTK_PIXMAP(icon),
-					icon_online_pm,
-					icon_online_bm );   
-			gtk_label_set( GTK_LABEL(status_label), _("Away") );
-			break;
+	switch( MRI_user_status ){
+	case offline:
+		gtk_pixmap_set( GTK_PIXMAP(icon),
+				icon_offline_pm,
+				icon_offline_bm );
+		gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
+		applet_set_tooltips(_("Offilne. Click to bring up login box."));
+		break;
+	case signing_on:
+		gtk_pixmap_set( GTK_PIXMAP(icon),
+				icon_connect_pm,
+				icon_connect_bm );   
+		gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
+		applet_set_tooltips(_("Attempting to sign on...."));
+		break;
+	case online:
+		gtk_pixmap_set( GTK_PIXMAP(icon),
+				icon_online_pm,
+				icon_online_bm );                
+		gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
+		g_snprintf(buf, sizeof buf, "Online: ");
+		while (c) {
+			strcat(buf, ((struct gaim_connection *)c->data)->username);
+			c = g_slist_next(c);
+			if (c) strcat(buf, ", ");
 		}
-		old_user_status = MRI_user_status;
+		applet_set_tooltips(buf);
+		break;
+	case away:
+		gtk_pixmap_set( GTK_PIXMAP(icon),
+				icon_online_pm,
+				icon_online_bm );   
+		gtk_label_set( GTK_LABEL(status_label), _("Away") );
+		break;
 	}
+
 	return TRUE;
 }
 
@@ -173,7 +169,7 @@ void update_pixmaps() {
 			&icon_connect_pm, &icon_connect_bm );
 	load_applet_icon( GAIM_GNOME_ONLINE_ICON, (sizehint-16), (sizehint-12),
 			&icon_online_pm, &icon_online_bm );
-	update_applet(TRUE);
+	update_applet();
 	gtk_widget_set_usize(appletframe, sizehint, sizehint);
 }
 
@@ -394,7 +390,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 		
 	icon=gtk_pixmap_new(icon_offline_pm,icon_offline_bm);
 	
-	update_applet(FALSE);
+	update_applet();
 	
 	vbox = gtk_vbox_new(FALSE,0);
 	
@@ -447,7 +443,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 
 void set_user_state( enum gaim_user_states state ){
 	MRI_user_status = state; 
-	update_applet(FALSE);
+	update_applet();
 }
 
 void applet_set_tooltips(char *msg) {
