@@ -860,7 +860,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		plugin_event(event_im_displayed_sent, c->gc, c->name, &buffy, 0);
 		if (buffy) {
 			int imflags = 0;
-			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))
+			if (c->check && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->check)))
 				imflags = IM_FLAG_CHECKBOX;
 			err = serv_send_im(c->gc, c->name, buffy, imflags);
 			g_free(buffy);
