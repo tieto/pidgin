@@ -7,7 +7,11 @@
 ;Configuration
 
 ;General
+!ifdef WITH_GTK
 OutFile "gaim-${GAIM_VERSION}.exe"
+!else
+OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
+!endif
 SetCompressor bzip2
 
 DirShow show
@@ -80,7 +84,11 @@ SetDateSave on
 
 ;--------------------------------
 ;Language Strings
-
+!ifndef WITH_GTK
+  LangString GTK_INSTALLER_NEEDED		${LANG_ENGLISH} \
+		"The GTK+ runtime environment is either missing or needs to be upgraded.$\r \
+		Please install v${GTK_VERSION} or higher of the GTK+ runtime"
+!endif
   ; Componants Page
   LangString GAIM_SECTION_TITLE			${LANG_ENGLISH} \
 		"Gaim Instant Messenger (required)"
@@ -193,18 +201,18 @@ SetDateSave on
   ReserveFile "${NSISDIR}\Plugins\AccessControl.dll"
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
+
+
 ;--------------------------------
-;Installer Sections
+;Uninstall any old version of Gaim
 
-Section $(GAIM_SECTION_TITLE) SecGaim
-  SectionIn 1 RO
-
+Section -SecUninstallOldGaim
   ; Check install rights..
   Call CheckUserInstallRights
   Pop $R0
 
   StrCmp $R0 "HKLM" gaim_hklm
-  StrCmp $R0 "HKCU" gaim_hkcu gaim_install_files
+  StrCmp $R0 "HKCU" gaim_hkcu done
 
   gaim_hkcu:
       ReadRegStr $R1 HKCU ${GAIM_REG_KEY} ""
@@ -219,7 +227,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
   ; If previous version exists .. remove
   try_uninstall:
-    StrCmp $R1 "" cont_install
+    StrCmp $R1 "" done
       ; Version key started with 0.60a3. Prior versions can't be 
       ; automaticlly uninstalled.
       StrCmp $R2 "" uninstall_problem
@@ -237,7 +245,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 	    ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
 	    IfErrors exec_error
               Delete "$TEMP\${GAIM_UNINST_EXE}"
-	      Goto cont_install
+	      Goto done
 
 	    exec_error:
               Delete "$TEMP\${GAIM_UNINST_EXE}"
@@ -263,53 +271,14 @@ Section $(GAIM_SECTION_TITLE) SecGaim
             uninstall_prob_cont:
 	      RMDir /r "$R1"
 
-    cont_install:
-      ; Gaim Registry Settings
-      StrCmp $R0 "HKLM" gaim_hklm1 gaim_hkcu1
-
-      gaim_hklm1:
-        WriteRegStr HKLM ${GAIM_REG_KEY} "" "$INSTDIR"
-        WriteRegStr HKLM ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
-        WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
-        WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
-        ; Sets scope of the desktop and Start Menu entries for all users.
-        SetShellVarContext "all"
-        Goto gaim_install_files
-
-      gaim_hkcu1:
-        WriteRegStr HKCU ${GAIM_REG_KEY} "" "$INSTDIR"
-        WriteRegStr HKCU ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
-        WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
-        WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
-        Goto gaim_install_files
-
-  gaim_install_files:
-    SetOutPath "$INSTDIR"
-    ; Gaim files
-    SetOverwrite on
-    File /r .\win32-install-dir\*.*
-
-    ; This stuff we do in both cases (install rights and no install rights)
-    CreateDirectory "$SMPROGRAMS\Gaim"
-    CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
-    CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
-    ; If we don't have install rights.. we're done
-    StrCmp $R0 "NONE" done
-    CreateShortCut "$SMPROGRAMS\Gaim\Uninstall.lnk" "$INSTDIR\${GAIM_UNINST_EXE}"
-    SetOverwrite off
-
-    ; write out uninstaller
-    SetOverwrite on
-    WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
-    SetOverwrite off
-
   done:
-SectionEnd ; end of default Gaim section
+SectionEnd
 
 
 ;--------------------------------
 ;GTK+ Runtime Install Section
 
+!ifdef WITH_GTK
 Section $(GTK_SECTION_TITLE) SecGtk
   SectionIn 1 RO
 
@@ -340,7 +309,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
     Goto gtk_install_cont
 
   upgrade_gtk:
-    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) IDNO done_final
+    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) IDNO done
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /S'
     Goto gtk_install_cont
@@ -371,42 +340,91 @@ Section $(GTK_SECTION_TITLE) SecGtk
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /S /D=$INSTDIR'
     IfErrors gtk_install_error
-      ; Move the dlls to the Gaim install dir..
-      move_gtk_dlls:
+      SetOverwrite on
       ClearErrors
       CopyFiles /FILESONLY "$INSTDIR\lib\*.dll" $INSTDIR
+      SetOverwrite off
       IfErrors gtk_install_error
         Delete "$INSTDIR\lib\*.dll"
-        Goto done_final
+        Goto done
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; end gtk_no_install_rights
 
   done:
-    ; If we have HKLM rights.. write App Path key.. else add to PATH
-    StrCmp $R1 "HKLM" 0 hkcu_path
-      WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R2\lib"
-      Goto done_cont
-    hkcu_path:
-      ; Add to User's PATH
-      StrCpy $R9 "$R2\lib"
-      Push $R9
-      Call AddToPath
-
-    done_cont:
-    ; Check for any of those nasty 'dll hell' situations..
-    Push $R2
-    Call CheckGtkInstallConflicts
-    Pop $R0
-    StrCmp $R0 "0" 0 done_final
-      ; Failure
-      MessageBox MB_OK $(GTK_INSTALL_TO_GAIM_DIR) IDOK
-      CopyFiles "$R2\*.*" $INSTDIR
-      Delete "$INSTDIR\uninst.exe"
-      Goto move_gtk_dlls
-
-  done_final:
-      Delete "$TEMP\gtk-runtime.exe"
+    Delete "$TEMP\gtk-runtime.exe"
 SectionEnd ; end of GTK+ section
+!endif
+
+;--------------------------------
+;Gaim Install Section
+
+Section $(GAIM_SECTION_TITLE) SecGaim
+  SectionIn 1 RO
+
+  ; Check install rights..
+  Call CheckUserInstallRights
+  Pop $R0
+
+  ; Get GTK+ lib dir if we have it..
+
+  StrCmp $R0 "NONE" gaim_none
+  StrCmp $R0 "HKLM" gaim_hklm gaim_hkcu
+
+  gaim_hklm:
+    ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
+    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\lib"
+    WriteRegStr HKLM ${GAIM_REG_KEY} "" "$INSTDIR"
+    WriteRegStr HKLM ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
+    WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
+    WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
+    ; Sets scope of the desktop and Start Menu entries for all users.
+    SetShellVarContext "all"
+    Goto gaim_install_files
+
+  gaim_hkcu:
+    ReadRegStr $R1 HKCU ${GTK_REG_KEY} "Path"
+    StrCmp $R1 "" 0 gaim_hkcu1
+      ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
+    gaim_hkcu1:
+    WriteRegStr HKCU ${GAIM_REG_KEY} "" "$INSTDIR"
+    WriteRegStr HKCU ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
+    WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
+    WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
+    Goto gaim_install_files
+
+  gaim_none:
+    ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
+
+  gaim_install_files:
+    SetOutPath "$INSTDIR"
+    ; Gaim files
+    SetOverwrite on
+    File /r .\win32-install-dir\*.*
+
+    ; If we don't have install rights and no hklm GTK install.. then Start in lnk property should
+    ; remain gaim dir.. otherwise it should be set to the GTK lib dir. (to avoid dll hell)
+    StrCmp $R0 "NONE" 0 startin_gtk
+      StrCmp $R1 "" startin_gaim
+    startin_gtk:
+      SetOutPath "$R1\lib"     
+    startin_gaim:
+    CreateDirectory "$SMPROGRAMS\Gaim"
+    CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
+    CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
+    SetOutPath "$INSTDIR"
+
+    ; If we don't have install rights.. we're done
+    StrCmp $R0 "NONE" done
+    CreateShortCut "$SMPROGRAMS\Gaim\Uninstall.lnk" "$INSTDIR\${GAIM_UNINST_EXE}"
+    SetOverwrite off
+
+    ; write out uninstaller
+    SetOverwrite on
+    WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
+    SetOverwrite off
+
+  done:
+SectionEnd ; end of default Gaim section
 
 ;--------------------------------
 ;GTK+ Themes
@@ -468,7 +486,6 @@ SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   SectionEnd
 SubSectionEnd
 
-
 ;--------------------------------
 ;Uninstaller Section
 
@@ -485,17 +502,7 @@ Section Uninstall
       ; HKCU install path matches our INSTDIR.. so uninstall
       DeleteRegKey HKCU ${GAIM_REG_KEY}
       DeleteRegKey HKCU "${GAIM_UNINSTALL_KEY}"
-      ; Try to remove GTK lib dir from PATH env var.
-      ReadRegStr $R1 HKCU ${GTK_REG_KEY} "Path"
-      StrCmp $R1 "" 0 cont_check_path
-      ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-      StrCmp $R1 "" cont_uninstall
-      cont_check_path:
-        ; Remove GTK+ path from PATH
-        StrCpy $R9 "$R1\lib"
-        Push $R9
-        Call un.RemoveFromPath
-        Goto cont_uninstall
+      Goto cont_uninstall
 
   try_hklm:
     ReadRegStr $R0 HKLM ${GAIM_REG_KEY} ""
@@ -570,8 +577,10 @@ SectionEnd ; end of uninstall section
 !insertmacro MUI_FUNCTIONS_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGaim} \
 	$(GAIM_SECTION_DESCRIPTION)
+!ifdef WITH_GTK
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
 	$(GTK_SECTION_DESCRIPTION)
+!endif
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkThemes} \
 	$(GTK_THEMES_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
@@ -586,107 +595,6 @@ SectionEnd ; end of uninstall section
 
 ;--------------------------------
 ;Functions
-
-;
-; Check that there are no conflicting dlls elsewhere on the system.
-; If there are, prompt the user to remove them.
-; Usage:
-;   Push $R0 - Path to GTK+ installation
-;   Call CheckGtkInstallConflicts
-;   Pop $R0  - Return value
-;
-; Return Value:
-; Success - "1" pushed to stack
-;   Success means that either there were not conflicting dlls, or they
-;   were successfully removed.
-; Failure - "0" pushed to stack
-;   Failure means that conflicting dlls were found, but we do not have
-;   file access permissions to rename the conflicting dlls.
-;
-Function CheckGtkInstallConflicts
-  Exch $5 ; GTK+ install path..
-  Push $0
-  Push $1
-  Push $2
-  Push $3
-  Push $4
-  Push $6
-  ; Two different actions in the search loop:
-  ; Action 1: $4 = "0" - String Cat conflict dlls to $2
-  ; Action 2: $4 = "1" - Remove conflict dll
-  ;
-  StrCpy $4 "0"
-
-  begin_search:
-    StrCpy $2 ""
-    ClearErrors
-    FindFirst $0 $1 "$5\lib\*.dll"
-    IfErrors search_done
-      ClearErrors
-      SearchPath $3 $1
-      IfErrors search_loop
-      search_loop1:
-      StrCmp $3 "$5\lib\$1" search_loop
-        ; Found conflict dll..
-        StrCmp $4 "0" action1
-        StrCmp $4 "1" action2
-        action1:
-          StrCpy $2 "$2$3$\r"
-          ClearErrors
-          FileOpen $6 $3 a
-          IfErrors rename_error
-          FileClose $6
-          Goto search_loop
-
-        action2:
-          ClearErrors
-          Rename $3 "$3.prob"
-          IfErrors rename_error
-
-      search_loop:
-        ClearErrors
-        FindNext $0 $1
-        IfErrors search_done
-          ClearErrors
-          SearchPath $3 $1
-          IfErrors search_loop
-          Goto search_loop1
-
-    search_done:
-      StrCmp $4 "0" action1a
-      StrCmp $4 "1" success
-      action1a:
-        StrCmp $2 "" success
-          MessageBox MB_YESNO $(GTK_DLL_CONFLICT_PROMPT) IDNO no_rename
-            ; Remove conflict dlls..
-            StrCpy $4 "1"
-            Goto begin_search
-
-          no_rename:
-            Goto failure
-
-
-      rename_error:
-        MessageBox MB_YESNO $(GTK_CAN_NOT_RENAME_CONFLICT_DLL) IDYES failure IDNO success
-
-    success:
-      StrCpy $0 "1"
-      Goto done
-
-    failure:
-      StrCpy $0 "0"
-      Goto done
-
-    done:
-      StrCpy $5 $0
-      Pop $6
-      Pop $4
-      Pop $3
-      Pop $2
-      Pop $1
-      Pop $0
-      Exch $5
-FunctionEnd
 
 ;
 ; Usage:
@@ -1033,8 +941,21 @@ Function DoWeNeedGtk
 FunctionEnd
 
 Function .onInit
+  ; If this installer dosn't have GTK, check whether we need it.
+  !ifndef WITH_GTK
+    Call DoWeNeedGtk
+    Pop $0
+    Pop $1
+
+    StrCmp $0 "0" have_gtk need_gtk
+    need_gtk:
+      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
+      Quit
+    have_gtk:
+  !else
   ;Extract InstallOptions INI Files
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "${GAIM_NSIS_INCLUDE_PATH}\gtkInstall.ini" "gtkInstall.ini"
+  !endif
 
   Call CheckUserInstallRights
   Pop $0
@@ -1162,5 +1083,3 @@ Function GtkInstallDirVerify
   done:
 FunctionEnd
 
-; PATH Env Manipulation..
-!include "${GAIM_NSIS_INCLUDE_PATH}\AddToPath.nsi"
