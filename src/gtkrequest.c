@@ -145,10 +145,11 @@ gaim_gtk_request_input(const char *title, const char *primary,
 
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
+	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
 
 	/* Setup the main horizontal box */
 	hbox = gtk_hbox_new(FALSE, 12);
@@ -210,6 +211,8 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	else {
 		entry = gtk_entry_new();
 
+		gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+
 		gtk_box_pack_start(GTK_BOX(vbox), entry, FALSE, FALSE, 0);
 
 		if (default_value != NULL)
@@ -268,9 +271,6 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	data->dialog = dialog = gtk_dialog_new();
 
 	for (i = 0; i < action_count; i++) {
-		gaim_debug(GAIM_DEBUG_MISC, "gtkrequest",
-				   "buttons[2 * %d] = '%s'\n",
-				   i, buttons[2 * i]);
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
 							  __text_to_stock(buttons[2 * i]), i);
 
@@ -317,6 +317,9 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
 
 	g_free(label_text);
+
+	if (default_action != -1)
+		gtk_dialog_set_default_response(GTK_DIALOG(dialog), default_action);
 
 	/* Show everything. */
 	gtk_widget_show_all(dialog);
