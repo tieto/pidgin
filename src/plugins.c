@@ -130,7 +130,7 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 	 * programming, by not using RTLD_GLOBAL :P ) */
 	plug->handle = dlopen(plug->filename, RTLD_LAZY);
 	if (!plug->handle) {
-		error = dlerror();
+		error = (char *)dlerror();
 		do_error_dialog(error, "Plugin Error");
 		g_free(plug);
 		return;
@@ -141,7 +141,7 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 	plugin_dialog = NULL;
 
 	gaim_plugin_init = dlsym(plug->handle, "gaim_plugin_init");
-	if ((error = dlerror()) != NULL) {
+	if ((error = (char *)dlerror()) != NULL) {
 		do_error_dialog(error, "Plugin Error");
 		dlclose(plug->handle);
 		g_free(plug);
@@ -152,13 +152,13 @@ void load_which_plugin(GtkWidget *w, gpointer data) {
 	(*gaim_plugin_init)(plug->handle);
 
 	cfunc = dlsym(plug->handle, "name");
-	if ((error = dlerror()) == NULL)
+	if ((error = (char *)dlerror()) == NULL)
 		plug->name = (*cfunc)();
 	else
 		plug->name = NULL;
 
 	cfunc = dlsym(plug->handle, "description");
-	if ((error = dlerror()) == NULL)
+	if ((error = (char *)dlerror()) == NULL)
 		plug->description = (*cfunc)();
 	else
 		plug->description = NULL;
@@ -330,7 +330,7 @@ void unload(GtkWidget *w, gpointer data) {
 	p = gtk_object_get_user_data(GTK_OBJECT(i->data));
 
 	gaim_plugin_remove = dlsym(p->handle, "gaim_plugin_remove");
-	if ((error = dlerror()) == NULL)
+	if ((error = (char *)dlerror()) == NULL)
 		(*gaim_plugin_remove)();
 	while (c) {
 		g = (struct gaim_callback *)c->data;
@@ -361,7 +361,7 @@ void list_clicked(GtkWidget *w, struct gaim_plugin *p) {
 	gtk_text_insert(GTK_TEXT(plugtext), NULL, NULL, NULL, buffer, -1);
 
 	gaim_plugin_config = dlsym(p->handle, "gaim_plugin_config");
-	if ((error = dlerror()) == NULL) {
+	if ((error = (char *)dlerror()) == NULL) {
 		gtk_signal_connect(GTK_OBJECT(config), "clicked",
 				   GTK_SIGNAL_FUNC(gaim_plugin_config), NULL);
 		gtk_widget_set_sensitive(config, 1);
