@@ -1,7 +1,7 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.69cvs
-	* Yahoo nows shows people using the java chat client (Tim Ringenbach)
+version 0.69
+	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Offline messages work for yahoo (Nandan Dixit)
 	* Proper support for buddy list	(lists greater than 1024 chars) (Nandan Dixit)
 	* SMS and away embles on custom status (Nandan Dixit)
