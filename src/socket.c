@@ -28,6 +28,7 @@
 /* This provides code for connecting to a Gaim socket and communicating with
  * it.  It will eventually be made a library once the core and ui are split. */
 
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include "gaim.h"
