@@ -24,6 +24,8 @@
 
 #include <libebook/e-book.h>
 
+#include "gevolution.h"
+
 void
 gevo_add_buddy(GaimAccount *account, const char *group_name,
 			   const char *screenname, const char *alias)
@@ -129,15 +131,22 @@ gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy)
 gboolean
 gevo_load_addressbook(EBook **book, GError **error)
 {
-	gboolean result;
+	gboolean result = FALSE;
 
 	g_return_val_if_fail(book != NULL, FALSE);
 
+#if EBOOK_CHECK_VERSION(0, 0, 93)
+	*book = e_book_new_system_addressbook(NULL);
+
+	if (book != NULL)
+		result = e_book_open(*book, FALSE, NULL);
+#else
 	*book = e_book_new();
 
-	result = e_book_load_local_addressbook (*book, error);
+	result = e_book_load_local_addressbook(*book, error);
+#endif
 
-	if (!result)
+	if (!result && *book != NULL)
 	{
 		g_object_unref(*book);
 		*book = NULL;
