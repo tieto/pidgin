@@ -978,8 +978,17 @@ struct aim_icq_offlinemsg {
 	char *msg;
 };
 
+struct aim_icq_simpleinfo {
+	fu32_t uin;
+	char *nick;
+	char *first;
+	char *last;
+	char *email;
+};
+
 faim_export int aim_icq_reqofflinemsgs(aim_session_t *sess);
 faim_export int aim_icq_ackofflinemsgs(aim_session_t *sess);
+faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin);
 
 /* aim_util.c */
 /*

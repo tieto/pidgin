@@ -229,23 +229,24 @@ static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searcherror(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searchreply(aim_session_t *, aim_frame_t *, ...);
 static int gaim_bosrights        (aim_session_t *, aim_frame_t *, ...);
-static int conninitdone_bos      (aim_session_t *sess, aim_frame_t *fr, ...);
-static int conninitdone_admin    (aim_session_t *sess, aim_frame_t *fr, ...);
-static int conninitdone_chat     (aim_session_t *sess, aim_frame_t *fr, ...);
-static int conninitdone_chatnav  (aim_session_t *sess, aim_frame_t *fr, ...);
+static int conninitdone_bos      (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_buddyrights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icbm_param_info  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_genericerr (aim_session_t *, aim_frame_t *, ...);
-static int gaim_memrequest       (aim_session_t *,  aim_frame_t*, ...);
-static int gaim_selfinfo         (aim_session_t *,  aim_frame_t*, ...);
-static int gaim_offlinemsg       (aim_session_t *,  aim_frame_t*, ...);
-static int gaim_offlinemsgdone   (aim_session_t *,  aim_frame_t*, ...);
+static int gaim_memrequest       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_selfinfo         (aim_session_t *, aim_frame_t *, ...);
+static int gaim_offlinemsg       (aim_session_t *, aim_frame_t *, ...);
+static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
+static int gaim_simpleinfo       (aim_session_t *, aim_frame_t *, ...);
 
-static int gaim_directim_initiate  (aim_session_t *, aim_frame_t *, ...);
-static int gaim_directim_incoming  (aim_session_t *, aim_frame_t *, ...);
-static int gaim_directim_typing    (aim_session_t *, aim_frame_t *, ...);
+static int gaim_directim_initiate(aim_session_t *, aim_frame_t *, ...);
+static int gaim_directim_incoming(aim_session_t *, aim_frame_t *, ...);
+static int gaim_directim_typing  (aim_session_t *, aim_frame_t *, ...);
 
 static char *msgerrreason[] = {
 	"Invalid error",
@@ -652,6 +653,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0001, 0x000f, gaim_selfinfo, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSG, gaim_offlinemsg, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_OFFLINEMSGCOMPLETE, gaim_offlinemsgdone, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_SIMPLEINFO, gaim_simpleinfo, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	for (i = 0; i < (int)strlen(info->bosip); i++) {
@@ -2025,6 +2027,31 @@ static int gaim_offlinemsgdone(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
+static int gaim_simpleinfo(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	va_list ap;
+	struct aim_icq_simpleinfo *info;
+	char buf[16 * 1024];
+
+	va_start(ap, fr);
+	info = va_arg(ap, struct aim_icq_simpleinfo *);
+	va_end(ap);
+
+	g_snprintf(buf, sizeof buf,
+		   "<B>UIN:</B> %lu<BR>"
+		   "<B>Nick:</B> %s<BR>"
+		   "<B>Name:</B> %s %s<BR>"
+		   "<B>Email:</B> %s\n",
+		   info->uin,
+		   info->nick,
+		   info->first, info->last,
+		   info->email);
+
+	g_show_info_text(buf, NULL);
+
+	return 1;
+}
+
 static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *address, *SNs;
@@ -2189,7 +2216,10 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 
 static void oscar_get_info(struct gaim_connection *g, char *name) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
+	if (odata->icq)
+		aim_icq_getsimpleinfo(odata->sess, name);
+	else
+		aim_getinfo(odata->sess, odata->conn, name, AIM_GETINFO_GENERALINFO);
 }
 
 static void oscar_get_away_msg(struct gaim_connection *g, char *name) {
