@@ -70,6 +70,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =			yahoo.c \
 			yahoochat.c \
+			yahoo_filexfer.c \
 			crypt.c \
 			util.c
 
