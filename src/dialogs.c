@@ -3171,7 +3171,7 @@ void show_bgcolor_dialog(struct conversation *c, GtkWidget *color)
 		bgclr[1] = (gdouble)(c->bgcol.green) / 255;
 		bgclr[2] = (gdouble)(c->bgcol.blue) / 255;
 
-		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Text Color"));
+		c->bg_color_dialog = gtk_color_selection_dialog_new(_("Select Background Color"));
 		colorsel = GTK_COLOR_SELECTION_DIALOG(c->bg_color_dialog)->colorsel;
 		gtk_color_selection_set_color(GTK_COLOR_SELECTION(colorsel), bgclr);
 		gtk_object_set_user_data(GTK_OBJECT(colorsel), c);

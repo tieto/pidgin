@@ -1097,7 +1097,7 @@ void delete_text_callback(GtkEditable *editable, gint start_pos, gint end_pos, g
 		return;
 
 	contents = gtk_editable_get_chars(editable, 0, -1);
-	if(start_pos == 0 && end_pos == strlen(contents)) {
+	if(start_pos == 0 && (end_pos == strlen(contents) || end_pos == -1)) {
 		if(c->type_again_timeout)
 			gtk_timeout_remove(c->type_again_timeout);
 		serv_send_typing(c->gc, c->name, NOT_TYPING);

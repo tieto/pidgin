@@ -194,7 +194,6 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len,
 	if (cnv && cnv->type_again_timeout)
 		gtk_timeout_remove(cnv->type_again_timeout);
 
-	serv_send_typing(gc, name, FALSE);
 	return val;
 }
 
