@@ -146,9 +146,7 @@ static char tochar(char *h)
 static char *url_encode(unsigned char *text, int dospace)
 {
 	static char newtext[MSN_BUF_LEN*2];
-	char *buf;
 	char *temp = (char *)malloc(4);
-	int c = 0;
 	int i = 0;
 	int j = 0;
 
@@ -382,7 +380,7 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 	
 	bzero(buf, MSN_BUF_LEN);
 	do {
-		if (!read(source, buf + i, 1)) {
+		if (read(source, buf + i, 1) != 1) {
 			free_msn_conn(mc);
 			return;
 		}
@@ -450,7 +448,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 	bzero(buf, MSN_BUF_LEN);
 		
 	do {
-		if (!read(source, buf + i, 1)) {
+		if (read(source, buf + i, 1) != 1) {
 			if (md->fd == source) {
 				hide_login_progress(gc, "Read error");
 				signoff(gc);
@@ -768,7 +766,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 	bzero(buf, MSN_BUF_LEN);
 		
 	do {
-		if (!read(source, buf + i, 1)) {
+		if (read(source, buf + i, 1) != 1) {
 			hide_login_progress(gc, "Read error");
 			signoff(gc);
 			return;
