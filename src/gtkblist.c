@@ -291,11 +291,17 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		struct gaim_conversation *conv =
 			gaim_conversation_new(GAIM_CONV_IM, ((struct buddy*)node)->account, ((struct buddy*)node)->name);
+
 		if(conv) {
-			gaim_window_raise(gaim_conversation_get_window(conv));
+			struct gaim_window *win = gaim_conversation_get_window(conv);
+
+			gaim_window_raise(win);
 			gaim_window_switch_conversation(
 				gaim_conversation_get_window(conv),
 				gaim_conversation_get_index(conv));
+
+			if (GAIM_IS_GTK_WINDOW(win))
+				gtk_window_present(GTK_WINDOW(GAIM_GTK_WINDOW(win)->window));
 		}
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		serv_join_chat(((struct chat *)node)->account->gc, ((struct chat*)node)->components);
