@@ -3,12 +3,7 @@ THE CORE:
 	Transparency for GtkIMHtml
 	GPG Encryption of messages
 	Better way of showing away state - and possibly in main window
-	Implement:
-		OPT_PROTO_MAILCHECK (mainly for Yahoo/MSN) - with appropriate toggle
-			on account editor modify thing for whether or not to display
-			it (and also move Yahoo/MSN dialog to prpl.c and have both of
-			them use it (is this doable? Yahoo only gives message count,
-			what does MSN give?))
+	Moving GTK/GDK and related things out of the prpls
 	Away needs to be modified to include "show" and "status", i.e. you can have
 		an away state, and an away message. This is exactly what ICQ does -
 		you're "N/A" (show in Jabber) and your away message is "I'm gone."
