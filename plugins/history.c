@@ -24,7 +24,6 @@ static void historize(GaimConversation *c)
 	char *history = NULL;
 	guint flags;
 	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
-	GtkTextIter end;
 	GList *logs = gaim_log_get_logs(gaim_conversation_get_name(c),
 			gaim_conversation_get_account(c));
 
@@ -36,10 +35,7 @@ static void historize(GaimConversation *c)
 		options |= GTK_IMHTML_NO_NEWLINE;
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
-	gtk_text_buffer_get_end_iter(GTK_IMHTML(gtkconv->imhtml)->text_buffer,
-			&end);
-	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0,
-			TRUE, 0, 0);
+	gtk_imhtml_scroll_to_end(GTK_IMHTML(gtkconv->imhtml));
 	g_free(history);
 	while (logs) {
 		GaimLog *log = logs->data;

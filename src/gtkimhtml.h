@@ -209,6 +209,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
                                     const gchar      *text,
                                     GtkIMHtmlOptions  options,
                                     GtkTextIter      *iter);
+void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml);
 void       gtk_imhtml_clear            (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_up          (GtkIMHtml *imhtml);
 void       gtk_imhtml_page_down        (GtkIMHtml *imhtml);

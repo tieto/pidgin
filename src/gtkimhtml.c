@@ -1747,17 +1747,24 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 
 	if (!(options & GTK_IMHTML_NO_SCROLL)) {
-		/* If this seems backwards at first glance, well it's not.
-		 * It means scroll such that the mark is closest to the top,
-		 * and closest to the right as possible. Remember kids, you have
-		 * to scroll left to move a given spot closest to the right,
-		 * and scroll down to move a spot closest to the top.
-		 */
-		gtk_text_iter_set_line_offset(&iter, 0);
-		gtk_text_buffer_move_mark(imhtml->text_buffer, imhtml->scrollpoint, &iter);
-		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), imhtml->scrollpoint,
-		                             0, TRUE, 1.0, 0.0);
+		gtk_imhtml_scroll_to_end(imhtml);
 	}
+}
+
+void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml)
+{
+	GtkTextIter iter;
+	/* If this seems backwards at first glance, well it's not.
+	 * It means scroll such that the mark is closest to the top,
+	 * and closest to the right as possible. Remember kids, you have
+	 * to scroll left to move a given spot closest to the right,
+	 * and scroll down to move a spot closest to the top.
+	 */
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &iter);
+	gtk_text_iter_set_line_offset(&iter, 0);
+	gtk_text_buffer_move_mark(imhtml->text_buffer, imhtml->scrollpoint, &iter);
+	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), imhtml->scrollpoint,
+	                             0, TRUE, 1.0, 0.0);
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
