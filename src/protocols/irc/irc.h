@@ -69,6 +69,8 @@ struct irc_conn {
 		time_t signon;
 	} whois;
 	GaimRoomlist *roomlist;
+
+	gboolean quitting;
 };
 
 struct irc_buddy {

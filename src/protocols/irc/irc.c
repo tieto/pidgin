@@ -82,11 +82,17 @@ static void irc_view_motd(GaimPluginAction *action)
 
 int irc_send(struct irc_conn *irc, const char *buf)
 {
+	int ret;
+
 	if (irc->fd < 0)
 		return -1;
 
 	/* gaim_debug(GAIM_DEBUG_MISC, "irc", "sent: %s", buf); */
-	return write(irc->fd, buf, strlen(buf));
+	if ((ret = write(irc->fd, buf, strlen(buf))) < 0)
+		gaim_connection_error(gaim_account_get_connection(irc->account),
+				      _("Server has disconnected"));
+
+	return ret;
 }
 
 /* XXX I don't like messing directly with these buddies */
@@ -387,7 +393,7 @@ static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond)
 		gaim_connection_error(gc, _("Read error"));
 		return;
 	} else if (len == 0) {
-		/* Remote closed the connection, probably */
+		gaim_connection_error(gc, _("Server has disconnected"));
 		return;
 	}
 
