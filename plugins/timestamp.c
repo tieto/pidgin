@@ -31,7 +31,7 @@ gboolean do_timestamp (gpointer data)
 
 	strftime(mdate, sizeof(mdate), "%H:%M", localtime(&tim));
 	buf = g_strdup_printf("            %s", mdate);
-	gaim_conversation_write(c, NULL, buf, WFLAG_NOLOG, tim, -1);
+	gaim_conversation_write(c, NULL, buf, -1, WFLAG_NOLOG, tim);
 	g_free(buf);
 	return TRUE;
 }
