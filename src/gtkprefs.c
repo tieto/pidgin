@@ -1056,7 +1056,7 @@ GtkWidget *conv_page() {
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
 		gtk_widget_set_sensitive(vbox2, FALSE);
 
-	gaim_gtk_prefs_checkbox(_("Show _close button on tabs"),
+	gaim_gtk_prefs_checkbox(_("Show close b_utton on tabs"),
 							"/gaim/gtk/conversations/close_on_tabs", vbox2);
 
 	label = gaim_gtk_prefs_dropdown(vbox2, _("Tab p_lacement:"), GAIM_PREF_INT,
