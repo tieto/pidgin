@@ -1431,7 +1431,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 						time_t mtime)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc;
+	GaimConnection *gc = NULL;
 	GaimAccount *account;
 	GaimConversationUiOps *ops;
 	GaimWindow *win;
@@ -1448,18 +1448,20 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		return;
 
 	account = gaim_conversation_get_account(conv);
-	gc      = gaim_account_get_connection(account);
+
+	if (account != NULL)
+		gc = gaim_account_get_connection(account);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-		(account->gc == NULL || !g_slist_find(account->gc->buddy_chats, conv)))
+		(gc == NULL || !g_slist_find(gc->buddy_chats, conv)))
 		return;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
-	if (account->gc != NULL) {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	if (gc != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
