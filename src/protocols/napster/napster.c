@@ -192,7 +192,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	buf[len] = 0;
 	
-	debug_printf("DEBUG: %s\n", buf);
+	gaim_debug(GAIM_DEBUG_MISC, "napster", "DEBUG: %s\n", buf);
 
 	if (command == 0xd6) {
 		res = g_strsplit(buf, " ", 0);
@@ -355,7 +355,8 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		return;
 	}
 
-	debug_printf("NAP: [COMMAND: 0x%04x] %s\n", command, buf);
+	gaim_debug(GAIM_DEBUG_MISC, "napster",
+			   "NAP: [COMMAND: 0x%04x] %s\n", command, buf);
 
 	g_free(buf);
 }
