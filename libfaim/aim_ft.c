@@ -676,7 +676,6 @@ int aim_listenestablish(u_short portnum)
   freeaddrinfo(ressave);
   return listenfd;
 #else
-#warn You do not have getaddrinfo(); You cannot request DirectIM
   return -1;
 #endif
 }
