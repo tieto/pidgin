@@ -531,6 +531,10 @@ gaim_gtk_notify_uri(const char *uri)
 		 * and/or current window?
 		 */
 	}
+	else if (!strcmp(web_browser, "gnome-open"))
+	{
+		command = g_strdup_printf("gnome-open \"%s\"", uri);
+	}
 	else if (!strcmp(web_browser, "galeon"))
 	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
