@@ -22,14 +22,6 @@
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 #define MAX_AWY_MESSAGES 50
 
-enum _GAIM_WIN {
-	GAIM_LOGIN_WIN,
-	GAIM_BUDDY_WIN,
-	GAIM_BACK_WIN,
-	GAIM_WIN_COUNT
-};
-typedef enum _GAIM_WIN GAIM_WIN;
-
 enum _SYSTRAY_STATE {
 	SYSTRAY_STATE_CONN,
 	SYSTRAY_STATE_CONNECTING,
@@ -60,7 +52,6 @@ static HICON sysicon_disconn=0;
 static HICON sysicon_conn=0;
 static HICON sysicon_away=0;
 static NOTIFYICONDATA wgaim_nid;
-static HWND gaim_windows[GAIM_WIN_COUNT];
 static SYSTRAY_STATE st_state=SYSTRAY_STATE_DISCONN;
 static HMENU systray_menu=0;
 static HMENU systray_away_menu=0;
@@ -68,6 +59,7 @@ static HMENU systray_away_menu=0;
 /*
  *  GLOBALS
  */
+extern GtkWidget *imaway;
 
 /*
  *  PRIVATE CODE
@@ -240,16 +232,17 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 	case WM_TRAYMESSAGE:
 	{
 		if( lparam == WM_LBUTTONDBLCLK ) {
-			/* If Gaim main win is hidden.. restore it */
-			if( st_state == SYSTRAY_STATE_DISCONN ) {
-				RestoreWndFromTray(gaim_windows[GAIM_LOGIN_WIN]);
-			}
-			else if( st_state == SYSTRAY_STATE_AWAY ) {
-				RestoreWndFromTray(gaim_windows[GAIM_BACK_WIN]);
-				RestoreWndFromTray(gaim_windows[GAIM_BUDDY_WIN]);
-			}
-			else if( st_state == SYSTRAY_STATE_CONN ) {
-				RestoreWndFromTray(gaim_windows[GAIM_BUDDY_WIN]);
+			/* Either hide or show current window (login or buddy) */
+			docklet_toggle();
+			/* if away.. hide/show I'm back win too */
+			if(st_state == SYSTRAY_STATE_AWAY) {
+				if(GTK_WIDGET_VISIBLE(blist) && !GTK_WIDGET_VISIBLE(imaway)) {
+					RestoreWndFromTray(GDK_WINDOW_HWND(GTK_WIDGET(imaway)->window));
+					gtk_window_present(GTK_WINDOW(imaway));
+				} else if(!GTK_WIDGET_VISIBLE(blist) && GTK_WIDGET_VISIBLE(imaway)) {
+					wgaim_systray_minimize(imaway);
+					gtk_widget_hide(imaway);
+				}
 			}
 			debug_printf("Systray got double click\n");
 		}
@@ -337,10 +330,6 @@ static void systray_remove_nid(void) {
 	Shell_NotifyIcon(NIM_DELETE,&wgaim_nid);
 }
 
-static void systray_minimize_win(HWND hWnd) {
-	MinimizeWndToTray(hWnd);
-}
-
 static void systray_update_icon() {
 	switch(st_state) {
 	case SYSTRAY_STATE_CONN:
@@ -391,18 +380,12 @@ static GdkFilterReturn st_buddywin_filter( GdkXEvent *xevent, GdkEvent *event, g
 	switch( msg->message ) {
 	case WM_SYSCOMMAND:
 		if( msg->wParam == SC_MINIMIZE ) {
-			systray_minimize_win(msg->hwnd);
-			/* Also minimize I'm back window */
-			if(st_state == SYSTRAY_STATE_AWAY)
-				systray_minimize_win(gaim_windows[GAIM_BACK_WIN]);
+			hide_buddy_list();
 			return GDK_FILTER_REMOVE;
 		}
 		break;
 	case WM_CLOSE:
-		systray_minimize_win(msg->hwnd);
-		/* Also minimize I'm back window */
-		if(st_state == SYSTRAY_STATE_AWAY)
-			systray_minimize_win(gaim_windows[GAIM_BACK_WIN]);
+		hide_buddy_list();
 		return GDK_FILTER_REMOVE;
 	}
 
@@ -414,7 +397,8 @@ static GdkFilterReturn st_loginwin_filter( GdkXEvent *xevent, GdkEvent *event, g
 
 	switch( msg->message ) {
 	case WM_CLOSE:
-		systray_minimize_win(msg->hwnd);
+		wgaim_systray_minimize(mainwindow);
+		gtk_widget_hide(mainwindow);
 		return GDK_FILTER_REMOVE;
 	}
 
@@ -427,7 +411,10 @@ static GdkFilterReturn st_backwin_filter( GdkXEvent *xevent, GdkEvent *event, gp
 	switch( msg->message ) {
 	case WM_SYSCOMMAND:
 		if( msg->wParam == SC_MINIMIZE ) {
-			systray_minimize_win(msg->hwnd);
+			if(imaway) {
+				wgaim_systray_minimize(imaway);
+				gtk_widget_hide(imaway);
+			}
 			return GDK_FILTER_REMOVE;
 		}
 		break;
@@ -455,6 +442,10 @@ static void st_back(struct gaim_connection *gc, void *data) {
 	systray_update_status();
 }
 
+static void st_im_recieve(struct gaim_connection *gc, void *data) {
+	
+}
+
 /*
  *  PUBLIC CODE
  */
@@ -462,6 +453,8 @@ static void st_back(struct gaim_connection *gc, void *data) {
 /* Create a hidden window and associate it with the systray icon.
    We use this hidden window to proccess WM_TRAYMESSAGE msgs. */
 void wgaim_systray_init(void) {
+	docklet_add();
+
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
 
@@ -485,6 +478,7 @@ void wgaim_systray_init(void) {
 }
 
 void wgaim_systray_cleanup(void) {
+	docklet_remove();
 	systray_remove_nid();
 	DestroyMenu(systray_menu);
 	DestroyWindow(systray_hwnd);
@@ -495,7 +489,6 @@ void wgaim_created_blistwin( GtkWidget *blist ) {
 	gdk_window_add_filter (GTK_WIDGET(blist)->window,
 			       st_buddywin_filter,
 			       NULL);
-	gaim_windows[GAIM_BUDDY_WIN] = GDK_WINDOW_HWND(GTK_WIDGET(blist)->window);
 }
 
 /* This function is called after the login window has been created */
@@ -503,12 +496,18 @@ void wgaim_created_loginwin( GtkWidget *loginwin ) {
 	gdk_window_add_filter (GTK_WIDGET(loginwin)->window,
 			       st_loginwin_filter,
 			       NULL);
-	gaim_windows[GAIM_LOGIN_WIN] = GDK_WINDOW_HWND(GTK_WIDGET(loginwin)->window);
 }
 
 void wgaim_created_backwin( GtkWidget *backwin ) {
 	gdk_window_add_filter (GTK_WIDGET(backwin)->window,
 			       st_backwin_filter,
 			       NULL);
-	gaim_windows[GAIM_BACK_WIN] = GDK_WINDOW_HWND(GTK_WIDGET(backwin)->window);
+}
+
+void wgaim_systray_minimize( GtkWidget *window ) {
+	MinimizeWndToTray(GDK_WINDOW_HWND(window->window));
+}
+
+void wgaim_systray_maximize( GtkWidget *window ) {
+	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
