@@ -1376,9 +1376,10 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		else if (err == -ENOTCONN)
 			debug_printf("Not yet connected\n");
 #else
-		else if (err == SOCKET_ERROR)
-			if( WSAENOTCONN == WSAGetLastError() )
+		else if (err == SOCKET_ERROR) {
+			if (WSAENOTCONN == WSAGetLastError())
 				debug_printf("Not yet connected\n");
+		}
 #endif
 		else
 			do_error_dialog(_("Unable to send message"), NULL, GAIM_ERROR);
