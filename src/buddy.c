@@ -1727,6 +1727,7 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 	hbox = gtk_hbox_new(FALSE, 2);
 
 	/* Create our pixmap and pack it */
+	gtk_widget_realize(menu->parent);
 	pm = gdk_pixmap_create_from_xpm_d(menu->parent->window, &mask, NULL, xpm);
 
 	pixmap = gtk_pixmap_new(pm, mask);
