@@ -27,6 +27,10 @@
 #include <ctype.h>
 #include "gaim.h"
 
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
 struct smiley_list {
 	char *sml;
 	GSList *smileys;

@@ -14,7 +14,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+#ifndef _WIN32
 #include <netdb.h>
+#endif
 #include "gaim.h"
 #include "prpl.h"
 #include "proxy.h"
@@ -22,6 +24,7 @@
 
 #ifdef _WIN32
 #include "win32dep.h"
+#include "stdint.h"
 #endif
 
 #include "pixmaps/protocols/msn/msn_online.xpm"
