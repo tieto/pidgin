@@ -806,13 +806,17 @@ msgstr ""
 "Jabber、Napster、Zephyr，以及 Gadu-Gadu 等功能。它是以 GTK+ 開發，並以 GPL 的"
 "方式發佈。<BR><BR>"
 
+# FIXME probably not the right place to put this zh_TW-specific info
+# FIXME but this info need to go somewhere
 #: src/about.c:99
 msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"3\">IRC:</FONT> irc.freenode.net 上的 #gaim 頻道<BR><BR>"
+"<FONT SIZE=\"3\">正體中文化資訊:</FONT>"
+" <A HREF=\"http://gaim.dnsq.org/\">http://gaim.dnsq.org/</A><BR><BR>"
 
 #: src/about.c:104
 msgid "Active Developers"
-msgstr ""
+msgstr "現任開發者"
 
 #: src/about.c:105
 msgid "maintainer"
@@ -921,9 +925,10 @@ msgstr "義大利文"
 msgid "Korean"
 msgstr "韓文"
 
+# NOTE Flemish 譯法是跟了http://www.ee.tku.edu.tw/~rexchen/cdict/
 #: src/about.c:164
 msgid "Dutch; Flemish"
-msgstr "荷蘭文"
+msgstr "荷蘭文、法蘭德斯文"
 
 # XXX 這兒用「方言」一詞大概不太對
 #: src/about.c:165
@@ -944,7 +949,7 @@ msgstr "瑞典文"
 
 #: src/about.c:169
 msgid "Simplified Chinese"
-msgstr "簡体中文"
+msgstr "簡體中文"
 
 #: src/about.c:170
 msgid "Traditional Chinese"
@@ -3555,11 +3560,11 @@ msgstr ""
 msgid "Load"
 msgstr "載入"
 
-# XXX update後務要查核這個譯文有沒有問題，如有須要便在#gaim或sf.net投訴
+# NOTE 只能譯「名稱」，因為同時解作「人名」及「模組名稱」
 #: src/gtkprefs.c:1814 src/protocols/msn/msn.c:1214
 #: src/protocols/trepia/trepia.c:433
 msgid "Name"
-msgstr "模組名稱"
+msgstr "名稱"
 
 #: src/gtkprefs.c:1861
 msgid "Details"
@@ -6853,11 +6858,12 @@ msgid ""
 "this time.</b><br><br>\n"
 msgstr "<b>對不起，暫時並不支援內容被列為兒童不宜的個人資訊。</b><br><br>\n"
 
+# NOTE 注意：鏈結在譯文之下顯示，故譯成「以下」
 #: src/protocols/yahoo/yahoo.c:1422 src/protocols/yahoo/yahoo.c:1438
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser"
-msgstr "您若然要看這則個人資訊，您必須使用您的瀏覽器開啟這個連結。"
+msgstr "您如果想看這則個人資訊，請用您的瀏覽器開啟以下連結"
 
 #: src/protocols/yahoo/yahoo.c:1436
 msgid ""
