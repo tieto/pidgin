@@ -536,32 +536,6 @@ void clean_pid(void)
 #endif
 }
 
-GaimAccount *gaim_account_find(const char *name, int protocol)
-{
-	char *who = g_strdup(normalize(name));
-	GList *accts = gaim_accounts_get_all();
-	GaimAccount *account;
-
-	while (accts) {
-		account = (GaimAccount *)accts->data;
-		if (!strcmp(normalize(account->username), who)) {
-			if (protocol != -1) {
-				if (account->protocol == protocol) {
-					g_free(who);
-					return account;
-				}
-			} else {
-				g_free(who);
-				return account;
-			}
-
-		}
-		accts = accts->next;
-	}
-	g_free(who);
-	return NULL;
-}
-
 
 /* Look for %n, %d, or %t in msg, and replace with the sender's name, date,
    or time */

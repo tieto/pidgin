@@ -117,19 +117,13 @@ GaimAccount *
 gaim_account_new(const char *username, GaimProtocol protocol)
 {
 	GaimAccount *account;
-	GList *l;
 
 	g_return_val_if_fail(username != NULL, NULL);
 
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		account = l->data;
+	account = gaim_accounts_find(username, protocol);
 
-		if (!strcmp(gaim_account_get_username(account), username) &&
-			gaim_account_get_protocol(account) == protocol) {
-
-			return account;
-		}
-	}
+	if (account != NULL)
+		return account;
 
 	account = g_new0(GaimAccount, 1);
 
@@ -1269,4 +1263,35 @@ GList *
 gaim_accounts_get_all(void)
 {
 	return accounts;
+}
+
+GaimAccount *
+gaim_accounts_find(const char *name, GaimProtocol protocol)
+{
+	GaimAccount *account = NULL;
+	GList *l;
+	char *who;
+
+	g_return_val_if_fail(name != NULL, NULL);
+
+	who = g_strdup(normalize(name));
+
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+		account = (GaimAccount *)l->data;
+
+		if (!strcmp(normalize(gaim_account_get_username(account)), who)) {
+			if (protocol != -1) {
+				if (account->protocol == protocol)
+					break;
+			}
+			else
+				break;
+		}
+
+		account = NULL;
+	}
+
+	g_free(who);
+
+	return account;
 }

@@ -1643,7 +1643,7 @@ load_pounces()
 		GaimGtkPounceAction actions = GAIM_GTKPOUNCE_NONE;
 		ph = (struct pounce_placeholder *)l->data;
 
-		account = gaim_account_find(ph->pouncer, ph->protocol);
+		account = gaim_accounts_find(ph->pouncer, ph->protocol);
 
 		old_pounce_opts_to_new(ph->options, &events, &actions);
 

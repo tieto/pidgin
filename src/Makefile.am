@@ -38,6 +38,7 @@ CORESOURCES = \
 	request.c \
 	request.h \
 	server.c \
+	server.h \
 	sound.c \
 	sound.h \
 	util.c \

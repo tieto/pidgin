@@ -126,16 +126,6 @@ char *linkify_text(const char *str);
 char *sec_to_text(guint sec);
 
 /**
- * Finds a gaim_account with the specified name and protocol ID.
- *
- * @param name     The name of the account.
- * @param protocol The protocol type.
- *
- * @return The gaim_account, if found, or @c NULL otherwise.
- */
-GaimAccount *gaim_account_find(const char *name, int protocol);
-
-/**
  * Returns the date and time in human-readable form.
  *
  * The returned string is stored in a static buffer, so the result
@@ -329,7 +319,8 @@ gint gaim_utf8_strcasecmp(const gchar *a, const gchar *b);
  * @param replacement The substring you want inserted in place 
  *        of the delimiting substring.
  */
-gchar *gaim_strreplace(const gchar *string, const gchar *delimiter, const gchar *replacement);
+gchar *gaim_strreplace(const gchar *string, const gchar *delimiter,
+					   const gchar *replacement);
 
 /**
  * Returns a string representing a filesize in the appropriate units (MB, KB, GB, etc.)

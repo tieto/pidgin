@@ -1379,7 +1379,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 		blist_parser_group_settings = NULL;
 	} else if(!strcmp(element_name, "chat")) {
-		GaimAccount *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			struct chat *chat = gaim_chat_new(account, blist_parser_chat_alias, blist_parser_chat_components);
@@ -1398,7 +1398,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_person_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "buddy")) {
-		GaimAccount *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			struct buddy *b = gaim_buddy_new(account, blist_parser_buddy_name, blist_parser_buddy_alias);
@@ -1464,7 +1464,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 	} else if(!strcmp(element_name, "privacy")) {
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "account")) {
-		GaimAccount *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			account->perm_deny = blist_parser_privacy_mode;
@@ -1473,7 +1473,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_account_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "permit")) {
-		GaimAccount *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_permit_add(account, blist_parser_buddy_name);
@@ -1482,7 +1482,7 @@ static void blist_end_element_handler(GMarkupParseContext *context,
 		blist_parser_buddy_name = NULL;
 		tag_stack = g_list_delete_link(tag_stack, tag_stack);
 	} else if(!strcmp(element_name, "block")) {
-		GaimAccount *account = gaim_account_find(blist_parser_account_name,
+		GaimAccount *account = gaim_accounts_find(blist_parser_account_name,
 				blist_parser_account_protocol);
 		if(account) {
 			gaim_privacy_deny_add(account, blist_parser_buddy_name);
