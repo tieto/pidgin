@@ -121,7 +121,7 @@ Section "" ; (default section)
   CreateDirectory "$SMPROGRAMS\Gaim"
   CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" \
                  "$INSTDIR\gaim.exe"
-  CreateShortCut "$SMPROGRAMS\Gaim\Unistall.lnk" \
+  CreateShortCut "$SMPROGRAMS\Gaim\Uninstall.lnk" \
                  "$INSTDIR\gaim-uninst.exe"
   ; Set Desktop icon
   CreateShortCut "$DESKTOP\Gaim.lnk" \
