@@ -6,8 +6,18 @@
 	Other RVOUS actions for TOC/Oscar
 	Jabber Transports
 	Fix MSN signon process
-	Make it so you can register new accounts via gaim
 	Jabber/ICQ/Napster user registration
+
+	Oscar blocking
+	Rename for groups/buddies
+	Status labels in buddy list (mostly just for yahoo)
+	Border for GtkIMHtml
+
+	I have an updated copy of libfaim. It adds a few new features
+		(change password, confirm, req. email, change email,
+		search by email). Unfortunately it breaks direct im.
+		Once direct im is fixed (which should also cause get
+		file to work) I'll add all these things to gaim.
 
 	ICQ through Oscar plugin (requires hacking libfaim :-/)
 
