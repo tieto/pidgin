@@ -74,6 +74,14 @@ typedef enum
 		((b)->present == GAIM_BUDDY_ONLINE || \
 		 (b)->present == GAIM_BUDDY_SIGNING_ON))
 
+typedef enum
+{
+	GAIM_BLIST_NODE_FLAG_NO_SAVE = 1,	/**< node should not be saved with the buddy list */
+} GaimBlistNodeFlags;
+
+#define GAIM_BLIST_NODE_HAS_FLAG(b, f) ((b)->flags & (f))
+#define GAIM_BLIST_NODE_SHOULD_SAVE(b) (! GAIM_BLIST_NODE_HAS_FLAG(b, GAIM_BLIST_NODE_FLAG_NO_SAVE))
+
 
 /**************************************************************************/
 /* Data Structures                                                        */
@@ -90,6 +98,7 @@ struct _GaimBlistNode {
 	GaimBlistNode *child;               /**< The child of this node         */
 	GHashTable *settings;               /**< per-node settings              */
 	void          *ui_data;             /**< The UI can put data here.      */
+	GaimBlistNodeFlags flags;           /**< The buddy flags                */
 };
 
 /**
@@ -108,8 +117,8 @@ struct _GaimBuddy {
 	int uc;                                 /**< This is a cryptic bitmask that makes sense only to the prpl.  This will get changed */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
-	GaimAccount *account;           /**< the account this buddy belongs to */
-	guint timer;							/**< The timer handle. */
+	GaimAccount *account;           	/**< the account this buddy belongs to */
+	guint timer;				/**< The timer handle. */
 };
 
 /**
@@ -491,6 +500,17 @@ void gaim_contact_set_alias(GaimContact *contact, const char *alias);
  * @return  The alias, or NULL if it is not set.
  */
 const char *gaim_contact_get_alias(GaimContact *contact);
+
+/**
+ * Determines whether an account owns any buddies in a given contact
+ *
+ * @param contact  The contact to search through.
+ * @param account  The account.
+ *
+ * @return TRUE if there are any buddies from account in the contact, or FALSE otherwise.
+ */
+gboolean gaim_contact_on_account(GaimContact *contact, GaimAccount *account);
+
 
 /**
  * Removes a buddy from the buddy list and frees the memory allocated to it.
