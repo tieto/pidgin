@@ -405,7 +405,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 612 $"
+#define REVISION "gaim:$Revision: 613 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -576,6 +576,7 @@ extern char *full_date();
 extern void check_gaim_versions();
 extern void spell_checker(GtkWidget *);
 extern char *away_subs(char *, char *);
+extern GtkWidget *picture_button(GtkWidget *, char *, char **);
 
 /* Functions in server.c */
 /* input to serv */

@@ -386,10 +386,6 @@ void show_warn_dialog(char *who)
 	GtkWidget *label;
 	GtkWidget *vbox;
         GtkWidget *bbox;
-	GtkWidget *button_box;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
 	GtkWidget *frame;
 	GtkWidget *fbox;
 
@@ -406,51 +402,9 @@ void show_warn_dialog(char *who)
 
 	frame = gtk_frame_new(_("Warn"));
 	
-	/* Build Warn Button */
+	warn = picture_button(w->window, _("Warn"), warn_xpm);
 
-	warn = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( w->window->window, &mask, NULL, warn_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Warn"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(warn), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( w->window->window, &mask, NULL, cancel_xpm);
-
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel), button_box);
-	
-	/* End of Cancel Button */
-
+	cancel = picture_button(w->window, _("Cancel"), cancel_xpm);
 
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
@@ -459,9 +413,6 @@ void show_warn_dialog(char *who)
 	}
 	
 	/* Put the buttons in the box */
-
-	gtk_widget_set_usize(warn, 75, 30);
-	gtk_widget_set_usize(cancel, 75, 30);
 
 	gtk_box_pack_start(GTK_BOX(bbox), warn, FALSE, FALSE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
@@ -492,8 +443,6 @@ void show_warn_dialog(char *who)
         gtk_signal_connect(GTK_OBJECT(warn), "clicked",
                            GTK_SIGNAL_FUNC(do_warn), w);
         /* Finish up */
-        gtk_widget_show(warn);
-        gtk_widget_show(cancel);
         gtk_widget_show(w->anon);
         gtk_widget_show(bbox);
         gtk_widget_show(vbox);
@@ -520,10 +469,6 @@ do_error_dialog(char *message, char *title)
 {
         GtkWidget *d;
 	GtkWidget *label;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
 	GtkWidget *close;
 
 
@@ -536,30 +481,7 @@ do_error_dialog(char *message, char *title)
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox),
 		label, FALSE, FALSE, 5);
 		
-	/* Build Close Button */
-
-	close = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( d->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Close"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(close), button_box);
-	gtk_widget_set_usize(close, 75, 30);
-	gtk_widget_show(close);
-
-	/* End of Close Button */
-
+	close = picture_button(d, _("Close"), cancel_xpm);
 
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
@@ -697,7 +619,6 @@ static void do_im(GtkWidget *widget, GtkWidget *imentry)
 {
         char *who;
         struct conversation *c;
-	char *test;
 	
         who = g_strdup(normalize(gtk_entry_get_text(GTK_ENTRY(imentry))));
 	destroy_dialog(NULL, imdialog);
@@ -764,10 +685,6 @@ void show_ee_dialog(int ee)
 void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 {
 	GtkWidget *button;
-	GtkWidget *button_box;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
 	GtkWidget *imentry;
         GtkWidget *vbox;
         GtkWidget *ebox;
@@ -793,73 +710,16 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 	
 		imentry = gtk_entry_new();
 
-	/* Build OK Button */
+		button = picture_button(imdialog, _("OK"), ok_xpm);
+		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+		gtk_signal_connect(GTK_OBJECT(button), "clicked",
+				   GTK_SIGNAL_FUNC(do_im), imentry);
 
-	button = gtk_button_new();
+		button = picture_button(imdialog, _("Cancel"), cancel_xpm);
+		gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
+		gtk_signal_connect(GTK_OBJECT(button), "clicked",
+				   GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
 
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( imdialog->window, &mask, NULL, ok_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("OK"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-                           GTK_SIGNAL_FUNC(do_im), imentry);
-
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	button = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( imdialog->window, &mask, NULL, cancel_xpm);
-
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-	
-	gtk_signal_connect(GTK_OBJECT(button), "clicked",
-                           GTK_SIGNAL_FUNC(destroy_dialog), imdialog);
-
-	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of Cancel Button */
-	
                 label = gtk_label_new(_("IM who: "));
                 gtk_box_pack_start(GTK_BOX(ebox), label, TRUE, TRUE, 10);
                 gtk_widget_show(label);
@@ -979,10 +839,6 @@ void show_add_group()
 	GtkWidget *vbox;
         GtkWidget *topbox;
 	GtkWidget *frame;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
         
@@ -998,59 +854,10 @@ void show_add_group()
         a->entry = gtk_entry_new();
         /* Put the buttons in the box */
 
-	/* Build Add Button */
+	add = picture_button(a->window, _("Add"), add_xpm);
 
-	add = gtk_button_new();
+	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
-		
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, add_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Add"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(add), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	cancel = gtk_button_new();
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel), button_box);
-	
-	/* End of Cancel Button */
-
-	gtk_widget_set_usize(add, 75, 30);
-	gtk_widget_set_usize(cancel, 75, 30);
-	
         gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 
@@ -1103,10 +910,6 @@ void show_add_buddy(char *buddy, char *group)
 	GtkWidget *vbox;
         GtkWidget *topbox;
 	GtkWidget *frame;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
 
         struct addbuddy *a = g_new0(struct addbuddy, 1);
         
@@ -1126,58 +929,8 @@ void show_add_buddy(char *buddy, char *group)
         gtk_combo_set_popdown_strings(GTK_COMBO(a->combo), groups_tree());
         /* Put the buttons in the box */
 
-	/* Build Add Button */
-
-	add = gtk_button_new();
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
-		
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, add_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Add"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(add), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	cancel = gtk_button_new();
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel), button_box);
-	
-	/* End of Cancel Button */
-
-	gtk_widget_set_usize(add, 75, 30);
-	gtk_widget_set_usize(cancel, 75, 30);
+	add = picture_button(a->window, _("Add"), add_xpm);
+	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
 	
         gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
@@ -1270,11 +1023,7 @@ void show_new_bp(char *name)
 	GtkWidget *label;
 	GtkWidget *bbox;
 	GtkWidget *vbox;
-	GtkWidget *icon_i;
-	GdkPixmap *icon;
-	GdkBitmap *mask;
 	GtkWidget *button;
-	GtkWidget *button_box;
 
         struct addbp *b = g_new0(struct addbp, 1);
         
@@ -1289,70 +1038,16 @@ void show_new_bp(char *name)
 
 	/* Build OK Button */
 
-	button = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("OK"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
+	button = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
                            GTK_SIGNAL_FUNC(do_new_bp), b);
-
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	button = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-	
+	button = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of Cancel Button */
-	
         /* Put the buttons in the box */
         label = gtk_label_new(_("Buddy To Pounce:"));
         gtk_widget_show(label);
@@ -1458,10 +1153,6 @@ void show_set_dir()
 	GtkWidget *bot;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
 	GtkWidget *frame;
 	GtkWidget *fbox;
 
@@ -1481,60 +1172,11 @@ void show_set_dir()
 
 	/* Build Save Button */
 
-	b->save = gtk_button_new();
+	b->save = picture_button(b->window, _("Save"), save_xpm);
 
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, save_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 	
-	label = gtk_label_new(_("Save"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->save), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->save), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	b->cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
-	
-	/* End of Cancel Button */
 	bot = gtk_hbox_new(TRUE, 10);
-
-	gtk_widget_set_usize(b->save, 75, 30);
-	gtk_widget_set_usize(b->cancel, 75, 30);
-
-	gtk_widget_show(b->save);
-	gtk_widget_show(b->cancel);
 
 	gtk_box_pack_start(GTK_BOX(bot), b->save, FALSE, FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(bot), b->cancel, FALSE, FALSE, 5);
@@ -1700,12 +1342,6 @@ void show_change_passwd()
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *vbox;
-
-	GtkWidget *button_box;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-
 	GtkWidget *fbox;
 	GtkWidget *frame;
 
@@ -1723,59 +1359,8 @@ void show_change_passwd()
 
 	/* Build OK Button */
 
-	b->ok = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("OK"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->ok), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->ok), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	b->cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
-	
-	/* End of Cancel Button */
-
-	gtk_widget_set_usize(b->ok, 75, 30);
-	gtk_widget_set_usize(b->cancel, 75, 30);
-
-	gtk_widget_show(b->ok);
-	gtk_widget_show(b->cancel);
+	b->ok = picture_button(b->window, _("OK"), ok_xpm);
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 
 	/* Create our vbox */
 	vbox = gtk_vbox_new(FALSE, 5);
@@ -1866,11 +1451,6 @@ void show_set_info()
 {
 	GtkWidget *bot;
 	GtkWidget *top;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
-	GtkWidget *label;
 	
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
 
@@ -1883,59 +1463,8 @@ void show_set_info()
 
 	/* Build OK Button */
 
-	b->save = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, save_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Save"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->save), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->save), button_box);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	b->cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
-	
-	/* End of Cancel Button */
-
-	gtk_widget_set_usize(b->save, 75, 30);
-	gtk_widget_set_usize(b->cancel, 75, 30);
-
-	gtk_widget_show(b->save);
-	gtk_widget_show(b->cancel);
+	b->save = picture_button(b->window, _("Save"), save_xpm);
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 
 	gtk_box_pack_start(GTK_BOX(bot), b->save, FALSE, FALSE, 10);
 	gtk_box_pack_start(GTK_BOX(bot), b->cancel, FALSE, FALSE, 10);
@@ -2214,10 +1743,6 @@ void show_add_perm(char *who)
         GtkWidget *rbox;
         GtkWidget *topbox;
         GtkWidget *which;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *icon_i;
-	GtkWidget *button_box;
 	GtkWidget *frame;
 	
 	struct addperm *p = g_new0(struct addperm, 1);
@@ -2240,52 +1765,8 @@ void show_add_perm(char *who)
 
 	/* Build Add Button */
 
-	add = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( p->window->window, &mask, NULL, add_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Add"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(add), button_box);
-
-	/* End of Add Button */
-	
-	/* Build Cancel Button */
-
-	cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( p->window->window, &mask, NULL, cancel_xpm);
-
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel), button_box);
+	add = picture_button(p->window, _("Add"), add_xpm);
+	cancel = picture_button(p->window, _("Cancel"), cancel_xpm);
 	
 	/* End of Cancel Button */
         if (who != NULL)
@@ -2303,9 +1784,6 @@ void show_add_perm(char *who)
                 
         /* Put the buttons in the box */
 	
-	gtk_widget_set_usize(add, 75, 30);
-	gtk_widget_set_usize(cancel, 75, 30);
-
 	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 		
@@ -2466,10 +1944,6 @@ void show_find_info()
         GtkWidget *bbox;
         GtkWidget *vbox;
 	GtkWidget *hbox;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
-	GtkWidget *button_box;
 	GtkWidget *fbox;
 	GtkWidget *frame;
 
@@ -2487,55 +1961,8 @@ void show_find_info()
 
 	/* Build OK Button */
 
-	ok = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("OK"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(ok), button_box);
-	gtk_widget_set_usize(ok, 75, 30);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	cancel = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
-		
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel), button_box);
-	gtk_widget_set_usize(cancel, 75, 30);
-	
-	/* End of Cancel Button */
+	ok = picture_button(b->window, _("OK"), ok_xpm);
+	cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
 
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 2);
@@ -2548,8 +1975,6 @@ void show_find_info()
 	b->stateentry = gtk_entry_new();
 	b->countryentry = gtk_entry_new();
 
-	gtk_widget_set_usize(ok, 75, 30);
-	gtk_widget_set_usize(cancel, 75, 30);
         gtk_box_pack_start(GTK_BOX(bbox), ok, FALSE, FALSE, 10);
         gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 10);
 
@@ -2678,10 +2103,6 @@ void show_find_email()
         GtkWidget *vbox;
         GtkWidget *topbox;
 	GtkWidget *frame;
-	GtkWidget *icon_i;
-	GdkPixmap *icon;
-	GdkBitmap *mask;
-	GtkWidget *button_box;
 	GtkWidget *button;
 
         struct findbyemail *b = g_new0(struct findbyemail, 1);
@@ -2701,69 +2122,15 @@ void show_find_email()
 
 	/* Build OK Button */
 
-	button = gtk_button_new();
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("OK"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
+	button = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
                            GTK_SIGNAL_FUNC(do_find_email), b);
-
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of OK Button */
-	
-	/* Build Cancel Button */
-
-	button = gtk_button_new();
-
-	button_box = gtk_hbox_new(FALSE, 5);
-	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new(icon, mask);
-	
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-
-	gtk_widget_show(label);
-	gtk_widget_show(icon_i);
-
-	gtk_widget_show(button_box);
-
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-	
+	button = picture_button(b->window, _("Cancel"), cancel_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked",
                            GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-	gtk_widget_set_usize(button, 75, 30);
-	gtk_widget_show(button);
-
-	/* End of Cancel Button */
 
         label = gtk_label_new(_("Email"));
         gtk_widget_show(label);
@@ -2834,9 +2201,6 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 	GtkWidget *label;
 	GtkWidget *frame;
 	GtkWidget *fbox;
-	GtkWidget *icon_i;
-	GdkBitmap *mask;
-	GdkPixmap *icon;
 
 	if (!linkdialog) {
 		struct linkdlg *b = g_new0(struct linkdlg, 1);
@@ -2854,61 +2218,8 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 
 		/* Build OK Button */
 
-		b->ok = gtk_button_new();
-
-		hbox = gtk_hbox_new(FALSE, 5);
-		icon = gdk_pixmap_create_from_xpm_d ( linkdialog->window, &mask, NULL, ok_xpm);
-		icon_i = gtk_pixmap_new(icon, mask);
-	
-		label = gtk_label_new(_("OK"));
-
-		gtk_box_pack_start(GTK_BOX(hbox), icon_i, FALSE, FALSE, 2);
-		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-
-		gtk_widget_show(label);
-		gtk_widget_show(icon_i);
-
-		gtk_widget_show(hbox);
-		gtk_container_add(GTK_CONTAINER(b->ok), hbox);
-		gtk_widget_set_usize(b->ok, 75, 30);
-		gtk_widget_show(b->ok);
-
-		/* End of OK Button */
-
-		/* Build Cancel Button */
-
-		b->cancel = gtk_button_new();
-
-		hbox = gtk_hbox_new(FALSE, 5);
-		icon = gdk_pixmap_create_from_xpm_d ( linkdialog->window, &mask, NULL, cancel_xpm);
-		icon_i = gtk_pixmap_new(icon, mask);
-	
-		label = gtk_label_new(_("Cancel"));
-
-		gtk_box_pack_start(GTK_BOX(hbox), icon_i, FALSE, FALSE, 2);
-		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-
-		gtk_widget_show(label);
-		gtk_widget_show(icon_i);
-
-		gtk_widget_show(hbox);
-
-		gtk_container_add(GTK_CONTAINER(b->cancel), hbox);
-
-		gtk_widget_set_usize(b->cancel, 75, 30);
-		gtk_widget_show(b->cancel);
-
-		/* End of Cancel Button */
-
-
-		if (display_options & OPT_DISP_COOL_LOOK)
-		{
-			gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
-			gtk_button_set_relief(GTK_BUTTON(b->ok), GTK_RELIEF_NONE);
-		}
-			
-		gtk_widget_show(b->ok);
-		gtk_widget_show(b->cancel);
+		b->ok = picture_button(linkdialog, _("OK"), ok_xpm);
+		b->cancel = picture_button(linkdialog, _("Cancel"), cancel_xpm);
 
 		gtk_box_pack_start(GTK_BOX(bbox), b->ok, FALSE, FALSE, 10);
 		gtk_box_pack_end(GTK_BOX(bbox), b->cancel, FALSE, FALSE, 10);
@@ -3445,16 +2756,11 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	GtkWidget *hbox;
 	GtkWidget *titlebox;
 	GtkWidget *tbox;
-	GtkWidget *create;
 	GtkWidget *sw;
 	GtkWidget *label;
 	GtkWidget *frame;
 	GtkWidget *fbox;
-	GtkWidget *button_box;
 	GtkWidget *button;
-	GdkPixmap *icon;
-	GdkBitmap *mask;
-	GtkWidget *icon_i;
 
         struct create_away *ca = g_new0(struct create_away, 1);
         
@@ -3502,61 +2808,13 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_widget_show(ca->text);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 5);   
 
-	/* create 'create' button */
-	
-	button_box = gtk_hbox_new(TRUE, 5);
-
-	icon = gdk_pixmap_create_from_xpm_d( ca->window->window , &mask, NULL, save_xpm);
-	icon_i = gtk_pixmap_new ( icon, mask );
-	label = gtk_label_new(_("Away"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-	gtk_widget_show(icon_i);
-	gtk_widget_show(label);
-
-	button = gtk_button_new();
+	button = picture_button(ca->window, _("Away"), save_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
-	gtk_widget_show(button_box);
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-	
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-
-	gtk_widget_show(button);
-
-	gtk_widget_set_usize(button, 80, 30);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 
-	/* End of our create button code */
-
-	/* create cancel button */
-
-	button_box = gtk_hbox_new(TRUE, 5);
-
-	icon = gdk_pixmap_create_from_xpm_d( ca->window->window , &mask, NULL, cancel_xpm);
-	icon_i = gtk_pixmap_new ( icon, mask );
-	label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
-	gtk_box_pack_start(GTK_BOX(button_box), label, FALSE, FALSE, 2);
-	gtk_widget_show(icon_i);
-	gtk_widget_show(label);
-
-	button = gtk_button_new();
+	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
-	gtk_widget_show(button_box);
-	gtk_container_add(GTK_CONTAINER(button), button_box);
-
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-		
-
-	gtk_widget_show(button);
-	gtk_widget_set_usize(button, 80, 30);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-
-	/* End of our cancel button code */
 
 	/* Checkbox for showing away msg */
 	ca->checkbx = gtk_check_button_new_with_label(_("Save for later use"));

@@ -888,3 +888,35 @@ char *away_subs(char *msg, char *name)
 	cpy[cnt]='\0';
 	return(cpy);
 }
+
+GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
+{
+	GtkWidget *button;
+	GtkWidget *button_box;
+	GtkWidget *label;
+	GdkBitmap *mask;
+	GdkPixmap *pm;
+	GtkWidget *pixmap;
+
+	button = gtk_button_new();
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	gtk_widget_show(button);
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(button), button_box);
+	gtk_widget_show(button_box);
+
+	pm = gdk_pixmap_create_from_xpm_d(window->window, &mask, NULL, xpm);
+	pixmap = gtk_pixmap_new(pm, mask);
+	gtk_box_pack_start(GTK_BOX(button_box), pixmap, FALSE, FALSE, 2);
+	gtk_widget_show(pixmap);
+
+	label = gtk_label_new(text);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+	gtk_widget_show(label);
+
+	gtk_widget_set_usize(button, 75, 30);
+
+	return button;
+}

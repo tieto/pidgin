@@ -80,6 +80,7 @@ XS(XS_AIM_deny_list); /* also returns permit list */
 XS(XS_AIM_command); /* send command to server */
 XS(XS_AIM_user_info); /* given name, return struct buddy members */
 XS(XS_AIM_print_to_conv); /* send message to someone */
+XS(XS_AIM_print_to_chat); /* send message to chat room */
 
 /* handler commands */
 XS(XS_AIM_add_message_handler); /* when people talk */
@@ -169,6 +170,7 @@ void perl_init()
 	newXS ("AIM::command", XS_AIM_command, "AIM");
 	newXS ("AIM::user_info", XS_AIM_user_info, "AIM");
 	newXS ("AIM::print_to_conv", XS_AIM_print_to_conv, "AIM");
+	newXS ("AIM::print_to_chat", XS_AIM_print_to_chat, "AIM");
 
 	newXS ("AIM::add_message_handler", XS_AIM_add_message_handler, "AIM");
 	newXS ("AIM::add_command_handler", XS_AIM_add_command_handler, "AIM");
@@ -250,7 +252,6 @@ XS (XS_AIM_get_info)
 		else
 			XST_mPV(0, "Oscar");
 		break;
-	/* FIXME */
 	default:
 		XST_mPV(0, "Error2");
 	}
@@ -336,7 +337,22 @@ XS (XS_AIM_deny_list)
 
 XS (XS_AIM_command)
 {
-	/* FIXME */
+	int junk;
+	char *command = NULL;
+	dXSARGS;
+	items = 0;
+
+	command = SvPV(ST(0), junk);
+	if (!command) XSRETURN(0);
+	if        (!strncasecmp(command, "signon", 6)) {
+	} else if (!strncasecmp(command, "signoff", 7)) {
+	} else if (!strncasecmp(command, "away", 4)) {
+	} else if (!strncasecmp(command, "back", 4)) {
+	} else if (!strncasecmp(command, "idle", 4)) {
+	} else if (!strncasecmp(command, "warn", 4)) {
+	}
+
+	XSRETURN(0);
 }
 
 XS (XS_AIM_user_info)
@@ -378,6 +394,29 @@ XS (XS_AIM_print_to_conv)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL);
 	serv_send_im(nick, what, 0);
+}
+
+XS (XS_AIM_print_to_chat)
+{
+	char *nick, *what;
+	struct conversation *c = NULL;
+	GList *bcs = buddy_chats;
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	nick = SvPV(ST(0), junk);
+	what = SvPV(ST(1), junk);
+	while (bcs) {
+		c = (struct conversation *)bcs->data;
+		if (!strcmp(c->name, nick))
+			break;
+		bcs = bcs->next;
+		c = NULL;
+	}
+	if (!c)
+		XSRETURN(0);
+	serv_chat_send(c->id, what);
 }
 
 XS (XS_AIM_add_message_handler)
