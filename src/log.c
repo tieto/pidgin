@@ -458,7 +458,7 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	char *read, *minus_header;
 	*flags = GAIM_LOG_READ_NO_NEWLINE;
 	if (!log->logger_data)
-		return g_strdup("<font color='red'><b>log->logger_data was NULL!</b></font>");
+		return g_strdup("<font color=\"red\"><b>log->logger_data was NULL!</b></font>");
 	if (g_file_get_contents((char *)log->logger_data, &read, NULL, NULL)) {
 		minus_header = strchr(read, '\n');
 		if (!minus_header)
@@ -468,7 +468,7 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		g_free(read);
 		return minus_header;
 	}
-	return g_strdup(_("<font color='red'><b>Could not read file: %s</b></font>"));
+	return g_strdup(_("<font color=\"red\"><b>Could not read file: %s</b></font>"));
 }
 
 static GaimLogLogger html_logger = {
@@ -566,7 +566,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	char *read, *minus_header;
 	*flags = 0;
 	if (!log->logger_data)
-		return g_strdup("<font color='red'><b>log->logger_data was NULL!</b></font>");
+		return g_strdup("<font color=\"red\"><b>log->logger_data was NULL!</b></font>");
 	if (g_file_get_contents((char *)log->logger_data, &read, NULL, NULL)) {
 		minus_header = strchr(read, '\n');
 		if (!minus_header)
@@ -576,7 +576,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		g_free(read);
 		return minus_header;
 	}
-        return g_strdup(_("<font color='red'><b>Could not read file: %s</b></font>"));
+        return g_strdup(_("<font color=\"red\"><b>Could not read file: %s</b></font>"));
 }
 
 static GaimLogLogger txt_logger = {
