@@ -1,26 +1,70 @@
-/* Rewritten by Etan Reisner <deryni@eden.rutgers.edu>
+/*
+ * Gaim buddy notification plugin.
  *
- * Added config dialog
- * Added control over notification method
- * Added control over when to release notification
- * 
- * Added option to get notification for chats also
- * Cleaned up code
- * Added option to notify on click as it's own option
- *  rather then as what happens when on focus isn't clicked
- * Added apply button to change the denotification methods for
- *  open conversation windows
- * Fixed apply to conversations, count now keeps count across applies
- * Fixed(?) memory leak, and in the process fixed some stupidities 
- * Hit enter when done editing the title string entry box to save it
+ * Copyright (C) 2000-2001, Eric Warmenhoven (original code)
+ * Copyright (C) 2002, Etan Reisner <deryni@eden.rutgers.edu> (rewritten code)
+ * Copyright (C) 2003, Christian Hammond (update for changed API)
+ * Copyright (C) 2003, Brian Tarricon <bjt23@cornell.edu> (mostly rewritten)
+ * Copyright (C) 2003, Mark Doliner (minor cleanup)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+/*
+ * From Etan, 2002:
+ *  -Added config dialog
+ *  -Added control over notification method
+ *  -Added control over when to release notification
+ *
+ *  -Added option to get notification for chats also
+ *  -Cleaned up code
+ *  -Added option to notify on click as it's own option
+ *   rather then as what happens when on focus isn't clicked
+ *  -Added apply button to change the denotification methods for
+ *   open conversation windows
+ *  -Fixed apply to conversations, count now keeps count across applies
+ *  -Fixed(?) memory leak, and in the process fixed some stupidities 
+ *  -Hit enter when done editing the title string entry box to save it
  *
  * Thanks to Carles Pina i Estany <carles@pinux.info>
  *   for count of new messages option
+ * 
+ * From Brian, 20 July 2003:
+ *  -Use new xml prefs
+ *  -Better handling of notification states tracking
+ *  -Better pref change handling
+ *  -Fixed a possible memleak and possible crash (rare)
+ *  -Use gtk_window_get_title() rather than gtkwin->title
+ *  -Other random fixes and cleanups
  */
 
-#include "config.h"
+#include "internal.h"
 
-#include "gaim.h"
+#include "conversation.h"
+#include "debug.h"
+#include "notify.h"
+#include "prefs.h"
+
+#include "gtkconv.h"
+#include "gtkplugin.h"
+#include "gtkutils.h"
+
+
+#include "gtkplugin.h"
+
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -29,332 +73,396 @@
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
-#include "gtkplugin.h"
+#include <glib.h>
 
-#define NOTIFY_PLUGIN_ID "gtk-notify"
+#define NOTIFY_PLUGIN_ID "gtk-x11-notify"
 
-guint type = 1;
-#define TYPE_IM				0x00000001
-#define TYPE_CHAT			0x00000002
+#define OPT_TYPE_IM				((guint)0x00000001)
+#define OPT_TYPE_CHAT			((guint)0x00000002)
+#define OPT_NOTIFY_FOCUS		((guint)0x00000004)
+#define OPT_NOTIFY_TYPE			((guint)0x00000008)
+#define OPT_NOTIFY_IN_FOCUS		((guint)0x00000010)
+#define OPT_NOTIFY_CLICK		((guint)0x00000020)
+#define OPT_METHOD_STRING		((guint)0x00000040)
+#define OPT_METHOD_QUOTE		((guint)0x00000080)
+#define OPT_METHOD_URGENT		((guint)0x00000100)
+#define OPT_METHOD_COUNT		((guint)0x00000200)
+#define OPT_METHOD_STRING_CHNG	((guint)0x00000400)
+#define STATE_IS_NOTIFIED		((guint)0x80000000)
 
-guint choice = 1;
-#define NOTIFY_FOCUS		0x00000001
-#define NOTIFY_TYPE			0x00000002
-#define NOTIFY_IN_FOCUS		0x00000004
-#define NOTIFY_CLICK		0x00000008
+#define TITLE_STR_BUFSIZE		256
 
-guint method = 1;
-#define METHOD_STRING		0x00000001
-#define METHOD_QUOTE		0x00000002
-#define METHOD_URGENT		0x00000004
-#define METHOD_COUNT		0x00000008
+#define GDATASTR				"notify-plugin-opts"
+#define GDATASTRCNT				"notify-plugin-count"
 
 static GaimPlugin *my_plugin = NULL;
 
-void *handle;
-GtkWidget *Entry;
-gchar *title_string;
-int Number = 0;
+static guint notify_opts = 0;
+static gchar title_string[TITLE_STR_BUFSIZE+1];
 
-/* predefine some functions, less warnings */
-void options(GtkWidget *widget, gpointer data);
-/* this returns an int so that typing events don't get stopped here */
-int un_star(GtkWidget *widget, gpointer data);
-int counter (char *buf, int *length);
-/*string functions */
-void string_add(GtkWidget *widget);
-gboolean string_remove(GtkWidget *widget);
+/* notification set/unset */
+static int notify(GaimConversation *c);
+static void unnotify(GaimConversation *c);
+static int unnotify_cb(GtkWidget *widget, gpointer data);
+
+/* gtk widget callbacks for prefs panel */
+static void options_toggle_cb(GtkWidget *widget, gpointer data);
+static gboolean options_settitle_cb(GtkWidget *w, GdkEventFocus *evt, GtkWidget *entry);
+static void options_toggle_title_cb(GtkWidget *w, GtkWidget *entry);
+static void apply_options(int opt_chng);
+
+/* string functions */
+static void string_add(GtkWidget *widget);
+static void string_remove(GtkWidget *widget);
+
 /* count functions */
-void count_add(GtkWidget *widget, int number);
-gboolean count_remove(GtkWidget *widget);
-/* quote functions */
-void quote_add(GtkWidget *widget);
-gboolean quote_remove(GtkWidget *widget);
-/* urgent functions */
-void urgent_add(GaimConversation *c);
-gboolean urgent_remove(GaimConversation *c);
+static void count_add(GtkWidget *widget);
+static void count_remove(GtkWidget *widget);
 
-int notify(GaimConversation *cnv) {
+/* quote functions */
+static void quote_add(GtkWidget *widget);
+static void quote_remove(GtkWidget *widget);
+
+/* urgent functions */
+static void urgent_add(GaimConversation *c);
+static void urgent_remove(GaimConversation *c);
+
+/****************************************/
+/* Begin doing stuff below this line... */
+/****************************************/
+
+static int notify(GaimConversation *c) {
 	GaimGtkWindow *gtkwin;
 	Window focus_return;
 	int revert_to_return;
-
-	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
-
-	XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window), &focus_return, &revert_to_return);
-
-	if ((choice & NOTIFY_IN_FOCUS) ||
-			focus_return != GDK_WINDOW_XWINDOW(gtkwin->window->window)) {
-		if (method & METHOD_STRING)
-			string_add(gtkwin->window);
-		if (method & METHOD_COUNT)
-			count_add(gtkwin->window, 0);
-		if (method & METHOD_QUOTE)
-			quote_add(gtkwin->window);
-		if (method & METHOD_URGENT)
-			urgent_add(cnv);
-	}
-	return 0;
-}
-
-guint unnotify(GaimConversation *c, gboolean clean) {
-	GaimGtkWindow *gtkwin;
-	guint option = 0;
+	guint opts;
+	gint count;
 
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
-	/* The top level ifs check whether we are either cleaning all methods,
-	 * or whether we have that method is currently selected.
-	 * If we do then they are cleaned
-	 *
-	 * The second level ifs check if we removed something,
-	 * and if that method is currently selected.
-	 * If we did and it is then set option so that it can be re-added */
-	if (clean || (method & METHOD_QUOTE))
-		if (quote_remove(gtkwin->window) && (method & METHOD_QUOTE))
-			option ^= METHOD_QUOTE;
+	/* increment message counter */
+	count = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkwin->window), GDATASTRCNT));
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER(count+1));
 
-	if (clean || (method & METHOD_COUNT))
-		if (count_remove(gtkwin->window) && (method & METHOD_COUNT))
-			option ^= METHOD_COUNT;
+	/* if we aren't doing notifications for this type of convo, bail */
+	if (((gaim_conversation_get_type(c) == GAIM_CONV_IM) && !(notify_opts & OPT_TYPE_IM)) ||
+		((gaim_conversation_get_type(c) == GAIM_CONV_CHAT) && !(notify_opts & OPT_TYPE_CHAT)))
+		return 0;
 
-	if (clean || (method & METHOD_STRING))
-		if (string_remove(gtkwin->window) && (method & METHOD_STRING))
-			option ^= METHOD_STRING;
+	XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window), &focus_return, &revert_to_return);
 
-	if (clean || (method & METHOD_URGENT))
-		if (urgent_remove(c) && (method & METHOD_URGENT))
-			option ^= METHOD_URGENT;
+	if ((notify_opts & OPT_NOTIFY_IN_FOCUS) || 
+		(focus_return != GDK_WINDOW_XWINDOW(gtkwin->window->window))) {
+		if (notify_opts & OPT_METHOD_STRING)
+			string_add(gtkwin->window);
+		if (notify_opts & OPT_METHOD_COUNT)
+			count_add(gtkwin->window);
+		if (notify_opts & OPT_METHOD_QUOTE)
+			quote_add(gtkwin->window);
+		if (notify_opts & OPT_METHOD_URGENT)
+			urgent_add(c);
+	}
 
-	return option;
-}
+	opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkwin->window), GDATASTR));
+	opts |= STATE_IS_NOTIFIED;
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER(opts));
 
-void chat_recv_im(struct gaim_connection *gc, int id, char **who, char **text) {
-	GaimConversation *c = gaim_find_chat(gc, id);
-
-	if (c && (type & TYPE_CHAT))
-		notify(c);
-	return;
-}
-
-void chat_sent_im(struct gaim_connection *gc, int id, char **text) {
-	GaimConversation *c = gaim_find_chat(gc, id);
-
-	if (c && (type & TYPE_CHAT))
-		unnotify(c, FALSE);
-	return;
-}
-
-int im_recv_im(struct gaim_connection *gc, char **who, char **what, void *m) {
-	GaimConversation *c = gaim_find_conversation(*who);
-
-	if (c && (type & TYPE_IM))
-		notify(c);
 	return 0;
 }
 
-int im_sent_im(struct gaim_connection *gc, char *who, char **what, void *m) {
-	GaimConversation *c = gaim_find_conversation(who);
-
-	if (c && (type & TYPE_IM))
-		unnotify(c, FALSE);
-	return 0;
-}
-
-int attach_signals(GaimConversation *c) {
-	GaimGtkConversation *gtkconv;
+static void unnotify(GaimConversation *c) {
 	GaimGtkWindow *gtkwin;
 
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
-	if (choice & NOTIFY_FOCUS) {
-		g_signal_connect(G_OBJECT(gtkwin->window), "focus-in-event", G_CALLBACK(un_star), NULL);
-	}
-
-	if (choice & NOTIFY_CLICK) {
-		g_signal_connect(G_OBJECT(gtkwin->window), "button_press_event", G_CALLBACK(un_star), NULL);
-
-		g_signal_connect_swapped(G_OBJECT(gtkconv->imhtml), "button_press_event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
-
-		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "button_press_event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
-	}
-
-	if (choice & NOTIFY_TYPE) {
-		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key-press-event", G_CALLBACK(un_star), G_OBJECT(gtkwin->window));
-	}
-
-	g_object_set_data(G_OBJECT(gtkwin->window), "user_data", c);
-	g_object_set_data(G_OBJECT(gtkwin->window), "notify_data", GUINT_TO_POINTER(choice));
-	return 0;
+	urgent_remove(c);
+	quote_remove(GTK_WIDGET(gtkwin->window));
+	count_remove(GTK_WIDGET(gtkwin->window));
+	string_remove(GTK_WIDGET(gtkwin->window));
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER((guint)0));
 }
 
-void detach_signals(GaimConversation *c) {
-	GaimGtkConversation *gtkconv;
-	GaimGtkWindow *gtkwin;
-	guint options;
-	
-	gtkconv = GAIM_GTK_CONVERSATION(c);
-	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-	
-	options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(gtkwin->window), "notify_data"));
-
-	if (options & NOTIFY_FOCUS) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
-	}
-	if (options & NOTIFY_CLICK) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->imhtml), un_star, gtkwin->window);
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), un_star, gtkwin->window);
-	}
-
-	if (options & NOTIFY_TYPE) {
-		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), un_star, gtkwin->window);
-	}
-}
-
-void new_conv(char *who) {
-	GaimConversation *c = gaim_find_conversation(who);
-
-	if (c && (type & TYPE_IM))
-		attach_signals(c);
-}
-
-void chat_join(struct gaim_connection *gc, int id, char *room) {
-	GaimConversation *c = gaim_find_chat(gc, id);
-
-	if (c && (type & TYPE_CHAT))
-		attach_signals(c);
-}
-
-int un_star(GtkWidget *widget, gpointer data) {
+static int unnotify_cb(GtkWidget *widget, gpointer data) {
 	GaimConversation *c = g_object_get_data(G_OBJECT(widget), "user_data");
 
-	if (method & METHOD_QUOTE)
-		quote_remove(widget);
-	if (method & METHOD_COUNT)
-		count_remove(widget);
-	if (method & METHOD_STRING)
-		string_remove(widget);
-	if (c && method & METHOD_URGENT)
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "in unnotify_cb()\n");
+
+	if (c)
 		urgent_remove(c);
+	quote_remove(widget);
+	count_remove(widget);
+	string_remove(widget);
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER((guint)0));
+	g_object_set_data(G_OBJECT(widget), GDATASTRCNT, GINT_TO_POINTER((guint)0));
+
 	return 0;
 }
 
-/* This function returns the number in [ ]'s or 0
-   and sets *length to the number of digits in that number */
-int counter (char *buf, int *length) {
-	char temp[256];
-	int i = 0;
-	int j = 0;
-	*length = 0;
+static void chat_recv_im(GaimConnection *gc, int id, char **who, char **text) {
+	GaimConversation *c = gaim_find_chat(gc, id);
 
-	/* Don't assume buf[0]=='[' */
-	while( buf[i++] != '[' && i<sizeof(buf));
+	if (c)
+		notify(c);
+	return;
+}
+
+static void chat_sent_im(GaimConnection *gc, int id, char **text) {
+	GaimConversation *c = gaim_find_chat(gc, id);
+
+	if (c)
+		unnotify(c);
+	return;
+}
+
+static int im_recv_im(GaimConnection *gc, char **who, char **what, void *m) {
+	GaimConversation *c = gaim_find_conversation(*who);
+
+	if (c)
+		notify(c);
+	return 0;
+}
+
+static int im_sent_im(GaimConnection *gc, char *who, char **what, void *m) {
+	GaimConversation *c = gaim_find_conversation(who);
+
+	if (c)
+		unnotify(c);
+	return 0;
+}
+
+static int attach_signals(GaimConversation *c) {
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
+
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+	if (notify_opts & OPT_NOTIFY_FOCUS) {
+		g_signal_connect(G_OBJECT(gtkwin->window), "focus-in-event", G_CALLBACK(unnotify_cb), NULL);
+	}
+
+	if (notify_opts & OPT_NOTIFY_CLICK) {
+		g_signal_connect(G_OBJECT(gtkwin->window), "button_press_event", G_CALLBACK(unnotify_cb), NULL);
+		g_signal_connect_swapped(G_OBJECT(gtkconv->imhtml), "button_press_event", G_CALLBACK(unnotify_cb), G_OBJECT(gtkwin->window));
+		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "button_press_event", G_CALLBACK(unnotify_cb), G_OBJECT(gtkwin->window));
+	}
+
+	if (notify_opts & OPT_NOTIFY_TYPE) {
+		g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key-press-event", G_CALLBACK(unnotify_cb), G_OBJECT(gtkwin->window));
+	}
+
+	return 0;
+}
+
+static void detach_signals(GaimConversation *c) {
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *gtkwin;
 	
-	while (isdigit(buf[i]) && i<sizeof(buf)) {
-		temp[j++] = buf[i++];
-		(*length)++;
-	}
-	temp[j] = '\0';
-
-	if (buf[i] != ']') {
-		*length = 0;
-		return (0);
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+	
+	if (notify_opts & OPT_NOTIFY_FOCUS) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), unnotify_cb, NULL);
 	}
 
-	return (atoi(temp));
+	if (notify_opts & OPT_NOTIFY_CLICK) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), unnotify_cb, NULL);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->imhtml), unnotify_cb, gtkwin->window);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), unnotify_cb, gtkwin->window);
+	}
+
+	if (notify_opts & OPT_NOTIFY_TYPE) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->entry), unnotify_cb, gtkwin->window);
+	}
 }
 
-void string_add(GtkWidget *widget) {
-	char buf[256];
+static void new_conv(char *who) {
+	GaimConversation *c = gaim_find_conversation(who);
+	GaimGtkWindow *gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER((guint)0));
+
+	if (c && (notify_opts & OPT_TYPE_IM))
+		attach_signals(c);
+}
+
+static void chat_join(GaimConnection *gc, int id, char *room) {
+	GaimConversation *c = gaim_find_chat(gc, id);
+	GaimGtkWindow *gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
+	g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER((guint)0));
+
+	if (c && (notify_opts & OPT_TYPE_CHAT))
+		attach_signals(c);
+}
+
+static void string_add(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
+	gchar newtitle[256];
+	const gchar *curtitle = gtk_window_get_title(win);
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
 
-	strncpy(buf, win->title, sizeof(buf));
-	if (!strstr(buf, title_string)) {
-		g_snprintf(buf, sizeof(buf), "%s%s", title_string, win->title);
-		gtk_window_set_title(win, buf);
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "string_add(): opts=0x%04x\n", opts);
+
+	if (opts & OPT_METHOD_STRING)
+		return;
+
+	if (!strstr(curtitle, title_string)) {
+		if (opts & OPT_METHOD_COUNT) {
+			char *p = strchr(curtitle, ']');
+			int len1;
+			if (!p)
+				return;
+			len1 = p-curtitle+2;
+			memcpy(newtitle, curtitle, len1);
+			strncpy(newtitle+len1, title_string, sizeof(newtitle)-len1);
+			strncpy(newtitle+len1+strlen(title_string), curtitle+len1,
+					sizeof(newtitle)-len1-strlen(title_string));
+		} else if (opts & OPT_METHOD_QUOTE) {
+			g_snprintf(newtitle, sizeof(newtitle), "\"%s%s", title_string, curtitle+1);
+		} else {
+			g_snprintf(newtitle, sizeof(newtitle), "%s%s", title_string, curtitle);
+		}
+		gtk_window_set_title(win, newtitle);
+		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "added string to window title\n");
 	}
+
+	opts |= OPT_METHOD_STRING;
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER(opts));
 }
 
-gboolean string_remove(GtkWidget *widget) {
-	char buf[256];
+static void string_remove(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
+	gchar newtitle[256];
+	const gchar *curtitle;
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
 
-	strncpy(buf, win->title, sizeof(buf));
-	if (strstr(buf, title_string)) {
-		g_snprintf(buf, sizeof(buf), "%s", &win->title[strlen(title_string)]);
-		gtk_window_set_title(win, buf);
-		return TRUE;
-	}
-	return FALSE;
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "string_remove(): opts=0x%04x\n", opts);
+
+	if (!(opts & OPT_METHOD_STRING))
+		return;
+
+	curtitle = gtk_window_get_title(win);
+
+	if (strstr(curtitle, title_string)) {
+		if (opts & OPT_METHOD_COUNT) {
+			char *p = strchr(curtitle, ']');
+			int len1;
+			if (!p)
+				return;
+			len1 = p-curtitle+2;
+			memcpy(newtitle, curtitle, len1);
+			strncpy(newtitle+len1, curtitle+len1+strlen(title_string), sizeof(newtitle)-len1);
+		} else if (opts & OPT_METHOD_QUOTE) {
+			g_snprintf(newtitle, sizeof(newtitle), "\"%s", curtitle+strlen(title_string)+1);
+		} else 
+			strncpy(newtitle, curtitle+strlen(title_string), sizeof(newtitle));
+		}
+		
+		gtk_window_set_title(win, newtitle);
+		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "removed string from window title (title now %s)\n", newtitle);
 }
 
-void count_add(GtkWidget *widget, int number) {
-	char buf[256];
-	int c, length;
+static void count_add(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
+	char newtitle[256];
+	const gchar *curtitle;
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
+	gint curcount = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTRCNT));
 
-	strncpy(buf, win->title, sizeof(buf));
-	c = counter(buf, &length);
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "count_add(): opts=0x%04x\n", opts);
 
-	if (number) {
-		/* This might cause problems in the future.
-		   I'm pretty sure if count_add is called after quote_add
-		   and number!=0, then this will have problems dealing with
-		   the quotation marks. */
-		g_snprintf(buf, sizeof(buf), "[%d] %s", number, win->title);
-	} else if (!c) {
-		g_snprintf(buf, sizeof(buf), "[1] %s", win->title);
-	} else if (buf[0] == '[' || buf[1] == '[' ) {
-		/* This has to be so complicated in order to account for METHOD_QUOTE */
-		g_snprintf(buf, sizeof(buf), "[%d] %s", c+1, &win->title[ ((method & METHOD_QUOTE) ? 4 : 3)+length ]);
-		if( buf[ strlen(buf)-1 ] == '"' )
-			buf[ strlen(buf)-1 ] = '\0';
-	}
-	gtk_window_set_title(win, buf);
+	if (curcount>0 && (opts & OPT_METHOD_COUNT))
+		count_remove(widget);
+
+	curtitle = gtk_window_get_title(win);
+	if (opts & OPT_METHOD_QUOTE)
+		g_snprintf(newtitle, sizeof(newtitle), "\"[%d] %s", curcount, curtitle+1);
+	else
+		g_snprintf(newtitle, sizeof(newtitle), "[%d] %s", curcount, curtitle);
+	gtk_window_set_title(win, newtitle);
+
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "added count of %d to window\n", curcount);
+
+	opts |= OPT_METHOD_COUNT;
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER(opts));
 }
 
-gboolean count_remove(GtkWidget *widget) {
-	char buf[256];
+static void count_remove(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
-	int length;
+	char newtitle[256], *p;
+	const gchar *curtitle;
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
 
-	strncpy(buf, win->title, sizeof(buf));
-	if (buf[0] == '[') {
-		Number = counter(buf, &length);
-		g_snprintf(buf, sizeof(buf), "%s", &win->title[3+length]);
-		gtk_window_set_title(win, buf);
-		return TRUE; 
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "count_remove(): opts=0x%04x\n", opts);
+
+	if (!(opts & OPT_METHOD_COUNT))
+		return;
+
+	curtitle = gtk_window_get_title(win);
+
+	p = strchr(curtitle, ']');
+
+	if (p) {
+		if (opts & OPT_METHOD_QUOTE)
+			g_snprintf(newtitle, sizeof(newtitle), "\"%s", p+2);
+		else
+			g_snprintf(newtitle, sizeof(newtitle), p+2);
+		gtk_window_set_title(win, newtitle);
+		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "removed count from title (title now %s)\n", newtitle);
 	}
-	return FALSE;
+
+	opts &= ~OPT_METHOD_COUNT;
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER(opts));
 }
 
-void quote_add(GtkWidget *widget) {
-	char buf[256];
+static void quote_add(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
+	char newtitle[256];
+	const gchar *curtitle = gtk_window_get_title(win);
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
 
-	strncpy(buf, win->title, sizeof(buf));
-	if (buf[0] != '\"') {
-		g_snprintf(buf, sizeof(buf), "\"%s\"", win->title);
-		gtk_window_set_title(win, buf);
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "quote_add(): opts=0x%04x\n", opts);
+
+	if (opts & OPT_METHOD_QUOTE)
+		return;
+
+	if (*curtitle != '\"') {
+		g_snprintf(newtitle, sizeof(newtitle), "\"%s\"", curtitle);
+		gtk_window_set_title(win, newtitle);
+		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "quoted title\n");
 	}
+
+	opts |= OPT_METHOD_QUOTE;
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER(opts));
 }
 
-gboolean quote_remove(GtkWidget *widget) {
-	char buf[256];
+static void quote_remove(GtkWidget *widget) {
 	GtkWindow *win = GTK_WINDOW(widget);
+	char newtitle[512];
+	const gchar *curtitle = gtk_window_get_title(win);
+	guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), GDATASTR));
 
-	strncpy(buf, win->title, sizeof(buf));
-	if (buf[0] == '\"') {
-		g_snprintf(buf, strlen(buf) - 1, "%s", &win->title[1]);
-		gtk_window_set_title(win, buf);
-		return TRUE;
-	}
-	return FALSE;
+	gaim_debug(GAIM_DEBUG_INFO, "notify.c", "quote_remove(): opts=0x%04x\n", opts);
+
+	if (!(opts & OPT_METHOD_QUOTE))
+		return;
+
+	if (*curtitle == '\"' && strlen(curtitle)-2<sizeof(newtitle)) {
+		memcpy(newtitle, curtitle+1, strlen(curtitle)-2);
+		newtitle[strlen(curtitle)-2] = 0;
+		gtk_window_set_title(win, newtitle);
+		gaim_debug(GAIM_DEBUG_INFO, "notify.c", "removed quotes from title (title now %s)\n", newtitle);
+ 	}
+
+	opts &= ~OPT_METHOD_QUOTE;
+	g_object_set_data(G_OBJECT(widget), GDATASTR, GINT_TO_POINTER(opts));
 }
 
-void urgent_add(GaimConversation *c) {
+static void urgent_add(GaimConversation *c) {
 	GaimGtkWindow *gtkwin;
 	XWMHints *hints;
 
@@ -366,15 +474,25 @@ void urgent_add(GaimConversation *c) {
 	XFree(hints);
 }
 
-gboolean urgent_remove(GaimConversation *c) {
+static void urgent_remove(GaimConversation *c) {
 	GaimGtkConversation *gtkconv;
+	const char *convo_placement = gaim_prefs_get_string("/core/conversations/placement");
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	if ((gaim_conversation_get_type(c) == GAIM_CONV_CHAT &&
-		 (chat_options & OPT_CHAT_ONE_WINDOW)) ||
-		(gaim_conversation_get_type(c) != GAIM_CONV_CHAT &&
-		 (im_options & OPT_IM_ONE_WINDOW))) {
+	if (!strcmp(convo_placement, "new")) {
+		GaimGtkWindow *gtkwin;
+		XWMHints *hints;
+
+		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+		hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window));
+
+		if (hints->flags & XUrgencyHint) {
+			hints->flags &= ~XUrgencyHint;
+			XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
+		}
+		XFree(hints);
+	} else {
 		if (gaim_conversation_get_type(c) == GAIM_CONV_CHAT) {
 			GaimConversation *c = (GaimConversation *)gaim_get_chats()->data;
 			GaimGtkWindow *gtkwin;
@@ -389,11 +507,8 @@ gboolean urgent_remove(GaimConversation *c) {
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
 				XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
-				XFree(hints);
-				return TRUE;
 			}
 			XFree(hints);
-			return FALSE;
 		} else {
 			GaimConversation *c;
 			GaimGtkWindow *gtkwin;
@@ -408,156 +523,166 @@ gboolean urgent_remove(GaimConversation *c) {
 			if (hints->flags & XUrgencyHint) {
 				hints->flags &= ~XUrgencyHint;
 				XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
-				XFree(hints);
-				return TRUE;
 			}
 			XFree(hints);
-			return FALSE;
 		}
-	} else {
-		GaimGtkWindow *gtkwin;
-		XWMHints *hints;
-
-		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-		hints = XGetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window));
-
-		if (hints->flags & XUrgencyHint) {
-			hints->flags &= ~XUrgencyHint;
-			XSetWMHints(GDK_WINDOW_XDISPLAY(gtkwin->window->window), GDK_WINDOW_XWINDOW(gtkwin->window->window), hints);
-			XFree(hints);
-			return TRUE;
-		}
-		XFree(hints);
-		return FALSE;
 	}
 }
 
-void save_notify_prefs() {
-	gchar buf[1000];
-	FILE *fp;
+static void save_notify_prefs() {
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_im", notify_opts & OPT_TYPE_IM);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_chat", notify_opts & OPT_TYPE_CHAT);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_in_focus", notify_opts & OPT_NOTIFY_IN_FOCUS);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_focus", notify_opts & OPT_NOTIFY_FOCUS);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_click", notify_opts & OPT_NOTIFY_CLICK);	
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/notify_type", notify_opts & OPT_NOTIFY_TYPE);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_string", notify_opts & OPT_METHOD_STRING);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_quote", notify_opts & OPT_METHOD_QUOTE);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_urgent", notify_opts & OPT_METHOD_URGENT);
+	gaim_prefs_set_bool("/plugins/gtk/X11/notify/method_count", notify_opts & OPT_METHOD_COUNT);
 
-	snprintf(buf, 1000, "%s/.gaim/.notify", getenv("HOME"));
-	if (!(fp = fopen(buf, "w"))) {
-		gaim_notify_error(my_plugin, NULL,
-						  _("Unable to write to config file"),
-						  _("Notify plugin"));
-		return;
-	}
-
-	fprintf(fp, "%d=TYPE\n", type);
-	fprintf(fp, "%d=CHOICE\n", choice);
-	fprintf(fp, "%d=METHOD\n", method);
-	fprintf(fp, "%s=STRING\n", title_string);
-	fclose(fp);
+	gaim_prefs_set_string("/plugins/gtk/X11/notify/title_string", title_string);
 }
 
-void load_notify_prefs() {
-	gchar buf[1000];
-	gchar **parsed;
-	FILE *fp;
+static void load_notify_prefs() {
+	notify_opts = 0;
+	
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_im") ? OPT_TYPE_IM : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_chat") ? OPT_TYPE_CHAT : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_in_focus") ? OPT_NOTIFY_IN_FOCUS : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus") ? OPT_NOTIFY_FOCUS : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click") ? OPT_NOTIFY_CLICK : 0);	
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_type") ? OPT_NOTIFY_TYPE : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_string") ? OPT_METHOD_STRING : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_quote") ? OPT_METHOD_QUOTE : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_urgent") ? OPT_METHOD_URGENT : 0);
+	notify_opts |= (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_count") ? OPT_METHOD_COUNT : 0);
 
-	g_snprintf(buf, sizeof(buf), "%s/.gaim/.notify", getenv("HOME"));
-	if (!(fp = fopen(buf, "r")))
-		return;
-
-	while (fgets(buf, 1000, fp) != NULL) {
-		parsed = g_strsplit(g_strchomp(buf), "=", 2);
-		if (parsed[0] && parsed[1]) {
-			if (!strcmp(parsed[1], "TYPE"))
-				type = atoi(parsed[0]);
-			if (!strcmp(parsed[1], "CHOICE"))
-				choice = atoi(parsed[0]);
-			if (!strcmp(parsed[1], "METHOD"))
-				method = atoi(parsed[0]);
-			if (!strcmp(parsed[1], "STRING")) {
-				if (title_string != NULL)
-					g_free(title_string);
-				title_string = g_strdup(parsed[0]);
-			}
-		}
-		g_strfreev(parsed);
-	}
-	fclose(fp);
-	return;
+	strncpy(title_string, gaim_prefs_get_string("/plugins/gtk/X11/notify/title_string"), TITLE_STR_BUFSIZE);
 }
 
-void options(GtkWidget *widget, gpointer data) {
+static void options_toggle_cb(GtkWidget *w, gpointer data) {
 	gint option = GPOINTER_TO_INT(data);
 
-	if (option == 0)
-		choice ^= NOTIFY_FOCUS;
-	else if (option == 1)
-		choice ^= NOTIFY_CLICK;
-	else if (option == 2)
-		choice ^= NOTIFY_TYPE;
-	else if (option == 3) {
-		method ^= METHOD_STRING;
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)))
-			gtk_widget_set_sensitive(Entry, TRUE);
-		else
-			gtk_widget_set_sensitive(Entry, FALSE);
-	}
-	else if (option == 4)
-		method ^= METHOD_QUOTE;
-	else if (option == 5)
-		method ^= METHOD_URGENT;
-	else if (option == 6)
-		choice ^= NOTIFY_IN_FOCUS;
-	else if (option == 7)
-		method ^= METHOD_COUNT;
-	else if (option == 8)
-		type ^= TYPE_IM;
-	else if (option == 9)
-		type ^= TYPE_CHAT;
-	else if (option == 10) {
-		/* I made an option for this as at least a way to have it save correctly
-		 * I'd much rather there were better ways, and I don't want to save this
-		 * no matter which pref is changed, that's too much of a hack */
-		if (title_string != NULL) {
-			g_free(title_string);
-			title_string = g_strdup(gtk_entry_get_text(GTK_ENTRY(Entry)));
-		}
-	}
+	notify_opts ^= option;
 
-	save_notify_prefs();
+	/* save prefs and re-notify the windows */
+ 	save_notify_prefs();
+	apply_options(option);
 }
 
-void apply_options(GtkWidget *widget, gpointer data) {
+static gboolean options_settitle_cb(GtkWidget *w, GdkEventFocus *evt, GtkWidget *entry) {
+ 	GList *cnv = gaim_get_conversations();
+
+	/* first we have to kill all the old strings */
+	while (cnv) {
+		GaimConversation *c = (GaimConversation *)cnv->data;
+		GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+		string_remove(gtkwin->window);
+		cnv = cnv->next;
+	}
+
+	g_snprintf(title_string, sizeof(title_string), gtk_entry_get_text(GTK_ENTRY(entry)));
+
+	/* save prefs and re-notify the windows */
+	save_notify_prefs();
+	apply_options(OPT_METHOD_STRING_CHNG);
+
+	return FALSE;
+}
+
+static void options_toggle_title_cb(GtkWidget *w, GtkWidget *entry) {
+	notify_opts ^= OPT_METHOD_STRING;
+
+	if (notify_opts & OPT_METHOD_STRING)
+		gtk_widget_set_sensitive(entry, TRUE);
+	else
+		gtk_widget_set_sensitive(entry, FALSE);
+
+	save_notify_prefs();
+	apply_options(OPT_METHOD_STRING);
+}
+
+static void apply_options(int opt_chng) {
 	GList *cnv = gaim_get_conversations();
 
+	/* option-setting handlers should have cleared out all window notifications */
+
 	while (cnv) {
-		guint notification;
-		GaimConversation *c = (GaimConversation *) cnv->data;
-		GaimGtkConversation *gtkconv;
-		GaimGtkWindow *gtkwin;
-		guint options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(c->window), "notify_data"));
+		GaimConversation *c = (GaimConversation *)cnv->data;
+		GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+		guint opts = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(gtkwin->window), GDATASTR));
 
-		gtkconv = GAIM_GTK_CONVERSATION(c);
-		gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-
-		if (options & NOTIFY_FOCUS)
-			g_signal_handlers_disconnect_by_func(G_OBJECT(gtkwin->window), un_star, NULL);
-
-		/* remove old notification signals */
+		/* kill signals */
 		detach_signals(c);
 
-		/* clean off all notification markings */
-		notification = unnotify(c, TRUE);
-	
-		/* re-add appropriate notification methods cleaned above */
-		if (notification & METHOD_STRING) /* re-add string */
-			string_add(gtkwin->window);
-		if (notification & METHOD_QUOTE) /* re-add quote */
-			quote_add(gtkwin->window);
-		if (notification & METHOD_COUNT) /* re-add count */
-			count_add(gtkwin->window, Number);
-		if (notification & METHOD_URGENT) /* re-add urgent */
-			urgent_add(c);
+		/*
+		 * do a full notify if the option that changed was an OPT_TYPE_*
+		 * either notify if it was enabled, or unnotify if it was disabled
+		 */
+		if (opt_chng==OPT_TYPE_IM || opt_chng==OPT_TYPE_CHAT) {
+			if ((gaim_conversation_get_type(c)==GAIM_CONV_IM && (notify_opts & OPT_TYPE_IM)) ||
+				(gaim_conversation_get_type(c)==GAIM_CONV_CHAT && (notify_opts & OPT_TYPE_CHAT))) {
+				Window focus_return;
+				int revert_to_return;
+				
+				XGetInputFocus(GDK_WINDOW_XDISPLAY(gtkwin->window->window),
+						&focus_return, &revert_to_return);
+				if ((notify_opts & OPT_NOTIFY_IN_FOCUS) ||
+						focus_return != GDK_WINDOW_XWINDOW(gtkwin->window->window)) {
+					if (notify_opts & OPT_METHOD_STRING)
+						string_add(gtkwin->window);
+					if (notify_opts & OPT_METHOD_COUNT)
+						count_add(gtkwin->window);
+					if (notify_opts & OPT_METHOD_QUOTE)
+						quote_add(gtkwin->window);
+					if (notify_opts & OPT_METHOD_URGENT)
+						urgent_add(c);
+				}
+			} else {
+				//don't simply call unnotify(), because that will kill the msg counter
+				urgent_remove(c);
+				quote_remove(gtkwin->window);
+				count_remove(gtkwin->window);
+				string_remove(gtkwin->window);
+			}
+		} else if (opts & STATE_IS_NOTIFIED) {
+			//add/remove the status that was changed
+			switch(opt_chng) {
+				case OPT_METHOD_COUNT:
+					if (notify_opts & OPT_METHOD_COUNT)
+						count_add(gtkwin->window);
+					else
+						count_remove(gtkwin->window);
+					break;
+				case OPT_METHOD_QUOTE:
+					if (notify_opts & OPT_METHOD_QUOTE)
+						quote_add(gtkwin->window);
+					else
+						quote_remove(gtkwin->window);
+					break;
+				case OPT_METHOD_STRING:
+					if (notify_opts & OPT_METHOD_STRING)
+						string_add(gtkwin->window);
+					else
+						string_remove(gtkwin->window);
+					break;
+				case OPT_METHOD_URGENT:
+					if (notify_opts & OPT_METHOD_URGENT)
+						urgent_add(c);
+					else
+						urgent_remove(c);
+					break;
+				case OPT_METHOD_STRING_CHNG:
+					string_add(gtkwin->window);
+					break;
+			}
+		}
 
 		/* attach new unnotification signals */
-		attach_signals(c);
+ 		attach_signals(c);
 
-		cnv = cnv->next;
+ 		cnv = cnv->next;
 	}
 }
 
@@ -565,86 +690,96 @@ static GtkWidget *
 get_config_frame(GaimPlugin *plugin)
 {
 	GtkWidget *ret;
+	GtkWidget *frame;
 	GtkWidget *vbox, *hbox;
-	GtkWidget *toggle, *button;
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	GtkWidget *toggle, *entry;
 
-	vbox = gaim_gtk_make_frame(ret, _("Notify For"));
+	ret = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER (ret), 12);
+
+	/*---------- "Notify For" ----------*/
+	frame = gaim_gtk_make_frame(ret, _("Notify For"));
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
 	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_IM);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(8));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_TYPE_IM);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_TYPE_IM));
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Chat windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_CHAT);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(9));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_TYPE_CHAT);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_TYPE_CHAT));
 
-	/*--------------*/
-	vbox = gaim_gtk_make_frame(ret, _("Notification Methods"));
+	/*---------- "Notification Methods" ----------*/
+	frame = gaim_gtk_make_frame(ret, _("Notification Methods"));
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
+
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title (hit enter to save):"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_STRING);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(3));
+	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title:"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_METHOD_STRING);
 	gtk_box_pack_start(GTK_BOX(hbox), toggle, FALSE, FALSE, 0);
-	Entry = gtk_entry_new();
-	gtk_entry_set_max_length(GTK_ENTRY(Entry), 10);
-	gtk_widget_set_sensitive(GTK_WIDGET(Entry), method & METHOD_STRING);
-	gtk_box_pack_start(GTK_BOX(hbox), Entry, FALSE, FALSE, 0);
-	gtk_entry_set_text(GTK_ENTRY(Entry), title_string);
-	g_signal_connect(G_OBJECT(Entry), "activate", G_CALLBACK(options), GINT_TO_POINTER(10));
+	entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
+	gtk_entry_set_max_length(GTK_ENTRY(entry), 10);
+	gtk_widget_set_sensitive(GTK_WIDGET(entry), notify_opts & OPT_METHOD_STRING);
+	gtk_entry_set_text(GTK_ENTRY(entry), title_string);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_title_cb), entry);
+	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(options_settitle_cb), entry);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("_Quote window title"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_QUOTE);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(4));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("_Quote window title"));
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_METHOD_QUOTE);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_METHOD_QUOTE));
 
-	toggle = gtk_check_button_new_with_mnemonic(_("Set Window Manager \"_URGENT\" Hint"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_URGENT);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(5));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("Set Window Manager \"_URGENT\" Hint"));
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_METHOD_URGENT);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_METHOD_URGENT));
 
-	toggle = gtk_check_button_new_with_mnemonic(_("Insert c_ount of new messages into window title"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_COUNT);
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(7));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("Insert c_ount of new messages into window title"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_METHOD_COUNT);
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_METHOD_COUNT));
 
-	toggle = gtk_check_button_new_with_mnemonic(_("_Notify even if conversation is in focus"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_IN_FOCUS);
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(6));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("_Notify even if conversation is in focus"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_NOTIFY_IN_FOCUS);
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_NOTIFY_IN_FOCUS));
 
-	/*--------------*/
-	vbox = gaim_gtk_make_frame(ret, _("Notification Removal"));
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window gains _focus"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_FOCUS);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(0));
+	/*---------- "Notification Methods" ----------*/
+	frame = gaim_gtk_make_frame(ret, _("Notification Removal"));
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window _receives click"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_CLICK);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(1));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window gains _focus"));
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_NOTIFY_FOCUS);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_NOTIFY_FOCUS));
 
-	toggle = gtk_check_button_new_with_mnemonic(_("Remove when _typing in conversation window"));
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_TYPE);
-	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(2));
+ 	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window _receives click"));
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_NOTIFY_CLICK);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_NOTIFY_CLICK));
 
-	button = gtk_button_new_with_mnemonic(_("Appl_y"));
-	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(apply_options), NULL);
+ 	toggle = gtk_check_button_new_with_mnemonic(_("Remove when _typing in conversation window"));
+ 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), notify_opts & OPT_NOTIFY_TYPE);
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options_toggle_cb), GINT_TO_POINTER(OPT_NOTIFY_TYPE));
 
-	gtk_widget_show_all(ret);
-	return ret;
+ 	gtk_widget_show_all(ret);
+ 	return ret;
 }
 
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	title_string = g_strdup("(*) ");
+	GList *cnv = gaim_get_conversations();
+
+	my_plugin = plugin;
 
 	load_notify_prefs();
 
@@ -655,28 +790,39 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(plugin, event_new_conversation, new_conv, NULL);
 	gaim_signal_connect(plugin, event_chat_join, chat_join, NULL);
 
+	while (cnv) {
+		GaimConversation *c = (GaimConversation *)cnv->data;
+		GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
+
+		/* attach signals */
+		attach_signals(c);
+		/* zero out data */
+		g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
+		g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER((guint)0));
+
+		cnv = cnv->next;
+	}
+
 	return TRUE;
 }
 
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	GList *c = gaim_get_conversations();
+	GList *cnv = gaim_get_conversations();
 
-	while (c) {
-		GaimConversation *cnv = (GaimConversation *)c->data;
-		GaimGtkWindow *gtkwin;
+	while (cnv) {
+		GaimConversation *c = (GaimConversation *)cnv->data;
+		GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
 
-		gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(cnv));
+		/* kill signals */
+		detach_signals(c);
+		/* zero out data */
+		g_object_set_data(G_OBJECT(gtkwin->window), GDATASTR, GINT_TO_POINTER((guint)0));
+		g_object_set_data(G_OBJECT(gtkwin->window), GDATASTRCNT, GINT_TO_POINTER((guint)0));
 
-		detach_signals(cnv);
-		un_star(gtkwin->window, NULL);
-
-		c = c->next;
+		cnv = cnv->next;
 	}
-	
-	/* this might be a hack I'm not sure, I don't think so but... */
-	g_free(title_string);
 
 	return TRUE;
 }
@@ -702,7 +848,8 @@ static GaimPluginInfo info =
 	N_("Provides a variety of ways of notifying you of unread messages."),
 	                                                  /**  description    */
 	N_("Provides a variety of ways of notifying you of unread messages."),
-	"Etan Reisner <deryni@eden.rutgers.edu>",         /**< author         */
+	"Etan Reisner <deryni@eden.rutgers.edu>\n\t\t\tBrian Tarricone <bjt23@cornell.edu",
+	                                                  /**< author         */
 	WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
@@ -716,7 +863,21 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
-	my_plugin = plugin;
+	gaim_prefs_add_none("/plugins/gtk");
+	gaim_prefs_add_none("/plugins/gtk/X11");
+	gaim_prefs_add_none("/plugins/gtk/X11/notify");
+
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_im", TRUE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_chat", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_string", FALSE);
+	gaim_prefs_add_string("/plugins/gtk/X11/notify/title_string", "(*)");
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_quote", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_urgent", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/method_count", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_in_focus", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_focus", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_click", FALSE);
+	gaim_prefs_add_bool("/plugins/gtk/X11/notify/notify_type", TRUE);
 }
 
 GAIM_INIT_PLUGIN(notify, init_plugin, info)
