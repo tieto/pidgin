@@ -6224,6 +6224,18 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 	return m;
 }
 
+GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "room", g_strdup(chat_name));
+
+	return defaults;
+}
+
 static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_conn_t *cur;
@@ -7196,6 +7208,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_away_states,		/* away_states */
 	oscar_blist_node_menu,	/* blist_node_menu */
 	oscar_chat_info,		/* chat_info */
+	oscar_chat_info_defaults, /* chat_info_defaults */
 	oscar_login,			/* login */
 	oscar_close,			/* close */
 	oscar_send_im,			/* send_im */

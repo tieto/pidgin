@@ -535,7 +535,7 @@ add_remove_cb(GtkWidget *widget, GaimConversation *conv)
 		if (c != NULL)
 			gaim_gtkdialogs_remove_chat(c);
 		else if (account != NULL && gaim_account_is_connected(account))
-			gaim_blist_request_add_chat(account, NULL, NULL);
+			gaim_blist_request_add_chat(account, NULL, NULL, name);
 	}
 
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);

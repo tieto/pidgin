@@ -189,6 +189,18 @@ static GList *irc_chat_join_info(GaimConnection *gc)
 	return m;
 }
 
+GHashTable *irc_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "channel", g_strdup(chat_name));
+
+	return defaults;
+}
+
 static void irc_login(GaimAccount *account)
 {
 	GaimConnection *gc;
@@ -579,6 +591,7 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_away_states,		/* away_states */
 	NULL,					/* blist_node_menu */
 	irc_chat_join_info,		/* chat_info */
+	irc_chat_info_defaults,	/* chat_info_defaults */
 	irc_login,				/* login */
 	irc_close,				/* close */
 	irc_im_send,			/* send_im */

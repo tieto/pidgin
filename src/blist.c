@@ -2050,14 +2050,15 @@ gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
 }
 
 void
-gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group, const char *alias)
+gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
+							const char *alias, const char *name)
 {
 	GaimBlistUiOps *ui_ops;
 
 	ui_ops = gaim_blist_get_ui_ops();
 
 	if (ui_ops != NULL && ui_ops->request_add_chat != NULL)
-		ui_ops->request_add_chat(account, group, alias);
+		ui_ops->request_add_chat(account, group, alias, name);
 }
 
 void

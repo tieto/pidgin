@@ -229,6 +229,7 @@ struct _GaimPluginProtocolInfo
 
 	GList *(*blist_node_menu)(GaimBlistNode *node);
 	GList *(*chat_info)(GaimConnection *);
+	GHashTable *(*chat_info_defaults)(GaimConnection *, const char *chat_name);
 
 	/* All the server-related functions */
 	void (*login)(GaimAccount *);

@@ -1826,6 +1826,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	zephyr_away_states,		/* away_states */
 	NULL, /* ??? blist_node_menu - probably all useful actions are already handled*/
 	zephyr_chat_info,		/* chat_info */
+	NULL,					/* chat_info_defaults */
 	zephyr_login,			/* login */
 	zephyr_close,			/* close */
 	zephyr_send_im,			/* send_im */

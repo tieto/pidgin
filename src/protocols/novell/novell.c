@@ -3374,6 +3374,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_away_states,			/* away_states */
 	novell_blist_node_menu,		/* blist_node_menu */
 	NULL,						/* chat_info */
+	NULL,						/* chat_info_defaults */
 	novell_login,				/* login */
 	novell_close,				/* close */
 	novell_send_im,				/* send_im */

@@ -1208,6 +1208,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,	/* away_states */
 	trepia_blist_node_menu,
 	NULL,	/* chat_info */
+	NULL,	/* chat_info_defaults */
 	trepia_login,
 	trepia_close,
 	trepia_send_im,

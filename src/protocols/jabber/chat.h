@@ -51,6 +51,7 @@ typedef struct _JabberChat {
 } JabberChat;
 
 GList *jabber_chat_info(GaimConnection *gc);
+GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name);
 void jabber_chat_join(GaimConnection *gc, GHashTable *data);
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server);

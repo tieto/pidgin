@@ -64,6 +64,24 @@ GList *jabber_chat_info(GaimConnection *gc)
 	return m;
 }
 
+GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+	gchar **name_split;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL) {
+		name_split = g_strsplit(chat_name, "@", 2);
+		g_hash_table_insert(defaults, "room", g_strdup(name_split[0]));
+		if (name_split[1] != NULL)
+			g_hash_table_insert(defaults, "server", g_strdup(name_split[1]));
+		g_strfreev(name_split);
+	}
+
+	return defaults;
+}
+
 JabberChat *jabber_chat_find(JabberStream *js, const char *room,
 		const char *server)
 {

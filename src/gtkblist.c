@@ -75,6 +75,7 @@ typedef struct
 typedef struct
 {
     GaimAccount *account;
+    const char *default_chat_name;
 
     GtkWidget *window;
 	GtkWidget *account_menu;
@@ -949,14 +950,14 @@ static void gaim_gtk_blist_add_chat_cb()
 	if(gtk_tree_selection_get_selected(sel, NULL, &iter)){
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &node, -1);
 		if (GAIM_BLIST_NODE_IS_BUDDY(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent->parent, NULL);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent->parent, NULL, NULL);
 		if (GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_CHAT(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent, NULL);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node->parent, NULL, NULL);
 		else if (GAIM_BLIST_NODE_IS_GROUP(node))
-			gaim_blist_request_add_chat(NULL, (GaimGroup*)node, NULL);
+			gaim_blist_request_add_chat(NULL, (GaimGroup*)node, NULL, NULL);
 	}
 	else {
-		gaim_blist_request_add_chat(NULL, NULL, NULL);
+		gaim_blist_request_add_chat(NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -4143,6 +4144,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 {
 	GaimConnection *gc;
 	GList *list, *tmp;
+	GHashTable *defaults = NULL;
 	struct proto_chat_entry *pce;
 	gboolean focus = TRUE;
 
@@ -4160,6 +4162,10 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 	data->entries = NULL;
 
 	list = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info(gc);
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults != NULL)
+		defaults = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info_defaults(gc,
+					data->default_chat_name);
 
 	for (tmp = list; tmp; tmp = tmp->next)
 	{
@@ -4194,11 +4200,15 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 		else
 		{
 			GtkWidget *entry = gtk_entry_new();
+			char *value;
 
 			g_object_set_data(G_OBJECT(entry), "identifier", pce->identifier);
 			data->entries = g_list_append(data->entries, entry);
 
-			if (pce->def)
+			value = g_hash_table_lookup(defaults, pce->identifier);
+			if (value != NULL)
+				gtk_entry_set_text(GTK_ENTRY(entry), value);
+			else if (pce->def)
 				gtk_entry_set_text(GTK_ENTRY(entry), pce->def);
 
 			if (focus)
@@ -4222,6 +4232,7 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 	}
 
 	g_list_free(list);
+	g_hash_table_destroy(defaults);
 
 	gtk_widget_show_all(data->entries_box);
 }
@@ -4252,7 +4263,7 @@ add_chat_check_account_func(GaimAccount *account)
 
 void
 gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
-								const char *alias)
+								const char *alias, const char *name)
 {
 	GaimGtkAddChatData *data;
 	GaimGtkBuddyList *gtkblist;
@@ -4270,6 +4281,8 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 								   GTK_ICON_SIZE_DIALOG);
 
 	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+
+	data->default_chat_name = name;
 
 	if (account != NULL)
 	{

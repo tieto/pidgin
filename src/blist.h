@@ -180,7 +180,7 @@ struct _GaimBlistUiOps
 	void (*request_add_buddy)(GaimAccount *account, const char *username,
 							  const char *group, const char *alias);
 	void (*request_add_chat)(GaimAccount *account, GaimGroup *group, 
-							 const char *alias);
+							 const char *alias, const char *name);
 	void (*request_add_group)(void);
 };
 
@@ -731,7 +731,7 @@ void gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
  * @param alias   The optional alias for the chat.
  */
 void gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
-								 const char *alias);
+								 const char *alias, const char *name);
 
 /**
  * Requests from the user information needed to add a group to the

@@ -1278,6 +1278,18 @@ static GList *toc_chat_info(GaimConnection *gc)
 	return m;
 }
 
+GHashTable *toc_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "room", g_strdup(chat_name));
+
+	return defaults;
+}
+
 static void toc_join_chat(GaimConnection *g, GHashTable *data)
 {
 	char buf[BUF_LONG];
@@ -2106,6 +2118,7 @@ static GaimPluginProtocolInfo prpl_info =
 	toc_away_states,		/* away_states */
 	toc_blist_node_menu,	/* blist_node_menu */
 	toc_chat_info,			/* chat_info */
+	toc_chat_info_defaults,	/* chat_info_defaults */
 	toc_login,				/* login */
 	toc_close,				/* close */
 	toc_send_im,			/* send_im */

@@ -42,6 +42,18 @@ GList *silcgaim_chat_info(GaimConnection *gc)
 	return ci;
 }
 
+GHashTable *silcgaim_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "channel", g_strdup(chat_name));
+
+	return defaults;
+}
+
 static void
 silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components);
 

@@ -544,6 +544,18 @@ static GList *nap_chat_info(GaimConnection *gc)
 	return m;
 }
 
+GHashTable *nap_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+{
+	GHashTable *defaults;
+
+	defaults = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, g_free);
+
+	if (chat_name != NULL)
+		g_hash_table_insert(defaults, "group", g_strdup(chat_name));
+
+	return defaults;
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -560,6 +572,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* away_states */
 	NULL,					/* blist_node_menu */
 	nap_chat_info,			/* chat_info */
+	nap_chat_info_defaults, /* chat_info_defaults */
 	nap_login,				/* login */
 	nap_close,				/* close */
 	nap_send_im,			/* send_im */

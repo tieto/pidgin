@@ -1670,6 +1670,7 @@ static GaimPluginProtocolInfo prpl_info =
 	msn_away_states,		/* away_states */
 	msn_blist_node_menu,	/* blist_node_menu */
 	NULL,					/* chat_info */
+	NULL,					/* chat_info_defaults */
 	msn_login,				/* login */
 	msn_close,				/* close */
 	msn_send_im,			/* send_im */

@@ -1491,6 +1491,7 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_away_states,				/* away_states */
 	jabber_blist_node_menu,			/* blist_node_menu */
 	jabber_chat_info,				/* chat_info */
+	jabber_chat_info_defaults,		/* chat_info_defaults */
 	jabber_login,					/* login */
 	jabber_close,					/* close */
 	jabber_message_send_im,			/* send_im */

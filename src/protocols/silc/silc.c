@@ -1491,6 +1491,7 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_away_states,		/* away_states */
 	silcgaim_blist_node_menu,	/* blist_node_menu */
 	silcgaim_chat_info,			/* chat_info */
+	silcgaim_chat_info_defaults,/* chat_info_defaults */
 	silcgaim_login,				/* login */
 	silcgaim_close,				/* close */
 	silcgaim_send_im,			/* send_im */
