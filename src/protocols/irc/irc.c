@@ -303,7 +303,7 @@ static void irc_close(GaimConnection *gc)
 	irc_cmd_quit(irc, "quit", NULL, NULL);
 
 	if (gc->inpa)
-		gaim_timeout_remove(gc->inpa);
+		gaim_input_remove(gc->inpa);
 
 	g_free(irc->inbuf);
 	close(irc->fd);
