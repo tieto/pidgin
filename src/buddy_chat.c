@@ -486,7 +486,7 @@ void tab_complete(struct conversation *c)
 				continue;
 			}
 			if (g_strncasecmp(nick + 1, entered, strlen(entered))) {
-				if (nick[0] != '@' && nick[1] != '+') {
+				if (nick[0] != '@' || nick[1] != '+') {
 					nicks = nicks->next;
 					continue;
 				}

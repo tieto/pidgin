@@ -1504,7 +1504,7 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			g_free(t2);
 		}
 
-		if (!(flags & WFLAG_NOLOG) && ((logging_options & OPT_LOG_ALL) || find_log_info(c->name))) {
+		if ((logging_options & OPT_LOG_ALL) || find_log_info(c->name)) {
 			char *t1, *t2;
 			char *nm = g_malloc(256);
 			if (c->is_chat)
