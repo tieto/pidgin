@@ -94,12 +94,13 @@ static gint send_lag() {
 				serv_send_im(my_gc, buf, m, 1);
 				g_free(buf);
 			} else if (!strchr(my_gc->username, '/')) {
-				char *buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
+				char *buf = g_strconcat(my_gc->username, "/GAIM", NULL);
 				serv_send_im(my_gc, buf, m, 1);
 				g_free(buf);
 			} else
 				serv_send_im(my_gc, my_gc->username, m, 1);
-		} else if (strcmp(my_gc->username, my_gc->displayname))
+		} else if ((my_gc->protocol <= PROTO_OSCAR || my_gc->protocol == PROTO_IRC)
+				&& strcmp(my_gc->username, my_gc->displayname))
 			serv_send_im(my_gc, my_gc->displayname, m, 1);
 		else
 			serv_send_im(my_gc, my_gc->username, m, 1);
