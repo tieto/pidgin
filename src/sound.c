@@ -44,6 +44,14 @@
 #include <esd.h>
 #endif
 
+#ifdef ARTSC_SOUND
+#include <artsc.h>
+#endif
+
+#ifdef NAS_SOUND
+#include <audio/audiolib.h>
+#endif
+
 #include "gaim.h"
 
 gboolean mute_sounds = 0;
@@ -54,18 +62,18 @@ gboolean mute_sounds = 0;
  * it has no option bit, set it to 0. the order here has to match *
  * the defines in gaim.h.                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
-	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "BuddyArrive.wav"},
-	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "BuddyLeave.wav"},
-	{N_("Message received"), OPT_SOUND_RECV, "Receive.wav"},
-	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "Receive.wav"},
-	{N_("Message sent"), OPT_SOUND_SEND, "Send.wav"},
-	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "BuddyArrive.wav"},
-	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "BuddyLeave.wav"},
-	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "Send.wav"},
-	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "Receive.wav"},
+	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "buddyarrive.wav"},
+	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "buddyleave.wav"},
+	{N_("Message received"), OPT_SOUND_RECV, "receive.wav"},
+	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "receive.wav"},
+	{N_("Message sent"), OPT_SOUND_SEND, "send.wav"},
+	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "buddyarrive.wav"},
+	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "buddyleave.wav"},
+	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "send.wav"},
+	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, 0, "RedAlert.wav"},
-	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "RedAlert.wav"}
+	{NULL, 0, "redalert.wav"},
+	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "redalert.wav"}
 };
 int sound_order[] = {
 	SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE,
