@@ -562,7 +562,6 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	char *msg_fixed;
 	char date[64];
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
-	const char *prpl_name = plugin->info->name;
 	struct generic_logger_data *data = log->logger_data;
 
 	if(!data) {
@@ -610,18 +609,18 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 				fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_RECV) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, prpl_name, msg_fixed);
+				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+						date, from, msg_fixed);
 			else
-				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, prpl_name, msg_fixed);
+				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
+						date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_SEND) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, prpl_name, msg_fixed);
+				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+						date, from, msg_fixed);
 			else
-				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
-						date, from, prpl_name, msg_fixed);
+				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
+						date, from, msg_fixed);
 		}
 	}
 

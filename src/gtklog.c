@@ -191,6 +191,8 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	title = title_utf8;
 	gtk_window_set_title(GTK_WINDOW(viewer->window), title);
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(viewer->imhtml),
+	                            gaim_account_get_protocol_name(log->account));
 	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
