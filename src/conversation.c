@@ -847,7 +847,9 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	{
 		char *buffy = g_strdup(buf);
 		enum gaim_event evnt = c->is_chat ? event_chat_send : event_im_send;
-		int plugin_return = plugin_event(evnt, c->gc, c->name, &buffy, 0);
+		int plugin_return = plugin_event(evnt, c->gc,
+						c->is_chat ? (void *)c->id : c->name,
+						&buffy, 0);
 		if (!buffy) {
 			g_free(buf2);
 			g_free(buf);

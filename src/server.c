@@ -302,6 +302,7 @@ void serv_join_chat(struct gaim_connection *g, GList *data)
 
 void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
 {
+	plugin_event(event_chat_send_invite, g, (void *)id, name, message);
 	if (g->prpl && g->prpl->chat_invite)
 		(*g->prpl->chat_invite)(g, id, message, name);
 }
@@ -836,7 +837,7 @@ struct conversation *serv_got_joined_chat(struct gaim_connection *gc, int id, ch
 {
 	struct conversation *b;
 
-	plugin_event(event_chat_join, gc, name, 0, 0);
+	plugin_event(event_chat_join, gc, (void *)id, name, 0);
 
 	b = (struct conversation *)g_new0(struct conversation, 1);
 	gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
@@ -894,7 +895,7 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 	if (!b)
 		return;
 
-	plugin_event(event_chat_leave, g, b->name, 0, 0);
+	plugin_event(event_chat_leave, g, (void *)b->id, 0, 0);
 
 	debug_printf("Leaving room %s.\n", b->name);
 
@@ -921,7 +922,7 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 	if (!b)
 		return;
 
-	if (plugin_event(event_chat_recv, g, b->name, who, message))
+	if (plugin_event(event_chat_recv, g, (void *)b->id, who, message))
 		 return;
 
 	buf = g_malloc(MAX(strlen(message) * 2, 8192));

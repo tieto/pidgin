@@ -20,13 +20,13 @@ enum gaim_event {
 	event_chat_recv,
 	event_chat_send,
 	event_warned,
-	event_error,
 	event_quit,
 	event_new_conversation,
 	event_set_info,
 	event_draw_menu,
 	event_im_displayed_sent,
-	event_im_displayed_rcvd
+	event_im_displayed_rcvd,
+	event_chat_send_invite
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -171,22 +171,29 @@ event_chat_invited:
 	an empty string.
 
 event_chat_join:
-	struct gaim_connection *gc, char *room
+	struct gaim_connection *gc, int id, char *room
 
 	'gc' is the connection that joined the room.
+	'id' is the id of the room. See, each room is given an id unique
+	within the connection. The struct conversation*'s in gc->buddy_chats
+	have an 'id' field that's only used if it's is_chat member is TRUE.
+	'id' is the *only* way to detect which chat room you actually mean,
+	because the name of the chat room is not always unique (for example,
+	MSN always uses "MSN Chat" as its name, since group chats in MSN
+	don't actually have names).
 	'room' is the chat room that you have just joined.
 
 event_chat_leave:
-	struct gaim_connection *gc, char *room
+	struct gaim_connection *gc, int
 
 	'gc' is the connection that joined the room.
-	'room' is the chat room that you have just left.
+	'id' is the id of the chat room that you have just left.
 
 event_chat_buddy_join:
-	struct gaim_connection *gc, char *room, char *who
+	struct gaim_connection *gc, int id, char *who
 
 	'gc' is the connection that the chat room is attached to.
-	'room' is the room the person joined.
+	'id' is the id of the room the person joined.
 	'who' is the screenname of the person who joined.
 
 	This is also triggered upon entering the room for every person in the
@@ -196,28 +203,29 @@ event_chat_buddy_join:
 	for though.)
 
 event_chat_buddy_leave:
-	struct gaim_connection *gc, char *room, char *who
+	struct gaim_connection *gc, int id, char *who
 
 	'gc' is the connection that the chat room is attached to.
-	'room' is the room the person left.
+	'id' is the id of the room the person left.
 	'who' is the screenname of the person who left.
 
 event_chat_recv:
-	struct gaim_connection *gc, char *room, char *who, char *text
+	struct gaim_connection *gc, int id, char *who, char *text
 
 	'gc' is the connection that received the message.
-	'room' should be obvious by now.
 	'who' should be too.
 	'text' is the message that got sent.
+	'id' is the id of the room that received the message (see
+	event_chat_join)
 
 	Note that because of the bizarre way chat works, you also receive
 	messages that you send. I didn't design it, AOL did.
 
 event_chat_send:
-	struct gaim_connection *gc, char *room, char **text
+	struct gaim_connection *gc, int id, char **text
 
 	'gc' is the connection that the message is about to be sent on.
-	'room'. Need I say more.
+	'id' is the id of the room to which you're sending the message.
 	'text' is what you're about to say, linkified/HTML-ized, but not
 	TOC-escaped.
 
@@ -233,15 +241,6 @@ event_warned:
 	'who' is who warned you. Note that this can be NULL, indicating either
 	an anonymous warning, or your warning level has dropped.
 	'level' is your new warning level.
-
-event_error:
-	int error
-
-	'error' is the number of the error as defined by the TOC PROTOCOL
-	document, which can be found in the docs/ directory of the source
-	tree. Note that if the person is using Oscar, this number is often
-	plain wrong, and this event may not always be triggered on error.
-	Experiment to find what is reliable.
 
 event_quit:
 	(none)
@@ -302,3 +301,15 @@ event_im_displayed_rcvd:
 	'who' is who sent the message.
 	'what' is what was sent.
 	'flags' is flags on the message.
+
+event_chat_send_invite:
+	struct gaim_connection *gc, int id, char *who, char *msg
+
+	This is called just before you're about to invite someone. It's
+	useful for if you want to pass someone a key so that they can
+	participate in a group encrypted chat (ahem).
+
+	'gc' is the connection the invite is sent on.
+	'id' is the id of the room you're inviting them to.
+	'who' is who you're inviting.
+	'msg' is the message they'll receive when they're invited.

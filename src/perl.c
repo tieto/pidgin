@@ -306,7 +306,7 @@ XS (XS_GAIM_get_info)
 	dXSARGS;
 	items = 0;
 
-	switch(atoi(SvPV(ST(0), junk))) {
+	switch(SvIV(ST(0))) {
 	case 0:
 		XST_mPV(0, VERSION);
 		i = 1;
@@ -318,24 +318,55 @@ XS (XS_GAIM_get_info)
 
 			while (c) {
 				gc = (struct gaim_connection *)c->data;
-				XST_mPV(i++, gc->username);
+				XST_mIV(i++, (guint)gc);
 				c = c->next;
 			}
 		}
 		break;
 	case 2:
 		{
-			GList *u = aim_users;
-			struct aim_user *a;
-			char *name = g_strdup(normalize(SvPV(ST(1), junk)));
-
-			while (u) {
-				a = (struct aim_user *)u->data;
-				if (!strcasecmp(normalize(a->username), name))
-					XST_mIV(i++, a->protocol);
-				u = u->next;
+			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			if (g_slist_find(connections, gc))
+				XST_mIV(i++, gc->protocol);
+			else
+				XST_mIV(i++, -1);
+		}
+		break;
+	case 3:
+		{
+			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			if (g_slist_find(connections, gc))
+				XST_mPV(i++, gc->username);
+			else
+				XST_mPV(i++, "");
+		}
+	case 4:
+		{
+			struct gaim_connection *gc = (struct gaim_connection *)SvPV(ST(1), junk);
+			if (g_slist_find(connections, gc))
+				XST_mIV(i++, g_list_index(aim_users, gc->user));
+			else
+				XST_mIV(i++, -1);
+		}
+		break;
+	case 5:
+		{
+			GList *a = aim_users;
+			while (a) {
+				struct aim_user *u = a->data;
+				XST_mPV(i++, u->username);
+				a = a->next;
 			}
-			g_free(name);
+		}
+		break;
+	case 6:
+		{
+			GList *a = aim_users;
+			while (a) {
+				struct aim_user *u = a->data;
+				XST_mIV(i++, u->protocol);
+				a = a->next;
+			}
 		}
 		break;
 	default:
@@ -362,20 +393,18 @@ XS (XS_GAIM_print)
 
 XS (XS_GAIM_buddy_list)
 {
-	char *acct;
 	struct gaim_connection *gc;
 	struct buddy *buddy;
 	struct group *g;
 	GSList *list = NULL;
 	GSList *mem;
 	int i = 0;
-	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
-	acct = SvPV(ST(0), junk);
-	gc = find_gaim_conn_by_name(acct);
-	if (gc) list = gc->groups;
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	if (g_slist_find(connections, gc))
+		list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
@@ -392,20 +421,18 @@ XS (XS_GAIM_buddy_list)
 
 XS (XS_GAIM_online_list)
 {
-	char *acct;
 	struct gaim_connection *gc;
 	struct buddy *b;
 	struct group *g;
 	GSList *list = NULL;
 	GSList *mem;
 	int i = 0;
-	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
-	acct = SvPV(ST(0), junk);
-	gc = find_gaim_conn_by_name(acct);
-	if (gc) list = gc->groups;
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	if (g_slist_find(connections, gc))
+		list = gc->groups;
 
 	while (list) {
 		g = (struct group *)list->data;
@@ -430,22 +457,17 @@ XS (XS_GAIM_command)
 	command = SvPV(ST(0), junk);
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
-		char *who = SvPV(ST(1), junk);
-		struct aim_user *u = find_user(who, -1);
-		if (u) serv_login(u);
+		int index = SvIV(ST(1));
+		if (g_list_nth_data(aim_users, index))
+		serv_login(g_list_nth_data(aim_users, index));
 	} else if (!strncasecmp(command, "signoff", 7)) {
-		char *who = SvPV(ST(1), junk);
-		struct gaim_connection *gc = find_gaim_conn_by_name(who);
-		if (gc) signoff(gc);
+		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+		if (g_slist_find(connections, gc)) signoff(gc);
 		else signoff_all(NULL, NULL);
 	} else if (!strncasecmp(command, "info", 4)) {
-	        GSList *c = connections;
-		struct gaim_connection *gc;
-		while (c) {
-		        gc = (struct gaim_connection *)c->data;
-			serv_set_info(gc, SvPV(ST(1), junk));
-			c = c->next;
-		}
+		struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
+		if (g_slist_find(connections, gc))
+			serv_set_info(gc, SvPV(ST(2), junk));
 	} else if (!strncasecmp(command, "away", 4)) {
 		char *message = SvPV(ST(1), junk);
 		static struct away_message a;
@@ -459,7 +481,7 @@ XS (XS_GAIM_command)
 
 		while (c) {
 			gc = (struct gaim_connection *)c->data;
-			serv_set_idle(gc, atoi(SvPV(ST(1), junk)));
+			serv_set_idle(gc, SvIV(ST(1)));
 			gc->is_idle = 1;
 			c = c->next;
 		}
@@ -469,7 +491,7 @@ XS (XS_GAIM_command)
 
 		while (c) {
 			gc = (struct gaim_connection *)c->data;
-			serv_warn(gc, SvPV(ST(1), junk), atoi(SvPV(ST(2), junk)));
+			serv_warn(gc, SvPV(ST(1), junk), SvIV(ST(2)));
 			c = c->next;
 		}
 	}
@@ -479,23 +501,16 @@ XS (XS_GAIM_command)
 
 XS (XS_GAIM_user_info)
 {
-	GSList *c = connections;
 	struct gaim_connection *gc;
 	unsigned int junk;
 	struct buddy *buddy = NULL;
-	char *nick;
 	dXSARGS;
 	items = 0;
 
-	nick = SvPV(ST(0), junk);
-	if (!nick[0])
-		XSRETURN(0);
-	while (c) {
-		gc = (struct gaim_connection *)c->data;
-		buddy = find_buddy(gc, nick);
-		if (buddy) c = NULL;
-		else c = c->next;
-	}
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	if (g_slist_find(connections, gc))
+		buddy = find_buddy(gc, SvPV(ST(1), junk));
+
 	if (!buddy)
 		XSRETURN(0);
 	XST_mPV(0, buddy->name);
@@ -519,7 +534,7 @@ XS (XS_GAIM_write_to_conv)
 	items = 0;
 
 	nick = SvPV(ST(0), junk);
-	send = atoi(SvPV(ST(1), junk));
+	send = SvIV(ST(1));
 	what = SvPV(ST(2), junk);
 	who = SvPV(ST(3), junk);
 	
@@ -537,69 +552,86 @@ XS (XS_GAIM_write_to_conv)
 		c = new_conversation(nick);
 		
 	write_to_conv(c, what, wflags, who, time((time_t)NULL));
+	XSRETURN(0);
 }
 
 XS (XS_GAIM_serv_send_im)
 {
-	char *nick, *what, *isauto;
+	struct gaim_connection *gc;
+	char *nick, *what;
+	int isauto;
 	int junk;
 	dXSARGS;
 	items = 0;
 
-	nick = SvPV(ST(0), junk);
-	what = SvPV(ST(1), junk);
-	isauto = SvPV(ST(2), junk);
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	nick = SvPV(ST(1), junk);
+	what = SvPV(ST(2), junk);
+	isauto = SvIV(ST(3));
 
-	if (!connections)
+	if (!g_slist_find(connections, gc)) {
+		XSRETURN(0);
 		return;
-	serv_send_im(connections->data, nick, what, atoi(isauto));
+	}
+	serv_send_im(connections->data, nick, what, isauto);
+	XSRETURN(0);
 }
 
 XS (XS_GAIM_print_to_conv)
 {
-	char *nick, *what, *isauto;
+	struct gaim_connection *gc;
+	char *nick, *what;
+	int isauto;
 	struct conversation *c;
 	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
-	nick = SvPV(ST(0), junk);
-	what = SvPV(ST(1), junk);
-	isauto = SvPV(ST(2), junk);
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	nick = SvPV(ST(1), junk);
+	what = SvPV(ST(2), junk);
+	isauto = SvIV(ST(3));
+	if (!g_slist_find(connections, gc)) {
+		XSRETURN(0);
+		return;
+	}
 	c = find_conversation(nick);
 	if (!c)
 		c = new_conversation(nick);
 	write_to_conv(c, what, WFLAG_SEND, NULL, time((time_t)NULL));
-	serv_send_im(c->gc, nick, what, atoi(isauto) ? IM_FLAG_AWAY : 0);
+	serv_send_im(c->gc, nick, what, isauto ? IM_FLAG_AWAY : 0);
+	XSRETURN(0);
 }
 
 XS (XS_GAIM_print_to_chat)
 {
-	char *nick, *what, *tmp;
-	GSList *c = connections;
 	struct gaim_connection *gc;
+	int id;
+	char *what;
 	struct conversation *b = NULL;
 	GSList *bcs;
 	unsigned int junk;
 	dXSARGS;
 	items = 0;
 
-	nick = SvPV(ST(0), junk);
-	what = SvPV(ST(1), junk);
-	tmp = g_strdup(normalize(nick));
-	while (c) {
-		gc = (struct gaim_connection *)c->data;
-		bcs = gc->buddy_chats;
-		while (bcs) {
-			b = (struct conversation *)bcs->data;
-			if (!strcmp(normalize(b->name), tmp))
-				break;
-			bcs = bcs->next;
-			b = NULL;
-		}
-		serv_chat_send(b->gc, b->id, what);
-		c = c->next;
+	gc = (struct gaim_connection *)SvIV(ST(0));
+	id = SvIV(ST(1));
+	what = SvPV(ST(2), junk);
+
+	if (!g_slist_find(connections, gc)) {
+		XSRETURN(0);
+		return;
 	}
+	bcs = gc->buddy_chats;
+	while (bcs) {
+		b = (struct conversation *)bcs->data;
+		if (b->id == id)
+			break;
+		bcs = bcs->next;
+		b = NULL;
+	}
+	if (b)
+		serv_chat_send(gc, id, what);
 	XSRETURN(0);
 }
 

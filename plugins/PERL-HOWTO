@@ -19,6 +19,11 @@ plugins.
 There's a really quick simple perl script in this directory, gaim.pl, that
 should show most of the functions. Most things should be self-explanatory.
 
+There's one thing you need to be aware of in perl scripts for gaim. Gaim
+supports multiple connections, and perl deals with them by using a unique
+identifier for each of them (that's a fancy way of saying that perl scripts
+use the memory address of the connection). 
+
 Everything available in normal perl scripts should be available in gaim's
 perl interface, so I'm not going to bother describing that. The important
 things are the functions provided by gaim's internal GAIM module, which is
@@ -34,27 +39,31 @@ GAIM::get_info(integer, ...)
 	This function returns different information based on the integer passed
 	to it.
 	0 - the version of gaim you're running ("0.10.0" for example).
-	1 - the list of currently online screennames
-	2 - given a screenname, the protocol(s) it(/they) use(s) (as ints)
+	1 - the list of connection ids
+	2 - given a connection index, the protocol it uses (as an int)
+	3 - given a connection index, the screenname of the person
+	4 - given a connection index, the index in the users list
+	5 - the list of names of users
+	6 - the list of protocols of the users
 
 GAIM::print(title, message)
 	This displays a nice little dialog window.
 
 
-GAIM::buddy_list(name)
+GAIM::buddy_list(index)
 	This returns the buddy list (no groups, just the names of the buddies)
-	for the specified account
+	for the specified connection.
 
-GAIM::online_list(name)
-	This returns the list of online buddies for the specified account.
+GAIM::online_list(index)
+	This returns the list of online buddies for the specified connection.
 
 
 GAIM::command(command, ...)
 	This sends commands to the server, and each command takes various
 	arguments. The command should be self-explanatory:
-	"signon" - the second arg is the screenname to sign on
-	"signoff" - the optional second arg is who to sign off. if no args are
-		    given, all names are signed off.
+	"signon" - the second arg is the index of the user to sign on
+	"signoff" - the optional second arg is the connection index to sign off.
+		    if no args are given, all connections are signed off.
 	"away" - the second arg is the away message
 	"back" - no args.
 	"idle" - the second arg is how long (in seconds) to set the idle time
@@ -63,9 +72,10 @@ GAIM::command(command, ...)
 		 especially evil since it warns the person from every 
 		 connection.  The third argument is 1 if you want to warn
 		 anonymously.  If 0 or ommitted, it will warn normally.
-	"info" - the second arg is what you want to set your profile to.
+	"info" - the second arg is the connection index whose info you want to set,
+	         and the third arg is what you want to set your profile to.
 
-GAIM::user_info(nick)
+GAIM::user_info(index, nick)
 	Returns 8 data items:
 		the screenname of the buddy
 		the alias of the buddy
@@ -96,20 +106,14 @@ GAIM::write_to_conv(to, wflags, what, who)
 		wflags==1: display message as if sent by <who>
 		wflags==2: display system message
 
-GAIM::print_to_conv(who, what, auto)
-	The question is not what does this do, it's who does this do it as. The
-	answer is "whatever the default is". It uses whichever connection is
-	selected in the conversation window's menu. If the conversation window
-	didn't exist beforehand, then it's the default (first) connection.  If
-	auto is one, it will send as an auto (read: away) message.  If 0 or
-	ommitted, it will send normally.
+GAIM::serv_send_im(index, who, what, auto)
+	Sends what from the connection index to who. :)
 
-GAIM::print_to_chat(room, what)
-	This goes through each connection. If it finds a room matching the name,
-	it'll print the message to that room.
+GAIM::print_to_conv(index, who, what, auto)
+	Convenience function; combination of write_to_conv and serv_send_im.
 
-GAIM::serv_send_im(who, what, auto)
-	Same as print_to_conv, but it does not display the message.
+GAIM::print_to_chat(index, room, what)
+	Room is actually an int. Read SIGNALS to find out why.
 
 GAIM::add_event_handler(event, function)
 	This is the most important of them all. This is basically exactly like

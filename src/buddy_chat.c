@@ -633,7 +633,7 @@ void add_chat_buddy(struct conversation *b, char *buddy)
 	int pos;
 	GList *ignored;
 
-	plugin_event(event_chat_buddy_join, b->gc, b->name, name, 0);
+	plugin_event(event_chat_buddy_join, b->gc, (void *)b->id, name, 0);
 	b->in_room = g_list_insert_sorted(b->in_room, name, insertname);
 	pos = g_list_index(b->in_room, name);
 
@@ -739,7 +739,7 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 
 	char tmp[BUF_LONG];
 
-	plugin_event(event_chat_buddy_leave, b->gc, b->name, buddy, 0);
+	plugin_event(event_chat_buddy_leave, b->gc, (void *)b->id, buddy, 0);
 
 	while (names) {
 		if (!g_strcasecmp((char *)names->data, buddy)) {

@@ -212,6 +212,7 @@ enum gaim_event {
 	event_draw_menu,
 	event_im_displayed_sent,
 	event_im_displayed_rcvd,
+	event_chat_send_invite,
 	/* any others? it's easy to add... */
 };
 
@@ -810,7 +811,6 @@ extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
 extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
 extern void gaim_plugin_unload(GModule *);
 #endif
-extern char *event_name(enum gaim_event);
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
 extern void remove_all_plugins();
 
