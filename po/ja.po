@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim version 0.56\n"
-"POT-Creation-Date: 2002-04-11 22:59-0400\n"
+"POT-Creation-Date: 2002-06-25 00:10-0400\n"
 "PO-Revision-Date: 2002-04-22 13:12+0900\n"
 "Last-Translator: Ryosuke Kutsuna <ryosuke@cool.email.ne.jp>\n"
 "Language-Team: Japanese\n"
@@ -14,7 +14,87 @@ msgstr ""
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/protocols/gg/gg.c:71
+#: plugins/chatlist.c:67 src/buddy_chat.c:272
+msgid "Buddy Chat"
+msgstr "仲間チャット"
+
+#: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
+#: plugins/chatlist.c:409
+#, fuzzy
+msgid "Gaim Chat"
+msgstr "Gaim - チャット"
+
+#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
+#: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
+#: src/conversation.c:2864 src/dialogs.c:567 src/dialogs.c:3899
+#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:438
+#: src/prpl.c:685 src/server.c:1072
+msgid "Close"
+msgstr "閉じる"
+
+#: plugins/chatlist.c:344
+#, fuzzy
+msgid "Chat Rooms"
+msgstr "チャットオプション"
+
+#: plugins/chatlist.c:363
+msgid "Refresh"
+msgstr ""
+
+#. Put the buttons in the box
+#: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
+#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2879
+#: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
+#: src/prefs.c:2041 src/prefs.c:2383 src/prefs.c:2417
+msgid "Add"
+msgstr "加える"
+
+#: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2829
+#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2876
+#: src/prefs.c:2055 src/prefs.c:2387 src/prefs.c:2421
+msgid "Remove"
+msgstr "削除"
+
+#: plugins/chatlist.c:388
+msgid "List of available chats"
+msgstr ""
+
+#: plugins/chatlist.c:398
+msgid "List of subscribed chats"
+msgstr ""
+
+#: plugins/gtik.c:699
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:711
+msgid "Update Frequency in min"
+msgstr ""
+
+#: plugins/gtik.c:727
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr ""
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:737
+msgid "Check this box to display only symbols and price:"
+msgstr ""
+
+#: plugins/gtik.c:738
+msgid "Check this box to scroll left to right:"
+msgstr ""
+
+#: plugins/gtik.c:974
+#, fuzzy
+msgid "(No"
+msgstr "いいえ"
+
+#: plugins/gtik.c:975
+#, fuzzy
+msgid "Change"
+msgstr "接続:"
+
+#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1919
 msgid "Available"
 msgstr "可視"
 
@@ -22,8 +102,8 @@ msgstr "可視"
 msgid "Available for friends only"
 msgstr "友達だけに可視"
 
-#: src/applet.c:293 src/buddy.c:493 src/buddy.c:2508 src/buddy.c:2644
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:703
+#: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
 msgid "Away"
 msgstr "離席"
 
@@ -39,7 +119,7 @@ msgstr "隠れる"
 msgid "Invisible for friends only"
 msgstr "友達だけから隠れる"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:699
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
 msgid "Unavailable"
 msgstr "放置"
 
@@ -71,7 +151,7 @@ msgstr "認証エラー"
 msgid "Unknown Error Code."
 msgstr "理解不能なコード"
 
-#: src/protocols/gg/gg.c:302
+#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2050
 #, c-format
 msgid "Status: %s"
 msgstr "状態: %s"
@@ -197,7 +277,7 @@ msgid "Sex"
 msgstr "性"
 
 #. Line 5
-#: src/dialogs.c:1582 src/dialogs.c:2290 src/protocols/gg/gg.c:729
+#: src/dialogs.c:1624 src/dialogs.c:2332 src/protocols/gg/gg.c:729
 msgid "City"
 msgstr "町"
 
@@ -271,7 +351,12 @@ msgstr "パスワードの変更に失敗 (%s)"
 msgid "Directory Search"
 msgstr "ディレクトリ検索"
 
-#: src/dialogs.c:1699 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#.
+#. } else if (!strcmp(act, _("Set Dir Info"))) {
+#. show_set_dir(gc);
+#.
+#: src/dialogs.c:1741 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#: src/protocols/jabber/jabber.c:3748 src/protocols/jabber/jabber.c:3761
 msgid "Change Password"
 msgstr "パスワード変更"
 
@@ -292,8 +377,8 @@ msgid "Send message through server"
 msgstr "サーバ経由でメッセージ送信"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2112 src/protocols/oscar/oscar.c:3436
-#: src/protocols/toc/toc.c:1216
+#: src/protocols/jabber/jabber.c:2860 src/protocols/oscar/oscar.c:3593
+#: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "情報取得"
 
@@ -329,11 +414,9 @@ msgstr "ニックが与えられていません"
 msgid ""
 "%s has requested a DCC chat.  Would you like to establish the direct "
 "connection?"
-msgstr ""
-"%s はDCCチャット要求をしました 直接接続しますか?"
-""
+msgstr "%s はDCCチャット要求をしました 直接接続しますか?"
 
-#: src/protocols/irc/irc.c:1001
+#: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:315
 msgid "Unable to write"
 msgstr "書き込めません"
 
@@ -360,7 +443,7 @@ msgstr "IRCパート"
 msgid "Channel:"
 msgstr "接続:"
 
-#: src/multi.c:547 src/protocols/irc/irc.c:1675
+#: src/multi.c:549 src/protocols/irc/irc.c:1675
 msgid "Password:"
 msgstr "パスワード:"
 
@@ -368,503 +451,833 @@ msgstr "パスワード:"
 msgid "DCC Chat"
 msgstr "DCCチャット"
 
-#: src/buddy.c:2801 src/protocols/jabber/jabber.c:705
-#: src/protocols/jabber/jabber.c:723
+#: src/protocols/jabber/jabber.c:942
+msgid "Incorrect current password! Password NOT Changed!"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:943 src/protocols/jabber/jabber.c:948
+#, fuzzy
+msgid "Password Change Error!"
+msgstr "Gaim - パスワード変更"
+
+#: src/protocols/jabber/jabber.c:947
+msgid "New password same as old password! Password NOT Changed!"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1092
+msgid "Unknown"
+msgstr "不明"
+
+#: src/buddy.c:2887 src/protocols/jabber/jabber.c:1120
+#: src/protocols/jabber/jabber.c:1138
 msgid "Online"
 msgstr "オンライン"
 
-#: src/protocols/jabber/jabber.c:707
+#: src/protocols/jabber/jabber.c:1122
 msgid "Extended Away"
 msgstr "逃走中"
 
-#: src/protocols/jabber/jabber.c:709
+#: src/protocols/jabber/jabber.c:1124
 msgid "Do Not Disturb"
 msgstr "邪魔するな"
 
-#: src/protocols/jabber/jabber.c:1042
+#: src/protocols/jabber/jabber.c:1434
+#, c-format
+msgid "Error %s: %s"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1437
+#, fuzzy
+msgid "Unknown Error in presence"
+msgstr "理解不能なコード"
+
+#: src/protocols/jabber/jabber.c:1607
+#, fuzzy, c-format
+msgid "The user %s wants to add you to their buddy list."
+msgstr ""
+"\n"
+"\n"
+"彼らを仲間リストに追加しますか?"
+
+#: src/protocols/jabber/jabber.c:1632
 msgid "No such user"
 msgstr "そのようなユーザはいません"
 
-#: src/protocols/jabber/jabber.c:1044
+#: src/protocols/jabber/jabber.c:1634 src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2506
 msgid "Jabber Error"
 msgstr "Jabber エラー"
 
-#: src/dialogs.c:845 src/protocols/jabber/jabber.c:1124
+#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1719
+#: src/protocols/msn/msn.c:1110
 msgid "Buddies"
 msgstr "仲間たち"
 
-#: src/protocols/jabber/jabber.c:1188
+#: src/protocols/jabber/jabber.c:1782
 msgid "Authenticating"
 msgstr "認証"
 
-#: src/protocols/jabber/jabber.c:1225
+#: src/protocols/jabber/jabber.c:1819
 msgid "Unknown login error"
 msgstr "不明なログインエラー"
 
-#: src/protocols/jabber/jabber.c:1455 src/protocols/jabber/jabber.c:2903
+#: src/protocols/jabber/jabber.c:2010
+#, fuzzy
+msgid "Password successfully changed."
+msgstr "パスワード変更できました"
+
+#: src/protocols/jabber/jabber.c:2012
+#, fuzzy
+msgid "Password Change"
+msgstr "Gaim - パスワード変更"
+
+#: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
 msgid "Connection lost"
 msgstr "接続が切れました"
 
-#: src/protocols/jabber/jabber.c:1457 src/protocols/jabber/jabber.c:1489
-#: src/protocols/jabber/jabber.c:2905 src/protocols/jabber/jabber.c:2951
+#: src/protocols/jabber/jabber.c:2056 src/protocols/jabber/jabber.c:2088
+#: src/protocols/jabber/jabber.c:3678 src/protocols/jabber/jabber.c:3724
+#: src/protocols/msn/msn.c:1741 src/protocols/msn/msn.c:1770
 msgid "Unable to connect"
 msgstr "接続できません"
 
-#: src/protocols/jabber/jabber.c:1463
+#: src/protocols/jabber/jabber.c:2062
 msgid "Connected"
 msgstr "接続しました"
 
-#: src/protocols/jabber/jabber.c:1466
+#: src/protocols/jabber/jabber.c:2065
 msgid "Requesting Authentication Method"
 msgstr "認証要求中"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:1484
+#: src/protocols/jabber/jabber.c:2083 src/protocols/msn/msn.c:1762
 msgid "Connecting"
 msgstr "接続中"
 
-#: src/protocols/jabber/jabber.c:1783
+#: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
+#, fuzzy
+msgid "Invalid Jabber I.D."
+msgstr "無効な名前"
+
+#: src/protocols/jabber/jabber.c:2473
 msgid "Room:"
 msgstr "部屋:"
 
-#: src/protocols/jabber/jabber.c:1787
+#: src/protocols/jabber/jabber.c:2477
 msgid "Server:"
 msgstr "サーバ:"
 
-#: src/protocols/jabber/jabber.c:1792
+#: src/protocols/jabber/jabber.c:2482
 msgid "Handle:"
 msgstr "ハンドル:"
 
-#: src/protocols/jabber/jabber.c:2062 src/protocols/jabber/jabber.c:2401
-msgid "Unknown"
-msgstr "不明"
+#: src/protocols/jabber/jabber.c:2539
+#, fuzzy
+msgid "Chats"
+msgstr "チャット"
 
-#: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2117
-#: src/protocols/oscar/oscar.c:3443
+#: src/protocols/jabber/jabber.c:2854
+#, fuzzy
+msgid "View Error Msg"
+msgstr "ログを見る"
+
+#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2865
+#: src/protocols/oscar/oscar.c:3606
 msgid "Get Away Msg"
 msgstr "離席メッセージ"
 
-#: src/protocols/jabber/jabber.c:2299
+#: src/protocols/jabber/jabber.c:2882
+msgid "Remove From Roster"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3076
 msgid "Full Name"
 msgstr "氏名"
 
-#: src/protocols/jabber/jabber.c:2300
+#: src/protocols/jabber/jabber.c:3077
 msgid "Family Name"
 msgstr "家族名"
 
-#: src/protocols/jabber/jabber.c:2301
+#: src/protocols/jabber/jabber.c:3078
 msgid "Given Name"
 msgstr "与えられた名前"
 
-#: src/protocols/jabber/jabber.c:2302
+#: src/protocols/jabber/jabber.c:3079
 msgid "Nickname"
 msgstr "ニックネーム"
 
-#: src/dialogs.c:2483 src/protocols/jabber/jabber.c:2303
+#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3080
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:2304
+#: src/protocols/jabber/jabber.c:3081
 msgid "Street Address"
 msgstr "住所"
 
-#: src/protocols/jabber/jabber.c:2305
+#: src/protocols/jabber/jabber.c:3082
 msgid "Extended Address"
 msgstr "その他"
 
-#: src/protocols/jabber/jabber.c:2306
+#: src/protocols/jabber/jabber.c:3083
 msgid "Locality"
 msgstr "区"
 
-#: src/protocols/jabber/jabber.c:2307
+#: src/protocols/jabber/jabber.c:3084
 msgid "Region"
 msgstr "州"
 
-#: src/protocols/jabber/jabber.c:2308
+#: src/protocols/jabber/jabber.c:3085
 msgid "Postal Code"
 msgstr "郵便番号"
 
 #. Line 7
-#: src/dialogs.c:1604 src/dialogs.c:2312 src/protocols/jabber/jabber.c:2309
+#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3086
 msgid "Country"
 msgstr "国"
 
-#: src/protocols/jabber/jabber.c:2310
+#: src/protocols/jabber/jabber.c:3087
 msgid "Telephone"
 msgstr "電話番号"
 
-#: src/dialogs.c:2388 src/protocols/jabber/jabber.c:2311
+#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3088
 msgid "Email"
 msgstr "E-mail"
 
-#: src/protocols/jabber/jabber.c:2312
+#: src/protocols/jabber/jabber.c:3089
 msgid "Organization Name"
 msgstr "組織名"
 
-#: src/protocols/jabber/jabber.c:2313
+#: src/protocols/jabber/jabber.c:3090
 msgid "Organization Unit"
 msgstr "所属部署"
 
-#: src/prefs.c:1988 src/protocols/jabber/jabber.c:2314
+#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3091
 msgid "Title"
 msgstr "題名"
 
-#: src/protocols/jabber/jabber.c:2315
+#: src/protocols/jabber/jabber.c:3092
 msgid "Role"
 msgstr "役職"
 
-#: src/protocols/jabber/jabber.c:2316
+#: src/protocols/jabber/jabber.c:3093
 msgid "Birthday"
 msgstr "誕生日"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2491 src/plugins.c:211 src/protocols/jabber/jabber.c:2317
+#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3094
 msgid "Description"
 msgstr "概要"
 
-#: src/protocols/jabber/jabber.c:2342
+#: src/protocols/jabber/jabber.c:3119
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
-"下記のアイテムはすべてオプションです。"
-"快適に感じる情報だけを入力します。"
+"下記のアイテムはすべてオプションです。快適に感じる情報だけを入力します。"
 
-#: src/protocols/jabber/jabber.c:2343
+#: src/protocols/jabber/jabber.c:3120
 msgid "User Identity"
 msgstr "ユーザID"
 
-#: src/protocols/jabber/jabber.c:2759
+#: src/protocols/jabber/jabber.c:3532
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Jabber vCardによって開発された"
 
-#: src/protocols/jabber/jabber.c:2833
+#: src/protocols/jabber/jabber.c:3606
 msgid "Server Registration successful!"
 msgstr "サーバに登録しました"
 
-#: src/protocols/jabber/jabber.c:2860
+#: src/protocols/jabber/jabber.c:3633
 msgid "Unknown registration error"
 msgstr "不明な登録エラー"
 
-#: src/protocols/jabber/jabber.c:2969 src/protocols/jabber/jabber.c:2984
+#: src/protocols/jabber/jabber.c:3742 src/protocols/jabber/jabber.c:3757
 msgid "Set User Info"
 msgstr "ユーザ情報の登録"
 
-#: src/protocols/msn/msn.c:719 src/protocols/msn/msn.c:2041
-#: src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:230
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:233
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:236
+#, fuzzy
+msgid "Invalid User"
+msgstr "無効な名前"
+
+#: src/protocols/msn/msn.c:239
+msgid "Fully Qualified Domain Name missing"
+msgstr ""
+
+#: src/protocols/msn/msn.c:242
+msgid "Already Login"
+msgstr ""
+
+#: src/protocols/msn/msn.c:245
+#, fuzzy
+msgid "Invalid Username"
+msgstr "無効な名前"
+
+#: src/protocols/msn/msn.c:248
+#, fuzzy
+msgid "Invalid Friendly Name"
+msgstr "無効な名前"
+
+#: src/protocols/msn/msn.c:251
+msgid "List Full"
+msgstr ""
+
+#: src/protocols/msn/msn.c:254
+msgid "Already there"
+msgstr ""
+
+#: src/protocols/msn/msn.c:257
+#, fuzzy
+msgid "Not on list"
+msgstr "接続が切れました"
+
+#: src/protocols/msn/msn.c:260
+msgid "User is offline"
+msgstr ""
+
+#: src/protocols/msn/msn.c:263
+msgid "Already in the mode"
+msgstr ""
+
+#: src/protocols/msn/msn.c:266
+msgid "Already in opposite list"
+msgstr ""
+
+#: src/protocols/msn/msn.c:269
+msgid "Switchboard failed"
+msgstr ""
+
+#: src/protocols/msn/msn.c:272
+msgid "Notify Transfer failed"
+msgstr ""
+
+#: src/protocols/msn/msn.c:276
+msgid "Required fields missing"
+msgstr ""
+
+#: src/protocols/msn/msn.c:279
+#, fuzzy
+msgid "Not logged in"
+msgstr "%s はログインしてます"
+
+#: src/protocols/msn/msn.c:283
+#, fuzzy
+msgid "Internal server error"
+msgstr "内部エラー"
+
+#: src/protocols/msn/msn.c:286
+msgid "Database server error"
+msgstr ""
+
+#: src/protocols/msn/msn.c:289
+#, fuzzy
+msgid "File operation error"
+msgstr "内部接続エラーです\n"
+
+#: src/protocols/msn/msn.c:292
+#, fuzzy
+msgid "Memory allocation error"
+msgstr "主要な接続エラー\n"
+
+#: src/protocols/msn/msn.c:296
+#, fuzzy
+msgid "Server busy"
+msgstr "サーバ:"
+
+#: src/protocols/msn/msn.c:299
+#, fuzzy
+msgid "Server unavailable"
+msgstr "放置"
+
+#: src/protocols/msn/msn.c:302
+msgid "Peer Notification server down"
+msgstr ""
+
+#: src/protocols/msn/msn.c:305
+#, fuzzy
+msgid "Database connect error"
+msgstr "内部接続エラーです\n"
+
+#: src/protocols/msn/msn.c:308
+msgid "Server is going down (abandon ship)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:312
+#, fuzzy
+msgid "Error creating connection"
+msgstr "g003: 接続開始エラー\n"
+
+#: src/protocols/msn/msn.c:318
+msgid "Session overload"
+msgstr ""
+
+#: src/protocols/msn/msn.c:321
+msgid "User is too active"
+msgstr ""
+
+#: src/protocols/msn/msn.c:324
+#, fuzzy
+msgid "Too many sessions"
+msgstr "マッチしすぎ"
+
+#: src/protocols/msn/msn.c:327
+msgid "Not expected"
+msgstr ""
+
+#: src/protocols/msn/msn.c:330
+msgid "Bad friend file"
+msgstr ""
+
+#: src/protocols/msn/msn.c:334
+#, fuzzy
+msgid "Authentication failed"
+msgstr "認証エラー"
+
+#: src/protocols/msn/msn.c:337
+#, fuzzy
+msgid "Not allowed when offline"
+msgstr "ログインしたときに音を鳴らさない"
+
+#: src/protocols/msn/msn.c:340
+msgid "Not accepting new users"
+msgstr ""
+
+#: src/protocols/msn/msn.c:343
+msgid "User unverified"
+msgstr ""
+
+#: src/protocols/msn/msn.c:346
+#, fuzzy
+msgid "Unknown Error Code"
+msgstr "理解不能なコード"
+
+#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
+#: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2114
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "MSN Error"
 msgstr "MSNエラー"
 
-#: src/protocols/msn/msn.c:719
+#: src/protocols/msn/msn.c:558
+msgid "A message may not have been received."
+msgstr ""
+
+#: src/protocols/msn/msn.c:813
 msgid "Gaim was unable to send a message"
 msgstr "Gaimはメッセージを送れません"
 
-#: src/protocols/msn/msn.c:1069
+#: src/protocols/msn/msn.c:917
+#, c-format
+msgid "The user %s (%s) wants to add %s to his or her buddy list."
+msgstr ""
+
+#: src/protocols/msn/msn.c:1074
+#, c-format
+msgid "The user %s (%s) wants to add you to their buddy list"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1175
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "切断されています 違う場所で接続してます"
 
-#: src/protocols/msn/msn.c:2041 src/protocols/msn/msn.c:2074
+#: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1679
+#, fuzzy
+msgid "Error reading from server"
+msgstr "ソケットからの読み込みに失敗"
+
+#: src/protocols/msn/msn.c:1568
+msgid "Requesting to send password"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1618
+#, fuzzy
+msgid "Unable to send password"
+msgstr "ソケットを読めません"
+
+#: src/protocols/msn/msn.c:1623
+#, fuzzy
+msgid "Password sent"
+msgstr "パスワード"
+
+#: src/protocols/msn/msn.c:1748
+#, fuzzy
+msgid "Unable to write to server"
+msgstr "サーバへ接続できません"
+
+#: src/protocols/msn/msn.c:1754
+#, fuzzy
+msgid "Synching with server"
+msgstr "サーバに登録"
+
+#: src/protocols/msn/msn.c:1920
+msgid "Away From Computer"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1921
+msgid "Be Right Back"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1922
+#, fuzzy
+msgid "Busy"
+msgstr "仲間"
+
+#: src/protocols/msn/msn.c:1923
+msgid "On The Phone"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1924
+msgid "Out To Lunch"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1925
+#, fuzzy
+msgid "Hidden"
+msgstr "隠れアイコン"
+
+#: src/protocols/msn/msn.c:2041
+msgid "Reset friendly name"
+msgstr ""
+
+#: src/protocols/msn/msn.c:2114
+msgid "Friendly name too long."
+msgstr ""
+
+#: src/protocols/msn/msn.c:2129 src/protocols/msn/msn.c:2150
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "名"
+
+#: src/protocols/msn/msn.c:2130
+#, fuzzy
+msgid "Set Friendly Name:"
+msgstr "スクリーンネーム: "
+
+#: src/protocols/msn/msn.c:2131
+msgid "Reset All Friendly Names"
+msgstr ""
+
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "Invalid name"
 msgstr "無効な名前"
 
-#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3075
-#: src/protocols/toc/toc.c:1101
+#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3209
+#: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "グループへの参加:"
 
-#: src/protocols/oscar/oscar.c:333
+#: src/protocols/oscar/oscar.c:330
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "%sの直接IMは閉じました"
 
-#: src/protocols/oscar/oscar.c:335
+#: src/protocols/oscar/oscar.c:332
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "%sの直接IMは失敗しました"
 
-#: src/protocols/oscar/oscar.c:373
+#: src/protocols/oscar/oscar.c:370
 msgid "connection error (rend)\n"
 msgstr "接続エラー (割けた)\n"
 
-#: src/protocols/oscar/oscar.c:384
+#: src/protocols/oscar/oscar.c:381
 msgid "major connection error\n"
 msgstr "主要な接続エラー\n"
 
-#: src/protocols/oscar/oscar.c:385 src/protocols/toc/toc.c:511
+#: src/protocols/oscar/oscar.c:382 src/protocols/toc/toc.c:511
 #: src/protocols/toc/toc.c:524 src/protocols/toc/toc.c:590
 msgid "Disconnected."
 msgstr "切断されました"
 
-#: src/protocols/oscar/oscar.c:397 src/protocols/toc/toc.c:761
+#: src/protocols/oscar/oscar.c:394 src/protocols/toc/toc.c:761
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "チャットルーム%sから切断されました"
 
-#: src/protocols/oscar/oscar.c:398
+#: src/protocols/oscar/oscar.c:395
 msgid "Chat Error!"
 msgstr "チャットエラー"
 
-#: src/protocols/oscar/oscar.c:410
+#: src/protocols/oscar/oscar.c:407
 msgid "Chat is currently unavailable"
 msgstr "チャットは接続できません"
 
-#: src/protocols/oscar/oscar.c:411
+#: src/protocols/oscar/oscar.c:408
 msgid "Gaim - Chat"
 msgstr "Gaim - チャット"
 
-#: src/protocols/oscar/oscar.c:470 src/protocols/oscar/oscar.c:530
+#: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
 msgid "Couldn't connect to host"
 msgstr "ホストへ接続できませんでした"
 
-#: src/protocols/oscar/oscar.c:478
+#: src/protocols/oscar/oscar.c:475
 msgid "Password sent, waiting for response\n"
 msgstr "パスワード送信、返答待ちです\n"
 
-#: src/protocols/oscar/oscar.c:511
+#: src/protocols/oscar/oscar.c:508
 msgid "internal connection error\n"
 msgstr "内部接続エラーです\n"
 
-#: src/protocols/oscar/oscar.c:512
+#: src/protocols/oscar/oscar.c:509
 msgid "Unable to login to AIM"
 msgstr "AIMへログインできません"
 
-#: src/protocols/oscar/oscar.c:517
+#: src/protocols/oscar/oscar.c:514
 #, c-format
 msgid "Signon: %s"
 msgstr "サインオン: %s"
 
-#: src/protocols/oscar/oscar.c:589
+#: src/protocols/oscar/oscar.c:586
 msgid "Signed off.\n"
 msgstr "サインオフ\n"
 
-#: src/protocols/oscar/oscar.c:608 src/protocols/oscar/oscar.c:732
+#: src/protocols/oscar/oscar.c:605 src/protocols/oscar/oscar.c:730
 msgid "Could Not Connect"
 msgstr "接続できません"
 
-#: src/protocols/oscar/oscar.c:616
+#: src/protocols/oscar/oscar.c:613
 msgid "Connection established, cookie sent"
 msgstr "接続できました、cookie送信"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:642 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:639 src/protocols/toc/toc.c:459
 msgid "Incorrect nickname or password."
 msgstr "間違ったニックネームかパスワードです"
 
 #. Suspended account
-#: src/protocols/oscar/oscar.c:647
+#: src/protocols/oscar/oscar.c:644
 msgid "Your account is currently suspended."
 msgstr "あなたのアカウントは現在停止中です"
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:651
+#: src/protocols/oscar/oscar.c:648
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"頻繁に接続しすぎており分離していました。10分待って、再び試みてください。"
-"努力し続ければ、さらに長く待つ必要があるでしょう。"
+"頻繁に接続しすぎており分離していました。10分待って、再び試みてください。努力"
+"し続ければ、さらに長く待つ必要があるでしょう。"
 
 #. client too old
-#: src/protocols/oscar/oscar.c:656
+#: src/protocols/oscar/oscar.c:653
 msgid "The client version you are using is too old. Please upgrade at "
 msgstr "クライアントのバージョンが古すぎます アップデートしましょう"
 
-#: src/protocols/oscar/oscar.c:660 src/protocols/toc/toc.c:542
+#: src/protocols/oscar/oscar.c:657 src/protocols/toc/toc.c:542
 msgid "Authentication Failed"
 msgstr "認証に失敗"
 
-#: src/protocols/oscar/oscar.c:682
+#: src/protocols/oscar/oscar.c:679
 msgid "Internal Error"
 msgstr "内部エラー"
 
-#: src/protocols/oscar/oscar.c:1250 src/protocols/oscar/oscar.c:3286
+#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3420
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "%s との直接IM確立しました"
 
-#: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
-#, c-format
+#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
+#, fuzzy, c-format
 msgid ""
-"The user %d has denied your request to add them to your contact list for the "
-"following reason:\n"
-"\n"
+"The user %lu has denied your request to add them to your contact list for "
+"the following reason:\n"
+"%s"
 msgstr ""
-"ユーザ%dは、次の理由のためにあなたの接触リストにそれらを加える"
-"あなたのリクエストを否定しました。\n"
+"ユーザ%dは、次の理由のためにあなたの接触リストにそれらを加えるあなたのリクエ"
+"ストを否定しました。\n"
 
-#: src/protocols/oscar/oscar.c:1496 src/protocols/oscar/oscar.c:2371
+#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
 msgid "No reason given."
 msgstr "理由不明"
 
-#: src/protocols/oscar/oscar.c:1497 src/protocols/oscar/oscar.c:2372
+#: src/protocols/oscar/oscar.c:1505 src/protocols/oscar/oscar.c:2457
 msgid "Gaim - ICQ Authorization Denied"
 msgstr "Gaim - ICQ認証に拒否されました"
 
-#: src/protocols/oscar/oscar.c:1503 src/protocols/oscar/oscar.c:2378
-#, c-format
-msgid "The user %d has granted your request to add them to your contact list."
-msgstr "ユーザ%dは、あなたのリクエストがあなたのコンタクトリストに彼らを加えることを認めました。"
+#: src/protocols/oscar/oscar.c:1511 src/protocols/oscar/oscar.c:2463
+#, fuzzy, c-format
+msgid "The user %lu has granted your request to add them to your contact list."
+msgstr ""
+"ユーザ%dは、あなたのリクエストがあなたのコンタクトリストに彼らを加えることを"
+"認めました。"
 
-#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2379
+#: src/protocols/oscar/oscar.c:1512 src/protocols/oscar/oscar.c:2464
 msgid "Gaim - ICQ Authorization Granted"
 msgstr "Gaim - ICQ認証"
 
-#: src/protocols/oscar/oscar.c:1577
+#: src/protocols/oscar/oscar.c:1585
 #, c-format
 msgid "You missed %d message from %s because it was invalid."
 msgstr "%sからのメッセージ%dは無効であるために失敗しました"
 
-#: src/protocols/oscar/oscar.c:1578
+#: src/protocols/oscar/oscar.c:1586
 #, c-format
 msgid "You missed %d messages from %s because they were invalid."
 msgstr "%sからのメッセージ%dは無効であるために失敗しました"
 
-#: src/protocols/oscar/oscar.c:1587
+#: src/protocols/oscar/oscar.c:1595
 #, c-format
 msgid "You missed %d message from %s because it was too large."
 msgstr "%sからの%dメッセージはでかすぎるために失敗しました"
 
-#: src/protocols/oscar/oscar.c:1588
+#: src/protocols/oscar/oscar.c:1596
 #, c-format
 msgid "You missed %d messages from %s because they were too large."
 msgstr "%sからの%dメッセージはでかすぎるために失敗しました"
 
-#: src/protocols/oscar/oscar.c:1597
+#: src/protocols/oscar/oscar.c:1605
 #, c-format
 msgid "You missed %d message from %s because the rate limit has been exceeded."
 msgstr "割合限界を超過したので%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1598
+#: src/protocols/oscar/oscar.c:1606
 #, c-format
 msgid ""
 "You missed %d messages from %s because the rate limit has been exceeded."
 msgstr "割合限界を超過したので%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1607
+#: src/protocols/oscar/oscar.c:1615
 #, c-format
 msgid "You missed %d message from %s because it was too evil."
 msgstr "有害すぎたので、%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1608
+#: src/protocols/oscar/oscar.c:1616
 #, c-format
 msgid "You missed %d messages from %s because they are too evil."
 msgstr "有害すぎたので、%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1617
+#: src/protocols/oscar/oscar.c:1625
 #, c-format
 msgid "You missed %d message from %s because you are too evil."
 msgstr "有害すぎたので、%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1618
+#: src/protocols/oscar/oscar.c:1626
 #, c-format
 msgid "You missed %d messages from %s because you are too evil."
 msgstr "有害すぎたので、%sからの%dメッセージを逃しました"
 
-#: src/protocols/oscar/oscar.c:1626
+#: src/protocols/oscar/oscar.c:1634
 #, c-format
 msgid "You missed %d message from %s for unknown reasons."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1627
+#: src/protocols/oscar/oscar.c:1635
 #, c-format
 msgid "You missed %d messages from %s for unknown reasons."
 msgstr "原因不明ですが%sからの%dメッセージを逃しました"
 
-#: src/dialogs.c:3034 src/dialogs.c:3040 src/protocols/oscar/oscar.c:1632
-#: src/protocols/oscar/oscar.c:1670 src/protocols/oscar/oscar.c:1688
-#: src/protocols/oscar/oscar.c:2141 src/protocols/yahoo/yahoo.c:585
+#: src/dialogs.c:3076 src/dialogs.c:3082 src/protocols/oscar/oscar.c:1640
+#: src/protocols/oscar/oscar.c:1755 src/protocols/oscar/oscar.c:1773
+#: src/protocols/oscar/oscar.c:2226 src/protocols/yahoo/yahoo.c:594
 msgid "Gaim - Error"
 msgstr "Gaim - エラー"
 
-#: src/protocols/oscar/oscar.c:1649
+#: src/protocols/oscar/oscar.c:1703
+#, c-format
+msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1705
+#, c-format
+msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1734
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC スルーエラー: %s\n"
 
-#: src/protocols/oscar/oscar.c:1651
+#: src/protocols/oscar/oscar.c:1736
 msgid "Gaim - Oscar SNAC Error"
 msgstr "Gaim - Oscar SNAC エラー"
 
-#: src/protocols/oscar/oscar.c:1668
+#: src/protocols/oscar/oscar.c:1753
 #, c-format
 msgid "Your message to %s did not get sent: %s"
 msgstr "%sへのメッセージは送信できませんでした:%s"
 
-#: src/protocols/oscar/oscar.c:1669 src/protocols/oscar/oscar.c:1687
+#: src/protocols/oscar/oscar.c:1754 src/protocols/oscar/oscar.c:1772
 msgid "Reason unknown"
 msgstr "原因不明"
 
-#: src/protocols/oscar/oscar.c:1686
+#: src/protocols/oscar/oscar.c:1771
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr "%sのユーザ情報が見えません: %s"
 
-#: src/buddy.c:2060 src/protocols/oscar/oscar.c:1717
+#: src/buddy.c:2131 src/protocols/oscar/oscar.c:1802
 msgid "Buddy Icon"
 msgstr "仲間アイコン"
 
-#: src/buddy.c:2063 src/protocols/oscar/oscar.c:1720
+#: src/buddy.c:2134 src/protocols/oscar/oscar.c:1805
 msgid "Voice"
 msgstr "音声"
 
-#: src/buddy.c:2066 src/protocols/oscar/oscar.c:1723
+#: src/buddy.c:2137 src/protocols/oscar/oscar.c:1808
 msgid "IM Image"
 msgstr "IM イメージ"
 
-#: src/buddy.c:494 src/buddy.c:2069 src/buddy.c:2507 src/prefs.c:2912
-#: src/protocols/oscar/oscar.c:1726
+#: src/buddy.c:498 src/buddy.c:2140 src/buddy.c:2581 src/prefs.c:2926
+#: src/protocols/oscar/oscar.c:1811
 msgid "Chat"
 msgstr "チャット"
 
-#: src/buddy.c:2072 src/protocols/oscar/oscar.c:1729
+#: src/buddy.c:2143 src/protocols/oscar/oscar.c:1814
 msgid "Get File"
 msgstr "ファイル取得"
 
-#: src/buddy.c:2075 src/protocols/oscar/oscar.c:1732
+#: src/buddy.c:2146 src/protocols/oscar/oscar.c:1817
 msgid "Send File"
 msgstr "ファイル送信"
 
-#: src/buddy.c:2079 src/protocols/oscar/oscar.c:1736
+#: src/buddy.c:2150 src/protocols/oscar/oscar.c:1821
 msgid "Games"
 msgstr "ゲーム"
 
-#: src/buddy.c:2082 src/protocols/oscar/oscar.c:1739
+#: src/buddy.c:2153 src/protocols/oscar/oscar.c:1824
 msgid "Stocks"
 msgstr "ストック"
 
-#: src/buddy.c:2085 src/protocols/oscar/oscar.c:1742
+#: src/buddy.c:2156 src/protocols/oscar/oscar.c:1827
 msgid "Send Buddy List"
 msgstr "仲間リスト送信"
 
-#: src/buddy.c:2088 src/protocols/oscar/oscar.c:1745
+#: src/buddy.c:2159 src/protocols/oscar/oscar.c:1830
 msgid "EveryBuddy Bug"
 msgstr "仲間全部 バグ"
 
-#: src/buddy.c:2091 src/protocols/oscar/oscar.c:1748
+#: src/buddy.c:2162 src/protocols/oscar/oscar.c:1833
 msgid "AP User"
 msgstr "APユーザ"
 
-#: src/buddy.c:2094 src/protocols/oscar/oscar.c:1751
+#: src/buddy.c:2165 src/protocols/oscar/oscar.c:1836
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/buddy.c:2097 src/protocols/oscar/oscar.c:1754
+#: src/buddy.c:2168 src/protocols/oscar/oscar.c:1839
 msgid "Nihilist"
 msgstr "ニヒリスト"
 
-#: src/buddy.c:2100 src/protocols/oscar/oscar.c:1757
+#: src/buddy.c:2171 src/protocols/oscar/oscar.c:1842
 msgid "ICQ Server Relay"
 msgstr "ICQサーバ経由"
 
-#: src/buddy.c:2103 src/protocols/oscar/oscar.c:1760
+#: src/buddy.c:2174 src/protocols/oscar/oscar.c:1845
 msgid "ICQ Unknown"
 msgstr "分からないICQ"
 
-#: src/buddy.c:2106 src/protocols/oscar/oscar.c:1763
+#: src/buddy.c:2177 src/protocols/oscar/oscar.c:1848
 msgid "Trillian Encryption"
 msgstr "Trillian暗号化"
 
-#: src/protocols/oscar/oscar.c:1801
+#: src/protocols/oscar/oscar.c:1886
 msgid ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
 "\"> : Normal AIM User<br><IMG SRC=\"aol_icon.gif\"> : AOL User <br><IMG SRC="
@@ -873,12 +1286,12 @@ msgid ""
 "Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"
 msgstr ""
 "<br><BODY BGCOLOR=WHITE><hr><I>伝統:</I><br><br><IMG SRC=\"free_icon.gif"
-"\"> : 普通の AIM ユーザ<br><IMG SRC=\"aol_icon.gif\"> : AOL ユーザ <br><IMG SRC="
-"\"dt_icon.gif\"> : AIM 体験ユーザ <br><IMG SRC=\"admin_icon.gif\"> : "
-"管理者 <br><IMG SRC=\"ab_icon.gif\"> : 有効仲間"
-"代理人<br><IMG SRC=\"wireless_icon.gif\"> : ワイヤレスデバイスユーザ<br>"
+"\"> : 普通の AIM ユーザ<br><IMG SRC=\"aol_icon.gif\"> : AOL ユーザ <br><IMG "
+"SRC=\"dt_icon.gif\"> : AIM 体験ユーザ <br><IMG SRC=\"admin_icon.gif\"> : 管理"
+"者 <br><IMG SRC=\"ab_icon.gif\"> : 有効仲間代理人<br><IMG SRC="
+"\"wireless_icon.gif\"> : ワイヤレスデバイスユーザ<br>"
 
-#: src/protocols/oscar/oscar.c:1829
+#: src/protocols/oscar/oscar.c:1914
 #, c-format
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
@@ -891,66 +1304,96 @@ msgstr ""
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 
-#: src/protocols/oscar/oscar.c:1861
+#: src/protocols/oscar/oscar.c:1946
 msgid "<i>User has no away message</i>"
 msgstr "<i>ユーザは離席メッセージを持っていません</i>"
 
-#: src/protocols/oscar/oscar.c:1873
+#: src/protocols/oscar/oscar.c:1958
 msgid "Client Capabilities: "
 msgstr "クライアント機能"
 
-#: src/protocols/oscar/oscar.c:1881
+#: src/protocols/oscar/oscar.c:1966
 msgid "<i>No Information Provided</i>"
 msgstr "<i>提供されている情報はありません</i>"
 
-#: src/protocols/oscar/oscar.c:1904
+#: src/protocols/oscar/oscar.c:1989
 msgid "Your connection may be lost."
 msgstr "接続が失われました"
 
-#: src/protocols/oscar/oscar.c:1905
+#: src/protocols/oscar/oscar.c:1990
 msgid "AOL error"
 msgstr "AOLエラー"
 
-#: src/protocols/oscar/oscar.c:2140
+#: src/protocols/oscar/oscar.c:2225
 msgid ""
 "The last message was not sent because you are over the rate limit. Please "
 "wait 10 seconds and try again."
 msgstr ""
-"割合限界に達しているためメッセージは送信しませんでした"
-"10秒まって再送してください"
+"割合限界に達しているためメッセージは送信しませんでした10秒まって再送してくだ"
+"さい"
 
-#: src/dialogs.c:3563 src/protocols/oscar/oscar.c:2482
-#: src/protocols/oscar/oscar.c:3407 src/protocols/toc/toc.c:1561
-#: src/protocols/toc/toc.c:1578 src/protocols/toc/toc.c:1638
-#: src/protocols/toc/toc.c:1680 src/protocols/toc/toc.c:1799
-#: src/protocols/toc/toc.c:1829 src/protocols/toc/toc.c:1885
+#: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2589
+#: src/protocols/oscar/oscar.c:3541 src/protocols/toc/toc.c:1564
+#: src/protocols/toc/toc.c:1581 src/protocols/toc/toc.c:1641
+#: src/protocols/toc/toc.c:1683 src/protocols/toc/toc.c:1802
+#: src/protocols/toc/toc.c:1832 src/protocols/toc/toc.c:1888
 msgid "Error"
 msgstr "エラー"
 
-#: src/protocols/oscar/oscar.c:3079 src/protocols/toc/toc.c:1105
+#: src/protocols/oscar/oscar.c:3192
+#, c-format
+msgid ""
+"The maximum number of buddies allowed in your buddy list is %d, and you have "
+"%d.  Until you are below the limit, some buddies will not show up as online."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3195
+#, fuzzy
+msgid "Gaim - Warning"
+msgstr "Gaim - ユーザを警告しますか?"
+
+#: src/protocols/oscar/oscar.c:3213 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
 msgstr "交換:"
 
-#: src/protocols/oscar/oscar.c:3407
+#: src/protocols/oscar/oscar.c:3541
 msgid "Unable to open Direct IM"
 msgstr "直接IMを開けません"
 
-#: src/protocols/oscar/oscar.c:3417
+#: src/protocols/oscar/oscar.c:3551
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
 "let them see your IP address, and may be a security risk. Do you wish to "
 "continue?"
 msgstr ""
-"%sとの直接IMを選択しました あなたのIPアドレスを彼らに見えるようにしますが"
-"セキュリティ的危険があります"
-"続けますか?"
+"%sとの直接IMを選択しました あなたのIPアドレスを彼らに見えるようにしますがセ"
+"キュリティ的危険があります続けますか?"
 
-#: src/protocols/oscar/oscar.c:3450
+#: src/protocols/oscar/oscar.c:3568
+#, c-format
+msgid ""
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
+"support sending status messages.</I><BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3575
+#, c-format
+msgid ""
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
+"</I><BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3600
+#, fuzzy
+msgid "Get Status Msg"
+msgstr "離席メッセージ"
+
+#: src/protocols/oscar/oscar.c:3613
 msgid "Direct IM"
 msgstr "直接IM"
 
-#: src/protocols/oscar/oscar.c:3458
+#: src/protocols/oscar/oscar.c:3621
 msgid "Get Capabilities"
 msgstr "機能取得"
 
@@ -1057,8 +1500,8 @@ msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"頻繁な接続で接続が切れました 10分まって再接続してください"
-"このまま接続を続ければもっと待つことになります"
+"頻繁な接続で接続が切れました 10分まって再接続してくださいこのまま接続を続けれ"
+"ばもっと待つことになります"
 
 #: src/protocols/toc/toc.c:471
 #, c-format
@@ -1094,7 +1537,7 @@ msgstr "チャットエラー"
 msgid "Password Change Successful"
 msgstr "パスワード変更成功"
 
-#: src/dialogs.c:1688 src/protocols/toc/toc.c:782
+#: src/dialogs.c:1730 src/protocols/toc/toc.c:782
 msgid "Gaim - Password Change"
 msgstr "Gaim - パスワード変更"
 
@@ -1104,85 +1547,85 @@ msgid ""
 "sent to it, and may kick you off if you send a message. Gaim will prevent "
 "anything from going through. This is only temporary, please be patient."
 msgstr ""
-"TOCは休止コマンドを送りました これが発生した場合TOCはメッセージの送信を"
-"無視し、あなたがメッセージを送っても蹴られます Gaimはこれによりどのメッ"
-"セージが通り抜けることもありません 一時的ですので我慢してください"
+"TOCは休止コマンドを送りました これが発生した場合TOCはメッセージの送信を無視"
+"し、あなたがメッセージを送っても蹴られます Gaimはこれによりどのメッセージが通"
+"り抜けることもありません 一時的ですので我慢してください"
 
 #: src/protocols/toc/toc.c:788
 msgid "TOC Pause"
 msgstr "TOC休止"
 
-#: src/protocols/toc/toc.c:1222
+#: src/protocols/toc/toc.c:1225
 msgid "Get Dir Info"
 msgstr "ディレクトリ情報取得"
 
-#: src/protocols/toc/toc.c:1638 src/protocols/toc/toc.c:1680
-#: src/protocols/toc/toc.c:1799 src/protocols/toc/toc.c:1885
+#: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
+#: src/protocols/toc/toc.c:1802 src/protocols/toc/toc.c:1888
 msgid "Could not connect for transfer!"
 msgstr "転送接続できません"
 
-#: src/protocols/toc/toc.c:1829
+#: src/protocols/toc/toc.c:1832
 msgid "Could not write file header!"
 msgstr "ファイルヘッダを書くことができません!"
 
-#: src/protocols/toc/toc.c:1918
+#: src/protocols/toc/toc.c:1921
 msgid "Gaim - Save As..."
 msgstr "Gaim - 名前を付けて保存"
 
-#: src/protocols/toc/toc.c:1959
+#: src/protocols/toc/toc.c:1962
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgstr "%s の %s への要求ファイル%dは受け付けられました: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1960
+#: src/protocols/toc/toc.c:1963
 #, c-format
 msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr "%s の %s への要求ファイル%dは受け付けられました: %s (%.2f %s)%s%s"
 
-#: src/protocols/toc/toc.c:1965
+#: src/protocols/toc/toc.c:1968
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr "%sがファイルを送るよう要求しています"
 
-#: src/protocols/yahoo/yahoo.c:585
+#: src/protocols/yahoo/yahoo.c:594
 msgid "Your message did not get sent."
 msgstr "メッセージは送りませんでした"
 
-#: src/protocols/zephyr/zephyr.c:802
+#: src/protocols/zephyr/zephyr.c:840
 msgid "ZLocate"
 msgstr "ZLocate"
 
-#: src/protocols/zephyr/zephyr.c:839
+#: src/protocols/zephyr/zephyr.c:877
 msgid "Class:"
 msgstr "クラス:"
 
-#: src/protocols/zephyr/zephyr.c:843
+#: src/protocols/zephyr/zephyr.c:881
 msgid "Instance:"
 msgstr "インスタンス:"
 
-#: src/protocols/zephyr/zephyr.c:847
+#: src/protocols/zephyr/zephyr.c:885
 msgid "Recipient:"
 msgstr "受取人"
 
-#: src/about.c:93
+#: src/about.c:102
 #, c-format
 msgid "About Gaim v%s"
 msgstr "Gaim v%s について"
 
-#: src/about.c:126
+#: src/about.c:135
+#, fuzzy
 msgid ""
-"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
-"written\n"
-"using Gtk+ and is licensed under the GPL.\n"
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
+"It is written using Gtk+ and is licensed under the GPL.\n"
 "\n"
 "URL: "
 msgstr ""
-"Gaim はAOLのインスタントメッセンジャープロトコルをサポートしたクライアント"
-"です Gtk+とGPLのライセンスのもと開発されました"
-"\n"
+"Gaim はAOLのインスタントメッセンジャープロトコルをサポートしたクライアントで"
+"す Gtk+とGPLのライセンスのもと開発されました\n"
 "URL:"
 
-#: src/about.c:127
+#: src/about.c:137
 msgid ""
 "\n"
 "\n"
@@ -1192,7 +1635,7 @@ msgstr ""
 "\n"
 "IRC: irc.openprojects.net の#gaim チャンネル"
 
-#: src/about.c:137
+#: src/about.c:147
 msgid ""
 "Active Developers\n"
 "====================\n"
@@ -1230,98 +1673,96 @@ msgstr ""
 "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
 "Mark Spencer (original author)   [ markster@marko.net ]"
 
-#: src/about.c:155 src/aim.c:318 src/buddy.c:2633 src/buddy_chat.c:1311
-#: src/buddy_chat.c:1408 src/buddy_chat.c:1438 src/conversation.c:2795
-#: src/dialogs.c:568 src/dialogs.c:3858 src/multi.c:1057 src/plugins.c:277
-#: src/prefs.c:2535 src/prpl.c:438 src/prpl.c:679 src/server.c:1050
-msgid "Close"
-msgstr "閉じる"
-
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 #. gtk_widget_grab_default(button);
-#: src/about.c:175
+#: src/about.c:185
 msgid "Web Site"
 msgstr "Webサイト"
 
-#: src/aim.c:151 src/buddy.c:2626
+#: src/aim.c:153 src/buddy.c:2709
 msgid "Signoff"
 msgstr "サインオフ"
 
-#: src/aim.c:163
+#: src/aim.c:165
 msgid "Please enter your logon"
 msgstr "ログインしてください"
 
-#: src/aim.c:163 src/multi.c:1388 src/server.c:55
+#: src/aim.c:165 src/multi.c:1400 src/server.c:55
 msgid "Signon Error"
 msgstr "サインオンエラー"
 
-#: src/aim.c:261
+#: src/aim.c:263
 msgid "Gaim - Login"
 msgstr "Gaim - ログイン"
 
-#: src/aim.c:279
+#: src/aim.c:281
 msgid "Screen Name: "
 msgstr "スクリーンネーム: "
 
-#: src/aim.c:295
+#: src/aim.c:297
 msgid "Password: "
 msgstr "パスワード"
 
-#: src/aim.c:316 src/buddy.c:2630
+#: src/aim.c:318 src/buddy.c:2713
 msgid "Quit"
 msgstr "閉じる"
 
-#: src/aim.c:321 src/aim.c:819 src/buddy.c:2656
+#: src/aim.c:323 src/aim.c:831 src/buddy.c:2739
 msgid "Accounts"
 msgstr "アカウント"
 
-#: src/aim.c:323 src/multi.c:903
+#: src/aim.c:325 src/multi.c:915
 msgid "Signon"
 msgstr "サインオン"
 
-#: src/aim.c:355
+#: src/aim.c:357
 msgid "About"
 msgstr "About"
 
-#: src/aim.c:356 src/prefs.c:1619 src/prefs.c:1893
+#: src/aim.c:358 src/prefs.c:1633 src/prefs.c:1905
 msgid "Options"
 msgstr "オプション"
 
-#: src/aim.c:358 src/aim.c:822 src/buddy.c:2674
+#: src/aim.c:360 src/aim.c:834 src/buddy.c:2757
 msgid "Plugins"
 msgstr "プラグイン"
 
-#: src/aim.c:816 src/buddy.c:2666
+#: src/aim.c:828 src/buddy.c:2749
 msgid "Preferences"
 msgstr "設定"
 
-#: src/applet.c:199
+#: src/aim.c:838 src/multi.c:1472
+#, fuzzy
+msgid "Auto-login"
+msgstr "自動ログイン"
+
+#: src/applet.c:109
 msgid "Attempting to sign on...."
 msgstr "サインオンの承認"
 
-#: src/applet.c:202
+#: src/applet.c:112
 msgid "Offline. Click to bring up login box."
 msgstr "オフライン ログインボックスをクリックしてください"
 
-#: src/applet.c:218
+#: src/applet.c:128
 #, c-format
 msgid "Away: %d pending."
 msgstr "離席: %d ペンディング"
 
-#: src/applet.c:221
+#: src/applet.c:131
 msgid "Away."
 msgstr "離席"
 
-#: src/applet.c:296 src/away.c:388
+#: src/applet.c:200 src/away.c:388
 msgid "New Away Message"
 msgstr "新しい離席メッセージ"
 
-#: src/applet.c:444
+#: src/applet.c:348
 msgid "Can't create Gaim applet!"
 msgstr "Gaimアプレットをつくれません!"
 
-#: src/applet.c:465
+#: src/applet.c:368
 msgid "About..."
 msgstr "About..."
 
@@ -1345,88 +1786,74 @@ msgstr "離席メッセージの削除"
 msgid "Set All Away"
 msgstr "全部離席する"
 
-#. Put the buttons in the box
-#: src/buddy.c:488 src/buddy.c:2741 src/buddy_chat.c:1443
-#: src/conversation.c:2328 src/conversation.c:2810 src/dialogs.c:890
-#: src/dialogs.c:1072 src/dialogs.c:2053 src/multi.c:1041 src/prefs.c:2029
-#: src/prefs.c:2371 src/prefs.c:2405
-msgid "Add"
-msgstr "加える"
-
-#: src/buddy.c:489 src/buddy.c:2742 src/dialogs.c:900 src/dialogs.c:1047
+#: src/buddy.c:493 src/buddy.c:2828 src/dialogs.c:942 src/dialogs.c:1089
 msgid "Group"
 msgstr "グループ"
 
-#: src/buddy.c:490 src/buddy.c:2743 src/buddy_chat.c:1445
-#: src/conversation.c:2314 src/conversation.c:2807 src/prefs.c:2043
-#: src/prefs.c:2375 src/prefs.c:2409
-msgid "Remove"
-msgstr "削除"
-
-#: src/buddy.c:495 src/buddy.c:646 src/buddy.c:798 src/buddy.c:2505
-#: src/buddy_chat.c:850 src/buddy_chat.c:1267
+#: src/buddy.c:499 src/buddy.c:664 src/buddy.c:834 src/buddy.c:2579
+#: src/buddy_chat.c:861 src/buddy_chat.c:1278
 msgid "IM"
 msgstr "IM"
 
-#: src/buddy.c:496 src/buddy.c:2506 src/buddy_chat.c:866 src/buddy_chat.c:1275
-#: src/buddy_chat.c:1451 src/conversation.c:2828
+#: src/buddy.c:500 src/buddy.c:2580 src/buddy_chat.c:877 src/buddy_chat.c:1286
+#: src/buddy_chat.c:1462 src/conversation.c:2897
 msgid "Info"
 msgstr "情報"
 
 #. Put the buttons in the box
-#: src/buddy.c:651 src/buddy.c:803 src/dialogs.c:1039 src/dialogs.c:3417
-#: src/dialogs.c:3432
+#: src/buddy.c:669 src/buddy.c:839 src/dialogs.c:1081 src/dialogs.c:3458
+#: src/dialogs.c:3473
 msgid "Alias"
 msgstr "エイリアス"
 
-#: src/buddy.c:656 src/buddy.c:822
+#: src/buddy.c:674 src/buddy.c:858
 msgid "Add Buddy Pounce"
 msgstr "仲間郡を加える"
 
-#: src/buddy.c:663 src/buddy.c:828
+#: src/buddy.c:681 src/buddy.c:864
 msgid "View Log"
 msgstr "ログを見る"
 
-#: src/buddy.c:785 src/buddy.c:816
+#: src/buddy.c:821 src/buddy.c:852
 msgid "Rename"
 msgstr "改名"
 
-#: src/buddy.c:810
+#: src/buddy.c:846
 msgid "Un-Alias"
 msgstr "エイリアスを解く"
 
-#: src/buddy.c:1581 src/buddy.c:2649
+#: src/buddy.c:1645 src/buddy.c:2732
 msgid "Buddy Pounce"
 msgstr "仲間を掴む"
 
-#: src/buddy.c:1661
+#: src/buddy.c:1725
 msgid "New Buddy Pounce"
 msgstr "新しい仲間を掴む"
 
-#: src/buddy.c:1679
+#: src/buddy.c:1743
 msgid "Remove Buddy Pounce"
 msgstr "掴んだ仲間の削除"
 
-#: src/buddy.c:1707
+#: src/buddy.c:1771
 msgid "[Click to edit]"
 msgstr "[編集をクリック]"
 
-#: src/buddy.c:2183
+#: src/buddy.c:2254
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "ログインしました: %s\n"
 
-#: src/buddy.c:2195
+#: src/buddy.c:2266
 #, c-format
 msgid "Warnings: %d%%\n"
 msgstr "警告: %d%%\n"
 
-#: src/buddy.c:2207
+#: src/buddy.c:2278
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "機能: %s\n"
 
-#: src/buddy.c:2211
+#: src/buddy.c:2282
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1437,117 +1864,127 @@ msgstr ""
 "スクリーン名: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2215
+#: src/buddy.c:2286
 msgid "Idle: "
 msgstr "アイドル: "
 
-#: src/buddy.c:2286 src/buddy.c:2291
+#: src/buddy.c:2359 src/buddy.c:2364
 #, c-format
 msgid "%s logged in."
 msgstr "%s はログインしてます"
 
-#: src/buddy.c:2350 src/buddy.c:2355
+#: src/buddy.c:2424 src/buddy.c:2429
 #, c-format
 msgid "%s logged out."
 msgstr "%s はログアウトしました"
 
-#: src/buddy.c:2540
+#: src/buddy.c:2614
 msgid "Information on selected Buddy"
 msgstr "選択した仲間の情報"
 
-#: src/buddy.c:2541 src/dialogs.c:697
+#: src/buddy.c:2615 src/dialogs.c:697
 msgid "Send Instant Message"
 msgstr "簡易メッセージの送信"
 
-#: src/buddy.c:2542
+#: src/buddy.c:2616
 msgid "Start/join a Buddy Chat"
 msgstr "仲間チャットの開始/加入"
 
-#: src/buddy.c:2543
+#: src/buddy.c:2617
 msgid "Activate Away Message"
 msgstr "有効な離席メッセージ"
 
-#: src/buddy.c:2606
+#: src/buddy.c:2689
 msgid "File"
 msgstr "ファイル"
 
-#: src/buddy.c:2610
+#: src/buddy.c:2693
 msgid "Add A Buddy"
 msgstr "仲間を加える"
 
-#: src/buddy.c:2612
+#: src/buddy.c:2695
 msgid "Join A Chat"
 msgstr "チャットに加わる"
 
-#: src/buddy.c:2614
+#: src/buddy.c:2697
 msgid "New Instant Message"
 msgstr "新しい簡易メッセージ"
 
-#: src/buddy.c:2616 src/dialogs.c:749
+#: src/buddy.c:2699 src/dialogs.c:759
 msgid "Get User Info"
 msgstr "ユーザ情報取得"
 
-#: src/buddy.c:2621
+#: src/buddy.c:2704
 msgid "Import Buddy List"
 msgstr "仲間リストのインポート"
 
-#: src/buddy.c:2639
+#: src/buddy.c:2722
 msgid "Tools"
 msgstr "ツール"
 
-#: src/buddy.c:2662
+#: src/buddy.c:2745
 msgid "Protocol Actions"
 msgstr "プロトコル選択"
 
-#: src/buddy.c:2668
+#: src/buddy.c:2751
 msgid "View System Log"
 msgstr "システムログを見る"
 
-#: src/buddy.c:2680
+#: src/buddy.c:2763
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2683
+#: src/buddy.c:2766
 msgid "Load Script"
 msgstr "スクリプトの読み込み"
 
-#: src/buddy.c:2687
+#: src/buddy.c:2770
 msgid "Unload All Scripts"
 msgstr "全てのスクリプトの解除"
 
-#: src/buddy.c:2691
+#: src/buddy.c:2774
 msgid "List Scripts"
 msgstr "スクリプトリスト"
 
-#: src/buddy.c:2699
+#: src/buddy.c:2782
 msgid "Help"
 msgstr "ヘルプ"
 
-#: src/buddy.c:2704
+#: src/buddy.c:2787
+#, fuzzy
+msgid "Online Help"
+msgstr "オンライン"
+
+#: src/buddy.c:2788
+#, fuzzy
+msgid "Debug Window"
+msgstr "デバッグウィンドウを表示"
+
+#: src/buddy.c:2789
 msgid "About Gaim"
 msgstr "Gaimについて"
 
-#: src/buddy.c:2721 src/prefs.c:2891
+#: src/buddy.c:2807 src/prefs.c:2905
 msgid "Buddy List"
 msgstr "仲間リスト"
 
-#: src/buddy.c:2774
+#: src/buddy.c:2860
 msgid "Add a new Buddy"
 msgstr "新しい仲間を加える"
 
-#: src/buddy.c:2775
+#: src/buddy.c:2861
 msgid "Add a new Group"
 msgstr "新しいグループ"
 
-#: src/buddy.c:2776
+#: src/buddy.c:2862
 msgid "Remove selected Buddy/Group"
 msgstr "選択した仲間/グループの削除"
 
-#: src/buddy.c:2803
+#: src/buddy.c:2889
 msgid "Edit Buddies"
 msgstr "仲間の編集"
 
-#: src/buddy.c:2846
+#: src/buddy.c:2932
 msgid "Gaim - Buddy List"
 msgstr "Gaim - 仲間リスト"
 
@@ -1555,21 +1992,17 @@ msgstr "Gaim - 仲間リスト"
 msgid "Join Chat"
 msgstr "チャットへ加入"
 
-#: src/buddy_chat.c:272
-msgid "Buddy Chat"
-msgstr "仲間チャット"
-
 #: src/buddy_chat.c:283
 msgid "Join Chat As:"
 msgstr "名前を指定してチャットに加入"
 
-#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:450
-#: src/dialogs.c:540 src/dialogs.c:715 src/dialogs.c:773 src/dialogs.c:892
-#: src/dialogs.c:1068 src/dialogs.c:1431 src/dialogs.c:1636 src/dialogs.c:1760
-#: src/dialogs.c:1820 src/dialogs.c:2042 src/dialogs.c:2224 src/dialogs.c:2399
-#: src/dialogs.c:2470 src/dialogs.c:3166 src/dialogs.c:3419 src/dialogs.c:3600
-#: src/dialogs.c:3971 src/dialogs.c:4077 src/dialogs.c:4736 src/multi.c:769
-#: src/multi.c:899 src/prpl.c:150 src/prpl.c:224
+#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:449
+#: src/dialogs.c:539 src/dialogs.c:715 src/dialogs.c:816 src/dialogs.c:934
+#: src/dialogs.c:1110 src/dialogs.c:1473 src/dialogs.c:1678 src/dialogs.c:1802
+#: src/dialogs.c:1862 src/dialogs.c:2084 src/dialogs.c:2266 src/dialogs.c:2441
+#: src/dialogs.c:2512 src/dialogs.c:3208 src/dialogs.c:3460 src/dialogs.c:3641
+#: src/dialogs.c:4012 src/dialogs.c:4118 src/dialogs.c:4777 src/multi.c:781
+#: src/multi.c:911 src/prpl.c:150 src/prpl.c:224
 msgid "Cancel"
 msgstr "取消"
 
@@ -1577,16 +2010,16 @@ msgstr "取消"
 msgid "Join"
 msgstr "加入"
 
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1317
-#: src/buddy_chat.c:1407
+#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1328
+#: src/buddy_chat.c:1418
 msgid "Invite"
 msgstr "招待"
 
-#: src/buddy_chat.c:412 src/dialogs.c:1259 src/dialogs.c:3427
+#: src/buddy_chat.c:412 src/dialogs.c:1301 src/dialogs.c:3468
 msgid "Buddy"
 msgstr "仲間"
 
-#: src/buddy_chat.c:417 src/prefs.c:1992
+#: src/buddy_chat.c:417 src/prefs.c:2004
 msgid "Message"
 msgstr "メッセージ"
 
@@ -1594,302 +2027,296 @@ msgstr "メッセージ"
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - 仲間のチャットルーム情報で招待"
 
-#: src/buddy_chat.c:857
+#: src/buddy_chat.c:868
 msgid "Un-Ignore"
 msgstr "不無視"
 
-#: src/buddy_chat.c:859 src/buddy_chat.c:1271
+#: src/buddy_chat.c:870 src/buddy_chat.c:1282
 msgid "Ignore"
 msgstr "無視"
 
 #. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:922 src/buddy_chat.c:1034 src/buddy_chat.c:1497
-#: src/buddy_chat.c:1530
+#: src/buddy_chat.c:933 src/buddy_chat.c:1045 src/buddy_chat.c:1508
+#: src/buddy_chat.c:1541
 #, c-format
 msgid "%d %s in room"
 msgstr "%dは%sにいます"
 
-#: src/buddy_chat.c:930
+#: src/buddy_chat.c:941
 #, c-format
 msgid "%s entered the room."
 msgstr "%sは部屋に入りました"
 
-#: src/buddy_chat.c:996
+#: src/buddy_chat.c:1007
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%sは%sとして知られています"
 
-#: src/buddy_chat.c:1043
+#: src/buddy_chat.c:1054
 #, c-format
 msgid "%s left the room (%s)."
 msgstr "%sは部屋(%s)を去りました"
 
-#: src/buddy_chat.c:1045
+#: src/buddy_chat.c:1056
 #, c-format
 msgid "%s left the room."
 msgstr "%sは部屋を去りました"
 
-#: src/buddy_chat.c:1144
+#: src/buddy_chat.c:1155
 msgid "Gaim - Group Chats"
 msgstr "Gaim - グループチャット"
 
-#: src/buddy_chat.c:1207
+#: src/buddy_chat.c:1218
 msgid "Topic:"
 msgstr "トピック:"
 
-#: src/buddy_chat.c:1248
+#: src/buddy_chat.c:1259
 msgid "0 people in room"
 msgstr "誰もいません"
 
-#: src/buddy_chat.c:1322 src/buddy_chat.c:1406
+#: src/buddy_chat.c:1333 src/buddy_chat.c:1417
 msgid "Whisper"
 msgstr "ささやく"
 
-#: src/buddy_chat.c:1327 src/buddy_chat.c:1404 src/buddy_chat.c:1453
-#: src/conversation.c:2839
+#: src/buddy_chat.c:1338 src/buddy_chat.c:1415 src/buddy_chat.c:1464
+#: src/conversation.c:2908
 msgid "Send"
 msgstr "送信"
 
-#: src/buddy_chat.c:1447 src/conversation.c:2816
+#: src/buddy_chat.c:1458 src/conversation.c:2885
 msgid "Block"
 msgstr "拒む"
 
-#: src/buddy_chat.c:1449 src/conversation.c:2822 src/dialogs.c:425
-#: src/dialogs.c:454
+#: src/buddy_chat.c:1460 src/conversation.c:2891 src/dialogs.c:424
+#: src/dialogs.c:453
 msgid "Warn"
 msgstr "警告"
 
-#: src/conversation.c:413
+#: src/conversation.c:431
 msgid "Gaim - Save Conversation"
 msgstr "Gaim - 設定の保存"
 
-#: src/conversation.c:474
+#: src/conversation.c:492
 msgid "Gaim - Insert Image"
 msgstr "Gaim - 画像挿入"
 
-#: src/conversation.c:1278
+#: src/conversation.c:1336
 msgid "Unable to send message: too large"
 msgstr "メッセージを送れません: でかいから"
 
-#: src/conversation.c:1278 src/conversation.c:1282
+#: src/conversation.c:1336 src/conversation.c:1340
 msgid "Message Error"
 msgstr "メッセージエラー"
 
-#: src/conversation.c:1282
+#: src/conversation.c:1340
 msgid "Unable to send message: Unknown reason"
 msgstr "メッセージを送れません: 原因不明"
 
-#: src/conversation.c:1501
+#: src/conversation.c:1559
 #, c-format
 msgid "Currently at %d, "
 msgstr "現在%dにいます"
 
-#: src/conversation.c:1509
+#: src/conversation.c:1567
 #, c-format
 msgid "Setting position to %d\n"
 msgstr "位置を%dにします\n"
 
-#: src/conversation.c:2110 src/prefs.c:1305
+#: src/conversation.c:2170 src/prefs.c:1308
 msgid "Bold Text"
 msgstr "ボールドテキスト"
 
-#: src/conversation.c:2110
+#: src/conversation.c:2170
 msgid "Bold"
 msgstr "ボールド"
 
-#: src/conversation.c:2114
+#: src/conversation.c:2174
 msgid "Italics Text"
 msgstr "イタリックテキスト"
 
-#: src/conversation.c:2115
+#: src/conversation.c:2175
 msgid "Italics"
 msgstr "イタリック"
 
-#: src/conversation.c:2118 src/prefs.c:1317
+#: src/conversation.c:2178 src/prefs.c:1320
 msgid "Underline Text"
 msgstr "下線テキスト"
 
-#: src/conversation.c:2119
+#: src/conversation.c:2179
 msgid "Underline"
 msgstr "下線"
 
-#: src/conversation.c:2123 src/prefs.c:1323
+#: src/conversation.c:2183 src/prefs.c:1326
 msgid "Strike through Text"
 msgstr "テキスト入力"
 
-#: src/conversation.c:2123
+#: src/conversation.c:2183
 msgid "Strike"
 msgstr "入力"
 
-#: src/conversation.c:2129
+#: src/conversation.c:2189
 msgid "Decrease font size"
 msgstr "サイズ減少"
 
-#: src/conversation.c:2129
+#: src/conversation.c:2189
 msgid "Small"
 msgstr "小さい"
 
-#: src/conversation.c:2132
+#: src/conversation.c:2192
 msgid "Normal font size"
 msgstr "普通のフォントサイズ"
 
-#: src/conversation.c:2132
+#: src/conversation.c:2192
 msgid "Normal"
 msgstr "普通"
 
-#: src/conversation.c:2135
+#: src/conversation.c:2195
 msgid "Increase font size"
 msgstr "サイズ増大"
 
-#: src/conversation.c:2135
+#: src/conversation.c:2195
 msgid "Big"
 msgstr "大きい"
 
-#: src/conversation.c:2142 src/dialogs.c:2841 src/dialogs.c:2865
+#: src/conversation.c:2202 src/dialogs.c:2883 src/dialogs.c:2907
 msgid "Select Font"
 msgstr "フォントの選択"
 
-#: src/conversation.c:2143
+#: src/conversation.c:2203
 msgid "Font"
 msgstr "フォント"
 
-#: src/conversation.c:2146 src/prefs.c:1353
+#: src/conversation.c:2206 src/prefs.c:1356
 msgid "Text Color"
 msgstr "文字色"
 
-#: src/conversation.c:2147 src/conversation.c:2151
+#: src/conversation.c:2207 src/conversation.c:2211
 msgid "Color"
 msgstr "色"
 
-#: src/conversation.c:2151 src/prefs.c:1371
+#: src/conversation.c:2211 src/prefs.c:1374
 msgid "Background Color"
 msgstr "背景色"
 
-#: src/conversation.c:2158 src/dialogs.c:2464
+#: src/conversation.c:2218 src/dialogs.c:2506
 msgid "Insert Link"
 msgstr "リンクの挿入"
 
-#: src/conversation.c:2159
+#: src/conversation.c:2219
 msgid "Link"
 msgstr "リンク"
 
-#: src/conversation.c:2162
+#: src/conversation.c:2222
 msgid "Insert smiley face"
 msgstr "スマイリー挿入"
 
-#: src/conversation.c:2162
+#: src/conversation.c:2222
 msgid "Smiley"
 msgstr "スマイリー"
 
-#: src/conversation.c:2165
+#: src/conversation.c:2225
 msgid "Insert IM Image"
 msgstr "IM画像挿入"
 
-#: src/conversation.c:2165
+#: src/conversation.c:2225
 msgid "Image"
 msgstr "画像"
 
-#: src/conversation.c:2172
+#: src/conversation.c:2232
 msgid "Enable logging"
 msgstr "ログ有効化"
 
-#: src/conversation.c:2173 src/prefs.c:254
+#: src/conversation.c:2233 src/prefs.c:254
 msgid "Logging"
 msgstr "ログ"
 
-#: src/conversation.c:2182
+#: src/conversation.c:2242
 msgid "Save Conversation"
 msgstr "会話の保存"
 
-#: src/conversation.c:2183 src/dialogs.c:1640 src/dialogs.c:1824
-#: src/dialogs.c:3178 src/dialogs.c:3867 src/dialogs.c:4744
+#: src/conversation.c:2243 src/dialogs.c:1682 src/dialogs.c:1866
+#: src/dialogs.c:3220 src/dialogs.c:3908 src/dialogs.c:4785
 msgid "Save"
 msgstr "保存"
 
-#: src/conversation.c:2187
-msgid "Enable sounds"
-msgstr "音の有効化"
-
-#: src/conversation.c:2188
+#: src/conversation.c:2247 src/conversation.c:2248
 msgid "Sound"
 msgstr "音"
 
-#: src/conversation.c:2668
+#: src/conversation.c:2729
 msgid "Gaim - Conversations"
 msgstr "Gaim - 会話"
 
-#: src/conversation.c:2755
+#: src/conversation.c:2816
 msgid "Send message as: "
 msgstr "名前を付けてメッセージ送信:"
 
-#: src/conversation.c:3373
+#: src/conversation.c:3453
 msgid "Gaim - Save Icon"
 msgstr "Gaim - アイコン保存"
 
-#: src/conversation.c:3400
+#: src/conversation.c:3487
 msgid "Disable Animation"
 msgstr "アニメーション無効化"
 
-#: src/conversation.c:3405
+#: src/conversation.c:3492
 msgid "Enable Animation"
 msgstr "アニメーション有効化"
 
-#: src/conversation.c:3411
+#: src/conversation.c:3498
 msgid "Hide Icon"
 msgstr "隠れアイコン"
 
-#: src/conversation.c:3417
+#: src/conversation.c:3504
 msgid "Save Icon As..."
 msgstr "名前を付けてアイコンを保存"
 
-#: src/dialogs.c:413
+#: src/dialogs.c:412
 msgid "Gaim - Warn user?"
 msgstr "Gaim - ユーザを警告しますか?"
 
-#: src/dialogs.c:433
+#: src/dialogs.c:432
 #, c-format
 msgid "Do you really want to warn %s?"
 msgstr "本当に%sを警告したいのですか?"
 
-#: src/dialogs.c:438
+#: src/dialogs.c:437
 msgid "Warn anonymously?"
 msgstr "匿名で警告しますか?"
 
-#: src/dialogs.c:442
+#: src/dialogs.c:441
 msgid "Anonymous warnings are less harsh."
 msgstr "匿名の警告はそれほど荒くありません"
 
-#: src/dialogs.c:470
+#: src/dialogs.c:469
 #, c-format
 msgid "Removing '%s' from buddylist.\n"
 msgstr "仲間リストから'%s'を削除\n"
 
-#: src/dialogs.c:495
+#: src/dialogs.c:494
 #, c-format
 msgid "Gaim - Remove %s?"
 msgstr "Gaim - %sを削除"
 
-#: src/dialogs.c:508
+#: src/dialogs.c:507
 msgid "Remove Buddy"
 msgstr "仲間を削除"
 
-#: src/dialogs.c:518
+#: src/dialogs.c:517
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
 "your buddylist. Do you want to continue?"
-msgstr ""
-"仲間リストから'%s'を削除することについて"
-"続けますか?"
+msgstr "仲間リストから'%s'を削除することについて続けますか?"
 
-#: src/dialogs.c:530 src/prpl.c:154 src/prpl.c:228
+#: src/dialogs.c:529 src/prpl.c:154 src/prpl.c:228
 msgid "Accept"
 msgstr "了解"
 
 #. Build OK Button
-#: src/dialogs.c:637 src/dialogs.c:720 src/dialogs.c:778 src/dialogs.c:1435
-#: src/dialogs.c:1764 src/dialogs.c:1915 src/dialogs.c:2223 src/dialogs.c:2403
-#: src/dialogs.c:2469 src/dialogs.c:3976 src/dialogs.c:4082 src/multi.c:774
+#: src/dialogs.c:635 src/dialogs.c:720 src/dialogs.c:821 src/dialogs.c:1477
+#: src/dialogs.c:1806 src/dialogs.c:1957 src/dialogs.c:2265 src/dialogs.c:2445
+#: src/dialogs.c:2511 src/dialogs.c:4017 src/dialogs.c:4123 src/multi.c:786
 msgid "OK"
 msgstr "了解"
 
@@ -1901,338 +2328,343 @@ msgstr "Gaim - IMユーザ"
 msgid "IM who:"
 msgstr "IM 誰:"
 
-#: src/dialogs.c:756
+#: src/dialogs.c:768
 msgid "User:"
 msgstr "ユーザ:"
 
+#: src/dialogs.c:777
+#, fuzzy
+msgid "Account:"
+msgstr "アカウント"
+
 #. Finish up
-#: src/dialogs.c:783
+#: src/dialogs.c:826
 msgid "Gaim - Get User Info"
 msgstr "Gaim - ユーザ情報取得"
 
-#: src/dialogs.c:898
+#: src/dialogs.c:940
 msgid "Add Group"
 msgstr "グループ追加"
 
-#: src/dialogs.c:923
+#: src/dialogs.c:965
 msgid "Gaim - Add Group"
 msgstr "Gaim - グループ追加"
 
-#: src/dialogs.c:1007
+#: src/dialogs.c:1049
 msgid "Gaim - Add Buddy"
 msgstr "Gaim - 仲間追加"
 
-#: src/dialogs.c:1019
+#: src/dialogs.c:1061
 msgid "Add Buddy"
 msgstr "仲間追加"
 
-#: src/dialogs.c:1029
+#: src/dialogs.c:1071
 msgid "Contact"
 msgstr "コンタクト"
 
 #. Set up stuff for the account box
-#: src/dialogs.c:1055
+#: src/dialogs.c:1097
 msgid "Add To"
 msgstr "追加"
 
-#: src/dialogs.c:1092
+#: src/dialogs.c:1134
 msgid "Please enter a buddy to pounce."
 msgstr "掴みかかる仲間をいれてください"
 
-#: src/dialogs.c:1092
+#: src/dialogs.c:1134
 msgid "Buddy Pounce Error"
 msgstr "仲間掴みエラー"
 
-#: src/dialogs.c:1228
+#: src/dialogs.c:1270
 msgid "Gaim - New Buddy Pounce"
 msgstr "Gaim - 新しい仲間を掴む"
 
 #. <pounce type="who">
-#: src/dialogs.c:1239
+#: src/dialogs.c:1281
 msgid "Pounce Who"
 msgstr "誰を掴む"
 
-#: src/dialogs.c:1250
+#: src/dialogs.c:1292
 msgid "Account"
 msgstr "アカウント"
 
 #. </pounce type="who">
 #. <pounce type="when">
-#: src/dialogs.c:1276
+#: src/dialogs.c:1318
 msgid "Pounce When"
 msgstr "いつつかみかかる"
 
-#: src/dialogs.c:1286
+#: src/dialogs.c:1328
 msgid "Pounce on sign on"
 msgstr "サインオンの時"
 
-#: src/dialogs.c:1295
+#: src/dialogs.c:1337
 msgid "Pounce on return from away"
 msgstr "離席から戻った時"
 
-#: src/dialogs.c:1304
+#: src/dialogs.c:1346
 msgid "Pounce on return from idle"
 msgstr "休止から戻った時"
 
-#: src/dialogs.c:1313
+#: src/dialogs.c:1355
 msgid "Pounce when buddy is typing to you"
 msgstr "あなたへ仲間が入力した時"
 
 #. </pounce type="when">
 #. <pounce type="action">
-#: src/dialogs.c:1323
+#: src/dialogs.c:1365
 msgid "Pounce Action"
 msgstr "掴み設定"
 
-#: src/dialogs.c:1334
+#: src/dialogs.c:1376
 msgid "Open IM Window"
 msgstr "IMウィンドウを開く"
 
-#: src/dialogs.c:1343
+#: src/dialogs.c:1385
 msgid "Popup Notification"
 msgstr "ポップアップ通知"
 
-#: src/dialogs.c:1352
+#: src/dialogs.c:1394
 msgid "Send Message"
 msgstr "メッセージ送信"
 
-#: src/dialogs.c:1373
+#: src/dialogs.c:1415
 msgid "Execute command on pounce"
 msgstr "掴むコマンドの実行"
 
-#: src/dialogs.c:1395
+#: src/dialogs.c:1437
 msgid "Play sound on pounce"
 msgstr "掴む音を再生"
 
 #. </pounce type="action">
-#: src/dialogs.c:1417
+#: src/dialogs.c:1459
 msgid "Save this pounce after activation"
 msgstr "活性化後の掴みの保存"
 
-#: src/dialogs.c:1503
+#: src/dialogs.c:1545
 msgid "Gaim - Set Dir Info"
 msgstr "Gaim - ディレクトリ情報の設定"
 
-#: src/dialogs.c:1512
+#: src/dialogs.c:1554
 msgid "Directory Info"
 msgstr "ディレクトリ情報"
 
-#: src/dialogs.c:1534
+#: src/dialogs.c:1576
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Web検索からあなたの情報を見付けることを許可する"
 
 #. Line 1
-#: src/dialogs.c:1537 src/dialogs.c:2242
+#: src/dialogs.c:1579 src/dialogs.c:2284
 msgid "First Name"
 msgstr "姓"
 
 #. Line 2
-#: src/dialogs.c:1548 src/dialogs.c:2254
+#: src/dialogs.c:1590 src/dialogs.c:2296
 msgid "Middle Name"
 msgstr "ミドルネーム"
 
 #. Line 3
-#: src/dialogs.c:1560 src/dialogs.c:2266
+#: src/dialogs.c:1602 src/dialogs.c:2308
 msgid "Last Name"
 msgstr "名"
 
 #. Line 4
-#: src/dialogs.c:1571 src/dialogs.c:2278
+#: src/dialogs.c:1613 src/dialogs.c:2320
 msgid "Maiden Name"
 msgstr "旧姓"
 
 #. Line 6
-#: src/dialogs.c:1593 src/dialogs.c:2301
+#: src/dialogs.c:1635 src/dialogs.c:2343
 msgid "State"
 msgstr "州"
 
-#: src/dialogs.c:1658
+#: src/dialogs.c:1700
 msgid "New Passwords Do Not Match"
 msgstr "新しいパスワードはマッチしません"
 
-#: src/dialogs.c:1658 src/dialogs.c:1663
+#: src/dialogs.c:1700 src/dialogs.c:1705
 msgid "Gaim - Change Password Error"
 msgstr "Gaim - パスワード変更エラー"
 
-#: src/dialogs.c:1663
+#: src/dialogs.c:1705
 msgid "Fill out all fields completely"
 msgstr "全てを入力してください"
 
-#: src/dialogs.c:1718
+#: src/dialogs.c:1760
 msgid "Original Password"
 msgstr "オリジナルパスワード"
 
-#: src/dialogs.c:1732
+#: src/dialogs.c:1774
 msgid "New Password"
 msgstr "新しいパスワード"
 
-#: src/dialogs.c:1746
+#: src/dialogs.c:1788
 msgid "New Password (again)"
 msgstr "新しいパスワード(再入力)"
 
-#: src/dialogs.c:1787
+#: src/dialogs.c:1829
 msgid "Gaim - Set User Info"
 msgstr "Gaim - ユーザ情報の登録"
 
-#: src/dialogs.c:1899
+#: src/dialogs.c:1941
 msgid "Below are the results of your search: "
 msgstr "あなたの検索結果は: "
 
-#: src/dialogs.c:2032 src/dialogs.c:2039
+#: src/dialogs.c:2074 src/dialogs.c:2081
 msgid "Permit"
 msgstr "許可"
 
-#: src/dialogs.c:2034 src/dialogs.c:2041
+#: src/dialogs.c:2076 src/dialogs.c:2083
 msgid "Deny"
 msgstr "非許可"
 
-#: src/dialogs.c:2078
+#: src/dialogs.c:2120
 msgid "Gaim - Add Permit"
 msgstr "Gaim - 許可の追加"
 
-#: src/dialogs.c:2080
+#: src/dialogs.c:2122
 msgid "Gaim - Add Deny"
 msgstr "Gaim - 非許可の追加"
 
-#: src/dialogs.c:2140
+#: src/dialogs.c:2182
 msgid "Gaim - Log Conversation"
 msgstr "Gaim - ログ会話"
 
-#: src/dialogs.c:2218 src/dialogs.c:2381
+#: src/dialogs.c:2260 src/dialogs.c:2423
 msgid "Search for Buddy"
 msgstr "仲間の検索"
 
-#: src/dialogs.c:2346
+#: src/dialogs.c:2388
 msgid "Gaim - Find Buddy By Info"
 msgstr "Gaim - 情報から仲間を探す"
 
-#: src/dialogs.c:2375
+#: src/dialogs.c:2417
 msgid "Gaim - Find Buddy By Email"
 msgstr "Gaim - E-mailから仲間を探す"
 
-#: src/dialogs.c:2515
+#: src/dialogs.c:2557
 msgid "Gaim - Add URL"
 msgstr "Gaim - URL追加"
 
-#: src/dialogs.c:2666 src/dialogs.c:2687 src/dialogs.c:2741
+#: src/dialogs.c:2708 src/dialogs.c:2729 src/dialogs.c:2783
 msgid "Select Text Color"
 msgstr "文字色選択"
 
-#: src/dialogs.c:2720
+#: src/dialogs.c:2762
 msgid "Select Background Color"
 msgstr "背景色選択"
 
-#: src/dialogs.c:2942
+#: src/dialogs.c:2984
 msgid "Import to:"
 msgstr "インポートする: "
 
-#: src/dialogs.c:2966
+#: src/dialogs.c:3008
 msgid "Gaim - Import Buddy List"
 msgstr "Gaim - 仲間リストのインポート"
 
 #. We shouldn't allow a blank title
-#: src/dialogs.c:3033
+#: src/dialogs.c:3075
 msgid "You cannot create an away message with a blank title"
 msgstr "空白の題名で離席メッセージは作れません"
 
 #. We shouldn't allow a blank message
-#: src/dialogs.c:3040
+#: src/dialogs.c:3082
 msgid "You cannot create an empty away message"
 msgstr "空のメッセージを作れません"
 
-#: src/dialogs.c:3108
+#: src/dialogs.c:3150
 msgid "Gaim - New away message"
 msgstr "Gaim - 新しい離席メッセージ"
 
-#: src/dialogs.c:3118
+#: src/dialogs.c:3160
 msgid "New away message"
 msgstr "新しい離席メッセージ"
 
-#: src/dialogs.c:3131
+#: src/dialogs.c:3173
 msgid "Away title: "
 msgstr "離席メッセージ 題名:"
 
-#: src/dialogs.c:3170
+#: src/dialogs.c:3212
 msgid "Use"
 msgstr "使う"
 
-#: src/dialogs.c:3174
+#: src/dialogs.c:3216
 msgid "Save & Use"
 msgstr "保存して使う"
 
 #. show everything
-#: src/dialogs.c:3372
+#: src/dialogs.c:3413
 msgid "Smile!"
 msgstr "笑え!"
 
-#: src/dialogs.c:3425
+#: src/dialogs.c:3466
 msgid "Alias Buddy"
 msgstr "仲間のエイリアス"
 
-#: src/dialogs.c:3458
+#: src/dialogs.c:3499
 msgid "Gaim - Alias Buddy"
 msgstr "Gaim - 仲間のエイリアス"
 
-#: src/dialogs.c:3530
+#: src/dialogs.c:3571
 msgid "Gaim - Save Log File"
 msgstr "Gaim - ログの保存"
 
-#: src/dialogs.c:3562
+#: src/dialogs.c:3603
 #, c-format
 msgid "Unable to remove file %s - %s"
 msgstr "ファイル %s - %s を削除"
 
-#: src/dialogs.c:3590
+#: src/dialogs.c:3631
 msgid "Really clear log?"
 msgstr "本当にログを削除?"
 
-#: src/dialogs.c:3605
+#: src/dialogs.c:3646
 msgid "Okay"
 msgstr "OK"
 
-#: src/dialogs.c:3776
+#: src/dialogs.c:3817
 msgid "Date"
 msgstr "日付"
 
-#: src/dialogs.c:3839
+#: src/dialogs.c:3880
 msgid "Conversation"
 msgstr "会話"
 
-#: src/dialogs.c:3862
+#: src/dialogs.c:3903
 msgid "Clear"
 msgstr "消去"
 
-#: src/dialogs.c:3940
+#: src/dialogs.c:3981
 msgid "Gaim - Rename Group"
 msgstr "Gaim - グループの改名"
 
-#: src/dialogs.c:3950
+#: src/dialogs.c:3991
 msgid "Rename Group"
 msgstr "グループの改名"
 
-#: src/dialogs.c:3957 src/dialogs.c:4063
+#: src/dialogs.c:3998 src/dialogs.c:4104
 msgid "New name:"
 msgstr "新しい名前"
 
-#: src/dialogs.c:4046
+#: src/dialogs.c:4087
 msgid "Gaim - Rename Buddy"
 msgstr "Gaim - 仲間の改名"
 
-#: src/dialogs.c:4056
+#: src/dialogs.c:4097
 msgid "Rename Buddy"
 msgstr "仲間の改名"
 
 #. Below is basically stolen from plugins.c
-#: src/dialogs.c:4140
+#: src/dialogs.c:4181
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Perlスクリプトの選択"
 
-#: src/gaimrc.c:1117
+#: src/gaimrc.c:1136
 #, c-format
 msgid "Could not open config file %s."
 msgstr "設定ファイル%sを開けません"
 
-#: src/gaimrc.c:1118
+#: src/gaimrc.c:1137
 msgid "Preferences Error"
 msgstr "設定エラー"
 
@@ -2245,55 +2677,65 @@ msgstr "受取: '%s'\n"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: 接続開始エラー\n"
 
-#: src/multi.c:452
+#: src/module.c:106 src/module.c:112 src/module.c:122
+#, fuzzy
+msgid "Plugin Error"
+msgstr "ログインエラー"
+
+#: src/multi.c:454
 msgid "Gaim - Load Buddy Icon"
 msgstr "Gaim - 仲間アイコン読み込み"
 
-#: src/multi.c:495
+#: src/multi.c:497
 msgid "Buddy Icon File:"
 msgstr "仲間アイコンファイル:"
 
-#: src/multi.c:506
+#: src/multi.c:508
 msgid "Browse"
 msgstr "閲覧"
 
-#: src/multi.c:511 src/prefs.c:1545
+#: src/multi.c:513 src/prefs.c:1548
 msgid "Reset"
 msgstr "リセット"
 
-#: src/multi.c:538
+#: src/multi.c:540
 msgid "Screenname:"
 msgstr "スクリーン名:"
 
-#: src/multi.c:558
+#: src/multi.c:559
+#, fuzzy
+msgid "Alias:"
+msgstr "エイリアス"
+
+#: src/multi.c:569
 msgid "Protocol:"
 msgstr "プロトコル:"
 
-#: src/multi.c:563
+#: src/multi.c:574
 msgid "Remember Password"
 msgstr "パスワードを覚える"
 
-#: src/multi.c:564
+#: src/multi.c:575
 msgid "Auto-Login"
 msgstr "自動ログイン"
 
-#: src/multi.c:604
+#: src/multi.c:616
 msgid "New Mail Notifications"
 msgstr "新しいメール通知"
 
-#: src/multi.c:694
+#: src/multi.c:706
 msgid "Register with server"
 msgstr "サーバに登録"
 
-#: src/multi.c:752
+#: src/multi.c:764
 msgid "Gaim - Modify Account"
 msgstr "Gaim - アカウント修正"
 
-#: src/multi.c:871
+#: src/multi.c:883
 msgid "Enter Password"
 msgstr "パスワード入力"
 
-#: src/multi.c:935
+#: src/multi.c:947
 msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
@@ -2301,44 +2743,44 @@ msgstr ""
 "このアカウントではログをとれません プロトコルを読み込んでいないなら読み込む"
 "か、プロトコルがログインでは機能しないかです"
 
-#: src/multi.c:937
+#: src/multi.c:949
 msgid "Login Error"
 msgstr "ログインエラー"
 
-#: src/multi.c:966
+#: src/multi.c:978
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "本当に%sを削除したいのですか?"
 
-#: src/multi.c:1003
+#: src/multi.c:1015
 msgid "Gaim - Account Editor"
 msgstr "Gaim - アカウント編集"
 
-#: src/multi.c:1022
+#: src/multi.c:1034
 msgid "Select All"
 msgstr "全て選択"
 
-#: src/multi.c:1027
+#: src/multi.c:1039
 msgid "Select Autos"
 msgstr "全て自動選択"
 
-#: src/multi.c:1031
+#: src/multi.c:1043
 msgid "Select None"
 msgstr "何も選択しない"
 
-#: src/multi.c:1045
+#: src/multi.c:1057
 msgid "Modify"
 msgstr "編集"
 
-#: src/multi.c:1049
+#: src/multi.c:1061
 msgid "Sign On/Off"
 msgstr "サインオン/オフ"
 
-#: src/multi.c:1053
+#: src/multi.c:1065
 msgid "Delete"
 msgstr "削除"
 
-#: src/multi.c:1368
+#: src/multi.c:1380
 #, c-format
 msgid ""
 "%s\n"
@@ -2347,25 +2789,25 @@ msgstr ""
 "%s\n"
 "%s: %s"
 
-#: src/multi.c:1387
+#: src/multi.c:1399
 #, c-format
 msgid "%s was unable to sign on"
 msgstr "%s はサインオンできません"
 
-#: src/multi.c:1398
+#: src/multi.c:1410
 msgid "Notice"
 msgstr "注意"
 
-#: src/multi.c:1408
+#: src/multi.c:1420
 #, c-format
 msgid "%s has been signed off"
 msgstr "%s はサインオフしました"
 
-#: src/multi.c:1409
+#: src/multi.c:1421
 msgid "Connection Error"
 msgstr "接続エラー"
 
-#: src/perl.c:856
+#: src/perl.c:875
 msgid "Perl Scripts"
 msgstr "Perl スクリプト"
 
@@ -2426,11 +2868,13 @@ msgstr "このウィンドウを閉じる"
 msgid "General Options"
 msgstr "一般的なオプション"
 
-#: src/prefs.c:200 src/prefs.c:383 src/prefs.c:551 src/prefs.c:665
-#: src/prefs.c:918 src/prefs.c:1068 src/prefs.c:1293 src/prefs.c:1615
-#: src/prefs.c:1889 src/prefs.c:2322
+#: src/prefs.c:200 src/prefs.c:384 src/prefs.c:552 src/prefs.c:667
+#: src/prefs.c:921 src/prefs.c:1071 src/prefs.c:1296 src/prefs.c:1629
+#: src/prefs.c:1901 src/prefs.c:2334
 msgid "All options take effect immediately unless otherwise noted."
-msgstr "もし他の方法で注意されなかったならば、オプションはすべて効果を直ちに現わします"
+msgstr ""
+"もし他の方法で注意されなかったならば、オプションはすべて効果を直ちに現わしま"
+"す"
 
 #: src/prefs.c:212
 msgid "Miscellaneous"
@@ -2502,8 +2946,8 @@ msgid "Browser"
 msgstr "閲覧する"
 
 #: src/prefs.c:291
-msgid "KFM"
-msgstr "KFM"
+msgid "Konqueror"
+msgstr ""
 
 #: src/prefs.c:292
 msgid "Opera"
@@ -2513,395 +2957,409 @@ msgstr "Opera"
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/prefs.c:296
+#: src/prefs.c:294
+msgid "Mozilla"
+msgstr ""
+
+#: src/prefs.c:297
 msgid "Pop up new window by default"
 msgstr "デフォルトで新しいウィンドウを開く"
 
-#: src/prefs.c:303
+#: src/prefs.c:304
 msgid "GNOME URL Handler"
 msgstr "GNOME URLハンドラー"
 
-#: src/prefs.c:305
+#: src/prefs.c:306
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/prefs.c:306
-msgid "Manual"
-msgstr "手作業"
+#: src/prefs.c:307
+#, c-format
+msgid "Manual (%s for URL)"
+msgstr ""
 
-#: src/prefs.c:375
+#: src/prefs.c:376
 msgid "Proxy Options"
 msgstr "プロキシオプション"
 
-#: src/prefs.c:387
+#: src/prefs.c:388
 msgid ""
 "Not all protocols can use these proxy options. Please see the README file "
 "for details."
 msgstr ""
-"全てのプロトコルでプロキシオプションは使わない READMEファイルをみて"
-"ください"
+"全てのプロトコルでプロキシオプションは使わない READMEファイルをみてください"
 
-#: src/prefs.c:392
+#: src/prefs.c:393
 msgid "Proxy Type"
 msgstr "プロキシタイプ"
 
-#: src/prefs.c:404
+#: src/prefs.c:405
 msgid "Proxy Server"
 msgstr "プロキシサーバ"
 
-#: src/prefs.c:407
+#: src/prefs.c:408
 msgid "No Proxy"
 msgstr "プロキシを利用しない"
 
-#: src/prefs.c:419
+#: src/prefs.c:420
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
-#: src/prefs.c:429
+#: src/prefs.c:430
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
-#: src/prefs.c:438
+#: src/prefs.c:439
 msgid "HTTP"
 msgstr "HTTP"
 
-#: src/prefs.c:462
+#: src/prefs.c:463
 msgid "Host"
 msgstr "ホスト名"
 
-#: src/prefs.c:478
+#: src/prefs.c:479
 msgid "Port"
 msgstr "ポート番号"
 
-#: src/prefs.c:495
+#: src/prefs.c:496
 msgid "User"
 msgstr "ユーザ名"
 
-#: src/prefs.c:511
+#: src/prefs.c:512
 msgid "Password"
 msgstr "パスワード"
 
-#: src/prefs.c:543
+#: src/prefs.c:544
 msgid "Buddy List Options"
 msgstr "仲間リストオプション"
 
-#: src/prefs.c:555
+#: src/prefs.c:556
 msgid "Buddy List Window"
 msgstr "仲間リストウィンドウ"
 
-#: src/prefs.c:568
+#: src/prefs.c:569
 msgid "Tab Placement:"
 msgstr "タブ置換"
 
-#: src/prefs.c:572 src/prefs.c:1001 src/prefs.c:1151
+#: src/prefs.c:573 src/prefs.c:1004 src/prefs.c:1154
 msgid "Top"
 msgstr "一番上"
 
-#: src/prefs.c:573 src/prefs.c:1003 src/prefs.c:1153
+#: src/prefs.c:574 src/prefs.c:1006 src/prefs.c:1156
 msgid "Bottom"
 msgstr "一番下"
 
-#: src/prefs.c:585
+#: src/prefs.c:586
 msgid "Hide IM/Info/Chat buttons"
 msgstr "IM/情報/チャットボタンを隠す"
 
-#: src/prefs.c:587
+#: src/prefs.c:588
 msgid "Automatically show buddy list on sign on"
 msgstr "登録された友達リストを自動で表示"
 
-#: src/prefs.c:589
+#: src/prefs.c:590
 msgid "Display Buddy List near applet"
 msgstr "アプレット付近で友達リストを表示"
 
-#: src/prefs.c:592
+#: src/prefs.c:593
 msgid "Save Window Size/Position"
 msgstr "ウィンドウサイズ、位置を保存"
 
-#: src/prefs.c:595
+#: src/prefs.c:596
 msgid "Show pictures on buttons"
 msgstr "ボタン画像を表示"
 
 #: src/prefs.c:600
+msgid "Raise Buddy List on Signons and Signoffs"
+msgstr ""
+
+#: src/prefs.c:602
 msgid "Group Displays"
 msgstr "グループを表示"
 
-#: src/prefs.c:612
+#: src/prefs.c:614
 msgid "Hide groups with no online buddies"
 msgstr "オフラインの友達はグループを隠す"
 
-#: src/prefs.c:618
+#: src/prefs.c:620
 msgid "Show numbers in groups"
 msgstr "グループ数の表示"
 
-#: src/prefs.c:620
+#: src/prefs.c:622
 msgid "Buddy Displays"
 msgstr "仲間を表示"
 
-#: src/prefs.c:632
+#: src/prefs.c:634
 msgid "Show buddy type icons"
 msgstr "仲間タイプアイコンの表示"
 
-#: src/prefs.c:633
+#: src/prefs.c:635
 msgid "Show warning levels"
 msgstr "警告レベルの表示"
 
-#: src/prefs.c:639
+#: src/prefs.c:641
 msgid "Show idle times"
 msgstr "休止時間の表示"
 
-#: src/prefs.c:640
+#: src/prefs.c:642
 msgid "Grey idle buddies"
 msgstr "休止仲間はグレーで"
 
-#: src/prefs.c:657
+#: src/prefs.c:659
 msgid "Conversation Options"
 msgstr "会話オプション"
 
-#: src/prefs.c:669
+#: src/prefs.c:671
 msgid "Keyboard Options"
 msgstr "キーボードオプション"
 
-#: src/prefs.c:681
+#: src/prefs.c:683
 msgid "Enter sends message"
 msgstr "「Enter」でメッセージ送信"
 
-#: src/prefs.c:682
+#: src/prefs.c:684
 msgid "Control-Enter sends message"
 msgstr "「Control-Enter」でメッセージ送信"
 
-#: src/prefs.c:683
+#: src/prefs.c:685
 msgid "Escape closes window"
 msgstr "「Escape」でウィンドウを閉じる"
 
-#: src/prefs.c:689
+#: src/prefs.c:686
+#, fuzzy
+msgid "Control-W closes window"
+msgstr "「Escape」でウィンドウを閉じる"
+
+#: src/prefs.c:692
 msgid "Control-{B/I/U/S} inserts HTML tags"
 msgstr "「Control-{B/I/U/S}」でHTMLタグを挿入"
 
-#: src/prefs.c:690
+#: src/prefs.c:693
 msgid "Control-(number) inserts smileys"
 msgstr "「Control-(number)」でスマイリー挿入"
 
-#: src/prefs.c:691
+#: src/prefs.c:694
 msgid "F2 toggles timestamp display"
 msgstr "F2 でタイムスタンプ表示"
 
-#: src/prefs.c:693
+#: src/prefs.c:696
 msgid "Display and General Options"
 msgstr "表示と一般オプション"
 
-#: src/prefs.c:705
+#: src/prefs.c:708
 msgid "Show graphical smileys"
 msgstr "グラフィックスマイリーの表示"
 
-#: src/prefs.c:706
+#: src/prefs.c:709
 msgid "Show timestamp on messages"
 msgstr "メッセージのタイムスタンプを表示"
 
-#: src/prefs.c:707
+#: src/prefs.c:710
 msgid "Show URLs as links"
 msgstr "リンクとしてURLを表示"
 
-#: src/prefs.c:708
+#: src/prefs.c:711
 msgid "Highlight misspelled words"
 msgstr "ミススペルをハイライトする"
 
-#: src/prefs.c:709 src/prefs.c:1911
+#: src/prefs.c:712 src/prefs.c:1923
 msgid "Sending messages removes away status"
 msgstr "離席状態のメッセージを送信"
 
-#: src/prefs.c:710 src/prefs.c:1924
+#: src/prefs.c:713 src/prefs.c:1936
 msgid "Queue new messages when away"
 msgstr "離席したら新しいメッセージはキューする"
 
-#: src/prefs.c:716
+#: src/prefs.c:719
 msgid "Ignore colors"
 msgstr "色を無視"
 
-#: src/prefs.c:717
+#: src/prefs.c:720
 msgid "Ignore font faces"
 msgstr "フォントを無視"
 
-#: src/prefs.c:718
+#: src/prefs.c:721
 msgid "Ignore font sizes"
 msgstr "フォントサイズを無視"
 
-#: src/prefs.c:719
+#: src/prefs.c:722
 msgid "Ignore TiK Automated Messages"
 msgstr "TiK自動メッセージを無視"
 
-#: src/prefs.c:720 src/prefs.c:1909
+#: src/prefs.c:723 src/prefs.c:1921
 msgid "Ignore new conversations when away"
 msgstr "離席時の新しい会話は無視"
 
-#: src/prefs.c:909
+#: src/prefs.c:912
 msgid "IM Options"
 msgstr "IMオプション"
 
-#: src/prefs.c:922 src/prefs.c:2907
+#: src/prefs.c:925 src/prefs.c:2921
 msgid "IM Window"
 msgstr "IMウィンドウ"
 
-#: src/prefs.c:938 src/prefs.c:1088
+#: src/prefs.c:941 src/prefs.c:1091
 msgid "Show buttons as: "
 msgstr "名前を付けてボタンを表示"
 
-#: src/prefs.c:942 src/prefs.c:1093
+#: src/prefs.c:945 src/prefs.c:1096
 msgid "Pictures And Text"
 msgstr "画像とテキスト"
 
-#: src/prefs.c:943 src/prefs.c:1095
+#: src/prefs.c:946 src/prefs.c:1098
 msgid "Pictures"
 msgstr "画像"
 
-#: src/prefs.c:944 src/prefs.c:1096
+#: src/prefs.c:947 src/prefs.c:1099
 msgid "Text"
 msgstr "テキスト"
 
-#: src/prefs.c:955
+#: src/prefs.c:958
 msgid "Show all conversations in one tabbed window"
 msgstr "全ての会話を一つのタブウィンドウで表示"
 
-#: src/prefs.c:957
+#: src/prefs.c:960
 msgid "Show chats in the same tabbed window"
 msgstr "同じタブウィンドウでチャットを表示"
 
-#: src/prefs.c:964 src/prefs.c:1116
+#: src/prefs.c:967 src/prefs.c:1119
 msgid "Raise windows on events"
 msgstr "イベント発生でウィンドウをアクティブにする"
 
-#: src/prefs.c:965
+#: src/prefs.c:968
 msgid "Show logins in window"
 msgstr "ウィンドウでログイン表示"
 
-#: src/prefs.c:966
-msgid "Show aliases in tabs/titles"
+#: src/prefs.c:969
+#, fuzzy
+msgid "Show aliases in tabs/titles/ticker"
 msgstr "タブ/題名をエイリアス表示"
 
-#: src/prefs.c:967
+#: src/prefs.c:970
 msgid "Hide window on send"
 msgstr "送信ウィンドウを隠す"
 
-#: src/prefs.c:969 src/prefs.c:1119
+#: src/prefs.c:972 src/prefs.c:1122
 msgid "Window Sizes"
 msgstr "ウィンドウサイズ"
 
-#: src/prefs.c:977 src/prefs.c:1127
+#: src/prefs.c:980 src/prefs.c:1130
 msgid "New window width:"
 msgstr "新しいウィンドウの幅:"
 
-#: src/prefs.c:978 src/prefs.c:1128
+#: src/prefs.c:981 src/prefs.c:1131
 msgid "New window height:"
 msgstr "新しいウィンドウの高さ:"
 
-#: src/prefs.c:979 src/prefs.c:1129
+#: src/prefs.c:982 src/prefs.c:1132
 msgid "Entry widget height:"
 msgstr "入力ウィジェットの高さ:"
 
-#: src/prefs.c:981 src/prefs.c:1131
+#: src/prefs.c:984 src/prefs.c:1134
 msgid "Tab Placement"
 msgstr "タブ置換"
 
-#: src/prefs.c:1010 src/prefs.c:1160
+#: src/prefs.c:1013 src/prefs.c:1163
 msgid "Left"
 msgstr "左"
 
-#: src/prefs.c:1012 src/prefs.c:1162
+#: src/prefs.c:1015 src/prefs.c:1165
 msgid "Right"
 msgstr "右"
 
-#: src/prefs.c:1016
+#: src/prefs.c:1019
 msgid "Buddy Icons"
 msgstr "仲間アイコン"
 
-#: src/prefs.c:1028
+#: src/prefs.c:1031
 msgid "Hide Buddy Icons"
 msgstr "仲間アイコンを隠す"
 
-#: src/prefs.c:1034
+#: src/prefs.c:1037
 msgid "Disable Buddy Icon Animation"
 msgstr "アニメーション仲間アイコン無効化"
 
-#: src/prefs.c:1060
+#: src/prefs.c:1063
 msgid "Chat Options"
 msgstr "チャットオプション"
 
-#: src/prefs.c:1072
+#: src/prefs.c:1075
 msgid "Group Chat Window"
 msgstr "グループチャットウィンドウ"
 
-#: src/prefs.c:1107
+#: src/prefs.c:1110
 msgid "Show all chats in one tabbed window"
 msgstr "全てのチャットを一つのタブウィンドウで表示"
 
-#: src/prefs.c:1109
+#: src/prefs.c:1112
 msgid "Show conversations in the same tabbed window"
 msgstr "全ての会話を同じタブウィンドウで表示"
 
-#: src/prefs.c:1117
+#: src/prefs.c:1120
 msgid "Show people joining/leaving in window"
 msgstr "加入/離席をウィンドウで表示"
 
-#: src/prefs.c:1165
+#: src/prefs.c:1168
 msgid "Tab Completion"
 msgstr "タブ完了"
 
-#: src/prefs.c:1177
+#: src/prefs.c:1180
 msgid "Tab-Complete Nicks"
 msgstr "タブのニックネーム"
 
-#: src/prefs.c:1183
+#: src/prefs.c:1186
 msgid "Old-Style Tab Completion"
 msgstr "古いスタイルのタブ"
 
-#: src/prefs.c:1285 src/prefs.c:2917
+#: src/prefs.c:1288 src/prefs.c:2931
 msgid "Font Options"
 msgstr "フォントオプション"
 
-#: src/prefs.c:1311
+#: src/prefs.c:1314
 msgid "Italic Text"
 msgstr "イタリックテキスト"
 
-#: src/prefs.c:1355 src/prefs.c:1373 src/prefs.c:1395
+#: src/prefs.c:1358 src/prefs.c:1376 src/prefs.c:1398
 msgid "Select"
 msgstr "選択"
 
-#: src/prefs.c:1393
+#: src/prefs.c:1396
 msgid "Font Face for Text"
 msgstr "テキストのフォント選択"
 
-#: src/prefs.c:1408
+#: src/prefs.c:1411
 msgid "Font Size for Text"
 msgstr "テキストのフォントサイズ選択"
 
-#: src/prefs.c:1505
+#: src/prefs.c:1508
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - 音声設定"
 
-#: src/prefs.c:1540
+#: src/prefs.c:1543
 msgid "Test"
 msgstr "テスト"
 
-#: src/prefs.c:1550
+#: src/prefs.c:1553
 msgid "Choose..."
 msgstr "選択..."
 
-#: src/prefs.c:1607
+#: src/prefs.c:1621
 msgid "Sound Options"
 msgstr "音声オプション"
 
-#: src/prefs.c:1635
+#: src/prefs.c:1649
 msgid "No sounds when you log in"
 msgstr "ログインしたときに音を鳴らさない"
 
-#: src/prefs.c:1641 src/prefs.c:1910
+#: src/prefs.c:1655 src/prefs.c:1922
 msgid "Sounds while away"
 msgstr "離席中の音"
 
-#: src/prefs.c:1651
+#: src/prefs.c:1665
 msgid "Sound method"
 msgstr "音声メソッド"
 
-#: src/prefs.c:1725
+#: src/prefs.c:1739
 #, c-format
 msgid ""
 "Sound command\n"
@@ -2910,103 +3368,103 @@ msgstr ""
 "音声コマンド\n"
 "(ファイル名%s)"
 
-#: src/prefs.c:1737
+#: src/prefs.c:1751
 msgid "Sound played when:"
 msgstr "音を鳴らすとき:"
 
-#: src/prefs.c:1881 src/prefs.c:2939
+#: src/prefs.c:1893 src/prefs.c:2953
 msgid "Away Messages"
 msgstr "離席メッセージ"
 
-#: src/prefs.c:1918
+#: src/prefs.c:1930
 msgid "Don't send auto-response"
 msgstr "自動返答を送らない"
 
-#: src/prefs.c:1919
+#: src/prefs.c:1931
 msgid "Only send auto-response when idle"
 msgstr "休止中は自動返答のみ"
 
-#: src/prefs.c:1934
+#: src/prefs.c:1946
 msgid "Time between sending auto-responses (in seconds):"
 msgstr "自動返答送信間隔(秒)"
 
-#: src/prefs.c:1949
+#: src/prefs.c:1961
 msgid "Auto Away after"
 msgstr "自動離席後"
 
-#: src/prefs.c:1963
+#: src/prefs.c:1975
 msgid "minutes using"
 msgstr "数分利用"
 
-#: src/prefs.c:1976
+#: src/prefs.c:1988
 msgid "Messages"
 msgstr "メッセージ"
 
-#: src/prefs.c:2033
+#: src/prefs.c:2045
 msgid "Edit"
 msgstr "編集"
 
-#: src/prefs.c:2037
+#: src/prefs.c:2049
 msgid "Make Away"
 msgstr "どっかいけ"
 
-#: src/prefs.c:2314
+#: src/prefs.c:2326
 msgid "Privacy Options"
 msgstr "個人情報オプション"
 
-#: src/prefs.c:2330
+#: src/prefs.c:2342
 msgid "Set privacy for:"
 msgstr "個人情報設定:"
 
-#: src/prefs.c:2349
+#: src/prefs.c:2361
 msgid "Allow all users to contact me"
 msgstr "だれの接触も許可"
 
-#: src/prefs.c:2350
+#: src/prefs.c:2362
 msgid "Allow only the users below"
 msgstr "以下のユーザのみ許可"
 
-#: src/prefs.c:2352
+#: src/prefs.c:2364
 msgid "Allow List"
 msgstr "許可リスト"
 
-#: src/prefs.c:2383
+#: src/prefs.c:2395
 msgid "Deny all users"
 msgstr "誰も許さない"
 
-#: src/prefs.c:2384
+#: src/prefs.c:2396
 msgid "Block the users below"
 msgstr "以下のユーザのみ拒否"
 
-#: src/prefs.c:2386
+#: src/prefs.c:2398
 msgid "Block List"
 msgstr "拒否リスト"
 
-#: src/prefs.c:2481
+#: src/prefs.c:2493
 msgid "Gaim - Preferences"
 msgstr "Gaim - 設定"
 
-#: src/prefs.c:2564
+#: src/prefs.c:2576
 msgid "Gaim debug output window"
 msgstr "Gaim デバッグウィンドウ"
 
-#: src/prefs.c:2873
+#: src/prefs.c:2887
 msgid "General"
 msgstr "一般"
 
-#: src/prefs.c:2878
+#: src/prefs.c:2892
 msgid "Proxy"
 msgstr "プロキシ"
 
-#: src/prefs.c:2902
+#: src/prefs.c:2916
 msgid "Conversations"
 msgstr "会話"
 
-#: src/prefs.c:2928
+#: src/prefs.c:2942
 msgid "Sounds"
 msgstr "音声"
 
-#: src/prefs.c:2950
+#: src/prefs.c:2964
 msgid "Privacy"
 msgstr "個人情報"
 
@@ -3017,10 +3475,10 @@ msgid ""
 "not the same version I cannot safely tell you which one it was. Needless to "
 "say, it was not successfully loaded."
 msgstr ""
-"この適用として出所の同じバージョンからコンパイルされなかったプロトコルを"
-"ロードすることを試みました不運にも、それが同じバージョンでないので、私は、"
-"それがどれだったかあなたに伝えることができません"
-"言うまでもなく、それは成功裡にロードされませんでした"
+"この適用として出所の同じバージョンからコンパイルされなかったプロトコルをロー"
+"ドすることを試みました不運にも、それが同じバージョンでないので、私は、それが"
+"どれだったかあなたに伝えることができません言うまでもなく、それは成功裡にロー"
+"ドされませんでした"
 
 #: src/prpl.c:74
 msgid "Protocol Error"
@@ -3051,37 +3509,37 @@ msgstr "Gaim - 新しいメール"
 msgid "Open Mail"
 msgstr "メールを開く"
 
-#: src/prpl.c:564
-#, c-format
-msgid "%s%s%s%s has made %s their buddy%s%s%s"
+#: src/prpl.c:570
+#, fuzzy, c-format
+msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s は仲間%s%s%sを作りました"
 
-#: src/prpl.c:572
+#: src/prpl.c:578
+#, fuzzy
 msgid ""
 "\n"
 "\n"
-"Do you wish to add them to your buddy list?"
+"Do you wish to add him or her to your buddy list?"
 msgstr ""
 "\n"
 "\n"
 "彼らを仲間リストに追加しますか?"
 
-#: src/prpl.c:615
+#: src/prpl.c:621
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
-msgstr ""
-"新しいアカウント登録が必要なプロトコルで現在使えません"
+msgstr "新しいアカウント登録が必要なプロトコルで現在使えません"
 
-#: src/prpl.c:652
+#: src/prpl.c:658
 msgid "Gaim - Registration"
 msgstr "Gaim - 登録"
 
-#: src/prpl.c:667
+#: src/prpl.c:673
 msgid "Registration Information"
 msgstr "登録情報"
 
-#: src/prpl.c:684
+#: src/prpl.c:690
 msgid "Register"
 msgstr "登録"
 
@@ -3110,6 +3568,59 @@ msgstr "はい"
 msgid "No"
 msgstr "いいえ"
 
-#: src/server.c:1054
+#: src/server.c:1076
 msgid "More Info"
 msgstr "もっと情報を"
+
+#: src/sound.c:63
+#, fuzzy
+msgid "Buddy logs in"
+msgstr "仲間アイコン"
+
+#: src/sound.c:64
+#, fuzzy
+msgid "Buddy logs out"
+msgstr "仲間リスト"
+
+#: src/sound.c:65
+#, fuzzy
+msgid "Message received"
+msgstr "メッセージエラー"
+
+#: src/sound.c:66
+msgid "Message received begins conversation"
+msgstr ""
+
+#: src/sound.c:67
+#, fuzzy
+msgid "Message sent"
+msgstr "メッセージ"
+
+#: src/sound.c:68
+msgid "Person enters chat"
+msgstr ""
+
+#: src/sound.c:69
+msgid "Person leaves chat"
+msgstr ""
+
+#: src/sound.c:70
+msgid "You talk in chat"
+msgstr ""
+
+#: src/sound.c:71
+msgid "Others talk in chat"
+msgstr ""
+
+#: src/sound.c:74
+msgid "Someone says your name in chat"
+msgstr ""
+
+#~ msgid "Enable sounds"
+#~ msgstr "音の有効化"
+
+#~ msgid "KFM"
+#~ msgstr "KFM"
+
+#~ msgid "Manual"
+#~ msgstr "手作業"

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gaim 0.48\n"
-"POT-Creation-Date: 2002-04-26 01:28-0400\n"
+"POT-Creation-Date: 2002-06-25 00:10-0400\n"
 "PO-Revision-Date: 2002-05-05 17:15GMT+1\n"
 "Last-Translator: Honza Král <hkral@centrum.cz>\n"
 "Language-Team: Èeský jazyk <cs@li.org>\n"
@@ -13,7 +13,87 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/protocols/gg/gg.c:71
+#: plugins/chatlist.c:67 src/buddy_chat.c:272
+msgid "Buddy Chat"
+msgstr "Chat s kamarádem"
+
+#: plugins/chatlist.c:166 plugins/chatlist.c:168 plugins/chatlist.c:407
+#: plugins/chatlist.c:409
+#, fuzzy
+msgid "Gaim Chat"
+msgstr "Gaim - Chat"
+
+#: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
+#: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
+#: src/conversation.c:2864 src/dialogs.c:567 src/dialogs.c:3899
+#: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:438
+#: src/prpl.c:685 src/server.c:1072
+msgid "Close"
+msgstr "Zavøít"
+
+#: plugins/chatlist.c:344
+#, fuzzy
+msgid "Chat Rooms"
+msgstr "Mo¾nosti chatu"
+
+#: plugins/chatlist.c:363
+msgid "Refresh"
+msgstr ""
+
+#. Put the buttons in the box
+#: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
+#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2879
+#: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
+#: src/prefs.c:2041 src/prefs.c:2383 src/prefs.c:2417
+msgid "Add"
+msgstr "Pøidat"
+
+#: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2829
+#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2876
+#: src/prefs.c:2055 src/prefs.c:2387 src/prefs.c:2421
+msgid "Remove"
+msgstr "Zru¹it"
+
+#: plugins/chatlist.c:388
+msgid "List of available chats"
+msgstr ""
+
+#: plugins/chatlist.c:398
+msgid "List of subscribed chats"
+msgstr ""
+
+#: plugins/gtik.c:699
+msgid "Gnome Stock Ticker Properties"
+msgstr ""
+
+#: plugins/gtik.c:711
+msgid "Update Frequency in min"
+msgstr ""
+
+#: plugins/gtik.c:727
+msgid "Enter symbols delimited with \"+\" in the box below."
+msgstr ""
+
+#. OUTPUT FORMAT and SCROLL DIRECTION
+#: plugins/gtik.c:737
+msgid "Check this box to display only symbols and price:"
+msgstr ""
+
+#: plugins/gtik.c:738
+msgid "Check this box to scroll left to right:"
+msgstr ""
+
+#: plugins/gtik.c:974
+#, fuzzy
+msgid "(No"
+msgstr "Ne"
+
+#: plugins/gtik.c:975
+#, fuzzy
+msgid "Change"
+msgstr "Kanál:"
+
+#: src/protocols/gg/gg.c:71 src/protocols/msn/msn.c:1919
 msgid "Available"
 msgstr "Pøítomen"
 
@@ -21,8 +101,8 @@ msgstr "Pøítomen"
 msgid "Available for friends only"
 msgstr "Pøítomen jen pro pøátele"
 
-#: src/applet.c:293 src/buddy.c:494 src/buddy.c:2513 src/buddy.c:2649
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:703
+#: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
 msgid "Away"
 msgstr "Pryè"
 
@@ -38,7 +118,7 @@ msgstr "Neviditelný"
 msgid "Invisible for friends only"
 msgstr "Neviditelný jen pro pøátele"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:699
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
 msgid "Unavailable"
 msgstr "Nedostupný"
 
@@ -70,7 +150,7 @@ msgstr "Autentifikace neúspì¹ná"
 msgid "Unknown Error Code."
 msgstr "Neznámy chybový kód."
 
-#: src/protocols/gg/gg.c:302
+#: src/protocols/gg/gg.c:302 src/protocols/msn/msn.c:2050
 #, c-format
 msgid "Status: %s"
 msgstr "Stav: %s"
@@ -122,7 +202,8 @@ msgid "Unable to ping server"
 msgstr "Nemù¾u se pøipojit k serveru."
 
 #: src/protocols/gg/gg.c:533
-msgid "Send as messege"
+#, fuzzy
+msgid "Send as message"
 msgstr "Po¹li jako zprávu"
 
 #: src/protocols/gg/gg.c:541
@@ -139,7 +220,8 @@ msgid "Connect to %s failed"
 msgstr "Spojení na %s pøeru¹eno"
 
 #: src/protocols/gg/gg.c:594
-msgid "You are trying to send a messege to an invalid Gadu-Gadu UIN."
+#, fuzzy
+msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
 msgstr "Pokou¹íte se poslat zprávu na nesprávné Gadu-Gadu UIN."
 
 #: src/protocols/gg/gg.c:595 src/protocols/gg/gg.c:657
@@ -198,7 +280,7 @@ msgid "Sex"
 msgstr "Pohlaví"
 
 #. Line 5
-#: src/dialogs.c:1584 src/dialogs.c:2292 src/protocols/gg/gg.c:729
+#: src/dialogs.c:1624 src/dialogs.c:2332 src/protocols/gg/gg.c:729
 msgid "City"
 msgstr "Mìsto"
 
@@ -272,7 +354,12 @@ msgstr "Zmìna hesla selhala (%s)"
 msgid "Directory Search"
 msgstr "Prohledávání seznamu"
 
-#: src/dialogs.c:1701 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#.
+#. } else if (!strcmp(act, _("Set Dir Info"))) {
+#. show_set_dir(gc);
+#.
+#: src/dialogs.c:1741 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
+#: src/protocols/jabber/jabber.c:3748 src/protocols/jabber/jabber.c:3761
 msgid "Change Password"
 msgstr "Zmìnit heslo"
 
@@ -291,12 +378,13 @@ msgid "Delete Buddies List from Server"
 msgstr "Sma¾ Buddy List ze serveru"
 
 #: src/protocols/icq/gaim_icq.c:308
-msgid "Send messege through server"
+#, fuzzy
+msgid "Send message through server"
 msgstr "Po¹li zprávu pøes server"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2163 src/protocols/oscar/oscar.c:3432
-#: src/protocols/toc/toc.c:1216
+#: src/protocols/jabber/jabber.c:2860 src/protocols/oscar/oscar.c:3593
+#: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "Získej Info"
 
@@ -334,7 +422,7 @@ msgid ""
 "connection?"
 msgstr "%s si vy¾ádal pøímý chat. Chcete vytvoøit pøímé spojení?"
 
-#: src/protocols/irc/irc.c:1001
+#: src/protocols/irc/irc.c:1001 src/protocols/msn/msn.c:315
 msgid "Unable to write"
 msgstr "Nemù¾u zapisovat"
 
@@ -361,7 +449,7 @@ msgstr "Èást IRC"
 msgid "Channel:"
 msgstr "Kanál:"
 
-#: src/multi.c:547 src/protocols/irc/irc.c:1675
+#: src/multi.c:549 src/protocols/irc/irc.c:1675
 msgid "Password:"
 msgstr "Heslo:"
 
@@ -370,332 +458,652 @@ msgstr "Heslo:"
 msgid "DCC Chat"
 msgstr "Chat"
 
-#: src/buddy.c:2806 src/protocols/jabber/jabber.c:705
-#: src/protocols/jabber/jabber.c:723
+#: src/protocols/jabber/jabber.c:942
+msgid "Incorrect current password! Password NOT Changed!"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:943 src/protocols/jabber/jabber.c:948
+#, fuzzy
+msgid "Password Change Error!"
+msgstr "Gaim - Zmìna hesla"
+
+#: src/protocols/jabber/jabber.c:947
+msgid "New password same as old password! Password NOT Changed!"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1092
+msgid "Unknown"
+msgstr "Neznámé"
+
+#: src/buddy.c:2887 src/protocols/jabber/jabber.c:1120
+#: src/protocols/jabber/jabber.c:1138
 msgid "Online"
 msgstr "Pøipojený"
 
-#: src/protocols/jabber/jabber.c:707
+#: src/protocols/jabber/jabber.c:1122
 msgid "Extended Away"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:709
-
+#: src/protocols/jabber/jabber.c:1124
 msgid "Do Not Disturb"
 msgstr "Neru¹it"
 
-#: src/protocols/jabber/jabber.c:1091
+#: src/protocols/jabber/jabber.c:1434
+#, c-format
+msgid "Error %s: %s"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:1437
+#, fuzzy
+msgid "Unknown Error in presence"
+msgstr "Neznámy chybový kód."
+
+#: src/protocols/jabber/jabber.c:1607
+#, fuzzy, c-format
+msgid "The user %s wants to add you to their buddy list."
+msgstr ""
+"\n"
+"\n"
+"Pøejete si pøidat jeho nebo ji do Va¹eho Buddy Listu?"
+
+#: src/protocols/jabber/jabber.c:1632
 #, fuzzy
 msgid "No such user"
 msgstr "®ádný u¾ivatel"
 
-#: src/protocols/jabber/jabber.c:1093
+#: src/protocols/jabber/jabber.c:1634 src/protocols/jabber/jabber.c:2341
+#: src/protocols/jabber/jabber.c:2506
 msgid "Jabber Error"
 msgstr "Chyba Jabberu"
 
-#: src/dialogs.c:847 src/protocols/jabber/jabber.c:1173
+#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1719
+#: src/protocols/msn/msn.c:1110
 msgid "Buddies"
 msgstr "Kontakty"
 
-#: src/protocols/jabber/jabber.c:1239
+#: src/protocols/jabber/jabber.c:1782
 #, fuzzy
 msgid "Authenticating"
 msgstr "Autentifikace"
 
-#: src/protocols/jabber/jabber.c:1276
+#: src/protocols/jabber/jabber.c:1819
 msgid "Unknown login error"
 msgstr "Neznámá chyba pøi pøihla¹ování"
 
-#: src/protocols/jabber/jabber.c:1506 src/protocols/jabber/jabber.c:2954
+#: src/protocols/jabber/jabber.c:2010
+#, fuzzy
+msgid "Password successfully changed."
+msgstr "Heslo bylo úspì¹nì zmìnìno"
+
+#: src/protocols/jabber/jabber.c:2012
+#, fuzzy
+msgid "Password Change"
+msgstr "Gaim - Zmìna hesla"
+
+#: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
 msgid "Connection lost"
 msgstr "Spojení ztraceno"
 
-#: src/protocols/jabber/jabber.c:1508 src/protocols/jabber/jabber.c:1540
-#: src/protocols/jabber/jabber.c:2956 src/protocols/jabber/jabber.c:3002
+#: src/protocols/jabber/jabber.c:2056 src/protocols/jabber/jabber.c:2088
+#: src/protocols/jabber/jabber.c:3678 src/protocols/jabber/jabber.c:3724
+#: src/protocols/msn/msn.c:1741 src/protocols/msn/msn.c:1770
 msgid "Unable to connect"
 msgstr "Nemù¾u se pøipojit"
 
-#: src/protocols/jabber/jabber.c:1514
+#: src/protocols/jabber/jabber.c:2062
 msgid "Connected"
 msgstr "Pøipojený"
 
-#: src/protocols/jabber/jabber.c:1517
+#: src/protocols/jabber/jabber.c:2065
 #, fuzzy
 msgid "Requesting Authentication Method"
 msgstr "®ádám autentifikaèní metodu"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:1535
+#: src/protocols/jabber/jabber.c:2083 src/protocols/msn/msn.c:1762
 #, fuzzy
 msgid "Connecting"
 msgstr "Spojuji"
 
-#: src/protocols/jabber/jabber.c:1834
+#: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
+#, fuzzy
+msgid "Invalid Jabber I.D."
+msgstr "Nesprávne jméno"
+
+#: src/protocols/jabber/jabber.c:2473
 msgid "Room:"
 msgstr "Místnost:"
 
-#: src/protocols/jabber/jabber.c:1838
+#: src/protocols/jabber/jabber.c:2477
 msgid "Server:"
 msgstr "Server:"
 
-#: src/protocols/jabber/jabber.c:1843
+#: src/protocols/jabber/jabber.c:2482
 msgid "Handle:"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2113 src/protocols/jabber/jabber.c:2452
-msgid "Unknown"
-msgstr "Neznámé"
+#: src/protocols/jabber/jabber.c:2539
+#, fuzzy
+msgid "Chats"
+msgstr "Chat"
 
-#: src/buddy_chat.c:875 src/protocols/jabber/jabber.c:2168
-#: src/protocols/oscar/oscar.c:3439
+#: src/protocols/jabber/jabber.c:2854
+#, fuzzy
+msgid "View Error Msg"
+msgstr "Zobrazit LOG"
+
+#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2865
+#: src/protocols/oscar/oscar.c:3606
 msgid "Get Away Msg"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2350
+#: src/protocols/jabber/jabber.c:2882
+msgid "Remove From Roster"
+msgstr ""
+
+#: src/protocols/jabber/jabber.c:3076
 msgid "Full Name"
 msgstr "Celé jméno"
 
-#: src/protocols/jabber/jabber.c:2351
+#: src/protocols/jabber/jabber.c:3077
 msgid "Family Name"
 msgstr "Jméno"
 
-#: src/protocols/jabber/jabber.c:2352
+#: src/protocols/jabber/jabber.c:3078
 msgid "Given Name"
 msgstr "Pøíjmení"
 
-#: src/protocols/jabber/jabber.c:2353
+#: src/protocols/jabber/jabber.c:3079
 msgid "Nickname"
 msgstr "Pøezdívka"
 
-#: src/dialogs.c:2485 src/protocols/jabber/jabber.c:2354
+#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3080
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:2355
+#: src/protocols/jabber/jabber.c:3081
 msgid "Street Address"
 msgstr "Ulice"
 
-#: src/protocols/jabber/jabber.c:2356
+#: src/protocols/jabber/jabber.c:3082
 msgid "Extended Address"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2357
+#: src/protocols/jabber/jabber.c:3083
 #, fuzzy
 msgid "Locality"
 msgstr "Lokalita"
 
-#: src/protocols/jabber/jabber.c:2358
+#: src/protocols/jabber/jabber.c:3084
 msgid "Region"
 msgstr "Region"
 
-#: src/protocols/jabber/jabber.c:2359
+#: src/protocols/jabber/jabber.c:3085
 msgid "Postal Code"
 msgstr "PSÈ"
 
 #. Line 7
-#: src/dialogs.c:1606 src/dialogs.c:2314 src/protocols/jabber/jabber.c:2360
+#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3086
 msgid "Country"
 msgstr "Stát"
 
-#: src/protocols/jabber/jabber.c:2361
+#: src/protocols/jabber/jabber.c:3087
 #, fuzzy
 msgid "Telephone"
 msgstr "telefon"
 
-#: src/dialogs.c:2390 src/protocols/jabber/jabber.c:2362
+#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3088
 msgid "Email"
 msgstr "Email"
 
-#: src/protocols/jabber/jabber.c:2363
+#: src/protocols/jabber/jabber.c:3089
 msgid "Organization Name"
 msgstr "Název organizace"
 
-#: src/protocols/jabber/jabber.c:2364
+#: src/protocols/jabber/jabber.c:3090
 msgid "Organization Unit"
 msgstr ""
 
-#: src/prefs.c:1989 src/protocols/jabber/jabber.c:2365
+#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3091
 msgid "Title"
 msgstr "Název"
 
-#: src/protocols/jabber/jabber.c:2366
+#: src/protocols/jabber/jabber.c:3092
 msgid "Role"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2367
+#: src/protocols/jabber/jabber.c:3093
 msgid "Birthday"
 msgstr "Datum narození"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2493 src/plugins.c:211 src/protocols/jabber/jabber.c:2368
+#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3094
 msgid "Description"
 msgstr "Popis"
 
-#: src/protocols/jabber/jabber.c:2393
+#: src/protocols/jabber/jabber.c:3119
 #, fuzzy
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
-msgstr "V¹echny následující údaje jsou volitelné. Zadejte pouze ty informace "
-"které chcete."
+msgstr ""
+"V¹echny následující údaje jsou volitelné. Zadejte pouze ty informace které "
+"chcete."
 
-#: src/protocols/jabber/jabber.c:2394
+#: src/protocols/jabber/jabber.c:3120
 msgid "User Identity"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2810
+#: src/protocols/jabber/jabber.c:3532
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Upravit Jaaber vizitku"
 
-#: src/protocols/jabber/jabber.c:2884
+#: src/protocols/jabber/jabber.c:3606
 msgid "Server Registration successful!"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:2911
+#: src/protocols/jabber/jabber.c:3633
 msgid "Unknown registration error"
 msgstr ""
 
-#: src/protocols/jabber/jabber.c:3020 src/protocols/jabber/jabber.c:3035
+#: src/protocols/jabber/jabber.c:3742 src/protocols/jabber/jabber.c:3757
 #, fuzzy
 msgid "Set User Info"
 msgstr "Získat informace o u¾ivateli"
 
-#: src/protocols/msn/msn.c:738 src/protocols/msn/msn.c:2165
-#: src/protocols/msn/msn.c:2198
+#: src/protocols/msn/msn.c:230
+msgid "Syntax Error (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:233
+msgid "Invalid Parameter (probably a Gaim bug)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:236
+#, fuzzy
+msgid "Invalid User"
+msgstr "Nesprávne jméno"
+
+#: src/protocols/msn/msn.c:239
+msgid "Fully Qualified Domain Name missing"
+msgstr ""
+
+#: src/protocols/msn/msn.c:242
+msgid "Already Login"
+msgstr ""
+
+#: src/protocols/msn/msn.c:245
+#, fuzzy
+msgid "Invalid Username"
+msgstr "Nesprávne jméno"
+
+#: src/protocols/msn/msn.c:248
+#, fuzzy
+msgid "Invalid Friendly Name"
+msgstr "Nesprávne jméno"
+
+#: src/protocols/msn/msn.c:251
+msgid "List Full"
+msgstr ""
+
+#: src/protocols/msn/msn.c:254
+msgid "Already there"
+msgstr ""
+
+#: src/protocols/msn/msn.c:257
+#, fuzzy
+msgid "Not on list"
+msgstr "Spojení ztraceno"
+
+#: src/protocols/msn/msn.c:260
+msgid "User is offline"
+msgstr ""
+
+#: src/protocols/msn/msn.c:263
+msgid "Already in the mode"
+msgstr ""
+
+#: src/protocols/msn/msn.c:266
+msgid "Already in opposite list"
+msgstr ""
+
+#: src/protocols/msn/msn.c:269
+msgid "Switchboard failed"
+msgstr ""
+
+#: src/protocols/msn/msn.c:272
+msgid "Notify Transfer failed"
+msgstr ""
+
+#: src/protocols/msn/msn.c:276
+msgid "Required fields missing"
+msgstr ""
+
+#: src/protocols/msn/msn.c:279
+#, fuzzy
+msgid "Not logged in"
+msgstr "%s prihlá¹en."
+
+#: src/protocols/msn/msn.c:283
+#, fuzzy
+msgid "Internal server error"
+msgstr "Vnitøní chyba"
+
+#: src/protocols/msn/msn.c:286
+msgid "Database server error"
+msgstr ""
+
+#: src/protocols/msn/msn.c:289
+#, fuzzy
+msgid "File operation error"
+msgstr "vnitøní chyba spojení\n"
+
+#: src/protocols/msn/msn.c:292
+#, fuzzy
+msgid "Memory allocation error"
+msgstr "vnitøní chyba spojení\n"
+
+#: src/protocols/msn/msn.c:296
+#, fuzzy
+msgid "Server busy"
+msgstr "Server:"
+
+#: src/protocols/msn/msn.c:299
+#, fuzzy
+msgid "Server unavailable"
+msgstr "Nedostupný"
+
+#: src/protocols/msn/msn.c:302
+msgid "Peer Notification server down"
+msgstr ""
+
+#: src/protocols/msn/msn.c:305
+#, fuzzy
+msgid "Database connect error"
+msgstr "vnitøní chyba spojení\n"
+
+#: src/protocols/msn/msn.c:308
+msgid "Server is going down (abandon ship)"
+msgstr ""
+
+#: src/protocols/msn/msn.c:312
+#, fuzzy
+msgid "Error creating connection"
+msgstr "g003: Chyba pøi otvírání spojení.\n"
+
+#: src/protocols/msn/msn.c:318
+msgid "Session overload"
+msgstr ""
+
+#: src/protocols/msn/msn.c:321
+msgid "User is too active"
+msgstr ""
+
+#: src/protocols/msn/msn.c:324
+msgid "Too many sessions"
+msgstr ""
+
+#: src/protocols/msn/msn.c:327
+msgid "Not expected"
+msgstr ""
+
+#: src/protocols/msn/msn.c:330
+msgid "Bad friend file"
+msgstr ""
+
+#: src/protocols/msn/msn.c:334
+#, fuzzy
+msgid "Authentication failed"
+msgstr "Autentifikace neúspì¹ná"
+
+#: src/protocols/msn/msn.c:337
+#, fuzzy
+msgid "Not allowed when offline"
+msgstr "®ádné zvuky pøi pøihlá¹ení"
+
+#: src/protocols/msn/msn.c:340
+msgid "Not accepting new users"
+msgstr ""
+
+#: src/protocols/msn/msn.c:343
+msgid "User unverified"
+msgstr ""
+
+#: src/protocols/msn/msn.c:346
+#, fuzzy
+msgid "Unknown Error Code"
+msgstr "Neznámy chybový kód."
+
+#: src/protocols/msn/msn.c:351 src/protocols/msn/msn.c:558
+#: src/protocols/msn/msn.c:813 src/protocols/msn/msn.c:2114
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "MSN Error"
 msgstr "Chyba MSN"
 
-#: src/protocols/msn/msn.c:738
-msgid "Gaim was unable to send a messege"
+#: src/protocols/msn/msn.c:558
+msgid "A message may not have been received."
+msgstr ""
+
+#: src/protocols/msn/msn.c:813
+#, fuzzy
+msgid "Gaim was unable to send a message"
 msgstr "Gaim nemohl odeslat zprávu"
 
-#: src/protocols/msn/msn.c:1088
+#: src/protocols/msn/msn.c:917
+#, fuzzy, c-format
+msgid "The user %s (%s) wants to add %s to his or her buddy list."
+msgstr "%s%s%s%s udìlal %s jeho kamarádem%s%s%s"
+
+#: src/protocols/msn/msn.c:1074
+#, c-format
+msgid "The user %s (%s) wants to add you to their buddy list"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1175
 #, fuzzy
 msgid "You have been disconnected. You have signed on from another location."
 msgstr "Byl jste odpojen. Pøihlásil jste se z jiné lokace."
 
-#: src/protocols/msn/msn.c:2165 src/protocols/msn/msn.c:2198
+#: src/protocols/msn/msn.c:1435 src/protocols/msn/msn.c:1679
+#, fuzzy
+msgid "Error reading from server"
+msgstr "Chyba pri ètení ze socketu."
+
+#: src/protocols/msn/msn.c:1568
+msgid "Requesting to send password"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1618
+#, fuzzy
+msgid "Unable to send password"
+msgstr "Nemù¾u èíst ze socketu"
+
+#: src/protocols/msn/msn.c:1623
+#, fuzzy
+msgid "Password sent"
+msgstr "Heslo: "
+
+#: src/protocols/msn/msn.c:1748
+#, fuzzy
+msgid "Unable to write to server"
+msgstr "Nemù¾u se pripojit na server."
+
+#: src/protocols/msn/msn.c:1754
+msgid "Synching with server"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1920
+msgid "Away From Computer"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1921
+msgid "Be Right Back"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1922
+#, fuzzy
+msgid "Busy"
+msgstr "Kamarád"
+
+#: src/protocols/msn/msn.c:1923
+msgid "On The Phone"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1924
+msgid "Out To Lunch"
+msgstr ""
+
+#: src/protocols/msn/msn.c:1925
+#, fuzzy
+msgid "Hidden"
+msgstr "Skryj ikonu"
+
+#: src/protocols/msn/msn.c:2041
+msgid "Reset friendly name"
+msgstr ""
+
+#: src/protocols/msn/msn.c:2114
+msgid "Friendly name too long."
+msgstr ""
+
+#: src/protocols/msn/msn.c:2129 src/protocols/msn/msn.c:2150
+#, fuzzy
+msgid "Set Friendly Name"
+msgstr "Pøíjmení"
+
+#: src/protocols/msn/msn.c:2130
+#, fuzzy
+msgid "Set Friendly Name:"
+msgstr "ID: "
+
+#: src/protocols/msn/msn.c:2131
+msgid "Reset All Friendly Names"
+msgstr ""
+
+#: src/protocols/msn/msn.c:2283 src/protocols/msn/msn.c:2336
 msgid "Invalid name"
 msgstr "Nesprávne jméno"
 
-#: src/protocols/napster/napster.c:450 src/protocols/oscar/oscar.c:3071
-#: src/protocols/toc/toc.c:1101
+#: src/protocols/napster/napster.c:457 src/protocols/oscar/oscar.c:3209
+#: src/protocols/toc/toc.c:1104
 msgid "Join what group:"
 msgstr "Ke které skupinì pripojit:"
 
-#: src/protocols/oscar/oscar.c:329
+#: src/protocols/oscar/oscar.c:330
 #, c-format
 msgid "Direct IM with %s closed"
 msgstr "Pøímé IM s %s zru¹eno"
 
-#: src/protocols/oscar/oscar.c:331
+#: src/protocols/oscar/oscar.c:332
 #, c-format
 msgid "Direct IM with %s failed"
 msgstr "Pøímé IM s %s selhalo"
 
-#: src/protocols/oscar/oscar.c:369
+#: src/protocols/oscar/oscar.c:370
 msgid "connection error (rend)\n"
 msgstr "chyba spojení (rend)\n"
 
-#: src/protocols/oscar/oscar.c:380
+#: src/protocols/oscar/oscar.c:381
 msgid "major connection error\n"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:381 src/protocols/toc/toc.c:511
+#: src/protocols/oscar/oscar.c:382 src/protocols/toc/toc.c:511
 #: src/protocols/toc/toc.c:524 src/protocols/toc/toc.c:590
 msgid "Disconnected."
 msgstr "Odpojený."
 
-#: src/protocols/oscar/oscar.c:393 src/protocols/toc/toc.c:761
+#: src/protocols/oscar/oscar.c:394 src/protocols/toc/toc.c:761
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Byl jste odpojen z chatové místnosti %s."
 
-#: src/protocols/oscar/oscar.c:394
+#: src/protocols/oscar/oscar.c:395
 msgid "Chat Error!"
 msgstr "Chyba Chatu!"
 
-#: src/protocols/oscar/oscar.c:406
+#: src/protocols/oscar/oscar.c:407
 msgid "Chat is currently unavailable"
 msgstr "Chat je momentálnì nedostupný"
 
-#: src/protocols/oscar/oscar.c:407
+#: src/protocols/oscar/oscar.c:408
 msgid "Gaim - Chat"
 msgstr "Gaim - Chat"
 
-#: src/protocols/oscar/oscar.c:466 src/protocols/oscar/oscar.c:526
+#: src/protocols/oscar/oscar.c:467 src/protocols/oscar/oscar.c:527
 msgid "Couldn't connect to host"
 msgstr "Nemù¾u se spojit s hostitelem"
 
-#: src/protocols/oscar/oscar.c:474
+#: src/protocols/oscar/oscar.c:475
 msgid "Password sent, waiting for response\n"
 msgstr "Posláno heslo, èekám na odpovìï\n"
 
-#: src/protocols/oscar/oscar.c:507
+#: src/protocols/oscar/oscar.c:508
 msgid "internal connection error\n"
 msgstr "vnitøní chyba spojení\n"
 
-#: src/protocols/oscar/oscar.c:508
+#: src/protocols/oscar/oscar.c:509
 msgid "Unable to login to AIM"
 msgstr "Nemù¾u se pøihlásit do AIM"
 
-#: src/protocols/oscar/oscar.c:513
+#: src/protocols/oscar/oscar.c:514
 #, c-format
 msgid "Signon: %s"
 msgstr "Prihlásit: %s"
 
-#: src/protocols/oscar/oscar.c:585
+#: src/protocols/oscar/oscar.c:586
 msgid "Signed off.\n"
 msgstr "Odhlá¹en.\n"
 
-#: src/protocols/oscar/oscar.c:604 src/protocols/oscar/oscar.c:728
+#: src/protocols/oscar/oscar.c:605 src/protocols/oscar/oscar.c:730
 msgid "Could Not Connect"
 msgstr "Nemù¾u se pøipojit"
 
-#: src/protocols/oscar/oscar.c:612
+#: src/protocols/oscar/oscar.c:613
 #, fuzzy
 msgid "Connection established, cookie sent"
 msgstr "Spojení vytvoøeno, cookie posláno"
 
 #. Incorrect nick/password
-#: src/protocols/oscar/oscar.c:638 src/protocols/toc/toc.c:459
+#: src/protocols/oscar/oscar.c:639 src/protocols/toc/toc.c:459
 msgid "Incorrect nickname or password."
 msgstr "Nesprávne heslo alebo pøezdívka."
 
 #. Suspended account
+#: src/protocols/oscar/oscar.c:644
 #, fuzzy
-#: src/protocols/oscar/oscar.c:643
 msgid "Your account is currently suspended."
 msgstr "Vá¹ úèet je momentálnì suspendovám"
 
 #. connecting too frequently
-#: src/protocols/oscar/oscar.c:647
+#: src/protocols/oscar/oscar.c:648
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"Pøipojovali a odpoovali jste se pøíli¹ èasto. Poèkejte 10 minut a zkuste to"
-"znova. Jestli budete pokraèovat v pøipojování, budete muset èekat je¹tì déle."
+"Pøipojovali a odpoovali jste se pøíli¹ èasto. Poèkejte 10 minut a zkuste "
+"toznova. Jestli budete pokraèovat v pøipojování, budete muset èekat je¹tì "
+"déle."
 
 #. client too old
-#: src/protocols/oscar/oscar.c:652
+#: src/protocols/oscar/oscar.c:653
 msgid "The client version you are using is too old. Please upgrade at "
-msgstr "Verze klienta kterou pou¾ívate je pøíli¹ stará. Nainstalujte si novou na"
+msgstr ""
+"Verze klienta kterou pou¾ívate je pøíli¹ stará. Nainstalujte si novou na"
 
-#: src/protocols/oscar/oscar.c:656 src/protocols/toc/toc.c:542
+#: src/protocols/oscar/oscar.c:657 src/protocols/toc/toc.c:542
 msgid "Authentication Failed"
 msgstr "Autentifikace pøeru¹ena"
 
-#: src/protocols/oscar/oscar.c:678
+#: src/protocols/oscar/oscar.c:679
 msgid "Internal Error"
 msgstr "Vnitøní chyba"
 
-#: src/protocols/oscar/oscar.c:1246 src/protocols/oscar/oscar.c:3282
+#: src/protocols/oscar/oscar.c:1248 src/protocols/oscar/oscar.c:3420
 #, c-format
 msgid "Direct IM with %s established"
 msgstr "Pøíamé IM spojení s %s vytvoøeno"
 
-#: src/protocols/oscar/oscar.c:1492 src/protocols/oscar/oscar.c:2367
+#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
 #, c-format
 msgid ""
 "The user %lu has denied your request to add them to your contact list for "
@@ -703,179 +1111,196 @@ msgid ""
 "%s"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1492 src/protocols/oscar/oscar.c:2367
+#: src/protocols/oscar/oscar.c:1504 src/protocols/oscar/oscar.c:2456
 #, fuzzy
 msgid "No reason given."
 msgstr "®ádný dùvod."
 
-#: src/protocols/oscar/oscar.c:1493 src/protocols/oscar/oscar.c:2368
+#: src/protocols/oscar/oscar.c:1505 src/protocols/oscar/oscar.c:2457
 msgid "Gaim - ICQ Authorization Denied"
 msgstr "Gaim - ICQ Autorizace odepøena"
 
-#: src/protocols/oscar/oscar.c:1499 src/protocols/oscar/oscar.c:2374
+#: src/protocols/oscar/oscar.c:1511 src/protocols/oscar/oscar.c:2463
 #, c-format
 msgid "The user %lu has granted your request to add them to your contact list."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1500 src/protocols/oscar/oscar.c:2375
+#: src/protocols/oscar/oscar.c:1512 src/protocols/oscar/oscar.c:2464
 #, fuzzy
 msgid "Gaim - ICQ Authorization Granted"
 msgstr "Gaim - ICQ autorizace pøijata"
 
-#: src/protocols/oscar/oscar.c:1573
-msgid "You missed %d messege from %s because it was invalid."
+#: src/protocols/oscar/oscar.c:1585
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was invalid."
 msgstr "Ztratil jste %d zprávu z %s proto¾e byla neplatná."
 
-#: src/protocols/oscar/oscar.c:1574
-msgid "You missed %d messeges from %s because they were invalid."
+#: src/protocols/oscar/oscar.c:1586
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they were invalid."
 msgstr "Ztratil jste %d zpráv z %s proto¾e byly neplatné."
 
-#: src/protocols/oscar/oscar.c:1583
-msgid "You missed %d messege from %s because it was too large."
+#: src/protocols/oscar/oscar.c:1595
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was too large."
 msgstr "Ztratil jste %d zprávu z %s proto¾e byla pøíli¹ velká."
 
-#: src/protocols/oscar/oscar.c:1584
-msgid "You missed %d messeges from %s because they were too large."
+#: src/protocols/oscar/oscar.c:1596
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they were too large."
 msgstr "Ztratil jste %d zpráv z %s proto¾e byly pøíli¹ velké."
 
-#: src/protocols/oscar/oscar.c:1593
-msgid "You missed %d messege from %s because the rate limit has been exceeded."
+#: src/protocols/oscar/oscar.c:1605
+#, fuzzy, c-format
+msgid "You missed %d message from %s because the rate limit has been exceeded."
 msgstr "Ztratil jste %d zprávu z %s proto¾e jste vyèerpali limit zpráv."
 
-#: src/protocols/oscar/oscar.c:1594
-msgid "You missed %d messeges from %s because the rate limit has been exceeded."
+#: src/protocols/oscar/oscar.c:1606
+#, fuzzy, c-format
+msgid ""
+"You missed %d messages from %s because the rate limit has been exceeded."
 msgstr "Ztratil jste %d zpráv z %s proto¾e jste vyèerpali limit zpráv."
 
-#: src/protocols/oscar/oscar.c:1603
-#, fuzzy
-msgid "You missed %d messege from %s because it was too evil."
+#: src/protocols/oscar/oscar.c:1615
+#, fuzzy, c-format
+msgid "You missed %d message from %s because it was too evil."
 msgstr "Ztratil jste %d zprávu z %s proto¾e byla velmi zlá."
 
-#: src/protocols/oscar/oscar.c:1604
-#, fuzzy
-msgid "You missed %d messeges from %s because they are too evil."
+#: src/protocols/oscar/oscar.c:1616
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because they are too evil."
 msgstr "Ztratil jste %d zpráv z %s proto¾e byly velmi zlé."
 
-#: src/protocols/oscar/oscar.c:1613
-#, fuzzy
-msgid "You missed %d messege from %s because you are too evil."
+#: src/protocols/oscar/oscar.c:1625
+#, fuzzy, c-format
+msgid "You missed %d message from %s because you are too evil."
 msgstr "Ztratil jste %d zprávu z %s preto¾e jste velmi zlý."
 
-#: src/protocols/oscar/oscar.c:1614
-#, fuzzy
-msgid "You missed %d messeges from %s because you are too evil."
+#: src/protocols/oscar/oscar.c:1626
+#, fuzzy, c-format
+msgid "You missed %d messages from %s because you are too evil."
 msgstr "Ztratil jste %d zpráv z %s proto¾e jste velmi zlý."
 
-#: src/protocols/oscar/oscar.c:1622
-#, fuzzy
-msgid "You missed %d messege from %s for unknown reasons."
+#: src/protocols/oscar/oscar.c:1634
+#, fuzzy, c-format
+msgid "You missed %d message from %s for unknown reasons."
 msgstr "Ztratil jste %d zprávu z %s z neznámých dùvodù."
 
-#: src/protocols/oscar/oscar.c:1623
-#, fuzzy
-msgid "You missed %d messeges from %s for unknown reasons."
+#: src/protocols/oscar/oscar.c:1635
+#, fuzzy, c-format
+msgid "You missed %d messages from %s for unknown reasons."
 msgstr "Ztratil jste %d zpráv z %s z neznámých dùvodù."
 
-#: src/dialogs.c:3036 src/dialogs.c:3042 src/protocols/oscar/oscar.c:1628
-#: src/protocols/oscar/oscar.c:1666 src/protocols/oscar/oscar.c:1684
-#: src/protocols/oscar/oscar.c:2137 src/protocols/yahoo/yahoo.c:594
+#: src/dialogs.c:3076 src/dialogs.c:3082 src/protocols/oscar/oscar.c:1640
+#: src/protocols/oscar/oscar.c:1755 src/protocols/oscar/oscar.c:1773
+#: src/protocols/oscar/oscar.c:2226 src/protocols/yahoo/yahoo.c:594
 msgid "Gaim - Error"
 msgstr "Gaim - Chyba"
 
-#: src/protocols/oscar/oscar.c:1645
+#: src/protocols/oscar/oscar.c:1703
+#, c-format
+msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR>%s<BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1705
+#, c-format
+msgid "<B>Status:</B> %s<BR><HR><BR>%s<BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:1734
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1647
+#: src/protocols/oscar/oscar.c:1736
 #, fuzzy
 msgid "Gaim - Oscar SNAC Error"
 msgstr "Gaim - Oscar SNAC Chyba"
 
-#: src/protocols/oscar/oscar.c:1664
-#, c-format
-msgid "Your messege to %s did not get sent: %s"
+#: src/protocols/oscar/oscar.c:1753
+#, fuzzy, c-format
+msgid "Your message to %s did not get sent: %s"
 msgstr "Va¹a zpráva pro %s nebyla poslaná: %s"
 
-#: src/protocols/oscar/oscar.c:1665 src/protocols/oscar/oscar.c:1683
+#: src/protocols/oscar/oscar.c:1754 src/protocols/oscar/oscar.c:1772
 msgid "Reason unknown"
 msgstr "Dùvod neznámý"
 
-#: src/protocols/oscar/oscar.c:1682
+#: src/protocols/oscar/oscar.c:1771
 #, c-format
 msgid "User information for %s unavailable: %s"
 msgstr "Informácie o u¾ivateli %s nejsou pøístupné: %s"
 
-#: src/buddy.c:2065 src/protocols/oscar/oscar.c:1713
+#: src/buddy.c:2131 src/protocols/oscar/oscar.c:1802
 #, fuzzy
 msgid "Buddy Icon"
 msgstr "Kamarádova ikona"
 
-#: src/buddy.c:2068 src/protocols/oscar/oscar.c:1716
+#: src/buddy.c:2134 src/protocols/oscar/oscar.c:1805
 msgid "Voice"
 msgstr "Hlas"
 
-#: src/buddy.c:2071 src/protocols/oscar/oscar.c:1719
+#: src/buddy.c:2137 src/protocols/oscar/oscar.c:1808
 #, fuzzy
 msgid "IM Image"
 msgstr "IM Obrázek"
 
-#: src/buddy.c:495 src/buddy.c:2074 src/buddy.c:2512 src/prefs.c:2913
-#: src/protocols/oscar/oscar.c:1722
+#: src/buddy.c:498 src/buddy.c:2140 src/buddy.c:2581 src/prefs.c:2926
+#: src/protocols/oscar/oscar.c:1811
 msgid "Chat"
 msgstr "Chat"
 
-#: src/buddy.c:2077 src/protocols/oscar/oscar.c:1725
+#: src/buddy.c:2143 src/protocols/oscar/oscar.c:1814
 msgid "Get File"
 msgstr "Získat soubor"
 
-#: src/buddy.c:2080 src/protocols/oscar/oscar.c:1728
+#: src/buddy.c:2146 src/protocols/oscar/oscar.c:1817
 msgid "Send File"
 msgstr "Poslat soubor"
 
-#: src/buddy.c:2084 src/protocols/oscar/oscar.c:1732
+#: src/buddy.c:2150 src/protocols/oscar/oscar.c:1821
 msgid "Games"
 msgstr "Hry"
 
-#: src/buddy.c:2087 src/protocols/oscar/oscar.c:1735
+#: src/buddy.c:2153 src/protocols/oscar/oscar.c:1824
 msgid "Stocks"
 msgstr ""
 
-#: src/buddy.c:2090 src/protocols/oscar/oscar.c:1738
+#: src/buddy.c:2156 src/protocols/oscar/oscar.c:1827
 #, fuzzy
 msgid "Send Buddy List"
 msgstr "Poslat Buddy List"
 
-#: src/buddy.c:2093 src/protocols/oscar/oscar.c:1741
+#: src/buddy.c:2159 src/protocols/oscar/oscar.c:1830
 msgid "EveryBuddy Bug"
 msgstr ""
 
-#: src/buddy.c:2096 src/protocols/oscar/oscar.c:1744
+#: src/buddy.c:2162 src/protocols/oscar/oscar.c:1833
 #, fuzzy
 msgid "AP User"
 msgstr "AP U¾ivatel"
 
-#: src/buddy.c:2099 src/protocols/oscar/oscar.c:1747
+#: src/buddy.c:2165 src/protocols/oscar/oscar.c:1836
 msgid "ICQ RTF"
 msgstr "ICQ RTF"
 
-#: src/buddy.c:2102 src/protocols/oscar/oscar.c:1750
+#: src/buddy.c:2168 src/protocols/oscar/oscar.c:1839
 msgid "Nihilist"
 msgstr ""
 
-#: src/buddy.c:2105 src/protocols/oscar/oscar.c:1753
+#: src/buddy.c:2171 src/protocols/oscar/oscar.c:1842
 msgid "ICQ Server Relay"
 msgstr ""
 
-#: src/buddy.c:2108 src/protocols/oscar/oscar.c:1756
+#: src/buddy.c:2174 src/protocols/oscar/oscar.c:1845
 msgid "ICQ Unknown"
 msgstr ""
 
-#: src/buddy.c:2111 src/protocols/oscar/oscar.c:1759
+#: src/buddy.c:2177 src/protocols/oscar/oscar.c:1848
 msgid "Trillian Encryption"
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:1797
+#: src/protocols/oscar/oscar.c:1886
 #, fuzzy
 msgid ""
 "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
@@ -889,7 +1314,7 @@ msgstr ""
 "<br><IMG SRC=\"dt_icon.gif\"> : Zku¹ební AIM u¾ivatet <br><IMG SRC="
 "\"admin_icon.gif\"> : Administrátor"
 
-#: src/protocols/oscar/oscar.c:1825
+#: src/protocols/oscar/oscar.c:1914
 #, fuzzy, c-format
 msgid ""
 "Username : <B>%s</B>  %s <BR>\n"
@@ -902,68 +1327,98 @@ msgstr ""
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 
-#: src/protocols/oscar/oscar.c:1857
+#: src/protocols/oscar/oscar.c:1946
 #, fuzzy
-msgid "<i>User has no away messege</i>"
+msgid "<i>User has no away message</i>"
 msgstr "<i>U¾ivatel nemá ¾ádnou 'Pryè' zprávu</i>"
 
-#: src/protocols/oscar/oscar.c:1869
+#: src/protocols/oscar/oscar.c:1958
 msgid "Client Capabilities: "
 msgstr "Mo¾nosti klienta"
 
-#: src/protocols/oscar/oscar.c:1877
+#: src/protocols/oscar/oscar.c:1966
 msgid "<i>No Information Provided</i>"
 msgstr "<i>Neposkytnuté ¾ádné informace</i>"
 
-#: src/protocols/oscar/oscar.c:1900
+#: src/protocols/oscar/oscar.c:1989
 msgid "Your connection may be lost."
 msgstr "Va¹e spojení mù¾e být pøeru¹ené."
 
-#: src/protocols/oscar/oscar.c:1901
+#: src/protocols/oscar/oscar.c:1990
 msgid "AOL error"
 msgstr "Chyba AOL"
 
-#: src/protocols/oscar/oscar.c:2136
+#: src/protocols/oscar/oscar.c:2225
 #, fuzzy
 msgid ""
-"The last messege was not sent because you are over the rate limit. Please "
+"The last message was not sent because you are over the rate limit. Please "
 "wait 10 seconds and try again."
 msgstr ""
-"Va¹e poslední zpráva nebyla odeslána proto¾e u¾ máte pøes limit. Poèkejte"
-"prosím 10 sekund a pokus opakujte."
+"Va¹e poslední zpráva nebyla odeslána proto¾e u¾ máte pøes limit. "
+"Poèkejteprosím 10 sekund a pokus opakujte."
 
-#: src/dialogs.c:3564 src/protocols/oscar/oscar.c:2478
-#: src/protocols/oscar/oscar.c:3403 src/protocols/toc/toc.c:1561
-#: src/protocols/toc/toc.c:1578 src/protocols/toc/toc.c:1638
-#: src/protocols/toc/toc.c:1680 src/protocols/toc/toc.c:1799
-#: src/protocols/toc/toc.c:1829 src/protocols/toc/toc.c:1885
+#: src/dialogs.c:3604 src/protocols/oscar/oscar.c:2589
+#: src/protocols/oscar/oscar.c:3541 src/protocols/toc/toc.c:1564
+#: src/protocols/toc/toc.c:1581 src/protocols/toc/toc.c:1641
+#: src/protocols/toc/toc.c:1683 src/protocols/toc/toc.c:1802
+#: src/protocols/toc/toc.c:1832 src/protocols/toc/toc.c:1888
 msgid "Error"
 msgstr "Chyba"
 
-#: src/protocols/oscar/oscar.c:3075 src/protocols/toc/toc.c:1105
+#: src/protocols/oscar/oscar.c:3192
+#, c-format
+msgid ""
+"The maximum number of buddies allowed in your buddy list is %d, and you have "
+"%d.  Until you are below the limit, some buddies will not show up as online."
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3195
+#, fuzzy
+msgid "Gaim - Warning"
+msgstr "Gaim - Varovat u¾ivatele?"
+
+#: src/protocols/oscar/oscar.c:3213 src/protocols/toc/toc.c:1108
 msgid "Exchange:"
 msgstr "Výmìna:"
 
-#: src/protocols/oscar/oscar.c:3403
+#: src/protocols/oscar/oscar.c:3541
 msgid "Unable to open Direct IM"
 msgstr "Nemù¾u otevøít Pøíme IM spojení"
 
-#: src/protocols/oscar/oscar.c:3413
+#: src/protocols/oscar/oscar.c:3551
 #, c-format
 msgid ""
 "You have selected to open a Direct IM connection with %s. Doing this will "
 "let them see your IP address, and may be a security risk. Do you wish to "
 "continue?"
 msgstr ""
-"Vybrali ste otevøení Pøímého IM spojení s %s. Toto dovolí jiným "
-"u¾ivatelùm vidìt Va¹i IP adresu, mù¾e to být bezpeènostní riziko. Pøejete "
-"si pokraèovat?"
+"Vybrali ste otevøení Pøímého IM spojení s %s. Toto dovolí jiným u¾ivatelùm "
+"vidìt Va¹i IP adresu, mù¾e to být bezpeènostní riziko. Pøejete si pokraèovat?"
 
-#: src/protocols/oscar/oscar.c:3446
+#: src/protocols/oscar/oscar.c:3568
+#, c-format
+msgid ""
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>Remote client does not "
+"support sending status messages.</I><BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3575
+#, c-format
+msgid ""
+"<B>UIN:</B> %s<BR><B>Status:</B> %s<BR><HR><BR><I>User has no status message."
+"</I><BR>"
+msgstr ""
+
+#: src/protocols/oscar/oscar.c:3600
+#, fuzzy
+msgid "Get Status Msg"
+msgstr "Stav: %s"
+
+#: src/protocols/oscar/oscar.c:3613
 msgid "Direct IM"
 msgstr "Pøímé IM"
 
-#: src/protocols/oscar/oscar.c:3454
+#: src/protocols/oscar/oscar.c:3621
 msgid "Get Capabilities"
 msgstr "Získat Mo¾nosti"
 
@@ -978,8 +1433,8 @@ msgid "Unable to read file %s."
 msgstr "Nemù¾u èíst ze souboru %s."
 
 #: src/protocols/toc/toc.c:404
-#, c-format
-msgid "Messege too long, last %s bytes truncated."
+#, fuzzy, c-format
+msgid "Message too long, last %s bytes truncated."
 msgstr "Zpráva je moc dlouhá, posledních %s bitù bude vymazáno."
 
 #: src/protocols/toc/toc.c:407
@@ -993,7 +1448,8 @@ msgid "Warning of %s not allowed."
 msgstr "Výstraha %s není dovolena."
 
 #: src/protocols/toc/toc.c:413
-msgid "A messege has been dropped, you are exceeding the server speed limit."
+#, fuzzy
+msgid "A message has been dropped, you are exceeding the server speed limit."
 msgstr "Správa byla zahozena, pøekroèili jste omezení rýchlosti serveru."
 
 #: src/protocols/toc/toc.c:416
@@ -1002,8 +1458,8 @@ msgid "Chat in %s is not available."
 msgstr "Chat %s není pøístupný."
 
 #: src/protocols/toc/toc.c:419
-#, c-format
-msgid "You are sending messeges too fast to %s."
+#, fuzzy, c-format
+msgid "You are sending messages too fast to %s."
 msgstr "Zprávy pro %s posíláte pøíli¹ rychle."
 
 #: src/protocols/toc/toc.c:422
@@ -1070,8 +1526,9 @@ msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"Pøipojovali a odpoovali jste se pøíli¹ èasto. Poèkejte 10 minut a zkuste to"
-"znova. Jestli budete pokraèovat v pøipojování, budete muset èekat je¹tì déle."
+"Pøipojovali a odpoovali jste se pøíli¹ èasto. Poèkejte 10 minut a zkuste "
+"toznova. Jestli budete pokraèovat v pøipojování, budete muset èekat je¹tì "
+"déle."
 
 #: src/protocols/toc/toc.c:471
 #, c-format
@@ -1092,7 +1549,7 @@ msgid "Waiting for reply..."
 msgstr "Èekejte na odezvu..."
 
 #: src/protocols/toc/toc.c:598
-msgid "TOC has come back from its pause. You may now send messeges again."
+msgid "TOC has come back from its pause. You may now send messages again."
 msgstr ""
 
 #: src/protocols/toc/toc.c:599
@@ -1108,14 +1565,14 @@ msgstr "Chyba Chatu"
 msgid "Password Change Successful"
 msgstr "Heslo bylo úspì¹nì zmìnìné"
 
-#: src/dialogs.c:1690 src/protocols/toc/toc.c:782
+#: src/dialogs.c:1730 src/protocols/toc/toc.c:782
 msgid "Gaim - Password Change"
 msgstr "Gaim - Zmìna hesla"
 
 #: src/protocols/toc/toc.c:785
 msgid ""
-"TOC has sent a PAUSE command. When this happens, TOC ignores any messeges "
-"sent to it, and may kick you off if you send a messege. Gaim will prevent "
+"TOC has sent a PAUSE command. When this happens, TOC ignores any messages "
+"sent to it, and may kick you off if you send a message. Gaim will prevent "
 "anything from going through. This is only temporary, please be patient."
 msgstr ""
 
@@ -1123,68 +1580,70 @@ msgstr ""
 msgid "TOC Pause"
 msgstr ""
 
-#: src/protocols/toc/toc.c:1222
+#: src/protocols/toc/toc.c:1225
 msgid "Get Dir Info"
 msgstr ""
 
-#: src/protocols/toc/toc.c:1638 src/protocols/toc/toc.c:1680
-#: src/protocols/toc/toc.c:1799 src/protocols/toc/toc.c:1885
+#: src/protocols/toc/toc.c:1641 src/protocols/toc/toc.c:1683
+#: src/protocols/toc/toc.c:1802 src/protocols/toc/toc.c:1888
 msgid "Could not connect for transfer!"
 msgstr "Nemù¾u se spojit pro pøenos!"
 
-#: src/protocols/toc/toc.c:1829
+#: src/protocols/toc/toc.c:1832
 msgid "Could not write file header!"
 msgstr "Nemù¾u zapsat hlavièku souboru!"
 
-#: src/protocols/toc/toc.c:1918
+#: src/protocols/toc/toc.c:1921
 msgid "Gaim - Save As..."
 msgstr "Gaim - Ulo¾it jako..."
 
-#: src/protocols/toc/toc.c:1959
+#: src/protocols/toc/toc.c:1962
 #, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgstr ""
 
-#: src/protocols/toc/toc.c:1960
+#: src/protocols/toc/toc.c:1963
 #, c-format
 msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr ""
 
-#: src/protocols/toc/toc.c:1965
+#: src/protocols/toc/toc.c:1968
 #, c-format
 msgid "%s requests you to send them a file"
 msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:594
-msgid "Your messege did not get sent."
+#, fuzzy
+msgid "Your message did not get sent."
 msgstr "Va¹a zpráva nebyla odeslána."
 
-#: src/protocols/zephyr/zephyr.c:802
+#: src/protocols/zephyr/zephyr.c:840
 msgid "ZLocate"
 msgstr "ZLocate"
 
-#: src/protocols/zephyr/zephyr.c:839
+#: src/protocols/zephyr/zephyr.c:877
 msgid "Class:"
 msgstr "Tøída:"
 
-#: src/protocols/zephyr/zephyr.c:843
+#: src/protocols/zephyr/zephyr.c:881
 msgid "Instance:"
 msgstr "Instance:"
 
-#: src/protocols/zephyr/zephyr.c:847
+#: src/protocols/zephyr/zephyr.c:885
 msgid "Recipient:"
 msgstr "Pøíjemnce:"
 
-#: src/about.c:93
+#: src/about.c:102
 #, c-format
 msgid "About Gaim v%s"
 msgstr "O aplikaci Gaim v%s"
 
-#: src/about.c:126
+#: src/about.c:135
+#, fuzzy
 msgid ""
-"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
-"written\n"
-"using Gtk+ and is licensed under the GPL.\n"
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ,\n"
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.\n"
+"It is written using Gtk+ and is licensed under the GPL.\n"
 "\n"
 "URL: "
 msgstr ""
@@ -1193,7 +1652,7 @@ msgstr ""
 "\n"
 "URL: "
 
-#: src/about.c:127
+#: src/about.c:137
 msgid ""
 "\n"
 "\n"
@@ -1203,7 +1662,7 @@ msgstr ""
 "\n"
 "IRC: #gaim na irc.openprojects.net"
 
-#: src/about.c:137
+#: src/about.c:147
 msgid ""
 "Active Developers\n"
 "====================\n"
@@ -1224,100 +1683,99 @@ msgid ""
 "Mark Spencer (original author)   [ markster@marko.net ]"
 msgstr ""
 
-#: src/about.c:155 src/aim.c:318 src/buddy.c:2638 src/buddy_chat.c:1311
-#: src/buddy_chat.c:1408 src/buddy_chat.c:1438 src/conversetion.c:2836
-#: src/dialogs.c:568 src/dialogs.c:3859 src/multi.c:1057 src/plugins.c:277
-#: src/prefs.c:2536 src/prpl.c:438 src/prpl.c:679 src/server.c:1072
-msgid "Close"
-msgstr "Zavøít"
-
 #. this makes the sizes not work.
 #. GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 #. gtk_widget_grab_default(button);
-#: src/about.c:175
+#: src/about.c:185
 msgid "Web Site"
 msgstr "Internetová stránka"
 
-#: src/aim.c:151 src/buddy.c:2631
+#: src/aim.c:153 src/buddy.c:2709
 msgid "Signoff"
 msgstr "Odhlásit"
 
-#: src/aim.c:163
+#: src/aim.c:165
 #, fuzzy
 msgid "Please enter your logon"
 msgstr "Prosím zadejte svùj logon"
 
-#: src/aim.c:163 src/multi.c:1388 src/server.c:55
+#: src/aim.c:165 src/multi.c:1400 src/server.c:55
 msgid "Signon Error"
 msgstr "Chyba pøi pøihla¹ování"
 
-#: src/aim.c:261
+#: src/aim.c:263
 msgid "Gaim - Login"
 msgstr "Gaim - Pøihlá¹ení"
 
-#: src/aim.c:279
+#: src/aim.c:281
 msgid "Screen Name: "
 msgstr "ID: "
 
-#: src/aim.c:295
+#: src/aim.c:297
 msgid "Password: "
 msgstr "Heslo: "
 
-#: src/aim.c:316 src/buddy.c:2635
+#: src/aim.c:318 src/buddy.c:2713
 msgid "Quit"
 msgstr "Konec"
 
-#: src/aim.c:321 src/aim.c:819 src/buddy.c:2661
+#: src/aim.c:323 src/aim.c:831 src/buddy.c:2739
 msgid "Accounts"
 msgstr "Úèty"
 
-#: src/aim.c:323 src/multi.c:903
+#: src/aim.c:325 src/multi.c:915
 msgid "Signon"
 msgstr "Pøihlásit"
 
-#: src/aim.c:355
+#: src/aim.c:357
 #, fuzzy
 msgid "About"
 msgstr "O aplikaci Gaim"
 
-#: src/aim.c:356 src/prefs.c:1620 src/prefs.c:1894
+#: src/aim.c:358 src/prefs.c:1633 src/prefs.c:1905
 msgid "Options"
 msgstr "Volby"
 
-#: src/aim.c:358 src/aim.c:822 src/buddy.c:2679
+#: src/aim.c:360 src/aim.c:834 src/buddy.c:2757
 msgid "Plugins"
 msgstr ""
 
-#: src/aim.c:816 src/buddy.c:2671
+#: src/aim.c:828 src/buddy.c:2749
 msgid "Preferences"
 msgstr "Nastavení"
 
-#: src/applet.c:199
+#: src/aim.c:838 src/multi.c:1472
+#, fuzzy
+msgid "Auto-login"
+msgstr "Aotomatické pøihla¹ování"
+
+#: src/applet.c:109
 msgid "Attempting to sign on...."
 msgstr "Pokou¹ím se pøihlásit...."
 
-#: src/applet.c:202
+#: src/applet.c:112
 msgid "Offline. Click to bring up login box."
 msgstr "Nepøipojen. Kliknìte pro otvevøení pøihla¹ovacího okna."
 
-#: src/applet.c:218
+#: src/applet.c:128
 #, c-format
 msgid "Away: %d pending."
 msgstr ""
 
-#: src/applet.c:221
+#: src/applet.c:131
 msgid "Away."
 msgstr "Pryè."
 
-#: src/applet.c:296 src/away.c:388
-msgid "New Away Messege"
+#: src/applet.c:200 src/away.c:388
+#, fuzzy
+msgid "New Away Message"
 msgstr "Nová 'Pryè' zpráva"
 
-#: src/applet.c:444
+#: src/applet.c:348
 msgid "Can't create Gaim applet!"
 msgstr "Nemù¾u vytvoøit applet Gaim!"
 
-#: src/applet.c:465
+#: src/applet.c:368
 msgid "About..."
 msgstr "O..."
 
@@ -1334,95 +1792,82 @@ msgid "Back"
 msgstr "Zpìt"
 
 #: src/away.c:408
-msgid "Remove Away Messege"
+#, fuzzy
+msgid "Remove Away Message"
 msgstr "Odstraò 'Pryè' zprávu"
 
 #: src/away.c:596
 msgid "Set All Away"
 msgstr "Nastav v¹e na 'Pryè'"
 
-#. Put the buttons in the box
-#: src/buddy.c:489 src/buddy.c:2746 src/buddy_chat.c:1443
-#: src/conversetion.c:2369 src/conversetion.c:2851 src/dialogs.c:892
-#: src/dialogs.c:1074 src/dialogs.c:2055 src/multi.c:1041 src/prefs.c:2030
-#: src/prefs.c:2372 src/prefs.c:2406
-msgid "Add"
-msgstr "Pøidat"
-
-#: src/buddy.c:490 src/buddy.c:2747 src/dialogs.c:902 src/dialogs.c:1049
+#: src/buddy.c:493 src/buddy.c:2828 src/dialogs.c:942 src/dialogs.c:1089
 msgid "Group"
 msgstr "Skupina"
 
-#: src/buddy.c:491 src/buddy.c:2748 src/buddy_chat.c:1445
-#: src/conversetion.c:2355 src/conversetion.c:2848 src/prefs.c:2044
-#: src/prefs.c:2376 src/prefs.c:2410
-msgid "Remove"
-msgstr "Zru¹it"
-
-#: src/buddy.c:496 src/buddy.c:649 src/buddy.c:803 src/buddy.c:2510
-#: src/buddy_chat.c:850 src/buddy_chat.c:1267
+#: src/buddy.c:499 src/buddy.c:664 src/buddy.c:834 src/buddy.c:2579
+#: src/buddy_chat.c:861 src/buddy_chat.c:1278
 msgid "IM"
 msgstr "IM"
 
-#: src/buddy.c:497 src/buddy.c:2511 src/buddy_chat.c:866 src/buddy_chat.c:1275
-#: src/buddy_chat.c:1451 src/conversetion.c:2869
+#: src/buddy.c:500 src/buddy.c:2580 src/buddy_chat.c:877 src/buddy_chat.c:1286
+#: src/buddy_chat.c:1462 src/conversation.c:2897
 msgid "Info"
 msgstr "Info"
 
 #. Put the buttons in the box
-#: src/buddy.c:654 src/buddy.c:808 src/dialogs.c:1041 src/dialogs.c:3418
-#: src/dialogs.c:3433
+#: src/buddy.c:669 src/buddy.c:839 src/dialogs.c:1081 src/dialogs.c:3458
+#: src/dialogs.c:3473
 msgid "Alias"
 msgstr "Alias"
 
-#: src/buddy.c:659 src/buddy.c:827
+#: src/buddy.c:674 src/buddy.c:858
 msgid "Add Buddy Pounce"
 msgstr ""
 
-#: src/buddy.c:666 src/buddy.c:833
+#: src/buddy.c:681 src/buddy.c:864
 msgid "View Log"
 msgstr "Zobrazit LOG"
 
-#: src/buddy.c:790 src/buddy.c:821
+#: src/buddy.c:821 src/buddy.c:852
 msgid "Rename"
 msgstr "Pøejmenovat"
 
-#: src/buddy.c:815
+#: src/buddy.c:846
 msgid "Un-Alias"
 msgstr "Zru¹it alias"
 
-#: src/buddy.c:1587 src/buddy.c:2654
+#: src/buddy.c:1645 src/buddy.c:2732
 msgid "Buddy Pounce"
 msgstr ""
 
-#: src/buddy.c:1667
+#: src/buddy.c:1725
 msgid "New Buddy Pounce"
 msgstr ""
 
-#: src/buddy.c:1685
+#: src/buddy.c:1743
 msgid "Remove Buddy Pounce"
 msgstr ""
 
-#: src/buddy.c:1713
+#: src/buddy.c:1771
 msgid "[Click to edit]"
 msgstr "[Klikni pro úpravu]"
 
-#: src/buddy.c:2188
+#: src/buddy.c:2254
 #, c-format
 msgid "Logged in: %s\n"
 msgstr "Pøihlá¹en v: %s\n"
 
-#: src/buddy.c:2200
+#: src/buddy.c:2266
 #, c-format
 msgid "Warnings: %d%%\n"
 msgstr "Výstrahy: %d%%\n"
 
-#: src/buddy.c:2212
+#: src/buddy.c:2278
 #, c-format
 msgid "Capabilities: %s\n"
 msgstr "mo¾nosti: %s\n"
 
-#: src/buddy.c:2216
+#: src/buddy.c:2282
 #, c-format
 msgid ""
 "Alias: %s               \n"
@@ -1433,117 +1878,130 @@ msgstr ""
 "ID: %s\n"
 "%s%s%s%s%s%s"
 
-#: src/buddy.c:2220
+#: src/buddy.c:2286
 msgid "Idle: "
 msgstr "Neèinný:"
 
-#: src/buddy.c:2291 src/buddy.c:2296
+#: src/buddy.c:2359 src/buddy.c:2364
 #, c-format
 msgid "%s logged in."
 msgstr "%s prihlá¹en."
 
-#: src/buddy.c:2355 src/buddy.c:2360
+#: src/buddy.c:2424 src/buddy.c:2429
 #, c-format
 msgid "%s logged out."
 msgstr "%s odhlá¹en."
 
-#: src/buddy.c:2545
+#: src/buddy.c:2614
 msgid "Information on selected Buddy"
 msgstr "Informace o vybraném kamarádovi"
 
-#: src/buddy.c:2546 src/dialogs.c:699
-msgid "Send Instant Messege"
+#: src/buddy.c:2615 src/dialogs.c:697
+#, fuzzy
+msgid "Send Instant Message"
 msgstr "Poslat zprávu"
 
-#: src/buddy.c:2547
+#: src/buddy.c:2616
 msgid "Start/join a Buddy Chat"
 msgstr "Zaèít/Pripojit se k chatu s kamarádem"
 
-#: src/buddy.c:2548
-msgid "Activate Away Messege"
+#: src/buddy.c:2617
+#, fuzzy
+msgid "Activate Away Message"
 msgstr "Aktivuj 'Pryè' správu"
 
-#: src/buddy.c:2611
+#: src/buddy.c:2689
 msgid "File"
 msgstr "Soubor"
 
-#: src/buddy.c:2615
+#: src/buddy.c:2693
 msgid "Add A Buddy"
 msgstr "Pridat kamaráda"
 
-#: src/buddy.c:2617
+#: src/buddy.c:2695
 msgid "Join A Chat"
 msgstr "Pripojit se k chatu"
 
-#: src/buddy.c:2619
-msgid "New Instant Messege"
+#: src/buddy.c:2697
+#, fuzzy
+msgid "New Instant Message"
 msgstr "Nová zpráva"
 
-#: src/buddy.c:2621 src/dialogs.c:751
+#: src/buddy.c:2699 src/dialogs.c:759
 msgid "Get User Info"
 msgstr "Získat informace o u¾ivateli"
 
-#: src/buddy.c:2626
+#: src/buddy.c:2704
 msgid "Import Buddy List"
 msgstr "Importuj Buddy List"
 
-#: src/buddy.c:2644
+#: src/buddy.c:2722
 msgid "Tools"
 msgstr "Nástroje"
 
-#: src/buddy.c:2667
+#: src/buddy.c:2745
 msgid "Protocol Actions"
 msgstr "Akce protokolu"
 
-#: src/buddy.c:2673
+#: src/buddy.c:2751
 msgid "View System Log"
 msgstr "Zobrazit systémový LOG"
 
-#: src/buddy.c:2685
+#: src/buddy.c:2763
 msgid "Perl"
 msgstr "Perl"
 
-#: src/buddy.c:2688
+#: src/buddy.c:2766
 msgid "Load Script"
 msgstr "Nahrát skript"
 
-#: src/buddy.c:2692
+#: src/buddy.c:2770
 msgid "Unload All Scripts"
 msgstr "Zru¹it v¹echny skripty"
 
-#: src/buddy.c:2696
+#: src/buddy.c:2774
 msgid "List Scripts"
 msgstr "Seznam scriptù"
 
-#: src/buddy.c:2704
+#: src/buddy.c:2782
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/buddy.c:2709
+#: src/buddy.c:2787
+#, fuzzy
+msgid "Online Help"
+msgstr "Pøipojený"
+
+#: src/buddy.c:2788
+#, fuzzy
+msgid "Debug Window"
+msgstr "Zobraz ladící okno"
+
+#: src/buddy.c:2789
 msgid "About Gaim"
 msgstr "O aplikaci Gaim"
 
-#: src/buddy.c:2726 src/prefs.c:2892
+#: src/buddy.c:2807 src/prefs.c:2905
 msgid "Buddy List"
 msgstr "Buddy List"
 
-#: src/buddy.c:2779
+#: src/buddy.c:2860
 msgid "Add a new Buddy"
 msgstr "Prida» nového kamaráda"
 
-#: src/buddy.c:2780
+#: src/buddy.c:2861
 msgid "Add a new Group"
 msgstr "Pridat novou skupinu"
 
-#: src/buddy.c:2781
+#: src/buddy.c:2862
 msgid "Remove selected Buddy/Group"
 msgstr "Vymazat vybraného kamaráda/skupinu"
 
-#: src/buddy.c:2808
+#: src/buddy.c:2889
 msgid "Edit Buddies"
 msgstr "Editovat kamarády"
 
-#: src/buddy.c:2851
+#: src/buddy.c:2932
 msgid "Gaim - Buddy List"
 msgstr "Gaim - Buddy List"
 
@@ -1551,21 +2009,17 @@ msgstr "Gaim - Buddy List"
 msgid "Join Chat"
 msgstr "Pripojit se k chatu"
 
-#: src/buddy_chat.c:272
-msgid "Buddy Chat"
-msgstr "Chat s kamarádem"
-
 #: src/buddy_chat.c:283
 msgid "Join Chat As:"
 msgstr "Pøipojit se k chatu jako:"
 
-#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:450
-#: src/dialogs.c:540 src/dialogs.c:717 src/dialogs.c:775 src/dialogs.c:894
-#: src/dialogs.c:1070 src/dialogs.c:1433 src/dialogs.c:1638 src/dialogs.c:1762
-#: src/dialogs.c:1822 src/dialogs.c:2044 src/dialogs.c:2226 src/dialogs.c:2401
-#: src/dialogs.c:2472 src/dialogs.c:3168 src/dialogs.c:3420 src/dialogs.c:3601
-#: src/dialogs.c:3972 src/dialogs.c:4078 src/dialogs.c:4737 src/multi.c:769
-#: src/multi.c:899 src/prpl.c:150 src/prpl.c:224
+#: src/buddy_chat.c:304 src/buddy_chat.c:392 src/dialogs.c:449
+#: src/dialogs.c:539 src/dialogs.c:715 src/dialogs.c:816 src/dialogs.c:934
+#: src/dialogs.c:1110 src/dialogs.c:1473 src/dialogs.c:1678 src/dialogs.c:1802
+#: src/dialogs.c:1862 src/dialogs.c:2084 src/dialogs.c:2266 src/dialogs.c:2441
+#: src/dialogs.c:2512 src/dialogs.c:3208 src/dialogs.c:3460 src/dialogs.c:3641
+#: src/dialogs.c:4012 src/dialogs.c:4118 src/dialogs.c:4777 src/multi.c:781
+#: src/multi.c:911 src/prpl.c:150 src/prpl.c:224
 msgid "Cancel"
 msgstr "Zru¹it"
 
@@ -1573,306 +2027,311 @@ msgstr "Zru¹it"
 msgid "Join"
 msgstr "Pripojit"
 
-#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1317
-#: src/buddy_chat.c:1407
+#: src/buddy_chat.c:393 src/buddy_chat.c:396 src/buddy_chat.c:1328
+#: src/buddy_chat.c:1418
 msgid "Invite"
 msgstr "Pozvat"
 
-#: src/buddy_chat.c:412 src/dialogs.c:1261 src/dialogs.c:3428
+#: src/buddy_chat.c:412 src/dialogs.c:1301 src/dialogs.c:3468
 msgid "Buddy"
 msgstr "Kamarád"
 
-#: src/buddy_chat.c:417 src/prefs.c:1993
-msgid "Messege"
+#: src/buddy_chat.c:417 src/prefs.c:2004
+#, fuzzy
+msgid "Message"
 msgstr "Zpráva"
 
 #: src/buddy_chat.c:454
 msgid "Gaim - Invite Buddy Into Chat Room"
 msgstr "Gaim - Pozvat kamaráda do chatovací místnosti"
 
-#: src/buddy_chat.c:857
+#: src/buddy_chat.c:868
 msgid "Un-Ignore"
 msgstr "Od-ignorovat"
 
-#: src/buddy_chat.c:859 src/buddy_chat.c:1271
+#: src/buddy_chat.c:870 src/buddy_chat.c:1282
 msgid "Ignore"
 msgstr "Ignorovat"
 
 #. don't remove them from ignored in case they re-enter
-#: src/buddy_chat.c:922 src/buddy_chat.c:1034 src/buddy_chat.c:1497
-#: src/buddy_chat.c:1530
+#: src/buddy_chat.c:933 src/buddy_chat.c:1045 src/buddy_chat.c:1508
+#: src/buddy_chat.c:1541
 #, c-format
 msgid "%d %s in room"
 msgstr "%d %s v místnosti"
 
-#: src/buddy_chat.c:930
+#: src/buddy_chat.c:941
 #, c-format
 msgid "%s entered the room."
 msgstr "%s vstoupil do místnosti."
 
-#: src/buddy_chat.c:996
+#: src/buddy_chat.c:1007
 #, c-format
 msgid "%s is now known as %s"
 msgstr "%s je teï znám jako %s"
 
-#: src/buddy_chat.c:1043
+#: src/buddy_chat.c:1054
 #, fuzzy, c-format
 msgid "%s left the room (%s)."
 msgstr "%s opustil místnost (%s)."
 
-#: src/buddy_chat.c:1045
+#: src/buddy_chat.c:1056
 #, c-format
 msgid "%s left the room."
 msgstr "%s opustil miestnost."
 
-#: src/buddy_chat.c:1144
+#: src/buddy_chat.c:1155
 msgid "Gaim - Group Chats"
 msgstr "Gaim - Skupinové chaty"
 
-#: src/buddy_chat.c:1207
+#: src/buddy_chat.c:1218
 msgid "Topic:"
 msgstr "Téma:"
 
-#: src/buddy_chat.c:1248
+#: src/buddy_chat.c:1259
 msgid "0 people in room"
 msgstr "0 lidí v místnosti"
 
-#: src/buddy_chat.c:1322 src/buddy_chat.c:1406
+#: src/buddy_chat.c:1333 src/buddy_chat.c:1417
 msgid "Whisper"
 msgstr "©eptat"
 
-#: src/buddy_chat.c:1327 src/buddy_chat.c:1404 src/buddy_chat.c:1453
-#: src/conversetion.c:2880
+#: src/buddy_chat.c:1338 src/buddy_chat.c:1415 src/buddy_chat.c:1464
+#: src/conversation.c:2908
 msgid "Send"
 msgstr "Poslat"
 
-#: src/buddy_chat.c:1447 src/conversetion.c:2857
+#: src/buddy_chat.c:1458 src/conversation.c:2885
 msgid "Block"
 msgstr "Blokovat"
 
-#: src/buddy_chat.c:1449 src/conversetion.c:2863 src/dialogs.c:425
-#: src/dialogs.c:454
+#: src/buddy_chat.c:1460 src/conversation.c:2891 src/dialogs.c:424
+#: src/dialogs.c:453
 msgid "Warn"
 msgstr "Varovat"
 
-#: src/conversetion.c:415
-msgid "Gaim - Save Conversetion"
+#: src/conversation.c:431
+#, fuzzy
+msgid "Gaim - Save Conversation"
 msgstr "Gaim - Ulo¾ konverzaci"
 
-#: src/conversetion.c:476
+#: src/conversation.c:492
 #, fuzzy
 msgid "Gaim - Insert Image"
 msgstr "Gaim - Vlo¾ Obrázek"
 
-#: src/conversetion.c:1319
-msgid "Unable to send messege: too large"
+#: src/conversation.c:1336
+#, fuzzy
+msgid "Unable to send message: too large"
 msgstr "Nemù¾u poslat zprávu: moc velká"
 
-#: src/conversetion.c:1319 src/conversetion.c:1323
-msgid "Messege Error"
+#: src/conversation.c:1336 src/conversation.c:1340
+#, fuzzy
+msgid "Message Error"
 msgstr "Chyba zprávy"
 
-#: src/conversetion.c:1323
-msgid "Unable to send messege: Unknown reason"
+#: src/conversation.c:1340
+#, fuzzy
+msgid "Unable to send message: Unknown reason"
 msgstr "Nemù¾u poslat správu: Neznámy dùvod"
 
-#: src/conversetion.c:1542
+#: src/conversation.c:1559
 #, c-format
 msgid "Currently at %d, "
 msgstr ""
 
-#: src/conversetion.c:1550
+#: src/conversation.c:1567
 #, c-format
 msgid "Setting position to %d\n"
 msgstr "Nastavuji pozici na %d\n"
 
-#: src/conversetion.c:2151 src/prefs.c:1306
+#: src/conversation.c:2170 src/prefs.c:1308
 msgid "Bold Text"
 msgstr "Tuèný text"
 
-#: src/conversetion.c:2151
+#: src/conversation.c:2170
 msgid "Bold"
 msgstr "Tuèný"
 
-#: src/conversetion.c:2155
+#: src/conversation.c:2174
 msgid "Italics Text"
 msgstr "Kurzíva"
 
-#: src/conversetion.c:2156
+#: src/conversation.c:2175
 msgid "Italics"
 msgstr "Kurzíva"
 
-#: src/conversetion.c:2159 src/prefs.c:1318
+#: src/conversation.c:2178 src/prefs.c:1320
 msgid "Underline Text"
 msgstr "Podtr¾ený text"
 
-#: src/conversetion.c:2160
+#: src/conversation.c:2179
 msgid "Underline"
 msgstr "Podtr¾ený"
 
-#: src/conversetion.c:2164 src/prefs.c:1324
+#: src/conversation.c:2183 src/prefs.c:1326
 msgid "Strike through Text"
 msgstr "Pøe¹krtnutý text"
 
-#: src/conversetion.c:2164
+#: src/conversation.c:2183
 msgid "Strike"
 msgstr "Pøe¹krtnutý"
 
-#: src/conversetion.c:2170
+#: src/conversation.c:2189
 msgid "Decrease font size"
 msgstr "Zmen¹it velikost písma"
 
-#: src/conversetion.c:2170
+#: src/conversation.c:2189
 msgid "Small"
 msgstr "Malý"
 
-#: src/conversetion.c:2173
+#: src/conversation.c:2192
 msgid "Normal font size"
 msgstr "Normálna veµkost písma"
 
-#: src/conversetion.c:2173
+#: src/conversation.c:2192
 msgid "Normal"
 msgstr "Normální"
 
-#: src/conversetion.c:2176
+#: src/conversation.c:2195
 msgid "Increase font size"
 msgstr "Zvìt¹it velikost písma"
 
-#: src/conversetion.c:2176
+#: src/conversation.c:2195
 msgid "Big"
 msgstr "Velký"
 
-#: src/conversetion.c:2183 src/dialogs.c:2843 src/dialogs.c:2867
+#: src/conversation.c:2202 src/dialogs.c:2883 src/dialogs.c:2907
 msgid "Select Font"
 msgstr "Vybrat písmo"
 
-#: src/conversetion.c:2184
+#: src/conversation.c:2203
 msgid "Font"
 msgstr "Písmo"
 
-#: src/conversetion.c:2187 src/prefs.c:1354
+#: src/conversation.c:2206 src/prefs.c:1356
 msgid "Text Color"
 msgstr "Barva textu"
 
-#: src/conversetion.c:2188 src/conversetion.c:2192
+#: src/conversation.c:2207 src/conversation.c:2211
 msgid "Color"
 msgstr "Barva"
 
-#: src/conversetion.c:2192 src/prefs.c:1372
+#: src/conversation.c:2211 src/prefs.c:1374
 msgid "Background Color"
 msgstr "Barva pozadí"
 
-#: src/conversetion.c:2199 src/dialogs.c:2466
+#: src/conversation.c:2218 src/dialogs.c:2506
 msgid "Insert Link"
 msgstr "Vlo¾it odkaz"
 
-#: src/conversetion.c:2200
+#: src/conversation.c:2219
 msgid "Link"
 msgstr "Odkaz"
 
-#: src/conversetion.c:2203
+#: src/conversation.c:2222
 msgid "Insert smiley face"
 msgstr "Vlo¾it smajlík"
 
-#: src/conversetion.c:2203
+#: src/conversation.c:2222
 msgid "Smiley"
 msgstr "Smajlík"
 
-#: src/conversetion.c:2206
+#: src/conversation.c:2225
 #, fuzzy
 msgid "Insert IM Image"
 msgstr "Vlo¾it IM obrázek"
 
-#: src/conversetion.c:2206
+#: src/conversation.c:2225
 msgid "Image"
 msgstr ""
 
-#: src/conversetion.c:2213
+#: src/conversation.c:2232
 msgid "Enable logging"
 msgstr "Povolit logování"
 
-#: src/conversetion.c:2214 src/prefs.c:254
+#: src/conversation.c:2233 src/prefs.c:254
 msgid "Logging"
 msgstr "Logování"
 
-#: src/conversetion.c:2223
-msgid "Save Conversetion"
+#: src/conversation.c:2242
+#, fuzzy
+msgid "Save Conversation"
 msgstr "Ulo¾it konverzaci"
 
-#: src/conversetion.c:2224 src/dialogs.c:1642 src/dialogs.c:1826
-#: src/dialogs.c:3180 src/dialogs.c:3868 src/dialogs.c:4745
+#: src/conversation.c:2243 src/dialogs.c:1682 src/dialogs.c:1866
+#: src/dialogs.c:3220 src/dialogs.c:3908 src/dialogs.c:4785
 msgid "Save"
 msgstr "Ulo¾it"
 
-#: src/conversetion.c:2228
-msgid "Enable sounds"
-msgstr "Povolit zvuky"
-
-#: src/conversetion.c:2229
+#: src/conversation.c:2247 src/conversation.c:2248
 msgid "Sound"
 msgstr "Zvuk"
 
-#: src/conversetion.c:2709
-msgid "Gaim - Conversetions"
+#: src/conversation.c:2729
+#, fuzzy
+msgid "Gaim - Conversations"
 msgstr "Gaim - Konverzace"
 
-#: src/conversetion.c:2796
-msgid "Send messege as: "
+#: src/conversation.c:2816
+#, fuzzy
+msgid "Send message as: "
 msgstr "Poslat zprávu jako: "
 
-#: src/conversetion.c:3414
+#: src/conversation.c:3453
 msgid "Gaim - Save Icon"
 msgstr "Gaim - Ulo¾it ikonu"
 
-#: src/conversetion.c:3441
-msgid "Diseble Animation"
+#: src/conversation.c:3487
+#, fuzzy
+msgid "Disable Animation"
 msgstr "Zakázat animace"
 
-#: src/conversetion.c:3446
+#: src/conversation.c:3492
 msgid "Enable Animation"
 msgstr "Povolit animace"
 
-#: src/conversetion.c:3452
+#: src/conversation.c:3498
 msgid "Hide Icon"
 msgstr "Skryj ikonu"
 
-#: src/conversetion.c:3458
+#: src/conversation.c:3504
 msgid "Save Icon As..."
 msgstr "Ulo¾it ikonu jako..."
 
-#: src/dialogs.c:413
+#: src/dialogs.c:412
 msgid "Gaim - Warn user?"
 msgstr "Gaim - Varovat u¾ivatele?"
 
-#: src/dialogs.c:433
+#: src/dialogs.c:432
 #, c-format
 msgid "Do you really want to warn %s?"
 msgstr "opravdu chcete varovat %s?"
 
-#: src/dialogs.c:438
+#: src/dialogs.c:437
 msgid "Warn anonymously?"
 msgstr "Varovat anonymnì?"
 
-#: src/dialogs.c:442
+#: src/dialogs.c:441
 msgid "Anonymous warnings are less harsh."
 msgstr "Anonymní varování nejsou tak kruté."
 
-#: src/dialogs.c:470
+#: src/dialogs.c:469
 #, c-format
 msgid "Removing '%s' from buddylist.\n"
 msgstr "Ma¾u '%s' z buddy Listu.\n"
 
-#: src/dialogs.c:495
+#: src/dialogs.c:494
 #, fuzzy, c-format
 msgid "Gaim - Remove %s?"
 msgstr "Gaim - Odstranit %s?"
 
-#: src/dialogs.c:508
+#: src/dialogs.c:507
 #, fuzzy
 msgid "Remove Buddy"
 msgstr "Pøejmenovat kamaráda"
 
-#: src/dialogs.c:518
+#: src/dialogs.c:517
 #, c-format
 msgid ""
 "You are about to remove '%s' from\n"
@@ -1881,358 +2340,370 @@ msgstr ""
 "Chystáte se odstranit '%s' z Va¹eho\n"
 "Buddy Listu. Opravdu to chcete udìlat?"
 
-#: src/dialogs.c:530 src/prpl.c:154 src/prpl.c:228
+#: src/dialogs.c:529 src/prpl.c:154 src/prpl.c:228
 msgid "Accept"
 msgstr "Akceptovat"
 
 #. Build OK Button
-#: src/dialogs.c:637 src/dialogs.c:722 src/dialogs.c:780 src/dialogs.c:1437
-#: src/dialogs.c:1766 src/dialogs.c:1917 src/dialogs.c:2225 src/dialogs.c:2405
-#: src/dialogs.c:2471 src/dialogs.c:3977 src/dialogs.c:4083 src/multi.c:774
+#: src/dialogs.c:635 src/dialogs.c:720 src/dialogs.c:821 src/dialogs.c:1477
+#: src/dialogs.c:1806 src/dialogs.c:1957 src/dialogs.c:2265 src/dialogs.c:2445
+#: src/dialogs.c:2511 src/dialogs.c:4017 src/dialogs.c:4123 src/multi.c:786
 msgid "OK"
 msgstr "OK"
 
-#: src/dialogs.c:689
+#: src/dialogs.c:687
 msgid "Gaim - IM user"
 msgstr "Gaim - IM u¾ivatel"
 
-#: src/dialogs.c:706
+#: src/dialogs.c:704
 msgid "IM who:"
 msgstr ""
 
-#: src/dialogs.c:758
+#: src/dialogs.c:768
 msgid "User:"
 msgstr "U¾ivatel:"
 
+#: src/dialogs.c:777
+#, fuzzy
+msgid "Account:"
+msgstr "Úèet"
+
 #. Finish up
-#: src/dialogs.c:785
+#: src/dialogs.c:826
 msgid "Gaim - Get User Info"
 msgstr "Gaim - Získat informace o u¾ivateli"
 
-#: src/dialogs.c:900
+#: src/dialogs.c:940
 msgid "Add Group"
 msgstr "Pøidat skupinu"
 
-#: src/dialogs.c:925
+#: src/dialogs.c:965
 msgid "Gaim - Add Group"
 msgstr "Gaim - Pøidat skupinu"
 
-#: src/dialogs.c:1009
+#: src/dialogs.c:1049
 msgid "Gaim - Add Buddy"
 msgstr "Gaim - Pøidat kamaráda"
 
-#: src/dialogs.c:1021
+#: src/dialogs.c:1061
 msgid "Add Buddy"
 msgstr "Pøidat kamaráda"
 
-#: src/dialogs.c:1031
+#: src/dialogs.c:1071
 msgid "Contact"
 msgstr "Kontakt"
 
 #. Set up stuff for the account box
-#: src/dialogs.c:1057
+#: src/dialogs.c:1097
 msgid "Add To"
 msgstr "Pøidat k"
 
-#: src/dialogs.c:1094
+#: src/dialogs.c:1134
 msgid "Please enter a buddy to pounce."
 msgstr ""
 
-#: src/dialogs.c:1094
+#: src/dialogs.c:1134
 msgid "Buddy Pounce Error"
 msgstr ""
 
-#: src/dialogs.c:1230
+#: src/dialogs.c:1270
 msgid "Gaim - New Buddy Pounce"
 msgstr ""
 
-#. <poun ce type="who">
-#: src/dialogs.c:1241
+#. <pounce type="who">
+#: src/dialogs.c:1281
 msgid "Pounce Who"
 msgstr ""
 
-#: src/dialogs.c:1252
+#: src/dialogs.c:1292
 msgid "Account"
 msgstr "Úèet"
 
 #. </pounce type="who">
 #. <pounce type="when">
-#: src/dialogs.c:1278
+#: src/dialogs.c:1318
 msgid "Pounce When"
 msgstr ""
 
-#: src/dialogs.c:1288
+#: src/dialogs.c:1328
 msgid "Pounce on sign on"
 msgstr ""
 
-#: src/dialogs.c:1297
+#: src/dialogs.c:1337
 msgid "Pounce on return from away"
 msgstr ""
 
-#: src/dialogs.c:1306
+#: src/dialogs.c:1346
 msgid "Pounce on return from idle"
 msgstr ""
 
-#: src/dialogs.c:1315
+#: src/dialogs.c:1355
 #, fuzzy
 msgid "Pounce when buddy is typing to you"
 msgstr "Zvuk kdy¾ se kamarád pøihlásí"
 
 #. </pounce type="when">
 #. <pounce type="action">
-#: src/dialogs.c:1325
+#: src/dialogs.c:1365
 msgid "Pounce Action"
 msgstr ""
 
-#: src/dialogs.c:1336
+#: src/dialogs.c:1376
 msgid "Open IM Window"
 msgstr "Otevøít IM okno"
 
-#: src/dialogs.c:1345
+#: src/dialogs.c:1385
 msgid "Popup Notification"
 msgstr "Zobrazit notifikaci"
 
-#: src/dialogs.c:1354
-msgid "Send Messege"
+#: src/dialogs.c:1394
+#, fuzzy
+msgid "Send Message"
 msgstr "Poslat zprávu"
 
-#: src/dialogs.c:1375
+#: src/dialogs.c:1415
 msgid "Execute command on pounce"
 msgstr ""
 
-#: src/dialogs.c:1397
+#: src/dialogs.c:1437
 msgid "Play sound on pounce"
 msgstr ""
 
 #. </pounce type="action">
-#: src/dialogs.c:1419
+#: src/dialogs.c:1459
 msgid "Save this pounce after activation"
 msgstr ""
 
-#: src/dialogs.c:1505
+#: src/dialogs.c:1545
 msgid "Gaim - Set Dir Info"
 msgstr ""
 
-#: src/dialogs.c:1514
+#: src/dialogs.c:1554
 msgid "Directory Info"
 msgstr ""
 
-#: src/dialogs.c:1536
+#: src/dialogs.c:1576
 msgid "Allow Web Searches To Find Your Info"
 msgstr "Povolit Internetovým vyhladávaèùm najít informace o Vás"
 
 #. Line 1
-#: src/dialogs.c:1539 src/dialogs.c:2244
+#: src/dialogs.c:1579 src/dialogs.c:2284
 msgid "First Name"
 msgstr "Jméno"
 
 #. Line 2
-#: src/dialogs.c:1550 src/dialogs.c:2256
+#: src/dialogs.c:1590 src/dialogs.c:2296
 msgid "Middle Name"
 msgstr "Prostøední jméno"
 
 #. Line 3
-#: src/dialogs.c:1562 src/dialogs.c:2268
+#: src/dialogs.c:1602 src/dialogs.c:2308
 msgid "Last Name"
 msgstr "Pøíjmení"
 
 #. Line 4
-#: src/dialogs.c:1573 src/dialogs.c:2280
+#: src/dialogs.c:1613 src/dialogs.c:2320
 msgid "Maiden Name"
 msgstr "Jméno za svobodna"
 
 #. Line 6
-#: src/dialogs.c:1595 src/dialogs.c:2303
+#: src/dialogs.c:1635 src/dialogs.c:2343
 msgid "State"
 msgstr "Stát"
 
-#: src/dialogs.c:1660
+#: src/dialogs.c:1700
 msgid "New Passwords Do Not Match"
 msgstr "Nové heslo nesouhlasí"
 
-#: src/dialogs.c:1660 src/dialogs.c:1665
+#: src/dialogs.c:1700 src/dialogs.c:1705
 msgid "Gaim - Change Password Error"
 msgstr "Gaim - Chyba zmìny hesla"
 
-#: src/dialogs.c:1665
+#: src/dialogs.c:1705
 msgid "Fill out all fields completely"
 msgstr "Vyplòte v¹echny políèka"
 
-#: src/dialogs.c:1720
+#: src/dialogs.c:1760
 msgid "Original Password"
 msgstr "Staré heslo"
 
-#: src/dialogs.c:1734
+#: src/dialogs.c:1774
 msgid "New Password"
 msgstr "Nové heslo"
 
-#: src/dialogs.c:1748
+#: src/dialogs.c:1788
 msgid "New Password (again)"
 msgstr "Nové heslo (znova)"
 
-#: src/dialogs.c:1789
+#: src/dialogs.c:1829
 msgid "Gaim - Set User Info"
 msgstr "Gaim - Nastavit informace o u¾ivateli"
 
-#: src/dialogs.c:1901
+#: src/dialogs.c:1941
 msgid "Below are the results of your search: "
 msgstr "Zde jsou výsledky Va¹eho hledání: "
 
-#: src/dialogs.c:2034 src/dialogs.c:2041
+#: src/dialogs.c:2074 src/dialogs.c:2081
 msgid "Permit"
 msgstr "Povolit"
 
-#: src/dialogs.c:2036 src/dialogs.c:2043
+#: src/dialogs.c:2076 src/dialogs.c:2083
 msgid "Deny"
 msgstr "Zamítnout"
 
-#: src/dialogs.c:2080
+#: src/dialogs.c:2120
 msgid "Gaim - Add Permit"
 msgstr "Gaim - Pøidat povolení"
 
-#: src/dialogs.c:2082
+#: src/dialogs.c:2122
 msgid "Gaim - Add Deny"
 msgstr "Gaim - Pøidat zákaz"
 
-#: src/dialogs.c:2142
-msgid "Gaim - Log Conversetion"
+#: src/dialogs.c:2182
+#, fuzzy
+msgid "Gaim - Log Conversation"
 msgstr "Gaim - Loguj konverzaci"
 
-#: src/dialogs.c:2220 src/dialogs.c:2383
+#: src/dialogs.c:2260 src/dialogs.c:2423
 msgid "Search for Buddy"
 msgstr "Nájít kamaráda"
 
-#: src/dialogs.c:2348
+#: src/dialogs.c:2388
 msgid "Gaim - Find Buddy By Info"
 msgstr "Gaim - Najít kamaráda podle informací"
 
-#: src/dialogs.c:2377
+#: src/dialogs.c:2417
 msgid "Gaim - Find Buddy By Email"
 msgstr "Gaim - Najít kamaráda podle emailu"
 
-#: src/dialogs.c:2517
+#: src/dialogs.c:2557
 msgid "Gaim - Add URL"
 msgstr "Gaim - Pøidat URL"
 
-#: src/dialogs.c:2668 src/dialogs.c:2689 src/dialogs.c:2743
+#: src/dialogs.c:2708 src/dialogs.c:2729 src/dialogs.c:2783
 msgid "Select Text Color"
 msgstr "Vyberte barvu textu"
 
-#: src/dialogs.c:2722
+#: src/dialogs.c:2762
 msgid "Select Background Color"
 msgstr "Vyberte barvu pozadí"
 
-#: src/dialogs.c:2944
+#: src/dialogs.c:2984
 msgid "Import to:"
 msgstr "Importuj do:"
 
-#: src/dialogs.c:2968
+#: src/dialogs.c:3008
 msgid "Gaim - Import Buddy List"
 msgstr "Gaim - Importuj Buddy List"
 
 #. We shouldn't allow a blank title
-#: src/dialogs.c:3035
-msgid "You cannot create an away messege with a blank title"
+#: src/dialogs.c:3075
+#, fuzzy
+msgid "You cannot create an away message with a blank title"
 msgstr "Nemù¾ete vytvoøit 'Pryè' zprávu s prázdným názvem"
 
-#. We shouldn't allow a blank messege
-#: src/dialogs.c:3042
-msgid "You cannot create an empty away messege"
+#. We shouldn't allow a blank message
+#: src/dialogs.c:3082
+#, fuzzy
+msgid "You cannot create an empty away message"
 msgstr "Nemù¾ete vytvoøit prázdnou 'Pryè' zprávu"
 
-#: src/dialogs.c:3110
-msgid "Gaim - New away messege"
+#: src/dialogs.c:3150
+#, fuzzy
+msgid "Gaim - New away message"
 msgstr "Gaim - Nová 'Pryè' zpráva"
 
-#: src/dialogs.c:3120
-msgid "New away messege"
+#: src/dialogs.c:3160
+#, fuzzy
+msgid "New away message"
 msgstr "Nová 'Pryè' zpráva"
 
-#: src/dialogs.c:3133
+#: src/dialogs.c:3173
 msgid "Away title: "
 msgstr "Název 'Pryè': "
 
-#: src/dialogs.c:3172
+#: src/dialogs.c:3212
 msgid "Use"
 msgstr "Pou¾ít"
 
-#: src/dialogs.c:3176
+#: src/dialogs.c:3216
 msgid "Save & Use"
 msgstr "Ulo¾it a Pou¾ít"
 
 #. show everything
-#: src/dialogs.c:3373
+#: src/dialogs.c:3413
 msgid "Smile!"
 msgstr "Úsmìv"
 
-#: src/dialogs.c:3426
+#: src/dialogs.c:3466
 msgid "Alias Buddy"
 msgstr "Alias kamaráda"
 
-#: src/dialogs.c:3459
+#: src/dialogs.c:3499
 msgid "Gaim - Alias Buddy"
 msgstr "Gaim - Alias kamaráda"
 
-#: src/dialogs.c:3531
+#: src/dialogs.c:3571
 msgid "Gaim - Save Log File"
 msgstr "Gaim - Ulo¾it LOG"
 
-#: src/dialogs.c:3563
+#: src/dialogs.c:3603
 #, c-format
 msgid "Unable to remove file %s - %s"
 msgstr "Nemù¾u vymazat soubor %s - %s"
 
-#: src/dialogs.c:3591
+#: src/dialogs.c:3631
 msgid "Really clear log?"
 msgstr "Skuteènì vymazat LOG?"
 
-#: src/dialogs.c:3606
+#: src/dialogs.c:3646
 msgid "Okay"
 msgstr "OK"
 
-#: src/dialogs.c:3777
+#: src/dialogs.c:3817
 msgid "Date"
 msgstr "Datum"
 
-#: src/dialogs.c:3840
-msgid "Conversetion"
+#: src/dialogs.c:3880
+#, fuzzy
+msgid "Conversation"
 msgstr "Konverzace"
 
-#: src/dialogs.c:3863
+#: src/dialogs.c:3903
 msgid "Clear"
 msgstr "Vymazat"
 
-#: src/dialogs.c:3941
+#: src/dialogs.c:3981
 msgid "Gaim - Rename Group"
 msgstr "Gaim - Pøejmenovat skupinu"
 
-#: src/dialogs.c:3951
+#: src/dialogs.c:3991
 msgid "Rename Group"
 msgstr "Pøejmenovat skupinu"
 
-#: src/dialogs.c:3958 src/dialogs.c:4064
+#: src/dialogs.c:3998 src/dialogs.c:4104
 msgid "New name:"
 msgstr "Nové jméno"
 
-#: src/dialogs.c:4047
+#: src/dialogs.c:4087
 msgid "Gaim - Rename Buddy"
 msgstr "Gaim - Pøejmenovat kamaráda"
 
-#: src/dialogs.c:4057
+#: src/dialogs.c:4097
 msgid "Rename Buddy"
 msgstr "Pøejmenovat kamaráda"
 
 #. Below is basically stolen from plugins.c
-#: src/dialogs.c:4141
+#: src/dialogs.c:4181
 msgid "Gaim - Select Perl Script"
 msgstr "Gaim - Vyberte si Perlový skript"
 
-#: src/gaimrc.c:1117
+#: src/gaimrc.c:1136
 #, c-format
 msgid "Could not open config file %s."
 msgstr "Nemù¾u otevøít konfiguraèní soubor %s."
 
-#: src/gaimrc.c:1118
+#: src/gaimrc.c:1137
 msgid "Preferences Error"
 msgstr "Chyba nastavení"
 
@@ -2245,55 +2716,65 @@ msgstr "Obdr¾ené: '%s'\n"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Chyba pøi otvírání spojení.\n"
 
-#: src/multi.c:452
+#: src/module.c:106 src/module.c:112 src/module.c:122
+#, fuzzy
+msgid "Plugin Error"
+msgstr "Chyba pøi Pøihla¹ování"
+
+#: src/multi.c:454
 msgid "Gaim - Load Buddy Icon"
 msgstr "Gaim - Nahraï ikonu kamaráda"
 
-#: src/multi.c:495
+#: src/multi.c:497
 msgid "Buddy Icon File:"
 msgstr "Soubor s ikonami kamarádù:"
 
-#: src/multi.c:506
+#: src/multi.c:508
 msgid "Browse"
 msgstr "Procházet"
 
-#: src/multi.c:511 src/prefs.c:1546
+#: src/multi.c:513 src/prefs.c:1548
 msgid "Reset"
 msgstr "Zru¹it"
 
-#: src/multi.c:538
+#: src/multi.c:540
 msgid "Screenname:"
 msgstr "ID:"
 
-#: src/multi.c:558
+#: src/multi.c:559
+#, fuzzy
+msgid "Alias:"
+msgstr "Alias"
+
+#: src/multi.c:569
 msgid "Protocol:"
 msgstr "Protokol:"
 
-#: src/multi.c:563
+#: src/multi.c:574
 msgid "Remember Password"
 msgstr "Zapamatovat heslo"
 
-#: src/multi.c:564
+#: src/multi.c:575
 msgid "Auto-Login"
 msgstr "Aotomatické pøihla¹ování"
 
-#: src/multi.c:604
+#: src/multi.c:616
 msgid "New Mail Notifications"
 msgstr "Upozoròování na nové zprávy"
 
-#: src/multi.c:694
+#: src/multi.c:706
 msgid "Register with server"
 msgstr ""
 
-#: src/multi.c:752
+#: src/multi.c:764
 msgid "Gaim - Modify Account"
 msgstr "Gaim - Zmìnit úèet"
 
-#: src/multi.c:871
+#: src/multi.c:883
 msgid "Enter Password"
 msgstr "Vlo¾te heslo"
 
-#: src/multi.c:935
+#: src/multi.c:947
 msgid ""
 "You cannot log this account in; you do not have the protocol it uses loaded, "
 "or the protocol does not have a login function."
@@ -2301,71 +2782,70 @@ msgstr ""
 "Nemù¾ete se pøihlásit na tento úèet, nemáte nahraný protokol, nebo protokol "
 "nemá funkci pøihlá¹ení"
 
-#: src/multi.c:937
+#: src/multi.c:949
 msgid "Login Error"
 msgstr "Chyba pøi Pøihla¹ování"
 
-#: src/multi.c:966
+#: src/multi.c:978
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Jste si jisti, ¾e chcete vymazat %s"
 
-#: src/multi.c:1003
+#: src/multi.c:1015
 msgid "Gaim - Account Editor"
 msgstr "Gaim - Editor úètù"
 
-#: src/multi.c:1022
+#: src/multi.c:1034
 msgid "Select All"
 msgstr "Vybrat v¹e"
 
-#: src/multi.c:1027
+#: src/multi.c:1039
 msgid "Select Autos"
 msgstr "Vybrat automatické"
 
-#: src/multi.c:1031
+#: src/multi.c:1043
 msgid "Select None"
 msgstr "Vybrat ¾ádné"
 
-#: src/multi.c:1045
+#: src/multi.c:1057
 msgid "Modify"
 msgstr "Zmìnit"
 
-#: src/multi.c:1049
+#: src/multi.c:1061
 msgid "Sign On/Off"
 msgstr "Prihlásit/Odhlásit"
 
-#: src/multi.c:1053
+#: src/multi.c:1065
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/multi.c:1368
+#: src/multi.c:1380
 #, c-format
 msgid ""
 "%s\n"
 "%s: %s"
 msgstr ""
 
-#: src/multi.c:1387
+#: src/multi.c:1399
 #, fuzzy, c-format
 msgid "%s was unable to sign on"
 msgstr "%s nebyl schopný se pøihlásit"
 
-#: src/multi.c:1398
-#, fuzzy
+#: src/multi.c:1410
 msgid "Notice"
 msgstr ""
 
-#: src/multi.c:1408
+#: src/multi.c:1420
 #, fuzzy, c-format
 msgid "%s has been signed off"
 msgstr "%s byl odhlá¹en"
 
-#: src/multi.c:1409
+#: src/multi.c:1421
 #, fuzzy
 msgid "Connection Error"
 msgstr "Chyba spojení"
 
-#: src/perl.c:856
+#: src/perl.c:875
 msgid "Perl Scripts"
 msgstr "Perlové skripty"
 
@@ -2427,9 +2907,9 @@ msgstr "Zavøi toto okno"
 msgid "General Options"
 msgstr "V¹eobecné mo¾nosti"
 
-#: src/prefs.c:200 src/prefs.c:383 src/prefs.c:551 src/prefs.c:665
-#: src/prefs.c:919 src/prefs.c:1069 src/prefs.c:1294 src/prefs.c:1616
-#: src/prefs.c:1890 src/prefs.c:2323
+#: src/prefs.c:200 src/prefs.c:384 src/prefs.c:552 src/prefs.c:667
+#: src/prefs.c:921 src/prefs.c:1071 src/prefs.c:1296 src/prefs.c:1629
+#: src/prefs.c:1901 src/prefs.c:2334
 msgid "All options take effect immediately unless otherwise noted."
 msgstr "v¹echny nastavení vejdou okam¾itì v platnost, pokud není øeèeno jinak."
 
@@ -2471,7 +2951,8 @@ msgid "X Use"
 msgstr "Pou¾ít X"
 
 #: src/prefs.c:262
-msgid "Log all conversetions"
+#, fuzzy
+msgid "Log all conversations"
 msgstr "Logovat v¹echny rozhovory"
 
 #: src/prefs.c:263
@@ -2503,8 +2984,8 @@ msgid "Browser"
 msgstr "Prohlí¾eè"
 
 #: src/prefs.c:291
-msgid "KFM"
-msgstr "KFM"
+msgid "Konqueror"
+msgstr ""
 
 #: src/prefs.c:292
 msgid "Opera"
@@ -2514,27 +2995,32 @@ msgstr "Opera"
 msgid "Netscape"
 msgstr "Netscape"
 
-#: src/prefs.c:296
+#: src/prefs.c:294
+msgid "Mozilla"
+msgstr ""
+
+#: src/prefs.c:297
 msgid "Pop up new window by default"
 msgstr "Standartnì otevøi nové okno"
 
-#: src/prefs.c:303
+#: src/prefs.c:304
 msgid "GNOME URL Handler"
 msgstr "GNOME URL ???"
 
-#: src/prefs.c:305
+#: src/prefs.c:306
 msgid "Galeon"
 msgstr "Galeon"
 
-#: src/prefs.c:306
-msgid "Manual"
-msgstr "Návod"
+#: src/prefs.c:307
+#, c-format
+msgid "Manual (%s for URL)"
+msgstr ""
 
-#: src/prefs.c:375
+#: src/prefs.c:376
 msgid "Proxy Options"
 msgstr "Nastavení proxy"
 
-#: src/prefs.c:387
+#: src/prefs.c:388
 msgid ""
 "Not all protocols can use these proxy options. Please see the README file "
 "for details."
@@ -2542,379 +3028,392 @@ msgstr ""
 "Ne v¹echny protokoly mù¾ou vyu¾ívat tyto nastavení proxy. Zkonsultujte,\n"
 "prosím, README soubor kvùli detailùm."
 
-#: src/prefs.c:392
+#: src/prefs.c:393
 msgid "Proxy Type"
 msgstr "Typ proxy"
 
-#: src/prefs.c:404
+#: src/prefs.c:405
 msgid "Proxy Server"
 msgstr "Proxy Server"
 
-#: src/prefs.c:407
+#: src/prefs.c:408
 msgid "No Proxy"
 msgstr "Bez proxy"
 
-#: src/prefs.c:419
+#: src/prefs.c:420
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
-#: src/prefs.c:429
+#: src/prefs.c:430
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
-#: src/prefs.c:438
+#: src/prefs.c:439
 msgid "HTTP"
 msgstr "HTTP"
 
-#: src/prefs.c:462
+#: src/prefs.c:463
 msgid "Host"
 msgstr "Hostitel"
 
-#: src/prefs.c:478
+#: src/prefs.c:479
 msgid "Port"
 msgstr "Port"
 
-#: src/prefs.c:495
+#: src/prefs.c:496
 msgid "User"
 msgstr "U¾ivatel"
 
-#: src/prefs.c:511
+#: src/prefs.c:512
 msgid "Password"
 msgstr "Heslo"
 
-#: src/prefs.c:543
+#: src/prefs.c:544
 msgid "Buddy List Options"
 msgstr "Mo¾nosti Buddy Listu"
 
-#: src/prefs.c:555
+#: src/prefs.c:556
 msgid "Buddy List Window"
 msgstr "Okno Buddy Listu"
 
-#: src/prefs.c:568
+#: src/prefs.c:569
 #, fuzzy
 msgid "Tab Placement:"
 msgstr "Poloha tabulky:"
 
-#: src/prefs.c:572 src/prefs.c:1002 src/prefs.c:1152
+#: src/prefs.c:573 src/prefs.c:1004 src/prefs.c:1154
 msgid "Top"
 msgstr "Nahoøe"
 
-#: src/prefs.c:573 src/prefs.c:1004 src/prefs.c:1154
+#: src/prefs.c:574 src/prefs.c:1006 src/prefs.c:1156
 msgid "Bottom"
 msgstr "Dole"
 
-#: src/prefs.c:585
+#: src/prefs.c:586
 msgid "Hide IM/Info/Chat buttons"
 msgstr "Skryj tlaèítka IM/Informace/Chat"
 
-#: src/prefs.c:587
+#: src/prefs.c:588
 msgid "Automatically show buddy list on sign on"
 msgstr "Automaticky zobraz Buddy List pøi pøihlá¹ení"
 
-#: src/prefs.c:589
+#: src/prefs.c:590
 msgid "Display Buddy List near applet"
 msgstr "Zobraz Buddy List u appletu"
 
-#: src/prefs.c:592
+#: src/prefs.c:593
 msgid "Save Window Size/Position"
 msgstr "Ulo¾ velikost/pozici okna"
 
-#: src/prefs.c:595
+#: src/prefs.c:596
 msgid "Show pictures on buttons"
 msgstr "Zobraz obrázky na tlaèítkách"
 
 #: src/prefs.c:600
+msgid "Raise Buddy List on Signons and Signoffs"
+msgstr ""
+
+#: src/prefs.c:602
 msgid "Group Displays"
 msgstr "Zobrazení skupin"
 
-#: src/prefs.c:612
+#: src/prefs.c:614
 msgid "Hide groups with no online buddies"
 msgstr "Skrýt skupiny s ¾ádnými online kamarády"
 
-#: src/prefs.c:618
+#: src/prefs.c:620
 msgid "Show numbers in groups"
 msgstr "Zobraz èísla ve skupinách"
 
-#: src/prefs.c:620
+#: src/prefs.c:622
 msgid "Buddy Displays"
 msgstr "Zobrazení kamarádù"
 
-#: src/prefs.c:632
+#: src/prefs.c:634
 msgid "Show buddy type icons"
 msgstr ""
 
-#: src/prefs.c:633
+#: src/prefs.c:635
 msgid "Show warning levels"
 msgstr "Zobraz úroveò varování"
 
-#: src/prefs.c:639
+#: src/prefs.c:641
 msgid "Show idle times"
 msgstr "Zobraz dobu neèinnosti"
 
-#: src/prefs.c:640
+#: src/prefs.c:642
 msgid "Grey idle buddies"
 msgstr "Neèinní kamarádí ¹edì"
 
-#: src/prefs.c:657
-msgid "Conversetion Options"
+#: src/prefs.c:659
+#, fuzzy
+msgid "Conversation Options"
 msgstr "Mo¾nosti konverzace"
 
-#: src/prefs.c:669
+#: src/prefs.c:671
 msgid "Keyboard Options"
 msgstr "Mo¾nosti klávesnice"
 
-#: src/prefs.c:681
-msgid "Enter sends messege"
+#: src/prefs.c:683
+#, fuzzy
+msgid "Enter sends message"
 msgstr "Enter po¹le zprávu"
 
-#: src/prefs.c:682
-msgid "Control-Enter sends messege"
+#: src/prefs.c:684
+#, fuzzy
+msgid "Control-Enter sends message"
 msgstr "Control-Enter po¹le zprávu"
 
-#: src/prefs.c:683
+#: src/prefs.c:685
 msgid "Escape closes window"
 msgstr "Klávesa Escape zavøe okno"
 
-#: src/prefs.c:684
+#: src/prefs.c:686
 #, fuzzy
 msgid "Control-W closes window"
 msgstr "Klávesa Control-W zatvøe okno"
 
-#: src/prefs.c:690
+#: src/prefs.c:692
 msgid "Control-{B/I/U/S} inserts HTML tags"
 msgstr "Control-{B/I/U/S} vlo¾í HTML znaèky"
 
-#: src/prefs.c:691
+#: src/prefs.c:693
 msgid "Control-(number) inserts smileys"
 msgstr "Control-(èíslo) vlo¾í smajlíka"
 
-#: src/prefs.c:692
+#: src/prefs.c:694
 msgid "F2 toggles timestamp display"
 msgstr "F2 pøpíná zobrazení èasové znaèky"
 
-#: src/prefs.c:694
+#: src/prefs.c:696
 msgid "Display and General Options"
 msgstr "Mo¾nosti zobrazení a v¹eobecné mo¾nosti"
 
-#: src/prefs.c:706
+#: src/prefs.c:708
 msgid "Show graphical smileys"
 msgstr "Zobraz grafické smajlíky"
 
-#: src/prefs.c:707
-msgid "Show timestamp on messeges"
+#: src/prefs.c:709
+#, fuzzy
+msgid "Show timestamp on messages"
 msgstr "Zobraz èasovou znaèku u zpráv"
 
-#: src/prefs.c:708
+#: src/prefs.c:710
 msgid "Show URLs as links"
 msgstr "Zobraz URL jako odkazy"
 
-#: src/prefs.c:709
+#: src/prefs.c:711
 msgid "Highlight misspelled words"
 msgstr "Zvýrazni nesprávnì napsané slovo"
 
-#: src/prefs.c:710 src/prefs.c:1912
-msgid "Sending messeges removes away status"
+#: src/prefs.c:712 src/prefs.c:1923
+#, fuzzy
+msgid "Sending messages removes away status"
 msgstr "Posílání zpráv zru¹í stav 'Pryè'"
 
-#: src/prefs.c:711 src/prefs.c:1925
-msgid "Queue new messeges when away"
+#: src/prefs.c:713 src/prefs.c:1936
+#, fuzzy
+msgid "Queue new messages when away"
 msgstr "Kdy¾ jsem 'Pryè' nové zprávy zaøaï do fronty"
 
-#: src/prefs.c:717
+#: src/prefs.c:719
 msgid "Ignore colors"
 msgstr "Ignoruj barvy"
 
-#: src/prefs.c:718
+#: src/prefs.c:720
 msgid "Ignore font faces"
 msgstr "Ignoruj písmo"
 
-#: src/prefs.c:719
+#: src/prefs.c:721
 msgid "Ignore font sizes"
 msgstr "Ignoruj velikost písma"
 
-#: src/prefs.c:720
-msgid "Ignore TiK Automated Messeges"
+#: src/prefs.c:722
+#, fuzzy
+msgid "Ignore TiK Automated Messages"
 msgstr "Ignoruj TiK automatické zprávy"
 
-#: src/prefs.c:721 src/prefs.c:1910
-msgid "Ignore new conversetions when away"
+#: src/prefs.c:723 src/prefs.c:1921
+#, fuzzy
+msgid "Ignore new conversations when away"
 msgstr "Ignoruj nové konverzace kdy¾ jsem 'Pryè'"
 
-#: src/prefs.c:910
+#: src/prefs.c:912
 msgid "IM Options"
 msgstr "Voµby IM"
 
-#: src/prefs.c:923 src/prefs.c:2908
+#: src/prefs.c:925 src/prefs.c:2921
 msgid "IM Window"
 msgstr "IM okno"
 
-#: src/prefs.c:939 src/prefs.c:1089
+#: src/prefs.c:941 src/prefs.c:1091
 msgid "Show buttons as: "
 msgstr "Zobraz tlaèítka jako:"
 
-#: src/prefs.c:943 src/prefs.c:1094
+#: src/prefs.c:945 src/prefs.c:1096
 msgid "Pictures And Text"
 msgstr "Obrázky a text"
 
-#: src/prefs.c:944 src/prefs.c:1096
+#: src/prefs.c:946 src/prefs.c:1098
 msgid "Pictures"
 msgstr "Obrázky"
 
-#: src/prefs.c:945 src/prefs.c:1097
+#: src/prefs.c:947 src/prefs.c:1099
 msgid "Text"
 msgstr "Text"
 
-#: src/prefs.c:956
-msgid "Show all conversetions in one tabbed window"
-msgstr "Zobraz v¹echny konverzace v jednom oknì se zálo¾kami"
-
 #: src/prefs.c:958
 #, fuzzy
-msgid "Show chats in the seme tabbed window"
+msgid "Show all conversations in one tabbed window"
+msgstr "Zobraz v¹echny konverzace v jednom oknì se zálo¾kami"
+
+#: src/prefs.c:960
+#, fuzzy
+msgid "Show chats in the same tabbed window"
 msgstr "Zobraz v¹echny chaty v jednom oknì se zálo¾kami"
 
-#: src/prefs.c:965 src/prefs.c:1117
+#: src/prefs.c:967 src/prefs.c:1119
 msgid "Raise windows on events"
 msgstr "Zvìt¹it okno pøi událostech"
 
-#: src/prefs.c:966
+#: src/prefs.c:968
 msgid "Show logins in window"
 msgstr "Zobrazuj pøihla¹ovací jména v oknì"
 
-#: src/prefs.c:967
+#: src/prefs.c:969
 #, fuzzy
-msgid "Show aliases in tabs/titles"
+msgid "Show aliases in tabs/titles/ticker"
 msgstr "Zobrazuj aliasy v zálo¾kách/nadpisech"
 
-#: src/prefs.c:968
+#: src/prefs.c:970
 msgid "Hide window on send"
 msgstr "Schovat okno pøi událostech"
 
-#: src/prefs.c:970 src/prefs.c:1120
+#: src/prefs.c:972 src/prefs.c:1122
 msgid "Window Sizes"
 msgstr "Velikosti okna"
 
-#: src/prefs.c:978 src/prefs.c:1128
+#: src/prefs.c:980 src/prefs.c:1130
 msgid "New window width:"
 msgstr "Vý¹ka nového okna:"
 
-#: src/prefs.c:979 src/prefs.c:1129
+#: src/prefs.c:981 src/prefs.c:1131
 msgid "New window height:"
 msgstr "©íøka nového okna:"
 
-#: src/prefs.c:980 src/prefs.c:1130
+#: src/prefs.c:982 src/prefs.c:1132
 msgid "Entry widget height:"
 msgstr "Vý¹ka vstupního okénka:"
 
-#: src/prefs.c:982 src/prefs.c:1132
+#: src/prefs.c:984 src/prefs.c:1134
 msgid "Tab Placement"
 msgstr "Poloha zálo¾ky"
 
-#: src/prefs.c:1011 src/prefs.c:1161
+#: src/prefs.c:1013 src/prefs.c:1163
 msgid "Left"
 msgstr "Vlevo"
 
-#: src/prefs.c:1013 src/prefs.c:1163
+#: src/prefs.c:1015 src/prefs.c:1165
 msgid "Right"
 msgstr "Vpravo"
 
-#: src/prefs.c:1017
+#: src/prefs.c:1019
 msgid "Buddy Icons"
 msgstr "Kamarádova ikona"
 
-#: src/prefs.c:1029
+#: src/prefs.c:1031
 msgid "Hide Buddy Icons"
 msgstr "Skryj ikony kamarádù"
 
-#: src/prefs.c:1035
+#: src/prefs.c:1037
 #, fuzzy
-msgid "Diseble Buddy Icon Animation"
+msgid "Disable Buddy Icon Animation"
 msgstr "zakázat animace"
 
-#: src/prefs.c:1061
+#: src/prefs.c:1063
 msgid "Chat Options"
 msgstr "Mo¾nosti chatu"
 
-#: src/prefs.c:1073
+#: src/prefs.c:1075
 msgid "Group Chat Window"
 msgstr "Okno skupinového chatu"
 
-#: src/prefs.c:1108
+#: src/prefs.c:1110
 msgid "Show all chats in one tabbed window"
 msgstr "Zobraz v¹echny chaty v jednom oknì se zálo¾kami"
 
-#: src/prefs.c:1110
+#: src/prefs.c:1112
 #, fuzzy
-msgid "Show conversetions in the seme tabbed window"
+msgid "Show conversations in the same tabbed window"
 msgstr "Zobraz v¹echny konverzace v jednom oknì se zálo¾kami"
 
-#: src/prefs.c:1118
+#: src/prefs.c:1120
 msgid "Show people joining/leaving in window"
 msgstr "Zobraz pøicházející/odcházející lidi v okne"
 
-#: src/prefs.c:1166
+#: src/prefs.c:1168
 msgid "Tab Completion"
 msgstr "Tab dokonèí"
 
-#: src/prefs.c:1178
+#: src/prefs.c:1180
 msgid "Tab-Complete Nicks"
 msgstr "Tab-dokonèí pøezdívku"
 
-#: src/prefs.c:1184
+#: src/prefs.c:1186
 msgid "Old-Style Tab Completion"
 msgstr ""
 
-#: src/prefs.c:1286 src/prefs.c:2918
+#: src/prefs.c:1288 src/prefs.c:2931
 msgid "Font Options"
 msgstr "Mo¾nosti písma"
 
-#: src/prefs.c:1312
+#: src/prefs.c:1314
 msgid "Italic Text"
 msgstr "Kurzíva"
 
-#: src/prefs.c:1356 src/prefs.c:1374 src/prefs.c:1396
+#: src/prefs.c:1358 src/prefs.c:1376 src/prefs.c:1398
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/prefs.c:1394
+#: src/prefs.c:1396
 msgid "Font Face for Text"
 msgstr "Vzhled písma pro text"
 
-#: src/prefs.c:1409
+#: src/prefs.c:1411
 msgid "Font Size for Text"
 msgstr "Velikost písma pro text"
 
-#: src/prefs.c:1506
+#: src/prefs.c:1508
 msgid "Gaim - Sound Configuration"
 msgstr "Gaim - Nastavení zvuku"
 
-#: src/prefs.c:1541
+#: src/prefs.c:1543
 #, fuzzy
 msgid "Test"
 msgstr "Test"
 
-#: src/prefs.c:1551
+#: src/prefs.c:1553
 msgid "Choose..."
 msgstr "Vyberte..."
 
-#: src/prefs.c:1608
+#: src/prefs.c:1621
 msgid "Sound Options"
 msgstr "Mo¾nosti zvuku"
 
-#: src/prefs.c:1636
+#: src/prefs.c:1649
 msgid "No sounds when you log in"
 msgstr "®ádné zvuky pøi pøihlá¹ení"
 
-#: src/prefs.c:1642 src/prefs.c:1911
+#: src/prefs.c:1655 src/prefs.c:1922
 msgid "Sounds while away"
 msgstr "Zvuky pøi 'Preè'"
 
-#: src/prefs.c:1652
+#: src/prefs.c:1665
 #, fuzzy
 msgid "Sound method"
 msgstr "Metody zvuku"
 
-#: src/prefs.c:1726
+#: src/prefs.c:1739
 #, fuzzy, c-format
 msgid ""
 "Sound command\n"
@@ -2923,119 +3422,122 @@ msgstr ""
 "Pøíkaz na pøehrávání zvukových souborù\n"
 "(%s pro jméno souboru)"
 
-#: src/prefs.c:1738
+#: src/prefs.c:1751
 #, fuzzy
 msgid "Sound played when:"
 msgstr "Pøehrát zvuk pøi:"
 
-#: src/prefs.c:1882 src/prefs.c:2940
-msgid "Away Messeges"
+#: src/prefs.c:1893 src/prefs.c:2953
+#, fuzzy
+msgid "Away Messages"
 msgstr "'Pryè' zprávy"
 
-#: src/prefs.c:1919
+#: src/prefs.c:1930
 msgid "Don't send auto-response"
 msgstr "Neposílat aotumatickou odpovìï"
 
-#: src/prefs.c:1920
+#: src/prefs.c:1931
 #, fuzzy
 msgid "Only send auto-response when idle"
 msgstr "Posílat automatickou opovìï pouze pøi neèinnosti"
 
-#: src/prefs.c:1935
+#: src/prefs.c:1946
 msgid "Time between sending auto-responses (in seconds):"
 msgstr "Èas mezi posíláním auto-odpovìdí"
 
-#: src/prefs.c:1950
+#: src/prefs.c:1961
 msgid "Auto Away after"
 msgstr "Automaticky 'Pryè' po"
 
-#: src/prefs.c:1964
+#: src/prefs.c:1975
 msgid "minutes using"
 msgstr "minut pou¾ívání"
 
-#: src/prefs.c:1977
-msgid "Messeges"
+#: src/prefs.c:1988
+#, fuzzy
+msgid "Messages"
 msgstr "Zprávy"
 
-#: src/prefs.c:2034
+#: src/prefs.c:2045
 msgid "Edit"
 msgstr "Edituj"
 
-#: src/prefs.c:2038
+#: src/prefs.c:2049
 msgid "Make Away"
 msgstr "Udìlej 'Preè'"
 
-#: src/prefs.c:2315
+#: src/prefs.c:2326
 msgid "Privacy Options"
 msgstr "Mo¾nosti Soukromí"
 
-#: src/prefs.c:2331
+#: src/prefs.c:2342
 msgid "Set privacy for:"
 msgstr "Nastav soukromí pro:"
 
-#: src/prefs.c:2350
+#: src/prefs.c:2361
 msgid "Allow all users to contact me"
 msgstr "Povo v¹em u¾ivatelùm kontaktovat mì"
 
-#: src/prefs.c:2351
+#: src/prefs.c:2362
 msgid "Allow only the users below"
 msgstr "Povol jen uvedeným u¾ivatelùm"
 
-#: src/prefs.c:2353
+#: src/prefs.c:2364
 msgid "Allow List"
 msgstr "Seznam povolených"
 
-#: src/prefs.c:2384
+#: src/prefs.c:2395
 msgid "Deny all users"
 msgstr "Odmietnout v¹echny u¾ivatele"
 
-#: src/prefs.c:2385
+#: src/prefs.c:2396
 msgid "Block the users below"
 msgstr "Blokovat uvedené u¾ivatele"
 
-#: src/prefs.c:2387
+#: src/prefs.c:2398
 msgid "Block List"
 msgstr "Seznam blokovaných"
 
-#: src/prefs.c:2482
+#: src/prefs.c:2493
 msgid "Gaim - Preferences"
 msgstr "Gaim - Nastavení"
 
-#: src/prefs.c:2565
+#: src/prefs.c:2576
 msgid "Gaim debug output window"
 msgstr "Gaim ladící výstupní okno"
 
-#: src/prefs.c:2874
+#: src/prefs.c:2887
 msgid "General"
 msgstr "Hlavní"
 
-#: src/prefs.c:2879
+#: src/prefs.c:2892
 msgid "Proxy"
 msgstr "Proxy"
 
-#: src/prefs.c:2903
-msgid "Conversetions"
+#: src/prefs.c:2916
+#, fuzzy
+msgid "Conversations"
 msgstr "Konverzace"
 
-#: src/prefs.c:2929
+#: src/prefs.c:2942
 msgid "Sounds"
 msgstr "Zvuky"
 
-#: src/prefs.c:2951
+#: src/prefs.c:2964
 msgid "Privacy"
 msgstr "Soukromí"
 
 #: src/prpl.c:70
+#, fuzzy
 msgid ""
-"You have attempted to load a protocol which was not compiled from the seme "
+"You have attempted to load a protocol which was not compiled from the same "
 "version of the source as this application was. Unfortunately, because it is "
-"not the seme version I cannot sefely tell you which one it was. Needless to "
-"sey, it was not successfully loaded."
+"not the same version I cannot safely tell you which one it was. Needless to "
+"say, it was not successfully loaded."
 msgstr ""
 "Pokusili jste se nahrát protokol, který nebyl zkompilovaný ze stejné verze "
-"zdroje jako tato aplikace. Bohu¾el, proto¾e to není stejná verze, nemù¾u "
-"Vám spolehlivì øíci jaká to byla. Samozøejmì, ¾e se nepodaøilo protokol nahrát."
-
+"zdroje jako tato aplikace. Bohu¾el, proto¾e to není stejná verze, nemù¾u Vám "
+"spolehlivì øíci jaká to byla. Samozøejmì, ¾e se nepodaøilo protokol nahrát."
 
 #: src/prpl.c:74
 msgid "Protocol Error"
@@ -3066,12 +3568,12 @@ msgstr "Gaim - Nová Po¹ta"
 msgid "Open Mail"
 msgstr "Otevøít po¹tu"
 
-#: src/prpl.c:564
+#: src/prpl.c:570
 #, fuzzy, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s udìlal %s jeho kamarádem%s%s%s"
 
-#: src/prpl.c:572
+#: src/prpl.c:578
 #, fuzzy
 msgid ""
 "\n"
@@ -3082,23 +3584,23 @@ msgstr ""
 "\n"
 "Pøejete si pøidat jeho nebo ji do Va¹eho Buddy Listu?"
 
-#: src/prpl.c:615
+#: src/prpl.c:621
 msgid ""
 "You do not currently have any protocols available that are able to register "
 "new accounts."
 msgstr ""
 "Momentlnì nemáte ¾ádný protokol, který je schopen zaregistrovat nový úèet."
 
-#: src/prpl.c:652
+#: src/prpl.c:658
 #, fuzzy
 msgid "Gaim - Registration"
 msgstr "Gaim - Registrace"
 
-#: src/prpl.c:667
+#: src/prpl.c:673
 msgid "Registration Information"
 msgstr ""
 
-#: src/prpl.c:684
+#: src/prpl.c:690
 #, fuzzy
 msgid "Register"
 msgstr "Registrovat"
@@ -3108,12 +3610,13 @@ msgid "Please enter your password"
 msgstr "Zadejte, prosím, Va¹e heslo"
 
 #: src/server.c:585
-#, c-format
-msgid "(%d messeges)"
+#, fuzzy, c-format
+msgid "(%d messages)"
 msgstr "(%d zpráv)"
 
 #: src/server.c:591
-msgid "(1 messege)"
+#, fuzzy
+msgid "(1 message)"
 msgstr "(1 zpráva)"
 
 #: src/server.c:783
@@ -3133,3 +3636,54 @@ msgstr "Ne"
 msgid "More Info"
 msgstr "Víc informací"
 
+#: src/sound.c:63
+#, fuzzy
+msgid "Buddy logs in"
+msgstr "Kamarádova ikona"
+
+#: src/sound.c:64
+#, fuzzy
+msgid "Buddy logs out"
+msgstr "Buddy List"
+
+#: src/sound.c:65
+msgid "Message received"
+msgstr ""
+
+#: src/sound.c:66
+msgid "Message received begins conversation"
+msgstr ""
+
+#: src/sound.c:67
+#, fuzzy
+msgid "Message sent"
+msgstr "Zprávy"
+
+#: src/sound.c:68
+msgid "Person enters chat"
+msgstr ""
+
+#: src/sound.c:69
+msgid "Person leaves chat"
+msgstr ""
+
+#: src/sound.c:70
+msgid "You talk in chat"
+msgstr ""
+
+#: src/sound.c:71
+msgid "Others talk in chat"
+msgstr ""
+
+#: src/sound.c:74
+msgid "Someone says your name in chat"
+msgstr ""
+
+#~ msgid "Enable sounds"
+#~ msgstr "Povolit zvuky"
+
+#~ msgid "KFM"
+#~ msgstr "KFM"
+
+#~ msgid "Manual"
+#~ msgstr "Návod"
