@@ -39,17 +39,6 @@ static GaimPlugin *my_protocol = NULL;
 
 static char *msn_normalize(const char *str);
 
-void
-msn_free(void *ptr, const char *filename, int line)
-{
-	gaim_debug_misc("msn", "Freeing pointer %p at %s:%d\n",
-					ptr, filename, line);
-	if (ptr == NULL)
-		abort();
-
-	real_g_free(ptr);
-}
-
 typedef struct
 {
 	GaimConnection *gc;
