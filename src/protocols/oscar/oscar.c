@@ -5607,9 +5607,8 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				/* From ICQ to AIM */
 				tmpmsg = g_markup_escape_text(message, -1);
 		} else {
-			if (aim_sn_is_icq(name))
-				/* From AIM to AIM and AIM to ICQ */
-				tmpmsg = g_strdup(message);
+			/* From AIM to AIM and AIM to ICQ */
+			tmpmsg = g_strdup(message);
 		}
 		len = strlen(tmpmsg);
 
