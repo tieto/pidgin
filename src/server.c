@@ -1137,6 +1137,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 	GaimAccount *account;
 	GaimConversation *c;
 	GaimBuddy *b;
+	char *alias;
 	GSList *buddies;
 	int old_idle;
 	time_t current_time = time(NULL);
@@ -1160,6 +1161,8 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_blist_rename_buddy(b, name);
 	}
 
+	alias = gaim_escape_html(gaim_get_buddy_alias(b));
+
 	old_idle = b->idle;
 
 	if (loggedin) {
@@ -1173,8 +1176,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (signing_on) {
 		if (c != NULL) {
-			char *tmp = g_strdup_printf(_("%s logged in."),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s logged in."), alias);
 
 			gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM,
 									time(NULL));
@@ -1183,8 +1185,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		else if (awayqueue && find_queue_total_by_name(b->name)) {
 			struct queued_message *qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-			qm->message = g_strdup_printf(_("%s logged in."),
-										  gaim_get_buddy_alias(b));
+			qm->message = g_strdup_printf(_("%s logged in."), alias);
 			qm->account = gc->account;
 			qm->tm = time(NULL);
 			qm->flags = GAIM_MESSAGE_SYSTEM;
@@ -1196,8 +1197,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		   gaim_prefs_get_bool("/core/logging/log_signon_signoff")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
 			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s signed on"),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s signed on"), alias);
 
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
 						   current_time, tmp);
@@ -1212,9 +1212,9 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		char *tmp = NULL;
 
 		if((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
-			tmp = g_strdup_printf(_("%s came back"), gaim_get_buddy_alias(b));
+			tmp = g_strdup_printf(_("%s came back"), alias);
 		else if(!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
-			tmp = g_strdup_printf(_("%s went away"), gaim_get_buddy_alias(b));
+			tmp = g_strdup_printf(_("%s went away"), alias);
 
 		if(tmp){
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
@@ -1228,8 +1228,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
 			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s became idle"),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s became idle"), alias);
 
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
 						   current_time, tmp);
@@ -1240,8 +1239,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		   gaim_prefs_get_bool("/core/logging/log_idle_state")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
 			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s became unidle"),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s became unidle"), alias);
 
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
 						   current_time, tmp);
@@ -1251,16 +1249,14 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	if (signing_off) {
 		if (c != NULL) {
-			char *tmp = g_strdup_printf(_("%s logged out."),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s logged out."), alias);
 			gaim_conversation_write(c, NULL, tmp,
 									GAIM_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		} else if (awayqueue && find_queue_total_by_name(b->name)) {
 			struct queued_message *qm = g_new0(struct queued_message, 1);
 			g_snprintf(qm->name, sizeof(qm->name), "%s", b->name);
-			qm->message = g_strdup_printf(_("%s logged out."),
-										  gaim_get_buddy_alias(b));
+			qm->message = g_strdup_printf(_("%s logged out."), alias);
 			qm->account = gc->account;
 			qm->tm = time(NULL);
 			qm->flags = GAIM_MESSAGE_SYSTEM;
@@ -1273,8 +1269,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		   gaim_prefs_get_bool("/core/logging/log_signon_signoff")) {
 			GaimAccount *account = gaim_connection_get_account(gc);
 			GaimLog *log = gaim_account_get_log(account);
-			char *tmp = g_strdup_printf(_("%s signed off"),
-										gaim_get_buddy_alias(b));
+			char *tmp = g_strdup_printf(_("%s signed off"), alias);
 
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, gaim_get_buddy_alias(b),
 						   current_time, tmp);
@@ -1314,6 +1309,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 		gaim_blist_update_buddy_evil(b, evil);
 		gaim_blist_update_buddy_status(b, type);
 	}
+	g_free(alias);
 }
 
 
