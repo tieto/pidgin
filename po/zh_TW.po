@@ -22,7 +22,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.73\n"
-"POT-Creation-Date: 2003-11-15 10:03-0500\n"
+"POT-Creation-Date: 2003-11-16 07:59-0500\n"
 "PO-Revision-Date: 2003-05-29 12:04+0800\n"
 "Last-Translator: Ambrose C. Li <acli@ada.dhs.org>\n"
 "Language-Team: Chinese (Traditional) <zh-l10n@linux.org.tw>\n"
@@ -646,6 +646,7 @@ msgstr "Perl 模組載入器"
 msgid "Provides support for loading perl plugins."
 msgstr "提供讀入 Perl 模組的支援。"
 
+# TODO Untranslated
 # TODO 微軟視窗的Adobe印表機驅動程式可以找到一個「Raw」的譯法 (但我忘了)
 #: plugins/raw.c:154
 msgid "Raw"
@@ -1107,7 +1108,6 @@ msgstr "芬蘭文"
 msgid "French"
 msgstr "法文"
 
-# XXX Yahoo是這樣譯的，但可能不太對
 #: src/about.c:171
 msgid "Hindi"
 msgstr "北印度文"
@@ -1128,7 +1128,7 @@ msgstr "韓文"
 # NOTE Flemish 譯法是跟了http://www.ee.tku.edu.tw/~rexchen/cdict/
 #: src/about.c:175
 msgid "Dutch; Flemish"
-msgstr "荷蘭文、法蘭德斯文"
+msgstr "荷蘭文╱法蘭德斯文"
 
 #: src/about.c:176
 msgid "Norwegian"
@@ -1191,7 +1191,6 @@ msgstr "希伯來文"
 msgid "Japanese"
 msgstr "日文"
 
-# XXX Yahoo譯法
 #: src/about.c:206
 msgid "Slovak"
 msgstr "斯洛伐克文"
@@ -5098,12 +5097,12 @@ msgstr "無效的 XML"
 msgid "Non-matching Hosts"
 msgstr "主機名稱不相乎"
 
-# TODO Untranslated
+# XXX 這是暫譯，譯文有待改進。不過好像真的有人這樣寫，大概沒有太大的問題
 # NOTE Jabber 協定 xmpp-core 中 Stream Error 的一種，即 <policy-violation/>
-# NOTE 見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-18.html
+# NOTE 見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-19.html
 #: src/protocols/jabber/jabber.c:160
 msgid "Policy Violation"
-msgstr ""
+msgstr "違反了服務政策"
 
 # NOTE Jabber 協定 Stream Error 的一種，即 <remote-connection-failed/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
@@ -6634,6 +6633,7 @@ msgstr "警告等級：<b>%d%%</b><br>\n"
 msgid "Online Since: <b>%s</b><br>\n"
 msgstr "上線時間：<b>%s</b><br>\n"
 
+# XXX 改譯「註冊日期」會否比較通順？
 #: src/protocols/oscar/oscar.c:3169
 #, c-format
 msgid "Member Since: <b>%s</b><br>\n"
@@ -7661,7 +7661,7 @@ msgstr "酷連結(二)"
 msgid "Cool Link 3"
 msgstr "酷連結(三)"
 
-# TODO 譯文有待改進
+# XXX 改譯「註冊日期」會否比較通順？
 #: src/protocols/yahoo/yahoo.c:2793
 msgid "Member Since"
 msgstr "成為成員的時間"
@@ -7746,16 +7746,19 @@ msgid ""
 "accounts on it when logged in as the same user."
 msgstr "因為 Zephyr 用您登入系統的帳號，您是不可能擁有多個 Zephyr 帳戶的。"
 
+# TODO Untranslated
 # TODO: 在 Google 找到的資料說 Zephyr 的 ZLocate 是一種名錄服務，不過在這裡不知是什麼意思
 #: src/protocols/zephyr/zephyr.c:868
 msgid "ZLocate"
 msgstr ""
 
+# TODO Untranslated
 # TODO: 在 Google 找到的資料說 Zephyr 的 Class 不是類別，而是一種半私人的聊天室
 #: src/protocols/zephyr/zephyr.c:908
 msgid "Class:"
 msgstr ""
 
+# TODO Untranslated
 # TODO: 在 Google 找到的資料說 Zephyr 的 Instance 是一種公共的聊天室
 #: src/protocols/zephyr/zephyr.c:913
 msgid "Instance:"
@@ -7899,13 +7902,17 @@ msgstr[0] "分"
 msgid "g003: Error opening connection.\n"
 msgstr "g003: 連線開啟錯誤。\n"
 
-#: src/win32/win32dep.c:387
+#: src/win32/win32dep.c:254
+msgid "Moving Gaim Settings.."
+msgstr "移動設定檔案中..."
+
+#: src/win32/win32dep.c:257
+msgid "Moving Gaim user settings to: "
+msgstr "包含 Gaim 的使用者設定的目錄現在移至："
+
+#: src/win32/win32dep.c:259
 msgid "Notification"
 msgstr "通知"
-
-#: src/win32/win32dep.c:388
-msgid "Moving Gaim user settings directory to:"
-msgstr "包含 Gaim 的使用者設定的目錄現在移至："
 
 #~ msgid "Log Conversation"
 #~ msgstr "記錄交談"
