@@ -205,6 +205,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	strcat(awayname, "away/");
 	strcat(awayname, a->name);
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), awayname);
+	g_free(awayname);
 #endif
 	default_msg = g_slist_nth_data(away_messages, default_away);
         away_messages = g_slist_remove(away_messages, a);
