@@ -163,30 +163,24 @@ void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char 
 
 void serv_set_away(struct gaim_connection *gc, char *state, char *message)
 {
-	if (gc && gc->prpl && gc->prpl->set_away) 
-	{
+	if (gc && gc->prpl && gc->prpl->set_away) {
 		char *buf=NULL;
-		if(message) 
-		{
-		buf = g_malloc(strlen(message)+1);
-		if(gc->prpl->options & OPT_PROTO_HTML) 
-		{
-			strncpy(buf, message, strlen(message)+1);
-		} 
-		else 
-		{
-			strncpy_nohtml(buf, message, strlen(message)+1);
+		if(message) {
+			buf = g_malloc(strlen(message)+1);
+			if(gc->prpl->options & OPT_PROTO_HTML)
+				strncpy(buf, message, strlen(message)+1);
+			else
+				strncpy_nohtml(buf, message, strlen(message)+1);
 		}
+
+		(*gc->prpl->set_away)(gc, state, buf);
+		plugin_event(event_away, gc, state, buf, 0);
+
+		if(buf)
+			g_free(buf);
 	}
 
-	(*gc->prpl->set_away)(gc, state, buf);
-	plugin_event(event_away, gc, state, buf, 0);
-
-	if(buf)
-		g_free(buf);
-}
-
-system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
+	system_log(log_away, gc, NULL, OPT_LOG_BUDDY_AWAY | OPT_LOG_MY_SIGNON);
 }
 
 void serv_set_away_all(char *message)
