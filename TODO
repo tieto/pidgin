@@ -133,8 +133,6 @@ THE CORE:
 	Cancelable proxy_connect
 	remember previous state better. both away, and allow start to invisible.
 	better privacy controls.
-	memory of last status preserved beyond shutdown, on a per-account basis
-	ability to unload a single perl script
 	networking code rethink (libgnet?)
 	netbsd gethostbyname() problem
 	GPG Encryption of messages (gaim-e plugin included with gaim would satify this)
