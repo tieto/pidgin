@@ -252,7 +252,7 @@ gint linkify_text(char *text)
 			char *tmp;
 			int flag;
 			int len = 0;
-			char illegal_chars[] = "!@#$%^&*()[]{}/\\<>\":;\0";
+			char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\0";
 			url_buf[0] = 0;
 
 			if (*(c - 1) == ' ' || *(c + 1) == ' ' || rindex(illegal_chars, *(c + 1))
@@ -283,15 +283,15 @@ gint linkify_text(char *text)
 				}
 			}
 
-
 			t = c + 1;
 
 			while (flag) {
 				if (badchar(*t)) {
-					if (*(t - 1) == '.') {
-						url_buf[t-c] = '\0';
+					while (*(t - 1) == '.') {
+						url_buf[t - cpy - 1] = '\0';
 						t--;
 					}
+
 					cnt += g_snprintf(&text[cnt], 1024,
 							  "<A HREF=\"mailto:%s\">%s</A>", url_buf,
 							  url_buf);
@@ -308,10 +308,7 @@ gint linkify_text(char *text)
 				}
 
 				t++;
-
 			}
-
-
 		}
 
 		if (*c == 0)

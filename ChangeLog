@@ -47,6 +47,8 @@ version 0.59 (06/07/2002):
 	* Can now set the server and port for MSN and Napster
 	* MSN Internationalization (Thanks Felipe Contreras and
 	  countless, countless others)
+	* E-mail addresses are no longer truncated when there is a '.' at
+	  the end.
 
 version 0.58 (05/13/2002):
 	* Bulgarian translation added (Thanks, Igel Itzo)
