@@ -48,6 +48,12 @@
 	didn't fix them, mind you, I just closed them.  With abandon.
 	Don't tell Luke.
 
+	Luke: Mmmm, I probly did even less than Ethan, except I closed rather 
+	more bugs for other reasons. Lots of you submitting duplicate bugs. 
+	This should be a pretty good release. We still have a couple crashes
+	in ssl stuff, but we fixed a number of the bugs in the tracker, and 
+	the code cleaning helps alot as well. Enjoy!
+
 0.70 (9/28/2003):
 	Sean: Yahoo! works (for now).  That's good NEWS if I've ever heard it.  
 	Huge thanks to our dear friends over at Cerulean Studios, creators of
