@@ -1622,7 +1622,7 @@ static int handlehdr_sendfile_finish(aim_session_t *sess, aim_conn_t *conn, fu8_
 
 	faimdprintf(sess, 2, "faim: get_rend: looks like we're done with a transfer (oft 0x0204)\n");
 
-	debug_printf("wtm: they sent csum %x\n", fh->recvcsum);
+	debug_printf("sendfile: receiver sent checksum %x\n", fh->recvcsum);
 
 	if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_GETFILECOMPLETE)) )
 		userfunc(sess, NULL, conn, fh->bcookie);
@@ -2151,15 +2151,32 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
   if (!sess || !conn || !name)
     return -1;
 
-  /* Authenticate whomever connected to our listener by checking
-   * that the correct cookie was proivided. */
-  if (!(cook = aim_checkcookie(sess, ft->cookie,
-				  AIM_COOKIETYPE_OFTSEND))) {
-	  return -1;
-  }
-
   if (!(fh = (struct aim_fileheader_t*)calloc(1, sizeof(struct aim_fileheader_t))))
     return -1;
+
+#ifdef DUMB_OFT_CHECKSUM
+  /* Yes, we are supposed to checksum the whole file before sending, and
+   * yes, it's dumb.  This is the only way to get some clients (such as
+   * Mac AIM v4.5.163) to successfully complete the transfer.  With
+   * the WinAIM clients, we seem to be able to get away with just
+   * setting the checksum to zero.
+   * -- wtm
+   */
+  {
+    int fd = open(name, O_RDONLY);
+    if (fd >= 0) {
+       int bytes;
+       char buf[1024];
+       fh->checksum = 0xffff0000;
+       while ((bytes = read(fd, buf, 1024)) > 0) {
+         fh->checksum = aim_oft_checksum(buf, bytes, fh->checksum);
+       }
+    }
+    close(fd);
+  }
+#else
+  fh->checksum    = 0x00000000;
+#endif
 
   fh->encrypt     = 0x0000;
   fh->compress    = 0x0000; 
@@ -2170,7 +2187,7 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
   fh->totsize     = totsize;
   fh->size        = size;
   fh->modtime     = (int)time(NULL); /* we'll go with current time for now */
-  fh->checksum    = 0xffffffff; /* XXX: checksum ! */
+  /* fh->checksum set above */
   fh->rfcsum      = 0x00000000;
   fh->rfsize      = 0x00000000;
   fh->cretime     = 0x00000000;
@@ -2198,7 +2215,15 @@ faim_export int aim_oft_sendfile_request(aim_session_t *sess, aim_conn_t *conn, 
 	  g_free(basename);
   }
 
-  memcpy(fh->bcookie, cook->cookie, 8);
+  /* XXX we should normally send a null cookie here, and make
+   * the receiver fill it in for authentication -- wtm
+   */
+  memcpy(fh->bcookie, ft->cookie, 8);
+
+  if (!(cook = aim_checkcookie(sess, ft->cookie, AIM_COOKIETYPE_OFTSEND))) {
+    return -1;
+  }
+
   /* Update both headers to be safe. */
   memcpy(&(ft->fh), fh, sizeof(struct aim_fileheader_t));
   memcpy(&(((struct aim_filetransfer_priv *)cook->data)->fh), fh,

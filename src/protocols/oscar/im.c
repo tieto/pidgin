@@ -654,6 +654,7 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	fu8_t ck[8];
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
+	struct aim_snac_destructor snacdest;
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
@@ -664,15 +665,22 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+8+2+1+strlen(sn)+2+2+2+8+16+6+8+6+4+2+2+2+2+4+strlen(filename)+4)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, 0x0004, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
-
 	for (i = 0; i < 7; i++)
 		aimutil_put8(ck+i, 0x30 + ((fu8_t) rand() % 10));
 	ck[7] = '\0';
 
 	if (ckret)
 		memcpy(ckret, ck, 8);
+
+	/* Fill in the snac destructor so we know if the request
+	 * times out.  Use the cookie in the data field, so we
+	 * know what request to cancel if there is an error.
+	 */
+	snacdest.data = malloc(8);
+	memcpy(snacdest.data, ck, 8);
+	snacdest.conn = conn;
+	snacid = aim_cachesnac(sess, 0x0004, 0x0006, AIM_SNACFLAGS_DESTRUCTOR, &snacdest, sizeof(snacdest));
+	aim_putsnac(&fr->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/*
 	 * Cookie
@@ -735,7 +743,7 @@ faim_internal int aim_request_sendfile(aim_session_t *sess, const char *sn, cons
 	aimbs_put32(&fr->data, 0x00000000);
 
 #if 0
-	/* from brian's patch (?) -- wtm */
+	/* Newer clients seem to send this (?) -- wtm */
 	aimbs_put32(&fr->data, 0x00030000);
 #endif
 
@@ -2218,6 +2226,20 @@ static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	return 0;
 }
 
+static int snacdestructor(aim_session_t *sess, aim_conn_t *conn, aim_modsnac_t *snac, void *data)
+{
+	aim_rxcallback_t userfunc;
+	int ret = 0;
+
+	if (snac->subtype == 0x0006) {
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_MSGTIMEOUT)))
+			ret = userfunc(sess, NULL, conn, data);
+	}
+	/* Note that we return 1 for success, 0 for failure. */
+	return ret;
+}
+
+
 faim_internal int msg_modfirst(aim_session_t *sess, aim_module_t *mod)
 {
 
@@ -2228,6 +2250,7 @@ faim_internal int msg_modfirst(aim_session_t *sess, aim_module_t *mod)
 	mod->flags = 0;
 	strncpy(mod->name, "messaging", sizeof(mod->name));
 	mod->snachandler = snachandler;
+	mod->snacdestructor = snacdestructor;
 
 	return 0;
 }

@@ -24,6 +24,8 @@ typedef struct aim_module_s {
 	fu16_t flags;
 	char name[AIM_MODULENAME_MAXLEN+1];
 	int (*snachandler)(aim_session_t *sess, struct aim_module_s *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs);
+	int (*snacdestructor)(aim_session_t *sess, aim_conn_t *conn, aim_modsnac_t *snac, void *data);
+
 	void (*shutdown)(aim_session_t *sess, struct aim_module_s *mod);
 	void *priv;
 	struct aim_module_s *next;
@@ -113,6 +115,11 @@ typedef struct aim_snac_s {
 	time_t issuetime;
 	struct aim_snac_s *next;
 } aim_snac_t;
+
+struct aim_snac_destructor {
+	aim_conn_t *conn;
+	void *data;
+};
 
 faim_internal void aim_initsnachash(aim_session_t *sess);
 faim_internal aim_snacid_t aim_newsnac(aim_session_t *, aim_snac_t *newsnac);

@@ -189,8 +189,6 @@ struct oscar_file_transfer {
 	int watcher;
 };
 
-static struct oscar_file_transfer *oft_listening;
-
 struct icon_req {
 	char *user;
 	time_t timestamp;
@@ -383,6 +381,7 @@ static void oscar_cancel_transfer(struct gaim_connection *,
 		struct file_transfer *);
 static int oscar_sendfile_request(aim_session_t *sess,
 		struct oscar_file_transfer *oft);
+static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...);
 
 static char *msgerrreason[] = {
 	"Invalid error",
@@ -761,29 +760,16 @@ static void oscar_bos_connect(gpointer data, gint source, GaimInputCondition con
 
 static void oscar_ask_send_file(struct gaim_connection *gc, char *destsn) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	struct oscar_file_transfer *oft = oft_listening;
 
-	/* Kludge:  if we try to send a file to a client that doesn't
-	 * support it, the BOS server sends us back an error without
-	 * any information identifying which transfer was aborted.  So
-	 * we only allow one sendfile request at a time, to ensure that
-	 * the transfer referenced by an error is unambiguous.  It's ugly,
-	 * but what else can we do? -- wtm
-	 */
-	if (oft) {
-		do_error_dialog(_("Sorry, you already have an outgoing transfer pending.  Due to limitations of the Oscar protocol, only one outgoing transfer request is permitted at a time."), NULL, GAIM_ERROR);
-	}
-	else {
-		struct oscar_file_transfer *oft = g_new0(struct oscar_file_transfer,
-				1);
+	struct oscar_file_transfer *oft = g_new0(struct oscar_file_transfer,
+			1);
 
-		oft->type = OFT_SENDFILE_OUT;
-		oft->sn = g_strdup(destsn);
+	oft->type = OFT_SENDFILE_OUT;
+	oft->sn = g_strdup(destsn);
 
-		od->file_transfers = g_slist_append(od->file_transfers, oft);
+	od->file_transfers = g_slist_append(od->file_transfers, oft);
 
-		oft->xfer = transfer_out_add(gc, oft->sn);
-	}
+	oft->xfer = transfer_out_add(gc, oft->sn);
 }
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
@@ -892,6 +878,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RIGHTSINFO, gaim_ssi_parserights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_NOLIST, gaim_ssi_parselist, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_MSGTIMEOUT, oscar_sendfile_timeout, 0);
 
 	((struct oscar_data *)gc->proto_data)->conn = bosconn;
 	for (i = 0; i < (int)strlen(info->bosip); i++) {
@@ -1540,9 +1527,7 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct oscar_file_transfer *oft;
 	va_list ap;
 	aim_conn_t *conn, *listenerconn;
-#ifndef NOSIGALARM
-	alarm(0); /* reset timeout alarm */
-#endif
+
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
 	listenerconn = va_arg(ap, aim_conn_t *);
@@ -1553,8 +1538,6 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	/* Stop watching listener conn; watch transfer conn instead */
 	gaim_input_remove(oft->watcher);
 	aim_conn_kill(sess, &listenerconn);
-	/* We no longer need to block other outgoing transfers. */
-	oft_listening = NULL;
 
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
 			AIM_CB_OFT_GETFILEFILESEND,
@@ -1573,27 +1556,27 @@ static int oscar_sendfile_accepted(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 0;
 }
 
-void oscar_sendfile_timeout(int sig)
-{
-	struct oscar_file_transfer *oft = oft_listening;
+static int oscar_sendfile_timeout(aim_session_t *sess, aim_frame_t *fr, ...) {
+	struct gaim_connection *gc = sess->aux_data;
+	va_list ap;
+	struct oscar_file_transfer *oft;
+	char *cookie;
+	aim_conn_t *bosconn;
 
-	if (oft) {
-		aim_session_t *sess = aim_conn_getsess(oft->conn);
-		aim_conn_t *bosconn;
-		{
-			/* XXX is this valid? is there a better way? -- wtm */
-			struct gaim_connection *gc = sess->aux_data;
-			struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
-			bosconn = odata->conn;
-		}
+	va_start(ap, fr);
+	bosconn = va_arg(ap, aim_conn_t *);
+	cookie = va_arg(ap, char *);
+	va_end(ap);
 
-		oft_listening = NULL;
+	if ((oft = find_oft_by_cookie(gc, cookie))) {
 		aim_canceltransfer(sess, bosconn, oft->cookie,
 				oft->sn, AIM_CAPS_SENDFILE);
 
 		transfer_abort(oft->xfer, _("Transfer timed out"));
 		oscar_file_transfer_disconnect(sess, oft->conn);
 	}
+
+	return 1; /* success */
 }
 
 /* Called once at the beginning of an outgoing transfer session. */
@@ -1607,7 +1590,6 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 	oft->totsize = totsize;
 	oft->totfiles = totfiles;
 	oft->filesdone = 0;
-	oft_listening = oft;
 
 	oft->conn = aim_sendfile_initiate(od->sess, oft->sn,
 			name, totfiles, oft->totsize, oft->cookie);
@@ -1617,18 +1599,7 @@ static void oscar_start_transfer_out(struct gaim_connection *gc,
 				GAIM_ERROR);
 		return;
 	}
-#ifndef NOSIGALARM
-	{
-		/* XXX is there a good glib-oriented way of doing this?
-		 * -- wtm */
-		struct sigaction act;
-		act.sa_handler = oscar_sendfile_timeout;
-		act.sa_flags = SA_RESETHAND;
-		sigemptyset (&act.sa_mask);
-		sigaction(SIGALRM, &act, NULL);
-		alarm(OFT_TIMEOUT);
-	}
-#endif
+
 	aim_conn_addhandler(od->sess, oft->conn, AIM_CB_FAM_OFT,
 			AIM_CB_OFT_GETFILEINITIATE,
 			oscar_sendfile_accepted,
@@ -1860,6 +1831,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		return 0;
 	}
 	else if (args->status != AIM_RENDEZVOUS_PROPOSE) {
+		debug_printf("unknown rendezvous status\n");
 		return 1;
 	}
 
@@ -1879,20 +1851,65 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			g_free(name);
 	} else if (args->reqclass & AIM_CAPS_SENDFILE) {
 		struct oscar_file_transfer *oft;
+		struct oscar_data *od = gc->proto_data;
 
-		if (!args->verifiedip) {
-			/* It seems that Trillian sends a message
-			 * with no file data during multiple-file
-			 * transfers.
+		if ((oft = find_oft_by_cookie(sess->aux_data, args->cookie)))
+		{
+			/* This is a request for a reverse connection,
+			 * which is used by newer clients when for some
+			 * reason they are unable to connect to our listener
+			 * (e.g. they are behind a firewall).
 			 */
-			debug_printf("sendfile: didn't get any data\n");
-			return -1;
-		}
+			if (oft->type != OFT_SENDFILE_OUT)
+				return -1;
 
-		oft = g_new0(struct oscar_file_transfer, 1);
+			/* It seems that Trillian sends some weird
+			 * packets.  Sanity check.
+			 */
+			if (!args->verifiedip)
+				return -1;
+
+			/* This connection isn't used for anything, since
+			 * we're using a reverse connection instead.
+			 */
+			gaim_input_remove(oft->watcher);
+			aim_conn_kill(sess, &oft->conn);
+
+			debug_printf("sendfile: doing reverse connection to %s:%d\n", args->verifiedip, args->port);
+
+			oft->conn = aim_accepttransfer(sess, od->conn,
+				userinfo->sn,
+				args->cookie, args->verifiedip,
+				args->port,
+				AIM_CAPS_SENDFILE);
+
+			/* XXX: this is a bit of a hack: ideally
+			 * we should wait on GAIM_INPUT_WRITE. -- wtm
+			 */
+			aim_conn_completeconnect(sess, oft->conn);
+
+			oscar_sendfile_request(sess, oft);
+
+			aim_conn_addhandler(sess, oft->conn,
+				AIM_CB_FAM_OFT,
+				AIM_CB_OFT_GETFILECOMPLETE,
+				oscar_sendfile_out_done,
+				0);
+			aim_conn_addhandler(sess, oft->conn,
+				AIM_CB_FAM_OFT,
+				AIM_CB_OFT_GETFILEFILESEND,
+				oscar_file_transfer_do,
+				0);
+			oft->watcher = gaim_input_add(oft->conn->fd,
+				GAIM_INPUT_READ, oscar_callback,
+				oft->conn);
+			return 0;
+		}
 
 		debug_printf("%s (%s) requests to send a file to %s\n",
 				userinfo->sn, args->verifiedip, gc->username);
+
+		oft = g_new0(struct oscar_file_transfer, 1);
 		
 		oft->type = OFT_SENDFILE_IN;
 		oft->sn = g_strdup(userinfo->sn);
@@ -1900,11 +1917,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		oft->port = args->port;
 		memcpy(oft->cookie, args->cookie, 8);
 
-		{ /* XXX ugly... */
-			struct gaim_connection *gc = sess->aux_data;
-			struct oscar_data *od = gc->proto_data;
-			od->file_transfers = g_slist_append(od->file_transfers, oft);
-		}
+		od->file_transfers = g_slist_append(od->file_transfers, oft);
 
 		oft->xfer = transfer_in_add(gc, userinfo->sn, 
 				args->info.sendfile.filename,
@@ -2224,10 +2237,6 @@ static int gaim_parse_clientauto_rend(aim_session_t *sess,
 			if (oft) {
 				buf = g_strdup_printf(_("%s has declined to receive a file from %s.\n"),
 						who, gc->username);
-#ifndef NOSIGALARM
-				alarm(0); /* reset timeout alarm */
-#endif
-				oft_listening = NULL;
 				transfer_abort(oft->xfer, buf);
 				g_free(buf);
 				oscar_file_transfer_disconnect(sess, oft->conn);
@@ -2328,23 +2337,19 @@ static int gaim_parse_genericerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
-	char *destn;
+	char *data;
 	fu16_t reason;
 	char buf[1024];
-	struct oscar_file_transfer *oft = oft_listening;
-
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_file_transfer *oft;
+	
 	va_start(ap, fr);
 	reason = (fu16_t)va_arg(ap, unsigned int);
-	destn = va_arg(ap, char *);
+	data = va_arg(ap, char *);
 	va_end(ap);
 
-	if (oft) {
-		/* If we try to send a file but it isn't supported, then
-		 * we get this error without any information identifying
-		 * the failed connection.  So we can only have one outgoing
-		 * transfer at a time.  Ugh. -- wtm
-		 */
-		oft_listening = NULL;
+	/* If this was a file transfer request, data is a cookie. */
+	if ((oft = find_oft_by_cookie(gc, data))) {
 		transfer_abort(oft->xfer,
 				(reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."));
 
@@ -2352,7 +2357,8 @@ static int gaim_parse_msgerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 	}
 
-	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), destn);
+	/* Data is assumed to be the destination sn. */
+	snprintf(buf, sizeof(buf), _("Your message to %s did not get sent:"), data);
 	do_error_dialog(buf, (reason < msgerrreasonlen) ? msgerrreason[reason] : _("No reason was given."), GAIM_ERROR);
 
 	return 1;
@@ -4165,13 +4171,9 @@ void oscar_transfer_done(struct gaim_connection *gc,
 		oscar_file_transfer_disconnect(sess, conn);
 	}
 	else if (oft->type == OFT_SENDFILE_OUT) { 
-#if 0
 		/* Wait for response before closing connection. */
 		oft->watcher = gaim_input_add(conn->fd, GAIM_INPUT_READ,
 				oscar_callback, conn);
-#else	
-		oscar_file_transfer_disconnect(sess, conn);
-#endif
 	}
 }
 
@@ -4180,6 +4182,7 @@ static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	aim_conn_t *conn;
 	struct oscar_file_transfer *oft;
+	int err;
 
 	va_start(ap, fr);
 	conn = va_arg(ap, aim_conn_t *);
@@ -4193,15 +4196,22 @@ static int oscar_file_transfer_do(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (oft->type == OFT_SENDFILE_IN) {
 		const char *name = va_arg(ap, const char *);
 		int size = va_arg(ap, int);
-		if (transfer_in_do(oft->xfer, conn->fd, name, size))
-			oscar_file_transfer_disconnect(sess, oft->conn);
+		err = transfer_in_do(oft->xfer, conn->fd, name, size);
 	}
 	else {
 		int offset = va_arg(ap, int);
-		if (transfer_out_do(oft->xfer, conn->fd, offset))
-			oscar_file_transfer_disconnect(sess, oft->conn);
+		err = transfer_out_do(oft->xfer, conn->fd, offset);
 	}
 	va_end(ap);
+
+	if (err) {
+		/* There was an error; cancel the transfer. */
+		struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+		aim_conn_t *bosconn = od->conn;
+		aim_canceltransfer(sess, bosconn, oft->cookie,
+			oft->sn, AIM_CAPS_SENDFILE);
+		oscar_file_transfer_disconnect(sess, oft->conn);
+	}
 
 	return 0;
 }
@@ -4431,13 +4441,13 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 			pbm->callback = oscar_ask_direct_im;
 			pbm->gc = gc;
 			m = g_list_append(m, pbm);
+		
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Send File");
+			pbm->callback = oscar_ask_send_file;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
 		}
-			
-		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Send File");
-		pbm->callback = oscar_ask_send_file;
-		pbm->gc = gc;
-		m = g_list_append(m, pbm);
 	}
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
