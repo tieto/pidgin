@@ -3615,6 +3615,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	gtk_button_set_relief(GTK_BUTTON(wink), GTK_RELIEF_NONE);
 	gtk_button_set_relief(GTK_BUTTON(yell), GTK_RELIEF_NONE);
 
+	gtk_window_set_title(GTK_WINDOW(dialog), _("Smile!"));
 	gtk_widget_show_all(dialog);
 
 	c->smiley_dialog = dialog;
