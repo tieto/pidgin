@@ -484,7 +484,7 @@ void sighandler(int sig)
 #else
 		fprintf(stderr, "Oh no!  Segmentation fault!\n");
 		/*g_on_error_query (g_get_prgname());*/
-		exit(1);
+		abort();
 #endif
 		abort();
 		break;
