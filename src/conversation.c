@@ -720,7 +720,7 @@ void write_to_conv(struct conversation *c, char *what, int flags)
                         who = current_user->username;
                 }
 
-                if (flags & WFLAG_AUTO)
+                if (flags & WFLAG_AUTO && flags & WFLAG_SEND)
                         sprintf(buf2, " %s", AUTO_RESPONSE);
                 else
                         buf2[0]=0; /* sprintf(buf2, ""); */
