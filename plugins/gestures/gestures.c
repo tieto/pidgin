@@ -207,7 +207,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* Configuration frame */
-	vbox = make_frame(ret, _("Mouse Gestures Configuration"));
+	vbox = gaim_gtk_make_frame(ret, _("Mouse Gestures Configuration"));
 
 #if 0
 	/* Mouse button drop-down menu */

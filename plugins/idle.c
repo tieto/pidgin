@@ -75,7 +75,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
-	frame = make_frame(ret, _("Idle Time"));
+	frame = gaim_gtk_make_frame(ret, _("Idle Time"));
 	
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);

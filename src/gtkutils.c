@@ -484,3 +484,33 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char
 
 	return menuitem;
 }
+
+GtkWidget *
+gaim_gtk_make_frame(GtkWidget *parent, const char *title)
+{
+	GtkWidget *vbox, *label, *hbox;
+	char labeltitle[256];
+
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(NULL);
+	g_snprintf(labeltitle, sizeof(labeltitle),
+			   "<span weight=\"bold\">%s</span>", title);
+
+	gtk_label_set_markup(GTK_LABEL(label), labeltitle);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 6);
+	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new("    ");
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	vbox = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+
+	return vbox;
+}
+

@@ -744,7 +744,7 @@ static void generate_login_options(struct mod_account *ma, GtkWidget *box)
 		gtk_widget_destroy(ma->login_frame);
 	ma->login_frame = NULL;
 
-	frame = make_frame(box, _("Login Options"));
+	frame = gaim_gtk_make_frame(box, _("Login Options"));
 	ma->login_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 	gtk_box_reorder_child(GTK_BOX(box), ma->login_frame, 0);
 
@@ -884,7 +884,7 @@ static void generate_user_options(struct mod_account *ma, GtkWidget *box)
 		gtk_widget_destroy(ma->user_frame);
 	ma->user_frame = NULL;
 
-	frame = make_frame(box, _("User Options"));
+	frame = gaim_gtk_make_frame(box, _("User Options"));
 	ma->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 	gtk_box_reorder_child(GTK_BOX(box), ma->user_frame, 1);
 	gtk_widget_show_all(ma->user_frame);
@@ -956,7 +956,7 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 		return;
 
 	g_snprintf(buf, sizeof(buf), _("%s Options"), p->info->name);
-	frame = make_frame(box, buf);
+	frame = gaim_gtk_make_frame(box, buf);
 
 	/* BLEH */
 	ma->proto_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
@@ -1032,7 +1032,7 @@ static void generate_proxy_options(struct mod_account *ma, GtkWidget *box) {
 	if(ma->account)
 		gpi = ma->account->gpi;
 
-	frame = make_frame(box, _("Proxy Options"));
+	frame = gaim_gtk_make_frame(box, _("Proxy Options"));
 	ma->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 	gtk_widget_show_all(ma->proxy_frame);
 

@@ -151,7 +151,7 @@ static void docklet_menu(GdkEventButton *event) {
 
 	gaim_new_item_from_stock(menu, _("File Transfers..."), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Accounts..."), GAIM_STOCK_ACCOUNTS, G_CALLBACK(account_editor), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(show_prefs), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Preferences..."), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
 
@@ -448,7 +448,7 @@ get_config_frame(GaimPlugin *plugin)
 	frame = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
 
-	vbox = make_frame(frame, _("Tray Icon Configuration"));
+	vbox = gaim_gtk_make_frame(frame, _("Tray Icon Configuration"));
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 

@@ -408,7 +408,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 	
-	vbox = make_frame(ret, _("Text Replacements"));
+	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
 	gtk_widget_set_size_request(vbox, 300, -1);
 	gtk_widget_show (vbox);
@@ -470,7 +470,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	gtk_widget_show(button);
 
-	vbox = make_frame(ret, _("Add a new text replacement"));
+	vbox = gaim_gtk_make_frame(ret, _("Add a new text replacement"));
 	gtk_widget_set_size_request(vbox, 300, -1);
 
 	hbox = gtk_hbox_new(FALSE, 2);

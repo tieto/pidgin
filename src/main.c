@@ -376,7 +376,7 @@ void show_login()
 	button = gaim_pixbuf_button_from_stock(_("Preferences"), GTK_STOCK_PREFERENCES, GAIM_BUTTON_VERTICAL);
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(show_prefs), mainwindow);
+					 G_CALLBACK(gaim_gtk_prefs_show), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = gaim_pixbuf_button_from_stock(_("Sign On"), GAIM_STOCK_SIGN_ON, GAIM_BUTTON_VERTICAL);
@@ -881,6 +881,10 @@ int main(int argc, char *argv[])
 	gaim_set_notify_ui_ops(gaim_get_gtk_notify_ui_ops());
 	gaim_set_request_ui_ops(gaim_get_gtk_request_ui_ops());
 
+	gaim_prefs_init();
+	gaim_gtk_prefs_init();
+	gaim_prefs_load();
+	load_prefs();
 
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
@@ -899,9 +903,6 @@ int main(int argc, char *argv[])
 	wgaim_init();
 #endif
 
-	gaim_prefs_init();
-	gaim_prefs_load();
-	load_prefs();
 	core_main();
 	load_pounces();
 	ui_main();

@@ -36,6 +36,7 @@
 #include "gtkconv.h"
 #include "pounce.h"
 #include "gtkft.h"
+#include "gtkprefs.h"
 #include "gtkutils.h"
 #include "stock.h"
 
@@ -171,6 +172,8 @@ extern GdkColor fgcolor;
 extern int smiley_array[FACE_TOTAL];
 extern GtkWidget *fgcseld;
 extern GtkWidget *bgcseld;
+void build_allow_list();
+void build_block_list();
 
 /* Globals in pounce.c */
 extern GtkWidget *bpmenu;
@@ -297,24 +300,6 @@ extern void account_editor(GtkWidget *, GtkWidget *);
 extern void show_plugins(GtkWidget *, gpointer);
 extern void update_show_plugins(); /* this is a hack and will be removed */
 #endif
-
-/* Functions in prefs.c */
-extern void set_option(GtkWidget *, int *);
-extern void show_prefs();
-extern void show_debug();
-extern void update_color(GtkWidget *, GtkWidget *);
-extern void set_default_away(GtkWidget *, gpointer);
-extern void default_away_menu_init(GtkWidget *);
-extern void build_allow_list();
-extern void build_block_list();
-extern GtkWidget *make_frame(GtkWidget *, char *);
-extern GtkListStore *prefs_away_store;
-extern GtkWidget *prefs_away_menu;
-extern GtkWidget *pref_fg_picture;
-extern GtkWidget *pref_bg_picture;
-extern void apply_font_dlg(GtkWidget *, GtkWidget *);
-extern void apply_color_dlg(GtkWidget *, gpointer);
-extern void destroy_colorsel(GtkWidget *, gpointer);
 
 /* Functions in prpl.c */
 extern void register_dialog();

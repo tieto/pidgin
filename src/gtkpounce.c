@@ -510,7 +510,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 
 	/* Create the "Pounce Who" frame. */
-	frame = make_frame(vbox2, _("Pounce Who"));
+	frame = gaim_gtk_make_frame(vbox2, _("Pounce Who"));
 
 	/* Account: */
 	hbox = gtk_hbox_new(FALSE, 6);
@@ -551,7 +551,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	}
 
 	/* Create the "Pounce When" frame. */
-	frame = make_frame(vbox2, _("Pounce When"));
+	frame = gaim_gtk_make_frame(vbox2, _("Pounce When"));
 
 	table = gtk_table_new(2, 4, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
@@ -602,7 +602,7 @@ gaim_gtkpounce_dialog_show(struct buddy *buddy,
 	gtk_widget_show(dialog->stop_typing);
 
 	/* Create the "Pounce Action" frame. */
-	frame = make_frame(vbox2, _("Pounce Action"));
+	frame = gaim_gtk_make_frame(vbox2, _("Pounce Action"));
 
 	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);

@@ -23,6 +23,7 @@
 #include "gtkdebug.h"
 #include "gaim.h"
 #include "gtkimhtml.h"
+#include "prefs.h"
 #include <gtk/gtk.h>
 
 typedef struct
@@ -52,10 +53,18 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 	g_free(debug_win);
 	debug_win = NULL;
 
-	if (misc_options & OPT_MISC_DEBUG)
-		misc_options ^= OPT_MISC_DEBUG;
+	gaim_prefs_set_bool("/gaim/gtk/debug/enabled", FALSE);
 
-	save_prefs();
+	return FALSE;
+}
+
+static gboolean
+__configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
+{
+	if (GTK_WIDGET_VISIBLE(w)) {
+		gaim_prefs_set_int("/gaim/gtk/debug/width",  event->width);
+		gaim_prefs_set_int("/gaim/gtk/debug/height", event->height);
+	}
 
 	return FALSE;
 }
@@ -76,6 +85,9 @@ static void
 __timestamps_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+
+	gaim_prefs_set_bool("/gaim/gtk/debug/timestamps", win->timestamps);
+						
 }
 
 static DebugWindow *
@@ -85,56 +97,69 @@ debug_window_new(void)
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
 	GtkWidget *sw;
+	GtkWidget *button;
+	int width, height;
 
 	win = g_new0(DebugWindow, 1);
 
+	width  = gaim_prefs_get_int("/gaim/gtk/debug/width");
+	height = gaim_prefs_get_int("/gaim/gtk/debug/height");
+
 	GAIM_DIALOG(win->window);
-	gtk_window_set_default_size(GTK_WINDOW(win->window), 500, 200);
+	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);
 	gtk_window_set_role(GTK_WINDOW(win->window), "debug");
 	gtk_window_set_title(GTK_WINDOW(win->window), _("Debug Window"));
 
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
 					 G_CALLBACK(debug_window_destroy), NULL);
+	g_signal_connect(G_OBJECT(win->window), "configure_event",
+					 G_CALLBACK(__configure_cb), win);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(win->window), vbox);
 
-	/* Setup our top button bar thingie. */
-	toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
-	gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
-							  GTK_ICON_SIZE_SMALL_TOOLBAR);
+	if (gaim_prefs_get_bool("/gaim/gtk/debug/toolbar")) {
+		/* Setup our top button bar thingie. */
+		toolbar = gtk_toolbar_new();
+		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+		gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
+								  GTK_ICON_SIZE_SMALL_TOOLBAR);
 
-	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
 #if 0
-	/* Find button */
-	gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-							 NULL, NULL, NULL, NULL, -1);
+		/* Find button */
+		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
+								 NULL, NULL, NULL, NULL, -1);
 
-	/* Save */
-	gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-							 NULL, NULL, NULL, NULL, -1);
+		/* Save */
+		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
+								 NULL, NULL, NULL, NULL, -1);
 #endif
 
-	/* Clear button */
-	gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-							 NULL, NULL, G_CALLBACK(__clear_cb), win, -1);
+		/* Clear button */
+		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
+								 NULL, NULL, G_CALLBACK(__clear_cb), win, -1);
 
-	gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
+		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
-	/* Pause */
-	gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-							   GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-							   _("Pause"), NULL, NULL,
-							   NULL, G_CALLBACK(__pause_cb), win);
+		/* Pause */
+		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+								   GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
+								   _("Pause"), NULL, NULL,
+								   NULL, G_CALLBACK(__pause_cb), win);
 
-	/* Timestamps */
-	gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-							   GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
-							   _("Timestamps"), NULL, NULL,
-							   NULL, G_CALLBACK(__timestamps_cb), win);
+		/* Timestamps */
+		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+											GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+											NULL, _("Timestamps"), NULL, NULL,
+											NULL, G_CALLBACK(__timestamps_cb),
+											win);
+
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
+				gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
+	}
 
 	/* Now our scrolled window... */
 	sw = gtk_scrolled_window_new(NULL, NULL);
@@ -163,6 +188,8 @@ gaim_gtk_debug_window_show(void)
 		debug_win = debug_window_new();
 
 	gtk_widget_show(debug_win->window);
+
+	gaim_prefs_set_bool("/gaim/gtk/debug/enabled", TRUE);
 }
 
 void
@@ -178,44 +205,48 @@ static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
-	gchar *arg_s;
+	gchar *arg_s, *ts_s;
+	gboolean timestamps;
+
+	timestamps = gaim_prefs_get_bool("/gaim/gtk/debug/timestamps");
 
 	arg_s = g_strdup_vprintf(format, args);
+
+	if (category == NULL) {
+		ts_s = g_strdup("");
+	}
+	else {
+		/*
+		 * If the category is not NULL, then do timestamps.
+		 * This IS right. :)
+		 */
+		if (timestamps) {
+			gchar mdate[64];
+			time_t mtime = time(NULL);
+
+			strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
+
+			ts_s = g_strdup_printf("(%s) ", mdate);
+		}
+		else
+			ts_s = g_strdup("");
+	}
 
 	if ((misc_options & OPT_MISC_DEBUG) &&
 		debug_win != NULL && !debug_win->paused) {
 
-		gchar *esc_s, *cat_s, *ts_s, *s;
+		gchar *esc_s, *cat_s, *s;
 
-		if (category == NULL) {
+		if (category == NULL)
 			cat_s = g_strdup("");
-			ts_s = g_strdup("");
-		}
-		else {
+		else
 			cat_s = g_strdup_printf("<b>%s:</b> ", category);
-
-			/*
-			 * If the category is not NULL, then do timestamps.
-			 * This IS right. :)
-			 */
-			if (debug_win->timestamps) {
-				gchar mdate[64];
-				time_t mtime = time(NULL);
-
-				strftime(mdate, sizeof(mdate), "%H:%M:%S", localtime(&mtime));
-
-				ts_s = g_strdup_printf("(%s) ", mdate);
-			}
-			else
-				ts_s = g_strdup("");
-		}
 
 		esc_s = g_markup_escape_text(arg_s, -1);
 
 		s = g_strdup_printf("<font color=\"%s\">%s%s%s</font>",
 							debug_fg_colors[level], ts_s, cat_s, esc_s);
 
-		g_free(ts_s);
 		g_free(esc_s);
 
 		if (level == GAIM_DEBUG_FATAL) {
@@ -234,11 +265,12 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 	if (opt_debug) {
 		if (category == NULL)
-			g_print("%s", arg_s);
+			g_print("%s%s", ts_s, arg_s);
 		else
-			g_print("%s: %s", category, arg_s);
+			g_print("%s%s: %s", ts_s, category, arg_s);
 	}
 
+	g_free(ts_s);
 	g_free(arg_s);
 }
 

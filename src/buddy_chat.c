@@ -267,7 +267,7 @@ join_chat()
 		gtk_container_set_border_width(GTK_CONTAINER(mainbox), 5);
 		gtk_container_add(GTK_CONTAINER(joinchat), mainbox);
 
-		frame = make_frame(mainbox, _("Buddy Chat"));
+		frame = gaim_gtk_make_frame(mainbox, _("Buddy Chat"));
 
 		fbox = gtk_vbox_new(FALSE, 5);
 		gtk_container_set_border_width(GTK_CONTAINER(fbox), 5);

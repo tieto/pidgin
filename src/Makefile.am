@@ -70,6 +70,7 @@ gaim_SOURCES = \
 	gtkplugin.c \
 	gtkplugin.h \
 	gtkprefs.c \
+	gtkprefs.h \
 	gtkpounce.c \
 	gtkpounce.h \
 	gtkrequest.c \

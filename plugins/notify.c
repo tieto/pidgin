@@ -570,7 +570,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	vbox = make_frame(ret, _("Notify For"));
+	vbox = gaim_gtk_make_frame(ret, _("Notify For"));
 	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_IM);
@@ -582,7 +582,7 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(9));
 
 	/*--------------*/
-	vbox = make_frame(ret, _("Notification Methods"));
+	vbox = gaim_gtk_make_frame(ret, _("Notification Methods"));
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title (hit enter to save):"));
@@ -617,7 +617,7 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(6));
 
 	/*--------------*/
-	vbox = make_frame(ret, _("Notification Removal"));
+	vbox = gaim_gtk_make_frame(ret, _("Notification Removal"));
 	toggle = gtk_check_button_new_with_mnemonic(_("Remove when conversation window gains _focus"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), choice & NOTIFY_FOCUS);
