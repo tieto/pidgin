@@ -30,6 +30,9 @@
 #include <gnome.h>
 #endif /* USE_APPLET */
 #endif /* USE_THEMES */
+#ifdef GAIM_PLUGINS
+#include <dlfcn.h>
+#endif /* GAIM_PLUGINS */
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <gdk/gdk.h>
