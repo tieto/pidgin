@@ -28,7 +28,6 @@
 #include <gdk/gdkevents.h>
 #include "wgaimerror.h"
 #include "libc_interface.h"
-#include "systray.h"
 
 /*
  *  PROTOS
