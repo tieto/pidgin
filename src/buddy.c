@@ -391,7 +391,8 @@ static void edit_mode_cb() {
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
 	while (gtk_events_pending())
 		gtk_main_iteration();
-	gtkblist->editmode = !gtkblist->editmode;
+	blist_options ^= OPT_BLIST_SHOW_OFFLINE;
+	save_prefs();
 	gdk_cursor_unref(cursor);
 	cursor = gdk_cursor_new(GDK_LEFT_PTR);
 	gdk_window_set_cursor(gtkblist->window->window, cursor);
@@ -899,7 +900,7 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 
 
 	/* Idle grey buddies affects the whole row.  This converts the status icon to greyscale. */
-	if (!b->present && gtkblist->editmode)
+	if (!b->present && blist_options & OPT_BLIST_SHOW_OFFLINE)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 	else if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 		gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
@@ -923,7 +924,7 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 
 
 	if (buf) {
-		if (!b->present && gtkblist->editmode)
+		if (!b->present && blist_options & OPT_BLIST_SHOW_OFFLINE)
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.0, FALSE);
 		if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
 			gdk_pixbuf_saturate_and_pixelate(buf, buf, 0.25, FALSE);
@@ -948,7 +949,7 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b, gboolean selected)
 	time_t t;
 
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS)) {
-		if ((b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || gtkblist->editmode) {
+		if ((b->idle > 0 && blist_options & OPT_BLIST_GREY_IDLERS && !selected) || blist_options & OPT_BLIST_SHOW_OFFLINE) {
 			text =  g_strdup_printf("<span color='dim grey'>%s</span>",
 						esc);
 			g_free(esc);
@@ -1341,7 +1342,7 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (get_iter_from_node(node, &iter)) {
 		gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		if(GAIM_BLIST_NODE_IS_BUDDY(node) &&
-		   !gtkblist->editmode &&
+		   !blist_options & OPT_BLIST_SHOW_OFFLINE &&
 		   gaim_blist_get_group_online_count((struct group *)node->parent) == 0) {
 			GtkTreeIter groupiter;
 			if(get_iter_from_node(node->parent, &groupiter))
@@ -1395,7 +1396,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 	if (!get_iter_from_node(node, &iter)) { /* This is a newly added node */
 		new_entry = TRUE;
 		if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
-			if (((struct buddy*)node)->present || (gtkblist->editmode && ((struct buddy*)node)->account->gc)) {
+			if (((struct buddy*)node)->present || (blist_options & OPT_BLIST_SHOW_OFFLINE && ((struct buddy*)node)->account->gc)) {
 				GtkTreeIter groupiter;
 				GaimBlistNode *oldersibling;
 				GtkTreeIter oldersiblingiter;
@@ -1445,7 +1446,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 				}
 			}
 		}
-		else if (GAIM_BLIST_NODE_IS_GROUP(node) && gtkblist->editmode) {
+		else if (GAIM_BLIST_NODE_IS_GROUP(node) && blist_options & OPT_BLIST_SHOW_OFFLINE) {
 			GaimBlistNode *oldersibling;
 			GtkTreeIter oldersiblingiter;
 			GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
@@ -1469,7 +1470,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		}
 		
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-			if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter) == FALSE && gtkblist->editmode == FALSE)
+			if (gtk_tree_model_iter_has_child(GTK_TREE_MODEL(gtkblist->treemodel), &iter) == FALSE && blist_options & OPT_BLIST_SHOW_OFFLINE == FALSE)
 			gtk_tree_store_remove(gtkblist->treemodel, &iter);
 		else {
 			char *esc = g_markup_escape_text(((struct group*)node)->name, -1);
@@ -1482,7 +1483,7 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 		}
 	}
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present || (gtkblist->editmode && ((struct buddy*)node)->account->gc))) {
+	if (GAIM_BLIST_NODE_IS_BUDDY(node) && (((struct buddy*)node)->present || (blist_options & OPT_BLIST_SHOW_OFFLINE && ((struct buddy*)node)->account->gc))) {
 		GdkPixbuf *status, *avatar;
 		char *mark;
 		char *warning = NULL, *idle = NULL;

@@ -239,6 +239,7 @@ extern guint blist_options;
 #define OPT_BLIST_BOTTOM_TAB		0X00000800
 #define OPT_BLIST_POPUP                 0x00001000
 #define OPT_BLIST_SHOW_ICONS            0x00002000 
+#define OPT_BLIST_SHOW_OFFLINE          0x00004000
 
 extern guint convo_options;
 #define OPT_CONVO_ENTER_SENDS		0x00000001
