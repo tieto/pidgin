@@ -75,6 +75,9 @@ extern GdkColor fgcolor;
 void check_everything(GtkWidget *entry);
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c);
 
+static void update_icon(struct conversation *);
+static void remove_icon(struct conversation *);
+
 /*------------------------------------------------------------------------*/
 /*  Helpers                                                               */
 /*------------------------------------------------------------------------*/
@@ -156,6 +159,7 @@ struct conversation *new_conversation(char *name)
 	show_conv(c);
 	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
 		(*c->gc->prpl->insert_convo)(c->gc, c);
+	update_icon(c);
 	plugin_event(event_new_conversation, name, 0, 0, 0);
 	return c;
 }
@@ -411,6 +415,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	if (!c->is_chat) {
 		if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
 			(*c->gc->prpl->remove_convo)(c->gc, c);
+		remove_icon(c);
 		if (display_options & OPT_DISP_ONE_WINDOW) {
 			if (g_list_length(conversations) > 1) {
 				gtk_notebook_remove_page(GTK_NOTEBOOK(convo_notebook),
@@ -1785,6 +1790,7 @@ static void convo_sel_send(GtkObject *m, struct gaim_connection *c)
 
 	if (cnv->gc && cnv->gc->prpl && cnv->gc->prpl->insert_convo)
 		(*cnv->gc->prpl->insert_convo)(cnv->gc, cnv);
+	update_icon(cnv);
 }
 
 void update_convo_add_button(struct conversation *c)
@@ -1892,6 +1898,7 @@ void convo_menu_remove(struct gaim_connection *gc)
 
 		if (C->gc && C->gc->prpl && C->gc->prpl->remove_convo)
 			(*C->gc->prpl->remove_convo)(C->gc, C);
+		remove_icon(C);
 	}
 }
 
@@ -1912,6 +1919,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 
 	if (c->gc && c->gc->prpl && c->gc->prpl->insert_convo)
 		(*c->gc->prpl->insert_convo)(c->gc, c);
+	update_icon(c);
 }
 
 void update_buttons_by_protocol(struct conversation *c)
@@ -2336,6 +2344,7 @@ void tabize()
 			win = c->window;
 			if (c->gc && c->gc->prpl->remove_convo)
 				(*c->gc->prpl->remove_convo)(c->gc, c);
+			remove_icon(c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
@@ -2343,6 +2352,7 @@ void tabize()
 			gtk_widget_destroy(win);
 			if (c->gc && c->gc->prpl->insert_convo)
 				(*c->gc->prpl->insert_convo)(c->gc, c);
+			update_icon(c);
 
 			x = x->next;
 		}
@@ -2357,12 +2367,14 @@ void tabize()
 			imhtml = c->text;
 			if (c->gc && c->gc->prpl->remove_convo)
 				(*c->gc->prpl->remove_convo)(c->gc, c);
+			remove_icon(c);
 			show_conv(c);
 			gtk_widget_destroy(c->text);
 			gtk_widget_reparent(imhtml, c->sw);
 			c->text = imhtml;
 			if (c->gc && c->gc->prpl->insert_convo)
 				(*c->gc->prpl->insert_convo)(c->gc, c);
+			update_icon(c);
 
 			x = x->next;
 		}
@@ -2460,4 +2472,182 @@ void update_convo_font()
 		if (b->hasfont) continue;
 		sprintf(b->fontface, "%s", fontface);
 	}
+}
+
+#if USE_PIXBUF
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk-pixbuf/gdk-pixbuf-loader.h>
+#define SCALE 48
+
+static gboolean redraw_icon(gpointer data)
+{
+	struct conversation *c = data;
+
+	GList *frames;
+	GdkPixbufFrame *frame;
+	GdkPixbuf *buf;
+	GdkPixbuf *scale;
+	GdkPixmap *src;
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+	GdkGC *gc;
+	gint delay;
+
+	if (!g_list_find(conversations, c)) {
+		debug_printf("I think this is a bug.\n");
+		return FALSE;
+	}
+
+	frames = gdk_pixbuf_animation_get_frames(c->anim);
+	frame = g_list_nth_data(frames, c->frame);
+	switch (gdk_pixbuf_frame_get_action(frame)) {
+	case GDK_PIXBUF_FRAME_RETAIN:
+		buf = gdk_pixbuf_frame_get_pixbuf(frame);
+		scale = gdk_pixbuf_scale_simple(buf,
+				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(c->anim), 1),
+				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(c->anim), 1),
+				GDK_INTERP_NEAREST);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
+		gdk_pixbuf_unref(scale);
+		gtk_pixmap_get(GTK_PIXMAP(c->icon), &pm, &bm);
+		gc = gdk_gc_new(pm);
+		gdk_draw_pixmap(pm, gc, src, 0, 0,
+				MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
+					gdk_pixbuf_animation_get_width(c->anim), 1),
+				MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
+					gdk_pixbuf_animation_get_height(c->anim), 1),
+				-1, -1);
+		gdk_pixmap_unref(src);
+		gtk_widget_queue_draw(c->icon);
+		gdk_gc_unref(gc);
+		break;
+	case GDK_PIXBUF_FRAME_DISPOSE:
+		buf = gdk_pixbuf_frame_get_pixbuf(frame);
+		scale = gdk_pixbuf_scale_simple(buf,
+				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(c->anim), 1),
+				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(c->anim), 1),
+				GDK_INTERP_NEAREST);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_unref(scale);
+		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
+		gdk_pixmap_unref(pm);
+		if (bm)
+			gdk_bitmap_unref(bm);
+		break;
+	case GDK_PIXBUF_FRAME_REVERT:
+		frame = frames->data;
+		buf = gdk_pixbuf_frame_get_pixbuf(frame);
+		scale = gdk_pixbuf_scale_simple(buf,
+				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(c->anim), 1),
+				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(c->anim), 1),
+				GDK_INTERP_NEAREST);
+		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+		gdk_pixbuf_unref(scale);
+		gtk_pixmap_set(GTK_PIXMAP(c->icon), pm, bm);
+		gdk_pixmap_unref(pm);
+		if (bm)
+			gdk_bitmap_unref(bm);
+		break;
+	}
+
+	c->frame = (c->frame + 1) % g_list_length(frames);
+	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
+	c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+
+	return FALSE;
+}
+#endif
+
+void remove_icon(struct conversation *c)
+{
+#if USE_PIXBUF
+	if (c->icon)
+		gtk_container_remove(GTK_CONTAINER(c->bbox), c->icon);
+	c->icon = NULL;
+	if (c->anim)
+		gdk_pixbuf_animation_unref(c->anim);
+	c->anim = NULL;
+	if (c->unanim)
+		gdk_pixbuf_unref(c->unanim);
+	c->unanim = NULL;
+	if (c->icon_timer)
+		gtk_timeout_remove(c->icon_timer);
+	c->icon_timer = 0;
+	c->frame = 0;
+#endif
+}
+
+void update_icon(struct conversation *c)
+{
+#if USE_PIXBUF
+	void *data;
+	int len;
+
+	GdkPixbufLoader *load;
+	GdkPixbuf *scale;
+	GdkPixmap *pm;
+	GdkBitmap *bm;
+
+	if (!c)
+		return;
+
+	if (!c->gc)
+		return;
+	data = get_icon_data(c->gc, normalize(c->name), &len);
+	if (!data)
+		return;
+
+	load = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(load, data, len);
+	c->anim = gdk_pixbuf_loader_get_animation(load);
+
+	if (c->anim) {
+		GList *frames = gdk_pixbuf_animation_get_frames(c->anim);
+		GdkPixbuf *buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
+		scale = gdk_pixbuf_scale_simple(buf,
+				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(c->anim), 1),
+				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(c->anim), 1),
+				GDK_INTERP_NEAREST);
+
+		if (gdk_pixbuf_animation_get_num_frames(c->anim) > 1) {
+			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
+			c->frame = 1;
+			c->icon_timer = gtk_timeout_add(delay * 10, redraw_icon, c);
+		}
+	} else {
+		c->unanim = gdk_pixbuf_loader_get_pixbuf(load);
+		if (!c->unanim) {
+			gdk_pixbuf_loader_close(load);
+			return;
+		}
+		scale = gdk_pixbuf_scale_simple(c->unanim, SCALE, SCALE, GDK_INTERP_NEAREST);
+	}
+
+	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+	gdk_pixbuf_unref(scale);
+
+	c->icon = gtk_pixmap_new(pm, bm);
+	gtk_box_pack_start(GTK_BOX(c->bbox), c->icon, FALSE, FALSE, 5);
+	gtk_widget_show(c->icon);
+	gdk_pixmap_unref(pm);
+	if (bm)
+		gdk_bitmap_unref(bm);
+
+	gdk_pixbuf_loader_close(load);
+#endif
+}
+
+void got_new_icon(struct gaim_connection *gc, char *who)
+{
+	struct conversation *c = find_conversation(who);
+	if (c->gc == gc)
+		update_icon(c);
 }

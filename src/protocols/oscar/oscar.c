@@ -26,7 +26,6 @@
 
 
 #include <netdb.h>
-#include <gtk/gtk.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netinet/in.h>
@@ -42,12 +41,6 @@
 #include "gaim.h"
 #include "aim.h"
 #include "proxy.h"
-
-#if USE_PIXBUF
-#include <gdk-pixbuf/gdk-pixbuf.h>
-#include <gdk-pixbuf/gdk-pixbuf-loader.h>
-#define SCALE 48
-#endif
 
 /*#include "pixmaps/cancel.xpm"*/
 #include "pixmaps/admin_icon.xpm"
@@ -122,21 +115,12 @@ struct ask_direct {
 	struct aim_directim_priv *priv;
 };
 
-#if USE_PIXBUF
 struct icon_req {
 	char *user;
 	time_t timestamp;
-	unsigned long length;
-	gpointer data;
+	unsigned long checksum;
 	gboolean request;
-	GdkPixbufAnimation *anim;
-	GdkPixbuf *unanim;
-	struct conversation *cnv;
-	GtkWidget *pix;
-	int curframe;
-	int timer;
 };
-#endif
 
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	GSList *d = od->direct_ims;
@@ -477,17 +461,7 @@ static void oscar_close(struct gaim_connection *gc) {
 #if USE_PIXBUF
 	while (odata->hasicons) {
 		struct icon_req *n = odata->hasicons->data;
-		if (n->anim)
-			gdk_pixbuf_animation_unref(n->anim);
-		if (n->unanim)
-			gdk_pixbuf_unref(n->unanim);
-		if (n->timer)
-			g_source_remove(n->timer);
-		if (n->cnv && n->pix)
-			gtk_container_remove(GTK_CONTAINER(n->cnv->bbox), n->pix);
 		g_free(n->user);
-		if (n->data)
-			g_free(n->data);
 		odata->hasicons = g_slist_remove(odata->hasicons, n);
 		g_free(n);
 	}
@@ -1266,88 +1240,6 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 	return TRUE;
 }
 
-#if USE_PIXBUF
-static gboolean redraw_anim(gpointer data)
-{
-	int delay;
-	struct icon_req *ir = data;
-	GList *frames;
-	GdkPixbufFrame *frame;
-	GdkPixbuf *buf;
-	GdkPixbuf *scale;
-	GdkPixmap *pm; GdkBitmap *bm;
-	GdkPixmap *src;
-	GdkGC *gc;
-
-	if (!ir->cnv || !g_list_find(conversations, ir->cnv)) {
-		debug_printf("I think this is a bug.\n");
-		return FALSE;
-	}
-
-	frames = gdk_pixbuf_animation_get_frames(ir->anim);
-	frame = g_list_nth_data(frames, ir->curframe);
-	switch (gdk_pixbuf_frame_get_action(frame)) {
-		case GDK_PIXBUF_FRAME_RETAIN:
-			buf = gdk_pixbuf_frame_get_pixbuf(frame);
-			scale = gdk_pixbuf_scale_simple(buf,
-					MAX(gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim), 1),
-					MAX(gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim), 1),
-					GDK_INTERP_NEAREST);
-			gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
-			gdk_pixbuf_unref(scale);
-			gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
-			gc = gdk_gc_new(pm);
-			gdk_draw_pixmap(pm, gc, src, 0, 0,
-					MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim), 1),
-					MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim), 1),
-					-1, -1);
-			gdk_pixmap_unref(src);
-			gtk_widget_queue_draw(ir->pix);
-			gdk_gc_unref(gc);
-			break;
-		case GDK_PIXBUF_FRAME_DISPOSE:
-			buf = gdk_pixbuf_frame_get_pixbuf(frame);
-			scale = gdk_pixbuf_scale_simple(buf,
-					MAX(gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim), 1),
-					MAX(gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim), 1),
-					GDK_INTERP_NEAREST);
-			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-			gdk_pixbuf_unref(scale);
-			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
-			gdk_pixmap_unref(pm);
-			if (bm)
-				gdk_bitmap_unref(bm);
-			break;
-		case GDK_PIXBUF_FRAME_REVERT:
-			frame = frames->data;
-			buf = gdk_pixbuf_frame_get_pixbuf(frame);
-			scale = gdk_pixbuf_scale_simple(buf,
-					MAX(gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim), 1),
-					MAX(gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim), 1),
-					GDK_INTERP_NEAREST);
-			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-			gdk_pixbuf_unref(scale);
-			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
-			gdk_pixmap_unref(pm);
-			if (bm)
-				gdk_bitmap_unref(bm);
-			break;
-	}
-	ir->curframe = (ir->curframe + 1) % g_list_length(frames);
-	delay = MAX(gdk_pixbuf_frame_get_delay_time(frame), 13);
-	ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
-	return FALSE;
-}
-#endif
-
 int gaim_parse_incoming_im(struct aim_session_t *sess,
 			   struct command_rx_struct *command, ...) {
 	int channel;
@@ -1367,7 +1259,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		args = va_arg(ap, struct aim_incomingim_ch1_args *);
 		va_end(ap);
 
-#if USE_PIXBUF
 		if (args->icbmflags & AIM_IMFLAGS_HASICON) {
 			struct oscar_data *od = gc->proto_data;
 			struct icon_req *ir = NULL;
@@ -1389,7 +1280,6 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				ir->request = TRUE;
 			ir->timestamp = args->iconstamp;
 		}
-#endif
 
 		/*
 		 * Quickly convert it to eight bit format, replacing 
@@ -1434,105 +1324,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 		} else if (args->reqclass & AIM_CAPS_GETFILE) {
 		} else if (args->reqclass & AIM_CAPS_VOICE) {
 		} else if (args->reqclass & AIM_CAPS_BUDDYICON) {
-#if USE_PIXBUF
-			struct oscar_data *od = gc->proto_data;
-			GSList *h = od->hasicons;
-			struct icon_req *ir = NULL;
-			char *who;
-			struct conversation *c;
-
-			GdkPixbufLoader *load;
-			GList *frames;
-			GdkPixbuf *buf;
-			GdkPixbuf *scale;
-			GdkPixmap *pm;
-			GdkBitmap *bm;
-
-			who = normalize(userinfo->sn);
-
-			while (h) {
-				ir = h->data;
-				if (!strcmp(who, ir->user))
-					break;
-				h = h->next;
-
-			}
-
-			if (!h || ((c = find_conversation(userinfo->sn)) == NULL) || (c->gc != gc)) {
-				debug_printf("got buddy icon for %s but didn't want it\n", userinfo->sn);
-				return 1;
-			}
-
-			if (ir->pix && ir->cnv)
-				gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
-			ir->pix = NULL;
-			ir->cnv = NULL;
-			if (ir->data)
-				g_free(ir->data);
-			if (ir->anim)
-				gdk_pixbuf_animation_unref(ir->anim);
-			ir->anim = NULL;
-			if (ir->unanim)
-				gdk_pixbuf_unref(ir->unanim);
-			ir->unanim = NULL;
-			if (ir->timer)
-				g_source_remove(ir->timer);
-			ir->timer = 0;
-
-			ir->length = args->info.icon.length;
-
-			if (!ir->length)
-				return 1;
-
-			ir->data = g_memdup(args->info.icon.icon, args->info.icon.length);
-
-			load = gdk_pixbuf_loader_new();
-			gdk_pixbuf_loader_write(load, ir->data, ir->length);
-			ir->anim = gdk_pixbuf_loader_get_animation(load);
-
-			if (ir->anim) {
-				frames = gdk_pixbuf_animation_get_frames(ir->anim);
-				buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-				scale = gdk_pixbuf_scale_simple(buf,
-						MAX(gdk_pixbuf_get_width(buf) * SCALE /
-							gdk_pixbuf_animation_get_width(ir->anim), 1),
-						MAX(gdk_pixbuf_get_height(buf) * SCALE /
-							gdk_pixbuf_animation_get_height(ir->anim), 1),
-						GDK_INTERP_NEAREST);
-				gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-				gdk_pixbuf_unref(scale);
-
-				if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-					int delay =
-						MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
-					ir->curframe = 1;
-					ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
-				}
-			} else {
-				ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
-				if (!ir->unanim) {
-					gdk_pixbuf_loader_close(load);
-					return 1;
-				}
-				scale = gdk_pixbuf_scale_simple(ir->unanim, SCALE, SCALE,
-						GDK_INTERP_NEAREST);
-				gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-				gdk_pixbuf_unref(scale);
-			}
-
-			ir->cnv = c;
-			ir->pix = gtk_pixmap_new(pm, bm);
-			gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
-			if (ir->anim && (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1))
-				gtk_widget_set_usize(ir->pix, SCALE, SCALE);
-			gtk_widget_show(ir->pix);
-			gdk_pixmap_unref(pm);
-			if (bm)
-				gdk_bitmap_unref(bm);
-
-			gdk_pixbuf_loader_close(load);
-
-#endif
+			set_icon_data(gc, normalize(userinfo->sn), args->info.icon.icon,
+					args->info.icon.length);
 		} else if (args->reqclass & AIM_CAPS_IMIMAGE) {
 			struct ask_direct *d = g_new0(struct ask_direct, 1);
 			char buf[256];
@@ -2885,118 +2678,6 @@ static void oscar_change_passwd(struct gaim_connection *gc, char *old, char *new
 	}
 }
 
-static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *c)
-{
-#if USE_PIXBUF
-	struct oscar_data *od = gc->proto_data;
-	GSList *h = od->hasicons;
-	struct icon_req *ir = NULL;
-	char *who = normalize(c->name);
-
-	GdkPixbufLoader *load;
-	GList *frames;
-	GdkPixbuf *buf;
-	GdkPixbuf *scale;
-	GdkPixmap *pm;
-	GdkBitmap *bm;
-
-	while (h) {
-		ir = h->data;
-		if (!strcmp(who, ir->user))
-			break;
-		h = h->next;
-	}
-	if (!h || !ir->data)
-		return;
-
-	ir->cnv = c;
-
-	load = gdk_pixbuf_loader_new();
-	gdk_pixbuf_loader_write(load, ir->data, ir->length);
-	ir->anim = gdk_pixbuf_loader_get_animation(load);
-
-	if (ir->anim) {
-		frames = gdk_pixbuf_animation_get_frames(ir->anim);
-		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-		scale = gdk_pixbuf_scale_simple(buf,
-				MAX(gdk_pixbuf_get_width(buf) * SCALE /
-					gdk_pixbuf_animation_get_width(ir->anim), 1),
-				MAX(gdk_pixbuf_get_height(buf) * SCALE /
-					gdk_pixbuf_animation_get_height(ir->anim), 1),
-				GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-		gdk_pixbuf_unref(scale);
-
-		if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
-			int delay = MAX(gdk_pixbuf_frame_get_delay_time(frames->data), 13);
-			ir->curframe = 1;
-			ir->timer = g_timeout_add(delay * 10, redraw_anim, ir);
-		}
-	} else {
-		ir->unanim = gdk_pixbuf_loader_get_pixbuf(load);
-		if (!ir->unanim) {
-			gdk_pixbuf_loader_close(load);
-			return;
-		}
-		scale = gdk_pixbuf_scale_simple(ir->unanim, SCALE, SCALE,
-				GDK_INTERP_NEAREST);
-		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
-		gdk_pixbuf_unref(scale);
-	}
-
-	ir->pix = gtk_pixmap_new(pm, bm);
-	gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
-	if (ir->anim && (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1))
-		gtk_widget_set_usize(ir->pix, gdk_pixbuf_animation_get_width(ir->anim),
-					gdk_pixbuf_animation_get_height(ir->anim));
-	gtk_widget_show(ir->pix);
-	gdk_pixmap_unref(pm);
-	if (bm)
-		gdk_bitmap_unref(bm);
-
-	gdk_pixbuf_loader_close(load);
-#endif
-}
-
-static void oscar_remove_convo(struct gaim_connection *gc, struct conversation *c)
-{
-#if USE_PIXBUF
-	struct oscar_data *od = gc->proto_data;
-	GSList *h = od->hasicons;
-	struct icon_req *ir = NULL;
-	char *who = normalize(c->name);
-	
-	while (h) {
-		ir = h->data;
-		if (!strcmp(who, ir->user))
-			break;
-		h = h->next;
-	}
-	if (!h || !ir->data)
-		return;
-	
-	if (ir->cnv && ir->pix) {
-		gtk_container_remove(GTK_CONTAINER(ir->cnv->bbox), ir->pix);
-		ir->pix = NULL;
-		ir->cnv = NULL;
-	}
-	
-	if (ir->anim) {
-		gdk_pixbuf_animation_unref(ir->anim);
-		ir->anim = NULL;
-	} else if (ir->unanim) {
-		gdk_pixbuf_unref(ir->unanim);
-		ir->unanim = NULL;
-	}
-	
-	ir->curframe = 0;
-	
-	if (ir->timer)
-		g_source_remove(ir->timer);
-	ir->timer = 0;
-#endif
-}
-
 static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
@@ -3011,8 +2692,6 @@ void oscar_init(struct prpl *ret) {
 	ret->user_opts = oscar_user_opts;
 	ret->draw_new_user = oscar_draw_new_user;
 	ret->do_new_user = oscar_do_new_user;
-	ret->insert_convo = oscar_insert_convo;
-	ret->remove_convo = oscar_remove_convo;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;

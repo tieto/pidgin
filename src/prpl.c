@@ -549,3 +549,81 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	} else if (gc->email_win)
 		gtk_widget_destroy(gc->email_win);
 }
+
+struct icon_data {
+	struct gaim_connection *gc;
+	char *who;
+	void *data;
+	int len;
+};
+
+static GList *icons = NULL;
+
+static gint find_icon_data(gconstpointer a, gconstpointer b)
+{
+	const struct icon_data *x = a;
+	const struct icon_data *y = b;
+
+	return ((x->gc != y->gc) || g_strcasecmp(x->who, y->who));
+}
+
+void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
+{
+	struct icon_data tmp = { gc, who, NULL, 0 };
+	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
+	struct icon_data *id = l ? l->data : NULL;
+
+	if (id) {
+		g_free(id->data);
+		if (!data) {
+			icons = g_list_remove(icons, id);
+			g_free(id->who);
+			g_free(id);
+			return;
+		}
+	} else if (data) {
+		id = g_new0(struct icon_data, 1);
+		icons = g_list_append(icons, id);
+		id->gc = gc;
+		id->who = g_strdup(who);
+	} else {
+		return;
+	}
+
+	id->data = g_memdup(data, len);
+	id->len = len;
+
+	got_new_icon(gc, who);
+}
+
+void remove_icon_data(struct gaim_connection *gc)
+{
+	GList *list = icons;
+	struct icon_data *id;
+
+	while (list) {
+		id = list->data;
+		if (id->gc == gc) {
+			g_free(id->data);
+			g_free(id->who);
+			list = icons = g_list_remove(icons, id);
+			g_free(id);
+		} else
+			list = list->next;
+	}
+}
+
+void *get_icon_data(struct gaim_connection *gc, char *who, int *len)
+{
+	struct icon_data tmp = { gc, who, NULL, 0 };
+	GList *l = g_list_find_custom(icons, &tmp, find_icon_data);
+	struct icon_data *id = l ? l->data : NULL;
+
+	if (id) {
+		*len = id->len;
+		return id->data;
+	}
+
+	*len = 0;
+	return NULL;
+}

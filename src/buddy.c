@@ -486,6 +486,7 @@ void signoff(struct gaim_connection *gc)
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	update_keepalive(gc, FALSE);
 	convo_menu_remove(gc);
+	remove_icon_data(gc);
 	serv_close(gc);
 	redo_buddy_list();
 	build_edit_tree();

@@ -162,4 +162,7 @@ extern void do_prompt_dialog(const char *, void *, void *, void *);
 
 extern void connection_has_mail(struct gaim_connection *, int, const char *, const char *);
 
+extern void set_icon_data(struct gaim_connection *, char *, void *, int);
+extern void *get_icon_data(struct gaim_connection *, char *, int *);
+
 #endif

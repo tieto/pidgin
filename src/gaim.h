@@ -322,6 +322,10 @@ struct debug_window {
 	GtkWidget *entry;
 };
 
+#if USE_PIXBUF
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#endif
+
 /* struct buddy_chat went away and got merged with this. */
 struct conversation {
 	struct gaim_connection *gc;
@@ -374,6 +378,15 @@ struct conversation {
 	GtkWidget *sep2;
 	GtkWidget *menu;
 	gboolean unseen;
+
+#if USE_PIXBUF
+	/* buddy icon stuff. sigh. */
+	GtkWidget *icon;
+	GdkPixbuf *unanim;
+	GdkPixbufAnimation *anim;
+	guint32 icon_timer;
+	int frame;
+#endif
 
 	/* stuff used just for chat */
         GList *in_room;
@@ -721,6 +734,8 @@ extern void do_big(GtkWidget *, GtkWidget *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
 extern void convo_menu_remove(struct gaim_connection *);
+extern void remove_icon_data(struct gaim_connection *);
+extern void got_new_icon(struct gaim_connection *, char *);
 extern void toggle_spellchk();
 extern void set_convo_gc(struct conversation *, struct gaim_connection *);
 extern void update_buttons_by_protocol(struct conversation *);
