@@ -1928,13 +1928,8 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		newvals [NAME] = names [i];
 
 		if (xflds [PTSZ][0]) {
-			g_snprintf (fs, sizeof (fs), "%d",
-				    font_sizes [MIN (fontsize, MAX_SIZE) - 1] / 10);
-			newvals [PTSZ] = fs;
-			newvals [SIZE] = "";
-			TRY_FONT;
-
 			newvals [PTSZ] = xflds [PTSZ];
+			newvals [SIZE] = "";
 		} else
 			newvals [SIZE] = xflds [SIZE];
 		TRY_FONT;
