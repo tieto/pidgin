@@ -43,3 +43,7 @@ linux-msg.sed
 po2tbl.sed.in
 xopen-msg.sed
 plural.c
+charset.alias
+libintl.h
+ref-add.sed
+ref-del.sed

@@ -14,6 +14,20 @@ AM_PROG_LIBTOOL
 LIBTOOL="$LIBTOOL --silent"
 AC_PROG_INSTALL
 
+# before gettexting, in case iconv matters
+case "$host_os" in
+darwin*)
+	AC_MSG_CHECKING([for fink])
+	if test -d /sw; then
+		AC_MSG_RESULT([found, adding /sw to search paths])
+		CFLAGS="$CFLAGS -I/sw/include"
+	else
+		AC_MSG_RESULT([not found])
+	fi
+	;;
+*)
+	;;
+esac
 
 ALL_LINGUAS="am bg ca cs da de es fi fr he hi hu it ja ko nl no pl pt_BR pt ro ru sk sr sr@Latn sv zh_CN zh_TW"
 AM_GNU_GETTEXT_VERSION(0.10.40)
