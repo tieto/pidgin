@@ -655,6 +655,12 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 {
 	GtkIMHtmlToolbar *toolbar = GTK_IMHTMLTOOLBAR(object);
 
+	if (toolbar->smiley_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->smiley_dialog);
+		toolbar->smiley_dialog = NULL;
+	}
+
 	if (toolbar->sml)
 		free(toolbar->sml);
 	gtk_object_sink(GTK_OBJECT(toolbar->tooltips));
