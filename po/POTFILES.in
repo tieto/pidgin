@@ -222,6 +222,7 @@ src/request.h
 src/server.c
 src/session.c
 src/socket.c
+src/status.c
 src/sound.c
 src/status.c
 src/stock.c
