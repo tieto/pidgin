@@ -90,7 +90,7 @@ gint check_idle(gpointer data)
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away)) {
 
-		if (!gc->away && (!gc->away_state ||
+		if ((!gc->away || !*gc->away) && (!gc->away_state ||
 				!strcmp(gc->away_state, GAIM_AWAY_CUSTOM))) {
 			struct away_message *default_away = NULL;
 			const char *default_name;
