@@ -629,6 +629,8 @@ gaim_xfer_cancel(struct gaim_xfer *xfer)
 	if (ui_ops != NULL && ui_ops->cancel != NULL)
 		ui_ops->cancel(xfer);
 
+	xfer->bytes_remaining = 0;
+
 	/* Delete the transfer. */
 	gaim_xfer_destroy(xfer);
 }
