@@ -392,7 +392,7 @@ static void nap_login_callback(gpointer data, gint source, GaimInputCondition co
 		serv_finish_login(gc);
 
 		if (bud_list_cache_exists(gc))
-			do_import(NULL, gc);
+			do_import(gc, NULL);
 
 		return;
 	}

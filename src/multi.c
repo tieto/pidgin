@@ -68,7 +68,7 @@ struct gaim_connection *new_gaim_conn(struct aim_user *user)
 	g_snprintf(gc->password, sizeof(gc->password), "%s", user->password);
 	gc->options = user->options;
 	gc->keepalive = 0;
-	gc->inpa = -1;
+	gc->inpa = 0;
 	gc->buddy_chats = NULL;
 	gc->groups = NULL;
 	gc->permit = NULL;
@@ -1099,7 +1099,6 @@ void signoff(struct gaim_connection *gc)
 	debug_printf("date: %s\n", full_date());
 	plugin_event(event_signoff, gc, 0, 0, 0);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
-	update_keepalive(gc, FALSE);
 
 	/* UI stuff */
 	convo_menu_remove(gc);

@@ -2781,121 +2781,45 @@ void show_font_dialog(struct conversation *c, GtkWidget *font)
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
-static gchar *get_screenname_filename(const char *name)
+static void do_import_dialog(GtkWidget *w, struct gaim_connection *gc)
 {
-	gchar **split;
-	gchar *good;
-	int i;
-
-	split = g_strsplit(name, G_DIR_SEPARATOR_S, -1);
-	good = g_strjoinv(NULL, split);
-	g_strfreev(split);
-
-	for (i = 0; i < strlen(good); i++)
-		good[i] = toupper(good[i]);
-
-	return good;
-}
-
-/* see if a buddy list cache file for this user exists */
-
-gboolean bud_list_cache_exists(struct gaim_connection *gc)
-{
-	gboolean ret = FALSE;
-	char path[PATHSIZE];
-	char *file;
-	struct stat sbuf;
-	char *g_screenname;
-
-	g_screenname = get_screenname_filename(gc->username);
-
-	file = gaim_user_dir();
-	if (file != (char *)NULL) {
-		g_snprintf(path, sizeof path, "%s/%s.%d.blist", file, g_screenname,
-			   (gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
-		if (!stat(path, &sbuf)) {
-			debug_printf("%s exists.\n", path);
-			ret = TRUE;
-		} else {
-			char path2[PATHSIZE];
-			debug_printf("%s does not exist.\n", path);
-			g_snprintf(path2, sizeof path2, "%s/%s.blist", file, g_screenname);
-			if (!stat(path2, &sbuf)) {
-				debug_printf("%s exists, moving to %s\n", path2, path);
-				if (rename(path2, path))
-					debug_printf("rename didn't work!\n");
-				else
-					ret = TRUE;
-			}
-		}
-		g_free(file);
-	}
-	g_free(g_screenname);
-	return ret;
-}
-
-/* if dummy is 0, save to ~/.gaim/screenname.blist, where screenname is each
- * signed in user. Else, let user choose */
-
-void do_export(struct gaim_connection *g)
-{
-	FILE *dir;
-	FILE *f;
-	char buf[32 * 1024];
-	char *file;
-	char path[PATHSIZE];
-	char *g_screenname;
-
-	/*
-	   if ( show_dialog == 1 ) {
-	   file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
-	   strncpy( path, file, PATHSIZE - 1 );
-	   if (file_is_dir(path, exportdialog)) {
-	   return;
-	   }
-	   if ((f = fopen(path,"w"))) {
-	   toc_build_config(connections->data, buf, 8192 - 1, TRUE);
-	   fprintf(f, "%s\n", buf);
-	   fclose(f);
-	   chmod(buf, S_IRUSR | S_IWUSR);
-	   } else {
-	   g_snprintf(buf, BUF_LONG / 2, _("Error writing file %s"), file);
-	   do_error_dialog(buf, _("Error"));
-	   }
-	   destroy_dialog(NULL, exportdialog);
-	   exportdialog = NULL;
-	   } else {
-	 */
-
-	file = gaim_user_dir();
-	if (!file)
+	char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
+	if (file_is_dir(file, importdialog)) {
 		return;
-
-	strcpy(buf, file);
-	dir = fopen(buf, "r");
-	if (!dir)
-		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
-	else
-		fclose(dir);
-
-	g_screenname = get_screenname_filename(g->username);
-
-	sprintf(path, "%s/%s.%d.blist", file, g_screenname,
-		(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
-	if ((f = fopen(path, "w"))) {
-		debug_printf("writing %s\n", path);
-		toc_build_config(g, buf, 8192 - 1, TRUE);
-		fprintf(f, "%s\n", buf);
-		fclose(f);
-		chmod(buf, S_IRUSR | S_IWUSR);
-	} else {
-		debug_printf("unable to write %s\n", path);
 	}
-
-	g_free(g_screenname);
-	g_free(file);
+	/* FIXME : import buddy list file. moderately important */
+	do_import(connections->data, file);
+	destroy_dialog(NULL, importdialog);
+	importdialog = NULL;
+	do_export(connections->data);
 }
 
+void show_import_dialog()
+{
+	char *buf = g_malloc(BUF_LEN);
+	if (!importdialog) {
+		importdialog = gtk_file_selection_new(_("Gaim - Import Buddy List"));
+
+		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(importdialog));
+
+		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
+
+		gtk_file_selection_set_filename(GTK_FILE_SELECTION(importdialog), buf);
+		gtk_signal_connect(GTK_OBJECT(importdialog), "destroy",
+				   GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
+
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
+				   "clicked", GTK_SIGNAL_FUNC(do_import_dialog), NULL);
+		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
+				   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
+
+
+	}
+
+	g_free(buf);
+	gtk_widget_show(importdialog);
+	gdk_window_raise(importdialog->window);
+}
 
 /*
 void show_export_dialog()
@@ -2927,157 +2851,6 @@ void show_export_dialog()
 
 }
 */
-
-/* if gc is non-NULL, then import from ~/.gaim/gc->username.blist, else let user
-   choose */
-
-void do_import(GtkWidget *w, struct gaim_connection *gc)
-{
-	char *buf = g_malloc(BUF_LONG * 2);
-	char *buf2;
-	char *first = g_malloc(64);
-	char *file;
-	char path[PATHSIZE];
-	char *g_screenname;
-	int len;
-	FILE *f;
-	gboolean from_dialog = FALSE;
-
-	if (!gc) {
-		debug_printf("want to import file ");
-		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
-		debug_printf("%s", file);
-		if (file_is_dir(file, importdialog)) {
-			debug_printf(" but it is a directory\n");
-			g_free(buf);
-			g_free(first);
-			return;
-		}
-		strncpy(path, file, PATHSIZE - 1);
-		/* FIXME : import buddy list file. moderately important */
-		gc = connections->data;
-		from_dialog = TRUE;
-	} else {
-		g_screenname = get_screenname_filename(gc->username);
-
-		file = gaim_user_dir();
-		if (file != (char *)NULL) {
-			sprintf(path, "%s/%s.%d.blist", file, g_screenname,
-				(gc->protocol == PROTO_OSCAR) ? PROTO_TOC : gc->protocol);
-			g_free(file);
-			g_free(g_screenname);
-		} else {
-			g_free(g_screenname);
-			g_free(buf);
-			g_free(first);
-			return;
-		}
-	}
-
-	if (!(f = fopen(path, "r"))) {
-		if (from_dialog) {
-			debug_printf(" but it can't be opened\n");
-			g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), path);
-			do_error_dialog(buf, _("Error"));
-			destroy_dialog(NULL, importdialog);
-			importdialog = NULL;
-		}
-		debug_printf("Unable to open %s.\n", path);
-		g_free(buf);
-		g_free(first);
-		return;
-	}
-
-	fgets(first, 64, f);
-
-	/* AIM 4 buddy list */
-	if (!g_strncasecmp(first, "Config {", strlen("Config {"))) {
-		debug_printf("aim 4\n");
-		rewind(f);
-		translate_blt(f, buf);
-		debug_printf("%s\n", buf);
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* AIM 3 buddy list */
-	} else if (strstr(first, "group") != NULL) {
-		debug_printf("aim 3\n");
-		rewind(f);
-		translate_lst(f, buf);
-		debug_printf("%s\n", buf);
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* GAIM buddy list - no translation */
-	} else if (first[0] == 'm') {
-		rewind(f);
-		len = fread(buf, 1, BUF_LONG * 2, f);
-		buf[len] = '\0';
-		buf2 = buf;
-		buf = g_malloc(8193);
-		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
-		g_free(buf2);
-		/* Something else */
-	} else {
-		if (from_dialog) {
-			debug_printf(" but I don't recognize the format\n");
-			destroy_dialog(NULL, importdialog);
-			importdialog = NULL;
-		}
-		g_free(buf);
-		g_free(first);
-		fclose(f);
-		return;
-	}
-
-	if (from_dialog)
-		debug_printf("\n");
-
-	parse_toc_buddy_list(gc, buf, 1);
-
-	fclose(f);
-
-	if (from_dialog) {
-		/* save what we just did to cache */
-
-		do_export(gc);
-		destroy_dialog(NULL, importdialog);
-		importdialog = NULL;
-	}
-
-	g_free(buf);
-	g_free(first);
-}
-
-void show_import_dialog()
-{
-	char *buf = g_malloc(BUF_LEN);
-	if (!importdialog) {
-		importdialog = gtk_file_selection_new(_("Gaim - Import Buddy List"));
-
-		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(importdialog));
-
-		g_snprintf(buf, BUF_LEN - 1, "%s/", getenv("HOME"));
-
-		gtk_file_selection_set_filename(GTK_FILE_SELECTION(importdialog), buf);
-		gtk_signal_connect(GTK_OBJECT(importdialog), "destroy",
-				   GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
-
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-				   "clicked", GTK_SIGNAL_FUNC(do_import), NULL);
-		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
-				   "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
-
-
-	}
-
-	g_free(buf);
-	gtk_widget_show(importdialog);
-	gdk_window_raise(importdialog->window);
-}
-
 
 /*------------------------------------------------------------------------*/
 /*  The dialog for new away messages                                      */

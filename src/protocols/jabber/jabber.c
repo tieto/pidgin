@@ -968,7 +968,7 @@ static void jabber_handleauthresp(gjconn j, jpacket p)
 		serv_finish_login(GJ_GC(j));
 
 		if (bud_list_cache_exists(GJ_GC(j)))
-			do_import(NULL, GJ_GC(j));
+			do_import(GJ_GC(j), NULL);
 
 		((struct jabber_data *)GJ_GC(j)->proto_data)->did_import = TRUE;
 

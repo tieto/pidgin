@@ -738,7 +738,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			md->fl = g_slist_append(md->fl, b);
 		} else if (!md->imported) {
 			if (bud_list_cache_exists(gc))
-				do_import(NULL, gc);
+				do_import(gc, NULL);
 			md->imported = TRUE;
 			while (md->fl) {
 				struct msn_buddy *mb = md->fl->data;

@@ -577,7 +577,7 @@ static void zephyr_login(struct aim_user *user)
 	serv_finish_login(zgc);
 
 	if (bud_list_cache_exists(zgc))
-		do_import(NULL, zgc);
+		do_import(zgc, NULL);
 	process_anyone();
 	process_zsubs();
 

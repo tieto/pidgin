@@ -794,30 +794,11 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 }
 
 
-void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy *rem_b)
+void ui_remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy *rem_b)
 {
-	GSList *grp;
-	GSList *mem;
 	struct conversation *c;
 	struct group_show *gs;
 	struct buddy_show *bs;
-
-	struct group *delg;
-	struct buddy *delb;
-
-	/* we assume that gc is not NULL and that the buddy exists somewhere within the
-	 * gc's buddy list, therefore we can safely remove it. we need to ensure this
-	 * via the UI
-	 */
-
-	grp = g_slist_find(gc->groups, rem_g);
-	delg = (struct group *)grp->data;
-	mem = delg->members;
-
-	mem = g_slist_find(mem, rem_b);
-	delb = (struct buddy *)mem->data;
-
-	delg->members = g_slist_remove(delg->members, delb);
 
 	gs = find_group_show(rem_g->name);
 	if (gs) {
@@ -850,62 +831,22 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 			update_num_group(gs);
 	}
 
-	c = find_conversation(delb->name);
+	c = find_conversation(rem_b->name);
 	if (c)
 		update_buttons_by_protocol(c);
-	g_free(delb);
-
-	/* we don't flush buddy list to cache because in the case of remove_group that would
-	 * mean writing to the buddy list file once for each buddy, plus one more time */
 }
 
-void remove_group(struct gaim_connection *gc, struct group *rem_g)
+void ui_remove_group(struct gaim_connection *gc, struct group *rem_g)
 {
-	GSList *grp;
-	GSList *mem;
 	struct group_show *gs;
-	GList *tmp = NULL;
 
-	struct group *delg;
-	struct buddy *delb;
-
-	/* we assume that the group actually does exist within the gc, and that the gc is not NULL.
-	 * the UI is responsible for this */
-
-	grp = g_slist_find(gc->groups, rem_g);
-	delg = (struct group *)grp->data;
-	mem = delg->members;
-
-	while (delg->members) {
-		delb = (struct buddy *)delg->members->data;
-		tmp = g_list_append(tmp, g_strdup(delb->name));
-		remove_buddy(gc, delg, delb);	/* this should take care of removing
-						   the group_show if necessary */
-	}
-
-	gc->groups = g_slist_remove(gc->groups, delg);
-
-	if ((gs = find_group_show(delg->name)) != NULL) {
+	if ((gs = find_group_show(rem_g->name)) != NULL) {
 		shows = g_slist_remove(shows, gs);
 		gtk_tree_remove_item(GTK_TREE(buddies), gs->item);
 		g_free(gs->name);
 		g_free(gs);
 	}
-	g_free(delg);
-
-	serv_remove_buddies(gc, tmp);
-	while (tmp) {
-		g_free(tmp->data);
-		tmp = g_list_remove(tmp, tmp->data);
-	}
-
-	/* don't flush buddy list to cache in order to be consistent with remove_buddy,
-	 * mostly. remove_group is only called from one place, so we'll let it handle it. */
 }
-
-
-
-
 
 gboolean edit_drag_compare_func(GtkCTree *ctree, GtkCTreeNode *source_node,
 				GtkCTreeNode *new_parent, GtkCTreeNode *new_sibling)
@@ -1233,51 +1174,20 @@ void build_edit_tree()
 
 }
 
-struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, char *show)
+void ui_add_buddy(struct gaim_connection *gc, struct group *g, struct buddy *b)
 {
 	GtkCTreeNode *p = NULL, *n;
 	char *text[1];
 	char buf[256];
-	struct buddy *b;
-	struct group *g;
-	struct group_show *gs = find_group_show(group);
-	char *good;
-
-	if ((b = find_buddy(gc, buddy)) != NULL)
-		return b;
-
-	g = find_group(gc, group);
-
-	if (g == NULL)
-		g = add_group(gc, group);
-
-	b = (struct buddy *)g_new0(struct buddy, 1);
-
-	if (!b)
-		return NULL;
+	struct group_show *gs = find_group_show(g->name);
 
 	b->edittype = EDIT_BUDDY;
-	b->gc = gc;
-	b->present = 0;
-
-	if (gc->prpl->normalize)
-		good = (*gc->prpl->normalize)(buddy);
-	else
-		good = buddy;
-
-	g_snprintf(b->name, sizeof(b->name), "%s", good);
-	g_snprintf(b->show, sizeof(b->show), "%s", show ? (show[0] ? show : good) : good);
-
-	g->members = g_slist_append(g->members, b);
-
-	b->idle = 0;
-	b->caps = 0;
 
 	if (gs)
 		update_num_group(gs);
 
 	if (!blist)
-		return b;
+		return;
 
 	p = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
 	if (strcmp(b->name, b->show)) {
@@ -1288,41 +1198,25 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 
 	n = gtk_ctree_insert_node(GTK_CTREE(edittree), p, NULL, text, 5, NULL, NULL, NULL, NULL, 1, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, b);
-
-	return b;
 }
 
-
-struct group *add_group(struct gaim_connection *gc, char *group)
+void ui_add_group(struct gaim_connection *gc, struct group *g)
 {
 	GtkCTreeNode *c = NULL, *p;
 	char *text[1];
-	struct group *g = find_group(gc, group);
-	if (g)
-		return g;
-	g = (struct group *)g_new0(struct group, 1);
-	if (!g)
-		return NULL;
 
 	g->edittype = EDIT_GROUP;
-	g->gc = gc;
-	strncpy(g->name, group, sizeof(g->name));
-	gc->groups = g_slist_append(gc->groups, g);
-
-	g->members = NULL;
 
 	if (!blist)
-		return g;
+		return;
 
 	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, gc);
 	text[0] = g->name;
 	p = gtk_ctree_insert_node(GTK_CTREE(edittree), c, NULL, text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), p, g);
 
-	if (!(blist_options & OPT_BLIST_NO_MT_GRP) && !find_group_show(group))
-		new_group_show(group);
-
-	return g;
+	if (!(blist_options & OPT_BLIST_NO_MT_GRP) && !find_group_show(g->name))
+		new_group_show(g->name);
 }
 
 
@@ -1512,180 +1406,6 @@ static void away_callback(GtkWidget *widget, GtkTree *tree)
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 1, time(NULL));
 }
-
-struct group *find_group(struct gaim_connection *gc, char *group)
-{
-	struct group *g;
-	GSList *grp;
-	GSList *c = connections;
-	struct gaim_connection *z;
-	char *grpname = g_malloc(strlen(group) + 1);
-
-	strcpy(grpname, normalize (group));
-	if (gc) {
-		grp = gc->groups;
-		while (grp) {
-			g = (struct group *)grp->data;
-			if (!g_strcasecmp(normalize (g->name), grpname)) {
-				g_free(grpname);
-				return g;
-			}
-			grp = g_slist_next(grp);
-		}
-
-		g_free(grpname);
-		return NULL;
-	} else {
-		while (c) {
-			z = (struct gaim_connection *)c->data;
-			grp = z->groups;
-			while (grp) {
-				g = (struct group *)grp->data;
-				if (!g_strcasecmp(normalize (g->name), grpname)) {
-					g_free(grpname);
-					return g;
-				}
-				grp = g_slist_next(grp);
-			}
-
-			c = c->next;
-		}
-		g_free(grpname);
-		return NULL;
-	}
-}
-
-
-struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
-{
-	struct group *g;
-	struct buddy *b;
-	GSList *grp;
-	GSList *mem;
-	char *whoname;
-	char *(*norm)(const char *);
-
-	if (gc) {
-		if (gc->prpl->normalize)
-			norm = gc->prpl->normalize;
-		else
-			norm = normalize;
-		whoname = g_strdup((*norm)(who));
-		grp = gc->groups;
-		while (grp) {
-			g = (struct group *)grp->data;
-
-			mem = g->members;
-			while (mem) {
-				b = (struct buddy *)mem->data;
-				if (!strcmp((*norm)(b->name), whoname)) {
-					g_free(whoname);
-					return g;
-				}
-				mem = mem->next;
-			}
-			grp = g_slist_next(grp);
-		}
-		g_free(whoname);
-		return NULL;
-	} else {
-		GSList *c = connections;
-		struct gaim_connection *z;
-		while (c) {
-			z = (struct gaim_connection *)c->data;
-			if (z->prpl->normalize)
-				norm = z->prpl->normalize;
-			else
-				norm = normalize;
-			whoname = g_strdup((*norm)(who));
-			grp = z->groups;
-			while (grp) {
-				g = (struct group *)grp->data;
-
-				mem = g->members;
-				while (mem) {
-					b = (struct buddy *)mem->data;
-					if (!strcmp((*norm)(b->name), whoname)) {
-						g_free(whoname);
-						return g;
-					}
-					mem = mem->next;
-				}
-				grp = g_slist_next(grp);
-			}
-			c = c->next;
-			g_free(whoname);
-		}
-		return NULL;
-	}
-}
-
-
-struct buddy *find_buddy(struct gaim_connection *gc, char *who)
-{
-	struct group *g;
-	struct buddy *b;
-	GSList *grp;
-	GSList *c;
-	struct gaim_connection *z;
-	GSList *mem;
-	char *whoname;
-	char *(*norm)(const char *);
-
-	if (gc) {
-		if (gc->prpl->normalize)
-			norm = gc->prpl->normalize;
-		else
-			norm = normalize;
-		whoname = g_strdup((*norm)(who));
-		grp = gc->groups;
-		while (grp) {
-			g = (struct group *)grp->data;
-
-			mem = g->members;
-			while (mem) {
-				b = (struct buddy *)mem->data;
-				if (!strcmp((*norm)(b->name), whoname)) {
-					g_free(whoname);
-					return b;
-				}
-				mem = mem->next;
-			}
-			grp = g_slist_next(grp);
-		}
-		g_free(whoname);
-		return NULL;
-	} else {
-		c = connections;
-		while (c) {
-			z = (struct gaim_connection *)c->data;
-			if (z->prpl->normalize)
-				norm = z->prpl->normalize;
-			else
-				norm = normalize;
-			whoname = g_strdup((*norm)(who));
-			grp = z->groups;
-			while (grp) {
-				g = (struct group *)grp->data;
-
-				mem = g->members;
-				while (mem) {
-					b = (struct buddy *)mem->data;
-					if (!strcmp((*norm)(b->name), whoname)) {
-						g_free(whoname);
-						return b;
-					}
-					mem = mem->next;
-				}
-				grp = g_slist_next(grp);
-			}
-			c = c->next;
-			g_free(whoname);
-		}
-		return NULL;
-	}
-}
-
 
 void rem_bp(GtkWidget *w, struct buddy_pounce *b)
 {
@@ -2895,146 +2615,4 @@ void refresh_buddy_window()
 
 	update_button_pix();
 	gtk_widget_show(blist);
-}
-
-void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_import)
-{
-	char *c;
-	char current[256];
-	char *name;
-	GList *bud;
-	int how_many = 0;
-
-	bud = NULL;
-
-	if (config != NULL) {
-
-		/* skip "CONFIG:" (if it exists) */
-		c = strncmp(config + 6 /* sizeof(struct sflap_hdr) */ , "CONFIG:", strlen("CONFIG:")) ?
-		    strtok(config, "\n") :
-		    strtok(config + 6 /* sizeof(struct sflap_hdr) */  + strlen("CONFIG:"), "\n");
-		do {
-			if (c == NULL)
-				break;
-			if (*c == 'g') {
-				strncpy(current, c + 2, sizeof(current));
-				add_group(gc, current);
-				how_many++;
-			} else if (*c == 'b' && !find_buddy(gc, c + 2)) {
-				char nm[80], sw[80], *tmp = c + 2;
-				int i = 0;
-				while (*tmp != ':' && *tmp)
-					nm[i++] = *tmp++;
-				if (*tmp == ':')
-					*tmp++ = '\0';
-				nm[i] = '\0';
-				i = 0;
-				while (*tmp)
-					sw[i++] = *tmp++;
-				sw[i] = '\0';
-				if (!find_buddy(gc, nm))
-					add_buddy(gc, current, nm, sw);
-				how_many++;
-
-				bud = g_list_append(bud, c + 2);
-			} else if (*c == 'p') {
-				GSList *d = gc->permit;
-				char *n;
-				name = g_malloc(strlen(c + 2) + 2);
-				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
-				n = g_strdup(normalize (name));
-				while (d) {
-					if (!g_strcasecmp(n, normalize (d->data)))
-						 break;
-					d = d->next;
-				}
-				g_free(n);
-				if (!d)
-					gc->permit = g_slist_append(gc->permit, name);
-				else
-					g_free(name);
-			} else if (*c == 'd') {
-				GSList *d = gc->deny;
-				char *n;
-				name = g_malloc(strlen(c + 2) + 2);
-				g_snprintf(name, strlen(c + 2) + 1, "%s", c + 2);
-				n = g_strdup(normalize (name));
-				while (d) {
-					if (!g_strcasecmp(n, normalize (d->data)))
-						 break;
-					d = d->next;
-				}
-				g_free(n);
-				if (!d)
-					gc->deny = g_slist_append(gc->deny, name);
-				else
-					g_free(name);
-			} else if (!strncmp("toc", c, 3)) {
-				sscanf(c + strlen(c) - 1, "%d", &gc->permdeny);
-				debug_printf("permdeny: %d\n", gc->permdeny);
-				if (gc->permdeny == 0)
-					gc->permdeny = 1;
-			} else if (*c == 'm') {
-				sscanf(c + 2, "%d", &gc->permdeny);
-				debug_printf("permdeny: %d\n", gc->permdeny);
-				if (gc->permdeny == 0)
-					gc->permdeny = 1;
-			}
-		} while ((c = strtok(NULL, "\n")));
-
-		if (bud != NULL) {
-			serv_add_buddies(gc, bud);
-			g_list_free(bud);
-		}
-		serv_set_permit_deny(gc);
-	}
-
-	/* perhaps the server dropped the buddy list, try importing from
-	   cache */
-
-	if (how_many == 0 && !from_do_import) {
-		do_import((GtkWidget *)NULL, gc);
-	} else if (gc && (bud_list_cache_exists(gc) == FALSE)) {
-		do_export(gc);
-	}
-}
-
-void toc_build_config(struct gaim_connection *gc, char *s, int len, gboolean show)
-{
-	GSList *grp = gc->groups;
-	GSList *mem;
-	struct group *g;
-	struct buddy *b;
-	GSList *plist = gc->permit;
-	GSList *dlist = gc->deny;
-
-	int pos = 0;
-
-	if (!gc->permdeny)
-		gc->permdeny = 1;
-
-	pos += g_snprintf(&s[pos], len - pos, "m %d\n", gc->permdeny);
-	while (len > pos && grp) {
-		g = (struct group *)grp->data;
-		pos += g_snprintf(&s[pos], len - pos, "g %s\n", g->name);
-		mem = g->members;
-		while (len > pos && mem) {
-			b = (struct buddy *)mem->data;
-			pos += g_snprintf(&s[pos], len - pos, "b %s%s%s\n", b->name,
-					  (show && strcmp(b->name, b->show)) ? ":" : "",
-					  (show && strcmp(b->name, b->show)) ? b->show : "");
-			mem = mem->next;
-		}
-		grp = g_slist_next(grp);
-	}
-
-	while (len > pos && plist) {
-		pos += g_snprintf(&s[pos], len - pos, "p %s\n", (char *)plist->data);
-		plist = plist->next;
-	}
-
-	while (len > pos && dlist) {
-		pos += g_snprintf(&s[pos], len - pos, "d %s\n", (char *)dlist->data);
-		dlist = dlist->next;
-	}
 }

@@ -17,6 +17,7 @@ gaim_applet_SOURCES =	about.c \
 			gtkticker.c \
 			html.c \
 			idle.c \
+			list.c \
 			multi.c \
 			perl.c \
 			plugins.c \
@@ -47,6 +48,7 @@ gaim_SOURCES =	about.c \
 		gtkticker.c \
 		html.c \
 		idle.c \
+		list.c \
 		multi.c \
 		perl.c \
 		plugins.c \

@@ -710,7 +710,7 @@ static void irc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_finish_login(gc);
 
 		if (bud_list_cache_exists(gc))
-			do_import(NULL, gc);
+			do_import(gc, NULL);
 
 		/* we don't call this now because otherwise some IRC servers might not like us */
 		idata->timer = g_timeout_add(20000, irc_request_buddy_update, gc);

@@ -53,6 +53,26 @@ void serv_login(struct aim_user *user)
 	}
 }
 
+static gboolean send_keepalive(gpointer d)
+{
+	struct gaim_connection *gc = d;
+	if (gc->prpl && gc->prpl->keepalive)
+		(*gc->prpl->keepalive)(gc);
+	return TRUE;
+}
+
+static void update_keepalive(struct gaim_connection *gc, gboolean on)
+{
+	if (on && !gc->keepalive) {
+		debug_printf("allowing NOP\n");
+		gc->keepalive = g_timeout_add(60000, send_keepalive, gc);
+	} else if (!on && gc->keepalive > 0) {
+		debug_printf("removing NOP\n");
+		g_source_remove(gc->keepalive);
+		gc->keepalive = 0;
+	}
+}
+
 void serv_close(struct gaim_connection *gc)
 {
 	while (gc->buddy_chats) {
@@ -65,9 +85,7 @@ void serv_close(struct gaim_connection *gc)
 		g_source_remove(gc->idle_timer);
 	gc->idle_timer = 0;
 
-	if (gc->keepalive > 0)
-		g_source_remove(gc->keepalive);
-	gc->keepalive = 0;
+	update_keepalive(gc, FALSE);
 
 	if (gc->prpl && gc->prpl->close)
 		(*gc->prpl->close)(gc);
@@ -913,23 +931,4 @@ void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper,
 
 	chat_write(b, who, w, buf, mtime);
 	g_free(buf);
-}
-
-void send_keepalive(gpointer d)
-{
-	struct gaim_connection *gc = (struct gaim_connection *)d;
-	if (gc->prpl && gc->prpl->keepalive)
-		(*gc->prpl->keepalive)(gc);
-}
-
-void update_keepalive(struct gaim_connection *gc, gboolean on)
-{
-	if (on && !gc->keepalive && blist) {
-		debug_printf("allowing NOP\n");
-		gc->keepalive = g_timeout_add(60000, send_keepalive, gc);
-	} else if (!on && gc->keepalive > 0) {
-		debug_printf("removing NOP\n");
-		g_source_remove(gc->keepalive);
-		gc->keepalive = 0;
-	}
 }

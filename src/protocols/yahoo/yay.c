@@ -259,7 +259,7 @@ static int yahoo_mainconnect(struct yahoo_session *sess, ...) {
 	}
 
 	if (bud_list_cache_exists(gc))
-		do_import(NULL, gc);
+		do_import(gc, NULL);
 
 	grps = yd->sess->groups;
 	while (grps) {
