@@ -1,4 +1,4 @@
-/* $Id: libgg.c 10230 2004-06-27 18:19:09Z lschiere $ */
+/* $Id: libgg.c 10513 2004-08-04 18:27:09Z lschiere $ */
 
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
@@ -73,7 +73,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgg.c 10230 2004-06-27 18:19:09Z lschiere $";
+= "$Id: libgg.c 10513 2004-08-04 18:27:09Z lschiere $";
 
 #endif 
 
@@ -1326,18 +1326,18 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 			if (gg_http_use_proxy) {
 				g_snprintf(buf, sizeof(buf) - 1,
-					"GET http://" GG_APPMSG_HOST "/appsvc/appmsg.asp?fmnumber=%lu HTTP/1.0\r\n"
+					"GET http://" GG_APPMSG_HOST "/appsvc/appmsg2.asp?fmnumber=%lu&version=%s&lastmsg=0 HTTP/1.0\r\n"
 					"Host: " GG_APPMSG_HOST "\r\n"
 					"User-Agent: " GG_HTTP_USERAGENT "\r\n"
 					"Pragma: no-cache\r\n"
-					"\r\n", sess->uin);
+					"\r\n", sess->uin, gg_urlencode(GG_DEFAULT_CLIENT_VERSION));
 			} else {
 				g_snprintf(buf, sizeof(buf) - 1,
-					"GET /appsvc/appmsg.asp?fmnumber=%lu HTTP/1.0\r\n"
+					"GET /appsvc/appmsg2.asp?fmnumber=%lu&version=%s&lastmsg=0 HTTP/1.0\r\n"
 					"Host: " GG_APPMSG_HOST "\r\n"
 					"User-Agent: " GG_HTTP_USERAGENT "\r\n"
 					"Pragma: no-cache\r\n"
-					"\r\n", sess->uin);
+					"\r\n", sess->uin, gg_urlencode(GG_DEFAULT_CLIENT_VERSION));
 			};
 
     			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", buf);
@@ -1392,21 +1392,13 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			tmp = buf;
 			
 			while (*tmp && *tmp != ' ')
-				tmp++;
-			while (*tmp && *tmp == ' ')
-				tmp++;
-			while (*tmp && *tmp != ' ')
-				tmp++;
-			while (*tmp && *tmp == ' ')
-				tmp++;
-			while (*tmp && *tmp != ' ')
-				tmp++;
-			while (*tmp && *tmp == ' ')
-				tmp++;
-			host = tmp;
-			while (*tmp && *tmp != ' ')
-				tmp++;
-			*tmp = 0;
+                                tmp++;
+                        while (*tmp && *tmp == ' ')
+                                tmp++;
+                        host = tmp;
+                        while (*tmp && *tmp != ' ')
+                                tmp++;
+                        *tmp = 0;
 
 			if ((tmp = strchr(host, ':'))) {
 				*tmp = 0;
