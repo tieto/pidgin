@@ -872,7 +872,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 {
 	char *buf = g_malloc(BUF_LONG);
         char *buf2 = g_malloc(BUF_LONG);
-	char *buf3;
 	char *str;
         FILE *fd;
         char colour[10];
@@ -913,8 +912,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
                 
         } else {
 
-		buf3 = g_malloc(BUF_LONG);
-		
 		if (flags & WFLAG_WHISPER) {
 			/* if we're whispering, it's not an autoresponse */
 			if (meify(what)) {
@@ -951,6 +948,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s %s</B></FONT> ", colour, date(), str);
 		else
 			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT>", colour, str);
+
+		g_free(str);
 
                 gtk_html_freeze(GTK_HTML(c->text));
 
