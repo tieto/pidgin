@@ -928,7 +928,8 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_widget_show(button_box_3);
 	gtk_widget_show(button_box);
 
-	gtk_widget_set_usize(button, 75, 30);
+/* this causes clipping on lots of buttons with long text */
+/*	gtk_widget_set_usize(button, 75, 30);*/
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
 		
