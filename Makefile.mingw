@@ -14,6 +14,7 @@ GTK_TOP = ../win32-dev/gtk_2_0
 GTK_LIBS = $(GTK_TOP)/lib
 PERL_TOP = ../win32-dev/perl56
 IDLETRACKER_TOP = $(GAIM_SRC)/win32/IdleTracker
+GTKRC_TOP = ../win32-dev/gtkrc
 OSCAR = $(GAIM_PROTOS)/oscar
 YAHOO = $(GAIM_PROTOS)/yahoo
 MSN = $(GAIM_PROTOS)/msn
@@ -89,6 +90,8 @@ PIXMAPS =		$(GAIM_PIXMAPS)/away.png \
 			$(GAIM_PIXMAPS)/online.png \
 			$(GAIM_PIXMAPS)/logo.png
 
+GTKRC_ENGINES =		$(GTKRC_TOP)/libnativewin.dll
+
 
 ##
 ## Don't forget to change STATIC_PROTO_INIT, in config.h.mingw if you 
@@ -141,6 +144,9 @@ install: all
 	cp -R $(GTK_LIBS)/gtk-2.0/2.0.0 $(GAIM_INSTALL_DIR)/lib/gtk-2.0
 	cp -R $(GTK_LIBS)/pango $(GAIM_INSTALL_DIR)/lib
 	cp -R $(GTK_TOP)/etc $(GAIM_INSTALL_DIR)
+	cp $(GTKRC_TOP)/gtkrc $(GAIM_INSTALL_DIR)/etc/gtk-2.0
+	mkdir -p $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
+	cp $(GTKRC_ENGINES) $(GAIM_INSTALL_DIR)/lib/gtk-2.0/2.0.0/engines
 
 installer:
 	makensis.exe gaim-installer.nsi
