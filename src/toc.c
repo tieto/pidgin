@@ -758,7 +758,7 @@ int toc_signon(char *username, char *password)
 int toc_wait_signon()
 {
 	/* Wait for the SIGNON to be approved */
-	char buf[BUF_LEN];
+	char buf[BUF_LONG];
 	int res;
 	res = wait_reply(buf, sizeof(buf));
 	if (res < 0)
@@ -800,7 +800,7 @@ gint win32_read()
 char *toc_wait_config()
 {
 	/* Waits for configuration packet, returning the contents of the packet */
-	static char buf[BUF_LEN];
+	static char buf[BUF_LONG];
 	int res;
 	res = wait_reply(buf, sizeof(buf));
 	if (res < 0)
