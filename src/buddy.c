@@ -275,7 +275,7 @@ gint applet_destroy_buddy( GtkWidget *widget, GdkEvent *event,gpointer *data ) {
 #endif
 
 
-static void signoff_all(GtkWidget *w, gpointer d)
+void signoff_all(GtkWidget *w, gpointer d)
 {
 	GSList *c = connections;
 	struct gaim_connection *g = NULL;
@@ -316,11 +316,6 @@ void signoff(struct gaim_connection *gc)
 	applet_buddy_show = FALSE;
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
 	remove_applet_away();
-        applet_widget_register_callback(APPLET_WIDGET(applet),
-                "signon",
-                _("Signon"),
-                applet_do_signon,
-                NULL);
 #else
         show_login();
 #endif /* USE_APPLET */

@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 974 $"
+#define REVISION "gaim:$Revision: 976 $"
 
 
 static unsigned int peer_ver=0;
@@ -134,7 +134,8 @@ struct gaim_connection *toc_login(char *username, char *password)
 	config = toc_wait_config(gc);
 	gc->state = STATE_ONLINE;
 
-        gtk_widget_hide(mainwindow);
+	if (mainwindow)
+		gtk_widget_hide(mainwindow);
 	show_buddy_list();
 #ifdef USE_APPLET
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {

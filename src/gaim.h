@@ -724,6 +724,7 @@ extern void show_buddy_list();
 extern void refresh_buddy_window();
 extern void toc_build_config(char *, int len, gboolean);
 extern void signoff(struct gaim_connection *);
+extern void signoff_all(GtkWidget *, gpointer);
 extern void do_im_back();
 extern void set_buddy(struct buddy *);
 extern struct person *add_person(char *, char *);

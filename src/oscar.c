@@ -1155,7 +1155,8 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 		aim_bos_setprofile(sess, command->conn, gc->user_info, NULL, gaim_caps);
 		aim_bos_reqbuddyrights(sess, command->conn);
 
-		gtk_widget_hide(mainwindow);
+		if (mainwindow)
+			gtk_widget_hide(mainwindow);
 		show_buddy_list();
 
 #ifdef USE_APPLET

@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-10-09 20:02:02 -0400 (Mon, 09 Oct 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-10-10 06:35:05 -0400 (Tue, 10 Oct 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 the actually want to compile what they just checked out. Gaim CVS is usually
@@ -59,11 +59,10 @@ details on Oscar.
 Applet
 ======
 
-I'll be amazed if the applet compiles. If it compiles, I'll be amazed if it
-doesn't segfault. But technically nothing drastic changed with the applet in
-The Change, so it may end up working just fine. I don't have the time nor the
-energy to test it right now though; I'll come back to it as soon as the app is
-stabilized.
+The applet made a comeback sooner than I expected, mostly because I got chat
+working. (This means that I'll be using current CVS as my "permanent" gaim,
+and I prefer having gaim as an applet.) Anyway, the UI is still shakey (as is
+the rest of gaim) but it is at least functional now.
 
 
 Plugins/Perl

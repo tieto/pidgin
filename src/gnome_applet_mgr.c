@@ -181,8 +181,6 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
 
 void applet_do_signon(AppletWidget *widget, gpointer data) {
 	applet_show_login(NULL, 0);
-	if (general_options & OPT_GEN_REMEMBER_PASS)
-		dologin(0, 0);
 }
 
 void insert_applet_away() {

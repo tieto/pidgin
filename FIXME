@@ -16,12 +16,7 @@ Holy Crap.
 4. We need to modify nearly every function in server.c to determine which connection to do things on.
    The ones that still need to be modified have a FIXME comment in them.
    4.1. We need to modify the UI to let the user indicate which account to do things on.
-   4.2. We need to decide when people are idle. Right now it's possible to have been idle for 10 minutes
-        but only signed on for one. DONE
 5. We need to completely modify the plugin/perl system to account for multiple connections.
 6. We need to modify functions to account for the possibility of protocol plugins.
-7. Get rid of dologin. Signons should be handled differently. The account editor should have final
-   control over this. DONE
-8. I seriously doubt the applet will compile. If it compiles it definitely won't run.
 
 And that's just the large things. There are countless trivial issues that need to be addressed.

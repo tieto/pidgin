@@ -46,9 +46,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "gaim.h"
-#ifndef USE_APPLET
 #include "pixmaps/logo.xpm"
-#endif /* USE_APPLET */
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -156,11 +154,10 @@ void gaim_setup(struct gaim_connection *gc) {
 
 #ifdef USE_APPLET
 	set_user_state(online);
-	applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
 	applet_widget_register_callback(APPLET_WIDGET(applet),
 			"signoff",
 			_("Signoff"),
-			signoff,
+			(AppletCallbackFunc)signoff_all,
 			NULL);
 #endif /* USE_APPLET */
 
@@ -189,12 +186,10 @@ void show_login()
 	GtkWidget *label;
 	GtkWidget *table;
 
-#ifndef USE_APPLET
 	GtkWidget *pmw;
 	GdkPixmap *pm;
 	GtkStyle *style;
 	GdkBitmap *mask;
-#endif /* USE_APPLET */
 
         if (mainwindow) {
                 gtk_widget_show(mainwindow);
@@ -293,7 +288,6 @@ void show_login()
 
         gtk_widget_realize(mainwindow);
 
-#ifndef USE_APPLET
 	/* Logo at the top */
 	style = gtk_widget_get_style(mainwindow);
 	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
@@ -303,7 +297,6 @@ void show_login()
 	gtk_widget_show(pmw);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(mask);
-#endif /* USE_APPLET */
 
         
         aol_icon(mainwindow->window);
@@ -316,12 +309,6 @@ void show_login()
 
 	SetTickerPrefs();
 	
-	/*
-        if((general_options & OPT_GEN_AUTO_LOGIN) &&
-           (general_options & OPT_GEN_REMEMBER_PASS)) {
-		dologin(signon, NULL);
-	}
-	*/
 }
 
 extern void show_debug(GtkObject *);
@@ -383,9 +370,9 @@ int main(int argc, char *argv[])
 					show_prefs,
 					NULL);
         applet_widget_register_callback(APPLET_WIDGET(applet),
-					"signon",
-					_("Signon"),
-					applet_do_signon,
+					"accounts",
+					_("Accounts"),
+					(AppletCallbackFunc)account_editor,
 					NULL);
 #ifdef GAIM_PLUGINS
         applet_widget_register_callback(APPLET_WIDGET(applet),
@@ -394,12 +381,6 @@ int main(int argc, char *argv[])
 					GTK_SIGNAL_FUNC(show_plugins),
 					NULL);
 #endif /* GAIM_PLUGINS */
-
-        if((general_options & OPT_GEN_AUTO_LOGIN) &&
-           (general_options & OPT_GEN_REMEMBER_PASS)) {
-
-                applet_show_login(APPLET_WIDGET(applet), NULL);
-        }
 
 	update_pixmaps();
 	
