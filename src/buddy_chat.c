@@ -958,7 +958,7 @@ void rename_chat_buddy(struct conversation *b, char *old, char *new)
 }
 
 
-void remove_chat_buddy(struct conversation *b, char *buddy)
+void remove_chat_buddy(struct conversation *b, char *buddy, char *reason)
 {
 	GList *names = b->in_room;
 	GList *items = GTK_LIST(b->list)->children;
@@ -998,7 +998,10 @@ void remove_chat_buddy(struct conversation *b, char *buddy)
 		play_sound(CHAT_LEAVE);
 
 	if (chat_options & OPT_CHAT_LOGON) {
-		g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
+		if (reason && *reason)
+			g_snprintf(tmp, sizeof(tmp), _("%s left the room (%s)."), buddy, reason);
+		else
+			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), buddy);
 		write_to_conv(b, tmp, WFLAG_SYSTEM, NULL, time(NULL));
 	}
 }

@@ -391,7 +391,7 @@ static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 			char *user, *tmp = buf;
 			GET_NEXT(tmp);
 			user = tmp;
-			remove_chat_buddy(ms->chat, user);
+			remove_chat_buddy(ms->chat, user, NULL);
 		} else {
 			msn_kill_switch(ms);
 			return 0;

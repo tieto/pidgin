@@ -677,7 +677,7 @@ static gboolean is_channel(struct gaim_connection *gc, char *name)
 	return FALSE;
 }
 
-static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick)
+static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick, char *reason)
 {
 	GSList *bcs = gc->buddy_chats;
 
@@ -693,7 +693,7 @@ static void irc_rem_chat_bud(struct gaim_connection *gc, char *nick)
 				who++;
 			if (!g_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(b, tmp);
+				remove_chat_buddy(b, tmp, reason);
 				g_free(tmp);
 				break;
 			}
@@ -865,10 +865,14 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 			gc->buddy_chats = g_slist_remove(gc->buddy_chats, c);
 			c->gc = NULL;
 			g_snprintf(outbuf, sizeof(outbuf), _("You have been kicked from %s: %s"),
-					word[3], *word_eol[5] == ':' ? word_eol[5] + 1: word_eol[5]);
+					word[3], *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5]);
 			do_error_dialog(outbuf, _("IRC Error"));
-		} else
-			irc_rem_chat_bud(gc, word[4]);
+		} else {
+			char *reason = *word_eol[5] == ':' ? word_eol[5] + 1 : word_eol[5];
+			char *msg = g_strdup_printf(_("Kicked by %s: %s"), nick, reason);
+			irc_rem_chat_bud(gc, word[4], msg);
+			g_free(msg);
+		}
 	} else if (!strcmp(cmd, "KILL")) { /* */
 	} else if (!strcmp(cmd, "MODE")) {
 		handle_mode(gc, word, word_eol, FALSE);
@@ -884,9 +888,12 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 	} else if (!strcmp(cmd, "PART")) {
 		char *chan = cmd + 5;
 		struct conversation *c;
+		char *reason = word_eol[4];
 		GList *r;
 		if (*chan == ':')
 			chan++;
+		if (*reason == ':')
+			reason++;
 		if (!(c = irc_find_chat(gc, chan)))
 			return FALSE;
 		if (!strcmp(nick, gc->displayname)) {
@@ -902,7 +909,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 				who++;
 			if (!g_strcasecmp(who, nick)) {
 				char *tmp = g_strdup(r->data);
-				remove_chat_buddy(c, tmp);
+				remove_chat_buddy(c, tmp, reason);
 				g_free(tmp);
 				break;
 			}
@@ -923,7 +930,7 @@ static gboolean irc_parse(struct gaim_connection *gc, char *buf)
 		}
 	} else if (!strcmp(cmd, "PONG")) { /* */
 	} else if (!strcmp(cmd, "QUIT")) {
-		irc_rem_chat_bud(gc, nick);
+		irc_rem_chat_bud(gc, nick, *word_eol[3] == ':' ? word_eol[3] + 1 : word_eol[3]);
 	} else if (!strcmp(cmd, "TOPIC")) {
 		struct conversation *c = irc_find_chat(gc, word[3]);
 		char *topic = *word_eol[4] == ':' ? word_eol[4] + 1 : word_eol[4];

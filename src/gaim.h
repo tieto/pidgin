@@ -326,7 +326,7 @@ extern void show_new_buddy_chat(struct conversation *);
 extern void chat_set_topic(struct conversation*, char*, char*);
 extern void add_chat_buddy(struct conversation *, char *);
 extern void rename_chat_buddy(struct conversation *, char *, char *);
-extern void remove_chat_buddy(struct conversation *, char *);
+extern void remove_chat_buddy(struct conversation *, char *, char *);
 
 /* Functions in conversation.c */
 extern void write_to_conv(struct conversation *, char *, int, char *, time_t);

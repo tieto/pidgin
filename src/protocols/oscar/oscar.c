@@ -1774,7 +1774,7 @@ static int gaim_chat_leave(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 1;
 
 	for (i = 0; i < count; i++)
-		remove_chat_buddy(c->cnv, info[i].sn);
+		remove_chat_buddy(c->cnv, info[i].sn, NULL);
 
 	return 1;
 }

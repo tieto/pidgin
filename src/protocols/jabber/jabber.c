@@ -828,7 +828,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 				}
 				jd = jc->gc->proto_data;
 				if (strcmp(who->resource, jc->Jid->resource) && jc->b) {
-					remove_chat_buddy(jc->b, who->resource);
+					remove_chat_buddy(jc->b, who->resource, NULL);
 					return;
 				}
 

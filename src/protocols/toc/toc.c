@@ -720,7 +720,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				add_chat_buddy(b, buddy);
 		else
 			while ((buddy = strtok(NULL, ":")) != NULL)
-				remove_chat_buddy(b, buddy);
+				remove_chat_buddy(b, buddy, NULL);
 	} else if (!strcasecmp(c, "CHAT_INVITE")) {
 		char *name, *who, *message;
 		int *id = g_new0(int, 1);
