@@ -30,7 +30,7 @@ somehow.
 
 You can basically do anything you want in the plugin. You can make function
 calls, change public widgets, display new widgets, things like that. But the
-really need thing is you can do things at events. For example, when one of
+really neat thing is you can do things at events. For example, when one of
 your buddies signs on, you can instantly send them a message. You can modify
 the incoming and outgoing text. You can do all kinds of crazy things. Whatever
 you want. Check out SIGNALS and CRAZY for more information and ideas.
