@@ -1469,10 +1469,10 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 	if (gc) {
 		if (gaim_find_buddy(gc->account, who))
 			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
-						G_CALLBACK(menu_chat_add_cb), conv, 0, 0, NULL);
+						G_CALLBACK(menu_chat_add_remove_cb), conv, 0, 0, NULL);
 		else
 			button = gaim_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
-						G_CALLBACK(menu_chat_add_cb), conv, 0, 0, NULL);
+						G_CALLBACK(menu_chat_add_remove_cb), conv, 0, 0, NULL);
 	}
 	/* End Jonas */
 
