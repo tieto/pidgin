@@ -15,7 +15,7 @@ EXTRA_DIST = \
 		gaim_info.png			\
 		gaim_question.png		\
 		gaim_warning.png		\
-		info.png \
+		info.png 			\
 		insert-image-small.png		\
 		insert-link-small.png		\
 		insert-smiley-small.png		\
@@ -43,14 +43,16 @@ EXTRA_DIST = \
 		status/Makefile.mingw		\
 		gaim-install.ico		\
 		gaim.ico			\
-		gaim_away.ico			\
-		gaim_offline.ico		\
-		gaim_16.ico			\
+		gaim_4bit_16.ico		\
 		gaim_away_16.ico		\
+		gaim_away_4bit_16.ico		\
 		gaim_blank_4bit_16.ico		\
 		gaim_msgpend_16.ico		\
+		gaim_msgpend_4bit_16.ico	\
 		gaim_msgunread_16.ico		\
-		gaim_offline_16.ico
+		gaim_msgunread_4bit_16.ico	\
+		gaim_offline_16.ico		\
+		gaim_offline_4bit_16.ico
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons

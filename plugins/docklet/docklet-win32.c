@@ -192,15 +192,31 @@ static void wgaim_tray_blank_icon() {
 }
 
 static void wgaim_tray_create() {
+	OSVERSIONINFO osinfo;
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
 
-	/* Load icons, and init systray notify icon */
-	sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
-	sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osinfo);
+
+	/* Load icons, and init systray notify icon
+	 * NOTE: Windows > XP only supports displaying 4-bit images in the Systray,
+	 *  2K and ME will use the highest color depth that the desktop will support,
+	 *  but will scale it back to 4-bits for display.
+	 * That is why we use custom 4-bit icons for pre XP Windowses */
+	if (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion > 0) {
+		sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+		sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	} else {
+		sysicon_disconn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_OFFLINE_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_conn = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+		sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON_4BIT), IMAGE_ICON, 16, 16, 0);
+	}
 	sysicon_blank = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_BLANK_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 
 	/* Create icon in systray */

@@ -7,3 +7,8 @@
 #define GAIM_PEND_TRAY_ICON             110
 #define GAIM_AWAYPEND_TRAY_ICON         111
 #define GAIM_BLANK_TRAY_ICON            112
+#define GAIM_TRAY_ICON_4BIT             113
+#define GAIM_OFFLINE_TRAY_ICON_4BIT     114
+#define GAIM_AWAY_TRAY_ICON_4BIT        115
+#define GAIM_PEND_TRAY_ICON_4BIT        116
+#define GAIM_AWAYPEND_TRAY_ICON_4BIT    117
