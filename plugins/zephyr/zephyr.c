@@ -530,9 +530,9 @@ static void process_zsubs()
 										sub.zsub_classinst,
 										sub.zsub_recipient);
 					}
-					g_free(recip);
 					subscrips = g_slist_append(subscrips,
 								new_triple(triple[0], triple[1], recip));
+					g_free(recip);
 				}
 				g_strfreev(triple);
 			}
