@@ -610,10 +610,10 @@ gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
  * @param url        The URL.
  * @param full       TRUE if this is the full URL, or FALSE if it's a
  *                   partial URL.
- * @param cb         The callback function.
- * @param data       The user data to pass to the callback function.
  * @param user_agent The user agent field to use, or NULL.
  * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ * @param cb         The callback function.
+ * @param data       The user data to pass to the callback function.
  */
 void gaim_url_fetch(const char *url, gboolean full,
 					const char *user_agent, gboolean http11,

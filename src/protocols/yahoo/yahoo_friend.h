@@ -39,7 +39,7 @@ typedef struct _YahooFriend {
 	gboolean sms;
 	char *ip;
 	guint bicon_checksum;
-	gboolean bicon_have;
+	gboolean bicon_sent_request;
 } YahooFriend;
 
 
@@ -54,6 +54,9 @@ const char *yahoo_friend_get_game(YahooFriend *f);
 
 void yahoo_friend_set_status_message(YahooFriend *f, char *msg);
 const char *yahoo_friend_get_status_message(YahooFriend *f);
+
+void yahoo_friend_set_buddy_icon_need_request(YahooFriend *f, gboolean needs);
+gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f);
 
 void yahoo_friend_free(gpointer p);
 

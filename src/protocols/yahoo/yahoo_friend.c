@@ -112,6 +112,16 @@ const char *yahoo_friend_get_status_message(YahooFriend *f)
 	return f->msg;
 }
 
+void yahoo_friend_set_buddy_icon_need_request(YahooFriend *f, gboolean needs)
+{
+	f->bicon_sent_request = !needs;
+}
+
+gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f)
+{
+	return !f->bicon_sent_request;
+}
+
 void yahoo_friend_free(gpointer p)
 {
 	YahooFriend *f = p;

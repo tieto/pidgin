@@ -47,7 +47,7 @@ extern char *yahoo_crypt(const char *, const char *);
 /* #define YAHOO_DEBUG */
 
 static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *);
-
+static void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who);
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
 {
@@ -688,6 +688,7 @@ struct _yahoo_im {
 	char *from;
 	int time;
 	int utf8;
+	int buddy_icon;
 	char *msg;
 };
 
@@ -712,6 +713,9 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (pair->key == 15)
 				if (im)
 					im->time = strtol(pair->value, NULL, 10);
+			if (pair->key == 206)
+				if (im)
+					im->buddy_icon = strtol(pair->value, NULL, 10);
 			if (pair->key == 14) {
 				if (im)
 					im->msg = pair->value;
@@ -726,6 +730,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	for (l = list; l; l = l->next) {
 		char *m, *m2;
 		im = l->data;
+		YahooFriend *f;
 
 		if (!im->from || !im->msg) {
 			g_free(im);
@@ -749,6 +754,14 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		g_free(m);
 		serv_got_im(gc, im->from, m2, 0, im->time);
 		g_free(m2);
+
+		if ((f = yahoo_friend_find(gc, im->from)) && im->buddy_icon == 2) {
+			if (yahoo_friend_get_buddy_icon_need_request(f)) {
+				yahoo_send_buddy_icon_request(gc, im->from);
+				yahoo_friend_set_buddy_icon_need_request(f, FALSE);
+			}
+		}
+
 		g_free(im);
 	}
 	g_slist_free(list);
@@ -1844,6 +1857,78 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
+struct yahoo_fetch_picture_data {
+	GaimConnection *gc;
+	char *who;
+	int checksum;
+};
+
+void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
+{
+	struct yahoo_fetch_picture_data *d = user_data;
+
+	if (GAIM_CONNECTION_IS_VALID(d->gc) && len) {
+		gaim_buddy_icons_set_for_user(gaim_connection_get_account(d->gc), d->who, pic_data, len);
+	}
+
+	g_free(d->who);
+	g_free(d);
+}
+
+static void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
+{
+	GSList *l = pkt->hash;
+	char *who = NULL, *us = NULL;
+	gboolean got_icon_info = FALSE;
+	char *url = NULL;
+	int checksum = 0; /* ?? */
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+
+		switch (pair->key) {
+		case 1:
+		case 4:
+			who = pair->value;
+			break;
+		case 5:
+			us = pair->value;
+			break;
+		case 13: {
+				int tmp;
+				tmp = strtol(pair->value, NULL, 10);
+				if (tmp == 1) {
+					/* send them info about our buddy icon */
+				} else if (tmp == 2) {
+					got_icon_info = TRUE;
+				}
+				break;
+			}
+		case 20:
+			url = pair->value;
+			break;
+		case 192:
+			checksum = strtol(pair->value, NULL, 10); /* just a guess for now */
+			break;
+		}
+
+		l = l->next;
+	}
+
+	if (got_icon_info && url) {
+		/* TODO: make this work p2p, try p2p before the url, check the checksum
+		 *       (if that's what it is) before fetching the icon.
+		 */
+		 struct yahoo_fetch_picture_data *data = g_new0(struct yahoo_fetch_picture_data, 1);
+		 data->gc = gc;
+		 data->who = g_strdup(who);
+		 data->checksum = checksum;
+		 gaim_url_fetch(url, FALSE, "Mozilla/4.0 (compatible; MSIE 5.0)", FALSE,
+		                yahoo_fetch_picture_cb, data);
+	}
+
+}
+
 static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
@@ -1934,6 +2019,9 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_PEEPTOPEER:
 		yahoo_process_p2p(gc, pkt);
+		break;
+	case YAHOO_SERVICE_PICTURE:
+		yahoo_process_picture(gc, pkt);
 		break;
 	default:
 		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
@@ -3076,6 +3164,19 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_group,
 	yahoo_packet_free(pkt);
 	g_free(gpn);
 	g_free(gpo);
+}
+
+static void yahoo_send_buddy_icon_request(GaimConnection *gc, const char *who)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt;
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE, YAHOO_STATUS_AVAILABLE, 0);
+	yahoo_packet_hash(pkt, 4, gaim_connection_get_display_name(gc)); /* me */
+	yahoo_packet_hash(pkt, 5, who); /* the other guy */
+	yahoo_packet_hash(pkt, 13, "1"); /* 1 = request, 2 = reply */
+	yahoo_send_packet(yd, pkt);
+	yahoo_packet_free(pkt);
 }
 
 #if 0

@@ -21,6 +21,7 @@ version 0.79cvs:
 	  buddy is currently in. For example, if the buddy is idle, set
 	  "Return from idle" by default. The last action(s) used are the
 	  defaults for the next pounce.
+	* Yahoo buddy icon support, can't set your own yet though.
 
 	Bug Fixes:
 	* Better handling of character sets in RTF for Novell (Mike Stoddard of
