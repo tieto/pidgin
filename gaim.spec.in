@@ -99,6 +99,26 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Nov 01 2001 Rob Flynn <rob@marko.net> (0.47 release)
+- Better font loading (pays attention to charset now) (thanks Arkadiusz Miskiewicz)
+- Better recoding in Gadu-Gadu (thanks Arkadiusz Miskiewicz)
+- Open Mail button for when you get new mail (Yahoo and MSN)
+- New buddy pounce option: Popup Notification
+- When adding a buddy, the groups list now updates when you switch accounts.
+- When creating a new buddy pounce, gaim now automagically selects "on away" or "on idle", if the user is away or idle.
+- Add Opera to the available browsers (thanks Brian Enigma)
+- Improved log viewer (thanks to Ben Miller)
+- When you are queueing away messages, double clicking on a buddy's name will cause the messages for that name to be dequeued.
+- You can choose which sound player you use at run-time (thanks Ben Miller)
+- When someone adds you to their buddy list, it asks if you want to add them as well (Yahoo, ICQ, and MSN) (thanks Nathan Walp)
+- Option to grey idle buddies (thanks Nathan Walp)
+- MSN Privacy Options
+- In MSN you can set a person's alias to their "friendly name" by right-click on their name while they're online.
+- IRC can do /WHOIS
+- The usual bug fixes and memory leak plugs
+- Added Dutch translation
+- Updated Korean translation
+
 * Thu Oct 18 2001 Rob Flynn <rob@marko.net> (0.46 release)
 - New applet icons (courtesy David Raeman)
 - ICQ works on big-endian platforms, e.g. sparc and ppc (thanks to Nathan Walp and Ben Miller)
