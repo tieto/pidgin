@@ -21,6 +21,7 @@
 			"X-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; PF=0\r\n\r\n"
 
 #define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
+#define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
 
 #define MSN_ONLINE  1
 #define MSN_BUSY    2
@@ -285,24 +286,28 @@ static char *handle_errcode(char *buf, gboolean show)
 
 static void handle_hotmail(struct gaim_connection *gc, char *data)
 {
+	char login_url[2048];
+	
+	snprintf(login_url, sizeof(login_url), "%s%s&passwd=%s", PASSPORT_URL, gc->username, gc->password);
+
 	if (strstr(data, "Content-Type: text/x-msmsgsinitialemailnotification;")) {
 		char *x = strstr(data, "Inbox-Unread:");
 		if (!x) return;
 		x += strlen("Inbox-Unread: ");
-		connection_has_mail(gc, atoi(x), NULL, NULL, HOTMAIL_URL);
+		connection_has_mail(gc, atoi(x), NULL, NULL, login_url);
 	} else if (strstr(data, "Content-Type: text/x-msmsgsemailnotification;")) {
 		char *from = strstr(data, "From:");
 		char *subject = strstr(data, "Subject:");
 		char *x;
 		if (!from || !subject) {
-			connection_has_mail(gc, 1, NULL, NULL, HOTMAIL_URL);
+			connection_has_mail(gc, 1, NULL, NULL, login_url);
 			return;
 		}
 		from += strlen("From: ");
 		x = strstr(from, "\r\n"); *x = 0;
 		subject += strlen("Subject: ");
 		x = strstr(subject, "\r\n"); *x = 0;
-		connection_has_mail(gc, -1, from, subject, HOTMAIL_URL);
+		connection_has_mail(gc, -1, from, subject, login_url);
 	}
 }
 
