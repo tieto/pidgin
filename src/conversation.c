@@ -150,7 +150,28 @@ char *get_tag_by_prefix(GtkWidget *entry, const char *prefix)
 	}
 	return t;
 }
-	
+
+void make_direct(struct conversation *c, gboolean direct, struct aim_conn_t *conn, gint watcher)
+{
+	char buf[BUF_LONG];
+	if (c == NULL) return;
+	c->is_direct = direct;
+	if (direct) {
+		c->conn = conn;
+		c->watcher = watcher;
+		g_snprintf(buf, sizeof buf, _("<HR><B>Direct Connection with %s established.</B><BR><HR>"),
+			c->name);
+		write_to_conv(c, buf, WFLAG_SYSTEM, NULL);
+	} else {
+		c->conn = NULL;
+		gdk_input_remove(c->watcher);
+		c->watcher = -1;
+		g_snprintf(buf, sizeof buf, _("<HR><B>Direct Connection with %s closed.</B><BR><HR>"),
+			c->name);
+		write_to_conv(c, buf, WFLAG_SYSTEM, NULL);
+	}
+}
+
 /* ---------------------------------------------------
  * Function to remove a log file entry
  * ---------------------------------------------------

@@ -1121,8 +1121,6 @@ void serv_got_imimage(char *name, char *cookie, char *ip, struct aim_conn_t *con
 	} else {
 		struct conversation *cnv = find_conversation(name);
 		if (!cnv) cnv = new_conversation(name);
-		cnv->is_direct = 1;
-		cnv->conn = conn;
-		cnv->watcher = watcher;
+		make_direct(cnv, TRUE, conn, watcher);
 	}
 }

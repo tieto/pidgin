@@ -25,6 +25,7 @@
 #include <gtk/gtk.h>
 #include <time.h>
 #include <stdio.h>
+#include <aim.h>
 #ifdef USE_APPLET
 #include <applet-widget.h>
 #endif /* USE_APPLET */
@@ -381,7 +382,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 525 $"
+#define REVISION "gaim:$Revision: 526 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -594,6 +595,7 @@ extern void serv_rvous_accept(char *, char *, char *);
 extern void serv_rvous_cancel(char *, char *, char *);
 
 /* Functions in conversation.c */
+extern void make_direct(struct conversation *, gboolean, struct aim_conn_t *, gint);
 extern void write_to_conv(struct conversation *, char *, int, char *);
 extern void show_conv(struct conversation *);
 extern struct conversation *new_conversation(char *);
