@@ -111,6 +111,9 @@ plugin_load(GaimPlugin *plugin)
 	dropdown = gaim_gtk_account_option_menu_new(NULL, FALSE,
 			G_CALLBACK(account_changed_cb), NULL);
 
+	if (gaim_connections_get_all())
+		account = (GaimAccount *)gaim_connections_get_all()->data;
+
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 
 	/* Entry box */
