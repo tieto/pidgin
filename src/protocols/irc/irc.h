@@ -26,6 +26,7 @@
 #include <glib.h>
 
 #include "multi.h"
+#include "roomlist.h"
 
 #define IRC_DEFAULT_SERVER "irc.freenode.net"
 #define IRC_DEFAULT_PORT 6667
@@ -67,6 +68,7 @@ struct irc_conn {
 		int idle;
 		time_t signon;
 	} whois;
+	GaimRoomlist *roomlist;
 };
 
 struct irc_buddy {
@@ -100,6 +102,7 @@ void irc_msg_inviteonly(struct irc_conn *irc, const char *name, const char *from
 void irc_msg_ison(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_join(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_kick(struct irc_conn *irc, const char *name, const char *from, char **args);
+void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char **args);
 void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, char **args);
@@ -134,6 +137,7 @@ int irc_cmd_help(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_invite(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_join(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+int irc_cmd_list(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_mode(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_names(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_nick(struct irc_conn *irc, const char *cmd, const char *target, const char **args);

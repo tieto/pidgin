@@ -223,6 +223,36 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	memset(&irc->whois, 0, sizeof(irc->whois));
 }
 
+void irc_msg_list(struct irc_conn *irc, const char *name, const char *from, char **args)
+{
+	if (!irc->roomlist)
+		return;
+
+	if (!strcmp(name, "321")) {
+		gaim_roomlist_set_in_progress(irc->roomlist, TRUE);
+		return;
+	}
+
+	if (!strcmp(name, "323")) {
+		gaim_roomlist_set_in_progress(irc->roomlist, FALSE);
+		gaim_roomlist_unref(irc->roomlist);
+		irc->roomlist = NULL;
+	}
+
+	if (!strcmp(name, "322")) {
+		GaimRoomlistRoom *room;
+
+		if (!args[0] || !args[1] || !args[2] || !args[3])
+			return;
+
+		room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, args[1], NULL);
+		gaim_roomlist_room_add_field(irc->roomlist, room, args[1]);
+		gaim_roomlist_room_add_field(irc->roomlist, room, GINT_TO_POINTER(strtol(args[2], NULL, 10)));
+		gaim_roomlist_room_add_field(irc->roomlist, room, args[3]);
+		gaim_roomlist_room_add(irc->roomlist, room);
+	}
+}
+
 void irc_msg_topic(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	char *chan, *topic, *msg, *nick;

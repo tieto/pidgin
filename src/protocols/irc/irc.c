@@ -465,6 +465,53 @@ static void irc_buddy_free(struct irc_buddy *ib)
 	g_free(ib);
 }
 
+static GaimRoomlist *irc_roomlist_get_list(GaimConnection *gc)
+{
+	struct irc_conn *irc;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
+
+	irc = gc->proto_data;
+
+	if (irc->roomlist)
+		gaim_roomlist_unref(irc->roomlist);
+
+	irc->roomlist = gaim_roomlist_new(gaim_connection_get_account(gc));
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Users"), "users", FALSE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Topic"), "topic", FALSE);
+	fields = g_list_append(fields, f);
+
+	gaim_roomlist_set_fields(irc->roomlist, fields);
+
+	irc_cmd_list(irc, "LIST", NULL, NULL);
+
+	return irc->roomlist;
+}
+
+static void irc_roomlist_cancel(GaimRoomlist *list)
+{
+	GaimConnection *gc = gaim_account_get_connection(list->account);
+	struct irc_conn *irc;
+
+	if (gc == NULL)
+		return;
+
+	irc = gc->proto_data;
+
+	gaim_roomlist_set_in_progress(list, FALSE);
+
+	if (irc->roomlist == list) {
+		irc->roomlist = NULL;
+		gaim_roomlist_unref(list);
+	}
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
@@ -515,8 +562,17 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL, /*irc_convo_closed,*/
+	NULL, /* normalize */
+	NULL, /* set buddy icon */
+	NULL, /* remove group */
+	NULL, /* get_cb_real_name */
+	NULL,
+	NULL,
+	irc_roomlist_get_list,
+	irc_roomlist_cancel,
 	NULL
 };
+
 
 static GaimPluginInfo info =
 {

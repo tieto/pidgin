@@ -59,6 +59,9 @@ static struct _irc_msg {
 	{ "318", "nt:", irc_msg_endwhois },	/* End of WHOIS			*/
 	{ "319", "nn:", irc_msg_whois },	/* Whois channels		*/
 	{ "320", "nn:", irc_msg_whois },	/* Whois (fn ident)		*/
+	{ "321", "*", irc_msg_list },		/* Start of list		*/
+	{ "322", "ncv:", irc_msg_list },	/* List.			*/
+	{ "323", ":", irc_msg_list },		/* End of list.			*/
 	{ "324", "ncv:", irc_msg_chanmode },	/* Channel modes		*/
 	{ "331", "nc:",	irc_msg_topic },	/* No channel topic		*/
 	{ "332", "nc:", irc_msg_topic },	/* Channel topic		*/
@@ -110,6 +113,7 @@ static struct _irc_user_cmd {
 	{ "j", "cv", irc_cmd_join },
 	{ "join", "cv", irc_cmd_join },
 	{ "kick", "n:", irc_cmd_kick },
+	{ "list", ":", irc_cmd_list },
 	{ "me", ":", irc_cmd_ctcp_action },
 	{ "mode", ":", irc_cmd_mode },
 	{ "msg", "t:", irc_cmd_privmsg },
