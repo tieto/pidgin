@@ -750,6 +750,10 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 {
 	gchar *t = tag;
 	gchar *e, *a;
+	gchar *val;
+	gint len;
+	gchar c;
+	GString *ret;
 
 	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
 		gboolean quote = FALSE;
@@ -773,13 +777,30 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 		while (*e && (*e != *(t - 1))) e++;
 		if  (*e == '\0') {
 			return NULL;
-		} else 
-			return g_strndup (a, e - a);
+		} else
+			val = g_strndup(a, e - a);
 	} else {
 		e = a = t;
 		while (*e && !isspace ((gint) *e)) e++;
-		return g_strndup (a, e - a);
+		val = g_strndup(a, e - a);
 	}
+
+	ret = g_string_new("");
+	e = val;
+	while(*e) {
+		if(gtk_imhtml_is_amp_escape(e, &c, &len)) {
+			ret = g_string_append_c(ret, c);
+			e += len;
+		} else {
+			ret = g_string_append_c(ret, *e);
+			e++;
+		}
+	}
+
+	g_free(val);
+	val = ret->str;
+	g_string_free(ret, FALSE);
+	return val;
 }
 
 
