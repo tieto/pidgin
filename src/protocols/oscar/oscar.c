@@ -1941,6 +1941,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	} else if (args->reqclass & AIM_CAPS_SENDFILE) {
 		struct oscar_file_transfer *oft;
 		struct oscar_data *od = gc->proto_data;
+		char *tmp;
 
 		if (!args->cookie || !args->verifiedip || !args->port ||
 		    !args->info.sendfile.filename || !args->info.sendfile.totsize ||
@@ -2013,11 +2014,12 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		od->file_transfers = g_slist_append(od->file_transfers, oft);
 
-		if (*(strrchr(args->info.sendfile.filename, '\\') + 1) == '*' ) {
-			/* last char of the ft req is a star, they are sending us a
-			 * directory -- remove the star and trailing slash so we dont save
-			 * directories that look like 'dirname\*'  -- arl */
-			*strrchr(args->info.sendfile.filename, '\\') = '\0';
+		/* last char of the ft req is a star, they are sending us a
+		 * directory -- remove the star and trailing slash so we dont save
+		 * directories that look like 'dirname\*'  -- arl */
+		tmp = strrchr(args->info.sendfile.filename, '\\');
+		if (tmp && (tmp[1] == '*')) {
+			tmp[0] = '\0';
 		}
 
 		oft->xfer = transfer_in_add(gc, userinfo->sn, 

@@ -1376,10 +1376,10 @@ static int parsedel(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		aimbs_get16(bs);
 		aim_bstream_advance(bs, aimbs_get16(bs));
 
-		del = aim_ssi_itemlist_find(sess->ssi.local, gid, bid);
-		aim_ssi_itemlist_del(&sess->ssi.local, del);
-		del = aim_ssi_itemlist_find(sess->ssi.official, gid, bid);
-		aim_ssi_itemlist_del(&sess->ssi.official, del);
+		if ((del = aim_ssi_itemlist_find(sess->ssi.local, gid, bid)))
+			aim_ssi_itemlist_del(&sess->ssi.local, del);
+		if ((del = aim_ssi_itemlist_find(sess->ssi.official, gid, bid)))
+			aim_ssi_itemlist_del(&sess->ssi.official, del);
 
 		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 			ret = userfunc(sess, rx);
