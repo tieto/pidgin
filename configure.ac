@@ -450,7 +450,7 @@ dnl #
 dnl # Check for NSS if it's specified, or if GNUTLS checks failed.
 dnl #
 if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
-        "x$msg_ssl" = "xno"; then
+        "x$msg_ssl" = "xNone"; then
 
 	AC_ARG_WITH(nspr-includes,
 		[  --with-nspr-includes=PREFIX     Specify location of Mozilla nspr4 includes.],
