@@ -808,10 +808,13 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 	if (type == GAIM_CONV_IM)
 	{
+		GaimBuddyIcon *icon;
 		conv->u.im = g_new0(GaimConvIm, 1);
 		conv->u.im->conv = conv;
 
 		ims = g_list_append(ims, conv);
+		if ((icon = gaim_buddy_icons_find(account, name)))
+			gaim_conv_im_set_icon(conv->u.im, icon);
 
 		gaim_conversation_set_logging(conv,
 				gaim_prefs_get_bool("/core/logging/log_ims"));

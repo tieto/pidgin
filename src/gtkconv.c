@@ -5425,8 +5425,6 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	FILE *file;
 	GError *err = NULL;
 
-	GaimBuddy *buddy;
-
 	const void *data;
 	size_t len;
 
@@ -5444,6 +5442,8 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	GaimButtonStyle button_type;
+
+	GaimBuddyIcon *icon;
 
 	g_return_if_fail(conv != NULL);
 	g_return_if_fail(GAIM_IS_GTK_CONVERSATION(conv));
@@ -5465,54 +5465,32 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	if (gtkconv->u.im->anim)
 		g_object_unref(G_OBJECT(gtkconv->u.im->anim));
 
-	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
-					gaim_conversation_get_name(conv))) != NULL) {
-		const char *iconfile;
-		if((iconfile = gaim_blist_node_get_string((GaimBlistNode*)buddy,
-												  "buddy_icon"))) {
-			GaimBuddyIcon *icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
-			struct stat st;
-			if ((icon == NULL) && (!stat(iconfile, &st))) {
-				FILE *file = fopen(iconfile, "rb");
-				if (file) {
-					char *data = g_malloc(st.st_size);
-					fread(data, 1, st.st_size, file);
-					fclose(file);
-					gaim_buddy_icons_set_for_user(gaim_conversation_get_account(conv), gaim_conversation_get_name(conv), data, st.st_size);
-					g_free(data);
-				}
-				return;
-			}
-			else
-				gtkconv->u.im->anim =
-					gdk_pixbuf_animation_new_from_file(iconfile, &err); /* LEAK */
-		}
-	}
-	else
-	{
-		GaimBuddyIcon *icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
 
-		if (icon == NULL)
-			return;
 
-		data = gaim_buddy_icon_get_data(icon, &len);
+	icon = gaim_conv_im_get_icon(GAIM_CONV_IM(conv));
 
-		/* this is such an evil hack, i don't know why i'm even considering it.
-		 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
-		g_snprintf(filename, sizeof(filename),
-				"%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
-				g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
+	if (icon == NULL)
+		return;
 
-		if (!(file = fopen(filename, "wb")))
-			return;
+	data = gaim_buddy_icon_get_data(icon, &len);
 
-		fwrite(data, 1, len, file);
-		fclose(file);
+	/* this is such an evil hack, i don't know why i'm even considering it.
+	 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
+	/* gdk-pixbuf-loader was leaky? is it still? */
+	g_snprintf(filename, sizeof(filename),
+			"%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
+			g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
 
-		gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
-		/* make sure we remove the file as soon as possible */
-		unlink(filename);
-	}
+	if (!(file = fopen(filename, "wb")))
+		return;
+
+	fwrite(data, 1, len, file);
+	fclose(file);
+
+	gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
+	/* make sure we remove the file as soon as possible */
+	unlink(filename);
+
 
 	if (err) {
 		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",

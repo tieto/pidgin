@@ -2623,14 +2623,42 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBuddy *b)
 {
 	const char *file;
 	GdkPixbuf *buf, *ret;
+	GdkPixbufLoader *loader;
+	GaimBuddyIcon *icon;
+	const char *data;
+	size_t len;
+	struct stat st;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"))
 		return NULL;
 
-	if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
-		return NULL;
+	if (!(icon = gaim_buddy_get_icon(b))) {
+		if ((file = gaim_blist_node_get_string((GaimBlistNode*)b, "buddy_icon")) == NULL)
+			return NULL;
 
-	buf = gdk_pixbuf_new_from_file(file, NULL);
+		/* This is a hack, we should be loading up the GaimBuddyIcon's somewhere
+		 * else, like the core, like when we parse the blist.xml file. */
+		if (!stat(file, &st)) {
+			FILE *f = fopen(file, "rb");
+			if (f) {
+				char *data = g_malloc(st.st_size);
+				fread(data, 1, st.st_size, f);
+				fclose(f);
+				gaim_buddy_icons_set_for_user(b->account, b->name, data, st.st_size);
+				g_free(data);
+			}
+		}
+
+		return NULL; /* Either no icon, or we just set one and so this will get called again */
+	}
+
+	loader = gdk_pixbuf_loader_new();
+	data = gaim_buddy_icon_get_data(icon, &len);
+	gdk_pixbuf_loader_write(loader, data, len, NULL);
+	buf = gdk_pixbuf_loader_get_pixbuf(loader);
+	if (buf)
+		g_object_ref(G_OBJECT(buf));
+	gdk_pixbuf_loader_close(loader, NULL);
 
 
 	if (buf) {
