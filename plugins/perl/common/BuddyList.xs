@@ -65,20 +65,6 @@ PPCODE:
 
 	g_slist_free(l);
 
-void
-get_buddies(account)
-	Gaim::Account account
-PREINIT:
-	GSList *l;
-PPCODE:
-	for (l = gaim_get_account_buddies(account); l != NULL; l = l->next)
-	{
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data,
-			"Gaim::BuddyList::Buddy")));
-	}
-
-	g_slist_free(l);
-
 Gaim::BuddyList::Group
 find_group(name)
 	const char *name
