@@ -23,7 +23,6 @@
 
 #include "pixmaps/ok.xpm"
 #include "pixmaps/cancel.xpm"
-#include "pixmaps/close.xpm"
 #include "pixmaps/register.xpm"
 
 extern void toc_init(struct prpl *);
@@ -266,7 +265,7 @@ void register_user(gpointer a, gpointer b)
 	gtk_box_pack_end(GTK_BOX(box), hbox, FALSE, FALSE, 5);
 	gtk_widget_show(hbox);
 
-	button = picture_button(regdialog, _("Close"), close_xpm);
+	button = picture_button(regdialog, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(delete_reg), NULL);
 

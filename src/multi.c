@@ -29,7 +29,6 @@
 #include "pixmaps/gnome_preferences.xpm"
 #include "pixmaps/join.xpm"
 #include "pixmaps/gnome_remove.xpm"
-#include "pixmaps/gnome_close.xpm"
 #include "pixmaps/cancel.xpm"
 #include "pixmaps/ok.xpm"
 
@@ -670,7 +669,7 @@ void account_editor(GtkWidget *w, GtkWidget *W)
 	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(del_acct), NULL);
 
-	button = picture_button(acctedit, _("Close"), gnome_close_xpm);
+	button = picture_button(acctedit, _("Close"), cancel_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), button, TRUE, TRUE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(acctedit_close), W);
 
