@@ -684,7 +684,7 @@ static gboolean find_nick(struct gaim_connection *gc, char *message)
 	n = strlen(who);
 	g_strdown(who);
 
-	if ((p = strstr(msg, who)) != NULL) {
+	if (n > 0 && (p = strstr(msg, who)) != NULL) {
 		if (((p == msg) || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
 			g_free(who);
 			g_free(msg);
