@@ -58,8 +58,10 @@ http_poll(gpointer data)
 
 		if (servconn->http_data->dirty)
 		{
+#if 0
 			gaim_debug_info("msn", "Polling server %s.\n",
 							servconn->http_data->gateway_ip);
+#endif
 			msn_http_servconn_poll(servconn);
 		}
 	}
@@ -72,7 +74,6 @@ stop_timer(MsnSession *session)
 {
 	if (session->http_poll_timer)
 	{
-		gaim_debug(GAIM_DEBUG_INFO, "msn", "Stopping timer\n");
 		gaim_timeout_remove(session->http_poll_timer);
 		session->http_poll_timer = 0;
 	}
@@ -83,8 +84,7 @@ start_timer(MsnSession *session)
 {
 	stop_timer(session);
 
-	gaim_debug(GAIM_DEBUG_INFO, "msn", "Starting timer\n");
-	session->http_poll_timer = gaim_timeout_add(5000, http_poll, session);
+	session->http_poll_timer = gaim_timeout_add(2000, http_poll, session);
 }
 
 void
@@ -179,7 +179,7 @@ msn_http_servconn_write(MsnServConn *servconn, const char *buf, size_t size,
 
 	g_free(params);
 
-#if 1
+#if 0
 	gaim_debug_misc("msn", "Writing HTTP to fd %d: {%s}\n",
 					servconn->fd, temp);
 #endif
@@ -239,7 +239,9 @@ msn_http_servconn_poll(MsnServConn *servconn)
 		servconn->http_data->session_id,
 		servconn->http_data->gateway_ip);
 
+#if 0
 	gaim_debug_misc("msn", "Writing to HTTP: {%s}\n", temp);
+#endif
 
 	s = write(servconn->fd, temp, strlen(temp));
 
@@ -271,7 +273,9 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	g_return_val_if_fail(ret_size != NULL, FALSE);
 	g_return_val_if_fail(error    != NULL, FALSE);
 
+#if 0
 	gaim_debug_info("msn", "parsing data {%s} from fd %d\n", buf, servconn->fd);
+#endif
 	servconn->http_data->waiting_response = FALSE;
 
 	gc = gaim_account_get_connection(servconn->session->account);
@@ -317,7 +321,9 @@ msn_http_servconn_parse_data(MsnServConn *servconn, const char *buf,
 	s += 4; /* Skip \r\n */
 	body = g_strndup(s, size - (s - buf));
 
+#if 0
 	gaim_debug_misc("msn", "Incoming HTTP buffer: {%s\r\n%s}", headers, body);
+#endif
 
 	if ((s = strstr(headers, "Content-Length: ")) != NULL)
 	{

@@ -241,6 +241,9 @@ msn_servconn_connect(MsnServConn *servconn)
 	if (session->http_method)
 	{
 		servconn->http_data->gateway_ip = g_strdup(servconn->server);
+
+		g_free(servconn->server);
+		servconn->server = g_strdup("gateway.messenger.hotmail.com");
 		servconn->port = 80;
 	}
 
