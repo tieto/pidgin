@@ -75,8 +75,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-DLL_C_SRC =		aim.c \
-			about.c \
+DLL_C_SRC =	about.c \
 			away.c \
 			browser.c \
 			buddy.c \
@@ -95,6 +94,7 @@ DLL_C_SRC =		aim.c \
 			idle.c \
 			list.c \
 			log.c \
+			main.c \
 			md5.c \
 			module.c \
 			multi.c \
@@ -114,7 +114,7 @@ DLL_C_SRC =		aim.c \
 
 RC_SRC =		win32/gaimrc.rc
 
-EXE_C_SRC = 		win_aim.c
+EXE_C_SRC = 		win_gaim.c
 
 DLL_OBJECTS = $(DLL_C_SRC:%.c=%.o) 
 

@@ -7,7 +7,6 @@ SUBDIRS = protocols
 
 bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES =	about.c \
-		aim.c \
 		away.c \
 		browser.c \
 		buddy.c \
@@ -33,6 +32,7 @@ gaim_SOURCES =	about.c \
 		idle.c \
 		list.c \
 		log.c \
+		main.c \
 		md5.c \
 		md5.h \
 		module.c \
