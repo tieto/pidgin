@@ -331,8 +331,7 @@ extern int sound_order[];
 struct sound_struct {
 	char *label;
 	guint opt;
-	unsigned char *snd;
-	size_t snd_size;
+	char *def;
 };
 extern struct sound_struct sounds[];
 

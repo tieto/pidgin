@@ -53,32 +53,27 @@
 #endif
 
 #include "gaim.h"
-#include "sounds/BuddyArrive.h"
-#include "sounds/BuddyLeave.h"
-#include "sounds/Send.h"
-#include "sounds/Receive.h"
-#include "sounds/RedAlert.h"
 
 gboolean mute_sounds = 0;
 
-/* description, option bit, default sound array, and it's size.   *
+/* description, option bit, default sound file                    *
  * if you want it to get displayed in the prefs dialog, it needs  *
  * to be added to the sound_order array in prefs.c, if not, and   *
  * it has no option bit, set it to 0. the order here has to match *
  * the defines in gaim.h.                               -Robot101 */
 struct sound_struct sounds[NUM_SOUNDS] = {
-	{N_("Buddy logs in"), OPT_SOUND_LOGIN, BuddyArrive, sizeof(BuddyArrive)},
-	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, BuddyLeave, sizeof(BuddyLeave)},
-	{N_("Message received"), OPT_SOUND_RECV, Receive, sizeof(Receive)},
-	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, Receive, sizeof(Receive)},
-	{N_("Message sent"), OPT_SOUND_SEND, Send, sizeof(Send)},
-	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, BuddyArrive, sizeof(BuddyArrive)},
-	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, BuddyLeave, sizeof(BuddyLeave)},
-	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, Send, sizeof(Send)},
-	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, Receive, sizeof(Receive)},
+	{N_("Buddy logs in"), OPT_SOUND_LOGIN, "arrive.wav"},
+	{N_("Buddy logs out"), OPT_SOUND_LOGOUT, "leave.wav"},
+	{N_("Message received"), OPT_SOUND_RECV, "receive.wav"},
+	{N_("Message received begins conversation"), OPT_SOUND_FIRST_RCV, "receive.wav"},
+	{N_("Message sent"), OPT_SOUND_SEND, "send.wav"},
+	{N_("Person enters chat"), OPT_SOUND_CHAT_JOIN, "arrive.wav"},
+	{N_("Person leaves chat"), OPT_SOUND_CHAT_PART, "leave.wav"},
+	{N_("You talk in chat"), OPT_SOUND_CHAT_YOU_SAY, "send.wav"},
+	{N_("Others talk in chat"), OPT_SOUND_CHAT_SAY, "receive.wav"},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, 0, RedAlert, sizeof(RedAlert)},
-	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, Receive, sizeof(Receive)}
+	{NULL, 0, "redalert.wav"},
+	{N_("Someone says your name in chat"), OPT_SOUND_CHAT_NICK, "redalert.wav"}
 };
 int sound_order[] = {
 	SND_BUDDY_ARRIVE, SND_BUDDY_LEAVE,
@@ -113,18 +108,6 @@ static int check_dev(char *dev)
 	return 0;
 }
 
-
-static void play_audio(unsigned char *data, int size)
-{
-	int fd;
-
-	fd = open("/dev/audio", O_WRONLY | O_EXCL | O_NDELAY);
-	if (fd < 0)
-		return;
-	write(fd, data, size);
-	close(fd);
-}
-
 static void play_audio_file(char *file)
 {
 	/* here we can assume that we can write to /dev/audio */
@@ -157,66 +140,9 @@ static int can_play_audio()
 	return check_dev("/dev/audio");
 }
 
-
-#if defined(ESD_SOUND) || defined(ARTSC_SOUND)
-
-/*
-** This routine converts from ulaw to 16 bit linear.
-**
-** Craig Reese: IDA/Supercomputing Research Center
-** 29 September 1989
-**
-** References:
-** 1) CCITT Recommendation G.711  (very difficult to follow)
-** 2) MIL-STD-188-113,"Interoperability and Performance Standards
-**     for Analog-to_Digital Conversion Techniques,"
-**     17 February 1987
-**
-** Input: 8 bit ulaw sample
-** Output: signed 16 bit linear sample
-** Z-note -- this is from libaudiofile.  Thanks guys!
-*/
-
-static int _af_ulaw2linear(unsigned char ulawbyte)
-{
-	static int exp_lut[8] = { 0, 132, 396, 924, 1980, 4092, 8316, 16764 };
-	int sign, exponent, mantissa, sample;
-
-	ulawbyte = ~ulawbyte;
-	sign = (ulawbyte & 0x80);
-	exponent = (ulawbyte >> 4) & 0x07;
-	mantissa = ulawbyte & 0x0F;
-	sample = exp_lut[exponent] + (mantissa << (exponent + 3));
-	if (sign != 0)
-		sample = -sample;
-
-	return (sample);
-}
-
-#endif
-
 #ifdef ESD_SOUND
 
 int esd_fd;
-
-static int play_esd(unsigned char *data, int size)
-{
-	int i;
-	guint16 *lineardata;
-
-	lineardata = g_malloc(size * 2);
-
-	for (i = 0; i < size; i++)
-		lineardata[i] = _af_ulaw2linear(data[i]);
-
-	write(esd_fd, lineardata, size * 2);
-
-	close(esd_fd);
-	g_free(lineardata);
-
-	return 1;
-
-}
 
 static int can_play_esd()
 {
@@ -234,36 +160,6 @@ static int can_play_esd()
 #endif
 
 #ifdef ARTSC_SOUND
-
-static int play_artsc(unsigned char *data, int size)
-{
-	arts_stream_t stream;
-	guint16 *lineardata;
-	int result = 1;
-	int error;
-	int i;
-
-	lineardata = g_malloc(size * 2);
-
-	for (i = 0; i < size; i++) {
-		lineardata[i] = _af_ulaw2linear(data[i]);
-	}
-
-	stream = arts_play_stream(8012, 16, 1, "gaim");
-
-	error = arts_write(stream, lineardata, size);
-	if (error < 0) {
-		result = 0;
-	}
-
-	arts_close_stream(stream);
-
-	g_free(lineardata);
-
-	arts_free();
-
-	return result;
-}
 
 static int can_play_artsc()
 {
@@ -341,48 +237,6 @@ static AuBool NasEventHandler(AuServer * aud, AuEvent * ev, AuEventHandlerRec * 
 		}
 	}
 	return AuTrue;
-}
-
-
-static int play_nas(unsigned char *data, int size)
-{
-	AuDeviceID device = AuNone;
-	AuFlowID flow;
-	AuElement elements[3];
-	int i, n, w;
-
-	/* look for an output device */
-	for (i = 0; i < AuServerNumDevices(nas_serv); i++) {
-		if ((AuDeviceKind(AuServerDevice(nas_serv, i)) ==
-		     AuComponentKindPhysicalOutput) &&
-		    AuDeviceNumTracks(AuServerDevice(nas_serv, i)) == 1) {
-			device = AuDeviceIdentifier(AuServerDevice(nas_serv, i));
-			break;
-		}
-	}
-
-	if (device == AuNone)
-		return 0;
-
-	if (!(flow = AuCreateFlow(nas_serv, NULL)))
-		return 0;
-
-
-	AuMakeElementImportClient(&elements[0], 8012, AuFormatULAW8, 1, AuTrue, size, size / 2, 0, NULL);
-	AuMakeElementExportDevice(&elements[1], 0, device, 8012, AuUnlimitedSamples, 0, NULL);
-	AuSetElements(nas_serv, flow, AuTrue, 2, elements, NULL);
-
-	AuStartFlow(nas_serv, flow, NULL);
-
-	AuWriteElement(nas_serv, flow, 0, size, data, AuTrue, NULL);
-
-	AuRegisterEventHandler(nas_serv, AuEventHandlerIDMask, 0, flow, NasEventHandler, NULL);
-
-	while (1) {
-		AuHandleEvents(nas_serv);
-	}
-
-	return 1;
 }
 
 static int can_play_nas()
@@ -492,92 +346,10 @@ void play_file(char *filename)
 #endif
 }
 
-void play(unsigned char *data, int size)
-{
-#ifndef _WIN32
-	int pid;
-#endif
-	if (sound_options & OPT_SOUND_BEEP) {
-		gdk_beep();
-		return;
-	}
-#ifndef _WIN32
-	else if ((sound_options & OPT_SOUND_CMD) && sound_cmd[0]) {
-		char command[4096];
-		FILE *child;
-
-		g_snprintf(command, sizeof(command), sound_cmd, "-");
-		
-		child=popen(command, "w");
-		if(child == NULL) {
-			perror("popen");
-			return;
- 	     }
- 
-		fwrite(data, size, 1, child);
-		pclose(child);
-		return;
-	}
-
-	pid = fork();
-	
-	if (pid < 0)
-		return;
-	else if (pid == 0) {
-		alarm(30);
-		
-#ifdef ESD_SOUND
-		/* ESD is our player of choice.  Are we OK to
-		 * go there? */
-		if (sound_options & OPT_SOUND_ESD) {
-			if (can_play_esd()) {
-				if (play_esd(data, size))
-					_exit(0);
-			}
-		}
-#endif
-
-#ifdef ARTSC_SOUND
-		/* ArtsC is the new second choice. */
-		if (sound_options & OPT_SOUND_ARTSC) {
-			if (can_play_artsc()) {
-				if (play_artsc(data, size))
-					_exit(0);
-			}
-		}
-#endif
-
-#ifdef NAS_SOUND
-		/* NAS is our second choice setup. */
-		if (sound_options & OPT_SOUND_NAS) {
-			if (can_play_nas()) {
-				if (play_nas(data, size))
-					_exit(0);
-			}
-		}
-#endif
-
-		/* Lastly, we can try just plain old /dev/audio */
-		if (sound_options & OPT_SOUND_NORMAL) {
-			if (can_play_audio()) {
-				play_audio(data, size);
-				_exit(0);
-			}
-		}
-
-		_exit(0);
-	}
-#else /* _WIN32 */
-	if (!PlaySound(data, 0, SND_ASYNC | SND_MEMORY))
-	  debug_printf("Error playing sound.");
-#endif
-}
-
 extern int logins_not_muted;
 
 void play_sound(int sound)
 {
-
 	if (mute_sounds)
 		return;
 	
@@ -597,7 +369,11 @@ void play_sound(int sound)
 		if (sound_file[sound]) {
 			play_file(sound_file[sound]);
 		} else {
-			play(sounds[sound].snd, sounds[sound].snd_size);
+			gchar *filename = NULL;
+
+			filename = g_build_filename(DATADIR, "sounds", "gaim", sounds[sound].def, NULL);
+			play_file(filename);
+			g_free(filename);
 		}
 	}
 }
