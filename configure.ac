@@ -51,7 +51,7 @@ if test "$ac_silc_includes" != "no"; then
 fi
 CPPFLAGS_save="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $SILC_INCLUDES"
-AC_CHECK_HEADER(silcincludes.h, , [static_silc=no, dynamic_silc=no])
+AC_CHECK_HEADER(silcincludes.h, [silcincludes=yes])
 CPPFLAGS="$CPPFLAGS_save"
 AC_SUBST(SILC_INCLUDES)
 
@@ -113,8 +113,7 @@ if test "$ac_silc_libs" != "no"; then
 	SILC_LIBS="-L$ac_silc_libs"
 fi
 SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread"
-AC_CHECK_LIB(silcclient, silc_client_init, ,
-	     [static_silc=no; dynamic_silc=no], $SILC_LIBS)
+AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
 AC_SUBST(SILC_LIBS)
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
@@ -162,7 +161,7 @@ AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
-AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes")
+AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
