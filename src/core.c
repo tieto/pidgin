@@ -485,31 +485,6 @@ int core_main()
 	g_io_channel_unref(channel);
 #endif
 
-#ifdef _WIN32
-	WORD wVersionRequested;
-	WSADATA wsaData;
-	int err;
-
-	wVersionRequested = MAKEWORD( 2, 2 );
-
-	err = WSAStartup( wVersionRequested, &wsaData );
-	if ( err != 0 ) {
-		return 1;
-	}
-
-	/* Confirm that the winsock DLL supports 2.2 */
-	/* Note that if the DLL supports versions greater than
-	   2.2 in addition to 2.2, it will still return 2.2 in 
-	   wVersion since that is the version we requested. */
-
-	if ( LOBYTE( wsaData.wVersion ) != 2 ||
-			HIBYTE( wsaData.wVersion ) != 2 ) {
-		debug_printf("Could not find a usable WinSock DLL.  Oh well.\n");
-		WSACleanup( );
-		return 1;
-	}
-#endif /* _WIN32 */
-
 	/*
 	loop = g_main_new(TRUE);
 	g_main_run(loop);
@@ -526,7 +501,5 @@ void core_quit()
 	sprintf(buf, "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
 	unlink(buf);
 	debug_printf("Removed core\n");
-#else
-	WSACleanup( );
 #endif
 }
