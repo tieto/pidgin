@@ -1250,11 +1250,11 @@ static GList *get_available_browsers()
 	};
 
 	static struct browser possible_browsers[] = {
-		{N_("Konqueror"), "kfmclient"},
 		{N_("Opera"), "opera"},
-		{N_("Galeon"), "galeon"},
 		{N_("Netscape"), "netscape"},
 		{N_("Mozilla"), "mozilla"},
+		{N_("Konqueror"), "kfmclient"},
+		{N_("Galeon"), "galeon"}
 	};
 	static const int num_possible_browsers = 5;
 
