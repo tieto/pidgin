@@ -462,6 +462,7 @@ GtkTreePath *theme_refresh_theme_list()
 				   0, pixbuf,
 				   1, description,
 				   2, theme->path,
+				   3, theme->name,
 				   -1);
 
 		if (pixbuf != NULL)
@@ -586,6 +587,37 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 	gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
+/* Does same as normal sort, except "none" is sorted first */
+gint gaim_sort_smileys (GtkTreeModel	*model,
+						GtkTreeIter		*a,
+						GtkTreeIter		*b,
+						gpointer		userdata)
+{
+	gaim_debug_info("gaim_sort_smileys","entered\n");
+	gint ret = 0;
+	gchar *name1, *name2;
+
+	gtk_tree_model_get(model, a, 3, &name1, -1);
+	gtk_tree_model_get(model, b, 3, &name2, -1);
+
+	if (name1 == NULL || name2 == NULL) {
+		if (!(name1 == NULL && name2 == NULL))
+			ret = (name1 == NULL) ? -1: 1;
+	} else if (!g_ascii_strcasecmp(name1, "none")) {
+		/* Sort name1 first */
+		ret = -1;
+	} else if (!g_ascii_strcasecmp(name2, "none")) {
+		/* Sort name2 first */
+		ret = 1;
+	} else {
+		/* Neither string is "none", default to normal sort */
+		ret = g_utf8_collate(name1,name2);
+	}
+
+	gaim_debug_info("gaim_sort_smileys","leaving\n");
+	return ret;
+}
+
 GtkWidget *theme_page() {
 	GtkWidget *ret;
 	GtkWidget *sw;
@@ -614,7 +646,7 @@ GtkWidget *theme_page() {
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-	smiley_theme_store = gtk_list_store_new (3, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING);
+	smiley_theme_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
 	path = theme_refresh_theme_list();
 
@@ -632,8 +664,13 @@ GtkWidget *theme_page() {
 		gtk_tree_selection_select_path(sel, path);
 		gtk_tree_path_free(path);
 	}
+
+	/* Custom sort so "none" theme is at top of list */
+	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
+									3, gaim_sort_smileys, NULL, NULL);
+
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
-										 1, GTK_SORT_ASCENDING);
+										 3, GTK_SORT_ASCENDING);
 
 	col = gtk_tree_view_column_new_with_attributes (_("Icon"),
 							rend,
