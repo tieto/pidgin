@@ -5346,6 +5346,7 @@ msgid ""
 "%s"
 msgstr ""
 "'%s'¥‘¿Ã %s¥‘¿ª ¥Î»≠Ω«ø° √ ¥Î: '%s'\n"
+"%s"
 
 #: src/server.c:1058
 #, c-format
