@@ -34,6 +34,8 @@ typedef struct
 	gboolean timestamps;
 	gboolean paused;
 
+	guint timestamps_handle;
+
 } DebugWindow;
 
 static char debug_fg_colors[][8] = {
@@ -50,10 +52,13 @@ static DebugWindow *debug_win = NULL;
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
-	g_free(debug_win);
-	debug_win = NULL;
+	if (debug_win->timestamps_handle != 0)
+		gaim_prefs_disconnect_callback(debug_win->timestamps_handle);
 
 	gaim_prefs_set_bool("/gaim/gtk/debug/enabled", FALSE);
+
+	g_free(debug_win);
+	debug_win = NULL;
 
 	return FALSE;
 }
@@ -87,6 +92,13 @@ __timestamps_cb(GtkWidget *w, DebugWindow *win)
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 
 	gaim_prefs_set_bool("/gaim/gtk/debug/timestamps", win->timestamps);
+}
+
+static void
+timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
+				   gpointer data)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), (gboolean)value);
 }
 
 static DebugWindow *
@@ -159,8 +171,9 @@ debug_window_new(void)
 											NULL, G_CALLBACK(__timestamps_cb),
 											win);
 
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-				gaim_prefs_get_bool("/gaim/gtk/debug/timestamps"));
+		win->timestamps_handle =
+			gaim_prefs_connect_callback("/gaim/gtk/debug/timestamps",
+										timestamps_pref_cb, button);
 	}
 
 	/* Now our scrolled window... */
