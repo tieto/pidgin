@@ -1601,13 +1601,13 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 
 	/* Check configuration if we have this connection configured.  If we
 	   have then return that data immediately, as it's faster way. */
+	if (gaim_account_get_bool(sg->account, "pubkey-auth", FALSE)) {
+		completion(TRUE, SILC_AUTH_PUBLIC_KEY, NULL, 0, context);
+		return;
+	}
 	if (gc->account->password && *gc->account->password) {
 		completion(TRUE, SILC_AUTH_PASSWORD, gc->account->password,
 			   strlen(gc->account->password), context);
-		return;
-	}
-	if (gaim_account_get_bool(sg->account, "pubkey-auth", FALSE)) {
-		completion(TRUE, SILC_AUTH_PUBLIC_KEY, NULL, 0, context);
 		return;
 	}
 
