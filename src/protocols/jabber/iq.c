@@ -241,7 +241,6 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *query, *error, *x;
 	const char *xmlns;
 	const char *type, *id, *from;
-	JabberIq *iq;
 
 	query = xmlnode_get_child(packet, "query");
 	type = xmlnode_get_attrib(packet, "type");
@@ -311,18 +310,20 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
 
-	iq = jabber_iq_new(js, JABBER_IQ_ERROR);
+	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {
+		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
 
-	xmlnode_free(iq->node);
-	iq->node = xmlnode_copy(packet);
-	xmlnode_set_attrib(iq->node, "to", from);
-	xmlnode_set_attrib(iq->node, "type", "error");
-	error = xmlnode_new_child(iq->node, "error");
-	xmlnode_set_attrib(error, "type", "cancel");
-	xmlnode_set_attrib(error, "code", "501");
-	x = xmlnode_new_child(error, "feature-not-implemented");
-	xmlnode_set_attrib(x, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
+		xmlnode_free(iq->node);
+		iq->node = xmlnode_copy(packet);
+		xmlnode_set_attrib(iq->node, "to", from);
+		xmlnode_set_attrib(iq->node, "type", "error");
+		error = xmlnode_new_child(iq->node, "error");
+		xmlnode_set_attrib(error, "type", "cancel");
+		xmlnode_set_attrib(error, "code", "501");
+		x = xmlnode_new_child(error, "feature-not-implemented");
+		xmlnode_set_attrib(x, "xmlns", "urn:ietf:params:xml:ns:xmpp-stanzas");
 
-	jabber_iq_send(iq);
+		jabber_iq_send(iq);
+	}
 }
 
