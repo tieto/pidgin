@@ -3040,12 +3040,14 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkSizeGroup *sg;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
-	GtkTargetEntry gte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
+	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD },
 				{"text/uri-list", 0, DRAG_URI},
 				{"text/plain", 0, DRAG_TEXT}};
-
+	GtkTargetEntry ste[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
+				{"application/x-im-contact", 0, DRAG_BUDDY},
+				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
 		gtk_widget_show(gtkblist->window);
 		return;
@@ -3114,10 +3116,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
-					       GDK_BUTTON1_MASK, gte, NUM_TARGETS,
+					       GDK_BUTTON1_MASK, ste, NUM_TARGETS,
 					       GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
-					     gte, NUM_TARGETS,
+					     dte, NUM_TARGETS,
 					     GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
   	g_signal_connect(G_OBJECT(gtkblist->treeview), "drag-data-received", G_CALLBACK(gaim_gtk_blist_drag_data_rcv_cb), NULL);
