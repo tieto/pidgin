@@ -821,7 +821,7 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	plugin_search_paths[0] = LIBDIR;
+	plugin_search_paths[0] = g_strdup(LIBDIR);
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_build_filename(gaim_user_dir(), "plugins", NULL);
 
@@ -829,6 +829,7 @@ int main(int argc, char *argv[])
 								  sizeof(*plugin_search_paths),
 								  plugin_search_paths);
 
+	g_free(plugin_search_paths[0]);
 	g_free(plugin_search_paths[2]);
 
 	gaim_plugins_probe(NULL);

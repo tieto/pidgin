@@ -147,4 +147,10 @@
 
 #define GAIM_WEBSITE "http://gaim.sourceforge.net/"
 
+#ifndef _WIN32
+/* Everything needs to include this, because
+ * everything gets the autoconf macros */
+#include "prefix.h"
+#endif /* _WIN32 */
+
 #endif /* _GAIM_INTERNAL_H_ */

@@ -81,9 +81,10 @@ gaim_coresources = \
 	plugin.c \
 	pluginpref.c \
 	pounce.c \
+	prefix.c \
+	prefs.c \
 	privacy.c \
 	proxy.c \
-	prefs.c \
 	prpl.c \
 	request.c \
 	roomlist.c \
@@ -119,9 +120,10 @@ gaim_coreheaders = \
 	plugin.h \
 	pluginpref.h \
 	pounce.h \
+	prefix.h
+	prefs.h \
 	privacy.h \
 	proxy.h \
-	prefs.h \
 	prpl.h \
 	request.h \
 	roomlist.h \
@@ -225,7 +227,9 @@ gaim_LDADD = \
 	$(STARTUP_NOTIFICATION_LIBS)
 
 gaim_remote_SOURCES = \
-	gaim-remote.c
+	gaim-remote.c \
+	prefix.c \
+	prefix.h
 
 gaim_remote_DEPENDENCIES = @LIBOBJS@
 gaim_remote_LDADD = \
@@ -233,6 +237,7 @@ gaim_remote_LDADD = \
 	$(top_builddir)/plugins/gaim-remote/libgaim-remote.la
 
 AM_CPPFLAGS = \
+	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
 	-DLIBDIR=\"$(libdir)/gaim/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \

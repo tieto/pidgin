@@ -1121,6 +1121,7 @@ if test "$zephyr" != "no" ; then
 	LDFLAGS="$orig_LDFLAGS"
 fi
 
+AM_BINRELOC
 
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
