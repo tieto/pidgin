@@ -3,6 +3,12 @@ aim.h
 -----
   - Needs a bit of cleaning
 
+info.c
+------
+  - aim_userinfo_s isn't real good. There is no way to tell the client
+      which fields are present and which are zero because they weren't
+      provided.
+
 search.c
 ------------
   - Still need aim_usersearch_name()

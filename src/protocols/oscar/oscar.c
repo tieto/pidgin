@@ -43,6 +43,7 @@
 #include "proxy.h"
 
 /*#include "pixmaps/cancel.xpm"*/
+#include "pixmaps/ab.xpm"
 #include "pixmaps/admin_icon.xpm"
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/away_icon.xpm"
@@ -52,6 +53,8 @@
 /* constants to identify proto_opts */
 #define USEROPT_AUTH      0
 #define USEROPT_AUTHPORT  1
+
+#define UC_AB 32
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -1130,6 +1133,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, struct aim_userinfo_s *);
 	va_end(ap);
 
+	if (info->flags & AIM_FLAG_ACTIVEBUDDY)
+		type |= UC_AB;
 	if (info->flags & AIM_FLAG_UNCONFIRMED)
 		type |= UC_UNCONFIRMED;
 	if (info->flags & AIM_FLAG_ADMINISTRATOR)
@@ -2374,6 +2379,8 @@ static int oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 }
 
 static char **oscar_list_icon(int uc) {
+	if (uc & UC_AB)
+		return (char **)ab_xpm;
 	if (uc & UC_UNAVAILABLE)
 		return (char **)away_icon_xpm;
 	if (uc & UC_AOL)

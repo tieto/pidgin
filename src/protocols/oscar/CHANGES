@@ -1,6 +1,15 @@
 
 No release numbers
 ------------------
+ - Wed Sep 19 18:50:34 PDT 2001
+  - Remove non-standard default features from aim_send_im_ext.
+    - Sadly, AOL 5.0 ignores messages with non-standard features.  Once
+        AOL releases AOL 6 for the Macintosh, there will no longer be any
+        reason for anyone to use AOL 5, and this will be a non-issue.
+  - Check for 0x2711 TLV in buddy icons.  This is weird.
+  - Add AIM_IMFLAG_ACTIVEBUDDY.
+  - Fix ICQ login. (Oops.)
+
  - Tue Sep 11 16:41:11 PDT 2001
   - Fix chat invites.
   - Keep faimtest from passing va_list's. That scares me.

@@ -82,7 +82,6 @@ static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
  * valid, a 0017/0007 comes back, which is the signal to send it the main 
  * login command (0017/0002). 
  *
- * XXX make ICQ logins work again. 
  */
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn)
 {
@@ -93,7 +92,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	if (!sess || !conn || !sn)
 		return -EINVAL;
 
-	if ((sn[0] >= '0') || (sn[0] <= '9'))
+	if ((sn[0] >= '0') && (sn[0] <= '9'))
 		return goddamnicq(sess, conn, sn);
 
 	sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
@@ -757,6 +756,7 @@ static int motd(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mod
 	 *   2 Advisory upgrade
 	 *   3 System bulletin
 	 *   4 Nothing's wrong ("top o the world" -- normal)
+	 *   5 Lets-break-something. 
 	 *
 	 */
 	id = aimbs_get16(bs);

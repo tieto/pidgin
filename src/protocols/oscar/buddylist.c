@@ -127,7 +127,7 @@ faim_export int aim_remove_buddy(aim_session_t *sess, aim_conn_t *conn, const ch
 	if (!sn || !strlen(sn))
 		return -EINVAL;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0002, 10+1+strlen(sn))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+1+strlen(sn))))
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0003, 0x0005, 0x0000, sn, strlen(sn)+1);

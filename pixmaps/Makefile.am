@@ -1,4 +1,5 @@
-EXTRA_DIST =	about_small.xpm			\
+EXTRA_DIST =	ab.xpm				\
+		about_small.xpm			\
 		add.xpm				\
 		add_small.xpm			\
 		admin_icon.xpm			\

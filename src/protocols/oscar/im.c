@@ -145,7 +145,7 @@ faim_export fu32_t aim_iconsum(const fu8_t *buf, int buflen)
 faim_export int aim_send_im_ext(aim_session_t *sess, aim_conn_t *conn, struct aim_sendimext_args *args)
 {
 	static const fu8_t deffeatures[] = {
-		0x01, 0x01, 0x01, 0x02, 0x42,
+		0x01, 0x01, 0x01, 0x02
 	};
 	int i, msgtlvlen;
 	aim_frame_t *fr;
@@ -962,7 +962,8 @@ static int incomingim_ch2_buddyicon(aim_session_t *sess, aim_module_t *mod, aim_
 	aim_tlv_t *miscinfo;
 	aim_bstream_t tbs;
 
-	miscinfo = aim_gettlv(list2, 0x2711, 1);
+	if (!(miscinfo = aim_gettlv(list2, 0x2711, 1)))
+		return 0;
 	aim_bstream_init(&tbs, miscinfo->value, miscinfo->length);
 
 	args->info.icon.checksum = aimbs_get32(&tbs);

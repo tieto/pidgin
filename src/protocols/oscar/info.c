@@ -210,6 +210,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, st
 			 *      0x0008  Unknown bit 4
 			 *      0x0010  Free (AIM) user 
 			 *      0x0020  Away
+			 *      0x0400  ActiveBuddy
 			 *
 			 */
 			outinfo->flags = aimbs_get16(bs);
@@ -444,7 +445,7 @@ faim_export int aim_0002_000b(aim_session_t *sess, aim_conn_t *conn, const char 
  * Normally contains:
  *   t(0001)  - short containing max profile length (value = 1024)
  *   t(0002)  - short - unknown (value = 16) [max MIME type length?]
- *   t(0003)  - short - unknown (value = 7)
+ *   t(0003)  - short - unknown (value = 10)
  */
 static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
