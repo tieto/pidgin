@@ -469,7 +469,7 @@ void serv_got_alias(GaimConnection *gc, char *who, char *alias) {
 	if (b->server_alias)
 		g_free(b->server_alias);
 
-	if (alias && g_utf8_validate(alias))
+	if (alias && g_utf8_validate(alias, -1, NULL))
 		b->server_alias = g_strdup(alias);
 	else
 		b->server_alias = NULL;
