@@ -67,14 +67,6 @@ extern guint accels_save_timer;
 void gaim_setup_imhtml(GtkWidget *imhtml);
 
 /**
- * Displays a dialog for saving the buddy icon in a conversation.
- *
- * @param obj  @c NULL
- * @param conv The conversation.
- */
-void gaim_gtk_save_icon_dialog(GtkObject *obj, GaimConversation *conv);
-
-/**
  * Returns the display style for buttons for the specified conversation
  * type.
  *
