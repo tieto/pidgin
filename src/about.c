@@ -197,7 +197,7 @@ void show_about(GtkWidget *w, void *data)
 			"  <b>", _("German"), " (de)</b> - Daniel Seifert, Karsten Weiss<br>"
 			"  <b>", _("Spanish"), " (es)</b> - Amaya Rodrigo, Alejandro G Villar, Nicolás Lichtmaier, JM Pérez Cáncer<br>"
 			"  <b>", _("Finnish"), " (fi)</b> - Tero Kuusela<br>"
-			"  <b>", _("French"), " (fr)</b> - sebfrance, Stéphane Pontier, Stéphane Wirtel, Loïc Jeannin<br>"
+			"  <b>", _("French"), " (fr)</b> - Sébastien François, Stéphane Pontier, Stéphane Wirtel, Loïc Jeannin<br>"
 			"  <b>", _("Hebrew"), " (he)</b> - Pavel Bibergal<br>"
 			"  <b>", _("Italian"), " (it)</b> - Salvatore di Maggio<br>"
 			"  <b>", _("Japanese"), " (ja)</b> - Ryosuke Kutsuna, Taku Yasui, Junichi Uekawa<br>"
