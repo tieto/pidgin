@@ -93,8 +93,6 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	if (session->http_method)
 	{
 		servconn->http_data->gateway_ip = g_strdup(host);
-		host = "gateway.messenger.hotmail.com";
-		port = 80;
 	}
 
 	i = gaim_proxy_connect(session->account, host, port, connect_cb,

@@ -111,26 +111,13 @@ msn_session_connect(MsnSession *session)
 
 	session->connected = TRUE;
 
-	if (session->http_method)
-	{
-		session->notification_conn = msn_notification_new(session);
+	session->notification_conn = msn_notification_new(session);
 
-		if (msn_notification_connect(session->notification_conn,
-									 "gateway.messenger.hotmail.com", 80))
-		{
-			return TRUE;
-		}
-	}
-	else
-	{
-		session->notification_conn = msn_notification_new(session);
-
-		if (msn_notification_connect(session->notification_conn,
+	if (msn_notification_connect(session->notification_conn,
 									 session->dispatch_server,
 									 session->dispatch_port))
-		{
-			return TRUE;
-		}
+	{
+		return TRUE;
 	}
 
 	return FALSE;
