@@ -146,15 +146,19 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 		}
 	}
 
-	cur = msn_url_decode(pre->str);
+	cur = g_strdup(msn_url_decode(pre->str));
 	g_string_free(pre, TRUE);
 
 	if (pre_ret != NULL)
 		*pre_ret = cur;
+	else
+		g_free(cur);
 
-	cur = msn_url_decode(post->str);
+	cur = g_strdup(msn_url_decode(post->str));
 	g_string_free(post, TRUE);
 
 	if (post_ret != NULL)
 		*post_ret = cur;
+	else
+		g_free(cur);
 }
