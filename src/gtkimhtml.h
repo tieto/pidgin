@@ -91,7 +91,7 @@ struct _GtkSmileyTree {
 struct _GtkIMHtmlSmiley {
 	gchar *smile;
 	gchar *file;
-	GdkPixbuf *icon;
+	GdkPixbufAnimation *icon;
 	gboolean hidden;
 };
 

@@ -27,12 +27,12 @@ MSN_SMILEYS = \
 	msn_angel.png		\
 	msn_angry.png		\
 	msn_away.png		\
-	msn_bat.png			\
+	msn_bat.gif			\
 	msn_beer.png		\
 	msn_bowl.png		\
 	msn_boy.png			\
 	msn_brheart.png		\
-	msn_cake.png		\
+	msn_cake.gif		\
 	msn_car.png			\
 	msn_cat.png			\
 	msn_cellphone.png	\
@@ -40,15 +40,16 @@ MSN_SMILEYS = \
 	msn_coffee.png		\
 	msn_coins.png		\
 	msn_computer.png	\
-	msn_cry.png			\
+	msn_cry.gif			\
 	msn_deadflower.png	\
 	msn_devil.png		\
 	msn_dog.png			\
+	msn_dontknow.gif	\
 	msn_donttell.png	\
 	msn_drink.png		\
 	msn_email.png		\
 	msn_embarrassed.png	\
-	msn_eyeroll.png		\
+	msn_eyeroll.gif		\
 	msn_film.png		\
 	msn_flower.png		\
 	msn_gift.png		\
@@ -61,14 +62,14 @@ MSN_SMILEYS = \
 	msn_island.png		\
 	msn_kiss.png		\
 	msn_laugh.png		\
-	msn_lightning.png	\
+	msn_lightning.gif	\
 	msn_nerd.png		\
 	msn_neutral.png		\
 	msn_note.png		\
 	msn_occ.png			\
 	msn_online.png		\
 	msn_ooooh.png		\
-	msn_party.png		\
+	msn_party.gif		\
 	msn_phone.png		\
 	msn_photo.png		\
 	msn_pizza.png		\
@@ -84,7 +85,7 @@ MSN_SMILEYS = \
 	msn_sheep.png		\
 	msn_sick.png		\
 	msn_sleep.png		\
-	msn_sleepy.png		\
+	msn_sleepy.gif		\
 	msn_smiley.png		\
 	msn_snail.png		\
 	msn_soccer.png		\
@@ -93,13 +94,13 @@ MSN_SMILEYS = \
 	msn_sun.png			\
 	msn_sunglasses.png	\
 	msn_teeth.png		\
-	msn_think.png		\
+	msn_think.gif		\
 	msn_thumbdown.png	\
 	msn_thumbup.png		\
 	msn_tongue.png		\
 	msn_umbrella.png	\
 	msn_weird.png		\
-	msn_wink.png
+	msn_wink.gif
 
 YAHOO_SMILEYS = \
 	yahoo_alien.gif			\

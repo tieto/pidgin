@@ -660,7 +660,7 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	return (*len > 0);
 }
 
-GdkPixbuf*
+GdkPixbufAnimation *
 gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		       const gchar   *sml,
 		       const gchar   *text)
@@ -693,7 +693,7 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 	}
 
 	if (!t->image->icon)
-		t->image->icon = gdk_pixbuf_new_from_file(t->image->file, NULL);
+		t->image->icon = gdk_pixbuf_animation_new_from_file(t->image->file, NULL);
 
 	return t->image->icon;
 }
@@ -1372,6 +1372,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			c++;
 			pos++;
 		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
+			GtkTextChildAnchor *anchor;
+			GtkWidget *icon;
+			GdkPixbufAnimation *pixbuf;
 			GtkIMHtmlFontDetail *fd;
 			gchar *sml = NULL;
 			if (fonts) {
@@ -1380,7 +1383,13 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			}
 			NEW_BIT (NEW_TEXT_BIT);
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
-			gtk_text_buffer_insert_pixbuf(imhtml->text_buffer, &iter, gtk_smiley_tree_image (imhtml, sml, ws));
+			anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
+			pixbuf = gtk_smiley_tree_image(imhtml, sml, ws);
+			icon = gtk_image_new_from_animation(pixbuf);
+			g_object_unref(pixbuf);
+			gtk_widget_show(icon);
+			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+
 			c += smilelen;
 			pos += smilelen;
 			wpos = 0;
@@ -1747,6 +1756,5 @@ void gtk_imhtml_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIt
 
 void gtk_imhtml_hr_free(GtkIMHtmlScalable *scale)
 {
-/*	gtk_widget_destroy(((GtkIMHtmlHr *)scale)->sep); */
 	g_free(scale);
 }
