@@ -19,6 +19,8 @@ version 0.44 (09/20/2001):
 	  the message received was auto-response (see SIGNALS)
 	* IRC fixes (largly copied from X-Chat)
 	* Internal change to how preferences are stored
+	* Other bug fixes
+	* Option to hide buddy icons
 
 version 0.43 (09/06/2001):
 	* Updated German Translation (thanks Daniel Seifert)

@@ -944,6 +944,22 @@ static void im_page()
 	opt = tab_radio(_("Right"), OPT_IM_SIDE_TAB | OPT_IM_BR_TAB, vbox3, opt);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), opt);
 
+#if USE_PIXBUF
+	frame = gtk_frame_new(_("Buddy Icons"));
+	gtk_box_pack_start(GTK_BOX(box), frame, FALSE, FALSE, 5);
+	gtk_widget_show(frame);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(frame), hbox);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	gaim_button(_("Hide Buddy Icons"), &im_options, OPT_IM_HIDE_ICONS, vbox);
+#endif
+
 	gtk_widget_show(prefdialog);
 }
 
@@ -2471,6 +2487,9 @@ static void set_im_option(GtkWidget *w, int option)
 
 	if (option == OPT_IM_ONE_WINDOW)
 		tabize();
+
+	if (option == OPT_IM_HIDE_ICONS)
+		set_hide_icons();
 
 	save_prefs();
 }

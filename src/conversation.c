@@ -2609,6 +2609,9 @@ void update_icon(struct conversation *c)
 
 	remove_icon(c);
 
+	if (im_options & OPT_IM_HIDE_ICONS)
+		return;
+
 	if (!c->gc)
 		return;
 
@@ -2666,6 +2669,15 @@ void got_new_icon(struct gaim_connection *gc, char *who)
 	struct conversation *c = find_conversation(who);
 	if (c && (c->gc == gc))
 		update_icon(c);
+}
+
+void set_hide_icons()
+{
+	GList *c = conversations;
+	while (c) {
+		update_icon(c->data);
+		c = c->next;
+	}
 }
 
 static void remove_checkbox(struct conversation *c)
