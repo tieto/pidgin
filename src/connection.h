@@ -114,7 +114,7 @@ extern "C" {
 /*@{*/
 
 /**
- * This function should only be called by gaim_connection_connect()
+ * This function should only be called by gaim_account_connect()
  * in account.c.  If you're trying to sign on an account, use that
  * function instead.
  *
@@ -134,7 +134,7 @@ void gaim_connection_new(GaimAccount *account, gboolean regist,
 									const char *password);
 
 /**
- * This function should only be called by gaim_connection_connect()
+ * This function should only be called by gaim_account_disconnect()
  * in account.c.  If you're trying to sign on an account, use that
  * function instead.
  *
@@ -143,19 +143,6 @@ void gaim_connection_new(GaimAccount *account, gboolean regist,
  * @param gc The gaim connection to destroy.
  */
 void gaim_connection_destroy(GaimConnection *gc);
-
-/**
- * This function should only be called by gaim_connection_disconnect()
- * in account.c.  If you're trying to sign out an account, use that
- * function instead.
- *
- * Logs out of this connection.
- *
- * @param gc The connection to log out.
- *
- * @see gaim_connection_connect()
- */
-void gaim_connection_disconnect(GaimConnection *gc);
 
 /**
  * Sets the connection state.

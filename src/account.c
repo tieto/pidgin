@@ -709,8 +709,8 @@ gaim_account_destroy(GaimAccount *account)
 
 	gaim_debug_info("account", "Destroying account %p\n", account);
 
-	if (account->gc != NULL)
-		gaim_connection_destroy(account->gc);
+	if (gaim_account_is_connected(account))
+		gaim_account_disconnect(account);
 
 	gaim_debug_info("account", "Continuing to destroy account %p\n", account);
 
@@ -831,11 +831,11 @@ gaim_account_disconnect(GaimAccount *account)
 	gaim_debug_info("account", "Disconnecting account %p\n", account);
 
 	account->disconnecting = TRUE;
+
 	gc = gaim_account_get_connection(account);
-
-	gaim_connection_disconnect(gc);
-
+	gaim_connection_destroy(gc);
 	gaim_account_set_connection(account, NULL);
+
 	account->disconnecting = FALSE;
 }
 
@@ -1031,7 +1031,7 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	g_free(account->buddy_icon);
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
 	if (gaim_account_is_connected(account))
-		serv_set_buddyicon(account->gc, icon);
+		serv_set_buddyicon(gaim_account_get_connection(account), icon);
 
 	schedule_accounts_save();
 }

@@ -117,48 +117,14 @@ gaim_connection_destroy(GaimConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
-		gaim_connection_disconnect(gc);
-
-		return;
-	}
-
-	gaim_debug_info("connection", "Destroying connection %p\n", gc);
-
-	account = gaim_connection_get_account(gc);
-	gaim_account_set_connection(account, NULL);
-
-	if (gc->password != NULL)
-		g_free(gc->password);
-
-	if (gc->display_name != NULL)
-		g_free(gc->display_name);
-
-	if (gc->disconnect_timeout)
-		gaim_timeout_remove(gc->disconnect_timeout);
-
-	g_free(gc);
-}
-
-void
-gaim_connection_disconnect(GaimConnection *gc)
-{
-	GaimAccount *account;
-	GList *wins;
-	GaimPresence *presence = NULL;
-
-	g_return_if_fail(gc != NULL);
-
 	account = gaim_connection_get_account(gc);
 
-	if (!account->disconnecting) {
-		gaim_account_disconnect(account);
-		return;
-	}
-
-	gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
-
 	if (gaim_connection_get_state(gc) != GAIM_DISCONNECTED) {
+		GList *wins;
+		GaimPresence *presence = NULL;
+
+		gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
+
 		if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
 			gaim_blist_remove_account(gaim_connection_get_account(gc));
 
@@ -190,19 +156,24 @@ gaim_connection_disconnect(GaimConnection *gc)
 
 		gaim_request_close_with_handle(gc);
 		gaim_notify_close_with_handle(gc);
+
+		return;
 	}
 
-	gaim_connection_destroy(gc);
-}
+	gaim_debug_info("connection", "Destroying connection %p\n", gc);
 
-gboolean
-gaim_connection_disconnect_cb(gpointer data)
-{
-	GaimAccount *account = data;
+	gaim_account_set_connection(account, NULL);
 
-	gaim_account_disconnect(account);
+	if (gc->password != NULL)
+		g_free(gc->password);
 
-	return FALSE;
+	if (gc->display_name != NULL)
+		g_free(gc->display_name);
+
+	if (gc->disconnect_timeout)
+		gaim_timeout_remove(gc->disconnect_timeout);
+
+	g_free(gc);
 }
 
 /*
@@ -410,6 +381,16 @@ gaim_connection_notice(GaimConnection *gc, const char *text)
 		ops->notice(gc, text);
 }
 
+gboolean
+gaim_connection_disconnect_cb(gpointer data)
+{
+	GaimAccount *account = data;
+
+	gaim_account_disconnect(account);
+
+	return FALSE;
+}
+
 void
 gaim_connection_error(GaimConnection *gc, const char *text)
 {
@@ -442,7 +423,7 @@ gaim_connections_disconnect_all(void)
 	while ((l = gaim_connections_get_all()) != NULL) {
 		gc = l->data;
 		gc->wants_to_die = TRUE;
-		gaim_connection_destroy(gc);
+		gaim_account_disconnect(gc->account);
 	}
 }
 
