@@ -85,7 +85,6 @@ sub plugin_load {
 	# Command to get dynamic message from
 	$command = "fortune -sn " . ($max - $len);
 
-	$seconds = 10;                   # Delay before updating away messages.
 	# output the first message and start the timers...
 	# This is done as a timeout to prevent attempts to set the
 	# profile before logging in.
