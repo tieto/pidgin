@@ -497,8 +497,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		GtkCellRenderer *rend, *rend2;
 
 		disconnect_window = g_new0(struct disconnect_window, 1);
-		disconnect_window->window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, GTK_DIALOG_NO_SEPARATOR,
-									GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
+		disconnect_window->window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, GTK_DIALOG_NO_SEPARATOR, NULL);
 		g_signal_connect(G_OBJECT(disconnect_window->window), "response", G_CALLBACK(disconnect_response_cb), disconnect_window);
 
 		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), 6);
@@ -531,6 +530,11 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 			GTK_DIALOG(disconnect_window->window),
 			_("Reconnect _All"),
 			GTK_RESPONSE_APPLY);
+
+		gtk_dialog_add_button(
+			GTK_DIALOG(disconnect_window->window),
+			GTK_STOCK_CLOSE,
+			GTK_RESPONSE_CLOSE);
 
 		gtk_widget_show_all(disconnect_window->window);
 
