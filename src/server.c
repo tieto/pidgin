@@ -1019,6 +1019,7 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 {
 	GaimAccount *account;
 	struct buddy *b;
+	GSList *buddies;
 
 	account = gaim_connection_get_account(gc);
 	b = gaim_find_buddy(account, name);
@@ -1129,21 +1130,12 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 			gaim_pounce_execute(gc->account, b->name, GAIM_POUNCE_SIGNOFF);
 			system_log(log_signoff, gc, b, OPT_LOG_BUDDY_SIGNON);
 		}
-	}	
-	
+	}
+
 	gaim_blist_update_buddy_presence(b, loggedin);
 
-	/*
-	 * Now, update the rest of the buddies in the list.  This is weird, by 
-	 * the way.  Basically we call gaim_find_buddy() until it returns null.  
-	 * Calling gaim_find_buddy() with a name sets a static variable.  Then 
-	 * calling it without a name uses that static reference to return other 
-	 * stuff.  We can't be sure that the above code didn't call 
-	 * gaim_find_buddy() again with another buddy name, so we "reseed" the 
-	 * function here.
-	 */
-	b = gaim_find_buddy(account, name);
-	while ((b = gaim_find_buddy(gc->account, NULL)) != NULL) {
+	for (buddies = gaim_find_buddies(account, name); buddies; buddies = g_slist_remove(buddies, buddies->data)) {
+		b = buddies->data;
 		gaim_blist_update_buddy_presence(b, loggedin);
 		gaim_blist_update_buddy_idle(b, idle);
 		gaim_blist_update_buddy_evil(b, evil);

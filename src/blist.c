@@ -798,34 +798,51 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 
 struct buddy *gaim_find_buddy(GaimAccount *account, const char *name)
 {
-	static struct buddy *buddy = NULL;
+	struct buddy *buddy;
 	struct _gaim_hbuddy hb;
 	GaimBlistNode *group;
-	const char *n = NULL;
 
 	if (!gaimbuddylist)
 		return NULL;
-	
-	if (!name && !buddy)
+
+	if (!name)
 		return NULL;
 
-	if (name) {
-		group = gaimbuddylist->root;
-		n = name;
-	} else {
-		group = ((GaimBlistNode*)buddy)->parent->next;
-		n = buddy->name;
-	}
+	hb.name = normalize(name);
+	hb.account = account;
 
-	while (group) {
-		hb.name = normalize(n);
-		hb.account = account;
+	for(group = gaimbuddylist->root; group; group = group->next) {
 		hb.group = group;
 		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
 			return buddy;
-		group = ((GaimBlistNode*)group)->next;
 	}
+
 	return NULL;
+}
+
+GSList *gaim_find_buddies(GaimAccount *account, const char *name)
+{
+	struct buddy *buddy;
+	struct _gaim_hbuddy hb;
+	GaimBlistNode *group;
+	GSList *ret = NULL;
+
+	if (!gaimbuddylist)
+		return NULL;
+
+	if (!name)
+		return NULL;
+
+	hb.name = normalize(name);
+	hb.account = account;
+
+	for(group = gaimbuddylist->root; group; group = group->next) {
+		hb.group = group;
+		if ((buddy = g_hash_table_lookup(gaimbuddylist->buddies, &hb)) != NULL)
+			ret = g_slist_append(ret, buddy);
+	}
+
+	return ret;
 }
 
 struct group *gaim_find_group(const char *name)

@@ -411,7 +411,18 @@ char *gaim_get_buddy_alias(struct buddy *buddy);
  * @param account The account this buddy belongs to
  * @return        The buddy or NULL if the buddy does not exist
  */
-struct buddy *gaim_find_buddy(GaimAccount *account, const char *name);   
+struct buddy *gaim_find_buddy(GaimAccount *account, const char *name);
+
+/**
+ * Finds all buddies struct given a screenname and an account
+ *
+ * @param name    The buddy's screenname
+ * @param account The account this buddy belongs to
+ *
+ * @return        A GSList of buddies (which must be freed), or NULL if the buddy doesn't exist
+ */
+GSList *gaim_find_buddies(GaimAccount *account, const char *name);
+
 
 /**
  * Finds a group by name

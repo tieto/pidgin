@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 
+#include "core.h"
 #include "debug.h"
 
 extern char *opt_rcfile_arg;
