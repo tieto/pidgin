@@ -2708,11 +2708,11 @@ void update_convo_status(struct conversation *c, int typing_state) {
 		buf = g_malloc(len+1);
 		g_snprintf(buf, len+1, win->title);
 		if(typing_state == TYPING) {
-			buf2 = g_strconcat(buf,_(" [TYPING]"));
+			buf2 = g_strconcat(buf,_(" [TYPING]"), NULL);
 			g_free(buf);
 			buf = buf2;
 		} else if(typing_state == TYPED) {
-			buf2 = g_strconcat(buf,_(" [TYPED]"));
+			buf2 = g_strconcat(buf,_(" [TYPED]"), NULL);
 			g_free(buf);
 			buf = buf2;
 		}
