@@ -1964,7 +1964,6 @@ void show_conv(struct conversation *c)
 		gtk_widget_set_usize(entry, 300, 50);
 	else
 		gtk_widget_set_usize(entry, 300, 25);
-	gtk_window_set_focus(GTK_WINDOW(win), entry);
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
