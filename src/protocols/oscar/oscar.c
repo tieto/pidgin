@@ -1003,8 +1003,8 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	int fd;
 
 	va_start(ap, fr);
-       offset = (fu32_t)va_arg(ap, unsigned long);
-       len = (fu32_t)va_arg(ap, unsigned long);
+	offset = va_arg(ap, fu32_t);
+	len = va_arg(ap, fu32_t);
 	modname = va_arg(ap, char *);
 	va_end(ap);
 
@@ -2194,12 +2194,13 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 }
 
 static int gaim_parse_incoming_im(aim_session_t *sess, aim_frame_t *fr, ...) {
-	int channel, ret = 0;
+	fu16_t channel;
+	int ret = 0;
 	aim_userinfo_t *userinfo;
 	va_list ap;
 
 	va_start(ap, fr);
-	channel = va_arg(ap, int);
+	channel = (fu16_t)va_arg(ap, unsigned int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 
 	switch (channel) {
@@ -2238,10 +2239,10 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char buf[1024];
 
 	va_start(ap, fr);
-       chan = (fu16_t)va_arg(ap, unsigned int);
-        userinfo = va_arg(ap, aim_userinfo_t *);
-       nummissed = (fu16_t)va_arg(ap, unsigned int);
-       reason = (fu16_t)va_arg(ap, unsigned int);
+	chan = (fu16_t)va_arg(ap, unsigned int);
+	userinfo = va_arg(ap, aim_userinfo_t *);
+	nummissed = (fu16_t)va_arg(ap, unsigned int);
+	reason = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	switch(reason) {
@@ -2407,18 +2408,18 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *who;
 
 	va_start(ap, fr);
-	chan = (fu16_t) va_arg(ap, unsigned int);
+	chan = (fu16_t)va_arg(ap, unsigned int);
 	who = va_arg(ap, char *);
-	reason = (fu16_t) va_arg(ap, unsigned int);
+	reason = (fu16_t)va_arg(ap, unsigned int);
 
 	if (chan == 0x0002) { /* File transfer declined */
 		char *cookie = va_arg(ap, char *);
 		return gaim_parse_clientauto_ch2(sess, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
-		int state = 0;
+		fu32_t state = 0;
 		char *msg = NULL;
 		if (reason == 0x0003) {
-			state = (int) va_arg(ap, fu32_t);
+			state = va_arg(ap, fu32_t);
 			msg = va_arg(ap, char *);
 		}
 		return gaim_parse_clientauto_ch4(sess, who, reason, state, msg);
@@ -2810,17 +2811,16 @@ static int gaim_chatnav_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			fu32_t createtime;
 
 			fqcn = va_arg(ap, char *);
-                       instance = (fu16_t)va_arg(ap, unsigned int);
-                       exchange = (fu16_t)va_arg(ap, unsigned int);
-                       flags = (fu16_t)va_arg(ap, unsigned int);
-                        createtime = va_arg(ap, fu32_t);
-                       maxmsglen = (fu16_t)va_arg(ap, unsigned int);
-                       maxoccupancy = (fu16_t)va_arg(ap, unsigned int);
-                       createperms = (fu8_t)va_arg(ap, int);
-                       unknown = (fu16_t)va_arg(ap, unsigned int);
-                       name = va_arg(ap, char *);
-                       ck = va_arg(ap, char *);
-/*                        va_end(ap); */
+			instance = (fu16_t)va_arg(ap, unsigned int);
+			exchange = (fu16_t)va_arg(ap, unsigned int);
+			flags = (fu16_t)va_arg(ap, unsigned int);
+			createtime = va_arg(ap, fu32_t);
+			maxmsglen = (fu16_t)va_arg(ap, unsigned int);
+			maxoccupancy = (fu16_t)va_arg(ap, unsigned int);
+			createperms = (fu8_t)va_arg(ap, unsigned int);
+			unknown = (fu16_t)va_arg(ap, unsigned int);
+			name = va_arg(ap, char *);
+			ck = va_arg(ap, char *);
 
 			debug_printf("created room: %s %hu %hu %hu %lu %hu %hu %hhu %hu %s %s\n",
 					fqcn,
@@ -2905,12 +2905,12 @@ static int gaim_chat_info_update(aim_session_t *sess, aim_frame_t *fr, ...) {
 	usercount= va_arg(ap, int);
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	roomdesc = va_arg(ap, char *);
-       unknown_c9 = (fu16_t)va_arg(ap, int);
-       creationtime = (fu32_t)va_arg(ap, unsigned long);
-       maxmsglen = (fu16_t)va_arg(ap, int);
-       unknown_d2 = (fu16_t)va_arg(ap, int);
-       unknown_d5 = (fu16_t)va_arg(ap, int);
-       maxvisiblemsglen = (fu16_t)va_arg(ap, int);
+	unknown_c9 = (fu16_t)va_arg(ap, unsigned int);
+	creationtime = va_arg(ap, fu32_t);
+	maxmsglen = (fu16_t)va_arg(ap, unsigned int);
+	unknown_d2 = (fu16_t)va_arg(ap, unsigned int);
+	unknown_d5 = (fu16_t)va_arg(ap, unsigned int);
+	maxvisiblemsglen = (fu16_t)va_arg(ap, unsigned int);
 	va_end(ap);
 
 	debug_printf("inside chat_info_update (maxmsglen = %hu, maxvislen = %hu)\n",
@@ -2997,15 +2997,15 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu32_t windowsize, clear, alert, limit, disconnect, currentavg, maxavg;
 
 	va_start(ap, fr); 
-       code = (fu16_t)va_arg(ap, unsigned int);
-       rateclass= (fu16_t)va_arg(ap, unsigned int);
-       windowsize = (fu32_t)va_arg(ap, unsigned long);
-       clear = (fu32_t)va_arg(ap, unsigned long);
-       alert = (fu32_t)va_arg(ap, unsigned long);
-       limit = (fu32_t)va_arg(ap, unsigned long);
-       disconnect = (fu32_t)va_arg(ap, unsigned long);
-       currentavg = (fu32_t)va_arg(ap, unsigned long);
-       maxavg = (fu32_t)va_arg(ap, unsigned long);
+	code = (fu16_t)va_arg(ap, unsigned int);
+	rateclass= (fu16_t)va_arg(ap, unsigned int);
+	windowsize = va_arg(ap, fu32_t);
+	clear = va_arg(ap, fu32_t);
+	alert = va_arg(ap, fu32_t);
+	limit = va_arg(ap, fu32_t);
+	disconnect = va_arg(ap, fu32_t);
+	currentavg = va_arg(ap, fu32_t);
+	maxavg = va_arg(ap, fu32_t);
 	va_end(ap);
 
 	debug_printf("rate %s (param ID 0x%04hx): curavg = %lu, maxavg = %lu, alert at %lu, "
