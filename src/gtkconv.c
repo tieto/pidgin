@@ -1285,8 +1285,7 @@ insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 {
 	GaimConversation *conv = (GaimConversation *)user_data;
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 		return;
@@ -1302,8 +1301,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 	GaimConversation *conv = (GaimConversation *)user_data;
 	GaimIm *im;
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 		return;
@@ -1743,8 +1741,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	conv = gaim_window_get_conversation_at(win, page_num);
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	gc      = gaim_conversation_get_gc(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
@@ -1911,8 +1908,7 @@ check_everything(GtkTextBuffer *buffer)
 	conv = (GaimConversation *)g_object_get_data(G_OBJECT(buffer),
 														 "user_data");
 
-	if (conv == NULL)
-		return;
+	g_return_if_fail(conv != NULL);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
@@ -2008,20 +2004,16 @@ update_send_as_selection(GaimWindow *win)
 	GtkWidget *menu;
 	GList *child;
 
-	if (g_list_find(gaim_get_windows(), win) == NULL)
-		return FALSE;
+	g_return_val_if_fail(g_list_find(gaim_get_windows(), win) != NULL, FALSE);
 
 	conv = gaim_window_get_active_conversation(win);
 
+	g_return_val_if_fail(conv != NULL, FALSE);
 
-	if (conv == NULL)
-		return FALSE;
+	account = gaim_conversation_get_account(conv);
+	gtkwin  = GAIM_GTK_WINDOW(win);
 
-	account   = gaim_conversation_get_account(conv);
-	gtkwin = GAIM_GTK_WINDOW(win);
-
-	if (account == NULL)
-		return FALSE;
+	g_return_val_if_fail(account != NULL, FALSE);
 
 	if (gtkwin->menu.send_as == NULL)
 		return FALSE;
@@ -2515,8 +2507,8 @@ meify(char *message, size_t len)
 	char *c;
 	gboolean inside_html = 0;
 
-	if (message == NULL)
-		return FALSE;    /* Umm.. this would be very bad if this happens. */
+	/* Umm.. this would be very bad if this happens. */
+	g_return_val_if_fail(message != NULL, FALSE);
 
 	if (len == -1)
 		len = strlen(message);
@@ -4527,8 +4519,7 @@ gaim_get_gtk_conversation_ui_ops(void)
 static void
 remove_icon(GaimGtkConversation *gtkconv)
 {
-	if (gtkconv == NULL)
-		return;
+	g_return_if_fail(gtkconv != NULL);
 
 	if (gtkconv->u.im->icon != NULL)
 		gtk_container_remove(GTK_CONTAINER(gtkconv->bbox),
@@ -4709,11 +4700,9 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 	GdkBitmap *bm;
 	int sf = 0;
 
-	if (conv == NULL || !GAIM_IS_GTK_CONVERSATION(conv) ||
-		gaim_conversation_get_type(conv) != GAIM_CONV_IM) {
-
-		return;
-	}
+	g_return_if_fail(conv != NULL);
+	g_return_if_fail(GAIM_IS_GTK_CONVERSATION(conv));
+	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_IM);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
