@@ -22,6 +22,7 @@
 
 #include "account.h"
 #include "debug.h"
+#include "prefs.h"
 #include "util.h"
 
 #include "gtkblist.h"
@@ -282,7 +283,7 @@ GaimConnectionUiOps *gaim_get_gtk_connection_ui_ops(void)
 }
 
 
-void away_on_login(char *mesg)
+void away_on_login(const char *mesg)
 {
 	GSList *awy = away_messages;
 	struct away_message *a, *message = NULL;
@@ -294,22 +295,20 @@ void away_on_login(char *mesg)
 		return;
 	}
 
-	if (mesg == NULL) {
-		/* Use default message */
-		do_away_message(NULL, default_away);
-	} else {
-		/* Use argument */
-		while (awy) {
-			a = (struct away_message *)awy->data;
-			if (strcmp(a->name, mesg) == 0) {
-				message = a;
-				break;
-			}
-			awy = awy->next;
+	if (mesg == NULL)
+		mesg = gaim_prefs_get_string("/core/away/default_message");
+	while (awy) {
+		a = (struct away_message *)awy->data;
+		if (strcmp(a->name, mesg) == 0) {
+			message = a;
+			break;
 		}
-		if (message == NULL)
-			message = default_away;
-		do_away_message(NULL, message);
+		awy = awy->next;
 	}
-	return;
+	if (message == NULL) {
+		if(!away_messages)
+			return;
+		message = away_messages->data;
+	}
+	do_away_message(NULL, message);
 }

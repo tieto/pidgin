@@ -71,18 +71,18 @@ free_parser_data(gpointer user_data)
 static void gaim_status_write(FILE *fp, struct away_message *am)
 {
 	char *esc = NULL;
-	
+
 	esc = g_markup_escape_text(am->name, -1);
-	fprintf(fp, " <status name=\"%s\">\n", esc);
-	g_free(esc);
-	
-	fprintf(fp, "    <state>away</state>\n");
-	
-	esc = g_markup_escape_text(am->message, -1);
-	fprintf(fp, "    <message>%s</message>\n", esc);
+	fprintf(fp, "\t<status name=\"%s\">\n", esc);
 	g_free(esc);
 
-	fprintf(fp, " </status>\n");
+	fprintf(fp, "\t\t<state>away</state>\n");
+
+	esc = g_markup_escape_text(am->message, -1);
+	fprintf(fp, "\t\t<message>%s</message>\n", esc);
+	g_free(esc);
+
+	fprintf(fp, "\t</status>\n");
 }
 
 static gboolean
@@ -134,7 +134,7 @@ start_element_handler(GMarkupParseContext *context,
 		}
 	} else if (!strcmp(element_name, "message")) {
 		data->tag = TAG_MESSAGE;
-		
+
 	}
 
 	g_hash_table_destroy(atts);

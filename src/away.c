@@ -44,7 +44,6 @@ GtkListStore *awayqueuestore = NULL;
 GtkWidget *awayqueuesw;
 
 struct away_message *awaymessage = NULL;
-struct away_message *default_away;
 int auto_away;
 
 static void destroy_im_away()
@@ -305,14 +304,22 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)
 {
-	int default_index;
-	default_index = g_slist_index(away_messages, default_away);
-	if (default_index == -1) {
-		if (away_messages != NULL)
-			default_away = away_messages->data;
-		else
-			default_away = NULL;
+	struct away_message *default_away = NULL;
+	const char *default_away_name;
+	GSList *l;
+
+	default_away_name = gaim_prefs_get_string("/core/away/default_message");
+
+	for(l = away_messages; l; l = l->next) {
+		if(!strcmp(default_away_name, ((struct away_message *)l->data)->name)) {
+			default_away = l->data;
+			break;
+		}
 	}
+
+	if(!default_away && away_messages)
+		default_away = away_messages->data;
+
 	away_messages = g_slist_remove(away_messages, a);
 	g_free(a);
 	do_away_menu();

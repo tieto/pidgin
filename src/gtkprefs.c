@@ -2529,11 +2529,14 @@ prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 void default_away_menu_init(GtkWidget *omenu)
 {
 	GtkWidget *menu, *opt;
-	int index = 0;
+	int index = 0, default_index = 0;
 	GSList *awy = away_messages;
 	struct away_message *a;
+	const char *default_name;
 
 	menu = gtk_menu_new();
+
+	default_name = gaim_prefs_get_string("/core/away/default_message");
 
 	while (awy) {
 		a = (struct away_message *)awy->data;
@@ -2543,13 +2546,16 @@ void default_away_menu_init(GtkWidget *omenu)
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
+		if(!strcmp(default_name, a->name))
+			default_index = index;
+
 		awy = awy->next;
 		index++;
 	}
 
 	gtk_option_menu_remove_menu(GTK_OPTION_MENU(omenu));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(omenu), menu);
-	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), g_slist_index(away_messages, default_away));
+	gtk_option_menu_set_history(GTK_OPTION_MENU(omenu), default_index);
 }
 
 GtkWidget *pref_fg_picture = NULL;
@@ -2604,7 +2610,7 @@ void apply_color_dlg(GtkWidget *w, gpointer d)
 
 void set_default_away(GtkWidget *w, gpointer i)
 {
-
+	struct away_message *default_away = NULL;
 	int length = g_slist_length(away_messages);
 
 	if (away_messages == NULL)
@@ -2613,6 +2619,11 @@ void set_default_away(GtkWidget *w, gpointer i)
 		default_away = g_slist_nth_data(away_messages, length - 1);
 	else
 		default_away = g_slist_nth_data(away_messages, (int)i);
+
+	if(default_away)
+		gaim_prefs_set_string("/core/away/default_message", default_away->name);
+	else
+		gaim_prefs_set_string("/core/away/default_message", "");
 }
 
 static GtkWidget *show_color_pref(GtkWidget *box, gboolean fgc)

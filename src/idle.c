@@ -92,6 +92,22 @@ gint check_idle(gpointer data)
 		&& (!gc->is_auto_away)) {
 
 		if (!gc->away) {
+			struct away_message *default_away = NULL;
+			const char *default_name;
+			GSList *l;
+
+			default_name = gaim_prefs_get_string("/core/away/default_message");
+
+			for(l = away_messages; l; l = l->next) {
+				if(!strcmp(default_name, ((struct away_message *)l->data)->name)) {
+					default_away = l->data;
+					break;
+				}
+			}
+
+			if(!default_away && away_messages)
+				default_away = away_messages->data;
+
 			gaim_debug(GAIM_DEBUG_INFO, "idle",
 					   "Making %s away automatically\n",
 					   gaim_account_get_username(account));
@@ -100,7 +116,6 @@ gint check_idle(gpointer data)
 			else if (default_away)
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
 			gc->is_auto_away = 1;
-			set_default_away(NULL, (gpointer)g_slist_index(away_messages, default_away));
 		} else
 			gc->is_auto_away = 2;
 	} else if (gc->is_auto_away &&

@@ -29,6 +29,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <glib.h>
+#include "internal.h"
 #include "prefs.h"
 #include "debug.h"
 #include "util.h"
@@ -107,6 +108,9 @@ void gaim_prefs_init() {
 	gaim_prefs_add_none("/core/away");
 	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);
 	gaim_prefs_add_int("/core/away/mins_before_away", 1);
+	/* XXX: internationalized string in prefs...evil */
+	gaim_prefs_add_string("/core/away/default_message",
+			_("Slightly less boring default"));
 
 	/* Away -> Auto Response */
 	gaim_prefs_add_none("/core/away/auto_response");
