@@ -615,8 +615,10 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 			}
 
 		if (type && (strcasecmp(type, "unavailable") == 0)) {
-			g_free(resources->data);
-			b->proto_data = g_slist_remove(b->proto_data, resources->data);
+			if (resources) {
+				g_free(resources->data);
+				b->proto_data = g_slist_remove(b->proto_data, resources->data);
+			}
 			if (!b->proto_data) {
 				serv_got_update(GJ_GC(j), buddy, 0, 0, 0, 0, 0, 0);
 			}
@@ -863,7 +865,9 @@ static void jabber_login(struct aim_user *user)
 	gjab_packet_handler(jd->jc, jabber_handlepacket);
 	gjab_start(jd->jc);
 
-	gc->inpa = gdk_input_add(jd->jc->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION, jabber_callback, gc);
+	if (gc->proto_data)
+		gc->inpa = gdk_input_add(jd->jc->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				jabber_callback, gc);
 
 	return;
 }
@@ -874,6 +878,7 @@ static void jabber_close(struct gaim_connection *gc)
 	gdk_input_remove(gc->inpa);
 	gjab_stop(jd->jc);
 	g_free(jd);
+	gc->proto_data = NULL;
 }
 
 static void jabber_send_im(struct gaim_connection *gc, char *who, char *message, int away)
