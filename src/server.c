@@ -383,6 +383,11 @@ int find_queue_total_by_name(char *name)
 	return i;
 }
 
+struct queued_away_response {
+	char name[80];
+	time_t sent_away;
+};
+
 struct queued_away_response *find_queued_away_response_by_name(char *name)
 {
 	GSList *templist;

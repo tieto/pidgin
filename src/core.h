@@ -35,6 +35,12 @@
 
 #include "multi.h"
 
+#define UC_AOL		1
+#define UC_ADMIN 	2
+#define UC_UNCONFIRMED	4
+#define UC_NORMAL	8
+#define UC_UNAVAILABLE  16
+
 enum gaim_event {
 	event_signon = 0,
 	event_signoff,
@@ -119,6 +125,40 @@ extern void remove_group(struct gaim_connection *, struct group *);
 extern void do_export(struct gaim_connection *);
 extern void do_import(struct gaim_connection *, char *);
 extern int bud_list_cache_exists(struct gaim_connection *);
+extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
+extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
+
+/* Functions in core.c */
+/* Don't ever use these; when gaim-core is done these will be
+ * merged into the core's main() and won't be called directly */
+extern int core_main();
+extern void core_quit();
+
+/* Functions in gaimrc.c */
+extern void load_prefs();
+extern void save_prefs();
+
+/* Functions in perl.c */
+#ifdef USE_PERL
+extern void perl_autoload();
+extern void perl_end();
+extern int perl_event(char *, char *);
+extern int perl_load_file(char *);
+extern void unload_perl_scripts();
+extern void list_perl_scripts();
+#endif
+
+/* Functions in plugins.c */
+#ifdef GAIM_PLUGINS
+extern struct gaim_plugin *load_plugin(char *);
+extern void unload_plugin(struct gaim_plugin *);
+extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
+extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
+extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
+extern void gaim_plugin_unload(GModule *);
+#endif
+extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
+extern void remove_all_plugins();
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);

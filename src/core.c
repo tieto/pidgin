@@ -44,6 +44,29 @@ struct UI {
 };
 GSList *uis = NULL;
 
+gint UI_write(struct UI *ui, guchar *data, gint len)
+{
+	guchar *send = g_new0(guchar, len + 6);
+	gint sent;
+	send[0] = 'f';
+	send[1] = 1;
+	memcpy(send + 2, &len, sizeof(len));
+	memcpy(send + 6, data, len);
+	/* we'll let the write silently fail because the read will pick it up as dead */
+	g_io_channel_write(ui->channel, send, len + 6, &sent);
+	return sent;
+}
+
+void UI_broadcast(guchar *data, gint len)
+{
+	GSList *u = uis;
+	while (u) {
+		struct UI *ui = u->data;
+		UI_write(ui, data, len);
+		u = u->next;
+	}
+}
+
 static gint gaim_recv(GIOChannel *source, guchar *buf, gint len)
 {
 	gint total = 0;

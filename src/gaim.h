@@ -33,12 +33,6 @@
  * it won't include core.h or ui.h (i.e. it'll mostly be #define's) */
 
 
-#define BROWSER_NETSCAPE              0
-#define BROWSER_KFM                   1
-#define BROWSER_MANUAL                2
-/*#define BROWSER_INTERNAL              3*/
-#define BROWSER_GNOME                 4
-
 #define IM_FLAG_AWAY     0x01
 #define IM_FLAG_CHECKBOX 0x02
 #define IM_FLAG_GAIMUSER 0x04
@@ -51,12 +45,6 @@
 #define PERMIT_NONE	2
 #define PERMIT_SOME	3
 #define DENY_SOME	4
-
-#define UC_AOL		1
-#define UC_ADMIN 	2
-#define UC_UNCONFIRMED	4
-#define UC_NORMAL	8
-#define UC_UNAVAILABLE  16
 
 #define WFLAG_SEND	0x01
 #define WFLAG_RECV	0x02
@@ -148,12 +136,6 @@ enum log_event {
 	log_quit
 };
 
-struct log_conversation {
-	char name[80];
-	char filename[512];
-        struct log_conversation *next;
-};
-
 #define OPT_POUNCE_POPUP    0x001
 #define OPT_POUNCE_SEND_IM  0x002
 #define OPT_POUNCE_COMMAND  0x004
@@ -175,24 +157,6 @@ struct buddy_pounce {
 	int protocol;
 
 	int options;
-};
-
-struct queued_message {
-	char name[80];
-	char *message;
-	time_t tm;
-	struct gaim_connection *gc;
-	int flags;
-};
-
-struct queued_away_response {
-	char name[80];
-	time_t sent_away;
-};
-
-struct away_message {
-	char name[80];
-	char message[2048];
 };
 
 /* struct buddy_chat went away and got merged with this. */
@@ -287,21 +251,12 @@ struct conversation {
 #define BUF_LONG BUF_LEN * 2
 
 /* Globals in aim.c */
-extern GList *log_conversations;
 extern GList *buddy_pounces;
-extern GSList *away_messages;
 extern GList *conversations;
 extern GtkWidget *mainwindow;
 extern int opt_away;
 extern char *opt_away_arg;
 extern char *opt_rcfile_arg;
-
-/* Globals in away.c */
-extern struct away_message *awaymessage;
-extern struct away_message *default_away;
-extern int auto_away;
-extern GtkWidget *awaymenu;
-extern GtkWidget *clistqueue; 
 
 extern guint misc_options;
 #define OPT_MISC_DEBUG			0x00000001
@@ -422,23 +377,33 @@ extern char web_command[2048];
 extern struct save_pos blist_pos;
 extern struct window_size conv_size, buddy_chat_size;
 
+/* Functions in buddy.c */
+extern void do_quit();
+extern void signoff(struct gaim_connection *);
+extern void do_pounce(struct gaim_connection *, char *, int);
+
 /* Functions in buddy_chat.c */
-extern void join_chat();
-extern void chat_write(struct conversation *, char *, int, char *, time_t);
+extern void show_new_buddy_chat(struct conversation *);
+extern void chat_set_topic(struct conversation*, char*, char*);
 extern void add_chat_buddy(struct conversation *, char *);
 extern void rename_chat_buddy(struct conversation *, char *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
-extern void show_new_buddy_chat(struct conversation *);
-extern void delete_chat(struct conversation *);
-extern void build_imchat_box(gboolean);
-extern void do_quit();
-extern void update_chat_button_pix();
-extern void update_im_button_pix();
-extern void update_chat_tabs();
-extern void update_im_tabs();
-extern void update_idle_times();
-extern void do_join_chat();
-extern void chat_set_topic(struct conversation*, char*, char*);
+
+/* Functions in conversation.c */
+extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
+extern struct conversation *find_conversation(char *);
+
+/* Functions in dialogs.c */
+extern void g_show_info_text(char *, ...);
+extern GtkWidget *do_error_dialog(char *, char *);
+extern void show_change_passwd(struct gaim_connection *);
+extern void show_set_dir(struct gaim_connection *);
+extern void show_find_email(struct gaim_connection *);
+extern void show_find_info(struct gaim_connection *);
+extern void show_set_info(struct gaim_connection *);
+
+/* Functions in gaimrc.c */
+extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in html.c */
 extern void grab_url(char *, void (*callback)(gpointer, char *), gpointer);
@@ -447,33 +412,8 @@ extern gchar *strip_html(gchar *);
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
 
-/* Functions in util.c */
-extern char *normalize(const char *);
-extern char *tobase64(const char *);
-extern void frombase64(const char *, char **, int *);
-extern gint clean_pid(gpointer);
-extern char *date();
-extern gint linkify_text(char *);
-extern void aol_icon(GdkWindow *);
-extern FILE *open_log_file (char *);
-extern char *sec_to_text(guint);
-extern struct aim_user *find_user(const char *, int);
-extern char *full_date();
-extern void check_gaim_versions();
-extern char *away_subs(char *, char *);
-extern GtkWidget *picture_button(GtkWidget *, char *, char **);
-extern GtkWidget *picture_button2(GtkWidget *, char *, char **, short);
-extern char *stylize(gchar *, int);
-extern void show_usage (int, char *);
-extern int do_auto_login (char *);
-extern int file_is_dir (const char *, GtkWidget *);
-extern char *gaim_user_dir();
-extern void strncpy_nohtml(gchar *, const gchar *, size_t);
-extern void strncpy_withhtml(gchar *, const gchar *, size_t);
-extern void away_on_login(char *);
-extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
-extern unsigned char *utf8_to_str(unsigned char *);
-extern char *str_to_utf8(unsigned char *);
+/* Functions in prefs.c */
+extern void debug_printf(char * fmt, ...);
 
 /* Functions in server.c */
 /* input to serv */
@@ -504,215 +444,31 @@ extern void serv_join_chat(struct gaim_connection *, GList *);
 extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
 extern void serv_chat_leave(struct gaim_connection *, int);
 extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
-extern int serv_chat_send(struct gaim_connection *, int, char *);
+extern int  serv_chat_send(struct gaim_connection *, int, char *);
 
-/* Functions in conversation.c */
-extern void gaim_setup_imhtml(GtkWidget *);
-extern void update_convo_add_button(struct conversation *);
-extern void write_html_with_smileys(GtkWidget *, GtkWidget *, char *);
-extern void write_to_conv(struct conversation *, char *, int, char *, time_t);
-extern void raise_convo_tab(struct conversation *);
-extern void set_convo_tab_label(struct conversation *, char *);
-extern void show_conv(struct conversation *);
-extern struct conversation *new_conversation(char *);
-extern struct conversation *find_conversation(char *);
-extern void delete_conversation(struct conversation *);
-extern void surround(GtkWidget *, char *, char *);
-extern int is_logging(char *);
-extern void set_state_lock(int );
-extern void rm_log(struct log_conversation *a);
-extern struct log_conversation *find_log_info(char *name);
-extern void remove_tags(GtkWidget *entry, char *tag);
-extern void update_log_convs();
-extern void update_transparency();
-extern void update_font_buttons();
-extern void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
-extern void do_bold(GtkWidget *, GtkWidget *);
-extern void do_italic(GtkWidget *, GtkWidget *);
-extern void do_underline(GtkWidget *, GtkWidget *);
-extern void do_strike(GtkWidget *, GtkWidget *);
-extern void do_small(GtkWidget *, GtkWidget *);
-extern void do_normal(GtkWidget *, GtkWidget *);
-extern void do_big(GtkWidget *, GtkWidget *);
-extern void set_font_face(char *, struct conversation *);
-extern void redo_convo_menus();
-extern void convo_menu_remove(struct gaim_connection *);
-extern void remove_icon_data(struct gaim_connection *);
-extern void got_new_icon(struct gaim_connection *, char *);
-extern void toggle_spellchk();
-extern void set_convo_gc(struct conversation *, struct gaim_connection *);
-extern void update_buttons_by_protocol(struct conversation *);
-extern void toggle_smileys();
-extern void toggle_timestamps();
-extern void update_pixmaps();
-extern void tabize();
-extern void chat_tabize();
-extern void update_convo_color();
-extern void update_convo_font();
-extern void set_hide_icons();
-
-/* Functions in toc.c */
-extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
-
-/* Functions in buddy.c */
-extern void handle_group_rename(struct group *, char *);
-extern void handle_buddy_rename(struct buddy *, char *);
-extern void destroy_buddy();
-extern void update_button_pix();
-extern void toggle_show_empty_groups();
-extern void update_all_buddies();
-extern void update_num_groups();
-extern void show_buddy_list();
-extern void refresh_buddy_window();
-extern void toc_build_config(struct gaim_connection *, char *, int len, gboolean);
-extern void signoff(struct gaim_connection *);
-extern void signoff_all(gpointer, gpointer);
-extern void do_im_back();
-extern void set_buddy(struct gaim_connection *, struct buddy *);
-extern void build_edit_tree();
-extern void do_pounce(struct gaim_connection *, char *, int);
-extern void do_bp_menu();
-extern void ui_add_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern void ui_remove_buddy(struct gaim_connection *, struct group *, struct buddy *);
-extern void ui_add_group(struct gaim_connection *, struct group *);
-extern void ui_remove_group(struct gaim_connection *, struct group *);
-extern void toggle_buddy_pixmaps();
-extern void gaim_separator(GtkWidget *);
-extern void redo_buddy_list(); /* you really shouldn't call this function */
-
-/* Functions in away.c */
-extern void rem_away_mess(GtkWidget *, struct away_message *);
-extern void do_away_message(GtkWidget *, struct away_message *);
-extern void do_away_menu();
-extern void away_list_unclicked(GtkWidget *, struct away_message *);
-extern void away_list_clicked(GtkWidget *, struct away_message *);
-extern void toggle_away_queue();
-extern void purge_away_queue();
-
-/* Functions in aim.c */
-extern void show_login();
-extern void gaim_setup(struct gaim_connection *gc);
-#ifdef USE_APPLET
-extern void createOnlinePopup();
-extern void applet_show_login(AppletWidget *, gpointer);
-GtkRequisition gnome_buddy_get_dimentions();
-#endif
-
-
-/* Functions in sound.c */
-extern void play_sound(int);
-extern void play_file(char *);
-
-/* Functions in perl.c */
-#ifdef USE_PERL
-extern void perl_autoload();
-extern void perl_end();
-extern int perl_event(char *, char *);
-extern int perl_load_file(char *);
-extern void unload_perl_scripts();
-extern void list_perl_scripts();
-#endif
-
-/* Functions in plugins.c */
-#ifdef GAIM_PLUGINS
-extern void show_plugins(GtkWidget *, gpointer);
-extern struct gaim_plugin *load_plugin(char *);
-extern void unload_plugin(struct gaim_plugin *);
-extern struct gaim_plugin *reload_plugin(struct gaim_plugin *);
-extern void gaim_signal_connect(GModule *, enum gaim_event, void *, void *);
-extern void gaim_signal_disconnect(GModule *, enum gaim_event, void *);
-extern void gaim_plugin_unload(GModule *);
-#endif
-extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
-extern void remove_all_plugins();
-
-/* Functions in prefs.c */
-extern void debug_printf( char * fmt, ... );
-#define debug_print(x) debug_printf(x);
-extern void set_option(GtkWidget *, int *);
-extern void show_prefs();
-extern void show_debug();
-extern void update_color(GtkWidget *, GtkWidget *);
-extern void set_default_away(GtkWidget *, gpointer);
-extern void default_away_menu_init(GtkWidget *);
-extern void update_connection_dependent_prefs();
-extern void build_allow_list();
-extern void build_block_list();
-extern GtkWidget *prefs_away_list;
-extern GtkWidget *prefs_away_menu;
-extern GtkWidget *pref_fg_picture;
-extern GtkWidget *pref_bg_picture;
-
-
-/* Functions in gaimrc.c */
-extern void load_prefs();
-extern void save_prefs();
-extern gint sort_awaymsg_list(gconstpointer, gconstpointer);
-
-gint sort_awaymsg_list(gconstpointer, gconstpointer);
-
-/* Functions in dialogs.c */
-extern void alias_dialog_bud(struct buddy *);
-extern void show_warn_dialog(struct gaim_connection *, char *);
-extern GtkWidget *do_error_dialog(char *, char *);
-extern void show_im_dialog();
-extern void some_name(char *);
-extern void show_info_dialog();
-extern void show_add_buddy(struct gaim_connection *, char *, char *);
-extern void show_add_group(struct gaim_connection *);
-extern void show_add_perm(struct gaim_connection *, char *, gboolean);
-extern void destroy_all_dialogs();
-extern void show_import_dialog();
-extern void show_export_dialog();
-extern void show_new_bp();
-extern void show_log(char *);
-extern void show_log_dialog(struct conversation *);
-extern void show_find_email(struct gaim_connection *);
-extern void show_find_info(struct gaim_connection *);
-extern void g_show_info_text(char *, ...);
-extern void show_set_info(struct gaim_connection *);
-extern void show_set_dir();
-extern void show_fgcolor_dialog(struct conversation *c, GtkWidget *color);
-extern void show_bgcolor_dialog(struct conversation *c, GtkWidget *color);
-extern void cancel_fgcolor(GtkWidget *widget, struct conversation *c);
-extern void cancel_bgcolor(GtkWidget *widget, struct conversation *c);
-extern void put_out(struct gaim_connection *, char *, char *());
-extern void create_away_mess(GtkWidget *, void *);
-extern void show_ee_dialog(int);
-extern void show_add_link(GtkWidget *,struct conversation *);
-extern void show_change_passwd(struct gaim_connection *);
-extern void show_smiley_dialog(struct conversation *, GtkWidget *);
-extern void close_smiley_dialog(GtkWidget *widget, struct conversation *c);
-extern void set_smiley_array(GtkWidget *widget, int smiley_type);
-extern void insert_smiley_text(GtkWidget *widget, struct conversation *c);
-extern void cancel_log(GtkWidget *, struct conversation *);
-extern void cancel_link(GtkWidget *, struct conversation *);
-extern void show_font_dialog(struct conversation *c, GtkWidget *font);
-extern void get_good(struct gaim_connection **);
-extern void cancel_font(GtkWidget *widget, struct conversation *c);
-extern void apply_font(GtkWidget *widget, GtkFontSelection *fontsel);
-extern void set_color_selection(GtkWidget *selection, GdkColor color);
-extern void show_rename_group(GtkWidget *, struct group *);
-extern void show_rename_buddy(GtkWidget *, struct buddy *);
-extern void load_perl_script();
-
-/* Functions in browser.c */
-extern void open_url(GtkWidget *, char *);
-extern void open_url_nw(GtkWidget *, char *);
-extern void add_bookmark(GtkWidget *, char *);
-
-/* Functions in multi.c */
-extern void account_editor(GtkWidget *, GtkWidget *);
-
-/* Functions in core.c */ /* Don't ever use these */
-extern int core_main();
-extern void core_quit();
-
-/* fucntions in ticker.c */
-void SetTickerPrefs();
-void BuddyTickerSignOff();
-void BuddyTickerAddUser(char *, GdkPixmap *, GdkBitmap *);
-void BuddyTickerSetPixmap(char *, GdkPixmap *, GdkBitmap *);
-void BuddyTickerSignoff();
+/* Functions in util.c */
+extern char *normalize(const char *);
+extern char *tobase64(const char *);
+extern void frombase64(const char *, char **, int *);
+extern gint clean_pid(gpointer);
+extern char *date();
+extern gint linkify_text(char *);
+extern FILE *open_log_file (char *);
+extern char *sec_to_text(guint);
+extern struct aim_user *find_user(const char *, int);
+extern char *full_date();
+extern void check_gaim_versions();
+extern char *away_subs(char *, char *);
+extern char *stylize(gchar *, int);
+extern void show_usage (int, char *);
+extern int do_auto_login (char *);
+extern int file_is_dir (const char *, GtkWidget *);
+extern char *gaim_user_dir();
+extern void strncpy_nohtml(gchar *, const gchar *, size_t);
+extern void strncpy_withhtml(gchar *, const gchar *, size_t);
+extern void away_on_login(char *);
+extern void system_log(enum log_event, struct gaim_connection *, struct buddy *, int);
+extern unsigned char *utf8_to_str(unsigned char *);
+extern char *str_to_utf8(unsigned char *);
 
 #endif /* _GAIM_H_ */

@@ -72,6 +72,7 @@ extern void applet_do_signon(AppletWidget *, gpointer);
 extern void make_buddy();
 extern void cancel_logon();
 extern gint applet_destroy_buddy(GtkWidget *, GdkEvent *, gpointer *);
+extern void createOnlinePopup();
 
 extern void set_user_state( enum gaim_user_states state );
 
