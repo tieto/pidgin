@@ -565,15 +565,12 @@ faim_export int aim_bos_changevisibility(aim_session_t *, aim_conn_t *, int, con
 faim_export int aim_bos_setbuddylist(aim_session_t *, aim_conn_t *, const char *);
 faim_export int aim_bos_setprofile(aim_session_t *sess, aim_conn_t *conn, const char *profile, const char *awaymsg, fu16_t caps);
 faim_export int aim_bos_setgroupperm(aim_session_t *, aim_conn_t *, fu32_t mask);
-faim_export int aim_reqrates(aim_session_t *, aim_conn_t *);
-faim_export int aim_ratesack(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_setprivacyflags(aim_session_t *, aim_conn_t *, fu32_t);
 faim_export int aim_bos_reqpersonalinfo(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqservice(aim_session_t *, aim_conn_t *, fu16_t);
 faim_export int aim_bos_reqrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqbuddyrights(aim_session_t *, aim_conn_t *);
 faim_export int aim_bos_reqlocaterights(aim_session_t *, aim_conn_t *);
-faim_export int aim_setversions(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_setdirectoryinfo(aim_session_t *sess, aim_conn_t *conn, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
 faim_export int aim_setuserinterests(aim_session_t *sess, aim_conn_t *conn, const char *interest1, const char *interest2, const char *interest3, const char *interest4, const char *interest5, fu16_t privacy);
 faim_export int aim_icq_setstatus(aim_session_t *sess, aim_conn_t *conn, fu16_t status);

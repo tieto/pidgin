@@ -229,15 +229,16 @@ static int gaim_parse_evilnotify (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searcherror(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_searchreply(aim_session_t *, aim_frame_t *, ...);
 static int gaim_bosrights        (aim_session_t *, aim_frame_t *, ...);
-static int rateresp_bos     (aim_session_t *, aim_frame_t *, ...);
-static int rateresp_auth    (aim_session_t *, aim_frame_t *, ...);
+static int conninitdone_bos      (aim_session_t *sess, aim_frame_t *fr, ...);
+static int conninitdone_admin    (aim_session_t *sess, aim_frame_t *fr, ...);
+static int conninitdone_chat     (aim_session_t *sess, aim_frame_t *fr, ...);
+static int conninitdone_chatnav  (aim_session_t *sess, aim_frame_t *fr, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_buddyrights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icbm_param_info  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_genericerr (aim_session_t *, aim_frame_t *, ...);
 static int gaim_memrequest       (aim_session_t *,  aim_frame_t*, ...);
-static int server_ready_bos      (aim_session_t *,  aim_frame_t*, ...);
 static int gaim_selfinfo         (aim_session_t *,  aim_frame_t*, ...);
 
 static int gaim_directim_initiate  (aim_session_t *, aim_frame_t *, ...);
@@ -649,11 +650,9 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		return 0;
 	}
 
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_bos, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
-	aim_conn_addhandler(sess, bosconn, 0x0001, 0x0007, rateresp_bos, 0); /* rate info */
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, server_ready_bos, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATEINFO, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_REDIRECT, gaim_handle_redirect, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_RIGHTSINFO, gaim_parse_buddyrights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING, gaim_parse_oncoming, 0);
@@ -857,30 +856,18 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int server_ready_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
-
-	aim_setversions(sess, fr->conn);
-	aim_reqrates(sess, fr->conn);
-	debug_printf("done with AUTH ServerReady\n");
-
-	return 1;
-}
-
-static int server_ready_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
-	aim_setversions(sess, fr->conn);
-	aim_reqrates(sess, fr->conn); /* request rate info */
-	debug_printf("done with BOS ServerReady\n");
-
-	return 1;
-}
-
-static int rateresp_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int conninitdone_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct chat_connection *chatcon;
 	static int id = 1;
 
-	aim_ratesack(sess, fr->conn);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
+	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+
 	aim_clientready(sess, fr->conn);
+
 	chatcon = find_oscar_chat_by_conn(gc, fr->conn);
 	chatcon->id = id;
 	chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
@@ -888,35 +875,13 @@ static int rateresp_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int rateresp_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int conninitdone_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
 
-	aim_ratesack(sess, fr->conn);
-	aim_clientready(sess, fr->conn);
-	aim_chatnav_reqrights(sess, fr->conn);
-
-	return 1;
-}
-
-static int server_ready_chatnav(aim_session_t *sess, aim_frame_t *fr, ...) {
-	debug_printf("chatnav: got server ready\n");
-	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chatnav, 0);
 	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CTN, AIM_CB_CTN_INFO, gaim_chatnav_info, 0);
-	aim_setversions(sess, fr->conn);
-	aim_reqrates(sess, fr->conn);
 
-	return 1;
-}
+	aim_clientready(sess, fr->conn);
 
-static int server_ready_chat(aim_session_t *sess, aim_frame_t *fr, ...) {
-
-	debug_printf("chat: got server ready\n");
-	aim_conn_addhandler(sess, fr->conn, 0x0001, 0x0007, rateresp_chat, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
-	aim_conn_addhandler(sess, fr->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
-	aim_setversions(sess, fr->conn);
-	aim_reqrates(sess, fr->conn);
+	aim_chatnav_reqrights(sess, fr->conn);
 
 	return 1;
 }
@@ -1050,8 +1015,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, server_ready_auth, 0);
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0007, rateresp_auth, 0);
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_admin, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0003, gaim_info_change, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
@@ -1073,7 +1037,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			g_free(host);
 			return 1;
 		}
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, server_ready_chatnav, 0);
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chatnav, 0);
 
 		tstconn->status |= AIM_CONN_STATUS_INPROGRESS;
 		tstconn->fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
@@ -1101,7 +1065,8 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 			return 1;
 		}
 
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, server_ready_chat, 0);
+		aim_conn_addhandler(sess, tstconn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNINITDONE, conninitdone_chat, 0);
+
 		ccon = g_new0(struct chat_connection, 1);
 		ccon->conn = tstconn;
 		ccon->gc = gc;
@@ -1934,10 +1899,9 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 
-	aim_ratesack(sess, fr->conn);
 	aim_bos_reqpersonalinfo(sess, fr->conn);
 	aim_bos_reqlocaterights(sess, fr->conn);
 	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
@@ -1961,13 +1925,12 @@ static int rateresp_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int rateresp_auth(aim_session_t *sess, aim_frame_t *fr, ...) {
+static int conninitdone_admin(aim_session_t *sess, aim_frame_t *fr, ...) {
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
 
-	aim_ratesack(sess, fr->conn);
 	aim_clientready(sess, fr->conn);
-	debug_printf("connected to auth (admin)\n");
+	debug_printf("connected to admin\n");
 
 	if (od->chpass) {
 		debug_printf("changing password\n");

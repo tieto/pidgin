@@ -28,9 +28,6 @@ struct aim_directim_intdata {
 };
 
 static int listenestablish(fu16_t portnum);
-#if 0
-static struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
-#endif
  
 /**
  * aim_handlerendconnect - call this to accept OFT connections and set up the required structures

@@ -370,6 +370,34 @@ faim_internal int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 	return 1;
 }
 
+/*
+ * Some SNACs we do not allow to be hooked, for good reason.
+ */
+static int checkdisallowed(fu16_t group, fu16_t type)
+{
+	static const struct {
+		fu16_t group;
+		fu16_t type;
+	} dontuse[] = {
+		{0x0001, 0x0002},
+		{0x0001, 0x0003},
+		{0x0001, 0x0006},
+		{0x0001, 0x0007},
+		{0x0001, 0x0008},
+		{0x0001, 0x0017},
+		{0x0001, 0x0018},
+		{0x0000, 0x0000}
+	};
+	int i;
+
+	for (i = 0; dontuse[i].group != 0x0000; i++) {
+		if ((dontuse[i].group == group) && (dontuse[i].type == type))
+			return 1;
+	}
+
+	return 0;
+}
+
 faim_export int aim_conn_addhandler(aim_session_t *sess, aim_conn_t *conn, fu16_t family, fu16_t type, aim_rxcallback_t newhandler, fu16_t flags)
 {
 	struct aim_rxcblist_s *newcb;
@@ -378,6 +406,11 @@ faim_export int aim_conn_addhandler(aim_session_t *sess, aim_conn_t *conn, fu16_
 		return -1;
 
 	faimdprintf(sess, 1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
+
+	if (checkdisallowed(family, type)) {
+		faimdprintf(sess, 0, "aim_conn_addhandler: client tried to hook %x/%x -- BUG!!!\n", family, type);
+		return -1;
+	}
 
 	if (!(newcb = (struct aim_rxcblist_s *)calloc(1, sizeof(struct aim_rxcblist_s))))
 		return -1;

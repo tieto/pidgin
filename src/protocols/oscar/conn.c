@@ -104,10 +104,11 @@ faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group)
 	return NULL;
 }
 
-static struct snacgroup *connkill_snacgroups(struct snacgroup *sg)
+static void connkill_snacgroups(struct snacgroup **head)
 {
+	struct snacgroup *sg;
 
-	while (sg) {
+	for (sg = *head; sg; ) {
 		struct snacgroup *tmp;
 
 		tmp = sg->next;
@@ -115,7 +116,26 @@ static struct snacgroup *connkill_snacgroups(struct snacgroup *sg)
 		sg = tmp;
 	}
 
-	return NULL;
+	*head = NULL;
+
+	return;
+}
+
+static void connkill_rates(struct rateclass **head)
+{
+	struct rateclass *rc;
+
+	for (rc = *head; rc; ) {
+		struct rateclass *tmp;
+
+		tmp = rc->next;
+		free(rc);
+		rc = tmp;
+	}
+
+	*head = NULL;
+
+	return;
 }
 
 static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
@@ -144,7 +164,8 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 	if ((*deadconn)->inside) {
 		aim_conn_inside_t *inside = (aim_conn_inside_t *)(*deadconn)->inside;
 
-		inside->groups = connkill_snacgroups(inside->groups);
+		connkill_snacgroups(&inside->groups);
+		connkill_rates(&inside->rates);
 
 		free(inside);
 	}
