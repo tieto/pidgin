@@ -133,14 +133,6 @@ void show_about(GtkWidget *w, void *data)
 		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
 		g_free(str);
 
-		/* Just because */
-		str = g_strconcat(
-			"<FONT SIZE=\"3\">", "Just Because", ":</FONT><BR>"
-			"  Rachel Shelton (Vampire & Dark Lord)<br>"
-			"<BR>", NULL);
-		gtk_imhtml_append_text(GTK_IMHTML(text), str, GTK_IMHTML_NO_SCROLL);
-		g_free(str);
-
 		/* Retired Developers */
 		str = g_strconcat(
 				"<FONT SIZE=\"3\">", _("Retired Developers"), ":</FONT><BR>"
