@@ -1,0 +1,13 @@
+#
+# Makefile.mingw
+#
+# Description: Build an import lib containing all Win32 API symbols
+# which are missing from mingw 1.1 import libs.
+#
+
+
+user32plus.lib: user32plus.def
+	dlltool -D user32.dll -d user32plus.def -l user32plus.lib
+
+all: user32plus.lib
+
