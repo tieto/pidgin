@@ -743,21 +743,19 @@ account_menu_cb(GtkWidget *optmenu, GCallback cb)
 															 user_data);
 }
 
-GtkWidget *
-gaim_gtk_account_option_menu_new(GaimAccount *default_account,
-								 gboolean show_all, GCallback cb,
-								 gpointer user_data)
+static void
+create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
+					gboolean show_all)
 {
 	GaimAccount *account;
-	GList *list;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *optmenu;
 	GtkWidget *menu;
 	GtkWidget *item;
 	GtkWidget *image;
+	GtkWidget *hbox;
+	GtkWidget *label;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *scale;
+	GList *list;
 	GList *p;
 	GtkSizeGroup *sg;
 	char *filename;
@@ -765,22 +763,15 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 	char buf[256];
 	int i, selected_index = -1;
 
-	optmenu = gtk_option_menu_new();
-	gtk_widget_show(optmenu);
-
-	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
-
-	menu = gtk_menu_new();
-	gtk_widget_show(menu);
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
 	if (show_all)
 		list = gaim_accounts_get_all();
 	else
 		list = gaim_connections_get_all();
 
-	gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Populating menu\n");
+	menu = gtk_menu_new();
+	gtk_widget_show(menu);
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
 		GaimPluginProtocolInfo *prpl_info = NULL;
@@ -793,8 +784,6 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 
 			account = gaim_connection_get_account(gc);
 		}
-
-		gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Adding item.\n");
 
 		plugin = gaim_find_prpl(gaim_account_get_protocol(account));
 
@@ -859,22 +848,81 @@ gaim_gtk_account_option_menu_new(GaimAccount *default_account,
 			selected_index = i;
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "gtkutils", "Done populating menu\n");
+	g_object_unref(sg);
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 
+	/* Set the place we should be at. */
 	if (selected_index != -1)
 		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+}
 
+static void
+account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
+{
+	GtkWidget *menu;
+	GtkWidget *item;
+	gboolean show_all;
+	GaimAccount *account;
+
+	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	item = gtk_menu_get_active(GTK_MENU(menu));
+	account = g_object_get_data(G_OBJECT(item), "account");
+
+	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
+												 "show_all"));
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
+
+	create_account_menu(optmenu, account, show_all);
+}
+
+static gboolean
+account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
+						  void *user_data)
+{
+	gaim_signal_disconnect(optmenu, event_signon,  account_menu_sign_on_off_cb);
+	gaim_signal_disconnect(optmenu, event_signoff, account_menu_sign_on_off_cb);
+
+	return FALSE;
+}
+
+GtkWidget *
+gaim_gtk_account_option_menu_new(GaimAccount *default_account,
+								 gboolean show_all, GCallback cb,
+								 gpointer user_data)
+{
+	GtkWidget *optmenu;
+
+	/* Create the option menu */
+	optmenu = gtk_option_menu_new();
+	gtk_widget_show(optmenu);
+
+	g_signal_connect(G_OBJECT(optmenu), "destroy",
+					 G_CALLBACK(account_menu_destroyed_cb), NULL);
+
+	/* Register the gaim sign on/off event callbacks. */
+	gaim_signal_connect(optmenu, event_signon,
+						account_menu_sign_on_off_cb, optmenu);
+	gaim_signal_connect(optmenu, event_signoff,
+						account_menu_sign_on_off_cb, optmenu);
+
+	/* Set some data. */
+	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
+	g_object_set_data(G_OBJECT(optmenu), "show_all", GINT_TO_POINTER(show_all));
+
+	/* Create and set the actual menu. */
+	create_account_menu(optmenu, default_account, show_all);
+
+	/* And now the last callback. */
 	g_signal_connect(G_OBJECT(optmenu), "changed",
 					 G_CALLBACK(account_menu_cb), cb);
-
-	g_object_unref(sg);
 
 	return optmenu;
 }
 
-gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
+gboolean
+gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
 {
 	char *dirname;
 
