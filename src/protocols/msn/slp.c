@@ -277,6 +277,13 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		file_name = msn_object_get_real_location(obj);
 
+		if (file_name == NULL)
+		{
+			gaim_debug_error("msn", "Wrong object.\n");
+			msn_object_destroy(obj);
+			g_return_if_reached();
+		}
+
 		slpsession = msn_slplink_find_slp_session(slplink,
 												   slpcall->session_id);
 
