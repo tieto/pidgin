@@ -3182,7 +3182,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 	}
 
-	final = gaim_str_sub_away_formatters(text->str, gaim_connection_get_display_name(gc));
+	final = gaim_str_sub_away_formatters(text->str, gaim_account_get_username(gaim_connection_get_account(gc)));
 	g_string_free(text, TRUE);
 	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL, final, NULL, NULL);
 
@@ -5425,7 +5425,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				tmp1 = gaim_strreplace(away_utf8, "<BR>", "\n");
 				tmp2 = gaim_markup_strip_html(tmp1);
 				g_free(tmp1);
-				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_connection_get_display_name(gc));
+				tmp3 = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp2);
 				tmp = ret;
 				ret = g_strconcat(tmp, _("<b>Away Message:</b> "), tmp3, "\n", NULL);
