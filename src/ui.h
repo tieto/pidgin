@@ -538,7 +538,6 @@ extern void session_init(gchar *, gchar *);
 extern void session_end();
 
 /* Functions in sound.c */
-extern void sound_quit();
 extern void play_sound(int);
 extern void play_file(char *);
 

@@ -820,8 +820,8 @@ static void gaimrc_read_options(FILE *f)
 	}
 
 	/* this is where we do bugs and compatibility stuff */
-	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_CMD)))
-		sound_options |= OPT_SOUND_NORMAL;
+	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC | OPT_SOUND_CMD)))
+		sound_options |= OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC;
 
 	if (conv_size.width == 0 &&
 	    conv_size.height == 0 &&
@@ -1244,7 +1244,10 @@ static void set_defaults()
 	    OPT_SOUND_RECV |
 	    OPT_SOUND_SEND |
 	    OPT_SOUND_SILENT_SIGNON |
-	    OPT_SOUND_NORMAL;
+	    OPT_SOUND_NORMAL |
+	    OPT_SOUND_NAS |
+	    OPT_SOUND_ARTSC |
+	    OPT_SOUND_ESD;
 
 #ifdef USE_SCREENSAVER
 	report_idle = IDLE_SCREENSAVER;

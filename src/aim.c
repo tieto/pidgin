@@ -896,8 +896,6 @@ int main(int argc, char *argv[])
 	gtk_main();
 	core_quit();
 	/* don't need ui_quit here because ui doesn't create anything */
-	/* maybe we do now? -Robot101 */
-	sound_quit();
 #ifdef _WIN32
 	wgaim_cleanup();
 #endif

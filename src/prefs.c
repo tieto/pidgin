@@ -956,12 +956,19 @@ GtkWidget *sound_page() {
 #ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
 	dd = gaim_dropdown(vbox, _("_Method"), &sound_options, OPT_SOUND_BEEP |
-		      OPT_SOUND_NORMAL |
+		      OPT_SOUND_ESD | OPT_SOUND_ARTSC | OPT_SOUND_NAS | OPT_SOUND_NORMAL |
 		      OPT_SOUND_CMD,
 		      _("Console beep"), OPT_SOUND_BEEP,
-#ifdef USE_AO
-		      _("Automatic"), OPT_SOUND_NORMAL,
+#ifdef ESD_SOUND
+		      "ESD", OPT_SOUND_ESD,
 #endif
+#ifdef ARTSC_SOUND
+		      "ArtsC", OPT_SOUND_ARTSC,
+#endif
+#ifdef NAS_SOUND
+		      "NAS", OPT_SOUND_NAS,
+#endif
+		      _("Internal"), OPT_SOUND_NORMAL,
 		      _("Command"), OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
