@@ -2450,7 +2450,6 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 	GtkWidget *bbox;
 	GtkWidget *vbox;
 	GtkWidget *topbox;
-	GtkWidget *frame;
 
 	struct addperm *p = g_new0(struct addperm, 1);
 	p->gc = gc;
@@ -2463,15 +2462,10 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 
 	dialogwindows = g_list_prepend(dialogwindows, p->window);
 
-	bbox = gtk_hbox_new(TRUE, 10);
+	bbox = gtk_hbox_new(FALSE, 5);
 	topbox = gtk_hbox_new(FALSE, 5);
 	vbox = gtk_vbox_new(FALSE, 5);
 	p->entry = gtk_entry_new();
-
-	if (permit)
-		frame = gtk_frame_new(_("Permit"));
-	else
-		frame = gtk_frame_new(_("Deny"));
 
 	/* Build Add Button */
 
@@ -2487,7 +2481,7 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 
 	/* Put the buttons in the box */
 
-	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
 
 	label = gtk_label_new(_("Add"));
@@ -2497,7 +2491,9 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 	/* And the boxes in the box */
 	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	gtk_widget_show(topbox);
+	topbox=gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(topbox), vbox, FALSE, FALSE, 5);
 
 
 	/* Handle closes right */
@@ -2513,13 +2509,12 @@ void show_add_perm(struct gaim_connection *gc, char *who, gboolean permit)
 	gtk_widget_show(topbox);
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
-	gtk_widget_show(frame);
 	if (permit)
 		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Permit"));
 	else
 		gtk_window_set_title(GTK_WINDOW(p->window), _("Gaim - Add Deny"));
 	gtk_window_set_focus(GTK_WINDOW(p->window), p->entry);
-	gtk_container_add(GTK_CONTAINER(p->window), frame);
+	gtk_container_add(GTK_CONTAINER(p->window), topbox);
 	gtk_widget_realize(p->window);
 
 	gtk_widget_show(p->window);
