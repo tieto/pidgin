@@ -433,7 +433,8 @@ insert_image_cb(GtkWidget *save, GtkIMHtmlToolbar *toolbar)
 }
 
 
-void close_smiley_dialog(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
+void close_smiley_dialog(GtkWidget *widget, GdkEvent *event,
+						 GtkIMHtmlToolbar *toolbar)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smiley), FALSE);
 
@@ -451,7 +452,7 @@ void insert_smiley_text(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 
 	gtk_imhtml_insert_smiley(GTK_IMHTML(toolbar->imhtml), NULL, smiley_text); //proto->info->name, smiley_text);
 
-	close_smiley_dialog(NULL, toolbar);
+	close_smiley_dialog(NULL, NULL, toolbar);
 }
 
 
@@ -564,7 +565,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		toolbar->smiley_dialog = dialog;
 
 	} else if (toolbar->smiley_dialog) {
-		close_smiley_dialog(smiley, toolbar);
+		close_smiley_dialog(smiley, NULL, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
