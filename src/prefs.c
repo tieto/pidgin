@@ -72,7 +72,6 @@ void set_default_away(GtkWidget *, gpointer);
 static gboolean program_is_valid(const char *);
 #endif
 
-struct debug_window *dw = NULL;
 GtkWidget *prefs = NULL;
 GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
@@ -345,7 +344,9 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 			/* It looks like we're dealing with a local file. Let's 
 			 * just untar it in the right place */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
-				debug_printf("%s\n", converr ? converr->message : "g_filename_from_uri error");
+				gaim_debug(GAIM_DEBUG_ERROR, "theme dnd", "%s\n",
+						   (converr ? converr->message :
+							"g_filename_from_uri error"));
 				return;
 			}
 			theme_install_theme(tmp, NULL);
@@ -1938,99 +1939,6 @@ void show_prefs()
 	gtk_widget_show(prefs);
 }
 
-static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
-{
-	if (debugbutton)
-		gtk_button_clicked(GTK_BUTTON(debugbutton));
-	if (misc_options & OPT_MISC_DEBUG) {
-		misc_options ^= OPT_MISC_DEBUG;
-	}
-	g_free(dw);
-	dw = NULL;
-	save_prefs();
-	return FALSE;
-}
-
-static void build_debug()
-{
-	GtkWidget *sw;
-	GtkTextBuffer *buffer;
-	GtkTextIter end;
-
-	if (!dw)
-		dw = g_new0(struct debug_window, 1);
-
-	GAIM_DIALOG(dw->window);
-	gtk_window_set_default_size(GTK_WINDOW(dw->window), 500, 200);
-	gtk_window_set_role(GTK_WINDOW(dw->window), "debug");
-	gtk_window_set_title(GTK_WINDOW(dw->window), _("Debug Window"));
-	g_signal_connect(G_OBJECT(dw->window), "delete_event", G_CALLBACK(debug_delete), NULL);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				      GTK_POLICY_NEVER,
-				      GTK_POLICY_ALWAYS);
-
-	dw->entry = gtk_text_view_new();
-	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(dw->entry), FALSE);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(dw->entry), FALSE);
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(dw->entry), GTK_WRAP_WORD_CHAR);
-
-	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dw->entry));
-	gtk_text_buffer_get_end_iter(buffer, &end);
-	gtk_text_buffer_create_mark(buffer, "end", &end, FALSE);
-
-	gtk_container_add(GTK_CONTAINER(sw), dw->entry);
-	gtk_container_add(GTK_CONTAINER(dw->window), sw);
-	gtk_widget_show_all(dw->window);
-}
-
-void show_debug()
-{
-	if ((misc_options & OPT_MISC_DEBUG)) {
-		if (!dw || !dw->window)
-			build_debug();
-		gtk_widget_show(dw->window);
-	} else {
-		if (!dw)
-			return;
-		gtk_widget_destroy(dw->window);
-		dw->window = NULL;
-	}
-}
-
-void toggle_debug()
-{
-	misc_options ^= OPT_MISC_DEBUG;
-	show_debug();
-	save_prefs();
-}
-
-void debug_printf(char *fmt, ...)
-{
-	va_list ap;
-	gchar *s;
-
-	va_start(ap, fmt);
-	s = g_strdup_vprintf(fmt, ap);
-	va_end(ap);
-
-	if (misc_options & OPT_MISC_DEBUG && dw) {
-		GtkTextBuffer *buffer;
-		GtkTextMark *endmark;
-		GtkTextIter end;
-
-		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dw->entry));
-		endmark = gtk_text_buffer_get_mark(buffer, "end");
-		gtk_text_buffer_get_iter_at_mark(buffer, &end, endmark);
-		gtk_text_buffer_insert(buffer, &end, s, -1);
-		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(dw->entry), endmark);
-	}
-	if (opt_debug)
-		g_print("%s", s);
-	g_free(s);
-}
-
 void set_option(GtkWidget *w, int *option)
 {
 	*option = !(*option);
@@ -2040,8 +1948,12 @@ static void set_misc_option(GtkWidget *w, int option)
 {
 	misc_options ^= option;
 
-	if (option == OPT_MISC_DEBUG)
-		show_debug();
+	if (option == OPT_MISC_DEBUG) {
+		if ((misc_options & OPT_MISC_DEBUG))
+			gaim_gtk_debug_window_show();
+		else
+			gaim_gtk_debug_window_hide();
+	}
 	else if(option == OPT_MISC_USE_SERVER_ALIAS) {
 		/* XXX blist reset the aliases here */
 		gaim_conversation_foreach(gaim_conversation_autoset_title);
@@ -2179,7 +2091,8 @@ GtkWidget *gaim_button(const char *text, guint *options, int option, GtkWidget *
 		g_signal_connect(GTK_OBJECT(button), "clicked", G_CALLBACK(set_away_option),
 				   (int *)option);
 	} else {
-		debug_printf("gaim_button: \"%s\" has no signal handler attached to it!\n", text);
+		gaim_debug(GAIM_DEBUG_WARNING, "gaim_button",
+				   "\"%s\" has no signal handler attached to it!\n", text);
 	}
 	gtk_widget_show(button);
 
@@ -2304,7 +2217,9 @@ static gboolean program_is_valid(const char *program)
 	}
 
 	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
-		debug_printf("Could not parse program '%s': ", error->message);
+		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
+				   "Could not parse program '%s': %s\n",
+				   program, error->message);
 		g_error_free(error);
 		return FALSE;
 	}
@@ -2372,7 +2287,7 @@ void dropdown_set(GObject *w, int *option)
 		*option = *option & ~clear;
 		*option = *option | opt;
 	} else {
-		debug_printf("HELLO %d\n", opt);
+		gaim_debug(GAIM_DEBUG_MISC, "dropdown_set", "HELLO %d\n", opt);
 		*option = opt;
 	}
 

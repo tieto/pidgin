@@ -216,7 +216,9 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 
 		g_snprintf(buf, sizeof(buf), "GET %s%s HTTP/1.0\r\n\r\n", gunk->full ? "" : "/",
 			   gunk->full ? gunk->url : gunk->website->page);
-		debug_printf("Request: %s\n", buf);
+
+		gaim_debug(GAIM_DEBUG_MISC, "grab_url_callback",
+				   "Request: %s\n", buf);
 
 		write(sock, buf, strlen(buf));
 		fcntl(sock, F_SETFL, O_NONBLOCK);
@@ -282,7 +284,8 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 		gunk->webdata = g_realloc(gunk->webdata, gunk->len + 1);
 		gunk->webdata[gunk->len] = 0;
 
-		debug_printf(_("Received: '%s'\n"), gunk->webdata);
+		gaim_debug(GAIM_DEBUG_MISC, "grab_url_callback",
+				   "Received: '%s'\n", gunk->webdata);
 
 		gaim_input_remove(gunk->inpa);
 		close(sock);

@@ -471,8 +471,6 @@ gaimrc_write_pounce(FILE *f)
 	struct gaim_pounce *pounce;
 	struct gaim_gtkpounce_data *pounce_data;
 
-	debug_printf("*** Writing pounces.\n");
-
 	fprintf(f, "pounce {\n");
 
 	for (pnc = gaim_get_pounces(); pnc != NULL; pnc = pnc->next) {
@@ -793,7 +791,8 @@ static void gaimrc_read_users(FILE *f)
 			if((account=gaimrc_read_user(f))!=NULL)
 				gaim_accounts = g_slist_append(gaim_accounts, account);
 			else {
-				debug_printf("Error reading in users from .gaimrc\n");
+				gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+						   "Error reading in users from .gaimrc\n");
 				return;
 			}
 		}
@@ -1152,11 +1151,13 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	user[0] = '\0';
 	pass[0] = '\0';
 
-	debug_printf("gaimrc_parse_proxy_uri(%s)\n", proxy);
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+			   "gaimrc_parse_proxy_uri(%s)\n", proxy);
 
 	if ((c = strchr(proxy, ':')) == NULL)
 	{
-	  debug_printf("no uri detected\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+				   "No URI detected.\n");
 		/* No URI detected. */
 		return FALSE;
 	}
@@ -1168,11 +1169,11 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 	else
 		return FALSE;
 
-	debug_printf("found http proxy\n");
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "Found HTTP proxy.\n");
 	/* Get past "://" */
 	c += 3;
 
-	debug_printf("looking at %s\n", c);
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "Looking at %s\n", c);
 
 	for (;;)
 	{
@@ -1234,9 +1235,10 @@ static gboolean gaimrc_parse_proxy_uri(const char *proxy)
 
 	global_proxy_info.proxyport = port;
 
-	debug_printf("host '%s'\nuser '%s'\npassword '%s'\nport %d\n",
-		global_proxy_info.proxyhost, global_proxy_info.proxyuser,
-		global_proxy_info.proxypass, global_proxy_info.proxyport);
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+			   "Host: '%s', User: '%s', Password: '%s', Port: %d\n",
+			   global_proxy_info.proxyhost, global_proxy_info.proxyuser,
+			   global_proxy_info.proxypass, global_proxy_info.proxyport);
 
 	return TRUE;
 }
@@ -1249,7 +1251,7 @@ static void gaimrc_read_proxy(FILE *f)
 
 	buf[0] = 0;
 	global_proxy_info.proxyhost[0] = 0;
-	debug_printf("gaimrc_read_proxy\n");
+	gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "gaimrc_read_proxy\n");
 
 	while (buf[0] != '}') {
 		if (buf[0] == '#')
@@ -1263,7 +1265,8 @@ static void gaimrc_read_proxy(FILE *f)
 		if (!strcmp(p->option, "host")) {
 			g_snprintf(global_proxy_info.proxyhost,
 					sizeof(global_proxy_info.proxyhost), "%s", p->value[0]);
-			debug_printf("set proxyhost %s\n", global_proxy_info.proxyhost);
+			gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+					   "Set proxyhost %s\n", global_proxy_info.proxyhost);
 		} else if (!strcmp(p->option, "port")) {
 			global_proxy_info.proxyport = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "type")) {
@@ -1459,11 +1462,13 @@ void load_prefs()
 	FILE *f;
 	char buf[1024];
 	int ver = 0;
-	debug_printf("load_prefs\n");
+
+	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Loading preferences.\n");
 
 	if (is_saving_prefs) {
 		request_load_prefs = 1;
-		debug_printf("currently saving, will request load\n");
+		gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
+				   "Currently saving. Will request load.\n");
 		return;
 	}
 
@@ -1478,7 +1483,7 @@ void load_prefs()
 
 	if ((f = fopen(buf, "r"))) {
 		is_loading_prefs = 1;
-		debug_printf("start load_prefs\n");
+		gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "start load_prefs\n");
 		fgets(buf, sizeof(buf), f);
 		sscanf(buf, "# .gaimrc v%d", &ver);
 		if ((ver <= 3) || (buf[0] != '#'))
@@ -1486,7 +1491,8 @@ void load_prefs()
 
 		while (!feof(f)) {
 			int tag = gaimrc_parse_tag(f);
-			debug_printf("starting read tag %d\n", tag);
+			gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+					   "starting read tag %d\n", tag);
 			switch (tag) {
 			case -1:
 				/* Let the loop end, EOF */
@@ -1517,13 +1523,15 @@ void load_prefs()
 				/* NOOP */
 				break;
 			}
-			debug_printf("ending read tag %d\n", tag);
+			gaim_debug(GAIM_DEBUG_MISC, "gaimrc",
+					   "ending read tag %d\n", tag);
 		}
 		fclose(f);
 		is_loading_prefs = 0;
-		debug_printf("end load_prefs\n");
+		gaim_debug(GAIM_DEBUG_MISC, "gaimrc", "end load_prefs\n");
 		if (request_save_prefs) {
-			debug_printf("saving prefs on request\n");
+			gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
+					   "Saving preferences on request\n");
 			save_prefs();
 			request_save_prefs = 0;
 		}
@@ -1545,13 +1553,14 @@ void save_prefs()
 	gchar *filename;
 	gchar *filename_temp;
 
-	debug_printf("enter save_prefs\n");  
+	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Entering save_prefs\n");
 	if (!prefs_initial_load)
 		return;
 
 	if (is_loading_prefs) {
 		request_save_prefs = 1;
-		debug_printf("currently loading, will request save\n");
+		gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
+				   "Currently loading. Will request save.\n");
 		return;
 	}
 
@@ -1579,20 +1588,24 @@ void save_prefs()
 		gaimrc_write_proxy(f);
 		fclose(f);
 		if (rename(filename_temp, filename) < 0)
-			debug_printf("error renaming %s to %s\n", filename_temp, filename);
+			gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+					   "Error renaming %s to %s\n", filename_temp, filename);
 		is_saving_prefs = 0;
 	} else
-		debug_printf("error opening %s\n", filename_temp);
+		gaim_debug(GAIM_DEBUG_ERROR, "gaimrc",
+				   "Error opening %s\n", filename_temp);
 
 	if (request_load_prefs) {
-		debug_printf("loading prefs on request\n");
+		gaim_debug(GAIM_DEBUG_INFO, "gaimrc",
+				   "Loading preferences on request.\n");
 		load_prefs();
 		request_load_prefs = 0;
 	}
 
 	g_free(filename);
 	g_free(filename_temp);
-	debug_printf("exit save_prefs\n");
+
+	gaim_debug(GAIM_DEBUG_INFO, "gaimrc", "Exiting save_prefs\n");
 }
 
 
@@ -1619,8 +1632,6 @@ load_pounces()
 	struct pounce_placeholder *ph;
 	struct gaim_pounce *pounce;
 	struct gaim_account *account;
-
-	debug_printf("*** Loading pounces...\n");
 
 	for (l = buddy_pounces; l != NULL; l = l->next) {
 		GaimPounceEvent events = GAIM_POUNCE_NONE;

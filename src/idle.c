@@ -80,7 +80,8 @@ gint check_idle(gpointer data)
 
 	if ((away_options & OPT_AWAY_AUTO) && (idle_time > (60 * auto_away)) && (!gc->is_auto_away)) {
 		if (!gc->away) {
-			debug_printf("making %s away automatically\n", gc->username);
+			gaim_debug(GAIM_DEBUG_INFO, "idle",
+					   "Making %s away automatically\n", gc->username);
 			if (g_slist_length(connections) == 1)
 				do_away_message(NULL, default_away);
 			else if (default_away)
@@ -96,13 +97,16 @@ gint check_idle(gpointer data)
 		}
 		gc->is_auto_away = 0;
 		if (awaymessage == NULL) {
-			debug_printf("removing auto-away message for %s\n", gc->username);
+			gaim_debug(GAIM_DEBUG_INFO, "idle",
+					   "Removing auto-away message for %s\n", gc->username);
 			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 		} else {
 			if (g_slist_length(connections) == 1)
 				do_im_back(0, 0);
 			else {
-				debug_printf("replacing auto-away with global for %s\n", gc->username);
+				gaim_debug(GAIM_DEBUG_INFO, "idle",
+						   "Replacing auto-away with global for %s\n",
+						   gc->username);
 				serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
 			}
 		}
@@ -117,12 +121,14 @@ gint check_idle(gpointer data)
 	}
 
 	if (idle_time >= IDLEMARK && !gc->is_idle) {
-		debug_printf("setting %s idle %d seconds\n", gc->username, idle_time);
+		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s idle %d seconds\n",
+				   gc->username, idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
 		system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	} else if (idle_time < IDLEMARK && gc->is_idle) {
-		debug_printf("setting %s unidle\n", gc->username);
+		gaim_debug(GAIM_DEBUG_INFO, "idle", "Setting %s unidle\n",
+				   gc->username);
 		serv_touch_idle(gc);
 		system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON);
 	}

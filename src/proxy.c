@@ -89,7 +89,9 @@ static gboolean gaim_io_invoke(GIOChannel *source, GIOCondition condition, gpoin
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 	/*
-	debug_printf("CLOSURE: callback for %d, fd is %d\n", closure->result, g_io_channel_unix_get_fd(source));
+	gaim_debug(GAIM_DEBUG_MISC, "proxy",
+			   "CLOSURE: callback for %d, fd is %d\n",
+			   closure->result, g_io_channel_unix_get_fd(source));
 	*/
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source), gaim_cond);
@@ -114,7 +116,12 @@ gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction
 	channel = g_io_channel_unix_new(source);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
 					      gaim_io_invoke, closure, gaim_io_destroy);
-	/* debug_printf("CLOSURE: adding input watcher %d for fd %d\n", closure->result, source); */
+
+	/*
+	gaim_debug(GAIM_DEBUG_MISC, "proxy",
+			   "CLOSURE: adding input watcher %d for fd %d\n",
+			   closure->result, source);
+	*/
 
 	g_io_channel_unref(channel);
 	return closure->result;
@@ -122,7 +129,8 @@ gint gaim_input_add(gint source, GaimInputCondition condition, GaimInputFunction
 
 void gaim_input_remove(gint tag)
 {
-	/* debug_printf("CLOSURE: removing input watcher %d\n", tag); */
+	/* gaim_debug(GAIM_DEBUG_MISC, "proxy",
+	              "CLOSURE: removing input watcher %d\n", tag); */
 	if (tag > 0)
 		g_source_remove(tag);
 }
@@ -182,14 +190,17 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 
 	/* Are you alive? */
 	if(kill(req->dns_pid, 0) != 0) {
-		debug_printf("DNS child %d no longer exists\n", req->dns_pid);
+		gaim_debug(GAIM_DEBUG_WARNING, "dns",
+				   "DNS child %s no longer exists\n", req->dns_pid);
 		return -1;
 	}
 	
 	/* Let's contact this lost child! */
 	rc = write(req->fd_in, dns_params, sizeof(*dns_params));
 	if(rc<0) {
-		debug_printf("Error writing to DNS child %d: %s\n", req->dns_pid, strerror(errno));
+		gaim_debug(GAIM_DEBUG_ERROR, "dns",
+				   "Unable to write to DNS child %d: %d\n",
+				   req->dns_pid, strerror(errno));
 		close(req->fd_in);
 		return -1;
 	}
@@ -199,12 +210,15 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 	/* Did you hear me? (This avoids some race conditions) */
 	rc = read(req->fd_out, &ch, 1);
 	if(rc != 1 || ch!='Y') {
-		debug_printf("DNS child %d not responding: killing it!\n", req->dns_pid);
+		gaim_debug(GAIM_DEBUG_WARNING, "dns",
+				   "DNS child %d not responding. Killing it!\n",
+				   req->dns_pid);
 		kill(req->dns_pid, SIGKILL);
 		return -1;
 	}
 	
-	debug_printf("Successfuly sent DNS request to child %d\n", req->dns_pid);
+	gaim_debug(GAIM_DEBUG_INFO, "dns",
+			   "Successfully sent DNS request to child %d\n", req->dns_pid);
 	return 0;
 }
 
@@ -222,13 +236,17 @@ static void release_dns_child(pending_dns_request_t *req)
 		req->callback = r->callback;
 		req->data = r->data;
 
-		debug_printf("Processing queued DNS query for '%s' with child %d\n", req->host, req->dns_pid);
+		gaim_debug(GAIM_DEBUG_INFO, "dns",
+				   "Processing queued DNS query for '%s' with child %d\n",
+				   req->host, req->dns_pid);
 
 		if(send_dns_request_to_child(req, &(r->params)) != 0) {
 			req_free(req);
 			req = NULL;
-			debug_printf("Intent of process queued query of '%s' failed, requeing...\n",
-				r->params.hostname);
+
+			gaim_debug(GAIM_DEBUG_WARNING, "dns",
+					   "Intent of process queued query of '%s' failed, "
+					   "requeueing...\n", r->params.hostname);
 			g_queue_push_head(queued_requests, r);
 		} else {
 			req->inpa = gaim_input_add(req->fd_out, GAIM_INPUT_READ, host_resolved, req);
@@ -251,7 +269,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	struct sockaddr *addr = NULL;
 	socklen_t addrlen;
 
-	debug_printf("Host '%s' resolved\n", req->host);
+	gaim_debug(GAIM_DEBUG_INFO, "dns", "Host '%s' resolved\n", req->host);
 	gaim_input_remove(req->inpa);
 
 	rc=read(req->fd_out, &err, sizeof(err));
@@ -264,7 +282,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 			hstrerror(err),
 #endif
 			req->dns_pid);
-		debug_printf("%s\n",message);
+		gaim_debug(GAIM_DEBUG_ERROR, "dns", "%s\n", message);
 		req->callback(NULL, req->data, message);
 		release_dns_child(req);
 		return;
@@ -284,7 +302,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	} else if(rc==-1) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
-		debug_printf("%s\n",message);
+		gaim_debug(GAIM_DEBUG_ERROR, "dns", "%s\n", message);
 		req->callback(NULL, req->data, message);
 		req_free(req);
 		return;
@@ -292,7 +310,7 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		char message[1024];
 		g_snprintf(message, sizeof(message), "EOF reading from DNS child");
 		close(req->fd_out);
-		debug_printf("%s\n",message);
+		gaim_debug(GAIM_DEBUG_ERROR, "dns", "%s\n", message);
 		req->callback(NULL, req->data, message);
 		req_free(req);
 		return;
@@ -344,7 +362,8 @@ static void cope_with_gdb_brokenness()
 	e[MAX(n,sizeof(e)-1)] = '\0';
 	
 	if(strstr(e,"gdb")) {
-		debug_printf("Debugger detected, performing useless query...\n");
+		gaim_debug(GAIM_DEBUG_INFO, "dns",
+				   "Debugger detected, performing useless query...\n");
 		gethostbyname("x.x.x.x.x");
 	}
 #endif
@@ -385,12 +404,16 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 			if(!queued_requests)
 				queued_requests = g_queue_new();
 			g_queue_push_tail(queued_requests, r);
-			debug_printf("DNS query for '%s' queued\n", hostname);
+
+			gaim_debug(GAIM_DEBUG_INFO, "dns",
+					   "DNS query for '%s' queued\n", hostname);
+
 			return 0;
 		}
 
 		if(pipe(child_out) || pipe(child_in)) {
-			debug_printf("Could not create pipes: %s",strerror(errno));
+			gaim_debug(GAIM_DEBUG_ERROR, "dns",
+					   "Could not create pipes: %s\n", strerror(errno));
 			return -1;
 		}
 
@@ -514,15 +537,18 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 		close(child_out[1]);
 		close(child_in[0]);
 		if(req->dns_pid==-1) {
-			debug_printf("Could not create child process for DNS: %s\n",strerror(errno));
+			gaim_debug(GAIM_DEBUG_ERROR, "dns",
+					   "Could not create child process for DNS: %s\n",
+					   strerror(errno));
 			g_free(req);
 			return -1;
 		}
 		req->fd_in = child_in[1];
 		req->fd_out = child_out[0];
 		number_of_dns_children++;
-		debug_printf("Created new DNS child %d, there are now %d children.\n",
-			req->dns_pid, number_of_dns_children);
+		gaim_debug(GAIM_DEBUG_INFO, "dns",
+				   "Created new DNS child %d, there are now %d children.\n",
+				   req->dns_pid, number_of_dns_children);
 	}
 	req->host=g_strdup(hostname);
 	req->port=port;
@@ -561,8 +587,9 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 	if (!inet_aton(hostname, &sin.sin_addr)) {
 		struct hostent *hp;
 		if(!(hp = gethostbyname(hostname))) {
-			debug_printf("gaim_gethostbyname(\"%s\", %d) failed: %s",
-				     hostname, port, hstrerror(h_errno));
+			gaim_debug(GAIM_DEBUG_ERROR, "dns",
+					   "gaim_gethostbyname(\"%s\", %d) failed: %s\n",
+					   hostname, port, hstrerror(h_errno));
 			return -1;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
@@ -590,7 +617,7 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 	int error=0;
 	int ret=0;
 
-	debug_printf("Connected\n");
+	gaim_debug(GAIM_DEBUG_INFO, "proxy", "Connected.\n");
 
 	len = sizeof(error);
 
@@ -602,8 +629,10 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
 		g_free(phb->host);
 		g_free(phb);
-                debug_printf("getsockopt SO_ERROR check: %s\n", 
-			     strerror(((ret<0) ? errno : error)));
+
+		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
+				   "getsockopt SO_ERROR check: %s\n",
+				   strerror((ret < 0) ? errno : error));
 		return;
 	}
 	fcntl(source, F_SETFL, 0);
@@ -631,30 +660,34 @@ static int proxy_connect_none(struct PHB *phb, struct sockaddr *addr, socklen_t 
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d with no proxy\n", phb->host, phb->port);
+	gaim_debug(GAIM_DEBUG_INFO, "proxy",
+			   "Connecting to %s:%d with no proxy\n", phb->host, phb->port);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
-		debug_printf("unable to create socket: %s\n", strerror(errno));
+		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
+				   "Unable to create socket: %s\n", strerror(errno));
 		return -1;
 	}
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 
 	if (connect(fd, (struct sockaddr *)addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			debug_printf("Connect would have blocked\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "proxy",
+					   "Connect would have blocked.\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			debug_printf("connect failed (errno %d)\n", errno);
+			gaim_debug(GAIM_DEBUG_ERROR, "proxy",
+					   "Connect failed (errno %d)\n", errno);
 			close(fd);
 			return -1;
 		}
 	} else {
 		unsigned int len;
 		int error = ETIMEDOUT;
-		debug_printf("Connect didn't block\n");
+		gaim_debug(GAIM_DEBUG_MISC, "proxy", "Connect didn't block.\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-			debug_printf("getsockopt failed\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "proxy", "getsockopt failed.\n");
 			close(fd);
 			return -1;
 		}
@@ -707,11 +740,13 @@ static void http_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 	
 	if(error) {
-		debug_printf("Unable to parse proxy's response: %s\n", inputline);
+		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
+				   "Unable to parse proxy's response: %s\n", inputline);
 		close(source);
 		source=-1;
 	} else if(status!=200) {
-		debug_printf("Proxy reserver replied: (%s)\n", p);
+		gaim_debug(GAIM_DEBUG_ERROR, "proxy",
+				   "Proxy server replied: (%s)\n", p);
 		close(source);
 		source=-1;
 	}
@@ -731,7 +766,8 @@ static void http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	debug_printf("Connected\n");
+	gaim_debug(GAIM_DEBUG_INFO, "http proxy", "Connected.\n");
+
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
 	len = sizeof(error);
@@ -776,7 +812,10 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using HTTP\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
+	gaim_debug(GAIM_DEBUG_INFO, "http proxy",
+			   "Connecting to %s:%d via %s:%d using HTTP\n",
+			   phb->host, phb->port, phb->gpi->proxyhost,
+			   phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		return -1;
@@ -786,7 +825,8 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			debug_printf("Connect would have blocked\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "http proxy",
+					   "Connect would have blocked.\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, http_canwrite, phb);
 		} else {
 			close(fd);
@@ -796,7 +836,9 @@ static int proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t 
 		unsigned int len;
 		int error = ETIMEDOUT;
 
-		debug_printf("Connect didn't block\n");
+		gaim_debug(GAIM_DEBUG_MISC, "http proxy",
+				   "Connect didn't block.\n");
+
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
@@ -841,7 +883,8 @@ static void s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	debug_printf("Connected\n");
+	gaim_debug(GAIM_DEBUG_INFO, "s4 proxy", "Connected.\n");
+
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
 	len = sizeof(error);
@@ -891,7 +934,10 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS4\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
+	gaim_debug(GAIM_DEBUG_INFO, "socks4 proxy",
+			   "Connecting to %s:%d via %s:%d using SOCKS4\n",
+			   phb->host, phb->port, phb->gpi->proxyhost,
+			   phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		return -1;
@@ -900,7 +946,8 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			debug_printf("Connect would have blocked\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "socks4 proxy",
+					   "Connect would have blocked.\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s4_canwrite, phb);
 		} else {
 			close(fd);
@@ -910,7 +957,9 @@ static int proxy_connect_socks4(struct PHB *phb, struct sockaddr *addr, socklen_
 		unsigned int len;
 		int error = ETIMEDOUT;
 
-		debug_printf("Connect didn't block\n");
+		gaim_debug(GAIM_DEBUG_MISC, "socks4 proxy",
+				   "Connect didn't block.\n");
+
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);
@@ -929,10 +978,10 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 	struct PHB *phb = data;
 
 	gaim_input_remove(phb->inpa);
-	debug_printf("able to read again\n");
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
 
 	if (read(source, buf, 10) < 10) {
-		debug_printf("or not...\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "socks5 proxy", "or not...\n");
 		close(source);
 		if(!phb->account || phb->account->gc)
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
@@ -941,7 +990,7 @@ static void s5_canread_again(gpointer data, gint source, GaimInputCondition cond
 		return;
 	}
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-		debug_printf("bad data\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
 		close(source);
 		if(!phb->account || phb->account->gc)
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
@@ -990,7 +1039,7 @@ static void s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	struct PHB *phb = data;
 
 	gaim_input_remove(phb->inpa);
-	debug_printf("got auth response\n");
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Got auth response.\n");
 
 	if (read(source, buf, 2) < 2) {
 		close(source);
@@ -1019,7 +1068,7 @@ static void s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	struct PHB *phb = data;
 
 	gaim_input_remove(phb->inpa);
-	debug_printf("able to read\n");
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read.\n");
 
 	if (read(source, buf, 2) < 2) {
 		close(source);
@@ -1070,7 +1119,8 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	debug_printf("Connected\n");
+	gaim_debug(GAIM_INFO, "socks5 proxy", "Connected.\n");
+
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
 	len = sizeof(error);
@@ -1098,7 +1148,7 @@ static void s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if (write(source, buf, i) < i) {
-		debug_printf("unable to write\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Unable to write\n");
 		close(source);
 		if(!phb->account || phb->account->gc)
 			phb->func(phb->data, -1, GAIM_INPUT_READ);
@@ -1114,7 +1164,10 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 {
 	int fd = -1;
 
-	debug_printf("connecting to %s:%d via %s:%d using SOCKS5\n", phb->host, phb->port, phb->gpi->proxyhost, phb->gpi->proxyport);
+	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy",
+			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
+			   phb->host, phb->port, phb->gpi->proxyhost,
+			   phb->gpi->proxyport);
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
 		return -1;
@@ -1123,7 +1176,8 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			debug_printf("Connect would have blocked\n");
+			gaim_debug(GAIM_DEBUG_WARNING, "socks5 proxy",
+					   "Connect would have blocked.\n");
 			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, s5_canwrite, phb);
 		} else {
 			close(fd);
@@ -1133,7 +1187,8 @@ static int proxy_connect_socks5(struct PHB *phb, struct sockaddr *addr, socklen_
 		unsigned int len;
 		int error = ETIMEDOUT;
 
-		debug_printf("Connect didn't block\n");
+		gaim_debug(GAIM_DEBUG_MISC, "socks5 proxy",
+				   "Connect didn't block.\n");
 		len = sizeof(error);
 		if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
 			close(fd);

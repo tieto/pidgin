@@ -1310,6 +1310,66 @@ irc_xfer_ack(struct gaim_xfer *xfer, const char *buffer, size_t size)
 	write(xfer->fd, (char *)&pos, 4);
 }
 
+/* NOTE: This was taken from irssi. Thanks irssi! */
+
+static gboolean
+is_numeric(const char *str, char end_char)
+{
+	g_return_val_if_fail(str != NULL, FALSE);
+
+	if (*str == '\0' || *str == end_char)
+		return FALSE;
+
+	while (*str != '\0' && *str != end_char) {
+		if (*str < '0' || *str > '9')
+			return FALSE;
+
+		str++;
+	}
+
+	return TRUE;
+}
+
+#define get_params_match(params, pos) \
+	(is_numeric(params[pos], '\0') && \
+	is_numeric(params[(pos)+1], '\0') && atol(params[(pos)+1]) < 65536 && \
+	is_numeric(params[(pos)+2], '\0'))
+
+/* Return number of parameters in `params' that belong to file name.
+   Normally it's paramcount-3, but I don't think anything forbids of
+   adding some extension where there could be more parameters after
+   file size.
+
+   MIRC sends filenames with spaces quoted ("file name"), but I'd rather
+   not trust that entirely either. At least some clients that don't really
+   understand the problem with spaces in file names sends the file name
+   without any quotes. */
+static int
+get_file_params_count(char **params, int paramcount)
+{
+	int pos, best;
+
+	if (*params[0] == '"') {
+		/* quoted file name? */
+		for (pos = 0; pos < paramcount - 3; pos++) {
+			if (params[pos][strlen(params[pos]) - 1] == '"' &&
+				get_params_match(params, pos + 1)) {
+
+				return pos + 1;
+			}
+		}
+	}
+
+	best = paramcount - 3;
+
+	for (pos = paramcount - 3; pos > 0; pos--) {
+		if (get_params_match(params, pos))
+			best = pos;
+	}
+
+	return best;
+}
+
 static void 
 handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 			char *msg, char *word[], char *word_eol[])
@@ -1325,19 +1385,19 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		g_snprintf(out, sizeof(out), ">> CTCP VERSION requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_ascii_strncasecmp(msg, "CLIENTINFO", 10)) {
+	else if (!g_ascii_strncasecmp(msg, "CLIENTINFO", 10)) {
 		g_snprintf(buf, sizeof(buf), "\001CLIENTINFO USERINFO CLIENTINFO VERSION\001");
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP CLIENTINFO requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_ascii_strncasecmp(msg, "USERINFO", 8)) {
+	else if (!g_ascii_strncasecmp(msg, "USERINFO", 8)) {
 		g_snprintf(buf, sizeof(buf), "\001USERINFO Alias: %s\001", gc->account->alias);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP USERINFO requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_ascii_strncasecmp(msg, "ACTION", 6)) {
+	else if (!g_ascii_strncasecmp(msg, "ACTION", 6)) {
 		char *po = strchr(msg + 6, 1);
 		char *tmp;
 		if (po) *po = 0;
@@ -1345,13 +1405,13 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		handle_privmsg(gc, to, nick, tmp);
 		g_free(tmp);
 	}
-	if (!g_ascii_strncasecmp(msg, "PING", 4)) {
+	else if (!g_ascii_strncasecmp(msg, "PING", 4)) {
 		g_snprintf(buf, sizeof(buf), "\001%s\001", msg);
 		irc_send_notice (gc, nick, buf);
 		g_snprintf(out, sizeof(out), ">> CTCP PING requested from %s", nick);
 		do_error_dialog(out, _("IRC CTCP info"), GAIM_INFO);
 	}
-	if (!g_ascii_strncasecmp(msg, "DCC CHAT", 8)) {
+	else if (!g_ascii_strncasecmp(msg, "DCC CHAT", 8)) {
 		char **chat_args = g_strsplit(msg, " ", 5);
 		char ask[1024];
 		struct dcc_chat *dccchat = g_new0(struct dcc_chat, 1);
@@ -1362,24 +1422,60 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		g_snprintf(ask, sizeof(ask), _("%s would like to establish a DCC chat"), nick);
 		do_ask_dialog(ask, _("This requires a direct connection to be established between the two computers.  Messages sent will not pass through the IRC server"), dccchat, _("Connect"), dcc_chat_init, _("Cancel"), dcc_chat_cancel, my_protocol->handle, FALSE);
 	}
-
-
-	if (!g_ascii_strncasecmp(msg, "DCC SEND", 8)) {
+	else if (!g_ascii_strncasecmp(msg, "DCC SEND", 8)) {
 		struct gaim_xfer *xfer;
 		char **send_args;
 		char *ip, *filename;
 		struct irc_xfer_data *xfer_data;
 		size_t size;
+		int param_count, file_params, len;
 		int port;
 
-		send_args = g_strsplit(msg, " ", 6);
-		send_args[5][strlen(send_args[5])-1] = 0;
+		/* Okay, this is ugly, but should get us past "DCC SEND" */
+		msg = strstr(msg, "DCC SEND");
+		msg = strchr(msg, ' ') + 1;
+		msg = strchr(msg, ' ') + 1;
+
+		/* SEND <file name> <address> <port> <size> [...] */
+		send_args = g_strsplit(msg, " ", -1);
+
+		for (param_count = 0; send_args[param_count] != NULL; param_count++)
+			;
+
+		if (param_count < 4) {
+			char buf[IRC_BUF_LEN];
+
+			g_snprintf(buf, sizeof(buf),
+					   _("Received an invalid file send request from %s."),
+					   nick);
+
+			do_error_dialog(buf, _("IRC Error"), GAIM_ERROR);
+
+			return;
+		}
+
+		file_params = get_file_params_count(send_args, param_count);
+
+		/* send_args[paramcount - 1][strlen(send_args[5])-1] = 0; */
 
 		/* Give these better names. */
-		ip       = send_args[3];
-		filename = send_args[2];
-		size     = atoi(send_args[5]);
-		port     = atoi(send_args[4]);
+		ip       = send_args[file_params];
+		port     = atoi(send_args[file_params + 1]);
+		size     = atoi(send_args[file_params + 2]);
+
+		send_args[file_params] = NULL;
+
+		filename = g_strjoinv(" ", send_args);
+
+		g_strfreev(send_args);
+
+		len = strlen(filename);
+
+		if (len > 1 && *filename == '"' && filename[len - 1] == '"') {
+			/* "file name" - MIRC sends filenames with spaces like this */
+			filename[len - 1] = '\0';
+			g_memmove(filename, filename + 1, len);
+		}
 
 		/* Setup the IRC-specific transfer data. */
 		xfer_data = g_malloc0(sizeof(struct irc_xfer_data));
@@ -1410,8 +1506,6 @@ handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 		/* Now perform the request! */
 		gaim_xfer_request(xfer);
 	}
-
-	/*write_to_conv(c, out, WFLAG_SYSTEM, NULL, time(NULL), -1);*/
 }
 
 static gboolean 

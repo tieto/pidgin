@@ -202,7 +202,7 @@ static FILE *open_gaim_log_file(const char *name, int *flag)
 	if (stat(log_all_file, &st) < 0)
 		*flag = 1;
 
-	debug_printf("Logging to: \"%s\"\n", log_all_file);
+	gaim_debug(GAIM_DEBUG_INFO, "log", "Logging to: \"%s\"\n", log_all_file);
 
 	fd = fopen(log_all_file, "a");
 

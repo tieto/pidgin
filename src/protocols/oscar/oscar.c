@@ -4549,10 +4549,13 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	maxitems = va_arg(ap, fu16_t *);
 	va_end(ap);
 
-	debug_printf("ssi rights:");
+	gaim_debug(GAIM_DEBUG_MISC, "prpl-oscar", "ssi rights:");
+
 	for (i=0; i<numtypes; i++)
-		debug_printf(" max type 0x%04x=%hd,", i, maxitems[i]);
-	debug_printf("\n");
+		gaim_debug(GAIM_DEBUG_MISC, NULL, " max type 0x%04x=%hd,",
+				   i, maxitems[i]);
+
+	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];

@@ -156,7 +156,8 @@ do_insert_image_cb(GObject *obj, GtkWidget *wid)
 		return;
 
 	if (stat(name, &st) != 0) {
-		debug_printf("Could not stat %s\n", name);
+		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
+				   "Could not stat image %s\n", name);
 		return;
 	}
 
@@ -1521,8 +1522,8 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e,
 	gtkwin = GAIM_GTK_WINDOW(win);
 
 	if (gtkwin->in_drag) {
-		debug_printf("Already in the middle of a window "
-					 "drag at tab_press_cb\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
+				   "Already in the middle of a window drag at tab_press_cb\n");
 		return TRUE;
 	}
 
@@ -4535,7 +4536,6 @@ gaim_gtkconv_toggle_spellchk(void)
 	struct gaim_gtk_conversation *gtkconv;
 	GtkSpell *spell;
 
-	debug_printf("gaim_gtkconv_toggle_spellchk\n");
 	for (cl = gaim_get_conversations(); cl != NULL; cl = cl->next) {
 		
 		conv = (struct gaim_conversation *)cl->data;
@@ -4614,7 +4614,9 @@ redraw_icon(gpointer data)
 	gint delay;
 
 	if (!g_list_find(gaim_get_ims(), conv)) {
-		debug_printf("I think this is a bug.\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
+				   "Conversation not found in redraw_icon. I think this "
+				   "is a bug.\n");
 		return FALSE;
 	}
 
@@ -4810,7 +4812,8 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	}
 
 	if (err) {
-		debug_printf("Buddy icon error: %s\n", err->message);
+		gaim_debug(GAIM_DEBUG_ERROR, "gtkconv",
+				   "Buddy icon error: %s\n", err->message);
 		g_error_free(err);
 	}
 

@@ -96,7 +96,8 @@ static char *sound_file[GAIM_NUM_SOUNDS];
 static void check_ao_init()
 {
 	if(!ao_initialized) {
-		debug_printf("Initializing sound ouput drivers.\n");
+		gaim_debug(GAIM_DEBUG_INFO, "sound",
+				   "Initializing sound output drivers.\n");
 		ao_initialize();
 		ao_initialized = TRUE;
 	}
@@ -122,12 +123,14 @@ void gaim_sound_change_output_method() {
 	}
 	if(ao_driver != -1) {
 		ao_info *info = ao_driver_info(ao_driver);
-		debug_printf("Sound output driver loaded: %s\n", info->name);
+		gaim_debug(GAIM_DEBUG_INFO, "sound",
+				   "Sound output driver loaded: %s\n", info->name);
 	}
 #endif /* USE_AO */
 #ifdef USE_NAS
 	if((sound_options & OPT_SOUND_NAS))
-		debug_printf("Sound output driver loaded: NAS output\n");
+		gaim_debug(GAIM_DEBUG_INFO, "sound",
+				   "Sound output driver loaded: NAS output\n");
 #endif /* USE_NAS */
 }
 
@@ -275,9 +278,10 @@ void gaim_sound_play_file(char *filename)
 	return;
 #endif /* USE_NAS_AUDIO || USE_AO */
 #else /* _WIN32 */
-	debug_printf("Playing %s\n", filename);
+	gaim_debug(GAIM_DEBUG_INFO, "sound", "Playing %s\n", filename);
+
 	if (!PlaySound(filename, 0, SND_ASYNC | SND_FILENAME))
-		debug_printf("Error playing sound.");
+		gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
 #endif /* _WIN32 */
 }
 
@@ -287,7 +291,8 @@ void gaim_sound_play_event(GaimSoundEventID event)
 		return;
 
 	if (event >= GAIM_NUM_SOUNDS) {
-		debug_printf("got request for unknown sound: %d\n", event);
+		gaim_debug(GAIM_DEBUG_MISC, "sound",
+				   "got request for unknown sound: %d\n", event);
 		return;
 	}
 

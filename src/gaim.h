@@ -377,9 +377,6 @@ struct g_url *parse_url(char *url);
 /* Functions in idle.c */
 extern gint check_idle(gpointer);
 
-/* Functions in prefs.c */
-extern void debug_printf(char * fmt, ...) G_GNUC_PRINTF(1,2);
-
 /* Functions in server.c */
 /* input to serv */
 extern void serv_login(struct gaim_account *);

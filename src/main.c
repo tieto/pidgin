@@ -51,6 +51,7 @@
 #include "gaim.h"
 #include "gaim-socket.h"
 #include "gtklist.h"
+#include "gtkdebug.h"
 #if HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -119,7 +120,7 @@ void do_quit()
 	/* record what we have before we blow it away... */
 	save_prefs();
 
-	debug_printf("Unloading all plugins\n");
+	gaim_debug(GAIM_DEBUG_INFO, "main", "Unloading all plugins\n");
 	gaim_plugins_unload_all();
 
 	/* XXX */
@@ -404,7 +405,8 @@ void sighandler(int sig)
 {
 	switch (sig) {
 	case SIGHUP:
-		debug_printf("caught signal %d\n", sig);
+		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
+				   "Caught signal %d\n", sig);
 		signoff_all(NULL, NULL);
 		break;
 	case SIGSEGV:
@@ -440,7 +442,8 @@ void sighandler(int sig)
 #endif
 		break;
 	default:
-		debug_printf("caught signal %d\n", sig);
+		gaim_debug(GAIM_DEBUG_WARNING, "sighandler",
+				   "Caught signal %d\n", sig);
 		signoff_all(NULL, NULL);
 
 		gaim_plugins_unload_all();
@@ -463,47 +466,50 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	guint32 x;
 	GError *error;
 
-	debug_printf("Core says: ");
+	gaim_debug(GAIM_DEBUG_INFO, "core socket", "Core says: ");
 	g_io_channel_read_chars(source, &type, sizeof(type), &x, &error);
 	if(error)
 		g_error_free(error);
 	if (x == 0) {
-		debug_printf("CORE IS GONE!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
 			g_free(error);
 		return FALSE;
 	}
-	debug_printf("%d ", type);
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "%d ", type);
 	g_io_channel_read_chars(source, &subtype, sizeof(subtype), &x, &error);
 	if(error)
 		g_error_free(error);
 	if (x == 0) {
-		debug_printf("CORE IS GONE!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
 			g_error_free(error);
 		return FALSE;
 	}
-	debug_printf("%d ", subtype);
+
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "%d ", subtype);
 	g_io_channel_read_chars(source, (guchar *)&len, sizeof(len), &x, &error);
 	if(error)
 		g_error_free(error);
 	if (x == 0) {
-		debug_printf("CORE IS GONE!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, NULL, "CORE IS GONE!\n");
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
 			g_error_free(error);
 		return FALSE;
 	}
-	debug_printf("(%d bytes)\n", len);
+	
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "(%d bytes)\n", len);
 
 	data = g_malloc(len);
 	g_io_channel_read_chars(source, data, len, &x, &error);
 	if(error)
 		g_error_free(error);
 	if (x != len) {
-		debug_printf("CORE IS GONE! (read %d/%d bytes)\n", x, len);
+		gaim_debug(GAIM_DEBUG_ERROR, "core socket",
+				   "CORE IS GONE! (read %d/%d bytes)\n", x, len);
 		g_free(data);
 		g_io_channel_shutdown(source, TRUE, &error);
 		if(error)
@@ -548,7 +554,8 @@ static int ui_main()
 		g_object_unref(G_OBJECT(icon));
 		g_list_free(icons);
 	} else {
-		debug_printf("Failed to load default window icon!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "ui_main",
+				   "Failed to load the default window icon!\n");
 	}
 
 	g_snprintf(name, sizeof(name), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
@@ -585,21 +592,21 @@ static void set_first_user(char *name)
 /* WIN32 print and log handlers */
 
 static void gaim_dummy_print( const gchar* string ) {
-        return;
+	return;
 }
 
 static void gaim_dummy_log_handler (const gchar    *domain,
 				    GLogLevelFlags  flags,
 				    const gchar    *msg,
 				    gpointer        user_data) {
-        return;
+	return;
 }
 
 static void gaim_log_handler (const gchar    *domain,
 			      GLogLevelFlags  flags,
 			      const gchar    *msg,
 			      gpointer        user_data) {
-        debug_printf("%s - %s\n", domain, msg);
+	gaim_debug(GAIM_DEBUG_MISC, "log", "%s - %s\n", domain, msg);
 	g_log_default_handler(domain, flags, msg, user_data);
 }
 #endif /* _WIN32 */
@@ -861,6 +868,13 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	/* Set the UI operation structures. */
+	gaim_set_debug_ui_ops(gaim_get_gtk_debug_ui_ops());
+	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
+	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
+	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
+
+
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());
@@ -877,11 +891,6 @@ int main(int argc, char *argv[])
 	/* Various win32 initializations */
 	wgaim_init();
 #endif
-
-	/* Set the UI operation structures. */
-	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
-	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
-	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());
 
 	load_prefs();
 	core_main();
@@ -904,7 +913,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (misc_options & OPT_MISC_DEBUG)
-		show_debug();
+		gaim_gtk_debug_window_show();
 
 	static_proto_init();
 

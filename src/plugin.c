@@ -195,8 +195,8 @@ gaim_plugin_probe(const char *filename)
 			g_module_close(plugin->handle);
 			plugin->handle = NULL;
 
-			debug_printf("%s is unloadable %s\n",
-						 plugin->path, g_module_error());
+			gaim_debug(GAIM_DEBUG_ERROR, "plugins", "%s is unloadable: %s\n",
+					   plugin->path, g_module_error());
 
 			gaim_plugin_destroy(plugin);
 
@@ -292,7 +292,8 @@ gaim_plugin_unload(GaimPlugin *plugin)
 
 	g_return_val_if_fail(gaim_plugin_is_loaded(plugin), FALSE);
 
-	debug_printf("Unloading plugin %s\n", plugin->info->name);
+	gaim_debug(GAIM_DEBUG_INFO, "plugins", "Unloading plugin %s\n",
+			   plugin->info->name);
 
 	/* cancel any pending dialogs the plugin has */
 	do_ask_cancel_by_handle(plugin);

@@ -10,6 +10,8 @@ CORESOURCES = \
 	conversation.h \
 	core.c \
 	core.h \
+	debug.c \
+	debug.h \
 	event.c \
 	event.h \
 	ft.c \
@@ -48,6 +50,8 @@ gaim_SOURCES = \
 	gtkcellrendererprogress.h \
 	gtkconv.c \
 	gtkconv.h \
+	gtkdebug.c \
+	gtkdebug.h \
 	gtkft.c \
 	gtkft.h \
 	gtkimhtml.c \

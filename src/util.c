@@ -913,7 +913,8 @@ char *add_cr(const char *text)
 		ret[j++] = text[i];
 	}
 
-	debug_printf("got: %s, leaving with %s\n", text, ret);
+	gaim_debug(GAIM_DEBUG_INFO, "add_cr", "got: %s, leaving with %s\n",
+			   text, ret);
 
 	return ret;
 }
@@ -956,20 +957,25 @@ FILE *gaim_mkstemp(gchar **fpath)
 #ifdef _WIN32
 			char* result = _mktemp( *fpath );
 			if( result == NULL )
-				debug_printf("gaim_mkstemp: Problem creating the template\n");
+				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+						   "Problem creating the template\n");
 			else
 			{
 				if( (fp = fopen( result, "w+" )) == NULL ) {
-					debug_printf("Error: Couldn't fopen() in gaim_mkstemp():\n%s\n", result);
+					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+							   "Couldn't fopen() %s\n", result);
 				}
 			}
 #else
 			if((fd = mkstemp(*fpath)) == -1) {
-				debug_printf("Error: Couldn't make \"%s\", error: %d\n", *fpath, errno);
+				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+						   "Couldn't make \"%s\", error: %d\n",
+						   *fpath, errno);
 			} else {
 				if((fp = fdopen(fd, "r+")) == NULL) {
 					close(fd);
-					debug_printf("Error: Couldn't fdopen(), error: %d\n", errno);
+					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+							   "Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
 #endif
@@ -979,7 +985,8 @@ FILE *gaim_mkstemp(gchar **fpath)
 			}
 		}
 	} else {
-		debug_printf("Error: g_get_tmp_dir() failed in gaim_mkstemp()!\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+				   "g_get_tmp_dir() failed!");
 	}
 
 	return fp;
@@ -991,8 +998,8 @@ const char *handle_uri(char *uri) {
 	GSList *conn = connections;
 	struct gaim_connection *gc = NULL;
 
-	debug_printf("Handling URI: %s\n", uri);
-	
+	gaim_debug(GAIM_DEBUG_INFO, "handle_uri", "Handling URI: %s\n", uri);
+
 	/* Well, we'd better check to make sure we have at least one
 	   AIM account connected. */
 	while (conn) {
@@ -1074,7 +1081,8 @@ const char *handle_uri(char *uri) {
 			group = g_strdup(str->str);
 			g_string_free(str, TRUE);
 		}
-		debug_printf("who: %s\n", who);
+
+		gaim_debug(GAIM_DEBUG_MISC, "handle_uri", "who: %s\n", who);
 		show_add_buddy(gc, who, group, NULL);
 		g_free(who);
 		if (group)

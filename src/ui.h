@@ -90,12 +90,6 @@ typedef enum {
 		GAIM_BUTTON_VERTICAL
 } GaimButtonStyle;
 
-
-struct debug_window {
-	GtkWidget *window;
-	GtkWidget *entry;
-};
-
 /* XXX CUI: save_pos and window_size are used by gaimrc.c which is core.
  * Need to figure out options saving. Same goes for several global variables as well. */
 struct save_pos {
@@ -308,7 +302,6 @@ extern void update_show_plugins(); /* this is a hack and will be removed */
 extern void set_option(GtkWidget *, int *);
 extern void show_prefs();
 extern void show_debug();
-extern void toggle_debug();
 extern void update_color(GtkWidget *, GtkWidget *);
 extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);

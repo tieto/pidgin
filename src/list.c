@@ -576,7 +576,9 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config)
 				if (a) {
 					utf8 = gaim_try_conv_to_utf8(a);
 					if (utf8 == NULL) {
-						debug_printf ("Failed to convert alias for '%s' to UTF-8\n", nm);
+						gaim_debug(GAIM_DEBUG_ERROR, "toc blist",
+								   "Failed to convert alias for "
+								   "'%s' to UTF-8\n", nm);
 					}
 				}
 				if (utf8 == NULL) {
@@ -600,12 +602,14 @@ void parse_toc_buddy_list(struct gaim_account *account, char *config)
 				gaim_privacy_deny_add(account, c + 2);
 			} else if (!strncmp("toc", c, 3)) {
 				sscanf(c + strlen(c) - 1, "%d", &account->permdeny);
-				debug_printf("permdeny: %d\n", account->permdeny);
+				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
+						   "permdeny: %d\n", account->permdeny);
 				if (account->permdeny == 0)
 					account->permdeny = 1;
 			} else if (*c == 'm') {
 				sscanf(c + 2, "%d", &account->permdeny);
-				debug_printf("permdeny: %d\n", account->permdeny);
+				gaim_debug(GAIM_DEBUG_MISC, "toc blist",
+						   "permdeny: %d\n", account->permdeny);
 				if (account->permdeny == 0)
 					account->permdeny = 1;
 			}
@@ -691,7 +695,8 @@ static GString *translate_blt(FILE *src_fp)
 				char *e;
 				g_strchomp(line);
 				buddy = g_strchug(line);
-				debug_printf("\nbuddy: \"%s\"\n\n", buddy);
+				gaim_debug(GAIM_DEBUG_MISC, "AIM 4 blt import",
+						   "buddy: \"%s\"\n", buddy);
 				dest = g_string_append(dest, "b ");
 				if (strchr(buddy, '{') != NULL) {
 					/* buddy pounce, etc */
@@ -828,12 +833,14 @@ static void do_import(struct gaim_account *account, const char *filename)
 	}
 
 	if (stat(path, &st)) {
-		debug_printf("Unable to stat %s.\n", path);
+		gaim_debug(GAIM_DEBUG_ERROR, "blist import", "Unable to stat %s.\n",
+				   path);
 		return;
 	}
 
 	if (!(f = fopen(path, "r"))) {
-		debug_printf("Unable to open %s.\n", path);
+		gaim_debug(GAIM_DEBUG_ERROR, "blist import", "Unable to open %s.\n",
+				   path);
 		return;
 	}
 
@@ -851,17 +858,17 @@ static void do_import(struct gaim_account *account, const char *filename)
 		
 	} else if (!g_strncasecmp(first, "Config {", strlen("Config {"))) {
 		/* AIM 4 buddy list */
-		debug_printf("aim 4\n");
+		gaim_debug(GAIM_DEBUG_MISC, "blist import", "aim 4\n");
 		rewind(f);
 		buf = translate_blt(f);
 	} else if (strstr(first, "group") != NULL) {
 		/* AIM 3 buddy list */
-		debug_printf("aim 3\n");
+		gaim_debug(GAIM_DEBUG_MISC, "blist import", "aim 3\n");
 		rewind(f);
 		buf = translate_lst(f);
 	} else if (!g_strncasecmp(first, "[User]", strlen("[User]"))) {
 		/* GnomeICU (hopefully) */
-		debug_printf("gnomeicu\n");
+		gaim_debug(GAIM_DEBUG_MISC, "blist import", "gnomeicu\n");
 		rewind(f);
 		buf = translate_gnomeicu(f);
 
@@ -1140,7 +1147,8 @@ static void blist_text_handler(GMarkupParseContext *context, const gchar *text,
 static void blist_error_handler(GMarkupParseContext *context, GError *error,
 		gpointer user_data) {
 	blist_parser_error_occurred = TRUE;
-	debug_printf("error parsing blist.xml: %s\n", error->message);
+	gaim_debug(GAIM_DEBUG_ERROR, "blist import",
+			   "Error parsing blist.xml: %s\n", error->message);
 }
 
 static GMarkupParser blist_parser = {
@@ -1157,9 +1165,11 @@ static gboolean gaim_blist_read(const char *filename) {
 	GMarkupParseContext *context;
 	GError *error = NULL;
 
-	debug_printf("gaim_blist_read: reading %s\n", filename);
+	gaim_debug(GAIM_DEBUG_INFO, "blist import",
+			   "Reading %s\n", filename);
 	if(!g_file_get_contents(filename, &contents, &length, &error)) {
-		debug_printf("error reading blist: %s\n", error->message);
+		gaim_debug(GAIM_DEBUG_ERROR, "blist import",
+				   "Error reading blist: %s\n", error->message);
 		g_error_free(error);
 		return FALSE;
 	}
@@ -1173,7 +1183,8 @@ static gboolean gaim_blist_read(const char *filename) {
 	}
 
 	if(!g_markup_parse_context_end_parse(context, NULL)) {
-		debug_printf("error parsing blist\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "blist import",
+				   "Error parsing %s\n", filename);
 		g_markup_parse_context_free(context);
 		g_free(contents);
 		return FALSE;
@@ -1185,7 +1196,8 @@ static gboolean gaim_blist_read(const char *filename) {
 	if(blist_parser_error_occurred)
 		return FALSE;
 
-	debug_printf("gaim_blist_read: finished reading %s\n", filename);
+	gaim_debug(GAIM_DEBUG_INFO, "blist import", "Finished reading %s\n",
+			   filename);
 
 	return TRUE;
 }
@@ -1357,7 +1369,8 @@ void gaim_blist_save() {
 	if(!user_dir)
 		return;
 	if(!blist_safe_to_write) {
-		debug_printf("AHH!! tried to write the blist before we read it!\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "blist save",
+				   "AHH!! Tried to write the blist before we read it!\n");
 		return;
 	}
 
@@ -1374,13 +1387,15 @@ void gaim_blist_save() {
 		fclose(file);
 		chmod(filename, S_IRUSR | S_IWUSR);
 	} else {
-		debug_printf("unable to write %s\n", filename);
+		gaim_debug(GAIM_DEBUG_ERROR, "blist save", "Unable to write %s\n",
+				   filename);
 	}
 
 	filename_real = g_build_filename(user_dir, "blist.xml", NULL);
 
 	if(rename(filename, filename_real) < 0)
-		debug_printf("error renaming %s to %s\n", filename, filename_real);
+		gaim_debug(GAIM_DEBUG_ERROR, "blist save",
+				   "Error renaming %s to %s\n", filename, filename_real);
 
 
 	g_free(filename);

@@ -84,7 +84,8 @@ void do_ask_cancel_by_handle(void *handle)
 {
 	GSList *d = do_ask_dialogs;
 
-	debug_printf("%d dialogs to search\n", g_slist_length(d));
+	gaim_debug(GAIM_DEBUG_MISC, "prpl",
+			   "%d dialogs to search", g_slist_length(d));
 
 	while (d) {
 		struct doaskstruct *doask = d->data;
@@ -92,7 +93,8 @@ void do_ask_cancel_by_handle(void *handle)
 		d = d->next;
 
 		if (doask->handle == handle) {
-			debug_printf("removing dialog, %d remain\n", g_slist_length(d));
+			gaim_debug(GAIM_DEBUG_MISC, "prpl",
+					   "Removing dialog, %d remain\n", g_slist_length(d));
 			gtk_dialog_response(GTK_DIALOG(doask->dialog), GTK_RESPONSE_NONE);
 		}
 	}
@@ -413,7 +415,9 @@ static void des_email_win(GtkWidget *w, struct mail_notify *mn)
 		gtk_widget_destroy(mn->email_win);
 		return;
 	}
-	debug_printf("removing mail notification\n");
+
+	gaim_debug(GAIM_DEBUG_INFO, "prpl", "Removing mail notification.\n");
+
 	mailnots = g_slist_remove(mailnots, mn);
 	if (mn->url)
 		g_free(mn->url);
@@ -555,7 +559,8 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 		return;
 	}
 
-	debug_printf("Got icon for %s (length %d)\n", realwho, len);
+	gaim_debug(GAIM_DEBUG_MISC, "prpl", "Got icon for %s (length %d)\n",
+			   realwho, len);
 
 	id->data = g_memdup(data, len);
 	id->len = len;
@@ -577,10 +582,13 @@ void set_icon_data(struct gaim_connection *gc, const char *who, void *data, int 
 		g_free(random);
 
 		if(!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-			debug_printf("creating icon cache directory\n");
+			gaim_debug(GAIM_DEBUG_INFO, "buddy icons",
+					   "Creating icon cache directory.\n");
+
 			if(mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0)
-				debug_printf("error creating directory %s: %s\n",
-						dirname, strerror(errno));
+				gaim_debug(GAIM_DEBUG_ERROR, "buddy icons",
+						   "Unable to create directory %s: %s\n",
+						   dirname, strerror(errno));
 		}
 
 		g_free(dirname);

@@ -55,11 +55,13 @@ void serv_login(struct gaim_account *account)
 			return;
 		}
 
-		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n",
-					 account->username, p->info->name);
+		gaim_debug(GAIM_DEBUG_INFO, "server",
+				   PACKAGE " " VERSION " logging in %s using %s\n",
+				   account->username, p->info->name);
 		account->connecting = TRUE;
 		connecting_count++;
-		debug_printf("connecting_count: %d\n", connecting_count);
+		gaim_debug(GAIM_DEBUG_MISC, "server",
+				   "connection count: %d\n", connecting_count);
 		gaim_event_broadcast(event_connecting, account);
 		prpl_info->login(account);
 	}
@@ -82,10 +84,10 @@ static gboolean send_keepalive(gpointer d)
 static void update_keepalive(struct gaim_connection *gc, gboolean on)
 {
 	if (on && !gc->keepalive) {
-		debug_printf("allowing NOP\n");
+		gaim_debug(GAIM_DEBUG_INFO, "server", "allowing NOP\n");
 		gc->keepalive = g_timeout_add(60000, send_keepalive, gc);
 	} else if (!on && gc->keepalive > 0) {
-		debug_printf("removing NOP\n");
+		gaim_debug(GAIM_DEBUG_INFO, "server", "removing NOP\n");
 		g_source_remove(gc->keepalive);
 		gc->keepalive = 0;
 	}
@@ -754,7 +756,7 @@ void serv_got_im(struct gaim_connection *gc, const char *who, const char *msg,
 	 */
 
 	if (flags & IM_FLAG_GAIMUSER)
-		debug_printf("%s is a gaim user.\n", who);
+		gaim_debug(GAIM_DEBUG_MISC, "%s is a gaim user.\n", who);
 
 	/*
 	 * We should update the conversation window buttons and menu,
@@ -1029,7 +1031,8 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin,
 	}
 
 	if (!b) {
-		debug_printf("Error, no such buddy %s\n", name);
+		gaim_debug(GAIM_DEBUG_ERROR, "server",
+				   "No such buddy: %s\n", name);
 		return;
 	}
 
@@ -1308,7 +1311,8 @@ void serv_got_chat_left(struct gaim_connection *g, int id)
 
 	gaim_event_broadcast(event_chat_leave, g, gaim_chat_get_id(chat));
 
-	debug_printf("Leaving room %s.\n", gaim_conversation_get_name(conv));
+	gaim_debug(GAIM_DEBUG_INFO, "server", "Leaving room: %s\n",
+			   gaim_conversation_get_name(conv));
 
 	g->buddy_chats = g_slist_remove(g->buddy_chats, conv);
 

@@ -4,6 +4,8 @@ version 0.63:
 	* A rewrite of the plugin API. Plugin authors will need to change their
 	  code based off the changes found in other plugins.
 	* Perl script support is now provided in the perl plugin.
+	* Debugging is core/ui split, and has a new API with support for
+	  debug levels and categories.
 
 version 0.62 (04/23/2003):
 	* Keyboard shortcuts in the buddy list work again (Thanks Joe 

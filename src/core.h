@@ -49,6 +49,7 @@ struct group;
 struct buddy;
 
 
+#include "debug.h"
 #include "multi.h"
 #include "conversation.h"
 #include "ft.h"

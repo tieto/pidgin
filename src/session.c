@@ -56,13 +56,14 @@ static gboolean ice_process_messages(GIOChannel *channel, GIOCondition condition
 	status = IceProcessMessages(connection, NULL, NULL);
 
 	if (status == IceProcessMessagesIOError) {
-		debug_printf("Session Management: ICE IO error, closing connection... ");
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "ICE IO error, closing connection... ");
 
 		/* IO error, please disconnect */
 		IceSetShutdownNegotiation(connection, False);
 		IceCloseConnection(connection);
 
-		debug_printf("done\n");
+		gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");
 
 		/* cancel the handler */
 		return FALSE;
@@ -79,7 +80,8 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 	if (opening) {
 		GIOChannel *channel;
 
-		debug_printf("Session Management: handling new ICE connection... ");
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "Handling new ICE connection... ");
 
 		/* ensure ICE connection is not passed to child processes */
 		fcntl(IceConnectionNumber(connection), F_SETFD, FD_CLOEXEC);
@@ -93,14 +95,15 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
 		/* store the input ID as a pointer for when it closes */
 		*watch_data = (IcePointer)GUINT_TO_POINTER(input_id);
 	} else {
-		debug_printf("Session Management: handling closed ICE connection... ");
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "Handling closed ICE connection... ");
 
 		/* get the input ID back and stop watching it */
 		input_id = GPOINTER_TO_UINT((gpointer) *watch_data);
 		g_source_remove(input_id);
 	}
 
-	debug_printf("done\n");
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");
 }
 
 /* We call any handler installed before (or after) ice_init but 
@@ -111,12 +114,13 @@ static void ice_connection_watch(IceConn connection, IcePointer client_data,
  */
 
 static void ice_io_error_handler(IceConn connection) {
-	debug_printf("Session Management: handling ICE IO error... ");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Handling ICE IO error... ");
 
 	if (ice_installed_io_error_handler)
 		(*ice_installed_io_error_handler)(connection);
 
-	debug_printf("done\n");
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "done.\n");
 }
 
 static void ice_init() {
@@ -130,7 +134,8 @@ static void ice_init() {
 
 	IceAddConnectionWatch(ice_connection_watch, NULL);
 
-	debug_printf("Session Management: ICE initialised\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "ICE initialized.\n");
 }
 
 /* my magic utility function */
@@ -169,7 +174,8 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 	      interact_style == SmInteractStyleNone && !shutdown &&
 	      !fast) {
 		/* this is just a dry run, spit it back */
-		debug_printf("Session Management: received first save_yourself\n");
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "Received first save_yourself\n");
 		SmcSaveYourselfDone(conn, True);
 		had_first_save = TRUE;
 		return;
@@ -178,7 +184,8 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 	/* tum ti tum... don't add anything else here without *
          * reading SMlib.PS from an X.org ftp server near you */
 
-	debug_printf("Session Management: received save_yourself\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Received save_yourself\n");
 
 	if (save_type == SmSaveGlobal || save_type == SmSaveBoth) {
 		/* may as well do something ... */
@@ -189,16 +196,19 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 }
 
 void session_die(SmcConn conn, SmPointer data) {
-	debug_printf("Session Management: received die\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Received die\n");
 	do_quit();
 }
 
 void session_save_complete(SmcConn conn, SmPointer data) {
-	debug_printf("Session Management: received save_complete\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Received save_complete\n");
 }
 
 void session_shutdown_cancelled(SmcConn conn, SmPointer data) {
-	debug_printf("Session Management: received shutdown_cancelled\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Received shutdown_cancelled\n");
 }
 
 /* utility functions stolen from Gnome-client */
@@ -279,12 +289,14 @@ void session_init(gchar *argv0, gchar *previous_id) {
 
 	if (session != NULL) {
 		/* session is already established, what the hell is going on? */
-		debug_printf("Session Management: duplicated call to session_init!\n");
+		gaim_debug(GAIM_DEBUG_WARNING, "Session Management",
+				   "Duplicated call to session_init!\n");
 		return;
 	}
 
 	if (g_getenv("SESSION_MANAGER") == NULL) {
-		debug_printf("Session Management: no SESSION_MANAGER found, aborting\n");
+		gaim_debug(GAIM_DEBUG_ERROR, "Session Management",
+				   "No SESSION_MANAGER found, aborting.\n");
 		return;
 	}
 
@@ -301,9 +313,11 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	callbacks.shutdown_cancelled.client_data = NULL;
 
 	if (previous_id) {
-		debug_printf("Session Management: connecting with previous ID %s\n", previous_id);
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "Connecting with previous ID %s\n", previous_id);
 	} else {
-		debug_printf("Session Management: connecting with no previous ID\n");
+		gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+				   "Connecting with no previous ID\n");
 	}
 
 	session = SmcOpenConnection(NULL, "session", SmProtoMajor, SmProtoMinor, SmcSaveYourselfProcMask |
@@ -312,15 +326,19 @@ void session_init(gchar *argv0, gchar *previous_id) {
 
 	if (session == NULL) {
 		if (error[0] != '\0') {
-			debug_printf("Session Management: connection failed with error: %s\n", error);
+			gaim_debug(GAIM_DEBUG_ERROR, "Session Management",
+					   "Connection failed with error: %s\n", error);
 		} else {
-			debug_printf("Session Management: connection failed with unknown error\n");
+			gaim_debug(GAIM_DEBUG_ERROR, "Session Management",
+					   "Connetion failed with unknown error.\n");
 		}
 		return;
 	}
 
 	tmp = SmcVendor(session);
-	debug_printf("Session Management: connected to manager (%s) with client ID %s\n", tmp, client_id);
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Connected to manager (%s) with client ID %s\n",
+			   tmp, client_id);
 	g_free(tmp);
 
 	session_managed = TRUE;
@@ -342,7 +360,8 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	session_set_string(session, SmProgram, g_get_prgname());
 
 	myself = g_strdup(argv0);
-	debug_printf("Session Management: using %s as command\n", myself);
+	gaim_debug(GAIM_DEBUG_MISC, "Session Management",
+			   "Using %s as command\n", myself);
 
 	cmd = session_make_command(NULL);
 	session_set_array(session, SmCloneCommand, cmd);
@@ -372,6 +391,7 @@ void session_end() {
 
 	SmcCloseConnection(session, 0, NULL);
 
-	debug_printf("Session Management: connection closed\n");
+	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
+			   "Connection closed.\n");
 #endif /* USE_SM */
 }

@@ -946,7 +946,8 @@ static void generate_protocol_options(struct mod_account *ma, GtkWidget *box)
 		gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 		g_object_set_data(G_OBJECT(entry), "position", GINT_TO_POINTER(puo->pos));
 		if (ma->proto_opt[puo->pos][0]) {
-			debug_printf("setting text %s\n", ma->proto_opt[puo->pos]);
+			gaim_debug(GAIM_DEBUG_MISC, "protocol options",
+					   "Setting text %s\n", ma->proto_opt[puo->pos]);
 			gtk_entry_set_text(GTK_ENTRY(entry), ma->proto_opt[puo->pos]);
 		} else {
 			gtk_entry_set_text(GTK_ENTRY(entry), puo->def);
@@ -1719,7 +1720,8 @@ void account_online(struct gaim_connection *gc)
 
 	gc->account->connecting = FALSE;
 	connecting_count--;
-	debug_printf("connecting_count: %d\n", connecting_count);
+	gaim_debug(GAIM_DEBUG_MISC, "accounts",
+			   "Connecting count: %d\n", connecting_count);
 
 	gaim_event_broadcast(event_signon, gc);
 	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
@@ -1790,8 +1792,11 @@ void account_offline(struct gaim_connection *gc)
 		meters = g_slist_remove(meters, meter);
 		g_free(meter);
 	}
-	debug_printf("Disconnecting. user = %p, gc = %p (%p)\n",
-				 gc->account, gc->account->gc, gc);
+
+	gaim_debug(GAIM_DEBUG_MISC, "accounts",
+			   "Disconnecting. user = %p, gc = %p (%p)\n",
+			   gc->account, gc->account->gc, gc);
+
 	gc->account->gc = NULL;	/* wasn't that awkward? */
 
 	if (!acctedit)
@@ -2059,7 +2064,7 @@ void signoff(struct gaim_connection *gc)
 	/* core stuff */
 	/* remove this here so plugins get a sensible count of connections */
 	connections = g_slist_remove(connections, gc);
-	debug_printf("date: %s\n", full_date());
+	gaim_debug(GAIM_DEBUG_MISC, "accounts", "date: %s\n", full_date());
 	gaim_event_broadcast(event_signoff, gc);
 	system_log(log_signoff, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 	/* set this in case the plugin died before really connecting.
@@ -2069,7 +2074,8 @@ void signoff(struct gaim_connection *gc)
 		gc->account->connecting = FALSE;
 		connecting_count--;
 	}
-	debug_printf("connecting_count: %d\n", connecting_count);
+	gaim_debug(GAIM_DEBUG_MISC, "accounts", "connecting_count: %d\n",
+			   connecting_count);
 	serv_close(gc);
 
 	/* more UI stuff */

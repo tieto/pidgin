@@ -21,17 +21,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "event.h"
+#include "debug.h"
 
 #include <sys/time.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-
-/*
- * XXX - This is for debug_printf! Move out when debug_printf moved to debug.h
- *          -- ChipX86
- */
-#include "gaim.h"
 
 /**
  * A signal callback.
@@ -74,7 +69,8 @@ gaim_signal_connect(void *handle, GaimEvent event,
 
 	callbacks = g_list_append(callbacks, call);
 
-	debug_printf("Adding callback %d\n", g_list_length(callbacks));
+	gaim_debug(GAIM_DEBUG_INFO, "signals",
+			   "Adding callback %d\n", g_list_length(callbacks));
 }
 
 void
@@ -105,7 +101,9 @@ gaim_signals_disconnect_by_handle(void *handle)
 
 	g_return_if_fail(handle != NULL);
 
-	debug_printf("%d callbacks to search\n", g_list_length(callbacks));
+	gaim_debug(GAIM_DEBUG_INFO, "signals",
+			   "Disconnecting callbacks. %d to search.\n",
+			   g_list_length(callbacks));
 
 	for (c = callbacks; c != NULL; c = c_next) {
 		c_next = c->next;
@@ -114,8 +112,9 @@ gaim_signals_disconnect_by_handle(void *handle)
 		if (g->handle == handle) {
 			callbacks = g_list_remove(callbacks, (gpointer)g);
 
-			debug_printf("Removing callback, %d remain\n",
-						 g_list_length(callbacks));
+			gaim_debug(GAIM_DEBUG_INFO, "signals",
+					   "Removing callback. %d remain.\n",
+					   g_list_length(callbacks));
 		}
 	}
 }
@@ -276,7 +275,8 @@ gaim_event_broadcast(GaimEvent event, ...)
 					break;
 
 				default:
-					debug_printf("unknown event %d\n", event);
+					gaim_debug(GAIM_DEBUG_WARNING, "events",
+							   "Unknown event %d\n", event);
 					break;
 			}
 

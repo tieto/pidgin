@@ -635,6 +635,20 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 	}
 }
 
+static void
+toggle_debug(void)
+{
+	misc_options ^= OPT_MISC_DEBUG;
+
+	if ((misc_options & OPT_MISC_DEBUG))
+		gaim_gtk_debug_window_show();
+	else
+		gaim_gtk_debug_window_hide();
+
+	save_prefs();
+}
+
+
 /***************************************************
  *            Crap                                 *
  ***************************************************/
