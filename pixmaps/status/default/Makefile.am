@@ -24,7 +24,6 @@ EXTRA_DIST = \
 	notauthorized.png \
 	occupied.png \
 	offline.png \
-	rendezvous.png \
 	secure.png \
 	trepia.png \
 	wireless.png \
