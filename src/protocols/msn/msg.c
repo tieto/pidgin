@@ -72,7 +72,7 @@ MsnMessage *
 msn_message_new_from_str(MsnSession *session, const char *str)
 {
 	MsnMessage *msg;
-	char *tmp, *field1, *field2, *c;
+	char *tmp_base, *tmp, *field1, *field2, *c;
 
 	g_return_val_if_fail(str != NULL, NULL);
 	g_return_val_if_fail(!g_ascii_strncasecmp(str, "MSG", 3), NULL);
@@ -84,7 +84,7 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 	msn_message_set_content_type(msg, NULL);
 	msn_message_set_charset(msg, NULL);
 
-	tmp = g_strdup(str);
+	tmp_base = tmp = g_strdup(str);
 
 	GET_NEXT(tmp); /* Skip MSG */
 	field1 = tmp;
@@ -165,6 +165,8 @@ msn_message_new_from_str(MsnSession *session, const char *str)
 
 	/* Now we *should* be at the body. */
 	msn_message_set_body(msg, tmp);
+
+	g_free(tmp_base);
 
 	/* Done! */
 
