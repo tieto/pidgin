@@ -1170,7 +1170,7 @@ msn_tooltip_info_text(MsnGetInfoData *info_data) {
 		if(b->server_alias) {
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
 			g_string_append_printf(s, _("<b>%s:</b> "), _("Nickname"));
-			g_string_append_printf(s, _("<font sml=\"msn\">%s</font><br>"),
+			g_string_append_printf(s, "<font sml=\"msn\">%s</font><br>",
 					nicktext);
 			g_free(nicktext);
 		}
