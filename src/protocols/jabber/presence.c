@@ -77,9 +77,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const char *away_state, cons
 				jabber_buddy_track_resource(jb, js->user->resource, 0, state, (msg && *msg) ? msg : NULL);
 			}
 			if((jbr = jabber_buddy_find_resource(jb, NULL)))
-				serv_got_update(js->gc, my_base_jid,
-						away_state ? !strcmp(away_state, "unavailable") : 1,
-						0, 0, 0, jbr->state);
+				serv_got_update(js->gc, my_base_jid, 1, 0, 0, 0, jbr->state);
 			else
 				serv_got_update(js->gc, my_base_jid, 0, 0, 0, 0, 0);
 		}
