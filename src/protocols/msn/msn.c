@@ -194,6 +194,7 @@ char *url_decode(const char *msg)
 {
 	static char buf[MSN_BUF_LEN];
 	int i, j = 0;
+	char *bum;
 
 	bzero(buf, sizeof(buf));
 	for (i = 0; i < strlen(msg); i++) {
@@ -209,6 +210,9 @@ char *url_decode(const char *msg)
 		buf[j++] = strtol(hex, NULL, 16);
 	}
 	buf[j] = 0;
+
+	if(!g_utf8_validate(buf, -1, (const char **)&bum))
+			*bum = '\0';
 
 	return buf;
 }
