@@ -60,16 +60,16 @@ static void play_audio(char *data, int size)
 
 static int can_play_audio()
 {
-	struct stat *stat_buf;
+	struct stat stat_buf;
 	uid_t user = getuid();
 	gid_t group = getgid(); 
-	if (stat("/dev/audio", stat_buf))
+	if (stat("/dev/audio", &stat_buf))
 		return 0;
-	if (user == stat_buf->st_uid && stat_buf->st_mode & S_IWUSR)
+	if (user == stat_buf.st_uid && stat_buf.st_mode & S_IWUSR)
 		return 1;
-	if (group == stat_buf->st_gid && stat_buf->st_mode & S_IWGRP)
+	if (group == stat_buf.st_gid && stat_buf.st_mode & S_IWGRP)
 		return 1;
-	if (stat_buf->st_mode & S_IWOTH)
+	if (stat_buf.st_mode & S_IWOTH)
 		return 1;
 	return 0;
 }
@@ -114,13 +114,16 @@ static int play_esd(unsigned char *data, int size)
 {
         int fd, i;
 	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
-        guint16 *lineardata = g_malloc(size * 2);
+        guint16 *lineardata;
 	
 	
         fd = esd_play_stream(format, 8012, NULL, "gaim");
 
-        if (fd < 0)
+        if (fd < 0) {
                 return 0;
+	}
+
+        lineardata = g_malloc(size * 2);
 
 	for (i=0; i<size; i++)
 		lineardata[i] = _af_ulaw2linear(data[i]);

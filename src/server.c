@@ -108,7 +108,7 @@ void serv_finish_login()
         char *buf;
 
 	if (strlen(current_user->user_info)) {
-		buf = g_malloc(strlen(current_user->user_info) * 2);
+		buf = g_malloc(strlen(current_user->user_info) * 4);
 		strcpy(buf, current_user->user_info);
 		escape_text(buf);
 		serv_set_info(buf);
@@ -170,7 +170,7 @@ void serv_set_dir(char *first, char *middle, char *last, char *maiden,
 		  char *city, char *state, char *country, int web)
 {
 #ifndef USE_OSCAR
-	char buf2[BUF_LEN], buf[BUF_LEN];
+	char buf2[BUF_LEN*4], buf[BUF_LEN];
 	g_snprintf(buf2, sizeof(buf2), "%s:%s:%s:%s:%s:%s:%s:%s", first,
 		   middle, last, maiden, city, state, country,
 		   (web == 1) ? "Y" : "");
@@ -577,10 +577,8 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
                                 else
                                         g_snprintf(who, 63, CONVERSATION_TITLE, name);
                                 gtk_window_set_title(GTK_WINDOW(cv->window), who);
-                                /* no free 'who', set_title needs it.
-                                 */
-				/* Umm .. Why?? */
-				g_free(who);
+				/* was g_free(buf), but break gives us that
+				 * and freeing twice is not good --Sumner */
                                 break;
                         }
                         cnv = cnv->next;

@@ -274,7 +274,7 @@ void insert_applet_away() {
 	while(awy) {
 		a = (struct away_message *)awy->data;
 
-		awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
+		awayname = g_malloc(sizeof *awayname * (6 + strlen(a->name)));
 		awayname[0] = '\0';
 		strcat(awayname, "away/");
 		strcat(awayname, a->name);
@@ -299,7 +299,7 @@ void remove_applet_away() {
 	while (awy) {
 		a = (struct away_message *)awy->data;
 
-		awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
+		awayname = g_malloc(sizeof *awayname * (6 + strlen(a->name)));
 		awayname[0] = '\0';
 		strcat(awayname, "away/");
 		strcat(awayname, a->name);

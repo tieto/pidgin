@@ -286,7 +286,6 @@ int gaim_redirect_handle(struct command_rx_struct *command, ...)
         case 0x0005: {
                 char *buf;
                 char *buf2;
-                char *first = g_malloc(64);
                 char file[1024];
                 FILE *f;
 

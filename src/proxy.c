@@ -50,7 +50,7 @@ proxy_recv_line (int sock, char **resultp)
     size_t input_index = 0;
     size_t result_size = 80;
 
-    result = (char *) malloc (result_size);
+    result = g_malloc (result_size);
 
     while (1)
     {
@@ -61,7 +61,7 @@ proxy_recv_line (int sock, char **resultp)
 
 	if (c == EOF)
 	{
-	    free (result);
+	    g_free (result);
 
 	    /* It's end of file.  */
 	    fprintf(stderr, "end of file from  server\n");
@@ -74,7 +74,7 @@ proxy_recv_line (int sock, char **resultp)
 	while (input_index + 1 >= result_size)
 	{
 	    result_size *= 2;
-	    result = (char *) realloc (result, result_size);
+	    result = (char *) g_realloc (result, result_size);
 	}
     }
 
@@ -85,7 +85,7 @@ proxy_recv_line (int sock, char **resultp)
     result[input_index] = '\0';
 
     if (resultp == NULL)
-	free (result);
+	g_free (result);
     return input_index;
 }
 

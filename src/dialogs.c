@@ -895,7 +895,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 		
 	save_prefs();
 
-        buf = g_malloc(strlen(current_user->user_info) * 2);
+        buf = g_malloc(strlen(current_user->user_info) * 4);
         g_snprintf(buf, strlen(current_user->user_info) * 2, "%s", current_user->user_info);
         escape_text(buf);
         serv_set_info(buf);
@@ -2158,6 +2158,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	char *buf;
 	char *header;
 	int hdrlen;
+	int read_rv;
 	char bmagic[5];
 	struct sockaddr_in sin;
 	int rcv;
@@ -2198,6 +2199,7 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	ft->fd = socket(AF_INET, SOCK_STREAM, 0);
 	
 	if (ft->fd <= -1 || connect(ft->fd, (struct sockaddr_in *)&sin, sizeof(sin))) {
+	        g_free(buf);
 		return;
 		/*cancel */
 	}
@@ -2205,7 +2207,13 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	rcv = 0;
 	header = g_malloc(6);
 	while (rcv != 6) {
-		rcv += read(ft->fd, header + rcv, 6 - rcv);
+		read_rv = read(ft->fd, header + rcv, 6 - rcv);
+		if(read_rv < 0) {
+			g_free(header);
+			g_free(buf);
+			return;
+		}
+		rcv += read_rv;
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
@@ -2221,7 +2229,13 @@ static void do_accept(GtkWidget *w, struct file_transfer *ft)
 	rcv = 0;
 
 	while (rcv != hdrlen) {
-		rcv += read(ft->fd, header + rcv, hdrlen - rcv);
+		read_rv = read(ft->fd, header + rcv, hdrlen - rcv);
+		if(read_rv < 0) {
+			g_free(header);
+			g_free(buf);
+			return;
+		}
+		rcv += read_rv;
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}

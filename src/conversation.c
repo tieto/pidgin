@@ -325,9 +325,8 @@ gboolean user_keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct co
 
 static void send_callback(GtkWidget *widget, struct conversation *c)
 {
-        char buf[BUF_LONG];
+        char buf[BUF_LEN*4];
 	char *buf2;
-        char *buf3;
 	gchar *buf4;
         int hdrlen;
 
@@ -349,7 +348,6 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	 * measure = 23 bytes + the length of normalize c->name */
 
 	buf2 = g_malloc(BUF_LONG);
-	buf3 = g_malloc(BUF_LONG);
 	
         hdrlen = 23 + strlen(normalize(c->name));
 
@@ -404,7 +402,6 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
 	gtk_widget_grab_focus(c->entry);
 
         g_free(buf2);
-        g_free(buf3);
 
 }
 

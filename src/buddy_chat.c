@@ -267,7 +267,7 @@ static void close_callback(GtkWidget *widget, struct buddy_chat *b)
 
 static void whisper_callback(GtkWidget *widget, struct buddy_chat *b)
 {
-	char buf[BUF_LONG];
+	char buf[BUF_LEN*4];
 	char buf2[BUF_LONG];
 	GList *selected;
 	char *who;
@@ -304,7 +304,7 @@ static void whisper_callback(GtkWidget *widget, struct buddy_chat *b)
 
 static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 {
-	char buf[BUF_LONG];
+	char buf[BUF_LEN*4];
 
 	strncpy(buf, gtk_entry_get_text(GTK_ENTRY(b->entry)), sizeof(buf)/2);
 	if (!strlen(buf))

@@ -76,7 +76,7 @@ VirtualRootWindowOfScreen(screen)
         if (screen != save_screen) {
                 Display *dpy = DisplayOfScreen(screen);
                 Atom __SWM_VROOT = None;
-                int i;
+                unsigned int i;
                 Window rootReturn, parentReturn, *children;
                 unsigned int numChildren;
 
@@ -409,7 +409,7 @@ mozilla_remote_command (GdkWindow *window, const char *command,
         if (!raise_p)
         {
                 char *close;
-                new_command = (char *) malloc (strlen (command) + 20);
+                new_command = g_malloc (strlen (command) + 20);
                 strcpy (new_command, command);
                 close = strrchr (new_command, ')');
                 if (close)
@@ -617,7 +617,7 @@ static void netscape_command(char *command)
 			args[0] = g_strdup("netscape");
 			args[1] = NULL;
                         e = execvp(args[0], args);
-                        printf("Hello%d\n");
+                        printf("Hello%d\n", getppid());
                         
 			_exit(0);
 		} else {

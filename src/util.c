@@ -303,8 +303,8 @@ gint linkify_text(char *text)
 
 FILE *open_log_file (struct conversation *c)
 {
-        char *buf = g_malloc(BUF_LONG);
-        char *buf2 = g_malloc(BUF_LONG);
+        char *buf;
+        char *buf2;
         char log_all_file[256];
         struct log_conversation *l;
         struct stat st;
@@ -313,9 +313,6 @@ FILE *open_log_file (struct conversation *c)
         int res;
 
         if (!(general_options & OPT_GEN_LOG_ALL)) {
-
-		g_free(buf);
-		g_free(buf2);
 
                 l = find_log_info(c->name);
                 if (!l)
@@ -334,6 +331,9 @@ FILE *open_log_file (struct conversation *c)
 
                 return fd;
         }
+
+	buf = g_malloc(BUF_LONG);
+	buf2 = g_malloc(BUF_LONG);
 
         /*  Dont log yourself */
         g_snprintf(log_all_file, 256, "%s/.gaim", getenv("HOME"));
@@ -436,7 +436,7 @@ int escape_text(char *msg)
 {
 	char *c, *cpy;
 	int cnt=0;
-	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
+	/* Assumes you have a buffer able to cary at least BUF_LEN * 4 bytes */
 	if (strlen(msg) > BUF_LEN) {
 		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
 		msg[2047]='\0';
@@ -479,7 +479,7 @@ char * escape_text2(char *msg)
                 msg[2047]='\0';
         }
 
-	woo = (char *)malloc(strlen(msg) * 2); 
+	woo = malloc(strlen(msg) * 2); 
         cpy = g_strdup(msg);
         c = cpy;
         while(*c) {
@@ -629,7 +629,7 @@ char *normalize(const char *s)
         char *t, *u;
         int x=0;
 
-        g_return_if_fail (s != NULL);
+        g_return_val_if_fail ((s != NULL), NULL);
 
         u = t = g_strdup(s);
 

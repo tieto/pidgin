@@ -154,10 +154,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
         }
 
 
-        buf2 = g_strdup(awaymessage->message);
+        buf2 = g_malloc(strlen(awaymessage->message)*4 + 1);
+	strcpy(buf2, awaymessage->message);
         escape_text(buf2);
         serv_set_away(buf2);
-        // g_free(buf2);
+        g_free(buf2);
 	gtk_widget_show(imaway);
 }
 
@@ -165,7 +166,7 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 {
 #ifdef USE_APPLET
 	char *awayname;
-	awayname = malloc(sizeof *awayname * (6 + strlen(a->name)));
+	awayname = g_malloc(sizeof (*awayname) * (6 + strlen(a->name)));
 	awayname[0] = '\0';
 	strcat(awayname, "away/");
 	strcat(awayname, a->name);

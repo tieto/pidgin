@@ -535,8 +535,9 @@ GdkFont *getfont(char * font, int bold, int italic, int fixed, int size)
 
 	g_strdown(font_name);
 		
-	if( my_font = 
-			g_datalist_id_get_data(&font_cache, g_quark_from_string(font_name)) )	
+	if( (my_font = 
+	     g_datalist_id_get_data(&font_cache, 
+				    g_quark_from_string(font_name)) ) )	
 	{
 		return my_font;
 	}
@@ -1110,7 +1111,7 @@ static void do_select(GtkHtml * html, int x, int y)
 		}
 		else
 		{
-			int st,
+			size_t st,
 			  en;
 			char *str;
 			if (html->num_end > html->num_start)
@@ -1136,7 +1137,7 @@ static void do_select(GtkHtml * html, int x, int y)
 	{
 		GtkHtmlBit *shb,
 		 *ehb;
-		int en,
+		size_t en,
 		  st;
 		int len,
 		  nlen;
@@ -2759,8 +2760,8 @@ static void gtk_html_add_text(GtkHtml * html,
 	int maxwidth;
 	gint lb;
 	GList *hbits;
-	int num = 0,
-	  i,
+	size_t num = 0;
+	int i,
 	  height;
 	GtkHtmlBit *hb;
 	gint hwidth,
@@ -3679,7 +3680,7 @@ static void move_cursor_ver(GtkHtml * html, int count)
 	GtkHtmlBit *hb = NULL,
 	 *hb2 = NULL;
 	gint y;
-	gint len,
+	size_t len,
 	  len2 = 0;
 
 	undraw_cursor(html);
@@ -3848,7 +3849,7 @@ static void move_cursor_hor(GtkHtml * html, int count)
 			html->cursor_pos = 0;
 		}
 	}
-	else if (html->cursor_pos > strlen(html->cursor_hb->text))
+	else if ((unsigned) html->cursor_pos > strlen(html->cursor_hb->text))
 	{
 		if (hbits->next)
 		{

@@ -283,35 +283,47 @@ int sflap_send(char *buf, int olen, int type)
 }
 
 
-int wait_reply(char *buffer, int buflen)
+int wait_reply(char *buffer, size_t buflen)
 {
-        int res=6;
+        size_t res=-1;
+	int read_rv = -1;
 	struct sflap_hdr *hdr=(struct sflap_hdr *)buffer;
         char *c;
 
-        while((res = read(toc_fd, buffer, 1))) {
-		if (res < 0)
-			return res;
+	if(buflen < sizeof(struct sflap_hdr)) {
+	    do_error_dialog("Buffer too small", "Gaim - Error (internal)");
+	    return -1;
+	}
+
+        while((read_rv = read(toc_fd, buffer, 1))) {
+		if (read_rv < 0 || read_rv > 1)
+			return -1;
 		if (buffer[0] == '*')
                         break;
 
 	}
 
-	res = read(toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
+	read_rv = read(toc_fd, buffer+1, sizeof(struct sflap_hdr) - 1);
 
-        if (res < 0)
-		return res;
+        if (read_rv < 0)
+		return read_rv;
 
-	res += 1;
+	res = read_rv + 1;
 	
         
 	sprintf(debug_buff, "Rcv: %s %s\n",print_header(buffer), "");
 	debug_print(debug_buff);
 
 
+	if(buflen < sizeof(struct sflap_hdr) + ntohs(hdr->len) + 1) {
+	    do_error_dialog("Buffer too small", "Gaim - Error (internal)");
+	    return -1;
+	}
 
         while (res < (sizeof(struct sflap_hdr) + ntohs(hdr->len))) {
-		res += read(toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
+		read_rv = read(toc_fd, buffer + res, (ntohs(hdr->len) + sizeof(struct sflap_hdr)) - res);
+		if(read_rv < 0) return read_rv;
+		res += read_rv;
 		while(gtk_events_pending())
 			gtk_main_iteration();
 	}
