@@ -476,6 +476,9 @@ faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *);
 faim_export int aim_tx_flushqueue(struct aim_session_t *);
 faim_internal int aim_tx_printqueue(struct aim_session_t *);
 faim_export void aim_tx_purgequeue(struct aim_session_t *);
+faim_internal int aim_parse_hostonline(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+faim_internal int aim_parse_hostversions(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+
 
 struct aim_rxcblist_t {
   u_short family;

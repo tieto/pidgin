@@ -1,6 +1,12 @@
 
 No release numbers
 ------------------
+ - Thu Dec 14 03:39:34 UTC 2000
+  - Change the 0x01 to a 0x00 in auth request to make buddy lists work again
+  - Rearrange bytes in setversions() to match winaim
+  - Add several cachesnac() calls
+  - Add hostonline and hostversions parsers (superfluous)
+
  - Wed Dec 13 02:26:39 UTC 2000
   - Create aim_cachesnac()
   - Some long overdue cleanups

@@ -370,21 +370,24 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    else
 	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
 	    break;
-         case 0x0007:
-           if (subtype == 0x0005)
-             workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
-           break;
-         case AIM_CB_FAM_SPECIAL:
-           if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
-             workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
-             break;
-           } /* others fall through */
-         default:
-#if 0
-           /* Old login protocol */
-           /* any user callbacks will be called from here */
-           workingPtr->handled = aim_authparse(sess, workingPtr);
-#endif
+	  case 0x0001:
+	    if (subtype == 0x0003)
+	      workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
+	    else
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
+	    break;
+	  case 0x0007:
+	    if (subtype == 0x0005)
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_ADM, AIM_CB_ADM_INFOCHANGE_REPLY, workingPtr);
+	    break;
+	  case AIM_CB_FAM_SPECIAL:
+	    if (subtype == AIM_CB_SPECIAL_DEBUGCONN_CONNECT) {
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, family, subtype, workingPtr);
+	      break;
+	    } else
+	      workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0017, 0xffff, workingPtr);
+	    break;
+	  default:
 	    break;
 	  }
 	}
@@ -415,7 +418,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    workingPtr->handled = aim_parse_generalerrs(sess, workingPtr);
 	    break;
 	  case 0x0003:
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0003, workingPtr);
+	    workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
 	    break;
 	  case 0x0005:
 	    workingPtr->handled = aim_handleredirect_middle(sess, workingPtr);
@@ -434,6 +437,9 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	    break;
 	  case 0x0013:
 	    workingPtr->handled = aim_parsemotd_middle(sess, workingPtr);
+	    break;
+	  case 0x0018:
+	    workingPtr->handled = aim_parse_hostversions(sess, workingPtr);
 	    break;
 	  default:
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_GEN, AIM_CB_GEN_DEFAULT, workingPtr);
@@ -544,6 +550,8 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 
 	if ((family == 0x0000) && (subtype == 0x00001)) {
 	  workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_FLAPVER, workingPtr);
+	} else if ((family == 0x0001) && (subtype == 0x0003)) {
+	  workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
 	} else if ((family == 0x000d) && (subtype == 0x0009)) {
 	  workingPtr->handled = aim_chatnav_parse_info(sess, workingPtr);
 	} else {
@@ -563,7 +571,7 @@ faim_export int aim_rxdispatch(struct aim_session_t *sess)
 	  if (subtype == 0x0001)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0001, workingPtr);
 	  else if (subtype == 0x0003)
-	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0003, workingPtr);
+	    workingPtr->handled = aim_parse_hostonline(sess, workingPtr);
 	  else if (subtype == 0x0007)
 	    workingPtr->handled = aim_callhandler_noparam(sess, workingPtr->conn, 0x0001, 0x0007, workingPtr);
 	  else
@@ -731,8 +739,46 @@ faim_internal int aim_parsemotd_middle(struct aim_session_t *sess,
   return ret;  
 }
 
+faim_internal int aim_parse_hostonline(struct aim_session_t *sess,
+				       struct command_rx_struct *command, ...)
+{
+  rxcallback_t userfunc = NULL;
+  int ret = 1;
+  unsigned short *families = NULL;
+  int famcount = 0, i;
+
+  famcount = (command->commandlen-10)/2;
+  if (!(families = malloc(command->commandlen-10)))
+    return ret;
+
+  for (i = 0; i < famcount; i++)
+    families[i] = aimutil_get16(command->data+((i*2)+10));
+
+  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0003)))
+    ret = userfunc(sess, command, famcount, families);
+
+  free(families);
+
+  return ret;  
+}
+
+faim_internal int aim_parse_hostversions(struct aim_session_t *sess,
+					 struct command_rx_struct *command, ...)
+{
+  rxcallback_t userfunc = NULL;
+  int ret = 1;
+  int vercount;
+
+  vercount = (command->commandlen-10)/4;
+  
+  if ((userfunc = aim_callhandler(command->conn, 0x0001, 0x0018)))
+    ret = userfunc(sess, command, vercount, command->data+10);
+
+  return ret;  
+}
+
 faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command, ...)
+					    struct command_rx_struct *command, ...)
 {
   int serviceid = 0;
   unsigned char *cookie = NULL;

@@ -457,9 +457,13 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
   newpacket->lock = 1;
 
   i = aim_putsnac(newpacket->data, 0x0001, 0x0017, 0x0000, sess->snac_nextid);
+  aim_cachesnac(sess, 0x0001, 0x0017, 0x0000, NULL, 0);
 
   i += aimutil_put16(newpacket->data+i, 0x0001);
   i += aimutil_put16(newpacket->data+i, 0x0003);
+
+  i += aimutil_put16(newpacket->data+i, 0x0013);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x0002);
   i += aimutil_put16(newpacket->data+i, 0x0001);
@@ -483,29 +487,16 @@ faim_export unsigned long aim_setversions(struct aim_session_t *sess,
   i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x000b);
-  i += aimutil_put16(newpacket->data+i, 0x0002);
+  i += aimutil_put16(newpacket->data+i, 0x0001);
 
   i += aimutil_put16(newpacket->data+i, 0x000c);
   i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0013);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-  i += aimutil_put16(newpacket->data+i, 0x0015);
-  i += aimutil_put16(newpacket->data+i, 0x0001);
-
-#if 0
-  for (j = 0; j < 0x10; j++) {
-    i += aimutil_put16(newpacket->data+i, j); /* family */
-    i += aimutil_put16(newpacket->data+i, 0x0003); /* version */
-  }
-#endif
 
   newpacket->commandlen = i;
   newpacket->lock = 0;
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 
@@ -655,9 +646,11 @@ faim_internal unsigned long aim_genericreq_n(struct aim_session_t *sess,
   newpacket->lock = 1;
 
   aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
- 
+
+  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
+
   aim_tx_enqueue(sess, newpacket);
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 /*
@@ -682,13 +675,14 @@ faim_internal unsigned long aim_genericreq_l(struct aim_session_t *sess,
   newpacket->lock = 1;
 
   aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
+  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
 
   /* copy in data */
   newlong = htonl(*longdata);
   memcpy(&(newpacket->data[10]), &newlong, sizeof(u_long));
 
   aim_tx_enqueue(sess, newpacket);
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
@@ -709,13 +703,14 @@ faim_internal unsigned long aim_genericreq_s(struct aim_session_t *sess,
   newpacket->lock = 1;
 
   aim_putsnac(newpacket->data, family, subtype, 0x0000, sess->snac_nextid);
+  aim_cachesnac(sess, family, subtype, 0x0000, NULL, 0);
 
   /* copy in data */
   newshort = htons(*shortdata);
   memcpy(&(newpacket->data[10]), &newshort, sizeof(u_short));
 
   aim_tx_enqueue(sess, newpacket);
-  return (sess->snac_nextid++);
+  return sess->snac_nextid;
 }
 
 /*
@@ -757,6 +752,8 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
   newpacket->lock = 1;
 
   i = aim_putsnac(newpacket->data, 0x0004, 0x0002, 0x0000, sess->snac_nextid);
+  aim_cachesnac(sess, 0x0004, 0x0002, 0x0000, NULL, 0);
+
   i += aimutil_put16(newpacket->data+i, 0x0000); 
   i += aimutil_put16(newpacket->data+i, 0x0000);
   i += aimutil_put16(newpacket->data+i, 0x0003);
@@ -768,7 +765,7 @@ faim_export unsigned long aim_addicbmparam(struct aim_session_t *sess,
   
   aim_tx_enqueue(sess, newpacket);
 
-  return (sess->snac_nextid);
+  return sess->snac_nextid;
 }
 
 /* 
