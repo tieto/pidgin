@@ -127,7 +127,6 @@ static void gtk_html_size_allocate(GtkWidget * widget,
 static void gtk_html_adjustment(GtkAdjustment * adjustment, GtkHtml * html);
 static void gtk_html_disconnect(GtkAdjustment * adjustment, GtkHtml * html);
 static void gtk_html_add_seperator(GtkHtml *, GdkFont *, GdkColor *, GdkColor *);
-// static void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, gint fit);
 static void gtk_html_add_text(GtkHtml * html,
 							  GdkFont * font,
 							  GdkColor * fore,
@@ -2125,23 +2124,26 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 		area.width = hb->width;
 		area.height = hb->height;
 		clear_area(html, &area);
-		if (hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
+		if (hb->back != NULL) {
 			int hwidth, hheight, hei, tmpcnt;
 			hei = get_line_height(html, hb);
 			gdk_window_get_size(html->html_area, &hwidth, &hheight);
 			gdk_gc_set_foreground(gc, hb->back);
-			for (tmpcnt = 1; tmpcnt < hb->newline; tmpcnt++) {
+			for (tmpcnt = 0; tmpcnt < hb->newline; tmpcnt++) {
 				int eoff = hei + hei + 2;
-				eoff *= tmpcnt - 1;
+				eoff *= tmpcnt;
 				eoff += 5;
 				gdk_draw_rectangle(html->html_area, gc, TRUE,
-						1, hb->y - html->yoffset - 11 + eoff,
+						1, hb->y - html->yoffset + eoff,
 						hwidth, hei + hei + 2);
 			}
 		}
 
 		if (hb->fore != NULL)
-		gdk_gc_set_background(gc, &widget->style->base[GTK_STATE_NORMAL]);
+			gdk_gc_set_foreground(gc, hb->fore);
+		else
+			gdk_gc_set_foreground(gc, &widget->style->fg[GTK_STATE_NORMAL]);
+
 		gdk_draw_pixmap(html->html_area, gc, hb->pm, 0, 0, hb->x,
 						hb->y - html->yoffset - (hb->height) + 4, -1, -1);
 	}
@@ -2766,9 +2768,11 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 	hb->width = private->width;
 	hb->text = NULL;
 	hb->url = NULL;
-	hb->fore = NULL;
-	hb->back = NULL;
-	hb->font = NULL;
+	if (last_hb->fore) hb->fore = gdk_color_copy(last_hb->fore);
+	else hb->fore = NULL;
+	if (last_hb->back) hb->back = gdk_color_copy(last_hb->back);
+	else hb->back = NULL;
+	hb->font = last_hb->font;
 	hb->uline = 0;
 	hb->strike = 0;
 	hb->was_selected = 0;
@@ -4389,7 +4393,7 @@ static int get_line_height(GtkHtml *html, GtkHtmlBit *start)
 {
 	int height, max_height = 0;
 	GList *hbits = html->html_bits;
-	GtkHtmlBit *hbit;
+	GtkHtmlBit *hbit = start; /* default this in case hbits is NULL */
 
 	hbits = g_list_find(hbits, start);
 
