@@ -3171,7 +3171,7 @@ gaim_gtk_new_window(struct gaim_window *win)
 	gtkwin->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkwin->window), "conversation");
 	gtk_window_set_policy(GTK_WINDOW(gtkwin->window), TRUE, TRUE, FALSE);
-	gtk_container_border_width(GTK_CONTAINER(gtkwin->window), 0);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
 	gtk_widget_realize(gtkwin->window);
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window), _("Gaim - Conversations"));
 
