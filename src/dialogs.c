@@ -2924,10 +2924,10 @@ void show_add_link(GtkWidget *linky, struct conversation *c)
 
 		b->ok = picture_button(c->link_dialog, _("OK"), ok_xpm);
 		b->cancel = picture_button(c->link_dialog, _("Cancel"), cancel_xpm);
-
+/*
 		gtk_widget_set_usize(b->ok, 75, 30);
 		gtk_widget_set_usize(b->cancel, 75, 30);
-
+*/
 		gtk_box_pack_start(GTK_BOX(bbox), b->ok, FALSE, FALSE, 10);
 		gtk_box_pack_end(GTK_BOX(bbox), b->cancel, FALSE, FALSE, 10);
 		gtk_widget_show(bbox);
