@@ -209,6 +209,8 @@ src/gtkimhtml.c
 src/gtknotify.c
 src/gtkpounce.c
 src/gtkprefs.c
+src/gtkprivacy.c
+src/gtkprivacy.c
 src/gtkrequest.c
 src/gtksound.c
 src/gtkutils.c
