@@ -1282,7 +1282,24 @@ GtkWidget *build_conv_toolbar(struct conversation *c) {
 	else
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(wood), FALSE);
         state_lock = 0;
-        
+
+	/* use a slicker look if the user wants to */
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(strike), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(normal), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(big), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(bold), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(italic), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(underline), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(speaker), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(wood), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(palette), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(link), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(font), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(small), GTK_RELIEF_NONE);
+	}
+	
 	gtk_widget_show(toolbar);
 	
 	c->bold = bold;
@@ -1347,7 +1364,17 @@ void show_conv(struct conversation *c)
 	}
         block = gtk_button_new_with_label(_("Block"));
 
-
+	/* use a slicker look if the user wants to */
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(send), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(block), GTK_RELIEF_NONE);
+	}
+	
         bbox = gtk_hbox_new(TRUE, 0);
 	vbox = gtk_vbox_new(FALSE, 0);
 	vbox2 = gtk_vbox_new(FALSE, 0);

@@ -1988,9 +1988,12 @@ void show_buddy_list()
 	buddies    = gtk_tree_new();
 	sw         = gtk_scrolled_window_new(NULL, NULL);
 	
-
-
-
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(imbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(infobutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(chatbutton), GTK_RELIEF_NONE);
+	}
         
 	tips = gtk_tooltips_new();
 	gtk_object_set_data(GTK_OBJECT(blist), _("Buddy List"), tips);
@@ -2034,6 +2037,13 @@ void show_buddy_list()
         
        	addbutton = gtk_button_new_with_label(_("Add"));
        	rembutton = gtk_button_new_with_label(_("Remove"));
+	
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
+	}
+	
 	edittree = gtk_ctree_new(1, 0);
 	gtk_ctree_set_line_style (GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);
         gtk_ctree_set_expander_style(GTK_CTREE(edittree), GTK_CTREE_EXPANDER_SQUARE);
@@ -2104,6 +2114,12 @@ void show_buddy_list()
         addpermbutton = gtk_button_new_with_label(_("Add"));
         rempermbutton = gtk_button_new_with_label(_("Remove"));
         
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(addpermbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(rempermbutton), GTK_RELIEF_NONE);
+	}
+	
        	permtree = gtk_tree_new();
 	build_permit_tree();
        	pbox = gtk_hbox_new(TRUE, 10);

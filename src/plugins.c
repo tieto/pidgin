@@ -294,20 +294,28 @@ void show_plugins(GtkWidget *w, gpointer data) {
 	gtk_signal_connect(GTK_OBJECT(add), "clicked",
 			   GTK_SIGNAL_FUNC(load_file), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), add, TRUE, FALSE, 5);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
 
 	config = gtk_button_new_with_label(_("Configure Plugin"));
 	gtk_widget_set_sensitive(config, 0);
 	gtk_box_pack_start(GTK_BOX(botbox), config, TRUE, FALSE, 5);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(config), GTK_RELIEF_NONE);
 
 	remove = gtk_button_new_with_label(_("Unload Plugin"));
 	gtk_signal_connect(GTK_OBJECT(remove), "clicked",
 			   GTK_SIGNAL_FUNC(unload), pluglist);
 	gtk_box_pack_start(GTK_BOX(botbox), remove, TRUE, FALSE, 5);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(remove), GTK_RELIEF_NONE);
 
 	close = gtk_button_new_with_label(_("Close"));
 	gtk_signal_connect(GTK_OBJECT(close), "clicked",
 			   GTK_SIGNAL_FUNC(hide_plugins), NULL);
 	gtk_box_pack_start(GTK_BOX(botbox), close, TRUE, FALSE, 5);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
 
 	gtk_box_pack_start(GTK_BOX(page), topbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(page), botbox, FALSE, FALSE, 0);

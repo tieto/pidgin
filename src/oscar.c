@@ -621,6 +621,8 @@ static void directim_dialog(struct aim_directim_priv *priv)
 	yes = gtk_button_new();
 	gtk_box_pack_start(GTK_BOX(hbox), yes, FALSE, FALSE, 5);
 	gtk_widget_show(yes);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(yes), GTK_RELIEF_NONE);
 
 	button = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(yes), button);
@@ -638,6 +640,8 @@ static void directim_dialog(struct aim_directim_priv *priv)
 	no = gtk_button_new();
 	gtk_box_pack_end(GTK_BOX(hbox), no, FALSE, FALSE, 5);
 	gtk_widget_show(no);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(no), GTK_RELIEF_NONE);
 
 	button = gtk_hbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(no), button);

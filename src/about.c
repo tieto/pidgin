@@ -114,7 +114,10 @@ void show_about(GtkWidget *w, void *null)
                                           GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
                 gtk_signal_connect(GTK_OBJECT(about), "destroy",
                                    GTK_SIGNAL_FUNC(destroy_about), GTK_OBJECT(about));
- 
+ 		
+ 		if (display_options & OPT_DISP_COOL_LOOK)
+ 			gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+ 			
 		GTK_WIDGET_SET_FLAGS(button, GTK_CAN_DEFAULT);
 		gtk_box_pack_start(GTK_BOX(vbox), button, TRUE, FALSE, 0);
 		gtk_widget_grab_default(button);

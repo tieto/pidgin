@@ -382,14 +382,12 @@ void show_warn_dialog(char *who)
 	gtk_window_set_policy(GTK_WINDOW(w->window), FALSE, FALSE, TRUE);
 	gtk_widget_show(w->window);
 	dialogwindows = g_list_prepend(dialogwindows, w->window);
-        cancel = gtk_button_new_with_label(_("Cancel"));
-        warn = gtk_button_new_with_label(_("Warn"));
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
 	fbox = gtk_vbox_new(FALSE, 5);
 
 	frame = gtk_frame_new(_("Warn"));
-
+	
 	/* Build Warn Button */
 
 	warn = gtk_button_new();
@@ -434,7 +432,15 @@ void show_warn_dialog(char *who)
 	gtk_container_add(GTK_CONTAINER(cancel), button_box);
 	
 	/* End of Cancel Button */
-        /* Put the buttons in the box */
+
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
+	}
+	
+	/* Put the buttons in the box */
 
 	gtk_widget_set_usize(warn, 75, 30);
 	gtk_widget_set_usize(cancel, 75, 30);
@@ -536,6 +542,10 @@ do_error_dialog(char *message, char *title)
 
 	/* End of Close Button */
 
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+	
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), 
 		close, FALSE, FALSE, 5);
 
@@ -701,6 +711,10 @@ void show_ee_dialog(int ee)
         ok = gtk_button_new_with_label(_("OK"));
         box = gtk_vbox_new(FALSE, 10);
 
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
+	
 	if (ee == 0)
 		label = gtk_label_new("Amazing!  Simply Amazing!");
 	else if (ee == 1)
@@ -786,6 +800,9 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
@@ -817,6 +834,9 @@ void show_im_dialog(GtkWidget *w, GtkWidget *w2)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
@@ -949,6 +969,9 @@ void show_add_buddy(char *buddy, char *group)
 
 	add = gtk_button_new();
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+		
 	button_box = gtk_hbox_new(FALSE, 5);
 	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, add_xpm);
 	icon_i = gtk_pixmap_new(icon, mask);
@@ -971,6 +994,9 @@ void show_add_buddy(char *buddy, char *group)
 
 	cancel = gtk_button_new();
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		
 	button_box = gtk_hbox_new(FALSE, 5);
 	icon = gdk_pixmap_create_from_xpm_d ( a->window->window, &mask, NULL, cancel_xpm);
 	icon_i = gtk_pixmap_new(icon, mask);
@@ -1125,6 +1151,9 @@ void show_new_bp(char *name)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
@@ -1155,6 +1184,9 @@ void show_new_bp(char *name)
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
@@ -1302,6 +1334,9 @@ void show_set_dir()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->save), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->save), button_box);
@@ -1324,6 +1359,9 @@ void show_set_dir()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
@@ -1538,6 +1576,9 @@ void show_change_passwd()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->ok), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->ok), button_box);
@@ -1560,6 +1601,9 @@ void show_change_passwd()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
@@ -1692,6 +1736,9 @@ void show_set_info()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->save), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->save), button_box);
@@ -1714,6 +1761,9 @@ void show_set_info()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
@@ -1847,6 +1897,12 @@ void show_register_dialog()
 	gtk_box_pack_start(GTK_BOX(vbox), table, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+	}
+	
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 	gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
@@ -1900,6 +1956,9 @@ void g_show_info_text(char *info)
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
         gtk_signal_connect(GTK_OBJECT(ok), "clicked",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
 
         label = gtk_label_new(_("Below are the results of your search: "));
 
@@ -2030,6 +2089,9 @@ void show_add_perm(char *who)
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(add), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(add), button_box);
@@ -2053,6 +2115,9 @@ void show_add_perm(char *who)
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(cancel), button_box);
@@ -2271,6 +2336,9 @@ void show_find_info()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(ok), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(ok), button_box);
@@ -2294,6 +2362,9 @@ void show_find_info()
 	gtk_widget_show(label);
 	gtk_widget_show(icon_i);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button_box);
 
 	gtk_container_add(GTK_CONTAINER(cancel), button_box);
@@ -2467,6 +2538,9 @@ void show_find_email()
 
 	button = gtk_button_new();
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	button_box = gtk_hbox_new(FALSE, 5);
 	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, ok_xpm);
 	icon_i = gtk_pixmap_new(icon, mask);
@@ -2518,6 +2592,9 @@ void show_find_email()
 
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);	
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_set_usize(button, 75, 30);
 	gtk_widget_show(button);
 
@@ -2598,7 +2675,13 @@ void show_add_link(GtkWidget *entry, GtkWidget *link)
 
 		b->cancel = gtk_button_new_with_label(_("Cancel"));
 		b->ok = gtk_button_new_with_label(_("Ok"));
-	
+
+		if (display_options & OPT_DISP_COOL_LOOK)
+		{
+			gtk_button_set_relief(GTK_BUTTON(b->cancel), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(b->ok), GTK_RELIEF_NONE);
+		}
+			
 		vbox = gtk_vbox_new(FALSE, 10);
 		bbox = gtk_hbox_new(TRUE, 10);
 
@@ -3210,6 +3293,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(create_mess), ca);
 	gtk_widget_show(button_box);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
+	
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+
 	gtk_widget_show(button);
 
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
@@ -3233,6 +3320,10 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 	gtk_widget_show(button_box);
 	gtk_container_add(GTK_CONTAINER(button), button_box);
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+		
 	gtk_widget_show(button);
 
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);

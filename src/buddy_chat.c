@@ -143,6 +143,12 @@ void join_chat()
 	gtk_widget_set_usize(cancel, 75, 30);
 
         /* End of Cancel Button */
+        
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(join), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+	}
 
 	gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
 	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
@@ -226,6 +232,12 @@ void invite_callback(GtkWidget *w, struct conversation *b)
 		vbox = gtk_vbox_new(FALSE, 5);
 		inviteentry = gtk_entry_new();
 		invitemess = gtk_entry_new();
+
+		if (display_options & OPT_DISP_COOL_LOOK)
+		{
+			gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+			gtk_button_set_relief(GTK_BUTTON(invite_btn), GTK_RELIEF_NONE);
+		}
 
 		/* Put the buttons in the box */
 		gtk_box_pack_start(GTK_BOX(bbox), invite_btn, TRUE, TRUE, 10);
@@ -550,6 +562,17 @@ void show_new_buddy_chat(struct conversation *b)
         ignore = gtk_button_new_with_label(_("Ignore"));
         info = gtk_button_new_with_label(_("Info"));
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(invite_btn), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(whisper), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(send), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(im), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(ignore), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
+	}
+	
 	text = gtk_html_new(NULL, NULL);
 	
 	b->text = text;

@@ -622,10 +622,14 @@ void build_prefs()
 	gtk_text_set_editable(GTK_TEXT(pd->away_text), TRUE );
 
 	add_away = gtk_button_new_with_label(_("Create Message"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(add_away), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(add_away), "clicked", GTK_SIGNAL_FUNC(create_away_mess), NULL);
 	gtk_box_pack_start(GTK_BOX(away_botbox), add_away, TRUE, FALSE, 5);
 
 	remove_away = gtk_button_new_with_label(_("Remove Message"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(remove_away), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(remove_away), "clicked", GTK_SIGNAL_FUNC(remove_away_message), NULL);
 	gtk_box_pack_start(GTK_BOX(away_botbox), remove_away, TRUE, FALSE, 5);
 
@@ -772,6 +776,7 @@ void build_prefs()
 	gaim_button(_("Use devil icons"), &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
 	gaim_button(_("Show graphical smileys (experimental)"), &display_options, OPT_DISP_SHOW_SMILEY, appbox );
 	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER, appbox );
+	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options, OPT_DISP_COOL_LOOK, appbox);
 	
 	
 	gaim_button(_("Bold Text"), &font_options, OPT_FONT_BOLD, fontbox);
@@ -781,6 +786,8 @@ void build_prefs()
 	font_face_for_text = gaim_button(_("Font Face for Text"), &font_options, OPT_FONT_FACE, fontbox);
 		
 	select_font = gtk_button_new_with_label(_("Select Font"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(select_font), GTK_RELIEF_NONE);
 	gtk_box_pack_start(GTK_BOX(fontbox), select_font, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(select_font), "clicked", GTK_SIGNAL_FUNC(show_font_dialog), NULL);
 	if (!(font_options & OPT_FONT_FACE))
@@ -806,6 +813,8 @@ void build_prefs()
 	
 	bbox = gtk_hbox_new(FALSE, 5);
 	close = gtk_button_new_with_label(_("Close"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
 	
 	/* Pack the button(s) in the button box */
 	gtk_box_pack_end(GTK_BOX(bbox), close, FALSE, FALSE, 5);
@@ -997,6 +1006,12 @@ void do_chat_page(GtkWidget *page)
 	ref_button = gtk_button_new_with_label(_("Refresh"));
 	add_button = gtk_button_new_with_label(_("Add"));
 	rem_button = gtk_button_new_with_label(_("Remove"));
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(ref_button), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(add_button), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(rem_button), GTK_RELIEF_NONE);
+	}
 	gtk_widget_show(list1);
 	gtk_widget_show(sw1);
 	gtk_widget_show(list2);

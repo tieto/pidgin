@@ -279,6 +279,8 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 	button = gtk_button_new_with_label(_("Cancel"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
 	gtk_widget_show(button);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
 	gtk_window_set_title(GTK_WINDOW(fw), _("Gaim - File Transfer"));
 	gtk_widget_realize(fw);
@@ -414,6 +416,8 @@ static void send_file_callback(gpointer data, gint source,
 	button = gtk_button_new_with_label(_("Cancel"));
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(fw)->action_area), button, 0, 0, 5);
 	gtk_widget_show(button);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", (GtkSignalFunc)toggle, &cont);
 	gtk_window_set_title(GTK_WINDOW(fw), _("Gaim - File Transfer"));
 	gtk_widget_realize(fw);
@@ -639,6 +643,15 @@ void accept_file_dialog(struct file_transfer *ft)
         gtk_widget_show(info);
         gtk_widget_show(warn);
         gtk_widget_show(cancel);
+
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(accept), GTK_RELIEF_NONE);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(info), GTK_RELIEF_NONE);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(warn), GTK_RELIEF_NONE);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
 
         gtk_box_pack_start(GTK_BOX(bbox), accept, TRUE, TRUE, 10);
         gtk_box_pack_start(GTK_BOX(bbox), info, TRUE, TRUE, 10);

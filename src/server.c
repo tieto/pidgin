@@ -877,6 +877,8 @@ void serv_got_eviled(char *name, int lev)
         label = gtk_label_new(buf2);
         gtk_widget_show(label);
         close = gtk_button_new_with_label("Close");
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(close), GTK_RELIEF_NONE);
         gtk_widget_show(close);
         gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox),
                            label, FALSE, FALSE, 5);
@@ -958,6 +960,10 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area),
                            nobtn, FALSE, FALSE, 5);
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(yesbtn), GTK_RELIEF_NONE);
+	if (display_options & OPT_DISP_COOL_LOOK)
+		gtk_button_set_relief(GTK_BUTTON(nobtn), GTK_RELIEF_NONE);
 
         /*		gtk_widget_set_usize(d, 200, 110); */
 

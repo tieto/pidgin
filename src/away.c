@@ -124,6 +124,8 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_text_insert(GTK_TEXT(awaytext), NULL, NULL, NULL, buf, -1);
 		gtk_widget_show(awaytext);
                 
+		if (display_options & OPT_DISP_COOL_LOOK)
+			gtk_button_set_relief(GTK_BUTTON(back), GTK_RELIEF_NONE);
 		
 		/* Put the buttons in the box */
 		gtk_box_pack_start(GTK_BOX(bbox), back, TRUE, TRUE, 10);

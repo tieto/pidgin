@@ -356,6 +356,15 @@ void show_login()
 
         gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
 
+	if (display_options & OPT_DISP_COOL_LOOK)
+	{
+		gtk_button_set_relief(GTK_BUTTON(signon), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(cancel), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(reg), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(options), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(plugs), GTK_RELIEF_NONE);
+	}
+
 	/* Make the buttons do stuff */
 	/* Clicking the button initiates a login */
 	gtk_signal_connect(GTK_OBJECT(signon), "clicked",
