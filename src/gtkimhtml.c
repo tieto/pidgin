@@ -1377,21 +1377,23 @@ gtk_imhtml_tip (gpointer data)
 
 static gboolean gtk_size_allocate_cb(GtkWidget *widget, GtkAllocation *alloc, gpointer user_data)
 {
-	static int old_width = 0, old_height = 0;
+	static GdkRectangle old_rect = {0,0,0,0};
+	GdkRectangle rect;
 
-	if(old_width && (old_width != alloc->width || old_height != alloc->height)){
+	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &rect);
+
+	if(old_rect.width && (old_rect.width != rect.width || old_rect.height != rect.height)){
 		GList *iter = GTK_IMHTML(widget)->scalables;
 
 		while(iter){
 			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(iter->data);
-			scale->scale(scale, alloc->width, alloc->height);
+			scale->scale(scale, rect.width, rect.height);
 
 			iter = iter->next;
 		}
 	}
 
-	old_width = alloc->width;
-	old_height = alloc->height;
+	old_rect = rect;
 	return FALSE;
 }
 
