@@ -2900,8 +2900,6 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 	GtkStyle *style;
 	struct conversation *c;
 	
-	printf("THIS GOT CALLED.\n");
-
 	if ((convo_options & OPT_CONVO_COMBINE) &&
 	    (im_options & OPT_IM_ONE_WINDOW) &&
 	    (chat_options & OPT_CHAT_ONE_WINDOW)) {
@@ -3115,8 +3113,6 @@ void show_conv(struct conversation *c)
 			gtk_widget_show(testidea);
 			gtk_widget_show(convo_notebook);
 			convo_menubar = menubar;
-
-			printf("I GOT HERE BIZNOTCHY.\n");
 
 			gtk_container_add(GTK_CONTAINER(win), testidea);
 			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
