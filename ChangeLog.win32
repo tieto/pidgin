@@ -1,4 +1,8 @@
-version 0.64
+version 0.65
+
+version 0.64 (05/30/3003)
+	* Perl plugin support is back.. after the plugin api rewrite
+	* File transfer fixed for win32
 
 version 0.63 (05/16/2003)
 	* Gaim installer re-written. Our own GTK+ installer is now bundled 
