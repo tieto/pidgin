@@ -5,6 +5,11 @@
 for the goodies I promised in 0.9.13 to appear in 0.9.14 which should be
 released very soon now.  
 
+	By the way, our CVS is now hosted over at source forge.  Go check
+it out at http://www.sourceforge.net.  Please check there before submitting
+any bug reports (You can read our CVS comments to see if we have fixed any
+problems).
+
 0.9.12:
 	Well guys, looks like we got some nifty things in this version.
 TrueType Fonts are supported for those XFSTT buffs out there (or whatever
