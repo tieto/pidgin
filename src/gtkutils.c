@@ -158,7 +158,7 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 	if (imhtml_ret != NULL)
 		*imhtml_ret = imhtml;
 
-	if (toolbar_ret != NULL)
+	if (editable && (toolbar_ret != NULL))
 		*toolbar_ret = toolbar;
 
 	return frame;

@@ -301,7 +301,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *imhtml;
-	GtkWidget *sw;
+	GtkWidget *frame;
 	int options = 0;
 	char label_text[2048];
 	char *linked_text;
@@ -334,23 +334,12 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	/* Setup the scrolled window that we're putting the gtkimhtml in. */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-								   GTK_POLICY_NEVER,
-								   GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
-										GTK_SHADOW_IN);
-	gtk_widget_set_size_request(sw, 300, 250);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gtk_widget_show(sw);
-
-	/* Now build that gtkimhtml */
-	imhtml = gtk_imhtml_new(NULL, NULL);
+	/* Add the imhtml */
+	frame = gaim_gtk_create_imhtml(FALSE, &imhtml, NULL);
 	gtk_widget_set_name(imhtml, "gaim_gtknotify_imhtml");
-	gtk_container_add(GTK_CONTAINER(sw), imhtml);
-	gtk_widget_show(imhtml);
-	gaim_setup_imhtml(imhtml);
+	gtk_widget_set_size_request(imhtml, 300, 250);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
 
 	/* Add the Close button. */
 	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
@@ -361,7 +350,6 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 							 G_CALLBACK(formatted_close_cb), window);
 	g_signal_connect(G_OBJECT(window), "key_press_event",
 					 G_CALLBACK(formatted_input_cb), NULL);
-
 
 	/* Add the text to the gtkimhtml */
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
@@ -378,8 +366,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 
 	/* Make sure URLs are clickable */
 	linked_text = gaim_markup_linkify(text);
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text,
-									   options);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text, options);
 	g_free(linked_text);
 
 	/* Show the window */

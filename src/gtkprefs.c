@@ -706,7 +706,7 @@ GtkWidget *theme_page() {
 }
 
 static void
-formatting_reset_cb(GtkWidget *w, GtkWidget* imhtml) {
+formatting_reset_cb(GtkWidget *w, GtkWidget *imhtml) {
 	gboolean bold, italic, uline;
 	bold = italic = uline = FALSE;
 
@@ -776,7 +776,6 @@ GtkWidget *messages_page() {
 	GtkWidget *vbox, *fontvbox;
 	GtkWidget *imhtml;
 	GtkWidget *toolbar;
-	GtkWidget *sw;
 	GtkWidget *frame;
 	GtkWidget *option;
 	GtkWidget *button;
@@ -804,33 +803,15 @@ GtkWidget *messages_page() {
 	option = gaim_gtk_prefs_checkbox(_("_Send default formatting with outgoing messages"),
 									 "/gaim/gtk/conversations/send_formatting", vbox);
 
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 	fontvbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), fontvbox);
+	gtk_container_add(GTK_CONTAINER(vbox), fontvbox);
 
-	toolbar = gtk_imhtmltoolbar_new();
-	gtk_box_pack_start(GTK_BOX(fontvbox), toolbar, FALSE, FALSE, 0);
-
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
-				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
-	gtk_box_pack_start(GTK_BOX(fontvbox), sw, TRUE, TRUE, 0);
-
-	imhtml = gtk_imhtml_new(NULL, NULL);
+	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
 	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
-	gtk_imhtml_set_editable(GTK_IMHTML(imhtml), TRUE);
-	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
-
-	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), imhtml);
-	gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
-	gaim_setup_imhtml(imhtml);
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
-	gtk_container_add(GTK_CONTAINER(sw), imhtml);
+	gtk_box_pack_start(GTK_BOX(fontvbox), frame, FALSE, FALSE, 0);
 
 	button = gtk_button_new_with_mnemonic(_("_Clear Formatting"));
 	gtk_box_pack_start(GTK_BOX(fontvbox), button, FALSE, FALSE, 0);
