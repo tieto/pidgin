@@ -390,6 +390,7 @@ AC_OUTPUT([Makefile
 	   pixmaps/smileys/default/Makefile
 	   plugins/Makefile
 	   plugins/docklet/Makefile
+	   plugins/gestures/Makefile
 	   plugins/ticker/Makefile
 	   po/Makefile.in 
            sounds/Makefile

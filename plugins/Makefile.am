@@ -1,4 +1,4 @@
-SUBDIRS = docklet ticker
+SUBDIRS = docklet gestures ticker
 
 plugindir = $(libdir)/gaim
 
