@@ -549,7 +549,8 @@ int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t call
 				write(child_out[1], &zero, sizeof(zero));
 				tmp = res;
 				while(res) {
-					write(child_out[1], &(res->ai_addrlen), sizeof(res->ai_addrlen));
+					size_t ai_addrlen = res->ai_addrlen;
+					write(child_out[1], &ai_addrlen, sizeof(ai_addrlen));
 					write(child_out[1], res->ai_addr, res->ai_addrlen);
 					res = res->ai_next;
 				}
