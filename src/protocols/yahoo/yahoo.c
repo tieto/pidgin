@@ -1205,6 +1205,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 5, who);
 	yahoo_packet_hash(pkt, 14, msg);
+	yahoo_packet_hash(pkt, 97, "1");
 
 	yahoo_send_packet(yd, pkt);
 
@@ -1388,55 +1389,6 @@ static void yahoo_remove_buddy(GaimConnection *gc, char *who, char *group)
 }
 
 static GaimPlugin *my_protocol = NULL;
-
-#if 0
-G_MODULE_EXPORT void yahoo_init(GaimPlugin *ret) {
-	struct proto_user_opt *puo;
-	ret->protocol = PROTO_YAHOO;
-	ret->options = OPT_PROTO_MAIL_CHECK;
-	ret->name = g_strdup("Yahoo");
-	ret->login = yahoo_login;
-	ret->close = yahoo_close;
-	ret->buddy_menu = yahoo_buddy_menu;
-	ret->list_icon = yahoo_list_icon;
-	ret->list_emblems = yahoo_list_emblems;
-	ret->status_text = yahoo_status_text;
-	ret->tooltip_text = yahoo_tooltip_text;
-	ret->actions = yahoo_actions;
-	ret->send_im = yahoo_send_im;
-	ret->away_states = yahoo_away_states;
-	ret->set_away = yahoo_set_away;
-	ret->set_idle = yahoo_set_idle;
-	ret->keepalive = yahoo_keepalive;
-	ret->add_buddy = yahoo_add_buddy;
-	ret->remove_buddy = yahoo_remove_buddy;
-	ret->send_typing = yahoo_send_typing;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Pager Host:"));
-	puo->def = g_strdup(YAHOO_PAGER_HOST);
-	puo->pos = USEROPT_PAGERHOST;
-	ret->protocol_options = g_list_append(ret->protocol_options, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = g_strdup(_("Pager Port:"));
-	puo->def = g_strdup("5050");
-	puo->pos = USEROPT_PAGERPORT;
-	ret->protocol_options = g_list_append(ret->protocol_options, puo);
-
-	my_protocol = ret;
-}
-
-#ifndef STATIC
-
-G_MODULE_EXPORT void gaim_prpl_init(struct prpl *prpl)
-{
-	yahoo_init(prpl);
-	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
-}
-
-#endif
-#endif
 
 static GaimPluginProtocolInfo prpl_info =
 {
