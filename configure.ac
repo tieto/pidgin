@@ -1146,6 +1146,7 @@ AC_CONFIG_COMMANDS_POST([
 
 AC_OUTPUT([Makefile
 		   Doxyfile
+		   gaim.apspec
 		   doc/Makefile
 		   doc/gaim.1
 		   doc/gaim-remote.1

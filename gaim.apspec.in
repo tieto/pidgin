@@ -1,0 +1,75 @@
+# -*-shell-script-*-
+
+[Meta]
+RootName: @gaim.sourceforge.net/gaim:$SOFTWAREVERSION
+DisplayName: Gaim Internet Messenger
+ShortName: gaim
+Maintainer: The Gaim Developers - http://gaim.sourceforge.net/
+Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
+Summary: Gaim allows you to talk to friends on a variety of chat network, such as AIM, ICQ, Yahoo!, MSN, and IRC.
+SoftwareVersion: @VERSION@
+
+# Only uncomment InterfaceVersion if your package exposes interfaces to other software,
+# for instance if it includes DSOs or python/perl modules. See the developer guide for more info,
+# or ask on autopackage-dev if you don't understand interface versioning in autopackage.
+#
+InterfaceVersion: 2.0
+
+PackageVersion: 1
+
+
+[Description]
+Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber,
+ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.
+It is written using Gtk+ and is licensed under the GPL.
+
+Gaim is NOT affiliated with or endorsed by AOL.
+
+[BuildPrepare]
+prepareBuild --disable-nss --enable-gnutls --enable-binreloc --disable-perl --disable-tcl
+
+
+[BuildUnprepare]
+unprepareBuild
+
+[Imports]
+rm -rf include
+find -name '*.la' | xargs rm
+echo '*' | import
+
+[Prepare]
+# Dependency checking
+require @gtk.org/gtk 2.2
+require @68k.org/libaudiofile 0.0
+require @xiph.org/libao 2.0
+require @gtkspell.sourceforge.net/gtkspell 0.0
+
+# ap alpha: while gnutls do not provide autopackages, we package this ourselves
+repo="http://autopackage.org/downloads/0.7"
+registerRepository @gnutls.org/gnutls $repo/gnutls.xml
+registerRepository @gnupg.org/libgcrypt $repo/libgcrypt.xml
+registerRepository @gnupg.org/libgpg-error $repo/libgpg-error.xml
+unset repo
+
+require @gnutls.org/gnutls 11.1
+
+[Install]
+# Put your installation script here
+installExe ./bin/*
+installLib ./lib/libgaim-remote.so.0.0.0
+# do the plugins
+copyFiles ./lib/gaim "$PREFIX/lib"
+installMan 1 ./man/man1/gaim.1
+installDesktop "Networking/Instant messaging" ./share/applications/gaim.desktop
+copyFiles ./share/locale "$PREFIX/share"
+copyFiles ./share/pixmaps "$PREFIX/share"
+copyFiles ./share/sounds "$PREFIX/share"
+installIcon ./share/pixmaps/gaim.png
+# install and fix the .pc file
+# move this to the -devel package when I make one
+# copyFile ./lib/pkgconfig/gaim.pc "$PREFIX/lib/pkgconfig/gaim.pc"
+# safeSed "$PREFIX/lib/pkgconfig/gaim.pc" "s|prefix=/usr/local|prefix=$PREFIX|"
+
+[Uninstall]
+# Usually just the following line is enough to uninstall everything
+uninstallFromLog

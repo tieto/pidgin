@@ -3,6 +3,7 @@ EXTRA_DIST = \
 		Doxyfile.in \
 		gaim.pc.in \
 		gaim.spec.in \
+		gaim.apspec.in \
 		gaim.desktop \
 		gaim2blt.pl \
 		gaim-installer.nsi \
