@@ -19,15 +19,11 @@ TICKER :=		./ticker
 ## VARIABLE DEFINITIONS
 ##
 
-VERSION := $(shell cat $(GAIM_TOP)/VERSION)
-
 # Compiler Options
 
-CC = gcc.exe
+CFLAGS =
 
-CFLAGS = -O2 -Wall -Werror -mno-cygwin -fnative-struct
-
-DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
+DEFINES =
 
 .SUFFIXES:
 .SUFFIXES: .c .dll
@@ -36,6 +32,7 @@ DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
 ## INCLUDE  MAKEFILES
 ##
 
+include $(GAIM_TOP)/src/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -88,9 +85,9 @@ install:
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o tmp$@.o -c $<
 	dlltool -D $@ -z $@.def tmp$@.o
-	gcc -mdll -o junk.tmp -Wl,--base-file,$@.base tmp$@.o $(LIB_PATHS) $(LIBS)
+	$(CC) -mdll -o junk.tmp -Wl,--base-file,$@.base tmp$@.o $(LIB_PATHS) $(LIBS)
 	dlltool -D $@ -b $@.base -e $@.exp -d $@.def
-	gcc -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
+	$(CC) -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
 	rm -rf $@.base $@.def $@.exp junk.tmp
 
 plugins: autorecon.dll iconaway.dll spellchk.dll

@@ -8,8 +8,6 @@
 # PATHS
 #
 
-BUILD_TOOLS = /usr/local/mingw
-
 INCLUDE_DIR :=		.
 GTK_TOP :=		../../win32-dev/gtk_2_0
 GAIM_TOP :=		..
@@ -24,17 +22,11 @@ GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 
 TARGET = gaim
 
-VERSION := $(shell cat $(GAIM_TOP)/VERSION)
-
 # Compiler and Linker Options
 
-GCOPTS = -B $(BUILD_TOOLS)
+CFLAGS =
 
-CC = gcc.exe $(GCOPTS)
-
-CFLAGS = -g -mno-cygwin -fnative-struct
-
-DEFINES = -DHAVE_CONFIG_H -DVERSION=\"$(VERSION)\" -DGTK_ENABLE_BROKEN
+DEFINES =
 
 LDFLAGS = -mwindows
 
@@ -45,6 +37,7 @@ LDFLAGS = -mwindows
 ## INCLUDE  MAKEFILES
 ##
 
+include $(GAIM_TOP)/src/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -107,7 +100,8 @@ DLL_C_SRC =		aim.c \
 			sound.c \
 			util.c \
 			win32/win32dep.c \
-			win32/MinimizeToTray.c
+			win32/MinimizeToTray.c \
+			win32/libc_interface.c
 
 RC_SRC =		win32/gaimrc.rc
 
@@ -174,7 +168,7 @@ $(TARGET).def: $(HEADER_DEPS) $(DLL_OBJECTS)
 		--exclude-symbols WinMain@16 $^
 
 $(TARGET).base: $(HEADER_DEPS) $(DLL_OBJECTS)
-	gcc -mdll $(LDFLAGS) -o junk.tmp -Wl,--base-file,$@ $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS)
+	$(CC) -mdll $(LDFLAGS) -o junk.tmp -Wl,--base-file,$@ $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf junk.tmp
 
 $(TARGET).exp: $(TARGET).base $(TARGET).def
@@ -182,7 +176,7 @@ $(TARGET).exp: $(TARGET).base $(TARGET).def
 		--output-exp $(TARGET).exp --def $(TARGET).def
 
 $(TARGET).dll: $(HEADER_DEPS) $(DLL_OBJECTS) $(TARGET).exp
-	gcc -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
+	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
 	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
 
 $(TARGET).lib: $(TARGET).def
@@ -193,9 +187,7 @@ $(TARGET).lib: $(TARGET).def
 #
 
 $(TARGET).exe: $(TARGET).lib $(EXE_OBJECTS)
-	gcc $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(TARGET).exe
-
-# -Wl,--subsystem,windows
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(TARGET).exe
 
 ##
 ## CLEAN RULES

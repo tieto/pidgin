@@ -22,21 +22,18 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
 TARGET = ticker
 
-VERSION := $(shell cat $(GAIM_TOP)/VERSION)
-
 # Compiler Options
 
-CC = gcc.exe
+CFLAGS =
 
-CFLAGS = -O2 -Werror -Wall -mno-cygwin -fnative-struct
-
-DEFINES = 	-DGTK_ENABLE_BROKEN -DVERSION=\"$(VERSION)\"
+DEFINES =
 
 
 ##
 ## INCLUDE  MAKEFILES
 ##
 
+include $(GAIM_TOP)/src/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -114,7 +111,7 @@ $(TARGET).def: $(OBJECTS)
 		$(OBJECTS)
 
 $(TARGET).base: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	gcc -mdll -o junk.tmp -Wl,--base-file,$@ $(OBJECTS) $(LIB_PATHS) $(LIBS)
+	$(CC) -mdll -o junk.tmp -Wl,--base-file,$@ $(OBJECTS) $(LIB_PATHS) $(LIBS)
 	rm -rf junk.tmp
 
 $(TARGET).exp: $(TARGET).def $(TARGET).base
@@ -123,7 +120,7 @@ $(TARGET).exp: $(TARGET).def $(TARGET).base
 	rm -rf $(TARGET).base
 
 $(TARGET).dll: $(OBJECTS) $(TARGET).exp $(GAIM_TOP)/src/gaim.lib
-	gcc -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
+	$(CC) -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
 	rm -rf $(TARGET).exp
 
 
