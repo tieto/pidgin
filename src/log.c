@@ -65,8 +65,8 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	if ( (gaim_prefs_get_bool("/gaim/gtk/logging/log_chats") && log->type == GAIM_LOG_CHAT) || 
-	     (gaim_prefs_get_bool("/gaim/gtk/logging/log_ims") && log->type == GAIM_LOG_IM))
+	if ((log->type == GAIM_LOG_IM && gaim_prefs_get_bool("/gaim/gtk/logging/log_ims")) ||
+	    (log->type == GAIM_LOG_CHAT && gaim_prefs_get_bool("/gaim/gtk/logging/log_chats")))
 		(log->logger->write)(log, type, from, time, message);
 }
 
