@@ -51,6 +51,12 @@ EXTRA_DIST =	about_small.xpm			\
 		gnome/penguin-connect.png	\
 		gnome/penguin-offline.png	\
 		gnome/penguin-online.png	\
+		gnomeicu-away.xpm		\
+		gnomeicu-dnd.xpm		\
+		gnomeicu-ffc.xpm		\
+		gnomeicu-na.xpm			\
+		gnomeicu-occ.xpm		\
+		gnomeicu-online.xpm		\
 		group.xpm			\
 		im.xpm				\
 		import_small.xpm		\
