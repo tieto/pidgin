@@ -610,7 +610,7 @@ static GtkWidget *build_icon_selection(struct mod_user *u, GtkWidget *box)
 
 static void generate_login_options(struct mod_user *u, GtkWidget *box)
 {
-	GtkWidget *frame;
+	GtkWidget *frame, *frame_parent;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
 	GtkWidget *label;
@@ -618,6 +618,7 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	struct prpl *p;
 
 	frame = make_frame(box, _("Login Options"));
+	frame_parent = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -671,7 +672,7 @@ static void generate_login_options(struct mod_user *u, GtkWidget *box)
 	u->rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
 
-	gtk_widget_show_all(frame);
+	gtk_widget_show_all(frame_parent);
 
 	if (u->user) {
 		gtk_entry_set_text(GTK_ENTRY(u->name), u->user->username);
@@ -698,15 +699,17 @@ static void generate_user_options(struct mod_user *u, GtkWidget *box)
 	/* Sean was right. I did do that. I told him I would. */
 
 	GtkWidget *vbox;
+	GtkWidget *frame;
 
 	struct prpl *p = find_prpl(u->protocol);
 
-	u->user_frame = make_frame(box, _("User Options"));
-	gtk_widget_show(u->user_frame);
+	frame = make_frame(box, _("User Options"));
+	u->user_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
+	gtk_widget_show_all(u->user_frame);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_container_add(GTK_CONTAINER(u->user_frame), vbox);
+	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
 	u->checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
@@ -863,25 +866,24 @@ static void show_acct_mod(struct aim_user *a)
 	gtk_window_set_wmclass(GTK_WINDOW(u->mod), "account", "Gaim");
 	gtk_widget_realize(u->mod);
 	gtk_window_set_title(GTK_WINDOW(u->mod), _("Gaim - Modify Account"));
-	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, TRUE, TRUE);	/* nothing odd here :) */
+	gtk_window_set_policy(GTK_WINDOW(u->mod), FALSE, FALSE, TRUE);	/* nothing odd here :) */
 	gtk_signal_connect(GTK_OBJECT(u->mod), "destroy", GTK_SIGNAL_FUNC(delmod), u);
 
 	vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_border_width(GTK_CONTAINER(vbox), 6);
 	gtk_container_add(GTK_CONTAINER(u->mod), vbox);
+	gtk_widget_show(vbox);
 
 	u->main = gtk_vbox_new(FALSE, 12);
 	gtk_container_border_width(GTK_CONTAINER(u->main), 6);
 	gtk_box_pack_start(GTK_BOX(vbox), u->main, FALSE, FALSE, 0);
+	gtk_widget_show(u->main);
 
 	u->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	generate_login_options(u, u->main);
 	generate_user_options(u, u->main);
 	generate_protocol_options(u, u->main);
-
-	sep = gtk_hseparator_new();
-	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
@@ -899,7 +901,12 @@ static void show_acct_mod(struct aim_user *a)
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(cancel_mod), u);
 
-	gtk_widget_show_all(u->mod);
+	sep = gtk_hseparator_new();
+	gtk_box_pack_end (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show(sep);
+
+	gtk_widget_show_all(hbox);
+	gtk_widget_show(u->mod);
 }
 
 static void add_acct(GtkWidget *w, gpointer d)
