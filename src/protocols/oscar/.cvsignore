@@ -34,3 +34,6 @@ ssi.lo
 translate.lo
 icq.lo
 service.lo
+liboscar.def
+liboscar.lib
+liboscar.exp
