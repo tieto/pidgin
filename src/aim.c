@@ -490,21 +490,26 @@ static gboolean socket_readable(GIOChannel *source, GIOCondition cond, gpointer 
 	g_free(data);
 	return TRUE;
 }
-
+#endif
 static int ui_main()
 {
+#ifndef _WIN32
 	GIOChannel *channel;
 	int UI_fd;
+#endif
 	char name[256];
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
+	char *icon_path;
 
 	smiley_theme_probe();
 	if (current_smiley_theme == NULL && smiley_themes)
 		load_smiley_theme(smiley_themes->data, TRUE);
 
 	/* use the nice PNG icon for all the windows */
-	icon = gdk_pixbuf_new_from_file(DATADIR G_DIR_SEPARATOR_S "pixmaps" G_DIR_SEPARATOR_S "gaim.png",NULL);
+	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);
+	icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+	g_free(icon_path);
 	if (icon) {
 		icons = g_list_append(icons,icon);
 		gtk_window_set_default_icon_list(icons);
@@ -514,16 +519,17 @@ static int ui_main()
 	}
 
 	g_snprintf(name, sizeof(name), "%s" G_DIR_SEPARATOR_S "gaim_%s.%d", g_get_tmp_dir(), g_get_user_name(), gaim_session);
-
+#ifndef _WIN32
 	UI_fd = gaim_connect_to_session(0);
 	if (UI_fd < 0)
 		return 1;
 
 	channel = g_io_channel_unix_new(UI_fd);
 	g_io_add_watch(channel, G_IO_IN | G_IO_HUP | G_IO_ERR, socket_readable, NULL);
+#endif
 	return 0;
 }
-#endif /* _WIN32 */
+
 
 static void set_first_user(char *name)
 {
@@ -830,7 +836,7 @@ int main(int argc, char *argv[])
 
 	load_prefs();
 	core_main();
-#ifndef _WIN32
+#ifndef _WIN321
 	ui_main();
 #endif
 
