@@ -2122,7 +2122,7 @@ void gaim_gtk_blist_sort_method_set(const char *name){
 		current_sort_method = l->data;
 		strcpy(sort_method, ((struct gaim_gtk_blist_sort_method*)l->data)->name);
 	} else if (!current_sort_method) {
-		gaim_gtk_blist_sort_method_set("None");
+		gaim_gtk_blist_sort_method_set(_("None"));
 		return;
 	}
 	save_prefs();
