@@ -849,9 +849,11 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
  		close(source);
 		source = -1;
 		
-		if ( status == 403 /* Forbidden */ )
-			gaim_connection_error(phb->account->gc, _("Access denied: proxy server forbids port 80 tunnelling."));
-		else {
+		if ( status == 403 /* Forbidden */ ) {
+			gchar *msg = g_strdup_printf(_("Access denied: proxy server forbids port %d tunnelling."), phb->port);
+			gaim_connection_error(phb->account->gc, msg);
+			g_free(msg);
+		} else {
 			char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
 			gaim_connection_error(phb->account->gc, msg);
 			g_free(msg);
