@@ -101,10 +101,10 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 		pce = tmp->data;
 
-		rowbox = gtk_hbox_new(FALSE, 5);
+		rowbox = gtk_hbox_new(FALSE, 12);
 		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
 
-		label = gtk_label_new(pce->label);
+		label = gtk_label_new_with_mnemonic(pce->label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(data->sg, label);
 		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
@@ -120,6 +120,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 			data->entries = g_list_append(data->entries, spin);
 			gtk_widget_set_size_request(spin, 50, -1);
 			gtk_box_pack_end(GTK_BOX(rowbox), spin, FALSE, FALSE, 0);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(spin));
 		} else {
 			GtkWidget *entry = gtk_entry_new();
 
@@ -139,6 +140,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
 			gtk_box_pack_end(GTK_BOX(rowbox), entry, TRUE, TRUE, 0);
+			gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(entry));
 		}
 
 		g_free(pce);
@@ -220,7 +222,7 @@ join_chat()
 
 	data->window = gtk_dialog_new_with_buttons(_("Join Chat"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 											   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-											   "Join", GTK_RESPONSE_OK, NULL);
+											   _("_Join"), GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
@@ -229,12 +231,12 @@ join_chat()
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
 
 	hbox = gtk_hbox_new(FALSE, 12);
-    gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
-    gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-    gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	label = gtk_label_new(_("Please enter the appropriate information about the chat you would like to join.\n"));
@@ -242,13 +244,13 @@ join_chat()
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	rowbox = gtk_hbox_new(FALSE, 5);
+	rowbox = gtk_hbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, TRUE, TRUE, 0);
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	if (numaccounts > 1) {
-		label = gtk_label_new(_("Join Chat As:"));
+		label = gtk_label_new_with_mnemonic(_("_Account:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 0);
 		gtk_size_group_add_widget(data->sg, label);
@@ -257,6 +259,7 @@ join_chat()
 				G_CALLBACK(join_chat_select_account_cb),
 				join_chat_check_account_func, data);
 		gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(data->account_menu));
 	}
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);

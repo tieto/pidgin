@@ -905,17 +905,17 @@ static GList *zephyr_chat_info(GaimConnection *gc) {
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Class:");
+	pce->label = _("_Class:");
 	pce->identifier = "class";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Instance:");
+	pce->label = _("_Instance:");
 	pce->identifier = "instance";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Recipient:");
+	pce->label = _("_Recipient:");
 	pce->identifier = "recipient";
 	m = g_list_append(m, pce);
 

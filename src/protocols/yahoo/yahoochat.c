@@ -934,7 +934,7 @@ GList *yahoo_c_info(GaimConnection *gc)
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Room:");
+	pce->label = _("_Room:");
 	pce->identifier = "room";
 	m = g_list_append(m, pce);
 

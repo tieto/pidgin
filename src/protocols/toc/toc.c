@@ -1256,12 +1256,12 @@ static GList *toc_chat_info(GaimConnection *gc)
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Join what group:");
+	pce->label = _("_Group:");
 	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Exchange:");
+	pce->label = _("_Exchange:");
 	pce->identifier = "exchange";
 	pce->is_int = TRUE;
 	pce->min = 4;

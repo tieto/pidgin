@@ -34,26 +34,26 @@ GList *jabber_chat_info(GaimConnection *gc)
 	JabberStream *js = gc->proto_data;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Room:");
+	pce->label = _("_Room:");
 	pce->identifier = "room";
 	m = g_list_append(m, pce);
 
 	/* we're gonna default to a conference server I know is true, until
 	 * I can figure out how to disco for a chat server */
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Server:");
+	pce->label = _("_Server:");
 	pce->identifier = "server";
 	pce->def = "conference.jabber.org";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Handle:");
+	pce->label = _("_Handle:");
 	pce->identifier = "handle";
 	pce->def = js->user->node;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Password:");
+	pce->label = _("_Password:");
 	pce->identifier = "password";
 	pce->secret = TRUE;
 	m = g_list_append(m, pce);

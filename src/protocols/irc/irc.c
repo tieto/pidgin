@@ -155,12 +155,12 @@ static GList *irc_chat_join_info(GaimConnection *gc)
 	struct proto_chat_entry *pce;
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Channel:");
+	pce->label = _("_Channel:");
 	pce->identifier = "channel";
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
-	pce->label = _("Password:");
+	pce->label = _("_Password:");
 	pce->identifier = "password";
 	pce->secret = TRUE;
 	m = g_list_append(m, pce);
