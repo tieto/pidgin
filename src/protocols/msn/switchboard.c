@@ -83,11 +83,12 @@ static gboolean
 __ans_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
 	MsnSwitchBoard *swboard = servconn->data;
 
 	if (swboard->chat != NULL)
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+						   gaim_account_get_username(account), NULL);
 
 	return __send_clientcaps(swboard);
 }
@@ -140,7 +141,8 @@ static gboolean
 __iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 
 	swboard->total_users = atoi(params[2]);
@@ -154,7 +156,8 @@ __iro_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	if (swboard->chat != NULL)
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+						   gaim_account_get_username(account), NULL);
 
 	return TRUE;
 }
@@ -163,7 +166,8 @@ static gboolean
 __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 		  size_t param_count)
 {
-	GaimConnection *gc = servconn->session->account->gc;
+	GaimAccount *account = servconn->session->account;
+	GaimConnection *gc = account->gc;
 	MsnSwitchBoard *swboard = servconn->data;
 	const char *passport;
 
@@ -174,7 +178,8 @@ __joi_cmd(MsnServConn *servconn, const char *command, const char **params,
 											 "MSN Chat");
 		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
 						   msn_user_get_passport(swboard->user), NULL);
-		gaim_chat_add_user(GAIM_CHAT(swboard->chat), gc->username, NULL);
+		gaim_chat_add_user(GAIM_CHAT(swboard->chat),
+						   gaim_account_get_username(account), NULL);
 
 		msn_user_unref(swboard->user);
 	}
@@ -343,6 +348,7 @@ static gboolean
 __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnServConn *servconn = data;
+	GaimAccount *account = servconn->session->account;
 	MsnSwitchBoard *swboard = servconn->data;
 	char outparams[MSN_BUF_LEN];
 
@@ -355,7 +361,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (msn_switchboard_is_invited(swboard)) {
 		g_snprintf(outparams, sizeof(outparams), "%s %s %s",
-				   servconn->session->account->gc->username,
+				   gaim_account_get_username(account),
 				   swboard->auth_key, swboard->session_id);
 
 		if (!msn_switchboard_send_command(swboard, "ANS", outparams)) {
@@ -366,7 +372,7 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else {
 		g_snprintf(outparams, sizeof(outparams), "%s %s",
-				   servconn->session->account->gc->username, swboard->auth_key);
+				   gaim_account_get_username(account), swboard->auth_key);
 
 		if (!msn_switchboard_send_command(swboard, "USR", outparams)) {
 			msn_switchboard_destroy(swboard);

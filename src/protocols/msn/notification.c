@@ -265,7 +265,7 @@ __inf_cmd(MsnServConn *servconn, const char *command, const char **params,
 	}
 
 	gaim_connection_update_progress(gc, _("Requesting to send password"),
-									4, MSN_CONNECT_STEPS);
+									5, MSN_CONNECT_STEPS);
 
 	return TRUE;
 }
@@ -285,7 +285,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 		/* OK */
 
-		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friendly);
+		gaim_connection_set_display_name(gc, friendly);
 
 		session->syncing_lists = TRUE;
 
@@ -296,7 +296,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		}
 
 		gaim_connection_update_progress(gc, _("Retrieving buddy list"),
-										5, MSN_CONNECT_STEPS);
+										7, MSN_CONNECT_STEPS);
 	}
 	else {
 		/* Challenge */
@@ -306,7 +306,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 		md5_byte_t di[16];
 		int i;
 
-		g_snprintf(buf, sizeof(buf), "%s%s", challenge, gc->password);
+		g_snprintf(buf, sizeof(buf), "%s%s", challenge,
+				   gaim_account_get_password(account));
 
 		md5_init(&st);
 		md5_append(&st, (const md5_byte_t *)buf, strlen(buf));
@@ -325,7 +326,8 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 			return FALSE;
 		}
 
-		set_login_progress(gc, 4, _("Password sent"));
+		gaim_connection_update_progress(gc, _("Password sent"),
+										6, MSN_CONNECT_STEPS);
 	}
 
 	return TRUE;
@@ -416,7 +418,7 @@ __add_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	MsnUser *user;
-	GaimConnection *account = session->account;
+	GaimAccount *account = session->account;
 	GaimConnection *gc = gaim_account_get_connection(account);
 	MsnPermitAdd *pa;
 	GSList *sl;
@@ -496,7 +498,7 @@ __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 *
 		 * In other words, deny some.
 		 */
-		gc->account->permdeny = DENY_SOME;
+		gc->account->perm_deny = DENY_SOME;
 	}
 	else {
 		/* If the current setting is BL, only messages from people
@@ -504,7 +506,7 @@ __blp_cmd(MsnServConn *servconn, const char *command, const char **params,
 		 *
 		 * In other words, permit some.
 		 */
-		gc->account->permdeny = PERMIT_SOME;
+		gc->account->perm_deny = PERMIT_SOME;
 	}
 
 	return TRUE;
@@ -735,7 +737,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 				return FALSE;
 			}
 
-			account_online(gc);
+			gaim_connection_set_state(gc, GAIM_CONNECTED);
 			serv_finish_login(gc);
 		}
 
@@ -834,7 +836,7 @@ __rea_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	friend = msn_url_decode(params[3]);
 
-	g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
+	gaim_connection_set_display_name(gc, friend);
 
 	return TRUE;
 }
@@ -956,7 +958,6 @@ __url_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	GaimAccount *account = session->account;
-	GaimConnection *gc = gaim_account_get_connection(gc);
 	const char *rru;
 	const char *url;
 	md5_state_t st;
@@ -972,7 +973,8 @@ __url_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	g_snprintf(buf, sizeof(buf), "%s%lu%s",
 			   session->passport_info.mspauth,
-			   time(NULL) - session->passport_info.sl, gc->password);
+			   time(NULL) - session->passport_info.sl,
+			   gaim_account_get_password(account));
 
 	md5_init(&st);
 	md5_append(&st, (const md5_byte_t *)buf, strlen(buf));
@@ -1215,7 +1217,7 @@ __initial_email_msg(MsnServConn *servconn, MsnMessage *msg)
 		return TRUE;
 	}
 
-	if (!GAIM_ACCOUNT_CHECK_MAIL(session->account))
+	if (!gaim_account_get_check_mail(session->account))
 		return TRUE;
 
 	if (session->passport_info.file == NULL) {
@@ -1256,7 +1258,7 @@ __email_msg(MsnServConn *servconn, MsnMessage *msg)
 		return TRUE;
 	}
 
-	if (!GAIM_ACCOUNT_CHECK_MAIL(session->account))
+	if (!gaim_account_get_check_mail(session->account))
 		return TRUE;
 
 	if (session->passport_info.file == NULL) {
@@ -1343,9 +1345,10 @@ __connect_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	session->user = msn_user_new(session,
-								 gaim_connection_get_username(account), NULL);
+								 gaim_account_get_username(account), NULL);
 
-	set_login_progress(session->account->gc, 4, _("Syncing with server"));
+	gaim_connection_update_progress(gc, _("Syncing with server"),
+									4, MSN_CONNECT_STEPS);
 
 	return TRUE;
 }
