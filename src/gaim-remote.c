@@ -111,20 +111,23 @@ int get_options(int argc, char *argv[])
 	else
 		return 1;
 
+	if(opts.help)
+		return 0;
+
 	/* And we can have another argument--the URI. */
-	if (optind < argc) {
-		/* but only if we're using the uri command. */
-		if (!strcmp(opts.command, "uri"))
+	/* but only if we're using the uri command. */
+	if (!strcmp(opts.command, "uri")) {
+		if(argc-optind==1)
 			opts.uri = g_strdup(argv[optind++]);
 		else
 			return 1;
-		
-		/* and we can't have any others. */
-		if (optind < argc)
-			return 1;
 	}
-	
-	return 0;
+	else if(optind==argc)
+		return 0;
+	else
+		return 1;
+
+	return 0;			
 }
 
 
@@ -132,7 +135,7 @@ int command_uri() {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
 	fd = gaim_remote_session_connect(0);
-	if (!fd) {
+	if (fd<0) {
 		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
@@ -148,7 +151,7 @@ int command_quit() {
 	int fd = 0;
 	GaimRemotePacket *p = NULL;
 	fd = gaim_remote_session_connect(0);
-	if (!fd) {
+	if (fd<0) {
 		fprintf(stderr, _("Gaim not running (on session 0)\n"));
 		return 1;
 	}
