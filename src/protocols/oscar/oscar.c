@@ -4488,6 +4488,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (export)
 		gaim_blist_save();
 
+#if 0
 	{ /* Add from local list to server list */
 		GaimBlistNode *gnode, *bnode;
 		struct group *group;
@@ -4520,7 +4521,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					}
 				}
 			}
-#if 0
 		/* Permit list */
 		if (gc->account->permit) {
 			for (cur=gc->account->permit; cur; cur=cur->next)
@@ -4538,12 +4538,12 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 					aim_ssi_adddeny(sess, od->conn, cur->data);
 				}
 		}
-#endif
 		/* Presence settings (idle time visibility) */
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
 			if (report_idle && !(tmp & 0x400))
 				aim_ssi_setpresence(sess, fr->conn, tmp | 0x400);
 	} /* end adding buddies from local list to server list */
+#endif
 
 	{ /* Check for maximum number of buddies */
 		GSList *groups = gaim_blist_groups(), *cur;
