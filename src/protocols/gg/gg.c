@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4798 2003-02-04 20:30:17Z chipx86 $
+ * $Id: gg.c 4808 2003-02-05 13:47:28Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -784,7 +784,7 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 
 		if (strlen(users_tbl[i])==0) {
 			debug_printf("import_buddies_server_results: users_tbl[i] is empty\n");
-			break;
+			continue;
 		}
 
 		g_strdelimit(users_tbl[i], "\r\t\n\015", ' ');
