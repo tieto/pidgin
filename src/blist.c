@@ -1116,7 +1116,6 @@ void gaim_blist_merge_contact(GaimContact *source, GaimBlistNode *node)
 
 void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 {
-#if 0
 	GaimBlistUiOps *ops;
 	GaimBlistNode *gnode = (GaimBlistNode*)group;
 
@@ -1168,7 +1167,6 @@ void gaim_blist_add_group(GaimGroup *group, GaimBlistNode *node)
 		for (node = gnode->child; node; node = node->next)
 			ops->update(gaimbuddylist, node);
 	}
-#endif
 }
 
 void gaim_blist_remove_contact(GaimContact *contact)
