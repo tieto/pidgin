@@ -102,7 +102,9 @@ debug_window_new(void)
 
 	/* Setup our top button bar thingie. */
 	toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_TEXT);
+	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+	gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
+							  GTK_ICON_SIZE_SMALL_TOOLBAR);
 
 	gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
