@@ -1,0 +1,1467 @@
+# translation of gaim.po to Macedonian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Tomislav Markovski <tome@set.com.mk>, 2004.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gaim\n"
+"POT-Creation-Date: 2004-04-01 23:11-0500\n"
+"PO-Revision-Date: 2004-04-09 14:30+0200\n"
+"Last-Translator: Tomislav Markovski <tome@set.com.mk>\n"
+"Language-Team: Macedonian <mk@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: KBabel 1.2\n"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/autorecon.c:110
+msgid "Auto-Reconnect"
+msgstr "Автоматскo врзување"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/autorecon.c:113 plugins/autorecon.c:115
+msgid "When you are kicked offline, this reconnects you."
+msgstr "Автоматско врзување, при пад на врската."
+
+#: plugins/chkmail.c:90 plugins/chkmail.c:113 plugins/chkmail.c:122
+msgid "Mail Server"
+msgstr "Сервер за пошта"
+
+#: plugins/chkmail.c:132
+#, c-format
+msgid "%s (%d new/%d total)"
+msgstr "%s (%d нови/%d вкупно)"
+
+#: plugins/chkmail.c:195
+msgid "Check Mail"
+msgstr "Провери пошта"
+
+#: plugins/chkmail.c:199
+msgid "Check email every X seconds.\n"
+msgstr "Провери пошта на секои X секунди.\n"
+
+#: plugins/contact_priority.c:82
+#, fuzzy
+msgid "Point values to use when..."
+msgstr "Точка до."
+
+#: plugins/contact_priority.c:91
+msgid "Buddy is offline:"
+msgstr "Пријателот е исклучен."
+
+#: plugins/contact_priority.c:105
+msgid "Buddy is away:"
+msgstr "Пријателот е отсутен:"
+
+#: plugins/contact_priority.c:119
+msgid "Buddy is idle:"
+msgstr "Пријателот е неактивен:"
+
+#: plugins/contact_priority.c:133
+msgid "Use last matching buddy"
+msgstr "Користи го последниот пронајден пријател"
+
+#. Explanation
+#: plugins/contact_priority.c:139
+#, fuzzy
+msgid ""
+"The buddy with the lowest score is the buddy who will have priority in the "
+"contact.\n"
+"The default values (offline = 4,away = 2, and idle = 1)\n"
+"will use what used to be the built-in order active->idle->away->away+idle-"
+">offline."
+msgstr "е во стандардно неповрзано и до во активен неповрзано."
+
+#: plugins/contact_priority.c:142
+#, fuzzy
+msgid "Point values to use for Account..."
+msgstr "Точка до за Сметка."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/contact_priority.c:191
+msgid "Contact Priority"
+msgstr "Приоритет на контакт"
+
+#. *< name
+#. *< version
+#. *< summary
+#: plugins/contact_priority.c:194
+msgid "Allows for controlling the values associated with different buddy states."
+msgstr "Овозможува контрола на вредностите асоцирани со различни состојби на пријателите."
+
+#. *< description
+#: plugins/contact_priority.c:196
+#, fuzzy
+msgid ""
+"Allows for changing the point values of idle/away/offline states for buddies "
+"in contact priority computations."
+msgstr "за точка од неповрзано за во."
+
+#.
+#. *  DEFINES, MACROS & DATA TYPES
+#.
+#: plugins/docklet/docklet-win32.c:44
+msgid "Gaim"
+msgstr "Gaim"
+
+#: plugins/docklet/docklet-win32.c:45
+msgid "Gaim - Signed off"
+msgstr "Gaim - Се исклучи"
+
+#: plugins/docklet/docklet-win32.c:46
+msgid "Gaim - Away"
+msgstr "Gaim - Отсутен"
+
+#: plugins/docklet/docklet.c:114 src/gtkaccount.c:495 src/gtkaccount.c:1820
+msgid "Auto-login"
+msgstr "Автоматска најава"
+
+#: plugins/docklet/docklet.c:117
+msgid "New Message..."
+msgstr "Нова порака..."
+
+#: plugins/docklet/docklet.c:118
+msgid "Join A Chat..."
+msgstr "Приклучи се на разговор..."
+
+#: plugins/docklet/docklet.c:149
+msgid "New..."
+msgstr "Нов..."
+
+#: plugins/docklet/docklet.c:153 src/gtkprefs.c:1587 src/protocols/gg/gg.c:51
+#: src/protocols/irc/msgs.c:187 src/protocols/jabber/jabber.c:960
+#: src/protocols/jabber/jutil.c:99 src/protocols/jabber/presence.c:58
+#: src/protocols/jabber/presence.c:114 src/protocols/oscar/oscar.c:2952
+#: src/protocols/oscar/oscar.c:4768 src/protocols/oscar/oscar.c:5814
+#: src/protocols/oscar/oscar.c:6432
+msgid "Away"
+msgstr "Отсутен"
+
+#. else...
+#: plugins/docklet/docklet.c:159 src/away.c:522
+#: src/protocols/oscar/oscar.c:4686 src/protocols/oscar/oscar.c:6440
+msgid "Back"
+msgstr "Назад"
+
+#: plugins/docklet/docklet.c:167
+msgid "Mute Sounds"
+msgstr "Замолчи звуци"
+
+#: plugins/docklet/docklet.c:172 src/gtkft.c:605
+msgid "File Transfers"
+msgstr "Пренос на датотеки"
+
+#. And now for the buttons
+#: plugins/docklet/docklet.c:173 src/gtkaccount.c:1999 src/main.c:288
+msgid "Accounts"
+msgstr "Акаунти"
+
+#: plugins/docklet/docklet.c:174 src/gtkprefs.c:2575 src/main.c:294
+msgid "Preferences"
+msgstr "Параметри"
+
+#: plugins/docklet/docklet.c:183
+msgid "Signoff"
+msgstr "Одјави се"
+
+#: plugins/docklet/docklet.c:187
+msgid "Quit"
+msgstr "Напушти"
+
+#: plugins/docklet/docklet.c:478
+msgid "Tray Icon Configuration"
+msgstr "Конфигурација за иконата во фиока"
+
+#: plugins/docklet/docklet.c:482
+msgid "_Hide new messages until tray icon is clicked"
+msgstr "Скриј нови пораки се додека икона не е кликната."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/docklet/docklet.c:506
+msgid "System Tray Icon"
+msgstr "Системска икона во фиока"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/docklet/docklet.c:509
+msgid "Displays an icon for Gaim in the system tray."
+msgstr "Прикажи икона за Gaim во фиока."
+
+#. *  description
+#: plugins/docklet/docklet.c:511
+#, fuzzy
+msgid ""
+"Displays a system tray icon (in GNOME, KDE or Windows for example) to show "
+"the current status of Gaim, allow fast access to commonly used functions, "
+"and to toggle display of the buddy list or login window. Also allows "
+"messages to be queued until the icon is clicked, similar to ICQ."
+msgstr "а икона во GNOME KDE or Прозорци за до статус од до функции и до од листа or прозорец до додека икона е до."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/filectl.c:222
+msgid "Gaim File Control"
+msgstr "Контрола на датотеки за Gaim"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/filectl.c:225 plugins/filectl.c:227
+msgid "Allows you to control Gaim by entering commands in a file."
+msgstr "Овозможува контрола на Gaim со внесување на команди во датотека."
+
+#: plugins/gaim-remote/remote.c:88
+msgid "Not connected to AIM"
+msgstr "Не е врзано на AIM"
+
+#: plugins/gaim-remote/remote.c:97 plugins/gaim-remote/remote.c:136
+msgid "No screenname given."
+msgstr "Нема корисничко име."
+
+#: plugins/gaim-remote/remote.c:173
+msgid "No roomname given."
+msgstr "Нема има на соба."
+
+#: plugins/gaim-remote/remote.c:192
+msgid "Invalid AIM URI"
+msgstr "Невавалидно AIM URI"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gaim-remote/remote.c:715
+msgid "Remote Control"
+msgstr "Далечинска контрола"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gaim-remote/remote.c:718
+msgid "Provides remote control for gaim applications."
+msgstr "Нуди далечинска контрола на gaim апликации."
+
+#. *  description
+#: plugins/gaim-remote/remote.c:720
+#, fuzzy
+msgid ""
+"Gives Gaim the ability to be remote-controlled through third-party "
+"applications or through the gaim-remote tool."
+msgstr "до трет or."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gaiminc.c:87
+msgid "Gaim Demonstration Plugin"
+msgstr "Додаток за демонстрација на Gaim"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gaiminc.c:90
+msgid "An example plugin that does stuff - see the description."
+msgstr "Додаток за пример што брка некои работи - види опис."
+
+#. *  description
+#: plugins/gaiminc.c:92
+msgid ""
+"This is a really cool plugin that does a lot of stuff:\n"
+"- It tells you who wrote the program when you log in\n"
+"- It reverses all incoming text\n"
+"- It sends a message to people on your list immediately when they sign on"
+msgstr ""
+"Ова е многу добар додаток кој прави многу работи:\n"
+"- Кажува кој ја напишал програмава кога се најавуваш\n"
+"- Пораките што ги добиваш ги испишува инверзно\n"
+"- Испраќа порака до пријателите веднаш по нивната најава"
+
+#. Configuration frame
+#: plugins/gestures/gestures.c:220
+msgid "Mouse Gestures Configuration"
+msgstr "Конфигурација за гестови на глувчето"
+
+#: plugins/gestures/gestures.c:227
+msgid "Middle mouse button"
+msgstr "Средно копче на глувчето"
+
+#: plugins/gestures/gestures.c:232
+msgid "Right mouse button"
+msgstr "Десно копче на глувчето"
+
+#. "Visual gesture display" checkbox
+#: plugins/gestures/gestures.c:244
+msgid "_Visual gesture display"
+msgstr "_Визуелен приказ на гестовите"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gestures/gestures.c:271
+msgid "Mouse Gestures"
+msgstr "Гестови на глувчето"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gestures/gestures.c:274
+msgid "Provides support for mouse gestures"
+msgstr "Нуди поддршка за гестови на глувчето"
+
+#. *  description
+#: plugins/gestures/gestures.c:276
+#, fuzzy
+msgid ""
+"Allows support for mouse gestures in conversation windows.\n"
+"Drag the middle mouse button to perform certain actions:\n"
+"\n"
+"Drag down and then to the right to close a conversation.\n"
+"Drag up and then to the left to switch to the previous conversation.\n"
+"Drag up and then to the right to switch to the next conversation."
+msgstr "за во прозорци до н долу и до десно до а горе и до лево до до горе и до десно до до."
+
+#: plugins/gevolution/add_buddy_dialog.c:136
+#: plugins/gevolution/assoc-buddy.c:76
+msgid "Local Addressbook"
+msgstr "Локален адресар"
+
+#: plugins/gevolution/add_buddy_dialog.c:146
+#: plugins/gevolution/add_buddy_dialog.c:157
+#: plugins/gevolution/assoc-buddy.c:86 plugins/gevolution/assoc-buddy.c:97
+#: src/gtkblist.c:2886 src/gtkprefs.c:862 src/gtkprefs.c:1615
+#: src/protocols/jabber/jabber.c:916
+msgid "None"
+msgstr "Ништо"
+
+#: plugins/gevolution/add_buddy_dialog.c:190
+#: plugins/gevolution/assoc-buddy.c:180 src/gtkprefs.c:1992
+#: src/gtkroomlist.c:561 src/protocols/jabber/jabber.c:590
+#: src/protocols/msn/msn.c:1379 src/protocols/trepia/trepia.c:401
+msgid "Name"
+msgstr "Име"
+
+#: plugins/gevolution/add_buddy_dialog.c:201
+msgid "Instant Messaging"
+msgstr "Инстант пораки"
+
+#. Add the label.
+#: plugins/gevolution/add_buddy_dialog.c:482
+msgid "Select a person from your address book below, or add a new person."
+msgstr "Одбери контакт од адресарот или додади нов."
+
+#. "Search"
+#: plugins/gevolution/add_buddy_dialog.c:495
+#: plugins/gevolution/assoc-buddy.c:385 src/protocols/oscar/oscar.c:6703
+msgid "Search"
+msgstr "Барај"
+
+#: plugins/gevolution/add_buddy_dialog.c:566
+#: plugins/gevolution/new_person_dialog.c:310 src/gtkblist.c:3904
+#: src/gtkblist.c:4232
+msgid "Group:"
+msgstr "Група:"
+
+#. "New Person" button
+#: plugins/gevolution/add_buddy_dialog.c:592
+#: plugins/gevolution/assoc-buddy.c:488
+msgid "New Person"
+msgstr "Ново лице"
+
+#. "Select Buddy" button
+#: plugins/gevolution/add_buddy_dialog.c:609
+msgid "Select Buddy"
+msgstr "Избери пријател"
+
+#. Add the label.
+#: plugins/gevolution/assoc-buddy.c:372
+#, fuzzy
+msgid ""
+"Select a person from your address book to add this buddy to, or create a new "
+"person."
+msgstr "Избор а од книга до до or а ново."
+
+#. Add the disclosure
+#: plugins/gevolution/assoc-buddy.c:451
+msgid "Show user details"
+msgstr "Прикажи кориснички детали"
+
+#: plugins/gevolution/assoc-buddy.c:452
+msgid "Hide user details"
+msgstr "Скриј кориснички детали"
+
+#. "Associate Buddy" button
+#: plugins/gevolution/assoc-buddy.c:505
+msgid "_Associate Buddy"
+msgstr "_Асоцирај пријател"
+
+#: plugins/gevolution/gevo-util.c:66 plugins/gevolution/gevolution.c:90
+#: src/blist.c:674 src/blist.c:861 src/blist.c:2094 src/gtkblist.c:3729
+#: src/protocols/jabber/roster.c:66 src/protocols/msn/notification.c:792
+msgid "Buddies"
+msgstr "Пријатели"
+
+#: plugins/gevolution/gevolution.c:214
+msgid "Add to Address Book"
+msgstr "Додади во адресар"
+
+#. Configuration frame
+#: plugins/gevolution/gevolution.c:347
+msgid "Evolution Integration Configuration"
+msgstr "Конфигурација за интегрирање на Evolution"
+
+#. Label
+#: plugins/gevolution/gevolution.c:350
+#, fuzzy
+msgid "Select all accounts that buddies should be auto-added to."
+msgstr "Избор сите до."
+
+#: plugins/gevolution/gevolution.c:380 src/gtkconn.c:620
+msgid "Account"
+msgstr "Акаунт"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/gevolution/gevolution.c:461
+msgid "Evolution Integration"
+msgstr "Интеграција со Evolution"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/gevolution/gevolution.c:464 plugins/gevolution/gevolution.c:466
+msgid "Provides integration with Ximian Evolution."
+msgstr "Нуди интеграција со Ximian Evolution."
+
+#: plugins/gevolution/new_person_dialog.c:270
+msgid "Please enter the person's information below."
+msgstr "Внеси ги информациите за лицето подолу."
+
+#: plugins/gevolution/new_person_dialog.c:274
+#, fuzzy
+msgid "Please enter the buddy's screen name and account type below."
+msgstr "име и вид доле."
+
+#: plugins/gevolution/new_person_dialog.c:294
+msgid "Account type:"
+msgstr "Тип на акаунт:"
+
+#: plugins/gevolution/new_person_dialog.c:298
+msgid "Screenname:"
+msgstr "Корисничко име:"
+
+#. Optional Information section
+#: plugins/gevolution/new_person_dialog.c:318
+msgid "Optional information:"
+msgstr "Изборни информации:"
+
+#. Label
+#: plugins/gevolution/new_person_dialog.c:341 src/gtkaccount.c:318
+#: src/protocols/oscar/oscar.c:3187
+msgid "Buddy Icon"
+msgstr "Икона на пријател:"
+
+#: plugins/gevolution/new_person_dialog.c:353
+msgid "First name:"
+msgstr "Име:"
+
+#: plugins/gevolution/new_person_dialog.c:365
+msgid "Last name:"
+msgstr "Презиме:"
+
+#: plugins/gevolution/new_person_dialog.c:385
+msgid "E-mail:"
+msgstr "E-пошта:"
+
+#: plugins/history.c:74
+msgid "History"
+msgstr "Историја"
+
+#: plugins/history.c:76
+#, fuzzy
+msgid "Shows recently logged conversations in new conversations."
+msgstr "во ново."
+
+#: plugins/history.c:77
+msgid ""
+"When a new conversation is opened this plugin will insert the last "
+"conversation into the current conversation."
+msgstr "Кога е отворен нов прозорец за разговор,овој додаток ќе го внеси последниот разговор во тековниот."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/iconaway.c:80
+msgid "Iconify on Away"
+msgstr "Иконизирај при отсуство"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/iconaway.c:83 plugins/iconaway.c:85
+msgid "Iconifies the buddy list and your conversations when you go away."
+msgstr "Ја иконизира листата на пријатели и разговорите кога си отсутен."
+
+#: plugins/idle.c:70
+msgid "Idle Time"
+msgstr "Неактивно време"
+
+#: plugins/idle.c:78
+msgid "Set"
+msgstr "Постави"
+
+#: plugins/idle.c:83
+msgid "idle for"
+msgstr "неактивен"
+
+#: plugins/idle.c:90 plugins/timestamp.c:109
+msgid "minutes."
+msgstr "минути."
+
+#: plugins/idle.c:96
+msgid "_Set"
+msgstr "_Постави"
+
+#: plugins/idle.c:119
+msgid "I'dle Mak'er"
+msgstr "I'dle Mak'er"
+
+#: plugins/idle.c:121 plugins/idle.c:122
+msgid "Allows you to hand-configure how long you've been idle for"
+msgstr "Нуди рачно конфигурирање на времето на неактивност."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ipc-test-client.c:84
+msgid "IPC Test Client"
+msgstr "IPC тест клиент"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ipc-test-client.c:87
+#, fuzzy
+msgid "Test plugin IPC support, as a client."
+msgstr "Тест додаток а."
+
+#. *  description
+#: plugins/ipc-test-client.c:89
+#, fuzzy
+msgid ""
+"Test plugin IPC support, as a client. This locates the server plugin and "
+"calls the commands registered."
+msgstr "Тест додаток а сервер додаток и."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ipc-test-server.c:71
+msgid "IPC Test Server"
+msgstr "IPC тест сервер"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ipc-test-server.c:74
+#, fuzzy
+msgid "Test plugin IPC support, as a server."
+msgstr "Тест додаток а сервер."
+
+#. *  description
+#: plugins/ipc-test-server.c:76
+#, fuzzy
+msgid "Test plugin IPC support, as a server. This registers the IPC commands."
+msgstr "Тест додаток а сервер."
+
+#: plugins/mailchk.c:156
+msgid "Mail Checker"
+msgstr "Проверувач на пошта"
+
+#: plugins/mailchk.c:158 plugins/mailchk.c:159
+msgid "Checks for new local mail."
+msgstr "Проверува нова локална пошта."
+
+#. ---------- "Notify For" ----------
+#: plugins/notify.c:572
+msgid "Notify For"
+msgstr "Извести за"
+
+#: plugins/notify.c:576
+msgid "_IM windows"
+msgstr "Прозорци за пораки"
+
+#: plugins/notify.c:583
+msgid "C_hat windows"
+msgstr "Прозорци за разговор"
+
+#: plugins/notify.c:590
+msgid "_Focused windows"
+msgstr "_Фокусирани прозорци"
+
+#. ---------- "Notification Methods" ----------
+#: plugins/notify.c:598
+msgid "Notification Methods"
+msgstr "Методи за исветување"
+
+#: plugins/notify.c:605
+msgid "Prepend _string into window title:"
+msgstr "Вметни текст на почеток во насловната лента на прозорецот:"
+
+#. Count method button
+#: plugins/notify.c:624
+#, fuzzy
+msgid "Insert c_ount of new messages into window title"
+msgstr "Внеси од ново прозорец"
+
+#. Urgent method button
+#: plugins/notify.c:633
+msgid "Set window manager \"_URGENT\" hint"
+msgstr "Подеси менаџер на прозорци \"_URGENT\" hint"
+
+#. ---------- "Notification Removals" ----------
+#: plugins/notify.c:640
+#, fuzzy
+msgid "Notification Removal"
+msgstr "Известување"
+
+#. Remove on focus button
+#: plugins/notify.c:646
+#, fuzzy
+msgid "Remove when conversation window _gains focus"
+msgstr "Отстрани прозорец"
+
+#. Remove on click button
+#: plugins/notify.c:654
+#, fuzzy
+msgid "Remove when conversation window _receives click"
+msgstr "Отстрани прозорец кликни"
+
+#. Remove on type button
+#: plugins/notify.c:662
+#, fuzzy
+msgid "Remove when _typing in conversation window"
+msgstr "Отстрани во прозорец"
+
+#. Remove on message send button
+#: plugins/notify.c:670
+#, fuzzy
+msgid "Remove when a _message gets sent"
+msgstr "Отстрани а пратена"
+
+#. Remove on conversation switch button
+#: plugins/notify.c:679
+#, fuzzy
+msgid "Remove on conversation ta_b switch"
+msgstr "Отстрани Вклучено"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/notify.c:762
+msgid "Message Notification"
+msgstr "Известување за порака"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/notify.c:765 plugins/notify.c:767
+#, fuzzy
+msgid "Provides a variety of ways of notifying you of unread messages."
+msgstr "Нуди а од од од."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/perl/perl.c:530
+#, fuzzy
+msgid "Perl Plugin Loader"
+msgstr "Perl Додаток"
+
+#. *< name
+#. *< version
+#: plugins/perl/perl.c:532 plugins/perl/perl.c:533
+#, fuzzy
+msgid "Provides support for loading perl plugins."
+msgstr "Нуди за вчитувам."
+
+#: plugins/raw.c:154
+msgid "Raw"
+msgstr ""
+
+#: plugins/raw.c:156
+#, fuzzy
+msgid "Lets you send raw input to text-based protocols."
+msgstr "до текст."
+
+#: plugins/raw.c:157
+#, fuzzy
+msgid ""
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"'Enter' in the entry box to send. Watch the debug window."
+msgstr "до текст во до Следи прозорец."
+
+#: plugins/relnot.c:62
+#, c-format
+#, fuzzy
+msgid "You are using Gaim version %s.  The current version is %s.<hr>"
+msgstr "Ти е<hr>"
+
+#: plugins/relnot.c:68
+#, c-format
+#, fuzzy
+msgid ""
+"<b>ChangeLog:</b>\n"
+"%s<br><br>"
+msgstr "<b></b> н<br><br>"
+
+#: plugins/relnot.c:73
+#, c-format
+#, fuzzy
+msgid ""
+"You can get version %s from:<br><a href=\"http://gaim.sourceforge.net/"
+"\">http://gaim.sourceforge.net</a>."
+msgstr "Ти од<br><a href=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net</a>."
+
+#: plugins/relnot.c:77 plugins/relnot.c:78
+#, fuzzy
+msgid "New Version Available"
+msgstr "Ново Верзија Достапно"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/relnot.c:134
+#, fuzzy
+msgid "Release Notification"
+msgstr "Серија Известување"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/relnot.c:137
+#, fuzzy
+msgid "Checks periodically for new releases."
+msgstr "за ново."
+
+#. *  description
+#: plugins/relnot.c:139
+#, fuzzy
+msgid ""
+"Checks periodically for new releases and notifies the user with the "
+"ChangeLog."
+msgstr "за ново и корисник."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/signals-test.c:465
+#, fuzzy
+msgid "Signals Test"
+msgstr "Тест"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/signals-test.c:468 plugins/signals-test.c:470
+#, fuzzy
+msgid "Test to see that all signals are working properly."
+msgstr "Тест до сите."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/simple.c:31
+#, fuzzy
+msgid "Simple Plugin"
+msgstr "Просто Додаток"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/simple.c:34 plugins/simple.c:36
+#, fuzzy
+msgid "Tests to see that most things are working."
+msgstr "до."
+
+#: plugins/spellchk.c:412
+#, fuzzy
+msgid "Text Replacements"
+msgstr "Текст"
+
+#: plugins/spellchk.c:436
+#, fuzzy
+msgid "You type"
+msgstr "Ти вид"
+
+#: plugins/spellchk.c:448
+#, fuzzy
+msgid "You send"
+msgstr "Ти"
+
+#: plugins/spellchk.c:474
+#, fuzzy
+msgid "Add a new text replacement"
+msgstr "Додај а ново текст"
+
+#: plugins/spellchk.c:481
+#, fuzzy
+msgid "You _type:"
+msgstr "Ти вид:"
+
+#: plugins/spellchk.c:495
+#, fuzzy
+msgid "You _send:"
+msgstr "Ти:"
+
+#: plugins/spellchk.c:535
+#, fuzzy
+msgid "Text replacement"
+msgstr "Текст"
+
+#: plugins/spellchk.c:537 plugins/spellchk.c:538
+#, fuzzy
+msgid "Replaces text in outgoing messages according to user-defined rules."
+msgstr "текст во до корисник."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ssl/ssl-gnutls.c:223
+msgid "GNUTLS"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ssl/ssl-gnutls.c:226 plugins/ssl/ssl-gnutls.c:228
+#, fuzzy
+msgid "Provides SSL support through GNUTLS."
+msgstr "Нуди SSL."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ssl/ssl-nss.c:312
+msgid "NSS"
+msgstr ""
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ssl/ssl-nss.c:315 plugins/ssl/ssl-nss.c:317
+#, fuzzy
+msgid "Provides SSL support through Mozilla NSS."
+msgstr "Нуди SSL."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ssl/ssl.c:91
+#, fuzzy
+msgid "SSL"
+msgstr "SSL"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ssl/ssl.c:94 plugins/ssl/ssl.c:96
+#, fuzzy
+msgid "Provides a wrapper around SSL support libraries."
+msgstr "Нуди а SSL."
+
+#: plugins/statenotify.c:30 src/gtkpounce.c:820
+#, c-format
+#, fuzzy
+msgid "%s has gone away."
+msgstr "има."
+
+#: plugins/statenotify.c:36
+#, c-format
+#, fuzzy
+msgid "%s is no longer away."
+msgstr "е не."
+
+#: plugins/statenotify.c:42
+#, c-format
+#, fuzzy
+msgid "%s has become idle."
+msgstr "има."
+
+#: plugins/statenotify.c:48
+#, c-format
+#, fuzzy
+msgid "%s is no longer idle."
+msgstr "е не."
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/statenotify.c:78
+#, fuzzy
+msgid "Buddy State Notification"
+msgstr "Состојба Известување"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/statenotify.c:81 plugins/statenotify.c:84
+#, fuzzy
+msgid ""
+"Notifies in a conversation window when a buddy goes or returns from away or "
+"idle."
+msgstr "во а прозорец а or од or."
+
+#: plugins/tcl/tcl.c:349
+#, fuzzy
+msgid "Tcl Plugin Loader"
+msgstr "Додаток"
+
+#: plugins/tcl/tcl.c:351 plugins/tcl/tcl.c:352
+#, fuzzy
+msgid "Provides support for loading Tcl plugins"
+msgstr "Нуди за вчитувам"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/ticker/ticker.c:74 plugins/ticker/ticker.c:328
+#, fuzzy
+msgid "Buddy Ticker"
+msgstr "Трепкач"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/ticker/ticker.c:331 plugins/ticker/ticker.c:333
+#, fuzzy
+msgid "A horizontal scrolling version of the buddy list."
+msgstr "A од листа."
+
+#: plugins/timestamp.c:95
+#, fuzzy
+msgid "iChat Timestamp"
+msgstr "Временска марка"
+
+#: plugins/timestamp.c:102
+#, fuzzy
+msgid "Delay"
+msgstr "Застој"
+
+#: plugins/timestamp.c:115
+#, fuzzy
+msgid "_Apply"
+msgstr "_Примени"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/timestamp.c:173
+#, fuzzy
+msgid "Timestamp"
+msgstr "Временска марка"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/timestamp.c:176 plugins/timestamp.c:178
+#, fuzzy
+msgid "Adds iChat-style timestamps to conversations every N minutes."
+msgstr "до N минути."
+
+#: plugins/win32/transparency/win2ktrans.c:133
+#: plugins/win32/transparency/win2ktrans.c:348
+#: plugins/win32/transparency/win2ktrans.c:379
+msgid "Opacity:"
+msgstr ""
+
+#. IM Convo trans options
+#: plugins/win32/transparency/win2ktrans.c:329
+#, fuzzy
+msgid "IM Conversation Windows"
+msgstr "Порака Прозорци"
+
+#: plugins/win32/transparency/win2ktrans.c:330
+#, fuzzy
+msgid "_IM window transparency"
+msgstr "Порака прозорец транспарентност"
+
+#: plugins/win32/transparency/win2ktrans.c:340
+#, fuzzy
+msgid "_Show slider bar in IM window"
+msgstr "Прикажи лизгач во Порака прозорец"
+
+#. Buddy List trans options
+#: plugins/win32/transparency/win2ktrans.c:365 src/gtkprefs.c:865
+#, fuzzy
+msgid "Buddy List Window"
+msgstr "Листа Прозорец"
+
+#: plugins/win32/transparency/win2ktrans.c:366
+#, fuzzy
+msgid "_Buddy List window transparency"
+msgstr "Листа прозорец транспарентност"
+
+#. *< api_version
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: plugins/win32/transparency/win2ktrans.c:422
+#, fuzzy
+msgid "Transparency"
+msgstr "Проѕирност"
+
+#. *< name
+#. *< version
+#. *  summary
+#: plugins/win32/transparency/win2ktrans.c:425
+#: plugins/win32/transparency/win2ktrans.c:427
+#, fuzzy
+msgid ""
+"This plugin enables variable alpha transparency on conversation windows.\n"
+"\n"
+"* Note: This plugin requires Win2000 or WinXP."
+msgstr "додаток alpha транспарентност Вклучено прозорци н н Забелешка додаток or."
+
+#: plugins/win32/winprefs/winprefs.c:348
+#, fuzzy
+msgid "GTK+ Runtime Version"
+msgstr "Верзија"
+
+#. Autostart
+#: plugins/win32/winprefs/winprefs.c:356
+#, fuzzy
+msgid "Startup"
+msgstr "Стартување"
+
+#: plugins/win32/winprefs/winprefs.c:357
+#, fuzzy
+msgid "_Start Gaim on Windows startup"
+msgstr "Старт Вклучено Прозорци"
+
+#. Buddy List
+#: plugins/win32/winprefs/winprefs.c:366 src/gtkblist.c:2927
+#: src/gtkprefs.c:2491
+msgid "Buddy List"
+msgstr "Листа на пријатели"
+
+#: plugins/win32/winprefs/winprefs.c:367
+#, fuzzy
+msgid "_Dockable Buddy List"
+msgstr "Листа"
+
+#. Docked Blist On Top
+#: plugins/win32/winprefs/winprefs.c:371
+#, fuzzy
+msgid "Docked _Buddy List is always on top"
+msgstr "Закачено Листа е Вклучено горе"
+
+#. Blist On Top
+#: plugins/win32/winprefs/winprefs.c:381
+#, fuzzy
+msgid "_Keep Buddy List window on top"
+msgstr "Листа прозорец Вклучено горе"
+
+#. Conversations
+#: plugins/win32/winprefs/winprefs.c:386 src/gtkprefs.c:903
+#: src/gtkprefs.c:2492 src/protocols/msn/msn.c:1709
+msgid "Conversations"
+msgstr ""
+
+#: plugins/win32/winprefs/winprefs.c:387
+#, fuzzy
+msgid "_Flash Window when messages are received"
+msgstr "Флеш Прозорец"
+
+#: plugins/win32/winprefs/winprefs.c:409
+#, fuzzy
+msgid "WinGaim Options"
+msgstr "Опции"
+
+#: plugins/win32/winprefs/winprefs.c:411 plugins/win32/winprefs/winprefs.c:412
+#, fuzzy
+msgid "Options specific to Windows Gaim."
+msgstr "Опции до Прозорци."
+
+#: src/about.c:59
+#, fuzzy
+msgid "About Gaim"
+msgstr "За"
+
+#: src/about.c:74
+#, c-format
+msgid "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
+msgstr ""
+
+#: src/about.c:94
+#, fuzzy
+msgid ""
+"Gaim is a modular Instant Messaging client capable of using AIM, ICQ, "
+"Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
+"written using Gtk+ and is licensed under the GPL.<BR><BR>"
+msgstr "е а од и сите е и е<BR><BR>"
+
+#: src/about.c:104
+#, fuzzy
+msgid "<FONT SIZE=\"3\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"3\"></FONT> Вклучено<BR><BR>"
+
+#: src/about.c:109
+msgid "Active Developers"
+msgstr "Активен развивачи"
+
+#: src/about.c:110
+msgid "maintainer"
+msgstr ""
+
+#: src/about.c:112
+#, fuzzy
+msgid "lead developer"
+msgstr "програмер"
+
+#: src/about.c:115
+#, fuzzy
+msgid "developer & webmaster"
+msgstr "програмер"
+
+#: src/about.c:116
+msgid "win32 port"
+msgstr ""
+
+#: src/about.c:119 src/about.c:120 src/about.c:121
+msgid "developer"
+msgstr "програмер"
+
+#: src/about.c:122
+msgid "support"
+msgstr "поддршка"
+
+#: src/about.c:129
+#, fuzzy
+msgid "Crazy Patch Writers"
+msgstr "Закрпа"
+
+#: src/about.c:144
+#, fuzzy
+msgid "Retired Developers"
+msgstr "Развивачи"
+
+#: src/about.c:145
+msgid "former libfaim maintainer"
+msgstr ""
+
+#: src/about.c:146
+#, fuzzy
+msgid "former lead developer"
+msgstr "програмер"
+
+#: src/about.c:149
+msgid "former maintainer"
+msgstr ""
+
+#: src/about.c:150
+#, fuzzy
+msgid "former Jabber developer"
+msgstr "програмер"
+
+#: src/about.c:151
+#, fuzzy
+msgid "original author"
+msgstr "автор"
+
+#: src/about.c:154
+#, fuzzy
+msgid "hacker and designated driver [lazy bum]"
+msgstr "и"
+
+#: src/about.c:162
+#, fuzzy
+msgid "Current Translators"
+msgstr "Сегашно"
+
+#: src/about.c:163 src/about.c:196
+#, fuzzy
+msgid "Catalan"
+msgstr "Каталонски"
+
+#: src/about.c:164 src/about.c:197
+#, fuzzy
+msgid "Czech"
+msgstr "Чешка"
+
+#: src/about.c:165
+#, fuzzy
+msgid "Danish"
+msgstr "Дански"
+
+#: src/about.c:166
+#, fuzzy
+msgid "British English"
+msgstr "Англиски"
+
+#: src/about.c:167 src/about.c:198
+#, fuzzy
+msgid "German"
+msgstr "Германски"
+
+#: src/about.c:168 src/about.c:199
+#, fuzzy
+msgid "Spanish"
+msgstr "Шпански"
+
+#: src/about.c:169 src/about.c:200
+#, fuzzy
+msgid "Finnish"
+msgstr "Финска"
+
+#: src/about.c:170 src/about.c:201
+#, fuzzy
+msgid "French"
+msgstr "Француски"
+
+#: src/about.c:171
+#, fuzzy
+msgid "Hindi"
+msgstr "Хинди"
+
+#: src/about.c:172
+#, fuzzy
+msgid "Hungarian"
+msgstr "Унгарски"
+
+#: src/about.c:173 src/about.c:203
+#, fuzzy
+msgid "Italian"
+msgstr "Италијански"
+
+#: src/about.c:174 src/about.c:205
+#, fuzzy
+msgid "Korean"
+msgstr "Корејски"
+
+#: src/about.c:175
+#, fuzzy
+msgid "Dutch; Flemish"
+msgstr "Холандски"
+
+#: src/about.c:176
+#, fuzzy
+msgid "Norwegian"
+msgstr "Норвешки"
+
+#: src/about.c:177 src/about.c:206
+#, fuzzy
+msgid "Polish"
+msgstr "Полски"
+
+#: src/about.c:178
+#, fuzzy
+msgid "Portuguese"
+msgstr "Португалски"
+
+#: src/about.c:179
+#, fuzzy
+msgid "Portuguese-Brazil"
+msgstr "Португалски Бразил"
+
+#: src/about.c:180
+#, fuzzy
+msgid "Romanian"
+msgstr "Романски"
+
+#: src/about.c:181 src/about.c:207
+#, fuzzy
+msgid "Russian"
+msgstr "Руски"
+
+#: src/about.c:182
+#, fuzzy
+msgid "Serbian"
+msgstr "Српска"
+
+#: src/about.c:183 src/about.c:209
+#, fuzzy
+msgid "Swedish"
+msgstr "Шведски"
+
+#: src/about.c:184
+#, fuzzy
+msgid "Vietnamese"
+msgstr "Виетнамска"
+
+#: src/about.c:184
+#, fuzzy
+msgid "Gnome Vi Team"
+msgstr "Gnome Тим"
+
+#: src/about.c:185
+#, fuzzy
+msgid "Simplified Chinese"
+msgstr "Упростен Кинески"
+
+#: src/about.c:186
+#, fuzzy
+msgid "Traditional Chinese"
+msgstr "Традиционален Кинески"
+
+#: src/about.c:193
+msgid "Past Translators"
+msgstr ""
+
+#: src/about.c:194
+msgid "Amharic"
+msgstr ""
+
+#: src/about.c:195
+#, fuzzy
+msgid "Bulgarian"
+msgstr "Бугарска"
+
+#: src/about.c:202
+#, fuzzy
+msgid "Hebrew"
+msgstr "Еврејски"
+
+#: src/about.c:204
+#, fuzzy
+msgid "Japanese"
+msgstr "Јапонски"
+
+#: src/about.c:208
+#, fuzzy
+msgid "Slovak"
+msgstr "Словачка"
+
+#: src/about.c:210
+#, fuzzy
+msgid "Chinese"
+msgstr "Кинески"
+
+#: src/account.c:275 src/protocols/jabber/jabber.c:1001
+#, fuzzy
+msgid "New passwords do not match."
+msgstr "Ново."
+
+#: src/account.c:283
+#, fuzzy
+msgid "Fill out all fields completely."
+msgstr "Пополни сите."
+
+#: src/account.c:308
+#, fuzzy
+msgid "Original password"
+msgstr "Оригинал лозинка"
+
+#: src/account.c:314
+#, fuzzy
+msgid "New password"
+msgstr "Нова лозинка"
+
+#: src/account.c:320
+#, fuzzy
+msgid "New password (again)"
+msgstr "Ново лозинка"
+

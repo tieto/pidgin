@@ -173,6 +173,7 @@ void show_about(GtkWidget *w, void *data)
 			"  <b>", _("Italian"), " (it)</b> - Claudio Satriano &lt;<a href=\"mailto: satriano@na.infn.it\">satriano@na.infn.it</a>&gt;<br>"
 			"  <b>", _("Korean"), " (ko)</b> - Kyung-uk Son &lt;<a href=\"mailto: vvs740@chol.com\">vvs740@chol.com</a>&gt;<br>"
 			"  <b>", _("Dutch; Flemish"), " (nl)</b> - Vincent van Adrighem &lt;<a href=\"mailto: V.vanAdrighem@dirck.mine.nu\">V.vanAdrighem@dirck.mine.nu</a>&gt;<br>"
+			"  <b>", _("Macedonian"), "(mk)</b> - Tomislav Markovski &lt;<a href=\"mailto: herrera@users.sf.net\">herrera@users.sf.net</a>&gt;<br>"
 			"  <b>", _("Norwegian"), " (no)</b> - Petter Johan Olsen &lt;<a href=\"mailto:petter.olsen@cc.uit.no\">petter.olsen@cc.uit.no</a>&gt;<br>"
 			"  <b>", _("Polish"), " (pl)</b> - Krzysztof &lt;<a href=\"mailto:krzysztof@foltman.com\">krzysztof@foltman.com</a>&gt;, Emil &lt;<a href=\"mailto:emil5@go2.pl\">emil5@go2.pl</a>&gt;<br>"
 			"  <b>", _("Portuguese"), " (pt)</b> - Duarte Henriques &lt;<a href=\"mailto:duarte_henriques@myrealbox.com\">duarte_henriques@myrealbox.com</a>&gt;<br>"
