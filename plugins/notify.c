@@ -10,6 +10,9 @@
  *  rather then as what happens when on focus isn't clicked
  * Added apply button to change the denotification methods for
  *  open conversation windows
+ * Fixed apply to conversations, count now keeps count across applies
+ * Fixed(?) memory leak, and in the process fixed some stupidities 
+ * Hit enter when done editing the title string entry box to save it
  *
  * Thanks to Carles Pina i Estany <carles@pinux.info>
  *   for count of new messages option
@@ -49,19 +52,19 @@ guint method = 1;
 
 void *handle;
 GtkWidget *Entry;
-gchar *title_string = "(*) ";
+gchar *title_string;
+int Number = 0;
 
 /* predefine some functions, less warnings */
 void options(GtkWidget *widget, gpointer data);
-void un_star(GtkWidget *widget, gpointer data);
 /* this returns an int so that typing events don't get stopped here */
-int un_star_window(GtkWidget *widget, gpointer data);
+int un_star(GtkWidget *widget, gpointer data);
 int counter (char *buf, int *length);
 /*string functions */
 void string_add(GtkWidget *widget);
 gboolean string_remove(GtkWidget *widget);
 /* count functions */
-void count_add(GtkWidget *widget);
+void count_add(GtkWidget *widget, int number);
 gboolean count_remove(GtkWidget *widget);
 /* quote functions */
 void quote_add(GtkWidget *widget);
@@ -91,11 +94,12 @@ int notify(struct conversation *cnv) {
 
 	XGetInputFocus(GDK_WINDOW_XDISPLAY(cnv->window->window), &focus_return, &revert_to_return);
 
-	if ((choice & NOTIFY_IN_FOCUS) || focus_return != GDK_WINDOW_XWINDOW(cnv->window->window)) {
+	if ((choice & NOTIFY_IN_FOCUS) ||
+			focus_return != GDK_WINDOW_XWINDOW(cnv->window->window)) {
 		if (method & METHOD_STRING)
 			string_add(cnv->window);
 		if (method & METHOD_COUNT)
-			count_add(cnv->window);
+			count_add(cnv->window, 0);
 		if (method & METHOD_QUOTE)
 			quote_add(cnv->window);
 		if (method & METHOD_URGENT)
@@ -116,15 +120,19 @@ guint unnotify(struct conversation *c, gboolean clean) {
 	if (clean || (method & METHOD_QUOTE))
 		if (quote_remove(c->window) && (method & METHOD_QUOTE))
 			option ^= METHOD_QUOTE;
+	
 	if (clean || (method & METHOD_COUNT))
 		if (count_remove(c->window) && (method & METHOD_COUNT))
 			option ^= METHOD_COUNT;
+
 	if (clean || (method & METHOD_STRING))
 		if (string_remove(c->window) && (method & METHOD_STRING))
 			option ^= METHOD_STRING;
+
 	if (clean || (method & METHOD_URGENT))
 		if (urgent_remove(c) && (method & METHOD_URGENT))
 			option ^= METHOD_URGENT;
+
 	return option;
 }
 
@@ -168,18 +176,35 @@ int attach_signals(struct conversation *c) {
 	if (choice & NOTIFY_CLICK) {
 		g_signal_connect(G_OBJECT(c->window), "button_press_event", G_CALLBACK(un_star), NULL);
 
-		g_signal_connect(G_OBJECT(c->text), "button_press_event", G_CALLBACK(un_star_window), NULL);
+		g_signal_connect_swapped(G_OBJECT(c->text), "button_press_event", G_CALLBACK(un_star), G_OBJECT(c->window));
 
-		g_signal_connect(G_OBJECT(c->entry), "button_press_event", G_CALLBACK(un_star_window), NULL);
+		g_signal_connect_swapped(G_OBJECT(c->entry), "button_press_event", G_CALLBACK(un_star), G_OBJECT(c->window));
 	}
 
 	if (choice & NOTIFY_TYPE) {
-		g_signal_connect(G_OBJECT(c->entry), "key-press-event", G_CALLBACK(un_star_window), NULL);
+		g_signal_connect_swapped(G_OBJECT(c->entry), "key-press-event", G_CALLBACK(un_star), G_OBJECT(c->window));
 	}
 
 	g_object_set_data(G_OBJECT(c->window), "user_data", c);
 	g_object_set_data(G_OBJECT(c->window), "notify_data", GUINT_TO_POINTER(choice));
 	return 0;
+}
+
+void detach_signals(struct conversation *c) {
+	guint options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(c->window), "notify_data"));
+
+	if (options & NOTIFY_FOCUS) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
+	}
+	if (options & NOTIFY_CLICK) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(c->text), un_star, c->window);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star, c->window);
+	}
+
+	if (options & NOTIFY_TYPE) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star, c->window);
+	}
 }
 
 void new_conv(char *who) {
@@ -198,7 +223,7 @@ void chat_join(struct gaim_connection *gc, int id, char *room) {
 	return;
 }
 
-void un_star(GtkWidget *widget, gpointer data) {
+int un_star(GtkWidget *widget, gpointer data) {
 	struct conversation *c = g_object_get_data(G_OBJECT(widget), "user_data");
 
 	if (method & METHOD_QUOTE)
@@ -209,13 +234,6 @@ void un_star(GtkWidget *widget, gpointer data) {
 		string_remove(widget);
 	if (c && method & METHOD_URGENT)
 		urgent_remove(c);
-	return;
-}
-
-int un_star_window(GtkWidget *widget, gpointer data) {
-	GtkWidget *parent = gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW);
-	un_star(parent, data);
-	/* return 0 so that the event continues to propagate */
 	return 0;
 }
 
@@ -264,17 +282,18 @@ gboolean string_remove(GtkWidget *widget) {
 	return FALSE;
 }
 
-void count_add(GtkWidget *widget) {
+void count_add(GtkWidget *widget, int number) {
 	char buf[256];
 	int c, length;
 	GtkWindow *win = GTK_WINDOW(widget);
 
 	strncpy(buf, win->title, sizeof(buf));
 	c = counter(buf, &length);
-	if (!c) {
+	if (number) {
+		g_snprintf(buf, sizeof(buf), "[%d] %s", number, win->title);
+	} else if (!c) {
 		g_snprintf(buf, sizeof(buf), "[1] %s", win->title);
-	}
-	else if (!g_strncasecmp(buf, "[", 1)) {
+	} else if (!g_strncasecmp(buf, "[", 1)) {
 		g_snprintf(buf, sizeof(buf), "[%d] %s", c+1, &win->title[3+length]);
 	}
 	gtk_window_set_title(win, buf);
@@ -287,7 +306,7 @@ gboolean count_remove(GtkWidget *widget) {
 
 	strncpy(buf, win->title, sizeof(buf));
 	if (!g_strncasecmp(buf, "[", 1)) {
-		counter(buf, &length);
+		Number = counter(buf, &length);
 		g_snprintf(buf, sizeof(buf), "%s", &win->title[3+length]);
 		gtk_window_set_title(win, buf);
 		return TRUE; 
@@ -326,15 +345,39 @@ void urgent_add(struct conversation *c) {
 }
 
 gboolean urgent_remove(struct conversation *c) {
-	GdkWindow *win = c->window->window;
+	if ((c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW)) || (!c->is_chat && (im_options & OPT_IM_ONE_WINDOW))) {
+		if (c->is_chat) {
+			struct conversation *c = (struct conversation *)chats->data;
+			GdkWindow *win = c->window->window;
 
-	XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
-	if (hints->flags & XUrgencyHint) {
-		hints->flags &= ~XUrgencyHint;
-		XSetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win), hints);
-		return TRUE;
+			XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
+			if (hints->flags & XUrgencyHint) {
+				hints->flags &= ~XUrgencyHint;
+				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				return TRUE;
+			}
+			return FALSE;
+		} else {
+			struct conversation *c = (struct conversation *)conversations->data;
+			GdkWindow *win = c->window->window;
+
+			XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win), GDK_WINDOW_XWINDOW(win));
+			if (hints->flags & XUrgencyHint) {
+				hints->flags &= ~XUrgencyHint;
+				XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+				return TRUE;
+			}
+			return FALSE;
+		}
+	} else {
+		XWMHints *hints = XGetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window));
+		if (hints->flags & XUrgencyHint) {
+			hints->flags &= ~XUrgencyHint;
+			XSetWMHints(GDK_WINDOW_XDISPLAY(c->window->window), GDK_WINDOW_XWINDOW(c->window->window), hints);
+			return TRUE;
+		}
+		return FALSE;
 	}
-	return FALSE;
 }
 
 void save_notify_prefs() {
@@ -372,9 +415,11 @@ void load_notify_prefs() {
 				choice = atoi(parsed[0]);
 			if (!strcmp(parsed[1], "METHOD"))
 				method = atoi(parsed[0]);
-			if (!strcmp(parsed[1], "STRING"))
-				if (title_string != NULL) g_free(title_string);
-			title_string = g_strdup(parsed[0]);
+			if (!strcmp(parsed[1], "STRING")) {
+				if (title_string != NULL)
+					g_free(title_string);
+				title_string = g_strdup(parsed[0]);
+			}
 		}
 		g_strfreev(parsed);
 	}
@@ -410,6 +455,15 @@ void options(GtkWidget *widget, gpointer data) {
 		type ^= TYPE_IM;
 	else if (option == 9)
 		type ^= TYPE_CHAT;
+	else if (option == 10) {
+		/* I made an option for this as at least a way to have it save correctly
+		 * I'd much rather there were better ways, and I don't want to save this
+		 * no matter which pref is changed, that's too much of a hack */
+		if (title_string != NULL) {
+			g_free(title_string);
+			title_string = g_strdup(gtk_entry_get_text(GTK_ENTRY(Entry)));
+		}
+	}
 
 	save_notify_prefs();
 }
@@ -420,32 +474,23 @@ void apply_options(GtkWidget *widget, gpointer data) {
 	while (cnv) {
 		guint notification;
 		struct conversation *c = (struct conversation *) cnv->data;
-		guint options = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(c->window), "notify_data"));
 
-		if (options & NOTIFY_FOCUS)
-			g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
+		/* remove old notification signals */
+		detach_signals(c);
 
-		if (options & NOTIFY_CLICK) {
-			g_signal_handlers_disconnect_by_func(G_OBJECT(c->window), un_star, NULL);
-			g_signal_handlers_disconnect_by_func(G_OBJECT(c->text), un_star_window, NULL);
-			g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star_window, NULL);
-		}
-
-		if (options & NOTIFY_TYPE)
-			g_signal_handlers_disconnect_by_func(G_OBJECT(c->entry), un_star_window, NULL);
-
-		/* works except for count, always get reset to [1] */
 		/* clean off all notification markings */
 		notification = unnotify(c, TRUE);
+	
 		/* re-add appropriate notification methods cleaned above */
 		if (notification & METHOD_STRING) /* re-add string */
 			string_add(c->window);
 		if (notification & METHOD_QUOTE) /* re-add quote */
 			quote_add(c->window);
 		if (notification & METHOD_COUNT) /* re-add count */
-			count_add(c->window);
+			count_add(c->window, Number);
 		if (notification & METHOD_URGENT) /* re-add urgent */
 			urgent_add(c);
+
 		/* attach new unnotification signals */
 		attach_signals(c);
 
@@ -457,6 +502,7 @@ void apply_options(GtkWidget *widget, gpointer data) {
 
 char *gaim_plugin_init(GModule *hndl) {
 	handle = hndl;
+	title_string = g_strdup("(*) ");
 
 	load_notify_prefs();
 
@@ -474,9 +520,15 @@ void gaim_plugin_remove() {
 
 	while (c) {
 		struct conversation *cnv = (struct conversation *)c->data;
+		
+		detach_signals(cnv);
 		un_star(cnv->window, NULL);
+		
 		c = c->next;
 	}
+	
+	/* this might be a hack I'm not sure, I don't think so but... */
+	g_free(title_string);
 }
 
 struct gaim_plugin_description desc; 
@@ -510,25 +562,27 @@ GtkWidget *gaim_plugin_config_gtk() {
 	toggle = gtk_check_button_new_with_mnemonic(_("_IM windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_IM);
-	g_signal_connect(GTK_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(7));
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(8));
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Chat windows"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), type & TYPE_CHAT);
-	g_signal_connect(GTK_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(8));
+	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(9));
 
 	/*--------------*/
 	vbox = make_frame(ret, _("Notification Methods"));
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title:"));
+	toggle = gtk_check_button_new_with_mnemonic(_("Prepend _string into window title (hit enter to save):"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), method & METHOD_STRING);
 	g_signal_connect(G_OBJECT(toggle), "toggled", G_CALLBACK(options), GINT_TO_POINTER(3));
 	gtk_box_pack_start(GTK_BOX(hbox), toggle, FALSE, FALSE, 0);
-	Entry = gtk_entry_new_with_max_length(7);
+	Entry = gtk_entry_new();
+	gtk_entry_set_max_length(GTK_ENTRY(Entry), 10);
 	gtk_widget_set_sensitive(GTK_WIDGET(Entry), method & METHOD_STRING);
 	gtk_box_pack_start(GTK_BOX(hbox), Entry, FALSE, FALSE, 0);
 	gtk_entry_set_text(GTK_ENTRY(Entry), title_string);
+	g_signal_connect(G_OBJECT(Entry), "activate", G_CALLBACK(options), GINT_TO_POINTER(10));
 
 	toggle = gtk_check_button_new_with_mnemonic(_("_Quote window title"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
