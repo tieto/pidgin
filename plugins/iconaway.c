@@ -1,4 +1,4 @@
-#include <config.h>
+#include "../config.h"
 #include "gaim.h"
 
 #include <gdk/gdkx.h>

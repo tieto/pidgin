@@ -3,7 +3,6 @@ EXTRA_DIST =	about_small.xpm			\
 		add_small.xpm			\
 		admin_icon.xpm			\
 		aimicon.xpm			\
-		aimicon2.xpm			\
 		angel.xpm			\
 		aol_icon.xpm			\
 		available-away.xpm		\
@@ -11,7 +10,6 @@ EXTRA_DIST =	about_small.xpm			\
 		available-dnd.xpm		\
 		available-xa.xpm		\
 		available.xpm			\
-		away.xpm			\
 		away_big.xpm			\
 		away_icon.xpm			\
 		away_small.xpm			\
@@ -20,10 +18,6 @@ EXTRA_DIST =	about_small.xpm			\
 		bigsmile.xpm			\
 		block.xpm			\
 		bold.xpm			\
-		bsmile.xpm			\
-		buddyadd.xpm			\
-		buddychat.xpm			\
-		buddydel.xpm			\
 		burp.xpm			\
 		cancel.xpm			\
 		close.xpm			\
@@ -31,33 +25,17 @@ EXTRA_DIST =	about_small.xpm			\
 		crazy4.xpm			\
 		crossedlips.xpm			\
 		cry.xpm				\
-		daemon-buddyadd.xpm		\
-		daemon-buddychat.xpm		\
-		daemon-buddydel.xpm		\
-		daemon-im.xpm			\
-		daemon-info.xpm			\
-		daemon-permadd.xpm		\
-		daemon-permdel.xpm		\
-		daemon.xpm			\
 		dt_icon.xpm			\
 		embarrassed.xpm			\
 		exit_small.xpm			\
-		export_small.xpm		\
 		fgcolor.xpm			\
 		fontface.xpm			\
 		fontface2.xpm			\
 		free_icon.xpm			\
 		gaim.xpm			\
 		gnome_add.xpm			\
-		gnome_close.xpm			\
 		gnome_preferences.xpm		\
 		gnome_remove.xpm 		\
-		gnome/devil-connect.png		\
-		gnome/devil-offline.png		\
-		gnome/devil-online.png		\
-		gnome/penguin-connect.png	\
-		gnome/penguin-offline.png	\
-		gnome/penguin-online.png	\
 		gnomeicu-away.xpm		\
 		gnomeicu-dnd.xpm		\
 		gnomeicu-ffc.xpm		\
@@ -65,9 +43,7 @@ EXTRA_DIST =	about_small.xpm			\
 		gnomeicu-occ.xpm		\
 		gnomeicu-online.xpm		\
 		group.xpm			\
-		im.xpm				\
 		import_small.xpm		\
-		info.xpm			\
 		italic.xpm			\
 		join.xpm			\
 		kiss.xpm			\
@@ -78,22 +54,13 @@ EXTRA_DIST =	about_small.xpm			\
 		luke03.xpm			\
 		moneymouth.xpm			\
 		mrt.xpm				\
-		msg_pending.xpm			\
 		msn_away.xpm			\
 		msn_online.xpm			\
 		napster.xpm			\
 		no_icon.xpm			\
 		normal.xpm			\
-		offline.xpm			\
 		ok.xpm				\
 		oneeye.xpm			\
-		online.xpm			\
-		palette.xpm			\
-		peng_frown.xpm			\
-		peng_smile.xpm			\
-		peng_wink.xpm			\
-		permadd.xpm			\
-		permdel.xpm			\
 		plugins_small.xpm		\
 		pounce_small.xpm		\
 		prefs_small.xpm			\
@@ -105,14 +72,10 @@ EXTRA_DIST =	about_small.xpm			\
 		scream.xpm			\
 		search_small.xpm		\
 		send_small.xpm			\
-		signing_on.xpm			\
 		small.xpm			\
 		smile.xpm			\
 		smile8.xpm			\
-		smile_happy.xpm			\
 		smile_icon.xpm			\
-		smile_sad.xpm			\
-		smile_wink.xpm			\
 		speaker.xpm			\
 		status-away.xpm			\
 		status-here.xpm			\
