@@ -828,7 +828,8 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 
 	state = gaim_status_get_id(status);
 
-	printf("%d %s\n", gc, state);
+	gaim_debug_info("msn", "Set status to %s\n", gaim_status_get_name(status));
+
 	if (strcmp(state, "offline") && !gc) {
 		gaim_account_connect(account, status);
 		return;
