@@ -1919,11 +1919,10 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 
 	g_return_val_if_fail(imhtml != NULL, FALSE);
 	g_return_val_if_fail(text != NULL, FALSE);
-	
+
 	if (imhtml->search_string && !strcmp(text, imhtml->search_string))
 		new_search = FALSE;
-	 
-	
+
 	if (new_search) {
 		gtk_imhtml_search_clear(imhtml);
 		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &iter);
@@ -1950,6 +1949,9 @@ gboolean gtk_imhtml_search_find(GtkIMHtml *imhtml, const gchar *text)
 		}
 		return TRUE;
 	}
+
+	gtk_imhtml_search_clear(imhtml);
+
 	return FALSE;
 }
 
