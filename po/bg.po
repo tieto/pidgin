@@ -11,24 +11,24 @@ msgstr ""
 "Last-Translator: Hristo Todorov <igel@bofh.bg>\n"
 "Language-Team: Bulgarian <bg@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=Windows-1251\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: plugins/docklet/docklet.c:111 src/gtkaccount.c:440 src/gtkaccount.c:1588
 #, fuzzy
 msgid "Auto-login"
-msgstr "Авто влизане"
+msgstr "РђРІС‚Рѕ РІР»РёР·Р°РЅРµ"
 
 #: plugins/docklet/docklet.c:114
 #, fuzzy
 msgid "New Message.."
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: plugins/docklet/docklet.c:115
 #, fuzzy
 msgid "Join A Chat..."
-msgstr "Присъединяване към чат"
+msgstr "РџСЂРёСЃСЉРµРґРёРЅСЏРІР°РЅРµ РєСЉРј С‡Р°С‚"
 
 #: plugins/docklet/docklet.c:146
 msgid "New..."
@@ -41,45 +41,45 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4548 src/protocols/oscar/oscar.c:5449
 #: src/protocols/oscar/oscar.c:5843
 msgid "Away"
-msgstr "Отсъствие"
+msgstr "РћС‚СЃСЉСЃС‚РІРёРµ"
 
 #: plugins/docklet/docklet.c:156 src/away.c:531
 msgid "Back"
-msgstr "Връщане"
+msgstr "Р’СЂСЉС‰Р°РЅРµ"
 
 #: plugins/docklet/docklet.c:164
 #, fuzzy
 msgid "Mute Sounds"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: plugins/docklet/docklet.c:169 src/gtkft.c:557
 #, fuzzy
 msgid "File Transfers"
-msgstr "Не мога да пиша"
+msgstr "РќРµ РјРѕРіР° РґР° РїРёС€Р°"
 
 #. And now for the buttons
 #: plugins/docklet/docklet.c:170 src/gtkaccount.c:1739 src/main.c:325
 #, fuzzy
 msgid "Accounts"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: plugins/docklet/docklet.c:171 src/gtkprefs.c:2356 src/main.c:335
 #, fuzzy
 msgid "Preferences"
-msgstr "Настройки"
+msgstr "РќР°СЃС‚СЂРѕР№РєРё"
 
 #: plugins/docklet/docklet.c:180
 msgid "Signoff"
-msgstr "Излизане"
+msgstr "РР·Р»РёР·Р°РЅРµ"
 
 #: plugins/docklet/docklet.c:184
 msgid "Quit"
-msgstr "Излизане от Gaim"
+msgstr "РР·Р»РёР·Р°РЅРµ РѕС‚ Gaim"
 
 #: plugins/docklet/docklet.c:413
 #, fuzzy
 msgid "Tray Icon Configuration"
-msgstr "Gaim - Звук - конфигуриране"
+msgstr "Gaim - Р—РІСѓРє - РєРѕРЅС„РёРіСѓСЂРёСЂР°РЅРµ"
 
 #: plugins/docklet/docklet.c:417
 msgid "_Hide new messages until tray icon is clicked"
@@ -123,7 +123,7 @@ msgstr ""
 #: plugins/autorecon.c:103
 #, fuzzy
 msgid "Auto-Reconnect"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #. *< name
 #. *< version
@@ -135,7 +135,7 @@ msgstr ""
 #: plugins/chkmail.c:89 plugins/chkmail.c:112 plugins/chkmail.c:121
 #, fuzzy
 msgid "Mail Server"
-msgstr "Сървър:"
+msgstr "РЎСЉСЂРІСЉСЂ:"
 
 #: plugins/chkmail.c:131
 #, c-format
@@ -145,7 +145,7 @@ msgstr ""
 #: plugins/chkmail.c:203
 #, fuzzy
 msgid "Check Mail"
-msgstr "?Отвори поща?"
+msgstr "?РћС‚РІРѕСЂРё РїРѕС‰Р°?"
 
 #: plugins/chkmail.c:207
 msgid "Check email every X seconds.\n"
@@ -197,7 +197,7 @@ msgstr ""
 #: plugins/gaiminc.c:72
 #, fuzzy
 msgid "Gaim Demonstration Plugin"
-msgstr "Gaim - Регистрация"
+msgstr "Gaim - Р РµРіРёСЃС‚СЂР°С†РёСЏ"
 
 #. *< name
 #. *< version
@@ -239,12 +239,12 @@ msgstr ""
 #: plugins/gtik.c:994
 #, fuzzy
 msgid "(No"
-msgstr "Не"
+msgstr "РќРµ"
 
 #: plugins/gtik.c:995
 #, fuzzy
 msgid "Change"
-msgstr "Канал:"
+msgstr "РљР°РЅР°Р»:"
 
 #: plugins/history.c:87
 msgid "History"
@@ -253,7 +253,7 @@ msgstr ""
 #: plugins/history.c:89
 #, fuzzy
 msgid "Shows recently logged conversations in new conversations."
-msgstr "Всички разговори в един прозорец с етикети"
+msgstr "Р’СЃРёС‡РєРё СЂР°Р·РіРѕРІРѕСЂРё РІ РµРґРёРЅ РїСЂРѕР·РѕСЂРµС† СЃ РµС‚РёРєРµС‚Рё"
 
 #: plugins/history.c:90
 msgid ""
@@ -282,12 +282,12 @@ msgstr ""
 #: plugins/idle.c:70 src/protocols/irc/irc.c:936
 #, fuzzy
 msgid "Idle Time"
-msgstr "Показва време на бездействие"
+msgstr "РџРѕРєР°Р·РІР° РІСЂРµРјРµ РЅР° Р±РµР·РґРµР№СЃС‚РІРёРµ"
 
 #: plugins/idle.c:78
 #, fuzzy
 msgid "Set"
-msgstr "Пол"
+msgstr "РџРѕР»"
 
 #: plugins/idle.c:83
 msgid "idle for"
@@ -296,12 +296,12 @@ msgstr ""
 #: plugins/idle.c:90 plugins/timestamp.c:88
 #, fuzzy
 msgid "minutes."
-msgstr "минути използвани"
+msgstr "РјРёРЅСѓС‚Рё РёР·РїРѕР»Р·РІР°РЅРё"
 
 #: plugins/idle.c:96
 #, fuzzy
 msgid "_Set"
-msgstr "Запис"
+msgstr "Р—Р°РїРёСЃ"
 
 #: plugins/idle.c:119
 msgid "I'dle Mak'er"
@@ -332,12 +332,12 @@ msgstr ""
 #: plugins/notify.c:442
 #, fuzzy
 msgid "Unable to write to config file"
-msgstr "Не мога да запиша файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° Р·Р°РїРёС€Р° С„Р°Р№Р» %s"
 
 #: plugins/notify.c:443
 #, fuzzy
 msgid "Notify plugin"
-msgstr "%s влезе."
+msgstr "%s РІР»РµР·Рµ."
 
 #: plugins/notify.c:573
 msgid "Notify For"
@@ -346,18 +346,18 @@ msgstr ""
 #: plugins/notify.c:574
 #, fuzzy
 msgid "_IM windows"
-msgstr "Прозорец за съобщения"
+msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #: plugins/notify.c:579
 #, fuzzy
 msgid "_Chat windows"
-msgstr "Групиране на чат прозорци"
+msgstr "Р“СЂСѓРїРёСЂР°РЅРµ РЅР° С‡Р°С‚ РїСЂРѕР·РѕСЂС†Рё"
 
 #. --------------
 #: plugins/notify.c:585
 #, fuzzy
 msgid "Notification Methods"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #: plugins/notify.c:588
 msgid "Prepend _string into window title (hit enter to save):"
@@ -383,7 +383,7 @@ msgstr ""
 #: plugins/notify.c:620
 #, fuzzy
 msgid "Notification Removal"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #: plugins/notify.c:621
 msgid "Remove when conversation window gains _focus"
@@ -411,7 +411,7 @@ msgstr ""
 #: plugins/notify.c:699
 #, fuzzy
 msgid "Message Notification"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #. *< name
 #. *< version
@@ -444,7 +444,7 @@ msgstr ""
 #: plugins/simple.c:30
 #, fuzzy
 msgid "Simple Plugin"
-msgstr "Всичко"
+msgstr "Р’СЃРёС‡РєРѕ"
 
 #. *< name
 #. *< version
@@ -456,7 +456,7 @@ msgstr ""
 #: plugins/spellchk.c:394
 #, fuzzy
 msgid "Text Replacements"
-msgstr "Поставяне на етикети:"
+msgstr "РџРѕСЃС‚Р°РІСЏРЅРµ РЅР° РµС‚РёРєРµС‚Рё:"
 
 #: plugins/spellchk.c:418
 msgid "You type"
@@ -465,7 +465,7 @@ msgstr ""
 #: plugins/spellchk.c:430
 #, fuzzy
 msgid "You send"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: plugins/spellchk.c:456
 msgid "Add a new text replacement"
@@ -474,7 +474,7 @@ msgstr ""
 #: plugins/spellchk.c:463
 #, fuzzy
 msgid "You _type:"
-msgstr "Тип Proxy"
+msgstr "РўРёРї Proxy"
 
 #: plugins/spellchk.c:477
 msgid "You _send:"
@@ -483,7 +483,7 @@ msgstr ""
 #: plugins/spellchk.c:517
 #, fuzzy
 msgid "Text replacement"
-msgstr "Поставяне на етикети:"
+msgstr "РџРѕСЃС‚Р°РІСЏРЅРµ РЅР° РµС‚РёРєРµС‚Рё:"
 
 #: plugins/spellchk.c:519 plugins/spellchk.c:520
 msgid "Replaces text in outgoing messages according to user-defined rules."
@@ -492,12 +492,12 @@ msgstr ""
 #: plugins/timestamp.c:74
 #, fuzzy
 msgid "iChat Timestamp"
-msgstr "Тест"
+msgstr "РўРµСЃС‚"
 
 #: plugins/timestamp.c:81
 #, fuzzy
 msgid "Delay"
-msgstr "Отхвърляне"
+msgstr "РћС‚С…РІСЉСЂР»СЏРЅРµ"
 
 #: plugins/timestamp.c:94
 msgid "_Apply"
@@ -513,7 +513,7 @@ msgstr ""
 #: plugins/timestamp.c:148
 #, fuzzy
 msgid "Timestamp"
-msgstr "Тест"
+msgstr "РўРµСЃС‚"
 
 #. *< name
 #. *< version
@@ -525,22 +525,22 @@ msgstr ""
 #: plugins/gaim-remote/remote.c:87
 #, fuzzy
 msgid "Not connected to AIM"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: plugins/gaim-remote/remote.c:96 plugins/gaim-remote/remote.c:135
 #, fuzzy
 msgid "No screenname given."
-msgstr "Не е зададен прякор"
+msgstr "РќРµ Рµ Р·Р°РґР°РґРµРЅ РїСЂСЏРєРѕСЂ"
 
 #: plugins/gaim-remote/remote.c:172
 #, fuzzy
 msgid "No roomname given."
-msgstr "Не е дадена причина."
+msgstr "РќРµ Рµ РґР°РґРµРЅР° РїСЂРёС‡РёРЅР°."
 
 #: plugins/gaim-remote/remote.c:191
 #, fuzzy
 msgid "Invalid AIM URI"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #. *< api_version
 #. *< type
@@ -624,7 +624,7 @@ msgstr ""
 #: plugins/ticker/ticker.c:72 plugins/ticker/ticker.c:312
 #, fuzzy
 msgid "Buddy Ticker"
-msgstr "Показва авер Ticker"
+msgstr "РџРѕРєР°Р·РІР° Р°РІРµСЂ Ticker"
 
 #. *< name
 #. *< version
@@ -643,32 +643,32 @@ msgstr ""
 #: plugins/win32/transparency/win2ktrans.c:340
 #, fuzzy
 msgid "IM Conversation Windows"
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: plugins/win32/transparency/win2ktrans.c:341
 #, fuzzy
 msgid "_IM window transparency"
-msgstr "Прозорец за съобщения"
+msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #: plugins/win32/transparency/win2ktrans.c:351
 #, fuzzy
 msgid "_Show slider bar in IM window"
-msgstr "Показва влизанията в прозореца"
+msgstr "РџРѕРєР°Р·РІР° РІР»РёР·Р°РЅРёСЏС‚Р° РІ РїСЂРѕР·РѕСЂРµС†Р°"
 
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:376 src/gtkprefs.c:848
 msgid "Buddy List Window"
-msgstr "Прозорец на листа"
+msgstr "РџСЂРѕР·РѕСЂРµС† РЅР° Р»РёСЃС‚Р°"
 
 #: plugins/win32/transparency/win2ktrans.c:377
 #, fuzzy
 msgid "_Keep Buddy List window on top"
-msgstr "Прозорец на листа"
+msgstr "РџСЂРѕР·РѕСЂРµС† РЅР° Р»РёСЃС‚Р°"
 
 #: plugins/win32/transparency/win2ktrans.c:380
 #, fuzzy
 msgid "_Buddy List window transparency"
-msgstr "Прозорец на листа"
+msgstr "РџСЂРѕР·РѕСЂРµС† РЅР° Р»РёСЃС‚Р°"
 
 #. *< api_version
 #. *< type
@@ -696,7 +696,7 @@ msgstr ""
 #: plugins/win32/winprefs/winprefs.c:124
 #, fuzzy
 msgid "Startup"
-msgstr "Състояние"
+msgstr "РЎСЉСЃС‚РѕСЏРЅРёРµ"
 
 #: plugins/win32/winprefs/winprefs.c:125
 msgid "_Start Gaim on Windows startup"
@@ -705,7 +705,7 @@ msgstr ""
 #: plugins/win32/winprefs/winprefs.c:152
 #, fuzzy
 msgid "WinGaim Options"
-msgstr "Шрифт"
+msgstr "РЁСЂРёС„С‚"
 
 #: plugins/win32/winprefs/winprefs.c:154 plugins/win32/winprefs/winprefs.c:155
 msgid "Options specific to Windows Gaim."
@@ -742,7 +742,7 @@ msgstr ""
 #: plugins/statenotify.c:72
 #, fuzzy
 msgid "Buddy State Notification"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #. *< name
 #. *< version
@@ -760,7 +760,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1336
 #, fuzzy
 msgid "Available"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/gg/gg.c:53
 msgid "Available for friends only"
@@ -777,7 +777,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1279 src/protocols/yahoo/yahoo.c:1346
 #, fuzzy
 msgid "Invisible"
-msgstr "Покана"
+msgstr "РџРѕРєР°РЅР°"
 
 #: src/protocols/gg/gg.c:57
 msgid "Invisible for friends only"
@@ -785,120 +785,120 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:58
 msgid "Unavailable"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/gg/gg.c:139
 msgid "Unable to resolve hostname."
-msgstr "Не може да бъде намерено името."
+msgstr "РќРµ РјРѕР¶Рµ РґР° Р±СЉРґРµ РЅР°РјРµСЂРµРЅРѕ РёРјРµС‚Рѕ."
 
 #: src/protocols/gg/gg.c:142
 msgid "Unable to connect to server."
-msgstr "Не мога да се свържа със сървъра."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° СЃСЉСЃ СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/gg/gg.c:145
 msgid "Invalid response from server."
-msgstr "Грешен отговор от сървъра."
+msgstr "Р“СЂРµС€РµРЅ РѕС‚РіРѕРІРѕСЂ РѕС‚ СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/gg/gg.c:148
 msgid "Error while reading from socket."
-msgstr "Грешка при четене от socket."
+msgstr "Р“СЂРµС€РєР° РїСЂРё С‡РµС‚РµРЅРµ РѕС‚ socket."
 
 #: src/protocols/gg/gg.c:151
 msgid "Error while writing to socket."
-msgstr "Грешка при писане в socket."
+msgstr "Р“СЂРµС€РєР° РїСЂРё РїРёСЃР°РЅРµ РІ socket."
 
 #: src/protocols/gg/gg.c:154
 msgid "Authentication failed."
-msgstr "Аудентикацията пропадна."
+msgstr "РђСѓРґРµРЅС‚РёРєР°С†РёСЏС‚Р° РїСЂРѕРїР°РґРЅР°."
 
 #: src/protocols/gg/gg.c:157
 msgid "Unknown Error Code."
-msgstr "Непознат код на грешка."
+msgstr "РќРµРїРѕР·РЅР°С‚ РєРѕРґ РЅР° РіСЂРµС€РєР°."
 
 #: src/protocols/gg/gg.c:262
 #, c-format
 msgid "Status: %s"
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/protocols/gg/gg.c:283
 msgid "Could not connect"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/protocols/gg/gg.c:290
 msgid "Unable to read socket"
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/gg/gg.c:402
 msgid "Unable to connect."
-msgstr "Не мога да се свържа."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°."
 
 #: src/protocols/gg/gg.c:418
 msgid "Reading data"
-msgstr "Четене на дани"
+msgstr "Р§РµС‚РµРЅРµ РЅР° РґР°РЅРё"
 
 #: src/protocols/gg/gg.c:421
 msgid "Balancer handshake"
-msgstr "?Балансирано ръкостискане?"
+msgstr "?Р‘Р°Р»Р°РЅСЃРёСЂР°РЅРѕ СЂСЉРєРѕСЃС‚РёСЃРєР°РЅРµ?"
 
 #: src/protocols/gg/gg.c:424
 msgid "Reading server key"
-msgstr "Четене на ключа на сървъра"
+msgstr "Р§РµС‚РµРЅРµ РЅР° РєР»СЋС‡Р° РЅР° СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:427
 msgid "Exchanging key hash"
-msgstr "Размяна на ключовия хеш"
+msgstr "Р Р°Р·РјСЏРЅР° РЅР° РєР»СЋС‡РѕРІРёСЏ С…РµС€"
 
 #: src/protocols/gg/gg.c:437
 msgid "Critical error in GG library\n"
-msgstr "Критична грешка в билблиотека GG\n"
+msgstr "РљСЂРёС‚РёС‡РЅР° РіСЂРµС€РєР° РІ Р±РёР»Р±Р»РёРѕС‚РµРєР° GG\n"
 
 #: src/protocols/gg/gg.c:455 src/protocols/gg/gg.c:546
 #, c-format
 msgid "Connect to %s failed"
-msgstr "Свързването с %s пропадна"
+msgstr "РЎРІСЉСЂР·РІР°РЅРµС‚Рѕ СЃ %s РїСЂРѕРїР°РґРЅР°"
 
 #: src/protocols/gg/gg.c:503
 msgid "Unable to ping server"
-msgstr "Не мога да пингна сървъра"
+msgstr "РќРµ РјРѕРіР° РґР° РїРёРЅРіРЅР° СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:515
 msgid "Send as message"
-msgstr "Изпрати като съобщение"
+msgstr "РР·РїСЂР°С‚Рё РєР°С‚Рѕ СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/protocols/gg/gg.c:520
 msgid "Looking up GG server"
-msgstr "Търсене на GG сървър"
+msgstr "РўСЉСЂСЃРµРЅРµ РЅР° GG СЃСЉСЂРІСЉСЂ"
 
 #: src/protocols/gg/gg.c:523
 msgid "Invalid Gadu-Gadu UIN specified"
-msgstr "Невалиден Gadu-Gadu UIN"
+msgstr "РќРµРІР°Р»РёРґРµРЅ Gadu-Gadu UIN"
 
 #: src/protocols/gg/gg.c:570
 msgid "You are trying to send a message to an invalid Gadu-Gadu UIN."
-msgstr "Опитвате да изпратите съобщение на невалиден Gadu-Gadu UIN!"
+msgstr "РћРїРёС‚РІР°С‚Рµ РґР° РёР·РїСЂР°С‚РёС‚Рµ СЃСЉРѕР±С‰РµРЅРёРµ РЅР° РЅРµРІР°Р»РёРґРµРЅ Gadu-Gadu UIN!"
 
 #: src/protocols/gg/gg.c:633
 msgid "Couldn't get search results"
-msgstr "Не мога да получа резултати от търсенето"
+msgstr "РќРµ РјРѕРіР° РґР° РїРѕР»СѓС‡Р° СЂРµР·СѓР»С‚Р°С‚Рё РѕС‚ С‚СЉСЂСЃРµРЅРµС‚Рѕ"
 
 #: src/protocols/gg/gg.c:638
 msgid "Gadu-Gadu Search Engine"
-msgstr "Търсеща машина Gadu-Gadu"
+msgstr "РўСЉСЂСЃРµС‰Р° РјР°С€РёРЅР° Gadu-Gadu"
 
 #: src/protocols/gg/gg.c:663
 msgid "Active"
-msgstr "Активен"
+msgstr "РђРєС‚РёРІРµРЅ"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
 #: src/gtkrequest.c:168 src/protocols/gg/gg.c:664 src/request.h:804
 msgid "Yes"
-msgstr "Да"
+msgstr "Р”Р°"
 
 #: src/gtkrequest.c:169 src/protocols/gg/gg.c:664 src/request.h:804
 msgid "No"
-msgstr "Не"
+msgstr "РќРµ"
 
 #: src/protocols/gg/gg.c:668
 msgid "UIN"
@@ -906,67 +906,67 @@ msgstr "UIN"
 
 #: src/protocols/gg/gg.c:672
 msgid "First name"
-msgstr "Име"
+msgstr "РРјРµ"
 
 #: src/protocols/gg/gg.c:677
 msgid "Second Name"
-msgstr "Бащино Име"
+msgstr "Р‘Р°С‰РёРЅРѕ РРјРµ"
 
 #: src/protocols/gg/gg.c:681 src/protocols/gg/gg.c:1380
 msgid "Nick"
-msgstr "Псевдоним"
+msgstr "РџСЃРµРІРґРѕРЅРёРј"
 
 #: src/protocols/gg/gg.c:688 src/protocols/gg/gg.c:691
 msgid "Birth year"
-msgstr "Година на раждане"
+msgstr "Р“РѕРґРёРЅР° РЅР° СЂР°Р¶РґР°РЅРµ"
 
 #: src/protocols/gg/gg.c:697 src/protocols/gg/gg.c:699
 #: src/protocols/gg/gg.c:701
 msgid "Sex"
-msgstr "Пол"
+msgstr "РџРѕР»"
 
 #. City
 #: src/dialogs.c:2035 src/dialogs.c:2684 src/protocols/gg/gg.c:705
 #: src/protocols/trepia/trepia.c:364
 msgid "City"
-msgstr "Град"
+msgstr "Р“СЂР°Рґ"
 
 #: src/protocols/gg/gg.c:738
 #, fuzzy
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
-msgstr "Няма листа съхранена на сървъра. Съжялавам!"
+msgstr "РќСЏРјР° Р»РёСЃС‚Р° СЃСЉС…СЂР°РЅРµРЅР° РЅР° СЃСЉСЂРІСЉСЂР°. РЎСЉР¶СЏР»Р°РІР°Рј!"
 
 #: src/protocols/gg/gg.c:746
 msgid "Couldn't Import Buddy List from Server"
-msgstr "Не мога да импортирам листата от сървъра"
+msgstr "РќРµ РјРѕРіР° РґР° РёРјРїРѕСЂС‚РёСЂР°Рј Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:809
 #, fuzzy
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
-msgstr "Листата успешно прехвърлена на сървъра"
+msgstr "Р›РёСЃС‚Р°С‚Р° СѓСЃРїРµС€РЅРѕ РїСЂРµС…РІСЉСЂР»РµРЅР° РЅР° СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:817
 #, fuzzy
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
-msgstr "Не мога да прехвърля листата на сървъра"
+msgstr "РќРµ РјРѕРіР° РґР° РїСЂРµС…РІСЉСЂР»СЏ Р»РёСЃС‚Р°С‚Р° РЅР° СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:825
 #, fuzzy
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
-msgstr "Листата успешно изтрита от сървъра"
+msgstr "Р›РёСЃС‚Р°С‚Р° СѓСЃРїРµС€РЅРѕ РёР·С‚СЂРёС‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:833
 #, fuzzy
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
-msgstr "Не мога да изтиря листата на сървъра"
+msgstr "РќРµ РјРѕРіР° РґР° РёР·С‚РёСЂСЏ Р»РёСЃС‚Р°С‚Р° РЅР° СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:841
 msgid "Password changed successfully"
-msgstr "Успешна смяна на паролат"
+msgstr "РЈСЃРїРµС€РЅР° СЃРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚"
 
 #: src/protocols/gg/gg.c:848
 msgid "Password couldn't be changed"
-msgstr "Паролата не може да бъде променена"
+msgstr "РџР°СЂРѕР»Р°С‚Р° РЅРµ РјРѕР¶Рµ РґР° Р±СЉРґРµ РїСЂРѕРјРµРЅРµРЅР°"
 
 #: src/protocols/gg/gg.c:965
 msgid "Error communicating with Gadu-Gadu server"
@@ -991,7 +991,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:1064
 #, fuzzy
 msgid "Couldn't export buddy list"
-msgstr "Не мога да импортирам листата от сървъра"
+msgstr "РќРµ РјРѕРіР° РґР° РёРјРїРѕСЂС‚РёСЂР°Рј Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:1065 src/protocols/gg/gg.c:1088
 msgid ""
@@ -1005,7 +1005,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:1136
 #, fuzzy
 msgid "Unable to access directory"
-msgstr "Не мога да отворя директна връзка"
+msgstr "РќРµ РјРѕРіР° РґР° РѕС‚РІРѕСЂСЏ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/protocols/gg/gg.c:1137
 msgid ""
@@ -1016,7 +1016,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:1170
 #, fuzzy
 msgid "Unable to change Gadu-Gadu password"
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/gg/gg.c:1171
 msgid ""
@@ -1026,30 +1026,30 @@ msgstr ""
 
 #: src/protocols/gg/gg.c:1187
 msgid "Directory Search"
-msgstr "Търсене в директорията"
+msgstr "РўСЉСЂСЃРµРЅРµ РІ РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°"
 
 #: src/dialogs.c:2146 src/dialogs.c:2155 src/protocols/gg/gg.c:1195
 #: src/protocols/jabber/jabber.c:4322 src/protocols/oscar/oscar.c:6112
 #: src/protocols/toc/toc.c:1474
 msgid "Change Password"
-msgstr "Смяна на паролата"
+msgstr "РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #: src/protocols/gg/gg.c:1203
 msgid "Import Buddy List from Server"
-msgstr "Импортиране на листата от сървър"
+msgstr "РРјРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂ"
 
 #: src/protocols/gg/gg.c:1209
 msgid "Export Buddy List to Server"
-msgstr "Експортиране на листата към сървъра"
+msgstr "Р•РєСЃРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РєСЉРј СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:1215
 msgid "Delete Buddy List from Server"
-msgstr "Изтриване на листата от сървъра"
+msgstr "РР·С‚СЂРёРІР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/gg/gg.c:1248
 #, fuzzy
 msgid "Unable to access user profile."
-msgstr "Не мога да чета файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° С„Р°Р№Р» %s"
 
 #: src/protocols/gg/gg.c:1249
 msgid ""
@@ -1070,7 +1070,7 @@ msgstr ""
 #: src/protocols/gg/gg.c:1361 src/protocols/gg/gg.c:1363
 #, fuzzy
 msgid "Gadu-Gadu Protocol Plugin"
-msgstr "Търсеща машина Gadu-Gadu"
+msgstr "РўСЉСЂСЃРµС‰Р° РјР°С€РёРЅР° Gadu-Gadu"
 
 #: src/protocols/icq/gaim_icq.c:224
 msgid "Gaim encountered an error communicating with the ICQ server."
@@ -1080,7 +1080,7 @@ msgstr ""
 #: src/gtkrequest.c:175 src/protocols/icq/gaim_icq.c:277
 #: src/protocols/oscar/oscar.c:2673 src/prpl.c:312
 msgid "Add"
-msgstr "Добавяне"
+msgstr "Р”РѕР±Р°РІСЏРЅРµ"
 
 #. Cancel button.
 #: src/buddy_chat.c:375 src/dialogs.c:459 src/dialogs.c:471 src/dialogs.c:484
@@ -1099,12 +1099,12 @@ msgstr "Добавяне"
 #: src/protocols/yahoo/yahoo.c:1188 src/prpl.c:313 src/request.h:813
 #: src/request.h:823
 msgid "Cancel"
-msgstr "Отмяна"
+msgstr "РћС‚РјСЏРЅР°"
 
 #: src/protocols/icq/gaim_icq.c:294
 #, fuzzy, c-format
 msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
-msgstr "%s%s%s%s направи %s техен контакт %s%s%s"
+msgstr "%s%s%s%s РЅР°РїСЂР°РІРё %s С‚РµС…РµРЅ РєРѕРЅС‚Р°РєС‚ %s%s%s"
 
 #: src/protocols/icq/gaim_icq.c:297 src/protocols/jabber/jabber.c:1716
 #: src/protocols/msn/notification.c:466 src/protocols/msn/notification.c:747
@@ -1117,11 +1117,11 @@ msgstr ""
 #: src/protocols/msn/notification.c:749 src/protocols/oscar/oscar.c:2603
 #: src/protocols/oscar/oscar.c:5098
 msgid "Deny"
-msgstr "Отхвърляне"
+msgstr "РћС‚С…РІСЉСЂР»СЏРЅРµ"
 
 #: src/protocols/icq/gaim_icq.c:310
 msgid "Send message through server"
-msgstr "Изпращане на съобщение през сървър"
+msgstr "РР·РїСЂР°С‰Р°РЅРµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµ РїСЂРµР· СЃСЉСЂРІСЉСЂ"
 
 #: src/protocols/icq/gaim_icq.c:344 src/protocols/jabber/jabber.c:2335
 #: src/protocols/jabber/jabber.c:2369 src/protocols/jabber/jabber.c:4238
@@ -1129,21 +1129,21 @@ msgstr "Изпращане на съобщение през сървър"
 #: src/protocols/msn/msn.c:459 src/protocols/msn/notification.c:1376
 #: src/protocols/napster/napster.c:496
 msgid "Unable to connect"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/protocols/icq/gaim_icq.c:352
 #, fuzzy
 msgid "Connecting..."
-msgstr "Свързване"
+msgstr "РЎРІСЉСЂР·РІР°РЅРµ"
 
 #: src/protocols/icq/gaim_icq.c:497 src/protocols/oscar/oscar.c:3936
 msgid "Nick:"
-msgstr "Псевдоним:"
+msgstr "РџСЃРµРІРґРѕРЅРёРј:"
 
 #: src/protocols/icq/gaim_icq.c:498
 #, fuzzy
 msgid "Gaim User"
-msgstr "Използване на Gaim"
+msgstr "РР·РїРѕР»Р·РІР°РЅРµ РЅР° Gaim"
 
 #: src/protocols/irc/irc.c:187
 msgid ""
@@ -1154,22 +1154,22 @@ msgstr ""
 #: src/protocols/irc/irc.c:488 src/protocols/irc/irc.c:2608
 #, c-format
 msgid "DCC Chat with %s closed"
-msgstr "DCC чат с %s затворен"
+msgstr "DCC С‡Р°С‚ СЃ %s Р·Р°С‚РІРѕСЂРµРЅ"
 
 #: src/protocols/irc/irc.c:541 src/protocols/irc/irc.c:2617
 #, fuzzy, c-format
 msgid "DCC Chat with %s established"
-msgstr "DCC чат с %s затворен"
+msgstr "DCC С‡Р°С‚ СЃ %s Р·Р°С‚РІРѕСЂРµРЅ"
 
 #: src/protocols/irc/irc.c:676
 #, fuzzy
 msgid "No topic is set"
-msgstr "Връзката се загуби"
+msgstr "Р’СЂСЉР·РєР°С‚Р° СЃРµ Р·Р°РіСѓР±Рё"
 
 #: src/protocols/irc/irc.c:697 src/protocols/irc/irc.c:1755
 #, c-format
 msgid "<B>%s has changed the topic to: %s</B>"
-msgstr "<B>%s смени темата на: %s</B>"
+msgstr "<B>%s СЃРјРµРЅРё С‚РµРјР°С‚Р° РЅР°: %s</B>"
 
 #: src/protocols/irc/irc.c:742
 #, c-format
@@ -1179,25 +1179,25 @@ msgstr ""
 #: src/protocols/irc/irc.c:919 src/protocols/irc/irc.c:932
 #, fuzzy
 msgid "User"
-msgstr "Потребител"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»"
 
 #. Splits
 #: src/protocols/irc/irc.c:923 src/protocols/irc/irc.c:3031
 #: src/protocols/jabber/jabber.c:4418 src/protocols/napster/napster.c:639
 #, fuzzy
 msgid "Server"
-msgstr "Сървър:"
+msgstr "РЎСЉСЂРІСЉСЂ:"
 
 #: src/protocols/irc/irc.c:927 src/protocols/irc/irc.c:1082
 #: src/protocols/irc/irc.c:1647
 #, fuzzy
 msgid "IRC Operator"
-msgstr "Грешка в IRC"
+msgstr "Р“СЂРµС€РєР° РІ IRC"
 
 #: src/protocols/irc/irc.c:940
 #, fuzzy
 msgid "Channels"
-msgstr "Канал:"
+msgstr "РљР°РЅР°Р»:"
 
 #: src/protocols/irc/irc.c:946
 #, c-format
@@ -1213,23 +1213,23 @@ msgstr ""
 #: src/protocols/irc/irc.c:1082
 #, fuzzy
 msgid "Rehashing server"
-msgstr "Четене на ключа на сървъра"
+msgstr "Р§РµС‚РµРЅРµ РЅР° РєР»СЋС‡Р° РЅР° СЃСЉСЂРІСЉСЂР°"
 
 #. ERR_NOSUCHNICK
 #: src/protocols/irc/irc.c:1085
 msgid "No such nick/channel"
-msgstr "Няма такъв ник/канал"
+msgstr "РќСЏРјР° С‚Р°РєСЉРІ РЅРёРє/РєР°РЅР°Р»"
 
 #: src/protocols/irc/irc.c:1085 src/protocols/irc/irc.c:1088
 #: src/protocols/irc/irc.c:1093 src/protocols/irc/irc.c:1097
 #: src/protocols/irc/irc.c:1463 src/protocols/irc/irc.c:1605
 msgid "IRC Error"
-msgstr "Грешка в IRC"
+msgstr "Р“СЂРµС€РєР° РІ IRC"
 
 #. ERR_NOSUCHSERVER
 #: src/protocols/irc/irc.c:1088
 msgid "No such server"
-msgstr "Няма такъв сървър"
+msgstr "РќСЏРјР° С‚Р°РєСЉРІ СЃСЉСЂРІСЉСЂ"
 
 #. ERR_NOMOTD
 #. drop it - bringing up dialog for NOMOTD is annoying
@@ -1237,7 +1237,7 @@ msgstr "Няма такъв сървър"
 #: src/protocols/irc/irc.c:1093
 #, fuzzy
 msgid "No nickname given"
-msgstr "Не е зададен прякор"
+msgstr "РќРµ Рµ Р·Р°РґР°РґРµРЅ РїСЂСЏРєРѕСЂ"
 
 #. ERR_NOPRIVILEGES
 #: src/protocols/irc/irc.c:1096
@@ -1280,7 +1280,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5720
 #, fuzzy
 msgid "Connect"
-msgstr "Свързан"
+msgstr "РЎРІСЉСЂР·Р°РЅ"
 
 #: src/protocols/irc/irc.c:1460
 #, c-format
@@ -1290,17 +1290,17 @@ msgstr ""
 #: src/protocols/irc/irc.c:1541 src/protocols/msn/error.c:133
 #: src/protocols/msn/notification.c:292 src/protocols/msn/notification.c:760
 msgid "Unable to write"
-msgstr "Не мога да пиша"
+msgstr "РќРµ РјРѕРіР° РґР° РїРёС€Р°"
 
 #: src/protocols/irc/irc.c:1603
 #, fuzzy, c-format
 msgid "You have been kicked from %s: %s"
-msgstr "Бяхте изритани от %s: %s"
+msgstr "Р‘СЏС…С‚Рµ РёР·СЂРёС‚Р°РЅРё РѕС‚ %s: %s"
 
 #: src/protocols/irc/irc.c:1608
 #, c-format
 msgid "Kicked by %s: %s"
-msgstr "Изритани от %s: %s"
+msgstr "РР·СЂРёС‚Р°РЅРё РѕС‚ %s: %s"
 
 #: src/protocols/irc/irc.c:1664 src/protocols/irc/irc.c:2918
 msgid "CTCP ClientInfo"
@@ -1309,7 +1309,7 @@ msgstr ""
 #: src/protocols/irc/irc.c:1670 src/protocols/irc/irc.c:2924
 #, fuzzy
 msgid "CTCP UserInfo"
-msgstr "Информация"
+msgstr "РРЅС„РѕСЂРјР°С†РёСЏ"
 
 #: src/protocols/irc/irc.c:1676 src/protocols/irc/irc.c:2930
 msgid "CTCP Version"
@@ -1323,12 +1323,12 @@ msgstr ""
 #: src/protocols/toc/toc.c:234
 #, c-format
 msgid "Signon: %s"
-msgstr "Влизане: %s"
+msgstr "Р’Р»РёР·Р°РЅРµ: %s"
 
 #: src/protocols/irc/irc.c:1963 src/protocols/trepia/trepia.c:1148
 #, fuzzy
 msgid "Unable to create socket"
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/irc/irc.c:2204
 #, c-format
@@ -1338,11 +1338,11 @@ msgstr ""
 #: src/protocols/irc/irc.c:2300
 #, c-format
 msgid "You have left %s"
-msgstr "Напуснахте %s"
+msgstr "РќР°РїСѓСЃРЅР°С…С‚Рµ %s"
 
 #: src/protocols/irc/irc.c:2301
 msgid "IRC Part"
-msgstr "?IRC разделяне?"
+msgstr "?IRC СЂР°Р·РґРµР»СЏРЅРµ?"
 
 #: src/protocols/irc/irc.c:2356
 msgid "<I>Requesting DCC CHAT</I>"
@@ -1376,15 +1376,15 @@ msgstr ""
 
 #: src/protocols/irc/irc.c:2474
 msgid "Channel:"
-msgstr "Канал:"
+msgstr "РљР°РЅР°Р»:"
 
 #: src/gtkaccount.c:422 src/main.c:309 src/protocols/irc/irc.c:2479
 msgid "Password:"
-msgstr "Парола"
+msgstr "РџР°СЂРѕР»Р°"
 
 #: src/protocols/irc/irc.c:2905
 msgid "DCC Chat"
-msgstr "DCC чат"
+msgstr "DCC С‡Р°С‚"
 
 #. *< api_version
 #. *< type
@@ -1399,14 +1399,14 @@ msgstr "DCC чат"
 #: src/protocols/irc/irc.c:3011 src/protocols/irc/irc.c:3013
 #, fuzzy
 msgid "IRC Protocol Plugin"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #. Account Options
 #: src/gtkprefs.c:1145 src/protocols/irc/irc.c:3035
 #: src/protocols/jabber/jabber.c:4425 src/protocols/msn/msn.c:1259
 #: src/protocols/napster/napster.c:644 src/protocols/trepia/trepia.c:1377
 msgid "Port"
-msgstr "Порт"
+msgstr "РџРѕСЂС‚"
 
 #: src/protocols/irc/irc.c:3039
 msgid "Encoding"
@@ -1436,12 +1436,12 @@ msgstr ""
 #: src/protocols/trepia/trepia.c:1208 src/protocols/trepia/trepia.c:1264
 #, fuzzy
 msgid "Write error"
-msgstr "AOL грешка"
+msgstr "AOL РіСЂРµС€РєР°"
 
 #: src/protocols/jabber/jabber.c:981
 #, fuzzy
 msgid "Unable to change password."
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/jabber/jabber.c:982
 msgid ""
@@ -1452,7 +1452,7 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:988
 #, fuzzy
 msgid "Unable to change password"
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/jabber/jabber.c:989
 msgid ""
@@ -1463,30 +1463,30 @@ msgstr ""
 #: src/blist.c:794 src/gtkaccount.c:139 src/gtkpounce.c:307
 #: src/protocols/jabber/jabber.c:1169
 msgid "Unknown"
-msgstr "Непознато"
+msgstr "РќРµРїРѕР·РЅР°С‚Рѕ"
 
 #. once again, we don't have to put anything here
 #: src/protocols/jabber/jabber.c:1178 src/protocols/jabber/jabber.c:3436
 #: src/protocols/jabber/jabber.c:3487
 #, fuzzy
 msgid "Chatty"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/protocols/jabber/jabber.c:1180 src/protocols/jabber/jabber.c:3438
 #: src/protocols/jabber/jabber.c:3495
 msgid "Extended Away"
-msgstr "Разширено отсъствие"
+msgstr "Р Р°Р·С€РёСЂРµРЅРѕ РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/protocols/jabber/jabber.c:1182 src/protocols/jabber/jabber.c:3439
 #: src/protocols/jabber/jabber.c:3499 src/protocols/oscar/oscar.c:2819
 #: src/protocols/oscar/oscar.c:4551 src/protocols/oscar/oscar.c:5844
 msgid "Do Not Disturb"
-msgstr "Не притеснявайте"
+msgstr "РќРµ РїСЂРёС‚РµСЃРЅСЏРІР°Р№С‚Рµ"
 
 #: src/protocols/jabber/jabber.c:1421
 #, fuzzy, c-format
 msgid "Jabber Error %s"
-msgstr "Jabber грешка"
+msgstr "Jabber РіСЂРµС€РєР°"
 
 #: src/protocols/jabber/jabber.c:1528
 #, c-format
@@ -1496,12 +1496,12 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1531
 #, fuzzy
 msgid "Unknown Error in presence"
-msgstr "Непознат код на грешка."
+msgstr "РќРµРїРѕР·РЅР°С‚ РєРѕРґ РЅР° РіСЂРµС€РєР°."
 
 #: src/protocols/jabber/jabber.c:1709
 #, fuzzy, c-format
 msgid "The user %s wants to add you to their buddy list."
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/jabber/jabber.c:1737
 #, c-format
@@ -1512,46 +1512,46 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:1740
 #, fuzzy
 msgid "No such user."
-msgstr "Няма такъв потребител"
+msgstr "РќСЏРјР° С‚Р°РєСЉРІ РїРѕС‚СЂРµР±РёС‚РµР»"
 
 #. Should never happen.
 #: src/blist.c:502 src/dialogs.c:855 src/protocols/jabber/jabber.c:1831
 #: src/protocols/msn/notification.c:87 src/protocols/msn/notification.c:88
 #: src/protocols/msn/notification.c:644
 msgid "Buddies"
-msgstr "Авери"
+msgstr "РђРІРµСЂРё"
 
 #: src/protocols/jabber/jabber.c:1904
 msgid "Authenticating"
-msgstr "Автентикация"
+msgstr "РђРІС‚РµРЅС‚РёРєР°С†РёСЏ"
 
 #: src/protocols/jabber/jabber.c:1938
 msgid "Unknown login error"
-msgstr "Непозната грешка при логване"
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР° РїСЂРё Р»РѕРіРІР°РЅРµ"
 
 #: src/protocols/jabber/jabber.c:2288
 #, fuzzy
 msgid "Password successfully changed."
-msgstr "Успешна смяна на паролат"
+msgstr "РЈСЃРїРµС€РЅР° СЃРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚"
 
 #: src/protocols/jabber/jabber.c:2333 src/protocols/jabber/jabber.c:4236
 msgid "Connection lost"
-msgstr "Връзката се загуби"
+msgstr "Р’СЂСЉР·РєР°С‚Р° СЃРµ Р·Р°РіСѓР±Рё"
 
 #: src/protocols/jabber/jabber.c:2340
 msgid "Connected"
-msgstr "Свързан"
+msgstr "РЎРІСЉСЂР·Р°РЅ"
 
 #: src/protocols/jabber/jabber.c:2343
 msgid "Requesting Authentication Method"
-msgstr "Заявяване на абтентикационен метод"
+msgstr "Р—Р°СЏРІСЏРІР°РЅРµ РЅР° Р°Р±С‚РµРЅС‚РёРєР°С†РёРѕРЅРµРЅ РјРµС‚РѕРґ"
 
 #. we have no chats yet
 #: src/protocols/jabber/jabber.c:2363 src/protocols/msn/dispatch.c:164
 #: src/protocols/msn/msn.c:450 src/protocols/napster/napster.c:489
 #: src/protocols/trepia/trepia.c:1142 src/protocols/yahoo/yahoo.c:986
 msgid "Connecting"
-msgstr "Свързване"
+msgstr "РЎРІСЉСЂР·РІР°РЅРµ"
 
 #: src/protocols/jabber/jabber.c:2689
 #, c-format
@@ -1561,44 +1561,44 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:2691
 #, fuzzy
 msgid "Unable to add buddy."
-msgstr "Не мога да чета файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° С„Р°Р№Р» %s"
 
 #: src/protocols/jabber/jabber.c:2692
 msgid "Jabber Error"
-msgstr "Jabber грешка"
+msgstr "Jabber РіСЂРµС€РєР°"
 
 #: src/protocols/jabber/jabber.c:2951
 msgid "Room:"
-msgstr "Стая:"
+msgstr "РЎС‚Р°СЏ:"
 
 #: src/protocols/jabber/jabber.c:2956
 msgid "Server:"
-msgstr "Сървър:"
+msgstr "РЎСЉСЂРІСЉСЂ:"
 
 #: src/protocols/jabber/jabber.c:2962
 msgid "Handle:"
-msgstr "?Дръжач?:"
+msgstr "?Р”СЂСЉР¶Р°С‡?:"
 
 #: src/protocols/jabber/jabber.c:2992
 #, fuzzy
 msgid "Unable to join chat"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/protocols/jabber/jabber.c:3228 src/protocols/jabber/jabber.c:3279
 #: src/protocols/jabber/jabber.c:3704
 #, fuzzy
 msgid "Jabber ID"
-msgstr "Jabber грешка"
+msgstr "Jabber РіСЂРµС€РєР°"
 
 #: src/protocols/jabber/jabber.c:3229
 msgid "Error"
-msgstr "Грешка"
+msgstr "Р“СЂРµС€РєР°"
 
 #: src/protocols/jabber/jabber.c:3280 src/protocols/jabber/jabber.c:3339
 #: src/protocols/jabber/jabber.c:3350 src/protocols/jabber/jabber.c:3730
 #, fuzzy
 msgid "Status"
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/protocols/jabber/jabber.c:3350 src/protocols/jabber/jabber.c:3372
 #: src/protocols/oscar/oscar.c:5457
@@ -1608,11 +1608,11 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:3385
 #, fuzzy
 msgid "View Error Msg"
-msgstr "Архив"
+msgstr "РђСЂС…РёРІ"
 
 #: src/gtkconv.c:1099 src/protocols/jabber/jabber.c:3397
 msgid "Get Away Msg"
-msgstr "Вземи away текст"
+msgstr "Р’Р·РµРјРё away С‚РµРєСЃС‚"
 
 #: src/protocols/jabber/jabber.c:3404
 msgid "Un-hide From"
@@ -1625,12 +1625,12 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:3414
 #, fuzzy
 msgid "Cancel Presence Notification"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #: src/protocols/jabber/jabber.c:3422
 #, fuzzy
 msgid "Re-request authorization"
-msgstr "Заявяване на абтентикационен метод"
+msgstr "Р—Р°СЏРІСЏРІР°РЅРµ РЅР° Р°Р±С‚РµРЅС‚РёРєР°С†РёРѕРЅРµРЅ РјРµС‚РѕРґ"
 
 #. state is one of our own strings. it won't be NULL.
 #: src/gtkaccount.c:1577 src/protocols/jabber/jabber.c:3435
@@ -1639,23 +1639,23 @@ msgstr "Заявяване на абтентикационен метод"
 #: src/protocols/yahoo/yahoo.c:1075 src/protocols/zephyr/zephyr.c:866
 #: src/protocols/zephyr/zephyr.c:876
 msgid "Online"
-msgstr "Онлайн"
+msgstr "РћРЅР»Р°Р№РЅ"
 
 #: src/protocols/jabber/jabber.c:3625
 msgid "Full Name"
-msgstr "Пълно име"
+msgstr "РџСЉР»РЅРѕ РёРјРµ"
 
 #: src/protocols/jabber/jabber.c:3626
 msgid "Family Name"
-msgstr "Фамилно име"
+msgstr "Р¤Р°РјРёР»РЅРѕ РёРјРµ"
 
 #: src/protocols/jabber/jabber.c:3627
 msgid "Given Name"
-msgstr "Дадено име"
+msgstr "Р”Р°РґРµРЅРѕ РёРјРµ"
 
 #: src/protocols/jabber/jabber.c:3628
 msgid "Nickname"
-msgstr "Псевдоним"
+msgstr "РџСЃРµРІРґРѕРЅРёРј"
 
 #: src/dialogs.c:2896 src/protocols/jabber/jabber.c:3629
 msgid "URL"
@@ -1663,90 +1663,90 @@ msgstr "URL"
 
 #: src/protocols/jabber/jabber.c:3630
 msgid "Street Address"
-msgstr "Улица"
+msgstr "РЈР»РёС†Р°"
 
 #: src/protocols/jabber/jabber.c:3631
 msgid "Extended Address"
-msgstr "Адрес"
+msgstr "РђРґСЂРµСЃ"
 
 #: src/protocols/jabber/jabber.c:3632
 msgid "Locality"
-msgstr "?Локалност?"
+msgstr "?Р›РѕРєР°Р»РЅРѕСЃС‚?"
 
 #: src/protocols/jabber/jabber.c:3633
 msgid "Region"
-msgstr "Регион"
+msgstr "Р РµРіРёРѕРЅ"
 
 #: src/protocols/jabber/jabber.c:3634
 msgid "Postal Code"
-msgstr "Пощенски код"
+msgstr "РџРѕС‰РµРЅСЃРєРё РєРѕРґ"
 
 #. Country
 #: src/dialogs.c:2057 src/dialogs.c:2702 src/protocols/jabber/jabber.c:3635
 #: src/protocols/trepia/trepia.c:372
 msgid "Country"
-msgstr "Държава"
+msgstr "Р”СЉСЂР¶Р°РІР°"
 
 #: src/protocols/jabber/jabber.c:3636
 msgid "Telephone"
-msgstr "Телефон"
+msgstr "РўРµР»РµС„РѕРЅ"
 
 #: src/dialogs.c:2760 src/protocols/jabber/jabber.c:3637
 msgid "Email"
-msgstr "и-мейл"
+msgstr "Рё-РјРµР№Р»"
 
 #: src/protocols/jabber/jabber.c:3638
 msgid "Organization Name"
-msgstr "Име на организацията"
+msgstr "РРјРµ РЅР° РѕСЂРіР°РЅРёР·Р°С†РёСЏС‚Р°"
 
 #: src/protocols/jabber/jabber.c:3639
 msgid "Organization Unit"
-msgstr "Отдел"
+msgstr "РћС‚РґРµР»"
 
 #: src/protocols/jabber/jabber.c:3640
 msgid "Title"
-msgstr "Длъжност"
+msgstr "Р”Р»СЉР¶РЅРѕСЃС‚"
 
 #: src/protocols/jabber/jabber.c:3641
 msgid "Role"
-msgstr "Позиция"
+msgstr "РџРѕР·РёС†РёСЏ"
 
 #: src/protocols/jabber/jabber.c:3642
 msgid "Birthday"
-msgstr "Дата на раждане"
+msgstr "Р”Р°С‚Р° РЅР° СЂР°Р¶РґР°РЅРµ"
 
 #: src/dialogs.c:2906 src/gtkprefs.c:604 src/gtkprefs.c:1840
 #: src/protocols/jabber/jabber.c:3643
 msgid "Description"
-msgstr "Описание"
+msgstr "РћРїРёСЃР°РЅРёРµ"
 
 #: src/protocols/jabber/jabber.c:3668
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
 msgstr ""
-"Всички точки по-долу са незадължителни. Въведете само информациякоято желаете"
+"Р’СЃРёС‡РєРё С‚РѕС‡РєРё РїРѕ-РґРѕР»Сѓ СЃР° РЅРµР·Р°РґСЉР»Р¶РёС‚РµР»РЅРё. Р’СЉРІРµРґРµС‚Рµ СЃР°РјРѕ РёРЅС„РѕСЂРјР°С†РёСЏРєРѕСЏС‚Рѕ Р¶РµР»Р°РµС‚Рµ"
 
 #: src/protocols/jabber/jabber.c:3669
 msgid "User Identity"
-msgstr "Потребителска идентичност"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЃРєР° РёРґРµРЅС‚РёС‡РЅРѕСЃС‚"
 
 #: src/protocols/jabber/jabber.c:4098
 msgid "Gaim - Edit Jabber vCard"
-msgstr "Gaim - Редактиране на Jabber vCard"
+msgstr "Gaim - Р РµРґР°РєС‚РёСЂР°РЅРµ РЅР° Jabber vCard"
 
 #: src/protocols/jabber/jabber.c:4173
 msgid "Server Registration successful!"
-msgstr "Регистрирането в сървъра успешно!"
+msgstr "Р РµРіРёСЃС‚СЂРёСЂР°РЅРµС‚Рѕ РІ СЃСЉСЂРІСЉСЂР° СѓСЃРїРµС€РЅРѕ!"
 
 #: src/protocols/jabber/jabber.c:4194
 msgid "Unknown registration error"
-msgstr "Непозната грешка при регистрация"
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР° РїСЂРё СЂРµРіРёСЃС‚СЂР°С†РёСЏ"
 
 #: src/dialogs.c:2232 src/protocols/jabber/jabber.c:4308
 #: src/protocols/oscar/oscar.c:6098 src/protocols/toc/toc.c:1462
 msgid "Set User Info"
-msgstr "Настрока данни"
+msgstr "РќР°СЃС‚СЂРѕРєР° РґР°РЅРЅРё"
 
 #. *< api_version
 #. *< type
@@ -1765,32 +1765,32 @@ msgstr ""
 #: src/protocols/jabber/jabber.c:4421
 #, fuzzy
 msgid "Resource"
-msgstr "Подразбиране"
+msgstr "РџРѕРґСЂР°Р·Р±РёСЂР°РЅРµ"
 
 #: src/protocols/jabber/jabber.c:4429
 #, fuzzy
 msgid "Connect server"
-msgstr "Свързан"
+msgstr "РЎРІСЉСЂР·Р°РЅ"
 
 #: src/protocols/msn/dispatch.c:45 src/protocols/msn/notification.c:229
 #, fuzzy
 msgid "Protocol not supported"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #: src/protocols/msn/dispatch.c:51
 #, fuzzy
 msgid "Unable to request INF\n"
-msgstr "Не мога да отворя директна връзка"
+msgstr "РќРµ РјРѕРіР° РґР° РѕС‚РІРѕСЂСЏ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/protocols/msn/dispatch.c:68 src/protocols/msn/notification.c:252
 #, fuzzy
 msgid "Unable to login using MD5"
-msgstr "Невъзможност за логване в AIM"
+msgstr "РќРµРІСЉР·РјРѕР¶РЅРѕСЃС‚ Р·Р° Р»РѕРіРІР°РЅРµ РІ AIM"
 
 #: src/protocols/msn/dispatch.c:77
 #, fuzzy
 msgid "Unable to send USR\n"
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/protocols/msn/dispatch.c:82 src/protocols/msn/notification.c:266
 msgid "Requesting to send password"
@@ -1803,28 +1803,28 @@ msgstr ""
 #: src/protocols/msn/dispatch.c:126
 #, fuzzy
 msgid "Unable to transfer"
-msgstr "Не мога да пиша"
+msgstr "РќРµ РјРѕРіР° РґР° РїРёС€Р°"
 
 #: src/protocols/msn/dispatch.c:147
 #, fuzzy
 msgid "Unable to parse message."
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/protocols/msn/dispatch.c:171 src/protocols/msn/notification.c:407
 #: src/protocols/msn/notification.c:1385
 #, fuzzy
 msgid "Unable to write to server"
-msgstr "Не мога да се свържа със сървъра."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° СЃСЉСЃ СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/msn/dispatch.c:175 src/protocols/msn/notification.c:1392
 #, fuzzy
 msgid "Syncing with server"
-msgstr "Регистриране със сървъра"
+msgstr "Р РµРіРёСЃС‚СЂРёСЂР°РЅРµ СЃСЉСЃ СЃСЉСЂРІСЉСЂР°"
 
 #: src/protocols/msn/dispatch.c:189 src/protocols/msn/notification.c:1406
 #, fuzzy
 msgid "Error reading from server"
-msgstr "Грешка при четене от socket."
+msgstr "Р“СЂРµС€РєР° РїСЂРё С‡РµС‚РµРЅРµ РѕС‚ socket."
 
 #: src/protocols/msn/error.c:33
 msgid "Syntax Error (probably a Gaim bug)"
@@ -1837,7 +1837,7 @@ msgstr ""
 #: src/protocols/msn/error.c:40
 #, fuzzy
 msgid "Invalid User"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/msn/error.c:44
 msgid "Fully Qualified Domain Name missing"
@@ -1850,12 +1850,12 @@ msgstr ""
 #: src/protocols/msn/error.c:50
 #, fuzzy
 msgid "Invalid Username"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/msn/error.c:53
 #, fuzzy
 msgid "Invalid Friendly Name"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/msn/error.c:56
 msgid "List Full"
@@ -1868,7 +1868,7 @@ msgstr ""
 #: src/protocols/msn/error.c:62
 #, fuzzy
 msgid "Not on list"
-msgstr "Връзката се загуби"
+msgstr "Р’СЂСЉР·РєР°С‚Р° СЃРµ Р·Р°РіСѓР±Рё"
 
 #: src/protocols/msn/error.c:65
 msgid "User is offline"
@@ -1901,12 +1901,12 @@ msgstr ""
 #: src/protocols/msn/error.c:89 src/protocols/oscar/oscar.c:178
 #, fuzzy
 msgid "Not logged in"
-msgstr "%s влезе."
+msgstr "%s РІР»РµР·Рµ."
 
 #: src/protocols/msn/error.c:93
 #, fuzzy
 msgid "Internal server error"
-msgstr "Вътрешна грешка"
+msgstr "Р’СЉС‚СЂРµС€РЅР° РіСЂРµС€РєР°"
 
 #: src/protocols/msn/error.c:96
 msgid "Database server error"
@@ -1915,12 +1915,12 @@ msgstr ""
 #: src/protocols/msn/error.c:99
 #, fuzzy
 msgid "File operation error"
-msgstr "вътрешна грешка на връзката\n"
+msgstr "РІСЉС‚СЂРµС€РЅР° РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р°\n"
 
 #: src/protocols/msn/error.c:102
 #, fuzzy
 msgid "Memory allocation error"
-msgstr "основна грешка на връзката\n"
+msgstr "РѕСЃРЅРѕРІРЅР° РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р°\n"
 
 #: src/protocols/msn/error.c:105
 msgid "Wrong CHL value sent to server"
@@ -1929,12 +1929,12 @@ msgstr ""
 #: src/protocols/msn/error.c:109
 #, fuzzy
 msgid "Server busy"
-msgstr "Сървър:"
+msgstr "РЎСЉСЂРІСЉСЂ:"
 
 #: src/protocols/msn/error.c:112
 #, fuzzy
 msgid "Server unavailable"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/msn/error.c:115
 msgid "Peer Notification server down"
@@ -1943,7 +1943,7 @@ msgstr ""
 #: src/protocols/msn/error.c:118
 #, fuzzy
 msgid "Database connect error"
-msgstr "вътрешна грешка на връзката\n"
+msgstr "РІСЉС‚СЂРµС€РЅР° РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р°\n"
 
 #: src/protocols/msn/error.c:122
 msgid "Server is going down (abandon ship)"
@@ -1952,7 +1952,7 @@ msgstr ""
 #: src/protocols/msn/error.c:126
 #, fuzzy
 msgid "Error creating connection"
-msgstr "g003: Грешка при отваряне на връзка.\n"
+msgstr "g003: Р“СЂРµС€РєР° РїСЂРё РѕС‚РІР°СЂСЏРЅРµ РЅР° РІСЂСЉР·РєР°.\n"
 
 #: src/protocols/msn/error.c:130
 msgid "CVR parameters are either unknown or not allowed"
@@ -1969,7 +1969,7 @@ msgstr ""
 #: src/protocols/msn/error.c:142
 #, fuzzy
 msgid "Too many sessions"
-msgstr "Прекалено много съвпадения."
+msgstr "РџСЂРµРєР°Р»РµРЅРѕ РјРЅРѕРіРѕ СЃСЉРІРїР°РґРµРЅРёСЏ."
 
 #: src/protocols/msn/error.c:145
 msgid "Not expected"
@@ -1982,12 +1982,12 @@ msgstr ""
 #: src/protocols/msn/error.c:152
 #, fuzzy
 msgid "Authentication failed"
-msgstr "Аудентикацията пропадна."
+msgstr "РђСѓРґРµРЅС‚РёРєР°С†РёСЏС‚Р° РїСЂРѕРїР°РґРЅР°."
 
 #: src/protocols/msn/error.c:155
 #, fuzzy
 msgid "Not allowed when offline"
-msgstr "Без звук при мое влизане"
+msgstr "Р‘РµР· Р·РІСѓРє РїСЂРё РјРѕРµ РІР»РёР·Р°РЅРµ"
 
 #: src/protocols/msn/error.c:158
 msgid "Not accepting new users"
@@ -2000,7 +2000,7 @@ msgstr ""
 #: src/protocols/msn/error.c:166
 #, fuzzy, c-format
 msgid "Unknown Error Code %d"
-msgstr "Непознат код на грешка."
+msgstr "РќРµРїРѕР·РЅР°С‚ РєРѕРґ РЅР° РіСЂРµС€РєР°."
 
 #: src/protocols/msn/msn.c:60
 msgid "Your new MSN friendly name is too long."
@@ -2009,7 +2009,7 @@ msgstr ""
 #: src/protocols/msn/msn.c:166
 #, fuzzy
 msgid "Set your friendly name."
-msgstr "Бащино Име"
+msgstr "Р‘Р°С‰РёРЅРѕ РРјРµ"
 
 #: src/protocols/msn/msn.c:167
 msgid "This is the name that other MSN buddies will see you as."
@@ -2040,7 +2040,7 @@ msgstr ""
 #: src/protocols/msn/msn.c:215
 #, fuzzy
 msgid "Allow"
-msgstr "Позволен лист"
+msgstr "РџРѕР·РІРѕР»РµРЅ Р»РёСЃС‚"
 
 #: src/protocols/msn/msn.c:216
 msgid "Disallow"
@@ -2049,22 +2049,22 @@ msgstr ""
 #: src/protocols/msn/msn.c:233
 #, fuzzy
 msgid "Send a mobile message."
-msgstr "Изпрати като съобщение"
+msgstr "РР·РїСЂР°С‚Рё РєР°С‚Рѕ СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/protocols/msn/msn.c:235
 #, fuzzy
 msgid "Page"
-msgstr "Образ"
+msgstr "РћР±СЂР°Р·"
 
 #: src/about.c:151 src/dialogs.c:4231 src/gtkrequest.c:173
 #: src/protocols/msn/msn.c:236 src/server.c:1458
 msgid "Close"
-msgstr "Затваряне"
+msgstr "Р—Р°С‚РІР°СЂСЏРЅРµ"
 
 #: src/protocols/msn/msn.c:324 src/protocols/yahoo/yahoo.c:1126
 #, fuzzy, c-format
 msgid "<b>Status:</b> %s"
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/protocols/msn/msn.c:337 src/protocols/msn/msn.c:592
 #: src/protocols/msn/state.c:32
@@ -2082,7 +2082,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1263 src/protocols/yahoo/yahoo.c:1338
 #, fuzzy
 msgid "Busy"
-msgstr "Авер"
+msgstr "РђРІРµСЂ"
 
 #: src/protocols/msn/msn.c:340 src/protocols/msn/msn.c:598
 #: src/protocols/msn/state.c:33 src/protocols/yahoo/yahoo.c:1063
@@ -2100,12 +2100,12 @@ msgstr ""
 #: src/protocols/zephyr/zephyr.c:863 src/protocols/zephyr/zephyr.c:878
 #, fuzzy
 msgid "Hidden"
-msgstr "Криене на икона"
+msgstr "РљСЂРёРµРЅРµ РЅР° РёРєРѕРЅР°"
 
 #: src/protocols/msn/msn.c:354
 #, fuzzy
 msgid "Set Friendly Name"
-msgstr "Бащино Име"
+msgstr "Р‘Р°С‰РёРЅРѕ РРјРµ"
 
 #: src/protocols/msn/msn.c:362
 msgid "Set Home Phone Number"
@@ -2130,12 +2130,12 @@ msgstr ""
 #: src/protocols/msn/msn.c:413
 #, fuzzy
 msgid "Send to Mobile"
-msgstr "Прати файл"
+msgstr "РџСЂР°С‚Рё С„Р°Р№Р»"
 
 #: src/protocols/msn/msn.c:422
 #, fuzzy
 msgid "Initiate Chat"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #: src/protocols/msn/msn.c:696
 #, c-format
@@ -2147,7 +2147,7 @@ msgstr ""
 #: src/protocols/msn/msn.c:700 src/protocols/msn/msn.c:740
 #, fuzzy
 msgid "Invalid MSN screenname"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/msn/msn.c:736
 #, c-format
@@ -2169,56 +2169,56 @@ msgstr ""
 #: src/protocols/msn/msn.c:1235 src/protocols/msn/msn.c:1237
 #, fuzzy
 msgid "MSN Protocol Plugin"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #: src/protocols/msn/msn.c:1254 src/protocols/trepia/trepia.c:1372
 #, fuzzy
 msgid "Login server"
-msgstr "Грешка при влизане"
+msgstr "Р“СЂРµС€РєР° РїСЂРё РІР»РёР·Р°РЅРµ"
 
 #: src/protocols/msn/notification.c:235
 #, fuzzy
 msgid "Unable to request INF"
-msgstr "Не мога да отворя директна връзка"
+msgstr "РќРµ РјРѕРіР° РґР° РѕС‚РІРѕСЂСЏ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/protocols/msn/notification.c:261
 #, fuzzy
 msgid "Unable to send USR"
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/protocols/msn/notification.c:297 src/protocols/trepia/trepia.c:719
 #, fuzzy
 msgid "Retrieving buddy list"
-msgstr "Премахване на '%s' от листа.\n"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ РЅР° '%s' РѕС‚ Р»РёСЃС‚Р°.\n"
 
 #: src/protocols/msn/notification.c:323
 #, fuzzy
 msgid "Unable to send password"
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/msn/notification.c:328
 #, fuzzy
 msgid "Password sent"
-msgstr "Парола:"
+msgstr "РџР°СЂРѕР»Р°:"
 
 #: src/protocols/msn/notification.c:346
 msgid "You have been disconnected. You have signed on from another location."
-msgstr "Бяхте разкачени. Влезли сте от друго място."
+msgstr "Р‘СЏС…С‚Рµ СЂР°Р·РєР°С‡РµРЅРё. Р’Р»РµР·Р»Рё СЃС‚Рµ РѕС‚ РґСЂСѓРіРѕ РјСЏСЃС‚Рѕ."
 
 #: src/protocols/msn/notification.c:351
 #, fuzzy
 msgid "You have been disconnected. The MSN servers are going down temporarily."
-msgstr "Бяхте разкачени. Влезли сте от друго място."
+msgstr "Р‘СЏС…С‚Рµ СЂР°Р·РєР°С‡РµРЅРё. Р’Р»РµР·Р»Рё СЃС‚Рµ РѕС‚ РґСЂСѓРіРѕ РјСЏСЃС‚Рѕ."
 
 #: src/protocols/msn/notification.c:462
 #, fuzzy, c-format
 msgid "The user %s (%s) wants to add %s to his or her buddy list."
-msgstr "%s%s%s%s направи %s техен контакт %s%s%s"
+msgstr "%s%s%s%s РЅР°РїСЂР°РІРё %s С‚РµС…РµРЅ РєРѕРЅС‚Р°РєС‚ %s%s%s"
 
 #: src/protocols/msn/notification.c:741
 #, fuzzy, c-format
 msgid "The user %s (%s) wants to add you to their buddy list."
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/msn/notification.c:1168
 msgid "Got invalid XFR"
@@ -2227,7 +2227,7 @@ msgstr ""
 #: src/protocols/msn/notification.c:1210
 #, fuzzy
 msgid "Unable to transfer to notification server"
-msgstr "Не мога да се свържа със сървъра."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° СЃСЉСЃ СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/msn/notification.c:1346
 #, c-format
@@ -2244,7 +2244,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1073
 #, fuzzy
 msgid "Idle"
-msgstr "Бездейства:"
+msgstr "Р‘РµР·РґРµР№СЃС‚РІР°:"
 
 #: src/protocols/msn/switchboard.c:121
 msgid "The conversation has become inactive and timed out."
@@ -2262,7 +2262,7 @@ msgstr ""
 #: src/protocols/napster/napster.c:232
 #, fuzzy
 msgid "Unable to read header from server"
-msgstr "Не мога да се свържа със сървъра."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° СЃСЉСЃ СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/napster/napster.c:307
 #, c-format
@@ -2278,20 +2278,20 @@ msgstr ""
 #: src/protocols/napster/napster.c:326
 #, fuzzy
 msgid "You were disconnected from the server."
-msgstr "Прекъснати сте от стаята за разговори %s."
+msgstr "РџСЂРµРєСЉСЃРЅР°С‚Рё СЃС‚Рµ РѕС‚ СЃС‚Р°СЏС‚Р° Р·Р° СЂР°Р·РіРѕРІРѕСЂРё %s."
 
 #. MSG_CLIENT_WHOIS
 #: src/protocols/napster/napster.c:382
 #, fuzzy, c-format
 msgid "%s requested your information"
-msgstr "Потребителя няма данни в директорията."
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏ РЅСЏРјР° РґР°РЅРЅРё РІ РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°."
 
 #: src/protocols/napster/napster.c:412
 #, fuzzy
 msgid ""
 "You were disconnected from the server, because you logged on from a "
 "different location"
-msgstr "Бяхте разкачени. Влезли сте от друго място."
+msgstr "Р‘СЏС…С‚Рµ СЂР°Р·РєР°С‡РµРЅРё. Р’Р»РµР·Р»Рё СЃС‚Рµ РѕС‚ РґСЂСѓРіРѕ РјСЏСЃС‚Рѕ."
 
 #. MSG_CLIENT_PING
 #: src/protocols/napster/napster.c:418
@@ -2301,12 +2301,12 @@ msgstr ""
 
 #: src/gtkblist.c:1573 src/protocols/napster/napster.c:531
 msgid "Get Info"
-msgstr "Данни"
+msgstr "Р”Р°РЅРЅРё"
 
 #: src/protocols/napster/napster.c:545 src/protocols/oscar/oscar.c:5168
 #: src/protocols/toc/toc.c:1201
 msgid "Join what group:"
-msgstr "Присъединяване към група:"
+msgstr "РџСЂРёСЃСЉРµРґРёРЅСЏРІР°РЅРµ РєСЉРј РіСЂСѓРїР°:"
 
 #. *< api_version
 #. *< type
@@ -2325,12 +2325,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:174
 #, fuzzy
 msgid "Invalid error"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/oscar/oscar.c:175
 #, fuzzy
 msgid "Invalid SNAC"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/oscar/oscar.c:176
 msgid "Rate to host"
@@ -2343,7 +2343,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:179
 #, fuzzy
 msgid "Service unavailable"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/oscar/oscar.c:180
 msgid "Service not defined"
@@ -2400,7 +2400,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:193
 #, fuzzy
 msgid "User temporarily unavailable"
-msgstr "Dir service временно недостъпен."
+msgstr "Dir service РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СЉРїРµРЅ."
 
 #: src/protocols/oscar/oscar.c:194
 msgid "No match"
@@ -2425,42 +2425,42 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:470
 #, c-format
 msgid "Direct IM with %s closed"
-msgstr "Директни съобщения с %s затворени"
+msgstr "Р”РёСЂРµРєС‚РЅРё СЃСЉРѕР±С‰РµРЅРёСЏ СЃ %s Р·Р°С‚РІРѕСЂРµРЅРё"
 
 #: src/protocols/oscar/oscar.c:472
 #, c-format
 msgid "Direct IM with %s failed"
-msgstr "Директното съобщение с %s пропадна"
+msgstr "Р”РёСЂРµРєС‚РЅРѕС‚Рѕ СЃСЉРѕР±С‰РµРЅРёРµ СЃ %s РїСЂРѕРїР°РґРЅР°"
 
 #: src/protocols/oscar/oscar.c:530 src/protocols/toc/toc.c:608
 #: src/protocols/toc/toc.c:623 src/protocols/toc/toc.c:686
 msgid "Disconnected."
-msgstr "Прекиснати сте."
+msgstr "РџСЂРµРєРёСЃРЅР°С‚Рё СЃС‚Рµ."
 
 #: src/protocols/oscar/oscar.c:542 src/protocols/toc/toc.c:862
 #, c-format
 msgid "You have been disconnected from chat room %s."
-msgstr "Прекъснати сте от стаята за разговори %s."
+msgstr "РџСЂРµРєСЉСЃРЅР°С‚Рё СЃС‚Рµ РѕС‚ СЃС‚Р°СЏС‚Р° Р·Р° СЂР°Р·РіРѕРІРѕСЂРё %s."
 
 #: src/protocols/oscar/oscar.c:558
 msgid "Chat is currently unavailable"
-msgstr "Чат-а е текущо недостъпен"
+msgstr "Р§Р°С‚-Р° Рµ С‚РµРєСѓС‰Рѕ РЅРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/oscar/oscar.c:632 src/protocols/oscar/oscar.c:689
 msgid "Couldn't connect to host"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/protocols/oscar/oscar.c:674
 msgid "Unable to login to AIM"
-msgstr "Невъзможност за логване в AIM"
+msgstr "РќРµРІСЉР·РјРѕР¶РЅРѕСЃС‚ Р·Р° Р»РѕРіРІР°РЅРµ РІ AIM"
 
 #: src/protocols/oscar/oscar.c:783 src/protocols/oscar/oscar.c:1169
 msgid "Could Not Connect"
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/protocols/oscar/oscar.c:790
 msgid "Connection established, cookie sent"
-msgstr "Връзката установена, изпратено е cookie"
+msgstr "Р’СЂСЉР·РєР°С‚Р° СѓСЃС‚Р°РЅРѕРІРµРЅР°, РёР·РїСЂР°С‚РµРЅРѕ Рµ cookie"
 
 #: src/protocols/oscar/oscar.c:857 src/protocols/oscar/oscar.c:870
 #: src/protocols/oscar/oscar.c:875
@@ -2470,33 +2470,33 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:858
 #, fuzzy
 msgid "Unable to establish listener socket."
-msgstr "Не мога да чета от socket"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° РѕС‚ socket"
 
 #: src/protocols/oscar/oscar.c:871
 #, fuzzy
 msgid "Unable to establish file descriptor."
-msgstr "Не мога да чета файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° С„Р°Р№Р» %s"
 
 #: src/protocols/oscar/oscar.c:876
 #, fuzzy
 msgid "Unable to create new connection."
-msgstr "Не мога да се свържа."
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°."
 
 #. Incorrect nick/password
 #: src/protocols/oscar/oscar.c:1058 src/protocols/toc/toc.c:555
 msgid "Incorrect nickname or password."
-msgstr "Грешен псевдоним или парола."
+msgstr "Р“СЂРµС€РµРЅ РїСЃРµРІРґРѕРЅРёРј РёР»Рё РїР°СЂРѕР»Р°."
 
 #. Suspended account
 #: src/protocols/oscar/oscar.c:1062
 msgid "Your account is currently suspended."
-msgstr "Акаунта Ви е текущо замразен."
+msgstr "РђРєР°СѓРЅС‚Р° Р’Рё Рµ С‚РµРєСѓС‰Рѕ Р·Р°РјСЂР°Р·РµРЅ."
 
 #. service temporarily unavailable
 #: src/protocols/oscar/oscar.c:1066
 #, fuzzy
 msgid "The AOL Instant Messenger service is temporarily unavailable."
-msgstr "Услугата е временно недостъпна."
+msgstr "РЈСЃР»СѓРіР°С‚Р° Рµ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СЉРїРЅР°."
 
 #. connecting too frequently
 #: src/protocols/oscar/oscar.c:1070
@@ -2504,22 +2504,22 @@ msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
 msgstr ""
-"Свързвате се прекалено често. Изчакайте 10 мин и опитайте пак. "
-"Акопродължитеда се опитвате, ще трябва да чакате дори повече."
+"РЎРІСЉСЂР·РІР°С‚Рµ СЃРµ РїСЂРµРєР°Р»РµРЅРѕ С‡РµСЃС‚Рѕ. РР·С‡Р°РєР°Р№С‚Рµ 10 РјРёРЅ Рё РѕРїРёС‚Р°Р№С‚Рµ РїР°Рє. "
+"РђРєРѕРїСЂРѕРґСЉР»Р¶РёС‚РµРґР° СЃРµ РѕРїРёС‚РІР°С‚Рµ, С‰Рµ С‚СЂСЏР±РІР° РґР° С‡Р°РєР°С‚Рµ РґРѕСЂРё РїРѕРІРµС‡Рµ."
 
 #. client too old
 #: src/protocols/oscar/oscar.c:1074
 #, fuzzy, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
-msgstr "Версията на клиента е прекалено стара. Моля обновете."
+msgstr "Р’РµСЂСЃРёСЏС‚Р° РЅР° РєР»РёРµРЅС‚Р° Рµ РїСЂРµРєР°Р»РµРЅРѕ СЃС‚Р°СЂР°. РњРѕР»СЏ РѕР±РЅРѕРІРµС‚Рµ."
 
 #: src/protocols/oscar/oscar.c:1078 src/protocols/toc/toc.c:640
 msgid "Authentication Failed"
-msgstr "Оторизирането пропадна"
+msgstr "РћС‚РѕСЂРёР·РёСЂР°РЅРµС‚Рѕ РїСЂРѕРїР°РґРЅР°"
 
 #: src/protocols/oscar/oscar.c:1106
 msgid "Internal Error"
-msgstr "Вътрешна грешка"
+msgstr "Р’СЉС‚СЂРµС€РЅР° РіСЂРµС€РєР°"
 
 #: src/protocols/oscar/oscar.c:1208 src/protocols/oscar/oscar.c:1238
 #: src/protocols/oscar/oscar.c:1326
@@ -2532,17 +2532,17 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:1211 src/protocols/oscar/oscar.c:1241
 #, fuzzy
 msgid "Gaim was Unable to get a valid AIM login hash."
-msgstr "Gaim не успя да изпрати съобщение"
+msgstr "Gaim РЅРµ СѓСЃРїСЏ РґР° РёР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/protocols/oscar/oscar.c:1329
 #, fuzzy
 msgid "Gaim was Unable to get a valid login hash."
-msgstr "Gaim не успя да изпрати съобщение"
+msgstr "Gaim РЅРµ СѓСЃРїСЏ РґР° РёР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/protocols/oscar/oscar.c:1898 src/protocols/oscar/oscar.c:5558
 #, c-format
 msgid "Direct IM with %s established"
-msgstr "Диретно съобщение с %s установено"
+msgstr "Р”РёСЂРµС‚РЅРѕ СЃСЉРѕР±С‰РµРЅРёРµ СЃ %s СѓСЃС‚Р°РЅРѕРІРµРЅРѕ"
 
 #: src/protocols/oscar/oscar.c:2227 src/protocols/oscar/oscar.c:2249
 msgid "(There was an error receiving this message)"
@@ -2563,12 +2563,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2430
 #, fuzzy
 msgid "Please authorize me so I can add you to my buddy list."
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:2438
 #, fuzzy
 msgid "Authorization Request Message:"
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #: src/protocols/oscar/oscar.c:2439
 msgid "Please authorize me!"
@@ -2584,7 +2584,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2472 src/protocols/oscar/oscar.c:2474
 #, fuzzy
 msgid "Request Authorization"
-msgstr "Заявяване на абтентикационен метод"
+msgstr "Р—Р°СЏРІСЏРІР°РЅРµ РЅР° Р°Р±С‚РµРЅС‚РёРєР°С†РёРѕРЅРµРЅ РјРµС‚РѕРґ"
 
 #: src/protocols/oscar/oscar.c:2510 src/protocols/oscar/oscar.c:2512
 #: src/protocols/oscar/oscar.c:2519 src/protocols/oscar/oscar.c:2591
@@ -2592,24 +2592,24 @@ msgstr "Заявяване на абтентикационен метод"
 #: src/protocols/oscar/oscar.c:3038 src/protocols/oscar/oscar.c:5089
 #: src/protocols/oscar/oscar.c:5135
 msgid "No reason given."
-msgstr "Не е дадена причина."
+msgstr "РќРµ Рµ РґР°РґРµРЅР° РїСЂРёС‡РёРЅР°."
 
 #: src/protocols/oscar/oscar.c:2518
 #, fuzzy
 msgid "Authorization Denied Message:"
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #: src/protocols/oscar/oscar.c:2591
 #, fuzzy, c-format
 msgid ""
 "The user %u wants to add you to their buddy list for the following reason:\n"
 "%s"
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:2599 src/protocols/oscar/oscar.c:5095
 #, fuzzy
 msgid "Authorization Request"
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #: src/protocols/oscar/oscar.c:2611
 #, fuzzy, c-format
@@ -2618,19 +2618,19 @@ msgid ""
 "following reason:\n"
 "%s"
 msgstr ""
-"Потребителят %d оказа да го добавите в листата поради:\n"
+"РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РѕРєР°Р·Р° РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р° РїРѕСЂР°РґРё:\n"
 "\n"
 
 #: src/protocols/oscar/oscar.c:2612
 #, fuzzy
 msgid "ICQ authorization denied."
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #. Someone has granted you authorization
 #: src/protocols/oscar/oscar.c:2619
 #, fuzzy, c-format
 msgid "The user %u has granted your request to add them to your contact list."
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:2627
 #, c-format
@@ -2670,26 +2670,26 @@ msgid "Do you want to add this contact to your Buddy List?"
 msgstr ""
 "\n"
 "\n"
-"Искате ли да ги добавите към листата?"
+"РСЃРєР°С‚Рµ Р»Рё РґР° РіРё РґРѕР±Р°РІРёС‚Рµ РєСЉРј Р»РёСЃС‚Р°С‚Р°?"
 
 #: src/protocols/oscar/oscar.c:2674
 #, fuzzy
 msgid "Decline"
-msgstr "Подчертан"
+msgstr "РџРѕРґС‡РµСЂС‚Р°РЅ"
 
 #: src/protocols/oscar/oscar.c:2756
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
-msgstr[0] "Изпуснахте %d събщение от %s, защото беше неправилно."
-msgstr[1] "Изпуснахте %d събщение от %s, защото беше неправилно."
+msgstr[0] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РЅРµРїСЂР°РІРёР»РЅРѕ."
+msgstr[1] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РЅРµРїСЂР°РІРёР»РЅРѕ."
 
 #: src/protocols/oscar/oscar.c:2765
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
-msgstr[0] "Изпуснахте %d събщение от %s, защото беше прекалено голямо."
-msgstr[1] "Изпуснахте %d събщение от %s, защото беше прекалено голямо."
+msgstr[0] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ."
+msgstr[1] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ."
 
 #: src/protocols/oscar/oscar.c:2774
 #, fuzzy, c-format
@@ -2698,30 +2698,30 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
-"Изпуснахте %d събщение от %s, защото границата на нивото е прехвълена."
+"РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ РіСЂР°РЅРёС†Р°С‚Р° РЅР° РЅРёРІРѕС‚Рѕ Рµ РїСЂРµС…РІСЉР»РµРЅР°."
 msgstr[1] ""
-"Изпуснахте %d събщение от %s, защото границата на нивото е прехвълена."
+"РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ РіСЂР°РЅРёС†Р°С‚Р° РЅР° РЅРёРІРѕС‚Рѕ Рµ РїСЂРµС…РІСЉР»РµРЅР°."
 
 #: src/protocols/oscar/oscar.c:2783
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
-msgstr[0] "Изпуснахте %d събщение от %s,  защото беше прекалено зло."
-msgstr[1] "Изпуснахте %d събщение от %s,  защото беше прекалено зло."
+msgstr[0] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s,  Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·Р»Рѕ."
+msgstr[1] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s,  Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·Р»Рѕ."
 
 #: src/protocols/oscar/oscar.c:2792
 #, fuzzy, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
-msgstr[0] "Изпуснахте %d събщение от %s,  защото сте прекалено зъл."
-msgstr[1] "Изпуснахте %d събщение от %s,  защото сте прекалено зъл."
+msgstr[0] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s,  Р·Р°С‰РѕС‚Рѕ СЃС‚Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·СЉР»."
+msgstr[1] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s,  Р·Р°С‰РѕС‚Рѕ СЃС‚Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·СЉР»."
 
 #: src/protocols/oscar/oscar.c:2801
 #, fuzzy, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
-msgstr[0] "Изпуснахте %d събщение от %s по незнайни причини."
-msgstr[1] "Изпуснахте %d събщение от %s по незнайни причини."
+msgstr[0] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s РїРѕ РЅРµР·РЅР°Р№РЅРё РїСЂРёС‡РёРЅРё."
+msgstr[1] "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s РїРѕ РЅРµР·РЅР°Р№РЅРё РїСЂРёС‡РёРЅРё."
 
 #: src/protocols/oscar/oscar.c:2817 src/protocols/oscar/oscar.c:4560
 #: src/protocols/oscar/oscar.c:5847
@@ -2732,7 +2732,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5845
 #, fuzzy
 msgid "Not Available"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/oscar/oscar.c:2823 src/protocols/oscar/oscar.c:4557
 #: src/protocols/oscar/oscar.c:5846
@@ -2751,56 +2751,56 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:2889
 #, fuzzy, c-format
 msgid "<B>Status:</B> %s<HR>%s"
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/protocols/oscar/oscar.c:2948
 #, c-format
 msgid "SNAC threw error: %s\n"
-msgstr "SNAC изхвърляща грешка: %s\n"
+msgstr "SNAC РёР·С…РІСЉСЂР»СЏС‰Р° РіСЂРµС€РєР°: %s\n"
 
 #: src/protocols/oscar/oscar.c:2949
 #, fuzzy
 msgid "Unknown error"
-msgstr "Непозната грешка при логване"
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР° РїСЂРё Р»РѕРіРІР°РЅРµ"
 
 #. Data is assumed to be the destination sn
 #: src/protocols/oscar/oscar.c:2984
 #, fuzzy, c-format
 msgid "Your message to %s did not get sent:"
-msgstr "Съобщението до %s не се изпрати: %s"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РґРѕ %s РЅРµ СЃРµ РёР·РїСЂР°С‚Рё: %s"
 
 #: src/protocols/oscar/oscar.c:3036
 #, fuzzy, c-format
 msgid "User information for %s unavailable:"
-msgstr "Потребителската информация за %s недостъпна: %s"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЃРєР°С‚Р° РёРЅС„РѕСЂРјР°С†РёСЏ Р·Р° %s РЅРµРґРѕСЃС‚СЉРїРЅР°: %s"
 
 #: src/gtkaccount.c:277 src/protocols/oscar/oscar.c:3070
 msgid "Buddy Icon"
-msgstr "Икона"
+msgstr "РРєРѕРЅР°"
 
 #: src/protocols/oscar/oscar.c:3073
 msgid "Voice"
-msgstr "Глас"
+msgstr "Р“Р»Р°СЃ"
 
 #: src/protocols/oscar/oscar.c:3076 src/protocols/oscar/oscar.c:5876
 msgid "Direct IM"
-msgstr "Директна връзка"
+msgstr "Р”РёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/gtkblist.c:1582 src/protocols/oscar/oscar.c:3079
 msgid "Chat"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/protocols/oscar/oscar.c:3082 src/protocols/oscar/oscar.c:5892
 msgid "Get File"
-msgstr "Вземи файл"
+msgstr "Р’Р·РµРјРё С„Р°Р№Р»"
 
 #: src/protocols/oscar/oscar.c:3085 src/protocols/oscar/oscar.c:5884
 msgid "Send File"
-msgstr "Прати файл"
+msgstr "РџСЂР°С‚Рё С„Р°Р№Р»"
 
 #: src/protocols/oscar/oscar.c:3089
 msgid "Games"
-msgstr "Игри"
+msgstr "РРіСЂРё"
 
 #: src/protocols/oscar/oscar.c:3092
 msgid "Add-Ins"
@@ -2808,7 +2808,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:3095
 msgid "Send Buddy List"
-msgstr "Изпрати листата"
+msgstr "РР·РїСЂР°С‚Рё Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:3098
 msgid "EveryBuddy Bug"
@@ -2816,7 +2816,7 @@ msgstr "EveryBuddy Bug"
 
 #: src/protocols/oscar/oscar.c:3101
 msgid "AP User"
-msgstr "AP потребител"
+msgstr "AP РїРѕС‚СЂРµР±РёС‚РµР»"
 
 #: src/protocols/oscar/oscar.c:3104
 msgid "ICQ RTF"
@@ -2824,19 +2824,19 @@ msgstr "ICQ RTF"
 
 #: src/protocols/oscar/oscar.c:3107
 msgid "Nihilist"
-msgstr "Нихилист"
+msgstr "РќРёС…РёР»РёСЃС‚"
 
 #: src/protocols/oscar/oscar.c:3110
 msgid "ICQ Server Relay"
-msgstr "Предаване през ICQ Server"
+msgstr "РџСЂРµРґР°РІР°РЅРµ РїСЂРµР· ICQ Server"
 
 #: src/protocols/oscar/oscar.c:3113
 msgid "ICQ Unknown"
-msgstr "ICQ непознато"
+msgstr "ICQ РЅРµРїРѕР·РЅР°С‚Рѕ"
 
 #: src/protocols/oscar/oscar.c:3116
 msgid "Trillian Encryption"
-msgstr "Кодиране Trillian"
+msgstr "РљРѕРґРёСЂР°РЅРµ Trillian"
 
 #: src/protocols/oscar/oscar.c:3119
 #, fuzzy
@@ -2876,27 +2876,27 @@ msgid ""
 "%s%s%s\n"
 "<hr>\n"
 msgstr ""
-"Потребителско име:<B>%s</B. %s <BR>\n"
-"Ниво на предупрежение:<B>%d %%</B><BR>\n"
+"РџРѕС‚СЂРµР±РёС‚РµР»СЃРєРѕ РёРјРµ:<B>%s</B. %s <BR>\n"
+"РќРёРІРѕ РЅР° РїСЂРµРґСѓРїСЂРµР¶РµРЅРёРµ:<B>%d %%</B><BR>\n"
 "%s%s%s<BR>\n"
 "<HR><BR>\n"
 
 #: src/protocols/oscar/oscar.c:3214
 msgid "<i>User has no away message</i>"
-msgstr "<i>Потребителя няма съобщение за отсъствие</i>"
+msgstr "<i>РџРѕС‚СЂРµР±РёС‚РµР»СЏ РЅСЏРјР° СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ</i>"
 
 #: src/protocols/oscar/oscar.c:3225
 msgid "Client Capabilities: "
-msgstr "Възможности на клиента:"
+msgstr "Р’СЉР·РјРѕР¶РЅРѕСЃС‚Рё РЅР° РєР»РёРµРЅС‚Р°:"
 
 #: src/protocols/oscar/oscar.c:3231
 msgid "<i>No Information Provided</i>"
-msgstr "<i>Няма дадена информация</i>"
+msgstr "<i>РќСЏРјР° РґР°РґРµРЅР° РёРЅС„РѕСЂРјР°С†РёСЏ</i>"
 
 #: src/protocols/oscar/oscar.c:3255
 #, fuzzy
 msgid "Your AIM connection may be lost."
-msgstr "Връзката може да бъде прекъсната."
+msgstr "Р’СЂСЉР·РєР°С‚Р° РјРѕР¶Рµ РґР° Р±СЉРґРµ РїСЂРµРєСЉСЃРЅР°С‚Р°."
 
 #: src/protocols/oscar/oscar.c:3642
 msgid "Rate limiting error."
@@ -2908,20 +2908,20 @@ msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
 msgstr ""
-"Съобщението не можа да бъде изпратено защото сте надхвърлили лимита. "
-"Моляопитайте след 10 сек."
+"РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РЅРµ РјРѕР¶Р° РґР° Р±СЉРґРµ РёР·РїСЂР°С‚РµРЅРѕ Р·Р°С‰РѕС‚Рѕ СЃС‚Рµ РЅР°РґС…РІСЉСЂР»РёР»Рё Р»РёРјРёС‚Р°. "
+"РњРѕР»СЏРѕРїРёС‚Р°Р№С‚Рµ СЃР»РµРґ 10 СЃРµРє."
 
 #: src/protocols/oscar/oscar.c:3704
 #, fuzzy
 msgid ""
 "You have been disconnected because you have signed on with this screen name "
 "at another location."
-msgstr "Бяхте разкачени. Влезли сте от друго място."
+msgstr "Р‘СЏС…С‚Рµ СЂР°Р·РєР°С‡РµРЅРё. Р’Р»РµР·Р»Рё СЃС‚Рµ РѕС‚ РґСЂСѓРіРѕ РјСЏСЃС‚Рѕ."
 
 #: src/protocols/oscar/oscar.c:3706
 #, fuzzy
 msgid "You have been signed off for an unknown reason."
-msgstr "Изпуснахте %d събщение от %s по незнайни причини."
+msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s РїРѕ РЅРµР·РЅР°Р№РЅРё РїСЂРёС‡РёРЅРё."
 
 #: src/protocols/oscar/oscar.c:3934
 #, fuzzy
@@ -2931,12 +2931,12 @@ msgstr "UIN"
 #: src/protocols/oscar/oscar.c:3939
 #, fuzzy
 msgid "First Name:"
-msgstr "Име"
+msgstr "РРјРµ"
 
 #: src/protocols/oscar/oscar.c:3942
 #, fuzzy
 msgid "Last Name:"
-msgstr "Фамилно име"
+msgstr "Р¤Р°РјРёР»РЅРѕ РёРјРµ"
 
 #: src/protocols/oscar/oscar.c:3945 src/protocols/oscar/oscar.c:3951
 msgid "Email Address:"
@@ -2949,7 +2949,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3959
 #, fuzzy
 msgid "Gender:"
-msgstr "Основни"
+msgstr "РћСЃРЅРѕРІРЅРё"
 
 #: src/protocols/oscar/oscar.c:3959 src/protocols/trepia/trepia.c:314
 msgid "Female"
@@ -2962,7 +2962,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3968
 #, fuzzy
 msgid "Birthday:"
-msgstr "Дата на раждане"
+msgstr "Р”Р°С‚Р° РЅР° СЂР°Р¶РґР°РЅРµ"
 
 #: src/protocols/oscar/oscar.c:3973
 msgid "Age:"
@@ -2975,27 +2975,27 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3979
 #, fuzzy
 msgid "Additional Information:"
-msgstr "Регистрационна инфо"
+msgstr "Р РµРіРёСЃС‚СЂР°С†РёРѕРЅРЅР° РёРЅС„Рѕ"
 
 #: src/protocols/oscar/oscar.c:3983
 #, fuzzy
 msgid "Home Address:"
-msgstr "Улица"
+msgstr "РЈР»РёС†Р°"
 
 #: src/protocols/oscar/oscar.c:3985 src/protocols/oscar/oscar.c:4001
 #, fuzzy
 msgid "Address:"
-msgstr "Улица"
+msgstr "РЈР»РёС†Р°"
 
 #: src/protocols/oscar/oscar.c:3988 src/protocols/oscar/oscar.c:4004
 #, fuzzy
 msgid "City:"
-msgstr "Град"
+msgstr "Р“СЂР°Рґ"
 
 #: src/protocols/oscar/oscar.c:3991 src/protocols/oscar/oscar.c:4007
 #, fuzzy
 msgid "State:"
-msgstr "Състояние"
+msgstr "РЎСЉСЃС‚РѕСЏРЅРёРµ"
 
 #: src/protocols/oscar/oscar.c:3994 src/protocols/oscar/oscar.c:4010
 msgid "Zip Code:"
@@ -3004,12 +3004,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3999
 #, fuzzy
 msgid "Work Address:"
-msgstr "Улица"
+msgstr "РЈР»РёС†Р°"
 
 #: src/protocols/oscar/oscar.c:4015
 #, fuzzy
 msgid "Work Information:"
-msgstr "Регистрационна инфо"
+msgstr "Р РµРіРёСЃС‚СЂР°С†РёРѕРЅРЅР° РёРЅС„Рѕ"
 
 #: src/protocols/oscar/oscar.c:4017
 msgid "Company:"
@@ -3049,7 +3049,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4163
 #, fuzzy
 msgid "Error Changing Account Info"
-msgstr "g003: Грешка при отваряне на връзка.\n"
+msgstr "g003: Р“СЂРµС€РєР° РїСЂРё РѕС‚РІР°СЂСЏРЅРµ РЅР° РІСЂСЉР·РєР°.\n"
 
 #: src/protocols/oscar/oscar.c:4166
 #, c-format
@@ -3108,7 +3108,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4195 src/protocols/oscar/oscar.c:4202
 #, fuzzy
 msgid "Account Info"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/protocols/oscar/oscar.c:4200
 #, c-format
@@ -3118,7 +3118,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4425
 #, fuzzy
 msgid "Unable to set AIM profile."
-msgstr "Не мога да чета файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° С„Р°Р№Р» %s"
 
 #: src/protocols/oscar/oscar.c:4426
 msgid ""
@@ -3141,7 +3141,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4477
 #, fuzzy
 msgid "Unable to set AIM away message."
-msgstr "Gaim не успя да изпрати съобщение"
+msgstr "Gaim РЅРµ СѓСЃРїСЏ РґР° РёР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/protocols/oscar/oscar.c:4478
 msgid ""
@@ -3160,7 +3160,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4520
 #, fuzzy
 msgid "Away message too long."
-msgstr "Съобщение за отсъствие"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/protocols/oscar/oscar.c:4740
 msgid "Unable To Retrieve Buddy List"
@@ -3192,7 +3192,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5003 src/protocols/oscar/oscar.c:5016
 #, fuzzy
 msgid "Unable To Add"
-msgstr "Не мога да пиша"
+msgstr "РќРµ РјРѕРіР° РґР° РїРёС€Р°"
 
 #: src/protocols/oscar/oscar.c:5015
 #, c-format
@@ -3207,30 +3207,30 @@ msgstr ""
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
 "want to add them?"
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:5056
 #, fuzzy
 msgid "Authorization Given"
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #: src/protocols/oscar/oscar.c:5089
 #, fuzzy, c-format
 msgid ""
 "The user %s wants to add you to their buddy list for the following reason:\n"
 "%s"
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #. Granted
 #: src/protocols/oscar/oscar.c:5131
 #, fuzzy, c-format
 msgid "The user %s has granted your request to add them to your contact list."
-msgstr "Потребителят %d позволи да го добавите в листата"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РїРѕР·РІРѕР»Рё РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:5132
 #, fuzzy
 msgid "Authorization Granted"
-msgstr "Gaim - ауторизацията е дадена"
+msgstr "Gaim - Р°СѓС‚РѕСЂРёР·Р°С†РёСЏС‚Р° Рµ РґР°РґРµРЅР°"
 
 #. Denied
 #: src/protocols/oscar/oscar.c:5135
@@ -3240,37 +3240,37 @@ msgid ""
 "following reason:\n"
 "%s"
 msgstr ""
-"Потребителят %d оказа да го добавите в листата поради:\n"
+"РџРѕС‚СЂРµР±РёС‚РµР»СЏС‚ %d РѕРєР°Р·Р° РґР° РіРѕ РґРѕР±Р°РІРёС‚Рµ РІ Р»РёСЃС‚Р°С‚Р° РїРѕСЂР°РґРё:\n"
 "\n"
 
 #: src/protocols/oscar/oscar.c:5136
 #, fuzzy
 msgid "Authorization Denied"
-msgstr "Gaim - отказана е ауторизация"
+msgstr "Gaim - РѕС‚РєР°Р·Р°РЅР° Рµ Р°СѓС‚РѕСЂРёР·Р°С†РёСЏ"
 
 #: src/protocols/oscar/oscar.c:5173 src/protocols/toc/toc.c:1206
 msgid "Exchange:"
-msgstr "Размяна:"
+msgstr "Р Р°Р·РјСЏРЅР°:"
 
 #: src/protocols/oscar/oscar.c:5393
 #, fuzzy
 msgid "<b>Status:</b> "
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/protocols/oscar/oscar.c:5402
 #, fuzzy
 msgid "<b>Logged In:</b> "
-msgstr "Влязъл: %s\n"
+msgstr "Р’Р»СЏР·СЉР»: %s\n"
 
 #: src/protocols/oscar/oscar.c:5409
 #, fuzzy
 msgid "<b>Capabilities:</b> "
-msgstr "Възможности: %s\n"
+msgstr "Р’СЉР·РјРѕР¶РЅРѕСЃС‚Рё: %s\n"
 
 #: src/protocols/oscar/oscar.c:5416
 #, fuzzy
 msgid "<b>Available:</b> "
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/oscar/oscar.c:5425
 msgid "<b>Status:</b> Not Authorized"
@@ -3283,11 +3283,11 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5459
 #, fuzzy
 msgid "Offline"
-msgstr "Онлайн"
+msgstr "РћРЅР»Р°Р№РЅ"
 
 #: src/protocols/oscar/oscar.c:5700
 msgid "Unable to open Direct IM"
-msgstr "Не мога да отворя директна връзка"
+msgstr "РќРµ РјРѕРіР° РґР° РѕС‚РІРѕСЂСЏ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/protocols/oscar/oscar.c:5713
 #, c-format
@@ -3303,12 +3303,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5861
 #, fuzzy
 msgid "Get Status Msg"
-msgstr "Вземи away текст"
+msgstr "Р’Р·РµРјРё away С‚РµРєСЃС‚"
 
 #: src/protocols/oscar/oscar.c:5905
 #, fuzzy
 msgid "Re-request Authorization"
-msgstr "Заявяване на абтентикационен метод"
+msgstr "Р—Р°СЏРІСЏРІР°РЅРµ РЅР° Р°Р±С‚РµРЅС‚РёРєР°С†РёРѕРЅРµРЅ РјРµС‚РѕРґ"
 
 #: src/protocols/oscar/oscar.c:5926
 msgid "The new formatting is invalid."
@@ -3325,7 +3325,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5982
 #, fuzzy
 msgid "Change Address To:"
-msgstr "Смяна на паролата"
+msgstr "РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:5996
 msgid "You are awaiting authorization from the following buddies:<BR>"
@@ -3345,7 +3345,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6042
 #, fuzzy
 msgid "Available Message:"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/protocols/oscar/oscar.c:6043
 msgid "Please talk to me, I'm lonely! (and single)"
@@ -3354,22 +3354,22 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6105
 #, fuzzy
 msgid "Set Available Message"
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/protocols/oscar/oscar.c:6119
 #, fuzzy
 msgid "Change Password (URL)"
-msgstr "Смяна на паролата"
+msgstr "РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #: src/protocols/oscar/oscar.c:6130
 #, fuzzy
 msgid "Format Screenname"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/protocols/oscar/oscar.c:6136
 #, fuzzy
 msgid "Confirm Account"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/protocols/oscar/oscar.c:6142
 msgid "Display Current Registered Address"
@@ -3386,7 +3386,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:6165
 #, fuzzy
 msgid "Search for Buddy by Email"
-msgstr "Търсене"
+msgstr "РўСЉСЂСЃРµРЅРµ"
 
 #. *< api_version
 #. *< type
@@ -3413,139 +3413,139 @@ msgstr ""
 #: src/protocols/toc/toc.c:174
 #, fuzzy, c-format
 msgid "Looking up %s"
-msgstr "Търсене на GG сървър"
+msgstr "РўСЉСЂСЃРµРЅРµ РЅР° GG СЃСЉСЂРІСЉСЂ"
 
 #: src/protocols/toc/toc.c:494
 #, c-format
 msgid "Unable to write file %s."
-msgstr "Не мога да запиша файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° Р·Р°РїРёС€Р° С„Р°Р№Р» %s"
 
 #: src/protocols/toc/toc.c:497
 #, c-format
 msgid "Unable to read file %s."
-msgstr "Не мога да чета файл %s"
+msgstr "РќРµ РјРѕРіР° РґР° С‡РµС‚Р° С„Р°Р№Р» %s"
 
 #: src/protocols/toc/toc.c:500
 #, c-format
 msgid "Message too long, last %s bytes truncated."
-msgstr "Съобщението прекалено дълго, последните %s байта отрязани"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РїСЂРµРєР°Р»РµРЅРѕ РґСЉР»РіРѕ, РїРѕСЃР»РµРґРЅРёС‚Рµ %s Р±Р°Р№С‚Р° РѕС‚СЂСЏР·Р°РЅРё"
 
 #: src/protocols/toc/toc.c:503
 #, c-format
 msgid "%s not currently logged in."
-msgstr "%s не е текущо влязъл"
+msgstr "%s РЅРµ Рµ С‚РµРєСѓС‰Рѕ РІР»СЏР·СЉР»"
 
 #: src/protocols/toc/toc.c:506
 #, c-format
 msgid "Warning of %s not allowed."
-msgstr "Предупрежение от %s непозволено."
+msgstr "РџСЂРµРґСѓРїСЂРµР¶РµРЅРёРµ РѕС‚ %s РЅРµРїРѕР·РІРѕР»РµРЅРѕ."
 
 #: src/protocols/toc/toc.c:509
 msgid "A message has been dropped, you are exceeding the server speed limit."
-msgstr "Съобщение е прекъснато, надхвърляте границата на скоростта на сървъра."
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ Рµ РїСЂРµРєСЉСЃРЅР°С‚Рѕ, РЅР°РґС…РІСЉСЂР»СЏС‚Рµ РіСЂР°РЅРёС†Р°С‚Р° РЅР° СЃРєРѕСЂРѕСЃС‚С‚Р° РЅР° СЃСЉСЂРІСЉСЂР°."
 
 #: src/protocols/toc/toc.c:512
 #, c-format
 msgid "Chat in %s is not available."
-msgstr "Чата в %s е невъзможен"
+msgstr "Р§Р°С‚Р° РІ %s Рµ РЅРµРІСЉР·РјРѕР¶РµРЅ"
 
 #: src/protocols/toc/toc.c:515
 #, c-format
 msgid "You are sending messages too fast to %s."
-msgstr "Прекалено бързо изпращате съобщения на %s."
+msgstr "РџСЂРµРєР°Р»РµРЅРѕ Р±СЉСЂР·Рѕ РёР·РїСЂР°С‰Р°С‚Рµ СЃСЉРѕР±С‰РµРЅРёСЏ РЅР° %s."
 
 #: src/protocols/toc/toc.c:518
 #, c-format
 msgid "You missed an IM from %s because it was too big."
-msgstr "Пропуснахте съобщение от %s - беше прекалено голямо."
+msgstr "РџСЂРѕРїСѓСЃРЅР°С…С‚Рµ СЃСЉРѕР±С‰РµРЅРёРµ РѕС‚ %s - Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ."
 
 #: src/protocols/toc/toc.c:521
 #, c-format
 msgid "You missed an IM from %s because it was sent too fast."
-msgstr "Пропуснахте съобщение от %s - беше пратено прекалено бързо."
+msgstr "РџСЂРѕРїСѓСЃРЅР°С…С‚Рµ СЃСЉРѕР±С‰РµРЅРёРµ РѕС‚ %s - Р±РµС€Рµ РїСЂР°С‚РµРЅРѕ РїСЂРµРєР°Р»РµРЅРѕ Р±СЉСЂР·Рѕ."
 
 #: src/protocols/toc/toc.c:524
 msgid "Failure."
-msgstr "Пропадане."
+msgstr "РџСЂРѕРїР°РґР°РЅРµ."
 
 #: src/protocols/toc/toc.c:527
 msgid "Too many matches."
-msgstr "Прекалено много съвпадения."
+msgstr "РџСЂРµРєР°Р»РµРЅРѕ РјРЅРѕРіРѕ СЃСЉРІРїР°РґРµРЅРёСЏ."
 
 #: src/protocols/toc/toc.c:530
 msgid "Need more qualifiers."
-msgstr "Нужни са повече показатели."
+msgstr "РќСѓР¶РЅРё СЃР° РїРѕРІРµС‡Рµ РїРѕРєР°Р·Р°С‚РµР»Рё."
 
 #: src/protocols/toc/toc.c:533
 msgid "Dir service temporarily unavailable."
-msgstr "Dir service временно недостъпен."
+msgstr "Dir service РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СЉРїРµРЅ."
 
 #: src/protocols/toc/toc.c:536
 msgid "Email lookup restricted."
-msgstr "Търсене по емайл забранено."
+msgstr "РўСЉСЂСЃРµРЅРµ РїРѕ РµРјР°Р№Р» Р·Р°Р±СЂР°РЅРµРЅРѕ."
 
 #: src/protocols/toc/toc.c:539
 msgid "Keyword ignored."
-msgstr "Игнориране на ключовата дума."
+msgstr "РРіРЅРѕСЂРёСЂР°РЅРµ РЅР° РєР»СЋС‡РѕРІР°С‚Р° РґСѓРјР°."
 
 #: src/protocols/toc/toc.c:542
 msgid "No keywords."
-msgstr "Липсват ключови думи."
+msgstr "Р›РёРїСЃРІР°С‚ РєР»СЋС‡РѕРІРё РґСѓРјРё."
 
 #: src/protocols/toc/toc.c:545
 msgid "User has no directory information."
-msgstr "Потребителя няма данни в директорията."
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»СЏ РЅСЏРјР° РґР°РЅРЅРё РІ РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°."
 
 #: src/protocols/toc/toc.c:549
 msgid "Country not supported."
-msgstr "Страната не се поддържа."
+msgstr "РЎС‚СЂР°РЅР°С‚Р° РЅРµ СЃРµ РїРѕРґРґСЉСЂР¶Р°."
 
 #: src/protocols/toc/toc.c:552
 #, c-format
 msgid "Failure unknown: %s."
-msgstr "Непозната грешка: %s."
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР°: %s."
 
 #: src/protocols/toc/toc.c:558
 msgid "The service is temporarily unavailable."
-msgstr "Услугата е временно недостъпна."
+msgstr "РЈСЃР»СѓРіР°С‚Р° Рµ РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СЉРїРЅР°."
 
 #: src/protocols/toc/toc.c:561
 msgid "Your warning level is currently too high to log in."
-msgstr "Нивото ви на предупреждение е прекалено високо за да влезете."
+msgstr "РќРёРІРѕС‚Рѕ РІРё РЅР° РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ Рµ РїСЂРµРєР°Р»РµРЅРѕ РІРёСЃРѕРєРѕ Р·Р° РґР° РІР»РµР·РµС‚Рµ."
 
 #: src/protocols/toc/toc.c:564
 msgid ""
 "You have been connecting and disconnecting too frequently.  Wait ten minutes "
 "and try again.  If you continue to try, you will need to wait even longer."
 msgstr ""
-"Свързвате се прекалено често. Изчакайте 10 мин и опитайте пак. Ако "
-"продължитеда се опитвате, ще трябва да чакате дори повече."
+"РЎРІСЉСЂР·РІР°С‚Рµ СЃРµ РїСЂРµРєР°Р»РµРЅРѕ С‡РµСЃС‚Рѕ. РР·С‡Р°РєР°Р№С‚Рµ 10 РјРёРЅ Рё РѕРїРёС‚Р°Р№С‚Рµ РїР°Рє. РђРєРѕ "
+"РїСЂРѕРґСЉР»Р¶РёС‚РµРґР° СЃРµ РѕРїРёС‚РІР°С‚Рµ, С‰Рµ С‚СЂСЏР±РІР° РґР° С‡Р°РєР°С‚Рµ РґРѕСЂРё РїРѕРІРµС‡Рµ."
 
 #: src/protocols/toc/toc.c:566
 #, c-format
 msgid "An unknown signon error has occurred: %s."
-msgstr "Непозната грешка при влизане: %s."
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР° РїСЂРё РІР»РёР·Р°РЅРµ: %s."
 
 #: src/protocols/toc/toc.c:569
 #, c-format
 msgid "An unknown error, %d, has occurred.  Info: %s"
-msgstr "Непозната грешка, %d. Детайли: %s"
+msgstr "РќРµРїРѕР·РЅР°С‚Р° РіСЂРµС€РєР°, %d. Р”РµС‚Р°Р№Р»Рё: %s"
 
 #: src/protocols/toc/toc.c:589
 msgid "Connection Closed"
-msgstr "Връзката затворена"
+msgstr "Р’СЂСЉР·РєР°С‚Р° Р·Р°С‚РІРѕСЂРµРЅР°"
 
 #: src/protocols/toc/toc.c:627
 msgid "Waiting for reply..."
-msgstr "Изчакване на отговор..."
+msgstr "РР·С‡Р°РєРІР°РЅРµ РЅР° РѕС‚РіРѕРІРѕСЂ..."
 
 #: src/protocols/toc/toc.c:692
 msgid "TOC has come back from its pause. You may now send messages again."
-msgstr "TOC се върна от пауза. Отново може да изпращате. "
+msgstr "TOC СЃРµ РІСЉСЂРЅР° РѕС‚ РїР°СѓР·Р°. РћС‚РЅРѕРІРѕ РјРѕР¶Рµ РґР° РёР·РїСЂР°С‰Р°С‚Рµ. "
 
 #: src/protocols/toc/toc.c:880
 msgid "Password Change Successful"
-msgstr "Успешна смяна на паролата"
+msgstr "РЈСЃРїРµС€РЅР° СЃРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #: src/protocols/toc/toc.c:884
 msgid "TOC has sent a PAUSE command."
@@ -3558,23 +3558,23 @@ msgid ""
 "if you send a message. Gaim will prevent anything from going through. This "
 "is only temporary, please be patient."
 msgstr ""
-"TOC изпрати комнанд PAUSE. Когато това стане, TOC игнорира всички съобщения "
-"и може да ви изхвърли ако опитате да изпратите. Gaim ще предпази каквото ида "
-"е от преминаване. Това е временно, моля имайте търпение "
+"TOC РёР·РїСЂР°С‚Рё РєРѕРјРЅР°РЅРґ PAUSE. РљРѕРіР°С‚Рѕ С‚РѕРІР° СЃС‚Р°РЅРµ, TOC РёРіРЅРѕСЂРёСЂР° РІСЃРёС‡РєРё СЃСЉРѕР±С‰РµРЅРёСЏ "
+"Рё РјРѕР¶Рµ РґР° РІРё РёР·С…РІСЉСЂР»Рё Р°РєРѕ РѕРїРёС‚Р°С‚Рµ РґР° РёР·РїСЂР°С‚РёС‚Рµ. Gaim С‰Рµ РїСЂРµРґРїР°Р·Рё РєР°РєРІРѕС‚Рѕ РёРґР° "
+"Рµ РѕС‚ РїСЂРµРјРёРЅР°РІР°РЅРµ. РўРѕРІР° Рµ РІСЂРµРјРµРЅРЅРѕ, РјРѕР»СЏ РёРјР°Р№С‚Рµ С‚СЉСЂРїРµРЅРёРµ "
 
 #: src/protocols/toc/toc.c:1344
 msgid "Get Dir Info"
-msgstr "Взимане на инфо за директроията"
+msgstr "Р’Р·РёРјР°РЅРµ РЅР° РёРЅС„Рѕ Р·Р° РґРёСЂРµРєС‚СЂРѕРёСЏС‚Р°"
 
 #: src/protocols/toc/toc.c:1468
 #, fuzzy
 msgid "Set Dir Info"
-msgstr "Взимане на инфо за директроията"
+msgstr "Р’Р·РёРјР°РЅРµ РЅР° РёРЅС„Рѕ Р·Р° РґРёСЂРµРєС‚СЂРѕРёСЏС‚Р°"
 
 #: src/protocols/toc/toc.c:1591
 #, fuzzy, c-format
 msgid "Could not open %s for writing!"
-msgstr "Не мога да се свържа за трансфер!"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° Р·Р° С‚СЂР°РЅСЃС„РµСЂ!"
 
 #: src/protocols/toc/toc.c:1627
 msgid "File transfer failed; other side probably canceled."
@@ -3584,11 +3584,11 @@ msgstr ""
 #: src/protocols/toc/toc.c:1924
 #, fuzzy
 msgid "Could not connect for transfer."
-msgstr "Не мога да се свържа за трансфер!"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° Р·Р° С‚СЂР°РЅСЃС„РµСЂ!"
 
 #: src/protocols/toc/toc.c:1836
 msgid "Could not connect for transfer!"
-msgstr "Не мога да се свържа за трансфер!"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° Р·Р° С‚СЂР°РЅСЃС„РµСЂ!"
 
 #: src/protocols/toc/toc.c:1869
 msgid "Could not write file header.  The file will not be transferred."
@@ -3596,19 +3596,19 @@ msgstr ""
 
 #: src/gtkft.c:1060 src/protocols/toc/toc.c:1969
 msgid "Gaim - Save As..."
-msgstr "Gaim - Запис като..."
+msgstr "Gaim - Р—Р°РїРёСЃ РєР°С‚Рѕ..."
 
 #: src/protocols/toc/toc.c:2003
 #, fuzzy, c-format
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-msgstr[0] "%s заявки %s за приемане на %d файл(а): %s (%.2f %s)%s%s"
-msgstr[1] "%s заявки %s за приемане на %d файл(а): %s (%.2f %s)%s%s"
+msgstr[0] "%s Р·Р°СЏРІРєРё %s Р·Р° РїСЂРёРµРјР°РЅРµ РЅР° %d С„Р°Р№Р»(Р°): %s (%.2f %s)%s%s"
+msgstr[1] "%s Р·Р°СЏРІРєРё %s Р·Р° РїСЂРёРµРјР°РЅРµ РЅР° %d С„Р°Р№Р»(Р°): %s (%.2f %s)%s%s"
 
 #: src/protocols/toc/toc.c:2010
 #, c-format
 msgid "%s requests you to send them a file"
-msgstr "%s изиква да му изпратите файл"
+msgstr "%s РёР·РёРєРІР° РґР° РјСѓ РёР·РїСЂР°С‚РёС‚Рµ С„Р°Р№Р»"
 
 #. *< api_version
 #. *< type
@@ -3623,17 +3623,17 @@ msgstr "%s изиква да му изпратите файл"
 #: src/protocols/toc/toc.c:2085 src/protocols/toc/toc.c:2087
 #, fuzzy
 msgid "TOC Protocol Plugin"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #: src/protocols/toc/toc.c:2104
 #, fuzzy
 msgid "TOC host"
-msgstr "Порт"
+msgstr "РџРѕСЂС‚"
 
 #: src/protocols/toc/toc.c:2108
 #, fuzzy
 msgid "TOC port"
-msgstr "Порт"
+msgstr "РџРѕСЂС‚"
 
 #. Basic Profile group.
 #: src/protocols/trepia/trepia.c:296
@@ -3643,18 +3643,18 @@ msgstr ""
 #. First Name
 #: src/dialogs.c:1990 src/dialogs.c:2644 src/protocols/trepia/trepia.c:300
 msgid "First Name"
-msgstr "Име"
+msgstr "РРјРµ"
 
 #. Last Name
 #: src/dialogs.c:2013 src/dialogs.c:2664 src/protocols/trepia/trepia.c:307
 msgid "Last Name"
-msgstr "Фамилно име"
+msgstr "Р¤Р°РјРёР»РЅРѕ РёРјРµ"
 
 #. Gender
 #: src/protocols/trepia/trepia.c:312
 #, fuzzy
 msgid "Gender"
-msgstr "Основни"
+msgstr "РћСЃРЅРѕРІРЅРё"
 
 #. Age
 #: src/protocols/trepia/trepia.c:318
@@ -3665,7 +3665,7 @@ msgstr ""
 #: src/protocols/trepia/trepia.c:322
 #, fuzzy
 msgid "Homepage"
-msgstr "Образ"
+msgstr "РћР±СЂР°Р·"
 
 #. E-Mail Address
 #: src/protocols/trepia/trepia.c:327
@@ -3675,19 +3675,19 @@ msgstr ""
 #: src/protocols/trepia/trepia.c:333
 #, fuzzy
 msgid "Profile Information"
-msgstr "Регистрационна инфо"
+msgstr "Р РµРіРёСЃС‚СЂР°С†РёРѕРЅРЅР° РёРЅС„Рѕ"
 
 #. Instant Messagers
 #: src/protocols/trepia/trepia.c:339
 #, fuzzy
 msgid "Instant Messagers"
-msgstr "Изпрати съобщение"
+msgstr "РР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #. AIM
 #: src/protocols/trepia/trepia.c:343
 #, fuzzy
 msgid "AIM"
-msgstr "Съобщение"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ"
 
 #. ICQ
 #: src/protocols/trepia/trepia.c:347
@@ -3712,7 +3712,7 @@ msgstr ""
 #. State
 #: src/dialogs.c:2046 src/dialogs.c:2693 src/protocols/trepia/trepia.c:368
 msgid "State"
-msgstr "Състояние"
+msgstr "РЎСЉСЃС‚РѕСЏРЅРёРµ"
 
 #. Call the dialog.
 #: src/protocols/trepia/trepia.c:377
@@ -3722,12 +3722,12 @@ msgstr ""
 #: src/dialogs.c:2088 src/dialogs.c:2269 src/dialogs.c:3435 src/dialogs.c:4240
 #: src/dialogs.c:4878 src/gtkrequest.c:177 src/protocols/trepia/trepia.c:379
 msgid "Save"
-msgstr "Запис"
+msgstr "Р—Р°РїРёСЃ"
 
 #: src/protocols/trepia/trepia.c:523
 #, fuzzy
 msgid "Set Profile"
-msgstr "Вземи файл"
+msgstr "Р’Р·РµРјРё С„Р°Р№Р»"
 
 #: src/protocols/trepia/trepia.c:559
 msgid "Visit Homepage"
@@ -3736,17 +3736,17 @@ msgstr ""
 #: src/protocols/trepia/trepia.c:905 src/protocols/trepia/trepia.c:908
 #, fuzzy
 msgid "Local Users"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/trepia/trepia.c:1004
 #, fuzzy
 msgid "Read error"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/protocols/trepia/trepia.c:1105
 #, fuzzy
 msgid "Logging in"
-msgstr "Архив"
+msgstr "РђСЂС…РёРІ"
 
 #. *< api_version
 #. *< type
@@ -3765,7 +3765,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:592
 #, fuzzy
 msgid "Your Yahoo! message did not get sent."
-msgstr "Съобщението не беше изпратено."
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РЅРµ Р±РµС€Рµ РёР·РїСЂР°С‚РµРЅРѕ."
 
 #: src/protocols/yahoo/yahoo.c:1057 src/protocols/yahoo/yahoo.c:1265
 #: src/protocols/yahoo/yahoo.c:1339
@@ -3781,7 +3781,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1341
 #, fuzzy
 msgid "Not In Office"
-msgstr "Бележка"
+msgstr "Р‘РµР»РµР¶РєР°"
 
 #: src/protocols/yahoo/yahoo.c:1065 src/protocols/yahoo/yahoo.c:1273
 #: src/protocols/yahoo/yahoo.c:1343
@@ -3800,7 +3800,7 @@ msgstr ""
 #: src/protocols/yahoo/yahoo.c:1196
 #, fuzzy
 msgid "Activate ID"
-msgstr "Активен"
+msgstr "РђРєС‚РёРІРµРЅ"
 
 #. *< api_version
 #. *< type
@@ -3863,15 +3863,15 @@ msgstr "ZLocate"
 
 #: src/protocols/zephyr/zephyr.c:888
 msgid "Class:"
-msgstr "Клас:"
+msgstr "РљР»Р°СЃ:"
 
 #: src/protocols/zephyr/zephyr.c:893
 msgid "Instance:"
-msgstr "Инстанция:"
+msgstr "РРЅСЃС‚Р°РЅС†РёСЏ:"
 
 #: src/protocols/zephyr/zephyr.c:898
 msgid "Recipient:"
-msgstr "Получател:"
+msgstr "РџРѕР»СѓС‡Р°С‚РµР»:"
 
 #. *< api_version
 #. *< type
@@ -3890,7 +3890,7 @@ msgstr ""
 #: src/about.c:56
 #, c-format
 msgid "About Gaim v%s"
-msgstr "Относно Gaim в%s"
+msgstr "РћС‚РЅРѕСЃРЅРѕ Gaim РІ%s"
 
 #: src/about.c:88
 #, fuzzy
@@ -3899,8 +3899,8 @@ msgid ""
 "Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, and Gadu-Gadu all at once.  It is "
 "written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
-"Gaim е клиент поддържащ AOL Instant Messenger. \n"
-"Написан е с използване на GTK+ и е лицензиран под GPL.\n"
+"Gaim Рµ РєР»РёРµРЅС‚ РїРѕРґРґСЉСЂР¶Р°С‰ AOL Instant Messenger. \n"
+"РќР°РїРёСЃР°РЅ Рµ СЃ РёР·РїРѕР»Р·РІР°РЅРµ РЅР° GTK+ Рё Рµ Р»РёС†РµРЅР·РёСЂР°РЅ РїРѕРґ GPL.\n"
 "\n"
 "URL: "
 
@@ -3943,28 +3943,28 @@ msgstr ""
 
 #: src/away.c:222
 msgid "Gaim - Away!"
-msgstr "Gaim - Отсъствие!"
+msgstr "Gaim - РћС‚СЃСЉСЃС‚РІРёРµ!"
 
 #: src/away.c:282
 msgid "I'm Back!"
-msgstr "Върнах се!"
+msgstr "Р’СЉСЂРЅР°С… СЃРµ!"
 
 #: src/away.c:384
 msgid "New Away Message"
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/away.c:404
 msgid "Remove Away Message"
-msgstr "Махане съобщение за отсъствие"
+msgstr "РњР°С…Р°РЅРµ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/away.c:599
 msgid "Set All Away"
-msgstr "Всички -> отсъствие"
+msgstr "Р’СЃРёС‡РєРё -> РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/blist.c:427 src/gtkprefs.c:2292
 #, fuzzy
 msgid "Chats"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/blist.c:751
 #, c-format
@@ -3980,7 +3980,7 @@ msgstr ""
 #: src/blist.c:947
 #, fuzzy
 msgid "Invalid Groupname"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/blist.c:1703
 msgid ""
@@ -3990,7 +3990,7 @@ msgstr ""
 #: src/blist.c:1705
 #, fuzzy
 msgid "Buddy List Error"
-msgstr "Лист"
+msgstr "Р›РёСЃС‚"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
@@ -4004,7 +4004,7 @@ msgstr ""
 #: src/blist.c:1716
 #, fuzzy
 msgid "Converting Buddy List"
-msgstr "Импортиране на листа"
+msgstr "РРјРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°"
 
 #: src/browser.c:407 src/browser.c:435
 msgid ""
@@ -4028,59 +4028,59 @@ msgstr ""
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
-msgstr "В момента мямате протокол с възможност за регистрира нови акаунти."
+msgstr "Р’ РјРѕРјРµРЅС‚Р° РјСЏРјР°С‚Рµ РїСЂРѕС‚РѕРєРѕР» СЃ РІСЉР·РјРѕР¶РЅРѕСЃС‚ Р·Р° СЂРµРіРёСЃС‚СЂРёСЂР° РЅРѕРІРё Р°РєР°СѓРЅС‚Рё."
 
 #: src/buddy_chat.c:330
 msgid "Join Chat"
-msgstr "Влизане в чат"
+msgstr "Р’Р»РёР·Р°РЅРµ РІ С‡Р°С‚"
 
 #: src/buddy_chat.c:336
 msgid "Buddy Chat"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/buddy_chat.c:346
 msgid "Join Chat As:"
-msgstr "Влизане в чат като:"
+msgstr "Р’Р»РёР·Р°РЅРµ РІ С‡Р°С‚ РєР°С‚Рѕ:"
 
 #. Join button.
 #: src/buddy_chat.c:369
 msgid "Join"
-msgstr "Присъединяване"
+msgstr "РџСЂРёСЃСЉРµРґРёРЅСЏРІР°РЅРµ"
 
 #: src/conversation.c:405
 #, fuzzy
 msgid "Unable to send message. The message is too large."
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/conversation.c:413
 #, fuzzy
 msgid "Unable to send message."
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/conversation.c:1926
 #, c-format
 msgid "%s entered the room."
-msgstr "%s влезе в стаята"
+msgstr "%s РІР»РµР·Рµ РІ СЃС‚Р°СЏС‚Р°"
 
 #: src/conversation.c:1929
 #, fuzzy, c-format
 msgid "%s [<I>%s</I>] entered the room."
-msgstr "%s влезе в стаята"
+msgstr "%s РІР»РµР·Рµ РІ СЃС‚Р°СЏС‚Р°"
 
 #: src/conversation.c:1979
 #, c-format
 msgid "%s is now known as %s"
-msgstr "%s се прекръсти на %s"
+msgstr "%s СЃРµ РїСЂРµРєСЂСЉСЃС‚Рё РЅР° %s"
 
 #: src/conversation.c:2021
 #, c-format
 msgid "%s left the room (%s)."
-msgstr "%s напусна стая (%s)."
+msgstr "%s РЅР°РїСѓСЃРЅР° СЃС‚Р°СЏ (%s)."
 
 #: src/conversation.c:2023
 #, c-format
 msgid "%s left the room."
-msgstr "%s напусна стаята."
+msgstr "%s РЅР°РїСѓСЃРЅР° СЃС‚Р°СЏС‚Р°."
 
 #: src/conversation.c:2224
 msgid "Last created window"
@@ -4089,27 +4089,27 @@ msgstr ""
 #: src/conversation.c:2226
 #, fuzzy
 msgid "New window"
-msgstr "Ширина на прозореца"
+msgstr "РЁРёСЂРёРЅР° РЅР° РїСЂРѕР·РѕСЂРµС†Р°"
 
 #: src/conversation.c:2228
 #, fuzzy
 msgid "By group"
-msgstr "Група"
+msgstr "Р“СЂСѓРїР°"
 
 #: src/conversation.c:2230
 #, fuzzy
 msgid "By account"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/dialogs.c:345
 #, fuzzy
 msgid "Warn User"
-msgstr "Използване на Gaim"
+msgstr "РР·РїРѕР»Р·РІР°РЅРµ РЅР° Gaim"
 
 #: src/dialogs.c:348
 #, fuzzy
 msgid "_Warn"
-msgstr "Предуреждение"
+msgstr "РџСЂРµРґСѓСЂРµР¶РґРµРЅРёРµ"
 
 #: src/dialogs.c:364
 #, c-format
@@ -4123,24 +4123,24 @@ msgstr ""
 #: src/dialogs.c:373
 #, fuzzy
 msgid "Warn _anonymously?"
-msgstr "Предупреди анонимно?"
+msgstr "РџСЂРµРґСѓРїСЂРµРґРё Р°РЅРѕРЅРёРјРЅРѕ?"
 
 #: src/dialogs.c:380
 #, fuzzy
 msgid "<b>Anonymous warnings are less severe.</b>"
-msgstr "Анонимните предупреждения са по-слаби."
+msgstr "РђРЅРѕРЅРёРјРЅРёС‚Рµ РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёСЏ СЃР° РїРѕ-СЃР»Р°Р±Рё."
 
 #: src/dialogs.c:455
 #, fuzzy, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr ""
-"Ще премахнете '%s' от листата.\n"
-"Сигурни ли сте?"
+"Р©Рµ РїСЂРµРјР°С…РЅРµС‚Рµ '%s' РѕС‚ Р»РёСЃС‚Р°С‚Р°.\n"
+"РЎРёРіСѓСЂРЅРё Р»Рё СЃС‚Рµ?"
 
 #: src/dialogs.c:457 src/dialogs.c:458
 msgid "Remove Buddy"
-msgstr "Премахване"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ"
 
 #: src/dialogs.c:467
 #, fuzzy, c-format
@@ -4148,13 +4148,13 @@ msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
 "continue?"
 msgstr ""
-"Ще премахнете '%s' от листата.\n"
-"Сигурни ли сте?"
+"Р©Рµ РїСЂРµРјР°С…РЅРµС‚Рµ '%s' РѕС‚ Р»РёСЃС‚Р°С‚Р°.\n"
+"РЎРёРіСѓСЂРЅРё Р»Рё СЃС‚Рµ?"
 
 #: src/dialogs.c:469 src/dialogs.c:470
 #, fuzzy
 msgid "Remove Chat"
-msgstr "Премахване"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ"
 
 #: src/dialogs.c:479
 #, fuzzy, c-format
@@ -4162,18 +4162,18 @@ msgid ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"
 msgstr ""
-"Ще премахнете '%s' от листата.\n"
-"Сигурни ли сте?"
+"Р©Рµ РїСЂРµРјР°С…РЅРµС‚Рµ '%s' РѕС‚ Р»РёСЃС‚Р°С‚Р°.\n"
+"РЎРёРіСѓСЂРЅРё Р»Рё СЃС‚Рµ?"
 
 #: src/dialogs.c:482 src/dialogs.c:483
 #, fuzzy
 msgid "Remove Group"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/dialogs.c:632
 #, fuzzy
 msgid "New Message"
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/dialogs.c:650
 msgid "Please enter the screenname of the person you would like to IM.\n"
@@ -4182,17 +4182,17 @@ msgstr ""
 #: src/dialogs.c:666 src/dialogs.c:743 src/dialogs.c:3767
 #, fuzzy
 msgid "_Screenname:"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/dialogs.c:681 src/dialogs.c:759 src/gtkpounce.c:408
 #, fuzzy
 msgid "_Account:"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/dialogs.c:712
 #, fuzzy
 msgid "Get User Info"
-msgstr "Информация"
+msgstr "РРЅС„РѕСЂРјР°С†РёСЏ"
 
 #: src/dialogs.c:731
 msgid ""
@@ -4202,7 +4202,7 @@ msgstr ""
 
 #: src/dialogs.c:889
 msgid "Add Group"
-msgstr "Добавяне група"
+msgstr "Р”РѕР±Р°РІСЏРЅРµ РіСЂСѓРїР°"
 
 #: src/dialogs.c:906
 msgid "Please enter the name of the group to be added.\n"
@@ -4211,11 +4211,11 @@ msgstr ""
 #: src/dialogs.c:915 src/dialogs.c:4319
 #, fuzzy
 msgid "_Group:"
-msgstr "Група"
+msgstr "Р“СЂСѓРїР°"
 
 #: src/dialogs.c:951
 msgid "Add Buddy"
-msgstr "Добавяне авер"
+msgstr "Р”РѕР±Р°РІСЏРЅРµ Р°РІРµСЂ"
 
 #: src/dialogs.c:970
 msgid ""
@@ -4227,25 +4227,25 @@ msgstr ""
 #: src/dialogs.c:989
 #, fuzzy
 msgid "Screen Name"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/dialogs.c:1002
 msgid "Alias"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #: src/dialogs.c:1012
 msgid "Group"
-msgstr "Група"
+msgstr "Р“СЂСѓРїР°"
 
 #. Set up stuff for the account box
 #: src/dialogs.c:1021
 msgid "Add To"
-msgstr "Добави към"
+msgstr "Р”РѕР±Р°РІРё РєСЉРј"
 
 #: src/dialogs.c:1340
 #, fuzzy
 msgid "Add Chat"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/dialogs.c:1363
 msgid ""
@@ -4256,22 +4256,22 @@ msgstr ""
 #: src/dialogs.c:1372
 #, fuzzy
 msgid "Account:"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/dialogs.c:1391 src/gtkaccount.c:427
 #, fuzzy
 msgid "Alias:"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #: src/dialogs.c:1402
 #, fuzzy
 msgid "Group:"
-msgstr "Група"
+msgstr "Р“СЂСѓРїР°"
 
 #: src/dialogs.c:1748
 #, fuzzy
 msgid "Privacy"
-msgstr "Уединиение"
+msgstr "РЈРµРґРёРЅРёРµРЅРёРµ"
 
 #: src/dialogs.c:1764
 msgid "Changes to privacy settings take effect immediately."
@@ -4279,83 +4279,83 @@ msgstr ""
 
 #: src/dialogs.c:1773
 msgid "Set privacy for:"
-msgstr "Уединие за:"
+msgstr "РЈРµРґРёРЅРёРµ Р·Р°:"
 
 #: src/dialogs.c:1790
 msgid "Allow all users to contact me"
-msgstr "Пoзволи всички"
+msgstr "РџoР·РІРѕР»Рё РІСЃРёС‡РєРё"
 
 #: src/dialogs.c:1794
 #, fuzzy
 msgid "Allow only users on my buddy list"
-msgstr "Позволи само потребителите по долу"
+msgstr "РџРѕР·РІРѕР»Рё СЃР°РјРѕ РїРѕС‚СЂРµР±РёС‚РµР»РёС‚Рµ РїРѕ РґРѕР»Сѓ"
 
 #: src/dialogs.c:1798
 msgid "Allow only the users below"
-msgstr "Позволи само потребителите по долу"
+msgstr "РџРѕР·РІРѕР»Рё СЃР°РјРѕ РїРѕС‚СЂРµР±РёС‚РµР»РёС‚Рµ РїРѕ РґРѕР»Сѓ"
 
 #: src/dialogs.c:1836
 msgid "Deny all users"
-msgstr "Блокирай всички"
+msgstr "Р‘Р»РѕРєРёСЂР°Р№ РІСЃРёС‡РєРё"
 
 #: src/dialogs.c:1840
 msgid "Block the users below"
-msgstr "Блокирай потребителите по-долу"
+msgstr "Р‘Р»РѕРєРёСЂР°Р№ РїРѕС‚СЂРµР±РёС‚РµР»РёС‚Рµ РїРѕ-РґРѕР»Сѓ"
 
 #: src/dialogs.c:1956
 #, fuzzy
 msgid "Set Directory Info"
-msgstr "Данни за директорията"
+msgstr "Р”Р°РЅРЅРё Р·Р° РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°"
 
 #: src/dialogs.c:1964
 msgid "Directory Info"
-msgstr "Данни за директорията"
+msgstr "Р”Р°РЅРЅРё Р·Р° РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°"
 
 #: src/dialogs.c:1974
 #, fuzzy, c-format
 msgid "Setting Dir Info for %s:"
-msgstr "Взимане на инфо за директроията"
+msgstr "Р’Р·РёРјР°РЅРµ РЅР° РёРЅС„Рѕ Р·Р° РґРёСЂРµРєС‚СЂРѕРёСЏС‚Р°"
 
 #: src/dialogs.c:1987
 msgid "Allow Web Searches To Find Your Info"
-msgstr "Pозволение върсенето в уеб за намиране на вашите данни."
+msgstr "PРѕР·РІРѕР»РµРЅРёРµ РІСЉСЂСЃРµРЅРµС‚Рѕ РІ СѓРµР± Р·Р° РЅР°РјРёСЂР°РЅРµ РЅР° РІР°С€РёС‚Рµ РґР°РЅРЅРё."
 
 #. Line 2
 #: src/dialogs.c:2001 src/dialogs.c:2654
 msgid "Middle Name"
-msgstr "Бащино име"
+msgstr "Р‘Р°С‰РёРЅРѕ РёРјРµ"
 
 #. Line 4
 #: src/dialogs.c:2024 src/dialogs.c:2674
 msgid "Maiden Name"
-msgstr "Моминско име"
+msgstr "РњРѕРјРёРЅСЃРєРѕ РёРјРµ"
 
 #: src/dialogs.c:2111
 #, fuzzy
 msgid "New passwords do not match."
-msgstr "Паролите не съвпадат"
+msgstr "РџР°СЂРѕР»РёС‚Рµ РЅРµ СЃСЉРІРїР°РґР°С‚"
 
 #: src/dialogs.c:2117
 #, fuzzy
 msgid "Fill out all fields completely."
-msgstr "Въведете всички полета"
+msgstr "Р’СЉРІРµРґРµС‚Рµ РІСЃРёС‡РєРё РїРѕР»РµС‚Р°"
 
 #: src/dialogs.c:2162
 #, fuzzy, c-format
 msgid "Changing password for %s:"
-msgstr "Пропадна промяна на паролата (%s)"
+msgstr "РџСЂРѕРїР°РґРЅР° РїСЂРѕРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р° (%s)"
 
 #: src/dialogs.c:2170
 msgid "Original Password"
-msgstr "Стара парола"
+msgstr "РЎС‚Р°СЂР° РїР°СЂРѕР»Р°"
 
 #: src/dialogs.c:2181
 msgid "New Password"
-msgstr "Нова парола"
+msgstr "РќРѕРІР° РїР°СЂРѕР»Р°"
 
 #: src/dialogs.c:2192
 msgid "New Password (again)"
-msgstr "Нова парола (отново)"
+msgstr "РќРѕРІР° РїР°СЂРѕР»Р° (РѕС‚РЅРѕРІРѕ)"
 
 #: src/dialogs.c:2241
 #, c-format
@@ -4364,49 +4364,49 @@ msgstr ""
 
 #: src/dialogs.c:2327
 msgid "Below are the results of your search: "
-msgstr "Резултати от търсенето"
+msgstr "Р РµР·СѓР»С‚Р°С‚Рё РѕС‚ С‚СЉСЂСЃРµРЅРµС‚Рѕ"
 
 #: src/dialogs.c:2438
 msgid "Permit"
-msgstr "Позволяване"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ"
 
 #: src/dialogs.c:2470
 #, fuzzy
 msgid "Add Permit"
-msgstr "Позволяване"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ"
 
 #: src/dialogs.c:2472
 #, fuzzy
 msgid "Add Deny"
-msgstr "Gaim - добавяне на забрана"
+msgstr "Gaim - РґРѕР±Р°РІСЏРЅРµ РЅР° Р·Р°Р±СЂР°РЅР°"
 
 #: src/dialogs.c:2539
 #, fuzzy
 msgid "Log Conversation"
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/dialogs.c:2620 src/dialogs.c:2753
 msgid "Search for Buddy"
-msgstr "Търсене"
+msgstr "РўСЉСЂСЃРµРЅРµ"
 
 #: src/dialogs.c:2720
 #, fuzzy
 msgid "Find Buddy By Info"
-msgstr "Gaim - Търсене по данни"
+msgstr "Gaim - РўСЉСЂСЃРµРЅРµ РїРѕ РґР°РЅРЅРё"
 
 #: src/dialogs.c:2747
 #, fuzzy
 msgid "Find Buddy By Email"
-msgstr "Gaim - Търсене по Email"
+msgstr "Gaim - РўСЉСЂСЃРµРЅРµ РїРѕ Email"
 
 #: src/dialogs.c:2851
 msgid "Insert Link"
-msgstr "Вмъкване на връзка"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РІСЂСЉР·РєР°"
 
 #: src/dialogs.c:2853
 #, fuzzy
 msgid "Insert"
-msgstr "Вмъкване на връзка"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РІСЂСЉР·РєР°"
 
 #: src/dialogs.c:2872
 msgid ""
@@ -4416,20 +4416,20 @@ msgstr ""
 
 #: src/dialogs.c:3041 src/dialogs.c:3058
 msgid "Select Text Color"
-msgstr "Цвят на текст"
+msgstr "Р¦РІСЏС‚ РЅР° С‚РµРєСЃС‚"
 
 #: src/dialogs.c:3093 src/dialogs.c:3110
 msgid "Select Background Color"
-msgstr "Фонов цвят"
+msgstr "Р¤РѕРЅРѕРІ С†РІСЏС‚"
 
 #: src/dialogs.c:3207 src/dialogs.c:3233
 msgid "Select Font"
-msgstr "Избор на шрифт"
+msgstr "РР·Р±РѕСЂ РЅР° С€СЂРёС„С‚"
 
 #: src/dialogs.c:3299
 #, fuzzy
 msgid "You cannot save an away message with a blank title"
-msgstr "Съобщението не може да е без заглавие"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РЅРµ РјРѕР¶Рµ РґР° Рµ Р±РµР· Р·Р°РіР»Р°РІРёРµ"
 
 #: src/dialogs.c:3301
 msgid ""
@@ -4438,33 +4438,33 @@ msgstr ""
 
 #: src/dialogs.c:3311
 msgid "You cannot create an empty away message"
-msgstr "Съобщението не може да е празно"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµС‚Рѕ РЅРµ РјРѕР¶Рµ РґР° Рµ РїСЂР°Р·РЅРѕ"
 
 #: src/dialogs.c:3376 src/dialogs.c:3384
 msgid "New away message"
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/dialogs.c:3394
 msgid "Away title: "
-msgstr "Заглавие на отсъствие"
+msgstr "Р—Р°РіР»Р°РІРёРµ РЅР° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/dialogs.c:3439
 msgid "Save & Use"
-msgstr "Запазване и използване"
+msgstr "Р—Р°РїР°Р·РІР°РЅРµ Рё РёР·РїРѕР»Р·РІР°РЅРµ"
 
 #: src/dialogs.c:3443
 msgid "Use"
-msgstr "Използване"
+msgstr "РР·РїРѕР»Р·РІР°РЅРµ"
 
 #. show everything
 #: src/dialogs.c:3592
 msgid "Smile!"
-msgstr "Усмивка!"
+msgstr "РЈСЃРјРёРІРєР°!"
 
 #: src/dialogs.c:3638
 #, fuzzy
 msgid "Alias Chat"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #. Setup the label containing the description.
 #: src/dialogs.c:3667
@@ -4474,11 +4474,11 @@ msgstr ""
 #: src/dialogs.c:3679 src/dialogs.c:3782
 #, fuzzy
 msgid "_Alias:"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #: src/dialogs.c:3716
 msgid "Alias Buddy"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #. Setup the label containing the description.
 #: src/dialogs.c:3746
@@ -4490,50 +4490,50 @@ msgstr ""
 #: src/dialogs.c:3836 src/dialogs.c:3843
 #, fuzzy, c-format
 msgid "Couldn't write to %s."
-msgstr "Не мога да се свържа"
+msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р°"
 
 #: src/dialogs.c:3867
 #, fuzzy
 msgid "Save Log File"
-msgstr "Gaim - Записване на лог файл"
+msgstr "Gaim - Р—Р°РїРёСЃРІР°РЅРµ РЅР° Р»РѕРі С„Р°Р№Р»"
 
 #: src/dialogs.c:3897
 #, fuzzy, c-format
 msgid "Couldn't remove file %s."
-msgstr "Не можа да се отвори конфигурационен файл %s."
+msgstr "РќРµ РјРѕР¶Р° РґР° СЃРµ РѕС‚РІРѕСЂРё РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРµРЅ С„Р°Р№Р» %s."
 
 #: src/dialogs.c:3916
 #, fuzzy
 msgid "Clear Log"
-msgstr "Изчистване"
+msgstr "РР·С‡РёСЃС‚РІР°РЅРµ"
 
 #: src/dialogs.c:3925
 msgid "Really clear log?"
-msgstr "Изчистване на лог-а?"
+msgstr "РР·С‡РёСЃС‚РІР°РЅРµ РЅР° Р»РѕРі-Р°?"
 
 #: src/dialogs.c:3970
 #, fuzzy, c-format
 msgid "Couldn't open log file %s."
-msgstr "Не можа да се отвори конфигурационен файл %s."
+msgstr "РќРµ РјРѕР¶Р° РґР° СЃРµ РѕС‚РІРѕСЂРё РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРµРЅ С„Р°Р№Р» %s."
 
 #: src/dialogs.c:4112
 #, fuzzy, c-format
 msgid "Conversations with %s"
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/dialogs.c:4114
 #, fuzzy
 msgid "System Log"
-msgstr "Системен лог"
+msgstr "РЎРёСЃС‚РµРјРµРЅ Р»РѕРі"
 
 #: src/dialogs.c:4135
 #, fuzzy, c-format
 msgid "Couldn't open log file %s"
-msgstr "Не можа да се отвори конфигурационен файл %s."
+msgstr "РќРµ РјРѕР¶Р° РґР° СЃРµ РѕС‚РІРѕСЂРё РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРµРЅ С„Р°Р№Р» %s."
 
 #: src/dialogs.c:4156
 msgid "Date"
-msgstr "Дата"
+msgstr "Р”Р°С‚Р°"
 
 #: src/dialogs.c:4213
 msgid "Log"
@@ -4541,11 +4541,11 @@ msgstr ""
 
 #: src/dialogs.c:4235
 msgid "Clear"
-msgstr "Изчистване"
+msgstr "РР·С‡РёСЃС‚РІР°РЅРµ"
 
 #: src/dialogs.c:4293
 msgid "Rename Group"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/dialogs.c:4310
 msgid "Please enter a new name for the selected group.\n"
@@ -4554,7 +4554,7 @@ msgstr ""
 #: src/ft.c:121
 #, fuzzy, c-format
 msgid "%s is not a valid filename.\n"
-msgstr "Чата в %s е невъзможен"
+msgstr "Р§Р°С‚Р° РІ %s Рµ РЅРµРІСЉР·РјРѕР¶РµРЅ"
 
 #: src/ft.c:135
 #, c-format
@@ -4645,12 +4645,12 @@ msgstr ""
 #: src/gaimrc.c:1264 src/gtkblist.c:1395
 #, fuzzy
 msgid "By log size"
-msgstr "Икона"
+msgstr "РРєРѕРЅР°"
 
 #: src/gaimrc.c:1694
 #, c-format
 msgid "Could not open config file %s."
-msgstr "Не можа да се отвори конфигурационен файл %s."
+msgstr "РќРµ РјРѕР¶Р° РґР° СЃРµ РѕС‚РІРѕСЂРё РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРµРЅ С„Р°Р№Р» %s."
 
 #: src/gtkaccount.c:252
 #, c-format
@@ -4664,52 +4664,52 @@ msgstr ""
 #: src/gtkaccount.c:327
 #, fuzzy
 msgid "Login Options"
-msgstr "Шрифт"
+msgstr "РЁСЂРёС„С‚"
 
 #: src/gtkaccount.c:344
 msgid "Protocol:"
-msgstr "Протокол:"
+msgstr "РџСЂРѕС‚РѕРєРѕР»:"
 
 #: src/gtkaccount.c:349
 msgid "Screenname:"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/gtkaccount.c:431
 #, fuzzy
 msgid "Remember password"
-msgstr "Помнене на парола"
+msgstr "РџРѕРјРЅРµРЅРµ РЅР° РїР°СЂРѕР»Р°"
 
 #. Build the user options frame.
 #: src/gtkaccount.c:485
 #, fuzzy
 msgid "User Options"
-msgstr "Прокси"
+msgstr "РџСЂРѕРєСЃРё"
 
 #: src/gtkaccount.c:498
 #, fuzzy
 msgid "New mail notifications"
-msgstr "Бележка за нови писма"
+msgstr "Р‘РµР»РµР¶РєР° Р·Р° РЅРѕРІРё РїРёСЃРјР°"
 
 #: src/gtkaccount.c:507
 #, fuzzy
 msgid "Buddy icon file:"
-msgstr "Файл за икона:"
+msgstr "Р¤Р°Р№Р» Р·Р° РёРєРѕРЅР°:"
 
 #: src/gtkaccount.c:516
 #, fuzzy
 msgid "_Browse"
-msgstr "Браузър"
+msgstr "Р‘СЂР°СѓР·СЉСЂ"
 
 #: src/gtkaccount.c:522
 #, fuzzy
 msgid "_Reset"
-msgstr "Подразбиране"
+msgstr "РџРѕРґСЂР°Р·Р±РёСЂР°РЅРµ"
 
 #. Build the protocol options frame.
 #: src/gtkaccount.c:583
 #, fuzzy, c-format
 msgid "%s Options"
-msgstr "Опции"
+msgstr "РћРїС†РёРё"
 
 #. Use Global Proxy Settings
 #: src/gtkaccount.c:704
@@ -4720,7 +4720,7 @@ msgstr ""
 #: src/gtkaccount.c:711
 #, fuzzy
 msgid "No Proxy"
-msgstr "Без прокси"
+msgstr "Р‘РµР· РїСЂРѕРєСЃРё"
 
 #. HTTP
 #: src/gtkaccount.c:718
@@ -4748,148 +4748,148 @@ msgstr ""
 #: src/gtkaccount.c:784
 #, fuzzy
 msgid "Proxy Options"
-msgstr "Уединие"
+msgstr "РЈРµРґРёРЅРёРµ"
 
 #: src/gtkaccount.c:800 src/gtkprefs.c:1100
 #, fuzzy
 msgid "Proxy _type:"
-msgstr "Тип Proxy"
+msgstr "РўРёРї Proxy"
 
 #: src/gtkaccount.c:809
 #, fuzzy
 msgid "_Host:"
-msgstr "Хост"
+msgstr "РҐРѕСЃС‚"
 
 #: src/gtkaccount.c:813
 #, fuzzy
 msgid "_Port:"
-msgstr "Порт"
+msgstr "РџРѕСЂС‚"
 
 #: src/gtkaccount.c:821
 #, fuzzy
 msgid "_Username:"
-msgstr "Потребител"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»"
 
 #: src/gtkaccount.c:826
 #, fuzzy
 msgid "Pa_ssword:"
-msgstr "Парола"
+msgstr "РџР°СЂРѕР»Р°"
 
 #: src/gtkaccount.c:1139
 #, fuzzy
 msgid "Add Account"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/gtkaccount.c:1141
 #, fuzzy
 msgid "Modify Account"
-msgstr "Gaim - Промяна на акаунт"
+msgstr "Gaim - РџСЂРѕРјСЏРЅР° РЅР° Р°РєР°СѓРЅС‚"
 
 #. Add the disclosure
 #: src/gtkaccount.c:1165
 #, fuzzy
 msgid "Show more options"
-msgstr "Прокси"
+msgstr "РџСЂРѕРєСЃРё"
 
 #: src/gtkaccount.c:1166
 #, fuzzy
 msgid "Show fewer options"
-msgstr "Прокси"
+msgstr "РџСЂРѕРєСЃРё"
 
 #. Register button
 #: src/gtkaccount.c:1193
 msgid "Register"
-msgstr "?Регистриране?"
+msgstr "?Р РµРіРёСЃС‚СЂРёСЂР°РЅРµ?"
 
 #: src/gtkaccount.c:1472
 #, c-format
 msgid "Are you sure you want to delete %s?"
-msgstr "Сигирни ли сте за изтриването на %s?"
+msgstr "РЎРёРіРёСЂРЅРё Р»Рё СЃС‚Рµ Р·Р° РёР·С‚СЂРёРІР°РЅРµС‚Рѕ РЅР° %s?"
 
 #: src/gtkaccount.c:1476 src/gtkrequest.c:174
 msgid "Delete"
-msgstr "Триене"
+msgstr "РўСЂРёРµРЅРµ"
 
 #: src/gtkaccount.c:1554
 #, fuzzy
 msgid "Screenname"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/gtkaccount.c:1595
 #, fuzzy
 msgid "Protocol"
-msgstr "Протокол:"
+msgstr "РџСЂРѕС‚РѕРєРѕР»:"
 
 #: src/gtkblist.c:410
 #, fuzzy
 msgid "Add a _Buddy"
-msgstr "Добавяне авер"
+msgstr "Р”РѕР±Р°РІСЏРЅРµ Р°РІРµСЂ"
 
 #: src/gtkblist.c:412
 #, fuzzy
 msgid "Add a C_hat"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/gtkblist.c:414
 #, fuzzy
 msgid "_Delete Group"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/gtkblist.c:416
 #, fuzzy
 msgid "_Rename"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/gtkblist.c:424
 #, fuzzy
 msgid "_Join"
-msgstr "Присъединяване"
+msgstr "РџСЂРёСЃСЉРµРґРёРЅСЏРІР°РЅРµ"
 
 #: src/gtkblist.c:426
 #, fuzzy
 msgid "Auto-Join"
-msgstr "Авто влизане"
+msgstr "РђРІС‚Рѕ РІР»РёР·Р°РЅРµ"
 
 #: src/gtkblist.c:429 src/gtkblist.c:475
 #, fuzzy
 msgid "_Alias"
-msgstr "Прякор"
+msgstr "РџСЂСЏРєРѕСЂ"
 
 #: src/gtkblist.c:431 src/gtkblist.c:477
 #, fuzzy
 msgid "_Remove"
-msgstr "Премахване"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ"
 
 #: src/gtkblist.c:449
 #, fuzzy
 msgid "_Get Info"
-msgstr "Данни"
+msgstr "Р”Р°РЅРЅРё"
 
 #: src/gtkblist.c:452
 #, fuzzy
 msgid "_IM"
-msgstr "Съобщение"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkblist.c:454
 #, fuzzy
 msgid "Add Buddy _Pounce"
-msgstr "Ново известие"
+msgstr "РќРѕРІРѕ РёР·РІРµСЃС‚РёРµ"
 
 #: src/gtkblist.c:456
 #, fuzzy
 msgid "View _Log"
-msgstr "Архив"
+msgstr "РђСЂС…РёРІ"
 
 #. Buddies menu
 #: src/gtkblist.c:781
 #, fuzzy
 msgid "/_Buddies"
-msgstr "Авери"
+msgstr "РђРІРµСЂРё"
 
 #: src/gtkblist.c:782
 #, fuzzy
 msgid "/Buddies/New _Instant Message..."
-msgstr "Изпрати съобщение"
+msgstr "РР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkblist.c:783
 msgid "/Buddies/Join a _Chat..."
@@ -4898,7 +4898,7 @@ msgstr ""
 #: src/gtkblist.c:784
 #, fuzzy
 msgid "/Buddies/Get _User Info..."
-msgstr "Информация"
+msgstr "РРЅС„РѕСЂРјР°С†РёСЏ"
 
 #: src/gtkblist.c:786
 msgid "/Buddies/Show _Offline Buddies"
@@ -4911,7 +4911,7 @@ msgstr ""
 #: src/gtkblist.c:788
 #, fuzzy
 msgid "/Buddies/_Add a Buddy..."
-msgstr "Добавяне"
+msgstr "Р”РѕР±Р°РІСЏРЅРµ"
 
 #: src/gtkblist.c:789
 msgid "/Buddies/Add a C_hat..."
@@ -4928,13 +4928,13 @@ msgstr ""
 #: src/gtkblist.c:793
 #, fuzzy
 msgid "/Buddies/_Quit"
-msgstr "Авери"
+msgstr "РђРІРµСЂРё"
 
 #. Tools
 #: src/gtkblist.c:796
 #, fuzzy
 msgid "/_Tools"
-msgstr "Инстрименти"
+msgstr "РРЅСЃС‚СЂРёРјРµРЅС‚Рё"
 
 #: src/gtkblist.c:797
 msgid "/Tools/_Away"
@@ -4943,17 +4943,17 @@ msgstr ""
 #: src/gtkblist.c:798
 #, fuzzy
 msgid "/Tools/Buddy _Pounce"
-msgstr "Известие"
+msgstr "РР·РІРµСЃС‚РёРµ"
 
 #: src/gtkblist.c:799
 #, fuzzy
 msgid "/Tools/P_rotocol Actions"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #: src/gtkblist.c:801
 #, fuzzy
 msgid "/Tools/A_ccounts"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/gtkblist.c:802
 msgid "/Tools/_File Transfers..."
@@ -4962,33 +4962,33 @@ msgstr ""
 #: src/gtkblist.c:803
 #, fuzzy
 msgid "/Tools/Preferences"
-msgstr "Настройки"
+msgstr "РќР°СЃС‚СЂРѕР№РєРё"
 
 #: src/gtkblist.c:804
 #, fuzzy
 msgid "/Tools/Pr_ivacy"
-msgstr "Уединиение"
+msgstr "РЈРµРґРёРЅРёРµРЅРёРµ"
 
 #: src/gtkblist.c:806
 #, fuzzy
 msgid "/Tools/View System _Log"
-msgstr "Системен лог"
+msgstr "РЎРёСЃС‚РµРјРµРЅ Р»РѕРі"
 
 #. Help
 #: src/gtkblist.c:809
 #, fuzzy
 msgid "/_Help"
-msgstr "Помощ"
+msgstr "РџРѕРјРѕС‰"
 
 #: src/gtkblist.c:810
 #, fuzzy
 msgid "/Help/Online _Help"
-msgstr "Онлайн"
+msgstr "РћРЅР»Р°Р№РЅ"
 
 #: src/gtkblist.c:811
 #, fuzzy
 msgid "/Help/_Debug Window"
-msgstr "Показва Debug прозорец"
+msgstr "РџРѕРєР°Р·РІР° Debug РїСЂРѕР·РѕСЂРµС†"
 
 #: src/gtkblist.c:812
 msgid "/Help/_About"
@@ -5011,7 +5011,7 @@ msgstr ""
 msgid ""
 "\n"
 "<b>Account:</b>"
-msgstr "Акаунт"
+msgstr "РђРєР°СѓРЅС‚"
 
 #: src/gtkblist.c:923
 msgid ""
@@ -5024,7 +5024,7 @@ msgstr ""
 msgid ""
 "\n"
 "<b>Nickname:</b>"
-msgstr "Псевдоним"
+msgstr "РџСЃРµРІРґРѕРЅРёРј"
 
 #: src/gtkblist.c:925
 msgid ""
@@ -5069,35 +5069,35 @@ msgstr ""
 #: src/gtkblist.c:1233
 #, fuzzy, c-format
 msgid "Warned (%d%%) "
-msgstr "Предупреждения: %d%%\n"
+msgstr "РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёСЏ: %d%%\n"
 
 #: src/gtkblist.c:1236
 #, fuzzy
 msgid "Offline "
-msgstr "Онлайн"
+msgstr "РћРЅР»Р°Р№РЅ"
 
 #: src/gtkblist.c:1392 src/gtkprefs.c:845 src/gtkprefs.c:1535
 msgid "None"
-msgstr "Не показва"
+msgstr "РќРµ РїРѕРєР°Р·РІР°"
 
 #: src/gtkblist.c:1431 src/gtkprefs.c:2289
 msgid "Buddy List"
-msgstr "Лист"
+msgstr "Р›РёСЃС‚"
 
 #: src/gtkblist.c:1455
 #, fuzzy
 msgid "/Tools/Away"
-msgstr "Инстрименти"
+msgstr "РРЅСЃС‚СЂРёРјРµРЅС‚Рё"
 
 #: src/gtkblist.c:1458
 #, fuzzy
 msgid "/Tools/Buddy Pounce"
-msgstr "Известие"
+msgstr "РР·РІРµСЃС‚РёРµ"
 
 #: src/gtkblist.c:1461
 #, fuzzy
 msgid "/Tools/Protocol Actions"
-msgstr "Действия на протокола"
+msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -5112,51 +5112,51 @@ msgstr ""
 
 #: src/gtkblist.c:1564 src/gtkconv.c:1071
 msgid "IM"
-msgstr "Съобщение"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkblist.c:1570
 #, fuzzy
 msgid "Send a message to the selected buddy"
-msgstr "Изпращане на съобщение през сървър"
+msgstr "РР·РїСЂР°С‰Р°РЅРµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµ РїСЂРµР· СЃСЉСЂРІСЉСЂ"
 
 #: src/gtkblist.c:1579
 #, fuzzy
 msgid "Get information on the selected buddy"
-msgstr "Информация"
+msgstr "РРЅС„РѕСЂРјР°С†РёСЏ"
 
 #: src/gtkblist.c:1587
 #, fuzzy
 msgid "Join a chat room"
-msgstr "Присъединяване към група:"
+msgstr "РџСЂРёСЃСЉРµРґРёРЅСЏРІР°РЅРµ РєСЉРј РіСЂСѓРїР°:"
 
 #: src/gtkblist.c:1595
 #, fuzzy
 msgid "Set an away message"
-msgstr "Ново съобщение за отсъствие"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkblist.c:2585
 #, fuzzy
 msgid "No actions available"
-msgstr "Недостъпен"
+msgstr "РќРµРґРѕСЃС‚СЉРїРµРЅ"
 
 #: src/gtkconn.c:56 src/gtkconn.c:241 src/gtkconn.c:254
 #, fuzzy
 msgid "Done."
-msgstr "Не показва"
+msgstr "РќРµ РїРѕРєР°Р·РІР°"
 
 #: src/gtkconn.c:135
 #, fuzzy
 msgid "Signon: "
-msgstr "Влизане: %s"
+msgstr "Р’Р»РёР·Р°РЅРµ: %s"
 
 #: src/gtkconn.c:193
 msgid "Signon"
-msgstr "Влизане"
+msgstr "Р’Р»РёР·Р°РЅРµ"
 
 #: src/gtkconn.c:206
 #, fuzzy
 msgid "Cancel All"
-msgstr "Отмяна"
+msgstr "РћС‚РјСЏРЅР°"
 
 #: src/gtkconv.c:180
 msgid "That file already exists"
@@ -5168,11 +5168,11 @@ msgstr ""
 
 #: src/gtkconv.c:276
 msgid "Gaim - Insert Image"
-msgstr "Gaim - Вмъкване на образ"
+msgstr "Gaim - Р’РјСЉРєРІР°РЅРµ РЅР° РѕР±СЂР°Р·"
 
 #: src/gtkconv.c:580
 msgid "Gaim - Invite Buddy Into Chat Room"
-msgstr "Gaim - Покана на авер в стаята"
+msgstr "Gaim - РџРѕРєР°РЅР° РЅР° Р°РІРµСЂ РІ СЃС‚Р°СЏС‚Р°"
 
 #. Put our happy label in it.
 #: src/gtkconv.c:608
@@ -5184,30 +5184,30 @@ msgstr ""
 #: src/gtkconv.c:629
 #, fuzzy
 msgid "_Buddy:"
-msgstr "Авер"
+msgstr "РђРІРµСЂ"
 
 #: src/gtkconv.c:649
 #, fuzzy
 msgid "_Message:"
-msgstr "Съобщение"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkconv.c:1079
 msgid "Un-Ignore"
-msgstr "Не-игнориране"
+msgstr "РќРµ-РёРіРЅРѕСЂРёСЂР°РЅРµ"
 
 #: src/gtkconv.c:1081 src/gtkprefs.c:777
 msgid "Ignore"
-msgstr "Игнориране"
+msgstr "РРіРЅРѕСЂРёСЂР°РЅРµ"
 
 #. Info button
 #: src/gtkconv.c:1090 src/gtkconv.c:2986
 msgid "Info"
-msgstr "Инфо"
+msgstr "РРЅС„Рѕ"
 
 #: src/gtkconv.c:1110 src/gtkconv.c:2969 src/gtkconv.c:4108
 #: src/gtkrequest.c:176
 msgid "Remove"
-msgstr "Премахване"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ"
 
 #: src/gtkconv.c:2199
 msgid "User is typing..."
@@ -5221,185 +5221,185 @@ msgstr ""
 #: src/gtkconv.c:2309
 #, fuzzy
 msgid "_Send As"
-msgstr "Пращане"
+msgstr "РџСЂР°С‰Р°РЅРµ"
 
 #: src/gtkconv.c:2765
 msgid "Gaim - Save Conversation"
-msgstr "Gaim - Записване на разговор"
+msgstr "Gaim - Р—Р°РїРёСЃРІР°РЅРµ РЅР° СЂР°Р·РіРѕРІРѕСЂ"
 
 #. Conversation menu
 #: src/gtkconv.c:2782
 #, fuzzy
 msgid "/_Conversation"
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2784
 #, fuzzy
 msgid "/Conversation/_Save As..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2786
 #, fuzzy
 msgid "/Conversation/View _Log..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2790
 #, fuzzy
 msgid "/Conversation/Add Buddy _Pounce..."
-msgstr "Ново известие"
+msgstr "РќРѕРІРѕ РёР·РІРµСЃС‚РёРµ"
 
 #: src/gtkconv.c:2792
 #, fuzzy
 msgid "/Conversation/A_lias..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2794
 #, fuzzy
 msgid "/Conversation/_Get Info..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2796
 #, fuzzy
 msgid "/Conversation/In_vite..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2801
 #, fuzzy
 msgid "/Conversation/Insert _URL..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2803
 #, fuzzy
 msgid "/Conversation/Insert _Image..."
-msgstr "Изпращане на образ"
+msgstr "РР·РїСЂР°С‰Р°РЅРµ РЅР° РѕР±СЂР°Р·"
 
 #: src/gtkconv.c:2808
 #, fuzzy
 msgid "/Conversation/_Warn..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2810
 #, fuzzy
 msgid "/Conversation/_Block..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2812
 #, fuzzy
 msgid "/Conversation/_Add..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2814
 #, fuzzy
 msgid "/Conversation/_Remove..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2819
 #, fuzzy
 msgid "/Conversation/_Close"
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #. Options
 #: src/gtkconv.c:2823
 #, fuzzy
 msgid "/_Options"
-msgstr "Опции"
+msgstr "РћРїС†РёРё"
 
 #: src/gtkconv.c:2824
 #, fuzzy
 msgid "/Options/Enable _Logging"
-msgstr "Позволяване на логванe"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ РЅР° Р»РѕРіРІР°РЅe"
 
 #: src/gtkconv.c:2825
 #, fuzzy
 msgid "/Options/Enable _Sounds"
-msgstr "Позволяване на звука"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ РЅР° Р·РІСѓРєР°"
 
 #: src/gtkconv.c:2865
 #, fuzzy
 msgid "/Conversation/View Log..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2870
 #, fuzzy
 msgid "/Conversation/Add Buddy Pounce..."
-msgstr "Ново известие"
+msgstr "РќРѕРІРѕ РёР·РІРµСЃС‚РёРµ"
 
 #: src/gtkconv.c:2874
 #, fuzzy
 msgid "/Conversation/Alias..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2878
 #, fuzzy
 msgid "/Conversation/Get Info..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2882
 #, fuzzy
 msgid "/Conversation/Invite..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2888
 #, fuzzy
 msgid "/Conversation/Insert URL..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2892
 #, fuzzy
 msgid "/Conversation/Insert Image..."
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkconv.c:2898
 #, fuzzy
 msgid "/Conversation/Warn..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2902
 #, fuzzy
 msgid "/Conversation/Block..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2906
 #, fuzzy
 msgid "/Conversation/Add..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2910
 #, fuzzy
 msgid "/Conversation/Remove..."
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:2916
 #, fuzzy
 msgid "/Options/Enable Logging"
-msgstr "Позволяване на логванe"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ РЅР° Р»РѕРіРІР°РЅe"
 
 #: src/gtkconv.c:2919
 #, fuzzy
 msgid "/Options/Enable Sounds"
-msgstr "Позволяване на звука"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ РЅР° Р·РІСѓРєР°"
 
 #. From right to left...
 #. Send button
 #: src/gtkconv.c:2943 src/gtkconv.c:2945 src/gtkconv.c:3043 src/gtkconv.c:3045
 #: src/gtkconv.c:5684
 msgid "Send"
-msgstr "Пращане"
+msgstr "РџСЂР°С‰Р°РЅРµ"
 
 #: src/gtkconv.c:2966 src/gtkconv.c:4126
 #, fuzzy
 msgid "Add the user to your buddy list"
-msgstr "Позволи само потребителите по долу"
+msgstr "РџРѕР·РІРѕР»Рё СЃР°РјРѕ РїРѕС‚СЂРµР±РёС‚РµР»РёС‚Рµ РїРѕ РґРѕР»Сѓ"
 
 #: src/gtkconv.c:2972 src/gtkconv.c:4111
 #, fuzzy
 msgid "Remove the user from your buddy list"
-msgstr "Премахване на '%s' от листа.\n"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ РЅР° '%s' РѕС‚ Р»РёСЃС‚Р°.\n"
 
 #. Warn button
 #: src/gtkconv.c:2979
 msgid "Warn"
-msgstr "Предуреждение"
+msgstr "РџСЂРµРґСѓСЂРµР¶РґРµРЅРёРµ"
 
 #: src/gtkconv.c:2983
 msgid "Warn the user"
@@ -5412,88 +5412,88 @@ msgstr ""
 #. Block button
 #: src/gtkconv.c:2993
 msgid "Block"
-msgstr "Блокиране"
+msgstr "Р‘Р»РѕРєРёСЂР°РЅРµ"
 
 #: src/gtkconv.c:2997
 #, fuzzy
 msgid "Block the user"
-msgstr "Блокирай потребителите по-долу"
+msgstr "Р‘Р»РѕРєРёСЂР°Р№ РїРѕС‚СЂРµР±РёС‚РµР»РёС‚Рµ РїРѕ-РґРѕР»Сѓ"
 
 #. Invite
 #: src/gtkconv.c:3055 src/gtkconv.c:5687
 msgid "Invite"
-msgstr "Покана"
+msgstr "РџРѕРєР°РЅР°"
 
 #: src/gtkconv.c:3058
 #, fuzzy
 msgid "Invite a user"
-msgstr "Невалидно име"
+msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #: src/gtkconv.c:3097
 msgid "Bold"
-msgstr "Удебелен"
+msgstr "РЈРґРµР±РµР»РµРЅ"
 
 #: src/gtkconv.c:3108
 #, fuzzy
 msgid "Italic"
-msgstr "Наклонен"
+msgstr "РќР°РєР»РѕРЅРµРЅ"
 
 #: src/gtkconv.c:3119
 msgid "Underline"
-msgstr "Подчертан"
+msgstr "РџРѕРґС‡РµСЂС‚Р°РЅ"
 
 #: src/gtkconv.c:3135
 #, fuzzy
 msgid "Larger font size"
-msgstr "Пренебрегва размерите на шрифта"
+msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° СЂР°Р·РјРµСЂРёС‚Рµ РЅР° С€СЂРёС„С‚Р°"
 
 #: src/gtkconv.c:3147
 msgid "Normal font size"
-msgstr "Нормален размер на шрифт"
+msgstr "РќРѕСЂРјР°Р»РµРЅ СЂР°Р·РјРµСЂ РЅР° С€СЂРёС„С‚"
 
 #: src/gtkconv.c:3159
 #, fuzzy
 msgid "Smaller font size"
-msgstr "Нормален размер на шрифт"
+msgstr "РќРѕСЂРјР°Р»РµРЅ СЂР°Р·РјРµСЂ РЅР° С€СЂРёС„С‚"
 
 #: src/gtkconv.c:3176
 #, fuzzy
 msgid "Font Face"
-msgstr "Шрифт за текст"
+msgstr "РЁСЂРёС„С‚ Р·Р° С‚РµРєСЃС‚"
 
 #: src/gtkconv.c:3188
 #, fuzzy
 msgid "Foreground font color"
-msgstr "Фонов цвят"
+msgstr "Р¤РѕРЅРѕРІ С†РІСЏС‚"
 
 #: src/gtkconv.c:3200
 #, fuzzy
 msgid "Background color"
-msgstr "Фонов цвят"
+msgstr "Р¤РѕРЅРѕРІ С†РІСЏС‚"
 
 #: src/gtkconv.c:3215
 #, fuzzy
 msgid "Insert image"
-msgstr "Изпращане на образ"
+msgstr "РР·РїСЂР°С‰Р°РЅРµ РЅР° РѕР±СЂР°Р·"
 
 #: src/gtkconv.c:3226
 #, fuzzy
 msgid "Insert link"
-msgstr "Вмъкване на връзка"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РІСЂСЉР·РєР°"
 
 #: src/gtkconv.c:3237
 #, fuzzy
 msgid "Insert smiley"
-msgstr "Вмъкване на гримаса"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РіСЂРёРјР°СЃР°"
 
 #: src/gtkconv.c:3294
 msgid "Topic:"
-msgstr "Заглавие:"
+msgstr "Р—Р°РіР»Р°РІРёРµ:"
 
 #. Setup the label telling how many people are in the room.
 #: src/gtkconv.c:3345
 msgid "0 people in room"
-msgstr "0 човека в стаята"
+msgstr "0 С‡РѕРІРµРєР° РІ СЃС‚Р°СЏС‚Р°"
 
 #: src/gtkconv.c:3402
 msgid "IM the user"
@@ -5502,7 +5502,7 @@ msgstr ""
 #: src/gtkconv.c:3414
 #, fuzzy
 msgid "Ignore the user"
-msgstr "Пренебрегва размерите на шрифта"
+msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° СЂР°Р·РјРµСЂРёС‚Рµ РЅР° С€СЂРёС„С‚Р°"
 
 #: src/gtkconv.c:3910 src/server.c:1298
 #, c-format
@@ -5517,30 +5517,30 @@ msgstr ""
 #: src/gtkconv.c:3946
 #, fuzzy
 msgid "Close conversation"
-msgstr "Разговор"
+msgstr "Р Р°Р·РіРѕРІРѕСЂ"
 
 #: src/gtkconv.c:4604 src/gtkconv.c:4726
 #, fuzzy, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "%d %s в стаята"
-msgstr[1] "%d %s в стаята"
+msgstr[0] "%d %s РІ СЃС‚Р°СЏС‚Р°"
+msgstr[1] "%d %s РІ СЃС‚Р°СЏС‚Р°"
 
 #: src/gtkconv.c:5000
 msgid "Disable Animation"
-msgstr "Забрана на анимаци"
+msgstr "Р—Р°Р±СЂР°РЅР° РЅР° Р°РЅРёРјР°С†Рё"
 
 #: src/gtkconv.c:5009
 msgid "Enable Animation"
-msgstr "Позволяване на анимации"
+msgstr "РџРѕР·РІРѕР»СЏРІР°РЅРµ РЅР° Р°РЅРёРјР°С†РёРё"
 
 #: src/gtkconv.c:5016
 msgid "Hide Icon"
-msgstr "Криене на икона"
+msgstr "РљСЂРёРµРЅРµ РЅР° РёРєРѕРЅР°"
 
 #: src/gtkconv.c:5022
 msgid "Save Icon As..."
-msgstr "Съхранение на иконата като..."
+msgstr "РЎСЉС…СЂР°РЅРµРЅРёРµ РЅР° РёРєРѕРЅР°С‚Р° РєР°С‚Рѕ..."
 
 #: src/gtkft.c:126
 #, c-format
@@ -5562,7 +5562,7 @@ msgstr ""
 #: src/gtkft.c:443
 #, fuzzy
 msgid "Filename"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/gtkft.c:450
 msgid "Size"
@@ -5575,17 +5575,17 @@ msgstr ""
 #: src/gtkft.c:487
 #, fuzzy
 msgid "Filename:"
-msgstr "Преименуване"
+msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #: src/gtkft.c:488
 #, fuzzy
 msgid "Status:"
-msgstr "Статус: %s"
+msgstr "РЎС‚Р°С‚СѓСЃ: %s"
 
 #: src/gtkft.c:489
 #, fuzzy
 msgid "Speed:"
-msgstr "Сървър:"
+msgstr "РЎСЉСЂРІСЉСЂ:"
 
 #: src/gtkft.c:490
 msgid "Time Elapsed:"
@@ -5616,13 +5616,13 @@ msgstr ""
 #: src/gtkft.c:648 src/stock.c:86
 #, fuzzy
 msgid "_Pause"
-msgstr "TOC пауза"
+msgstr "TOC РїР°СѓР·Р°"
 
 #. Resume button
 #: src/gtkft.c:658
 #, fuzzy
 msgid "_Resume"
-msgstr "TOC продължение"
+msgstr "TOC РїСЂРѕРґСЉР»Р¶РµРЅРёРµ"
 
 #: src/gtkft.c:1013
 msgid "That file does not exist."
@@ -5639,7 +5639,7 @@ msgstr ""
 #: src/gtkft.c:1058
 #, fuzzy
 msgid "Gaim - Open..."
-msgstr "Gaim - Запис като..."
+msgstr "Gaim - Р—Р°РїРёСЃ РєР°С‚Рѕ..."
 
 #: src/gtkft.c:1107
 #, c-format
@@ -5668,19 +5668,19 @@ msgstr ""
 #: src/gtkimhtml.c:1649
 #, fuzzy
 msgid "Save Image"
-msgstr "IM образ"
+msgstr "IM РѕР±СЂР°Р·"
 
 #: src/gtkimhtml.c:1671
 #, fuzzy
 msgid "_Save Image..."
-msgstr "Съхранение на иконата като..."
+msgstr "РЎСЉС…СЂР°РЅРµРЅРёРµ РЅР° РёРєРѕРЅР°С‚Р° РєР°С‚Рѕ..."
 
 #: src/gtknotify.c:199
 #, fuzzy, c-format
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
-msgstr[0] "<i>Потребителя няма съобщение за отсъствие</i>"
-msgstr[1] "<i>Потребителя няма съобщение за отсъствие</i>"
+msgstr[0] "<i>РџРѕС‚СЂРµР±РёС‚РµР»СЏ РЅСЏРјР° СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ</i>"
+msgstr[1] "<i>РџРѕС‚СЂРµР±РёС‚РµР»СЏ РЅСЏРјР° СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ</i>"
 
 #: src/gtknotify.c:207
 #, c-format
@@ -5711,114 +5711,114 @@ msgstr ""
 #: src/gtkpounce.c:140
 #, fuzzy
 msgid "Select a file"
-msgstr "Всичко"
+msgstr "Р’СЃРёС‡РєРѕ"
 
 #: src/gtkpounce.c:189
 msgid "Please enter a buddy to pounce."
-msgstr "Въведи авер за известяването"
+msgstr "Р’СЉРІРµРґРё Р°РІРµСЂ Р·Р° РёР·РІРµСЃС‚СЏРІР°РЅРµС‚Рѕ"
 
 #. "New Buddy Pounce"
 #: src/gtkpounce.c:383 src/gtkpounce.c:787
 msgid "New Buddy Pounce"
-msgstr "Ново известие"
+msgstr "РќРѕРІРѕ РёР·РІРµСЃС‚РёРµ"
 
 #: src/gtkpounce.c:383
 #, fuzzy
 msgid "Edit Buddy Pounce"
-msgstr "Ново известие"
+msgstr "РќРѕРІРѕ РёР·РІРµСЃС‚РёРµ"
 
 #. Create the "Pounce Who" frame.
 #: src/gtkpounce.c:401
 msgid "Pounce Who"
-msgstr "Извести кого"
+msgstr "РР·РІРµСЃС‚Рё РєРѕРіРѕ"
 
 #: src/gtkpounce.c:426
 #, fuzzy
 msgid "_Buddy Name:"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #. Create the "Pounce When" frame.
 #: src/gtkpounce.c:448
 msgid "Pounce When"
-msgstr "Известяване при"
+msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё"
 
 #: src/gtkpounce.c:456
 #, fuzzy
 msgid "Sign on"
-msgstr "Влизане"
+msgstr "Р’Р»РёР·Р°РЅРµ"
 
 #: src/gtkpounce.c:458
 #, fuzzy
 msgid "Sign off"
-msgstr "Излизане"
+msgstr "РР·Р»РёР·Р°РЅРµ"
 
 #: src/gtkpounce.c:462
 #, fuzzy
 msgid "Return from away"
-msgstr "Известяване при връщане от остсъствие"
+msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё РІСЂСЉС‰Р°РЅРµ РѕС‚ РѕСЃС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkpounce.c:466
 #, fuzzy
 msgid "Return from idle"
-msgstr "Известяване при прекратяване на бездействието"
+msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё РїСЂРµРєСЂР°С‚СЏРІР°РЅРµ РЅР° Р±РµР·РґРµР№СЃС‚РІРёРµС‚Рѕ"
 
 #: src/gtkpounce.c:468
 #, fuzzy
 msgid "Buddy starts typing"
-msgstr "Лист авери"
+msgstr "Р›РёСЃС‚ Р°РІРµСЂРё"
 
 #: src/gtkpounce.c:470
 #, fuzzy
 msgid "Buddy stops typing"
-msgstr "Икона"
+msgstr "РРєРѕРЅР°"
 
 #. Create the "Pounce Action" frame.
 #: src/gtkpounce.c:499
 msgid "Pounce Action"
-msgstr "Действия"
+msgstr "Р”РµР№СЃС‚РІРёСЏ"
 
 #: src/gtkpounce.c:506
 #, fuzzy
 msgid "Open an IM window"
-msgstr "Отваряне прозорец за съобщение"
+msgstr "РћС‚РІР°СЂСЏРЅРµ РїСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkpounce.c:507
 #, fuzzy
 msgid "Popup notification"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #: src/gtkpounce.c:508
 #, fuzzy
 msgid "Send a message"
-msgstr "Изпрати като съобщение"
+msgstr "РР·РїСЂР°С‚Рё РєР°С‚Рѕ СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkpounce.c:509
 #, fuzzy
 msgid "Execute a command"
-msgstr "Изпълняване"
+msgstr "РР·РїСЉР»РЅСЏРІР°РЅРµ"
 
 #: src/gtkpounce.c:510
 #, fuzzy
 msgid "Play a sound"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: src/gtkpounce.c:514 src/gtkpounce.c:516
 msgid "Browse"
-msgstr "Преглеждане"
+msgstr "РџСЂРµРіР»РµР¶РґР°РЅРµ"
 
 #: src/gtkpounce.c:517 src/gtkprefs.c:2116
 msgid "Test"
-msgstr "Тест"
+msgstr "РўРµСЃС‚"
 
 #: src/gtkpounce.c:600
 #, fuzzy
 msgid "_Save this pounce after activation"
-msgstr "Запиши това известяване след активирането"
+msgstr "Р—Р°РїРёС€Рё С‚РѕРІР° РёР·РІРµСЃС‚СЏРІР°РЅРµ СЃР»РµРґ Р°РєС‚РёРІРёСЂР°РЅРµС‚Рѕ"
 
 #. "Remove Buddy Pounce"
 #: src/gtkpounce.c:794
 msgid "Remove Buddy Pounce"
-msgstr "Премахване на известие"
+msgstr "РџСЂРµРјР°С…РІР°РЅРµ РЅР° РёР·РІРµСЃС‚РёРµ"
 
 #: src/gtkpounce.c:835
 #, c-format
@@ -5828,17 +5828,17 @@ msgstr ""
 #: src/gtkpounce.c:836
 #, fuzzy, c-format
 msgid "%s has signed on"
-msgstr "%s излезе"
+msgstr "%s РёР·Р»РµР·Рµ"
 
 #: src/gtkpounce.c:837
 #, fuzzy, c-format
 msgid "%s has returned from being idle"
-msgstr "Известяване при прекратяване на бездействието"
+msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё РїСЂРµРєСЂР°С‚СЏРІР°РЅРµ РЅР° Р±РµР·РґРµР№СЃС‚РІРёРµС‚Рѕ"
 
 #: src/gtkpounce.c:838
 #, fuzzy, c-format
 msgid "%s has returned from being away"
-msgstr "Известяване при връщане от остсъствие"
+msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё РІСЂСЉС‰Р°РЅРµ РѕС‚ РѕСЃС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkpounce.c:839
 #, c-format
@@ -5848,12 +5848,12 @@ msgstr ""
 #: src/gtkpounce.c:840
 #, fuzzy, c-format
 msgid "%s has signed off"
-msgstr "%s излезе"
+msgstr "%s РёР·Р»РµР·Рµ"
 
 #: src/gtkpounce.c:841
 #, fuzzy, c-format
 msgid "%s has become idle"
-msgstr "%s излезе"
+msgstr "%s РёР·Р»РµР·Рµ"
 
 #: src/gtkpounce.c:842
 #, c-format
@@ -5867,7 +5867,7 @@ msgstr ""
 #: src/gtkprefs.c:381
 #, fuzzy
 msgid "Interface Options"
-msgstr "Общи"
+msgstr "РћР±С‰Рё"
 
 #: src/gtkprefs.c:383
 msgid "D_isplay remote nicknames if no alias is set"
@@ -5882,348 +5882,348 @@ msgstr ""
 #: src/gtkprefs.c:597
 #, fuzzy
 msgid "Icon"
-msgstr "Икона"
+msgstr "РРєРѕРЅР°"
 
 #: src/gtkprefs.c:671
 #, fuzzy
 msgid "Style"
-msgstr "Състояние"
+msgstr "РЎСЉСЃС‚РѕСЏРЅРёРµ"
 
 #: src/gtkprefs.c:672
 #, fuzzy
 msgid "_Bold"
-msgstr "Удебелен"
+msgstr "РЈРґРµР±РµР»РµРЅ"
 
 #: src/gtkprefs.c:674
 #, fuzzy
 msgid "_Italics"
-msgstr "Наклонен"
+msgstr "РќР°РєР»РѕРЅРµРЅ"
 
 #: src/gtkprefs.c:676
 #, fuzzy
 msgid "_Underline"
-msgstr "Подчертан"
+msgstr "РџРѕРґС‡РµСЂС‚Р°РЅ"
 
 #: src/gtkprefs.c:678
 #, fuzzy
 msgid "_Strikethrough"
-msgstr "Пресечен през текста"
+msgstr "РџСЂРµСЃРµС‡РµРЅ РїСЂРµР· С‚РµРєСЃС‚Р°"
 
 #: src/gtkprefs.c:681
 #, fuzzy
 msgid "Face"
-msgstr "Отмяна"
+msgstr "РћС‚РјСЏРЅР°"
 
 #: src/gtkprefs.c:684
 #, fuzzy
 msgid "Use custo_m face"
-msgstr "Вмъкване на гримаса"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РіСЂРёРјР°СЃР°"
 
 #: src/gtkprefs.c:701
 #, fuzzy
 msgid "Use custom si_ze"
-msgstr "Вмъкване на гримаса"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РіСЂРёРјР°СЃР°"
 
 #: src/gtkprefs.c:714
 msgid "Color"
-msgstr "Цвят"
+msgstr "Р¦РІСЏС‚"
 
 #: src/gtkprefs.c:718
 #, fuzzy
 msgid "_Text color"
-msgstr "Цвят на текст"
+msgstr "Р¦РІСЏС‚ РЅР° С‚РµРєСЃС‚"
 
 #: src/gtkprefs.c:737
 #, fuzzy
 msgid "Bac_kground color"
-msgstr "Фонов цвят"
+msgstr "Р¤РѕРЅРѕРІ С†РІСЏС‚"
 
 #: src/gtkprefs.c:765 src/gtkprefs.c:997 src/gtkprefs.c:1050
 #, fuzzy
 msgid "Display"
-msgstr "Авери - показване"
+msgstr "РђРІРµСЂРё - РїРѕРєР°Р·РІР°РЅРµ"
 
 #: src/gtkprefs.c:766
 #, fuzzy
 msgid "Show graphical _smileys"
-msgstr "Графични гримаси"
+msgstr "Р“СЂР°С„РёС‡РЅРё РіСЂРёРјР°СЃРё"
 
 #: src/gtkprefs.c:768
 #, fuzzy
 msgid "Show _timestamp on messages"
-msgstr "Показва време на съобщение"
+msgstr "РџРѕРєР°Р·РІР° РІСЂРµРјРµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:770
 #, fuzzy
 msgid "Show _URLs as links"
-msgstr "Показва URL като връзки"
+msgstr "РџРѕРєР°Р·РІР° URL РєР°С‚Рѕ РІСЂСЉР·РєРё"
 
 #: src/gtkprefs.c:774
 #, fuzzy
 msgid "_Highlight misspelled words"
-msgstr "Осветя збъркани думи"
+msgstr "РћСЃРІРµС‚СЏ Р·Р±СЉСЂРєР°РЅРё РґСѓРјРё"
 
 #: src/gtkprefs.c:778
 #, fuzzy
 msgid "Ignore c_olors"
-msgstr "Пренебрегва цвят"
+msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° С†РІСЏС‚"
 
 #: src/gtkprefs.c:780
 #, fuzzy
 msgid "Ignore font _faces"
-msgstr "Пренебрегва шрифт"
+msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° С€СЂРёС„С‚"
 
 #: src/gtkprefs.c:782
 #, fuzzy
 msgid "Ignore font si_zes"
-msgstr "Пренебрегва размерите на шрифта"
+msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° СЂР°Р·РјРµСЂРёС‚Рµ РЅР° С€СЂРёС„С‚Р°"
 
 #: src/gtkprefs.c:795
 msgid "Send Message"
-msgstr "Изпращане на съобщение"
+msgstr "РР·РїСЂР°С‰Р°РЅРµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:796
 #, fuzzy
 msgid "Enter _sends message"
-msgstr "Enter изпраща съобщение"
+msgstr "Enter РёР·РїСЂР°С‰Р° СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:798
 #, fuzzy
 msgid "C_ontrol-Enter sends message"
-msgstr "Ctrl-Enter изпраща съобщение"
+msgstr "Ctrl-Enter РёР·РїСЂР°С‰Р° СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:801
 #, fuzzy
 msgid "Window Closing"
-msgstr "Прозорец за съобщения"
+msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtkprefs.c:802
 #, fuzzy
 msgid "_Escape closes window"
-msgstr "Esc затваря прозорец"
+msgstr "Esc Р·Р°С‚РІР°СЂСЏ РїСЂРѕР·РѕСЂРµС†"
 
 #: src/gtkprefs.c:805
 #, fuzzy
 msgid "Insertions"
-msgstr "Вмъкване на връзка"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РІСЂСЉР·РєР°"
 
 #: src/gtkprefs.c:806
 #, fuzzy
 msgid "Control-{B/I/U} inserts _HTML tags"
-msgstr "Ctrl-{B/I/U/S} вмъква HTML таг"
+msgstr "Ctrl-{B/I/U/S} РІРјСЉРєРІР° HTML С‚Р°Рі"
 
 #: src/gtkprefs.c:808
 #, fuzzy
 msgid "Control-(number) _inserts smileys"
-msgstr "Ctrl-(цифра) вмъква гримаса"
+msgstr "Ctrl-(С†РёС„СЂР°) РІРјСЉРєРІР° РіСЂРёРјР°СЃР°"
 
 #: src/gtkprefs.c:825
 #, fuzzy
 msgid "Buddy List Sorting"
-msgstr "Лист авери"
+msgstr "Р›РёСЃС‚ Р°РІРµСЂРё"
 
 #: src/gtkprefs.c:834
 #, fuzzy
 msgid "Sorting:"
-msgstr "Порт"
+msgstr "РџРѕСЂС‚"
 
 #: src/gtkprefs.c:839
 #, fuzzy
 msgid "Buddy List Toolbar"
-msgstr "Лист"
+msgstr "Р›РёСЃС‚"
 
 #: src/gtkprefs.c:840 src/gtkprefs.c:967 src/gtkprefs.c:1023
 #, fuzzy
 msgid "Show _buttons as:"
-msgstr "Бутоните като:"
+msgstr "Р‘СѓС‚РѕРЅРёС‚Рµ РєР°С‚Рѕ:"
 
 #: src/gtkprefs.c:842 src/gtkprefs.c:969 src/gtkprefs.c:1025
 msgid "Pictures"
-msgstr "Картини"
+msgstr "РљР°СЂС‚РёРЅРё"
 
 #: src/gtkprefs.c:843 src/gtkprefs.c:970 src/gtkprefs.c:1026
 msgid "Text"
-msgstr "Текст"
+msgstr "РўРµРєСЃС‚"
 
 #: src/gtkprefs.c:844 src/gtkprefs.c:971 src/gtkprefs.c:1027
 #, fuzzy
 msgid "Pictures and text"
-msgstr "Картини и текст"
+msgstr "РљР°СЂС‚РёРЅРё Рё С‚РµРєСЃС‚"
 
 #: src/gtkprefs.c:849
 #, fuzzy
 msgid "_Raise window on events"
-msgstr "Повдига прозорец при събитие"
+msgstr "РџРѕРІРґРёРіР° РїСЂРѕР·РѕСЂРµС† РїСЂРё СЃСЉР±РёС‚РёРµ"
 
 #: src/gtkprefs.c:852
 #, fuzzy
 msgid "Group Display"
-msgstr "Групи"
+msgstr "Р“СЂСѓРїРё"
 
 #. prefs_checkbox(_("Show _groups with no online buddies"), "/gaim/gtk/blist/show_empty_groups", vbox);
 #: src/gtkprefs.c:854
 #, fuzzy
 msgid "Show _numbers in groups"
-msgstr "Показва броя в групата"
+msgstr "РџРѕРєР°Р·РІР° Р±СЂРѕСЏ РІ РіСЂСѓРїР°С‚Р°"
 
 #: src/gtkprefs.c:857
 #, fuzzy
 msgid "Buddy Display"
-msgstr "Авери - показване"
+msgstr "РђРІРµСЂРё - РїРѕРєР°Р·РІР°РЅРµ"
 
 #: src/gtkprefs.c:858 src/gtkprefs.c:992
 #, fuzzy
 msgid "Show buddy _icons"
-msgstr "Показва типови икони"
+msgstr "РџРѕРєР°Р·РІР° С‚РёРїРѕРІРё РёРєРѕРЅРё"
 
 #: src/gtkprefs.c:860
 #, fuzzy
 msgid "Show _warning levels"
-msgstr "Показва нива на предупреждение"
+msgstr "РџРѕРєР°Р·РІР° РЅРёРІР° РЅР° РїСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ"
 
 #: src/gtkprefs.c:863
 #, fuzzy
 msgid "Show idle _times"
-msgstr "Покава време на бездействие"
+msgstr "РџРѕРєР°РІР° РІСЂРµРјРµ РЅР° Р±РµР·РґРµР№СЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:877
 #, fuzzy
 msgid "Dim i_dle buddies"
-msgstr "Посивява бездайстващи авери"
+msgstr "РџРѕСЃРёРІСЏРІР° Р±РµР·РґР°Р№СЃС‚РІР°С‰Рё Р°РІРµСЂРё"
 
 #: src/gtkprefs.c:897 src/gtkprefs.c:2290
 msgid "Conversations"
-msgstr "Разговори"
+msgstr "Р Р°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkprefs.c:901
 #, fuzzy
 msgid "_Placement:"
-msgstr "Поставяне на етикети:"
+msgstr "РџРѕСЃС‚Р°РІСЏРЅРµ РЅР° РµС‚РёРєРµС‚Рё:"
 
 #: src/gtkprefs.c:910
 #, fuzzy
 msgid "Send _URLs as Links"
-msgstr "Показва URL като връзки"
+msgstr "РџРѕРєР°Р·РІР° URL РєР°С‚Рѕ РІСЂСЉР·РєРё"
 
 #: src/gtkprefs.c:913
 #, fuzzy
 msgid "Tab Options"
-msgstr "Чат"
+msgstr "Р§Р°С‚"
 
 #: src/gtkprefs.c:916 src/gtkprefs.c:927
 msgid "Top"
-msgstr "Горе"
+msgstr "Р“РѕСЂРµ"
 
 #: src/gtkprefs.c:918 src/gtkprefs.c:928
 #, fuzzy
 msgid "Bottom"
-msgstr "Долу"
+msgstr "Р”РѕР»Сѓ"
 
 #: src/gtkprefs.c:920 src/gtkprefs.c:929
 msgid "Left"
-msgstr "Ляво"
+msgstr "Р›СЏРІРѕ"
 
 #: src/gtkprefs.c:922 src/gtkprefs.c:930
 msgid "Right"
-msgstr "Дясно"
+msgstr "Р”СЏСЃРЅРѕ"
 
 #: src/gtkprefs.c:925
 #, fuzzy
 msgid "_Tab Placement:"
-msgstr "Постявяне на етикети"
+msgstr "РџРѕСЃС‚СЏРІСЏРЅРµ РЅР° РµС‚РёРєРµС‚Рё"
 
 #: src/gtkprefs.c:936
 #, fuzzy
 msgid "Show IMs and chats in _tabbed windows"
-msgstr "Чат-овете в един прозорец с етикети"
+msgstr "Р§Р°С‚-РѕРІРµС‚Рµ РІ РµРґРёРЅ РїСЂРѕР·РѕСЂРµС† СЃ РµС‚РёРєРµС‚Рё"
 
 #: src/gtkprefs.c:939
 #, fuzzy
 msgid "Show _close button on tabs"
-msgstr "Бутоните като:"
+msgstr "Р‘СѓС‚РѕРЅРёС‚Рµ РєР°С‚Рѕ:"
 
 #: src/gtkprefs.c:966 src/gtkprefs.c:1022
 #, fuzzy
 msgid "Window"
-msgstr "Прозорец за съобщения"
+msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtkprefs.c:976 src/gtkprefs.c:1032
 #, fuzzy
 msgid "New window _width:"
-msgstr "Ширина на прозореца"
+msgstr "РЁРёСЂРёРЅР° РЅР° РїСЂРѕР·РѕСЂРµС†Р°"
 
 #: src/gtkprefs.c:979 src/gtkprefs.c:1035
 #, fuzzy
 msgid "New window _height:"
-msgstr "Височина на прозореца"
+msgstr "Р’РёСЃРѕС‡РёРЅР° РЅР° РїСЂРѕР·РѕСЂРµС†Р°"
 
 #: src/gtkprefs.c:982 src/gtkprefs.c:1038
 #, fuzzy
 msgid "_Entry field height:"
-msgstr "Височина на полето за писане"
+msgstr "Р’РёСЃРѕС‡РёРЅР° РЅР° РїРѕР»РµС‚Рѕ Р·Р° РїРёСЃР°РЅРµ"
 
 #: src/gtkprefs.c:985 src/gtkprefs.c:1041
 #, fuzzy
 msgid "_Raise windows on events"
-msgstr "Повдига прозорец при събитие"
+msgstr "РџРѕРІРґРёРіР° РїСЂРѕР·РѕСЂРµС† РїСЂРё СЃСЉР±РёС‚РёРµ"
 
 #: src/gtkprefs.c:987
 #, fuzzy
 msgid "Hide window on _send"
-msgstr "Криене на прозореца след изпращане"
+msgstr "РљСЂРёРµРЅРµ РЅР° РїСЂРѕР·РѕСЂРµС†Р° СЃР»РµРґ РёР·РїСЂР°С‰Р°РЅРµ"
 
 #: src/gtkprefs.c:991
 msgid "Buddy Icons"
-msgstr "Икони"
+msgstr "РРєРѕРЅРё"
 
 #: src/gtkprefs.c:994
 #, fuzzy
 msgid "Enable buddy icon a_nimation"
-msgstr "Забрана анимацията на икони"
+msgstr "Р—Р°Р±СЂР°РЅР° Р°РЅРёРјР°С†РёСЏС‚Р° РЅР° РёРєРѕРЅРё"
 
 #: src/gtkprefs.c:998
 #, fuzzy
 msgid "Show _logins in window"
-msgstr "Показва влизанията в прозореца"
+msgstr "РџРѕРєР°Р·РІР° РІР»РёР·Р°РЅРёСЏС‚Р° РІ РїСЂРѕР·РѕСЂРµС†Р°"
 
 #: src/gtkprefs.c:1000
 #, fuzzy
 msgid "Show a_liases in tabs/titles"
-msgstr "Показва прякор в етикети/заглавия"
+msgstr "РџРѕРєР°Р·РІР° РїСЂСЏРєРѕСЂ РІ РµС‚РёРєРµС‚Рё/Р·Р°РіР»Р°РІРёСЏ"
 
 #: src/gtkprefs.c:1003
 #, fuzzy
 msgid "Typing Notification"
-msgstr "Показващо се известяване"
+msgstr "РџРѕРєР°Р·РІР°С‰Рѕ СЃРµ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #: src/gtkprefs.c:1004
 #, fuzzy
 msgid "Notify buddies that you are _typing to them"
-msgstr "Оповестява дригия при писане"
+msgstr "РћРїРѕРІРµСЃС‚СЏРІР° РґСЂРёРіРёСЏ РїСЂРё РїРёСЃР°РЅРµ"
 
 #: src/gtkprefs.c:1044
 msgid "Tab Completion"
-msgstr "Етикетно допълване"
+msgstr "Р•С‚РёРєРµС‚РЅРѕ РґРѕРїСЉР»РІР°РЅРµ"
 
 #: src/gtkprefs.c:1045
 #, fuzzy
 msgid "_Tab-complete nicks"
-msgstr "Tab - допълва прякор"
+msgstr "Tab - РґРѕРїСЉР»РІР° РїСЂСЏРєРѕСЂ"
 
 #: src/gtkprefs.c:1047
 #, fuzzy
 msgid "_Old-style tab completion"
-msgstr "Стар стил допълване на прякора"
+msgstr "РЎС‚Р°СЂ СЃС‚РёР» РґРѕРїСЉР»РІР°РЅРµ РЅР° РїСЂСЏРєРѕСЂР°"
 
 #: src/gtkprefs.c:1051
 #, fuzzy
 msgid "_Show people joining in window"
-msgstr "Показва влизащи/излизащи хора в прозореца "
+msgstr "РџРѕРєР°Р·РІР° РІР»РёР·Р°С‰Рё/РёР·Р»РёР·Р°С‰Рё С…РѕСЂР° РІ РїСЂРѕР·РѕСЂРµС†Р° "
 
 #: src/gtkprefs.c:1053
 #, fuzzy
 msgid "_Show people leaving in window"
-msgstr "Показва влизащи/излизащи хора в прозореца "
+msgstr "РџРѕРєР°Р·РІР° РІР»РёР·Р°С‰Рё/РёР·Р»РёР·Р°С‰Рё С…РѕСЂР° РІ РїСЂРѕР·РѕСЂРµС†Р° "
 
 #: src/gtkprefs.c:1055
 msgid "Co_lorize screennames"
@@ -6231,31 +6231,31 @@ msgstr ""
 
 #: src/gtkprefs.c:1099
 msgid "Proxy Type"
-msgstr "Тип Proxy"
+msgstr "РўРёРї Proxy"
 
 #: src/gtkprefs.c:1102
 #, fuzzy
 msgid "No proxy"
-msgstr "Без прокси"
+msgstr "Р‘РµР· РїСЂРѕРєСЃРё"
 
 #: src/gtkprefs.c:1108
 msgid "Proxy Server"
-msgstr "Proxy сървър"
+msgstr "Proxy СЃСЉСЂРІСЉСЂ"
 
 #: src/gtkprefs.c:1128
 #, fuzzy
 msgid "_Host"
-msgstr "Хост"
+msgstr "РҐРѕСЃС‚"
 
 #: src/gtkprefs.c:1163
 #, fuzzy
 msgid "_User"
-msgstr "Потребител"
+msgstr "РџРѕС‚СЂРµР±РёС‚РµР»"
 
 #: src/gtkprefs.c:1180
 #, fuzzy
 msgid "Pa_ssword"
-msgstr "Парола"
+msgstr "РџР°СЂРѕР»Р°"
 
 #: src/gtkprefs.c:1236
 #, c-format
@@ -6280,11 +6280,11 @@ msgstr ""
 
 #: src/gtkprefs.c:1260
 msgid "Galeon"
-msgstr "Галеон"
+msgstr "Р“Р°Р»РµРѕРЅ"
 
 #: src/gtkprefs.c:1269
 msgid "Manual"
-msgstr "Ръчно"
+msgstr "Р СЉС‡РЅРѕ"
 
 #: src/gtkprefs.c:1310
 msgid "Browser Selection"
@@ -6293,7 +6293,7 @@ msgstr ""
 #: src/gtkprefs.c:1314
 #, fuzzy
 msgid "_Browser:"
-msgstr "Браузър"
+msgstr "Р‘СЂР°СѓР·СЉСЂ"
 
 #: src/gtkprefs.c:1324
 #, c-format
@@ -6305,86 +6305,86 @@ msgstr ""
 #: src/gtkprefs.c:1345
 #, fuzzy
 msgid "Browser Options"
-msgstr "Прокси"
+msgstr "РџСЂРѕРєСЃРё"
 
 #: src/gtkprefs.c:1346
 #, fuzzy
 msgid "Open new _window by default"
-msgstr "Покава нов прозорец по подразбиране"
+msgstr "РџРѕРєР°РІР° РЅРѕРІ РїСЂРѕР·РѕСЂРµС† РїРѕ РїРѕРґСЂР°Р·Р±РёСЂР°РЅРµ"
 
 #: src/gtkprefs.c:1361
 #, fuzzy
 msgid "Message Logs"
-msgstr "Съобщения"
+msgstr "РЎСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtkprefs.c:1362
 #, fuzzy
 msgid "_Log all instant messages"
-msgstr "Ново съобщение"
+msgstr "РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:1364
 #, fuzzy
 msgid "Log all c_hats"
-msgstr "Логва всички разговори"
+msgstr "Р›РѕРіРІР° РІСЃРёС‡РєРё СЂР°Р·РіРѕРІРѕСЂРё"
 
 #: src/gtkprefs.c:1366
 #, fuzzy
 msgid "Strip _HTML from logs"
-msgstr "Премахва HTML от логовете"
+msgstr "РџСЂРµРјР°С…РІР° HTML РѕС‚ Р»РѕРіРѕРІРµС‚Рµ"
 
 #: src/gtkprefs.c:1369
 #, fuzzy
 msgid "System Logs"
-msgstr "Системен лог"
+msgstr "РЎРёСЃС‚РµРјРµРЅ Р»РѕРі"
 
 #: src/gtkprefs.c:1370
 #, fuzzy
 msgid "Log when buddies _sign on/sign off"
-msgstr "Логва авера при влизане/излизане"
+msgstr "Р›РѕРіРІР° Р°РІРµСЂР° РїСЂРё РІР»РёР·Р°РЅРµ/РёР·Р»РёР·Р°РЅРµ"
 
 #: src/gtkprefs.c:1372
 #, fuzzy
 msgid "Log when buddies become _idle/un-idle"
-msgstr "Логва авера при бездействие/връщане"
+msgstr "Р›РѕРіРІР° Р°РІРµСЂР° РїСЂРё Р±РµР·РґРµР№СЃС‚РІРёРµ/РІСЂСЉС‰Р°РЅРµ"
 
 #: src/gtkprefs.c:1374
 #, fuzzy
 msgid "Log when buddies go away/come _back"
-msgstr "Логва авера при смяна остсъствие/връщане"
+msgstr "Р›РѕРіРІР° Р°РІРµСЂР° РїСЂРё СЃРјСЏРЅР° РѕСЃС‚СЃСЉСЃС‚РІРёРµ/РІСЂСЉС‰Р°РЅРµ"
 
 #: src/gtkprefs.c:1376
 #, fuzzy
 msgid "Log your _own signons/idleness/awayness"
-msgstr "Логва собствено влизане/бездействие/остсъствие"
+msgstr "Р›РѕРіРІР° СЃРѕР±СЃС‚РІРµРЅРѕ РІР»РёР·Р°РЅРµ/Р±РµР·РґРµР№СЃС‚РІРёРµ/РѕСЃС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1378
 #, fuzzy
 msgid "I_ndividual log file for each buddy's signons"
-msgstr "Отделен лог файл за всяко влизане на авера"
+msgstr "РћС‚РґРµР»РµРЅ Р»РѕРі С„Р°Р№Р» Р·Р° РІСЃСЏРєРѕ РІР»РёР·Р°РЅРµ РЅР° Р°РІРµСЂР°"
 
 #: src/gtkprefs.c:1421
 msgid "Sound Options"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: src/gtkprefs.c:1422
 #, fuzzy
 msgid "_No sounds when you log in"
-msgstr "Без звук при мое влизане"
+msgstr "Р‘РµР· Р·РІСѓРє РїСЂРё РјРѕРµ РІР»РёР·Р°РЅРµ"
 
 #: src/gtkprefs.c:1424
 #, fuzzy
 msgid "_Sounds while away"
-msgstr "Звук при отсъствие"
+msgstr "Р—РІСѓРє РїСЂРё РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1428
 #, fuzzy
 msgid "Sound Method"
-msgstr "Звуков метод"
+msgstr "Р—РІСѓРєРѕРІ РјРµС‚РѕРґ"
 
 #: src/gtkprefs.c:1429
 #, fuzzy
 msgid "_Method:"
-msgstr "Звуков метод"
+msgstr "Р—РІСѓРєРѕРІ РјРµС‚РѕРґ"
 
 #: src/gtkprefs.c:1431
 msgid "Console beep"
@@ -6404,23 +6404,23 @@ msgid ""
 "Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
-"Звукова команда\n"
-"(%s за файла)"
+"Р—РІСѓРєРѕРІР° РєРѕРјР°РЅРґР°\n"
+"(%s Р·Р° С„Р°Р№Р»Р°)"
 
 #: src/gtkprefs.c:1505
 #, fuzzy
 msgid "_Sending messages removes away status"
-msgstr "Изпращането премахва отсъствие"
+msgstr "РР·РїСЂР°С‰Р°РЅРµС‚Рѕ РїСЂРµРјР°С…РІР° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1507
 #, fuzzy
 msgid "_Queue new messages when away"
-msgstr "Съобщенията в опашка при отсъствие"
+msgstr "РЎСЉРѕР±С‰РµРЅРёСЏС‚Р° РІ РѕРїР°С€РєР° РїСЂРё РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1510
 #, fuzzy
 msgid "Auto-response"
-msgstr "Не изпраща авто-орговори"
+msgstr "РќРµ РёР·РїСЂР°С‰Р° Р°РІС‚Рѕ-РѕСЂРіРѕРІРѕСЂРё"
 
 #: src/gtkprefs.c:1513
 msgid "Seconds before _resending:"
@@ -6429,17 +6429,17 @@ msgstr ""
 #: src/gtkprefs.c:1516
 #, fuzzy
 msgid "_Send auto-response"
-msgstr "Не изпраща авто-орговори"
+msgstr "РќРµ РёР·РїСЂР°С‰Р° Р°РІС‚Рѕ-РѕСЂРіРѕРІРѕСЂРё"
 
 #: src/gtkprefs.c:1518
 #, fuzzy
 msgid "_Only send auto-response when idle"
-msgstr "Авто-отговори само при бездействие"
+msgstr "РђРІС‚Рѕ-РѕС‚РіРѕРІРѕСЂРё СЃР°РјРѕ РїСЂРё Р±РµР·РґРµР№СЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1520
 #, fuzzy
 msgid "Send auto-response in active conversations"
-msgstr "Не изпраща авто-орговори"
+msgstr "РќРµ РёР·РїСЂР°С‰Р° Р°РІС‚Рѕ-РѕСЂРіРѕРІРѕСЂРё"
 
 #: src/gtkprefs.c:1533
 msgid "Idle _time reporting:"
@@ -6448,22 +6448,22 @@ msgstr ""
 #: src/gtkprefs.c:1536
 #, fuzzy
 msgid "Gaim usage"
-msgstr "Използване на Gaim"
+msgstr "РР·РїРѕР»Р·РІР°РЅРµ РЅР° Gaim"
 
 #: src/gtkprefs.c:1539
 #, fuzzy
 msgid "X usage"
-msgstr "Използване на X"
+msgstr "РР·РїРѕР»Р·РІР°РЅРµ РЅР° X"
 
 #: src/gtkprefs.c:1541
 #, fuzzy
 msgid "Windows usage"
-msgstr "Прозорец за съобщения"
+msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtkprefs.c:1549
 #, fuzzy
 msgid "Auto-away"
-msgstr "Отсъствие"
+msgstr "РћС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1550
 msgid "Set away _when idle"
@@ -6476,7 +6476,7 @@ msgstr ""
 #: src/gtkprefs.c:1559
 #, fuzzy
 msgid "Away m_essage:"
-msgstr "Съобщение за отсъствие"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:1621
 #, c-format
@@ -6500,12 +6500,12 @@ msgstr ""
 
 #: src/gtkprefs.c:1804
 msgid "Load"
-msgstr "Зареждане"
+msgstr "Р—Р°СЂРµР¶РґР°РЅРµ"
 
 #: src/gtkprefs.c:1811
 #, fuzzy
 msgid "Name"
-msgstr "Псевдоним"
+msgstr "РџСЃРµРІРґРѕРЅРёРј"
 
 #: src/gtkprefs.c:1858
 msgid "Details"
@@ -6514,7 +6514,7 @@ msgstr ""
 #: src/gtkprefs.c:1983
 #, fuzzy
 msgid "Sound Selection"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: src/gtkprefs.c:2090
 msgid "Play"
@@ -6526,36 +6526,36 @@ msgstr ""
 
 #: src/gtkprefs.c:2120
 msgid "Reset"
-msgstr "Подразбиране"
+msgstr "РџРѕРґСЂР°Р·Р±РёСЂР°РЅРµ"
 
 #: src/gtkprefs.c:2124
 msgid "Choose..."
-msgstr "Избор..."
+msgstr "РР·Р±РѕСЂ..."
 
 #: src/gtkprefs.c:2248
 #, fuzzy
 msgid "_Edit"
-msgstr "Редактиране"
+msgstr "Р РµРґР°РєС‚РёСЂР°РЅРµ"
 
 #: src/gtkprefs.c:2284
 #, fuzzy
 msgid "Interface"
-msgstr "Инстанция:"
+msgstr "РРЅСЃС‚Р°РЅС†РёСЏ:"
 
 #: src/gtkprefs.c:2285
 #, fuzzy
 msgid "Smiley Themes"
-msgstr "Вмъкване на гримаса"
+msgstr "Р’РјСЉРєРІР°РЅРµ РЅР° РіСЂРёРјР°СЃР°"
 
 #: src/gtkprefs.c:2286
 #, fuzzy
 msgid "Fonts"
-msgstr "Шрифт"
+msgstr "РЁСЂРёС„С‚"
 
 #: src/gtkprefs.c:2287
 #, fuzzy
 msgid "Message Text"
-msgstr "Съобщения"
+msgstr "РЎСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtkprefs.c:2288
 msgid "Shortcuts"
@@ -6564,42 +6564,42 @@ msgstr ""
 #: src/gtkprefs.c:2291
 #, fuzzy
 msgid "IMs"
-msgstr "Съобщение"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ"
 
 #: src/gtkprefs.c:2293
 msgid "Proxy"
-msgstr "Прокси"
+msgstr "РџСЂРѕРєСЃРё"
 
 #. We use the registered default browser in windows
 #: src/gtkprefs.c:2296
 msgid "Browser"
-msgstr "Браузър"
+msgstr "Р‘СЂР°СѓР·СЉСЂ"
 
 #: src/gtkprefs.c:2298
 msgid "Logging"
-msgstr "Архив"
+msgstr "РђСЂС…РёРІ"
 
 #: src/gtkprefs.c:2299
 msgid "Sounds"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: src/gtkprefs.c:2300
 #, fuzzy
 msgid "Sound Events"
-msgstr "Звук"
+msgstr "Р—РІСѓРє"
 
 #: src/gtkprefs.c:2301
 #, fuzzy
 msgid "Away / Idle"
-msgstr "Заглавие на отсъствие"
+msgstr "Р—Р°РіР»Р°РІРёРµ РЅР° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:2302
 msgid "Away Messages"
-msgstr "Съобщение за отсъствие"
+msgstr "РЎСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #: src/gtkprefs.c:2305
 msgid "Plugins"
-msgstr "Плъгини"
+msgstr "РџР»СЉРіРёРЅРё"
 
 #: src/gtkrequest.c:172
 msgid "Apply"
@@ -6608,17 +6608,17 @@ msgstr ""
 #: src/gtksound.c:60
 #, fuzzy
 msgid "Buddy logs in"
-msgstr "Икона"
+msgstr "РРєРѕРЅР°"
 
 #: src/gtksound.c:61
 #, fuzzy
 msgid "Buddy logs out"
-msgstr "Лист"
+msgstr "Р›РёСЃС‚"
 
 #: src/gtksound.c:62
 #, fuzzy
 msgid "Message received"
-msgstr "Грешка на съобщението"
+msgstr "Р“СЂРµС€РєР° РЅР° СЃСЉРѕР±С‰РµРЅРёРµС‚Рѕ"
 
 #: src/gtksound.c:63
 msgid "Message received begins conversation"
@@ -6627,7 +6627,7 @@ msgstr ""
 #: src/gtksound.c:64
 #, fuzzy
 msgid "Message sent"
-msgstr "Съобщения"
+msgstr "РЎСЉРѕР±С‰РµРЅРёСЏ"
 
 #: src/gtksound.c:65
 msgid "Person enters chat"
@@ -6673,7 +6673,7 @@ msgstr ""
 
 #: src/gtkutils.c:318
 msgid "Gaim - Save Icon"
-msgstr "Gaim - Записване на икона"
+msgstr "Gaim - Р—Р°РїРёСЃРІР°РЅРµ РЅР° РёРєРѕРЅР°"
 
 #. full help text
 #: src/gtkutils.c:908
@@ -6703,7 +6703,7 @@ msgstr ""
 
 #: src/html.c:321
 msgid "g003: Error opening connection.\n"
-msgstr "g003: Грешка при отваряне на връзка.\n"
+msgstr "g003: Р“СЂРµС€РєР° РїСЂРё РѕС‚РІР°СЂСЏРЅРµ РЅР° РІСЂСЉР·РєР°.\n"
 
 #: src/log.c:29
 msgid "Error in specifying buddy conversation."
@@ -6712,12 +6712,12 @@ msgstr ""
 #: src/log.c:35
 #, fuzzy
 msgid "Unable to find conversation log"
-msgstr "Не може да се изпрати: прекалено голямо"
+msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚Рё: РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»СЏРјРѕ"
 
 #: src/log.c:118 src/log.c:139 src/log.c:152
 #, fuzzy, c-format
 msgid "Unable to make directory %s for logging"
-msgstr "Не мога да отворя директна връзка"
+msgstr "РќРµ РјРѕРіР° РґР° РѕС‚РІРѕСЂСЏ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #: src/log.c:206 src/log.c:222
 #, c-format
@@ -6737,7 +6737,7 @@ msgstr ""
 #: src/log.c:274
 #, fuzzy, c-format
 msgid "+++ %s (%s) signed off @ %s"
-msgstr "%s излезе"
+msgstr "%s РёР·Р»РµР·Рµ"
 
 #: src/log.c:279
 #, c-format
@@ -6827,7 +6827,7 @@ msgstr ""
 #: src/main.c:145
 #, fuzzy
 msgid "Please enter your login."
-msgstr "Моля въведете вашия логин"
+msgstr "РњРѕР»СЏ РІСЉРІРµРґРµС‚Рµ РІР°С€РёСЏ Р»РѕРіРёРЅ"
 
 #: src/main.c:233
 msgid "<New User>"
@@ -6836,22 +6836,22 @@ msgstr ""
 #: src/main.c:275
 #, fuzzy
 msgid "Login"
-msgstr "Архив"
+msgstr "РђСЂС…РёРІ"
 
 #: src/main.c:291
 #, fuzzy
 msgid "Screen Name:"
-msgstr "Номер:"
+msgstr "РќРѕРјРµСЂ:"
 
 #: src/main.c:341
 #, fuzzy
 msgid "Sign On"
-msgstr "Влизане/Излизане"
+msgstr "Р’Р»РёР·Р°РЅРµ/РР·Р»РёР·Р°РЅРµ"
 
 #: src/prpl.c:292
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
-msgstr "%s%s%s%s направи %s техен контакт %s%s%s"
+msgstr "%s%s%s%s РЅР°РїСЂР°РІРё %s С‚РµС…РµРЅ РєРѕРЅС‚Р°РєС‚ %s%s%s"
 
 #: src/prpl.c:304
 msgid ""
@@ -6861,12 +6861,12 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Искате ли да ги добавите към листата?"
+"РСЃРєР°С‚Рµ Р»Рё РґР° РіРё РґРѕР±Р°РІРёС‚Рµ РєСЉРј Р»РёСЃС‚Р°С‚Р°?"
 
 #: src/prpl.c:307
 #, fuzzy
 msgid "Gaim - Information"
-msgstr "Информация Gadu-Gadu"
+msgstr "РРЅС„РѕСЂРјР°С†РёСЏ Gadu-Gadu"
 
 #: src/prpl.c:310
 msgid "Add buddy to your list?"
@@ -6877,30 +6877,30 @@ msgstr ""
 #.
 #: src/request.h:823
 msgid "Accept"
-msgstr "Приемане"
+msgstr "РџСЂРёРµРјР°РЅРµ"
 
 #: src/server.c:56
 msgid "Please enter your password"
-msgstr "Моля въведете парола"
+msgstr "РњРѕР»СЏ РІСЉРІРµРґРµС‚Рµ РїР°СЂРѕР»Р°"
 
 #: src/server.c:874
 #, c-format
 msgid "(%d messages)"
-msgstr "(%d съобщения)"
+msgstr "(%d СЃСЉРѕР±С‰РµРЅРёСЏ)"
 
 #: src/server.c:886
 msgid "(1 message)"
-msgstr "(1 съобщение)"
+msgstr "(1 СЃСЉРѕР±С‰РµРЅРёРµ)"
 
 #: src/server.c:1084 src/server.c:1094
 #, c-format
 msgid "%s logged in."
-msgstr "%s влезе."
+msgstr "%s РІР»РµР·Рµ."
 
 #: src/server.c:1112 src/server.c:1120
 #, c-format
 msgid "%s logged out."
-msgstr "%s излезе."
+msgstr "%s РёР·Р»РµР·Рµ."
 
 #: src/server.c:1161
 #, c-format
@@ -6912,7 +6912,7 @@ msgstr ""
 #: src/server.c:1164
 #, fuzzy
 msgid "an anonymous person"
-msgstr "Предупреди анонимно?"
+msgstr "РџСЂРµРґСѓРїСЂРµРґРё Р°РЅРѕРЅРёРјРЅРѕ?"
 
 #: src/server.c:1254
 #, c-format
@@ -6933,21 +6933,21 @@ msgstr ""
 #: src/server.c:1436
 #, fuzzy
 msgid "Gaim - Popup"
-msgstr "?Gaim - Напомняне?"
+msgstr "?Gaim - РќР°РїРѕРјРЅСЏРЅРµ?"
 
 #: src/server.c:1463
 msgid "More Info"
-msgstr "Повече инфо"
+msgstr "РџРѕРІРµС‡Рµ РёРЅС„Рѕ"
 
 #: src/stock.c:84
 #, fuzzy
 msgid "_Modify"
-msgstr "Промяня"
+msgstr "РџСЂРѕРјСЏРЅСЏ"
 
 #: src/stock.c:85
 #, fuzzy
 msgid "_Open Mail"
-msgstr "?Отвори поща?"
+msgstr "?РћС‚РІРѕСЂРё РїРѕС‰Р°?"
 
 #: src/util.c:78 src/util.c:83 src/util.c:88 src/util.c:91
 msgid "day"
@@ -6965,8 +6965,8 @@ msgstr[1] ""
 #, fuzzy
 msgid "minute"
 msgid_plural "minutes"
-msgstr[0] "минути използвани"
-msgstr[1] "минути използвани"
+msgstr[0] "РјРёРЅСѓС‚Рё РёР·РїРѕР»Р·РІР°РЅРё"
+msgstr[1] "РјРёРЅСѓС‚Рё РёР·РїРѕР»Р·РІР°РЅРё"
 
 #: src/util.c:933
 msgid "Calculating..."
@@ -6975,7 +6975,7 @@ msgstr ""
 #: src/util.c:936
 #, fuzzy
 msgid "Unknown."
-msgstr "Непознато"
+msgstr "РќРµРїРѕР·РЅР°С‚Рѕ"
 
 #: src/plugin.c:222
 #, c-format
@@ -6985,7 +6985,7 @@ msgstr ""
 #: src/plugin.c:227
 #, fuzzy
 msgid "Gaim was unable to load your plugin."
-msgstr "Gaim не успя да изпрати съобщение"
+msgstr "Gaim РЅРµ СѓСЃРїСЏ РґР° РёР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #. * Custom away message.
 #: src/prpl.h:175
@@ -6995,301 +6995,301 @@ msgstr ""
 #: src/gtkdebug.c:142
 #, fuzzy
 msgid "Debug Window"
-msgstr "Показва Debug прозорец"
+msgstr "РџРѕРєР°Р·РІР° Debug РїСЂРѕР·РѕСЂРµС†"
 
 #: src/gtkdebug.c:182
 #, fuzzy
 msgid "Pause"
-msgstr "TOC пауза"
+msgstr "TOC РїР°СѓР·Р°"
 
 #: src/gtkdebug.c:188
 #, fuzzy
 msgid "Timestamps"
-msgstr "Тест"
+msgstr "РўРµСЃС‚"
 
 #, fuzzy
 #~ msgid "Accounts..."
-#~ msgstr "Акаунти"
+#~ msgstr "РђРєР°СѓРЅС‚Рё"
 
 #, fuzzy
 #~ msgid "About Gaim..."
-#~ msgstr "Относно Gaim"
+#~ msgstr "РћС‚РЅРѕСЃРЅРѕ Gaim"
 
 #, fuzzy
 #~ msgid "Gaim Chat"
-#~ msgstr "Gaim - Чат"
+#~ msgstr "Gaim - Р§Р°С‚"
 
 #, fuzzy
 #~ msgid "Chat Rooms"
-#~ msgstr "Чат"
+#~ msgstr "Р§Р°С‚"
 
 #~ msgid "yes"
-#~ msgstr "Да"
+#~ msgstr "Р”Р°"
 
 #~ msgid "no"
-#~ msgstr "Не"
+#~ msgstr "РќРµ"
 
 #~ msgid "Gadu-Gadu User"
-#~ msgstr "Gadu-Gadu потребител"
+#~ msgstr "Gadu-Gadu РїРѕС‚СЂРµР±РёС‚РµР»"
 
 #, fuzzy
 #~ msgid "Gaim was unable to send an MSN message"
-#~ msgstr "Gaim не успя да изпрати съобщение"
+#~ msgstr "Gaim РЅРµ СѓСЃРїСЏ РґР° РёР·РїСЂР°С‚Рё СЃСЉРѕР±С‰РµРЅРёРµ"
 
 #, fuzzy
 #~ msgid "Unable to connect to Notification Server"
-#~ msgstr "Не мога да се свържа със сървъра."
+#~ msgstr "РќРµ РјРѕРіР° РґР° СЃРµ СЃРІСЉСЂР¶Р° СЃСЉСЃ СЃСЉСЂРІСЉСЂР°."
 
 #, fuzzy
 #~ msgid "Set Friendly Name:"
-#~ msgstr "Номер:"
+#~ msgstr "РќРѕРјРµСЂ:"
 
 #~ msgid "connection error (rend)\n"
-#~ msgstr "грешка на връзката (rend)\n"
+#~ msgstr "РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р° (rend)\n"
 
 #~ msgid "major connection error\n"
-#~ msgstr "основна грешка на връзката\n"
+#~ msgstr "РѕСЃРЅРѕРІРЅР° РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р°\n"
 
 #~ msgid "Password sent, waiting for response\n"
-#~ msgstr "Паролата изпратена, изчакване на отговор\n"
+#~ msgstr "РџР°СЂРѕР»Р°С‚Р° РёР·РїСЂР°С‚РµРЅР°, РёР·С‡Р°РєРІР°РЅРµ РЅР° РѕС‚РіРѕРІРѕСЂ\n"
 
 #~ msgid "internal connection error\n"
-#~ msgstr "вътрешна грешка на връзката\n"
+#~ msgstr "РІСЉС‚СЂРµС€РЅР° РіСЂРµС€РєР° РЅР° РІСЂСЉР·РєР°С‚Р°\n"
 
 #~ msgid "Signed off.\n"
-#~ msgstr "Излизане.\n"
+#~ msgstr "РР·Р»РёР·Р°РЅРµ.\n"
 
 #, fuzzy
 #~ msgid "Couldn't open listener to send file"
-#~ msgstr "Не можа да се отвори конфигурационен файл %s."
+#~ msgstr "РќРµ РјРѕР¶Р° РґР° СЃРµ РѕС‚РІРѕСЂРё РєРѕРЅС„РёРіСѓСЂР°С†РёРѕРЅРµРЅ С„Р°Р№Р» %s."
 
 #, fuzzy
 #~ msgid "You missed %hu messages from %s because they were invalid."
-#~ msgstr "Изпуснахте %d събщения от  %s, защото бяха неправилни."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚  %s, Р·Р°С‰РѕС‚Рѕ Р±СЏС…Р° РЅРµРїСЂР°РІРёР»РЅРё."
 
 #, fuzzy
 #~ msgid "You missed %hu messages from %s because they were too large."
-#~ msgstr "Изпуснахте %d събщения от %s, защото бяха прекалено големи."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±СЏС…Р° РїСЂРµРєР°Р»РµРЅРѕ РіРѕР»РµРјРё."
 
 #, fuzzy
 #~ msgid ""
 #~ "You missed %hu messages from %s because the rate limit has been exceeded."
 #~ msgstr ""
-#~ "Изпуснахте %d събщения от %s, защото границата на нивото е прехвълена."
+#~ "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ РіСЂР°РЅРёС†Р°С‚Р° РЅР° РЅРёРІРѕС‚Рѕ Рµ РїСЂРµС…РІСЉР»РµРЅР°."
 
 #, fuzzy
 #~ msgid "You missed %hu messages from %s because he/she was too evil."
-#~ msgstr "Изпуснахте %d събщение от %s,  защото беше прекалено зло."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёРµ РѕС‚ %s,  Р·Р°С‰РѕС‚Рѕ Р±РµС€Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·Р»Рѕ."
 
 #, fuzzy
 #~ msgid "You missed %hu messages from %s because you are too evil."
-#~ msgstr "Изпуснахте %d събщения от %s, защото сте прекалено зъл."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ СЃС‚Рµ РїСЂРµРєР°Р»РµРЅРѕ Р·СЉР»."
 
 #, fuzzy
 #~ msgid "You missed %hu messages from %s for an unknown reason."
-#~ msgstr "Изпуснахте %d събщения от %s по незнайни причини."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚ %s РїРѕ РЅРµР·РЅР°Р№РЅРё РїСЂРёС‡РёРЅРё."
 
 #, fuzzy
 #~ msgid "No reason was given."
-#~ msgstr "Не е дадена причина."
+#~ msgstr "РќРµ Рµ РґР°РґРµРЅР° РїСЂРёС‡РёРЅР°."
 
 #~ msgid "Stocks"
-#~ msgstr "Ценни книжа"
+#~ msgstr "Р¦РµРЅРЅРё РєРЅРёР¶Р°"
 
 #~ msgid "Get Capabilities"
-#~ msgstr "Вземи възможностите"
+#~ msgstr "Р’Р·РµРјРё РІСЉР·РјРѕР¶РЅРѕСЃС‚РёС‚Рµ"
 
 #~ msgid "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
-#~ msgstr "%s заявки  %s за приемане на %d файла: %s (%.2f %s)%s%s"
+#~ msgstr "%s Р·Р°СЏРІРєРё  %s Р·Р° РїСЂРёРµРјР°РЅРµ РЅР° %d С„Р°Р№Р»Р°: %s (%.2f %s)%s%s"
 
 #~ msgid "Gaim - Login"
-#~ msgstr "Gaim - Влизане"
+#~ msgstr "Gaim - Р’Р»РёР·Р°РЅРµ"
 
 #~ msgid "Un-Alias"
-#~ msgstr "Без прякор"
+#~ msgstr "Р‘РµР· РїСЂСЏРєРѕСЂ"
 
 #, fuzzy
 #~ msgid "[no message]"
-#~ msgstr "(1 съобщение)"
+#~ msgstr "(1 СЃСЉРѕР±С‰РµРЅРёРµ)"
 
 #~ msgid "[Click to edit]"
-#~ msgstr "[Редактиране]"
+#~ msgstr "[Р РµРґР°РєС‚РёСЂР°РЅРµ]"
 
 #~ msgid ""
 #~ "Alias: %s               \n"
 #~ "Screen Name: %s\n"
 #~ "%s%s%s%s%s%s"
 #~ msgstr ""
-#~ "Прякори: %s\n"
-#~ "Номер: %s\n"
+#~ "РџСЂСЏРєРѕСЂРё: %s\n"
+#~ "РќРѕРјРµСЂ: %s\n"
 #~ "%s%s%s%s%s%s"
 
 #~ msgid "Idle: "
-#~ msgstr "Бездейства:"
+#~ msgstr "Р‘РµР·РґРµР№СЃС‚РІР°:"
 
 #~ msgid "Start/join a Buddy Chat"
-#~ msgstr "Чат"
+#~ msgstr "Р§Р°С‚"
 
 #~ msgid "Activate Away Message"
-#~ msgstr "Активиране на съобщение при остсъствие"
+#~ msgstr "РђРєС‚РёРІРёСЂР°РЅРµ РЅР° СЃСЉРѕР±С‰РµРЅРёРµ РїСЂРё РѕСЃС‚СЃСЉСЃС‚РІРёРµ"
 
 #~ msgid "Gaim - Buddy List"
-#~ msgstr "Gaim - лист"
+#~ msgstr "Gaim - Р»РёСЃС‚"
 
 #~ msgid "File"
-#~ msgstr "Файл"
+#~ msgstr "Р¤Р°Р№Р»"
 
 #, fuzzy
 #~ msgid "Hide"
-#~ msgstr "Криене на икона"
+#~ msgstr "РљСЂРёРµРЅРµ РЅР° РёРєРѕРЅР°"
 
 #, fuzzy
 #~ msgid "_Accounts..."
-#~ msgstr "Акаунти"
+#~ msgstr "РђРєР°СѓРЅС‚Рё"
 
 #, fuzzy
 #~ msgid "_Preferences..."
-#~ msgstr "Настройки"
+#~ msgstr "РќР°СЃС‚СЂРѕР№РєРё"
 
 #~ msgid "About Gaim"
-#~ msgstr "Относно Gaim"
+#~ msgstr "РћС‚РЅРѕСЃРЅРѕ Gaim"
 
 #~ msgid "Add a new Buddy"
-#~ msgstr "Добавяне"
+#~ msgstr "Р”РѕР±Р°РІСЏРЅРµ"
 
 #~ msgid "Add a new Group"
-#~ msgstr "Добавяне група"
+#~ msgstr "Р”РѕР±Р°РІСЏРЅРµ РіСЂСѓРїР°"
 
 #~ msgid "Remove selected Buddy/Group"
-#~ msgstr "Премахване на избраните"
+#~ msgstr "РџСЂРµРјР°С…РІР°РЅРµ РЅР° РёР·Р±СЂР°РЅРёС‚Рµ"
 
 #~ msgid "Edit Buddies"
-#~ msgstr "Всички"
+#~ msgstr "Р’СЃРёС‡РєРё"
 
 #~ msgid "Gaim - Group Chats"
-#~ msgstr "Gaim - групови чатове"
+#~ msgstr "Gaim - РіСЂСѓРїРѕРІРё С‡Р°С‚РѕРІРµ"
 
 #, fuzzy
 #~ msgid "_Save Conversation"
-#~ msgstr "Запис на разгово"
+#~ msgstr "Р—Р°РїРёСЃ РЅР° СЂР°Р·РіРѕРІРѕ"
 
 #, fuzzy
 #~ msgid "_Close"
-#~ msgstr "Затваряне"
+#~ msgstr "Р—Р°С‚РІР°СЂСЏРЅРµ"
 
 #~ msgid "Gaim - Conversations"
-#~ msgstr "Gaim - Разговори"
+#~ msgstr "Gaim - Р Р°Р·РіРѕРІРѕСЂРё"
 
 #~ msgid "Send message as: "
-#~ msgstr "Изпращане от:"
+#~ msgstr "РР·РїСЂР°С‰Р°РЅРµ РѕС‚:"
 
 #~ msgid "Gaim - Add Group"
-#~ msgstr "Gaim - Добавяне група"
+#~ msgstr "Gaim - Р”РѕР±Р°РІСЏРЅРµ РіСЂСѓРїР°"
 
 #~ msgid "Gaim - Add Buddy"
-#~ msgstr "Gaim - Добавяне авер"
+#~ msgstr "Gaim - Р”РѕР±Р°РІСЏРЅРµ Р°РІРµСЂ"
 
 #, fuzzy
 #~ msgid "Gaim - Privacy"
-#~ msgstr "Gaim - Отсъствие!"
+#~ msgstr "Gaim - РћС‚СЃСЉСЃС‚РІРёРµ!"
 
 #~ msgid "Gaim - New Buddy Pounce"
-#~ msgstr "Gaim - ново известяване"
+#~ msgstr "Gaim - РЅРѕРІРѕ РёР·РІРµСЃС‚СЏРІР°РЅРµ"
 
 #~ msgid "Pounce on sign on"
-#~ msgstr "Известяване при влизане"
+#~ msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ РїСЂРё РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Pounce when buddy is typing to you"
-#~ msgstr "Известяване ако авера ми пише"
+#~ msgstr "РР·РІРµСЃС‚СЏРІР°РЅРµ Р°РєРѕ Р°РІРµСЂР° РјРё РїРёС€Рµ"
 
 #, fuzzy
 #~ msgid "C_ancel"
-#~ msgstr "Отмяна"
+#~ msgstr "РћС‚РјСЏРЅР°"
 
 #~ msgid "Gaim - Set Dir Info"
-#~ msgstr "Натройка на данни за директорията"
+#~ msgstr "РќР°С‚СЂРѕР№РєР° РЅР° РґР°РЅРЅРё Р·Р° РґРёСЂРµРєС‚РѕСЂРёСЏС‚Р°"
 
 #~ msgid "Gaim - Password Change"
-#~ msgstr "Gaim - Смяна на паролата"
+#~ msgstr "Gaim - РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #~ msgid "Gaim - Set User Info"
-#~ msgstr "Gaim - Поставяне на данни"
+#~ msgstr "Gaim - РџРѕСЃС‚Р°РІСЏРЅРµ РЅР° РґР°РЅРЅРё"
 
 #~ msgid "Gaim - Add Permit"
-#~ msgstr "Gaim - добавяне на позволение"
+#~ msgstr "Gaim - РґРѕР±Р°РІСЏРЅРµ РЅР° РїРѕР·РІРѕР»РµРЅРёРµ"
 
 #~ msgid "Gaim - Log Conversation"
-#~ msgstr "Gaim - записване на разговора"
+#~ msgstr "Gaim - Р·Р°РїРёСЃРІР°РЅРµ РЅР° СЂР°Р·РіРѕРІРѕСЂР°"
 
 #~ msgid "Gaim - Add URL"
-#~ msgstr "Gaim - Добявяне URL"
+#~ msgstr "Gaim - Р”РѕР±СЏРІСЏРЅРµ URL"
 
 #~ msgid "Import to:"
-#~ msgstr "Импортиране в:"
+#~ msgstr "РРјРїРѕСЂС‚РёСЂР°РЅРµ РІ:"
 
 #~ msgid "Gaim - Import Buddy List"
-#~ msgstr "Gaim - импортиране на листа"
+#~ msgstr "Gaim - РёРјРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°"
 
 #~ msgid "Gaim - New away message"
-#~ msgstr "Gaim - Ново съобщение за отсъствие"
+#~ msgstr "Gaim - РќРѕРІРѕ СЃСЉРѕР±С‰РµРЅРёРµ Р·Р° РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #~ msgid "Gaim - Alias Buddy"
-#~ msgstr "Gaim - Прякор"
+#~ msgstr "Gaim - РџСЂСЏРєРѕСЂ"
 
 #~ msgid "Okay"
-#~ msgstr "ОК"
+#~ msgstr "РћРљ"
 
 #~ msgid "Gaim - Rename Group"
-#~ msgstr "Gaim - Преименуване на група"
+#~ msgstr "Gaim - РџСЂРµРёРјРµРЅСѓРІР°РЅРµ РЅР° РіСЂСѓРїР°"
 
 #~ msgid "Gaim - Rename Buddy"
-#~ msgstr "Gaim - Преименуване"
+#~ msgstr "Gaim - РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #~ msgid "Rename Buddy"
-#~ msgstr "Преименуване"
+#~ msgstr "РџСЂРµРёРјРµРЅСѓРІР°РЅРµ"
 
 #~ msgid "New name:"
-#~ msgstr "Ново име:"
+#~ msgstr "РќРѕРІРѕ РёРјРµ:"
 
 #~ msgid "Gaim - Select Perl Script"
-#~ msgstr "Gaim - Избиране на Perl скрипт"
+#~ msgstr "Gaim - РР·Р±РёСЂР°РЅРµ РЅР° Perl СЃРєСЂРёРїС‚"
 
 #~ msgid "Received: '%s'\n"
-#~ msgstr "Получени: '%s'\n"
+#~ msgstr "РџРѕР»СѓС‡РµРЅРё: '%s'\n"
 
 #~ msgid "Gaim - Load Buddy Icon"
-#~ msgstr "Gaim - зареждане на икона"
+#~ msgstr "Gaim - Р·Р°СЂРµР¶РґР°РЅРµ РЅР° РёРєРѕРЅР°"
 
 #~ msgid "Auto-Login"
-#~ msgstr "Авто влизане"
+#~ msgstr "РђРІС‚Рѕ РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Register with server"
-#~ msgstr "Регистриране със сървъра"
+#~ msgstr "Р РµРіРёСЃС‚СЂРёСЂР°РЅРµ СЃСЉСЃ СЃСЉСЂРІСЉСЂР°"
 
 #~ msgid "Enter Password"
-#~ msgstr "Парола"
+#~ msgstr "РџР°СЂРѕР»Р°"
 
 #, fuzzy
 #~ msgid "Password for %s:"
-#~ msgstr "Парола"
+#~ msgstr "РџР°СЂРѕР»Р°"
 
 #, fuzzy
 #~ msgid "Protocol not found."
-#~ msgstr "Действия на протокола"
+#~ msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #~ msgid ""
 #~ "You cannot log this account in; you do not have the protocol it uses "
 #~ "loaded, or the protocol does not have a login function."
 #~ msgstr ""
-#~ "Не може да влезете с този акаунт. Птрокола не е зареден, или му лиспва "
-#~ "функция за влизане"
+#~ "РќРµ РјРѕР¶Рµ РґР° РІР»РµР·РµС‚Рµ СЃ С‚РѕР·Рё Р°РєР°СѓРЅС‚. РџС‚СЂРѕРєРѕР»Р° РЅРµ Рµ Р·Р°СЂРµРґРµРЅ, РёР»Рё РјСѓ Р»РёСЃРїРІР° "
+#~ "С„СѓРЅРєС†РёСЏ Р·Р° РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Gaim - Account Editor"
-#~ msgstr "Gaim - Редактор на акаунти"
+#~ msgstr "Gaim - Р РµРґР°РєС‚РѕСЂ РЅР° Р°РєР°СѓРЅС‚Рё"
 
 #, fuzzy
 #~ msgid "Gaim Account Signon"
-#~ msgstr "Gaim - Редактор на акаунти"
+#~ msgstr "Gaim - Р РµРґР°РєС‚РѕСЂ РЅР° Р°РєР°СѓРЅС‚Рё"
 
 #~ msgid ""
 #~ "%s\n"
@@ -7299,95 +7299,95 @@ msgstr "Тест"
 #~ "%s: %s"
 
 #~ msgid "%s was unable to sign on"
-#~ msgstr "%s не успя да влезе"
+#~ msgstr "%s РЅРµ СѓСЃРїСЏ РґР° РІР»РµР·Рµ"
 
 #~ msgid "Signon Error"
-#~ msgstr "Грешка при влизане"
+#~ msgstr "Р“СЂРµС€РєР° РїСЂРё РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Connection Error"
-#~ msgstr "Грешка на свързване"
+#~ msgstr "Р“СЂРµС€РєР° РЅР° СЃРІСЉСЂР·РІР°РЅРµ"
 
 #, fuzzy
 #~ msgid "Show _debug window"
-#~ msgstr "Показва Debug прозорец"
+#~ msgstr "РџРѕРєР°Р·РІР° Debug РїСЂРѕР·РѕСЂРµС†"
 
 #, fuzzy
 #~ msgid "Control-_W closes window"
-#~ msgstr "Esc затваря прозорец"
+#~ msgstr "Esc Р·Р°С‚РІР°СЂСЏ РїСЂРѕР·РѕСЂРµС†"
 
 #, fuzzy
 #~ msgid "Buttons"
-#~ msgstr "Долу"
+#~ msgstr "Р”РѕР»Сѓ"
 
 #, fuzzy
 #~ msgid "_Hide IM/Info/Chat buttons"
-#~ msgstr "Крий съобщение/данни/чат бутони"
+#~ msgstr "РљСЂРёР№ СЃСЉРѕР±С‰РµРЅРёРµ/РґР°РЅРЅРё/С‡Р°С‚ Р±СѓС‚РѕРЅРё"
 
 #, fuzzy
 #~ msgid "Show _pictures on buttons"
-#~ msgstr "Картинки в/у бутоните"
+#~ msgstr "РљР°СЂС‚РёРЅРєРё РІ/Сѓ Р±СѓС‚РѕРЅРёС‚Рµ"
 
 #, fuzzy
 #~ msgid "_Save window size/position"
-#~ msgstr "Помни размер/място на прозореца"
+#~ msgstr "РџРѕРјРЅРё СЂР°Р·РјРµСЂ/РјСЏСЃС‚Рѕ РЅР° РїСЂРѕР·РѕСЂРµС†Р°"
 
 #, fuzzy
 #~ msgid "Hide _groups with no online buddies"
-#~ msgstr "Скрива групите без влезли авери"
+#~ msgstr "РЎРєСЂРёРІР° РіСЂСѓРїРёС‚Рµ Р±РµР· РІР»РµР·Р»Рё Р°РІРµСЂРё"
 
 #, fuzzy
 #~ msgid "Hide buddy _icons"
-#~ msgstr "Криене на икони"
+#~ msgstr "РљСЂРёРµРЅРµ РЅР° РёРєРѕРЅРё"
 
 #, fuzzy
 #~ msgid ""
 #~ "Show all _instant messages in one tabbed\n"
 #~ "window"
-#~ msgstr "Чат-овете в един процорец с етикети"
+#~ msgstr "Р§Р°С‚-РѕРІРµС‚Рµ РІ РµРґРёРЅ РїСЂРѕС†РѕСЂРµС† СЃ РµС‚РёРєРµС‚Рё"
 
 #, fuzzy
 #~ msgid "Chat Tabs"
-#~ msgstr "Чат"
+#~ msgstr "Р§Р°С‚"
 
 #, fuzzy
 #~ msgid "Show all c_hats in one tabbed window"
-#~ msgstr "Чат-овете в един процорец с етикети"
+#~ msgstr "Р§Р°С‚-РѕРІРµС‚Рµ РІ РµРґРёРЅ РїСЂРѕС†РѕСЂРµС† СЃ РµС‚РёРєРµС‚Рё"
 
 #, fuzzy
 #~ msgid "Internal"
-#~ msgstr "Вътрешна грешка"
+#~ msgstr "Р’СЉС‚СЂРµС€РЅР° РіСЂРµС€РєР°"
 
 #, fuzzy
 #~ msgid "_Ignore new conversations when away"
-#~ msgstr "Пренебреква нови разговори при отсъствие"
+#~ msgstr "РџСЂРµРЅРµР±СЂРµРєРІР° РЅРѕРІРё СЂР°Р·РіРѕРІРѕСЂРё РїСЂРё РѕС‚СЃСЉСЃС‚РІРёРµ"
 
 #~ msgid "Gaim - Sound Configuration"
-#~ msgstr "Gaim - Звук - конфигуриране"
+#~ msgstr "Gaim - Р—РІСѓРє - РєРѕРЅС„РёРіСѓСЂРёСЂР°РЅРµ"
 
 #~ msgid "IM Window"
-#~ msgstr "Прозорец за съобщения"
+#~ msgstr "РџСЂРѕР·РѕСЂРµС† Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #, fuzzy
 #~ msgid "Chat Window"
-#~ msgstr "Групиране на чат прозорци"
+#~ msgstr "Р“СЂСѓРїРёСЂР°РЅРµ РЅР° С‡Р°С‚ РїСЂРѕР·РѕСЂС†Рё"
 
 #~ msgid "Gaim - Preferences"
-#~ msgstr "Gaim - Настройки"
+#~ msgstr "Gaim - РќР°СЃС‚СЂРѕР№РєРё"
 
 #, fuzzy
 #~ msgid "Gaim - Debug Window"
-#~ msgstr "Показва Debug прозорец"
+#~ msgstr "РџРѕРєР°Р·РІР° Debug РїСЂРѕР·РѕСЂРµС†"
 
 #~ msgid "Gaim - New Mail"
-#~ msgstr "Gaim - Нова поща"
+#~ msgstr "Gaim - РќРѕРІР° РїРѕС‰Р°"
 
 #~ msgid ""
 #~ "%s has requested a DCC chat.  Would you like to establish the direct "
 #~ "connection?"
-#~ msgstr "%s поиска DCC chat. Желаете ли да се установи директна връзка"
+#~ msgstr "%s РїРѕРёСЃРєР° DCC chat. Р–РµР»Р°РµС‚Рµ Р»Рё РґР° СЃРµ СѓСЃС‚Р°РЅРѕРІРё РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР°"
 
 #~ msgid "You missed %d messages from %s because they are too evil."
-#~ msgstr "Изпуснахте %d събщения от %s, защото бяха прекалено зли."
+#~ msgstr "РР·РїСѓСЃРЅР°С…С‚Рµ %d СЃСЉР±С‰РµРЅРёСЏ РѕС‚ %s, Р·Р°С‰РѕС‚Рѕ Р±СЏС…Р° РїСЂРµРєР°Р»РµРЅРѕ Р·Р»Рё."
 
 #~ msgid ""
 #~ "<br><BODY BGCOLOR=WHITE><hr><I>Legend:</I><br><br><IMG SRC=\"free_icon.gif"
@@ -7396,20 +7396,20 @@ msgstr "Тест"
 #~ "Administrator <br><IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive "
 #~ "Agent<br><IMG SRC=\"wireless_icon.gif\"> : Wireless Device User<br>"
 #~ msgstr ""
-#~ "<br><BODY BGCOLOR=WHITE><hr><I>Легенда:</I><br><br><IMG SRC=\"free_icon."
-#~ "gif\"> : Обикновен AIM потребител<br><IMG SRC=\"aol_icon.gif\"> : AOL "
-#~ "потребител<br><IMG SRC=\"dt_icon.gif\"> : Пробен AIM ппотребител<br><IMG "
-#~ "SRC=\"admin_icon.gif\"> : Администратор <br><IMG SRC=\\\"ab_icon.gif\\"
-#~ "\"> : ActiveBuddy интерактивен агент <br> <IMG SRC=\\\"wireless_icon.gif\\"
-#~ "\"> : Потребител на безжично устройство<br>\""
+#~ "<br><BODY BGCOLOR=WHITE><hr><I>Р›РµРіРµРЅРґР°:</I><br><br><IMG SRC=\"free_icon."
+#~ "gif\"> : РћР±РёРєРЅРѕРІРµРЅ AIM РїРѕС‚СЂРµР±РёС‚РµР»<br><IMG SRC=\"aol_icon.gif\"> : AOL "
+#~ "РїРѕС‚СЂРµР±РёС‚РµР»<br><IMG SRC=\"dt_icon.gif\"> : РџСЂРѕР±РµРЅ AIM РїРїРѕС‚СЂРµР±РёС‚РµР»<br><IMG "
+#~ "SRC=\"admin_icon.gif\"> : РђРґРјРёРЅРёСЃС‚СЂР°С‚РѕСЂ <br><IMG SRC=\\\"ab_icon.gif\\"
+#~ "\"> : ActiveBuddy РёРЅС‚РµСЂР°РєС‚РёРІРµРЅ Р°РіРµРЅС‚ <br> <IMG SRC=\\\"wireless_icon.gif\\"
+#~ "\"> : РџРѕС‚СЂРµР±РёС‚РµР» РЅР° Р±РµР·Р¶РёС‡РЅРѕ СѓСЃС‚СЂРѕР№СЃС‚РІРѕ<br>\""
 
 #~ msgid ""
 #~ "You have selected to open a Direct IM connection with %s. Doing this will "
 #~ "let them see your IP address, and may be a security risk. Do you wish to "
 #~ "continue?"
 #~ msgstr ""
-#~ "Избрахте да отворите директна връзка с %s. Това ще им позволи да видят IP-"
-#~ "то Ви. Това е риск в сигурността. Желаете ли да продължите."
+#~ "РР·Р±СЂР°С…С‚Рµ РґР° РѕС‚РІРѕСЂРёС‚Рµ РґРёСЂРµРєС‚РЅР° РІСЂСЉР·РєР° СЃ %s. РўРѕРІР° С‰Рµ РёРј РїРѕР·РІРѕР»Рё РґР° РІРёРґСЏС‚ IP-"
+#~ "С‚Рѕ Р’Рё. РўРѕРІР° Рµ СЂРёСЃРє РІ СЃРёРіСѓСЂРЅРѕСЃС‚С‚Р°. Р–РµР»Р°РµС‚Рµ Р»Рё РґР° РїСЂРѕРґСЉР»Р¶РёС‚Рµ."
 
 #~ msgid ""
 #~ "Active Developers\n"
@@ -7430,175 +7430,175 @@ msgstr "Тест"
 #~ "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
 #~ "Mark Spencer (original author)   [ markster@marko.net ]"
 #~ msgstr ""
-#~ "Активни разработчици\n"
-#~ "Rob Flynn (отговорник) [ rob@marko.net ]\n"
-#~ "Sean Egan (кодировач)      [ bj91704@binghamton.edu ]\n"
+#~ "РђРєС‚РёРІРЅРё СЂР°Р·СЂР°Р±РѕС‚С‡РёС†Рё\n"
+#~ "Rob Flynn (РѕС‚РіРѕРІРѕСЂРЅРёРє) [ rob@marko.net ]\n"
+#~ "Sean Egan (РєРѕРґРёСЂРѕРІР°С‡)      [ bj91704@binghamton.edu ]\n"
 #~ "\n"
-#~ "Лудите писачи на кръпки\n"
+#~ "Р›СѓРґРёС‚Рµ РїРёСЃР°С‡Рё РЅР° РєСЂСЉРїРєРё\n"
 #~ "===================\n"
 #~ "Benjamin Miller\n"
 #~ "Decklin Foster\n"
 #~ "Nathan Walp\n"
 #~ "Mark Doliner\n"
 #~ "\n"
-#~ "Оттеглили се разработчици\n"
+#~ "РћС‚С‚РµРіР»РёР»Рё СЃРµ СЂР°Р·СЂР°Р±РѕС‚С‡РёС†Рё\n"
 #~ "===================\n"
 #~ "Jim Duchek\n"
 #~ "Eric Warmenhoven                   [ warmenhoven@yahoo.com ]\n"
-#~ "Mark Spencer (Оригинален автор)   [ markster@marko.net ]"
+#~ "Mark Spencer (РћСЂРёРіРёРЅР°Р»РµРЅ Р°РІС‚РѕСЂ)   [ markster@marko.net ]"
 
 #~ msgid "Web Site"
-#~ msgstr "Уеб страница"
+#~ msgstr "РЈРµР± СЃС‚СЂР°РЅРёС†Р°"
 
 #~ msgid "Password: "
-#~ msgstr "Парола:"
+#~ msgstr "РџР°СЂРѕР»Р°:"
 
 #~ msgid "About"
-#~ msgstr "Относно"
+#~ msgstr "РћС‚РЅРѕСЃРЅРѕ"
 
 #~ msgid "Perl"
 #~ msgstr "Perl"
 
 #~ msgid "Load Script"
-#~ msgstr "Зареди скрипт"
+#~ msgstr "Р—Р°СЂРµРґРё СЃРєСЂРёРїС‚"
 
 #~ msgid "Unload All Scripts"
-#~ msgstr "Прекъсни всички скриптове"
+#~ msgstr "РџСЂРµРєСЉСЃРЅРё РІСЃРёС‡РєРё СЃРєСЂРёРїС‚РѕРІРµ"
 
 #~ msgid "List Scripts"
-#~ msgstr "Покажи скриптове"
+#~ msgstr "РџРѕРєР°Р¶Рё СЃРєСЂРёРїС‚РѕРІРµ"
 
 #~ msgid "Whisper"
-#~ msgstr "Шепнене"
+#~ msgstr "РЁРµРїРЅРµРЅРµ"
 
 #~ msgid "Currently at %d, "
-#~ msgstr "В момента на %d,"
+#~ msgstr "Р’ РјРѕРјРµРЅС‚Р° РЅР° %d,"
 
 #~ msgid "Setting position to %d\n"
-#~ msgstr "Позиция на %d\n"
+#~ msgstr "РџРѕР·РёС†РёСЏ РЅР° %d\n"
 
 #~ msgid "Bold Text"
-#~ msgstr "Удебелен"
+#~ msgstr "РЈРґРµР±РµР»РµРЅ"
 
 #~ msgid "Italics Text"
-#~ msgstr "Наклонен"
+#~ msgstr "РќР°РєР»РѕРЅРµРЅ"
 
 #~ msgid "Underline Text"
-#~ msgstr "Подчертан"
+#~ msgstr "РџРѕРґС‡РµСЂС‚Р°РЅ"
 
 #~ msgid "Strike through Text"
-#~ msgstr "Пресечен през текста"
+#~ msgstr "РџСЂРµСЃРµС‡РµРЅ РїСЂРµР· С‚РµРєСЃС‚Р°"
 
 #~ msgid "Strike"
-#~ msgstr "Пресечен"
+#~ msgstr "РџСЂРµСЃРµС‡РµРЅ"
 
 #~ msgid "Decrease font size"
-#~ msgstr "Намяляване на размера"
+#~ msgstr "РќР°РјСЏР»СЏРІР°РЅРµ РЅР° СЂР°Р·РјРµСЂР°"
 
 #~ msgid "Small"
-#~ msgstr "Малък"
+#~ msgstr "РњР°Р»СЉРє"
 
 #~ msgid "Normal"
-#~ msgstr "Нормален"
+#~ msgstr "РќРѕСЂРјР°Р»РµРЅ"
 
 #~ msgid "Increase font size"
-#~ msgstr "Увеличаване на размера"
+#~ msgstr "РЈРІРµР»РёС‡Р°РІР°РЅРµ РЅР° СЂР°Р·РјРµСЂР°"
 
 #~ msgid "Big"
-#~ msgstr "Голям"
+#~ msgstr "Р“РѕР»СЏРј"
 
 #~ msgid "Font"
-#~ msgstr "Шрифт"
+#~ msgstr "РЁСЂРёС„С‚"
 
 #~ msgid "Text Color"
-#~ msgstr "Цвят на текст"
+#~ msgstr "Р¦РІСЏС‚ РЅР° С‚РµРєСЃС‚"
 
 #~ msgid "Background Color"
-#~ msgstr "Фонов цвят"
+#~ msgstr "Р¤РѕРЅРѕРІ С†РІСЏС‚"
 
 #~ msgid "Link"
-#~ msgstr "Връзка"
+#~ msgstr "Р’СЂСЉР·РєР°"
 
 #~ msgid "Gaim - Warn user?"
-#~ msgstr "Предупреждаване на потребител ?"
+#~ msgstr "РџСЂРµРґСѓРїСЂРµР¶РґР°РІР°РЅРµ РЅР° РїРѕС‚СЂРµР±РёС‚РµР» ?"
 
 #~ msgid "Do you really want to warn %s?"
-#~ msgstr "Наистина ли искате да предупредите %s?"
+#~ msgstr "РќР°РёСЃС‚РёРЅР° Р»Рё РёСЃРєР°С‚Рµ РґР° РїСЂРµРґСѓРїСЂРµРґРёС‚Рµ %s?"
 
 #~ msgid "Gaim - Remove %s?"
-#~ msgstr "Gaim - Премахване на %s?"
+#~ msgstr "Gaim - РџСЂРµРјР°С…РІР°РЅРµ РЅР° %s?"
 
 #~ msgid "Gaim - IM user"
-#~ msgstr "Gaim - съобщние на потребител"
+#~ msgstr "Gaim - СЃСЉРѕР±С‰РЅРёРµ РЅР° РїРѕС‚СЂРµР±РёС‚РµР»"
 
 #~ msgid "IM who:"
-#~ msgstr "Съобщение на:"
+#~ msgstr "РЎСЉРѕР±С‰РµРЅРёРµ РЅР°:"
 
 #~ msgid "User:"
-#~ msgstr "Потребител:"
+#~ msgstr "РџРѕС‚СЂРµР±РёС‚РµР»:"
 
 #~ msgid "Gaim - Get User Info"
-#~ msgstr "Информация"
+#~ msgstr "РРЅС„РѕСЂРјР°С†РёСЏ"
 
 #~ msgid "Contact"
-#~ msgstr "Контакт"
+#~ msgstr "РљРѕРЅС‚Р°РєС‚"
 
 #~ msgid "Block List"
-#~ msgstr "Забранен лист"
+#~ msgstr "Р—Р°Р±СЂР°РЅРµРЅ Р»РёСЃС‚"
 
 #~ msgid "Select Autos"
-#~ msgstr "Избиране на автоматичните"
+#~ msgstr "РР·Р±РёСЂР°РЅРµ РЅР° Р°РІС‚РѕРјР°С‚РёС‡РЅРёС‚Рµ"
 
 #~ msgid "Select None"
-#~ msgstr "Нищo"
+#~ msgstr "РќРёС‰o"
 
 #~ msgid "Gaim - Plugin List"
-#~ msgstr "Gaim - плъгин листа"
+#~ msgstr "Gaim - РїР»СЉРіРёРЅ Р»РёСЃС‚Р°"
 
 #~ msgid "Gaim - Plugins"
-#~ msgstr "Gaim - плъгини"
+#~ msgstr "Gaim - РїР»СЉРіРёРЅРё"
 
 #~ msgid "Loaded Plugins"
-#~ msgstr "Заредени плъгини"
+#~ msgstr "Р—Р°СЂРµРґРµРЅРё РїР»СЉРіРёРЅРё"
 
 #~ msgid "Filepath:"
-#~ msgstr "Път:"
+#~ msgstr "РџСЉС‚:"
 
 #~ msgid "Load a plugin from a file"
-#~ msgstr "Зареждане на плъгин от файл"
+#~ msgstr "Р—Р°СЂРµР¶РґР°РЅРµ РЅР° РїР»СЉРіРёРЅ РѕС‚ С„Р°Р№Р»"
 
 #~ msgid "Configure"
-#~ msgstr "Настройка"
+#~ msgstr "РќР°СЃС‚СЂРѕР№РєР°"
 
 #~ msgid "Configure settings of the selected plugin"
-#~ msgstr "Настройка на плъгина"
+#~ msgstr "РќР°СЃС‚СЂРѕР№РєР° РЅР° РїР»СЉРіРёРЅР°"
 
 #~ msgid "Reload"
-#~ msgstr "презареждане"
+#~ msgstr "РїСЂРµР·Р°СЂРµР¶РґР°РЅРµ"
 
 #~ msgid "Reload the selected plugin"
-#~ msgstr "Презареждане на плъгина"
+#~ msgstr "РџСЂРµР·Р°СЂРµР¶РґР°РЅРµ РЅР° РїР»СЉРіРёРЅР°"
 
 #~ msgid "Unload"
-#~ msgstr "Спиране"
+#~ msgstr "РЎРїРёСЂР°РЅРµ"
 
 #~ msgid "Unload the selected plugin"
-#~ msgstr "Спиране на плъгина"
+#~ msgstr "РЎРїРёСЂР°РЅРµ РЅР° РїР»СЉРіРёРЅР°"
 
 #~ msgid "Close this window"
-#~ msgstr "Затворяне на прозореца"
+#~ msgstr "Р—Р°С‚РІРѕСЂСЏРЅРµ РЅР° РїСЂРѕР·РѕСЂРµС†Р°"
 
 #, fuzzy
 #~ msgid "Use _borderless buttons"
-#~ msgstr "Бутони без рамка"
+#~ msgstr "Р‘СѓС‚РѕРЅРё Р±РµР· СЂР°РјРєР°"
 
 #, fuzzy
 #~ msgid "Ignore Ti_K Automated Messages"
-#~ msgstr "Пренебрегва TiK авто съобщения"
+#~ msgstr "РџСЂРµРЅРµР±СЂРµРіРІР° TiK Р°РІС‚Рѕ СЃСЉРѕР±С‰РµРЅРёСЏ"
 
 #, fuzzy
 #~ msgid "_Raise Window on Events"
-#~ msgstr "Повдига прозорец при събитие"
+#~ msgstr "РџРѕРІРґРёРіР° РїСЂРѕР·РѕСЂРµС† РїСЂРё СЃСЉР±РёС‚РёРµ"
 
 #~ msgid "Gaim debug output window"
 #~ msgstr "Gaim debug"
@@ -7609,192 +7609,192 @@ msgstr "Тест"
 #~ "because it is not the same version I cannot safely tell you which one it "
 #~ "was. Needless to say, it was not successfully loaded."
 #~ msgstr ""
-#~ "Опитхте да заредите протокол който не е компилиран от същата версия на "
-#~ "кода.Зареждането е неуспешно!"
+#~ "РћРїРёС‚С…С‚Рµ РґР° Р·Р°СЂРµРґРёС‚Рµ РїСЂРѕС‚РѕРєРѕР» РєРѕР№С‚Рѕ РЅРµ Рµ РєРѕРјРїРёР»РёСЂР°РЅ РѕС‚ СЃСЉС‰Р°С‚Р° РІРµСЂСЃРёСЏ РЅР° "
+#~ "РєРѕРґР°.Р—Р°СЂРµР¶РґР°РЅРµС‚Рѕ Рµ РЅРµСѓСЃРїРµС€РЅРѕ!"
 
 #~ msgid "%s was using %s, which got removed. %s is now offline."
-#~ msgstr "%s използваше %s което е премахнато. %s е излязъл."
+#~ msgstr "%s РёР·РїРѕР»Р·РІР°С€Рµ %s РєРѕРµС‚Рѕ Рµ РїСЂРµРјР°С…РЅР°С‚Рѕ. %s Рµ РёР·Р»СЏР·СЉР»."
 
 #~ msgid "Accept?"
-#~ msgstr "Приемам?"
+#~ msgstr "РџСЂРёРµРјР°Рј?"
 
 #~ msgid "Gadu-Gadu Error"
-#~ msgstr "Gaim-Gadu Грешка"
+#~ msgstr "Gaim-Gadu Р“СЂРµС€РєР°"
 
 #~ msgid "Couldn't send http request"
-#~ msgstr "Не мога да изпратя HTTP заявка"
+#~ msgstr "РќРµ РјРѕРіР° РґР° РёР·РїСЂР°С‚СЏ HTTP Р·Р°СЏРІРєР°"
 
 #~ msgid "Buddies List import from Server failed (%s)"
-#~ msgstr "Импортиране на листата от сървъра пропадна (%s)"
+#~ msgstr "РРјРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР° РїСЂРѕРїР°РґРЅР° (%s)"
 
 #~ msgid "Buddies List export to Server failed (%s)"
-#~ msgstr "Експортиране на листата към сървъра пропадна (%s)"
+#~ msgstr "Р•РєСЃРїРѕСЂС‚РёСЂР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РєСЉРј СЃСЉСЂРІСЉСЂР° РїСЂРѕРїР°РґРЅР° (%s)"
 
 #~ msgid "Deletion of Buddies List from Server failed (%s)"
-#~ msgstr "Изтриване на листата от сървъра пропадна (%s)"
+#~ msgstr "РР·С‚СЂРёРІР°РЅРµ РЅР° Р»РёСЃС‚Р°С‚Р° РѕС‚ СЃСЉСЂРІСЉСЂР° РїСЂРѕРїР°РґРЅР° (%s)"
 
 #~ msgid "Connect to search service failed (%s)"
-#~ msgstr "Пропадна свързване с услугата за търсене (%s)"
+#~ msgstr "РџСЂРѕРїР°РґРЅР° СЃРІСЉСЂР·РІР°РЅРµ СЃ СѓСЃР»СѓРіР°С‚Р° Р·Р° С‚СЉСЂСЃРµРЅРµ (%s)"
 
 #, fuzzy
 #~ msgid "Password Change Error!"
-#~ msgstr "Gaim - Смяна на паролата"
+#~ msgstr "Gaim - РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #, fuzzy
 #~ msgid "Password Change"
-#~ msgstr "Gaim - Смяна на паролата"
+#~ msgstr "Gaim - РЎРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #, fuzzy
 #~ msgid "Invalid Jabber I.D."
-#~ msgstr "Невалидно име"
+#~ msgstr "РќРµРІР°Р»РёРґРЅРѕ РёРјРµ"
 
 #~ msgid "MSN Error"
-#~ msgstr "Грешка в MSN"
+#~ msgstr "Р“СЂРµС€РєР° РІ MSN"
 
 #~ msgid "Chat Error!"
-#~ msgstr "Грешка на чат-а!"
+#~ msgstr "Р“СЂРµС€РєР° РЅР° С‡Р°С‚-Р°!"
 
 #~ msgid "Gaim - Chat"
-#~ msgstr "Gaim - Чат"
+#~ msgstr "Gaim - Р§Р°С‚"
 
 #~ msgid "Gaim - Error"
-#~ msgstr "Gaim - Грешка"
+#~ msgstr "Gaim - Р“СЂРµС€РєР°"
 
 #~ msgid "Gaim - Oscar SNAC Error"
-#~ msgstr "Gaim - Грешка в Oscar SNAC"
+#~ msgstr "Gaim - Р“СЂРµС€РєР° РІ Oscar SNAC"
 
 #~ msgid "Reason unknown"
-#~ msgstr "Незнайна причина"
+#~ msgstr "РќРµР·РЅР°Р№РЅР° РїСЂРёС‡РёРЅР°"
 
 #, fuzzy
 #~ msgid "Gaim - Warning"
-#~ msgstr "Предупреждаване на потребител ?"
+#~ msgstr "РџСЂРµРґСѓРїСЂРµР¶РґР°РІР°РЅРµ РЅР° РїРѕС‚СЂРµР±РёС‚РµР» ?"
 
 #~ msgid "Chat Error"
-#~ msgstr "Чат грешка"
+#~ msgstr "Р§Р°С‚ РіСЂРµС€РєР°"
 
 #~ msgid "Could not write file header!"
-#~ msgstr "Не мога да запиша header-а на файла!"
+#~ msgstr "РќРµ РјРѕРіР° РґР° Р·Р°РїРёС€Р° header-Р° РЅР° С„Р°Р№Р»Р°!"
 
 #~ msgid "Attempting to sign on...."
-#~ msgstr "Опит за свързване..."
+#~ msgstr "РћРїРёС‚ Р·Р° СЃРІСЉСЂР·РІР°РЅРµ..."
 
 #~ msgid "Offline. Click to bring up login box."
-#~ msgstr "Изключен. Щракнете за да се покаже login box."
+#~ msgstr "РР·РєР»СЋС‡РµРЅ. Р©СЂР°РєРЅРµС‚Рµ Р·Р° РґР° СЃРµ РїРѕРєР°Р¶Рµ login box."
 
 #~ msgid "Away: %d pending."
-#~ msgstr "Отсъствие: %d чакащи."
+#~ msgstr "РћС‚СЃСЉСЃС‚РІРёРµ: %d С‡Р°РєР°С‰Рё."
 
 #~ msgid "Away."
-#~ msgstr "Отсъствие."
+#~ msgstr "РћС‚СЃСЉСЃС‚РІРёРµ."
 
 #~ msgid "Can't create Gaim applet!"
-#~ msgstr "Не мога да създам Gaim аплет!"
+#~ msgstr "РќРµ РјРѕРіР° РґР° СЃСЉР·РґР°Рј Gaim Р°РїР»РµС‚!"
 
 #~ msgid "About..."
-#~ msgstr "Относно"
+#~ msgstr "РћС‚РЅРѕСЃРЅРѕ"
 
 #~ msgid "Message Error"
-#~ msgstr "Грешка на съобщението"
+#~ msgstr "Р“СЂРµС€РєР° РЅР° СЃСЉРѕР±С‰РµРЅРёРµС‚Рѕ"
 
 #~ msgid "Unable to send message: Unknown reason"
-#~ msgstr "Не може да се изпратисъобщение: Незнайна причина"
+#~ msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РёР·РїСЂР°С‚РёСЃСЉРѕР±С‰РµРЅРёРµ: РќРµР·РЅР°Р№РЅР° РїСЂРёС‡РёРЅР°"
 
 #~ msgid "Buddy Pounce Error"
-#~ msgstr "Грешка в известяването"
+#~ msgstr "Р“СЂРµС€РєР° РІ РёР·РІРµСЃС‚СЏРІР°РЅРµС‚Рѕ"
 
 #~ msgid "Gaim - Change Password Error"
-#~ msgstr "Gaim - грешка при смяна на паролата"
+#~ msgstr "Gaim - РіСЂРµС€РєР° РїСЂРё СЃРјСЏРЅР° РЅР° РїР°СЂРѕР»Р°С‚Р°"
 
 #~ msgid "Unable to remove file %s - %s"
-#~ msgstr "Не може да се премахне файла %s - %s"
+#~ msgstr "РќРµ РјРѕР¶Рµ РґР° СЃРµ РїСЂРµРјР°С…РЅРµ С„Р°Р№Р»Р° %s - %s"
 
 #~ msgid "Preferences Error"
-#~ msgstr "Грешка в настройки"
+#~ msgstr "Р“СЂРµС€РєР° РІ РЅР°СЃС‚СЂРѕР№РєРё"
 
 #, fuzzy
 #~ msgid "Plugin Error"
-#~ msgstr "Грешка при влизане"
+#~ msgstr "Р“СЂРµС€РєР° РїСЂРё РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Perl Scripts"
-#~ msgstr "Perl скриптове"
+#~ msgstr "Perl СЃРєСЂРёРїС‚РѕРІРµ"
 
 #~ msgid "Select"
-#~ msgstr "Избор"
+#~ msgstr "РР·Р±РѕСЂ"
 
 #~ msgid "Automatically show buddy list on sign on"
-#~ msgstr "Автоматично показване на листа при влизане"
+#~ msgstr "РђРІС‚РѕРјР°С‚РёС‡РЅРѕ РїРѕРєР°Р·РІР°РЅРµ РЅР° Р»РёСЃС‚Р° РїСЂРё РІР»РёР·Р°РЅРµ"
 
 #~ msgid "Display Buddy List near applet"
-#~ msgstr "Показва листа около аплета"
+#~ msgstr "РџРѕРєР°Р·РІР° Р»РёСЃС‚Р° РѕРєРѕР»Рѕ Р°РїР»РµС‚Р°"
 
 #~ msgid "Edit"
-#~ msgstr "Редактиране"
+#~ msgstr "Р РµРґР°РєС‚РёСЂР°РЅРµ"
 
 #~ msgid "Protocol Error"
-#~ msgstr "Протоколна грешка"
+#~ msgstr "РџСЂРѕС‚РѕРєРѕР»РЅР° РіСЂРµС€РєР°"
 
 #, fuzzy
 #~ msgid "Protocol Warning"
-#~ msgstr "Действия на протокола"
+#~ msgstr "Р”РµР№СЃС‚РІРёСЏ РЅР° РїСЂРѕС‚РѕРєРѕР»Р°"
 
 #~ msgid "Disconnect"
-#~ msgstr "Разкачам"
+#~ msgstr "Р Р°Р·РєР°С‡Р°Рј"
 
 #~ msgid "Warned"
-#~ msgstr "Предупреден"
+#~ msgstr "РџСЂРµРґСѓРїСЂРµРґРµРЅ"
 
 #~ msgid "All options take effect immediately unless otherwise noted."
-#~ msgstr "Всяка промяна действа веднага, освен ако не е упоменато друго."
+#~ msgstr "Р’СЃСЏРєР° РїСЂРѕРјСЏРЅР° РґРµР№СЃС‚РІР° РІРµРґРЅР°РіР°, РѕСЃРІРµРЅ Р°РєРѕ РЅРµ Рµ СѓРїРѕРјРµРЅР°С‚Рѕ РґСЂСѓРіРѕ."
 
 #~ msgid "Miscellaneous"
-#~ msgstr "Разни"
+#~ msgstr "Р Р°Р·РЅРё"
 
 #~ msgid "GNOME URL Handler"
-#~ msgstr "GNOME URL помощник"
+#~ msgstr "GNOME URL РїРѕРјРѕС‰РЅРёРє"
 
 #~ msgid ""
 #~ "Not all protocols can use these proxy options. Please see the README file "
 #~ "for details."
 #~ msgstr ""
-#~ "Не всички протоколи могат да използват прокси!\n"
-#~ "Прочетете README за допълнителна информация."
+#~ "РќРµ РІСЃРёС‡РєРё РїСЂРѕС‚РѕРєРѕР»Рё РјРѕРіР°С‚ РґР° РёР·РїРѕР»Р·РІР°С‚ РїСЂРѕРєСЃРё!\n"
+#~ "РџСЂРѕС‡РµС‚РµС‚Рµ README Р·Р° РґРѕРїСЉР»РЅРёС‚РµР»РЅР° РёРЅС„РѕСЂРјР°С†РёСЏ."
 
 #~ msgid "Keyboard Options"
-#~ msgstr "Клавиатура"
+#~ msgstr "РљР»Р°РІРёР°С‚СѓСЂР°"
 
 #~ msgid "F2 toggles timestamp display"
-#~ msgstr "F2 превключва показване на време"
+#~ msgstr "F2 РїСЂРµРІРєР»СЋС‡РІР° РїРѕРєР°Р·РІР°РЅРµ РЅР° РІСЂРµРјРµ"
 
 #~ msgid "Display and General Options"
-#~ msgstr "Изглед и общи"
+#~ msgstr "РР·РіР»РµРґ Рё РѕР±С‰Рё"
 
 #~ msgid "IM Options"
-#~ msgstr "?Опции за съобщения?"
+#~ msgstr "?РћРїС†РёРё Р·Р° СЃСЉРѕР±С‰РµРЅРёСЏ?"
 
 #~ msgid "Window Sizes"
-#~ msgstr "Размер на прозорци"
+#~ msgstr "Р Р°Р·РјРµСЂ РЅР° РїСЂРѕР·РѕСЂС†Рё"
 
 #~ msgid "Show conversations in the same tabbed window"
-#~ msgstr "Разговорите в един процорец с етикети"
+#~ msgstr "Р Р°Р·РіРѕРІРѕСЂРёС‚Рµ РІ РµРґРёРЅ РїСЂРѕС†РѕСЂРµС† СЃ РµС‚РёРєРµС‚Рё"
 
 #~ msgid "Italic Text"
-#~ msgstr "Наклонен текст"
+#~ msgstr "РќР°РєР»РѕРЅРµРЅ С‚РµРєСЃС‚"
 
 #~ msgid "Font Size for Text"
-#~ msgstr "Размер на шрифта за текст"
+#~ msgstr "Р Р°Р·РјРµСЂ РЅР° С€СЂРёС„С‚Р° Р·Р° С‚РµРєСЃС‚"
 
 #~ msgid "Sound played when:"
-#~ msgstr "Звук при:"
+#~ msgstr "Р—РІСѓРє РїСЂРё:"
 
 #~ msgid "Time between sending auto-responses (in seconds):"
-#~ msgstr "Време м/у автоматичните отговори (в секунди):"
+#~ msgstr "Р’СЂРµРјРµ Рј/Сѓ Р°РІС‚РѕРјР°С‚РёС‡РЅРёС‚Рµ РѕС‚РіРѕРІРѕСЂРё (РІ СЃРµРєСѓРЅРґРё):"
 
 #~ msgid "Auto Away after"
-#~ msgstr "Автоматично отсъстващ след"
+#~ msgstr "РђРІС‚РѕРјР°С‚РёС‡РЅРѕ РѕС‚СЃСЉСЃС‚РІР°С‰ СЃР»РµРґ"
 
 #~ msgid "Make Away"
-#~ msgstr "Прави отсъстващ"
+#~ msgstr "РџСЂР°РІРё РѕС‚СЃСЉСЃС‚РІР°С‰"
 
 #~ msgid "KFM"
 #~ msgstr "KFM"
