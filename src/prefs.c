@@ -303,7 +303,7 @@ static void general_page()
 	opt = browser_radio(_("GNOME URL Handler"), BROWSER_GNOME, vbox, opt);
 #endif /* USE_GNOME */
 	opt = browser_radio(_("Galeon"), BROWSER_GALEON, vbox, opt);
-	opt = browser_radio(_("Manual"), BROWSER_MANUAL, vbox, opt);
+	opt = browser_radio(_("Manual (%s for URL)"), BROWSER_MANUAL, vbox, opt);
 
 	browser_entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), browser_entry, FALSE, FALSE, 0);
