@@ -68,6 +68,7 @@ static void buddy_ticker_create_window() {
 	}
 
 	tickerwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(tickerwindow), 500, -1);
 	g_signal_connect(G_OBJECT(tickerwindow), "delete_event",
 			G_CALLBACK (buddy_ticker_destroy_window), NULL);
 	gtk_window_set_title (GTK_WINDOW(tickerwindow), _("Buddy Ticker"));
@@ -79,7 +80,7 @@ static void buddy_ticker_create_window() {
 	gtk_ticker_set_interval(GTK_TICKER(ticker), 500);
 	gtk_ticker_set_scootch(GTK_TICKER(ticker), 10);
 	gtk_ticker_start_scroll(GTK_TICKER(ticker));
-	gtk_widget_set_size_request(ticker, 500, -1);
+	gtk_widget_set_size_request(ticker, 1, -1);
 
 	gtk_widget_show_all(tickerwindow);
 }

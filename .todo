@@ -50,9 +50,6 @@
                 add chooser to sound
             </note>
         </note>
-        <note priority="medium" time="1036040080">
-            fix buddy ticker resize bug. can't shrink it below default
-        </note>
         <note priority="medium" time="1036210515">
             blist does not resize correctly on some platforms. this does not seem to be an issue on linux.
         </note>
