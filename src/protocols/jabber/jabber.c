@@ -265,6 +265,8 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
+	} else {
+		gaim_connection_error(gc, _("Read Error"));
 	}
 }
 
@@ -283,6 +285,8 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
+	} else {
+		gaim_connection_error(gc, _("Read Error"));
 	}
 }
 
