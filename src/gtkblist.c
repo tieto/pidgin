@@ -2808,6 +2808,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			tmp = new;
 		}
 
+#if !GTK_CHECK_VERSION(2,6,0)
 		if(tmp) {
 			char buf[32];
 			char *c = tmp;
@@ -2828,17 +2829,18 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 
 			length = c - tmp;
 
-#if !GTK_CHECK_VERSION(2,6,0)
 			if(vis == 20)
 				g_snprintf(buf, sizeof(buf), "%%.%ds...", length);
 			else
-#endif
 				g_snprintf(buf, sizeof(buf), "%%s ");
 
 			statustext = g_strdup_printf(buf, tmp);
 
 			g_free(tmp);
 		}
+#else
+		statustext = tmp;
+#endif
 	}
 
 	if (gaim_presence_is_idle(presence) &&
