@@ -104,6 +104,7 @@ destroy_signal_data(GaimSignalData *signal_data)
 		g_free(signal_data->values);
 	}
 
+	g_free(signal_data->ret_value);
 	g_free(signal_data);
 }
 

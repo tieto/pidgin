@@ -489,6 +489,8 @@ void
 gaim_plugin_destroy(GaimPlugin *plugin)
 {
 #ifdef GAIM_PLUGINS
+		if(plugin->path)
+			g_free(plugin->path);
 	g_return_if_fail(plugin != NULL);
 
 	if (gaim_plugin_is_loaded(plugin))

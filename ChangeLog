@@ -14,6 +14,7 @@ version 2.0.0
 	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 
 	Bug fixes:
+	* Some memory leaks plugged (Miah Gregory, Felipe Contreras)
 	* People using input methods can now use Enter again.
 	* Many problems related to having an IM conversation and a chat open
 	  with the same name (Andrew Hart)
