@@ -4230,16 +4230,16 @@ msgstr "XML"
 #: src/log.c:514
 #, c-format
 msgid ""
-"<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
+"<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
 msgstr ""
-"<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-SVAR&gt;:</b></font> %s<br/>\n"
+"<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-SVAR&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:516
 #, c-format
 msgid ""
-"<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
+"<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"
 msgstr ""
-"<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-SVAR&gt;:</b></font> %s<br/>\n"
+"<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-SVAR&gt;:</b></font> %s<br/>\n"
 
 #: src/log.c:560 src/log.c:696
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
