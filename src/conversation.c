@@ -134,6 +134,14 @@ void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle)
 	return;
 }
 
+void set_convo_name(struct conversation *c, const char *nname)
+{
+
+	g_snprintf(c->name, sizeof(c->name), "%s", nname);
+
+	return;
+}
+
 struct conversation *new_conversation(char *name)
 {
 	struct conversation *c;

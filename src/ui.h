@@ -339,6 +339,7 @@ extern void update_convo_add_button(struct conversation *);
 extern void raise_convo_tab(struct conversation *);
 extern void set_convo_title(struct conversation *);
 extern void show_conv(struct conversation *);
+void set_convo_name(struct conversation *c, const char *nname);
 extern struct conversation *new_conversation(char *);
 extern void delete_conversation(struct conversation *);
 extern void surround(GtkWidget *, char *, char *);

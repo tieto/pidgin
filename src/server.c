@@ -639,6 +639,8 @@ void serv_got_im(struct gaim_connection *gc, char *name, char *message, guint32 
 		else if (cnv->makesound && (sound_options & OPT_SOUND_RECV))
 			play_sound(RECEIVE);
 
+		set_convo_name(cnv, name);
+
 		write_to_conv(cnv, message, away | WFLAG_RECV, NULL, mtime, len);
 	}
 
