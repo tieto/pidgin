@@ -2841,7 +2841,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 
 	/* Build the right pane. */
 	lbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack2(GTK_PANED(hpaned), lbox, TRUE, TRUE);
+	gtk_paned_pack2(GTK_PANED(hpaned), lbox, FALSE, TRUE);
 	gtk_widget_show(lbox);
 
 	/* Setup the label telling how many people are in the room. */
@@ -2935,7 +2935,7 @@ setup_chat_pane(struct gaim_conversation *conv)
 
 	/* Build the toolbar. */
 	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);
+	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
 	gtk_widget_show(vbox);
 
 	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
@@ -3003,7 +3003,7 @@ setup_im_pane(struct gaim_conversation *conv)
 
 	/* Setup the top part of the pane. */
 	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
+	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
 	/* Setup the gtkimhtml widget. */
