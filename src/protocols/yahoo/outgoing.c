@@ -49,7 +49,7 @@ int yahoo_write_cmd(struct yahoo_session *session, struct yahoo_conn *conn,
 	struct yahoo_packet *pkt;
 	int ret;
 
-	if (!session || !conn)
+	if (!session || !session->login || !conn || !active_id)
 		return 0;
 
 	if (!(pkt = g_new0(struct yahoo_packet, 1)))
@@ -149,6 +149,9 @@ int yahoo_logoff(struct yahoo_session *session)
 	struct yahoo_conn *conn;
 
 	if (!session)
+		return 0;
+
+	if (!session->login)
 		return 0;
 
 	if (!(conn = yahoo_getconn_type(session, YAHOO_CONN_TYPE_MAIN)))
