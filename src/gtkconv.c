@@ -1643,7 +1643,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_Up) ||
 		(event->keyval == GDK_Down) ||
 		(event->keyval == GDK_Left) ||
-		(event->keyval == GDK_Right))
+		(event->keyval == GDK_Right) ||
+		(event->keyval == GDK_Home) ||
+		(event->keyval == GDK_End))
 			return FALSE;
 
 	if (event->type == GDK_KEY_RELEASE)
