@@ -38,7 +38,7 @@ struct smiley_list {
 	struct smiley_list *next;
 };
 
-GSList *smiley_themes;
+GSList *smiley_themes = NULL;
 struct smiley_theme *current_smiley_theme;
 
 void smiley_themeize(GtkWidget *imhtml)
@@ -60,7 +60,7 @@ void smiley_themeize(GtkWidget *imhtml)
 	}
 }
 
-struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
+void load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = fopen(file, "r");
 	char buf[256];
@@ -69,32 +69,31 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	struct smiley_list *list = NULL;
 	GSList *lst = smiley_themes;
 	char *dirname;
-	gboolean old=FALSE;
+
+	if (!f)
+		return;
 
 	while (lst) {
 		struct smiley_theme *thm = lst->data;
 		if (!strcmp(thm->path, file)) {
 			theme = thm;
-			old = TRUE;
 			break;
 		}
 		lst = lst->next;
 	}
 
-	if (!f)
-		return NULL;
 	if (!theme) {
 		theme = g_new0(struct smiley_theme, 1);
 		theme->path = g_strdup(file);
+		smiley_themes = g_slist_append(smiley_themes, theme);
 	}
 
 	dirname = g_path_get_dirname(file);
 	if (load) {
 		if (current_smiley_theme) {
 			GSList *already_freed = NULL;
-			struct smiley_list *wer = current_smiley_theme->list;
+			struct smiley_list *wer = current_smiley_theme->list, *wer2;
 			while (wer) {
-				GSList *already_freed = NULL;
 				while (wer->smileys) {
 					GtkIMHtmlSmiley *uio = wer->smileys->data;
 					if (uio->icon)
@@ -107,7 +106,10 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 					g_free(uio);
 					wer->smileys=g_slist_remove(wer->smileys, uio);
 				}
-				wer = wer->next;
+				wer2 = wer->next;
+				g_free(wer->sml);
+				g_free(wer);
+				wer = wer2;
 			}
 			current_smiley_theme->list = NULL;
 			g_slist_free(already_freed);
@@ -137,15 +139,23 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 				theme->list = child;
 			list = child;
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
+			if(theme->name)
+				g_free(theme->name);
 			theme->name = g_strdup(i+ strlen("Name="));
 			theme->name[strlen(theme->name)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Description=", strlen("Description="))) {
+			if(theme->desc)
+				g_free(theme->desc);
 			theme->desc = g_strdup(i + strlen("Description="));
 			theme->desc[strlen(theme->desc)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Icon=", strlen("Icon="))) {
+			if(theme->icon)
+				g_free(theme->icon);
 			theme->icon = g_build_filename(dirname, i + strlen("Icon="), NULL);
 			theme->icon[strlen(theme->icon)-1] = 0;
 		} else if (!g_ascii_strncasecmp(i, "Author=", strlen("Author="))) {
+			if(theme->author)
+				g_free(theme->author);
 			theme->author = g_strdup(i + strlen("Author="));
 			theme->author[strlen(theme->author)-1] = 0;
 		} else if (load && list) {
@@ -191,7 +201,6 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 	}
 
 	g_free(dirname);
-	return old ? NULL : theme;
 }
 
 void smiley_theme_probe()
@@ -199,7 +208,6 @@ void smiley_theme_probe()
 	GDir *dir;
 	const gchar *file;
 	gchar *path;
-	struct smiley_theme *smile;
 	int l;
 
 	char* probedirs[3];
@@ -211,20 +219,18 @@ void smiley_theme_probe()
 		if (dir) {
 			while ((file = g_dir_read_name(dir))) {
 				path = g_build_filename(probedirs[l], file, "theme", NULL);
-				
+
 				/* Here we check to see that the theme has proper syntax.
 				 * We set the second argument to FALSE so that it doesn't load
 				 * the theme yet.
 				 */
-				if ((smile = load_smiley_theme(path, FALSE))) {
-					smiley_themes = g_slist_append(smiley_themes, smile);
-				}
+				load_smiley_theme(path, FALSE);
 				g_free(path);
 			}
 			g_dir_close(dir);
 		} else if (l == 1) {
 			mkdir(probedirs[l], S_IRUSR | S_IWUSR | S_IXUSR);
-		}	
+		}
 		g_free(probedirs[l]);
 	}
 }

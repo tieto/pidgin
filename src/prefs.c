@@ -242,6 +242,7 @@ GtkTreePath *theme_refresh_theme_list()
 				   1, description,
 				   2, theme->path,
 				   -1);
+		g_object_unref(G_OBJECT(pixbuf));
 		g_free(description);
 		themes = themes->next;
 		if (current_smiley_theme && !strcmp(theme->path, current_smiley_theme->path)) {
@@ -739,11 +740,6 @@ GtkWidget *proxy_page() {
 		      "SOCKS 4", PROXY_SOCKS4,
 		      "SOCKS 5", PROXY_SOCKS5,
 		      "HTTP", PROXY_HTTP, NULL);
-
-	table = gtk_table_new(2, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 
 	vbox = make_frame(ret, _("Proxy Server"));
 	prefs_proxy_frame = vbox;
@@ -1782,8 +1778,10 @@ void show_prefs()
 	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_v), FALSE);
 	gtk_widget_show(tree_v);
 	/* icons */
+	/* XXX: to be used at a later date
 	cell = gtk_cell_renderer_pixbuf_new ();
 	column = gtk_tree_view_column_new_with_attributes ("icons", cell, "pixbuf", 0, NULL);
+	*/
 
 	/* text */
 	cell = gtk_cell_renderer_text_new ();

@@ -149,19 +149,10 @@ enum {
 };
 static guint signals [LAST_SIGNAL] = { 0 };
 
-static gboolean
-gtk_smiley_tree_destroy_from_hash(gpointer key, gpointer value,
-		gpointer user_data)
-{
-	gtk_smiley_tree_destroy(value);
-	return TRUE;
-}
-
 static void
 gtk_imhtml_finalize (GObject *object)
 {
 	GtkIMHtml *imhtml = GTK_IMHTML(object);
-	g_hash_table_foreach_remove(imhtml->smiley_data, gtk_smiley_tree_destroy_from_hash, NULL);
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
@@ -225,7 +216,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->show_smileys = TRUE;
 	imhtml->show_comments = TRUE;
 
-	imhtml->smiley_data = g_hash_table_new (g_str_hash, g_str_equal);
+	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
@@ -462,7 +454,7 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 	else if ((tree = g_hash_table_lookup(imhtml->smiley_data, sml))) {
 	} else {
 		tree = gtk_smiley_tree_new();
-		g_hash_table_insert(imhtml->smiley_data, sml, tree);
+		g_hash_table_insert(imhtml->smiley_data, g_strdup(sml), tree);
 	}
 
 	gtk_smiley_tree_insert (tree, smiley);
@@ -1187,11 +1179,12 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	return str;
 }
 
-void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml) 
-{ 
+void gtk_imhtml_remove_smileys(GtkIMHtml *imhtml)
+{
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
-	imhtml->smiley_data = g_hash_table_new (g_str_hash, g_str_equal);
+	imhtml->smiley_data = g_hash_table_new_full(g_str_hash, g_str_equal,
+			g_free, gtk_smiley_tree_destroy);
 	imhtml->default_smilies = gtk_smiley_tree_new();
 }
 void       gtk_imhtml_show_smileys     (GtkIMHtml        *imhtml,

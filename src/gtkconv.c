@@ -3776,6 +3776,7 @@ gaim_gtkconv_destroy(struct gaim_conversation *conv)
 		gtk_widget_destroy(gtkconv->dialogs.log);
 
 	gtk_widget_destroy(gtkconv->tab_cont);
+	g_object_unref(gtkconv->tab_cont);
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		if (gtkconv->u.im->icon_timer != 0)
