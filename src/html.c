@@ -2,6 +2,7 @@
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ *               2003, Nathan Walp <faceprint@faceprint.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,13 +330,17 @@ struct gaim_parse_tag {
 };
 
 #define ALLOW_TAG_ALT(x, y) if(!g_ascii_strncasecmp(c, "<" x " ", strlen("<" x " "))) { \
-						const char *o = c + 1; \
+						const char *o = c + strlen("<" x); \
 						const char *p = NULL, *q = NULL, *r = NULL; \
-						while(*o) { \
+						GString *innards = g_string_new(""); \
+						while(o && *o) { \
 							if(!q && (*o == '\"' || *o == '\'') ) { \
 								q = o; \
 							} else if(q) { \
 								if(*o == *q) { \
+									char *unescaped = g_strndup(q+1, o-q-1); \
+									char *escaped = g_markup_escape_text(unescaped, -1); \
+									g_string_append_printf(innards, "%c%s%c", *q, escaped, *q); \
 									q = NULL; \
 								} else if(*c == '\\') { \
 									o++; \
@@ -345,6 +350,8 @@ struct gaim_parse_tag {
 							} else if(*o == '>') { \
 								p = o; \
 								break; \
+							} else { \
+								innards = g_string_append_c(innards, *o); \
 							} \
 							o++; \
 						} \
@@ -357,12 +364,15 @@ struct gaim_parse_tag {
 							} \
 							xhtml = g_string_append(xhtml, "<" y); \
 							c += strlen("<" x ); \
-							xhtml = g_string_append_len(xhtml, c, (p - c) + 1); \
+							xhtml = g_string_append(xhtml, innards->str); \
+							xhtml = g_string_append_c(xhtml, '>'); \
 							c = p + 1; \
 						} else { \
 							xhtml = g_string_append(xhtml, "&lt;"); \
 							plain = g_string_append_c(plain, '<'); \
+							c++; \
 						} \
+						g_string_free(innards, TRUE); \
 						continue; \
 					} \
 						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
@@ -389,7 +399,8 @@ void html_to_xhtml(const char *html, char **xhtml_out, char **plain_out) {
 	GString *plain = g_string_new("");
 	GList *tags = NULL, *tag;
 	const char *c = html;
-	while(*c) {
+
+	while(c && *c) {
 		if(*c == '<') {
 			if(*(c+1) == '/') { /* closing tag */
 				tag = tags;
