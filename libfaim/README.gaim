@@ -15,6 +15,7 @@ So far the changes to libfaim that I've made are:
 - remove mkbuildinfo.sh and put the #defines it creates into Makefile.am
 - fix a typo in aim.h - "aim_directim_initiate", not "aim_directim_intiate"
 - add #if HAVE_GETADDRINFO in aim_ft.c for Solaris people
+- aim_conn_kill wasn't close()'ing connections, so I added that
 
 And finally, a word of warning. Gaim/Faim is VERY buggy. Please, don't use this
 for anything other than laughs right now. Hopefully we'll get it working better
@@ -42,7 +43,6 @@ Being away/coming back
 Setting your info
 Getting users' info
 Getting users' away messages
-Telling the server who's on your permit/deny lists
 Chat:
  - joining rooms
  - leaving rooms
@@ -55,6 +55,7 @@ Direct IM (aka IM Image, for sounds and pictures)
 
 CURRENTLY UNSUPPORTED FEATURES
 ==============================
+Telling the server who's on your permit/deny lists
 Warning users/getting warned
 Chat:
  - whispering (this will never happen)
@@ -69,8 +70,8 @@ KNOWN ISSUES
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- The permit/deny list stuff is really warped. I'm probably going to comment it
-out soon and try to figure out what's going on.
+- The permit/deny list stuff is really warped. I've commented it out; the code
+in libfaim is untested and it's causing way too many problems.
 
 - "Allow anyone" and "Deny some" serve the same function. That's not a bug. But
 "Allow anyone" works all the time (?) and "Deny some" doesn't work some of the

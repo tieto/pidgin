@@ -415,25 +415,21 @@ void serv_set_permit_deny()
 			break;
 		}
 	} else {
+/*
 		int at;
 		GList *list;
 		char buf[MSG_LEN];
 
 		switch (permdeny) {
-		/* aim_bos_changevisibility(gaim_sess, gaim_conn, type, list) */
 		case PERMIT_ALL:
-			/* AIM_VISIBILITYCHANGE_DENYADD current_user */
 			aim_bos_changevisibility(gaim_sess, gaim_conn,
 			   AIM_VISIBILITYCHANGE_DENYADD, current_user->username);
 			break;
 		case PERMIT_NONE:
-			/* AIM_VISIBILITY_PERMITADD current_user */
 			aim_bos_changevisibility(gaim_sess, gaim_conn,
 			   AIM_VISIBILITYCHANGE_PERMITADD, current_user->username);
 			break;
 		case PERMIT_SOME:
-			/* PERMIT <permit> */
-			/* if permit is empty this is the same as PERMIT_NONE */
 			at = g_snprintf(buf, sizeof(buf), "%s", current_user->username);
 			list = permit;
 			while (list) {
@@ -445,8 +441,6 @@ void serv_set_permit_deny()
 			   AIM_VISIBILITYCHANGE_PERMITADD, buf);
 			break;
 		case DENY_SOME:
-			/* DENY <deny> */
-			/* if deny is empty this is the same as PERMIT_ALL */
 			if (deny) {
 				at = 0;
 				list = deny;
@@ -466,6 +460,7 @@ void serv_set_permit_deny()
 			}
 			break;
 		}
+*/
 	}
 }
 

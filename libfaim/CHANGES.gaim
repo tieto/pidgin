@@ -1,4 +1,9 @@
 
+Thu Aug 17 07:56:49 UTC 2000 EWarmenhoven
+	- The permit/deny stuff is warped. It's untested and just doesn't
+	  work. I'm diabling it in gaim. If you want to deny someone,
+	  use TOC.
+
 Tue Aug  8 21:04:30 UTC 2000 EWarmenhoven
 	- Solaris doesn't have getaddrinfo(). Well, old versions of Solaris
 	  don't. I changed aim_ft.c to try to work around this problem.
