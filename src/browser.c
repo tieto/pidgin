@@ -336,11 +336,10 @@ static const char *get_lock_data() {
 	return lock_data;
 }
 
-static gboolean mozilla_remote_obtain_lock(GdkWindow * window)
+static void mozilla_remote_obtain_lock(GdkWindow * window)
 {
 	gboolean locked = False;
 	const char *lock_data = get_lock_data();
-		int result;
 		GdkAtom actual_type;
 		gint actual_format;
 		gint nitems;
@@ -409,7 +408,6 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 	int actual_format;
 	unsigned long nitems, bytes_after;
 	unsigned char *data = 0;
-	char *error = NULL;
 
 	if (window == NULL || GDK_WINDOW_OBJECT(window)->destroyed) {
 		do_error_dialog(_("Communication with the browser failed.  Please close all "
@@ -461,8 +459,6 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 
 static void mozilla_remote_command(GdkWindow * window, const char *command, Bool raise_p)
 {
-	int result = 0;
-	Bool done = False;
 	char *new_command = 0;
 
 	/* The -noraise option is implemented by passing a "noraise" argument
@@ -520,43 +516,48 @@ void open_url(GtkWidget *w, char *url)
 {
 	char *command = NULL;
 	GError *error = NULL;
- 
+
 	switch (web_browser) {
 		case BROWSER_NETSCAPE: {
 			char *args = NULL;
- 
+
 			if (misc_options & OPT_MISC_BROWSER_POPUP)
 				args = g_strdup_printf("OpenURL(%s, new-window)", url);
 			else
 				args = g_strdup_printf("OpenURL(%s)", url);
- 
-			if (netscape_command(args)) { 
+
+			if (netscape_command(args)) {
 				g_free(args);
 				return;
 			}
 
-			/* if netscape is running ... 
+			/* if netscape is running ...
 			command = g_strdup_printf("netscape -remote %s", args); */
 
-			command = g_strdup_printf("netscape %s", url);
+			command = g_strdup_printf("netscape \"%s\"", url);
 			g_free(args);
 			} break;
 
 		case BROWSER_OPERA:
-			command = g_strdup_printf("opera -newwindow %s", url);
+			if (misc_options & OPT_MISC_BROWSER_POPUP)
+				command = g_strdup_printf("opera -newwindow \"%s\"", url);
+			else
+				command = g_strdup_printf("opera \"%s\"", url);
 			break;
- 
+
 		case BROWSER_KONQ:
-			command = g_strdup_printf("kfmclient openURL %s", url);
+			command = g_strdup_printf("kfmclient openURL \"%s\"", url);
 			break;
- 
+
 		case BROWSER_GALEON:
-			command = g_strdup_printf("galeon -w %s", url);
-			command = g_strdup_printf("galeon %s", url);
+			if (misc_options & OPT_MISC_BROWSER_POPUP)
+				command = g_strdup_printf("galeon -w \"%s\"", url);
+			else
+				command = g_strdup_printf("galeon \"%s\"", url);
 			break;
 
 		case BROWSER_MOZILLA:
-			command = g_strdup_printf("mozilla %s", url);
+			command = g_strdup_printf("mozilla \"%s\"", url);
 			break;
 
 		case BROWSER_MANUAL: {
