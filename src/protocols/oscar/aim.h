@@ -1315,11 +1315,6 @@ faim_export int aim_sncmp(const char *sn1, const char *sn2);
 /* for libc's that dont have it */
 faim_export char *aim_strsep(char **pp, const char *delim);
 
-/* meta.c */
-faim_export char *aim_getbuilddate(void);
-faim_export char *aim_getbuildtime(void);
-faim_export int aim_getbuildstring(char *buf, int buflen);
-
 #include <aim_internal.h>
 
 #endif /* __AIM_H__ */

@@ -2815,14 +2815,11 @@ static int gaim_parse_motd(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *msg;
 	fu16_t id;
 	va_list ap;
-	char buildbuf[150];
 
 	va_start(ap, fr);
 	id  = (fu16_t) va_arg(ap, unsigned int);
 	msg = va_arg(ap, char *);
 	va_end(ap);
-
-	aim_getbuildstring(buildbuf, sizeof(buildbuf));
 
 	debug_printf("MOTD: %s (%hu)\n", msg ? msg : "Unknown", id);
 	if (id < 4)

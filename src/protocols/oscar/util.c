@@ -1,12 +1,33 @@
 /*
- *
- *
- *
+ * A little bit of this
+ * A little bit of that
+ * It started with a kiss
+ * Now we're up to bat
  */
 
 #define FAIM_INTERNAL
 #include <aim.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+#include "win32dep.h"
+#endif
+
+faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...)
+{
+	if (!sess) {
+		fprintf(stderr, "faimdprintf: no session! boo! (%d, %s)\n", dlevel, format);
+		return;
+	}
+	if ((dlevel <= sess->debug) && sess->debugcb) {
+		va_list ap;
+		va_start(ap, format);
+		sess->debugcb(sess, dlevel, format, ap);
+		va_end(ap);
+	}
+
+	return;
+}
 
 faim_export faim_shortfunc int aimutil_putstr(u_char *dest, const char *src, int len)
 {

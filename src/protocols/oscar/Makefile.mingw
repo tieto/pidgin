@@ -82,7 +82,6 @@ C_SRC =			admin.c		\
 			im.c		\
 			info.c		\
 			invite.c	\
-			meta.c		\
 			misc.c		\
 			msgcookie.c	\
 			newsearch.c	\

@@ -12,9 +12,7 @@ CFLAGS += -O2 -Wall -mno-cygwin -fnative-struct
 
 VERSION := $(shell cat $(GAIM_TOP)/VERSION)
 
-DEFINES += 	-DAIM_BUILDDATE=\"`date +%Y%m%d`\" \
-		-DAIM_BUILDTIME=\"`date +%H%M%S`\" \
-		-DVERSION=\"$(VERSION)\" \
+DEFINES += 	-DVERSION=\"$(VERSION)\" \
 		-DHAVE_CONFIG_H \
 		-DGTK_ENABLE_BROKEN
 

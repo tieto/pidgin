@@ -23,7 +23,6 @@ OSCARSOURCES = \
 	info.c         \
 	invite.c       \
 	md5.h          \
-	meta.c         \
 	misc.c         \
 	msgcookie.c    \
 	newsearch.c    \
@@ -40,9 +39,6 @@ OSCARSOURCES = \
 	txqueue.c      \
 	util.c         \
 	oscar.c
-
-CURRENT_DATE := $(shell date +%Y%m%d)
-CURRENT_TIME := $(shell date +%H%M%S)
 
 AM_CFLAGS = $(st)
 
@@ -65,6 +61,4 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
-	$(DEBUG_CFLAGS) \
-	-DAIM_BUILDDATE=\"$(CURRENT_DATE)\" \
-	-DAIM_BUILDTIME=\"$(CURRENT_TIME)\"
+	$(DEBUG_CFLAGS)
