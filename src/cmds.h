@@ -29,10 +29,10 @@
  **************************************************************************/
 /*@{*/
 
-typedef enum   _GaimCmdPriority GaimCmdPriority;
-typedef enum   _GaimCmdFlag     GaimCmdFlag;
-typedef enum _GaimCmdStatus     GaimCmdStatus;
-typedef enum _GaimCmdRet        GaimCmdRet;
+typedef enum _GaimCmdPriority GaimCmdPriority;
+typedef enum _GaimCmdFlag     GaimCmdFlag;
+typedef enum _GaimCmdStatus   GaimCmdStatus;
+typedef enum _GaimCmdRet      GaimCmdRet;
 
 enum _GaimCmdStatus {
 	GAIM_CMD_STATUS_OK,
@@ -118,6 +118,7 @@ extern "C" {
  *                and any arguments it accpets (if it takes any arguments, otherwise no space), follow
  *                by a colon, two spaces, and a description of the command in sentence form. No slash
  *                before the command name.
+ * @param data User defined data to pass to the GaimCmdFunc
  * @return A GaimCmdId. This is only used for calling gaim_cmd_unregister.
  *         Returns @c NULL on failure.
  */

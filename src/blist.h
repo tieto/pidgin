@@ -749,6 +749,7 @@ void gaim_blist_request_add_buddy(GaimAccount *account, const char *username,
  * @param account The account the buddy is added to.
  * @param group   The optional group to add the chat to.
  * @param alias   The optional alias for the chat.
+ * @param name    The required chat name.
  */
 void gaim_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 								 const char *alias, const char *name);

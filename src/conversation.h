@@ -1186,10 +1186,11 @@ void gaim_conv_chat_send(GaimConvChat *chat, const char *message);
 /**
  * Adds a user to a chat.
  *
- * @param chat      The chat.
- * @param user      The user to add.
- * @param extra_msg An extra message to display with the join message.
- * @param flags     The users flags
+ * @param chat        The chat.
+ * @param user        The user to add.
+ * @param extra_msg   An extra message to display with the join message.
+ * @param flags       The users flags
+ * @param new_arrival Decides whether or not to show a join notice.
  */
 void gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
 							 const char *extra_msg, GaimConvChatBuddyFlags flags,
