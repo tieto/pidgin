@@ -35,6 +35,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
+#include <time.h>
 #include <ctype.h>
 
 #include "libxode.h"
