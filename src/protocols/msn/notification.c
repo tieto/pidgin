@@ -678,6 +678,13 @@ usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 			}
 		}
 
+		if (key < value)
+		{
+			/* Let's not forget the last one, it doesn't end with a ',' */
+			g_hash_table_insert(session->ssl_challenge_data,
+								g_strdup(key), g_strdup(value));
+		}
+
 		g_free(challenge_data);
 
 #if 0
