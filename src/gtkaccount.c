@@ -1508,6 +1508,8 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	account_win_destroy_cb(NULL, NULL, dialog);
 
+	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", ret);
+
 	return ret;
 }
 
@@ -2511,4 +2513,24 @@ GaimAccountUiOps *
 gaim_gtk_accounts_get_ui_ops(void)
 {
 	return &ui_ops;
+}
+
+void *
+gaim_gtk_account_get_handle() {
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_gtk_account_init(void) {
+	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT));
+}
+
+void
+gaim_gtk_account_uninit(void) {
+	gaim_signals_unregister_by_instance(gaim_gtk_blist_get_handle());
 }

@@ -463,6 +463,7 @@ gaim_gtk_ui_init(void)
 
 	gaim_gtk_stock_init();
 	gaim_gtk_prefs_init();
+	gaim_gtk_account_init();
 	gaim_gtk_blist_init();
 	gaim_gtk_conversations_init();
 	gaim_gtk_pounces_init();

@@ -2,7 +2,6 @@
 
  @signals
   @signal gtkblist-created
-  @signal drawing-menu
   @signal drawing-tooltip
  @endsignals
 
@@ -15,16 +14,6 @@ void (*gtkblist-created)(GaimBuddyList *blist);
   @signaldesc
    Emitted when the buddy list is created.
   @param blist The buddy list.
- @endsignaldef
-
- @signaldef drawing-menu
-  @signalproto
-void (*drawing-menu)(GtkMenu *menu, GaimBuddy *buddy);
-  @endsignalproto
-  @signaldesc
-   Emitted when the user right clicks on a buddy or chat in the buddy list.
-  @param menu The menu that will be shown.
-  @param buddy The buddy or chat.
  @endsignaldef
 
  @signaldef drawing-tooltip

@@ -61,5 +61,21 @@ void gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
  */
 GaimAccountUiOps *gaim_gtk_accounts_get_ui_ops(void);
 
-#endif /* _GAIM_GTK_ACCOUNT_H_ */
+/**
+ * Returns the gtkaccounts handle
+ *
+ * @return The handle to the GTK+ account system
+ */
+void *gaim_gtk_account_get_handle(void);
 
+/**
+ * Initializes the GTK+ account system
+ */
+void gaim_gtk_account_init(void);
+
+/**
+ * Uninitializes the GTK+ account system
+ */
+void gaim_gtk_account_uninit(void);
+
+#endif /* _GAIM_GTK_ACCOUNT_H_ */

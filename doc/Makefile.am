@@ -10,6 +10,7 @@ EXTRA_DIST = \
 	blist-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
+	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
 	gtkimhtml-signals.dox \

@@ -27,6 +27,7 @@ version 0.81cvs
 	* Added: chat-buddy-flags for when user's flags change
 	gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT (required for the new
 	chat-buddy-flags signal)
+	* Added: account-modified for when account settings have been changed.
 
 version 0.80 (07/15/2004):
 	Gaim API:
