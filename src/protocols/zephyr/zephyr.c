@@ -56,7 +56,7 @@ extern Code_t ZGetLocations(ZLocations_t *, int *);
 extern Code_t ZSetLocation(char *);
 extern Code_t ZUnsetLocation();
 extern Code_t ZGetSubscriptions(ZSubscription_t *, int*);
-
+extern char __Zephyr_realm[];
 typedef struct _zframe zframe;
 typedef struct _zephyr_triple zephyr_triple;
 typedef struct _zephyr_account zephyr_account;
@@ -722,11 +722,11 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 						     str->str, NULL, NULL);
 				g_string_free(str, TRUE);
 			} else {
-                                if (nlocs>0) 
-                                        gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
-                                else 
-                                        gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
-                        }
+				if (nlocs>0) 
+					gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+				else 
+					gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
+			}
 
 			g_free(user);
 		}
@@ -1137,10 +1137,10 @@ static gint check_notify_tzc(gpointer data)
 							     str->str, NULL, NULL);
 					g_string_free(str, TRUE);
 				} else {
-                                        if (nlocs>0) 
-                                                gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
-                                        else 
-                                                gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
+					if (nlocs>0) 
+						gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+					else 
+						gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 				}
 			}
 			else if (!g_ascii_strncasecmp(spewtype,"subscribed",10)) {
@@ -1236,10 +1236,10 @@ static gint check_loc(gpointer data)
 							int i;
 							for(i=0;i<numlocs;i++) {
 								ZGetLocations(&locations,&one);
-                                                                if (nlocs>0) 
-                                                                        gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
-                                                                else 
-                                                                        gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
+								if (nlocs>0) 
+									gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+								else 
+									gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 							}
 						}
 #else
@@ -1443,16 +1443,44 @@ static void process_anyone(GaimConnection *gc)
 	g_free(filename);
 }
 
+static char* normalize_zephyr_exposure(const char* exposure) {
+	char *exp2 = g_strstrip(g_ascii_strup(exposure,-1));
+
+	if (!exp2)
+		return EXPOSE_REALMVIS;
+	if (!g_ascii_strcasecmp(exp2, EXPOSE_NONE))
+		return EXPOSE_NONE;
+	if (!g_ascii_strcasecmp(exp2, EXPOSE_OPSTAFF))
+		return EXPOSE_OPSTAFF;
+	if (!g_ascii_strcasecmp(exp2, EXPOSE_REALMANN))
+		return EXPOSE_REALMANN;
+	if (!g_ascii_strcasecmp(exp2, EXPOSE_NETVIS))
+		return EXPOSE_NETVIS;
+	if (!g_ascii_strcasecmp(exp2, EXPOSE_NETANN))
+		return EXPOSE_NETANN;
+	return EXPOSE_REALMVIS;
+}
+
 static void zephyr_login(GaimAccount * account)
 {
 	GaimConnection *gc;
 	zephyr_account *zephyr;
+	gboolean read_anyone; 
+	gboolean read_zsubs; 
+	gchar *exposure;
 
 	gc = gaim_account_get_connection(account);
+	read_anyone = gaim_account_get_bool(gc->account,"read_anyone",TRUE);
+	read_zsubs = gaim_account_get_bool(gc->account,"read_zsubs",TRUE);
+	exposure = (gchar *)gaim_account_get_string(gc->account, "exposure_level", EXPOSE_REALMVIS); 
+
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
 	gc->proto_data = zephyr=g_new0(zephyr_account,1); 
+
 	zephyr->account = account;
-	zephyr->exposure = g_strdup(gaim_account_get_string(gc->account, "exposure_level", EXPOSE_REALMVIS));
+
+	/* Make sure that the exposure (visibility) is set to a sane value */
+	zephyr->exposure=g_strdup(normalize_zephyr_exposure(exposure));
 
 	if (gaim_account_get_bool(gc->account,"use_tzc",0)) {
 		zephyr->connection_type = GAIM_ZEPHYR_TZC;
@@ -1648,8 +1676,17 @@ static void zephyr_login(GaimAccount * account)
 						zephyr->username = g_strdup_printf("%s",username);
 						if ((realm = strchr(username,'@'))) 
 							zephyr->realm = g_strdup_printf("%s",realm+1);
-						else 
-							zephyr->realm = g_strdup("local-realm");
+						else {
+							realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
+							if (!g_strcasecmp(realm,"")) {
+								realm = "local-realm";
+							}
+							zephyr->realm = g_strdup(realm);
+							g_strlcpy(__Zephyr_realm, (const char*)zephyr->realm, REALM_SZ-1);
+						}
+						/* else {
+						   zephyr->realm = g_strdup("local-realm");
+						   }*/
 							
 						g_free(username);
 					}  else {
@@ -1671,12 +1708,20 @@ static void zephyr_login(GaimAccount * account)
 		}
 	}
 	else if ( use_zeph02(zephyr)) {
+		gchar* realm;
 		z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 		z_call_s(ZOpenPort(&(zephyr->port)), "Couldn't open port");
 		z_call_s(ZSetLocation((char *)zephyr->exposure), "Couldn't set location");
-		
+
+		realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
+		if (!g_strcasecmp(realm,"")) {
+			realm = ZGetRealm();
+		} 
+		zephyr->realm = g_strdup(realm);
+		g_strlcpy(__Zephyr_realm, (const char*)zephyr->realm, REALM_SZ-1);
 		zephyr->username = g_strdup(ZGetSender());
-		zephyr->realm = g_strdup(ZGetRealm());
+
+		/*		zephyr->realm = g_strdup(ZGetRealm()); */
 		gaim_debug_info("zephyr","realm: %s\n",zephyr->realm);
 	} 
 	else {
@@ -1700,8 +1745,12 @@ static void zephyr_login(GaimAccount * account)
 	}
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
-	process_anyone(gc);
-	process_zsubs(zephyr);
+
+	if (read_anyone)
+		process_anyone(gc);
+	if (read_zsubs)
+		process_zsubs(zephyr);
+
 	serv_finish_login(gc);
 
 	if (use_zeph02(zephyr)) {
@@ -2126,7 +2175,7 @@ static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 	} 
 	else if (!strcmp(status_id,"online")) {
 		if (use_zeph02(zephyr)) {
-			ZSetLocation(get_exposure_level());
+			ZSetLocation(zephyr->exposure);
 		}
 		else {
 			char *zexpstr = g_strdup_printf("((tzcfodder . set-location) (hostname . \"%s\") (exposure . \"%s\"))\n",zephyr->ourhost,zephyr->exposure);
@@ -2530,6 +2579,11 @@ static void zephyr_register_slash_commands()
 			  "prpl-zephyr",
 			  zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
+	gaim_cmd_register("topic","s", GAIM_CMD_P_PRPL,
+			  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+			  "prpl-zephyr",
+			  zephyr_gaim_cmd_instance, _("topic &lt;instance&gt;: Set the instance to be used on this class"), NULL);
+
 	gaim_cmd_register("sub", "www", GAIM_CMD_P_PRPL,
 			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
@@ -2774,7 +2828,7 @@ static void init_plugin(GaimPlugin * plugin)
 {
 	GaimAccountOption *option;
 	char *tmp = get_exposure_level();
-
+	
 	option = gaim_account_option_bool_new("Use tzc", "use_tzc", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
@@ -2787,7 +2841,16 @@ static void init_plugin(GaimPlugin * plugin)
 	option = gaim_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Exposure"), "exposure_level", tmp ? tmp : EXPOSE_REALMVIS);
+	option = gaim_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+ 
+	option = gaim_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+ 
+	option = gaim_account_option_string_new(_("Realm"), "realm", "");
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	
+	option = gaim_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);

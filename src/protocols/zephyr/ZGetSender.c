@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: lschiere $
  *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -16,7 +16,7 @@
 
 #ifndef lint
 static const char rcsid_ZGetSender_c[] =
-    "$Id: ZGetSender.c 9554 2004-04-24 09:02:28Z chipx86 $";
+    "$Id: ZGetSender.c 10997 2004-09-18 22:25:12Z lschiere $";
 #endif
 
 #include <pwd.h>
@@ -32,8 +32,10 @@ char *ZGetSender()
 #endif
 
     /* Return it if already cached */
-    if (*sender)
+
+    /*    if (*sender)
 	return (sender);
+    */
 
 #ifdef ZEPHYR_USES_KERBEROS
     if (krb_get_tf_fullname((char *)TKT_FILE, pname, pinst, prealm) == KSUCCESS)
