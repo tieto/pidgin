@@ -1864,7 +1864,7 @@ void redo_convo_menus()
 
 		create_convo_menu(C);
 
-		if (g_slist_index(connections, C->gc) < 0)
+		if (g_slist_index(connections, C->gc) >= 0)
 			continue;
 
 		set_convo_gc(C, connections ? connections->data : NULL);
@@ -1876,7 +1876,7 @@ void set_convo_gc(struct conversation *c, struct gaim_connection *gc)
 	if (c->gc == gc)
 		return;
 
-	if (c->gc && c->gc->prpl && c->gc->prpl->remove_convo)
+	if (c->gc && g_slist_find(connections, c->gc) && c->gc->prpl && c->gc->prpl->remove_convo)
 		(*c->gc->prpl->remove_convo)(c->gc, c);
 
 	c->gc = gc;

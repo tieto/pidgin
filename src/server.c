@@ -83,7 +83,6 @@ void serv_close(struct gaim_connection *gc)
 
 	account_offline(gc);
 	destroy_gaim_conn(gc);
-	build_edit_tree();
 }
 
 void serv_touch_idle(struct gaim_connection *gc)

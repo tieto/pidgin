@@ -96,7 +96,6 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		g_free(m);
 	}
 	g_free(gc);
-	redo_convo_menus();
 #ifndef USE_APPLET
 	if (!connections && mainwindow)
 		gtk_widget_show(mainwindow);
@@ -767,7 +766,6 @@ void account_offline(struct gaim_connection *gc)
 		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "No");
-	redo_convo_menus();
 }
 
 void auto_login()

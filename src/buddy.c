@@ -485,8 +485,10 @@ void signoff(struct gaim_connection *gc)
 	update_keepalive(gc, FALSE);
 	serv_close(gc);
 	redo_buddy_list();
+	build_edit_tree();
 	do_away_menu();
 	do_proto_menu();
+	redo_convo_menus();
 #ifdef USE_APPLET
 	if (connections)
 		set_user_state(online);
