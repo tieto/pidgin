@@ -806,7 +806,7 @@ static char *yahoo_decode(const char *text)
 	char *converted;
 	char *p, *n, *new;
 	
-	n = new = g_malloc(strlen (text));
+	n = new = g_malloc(strlen (text) + 1);
 
 	for (p = (char *)text; *p; p++, n++) {
 		if (*p == '\\') {
