@@ -695,7 +695,6 @@ void dialog_link_destroy(GaimConversation *c)
 static void do_insert_link(GtkWidget *w, int resp, struct linkdlg *a)
 {
 	GaimGtkConversation *gtkconv;
-	char *open_tag;
 	const char *urltext, *showtext;
 
 	gtkconv = GAIM_GTK_CONVERSATION(a->c);
@@ -707,9 +706,8 @@ static void do_insert_link(GtkWidget *w, int resp, struct linkdlg *a)
 		if (!strlen(showtext))
 			showtext = urltext;
 
-		open_tag = g_strdup_printf("<A HREF=\"%s\">%s", urltext, showtext);
-		gaim_gtk_surround(gtkconv, open_tag, "</A>");
-		g_free(open_tag);
+		gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry), urltext, showtext);
+		gaim_gtk_advance_past(gtkconv, "<A HREF>", "</A>");
 	}
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(gtkconv->toolbar.link), FALSE);
@@ -863,16 +861,12 @@ void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->fg_color = text_color;
-	g_snprintf(open_tag, 23, "<FONT COLOR=\"#%02X%02X%02X\">",
+	g_snprintf(open_tag, 23, "#%02X%02X%02X",
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-	gaim_gtk_surround(gtkconv, open_tag, "</FONT>");
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(gtkconv->entry), open_tag);
 
-	gaim_debug(GAIM_DEBUG_MISC, "fgcolor dialog", "#%02X%02X%02X\n",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
 	g_free(open_tag);
 	cancel_fgcolor(NULL, c);
 }
@@ -894,16 +888,12 @@ void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
 	gtkconv->bg_color = text_color;
-	g_snprintf(open_tag, 25, "<BODY BGCOLOR=\"#%02X%02X%02X\">",
+	g_snprintf(open_tag, 25, "#%02X%02X%02X",
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-	gaim_gtk_surround(gtkconv, open_tag, "</BODY>");
-	gaim_debug(GAIM_DEBUG_MISC, "bgcolor dialog", "#%02X%02X%02X\n",
-			   text_color.red / 256,
-			   text_color.green / 256,
-			   text_color.blue / 256);
-
+	gtk_imhtml_toggle_backcolor(GTK_IMHTML(gtkconv->entry), open_tag);
+	
 	g_free(open_tag);
 	cancel_bgcolor(NULL, c);
 }
@@ -1351,21 +1341,12 @@ void insert_smiley_text(GtkWidget *widget, GaimConversation *c)
 {
 	GaimGtkConversation *gtkconv;
 	char *smiley_text = g_object_get_data(G_OBJECT(widget), "smiley_text");
-	GtkTextMark *select_mark, *insert_mark;
-	GtkTextIter select_iter, insert_iter;
+	GaimPlugin *proto = gaim_find_prpl(gaim_account_get_protocol_id(gaim_conversation_get_account(c)));
 
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 
-	select_mark = gtk_text_buffer_get_selection_bound(gtkconv->entry_buffer);
-	insert_mark = gtk_text_buffer_get_insert(gtkconv->entry_buffer);
+	gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), proto->info->name, smiley_text);
 
-	if(insert_mark != select_mark) { /* there is text selected */
-		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &select_iter, select_mark);
-		gtk_text_buffer_get_iter_at_mark(gtkconv->entry_buffer, &insert_iter, insert_mark);
-		gtk_text_buffer_delete(gtkconv->entry_buffer, &select_iter, &insert_iter);
-	}
-
-	gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, smiley_text, -1);
 	close_smiley_dialog(NULL, c);
 }
 
