@@ -1000,67 +1000,67 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 	*len = 2;
 	if (	   !strncmp(m, ":)", 2) ||
 		   !strncmp(m, "=)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, smile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile_xpm);
 	} else if (!strncmp(m, ":(", 2) ||
 		   !strncmp(m, "=(", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, sad_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], sad_xpm);
 	} else if (!strncmp(m, ";)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, wink_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], wink_xpm);
 	}
 
 	if (face || strlen(m) < 3) return face;
 	*len = 3;
 	if (	   !strncmp(m, ":-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, smile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile_xpm);
 	} else if (!strncmp(m, "O-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, oneeye_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], oneeye_xpm);
 	} else if (!strncmp(m, "C:)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, luke03_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], luke03_xpm);
 	} else if (!strncmp(m, ":-(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, sad_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], sad_xpm);
 	} else if (!strncmp(m, ";-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, wink_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], wink_xpm);
 	} else if (!strncmp(m, ":-p", 3) ||
 		   !strncmp(m, ":-P", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, tongue_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], tongue_xpm);
 	} else if (!strncmp(m, "=-O", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, scream_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], scream_xpm);
 	} else if (!strncmp(m, ":-*", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, kiss_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], kiss_xpm);
 	} else if (!strncmp(m, ">:o", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, yell_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], yell_xpm);
 	} else if (!strncmp(m, "8-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, smile8_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile8_xpm);
 	} else if (!strncmp(m, ":-$", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, moneymouth_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], moneymouth_xpm);
 	} else if (!strncmp(m, ":-!", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, burp_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], burp_xpm);
 	} else if (!strncmp(m, ":-[", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, embarrassed_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], embarrassed_xpm);
 	} else if (!strncmp(m, ":'(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, cry_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], cry_xpm);
 	} else if (!strncmp(m, ":-\\", 3) ||
 		   !strncmp(m, ":-/", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, think_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], think_xpm);
 	} else if (!strncmp(m, ":-X", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, crossedlips_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], crossedlips_xpm);
 	} else if (!strncmp(m, ":-D", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, bigsmile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], bigsmile_xpm);
 	}
 
 	if (face || strlen(m) < 4) return face;
 	*len = 4;
 	if (	   !strncmp(m, "O:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, angel_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], angel_xpm);
 	}
 	else if (!strncmp(m, "C:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, luke03_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], luke03_xpm);
 	}
 
 	if (face || strlen(m) < 6) return face;
 	*len = 6;
 	if (	   !strncmp(m, "&gt;:o", 6)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->white, yell_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], yell_xpm);
 	}
 
 	return face;

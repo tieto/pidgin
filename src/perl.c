@@ -345,11 +345,20 @@ XS (XS_AIM_command)
 	command = SvPV(ST(0), junk);
 	if (!command) XSRETURN(0);
 	if        (!strncasecmp(command, "signon", 6)) {
+		if (!blist) {
+			show_login();
+			dologin(0, 0);
+		}
 	} else if (!strncasecmp(command, "signoff", 7)) {
+		signoff();
 	} else if (!strncasecmp(command, "away", 4)) {
+		/* FIXME */
 	} else if (!strncasecmp(command, "back", 4)) {
+		do_im_back();
 	} else if (!strncasecmp(command, "idle", 4)) {
+		/* FIXME */
 	} else if (!strncasecmp(command, "warn", 4)) {
+		/* FIXME */
 	}
 
 	XSRETURN(0);
