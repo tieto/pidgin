@@ -1961,15 +1961,8 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		for (i = 0; fontsize && names [i]; i++) {
 			newvals [FMLY] = names [i];
 
-			g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize) / 10);
-			newvals [PXLSZ] = fs;
-			newvals [PTSZ] = "*";
-
-			TRY_FONT;
-
 			newvals [PXLSZ] = xflds [PXLSZ];
 			newvals [PTSZ] = xflds [PTSZ];
-
 			TRY_FONT;
 		}
 
