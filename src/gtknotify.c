@@ -401,10 +401,10 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_formatting"))
 		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
-	options ^= GTK_IMHTML_NO_COMMENTS;
-	options ^= GTK_IMHTML_NO_TITLE;
-	options ^= GTK_IMHTML_NO_NEWLINE;
-	options ^= GTK_IMHTML_NO_SCROLL;
+	options |= GTK_IMHTML_NO_COMMENTS;
+	options |= GTK_IMHTML_NO_TITLE;
+	options |= GTK_IMHTML_NO_NEWLINE;
+	options |= GTK_IMHTML_NO_SCROLL;
 
 	/* Make sure URLs are clickable */
 	linked_text = gaim_markup_linkify(text);

@@ -4744,21 +4744,21 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		sml_attrib = g_strdup_printf("sml=\"%s\"",
 									 gaim_account_get_protocol_name(conv->account));
 
-	gtk_font_options ^= GTK_IMHTML_NO_COMMENTS;
+	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_formatting"))
-		gtk_font_options ^= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
+		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	/* this is gonna crash one day, I can feel it. */
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(conv->account)))->options &
 	    OPT_PROTO_USE_POINTSIZE) {
-		gtk_font_options ^= GTK_IMHTML_USE_POINTSIZE;
+		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
 				   mdate, message);
-	
+
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib, mdate, message);
@@ -4772,7 +4772,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	} else if (flags & GAIM_MESSAGE_ERROR) {
 		g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
 				   mdate, message);
-		
+
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib, mdate, message);
