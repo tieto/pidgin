@@ -48,11 +48,17 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 %files
 %defattr(-,root,root)
 %{prefix}/bin/gaim
+%{prefix}/bin/gaim-remote
 %doc doc/the_penguin.txt doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README ChangeLog plugins/PERL-HOWTO HACKING
 %{prefix}/man/man1/gaim.1.gz
 %attr(755,root,root) %{prefix}/lib/gaim/*
 %{prefix}/share/locale/*/*/*
 %{prefix}/share/pixmaps/gaim.png
+%{prefix}/share/pixmaps/gaim/*
+%{prefix}/share/pixmaps/gaim/dialogs/*
+%{prefix}/share/pixmaps/gaim/dialogs/*
+%{prefix}/share/pixmaps/gaim/buttons/*
+
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
 
 %clean
