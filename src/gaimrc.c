@@ -37,6 +37,7 @@
 
 #include "gtkpounce.h"
 #include "gtksound.h"
+#include "gtkplugin.h"
 
 /* for people like myself, who are too lazy to add an away msg :) */
 #define BORING_DEFAULT_AWAY_MSG _("sorry, i ran out for a while. bbl")
@@ -500,6 +501,7 @@ static void gaimrc_read_plugins(FILE *f)
 			gaim_plugin_load(gaim_plugin_probe(p->value[0]));
 		}
 	}
+	gaim_gtk_plugins_save();
 }
 
 static GaimAccount *gaimrc_read_user(FILE *f)
@@ -1174,7 +1176,14 @@ static void gaimrc_read_options(FILE *f)
 			gaim_prefs_set_int("/gaim/gtk/blist/width", atoi(p->value[2]));
 			gaim_prefs_set_int("/gaim/gtk/blist/height", atoi(p->value[3]));
 		} else if (!strcmp(p->option, "sort_method")) {
-			gaim_prefs_set_string("/gaim/gtk/blist/sort_type", p->value[0]);
+			if(!strcmp(p->value[0], _("Alphabetical")))
+				gaim_prefs_set_string("/gaim/gtk/blist/sort_type", "alphabetical");
+			else if(!strcmp(p->value[0], _("By status")))
+				gaim_prefs_set_string("/gaim/gtk/blist/sort_type", "status");
+			else if(!strcmp(p->value[0], _("By log size")))
+				gaim_prefs_set_string("/gaim/gtk/blist/sort_type", "log_size");
+			else
+				gaim_prefs_set_string("/gaim/gtk/blist/sort_type", "none");
 		}
 
 	}
