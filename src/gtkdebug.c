@@ -282,7 +282,7 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled") &&
 		debug_win != NULL && !debug_win->paused) {
 
-		gchar *esc_s, *cat_s, *s;
+		gchar *esc_s, *cat_s, *utf8_s, *s;
 
 		if (category == NULL)
 			cat_s = g_strdup("");
@@ -296,9 +296,14 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 		g_free(esc_s);
 
+		utf8_s = gaim_try_conv_to_utf8(s);
+		g_free(s);
+		s = utf8_s;
+
 		if (level == GAIM_DEBUG_FATAL) {
 			gchar *temp = s;
 
+			g_free(s);
 			s = g_strdup_printf("<b>%s</b>", temp);
 			g_free(temp);
 		}
