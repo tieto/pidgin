@@ -47,7 +47,7 @@
 #include "pixmaps/status-here.xpm"
 #include "pixmaps/status-idle.xpm"
 
-#define YAHOO_DEBUG
+#undef YAHOO_DEBUG
 
 #define USEROPT_MAIL 0
 
@@ -551,7 +551,8 @@ static void yahoo_process_contact(struct gaim_connection *gc, struct yahoo_packe
 		l = l->next;
 	}
 
-	show_got_added(gc, id, who, NULL, msg);
+	if (id)
+		show_got_added(gc, id, who, NULL, msg);
 }
 
 static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *pkt)
