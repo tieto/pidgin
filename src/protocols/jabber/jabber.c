@@ -1757,8 +1757,8 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	 */
 	if (BUD_SUB_TO_PEND(sub, ask) || BUD_SUBD_TO(sub, ask)) {
 		if ((b = gaim_find_buddy(GJ_GC(gjc)->account, buddyname)) == NULL) {
-			b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			struct group *g;
+			b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
 			if (groupname) {
 				if (!(g = gaim_find_group(groupname))) {
 					g = gaim_group_new(groupname);
