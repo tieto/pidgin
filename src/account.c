@@ -171,7 +171,6 @@ gaim_account_disconnect(GaimAccount *account)
 	g_return_if_fail(gaim_account_is_connected(account));
 
 	gaim_connection_disconnect(account->gc);
-	gaim_connection_destroy(account->gc);
 
 	account->gc = NULL;
 }
