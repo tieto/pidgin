@@ -55,7 +55,6 @@ struct gaim_sound_event {
 static gboolean mute_login_sounds = FALSE;
 static gboolean mute_sounds = FALSE;
 static gboolean sound_initialized = FALSE;
-static char *sound_cmd = NULL;
 
 static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "arrive.wav"},
@@ -384,21 +383,5 @@ char *gaim_gtk_sound_get_event_label(GaimSoundEventID event)
 		return NULL;
 
 	return sounds[event].label;
-}
-
-
-void gaim_sound_set_command(const char *cmd)
-{
-	if(sound_cmd)
-		g_free(sound_cmd);
-	if(strlen(cmd) > 0)
-		sound_cmd = g_strdup(cmd);
-	else
-		sound_cmd = NULL;
-}
-
-char *gaim_sound_get_command()
-{
-	return sound_cmd;
 }
 
