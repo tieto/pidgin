@@ -99,6 +99,11 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Thu Nov 18 2001 Rob Flynn <rob@marko.net> (0.48 release)
+- Right-click on links to open/copy URL
+- Yahoo changes
+- Oscar can send/receive offline messages in ICQ. Since the "real" ICQ protocol isn't working too well it's recommended that you use Oscar for ICQ.
+
 * Thu Nov 01 2001 Rob Flynn <rob@marko.net> (0.47 release)
 - Better font loading (pays attention to charset now) (thanks Arkadiusz Miskiewicz)
 - Better recoding in Gadu-Gadu (thanks Arkadiusz Miskiewicz)
