@@ -25,6 +25,9 @@
 #include "iq.h"
 #include "roster.h"
 
+#ifdef _WIN32
+#include "utsname.h"
+#endif
 
 JabberIq *jabber_iq_new(JabberStream *js, JabberIqType type)
 {

@@ -69,7 +69,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =		auth.c \
+C_SRC =			auth.c \
 			buddy.c \
 			chat.c \
 			iq.c \
