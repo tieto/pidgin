@@ -1749,7 +1749,8 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		g_hash_table_insert(od->buddyinfo, g_strdup(normalize(info->sn)), bi);
 	}
 	bi->signon = info->onlinesince ? info->onlinesince : (info->sessionlen + time(NULL));
-	bi->caps = caps;
+	if (caps)
+		bi->caps = caps;
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
 
@@ -4224,11 +4225,6 @@ static void oscar_get_away(struct gaim_connection *g, char *who) {
 		aim_getinfo(od->sess, od->conn, who, AIM_GETINFO_GENERALINFO);
 }
 
-static void oscar_get_caps(struct gaim_connection *g, char *name) {
-	struct oscar_data *od = (struct oscar_data *)g->proto_data;
-	aim_getinfo(od->sess, od->conn, name, AIM_GETINFO_CAPABILITIES);
-}
-
 static void oscar_set_dir(struct gaim_connection *g, const char *first, const char *middle, const char *last,
 			  const char *maiden, const char *city, const char *state, const char *country, int web) {
 	/* XXX - some of these things are wrong, but i'm lazy */
@@ -4790,6 +4786,13 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 		switch (retval->ack) {
 			case 0x0000: { /* added successfully */
 			} break;
+
+			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
+				gchar *buf;
+				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
+				/* do_error_dialog(_("Unable To Add"), buf, GAIM_ERROR); */
+				g_free(buf);
+			}
 
 			case 0x000e: { /* contact requires authorization */
 				if ((retval->action == AIM_CB_SSI_ADD) && (retval->name))
@@ -5512,12 +5515,6 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 #endif
 		}
 	}
-
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Capabilities");
-	pbm->callback = oscar_get_caps;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
 
 	return m;
 }
