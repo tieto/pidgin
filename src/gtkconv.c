@@ -234,14 +234,6 @@ default_formatize(GaimConversation *conv)
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
 			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough"))
-		{
-			/* Tell me noone uses <s> by default ... maybe I won't do
-			 _toggle_strikethrough and not let them */
-			/*	g_snprintf(buf2, limit, "<STRIKE>%s</STRIKE>", buf);
-			  strcpy(buf, buf2); */
-		}
-
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font") ||
 			c->has_font)
 		{
@@ -5736,7 +5728,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/escape_closes", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/send_strikethrough", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_smileys", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);

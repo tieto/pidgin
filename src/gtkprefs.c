@@ -675,9 +675,17 @@ GtkWidget *font_page() {
 			"/gaim/gtk/conversations/send_italic", vbox);
 	gaim_gtk_prefs_checkbox(_("_Underline"),
 			"/gaim/gtk/conversations/send_underline", vbox);
+#if 0
+	/*who in their right mind would use this as a default anyway?
+	 * and plus, it wouldn't work as the code currently existed,
+	 * and then i went and applied simguy's patch to remove the
+	 * non-functional code.
+	 *
+	 * remove this after string freeze ends
+	 */
 	gaim_gtk_prefs_checkbox(_("_Strikethrough"),
 			"/gaim/gtk/conversations/send_strikethrough", vbox);
-
+#endif
 	vbox = gaim_gtk_make_frame(ret, _("Face"));
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);

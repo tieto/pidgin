@@ -49,7 +49,7 @@
 #define OPT_FONT_BOLD			0x00000001
 #define OPT_FONT_ITALIC			0x00000002
 #define OPT_FONT_UNDERLINE		0x00000008
-#define OPT_FONT_STRIKE			0x00000010
+/* We're going to ignore strikethough */
 #define OPT_FONT_FACE			0x00000020
 #define OPT_FONT_FGCOL			0x00000040
 #define OPT_FONT_BGCOL			0x00000080
@@ -1102,8 +1102,6 @@ static void gaimrc_read_options(FILE *f)
 					font_options & OPT_FONT_ITALIC);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline",
 					font_options & OPT_FONT_UNDERLINE);
-			gaim_prefs_set_bool("/gaim/gtk/conversations/send_strikethrough",
-					font_options & OPT_FONT_STRIKE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_font",
 					font_options & OPT_FONT_FACE);
 			gaim_prefs_set_bool("/gaim/gtk/conversations/use_custom_size",

@@ -1018,11 +1018,6 @@ char *stylize(const gchar *text, int length)
 		strcpy(buf, tmp);
 	}
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_strikethrough")) {
-		g_snprintf(tmp, length, "<S>%s</S>", buf);
-		strcpy(buf, tmp);
-	}
-
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/use_custom_font")) {
 		const char *fontface;
 
