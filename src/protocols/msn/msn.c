@@ -43,7 +43,7 @@ typedef struct
 } MsnMobileData;
 
 static void
-msn_act_id(gpointer data, char *entry)
+msn_act_id(const char *entry, void *data)
 {
 	struct gaim_connection *gc = data;
 	MsnSession *session = gc->proto_data;
@@ -159,8 +159,10 @@ __send_to_mobile_cb(MsnMobileData *data, const char *entry)
 static void
 msn_show_set_friendly_name(struct gaim_connection *gc)
 {
-	do_prompt_dialog(_("Set Friendly Name:"), gc->displayname,
-					 gc, msn_act_id, NULL);
+	gaim_request_input(gc, NULL, _("Set your friendly name."), NULL,
+					   gc->displayname, FALSE,
+					   _("OK"), G_CALLBACK(msn_act_id),
+					   _("Cancel"), NULL, gc);
 }
 
 static void
