@@ -153,6 +153,18 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	serv_login(u);
 }
 
+static void dologin_all(GtkWidget *widget, GtkWidget *w)
+{
+	struct aim_user *u;
+	GSList *users = aim_users;
+
+	while (users) {
+		u = users->data;
+		if (u->options & OPT_USR_AUTO)
+			serv_login(u);
+		users = users->next;
+	}
+}
 
 static void doenter(GtkWidget *widget, GtkWidget *w)
 {
@@ -202,6 +214,7 @@ static GList *combo_user_names()
 
 void show_login()
 {
+	GtkWidget *signon_all;
 	GtkWidget *options;
 #ifdef GAIM_PLUGINS
 	GtkWidget *plugs;
@@ -326,7 +339,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
 	gtk_widget_show(hbox);
 
-	reg = gtk_button_new_with_label(_("About"));
+	reg = gtk_button_new_with_label(_("Auto-login"));
 	options = gtk_button_new_with_label(_("Options"));
 #ifdef GAIM_PLUGINS
 	plugs = gtk_button_new_with_label(_("Plugins"));
@@ -339,16 +352,16 @@ void show_login()
 #endif
 	}
 
-	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(show_about), NULL);
+	gtk_signal_connect(GTK_OBJECT(reg), "clicked", GTK_SIGNAL_FUNC(dologin_all), NULL);
 	gtk_signal_connect(GTK_OBJECT(options), "clicked", GTK_SIGNAL_FUNC(show_prefs), NULL);
 #ifdef GAIM_PLUGINS
 	gtk_signal_connect(GTK_OBJECT(plugs), "clicked", GTK_SIGNAL_FUNC(show_plugins), NULL);
 #endif
 
-	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), options, TRUE, TRUE, 0);
 #ifdef GAIM_PLUGINS
-	gtk_box_pack_start(GTK_BOX(hbox), plugs, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), reg, TRUE, TRUE, 0);
 #endif
 
 	gtk_widget_show(reg);
