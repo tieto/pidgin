@@ -656,7 +656,7 @@ void surround(GtkWidget *entry, char *pre, char *post)
 	gtk_widget_grab_focus(entry);
 }
 
-static void advance_past(GtkWidget *entry, char *pre, char *post)
+void advance_past(GtkWidget *entry, char *pre, char *post)
 {
 	char *s, *s2;
 	int pos;
@@ -699,7 +699,7 @@ static void toggle_font(GtkWidget *font, struct conversation *c)
 	return;
 }
 
-static void do_link(GtkWidget *linky, GtkWidget *entry)
+void do_link(GtkWidget *linky, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
@@ -709,7 +709,7 @@ static void do_link(GtkWidget *linky, GtkWidget *entry)
 		advance_past(entry, "<A HREF>", "</A>"	);
 }
 
-static void do_strike(GtkWidget *strike, GtkWidget *entry)
+void do_strike(GtkWidget *strike, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
@@ -719,7 +719,7 @@ static void do_strike(GtkWidget *strike, GtkWidget *entry)
 		advance_past(entry, "<STRIKE>", "</STRIKE>");
 }
 
-static void do_bold(GtkWidget *bold, GtkWidget *entry)
+void do_bold(GtkWidget *bold, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
@@ -729,7 +729,7 @@ static void do_bold(GtkWidget *bold, GtkWidget *entry)
 		advance_past(entry, "<B>", "</B>");
 }
 
-static void do_underline(GtkWidget *underline, GtkWidget *entry)
+void do_underline(GtkWidget *underline, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
@@ -739,7 +739,7 @@ static void do_underline(GtkWidget *underline, GtkWidget *entry)
 		advance_past(entry, "<U>", "</U>");
 }
 
-static void do_italic(GtkWidget *italic, GtkWidget *entry)
+void do_italic(GtkWidget *italic, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
@@ -752,21 +752,21 @@ static void do_italic(GtkWidget *italic, GtkWidget *entry)
 /* html code to modify font sizes must all be the same length, */
 /* currently set to 15 chars */
 
-static void do_small(GtkWidget *small, GtkWidget *entry)
+void do_small(GtkWidget *small, GtkWidget *entry)
 {
 	if (state_lock)
 		return;
 	surround(entry, "<FONT SIZE=\"1\">","</FONT>");
 }
 
-static void do_normal(GtkWidget *normal, GtkWidget *entry)
+void do_normal(GtkWidget *normal, GtkWidget *entry)
 {
 	if (state_lock)
                  return;
 	surround(entry, "<FONT SIZE=\"3\">","</FONT>");
 }
 
-static void do_big(GtkWidget *big, GtkWidget *entry)
+void do_big(GtkWidget *big, GtkWidget *entry)
 {
 	if (state_lock)
 		return;

@@ -29,11 +29,29 @@
 #include "gtkhtml.h"
 #include <gdk/gdkkeysyms.h>
 
+#include "pixmaps/underline.xpm"
+#include "pixmaps/bold.xpm"
+#include "pixmaps/italic.xpm"
+#include "pixmaps/small.xpm"
+#include "pixmaps/normal.xpm"
+#include "pixmaps/big.xpm"
+/*
+#include "pixmaps/fontface.xpm"
+#include "pixmaps/palette.xpm"
+*/
+#include "pixmaps/link.xpm"
+#include "pixmaps/strike.xpm"
+
+#include "pixmaps/smile_happy.xpm"
+#include "pixmaps/smile_sad.xpm"
+#include "pixmaps/smile_wink.xpm"
+
 static GtkWidget *joinchat;
 static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
 static GtkWidget *invitemess;
+extern int state_lock;
 
 static void destroy_join_chat()
 {
@@ -326,12 +344,12 @@ static void send_callback(GtkWidget *widget, struct buddy_chat *b)
 }
 
 
-static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, struct buddy_chat *b)
+static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, struct buddy_chat *c)
 {
 	int pos;
 	if (event->keyval == GDK_Return) {
 		if (!(event->state & GDK_SHIFT_MASK)) {
-			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", b);
+			gtk_signal_emit_by_name(GTK_OBJECT(entry), "activate", c);
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		} else {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "keypress_event");
@@ -339,6 +357,42 @@ static gboolean chat_keypress_callback(GtkWidget *entry, GdkEventKey *event, str
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 		}
 	}
+
+	/* now we see if we need to unset any buttons */
+
+	if (invert_tags(c->entry, "<B>", "</B>", 0))
+		quiet_set(c->bold, TRUE);
+	else if (count_tag(c->entry, "<B>", "</B>")) 
+		quiet_set(c->bold, TRUE);
+	else
+		quiet_set(c->bold,FALSE);
+
+	if (invert_tags(c->entry, "<I>", "</I>", 0))
+		quiet_set(c->italic, TRUE);
+	else if (count_tag(c->entry, "<I>", "</I>"))  
+		quiet_set(c->italic, TRUE);
+	else
+		quiet_set(c->italic, FALSE);
+
+	if (invert_tags(c->entry, "<A HREF", "</A>", 0))
+		quiet_set(c->link, TRUE);
+	else if (count_tag(c->entry, "<A HREF", "</A>"))
+		quiet_set(c->link, TRUE);
+	else
+		quiet_set(c->link, FALSE);
+
+ 	if (invert_tags(entry, "<U>", "</U>", 0))
+		quiet_set(c->underline, TRUE);
+	else if (count_tag(entry, "<U>", "</U>"))
+		quiet_set(c->underline, TRUE);
+	else
+		quiet_set(c->underline, FALSE);  
+
+	if (invert_tags(entry, "<STRIKE>", "</STRIKE>", 0))
+		quiet_set(c->strike, TRUE);
+	else if (count_tag(entry, "<STRIKE>", "</STRIKE>"))
+		quiet_set(c->strike, TRUE);
+	else
 
 	return TRUE;
 
@@ -462,6 +516,7 @@ static void info_callback(GtkWidget *w, struct buddy_chat *b)
 
 
 
+
 void show_new_buddy_chat(struct buddy_chat *b)
 {
 	GtkWidget *win;
@@ -481,6 +536,11 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	GtkWidget *vbox;
 	GtkWidget *vpaned;
 	GtkWidget *hpaned;
+	GtkWidget *toolbar;
+	GdkPixmap *strike_i, *small_i, *normal_i, *big_i, *bold_i, *italic_i, *underline_i, *link_i;
+	GtkWidget *strike_p, *small_p, *normal_p, *big_p, *bold_p, *italic_p, *underline_p, *link_p;
+	GtkWidget *strike, *small, *normal, *big, *bold, *italic, *underline, *link;
+	GdkBitmap *mask;
 	
 	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	b->window = win;
@@ -517,6 +577,81 @@ void show_new_buddy_chat(struct buddy_chat *b)
 
 	gtk_widget_realize(win);
 
+	toolbar = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
+
+	link_i = gdk_pixmap_create_from_xpm_d(win->window, &mask,
+			&win->style->white, link_xpm );
+	link_p = gtk_pixmap_new(link_i, mask);
+	gtk_widget_show(link_p);
+
+	strike_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, strike_xpm );
+	strike_p = gtk_pixmap_new(strike_i, mask);
+	gtk_widget_show(strike_p);
+
+	bold_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, bold_xpm );
+	bold_p = gtk_pixmap_new(bold_i, mask);
+	gtk_widget_show(bold_p);
+
+	italic_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, italic_xpm );
+	italic_p = gtk_pixmap_new(italic_i, mask);
+	gtk_widget_show(italic_p);
+
+	underline_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, underline_xpm );
+	underline_p = gtk_pixmap_new(underline_i, mask);
+	gtk_widget_show(underline_p);
+
+	small_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, small_xpm );
+	small_p = gtk_pixmap_new(small_i, mask);
+	gtk_widget_show(small_p);
+
+	normal_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, normal_xpm );
+	normal_p = gtk_pixmap_new(normal_i, mask);
+	gtk_widget_show(normal_p);
+
+	big_i = gdk_pixmap_create_from_xpm_d ( win->window, &mask,
+			&win->style->white, big_xpm );
+	big_p = gtk_pixmap_new(big_i, mask);
+	gtk_widget_show(big_p);
+
+	bold = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+	                                  GTK_TOOLBAR_CHILD_TOGGLEBUTTON, NULL,
+					  "Bold", "Bold Text", "Bold", bold_p,
+					  GTK_SIGNAL_FUNC(do_bold), chatentry);
+	italic = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar), 
+		                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, "Italics", "Italics Text",
+					    "Italics", italic_p, GTK_SIGNAL_FUNC(do_italic), chatentry);
+	underline = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, "Underline", "Underline Text",
+					    "Underline", underline_p, GTK_SIGNAL_FUNC(do_underline), chatentry);
+	strike = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+					    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+					    NULL, "Strike", "Strike through Text",
+					    "Strike", strike_p, GTK_SIGNAL_FUNC(do_strike), chatentry);
+	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
+	small = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Small", "Decrease font size", "Small", small_p, GTK_SIGNAL_FUNC(do_small), chatentry);
+	normal = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Normal", "Normal font size", "Normal", normal_p, GTK_SIGNAL_FUNC(do_normal), chatentry);
+	big = gtk_toolbar_append_item(GTK_TOOLBAR(toolbar), "Big", "Increase font size", "Big", big_p, GTK_SIGNAL_FUNC(do_big), chatentry);
+
+	gtk_toolbar_append_space(GTK_TOOLBAR(toolbar));
+	link = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+                                            GTK_TOOLBAR_CHILD_TOGGLEBUTTON,                                                 NULL, "Link", "Insert Link",
+                                            "Link", link_p, GTK_SIGNAL_FUNC(do_link), chatentry);                 
+
+	gtk_widget_show(toolbar);
+
+	b->bold = bold;
+	b->strike = strike;
+	b->italic = italic;
+	b->underline = underline;
+	b->link = link;
 
 	b->makesound=1;
 
@@ -587,6 +722,7 @@ void show_new_buddy_chat(struct buddy_chat *b)
 	
 	
 	gtk_paned_pack1(GTK_PANED(vpaned), hpaned, TRUE, FALSE);
+	gtk_box_pack_start(GTK_BOX(vbox), toolbar, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), chatentry, TRUE, TRUE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, TRUE, FALSE);

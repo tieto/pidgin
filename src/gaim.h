@@ -199,6 +199,15 @@ struct buddy_chat {
 	GtkWidget *text;
 	GtkWidget *list;
         GtkWidget *entry;
+	GtkWidget *italic;
+	GtkWidget *bold;
+	GtkWidget *underline;
+	GtkWidget *palette;
+	GtkWidget *link;
+	GtkWidget *strike;
+	GtkWidget *font;
+	GtkWidget *color_dialog;
+	GtkWidget *font_dialog;
         GList *in_room;
         GList *ignored;
 	int makesound;
@@ -235,8 +244,8 @@ struct conversation {
 	GtkWidget *underline;
 	GtkWidget *palette;
 	GtkWidget *link;
-    GtkWidget *add_button;
-    GtkWidget *log_button;
+	GtkWidget *add_button;
+	GtkWidget *log_button;
 	GtkWidget *strike;
 	GtkWidget *font;
 	GtkWidget *color_dialog;
@@ -348,7 +357,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 350 $"
+#define REVISION "gaim:$Revision: 354 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -567,6 +576,14 @@ extern void update_log_convs();
 extern void update_transparency();
 extern void update_font_buttons();
 extern void toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
+extern void do_bold(GtkWidget *, GtkWidget *);
+extern void do_italic(GtkWidget *, GtkWidget *);
+extern void do_underline(GtkWidget *, GtkWidget *);
+extern void do_strike(GtkWidget *, GtkWidget *);
+extern void do_small(GtkWidget *, GtkWidget *);
+extern void do_normal(GtkWidget *, GtkWidget *);
+extern void do_big(GtkWidget *, GtkWidget *);
+extern void do_link(GtkWidget *, GtkWidget *);
 
 /* Functions in network.c */
 extern unsigned int *get_address(char *);
