@@ -5489,8 +5489,8 @@ gaim_debug(GAIM_DEBUG_ERROR, "XXX", "got self icon info, type is 0x%04hx, flags 
 								   "Can't stat buddy icon file!\n");
 					}
 				}
-			} /* else if (flags == 0x81)
-				aim_ssi_seticon(od->sess, md5, length); */
+			} else if (flags == 0x81)
+				aim_ssi_seticon(od->sess, md5, length); 
 		} break;
 
 		case 0x0002: { /* We just set an "available" message? */
