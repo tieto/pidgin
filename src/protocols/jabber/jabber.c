@@ -1793,6 +1793,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			} else if(name != NULL && strcmp(b->alias, name)) {
 				g_snprintf(b->alias, sizeof(b->alias), "%s", name);
 				handle_buddy_rename(b, buddyname);
+				do_export(GJ_GC(gjc));
 			}
 		}
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {

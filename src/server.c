@@ -813,6 +813,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		char *who = g_strdup(b->name);
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
 		handle_buddy_rename(b, who);
+		do_export(b->gc);
 		g_free(who);
 	}
 

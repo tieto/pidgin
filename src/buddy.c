@@ -233,9 +233,6 @@ void handle_buddy_rename(struct buddy *b, char *prevname)
 	GtkCTreeNode *c;
 	char buf[256];
 
-	/* well you shouldn't be calling this if nothing changed. duh. */
-	do_export(b->gc);
-
 	c = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, b);
 	if (get_buddy_alias_only(b))
 		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, get_buddy_alias(b));
@@ -743,7 +740,7 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 	b->alias[0] = '\0';
 	handle_buddy_rename(b, b->name); /* make me a sammich! */
 	serv_alias_buddy(b);
-
+	do_export(b->gc);
 }
 
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)

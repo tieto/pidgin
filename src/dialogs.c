@@ -3777,6 +3777,7 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 		b->alias[0] = '\0';
 	handle_buddy_rename(b, b->name);
 	serv_alias_buddy(b);
+	do_export(b->gc);
 	destroy_dialog(aliasdlg, aliasdlg);
 }
 
@@ -4425,6 +4426,7 @@ static void do_rename_buddy(GtkObject *obj, GtkWidget *entry)
 		g_snprintf(b->name, sizeof(b->name), "%s", new_name);
 		serv_add_buddy(b->gc, b->name);
 		handle_buddy_rename(b, prevname);
+		do_export(b->gc);
 		g_free(prevname);
 	}
 
