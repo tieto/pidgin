@@ -18,9 +18,9 @@ GAIM::add_event_handler("event_buddy_signon", "echo_reply");
 GAIM::add_timeout_handler(60, "notify");
 
 sub echo_reply {
-	$args = $_[0];
-	$args =~ s/(.+) \"(.+)\"//;
-	GAIM::print_to_conv($1, $2, "Hello", 0);
+	$index = $_[0];
+	$who = $_[1];
+	GAIM::print_to_conv($index, $who, "Hello", 0);
 }
 
 sub notify {

@@ -122,10 +122,11 @@ GAIM::add_event_handler(event, function)
 	(a string with the same name as the events for plugins, see SIGNALS), and a
 	string with the name of the function you want called. Simple enough?
 
-	When this is triggered, the arguments will be passed in @_ and are not
-	broken into a list, but left as one long string. You'll have to parse those
-	yourself with split. (Sounding exactly like X-Chat yet?) The arguments are
-	the exact same as those passed to the plugins, and are passed after the
+	When this is triggered, the arguments will be passed in @_ and are broken
+	into a list. This is different from all previous versions of Gaim, where you
+	had to parse the arguments yourself. The arguments are quite different from
+	what's passed to the plugins, though they are very similar, and you should
+	read perl.c to figure out what they are. The arguments are passed after the
 	plugins have had their way with them. Perl scripts cannot modify the values
 	so that gaim knows what the changes are.
 
@@ -134,10 +135,6 @@ GAIM::add_event_handler(event, function)
 	event simply return a non-0 value. This will cause all subsequent scripts
 	and the event itself to never happen (i.e. the user won't see it happen,
 	and _send events won't actually send).
-
-	Names of buddies and chat rooms will be in quotes, and all other
-	values (like text messages) will not be. (Watch the debug window to get a
-	better feel for this, or better yet, look at the bottom of plugins.c.)
 
 GAIM::add_timeout_handler(integer, function)
 	This calls function after integer number of seconds. It only calls function

@@ -569,6 +569,7 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, sighandler);
 	signal(SIGINT, sighandler);
 	signal(SIGTERM, sighandler);
+	signal(SIGQUIT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
 #endif
 

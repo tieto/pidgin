@@ -131,24 +131,28 @@ static char *escape_quotes(char *buf)
 static SV *execute_perl(char *function, char *args)
 {
 	static char *perl_cmd = NULL;
+	SV *i;
 
 	if (perl_cmd)
 		g_free(perl_cmd);
-	perl_cmd = g_malloc(strlen(function) + (strlen(args) * 2) + 2 + 10);
-	sprintf(perl_cmd, "&%s('%s')", function, escape_quotes(args));
+	perl_cmd = g_malloc(strlen(function) + strlen(args) + 4);
+	sprintf(perl_cmd, "&%s(%s)", function, args);
 #ifndef HAVE_PERL_EVAL_PV
-	return (perl_eval_pv(perl_cmd, TRUE));
+	i = (perl_eval_pv(perl_cmd, TRUE));
 #else
-	return (Perl_eval_pv(perl_cmd, TRUE));
+	i = (Perl_eval_pv(perl_cmd, TRUE));
 #endif
+	return i;
 }
 
 int perl_load_file(char *script_name)
 {
+	char *name = g_strdup_printf("'%s'", escape_quotes(script_name));
 	SV *return_val;
 	if (my_perl == NULL)
 		perl_init();
-	return_val = execute_perl("load_file", script_name);
+	return_val = execute_perl("load_file", name);
+	g_free(name);
 	return SvNV (return_val);
 }
 
@@ -643,20 +647,141 @@ XS (XS_GAIM_print_to_chat)
 	XSRETURN(0);
 }
 
-int perl_event(char *event, char *args)
+int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
 {
+	char *buf = NULL;
 	GList *handler;
 	struct _perl_event_handlers *data;
 	SV *handler_return;
 
+	switch (event) {
+	case event_signon:
+	case event_signoff:
+		buf = g_strdup_printf("'%lu'", (unsigned long)arg1);
+		break;
+	case event_away:
+		buf = g_strdup_printf("'%lu','%s'", (unsigned long)arg1,
+				((struct gaim_connection *)arg1)->away ?
+					escape_quotes(((struct gaim_connection *)arg1)->away) : "");
+		break;
+	case event_im_recv:
+		{
+		char *tmp = *(char **)arg2 ? g_strdup(escape_quotes(*(char **)arg2)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp,
+			   *(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
+		g_free(tmp);
+		}
+		break;
+	case event_im_send:
+		{
+		char *tmp = arg2 ? g_strdup(escape_quotes(arg2)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp,
+			   *(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
+		g_free(tmp);
+		}
+		break;
+	case event_buddy_signon:
+	case event_buddy_signoff:
+	case event_set_info:
+	case event_buddy_away:
+	case event_buddy_back:
+	case event_buddy_idle:
+	case event_buddy_unidle:
+		buf = g_strdup_printf("'%lu','%s'", (unsigned long)arg1, escape_quotes(arg2));
+		break;
+	case event_chat_invited:
+		{
+		char *tmp2, *tmp3, *tmp4;
+		tmp2 = g_strdup(escape_quotes(arg2));
+		tmp3 = g_strdup(escape_quotes(arg3));
+		tmp4 = arg4 ? g_strdup(escape_quotes(arg4)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%s','%s','%s'", (unsigned long)arg1, tmp2, tmp3, tmp4);
+		g_free(tmp2);
+		g_free(tmp3);
+		g_free(tmp4);
+		}
+		break;
+	case event_chat_join:
+	case event_chat_buddy_join:
+	case event_chat_buddy_leave:
+		buf = g_strdup_printf("'%lu','%d','%s'", (unsigned long)arg1, (int)arg2,
+				escape_quotes(arg3));
+		break;
+	case event_chat_leave:
+		buf = g_strdup_printf("'%lu','%d'", (unsigned long)arg1, (int)arg2);
+		break;
+	case event_chat_recv:
+		{
+		char *t3, *t4;
+		t3 = g_strdup(escape_quotes(arg3));
+		t4 = arg4 ? g_strdup(escape_quotes(arg4)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, t3, t4);
+		g_free(t3);
+		g_free(t4);
+		}
+		break;
+	case event_chat_send_invite:
+		{
+		char *t3, *t4;
+		t3 = g_strdup(escape_quotes(arg3));
+		t4 = *(char **)arg4 ? g_strdup(escape_quotes(*(char **)arg4)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, t3, t4);
+		g_free(t3);
+		g_free(t4);
+		}
+		break;
+	case event_chat_send:
+		buf = g_strdup_printf("'%lu','%d','%s'", (unsigned long)arg1, (int)arg2,
+				*(char **)arg3 ? escape_quotes(*(char **)arg3) : "");
+		break;
+	case event_warned:
+		buf = g_strdup_printf("'%lu','%s','%d'", (unsigned long)arg1,
+				arg2 ? escape_quotes(arg2) : "", (int)arg3);
+		break;
+	case event_quit:
+		buf = g_malloc0(1);
+		break;
+	case event_new_conversation:
+		buf = g_strdup_printf("'%s'", escape_quotes(arg1));
+		break;
+	case event_im_displayed_sent:
+		{
+		char *tmp2, *tmp3;
+		tmp2 = g_strdup(escape_quotes(arg2));
+		tmp3 = *(char **)arg3 ? g_strdup(escape_quotes(*(char **)arg3)) : g_malloc0(1);
+		buf = g_strdup_printf("'%lu','%s','%s'", (unsigned long)arg1, tmp2, tmp3);
+		g_free(tmp2);
+		g_free(tmp3);
+		}
+		break;
+	case event_im_displayed_rcvd:
+		{
+		char *tmp2, *tmp3;
+		tmp2 = g_strdup(escape_quotes(arg2));
+		tmp3 = arg3 ? g_strdup(escape_quotes(arg3)) : g_malloc0(1);
+		buf = g_strdup_printf("%lu \"%s\" %s", (unsigned long)arg1, tmp2, tmp3);
+		g_free(tmp2);
+		g_free(tmp3);
+		}
+		break;
+	default:
+		return 0;
+	}
+
 	for (handler = perl_event_handlers; handler != NULL; handler = handler->next) {
 		data = handler->data;
-		if (!strcmp(event, data->event_type)) {
-			handler_return = execute_perl(data->handler_name, args);
-			if (SvIV(handler_return))
+		if (!strcmp(event_name(event), data->event_type)) {
+			handler_return = execute_perl(data->handler_name, buf);
+			if (SvIV(handler_return)) {
+				if (buf)
+					g_free(buf);
 				return SvIV(handler_return);
+			}
 		}
 	}
+
+	if (buf)
+		g_free(buf);
 
 	return 0;
 }

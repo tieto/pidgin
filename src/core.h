@@ -169,7 +169,7 @@ extern void save_prefs();
 #ifdef USE_PERL
 extern void perl_autoload();
 extern void perl_end();
-extern int perl_event(char *, char *);
+extern int perl_event(enum gaim_event, void *, void *, void *, void *);
 extern int perl_load_file(char *);
 extern void unload_perl_scripts();
 extern void list_perl_scripts();
@@ -186,6 +186,7 @@ extern void gaim_plugin_unload(GModule *);
 extern void remove_all_plugins();
 #endif
 extern int plugin_event(enum gaim_event, void *, void *, void *, void *);
+extern char *event_name(enum gaim_event);
 
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, gushort);

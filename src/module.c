@@ -175,7 +175,7 @@ static gboolean unload_timeout(gpointer handle)
 void gaim_plugin_unload(GModule *handle)
 {
 	GList *pl = plugins;
-	struct gaim_plugin *p;
+	struct gaim_plugin *p = NULL;
 	void (*gaim_plugin_remove)();
 
 	while (pl) {
@@ -269,7 +269,7 @@ void gaim_signal_disconnect(GModule *handle, enum gaim_event which, void *func)
 
 #endif /* GAIM_PLUGINS */
 
-static char *event_name(enum gaim_event event)
+char *event_name(enum gaim_event event)
 {
 	static char buf[128];
 	switch (event) {
@@ -468,9 +468,6 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 
 int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *arg4)
 {
-#ifdef USE_PERL
-	char buf[BUF_LONG];
-#endif
 #ifdef GAIM_PLUGINS
 	GList *c = callbacks;
 	struct gaim_callback *g;
@@ -487,7 +484,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 		void (*four)(void *, void *, void *, void *, void *);
 
 		g = (struct gaim_callback *)c->data;
-		if (g->event == event && g->function !=NULL) {
+		if (g->event == event && g->function != NULL) {
 			switch (event) {
 
 				/* no args */
@@ -553,81 +550,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 	}
 #endif /* GAIM_PLUGINS */
 #ifdef USE_PERL
-	switch (event) {
-	case event_signon:
-	case event_signoff:
-		g_snprintf(buf, sizeof buf, "%lu", (unsigned long)arg1);
-		break;
-	case event_away:
-		g_snprintf(buf, sizeof buf, "%lu %s", (unsigned long)arg1,
-				((struct gaim_connection *)arg1)->away ?
-					((struct gaim_connection *)arg1)->away : "");
-		break;
-	case event_im_recv:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
-			   *(char **)arg2 ? *(char **)arg2 : "(null)",
-			   *(char **)arg3 ? *(char **)arg3 : "(null)");
-		break;
-	case event_im_send:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
-			   (char *)arg2, *(char **)arg3 ? *(char **)arg3 : "(null)");
-		break;
-	case event_buddy_signon:
-	case event_buddy_signoff:
-	case event_set_info:
-	case event_buddy_away:
-	case event_buddy_back:
-	case event_buddy_idle:
-	case event_buddy_unidle:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\"", (unsigned long)arg1, (char *)arg2);
-		break;
-	case event_chat_invited:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" \"%s\" %s", (unsigned long)arg1,
-				(char *)arg2, (char *)arg3, arg4 ? (char *)arg4 : "");
-		break;
-	case event_chat_join:
-	case event_chat_buddy_join:
-	case event_chat_buddy_leave:
-		g_snprintf(buf, sizeof buf, "%lu %d \"%s\"", (unsigned long)arg1,
-				(int)arg2, (char *)arg3);
-		break;
-	case event_chat_leave:
-		g_snprintf(buf, sizeof buf, "%lu %d", (unsigned long)arg1, (int)arg2);
-		break;
-	case event_chat_recv:
-		g_snprintf(buf, sizeof buf, "%lu %d \"%s\" %s", (unsigned long)arg1,
-				(int)arg2, (char *)arg3, (char *)arg4 ? (char *)arg4 : "(null)");
-		break;
-	case event_chat_send_invite:
-		g_snprintf(buf, sizeof buf, "%lu %d \"%s\" %s", (unsigned long)arg1,
-				(int)arg2, (char *)arg3, *(char **)arg4 ? *(char **)arg4 : "(null)");
-		break;
-	case event_chat_send:
-		g_snprintf(buf, sizeof buf, "%lu %d %s", (unsigned long)arg1, (int)arg2,
-				*(char **)arg3 ? *(char **)arg3 : "(null)");
-		break;
-	case event_warned:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" %d", (unsigned long)arg1,
-				arg2 ? (char *)arg2 : "", (int)arg3);
-		break;
-	case event_quit:
-		buf[0] = 0;
-		break;
-	case event_new_conversation:
-		g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
-		break;
-	case event_im_displayed_sent:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
-				(char *)arg2, *(char **)arg3 ? *(char **)arg3 : "(null)");
-		break;
-	case event_im_displayed_rcvd:
-		g_snprintf(buf, sizeof buf, "%lu \"%s\" %s", (unsigned long)arg1,
-				(char *)arg2, (char *)arg3 ? (char *)arg3 : "(null)");
-		break;
-	default:
-		return 0;
-	}
-	return perl_event(event_name(event), buf);
+	return perl_event(event, arg1, arg2, arg3, arg4);
 #else
 	return 0;
 #endif
