@@ -26,15 +26,18 @@
 
 #define MY_LAG_STRING "ZYXCHECKLAGXYZ"
 
-void *handle;
+GModule *handle;
 GtkWidget *lagbox;
 GtkWidget *my_lagometer;
 struct timeval my_lag_tv;
-int check_timeout = -1;
+guint check_timeout = 0;
 guint delay = 10;
 static GtkWidget *confdlg;
+struct gaim_connection *my_gc = NULL;
 
-void update_lag(int us) {
+static void avail_now(struct gaim_connection *, void *);
+
+static void update_lag(int us) {
 	double pct;
 
 	if (lagbox == NULL) {
@@ -69,8 +72,12 @@ void update_lag(int us) {
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(my_lagometer), pct);
 }
 
-void check_lag(struct gaim_connection *gc, char **who, char **message, void *m) {
-	char *name = g_strdup(normalize(*who));
+static void check_lag(struct gaim_connection *gc, char **who, char **message, void *m) {
+	char *name;
+	if (gc != my_gc)
+		return;
+
+	name = g_strdup(normalize(*who));
 	if (!strcasecmp(normalize(gc->username), name) &&
 	    (*message != NULL) &&
 	    !strcmp(*message, MY_LAG_STRING)) {
@@ -89,14 +96,54 @@ void check_lag(struct gaim_connection *gc, char **who, char **message, void *m) 
 	g_free(name);
 }
 
-void send_lag(struct gaim_connection *gc) {
+static gint send_lag(struct gaim_connection *gc) {
 	gettimeofday(&my_lag_tv, NULL);
-	serv_send_im(gc, gc->username, MY_LAG_STRING, 1);
+	if (g_slist_find(connections, gc)) {
+		serv_send_im(gc, gc->username, MY_LAG_STRING, 1);
+		return TRUE;
+	} else {
+		debug_printf("LAGMETER: send_lag called for connection that no longer exists\n");
+		check_timeout = 0;
+		return FALSE;
+	}
+}
+
+static void got_signoff(struct gaim_connection *gc, void *m) {
+	if (gc != my_gc)
+		return;
+
+	if (check_timeout > 0)
+		gtk_timeout_remove(check_timeout);
+	check_timeout = 0;
+
+	if (confdlg)
+		gtk_widget_destroy(confdlg);
+	confdlg = NULL;
+
+	if (lagbox)
+		gtk_widget_destroy(lagbox);
+	lagbox = NULL;
+
+	if (g_slist_length(connections) > 1) {
+		if (connections->data == my_gc)
+			avail_now(connections->next->data, NULL);
+		else
+			avail_now(connections->data, NULL);
+	} else {
+		my_gc = NULL;
+	}
+}
+
+static void avail_now(struct gaim_connection *gc, void *m) {
+	update_lag(0);
+	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, gc);
+	my_gc = gc;
 }
 
 void gaim_plugin_remove() {
-	if (check_timeout != -1)
+	if (check_timeout > 0)
 		gtk_timeout_remove(check_timeout);
+	check_timeout = 0;
 	if (confdlg)
 		gtk_widget_destroy(confdlg);
 	if (lagbox)
@@ -104,13 +151,7 @@ void gaim_plugin_remove() {
 
 	confdlg = NULL;
 	lagbox = NULL;
-}
-
-void avail_now(struct gaim_connection *gc, void *m) {
-	update_lag(0);
-	gaim_signal_connect(handle, event_im_recv, check_lag, NULL);
-	gaim_signal_connect(handle, event_signoff, gaim_plugin_remove, NULL);
-	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, gc);
+	my_gc = NULL;
 }
 
 char *gaim_plugin_init(GModule *h) {
@@ -119,7 +160,10 @@ char *gaim_plugin_init(GModule *h) {
 	confdlg = NULL;
 	lagbox = NULL;
 
-	if (!blist)
+	gaim_signal_connect(handle, event_im_recv, check_lag, NULL);
+	gaim_signal_connect(handle, event_signoff, got_signoff, NULL);
+
+	if (!connections)
 		gaim_signal_connect(handle, event_signon, avail_now, NULL);
 	else
 		avail_now(connections->data, NULL);
@@ -127,14 +171,15 @@ char *gaim_plugin_init(GModule *h) {
 	return NULL;
 }
 
-void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {
+static void adjust_timeout(GtkWidget *button, GtkWidget *spinner) {
 	delay = CLAMP(gtk_spin_button_get_value_as_int(
 				GTK_SPIN_BUTTON(spinner)), 0, 3600);
-	sprintf(debug_buff, "new updates: %d\n", delay);
-	debug_print(debug_buff);
-	if (check_timeout >= 0)
+	debug_printf("LAGMETER: new updates: %d\n", delay);
+	if (check_timeout > 0)
 		gtk_timeout_remove(check_timeout);
-	check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, NULL);
+	check_timeout = 0;
+	if (my_gc)
+		check_timeout = gtk_timeout_add(1000 * delay, (GtkFunction)send_lag, my_gc);
 	gtk_widget_destroy(confdlg);
 	confdlg = NULL;
 }
