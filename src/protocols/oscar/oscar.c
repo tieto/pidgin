@@ -1205,7 +1205,7 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 		/* ... if it refers to a valid gaim image ... */
 		if (id && (image = gaim_imgstore_get(atoi(id)))) {
 			/* ... append the message from start to the tag ... */
-			size_t size = gaim_imgstore_get_size(image);
+			unsigned long size = gaim_imgstore_get_size(image);
 			const char *filename = gaim_imgstore_get_filename(image);
 			gpointer imgdata = gaim_imgstore_get_data(image);
 
@@ -1214,15 +1214,15 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 			/* ... insert a new img tag with the oscar id ... */
 			if (filename)
 				g_string_append_printf(msg,
-					"<IMG SRC=\"%s\" ID=\"%d\" DATASIZE=\"%zu\">",
+					"<IMG SRC=\"%s\" ID=\"%d\" DATASIZE=\"%lu\">",
 					filename, oscar_id, size);
 			else
 				g_string_append_printf(msg,
-					"<IMG ID=\"%d\" DATASIZE=\"%zu\">",
+					"<IMG ID=\"%d\" DATASIZE=\"%lu\">",
 					oscar_id, size);
 
 			/* ... and append the data to the binary section ... */
-			g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%zu\">",
+			g_string_append_printf(data, "<DATA ID=\"%d\" SIZE=\"%lu\">",
 				oscar_id, size);
 			data = g_string_append_len(data, imgdata, size);
 			data = g_string_append(data, "</DATA>");
