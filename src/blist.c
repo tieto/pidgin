@@ -2348,6 +2348,22 @@ void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key)
 }
 
 void
+gaim_blist_node_set_flags(GaimBlistNode *node, GaimBlistNodeFlags flags)
+{
+	g_return_if_fail(node != NULL);
+
+	node->flags = flags;
+}
+
+GaimBlistNodeFlags
+gaim_blist_node_get_flags(GaimBlistNode *node)
+{
+	g_return_val_if_fail(node != NULL, 0);
+
+	return node->flags;
+}
+
+void
 gaim_blist_node_set_bool(GaimBlistNode* node, const char *key, gboolean data)
 {
 	GaimValue *value;

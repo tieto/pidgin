@@ -842,6 +842,25 @@ const char *gaim_blist_node_get_string(GaimBlistNode *node, const char *key);
  */
 void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key);
 
+/**
+ * Set the flags for the given node.  Setting a node's flags will overwrite
+ * the old flags, so if you want to save them, you must first call
+ * gaim_blist_node_get_flags and modify that appropriately.
+ *
+ * @param node  The node on which to set the flags.
+ * @param flags The flags to set.  This is a bitmask.
+ */
+void gaim_blist_node_set_flags(GaimBlistNode *node, GaimBlistNodeFlags flags);
+
+/**
+ * Get the current flags on a given node.
+ *
+ * @param node The node from which to get the flags.
+ *
+ * @return The flags on the node.  This is a bitmask.
+ */
+GaimBlistNodeFlags gaim_blist_node_get_flags(GaimBlistNode *node);
+
 /*@}*/
 
 
