@@ -6,9 +6,7 @@
  * 	? I think i did everything i want to with it.
  *
  * BUGS:
- * 	If you have a numeric replacement, and is preceded by numeric text,
- * 	it doesn't catch it. I don't know why. Probably because it's not
- * 	designed to work with numbers.
+ * 	? I think i fixed them all.
  */
 #define GAIM_PLUGINS
 #include "gaim.h"
@@ -50,9 +48,12 @@ void spell_check(char *who, char **message, void *m) {
 			struct replace_words *r;
 			r = (struct replace_words *)(w->data);
 			tmp = have_word(*message, word);
-			if (!strcmp(have_word(*message, word), r->bad))
+			if (!strcmp(have_word(*message, word), r->bad)) {
 				substitute(message, word, strlen(r->bad),
 						r->good);
+				l += num_words(r->good) - num_words(r->bad);
+				i += num_words(r->good) - num_words(r->bad);
+			}
 			free(tmp);
 			w = w->next;
 		}
@@ -167,10 +168,10 @@ int num_words(char *m) {
 				state = 2;
 			break;
 		case 1: /* inside word */
-			if (isspace(m[pos]) || m[pos] == '\'' || m[pos] == '.')
-				state = 0;
-			else if (m[pos] == '<')
+			if (m[pos] == '<')
 				state = 2;
+			else if (!isalnum(m[pos]))
+				state = 0;
 			break;
 		case 2: /* inside HTML tag */
 			if (m[pos] == '>')
@@ -196,7 +197,9 @@ int get_word(char *m, int word) {
 				state = 2;
 			break;
 		case 1:
-			if (isspace(m[pos]) || m[pos] == '\'' || m[pos] == '.')
+			if (m[pos] == '<')
+				state = 2;
+			else if (!isalnum(m[pos]))
 				state = 0;
 			break;
 		case 2:
@@ -209,7 +212,7 @@ int get_word(char *m, int word) {
 }
 
 char *have_word(char *m, int pos) {
-	char *tmp = strpbrk(&m[pos], "' \t\f\r\n.");
+	char *tmp = strpbrk(&m[pos], "' \t\f\r\n.?!-,");
 	int len = (int)(tmp - &m[pos]);
 
 	if (tmp == NULL) {
