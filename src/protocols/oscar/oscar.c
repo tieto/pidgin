@@ -457,7 +457,7 @@ static void oscar_login(struct aim_user *user) {
 		odata->icq = TRUE;
 		/* this is odd but it's necessary for a proper do_import and do_export */
 		gc->protocol = PROTO_ICQ;
-		gc->checkbox = _("Send offline message");
+		gc->password[9] = 0;
 	} else {
 		gc->protocol = PROTO_TOC;
 		gc->flags |= OPT_CONN_HTML;
@@ -2238,8 +2238,6 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 	} else {
 		if (imflags & IM_FLAG_AWAY) {
 			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_AWAY, message);
-		} else if (imflags & IM_FLAG_CHECKBOX) {
-			ret = aim_send_im(odata->sess, name, AIM_IMFLAGS_OFFLINE, message);
 		} else {
 			struct aim_sendimext_args args;
 			GSList *h = odata->hasicons;
@@ -2248,6 +2246,8 @@ static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, 
 			struct stat st;
 
 			args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
+			if (odata->icq)
+				args.flags |= AIM_IMFLAGS_OFFLINE;
 
 			args.features = gaim_features;
 			args.featureslen = sizeof(gaim_features);
@@ -2738,6 +2738,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	GList *m = NULL;
 	struct proto_buddy_menu *pbm;
 	char *n = g_strdup(normalize(gc->username));
+	struct oscar_data *odata = gc->proto_data;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	pbm->label = _("Get Info");
@@ -2745,18 +2746,20 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, char *who) {
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
 
-	pbm = g_new0(struct proto_buddy_menu, 1);
-	pbm->label = _("Get Away Msg");
-	pbm->callback = oscar_get_away_msg;
-	pbm->gc = gc;
-	m = g_list_append(m, pbm);
-
-	if (strcmp(n, normalize(who))) {
+	if (!odata->icq) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
-		pbm->label = _("Direct IM");
-		pbm->callback = oscar_ask_direct_im;
+		pbm->label = _("Get Away Msg");
+		pbm->callback = oscar_get_away_msg;
 		pbm->gc = gc;
 		m = g_list_append(m, pbm);
+
+		if (strcmp(n, normalize(who))) {
+			pbm = g_new0(struct proto_buddy_menu, 1);
+			pbm->label = _("Direct IM");
+			pbm->callback = oscar_ask_direct_im;
+			pbm->gc = gc;
+			m = g_list_append(m, pbm);
+		}
 	}
 	g_free(n);
 
