@@ -342,7 +342,8 @@ void do_away_menu()
 	GtkWidget *remmenu;
 	GtkWidget *submenu, *submenu2;
 	GtkWidget *remitem;
-	GtkWidget *sep;
+	GtkWidget *image;
+	GdkPixbuf *pixbuf, *scale;
 	GList *l;
 	GSList *awy = away_messages;
 	struct away_message *a;
@@ -401,13 +402,7 @@ void do_away_menu()
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), remmenu);
 		gtk_widget_show(remmenu);
 
-		sep = gtk_hseparator_new();
-		menuitem = gtk_menu_item_new();
-		gtk_menu_shell_append(GTK_MENU_SHELL(awaymenu), menuitem);
-		gtk_container_add(GTK_CONTAINER(menuitem), sep);
-		gtk_widget_set_sensitive(menuitem, FALSE);
-		gtk_widget_show(menuitem);
-		gtk_widget_show(sep);
+		gaim_separator(awaymenu);
 
 		while (con) {
 			gc = con->data;
@@ -494,9 +489,21 @@ void do_away_menu()
 					continue;
 				}
 
+				pixbuf = create_prpl_icon(gc->account);
+				if (pixbuf) {
+					scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+					image = gtk_image_new_from_pixbuf(scale);
+					g_object_unref(G_OBJECT(pixbuf));
+					g_object_unref(G_OBJECT(scale));
+				} else {
+					image = gtk_image_new();
+				}
+				gtk_widget_show(image);
+
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
 					   gc->username, gc->prpl->name);
-				menuitem = gtk_menu_item_new_with_label(buf);
+				menuitem = gtk_image_menu_item_new_with_label(buf);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 				gtk_menu_shell_append(GTK_MENU_SHELL(awaymenu), menuitem);
 				gtk_widget_show(menuitem);
 
@@ -514,13 +521,7 @@ void do_away_menu()
 					g_signal_connect(GTK_OBJECT(menuitem), "activate",
 							   G_CALLBACK(set_gc_away), gc);
 
-					sep = gtk_hseparator_new();
-					menuitem = gtk_menu_item_new();
-					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-					gtk_container_add(GTK_CONTAINER(menuitem), sep);
-					gtk_widget_set_sensitive(menuitem, FALSE);
-					gtk_widget_show(menuitem);
-					gtk_widget_show(sep);
+					gaim_separator(submenu);
 
 					awy = away_messages;
 

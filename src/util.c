@@ -45,7 +45,6 @@
 #include <math.h>
 #include "gaim.h"
 #include "prpl.h"
-#include "gtklist.h"
 
 #ifndef _WIN32
 #include <sys/socket.h>
@@ -1109,70 +1108,6 @@ const char *handle_uri(char *uri) {
 	
 	
 	return NULL;
-}
-
-GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
-{
-	GtkWidget *menuitem;
-	/*
-	GtkWidget *hbox;
-	GtkWidget *label;
-	*/
-	GtkWidget *image;
-
-	if (icon == NULL)
-		menuitem = gtk_menu_item_new_with_mnemonic(str);
-	else
-		menuitem = gtk_image_menu_item_new_with_mnemonic(str);
-
-	if (menu)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-	if (sf)
-		g_signal_connect(GTK_OBJECT(menuitem), "activate", sf, data);
-
-	if (icon != NULL) {
-		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-	}
-/* FIXME: this isn't right
-	if (mod) {
-		label = gtk_label_new(mod);
-		gtk_box_pack_end(GTK_BOX(hbox), label, FALSE, FALSE, 2);
-		gtk_widget_show(label);
-	}
-*/
-/*
-	if (accel_key) {
-		gtk_widget_add_accelerator(menuitem, "activate", accel, accel_key,
-					   accel_mods, GTK_ACCEL_LOCKED);
-	}
-*/
-
-	gtk_widget_show_all(menuitem);
-
-	return menuitem;
-}
-
-GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
-{
-	GtkWidget *menuitem;
-	GtkWidget *label;
-
-	menuitem = gtk_menu_item_new();
-	if (menu)
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-	gtk_widget_show(menuitem);
-
-	label = gtk_label_new(str);
-	gtk_label_set_pattern(GTK_LABEL(label), "_");
-	gtk_container_add(GTK_CONTAINER(menuitem), label);
-	gtk_widget_show(label);
-/* FIXME: Go back and fix this 
-	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
-				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-*/
-	return menuitem;
 }
 
 char *gaim_try_conv_to_utf8(const char *str)
