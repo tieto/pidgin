@@ -1,7 +1,10 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-$Id: udphandle.c 1508 2001-02-22 23:07:34Z warmenhoven $
+$Id: udphandle.c 1871 2001-05-19 17:57:49Z warmenhoven $
 $Log$
+Revision 1.5  2001/05/19 17:57:49  warmenhoven
+this is not an "official" fix
+
 Revision 1.4  2001/02/22 23:07:34  warmenhoven
 updating icqlib
 
@@ -838,15 +841,15 @@ void icq_ServerResponse(ICQLINK *link, icq_Packet *p)
         break;
       case UDP_SRV_WRONG_PASSWORD:
         icq_FmtLog(link, ICQ_LOG_ERROR, "Wrong password\n");
+        icq_UDPAck(link, seq);
         if(link->icq_WrongPassword)
           (*link->icq_WrongPassword)(link);
-        icq_UDPAck(link, seq);
         break;
       case UDP_SRV_INVALID_UIN:
         icq_FmtLog(link, ICQ_LOG_WARNING, "Invalid UIN\n");
+        icq_UDPAck(link, seq);
         if(link->icq_InvalidUIN)
           (*link->icq_InvalidUIN)(link);
-        icq_UDPAck(link, seq);
         break;
       case UDP_SRV_META_USER:
         icq_HandleMetaUserInfo(link, p);
