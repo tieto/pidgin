@@ -894,9 +894,7 @@ static void process_anyone()
 static void zephyr_login(GaimAccount * account)
 {
 	ZSubscription_t sub;
-	unsigned short port = 0;
-	FILE* wgfile;
-	char* wgfilename;
+
 	if (zgc) {
 		gaim_notify_error(account->gc, NULL,
 						  _("Already logged in with Zephyr"), _("Because Zephyr uses your system username, you " "are unable to have multiple accounts on it " "when logged in as the same user."));
@@ -908,24 +906,19 @@ static void zephyr_login(GaimAccount * account)
 	gaim_connection_update_progress(zgc, _("Connecting"), 0, 2);
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
-	z_call_s(ZOpenPort(&port), "Couldn't open port");
+	z_call_s(ZOpenPort(NULL), "Couldn't open port");
 	z_call_s(ZSetLocation((char *)
 						  gaim_account_get_string(zgc->account, "exposure_level", EXPOSE_REALMVIS)), "Couldn't set location");
 
 	sub.zsub_class = "MESSAGE";
 	sub.zsub_classinst = "PERSONAL";
 	sub.zsub_recipient = (char *)gaim_zephyr_get_sender();
-	
+
 	/* we don't care if this fails. i'm lying right now. */
 	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
 		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Couldn't subscribe to messages!\n");
 	}
 
-	wgfile = gaim_mkstemp_template(&wgfilename,"gaimwgXXXXXX");
-	if (wgfile) {
-		fprintf(wgfile,"%d\n",port);
-		fclose(wgfile);
-	}
 	gaim_connection_set_state(zgc, GAIM_CONNECTED);
 	serv_finish_login(zgc);
 
@@ -1344,6 +1337,46 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 
 }
 
+static int zephyr_resubscribe(GaimConnection *gc)
+{
+        /* Resubscribe to the in-memory list of subscriptions and also
+           unsubscriptions*/
+
+        GSList *s = subscrips;
+        zephyr_triple *zt;
+        ZSubscription_t zst;
+        while (s) {
+                zt = s->data;
+                zst.zsub_class = zt->class;
+                zst.zsub_classinst = zt->instance;
+                zst.zsub_recipient = zt->recipient;
+                ZSubscribeTo(&zst, 1, 0);
+                /* XXX We really should care if this fails */
+                s = s->next;
+        }
+        /* XXX handle unsubscriptions */
+        return 1;
+}
+
+static void zephyr_action_resubscribe(GaimPluginAction *action)
+{
+
+        GaimConnection *gc = (GaimConnection *) action->context;
+        zephyr_resubscribe(gc);
+}
+
+
+static GList *zephyr_actions(GaimPlugin *plugin, gpointer context)
+{
+	GList *list = NULL;
+	GaimPluginAction *act = NULL;
+
+	act = gaim_plugin_action_new(_("Resubscribe"), zephyr_action_resubscribe);
+	list = g_list_append(list, act);
+
+	return list;
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info = {
@@ -1429,7 +1462,7 @@ static GaimPluginInfo info = {
 	NULL,						  /**< ui_info        */
 	&prpl_info,					  /**< extra_info     */
 	NULL,
-	NULL
+	zephyr_actions
 };
 
 static void init_plugin(GaimPlugin * plugin)

@@ -1951,13 +1951,7 @@ int gaim_build_dir (const char *path, int mode)
 static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
 
 FILE *
-gaim_mkstemp(char **fpath) {
-  return gaim_mkstemp_template(fpath, gaim_mkstemp_templ);
-}
-
-
-FILE *
-gaim_mkstemp_template(char **fpath, const char *template)
+gaim_mkstemp(char **fpath)
 {
 	const gchar *tmpdir;
 #ifndef _WIN32
@@ -1968,7 +1962,7 @@ gaim_mkstemp_template(char **fpath, const char *template)
 	g_return_val_if_fail(fpath != NULL, NULL);
 
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
-		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, template)) != NULL) {
+		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
 #ifdef _WIN32
 			char* result = _mktemp( *fpath );
 			if( result == NULL )

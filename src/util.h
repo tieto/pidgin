@@ -394,26 +394,6 @@ int gaim_build_dir(const char *path, int mode);
 FILE *gaim_mkstemp(char **path);
 
 /**
- * Creates a temporary file and returns a file pointer to it.
- *
- * This is like mkstemp(), but returns a file pointer. It uses the
- * semantics of tempnam() for the directory to use and allocates the
- * space for the file path.
- *
- * The caller is responsible for closing the file and removing it when
- * done, as well as freeing the space pointed to by @a path with
- * g_free().
- *
- * @param path The returned path to the temp file.
- *
- * @param pattern Pattern for use with the returned filename.
- *
- * @return A file pointer to the temporary file, or @c NULL on failure.
- */
-
-FILE *gaim_mkstemp_template(char **path,const char *template);
-
-/**
  * Checks if the given program name is valid and executable.
  *
  * @param program The file name of the application.
