@@ -54,49 +54,36 @@ XSLoader::load('Gaim', $VERSION);
 # Preloaded methods go here.
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Gaim - Perl extension for blah blah blah
+Gaim - Perl extension the Gaim instant messenger.
 
 =head1 SYNOPSIS
 
   use Gaim;
-  blah blah blah
 
 =head1 ABSTRACT
 
-  This should be the abstract for Gaim.
-  The abstract is used when making PPD (Perl Package Description) files.
-  If you don't want an ABSTRACT you should also edit Makefile.PL to
-  remove the ABSTRACT_FROM option.
+This module provides the interface for using perl scripts as plugins
+in Gaim.
 
 =head1 DESCRIPTION
 
-Stub documentation for Gaim, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+This module provides the interface for using perl scripts as plugins
+in Gaim. With this, developers can write perl scripts that can be
+loaded in Gaim as plugins. The scripts can interact with IMs, chats,
+accounts, the buddy list, gaim signals, and more.
 
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-
+The API for the perl interface is very similar to that of the Gaim C
+API, which can be viewed at http://gaim.sourceforge.net/api/ or in
+the header files in the Gaim source tree.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+Gaim C API documentation - http//gaim.sourceforge.net/api/
 
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+Gaim website - http://gaim.sourceforge.net/
 
 =head1 AUTHOR
 
@@ -107,6 +94,7 @@ Christian Hammond, E<lt>chipx86@gnupdate.orgE<gt>
 Copyright 2003 by Christian Hammond
 
 This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+it under the terms of the General Public License (GPL).  For
+more information, see http://www.fsf.org/licenses/gpl.txt
 
 =cut
