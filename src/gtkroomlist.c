@@ -321,7 +321,7 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_widget_show(bbox);
 
 	/* Get list button */
-	button = gtk_button_new_with_mnemonic(_("Get _list"));
+	button = gtk_button_new_with_mnemonic(_("Get _List"));
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 	dialog->list_button = button;

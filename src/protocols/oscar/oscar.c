@@ -4668,7 +4668,7 @@ static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) 
 	}
 
 #ifdef NOSSI
-	aim_add_buddy(od->sess, od->conn, name);
+	aim_buddylist_addbuddy(od->sess, od->conn, name);
 #else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_exists(od->sess->ssi.local, name))) {
 		GaimBuddy *buddy = gaim_find_buddy(gc->account, name);
@@ -4711,7 +4711,7 @@ static void oscar_add_buddies(GaimConnection *gc, GList *buddies) {
 static void oscar_remove_buddy(GaimConnection *gc, const char *name, const char *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
-	aim_remove_buddy(od->sess, od->conn, name);
+	aim_buddylist_removebuddy(od->sess, od->conn, name);
 #else
 	if (od->sess->ssi.received_data) {
 		gaim_debug(GAIM_DEBUG_INFO, "oscar",
@@ -4726,7 +4726,7 @@ static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, const char 
 #ifdef NOSSI
 	GList *cur;
 	for (cur=buddies; cur; cur=cur->next)
-		aim_remove_buddy(od->sess, od->conn, cur->data);
+		aim_buddylist_removebuddy(od->sess, od->conn, cur->data);
 #else
 	if (od->sess->ssi.received_data) {
 		while (buddies) {
@@ -6047,7 +6047,7 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
 #ifdef NOSSI
-	GSList *list, *g = gaim_blist_groups(), *g1;
+	GSList *list;
 	char buf[MAXMSGLEN];
 	int at;
 
@@ -6076,28 +6076,9 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 		}
 		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
 		break;
-	case 5:
-		g1 = g;
-		at = 0;
-		while (g1) {
-			list = gaim_blist_members((struct group *)g->data);
-			GSList list1 = list;
-			while (list1) {
-				struct buddy *b = list1->data;
-				if(b->account == account)
-					at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", b->name);
-				list1 = list1->next;
-			}
-			g_slist_free(list);
-			g1 = g1->next;
-		}
-		g_slist_free(g);
-		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
-		break;
 	default:
 		break;
 	}
-	signoff_blocked(gc);
 #else
 	if (od->sess->ssi.received_data)
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
@@ -6106,7 +6087,7 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 
 static void oscar_add_permit(GaimConnection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->account->permdeny == 3)
+	if (gc->account->perm_deny == 3)
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -6118,7 +6099,7 @@ static void oscar_add_permit(GaimConnection *gc, const char *who) {
 
 static void oscar_add_deny(GaimConnection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->account->permdeny == 4)
+	if (gc->account->perm_deny == 4)
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -6130,7 +6111,7 @@ static void oscar_add_deny(GaimConnection *gc, const char *who) {
 
 static void oscar_rem_permit(GaimConnection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->account->permdeny == 3)
+	if (gc->account->perm_deny == 3)
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;
@@ -6142,7 +6123,7 @@ static void oscar_rem_permit(GaimConnection *gc, const char *who) {
 
 static void oscar_rem_deny(GaimConnection *gc, const char *who) {
 #ifdef NOSSI
-	if (gc->account->permdeny == 4)
+	if (gc->account->perm_deny == 4)
 		oscar_set_permit_deny(gc);
 #else
 	OscarData *od = (OscarData *)gc->proto_data;

@@ -1134,12 +1134,120 @@ menu_chat_add_remove_cb(GtkWidget *w, GaimConversation *conv)
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
 
+static GtkWidget *
+create_chat_menu(GaimConversation *conv, gchar *who,
+				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
+{
+	static GtkWidget *menu = NULL;
+	GtkWidget *button;
+
+	/*
+	 * If a menu already exists, destroy it before creating a new one,
+	 * thus freeing-up the memory it occupied.
+	 */
+	if (menu)
+		gtk_widget_destroy(menu);
+
+	menu = gtk_menu_new();
+
+	button = gtk_menu_item_new_with_label(_("IM"));
+	g_signal_connect(G_OBJECT(button), "activate",
+						 G_CALLBACK(menu_chat_im_cb), conv);
+	g_object_set_data(G_OBJECT(button), "user_data", who);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+	gtk_widget_show(button);
+
+	if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
+		button = gtk_menu_item_new_with_label(_("Un-Ignore"));
+	else
+		button = gtk_menu_item_new_with_label(_("Ignore"));
+
+	g_signal_connect(G_OBJECT(button), "activate",
+						 G_CALLBACK(ignore_cb), conv);
+	g_object_set_data(G_OBJECT(button), "user_data", who);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+	gtk_widget_show(button);
+
+	if (gc && prpl_info->get_info) {
+		button = gtk_menu_item_new_with_label(_("Info"));
+		g_signal_connect(G_OBJECT(button), "activate",
+							 G_CALLBACK(menu_chat_info_cb), conv);
+		g_object_set_data(G_OBJECT(button), "user_data", who);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+		gtk_widget_show(button);
+	}
+
+	if (gc && prpl_info->get_cb_away) {
+		button = gtk_menu_item_new_with_label(_("Get Away Msg"));
+		g_signal_connect(G_OBJECT(button), "activate",
+							 G_CALLBACK(menu_chat_get_away_cb), conv);
+		g_object_set_data(G_OBJECT(button), "user_data", who);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+		gtk_widget_show(button);
+	}
+
+	/* Added by Jonas <jonas@birme.se> */
+	if (gc) {
+		if (gaim_find_buddy(gc->account, who))
+			button = gtk_menu_item_new_with_label(_("Remove"));
+		else
+			button = gtk_menu_item_new_with_label(_("Add"));
+
+		g_signal_connect(G_OBJECT(button), "activate",
+				 G_CALLBACK(menu_chat_add_remove_cb), conv);
+
+		g_object_set_data(G_OBJECT(button), "user_data", who);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
+		gtk_widget_show(button);
+	}
+	/* End Jonas */
+
+	return menu;
+}
+
+
+static gint
+gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimGtkChatPane *gtkchat;
+	GaimConnection *gc;
+	GaimAccount *account;
+	GtkTreeSelection *sel;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkWidget *menu;
+	gchar *who;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkchat = gtkconv->u.chat;
+	account = gaim_conversation_get_account(conv);
+	gc      = account->gc;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
+
+	if (gc != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
+	if(!gtk_tree_selection_get_selected(sel, NULL, &iter))
+		return FALSE;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, 1, &who, -1);
+	menu = create_chat_menu (conv, who, prpl_info, gc);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, gaim_gtk_treeview_popup_menu_position_func, widget, 0, GDK_CURRENT_TIME);
+
+	return TRUE;
+}
+
+
 static gint
 right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 					GaimConversation *conv)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkConversation *gtkconv;
+	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GaimAccount *account;
@@ -1175,71 +1283,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
 		chat_do_im(conv, who);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
-		static GtkWidget *menu = NULL;
-		GtkWidget *button;
-
-		/*
-		 * If a menu already exists, destroy it before creating a new one,
-		 * thus freeing-up the memory it occupied.
-		 */
-
-		if (menu)
-			gtk_widget_destroy(menu);
-
-		menu = gtk_menu_new();
-
-		button = gtk_menu_item_new_with_label(_("IM"));
-		g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(menu_chat_im_cb), conv);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
-
-		if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
-			button = gtk_menu_item_new_with_label(_("Un-Ignore"));
-		else
-			button = gtk_menu_item_new_with_label(_("Ignore"));
-
-		g_signal_connect(G_OBJECT(button), "activate",
-						 G_CALLBACK(ignore_cb), conv);
-		g_object_set_data(G_OBJECT(button), "user_data", who);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-		gtk_widget_show(button);
-
-		if (gc && prpl_info->get_info) {
-			button = gtk_menu_item_new_with_label(_("Info"));
-			g_signal_connect(G_OBJECT(button), "activate",
-							 G_CALLBACK(menu_chat_info_cb), conv);
-			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-			gtk_widget_show(button);
-		}
-
-		if (gc && prpl_info->get_cb_away) {
-			button = gtk_menu_item_new_with_label(_("Get Away Msg"));
-			g_signal_connect(G_OBJECT(button), "activate",
-							 G_CALLBACK(menu_chat_get_away_cb), conv);
-			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-			gtk_widget_show(button);
-		}
-
-		/* Added by Jonas <jonas@birme.se> */
-		if (gc) {
-			if (gaim_find_buddy(gc->account, who))
-				button = gtk_menu_item_new_with_label(_("Remove"));
-			else
-				button = gtk_menu_item_new_with_label(_("Add"));
-
-			g_signal_connect(G_OBJECT(button), "activate",
-							 G_CALLBACK(menu_chat_add_remove_cb), conv);
-
-			g_object_set_data(G_OBJECT(button), "user_data", who);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), button);
-			gtk_widget_show(button);
-		}
-		/* End Jonas */
-
+		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
 					   event->button, event->time);
 	}
@@ -1376,15 +1420,15 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Page_Down:
-			case '[':
-				gaim_conv_window_switch_conversation(win,  (curconv + numconvs - 1) % numconvs);
+			case ']':
+				gaim_conv_window_switch_conversation(win,  (curconv + 1) % numconvs);
 
 				return TRUE;
 				break;
 
 			case GDK_Page_Up:
-			case ']':
-				gaim_conv_window_switch_conversation(win,  (curconv + 1) % numconvs);
+			case '[':
+				gaim_conv_window_switch_conversation(win,  (curconv + numconvs - 1) % numconvs);
 
 				return TRUE;
 				break;
@@ -3588,6 +3632,7 @@ setup_chat_pane(GaimConversation *conv)
 	GtkListStore *ls;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
+	GList *focus_chain;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
@@ -3695,6 +3740,8 @@ setup_chat_pane(GaimConversation *conv)
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), conv);
+	g_signal_connect(G_OBJECT(list), "popup-menu",
+			 G_CALLBACK(gtkconv_chat_popup_menu_cb), conv);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
 
@@ -3804,6 +3851,8 @@ setup_chat_pane(GaimConversation *conv)
 
 	setup_chat_buttons(conv, gtkconv->bbox);
 
+	focus_chain = g_list_prepend (NULL, sw);
+	gtk_container_set_focus_chain (GTK_CONTAINER(vbox), focus_chain);
 	return vpaned;
 }
 
@@ -3816,6 +3865,7 @@ setup_im_pane(GaimConversation *conv)
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GtkWidget *sw;
+	GList *focus_chain;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkim   = gtkconv->u.im;
@@ -3911,6 +3961,9 @@ setup_im_pane(GaimConversation *conv)
 	gtk_widget_show(gtkconv->bbox);
 
 	setup_im_buttons(conv, gtkconv->bbox);
+
+	focus_chain = g_list_prepend (NULL, sw);
+	gtk_container_set_focus_chain (GTK_CONTAINER(vbox2), focus_chain);
 
 	return paned;
 }
@@ -4221,9 +4274,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtkconv->show_formatting_toolbar = gaim_prefs_get_bool(
 				"/gaim/gtk/conversations/show_formatting_toolbar");
 
-		g_signal_connect_swapped(G_OBJECT(pane), "focus",
-					 G_CALLBACK(gtk_widget_grab_focus),
-					 gtkconv->entry);
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);

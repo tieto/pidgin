@@ -1389,3 +1389,175 @@ gaim_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	atk_relation_set_add (set, relation);
 	g_object_unref (relation);
 }
+
+static void
+gaim_gtk_menu_position_func(GtkMenu *menu,
+							gint *x,
+							gint *y,
+							gboolean *push_in,
+							gpointer data)
+{
+	GtkWidget *widget;
+	GtkRequisition requisition;
+	GdkScreen *screen;
+	GdkRectangle monitor;
+	gint monitor_num;
+	gint space_left, space_right, space_above, space_below;
+	gint needed_width;
+	gint needed_height;
+	gint xthickness;
+	gint ythickness;
+	gboolean rtl;
+
+	g_return_if_fail(GTK_IS_MENU(menu));
+
+	widget     = GTK_WIDGET(menu);
+	screen     = gtk_widget_get_screen(widget);
+	xthickness = widget->style->xthickness;
+	ythickness = widget->style->ythickness;
+	rtl        = (gtk_widget_get_direction(widget) == GTK_TEXT_DIR_RTL);
+
+	/*
+	 * We need the requisition to figure out the right place to
+	 * popup the menu. In fact, we always need to ask here, since
+	 * if a size_request was queued while we weren't popped up,
+	 * the requisition won't have been recomputed yet.
+	 */
+	gtk_widget_size_request (widget, &requisition);
+
+	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
+
+	push_in = FALSE;
+  
+	/*
+	 * The placement of popup menus horizontally works like this (with
+	 * RTL in parentheses)
+	 *
+	 * - If there is enough room to the right (left) of the mouse cursor,
+	 *   position the menu there.
+	 * 
+	 * - Otherwise, if if there is enough room to the left (right) of the 
+	 *   mouse cursor, position the menu there.
+	 * 
+	 * - Otherwise if the menu is smaller than the monitor, position it
+	 *   on the side of the mouse cursor that has the most space available
+	 *
+	 * - Otherwise (if there is simply not enough room for the menu on the
+	 *   monitor), position it as far left (right) as possible.
+	 *
+	 * Positioning in the vertical direction is similar: first try below
+	 * mouse cursor, then above.
+	 */
+	gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+
+	space_left = *x - monitor.x;
+	space_right = monitor.x + monitor.width - *x - 1;
+	space_above = *y - monitor.y;
+	space_below = monitor.y + monitor.height - *y - 1;
+
+	/* position horizontally */
+
+	/* the amount of space we need to position the menu. Note the
+	 * menu is offset "xthickness" pixels 
+	 */
+	needed_width = requisition.width - xthickness;
+
+	if (needed_width <= space_left ||
+	    needed_width <= space_right)
+	{
+		if ((rtl  && needed_width <= space_left) ||
+		    (!rtl && needed_width >  space_right))
+		{
+			/* position left */
+			*x = *x + xthickness - requisition.width + 1;
+		}
+		else
+		{
+			/* position right */
+			*x = *x - xthickness;
+		}
+
+		/* x is clamped on-screen further down */
+	}
+	else if (requisition.width <= monitor.width)
+	{
+		/* the menu is too big to fit on either side of the mouse
+		 * cursor, but smaller than the monitor. Position it on
+		 * the side that has the most space
+		 */
+		if (space_left > space_right)
+		{
+			/* left justify */
+			*x = monitor.x;
+		}
+		else
+		{
+			/* right justify */
+			*x = monitor.x + monitor.width - requisition.width;
+		}
+	}
+	else /* menu is simply too big for the monitor */
+	{
+		if (rtl)
+		{
+			/* right justify */
+			*x = monitor.x + monitor.width - requisition.width;
+		}
+		else
+		{
+			/* left justify */
+			*x = monitor.x;
+		}
+	}
+
+	/* Position vertically. The algorithm is the same as above, but
+	 * simpler because we don't have to take RTL into account.
+	 */
+	needed_height = requisition.height - ythickness;
+
+	if (needed_height <= space_above ||
+	    needed_height <= space_below)
+	{
+		if (needed_height <= space_below)
+			*y = *y - ythickness;
+		else
+			*y = *y + ythickness - requisition.height + 1;
+	  
+		*y = CLAMP (*y, monitor.y,
+			   monitor.y + monitor.height - requisition.height);
+	}
+	else if (needed_height > space_below && needed_height > space_above)
+	{
+		if (space_below >= space_above)
+			*y = monitor.y + monitor.height - requisition.height;
+		else
+			*y = monitor.y;
+	}
+	else
+	{
+		*y = monitor.y;
+	}
+}
+
+void
+gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
+										   gint *x,
+										   gint *y,
+										   gboolean *push_in,
+										   gpointer data)
+{
+	GtkWidget *widget = GTK_WIDGET(data);
+	GtkTreeView *tv = GTK_TREE_VIEW(data);
+	GtkTreePath *path;
+	GtkTreeViewColumn *col;
+	GdkRectangle rect;
+	gint ythickness = GTK_WIDGET(menu)->style->ythickness;
+
+	gdk_window_get_origin (widget->window, x, y);
+	gtk_tree_view_get_cursor (tv, &path, &col);
+	gtk_tree_view_get_cell_area (tv, path, col, &rect);
+	
+	*x += rect.x+rect.width;
+	*y += rect.y+rect.height+ythickness;
+	gaim_gtk_menu_position_func (menu, x, y, push_in, data);
+}
