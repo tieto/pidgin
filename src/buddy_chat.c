@@ -99,12 +99,15 @@ static void create_joinchat_menu(GtkWidget *box)
 	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 0);
 
 	menu = gtk_menu_new();
+	joinchatgc = NULL;
 
 	while (c) {
 		g = (struct gaim_connection *)c->data;
 		c = c->next;
 		if (!g->prpl->join_chat)
 			continue;
+		if (!joinchatgc)
+			joinchatgc = g;
 		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, (*g->prpl->name)());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
@@ -115,8 +118,6 @@ static void create_joinchat_menu(GtkWidget *box)
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
-
-	joinchatgc = connections->data;
 }
 
 
