@@ -110,7 +110,7 @@ find_nick(GaimConnection *gc, const char *message)
 	}
 
 	who = g_utf8_strdown(gaim_connection_get_display_name(gc), -1);
-	n = strlen(who);
+	n = who ? strlen(who) : 0;
 
 	if (n > 0 && (p = strstr(msg, who)) != NULL) {
 		if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
