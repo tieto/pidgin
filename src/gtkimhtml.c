@@ -999,6 +999,7 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	GtkSmileyTree *tree;
 	GtkIMHtmlFontDetail *font;
 	char *sml = NULL;
+	char *unescaped = NULL;
 
 	if (fonts) {
 		font = fonts->data;
@@ -1013,7 +1014,9 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	if (tree == NULL)
 		return FALSE;
 
-	*len = gtk_smiley_tree_lookup (tree, text);
+	unescaped = gaim_unescape_html(text);
+	*len = gtk_smiley_tree_lookup (tree, unescaped);
+	g_free(unescaped);
 	return (*len > 0);
 }
 
@@ -1917,6 +1920,44 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 			pos += tlen;
 			if(tag)
 				g_free(tag); /* This was allocated back in VALID_TAG() */
+		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
+			GtkIMHtmlFontDetail *fd;
+
+			gchar *sml = NULL;
+			gchar *unescaped = NULL;
+			gint length = 0;
+			if (fonts) {
+				fd = fonts->data;
+				sml = fd->sml;
+			}
+			if (url)
+				gtk_imhtml_insert_link(imhtml, url, ws);
+			else {
+				gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
+			}
+			unescaped = gaim_unescape_html(c);
+			wpos = g_snprintf (ws, smilelen + 1, "%s", unescaped);
+			g_free(unescaped);
+
+			gtk_imhtml_insert_smiley(imhtml, sml, ws);
+
+			ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+
+			while(length < smilelen)
+			{
+			  if(*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
+				  c += tlen;
+				  pos += tlen;
+			  } else {
+				  c++;
+				  pos++;
+			  }
+			  length++;
+			}
+
+			wpos = 0;
+			ws[0] = 0;
 		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
 			while(*amp) {
 				ws [wpos++] = *amp++;
@@ -1945,29 +1986,6 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 				 ws [wpos++] = *c++;
 				 pos++;
 			}
-		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
-			GtkIMHtmlFontDetail *fd;
-
-			gchar *sml = NULL;
-			if (fonts) {
-				fd = fonts->data;
-				sml = fd->sml;
-			}
-			if (url)
-				gtk_imhtml_insert_link(imhtml, url, ws);
-			else {
-				gtk_text_buffer_insert(imhtml->text_buffer, &iter, ws, wpos);
-			}
-			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
-			gtk_imhtml_insert_smiley(imhtml, sml, ws);
-
-			ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
-			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
-
-			c += smilelen;
-			pos += smilelen;
-			wpos = 0;
-			ws[0] = 0;
 		} else if (*c) {
 			ws [wpos++] = *c++;
 			pos++;
