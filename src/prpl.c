@@ -74,7 +74,7 @@ void load_protocol(proto_init pi, int size)
 	}
 	p = g_new0(struct prpl, 1);
 	pi(p);
-	if ((old = find_prpl(p->protocol)) == NULL)
+	if ((old = find_prpl(p->protocol)) != NULL)
 		unload_protocol(old);
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 	regenerate_user_list();
