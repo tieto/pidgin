@@ -1969,23 +1969,27 @@ static void do_clear_log_file(struct view_log *view)
 
 	g_free(filename);
 
-	gtk_widget_destroy(view->window);
+	if(view)
+		gtk_widget_destroy(view->window);
 }
 
 static void show_clear_log(GtkWidget *w, struct view_log *view)
 {
 	char *text;
+	void *clear_handle;
 
 	if ((view != NULL ) && (view->clear_handle != NULL))
 		return;
 
 	text = g_strdup_printf(_("You are about to remove the log file for %s.  Do you want to continue?"),
 						   view ? view->name : _("System Log"));
-	view->clear_handle = gaim_request_action(NULL, NULL, _("Remove Log"),
+	clear_handle = gaim_request_action(NULL, NULL, _("Remove Log"),
 											 text, -1, view, 2,
 											 _("Remove Log"),
 											 G_CALLBACK(do_clear_log_file),
 											 _("Cancel"), NULL);
+	if(view)
+		view->clear_handle = clear_handle;
 	g_free(text);
 }
 
