@@ -517,19 +517,35 @@ static void prefs_start_element_handler (GMarkupParseContext *context,
 
 	pref_name_full = g_string_prepend_c(pref_name_full, '/');
 
-	switch(pref_type) {
-		case GAIM_PREF_NONE:
-			gaim_prefs_add_none(pref_name_full->str);
-			break;
-		case GAIM_PREF_BOOLEAN:
-			gaim_prefs_add_bool(pref_name_full->str, atoi(pref_value));
-			break;
-		case GAIM_PREF_INT:
-			gaim_prefs_add_int(pref_name_full->str, atoi(pref_value));
-			break;
-		case GAIM_PREF_STRING:
-			gaim_prefs_add_string(pref_name_full->str, pref_value);
-			break;
+	if(find_pref(pref_name_full->str)) {
+		switch(pref_type) {
+			case GAIM_PREF_NONE:
+				gaim_prefs_add_none(pref_name_full->str);
+				break;
+			case GAIM_PREF_BOOLEAN:
+				gaim_prefs_add_bool(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_INT:
+				gaim_prefs_add_int(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_STRING:
+				gaim_prefs_add_string(pref_name_full->str, pref_value);
+				break;
+		}
+	} else {
+		switch(pref_type) {
+			case GAIM_PREF_NONE:
+				break;
+			case GAIM_PREF_BOOLEAN:
+				gaim_prefs_set_bool(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_INT:
+				gaim_prefs_set_int(pref_name_full->str, atoi(pref_value));
+				break;
+			case GAIM_PREF_STRING:
+				gaim_prefs_set_string(pref_name_full->str, pref_value);
+				break;
+		}
 	}
 
 	prefs_stack = g_list_prepend(prefs_stack, g_strdup(pref_name));
