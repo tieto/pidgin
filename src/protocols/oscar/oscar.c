@@ -1615,20 +1615,20 @@ static gboolean redraw_anim(gpointer data)
 		case GDK_PIXBUF_FRAME_RETAIN:
 			buf = gdk_pixbuf_frame_get_pixbuf(frame);
 			scale = gdk_pixbuf_scale_simple(buf,
-					gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim),
-					gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim),
+					MAX(gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim), 1),
+					MAX(gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim), 1),
 					GDK_INTERP_NEAREST);
 			gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
 			gdk_pixbuf_unref(scale);
 			gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
 			gc = gdk_gc_new(pm);
 			gdk_draw_pixmap(pm, gc, src, 0, 0,
-					gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim),
-					gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim),
+					MAX(gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim), 1),
+					MAX(gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim), 1),
 					-1, -1);
 			gdk_pixmap_unref(src);
 			gtk_widget_queue_draw(ir->pix);
@@ -1637,10 +1637,10 @@ static gboolean redraw_anim(gpointer data)
 		case GDK_PIXBUF_FRAME_DISPOSE:
 			buf = gdk_pixbuf_frame_get_pixbuf(frame);
 			scale = gdk_pixbuf_scale_simple(buf,
-					gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim),
-					gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim),
+					MAX(gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim), 1),
+					MAX(gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim), 1),
 					GDK_INTERP_NEAREST);
 			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 			gdk_pixbuf_unref(scale);
@@ -1653,10 +1653,10 @@ static gboolean redraw_anim(gpointer data)
 			frame = frames->data;
 			buf = gdk_pixbuf_frame_get_pixbuf(frame);
 			scale = gdk_pixbuf_scale_simple(buf,
-					gdk_pixbuf_get_width(buf) * SCALE /
-						gdk_pixbuf_animation_get_width(ir->anim),
-					gdk_pixbuf_get_height(buf) * SCALE /
-						gdk_pixbuf_animation_get_height(ir->anim),
+					MAX(gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim), 1),
+					MAX(gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim), 1),
 					GDK_INTERP_NEAREST);
 			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 			gdk_pixbuf_unref(scale);
@@ -1840,10 +1840,10 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 				frames = gdk_pixbuf_animation_get_frames(ir->anim);
 				buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
 				scale = gdk_pixbuf_scale_simple(buf,
-						gdk_pixbuf_get_width(buf) * SCALE /
-							gdk_pixbuf_animation_get_width(ir->anim),
-						gdk_pixbuf_get_height(buf) * SCALE /
-							gdk_pixbuf_animation_get_height(ir->anim),
+						MAX(gdk_pixbuf_get_width(buf) * SCALE /
+							gdk_pixbuf_animation_get_width(ir->anim), 1),
+						MAX(gdk_pixbuf_get_height(buf) * SCALE /
+							gdk_pixbuf_animation_get_height(ir->anim), 1),
 						GDK_INTERP_NEAREST);
 				gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 				gdk_pixbuf_unref(scale);
@@ -3210,10 +3210,10 @@ static void oscar_insert_convo(struct gaim_connection *gc, struct conversation *
 		frames = gdk_pixbuf_animation_get_frames(ir->anim);
 		buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
 		scale = gdk_pixbuf_scale_simple(buf,
-				gdk_pixbuf_get_width(buf) * SCALE /
-					gdk_pixbuf_animation_get_width(ir->anim),
-				gdk_pixbuf_get_height(buf) * SCALE /
-					gdk_pixbuf_animation_get_height(ir->anim),
+				MAX(gdk_pixbuf_get_width(buf) * SCALE /
+					gdk_pixbuf_animation_get_width(ir->anim), 1),
+				MAX(gdk_pixbuf_get_height(buf) * SCALE /
+					gdk_pixbuf_animation_get_height(ir->anim), 1),
 				GDK_INTERP_NEAREST);
 		gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
 		gdk_pixbuf_unref(scale);
