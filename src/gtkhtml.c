@@ -126,7 +126,7 @@ static void gtk_html_size_allocate(GtkWidget * widget,
 								   GtkAllocation * allocation);
 static void gtk_html_adjustment(GtkAdjustment * adjustment, GtkHtml * html);
 static void gtk_html_disconnect(GtkAdjustment * adjustment, GtkHtml * html);
-static void gtk_html_add_seperator(GtkHtml * html);
+static void gtk_html_add_seperator(GtkHtml *, GdkFont *, GdkColor *, GdkColor *);
 // static void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, gint fit);
 static void gtk_html_add_text(GtkHtml * html,
 							  GdkFont * font,
@@ -2047,7 +2047,7 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 			/*end my stuff*/
 
 
-			if (hb->text && hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
+			if (hb->text && hb->back != NULL) {
 				int hwidth, hheight, hei, tmpcnt;
 				hei = get_line_height(html, hb);
 				gdk_window_get_size(html->html_area, &hwidth, &hheight);
@@ -2089,6 +2089,29 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 	}
 	else if (hb->type == HTML_BIT_SEP)
 	{
+		if (hb->back != NULL) {
+			int hwidth, hheight, hei, tmpcnt;
+			hei = get_line_height(html, hb);
+			gdk_window_get_size(html->html_area, &hwidth, &hheight);
+			gdk_gc_set_foreground(gc, hb->back);
+			gdk_draw_rectangle(html->html_area, gc, TRUE,
+						1, hb->y - html->yoffset,
+						hwidth, 5);
+			for (tmpcnt = 0; tmpcnt < hb->newline; tmpcnt++) {
+				int eoff = hei + hei + 2;
+				eoff *= tmpcnt;
+				eoff += 5;
+				gdk_draw_rectangle(html->html_area, gc, TRUE,
+						1, hb->y - html->yoffset + eoff,
+						hwidth, hei + hei + 2);
+			}
+		}
+
+		if (hb->fore != NULL)
+			gdk_gc_set_foreground(gc, hb->fore);
+		else
+			gdk_gc_set_foreground(gc, &widget->style->fg[GTK_STATE_NORMAL]);
+
 		gdk_draw_line(html->html_area, gc, hb->x + 2,
 					  hb->y - html->yoffset - (hb->height / 2 - 1),
 					  hb->x + hb->width,
@@ -2102,6 +2125,22 @@ static void gtk_html_draw_bit(GtkHtml * html, GtkHtmlBit * hb, int redraw)
 		area.width = hb->width;
 		area.height = hb->height;
 		clear_area(html, &area);
+		if (hb->back != NULL && selected_state != GTK_STATE_SELECTED) {
+			int hwidth, hheight, hei, tmpcnt;
+			hei = get_line_height(html, hb);
+			gdk_window_get_size(html->html_area, &hwidth, &hheight);
+			gdk_gc_set_foreground(gc, hb->back);
+			for (tmpcnt = 1; tmpcnt < hb->newline; tmpcnt++) {
+				int eoff = hei + hei + 2;
+				eoff *= tmpcnt - 1;
+				eoff += 5;
+				gdk_draw_rectangle(html->html_area, gc, TRUE,
+						1, hb->y - html->yoffset - 11 + eoff,
+						hwidth, hei + hei + 2);
+			}
+		}
+
+		if (hb->fore != NULL)
 		gdk_gc_set_background(gc, &widget->style->base[GTK_STATE_NORMAL]);
 		gdk_draw_pixmap(html->html_area, gc, hb->pm, 0, 0, hb->x,
 						hb->y - html->yoffset - (hb->height) + 4, -1, -1);
@@ -2329,7 +2368,7 @@ static void resize_html(GtkHtml * html)
 		if (hb->type == HTML_BIT_SEP)
 		{
 
-			gtk_html_add_seperator(html);
+			gtk_html_add_seperator(html, hb->font, hb->fore, hb->back);
 
 			g_free(hb);
 
@@ -2755,7 +2794,7 @@ void gtk_html_add_pixmap(GtkHtml * html, GdkPixmap * pm, int fit, int newline)
 
 }
 
-static void gtk_html_add_seperator(GtkHtml * html)
+static void gtk_html_add_seperator(GtkHtml * html, GdkFont *font, GdkColor *fore, GdkColor *back)
 {
 	GtkHtmlBit *hb = g_new0(GtkHtmlBit, 1);
 	gint width,
@@ -2776,9 +2815,16 @@ static void gtk_html_add_seperator(GtkHtml * html)
 		width - 10;
 	hb->text = NULL;
 	hb->url = NULL;
-	hb->fore = NULL;
-	hb->back = NULL;
-	hb->font = NULL;
+	if (fore)
+		hb->fore = gdk_color_copy(fore);
+	else
+		hb->fore = NULL;
+	
+	if (back)
+		hb->back = gdk_color_copy(back);
+	else
+		hb->back = NULL;
+	hb->font = font;
 	hb->uline = 0;
 	hb->strike = 0;
 	hb->was_selected = 0;
@@ -3243,7 +3289,7 @@ void gtk_html_append_text(GtkHtml * html, char *text, gint options)
 				else if (!strcasecmp(tag, "PRE"))
 					fixed = 1;
 				else if (!strcasecmp(tag, "HR"))
-					gtk_html_add_seperator(html);
+					gtk_html_add_seperator(html, cfont, current->color, current->bgcol);
 				else if (!strcasecmp(tag, "/B"))
 					bold = 0;
 				else if (!strcasecmp(tag, "/STRIKE") || !strcasecmp(tag, "/S"))
