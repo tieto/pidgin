@@ -2104,10 +2104,7 @@ conv_placement_by_group(struct gaim_conversation *conv)
 				if (b2 != NULL)
 					grp2 = find_group_by_buddy(b2);
 
-				if ((grp == NULL && grp2 == NULL) ||
-					(grp != NULL && grp2 != NULL &&
-					 !strncmp(grp2->name, grp->name, 80))) {
-
+				if (grp == grp2) {
 					gaim_window_add_conversation(win2, conv);
 
 					return;
