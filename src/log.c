@@ -609,14 +609,14 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 				fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_RECV) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+				fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
 				fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		} else if (type & GAIM_MESSAGE_SEND) {
 			if(gaim_message_meify(msg_fixed, -1))
-				fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
+				fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
 				fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
