@@ -564,9 +564,6 @@ const char *gaim_xfers_get_local_system_ip(void);
  * If that IP is not set, the system's local IP is tried, via a call to
  * gaim_xfers_get_local_ip().
  *
- * @note The returned IP address must be g_free()'d when no longer
- *       in use.
- *
  * @note The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
  *       of the returned string.
