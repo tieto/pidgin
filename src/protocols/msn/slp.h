@@ -24,7 +24,7 @@
 #ifndef _MSN_SLP_H_
 #define _MSN_SLP_H_
 
-#define DEBUG_SLP 1
+/* #define DEBUG_SLP 1 */
 /* #define DEBUG_SLP_FILES 1 */
 
 #include "slpcall.h"
@@ -44,5 +44,7 @@ void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 
 void msn_xfer_cancel(GaimXfer *xfer);
 void msn_xfer_end_cb(MsnSlpCall *slpcall);
+
+void msn_queue_buddy_icon_request(MsnUser *user);
 
 #endif /* _MSN_SLP_H_ */

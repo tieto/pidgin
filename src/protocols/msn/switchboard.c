@@ -130,27 +130,8 @@ static void
 ans_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSwitchBoard *swboard;
-#if 1
-	MsnSession *session;
 
-	session = cmdproc->session;
 	swboard = cmdproc->servconn->data;
-
-	/* send_clientcaps(swboard); */
-
-	if (session->protocol_ver >= 9)
-	{
-		GList *l;
-
-		/* But we already know the switchboard... */
-		/* What if there is more than one user? */
-		for (l = swboard->users; l != NULL; l = l->next)
-		{
-			msn_request_buddy_icon(session->account->gc, l->data);
-		}
-	}
-#endif
-
 	swboard->ready = TRUE;
 }
 
@@ -256,12 +237,6 @@ joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_switchboard_process_queue(swboard);
 
 	send_clientcaps(swboard);
-
-#if 1
-	if (session->protocol_ver >= 9)
-		/* But we already know the switchboard... */
-		msn_request_buddy_icon(gc, passport);
-#endif
 }
 
 static void

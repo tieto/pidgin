@@ -397,6 +397,8 @@ msn_userlist_new(MsnSession *session)
 	userlist = g_new0(MsnUserList, 1);
 
 	userlist->session = session;
+	userlist->buddy_icon_requests = g_queue_new();
+	userlist->buddy_icon_window = 5;
 
 	return userlist;
 }

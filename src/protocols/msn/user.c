@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "user.h"
+#include "slp.h"
 
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
@@ -285,18 +286,8 @@ msn_user_set_object(MsnUser *user, MsnObject *obj)
 
 	user->msnobj = obj;
 
-	if ((obj != NULL) && (user->list_op & MSN_LIST_FL_OP))
-	{
-		/* TODO: I think we need better buddy icon core functions */
-		GaimAccount *account;
-		const char *username;
-
-		account  = user->userlist->session->account;
-		username = msn_object_get_creator(obj);
-
-		if (gaim_find_conversation_with_account(username, account) != NULL)
-			msn_request_buddy_icon(account->gc, username);
-	}
+	if (user->list_op & MSN_LIST_FL_OP)
+		msn_queue_buddy_icon_request(user);
 }
 
 void

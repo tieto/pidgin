@@ -40,6 +40,8 @@ static void send_ok(MsnSlpCall *slpcall, const char *branch,
 static void send_decline(MsnSlpCall *slpcall, const char *branch,
 						 const char *type, const char *content);
 
+void msn_request_user_display(MsnUser *user);
+
 /**************************************************************************
  * Util
  **************************************************************************/
@@ -753,32 +755,6 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	g_strfreev(tokens);
 }
 
-void
-got_user_display(MsnSlpCall *slpcall,
-				 const char *data, long long size)
-{
-	const char *info;
-	GaimAccount *account;
-	GSList *sl;
-
-	info = slpcall->data_info;
-	gaim_debug_info("msn", "Got User Display: %s\n", info);
-
-	account = slpcall->slplink->session->account;
-
-	/* TODO: I think we need better buddy icon core functions. */
-	gaim_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
-								  (void *)data, size);
-
-	sl = gaim_find_buddies(account, slpcall->slplink->remote_user);
-
-	for (; sl != NULL; sl = sl->next)
-	{
-		GaimBuddy *buddy = (GaimBuddy *)sl->data;
-		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
-	}
-}
-
 static gboolean
 buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 {
@@ -816,30 +792,130 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 }
 
 void
-msn_request_buddy_icon(GaimConnection *gc, const char *passport)
+msn_release_buddy_icon_request(MsnUserList *userlist)
 {
-	MsnSession *session;
-	MsnSlpLink *slplink;
 	MsnUser *user;
+
+	while (userlist->buddy_icon_window > 0)
+	{
+		GQueue *queue;
+		GaimAccount *account;
+		const char *username;
+
+		queue = userlist->buddy_icon_requests;
+
+		if (g_queue_is_empty(userlist->buddy_icon_requests))
+			break;
+
+		user = g_queue_pop_head(queue);
+
+		account  = userlist->session->account;
+		username = user->passport;
+
+		msn_request_user_display(user);
+		userlist->buddy_icon_window--;
+	}
+}
+
+void
+msn_queue_buddy_icon_request(MsnUser *user)
+{
+	GaimAccount *account;
 	MsnObject *obj;
-	const char *info;
+	GQueue *queue;
 
-	session = gc->proto_data;
-
-	g_return_if_fail(session->protocol_ver == 9);
-
-	slplink = msn_session_get_slplink(session, passport);
-
-	user = msn_userlist_find_user(session->userlist, passport);
+	account = user->userlist->session->account;
 
 	obj = msn_user_get_object(user);
 
 	if (obj == NULL)
+	{
 		/* It seems the user has not set a msnobject */
+		GSList *sl;
+
+		/* TODO: I think we need better buddy icon core functions. */
+		gaim_buddy_icons_set_for_user(account, user->passport, NULL, -1);
+
+		sl = gaim_find_buddies(account, user->passport);
+
+		for (; sl != NULL; sl = sl->next)
+		{
+			GaimBuddy *buddy = (GaimBuddy *)sl->data;
+			gaim_blist_node_remove_setting((GaimBlistNode*)buddy, "icon_checksum");
+		}
+
 		return;
+	}
+
+	if (!buddy_icon_cached(account->gc, obj))
+	{
+		MsnUserList *userlist;
+
+		userlist = user->userlist;
+		queue = userlist->buddy_icon_requests;
+
+		g_queue_push_tail(queue, user);
+
+		if (userlist->buddy_icon_window > 0)
+			msn_release_buddy_icon_request(userlist);
+	}
+}
+
+void
+got_user_display(MsnSlpCall *slpcall,
+				 const char *data, long long size)
+{
+	const char *info;
+	GaimAccount *account;
+	GSList *sl;
+
+	info = slpcall->data_info;
+	gaim_debug_info("msn", "Got User Display: %s\n", info);
+
+	account = slpcall->slplink->session->account;
+
+	/* TODO: I think we need better buddy icon core functions. */
+	gaim_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
+								  (void *)data, size);
+
+	sl = gaim_find_buddies(account, slpcall->slplink->remote_user);
+
+	for (; sl != NULL; sl = sl->next)
+	{
+		GaimBuddy *buddy = (GaimBuddy *)sl->data;
+		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
+	}
+
+	slpcall->slplink->session->userlist->buddy_icon_window++;
+	msn_release_buddy_icon_request(slpcall->slplink->session->userlist);
+}
+
+void
+msn_request_user_display(MsnUser *user)
+{
+	GaimAccount *account;
+	MsnSession *session;
+	MsnSlpLink *slplink;
+	MsnObject *obj;
+	const char *info;
+
+	session = user->userlist->session;
+	account = session->account;
+
+	slplink = msn_session_get_slplink(session, user->passport);
+
+	obj = msn_user_get_object(user);
 
 	info = msn_object_get_sha1c(obj);
 
-	if (!buddy_icon_cached(gc, obj))
+	if (g_ascii_strcasecmp(user->passport,
+						   gaim_account_get_username(account)))
+	{
 		msn_slplink_request_object(slplink, info, got_user_display, obj);
+	}
+	else
+	{
+		session->userlist->buddy_icon_window++;
+		msn_release_buddy_icon_request(session->userlist);
+	}
 }

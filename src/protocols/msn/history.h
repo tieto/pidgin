@@ -24,7 +24,7 @@
 #ifndef _MSN_HISTORY_H
 #define _MSN_HISTORY_H
 
-#define MSN_HIST_ELEMS 8
+#define MSN_HIST_ELEMS 0x30
 
 typedef struct _MsnHistory MsnHistory;
 

@@ -115,6 +115,4 @@ typedef enum
 	 (MSN_CLIENT_ID_RESERVED_2 <<  8) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
-void msn_request_buddy_icon(GaimConnection *gc, const char *who);
-
 #endif /* _MSN_H_ */

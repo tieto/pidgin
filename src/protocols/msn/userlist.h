@@ -56,6 +56,9 @@ struct _MsnUserList
 	GList *users;
 	GList *groups;
 
+	GQueue *buddy_icon_requests;
+	int buddy_icon_window;
+
 	int fl_users_count;
 
 };
