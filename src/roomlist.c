@@ -216,14 +216,14 @@ void gaim_roomlist_cancel_get_list(GaimRoomlist *list)
 		prpl_info->roomlist_cancel(list);
 }
 
-void gaim_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory)
+void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
 
 	g_return_if_fail(list != NULL);
-	g_return_if_fail(catagory != NULL);
-	g_return_if_fail(catagory->type & GAIM_ROOMLIST_ROOMTYPE_CATAGORY);
+	g_return_if_fail(category != NULL);
+	g_return_if_fail(category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY);
 
 	gc = gaim_account_get_connection(list->account);
 	g_return_if_fail(gc != NULL);
@@ -231,8 +231,8 @@ void gaim_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagor
 	if (gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (prpl_info && prpl_info->roomlist_expand_catagory)
-		prpl_info->roomlist_expand_catagory(list, catagory);
+	if (prpl_info && prpl_info->roomlist_expand_category)
+		prpl_info->roomlist_expand_category(list, category);
 }
 
 /*@}*/

@@ -1127,7 +1127,7 @@ static void yahoo_chatlist_start_element(GMarkupParseContext *context, const gch
 			return;
 
 		parent = g_queue_peek_head(s->q);
-		r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY, name, parent);
+		r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, name, parent);
 		gaim_roomlist_room_add_field(list, r, (gpointer)name);
 		gaim_roomlist_room_add_field(list, r, (gpointer)id);
 		gaim_roomlist_room_add(list, r);
@@ -1188,10 +1188,10 @@ static void yahoo_chatlist_end_element(GMarkupParseContext *context, const gchar
 		GaimRoomlistRoom *r, *l;
 
 		if (s->room.type == yrt_yahoo)
-			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
 		                                   s->room.name, s->yrl->cat);
 		else
-			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
 		                                   s->room.name, s->yrl->ucat);
 
 		gaim_roomlist_room_add_field(s->list, r, s->room.name);
@@ -1384,16 +1384,16 @@ void yahoo_roomlist_cancel(GaimRoomlist *list)
 	g_list_free(k);
 }
 
-void yahoo_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory)
+void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category)
 {
 	struct yahoo_roomlist *yrl;
 	char *url;
 	char *id;
 
-	if (catagory->type != GAIM_ROOMLIST_ROOMTYPE_CATAGORY)
+	if (category->type != GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
 		return;
 
-	if (!(id = g_list_nth_data(catagory->fields, 1))) {
+	if (!(id = g_list_nth_data(category->fields, 1))) {
 		gaim_roomlist_set_in_progress(list, FALSE);
 		return;
 	}
@@ -1405,13 +1405,13 @@ void yahoo_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catago
 
 	yrl = g_new0(struct yahoo_roomlist, 1);
 	yrl->list = list;
-	yrl->cat = catagory;
+	yrl->cat = category;
 	list->proto_data = g_list_append(list->proto_data, yrl);
 
 	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path));
 	g_free(url);
 
-	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY, _("User Rooms"), yrl->cat);
+	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
 	gaim_roomlist_room_add(list, yrl->ucat);
 
 	if (gaim_proxy_connect(list->account,

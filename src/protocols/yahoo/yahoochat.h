@@ -52,6 +52,6 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name);
 /* room listing functions */
 GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc);
 void yahoo_roomlist_cancel(GaimRoomlist *list);
-void yahoo_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory);
+void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category);
 
 #endif /* _YAHOO_CHAT_H_ */

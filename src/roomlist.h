@@ -56,7 +56,7 @@ struct _GaimRoomlist {
  * These are ORable flags.
  */
 enum _GaimRoomlistRoomType {
-	GAIM_ROOMLIST_ROOMTYPE_CATAGORY = 0x01, /**< It's a catagory, but not a room you can join. */
+	GAIM_ROOMLIST_ROOMTYPE_CATEGORY = 0x01, /**< It's a category, but not a room you can join. */
 	GAIM_ROOMLIST_ROOMTYPE_ROOM = 0x02,     /**< It's a room, like the kind you can join. */
 };
 
@@ -222,17 +222,17 @@ GaimRoomlist *gaim_roomlist_get_list(GaimConnection *gc);
 void gaim_roomlist_cancel_get_list(GaimRoomlist *list);
 
 /**
- * Tells the prpl that a catagory was expanded.
+ * Tells the prpl that a category was expanded.
  *
- * On some protocols, the rooms in the catagory
+ * On some protocols, the rooms in the category
  * won't be fetched until this is called.
  *
  * @param list The room list.
- * @param room The catagory that was expanded. The expression
- *             (catagory->type & GAIM_ROOMLIST_ROOMTYPE_CATAGORY)
+ * @param room The category that was expanded. The expression
+ *             (category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
  *             must be true.
  */
-void gaim_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory);
+void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category);
 
 /*@}*/
 

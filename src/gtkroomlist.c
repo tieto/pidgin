@@ -271,15 +271,15 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePath *arg2, gpointer user_data)
 {
 	GaimRoomlist *list = user_data;
-	GaimRoomlistRoom *catagory;
+	GaimRoomlistRoom *category;
 	GValue val = { 0, };
 
 	gtk_tree_model_get_value(gtk_tree_view_get_model(treeview), arg1, ROOM_COLUMN, &val);
-	catagory = g_value_get_pointer(&val);
+	category = g_value_get_pointer(&val);
 
-	if (!catagory->expanded_once) {
-		gaim_roomlist_expand_catagory(list, catagory);
-		catagory->expanded_once = TRUE;
+	if (!category->expanded_once) {
+		gaim_roomlist_expand_category(list, category);
+		category->expanded_once = TRUE;
 	}
 }
 
@@ -657,12 +657,12 @@ static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *roo
 	else
 		iter = child;
 
-	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATAGORY)
+	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
 		gtk_tree_store_append(rl->model, &child, &iter);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(rl->model), &iter);
 
-	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATAGORY) {
+	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY) {
 		rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(rl->model), path);
 		g_hash_table_insert(rl->cats, room, rr);
 	}

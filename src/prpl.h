@@ -327,7 +327,7 @@ struct _GaimPluginProtocolInfo
 	/* room listing prpl callbacks */
 	struct _GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
 	void (*roomlist_cancel)(struct _GaimRoomlist *list);
-	void (*roomlist_expand_catagory)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *catagory);
+	void (*roomlist_expand_category)(struct _GaimRoomlist *list, struct _GaimRoomlistRoom *category);
 
 };
 
