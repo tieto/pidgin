@@ -2347,7 +2347,7 @@ static void resize_html(GtkHtml * html)
 			{
 				str = hb->text;
 				hb->text = g_strconcat(str, "\n", NULL);
-				g_free(str);
+				if (str) g_free(str);
 			}
 		}
 
