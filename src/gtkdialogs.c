@@ -82,6 +82,7 @@ static struct developer patch_writers[] = {
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Gary 'grim' Kramlich",		NULL,	NULL},
+	{"Richard 'rlaager' Laager",	NULL,	NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
