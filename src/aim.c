@@ -339,6 +339,11 @@ void show_login()
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(dologin), mainwindow);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
+#ifdef _WIN32
+	/* Register newly created window with systray module */
+	wgaim_created_loginwin(GTK_WIDGET(mainwindow));
+#endif
+
 	/* Now grab the focus that we need */
 	if (aim_users) {
 		struct aim_user *c = (struct aim_user *)aim_users->data;

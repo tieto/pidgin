@@ -2811,10 +2811,8 @@ void make_buddy_list()
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 #ifdef _WIN32
-	/* Set filter to enable win32 systray minimization */
-	gdk_window_add_filter (GTK_WIDGET(blist)->window,
-			       wgaim_window_filter,
-			       NULL);
+	/* Register newly created window with systray module */
+	wgaim_created_blistwin(GTK_WIDGET(blist));
 #endif
 }
 
