@@ -1325,9 +1325,9 @@ GtkWidget *logging_page() {
 				 names);
 
 	prefs_checkbox(_("_Log all instant messages"),
-				  "/gaim/gtk/logging/log_ims", vbox);
+				  "/core/logging/log_ims", vbox);
 	prefs_checkbox(_("Log all c_hats"),
-				  "/gaim/gtk/logging/log_chats", vbox);
+				  "/core/logging/log_chats", vbox);
 /*
 	vbox = gaim_gtk_make_frame (ret, _("System Logs"));
 	prefs_checkbox(_("Log when buddies _sign on/sign off"),
@@ -2731,16 +2731,6 @@ gaim_gtk_prefs_init(void)
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
 	gaim_prefs_add_string("/gaim/gtk/idle/reporting_method", "system");
-
-	/* Logging */
-	gaim_prefs_add_none("/gaim/gtk/logging");
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_ims", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_chats", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_signon_signoff", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_idle_state", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_away_state", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_own_states", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/individual_logs", FALSE);
 
 	/* Plugins */
 	gaim_prefs_add_none("/gaim/gtk/plugins");

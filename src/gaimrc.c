@@ -962,22 +962,10 @@ static void gaimrc_read_options(FILE *f)
 		} else if (!strcmp(p->option, "logging_options")) {
 			logging_options = atoi(p->value[0]);
 			read_logging = TRUE;
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
+			gaim_prefs_set_bool("/core/logging/log_ims",
 					logging_options & OPT_LOG_CONVOS);
-			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
-					logging_options & OPT_LOG_STRIP_HTML);
-			gaim_prefs_set_bool("/gaim/gtk/logging/individual_logs",
-					logging_options & OPT_LOG_INDIVIDUAL);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
+			gaim_prefs_set_bool("/core/logging/log_chats",
 					logging_options & OPT_LOG_CHATS);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_signon_signoff",
-					logging_options & OPT_LOG_BUDDY_SIGNON);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_idle_state",
-					logging_options & OPT_LOG_BUDDY_IDLE);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_away_state",
-					logging_options & OPT_LOG_BUDDY_AWAY);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_own_states",
-					logging_options & OPT_LOG_MY_SIGNON);
 		} else if (!strcmp(p->option, "blist_options")) {
 			blist_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
@@ -1283,12 +1271,10 @@ static void gaimrc_read_options(FILE *f)
 	if (read_general) {
 		if (!read_logging) {
 			logging_options = 0;
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
+			gaim_prefs_set_bool("/core/logging/log_ims",
 					general_options & OPT_GEN_LOG_ALL);
-			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
+			gaim_prefs_set_bool("/core/logging/log_chats",
 					general_options & OPT_GEN_LOG_ALL);
-			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
-					general_options & OPT_GEN_STRIP_HTML);
 		}
 	}
 

@@ -819,7 +819,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		ims = g_list_append(ims, conv);
 
 		gaim_conversation_set_logging(conv,
-				gaim_prefs_get_bool("/gaim/gtk/logging/log_ims"));
+				gaim_prefs_get_bool("/core/logging/log_ims"));
 	}
 	else if (type == GAIM_CONV_CHAT)
 	{
@@ -829,7 +829,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		chats = g_list_append(chats, conv);
 
 		gaim_conversation_set_logging(conv,
-				gaim_prefs_get_bool("/gaim/gtk/logging/log_chats"));
+				gaim_prefs_get_bool("/core/logging/log_chats"));
 	}
 
 	conversations = g_list_append(conversations, conv);
