@@ -658,7 +658,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		ap = g_new0(struct msn_add_permit, 1);
 		ap->user = g_strdup(user);
-		ap->friend = g_strdup(friend);
+		ap->friend = g_strdup(url_decode(friend));
 		ap->gc = gc;
 
 		g_snprintf(msg, sizeof(msg), "The user %s (%s) wants to add you to their buddy list.",
