@@ -115,7 +115,7 @@ void show_about(GtkWidget *w, void *null)
 		/* Left side, TOP */
 		style = gtk_widget_get_style(about);
 		pm = gdk_pixmap_create_from_xpm_d(about->window, &bm,
-						  &style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
+						  &style->bg[GTK_STATE_NORMAL], (gchar **)gaim_logo_xpm);
 		pixmap = gtk_pixmap_new(pm, bm);
 		gdk_pixmap_unref(pm);
 		gdk_bitmap_unref(bm);
@@ -124,7 +124,7 @@ void show_about(GtkWidget *w, void *null)
 
 		label =
 		    gtk_label_new(
-				  _("GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
+				  _("Gaim is a client that supports AOL's Instant Messenger protocol. It is written\n"
 				   "using Gtk+ and is licensed under the GPL.\n\n" "URL: " WEBSITE "\n\n"
 				   "IRC: #gaim on irc.openprojects.net"));
 

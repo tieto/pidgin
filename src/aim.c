@@ -246,7 +246,7 @@ void show_login()
 
 	style = gtk_widget_get_style(mainwindow);
 	pm = gdk_pixmap_create_from_xpm_d(mainwindow->window, &mask,
-					  &style->bg[GTK_STATE_NORMAL], (gchar **)aol_logo);
+					  &style->bg[GTK_STATE_NORMAL], (gchar **)gaim_logo_xpm);
 	pmw = gtk_pixmap_new(pm, mask);
 	gtk_table_attach(GTK_TABLE(table), pmw, 0, 2, 0, 1, 0, 0, 5, 5);
 	gtk_widget_show(pmw);
