@@ -3753,20 +3753,8 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	if (od->icq)
 		aim_bos_setprofile(sess, fr->conn, NULL, NULL, 0, NULL, NULL, 0, caps_icq);
-	else {
-		flags = oscar_encoding_check (gc->account->user_info);
-
-		if (flags == 0) {
-			aim_bos_setprofile(sess, fr->conn, "us-ascii", gc->account->user_info,
-					   strlen(gc->account->user_info), NULL, NULL, 0, caps_aim);
-		} else {
-			unicode = g_convert (gc->account->user_info, strlen(gc->account->user_info),
-					     "UCS-2BE", "UTF-8", NULL, &unicode_len, NULL);
-			aim_bos_setprofile(sess, fr->conn, "unicode-2-0", unicode, unicode_len,
-					   NULL, NULL, 0, caps_aim);
-			g_free(unicode);
-		}
-	}
+	else
+		oscar_set_info(gc, gc->account->user_info);
 
 	return 1;
 }
