@@ -273,13 +273,13 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	button = picture_button(window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
-
 	button = picture_button(window, _("Accept"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(act_prompt), p);
+
+	button = picture_button(window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(des_win), window);
 
 	gtk_widget_show_all(window);
 }

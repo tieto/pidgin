@@ -1108,13 +1108,13 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group, char *
 	bbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(mainbox), bbox, TRUE, TRUE, 0);
 
-	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
-
 	add = picture_button(a->window, _("Add"), add_xpm);
 	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(do_add_buddy), a);
+
+	cancel = picture_button(a->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), a->window);
 
 	gtk_widget_show_all(a->window);
 	if (group != NULL) 
@@ -2078,13 +2078,13 @@ void show_set_dir(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(fbox), bot, FALSE, FALSE, 0);
 	gtk_widget_show(bot);
 
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(bot), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-
 	b->save = picture_button(b->window, _("Save"), save_xpm);
 	gtk_box_pack_end(GTK_BOX(bot), b->save, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(b->save), "clicked", GTK_SIGNAL_FUNC(do_set_dir), b);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(bot), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
 	gtk_window_set_focus(GTK_WINDOW(b->window), b->first);
 
@@ -2201,14 +2201,13 @@ void show_change_passwd(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(fbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-
 	b->ok = picture_button(b->window, _("OK"), ok_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), b->ok, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(b->ok), "clicked", GTK_SIGNAL_FUNC(do_change_password), b);
 
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
 	gtk_widget_show(b->window);
 }
@@ -2260,13 +2259,13 @@ void show_set_info(struct gaim_connection *gc)
 	gtk_box_pack_start(GTK_BOX(vbox), buttons, FALSE, FALSE, 0);
 	gtk_widget_show(buttons);
 
-	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
-	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
-	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
-
 	b->save = picture_button(b->window, _("Save"), save_xpm);
 	gtk_box_pack_end(GTK_BOX(buttons), b->save, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(b->save), "clicked", GTK_SIGNAL_FUNC(do_save_info), b);
+
+	b->cancel = picture_button(b->window, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(buttons), b->cancel, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(b->cancel), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), b->window);
 
 	gtk_widget_show(b->window);
 
@@ -3537,20 +3536,20 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	gtk_box_pack_start(GTK_BOX(tbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
-	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
-	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-
-	button = picture_button(ca->window, _("Use"), gnome_preferences_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(use_away_mess), ca);
+	button = picture_button(ca->window, _("Save"), ok_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	button = picture_button(ca->window, _("Save & Use"), add_xpm);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(su_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = picture_button(ca->window, _("Save"), ok_xpm);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(save_away_mess), ca);
+	button = picture_button(ca->window, _("Use"), gnome_preferences_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(use_away_mess), ca);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+
+	button = picture_button(ca->window, _("Cancel"), cancel_xpm);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), ca->window);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
 	gtk_widget_show(ca->window);
@@ -3698,11 +3697,11 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 
 void alias_dialog_bud(struct buddy *b)
 {
-	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *bbox;
 	GtkWidget *cancel;
 	static GtkWidget *add = NULL;
+	const char *name = g_malloc(80);
 	GtkWidget *label;
 	GtkWidget *topbox;
 	static int a, c;
@@ -3716,36 +3715,41 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_widget_realize(aliasdlg);
 	dialogwindows = g_list_prepend(dialogwindows, aliasdlg);
 
-	bbox = gtk_hbox_new(TRUE, 10);
-	topbox = gtk_hbox_new(FALSE, 5);
+	topbox = gtk_vbox_new(FALSE, 5);
 	vbox = gtk_vbox_new(FALSE, 5);
 
 	aliasentry = gtk_entry_new();
 	aliasname = gtk_entry_new();
-	/* Put the buttons in the box */
 
-	add = picture_button(aliasdlg, _("Alias"), add_xpm);
-
-	cancel = picture_button(aliasdlg, _("Cancel"), cancel_xpm);
-
-	gtk_box_pack_start(GTK_BOX(bbox), add, FALSE, FALSE, 5);
-	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
-
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_label(GTK_FRAME(frame), _("Alias Buddy"));
-
+	/* Make the buddy name box */
+	bbox = gtk_hbox_new(FALSE, 5);
 	label = gtk_label_new(_("Buddy"));
+	gtk_widget_show(bbox);
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), aliasentry, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), aliasentry, FALSE, FALSE, 5);
 	gtk_entry_set_editable(GTK_ENTRY(aliasentry), FALSE);
+	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
+
+	/* And the buddy alias box */
+	bbox = gtk_hbox_new(FALSE, 5);
 	label = gtk_label_new(_("Alias"));
+	gtk_widget_show(bbox);
 	gtk_widget_show(label);
-	gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(topbox), aliasname, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_end(GTK_BOX(bbox), aliasname, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(topbox), bbox, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(aliasentry), b->name);
 	gtk_entry_set_text(GTK_ENTRY(aliasname), b->show);
+
+	/* Put the buttons in the box */
+	bbox = gtk_hbox_new(FALSE, 5);
+
+	add = picture_button(aliasdlg, _("Alias"), add_xpm);
+	cancel = picture_button(aliasdlg, _("Cancel"), cancel_xpm);
+	gtk_box_pack_end(GTK_BOX(bbox), add, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
 
 	/* And the boxes in the box */
 	gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
@@ -3764,11 +3768,9 @@ void alias_dialog_bud(struct buddy *b)
 	gtk_widget_show(topbox);
 	gtk_widget_show(bbox);
 	gtk_widget_show(vbox);
-	gtk_widget_show(frame);
 	gtk_window_set_title(GTK_WINDOW(aliasdlg), _("Gaim - Alias Buddy"));
-	gtk_window_set_focus(GTK_WINDOW(aliasdlg), aliasentry);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_container_add(GTK_CONTAINER(aliasdlg), frame);
+	gtk_window_set_focus(GTK_WINDOW(aliasdlg), aliasname);
+	gtk_container_add(GTK_CONTAINER(aliasdlg), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(aliasdlg), 5);
 	gtk_widget_realize(aliasdlg);
 

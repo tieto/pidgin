@@ -310,14 +310,14 @@ void join_chat()
 		bbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(mainbox), bbox, FALSE, FALSE, 0);
 
+		join = picture_button(joinchat, _("Join"), join_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
+		gtk_signal_connect(GTK_OBJECT(join), "clicked", GTK_SIGNAL_FUNC(do_join_chat), NULL);
+
 		cancel = picture_button(joinchat, _("Cancel"), cancel_xpm);
 		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 0);
 		gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
 				   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
-
-		join = picture_button(joinchat, _("Join"), join_xpm);
-		gtk_box_pack_end(GTK_BOX(bbox), join, FALSE, FALSE, 0);
-		gtk_signal_connect(GTK_OBJECT(join), "clicked", GTK_SIGNAL_FUNC(do_join_chat), NULL);
 	}
 	gtk_widget_show_all(joinchat);
 }
