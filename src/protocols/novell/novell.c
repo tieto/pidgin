@@ -1147,6 +1147,7 @@ _send_message(NMUser * user, NMMessage * message)
 static void
 _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 {
+#if 0
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	int gstatus = status << 1;
 	int idle = 0;
@@ -1175,6 +1176,7 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 	}
 
 	serv_got_update(gc, buddy->name, loggedin, 0, 0, idle, gstatus);
+#endif
 }
 
 /* Iterate through the cached Gaim buddy list and remove buddies
@@ -2906,7 +2908,7 @@ novell_status_text(GaimBuddy * buddy)
 
 	return NULL;
 }
-
+#if 0
 static GList *
 novell_away_states(GaimConnection * gc)
 {
@@ -2991,7 +2993,7 @@ novell_set_away(GaimConnection * gc, const char *state, const char *msg)
 	if (text)
 		g_free(text);
 }
-
+#endif
 static void
 novell_add_permit(GaimConnection *gc, const char *who)
 {
@@ -3399,7 +3401,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_list_emblems,		/* list_emblems */
 	novell_status_text,			/* status_text */
 	novell_tooltip_text,		/* tooltip_text */
-	novell_away_states,			/* away_states */
+	/*novell_away_states*/NULL,			/* away_states */
 	novell_blist_node_menu,		/* blist_node_menu */
 	NULL,						/* chat_info */
 	NULL,						/* chat_info_defaults */
@@ -3409,7 +3411,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,						/* set_info */
 	novell_send_typing,			/* send_typing */
 	novell_get_info,			/* get_info */
-	novell_set_away,			/* set_away */
+	/*novell_set_away*/ NULL,			/* set_away */
 	novell_set_idle,			/* set_idle */
 	NULL,						/* change_passwd */
 	novell_add_buddy,			/* add_buddy */
