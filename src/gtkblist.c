@@ -2534,9 +2534,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			accounttext = g_markup_escape_text(b->account->username, -1);
 
 		text = g_strdup_printf("<span size='larger' weight='bold'>%s</span>"
-#ifdef _WIN32
-					"\nThis tooltip may not go away.  Don't report it.  Deal"
-#endif
 					"%s %s"  /* Account */
 					"%s %s"  /* Contact Alias */
 					"%s %s"  /* Alias */
