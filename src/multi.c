@@ -796,21 +796,17 @@ void account_online(struct gaim_connection *gc)
 	if (mainwindow)
 		gtk_widget_hide(mainwindow);
 
+	show_buddy_list();
+	refresh_buddy_window();
 #ifdef USE_APPLET
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-		show_buddy_list();
-		refresh_buddy_window();
 		createOnlinePopup();
 		applet_buddy_show = TRUE;
 	} else if (!blist) {
-		show_buddy_list();
 		gtk_widget_hide(blist);
 		applet_buddy_show = FALSE;
 	}
 	set_user_state(online);
-#else
-	show_buddy_list();
-	refresh_buddy_window();
 #endif
 	setup_buddy_chats();
 
