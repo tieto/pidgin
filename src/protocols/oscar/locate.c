@@ -217,7 +217,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		cur->iconcsumlen = userinfo->iconcsumlen;
 	}
 
-	if ((userinfo->info != NULL) && (userinfo->info_len > 0)) {
+	if (userinfo->info != NULL) {
 		free(cur->info);
 		free(cur->info_encoding);
 		cur->info = (char *)malloc(userinfo->info_len);
@@ -226,7 +226,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 		cur->info_len = userinfo->info_len;
 	}
 
-	if ((userinfo->away != NULL) && (userinfo->away_len > 0)) {
+	if (userinfo->away != NULL) {
 		free(cur->away);
 		free(cur->away_encoding);
 		cur->away = (char *)malloc(userinfo->away_len);

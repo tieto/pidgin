@@ -359,7 +359,7 @@ faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const cha
 	strftime(timestr, 30, "%a, %d %b %Y %T %Z", tm);
 
 	/* The length of xml included the null terminating character */
-	xmllen = 500 + strlen(name) + strlen(msg) + strlen(sess->sn) + strlen(alias) + strlen(timestr) + 1;
+	xmllen = 225 + strlen(name) + strlen(msg) + strlen(sess->sn) + strlen(alias) + strlen(timestr) + 1;
 
 	if (!(xml = (char *)malloc(xmllen*sizeof(char))))
 		return -ENOMEM;
