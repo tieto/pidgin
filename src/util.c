@@ -353,10 +353,10 @@ static const char alphabet[] =
 /* This was borrowed from the Kame source, and then tweaked to our needs */
 char *tobase64(const unsigned char *buf, size_t len)
 {
-	char *s, *rv;
+	char *s = NULL, *rv = NULL;
 	unsigned tmp;
 
-	if(len < 0)
+	if(len == (size_t)(-1))
 		len = strlen(buf);
 
 	s = g_malloc((4 * (len + 1)) / 3 + 1);
