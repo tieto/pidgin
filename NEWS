@@ -5,6 +5,14 @@
 	PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA 
 	PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA PLA  
 
+	All of that nonsense aside, there are a few things that DIDN'T happen
+	in this version of gaim.  The user interface changes will wait until
+	the 0.9.20 release.  We've decided to turn 0.9.19 into a "new feature
+	and major bug fix" release.  All/Most major bugs should be worked out
+	now.  We're sorry about the problem of segfaulting when your buddylist
+	stored on the server was null.  Oops! We won't let it happen again,
+	we promise.
+
 0.9.18 (06/02/2000):
 	Rob: Talk about release early, release often - sheesh!  We're going
 	insane.  Ya know, I'm not too happy with the GAIM UI.  I dont know
