@@ -557,7 +557,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		str = g_string_append(str, text);
 		str = g_string_append_unichar(str, 0x0000);
 		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
-		gtk_selection_data_set (selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
+		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
 		g_string_free(str, TRUE);
 		g_free(selection);
 	} else {
@@ -729,14 +729,33 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		g_free(text);
 		text = tmp;
 	} else {
-		text = g_malloc((selection_data->format / 8) * selection_data->length);
-		memcpy(text, selection_data->data, selection_data->length * (selection_data->format / 8));
+#if 0
+		/* Here's some debug code, for figuring out what sent to us over the clipboard. */
+		{
+		int i;
+
+		gaim_debug_misc("gtkimhtml", "In paste_received_cb():\n\tformat = %d, length = %d\n\t",
+	                        selection_data->format, selection_data->length);
+
+		for (i = 0; i < (/*(selection_data->format / 8) **/ selection_data->length); i++) {
+			if ((i % 70) == 0)
+				printf("\n\t");
+			if (selection_data->data[i] == '\0')
+				printf(".");
+			else
+				printf("%c", selection_data->data[i]);
+		}
+		printf("\n");
+		}
+#endif
+		text = g_malloc(selection_data->length);
+		memcpy(text, selection_data->data, selection_data->length);
 	}
 
 	memcpy (&c, text, 2);
 	if (c == 0xfeff) {
 		/* This is UCS2 */
-		char *utf8 = g_convert(text+2, (selection_data->length * (selection_data->format / 8)) - 2, "UTF-8", "UCS-2", NULL, NULL, NULL);
+		char *utf8 = g_convert(text+2, selection_data->length - 2, "UTF-8", "UCS-2", NULL, NULL, NULL);
 		g_free(text);
 		text = utf8;
 		if (!text) {
@@ -2451,23 +2470,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	g_list_free(imhtml->scalables);
 	imhtml->scalables = NULL;
 
-	imhtml->edit.bold = FALSE;
-	imhtml->edit.italic = FALSE;
-	imhtml->edit.underline = FALSE;
-
-	if (imhtml->edit.fontface)
-		g_free(imhtml->edit.fontface);
-	imhtml->edit.fontface = NULL;
-
-	if (imhtml->edit.forecolor)
-		g_free(imhtml->edit.forecolor);
-	imhtml->edit.forecolor = NULL;
-
-	if (imhtml->edit.backcolor)
-		g_free(imhtml->edit.backcolor);
-	imhtml->edit.backcolor = NULL;
-
-	imhtml->edit.fontsize = 0;
+	gtk_imhtml_close_tags(imhtml, &start);
 
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
 	g_object_unref(object);
@@ -3049,10 +3052,10 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
  *
  * Just in case I do do this, I asked about what to set the secondary text cursor to.
  *
-   (12:45:27) ?? ???: secondary_cursor_color = (rgb(background) + rgb(primary_cursor_color) ) / 2 *
-(12:45:55) ?? ???: understand? *
+ * (12:45:27) ?? ???: secondary_cursor_color = (rgb(background) + rgb(primary_cursor_color) ) / 2
+ * (12:45:55) ?? ???: understand?
  * (12:46:14) Tim: yeah. i didn't know there was an exact formula
-(12:46:56) ?? ???: u might need to exactract separate each color from RGB *
+ * (12:46:56) ?? ???: u might need to exactract separate each color from RGB
  */
 
 static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *mark,
@@ -3106,7 +3109,7 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 				imhtml->edit.fontface = g_strdup(&(tag->name)[10]);
 			if (strncmp(tag->name, "FONT SIZE ", 10) == 0)
 				imhtml->edit.fontsize = strtol(&(tag->name)[10], NULL, 10);
-			if (strncmp(tag->name, "LINK ", 5) == 0)
+			if ((strncmp(tag->name, "LINK ", 5) == 0) && !gtk_text_iter_is_end(&iter))
 				imhtml->edit.link = tag;
 		}
 	}
@@ -3631,6 +3634,9 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter)
 		gtk_imhtml_toggle_fontface(imhtml, NULL);
 
 	imhtml->edit.fontsize = 0;
+
+	if (imhtml->edit.link)
+		gtk_imhtml_toggle_link(imhtml, NULL);
 
 	gtk_text_buffer_remove_all_tags(imhtml->text_buffer, iter, iter);
 
