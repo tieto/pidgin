@@ -25,6 +25,15 @@
 #include <gtk/gtk.h>
 #include "gaim.h"
 
+#include "pixmaps/tmp_send.xpm"
+#include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/fgcolor.xpm"
+#include "pixmaps/bgcolor.xpm"
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/warn.xpm"
+#include "pixmaps/tb_search.xpm"
+#include "pixmaps/block.xpm"
 
 /* we declare all of the global functions for chat and IM windows here, so
  * that it's easy to keep them merged. */

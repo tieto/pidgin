@@ -67,16 +67,6 @@
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
 
-#include "pixmaps/tmp_send.xpm"
-#include "pixmaps/gnome_remove.xpm"
-#include "pixmaps/gnome_add.xpm"
-#include "pixmaps/fgcolor.xpm"
-#include "pixmaps/bgcolor.xpm"
-#include "pixmaps/cancel.xpm"
-#include "pixmaps/warn.xpm"
-#include "pixmaps/tb_search.xpm"
-#include "pixmaps/block.xpm"
-
 int state_lock=0;
 
 GdkPixmap *dark_icon_pm = NULL;
@@ -438,17 +428,17 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 {
 	if (find_buddy(c->name) != NULL) {
 		gboolean dispstyle = (display_options & OPT_DISP_CONV_SHOW_TEXT) ? TRUE : FALSE;
-		GtkWidget *parent = c->add_button->parent;
+		GtkWidget *parent = c->add->parent;
 		sprintf(debug_buff,_("Removing '%s' from buddylist.\n"), c->name);
 		debug_print(debug_buff);
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
 		build_edit_tree();
-		gtk_widget_destroy(c->add_button);
-		c->add_button = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
-		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add_button, dispstyle, dispstyle, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);
-		gtk_widget_show(c->add_button);
+		gtk_widget_destroy(c->add);
+		c->add = picture_button2(c->window, _("Add"), gnome_add_xpm, dispstyle);
+		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+		gtk_widget_show(c->add);
 	}
 	else
 	{
@@ -1691,7 +1681,6 @@ void show_conv(struct conversation *c)
 	gtk_object_set_user_data(GTK_OBJECT(entry), c);
 	c->entry = entry;
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback),c);
-	c->add_button = add;
 		
 	/* Toolbar */
 	toolbar = build_conv_toolbar(c);
@@ -1720,11 +1709,17 @@ void show_conv(struct conversation *c)
 	/* Ready and pack buttons */
 	gtk_object_set_user_data(GTK_OBJECT(win), c);
 	gtk_object_set_user_data(GTK_OBJECT(close), c);
+	c->close = close;
 	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_callback), c);
+	c->send = send;
 	gtk_signal_connect(GTK_OBJECT(send), "clicked", GTK_SIGNAL_FUNC(send_callback), c);
+	c->add = add;
 	gtk_signal_connect(GTK_OBJECT(add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+	c->info = info;
 	gtk_signal_connect(GTK_OBJECT(info), "clicked", GTK_SIGNAL_FUNC(info_callback), c);
+	c->warn = warn;
 	gtk_signal_connect(GTK_OBJECT(warn), "clicked", GTK_SIGNAL_FUNC(warn_callback), c);
+	c->block = block;
 	gtk_signal_connect(GTK_OBJECT(block), "clicked", GTK_SIGNAL_FUNC(block_callback), c);
        
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
@@ -1735,16 +1730,16 @@ void show_conv(struct conversation *c)
 		gtk_widget_set_usize(entry, 300, 25);
 
 	gtk_box_pack_end(GTK_BOX(bbox), close, dispstyle, dispstyle, 0);
-	sep = gtk_vseparator_new();
-	gtk_widget_show(sep);
-	gtk_box_pack_end(GTK_BOX(bbox), sep, dispstyle, dispstyle, 0);
+	c->sep1 = gtk_vseparator_new();
+	gtk_widget_show(c->sep1);
+	gtk_box_pack_end(GTK_BOX(bbox), c->sep1, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), add, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), block, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), warn, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), info, dispstyle, dispstyle, 0);
-	sep = gtk_vseparator_new();
-	gtk_widget_show(sep);
-	gtk_box_pack_end(GTK_BOX(bbox), sep, dispstyle, dispstyle, 0);
+	c->sep2 = gtk_vseparator_new();
+	gtk_widget_show(c->sep2);
+	gtk_box_pack_end(GTK_BOX(bbox), c->sep2, dispstyle, dispstyle, 0);
 	gtk_box_pack_end(GTK_BOX(bbox), send, dispstyle, dispstyle, 0);
 	
 	/* pack and fill the rest */

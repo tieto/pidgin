@@ -287,8 +287,15 @@ struct conversation {
 	GdkColor fgcol;
 	int hasfg;
 
+	GtkWidget *send;
+
 	/* stuff used just for IM */
-	GtkWidget *add_button;
+	GtkWidget *info;
+	GtkWidget *warn;
+	GtkWidget *block;
+	GtkWidget *add;
+	GtkWidget *sep1;
+	GtkWidget *sep2;
  	time_t sent_away;
 
 	/* stuff used just for chat */
@@ -296,7 +303,6 @@ struct conversation {
         GList *ignored;
         int id;
 	GtkWidget *list;
-	GtkWidget *send;
 	GtkWidget *whisper;
 	GtkWidget *invite;
 	GtkWidget *close;
@@ -408,7 +414,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 914 $"
+#define REVISION "gaim:$Revision: 919 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -569,6 +575,7 @@ extern void setup_buddy_chats();
 extern void build_imchat_box(gboolean);
 extern void do_quit();
 extern void update_chat_button_pix();
+extern void update_im_button_pix();
 
 
 

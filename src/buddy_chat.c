@@ -33,14 +33,9 @@
 
 #include "convo.h"
 
-#include "pixmaps/tmp_send.xpm"
-#include "pixmaps/close.xpm"
-#include "pixmaps/tb_search.xpm"
-
 #include "pixmaps/tb_forward.xpm"
 #include "pixmaps/join.xpm"
-#include "pixmaps/cancel.xpm"
-
+#include "pixmaps/close.xpm"
 
 static GtkWidget *joinchat;
 static GtkWidget *entry;
@@ -768,13 +763,16 @@ void setup_buddy_chats()
 
 }
 
-static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm)
+static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, char **xpm, int opt)
 {
-	gboolean dispstyle = (display_options & OPT_DISP_CHAT_SHOW_TEXT) ? TRUE : FALSE;
+	gboolean dispstyle = (display_options & opt) ? TRUE : FALSE;
 	GtkWidget *parent = button->parent;
 	gtk_widget_destroy(button);
 	button = picture_button2(win, text, xpm, dispstyle);
-	gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 5);
+	if (opt == OPT_DISP_CHAT_SHOW_TEXT)
+		gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 5);
+	else
+		gtk_box_pack_end(GTK_BOX(parent), button, dispstyle, dispstyle, 0);
 	gtk_widget_show(button);
 	return button;
 }
@@ -783,18 +781,58 @@ void update_chat_button_pix()
 {
 	GList *bcs = buddy_chats;
 	struct conversation *c;
+	int opt = OPT_DISP_CHAT_SHOW_TEXT;
 
 	while (bcs) {
 		c = (struct conversation *)bcs->data;
-		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm);
-		c->whisper = change_text(c->window, _("Whisper"), c->whisper, tb_forward_xpm);
-		c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm);
-		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm);
+		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
+		c->whisper = change_text(c->window, _("Whisper"), c->whisper, tb_forward_xpm, opt);
+		c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm, opt);
+		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
 		gtk_object_set_user_data(GTK_OBJECT(c->close), c);
 		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback),c);
 		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback),c);
 		gtk_signal_connect(GTK_OBJECT(c->invite), "clicked", GTK_SIGNAL_FUNC(invite_callback),c);
 		gtk_signal_connect(GTK_OBJECT(c->whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback),c);
+		bcs = bcs->next;
+	}
+}
+
+void update_im_button_pix()
+{
+	GList *bcs = conversations;
+	struct conversation *c;
+	GtkWidget *parent;
+	int opt = OPT_DISP_CONV_SHOW_TEXT;
+	gboolean dispstyle = (display_options & opt) ? TRUE : FALSE;
+
+	while (bcs) {
+		c = (struct conversation *)bcs->data;
+		parent = c->close->parent;
+		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
+		gtk_box_reorder_child(GTK_BOX(parent), c->close, 0);
+		gtk_box_set_child_packing(GTK_BOX(parent), c->sep1, dispstyle, dispstyle, 0, GTK_PACK_END);
+		if (find_buddy(c->name) == NULL)
+			c->add = change_text(c->window, _("Add"), c->add, gnome_add_xpm, opt);
+		else
+			c->add = change_text(c->window, _("Remove"), c->add, gnome_remove_xpm, opt);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+		c->block = change_text(c->window, _("Block"), c->block, block_xpm, opt);
+		gtk_box_reorder_child(GTK_BOX(parent), c->block, 3);
+		c->warn = change_text(c->window, _("Warn"), c->warn, warn_xpm, opt);
+		gtk_box_reorder_child(GTK_BOX(parent), c->warn, 4);
+		c->info = change_text(c->window, _("Info"), c->info, tb_search_xpm, opt);
+		gtk_box_reorder_child(GTK_BOX(parent), c->info, 5);
+		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
+		gtk_box_set_child_packing(GTK_BOX(parent), c->sep2, dispstyle, dispstyle, 0, GTK_PACK_END);
+		gtk_box_reorder_child(GTK_BOX(parent), c->send, 7);
+		gtk_object_set_user_data(GTK_OBJECT(c->close), c);
+		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->info), "clicked", GTK_SIGNAL_FUNC(info_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->warn), "clicked", GTK_SIGNAL_FUNC(warn_callback),c);
+		gtk_signal_connect(GTK_OBJECT(c->block), "clicked", GTK_SIGNAL_FUNC(block_callback),c);
 		bcs = bcs->next;
 	}
 }

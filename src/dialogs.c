@@ -778,13 +778,13 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         if (c != NULL) {
 		gboolean dispstyle = (display_options & OPT_DISP_CONV_SHOW_TEXT) ? TRUE : FALSE;
-		GtkWidget *parent = c->add_button->parent;
-		gtk_widget_destroy(c->add_button);
-		c->add_button = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
-		gtk_signal_connect(GTK_OBJECT(c->add_button), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
-		gtk_box_pack_end(GTK_BOX(parent), c->add_button, dispstyle, dispstyle, 0);
-		gtk_box_reorder_child(GTK_BOX(parent), c->add_button, 1);
-		gtk_widget_show(c->add_button);
+		GtkWidget *parent = c->add->parent;
+		gtk_widget_destroy(c->add);
+		c->add = picture_button2(c->window, _("Remove"), gnome_remove_xpm, dispstyle);
+		gtk_signal_connect(GTK_OBJECT(c->add), "clicked", GTK_SIGNAL_FUNC(add_callback), c);
+		gtk_box_pack_end(GTK_BOX(parent), c->add, dispstyle, dispstyle, 0);
+		gtk_box_reorder_child(GTK_BOX(parent), c->add, 2);
+		gtk_widget_show(c->add);
 	}
         
         build_edit_tree();
