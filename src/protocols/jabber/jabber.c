@@ -551,13 +551,17 @@ static void gjab_send(gjconn gjc, xmlnode x)
 {
 	if (gjc && gjc->state != JCONN_STATE_OFF) {
 		char *buf = xmlnode2str(x);
-		if (buf)
+		if (buf) {
 #ifndef _WIN32
-			write(gjc->fd, buf, strlen(buf));
+			if(write(gjc->fd, buf, strlen(buf)) < 0) {
 #else
-			send(gjc->fd, buf, strlen(buf), 0);
+			if(send(gjc->fd, buf, strlen(buf), 0) < 0) {
 #endif
-		gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send: %s\n", buf);
+				gaim_connection_error(GJ_GC(gjc), _("Write error"));
+			} else {
+				gaim_debug(GAIM_DEBUG_MISC, "jabber", "gjab_send: %s\n", buf);
+			}
+		}
 	}
 }
 
@@ -572,8 +576,7 @@ static void gjab_send_raw(gjconn gjc, const char *str)
 #else
 		if(send(gjc->fd, str, strlen(str), 0) < 0) {
 #endif
-			fprintf(stderr, "DBG: Problem sending.  Error: %d\n", errno);
-			fflush(stderr);
+			gaim_connection_error(GJ_GC(gjc), _("Write error"));
 		}
 		/* printing keepalives to the debug window is really annoying */
 		if(strcmp(str, JABBER_KEEPALIVE_STRING))
