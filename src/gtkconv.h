@@ -253,8 +253,18 @@ void gaim_gtkconv_update_font_buttons(void);
 /**
  * Updates the font colors of each conversation to the new colors
  * chosen in the prefs dialog.
+ *
+ * @param conv The conversation to update.
  */
 void gaim_gtkconv_update_font_colors(struct gaim_conversation *conv);
+
+/**
+ * Updates the font faces of each conversation to the new font
+ * face chosen in the prefs dialog.
+ *
+ * @param conv The conversation to update.
+ */
+void gaim_gtkconv_update_font_face(struct gaim_conversation *conv);
 
 /**
  * Updates the tab positions on all conversation windows to reflect any

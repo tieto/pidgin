@@ -2420,7 +2420,10 @@ void apply_font_dlg(GtkWidget *w, GtkWidget *f)
 		fontface[i] = fontname[i];
 		i++;
 	}
+
 	fontface[i] = 0;
 	g_free(fontname);
+	
+	gaim_conversation_foreach(gaim_gtkconv_update_font_face);
 }
 

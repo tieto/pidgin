@@ -3304,6 +3304,9 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 		/* Setup the foreground and background colors */
 		gaim_gtkconv_update_font_colors(conv);
 
+		/* Setup the font face */
+		gaim_gtkconv_update_font_face(conv);
+
 		if (conv_type == GAIM_CONV_CHAT) {
 			gtkconv->u.chat = g_malloc0(sizeof(struct gaim_gtk_chat_pane));
 
@@ -4602,16 +4605,33 @@ gaim_gtkconv_update_font_buttons(void)
 void
 gaim_gtkconv_update_font_colors(struct gaim_conversation *conv)
 {
-	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	struct gaim_gtk_conversation *gtkconv;
 	
-		gtkconv->fg_color.red = fgcolor.red;
-		gtkconv->fg_color.blue = fgcolor.blue;
-		gtkconv->fg_color.green = fgcolor.green;
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return;
+	
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	
+	gtkconv->fg_color.red = fgcolor.red;
+	gtkconv->fg_color.blue = fgcolor.blue;
+	gtkconv->fg_color.green = fgcolor.green;
 
-		gtkconv->bg_color.red = bgcolor.red;
-		gtkconv->bg_color.blue = bgcolor.blue;
-		gtkconv->bg_color.green = bgcolor.green;
+	gtkconv->bg_color.red = bgcolor.red;
+	gtkconv->bg_color.blue = bgcolor.blue;
+	gtkconv->bg_color.green = bgcolor.green;
+}
 
+void
+gaim_gtkconv_update_font_face(struct gaim_conversation *conv)
+{
+	struct gaim_gtk_conversation *gtkconv;
+	
+	if (!GAIM_IS_GTK_CONVERSATION(conv))
+		return;
+	
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	
+	strncpy(gtkconv->fontface, fontface, 128);
 }
 
 void
