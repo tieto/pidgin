@@ -367,6 +367,12 @@ void msn_callback (struct gaim_connection * gc, gint fd) {
 		int size;
 		int status;
 		
+		if (strcasecmp("hotmail", resps[1]) == 0) {
+			/* We want to ignore these */
+			g_strfreev(resps);
+			return;
+		}
+		
 		/* Determine our message size */
 		size = atoi(resps[3]);
 
@@ -682,6 +688,46 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 	g_free(buf);
 }
 
+void msn_close (struct gaim_connection *gc) {
+	struct msn_data *mdata = (struct msn_data *)gc->proto_data;
+	GSList *conns = msn_connections;
+	struct msn_conn *mc = NULL;
+	char buf[4096];
+
+	while (conns) {
+		mc = (struct msn_conn *)conns->data;
+
+		if (mc->inpa > 0)
+			gdk_input_remove(mc->inpa);
+
+		if (mc->fd > 0)
+			close(mc->fd);
+
+		if (mc->user != NULL)
+			g_free(mc->user);
+		
+		conns = g_slist_remove(conns, mc);
+		g_free(mc);
+	}
+
+
+	g_snprintf(buf, 4096, "OUT\n");
+	write(mdata->fd, buf, strlen(buf));
+	
+	if (gc->inpa > 0)
+		gdk_input_remove(gc->inpa);
+
+	close(mdata->fd);
+
+	if (mdata->friendly != NULL)
+		g_free(mdata->friendly);
+
+	g_free(gc->proto_data);
+
+	debug_printf(_("Signed off.\n"));
+	
+}
+
 static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret) {
@@ -691,7 +737,7 @@ void msn_init(struct prpl *ret) {
 	ret->action_menu = NULL;
 	ret->user_opts = NULL;
 	ret->login = msn_login;
-	ret->close = NULL;
+	ret->close = msn_close;
 	ret->send_im = msn_send_im;
 	ret->set_info = NULL;
 	ret->get_info = NULL;
