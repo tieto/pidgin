@@ -1243,7 +1243,6 @@ static void away_page()
 	gtk_widget_show(hbox);
 
 	button = gaim_button(_("Auto Away after"), &general_options, OPT_GEN_AUTO_AWAY, hbox);
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
 
 	adjust = gtk_adjustment_new(auto_away, 1, 1440, 1, 10, 10);
 	spin = gtk_spin_button_new(GTK_ADJUSTMENT(adjust), 1, 0);
@@ -1251,6 +1250,7 @@ static void away_page()
 	if (!(general_options & OPT_GEN_AUTO_AWAY))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), spin);
 	gtk_signal_connect(GTK_OBJECT(adjust), "value-changed", GTK_SIGNAL_FUNC(set_auto_away), GTK_WIDGET(spin));
 	gtk_widget_show(spin);
 
@@ -1259,10 +1259,10 @@ static void away_page()
 	gtk_widget_show(label);
 
 	prefs_away_menu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
+	default_away_menu_init(prefs_away_menu);
 	if (!(general_options & OPT_GEN_AUTO_AWAY))
 		gtk_widget_set_sensitive(GTK_WIDGET(prefs_away_menu), FALSE);
-	default_away_menu_init(prefs_away_menu);
-	gtk_box_pack_start(GTK_BOX(hbox), prefs_away_menu, FALSE, FALSE, 0);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_sensitive), prefs_away_menu);
 	gtk_widget_show(prefs_away_menu);
 
