@@ -308,8 +308,6 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 			tempdata->url = g_strdup(url);
 
 			menu = gtk_menu_new();
-			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
-							event_button->button, event_button->time);
 
 			/* buttons and such */
 			img = gtk_image_new_from_stock(GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
@@ -325,7 +323,10 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(url_open),
 					tempdata);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+
 			gtk_widget_show_all(menu);
+			gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
+							event_button->button, event_button->time);
 
 			return TRUE;
 		}
