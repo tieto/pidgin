@@ -78,6 +78,8 @@ typedef struct
 	GaimPlugin *plugin;
 	GaimPluginProtocolInfo *prpl_info;
 
+	GaimProxyType new_proxy_type;
+
 	GtkWidget *window;
 
 	/* Login Options */
@@ -101,6 +103,13 @@ typedef struct
 
 	/* Proxy Options */
 	GtkWidget *proxy_frame;
+	GtkWidget *proxy_vbox;
+	GtkWidget *proxy_dropdown;
+	GtkWidget *proxy_menu;
+	GtkWidget *proxy_host_entry;
+	GtkWidget *proxy_port_entry;
+	GtkWidget *proxy_user_entry;
+	GtkWidget *proxy_pass_entry;
 
 	GtkSizeGroup *sg;
 
@@ -493,7 +502,7 @@ __add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static GtkWidget *
-__make_proxy_dropdown(GaimAccount *account)
+__make_proxy_dropdown(void)
 {
 	GtkWidget *dropdown;
 	GtkWidget *menu;
@@ -543,11 +552,27 @@ __make_proxy_dropdown(GaimAccount *account)
 }
 
 static void
+__proxy_type_changed_cb(GtkWidget *optmenu, AccountPrefsDialog *dialog)
+{
+	dialog->new_proxy_type =
+		gtk_option_menu_get_history(GTK_OPTION_MENU(optmenu)) - 1;
+
+	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL ||
+		dialog->new_proxy_type == GAIM_PROXY_NONE) {
+
+		gtk_widget_hide_all(dialog->proxy_vbox);
+	}
+	else
+		gtk_widget_show_all(dialog->proxy_vbox);
+}
+
+static void
 __add_proxy_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
+	GaimProxyInfo *proxy_info;
 	GtkWidget *frame;
 	GtkWidget *vbox;
-	GtkWidget *dropdown;
+	GtkWidget *vbox2;
 
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
@@ -564,9 +589,73 @@ __add_proxy_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Proxy Type drop-down. */
-	dropdown = __make_proxy_dropdown(dialog->account);
+	dialog->proxy_dropdown = __make_proxy_dropdown();
+	dialog->proxy_menu =
+		gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->proxy_dropdown));
 
-	__add_pref_box(dialog, vbox, _("Proxy _type"), dropdown);
+	__add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
+
+	/* Setup the second vbox, which may be hidden at times. */
+	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, 6);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
+	gtk_widget_show(vbox2);
+
+	/* Host */
+	dialog->proxy_host_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox2, _("_Host:"), dialog->proxy_host_entry);
+
+	/* Port */
+	dialog->proxy_port_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox2, _("_Port:"), dialog->proxy_port_entry);
+
+	/* User */
+	dialog->proxy_user_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox2, _("_Username:"), dialog->proxy_user_entry);
+
+	/* Password */
+	dialog->proxy_pass_entry = gtk_entry_new();
+	__add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
+
+	if (dialog->account != NULL &&
+		(proxy_info = gaim_account_get_proxy_info(dialog->account)) != NULL) {
+
+		GaimProxyType type = gaim_proxy_info_get_type(proxy_info);
+
+		/* Hah! */
+		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
+									(int)type + 1);
+
+		if (type == GAIM_PROXY_NONE || type == GAIM_PROXY_USE_GLOBAL) {
+			gtk_widget_hide_all(vbox2);
+		}
+		else {
+			const char *value;
+			int int_val;
+
+			if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
+				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
+
+			if ((int_val = gaim_proxy_info_get_port(proxy_info)) != 0) {
+				char buf[32];
+
+				g_snprintf(buf, sizeof(buf), "%d", int_val);
+
+				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), buf);
+			}
+
+			if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_user_entry), value);
+
+			if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+				gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
+		}
+	}
+	else
+		gtk_widget_hide_all(vbox2);
+
+	/* Connect signals. */
+	g_signal_connect(G_OBJECT(dialog->proxy_dropdown), "changed",
+					 G_CALLBACK(__proxy_type_changed_cb), dialog);
 }
 
 static void
