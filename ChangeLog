@@ -1,5 +1,9 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
+version 0.11.0-pre11:
+	* MSN has the option to notify you of new hotmail
+	  messages
+
 version 0.11.0-pre10 (04/13/2001):
 	* Many, many bug fixes
 	* Can choose to not send away auto-response (thanks phzzzt)

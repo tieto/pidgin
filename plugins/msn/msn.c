@@ -42,6 +42,7 @@
 
 #include "pixmaps/msn_online.xpm"
 #include "pixmaps/msn_away.xpm"
+#include "pixmaps/ok.xpm"
 
 #define MIME_HEADER "MIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\nX-MMS-IM-Format: FN=MS%20Sans%20Serif; EF=; CO=0; CS=0; PF=0\r\n\r\n"
 
@@ -59,6 +60,13 @@
 
 #define MSN_SIGNON_GOT_XFR	0x0001
 #define MSN_SIGNON_SENT_USR	0x0002
+
+#define USEROPT_HOTMAIL		0
+
+struct mod_usr_opt {
+	struct aim_user *user;
+	int opt;
+};
 
 struct msn_ask_add_permit {
 	struct gaim_connection *gc;
@@ -94,6 +102,7 @@ GSList *msn_connections = NULL;
 unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
 static void msn_add_permit(struct gaim_connection *gc, char *who);
+static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata);
 
 void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 {
@@ -171,6 +180,9 @@ struct msn_conn *find_msn_conn_by_trid(time_t trid)
 
 	return NULL;
 }
+
+void msn_des_win(GtkWidget *a, GtkWidget *b);
+void msn_newmail_dialog(const char *text);
 
 static char *msn_name()
 {
@@ -399,6 +411,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		/* We should ignore messages from the user Hotmail */
 		if (!strcasecmp("hotmail", res[1]))
 		{
+			process_hotmail_msg(gc,msgdata);
 			g_strfreev(res);
 			g_free(msgdata);
 			return;
@@ -1111,6 +1124,124 @@ static void msn_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);	
 }
 
+void msn_newmail_dialog(const char *text)
+{
+	GtkWidget *window;
+	GtkWidget *vbox;
+	GtkWidget *label;
+	GtkWidget *hbox;
+	GtkWidget *button;
+
+	window = gtk_window_new(GTK_WINDOW_DIALOG);
+	gtk_window_set_wmclass(GTK_WINDOW(window), "prompt", "Gaim");
+	gtk_window_set_policy(GTK_WINDOW(window), FALSE, TRUE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(window), _("Gaim-MSN: New Mail"));
+	gtk_widget_realize(window);
+	aol_icon(window->window);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_container_add(GTK_CONTAINER(window), vbox);
+
+	label = gtk_label_new(text);
+	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+	button = picture_button(window, _("OK"), ok_xpm);
+	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(msn_des_win), window);
+
+	gtk_widget_show_all(window);
+}
+
+void msn_des_win(GtkWidget *a, GtkWidget *b)
+{
+	gtk_widget_destroy(b);
+}
+
+static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
+{
+	if (m->user) {
+		if (m->user->proto_opt[m->opt][0] == '1')
+			m->user->proto_opt[m->opt][0] = '\0';
+		else
+			strcpy(m->user->proto_opt[m->opt],"1");
+	}
+}
+
+static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
+{
+	g_free(m);
+}
+
+static GtkWidget *msn_protoopt_button(const char *text, struct aim_user *u, int option, GtkWidget *box)
+{
+	GtkWidget *button;
+	struct mod_usr_opt *muo = g_new0(struct mod_usr_opt, 1);
+	button = gtk_check_button_new_with_label(text);
+	if (u) {
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (u->proto_opt[option][0] == '1'));
+	}
+	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
+	muo->user = u;
+	muo->opt = option;
+	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_opt), muo);
+	gtk_signal_connect(GTK_OBJECT(button), "destroy", GTK_SIGNAL_FUNC(free_muo), muo);
+	gtk_widget_show(button);
+	return button;
+}
+
+static void msn_user_opts(GtkWidget *book, struct aim_user *user) {
+	GtkWidget *vbox;
+	GtkWidget *button;
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
+	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
+			gtk_label_new("MSN Options"));
+	gtk_widget_show(vbox);
+	button = msn_protoopt_button("Notify me of new HotMail",user,USEROPT_HOTMAIL,vbox);
+}
+
+/* 
+   Process messages from Hotmail service.  right now we just check for new
+   mail notifications, if the user has checking enabled.
+*/
+
+static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata)
+{
+	gchar *mailnotice;
+	char *mailfrom,*mailsubj,*mailct,*mailp;
+
+	if (gc->user->proto_opt[USEROPT_HOTMAIL][0] != '1') return;
+	mailfrom=NULL; mailsubj=NULL; mailct=NULL; mailp=NULL;
+	mailct = strstr(msgdata,"Content-Type: ");
+	mailp = strstr(mailct,";");
+	if (mailct != NULL && mailp != NULL && mailp > mailct && !strncmp(mailct,"Content-Type: text/x-msmsgsemailnotification",(mailp-mailct)-1))
+	{
+		mailfrom=strstr(mailp,"From: ");
+		mailsubj=strstr(mailp,"Subject: ");
+	}
+	
+	if (mailfrom != NULL && mailsubj != NULL)
+	{
+		mailfrom += 6;
+		mailp=strstr(mailfrom,"\r\n");
+		if (mailp==NULL) return;
+		*mailp = 0;
+		mailsubj += 9;
+		mailp=strstr(mailsubj,"\r\n");
+		if (mailp==NULL) return;
+		*mailp = 0;
+		mailnotice = (gchar *)g_malloc(sizeof(gchar) *(strlen(mailfrom)+strlen(mailsubj)+128));
+		sprintf(mailnotice,"Mail from %s, re: %s",mailfrom,mailsubj);
+		msn_newmail_dialog(mailnotice);
+		g_free(mailnotice);
+	}
+}
+
 static char **msn_list_icon(int uc)
 {
 	if (uc == UC_UNAVAILABLE)
@@ -1129,7 +1260,7 @@ void msn_init(struct prpl *ret)
 	ret->name = msn_name;
 	ret->list_icon = msn_list_icon;
 	ret->buddy_menu = msn_buddy_menu;
-	ret->user_opts = NULL;
+	ret->user_opts = msn_user_opts;
 	ret->login = msn_login;
 	ret->close = msn_close;
 	ret->send_im = msn_send_im;
