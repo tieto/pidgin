@@ -933,7 +933,7 @@ static GMarkupParser blist_parser = {
 };
 
 static gboolean gaim_blist_read(const char *filename) {
-	gchar *contents;
+	gchar *contents = NULL;
 	gsize length;
 	GMarkupParseContext *context;
 	GError *error = NULL;
@@ -947,16 +947,20 @@ static gboolean gaim_blist_read(const char *filename) {
 
 	if(!g_markup_parse_context_parse(context, contents, length, NULL)) {
 		g_markup_parse_context_free(context);
+		g_free(contents);
 		return FALSE;
 	}
 
 	if(!g_markup_parse_context_end_parse(context, NULL)) {
 		debug_printf("error parsing blist\n");
 		g_markup_parse_context_free(context);
+		g_free(contents);
 		return FALSE;
 	}
 
 	g_markup_parse_context_free(context);
+	g_free(contents);
+
 	if(blist_parser_error_occurred)
 		return FALSE;
 
