@@ -270,6 +270,9 @@ if test "$enable_perl" = yes ; then
 		AC_MSG_RESULT(no)
 	fi
 
+	prefix=`eval echo $prefix`
+	PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
+
 	AC_ARG_WITH(perl-lib,
 	[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
 	                           Perl libraries for gaim. Default is site.],
@@ -285,11 +288,9 @@ if test "$enable_perl" = yes ; then
 		else
 			PERL_MM_PARAMS="INSTALLDIRS=perl LIB=$withval"
 		fi
-	],
-	[
-		prefix=`eval echo $prefix`
-		PERL_MM_PARAMS="INSTALLDIRS=perl PREFIX=$prefix"
 	])
+
+	AC_SUBST(PERL_MM_PARAMS)
 
 	AC_MSG_CHECKING(for DynaLoader.a)
 	DYNALOADER_A=`echo $PERL_LDFLAGS | $perlpath -pe 's/^(.* )*([[^ ]]*DynaLoader\.a).*/\2/'`
@@ -323,8 +324,6 @@ if test "$enable_perl" = yes ; then
 	else
 		AC_MSG_RESULT(no)
 	fi
-
-	AC_SUBST(PERL_MM_PARAMS)
 else
 	PERL_CFLAGS=
 	PERL_LIBS=
