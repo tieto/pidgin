@@ -46,6 +46,7 @@
 #if USE_PIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixbuf-loader.h>
+#define SCALE 48
 #endif
 
 /*#include "pixmaps/cancel.xpm"*/
@@ -1598,6 +1599,7 @@ static gboolean redraw_anim(gpointer data)
 	GList *frames;
 	GdkPixbufFrame *frame;
 	GdkPixbuf *buf;
+	GdkPixbuf *scale;
 	GdkPixmap *pm; GdkBitmap *bm;
 	GdkPixmap *src;
 	GdkGC *gc;
@@ -1609,22 +1611,39 @@ static gboolean redraw_anim(gpointer data)
 
 	frames = gdk_pixbuf_animation_get_frames(ir->anim);
 	frame = g_list_nth_data(frames, ir->curframe);
-	buf = gdk_pixbuf_frame_get_pixbuf(frame);
 	switch (gdk_pixbuf_frame_get_action(frame)) {
 		case GDK_PIXBUF_FRAME_RETAIN:
-			gdk_pixbuf_render_pixmap_and_mask(buf, &src, NULL, 0);
+			buf = gdk_pixbuf_frame_get_pixbuf(frame);
+			scale = gdk_pixbuf_scale_simple(buf,
+					gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim),
+					gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim),
+					GDK_INTERP_NEAREST);
+			gdk_pixbuf_render_pixmap_and_mask(scale, &src, NULL, 0);
+			gdk_pixbuf_unref(scale);
 			gtk_pixmap_get(GTK_PIXMAP(ir->pix), &pm, &bm);
 			gc = gdk_gc_new(pm);
 			gdk_draw_pixmap(pm, gc, src, 0, 0,
-					gdk_pixbuf_frame_get_x_offset(frame),
-					gdk_pixbuf_frame_get_y_offset(frame),
+					gdk_pixbuf_frame_get_x_offset(frame) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim),
+					gdk_pixbuf_frame_get_y_offset(frame) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim),
 					-1, -1);
 			gdk_pixmap_unref(src);
 			gtk_widget_queue_draw(ir->pix);
 			gdk_gc_unref(gc);
 			break;
 		case GDK_PIXBUF_FRAME_DISPOSE:
-			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+			buf = gdk_pixbuf_frame_get_pixbuf(frame);
+			scale = gdk_pixbuf_scale_simple(buf,
+					gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim),
+					gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim),
+					GDK_INTERP_NEAREST);
+			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+			gdk_pixbuf_unref(scale);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gdk_pixmap_unref(pm);
 			if (bm)
@@ -1633,7 +1652,14 @@ static gboolean redraw_anim(gpointer data)
 		case GDK_PIXBUF_FRAME_REVERT:
 			frame = frames->data;
 			buf = gdk_pixbuf_frame_get_pixbuf(frame);
-			gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+			scale = gdk_pixbuf_scale_simple(buf,
+					gdk_pixbuf_get_width(buf) * SCALE /
+						gdk_pixbuf_animation_get_width(ir->anim),
+					gdk_pixbuf_get_height(buf) * SCALE /
+						gdk_pixbuf_animation_get_height(ir->anim),
+					GDK_INTERP_NEAREST);
+			gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+			gdk_pixbuf_unref(scale);
 			gtk_pixmap_set(GTK_PIXMAP(ir->pix), pm, bm);
 			gdk_pixmap_unref(pm);
 			if (bm)
@@ -1764,6 +1790,7 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			GdkPixbufLoader *load;
 			GList *frames;
 			GdkPixbuf *buf;
+			GdkPixbuf *scale;
 			GdkPixmap *pm;
 			GdkBitmap *bm;
 
@@ -1812,7 +1839,14 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			if (ir->anim) {
 				frames = gdk_pixbuf_animation_get_frames(ir->anim);
 				buf = gdk_pixbuf_frame_get_pixbuf(frames->data);
-				gdk_pixbuf_render_pixmap_and_mask(buf, &pm, &bm, 0);
+				scale = gdk_pixbuf_scale_simple(buf,
+						gdk_pixbuf_get_width(buf) * SCALE /
+							gdk_pixbuf_animation_get_width(ir->anim),
+						gdk_pixbuf_get_height(buf) * SCALE /
+							gdk_pixbuf_animation_get_height(ir->anim),
+						GDK_INTERP_NEAREST);
+				gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+				gdk_pixbuf_unref(scale);
 
 				if (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1) {
 					int delay =
@@ -1826,15 +1860,17 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 					gdk_pixbuf_loader_close(load);
 					return 1;
 				}
-				gdk_pixbuf_render_pixmap_and_mask(ir->unanim, &pm, &bm, 0);
+				scale = gdk_pixbuf_scale_simple(ir->unanim, SCALE, SCALE,
+						GDK_INTERP_NEAREST);
+				gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 0);
+				gdk_pixbuf_unref(scale);
 			}
 
 			ir->cnv = c;
 			ir->pix = gtk_pixmap_new(pm, bm);
 			gtk_box_pack_start(GTK_BOX(c->bbox), ir->pix, FALSE, FALSE, 5);
 			if (ir->anim && (gdk_pixbuf_animation_get_num_frames(ir->anim) > 1))
-				gtk_widget_set_usize(ir->pix, gdk_pixbuf_animation_get_width(ir->anim),
-							gdk_pixbuf_animation_get_height(ir->anim));
+				gtk_widget_set_usize(ir->pix, SCALE, SCALE);
 			gtk_widget_show(ir->pix);
 			gdk_pixmap_unref(pm);
 			if (bm)
