@@ -5703,7 +5703,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			gchar *away_utf8 = away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+			gchar *away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
 			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
