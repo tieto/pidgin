@@ -591,13 +591,18 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 		} else if (msg) {
 			struct conversation *b;
 			struct jabber_chat *jc;
-			from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
-				g_snprintf(m, sizeof(m), "%s", msg);
+			g_snprintf(m, sizeof(m), "%s", msg);
 			if ((jc = find_existing_chat(GJ_GC(j), p->from)) != NULL) /* whisper */
 				serv_got_chat_in(GJ_GC(j), jc->b->id, p->from->resource, 1, m, time(NULL));
-			else
-				serv_got_im(GJ_GC(j), from, m, 0, time(NULL));
-			g_free(from);
+			else {
+				if (find_conversation(jid_full(p->from)))
+					serv_got_im(GJ_GC(j), jid_full(p->from), m, 0, time(NULL));
+				else {
+					from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
+					serv_got_im(GJ_GC(j), from, m, 0, time(NULL));
+					g_free(from);
+				}
+			}
 		}
 
 		if (msg)
@@ -1765,16 +1770,6 @@ static void jabber_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	gtk_signal_connect(GTK_OBJECT(button), "activate",
 	      		   GTK_SIGNAL_FUNC(jabber_info), who);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
-	gtk_menu_append(GTK_MENU(menu), button);
-	gtk_widget_show(button);
-	
-	status = g_hash_table_lookup(jd->hash, b->name);
-	if (!status || !strcasecmp("Online", status))
-	   return;
-
-	g_snprintf(buf, sizeof buf, "Status: %s",status);
-
-	button = gtk_menu_item_new_with_label(buf);
 	gtk_menu_append(GTK_MENU(menu), button);
 	gtk_widget_show(button);
 }
