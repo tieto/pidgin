@@ -360,7 +360,7 @@ if test "x$enable_nss" = "xyes"; then
 	AC_MSG_WARN([NSS enabled. Disabling GNUTLS.])
 fi
 
-msg_ssl="no"
+msg_ssl="None"
 
 dnl #
 dnl # Check for GNUTLS if it's specified.
@@ -423,7 +423,7 @@ if test "x$enable_gnutls" != "xno"; then
 		if test "x$gnutls_libs" != "xno"; then
 			AC_DEFINE(HAVE_GNUTLS, 1, [Define if you have GNUTLS])
 			AC_DEFINE(HAVE_SSL)
-			msg_ssl="yes (GNUTLS)"
+			msg_ssl="GNUTLS"
 			GNUTLS_LIBS="$with_gnutls_libs -lgnutls -lgcrypt"
 
 			enable_gnutls="yes"
@@ -490,7 +490,7 @@ if test "x$enable_nss" = "xyes" -o "x$enable_nss" = "xstatic" -o \
 			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
 			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
 
-			msg_ssl="yes (Mozilla NSS)"
+			msg_ssl="Mozilla NSS"
 			enable_nss="yes"
 		else
 			nss_manual_check="yes"
@@ -946,6 +946,7 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo UI Library.................... : GTK 2.x
+echo SSL Library................... : $msg_ssl
 echo
 echo Build with Plugin support..... : $enable_plugins
 echo Build with Perl support....... : $enable_perl
@@ -954,7 +955,6 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
-echo Build with SSL support........ : $msg_ssl
 echo
 echo Use XScreenSaver Extension.... : $enable_xss
 echo Use X Session Management...... : $enable_sm
