@@ -323,6 +323,8 @@ if test "$enable_perl" = yes ; then
 	else
 		AC_MSG_RESULT(no)
 	fi
+
+	AC_SUBST(PERL_MM_PARAMS)
 else
 	PERL_CFLAGS=
 	PERL_LIBS=
