@@ -3806,7 +3806,7 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	GaimConversation *focus_conv;
 	GtkWidget *pane = NULL;
 	GtkWidget *tab_cont;
-	GtkWidget *tabby;
+	GtkWidget *tabby, *menu_tabby;
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
@@ -3932,6 +3932,7 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
+	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, 5);
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
@@ -3948,10 +3949,12 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
+	gtkconv->menu_icon = gtk_image_new();
 	update_tab_icon(conv);
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
+	gtkconv->menu_label = gtk_label_new(gaim_conversation_get_title(conv));
 #if 0
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
 	gtk_misc_set_padding(GTK_MISC(gtkconv->tab_label), 4, 0);
@@ -3960,23 +3963,29 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 
 	/* Pack it all together. */
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs"))
+	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_icon, FALSE, FALSE, 0);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/icons_on_tabs")) {
 		gtk_widget_show_all(gtkconv->icon);
+		gtk_widget_show_all(gtkconv->menu_icon);
+	}
 
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_label, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->tab_label);
+	gtk_widget_show(gtkconv->menu_label);
+	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs"))
 		gtk_widget_show_all(gtkconv->close);
 
 	gtk_widget_show(tabby);
+	gtk_widget_show(menu_tabby);
 
 
 	/* Add this pane to the conversations notebook. */
 	gtk_notebook_append_page(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby);
-	gtk_notebook_set_menu_label_text(GTK_NOTEBOOK(gtkwin->notebook), tab_cont,
-									 gaim_conversation_get_title(conv));
+	gtk_notebook_set_menu_label(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, menu_tabby);
 
 	gtk_widget_show(tab_cont);
 
@@ -4845,7 +4854,8 @@ gaim_gtkconv_set_title(GaimConversation *conv, const char *title)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
-
+	gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
+	
 	if(conv == gaim_window_get_active_conversation(win))
 		gtk_window_set_title(GTK_WINDOW(gtkwin->window), title);
 }
@@ -4868,6 +4878,9 @@ update_tab_icon(GaimConversation *conv)
 			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon),
 					gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
 						GAIM_STATUS_ICON_SMALL));
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon),
+					gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+						GAIM_STATUS_ICON_SMALL));
 		} else {
 			GdkPixbuf *pixbuf, *scale;
 			pixbuf = create_prpl_icon(account);
@@ -4876,11 +4889,13 @@ update_tab_icon(GaimConversation *conv)
 				scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
 
 				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
+				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), scale);
 
 				g_object_unref(pixbuf);
 				g_object_unref(scale);
 			} else {
 				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
+				gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), NULL);
 			}
 		}
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
@@ -4891,11 +4906,13 @@ update_tab_icon(GaimConversation *conv)
 			scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
 
 			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), scale);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), scale);
 
 			g_object_unref(pixbuf);
 			g_object_unref(scale);
 		} else {
 			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), NULL);
+			gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), NULL);
 		}
 	}
 }
@@ -5687,9 +5704,12 @@ icons_on_tabs_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		if (value) {
 			update_tab_icon(conv);
 			gtk_widget_show(gtkconv->icon);
+			gtk_widget_show(gtkconv->menu_icon);
 		}
-		else
+		else {
 			gtk_widget_hide(gtkconv->icon);
+			gtk_widget_hide(gtkconv->menu_icon);
+		}
 	}
 }
 

@@ -135,6 +135,7 @@ struct _GaimGtkConversation
 
 	GtkWidget *tab_cont;
 	GtkWidget *tabby;
+	GtkWidget *menu_tabby;
 
 	GtkWidget *imhtml;
 	GtkTextBuffer *entry_buffer;
@@ -145,6 +146,8 @@ struct _GaimGtkConversation
 	GtkWidget *close;
 	GtkWidget *icon;
 	GtkWidget *tab_label;
+	GtkWidget *menu_icon;
+	GtkWidget *menu_label;
 	GtkSizeGroup *sg;
 
 	GtkWidget *bbox;
