@@ -1029,7 +1029,11 @@ static void set_defaults()
 	    OPT_SOUND_ARTSC |
 	    OPT_SOUND_ESD;
 
+#ifdef USE_SCREENSAVER
 	report_idle = IDLE_SCREENSAVER;
+#else
+	report_idle = IDLE_GAIM;
+#endif
 	web_browser = BROWSER_NETSCAPE;
 	g_snprintf(web_command, sizeof(web_command), "xterm -e lynx \"%%s\"");
 
