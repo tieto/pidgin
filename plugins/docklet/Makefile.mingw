@@ -8,8 +8,8 @@
 # PATHS
 #
 
-GTK_TOP :=		../../../../win32-dev/gtk_2_0
-GAIM_TOP :=		../../..
+GTK_TOP :=		../../../win32-dev/gtk_2_0
+GAIM_TOP :=		../..
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
