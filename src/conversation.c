@@ -1795,8 +1795,8 @@ gaim_conv_chat_set_topic(GaimConvChat *chat, const char *who, const char *topic)
 {
 	g_return_if_fail(chat != NULL);
 
-	if (chat->who   != NULL) free(chat->who);
-	if (chat->topic != NULL) free(chat->topic);
+	if (chat->who   != NULL) g_free(chat->who);
+	if (chat->topic != NULL) g_free(chat->topic);
 
 	chat->who   = (who   == NULL ? NULL : g_strdup(who));
 	chat->topic = (topic == NULL ? NULL : g_strdup(topic));

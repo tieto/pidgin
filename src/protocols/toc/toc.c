@@ -309,7 +309,7 @@ char *escape_message(const char *msg)
 		}
 
 	/* Allocate a string */
-	ret = (char *)malloc((j+1) * sizeof(char));
+	ret = (char *)g_malloc((j+1) * sizeof(char));
 
 	/* Copy the string */
 	for (i=0, j=0; msg[i]; i++)
@@ -436,7 +436,7 @@ static int sflap_send(GaimConnection *gc, const char *buf, int olen, int type)
 
 	ret = toc_write(tdt->toc_fd, obuf, slen);
 	free(obuf);
-	free(escaped);
+	g_free(escaped);
 
 	return ret;
 }

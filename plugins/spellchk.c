@@ -107,7 +107,7 @@ static void load_conf() {
 
 	buf = g_build_filename(gaim_user_dir(), "dict", NULL);
 	g_file_get_contents(buf, &ibuf, &size, NULL);
-	free(buf);
+	g_free(buf);
 	if(!ibuf) {
 		ibuf = g_strdup(defaultconf);
 		size = strlen(defaultconf);
@@ -133,7 +133,7 @@ static void load_conf() {
 			}
 		}
 	}
-	free(ibuf);
+	g_free(ibuf);
 }
 
 

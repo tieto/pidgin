@@ -592,7 +592,7 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		if (*buffer != '\0')
 			g_hash_table_insert(data->keys, data->tag, buffer);
 		else
-			free(buffer);
+			g_free(buffer);
 	}
 
 	data->tag = NULL;

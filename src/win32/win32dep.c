@@ -359,18 +359,18 @@ char* wgaim_install_dir(void) {
 	if( hmod == 0 ) {
 		buf = g_win32_error_message( GetLastError() );
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleHandle error: %s\n", buf);
-		free(buf);
+		g_free(buf);
 		return NULL;
 	}
 	if(GetModuleFileName( hmod, (char*)&install_dir, MAXPATHLEN ) == 0) {
 		buf = g_win32_error_message( GetLastError() );
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleFileName error: %s\n", buf);
-		free(buf);
+		g_free(buf);
 		return NULL;
 	}
 	buf = g_path_get_dirname( install_dir );
 	strcpy( (char*)&install_dir, buf );
-	free( buf );
+	g_free( buf );
 
 	return (char*)&install_dir;
 }
