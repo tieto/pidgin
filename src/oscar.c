@@ -2597,7 +2597,7 @@ static void oscar_set_away(struct gaim_connection *g, char *state, char *message
 	g_snprintf(info, sizeof(info), "%s", g->user->user_info);
 	if (message)
 		g_snprintf(away, sizeof(away), "%s", message);
-	aim_bos_setprofile(odata->sess, odata->conn, info, away, gaim_caps);
+	aim_bos_setprofile(odata->sess, odata->conn, info, message ? away : NULL, gaim_caps);
 	if (g->away)
 		g_free (g->away);
 	g->away = NULL;
