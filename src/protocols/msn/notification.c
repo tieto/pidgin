@@ -1200,6 +1200,9 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 			user = msn_user_new(session, passport, friend);
 
+			/* Ensure we have a friendly name set. */
+			msn_user_set_name(user, friend);
+
 			tokens = g_strsplit(group_nums, ",", -1);
 
 			gaim_debug_misc("msn", "Fetching group IDs from '%s'\n",
@@ -1259,6 +1262,9 @@ lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 				pa       = g_new0(MsnPermitAdd, 1);
 				pa->user = msn_user_new(session, passport, friend);
 				pa->gc   = gc;
+
+				/* Ensure we have a friendly name set. */
+				msn_user_set_name(pa->user, friend);
 
 				g_snprintf(msg, sizeof(msg),
 						   _("The user %s (%s) wants to add you to their "
