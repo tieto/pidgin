@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 4787 2003-02-03 13:57:25Z lschiere $
+ * $Id: gg.c 4794 2003-02-04 15:46:05Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -779,6 +779,10 @@ static void import_buddies_server_results(struct gaim_connection *gc, gchar *web
 
 	/* Parse array of Buddies List */
 	for (i = 0; users_tbl[i] != NULL; i++) {
+		if (strlen(users_tbl[i])==0) {
+			debug_printf("import_buddies_server_results: users_tbl[i] is empty\n");
+			break;
+		}
 		gchar **data_tbl;
 		gchar *name, *show;
 
@@ -844,7 +848,7 @@ static void password_change_server_results(struct gaim_connection *gc, gchar *we
 		return;
 	}
 
-	debug_printf("delete_buddies_server_results: webdata [%s]\n", webdata);
+	debug_printf("password_change_server_results: webdata [%s]\n", webdata);
 	do_error_dialog(_("Password couldn't be changed"), NULL, GAIM_ERROR);
 }
 
@@ -1014,10 +1018,11 @@ static void export_buddies_server(struct gaim_connection *gc)
 	while (gr) {
 		struct group *g = gr->data;
 		GSList *m = g->members;
+		int num_added=0;
 		while (m) {
 			struct buddy *b = m->data;
 
-			if(b->account->gc == gc) {
+			if(b->account == gc->account) {
 				gchar *newdata;
 				/* GG Number */
 				gchar *name = gg_urlencode(b->name);
@@ -1027,9 +1032,15 @@ static void export_buddies_server(struct gaim_connection *gc)
 				gchar *gname = gg_urlencode(g->name);
 
 				ptr = he->request;
-				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s\r\n",
+				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s",
 						show, show, show, show, "", gname, name);
-				he->request = g_strconcat(ptr, newdata, NULL);
+
+				if(num_added > 0)
+					he->request = g_strconcat(ptr, "%0d%0a", newdata, NULL);
+				else
+					he->request = g_strconcat(ptr, newdata, NULL);
+
+				num_added++;
 
 				g_free(newdata);
 				g_free(ptr);
