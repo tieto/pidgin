@@ -568,9 +568,10 @@ static GaimAccount *gaimrc_read_user(FILE *f)
 	if (strcmp(p->option, "user_opts"))
 		return account;
 
-	/* TODO: Handle OPT_ACCT_AUTO */
-
 	flags = atoi(p->value[0]);
+
+	if (flags & OPT_ACCT_AUTO)
+		gaim_account_set_auto_login(account, GAIM_GTK_UI, TRUE);
 
 	if (flags & OPT_ACCT_MAIL_CHECK)
 		gaim_account_set_check_mail(account, TRUE);
@@ -713,69 +714,53 @@ struct replace {
 	int new;
 };
 
-static struct replace gen_replace[] = {
-{ /* OPT_GEN_ENTER_SENDS */		0x00000001, &convo_options, OPT_CONVO_ENTER_SENDS },
-{ /* OPT_GEN_POPUP_WINDOWS */		0x00000020,    &im_options, OPT_IM_POPUP },
-{ /* OPT_GEN_SEND_LINKS */		0x00000040, &convo_options, OPT_CONVO_SEND_LINKS },
-{ /* OPT_GEN_DEBUG */			0x00000100,  &misc_options, OPT_MISC_DEBUG },
-{ /* OPT_GEN_BROWSER_POPUP */		0x00000800,  &misc_options, OPT_MISC_BROWSER_POPUP },
-{ /* OPT_GEN_CHECK_SPELLING */		0x00008000, &convo_options, OPT_CONVO_CHECK_SPELLING },
-{ /* OPT_GEN_POPUP_CHAT */		0x00010000,  &chat_options, OPT_CHAT_POPUP },
-{ /* OPT_GEN_BACK_ON_IM */		0x00020000,  &away_options, OPT_AWAY_BACK_ON_IM },
-{ /* OPT_GEN_CTL_CHARS */		0x00080000, &convo_options, OPT_CONVO_CTL_CHARS },
-#if 0
-{ /* OPT_GEN_TOMBSTONE */		0x00100000,  &away_options, OPT_AWAY_TOMBSTONE },
-#endif
-{ /* OPT_GEN_CTL_SMILEYS */		0x00200000, &convo_options, OPT_CONVO_CTL_SMILEYS },
-{ /* OPT_GEN_AUTO_AWAY */		0x00800000,  &away_options, OPT_AWAY_AUTO },
-{ /* OPT_GEN_ESC_CAN_CLOSE */		0x01000000, &convo_options, OPT_CONVO_ESC_CAN_CLOSE },
-{ /* OPT_GEN_CTL_ENTER */		0x02000000, &convo_options, OPT_CONVO_CTL_ENTER },
-{ /* OPT_GEN_F2_TOGGLES */		0x04000000, &convo_options, OPT_CONVO_F2_TOGGLES },
-{ /* OPT_GEN_NO_AUTO_RESP */		0x08000000,  &away_options, OPT_AWAY_NO_AUTO_RESP },
-{ /* OPT_GEN_QUEUE_WHEN_AWAY */		0x10000000,  &away_options, OPT_AWAY_QUEUE },
-{ 0,NULL,0 }
-};
+#define OPT_GEN_ENTER_SENDS     0x00000001
+#define OPT_GEN_LOG_ALL         0x00000004
+#define OPT_GEN_STRIP_HTML      0x00000008
+#define OPT_GEN_POPUP_WINDOWS   0x00000020
+#define OPT_GEN_SEND_LINKS      0x00000040
+#define OPT_GEN_DEBUG           0x00000100
+#define OPT_GEN_BROWSER_POPUP   0x00000800
+#define OPT_GEN_CHECK_SPELLING  0x00008000
+#define OPT_GEN_POPUP_CHAT      0x00010000
+#define OPT_GEN_BACK_ON_IM      0x00020000
+#define OPT_GEN_CTL_CHARS       0x00080000
+#define OPT_GEN_CTL_SMILEYS     0x00200000
+#define OPT_GEN_AUTO_AWAY       0x00800000
+#define OPT_GEN_ESC_CAN_CLOSE   0x01000000
+#define OPT_GEN_CTL_ENTER       0x02000000
+#define OPT_GEN_F2_TOGGLES      0x04000000
+#define OPT_GEN_NO_AUTO_RESP    0x08000000
+#define OPT_GEN_QUEUE_WHEN_AWAY 0x10000000
 
-#define OPT_GEN_LOG_ALL		0x00000004
-#define OPT_GEN_STRIP_HTML	0x00000008
-
-static struct replace disp_replace[] = {
-{ /* OPT_DISP_SHOW_TIME */		0x00000001, &convo_options, OPT_CONVO_SHOW_TIME },
-{ /* OPT_DISP_SHOW_GRPNUM */		0x00000002, &blist_options, OPT_BLIST_SHOW_GRPNUM },
-{ /* OPT_DISP_SHOW_PIXMAPS */		0x00000004, &blist_options, OPT_BLIST_SHOW_PIXMAPS },
-{ /* OPT_DISP_SHOW_IDLETIME */		0x00000008, &blist_options, OPT_BLIST_SHOW_IDLETIME },
-{ /* OPT_DISP_SHOW_BUTTON_XPM */	0x00000010, &blist_options, OPT_BLIST_SHOW_BUTTON_XPM },
-{ /* OPT_DISP_IGNORE_COLOUR */		0x00000020, &convo_options, OPT_CONVO_IGNORE_COLOUR },
-{ /* OPT_DISP_SHOW_LOGON */		0x00000040,    &im_options, OPT_IM_LOGON },
-{ /* OPT_DISP_SHOW_SMILEY */		0x00000100, &convo_options, OPT_CONVO_SHOW_SMILEY },
-{ /* OPT_DISP_COOL_LOOK */		0x00000400, &misc_options, 0},
-{ /* OPT_DISP_CHAT_LOGON */		0x00000800,  &chat_options, OPT_CHAT_LOGON },
-{ /* OPT_DISP_NO_BUTTONS */		0x00002000, &blist_options, OPT_BLIST_NO_BUTTON_TEXT },
-{ /* OPT_DISP_CONV_BUTTON_TEXT */	0x00004000,    &im_options, OPT_IM_BUTTON_TEXT },
-{ /* OPT_DISP_CHAT_BUTTON_TEXT */	0x00008000,  &chat_options, OPT_CHAT_BUTTON_TEXT },
-{ /* OPT_DISP_NO_MT_GRP */		0x00040000, &blist_options, OPT_BLIST_NO_MT_GRP },
-{ /* OPT_DISP_CONV_BUTTON_XPM */	0x00080000,    &im_options, OPT_IM_BUTTON_XPM },
-{ /* OPT_DISP_CHAT_BUTTON_XPM */	0x00100000,  &chat_options, OPT_CHAT_BUTTON_XPM },
-{ /* OPT_DISP_SHOW_WARN */		0x00200000, &blist_options, OPT_BLIST_SHOW_WARN },
-{ /* OPT_DISP_IGNORE_FONTS */		0x00400000, &convo_options, OPT_CONVO_IGNORE_FONTS },
-{ /* OPT_DISP_IGNORE_SIZES */		0x00800000, &convo_options, OPT_CONVO_IGNORE_SIZES },
-{ /* OPT_DISP_ONE_WINDOW */		0x01000000,    &im_options, OPT_IM_ONE_WINDOW },
-{ /* OPT_DISP_ONE_CHAT_WINDOW */	0x02000000,  &chat_options, OPT_CHAT_ONE_WINDOW },
-{ /* OPT_DISP_CONV_SIDE_TAB */		0x04000000,    &im_options, OPT_IM_SIDE_TAB },
-{ /* OPT_DISP_CONV_BR_TAB */		0x08000000,    &im_options, OPT_IM_BR_TAB },
-{ /* OPT_DISP_CHAT_SIDE_TAB */		0x10000000,  &chat_options, OPT_CHAT_SIDE_TAB },
-{ /* OPT_DISP_CHAT_BR_TAB */		0x20000000,  &chat_options, OPT_CHAT_BR_TAB },
-{ 0,NULL,0 }
-};
+#define OPT_DISP_SHOW_TIME        0x00000001
+#define OPT_DISP_SHOW_GRPNUM      0x00000002
+#define OPT_DISP_SHOW_IDLETIME    0x00000008
+#define OPT_DISP_SHOW_BUTTON_XPM  0x00000010
+#define OPT_DISP_IGNORE_COLOUR    0x00000020
+#define OPT_DISP_SHOW_LOGON       0x00000040
+#define OPT_DISP_SHOW_SMILEY      0x00000100
+#define OPT_DISP_CHAT_LOGON       0x00000800
+#define OPT_DISP_NO_BUTTONS       0x00002000
+#define OPT_DISP_CONV_BUTTON_TEXT 0x00004000
+#define OPT_DISP_CHAT_BUTTON_TEXT 0x00008000
+#define OPT_DISP_NO_MT_GRP        0x00040000
+#define OPT_DISP_CONV_BUTTON_XPM  0x00080000
+#define OPT_DISP_CHAT_BUTTON_XPM  0x00100000
+#define OPT_DISP_SHOW_WARN        0x00200000
+#define OPT_DISP_IGNORE_FONTS     0x00400000
+#define OPT_DISP_IGNORE_SIZES     0x00800000
+#define OPT_DISP_ONE_CHAT_WINDOW  0x02000000
+#define OPT_DISP_CONV_SIDE_TAB    0x04000000
+#define OPT_DISP_CONV_BR_TAB      0x08000000
 
 static void gaimrc_read_options(FILE *f)
 {
 	char buf[2048];
 	struct parse parse_buffer;
 	struct parse *p;
-	gboolean read_logging = FALSE, read_general = FALSE, read_display = FALSE;
+	gboolean read_logging = FALSE, read_general = FALSE;
 	int general_options = 0, display_options = 0;
-	int i;
 
 	buf[0] = 0;
 
@@ -792,9 +777,82 @@ static void gaimrc_read_options(FILE *f)
 		if (!strcmp(p->option, "general_options")) {
 			general_options = atoi(p->value[0]);
 			read_general = TRUE;
+			gaim_prefs_set_bool("/gaim/gtk/conversations/enter_sends",
+					general_options & OPT_GEN_ENTER_SENDS);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/im/raise_on_events",
+					general_options & OPT_GEN_POPUP_WINDOWS);
+			gaim_prefs_set_bool("/core/conversations/send_urls_as_links",
+					general_options & OPT_GEN_SEND_LINKS);
+			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
+					general_options & OPT_GEN_DEBUG);
+			gaim_prefs_set_bool("/gaim/gtk/browsers/new_window",
+					general_options & OPT_GEN_BROWSER_POPUP);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/spellecheck",
+					general_options & OPT_GEN_CHECK_SPELLING);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/raise_on_events",
+					general_options & OPT_GEN_POPUP_CHAT);
+			gaim_prefs_set_bool("/core/conversations/away_back_on_send",
+					general_options & OPT_GEN_BACK_ON_IM);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/html_shortcuts",
+					general_options & OPT_GEN_CTL_CHARS);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/smiley_shortcuts",
+					general_options & OPT_GEN_CTL_SMILEYS);
+			gaim_prefs_set_bool("/core/away/away_when_idle",
+					general_options & OPT_GEN_AUTO_AWAY);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/escape_closes",
+					general_options & OPT_GEN_ESC_CAN_CLOSE);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_enter_sends",
+					general_options & OPT_GEN_CTL_ENTER);
+			gaim_prefs_set_bool("/core/away/auto_response/enabled",
+					!(general_options & OPT_GEN_NO_AUTO_RESP));
+			gaim_prefs_set_bool("/gaim/gtk/away/queu_messages",
+					general_options & OPT_AWAY_QUEUE);
 		} else if (!strcmp(p->option, "display_options")) {
 			display_options = atoi(p->value[0]);
-			read_display = TRUE;
+			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
+					display_options & OPT_DISP_SHOW_TIME);
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
+					display_options & OPT_DISP_SHOW_GRPNUM);
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
+					display_options & OPT_DISP_SHOW_IDLETIME);
+			gaim_prefs_set_int("/gaim/gtk/blist/button_style",
+					((display_options & OPT_DISP_SHOW_BUTTON_XPM)
+					 ? ((display_options & OPT_DISP_NO_BUTTONS)
+						 ? GAIM_BUTTON_IMAGE : GAIM_BUTTON_TEXT_IMAGE)
+					 : ((display_options & OPT_DISP_NO_BUTTONS)
+						 ? GAIM_BUTTON_NONE : GAIM_BUTTON_TEXT)));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
+					display_options & OPT_DISP_IGNORE_COLOUR);
+			gaim_prefs_set_bool("/core/conversations/im/show_login",
+					display_options & OPT_DISP_SHOW_LOGON);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
+					display_options & OPT_DISP_SHOW_SMILEY);
+			gaim_prefs_set_bool("/core/conversations/chat/show_join",
+					display_options & OPT_DISP_CHAT_LOGON);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/im/button_type",
+					((display_options & OPT_DISP_CONV_BUTTON_XPM)
+					 ? ((display_options & OPT_DISP_CONV_BUTTON_TEXT)
+						 ? GAIM_BUTTON_TEXT_IMAGE : GAIM_BUTTON_IMAGE)
+					 : ((display_options & OPT_DISP_CONV_BUTTON_TEXT)
+						 ? GAIM_BUTTON_TEXT : GAIM_BUTTON_NONE)));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/chat/button_type",
+					((display_options & OPT_DISP_CHAT_BUTTON_XPM)
+					 ? ((display_options & OPT_DISP_CHAT_BUTTON_TEXT)
+						 ? GAIM_BUTTON_TEXT_IMAGE : GAIM_BUTTON_IMAGE)
+					 : ((display_options & OPT_DISP_CHAT_BUTTON_TEXT)
+						 ? GAIM_BUTTON_TEXT : GAIM_BUTTON_NONE)));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_warning_level",
+					display_options & OPT_DISP_SHOW_WARN);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
+					display_options & OPT_DISP_IGNORE_FONTS);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",
+					display_options & OPT_DISP_IGNORE_SIZES);
+			gaim_prefs_set_int("/gaim/gtk/conversations/tab_side",
+					((display_options & OPT_DISP_CONV_SIDE_TAB)
+					 ? ((display_options & OPT_DISP_CONV_BR_TAB)
+						 ? GTK_POS_RIGHT : GTK_POS_LEFT)
+					 : ((display_options & OPT_DISP_CONV_BR_TAB)
+						 ? GTK_POS_BOTTOM : GTK_POS_TOP)));
 		} else if (!strcmp(p->option, "misc_options")) {
 			misc_options = atoi(p->value[0]);
 			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
@@ -1035,7 +1093,6 @@ static void gaimrc_read_options(FILE *f)
 					break;
 			}
 		} else if (!strcmp(p->option, "web_browser")) {
-			/* XXX: someone check and make sure I did these right */
 			switch(atoi(p->value[0])) {
 				case BROWSER_NETSCAPE:
 					gaim_prefs_set_string("/gaim/gtk/browsers/browser",
@@ -1100,20 +1157,14 @@ static void gaimrc_read_options(FILE *f)
 	if (read_general) {
 		if (!read_logging) {
 			logging_options = 0;
-			if (general_options & OPT_GEN_LOG_ALL)
-				logging_options |= OPT_LOG_CONVOS | OPT_LOG_CHATS;
-			if (general_options & OPT_GEN_STRIP_HTML)
-				logging_options |= OPT_LOG_STRIP_HTML;
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
+								general_options & OPT_GEN_LOG_ALL);
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
+								general_options & OPT_GEN_LOG_ALL);
+			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
+								general_options & OPT_GEN_STRIP_HTML);
 		}
-		for (i = 0; gen_replace[i].val; i++)
-			if (general_options & gen_replace[i].old)
-				*gen_replace[i].val |= gen_replace[i].new;
 	}
-
-	if (read_display)
-		for (i = 0; disp_replace[i].val; i++)
-			if (display_options & disp_replace[i].old)
-				*disp_replace[i].val |= disp_replace[i].new;
 
 	if (misc_options & OPT_MISC_BUDDY_TICKER) {
 		if (gaim_plugins_enabled()) {

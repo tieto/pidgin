@@ -348,7 +348,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gaim_account_get_remember_password(dialog->account));
 
 		gtk_toggle_button_set_active(
-				GTK_TOGGLE_BUTTON(dialog->auto_login_check), FALSE);
+				GTK_TOGGLE_BUTTON(dialog->auto_login_check),
+				gaim_account_get_auto_login(dialog->account, GAIM_GTK_UI));
 	}
 
 	if (dialog->prpl_info != NULL &&
@@ -832,6 +833,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_check_mail(dialog->account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
+
+	/* Auto Login */
+	gaim_account_set_auto_login(dialog->account, GAIM_GTK_UI,
+			gtk_toggle_button_get_active(
+				GTK_TOGGLE_BUTTON(dialog->auto_login_check)));
 
 	/* TODO: Do something about auto-login. */
 
