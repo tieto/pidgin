@@ -60,7 +60,7 @@ void show_about(GtkWidget *w, void *null)
 		g_snprintf(abouttitle, sizeof(abouttitle), "About GAIM v%s", VERSION);
 		gtk_window_set_title(GTK_WINDOW(about), abouttitle);
 		gtk_container_border_width(GTK_CONTAINER(about), 2);
-		gtk_widget_set_usize(about, 455, 370);
+		gtk_widget_set_usize(about, 510, 370);
 
 		gtk_widget_show(about);
         	aol_icon(about->window);
