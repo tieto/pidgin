@@ -53,7 +53,7 @@
 #include "pixmaps/protocols/msn/msn_thumbdown.xpm"
 #include "pixmaps/protocols/msn/msn_thumbup.xpm"
 #include "pixmaps/protocols/msn/msn_weird.xpm"
-#include "pixmaps/protocols/msn/msn_embaressed.xpm"
+#include "pixmaps/protocols/msn/msn_embarrassed.xpm"
 #include "pixmaps/protocols/msn/msn_angel.xpm"
 #include "pixmaps/protocols/msn/msn_film.xpm"
 #include "pixmaps/protocols/msn/msn_dog.xpm"
