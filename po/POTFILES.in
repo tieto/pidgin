@@ -6,7 +6,7 @@ src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/dialogs.c
-src/gtkhtml.c
+src/gtkimhtml.c
 src/html.c
 src/multi.c
 src/oscar.c

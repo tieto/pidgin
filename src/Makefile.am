@@ -10,7 +10,7 @@ gaim_applet_SOURCES =	about.c \
 			conversation.c \
 			dialogs.c \
 			gaimrc.c \
-			gtkhtml.c \
+			gtkimhtml.c \
 			gtkspell.c \
 			gtkticker.c \
 			html.c \
@@ -42,7 +42,7 @@ gaim_SOURCES =	about.c \
 		conversation.c \
 		dialogs.c \
 		gaimrc.c \
-		gtkhtml.c \
+		gtkimhtml.c \
 		gtkspell.c \
 		gtkticker.c \
 		html.c \
@@ -86,7 +86,7 @@ EXTRA_DIST =	applet.h \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
-		gtkhtml.h \
+		gtkimhtml.h \
 		gtkspell.h \
 		gtkticker.h \
 		multi.h \

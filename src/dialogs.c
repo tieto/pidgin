@@ -39,7 +39,7 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
-#include "gtkhtml.h"
+#include "gtkimhtml.h"
 #include "prpl.h"
 
 #include "pixmaps/gnome_preferences.xpm"
@@ -56,7 +56,9 @@
 #include "pixmaps/cry.xpm"
 #include "pixmaps/embarrassed.xpm"
 #include "pixmaps/kiss.xpm"
+#include "pixmaps/luke03.xpm"
 #include "pixmaps/moneymouth.xpm"
+#include "pixmaps/oneeye.xpm"
 #include "pixmaps/sad.xpm"
 #include "pixmaps/scream.xpm"
 #include "pixmaps/smile.xpm"
@@ -65,6 +67,11 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
+
+#include "pixmaps/aol_icon.xpm"
+#include "pixmaps/free_icon.xpm"
+#include "pixmaps/dt_icon.xpm"
+#include "pixmaps/admin_icon.xpm"
 
 #define DEFAULT_FONT_NAME "-adobe-helvetica-medium-r-normal--12-120-75-75-p-67-iso8859-1"
 
@@ -1756,6 +1763,19 @@ static void info_dlg_free(GtkWidget *b, struct info_dlg *d) {
 	g_free(d);
 }
 
+gchar **info_img_handler(gchar *url)
+{
+	if (!g_strcasecmp(url, "free_icon.gif"))
+		return free_icon_xpm;
+	if (!g_strcasecmp(url, "aol_icon.gif"))
+		return aol_icon_xpm;
+	if (!g_strcasecmp(url, "dt_icon.gif"))
+		return dt_icon_xpm;
+	if (!g_strcasecmp(url, "admin_icon.gif"))
+		return admin_icon_xpm;
+	return NULL;
+}
+
 void g_show_info_text(char *info)
 {
         GtkWidget *ok;
@@ -1763,6 +1783,7 @@ void g_show_info_text(char *info)
 	GtkWidget *text;
         GtkWidget *bbox;
         GtkWidget *sw;
+	gint options = 0;
 
         struct info_dlg *b = g_new0(struct info_dlg, 1);
 
@@ -1790,13 +1811,20 @@ void g_show_info_text(char *info)
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
 					GTK_POLICY_NEVER,
 					GTK_POLICY_ALWAYS);
-	text = gtk_html_new(NULL, NULL);
+	text = gtk_imhtml_new(NULL, NULL);
 	b->text = text;
 	gtk_container_add(GTK_CONTAINER(sw), text);
 
-	GTK_HTML (text)->hadj->step_increment = 10.0;
-	GTK_HTML (text)->vadj->step_increment = 10.0;
+	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
+	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	gtk_widget_set_usize(sw, 300, 250);
+	gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
+	if (!(display_options & OPT_DISP_SHOW_SMILEY))
+		gtk_imhtml_show_smileys(GTK_IMHTML(b->text), FALSE);
+	gtk_signal_connect(GTK_OBJECT(text), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
@@ -1805,11 +1833,16 @@ void g_show_info_text(char *info)
 	aol_icon(b->window->window);
 	gtk_widget_show_all(b->window);
 
-	if (display_options & OPT_DISP_SHOW_SMILEY)
-		write_html_with_smileys(b->window, b->text, info);
-	else
-		gtk_html_append_text(GTK_HTML(b->text), info, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
-	gtk_html_append_text(GTK_HTML(b->text), "</BODY>", 0);
+	if (display_options & OPT_DISP_IGNORE_COLOUR)
+		options ^= GTK_IMHTML_NO_COLOURS;
+	if (display_options & OPT_DISP_IGNORE_FONTS)
+		options ^= GTK_IMHTML_NO_FONTS;
+	options ^= GTK_IMHTML_NO_COMMENTS;
+	options ^= GTK_IMHTML_NO_TITLE;
+	options ^= GTK_IMHTML_NO_NEWLINE;
+	options ^= GTK_IMHTML_NO_SCROLL;
+	gtk_imhtml_append_text(GTK_IMHTML(b->text), info, options);
+	gtk_imhtml_append_text(GTK_IMHTML(b->text), "<BR>", 0);
 
 	gtk_adjustment_set_value(gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(sw)), 0);
 }

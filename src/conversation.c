@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <gtk/gtk.h>
-#include "gtkhtml.h"
+#include "gtkimhtml.h"
 #include <gdk/gdkkeysyms.h>
 #include "convo.h"
 #include "gtkspell.h"
@@ -52,22 +52,6 @@
 #include "pixmaps/fgcolor.xpm"
 #include "pixmaps/bgcolor.xpm"
 
-#include "pixmaps/angel.xpm"
-#include "pixmaps/bigsmile.xpm"
-#include "pixmaps/burp.xpm"
-#include "pixmaps/crossedlips.xpm"
-#include "pixmaps/cry.xpm"
-#include "pixmaps/embarrassed.xpm"
-#include "pixmaps/kiss.xpm"
-#include "pixmaps/moneymouth.xpm"
-#include "pixmaps/sad.xpm"
-#include "pixmaps/scream.xpm"
-#include "pixmaps/smile.xpm"
-#include "pixmaps/smile8.xpm"
-#include "pixmaps/think.xpm"
-#include "pixmaps/tongue.xpm"
-#include "pixmaps/wink.xpm"
-#include "pixmaps/yell.xpm"
 #include "pixmaps/luke03.xpm"
 #include "pixmaps/oneeye.xpm"
 
@@ -485,6 +469,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->window, c);
 		}
+	} else if (event->keyval == GDK_F2) {
+		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !(GTK_IMHTML(c->text))->comments);
 	} else if (event->keyval == GDK_Return) {
 		if (!(event->state & GDK_SHIFT_MASK)
 		    && (general_options & OPT_GEN_ENTER_SENDS)) {
@@ -1120,130 +1106,6 @@ void check_everything(GtkWidget *entry)
 /*------------------------------------------------------------------------*/
 
 
-static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len, GdkColor * trans)
-{
-	GdkBitmap *mask;
-	GdkPixmap *face = NULL;
-
-	if (strlen(m) < 2)
-		return face;
-	*len = 2;
-	if (!strncmp(m, ":)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile_xpm);
-	} else if (!strncmp(m, ":(", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, sad_xpm);
-	} else if (!strncmp(m, ";)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, wink_xpm);
-	}
-
-	if (face || strlen(m) < 3)
-		return face;
-	*len = 3;
-	if (!strncmp(m, ":-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile_xpm);
-	} else if (!strncmp(m, "O-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, oneeye_xpm);
-	} else if (!strncmp(m, "C:)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, luke03_xpm);
-	} else if (!strncmp(m, ":-(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, sad_xpm);
-	} else if (!strncmp(m, ";-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, wink_xpm);
-	} else if (!strncmp(m, ":-p", 3) || !strncmp(m, ":-P", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, tongue_xpm);
-	} else if (!strncmp(m, "=-O", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, scream_xpm);
-	} else if (!strncmp(m, ":-*", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, kiss_xpm);
-	} else if (!strncmp(m, ">:o", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, yell_xpm);
-	} else if (!strncmp(m, "8-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile8_xpm);
-	} else if (!strncmp(m, ":-$", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, moneymouth_xpm);
-	} else if (!strncmp(m, ":-!", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, burp_xpm);
-	} else if (!strncmp(m, ":-[", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, embarrassed_xpm);
-	} else if (!strncmp(m, ":'(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, cry_xpm);
-	} else if (!strncmp(m, ":-\\", 3) || !strncmp(m, ":-/", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, think_xpm);
-	} else if (!strncmp(m, ":-X", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, crossedlips_xpm);
-	} else if (!strncmp(m, ":-D", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, bigsmile_xpm);
-	}
-
-	if (face || strlen(m) < 4)
-		return face;
-	*len = 4;
-	if (!strncmp(m, "O:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, angel_xpm);
-	} else if (!strncmp(m, "C:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, luke03_xpm);
-	}
-
-	if (face || strlen(m) < 6)
-		return face;
-	*len = 6;
-	if (!strncmp(m, "&gt;:o", 6)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, yell_xpm);
-	}
-
-	return face;
-}
-
-void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
-{
-	int y = 0;
-	char *buf2 = g_strdup(what);
-	int i;
-	GdkPixmap *face;
-	/* hopefully we can later use this for bgcolors in smileys */
-	GdkColor *trans = &window->style->base[GTK_STATE_NORMAL];
-	gboolean in_tag = FALSE;
-	int gtk_font_options = 0;
-
-	if (display_options & OPT_DISP_IGNORE_COLOUR)
-		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_COLOURS;
-
-	if (display_options & OPT_DISP_IGNORE_FONTS)
-		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_FONTS;
-
-	for (i = 0; i < strlen(what); i++) {
-		if (!in_tag) {
-			int len;
-			if (what[i] == '<') {
-				buf2[y] = what[i];
-				y++;
-				in_tag = TRUE;
-			} else if ((face = is_smiley(window, &what[i], &len, trans)) != NULL) {
-
-				buf2[y] = 0;
-				gtk_html_append_text(GTK_HTML(html), buf2, gtk_font_options);
-				gtk_html_add_pixmap(GTK_HTML(html), face, 0, 0);
-				y = 0;
-				i += len - 1;
-			} else {
-				buf2[y] = what[i];
-				y++;
-			}
-		} else {
-			buf2[y] = what[i];
-			y++;
-			if (what[i] == '>')
-				in_tag = FALSE;
-		}
-	}
-
-	if (y) {
-		buf2[y] = 0;
-		gtk_html_append_text(GTK_HTML(html), buf2, gtk_font_options);
-	}
-	g_free(buf2);
-}
-
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
 void write_to_conv(struct conversation *c, char *what, int flags, char *who)
@@ -1260,10 +1122,16 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	int gtk_font_options = 0;
 
 	if (display_options & OPT_DISP_IGNORE_COLOUR)
-		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_COLOURS;
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COLOURS;
 
 	if (display_options & OPT_DISP_IGNORE_FONTS)
-		gtk_font_options = gtk_font_options ^ HTML_OPTION_NO_FONTS;
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_FONTS;
+
+	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_COMMENTS;
+	gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_TITLE;
+
+	if (display_options & OPT_DISP_IGNORE_SIZES)
+		gtk_font_options = gtk_font_options ^ GTK_IMHTML_NO_SIZES;
 
 
 	if (!who) {
@@ -1288,11 +1156,9 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 
 	if (flags & WFLAG_SYSTEM) {
 
-		gtk_html_freeze(GTK_HTML(c->text));
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), what, 0);
 
-		gtk_html_append_text(GTK_HTML(c->text), what, 0);
-
-		gtk_html_append_text(GTK_HTML(c->text), "<BR>", 0);
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
 		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
 			char *t1;
@@ -1358,34 +1224,16 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 			}
 		}
 
-		if (display_options & OPT_DISP_SHOW_TIME)
-			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s %s</B></FONT> ", colour,
-				   date(), str);
-		else
-			g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><B>%s</B></FONT>", colour, str);
+		g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"%s\"><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+				"<B>%s</B></FONT> ", colour, date(), str);
 
 		g_free(str);
 
-		gtk_html_freeze(GTK_HTML(c->text));
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), buf, 0);
 
-		if (colorv != -1) {
-			sprintf(buf2, "<BODY BGCOLOR=\"#%x\">", colorv);
-			gtk_html_append_text(GTK_HTML(c->text), buf2, gtk_font_options);
-		}
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), what, gtk_font_options);
 
-		gtk_html_append_text(GTK_HTML(c->text), buf, 0);
-
-		if (display_options & OPT_DISP_SHOW_SMILEY) {
-			write_html_with_smileys(c->window, c->text, what);
-		} else {
-			gtk_html_append_text(GTK_HTML(c->text), what, gtk_font_options);
-		}
-
-		if (colorv != -1) {
-			gtk_html_append_text(GTK_HTML(c->text), "</BODY>", gtk_font_options);
-		}
-		gtk_html_append_text(GTK_HTML(c->text), "<BR>", gtk_font_options);
-
+		gtk_imhtml_append_text(GTK_IMHTML(c->text), "<BR>", 0);
 
 		if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(c->name)) {
 			char *t1, *t2;
@@ -1429,8 +1277,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	if ((c->is_chat && (general_options & OPT_GEN_POPUP_CHAT)) ||
 	    (!c->is_chat && (general_options & OPT_GEN_POPUP_WINDOWS)))
 		    gdk_window_show(c->window->window);
-
-	gtk_html_thaw(GTK_HTML(c->text));
 
 	g_free(smiley);
 	g_free(buf);
@@ -1866,12 +1712,19 @@ void show_conv(struct conversation *c)
 	gtk_widget_set_usize(sw, 320, 175);
 	gtk_widget_show(sw);
 
-	text = gtk_html_new(NULL, NULL);
+	text = gtk_imhtml_new(NULL, NULL);
 	c->text = text;
-	gtk_html_set_editable(GTK_HTML(text), FALSE);
 	gtk_container_add(GTK_CONTAINER(sw), text);
-	GTK_HTML(text)->hadj->step_increment = 10.0;
-	GTK_HTML(text)->vadj->step_increment = 10.0;
+	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
+	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
+	if (!(display_options & OPT_DISP_SHOW_SMILEY))
+		gtk_imhtml_show_smileys(GTK_IMHTML(text), FALSE);
+	if (display_options & OPT_DISP_SHOW_TIME)
+		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
+	gtk_signal_connect(GTK_OBJECT(text), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
 	gtk_widget_show(text);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);
@@ -2000,6 +1853,70 @@ void toggle_spellchk()
 				gtkspell_attach(GTK_TEXT(c->entry));
 			else
 				gtkspell_detach(GTK_TEXT(c->entry));
+			cht = cht->next;
+		}
+		con = con->next;
+	}
+}
+
+void toggle_timestamps()
+{
+	GList *cnv = conversations;
+	GSList *cht;
+	struct conversation *c;
+	GSList *con = connections;
+	struct gaim_connection *gc;
+
+	while (cnv) {
+		c = (struct conversation *)cnv->data;
+		if (display_options & OPT_DISP_SHOW_TIME)
+			gtk_imhtml_show_comments(GTK_IMHTML(c->text), TRUE);
+		else
+			gtk_imhtml_show_comments(GTK_IMHTML(c->text), FALSE);
+		cnv = cnv->next;
+	}
+
+	while (con) {
+		gc = (struct gaim_connection *)con->data;
+		cht = gc->buddy_chats;
+		while (cht) {
+			c = (struct conversation *)cht->data;
+			if (display_options & OPT_DISP_SHOW_TIME)
+				gtk_imhtml_show_comments(GTK_IMHTML(c->text), TRUE);
+			else
+				gtk_imhtml_show_comments(GTK_IMHTML(c->text), FALSE);
+			cht = cht->next;
+		}
+		con = con->next;
+	}
+}
+
+void toggle_smileys()
+{
+	GList *cnv = conversations;
+	GSList *cht;
+	struct conversation *c;
+	GSList *con = connections;
+	struct gaim_connection *gc;
+
+	while (cnv) {
+		c = (struct conversation *)cnv->data;
+		if (display_options & OPT_DISP_SHOW_SMILEY)
+			gtk_imhtml_show_smileys(GTK_IMHTML(c->text), TRUE);
+		else
+			gtk_imhtml_show_smileys(GTK_IMHTML(c->text), FALSE);
+		cnv = cnv->next;
+	}
+
+	while (con) {
+		gc = (struct gaim_connection *)con->data;
+		cht = gc->buddy_chats;
+		while (cht) {
+			c = (struct conversation *)cht->data;
+			if (display_options & OPT_DISP_SHOW_SMILEY)
+				gtk_imhtml_show_smileys(GTK_IMHTML(c->text), TRUE);
+			else
+				gtk_imhtml_show_smileys(GTK_IMHTML(c->text), FALSE);
 			cht = cht->next;
 		}
 		con = con->next;
