@@ -839,17 +839,20 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 	if (b->evil > 0)
 		warning = g_strdup_printf(_("Warned (%d%%) "), b->evil);
 
-	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
+	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS) {
 		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s%s%s</span>",
 					esc,
 					statustext != NULL ? statustext : "",
 					idletime != NULL ? idletime : "", 
 					warning != NULL ? warning : "");
-	else
+	} else if (statustext == NULL && idletime == NULL && warning == NULL) {
+		text = g_strdup_printf("%s", esc);
+	} else {
 		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s%s%s</span>", esc,
 				       statustext != NULL ? statustext :  "",
 				       idletime != NULL ? idletime : "", 
 				       warning != NULL ? warning : "");
+	}
 	if (idletime)
 		g_free(idletime);
 	if (warning)
@@ -964,7 +967,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	rend = gtk_cell_renderer_text_new();
 	column = gtk_tree_view_column_new_with_attributes("Name", rend, "markup", NAME_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), column);
-	g_object_set(rend, "ypad", 0, NULL);
+	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
