@@ -97,7 +97,7 @@ static void load_conf() {
 	const char * const defaultconf = "BAD r\nGOOD are\n\n"
 			"BAD u\nGOOD you\n\n"
 			"BAD teh\nGOOD the\n\n";
-	char *buf, *ibuf;
+	gchar *buf, *ibuf;
 	char name[82];
 	char cmd[256];
 	int pnt = 0;
@@ -105,7 +105,7 @@ static void load_conf() {
 
 	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
 
-	buf = g_build_filename(gaim_home_dir(), ".gaim", "dict", NULL);
+	buf = g_build_filename(gaim_user_dir(), "dict", NULL);
 	g_file_get_contents(buf, &ibuf, &size, NULL);
 	free(buf);
 	if(!ibuf) {

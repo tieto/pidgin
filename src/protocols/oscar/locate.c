@@ -237,7 +237,7 @@ static void aim_locate_adduserinfo(aim_session_t *sess, aim_userinfo_t *userinfo
 }
 
 static void aim_locate_dorequest(aim_session_t *sess) {
-	struct userinfo_node *cur = sess->locate.request_queue;
+	struct userinfo_node *cur = sess->locate.torequest;
 
 	if (cur == NULL)
 		return;
@@ -247,6 +247,11 @@ static void aim_locate_dorequest(aim_session_t *sess) {
 
 	sess->locate.waiting_for_response = TRUE;
 	aim_locate_getinfoshort(sess, cur->sn, 0x00000003);
+
+	/* Move this node to the "requested" queue */
+	sess->locate.torequest = cur->next;
+	cur->next = sess->locate.requested;
+	sess->locate.requested = cur;
 }
 
 /**
@@ -262,15 +267,15 @@ static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
 	struct userinfo_node *cur, *del;
 	int was_explicit = TRUE;
 
-	while ((sess->locate.request_queue != NULL) && (aim_sncmp(sn, sess->locate.request_queue->sn) == 0)) {
-		del = sess->locate.request_queue;
-		sess->locate.request_queue = del->next;
+	while ((sess->locate.requested != NULL) && (aim_sncmp(sn, sess->locate.requested->sn) == 0)) {
+		del = sess->locate.requested;
+		sess->locate.requested = del->next;
 		was_explicit = FALSE;
 		free(del->sn);
 		free(del);
 	}
 
-	cur = sess->locate.request_queue;
+	cur = sess->locate.requested;
 	while ((cur != NULL) && (cur->next != NULL)) {
 		if (aim_sncmp(sn, cur->next->sn) == 0) {
 			del = cur->next;
@@ -294,7 +299,7 @@ faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *s
 	struct userinfo_node *cur;
 
 	/* Make sure we aren't already requesting info for this buddy */
-	cur = sess->locate.request_queue;
+	cur = sess->locate.torequest;
 	while (cur != NULL) {
 		if (aim_sncmp(sn, cur->sn) == 0)
 			return;
@@ -304,8 +309,8 @@ faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *s
 	/* Add a new node to our request queue */
 	cur = (struct userinfo_node *)malloc(sizeof(struct userinfo_node));
 	cur->sn = strdup(sn);
-	cur->next = sess->locate.request_queue;
-	sess->locate.request_queue = cur;
+	cur->next = sess->locate.torequest;
+	sess->locate.torequest = cur;
 
 	/* Actually request some info up in this piece */
 	aim_locate_dorequest(sess);

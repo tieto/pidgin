@@ -191,11 +191,9 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
- * aim_connrst - Clears out connection list, killing remaining connections.
- * @sess: Session to be cleared
+ * Clears out connection list, killing remaining connections.
  *
- * Clears out the connection list and kills any connections left.
- *
+ * @param sess Session to be cleared
  */
 static void aim_connrst(aim_session_t *sess)
 {
@@ -217,11 +215,10 @@ static void aim_connrst(aim_session_t *sess)
 }
 
 /**
- * aim_conn_init - Reset a connection to default values.
- * @deadconn: Connection to be reset
- *
+ * Reset a connection to default values.
  * Initializes and/or resets a connection structure.
  *
+ * @param deadconn Connection to be reset
  */
 static void aim_conn_init(aim_conn_t *deadconn)
 {
@@ -871,20 +868,16 @@ faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int deb
 	sess->queue_incoming = NULL;
 	aim_initsnachash(sess);
 	sess->msgcookies = NULL;
-	sess->icq_info = NULL;
-	sess->oft_info = NULL;
-	sess->emailinfo = NULL;
-	sess->locate.userinfo = NULL;
-	sess->locate.request_queue = NULL;
-	sess->locate.waiting_for_response = FALSE;
-	sess->snacid_next = 0x00000001;
-
 	sess->nonblocking = nonblocking;
 	sess->debug = debuglevel;
 	sess->debugcb = defaultdebugcb;
-
 	sess->modlistv = NULL;
+	sess->snacid_next = 0x00000001;
 
+	sess->locate.userinfo = NULL;
+	sess->locate.torequest = NULL;
+	sess->locate.requested = NULL;
+	sess->locate.waiting_for_response = FALSE;
 	sess->ssi.received_data = 0;
 	sess->ssi.numitems = 0;
 	sess->ssi.official = NULL;
@@ -892,15 +885,16 @@ faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int deb
 	sess->ssi.pending = NULL;
 	sess->ssi.timestamp = (time_t)0;
 	sess->ssi.waiting_for_ack = 0;
-
+	sess->icq_info = NULL;
 	sess->authinfo = NULL;
+	sess->emailinfo = NULL;
+	sess->oft_info = NULL;
 
 	/*
 	 * This must always be set.  Default to the queue-based
 	 * version for back-compatibility.  
 	 */
 	aim_tx_setenqueue(sess, AIM_TX_QUEUED, NULL);
-
 
 	/*
 	 * Register all the modules for this session...
