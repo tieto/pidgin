@@ -165,8 +165,8 @@ struct smiley_theme *load_smiley_theme(const char *file, gboolean load)
 					l[li] = 0;
 					sfile = g_build_filename(dirname, l, NULL);
 				} else {
-					l[li] = 0;
 					GtkIMHtmlSmiley *smiley = g_new0(GtkIMHtmlSmiley, 1);
+					l[li] = 0;
 					smiley->file = sfile;
 					smiley->smile = g_strdup(l);
 					list->smileys = g_slist_append(list->smileys, smiley);
