@@ -12,3 +12,4 @@ Makevars
 *.sed
 *.header
 *.sin
+ChangeLog.save
