@@ -813,7 +813,7 @@ static void check_spelling( GtkEditable * editable, gchar * new_text,
         	if(isspace(new_text[0]))
         	{
                 	gtk_text_freeze(GTK_TEXT(editable));
-                	spell_check(GTK_WIDGET(editable));
+                	spell_checker(GTK_WIDGET(editable));
                 	gtk_text_thaw(GTK_TEXT(editable));
         	}
         	gtk_signal_handler_unblock_by_func(GTK_OBJECT(editable),

@@ -754,7 +754,7 @@ http://www.everybuddy.com
 
 */
 
-void spell_check(GtkWidget * text)
+void spell_checker(GtkWidget * text)
 {
         int start = 0;
         int end = 0;
