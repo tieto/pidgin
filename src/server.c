@@ -31,13 +31,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <errno.h>
-#include <gtk/gtk.h>
-#ifdef USE_SCREENSAVER
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/scrnsaver.h>
-#endif /* USE_SCREENSAVER */
-extern int gaim_caps;
 #include "prpl.h"
 #include "multi.h"
 #include "gaim.h"
@@ -107,7 +100,7 @@ void serv_finish_login(struct gaim_connection *gc)
 	if (gc->idle_timer > 0)
 		g_source_remove(gc->idle_timer);
 
-	gc->idle_timer = g_timeout_add(20000, (GtkFunction)check_idle, gc);
+	gc->idle_timer = g_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);
 
 	time(&gc->login_time);
@@ -656,7 +649,6 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 		g_snprintf(b->name, sizeof(b->name), "%s", name);
 		handle_buddy_rename(b, who);
 		g_free(who);
-		/*gtk_label_set_text(GTK_LABEL(b->label), b->name); */
 
 		/* okay lets save the new config... */
 
@@ -708,18 +700,10 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 	set_buddy(gc, b);
 }
 
-static
-void close_warned(GtkWidget *w, GtkWidget *w2)
-{
-	gtk_widget_destroy(w2);
-}
-
-
 
 void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 {
 	char buf2[1024];
-	GtkWidget *d, *label, *close;
 
 	plugin_event(event_warned, gc, name, (void *)lev, 0);
 
@@ -733,20 +717,7 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 	g_snprintf(buf2, sizeof(buf2), "%s has just been warned by %s.\nYour new warning level is %d%%",
 		   gc->username, ((name == NULL)? "an anonymous person" : name), lev);
 
-	d = gtk_dialog_new();
-	gtk_widget_realize(d);
-	aol_icon(d->window);
-
-	label = gtk_label_new(buf2);
-	gtk_widget_show(label);
-	close = picture_button(d, _("Close"), cancel_xpm);
-	gtk_widget_show(close);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox), label, FALSE, FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area), close, FALSE, FALSE, 5);
-
-	gtk_window_set_title(GTK_WINDOW(d), "Warned");
-	gtk_signal_connect(GTK_OBJECT(close), "clicked", GTK_SIGNAL_FUNC(close_warned), d);
-	gtk_widget_show(d);
+	do_error_dialog(_("Warned"), buf2);
 }
 
 
@@ -955,7 +926,7 @@ void update_keepalive(struct gaim_connection *gc, gboolean on)
 {
 	if (on && !gc->keepalive && blist) {
 		debug_printf("allowing NOP\n");
-		gc->keepalive = g_timeout_add(60000, (GtkFunction)send_keepalive, gc);
+		gc->keepalive = g_timeout_add(60000, send_keepalive, gc);
 	} else if (!on && gc->keepalive > 0) {
 		debug_printf("removing NOP\n");
 		g_source_remove(gc->keepalive);

@@ -613,7 +613,7 @@ extern void grab_url(char *, void (*callback)(gpointer, char *), gpointer);
 extern gchar *strip_html(gchar *);
 
 /* Functions in idle.c */
-extern gint check_idle(struct gaim_connection *);
+extern gint check_idle(gpointer);
 
 /* Functions in util.c */
 extern char *normalize(const char *);

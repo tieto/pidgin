@@ -38,8 +38,9 @@
 #include "prpl.h"
 
 
-gint check_idle(struct gaim_connection *gc)
+gint check_idle(gpointer data)
 {
+	struct gaim_connection *gc = data;
 	time_t t;
 #ifdef USE_SCREENSAVER
 	static XScreenSaverInfo *mit_info = NULL;
