@@ -1482,7 +1482,9 @@ GtkIMHtmlScalable *gaim_hr_new()
 
 void gaim_hr_scale(GtkIMHtmlScalable *scale, int width, int height)
 {
+	/* FIXME: we need to figure out why this causes infinite looping
 	gtk_widget_set_size_request(((gaim_hr *)scale)->sep, width, 2);
+	*/
 }
 
 void gaim_hr_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
