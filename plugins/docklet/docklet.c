@@ -84,7 +84,7 @@ docklet_auto_login()
 }
 
 #ifdef _WIN32
-/* This is a workaround for a bug in windows GTK+.. Clicking outside of the
+/* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
 static gboolean
@@ -197,36 +197,30 @@ static gboolean
 docklet_blink_icon()
 {
 	static gboolean blinked = FALSE;
-	enum docklet_status icon = status;
 
 	blinked = !blinked;
 
-	if (status == online_pending) {
-		if (blinked) {
-			/* last icon was the right one... let's change it */
-			icon = online;
-		} else {
-			/* last icon was the wrong one, change it back */
-			icon = online_pending;
-		}
-	} else if (status == away_pending) {
-		if (blinked) {
-			/* last icon was the right one... let's change it */
-			icon = away;
-		} else {
-			/* last icon was the wrong one, change it back */
-			icon = away_pending;
-		}
-	} else {
-		/* no messages, stop blinking */
-		blinked = FALSE;
-		return FALSE;
+	switch (status) {
+		case online_pending:
+		case away_pending:
+			if (blinked) {
+				if (ui_ops && ui_ops->blank_icon)
+					ui_ops->blank_icon();
+			} else {
+				if (ui_ops && ui_ops->update_icon)
+					ui_ops->update_icon(status);
+			}
+			return TRUE; /* keep blinking */
+			break;
+		case offline:
+		case offline_connecting:
+		case online:
+		case online_connecting:
+		case away:
+			blinked = FALSE;
+			return FALSE; /* no more blinking */
+			break;
 	}
-
-	if (ui_ops->update_icon)
-		ui_ops->update_icon(icon);
-
-	return TRUE; /* keep blinking */
 }
 
 static gboolean
@@ -260,7 +254,7 @@ docklet_update_status()
 
 	/* update the icon if we changed status */
 	if (status != oldstatus) {
-		if (ui_ops->update_icon)
+		if (ui_ops && ui_ops->update_icon)
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
@@ -327,7 +321,7 @@ docklet_embedded()
 	gaim_gtk_blist_docklet_add();
 
 	docklet_update_status();
-	if (ui_ops->update_icon)
+	if (ui_ops && ui_ops->update_icon)
 		ui_ops->update_icon(status);
 }
 
@@ -428,7 +422,7 @@ plugin_load(GaimPlugin *plugin)
 	handle = plugin;
 
 	docklet_ui_init();
-	if (ui_ops->create)
+	if (ui_ops && ui_ops->create)
 		ui_ops->create();
 
 	gaim_signal_connect(conn_handle, "signed-on",
@@ -455,7 +449,7 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	if (ui_ops->destroy)
+	if (ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
 
 	/* XXX: do this while gaim has no other way to toggle the global mute */

@@ -36,6 +36,7 @@
 /* globals */
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *image = NULL;
+static GdkPixbuf *blank_icon = NULL;
 
 /* protos */
 static void docklet_x11_create();
@@ -109,6 +110,20 @@ docklet_x11_update_icon(enum docklet_status icon)
 }
 
 static void
+docklet_x11_blank_icon()
+{
+	if (!blank_icon) {
+		gint width, height;
+
+		gtk_icon_size_lookup(GTK_ICON_SIZE_LARGE_TOOLBAR, &width, &height);
+		blank_icon = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
+		gdk_pixbuf_fill(blank_icon, 0);
+	}
+
+	gtk_image_set_from_pixbuf(GTK_IMAGE(image), blank_icon);
+}
+
+static void
 docklet_x11_destroy()
 {
 	docklet_remove(GTK_WIDGET_VISIBLE(docklet));
@@ -118,6 +133,10 @@ docklet_x11_destroy()
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
+
+	if (blank_icon)
+		g_object_unref(G_OBJECT(blank_icon));
+	blank_icon = NULL;
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
 }
@@ -157,7 +176,8 @@ static struct docklet_ui_ops ui_ops =
 {
 	docklet_x11_create,
 	docklet_x11_destroy,
-	docklet_x11_update_icon
+	docklet_x11_update_icon,
+	docklet_x11_blank_icon
 };
 
 void

@@ -6,3 +6,4 @@
 #define GAIM_AWAY_TRAY_ICON             109
 #define GAIM_PEND_TRAY_ICON             110
 #define GAIM_AWAYPEND_TRAY_ICON         111
+#define GAIM_BLANK_TRAY_ICON            112

@@ -55,6 +55,7 @@ static HICON sysicon_conn=0;
 static HICON sysicon_away=0;
 static HICON sysicon_pend=0;
 static HICON sysicon_awypend=0;
+static HICON sysicon_blank=0;
 static NOTIFYICONDATA wgaim_nid;
 
 
@@ -151,9 +152,11 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 static void systray_change_icon(HICON icon, char* text) {
 	char *locenc=NULL;
 	wgaim_nid.hIcon = icon;
-	locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
-	lstrcpy(wgaim_nid.szTip, locenc);
-	g_free(locenc);
+        if(text) {
+                locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
+                lstrcpy(wgaim_nid.szTip, locenc);
+                g_free(locenc);
+        }
 	Shell_NotifyIcon(NIM_MODIFY,&wgaim_nid);
 }
 
@@ -184,6 +187,10 @@ static void wgaim_tray_update_icon(enum docklet_status icon) {
 	}
 }
 
+static void wgaim_tray_blank_icon() {
+        systray_change_icon(sysicon_blank, NULL);
+}
+
 static void wgaim_tray_create() {
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
@@ -194,6 +201,7 @@ static void wgaim_tray_create() {
 	sysicon_away = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAY_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 	sysicon_pend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_PEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 	sysicon_awypend = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_AWAYPEND_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
+	sysicon_blank = (HICON)LoadImage(wgaim_hinstance(), MAKEINTRESOURCE(GAIM_BLANK_TRAY_ICON), IMAGE_ICON, 16, 16, 0);
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
@@ -210,7 +218,8 @@ static struct docklet_ui_ops wgaim_tray_ops =
 {
 	wgaim_tray_create,
 	wgaim_tray_destroy,
-	wgaim_tray_update_icon
+	wgaim_tray_update_icon,
+        wgaim_tray_blank_icon
 };
 
 /* Used by docklet's plugin load func */
