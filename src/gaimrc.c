@@ -1644,6 +1644,8 @@ load_pounces()
 		ph = (struct pounce_placeholder *)l->data;
 
 		account = gaim_accounts_find(ph->pouncer, ph->protocol);
+		if (account == NULL)
+			continue;
 
 		old_pounce_opts_to_new(ph->options, &events, &actions);
 
