@@ -221,7 +221,7 @@ void tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg
 	if (event->type == GDK_BUTTON_RELEASE) {
 		/* A link was clicked--we emit the "url_clicked" signal with the URL as the argument */
 		//	if ((GdkEventButton)(event)->button == 1) 
-			gtk_signal_emit (G_OBJECT(arg1), signals[URL_CLICKED], url);
+			gtk_signal_emit (GTK_OBJECT(arg1), signals[URL_CLICKED], url);
 	} else if (event->type == GDK_ENTER_NOTIFY) {
 		/* make a hand cursor and a tooltip timeout -- if GTK worked as it should */
 	} else if (event->type == GDK_LEAVE_NOTIFY) {
@@ -252,8 +252,10 @@ gtk_smiley_tree_remove (GtkSmileyTree *tree,
 		x++; len++;
 	}
 
-	if (t->image)
+	if (t->image) {
+		g_free(t->image);
 		t->image = NULL;
+	}
 }
 
 static gint
