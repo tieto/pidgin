@@ -613,7 +613,8 @@ void gaim_prefs_rename(const char *oldname, const char *newname) {
 }
 
 void gaim_prefs_rename_old() {
-	/* This doesn't actually do anything yet, but it will */
+	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
+	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
 }
 
 guint gaim_prefs_connect_callback(const char *name, GaimPrefCallback func, gpointer data)

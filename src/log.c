@@ -65,8 +65,8 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 	g_return_if_fail(log->logger);
 	g_return_if_fail(log->logger->write);
 
-	if ((log->type == GAIM_LOG_IM && gaim_prefs_get_bool("/gaim/gtk/logging/log_ims")) ||
-	    (log->type == GAIM_LOG_CHAT && gaim_prefs_get_bool("/gaim/gtk/logging/log_chats")))
+	if ((log->type == GAIM_LOG_IM && gaim_prefs_get_bool("/core/logging/log_ims")) ||
+	    (log->type == GAIM_LOG_CHAT && gaim_prefs_get_bool("/core/logging/log_chats")))
 		(log->logger->write)(log, type, from, time, message);
 }
 
@@ -193,8 +193,8 @@ GList *gaim_log_get_logs(const char *name, GaimAccount *account)
 void gaim_log_init(void)
 {
 	gaim_prefs_add_none("/core/logging");
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_ims", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/logging/log_chats", FALSE);
+	gaim_prefs_add_bool("/core/logging/log_ims", FALSE);
+	gaim_prefs_add_bool("/core/logging/log_chats", FALSE);
 	gaim_prefs_add_string("/core/logging/format", "txt");
 	gaim_log_logger_add(&html_logger);
 	gaim_log_logger_add(&txt_logger);
