@@ -140,7 +140,7 @@ struct yahoo_friend { /* we'll call them friends, so we don't confuse them with 
 	gboolean sms;
 };
 
-#define YAHOO_MAX_STATUS_MESSAGE_LENGTH (56)
+#define YAHOO_MAX_STATUS_MESSAGE_LENGTH (48)
 
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id);
 void yahoo_packet_hash(struct yahoo_packet *pkt, int key, const char *value);
