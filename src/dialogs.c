@@ -1175,6 +1175,8 @@ void show_change_passwd()
 	GtkWidget *label;
 	GtkWidget *vbox;
 	GtkWidget *table;
+
+
 	struct passwddlg *b = g_new0(struct passwddlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
@@ -1246,24 +1248,71 @@ void show_set_info()
 {
 	GtkWidget *bot;
 	GtkWidget *top;
-
+	GtkWidget *icon_i;
+	GdkBitmap *mask;
+	GdkPixmap *icon;
+	GtkWidget *button_box;
+	GtkWidget *label;
+	
 	struct set_info_dlg *b = g_new0(struct set_info_dlg, 1);
 
 	b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	dialogwindows = g_list_prepend(dialogwindows, b->window);
-
-	b->cancel = gtk_button_new_with_label(_("Cancel"));
-	b->save = gtk_button_new_with_label(_("Save"));
+	gtk_widget_show(b->window);
 
 	bot = gtk_hbox_new(TRUE, 10);
 	top = gtk_vbox_new(FALSE, 10);
+
+	/* Build OK Button */
+
+	b->save = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, save_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Save"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(b->save), button_box);
+
+	/* End of OK Button */
+	
+	/* Build Cancel Button */
+
+	b->cancel = gtk_button_new();
+
+	button_box = gtk_hbox_new(FALSE, 5);
+	icon = gdk_pixmap_create_from_xpm_d ( b->window->window, &mask, NULL, cancel_xpm);
+	icon_i = gtk_pixmap_new(icon, mask);
+	
+	label = gtk_label_new(_("Cancel"));
+
+	gtk_box_pack_start(GTK_BOX(button_box), icon_i, FALSE, FALSE, 2);
+	gtk_box_pack_end(GTK_BOX(button_box), label, FALSE, FALSE, 2);
+
+	gtk_widget_show(label);
+	gtk_widget_show(icon_i);
+
+	gtk_widget_show(button_box);
+
+	gtk_container_add(GTK_CONTAINER(b->cancel), button_box);
+	
+	/* End of Cancel Button */
+
 
 	gtk_widget_show(b->save);
 	gtk_widget_show(b->cancel);
 
 	gtk_box_pack_start(GTK_BOX(bot), b->save, FALSE, FALSE, 10);
 	gtk_box_pack_start(GTK_BOX(bot), b->cancel, FALSE, FALSE, 10);
-
 
 	gtk_signal_connect(GTK_OBJECT(b->window), "destroy",
 			   GTK_SIGNAL_FUNC(destroy_dialog), b->window);
@@ -1287,11 +1336,12 @@ void show_set_info()
 	gtk_widget_show(top);
 
 	gtk_box_pack_start(GTK_BOX(top), bot, FALSE, FALSE, 10);
+
 	gtk_container_add(GTK_CONTAINER(b->window), top);
         gtk_container_border_width(GTK_CONTAINER(b->window), 10);
         gtk_widget_realize(b->window);
 	aol_icon(b->window->window);
-
+	
 	gtk_window_set_title(GTK_WINDOW(b->window), _("Gaim - Set User Info"));
 	gtk_widget_show(b->window);
 
