@@ -1422,11 +1422,10 @@ add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer,
 					   "text", COLUMN_SCREENNAME);
 	dialog->screenname_col = column;
-	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
 	/* Online? */
 	renderer = gtk_cell_renderer_toggle_new();
-	
+
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 			 G_CALLBACK(online_cb), dialog);
 	
