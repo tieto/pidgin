@@ -401,7 +401,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 		gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL, G_CALLBACK(gtk_blist_menu_bp_cb), node, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("View _Log"), NULL, G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
-		if (prpl && prpl->buddy_menu) {
+		if (prpl && prpl_info->buddy_menu) {
 			list = prpl_info->buddy_menu(((struct buddy*)node)->account->gc, ((struct buddy*)node)->name);
 			while (list) {
 				struct proto_buddy_menu *pbm = list->data;
