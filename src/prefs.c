@@ -1547,33 +1547,37 @@ static gint debug_delete(GtkWidget *w, GdkEvent *event, void *dummy)
 
 static void build_debug()
 {
-	GtkWidget *scroll;
+	GtkWidget *sw;
 	GtkWidget *box;
+	GtkTextBuffer *buffer;
+	GtkTextIter end;
+
 	if (!dw)
 		dw = g_new0(struct debug_window, 1);
 
 	GAIM_DIALOG(dw->window);
-	gtk_window_set_title(GTK_WINDOW(dw->window), _("Gaim debug output window"));
-	gtk_window_set_wmclass(GTK_WINDOW(dw->window), "debug_out", "Gaim");
-	gtk_signal_connect(GTK_OBJECT(dw->window), "delete_event", GTK_SIGNAL_FUNC(debug_delete), NULL);
-	gtk_widget_realize(dw->window);
+	gtk_window_set_default_size(GTK_WINDOW(dw->window), 500, 200);
+	gtk_window_set_role(GTK_WINDOW(dw->window), "debug");
+	gtk_window_set_title(GTK_WINDOW(dw->window), _("Gaim - Debug Window"));
+	g_signal_connect(G_OBJECT(dw->window), "delete_event", G_CALLBACK(debug_delete), NULL);
 
-	box = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(dw->window), box);
-	gtk_widget_show(box);
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+				      GTK_POLICY_NEVER,
+				      GTK_POLICY_ALWAYS);
 
-	dw->entry = gtk_text_new(NULL, NULL);
-	gtk_text_set_word_wrap(GTK_TEXT(dw->entry), TRUE);
-	gtk_text_set_editable(GTK_TEXT(dw->entry), FALSE);
-	gtk_container_add(GTK_CONTAINER(box), dw->entry);
-	gtk_widget_set_usize(dw->entry, 500, 200);
-	gtk_widget_show(dw->entry);
+	dw->entry = gtk_text_view_new();
+	gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(dw->entry), FALSE);
+	gtk_text_view_set_editable(GTK_TEXT_VIEW(dw->entry), FALSE);
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(dw->entry), GTK_WRAP_WORD);
 
-	scroll = gtk_vscrollbar_new(GTK_TEXT(dw->entry)->vadj);
-	gtk_box_pack_start(GTK_BOX(box), scroll, FALSE, FALSE, 0);
-	gtk_widget_show(scroll);
+	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dw->entry));
+	gtk_text_buffer_get_end_iter(buffer, &end);
+	gtk_text_buffer_create_mark(buffer, "end", &end, FALSE);
 
-	gtk_widget_show(dw->window);
+	gtk_container_add(GTK_CONTAINER(sw), dw->entry);
+	gtk_container_add(GTK_CONTAINER(dw->window), sw);
+	gtk_widget_show_all(dw->window);
 }
 
 void show_debug()
@@ -1600,15 +1604,15 @@ void debug_printf(char *fmt, ...)
 	va_end(ap);
 
 	if (misc_options & OPT_MISC_DEBUG && dw) {
-		GtkAdjustment *adj = GTK_TEXT(dw->entry)->vadj;
-		gboolean scroll = (adj->value == adj->upper - adj->lower - adj->page_size);
+		GtkTextBuffer *buffer;
+		GtkTextMark *endmark;
+		GtkTextIter end;
 
-		gtk_text_freeze(GTK_TEXT(dw->entry));
-		gtk_text_insert(GTK_TEXT(dw->entry), NULL, NULL, NULL, s, -1);
-		gtk_text_thaw(GTK_TEXT(dw->entry));
-
-		if (scroll)
-			gtk_adjustment_set_value(adj, adj->upper - adj->lower - adj->page_size);
+		buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(dw->entry));
+		endmark = gtk_text_buffer_get_mark(buffer, "end");
+		gtk_text_buffer_get_iter_at_mark(buffer, &end, endmark);
+		gtk_text_buffer_insert(buffer, &end, s, -1);
+		gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(dw->entry), endmark);
 	}
 	if (opt_debug)
 		g_print("%s", s);
