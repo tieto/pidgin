@@ -45,6 +45,10 @@ Getting users' away messages (PLEASE do not use oscar/libfaim just because of
 	to me anyway)
 Telling the server who's on your permit/deny lists
 Chat:
+ - joining rooms
+ - leaving rooms
+ - talking
+ - inviting someone
  - getting invited
  - refreshing the chatlist in the preferences dialog
 
@@ -52,10 +56,6 @@ CURRENTLY UNSUPPORTED FEATURES
 ==============================
 Warning users/getting warned
 Chat:
- - joining rooms
- - leaving rooms
- - talking
- - inviting someone
  - whispering (this will never happen)
 Getting/setting dir info
 Changing your password
@@ -66,9 +66,10 @@ KNOWN ISSUES
 - Oscar doesn't do whispering in chat rooms any more (and hasn't for quite a
 while, evidently). So if you want to "whisper" to someone, just IM them.
 
-- Chat is really funny. I have no idea what's going on with it. I'm not sure I
-want to know. I'm not worried about it, I never use chat. It's not exactly high-
-priority.
+- Chat works, to a degree. I'm not sure that you can create rooms, but I think
+you can. I'm not sure that you can be in more than one room at once, but I
+think you can. I'm not sure that you can leave the chat room and still have
+gaim be stable, but I think you can.
 
 - The permit list sometimes has problems when you start gaim, but if you change
 to it in the middle of a session there don't seem to be any problems.

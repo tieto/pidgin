@@ -213,6 +213,13 @@ struct chat_room {
         int exchange;
 };
 
+struct chat_connection {
+	char *name;
+	int fd; /* this is redundant since we have the conn below */
+	struct aim_conn_t *conn;
+	int inpa;
+};
+
 struct debug_window {
 	GtkWidget *window;
 	GtkWidget *entry;
@@ -341,7 +348,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 321 $"
+#define REVISION "gaim:$Revision: 322 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -364,6 +371,7 @@ extern GtkWidget *applet;
 #ifdef USE_OSCAR
 extern struct aim_session_t *gaim_sess;
 extern struct aim_conn_t    *gaim_conn;
+extern GList *oscar_chats;
 #endif
 
 /* Globals in server.c */
@@ -565,7 +573,7 @@ extern int connect_address(unsigned int, unsigned short);
 /* Functions in oscar.c */
 extern int oscar_login(char *, char *);
 extern void oscar_close();
-extern int oscar_send_im(char *, char *, int);
+extern struct chat_connection *find_oscar_chat(char *name);
 
 /* Functions in toc.c */
 extern void toc_close();

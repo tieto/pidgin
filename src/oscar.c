@@ -43,9 +43,27 @@ struct aim_session_t *gaim_sess;
 struct aim_conn_t    *gaim_conn;
 int gaim_caps = AIM_CAPS_CHAT | AIM_CAPS_SENDFILE | AIM_CAPS_GETFILE;
 
+GList *oscar_chats = NULL;
+
+struct chat_connection *find_oscar_chat(char *name) {
+	GList *g = oscar_chats;
+	struct chat_connection *c = NULL;
+
+	while (g) {
+		c = (struct chat_connection *)g->data;
+		if (!strcmp(name, c->name))
+			break;
+		g = g->next;
+		c = NULL;
+	}
+
+	return c;
+}
+
 static int gaim_parse_auth_resp  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_auth_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_server_ready     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_chat_server_ready(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_handle_redirect  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_oncoming   (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_parse_offgoing   (struct aim_session_t *, struct command_rx_struct *, ...);
@@ -269,7 +287,6 @@ int gaim_auth_server_ready(struct aim_session_t *sess,
 
 int gaim_server_ready(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
-	static int id = 1;
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_bos_reqrate(sess, command->conn);
@@ -287,23 +304,26 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chatnav_clientready(sess, command->conn);
 		aim_chatnav_reqrights(sess, command->conn);
 		break;
-	case AIM_CONN_TYPE_CHAT:
-		debug_print("chat: got server ready\n");
-		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
-		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
-		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
-		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
-		aim_bos_reqrate(sess, command->conn);
-		aim_bos_ackrateresp(sess, command->conn);
-		aim_chat_clientready(sess, command->conn);
-		serv_got_joined_chat(id++, aim_chat_getname(command->conn));
-		break;
 	default: /* huh? */
 		sprintf(debug_buff, "server ready: got unexpected connection type %04x\n", command->conn->type);
 		debug_print(debug_buff);
 		break;
 	}
 	return 1;
+}
+
+int gaim_chat_server_ready(struct aim_session_t *sess,
+			   struct command_rx_struct *command, ...) {
+	static int id = 1;
+	debug_print("chat: got server ready\n");
+	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERJOIN, gaim_chat_join, 0);
+	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_USERLEAVE, gaim_chat_leave, 0);
+	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_ROOMINFOUPDATE, gaim_chat_info_update, 0);
+	aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_CHT, AIM_CB_CHT_INCOMINGMSG, gaim_chat_incoming_msg, 0);
+	aim_bos_reqrate(sess, command->conn);
+	aim_bos_ackrateresp(sess, command->conn);
+	aim_chat_clientready(sess, command->conn);
+	serv_got_joined_chat(id++, aim_chat_getname(command->conn));
 }
 
 extern void gaim_setup();
@@ -387,6 +407,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		{
 		struct aim_conn_t *tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, ip);
 		char *roomname = va_arg(ap, char *);
+		struct chat_connection *ccon;
 		if (tstconn == NULL || tstconn->status >= AIM_CONN_STATUS_RESOLVERR) {
 			debug_print("unable to connect to chat server\n");
 			return 1;
@@ -394,8 +415,19 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		sprintf(debug_buff, "Connected to chat room %s\n", roomname);
 		debug_print(debug_buff);
 
+		ccon = g_new0(struct chat_connection, 1);
+		ccon->conn = tstconn;
+		ccon->fd = tstconn->fd;
+		ccon->name = g_strdup(roomname);
+		
+		ccon->inpa = gdk_input_add(tstconn->fd,
+				GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+				oscar_callback, tstconn);
+
+		oscar_chats = g_list_append(oscar_chats, ccon);
+		
 		aim_chat_attachname(tstconn, roomname);
-		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
+		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_chat_server_ready, 0);
 		aim_auth_sendcookie(sess, tstconn, cookie);
 		}
 		break;
@@ -632,6 +664,7 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				i++;
 			}
 			}
+			aim_conn_close(command->conn);
 			break;
 		default:
 			va_end(ap);

@@ -484,6 +484,8 @@ void serv_join_chat(int exchange, char *name)
 #else
 	sprintf(debug_buff, "Attempting to join chat room %s.\n", name);
 	debug_print(debug_buff);
+	/* aim_bos_reqservice(gaim_sess, gaim_conn, AIM_CONN_TYPE_CHATNAV); */
+	aim_chatnav_createroom(gaim_sess, aim_getconn_type(gaim_sess, AIM_CONN_TYPE_CHATNAV), name, 0x0004);
 	aim_chat_join(gaim_sess, gaim_conn, 0x0004, name);
 #endif
 }
@@ -523,6 +525,7 @@ void serv_chat_leave(int id)
 #else
 	GList *bcs = buddy_chats;
 	struct buddy_chat *b = NULL;
+	struct chat_connection *c = NULL;
 
 	while (bcs) {
 		b = (struct buddy_chat *)bcs->data;
@@ -536,6 +539,13 @@ void serv_chat_leave(int id)
 		return;
 
 	aim_chat_leaveroom(gaim_sess, b->name);
+	c = find_oscar_chat(b->name);
+	if (c != NULL) {
+		oscar_chats = g_list_remove(oscar_chats, c);
+		gdk_input_remove(c->inpa);
+		g_free(c->name);
+		g_free(c);
+	}
 #endif
 }
 

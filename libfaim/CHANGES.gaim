@@ -1,4 +1,11 @@
 
+Fri Jun  2 08:53:53 UTC 2000 EWarmenhoven
+	- Well, I got chat working again.
+	- Added struct chat_connection to keep track of file descriptors and
+	  input watchers.
+	- Added oscar_chats to keep track of chat_connection's.
+	- It still doesn't work well, nor all the time. But at least it works.
+
 Thu Jun  1 09:36:04 UTC 2000 EWarmenhoven
 	- The buddy list and permit/deny list get set before you finish signing
 	  on now, so you shouldn't flash on the buddy lists of people you're
