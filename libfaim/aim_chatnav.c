@@ -124,6 +124,7 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 	      curexchange++;
 	      exchanges = realloc(exchanges, curexchange * sizeof(struct aim_chat_exchangeinfo));
 	      
+
 	      /* exchange number */
 	      exchanges[curexchange-1].number = aimutil_get16(exchangetlv->value);
 	      innerlist = aim_readtlvchain(exchangetlv->value+2, exchangetlv->length-2);
@@ -231,7 +232,7 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
 			   curexchange, 
 			   exchanges);
 	  curexchange--;
-	  while(curexchange)
+	  while(curexchange >= 0)
 	    {
 	      if (exchanges[curexchange].name)
 		free(exchanges[curexchange].name);

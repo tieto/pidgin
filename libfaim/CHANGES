@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Fri Aug 18 19:52:54 UTC 2000
+   - Fix the non-pthread bug
+
  - Thu Aug 17 23:19:40 UTC 2000
    - A few more leak fixes (only a few left to go...)
 
