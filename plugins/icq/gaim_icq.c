@@ -502,6 +502,7 @@ static void icq_insert_convo(struct gaim_connection *gc, struct conversation *c)
 	GtkWidget *button;
 	struct icq_data *id = gc->proto_data;
 	GSList *l = id->thru_serv;
+	long who = atol(c->name);
 
 	button = gtk_check_button_new_with_label("Send message through server");
 	gtk_box_pack_start(GTK_BOX(c->lbox), button, FALSE, FALSE, 5);
