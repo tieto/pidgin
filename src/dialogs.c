@@ -3467,7 +3467,14 @@ static void des_view_item(GtkObject *obj, struct view_log *view)
 	g_free(view);
 }
 
-void show_log(char *name)
+static void des_log_win(GtkObject *win, gpointer data)
+{
+	char *x = gtk_object_get_user_data(win);
+	if (x)
+		g_free(x);
+}
+
+void show_log(char *nm)
 {
 	gchar filename[256];
 	gchar buf[BUF_LONG];
@@ -3487,6 +3494,7 @@ void show_log(char *name)
 	GtkWidget *last = NULL;
 	GtkWidget *frame;
 	struct view_log *view;
+	char *name = nm ? g_strdup(nm) : NULL;
 
 	int options;
 	guint block;
@@ -3503,6 +3511,8 @@ void show_log(char *name)
 		options ^= GTK_IMHTML_NO_SIZES;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_object_set_user_data(GTK_OBJECT(window), name);
+	gtk_signal_connect(GTK_OBJECT(window), "destroy", GTK_SIGNAL_FUNC(des_log_win), NULL);
 	gtk_window_set_wmclass(GTK_WINDOW(window), "log", "Gaim");
 	if (name)
 		g_snprintf(buf, BUF_LONG, "Gaim - Conversations with %s", name);
