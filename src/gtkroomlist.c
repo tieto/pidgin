@@ -79,7 +79,7 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 
 	if (dialog->roomlist) {
 		if (dialog->pg_to_active) {
-			g_source_remove(dialog->pg_update_to);
+			gaim_timeout_remove(dialog->pg_update_to);
 			dialog->pg_to_active = FALSE;
 			/* yes, that's right, unref it twice. */
 			gaim_roomlist_unref(dialog->roomlist);

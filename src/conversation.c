@@ -1592,7 +1592,7 @@ gaim_conv_im_stop_typing_timeout(GaimConvIm *im)
 	if (im->typing_timeout == 0)
 		return;
 
-	g_source_remove(im->typing_timeout);
+	gaim_timeout_remove(im->typing_timeout);
 	im->typing_timeout = 0;
 }
 
@@ -1637,7 +1637,7 @@ gaim_conv_im_stop_type_again_timeout(GaimConvIm *im)
 	if (im->type_again_timeout == 0)
 		return;
 
-	g_source_remove(im->type_again_timeout);
+	gaim_timeout_remove(im->type_again_timeout);
 	im->type_again_timeout = 0;
 }
 

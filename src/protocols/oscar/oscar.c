@@ -790,9 +790,9 @@ static void oscar_close(GaimConnection *gc) {
 	if (od->icopa > 0)
 		gaim_input_remove(od->icopa);
 	if (od->icontimer > 0)
-		g_source_remove(od->icontimer);
+		gaim_timeout_remove(od->icontimer);
 	if (od->getblisttimer)
-		g_source_remove(od->getblisttimer);
+		gaim_timeout_remove(od->getblisttimer);
 	aim_session_kill(od->sess);
 	g_free(od->sess);
 	od->sess = NULL;
@@ -1463,7 +1463,7 @@ static int conninitdone_icon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	od->iconconnecting = FALSE;
 
 	if (od->icontimer)
-		g_source_remove(od->icontimer);
+		gaim_timeout_remove(od->icontimer);
 	od->icontimer = gaim_timeout_add(100, gaim_icon_timerfunc, gc);
 
 	return 1;
@@ -1882,7 +1882,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			if (!cur) {
 				od->requesticon = g_slist_append(od->requesticon, g_strdup(gaim_normalize(gc->account, info->sn)));
 				if (od->icontimer)
-					g_source_remove(od->icontimer);
+					gaim_timeout_remove(od->icontimer);
 				od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 			}
 		}
@@ -3496,7 +3496,7 @@ static int gaim_icon_error(aim_session_t *sess, aim_frame_t *fr, ...) {
 	free(sn);
 
 	if (od->icontimer)
-		g_source_remove(od->icontimer);
+		gaim_timeout_remove(od->icontimer);
 	od->icontimer = gaim_timeout_add(500, gaim_icon_timerfunc, gc);
 
 	return 1;
@@ -3544,7 +3544,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	}
 
 	if (od->icontimer)
-		g_source_remove(od->icontimer);
+		gaim_timeout_remove(od->icontimer);
 	od->icontimer = gaim_timeout_add(250, gaim_icon_timerfunc, gc);
 
 	return 1;

@@ -797,10 +797,10 @@ static void zephyr_close(GaimConnection *gc)
 	g_slist_free(subscrips);
 	
 	if (nottimer)
-		g_source_remove(nottimer);
+		gaim_timeout_remove(nottimer);
 	nottimer = 0;
 	if (loctimer)
-		g_source_remove(loctimer);
+		gaim_timeout_remove(loctimer);
 	loctimer = 0;
 	zgc = NULL;
 	z_call(ZCancelSubscriptions(0));

@@ -148,7 +148,7 @@ static void icq_set_timeout(long interval) {
 	if (interval > 0 && ack_timer == 0)
 		ack_timer = gaim_timeout_add(interval * 1000, icq_set_timeout_cb, NULL);
 	else if (ack_timer > 0) {
-		g_source_remove(ack_timer);
+		gaim_timeout_remove(ack_timer);
 		ack_timer = 0;
 	}
 }

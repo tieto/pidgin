@@ -270,12 +270,12 @@ static void irc_close(GaimConnection *gc)
 	irc_cmd_quit(irc, "quit", NULL, NULL);
 
 	if (gc->inpa)
-		g_source_remove(gc->inpa);
+		gaim_timeout_remove(gc->inpa);
 
 	g_free(irc->inbuf);
 	close(irc->fd);
 	if (irc->timer)
-		g_source_remove(irc->timer);
+		gaim_timeout_remove(irc->timer);
 	g_hash_table_destroy(irc->cmds);
 	g_hash_table_destroy(irc->msgs);
 	if (irc->motd)

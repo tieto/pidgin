@@ -54,6 +54,12 @@ struct _GaimEventLoopUiOps
 	guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data);
 
 	/**
+	 * Removes a callback timer.
+	 * @see gaim_timeout_remove, g_source_remove
+	 */
+	guint (*timeout_remove)(guint handle);
+
+	/**
 	 * Adds an input handler.
 	 * @see gaim_input_add, g_io_add_watch_full
 	 */
@@ -81,6 +87,13 @@ struct _GaimEventLoopUiOps
  * @param data		data to pass to <tt>function</tt>.
  **/
 guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
+
+/**
+ * Removes a timeout handler.
+ *
+ * @param handle The handle, as returned by gaim_timeout_add.
+ */
+void gaim_timeout_remove(guint handle);
 
 /**
  * Adds an input handler.

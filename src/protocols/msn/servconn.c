@@ -280,7 +280,7 @@ msn_servconn_disconnect(MsnServConn *servconn)
 			g_free(servconn->http_data->gateway_ip);
 
 		if (servconn->http_data->timer)
-			g_source_remove(servconn->http_data->timer);
+			gaim_timeout_remove(servconn->http_data->timer);
 
 		g_free(servconn->http_data);
 	}

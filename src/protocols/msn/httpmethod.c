@@ -67,7 +67,7 @@ stop_timer(MsnServConn *servconn)
 	if (servconn->http_data->timer)
 	{
 		gaim_debug(GAIM_DEBUG_INFO, "msn", "Stopping timer\n");
-		g_source_remove(servconn->http_data->timer);
+		gaim_timeout_remove(servconn->http_data->timer);
 		servconn->http_data->timer = 0;
 	}
 }

@@ -135,7 +135,7 @@ void
 gaim_prefs_uninit()
 {
 	if (prefs_save_timer != 0) {
-		g_source_remove(prefs_save_timer);
+		gaim_timeout_remove(prefs_save_timer);
 		prefs_save_timer = 0;
 		gaim_prefs_sync();
 	}

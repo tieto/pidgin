@@ -87,7 +87,7 @@ gaim_connection_destroy(GaimConnection *gc)
 		g_free(gc->away_state);
 
 	if (gc->disconnect_timeout)
-		g_source_remove(gc->disconnect_timeout);
+		gaim_timeout_remove(gc->disconnect_timeout);
 
 	g_free(gc);
 }

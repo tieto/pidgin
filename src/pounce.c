@@ -1008,7 +1008,7 @@ void
 gaim_pounces_uninit()
 {
 	if (pounces_save_timer != 0) {
-		g_source_remove(pounces_save_timer);
+		gaim_timeout_remove(pounces_save_timer);
 		pounces_save_timer = 0;
 		gaim_pounces_sync();
 	}

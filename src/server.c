@@ -90,7 +90,7 @@ static void update_keepalive(GaimConnection *gc, gboolean on)
 		gc->keep_alive = gaim_timeout_add(60000, send_keepalive, gc);
 	} else if (!on && gc->keep_alive > 0) {
 		gaim_debug(GAIM_DEBUG_INFO, "server", "removing NOP\n");
-		g_source_remove(gc->keep_alive);
+		gaim_timeout_remove(gc->keep_alive);
 		gc->keep_alive = 0;
 	}
 }
@@ -108,7 +108,7 @@ void serv_close(GaimConnection *gc)
 	}
 
 	if (gc->idle_timer > 0)
-		g_source_remove(gc->idle_timer);
+		gaim_timeout_remove(gc->idle_timer);
 	gc->idle_timer = 0;
 
 	update_keepalive(gc, FALSE);
@@ -152,7 +152,7 @@ void serv_finish_login(GaimConnection *gc)
 	}
 
 	if (gc->idle_timer > 0)
-		g_source_remove(gc->idle_timer);
+		gaim_timeout_remove(gc->idle_timer);
 
 	gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
 	serv_touch_idle(gc);

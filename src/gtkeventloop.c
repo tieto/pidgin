@@ -92,19 +92,12 @@ static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInput
 	return closure->result;
 }
 
-static void gaim_gtk_input_remove(guint tag)
-{
-	/* gaim_debug(GAIM_DEBUG_MISC, "proxy",
-	              "CLOSURE: removing input watcher %d\n", tag); */
-	if (tag > 0)
-		g_source_remove(tag);
-}
-
 static GaimEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
+	g_source_remove,
 	gaim_gtk_input_add,
-	gaim_gtk_input_remove
+	g_source_remove
 };
 
 GaimEventLoopUiOps *

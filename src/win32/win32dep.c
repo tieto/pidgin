@@ -128,7 +128,7 @@ static int halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer d
                 WGAIM_FLASH_INFO *finfo = data;        
                 /* Stop flashing and remove filter */
                 gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
-                g_source_remove(finfo->t_handle);
+                gaim_timeout_remove(finfo->t_handle);
                 gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
                 g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
                 gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");

@@ -1659,7 +1659,7 @@ void
 gaim_accounts_uninit(void)
 {
 	if (accounts_save_timer != 0) {
-		g_source_remove(accounts_save_timer);
+		gaim_timeout_remove(accounts_save_timer);
 		accounts_save_timer = 0;
 		gaim_accounts_sync();
 	}

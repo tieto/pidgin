@@ -188,7 +188,7 @@ do_animation (GaimDisclosure *disclosure,
 	      gboolean opening)
 {
 	if (disclosure->priv->expand_id > 0) {
-		g_source_remove(disclosure->priv->expand_id);
+		gaim_timeout_remove(disclosure->priv->expand_id);
 	}
 
 	disclosure->priv->direction = opening ? 1 : -1;
