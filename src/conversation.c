@@ -534,7 +534,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	char *buf, *buf2, *buf3;
 	int hdrlen, limit;
 
-	if (c->is_direct) limit = 0x1ffffff;
+	if (c->is_direct) limit = 0x8000; /* 32 k */
 	else if (c->is_chat && USE_OSCAR) limit = MAXCHATMSGLEN;
 	else if (USE_OSCAR) limit = MAXMSGLEN;
 	else limit = MSG_LEN;
