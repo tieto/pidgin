@@ -25,6 +25,7 @@
 
 #include "account.h"
 #include "internal.h"
+#include "notify.h"
 #include "request.h"
 #include "savedstatuses.h"
 #include "status.h"
@@ -50,6 +51,7 @@ enum
 enum
 {
 	STATUS_WINDOW_COLUMN_TITLE,
+	STATUS_WINDOW_COLUMN_TYPE,
 	STATUS_WINDOW_COLUMN_MESSAGE,
 	STATUS_WINDOW_NUM_COLUMNS
 };
@@ -59,6 +61,12 @@ typedef struct
 	GtkWidget *window;
 	GtkListStore *model;
 	GtkWidget *treeview;
+	GtkWidget *save_button;
+
+	gchar *original_title;
+	GtkEntry *title;
+	GtkOptionMenu *type;
+	GtkIMHtml *message;
 } StatusEditor;
 
 typedef struct
@@ -71,6 +79,9 @@ typedef struct
 } StatusWindow;
 
 static StatusWindow *status_window = NULL;
+
+static void add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status);
+static gboolean status_window_find_savedstatus(GtkTreeIter *iter, const char *title);
 
 static gboolean
 status_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -95,7 +106,77 @@ status_editor_cancel_cb(GtkButton *button, gpointer user_data)
 static void
 status_editor_save_cb(GtkButton *button, gpointer user_data)
 {
-	/* TODO: Save the status */
+	StatusEditor *dialog = user_data;
+	const char *title;
+	GaimStatusPrimitive type;
+	char *message, *unformatted;
+	GaimSavedStatus *status;
+
+	title = gtk_entry_get_text(dialog->title);
+
+	/*
+	 * If the title is already taken then show an error dialog and
+	 * don't do anything.
+	 */
+	if ((gaim_savedstatus_find(title) != NULL) &&
+		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
+	{
+		gaim_notify_error(NULL, NULL, _("Title already in use.  You must "
+						  "choose a unique title."), NULL);
+		return;
+	}
+
+	type = gtk_option_menu_get_history(dialog->type);
+	message = gtk_imhtml_get_markup(dialog->message);
+	unformatted = gaim_markup_strip_html(message);
+
+	/*
+	 * If we're editing an existing status, remove the old one to
+	 * make way for the modified one.
+	 */
+	if (dialog->original_title != NULL)
+	{
+		GtkTreeIter iter;
+
+		gaim_savedstatus_delete(dialog->original_title);
+
+		if (status_window_find_savedstatus(&iter, dialog->original_title))
+		{
+			gtk_list_store_remove(status_window->model, &iter);
+		}
+
+		g_free(dialog->original_title);
+	}
+
+	status = gaim_savedstatus_new(title, type);
+	if (*unformatted != '\0')
+		gaim_savedstatus_set_message(status, message);
+	g_free(message);
+	g_free(unformatted);
+
+	gtk_widget_destroy(dialog->window);
+	g_free(dialog);
+
+	add_status_to_saved_status_list(status_window->model, status);
+}
+
+static void
+status_editor_custom_status_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
+{
+	/* StatusEditor *dialog = (StatusEditor *)data; */
+
+	/* TODO: Need to allow user to set a custom status for the highlighted account, somehow */
+}
+
+static void
+editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
+{
+	StatusEditor *dialog = user_data;
+	const gchar *text;
+
+	text = gtk_entry_get_text(dialog->title);
+
+	gtk_widget_set_sensitive(dialog->save_button, (*text != '\0'));
 }
 
 static GtkWidget *
@@ -121,14 +202,6 @@ create_status_type_menu(GaimStatusPrimitive type)
 	gtk_widget_show(menu);
 
 	return dropdown;
-}
-
-static void
-status_editor_custom_status_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpointer data)
-{
-	/* StatusEditor *dialog = (StatusEditor *)data; */
-
-	/* TODO: Need to allow user to set a custom status for the highlighted account, somehow */
 }
 
 static void
@@ -239,6 +312,9 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 
 	dialog = g_new0(StatusEditor, 1);
 
+	if (status != NULL)
+		dialog->original_title = g_strdup(gaim_savedstatus_get_title(status));
+
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "status");
 	gtk_window_set_title(GTK_WINDOW(win), _("Status"));
@@ -267,12 +343,15 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_size_group_add_widget(sg, label);
 
 	entry = gtk_entry_new();
+	dialog->title = GTK_ENTRY(entry);
 	if (status != NULL)
-		gtk_entry_set_text(GTK_ENTRY(entry), gaim_savedstatus_get_title(status));
+		gtk_entry_set_text(GTK_ENTRY(entry), dialog->original_title);
 	else
 		gtk_entry_set_text(GTK_ENTRY(entry), _("Out of the office"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
+	g_signal_connect(G_OBJECT(entry), "changed",
+					 G_CALLBACK(editor_title_changed_cb), dialog);
 
 	/* Status type */
 	hbox = gtk_hbox_new(FALSE, 6);
@@ -289,6 +368,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 		dropdown = create_status_type_menu(gaim_savedstatus_get_type(status));
 	else
 		dropdown = create_status_type_menu(GAIM_STATUS_AWAY);
+	dialog->type = GTK_OPTION_MENU(dropdown);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
 	gtk_widget_show(dropdown);
 
@@ -304,6 +384,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_size_group_add_widget(sg, label);
 
 	frame = gaim_gtk_create_imhtml(TRUE, &text, &toolbar);
+	dialog->message = GTK_IMHTML(text);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
@@ -370,10 +451,9 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 					 G_CALLBACK(status_editor_cancel_cb), dialog);
 
 	/* Save button */
-	/* TODO: This button needs to be made sensitive when the title box contains text */
 	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	dialog->save_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -509,29 +589,39 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 }
 
 static void
-populate_saved_status_list(StatusWindow *dialog)
+add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status)
 {
 	GtkTreeIter iter;
-	const GList *saved_statuses;
-	GaimSavedStatus *saved_status;
+	const char *title;
+	const char *type;
 	char *message;
+
+	title = gaim_savedstatus_get_title(saved_status);
+	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
+	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
+	if (strlen(message) > 70)
+		strcpy(&message[68], "...");
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+					   STATUS_WINDOW_COLUMN_TITLE, title,
+					   STATUS_WINDOW_COLUMN_TYPE, type,
+					   STATUS_WINDOW_COLUMN_MESSAGE, message,
+					   -1);
+	free(message);
+}
+
+static void
+populate_saved_status_list(StatusWindow *dialog)
+{
+	const GList *saved_statuses;
 
 	gtk_list_store_clear(dialog->model);
 
 	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
 			saved_statuses = g_list_next(saved_statuses))
 	{
-		saved_status = (GaimSavedStatus *)saved_statuses->data;
-		message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
-		if (strlen(message) > 70)
-			strcpy(&message[68], "...");
-
-		gtk_list_store_append(dialog->model, &iter);
-		gtk_list_store_set(dialog->model, &iter,
-						   STATUS_WINDOW_COLUMN_TITLE, gaim_savedstatus_get_title(saved_status),
-						   STATUS_WINDOW_COLUMN_MESSAGE, message,
-						   -1);
-		free(message);
+		add_status_to_saved_status_list(dialog->model, saved_statuses->data);
 	}
 }
 
@@ -555,6 +645,7 @@ create_saved_status_list(StatusWindow *dialog)
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
+									   G_TYPE_STRING,
 									   G_TYPE_STRING,
 									   G_TYPE_STRING);
 
@@ -583,6 +674,17 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_TITLE);
+
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Type"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_sort_column_id(column,
+											STATUS_WINDOW_COLUMN_TYPE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   STATUS_WINDOW_COLUMN_TYPE);
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Message"));

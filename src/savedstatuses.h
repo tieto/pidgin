@@ -47,10 +47,21 @@ typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
  * @param title The title of the saved status.  This must be unique.
  * @param type  The type of saved status.
  *
- * @return The newly created saved status.
+ * @return The newly created saved status, or NULL if the title you
+ *         used was already taken.
  */
 GaimSavedStatus *gaim_savedstatus_new(const char *title,
 									  GaimStatusPrimitive type);
+
+/**
+ * Set the message for the given saved status.
+ *
+ * @param status  The saved status.
+ * @param message The message, or NULL if you want to unset the
+ *                message for this status.
+ */
+void gaim_savedstatus_set_message(GaimSavedStatus *status,
+								  const char *message);
 
 /**
  * Delete a saved status.  This removes the saved status from the list

@@ -650,7 +650,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	add_pref_box(dialog, vbox, _("Screen Name:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
-			 G_CALLBACK(screenname_changed_cb), dialog);
+					 G_CALLBACK(screenname_changed_cb), dialog);
 
 	/* Do the user split thang */
 	if (dialog->plugin == NULL) /* Yeah right. */

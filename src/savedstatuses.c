@@ -445,6 +445,8 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 {
 	GaimSavedStatus *status;
 
+	g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
+
 	status = g_new0(GaimSavedStatus, 1);
 	status->title = g_strdup(title);
 	status->type = type;
@@ -454,6 +456,17 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 	schedule_save();
 
 	return status;
+}
+
+void
+gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
+{
+	g_return_if_fail(status != NULL);
+
+	g_free(status->message);
+	status->message = g_strdup(message);
+
+	schedule_save();
 }
 
 gboolean
