@@ -1388,6 +1388,11 @@ static void irc_get_info(struct gaim_connection *gc, char *who)
 	struct irc_data *idata = gc->proto_data;
 	char buf[IRC_BUF_LEN];
 
+	if (*who == '@')
+		who++;
+	if (*who == '+')
+		who++;
+
 	g_snprintf(buf, sizeof(buf), "WHOIS %s\r\n", who);
 	irc_write(idata->fd, buf, strlen(buf));
 }
