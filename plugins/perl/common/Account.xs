@@ -125,6 +125,15 @@ void
 gaim_accounts_remove(account)
 	Gaim::Account account
 
+Gaim::Account
+find(name, protocol_id)
+	const char *name
+	const char *protocol_id
+CODE:
+	RETVAL = gaim_accounts_find_with_prpl_id(name, protocol_id);
+OUTPUT:
+	RETVAL
+
 void *
 handle()
 CODE:
@@ -142,13 +151,4 @@ PREINIT:
 PPCODE:
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Account")));
-
-Gaim::Account
-account_find(name, protocol_id)
-	const char *name
-	const char *protocol_id
-CODE:
-	RETVAL = gaim_accounts_find_with_prpl_id(name, protocol_id);
-OUTPUT:
-	RETVAL
 
