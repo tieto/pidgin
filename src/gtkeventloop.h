@@ -1,5 +1,5 @@
 /**
- * @file gtkeventloop.h Gaim Event Loop API (gtk implementation)
+ * @file gtkeventloop.h Gaim GTK+ Event Loop Implementation
  * @ingroup gtkui
  *
  * gaim
@@ -22,13 +22,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKEVENTLOOP_H_
-#define _GAIM_GTKEVENTLOOP_H_
+#ifndef _GAIM_GTK_EVENT_LOOP_H_
+#define _GAIM_GTK_EVENT_LOOP_H_
+
 #include "eventloop.h"
 
 /**
- * Gets a static pointer to a gtk implementation of an eventloop.
+ * Returns the GTK+ event loop UI operations structure.
+ *
+ * @return The GTK+ event loop UI operations structure.
  */
 GaimEventLoopUiOps *gaim_gtk_eventloop_get_ui_ops(void);
 
-#endif /* _GAIM_GTKEVENTLOOP_H_ */
+#endif /* _GAIM_GTK_EVENT_LOOP_H_ */
