@@ -1872,13 +1872,9 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	char hostname[256];
 	char buf[IRC_BUF_LEN];
 	char *test;
+	const char *alias;
 	const char *charset = gaim_account_get_string(account, "charset", "UTF-8");
 	GError *err = NULL;
-	
-	if (!g_list_find(gaim_connections_get_all(), gc)) {
-		close(source);
-		return;
-	}
 
 	idata = gc->proto_data;
 
@@ -1902,11 +1898,13 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 	
 	gethostname(hostname, sizeof(hostname) - 1);
 	hostname[sizeof(hostname) - 1] = 0;
+
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
 
-	if (gc->account->password != NULL) {
-		g_snprintf(buf, sizeof(buf), "PASS %s\r\n", gaim_account_get_password(account));
+	if (gaim_account_get_password(account) != NULL) {
+		g_snprintf(buf, sizeof(buf), "PASS %s\r\n",
+				   gaim_account_get_password(account));
 
 		if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 			gaim_connection_error(gc, "Write error");
@@ -1914,16 +1912,21 @@ irc_login_callback(gpointer data, gint source, GaimInputCondition condition)
 		}
 	}
 
+	alias = gaim_account_get_alias(account);
+
 	g_snprintf(buf, sizeof(buf), "USER %s %s %s :%s\r\n",
 		   g_get_user_name(), hostname,
 		   idata->server,
-		   *gc->account->alias ? gc->account->alias : "gaim");
+		   (alias == NULL ? "gaim" : alias));
+
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		gaim_connection_error(gc, "Write error");
 		return;
 	}
 
-	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", gaim_connection_get_display_name(gc));
+	g_snprintf(buf, sizeof(buf), "NICK %s\r\n",
+			   gaim_connection_get_display_name(gc));
+
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		gaim_connection_error(gc, "Write error");
 		return;
@@ -1964,7 +1967,7 @@ irc_login(GaimAccount *account)
 			   gaim_account_get_int(account, "port", 6667),
 			   irc_login_callback, gc);
 	
-	if (!account->gc || (rc != 0)) {
+	if (rc != 0) {
 		gaim_connection_error(gc, _("Unable to create socket"));
 		return;
 	}
