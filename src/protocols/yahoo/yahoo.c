@@ -3088,7 +3088,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	yahoo_packet_hash(pkt, 10, buf);
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		GaimStatus *status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
-		msg = yahoo_string_encode(gc, gaim_status_get_attr_string(status, "message"), NULL);
+		msg = yahoo_string_encode(gc, gaim_status_get_attr_string(status, "message"), NULL); //this line crashes, fix it
 		msg2 = gaim_unescape_html(msg);
 		yahoo_packet_hash(pkt, 19, msg2);
 	} else {
