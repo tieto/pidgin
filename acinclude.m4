@@ -195,7 +195,7 @@ main ()
           echo "*** If you have an old version installed, it is best to remove it, although"
           echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH" ],
         [ echo "*** The test program failed to compile or link. See the file config.log for the"
-          echo "*** exact error that occured. This usually means GLIB is incorrectly installed."])
+          echo "*** exact error that occurred. This usually means GLIB is incorrectly installed."])
           CFLAGS="$ac_save_CFLAGS"
           LIBS="$ac_save_LIBS"
        fi
@@ -397,7 +397,7 @@ main ()
           echo "*** If you have an old version installed, it is best to remove it, although"
           echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH" ],
         [ echo "*** The test program failed to compile or link. See the file config.log for the"
-          echo "*** exact error that occured. This usually means GTK+ is incorrectly installed."])
+          echo "*** exact error that occurred. This usually means GTK+ is incorrectly installed."])
           CFLAGS="$ac_save_CFLAGS"
           LIBS="$ac_save_LIBS"
        fi
@@ -513,7 +513,7 @@ int main ()
        echo "*** If you have an old version installed, it is best to remove it, although"
        echo "*** you may also be able to get things to work by modifying LD_LIBRARY_PATH"],
        [ echo "*** The test program failed to compile or link. See the file config.log for the"
-       echo "*** exact error that occured. This usually means ao was incorrectly installed"
+       echo "*** exact error that occurred. This usually means ao was incorrectly installed"
        echo "*** or that you have moved ao since it was installed." ])
        CFLAGS="$ac_save_CFLAGS"
        LIBS="$ac_save_LIBS"
@@ -692,7 +692,7 @@ END
 END
         ],
         [ echo "*** The test program failed to compile or link. See the file config.log"
-          echo "*** for the exact error that occured. This usually means the Audio File"
+          echo "*** for the exact error that occurred. This usually means the Audio File"
           echo "*** Library was incorrectly installed or that you have moved the Audio"
           echo "*** File Library since it was installed. In the latter case, you may want"
           echo "*** to edit the audiofile-config script: $AUDIOFILE_CONFIG" ])
