@@ -5297,8 +5297,8 @@ msgstr "Chiudi la conversazione"
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
-msgstr[0] "0 persone nella stanza"
-msgstr[1] "0 persone nella stanza"
+msgstr[0] "%d persona nella stanza"
+msgstr[1] "%d persone nella stanza"
 
 #: src/gtkconv.c:4661
 msgid "Disable Animation"
