@@ -381,6 +381,7 @@ void build_prefs()
 
         
 	gaim_button(_("Enter sends message"), &general_options, OPT_GEN_ENTER_SENDS, genbox);
+	gaim_button(_("Control characters for HTML (e.g. Ctrl-I for italics)"), &general_options, OPT_GEN_CTL_CHARS, genbox);
 	gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, genbox);
 	gaim_button(_("Log All Conversations"), &general_options, OPT_GEN_LOG_ALL, genbox);
 	gaim_button(_("Strip HTML from log files"), &general_options, OPT_GEN_STRIP_HTML, genbox);

@@ -404,7 +404,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 579 $"
+#define REVISION "gaim:$Revision: 585 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -484,6 +484,7 @@ extern int general_options;
 #define OPT_GEN_POPUP_CHAT	0x00010000
 #define OPT_GEN_BACK_ON_IM	0x00020000
 #define OPT_GEN_USE_OSCAR	0x00040000
+#define OPT_GEN_CTL_CHARS	0x00080000
 extern int USE_OSCAR;
 
 extern int display_options;

@@ -464,7 +464,8 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey *event,  struct convers
 			pos=gtk_editable_get_position(GTK_EDITABLE(entry));
 			gtk_editable_insert_text(GTK_EDITABLE(entry), "\n", 1, &pos);
 		}
-	} else if (event->state & GDK_CONTROL_MASK) {
+	} else if ((event->state & GDK_CONTROL_MASK)
+		   && (general_options & OPT_GEN_CTL_CHARS)) {
 		switch (event->keyval) {
 		case 'i':
 			quiet_set(c->italic, !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(c->italic)));
