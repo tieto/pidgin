@@ -81,6 +81,31 @@ char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
 	}
 	return (_("<b><font color=\"red\">The logger has no read function</font></b>"));
 }
+	
+int gaim_log_get_size(GaimLog *log)
+{
+	g_return_val_if_fail(log && log->logger, 0);
+	if (log->logger->size)
+		return log->logger->size(log);
+	return 0;
+}
+
+int gaim_log_get_total_size(const char *name, GaimAccount *account)
+{
+	GList *logs = gaim_log_get_logs(name, account);
+	int size = 0;
+	
+	while (logs) {
+		GList *logs2 = logs->next;
+		GaimLog *log = (GaimLog*)(logs->data);
+		size += gaim_log_get_size(log);
+		g_free(log->name);
+		g_free(log);
+		g_list_free_1(logs);
+		logs = logs2;
+	}
+	return size;
+}
 
 /****************************************************************************
  * LOGGER FUNCTIONS *********************************************************
@@ -110,7 +135,8 @@ GaimLogLogger *gaim_log_logger_new(void(*create)(GaimLog *),
 				   void(*write)(GaimLog *, GaimMessageFlags, const char *,
 						time_t, const char *),
 				   void(*finalize)(GaimLog *), GList*(*list)(const char*, GaimAccount*),
-				   char*(*read)(GaimLog*, GaimLogReadFlags*))
+				   char*(*read)(GaimLog*, GaimLogReadFlags*),
+				   int(*size)(GaimLog*))
 {
 	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
 	logger->create = create;
@@ -118,6 +144,7 @@ GaimLogLogger *gaim_log_logger_new(void(*create)(GaimLog *),
 	logger->finalize = finalize;
 	logger->list = list;
 	logger->read = read;
+	logger->size = size;
 	return logger;
 }
 
@@ -267,6 +294,17 @@ static GList *log_lister_common(const char *screenname, GaimAccount *account, co
 	g_dir_close(dir);
 	g_free(path);
 	return list;
+}
+
+/* Only to be used with logs listed from log_lister_common */
+int log_sizer_common(GaimLog *log) 
+{
+	struct stat st;
+
+	if (stat((char*)(log->logger_data), &st))
+		st.st_size = 0;
+
+	return st.st_size;
 }
 
 #if 0 /* Maybe some other time. */
@@ -506,7 +544,8 @@ static GaimLogLogger html_logger = {
 	html_logger_write,
 	html_logger_finalize,
 	html_logger_list,
-	html_logger_read
+	html_logger_read,
+	log_sizer_common
 };
 
 
@@ -637,7 +676,8 @@ static GaimLogLogger txt_logger = {
 	txt_logger_write,
 	txt_logger_finalize,
 	txt_logger_list,
-	txt_logger_read
+	txt_logger_read,
+	log_sizer_common
 };
 
 /****************
@@ -750,6 +790,12 @@ char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	if(strstr(read, "<BR>"))
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
 	return read;
+}
+
+int old_logger_size (GaimLog *log)
+{
+	struct old_logger_data *data = log->logger_data;
+	return data->length;
 }
 
 static GaimLogLogger old_logger = {

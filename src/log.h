@@ -77,6 +77,10 @@ struct _GaimLogLogger {
 	/** Given one of the logs returned by the logger's list function,
 	 * this returns the contents of the log in GtkIMHtml markup */
 	char *(*read)(GaimLog *log, GaimLogReadFlags *flags);
+	
+	/** Given one of the logs returned by the logger's list function,
+	 * this returns the size of the log in bytes */
+	int (*size)(GaimLog *log);
 };
 
 /**
@@ -158,7 +162,22 @@ extern "C" {
 	 */
 	GList *gaim_log_get_logs(const char *name, GaimAccount *account);
 
+	/**
+	 * Returns the size of a log 
+	 *
+	 * @param log                 The log
+	 * @return                    The size of the log, in bytes
+	 */
+	int gaim_log_get_size(GaimLog *log);
 
+	/**
+	 * Returns the size, in bytes, of all available logs in this conversation
+	 *
+	 * @param name                The name of the log
+	 * @param account             The account
+	 * @return                    The size in bytes
+	 */
+	 int gaim_log_get_total_log_size(const char *name, GaimAccount *account);
 	/******************************************
 	 ** LOGGER FUNCTIONS **********************
 	 ******************************************/
@@ -171,6 +190,7 @@ extern "C" {
 	 * @param finalize The logger's finalize function.
 	 * @param list     The logger's list function.
 	 * @param read     The logger's read function.
+	 * @param size     The logger's size function.
 	 *
 	 * @return The new logger
 	 */
@@ -179,7 +199,8 @@ extern "C" {
 							const char *, time_t, const char *),
 					   void(*finalize)(GaimLog *),
 					   GList*(*list)(const char*, GaimAccount*),
-					   char*(*read)(GaimLog*, GaimLogReadFlags*));
+					   char*(*read)(GaimLog*, GaimLogReadFlags*),
+					   int(*size)(GaimLog*));
 	/**
 	 * Frees a logger
 	 *
