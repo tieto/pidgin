@@ -489,8 +489,10 @@ msn_switchboard_new(MsnSession *session)
 									  clientcaps_msg);
 		msn_servconn_register_msg_type(servconn, "text/x-clientinfo",
 									  clientcaps_msg);
+#if 0
 		msn_servconn_register_msg_type(servconn, "application/x-msnmsgrp2p",
 									   msn_p2p_msg);
+#endif
 
 		/* Save these for future use. */
 		switchboard_commands  = servconn->commands;
