@@ -3704,7 +3704,11 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar.toolbar,
 					   FALSE, FALSE, 0);
 
-	/* Setup the entry widget. */
+	/* Setup the entry widget.
+	 * We never show the horizontal scrollbar because it was causing weird
+	 * lockups when typing text just as you type the character that would 
+	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
+	 */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
@@ -3804,7 +3808,11 @@ setup_im_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar.toolbar,
 					   FALSE, FALSE, 0);
 
-	/* Setup the entry widget. */
+	/* Setup the entry widget.
+	 * We never show the horizontal scrollbar because it was causing weird
+	 * lockups when typing text just as you type the character that would 
+	 * cause both scrollbars to appear.  Definitely seems like a gtk bug.
+	 */
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
