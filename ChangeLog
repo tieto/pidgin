@@ -37,8 +37,10 @@ version 0.78cvs
 	* Print Gadu-Gadu messages to the debug window instead of the console
 	* New tabs should scroll correctly again (Tim Ringenbach)
 	* Ampersands in links should work right (Tim Ringenbach)
-	* IM Image support for AIM is back. It still depends on Direct
-	  Connect, and both are still as buggy as ever, if not more so.
+	* IM Image support for AIM is back. It may be buggy, and depends on
+	  Direct IM and inherits all its bugs.
+	* Direct IM for AIM should be slightly less buggy, and may actually
+	  work now, if at least one side isn't behind a NAT or firewall.
 
 	Preference Changes:
 	* Added a "none" smiley theme to replace the "Show graphical
