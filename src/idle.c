@@ -68,7 +68,7 @@ gint check_idle(gpointer data)
 	report_idle = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
 
 #ifdef USE_SCREENSAVER
-	if (!strcmp(report_idle, "system")) {
+	if (report_idle != NULL && !strcmp(report_idle, "system")) {
 #ifndef _WIN32
 		int event_base, error_base;
 		if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
@@ -130,7 +130,7 @@ gint check_idle(gpointer data)
 	   usage for auto-away, but quit here so we don't report to the 
 	   server */
 
-	if (!strcmp(report_idle, "none"))
+	if (report_idle != NULL && !strcmp(report_idle, "none"))
 		return TRUE;
 
 	if (idle_time >= IDLEMARK && !gc->is_idle) {
