@@ -87,7 +87,6 @@ __timestamps_cb(GtkWidget *w, DebugWindow *win)
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 
 	gaim_prefs_set_bool("/gaim/gtk/debug/timestamps", win->timestamps);
-						
 }
 
 static DebugWindow *

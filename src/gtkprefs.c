@@ -881,10 +881,10 @@ GtkWidget *list_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
 
 	for (sl = gaim_gtk_blist_sort_methods; sl != NULL; sl = sl->next) {
-		char *name = ((struct gaim_gtk_blist_sort_method*)sl->data)->name;
+		struct gaim_gtk_blist_sort_method *method = sl->data;
 
-		l = g_list_append(l, name);
-		l = g_list_append(l, name);
+		l = g_list_append(l, method->name);
+		l = g_list_append(l, method->id);
 	}
 
 	prefs_dropdown_from_list(vbox, _("Sorting:"), GAIM_PREF_STRING,
@@ -1025,7 +1025,7 @@ GtkWidget *im_page() {
 	prefs_checkbox(_("_Raise windows on events"),
 				  "/gaim/gtk/conversations/im/raise_on_events", vbox);
 	prefs_checkbox(_("Hide window on _send"),
-				  "/gaim/gtk/conversations/hide_im_on_send", vbox);
+				  "/gaim/gtk/conversations/im/hide_on_send", vbox);
 	gtk_widget_show (vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Icons"));

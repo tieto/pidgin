@@ -70,9 +70,6 @@
 
 static GaimPlugin *my_protocol = NULL;
 
-/* For win32 compatability */
-G_MODULE_IMPORT int report_idle;
-
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_IMIMAGE | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE;
 
@@ -4909,7 +4906,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		}
 		/* Presence settings (idle time visibility) */
 		if ((tmp = aim_ssi_getpresence(sess->ssi.local)) != 0xFFFFFFFF)
-			if (report_idle && !(tmp & 0x400))
+			if (!(tmp & 0x400))
 				aim_ssi_setpresence(sess, tmp | 0x400);
 	} /* end adding buddies from local list to server list */
 

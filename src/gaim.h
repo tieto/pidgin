@@ -113,10 +113,6 @@
 #define IM_FLAG_CHECKBOX 0x02
 #define IM_FLAG_GAIMUSER 0x04
 
-#define IDLE_NONE        0
-#define IDLE_GAIM        1
-#define IDLE_SCREENSAVER 2
-
 #define PERMIT_ALL	1
 #define PERMIT_NONE	2
 #define PERMIT_SOME	3

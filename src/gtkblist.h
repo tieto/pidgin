@@ -136,6 +136,7 @@ typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, struct g
 extern GSList *gaim_gtk_blist_sort_methods;
 
 struct gaim_gtk_blist_sort_method {
+	char *id;
 	char *name;
 	gaim_gtk_blist_sort_function func;
 };
@@ -143,25 +144,26 @@ struct gaim_gtk_blist_sort_method {
 /**
  * Registers a buddy list sorting method.
  *
+ * @param id   The unique ID of the sorting method
  * @param name The method's name.
  * @param func  A pointer to the function.
  *
  */
-void gaim_gtk_blist_sort_method_reg(const char *name, gaim_gtk_blist_sort_function func);
+void gaim_gtk_blist_sort_method_reg(const char *id, const char *name, gaim_gtk_blist_sort_function func);
 
 /**
  * Unregisters a buddy list sorting method.
  *
- * @param name The method's name
+ * @param id The method's id
  */
-void gaim_gtk_blist_sort_method_unreg(const char *name);
+void gaim_gtk_blist_sort_method_unreg(const char *id);
 
 /**
  * Sets a buddy list sorting method.
  *
- * @param name The method's name.
+ * @param id The method's id.
  */
-void gaim_gtk_blist_sort_method_set(const char *name);
+void gaim_gtk_blist_sort_method_set(const char *id);
 
 /**
  * Sets up the programs default sort methods

@@ -157,6 +157,10 @@
 #define OPT_ACCT_REM_PASS	0x00000004
 #define OPT_ACCT_MAIL_CHECK      0x00000008
 
+#define IDLE_NONE        0
+#define IDLE_GAIM        1
+#define IDLE_SCREENSAVER 2
+
 static guint misc_options;
 static guint logging_options;
 static guint blist_options;
@@ -177,11 +181,10 @@ guint proxy_info_is_from_gaimrc = 1; /* Only save proxy info if it
 				      * was loaded from the file
 				      * or otherwise explicitly requested */
 
-int report_idle;
-int web_browser;
-struct save_pos blist_pos;
-struct window_size conv_size, buddy_chat_size;
-char web_command[2048] = "";
+static int web_browser;
+static struct save_pos blist_pos;
+static struct window_size conv_size, buddy_chat_size;
+static char web_command[2048] = "";
 
 static GdkColor fgcolor;
 static GdkColor bgcolor;
@@ -786,17 +789,79 @@ static void gaimrc_read_options(FILE *f)
 			read_display = TRUE;
 		} else if (!strcmp(p->option, "misc_options")) {
 			misc_options = atoi(p->value[0]);
+			gaim_prefs_set_bool("/gaim/gtk/debug/enabled",
+								(misc_options & OPT_MISC_DEBUG));
+			gaim_prefs_set_bool("/gaim/gtk/browsers/new_window",
+								(misc_options & OPT_MISC_BROWSER_POPUP));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/im/send_typing",
+								!(misc_options & OPT_MISC_STEALTH_TYPING));
+			gaim_prefs_set_bool("/gaim/gtk/buddies/use_server_alias",
+								(misc_options & OPT_MISC_USE_SERVER_ALIAS));
 		} else if (!strcmp(p->option, "logging_options")) {
 			logging_options = atoi(p->value[0]);
 			read_logging = TRUE;
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_ims",
+								(logging_options & OPT_LOG_CONVOS));
+			gaim_prefs_set_bool("/gaim/gtk/logging/strip_html",
+								(logging_options & OPT_LOG_STRIP_HTML));
+			gaim_prefs_set_bool("/gaim/gtk/logging/individual_logs",
+								(logging_options & OPT_LOG_INDIVIDUAL));
+			gaim_prefs_set_bool("/gaim/gtk/logging/log_chats",
+								(logging_options & OPT_LOG_CHATS));
 		} else if (!strcmp(p->option, "blist_options")) {
 			blist_options = atoi(p->value[0]);
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_group_count",
+								(blist_options & OPT_BLIST_SHOW_GRPNUM));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_idle_time",
+								(blist_options & OPT_BLIST_SHOW_IDLETIME));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
+								!(blist_options & OPT_BLIST_NO_MT_GRP));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_warning_level",
+								(blist_options & OPT_BLIST_SHOW_WARN));
+			gaim_prefs_set_bool("/gaim/gtk/blist/grey_idle_buddies",
+								(blist_options & OPT_BLIST_GREY_IDLERS));
+			gaim_prefs_set_bool("/gaim/gtk/blist/raise_on_events",
+								(blist_options & OPT_BLIST_POPUP));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_buddy_icons",
+								(blist_options & OPT_BLIST_SHOW_ICONS));
+			gaim_prefs_set_bool("/gaim/gtk/blist/show_offline_buddies",
+								(blist_options & OPT_BLIST_SHOW_OFFLINE));
 		} else if (!strcmp(p->option, "convo_options")) {
 			convo_options = atoi(p->value[0]);
+			gaim_prefs_set_bool("/gaim/gtk/conversations/enter_sends",
+								(convo_options & OPT_CONVO_ENTER_SENDS));
+			gaim_prefs_set_bool("/core/conversations/send_urls_as_links",
+								(convo_options & OPT_CONVO_SEND_LINKS));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/spellcheck",
+								(convo_options & OPT_CONVO_CHECK_SPELLING));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/html_shortcuts",
+								(convo_options & OPT_CONVO_CTL_CHARS));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/smiley_shortcuts",
+								(convo_options & OPT_CONVO_CTL_SMILEYS));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/escape_closes",
+								(convo_options & OPT_CONVO_ESC_CAN_CLOSE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_enter_sends",
+								(convo_options & OPT_CONVO_CTL_ENTER));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
+								(convo_options & OPT_CONVO_SHOW_TIME));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_colors",
+								(convo_options & OPT_CONVO_IGNORE_COLOR));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/show_smileys",
+								(convo_options & OPT_CONVO_SHOW_SMILEY));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_fonts",
+								(convo_options & OPT_CONVO_IGNORE_FONTS));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ignore_font_sizes",
+								(convo_options & OPT_CONVO_IGNORE_SIZES));
+			gaim_prefs_set_bool("/core/conversations/combine_chat_im",
+								(convo_options & OPT_CONVO_COMBINE));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/ctrl_w_closes",
+								(convo_options & OPT_CONVO_CTL_W_CLOSES));
+			gaim_prefs_set_bool("/gaim/gtk/conversations/close_on_tabs",
+								!(convo_options & OPT_CONVO_NO_X_ON_TAB));
 		} else if (!strcmp(p->option, "im_options")) {
 			im_options = atoi(p->value[0]);
 
-			gaim_prefs_set_bool("/gaim/gtk/conversations/hide_im_on_send",
+			gaim_prefs_set_bool("/gaim/gtk/conversations/im/hide_on_send",
 								(im_options & OPT_IM_POPDOWN));
 
 		} else if (!strcmp(p->option, "conv_placement")) {
@@ -856,7 +921,20 @@ static void gaimrc_read_options(FILE *f)
 			gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", buf);
 
 		} else if (!strcmp(p->option, "report_idle")) {
-			report_idle = atoi(p->value[0]);
+			switch(atoi(p->value[0])) {
+				case IDLE_SCREENSAVER:
+					gaim_prefs_set_string("/gaim/gtk/idle/reporting_method",
+							"system");
+					break;
+				case IDLE_GAIM:
+					gaim_prefs_set_string("/gaim/gtk/idle/reporting_method",
+							"gaim");
+					break;
+				default:
+					gaim_prefs_set_string("/gaim/gtk/idle/reporting_method",
+							"none");
+					break;
+			}
 		} else if (!strcmp(p->option, "web_browser")) {
 			web_browser = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "web_command")) {
@@ -1183,6 +1261,7 @@ static void gaimrc_read_proxy(FILE *f)
 
 static void set_defaults()
 {
+#if 0
 	int i;
 	struct away_message *a;
 
@@ -1268,6 +1347,7 @@ static void set_defaults()
 	buddy_chat_size.width = 320;
 	buddy_chat_size.height = 160;
 	buddy_chat_size.entry_height = 50;
+#endif
 }
 
 void load_prefs()
