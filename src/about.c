@@ -199,7 +199,7 @@ void gaim_help(GtkWidget *w, void *x)
 		aol_icon(help->window);
 		gtk_signal_connect(GTK_OBJECT(help), "destroy",
 				   GTK_SIGNAL_FUNC(destroy_help), GTK_OBJECT(help));
-		gtk_widget_set_usize(help, 240, -1);
+		gtk_widget_set_usize(help, 315, -1);
 
 		vbox = gtk_vbox_new(FALSE, 10);
 		gtk_container_add(GTK_CONTAINER(help), vbox);
