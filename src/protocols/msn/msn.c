@@ -619,7 +619,7 @@ static char *msn_parse_format(char *mime)
 	}
 	
 	cur = url_decode(ret->str);
-	g_string_free(ret, FALSE);
+	g_string_free(ret, TRUE);
 	return cur;
 }
 			
@@ -682,7 +682,6 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 
 		g_free(message);
 		if (format) {
-			g_free(format);
 			g_free(utf);
 		}
 	}
