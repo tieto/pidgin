@@ -1167,7 +1167,7 @@ static void toc_change_passwd(GaimConnection *g, const char *orig, const char *n
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_add_buddy(GaimConnection *g, const char *name)
+static void toc_add_buddy(GaimConnection *g, const char *name, GaimGroup *group)
 {
 	char buf[BUF_LEN * 2];
 	g_snprintf(buf, sizeof(buf), "toc_add_buddy %s", normalize(name));

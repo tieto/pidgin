@@ -289,7 +289,7 @@ static void irc_set_away(GaimConnection *gc, const char *state, const char *msg)
 	irc_cmd_away(irc, "away", NULL, args);
 }
 
-static void irc_add_buddy(GaimConnection *gc, const char *who)
+static void irc_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
 {
 	struct irc_conn *irc = (struct irc_conn *)gc->proto_data;
 	struct irc_buddy *ib = g_new0(struct irc_buddy, 1);

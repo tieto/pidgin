@@ -1702,7 +1702,7 @@ static void yahoo_keepalive(GaimConnection *gc)
 	yahoo_packet_free(pkt);
 }
 
-static void yahoo_add_buddy(GaimConnection *gc, const char *who)
+static void yahoo_add_buddy(GaimConnection *gc, const char *who, GaimGroup *foo)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;

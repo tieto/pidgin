@@ -639,7 +639,7 @@ msn_set_idle(GaimConnection *gc, int idle)
 }
 
 static void
-msn_add_buddy(GaimConnection *gc, const char *name)
+msn_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	MsnSession *session = gc->proto_data;
 	char *who;

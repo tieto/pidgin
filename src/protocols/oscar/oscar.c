@@ -4633,7 +4633,7 @@ static void oscar_dir_search(GaimConnection *gc, const char *first, const char *
 		aim_usersearch_address(od->sess, od->conn, email);
 }
 
-static void oscar_add_buddy(GaimConnection *gc, const char *name) {
+static void oscar_add_buddy(GaimConnection *gc, const char *name, GaimGroup *g) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 #ifdef NOSSI
 	aim_add_buddy(od->sess, od->conn, name);

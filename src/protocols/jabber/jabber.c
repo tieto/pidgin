@@ -2760,7 +2760,7 @@ static void jabber_rename_group(GaimConnection *gc,
 		}
 }
 
-static void jabber_add_buddy(GaimConnection *gc, const char *name)
+static void jabber_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	xmlnode x;
 	char *realwho;

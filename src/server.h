@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -48,7 +48,7 @@ void serv_set_away(GaimConnection *, const char *, const char *);
 void serv_set_away_all(const char *);
 int  serv_send_typing(GaimConnection *, const char *, int);
 void serv_change_passwd(GaimConnection *, const char *, const char *);
-void serv_add_buddy(GaimConnection *, const char *);
+void serv_add_buddy(GaimConnection *, const char *, GaimGroup *);
 void serv_add_buddies(GaimConnection *, GList *);
 void serv_remove_buddy(GaimConnection *, const char *, const char *);
 void serv_remove_buddies(GaimConnection *, GList *, const char *);

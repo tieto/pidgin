@@ -157,7 +157,8 @@ void serv_finish_login(GaimConnection *gc)
 
 	if (prpl_info->options & OPT_PROTO_CORRECT_TIME)
 		serv_add_buddy(gc,
-				gaim_account_get_username(gaim_connection_get_account(gc)));
+				gaim_account_get_username(gaim_connection_get_account(gc)),
+				NULL);
 
 	update_keepalive(gc, TRUE);
 }
@@ -448,7 +449,7 @@ void serv_change_passwd(GaimConnection *g, const char *orig, const char *new)
 		prpl_info->change_passwd(g, orig, new);
 }
 
-void serv_add_buddy(GaimConnection *g, const char *name)
+void serv_add_buddy(GaimConnection *g, const char *name, GaimGroup *group)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -456,7 +457,7 @@ void serv_add_buddy(GaimConnection *g, const char *name)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
 
 	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->add_buddy)
-		prpl_info->add_buddy(g, name);
+		prpl_info->add_buddy(g, name, group);
 }
 
 void serv_add_buddies(GaimConnection *g, GList *buddies)
@@ -471,7 +472,7 @@ void serv_add_buddies(GaimConnection *g, GList *buddies)
 			prpl_info->add_buddies(g, buddies);
 		else if (prpl_info->add_buddy) {
 			while (buddies) {
-				prpl_info->add_buddy(g, buddies->data);
+				prpl_info->add_buddy(g, buddies->data, NULL);
 				buddies = buddies->next;
 			}
 		}

@@ -26,6 +26,7 @@ typedef struct _MsnUser  MsnUser;
 typedef struct _MsnUsers MsnUsers;
 
 #include "session.h"
+#include "msnobject.h"
 
 /**
  * A user.
@@ -50,6 +51,8 @@ struct _MsnUser
 	GList *group_ids;       /**< The group IDs.             */
 
 	size_t ref_count;       /**< The reference count.       */
+
+	MsnObject *msnobj;      /**< The user's MSN Object.     */
 
 	GHashTable *clientcaps; /**< The client's capabilities. */
 };

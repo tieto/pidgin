@@ -144,7 +144,7 @@ static int nap_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 /* 207 - MSG_CLIENT_ADD_HOTLIST */
-static void nap_add_buddy(GaimConnection *gc, const char *name)
+static void nap_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 	nap_write_packet(gc, 207, "%s", name);
 }

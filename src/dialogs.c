@@ -849,7 +849,7 @@ void do_add_buddy(GtkWidget *w, int resp, struct addbuddy *a)
 		}
 		b = gaim_buddy_new(a->gc->account, who, whoalias);
 		gaim_blist_add_buddy(b, NULL, g, NULL);
-		serv_add_buddy(a->gc, who);
+		serv_add_buddy(a->gc, who, g);
 
 		if (c != NULL)
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);

@@ -1,9 +1,9 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7221 2003-09-02 03:41:10Z faceprint $
+ * $Id: gg.c 7326 2003-09-07 23:47:00Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -582,7 +582,7 @@ static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, int
 	return 1;
 }
 
-static void agg_add_buddy(GaimConnection *gc, const char *who)
+static void agg_add_buddy(GaimConnection *gc, const char *who, GaimGroup *group)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (invalid_uin(who))

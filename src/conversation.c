@@ -297,7 +297,7 @@ common_send(GaimConversation *conv, const char *message)
 
 					while ((c = strchr(filename, '/')) != NULL)
 						filename = c + 1;
-					
+
 					g_snprintf(imgtag, sizeof(imgtag),
 							   "<IMG SRC=\"file://%s\" ID=\"%d\" "
 							   "DATASIZE=\"%d\">",

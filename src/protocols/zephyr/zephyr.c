@@ -746,7 +746,7 @@ static void zephyr_close(GaimConnection *gc)
 	z_call(ZClosePort());
 }
 
-static void zephyr_add_buddy(GaimConnection *gc, const char *buddy) { }
+static void zephyr_add_buddy(GaimConnection *gc, const char *buddy, GaimGroup *group) { }
 static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { }
 
 static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)

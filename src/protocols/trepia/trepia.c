@@ -1213,7 +1213,7 @@ trepia_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 static void
-trepia_add_buddy(GaimConnection *gc, const char *name)
+trepia_add_buddy(GaimConnection *gc, const char *name, GaimGroup *group)
 {
 }
 
