@@ -4114,24 +4114,26 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 				gtkconv->tab_label))));
 
 		if (im != NULL && gaim_im_get_typing_state(im) == TYPING) {
-			style->fg[0].red   = 0x4646;
-			style->fg[0].green = 0xA0A0;
-			style->fg[0].blue  = 0x4646;
+			style->fg[GTK_STATE_NORMAL].red   = 0x4646;
+			style->fg[GTK_STATE_NORMAL].green = 0xA0A0;
+			style->fg[GTK_STATE_NORMAL].blue  = 0x4646;
+			style->fg[GTK_STATE_ACTIVE] = style->fg[GTK_STATE_NORMAL];
 		}
 		else if (im != NULL && gaim_im_get_typing_state(im) == TYPED) {
-			style->fg[0].red   = 0xD1D1;
-			style->fg[0].green = 0x9494;
-			style->fg[0].blue  = 0x0C0C;
+			style->fg[GTK_STATE_NORMAL].red   = 0xD1D1;
+			style->fg[GTK_STATE_NORMAL].green = 0x9494;
+			style->fg[GTK_STATE_NORMAL].blue  = 0x0C0C;
+			style->fg[GTK_STATE_ACTIVE] = style->fg[GTK_STATE_NORMAL];
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK) {
-			style->fg[0].red   = 0x3131;
-			style->fg[0].green = 0x4E4E;
-			style->fg[0].blue  = 0x6C6C;
+			style->fg[GTK_STATE_ACTIVE].red   = 0x3131;
+			style->fg[GTK_STATE_ACTIVE].green = 0x4E4E;
+			style->fg[GTK_STATE_ACTIVE].blue  = 0x6C6C;
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT) {
-			style->fg[0].red   = 0xDFDF;
-			style->fg[0].green = 0x4242;
-			style->fg[0].blue  = 0x1E1E;
+			style->fg[GTK_STATE_ACTIVE].red   = 0xDFDF;
+			style->fg[GTK_STATE_ACTIVE].green = 0x4242;
+			style->fg[GTK_STATE_ACTIVE].blue  = 0x1E1E;
 		}
 
 		gtk_widget_set_style(gtkconv->tab_label, style);
