@@ -188,6 +188,9 @@ field_account_cb(GObject *w, GaimAccount *account, GaimRequestField *field)
 static void
 multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
+	if (!GTK_WIDGET_HAS_FOCUS(button))
+		gtk_widget_grab_focus(button);
+
 	if (data->cbs[0] != NULL)
 		((GaimRequestFieldsCb)data->cbs[0])(data->user_data,
 											data->u.multifield.fields);

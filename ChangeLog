@@ -59,6 +59,9 @@ version 0.76cvs:
 	  consideration.
 	* Minor tweaks to the list box in the multi-field request dialogs
 	  so they work without a label and scrollbar (Pekka Riikonen)
+	* Hitting enter in a multi-field request dialog when a textfield has
+	  the focus no longer ignores the changed text in the textfield
+	  (Gary Kramlich)
 	* The Disconnect dialog no longer raises and gains focus each time
 	  a disconnected account is added (Ka-Hing Cheung)
 	* Gadu-Gadu might actually connect again (Ignacy Gawedzki)
