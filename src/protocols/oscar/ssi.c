@@ -309,7 +309,7 @@ faim_export struct aim_ssi_item *aim_ssi_itemlist_finditem(struct aim_ssi_item *
 
 	} else if (sn) { /* For finding permits, denies, and ignores */
 		for (cur=list; cur; cur=cur->next) {
-			if ((cur->type == type) && (cur->gid == 0x0000) && (cur->name) && !(aim_sncmp(cur->name, sn))) {
+			if ((cur->type == type) && (cur->name) && !(aim_sncmp(cur->name, sn))) {
 				return cur;
 			}
 		}
@@ -632,8 +632,9 @@ faim_export int aim_ssi_deletelist(aim_session_t *sess, aim_conn_t *conn)
 
 /**
  * This "cleans" the ssi list.  It does the following:
- * 1) Makes sure that all buddies are in a group.
- * 2) Makes sure there are no empty groups
+ * 1) Makes sure all buddies, permits, and denies have names.
+ * 2) Makes sure that all buddies are in a group that exist.
+ * 3) Deletes any empty groups
  *
  * @param sess The oscar session.
  * @param conn The bos connection for this session.
