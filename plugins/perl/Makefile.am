@@ -78,11 +78,6 @@ all-local: common/Makefile
 		 $(MAKE) CC="$(CC)" CCFLAGS="$(PERL_CFLAGS) $(CFLAGS)" $(PERL_EXTRA_OPTS)) && \
 		cd ..; \
 	done
-	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
-		for f in ${common_sources}; do \
-			rm -f $$f; \
-		done; \
-	fi
 
 install-exec-local:
 	@for dir in $(perl_dirs); do \
