@@ -328,6 +328,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	struct file_header *fhdr = g_new0(struct file_header, 1);
 	struct sockaddr_in sin;
 	guint32 rcv;
+	char *c;
 	GtkWidget *fw = NULL, *fbar = NULL, *label;
 	struct stat st;
 
@@ -373,6 +374,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	 */
 
 	/* 1. build/send header */
+	c = file + strlen(file);
+	while (*(c - 1) != '/') c--;
 	buf = frombase64(ft->cookie);
 	sprintf(debug_buff, "Building header to send %s (cookie: %s)\n", file, buf);
 	printf("%s", buf); fflush(stdout);
@@ -387,9 +390,10 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	fhdr->totparts = 1;
 	fhdr->partsleft = 1;
 	fhdr->totsize = (long)st.st_size; /* ? */
-	fhdr->size = (long)st.st_size; /* size of listing.txt */ /* FIXME */
-	fhdr->modtime = 0; /* time since UNIX epoch */ /* FIXME */
-	fhdr->checksum = 0; /* ? */
+	/* size = 10 (date) + 1 + 5 (time) + 1 + 8 (size) + 1 + name + 2 = 30 + name */
+	fhdr->size = 30 + strlen(c); /* size of listing.txt */
+	fhdr->modtime = time(NULL); /* time since UNIX epoch */
+	fhdr->checksum = 0x89f70000; /* ? */
 	fhdr->rfrcsum = 0;
 	fhdr->rfsize = 0;
 	fhdr->cretime = 0;
@@ -440,6 +444,8 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	}
 
 	/* 3. send listing file */
+	/* mm/dd/yyyy hh:mm sizesize name.ext\r\n */
+	/* creation date ^ */
 	sprintf(debug_buff, "Sending file\n");
 	debug_print(debug_buff);
 	rcv = 0;
