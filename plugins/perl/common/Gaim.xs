@@ -91,4 +91,8 @@ BOOT:
 	GAIM_PERL_BOOT(BuddyList__Buddy);
 	GAIM_PERL_BOOT(BuddyList__Chat);
 	GAIM_PERL_BOOT(Connection);
+	GAIM_PERL_BOOT(Conversation);
+	GAIM_PERL_BOOT(Conversation__Chat);
+	GAIM_PERL_BOOT(Conversation__IM);
+	GAIM_PERL_BOOT(ConvWindow);
 
