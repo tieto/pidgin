@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -144,7 +144,7 @@ typedef enum
 
 	/**
 	 * Buddy icon support.
-	 * 
+	 *
 	 * Oscar and Jabber have buddy icons.
 	 */
 	OPT_PROTO_BUDDY_ICON = 0x00000040,
@@ -190,8 +190,8 @@ struct _GaimPluginProtocolInfo
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
 	GList *protocol_options; /* A GList of GaimAccountOption    */
 
-	/** 
-	 * Returns the base icon name for the given buddy and account.  
+	/**
+	 * Returns the base icon name for the given buddy and account.
 	 * If buddy is NULL, it will return the name to use for the account's icon
 	 */
 	const char *(*list_icon)(GaimAccount *account, struct buddy *buddy);
@@ -208,12 +208,12 @@ struct _GaimPluginProtocolInfo
 	 * be shown on the buddy list.
 	 */
 	char *(*status_text)(struct buddy *buddy);
-	
+
 	/**
 	 * Gets a string to put in the buddy list tooltip.
 	 */
 	char *(*tooltip_text)(struct buddy *buddy);
-	
+
 	GList *(*away_states)(GaimConnection *gc);
 	GList *(*actions)(GaimConnection *gc);
 
@@ -253,7 +253,7 @@ struct _GaimPluginProtocolInfo
 						  const char *new_pass);
 	void (*add_buddy)(GaimConnection *, const char *name);
 	void (*add_buddies)(GaimConnection *, GList *buddies);
-	void (*remove_buddy)(GaimConnection *, const char *name, 
+	void (*remove_buddy)(GaimConnection *, const char *name,
 						const char *group);
 	void (*remove_buddies)(GaimConnection *, GList *buddies,
 						   const char *group);
@@ -297,7 +297,7 @@ struct _GaimPluginProtocolInfo
 	void (*convo_closed)(GaimConnection *, const char *who);
 
 	char *(*normalize)(const char *);
-	
+
 	void (*set_buddy_icon)(GaimConnection *, const char *filename);
 };
 
