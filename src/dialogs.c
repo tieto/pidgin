@@ -2768,9 +2768,9 @@ bud_list_cache_exists(struct gaim_connection *gc)
 		g_screenname[i] = toupper(gc->username[i]);
 	g_screenname[i] = '\0';
 
-	file = getenv( "HOME" );
+	file = gaim_user_dir();
 	if ( file != (char *) NULL ) {
-	       	sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
+		sprintf(path, "%s/%s.blist", file, g_screenname); 
 		if ( !stat(path, &sbuf) ) {
 			sprintf(debug_buff, "%s exists.\n", path);
 			debug_print(debug_buff);
@@ -2779,6 +2779,7 @@ bud_list_cache_exists(struct gaim_connection *gc)
 			sprintf(debug_buff, "%s does not exist.\n", path);
 			debug_print(debug_buff);
 		}
+		g_free(file);
 	}
 	return ret;
 }
@@ -2818,10 +2819,10 @@ void do_export(GtkWidget *w, void *dummy)
 		char g_screenname[64];
 		int i;
 
-		file = getenv( "HOME" );
+		file = gaim_user_dir();
 		if ( file != (char *) NULL ) {
 			FILE *dir;
-			sprintf(buf, "%s/.gaim/", file);
+			strcpy(buf, file);
 			dir = fopen(buf, "r");
 			if (!dir)
 				mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
@@ -2834,7 +2835,7 @@ void do_export(GtkWidget *w, void *dummy)
 				for (i = 0; i < strlen(g->username); i++)
 					g_screenname[i] = toupper(g->username[i]);
 				g_screenname[i] = '\0';
-				sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
+				sprintf(path, "%s/%s.blist", file, g_screenname);
 				if ((f = fopen(path,"w"))) {
 					sprintf(debug_buff, "writing %s\n", path);
 					debug_print(debug_buff);
@@ -2849,10 +2850,11 @@ void do_export(GtkWidget *w, void *dummy)
 
 				c = c->next;
 			}
+			g_free(file);
 		} else return;
 	}
 
-        g_free(buf);
+	g_free(buf);
         
 }
 
@@ -2901,9 +2903,9 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
         FILE *f;
 	gboolean from_dialog = FALSE;
 
-        if ( !gc ) {
-        	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
-                strncpy( path, file, PATHSIZE - 1 );
+	if ( !gc ) {
+		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
+				strncpy( path, file, PATHSIZE - 1 );
 		if (file_is_dir(path, importdialog)) {
 			g_free (buf);
 			g_free (first);
@@ -2912,22 +2914,24 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 		/* FIXME : import buddy list file. moderately important */
 		gc = connections->data;
 		from_dialog = TRUE;
-        }
-        else {
+	}
+	else {
 		for (i = 0; i < strlen(gc->username); i++)
 			g_screenname[i] = toupper(gc->username[i]);
 		g_screenname[i] = '\0';
 
-                file = getenv( "HOME" );
-                if ( file != (char *) NULL )
-                        sprintf( path, "%s/.gaim/%s.blist", file, g_screenname);
-                else
+		file = gaim_user_dir();
+		if ( file != (char *) NULL ) {
+			sprintf( path, "%s/%s.blist", file, g_screenname);
+			g_free(file);
+		} else {
 			return;
-        }
+		}
+	}
 
-        if (!(f = fopen(path,"r"))) {
+	if (!(f = fopen(path,"r"))) {
 		if ( !gc ) {
-                	g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), file);
+                	g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), path);
                 	do_error_dialog(buf, _("Error"));
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
@@ -2937,12 +2941,12 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
                 g_free(buf);
 		g_free(first);
                 return;
-        }
+	}
                 
         fgets(first, 64, f);
 
 	/* AIM 4 buddy list */
-        if (!strcasecmp(first, "Config {\n")) {
+	if (!strcasecmp(first, "Config {\n")) {
 		debug_print("aim 4\n");
 		rewind(f);
 		translate_blt (f, buf);
@@ -2997,8 +3001,8 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
                	importdialog = NULL;
 	} 
 
-        g_free(buf);
-        g_free(first);
+	g_free(buf);
+	g_free(first);
 }
 
 void show_import_dialog()

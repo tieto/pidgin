@@ -330,6 +330,7 @@ FILE *open_log_file (char *name)
         int flag = 0;
         FILE *fd;
         int res;
+	gchar* gaim_dir;
 
         if (!(general_options & OPT_GEN_LOG_ALL)) {
 
@@ -353,9 +354,10 @@ FILE *open_log_file (char *name)
 
 	buf = g_malloc(BUF_LONG);
 	buf2 = g_malloc(BUF_LONG);
-
+	gaim_dir = gaim_user_dir();
+	
         /*  Dont log yourself */
-        g_snprintf(log_all_file, 256, "%s/.gaim", getenv("HOME"));
+	strncpy(log_all_file, gaim_dir, 256);
 
         stat(log_all_file, &st);
         if (!S_ISDIR(st.st_mode))
@@ -375,7 +377,7 @@ FILE *open_log_file (char *name)
         } else
                 fclose(fd);
 
-        g_snprintf(log_all_file, 256, "%s/.gaim/logs", getenv("HOME"));
+		g_snprintf(log_all_file, 256, "%s/logs", gaim_dir);
 
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
@@ -396,8 +398,8 @@ FILE *open_log_file (char *name)
                 fclose(fd);
 
         
-        g_snprintf(log_all_file, 256, "%s/.gaim/logs/%s.log", getenv("HOME"), normalize(name));
 
+        g_snprintf(log_all_file, 256, "%s/logs/%s.log", gaim_dir, normalize(name));
         if (stat(log_all_file, &st) < 0)
                 flag = 1;
 
@@ -414,6 +416,7 @@ FILE *open_log_file (char *name)
 
 	g_free(buf);
 	g_free(buf2);
+	g_free(gaim_dir);
         return fd;
 }
 
@@ -429,7 +432,7 @@ int escape_message(char *msg)
 		debug_print(debug_buff);
 		msg[2047]='\0';
 	}
-	
+
 	cpy = g_strdup(msg);
 	c = cpy;
 	while(*c) {
@@ -462,7 +465,7 @@ int escape_text(char *msg)
 		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
 		msg[2047]='\0';
 	}
-	
+
 	cpy = g_strdup(msg);
 	c = cpy;
 	while(*c) {
@@ -491,7 +494,7 @@ int escape_text(char *msg)
 
 char * escape_text2(char *msg)
 {
-        char *c, *cpy;
+	char *c, *cpy;
 	char *woo;
         int cnt=0;
         /* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
@@ -539,9 +542,9 @@ char *tobase64(char *text)
 	char *c;
 	unsigned int tmp = 0;
 	int len = 0, n = 0;
-	
+    
 	c = text;
-	
+    
 	while(c) {
 		tmp = tmp << 8;
 		tmp += *c;
@@ -560,22 +563,22 @@ char *tobase64(char *text)
 		c++;
 	}
 	switch(n) {
-	
+
 	case 2:
-	        out = g_realloc(out, len+5);
-	        out[len] = alphabet[(tmp >> 12) & 0x3f];
-	        out[len+1] = alphabet[(tmp >> 6) & 0x3f];
-	        out[len+2] = alphabet[tmp & 0x3f];
-	        out[len+3] = '=';
-	        out[len+4] = 0;
-	        break;
+		out = g_realloc(out, len+5);
+		out[len] = alphabet[(tmp >> 12) & 0x3f];
+		out[len+1] = alphabet[(tmp >> 6) & 0x3f];
+		out[len+2] = alphabet[tmp & 0x3f];
+		out[len+3] = '=';
+		out[len+4] = 0;
+		break;
 	case 1:
-	        out = g_realloc(out, len+4);
-	        out[len] = alphabet[(tmp >> 6) & 0x3f];
-	        out[len+1] = alphabet[tmp & 0x3f];
-	        out[len+2] = '=';
-	        out[len+3] = 0;
-	        break;
+		out = g_realloc(out, len+4);
+		out[len] = alphabet[(tmp >> 6) & 0x3f];
+		out[len+1] = alphabet[tmp & 0x3f];
+		out[len+2] = '=';
+		out[len+3] = 0;
+		break;
 	case 0:
 		out = g_realloc(out, len+2);
 		out[len] = '=';
@@ -606,7 +609,7 @@ char *frombase64(char *text)
                 } else if (*c == '+') {
                         tmp = 62;
                 } else if (*c == '/') {
-                	tmp = 63;
+                        tmp = 63;
                 } else if (*c == '=') {
                         if (n == 3) {
                                 out = g_realloc(out, len + 2);
@@ -697,7 +700,7 @@ void aol_icon(GdkWindow *w)
 #ifndef _WIN32
 	if (icon_pm == NULL) {
 		icon_pm = gdk_pixmap_create_from_xpm_d(w, &icon_bm,
-						       NULL, (gchar **)aimicon_xpm);
+							   NULL, (gchar **)aimicon_xpm);
 	}
 	gdk_window_set_icon(w, NULL, icon_pm, icon_bm);
 	if (mainwindow) gdk_window_set_group(w, mainwindow->window);
@@ -820,7 +823,7 @@ GtkWidget *picture_button(GtkWidget *window, char *text, char **xpm)
 	gtk_widget_show(button_box);
 
 /* this causes clipping on lots of buttons with long text */
-/*	gtk_widget_set_usize(button, 75, 30);*/
+/*  gtk_widget_set_usize(button, 75, 30);*/
 	gtk_widget_show(button);
 	gdk_pixmap_unref(pm);
 	gdk_bitmap_unref(mask);
@@ -837,7 +840,7 @@ GtkWidget *picture_button2(GtkWidget *window, char *text, char **xpm, short disp
 	GdkPixmap *pm;
 	GtkWidget *pixmap;
 	GtkWidget *label;
-	
+
 	if (!button_tips) button_tips = gtk_tooltips_new();
 	button = gtk_button_new();
 	if (display_options & OPT_DISP_COOL_LOOK)
@@ -933,14 +936,14 @@ void translate_blt (FILE *src_fp, char *dest)
 
 	sprintf (dest, "m 1\n");
   
-	while (strstr (fgets (line, BUF_LEN, src_fp), "Buddy") == NULL)	;
-	while (strstr (fgets (line, BUF_LEN, src_fp), "list") == NULL)	;
+	while (strstr (fgets (line, BUF_LEN, src_fp), "Buddy") == NULL) ;
+	while (strstr (fgets (line, BUF_LEN, src_fp), "list") == NULL)  ;
 
 	while (1) {
 		fgets (line, BUF_LEN, src_fp);
 		if (strchr (line, '}') != NULL)
 			break;
-    
+	
 		/* Syntax starting with "<group> {" */
 		if (strchr (line, '{') != NULL) {
 			strcat (dest, "g ");
@@ -1231,6 +1234,13 @@ GSList *message_split(char *message, int limit) {
 			lastgood += limit;
 		}
 	}
+}
+
+/* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
+ * dir. this string should be freed after it's used. Note that there is no
+ * trailing slash after .gaim. */
+gchar* gaim_user_dir() {
+	return g_strjoin(G_DIR_SEPARATOR_S, g_get_home_dir(), ".gaim", NULL);
 }
 
 void strncpy_withhtml(gchar *dest, const gchar *src, size_t destsize)

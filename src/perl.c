@@ -44,6 +44,7 @@
 #undef PACKAGE
 #include <stdio.h>
 #include <dirent.h>
+#include <string.h>
 #include <gtk/gtk.h>
 
 
@@ -157,9 +158,9 @@ void perl_autoload()
 	DIR *dir;
 	struct dirent *ent;
 	char *buf;
-	char path[BUF_LONG];
+	char *path;
 
-	g_snprintf(path, sizeof(path), "%s/.gaim", getenv("HOME"));
+	path = gaim_user_dir();
 	dir = opendir(path);
 	if (dir) {
 		while ((ent = readdir(dir))) {
@@ -174,6 +175,7 @@ void perl_autoload()
 		}
 		closedir(dir);
 	}
+	g_free(path);
 }
 
 void perl_init()
@@ -639,8 +641,9 @@ void load_perl_script(GtkWidget *w, gpointer d)
 	gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(config));
 
 	if (!last_dir) {
-		buf = g_strjoin(NULL, g_get_home_dir(), G_DIR_SEPARATOR_S, ".gaim", 
-					G_DIR_SEPARATOR_S, NULL);
+		temp = gaim_user_dir();
+		buf = g_strconcat(temp, G_DIR_SEPARATOR_S);
+		g_free(temp);
 	} else {
 		buf = g_strconcat(last_dir, G_DIR_SEPARATOR_S, NULL);
 	}
