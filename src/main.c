@@ -178,7 +178,7 @@ static gboolean domiddleclick(GtkWidget *w, GdkEventButton *event, gpointer null
 	if (event->button != 2)
 		return FALSE;
 
-	/* TODO auto_login(); */
+	gaim_accounts_auto_login(GAIM_GTK_UI);
 
 	return TRUE;
 }
@@ -656,7 +656,7 @@ int main(int argc, char *argv[])
 #ifdef DEBUG
 	opt_debug = 1;
 #endif
-abort();
+	abort();
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -957,7 +957,7 @@ abort();
 	}
 
 	if (!opt_acct && !opt_nologin && gaim_session == 0)
-		; /* TODO auto_login(); */
+		gaim_accounts_auto_login(GAIM_GTK_UI);
 
 	if (opt_acct) {
 		gaim_gtk_account_dialog_show();

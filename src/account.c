@@ -764,7 +764,6 @@ __start_element_handler(GMarkupParseContext *context,
 		data->tag = TAG_PORT;
 	else if (!strcmp(element_name, "settings")) {
 		if ((value = g_hash_table_lookup(atts, "ui")) != NULL) {
-			gaim_debug(GAIM_DEBUG_INFO, "account", "Found ui: %s\n", value);
 			data->setting_ui = g_strdup(value);
 		}
 	}
@@ -876,10 +875,6 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 	else if (data->tag == TAG_SETTING) {
 		if (data->setting_ui != NULL) {
-			gaim_debug(GAIM_DEBUG_INFO, "account",
-					   "Setting account. UI = %s, setting = %s, buffer = %s\n",
-					   data->setting_ui, data->setting_name, buffer);
-
 			if (data->setting_type == GAIM_PREF_STRING)
 				gaim_account_set_ui_string(data->account, data->setting_ui,
 										   data->setting_name, buffer);
@@ -965,8 +960,6 @@ gaim_accounts_load()
 		return FALSE;
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Reading %s\n", filename);
-
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
 		gaim_debug(GAIM_DEBUG_ERROR, "accounts",
 				   "Error reading accounts: %s\n", error->message);
@@ -1005,8 +998,6 @@ gaim_accounts_load()
 	g_markup_parse_context_free(context);
 	g_free(contents);
 
-	gaim_debug(GAIM_DEBUG_INFO, "accounts", "Finished reading %s\n",
-			   filename);
 	g_free(filename);
 
 	accounts_loaded = TRUE;
@@ -1220,11 +1211,14 @@ gaim_accounts_auto_login(const char *ui)
 
 	g_return_if_fail(ui != NULL);
 
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = l->data;
 
-		if (gaim_account_get_auto_login(account, ui))
+		if (gaim_account_get_auto_login(account, ui) &&
+			gaim_account_get_remember_password(account)) {
+
 			gaim_account_connect(account);
+		}
 	}
 }
 
