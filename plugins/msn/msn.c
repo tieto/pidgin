@@ -153,7 +153,7 @@ time_t trId(struct msn_data *md)
 void msn_write(int fd, char *buf)
 {
 	write(fd, buf, strlen(buf));
-	printf("MSN <== %s", buf);
+	printf("MSN(%d) <== %s", fd, buf);
 }
 
 static void msn_answer_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -180,8 +180,10 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 	char buf[MSN_BUF_LEN];
 	struct gaim_connection *gc = mc->gc;
 	int i = 0;
-
+	
 	fcntl(source, F_SETFL, 0);
+
+	printf("GOT HERE|\n");
 
 	if (condition == GDK_INPUT_WRITE)
 	{
@@ -191,12 +193,11 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 
 		/* Write our signon request */
 		g_snprintf(buf, MSN_BUF_LEN, "USR %d %s %s\n", mc->last_trid, mc->gc->username, mc->secret);
-		msn_write(source, buf);
+		msn_write(mc->fd, buf);
 		return;
 	}
 
 	bzero(buf, MSN_BUF_LEN);
-		
 	do 
 	{
 		if (read(source, buf + i, 1) < 0)
@@ -210,13 +211,17 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 
 	g_strchomp(buf);
 
-	printf("MSN(%d) ==> %s\n", source, buf);
+	printf("!!MSN(%d) ==> %s\n", source, buf);
+	printf("Got here.\n");
 
 	if (!strncmp("USR ", buf, 4))
 	{
 		char **res;
 
+		printf("Got here2.\n");
+
 		res = g_strsplit(buf, " ", 0);
+		printf("%s\n",res[2]);
 		if (strcasecmp("OK", res[2]))
 		{
 			g_strfreev(res);
@@ -417,13 +422,14 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, ":", 0);
 
-		close(md->fd);
-		
 		/* Now we have the host and port */
-		if (!(md->fd = msn_connect(res[0], atoi(res[1]))))
+		if (!(mc->fd = msn_connect(res[0], atoi(res[1]))))
 			return;
 
 		printf("Connected to: %s:%s\n", res[0], res[1]);
+
+		if (mc->inpa)
+			gdk_input_remove(mc->inpa);
 
 		mc->inpa = gdk_input_add(mc->fd, GDK_INPUT_WRITE, msn_invite_callback, mc);
 
@@ -769,6 +775,12 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 
 		/* Append our connection */
 		msn_connections = g_slist_append(msn_connections, mc);
+	}
+	else
+	{
+		g_snprintf(buf, MSN_BUF_LEN, "MSG %d N %d\r\n%s%s", trId(md), strlen(message) + strlen(MIME_HEADER), MIME_HEADER, message);
+
+		msn_write(mc->fd, buf);
 	}
 
 }
