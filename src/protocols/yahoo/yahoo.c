@@ -974,15 +974,14 @@ static void yahoo_login(struct aim_user *user) {
 	yd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	yd->games = g_hash_table_new(g_str_hash, g_str_equal);
 
-#if 0
-	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "scs.yahoo.com", strlen("scs.yahoo.com"))) {
-		/* Figured out the new auth method */
+
+	if (!g_strncasecmp(user->proto_opt[USEROPT_PAGERHOST], "cs.yahoo.com", strlen("cs.yahoo.com"))) {
+		/* Figured out the new auth method -- cs.yahoo.com likes to disconnect on buddy remove and add now */
 		debug_printf("Setting new Yahoo! server.\n");
-		g_snprintf(user->proto_opt[USEROPT_PAGERHOST], strlen("cs.yahoo.com") + 1, "cs.yahoo.com");
+		g_snprintf(user->proto_opt[USEROPT_PAGERHOST], strlen("scs.yahoo.com") + 1, "scs.yahoo.com");
 		save_prefs();
 	}
 	
-#endif /* 0 */
     
        	if (proxy_connect(user->proto_opt[USEROPT_PAGERHOST][0] ?
 				user->proto_opt[USEROPT_PAGERHOST] : YAHOO_PAGER_HOST,
