@@ -104,6 +104,13 @@ struct msn_data {
 	GSList *fl;
 	GSList *permit;
 	GSList *deny;
+
+	char *kv;
+	char *sid;
+	char *mspauth;
+	unsigned long sl;
+	char *passport;
+
 };
 
 struct msn_switchboard {
@@ -343,8 +350,18 @@ static char *handle_errcode(char *buf, gboolean show)
 static void handle_hotmail(struct gaim_connection *gc, char *data)
 {
 	char login_url[2048];
-	
-	snprintf(login_url, sizeof(login_url), "%s%s&passwd=%s", PASSPORT_URL, gc->username, gc->password);
+	char buf[MSN_BUF_LEN];
+	struct msn_data *md = gc->proto_data;
+
+	g_snprintf(buf, sizeof(buf), "URL %d INBOX\r\n", ++md->trId);
+
+	if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		return;
+	}
+
+	debug_printf("\n");
+
+	snprintf(login_url, sizeof(login_url), "%s", md->passport);
 
 	if (strstr(data, "Content-Type: text/x-msmsgsinitialemailnotification;")) {
 		char *x = strstr(data, "Inbox-Unread:");
@@ -573,6 +590,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT);
 			return;
 		} 
+
 	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
 				  strlen("Content-Type: text/plain"))) {
 		char *skiphead;
@@ -1124,6 +1142,65 @@ static int msn_process_main(struct gaim_connection *gc, char *buf)
 		ms->sessid = g_strdup(sessid);
 		ms->auth = g_strdup(auth);
 		ms->gc = gc;
+	} else if (!g_strncasecmp(buf, "URL", 3)) {
+		char *tmp = buf;
+		FILE *fd;
+		md5_state_t st;
+		md5_byte_t di[16];
+		int i;
+		char buf2[64];
+		char sendbuf[64];
+		char hippy[2048];
+		char *rru;
+		char *passport;
+		char *filename;
+
+		GET_NEXT(tmp);
+		GET_NEXT(tmp);
+		rru = tmp;
+		GET_NEXT(tmp);
+		passport = tmp;
+		
+		snprintf(hippy, sizeof(hippy), "%s%d%s", md->mspauth, time(NULL) - md->sl, gc->password);
+
+		md5_init(&st);
+		md5_append(&st, (const md5_byte_t *)hippy, strlen(hippy));
+		md5_finish(&st, di);
+
+		bzero(sendbuf, sizeof(sendbuf));
+		for (i = 0; i < 16; i++) {
+			g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
+			strcat(sendbuf, buf2);
+		}
+
+		md->passport = tmpnam(NULL);
+
+		fd = fopen(md->passport, "w");
+		fprintf(fd, "<html>\n");
+		fprintf(fd, "<head>\n");
+		fprintf(fd, "<noscript>\n");
+		fprintf(fd, "<meta http-equiv=Refresh content=\"0; url=http://www.hotmail.com\">\n");
+		fprintf(fd, "</noscript>\n");
+		fprintf(fd, "</head>\n\n");
+		
+		fprintf(fd, "<body onload=\"document.pform.submit(); \">\n");
+		fprintf(fd, "<form name=\"pform\" action=\"%s\" method=\"POST\">\n\n", passport);
+		fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
+		fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n", gc->username);
+		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n", gc->username);
+		fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n", md->sid);
+		fprintf(fd, "<input type=\"hidden\" name=\"kv\" value=\"%s\">\n", md->kv);
+		fprintf(fd, "<input type=\"hidden\" name=\"id\" value=\"2\">\n");
+		fprintf(fd, "<input type=\"hidden\" name=\"sl\" value=\"%ld\">\n", time(NULL) - md->sl);
+		fprintf(fd, "<input type=\"hidden\" name=\"rru\" value=\"%s\">\n", rru);
+		fprintf(fd, "<input type=\"hidden\" name=\"auth\" value=\"%s\">\n", md->mspauth);
+		fprintf(fd, "<input type=\"hidden\" name=\"creds\" value=\"%s\">\n", sendbuf); // Digest me
+		fprintf(fd, "<input type=\"hidden\" name=\"svc\" value=\"mail\">\n");
+		fprintf(fd, "<input type=\"hidden\" name=\"js\" value=\"yes\">\n");
+		fprintf(fd, "</form></body>\n");
+		fprintf(fd, "</html>\n");
+		fclose(fd);
+
 	} else if (!g_strncasecmp(buf, "SYN", 3)) {
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 	} else if (!g_strncasecmp(buf, "XFR", 3)) {
@@ -1194,11 +1271,52 @@ static void msn_process_main_msg(struct gaim_connection *gc, char *msg)
 {
 	struct msn_data *md = gc->proto_data;
 	char *skiphead, *utf;
+	char *content;
+
+	content = strstr(msg, "Content-Type: ");
+
+	if ((content) && (!g_strncasecmp(content, "Content-Type: text/x-msmsgsprofile",
+				strlen("Content-Type: text/x-msmsgsprofile")))) {
+
+		char *kv,*sid,*mspauth;
+
+		kv = strstr(msg, "kv: ");
+		sid = strstr(msg, "sid: ");
+		mspauth = strstr(msg, "MSPAuth: ");
+
+		if (kv) {
+			char *tmp;
+
+			kv += strlen("kv: ");
+			tmp = strstr(kv, "\r\n"); *tmp = 0;
+			md->kv = g_strdup(kv);
+		}
+
+		if (sid) {
+			char *tmp;
+
+			sid += strlen("sid: ");
+			tmp = strstr(sid, "\r\n"); *tmp = 0;
+			md->sid = g_strdup(sid);
+		}
+
+		if (mspauth) {
+			char *tmp;
+
+			mspauth += strlen("MSPAuth: ");
+			tmp = strstr(mspauth, "\r\n"); *tmp = 0;
+			md->mspauth = g_strdup(mspauth);
+		}
+
+	}
+
+
 
 	if (!g_strcasecmp(md->msguser, "hotmail")) {
 		handle_hotmail(gc, msg);
 		return;
 	}
+
 
 	skiphead = strstr(msg, "\r\n\r\n");
 	if (!skiphead || !skiphead[4])
@@ -1435,6 +1553,7 @@ static int msn_process_login(struct gaim_connection *gc, char *buf)
 		md->inpa = 0;
 		md->fd = 0;
 		md->fd = proxy_connect(host, port, msn_login_xfr_connect, gc);
+		md->sl = time(NULL);
 		if (md->fd < 0) {
 			hide_login_progress(gc, "Unable to transfer");
 			signoff(gc);
