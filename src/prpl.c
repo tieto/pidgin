@@ -404,7 +404,8 @@ void connection_has_mail(struct gaim_connection *gc, int count, const char *from
 	} else if (mn->email_win) {
 		gtk_widget_destroy(mn->email_win);
 		return;
-	}
+	} else
+		return;
 
 	if (mn->email_win) {
 		gtk_label_set_text(GTK_LABEL(mn->email_label), buf);
