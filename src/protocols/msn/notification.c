@@ -1308,7 +1308,7 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		if (old_group != NULL &&
 			msn_users_get_count(msn_group_get_users(old_group)) <= 0)
 		{
-			msn_cmdproc_send(cmdproc, "REM", "%s", "%d",
+			msn_cmdproc_send(cmdproc, "RMG", "%s", "%d",
 							 msn_group_get_id(old_group));
 		}
 	}

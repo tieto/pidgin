@@ -1161,7 +1161,7 @@ msn_group_buddy(GaimConnection *gc, const char *who,
 
 	if (old_group != NULL)
 	{
-		msn_cmdproc_send(cmdproc, "REM", "AL %s %s", who,
+		msn_cmdproc_send(cmdproc, "REM", "FL %s %d", who,
 						 msn_group_get_id(old_group));
 
 		if (cmdproc->error)
