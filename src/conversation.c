@@ -1068,7 +1068,7 @@ void check_everything(GtkWidget *entry)
 /*------------------------------------------------------------------------*/
 
 
-static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
+static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len, GdkColor *trans) {
 	GdkBitmap *mask;
 	GdkPixmap *face = NULL;
 
@@ -1076,70 +1076,70 @@ static GdkPixmap *is_smiley(GtkWidget *window, char *m, int *len) {
 	*len = 2;
 	if (	   !strncmp(m, ":)", 2) ||
 		   !strncmp(m, "=)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile_xpm);
 	} else if (!strncmp(m, ":(", 2) ||
 		   !strncmp(m, "=(", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], sad_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, sad_xpm);
 	} else if (!strncmp(m, ";)", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], wink_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, wink_xpm);
 	} else if (!strncmp(m, ":p", 2) ||
 		   !strncmp(m, ":P", 2)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], tongue_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, tongue_xpm);
 	}
 
 	if (face || strlen(m) < 3) return face;
 	*len = 3;
 	if (	   !strncmp(m, ":-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile_xpm);
 	} else if (!strncmp(m, "O-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], oneeye_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, oneeye_xpm);
 	} else if (!strncmp(m, "C:)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], luke03_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, luke03_xpm);
 	} else if (!strncmp(m, ":-(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], sad_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, sad_xpm);
 	} else if (!strncmp(m, ";-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], wink_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, wink_xpm);
 	} else if (!strncmp(m, ":-p", 3) ||
 		   !strncmp(m, ":-P", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], tongue_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, tongue_xpm);
 	} else if (!strncmp(m, "=-O", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], scream_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, scream_xpm);
 	} else if (!strncmp(m, ":-*", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], kiss_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, kiss_xpm);
 	} else if (!strncmp(m, ">:o", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], yell_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, yell_xpm);
 	} else if (!strncmp(m, "8-)", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], smile8_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, smile8_xpm);
 	} else if (!strncmp(m, ":-$", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], moneymouth_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, moneymouth_xpm);
 	} else if (!strncmp(m, ":-!", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], burp_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, burp_xpm);
 	} else if (!strncmp(m, ":-[", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], embarrassed_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, embarrassed_xpm);
 	} else if (!strncmp(m, ":'(", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], cry_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, cry_xpm);
 	} else if (!strncmp(m, ":-\\", 3) ||
 		   !strncmp(m, ":-/", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], think_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, think_xpm);
 	} else if (!strncmp(m, ":-X", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], crossedlips_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, crossedlips_xpm);
 	} else if (!strncmp(m, ":-D", 3)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], bigsmile_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, bigsmile_xpm);
 	}
 
 	if (face || strlen(m) < 4) return face;
 	*len = 4;
 	if (	   !strncmp(m, "O:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], angel_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, angel_xpm);
 	}
 	else if (!strncmp(m, "C:-)", 4)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], luke03_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, luke03_xpm);
 	}
 
 	if (face || strlen(m) < 6) return face;
 	*len = 6;
 	if (	   !strncmp(m, "&gt;:o", 6)) {
-		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, &window->style->base[GTK_STATE_NORMAL], yell_xpm);
+		face = gdk_pixmap_create_from_xpm_d(window->window, &mask, trans, yell_xpm);
 	}
 
 	return face;
@@ -1151,6 +1151,8 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 	char *buf2 = g_strdup(what);
 	int i;
 	GdkPixmap *face;
+	/* hopefully we can later use this for bgcolors in smileys */
+	GdkColor *trans = &window->style->base[GTK_STATE_NORMAL];
 	gboolean in_tag = FALSE;
 
 	for (i = 0; i < strlen(what); i++)
@@ -1161,7 +1163,7 @@ void write_html_with_smileys(GtkWidget *window, GtkWidget *html, char *what)
 				buf2[y] = what[i];
 				y++;
 				in_tag = TRUE;
-			} else if ((face = is_smiley(window, &what[i], &len)) != NULL) {
+			} else if ((face = is_smiley(window, &what[i], &len, trans)) != NULL) {
 				buf2[y] = 0;
 				gtk_html_append_text(GTK_HTML(html), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
 				gtk_html_add_pixmap(GTK_HTML(html), face, 0, 0);
