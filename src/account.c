@@ -552,7 +552,7 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 			plugin = (GaimPlugin *)l->data;
 
 			if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
-				if (!strcmp(plugin->info->name, buffer)) {
+				if (!strcmp(plugin->info->id, buffer)) {
 					data->protocol =
 						GAIM_PLUGIN_PROTOCOL_INFO(plugin)->protocol;
 
@@ -563,8 +563,10 @@ __end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 	}
 	else if (data->tag == TAG_NAME)
 		data->account = gaim_account_new(buffer, data->protocol);
-	else if (data->tag == TAG_PASSWORD)
+	else if (data->tag == TAG_PASSWORD) {
 		gaim_account_set_password(data->account, buffer);
+		gaim_account_set_remember_password(data->account, TRUE);
+	}
 	else if (data->tag == TAG_ALIAS)
 		gaim_account_set_alias(data->account, buffer);
 	else if (data->tag == TAG_USERINFO)

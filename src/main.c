@@ -886,12 +886,10 @@ int main(int argc, char *argv[])
 
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
-	gaim_accounts_load();
 
 	if (!gaim_prefs_load()) {
 		load_prefs();
 		gaim_prefs_sync();
-		gaim_accounts_sync();
 	}
 
 	plugin_search_paths[0] = LIBDIR;
@@ -905,6 +903,8 @@ int main(int argc, char *argv[])
 	g_free(plugin_search_paths[2]);
 
 	gaim_plugins_probe(NULL);
+
+	gaim_accounts_load();
 
 #ifdef _WIN32
 	/* Various win32 initializations */

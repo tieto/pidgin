@@ -89,6 +89,8 @@ gaim_connection_connect(GaimConnection *gc)
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL) &&
 		gaim_account_get_password(account) == NULL) {
 
+		gaim_debug(GAIM_DEBUG_INFO, "connection", "Requestin password\n");
+
 		if (ops != NULL && ops->request_pass != NULL)
 			ops->request_pass(gc);
 
@@ -96,6 +98,8 @@ gaim_connection_connect(GaimConnection *gc)
 	}
 
 	gaim_connection_set_state(gc, GAIM_CONNECTING);
+
+	gaim_debug(GAIM_DEBUG_INFO, "connection", "Calling serv_login\n");
 
 	serv_login(account);
 }

@@ -29,10 +29,11 @@
 enum
 {
 	COLUMN_ICON,
+	COLUMN_PROTOCOL,
 	COLUMN_SCREENNAME,
 	COLUMN_ONLINE,
 	COLUMN_AUTOLOGIN,
-	COLUMN_PROTOCOL,
+	COLUMN_FILLER,
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
@@ -42,6 +43,8 @@ typedef struct
 	GtkWidget *window;
 
 	GtkListStore *model;
+
+	GtkTreeViewColumn *screenname_col;
 
 } AccountsDialog;
 
@@ -68,8 +71,30 @@ static gboolean
 __configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsDialog *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
+		int old_width = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
+		int col_width;
+		int difference;
+
 		gaim_prefs_set_int("/gaim/gtk/accounts/dialog/width",  event->width);
 		gaim_prefs_set_int("/gaim/gtk/accounts/dialog/height", event->height);
+
+		col_width = gtk_tree_view_column_get_width(dialog->screenname_col);
+
+		if (col_width == 0)
+			return FALSE;
+
+		difference = (MAX(old_width, event->width) -
+					  MIN(old_width, event->width));
+
+		if (difference == 0)
+			return FALSE;
+
+		if (old_width < event->width)
+			gtk_tree_view_column_set_min_width(dialog->screenname_col,
+					col_width + difference);
+		else
+			gtk_tree_view_column_set_max_width(dialog->screenname_col,
+					col_width - difference);
 	}
 
 	return FALSE;
@@ -116,22 +141,33 @@ static void
 __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 {
 	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
 
-	/* Protocol Icon */
+	/* Protocol */
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Protocol"));
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+
+	/* Icon text */
 	renderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, "",
-												renderer,
-												"pixbuf", COLUMN_ICON,
-												NULL);
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+									   "pixbuf", COLUMN_ICON);
+
+	/* Protocol name */
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer,
+									   "text", COLUMN_PROTOCOL);
 
 	/* Screennames */
 	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, _("Screenname"),
-												renderer,
-												"text", COLUMN_SCREENNAME,
-												NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Screenname"),
+				renderer, "text", COLUMN_SCREENNAME, NULL);
+	dialog->screenname_col = column;
+
+	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 
 	/* Online? */
 	renderer = gtk_cell_renderer_toggle_new();
@@ -145,26 +181,22 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 												"active", COLUMN_ONLINE,
 												NULL);
 
-
 	/* Auto-login? */
 	renderer = gtk_cell_renderer_toggle_new();
 
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 					 G_CALLBACK(__autologin_cb), dialog);
 
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, _("Auto-login"),
-												renderer,
-												"active", COLUMN_AUTOLOGIN,
-												NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Auto-login"),
+			renderer, "active", COLUMN_AUTOLOGIN, NULL);
 
+	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
 
-	/* Protocol description */
+	/* Filler */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, _("Protocol"),
-												renderer,
-												"text", COLUMN_PROTOCOL,
+												-1, "", renderer,
+												"visible", COLUMN_FILLER,
 												NULL);
 }
 
@@ -198,6 +230,7 @@ __populate_accounts_list(AccountsDialog *dialog)
 				COLUMN_AUTOLOGIN, FALSE,
 				COLUMN_PROTOCOL, proto_name(gaim_account_get_protocol(account)),
 				COLUMN_DATA, account,
+				COLUMN_FILLER, FALSE,
 				-1);
 
 		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
@@ -222,9 +255,9 @@ __create_accounts_list(AccountsDialog *dialog)
 
 	/* Create the list model. */
 	dialog->model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF,
-									   G_TYPE_STRING, G_TYPE_BOOLEAN,
-									   G_TYPE_BOOLEAN, G_TYPE_STRING,
-									   G_TYPE_POINTER);
+									   G_TYPE_STRING, G_TYPE_STRING,
+									   G_TYPE_BOOLEAN, G_TYPE_BOOLEAN,
+									   G_TYPE_BOOLEAN, G_TYPE_POINTER);
 
 	/* And now the actual treeview */
 	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
@@ -234,10 +267,10 @@ __create_accounts_list(AccountsDialog *dialog)
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview)),
 			GTK_SELECTION_MULTIPLE);
 
-	__add_columns(treeview, dialog);
-
 	gtk_container_add(GTK_CONTAINER(sw), treeview);
 	gtk_widget_show(treeview);
+
+	__add_columns(treeview, dialog);
 
 	__populate_accounts_list(dialog);
 
