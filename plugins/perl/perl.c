@@ -1045,6 +1045,7 @@ perl_event(GaimEvent event, void *unused, va_list args)
 		break;
 	case event_new_conversation:
 	case event_del_conversation:
+	case event_conversation_switch:
 		buf[0] = arg1;
 		break;
 	case event_im_displayed_sent:

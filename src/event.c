@@ -408,6 +408,9 @@ gaim_event_get_name(GaimEvent event)
 		case event_connecting:
 			snprintf(buf, sizeof(buf), "event_connecting");
 			break;
+		case event_conversation_switch:
+			snprintf(buf, sizeof(buf), "event_conversation_switch");
+			break;				
 		default:
 			snprintf(buf, sizeof(buf), "event_unknown");
 			break;
