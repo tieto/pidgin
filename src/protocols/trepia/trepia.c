@@ -284,8 +284,7 @@ trepia_tooltip_text(struct buddy *b)
 static void
 __free_parser_data(gpointer user_data)
 {
-	return;
-
+#if 0
 	TrepiaParserData *data = user_data;
 
 	if (data->buffer != NULL)
@@ -295,6 +294,7 @@ __free_parser_data(gpointer user_data)
 		g_free(data->tag);
 
 	g_free(data);
+#endif
 }
 
 static void
