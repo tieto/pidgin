@@ -28,8 +28,8 @@
 #endif
 #undef PACKAGE
 
-#ifdef USE_PERL /**/
-/*#if 0 /**/
+#ifndef USE_APPLET /* FIXME: _ conflicts */
+#ifdef USE_PERL
 
 #include <EXTERN.h>
 #ifndef _SEM_SEMUN_UNDEFINED
@@ -338,3 +338,4 @@ XS (XS_AIM_add_timeout_handler)
 }
 
 #endif /* USE_PERL */
+#endif /* ifndef USE_APPLET */
