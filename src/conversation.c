@@ -826,27 +826,22 @@ gboolean send_typed(gpointer data)
 gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct conversation *c)
 {
 	int pos;
-	gboolean key_is_typing = TRUE;
 
 	if (event->keyval == GDK_Escape) {
-		key_is_typing = FALSE;
 		if (convo_options & OPT_CONVO_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->close, c);
 			c = NULL;
 		}
 	} else if (event->keyval == GDK_Page_Up) {
-		key_is_typing = FALSE;
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		if(!(event->state & GDK_CONTROL_MASK))
 			gtk_imhtml_page_up(GTK_IMHTML(c->text));
 	} else if (event->keyval == GDK_Page_Down) {
-		key_is_typing = FALSE;
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 		if(!(event->state & GDK_CONTROL_MASK))
 			gtk_imhtml_page_down(GTK_IMHTML(c->text));
 	} else if ((event->keyval == GDK_F2) && (convo_options & OPT_CONVO_F2_TOGGLES)) {
-		key_is_typing = FALSE;
 		gtk_imhtml_show_comments(GTK_IMHTML(c->text), !GTK_IMHTML(c->text)->comments);
 	} else if ((event->keyval == GDK_Return) || (event->keyval == GDK_KP_Enter)) {
 		if ((event->state & GDK_CONTROL_MASK) && (convo_options & OPT_CONVO_CTL_ENTER)) {
@@ -1021,22 +1016,18 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 			}
 		}
 		if (event->keyval == 'l') {
-			key_is_typing = FALSE;
 			gtk_imhtml_clear(GTK_IMHTML(c->text));
 			g_string_free(c->history, TRUE);
 			c->history = g_string_new("");
 		} else if ((event->keyval == 'w') && (convo_options & OPT_CONVO_CTL_W_CLOSES)) {
-			key_is_typing = FALSE;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->close, c);
 			c = NULL;
 			return TRUE;
 		} else if (event->keyval == 'n') {
-			key_is_typing = FALSE;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			show_im_dialog();
 		} else if (event->keyval == 'z') {
-			key_is_typing = FALSE;
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 #ifndef _WIN32
 			XIconifyWindow(GDK_DISPLAY(),
@@ -1050,15 +1041,12 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) {
 			GtkWidget *notebook = (c->is_chat ? chat_notebook : convo_notebook);
 			if (event->keyval == '[') {
-				key_is_typing = FALSE;
 				gtk_notebook_prev_page(GTK_NOTEBOOK(notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			} else if (event->keyval == ']') {
-				key_is_typing = FALSE;
 				gtk_notebook_next_page(GTK_NOTEBOOK(notebook));
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			} else if (event->keyval == GDK_Tab) {
-				key_is_typing = FALSE;
 				move_next_tab(GTK_NOTEBOOK(notebook), c->is_chat);
 				gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 				return TRUE;
@@ -1072,42 +1060,68 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		    (c->is_chat && (chat_options & OPT_CHAT_ONE_WINDOW))) &&
 		   (event->state & GDK_MOD1_MASK) && (event->keyval > '0') && (event->keyval <= '9')) {
 		GtkWidget *notebook = NULL;
-		key_is_typing = FALSE;
 		notebook = (c->is_chat ? chat_notebook : convo_notebook);
 		gtk_notebook_set_page(GTK_NOTEBOOK(notebook), event->keyval - '1');
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
 
-	if (c && (!(misc_options & OPT_MISC_STEALTH_TYPING)) && !c->is_chat) {
-		char *txt = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
-		if (strlen(txt) == 1 && ((GTK_OLD_EDITABLE(c->entry)->current_pos == 1 && event->keyval == GDK_BackSpace) ||
-					(GTK_OLD_EDITABLE(c->entry)->current_pos == 0 && event->keyval == GDK_Delete))) {
-			if (c && c->type_again_timeout)
-				gtk_timeout_remove(c->type_again_timeout);
-			serv_send_typing(c->gc, c->name, NOT_TYPING);
-		} else if (GTK_OLD_EDITABLE(c->entry)->selection_start_pos == 0 && (GTK_OLD_EDITABLE(c->entry)->selection_end_pos == strlen(txt) &&
-					strlen(txt) > 0 && (event->keyval == GDK_BackSpace || event->keyval == GDK_Delete))) {
-			if (c && c->type_again_timeout)
-				gtk_timeout_remove(c->type_again_timeout);
-			serv_send_typing(c->gc, c->name, NOT_TYPING);
-		}
-		else if (gdk_keyval_to_unicode(event->keyval) || (strlen(txt) > 0 &&(event->keyval == GDK_BackSpace || event->keyval == GDK_Delete)))  {
-			if (key_is_typing && (strlen(txt) == 0 || (c->type_again != 0 && time(NULL) > c->type_again))) {
-				int timeout = serv_send_typing(c->gc, c->name, TYPING);
-				if (timeout)
-					c->type_again = time(NULL) + timeout;
-				else
-					c->type_again = 0;
-			}
-			if (c->type_again_timeout)
-				gtk_timeout_remove(c->type_again_timeout);
-			c->type_again_timeout = gtk_timeout_add(SEND_TYPED_TIMEOUT, send_typed, (gpointer)c);
-		}
-		g_free(txt);
-	}
 	return FALSE;
 }
 
+static void got_typing_keypress(struct conversation *c, gboolean first) {
+	/* we know we got something, so we at least have to make sure we don't send
+	 * TYPED any time soon */
+	if(c->type_again_timeout)
+		gtk_timeout_remove(c->type_again_timeout);
+	c->type_again_timeout = gtk_timeout_add(SEND_TYPED_TIMEOUT, send_typed, c);
+
+	/* we send typed if this is the first character typed, or if we're due
+	 * to send another one */
+	if(first || (c->type_again != 0 && time(NULL) > c->type_again)) {
+		int timeout = serv_send_typing(c->gc, c->name, TYPING);
+		if(timeout)
+			c->type_again = time(NULL) + timeout;
+		else
+			c->type_again = 0;
+	}
+}
+
+void delete_text_callback(GtkEditable *editable, gint start_pos, gint end_pos, gpointer user_data) {
+	struct conversation *c = user_data;
+	gchar *contents;
+
+	if(!c)
+		return;
+
+	if (misc_options & OPT_MISC_STEALTH_TYPING)
+		return;
+
+	contents = gtk_editable_get_chars(editable, 0, -1);
+	if(start_pos == 0 && end_pos == strlen(contents)) {
+		if(c->type_again_timeout)
+			gtk_timeout_remove(c->type_again_timeout);
+		serv_send_typing(c->gc, c->name, NOT_TYPING);
+	} else {
+		/* we're deleting, but not all of it, so it counts as typing */
+		got_typing_keypress(c, FALSE);
+	}
+	g_free(contents);
+}
+
+void insert_text_callback(GtkEditable *editable, gchar *new_text, gint new_text_length, gint *position, gpointer user_data) {
+	struct conversation *c = user_data;
+	gchar *contents;
+
+	if(!c)
+		return;
+
+	if (misc_options & OPT_MISC_STEALTH_TYPING)
+		return;
+
+	contents = gtk_editable_get_chars(editable, 0, -1);
+	got_typing_keypress(c, (*position == 0 && strlen(contents) == 0));
+	g_free(contents);
+}
 
 void send_callback(GtkWidget *widget, struct conversation *c)
 {
@@ -2930,6 +2944,8 @@ void show_conv(struct conversation *c)
 
 	gtk_signal_connect(GTK_OBJECT(entry), "activate", GTK_SIGNAL_FUNC(send_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(keypress_callback), c);
+	gtk_signal_connect(GTK_OBJECT(entry), "insert-text", GTK_SIGNAL_FUNC(insert_text_callback), c);
+	gtk_signal_connect(GTK_OBJECT(entry), "delete-text", GTK_SIGNAL_FUNC(delete_text_callback), c);
 	gtk_signal_connect(GTK_OBJECT(entry), "key_press_event", GTK_SIGNAL_FUNC(entry_key_pressed),
 			   entry);
 	if (convo_options & OPT_CONVO_CHECK_SPELLING)
