@@ -1683,16 +1683,17 @@ irc_parse_notice(struct gaim_connection *gc, char *nick, char *ex,
 		if (p)
 			*p = 0;
 
-		vector = g_strsplit(word_eol[5], " ", 2);
+		vector = g_strsplit(word_eol[5], ".", 2);
 
 		if (gettimeofday(&now, NULL) == 0 && vector != NULL) {
-			if (now.tv_usec - atol(vector[1]) < 0) {
+			if (vector[1] && now.tv_usec - atol(vector[1]) < 0) {
 				ping_time.tv_sec = now.tv_sec - atol(vector[0]) - 1;
 				ping_time.tv_usec = now.tv_usec - atol(vector[1]) + 1000000;
 
 			} else {
 				ping_time.tv_sec = now.tv_sec - atol(vector[0]);
-				ping_time.tv_usec = now.tv_usec - atol(vector[1]);
+				if(vector[1])
+					ping_time.tv_usec = now.tv_usec - atol(vector[1]);
 			}
 
 			g_snprintf(buf, sizeof(buf),
@@ -2794,8 +2795,11 @@ static void
 irc_ctcp_ping(struct gaim_connection *gc, const char *who)
 {
 	char buf[IRC_BUF_LEN];
+	struct timeval now;
 
-	g_snprintf (buf, sizeof(buf), "\001PING %ld\001", time(NULL));
+	gettimeofday(&now, NULL);
+	g_snprintf (buf, sizeof(buf), "\001PING %lu.%.03lu\001", now.tv_sec,
+			now.tv_usec/1000);
 	irc_send_privmsg(gc, who, buf, FALSE);
 }
 
