@@ -3313,6 +3313,7 @@ void set_hide_icons()
 
 void set_anim()
 {
+#if USE_PIXBUF
 	GList *c = conversations;
 	while (c) {
 		if(im_options & OPT_IM_NO_ANIMATION)
@@ -3321,6 +3322,7 @@ void set_anim()
 			start_anim(NULL, c->data);
 		c = c->next;
 	}
+#endif
 }
 
 static void remove_checkbox(struct conversation *c)
