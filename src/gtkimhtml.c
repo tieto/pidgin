@@ -297,7 +297,7 @@ static void url_copy(GtkWidget *w, gchar *url) {
 }
 
 /* The callback for an event on a link tag. */
-gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter *arg2, char *url) {
+gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, char *url) {
 	GdkEventButton *event_button = (GdkEventButton *) event;
 
 	if (event->type == GDK_BUTTON_RELEASE) {
@@ -312,14 +312,24 @@ gboolean tag_event(GtkTextTag *tag, GObject *arg1, GdkEvent *event, GtkTextIter 
 
 			/* A link was clicked--we emit the "url_clicked" signal
 			 * with the URL as the argument */
-			g_signal_emit(arg1, signals[URL_CLICKED], 0, url);
+			g_signal_emit(imhtml, signals[URL_CLICKED], 0, url);
 			return FALSE;
 		} else if(event_button->button == 3) {
 			GtkWidget *img, *item, *menu;
 			struct url_data *tempdata = g_new(struct url_data, 1);
-			tempdata->object = g_object_ref(arg1);
+			tempdata->object = g_object_ref(imhtml);
 			tempdata->url = g_strdup(url);
 
+			/* Don't want the tooltip around if user right-clicked on link */
+			if (GTK_IMHTML(imhtml)->tip_window) {
+				gtk_widget_destroy(GTK_IMHTML(imhtml)->tip_window);
+				GTK_IMHTML(imhtml)->tip_window = NULL;
+			}
+			if (GTK_IMHTML(imhtml)->tip_timer) {
+				g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
+				GTK_IMHTML(imhtml)->tip_timer = 0;
+			}
+			gdk_window_set_cursor(event_button->window, GTK_IMHTML(imhtml)->arrow_cursor);
 			menu = gtk_menu_new();
 
 			/* buttons and such */
