@@ -34,6 +34,7 @@
 #include "zephyr/zephyr.h"
 
 typedef struct _zframe zframe;
+typedef struct _zephyr_triple zephyr_triple;
 
 /* struct I need for zephyr_to_html */
 struct _zframe {
@@ -45,6 +46,15 @@ struct _zframe {
 	/* text including the opening html thingie. */
 	GString *text;
 	struct _zframe *enclosing;
+};
+
+struct _zephyr_triple {
+	char *class;
+	char *instance;
+	char *recipient;
+	char *name;
+	gboolean open;
+	int id;
 };
 
 char *name()
@@ -80,6 +90,11 @@ static guint32 nottimer = 0;
 static guint32 loctimer = 0;
 struct gaim_connection *zgc = NULL;
 static GList *pending_zloc_names = NULL;
+static GSList *subscrips = NULL;
+static int last_id = 0;
+static GtkWidget *class_entry;
+static GtkWidget *inst_entry;
+static GtkWidget *recip_entry;
 
 /* just for debugging
 static void handle_unknown(ZNotice_t notice)
@@ -97,6 +112,73 @@ static void handle_unknown(ZNotice_t notice)
 	g_print("\n");
 }
 */
+
+static zephyr_triple *new_triple(char *c, char *i, char *r)
+{
+	zephyr_triple *zt;
+	zt = g_new0(zephyr_triple, 1);
+	zt->class = g_strdup(c);
+	zt->instance = g_strdup(i);
+	zt->recipient = g_strdup(r);
+	zt->name = g_strdup_printf("%s,%s,%s", c, i, r);
+	zt->id = ++last_id;
+	zt->open = FALSE;
+	return zt;
+}
+
+static void free_triple(zephyr_triple *zt)
+{
+	g_free(zt->class);
+	g_free(zt->instance);
+	g_free(zt->recipient);
+	g_free(zt->name);
+	g_free(zt);
+}
+
+/* returns true if zt1 is a subset of zt2, i.e. zt2 has the same thing or
+ * wildcards in each field of zt1. */
+static gboolean triple_subset(zephyr_triple *zt1, zephyr_triple *zt2)
+{
+	if (g_strcasecmp(zt2->class, zt1->class) &&
+			g_strcasecmp(zt2->class, "*")) {
+		return FALSE;
+	}
+	if (g_strcasecmp(zt2->instance, zt1->instance) &&
+			g_strcasecmp(zt2->instance, "*")) {
+		return FALSE;
+	}
+	if (g_strcasecmp(zt2->recipient, zt1->recipient) &&
+			g_strcasecmp(zt2->recipient, "*")) {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+static zephyr_triple *find_sub_by_triple(zephyr_triple *zt)
+{
+	zephyr_triple *curr_t;
+	GSList *curr = subscrips;
+	while (curr) {
+		curr_t = curr->data;
+		if (triple_subset(zt, curr_t))
+			return curr_t;
+		curr = curr->next;
+	}
+	return NULL;
+}
+
+static zephyr_triple *find_sub_by_id(int id)
+{
+	zephyr_triple *zt;
+	GSList *curr = subscrips;
+	while (curr) {
+		zt = curr->data;
+		if (zt->id == id)
+			return zt;
+		curr = curr->next;
+	}
+	return NULL;
+}
 
 /* utility macros that are useful for zephyr_to_html */
 
@@ -304,6 +386,26 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				g_snprintf(buf, len + 1, "%s", buf2);
 				serv_got_im(zgc, notice.z_sender, buf, 0, time((time_t)NULL));
 				g_free(buf);
+			} else {
+				zephyr_triple *zt1, *zt2;
+				zt1 = new_triple(notice.z_class, notice.z_class_inst,
+								notice.z_recipient);
+				zt2 = find_sub_by_triple(zt1);
+				if (!zt2) {
+					/* we shouldn't be subscribed to this message. ignore. */
+				} else {
+					len = MAX(BUF_LONG, strlen(buf2));
+					buf = g_malloc(len + 1);
+					g_snprintf(buf, len + 1, "%s", buf2);
+					if (!zt2->open) {
+						zt2->open = TRUE;
+						serv_got_joined_chat(zgc, zt2->id, zt2->name);
+					}
+					serv_got_chat_in(zgc, zt2->id, notice.z_sender, FALSE,
+								buf, time((time_t)NULL));
+					g_free(buf);
+				}
+				free_triple(zt1);
 			}
 			g_free(buf2);
 		}
@@ -429,6 +531,8 @@ static void process_zsubs()
 										sub.zsub_recipient);
 					}
 					g_free(recip);
+					subscrips = g_slist_append(subscrips,
+								new_triple(triple[0], triple[1], recip));
 				}
 				g_strfreev(triple);
 			}
@@ -483,12 +587,34 @@ static void zephyr_login(struct aim_user *user)
 	if (bud_list_cache_exists(zgc))
 		do_import(NULL, zgc);
 	process_anyone();
-	/* call process_zsubs to subscribe. still commented out since I don't know
-	 * how you want to handle incoming msgs from subs.
-	process_zsubs(); */
+	process_zsubs();
 
 	nottimer = gtk_timeout_add(100, check_notify, NULL);
 	loctimer = gtk_timeout_add(2000, check_loc, NULL);
+}
+
+static void write_zsubs()
+{
+	GSList *s = subscrips;
+	zephyr_triple *zt;
+	FILE *fd;
+	char *fname;
+
+	fname = g_strdup_printf("%s/.zephyr.subs", g_get_home_dir());
+	fd = fopen(fname, "w");
+	
+	if (!fd) {
+		g_free(fname);
+		return;
+	}
+	
+	while (s) {
+		zt = s->data;
+		fprintf(fd, "%s\n", zt->name);
+		s = s->next;
+	}
+	g_free(fname);
+	fclose(fd);
 }
 
 static void write_anyone()
@@ -528,9 +654,25 @@ static void write_anyone()
 
 static void zephyr_close(struct gaim_connection *gc)
 {
-	g_list_foreach(pending_zloc_names, (GFunc)g_free, NULL);
+	GList *l;
+	GSList *s;
+	l = pending_zloc_names;
+	while (l) {
+		g_free((char*)l->data);
+		l = l->next;
+	}
 	g_list_free(pending_zloc_names);
+	
 	write_anyone();
+	write_zsubs();
+	
+	s = subscrips;
+	while (s) {
+		free_triple((zephyr_triple*)s->data);
+		s = s->next;
+	}
+	g_slist_free(subscrips);
+	
 	if (nottimer)
 		gtk_timeout_remove(nottimer);
 	nottimer = 0;
@@ -545,6 +687,45 @@ static void zephyr_close(struct gaim_connection *gc)
 
 static void zephyr_add_buddy(struct gaim_connection *gc, char *buddy) { }
 static void zephyr_remove_buddy(struct gaim_connection *gc, char *buddy) { }
+
+static void zephyr_chat_send(struct gaim_connection *gc, int id, char *im)
+{
+	ZNotice_t notice;
+	zephyr_triple *zt;
+	char *buf;
+	char *sig;
+
+	zt = find_sub_by_id(id);
+	if (!zt)
+		/* this should never happen. */
+		return;
+	
+	sig = ZGetVariable("zwrite-signature");
+	if (!sig) {
+		sig = g_get_real_name();
+	}
+	buf = g_strdup_printf("%s%c%s", sig, '\0', im);
+
+	bzero((char *)&notice, sizeof(notice));
+	notice.z_kind = ACKED;
+	notice.z_port = 0;
+	notice.z_opcode = "";
+	notice.z_class = zt->class;
+	notice.z_class_inst = zt->instance;
+	if (!g_strcasecmp(zt->recipient, "*"))
+		notice.z_recipient = zephyr_normalize("");
+	else
+		notice.z_recipient = zephyr_normalize(zt->recipient);
+	notice.z_sender = 0;
+	notice.z_default_format =
+		"Class $class, Instance $instance:\n"
+		"To: @bold($recipient) at $time $date\n"
+		"From: @bold($1) <$sender>\n\n$2";
+	notice.z_message_len = strlen(im) + strlen(sig) + 4;
+	notice.z_message = buf;
+	ZSendNotice(&notice, ZAUTH);
+	g_free(buf);
+}
 
 static void zephyr_send_im(struct gaim_connection *gc, char *who, char *im, int away) {
 	ZNotice_t notice;
@@ -643,6 +824,112 @@ static GList *zephyr_away_states()
 	return m;
 }
 
+static void zephyr_draw_jc(struct gaim_connection *gc, GtkWidget *vbox) {
+	GtkWidget *label;
+	GtkWidget *rowbox;
+	
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Class:"));
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+	
+	class_entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(rowbox), class_entry, FALSE, FALSE, 5);
+	gtk_widget_show(class_entry);
+	
+	gtk_widget_show(rowbox);
+
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Instance:"));
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+	
+	inst_entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(rowbox), inst_entry, FALSE, FALSE, 5);
+	gtk_widget_show(inst_entry);
+
+	gtk_widget_show(rowbox);
+
+	rowbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
+
+	label = gtk_label_new(_("Recipient:"));
+	gtk_box_pack_start(GTK_BOX(rowbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+	
+	recip_entry = gtk_entry_new();
+	gtk_box_pack_end(GTK_BOX(rowbox), recip_entry, FALSE, FALSE, 5);
+	gtk_widget_show(recip_entry);
+	
+	gtk_widget_show(rowbox);
+}
+
+static void zephyr_join_chat(struct gaim_connection *gc, int id, char *nm)
+{
+	ZSubscription_t sub;
+	zephyr_triple *zt1, *zt2;
+	char *classname;
+	char *instname;
+	char *recip;
+	char **splitted;
+
+	if (!nm) {
+		splitted = NULL;
+		classname = gtk_entry_get_text(GTK_ENTRY(class_entry));
+		instname = gtk_entry_get_text(GTK_ENTRY(inst_entry));
+		recip = gtk_entry_get_text(GTK_ENTRY(recip_entry));
+		if (!g_strcasecmp(recip, "%me%"))
+			recip = g_getenv("USER");
+	} else {
+		splitted = g_strsplit(nm, ",", 3);
+		if (!splitted[0] || !splitted[1] || !splitted[2]) {
+			g_strfreev(splitted);
+			return;
+		}
+		classname = g_strstrip(splitted[0]);
+		instname = g_strstrip(splitted[1]);
+		recip = g_strstrip(splitted[2]);
+	}
+
+	zt1 = new_triple(classname, instname, recip);
+	if (splitted)
+		g_strfreev(splitted);
+	zt2 = find_sub_by_triple(zt1);
+	if (zt2) {
+		free_triple(zt1);
+		if (!zt2->open)
+			serv_got_joined_chat(gc, zt2->id, zt2->name);
+		return;
+	}
+
+	sub.zsub_class = zt1->class;
+	sub.zsub_classinst = zt1->instance;
+	sub.zsub_recipient = zt1->recipient;
+
+	if (ZSubscribeTo(&sub, 1, 0) != ZERR_NONE) {
+		free_triple(zt1);
+		return;
+	}
+
+	subscrips = g_slist_append(subscrips, zt1);
+	zt1->open = TRUE;
+	serv_got_joined_chat(gc, zt1->id, zt1->name);
+}
+
+static void zephyr_chat_leave(struct gaim_connection *gc, int id)
+{
+	zephyr_triple *zt;
+	zt = find_sub_by_id(id);
+	if (zt) {
+		zt->open = FALSE;
+		zt->id = ++last_id;
+	}
+}
+
 static struct prpl *my_protocol = NULL;
 
 void zephyr_init(struct prpl *ret)
@@ -659,6 +946,10 @@ void zephyr_init(struct prpl *ret)
 	ret->buddy_menu = zephyr_buddy_menu;
 	ret->away_states = zephyr_away_states;
 	ret->set_away = zephyr_set_away;
+	ret->draw_join_chat = zephyr_draw_jc;
+	ret->join_chat = zephyr_join_chat;
+	ret->chat_send = zephyr_chat_send;
+	ret->chat_leave = zephyr_chat_leave;
 
 	my_protocol = ret;
 }
