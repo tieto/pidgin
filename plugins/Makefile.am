@@ -10,4 +10,4 @@ LDFLAGS += -ggdb $(GTK_LIBS) -shared
 plugin_DATA = autorecon.so iconaway.so spellchk.so
 plugindir = $(libdir)/gaim
 EXTRA_DIST = CRAZY HOWTO SIGNALS autorecon.c chkmail.c filectl.c gaiminc.c \
-	iconaway.c notify.c simple.c spellchk.c toc_commands.c
+	iconaway.c lagmeter.c notify.c simple.c spellchk.c toc_commands.c
