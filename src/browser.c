@@ -556,7 +556,7 @@ gint check_netscape(char *msg)
         mozilla_remote_init_atoms ();
         window = mozilla_remote_find_window();
 
-        if (window) {
+        if (window && (((GdkWindowPrivate *)window)->destroyed == FALSE)) {
 
 		XSelectInput(gdk_display, ((GdkWindowPrivate *)window)->xwindow,
 			     (PropertyChangeMask|StructureNotifyMask));
@@ -596,7 +596,7 @@ static void netscape_command(char *command)
 	mozilla_remote_init_atoms();
 	window = mozilla_remote_find_window();
 
-	if (window) {
+	if (window && (((GdkWindowPrivate *)window)->destroyed == FALSE)) {
 
 		XSelectInput(gdk_display, ((GdkWindowPrivate *)window)->xwindow,
 			     (PropertyChangeMask|StructureNotifyMask));
