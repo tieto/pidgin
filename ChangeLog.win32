@@ -1,3 +1,6 @@
+version 0.74:
+	* Installer translations for: Czech.
+
 version 0.73 (11/21/2003):
 	* Fix the close button on the first tab in each window.
 	* Fix for carriage return pileups in userinfo.
