@@ -666,6 +666,9 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 	int count = 0;
 	GSList *l = pkt->hash;
 
+	if (!GAIM_ACCOUNT_CHECK_MAIL(gc->account))
+		return;
+
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 		if (pair->key == 9)
@@ -681,10 +684,18 @@ static void yahoo_process_mail(struct gaim_connection *gc, struct yahoo_packet *
 
 	if (who && subj && email && *email) {
 		char *from = g_strdup_printf("%s (%s)", who, email);
-		connection_has_mail(gc, -1, from, subj, "http://mail.yahoo.com/");
+
+		gaim_notify_email(gc, subj, from, gc->username,
+						  "http://mail.yahoo.com/", NULL, NULL);
+
 		g_free(from);
-	} else if (count > 0)
-		connection_has_mail(gc, count, NULL, NULL, "http://mail.yahoo.com/");
+	} else if (count > 0) {
+		const char *to = gc->username;
+		const char *url = "http://mail.yahoo.com/";
+
+		gaim_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
+						   NULL, NULL);
+	}
 }
 /* This is the y64 alphabet... it's like base64, but has a . and a _ */
 char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._";
