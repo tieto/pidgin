@@ -8,6 +8,11 @@ version 2.0.0
 	* gaim-remote can send text (John B. Silvestri)
 	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 
+	Preference changes:
+	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
+	  won't interfere with bindings set by the GTK theme.
+	* Removed preference for buddy list button type, defaulted to "None"
+
 version 1.0.1 (10/07/2004):
 	New Features:
 	* Use the GNOME default browser when opening links if you're running GNOME

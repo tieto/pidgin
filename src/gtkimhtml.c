@@ -71,6 +71,8 @@
 #define gtk_widget_get_clipboard(x, y) gtk_clipboard_get(y)
 #endif
 
+static GtkTextViewClass *parent_class = NULL;
+
 static gboolean
 gtk_text_view_drag_motion (GtkWidget        *widget,
                            GdkDragContext   *context,
@@ -505,10 +507,6 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
  * http://bugzilla.gnome.org/show_bug.cgi?id=107939
  */
 
-/*
- * I'm adding some keyboard shortcuts too.
- */
-
 gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
 {
 	char buf[7];
@@ -528,78 +526,11 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 		case GDK_End:
 			return TRUE;
 			break;
+
 #endif /* !(Gtk+ >= 2.2.0) */
-		
-		case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
-		case 'B':
-			if (imhtml->format_functions & GTK_IMHTML_BOLD) {
-				if(imhtml->html_shortcuts) {
-					gtk_imhtml_toggle_bold(imhtml);
-					return TRUE;
-				}
-			}
-			return FALSE;
-			break;
-
-		case 'i':
-		case 'I':
-			if (imhtml->format_functions & GTK_IMHTML_ITALIC) {
-				if(imhtml->html_shortcuts) {
-					gtk_imhtml_toggle_italic(imhtml);
-					return TRUE;
-				}
-			}
-			return FALSE;
-			break;
-			
-		case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
-		case 'U':
-			if (imhtml->format_functions & GTK_IMHTML_UNDERLINE) {
-				if(imhtml->html_shortcuts) {
-					gtk_imhtml_toggle_underline(imhtml);
-					return TRUE;
-				}
-			}
-			return FALSE;
-			break;
-			
-		case '-':
-			if (imhtml->format_functions & GTK_IMHTML_SHRINK)
-				gtk_imhtml_font_shrink(imhtml);
-			return TRUE;
-			break;
-			
-		case '=':
-		case '+':
-			if (imhtml->format_functions & GTK_IMHTML_GROW)
-				gtk_imhtml_font_grow(imhtml);
-			return TRUE;
-			break;
-
-		case '1': strcpy(buf, ":-)");  break;
-		case '2': strcpy(buf, ":-(");  break;
-		case '3': strcpy(buf, ";-)");  break;
-		case '4': strcpy(buf, ":-P");  break;
-		case '5': strcpy(buf, "=-O");  break;
-		case '6': strcpy(buf, ":-*");  break;
-		case '7': strcpy(buf, ">:o");  break;
-		case '8': strcpy(buf, "8-)");  break;
-		case '!': strcpy(buf, ":-$");  break;
-		case '@': strcpy(buf, ":-!");  break;
-		case '#': strcpy(buf, ":-[");  break;
-		case '$': strcpy(buf, "O:-)"); break;
-		case '%': strcpy(buf, ":-/");  break;
-		case '^': strcpy(buf, ":'(");  break;
-		case '&': strcpy(buf, ":-X");  break;
-		case '*': strcpy(buf, ":-D");  break;
 		}
-	if (*buf && imhtml->smiley_shortcuts) {
-		gtk_imhtml_insert_smiley(imhtml, imhtml->protocol_name, buf);
-		return TRUE;
-	}
 	return FALSE;
 }
-
 static void paste_unformatted_cb(GtkMenuItem *menu, GtkIMHtml *imhtml)
 {
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
@@ -957,7 +888,28 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 	return FALSE;
 }
 
-static GtkTextViewClass *parent_class = NULL;
+static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
+{
+	switch (buttons) {
+	case GTK_IMHTML_BOLD:
+		gtk_imhtml_toggle_bold(imhtml);
+		break;
+	case GTK_IMHTML_ITALIC:
+		gtk_imhtml_toggle_italic(imhtml);
+		break;
+	case GTK_IMHTML_UNDERLINE:
+		gtk_imhtml_toggle_underline(imhtml);
+		break;
+	case GTK_IMHTML_SHRINK:
+		gtk_imhtml_font_shrink(imhtml);
+		break;
+	case GTK_IMHTML_GROW:
+		gtk_imhtml_font_grow(imhtml);
+		break;
+	default:
+		break;
+	}
+}
 
 static void
 gtk_imhtml_finalize (GObject *object)
@@ -1007,6 +959,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;
 	GtkObjectClass *object_class;
+	GtkBindingSet *binding_set;
 	GObjectClass   *gobject_class;
 	object_class = (GtkObjectClass*) klass;
 	gobject_class = (GObjectClass*) klass;
@@ -1031,7 +984,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					       G_TYPE_INT);
 	signals[TOGGLE_FORMAT] = g_signal_new("format_function_toggle",
 					      G_TYPE_FROM_CLASS(gobject_class),
-					      G_SIGNAL_RUN_FIRST,
+					      G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 					      G_STRUCT_OFFSET(GtkIMHtmlClass, toggle_format),
 					      NULL,
 					      0,
@@ -1044,22 +997,33 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					      G_STRUCT_OFFSET(GtkIMHtmlClass, clear_format),
 					      NULL,
 					      0,
-						  g_cclosure_marshal_VOID__VOID,
-						  G_TYPE_NONE, 0);
+					     g_cclosure_marshal_VOID__VOID,
+					     G_TYPE_NONE, 0);
 	signals[UPDATE_FORMAT] = g_signal_new("format_function_update",
-							G_TYPE_FROM_CLASS(gobject_class),
-							G_SIGNAL_RUN_FIRST,
-							G_STRUCT_OFFSET(GtkIMHtmlClass, update_format),
-							NULL,
-							0,
-							g_cclosure_marshal_VOID__VOID,
-							G_TYPE_NONE, 0);
+					      G_TYPE_FROM_CLASS(gobject_class),
+					      G_SIGNAL_RUN_FIRST,
+					      G_STRUCT_OFFSET(GtkIMHtmlClass, update_format),
+					      NULL,
+					      0,
+					      g_cclosure_marshal_VOID__VOID,
+					      G_TYPE_NONE, 0);
+
+	klass->toggle_format = imhtml_toggle_format;
+
 	gobject_class->finalize = gtk_imhtml_finalize;
       	widget_class->drag_motion = gtk_text_view_drag_motion;
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+
+	binding_set = gtk_binding_set_by_class (parent_class);
+	gtk_binding_entry_add_signal (binding_set, GDK_a, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_BOLD);
+	gtk_binding_entry_add_signal (binding_set, GDK_i, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_ITALIC);
+	gtk_binding_entry_add_signal (binding_set, GDK_u, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_UNDERLINE);
+	gtk_binding_entry_add_signal (binding_set, GDK_plus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
+	gtk_binding_entry_add_signal (binding_set, GDK_equal, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
+	gtk_binding_entry_add_signal (binding_set, GDK_minus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_SHRINK);
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
@@ -3540,7 +3504,6 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
 	g_object_unref(object);
 
 	return (imhtml->edit.bold != FALSE);
@@ -3566,7 +3529,6 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_ITALIC);
 	g_object_unref(object);
 
 	return imhtml->edit.italic != FALSE;
@@ -3592,7 +3554,6 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_UNDERLINE);
 	g_object_unref(object);
 
 	return imhtml->edit.underline != FALSE;
@@ -3618,7 +3579,6 @@ gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_STRIKE);
 	g_object_unref(object);
 
 	return imhtml->edit.strike != FALSE;
@@ -3647,7 +3607,6 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 	object = g_object_ref(G_OBJECT(imhtml));
 	b |= GTK_IMHTML_SHRINK;
 	b |= GTK_IMHTML_GROW;
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, b);
 	g_object_unref(object);
 }
 
@@ -3675,7 +3634,6 @@ void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK);
 	g_object_unref(object);
 }
 
@@ -3703,7 +3661,6 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_GROW);
 	g_object_unref(object);
 }
 
@@ -3737,7 +3694,6 @@ gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_FORECOLOR);
 	g_object_unref(object);
 
 	return imhtml->edit.forecolor != NULL;
@@ -3774,7 +3730,6 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BACKCOLOR);
 	g_object_unref(object);
 
 	return imhtml->edit.backcolor != NULL;
@@ -3811,7 +3766,6 @@ gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
-	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_FACE);
 	g_object_unref(object);
 
 	return imhtml->edit.fontface != NULL;

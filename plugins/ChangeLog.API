@@ -6,6 +6,8 @@ version 2.0.0cvs:
 	* Added: gaim_prefs_disconnect_by_handle()
 	* Removed: gaim_gtk_sound_{get,set}_mute() (replaced by the
 	           /gaim/gtk/sound/mute preference)
+	* Changed: gtk_imhtml_toolbar now descends from GtkHBox making it
+		   easier to add your own widgets to it
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

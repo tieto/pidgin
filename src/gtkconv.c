@@ -1823,7 +1823,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 		}
 	}
-
 	return FALSE;
 }
 
