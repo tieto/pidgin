@@ -102,7 +102,7 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 	GtkWidget *imhtml;
 	GtkWidget *sep;
 	GtkWidget *sw;
-	GtkWidget *toolbar;
+	GtkWidget *toolbar = NULL;
 	GtkWidget *vbox;
 
 	frame = gtk_frame_new(NULL);
