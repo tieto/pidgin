@@ -1052,6 +1052,7 @@ static void gaim_gtk_blist_show(struct gaim_buddy_list *list)
 	gtk_window_set_gravity(GTK_WINDOW(gtkblist->window), GDK_GRAVITY_NORTH_WEST);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	gtk_widget_realize(gtkblist->window);
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
