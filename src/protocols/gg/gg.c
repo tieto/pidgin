@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 2869 2001-12-08 09:48:52Z warmenhoven $
+ * $Id: gg.c 2928 2001-12-22 00:41:30Z warmenhoven $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -334,6 +334,7 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		gd->sess->fd = source;
 
 	if (source == -1) {
+		hide_login_progress(gc, _("Could not connect"));
 		signoff(gc);
 		return;
 	}
