@@ -753,11 +753,35 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 		toolbar->image_dialog = NULL;
 	}
 
-	close_link_dialog(toolbar);
-	close_smiley_dialog(NULL, NULL, toolbar);
-	destroy_toolbar_font(NULL, NULL, toolbar);
-	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
-	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
+	if (toolbar->font_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->font_dialog);
+		toolbar->font_dialog = NULL;
+	}
+
+	if (toolbar->smiley_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->smiley_dialog);
+		toolbar->smiley_dialog = NULL;
+	}
+
+	if (toolbar->bgcolor_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->bgcolor_dialog);
+		toolbar->bgcolor_dialog = NULL;
+	}
+
+	if (toolbar->fgcolor_dialog != NULL)
+	{
+		gtk_widget_destroy(toolbar->fgcolor_dialog);
+		toolbar->fgcolor_dialog = NULL;
+	}
+
+	if (toolbar->link_dialog != NULL)
+	{
+		gaim_request_close(GAIM_REQUEST_FIELDS, toolbar->link_dialog);
+		toolbar->link_dialog = NULL;
+	}
 
 	if (toolbar->sml)
 		free(toolbar->sml);
