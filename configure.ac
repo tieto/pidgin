@@ -261,6 +261,7 @@ if test "$enable_perl" = yes ; then
 else
 	PERL_CFLAGS=
 	PERL_LIBS=
+	AM_CONDITIONAL(USE_PERL, false)
 fi
 
 dnl Thanks, Evan.
