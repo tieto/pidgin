@@ -30,6 +30,8 @@ CORESOURCES = \
 	prefs.h \
 	prpl.c \
 	prpl.h \
+	request.c \
+	request.h \
 	server.c \
 	sound.c \
 	sound.h \
