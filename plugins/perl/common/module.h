@@ -18,9 +18,10 @@ typedef struct group *Gaim__Group;
 #include "server.h"
 
 typedef GaimAccount *     Gaim__Account;
-typedef struct buddy *    Gaim__BuddyList__Buddy;
-typedef struct chat *     Gaim__BuddyList__Chat;
-typedef struct group *    Gaim__BuddyList__Group;
+typedef GaimBuddy *       Gaim__BuddyList__Buddy;
+typedef GaimBlistChat *   Gaim__BuddyList__Chat;
+typedef GaimGroup *       Gaim__BuddyList__Group;
+typedef GaimContact *     Gaim__BuddyList__Contact;
 typedef GaimConnection *  Gaim__Connection;
 typedef GaimConversation *Gaim__Conversation;
 typedef GaimChat *        Gaim__Conversation__Chat;

@@ -12,7 +12,7 @@ add_buddy(buddy, group)
 	Gaim::BuddyList::Buddy buddy
 	Gaim::BuddyList::Group group
 CODE:
-	gaim_blist_add_buddy(buddy, group, NULL);
+	gaim_blist_add_buddy(buddy, NULL, group, NULL);
 
 void
 add_group(group)
