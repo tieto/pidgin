@@ -149,39 +149,50 @@ gaim_network_get_my_ip(int fd)
 static int
 gaim_network_do_listen(unsigned short port)
 {
-#if HAVE_GETADDRINFO
 	int listenfd;
 	const int on = 1;
-	struct addrinfo hints, *res, *ressave;
+#if HAVE_GETADDRINFO
+	int errnum;
+	struct addrinfo hints, *res, *next;
 	char serv[5];
 
-	snprintf(serv, sizeof(serv), "%d", port);
+	/*
+	 * Get a list of addresses on this machine.
+	 */
+	snprintf(serv, sizeof(serv), "%hu", port);
 	memset(&hints, 0, sizeof(struct addrinfo));
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-	if (getaddrinfo(NULL /* any IP */, serv, &hints, &res) != 0) {
-		gaim_debug_warning("network", "getaddrinfo: %s\n", strerror(errno));
+	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
+	if (errnum != 0) {
+		gaim_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
+		if (errnum == EAI_SYSTEM)
+			gaim_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
 		return -1;
 	}
-	ressave = res;
-	do {
+
+	/*
+	 * Go through the list of addresses and attempt to listen on
+	 * one of them.
+	 * XXX - Try IPv6 addresses first?
+	 */
+	for (next = res; next != NULL; next = next->ai_next) {
 		listenfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 		if (listenfd < 0)
 			continue;
-		setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
+			gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
 		if (bind(listenfd, res->ai_addr, res->ai_addrlen) == 0)
 			break; /* success */
 		close(listenfd);
-	} while ( (res = res->ai_next) );
+	}
 
-	if (!res)
+	freeaddrinfo(res);
+
+	if (next == NULL)
 		return -1;
-
-	freeaddrinfo(ressave);
 #else
-	int listenfd;
-	const int on = 1;
 	struct sockaddr_in sockin;
 
 	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -189,14 +200,11 @@ gaim_network_do_listen(unsigned short port)
 		return -1;
 	}
 
-	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)) != 0) {
+	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
 		gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
-		close(listenfd);
-		return -1;
-	}
 
 	memset(&sockin, 0, sizeof(struct sockaddr_in));
-	sockin.sin_family = AF_INET;
+	sockin.sin_family = PF_INET;
 	sockin.sin_port = htons(port);
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
@@ -253,7 +261,7 @@ gaim_network_get_port_from_fd(int fd)
 	struct sockaddr_in addr;
 	socklen_t len;
 
-	g_return_val_if_fail(fd > 0, 0);
+	g_return_val_if_fail(fd >= 0, 0);
 
 	len = sizeof(addr);
 	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
