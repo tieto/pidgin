@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 6001 2003-05-31 14:29:44Z lschiere $
+ * $Id: gg.c 6007 2003-05-31 15:06:17Z faceprint $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -55,6 +55,8 @@
 #endif
 
 #define USEROPT_NICK 0
+
+#define GG_CONNECT_STEPS 5
 
 #define AGG_BUF_LEN 1024
 
@@ -178,7 +180,7 @@ static char *handle_errcode(GaimConnection *gc, int errcode)
 		break;
 	}
 
-	hide_login_progress(gc, msg);
+	gaim_connection_error(gc, msg);
 
 	return msg;
 }
@@ -300,15 +302,13 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		gd->sess->fd = source;
 
 	if (source == 0) {
-		hide_login_progress(gc, _("Could not connect"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Could not connect"));
 		return;
 	}
 
 	if (!(e = gg_watch_fd(gd->sess))) {
 		debug_printf("main_callback: gg_watch_fd failed - CRITICAL!\n");
-		hide_login_progress(gc, _("Unable to read socket"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to read socket"));
 		return;
 	}
 
@@ -323,7 +323,6 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 		if (gc->inpa)
 			gaim_input_remove(gc->inpa);
 		handle_errcode(gc, e->event.failure);
-		signoff(gc);
 		break;
 	case GG_EVENT_MSG:
 		{
@@ -415,10 +414,9 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 	debug_printf("Found GG connection\n");
-	
+
 	if (source == 0) {
-		hide_login_progress(gc, _("Unable to connect."));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -433,16 +431,16 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	debug_printf("Checking State.\n");
 	switch (gd->sess->state) {
 	case GG_STATE_READING_DATA:
-		set_login_progress(gc, 2, _("Reading data"));
+		gaim_connection_update_progress(gc, _("Reading data"), 2, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_CONNECTING_GG:
-		set_login_progress(gc, 3, _("Balancer handshake"));
+		gaim_connection_update_progress(gc, _("Balancer handshake"), 3, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_READING_KEY:
-		set_login_progress(gc, 4, _("Reading server key"));
+		gaim_connection_update_progress(gc, _("Reading server key"), 4, GG_CONNECT_STEPS);
 		break;
 	case GG_STATE_READING_REPLY:
-		set_login_progress(gc, 5, _("Exchanging key hash"));
+		gaim_connection_update_progress(gc, _("Exchanging key hash"), 5, GG_CONNECT_STEPS);
 		break;
 	default:
 		debug_printf("No State found\n");
@@ -451,8 +449,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 	debug_printf("gg_watch_fd\n");
 	if (!(e = gg_watch_fd(gd->sess))) {
 		debug_printf("login_callback: gg_watch_fd failed - CRITICAL!\n");
-		hide_login_progress(gc, _("Critical error in GG library\n"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Critical error in GG library\n"));
 		return;
 	}
 
@@ -471,8 +468,7 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 			if (proxy_connect(gc->account, inet_ntoa(ip), gd->sess->port, login_callback, gc) < 0) {
 				g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), inet_ntoa(ip));
-				hide_login_progress(gc, buf);
-				signoff(gc);
+				gaim_connection_error(gc, buf);
 				return;
 			}
 			break;
@@ -505,7 +501,6 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 		gaim_input_remove(gc->inpa);
 		gc->inpa = 0;
 		handle_errcode(gc, e->event.failure);
-		signoff(gc);
 		break;
 	default:
 		debug_printf("no gg_event\n");
@@ -519,8 +514,7 @@ static void agg_keepalive(GaimConnection *gc)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
 	if (gg_ping(gd->sess) < 0) {
-		hide_login_progress(gc, _("Unable to ping server"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Unable to ping server"));
 		return;
 	}
 }
@@ -537,13 +531,12 @@ static void agg_login(GaimAccount *account)
 
 	gd->sess = g_new0(struct gg_session, 1);
 
-	gaim_connection_set_display_name(account, gaim_account_get_string("nick"));
+	gaim_connection_set_display_name(gc, gaim_account_get_string(account, "nick", ""));
 
-	set_login_progress(gc, 1, _("Looking up GG server"));
+	gaim_connection_update_progress(gc, _("Looking up GG server"), 1, GG_CONNECT_STEPS);
 
 	if (invalid_uin(account->username)) {
-		hide_login_progress(gc, _("Invalid Gadu-Gadu UIN specified"));
-		signoff(gc);
+		gaim_connection_error(gc, _("Invalid Gadu-Gadu UIN specified"));
 		return;
 	}
 
@@ -567,8 +560,7 @@ static void agg_login(GaimAccount *account)
 	gd->sess->async = 1;
 	if (proxy_connect(account, GG_APPMSG_HOST, GG_APPMSG_PORT, login_callback, gc) < 0) {
 		g_snprintf(buf, sizeof(buf), _("Connect to %s failed"), GG_APPMSG_HOST);
-		hide_login_progress(gc, buf);
-		signoff(gc);
+		gaim_connection_error(gc, buf);
 		return;
 	}
 }
@@ -991,8 +983,8 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 static void import_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *hi = g_new0(struct agg_http, 1);
-	gchar *u = gg_urlencode(gc->username);
-	gchar *p = gg_urlencode(gc->password);
+	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
+	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
 
 	hi->gc = gc;
 	hi->type = AGG_HTTP_USERLIST_IMPORT;
@@ -1018,8 +1010,8 @@ static void export_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
 	gchar *ptr;
-	gchar *u = gg_urlencode(gc->username);
-	gchar *p = gg_urlencode(gc->password);
+	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
+	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
 
 	GaimBlistNode *gnode, *bnode;
 
@@ -1087,8 +1079,8 @@ static void export_buddies_server(GaimConnection *gc)
 static void delete_buddies_server(GaimConnection *gc)
 {
 	struct agg_http *he = g_new0(struct agg_http, 1);
-	gchar *u = gg_urlencode(gc->username);
-	gchar *p = gg_urlencode(gc->password);
+	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
+	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
 
 	he->gc = gc;
 	he->type = AGG_HTTP_USERLIST_DELETE;
@@ -1160,8 +1152,8 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 static void agg_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
 	struct agg_http *hpass = g_new0(struct agg_http, 1);
-	gchar *u = gg_urlencode(gc->username);
-	gchar *p = gg_urlencode(gc->password);
+	gchar *u = gg_urlencode(gaim_account_get_username(gc->account));
+	gchar *p = gg_urlencode(gaim_account_get_password(gc->account));
 	gchar *enew = gg_urlencode(new);
 	gchar *eold = gg_urlencode(old);
 
