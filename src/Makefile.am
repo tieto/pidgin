@@ -163,6 +163,7 @@ gaim_SOURCES = \
 	gtkroomlist.c \
 	gtksound.c \
 	gtksourceiter.c \
+	gtkstatusselector.c \
 	gtkutils.c \
 	idle.c \
 	main.c \
@@ -198,6 +199,7 @@ gaim_headers = \
 	gtkroomlist.h \
 	gtksound.h \
 	gtksourceiter.h \
+	gtkstatusselector.h \
 	gtkutils.h \
 	internal.h \
 	stock.h

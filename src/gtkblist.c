@@ -49,6 +49,7 @@
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
 #include "gtksound.h"
+#include "gtkstatusselector.h"
 #include "gtkutils.h"
 
 #include "gaim.h"
@@ -3090,7 +3091,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	void *handle;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
+	GtkWidget *menu;
 	GtkWidget *sw;
+	GtkWidget *selector;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3113,6 +3116,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
+	gtk_widget_show(gtkblist->vbox);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
 	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
@@ -3133,7 +3137,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_load_accels();
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 														G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtk_item_factory_get_widget(gtkblist->ift, "<GaimMain>"), FALSE, FALSE, 0);
+	menu = gtk_item_factory_get_widget(gtkblist->ift, "<GaimMain>");
+	gtk_widget_show(menu);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
 	awaymenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Away"));
 
@@ -3152,6 +3158,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_update_plugin_actions();
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_widget_show(sw);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
@@ -3160,6 +3167,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
+	gtk_widget_show(gtkblist->treeview);
 	gtk_widget_set_name(gtkblist->treeview, "gaim_gtkblist_treeview");
 
 	/* Set up selection stuff */
@@ -3233,6 +3241,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
+	selector = gaim_gtk_status_selector_new();
+	gtk_widget_show(selector);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), selector, FALSE, TRUE, 0);
+
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101
 	 */
@@ -3248,7 +3260,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
 	gaim_gtk_blist_restore_position();
-	gtk_widget_show_all(gtkblist->window);
+	gtk_widget_show(gtkblist->window);
 
 	/* start the refresh timer */
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_idle_time") ||
