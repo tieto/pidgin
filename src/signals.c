@@ -55,6 +55,7 @@ typedef struct
 	GaimCallback cb;
 	void *handle;
 	void *data;
+	gboolean use_vargs;
 
 } GaimSignalHandlerData;
 
@@ -168,9 +169,9 @@ gaim_signals_unregister_by_instance(void *instance)
 	g_return_if_fail(found);
 }
 
-gulong
-gaim_signal_connect(void *instance, const char *signal, void *handle,
-					GaimCallback func, void *data)
+static gulong
+signal_connect_common(void *instance, const char *signal, void *handle,
+					  GaimCallback func, void *data, gboolean use_vargs)
 {
 	GaimInstanceData *instance_data;
 	GaimSignalData *signal_data;
@@ -200,16 +201,30 @@ gaim_signal_connect(void *instance, const char *signal, void *handle,
 
 	/* Create the signal handler data */
 	handler_data = g_new0(GaimSignalHandlerData, 1);
-	handler_data->id     = signal_data->next_handler_id;
-	handler_data->cb     = func;
-	handler_data->handle = handle;
-	handler_data->data   = data;
+	handler_data->id        = signal_data->next_handler_id;
+	handler_data->cb        = func;
+	handler_data->handle    = handle;
+	handler_data->data      = data;
+	handler_data->use_vargs = use_vargs;
 
 	signal_data->handlers = g_list_append(signal_data->handlers, handler_data);
 	signal_data->handler_count++;
 	signal_data->next_handler_id++;
 
 	return handler_data->id;
+}
+gulong
+gaim_signal_connect(void *instance, const char *signal, void *handle,
+					GaimCallback func, void *data)
+{
+	return signal_connect_common(instance, signal, handle, func, data, FALSE);
+}
+
+gulong
+gaim_signal_connect_vargs(void *instance, const char *signal, void *handle,
+						  GaimCallback func, void *data)
+{
+	return signal_connect_common(instance, signal, handle, func, data, TRUE);
 }
 
 void
@@ -352,7 +367,16 @@ gaim_signal_emit_vargs(void *instance, const char *signal, va_list args)
 	{
 		handler_data = (GaimSignalHandlerData *)l->data;
 
-		signal_data->marshal(handler_data->cb, args, handler_data->data, NULL);
+		if (handler_data->use_vargs)
+		{
+			((void (*)(va_list, void *))handler_data->cb)(args,
+														  handler_data->data);
+		}
+		else
+		{
+			signal_data->marshal(handler_data->cb, args,
+								 handler_data->data, NULL);
+		}
 	}
 }
 
@@ -401,8 +425,16 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 	{
 		handler_data = (GaimSignalHandlerData *)l->data;
 
-		signal_data->marshal(handler_data->cb, args, handler_data->data,
-							 &ret_val);
+		if (handler_data->use_vargs)
+		{
+			ret_val = ((void *(*)(va_list, void *))handler_data->cb)(
+				args, handler_data->data);
+		}
+		else
+		{
+			signal_data->marshal(handler_data->cb, args,
+								 handler_data->data, &ret_val);
+		}
 	}
 
 	return ret_val;
