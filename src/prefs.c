@@ -2117,7 +2117,7 @@ static void build_deny_menu()
 		c = c->next;
 		if (!gc->prpl->set_permit_deny)
 			continue;
-		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, (*gc->prpl->name)());
+		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
 		gtk_widget_show(opt);
@@ -2341,7 +2341,7 @@ static void try_me(GtkCTree *ctree, GtkCTreeNode *node)
 	/* this is a hack */
 	void (*func)();
 	func = gtk_ctree_node_get_row_data(ctree, node);
-	(*func)();
+	func();
 }
 
 void show_prefs()

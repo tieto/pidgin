@@ -103,7 +103,7 @@ void destroy_gaim_conn(struct gaim_connection *gc)
 		while (h) {
 			n = (struct buddy *)h->data;
 			if (gc->prpl->buddy_free)
-				(*gc->prpl->buddy_free)(n);
+				gc->prpl->buddy_free(n);
 			h = g_slist_remove(h, n);
 			g_free(n);
 		}
@@ -150,7 +150,7 @@ static char *proto_name(int proto)
 {
 	struct prpl *p = find_prpl(proto);
 	if (p && p->name)
-		return (*p->name)();
+		return p->name();
 	else
 		return "Unknown";
 }
@@ -357,7 +357,7 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
 		if (!found)
 			count++;
 		if (e->name)
-			opt = gtk_menu_item_new_with_label((*e->name)());
+			opt = gtk_menu_item_new_with_label(e->name());
 		else
 			opt = gtk_menu_item_new_with_label("Unknown");
 		gtk_object_set_user_data(GTK_OBJECT(opt), u);
@@ -606,12 +606,12 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	if (!p->user_opts)
 		return;
 
-	tmp = op = (*p->user_opts)();
+	tmp = op = p->user_opts();
 
 	if (!op)
 		return;
 
-	g_snprintf(buf, sizeof(buf), "%s Options", (*p->name)());
+	g_snprintf(buf, sizeof(buf), "%s Options", p->name());
 	u->proto_frame = gtk_frame_new(buf);
 	gtk_box_pack_start(GTK_BOX(box), u->proto_frame, FALSE, FALSE, 0);
 	gtk_widget_show(u->proto_frame);
@@ -1088,7 +1088,7 @@ void account_online(struct gaim_connection *gc)
 		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
-	gtk_clist_set_text(GTK_CLIST(list), i, 3, (*gc->prpl->name)());
+	gtk_clist_set_text(GTK_CLIST(list), i, 3, gc->prpl->name());
 
 	return;
 }

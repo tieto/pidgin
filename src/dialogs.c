@@ -830,7 +830,7 @@ static void create_online_user_names(struct addbuddy *b)
 	while (g) {
 		c = (struct gaim_connection *)g->data;
 		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				c->username, (*c->prpl->name)());
+				c->username, c->prpl->name());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), b);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate",
@@ -2724,7 +2724,7 @@ static void create_import_dropdown(GtkFileSelection *fs)
 
 	while (g) {
 		c = (struct gaim_connection *)g->data;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, (*c->prpl->name)());
+		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_import_gc), c);
 		gtk_widget_show(opt);

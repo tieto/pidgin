@@ -293,7 +293,7 @@ void BuddyTickerShow()
 				if( b->present ) {
 					xpm = NULL;
 					if (gc->prpl->list_icon)
-						xpm = (*gc->prpl->list_icon)(b->uc);
+						xpm = gc->prpl->list_icon(b->uc);
 					if (xpm == NULL)
 						xpm = (char **)no_icon_xpm;
 					pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);

@@ -92,7 +92,7 @@ void unload_protocol(struct prpl *p)
 			char buf[256];
 			g_snprintf(buf, sizeof buf, _("%s was using %s, which got removed."
 						      " %s is now offline."), g->username,
-				   (*p->name)(), g->username);
+				   p->name(), g->username);
 			do_error_dialog(buf, _("Disconnect"));
 			signoff(g);
 			c = connections;
@@ -235,7 +235,7 @@ void do_prompt_dialog(const char *text, const char *def, void *data, void *doit,
 static void proto_act(GtkObject *obj, struct gaim_connection *gc)
 {
 	char *act = gtk_object_get_user_data(obj);
-	(*gc->prpl->do_action)(gc, act);
+	gc->prpl->do_action(gc, act);
 }
 
 void do_proto_menu()
@@ -282,7 +282,7 @@ void do_proto_menu()
 			c = g_slist_next(c);
 		}
 
-		tmp = act = (*gc->prpl->actions)();
+		tmp = act = gc->prpl->actions();
 
 		while (act) {
 			if (act->data == NULL) {
@@ -311,7 +311,7 @@ void do_proto_menu()
 				continue;
 			}
 
-			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, (*gc->prpl->name)());
+			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name());
 			menuitem = gtk_menu_item_new_with_label(buf);
 			gtk_menu_append(GTK_MENU(protomenu), menuitem);
 			gtk_widget_show(menuitem);
@@ -320,7 +320,7 @@ void do_proto_menu()
 			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 			gtk_widget_show(submenu);
 
-			tmp = act = (*gc->prpl->actions)();
+			tmp = act = gc->prpl->actions();
 
 			while (act) {
 				if (act->data == NULL) {

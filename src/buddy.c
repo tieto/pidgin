@@ -164,7 +164,7 @@ void handle_group_rename(struct group *g, char *prevname)
 				if ((bs = find_buddy_show(new_gs, b->name)) == NULL) {
 					if (g->gc->prpl->list_icon) {
 						bs = new_buddy_show(new_gs, b,
-								    (*g->gc->prpl->list_icon)(b->uc));
+								    g->gc->prpl->list_icon(b->uc));
 					} else {
 						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
 					}
@@ -217,7 +217,7 @@ void handle_group_rename(struct group *g, char *prevname)
 					}
 					if (g->gc->prpl->list_icon) {
 						bs = new_buddy_show(new_gs, b,
-								    (*g->gc->prpl->list_icon)(b->uc));
+								    g->gc->prpl->list_icon(b->uc));
 					} else {
 						bs = new_buddy_show(new_gs, b, (char **)no_icon_xpm);
 					}
@@ -640,7 +640,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 			while (cn) {
 				g = (struct gaim_connection *)cn->data;
 				if (g->prpl->buddy_menu) {
-					GList *mo = (*g->prpl->buddy_menu)(g, b->name);
+					GList *mo = g->prpl->buddy_menu(g, b->name);
 
 					menuitem = gtk_menu_item_new_with_label(g->username);
 					gtk_menu_append(GTK_MENU(menu), menuitem);
@@ -669,7 +669,7 @@ void handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct buddy_s
 		} else {
 			g = (struct gaim_connection *)cn->data;
 			if (g->prpl->buddy_menu) {
-				GList *mo = (*g->prpl->buddy_menu)(g, b->name);
+				GList *mo = g->prpl->buddy_menu(g, b->name);
 
 				while (mo) {
 					struct proto_buddy_menu *pbm = mo->data;
@@ -949,7 +949,7 @@ void redo_buddy_list()
 					if (!bs) {
 						if (gc->prpl->list_icon)
 							bs = new_buddy_show(gs, b,
-									    (*gc->prpl->list_icon)(b->
+									    gc->prpl->list_icon(b->
 												   uc));
 						else
 							bs = new_buddy_show(gs, b, (char **)no_icon_xpm);
@@ -2082,7 +2082,7 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			bs->sound = 2;
 		} else if (bs->log_timer == 0) {
 			if (gc->prpl->list_icon)
-				xpm = (*gc->prpl->list_icon)(b->uc);
+				xpm = gc->prpl->list_icon(b->uc);
 			if (xpm == NULL)
 				xpm = (char **)no_icon_xpm;
 			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm, NULL, xpm);

@@ -126,7 +126,7 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	b->present = 0;
 
 	if (gc->prpl->normalize)
-		good = (*gc->prpl->normalize)(buddy);
+		good = gc->prpl->normalize(buddy);
 	else
 		good = buddy;
 
@@ -223,7 +223,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 			norm = gc->prpl->normalize;
 		else
 			norm = normalize;
-		whoname = g_strdup((*norm)(who));
+		whoname = g_strdup(norm(who));
 		grp = gc->groups;
 		while (grp) {
 			g = (struct group *)grp->data;
@@ -231,7 +231,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 			mem = g->members;
 			while (mem) {
 				b = (struct buddy *)mem->data;
-				if (!strcmp((*norm)(b->name), whoname)) {
+				if (!strcmp(norm(b->name), whoname)) {
 					g_free(whoname);
 					return g;
 				}
@@ -250,7 +250,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 				norm = z->prpl->normalize;
 			else
 				norm = normalize;
-			whoname = g_strdup((*norm)(who));
+			whoname = g_strdup(norm(who));
 			grp = z->groups;
 			while (grp) {
 				g = (struct group *)grp->data;
@@ -258,7 +258,7 @@ struct group *find_group_by_buddy(struct gaim_connection *gc, char *who)
 				mem = g->members;
 				while (mem) {
 					b = (struct buddy *)mem->data;
-					if (!strcmp((*norm)(b->name), whoname)) {
+					if (!strcmp(norm(b->name), whoname)) {
 						g_free(whoname);
 						return g;
 					}
@@ -291,7 +291,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 			norm = gc->prpl->normalize;
 		else
 			norm = normalize;
-		whoname = g_strdup((*norm)(who));
+		whoname = g_strdup(norm(who));
 		grp = gc->groups;
 		while (grp) {
 			g = (struct group *)grp->data;
@@ -299,7 +299,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 			mem = g->members;
 			while (mem) {
 				b = (struct buddy *)mem->data;
-				if (!strcmp((*norm)(b->name), whoname)) {
+				if (!strcmp(norm(b->name), whoname)) {
 					g_free(whoname);
 					return b;
 				}
@@ -317,7 +317,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 				norm = z->prpl->normalize;
 			else
 				norm = normalize;
-			whoname = g_strdup((*norm)(who));
+			whoname = g_strdup(norm(who));
 			grp = z->groups;
 			while (grp) {
 				g = (struct group *)grp->data;
@@ -325,7 +325,7 @@ struct buddy *find_buddy(struct gaim_connection *gc, char *who)
 				mem = g->members;
 				while (mem) {
 					b = (struct buddy *)mem->data;
-					if (!strcmp((*norm)(b->name), whoname)) {
+					if (!strcmp(norm(b->name), whoname)) {
 						g_free(whoname);
 						return b;
 					}

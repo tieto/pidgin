@@ -436,7 +436,7 @@ void do_away_menu()
 				con = g_slist_next(con);
 			}
 
-			tmp = msgs = (*gc->prpl->away_states)(gc);
+			tmp = msgs = gc->prpl->away_states(gc);
 
 			if ((g_list_length(msgs) == 1) && !strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
 				awy = away_messages;
@@ -503,7 +503,7 @@ void do_away_menu()
 				}
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gc->username, (*gc->prpl->name)());
+					   gc->username, gc->prpl->name());
 				menuitem = gtk_menu_item_new_with_label(buf);
 				gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 				gtk_widget_show(menuitem);
@@ -512,7 +512,7 @@ void do_away_menu()
 				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 				gtk_widget_show(submenu);
 
-				tmp = msgs = (*gc->prpl->away_states)(gc);
+				tmp = msgs = gc->prpl->away_states(gc);
 
 				if ((g_list_length(msgs) == 1) &&
 				    (!strcmp(msgs->data, GAIM_AWAY_CUSTOM))) {

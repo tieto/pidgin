@@ -113,7 +113,7 @@ static struct g_url *parse_url(char *url)
 }
 
 struct grab_url_data {
-	void (*callback)(gpointer, char *);
+	void (* callback)(gpointer, char *);
 	gpointer data;
 	struct g_url *website;
 	char *url;
@@ -202,7 +202,7 @@ static void grab_url_callback(gpointer dat, gint sock, GaimInputCondition cond)
 	}
 }
 
-void grab_url(char *url, gboolean full, void (*callback)(gpointer, char *), gpointer data)
+void grab_url(char *url, gboolean full, void callback(gpointer, char *), gpointer data)
 {
 	int sock;
 	struct grab_url_data *gunk = g_new0(struct grab_url_data, 1);

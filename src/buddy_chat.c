@@ -141,7 +141,7 @@ static void rebuild_jc()
 		g_list_free(chatentries);
 	chatentries = NULL;
 
-	tmp = list = (*joinchatgc->prpl->chat_info)(joinchatgc);
+	tmp = list = joinchatgc->prpl->chat_info(joinchatgc);
 	while (list) {
 		GtkWidget *label;
 		GtkWidget *rowbox;
@@ -217,7 +217,7 @@ static void create_joinchat_menu(GtkWidget *box)
 			continue;
 		if (!joinchatgc)
 			joinchatgc = g;
-		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, (*g->prpl->name)());
+		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, g->prpl->name());
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);
@@ -806,7 +806,7 @@ static void chat_press_ign(GtkWidget *obj, struct conversation *b)
 static void chat_press_info(GtkObject *obj, struct conversation *b)
 {
 	if (b->gc)
-		(*b->gc->prpl->get_info)(b->gc, gtk_object_get_user_data(obj));
+		b->gc->prpl->get_info(b->gc, gtk_object_get_user_data(obj));
 }
 
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)

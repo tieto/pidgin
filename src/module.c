@@ -115,7 +115,7 @@ struct gaim_plugin *load_plugin(char *filename)
 		return NULL;
 	}
 
-	retval = (*gaim_plugin_init)(plug->handle);
+	retval = gaim_plugin_init(plug->handle);
 	debug_printf("loaded plugin returned %s\n", retval ? retval : "NULL");
 	if (retval) {
 		plugin_remove_callbacks(plug->handle);
@@ -128,13 +128,13 @@ struct gaim_plugin *load_plugin(char *filename)
 	plugins = g_list_append(plugins, plug);
 
 	if (g_module_symbol(plug->handle, "name", (gpointer *)&cfunc)) {
-		plug->name = (*cfunc)();
+		plug->name = cfunc();
 	} else {
 		plug->name = NULL;
 	}
 
 	if (g_module_symbol(plug->handle, "description", (gpointer *)&cfunc))
-		plug->description = (*cfunc)();
+		plug->description = cfunc();
 	else
 		plug->description = NULL;
 
@@ -150,7 +150,7 @@ static void unload_gaim_plugin(struct gaim_plugin *p)
 
 	/* Attempt to call the plugin's remove function (if there) */
 	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-		(*gaim_plugin_remove)();
+		gaim_plugin_remove();
 
 	plugin_remove_callbacks(p->handle);
 
@@ -190,7 +190,7 @@ void gaim_plugin_unload(GModule *handle)
 	debug_printf("Unloading %s\n", g_module_name(p->handle));
 
 	if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-		(*gaim_plugin_remove)();
+		gaim_plugin_remove();
 	plugin_remove_callbacks(p->handle);
 	plugins = g_list_remove(plugins, p);
 	g_free(p);
@@ -491,7 +491,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_blist_update:
 			case event_quit:
 				zero = g->function;
-				(*zero)(g->data);
+				zero(g->data);
 				break;
 
 				/* one arg */
@@ -500,7 +500,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_new_conversation:
 			case event_error:
 				one = g->function;
-				(*one)(arg1, g->data);
+				one(arg1, g->data);
 				break;
 
 				/* two args */
@@ -514,7 +514,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_set_info:
 			case event_draw_menu:
 				two = g->function;
-				(*two)(arg1, arg2, g->data);
+				two(arg1, arg2, g->data);
 				break;
 
 				/* three args */
@@ -528,7 +528,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_back:
 			case event_warned:
 				three = g->function;
-				(*three)(arg1, arg2, arg3, g->data);
+				three(arg1, arg2, arg3, g->data);
 				break;
 
 				/* four args */
@@ -538,7 +538,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_chat_send_invite:
 			case event_chat_invited:
 				four = g->function;
-				(*four)(arg1, arg2, arg3, arg4, g->data);
+				four(arg1, arg2, arg3, arg4, g->data);
 				break;
 
 			default:
@@ -567,7 +567,7 @@ void remove_all_plugins()
 	while (c) {
 		p = (struct gaim_plugin *)c->data;
 		if (g_module_symbol(p->handle, "gaim_plugin_remove", (gpointer *)&gaim_plugin_remove))
-			(*gaim_plugin_remove)();
+			gaim_plugin_remove();
 		g_free(p);
 		c = c->next;
 	}
