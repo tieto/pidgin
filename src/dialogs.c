@@ -2055,7 +2055,7 @@ void show_log_dialog(struct conversation *c)
 
 		gtk_file_selection_hide_fileop_buttons(GTK_FILE_SELECTION(c->log_dialog));
 
-		g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", getenv("HOME"), c->name);
+		g_snprintf(buf, BUF_LEN - 1, "%s/%s.log", getenv("HOME"), normalize(c->name));
 		gtk_object_set_user_data(GTK_OBJECT(c->log_dialog), "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(c->log_dialog), buf);
 		gtk_signal_connect(GTK_OBJECT(c->log_dialog), "delete_event",
