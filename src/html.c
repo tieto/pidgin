@@ -394,40 +394,38 @@ char *html_to_xhtml(const char *html) {
 				}
 			} else { /* opening tag */
 				ALLOW_TAG("a");
-				ALLOW_TAG("b");
+				ALLOW_TAG_ALT("b", "strong");
 				ALLOW_TAG("blockquote");
 				ALLOW_TAG("body");
-				ALLOW_TAG_ALT("bold", "b");
+				ALLOW_TAG_ALT("bold", "strong");
 				ALLOW_TAG("br");
 				ALLOW_TAG("cite");
 				ALLOW_TAG("div");
 				ALLOW_TAG("em");
-				ALLOW_TAG("font");
+				ALLOW_TAG("font"); /* FIXME: not valid, need to translate */
 				ALLOW_TAG("h1");
 				ALLOW_TAG("h2");
 				ALLOW_TAG("h3");
 				ALLOW_TAG("h4");
 				ALLOW_TAG("h5");
 				ALLOW_TAG("h6");
-				ALLOW_TAG("head");
-				ALLOW_TAG("hr");
+				ALLOW_TAG("hr"); /* FIXME: not valid, need to skip?? */
 				ALLOW_TAG("html");
-				ALLOW_TAG("i");
-				ALLOW_TAG_ALT("italic", "i");
+				ALLOW_TAG_ALT("i", "em");
+				ALLOW_TAG_ALT("italic", "em");
 				ALLOW_TAG("li");
 				ALLOW_TAG("ol");
 				ALLOW_TAG("p");
 				ALLOW_TAG("pre");
 				ALLOW_TAG("q");
-				ALLOW_TAG_ALT("s", "strike");
+				ALLOW_TAG_ALT("s", "strike"); /* FIXME: see strike */
 				ALLOW_TAG("span");
-				ALLOW_TAG("strike");
+				ALLOW_TAG("strike"); /* FIXME: not valid, need to convert */
 				ALLOW_TAG("strong");
-				ALLOW_TAG("sub");
-				ALLOW_TAG("sup");
-				ALLOW_TAG("title");
-				ALLOW_TAG("u");
-				ALLOW_TAG_ALT("underline","u");
+				ALLOW_TAG("sub"); /* FIXME: not valid, need to convert */
+				ALLOW_TAG("sup"); /* FIXME: not valid, need to convert */
+				ALLOW_TAG("u"); /* FIXME: need to convert */
+				ALLOW_TAG_ALT("underline","u"); /* FIXME: need to convert */
 				ALLOW_TAG("ul");
 
 				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {

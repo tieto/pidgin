@@ -716,6 +716,13 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_OPT_TAG ("H3");
 	VALID_OPT_TAG ("HTML");
 
+	VALID_TAG ("CITE");
+	VALID_TAG ("/CITE");
+	VALID_TAG ("EM");
+	VALID_TAG ("/EM");
+	VALID_TAG ("STRONG");
+	VALID_TAG ("/STRONG");
+
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
@@ -904,22 +911,26 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				{
 				case 1:		/* B */
 				case 2:		/* BOLD */
+				case 54:	/* STRONG */
 					NEW_BIT (NEW_TEXT_BIT);
 					bold++;
 					break;
 				case 3:		/* /B */
 				case 4:		/* /BOLD */
+				case 55:	/* /STRONG */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (bold)
 						bold--;
 					break;
 				case 5:		/* I */
 				case 6:		/* ITALIC */
+				case 52:	/* EM */
 					NEW_BIT (NEW_TEXT_BIT);
 					italics++;
 					break;
 				case 7:		/* /I */
 				case 8:		/* /ITALIC */
+				case 53:	/* /EM */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (italics)
 						italics--;
@@ -1175,8 +1186,10 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				case 47:	/* P (opt) */
 				case 48:	/* H3 (opt) */
 				case 49:	/* HTML (opt) */
+				case 50:	/* CITE */
+				case 51:	/* /CITE */
 					break;
-				case 50:	/* comment */
+				case 56:	/* comment */
 					NEW_BIT (NEW_TEXT_BIT);
 					if (imhtml->show_comments)
 						wpos = g_snprintf (ws, len, "%s", tag);
