@@ -105,7 +105,7 @@ void set_display_option(GtkWidget *w, int *option)
 
 	if (blist) update_button_pix();
 
-#if USE_APPLET
+#ifdef USE_APPLET
 	update_pixmaps();
 #endif
 
@@ -712,7 +712,7 @@ void build_prefs()
 	gaim_button("Transparent text window (experimental)", &transparent, appbox );
 #endif
 	gaim_button("Show logon/logoffs in conversation windows", &display_options, OPT_DISP_SHOW_LOGON, appbox );
-#if USE_APPLET
+#ifdef USE_APPLET
 	gaim_button("Use devil icons in applet", &display_options, OPT_DISP_DEVIL_PIXMAPS, appbox );
 #endif
 	

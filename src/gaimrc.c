@@ -32,7 +32,7 @@
 #include "gaim.h"
 #include "proxy.h"
 
-#if USE_APPLET
+#ifdef USE_APPLET
 #include "gnome_applet_mgr.h"
 #endif
 

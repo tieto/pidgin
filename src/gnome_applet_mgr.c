@@ -268,6 +268,7 @@ void make_buddy(void) {
 
 void applet_show_login(AppletWidget *widget, gpointer data) {
         show_login();
+	/*
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
         applet_widget_register_callback(APPLET_WIDGET(applet),
                 "signoff",
@@ -280,6 +281,7 @@ void applet_show_login(AppletWidget *widget, gpointer data) {
                 _("Buddy List"),
                 (AppletCallbackFunc)make_buddy,
                 NULL);
+	*/
 }
 
 void insert_applet_away() {
@@ -312,8 +314,6 @@ void insert_applet_away() {
 		awy = awy->next;
 		free(awayname);
 	}
-
-	MRI_user_status = online;
 }
 
 void remove_applet_away() {
@@ -337,8 +337,6 @@ void remove_applet_away() {
 	}
 	applet_widget_unregister_callback_dir(APPLET_WIDGET(applet), "away/");
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
-
-	MRI_user_status = away;
 }
 
 /***************************************************************

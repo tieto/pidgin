@@ -111,6 +111,7 @@ void hide_login_progress(char *why)
 
 void dologin(GtkWidget *widget, GtkWidget *w)
 {
+	static gboolean running = FALSE;
 	char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
         char *password = gtk_entry_get_text(GTK_ENTRY(pass));
 
@@ -131,11 +132,29 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 	setUserState(signing_on);
 #endif /* USE_APPLET */
 
+	if (running) return;
+	running = TRUE;
 
-        if (serv_login(username, password) < 0)
+        if (serv_login(username, password) < 0) {
+		running = FALSE;
                 return;
+	}
 
-        return;
+#ifdef USE_APPLET
+	 applet_widget_unregister_callback(APPLET_WIDGET(applet),"signon");
+	 applet_widget_register_callback(APPLET_WIDGET(applet),
+			 "buddy",
+			 _("Buddy List"),
+			 (AppletCallbackFunc)make_buddy,
+			 NULL);
+	 applet_widget_register_callback(APPLET_WIDGET(applet),
+			 "signoff",
+			 _("Signoff"),
+			 signoff,
+			 NULL);
+#endif
+	 running = FALSE;
+	 return;
 }
 
 

@@ -22,6 +22,7 @@
 #ifdef USE_APPLET
 #include <gnome.h>
 #include <applet-widget.h>
+#include "gnome_applet_mgr.h"
 #endif /* USE_APPLET */
 #include <string.h>
 #include <stdio.h>
@@ -299,6 +300,7 @@ GtkRequisition gnome_buddy_get_dimentions(){
 #endif
 
 
+extern enum gaim_user_states MRI_user_status;
 void signoff()
 {
 	GList *mem;
@@ -317,6 +319,7 @@ void signoff()
         destroy_buddy();
         hide_login_progress("");
 #ifdef USE_APPLET
+	MRI_user_status = offline;
         set_applet_draw_closed();
         applet_widget_unregister_callback(APPLET_WIDGET(applet),"signoff");
 	remove_applet_away();

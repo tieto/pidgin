@@ -290,6 +290,8 @@ void destroy_all_dialogs()
         g_list_free(dialogwindows);
         dialogwindows = NULL;
 
+	do_im_back(NULL, NULL);
+
         if (imdialog) {
                 destroy_dialog(NULL, imdialog);
                 imdialog = NULL;

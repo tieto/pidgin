@@ -33,6 +33,9 @@
 #include "gaim.h"
 
 static GtkWidget *imaway=NULL;
+#ifdef USE_APPLET
+extern enum gaim_user_states MRI_user_status;
+#endif
 
 GtkWidget *awaymenu;
 struct away_message *awaymessage = NULL;
@@ -56,6 +59,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
       		        (AppletCallbackFunc)make_buddy,
                 	NULL);
 	}
+  MRI_user_status = online;
   insert_applet_away();
 #endif /* USE_APPLET */
 	if (imaway) {
@@ -93,6 +97,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
                                         _("Back"),
                                         (AppletCallbackFunc) do_im_back,
                                         NULL);
+	MRI_user_status = away;
 #endif
 
 	if (!imaway) {
