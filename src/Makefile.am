@@ -92,6 +92,8 @@ CORESOURCES = \
 	prpl.h \
 	request.c \
 	request.h \
+	roomlist.c \
+	roomlist.h \
 	server.c \
 	server.h \
 	sha.c \
@@ -157,6 +159,8 @@ gaim_SOURCES = \
 	gtkpounce.h \
 	gtkrequest.c \
 	gtkrequest.h \
+	gtkroomlist.c \
+	gtkroomlist.h \
 	gtksound.c \
 	gtksound.h \
 	gtksourceiter.c \

@@ -1170,7 +1170,10 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* remove_group */
 	jabber_chat_buddy_real_name,
 	jabber_chat_set_topic,
-	jabber_find_blist_chat
+	jabber_find_blist_chat,
+	jabber_roomlist_get_list,
+	jabber_roomlist_cancel,
+	NULL
 };
 
 static GaimPluginInfo info =

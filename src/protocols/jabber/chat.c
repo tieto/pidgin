@@ -22,6 +22,8 @@
 #include "debug.h"
 #include "multi.h" /* for proto_chat_entry */
 #include "notify.h"
+#include "request.h"
+#include "roomlist.h"
 #include "util.h"
 
 #include "chat.h"
@@ -152,8 +154,11 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	handle = g_hash_table_lookup(data, "handle");
 	passwd = g_hash_table_lookup(data, "password");
 
-	if(!room || !server || !handle)
+	if(!room || !server)
 		return;
+
+	if(!handle)
+		handle = js->user->node;
 
 	if(!jabber_nodeprep_validate(room)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
@@ -601,5 +606,124 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 	xmlnode_free(presence);
 	g_free(room_jid);
 }
+
+static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *query;
+	xmlnode *item;
+	const char *type;
+
+	if(!js->roomlist)
+		return;
+
+	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
+		/* XXX: error msg */
+		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+		return;
+	}
+
+	if(!(query = xmlnode_get_child(packet, "query"))) {
+		/* XXX: error msg */
+		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+		return;
+	}
+
+	for(item = query->child; item; item = item->next) {
+		const char *name;
+		GaimRoomlistRoom *room;
+		JabberID *jid;
+
+		if(item->type != NODE_TYPE_TAG)
+			continue;
+		if(strcmp(item->name, "item"))
+			continue;
+
+		if(!(jid = jabber_id_new(xmlnode_get_attrib(item, "jid"))))
+			continue;
+		name = xmlnode_get_attrib(item, "name");
+
+
+		room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, jid->node, NULL);
+		gaim_roomlist_room_add_field(js->roomlist, room, jid->node);
+		gaim_roomlist_room_add_field(js->roomlist, room, jid->domain);
+		gaim_roomlist_room_add_field(js->roomlist, room, name ? name : "");
+		gaim_roomlist_room_add(js->roomlist, room);
+
+		jabber_id_free(jid);
+	}
+	gaim_roomlist_set_in_progress(js->roomlist, FALSE);
+	gaim_roomlist_unref(js->roomlist);
+	js->roomlist = NULL;
+}
+
+static void roomlist_ok_cb(JabberStream *js, const char *server)
+{
+	JabberIq *iq;
+
+	if(!js->roomlist)
+		return;
+
+	if(!server || !*server) {
+		gaim_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+		return;
+	}
+
+	gaim_roomlist_set_in_progress(js->roomlist, TRUE);
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+
+	xmlnode_set_attrib(iq->node, "to", server);
+
+	jabber_iq_set_callback(iq, roomlist_disco_result_cb, NULL);
+
+	jabber_iq_send(iq);
+}
+
+GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
+{
+	JabberStream *js = gc->proto_data;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
+
+	if(js->roomlist)
+		gaim_roomlist_unref(js->roomlist);
+
+	js->roomlist = gaim_roomlist_new(gaim_connection_get_account(gc));
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "server", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Description"), "description", FALSE);
+	fields = g_list_append(fields, f);
+
+	gaim_roomlist_set_fields(js->roomlist, fields);
+
+	gaim_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
+			_("Select a conference server to query"),
+			js->chat_servers ? js->chat_servers->data : "conference.jabber.org",
+			FALSE, FALSE, _("Find Rooms"), G_CALLBACK(roomlist_ok_cb), _("Cancel"), NULL, js);
+
+	return js->roomlist;
+}
+
+void jabber_roomlist_cancel(GaimRoomlist *list)
+{
+	GaimConnection *gc;
+	JabberStream *js;
+
+	gc = gaim_account_get_connection(list->account);
+	js = gc->proto_data;
+
+	gaim_roomlist_set_in_progress(list, FALSE);
+
+	if (js->roomlist == list) {
+		js->roomlist = NULL;
+		gaim_roomlist_unref(list);
+	}
+}
+
 
 

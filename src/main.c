@@ -49,6 +49,7 @@
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkrequest.h"
+#include "gtkroomlist.h"
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "stock.h"
@@ -509,6 +510,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_pounces_init();
 	gaim_gtk_privacy_init();
 	gaim_gtk_xfers_init();
+	gaim_gtk_roomlist_init();
 }
 
 static void

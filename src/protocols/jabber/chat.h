@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "connection.h"
 #include "conversation.h"
+#include "roomlist.h"
 
 #include "jabber.h"
 
@@ -58,6 +59,9 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic);
 void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 void jabber_chat_change_nick(JabberChat *chat, const char *nick);
 void jabber_chat_part(JabberChat *chat, const char *msg);
+
+GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc);
+void jabber_roomlist_cancel(GaimRoomlist *list);
 
 
 #endif /* _GAIM_JABBER_CHAT_H_ */

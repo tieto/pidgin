@@ -3,6 +3,7 @@ Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 version 0.76cvs:
 	* WYSIWYG text input (with scrollbars, too!)
 	* Improved accessibility in conversation windows (Nathan Fredrickson)
+	* Chatroom List support (thanks, Tim Ringenbach)
 	* Catalan translation updated (Xan (DXpublica))
 	* English (British) translation updated (Luke Ross (lukeross))
 	* Hebrew translation had 1 character removed (Ambrose C. LI)

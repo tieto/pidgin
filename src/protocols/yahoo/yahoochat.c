@@ -1004,3 +1004,403 @@ void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *nam
 	}
 }
 
+
+struct yahoo_roomlist {
+	int fd;
+	int inpa;
+	guchar *rxqueue;
+	int rxlen;
+	gboolean started;
+	char *path;
+	char *host;
+	GaimRoomlist *list;
+	GaimRoomlistRoom *cat;
+	GaimRoomlistRoom *ucat;
+	GMarkupParseContext *parse;
+
+};
+
+static void yahoo_roomlist_destroy(struct yahoo_roomlist *yrl)
+{
+	if (yrl->inpa)
+		gaim_input_remove(yrl->inpa);
+	if (yrl->rxqueue)
+		g_free(yrl->rxqueue);
+	if (yrl->path)
+		g_free(yrl->path);
+	if (yrl->host)
+		g_free(yrl->host);
+	if (yrl->parse)
+		g_markup_parse_context_free(yrl->parse);
+}
+
+enum yahoo_room_type {
+	yrt_yahoo,
+	yrt_user,
+};
+
+struct yahoo_chatxml_state {
+	GaimRoomlist *list;
+	struct yahoo_roomlist *yrl;
+	GQueue *q;
+	struct {
+		enum yahoo_room_type type;
+		char *name;
+		char *topic;
+		char *id;
+		int users, voices, webcams;
+	} room;
+};
+
+struct yahoo_lobby {
+	int count, users, voices, webcams;
+};
+
+static struct yahoo_chatxml_state *yahoo_chatxml_state_new(GaimRoomlist *list, struct yahoo_roomlist *yrl)
+{
+	struct yahoo_chatxml_state *s;
+
+	s = g_new0(struct yahoo_chatxml_state, 1);
+
+	s->list = list;
+	s->yrl = yrl;
+	s->q = g_queue_new();
+
+	return s;
+}
+
+static void yahoo_chatxml_state_destroy(struct yahoo_chatxml_state *s)
+{
+	g_queue_free(s->q);
+	if (s->room.name)
+		g_free(s->room.name);
+	if (s->room.topic)
+		g_free(s->room.topic);
+	if (s->room.id)
+		g_free(s->room.id);
+	g_free(s);
+}
+
+static void yahoo_chatlist_start_element(GMarkupParseContext *context, const gchar *ename,
+                                  const gchar **anames, const gchar **avalues,
+                                  gpointer user_data, GError **error)
+{
+	struct yahoo_chatxml_state *s = user_data;
+	GaimRoomlist *list = s->list;
+	GaimRoomlistRoom *r;
+	GaimRoomlistRoom *parent;
+	int i;
+
+	if (!strcmp(ename, "category")) {
+		const gchar *name = NULL, *id = NULL;
+
+		for (i = 0; anames[i]; i++) {
+			if (!strcmp(anames[i], "id"))
+				id = avalues[i];
+			if (!strcmp(anames[i], "name"))
+				name = avalues[i];
+		}
+		if (!name || !id)
+			return;
+
+		parent = g_queue_peek_head(s->q);
+		r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY, name, parent);
+		gaim_roomlist_room_add_field(list, r, (gpointer)name);
+		gaim_roomlist_room_add_field(list, r, (gpointer)id);
+		gaim_roomlist_room_add(list, r);
+		g_queue_push_head(s->q, r);
+	} else if (!strcmp(ename, "room")) {
+		s->room.users = s->room.voices = s->room.webcams = 0;
+
+		for (i = 0; anames[i]; i++) {
+			if (!strcmp(anames[i], "id")) {
+				if (s->room.id)
+					g_free(s->room.id);
+				s->room.id = g_strdup(avalues[i]);
+			} else if (!strcmp(anames[i], "name")) {
+				if (s->room.name)
+					g_free(s->room.name);
+				s->room.name = g_strdup(avalues[i]);
+			} else if (!strcmp(anames[i], "topic")) {
+				if (s->room.topic)
+					g_free(s->room.topic);
+				s->room.topic = g_strdup(avalues[i]);
+			} else if (!strcmp(anames[i], "type")) {
+				if (!strcmp("yahoo", avalues[i]))
+					s->room.type = yrt_yahoo;
+				else
+					s->room.type = yrt_user;
+			}
+		}
+
+	} else if (!strcmp(ename, "lobby")) {
+		struct yahoo_lobby *lob = g_new0(struct yahoo_lobby, 1);
+
+		for (i = 0; anames[i]; i++) {
+			if (!strcmp(anames[i], "count")) {
+				lob->count = strtol(avalues[i], NULL, 10);
+			} else if (!strcmp(anames[i], "users")) {
+				s->room.users += lob->users = strtol(avalues[i], NULL, 10);
+			} else if (!strcmp(anames[i], "voices")) {
+				s->room.voices += lob->voices = strtol(avalues[i], NULL, 10);
+			} else if (!strcmp(anames[i], "webcams")) {
+				s->room.webcams += lob->webcams = strtol(avalues[i], NULL, 10);
+			}
+		}
+
+		g_queue_push_head(s->q, lob);
+	}
+
+}
+
+static void yahoo_chatlist_end_element(GMarkupParseContext *context, const gchar *ename,
+                                       gpointer user_data, GError **error)
+{
+	struct yahoo_chatxml_state *s = user_data;
+
+	if (!strcmp(ename, "category")) {
+		g_queue_pop_head(s->q);
+	} else if (!strcmp(ename, "room")) {
+		struct yahoo_lobby *lob;
+		GaimRoomlistRoom *r, *l;
+
+		if (s->room.type == yrt_yahoo)
+			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+		                                   s->room.name, s->yrl->cat);
+		else
+			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+		                                   s->room.name, s->yrl->ucat);
+
+		gaim_roomlist_room_add_field(s->list, r, s->room.name);
+		gaim_roomlist_room_add_field(s->list, r, s->room.id);
+		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.users));
+		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.voices));
+		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.webcams));
+		gaim_roomlist_room_add_field(s->list, r, s->room.topic);
+		gaim_roomlist_room_add(s->list, r);
+
+		while ((lob = g_queue_pop_head(s->q))) {
+			char *name = g_strdup_printf("%s:%d", s->room.name, lob->count);
+			l = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, name, r);
+
+			gaim_roomlist_room_add_field(s->list, l, name);
+			gaim_roomlist_room_add_field(s->list, l, s->room.id);
+			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->users));
+			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->voices));
+			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->webcams));
+			gaim_roomlist_room_add_field(s->list, l, s->room.topic);
+			gaim_roomlist_room_add(s->list, l);
+
+			g_free(name);
+			g_free(lob);
+		}
+
+	}
+
+}
+
+static GMarkupParser parser = {
+	yahoo_chatlist_start_element,
+	yahoo_chatlist_end_element,
+	NULL,
+	NULL,
+	NULL
+};
+
+static void yahoo_roomlist_cleanup(GaimRoomlist *list, struct yahoo_roomlist *yrl)
+{
+	gaim_roomlist_set_in_progress(list, FALSE);
+
+	if (yrl) {
+		list->proto_data = g_list_remove(list->proto_data, yrl);
+		yahoo_roomlist_destroy(yrl);
+	}
+
+	gaim_roomlist_unref(list);
+}
+
+static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct yahoo_roomlist *yrl = data;
+	GaimRoomlist *list = yrl->list;
+	char buf[1024];
+	int len;
+	guchar *start;
+	struct yahoo_chatxml_state *s;
+
+	len = read(yrl->fd, buf, sizeof(buf));
+
+	if (len <= 0) {
+		if (yrl->parse)
+			g_markup_parse_context_end_parse(yrl->parse, NULL);
+		yahoo_roomlist_cleanup(list, yrl);
+		return;
+	}
+
+
+	yrl->rxqueue = g_realloc(yrl->rxqueue, len + yrl->rxlen);
+	memcpy(yrl->rxqueue + yrl->rxlen, buf, len);
+	yrl->rxlen += len;
+
+	if (!yrl->started) {
+		yrl->started = TRUE;
+		start = g_strstr_len(yrl->rxqueue, yrl->rxlen, "\r\n\r\n");
+		if (!start || (start - yrl->rxqueue + 4) >= yrl->rxlen)
+			return;
+		start += 4;
+	} else {
+		start = yrl->rxqueue;
+	}
+
+	if (yrl->parse == NULL) {
+		s = yahoo_chatxml_state_new(list, yrl);
+		yrl->parse = g_markup_parse_context_new(&parser, 0, s,
+		             (GDestroyNotify)yahoo_chatxml_state_destroy);
+	}
+
+	if (!g_markup_parse_context_parse(yrl->parse, start, (yrl->rxlen - (start - yrl->rxqueue)), NULL)) {
+
+		yahoo_roomlist_cleanup(list, yrl);
+		return;
+	}
+
+	yrl->rxlen = 0;
+}
+
+static void yahoo_roomlist_got_connected(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct yahoo_roomlist *yrl = data;
+	GaimRoomlist *list = yrl->list;
+	char *buf, *cookie;
+	struct yahoo_data *yd = gaim_account_get_connection(list->account)->proto_data;
+
+	if (source < 0) {
+		gaim_notify_error(gaim_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		yahoo_roomlist_cleanup(list, yrl);
+		return;
+	}
+
+	yrl->fd = source;
+
+	cookie = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
+	buf = g_strdup_printf("GET /%s HTTP/1.0\r\nHost: %s\r\nCookie: %s\r\n\r\n", yrl->path, yrl->host, cookie);
+	write(yrl->fd, buf, strlen(buf));
+	g_free(cookie);
+	g_free(buf);
+	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_READ, yahoo_roomlist_pending, yrl);
+
+}
+
+GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)
+{
+	struct yahoo_roomlist *yrl;
+	GaimRoomlist *rl;
+	char *url;
+	GList *fields = NULL;
+	GaimRoomlistField *f;
+
+	url = g_strdup_printf("%s?chatcat=0",
+	                      gaim_account_get_string(
+	                      gaim_connection_get_account(gc),
+	                      "room_list", YAHOO_ROOMLIST_URL));
+
+	yrl = g_new0(struct yahoo_roomlist, 1);
+	rl = gaim_roomlist_new(gaim_connection_get_account(gc));
+	yrl->list = rl;
+
+	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path));
+	g_free(url);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "id", TRUE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Users"), "users", FALSE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Voices"), "voices", FALSE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Webcams"), "webcams", FALSE);
+	fields = g_list_append(fields, f);
+
+	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Topic"), "topic", FALSE);
+	fields = g_list_append(fields, f);
+
+	gaim_roomlist_set_fields(rl, fields);
+
+	if (gaim_proxy_connect(gaim_connection_get_account(gc),
+	                       yrl->host, 80, yahoo_roomlist_got_connected, yrl) != 0)
+	{
+		gaim_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
+		yahoo_roomlist_cleanup(rl, yrl);
+		return NULL;
+	}
+
+	rl->proto_data = g_list_append(rl->proto_data, yrl);
+
+	gaim_roomlist_set_in_progress(rl, TRUE);
+	return rl;
+}
+
+void yahoo_roomlist_cancel(GaimRoomlist *list)
+{
+	GList *l, *k;
+
+	k = l = list->proto_data;
+	list->proto_data = NULL;
+
+	gaim_roomlist_set_in_progress(list, FALSE);
+
+	for (; l; l = l->next) {
+		yahoo_roomlist_destroy(l->data);
+		gaim_roomlist_unref(l->data);
+	}
+	g_list_free(k);
+}
+
+void yahoo_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory)
+{
+	struct yahoo_roomlist *yrl;
+	char *url;
+	char *id;
+
+	if (catagory->type != GAIM_ROOMLIST_ROOMTYPE_CATAGORY)
+		return;
+
+	if (!(id = g_list_nth_data(catagory->fields, 1))) {
+		gaim_roomlist_set_in_progress(list, FALSE);
+		return;
+	}
+
+	url = g_strdup_printf("%s?chatroom_%s=0",
+	                      gaim_account_get_string(
+	                      list->account,
+	                      "room_list", YAHOO_ROOMLIST_URL), id);
+
+	yrl = g_new0(struct yahoo_roomlist, 1);
+	yrl->list = list;
+	yrl->cat = catagory;
+	list->proto_data = g_list_append(list->proto_data, yrl);
+
+	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path));
+	g_free(url);
+
+	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATAGORY, _("User Rooms"), yrl->cat);
+	gaim_roomlist_room_add(list, yrl->ucat);
+
+	if (gaim_proxy_connect(list->account,
+	                       yrl->host, 80, yahoo_roomlist_got_connected, yrl) != 0)
+	{
+		gaim_notify_error(gaim_account_get_connection(list->account),
+		                  NULL, _("Connection problem"), _("Unable to fetch room list."));
+		yahoo_roomlist_cleanup(list, yrl);
+		return;
+	}
+
+	gaim_roomlist_set_in_progress(list, TRUE);
+	gaim_roomlist_ref(list);
+}
+

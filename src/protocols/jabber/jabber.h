@@ -24,6 +24,7 @@
 
 #include <glib.h>
 #include "connection.h"
+#include "roomlist.h"
 #include "sslconn.h"
 
 #include "jutil.h"
@@ -65,6 +66,7 @@ typedef struct _JabberStream
 
 	GHashTable *chats;
 	GList *chat_servers;
+	GaimRoomlist *roomlist;
 
 	GHashTable *callbacks;
 	int next_id;

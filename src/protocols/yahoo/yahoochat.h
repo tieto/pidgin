@@ -25,6 +25,8 @@
 #ifndef _YAHOOCHAT_H_
 #define _YAHOOCHAT_H_
 
+#include "roomlist.h"
+
 void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt);
@@ -46,5 +48,10 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data);
 void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *name);
 
 void yahoo_chat_goto(GaimConnection *gc, const char *name);
+
+/* room listing functions */
+GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc);
+void yahoo_roomlist_cancel(GaimRoomlist *list);
+void yahoo_roomlist_expand_catagory(GaimRoomlist *list, GaimRoomlistRoom *catagory);
 
 #endif /* _YAHOO_CHAT_H_ */

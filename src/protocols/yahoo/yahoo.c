@@ -2707,15 +2707,12 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 		return;
 	/* It seems to work better without this */
 
+	/* if (gc->account->perm_deny != 4)
+		return; */
 
-	/* 
-	 * if (gc->account->perm_deny != 4)
-	 *	return;
- 	 *
-	 * if (!who || who[0] == '\0')
-	 *		return;
-	 */
-    
+	if (!who || who[0] == '\0')
+		return;
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, 1, gaim_connection_get_display_name(gc));
 	yahoo_packet_hash(pkt, 7, who);
@@ -3158,8 +3155,13 @@ static GaimPluginProtocolInfo prpl_info =
 #if 0
 	yahoo_ask_send_file,
 	yahoo_send_file,
-	yahoo_has_send_file
+	yahoo_has_send_file,
 #endif
+	NULL,
+	NULL,
+	yahoo_roomlist_get_list,
+	yahoo_roomlist_cancel,
+	yahoo_roomlist_expand_catagory,
 };
 
 static GaimPluginInfo info =
@@ -3206,6 +3208,9 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
+	option = gaim_account_option_string_new(_("Chat Room List Url"), "room_list", YAHOO_ROOMLIST_URL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	
 	my_protocol = plugin;
 
 	yahoo_init_colorht();
