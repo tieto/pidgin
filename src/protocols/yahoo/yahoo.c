@@ -33,6 +33,7 @@
 #include "util.h"
 #include "html.h"
 
+#include "yahoo.h"
 #include "md5.h"
 
 /* XXX */
@@ -564,24 +565,13 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 				tm = strtol(pair->value, NULL, 10);
 			if (pair->key == 14) {
 				char *m;
-				int i, j;
 
 				msg = pair->value;
 
 				strip_linefeed(msg);
-				m = msg;
-				for (i = 0, j = 0; m[i]; i++) {
-					if (m[i] == 033) {
-						while (m[i] && (m[i] != 'm'))
-							i++;
-						if (!m[i])
-							i--;
-						continue;
-					}
-					msg[j++] = m[i];
-				}
-				msg[j] = 0;
-				serv_got_im(gc, from, msg, 0, tm, -1);
+				m = yahoo_codes_to_html(msg);
+				serv_got_im(gc, from, m, 0, tm, -1);
+				g_free(m);
 
 				tm = time(NULL);
 			}
@@ -1393,6 +1383,12 @@ static void yahoo_remove_buddy(GaimConnection *gc, const char *who, const char *
 	yahoo_packet_free(pkt);
 }
 
+static gboolean yahoo_unload_plugin(GaimPlugin *plugin)
+{
+	yahoo_dest_colorht();
+	return TRUE;
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -1469,7 +1465,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
+	yahoo_unload_plugin,                              /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
@@ -1492,6 +1488,8 @@ init_plugin(GaimPlugin *plugin)
 											   option);
 
 	my_protocol = plugin;
+
+	yahoo_init_colorht();
 }
 
 GAIM_INIT_PLUGIN(yahoo, init_plugin, info);

@@ -6,7 +6,9 @@ pkgdir = $(libdir)/gaim
 YAHOOSOURCES = \
 	crypt.c \
 	md5.h \
-	yahoo.c
+	yahoo.h \
+	yahoo.c \
+	util.c
 
 AM_CFLAGS = $(st)
 

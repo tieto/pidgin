@@ -16,3 +16,4 @@ crypt.lo
 libyahoo.def
 libyahoo.lib
 libyahoo.dll
+util.lo
