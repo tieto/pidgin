@@ -7,9 +7,9 @@
  * Adds a single buddy to your buddy list after login.
  *
  */
-u_long aim_add_buddy(struct aim_session_t *sess,
-		     struct aim_conn_t *conn, 
-		     char *sn )
+faim_export unsigned long aim_add_buddy(struct aim_session_t *sess,
+					struct aim_conn_t *conn, 
+					char *sn )
 {
    struct command_tx_struct *newpacket;
    int i;
@@ -47,9 +47,9 @@ u_long aim_add_buddy(struct aim_session_t *sess,
    return( sess->snac_nextid++ );
 }
 
-u_long aim_remove_buddy(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			char *sn )
+faim_export unsigned long aim_remove_buddy(struct aim_session_t *sess,
+					   struct aim_conn_t *conn, 
+					   char *sn )
 {
    struct command_tx_struct *newpacket;
    int i;
@@ -86,8 +86,8 @@ u_long aim_remove_buddy(struct aim_session_t *sess,
    return( sess->snac_nextid++ );
 }
 
-int aim_parse_buddyrights(struct aim_session_t *sess,
-			  struct command_rx_struct *command, ...)
+faim_internal int aim_parse_buddyrights(struct aim_session_t *sess,
+					struct command_rx_struct *command, ...)
 {
   rxcallback_t userfunc = NULL;
   int ret=1;

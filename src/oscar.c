@@ -211,7 +211,6 @@ static void oscar_callback(gpointer data, gint source,
 int oscar_login(char *username, char *password) {
 	struct aim_session_t *sess;
 	struct aim_conn_t *conn;
-/*	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055}; */
 	struct aim_user *u;
 	char buf[256];
 
@@ -399,7 +398,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 int gaim_parse_login(struct aim_session_t *sess,
 		     struct command_rx_struct *command, ...) {
 	struct client_info_s info = {"AOL Instant Messenger (TM), version 2.1.1187/WIN32", 4, 30, 3141, "us", "en", 0x0004, 0x0001, 0x055};
-	unsigned char *key;
+	char *key;
 	va_list ap;
 
 	va_start(ap, command);
@@ -455,12 +454,12 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 	va_list ap;
 	int serviceid;
 	char *ip;
-	char *cookie;
+	unsigned char *cookie;
 
 	va_start(ap, command);
 	serviceid = va_arg(ap, int);
 	ip        = va_arg(ap, char *);
-	cookie    = va_arg(ap, char *);
+	cookie    = va_arg(ap, unsigned char *);
 
 	switch(serviceid) {
 	case 0x7: /* Authorizer */
@@ -1034,7 +1033,7 @@ int gaim_parse_ratechange(struct aim_session_t *sess, struct command_rx_struct *
 	debug_print(debug_buff);
 
 	return 1;
-};
+}
 
 int gaim_parse_evilnotify(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
 	va_list ap;

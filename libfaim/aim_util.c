@@ -7,18 +7,16 @@
 #include <faim/aim.h>
 #include <ctype.h>
 
-#define AIMUTIL_USEMACROS
-
 #ifdef AIMUTIL_USEMACROS
 /* macros in faim/aim.h */
 #else
-inline int aimutil_put8(u_char *buf, u_char data)
+faim_shortfunc int aimutil_put8(u_char *buf, u_char data)
 {
   buf[0] = (u_char)data&0xff;
   return 1;
 }
 
-inline u_char aimutil_get8(u_char *buf)
+faim_shortfunc u_char aimutil_get8(u_char *buf)
 {
   return buf[0];
 }
@@ -26,14 +24,14 @@ inline u_char aimutil_get8(u_char *buf)
 /*
  * Endian-ness issues here?
  */
-inline int aimutil_put16(u_char *buf, u_short data)
+faim_shortfunc int aimutil_put16(u_char *buf, u_short data)
 {
   buf[0] = (u_char)(data>>8)&0xff;
   buf[1] = (u_char)(data)&0xff;
   return 2;
 }
 
-inline u_short aimutil_get16(u_char *buf)
+faim_shortfunc u_short aimutil_get16(u_char *buf)
 {
   u_short val;
   val = (buf[0] << 8) & 0xff00;
@@ -41,7 +39,7 @@ inline u_short aimutil_get16(u_char *buf)
   return val;
 }
 
-inline int aimutil_put32(u_char *buf, u_long data)
+faim_shortfunc int aimutil_put32(u_char *buf, u_long data)
 {
   buf[0] = (u_char)(data>>24)&0xff;
   buf[1] = (u_char)(data>>16)&0xff;
@@ -50,7 +48,7 @@ inline int aimutil_put32(u_char *buf, u_long data)
   return 4;
 }
 
-inline u_long aimutil_get32(u_char *buf)
+faim_shortfunc u_long aimutil_get32(u_char *buf)
 {
   u_long val;
   val = (buf[0] << 24) & 0xff000000;
@@ -61,7 +59,7 @@ inline u_long aimutil_get32(u_char *buf)
 }
 #endif /* AIMUTIL_USEMACROS */
 
-inline int aimutil_putstr(u_char *dest, const u_char *src, int len)
+faim_export faim_shortfunc int aimutil_putstr(u_char *dest, const char *src, int len)
 {
   memcpy(dest, src, len);
   return len;
@@ -72,7 +70,7 @@ inline int aimutil_putstr(u_char *dest, const u_char *src, int len)
  *   -- DMP.
  *
  */
-int aimutil_tokslen(char *toSearch, int index, char dl)
+faim_export int aimutil_tokslen(char *toSearch, int index, char dl)
 {
   int curCount = 1;
   char *next;
@@ -97,7 +95,7 @@ int aimutil_tokslen(char *toSearch, int index, char dl)
   return toReturn;
 }
 
-int aimutil_itemcnt(char *toSearch, char dl)
+faim_export int aimutil_itemcnt(char *toSearch, char dl)
 {
   int curCount;
   char *next;
@@ -115,7 +113,7 @@ int aimutil_itemcnt(char *toSearch, char dl)
   return curCount;
 }
 
-char *aimutil_itemidx(char *toSearch, int index, char dl)
+faim_export char *aimutil_itemidx(char *toSearch, int index, char dl)
 {
   int curCount;
   char *next;
@@ -171,7 +169,7 @@ char *aimutil_itemidx(char *toSearch, int index, char dl)
  * return is equal to that of strlen().
  *
  */
-int aim_snlen(const char *sn)
+faim_export int aim_snlen(const char *sn)
 {
   int i = 0;
   const char *curPtr = NULL;
@@ -202,7 +200,7 @@ int aim_snlen(const char *sn)
  *
  */
 
-int aim_sncmp(const char *sn1, const char *sn2)
+faim_export int aim_sncmp(const char *sn1, const char *sn2)
 {
   const char *curPtr1 = NULL, *curPtr2 = NULL;
 
@@ -226,4 +224,42 @@ int aim_sncmp(const char *sn1, const char *sn2)
   }
 
   return 0;
+}
+
+/* strsep Copyright (C) 1992, 1993 Free Software Foundation, Inc.
+   strsep is part of the GNU C Library.
+   
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+   
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+   
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If
+   not, write to the Free Software Foundation, Inc., 675 Mass Ave,
+   Cambridge, MA 02139, USA.  */
+
+/* Minor changes by and1000 on 15/1/97 to make it go under Nemesis */
+
+faim_export char *aim_strsep(char **pp, const char *delim)
+{
+  char *p, *q;
+  
+  if (!(p = *pp))
+    return 0;
+  
+  if ((q = strpbrk (p, delim)))
+    {
+      *pp = q + 1;
+      *q = '\0';
+    }
+  else
+    *pp = 0;
+  
+  return p;
 }

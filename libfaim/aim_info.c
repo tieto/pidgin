@@ -14,10 +14,10 @@ struct aim_priv_inforeq {
   unsigned short infotype;
 };
 
-u_long aim_getinfo(struct aim_session_t *sess,
-		   struct aim_conn_t *conn, 
-		   const char *sn,
-		   unsigned short infotype)
+faim_export unsigned long aim_getinfo(struct aim_session_t *sess,
+				      struct aim_conn_t *conn, 
+				      const char *sn,
+				      unsigned short infotype)
 {
   struct command_tx_struct *newpacket;
   int i = 0;
@@ -57,8 +57,8 @@ u_long aim_getinfo(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-int aim_parse_locateerr(struct aim_session_t *sess,
-			struct command_rx_struct *command)
+faim_internal int aim_parse_locateerr(struct aim_session_t *sess,
+				      struct command_rx_struct *command)
 {
   u_long snacid = 0x000000000;
   struct aim_snac_t *snac = NULL;
@@ -131,7 +131,7 @@ u_char aim_caps[6][16] = {
    0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}
 };
 
-u_short aim_getcap(unsigned char *capblock, int buflen)
+faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
 {
   u_short ret = 0;
   int y;
@@ -156,7 +156,7 @@ u_short aim_getcap(unsigned char *capblock, int buflen)
   return ret;
 }
 
-int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
+faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
 {
   int offset = 0;
 
@@ -195,7 +195,7 @@ int aim_putcap(unsigned char *capblock, int buflen, u_short caps)
  * AIM is fairly regular about providing user info.  This
  * is a generic routine to extract it in its standard form.
  */
-int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinfo)
+faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinfo)
 {
   int i = 0;
   int tlvcnt = 0;
@@ -421,8 +421,8 @@ int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinfo)
  * through aim_extractuserinfo() however.
  *
  */
-int aim_parse_oncoming_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_parse_oncoming_middle(struct aim_session_t *sess,
+					    struct command_rx_struct *command)
 {
   struct aim_userinfo_s userinfo;
   u_int i = 0;
@@ -443,14 +443,14 @@ int aim_parse_oncoming_middle(struct aim_session_t *sess,
  * information other than the name it applies to.
  *
  */
-int aim_parse_offgoing_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_parse_offgoing_middle(struct aim_session_t *sess,
+					    struct command_rx_struct *command)
 {
   char sn[MAXSNLEN+1];
   u_int i = 0;
   rxcallback_t userfunc=NULL;
 
-  strncpy(sn, command->data+11, (int)command->data[10]);
+  strncpy(sn, (char *)command->data+11, (int)command->data[10]);
   sn[(int)command->data[10]] = '\0';
 
   userfunc = aim_callhandler(command->conn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING);
@@ -465,8 +465,8 @@ int aim_parse_offgoing_middle(struct aim_session_t *sess,
  * the higher-level callback (in the user app).
  *
  */
-int aim_parse_userinfo_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_parse_userinfo_middle(struct aim_session_t *sess,
+					    struct command_rx_struct *command)
 {
   struct aim_userinfo_s userinfo;
   char *text_encoding = NULL;
@@ -548,7 +548,7 @@ int aim_parse_userinfo_middle(struct aim_session_t *sess,
 /*
  * Inverse of aim_extractuserinfo()
  */
-int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info)
+faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info)
 {
   int i = 0;
   struct aim_tlvlist_t *tlvlist = NULL;
@@ -576,7 +576,7 @@ int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info)
   return i;
 }
 
-int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info)
+faim_export int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info)
 {
   struct command_tx_struct *tx;
   int i = 0;
@@ -604,7 +604,7 @@ int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, s
   return 0;
 }
 
-int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn)
+faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn)
 {
   struct command_tx_struct *tx;
   int i = 0;

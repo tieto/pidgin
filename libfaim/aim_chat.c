@@ -7,7 +7,7 @@
 
 #include <faim/aim.h> 
 
-char *aim_chat_getname(struct aim_conn_t *conn)
+faim_export char *aim_chat_getname(struct aim_conn_t *conn)
 {
   if (!conn)
     return NULL;
@@ -17,7 +17,7 @@ char *aim_chat_getname(struct aim_conn_t *conn)
   return (char *)conn->priv; /* yuck ! */
 }
 
-struct aim_conn_t *aim_chat_getconn(struct aim_session_t *sess, char *name)
+faim_export struct aim_conn_t *aim_chat_getconn(struct aim_session_t *sess, char *name)
 {
   struct aim_conn_t *cur;
   
@@ -33,7 +33,7 @@ struct aim_conn_t *aim_chat_getconn(struct aim_session_t *sess, char *name)
   return cur;
 }
 
-int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
+faim_export int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
 {
   if (!conn || !roomname)
     return -1;
@@ -44,9 +44,9 @@ int aim_chat_attachname(struct aim_conn_t *conn, char *roomname)
   return 0;
 }
 
-u_long aim_chat_send_im(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			char *msg)
+faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess,
+					   struct aim_conn_t *conn, 
+					   char *msg)
 {   
 
   int curbyte,i;
@@ -121,10 +121,10 @@ u_long aim_chat_send_im(struct aim_session_t *sess,
  * and room name.
  *
  */
-u_long aim_chat_join(struct aim_session_t *sess,
-		     struct aim_conn_t *conn, 
-		     u_short exchange,
-		     const char *roomname)
+faim_export unsigned long aim_chat_join(struct aim_session_t *sess,
+					struct aim_conn_t *conn, 
+					u_short exchange,
+					const char *roomname)
 {
   struct command_tx_struct *newpacket;
   int i;
@@ -188,7 +188,7 @@ u_long aim_chat_join(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
+faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
 {
   int namelen = 0;
   int i = 0;
@@ -211,7 +211,7 @@ int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
   i += 2;
   
   return i;
-};
+}
 
 
 /*
@@ -223,8 +223,8 @@ int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo)
  *
  * SNAC 000e/0002
  */
-int aim_chat_parse_infoupdate(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess,
+					    struct command_rx_struct *command)
 {
   struct aim_userinfo_s *userinfo = NULL;
   rxcallback_t userfunc=NULL;	
@@ -358,8 +358,8 @@ int aim_chat_parse_infoupdate(struct aim_session_t *sess,
   return ret;
 }
 
-int aim_chat_parse_joined(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_chat_parse_joined(struct aim_session_t *sess,
+					struct command_rx_struct *command)
 {
   struct aim_userinfo_s *userinfo = NULL;
   rxcallback_t userfunc=NULL;	
@@ -384,8 +384,8 @@ int aim_chat_parse_joined(struct aim_session_t *sess,
   return ret;
 }	      
 
-int aim_chat_parse_leave(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_chat_parse_leave(struct aim_session_t *sess,
+				       struct command_rx_struct *command)
 {
 
   struct aim_userinfo_s *userinfo = NULL;
@@ -416,8 +416,8 @@ int aim_chat_parse_leave(struct aim_session_t *sess,
  * code as channel 0x0003, however, since only the start
  * would be the same, we might as well do it here.
  */
-int aim_chat_parse_incoming(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_chat_parse_incoming(struct aim_session_t *sess,
+					  struct command_rx_struct *command)
 {
   struct aim_userinfo_s userinfo;
   rxcallback_t userfunc=NULL;	
@@ -511,8 +511,8 @@ int aim_chat_parse_incoming(struct aim_session_t *sess,
   return ret;
 }	      
 
-u_long aim_chat_clientready(struct aim_session_t *sess,
-			    struct aim_conn_t *conn)
+faim_export unsigned long aim_chat_clientready(struct aim_session_t *sess,
+					       struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int i;
@@ -542,7 +542,7 @@ u_long aim_chat_clientready(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-int aim_chat_leaveroom(struct aim_session_t *sess, char *name)
+faim_export int aim_chat_leaveroom(struct aim_session_t *sess, char *name)
 {
   struct aim_conn_t *conn;
 
@@ -557,13 +557,13 @@ int aim_chat_leaveroom(struct aim_session_t *sess, char *name)
 /*
  * conn must be a BOS connection!
  */
-u_long aim_chat_invite(struct aim_session_t *sess,
-		       struct aim_conn_t *conn,
-		       char *sn,
-		       char *msg,
-		       u_short exchange,
-		       char *roomname,
-		       u_short instance)
+faim_export unsigned long aim_chat_invite(struct aim_session_t *sess,
+					  struct aim_conn_t *conn,
+					  char *sn,
+					  char *msg,
+					  u_short exchange,
+					  char *roomname,
+					  u_short instance)
 {
   struct command_tx_struct *newpacket;
   int i,curbyte=0;

@@ -11,8 +11,8 @@
 /*
  * conn must be a chatnav connection!
  */
-u_long aim_chatnav_reqrights(struct aim_session_t *sess,
-			  struct aim_conn_t *conn)
+faim_export unsigned long aim_chatnav_reqrights(struct aim_session_t *sess,
+						struct aim_conn_t *conn)
 {
   struct aim_snac_t snac;
 
@@ -28,8 +28,8 @@ u_long aim_chatnav_reqrights(struct aim_session_t *sess,
   return (sess->snac_nextid); /* already incremented */
 }
 
-u_long aim_chatnav_clientready(struct aim_session_t *sess,
-			       struct aim_conn_t *conn)
+faim_export unsigned long aim_chatnav_clientready(struct aim_session_t *sess,
+						  struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket; 
   int i;
@@ -63,7 +63,7 @@ u_long aim_chatnav_clientready(struct aim_session_t *sess,
  * we must lookup the snacid to determine the original
  * snac subtype that was called.
  */
-int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command)
+faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   struct aim_snac_t *snac;
   u_long snacid;
@@ -306,10 +306,10 @@ int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct 
   return ret;
 }
 
-u_long aim_chatnav_createroom(struct aim_session_t *sess,
-			      struct aim_conn_t *conn,
-			      char *name, 
-			      u_short exchange)
+faim_export unsigned long aim_chatnav_createroom(struct aim_session_t *sess,
+						 struct aim_conn_t *conn,
+						 char *name, 
+						 u_short exchange)
 {
   struct command_tx_struct *newpacket; 
   int i;

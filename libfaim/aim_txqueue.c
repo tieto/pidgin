@@ -19,7 +19,7 @@
  * chan = channel for OSCAR, hdrtype for OFT
  *
  */
-struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen)
+faim_internal struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen)
 {
   struct command_tx_struct *new;
 
@@ -70,8 +70,8 @@ struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct ai
  * that is, when sess->tx_enqueue is set to &aim_tx_enqueue__queuebased.
  *
  */
-int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
-			       struct command_tx_struct *newpacket)
+faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
+					     struct command_tx_struct *newpacket)
 {
   struct command_tx_struct *cur;
 
@@ -122,7 +122,7 @@ int aim_tx_enqueue__queuebased(struct aim_session_t *sess,
  * right here. 
  * 
  */
-int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_struct *newpacket)
+faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_struct *newpacket)
 {
   if (newpacket->conn == NULL) {
     faimdprintf(1, "aim_tx_enqueue: ERROR: packet has no connection\n");
@@ -156,7 +156,7 @@ int aim_tx_enqueue__immediate(struct aim_session_t *sess, struct command_tx_stru
  *   before enqueuement (in aim_tx_enqueue()).
  *
  */
-u_int aim_get_next_txseqnum(struct aim_conn_t *conn)
+faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *conn)
 {
   u_int ret;
   
@@ -175,7 +175,7 @@ u_int aim_get_next_txseqnum(struct aim_conn_t *conn)
  *
  */
 #if debug == 2
-int aim_tx_printqueue(struct aim_session_t *sess)
+faim_internal int aim_tx_printqueue(struct aim_session_t *sess)
 {
   struct command_tx_struct *cur;
 
@@ -225,7 +225,7 @@ int aim_tx_printqueue(struct aim_session_t *sess)
  *    9) Step to next struct in list and go back to 1.
  *
  */
-int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur)
+faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur)
 {
   int buflen = 0;
   unsigned char *curPacket;
@@ -327,7 +327,7 @@ int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur)
   return 1; /* success */
 }
 
-int aim_tx_flushqueue(struct aim_session_t *sess)
+faim_export int aim_tx_flushqueue(struct aim_session_t *sess)
 {
   struct command_tx_struct *cur;
    
@@ -371,7 +371,7 @@ int aim_tx_flushqueue(struct aim_session_t *sess)
  *  reduce memory footprint at run time!  
  *
  */
-void aim_tx_purgequeue(struct aim_session_t *sess)
+faim_export void aim_tx_purgequeue(struct aim_session_t *sess)
 {
   struct command_tx_struct *cur = NULL;
   struct command_tx_struct *tmp;

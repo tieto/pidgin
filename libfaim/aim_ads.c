@@ -5,8 +5,8 @@
 
 #include <faim/aim.h>
 
-u_long aim_ads_clientready(struct aim_session_t *sess,
-			   struct aim_conn_t *conn)
+faim_export unsigned long aim_ads_clientready(struct aim_session_t *sess,
+					      struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int i;
@@ -35,8 +35,8 @@ u_long aim_ads_clientready(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-u_long aim_ads_requestads(struct aim_session_t *sess,
-			  struct aim_conn_t *conn)
+faim_export unsigned long aim_ads_requestads(struct aim_session_t *sess,
+					     struct aim_conn_t *conn)
 {
   return aim_genericreq_n(sess, conn, 0x0005, 0x0002);
 }

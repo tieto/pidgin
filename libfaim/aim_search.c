@@ -8,9 +8,9 @@
 
 #include <faim/aim.h>
 
-u_long aim_usersearch_address(struct aim_session_t *sess,
-			      struct aim_conn_t *conn, 
-			      char *address)
+faim_export unsigned long aim_usersearch_address(struct aim_session_t *sess,
+						 struct aim_conn_t *conn, 
+						 char *address)
 {
   struct command_tx_struct *newpacket;
   

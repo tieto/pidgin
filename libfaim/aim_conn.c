@@ -8,10 +8,14 @@
 
 #include <faim/aim.h> 
 
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 /*
  * Clears out connection list, killing remaining connections.
  */
-void aim_connrst(struct aim_session_t *sess)
+faim_internal void aim_connrst(struct aim_session_t *sess)
 {
   faim_mutex_init(&sess->connlistlock);
   if (sess->connlist) {
@@ -31,7 +35,7 @@ void aim_connrst(struct aim_session_t *sess)
 /*
  * Gets a new connection structure.
  */
-struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
+faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *sess)
 {
   struct aim_conn_t *newconn, *cur;
 
@@ -74,7 +78,7 @@ static void aim_conn_init(struct aim_conn_t *deadconn)
   return;
 }
 
-void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
+faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
 {
   struct aim_conn_t *cur;
 
@@ -111,7 +115,7 @@ void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn)
   return;
 }
 
-void aim_conn_close(struct aim_conn_t *deadconn)
+faim_export void aim_conn_close(struct aim_conn_t *deadconn)
 {
   int typesav = -1, subtypesav = -1;
   void *privsav = NULL;
@@ -141,8 +145,8 @@ void aim_conn_close(struct aim_conn_t *deadconn)
   return;
 }
 
-struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
-				    int type)
+faim_internal struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
+						  int type)
 {
   struct aim_conn_t *cur;
 
@@ -164,8 +168,8 @@ struct aim_conn_t *aim_getconn_type(struct aim_session_t *sess,
  * FIXME: Return errors in a more sane way.
  *
  */
-struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
-			       int type, char *dest)
+faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
+					   int type, char *dest)
 {
   struct aim_conn_t *connstruct;
   int ret;
@@ -236,7 +240,7 @@ struct aim_conn_t *aim_newconn(struct aim_session_t *sess,
   return connstruct;
 }
 
-int aim_conngetmaxfd(struct aim_session_t *sess)
+faim_export int aim_conngetmaxfd(struct aim_session_t *sess)
 {
   int j = 0;
   struct aim_conn_t *cur;
@@ -251,7 +255,7 @@ int aim_conngetmaxfd(struct aim_session_t *sess)
   return j;
 }
 
-int aim_countconn(struct aim_session_t *sess)
+static int aim_countconn(struct aim_session_t *sess)
 {
   int cnt = 0;
   struct aim_conn_t *cur;
@@ -279,8 +283,8 @@ int aim_countconn(struct aim_session_t *sess)
  * XXX: we could probably stand to do a little courser locking here.
  *
  */ 
-struct aim_conn_t *aim_select(struct aim_session_t *sess,
-			      struct timeval *timeout, int *status)
+faim_export struct aim_conn_t *aim_select(struct aim_session_t *sess,
+					  struct timeval *timeout, int *status)
 {
   struct aim_conn_t *cur;
   fd_set fds;
@@ -333,14 +337,14 @@ struct aim_conn_t *aim_select(struct aim_session_t *sess,
   return NULL;  /* no waiting or error, return */
 }
 
-int aim_conn_isready(struct aim_conn_t *conn)
+faim_export int aim_conn_isready(struct aim_conn_t *conn)
 {
   if (conn)
     return (conn->status & 0x0001);
   return -1;
 }
 
-int aim_conn_setstatus(struct aim_conn_t *conn, int status)
+faim_export int aim_conn_setstatus(struct aim_conn_t *conn, int status)
 {
   int val;
 
@@ -353,7 +357,7 @@ int aim_conn_setstatus(struct aim_conn_t *conn, int status)
   return val;
 }
 
-int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
+faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
 {
   if (!conn)
     return -1;
@@ -366,7 +370,7 @@ int aim_conn_setlatency(struct aim_conn_t *conn, int newval)
   return 0;
 }
 
-void aim_session_init(struct aim_session_t *sess)
+faim_export void aim_session_init(struct aim_session_t *sess)
 {
   if (!sess)
     return;

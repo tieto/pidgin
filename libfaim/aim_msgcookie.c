@@ -26,8 +26,8 @@
  * 
  * returns -1 on error, 0 on success.  */
 
-int aim_cachecookie(struct aim_session_t *sess,
-		    struct aim_msgcookie_t *cookie)
+faim_internal int aim_cachecookie(struct aim_session_t *sess,
+				  struct aim_msgcookie_t *cookie)
 {
   struct aim_msgcookie_t *newcook = NULL, *cur = NULL;
   
@@ -80,7 +80,7 @@ int aim_cachecookie(struct aim_session_t *sess,
  * NULL on not found.
  */
 
-struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cookie, int type)
+faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, unsigned char *cookie, int type)
 {
   struct aim_msgcookie_t *cur;
 
@@ -120,7 +120,7 @@ struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cook
  * i'll avoid the puns.  
  */
 
-int aim_purgecookies(struct aim_session_t *sess, int maxage)
+faim_export int aim_purgecookies(struct aim_session_t *sess, int maxage)
 {
   struct aim_msgcookie_t *cur;
   struct aim_msgcookie_t *remed = NULL;
@@ -153,7 +153,7 @@ int aim_purgecookies(struct aim_session_t *sess, int maxage)
   return 0;
 }
 
-struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, void *data) 
+faim_internal struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, void *data) 
 {
   struct aim_msgcookie_t *cookie;
 
@@ -172,7 +172,7 @@ struct aim_msgcookie_t *aim_mkcookie(unsigned char *c, int type, void *data)
   return(cookie);
 }
   
-struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *sess, char *cookie, int type)
+faim_internal struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *sess, unsigned char *cookie, int type)
 {
   struct aim_msgcookie_t *cur;
   
@@ -191,11 +191,11 @@ struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *sess, char *cookie
   return(NULL);
 }
 
-int aim_freecookie(struct aim_msgcookie_t *cookie) {
+static int aim_freecookie(struct aim_msgcookie_t *cookie) {
   return(0);
 } 
 
-int aim_msgcookie_gettype(int reqclass) {
+faim_internal int aim_msgcookie_gettype(int reqclass) {
   /* XXX: hokey-assed. needs fixed. */
   switch(reqclass) {
   case AIM_CAPS_BUDDYICON:

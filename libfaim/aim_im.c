@@ -17,9 +17,9 @@
  *                        when the message is received (of type 0x0004/0x000c)
  *
  */
-u_long aim_send_im(struct aim_session_t *sess,
-		   struct aim_conn_t *conn, 
-		   char *destsn, u_int flags, char *msg)
+faim_export unsigned long aim_send_im(struct aim_session_t *sess,
+				      struct aim_conn_t *conn, 
+				      char *destsn, u_int flags, char *msg)
 {   
 
   int curbyte,i;
@@ -139,8 +139,8 @@ u_long aim_send_im(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
-				 struct command_rx_struct *command)
+faim_internal int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
+					       struct command_rx_struct *command)
 {
   unsigned int i = 0, z;
   rxcallback_t userfunc = NULL;
@@ -167,7 +167,7 @@ int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
     return 1;
   }
 
-  strncpy(sn, command->data+i+1, (int) *(command->data+i));
+  strncpy(sn, (char *) command->data+i+1, (int) *(command->data+i));
   i += 1 + (int) *(command->data+i);
 
   tlvlist = aim_readtlvchain(command->data+i, command->commandlen-i);
@@ -180,7 +180,7 @@ int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
   if (aim_gettlv(tlvlist, 0x0002, 1)) {
     int j = 0;
 
-    msgblock = aim_gettlv_str(tlvlist, 0x0002, 1);
+    msgblock = (unsigned char *)aim_gettlv_str(tlvlist, 0x0002, 1);
 
     /* no, this really is correct.  I'm not high or anything either. */
     j += 2;
@@ -222,8 +222,8 @@ int aim_parse_outgoing_im_middle(struct aim_session_t *sess,
  * room we're invited to, but obviously can't attend...
  *
  */
-int aim_parse_incoming_im_middle(struct aim_session_t *sess,
-				 struct command_rx_struct *command)
+faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *sess,
+					       struct command_rx_struct *command)
 {
   u_int i = 0,z;
   rxcallback_t userfunc = NULL;
@@ -785,11 +785,11 @@ int aim_parse_incoming_im_middle(struct aim_session_t *sess,
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  * 
  */
-u_long aim_denytransfer(struct aim_session_t *sess,
-			struct aim_conn_t *conn, 
-			char *sender,
-			char *cookie, 
-			unsigned short code)
+faim_export unsigned long aim_denytransfer(struct aim_session_t *sess,
+					   struct aim_conn_t *conn, 
+					   char *sender,
+					   char *cookie, 
+					   unsigned short code)
 {
   struct command_tx_struct *newpacket;
   int curbyte, i;
@@ -820,8 +820,8 @@ u_long aim_denytransfer(struct aim_session_t *sess,
  * idea. 
  *
  */
-u_long aim_seticbmparam(struct aim_session_t *sess,
-			struct aim_conn_t *conn)
+faim_export unsigned long aim_seticbmparam(struct aim_session_t *sess,
+					   struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int curbyte;
@@ -849,8 +849,8 @@ u_long aim_seticbmparam(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-int aim_parse_msgerror_middle(struct aim_session_t *sess,
-			      struct command_rx_struct *command)
+faim_internal int aim_parse_msgerror_middle(struct aim_session_t *sess,
+					    struct command_rx_struct *command)
 {
   u_long snacid = 0x000000000;
   struct aim_snac_t *snac = NULL;
@@ -898,8 +898,8 @@ int aim_parse_msgerror_middle(struct aim_session_t *sess,
 }
 
 
-int aim_parse_missedcall(struct aim_session_t *sess,
-			 struct command_rx_struct *command)
+faim_internal int aim_parse_missedcall(struct aim_session_t *sess,
+				       struct command_rx_struct *command)
 {
   int i, ret = 1;
   rxcallback_t userfunc = NULL;

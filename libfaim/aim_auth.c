@@ -8,9 +8,9 @@
 #include <faim/aim.h> 
 
 /* this just pushes the passed cookie onto the passed connection -- NO SNAC! */
-int aim_auth_sendcookie(struct aim_session_t *sess, 
-			struct aim_conn_t *conn, 
-			u_char *chipsahoy)
+faim_export int aim_auth_sendcookie(struct aim_session_t *sess, 
+				    struct aim_conn_t *conn, 
+				    unsigned char *chipsahoy)
 {
   struct command_tx_struct *newpacket;
   int curbyte=0;
@@ -29,8 +29,8 @@ int aim_auth_sendcookie(struct aim_session_t *sess,
   return aim_tx_enqueue(sess, newpacket);
 }
 
-u_long aim_auth_clientready(struct aim_session_t *sess,
-			    struct aim_conn_t *conn)
+faim_export unsigned long aim_auth_clientready(struct aim_session_t *sess,
+					       struct aim_conn_t *conn)
 {
   struct command_tx_struct *newpacket;
   int curbyte = 0;
@@ -68,9 +68,9 @@ u_long aim_auth_clientready(struct aim_session_t *sess,
   return (sess->snac_nextid++);
 }
 
-u_long aim_auth_changepasswd(struct aim_session_t *sess,
-			     struct aim_conn_t *conn, 
-			     char *new, char *current)
+faim_export unsigned long aim_auth_changepasswd(struct aim_session_t *sess,
+						struct aim_conn_t *conn, 
+						char *new, char *current)
 {
   struct command_tx_struct *newpacket;
   int i;

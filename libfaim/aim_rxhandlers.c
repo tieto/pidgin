@@ -13,7 +13,7 @@
  * Bleck functions get called when there's no non-bleck functions
  * around to cleanup the mess...
  */
-int bleck(struct aim_session_t *sess,struct command_rx_struct *workingPtr, ...)
+faim_internal int bleck(struct aim_session_t *sess,struct command_rx_struct *workingPtr, ...)
 {
   u_short family;
   u_short subtype;
@@ -181,7 +181,7 @@ int bleck(struct aim_session_t *sess,struct command_rx_struct *workingPtr, ...)
   return 1;
 }
 
-int aim_conn_addhandler(struct aim_session_t *sess,
+faim_export int aim_conn_addhandler(struct aim_session_t *sess,
 			struct aim_conn_t *conn,
 			u_short family,
 			u_short type,
@@ -218,7 +218,7 @@ int aim_conn_addhandler(struct aim_session_t *sess,
   return 0;
 }
 
-int aim_clearhandlers(struct aim_conn_t *conn)
+faim_export int aim_clearhandlers(struct aim_conn_t *conn)
 {
  struct aim_rxcblist_t *cur,*tmp;
  if (!conn)
@@ -234,9 +234,9 @@ int aim_clearhandlers(struct aim_conn_t *conn)
  return 0;
 }
 
-rxcallback_t aim_callhandler(struct aim_conn_t *conn,
-		    u_short family,
-		    u_short type)
+faim_internal rxcallback_t aim_callhandler(struct aim_conn_t *conn,
+					 u_short family,
+					 u_short type)
 {
   struct aim_rxcblist_t *cur;
 
@@ -258,11 +258,11 @@ rxcallback_t aim_callhandler(struct aim_conn_t *conn,
   return aim_callhandler(conn, family, 0xffff);
 }
 
-int aim_callhandler_noparam(struct aim_session_t *sess,
-			    struct aim_conn_t *conn,
-			    u_short family,
-			    u_short type,
-			    struct command_rx_struct *ptr)
+faim_internal int aim_callhandler_noparam(struct aim_session_t *sess,
+					  struct aim_conn_t *conn,
+					  u_short family,
+					  u_short type,
+					  struct command_rx_struct *ptr)
 {
   rxcallback_t userfunc = NULL;
   userfunc = aim_callhandler(conn, family, type);
@@ -294,7 +294,7 @@ int aim_callhandler_noparam(struct aim_session_t *sess,
   TODO: Allow for NULL handlers.
   
  */
-int aim_rxdispatch(struct aim_session_t *sess)
+faim_export int aim_rxdispatch(struct aim_session_t *sess)
 {
   int i = 0;
   struct command_rx_struct *workingPtr = NULL;
@@ -376,8 +376,8 @@ int aim_rxdispatch(struct aim_session_t *sess)
            /* Old login protocol */
            /* any user callbacks will be called from here */
            workingPtr->handled = aim_authparse(sess, workingPtr);
-	    break;
 #endif
+	    break;
 	  }
 	}
 	break;
@@ -614,7 +614,7 @@ int aim_rxdispatch(struct aim_session_t *sess)
   return 0;
 }
 
-int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
   char sn[MAXSNLEN];
@@ -630,7 +630,7 @@ int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct
   i++;
 
   memset(sn, 0, sizeof(sn));
-  strncpy(sn, command->data+i, snlen);
+  strncpy(sn, (char *)command->data+i, snlen);
 
   if ((userfunc = aim_callhandler(command->conn, 0x0004, 0x000c)))
     ret =  userfunc(sess, command, type, sn);
@@ -638,7 +638,7 @@ int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct
   return ret;
 }
 
-int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
   int ret = 1;
@@ -657,7 +657,7 @@ int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_st
   return ret;
 }
 
-int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command)
+faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   rxcallback_t userfunc = NULL;
   int ret = 1, pos;
@@ -682,8 +682,8 @@ int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_st
   return ret;
 }
 
-int aim_parsemotd_middle(struct aim_session_t *sess,
-			 struct command_rx_struct *command, ...)
+faim_internal int aim_parsemotd_middle(struct aim_session_t *sess,
+				       struct command_rx_struct *command, ...)
 {
   rxcallback_t userfunc = NULL;
   char *msg;
@@ -724,12 +724,12 @@ int aim_parsemotd_middle(struct aim_session_t *sess,
   return ret;  
 }
 
-int aim_handleredirect_middle(struct aim_session_t *sess,
+faim_internal int aim_handleredirect_middle(struct aim_session_t *sess,
 			      struct command_rx_struct *command, ...)
 {
   struct aim_tlv_t *tmptlv = NULL;
   int serviceid = 0x00;
-  char cookie[AIM_COOKIELEN];
+  unsigned char cookie[AIM_COOKIELEN];
   char *ip = NULL;
   rxcallback_t userfunc = NULL;
   struct aim_tlvlist_t *tlvlist;
@@ -791,8 +791,8 @@ int aim_handleredirect_middle(struct aim_session_t *sess,
   return ret;
 }
 
-int aim_parse_unknown(struct aim_session_t *sess,
-		      struct command_rx_struct *command, ...)
+faim_internal int aim_parse_unknown(struct aim_session_t *sess,
+					  struct command_rx_struct *command, ...)
 {
   u_int i = 0;
 
@@ -812,8 +812,8 @@ int aim_parse_unknown(struct aim_session_t *sess,
 }
 
 
-int aim_negchan_middle(struct aim_session_t *sess,
-		       struct command_rx_struct *command)
+faim_internal int aim_negchan_middle(struct aim_session_t *sess,
+				     struct command_rx_struct *command)
 {
   struct aim_tlvlist_t *tlvlist;
   char *msg = NULL;
@@ -847,8 +847,8 @@ int aim_negchan_middle(struct aim_session_t *sess,
  * Middle handler for 0x0001 snac of each family.
  *
  */
-int aim_parse_generalerrs(struct aim_session_t *sess,
-			  struct command_rx_struct *command, ...)
+faim_internal int aim_parse_generalerrs(struct aim_session_t *sess,
+					struct command_rx_struct *command, ...)
 {
   u_short family;
   u_short subtype;

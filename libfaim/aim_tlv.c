@@ -1,6 +1,6 @@
 #include <faim/aim.h>
 
-struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
+faim_internal struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
 {
   int pos;
   struct aim_tlvlist_t *list;
@@ -62,7 +62,7 @@ struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen)
   return list;
 }
 
-void aim_freetlvchain(struct aim_tlvlist_t **list)
+faim_internal void aim_freetlvchain(struct aim_tlvlist_t **list)
 {
   struct aim_tlvlist_t *cur, *cur2;
 
@@ -81,7 +81,7 @@ void aim_freetlvchain(struct aim_tlvlist_t **list)
   return;
 }
 
-int aim_counttlvchain(struct aim_tlvlist_t **list)
+faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list)
 {
   struct aim_tlvlist_t *cur;
   int count = 0;
@@ -95,7 +95,7 @@ int aim_counttlvchain(struct aim_tlvlist_t **list)
   return count;
 }
 
-int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len)
+faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len)
 {
   struct aim_tlvlist_t *new;
   struct aim_tlvlist_t *cur;
@@ -126,7 +126,7 @@ int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char
   return new->tlv->length;
 }
 
-int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val)
+faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val)
 {
   struct aim_tlvlist_t *new;
   struct aim_tlvlist_t *cur;
@@ -157,7 +157,7 @@ int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsign
   return 2;
 }
 
-int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val)
+faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val)
 {
   struct aim_tlvlist_t *new;
   struct aim_tlvlist_t *cur;
@@ -188,7 +188,7 @@ int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsign
   return 4;
 }
 
-int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list)
+faim_internal int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list)
 {
   int goodbuflen = 0;
   int i = 0;
@@ -221,7 +221,7 @@ int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list)
 /*
  * Grab the Nth TLV of type type in the TLV list list.
  */
-struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, u_short type, int nth)
+faim_internal struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, u_short type, int nth)
 {
   int i;
   struct aim_tlvlist_t *cur;
@@ -240,7 +240,7 @@ struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *list, u_short type, int nth)
   return NULL;
 }
 
-char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int nth)
+faim_internal char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int nth)
 {
   struct aim_tlv_t *tlv;
   char *newstr;
@@ -255,7 +255,7 @@ char *aim_gettlv_str(struct aim_tlvlist_t *list, u_short type, int nth)
   return newstr;
 }
 
-struct aim_tlv_t *aim_grabtlv(u_char *src)
+faim_internal struct aim_tlv_t *aim_grabtlv(u_char *src)
 {
   struct aim_tlv_t *dest = NULL;
 
@@ -275,7 +275,7 @@ struct aim_tlv_t *aim_grabtlv(u_char *src)
   return dest;
 }
 
-struct aim_tlv_t *aim_grabtlvstr(u_char *src)
+faim_internal struct aim_tlv_t *aim_grabtlvstr(u_char *src)
 {
   struct aim_tlv_t *dest = NULL;
 
@@ -296,7 +296,7 @@ struct aim_tlv_t *aim_grabtlvstr(u_char *src)
   return dest;
 }
 
-int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv)
+faim_internal int aim_puttlv(u_char *dest, struct aim_tlv_t *newtlv)
 {
   int i=0;
 
@@ -309,7 +309,7 @@ int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv)
   return i;
 }
 
-struct aim_tlv_t *aim_createtlv(void)
+faim_internal struct aim_tlv_t *aim_createtlv(void)
 {
   struct aim_tlv_t *newtlv = NULL;
   newtlv = (struct aim_tlv_t *)malloc(sizeof(struct aim_tlv_t));
@@ -317,7 +317,7 @@ struct aim_tlv_t *aim_createtlv(void)
   return newtlv;
 }
 
-int aim_freetlv(struct aim_tlv_t **oldtlv)
+faim_internal int aim_freetlv(struct aim_tlv_t **oldtlv)
 {
   if (!oldtlv)
     return -1;
@@ -331,7 +331,7 @@ int aim_freetlv(struct aim_tlv_t **oldtlv)
   return 0;
 }
 
-int aim_puttlv_16(u_char *buf, u_short t, u_short v)
+faim_internal int aim_puttlv_16(u_char *buf, u_short t, u_short v)
 {
   int curbyte=0;
   curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
@@ -340,7 +340,7 @@ int aim_puttlv_16(u_char *buf, u_short t, u_short v)
   return curbyte;
 }
 
-int aim_puttlv_32(u_char *buf, u_short t, u_long v)
+faim_internal int aim_puttlv_32(u_char *buf, u_short t, u_long v)
 {
   int curbyte=0;
   curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
@@ -349,7 +349,7 @@ int aim_puttlv_32(u_char *buf, u_short t, u_long v)
   return curbyte;
 }
 
-int aim_puttlv_str(u_char *buf, u_short t, u_short l, u_char *v)
+faim_internal int aim_puttlv_str(u_char *buf, u_short t, u_short l, char *v)
 {
   int curbyte;
   
@@ -357,7 +357,7 @@ int aim_puttlv_str(u_char *buf, u_short t, u_short l, u_char *v)
   curbyte += aimutil_put16(buf+curbyte, (u_short)(t&0xffff));
   curbyte += aimutil_put16(buf+curbyte, (u_short)(l&0xffff));
   if (v)
-    memcpy(buf+curbyte, v, l);
+    memcpy(buf+curbyte, (unsigned char *)v, l);
   curbyte += l;
   return curbyte;
 }

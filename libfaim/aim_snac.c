@@ -18,7 +18,7 @@
 /*
  * Called from aim_session_init() to initialize the hash.
  */
-void aim_initsnachash(struct aim_session_t *sess)
+faim_internal void aim_initsnachash(struct aim_session_t *sess)
 {
   int i;
 
@@ -34,8 +34,8 @@ void aim_initsnachash(struct aim_session_t *sess)
  * Clones the passed snac structure and caches it in the
  * list/hash.
  */
-u_long aim_newsnac(struct aim_session_t *sess,
-		   struct aim_snac_t *newsnac) 
+faim_internal unsigned long aim_newsnac(struct aim_session_t *sess,
+					struct aim_snac_t *newsnac) 
 {
   struct aim_snac_t *snac = NULL;
   int index;
@@ -56,8 +56,6 @@ u_long aim_newsnac(struct aim_session_t *sess,
   sess->snac_hash[index] = snac;
   faim_mutex_unlock(&sess->snac_hash_locks[index]);
 
-  printf("faim: cached snac %lx\n", snac->id);
-
   return(snac->id);
 }
 
@@ -68,8 +66,8 @@ u_long aim_newsnac(struct aim_session_t *sess,
  * The returned structure must be freed by the caller.
  *
  */
-struct aim_snac_t *aim_remsnac(struct aim_session_t *sess, 
-			       u_long id) 
+faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *sess, 
+					     u_long id) 
 {
   struct aim_snac_t *cur = NULL;
   int index;
@@ -108,8 +106,8 @@ struct aim_snac_t *aim_remsnac(struct aim_session_t *sess,
  * maxage is the _minimum_ age in seconds to keep SNACs.
  *
  */
-int aim_cleansnacs(struct aim_session_t *sess,
-		   int maxage)
+faim_internal int aim_cleansnacs(struct aim_session_t *sess,
+				 int maxage)
 {
   struct aim_snac_t *cur, *next, *prev = NULL;
   time_t curtime;
@@ -133,8 +131,6 @@ int aim_cleansnacs(struct aim_session_t *sess,
 	else
 	  prev->next = next;
 
-	printf("faim: killing ancient snac %lx (%lx)\n", cur->id, curtime - cur->issuetime);
-	
 	/* XXX should we have destructors here? */
 	if (cur->data)
 	  free(cur->data);
@@ -152,7 +148,7 @@ int aim_cleansnacs(struct aim_session_t *sess,
   return 0;
 }
 
-int aim_putsnac(u_char *buf, int family, int subtype, int flags, u_long snacid)
+faim_internal int aim_putsnac(u_char *buf, int family, int subtype, int flags, u_long snacid)
 {
   int curbyte = 0;
   curbyte += aimutil_put16(buf+curbyte, (u_short)(family&0xffff));

@@ -18,8 +18,8 @@ static int aim_encode_password_md5(const char *password, const char *key, md5_by
 #include "tis_telnet_proxy.h"
 #endif
 
-int aim_sendconnack(struct aim_session_t *sess,
-		      struct aim_conn_t *conn)
+faim_export int aim_sendconnack(struct aim_session_t *sess,
+				struct aim_conn_t *conn)
 {
   int curbyte=0;
   
@@ -45,9 +45,9 @@ int aim_sendconnack(struct aim_session_t *sess,
  * a 0017/0007 comes back, which is the signal to send
  * it the main login command (0017/0002).  
  */
-int aim_request_login(struct aim_session_t *sess,
-		      struct aim_conn_t *conn, 
-		      char *sn)
+faim_export int aim_request_login(struct aim_session_t *sess,
+				  struct aim_conn_t *conn, 
+				  char *sn)
 {
   int curbyte=0;
   
@@ -75,10 +75,11 @@ int aim_request_login(struct aim_session_t *sess,
  * stupid method of doing it.
  *
  */
-int aim_send_login (struct aim_session_t *sess,
-		    struct aim_conn_t *conn, 
-		    char *sn, char *password, struct client_info_s *clientinfo,
-		    char *key)
+faim_export int aim_send_login (struct aim_session_t *sess,
+				struct aim_conn_t *conn, 
+				char *sn, char *password, 
+				struct client_info_s *clientinfo,
+				char *key)
 {
   int curbyte=0;
   md5_byte_t digest[16];
@@ -100,7 +101,7 @@ int aim_send_login (struct aim_session_t *sess,
   curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0001, strlen(sn), sn);
   
   aim_encode_password_md5(password, key, digest);
-  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, digest);
+  curbyte+= aim_puttlv_str(newpacket->data+curbyte, 0x0025, 16, (char *)digest);
   
   /* XXX is clientstring required by oscar? */
   if (strlen(clientinfo->clientstring))
@@ -197,8 +198,8 @@ static int aim_encode_password(const char *password, unsigned char *encoded)
  * its nonzero, there was an error.
  *
  */
-int aim_authparse(struct aim_session_t *sess, 
-		  struct command_rx_struct *command)
+faim_internal int aim_authparse(struct aim_session_t *sess, 
+				struct command_rx_struct *command)
 {
   struct aim_tlvlist_t *tlvlist;
   int ret = 1;
@@ -298,7 +299,7 @@ int aim_authparse(struct aim_session_t *sess,
  * Calls the client, which should then use the value to call aim_send_login.
  *
  */
-int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command)
+faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command)
 {
   unsigned char *key;
   int keylen;
@@ -312,7 +313,7 @@ int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *comma
   key[keylen] = '\0';
   
   if ((userfunc = aim_callhandler(command->conn, 0x0017, 0x0007)))
-    ret = userfunc(sess, command, key);
+    ret = userfunc(sess, command, (char *)key);
 
   free(key);  
 
@@ -325,11 +326,11 @@ int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *comma
  * You probably don't want this unless you're writing an AIM server.
  *
  */
-unsigned long aim_sendauthresp(struct aim_session_t *sess, 
-			       struct aim_conn_t *conn, 
-			       char *sn, char *bosip, 
-			       char *cookie, char *email, 
-			       int regstatus)
+faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, 
+					   struct aim_conn_t *conn, 
+					   char *sn, char *bosip, 
+					   char *cookie, char *email, 
+					   int regstatus)
 {	
   struct command_tx_struct *tx;
   struct aim_tlvlist_t *tlvlist = NULL;
@@ -362,7 +363,7 @@ unsigned long aim_sendauthresp(struct aim_session_t *sess,
 /*
  * Generate a random cookie.  (Non-client use only)
  */
-int aim_gencookie(unsigned char *buf)
+faim_export int aim_gencookie(unsigned char *buf)
 {
   int i;
 
@@ -377,7 +378,7 @@ int aim_gencookie(unsigned char *buf)
 /*
  * Send Server Ready.  (Non-client)
  */
-int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
+faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
 {
   struct command_tx_struct *tx;
   int i = 0;
@@ -411,11 +412,11 @@ int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn)
 /* 
  * Send service redirect.  (Non-Client)
  */
-unsigned long aim_sendredirect(struct aim_session_t *sess, 
-			       struct aim_conn_t *conn, 
-			       unsigned short servid, 
-			       char *ip,
-			       char *cookie)
+faim_export unsigned long aim_sendredirect(struct aim_session_t *sess, 
+					   struct aim_conn_t *conn, 
+					   unsigned short servid, 
+					   char *ip,
+					   char *cookie)
 {	
   struct command_tx_struct *tx;
   struct aim_tlvlist_t *tlvlist = NULL;

@@ -1,6 +1,19 @@
 
 No release numbers
 ------------------
+ - Mon Sep  4 22:08:35 GMT 2000
+   - Forgot aim_snac and aim_search
+
+ - Mon Sep  4 21:38:09 GMT 2000
+   - A mild step towards ANSI compliance
+     - Compiles cleanly with -pedantic (except for the libc issue in socket.h)
+     - Fixes various sign mismatch things. There may be more, we'll see
+       what MSVC has to say about it.
+   - Add faim_internal and faim_export macros so Win32 DLL is easier
+
+ - Sun Sep  3 23:58:17 UTC 2000
+   - Portability fixes (for solaris, set the SOLARIS env var first)
+
  - Sat Sep  2 23:42:37 UTC 2000
    - Hopefully fix aim_snac.c bugs
    - Add Buddy List Rights parser (max buddies and max watchers)

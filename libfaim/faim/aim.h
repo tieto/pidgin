@@ -30,9 +30,6 @@
 #include <time.h>
 #include <io.h>
 #else
-#include <netdb.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -70,9 +67,31 @@
 #define gethostbyname(x) gethostbyname2(x, AF_INET) 
 #endif
 
-#if !defined(MSG_WAITALL)
-#warning FIX YOUR LIBC! MSG_WAITALL is required!
-#define MSG_WAITALL 0x100
+#if defined(_WIN32) || defined(STRICT_ANSI)
+#define faim_shortfunc
+#else
+#define faim_shortfunc inline
+#endif
+
+#if defined(_WIN32)
+/*
+ * For a win32 DLL, we define WIN32_INDLL if this file
+ * is included while compiling the DLL. If its not 
+ * defined (its included in a client app), the symbols
+ * will be imported instead of exported.
+ */
+#ifdef WIN32_INDLL
+#define faim_export __declspec(dllexport)
+#else 
+#define faim_export __declspec(dllimport)
+#endif /* WIN32_INDLL */
+#define faim_internal
+#else
+/*
+ * Nothing normally needed for unix...
+ */
+#define faim_export
+#define faim_internal
 #endif
 
 /* 
@@ -117,12 +136,6 @@
 
 #define AIM_MD5_STRING "AOL Instant Messenger (SM)"
 
-#if debug > 0
-#define faimdprintf(l, x...) {if (l >= debug) printf(x); }
-#else
-#define faimdprintf(l, x...)
-#endif
-
 /*
  * Login info.  Passes information from the Authorization
  * stage of login to the service (BOS, etc) connection
@@ -132,7 +145,7 @@
 struct aim_login_struct {
   char screen_name[MAXSNLEN+1];
   char *BOSIP;
-  char cookie[AIM_COOKIELEN];
+  unsigned char cookie[AIM_COOKIELEN];
   char *email;
   u_short regstatus;
   char *errorurl;
@@ -362,36 +375,36 @@ struct aim_tlvlist_t {
 };
 
 /* TLV-handling functions */
-struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen);
-void aim_freetlvchain(struct aim_tlvlist_t **list);
-struct aim_tlv_t *aim_grabtlv(u_char *src);
-struct aim_tlv_t *aim_grabtlvstr(u_char *src);
-struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *, u_short, int);
-char *aim_gettlv_str(struct aim_tlvlist_t *, u_short, int);
-int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv);
-struct aim_tlv_t *aim_createtlv(void);
-int aim_freetlv(struct aim_tlv_t **oldtlv);
-int aim_puttlv_16(u_char *, u_short, u_short);
-int aim_puttlv_32(u_char *, u_short, u_long);
-int aim_puttlv_str(u_char *buf, u_short t, u_short l, u_char *v);
-int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list);
-int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val);
-int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
-int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len);
-int aim_counttlvchain(struct aim_tlvlist_t **list);
+faim_internal struct aim_tlvlist_t *aim_readtlvchain(u_char *buf, int maxlen);
+faim_internal void aim_freetlvchain(struct aim_tlvlist_t **list);
+faim_internal struct aim_tlv_t *aim_grabtlv(u_char *src);
+faim_internal struct aim_tlv_t *aim_grabtlvstr(u_char *src);
+faim_internal struct aim_tlv_t *aim_gettlv(struct aim_tlvlist_t *, u_short, int);
+faim_internal char *aim_gettlv_str(struct aim_tlvlist_t *, u_short, int);
+faim_internal int aim_puttlv (u_char *dest, struct aim_tlv_t *newtlv);
+faim_internal struct aim_tlv_t *aim_createtlv(void);
+faim_internal int aim_freetlv(struct aim_tlv_t **oldtlv);
+faim_internal int aim_puttlv_16(u_char *, u_short, u_short);
+faim_internal int aim_puttlv_32(u_char *, u_short, u_long);
+faim_internal int aim_puttlv_str(u_char *buf, u_short t, u_short l, char *v);
+faim_internal int aim_writetlvchain(u_char *buf, int buflen, struct aim_tlvlist_t **list);
+faim_internal int aim_addtlvtochain16(struct aim_tlvlist_t **list, unsigned short type, unsigned short val);
+faim_internal int aim_addtlvtochain32(struct aim_tlvlist_t **list, unsigned short type, unsigned long val);
+faim_internal int aim_addtlvtochain_str(struct aim_tlvlist_t **list, unsigned short type, char *str, int len);
+faim_internal int aim_counttlvchain(struct aim_tlvlist_t **list);
 
 /*
  * Get command from connections / Dispatch commands
  * already in queue.
  */
-int aim_get_command(struct aim_session_t *, struct aim_conn_t *);
+faim_export int aim_get_command(struct aim_session_t *, struct aim_conn_t *);
 int aim_rxdispatch(struct aim_session_t *);
 
 u_long aim_debugconn_sendconnect(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 int aim_logoff(struct aim_session_t *);
 
-void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
+faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
 
 typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_register_callbacks(rxcallback_t *);
@@ -400,42 +413,34 @@ u_long aim_genericreq_n(struct aim_session_t *, struct aim_conn_t *conn, u_short
 u_long aim_genericreq_l(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_long *);
 u_long aim_genericreq_s(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short subtype, u_short *);
 
-struct aim_fileheader_t *aim_oft_getfh(char *hdr);
+faim_internal struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
 
 /* aim_login.c */
-int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
-int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
-int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
-unsigned long aim_sendauthresp(struct aim_session_t *sess, 
-			       struct aim_conn_t *conn, 
-			       char *sn, char *bosip, 
-			       char *cookie, char *email, 
-			       int regstatus);
-int aim_gencookie(unsigned char *buf);
-int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
-int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command);
-unsigned long aim_sendredirect(struct aim_session_t *sess, 
-			       struct aim_conn_t *conn, 
-			       unsigned short servid, 
-			       char *ip,
-			       char *cookie);
-void aim_purge_rxqueue(struct aim_session_t *);
-void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_request_login (struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+faim_export int aim_send_login (struct aim_session_t *, struct aim_conn_t *, char *, char *, struct client_info_s *, char *key);
+faim_export unsigned long aim_sendauthresp(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *bosip, char *cookie, char *email, int regstatus);
+faim_export int aim_gencookie(unsigned char *buf);
+faim_export int aim_sendserverready(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_internal int aim_authkeyparse(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_export unsigned long aim_sendredirect(struct aim_session_t *sess, struct aim_conn_t *conn, unsigned short servid, char *ip, char *cookie);
+faim_export void aim_purge_rxqueue(struct aim_session_t *);
+faim_internal void aim_rxqueue_cleanbyconn(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *command, ...);
 int aim_parse_missed_im(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
-int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct aim_conn_t *conn);
 
-struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen);
-int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
-int aim_tx_enqueue__immediate(struct aim_session_t *, struct command_tx_struct *);
+faim_internal struct command_tx_struct *aim_tx_new(unsigned short framing, int chan, struct aim_conn_t *conn, int datalen);
+faim_internal int aim_tx_enqueue__queuebased(struct aim_session_t *, struct command_tx_struct *);
+faim_internal int aim_tx_enqueue__immediate(struct aim_session_t *, struct command_tx_struct *);
 #define aim_tx_enqueue(x, y) ((*(x->tx_enqueue))(x, y))
-int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur);
-u_int aim_get_next_txseqnum(struct aim_conn_t *);
-int aim_tx_flushqueue(struct aim_session_t *);
-int aim_tx_printqueue(struct aim_session_t *);
-void aim_tx_purgequeue(struct aim_session_t *);
+faim_internal int aim_tx_sendframe(struct aim_session_t *sess, struct command_tx_struct *cur);
+faim_internal unsigned int aim_get_next_txseqnum(struct aim_conn_t *);
+faim_export int aim_tx_flushqueue(struct aim_session_t *);
+faim_internal int aim_tx_printqueue(struct aim_session_t *);
+faim_export void aim_tx_purgequeue(struct aim_session_t *);
 
 struct aim_rxcblist_t {
   u_short family;
@@ -445,11 +450,11 @@ struct aim_rxcblist_t {
   struct aim_rxcblist_t *next;
 };
 
-int aim_conn_setlatency(struct aim_conn_t *conn, int newval);
+faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval);
 
-int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, rxcallback_t newhandler, u_short flags);
-rxcallback_t aim_callhandler(struct aim_conn_t *conn, u_short family, u_short type);
-int aim_clearhandlers(struct aim_conn_t *conn);
+faim_export int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, rxcallback_t newhandler, u_short flags);
+faim_internal rxcallback_t aim_callhandler(struct aim_conn_t *conn, u_short family, u_short type);
+faim_export int aim_clearhandlers(struct aim_conn_t *conn);
 
 /*
  * Generic SNAC structure.  Rarely if ever used.
@@ -463,23 +468,23 @@ struct aim_snac_t {
   time_t issuetime;
   struct aim_snac_t *next;
 };
-void aim_initsnachash(struct aim_session_t *sess);
-u_long aim_newsnac(struct aim_session_t *, struct aim_snac_t *newsnac);
-struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
-int aim_cleansnacs(struct aim_session_t *, int maxage);
-int aim_putsnac(u_char *, int, int, int, u_long);
+faim_internal void aim_initsnachash(struct aim_session_t *sess);
+faim_internal unsigned long aim_newsnac(struct aim_session_t *, struct aim_snac_t *newsnac);
+faim_internal struct aim_snac_t *aim_remsnac(struct aim_session_t *, u_long id);
+faim_internal int aim_cleansnacs(struct aim_session_t *, int maxage);
+faim_internal int aim_putsnac(u_char *, int, int, int, u_long);
 
 
-void aim_connrst(struct aim_session_t *);
-struct aim_conn_t *aim_conn_getnext(struct aim_session_t *);
-void aim_conn_close(struct aim_conn_t *deadconn);
-struct aim_conn_t *aim_getconn_type(struct aim_session_t *, int type);
-struct aim_conn_t *aim_newconn(struct aim_session_t *, int type, char *dest);
-int aim_conngetmaxfd(struct aim_session_t *);
-struct aim_conn_t *aim_select(struct aim_session_t *, struct timeval *, int *);
-int aim_conn_isready(struct aim_conn_t *);
-int aim_conn_setstatus(struct aim_conn_t *, int);
-void aim_session_init(struct aim_session_t *);
+faim_internal void aim_connrst(struct aim_session_t *);
+faim_internal struct aim_conn_t *aim_conn_getnext(struct aim_session_t *);
+faim_export void aim_conn_close(struct aim_conn_t *deadconn);
+faim_internal struct aim_conn_t *aim_getconn_type(struct aim_session_t *, int type);
+faim_export struct aim_conn_t *aim_newconn(struct aim_session_t *, int type, char *dest);
+faim_export int aim_conngetmaxfd(struct aim_session_t *);
+faim_export struct aim_conn_t *aim_select(struct aim_session_t *, struct timeval *, int *);
+faim_export int aim_conn_isready(struct aim_conn_t *);
+faim_export int aim_conn_setstatus(struct aim_conn_t *, int);
+faim_export void aim_session_init(struct aim_session_t *);
 
 /* aim_misc.c */
 
@@ -500,33 +505,36 @@ u_long aim_bos_changevisibility(struct aim_session_t *, struct aim_conn_t *, int
 u_long aim_bos_setbuddylist(struct aim_session_t *, struct aim_conn_t *, char *);
 u_long aim_bos_setprofile(struct aim_session_t *, struct aim_conn_t *, char *, char *, unsigned int);
 u_long aim_bos_setgroupperm(struct aim_session_t *, struct aim_conn_t *, u_long);
-u_long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
+unsigned long aim_bos_clientready(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqrate(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_ackrateresp(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_setprivacyflags(struct aim_session_t *, struct aim_conn_t *, u_long);
 u_long aim_bos_reqpersonalinfo(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqservice(struct aim_session_t *, struct aim_conn_t *, u_short);
-u_long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
+unsigned long aim_bos_reqrights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqbuddyrights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqlocaterights(struct aim_session_t *, struct aim_conn_t *);
 u_long aim_bos_reqicbmparaminfo(struct aim_session_t *, struct aim_conn_t *);
 unsigned long aim_addicbmparam(struct aim_session_t *sess,struct aim_conn_t *conn);
 u_long aim_setversions(struct aim_session_t *sess, struct aim_conn_t *conn);
 
-struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
-int aim_listenestablish(u_short);
+faim_internal struct aim_fileheader_t *aim_getlisting(struct aim_session_t*);
+faim_internal int aim_listenestablish(u_short);
 
 /* aim_rxhandlers.c */
-int aim_rxdispatch(struct aim_session_t *);
-int aim_authparse(struct aim_session_t *, struct command_rx_struct *);
-int aim_handleredirect_middle(struct aim_session_t *, struct command_rx_struct *, ...);
-int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *, ...);
+faim_export int aim_rxdispatch(struct aim_session_t *);
+faim_internal int aim_authparse(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_handleredirect_middle(struct aim_session_t *, struct command_rx_struct *, ...);
+faim_internal int aim_parse_unknown(struct aim_session_t *, struct command_rx_struct *, ...);
 int aim_parse_last_bad(struct aim_session_t *, struct command_rx_struct *, ...);
-int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
-int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_parse_generalerrs(struct aim_session_t *, struct command_rx_struct *command, ...);
+faim_internal int aim_parsemotd_middle(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+faim_internal int aim_parse_ratechange_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_parse_evilnotify_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_parse_msgack_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+
+faim_export unsigned long aim_ads_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_ads_requestads(struct aim_session_t *sess, struct aim_conn_t *conn);
 
 /* aim_im.c */
 struct aim_directim_priv {
@@ -538,18 +546,18 @@ struct aim_directim_priv {
 #define AIM_IMFLAGS_AWAY 0x01 /* mark as an autoreply */
 #define AIM_IMFLAGS_ACK  0x02 /* request a receipt notice */
 
-u_long aim_send_im(struct aim_session_t *, struct aim_conn_t *, char *, u_int, char *);
-int aim_parse_incoming_im_middle(struct aim_session_t *, struct command_rx_struct *);
-int aim_parse_outgoing_im_middle(struct aim_session_t *, struct command_rx_struct *);
-u_long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
-int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
-int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_export unsigned long aim_send_im(struct aim_session_t *, struct aim_conn_t *, char *, u_int, char *);
+faim_internal int aim_parse_incoming_im_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_parse_outgoing_im_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_export unsigned long aim_seticbmparam(struct aim_session_t *, struct aim_conn_t *conn);
+faim_internal int aim_parse_msgerror_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_negchan_middle(struct aim_session_t *sess, struct command_rx_struct *command);
 int aim_parse_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
-int aim_parse_missedcall(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_parse_missedcall(struct aim_session_t *sess, struct command_rx_struct *command);
 
-struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
-int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
-struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
+faim_export struct aim_conn_t * aim_directim_initiate(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *, char *);
+faim_export int aim_send_im_direct(struct aim_session_t *, struct aim_conn_t *, char *);
+faim_export struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_t *, struct aim_directim_priv *);
 
 /* aim_info.c */
 #define AIM_CAPS_BUDDYICON 0x01
@@ -560,8 +568,8 @@ struct aim_conn_t *aim_directim_connect(struct aim_session_t *, struct aim_conn_
 #define AIM_CAPS_SENDFILE 0x20
 
 extern u_char aim_caps[6][16];
-u_short aim_getcap(unsigned char *capblock, int buflen);
-int aim_putcap(unsigned char *capblock, int buflen, u_short caps);
+faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen);
+faim_internal int aim_putcap(unsigned char *capblock, int buflen, u_short caps);
 
 #define AIM_GETINFO_GENERALINFO 0x00001
 #define AIM_GETINFO_AWAYMESSAGE 0x00003
@@ -633,44 +641,43 @@ struct aim_filetransfer_priv {
 #define AIM_COOKIETYPE_OFTIMAGE 0x14
 #define AIM_COOKIETYPE_OFTICON  0x15
 
-int aim_cachecookie(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
-int aim_purgecookies(struct aim_session_t *sess, int maxage);
-struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, char *cookie, int type);
-struct aim_msgcookie_t *aim_mkcookie(unsigned char *, int, void *);
-struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *, char *, int);
-int aim_getcookietype(int);
+faim_internal int aim_cachecookie(struct aim_session_t *sess, struct aim_msgcookie_t *cookie);
+faim_export int aim_purgecookies(struct aim_session_t *sess, int maxage);
+faim_internal struct aim_msgcookie_t *aim_uncachecookie(struct aim_session_t *sess, unsigned char *cookie, int type);
+faim_internal struct aim_msgcookie_t *aim_mkcookie(unsigned char *, int, void *);
+faim_internal struct aim_msgcookie_t *aim_checkcookie(struct aim_session_t *, unsigned char *, int);
+faim_internal int aim_msgcookie_gettype(int reqclass);
 
-int aim_handlerendconnect(struct aim_session_t *sess, struct aim_conn_t *cur);
+faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_conn_t *cur);
 
 #define AIM_TRANSFER_DENY_NOTSUPPORTED 0x0000
 #define AIM_TRANSFER_DENY_DECLINE 0x0001
 #define AIM_TRANSFER_DENY_NOTACCEPTING 0x0002
-u_long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
-u_long aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn,struct aim_conn_t *oftconn, char *sender, char *cookie, unsigned short rendid);
+faim_export unsigned long aim_denytransfer(struct aim_session_t *sess, struct aim_conn_t *conn, char *sender, char *cookie, unsigned short code);
+faim_export unsigned long aim_accepttransfer(struct aim_session_t *sess, struct aim_conn_t *conn,struct aim_conn_t *oftconn, char *sender, char *cookie, unsigned short rendid);
 
-u_long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
-int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);
-int aim_parse_userinfo_middle(struct aim_session_t *, struct command_rx_struct *);
-int aim_parse_oncoming_middle(struct aim_session_t *, struct command_rx_struct *);
-int aim_parse_offgoing_middle(struct aim_session_t *, struct command_rx_struct *);
-int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info);
-int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
-int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
-int aim_parse_locateerr(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_export unsigned long aim_getinfo(struct aim_session_t *, struct aim_conn_t *, const char *, unsigned short);
+faim_internal int aim_extractuserinfo(u_char *, struct aim_userinfo_s *);
+faim_internal int aim_parse_userinfo_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_parse_oncoming_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_parse_offgoing_middle(struct aim_session_t *, struct command_rx_struct *);
+faim_internal int aim_putuserinfo(u_char *buf, int buflen, struct aim_userinfo_s *info);
+faim_export int aim_sendbuddyoncoming(struct aim_session_t *sess, struct aim_conn_t *conn, struct aim_userinfo_s *info);
+faim_export int aim_sendbuddyoffgoing(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn);
+faim_internal int aim_parse_locateerr(struct aim_session_t *sess, struct command_rx_struct *command);
 
 /* aim_auth.c */
-int aim_auth_sendcookie(struct aim_session_t *, struct aim_conn_t *, u_char *);
-u_long aim_auth_clientready(struct aim_session_t *, struct aim_conn_t *);
-u_long aim_auth_changepasswd(struct aim_session_t *, struct aim_conn_t *, char *, char *);
+faim_export int aim_auth_sendcookie(struct aim_session_t *, struct aim_conn_t *, u_char *);
+faim_export u_long aim_auth_clientready(struct aim_session_t *, struct aim_conn_t *);
+faim_export unsigned long aim_auth_changepasswd(struct aim_session_t *, struct aim_conn_t *, char *, char *);
 
 /* aim_buddylist.c */
-u_long aim_add_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
-u_long aim_remove_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
-int aim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
+faim_export unsigned long aim_add_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
+faim_export unsigned long aim_remove_buddy(struct aim_session_t *, struct aim_conn_t *, char *);
+faim_internal int aim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...);
 
 /* aim_search.c */
-u_long aim_usersearch_address(struct aim_session_t *, struct aim_conn_t *, char *);
-/* u_long aim_usersearch_name(struct aim_session_t *, struct aim_conn_t *, char *); */
+faim_export u_long aim_usersearch_address(struct aim_session_t *, struct aim_conn_t *, char *);
 
 
 struct aim_chat_roominfo {
@@ -678,22 +685,22 @@ struct aim_chat_roominfo {
   char *name;
   u_short instance;
 };
-int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo);
-int aim_chat_parse_infoupdate(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_chat_parse_joined(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_chat_parse_leave(struct aim_session_t *sess, struct command_rx_struct *command);
-int aim_chat_parse_incoming(struct aim_session_t *sess, struct command_rx_struct *command);
-u_long aim_chat_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, char *msg);
-u_long aim_chat_join(struct aim_session_t *sess, struct aim_conn_t *conn, u_short exchange, const char *roomname);
-u_long aim_chat_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
-int aim_chat_attachname(struct aim_conn_t *conn, char *roomname);
-char *aim_chat_getname(struct aim_conn_t *conn);
-struct aim_conn_t *aim_chat_getconn(struct aim_session_t *, char *name);
+faim_internal int aim_chat_readroominfo(u_char *buf, struct aim_chat_roominfo *outinfo);
+faim_internal int aim_chat_parse_infoupdate(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_chat_parse_joined(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_chat_parse_leave(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_internal int aim_chat_parse_incoming(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_export unsigned long aim_chat_send_im(struct aim_session_t *sess, struct aim_conn_t *conn, char *msg);
+faim_export unsigned long aim_chat_join(struct aim_session_t *sess, struct aim_conn_t *conn, u_short exchange, const char *roomname);
+faim_export unsigned long aim_chat_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export int aim_chat_attachname(struct aim_conn_t *conn, char *roomname);
+faim_export char *aim_chat_getname(struct aim_conn_t *conn);
+faim_export struct aim_conn_t *aim_chat_getconn(struct aim_session_t *, char *name);
 
-u_long aim_chatnav_reqrights(struct aim_session_t *sess, struct aim_conn_t *conn);
-u_long aim_chatnav_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_chatnav_reqrights(struct aim_session_t *sess, struct aim_conn_t *conn);
+faim_export unsigned long aim_chatnav_clientready(struct aim_session_t *sess, struct aim_conn_t *conn);
 
-u_long aim_chat_invite(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *msg, u_short exchange, char *roomname, u_short instance);
+faim_export unsigned long aim_chat_invite(struct aim_session_t *sess, struct aim_conn_t *conn, char *sn, char *msg, u_short exchange, char *roomname, u_short instance);
 
 struct aim_chat_exchangeinfo {
   u_short number;
@@ -703,9 +710,9 @@ struct aim_chat_exchangeinfo {
   char *charset2;
   char *lang2;
 };
-int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command);
-u_long aim_chatnav_createroom(struct aim_session_t *sess, struct aim_conn_t *conn, char *name, u_short exchange);
-int aim_chat_leaveroom(struct aim_session_t *sess, char *name);
+faim_internal int aim_chatnav_parse_info(struct aim_session_t *sess, struct command_rx_struct *command);
+faim_export u_long aim_chatnav_createroom(struct aim_session_t *sess, struct aim_conn_t *conn, char *name, u_short exchange);
+faim_export int aim_chat_leaveroom(struct aim_session_t *sess, char *name);
 
 /* aim_util.c */
 #ifdef AIMUTIL_USEMACROS
@@ -739,18 +746,22 @@ int aimutil_put32(u_char *, u_long);
 u_long aimutil_get32(u_char *);
 #endif
 
-int aimutil_putstr(u_char *, const u_char *, int);
-int aimutil_tokslen(char *toSearch, int index, char dl);
-int aimutil_itemcnt(char *toSearch, char dl);
-char *aimutil_itemidx(char *toSearch, int index, char dl);
+faim_export int aimutil_putstr(u_char *, const char *, int);
+faim_export int aimutil_tokslen(char *toSearch, int index, char dl);
+faim_export int aimutil_itemcnt(char *toSearch, char dl);
+faim_export char *aimutil_itemidx(char *toSearch, int index, char dl);
 
-int aim_snlen(const char *sn);
-int aim_sncmp(const char *sn1, const char *sn2);
+faim_export int aim_snlen(const char *sn);
+faim_export int aim_sncmp(const char *sn1, const char *sn2);
+
+/* for libc's that dont have it */
+faim_export char *aim_strsep(char **pp, const char *delim);
 
 /* aim_meta.c */
-char *aim_getbuilddate(void);
-char *aim_getbuildtime(void);
-char *aim_getbuildstring(void);
+faim_export char *aim_getbuilddate(void);
+faim_export char *aim_getbuildtime(void);
+faim_export char *aim_getbuildstring(void);
+faim_internal void faimdprintf(int dlevel, const char *format, ...);
 
 #endif /* __AIM_H__ */
 
