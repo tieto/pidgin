@@ -10,6 +10,10 @@
 ; Startup GTK+ check
 !define GTK_INSTALLER_NEEDED			"O ambiente de tempo de execução do GTK+ está ausente ou precisa ser atualizado.$\rFavor instalar a versão v${GTK_VERSION} ou superior do ambiente de tempo de execução do GTK+."
 
+; License Page
+!define GAIM_LICENSE_BUTTON                      "Próximo >"
+!define GAIM_LICENSE_BOTTOM_TEXT         "$(^Name) é distribuído sob a licença GPL. Esta licença é disponibilizada aqui apenas para fins informativos. $_CLICK" 
+
 ; Components Page
 !define GAIM_SECTION_TITLE			"Cliente de mensagens instantâneas Gaim (requerido)"
 !define GTK_SECTION_TITLE			"Ambiente de tempo de execução do GTK+ (requerido)"
@@ -40,6 +44,9 @@
 
 ; GTK+ Themes section
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Você não tem permissão para instalar um tema do GTK+."
+
+; Installer Finish Page
+!define GAIM_FINISH_VISIT_WEB_SITE               "Visite a página da web do Gaim para Windows"
 
 ; Uninstall Section Prompts
 !define un.GAIM_UNINSTALL_ERROR_1         "O desinstalador não pôde encontrar entradas de registro do Gaim.$\rÉ provável que outro usuário tenha instalado esta aplicação."

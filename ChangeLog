@@ -4,6 +4,8 @@ version 0.75cvs :
 	* Yahoo file transfer (Tim Ringenbach)
 	* Esperanto translation added (Anthony Ehrhardt (cguru))
 	* Italian translation updated (Claudio Satriano)
+	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
+	  Rodrigues Collares Neto)
 
 version 0.74 (11/25/2003):
 	* Sort-by-size log sorting fix
