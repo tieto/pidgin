@@ -73,6 +73,10 @@ struct gaim_connection {
 
 	int evil;
 	gboolean wants_to_die; /* defaults to FALSE */
+
+	/* email notification (MSN and Yahoo) */
+	GtkWidget *email_win;
+	GtkWidget *email_label;
 };
 
 /* now that we have our struct, we're going to need lots of them. Maybe even a list of them. */

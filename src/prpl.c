@@ -474,6 +474,83 @@ void do_proto_menu()
 	}
 }
 
+static void des_email_win(GtkWidget *w, struct gaim_connection *yd) {
+	gtk_widget_destroy(yd->email_win);
+	if (yd->email_win == w)
+		yd->email_win = NULL;
+	yd->email_label = NULL;
+}
+
+void connection_has_mail(struct gaim_connection *gc, int count, const char *from, const char *subject)
+{
+	char buf[2048];
+
+	if (!(gc->user->options & OPT_USR_MAIL_CHECK))
+		return;
+
+	if (count < 0 && from && subject) {
+		g_snprintf(buf, sizeof buf, "%s has mail from %s: %s",
+				gc->username, from, subject);
+		if (!gc->email_win) {
+			GtkWidget *close;
+
+			gc->email_win = gtk_dialog_new();
+			gtk_window_set_policy(GTK_WINDOW(gc->email_win), 0, 0, 1);
+			gtk_container_set_border_width(GTK_CONTAINER(gc->email_win), 5);
+			gtk_window_set_title(GTK_WINDOW(gc->email_win), "New Mail");
+			gtk_signal_connect(GTK_OBJECT(gc->email_win), "destroy",
+					   GTK_SIGNAL_FUNC(des_email_win), gc);
+			gtk_widget_realize(gc->email_win);
+			aol_icon(gc->email_win->window);
+
+			gc->email_label = gtk_label_new(buf);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->vbox),
+					gc->email_label, 0, 0, 5);
+			gtk_widget_show(gc->email_label);
+
+			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
+					close, 0, 0, 5);
+			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
+					   GTK_SIGNAL_FUNC(des_email_win), gc);
+
+			gtk_widget_show(gc->email_win);
+		}
+		gtk_label_set_text(GTK_LABEL(gc->email_label), buf);
+	} else if (count) {
+		g_snprintf(buf, sizeof buf, "%s has %d new message%s.",
+				gc->username, count, count == 1 ? "" : "s");
+		if (!gc->email_win) {
+			GtkWidget *close;
+
+			gc->email_win = gtk_dialog_new();
+			gtk_window_set_policy(GTK_WINDOW(gc->email_win), 0, 0, 1);
+			gtk_container_set_border_width(GTK_CONTAINER(gc->email_win), 5);
+			gtk_window_set_title(GTK_WINDOW(gc->email_win), "New Mail");
+			gtk_signal_connect(GTK_OBJECT(gc->email_win), "destroy",
+					   GTK_SIGNAL_FUNC(des_email_win), gc);
+			gtk_widget_realize(gc->email_win);
+			aol_icon(gc->email_win->window);
+
+			gc->email_label = gtk_label_new(buf);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->vbox),
+					gc->email_label, 0, 0, 5);
+			gtk_widget_show(gc->email_label);
+
+			close = picture_button(gc->email_win, _("Close"), cancel_xpm);
+			gtk_box_pack_start(GTK_BOX(GTK_DIALOG(gc->email_win)->action_area),
+					close, 0, 0, 5);
+			gtk_signal_connect(GTK_OBJECT(close), "clicked",                      
+					   GTK_SIGNAL_FUNC(des_email_win), gc);
+
+			gtk_widget_show(gc->email_win);
+		}
+		gtk_label_set_text(GTK_LABEL(gc->email_label), buf);
+	} else if (gc->email_win)
+		gtk_widget_destroy(gc->email_win);
+}
+
+/*
 struct ft_req {
 	struct gaim_connection *gc;
 	gboolean send;
@@ -500,7 +577,7 @@ static void ftrrno(gpointer w, struct ft_req *fr)
 
 static void do_exist_dialog(const char *name, unsigned long size, struct ft_req *fr)
 {
-	/*
+	\*
 	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *label;
@@ -513,7 +590,7 @@ static void do_exist_dialog(const char *name, unsigned long size, struct ft_req 
 			(size <= fr->size) ? ", resume the download," : "");
 
 	window = gtk_window_new(GTK_WINDOW_DIALOG);
-	*/
+	*\
 }
 
 static void ftgotfile(gpointer w, struct ft_req *fr)
@@ -538,7 +615,7 @@ static void ftgotfile(gpointer w, struct ft_req *fr)
 
 static void ftrrok(gpointer w, struct ft_req *ft)
 {
-	/* ft is going to be free'd as soon as we leave this function, so we'll copy it */
+	\* ft is going to be free'd as soon as we leave this function, so we'll copy it *\
 	struct ft_req *fr = g_memdup(ft, sizeof(struct ft_req));
 	char buf[256];
 
@@ -592,3 +669,4 @@ void ft_receive_request(struct gaim_connection *gc, const char *who, gboolean se
 
 	do_ask_dialog(buf, fr, ftrrok, ftrrno);
 }
+*/

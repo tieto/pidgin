@@ -292,6 +292,13 @@ static void set_prot(GtkWidget *opt, int proto)
 			gtk_widget_show(u->pwdbox);
 			gtk_widget_show(u->rempass);
 		}
+		if (!(p->options & OPT_PROTO_MAIL_CHECK) &&
+		     (q->options & OPT_PROTO_MAIL_CHECK)) {
+			gtk_widget_show(u->checkmail);
+		} else if ((p->options & OPT_PROTO_MAIL_CHECK) &&
+			  !(q->options & OPT_PROTO_MAIL_CHECK)) {
+			gtk_widget_hide(u->checkmail);
+		}
 		u->tmp_protocol = proto;
 		generate_prpl_options(u, u->main);
 	} else if (!u && (tmpusr.tmp_protocol != proto)) {
@@ -307,6 +314,13 @@ static void set_prot(GtkWidget *opt, int proto)
 			  !(q->options & OPT_PROTO_NO_PASSWORD)) {
 			gtk_widget_show(tmpusr.pwdbox);
 			gtk_widget_show(tmpusr.rempass);
+		}
+		if (!(p->options & OPT_PROTO_MAIL_CHECK) &&
+		     (q->options & OPT_PROTO_MAIL_CHECK)) {
+			gtk_widget_show(tmpusr.checkmail);
+		} else if ((p->options & OPT_PROTO_MAIL_CHECK) &&
+			  !(q->options & OPT_PROTO_MAIL_CHECK)) {
+			gtk_widget_hide(tmpusr.checkmail);
 		}
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
 		generate_prpl_options(NULL, newmain);
@@ -369,6 +383,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	GtkWidget *name;
 	GtkWidget *pass;
 	GtkWidget *rempass;
+	GtkWidget *checkmail;
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
@@ -405,6 +420,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 	rempass = acct_button(_("Remember Password"), u, OPT_USR_REM_PASS, vbox);
 	acct_button(_("Auto-Login"), u, OPT_USR_AUTO, vbox);
 	/*acct_button(_("Send KeepAlive packet (6 bytes/second)"), u, OPT_USR_KEEPALV, vbox);*/
+	checkmail = acct_button(_("New Mail Notifications"), u, OPT_USR_MAIL_CHECK, vbox);
 
 	gtk_widget_show_all(vbox);
 
@@ -413,6 +429,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 		u->pwdbox = pwdbox;
 		u->pass = pass;
 		u->rempass = rempass;
+		u->checkmail = checkmail;
 		gtk_entry_set_text(GTK_ENTRY(name), u->username);
 		gtk_entry_set_text(GTK_ENTRY(pass), u->password);
 		gtk_entry_set_editable(GTK_ENTRY(name), FALSE);
@@ -421,6 +438,7 @@ static void generate_general_options(struct aim_user *u, GtkWidget *book)
 		tmpusr.pwdbox = pwdbox;
 		tmpusr.pass = pass;
 		tmpusr.rempass = rempass;
+		tmpusr.checkmail = checkmail;
 	}
 }
 
@@ -521,12 +539,16 @@ static void show_acct_mod(struct aim_user *u)
 			gtk_widget_hide(u->pwdbox);
 			gtk_widget_hide(u->rempass);
 		}
+		if (!(p->options & OPT_PROTO_MAIL_CHECK))
+			gtk_widget_hide(u->checkmail);
 	} else {
 		p = find_prpl(tmpusr.tmp_protocol);
 		if (p->options & OPT_PROTO_NO_PASSWORD) {
 			gtk_widget_hide(tmpusr.pwdbox);
 			gtk_widget_hide(tmpusr.rempass);
 		}
+		if (!(p->options & OPT_PROTO_MAIL_CHECK))
+			gtk_widget_hide(tmpusr.checkmail);
 	}
 }
 

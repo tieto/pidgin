@@ -54,6 +54,8 @@
 #define OPT_PROTO_CHAT_TOPIC      0x00000008
 /* IRC and Zephyr don't require passwords, so there's no need for a password prompt */
 #define OPT_PROTO_NO_PASSWORD     0x00000010
+/* MSN and Yahoo notify you when you have new mail */
+#define OPT_PROTO_MAIL_CHECK      0x00000020
 
 #define GAIM_AWAY_CUSTOM "Custom"
 
@@ -149,6 +151,8 @@ void prepare_regbox_for_next();
 
 void do_ask_dialog(const char *, void *, void *, void *);
 void do_prompt_dialog(const char *, void *, void *, void *);
+
+void connection_has_mail(struct gaim_connection *, int, const char *, const char *);
 
 /* UI for file transfer */
 #define FT_EXIST_DNE       0

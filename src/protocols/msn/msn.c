@@ -245,32 +245,25 @@ static char *handle_errcode(char *buf, gboolean show)
 
 static void handle_hotmail(struct gaim_connection *gc, char *data)
 {
-	char *mailct, *mailp, *from = NULL, *subj = NULL, notice[MSN_BUF_LEN];
-
-	if (gc->user->proto_opt[USEROPT_HOTMAIL][0] != '1') return;
-	mailct = strstr(data, "Content-Type: ");
-	mailp = strstr(mailct, ";");
-	if (mailct && mailp && (mailp > mailct) &&
-	    !strncmp(mailct, "Content-Type: text/x-msmsgsemailnotification", mailp - mailct - 1)) {
-		from = strstr(mailp, "From: ");
-		subj = strstr(mailp, "Subject: ");
+	if (strstr(data, "Content-Type: text/x-msmsgsinitialemailnotification;")) {
+		char *x = strstr(data, "Inbox-Unread:");
+		if (!x) return;
+		x += strlen("Inbox-Unread: ");
+		connection_has_mail(gc, atoi(x), NULL, NULL);
+	} else if (strstr(data, "Content-Type: text/x-msmsgsemailnotification;")) {
+		char *from = strstr(data, "From:");
+		char *subject = strstr(data, "Subject:");
+		char *x;
+		if (!from || !subject) {
+			connection_has_mail(gc, 1, NULL, NULL);
+			return;
+		}
+		from += strlen("From: ");
+		x = strstr(from, "\r\n"); *x = 0;
+		subject += strlen("Subject: ");
+		x = strstr(subject, "\r\n"); *x = 0;
+		connection_has_mail(gc, -1, from, subject);
 	}
-
-	if (!from || !subj)
-		return;
-
-	from += strlen("From: ");
-	mailp = strstr(from, "\r\n");
-	if (!mailp) return;
-	*mailp = 0;
-
-	subj += strlen("Subject: ");
-	mailp = strstr(from, "\r\n");
-	if (!mailp) return;
-	*mailp = 0;
-
-	g_snprintf(notice, sizeof(notice), "Mail from %s, re: %s", from, subj);
-	do_error_dialog(notice, "New MSN Mail");
 }
 
 static struct msn_switchboard *msn_find_switch(struct gaim_connection *gc, char *id)
@@ -1340,55 +1333,6 @@ static void msn_buddy_menu(GtkWidget *menu, struct gaim_connection *gc, char *wh
 	gtk_widget_show(button);
 }
 
-struct mod_usr_opt {
-	struct aim_user *user;
-	int opt;
-};
-
-static void mod_opt(GtkWidget *b, struct mod_usr_opt *m)
-{
-	if (m->user) {
-		if (m->user->proto_opt[m->opt][0] == '1')
-			m->user->proto_opt[m->opt][0] = '\0';
-		else
-			strcpy(m->user->proto_opt[m->opt],"1");
-	}
-}
-
-static void free_muo(GtkWidget *b, struct mod_usr_opt *m)
-{
-	g_free(m);
-}
-
-static GtkWidget *msn_protoopt_button(const char *text, struct aim_user *u, int option, GtkWidget *box)
-{
-	GtkWidget *button;
-	struct mod_usr_opt *muo = g_new0(struct mod_usr_opt, 1);
-	button = gtk_check_button_new_with_label(text);
-	if (u)
-		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), (u->proto_opt[option][0] == '1'));
-	gtk_box_pack_start(GTK_BOX(box), button, FALSE, FALSE, 0);
-	muo->user = u;
-	muo->opt = option;
-	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(mod_opt), muo);
-	gtk_signal_connect(GTK_OBJECT(button), "destroy", GTK_SIGNAL_FUNC(free_muo), muo);
-	gtk_widget_show(button);
-
-	return button;
-}
-
-static void msn_user_opts(GtkWidget* book, struct aim_user *user)
-{
-	GtkWidget *vbox;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox, gtk_label_new("MSN Options"));
-	gtk_widget_show(vbox);
-
-	msn_protoopt_button("Notify me of new HotMail",user,USEROPT_HOTMAIL,vbox);
-}
-
 static void msn_add_buddy(struct gaim_connection *gc, char *who)
 {
 	struct msn_data *md = gc->proto_data;
@@ -1430,10 +1374,10 @@ static struct prpl *my_protocol = NULL;
 void msn_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_MSN;
+	ret->options = OPT_PROTO_MAIL_CHECK;
 	ret->name = msn_name;
 	ret->list_icon = msn_list_icon;
 	ret->buddy_menu = msn_buddy_menu;
-	ret->user_opts = msn_user_opts;
 	ret->login = msn_login;
 	ret->close = msn_close;
 	ret->send_im = msn_send_im;
