@@ -789,6 +789,7 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	int row, column;
 	static GtkWidget *menu = NULL;
 	GtkWidget *button;
+	static GList *mo_top = NULL;
 
 	if (event->button != 3 || event->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -806,6 +807,11 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 	if(menu) {
 		gtk_widget_destroy(menu);
 		menu = NULL;	/* safety measure */
+		if(mo_top) {
+			g_list_foreach(mo_top, (GFunc)g_free, NULL);
+			g_list_free(mo_top);
+			mo_top = NULL;
+		}
 	}
 
 	if (*type == EDIT_GROUP) {
@@ -860,6 +866,27 @@ static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpoint
 				   GTK_SIGNAL_FUNC(pressed_log), b->name);
 		gtk_menu_append(GTK_MENU(menu), button);
 		gtk_widget_show(button);
+
+		/*
+		 * Add protocol-specific edit buddy menu items if they exist
+		 */
+		if (b->gc->prpl->edit_buddy_menu) {
+			GList *mo = mo_top = b->gc->prpl->edit_buddy_menu(b->gc, b->name);
+
+			while (mo) {
+				struct proto_buddy_menu *pbm = mo->data;
+				GtkWidget *button;
+
+				button = gtk_menu_item_new_with_label(pbm->label);
+				gtk_signal_connect(GTK_OBJECT(button), "activate",
+						   GTK_SIGNAL_FUNC(menu_click), b->name);
+				gtk_object_set_user_data(GTK_OBJECT(button), mo);
+				gtk_menu_append(GTK_MENU(menu), button);
+				gtk_widget_show(button);
+
+				mo = mo->next;
+			}
+		}
 
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
 
