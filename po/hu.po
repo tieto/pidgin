@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: hu\n"
 "POT-Creation-Date: 2003-07-18 10:18-0500\n"
-"PO-Revision-Date: 2003-07-21 21:00+0200\n"
+"PO-Revision-Date: 2003-07-30 22:44+0200\n"
 "Last-Translator: Zoltan Sutto <suttozoltan@chello.hu>\n"
 "Language-Team: Hungarian <hu@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -409,14 +409,14 @@ msgstr "Raw"
 
 #: plugins/raw.c:154
 msgid "Lets you send raw input to text-based protocols."
-msgstr "Raw adatküldésre ad lehetõséget text alapú protokolok számára."
+msgstr "Raw adatküldésre ad lehetõséget text alapú protokollok számára."
 
 #: plugins/raw.c:155
 msgid ""
 "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Raw adatküldésre ad lehetõséget text alapú protokolok számára (Jabber, MSN, "
+"Raw adatküldésre ad lehetõséget text alapú protokollok számára (Jabber, MSN, "
 "IRC, TOC). Nyomja meg az 'Enter' billentyût a küldéshez. Figyelje a nyomkövetõ "
 "ablakot."
 
@@ -612,7 +612,7 @@ msgstr "Partner figyelõ"
 #. *  summary
 #: plugins/ticker/ticker.c:315 plugins/ticker/ticker.c:317
 msgid "A horizontal scrolling version of the buddy list."
-msgstr "Vízszintesen gördíthetõ partner lista"
+msgstr "Vízszintesen gördíthetõ partnerlista"
 
 #: plugins/win32/transparency/win2ktrans.c:133
 #: plugins/win32/transparency/win2ktrans.c:359
@@ -636,15 +636,15 @@ msgstr "C_súszka mutatása az IM ablakban"
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:376 src/gtkprefs.c:848
 msgid "Buddy List Window"
-msgstr "Partner lista ablaka"
+msgstr "Partnerlista ablak"
 
 #: plugins/win32/transparency/win2ktrans.c:377
 msgid "_Keep Buddy List window on top"
-msgstr "_Partner lista mindig felül"
+msgstr "_Partnerlista mindig felül"
 
 #: plugins/win32/transparency/win2ktrans.c:380
 msgid "_Buddy List window transparency"
-msgstr "_Partner lista átlátszósága"
+msgstr "_Partnerlista átlátszósága"
 
 #. *< api_version
 #. *< type
@@ -911,7 +911,7 @@ msgstr "Város"
 
 #: src/protocols/gg/gg.c:738
 msgid "There is no Buddy List stored on the Gadu-Gadu server."
-msgstr "Nincs tárolva partner lista a Gadu Gadu kiszolgálón."
+msgstr "Nincs tárolva partnerlista a Gadu Gadu kiszolgálón."
 
 #: src/protocols/gg/gg.c:746
 msgid "Couldn't Import Buddy List from Server"
@@ -919,19 +919,19 @@ msgstr "Nem tudom a partner listát importálni a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:809
 msgid "Buddy List successfully transferred to Gadu-Gadu server"
-msgstr "Partner lista sikeresen továbbítva a Gadu Gadu kiszolgálóra"
+msgstr "Partnerlista sikeresen továbbítva a Gadu Gadu kiszolgálóra"
 
 #: src/protocols/gg/gg.c:817
 msgid "Couldn't transfer Buddy List to Gadu-Gadu server"
-msgstr "Nem sikerül a partner lista továbbítása a Gadu Gadu kiszolgálóra"
+msgstr "Nem sikerül a partnerlista továbbítása a Gadu Gadu kiszolgálóra"
 
 #: src/protocols/gg/gg.c:825
 msgid "Buddy List successfully deleted from Gadu-Gadu server"
-msgstr "Partner lista sikeresen törölve a Gadu Gadu kiszolgálóról"
+msgstr "Partnerlista sikeresen törölve a Gadu Gadu kiszolgálóról"
 
 #: src/protocols/gg/gg.c:833
 msgid "Couldn't delete Buddy List from Gadu-Gadu server"
-msgstr "Nem sikerül a partner lista törlése a Gadu Gadu kiszolgálóról"
+msgstr "Nem sikerül a partnerlista törlése a Gadu Gadu kiszolgálóról"
 
 #: src/protocols/gg/gg.c:841
 msgid "Password changed successfully"
@@ -962,7 +962,7 @@ msgid ""
 "Gaim was unable to connect to the Gadu-Gadu buddy list server.  Please try "
 "again later."
 msgstr ""
-"Gaim nem tudott a Gadu Gadu partner lista kiszolgálóhoz kapcsolódni. Kérem "
+"Gaim nem tudott a Gadu Gadu partnerlista kiszolgálóhoz kapcsolódni. Kérem "
 "késõbb próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1064
@@ -972,7 +972,7 @@ msgstr "Nem tudom a partner listát exportálni"
 #: src/protocols/gg/gg.c:1065 src/protocols/gg/gg.c:1088
 msgid "Gaim was unable to connect to the buddy list server.  Please try again later."
 msgstr ""
-"Gaim nem tudott a partner lista kiszolgálóhoz kapcsolódni. Kérem késõbb "
+"Gaim nem tudott a partnerlista kiszolgálóhoz kapcsolódni. Kérem késõbb "
 "próbálja meg újra."
 
 #: src/protocols/gg/gg.c:1087
@@ -1015,15 +1015,15 @@ msgstr "Jelszó megváltoztatása"
 
 #: src/protocols/gg/gg.c:1203
 msgid "Import Buddy List from Server"
-msgstr "Partner lista importálása a kiszolgálóról"
+msgstr "Partnerlista importálása a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:1209
 msgid "Export Buddy List to Server"
-msgstr "Partner lista exportálása a kiszolgálóra"
+msgstr "Partnerlista exportálása a kiszolgálóra"
 
 #: src/protocols/gg/gg.c:1215
 msgid "Delete Buddy List from Server"
-msgstr "Partner lista törlése a kiszolgálóról"
+msgstr "Partnerlista törlése a kiszolgálóról"
 
 #: src/protocols/gg/gg.c:1248
 msgid "Unable to access user profile."
@@ -1049,7 +1049,7 @@ msgstr ""
 #. *  summary
 #: src/protocols/gg/gg.c:1361 src/protocols/gg/gg.c:1363
 msgid "Gadu-Gadu Protocol Plugin"
-msgstr "Gadu-Gadu protokol plugin"
+msgstr "Gadu-Gadu protokoll plugin"
 
 #: src/protocols/icq/gaim_icq.c:224
 msgid "Gaim encountered an error communicating with the ICQ server."
@@ -1374,7 +1374,7 @@ msgstr "DCC csevegés"
 #. *  summary
 #: src/protocols/irc/irc.c:3011 src/protocols/irc/irc.c:3013
 msgid "IRC Protocol Plugin"
-msgstr "IRC protokol plugin"
+msgstr "IRC protokoll plugin"
 
 #. Account Options
 #: src/protocols/irc/irc.c:3035 src/protocols/jabber/jabber.c:4425
@@ -1721,7 +1721,7 @@ msgstr "Felhasználói adatok beállítása"
 #. *  summary
 #: src/protocols/jabber/jabber.c:4397 src/protocols/jabber/jabber.c:4399
 msgid "Jabber Protocol Plugin"
-msgstr "Jabber protokol plugin"
+msgstr "Jabber protokoll plugin"
 
 #: src/protocols/jabber/jabber.c:4421
 msgid "Resource"
@@ -1733,7 +1733,7 @@ msgstr "Kiszolgáló"
 
 #: src/protocols/msn/dispatch.c:45 src/protocols/msn/notification.c:229
 msgid "Protocol not supported"
-msgstr "Nem támogatott protokol"
+msgstr "Nem támogatott protokoll"
 
 #: src/protocols/msn/dispatch.c:51
 msgid "Unable to request INF\n"
@@ -2100,7 +2100,7 @@ msgstr ""
 #. *  summary
 #: src/protocols/msn/msn.c:1235 src/protocols/msn/msn.c:1237
 msgid "MSN Protocol Plugin"
-msgstr "MSN protokol plugin"
+msgstr "MSN protokoll plugin"
 
 #: src/protocols/msn/msn.c:1254 src/protocols/trepia/trepia.c:1372
 msgid "Login server"
@@ -2116,7 +2116,7 @@ msgstr "USR -t nem sikerül elküldeni"
 
 #: src/protocols/msn/notification.c:297 src/protocols/trepia/trepia.c:719
 msgid "Retrieving buddy list"
-msgstr "Partner lista fogadása"
+msgstr "Partnerlista fogadása"
 
 #: src/protocols/msn/notification.c:323
 msgid "Unable to send password"
@@ -2224,7 +2224,7 @@ msgstr "%s-tõl PING kérés érkezett"
 
 #: src/protocols/napster/napster.c:531 src/gtkblist.c:1573
 msgid "Get Info"
-msgstr "Információ lekérdezése"
+msgstr "Infó"
 
 #: src/protocols/napster/napster.c:545 src/protocols/oscar/oscar.c:5168
 #: src/protocols/toc/toc.c:1201
@@ -2243,7 +2243,7 @@ msgstr "Kapcsolódás csoporthoz:"
 #. *  summary
 #: src/protocols/napster/napster.c:621 src/protocols/napster/napster.c:623
 msgid "NAPSTER Protocol Plugin"
-msgstr "NAPSTER protokol plugin"
+msgstr "NAPSTER protokoll plugin"
 
 #: src/protocols/oscar/oscar.c:174
 msgid "Invalid error"
@@ -2729,7 +2729,7 @@ msgstr "Kiegészítõk"
 
 #: src/protocols/oscar/oscar.c:3095
 msgid "Send Buddy List"
-msgstr "Partner lista küldése"
+msgstr "Partnerlista küldése"
 
 #: src/protocols/oscar/oscar.c:3098
 msgid "EveryBuddy Bug"
@@ -3318,7 +3318,7 @@ msgstr "Partner keresése email alapján"
 #. *  summary
 #: src/protocols/oscar/oscar.c:6286 src/protocols/oscar/oscar.c:6288
 msgid "AIM/ICQ Protocol Plugin"
-msgstr "AIM/ICQ protokol plugin"
+msgstr "AIM/ICQ protokoll plugin"
 
 #: src/protocols/oscar/oscar.c:6305
 msgid "Auth host"
@@ -3537,7 +3537,7 @@ msgstr "%s felkér Önt, hogy küldjön nekik egy fájlt"
 #. *  summary
 #: src/protocols/toc/toc.c:2085 src/protocols/toc/toc.c:2087
 msgid "TOC Protocol Plugin"
-msgstr "TOC protokol plugin"
+msgstr "TOC protokoll plugin"
 
 #: src/protocols/toc/toc.c:2104
 msgid "TOC host"
@@ -3664,7 +3664,7 @@ msgstr "Bejelentkezés"
 #. *  summary
 #: src/protocols/trepia/trepia.c:1353 src/protocols/trepia/trepia.c:1355
 msgid "Trepia Protocol Plugin"
-msgstr "Trepia protokol plugin"
+msgstr "Trepia protokoll plugin"
 
 #: src/protocols/yahoo/yahoo.c:592
 msgid "Your Yahoo! message did not get sent."
@@ -3715,7 +3715,7 @@ msgstr "Azonosító aktiválása"
 #. *  summary
 #: src/protocols/yahoo/yahoo.c:1465 src/protocols/yahoo/yahoo.c:1467
 msgid "Yahoo Protocol Plugin"
-msgstr "Yahoo protokol plugin"
+msgstr "Yahoo protokoll plugin"
 
 #: src/protocols/yahoo/yahoo.c:1484
 msgid "Pager host"
@@ -3757,7 +3757,7 @@ msgid ""
 "Because Zephyr uses your system username, you are unable to have multiple "
 "accounts on it when logged in as the same user."
 msgstr ""
-"Mivel a Zephyr protokol az Ön rendszer felhasználói nevét használja, ezért nem "
+"Mivel a Zephyr protokoll az Ön rendszer felhasználói nevét használja, ezért nem "
 "lehet egyidejüleg több fiókja."
 
 #: src/protocols/zephyr/zephyr.c:848
@@ -3788,7 +3788,7 @@ msgstr "Címzett:"
 #. *  summary
 #: src/protocols/zephyr/zephyr.c:1030 src/protocols/zephyr/zephyr.c:1032
 msgid "Zephyr Protocol Plugin"
-msgstr "Zephyr protokol plugin"
+msgstr "Zephyr protokoll plugin"
 
 #: src/about.c:56
 #, c-format
@@ -3802,7 +3802,7 @@ msgid ""
 "written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim egy moduláris üzenetküldõ kliens AIM, ICQ, Yahoo!, MSN, IRC, Jabber, "
-"Napster, Zephyr, és Gadu-Gadu protokolok egyidejû használatának "
+"Napster, Zephyr, és Gadu-Gadu protokollok egyidejû használatának "
 "képességével.  Gtk+ segítségével készül GPL licensz alatt.<BR><BR>"
 
 #: src/about.c:98
@@ -3900,12 +3900,12 @@ msgstr "Érvénytelen csoportnév"
 #: src/blist.c:1703
 msgid "An error was encountered parsing your buddy list.  It has not been loaded."
 msgstr ""
-"A partner lista beolvasása közben hiba lépett fel.  A lista nem lett "
+"A partnerlista beolvasása közben hiba lépett fel.  A lista nem lett "
 "betöltve."
 
 #: src/blist.c:1705
 msgid "Buddy List Error"
-msgstr "Partner lista hiba"
+msgstr "Partnerlista hiba"
 
 #. rob wants to inform the user that their buddy lists are
 #. * being converted
@@ -3920,7 +3920,7 @@ msgstr ""
 
 #: src/blist.c:1716
 msgid "Converting Buddy List"
-msgstr "Partner lista konvertálása"
+msgstr "Partnerlista konvertálása"
 
 #: src/browser.c:407 src/browser.c:435
 msgid ""
@@ -4582,7 +4582,7 @@ msgstr "Bejelentkezés beállításai"
 
 #: src/gtkaccount.c:344
 msgid "Protocol:"
-msgstr "Protokol:"
+msgstr "Protokoll:"
 
 #: src/gtkaccount.c:349
 msgid "Screenname:"
@@ -4713,7 +4713,7 @@ msgstr "Fiók azonosító"
 
 #: src/gtkaccount.c:1595
 msgid "Protocol"
-msgstr "Protokol"
+msgstr "Protokoll"
 
 #: src/gtkblist.c:410
 msgid "Add a _Buddy"
@@ -4965,7 +4965,7 @@ msgstr "Nincs"
 
 #: src/gtkblist.c:1431 src/gtkprefs.c:2289
 msgid "Buddy List"
-msgstr "Partner lista"
+msgstr "Partnerlista"
 
 #: src/gtkblist.c:1455
 msgid "/Tools/Away"
@@ -4977,7 +4977,7 @@ msgstr "/Eszközök/Partner figyelõ"
 
 #: src/gtkblist.c:1461
 msgid "/Tools/Protocol Actions"
-msgstr "/Eszközök/Protokol mûveletek"
+msgstr "/Eszközök/Protokollmûveletek"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -5804,15 +5804,15 @@ msgstr "Control-(szám) hangulatjelek be_szúrása"
 
 #: src/gtkprefs.c:825
 msgid "Buddy List Sorting"
-msgstr "Partner lista rendezése"
+msgstr "Partnerlista rendezettsége"
 
 #: src/gtkprefs.c:834
 msgid "Sorting:"
-msgstr "Rendezés:"
+msgstr "Rendezettség:"
 
 #: src/gtkprefs.c:839
 msgid "Buddy List Toolbar"
-msgstr "Partner lista eszközsora"
+msgstr "Partnerlista eszközsora"
 
 #: src/gtkprefs.c:840 src/gtkprefs.c:967 src/gtkprefs.c:1023
 msgid "Show _buttons as:"
