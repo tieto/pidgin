@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.19\n"
-"POT-Creation-Date: 2001-03-23 09:31-0800\n"
+"POT-Creation-Date: 2001-03-23 15:58-0800\n"
 "PO-Revision-Date: 2000-06-07 22:42+0000\n"
 "Last-Translator: Marcel Becker <MBeckerHH1@aol.com>\n"
 "Language-Team: German <de@li.org>\n"
