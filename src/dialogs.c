@@ -468,9 +468,9 @@ void show_confirm_del(struct gaim_connection *gc, gchar *name)
 
 void show_confirm_del_group(struct group *g)
 {
-     	char *text = g_strdup_printf(_("You are about to remove he group %s and all its members from your buddy list.  Do you want to continue?"), 
+     	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"), 
 			       g->name);
-	do_ask_dialog(_("Remove Group"), text, g, _("Remove Buddy"), do_remove_group, _("Cancel"), NULL, NULL, FALSE);
+	do_ask_dialog(_("Remove Group"), text, g, _("Remove Group"), do_remove_group, _("Cancel"), NULL, NULL, FALSE);
 	g_free(text);
 }
 
