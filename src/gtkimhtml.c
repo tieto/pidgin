@@ -825,7 +825,10 @@ gtk_imhtml_get_html_opt (gchar       *tag,
                                             gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                                  } \
                                  if (fd->size) { \
-                                            texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "size-points", (double)POINT_SIZE(fd->size), NULL); \
+                                            gushort points; \
+                                            /* only do the POINT_SIZE converstion for AIM/ICQ */ \
+                                            points = (strcmp(fd->sml, "AIM/ICQ") == 0) ? POINT_SIZE(fd->size) : fd->size; \
+                                            texttag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "size-points", (double)points, NULL); \
                                             gtk_text_buffer_apply_tag(imhtml->text_buffer, texttag, &siter, &iter); \
                                  } \
                         } \
