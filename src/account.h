@@ -72,6 +72,8 @@ struct _GaimAccount
 	GSList *deny;               /**< Deny list.                           */
 	int perm_deny;              /**< The permit/deny setting.             */
 	GaimLog *system_log;        /**< The system log                       */
+	
+	void *ui_data;             /**< The UI can put data here.			  */
 };
 
 #ifdef __cplusplus
