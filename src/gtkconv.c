@@ -4488,7 +4488,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			g_snprintf(buf, BUF_LONG, "<B>%s</B>", message);
 
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\2\"><!--(%s) --></FONT><B>%s</B></FONT><BR>",
+			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT><BR>",
 			   sml_attrib, mdate, message);
 
 		gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->imhtml),

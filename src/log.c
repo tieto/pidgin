@@ -505,28 +505,28 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 	strftime(date, sizeof(date), "%H:%M:%S", localtime(&time));
 	if (type & GAIM_MESSAGE_SYSTEM)
-		fprintf(data->file, "(%s)<b> %s</b><br/>\n", date, msg_fixed);
+		fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
 	else if (type & GAIM_MESSAGE_WHISPER)
-		fprintf(data->file, "<font color=\"#6C2585\">(%s)<b> %s:</b></font> %s<br/>\n",
+		fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 			date, from, msg_fixed);
 	else if (type & GAIM_MESSAGE_AUTO_RESP) {
 		if (type & GAIM_MESSAGE_SEND)
-			fprintf(data->file, _("<font color=\"#16569E\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+			fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 		else if (type & GAIM_MESSAGE_RECV)
-			fprintf(data->file, _("<font color=\"#A82F2F\">(%s) <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
+			fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
 	} else if (type & GAIM_MESSAGE_RECV) {
 		if(gaim_message_meify(msg_fixed, -1))
-			fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+			fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
 					date, from, gc->prpl->info->name, msg_fixed);
 		else
-			fprintf(data->file, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+			fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
 					date, from, gc->prpl->info->name, msg_fixed);
 	} else if (type & GAIM_MESSAGE_SEND) {
 		if(gaim_message_meify(msg_fixed, -1))
-			fprintf(data->file, "<font color=\"#6C2585\">(%s) <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
+			fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> <font sml=\"%s\">%s</font><br/>\n",
 					date, from, gc->prpl->info->name, msg_fixed);
 		else
-			fprintf(data->file, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
+			fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n",
 					date, from, gc->prpl->info->name, msg_fixed);
 	}
 	g_free(msg_fixed);
