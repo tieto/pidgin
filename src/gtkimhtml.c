@@ -1345,7 +1345,7 @@ gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
 	window = GTK_LAYOUT (imhtml)->bin_window;
 	gdk_window_get_size (window, &width, &height);
 	gdk_window_clear_area (window, 0, 0, width, BORDER_SIZE + 10);
-	gdk_window_clear_area (window, 0, height - BORDER_SIZE, width, BORDER_SIZE);
+	gdk_window_clear_area (window, 0, MAX (height - BORDER_SIZE - 10, 0), width, BORDER_SIZE + 10);
 
 	gtk_imhtml_draw_exposed (imhtml);
 }

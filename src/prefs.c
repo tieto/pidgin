@@ -1724,6 +1724,9 @@ void away_list_clicked(GtkWidget *widget, struct away_message *a)
 	gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 							   GTK_IMHTML_NO_COMMENTS |
 							   GTK_IMHTML_NO_SCROLL);
+	gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
+							      GTK_IMHTML_NO_COMMENTS |
+							      GTK_IMHTML_NO_SCROLL);
 	g_free(tmp);
 }
 
@@ -1973,6 +1976,9 @@ static void away_page()
 		gtk_imhtml_append_text(GTK_IMHTML(away_text), tmp, GTK_IMHTML_NO_TITLE |
 								   GTK_IMHTML_NO_COMMENTS |
 								   GTK_IMHTML_NO_SCROLL);
+		gtk_imhtml_append_text(GTK_IMHTML(away_text), "<BR>", GTK_IMHTML_NO_TITLE |
+								      GTK_IMHTML_NO_COMMENTS |
+								      GTK_IMHTML_NO_SCROLL);
 		g_free(tmp);
 	}
 

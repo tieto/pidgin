@@ -159,6 +159,18 @@ struct icon_req {
 };
 #endif
 
+static gpointer memdup(gconstpointer mem, guint size)
+{
+	gpointer new_mem;
+
+	if (mem) {
+		new_mem = malloc(size);
+		memcpy(new_mem, mem, size);
+		return new_mem;
+	} else
+		return NULL;
+}
+
 static struct direct_im *find_direct_im(struct oscar_data *od, char *who) {
 	GSList *d = od->direct_ims;
 	char *n = g_strdup(normalize(who));
@@ -444,9 +456,16 @@ static void oscar_debug(struct aim_session_t *sess, int level, const char *forma
 static void oscar_login_connect(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata = gc->proto_data;
-	struct aim_session_t *sess = odata->sess;
-	struct aim_conn_t *conn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+	struct oscar_data *odata;
+	struct aim_session_t *sess;
+	struct aim_conn_t *conn;
+
+	if (!g_slist_find(connections, gc))
+		return;
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	conn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
 
 	if (source < 0) {
 		hide_login_progress(gc, _("Couldn't connect to host"));
@@ -566,9 +585,16 @@ static void oscar_close(struct gaim_connection *gc) {
 
 static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond) {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata = gc->proto_data;
-	struct aim_session_t *sess = odata->sess;
-	struct aim_conn_t *bosconn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
+	struct oscar_data *odata;
+	struct aim_session_t *sess;
+	struct aim_conn_t *bosconn;
+
+	if (!g_slist_find(connections, gc))
+		return;
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	bosconn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
 
 	if (source < 0) {
 		if (bosconn->priv)
@@ -583,7 +609,7 @@ static void oscar_bos_connect(gpointer data, gint source, GdkInputCondition cond
 		bosconn->fd = source;
 
 	aim_auth_sendcookie(sess, bosconn, bosconn->priv);
-	g_free(bosconn->priv);
+	free(bosconn->priv);
 	bosconn->priv = NULL;
 	gc->inpa = gdk_input_add(bosconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 			oscar_callback, bosconn);
@@ -717,7 +743,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		}
 	}
 	host = g_strndup(bosip, i);
-	bosconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+	bosconn->priv = memdup(cookie, AIM_COOKIELEN);
 	bosconn->fd = proxy_connect(host, port, oscar_bos_connect, gc);
 	g_free(host);
 	if (!user->gc || (bosconn->fd < 0)) {
@@ -972,9 +998,16 @@ int gaim_server_ready(struct aim_session_t *sess,
 static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata = gc->proto_data;
-	struct aim_session_t *sess = odata->sess;
-	struct aim_conn_t *tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_CHATNAV);
+	struct oscar_data *odata;
+	struct aim_session_t *sess;
+	struct aim_conn_t *tstconn;
+
+	if (!g_slist_find(connections, gc))
+		return;
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_CHATNAV);
 
 	if (source < 0) {
 		if (tstconn->priv)
@@ -989,7 +1022,7 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 		tstconn->fd = source;
 
 	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
-	g_free(tstconn->priv);
+	free(tstconn->priv);
 	tstconn->priv = NULL;
 	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
@@ -999,9 +1032,16 @@ static void oscar_chatnav_connect(gpointer data, gint source, GdkInputCondition 
 static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition cond)
 {
 	struct gaim_connection *gc = data;
-	struct oscar_data *odata = gc->proto_data;
-	struct aim_session_t *sess = odata->sess;
-	struct aim_conn_t *tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
+	struct oscar_data *odata;
+	struct aim_session_t *sess;
+	struct aim_conn_t *tstconn;
+
+	if (!g_slist_find(connections, gc))
+		return;
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	tstconn = aim_getconn_type(sess, AIM_CONN_TYPE_AUTH);
 
 	if (source < 0) {
 		if (tstconn->priv)
@@ -1016,7 +1056,7 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 		tstconn->fd = source;
 
 	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
-	g_free(tstconn->priv);
+	free(tstconn->priv);
 	tstconn->priv = NULL;
 	odata->paspa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
@@ -1027,9 +1067,21 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 {
 	struct chat_connection *ccon = data;
 	struct gaim_connection *gc = ccon->gc;
-	struct oscar_data *odata = gc->proto_data;
-	struct aim_session_t *sess = odata->sess;
-	struct aim_conn_t *tstconn = ccon->conn;
+	struct oscar_data *odata;
+	struct aim_session_t *sess;
+	struct aim_conn_t *tstconn;
+
+	if (!g_slist_find(connections, gc)) {
+		g_free(ccon->priv);
+		g_free(ccon->show);
+		g_free(ccon->name);
+		g_free(ccon);
+		return;
+	}
+
+	odata = gc->proto_data;
+	sess = odata->sess;
+	tstconn = ccon->conn;
 
 	if (source < 0) {
 		aim_conn_kill(sess, &tstconn);
@@ -1037,6 +1089,7 @@ static void oscar_chat_connect(gpointer data, gint source, GdkInputCondition con
 		g_free(ccon->show);
 		g_free(ccon->name);
 		g_free(ccon);
+		return;
 	}
 
 	if (ccon->fd != source)
@@ -1090,7 +1143,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0005, gaim_info_change, 0);
 		aim_conn_addhandler(sess, tstconn, 0x0007, 0x0007, gaim_account_confirm, 0);
 
-		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+		tstconn->priv = memdup(cookie, AIM_COOKIELEN);
 		fd = proxy_connect(host, port, oscar_auth_connect, gc);
 		if (fd < 0) {
 			if (tstconn->priv)
@@ -1112,7 +1165,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		}
 		aim_conn_addhandler(sess, tstconn, 0x0001, 0x0003, gaim_server_ready, 0);
 
-		tstconn->priv = g_memdup(cookie, AIM_COOKIELEN);
+		tstconn->priv = memdup(cookie, AIM_COOKIELEN);
 		fd = proxy_connect(host, port, oscar_chatnav_connect, gc);
 		if (fd < 0) {
 			if (tstconn->priv)
@@ -1146,7 +1199,7 @@ int gaim_handle_redirect(struct aim_session_t *sess,
 		ccon->exchange = exchange;
 		ccon->show = extract_name(roomname);
 		
-		ccon->priv = g_memdup(cookie, AIM_COOKIELEN);
+		ccon->priv = memdup(cookie, AIM_COOKIELEN);
 		fd = proxy_connect(host, port, oscar_chat_connect, ccon);
 		if (fd < 0) {
 			aim_conn_kill(sess, &tstconn);
@@ -2529,22 +2582,31 @@ static void oscar_set_idle(struct gaim_connection *g, int time) {
 
 static void oscar_set_info(struct gaim_connection *g, char *info) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	if (awaymessage)
-		aim_bos_setprofile(odata->sess, odata->conn, info,
-					awaymessage->message, gaim_caps);
-	else
-		aim_bos_setprofile(odata->sess, odata->conn, info,
-					NULL, gaim_caps);
+	char inforeal[1025], away[1025];
+	g_snprintf(inforeal, sizeof(inforeal), "%s", info);
+	if (g->away)
+		g_snprintf(away, sizeof(away), "%s", g->away);
+	if (strlen(info) > 1024)
+		do_error_dialog("Maximum info length (1024) exceeded, truncating", "Info Too Long");
+	aim_bos_setprofile(odata->sess, odata->conn, inforeal, g->away ? away : NULL, gaim_caps);
 }
 
 static void oscar_set_away(struct gaim_connection *g, char *state, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	aim_bos_setprofile(odata->sess, odata->conn, g->user->user_info, message, gaim_caps);
+	char info[1025], away[1025];
+	g_snprintf(info, sizeof(info), "%s", g->user->user_info);
+	if (message)
+		g_snprintf(away, sizeof(away), "%s", message);
+	aim_bos_setprofile(odata->sess, odata->conn, info, away, gaim_caps);
 	if (g->away)
 		g_free (g->away);
 	g->away = NULL;
-	if (message)
+	if (message) {
+		if (strlen(message) > 1024)
+			do_error_dialog("Maximum away length (1024) exceeded, truncating",
+					"Info Too Long");
 		g->away = g_strdup (message);
+	}
 }
 
 static void oscar_warn(struct gaim_connection *g, char *name, int anon) {

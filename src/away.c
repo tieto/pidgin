@@ -175,6 +175,9 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 								  GTK_IMHTML_NO_COMMENTS |
 								  GTK_IMHTML_NO_SCROLL);
 		g_free(buf);
+		gtk_imhtml_append_text(GTK_IMHTML(awaytext), "<BR>", GTK_IMHTML_NO_TITLE |
+								     GTK_IMHTML_NO_COMMENTS |
+								     GTK_IMHTML_NO_SCROLL);
 
 		clistqueuesw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(clistqueuesw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);

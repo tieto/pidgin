@@ -3746,6 +3746,7 @@ show_log (char *name)
 			gtk_main_iteration();
 	}
 	gtk_imhtml_append_text (GTK_IMHTML(layout), string->str, options);
+	gtk_imhtml_append_text (GTK_IMHTML(layout), "<BR>", options);
 
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event",
