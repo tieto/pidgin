@@ -1057,10 +1057,12 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 		switch (info->errorcode) {
 		case 0x05:
 			/* Incorrect nick/password */
+			gc->wants_to_die = TRUE;
 			gaim_connection_error(gc, _("Incorrect nickname or password."));
 			break;
 		case 0x11:
 			/* Suspended account */
+			gc->wants_to_die = TRUE;
 			gaim_connection_error(gc, _("Your account is currently suspended."));
 			break;
 		case 0x14:
@@ -1069,10 +1071,12 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			break;
 		case 0x18:
 			/* connecting too frequently */
+			gc->wants_to_die = TRUE;
 			gaim_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		case 0x1c:
 			/* client too old */
+			gc->wants_to_die = TRUE;
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), GAIM_WEBSITE);
 			gaim_connection_error(gc, buf);
 			break;
