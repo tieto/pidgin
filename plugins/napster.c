@@ -105,10 +105,12 @@ static struct nap_channel *find_channel_by_name(struct gaim_connection *gc, char
 
 	while (channels) {
 		channel = (struct nap_channel *)channels->data;
-		if (!g_strcasecmp(name, channel->name)) {
-			return channel;
-		}
 
+		if (channel) {
+			if (!g_strcasecmp(name, channel->name)) {
+				return channel;
+			}
+		}
 		channels = g_slist_next(channels);
 	}
 
@@ -238,6 +240,23 @@ static void nap_callback(gpointer data, gint source, GdkInputCondition condition
 
 		g_strfreev(res);
 
+		free(buf);
+		return;
+	}
+
+	if (command == 0x197) {
+		struct nap_channel *channel;
+		struct conversation *convo;
+		gchar **res;
+
+		res = g_strsplit(buf, " ", 0);
+		
+		channel = find_channel_by_name(gc, res[0]);
+		convo = find_conversation_by_id(gc, channel->id);
+
+		remove_chat_buddy(convo, res[1]);
+		
+		g_strfreev(res);
 		free(buf);
 		return;
 	}
@@ -436,7 +455,7 @@ static void nap_chat_leave(struct gaim_connection *gc, int id)
 
 	nap_write_packet(gc, 0x191, channel->name);
 	
-	channels = g_slist_remove(channels, channel);
+	ndata->channels = g_slist_remove(ndata->channels, channel);
 	g_free(channel->name);
 	g_free(channel);
 	
@@ -480,13 +499,14 @@ static void nap_close(struct gaim_connection *gc)
 	if (gc->inpa)
 		gdk_input_remove(gc->inpa);
 
-	while (channels) {
-		channel = (struct nap_channel *)channels->data;
+	while (ndata->channels) {
+		channel = (struct nap_channel *)ndata->channels->data;
 		g_free(channel->name);
-		channels = g_slist_remove(channels, channel);
+		ndata->channels = g_slist_remove(ndata->channels, channel);
 		g_free(channel);
 	}
-	
+
+	free(gc->proto_data);
 }
 
 static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
