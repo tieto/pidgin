@@ -1031,7 +1031,7 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	char *c;
 	int port;
 
-	if (strcmp(params[1], "SB")) {
+	if (strcmp(params[1], "SB") && strcmp(params[1], "NS")) {
 		hide_login_progress(gc, _("Got invalid XFR"));
 		signoff(gc);
 		
@@ -1047,25 +1047,40 @@ __xfr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	else
 		port = 1863;
 
-	swboard = msn_session_find_unused_switch(session);
+	if (!strcmp(params[1], "SB")) {
+		swboard = msn_session_find_unused_switch(session);
 
-	if (swboard == NULL) {
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Received an XFR SB request when there's no unused "
-				   "switchboards!\n");
-		return FALSE;
+		if (swboard == NULL) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Received an XFR SB request when there's no unused "
+					   "switchboards!\n");
+			return FALSE;
+		}
+
+		msn_switchboard_set_auth_key(swboard, params[4]);
+
+		if (!msn_switchboard_connect(swboard, host, port)) {
+			gaim_debug(GAIM_DEBUG_ERROR, "msn",
+					   "Unable to connect to switchboard on %s, port %d\n",
+					   host, port);
+
+			g_free(host);
+
+			return FALSE;
+		}
 	}
+	else if (!strcmp(params[1], "NS")) {
+		msn_servconn_destroy(session->notification_conn);
 
-	msn_switchboard_set_auth_key(swboard, params[4]);
+		session->notification_conn = msn_notification_new(session, host, port);
 
-	if (!msn_switchboard_connect(swboard, host, port)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "msn",
-				   "Unable to connect to switchboard on %s, port %d\n",
-				   host, port);
+		if (!msn_servconn_connect(session->notification_conn)) {
+			hide_login_progress(gc, _("Unable to transfer to "
+									  "notification server"));
+			signoff(gc);
 
-		g_free(host);
-
-		return FALSE;
+			return FALSE;
+		}
 	}
 
 	g_free(host);
