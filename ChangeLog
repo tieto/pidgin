@@ -15,6 +15,7 @@ version 2.0.0
 	* People using input methods can now use Enter again.
 
 	Preference changes:
+	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
 	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
 	  won't interfere with bindings set by the GTK theme.
 	* Removed preference for buddy list button type, defaulted to "None"
