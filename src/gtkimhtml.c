@@ -43,13 +43,6 @@
 #include "pixmaps/broken.xpm"
 #endif
 
-#if GTK_CHECK_VERSION(1,3,0)
-#  define GTK_IMHTML_GET_STYLE_FONT(style) gtk_style_get_font (style)
-#else
-#  define GTK_IMHTML_GET_STYLE_FONT(style) (style)->font
-#  define GTK_CLASS_TYPE(class) (class)->type
-#endif
-
 #include "pixmaps/angel.xpm"
 #include "pixmaps/bigsmile.xpm"
 #include "pixmaps/burp.xpm"
@@ -90,6 +83,8 @@ static gint _point_sizes [] = { 80, 100, 120, 140, 200, 300, 400 };
 #define TYPE_SEP      3
 #define TYPE_BR       4
 #define TYPE_COMMENT  5
+
+#define  GTK_IMHTML_GET_STYLE_FONT(style) gtk_style_get_font (style)
 
 #define DRAW_IMG(x) (((x)->type == TYPE_IMG) || (imhtml->smileys && ((x)->type == TYPE_SMILEY)))
 
@@ -1438,32 +1433,29 @@ scroll_timeout (GtkIMHtml *imhtml)
 static gint
 gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 {
+	int x,y;
 	GtkStyle *style;
-	GdkFont *font;
-	gint y, baseline_skip, gap;
-
+	PangoLayout *layout;
+		if (imhtml->tip_bit->url)
+		layout = gtk_widget_create_pango_layout (imhtml->tip_window, imhtml->tip_bit->url);
+	else if (imhtml->tip_bit->img)
+		layout = gtk_widget_create_pango_layout (imhtml->tip_window, imhtml->tip_bit->img->filename);
+	else
+		return FALSE;
+		
 	style = imhtml->tip_window->style;
-	font = GTK_IMHTML_GET_STYLE_FONT (style);
-
-	gap = (font->ascent + font->descent) / 4;
-	if (gap < 2)
-		gap = 2;
-	baseline_skip = font->ascent + font->descent + gap;
+	pango_layout_get_size (layout, &x, &y);
 
 	if (!imhtml->tip_bit)
 		return FALSE;
-
+	
 	gtk_paint_flat_box (style, imhtml->tip_window->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			   NULL, imhtml->tip_window, "tooltip", 0, 0, -1, -1);
 
-	y = font->ascent + 4;
-	if (imhtml->tip_bit->url)
-		gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
-				  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->url);
-	else if (imhtml->tip_bit->img)
-		gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
-				  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->img->filename);
-
+	gtk_paint_layout (style, imhtml->tip_window->window, GTK_STATE_NORMAL, TRUE,
+			  NULL, imhtml->tip_window, "tooltip", 4, 4, layout);
+	
+	g_object_unref (layout);
 	return FALSE;
 }
 
@@ -1473,8 +1465,8 @@ gtk_imhtml_tip (gpointer data)
 	GtkIMHtml *imhtml = data;
 	GtkWidget *widget = GTK_WIDGET (imhtml);
 	GtkStyle *style;
-	GdkFont *font;
-	gint gap, x, y, w, h, scr_w, scr_h, baseline_skip;
+	PangoLayout *layout;
+	gint x, y, w, h, scr_w, scr_h;
 
 	if (!imhtml->tip_bit || !GTK_WIDGET_DRAWABLE (widget)) {
 		imhtml->tip_timer = 0;
@@ -1490,24 +1482,19 @@ gtk_imhtml_tip (gpointer data)
 	gtk_widget_set_name (imhtml->tip_window, "gtk-tooltips");
 	gtk_signal_connect_object (GTK_OBJECT (imhtml->tip_window), "expose_event",
 				   GTK_SIGNAL_FUNC (gtk_imhtml_tip_paint), GTK_OBJECT (imhtml));
-	gtk_signal_connect_object (GTK_OBJECT (imhtml->tip_window), "draw",
-				   GTK_SIGNAL_FUNC (gtk_imhtml_tip_paint), GTK_OBJECT (imhtml));
 
 	gtk_widget_ensure_style (imhtml->tip_window);
 	style = imhtml->tip_window->style;
-	font = GTK_IMHTML_GET_STYLE_FONT (style);
+	layout = gtk_widget_create_pango_layout(imhtml->tip_window, 
+						imhtml->tip_bit->url ? imhtml->tip_bit->url : imhtml->tip_bit->img->filename);
 
 	scr_w = gdk_screen_width ();
 	scr_h = gdk_screen_height ();
 
-	gap = (font->ascent + font->descent) / 4;
-	if (gap < 2)
-		gap = 2;
-	baseline_skip = font->ascent + font->descent + gap;
+	pango_layout_get_size(layout, &w, &h);
 
-	w = 8 + gdk_string_width (font, imhtml->tip_bit->img ? imhtml->tip_bit->img->filename : 
-				  imhtml->tip_bit->url);
-	h = 8 - gap + baseline_skip;
+	w = PANGO_PIXELS(w) + 8;
+	h = PANGO_PIXELS(h) + 8;
 
 	gdk_window_get_pointer (NULL, &x, &y, NULL);
 	if (GTK_WIDGET_NO_WINDOW (widget))
@@ -1521,18 +1508,17 @@ gtk_imhtml_tip (gpointer data)
 		x = 0;
 
 	if ((y + h + + 4) > scr_h)
-		y = y - imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
+		y = y - h;
 	else 
-		if (imhtml->tip_bit->font)
-			y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
-		else
-			y = y + font->ascent + font->descent;
-
+		y = y + h - 4;
+	
 	gtk_widget_set_usize (imhtml->tip_window, w, h);
 	gtk_widget_set_uposition (imhtml->tip_window, x, y);
 	gtk_widget_show (imhtml->tip_window);
 
 	imhtml->tip_timer = 0;
+	g_object_unref(layout);
+
 	return FALSE;
 }
 
@@ -1590,7 +1576,7 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 
 		while (click) {
 			uw = (struct clickable *) click->data;
-			if ((x > uw->x) && (x < uw->x + uw->width) &&
+			if ((uw->bit->url) && (x > uw->x) && (x < uw->x + uw->width) &&
 			    (y > uw->y) && (y < uw->y + uw->height) &&
 			    (uw->bit->url || uw->bit->img)) {
 				if (imhtml->tip_bit != uw->bit) {
@@ -2076,12 +2062,7 @@ gtk_imhtml_class_init (GtkIMHtmlClass *class)
 static const gchar*
 gtk_imhtml_get_font_name (GdkFont *font)
 {
-#if GTK_CHECK_VERSION(1,3,0)
 	return gdk_x11_font_get_name(font);
-#else
-	GdkFontPrivate *fontpriv = (GdkFontPrivate *) font;
-	return fontpriv->names->data;
-#endif
 }
 
 static GdkFont*
