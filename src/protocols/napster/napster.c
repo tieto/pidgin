@@ -468,7 +468,7 @@ static void nap_login_connect(gpointer data, gint source, GaimInputCondition con
 
 	/* Update the login progress status display */
 	buf = g_strdup_printf("Logging in: %s", gaim_account_get_username(gc->account));
-	gaim_connection_update_progress(gc, buf, 2, NAPSTER_CONNECT_STEPS);
+	gaim_connection_update_progress(gc, buf, 1, NAPSTER_CONNECT_STEPS);
 	g_free(buf);
 
 	/* Write our signon data */
@@ -484,7 +484,7 @@ static void nap_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 
-	gaim_connection_update_progress(gc, _("Connecting"), 1, NAPSTER_CONNECT_STEPS);
+	gaim_connection_update_progress(gc, _("Connecting"), 0, NAPSTER_CONNECT_STEPS);
 
 	gc->proto_data = g_new0(struct nap_data, 1);
 	if (gaim_proxy_connect(account,
