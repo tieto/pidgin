@@ -726,7 +726,7 @@ static void un_alias(GtkWidget *a, struct buddy *b)
 	gtk_ctree_node_set_text(GTK_CTREE(edittree), node, 0, b->name);
 	if (gs) bs = find_buddy_show(gs, b->name);
 	if (bs) gtk_label_set(GTK_LABEL(bs->label), b->name);
-	do_export(0, 0);
+	do_export(b->gc);
 }
 
 static gboolean click_edit_tree(GtkWidget *widget, GdkEventButton *event, gpointer data)
@@ -871,7 +871,7 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 
 	// flush buddy list to cache
 
-	do_export( (GtkWidget *) NULL, 0 );
+	do_export(gc);
 }
 
 void remove_group(struct gaim_connection *gc, struct group *rem_g)
@@ -908,7 +908,7 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 
         // flush buddy list to cache
 
-        do_export( (GtkWidget *) NULL, 0 );
+        do_export(gc);
 }
 
 
@@ -1090,8 +1090,11 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 		} else
 			new_g->members = g_slist_append(new_g->members, buddy);
 
-		if (buddy->gc != new_g->gc)
+		do_export(buddy->gc);
+		if (buddy->gc != new_g->gc) {
+			do_export(new_g->gc);
 			build_edit_tree();
+		}
 	} else /* group */ {
 		/* move the group. if moving connections, copy the group, and each buddy in the
 		 * group. if the buddy exists in the new connection, leave it where it is. */
@@ -1132,6 +1135,7 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 					mem = mem->next;
 				}
 			}
+			do_export(pc);
 		} else {
 			g = group;
 			gc = g->gc;
@@ -1147,10 +1151,9 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 					gc->groups = g_slist_prepend(gc->groups, g);
 			} else
 				gc->groups = g_slist_append(gc->groups, g);
+			do_export(gc);
 		}
 	}
-
-	do_export( (GtkWidget *) NULL, 0 );
 
 	redo_buddy_list();
 	update_num_groups();
@@ -1345,11 +1348,11 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
 			g = find_group_by_buddy(b->gc, b->name);
 			remove_buddy(b->gc, g, b);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
-			do_export( (GtkWidget *) NULL, 0 );
+			do_export(b->gc);
 		} else if (*type == EDIT_GROUP) {
 			remove_group(((struct group *)type)->gc, (struct group *)type);
 			gtk_ctree_remove_node(GTK_CTREE(edittree), node);
-			do_export( (GtkWidget *) NULL, 0 );
+			do_export(((struct group *)type)->gc);
                 }
 
         } else {
@@ -1362,13 +1365,6 @@ void import_callback(GtkWidget *widget, void *null)
 {
         show_import_dialog();
 }
-
-void export_callback(GtkWidget *widget, void *null)
-{
-        show_export_dialog();
-}
-
-
 
 void do_quit()
 {
@@ -2571,8 +2567,8 @@ void show_buddy_list()
 
         gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm,
 			GTK_SIGNAL_FUNC(import_callback), 0, 0, 0);
-        gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,
-			GTK_SIGNAL_FUNC(export_callback), 0, 0, 0);
+        /*gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,
+			GTK_SIGNAL_FUNC(show_export_dialog), 0, 0, 0);*/
 	gaim_separator(menu);
 	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm,
 			GTK_SIGNAL_FUNC(signoff_all), 'd', GDK_CONTROL_MASK, "Ctl+D");
@@ -2940,7 +2936,7 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 	if (how_many == 0 && !from_do_import) {
 		do_import((GtkWidget *)NULL, gc);
 	} else if (gc && (bud_list_cache_exists(gc) == FALSE)) {
-		do_export((GtkWidget *)NULL, 0);
+		do_export(gc);
 	}
 }
 

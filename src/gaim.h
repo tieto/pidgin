@@ -795,7 +795,7 @@ gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
-extern void do_export(GtkWidget *, void *);
+extern void do_export(struct gaim_connection *);
 extern void show_warn_dialog(struct gaim_connection *, char *);
 extern void do_error_dialog(char *, char *);
 extern void show_error_dialog(char *);
@@ -805,8 +805,8 @@ extern void show_add_buddy(struct gaim_connection *, char *, char *);
 extern void show_add_group(struct gaim_connection *);
 extern void show_add_perm(struct gaim_connection *, char *, gboolean);
 extern void destroy_all_dialogs();
-extern void show_export_dialog();
 extern void show_import_dialog();
+extern void show_export_dialog();
 extern void show_new_bp();
 extern void show_log_dialog(struct conversation *);
 extern void show_find_email(struct gaim_connection *gc);

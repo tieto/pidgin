@@ -728,7 +728,7 @@ static void jabber_handlepresence(gjconn j, jpacket p)
 			jd->pending_chats = g_slist_remove(jd->pending_chats, jc);
 		} else if (!(b = find_buddy(GJ_GC(j), buddy))) {
 			b = add_buddy(GJ_GC(j), "Buddies", buddy, buddy);
-			do_export(NULL, NULL);
+			do_export(GJ_GC(j));
 		}
 	}
 
@@ -854,10 +854,9 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 					if (strcasecmp(sub, "from") && strcasecmp(sub, "none") &&
 							!(b = find_buddy(GJ_GC(j), buddyname))) {
 						debug_printf("adding buddy: %s\n", buddyname);
-						b =
-						    add_buddy(GJ_GC(j), groupname, buddyname,
+						b = add_buddy(GJ_GC(j), groupname, buddyname,
 							      name ? name : buddyname);
-						do_export(0, 0);
+						do_export(GJ_GC(j));
 					} else if (b) {
 						debug_printf("updating buddy: %s/%s\n", buddyname, name);
 						g_snprintf(b->name, sizeof(b->name), "%s", buddyname);
@@ -881,7 +880,7 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 			if (strcasecmp(sub, "from") && strcasecmp(sub, "none") &&
 					!(b = find_buddy(GJ_GC(j), buddyname))) {
 				b = add_buddy(GJ_GC(j), "Buddies", buddyname, name ? name : Jid);
-				do_export(0, 0);
+				do_export(GJ_GC(j));
 			}
 			g_free(buddyname);
 		}

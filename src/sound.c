@@ -176,16 +176,6 @@ static int play_esd(unsigned char *data, int size)
 
 }
 
-static int play_esd_file(char *file)
-{
-	int esd_stat;
-	int fd = open(file, O_RDONLY);
-	if (fd <= 0)
-		return 0;
-	esd_stat = esd_play_file(NULL, file, 1);
-	return esd_stat;
-}
-
 static int can_play_esd()
 {
 	esd_format_t format = ESD_BITS16 | ESD_STREAM | ESD_PLAY | ESD_MONO;
@@ -329,7 +319,7 @@ void play_file(char *filename)
 			_exit(0);
 		}
 #ifdef ESD_SOUND
-		if (play_esd_file(filename))
+		if (esd_play_file(NULL, filename, 1))
 			_exit(0);
 #endif
 

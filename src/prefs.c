@@ -1797,7 +1797,7 @@ static void set_deny_mode(GtkWidget *w, int data)
 {
 	current_deny_gc->permdeny = data;
 	serv_set_permit_deny(current_deny_gc);
-	do_export(NULL, 0);
+	do_export(current_deny_gc);
 }
 
 static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *set)
@@ -1967,7 +1967,7 @@ static void pref_deny_rem(GtkWidget *button, gboolean permit)
 		build_block_list();
 	}
 
-	do_export(0, 0);
+	do_export(current_deny_gc);
 }
 
 static void deny_page()

@@ -796,13 +796,14 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 	} else if (connections) {
 		add_buddy(connections->data, grp, who, whoalias);
 		serv_add_buddy(connections->data, who);
+		a->gc = connections->data;
 	}
 
         if (c != NULL) {
 		update_buttons_by_protocol(c);
 	}
         
-	do_export( (GtkWidget *) NULL, 0 );
+	do_export(a->gc);
 
         destroy_dialog(NULL, a->window);
 }
@@ -814,9 +815,12 @@ void do_add_group(GtkWidget *w, struct addbuddy *a)
 	grp = gtk_entry_get_text(GTK_ENTRY(a->entry));
 
 	if (a->gc) add_group(a->gc, grp);
-	else if (connections) add_group(connections->data, grp);
+	else if (connections) {
+		add_group(connections->data, grp);
+		a->gc = connections->data;
+	}
 
-	do_export( (GtkWidget *) NULL, 0 );
+	do_export(a->gc);
 
 	destroy_dialog(NULL, a->window);
 }
@@ -1820,7 +1824,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 			p->gc->deny = g_slist_append(p->gc->deny, name);
 			build_block_list();
 			serv_add_deny(p->gc, name);
-			do_export(0, 0);
+			do_export(p->gc);
 		} else
 			g_free(name);
         } else {
@@ -1837,7 +1841,7 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 			p->gc->permit = g_slist_append(p->gc->permit, name);
 			build_allow_list();
 			serv_add_permit(p->gc, name);
-			do_export(0, 0);
+			do_export(p->gc);
 		} else
 			g_free(name);
         }
@@ -2788,19 +2792,20 @@ bud_list_cache_exists(struct gaim_connection *gc)
 /* if dummy is 0, save to ~/.gaim/screenname.blist, where screenname is each
  * signed in user. Else, let user choose */
 
-void do_export(GtkWidget *w, void *dummy)
+void do_export(struct gaim_connection *g)
 {
+	FILE *dir;
         FILE *f;
-	gint show_dialog = (int) dummy;
-        char *buf = g_malloc(BUF_LONG * 2);
+        char buf[32 * 1024];
         char *file;
 	char path[PATHSIZE];
+	char *g_screenname;
 
+	/*
 	if ( show_dialog == 1 ) {
 		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
 		strncpy( path, file, PATHSIZE - 1 );
 		if (file_is_dir(path, exportdialog)) {
-			g_free (buf);
 			return;
 		}
 		if ((f = fopen(path,"w"))) {
@@ -2815,50 +2820,38 @@ void do_export(GtkWidget *w, void *dummy)
         	destroy_dialog(NULL, exportdialog);
         	exportdialog = NULL;
 	} else {
-		GSList *c = connections;
-		struct gaim_connection *g;
-		char *g_screenname;
+	*/
 
-		file = gaim_user_dir();
-		if ( file != (char *) NULL ) {
-			FILE *dir;
-			strcpy(buf, file);
-			dir = fopen(buf, "r");
-			if (!dir)
-				mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
-			else
-				fclose(dir);
+	file = gaim_user_dir();
+	if (!file) return;
 
-			while (c) {
-				g = (struct gaim_connection *)c->data;
+	strcpy(buf, file);
+	dir = fopen(buf, "r");
+	if (!dir)
+		mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
+	else
+		fclose(dir);
 
-				g_screenname = get_screenname_filename(g->username);
+	g_screenname = get_screenname_filename(g->username);
 
-				sprintf(path, "%s/%s.%d.blist", file, g_screenname,
-						(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
-				if ((f = fopen(path,"w"))) {
-					debug_printf("writing %s\n", path);
-					toc_build_config(g, buf, 8192 - 1, TRUE);
-					fprintf(f, "%s\n", buf);
-					fclose(f);
-					chmod(buf, S_IRUSR | S_IWUSR);
-				} else {
-					debug_printf("unable to write %s\n", path);
-				}
-
-				g_free(g_screenname);
-
-				c = c->next;
-			}
-			g_free(file);
-		} else return;
+	sprintf(path, "%s/%s.%d.blist", file, g_screenname,
+			(g->protocol == PROTO_OSCAR) ? PROTO_TOC : g->protocol);
+	if ((f = fopen(path,"w"))) {
+		debug_printf("writing %s\n", path);
+		toc_build_config(g, buf, 8192 - 1, TRUE);
+		fprintf(f, "%s\n", buf);
+		fclose(f);
+		chmod(buf, S_IRUSR | S_IWUSR);
+	} else {
+		debug_printf("unable to write %s\n", path);
 	}
 
-	g_free(buf);
-        
+	g_free(g_screenname);
+	g_free(file);
 }
 
-	
+
+/*
 void show_export_dialog()
 {
         char *buf = g_malloc(BUF_LEN);
@@ -2887,6 +2880,7 @@ void show_export_dialog()
         gdk_window_raise(exportdialog->window);
 
 }
+*/
 
 /* if gc is non-NULL, then import from ~/.gaim/gc->username.blist, else let user
    choose */
@@ -2992,7 +2986,7 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	if ( from_dialog ) {
 		/* save what we just did to cache */
 
-		do_export( (GtkWidget *) NULL, 0 );
+		do_export(gc);
                	destroy_dialog(NULL, importdialog);
                	importdialog = NULL;
 	} 
@@ -3391,7 +3385,7 @@ static void do_alias_bud(GtkWidget *w, struct buddy *b)
 	char *al = gtk_entry_get_text(GTK_ENTRY(aliasname));
 	g_snprintf(b->show, sizeof(b->show), "%s", (al && strlen(al)) ? al : b->name);
 	handle_buddy_rename(b, b->name);
-	do_export(0, 0);
+	do_export(b->gc);
 	destroy_dialog(aliasdlg, aliasdlg);
 }
 
@@ -3793,7 +3787,7 @@ static void do_rename_group(GtkObject *obj, GtkWidget *entry)
 			handle_group_rename(g, prevname);
 			g_free(prevname);
 		}
-		do_export(0, 0);
+		do_export(g->gc);
 	}
 
 	destroy_dialog(rename_dialog, rename_dialog);
