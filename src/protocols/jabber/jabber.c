@@ -1097,7 +1097,7 @@ static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
 				continue;
 
 			if(chat->account != account)
-				return;
+				continue;
 
 			if(!(room = g_hash_table_lookup(chat->components, "room")))
 				continue;
