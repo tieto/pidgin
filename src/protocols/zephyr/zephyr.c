@@ -171,7 +171,7 @@ static const char *zephyr_normalize(const GaimAccount *, const char *);
 static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic);
 char* zephyr_tzc_deescape_str(const char *message);
 
-char *zephyr_strip_foreign_realm(zephyr_account* zephyr,const char* user){
+char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
 	/*
 	  Takes in a username of the form username or username@realm 
 	  and returns:
@@ -696,12 +696,9 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 				return;
 
 			if ((b = gaim_find_buddy(gc->account, user)) == NULL) {
-				char *e = strchr(user, '@');
-
-				if (e && !g_ascii_strcasecmp(e + 1, zephyr->realm)) {
-					*e = '\0';
-				}
-				b = gaim_find_buddy(gc->account, user);
+                                char* stripped_user = zephyr_strip_local_realm(zephyr,user);
+                                b = gaim_find_buddy(gc->account,stripped_user);
+                                g_free(stripped_user);
 			}
 			if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user)) {
 				ZLocations_t locs;
@@ -767,7 +764,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 			gchar* stripped_sender;
 			if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
 				flags |= GAIM_CONV_IM_AUTO_RESP;
-			stripped_sender = zephyr_strip_foreign_realm(zephyr,notice.z_sender);
+			stripped_sender = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
 				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, GAIM_TYPING);
@@ -839,19 +836,19 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice, struct sockaddr_
 			g_free(sendertmp); /* fix memory leak? */
 			/* If the person is in the default Realm, then strip the 
 			   Realm from the sender field */
-			sendertmp = zephyr_strip_foreign_realm(zephyr,notice.z_sender);
+			sendertmp = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
 			send_inst_utf8 = zephyr_recv_convert(gc,send_inst, strlen(send_inst));
 			if (!send_inst_utf8) {
 				gaim_debug(GAIM_DEBUG_ERROR, "zephyr","send_inst %s became null\n", send_inst);
 				send_inst_utf8 = "malformed instance";
 			}
-				
+
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
 			g_free(send_inst);
 			gconv1 = gaim_find_conversation_with_account(zt2->name, gc->account);
 			gcc = gaim_conversation_get_chat_data(gconv1);
-				
+
 			if (!gaim_conv_chat_find_user(gcc, sendertmp)) {
 				/* force interpretation in network byte order */
 				unsigned char *addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
@@ -1097,22 +1094,17 @@ static gint check_notify_tzc(gpointer data)
 				char *user; 
 				GaimBuddy *b;
 				int nlocs = 0;
-                                parse_tree *locations;
-                                gchar *locval;
+				parse_tree *locations;
+				gchar *locval;
 				user = tree_child(find_node(newparsetree,"user"),2)->contents;
 
 				if ((b = gaim_find_buddy(gc->account, user)) == NULL) {
-					char *e = strchr(user, '@');
-
-					if (e && !g_ascii_strcasecmp(e + 1, zephyr->realm)) {
-						*e = '\0';
-					}
-					b = gaim_find_buddy(gc->account, user);
+                                        gchar *stripped_user = zephyr_strip_local_realm(zephyr,user);
+					b = gaim_find_buddy(gc->account, stripped_user);
+                                        g_free(stripped_user);
 				}
-
 				locations = find_node(newparsetree,"locations");
 				locval = tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents;
-                                /*				fprintf(stderr,"locval: %s %d\n",locval,strlen(locval)); */
 
 				if (!locval || !g_ascii_strcasecmp(locval," ") || (strlen(locval) == 0)) {
 					nlocs = 0;
@@ -1424,8 +1416,13 @@ static void process_anyone(GaimConnection *gc)
 			strip_comments(buff);
 			if (buff[0]) {
 				if (!(b = gaim_find_buddy(gc->account, buff))) {
-					b = gaim_buddy_new(gc->account, buff, NULL);
-					gaim_blist_add_buddy(b, NULL, g, NULL);
+                                        char *stripped_user = zephyr_strip_local_realm(gc->proto_data,buff);
+                                        gaim_debug_info("zephyr","stripped_user %s\n",stripped_user);
+                                        if (!(b = gaim_find_buddy(gc->account,stripped_user))){
+                                                b = gaim_buddy_new(gc->account, stripped_user, NULL);
+                                                gaim_blist_add_buddy(b, NULL, g, NULL);
+                                        } 
+                                        g_free(stripped_user);
 				}
 			}
 		}
@@ -1777,7 +1774,7 @@ static void write_anyone(GaimConnection *gc)
 {
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GaimBuddy *b;
-	char *ptr, *fname, *ptr2;
+	char *fname;
 	FILE *fd;
 	zephyr_account* zephyr = gc->proto_data;
 	fname = g_strdup_printf("%s/.anyone", gaim_home_dir());
@@ -1798,18 +1795,9 @@ static void write_anyone(GaimConnection *gc)
 					continue;
 				b = (GaimBuddy *) bnode;
 				if (b->account == gc->account) {
-					if ((ptr = strchr(b->name, '@')) != NULL) {
-						ptr2 = ptr + 1;
-						/* We should only strip the realm name if the principal
-						   is in the user's realm
-						*/
-						if (!g_ascii_strcasecmp(ptr2, zephyr->realm)) {
-							*ptr = '\0';
-						}
-					}
-					fprintf(fd, "%s\n", b->name);
-					if (ptr)
-						*ptr = '@';
+                                        gchar *stripped_user = zephyr_strip_local_realm(zephyr,b->name);
+					fprintf(fd, "%s\n", stripped_user);
+                                        g_free(stripped_user);
 				}
 			}
 		}
@@ -2075,7 +2063,7 @@ static const char *zephyr_normalize(const GaimAccount * account, const char *ori
 char *local_zephyr_normalize(zephyr_account *zephyr,const char *orig)
 {
 	/* 
-	   Basically the inverse of zephyr_strip_foreign_realm 
+	   Basically the inverse of zephyr_strip_local_realm 
 	*/	
 	char* buf;
 	
