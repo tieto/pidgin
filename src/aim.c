@@ -134,11 +134,11 @@ void dologin(GtkWidget *widget, GtkWidget *w)
                 return;
         
 	if (!strlen(username)) {
-		hide_login_progress("Please enter your logon");
+		hide_login_progress(_("Please enter your logon"));
 		return;
 	}
 	if (!strlen(password)) {
-		hide_login_progress("You must give your password");
+		hide_login_progress(_("You must give your password"));
 		return;
 	}
 
@@ -419,7 +419,7 @@ void show_login()
 	gtk_container_add(GTK_CONTAINER(mainwindow),table );
 	
 	gtk_widget_show(table);
-	gtk_window_set_title(GTK_WINDOW(mainwindow),"Gaim - Login");
+	gtk_window_set_title(GTK_WINDOW(mainwindow),_("Gaim - Login"));
 
 
         gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember), (general_options & OPT_GEN_REMEMBER_PASS));
