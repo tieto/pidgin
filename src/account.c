@@ -730,9 +730,11 @@ gaim_account_get_protocol_id(const GaimAccount *account)
 const char *
 gaim_account_get_protocol_name(const GaimAccount *account)
 {
+	GaimPlugin *p;
+
 	g_return_val_if_fail(account != NULL, NULL);
 
-	GaimPlugin *p = gaim_find_prpl(account->protocol_id);
+	p = gaim_find_prpl(account->protocol_id);
 
 	return ((p && p->info->name) ? _(p->info->name) : _("Unknown"));
 }
