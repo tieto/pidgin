@@ -1274,10 +1274,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					gtk_text_buffer_get_end_iter(gtkconv->entry_buffer, &end);
 
 					conv->send_history->data =
-						gtk_text_buffer_get_text(gtkconv->entry_buffer,
-												 &start, &end, FALSE);
+						gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 				}
-
+				
 				if (conv->send_history->next &&
 					conv->send_history->next->data) {
 

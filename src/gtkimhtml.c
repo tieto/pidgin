@@ -90,6 +90,7 @@ enum {
 	BUTTONS_UPDATE,
 	TOGGLE_FORMAT,
 	CLEAR_FORMAT,
+	UPDATE_FORMAT,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -625,7 +626,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 						g_cclosure_marshal_VOID__POINTER,
 						G_TYPE_NONE, 1,
 						G_TYPE_POINTER);
-	signals[BUTTONS_UPDATE] = g_signal_new("format_functions_update",
+	signals[BUTTONS_UPDATE] = g_signal_new("format_buttons_update",
 					       G_TYPE_FROM_CLASS(gobject_class),
 					       G_SIGNAL_RUN_FIRST,
 					       G_STRUCT_OFFSET(GtkIMHtmlClass, buttons_update),
@@ -651,6 +652,14 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *class)
 					      0,
 						  g_cclosure_marshal_VOID__VOID,
 						  G_TYPE_NONE, 0);
+	signals[UPDATE_FORMAT] = g_signal_new("format_function_update",
+							G_TYPE_FROM_CLASS(gobject_class),
+							G_SIGNAL_RUN_FIRST,
+							G_STRUCT_OFFSET(GtkIMHtmlClass, update_format),
+							NULL,
+							0,
+							g_cclosure_marshal_VOID__VOID,
+							G_TYPE_NONE, 0);
 	gobject_class->finalize = gtk_imhtml_finalize;
 }
 
@@ -1415,6 +1424,7 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 		pre = 0;
 
 	GSList *fonts = NULL;
+	GObject *object;
 	GtkIMHtmlScalable *scalable = NULL;
 	int y, height;
 
@@ -2042,7 +2052,12 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	g_free (ws);
 	if(bg)
 		g_free(bg);
-	gtk_imhtml_close_tags(imhtml);
+	/* this shouldn't be necessary if we want to be able to continue 
+	 * using the format if it was unclosed.  But seeing as removing this
+	 * line does not help the ctrl-up/down from enabling open tags, I'm
+	 * leaving it up to sean, or unless I find some time to look into it
+	 * more -Gary */
+	gtk_imhtml_close_tags(imhtml); 
 	if (!(options & GTK_IMHTML_NO_SCROLL))
 		gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (imhtml), mark,
 					      0, TRUE, 0.0, 1.0);
@@ -2050,6 +2065,11 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	gtk_text_buffer_move_mark (imhtml->text_buffer,
 				   gtk_text_buffer_get_mark (imhtml->text_buffer, "insert"),
 				   &iter);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[UPDATE_FORMAT], 0);
+	g_object_unref(object);
+
 	return str;
 }
 

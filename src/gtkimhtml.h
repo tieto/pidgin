@@ -123,6 +123,7 @@ struct _GtkIMHtmlClass {
 	void (*buttons_update)(GtkIMHtml *, GtkIMHtmlButtons);
 	void (*toggle_format)(GtkIMHtml *, GtkIMHtmlButtons);
 	void (*clear_format)(GtkIMHtml *);
+	void (*update_format)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {

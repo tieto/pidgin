@@ -701,6 +701,25 @@ static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   FALSE, toolbar);
 }
+static void update_format_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
+{
+	gboolean bold, italic, underline;
+	
+	bold = italic = underline = FALSE;
+	gtk_imhtml_get_current_format(imhtml, -1, &bold, &italic, &underline);
+
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)) != bold)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
+									   toolbar);
+	
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)) != italic)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
+									   toolbar);
+	
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
+		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
+									   underline, toolbar);	
+}
 
 static void cursor_moved_cb(GtkIMHtml *imhtml, GtkMovementStep step,
 							gint change, gboolean selected,
@@ -979,9 +998,10 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
 	toolbar->imhtml = imhtml;
-	g_signal_connect(G_OBJECT(imhtml), "format_functions_update", G_CALLBACK(update_buttons_cb), toolbar);
+	g_signal_connect(G_OBJECT(imhtml), "format_buttons_update", G_CALLBACK(update_buttons_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(reset_buttons_cb), toolbar);
+	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "move_cursor", G_CALLBACK(cursor_moved_cb), toolbar);
 
 	bold = italic = underline = FALSE;
