@@ -167,8 +167,9 @@ gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 
 	signal_handlers = g_list_append(signal_handlers, handler);
 
-	gaim_signal_connect(instance, signal,
-						plugin, GAIM_CALLBACK(perl_signal_cb), handler);
+	gaim_debug(GAIM_DEBUG_MISC, "perl", "plugin = %p\n", plugin);
+	gaim_signal_connect_vargs(instance, signal,
+							  plugin, GAIM_CALLBACK(perl_signal_cb), handler);
 }
 
 void

@@ -14,25 +14,6 @@ CODE:
 	gaim_perl_timeout_add(plugin, seconds, func, data);
 
 void
-debug(level, category, string)
-	const char *level
-	const char *category
-	const char *string
-CODE:
-	if (!strcmp(level, "misc"))
-		gaim_debug(GAIM_DEBUG_MISC, category, string);
-	else if (!strcmp(level, "info"))
-		gaim_debug(GAIM_DEBUG_INFO, category, string);
-	else if (!strcmp(level, "warning"))
-		gaim_debug(GAIM_DEBUG_WARNING, category, string);
-	else if (!strcmp(level, "error"))
-		gaim_debug(GAIM_DEBUG_ERROR, category, string);
-	else if (!strcmp(level, "fatal"))
-		gaim_debug(GAIM_DEBUG_FATAL, category, string);
-	else
-		croak("Unknown debug level type '%s'", level);
-
-void
 signal_connect(instance, signal, plugin, func, data)
 	void *instance
 	const char *signal
@@ -50,6 +31,25 @@ signal_disconnect(instance, signal, plugin, func)
 	const char *func
 CODE:
 	gaim_perl_signal_disconnect(plugin, instance, signal, func);
+
+void
+debug(level, category, string)
+	const char *level
+	const char *category
+	const char *string
+CODE:
+	if (!strcmp(level, "misc"))
+		gaim_debug(GAIM_DEBUG_MISC, category, string);
+	else if (!strcmp(level, "info"))
+		gaim_debug(GAIM_DEBUG_INFO, category, string);
+	else if (!strcmp(level, "warning"))
+		gaim_debug(GAIM_DEBUG_WARNING, category, string);
+	else if (!strcmp(level, "error"))
+		gaim_debug(GAIM_DEBUG_ERROR, category, string);
+	else if (!strcmp(level, "fatal"))
+		gaim_debug(GAIM_DEBUG_FATAL, category, string);
+	else
+		croak("Unknown debug level type '%s'", level);
 
 void
 debug_misc(category, string)
