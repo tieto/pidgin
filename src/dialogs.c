@@ -873,7 +873,6 @@ void show_add_buddy(struct gaim_connection *gc, char *buddy, char *group)
 	GtkWidget *cancel;
 	GtkWidget *add;
 	GtkWidget *label;
-	GList *tmp;
 
 	struct addbuddy *a = g_new0(struct addbuddy, 1);
 	a->gc = gc;
