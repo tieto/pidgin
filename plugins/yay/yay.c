@@ -216,7 +216,7 @@ static void yahoo_login(struct aim_user *user) {
 	if (!ctxt || !yahoo_connect(ctxt)) {
 		debug_printf("Yahoo: Unable to connect\n");
 		hide_login_progress(gc, "Unable to connect");
-		destroy_gaim_conn(gc);
+		signoff(gc);
 		return;
 	}
 
@@ -233,7 +233,7 @@ static void yahoo_login(struct aim_user *user) {
 	if (yahoo_cmd_logon(ctxt, YAHOO_STATUS_AVAILABLE)) {
 		debug_printf("Yahoo: Unable to login\n");
 		hide_login_progress(gc, "Unable to login");
-		destroy_gaim_conn(gc);
+		signoff(gc);
 		return;
 	}
 
