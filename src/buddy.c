@@ -631,6 +631,8 @@ static GdkPixbuf *gaim_gtk_blist_get_status_icon(struct buddy *b, GaimStatusIcon
 		g_free(filename);
 
 		gtknode = GAIM_GTK_BLIST_NODE((GaimBlistNode*)b);
+		if (gtknode->timer > 0)
+			g_source_remove(gtknode->timer);
 		gtknode->timer = g_timeout_add(10000, (GSourceFunc)gaim_reset_present_icon, b);
 
 		/* "Hey, what's all this crap?" you ask.  Status icons will be themeable too, and
