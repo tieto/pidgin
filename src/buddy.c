@@ -270,13 +270,13 @@ static void destroy_buddies(struct gaim_connection *gc) {
 		m = g->members;
 		while (m) {
 			b = (struct buddy_show *)m->data;
-			if (g_slist_length(b->connlist) == 1 && b->connlist->data == gc) {
+			if ((g_slist_length(b->connlist) == 1) && (b->connlist->data == gc)) {
 				if (b->log_timer > 0)
 					gtk_timeout_remove(b->log_timer);
 				b->connlist = g_slist_remove(b->connlist, gc);
 				gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
-				g->members = g_slist_remove(g->members, b);
-				if (g->members == NULL) {
+				m = g->members = g_slist_remove(g->members, b);
+				if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
 					shows = g_slist_remove(shows, g);
 					gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 					g_free(g->name);
@@ -284,12 +284,13 @@ static void destroy_buddies(struct gaim_connection *gc) {
 					m = NULL;
 					remove_group = TRUE;
 				} else
-					m = g->members;
+					update_num_group(g);
 				g_free(b->name);
 				g_free(b->show);
 				g_free(b);
 			} else if (g_slist_find(b->connlist, gc)) {
-				b->connlist = g_slist_remove(b->connlist, gc);
+				if (g_slist_find(b->connlist, gc))
+					b->connlist = g_slist_remove(b->connlist, gc);
 				m = g_slist_next(m);
 			} else
 				m = g_slist_next(m);
@@ -491,7 +492,6 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 		if (bs) {
 			if (g_slist_find(bs->connlist, gc)) {
 				bs->connlist = g_slist_remove(bs->connlist, gc);
-				update_num_group(gs);
 				if (!g_slist_length(bs->connlist)) {
 					gs->members = g_slist_remove(gs->members, bs);
 					if (bs->log_timer > 0)
@@ -500,13 +500,16 @@ void remove_buddy(struct gaim_connection *gc, struct group *rem_g, struct buddy 
 					g_free(bs->show);
 					g_free(bs->name);
 					g_free(bs);
-					if (!g_slist_length(gs->members)) {
+					if (!g_slist_length(gs->members) &&
+							(display_options & OPT_DISP_NO_MT_GRP)) {
 						shows = g_slist_remove(shows, gs);
 						gtk_container_remove(GTK_CONTAINER(buddies), gs->item);
 						g_free(gs->name);
 						g_free(gs);
-					}
-				}
+					} else
+						update_num_group(gs);
+				} else
+					update_num_group(gs);
 			}
 		}
 	}
@@ -549,7 +552,8 @@ void remove_group(struct gaim_connection *gc, struct group *rem_g)
 
 	while(delg->members) {
 		delb = (struct buddy *)delg->members->data;
-		remove_buddy(gc, delg, delb);
+		remove_buddy(gc, delg, delb); /* this should take care of removing
+						 the group_show if necessary */
                 serv_remove_buddy(gc, delb->name);
 	}
 
@@ -1529,12 +1533,13 @@ static int log_timeout(struct buddy_show *b) {
 		struct group_show *g = find_gs_by_bs(b);
 		g->members = g_slist_remove(g->members, b);
 		gtk_container_remove(GTK_CONTAINER(g->tree), b->item);
-		if (g->members == NULL && (display_options & OPT_DISP_NO_MT_GRP)) {
+		if ((g->members == NULL) && (display_options & OPT_DISP_NO_MT_GRP)) {
 			shows = g_slist_remove(shows, g);
 			gtk_container_remove(GTK_CONTAINER(buddies), g->item);
 			g_free(g->name);
 			g_free(g);
-		}
+		} else
+			update_num_group(g);
 		g_free(b->name);
 		g_free(b->show);
 		g_free(b);
