@@ -2938,29 +2938,6 @@ setup_chat_pane(struct gaim_conversation *conv)
 		gtk_widget_show(gtkchat->topic_text);
 	}
 
-	/* Build the toolbar. */
-	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar.toolbar,
-					   FALSE, FALSE, 0);
-
-	/* Setup the entry widget. */
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
-
-	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
-	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
-
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
-	gtk_widget_set_size_request(gtkconv->entry, -1,
-								MAX(buddy_chat_size.entry_height, 25));
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
-	gtk_widget_show(vbox);
-
 	/* Setup the horizontal pane. */
 	hpaned = gtk_hpaned_new();
 	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 5);
@@ -3086,6 +3063,28 @@ setup_chat_pane(struct gaim_conversation *conv)
 
 	gtkconv->info = button;
 
+	/* Build the toolbar. */
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, FALSE);
+	gtk_widget_show(vbox);
+
+	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->toolbar.toolbar,
+					   FALSE, FALSE, 0);
+
+	/* Setup the entry widget. */
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+
+	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
+	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
+
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
+	gtk_widget_set_size_request(gtkconv->entry, -1,
+								MAX(buddy_chat_size.entry_height, 25));
 
 	/* Connect the signal handlers. */
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
@@ -3136,36 +3135,13 @@ setup_im_pane(struct gaim_conversation *conv)
 	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
-	/* Setup the entry widget. */
-	frame = gtk_frame_new(NULL);
-	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
-
-	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
-	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
-
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
-	gtk_widget_set_size_request(gtkconv->entry, -1,
-								MAX(conv_size.entry_height, 25));
-
-	vbox2 = gtk_vbox_new(FALSE, 5);
-	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
-	gtk_widget_show(vbox2);
-
-	/* Build the toolbar. */
-	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar.toolbar,
-					   FALSE, FALSE, 0);
-
 	/* Setup the gtkimhtml widget. */
 	gtkconv->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(gtkconv->sw),
 								   GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(gtkconv->sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->sw, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->sw, TRUE, TRUE, 0);
 
 	gtk_widget_set_size_request(gtkconv->sw, conv_size.width, conv_size.height);
 	gtk_widget_show(gtkconv->sw);
@@ -3182,6 +3158,29 @@ setup_im_pane(struct gaim_conversation *conv)
 	gaim_setup_imhtml(gtkconv->imhtml);
 
 	gtk_widget_show(gtkconv->imhtml);
+
+	vbox2 = gtk_vbox_new(FALSE, 5);
+	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, FALSE);
+	gtk_widget_show(vbox2);
+
+	/* Build the toolbar. */
+	gtkconv->toolbar.toolbar = build_conv_toolbar(conv);
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->toolbar.toolbar,
+					   FALSE, FALSE, 0);
+
+	/* Setup the entry widget. */
+	frame = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+
+	gtkconv->entry_buffer = gtk_text_buffer_new(NULL);
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
+	gtkconv->entry = gtk_text_view_new_with_buffer(gtkconv->entry_buffer);
+
+	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(gtkconv->entry), GTK_WRAP_WORD);
+	gtk_widget_set_size_request(gtkconv->entry, -1,
+								MAX(conv_size.entry_height, 25));
 
 	/* Connect the signal handlers. */
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry), "key_press_event",
