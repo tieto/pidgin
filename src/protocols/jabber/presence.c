@@ -217,6 +217,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			continue;
 
 		if(!strcmp(y->name, "status")) {
+			g_free(status);
 			status = xmlnode_get_data(y);
 		} else if(!strcmp(y->name, "priority")) {
 			char *p = xmlnode_get_data(y);
@@ -273,6 +274,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 			jabber_chat_destroy(chat);
 			jabber_id_free(jid);
+			g_free(status);
 			return;
 		}
 
@@ -302,6 +304,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					"got unexpected presence from %s, ignoring\n", from);
 			jabber_id_free(jid);
+			g_free(status);
 			return;
 		}
 
@@ -310,6 +313,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if((b = gaim_find_buddy(js->gc->account, buddy_name)) == NULL) {
 			jabber_id_free(jid);
 			g_free(buddy_name);
+			g_free(status);
 			return;
 		}
 
