@@ -466,7 +466,8 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	if (!gaim_account_is_connected(account))
 		return;
 
-	if (gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) &&
+		gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
 		return;
 
 	if(gaim_prefs_get_bool("/gaim/gtk/conversations/enable_commands")) {
