@@ -286,12 +286,14 @@ br_free_last_value ()
  * Store str in a thread-local variable and return str. The next
  * you run this function, that variable is freed too.
  * This function is created so you don't have to worry about freeing
- * strings.
+ * strings. Just be careful about doing this sort of thing:
  *
- * Example:
+ * some_function( BR_DATADIR("/one.png"), BR_DATADIR("/two.png") )
+ *
+ * Examples:
  * char *foo;
- * foo = thread_local_store (strdup ("hello")); --> foo == "hello"
- * foo = thread_local_store (strdup ("world")); --> foo == "world"; "hello" is now freed.
+ * foo = br_thread_local_store (strdup ("hello")); --> foo == "hello"
+ * foo = br_thread_local_store (strdup ("world")); --> foo == "world"; "hello" is now freed.
  */
 const char *
 br_thread_local_store (char *str)

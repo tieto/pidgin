@@ -88,13 +88,13 @@ extern "C" {
 /* The following functions are used internally by BinReloc
    and shouldn't be used directly in applications. */
 
-const char *br_thread_local_store (char *str);
 char *br_locate		(void *symbol);
 char *br_locate_prefix	(void *symbol);
 char *br_prepend_prefix	(void *symbol, char *path);
 
-
 #endif /* ENABLE_BINRELOC */
+
+const char *br_thread_local_store (char *str);
 
 
 /* These macros and functions are not guarded by the ENABLE_BINRELOC
@@ -108,6 +108,14 @@ char *br_prepend_prefix	(void *symbol, char *path);
 
 #ifndef BR_NO_MACROS
 	/* Convenience functions for concatenating paths */
+
+	/* Each time you call one, the previous result will be freed. So don't do this:
+	 *
+	 *   some_function( BR_DATADIR("/one"), BR_DATADIR("/two") )
+	 *
+	 * as the first parameter will now be bogus!
+	 */
+
 	#define BR_SELFPATH(suffix)	(br_thread_local_store (br_strcat (SELFPATH, suffix)))
 	#define BR_PREFIX(suffix)	(br_thread_local_store (br_strcat (PREFIX, suffix)))
 	#define BR_PREFIXDIR(suffix)	(br_thread_local_store (br_strcat (BR_PREFIX, suffix)))
