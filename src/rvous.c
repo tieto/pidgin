@@ -530,6 +530,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	char *buf2;
 	char tmp_buf[MSG_LEN];
 	int read_rv;
+	int at;
 	struct file_header fhdr;
 	guint32 rcv = 0;
 	char *c;
@@ -643,10 +644,11 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	sprintf(debug_buff, "Sending file\n");
 	debug_print(debug_buff);
 	fortime = localtime(&st.st_ctime);
-	snprintf(buf, ntohl(fhdr.size) + 1, "%2d/%2d/%4d %2d:%2d %8ld %s\r\n",
+	at = g_snprintf(buf, ntohl(fhdr.size) + 1, "%2d/%2d/%4d %2d:%2d %8ld ",
 			fortime->tm_mon + 1, fortime->tm_mday, fortime->tm_year + 1900,
 			fortime->tm_hour + 1, fortime->tm_min + 1,
-			st.st_size, c);
+			st.st_size);
+	g_snprintf(buf + at, ntohl(fhdr.size) + 1 - at, "%s\r\n", c);
 	sprintf(debug_buff, "Sending listing.txt (%d bytes) to %s\n",
 			ntohl(fhdr.size) + 1, ft->user);
 	debug_print(debug_buff);
