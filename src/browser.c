@@ -196,12 +196,12 @@ static char *window_check_mozilla_version(Window window) {
 	unsigned char *version = 0;
 	gchar *retval = NULL;
 
-	if (XGetWindowProperty(gdk_display, window, 
+	if (XGetWindowProperty(gdk_display, window,
 					gdk_x11_atom_to_xatom(GDKA_MOZILLA_VERSION),
 					0, (65536 / sizeof(long)),
 					False, XA_STRING,
 					&type, &format, &nitems, &bytesafter,
-					&version) != Success) {	
+					&version) != Success) {
 		return NULL;
 	}
 
@@ -309,7 +309,7 @@ static const char *get_lock_data() {
 	static char *lock_data = NULL;
 
 	if (lock_data == NULL) {
-		char hostname[HOST_NAME_MAX + 1] = {0}; 
+		char hostname[HOST_NAME_MAX + 1] = {0};
 
 		if (gethostname(hostname, HOST_NAME_MAX + 1) == 0) {
 			lock_data = g_strdup_printf("pid%d@%s", getpid(), hostname);
@@ -360,7 +360,7 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 {
 	int result = 0;
 	GdkAtom actual_type;
-	gint actual_format; 
+	gint actual_format;
 	gint nitems;
 	unsigned char *data = 0;
 	const char *lock_data = get_lock_data();
@@ -369,7 +369,7 @@ static void mozilla_remote_free_lock(GdkWindow * window)
 			   "%s: deleting " MOZILLA_LOCK_PROP " \"%s\" from 0x%x\n",
 			   progname, lock_data, (unsigned int)window);
 
-	result = gdk_property_get(window, GDKA_MOZILLA_LOCK, 
+	result = gdk_property_get(window, GDKA_MOZILLA_LOCK,
 				  gdk_x11_xatom_to_atom (XA_STRING),
 				  0, (65536 / sizeof(long)),
 				  1, &actual_type, &actual_format, &nitems, &data);
@@ -424,32 +424,32 @@ static GdkFilterReturn netscape_response_cb(XEvent *event, GdkEvent *translated,
 
 	if (XGetWindowProperty (gdk_display, xid, mozilla_response,
 							 0, (65536 / sizeof (long)),
-							 True, 
-							 XA_STRING, 
+							 True,
+							 XA_STRING,
 							 &actual_type, &actual_format,
 							 &nitems, &bytes_after,
-							 &data) != Success 
+							 &data) != Success
 		|| data == NULL || (data[0] != '1' && data[0] != '2')) {
 
 		gaim_notify_error(NULL, NULL,
 						  _("Communication with the browser failed. "
 							"Please close all windows and try again."), NULL);
-	} 
+	}
 
     if (data[0] == '1') {
 		/* Netscape isn't ready yet */
 		gaim_debug(GAIM_DEBUG_ERROR, "browser",
 				   "Remote Netscape window isn't ready yet.\n");
 		return GDK_FILTER_REMOVE;
-	} 
-	
+	}
+
 	if (data[0] == '2') {
-		/* Yay! It worked */ 
+		/* Yay! It worked */
 		gaim_debug(GAIM_DEBUG_INFO, "browser",
 				   "Successfully sent command to remote Netscape window.\n");
 	}
 
-	gdk_window_remove_filter(window, (GdkFilterFunc) netscape_response_cb, window); 
+	gdk_window_remove_filter(window, (GdkFilterFunc) netscape_response_cb, window);
 	mozilla_remote_free_lock(window);
 	netscape_lock = 0;
 	return GDK_FILTER_REMOVE;
@@ -478,8 +478,8 @@ static void mozilla_remote_command(GdkWindow * window, const char *command, Bool
 			   "%s: Writing " MOZILLA_COMMAND_PROP " \"%s\" to 0x%x\n",
 			   progname, command, (unsigned int)window);
 
-	gdk_property_change(window, GDKA_MOZILLA_COMMAND, 
-			    gdk_x11_xatom_to_atom (XA_STRING), 
+	gdk_property_change(window, GDKA_MOZILLA_COMMAND,
+			    gdk_x11_xatom_to_atom (XA_STRING),
 			    8, GDK_PROP_MODE_REPLACE, (unsigned char *)command, strlen(command));
 
 	gdk_window_add_filter(window, (GdkFilterFunc) netscape_response_cb, window);
@@ -488,7 +488,7 @@ static void mozilla_remote_command(GdkWindow * window, const char *command, Bool
 static gboolean netscape_command(const char *command)
 {
  	GdkWindow *window = NULL;
- 
+
  	if (netscape_lock) {
 		gaim_debug(GAIM_DEBUG_WARNING, "browser",
 				   "netscape_command() is currently in use.\n");
@@ -512,55 +512,57 @@ static gboolean netscape_command(const char *command)
 	netscape_lock = 0;
 	return TRUE;
 }
+#endif /* _WIN32 */
 
-void open_url(GtkWidget *w, const char *url)
+void *
+gaim_gtk_notify_uri(const char *uri)
 {
+#ifndef _WIN32
 	char *command = NULL;
 	GError *error = NULL;
 	const char *web_browser;
-	
+
 	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
 
 	if (!strcmp(web_browser, "netscape")) {
 		char *args = NULL;
 
 		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-			args = g_strdup_printf("OpenURL(%s, new-window)", url);
+			args = g_strdup_printf("OpenURL(%s, new-window)", uri);
 		else
-			args = g_strdup_printf("OpenURL(%s)", url);
+			args = g_strdup_printf("OpenURL(%s)", uri);
 
 		if (netscape_command(args)) {
 			g_free(args);
-			return;
+			return NULL;
 		}
 
 		/* if netscape is running ...
 		command = g_strdup_printf("netscape -remote %s", args); */
 
-		command = g_strdup_printf("netscape \"%s\"", url);
+		command = g_strdup_printf("netscape \"%s\"", uri);
 		g_free(args);
 	}
 	else if (!strcmp(web_browser, "opera")) {
 		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-			command = g_strdup_printf("opera -newwindow \"%s\"", url);
+			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
 		else
-			command = g_strdup_printf("opera \"%s\"", url);
+			command = g_strdup_printf("opera \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "kfmclient")) {
-		command = g_strdup_printf("kfmclient openURL \"%s\"", url);
+		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "galeon")) {
 		if (gaim_prefs_get_bool("/gaim/gtk/browsers/new_window"))
-			command = g_strdup_printf("galeon -w \"%s\"", url);
+			command = g_strdup_printf("galeon -w \"%s\"", uri);
 		else
-			command = g_strdup_printf("galeon \"%s\"", url);
+			command = g_strdup_printf("galeon \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "mozilla")) {
-		command = g_strdup_printf("mozilla \"%s\"", url);
+		command = g_strdup_printf("mozilla \"%s\"", uri);
 	}
 	else if (!strcmp(web_browser, "custom")) {
 		const char *web_command;
-
 
 		web_command = gaim_prefs_get_string("/gaim/gtk/browsers/command");
 
@@ -570,52 +572,36 @@ void open_url(GtkWidget *w, const char *url)
 								"the 'Manual' browser command has been "
 								"chosen, but no command has been set."),
 							  NULL);
-			return;
+			return NULL;
 		}
 
 		if (strstr(web_command, "%s"))
-			command = gaim_strreplace(web_command, "%s", url);
+			command = gaim_strreplace(web_command, "%s", uri);
 		else {
-			/* There is no "%s" in the browser command.  Assume the user
-			 * wanted the URL tacked on to the end of the command. */
-			command = g_strdup_printf("%s %s", web_command, url);
+			/*
+			 * There is no "%s" in the browser command.  Assume the user
+			 * wanted the URL tacked on to the end of the command.
+			 */
+			command = g_strdup_printf("%s %s", web_command, uri);
 		}
 	}
 
-	if (g_spawn_command_line_async(command, &error) == FALSE) {
-		char *tmp = g_strdup_printf(_("There was an error launching your chosen browser: %s"), error->message);
+	if (!g_spawn_command_line_async(command, &error)) {
+		char *tmp = g_strdup_printf(
+				_("There was an error launching your chosen browser: %s"),
+				error->message);
+
 		gaim_notify_error(NULL, NULL, tmp, NULL);
+
 		g_free(tmp);
 		g_error_free(error);
  	}
 
 	g_free(command);
+
+#else
+	ShellExecute(NULL, NULL, uri, NULL, ".\\", 0);
+#endif
+
+	return NULL;
 }
-
-void add_bookmark(GtkWidget *w, char *url)
-{
-	const char *web_browser;
-
-	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
-
-	if (!strcmp(web_browser, "netscape")) {
-		char *command = g_strdup_printf("AddBookmark(%s)", url);
-
-		netscape_command(command);
-		g_free(command);
-	}
-}
-
-#else /* _WIN32 */
-
-/* Sooner or later, I shall support Windows clicking! */
-
-void add_bookmark(GtkWidget *w, char *url)
-{
-}
-void open_url(GtkWidget *w, char *url)
-{
-	ShellExecute(NULL, NULL, url, NULL, ".\\", 0);
-}
-
-#endif /* _WIN32 */

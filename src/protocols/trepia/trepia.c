@@ -35,7 +35,6 @@
 /* XXX */
 #include "gaim.h"
 #include "multi.h"
-#include "ui.h" /* XXX for open_url */
 
 #ifndef _WIN32
 # include <sys/socket.h>
@@ -539,7 +538,7 @@ trepia_visit_homepage(GaimConnection *gc, const char *who)
 	profile = b->proto_data;
 
 	if ((value = trepia_profile_get_homepage(profile)) != NULL)
-		open_url(NULL, value);
+		gaim_notify_uri(gc, value);
 }
 
 static GList *

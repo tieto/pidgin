@@ -1089,7 +1089,7 @@ static void yahoo_game(GaimConnection *gc, const char *name) {
 		t++;
 	*t = 0;
 	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game);
-	open_url(NULL, url);
+	gaim_notify_uri(gc, url);
 	g_free(game);
 }
 

@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -144,6 +144,31 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 		info->handle    = handle;
 		info->ui_handle = ops->notify_formatted(title, primary, secondary,
 												text, cb, user_data);
+
+		handles = g_list_append(handles, info);
+
+		return info->ui_handle;
+	}
+
+	return NULL;
+}
+
+void *
+gaim_notify_uri(void *handle, const char *uri)
+{
+	GaimNotifyUiOps *ops;
+
+	g_return_val_if_fail(uri != NULL, NULL);
+
+	ops = gaim_get_notify_ui_ops();
+
+	if (ops != NULL && ops->notify_uri != NULL) {
+		GaimNotifyInfo *info;
+
+		info            = g_new0(GaimNotifyInfo, 1);
+		info->type      = GAIM_NOTIFY_URI;
+		info->handle    = handle;
+		info->ui_handle = ops->notify_uri(uri);
 
 		handles = g_list_append(handles, info);
 

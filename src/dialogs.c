@@ -2,7 +2,7 @@
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -112,7 +112,7 @@ struct getuserinfo {
 	GtkWidget *window;
 	GtkWidget *entry;
 	GtkWidget *account;
-	GaimConnection *gc; 
+	GaimConnection *gc;
 };
 
 typedef struct
@@ -349,7 +349,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(w->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	
+
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 	labeltext = g_strdup_printf(_("<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n\n"
@@ -363,7 +363,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 
 	w->anon = gtk_check_button_new_with_mnemonic(_("Warn _anonymously?"));
 	gtk_box_pack_start(GTK_BOX(vbox), w->anon, FALSE, FALSE, 0);
-	
+
 	hbox = gtk_hbox_new(FALSE, 6);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 	img = gtk_image_new_from_stock(GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_MENU);
@@ -469,7 +469,7 @@ void show_confirm_del_chat(struct chat *chat)
 
 void show_confirm_del_group(struct group *g)
 {
-	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"), 
+	char *text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 			       g->name);
 
 	gaim_request_action(NULL, NULL, _("Remove Group"), text, -1, g, 2,
@@ -526,7 +526,7 @@ static void do_info(GtkWidget *widget, int resp, struct getuserinfo *info)
 			g_free(who);
 			return;
 		}
-	
+
 		/* what do we want to do about this case? */
 		if (info->gc)
 			serv_get_info(info->gc, who);
@@ -548,37 +548,37 @@ void show_ee_dialog(int ee)
 
 	label = gtk_label_new(NULL);
 	if (ee == 0)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"purple\">Amazing!  Simply Amazing!</span>");
 	else if (ee == 1)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#1f6bad\">Pimpin\' Penguin Style! *Waddle Waddle*</span>");
 	else if (ee == 2)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me.  I'm so cute!</span>");
 	else if (ee == 3)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"orange\">Now that's what I like!</span>");
 	else if (ee == 4)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"brown\">Ahh, and excellent choice!</span>");
 	else  if (ee == 5)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#009900\">Everytime you click my name, an angel gets its wings.</span>");
 	else if (ee == 6)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"red\">This sunflower seed taste like pizza.</span>");
 	else if (ee == 7)
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey!  I was in that tumbleweed!</span>");
 	else
-		gtk_label_set_markup(GTK_LABEL(label), 
+		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
-	
+
 	window = gtk_dialog_new_with_buttons("", GTK_WINDOW(gtkblist->window), 0, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
-	
+
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
@@ -588,7 +588,7 @@ void show_ee_dialog(int ee)
 	hbox = gtk_hbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	
+
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
@@ -703,7 +703,7 @@ void show_info_dialog()
 
 	info->gc = gaim_connections_get_all()->data;
 
-	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0, 
+	window = gtk_dialog_new_with_buttons(_("Get User Info"), gtkblist->window ? GTK_WINDOW(gtkblist->window) : NULL, 0,
 					     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	gtk_container_set_border_width (GTK_CONTAINER(window), 6);
@@ -721,18 +721,18 @@ void show_info_dialog()
 
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-		
+
 	label = gtk_label_new(_("Please enter the screenname of the person whose info you would like to view.\n"));
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	
+
 	table = gtk_table_new(2, 2, FALSE);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 6);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 12);
 	gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-	
+
 	label = gtk_label_new(NULL);
 	gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), _("_Screenname:"));
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -745,7 +745,7 @@ void show_info_dialog()
 
 	g_signal_connect(G_OBJECT(info->entry), "changed",
 			G_CALLBACK(dialog_set_ok_sensitive), window);
-	
+
 	if (gaim_connections_get_all()->next) {
 
 		label = gtk_label_new(NULL);
@@ -761,8 +761,8 @@ void show_info_dialog()
 	}
 
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_info), info);
-	
-	
+
+
 	gtk_widget_show_all(window);
 	if (info->entry)
 		gtk_widget_grab_focus(GTK_WIDGET(info->entry));
@@ -934,7 +934,7 @@ void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 	a->entry = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), a->entry, 1, 2, 0, 1);
 	gtk_widget_grab_focus(a->entry);
-	
+
 	if (buddy != NULL)
 		gtk_entry_set_text(GTK_ENTRY(a->entry), buddy);
 
@@ -976,7 +976,7 @@ void show_add_buddy(GaimConnection *gc, char *buddy, char *group, char *alias)
 
 	gtk_widget_show_all(a->window);
 
-	if (group != NULL) 
+	if (group != NULL)
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(a->combo)->entry), group);
 }
 
@@ -1910,7 +1910,7 @@ void show_log_dialog(GaimConversation *c)
 
 		g_snprintf(buf, BUF_LEN - 1, "%s" G_DIR_SEPARATOR_S "%s.log",
 				   gaim_home_dir(), normalize(c->name));
-		g_object_set_data(G_OBJECT(gtkconv->dialogs.log), "dialog_type", 
+		g_object_set_data(G_OBJECT(gtkconv->dialogs.log), "dialog_type",
 								 "log dialog");
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(gtkconv->dialogs.log),
 										buf);
@@ -2176,11 +2176,11 @@ void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 	if (resp == GTK_RESPONSE_OK) {
 
 		open_tag = g_malloc(2048);
-		
+
 		urltext = gtk_entry_get_text(GTK_ENTRY(b->url));
 		showtext = gtk_entry_get_text(GTK_ENTRY(b->text));
 
-		if (!strlen(showtext)) 
+		if (!strlen(showtext))
 			showtext = urltext;
 
 		g_snprintf(open_tag, 2048, "<A HREF=\"%s\">%s", urltext, showtext);
@@ -2227,53 +2227,53 @@ void show_insert_link(GtkWidget *linky, GaimConversation *c)
 		gtk_container_set_border_width(
 			GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
 		gtk_window_set_role(GTK_WINDOW(a->window), "insert_link");
-	
+
 		hbox = gtk_hbox_new(FALSE, 12);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	
+
 		vbox = gtk_vbox_new(FALSE, 0);
 		gtk_container_add(GTK_CONTAINER(hbox), vbox);
-	
+
 		label = gtk_label_new(_("Please enter the URL and description of "
 								"the link that you want to insert.  The "
 								"description is optional.\n"));
-	
+
 		gtk_widget_set_size_request(GTK_WIDGET(label), 335, -1);
 		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	
+
 		hbox = gtk_hbox_new(FALSE, 6);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	
+
 		g_signal_connect(G_OBJECT(a->window), "destroy",
 						 G_CALLBACK(destroy_dialog), a->window);
 		g_signal_connect(G_OBJECT(a->window), "destroy",
 						 G_CALLBACK(free_dialog), a);
 		dialogwindows = g_list_prepend(dialogwindows, a->window);
-	
+
 		table = gtk_table_new(4, 2, FALSE);
 		gtk_table_set_row_spacings(GTK_TABLE(table), 5);
 		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
-	
+
 		label = gtk_label_new(_("URL"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
-	
+
 		a->url = gtk_entry_new();
 		gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
 		gtk_widget_grab_focus(a->url);
-		
+
 		gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
-	
+
 		label = gtk_label_new(_("Description"));
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
-	
+
 		a->text = gtk_entry_new();
 		gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
 		gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
@@ -2640,7 +2640,7 @@ static struct away_message *save_away_message(struct create_away *ca)
 		am = ca->mess;
 	}
 
-	
+
 	g_snprintf(am->name, sizeof(am->name), "%s", gtk_entry_get_text(GTK_ENTRY(ca->entry)));
 	away_message = gtk_text_view_get_text(GTK_TEXT_VIEW(ca->text), FALSE);
 
@@ -3283,6 +3283,12 @@ void chat_show_log(GtkWidget *w, gpointer data)
 	g_free(name);
 }
 
+static void
+url_clicked_cb(GtkWidget *widget, const char *uri)
+{
+	gaim_notify_uri(NULL, uri);
+}
+
 void show_log(char *nm)
 {
 	gchar filename[256];
@@ -3396,7 +3402,7 @@ void show_log(char *nm)
 				temp++;
 				length = strcspn(temp, "-");
 				if (length > 31) length = 31;
-				
+
 				offset = ftell(fp);
 				g_snprintf(convo_start, length, "%s", temp);
 				gtk_list_store_append(list_store, &iter);
@@ -3440,7 +3446,8 @@ void show_log(char *nm)
 	gtk_container_add(GTK_CONTAINER(frame), sw);
 	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-	g_signal_connect(G_OBJECT(layout), "url_clicked", G_CALLBACK(open_url), NULL);
+	g_signal_connect(G_OBJECT(layout), "url_clicked",
+					 G_CALLBACK(url_clicked_cb), NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
 	gaim_setup_imhtml(layout);
 

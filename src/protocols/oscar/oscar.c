@@ -46,7 +46,6 @@
 /* XXX CORE/UI */
 #include "gtkinternal.h"
 #include "gaim.h"
-#include "ui.h"
 
 
 #define UC_AOL		0x02
@@ -6082,7 +6081,7 @@ static void oscar_show_chpassurl(GaimConnection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	gchar *substituted = gaim_strreplace(od->sess->authinfo->chpassurl, "%s", gaim_account_get_username(gaim_connection_get_account(gc)));
-	open_url(NULL, substituted);
+	gaim_notify_uri(gc, substituted);
 	g_free(substituted);
 }
 

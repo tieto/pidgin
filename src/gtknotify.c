@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "prefs.h"
 #include "stock.h"
+#include "util.h"
 
 #include "gtkimhtml.h"
 #include "gtknotify.h"
@@ -58,7 +59,7 @@ static void
 email_response_cb(GtkDialog *dialog, gint id, GaimNotifyMailData *data)
 {
 	if (id == 0)
-		open_url(NULL, data->url);
+		gaim_notify_uri(NULL, data->url);
 
 	gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
 }
@@ -357,6 +358,7 @@ static GaimNotifyUiOps ops =
 	gaim_gtk_notify_email,
 	gaim_gtk_notify_emails,
 	gaim_gtk_notify_formatted,
+	gaim_gtk_notify_uri,
 	gaim_gtk_close_notify
 };
 

@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,7 +35,8 @@ typedef enum
 	GAIM_NOTIFY_MESSAGE = 0, /**< Message notification.         */
 	GAIM_NOTIFY_EMAIL,       /**< Single e-mail notification.   */
 	GAIM_NOTIFY_EMAILS,      /**< Multiple e-mail notification. */
-	GAIM_NOTIFY_FORMATTED    /**< Formatted text.               */
+	GAIM_NOTIFY_FORMATTED,   /**< Formatted text.               */
+	GAIM_NOTIFY_URI          /**< URI notification or display.  */
 
 } GaimNotifyType;
 
@@ -68,6 +69,7 @@ typedef struct
 	void *(*notify_formatted)(const char *title, const char *primary,
 							  const char *secondary, const char *text,
 							  GCallback cb, void *user_data);
+	void *(*notify_uri)(const char *uri);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
 
@@ -162,6 +164,18 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 void *gaim_notify_formatted(void *handle, const char *title,
 							const char *primary, const char *secondary,
 							const char *text, GCallback cb, void *user_data);
+
+/**
+ * Opens a URI or somehow presents it to the user.
+ *
+ * @param handle The plugin or connection handle.
+ * @param url    The URI to display or go to.
+ *
+ * @return A UI-specific handle, if any. This may only be presented if
+ *         the UI code displays a dialog instead of a webpage, or something
+ *         similar.
+ */
+void *gaim_notify_uri(void *handle, const char *uri);
 
 /**
  * Closes a notification.

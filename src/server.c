@@ -1431,6 +1431,12 @@ static void des_popup(GtkWidget *w, GtkWidget *window)
 	gtk_widget_destroy(window);
 }
 
+static void
+url_clicked_cb(GtkWidget *w, const char *uri)
+{
+	gaim_notify_uri(NULL, uri);
+}
+
 void serv_got_popup(const char *msg, const char *u, int wid, int hei)
 {
 	GtkWidget *window;
@@ -1474,7 +1480,7 @@ void serv_got_popup(const char *msg, const char *u, int wid, int hei)
 	button = gaim_pixbuf_button_from_stock(_("More Info"), GTK_STOCK_FIND, GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(open_url), url);
+					 G_CALLBACK(url_clicked_cb), url);
 
 	gtk_widget_show_all(window);
 

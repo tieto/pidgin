@@ -51,6 +51,12 @@
 #include "wspell.h"
 #endif
 
+static void
+url_clicked_cb(GtkWidget *w, const char *uri)
+{
+	gaim_notify_uri(NULL, uri);
+}
+
 void
 gaim_setup_imhtml(GtkWidget *imhtml)
 {
@@ -61,7 +67,7 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
 
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
-					 G_CALLBACK(open_url), NULL);
+					 G_CALLBACK(url_clicked_cb), NULL);
 
 	smiley_themeize(imhtml);
 }

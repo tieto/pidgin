@@ -137,8 +137,7 @@ extern void purge_away_queue(GSList**);
 extern void do_im_back(GtkWidget *w, GtkWidget *x);
 
 /* Functions in browser.c */
-extern void open_url(GtkWidget *, const char *);
-extern void add_bookmark(GtkWidget *, char *);
+void *gaim_gtk_notify_uri(const char *uri);
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);
