@@ -21,8 +21,8 @@
 
 # Note from Eric Warmenhoven, random guy -- this appears to be the last
 # published version of the protocol, and AOL has stopped hosting the TiK
-# program. This was taken from the last version of TiK I could find, version
-# 0.75.
+# program. TiK is still being maintained and is hosted on sourceforge.net;
+# this appears to be the same version of the protocol they're using.
 
 Version: TOC1.0
 
