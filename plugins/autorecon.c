@@ -33,7 +33,7 @@ static void reconnect(struct gaim_connection *gc, void *m) {
 		if (!del)
 			del = INITIAL;
 		else
-			del = 2 * del;
+			del = MAX(2 * del, MAXTIME);
 		tim = g_timeout_add(del, do_signon, gc->user);
 		g_hash_table_insert(hash, gc->user, (gpointer)del);
 	} else {
