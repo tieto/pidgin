@@ -9,6 +9,8 @@ General
 
 - Use gaim_home_dir instead of g_get_home_dir or g_getenv("HOME")
 
+- Make sure when including win32dep.h that it is the last header to
+  be included.
 
 PLUGINS & PROTOS
 ----------------
