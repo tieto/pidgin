@@ -108,16 +108,16 @@ gaim_connection_register(GaimConnection *gc)
 
 	g_return_if_fail(gc != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "connection",
-			"Registering.  gc = %p\n", gc);
+	gaim_debug(GAIM_DEBUG_INFO, "connection", "Registering.  gc = %p\n", gc);
 
 	ops = gaim_connections_get_ui_ops();
 
 	if (gc->prpl != NULL)
-	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-	else {
-	        gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
-						 gaim_account_get_username(gaim_connection_get_account(gc)));
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	else
+	{
+		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
+			gaim_account_get_username(gaim_connection_get_account(gc)));
 
 		gaim_debug(GAIM_DEBUG_ERROR, "connection",
 			   "Could not get prpl info for %p\n", gc);
@@ -126,6 +126,9 @@ gaim_connection_register(GaimConnection *gc)
 		g_free(message);
 		return;
 	}
+
+	if (prpl_info->register_user == NULL)
+		return;
 
 	account = gaim_connection_get_account(gc);
 
@@ -164,8 +167,8 @@ gaim_connection_connect(GaimConnection *gc)
 	if (gc->prpl != NULL)
 	        prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	else {
-	        gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
-						 gaim_account_get_username(gaim_connection_get_account(gc)));
+		gchar *message = g_strdup_printf(_("Missing protocol plugin for %s"),
+			gaim_account_get_username(gaim_connection_get_account(gc)));
 
 		gaim_debug(GAIM_DEBUG_ERROR, "connection",
 			   "Could not get prpl info for %p\n", gc);
@@ -276,10 +279,10 @@ gaim_connection_disconnect_cb(gpointer data)
 }
 
 /*
- * d:)->-< 
+ * d:)->-<
  *
  * d:O-\-<
- * 
+ *
  * d:D-/-<
  *
  * d8D->-< DANCE!
