@@ -1959,7 +1959,7 @@ static gboolean gaim_blist_read(const char *filename)
 	gaim_debug_info("blist", "Reading %s\n", filename);
 
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug_error("blist", "Error reading blist.xml: %s\n",
+		gaim_debug_error("blist", "Error reading buddy list: %s\n",
 						 error->message);
 		g_error_free(error);
 		return FALSE;
@@ -1970,8 +1970,8 @@ static gboolean gaim_blist_read(const char *filename)
 	if (gaim == NULL) {
 		FILE *backup;
 		char *name;
-		gaim_debug_error("blist", "Error parsing blist.xml\n");
-		name = g_build_filename(gaim_user_dir(), "blist.xml~", NULL);
+		gaim_debug_error("blist", "Error parsing buddy list\n");
+		name = g_strdup_printf("%s~", filename);
 		if ((backup = fopen(name, "w"))) {
 			fwrite(contents, length, 1, backup);
 			fclose(backup);
@@ -2036,7 +2036,7 @@ static gboolean gaim_blist_read(const char *filename)
 		}
 	}
 
-	gaim_debug_info("blist", "Finished reading blist.xml\n");
+	gaim_debug_info("blist", "Finished reading buddy list\n");
 
 	xmlnode_free(gaim);
 
@@ -2280,7 +2280,7 @@ static void blist_write_chat(FILE *file, GaimAccount *exp_acct, GaimChat *chat)
 
 	if (exp_acct && chat->account != exp_acct)
 		return;
-	
+
 	acct_name = g_markup_escape_text(chat->account->username, -1);
 	fprintf(file, "\t\t\t<chat proto=\"%s\" account=\"%s\">\n",
 			gaim_account_get_protocol_id(chat->account), acct_name);

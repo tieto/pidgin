@@ -1829,7 +1829,7 @@ gaim_statuses_read(const char *filename)
 	gaim_debug_info("status", "Reading %s\n", filename);
 
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug_error("status", "Error reading status.xml: %s\n",
+		gaim_debug_error("status", "Error reading statuses: %s\n",
 						 error->message);
 		g_error_free(error);
 		return FALSE;
@@ -1840,8 +1840,8 @@ gaim_statuses_read(const char *filename)
 	if (statuses == NULL) {
 		FILE *backup;
 		gchar *name;
-		gaim_debug_error("status", "Error parsing status.xml\n");
-		name = g_build_filename(gaim_user_dir(), "status.xml~", NULL);
+		gaim_debug_error("status", "Error parsing statuses\n");
+		name = g_strdup_printf("%s~", filename);
 		if ((backup = fopen(name, "w"))) {
 			fwrite(contents, length, 1, backup);
 			fclose(backup);
@@ -1861,7 +1861,7 @@ gaim_statuses_read(const char *filename)
 		gaim_statuses_read_parse_status(status);
 	}
 
-	gaim_debug_info("status", "Finished reading status.xml\n");
+	gaim_debug_info("status", "Finished reading statuses\n");
 
 	xmlnode_free(statuses);
 
