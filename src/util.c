@@ -555,11 +555,10 @@ char *escape_text2(const char *msg)
 	/* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
 	if (strlen(msg) > BUF_LEN) {
 		fprintf(stderr, "Warning:  truncating message to 2048 bytes\n");
-		msg[2047] = '\0';
 	}
 
 	woo = malloc(strlen(msg) * 4 + 1);
-	cpy = g_strdup(msg);
+	cpy = g_strndup(msg, 2048);
 	c = cpy;
 	while (*c) {
 		switch (*c) {
