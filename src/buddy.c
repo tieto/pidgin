@@ -1782,7 +1782,7 @@ create_prpl_icon(struct gaim_account *account)
 		status = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
 	} else if (!strcmp(protoname, "gadu-gadu")) {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "gadugadu.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "gadu-gadu.png", NULL);
 		status = gdk_pixbuf_new_from_file(filename,NULL);
 		g_free(filename);
 	} else if (!strcmp(protoname, "napster")) {

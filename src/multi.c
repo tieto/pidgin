@@ -1911,16 +1911,12 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (cancel_button), FALSE, FALSE, 0);
 	
 		g_signal_connect (GTK_OBJECT (meter_win->window), "delete_event", G_CALLBACK (meter_destroy), NULL);
-		}
+	}
 	
 	if (!meter) {
-		char buf[256];
-
 		meter = register_meter(gc, GTK_WIDGET (meter_win->window), GTK_TABLE (meter_win->table), (gint *)  &meter_win->rows);
 		meter->gc = gc;
 		meters = g_slist_append(meters, meter);
-
-		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name);
 	}
 
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);
