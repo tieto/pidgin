@@ -80,10 +80,11 @@
 	and then some should appear in 0.79.
 
 	Sean: I'll write my entry down here tonight.  Removing preferences
-	was my big crusade this week, and the team did a great job at it, but
-	I still have a nagging feeling that our preferences are still overwhelming.
-	Everyone's been doing a real great job; it's entirely my fault we keep
-	failing to meet our three-week schedule.  Send your complaints this way.
+	was my big crusade this week, and the team did a great job at it,
+	but I still have a nagging feeling that our preferences are still
+	overwhelming.  Everyone's been doing a real great job; it's entirely
+	my fault we keep failing to meet our three-week schedule.  Send your
+	complaints this way.
 
 	Nathan: I really didn't do much thanks to exams, and graduation, and all
 	of that fun stuff.  For next release, I'll have all new excuses, like my
@@ -92,10 +93,11 @@
 
 0.77 (04/22/2004):
 	Sean: We're back to a somewhat regular release cycle now.  Hooray!
-	WYSIWYG is much improved in this release, and you can now copy and paste
-	rich text to and from Gaim and other applications (see: Mozilla, Evolution
-	OpenOffice).  Also, Novell has released their first release of their
-	GroupWise plugin, included in this release.  Good stuff all around.
+	WYSIWYG is much improved in this release, and you can now copy and
+	paste rich text to and from Gaim and other applications (see: Mozilla,
+	Evolution OpenOffice).  Also, Novell has released their first release
+	of their GroupWise plugin, included in this release.  Good stuff all
+	around.
 
 	Luke: Only a week "late" this time around, much nicer than the delay
 	before the last release.  Anyway, this release sees a HUGE number of
@@ -144,12 +146,12 @@
 	lazy. A very long ChangeLog for you all. Most notably of course is the
 	addition of WYSIWYG input for chats and conversations. Many thanks to
 	DAYS of long work by Sean, Gary Kramlich, Kevin Stange, Tim Ringenbach,
-	and Stu Tomlinson for their efforts writting, fixing, and testing this.
-	Without the dedicated support of our crazy patch writters, this release
-	would have taken yet longer. Sean also has yahoo working again, with some
-	assistance from our friends over at Trillian, you may all officially
-	rejoice. We also have a large number of bug fixes, closing more than 200
-	bug reports this month alone.
+	and Stu Tomlinson for their efforts writting, fixing, and testing
+	this.  Without the dedicated support of our crazy patch writters, this
+	release would have taken yet longer. Sean also has yahoo working again,
+	with some assistance from our friends over at Trillian, you may all
+	officially rejoice. We also have a large number of bug fixes, closing
+	more than 200 bug reports this month alone.
 
 	Christian: It's been a long time between the last release, but I think
 	you guys will find that we've managed to do some neat stuff in this one.
@@ -342,15 +344,15 @@
 
 	Christian: This is a good release, and I don't think people will have
 	too many problems. There are a lot of little nice feature additions,
-	and much progress has been made on the core/UI split. We should be
-	done in a couple of releases, assuming we can get the remaining two or
-	three parts core/UI-split. Oh, and plugin authors are going to hate me
-	again, as a lot of code (specifically, the conversations code and utility
-	functions) changed names. This is a Good Thing (TM), as always, but
-	may require modifications to some plugins. Not all, fortunately, but
-	some :) Many SSL problems were fixed, though we still have some to go.
-	If you don't have SSL, you now need it for MSN. MSN won't even load
-	without it. Starting October 15th, the old protocol won't be supported
+	and much progress has been made on the core/UI split. We should be done
+	in a couple of releases, assuming we can get the remaining two or three
+	parts core/UI-split. Oh, and plugin authors are going to hate me again,
+	as a lot of code (specifically, the conversations code and utility
+	functions) changed names. This is a Good Thing (TM), as always, but may
+	require modifications to some plugins. Not all, fortunately, but some
+	:) Many SSL problems were fixed, though we still have some to go.  If
+	you don't have SSL, you now need it for MSN. MSN won't even load without
+	it. Starting October 15th, the old protocol won't be supported
 	anymore, so there's no reason to support the old one anymore.
 
 	Herman: I bet some plugin authors have resorted to making voodoo dolls
@@ -675,27 +677,27 @@
 	work without me.  Thanks, guys.
 
 	Christian: I can't remember what I did here.. Think I'll take a quick
-	look at the ChangeLog.... Okay, guess I was useless. That's okay, though,
-	because I have some really cool stuff going into 0.63. Plugin authors
-	will hate me for it. A rewrite of the plugins interface! This is actually
-	a Good Thing (TM). Anyhow, upgrade to this release, and tell your friends.
-	33 Gaim users can't be wrong!
+	look at the ChangeLog.... Okay, guess I was useless. That's okay,
+	though, because I have some really cool stuff going into 0.63. Plugin
+	authors will hate me for it. A rewrite of the plugins interface! This is
+	actually a Good Thing (TM). Anyhow, upgrade to this release, and tell
+	your friends.  33 Gaim users can't be wrong!
 
-	Luke: I didn't do much here besides the odd translation patch and a couple
-	bug fix patches. This is primarily a bug fix release, and much needed at 
-	that. Didn't get a chance to write sorting code, work has been busy. 
-	Hopeefully it will happen for 0.63. 
+	Luke: I didn't do much here besides the odd translation patch and a
+	couple bug fix patches. This is primarily a bug fix release, and much
+	needed at that. Didn't get a chance to write sorting code, work has been
+	busy.  Hopeefully it will happen for 0.63.
 
 	Mark: Gaim is coming along quite beautimously.  I'm going to eat 
 	my Pop-tarts now.
 
-	Nathan: oh dot sixty two.  There are a lot of bugs fixed in this release,
-	and one major new feature.  Our Jabber plugin now supports XHTML-IM.  In
-	plain english, this means that you can now format your jabber messages,
-	and other people will see the formatting.  GtkIMHTML still needs some
-	work to get it to parse valid XHTML-IM better, but that will come in time.
-	That time would come sooner if my CS prof accepted "I was hacking on Gaim"
-	as a valid excuse for an extension ;-)
+	Nathan: oh dot sixty two.  There are a lot of bugs fixed in this
+	release, and one major new feature.  Our Jabber plugin now supports
+	XHTML-IM.  In plain english, this means that you can now format your
+	jabber messages, and other people will see the formatting.  GtkIMHTML
+	still needs some work to get it to parse valid XHTML-IM better, but that
+	will come in time.  That time would come sooner if my CS prof accepted
+	"I was hacking on Gaim" as a valid excuse for an extension ;-)
 
 0.61 (04/07/2003):
 	Rob: Nathan commited his news first.  However, I'm cooler so I'm putting
@@ -703,11 +705,11 @@
 	blame it on the rain. It was falling, falling.  I blame it on the
 	faucet. It drips all night.
 
-	Sean: I committed my news after Rob.  I'm cooler than Nathan (by far) but
-	not as cool as Rob.  So I go here.  Actually, I didn't do anything since 
-	0.60 other than commit some other peoples patches.  The one from Dave Camp
-	is cool.  How 'bout this snow?  Isn't that crazy?  Oh, and thanks to
-	everyone who wished me a happy birthday.
+	Sean: I committed my news after Rob.  I'm cooler than Nathan (by far)
+	but not as cool as Rob.  So I go here.  Actually, I didn't do anything
+	since 0.60 other than commit some other peoples patches.  The one from
+	Dave Camp is cool.  How 'bout this snow?  Isn't that crazy?  Oh, and
+	thanks to everyone who wished me a happy birthday.
 
 	Nathan: You want frequent releases?  You got 'em ;-)  Chip wrote some
 	cool new pounce stuff, and things shouldn't get weird when you drag
@@ -721,11 +723,11 @@
 	box spiffy. Yay frequent releases! Erm, I can't think of anything else
 	cool to say here. Have fun, everyone!
 
-	Luke: Okay, i'm probly the least cool, so I'll go last. I committed a few 
-	patches from other people here, nothing earth shattering though. The biggest
-	thing in this release is the group re-ordering bug fix, having that fixed 
-	will make for fewwer questions. Get used to using releases people, we want
-	to use cvs for actual development :-).
+	Luke: Okay, i'm probly the least cool, so I'll go last. I committed a
+	few patches from other people here, nothing earth shattering though. The
+	biggest thing in this release is the group re-ordering bug fix, having
+	that fixed will make for fewwer questions. Get used to using releases
+	people, we want to use cvs for actual development :-).
 
 	Mark: I didn't want to write any news without actually having done 
 	anything, so I fixed a meaningless compile warning.  Boo-yeah.
@@ -752,12 +754,13 @@
 	to describe 0.60.  Prepare to be shocked and amazed.  /me raises his
 	(shot) glass ;-)
 
-	Christian: Geeeeeze this took a long time. Worth it though! Personally, I
-	thought we'd all just give up on releases altogether and tell everybody
-	just to grab CVS. I'm pretty happy with this release. I was able to
-	contribute quite a bit to it. Makes me feel proud to be a gaim developer!
-	I'm really looking forward to the future releases. I have some neat stuff
-	planned. Yay, I'm still 19! Mmmm, Sierra Mist. Make me a sammich!
+	Christian: Geeeeeze this took a long time. Worth it though! Personally,
+	I thought we'd all just give up on releases altogether and tell
+	everybody just to grab CVS. I'm pretty happy with this release. I was
+	able to contribute quite a bit to it. Makes me feel proud to be a gaim
+	developer!  I'm really looking forward to the future releases. I have
+	some neat stuff planned. Yay, I'm still 19! Mmmm, Sierra Mist. Make me a
+	sammich!
 
 	Mark: Whoops, I started drinking a little earlier than I was supposed 
 	to.  I guess I missed the memo.  Hmm, I ate at a restaurant somewhere, 
@@ -1062,7 +1065,7 @@
 0.11.0-pre11 (04/30/2001):
 	Rob: I bought a big carton of juice today.  It is now 50% empty.
 	A lot of the plugins got some new options and/or improvements. I
-        have a headache right now, though, so I won't say much.  I'll let
+	have a headache right now, though, so I won't say much.  I'll let
 	Eric talk :)
 
 	Eric: I uh. I bought 72 cans of soda yesterday. It only cost $15
@@ -1405,7 +1408,8 @@
 times we'll actually get some of it right ;) Anyway, yeah. Just bug fixes in
 this one.
 
-	Rob: Yeah, we wouldn't be ourselves if we released it once and got it right, would we? :-)
+	Rob: Yeah, we wouldn't be ourselves if we released it once and got it
+	right, would we? :-)
 
 0.9.16:
 	Rob: Blah Blah Blah.
