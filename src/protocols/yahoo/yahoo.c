@@ -39,8 +39,6 @@
 #include "yahoochat.h"
 #include "md5.h"
 
-#define YAHOO_WEBMESSENGER
-
 extern char *yahoo_crypt(const char *, const char *);
 
 typedef struct

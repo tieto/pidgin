@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
-version 0.71
+version 0.71 (10/09/2003):
 	* The right-click menu for e-mail links now presents a "Copy E-Mail
 	  Address" item
 	* Fix sort by idle to behave as it did pre-contact support (David
