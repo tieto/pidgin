@@ -129,24 +129,13 @@ gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy)
 gboolean
 gevo_load_addressbook(EBook **book, GError **error)
 {
-	char *filename;
-	char *uri;
 	gboolean result;
 
 	g_return_val_if_fail(book != NULL, FALSE);
 
 	*book = e_book_new();
 
-	filename = g_build_filename(g_get_home_dir(),
-			".evolution/addressbook/local/OnThisComputer/Personal", NULL);
-
-	uri = g_strdup_printf("file://%s", filename);
-
-	g_free(filename);
-
-	result = e_book_load_uri(*book, uri, FALSE, error);
-
-	g_free(uri);
+	result = e_book_load_local_addressbook (*book, error);
 
 	if (!result)
 	{

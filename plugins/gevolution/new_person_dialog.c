@@ -129,7 +129,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 			else
 				file_as = g_strdup(firstname);
 
-			e_contact_set(contact, E_CONTACT_FILE_AS, file_as);
+			e_contact_set(dialog->contact, E_CONTACT_FILE_AS, file_as);
 
 			g_free(file_as);
 
