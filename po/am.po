@@ -1,3 +1,7 @@
+#THIS IS BROKEN, SOMEONE PLEASE FIX THIS AND THEN RE-ENABLE IT IN 
+#configure.ac AND configure.in
+
+
 # Translations into the Amharic Language.
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gaim package.
