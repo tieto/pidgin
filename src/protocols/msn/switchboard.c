@@ -450,6 +450,8 @@ msn_switchboard_init(void)
 
 	msn_table_add_cmd(cbs_table, "USR", "USR", usr_cmd);
 
+	msn_table_add_cmd(cbs_table, "CAL", "CAL", NULL);
+
 	msn_table_add_cmd(cbs_table, NULL, "MSG", msg_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "JOI", joi_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "BYE", bye_cmd);
