@@ -5,6 +5,7 @@ version 0.61 (04/07/2003):
 	* Removed folder icons and excess space from the buddy list (Thanks
 	  Dave Camp)
 	* Fixed a bug involving dragging buddies and groups
+	* Re-implemented the logout icons.
 
 version 0.60 (04/04/2003): 
 	Core:
