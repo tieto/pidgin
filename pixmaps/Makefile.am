@@ -38,6 +38,7 @@ EXTRA_DIST = \
 		Makefile.mingw			\
 		smileys/Makefile.mingw		\
 		smileys/default/Makefile.mingw	\
+		smileys/none/Makefile.mingw	\
 		status/default/Makefile.mingw	\
 		status/Makefile.mingw		\
                 gaim-install.ico		\
