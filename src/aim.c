@@ -161,9 +161,11 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
         char *txt = gtk_editable_get_chars(GTK_EDITABLE(GTK_COMBO(combo)->entry), 0, -1);
         struct aim_user *u;
         
-        if (!(general_options & OPT_GEN_REMEMBER_PASS))
+        if (!(general_options & OPT_GEN_REMEMBER_PASS)) {
+		g_free(txt);
                 return;
-        
+        }
+
         u = find_user(txt);
 
         if (u != NULL) {
@@ -171,7 +173,8 @@ static void combo_changed(GtkWidget *w, GtkWidget *combo)
         } else {
                 gtk_entry_set_text(GTK_ENTRY(pass), "");
         }
-        
+       
+	g_free(txt); 
         return;
 }
 

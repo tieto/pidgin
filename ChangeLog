@@ -12,6 +12,9 @@ version 0.9.12:
 	  and numbers.
 	* Various GNOME Applet Enhancements (thanks AGAIN to 
 	  Eric.  Someone needs to stop this boy :-) ) 
+	* A lot of random, obscure bugs fixed
+	* About 6 memory leaks fixed (yes, we're embarassed)
+	  (Thanks to Jeramey and Peter Teichman for these!)
 	
 version 0.9.11:
 	* <STRIKE>Strike Tag Support</STRIKE> :-)

@@ -1,6 +1,16 @@
 -=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
 0.9.12:
+	Well guys, looks like we got some nifty things in this version.
+TrueType Fonts are supported for those XFSTT buffs out there (or whatever
+else you use).  A crap load of those plaguing memory leaks have FINALLY been
+fixed.  My brother, Jeramey, and a new friend Peter Teichan helped stomp
+those babies out.  A rad guy by the name of Eric Warmenhoven has been
+really sweet lately and has all but rewritten the Gnome Applet support :).
+He submitted patch after patch.  I finally got annoyed with him (just kidding bud)
+and gave him CVS access.  Look for Gnome Applet support in Gaim to start improving.
+That's about all for now.  I wanted to get this release out there.  File Receive
+support will be in 0.9.13 which is due out soon.
 	
 0.9.11:
 	Jeramey got a new Comfy Chair! Its very very comfy!  Whee!

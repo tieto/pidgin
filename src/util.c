@@ -304,6 +304,9 @@ FILE *open_log_file (struct conversation *c)
 
         if (!(general_options & OPT_GEN_LOG_ALL)) {
 
+		g_free(buf);
+		g_free(buf2);
+
                 l = find_log_info(c->name);
                 if (!l)
                         return NULL;
@@ -379,6 +382,9 @@ FILE *open_log_file (struct conversation *c)
 		fprintf(fd, "IM Sessions with %s", c->name );
 		fprintf(fd, "</TITLE></HEAD><BODY BGCOLOR=\"ffffff\">\n" );
         }
+
+	g_free(buf);
+	g_free(buf2);
         return fd;
 }
 

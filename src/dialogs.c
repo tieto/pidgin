@@ -385,6 +385,7 @@ void show_warn_dialog(char *who)
         aol_icon(w->window->window);
 
         gtk_widget_show(w->window);
+	g_free(buf);
 }
 
 
@@ -890,7 +891,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
 	junk = gtk_editable_get_chars(GTK_EDITABLE(b->text), 0, -1);
 
 	g_snprintf(current_user->user_info, sizeof(current_user->user_info), "%s", junk);
-	
+		
 	save_prefs();
 
         buf = g_malloc(strlen(current_user->user_info) * 2);
@@ -898,7 +899,7 @@ void do_save_info(GtkWidget *widget, struct set_info_dlg *b)
         escape_text(buf);
         serv_set_info(buf);
         g_free(buf);
-
+	g_free(junk);
 	destroy_dialog(NULL, b->window);
 	g_free(b);
 }
@@ -1438,6 +1439,8 @@ void show_log_dialog(char *bname)
 		gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(logdialog)->cancel_button), "clicked", GTK_SIGNAL_FUNC(cancel_log), bname);
 	}
 
+	g_free(buf);
+
 	gtk_widget_show(logdialog);
 	gdk_window_raise(logdialog->window);
 }
@@ -1883,6 +1886,7 @@ void do_import(GtkWidget *w, void *dummy)
         if (!strcasecmp(first, "Config {\n")) {
                 destroy_dialog(NULL, importdialog);
                 importdialog = NULL;
+		g_free(buf);
                 return;
         } else if (buf[0] == 'm') {
                 buf2 = buf;

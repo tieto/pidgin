@@ -543,10 +543,13 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
         if (!strcasecmp(nname, normalize(current_user->username))) {
                 correction_time = (int)(signon - login_time);
                 update_all_buddies();
-                if (!b)
+                if (!b) {
+			g_free(nname);
                         return;
+		}
         }
 
+	g_free(nname);
         
         if (!b) {
                 sprintf(debug_buff,"Error, no such person\n");
@@ -576,10 +579,12 @@ void serv_got_update(char *name, int loggedin, int evil, time_t signon, time_t i
                                 gtk_window_set_title(GTK_WINDOW(cv->window), who);
                                 /* no free 'who', set_title needs it.
                                  */
+				g_free(who); //FIXME
                                 break;
                         }
                         cnv = cnv->next;
                 }
+		g_free(who); //FIXME
                 g_snprintf(b->name, sizeof(b->name), "%s", name);
                 /*gtk_label_set_text(GTK_LABEL(b->label), b->name);*/
 

@@ -327,9 +327,12 @@ static void send_callback(GtkWidget *widget, struct conversation *c)
         char buf[BUF_LONG];
 	char *buf2;
         char *buf3;
+	gchar *buf4;
         int hdrlen;
 
-        g_snprintf(buf, BUF_LONG, "%s", gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1)); 
+	buf4 = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
+	g_snprintf(buf, BUF_LONG, "%s", buf4);
+	g_free(buf4);
 
         if (!strlen(buf)) {
                 return;
@@ -446,6 +449,7 @@ int count_tag(GtkWidget *entry, char *s1, char *s2)
 		}
 	} while (p1 || p2);
 	tmpo[GTK_EDITABLE(entry)->current_pos]=h;
+	g_free(tmpo);
 	return res;
 }
 
