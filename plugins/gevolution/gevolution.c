@@ -223,15 +223,19 @@ static gboolean
 load_timeout(gpointer data)
 {
 	GaimPlugin *plugin = (GaimPlugin *)data;
+	EBookQuery *query;
 
 	timer = 0;
 
 	if (!gevo_load_addressbook(&book, NULL))
 		return FALSE;
 
-	book_view_tag = e_book_async_get_book_view(book,
-		"(contains \"x-evolution-any-field\" \"\")",
-		got_book_view_cb, NULL);
+	query = e_book_query_any_field_contains("");
+
+	book_view_tag = e_book_async_get_book_view(book, query, NULL, -1,
+											   got_book_view_cb, NULL);
+
+	e_book_query_unref(query);
 
 	gaim_signal_connect(GAIM_GTK_BLIST(gaim_get_blist()), "drawing-menu",
 						plugin, GAIM_CALLBACK(drawing_menu_cb), NULL);
