@@ -1584,7 +1584,6 @@ static int msn_send_typing(struct gaim_connection *gc, char *who, int typing) {
 	struct msn_switchboard *ms = msn_find_switch(gc, who);
 	char header[MSN_BUF_LEN] =   "MIME-Version: 1.0\r\n"
 				     "Content-Type: text/x-msmsgscontrol\r\n" 
-				     "User-Agent: Gaim/" VERSION "\r\n" 
 				     "TypingUser: ";
 	char buf [MSN_BUF_LEN];
 	if (!ms || !typing)
