@@ -524,6 +524,16 @@ int main(int argc, char *argv[])
 	}
 #endif
 
+	gui_check = gtk_init_check(&argc, &argv);
+	if (!gui_check) {
+		char *display = gdk_get_display();
+
+		g_warning("cannot open display: %s", display ? display : "unset");
+		g_free(display);
+
+		return 1;
+	}
+
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
@@ -585,16 +595,6 @@ int main(int argc, char *argv[])
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
 		set_gaim_user_dir(opt_config_dir_arg);
-	}
-
-	gui_check = gtk_init_check(&argc, &argv);
-	if (!gui_check) {
-		char *display = gdk_get_display();
-
-		g_warning("cannot open display: %s", display ? display : "unset");
-		g_free(display);
-
-		return 1;
 	}
 
 	/*
