@@ -4374,8 +4374,15 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 					  time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
+	GaimConvWindow *gaimwin;
+	GaimGtkWindow *gtkwin;
+	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gaimwin = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(gaimwin);
+
+	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
 
 	if (!(flags & GAIM_MESSAGE_NO_LOG) &&
 		gaim_prefs_get_bool("/gaim/gtk/conversations/im/raise_on_events")) {
@@ -4384,7 +4391,8 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	}
 
 	/* Play a sound, if specified in prefs. */
-	if (gtkconv->make_sound) {
+	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
+		gaim_prefs_get_bool("/gaim/gtk/sound/silent_focus") && has_focus)) {
 		if (flags & GAIM_MESSAGE_RECV) {
 			if (gtkconv->u.im->a_virgin &&
 				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/first_im_recv")) {
@@ -4409,11 +4417,19 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 						const char *message, GaimMessageFlags flags, time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
+	GaimConvWindow *gaimwin;
+	GaimGtkWindow *gtkwin;
+	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gaimwin = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(gaimwin);
+
+	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
 
 	/* Play a sound, if specified in prefs. */
-	if (gtkconv->make_sound) {
+	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
+		gaim_prefs_get_bool("/gaim/gtk/sound/silent_focus") && has_focus)) {
 		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
 			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
 		else if (flags & GAIM_MESSAGE_RECV) {
