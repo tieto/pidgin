@@ -525,7 +525,7 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 			break;
 		case 0x1c:
 			/* client too old */
-			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at http://www.marko.net/gaim/"));
+			hide_login_progress(gc, _("The client version you are using is too old. Please upgrade at http://gaim.sourceforge.net/"));
 			plugin_event(event_error, (void *)989, 0, 0, 0);
 			break;
 		default:
