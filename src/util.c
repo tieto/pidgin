@@ -1304,8 +1304,6 @@ badchar(char c)
 	switch (c) {
 	case ' ':
 	case ',':
-	case '(':
-	case ')':
 	case '\0':
 	case '\n':
 	case '<':
