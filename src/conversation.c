@@ -2967,7 +2967,7 @@ void show_conv(struct conversation *c)
 	gtk_widget_show(send);
 
 	update_buttons_by_protocol(c);
-
+	gtk_widget_grab_focus(c->entry);
 	gtk_widget_show(win);
 }
 
