@@ -607,7 +607,7 @@
 	}
 
 	char *name() {
-		return "The Gnome Stock Ticker for GAIM";
+		return "The Gnome Stock Ticker for Gaim";
 	}
 
 

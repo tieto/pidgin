@@ -129,7 +129,7 @@
 #define OPT_USR_REM_PASS	0x00000004
 #define OPT_USR_MAIL_CHECK      0x00000008
 
-#define DEFAULT_INFO "Visit the GAIM website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
+#define DEFAULT_INFO "Visit the Gaim website at <A HREF=\"http://gaim.sourceforge.net/\">http://gaim.sourceforge.net/</A>."
 
 enum log_event {
 	log_signon = 0,

@@ -1,4 +1,4 @@
-GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
+Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.46:
 	* New applet icons (courtesy David Raeman)
@@ -360,7 +360,7 @@ version 0.9.18 (06/02/2000):
 	  fixed.
 	* Pressing enter once again sends a message in buddy chatrooms (oops)
 	* More fixes for the change on the AOL sign-on process. 
-	* Fixed bug where GAIM sometimes doesn't find a font to use.
+	* Fixed bug where Gaim sometimes doesn't find a font to use.
 	* Per-conversation font and color dialogs (thanks fflewddur)
 	* Chat in oscar works (somewhat)
 	* Even more fixes for the sign-on process, and now you don't flash when
@@ -442,7 +442,7 @@ version 0.9.11 (03/22/2000):
 	* Better support for multiple screen names
 	* Font Properties
 	* Saving of buddylist window position 
-	* Fixed a problem with GAIM and the Netscape-branded version
+	* Fixed a problem with Gaim and the Netscape-branded version
 	  of Mozilla 
 	* New Sound Properties
 	* More General Properties
@@ -450,7 +450,7 @@ version 0.9.11 (03/22/2000):
 	* Various Random Bug fixes
 
 version 0.9.10 (11/03/1999):
-	* Fixed a nasty memory leak.  No more 40M GAIM processes. LOL
+	* Fixed a nasty memory leak.  No more 40M Gaim processes. LOL
 	* IDLE Times are displayed in a neater fashion.
  
 version 0.9.9  (10/31/1999):
@@ -473,7 +473,7 @@ version 0.9.8  (10/04/1999):
 	* Some logging fixes and improvements
 	* configurable host/port selection
 	* Clickable Links in buddy chat
-	* New GAIM Logo 
+	* New Gaim Logo 
 	* Display Signon/Signoff messages in conversation windows 
 	* Option to strip HTML from logged messages
 	* GNOME cleanups (It might work now haha)
@@ -550,5 +550,5 @@ version 0.8.0  (04/31/1999):
 	* Scroll-Wheel Mice work in Conversation Window
 	* Fixed WindowMaker Appicon 
 	* Version Number in About Box
-	* GAIM Slogan in about box :)
+	* Gaim Slogan in about box :)
 	* Created Changelog File :) 

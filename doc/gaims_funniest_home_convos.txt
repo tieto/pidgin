@@ -114,7 +114,7 @@ I was going to ask him is microscopic.
 13:45:00 WinFreak : Where can I download tar xvzf gaim-0.9.5.tar.gz?  Is this for windows?
 
 
-*** This is what happens when GAIM Developers get bored.
+*** This is what happens when Gaim Developers get bored.
 
 22:39:18 RobFlynn: Umm
 22:39:19 RobFlynn: My brain is dead.

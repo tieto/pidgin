@@ -516,18 +516,18 @@ msgstr "수신:"
 # src/about.c:87
 #: src/about.c:96
 #, c-format
-msgid "About GAIM v%s"
-msgstr "GAIM v%s 에 대하여"
+msgid "About Gaim v%s"
+msgstr "Gaim v%s 에 대하여"
 
 # src/about.c:124
 #: src/about.c:126
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is written\n"
 "using Gtk+ and is licensed under the GPL.\n"
 "\n"
 "URL: "
 msgstr ""
-"GAIM은 AOL 프로토콜을 사용하는 메신저입니다. Gtk+를 이용하여 만들어졌으며\n"
+"Gaim은 AOL 프로토콜을 사용하는 메신저입니다. Gtk+를 이용하여 만들어졌으며\n"
 "GPL 라이센스로 배포합니다.\n"
 "\n"
 "인터넷주소:"
@@ -709,8 +709,8 @@ msgstr "새 자리비움 메시지"
 
 # src/applet.c:309
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "GAIM 애플릿을 만들 수 없습니다!"
+msgid "Can't create Gaim applet!"
+msgstr "Gaim 애플릿을 만들 수 없습니다!"
 
 # src/applet.c:352
 #: src/applet.c:352
@@ -1086,7 +1086,7 @@ msgstr "도움말"
 # src/buddy.c:2708
 #: src/buddy.c:2752
 msgid "About Gaim"
-msgstr "GAIM 은"
+msgstr "Gaim 은"
 
 # src/buddy.c:2727 src/prefs.c:2671
 #: src/buddy.c:2771
@@ -1969,8 +1969,8 @@ msgstr "설명"
 
 # src/dialogs.c:2381
 #: src/dialogs.c:2364
-msgid "GAIM - Add URL"
-msgstr "GAIM - URL 추가"
+msgid "Gaim - Add URL"
+msgstr "Gaim - URL 추가"
 
 # src/dialogs.c:2524 src/dialogs.c:2537 src/dialogs.c:2574
 #: src/dialogs.c:2512
@@ -2359,8 +2359,8 @@ msgstr "아님"
 
 # src/prefs.c:241
 #: src/prefs.c:240
-msgid "GAIM Use"
-msgstr "GAIM 사용"
+msgid "Gaim Use"
+msgstr "Gaim 사용"
 
 # src/prefs.c:243
 #: src/prefs.c:242
@@ -3004,8 +3004,8 @@ msgstr "Gaim - 설정"
 
 # src/prefs.c:2459
 #: src/prefs.c:2323
-msgid "GAIM debug output window"
-msgstr "GAIM 디버깅 출력창"
+msgid "Gaim debug output window"
+msgstr "Gaim 디버깅 출력창"
 
 # src/prefs.c:2653
 #: src/prefs.c:2578

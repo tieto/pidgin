@@ -44,7 +44,7 @@ for you there are several libraries that you can link gaim against.
 
 * Plugins:
 
-If you do not wish to enable the plugin support within GAIM, run the
+If you do not wish to enable the plugin support within Gaim, run the
 ./configure script with the --disable-plugins option and recompile your
 source code.  This will prevent the ability to load plugins.
 

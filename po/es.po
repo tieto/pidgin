@@ -53,12 +53,12 @@ msgstr ""
 
 #: src/about.c:87
 #, c-format
-msgid "About GAIM v%s"
-msgstr "Sobre GAIM v%s"
+msgid "About Gaim v%s"
+msgstr "Sobre Gaim v%s"
 
 #: src/about.c:124
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is "
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
 "written using Gtk+ and is licensed under the GPL.\n"
 "URL: "
 msgstr ""
@@ -152,8 +152,8 @@ msgid "New Away Message"
 msgstr "Nuevo Mensaje de Ausencia"
 
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "No pudo crearse el programa GAIM"
+msgid "Can't create Gaim applet!"
+msgstr "No pudo crearse el programa Gaim"
 
 #: src/applet.c:352
 msgid "About..."
@@ -1101,8 +1101,8 @@ msgid "Description"
 msgstr "Descripción"
 
 #: src/dialogs.c:2381
-msgid "GAIM - Add URL"
-msgstr "GAIM - Agregar dirección"
+msgid "Gaim - Add URL"
+msgstr "Gaim - Agregar dirección"
 
 #: src/dialogs.c:2524 src/dialogs.c:2537 src/dialogs.c:2574
 msgid "Select Text Color"
@@ -1154,7 +1154,7 @@ msgstr "Titulo del mensaje: "
 #: src/dialogs.c:3203
 #, fuzzy
 msgid "Use"
-msgstr "GAIM Usar"
+msgstr "Gaim Usar"
 
 #: src/dialogs.c:3207
 msgid "Save & Use"
@@ -1634,13 +1634,13 @@ msgid "None"
 msgstr ""
 
 #: src/prefs.c:241
-msgid "GAIM Use"
-msgstr "GAIM Usar"
+msgid "Gaim Use"
+msgstr "Gaim Usar"
 
 #: src/prefs.c:243
 #, fuzzy
 msgid "X Use"
-msgstr "GAIM Usar"
+msgstr "Gaim Usar"
 
 #: src/prefs.c:254
 #, fuzzy
@@ -2178,8 +2178,8 @@ msgid "Gaim - Preferences"
 msgstr "Gaim - Preferencias"
 
 #: src/prefs.c:2459
-msgid "GAIM debug output window"
-msgstr "GAIM ventana de respuestas del programa"
+msgid "Gaim debug output window"
+msgstr "Gaim ventana de respuestas del programa"
 
 #: src/prefs.c:2653
 msgid "General"
@@ -2440,8 +2440,8 @@ msgstr "%s le pide que les mande un archivo"
 #~ msgid "Make Away Now"
 #~ msgstr "Hacerme ausente ahora"
 
-#~ msgid "GAIM"
-#~ msgstr "GAIM"
+#~ msgid "Gaim"
+#~ msgstr "Gaim"
 
 #~ msgid "HTML Link:"
 #~ msgstr "Dirección:"

@@ -1,4 +1,4 @@
-GAIM: The Pimpin' Penguin IM Clone Thats Good For The Soul
+Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
 1  The Basics
 	1.1  What does 'gaim' stand for?
@@ -70,8 +70,8 @@ $HOME/.gaim/YourScreenName/ (e.g. $HOME/.gaim/EWarmenhoven).
 
 1.3  What are GtkHTML and GtkIMHtml, and why not just use GNOME's GtkHTML?
 
-The widget GAIM had previously used to display HTML was called GtkHTML, and
-was written by Mark and Jim specifically for GAIM. Over time, Rob and Eric
+The widget Gaim had previously used to display HTML was called GtkHTML, and
+was written by Mark and Jim specifically for Gaim. Over time, Rob and Eric
 hacked at it (read: broke it) and it's gotten to be very fragile and fairly
 buggy.
 
@@ -81,9 +81,9 @@ it its own separate project, so that other IM clients (like Jabber clients)
 could use it. He based it somewhat off of the old GtkHTML and GNOME's GtkHTML.
 
 GNOME's GtkHTML is a very powerful HTML viewer. Because of this, it isn't
-well-suited for GAIM. It wouldn't be very good if we let you have IFrames in
+well-suited for Gaim. It wouldn't be very good if we let you have IFrames in
 your conversation, for example. Also, GNOME's GtkHTML depends on a lot of
-GNOME libraries that we don't want to force people to use in GAIM. (There is
+GNOME libraries that we don't want to force people to use in Gaim. (There is
 a strip-down version, CSCHTML, which doesn't use the GNOME libraries; but the
 first objection (that it supports too many tags) still applies.)
 

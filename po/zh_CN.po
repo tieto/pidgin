@@ -1,4 +1,4 @@
-# Simplified Chinese translation for GAIM.
+# Simplified Chinese translation for Gaim.
 # Copyright (C) YEAR Free Software Foundation, Inc.
 # Hashao <hashao@china.com>, 2000.
 # 
@@ -53,12 +53,12 @@ msgstr ""
 
 #: src/about.c:87
 #, c-format
-msgid "About GAIM v%s"
-msgstr "关于 GAIM 第 %s 版"
+msgid "About Gaim v%s"
+msgstr "关于 Gaim 第 %s 版"
 
 #: src/about.c:124
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is "
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
 "written using Gtk+ and is licensed under the GPL.\n"
 "URL: "
 msgstr ""
@@ -152,8 +152,8 @@ msgid "New Away Message"
 msgstr "新的暂时离开信息"
 
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "无法建立 GAIM applet!"
+msgid "Can't create Gaim applet!"
+msgstr "无法建立 Gaim applet!"
 
 #: src/applet.c:352
 msgid "About..."
@@ -1098,8 +1098,8 @@ msgid "Description"
 msgstr "描述"
 
 #: src/dialogs.c:2381
-msgid "GAIM - Add URL"
-msgstr "GAIM - 增加 URL"
+msgid "Gaim - Add URL"
+msgstr "Gaim - 增加 URL"
 
 #: src/dialogs.c:2524 src/dialogs.c:2537 src/dialogs.c:2574
 msgid "Select Text Color"
@@ -1151,7 +1151,7 @@ msgstr "暂时离开标题："
 #: src/dialogs.c:3203
 #, fuzzy
 msgid "Use"
-msgstr "GAIM 使用"
+msgstr "Gaim 使用"
 
 #: src/dialogs.c:3207
 msgid "Save & Use"
@@ -1628,13 +1628,13 @@ msgid "None"
 msgstr ""
 
 #: src/prefs.c:241
-msgid "GAIM Use"
-msgstr "GAIM 使用"
+msgid "Gaim Use"
+msgstr "Gaim 使用"
 
 #: src/prefs.c:243
 #, fuzzy
 msgid "X Use"
-msgstr "GAIM 使用"
+msgstr "Gaim 使用"
 
 #: src/prefs.c:254
 #, fuzzy
@@ -2166,8 +2166,8 @@ msgid "Gaim - Preferences"
 msgstr "Gaim - 优先设定"
 
 #: src/prefs.c:2459
-msgid "GAIM debug output window"
-msgstr "GAIM 除虫输出窗口"
+msgid "Gaim debug output window"
+msgstr "Gaim 除虫输出窗口"
 
 #: src/prefs.c:2653
 msgid "General"

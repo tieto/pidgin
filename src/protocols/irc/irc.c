@@ -677,7 +677,7 @@ static void handle_ctcp(struct gaim_connection *gc, char *to, char *nick,
 	char buf[IRC_BUF_LEN];
 
 	if (!g_strncasecmp(msg, "VERSION", 7)) {
-		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION GAIM " VERSION ": The Pimpin "
+		g_snprintf(buf, sizeof(buf), "NOTICE %s :\001VERSION Gaim " VERSION ": The Pimpin "
 					     "Penguin AIM Clone: " WEBSITE "\001\r\n", nick);
 		irc_write(id->fd, buf, strlen(buf));
 	}
@@ -899,7 +899,7 @@ static void irc_login_callback(gpointer data, gint source, GaimInputCondition co
 	hostname[sizeof(hostname) - 1] = 0;
 	if (!*hostname)
 		g_snprintf(hostname, sizeof(hostname), "localhost");
-	g_snprintf(buf, sizeof(buf), "USER %s %s %s :GAIM (%s)\r\n",
+	g_snprintf(buf, sizeof(buf), "USER %s %s %s :Gaim (%s)\r\n",
 		   g_get_user_name(), hostname, gc->user->proto_opt[USEROPT_SERV], WEBSITE);
 	if (irc_write(idata->fd, buf, strlen(buf)) < 0) {
 		hide_login_progress(gc, "Write error");
@@ -943,7 +943,7 @@ static void irc_close(struct gaim_connection *gc)
 	struct irc_data *idata = (struct irc_data *)gc->proto_data;
 	gchar buf[IRC_BUF_LEN];
 
-	g_snprintf(buf, sizeof(buf), "QUIT :Download GAIM [%s]\r\n", WEBSITE);
+	g_snprintf(buf, sizeof(buf), "QUIT :Download Gaim [%s]\r\n", WEBSITE);
 	irc_write(idata->fd, buf, strlen(buf));
 
 	g_free(idata->chantypes);

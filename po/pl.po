@@ -1,4 +1,4 @@
-# GAIM polish translation .
+# Gaim polish translation .
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Przemys³aw Su³ek <pbs@linux.net.pl> <psulek@plo.pl>, 2001.
 #
@@ -717,18 +717,18 @@ msgstr "Odbiorca:"
 
 #: src/about.c:96
 #, c-format
-msgid "About GAIM v%s"
-msgstr "O GAIM v%s"
+msgid "About Gaim v%s"
+msgstr "O Gaim v%s"
 
 #: src/about.c:128
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is "
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
 "written\n"
 "using Gtk+ and is licensed under the GPL.\n"
 "\n"
 "URL: "
 msgstr ""
-"GAIM jest klientem obs³uguj±cym protokó³ Instant Messenger AOL. Napisany\n"
+"Gaim jest klientem obs³uguj±cym protokó³ Instant Messenger AOL. Napisany\n"
 "z u¿yciem Gtk+ i licencjonowany wg. GPL.\n"
 "\n"
 "URL: "
@@ -879,8 +879,8 @@ msgid "New Away Message"
 msgstr "Nowy komunikat Zajêty"
 
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "Nie mo¿na stworzyæ apletu GAIM!"
+msgid "Can't create Gaim applet!"
+msgstr "Nie mo¿na stworzyæ apletu Gaim!"
 
 #: src/applet.c:348
 msgid "About..."
@@ -1670,8 +1670,8 @@ msgid "Description"
 msgstr "Opis"
 
 #: src/dialogs.c:2225
-msgid "GAIM - Add URL"
-msgstr "GAIM - Dodaj URL"
+msgid "Gaim - Add URL"
+msgstr "Gaim - Dodaj URL"
 
 #: src/dialogs.c:2376 src/dialogs.c:2397 src/dialogs.c:2451
 msgid "Select Text Color"
@@ -1966,7 +1966,7 @@ msgid "None"
 msgstr "Brak"
 
 #: src/prefs.c:239
-msgid "GAIM Use"
+msgid "Gaim Use"
 msgstr "U¿yj Gaim"
 
 #: src/prefs.c:241
@@ -2483,8 +2483,8 @@ msgid "Gaim - Preferences"
 msgstr "Gaim - preferencje"
 
 #: src/prefs.c:2358
-msgid "GAIM debug output window"
-msgstr "GAIM okno wyj¶cia odplukswiania"
+msgid "Gaim debug output window"
+msgstr "Gaim okno wyj¶cia odplukswiania"
 
 #: src/prefs.c:2612
 msgid "General"

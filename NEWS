@@ -1,4 +1,4 @@
--=[ GAIM ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
+-=[ Gaim ]=-  The Pimpin' Penguin AIM Clone That's Good For The Soul!
 
 0.45 (10/04/2001):
 	Eric: Well, it seems that the time has come for yet another
@@ -383,7 +383,7 @@
 	of work to the user interface.  It's still not in the state that I
 	would like it to be, though.  Over the next few versions you will
 	notice a few more interface changes as we try to bring a more
-	professional look to GAIM.  As always, we will stay true to our
+	professional look to Gaim.  As always, we will stay true to our
 	pimpin' penguin atittude. 
 
 	Eric: While Rob's been busy making things pretty, I've been busy
@@ -427,7 +427,7 @@
 
 0.9.18 (06/02/2000):
 	Rob: Talk about release early, release often - sheesh!  We're going
-	insane.  Ya know, I'm not too happy with the GAIM UI.  I dont know
+	insane.  Ya know, I'm not too happy with the Gaim UI.  I dont know
 	how the rest of you feel but it's time for a nice overhaul.  In the
 	next few days I'll be sitting down with some of my friends and coming
 	up with an improved interface.  I hope you all enjoy it.  It'll
@@ -530,7 +530,7 @@ support will be in 0.9.13 which is due out soon.
 0.9.11:
 	Jeramey got a new Comfy Chair! Its very very comfy!  Whee!
 Jim also had a little hyper-drunken moment and started hacking away at
-a new configuration format for GAIM.  Looks like we're running .gaimrc
+a new configuration format for Gaim.  Looks like we're running .gaimrc
 version 1 now.  Gotta love it.  I got bored and hacked in a couple font
 properties that will, in time, contain more features.  That's about it
 for this version -- cept for that memory leak we fixed.  Shush! We're
@@ -552,7 +552,7 @@ Send us beer.  We'll do better :)
 
 0.9.9:
 	Welp, All of you boys and girls who run Mandrake and have some
-problems with GAIM working properly, please check out the FAQ file.  It 
+problems with Gaim working properly, please check out the FAQ file.  It 
 contains a nice fix submitted by one of our users.  I hope this works for
 you guys!
 	Jim appears to have intoxicated himself.  This is, as always, a
@@ -573,7 +573,7 @@ with this release.  We are all a little bit happy tonight.  You must love
 life.  This is a special release of gaim.  We will be releasing some wonderful
 photographs soon .. or perhaps if we get the bloody webcam working then we
 will take a couple of quick snapshots.
-	Looks like the GAIM developers convention (cool name huh) that we
+	Looks like the Gaim developers convention (cool name huh) that we
 had this weekend in Auburn, AL went wonderfully :).  yum yum yum. Hahahah. Oh
 by the way.  Beware of insecure rednecks in the deli.  Bad things.
 	In (non)related news, Jeramey could not successfully slaughter the

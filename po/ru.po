@@ -65,12 +65,12 @@ msgstr "Регистрация на сервере Napster находится на стадии разработки"
 
 #: src/about.c:89
 #, c-format
-msgid "About GAIM v%s"
+msgid "About Gaim v%s"
 msgstr "О Gaim версия%s "
 
 #: src/about.c:119
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is written\n"
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is written\n"
 "using Gtk+ and is licensed under the GPL.\n"
 "\n"
 "URL: "
@@ -199,8 +199,8 @@ msgid "New Away Message"
 msgstr "Новое сообщение об отсутствии"
 
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "Невозможно создать GAIM апплет!"
+msgid "Can't create Gaim applet!"
+msgstr "Невозможно создать Gaim апплет!"
 
 #: src/applet.c:352
 msgid "About..."
@@ -1236,7 +1236,7 @@ msgid "Description"
 msgstr "Описание"
 
 #: src/dialogs.c:2381
-msgid "GAIM - Add URL"
+msgid "Gaim - Add URL"
 msgstr "Gaim - Добавить URL"
 
 #: src/dialogs.c:2524
@@ -1787,8 +1787,8 @@ msgid "None"
 msgstr "Нет"
 
 #: src/prefs.c:241
-msgid "GAIM Use"
-msgstr "Использование GAIM"
+msgid "Gaim Use"
+msgstr "Использование Gaim"
 
 #: src/prefs.c:243
 msgid "X Use"
@@ -2304,8 +2304,8 @@ msgid "Gaim - Preferences"
 msgstr "Gaim - Настройки"
 
 #: src/prefs.c:2482
-msgid "GAIM debug output window"
-msgstr "окно отладки GAIM"
+msgid "Gaim debug output window"
+msgstr "окно отладки Gaim"
 
 #: src/prefs.c:2676
 msgid "General"

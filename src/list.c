@@ -487,7 +487,7 @@ static char *remove_spaces(char *str)
 }
 
 
-/* translate an AIM 3 buddylist (*.lst) to a GAIM buddylist */
+/* translate an AIM 3 buddylist (*.lst) to a Gaim buddylist */
 static void translate_lst(FILE *src_fp, char *dest)
 {
 	char line[BUF_LEN], *line2;
@@ -520,7 +520,7 @@ static void translate_lst(FILE *src_fp, char *dest)
 }
 
 
-/* translate an AIM 4 buddylist (*.blt) to GAIM format */
+/* translate an AIM 4 buddylist (*.blt) to Gaim format */
 static void translate_blt(FILE *src_fp, char *dest)
 {
 	int i;
@@ -708,7 +708,7 @@ void do_import(struct gaim_connection *gc, char *filename)
 		buf = g_malloc(8193);
 		g_snprintf(buf, 8192, "toc_set_config {%s}\n", buf2);
 		g_free(buf2);
-		/* GAIM buddy list - no translation */
+		/* Gaim buddy list - no translation */
 	} else if (first[0] == 'm') {
 		rewind(f);
 		len = fread(buf, 1, BUF_LONG * 2, f);

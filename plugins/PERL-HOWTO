@@ -3,7 +3,7 @@ but there didn't seem to be a much better place.
 
 If you've ever written a perl script for X-Chat then you've basically written
 one for gaim as well. perl.c in gaim's source is basically an exact copy of
-X-Chat's perl.c file, with small modifications to suit GAIM rather than IRC.
+X-Chat's perl.c file, with small modifications to suit Gaim rather than IRC.
 
 Basically the reason for including perl is based on the experience with the
 plugins. X-Chat's docs on Perl Scripting sums it up nicely:

@@ -38,7 +38,7 @@ msgstr ""
 #: plugins/yay/yay.c:203
 #, fuzzy
 msgid "Gaim - Buddy"
-msgstr "GAIM - Ajouter un Pote"
+msgstr "Gaim - Ajouter un Pote"
 
 #: plugins/yay/yay.c:250 src/about.c:179 src/aim.c:303 src/buddy.c:2607
 #: src/buddy_chat.c:971 src/buddy_chat.c:1125 src/buddy_chat.c:1152
@@ -53,12 +53,12 @@ msgstr "Enregistrement à Napster est encore en développement"
 
 #: src/about.c:87
 #, c-format
-msgid "About GAIM v%s"
-msgstr "A propos de GAIM v%s"
+msgid "About Gaim v%s"
+msgstr "A propos de Gaim v%s"
 
 #: src/about.c:124
 msgid ""
-"GAIM is a client that supports AOL's Instant Messenger protocol. It is "
+"Gaim is a client that supports AOL's Instant Messenger protocol. It is "
 "written using Gtk+ and is licensed under the GPL.\n"
 "URL: "
 msgstr ""
@@ -152,8 +152,8 @@ msgid "New Away Message"
 msgstr "Nouveau Message d'absence"
 
 #: src/applet.c:309
-msgid "Can't create GAIM applet!"
-msgstr "Impossible de créer l'applet GAIM"
+msgid "Can't create Gaim applet!"
+msgstr "Impossible de créer l'applet Gaim"
 
 #: src/applet.c:352
 msgid "About..."
@@ -450,7 +450,7 @@ msgstr "Editer ses amis"
 
 #: src/buddy.c:2847
 msgid "Gaim - Buddy List"
-msgstr "GAIM - Liste des Potes"
+msgstr "Gaim - Liste des Potes"
 
 #: src/buddy_chat.c:104 src/oscar.c:2590 src/toc.c:1001
 msgid "Join what group:"
@@ -887,11 +887,11 @@ msgstr "Ajouter un Groupe"
 #: src/dialogs.c:921
 #, fuzzy
 msgid "Gaim - Add Group"
-msgstr "GAIM - Ajouter un Pote"
+msgstr "Gaim - Ajouter un Pote"
 
 #: src/dialogs.c:948
 msgid "Gaim - Add Buddy"
-msgstr "GAIM - Ajouter un Pote"
+msgstr "Gaim - Ajouter un Pote"
 
 #: src/dialogs.c:962
 msgid "Add Buddy"
@@ -1098,7 +1098,7 @@ msgid "Description"
 msgstr "Description"
 
 #: src/dialogs.c:2381
-msgid "GAIM - Add URL"
+msgid "Gaim - Add URL"
 msgstr "Gaim - Ajouter une adresse internet"
 
 #: src/dialogs.c:2524 src/dialogs.c:2537 src/dialogs.c:2574
@@ -1171,7 +1171,7 @@ msgstr "Ajouter un Pote"
 #: src/dialogs.c:3466
 #, fuzzy
 msgid "Gaim - Alias Buddy"
-msgstr "GAIM - Ajouter un Pote"
+msgstr "Gaim - Ajouter un Pote"
 
 #: src/dialogs.c:3543
 #, fuzzy
@@ -1200,7 +1200,7 @@ msgstr "Fermer"
 #: src/dialogs.c:3821
 #, fuzzy
 msgid "Gaim - Rename Group"
-msgstr "GAIM - Renommer un groupe"
+msgstr "Gaim - Renommer un groupe"
 
 #: src/dialogs.c:3831
 msgid "Rename Group"
@@ -1214,12 +1214,12 @@ msgstr "Pseudonyme:"
 #: src/dialogs.c:3909
 #, fuzzy
 msgid "Gaim - Rename Buddy"
-msgstr "GAIM - Renommer un Pote"
+msgstr "Gaim - Renommer un Pote"
 
 #: src/dialogs.c:3919
 #, fuzzy
 msgid "Rename Buddy"
-msgstr "GAIM - Renommer un Pote"
+msgstr "Gaim - Renommer un Pote"
 
 #: src/gaimrc.c:980
 #, c-format
@@ -1649,8 +1649,8 @@ msgid "None"
 msgstr "Aucune"
 
 #: src/prefs.c:241
-msgid "GAIM Use"
-msgstr "Utilisation de GAIM"
+msgid "Gaim Use"
+msgstr "Utilisation de Gaim"
 
 #: src/prefs.c:243
 #, fuzzy
@@ -2191,8 +2191,8 @@ msgid "Gaim - Preferences"
 msgstr "Gaim - Préférences"
 
 #: src/prefs.c:2459
-msgid "GAIM debug output window"
-msgstr "fenêtre de debug GAIM"
+msgid "Gaim debug output window"
+msgstr "fenêtre de debug Gaim"
 
 #: src/prefs.c:2653
 msgid "General"
@@ -2458,8 +2458,8 @@ msgstr "%s vous demande de leur envoyer un fichier"
 #~ msgid "Make Away Now"
 #~ msgstr "Etre absent maintenant"
 
-#~ msgid "GAIM"
-#~ msgstr "GAIM"
+#~ msgid "Gaim"
+#~ msgstr "Gaim"
 
 #~ msgid "HTML Link:"
 #~ msgstr "Lien HTML:"
