@@ -4,7 +4,7 @@ version 0.11.0-pre13:
 	* Can view/set chat topic in Jabber (thanks faceprint)
 	* The napster plugin no longer segfaults on invalid names
 	  and/or passwords.
-    * HTML is properly stripped from away messages in protocols that
+	* HTML is properly stripped from away messages in protocols that
 	  do not use HTML.  (thanks, faceprint)
 
 version 0.11.0-pre12 (05/29/2001):
