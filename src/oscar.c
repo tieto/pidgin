@@ -102,6 +102,7 @@ struct chat_connection {
 	int inpa;
 	int id;
 	struct gaim_connection *gc; /* i hate this. */
+	struct conversation *cnv; /* bah. */
 	gpointer priv; /* don't ask. */
 };
 
@@ -984,7 +985,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_chat_clientready(sess, command->conn);
 		chatcon = find_oscar_chat_by_conn(gc, command->conn);
 		chatcon->id = id;
-		serv_got_joined_chat(gc, id++, chatcon->show);
+		chatcon->cnv = serv_got_joined_chat(gc, id++, chatcon->show);
 		break;
 	case AIM_CONN_TYPE_RENDEZVOUS:
 		break;
@@ -2158,8 +2159,6 @@ int gaim_chat_join(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 	struct gaim_connection *g = sess->aux_data;
 
-	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
 
 	va_start(ap, command);
@@ -2171,18 +2170,8 @@ int gaim_chat_join(struct aim_session_t *sess,
 	if (!c)
 		return 1;
 
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (!strcasecmp(b->name, c->show))
-			break;	
-		bcs = bcs->next;
-		b = NULL;
-	}
-	if (!b)
-		return 1;
-		
 	while (i < count)
-		add_chat_buddy(b, info[i++].sn);
+		add_chat_buddy(c->cnv, info[i++].sn);
 
 	return 1;
 }
@@ -2194,8 +2183,6 @@ int gaim_chat_leave(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 	struct gaim_connection *g = sess->aux_data;
 
-	GSList *bcs = g->buddy_chats;
-	struct conversation *b = NULL;
 	struct chat_connection *c = NULL;
 
 	va_start(ap, command);
@@ -2207,18 +2194,8 @@ int gaim_chat_leave(struct aim_session_t *sess,
 	if (!c)
 		return 1;
 
-	while (bcs) {
-		b = (struct conversation *)bcs->data;
-		if (!strcasecmp(b->name, c->show))
-			break;	
-		bcs = bcs->next;
-		b = NULL;
-	}
-	if (!b)
-		return 1;
-		
 	while (i < count)
-		remove_chat_buddy(b, info[i++].sn);
+		remove_chat_buddy(c->cnv, info[i++].sn);
 
 	return 1;
 }
@@ -2235,32 +2212,16 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	struct aim_userinfo_s *info;
 	char *msg;
 	struct gaim_connection *gc = sess->aux_data;
+	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, command->conn);
 	char *tmp;
-
-	GSList *bcs = gc->buddy_chats;
-	struct conversation *b = NULL;
 
 	va_start(ap, command);
 	info = va_arg(ap, struct aim_userinfo_s *);
 	msg  = va_arg(ap, char *);
 
-	while(bcs) {
-		b = (struct conversation *)bcs->data;
-		tmp = extract_name(command->conn->priv);
-		if (!strcasecmp(b->name, tmp)) {
-			g_free(tmp);
-			break;
-		}
-		g_free(tmp);
-		bcs = bcs->next;
-		b = NULL;
-	}
-	if (!b)
-		return 0;
-
 	tmp = g_malloc(BUF_LONG);
 	g_snprintf(tmp, BUF_LONG, "%s", msg);
-	serv_got_chat_in(gc, b->id, info->sn, 0, tmp, time((time_t)NULL));
+	serv_got_chat_in(gc, ccon->id, info->sn, 0, tmp, time((time_t)NULL));
 	g_free(tmp);
 
 	return 1;
@@ -2790,7 +2751,7 @@ static void oscar_chat_send(struct gaim_connection *g, int id, char *message) {
 	bcs = odata->oscar_chats;
 	while (bcs) {
 		c = (struct chat_connection *)bcs->data;
-		if (!strcmp(b->name, c->show))
+		if (b == c->cnv)
 			break;
 		bcs = bcs->next;
 		c = NULL;
