@@ -2451,7 +2451,7 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 
 static void oscar_set_away(struct gaim_connection *gc, char *state, char *message) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	char away[4096];
+	char away[1025];
 	if (!od->icq) {
 		if (message)
 			g_snprintf(away, sizeof(away), "%s", message);
@@ -2460,8 +2460,8 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 			g_free (gc->away);
 		gc->away = NULL;
 		if (message) {
-			if (strlen(message) > sizeof(away))
-				do_error_dialog("Maximum away length exceeded, truncating",
+			if (strlen(message) > sizeof(away)-1)
+				do_error_dialog("Maximum away length exceeded (1024), truncating",
 						"Info Too Long");
 			gc->away = g_strdup (message);
 		}
