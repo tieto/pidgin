@@ -266,7 +266,11 @@ void play(unsigned char *data, int size)
 
 extern int logins_not_muted;
 
+#ifdef USE_APPLET
+void applet_play_sound(int sound)
+#else
 void play_sound(int sound)
+#endif
 {
 
 	switch(sound) {
@@ -300,11 +304,11 @@ void play_sound(int sound)
 #ifdef USE_APPLET
 
 #include <gnome.h>
-void applet_play_sound(int sound)
+void play_sound(int sound)
 {
 
 	if (!(sound_options & OPT_SOUND_THROUGH_GNOME)) {
-		play_sound(sound);
+		applet_play_sound(sound);
 		return;
 	}
 
