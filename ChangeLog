@@ -4,6 +4,7 @@ version 0.68:
 	* Removed the old event system and replaced it with a much better
 	  signal system.
 	* Added plugin dependency support.
+	* Swedish translation updated (Tore Lundqvist (luntor))
 
 version 0.67 (08/14/2003):
 	* Brought back the message notification plugin (Brian Tarricone)
