@@ -1249,62 +1249,34 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static gboolean
-entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
+entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 {
 	GaimConvWindow *win;
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
+	int numconvs;
+	int curconv;
 
-	conv    = (GaimConversation *)data;
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	win     = gaim_conversation_get_window(conv);
-	gtkwin  = GAIM_GTK_WINDOW(win);
+	conv     = (GaimConversation *)data;
+	gtkconv  = GAIM_GTK_CONVERSATION(conv);
+	win      = gaim_conversation_get_window(conv);
+	gtkwin   = GAIM_GTK_WINDOW(win);
+	numconvs = gaim_conv_window_get_conversation_count(win);
+	curconv  = gaim_conversation_get_index(conv);
 
-	if (event->keyval == GDK_Page_Up) {
-		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-		if (!(event->state & GDK_CONTROL_MASK))
-			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
-	}
-	else if (event->keyval == GDK_Page_Down) {
-		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-		if (!(event->state & GDK_CONTROL_MASK))
-			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
-	}
-	else if (event->keyval == GDK_F2) {
-
-		gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
-			!gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
-	}
-	else if (event->keyval == GDK_Return || event->keyval == GDK_KP_Enter) {
-		if ((event->state & GDK_CONTROL_MASK) &&
-			gaim_prefs_get_bool("/gaim/gtk/conversations/ctrl_enter_sends")) {
-
-			send_cb(NULL, conv);
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-			return TRUE;
-		}
-		else if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) &&
-				 gaim_prefs_get_bool("/gaim/gtk/conversations/enter_sends")) {
-
-			send_cb(NULL, conv);
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
-			return TRUE;
-		}
-
-		return FALSE;
-	}
-	else if ((event->state & GDK_CONTROL_MASK) && (event->keyval == 'm' ||
-				event->keyval == 'M')) {
-		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-		gtk_text_buffer_insert_at_cursor(gtkconv->entry_buffer, "\n", 1);
-	}
-	else if (event->state & GDK_CONTROL_MASK) {
+	/* If CTRL was held down... */
+	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
+			case GDK_Return:
+			case GDK_KP_Enter:
+				if (gaim_prefs_get_bool("/gaim/gtk/conversations/ctrl_enter_sends")) {
+					send_cb(NULL, conv);
+
+					return TRUE;
+				}
+				break;
+
 			case GDK_Up:
 				if (!conv->send_history)
 					break;
@@ -1332,23 +1304,39 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->entry), conv->send_history->data, 0, NULL);
 				}
 
+				return TRUE;
 				break;
 
 			case GDK_Down:
 				if (!conv->send_history)
 					break;
 
-				if (conv->send_history->prev) {
-					conv->send_history = conv->send_history->prev;
+				if (conv->send_history->prev &&
+					conv->send_history->prev->data) {
 
-					if (conv->send_history->data) {
-						gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-						gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->entry), conv->send_history->data, 0, NULL);
-					}
+					conv->send_history = conv->send_history->prev;
+					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+					gtk_imhtml_append_text_with_images(GTK_IMHTML(gtkconv->entry), conv->send_history->data, 0, NULL);
 				}
 
+				return TRUE;
 				break;
-		}
+
+			case GDK_Page_Up:
+				if (curconv + 1 < numconvs)
+					gaim_conv_window_switch_conversation(win,  curconv + 1);
+
+				return TRUE;
+				break;
+
+			case GDK_Page_Down:
+				if (curconv > 0)
+					gaim_conv_window_switch_conversation(win, curconv - 1);
+
+				return TRUE;
+				break;
+
+		} /* End of switch */
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/html_shortcuts")) {
 			switch (event->keyval) {
@@ -1358,8 +1346,7 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.italic)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 
 				case 'u':  /* ctrl-u is GDK_Clear, which clears the line. */
@@ -1368,8 +1355,7 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.underline)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 
 				case 'b':  /* ctrl-b is GDK_Left, which moves backwards. */
@@ -1378,8 +1364,7 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.bold)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 
 				case '-':
@@ -1387,8 +1372,7 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 							!gtk_toggle_button_get_active(
 								GTK_TOGGLE_BUTTON(gtkconv->toolbar.smaller_size)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 
 				case '=':
@@ -1397,18 +1381,18 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 							!gtk_toggle_button_get_active(
 								GTK_TOGGLE_BUTTON(gtkconv->toolbar.larger_size)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 
+#if 0
 				case '0':
-					/*set_toggle(gtkconv->toolbar.normal_size,
+					set_toggle(gtkconv->toolbar.normal_size,
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.normal_size)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-					"key_press_event"); */
+					return TRUE;
 					break;
+#endif
 
 				case 'f':
 				case 'F':
@@ -1416,11 +1400,10 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 						!gtk_toggle_button_get_active(
 							GTK_TOGGLE_BUTTON(gtkconv->toolbar.font)));
 
-					g_signal_stop_emission_by_name(G_OBJECT(entry),
-												 "key_press_event");
+					return TRUE;
 					break;
 			}
-		}
+		} /* End of switch */
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/smiley_shortcuts")) {
 			char buf[7];
@@ -1444,12 +1427,11 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				case '^': strcpy(buf, ":'(");  break;
 				case '&': strcpy(buf, ":-X");  break;
 				case '*': strcpy(buf, ":-D");  break;
-				default: break;
 			}
 
 			if (*buf) {
 				gtk_imhtml_insert_smiley(GTK_IMHTML(gtkconv->entry), conv->account->protocol_id, buf);
-				g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+				return TRUE;
 			}
 		}
 
@@ -1457,49 +1439,87 @@ entry_key_pressed_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
 			g_string_free(conv->history, TRUE);
 			conv->history = g_string_new("");
+
+			return TRUE;
 		}
 		else if (event->keyval == 'z') {
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-
 			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
+
+			return TRUE;
 		}
 		else if (event->keyval == '[') {
 			gaim_conv_window_switch_conversation(win,
 				gaim_conversation_get_index(conv) - 1);
 
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+			return TRUE;
 		}
 		else if (event->keyval == ']') {
 			gaim_conv_window_switch_conversation(win,
 				gaim_conversation_get_index(conv) + 1);
 
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+			return TRUE;
 		}
 		else if (event->keyval == GDK_Tab) {
 			move_next_tab(conv);
 
-			g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/* If ALT (or whatever) was held down... */
+	if (event->state & GDK_MOD1_MASK) {
+		/* XXX - Make sure the conv exists befeore switching to it */
+		if (event->keyval > '0' && event->keyval <= '9') {
+			int switchto = event->keyval - '1';
+			if (switchto < numconvs)
+				gaim_conv_window_switch_conversation(win, switchto);
 
 			return TRUE;
 		}
+
+		return FALSE;
 	}
-	else if (event->keyval == GDK_Tab &&
-			 gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
-			 gaim_prefs_get_bool("/gaim/gtk/conversations/chat/tab_completion")) {
 
-		tab_complete(conv);
+	/* If neither CTRL nor ALT were held down... */
+	switch (event->keyval) {
+		case GDK_Return:
+		case GDK_KP_Enter:
+			if (!(event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) &&
+				  gaim_prefs_get_bool("/gaim/gtk/conversations/enter_sends")) {
 
-		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
+				send_cb(NULL, conv);
+				return TRUE;
+			}
+			break;
 
-		return TRUE;
-	}
-	else if ((event->state & GDK_MOD1_MASK) &&
-			 event->keyval > '0' && event->keyval <= '9') {
+		case GDK_Tab:
+			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
+				gaim_prefs_get_bool("/gaim/gtk/conversations/chat/tab_completion")) {
 
-		gaim_conv_window_switch_conversation(win, event->keyval - '1');
+				tab_complete(conv);
+				return TRUE;
+			}
+			break;
 
-		g_signal_stop_emission_by_name(G_OBJECT(entry), "key_press_event");
-	}
+		case GDK_Page_Up:
+			gtk_imhtml_page_up(GTK_IMHTML(gtkconv->imhtml));
+			return TRUE;
+			break;
+
+		case GDK_Page_Down:
+			gtk_imhtml_page_down(GTK_IMHTML(gtkconv->imhtml));
+			return TRUE;
+			break;
+
+		case GDK_F2:
+			gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
+				!gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
+			return TRUE;
+			break;
+
+	} /* End of switch */
 
 	return FALSE;
 }
@@ -1526,11 +1546,16 @@ entry_stop_rclick_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
 }
 
 static gboolean
-refocus_entry_cb(GtkWidget *widget, GdkEventButton *event, gpointer data)
+refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
 	GaimGtkConversation *gtkconv = data;
 
-	gtk_widget_grab_focus(gtkconv->entry);
+	if (!(event->state & GDK_CONTROL_MASK)) {
+		gtk_widget_grab_focus(gtkconv->entry);
+		gtk_widget_event(gtkconv->entry, (GdkEvent *)event);
+
+		return TRUE;
+	}
 
 	return FALSE;
 }
@@ -3589,7 +3614,7 @@ setup_chat_pane(GaimConversation *conv)
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "button_release_event",
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gaim_setup_imhtml(gtkconv->imhtml);
@@ -3716,7 +3741,7 @@ setup_chat_pane(GaimConversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb), conv);
+					 G_CALLBACK(entry_key_press_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 
@@ -3776,7 +3801,7 @@ setup_im_pane(GaimConversation *conv)
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "button_release_event",
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
@@ -3815,7 +3840,7 @@ setup_im_pane(GaimConversation *conv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_pressed_cb), conv);
+					 G_CALLBACK(entry_key_press_cb), conv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
 
@@ -4181,8 +4206,10 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 						 G_CALLBACK(conv_dnd_recv), conv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
 						 G_CALLBACK(conv_dnd_recv), conv);
-/*		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-						 G_CALLBACK(conv_dnd_recv), conv);*/
+#if 0
+		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
+						 G_CALLBACK(conv_dnd_recv), conv);
+#endif
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 5);

@@ -148,7 +148,7 @@ struct _GtkIMHtmlHr {
 typedef enum {
 	GTK_IMHTML_NO_COLOURS    = 1 << 0,
 	GTK_IMHTML_NO_FONTS      = 1 << 1,
-	GTK_IMHTML_NO_COMMENTS   = 1 << 2,
+	GTK_IMHTML_NO_COMMENTS   = 1 << 2, /* Remove */
 	GTK_IMHTML_NO_TITLE      = 1 << 3,
 	GTK_IMHTML_NO_NEWLINE    = 1 << 4,
 	GTK_IMHTML_NO_SIZES      = 1 << 5,

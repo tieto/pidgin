@@ -433,6 +433,9 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	guint16 c;
 	GtkIMHtml *imhtml = data;
 
+	if (!gtk_text_view_get_editable(imhtml))
+		return;
+
 	if (selection_data->length < 0) {
 		text = gtk_clipboard_wait_for_text(clipboard);
 	} else {
