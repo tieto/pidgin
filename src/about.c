@@ -132,8 +132,8 @@ void show_about(GtkWidget *w, void *null)
 
 		text = gtk_text_new(NULL, NULL);
 		gtk_text_insert(GTK_TEXT(text), NULL, NULL, NULL,
-				_("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven (lead coder)  warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nSean Egan\nJim Duchek\nMark Spencer (original author)   markster@marko.net"),
-				208);
+				_("Rob Flynn (maintainer)               rob@marko.net\nEric Warmenhoven warmenhoven@yahoo.com\n\nBenjamin Miller\nDecklin Foster\nSean Egan\nJim Duchek\nMark Spencer (original author)   markster@marko.net"),
+				194);
 		gtk_box_pack_start(GTK_BOX(fbox), text, TRUE, TRUE, 0);
 		gtk_widget_show(text);
 
