@@ -254,7 +254,7 @@ void do_away_menu()
 		l = gtk_container_children(GTK_CONTAINER(awaymenu));
 
 		while (l) {
-			gtk_widget_destroy(GTK_WIDGET(l->data));
+			gtk_container_remove(GTK_CONTAINER(awaymenu), GTK_WIDGET(l->data));
 			l = l->next;
 		}
 
