@@ -11,6 +11,7 @@ int gaim_plugin_init(void *handle) {
 
 	srand(time(NULL));
 	error = rand() % 3;
+	error -= 2;
 	/* there's a 1 in 3 chance there *won't* be an error :) */
 	return error;
 }
@@ -25,10 +26,10 @@ char *gaim_plugin_error(int error) {
 	 * we just have to deal with what the error was (as defined by us)
 	 * and do any other clean-up stuff we need to do. */
 	switch (error) {
-	case 0:
+	case -1:
 		do_error_dialog("I'm calling the error myself", "MY BAD");
 		return NULL;
-	case 2:
+	case -2:
 		return "Internal plugin error: exiting.";
 	}
 	/* we should never get here */

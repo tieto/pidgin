@@ -9,10 +9,10 @@ version 0.9.20:
 	plugins do not have to be recompiled in order for them to still work.
 
 	The big thing to note is that gaim_plugin_init no longer returns void,
-	but int.  If it returns 1, gaim interprets this as there being no
+	but int.  If it returns 0+, gaim interprets this as there being no
 	error, and continues with loading as normal. (This should be backwards-
-	compatible: returning 1 is the equivalent of returning void.) If it
-	returns a number other than 1, there was an error loading detected by
+	compatible: returning 0/1 is the equivalent of returning void.) If it
+	returns a number less than 0, there was an error loading detected by
 	the plugin. At that point, gaim will try to clean things up by removing
 	any callbacks that have been added by the plugin. It will then try to
 	call the plugin's gaim_plugin_error function, if there is one. The

@@ -28,10 +28,9 @@ DO NOT CHANGE THIS POINTER! Bad things will happen. You've been warned. It's
 needed for connecting to signals and things. It's a good idea to remember it
 somehow.
 
-gaim_plugin_init should return an int. If the int it returns is anything other
-than 1, it is interpreted as an error, and gaim_plugin_error is called. See
-the ChangeLog file in this directory for more details, and error.c for an
-example.
+gaim_plugin_init should return an int. If the int returned is less than 0, it
+is interpreted as an error, and gaim_plugin_error is called. See the ChangeLog
+file in this directory for more details, and error.c for an example.
 
 You can basically do anything you want in the plugin. You can make function
 calls, change public widgets, display new widgets, things like that. But the
