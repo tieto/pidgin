@@ -4,6 +4,7 @@ version 0.71
 	* Display AIM away messages in the tooltip for buddies when
 	  they are away.
 	* Re-write of Jabber protocol plugin
+	* Massive core/UI splitting.
 	* SSL support can now be provided by third party plugins.
 	* Multiple copies of gaim installed at different locations no
 	  longer attempt to load the same, possibly incompatible plugins
