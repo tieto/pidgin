@@ -8,6 +8,9 @@ AC_PREREQ([2.50])
 
 AC_PATH_PROG(sedpath, sed)
 
+dnl Storing configure arguments
+AC_DEFINE_UNQUOTED(CONFIG_ARGS, "$ac_configure_args", [configure arguments])
+
 dnl Checks for programs.
 AC_PROG_CC
 AC_DISABLE_STATIC
