@@ -4818,6 +4818,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	gchar who[16];
 	GString *str;
 	gchar *primary, *utf8;
+	const gchar *alias;
 	va_list ap;
 	struct aim_icq_info *info;
 
@@ -4914,7 +4915,11 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_string_append_printf(str, "\n<hr>\n");
 	}
 
-	primary = g_strdup_printf(_("ICQ Info for %s"), gaim_buddy_get_alias(buddy));
+	if (buddy != NULL)
+		alias = gaim_buddy_get_alias(buddy);
+	else
+		alias = who;
+	primary = g_strdup_printf(_("ICQ Info for %s"), alias);
 	gaim_notify_formatted(gc, NULL, primary, NULL, str->str, NULL, NULL);
 	g_free(primary);
 	g_string_free(str, TRUE);
