@@ -281,7 +281,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(room_jid);
 	} else {
-		if(!(jb->subscription & JABBER_SUB_TO)) {
+		if(state != JABBER_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO)) {
 			gaim_debug(GAIM_DEBUG_INFO, "jabber",
 					"got unexpected presence from %s, ignoring\n", from);
 			jabber_id_free(jid);

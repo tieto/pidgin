@@ -185,7 +185,7 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 	} else if(!strcmp(packet->name, "message")) {
 		jabber_message_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:features")) {
-		if(js->state == JABBER_STREAM_AUTHENTICATING) {
+		if(!js->registration && js->state == JABBER_STREAM_AUTHENTICATING) {
 			jabber_auth_start(js, packet);
 		} else if(js->state == JABBER_STREAM_REINITIALIZING) {
 			jabber_session_init(js);
@@ -844,8 +844,99 @@ static GList *jabber_away_states(GaimConnection *gc)
 	return m;
 }
 
+static void jabber_password_change_result_cb(JabberStream *js, xmlnode *packet)
+{
+	const char *type;
+
+	type = xmlnode_get_attrib(packet, "type");
+
+	if(!strcmp(type, "result")) {
+		gaim_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
+				_("Your password has been changed."));
+	} else {
+		xmlnode *error;
+		char *buf, *error_txt = NULL;
+
+
+		if((error = xmlnode_get_child(packet, "error")))
+			error_txt = xmlnode_get_data(error);
+
+		if(error_txt) {
+			buf = g_strdup_printf(_("Error changing password: %s"),
+					error_txt);
+			g_free(error_txt);
+		} else {
+			buf = g_strdup(_("Unknown error occurred changing password"));
+		}
+
+		gaim_notify_error(js->gc, _("Error"), _("Error"), buf);
+		g_free(buf);
+	}
+}
+
+static void jabber_password_change_cb(JabberStream *js,
+		GaimRequestFields *fields)
+{
+	const char *p1, *p2;
+	JabberIq *iq;
+	xmlnode *query, *y;
+
+	p1 = gaim_request_fields_get_string(fields, "password1");
+	p2 = gaim_request_fields_get_string(fields, "password2");
+
+	if(strcmp(p1, p2)) {
+		gaim_notify_error(js->gc, NULL, _("New passwords do not match."), NULL);
+		return;
+	}
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
+
+	xmlnode_set_attrib(iq->node, "to", js->user->domain);
+
+	query = xmlnode_get_child(iq->node, "query");
+
+	y = xmlnode_new_child(query, "username");
+	xmlnode_insert_data(y, js->user->node, -1);
+	y = xmlnode_new_child(query, "password");
+	xmlnode_insert_data(y, p1, -1);
+
+	jabber_iq_set_callback(iq, jabber_password_change_result_cb);
+
+	jabber_iq_send(iq);
+
+	gaim_account_set_password(js->gc->account, p1);
+}
+
+static void jabber_password_change(GaimConnection *gc)
+{
+	JabberStream *js = gc->proto_data;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("password1", _("Password"),
+			"", FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("password2", _("Password (again)"),
+			"", FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(js->gc, _("Change Jabber Password"),
+			_("Change Jabber Password"), _("Please enter your new password"),
+			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
+			_("Cancel"), NULL, js);
+}
+
 static GList *jabber_actions(GaimConnection *gc)
 {
+	JabberStream *js = gc->proto_data;
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
 
@@ -855,7 +946,13 @@ static GList *jabber_actions(GaimConnection *gc)
 	pam->gc = gc;
 	m = g_list_append(m, pam);
 
-	/* XXX: Change Password */
+	if(js->protocol_version == JABBER_PROTO_0_9) {
+		pam = g_new0(struct proto_actions_menu, 1);
+		pam->label = _("Change Password");
+		pam->callback = jabber_password_change;
+		pam->gc = gc;
+		m = g_list_append(m, pam);
+	}
 
 	return m;
 }
@@ -947,23 +1044,15 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
 
-	/* Ugly Hack for SSL */
-	GaimPlugin *ssl_plugin;
-	ssl_plugin = gaim_plugins_find_with_id("core-ssl");
-	if (ssl_plugin != NULL && !gaim_plugin_is_loaded(ssl_plugin))
-		gaim_plugin_load(ssl_plugin);
-
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	split = gaim_account_user_split_new(_("Resource"), "Gaim", '/');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	if(gaim_ssl_is_supported()) {
-		option = gaim_account_option_bool_new(_("Force Old SSL"), "old_ssl", FALSE);
-		prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
-				option);
-	}
+	option = gaim_account_option_bool_new(_("Force Old SSL"), "old_ssl", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
+			option);
 
 	option = gaim_account_option_int_new(_("Port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
