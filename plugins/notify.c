@@ -35,14 +35,14 @@
 #include <gdk/gdkx.h>
 
 guint type = 1;
-#define TYPE_IM         0x00000001
-#define TYPE_CHAT       0x00000002
+#define TYPE_IM				0x00000001
+#define TYPE_CHAT			0x00000002
 
 guint choice = 1;
 #define NOTIFY_FOCUS		0x00000001
 #define NOTIFY_TYPE			0x00000002
-#define NOTIFY_IN_FOCUS	0x00000004
-#define NOTIFY_CLICK    0x00000008
+#define NOTIFY_IN_FOCUS		0x00000004
+#define NOTIFY_CLICK		0x00000008
 
 guint method = 1;
 #define METHOD_STRING		0x00000001
@@ -101,7 +101,7 @@ guint unnotify(struct gaim_conversation *c, gboolean clean) {
 	guint option = 0;
 
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(c));
-	
+
 	/* The top level ifs check whether we are either cleaning all methods,
 	 * or whether we have that method is currently selected.
 	 * If we do then they are cleaned
@@ -112,7 +112,7 @@ guint unnotify(struct gaim_conversation *c, gboolean clean) {
 	if (clean || (method & METHOD_QUOTE))
 		if (quote_remove(gtkwin->window) && (method & METHOD_QUOTE))
 			option ^= METHOD_QUOTE;
-	
+
 	if (clean || (method & METHOD_COUNT))
 		if (count_remove(gtkwin->window) && (method & METHOD_COUNT))
 			option ^= METHOD_COUNT;
@@ -240,18 +240,22 @@ int un_star(GtkWidget *widget, gpointer data) {
 	return 0;
 }
 
-/* This function returns the number in [ ]'s or 0 */
+/* This function returns the number in [ ]'s or 0
+   and sets *length to the number of digits in that number */
 int counter (char *buf, int *length) {
 	char temp[256];
-	int i = 1;
+	int i = 0;
+	int j = 0;
 	*length = 0;
 
+	/* Don't assume buf[0]=='[' */
+	while( buf[i++] != '[' && i<sizeof(buf));
+	
 	while (isdigit(buf[i]) && i<sizeof(buf)) {
-		temp[i-1] = buf[i];
+		temp[j++] = buf[i++];
 		(*length)++;
-		i++;
 	}
-	temp[i] = '\0';
+	temp[j] = '\0';
 
 	if (buf[i] != ']') {
 		*length = 0;
@@ -292,12 +296,20 @@ void count_add(GtkWidget *widget, int number) {
 
 	strncpy(buf, win->title, sizeof(buf));
 	c = counter(buf, &length);
+
 	if (number) {
+		/* This might cause problems in the future.
+		   I'm pretty sure if count_add is called after quote_add
+		   and number!=0, then this will have problems dealing with
+		   the quotation marks. */
 		g_snprintf(buf, sizeof(buf), "[%d] %s", number, win->title);
 	} else if (!c) {
 		g_snprintf(buf, sizeof(buf), "[1] %s", win->title);
-	} else if (buf[0]== '[' ) {
-		g_snprintf(buf, sizeof(buf), "[%d] %s", c+1, &win->title[3+length]);
+	} else if (buf[0] == '[' || buf[1] == '[' ) {
+		/* This has to be so complicated in order to account for METHOD_QUOTE */
+		g_snprintf(buf, sizeof(buf), "[%d] %s", c+1, &win->title[ ((method & METHOD_QUOTE) ? 4 : 3)+length ]);
+		if( buf[ strlen(buf)-1 ] == '"' )
+			buf[ strlen(buf)-1 ] = '\0';
 	}
 	gtk_window_set_title(win, buf);
 }
