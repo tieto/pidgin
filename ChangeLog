@@ -16,7 +16,8 @@ version 0.58:
 	* A warning when your OSCAR buddy list is too long
 	  (Thanks, Mark Doliner)
 	* ICQ status messages in OSCAR (Thanks, Mark Doliner)
-	
+	* Play sound when your name is said in a chat
+
 version 0.57 (04/25/2002):
 	* New authorization method for Yahoo!
 	* Polish translation updated (Thanks Przemyslaw Sulek)
