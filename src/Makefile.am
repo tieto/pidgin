@@ -45,17 +45,16 @@ EXTRA_DIST = \
 
 SUBDIRS = protocols
 
-SSLSOURCES =
-
 if USE_NSS
-SSLSOURCES += ssl-nss.c
+SSLSOURCES = ssl-nss.c
 endif
 
 if USE_GNUTLS
-SSLSOURCES += ssl-gnutls.c
+SSLSOURCES = ssl-gnutls.c
 endif
 
 CORESOURCES = \
+	$(SSLSOURCES) \
 	account.c \
 	account.h \
 	accountopt.c \
@@ -107,7 +106,6 @@ CORESOURCES = \
 	util.h \
 	value.c \
 	value.h \
-	$(SSLSOURCES)
 
 bin_PROGRAMS = gaim gaim-remote
 gaim_SOURCES = \
