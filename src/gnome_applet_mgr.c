@@ -224,6 +224,7 @@ void make_buddy(void) {
 	} else {
 		gnome_buddy_show();
 	}	
+	build_edit_tree();
 	applet_widget_unregister_callback(APPLET_WIDGET(applet),"buddy");
 	
 }
