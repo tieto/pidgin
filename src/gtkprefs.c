@@ -1733,7 +1733,7 @@ update_plugin_list(void *data)
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
 				   1, plug->info->name ? _(plug->info->name) : plug->path,
-				   2, plug->info->summary,
+				   2, _(plug->info->summary),
 				   3, plug, -1);
 	}
 }
