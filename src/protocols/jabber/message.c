@@ -195,6 +195,7 @@ static void handle_groupchat_invite(JabberMessage *jm)
 {
 	GHashTable *components;
 	JabberID *jid = jabber_id_new(jm->to);
+	char *stripped;
 
 	if(!jid)
 		return;
@@ -209,7 +210,9 @@ static void handle_groupchat_invite(JabberMessage *jm)
 			g_strdup(jm->password));
 
 	jabber_id_free(jid);
-	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, jm->body, components);
+	stripped = gaim_markup_strip_html(jm->body);
+	serv_got_chat_invite(jm->js->gc, jm->to, jm->from, stripped, components);
+	g_free(stripped);
 }
 
 static void handle_error(JabberMessage *jm)

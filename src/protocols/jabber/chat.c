@@ -572,7 +572,8 @@ void jabber_chat_part(JabberChat *chat, const char *msg)
 	char *room_jid;
 	xmlnode *presence;
 
-	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
+	room_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server,
+			chat->handle);
 	presence = xmlnode_new("presence");
 	xmlnode_set_attrib(presence, "to", room_jid);
 	xmlnode_set_attrib(presence, "type", "unavailable");
