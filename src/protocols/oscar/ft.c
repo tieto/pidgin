@@ -237,7 +237,6 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 	char ip[20];
 	int port;
 
-debug_printf("AAA - We got a bite!  Dude connected to listener\n");
 	if ((acceptfd = accept(cur->fd, &addr, &addrlen)) == -1)
 		return 0; /* not an error */
 
@@ -617,7 +616,6 @@ faim_export aim_conn_t *aim_sendfile_listen(aim_session_t *sess, const fu8_t *co
 	aim_conn_t *newconn;
 	int listenfd;
 
-debug_printf("AAA - listening on port %d\n", port);
 	if ((listenfd = listenestablish(port)) == -1)
 		return NULL;
 
