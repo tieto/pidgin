@@ -1067,18 +1067,42 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 {
 	char *buf1, *buf2;
 
-gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", message);
+#if 1
+	/* This is the old, non-i18n way */
 	buf1 = escape_text(message);
 	if (strlen(buf1) + 52 > MSG_LEN) {
 		g_free(buf1);
 		return -E2BIG;
 	}
-
-gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf1);
 	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", normalize(name), buf1, 
 						   ((flags & GAIM_IM_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
-gaim_debug(GAIM_DEBUG_ERROR, "xxx", "1 - Sending message %s\n", buf2);
+#else
+	/* This doesn't work yet.  See the comments below for details */
+	buf1 = gaim_strreplace(message, "\"", "\\\"");
+
+	/*
+	 * We still need to determine what encoding should be used and send the 
+	 * message in that encoding.  This should be done the same as in 
+	 * oscar_encoding_check() in oscar.c.  There is no encoding flag sent 
+	 * along with the message--the TOC to OSCAR proxy server must just 
+	 * use a lil' algorithm to determine what the actual encoding is.
+	 *
+	 * After that, you need to convert buf1 to that encoding, and keep track 
+	 * of the length of the resulting string.  Then you need to make sure 
+	 * that length is passed to sflap_send().
+	 */
+
+	if (len + 52 > MSG_LEN) {
+		g_free(buf1);
+		return -E2BIG;
+	}
+
+	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", normalize(name), buf1, 
+						   ((flags & GAIM_IM_AUTO_RESP) ? "auto" : ""));
+	g_free(buf1);
+#endif
+
 	sflap_send(gc, buf2, -1, TYPE_DATA);
 	g_free(buf2);
 
