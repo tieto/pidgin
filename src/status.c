@@ -649,7 +649,7 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 			temp_status = (GaimStatus *)g_hash_table_lookup(
 												presence->status_table,
 												gaim_status_type_get_id(temp_type));
-			
+
 			if (gaim_status_is_active(temp_status))
 			{
 				/*

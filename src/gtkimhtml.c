@@ -366,11 +366,9 @@ gtk_imhtml_tip (gpointer data)
 		g_free(tmp);
 
 		return FALSE;
-		
 	}
 
 	font_metrics = pango_font_get_metrics(font, NULL);
-	
 
 	pango_layout_get_pixel_size(layout, &scr_w, NULL);
 	gap = PANGO_PIXELS((pango_font_metrics_get_ascent(font_metrics) +
@@ -618,7 +616,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 	GtkTextIter start, end;
 	GtkTextMark *sel = gtk_text_buffer_get_selection_bound(imhtml->text_buffer);
 	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
-	
+
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, sel);
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &end, ins);
 	primary = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_PRIMARY) == clipboard;
@@ -629,7 +627,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		GString *str = g_string_new(NULL);
 		if (primary) {
 			text = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		} else 
+		} else
 			text = imhtml->clipboard_html_string;
 
 		/* Mozilla asks that we start our text/html with the Unicode byte order mark */
