@@ -28,7 +28,7 @@
 #include "signals.h"
 #include "util.h"
 
-/* XXX CORE/UI */
+/* XXX CORE/UI, waiting for away splittage */
 #include "gtkinternal.h"
 #include "ui.h"
 

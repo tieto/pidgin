@@ -64,7 +64,6 @@ static struct StockIcon
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 	{ GAIM_STOCK_PAUSE,           "buttons", "pause.png"                },
-	{ GAIM_STOCK_PRIVACY,         NULL,      GTK_STOCK_PROPERTIES       },
 	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },

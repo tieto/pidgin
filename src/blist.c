@@ -628,7 +628,7 @@ void gaim_blist_add_chat(GaimChat *chat, GaimGroup *group, GaimBlistNode *node)
 		gaim_blist_save();
 }
 
-void  gaim_blist_add_buddy (GaimBuddy *buddy, GaimContact *contact, GaimGroup *group, GaimBlistNode *node)
+void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *group, GaimBlistNode *node)
 {
 	GaimBlistNode *cnode, *bnode;
 	GaimGroup *g;

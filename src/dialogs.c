@@ -180,10 +180,11 @@ static void do_warn(GtkWidget *widget, gint resp, struct warning *w)
 		serv_warn(w->gc, w->who, (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->anon))) ? 1 : 0);
 
 	destroy_dialog(NULL, w->window);
+	g_free(w->who);
 	g_free(w);
 }
 
-void show_warn_dialog(GaimConnection *gc, char *who)
+void show_warn_dialog(GaimConnection *gc, const char *who)
 {
 	char *labeltext;
 	GtkWidget *hbox, *vbox;
@@ -192,7 +193,7 @@ void show_warn_dialog(GaimConnection *gc, char *who)
 	GaimConversation *c = gaim_find_conversation_with_account(who, gc->account);
 
 	struct warning *w = g_new0(struct warning, 1);
-	w->who = who;
+	w->who = g_strdup(who);
 	w->gc = gc;
 
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);

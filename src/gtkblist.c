@@ -3205,6 +3205,7 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		serv_add_buddy(gaim_account_get_connection(data->account), who, g);
 
 		if (c != NULL) {
+			/* This should be in blist.c somewhere... */
 			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
 		}
