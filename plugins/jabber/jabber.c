@@ -56,10 +56,6 @@
 #define IQ_AUTH 0
 #define IQ_ROSTER 1
 
-#define USEROPT_SERVER   0
-#define USEROPT_PORT     1
-#define USEROPT_RESOURCE 2
-
 typedef struct gjconn_struct
 {
         /* Core structure */
@@ -91,7 +87,7 @@ static gjconn gjab_new(char *user, char *pass, void *priv);
 static void gjab_delete(gjconn j);
 static void gjab_state_handler(gjconn j, gjconn_state_h h);
 static void gjab_packet_handler(gjconn j, gjconn_packet_h h);
-static void gjab_start(gjconn j, int port);
+static void gjab_start(gjconn j);
 static void gjab_stop(gjconn j);
 static int gjab_getfd(gjconn j);
 static jid gjab_getjid(gjconn j);
@@ -364,7 +360,7 @@ static void charData(void *userdata, const char *s, int slen)
         xmlnode_insert_cdata(j->current, s, slen);
 }
 
-static void gjab_start(gjconn j, int port)
+static void gjab_start(gjconn j)
 {
     xmlnode x;
     char *t,*t2;
@@ -377,7 +373,7 @@ static void gjab_start(gjconn j, int port)
     XML_SetElementHandler(j->parser, startElement, endElement);
     XML_SetCharacterDataHandler(j->parser, charData);
 
-    j->fd = make_netsocket(port, j->user->server, NETSOCKET_CLIENT);
+    j->fd = make_netsocket(5222, j->user->server, NETSOCKET_CLIENT);
     if(j->fd < 0) {
         STATE_EVT(JCONN_STATE_OFF)
         return;
@@ -413,7 +409,6 @@ static void jabber_callback(gpointer data, gint source, GdkInputCondition condit
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
   xmlnode y;
-  char *x, *m;
 
   char *from = NULL, *msg = NULL;
 
@@ -426,17 +421,6 @@ static void jabber_handlemessage(gjconn j, jpacket p)
     return;
   }
 
-  x = strchr(from, '@');
-  if (x) {
-	  *x++ = '\0';
-	  m = strchr(x, '/');
-	  *m = '\0';
-	  if (strcmp(j->user->server, x)) {
-		  x--;
-		  *x = '@';
-		  *m = '/';
-	  }
-  }
   debug_printf("jabber: msg from %s: %s\n", from, msg);
 
   serv_got_im(GJ_GC(j), from, msg, 0);
@@ -515,6 +499,10 @@ static void jabber_handleroster(gjconn j, xmlnode querynode)
 
                 x = xmlnode_get_nextsibling(x);
         }
+
+	x = jutil_presnew(0, NULL, NULL);
+	gjab_send(j, x);
+	xmlnode_free(x);
 }
 
 static void jabber_handlepacket(gjconn j, jpacket p)
@@ -537,15 +525,13 @@ static void jabber_handlepacket(gjconn j, jpacket p)
 
                   /* XXX this just doesn't look right */
                   if (!xmlns || NSCHECK(querynode, NS_AUTH)) {
-                          xmlnode x;
-
                           debug_printf("auth success\n");
-                          x = jutil_presnew(0, NULL, NULL);
-                          gjab_send(j, x);
-                          xmlnode_free(x);
                           
                           account_online(GJ_GC(j));
                           serv_finish_login(GJ_GC(j));
+
+			  if (bud_list_cache_exists(GJ_GC(j)))
+				  do_import(NULL, GJ_GC(j));
                           
                           gjab_reqroster(j);
 
@@ -608,33 +594,22 @@ static void jabber_handlestate(gjconn j, int state)
 static void jabber_login(struct aim_user *user) {
 	struct gaim_connection *gc = new_gaim_conn(user);
 	struct jabber_data *jd = gc->proto_data = g_new0(struct jabber_data, 1);
-	char *tmp;
-	int port;
 
 	set_login_progress(gc, 1, "Connecting");
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
-	tmp = g_strdup_printf("%s@%s/%s", user->username,
-		user->proto_opt[USEROPT_SERVER][0] ? user->proto_opt[USEROPT_SERVER] : "jabber.com",
-		user->proto_opt[USEROPT_RESOURCE][0] ? user->proto_opt[USEROPT_RESOURCE] : "GAIM");
-
-        debug_printf("jabber_login (u=%s)\n", tmp);
-
-        if (!(jd->jc = gjab_new(tmp, user->password, gc))) {
+        if (!(jd->jc = gjab_new(user->username, user->password, gc))) {
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
 		hide_login_progress(gc, "Unable to connect");
 		signoff(gc);
 		g_free(jd);
-		g_free(tmp);
                 return;
         }
-	g_free(tmp);
 
         gjab_state_handler(jd->jc, jabber_handlestate);
         gjab_packet_handler(jd->jc, jabber_handlepacket);
-	port = user->proto_opt[USEROPT_PORT][0] ? atoi(user->proto_opt[USEROPT_PORT]) : 5222;
-        gjab_start(jd->jc, port);
+        gjab_start(jd->jc);
 
 
 	gc->inpa = gdk_input_add(jd->jc->fd, 
@@ -677,95 +652,6 @@ static void jabber_send_im(struct gaim_connection *gc, char *who, char *message,
         gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
 }
 
-static void jabber_print_option(GtkEntry *entry, struct aim_user *user) {
-	int entrynum;
-
-	entrynum = (int) gtk_object_get_user_data(GTK_OBJECT(entry));
-
-	if (entrynum == USEROPT_SERVER)
-		g_snprintf(user->proto_opt[USEROPT_SERVER],
-				sizeof(user->proto_opt[USEROPT_SERVER]),
-				"%s", gtk_entry_get_text(entry));
-	else if (entrynum == USEROPT_PORT)
-		g_snprintf(user->proto_opt[USEROPT_PORT],
-				sizeof(user->proto_opt[USEROPT_PORT]),
-				"%s", gtk_entry_get_text(entry));
-	else if (entrynum == USEROPT_RESOURCE)
-		g_snprintf(user->proto_opt[USEROPT_RESOURCE],
-				sizeof(user->proto_opt[USEROPT_RESOURCE]),
-				"%s", gtk_entry_get_text(entry));
-}
-
-static void jabber_user_opts(GtkWidget *book, struct aim_user *user) {
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *entry;
-
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 5);
-	gtk_notebook_append_page(GTK_NOTEBOOK(book), vbox,
-				 gtk_label_new("Jabber Options"));
-	gtk_widget_show(vbox);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Server:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_SERVER);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(jabber_print_option), user);
-	if (user->proto_opt[USEROPT_SERVER][0])
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_SERVER]);
-	else
-		gtk_entry_set_text(GTK_ENTRY(entry), "jabber.com");
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Port:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_PORT);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(jabber_print_option), user);
-	if (user->proto_opt[USEROPT_PORT][0])
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_PORT]);
-	else
-		gtk_entry_set_text(GTK_ENTRY(entry), "5222");
-	gtk_widget_show(entry);
-
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
-
-	label = gtk_label_new("Resource:");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
-
-	entry = gtk_entry_new();
-	gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
-	gtk_object_set_user_data(GTK_OBJECT(entry), (void *)USEROPT_RESOURCE);
-	gtk_signal_connect(GTK_OBJECT(entry), "changed",
-			   GTK_SIGNAL_FUNC(jabber_print_option), user);
-	if (user->proto_opt[USEROPT_RESOURCE][0])
-		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[USEROPT_RESOURCE]);
-	else
-		gtk_entry_set_text(GTK_ENTRY(entry), "GAIM");
-	gtk_widget_show(entry);
-}
-
 static struct prpl *my_protocol = NULL;
 
 void Jabber_init(struct prpl *ret) {
@@ -774,7 +660,7 @@ void Jabber_init(struct prpl *ret) {
 	ret->name = jabber_name;
 	ret->list_icon = NULL;
 	ret->action_menu = NULL;
-	ret->user_opts = jabber_user_opts;
+	ret->user_opts = NULL;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;

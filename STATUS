@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-20 01:28:05 -0500 (Wed, 20 Dec 2000) $ by $Author: warmenhoven $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-20 06:00:44 -0500 (Wed, 20 Dec 2000) $ by $Author: warmenhoven $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -120,9 +120,9 @@ Chat and file transfer are planned but not yet implemented.
 Jabber
 ======
 
-Um, Jabber can't do much yet. I don't even remember what it can do; I didn't
-write it, Adam of libfaim did. I just wanted to get it added; hopefully it'll
-be ready before 0.11.0 is finished.
+Jabber can currently sign on/off, and send/receive messages. That's all it can
+do on its own so far. But if you use a different Jabber client and create a
+roster and set up your transports then gaim/Jabber will be able to use those.
 
 
 Napster
