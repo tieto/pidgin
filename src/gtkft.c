@@ -510,7 +510,8 @@ make_info_table(struct gaim_gtkxfer_dialog *dialog)
 		GtkWidget *label;
 		char buf[256];
 
-		g_snprintf(buf, sizeof(buf), "<b>%s</b>", labels[i].desc);
+		g_snprintf(buf, sizeof(buf), "<b>%s</b>",
+			   labels[i].desc != NULL ? labels[i].desc : "");
 
 		*labels[i].desc_label = label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(label), buf);
