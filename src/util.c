@@ -1107,29 +1107,31 @@ void translate_blt (FILE *src_fp, char *dest)
 	return;
 }
 
-void stylize(gchar *text, int length)
+char *stylize(gchar *text, int length)
 {
 	gchar *buf;	
+	char tmp[length];
 
 	buf = g_malloc(length);
+	g_snprintf(buf, length, "%s", text);
 
 	if (font_options & OPT_FONT_FACE)
 	{
-		g_snprintf(buf, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, text);
-		strcpy(text, buf);
+		g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", fontface, buf);
+		strcpy(buf, tmp);
 	}
 
 	if (font_options & OPT_FONT_FGCOL)
 	{
-		g_snprintf(buf, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red, fgcolor.green, fgcolor.blue, text);
-		strcpy(text, buf);
+		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>", fgcolor.red, fgcolor.green, fgcolor.blue, buf);
+		strcpy(buf, tmp);
 	}
 
 	if (font_options & OPT_FONT_BGCOL)
 	{
-		g_snprintf(buf, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red, bgcolor.green, bgcolor.blue, text);
-		strcpy(text, buf);
+		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>", bgcolor.red, bgcolor.green, bgcolor.blue, buf);
+		strcpy(buf, tmp);
 	}
 	
-	g_free(buf);
+	return buf;
 }

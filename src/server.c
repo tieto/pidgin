@@ -704,7 +704,7 @@ void serv_got_im(char *name, char *message, int away)
 
 	if (awaymessage != NULL) {
 		time_t t;
-		char tmpmsg[BUF_LEN];
+		char *tmpmsg;
 
 		time(&t);
 
@@ -718,9 +718,8 @@ void serv_got_im(char *name, char *message, int away)
 			is_idle = -1;
 
 		/* apply default fonts and colors */
-		stylize(awaymessage->message, MSG_LEN);
+		tmpmsg = stylize(awaymessage->message, MSG_LEN);
 		
-		strcpy(tmpmsg, awaymessage->message);
 		escape_text(tmpmsg);
 		escape_message(tmpmsg);
 		serv_send_im(name, away_subs(tmpmsg, name), 1);
@@ -729,7 +728,8 @@ void serv_got_im(char *name, char *message, int away)
 			is_idle = 1;
 		
 		if (cnv != NULL)
-			write_to_conv(cnv, away_subs(awaymessage->message, name), WFLAG_SEND | WFLAG_AUTO, NULL);
+			write_to_conv(cnv, away_subs(tmpmsg, name), WFLAG_SEND | WFLAG_AUTO, NULL);
+		g_free(tmpmsg);
 	}
 }
 
