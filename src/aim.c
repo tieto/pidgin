@@ -159,7 +159,7 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 	 * to use the account editor to sign in the second one */
 	u = find_user(username, -1);
 	if (!u)
-		u = new_user(username, PROTO_TOC, OPT_USR_REM_PASS);
+		u = new_user(username, DEFAULT_PROTO, OPT_USR_REM_PASS);
 	g_snprintf(u->password, sizeof u->password, "%s", password);
 	save_prefs();
 	serv_login(u);

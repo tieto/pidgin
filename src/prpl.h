@@ -36,6 +36,8 @@
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
 
+#define DEFAULT_PROTO   PROTO_OSCAR
+
 /* These should all be stuff that some plugins can do and others can't */
 /* TOC/Oscar send HTML-encoded messages; most other protocols don't */
 #define OPT_PROTO_HTML            0x00000001

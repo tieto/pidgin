@@ -42,7 +42,9 @@ static GtkWidget *acctedit = NULL;
 static GtkWidget *list = NULL;	/* the clist of names in the accteditor */
 static GtkWidget *newmod = NULL;	/* the dialog for creating a new account */
 static GtkWidget *newmain = NULL;	/* the notebook that holds options */
-static struct aim_user tmpusr;
+static struct aim_user tmpusr = { "", "", "", OPT_USR_REM_PASS, DEFAULT_PROTO,
+		{ "", "", "", "", "", "", "" }, NULL, NULL, NULL, NULL, NULL,
+		OPT_USR_REM_PASS, DEFAULT_PROTO, NULL, NULL, NULL };
 
 static void generate_prpl_options(struct aim_user *, GtkWidget *);
 
@@ -284,13 +286,13 @@ static void set_prot(GtkWidget *opt, int proto)
 	struct aim_user *u = gtk_object_get_user_data(GTK_OBJECT(opt));
 	if (u && (u->tmp_protocol != proto)) {
 		int i;
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < 7; i++)
 			u->proto_opt[i][0] = '\0';
 		u->tmp_protocol = proto;
 		generate_prpl_options(u, u->main);
 	} else if (tmpusr.tmp_protocol != proto) {
 		int i;
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < 7; i++)
 			tmpusr.proto_opt[i][0] = '\0';
 		tmpusr.tmp_protocol = tmpusr.protocol = proto;
 		generate_prpl_options(NULL, newmain);
