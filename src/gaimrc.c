@@ -758,6 +758,7 @@ static void gaimrc_read_options(FILE *f)
 			font_options = atoi(p->value[0]);
 		} else if (!strcmp(p->option, "sound_options")) {
 			sound_options = atoi(p->value[0]);
+			gaim_sound_change_output_method();
 		} else if (!strcmp(p->option, "away_options")) {
 			away_options = atoi(p->value[0]);
 			away_resend = atoi(p->value[1]);
@@ -799,7 +800,8 @@ static void gaimrc_read_options(FILE *f)
 	}
 
 	/* this is where we do bugs and compatibility stuff */
-	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_CMD)))
+	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_NORMAL | OPT_SOUND_ESD
+					| OPT_SOUND_ARTS | OPT_SOUND_NAS | OPT_SOUND_CMD)))
 		sound_options |= OPT_SOUND_NORMAL;
 
 	if (conv_size.width == 0 &&
@@ -822,7 +824,7 @@ static void gaimrc_read_options(FILE *f)
 		if (!read_logging) {
 			logging_options = 0;
 			if (general_options & OPT_GEN_LOG_ALL)
-  				logging_options |= OPT_LOG_CONVOS | OPT_LOG_CHATS; 
+				logging_options |= OPT_LOG_CONVOS | OPT_LOG_CHATS;
 			if (general_options & OPT_GEN_STRIP_HTML)
 				logging_options |= OPT_LOG_STRIP_HTML;
 		}
@@ -1232,7 +1234,8 @@ static void set_defaults()
 	    OPT_SOUND_RECV |
 	    OPT_SOUND_SEND |
 	    OPT_SOUND_SILENT_SIGNON |
-	    OPT_SOUND_NORMAL;
+	    OPT_SOUND_NORMAL |
+		OPT_SOUND_NAS;
 
 #ifdef USE_SCREENSAVER
 	report_idle = IDLE_SCREENSAVER;

@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef _SOUND_H_
-#define _SOUND_H_
+#ifndef _GAIM_SOUND_H_
+#define _GAIM_SOUND_H_
 
 /**************************************************************************/
 /** Data Structures                                                       */
@@ -55,9 +55,9 @@ typedef enum _GaimSoundEventID
 /*@{*/
 
 /**
- * Sets up the sound system.
+ * Lets the sound subsystem know when the sound output method has changed.
  */
-void gaim_sound_init();
+void gaim_sound_change_output_method();
 
 /**
  * Properly shuts down the sound system.
@@ -146,4 +146,4 @@ char *gaim_sound_get_command();
 
 /*@}*/
 
-#endif /* _SOUND_H_ */
+#endif /* _GAIM_SOUND_H_ */

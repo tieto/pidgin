@@ -28,23 +28,20 @@
 #include <string.h>
 
 #ifndef _WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #else
 #include <windows.h>
 #include <mmsystem.h>
 #endif
 
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
 #ifdef USE_AO
 #include <ao/ao.h>
 #include <audiofile.h>
 #endif /* USE_AO */
+#ifdef USE_NAS_AUDIO
+#include <audio/audiolib.h>
+#include <audio/soundlib.h>
+#endif /* USE_NAS_AUDIO */
 
 #include "gaim.h"
 #include "sound.h"
@@ -60,7 +57,8 @@ struct gaim_sound_event {
 };
 
 #ifdef USE_AO
-static int ao_driver;
+static gboolean ao_initialized=FALSE;
+static int ao_driver = -1;
 #endif /* USE_AO */
 
 
@@ -89,37 +87,79 @@ static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
 
 static char *sound_file[GAIM_NUM_SOUNDS];
 
-void gaim_sound_init()
-{
+
 #ifdef USE_AO
+static void check_ao_init()
+{
+	if(!ao_initialized) {
+		debug_printf("Initializing sound ouput drivers.\n");
+		ao_initialize();
+		ao_initialized = TRUE;
+	}
+}
+#endif /* USE_AO */
 
-	ao_initialize();
-	ao_driver = ao_default_driver_id();
+void gaim_sound_change_output_method() {
+#ifdef USE_AO
+	ao_driver = -1;
 
-	if(ao_driver == -1) {
-		debug_printf("No suitable sound ouput driver found.\n");
-	} else {
+	if ((sound_options & OPT_SOUND_ESD) || (sound_options & OPT_SOUND_ARTS) ||
+			(sound_options & OPT_SOUND_NORMAL)) {
+		check_ao_init();
+		if (ao_driver == -1 && (sound_options & OPT_SOUND_ESD)) {
+			ao_driver = ao_driver_id("esd");
+		}
+		if(ao_driver == -1 && (sound_options & OPT_SOUND_ARTS)) {
+			ao_driver = ao_driver_id("arts");
+		}
+		if (ao_driver == -1) {
+			ao_driver = ao_default_driver_id();
+		}
+	}
+	if(ao_driver != -1) {
 		ao_info *info = ao_driver_info(ao_driver);
 		debug_printf("Sound output driver loaded: %s\n", info->name);
 	}
-
-#endif
+#endif /* USE_AO */
+#ifdef USE_NAS
+	if((sound_options & OPT_SOUND_NAS))
+		debug_printf("Sound output driver loaded: NAS output\n");
+#endif /* USE_NAS */
 }
 
 void gaim_sound_quit()
 {
 #ifdef USE_AO
-
-	ao_shutdown();
-
+	if(ao_initialized)
+		ao_shutdown();
 #endif
 }
 
+
+#ifdef USE_NAS_AUDIO
+static gboolean play_file_nas(const char *filename)
+{
+	AuServer *nas_serv;
+	gboolean ret = FALSE;
+
+	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
+		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
+		AuCloseServer(nas_serv);
+	}
+
+	return ret;
+}
+
+#endif /* USE_NAS_AUDIO */
+
 void gaim_sound_play_file(char *filename)
 {
-#ifdef USE_AO
+#if defined(USE_NAS_AUDIO) || defined(USE_AO)
 	pid_t pid;
-#endif /* USE_AO */
+#ifdef USE_AO
+	AFfilehandle file;
+#endif
+#endif
 
 	if (mute_sounds)
 		return;
@@ -161,21 +201,20 @@ void gaim_sound_play_file(char *filename)
 		g_free(command);
 		return;
 	}
-#ifdef USE_AO
-
-	if(ao_driver == -1) {
-		/* do _something_ audible ;-) */
-		gdk_beep();
-		return;
-	}
-
-
+#if defined(USE_NAS_AUDIO) || defined(USE_AO)
 	pid = fork();
-
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
-		AFfilehandle file = afOpenFile(filename, "rb", NULL);
+#ifdef USE_NAS_AUDIO
+		if ((sound_options & OPT_SOUND_NAS)) {
+			if (play_file_nas(filename))
+				_exit(0);
+		}
+#endif /* USE_NAS_AUDIO */
+
+#ifdef USE_AO
+		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
 			ao_device *device;
 			ao_sample_format format;
@@ -210,17 +249,17 @@ void gaim_sound_play_file(char *filename)
 						break;
 				}
 				ao_close(device);
-			} else {
-				debug_printf("error opening audio device!\n");
 			}
 			afCloseFile(file);
 		}
+		ao_shutdown();
+#endif /* USE_AO */
 		_exit(0);
 	}
-#else /* USE_AO */
+#else /* USE_NAS_AUDIO || USE_AO */
 	gdk_beep();
 	return;
-#endif /* USE_AO */
+#endif /* USE_NAS_AUDIO || USE_AO */
 #else /* _WIN32 */
 	debug_printf("Playing %s\n", filename);
 	if (!PlaySound(filename, 0, SND_ASYNC | SND_FILENAME))

@@ -530,8 +530,6 @@ static int ui_main()
 
 	setup_stock();
 
-	gaim_sound_init();
-
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	icon_path = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);

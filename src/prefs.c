@@ -986,11 +986,16 @@ GtkWidget *sound_page() {
 #ifndef _WIN32
 	vbox = make_frame (ret, _("Sound Method"));
 	dd = gaim_dropdown(vbox, _("_Method"), &sound_options, OPT_SOUND_BEEP |
-		      OPT_SOUND_NORMAL |
-		      OPT_SOUND_CMD,
+		      OPT_SOUND_ESD | OPT_SOUND_ARTS | OPT_SOUND_NAS |
+			  OPT_SOUND_NORMAL | OPT_SOUND_CMD,
 		      _("Console beep"), OPT_SOUND_BEEP,
 #ifdef USE_AO
 		      _("Automatic"), OPT_SOUND_NORMAL,
+			  "ESD", OPT_SOUND_ESD,
+			  "Arts", OPT_SOUND_ARTS,
+#endif
+#ifdef USE_NAS_AUDIO
+			  "NAS", OPT_SOUND_NAS,
 #endif
 		      _("Command"), OPT_SOUND_CMD, NULL);
 	gtk_size_group_add_widget(sg, dd);
@@ -2300,6 +2305,7 @@ void dropdown_set(GtkObject *w, int *option)
 			gtk_widget_set_sensitive(sndcmd, TRUE);
 		else
 			gtk_widget_set_sensitive(sndcmd, FALSE);
+		gaim_sound_change_output_method();
 	} else if (option == (int*)&im_options) { 
 		if (clear == (OPT_IM_SIDE_TAB | OPT_IM_BR_TAB))
 			gaim_gtkconv_update_tabs();
