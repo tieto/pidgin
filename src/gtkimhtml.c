@@ -1353,7 +1353,7 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					NEW_BIT (NEW_COMMENT_BIT);
 					break;
 				default:
-					break;	
+					break;
 				}
 			c += tlen;
 			pos += tlen;
@@ -1373,8 +1373,9 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			pos++;
 		} else if (imhtml->show_smileys && (gtk_imhtml_is_smiley (imhtml, fonts, c, &smilelen) || gtk_imhtml_is_smiley(imhtml, NULL, c, &smilelen))) {
 			GtkTextChildAnchor *anchor;
-			GtkWidget *icon;
-			GdkPixbufAnimation *pixbuf;
+			GtkWidget *icon = NULL;
+			GdkPixbufAnimation *annipixbuf = NULL;
+			GdkPixbuf *pixbuf = NULL;
 			GtkIMHtmlFontDetail *fd;
 			gchar *sml = NULL;
 			if (fonts) {
@@ -1384,9 +1385,18 @@ GString* gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			NEW_BIT (NEW_TEXT_BIT);
 			wpos = g_snprintf (ws, smilelen + 1, "%s", c);
 			anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, &iter);
-			pixbuf = gtk_smiley_tree_image(imhtml, sml, ws);
-			if(pixbuf){
-				icon = gtk_image_new_from_animation(pixbuf);
+			annipixbuf = gtk_smiley_tree_image(imhtml, sml, ws);
+			if(annipixbuf) {
+				if(gdk_pixbuf_animation_is_static_image(annipixbuf)) {
+					pixbuf = gdk_pixbuf_animation_get_static_image(annipixbuf);
+					if(pixbuf)
+						icon = gtk_image_new_from_pixbuf(pixbuf);
+				} else {
+					icon = gtk_image_new_from_animation(annipixbuf);
+				}
+			}
+
+			if (icon) {
 				gtk_widget_show(icon);
 				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
 			}
