@@ -571,9 +571,6 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 	menu = gtk_menu_new();
 	gtk_widget_show(menu);
 
-	g_signal_connect(G_OBJECT(optmenu), "changed",
-					 G_CALLBACK(__protocol_menu_cb), cb);
-
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = gaim_plugins_get_protocols(), i = 0;
@@ -638,6 +635,9 @@ gaim_gtk_protocol_option_menu_new(GaimProtocol protocol, GCallback cb,
 
 	if (selected_index != -1)
 		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+
+	g_signal_connect(G_OBJECT(optmenu), "changed",
+					 G_CALLBACK(__protocol_menu_cb), cb);
 
 	g_object_unref(sg);
 

@@ -80,7 +80,11 @@ typedef struct
 
 	GaimProxyType new_proxy_type;
 
+	GtkSizeGroup *sg;
 	GtkWidget *window;
+
+	GtkWidget *top_vbox;
+	GtkWidget *bottom_vbox;
 
 	/* Login Options */
 	GtkWidget *login_frame;
@@ -111,8 +115,6 @@ typedef struct
 	GtkWidget *proxy_user_entry;
 	GtkWidget *proxy_pass_entry;
 
-	GtkSizeGroup *sg;
-
 } AccountPrefsDialog;
 
 
@@ -130,11 +132,11 @@ proto_name(int proto)
 /**************************************************************************
  * Add/Modify Account dialog
  **************************************************************************/
-static void
-__set_account_protocol(GtkWidget *item, GaimProtocol protocol,
-					   AccountPrefsDialog *dialog)
-{
-}
+static void __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent);
+static void __add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent);
+static void __add_protocol_options(AccountPrefsDialog *dialog,
+								   GtkWidget *parent);
+static void __add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent);
 
 static GtkWidget *
 __add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
@@ -157,6 +159,20 @@ __add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_widget_show(widget);
 
 	return hbox;
+}
+
+static void
+__set_account_protocol_cb(GtkWidget *item, GaimProtocol protocol,
+						  AccountPrefsDialog *dialog)
+{
+	dialog->protocol = protocol;
+
+	if ((dialog->plugin = gaim_find_prpl(dialog->protocol)) != NULL)
+		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+
+	__add_login_options(dialog,    dialog->top_vbox);
+	__add_user_options(dialog,     dialog->top_vbox);
+	__add_protocol_options(dialog, dialog->bottom_vbox);
 }
 
 static void
@@ -189,7 +205,7 @@ __add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Protocol */
 	dialog->protocol_menu = gaim_gtk_protocol_option_menu_new(
-			dialog->protocol, G_CALLBACK(__set_account_protocol), dialog);
+			dialog->protocol, G_CALLBACK(__set_account_protocol_cb), dialog);
 
 	__add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
@@ -383,7 +399,7 @@ __add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 }
 
 static void
-__add_protocol_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
+__add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GaimAccountOption *option;
 	GtkWidget *frame;
@@ -567,7 +583,7 @@ __proxy_type_changed_cb(GtkWidget *optmenu, AccountPrefsDialog *dialog)
 }
 
 static void
-__add_proxy_options_frame(AccountPrefsDialog *dialog, GtkWidget *parent)
+__add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GaimProxyInfo *proxy_info;
 	GtkWidget *frame;
@@ -709,7 +725,7 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	gtk_widget_show(main_vbox);
 
 	/* Setup the inner vbox */
-	vbox = gtk_vbox_new(FALSE, 18);
+	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(main_vbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -724,14 +740,14 @@ __show_account_prefs(AccountPrefsDialogType type, GaimAccount *account)
 	gtk_widget_show(disclosure);
 
 	/* Setup the box that the disclosure will cover. */
-	dbox = gtk_vbox_new(FALSE, 18);
+	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
 
 	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
 
 	/** Setup the bottom frames. */
-	__add_protocol_options_frame(dialog, dbox);
-	__add_proxy_options_frame(dialog, dbox);
+	__add_protocol_options(dialog, dbox);
+	__add_proxy_options(dialog, dbox);
 
 	/* Separator... */
 	sep = gtk_hseparator_new();
