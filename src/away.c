@@ -232,11 +232,11 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		g_free(qar);
 	}
 
+	gtk_widget_show(imaway);
 	buf2 = g_malloc(strlen(awaymessage->message) * 4 + 1);
 	strncpy_withhtml(buf2, awaymessage->message, strlen(awaymessage->message) * 4 + 1);
 	serv_set_away_all(buf2);
 	g_free(buf2);
-	gtk_widget_show(imaway);
 }
 
 void rem_away_mess(GtkWidget *w, struct away_message *a)

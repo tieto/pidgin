@@ -8,14 +8,14 @@ void *handle;
 
 extern GtkWidget *imaway;
 extern GtkWidget *blist;
+extern GtkWidget *all_chats;
+extern GtkWidget *all_convos;
 
 #ifdef USE_APPLET
 extern void applet_destroy_buddy();
 #endif
 
 void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
-	if (!gc->away)
-		return;
 	if (!imaway)
 		return;
 	XIconifyWindow(GDK_DISPLAY(),
@@ -28,6 +28,14 @@ void iconify_windows(struct gaim_connection *gc, char *state, char *message, voi
 			GDK_WINDOW_XWINDOW(blist->window),
 			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 #endif
+	if (all_convos)
+		XIconifyWindow(GDK_DISPLAY(),
+				GDK_WINDOW_XWINDOW(all_convos->window),
+				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
+	if (all_chats)
+		XIconifyWindow(GDK_DISPLAY(),
+				GDK_WINDOW_XWINDOW(all_chats->window),
+				((_XPrivDisplay)GDK_DISPLAY())->default_screen);
 }
 
 char *gaim_plugin_init(GModule *h) {
