@@ -7,6 +7,7 @@
 Name "Gaim 0.60 alpha 3 (Win32)"
 OutFile "gaim-0.60-alpha3.exe"
 Icon .\pixmaps\gaim-install.ico
+UninstallIcon .\pixmaps\gaim-install.ico
 
 ; Some default compiler settings (uncomment and change at will):
 ; SetCompress auto ; (can be off or force)
@@ -22,6 +23,19 @@ DirShow show ; (make this hide to not let the user change it)
 DirText "Select the directory to install Gaim in:"
 
 Section "" ; (default section)
+  ; Check if previous intallation exists
+  ReadRegStr $R0 HKEY_LOCAL_MACHINE "SOFTWARE\gaim" ""
+  StrCmp $R0 "" cont_install
+    ReadRegStr $R1 HKEY_LOCAL_MACHINE "SOFTWARE\gaim" "Version"
+    StrCmp $R1 "" no_version
+      ; Gaim found, so exit Intallation
+      MessageBox MB_OK "Gaim v$R1 has already been installed. If you wish to install a new version, uninstall first." IDOK
+      Quit
+      no_version: 
+      MessageBox MB_OK "Gaim has already been installed on your machine. If you wish to install a new version, uninstall first." IDOK
+      Quit
+  cont_install:
+
   ; Install Aspell
   SetOutPath "$INSTDIR"
   File ..\win32-dev\aspell-15\bin\aspell-0.50.2.exe
@@ -33,6 +47,7 @@ Section "" ; (default section)
 
   ; Gaim Registry Settings
   WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "" "$INSTDIR"
+  WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Gaim" "Version" "0.60a3"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "DisplayName" "Gaim (remove only)"
   WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\Gaim" "UninstallString" '"$INSTDIR\gaim-uninst.exe"'
   ; Set App path to include aspell dir
