@@ -392,6 +392,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		gchar *user;
 		gchar *msgdata;
 		int size;
+		char rahc[MSN_BUF_LEN * 2];
 		       
 		res = g_strsplit(buf, " ", 0);
 
@@ -428,7 +429,8 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		/* Otherwise, everything is ok. Let's show the message. Skipping, 
 		 * of course, the header. */
 
-		serv_got_im(gc, res[1], strstr(msgdata, "\r\n\r\n") + 4, 0);
+		g_snprintf(rahc, sizeof(rahc), "%s", strstr(msgdata, "\r\n\r\n") + 4);
+		serv_got_im(gc, res[1], rahc, 0);
 
 		g_strfreev(res);
 		g_free(msgdata);
