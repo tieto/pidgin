@@ -1,4 +1,6 @@
 version 0.82:
+	* Selecting away messages using the system tray icon works
+	  (Thanks François Gagné)
 
 version 0.81 (08/05/2004):
 	* Napster joins binary release (Thanks Kevin)

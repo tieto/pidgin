@@ -85,6 +85,24 @@ docklet_auto_login()
 }
 
 #ifdef _WIN32
+/* This is workaround for a bug in windows GTK+. Clicking outside of the
+   parent menu (including on a submenu-item) close the whole menu before
+   the "activate" event is thrown for the given submenu-item. Fixed by
+   replacing "activate" by "button-release-event". */
+static gboolean
+docklet_menu_do_away_message(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	do_away_message(widget, user_data);
+	return FALSE;
+}
+
+static gboolean
+docklet_menu_create_away_mess(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
+{
+	create_away_mess(widget, user_data);
+	return FALSE;
+}
+
 /* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
@@ -138,7 +156,11 @@ static void docklet_menu() {
 				a = (struct away_message *)awy->data;
 
 				entry = gtk_menu_item_new_with_label(a->name);
+#ifdef _WIN32
+				g_signal_connect(G_OBJECT(entry), "button-release-event", G_CALLBACK(docklet_menu_do_away_message), a);
+#else
 				g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_away_message), a);
+#endif
 				gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 				awy = g_slist_next(awy);
@@ -148,7 +170,11 @@ static void docklet_menu() {
 				gaim_separator(docklet_awaymenu);
 
 			entry = gtk_menu_item_new_with_label(_("New..."));
+#ifdef _WIN32
+			g_signal_connect(G_OBJECT(entry), "button-release-event", G_CALLBACK(docklet_menu_create_away_mess), NULL);
+#else
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
+#endif
 			gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("Away"));
