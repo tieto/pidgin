@@ -4505,8 +4505,10 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		/* XXX - Attempt to load this file into gdk_pixbuf, or otherwise determine if it is an image.  If it is, offer
 		 * the choice of a) sending this file b) inserting this file as an IM image or c) setting this file as a custom
 		 * buddy icon for this buddy */
+		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
-	gtk_drag_finish(dc, FALSE, FALSE, t);
+	else
+		gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
 /**************************************************************************
@@ -4637,11 +4639,9 @@ gaim_gtk_switch_conversation(GaimConvWindow *win, unsigned int index)
 
 static const GtkTargetEntry te[] =
 {
-	{"text/uri-list", 0, 0},
-	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 1},
-	{"text/plain", 0, 2},
-	{"STRING", 0, 3},
-	{"application/x-im-contact", 0, 4}
+	GTK_IMHTML_DND_TARGETS,
+	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, GTK_IMHTML_DRAG_NUM},
+	{"application/x-im-contact", 0, GTK_IMHTML_DRAG_NUM + 1}
 };
 
 static void

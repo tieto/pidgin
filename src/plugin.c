@@ -493,6 +493,8 @@ gaim_plugin_destroy(GaimPlugin *plugin)
 			plugin->info->major_version != GAIM_MAJOR_VERSION) {
 		if(plugin->handle)
 			g_module_close(plugin->handle);
+		if(plugin->path != NULL)
+			g_free(plugin->path);
 		g_free(plugin);
 		return;
 	}

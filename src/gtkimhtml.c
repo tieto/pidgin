@@ -106,15 +106,6 @@ enum {
 };
 
 enum {
-	DRAG_URL,
-	DRAG_HTML,
-	DRAG_UTF8_STRING,
-	DRAG_COMPOUND_TEXT,
-	DRAG_STRING,
-	DRAG_TEXT,
-};
-
-enum {
 	URL_CLICKED,
 	BUTTONS_UPDATE,
 	TOGGLE_FORMAT,
@@ -133,16 +124,8 @@ GtkTargetEntry selection_targets[] = {
 	{ "TEXT", 0, TARGET_TEXT}};
 
 GtkTargetEntry link_drag_drop_targets[] = {
-	{"text/html", 0, DRAG_HTML },
-	{"x-url/ftp", 0, DRAG_URL},
-	{"x-url/http", 0, DRAG_URL},
-	{"text/uri-list", 0, DRAG_URL},
-	{"_NETSCAPE_URL", 0, DRAG_URL},
-	{ "UTF8_STRING", 0, DRAG_UTF8_STRING },
-	{ "COMPOUND_TEXT", 0, DRAG_COMPOUND_TEXT },
-	{ "STRING", 0, DRAG_STRING },
-	{ "TEXT", 0, DRAG_TEXT}};
-
+	GTK_IMHTML_DND_TARGETS
+};
 
 #ifdef _WIN32
 /* Win32 clipboard format value, and functions to convert back and
@@ -1298,8 +1281,7 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 {
 	GdkDragAction suggested_action = 0;	
 
-	if (gtk_drag_dest_find_target (widget, context,
-				       gtk_drag_dest_get_target_list (widget)) == GDK_NONE) {
+	if (gtk_drag_dest_find_target (widget, context, NULL) == GDK_NONE) {
     		/* can't accept any of the offered targets */
 	} else {
 		GtkWidget *source_widget;
@@ -1314,11 +1296,7 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 		}
 	} 
 	
-	if (suggested_action != 0) {
-		gdk_drag_status (context, suggested_action, time);
-	} else {
-		gdk_drag_status (context, 0, time);
-	}
+	gdk_drag_status (context, suggested_action, time);
 	
   /* TRUE return means don't propagate the drag motion to parent
    * widgets that may also be drop sites.
@@ -1354,7 +1332,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 
 	if(gtk_imhtml_get_editable(imhtml) && sd->data){
 		switch (info) {
-		case DRAG_URL:
+		case GTK_IMHTML_DRAG_URL:
 			gaim_str_strip_cr(sd->data);
 
 			links = g_strsplit(sd->data, "\n", 0);
@@ -1370,7 +1348,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 				}
 			}
 			break;
-		case DRAG_HTML:
+		case GTK_IMHTML_DRAG_HTML:
 			if (sd->length >= 2 &&
 			    (*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
 				/* This is UCS-2 */
@@ -1393,11 +1371,21 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			}
 			gtk_imhtml_insert_html_at_iter(imhtml, text, 0, &iter);
 			break;
-		default:
+		case GTK_IMHTML_DRAG_TEXT:
+			if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
+				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
+				g_free(text);
+				return;
+			} else {
+				char *tmp = gaim_escape_html(text);
+				gtk_imhtml_insert_html_at_iter(imhtml, tmp, 0, &iter);
+				g_free(tmp);
+			}
 			break;
+		default:
+			gtk_drag_finish(dc, FALSE, FALSE, t);
+			return;
 		}
-		      
-		
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	} else {
 		gtk_drag_finish(dc, FALSE, FALSE, t);

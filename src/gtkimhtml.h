@@ -192,6 +192,28 @@ typedef enum {
 	GTK_IMHTML_USE_POINTSIZE = 1 << 8
 } GtkIMHtmlOptions;
 
+enum {
+	GTK_IMHTML_DRAG_URL = 0,
+	GTK_IMHTML_DRAG_HTML,
+	GTK_IMHTML_DRAG_UTF8_STRING,
+	GTK_IMHTML_DRAG_COMPOUND_TEXT,
+	GTK_IMHTML_DRAG_STRING,
+	GTK_IMHTML_DRAG_TEXT,
+	GTK_IMHTML_DRAG_NUM
+};
+
+#define GTK_IMHTML_DND_TARGETS	\
+	{ "text/html", 0, GTK_IMHTML_DRAG_HTML }, \
+	{ "x-url/ftp", 0, GTK_IMHTML_DRAG_URL }, \
+	{ "x-url/http", 0, GTK_IMHTML_DRAG_URL }, \
+	{ "text/uri-list", 0, GTK_IMHTML_DRAG_URL }, \
+	{ "_NETSCAPE_URL", 0, GTK_IMHTML_DRAG_URL }, \
+	{ "UTF8_STRING", 0, GTK_IMHTML_DRAG_UTF8_STRING }, \
+	{ "COMPOUND_TEXT", 0, GTK_IMHTML_DRAG_COMPOUND_TEXT }, \
+	{ "STRING", 0, GTK_IMHTML_DRAG_STRING }, \
+	{ "text/plain", 0, GTK_IMHTML_DRAG_TEXT }, \
+	{ "TEXT", 0, GTK_IMHTML_DRAG_TEXT }
+
 typedef gpointer    (*GtkIMHtmlGetImageFunc)        (int id);
 typedef gpointer    (*GtkIMHtmlGetImageDataFunc)    (gpointer i);
 typedef size_t      (*GtkIMHtmlGetImageSizeFunc)    (gpointer i);
