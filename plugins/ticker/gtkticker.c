@@ -51,6 +51,8 @@ GType gtk_ticker_get_type (void)
 {
 	static GType ticker_type = 0;
 
+	ticker_type = g_type_from_name("GtkTicker");
+
 	if (!ticker_type)
 	{
 		static const GTypeInfo ticker_info =
@@ -68,6 +70,11 @@ GType gtk_ticker_get_type (void)
 
 		ticker_type = g_type_register_static (GTK_TYPE_CONTAINER, "GtkTicker",
 				&ticker_info, 0);
+	}
+
+	/* kludge to re-initialise the class if it's already registered */
+	else if (parent_class == NULL) {
+		gtk_ticker_class_init((GtkTickerClass *)g_type_class_peek(ticker_type));
 	}
 
 	return ticker_type;
