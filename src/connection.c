@@ -339,7 +339,7 @@ gaim_connections_disconnect_all(void)
 {
 	GList *l;
 
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+	while ((l = gaim_connections_get_all()) != NULL)
 		gaim_connection_destroy(l->data);
 }
 
