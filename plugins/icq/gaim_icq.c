@@ -500,11 +500,20 @@ static void toggle_thru_serv(GtkToggleButton *button, struct conversation *c)
 static void icq_insert_convo(struct gaim_connection *gc, struct conversation *c)
 {
 	GtkWidget *button;
+	struct icq_data *id = gc->proto_data;
+	GSList *l = id->thru_serv;
 
 	button = gtk_check_button_new_with_label("Send message through server");
 	gtk_box_pack_start(GTK_BOX(c->lbox), button, FALSE, FALSE, 5);
 	gtk_signal_connect(GTK_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(toggle_thru_serv), c);
 	gtk_object_set_user_data(GTK_OBJECT(button), gc);
+	while (l) {
+		if (who == (long)l->data)
+			break;
+		l = l->next;
+	}
+	if (l)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 	gtk_widget_show(button);
 }
 
