@@ -978,7 +978,13 @@ static void irc_login(struct aim_user *user)
 
 	site.sin_family = AF_INET;
 	site.sin_addr.s_addr = *(long *)(host->h_addr);
-	site.sin_port = htons(atoi(user->proto_opt[1]));
+	
+	if (user->proto_opt[1][0])
+		site.sin_port = htons(atoi(user->proto_opt[1]));
+	else {
+		site.sin_port = htons(6667);
+		g_snprintf(user->proto_opt[1], 5, "6667");
+	}
 
 	fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd < 0) {
@@ -1064,6 +1070,8 @@ static void irc_user_opts(GtkWidget * book, struct aim_user *user)
 	if (user->proto_opt[1][0]) {
 		debug_printf("setting text %s\n", user->proto_opt[1]);
 		gtk_entry_set_text(GTK_ENTRY(entry), user->proto_opt[1]);
+	} else {
+		gtk_entry_set_text(GTK_ENTRY(entry), "6667");
 	}
 	gtk_object_set_user_data(GTK_OBJECT(entry), user);
 	gtk_signal_connect(GTK_OBJECT(entry), "changed", GTK_SIGNAL_FUNC(irc_print_option), user);
