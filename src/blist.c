@@ -338,16 +338,16 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		 * being moved.
 		 */
 		((struct group *)cnode->parent)->totalsize--;
-		if (chat->account->gc)
+		if (chat->account->gc) {
+			((struct group *)cnode->parent)->online--;
 			((struct group *)cnode->parent)->currentsize--;
+		}
 		if(cnode->next)
 			cnode->next->prev = cnode->prev;
 		if(cnode->prev)
 			cnode->prev->next = cnode->next;
 		if(cnode->parent->child == cnode)
 			cnode->parent->child = cnode->next;
-
-		((struct group *)((GaimBlistNode *)chat)->parent)->online--;
 
 		ops->remove(gaimbuddylist, cnode);
 
@@ -362,18 +362,20 @@ void gaim_blist_add_chat(struct chat *chat, struct group *group, GaimBlistNode *
 		cnode->parent = n->parent;
 		n->next = cnode;
 		((struct group *)n->parent)->totalsize++;
-		if (chat->account->gc)
+		if (chat->account->gc) {
+			((struct group *)n->parent)->online++;
 			((struct group *)n->parent)->currentsize++;
+		}
 	} else {
 		((GaimBlistNode*)g)->child = cnode;
 		cnode->next = cnode->prev = NULL;
 		cnode->parent = (GaimBlistNode*)g;
 		g->totalsize++;
-		if (chat->account->gc)
+		if (chat->account->gc) {
+			g->online++;
 			g->currentsize++;
+		}
 	}
-
-	((struct group *)((GaimBlistNode *)chat)->parent)->online++;
 
 	if (ops)
 		ops->update(gaimbuddylist, (GaimBlistNode*)cnode);
@@ -726,6 +728,7 @@ void gaim_blist_add_account(struct gaim_account *account)
 				}
 			} else if(GAIM_BLIST_NODE_IS_CHAT(buddy)) {
 				if (account == ((struct chat*)buddy)->account) {
+					((struct group *)group)->online++;
 					((struct group *)group)->currentsize++;
 					if(ops)
 						ops->update(gaimbuddylist, buddy);
