@@ -704,11 +704,8 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 	cnode = (GaimBlistNode*)contact;
 
 	if(cnode->parent) {
-
-		ops->remove(gaimbuddylist, cnode);
-
-		if(gnode->child == cnode)
-			gnode->child = cnode->next;
+		if(cnode->parent->child == cnode)
+			cnode->parent->child = cnode->next;
 		if(cnode->prev)
 			cnode->prev->next = cnode->next;
 		if(cnode->next)
@@ -720,6 +717,8 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 		if(contact->currentsize > 0)
 			((GaimGroup*)cnode->parent)->currentsize--;
 		((GaimGroup*)cnode->parent)->totalsize--;
+
+		ops->remove(gaimbuddylist, cnode);
 
 		save = TRUE;
 	}
