@@ -87,11 +87,11 @@ static gint send_lag() {
 		char *m = g_strdup(MY_LAG_STRING);
 		if (my_gc->protocol == PROTO_JABBER) {
 			if (!strchr(my_gc->username, '@')) {
-				char buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
+				char *buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
 				serv_send_im(my_gc, buf, m, 1);
 				g_free(buf);
 			} else if (!strchr(my_gc->username, '/')) {
-				char buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
+				char *buf = g_strconcat(my_gc->username, "@jabber.org/GAIM", NULL);
 				serv_send_im(my_gc, buf, m, 1);
 				g_free(buf);
 			} else
