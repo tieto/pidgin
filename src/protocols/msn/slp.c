@@ -148,7 +148,7 @@ msn_xfer_end_cb(MsnSlpCall *slpcall)
 		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE) &&
 		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_LOCAL))
 	{
-		/* gaim_xfer_cancel_remote(slpcall->xfer); */
+		gaim_xfer_cancel_remote(slpcall->xfer);
 	}
 }
 
