@@ -777,9 +777,9 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 		return "Stepped Out";
 	case YAHOO_STATUS_INVISIBLE:
 		return "Invisible";
+    default:
+        return "Online";
 	}
-
-	return "Online";
 }
 
 static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
@@ -793,6 +793,8 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 
 	if (!(b->uc & UC_UNAVAILABLE))
 		return NULL;
+    if (b->uc >> 1 == YAHOO_STATUS_IDLE)
+        return NULL;
 
 	pbm = g_new0(struct proto_buddy_menu, 1);
 	if ((b->uc >> 1) != YAHOO_STATUS_CUSTOM)
