@@ -87,14 +87,13 @@ static void load_winver_specific_procs(void) {
  *  PUBLIC CODE
  */
 
-/* Misc Wingaim functions */
 HINSTANCE wgaim_hinstance(void) {
 	return gaimexe_hInstance;
 }
 
 /* Escape windows dir separators.  This is needed when paths are saved,
    and on being read back have their '\' chars used as an escape char.
-   Returns and allocated string which needs to be freed.
+   Returns an allocated string which needs to be freed.
 */
 char* wgaim_escape_dirsep( char* filename ) {
 	int sepcount=0;
@@ -119,6 +118,32 @@ char* wgaim_escape_dirsep( char* filename ) {
 	return ret;
 }
 
+/*
+ * This is a hack to circumvent the conflict between the
+ * windows behaviour of gtk_window_get_pos and gtk_window_move, which
+ * exists in GTK+ v2.2.0.  GTK+ documentation explains the following
+ * should be true for gtk_window_get_pos:
+ *   This function returns the position you need to pass to
+ *   gtk_window_move() to keep window in its current position.
+ * This is false (for windows). gtk_window_get_pos returns
+ * client coords, whereas gtk_window_move accepts non-client coords.
+ * Our solution, until this is fixed, is to anticipate the offset and
+ * adjust the coordinates passed to gtk_window_move.
+ */
+void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y) {
+	LONG style,  extended_style;
+	RECT trect;
+	HWND hWnd = GDK_WINDOW_HWND(GTK_WIDGET(window)->window);
+
+	style = GetWindowLong(hWnd, GWL_STYLE);
+	extended_style = GetWindowLong (hWnd, GWL_EXSTYLE);
+	GetClientRect (hWnd, &trect);
+	AdjustWindowRectEx (&trect, style, FALSE, extended_style);
+
+	gtk_window_move(window, x + (-1 * trect.left) , y + (-1 * trect.top));
+}
+
+
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
 FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
@@ -137,11 +162,13 @@ FARPROC wgaim_find_and_loadproc( char* dllname, char* procedure ) {
  	}
 
 	if((proc=GetProcAddress(hmod, procedure))) {
-		debug_printf("This version of %s contains %s\n", dllname, procedure);
+		debug_printf("This version of %s contains %s\n", 
+			     dllname, procedure);
 		return proc;
 	}
 	else {
-		debug_printf("Function: %s not found in dll: %s\n", procedure, dllname);
+		debug_printf("Function: %s not found in dll: %s\n", 
+			     procedure, dllname);
 		if(did_load) {
 			/* unload dll */
 			FreeLibrary(hmod);
@@ -227,8 +254,12 @@ void wgaim_im_blink(GtkWidget *window) {
 		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
 
 		/* Start Flashing window */
-		finfo->t_handle = g_timeout_add(1000, flash_window_cb, GDK_WINDOW_HWND(window->window));
-		finfo->sig_handler = g_signal_connect(G_OBJECT(window), "focus-in-event", G_CALLBACK(halt_flash_filter), finfo);
+		finfo->t_handle = g_timeout_add(1000, 
+						flash_window_cb, 
+						GDK_WINDOW_HWND(window->window));
+		finfo->sig_handler = g_signal_connect(G_OBJECT(window), 
+						      "focus-in-event", 
+						      G_CALLBACK(halt_flash_filter), finfo);
 	}
 }
 

@@ -44,6 +44,10 @@ extern void wgaim_cleanup(void);
 #define LIBDIR wgaim_lib_dir()
 #define LOCALEDIR wgaim_locale_dir()
 
+/* Temp solution for gtk_window_get_pos & gtk_window_move conflict */
+#define gtk_window_move( window, x, y ) \
+wgaim_gtk_window_move( ## window ##, ## x ##, ## y ## )
+
 /*
  *  Gtk specific
  */
