@@ -1710,6 +1710,7 @@ static void paldest(GtkWidget *m, gpointer n)
 {
 	gtk_widget_destroy(prefs_away_list);
 	prefs_away_list = NULL;
+	prefs_away_menu = NULL;
 	make_away_button = NULL;
 }
 
