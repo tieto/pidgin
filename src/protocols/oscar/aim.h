@@ -407,12 +407,13 @@ typedef struct aim_session_s {
  */
 typedef struct {
 	char sn[MAXSNLEN+1];
-	fu16_t warnlevel;
-	fu16_t idletime;
+	fu16_t warnlevel; /* evil percent * 10 (999 = 99.9%) */
+	fu16_t idletime; /* in seconds */
 	fu16_t flags;
-	fu32_t membersince;
-	fu32_t onlinesince;
-	fu32_t sessionlen; 
+	fu32_t createtime; /* time_t */
+	fu32_t membersince; /* time_t */
+	fu32_t onlinesince; /* time_t */
+	fu32_t sessionlen;  /* in seconds */
 	fu32_t capabilities;
 	struct {
 		fu32_t status;
@@ -431,11 +432,13 @@ typedef struct {
 #define AIM_USERINFO_PRESENT_ICQDATA      0x00000040
 #define AIM_USERINFO_PRESENT_CAPABILITIES 0x00000080
 #define AIM_USERINFO_PRESENT_SESSIONLEN   0x00000100
+#define AIM_USERINFO_PRESENT_CREATETIME   0x00000200
 
 faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui);
 faim_export fu16_t aim_userinfo_flags(aim_userinfo_t *ui);
 faim_export fu16_t aim_userinfo_idle(aim_userinfo_t *ui);
 faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui);
+faim_export time_t aim_userinfo_createtime(aim_userinfo_t *ui);
 faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui);
 faim_export time_t aim_userinfo_onlinesince(aim_userinfo_t *ui);
 faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui);

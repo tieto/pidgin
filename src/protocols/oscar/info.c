@@ -76,6 +76,15 @@ faim_export float aim_userinfo_warnlevel(aim_userinfo_t *ui)
 	return (ui->warnlevel / 10);
 }
 
+faim_export time_t aim_userinfo_createtime(aim_userinfo_t *ui)
+{
+
+	if (!ui)
+		return 0;
+
+	return (time_t)ui->createtime;
+}
+
 faim_export time_t aim_userinfo_membersince(aim_userinfo_t *ui)
 {
 
@@ -278,6 +287,30 @@ faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps)
 	return 0;
 }
 
+static void dumptlv(aim_session_t *sess, fu16_t type, aim_bstream_t *bs, fu8_t len)
+{
+	int i;
+
+	if (!sess || !bs || !len)
+		return;
+
+	faimdprintf(sess, 0, "userinfo:   type  =0x%04x\n", type);
+	faimdprintf(sess, 0, "userinfo:   length=0x%04x\n", len);
+
+	faimdprintf(sess, 0, "userinfo:   value:\n");
+
+	for (i = 0; i < len; i++) {
+		if ((i % 8) == 0)
+			faimdprintf(sess, 0, "\nuserinfo:        ");
+
+		faimdprintf(sess, 0, "0x%2x ", aimbs_get8(bs));
+	}
+
+	faimdprintf(sess, 0, "\n");
+
+	return;
+}
+
 /*
  * AIM is fairly regular about providing user info.  This is a generic 
  * routine to extract it in its standard form.
@@ -342,13 +375,20 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 
 		} else if (type == 0x0002) {
 			/*
-			 * Type = 0x0002: Member-Since date. 
+			 * Type = 0x0002: Account creation time. 
 			 *
 			 * The time/date that the user originally registered for
 			 * the service, stored in time_t format.
+			 *
+			 * I'm not sure how this differs from type 5 ("member
+			 * since").
+			 *
+			 * Note: This is the field formerly known as "member
+			 * since".  All these years and I finally found out
+			 * that I got the name wrong.
 			 */
-			outinfo->membersince = aimbs_get32(bs);
-			outinfo->present |= AIM_USERINFO_PRESENT_MEMBERSINCE;
+			outinfo->createtime = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_CREATETIME;
 
 		} else if (type == 0x0003) {
 			/*
@@ -373,6 +413,18 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 */
 			outinfo->idletime = aimbs_get16(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_IDLE;
+		} else if (type == 0x0005) {
+			/*
+			 * Type = 0x0005: Member since date. 
+			 *
+			 * The time/date that the user originally registered for
+			 * the service, stored in time_t format.
+			 *
+			 * This is sometimes sent instead of type 2 ("account
+			 * creation time"), particularly in the self-info.
+			 */
+			outinfo->membersince = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_MEMBERSINCE;
 
 		} else if (type == 0x0006) {
 			/*
@@ -442,6 +494,19 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			outinfo->sessionlen = aimbs_get32(bs);
 			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
+		} else if (type == 0x001d) {
+			/*
+			 * Type 29: Unknown.
+			 *
+			 * Currently very rare. Always 18 bytes of mostly zero.
+			 */
+
+		} else if (type == 0x001e) {
+			/*
+			 * Type 30: Unknown.
+			 *
+			 * Always four bytes, but it doesn't look like an int.
+			 */
 		} else {
 
 			/*
@@ -455,9 +520,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 */
 			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV:\n");
 			faimdprintf(sess, 0, "userinfo:   sn    =%s\n", outinfo->sn);
-			faimdprintf(sess, 0, "userinfo:   type  =0x%04x\n",type);
-			faimdprintf(sess, 0, "userinfo:   length=0x%04x\n", length);
-
+			dumptlv(sess, type, bs, length);
 		}
 
 		/* Save ourselves. */
@@ -483,21 +546,29 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 	aimbs_put16(bs, info->warnlevel);
 
 
-	aim_addtlvtochain16(&tlvlist, 0x0001, info->flags);
-	aim_addtlvtochain32(&tlvlist, 0x0002, info->membersince);
-	aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
-	aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
+	if (info->present & AIM_USERINFO_PRESENT_FLAGS)
+		aim_addtlvtochain16(&tlvlist, 0x0001, info->flags);
+	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE)
+		aim_addtlvtochain32(&tlvlist, 0x0002, info->membersince);
+	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
+		aim_addtlvtochain32(&tlvlist, 0x0003, info->onlinesince);
+	if (info->present & AIM_USERINFO_PRESENT_IDLE)
+		aim_addtlvtochain16(&tlvlist, 0x0004, info->idletime);
 
 #if ICQ_OSCAR_SUPPORT
 	if (atoi(info->sn) != 0) {
-		aim_addtlvtochain16(&tlvlist, 0x0006, info->icqinfo.status);
-		aim_addtlvtochain32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
+		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
+			aim_addtlvtochain16(&tlvlist, 0x0006, info->icqinfo.status);
+		if (info->present & AIM_USERINFO_PRESENT_ICQIPADDR)
+			aim_addtlvtochain32(&tlvlist, 0x000a, info->icqinfo.ipaddr);
 	}
 #endif
 
-	aim_addtlvtochain_caps(&tlvlist, 0x000d, info->capabilities);
-
-	aim_addtlvtochain32(&tlvlist, (fu16_t)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
+	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
+		aim_addtlvtochain_caps(&tlvlist, 0x000d, info->capabilities);
+ 
+	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
+		aim_addtlvtochain32(&tlvlist, (fu16_t)((info->flags & AIM_FLAG_AOL) ? 0x0010 : 0x000f), info->sessionlen);
 
 	aimbs_put16(bs, aim_counttlvchain(&tlvlist));
 	aim_writetlvchain(bs, &tlvlist);

@@ -46,9 +46,9 @@ static void freetlv(aim_tlv_t **oldtlv)
 faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 {
 	aim_tlvlist_t *list = NULL, *cur;
-	fu16_t type, length;
-
-	while (aim_bstream_empty(bs)) {
+	
+	while (aim_bstream_empty(bs) > 0) {
+		fu16_t type, length;
 
 		type = aimbs_get16(bs);
 		length = aimbs_get16(bs);
@@ -70,13 +70,35 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 #endif
 		else {
 
+			if (length > aim_bstream_empty(bs)) {
+				aim_freetlvchain(&list);
+				return NULL;
+			}
+
 			cur = (aim_tlvlist_t *)malloc(sizeof(aim_tlvlist_t));
+			if (!cur) {
+				aim_freetlvchain(&list);
+				return NULL;
+			}
+
 			memset(cur, 0, sizeof(aim_tlvlist_t));
 
-			cur->tlv = createtlv();	
+			cur->tlv = createtlv();
+			if (!cur->tlv) {
+				free(cur);
+				aim_freetlvchain(&list);
+				return NULL;
+			}
 			cur->tlv->type = type;
-			if ((cur->tlv->length = length))
+			if ((cur->tlv->length = length)) {
 			       cur->tlv->value = aimbs_getraw(bs, length);	
+			       if (!cur->tlv->value) {
+				       freetlv(&cur->tlv);
+				       free(cur);
+				       aim_freetlvchain(&list);
+				       return NULL;
+			       }
+			}
 
 			cur->next = list;
 			list = cur;
