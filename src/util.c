@@ -669,7 +669,6 @@ void aol_icon(GdkWindow *w)
 						       NULL, (gchar **)aimicon_xpm);
 	}
 	gdk_window_set_icon(w, NULL, icon_pm, icon_bm);
-        gdk_window_set_group(w, mainwindow->window);
 	if (mainwindow) gdk_window_set_group(w, mainwindow->window);
 #endif
 }
