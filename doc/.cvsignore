@@ -1,3 +1,5 @@
 Makefile.in
 Makefile
 html
+gaim.1
+gaim-remote.1
