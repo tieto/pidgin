@@ -39,7 +39,7 @@
 #include "gaim.h"
 #include "gnome_applet_mgr.h"
 
-#define REVISION "gaim:$Revision: 970 $"
+#define REVISION "gaim:$Revision: 974 $"
 
 
 static unsigned int peer_ver=0;
@@ -497,7 +497,7 @@ void toc_callback( gpointer          data,
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
                 name = strtok(NULL, ":");
-                serv_got_joined_chat(id, name);
+                serv_got_joined_chat(gc, id, name);
 
 	} else if (!strcasecmp(c, "DIR_STATUS")) {
 	} else if (!strcasecmp(c, "ADMIN_PASSWD_STATUS")) {
@@ -506,7 +506,7 @@ void toc_callback( gpointer          data,
 		int id;
 		char *in;
 		char *buddy;
-                GList *bcs = buddy_chats;
+                GSList *bcs = gc->buddy_chats;
 		struct conversation *b = NULL;
 		
 		sscanf(strtok(NULL, ":"), "%d", &id);
@@ -543,7 +543,7 @@ void toc_callback( gpointer          data,
 
                 sscanf(strtok(NULL, ":"), "%d", &id);
 
-                serv_got_chat_left(id);
+                serv_got_chat_left(gc, id);
 
 
 	} else if (!strcasecmp(c, "CHAT_IN")) {
@@ -565,7 +565,7 @@ void toc_callback( gpointer          data,
 		else
 			w = 0;
 
-		serv_got_chat_in(id, who, w, m);
+		serv_got_chat_in(gc, id, who, w, m);
 
 
 	} else if (!strcasecmp(c, "CHAT_INVITE")) {
@@ -580,7 +580,7 @@ void toc_callback( gpointer          data,
 		who = strtok(NULL, ":");
                 message = strtok(NULL, ":");
 
-                serv_got_chat_invite(name, id, who, message);
+                serv_got_chat_invite(gc, name, id, who, message);
 
 
         } else if (!strcasecmp(c, "RVOUS_PROPOSE")) {

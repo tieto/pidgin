@@ -35,6 +35,9 @@ extern int gaim_caps;
 #include "multi.h"
 #include "gaim.h"
 
+#include "pixmaps/ok.xpm"
+#include "pixmaps/cancel.xpm"
+
 int correction_time = 0;
 
 struct gaim_connection *serv_login(char *username, char *password)
@@ -511,25 +514,21 @@ void serv_save_config()
 }
 
 
-void serv_accept_chat(int i)
+void serv_accept_chat(struct gaim_connection *g, int i)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char *buf = g_malloc(256);
 	        g_snprintf(buf, 255, "toc_chat_accept %d",  i);
 	        sflap_send(g, buf, -1, TYPE_DATA);
 	        g_free(buf);
 	} else if (g->protocol == PROTO_OSCAR) {
-	/* this should never get called because libfaim doesn't use the id
-	 * (i'm not even sure Oscar does). go through serv_join_chat instead */
+		/* this should never get called because libfaim doesn't use the id
+		 * (i'm not even sure Oscar does). go through serv_join_chat instead */
 	}
 }
 
-void serv_join_chat(int exchange, char *name)
+void serv_join_chat(struct gaim_connection *g, int exchange, char *name)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char buf[BUF_LONG];
 	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_join %d \"%s\"", exchange, name);
@@ -551,16 +550,14 @@ void serv_join_chat(int exchange, char *name)
 	}
 }
 
-void serv_chat_invite(int id, char *message, char *name)
+void serv_chat_invite(struct gaim_connection *g, int id, char *message, char *name)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char buf[BUF_LONG];
 	        g_snprintf(buf, sizeof(buf)/2, "toc_chat_invite %d \"%s\" %s", id, message, normalize(name));
 	        sflap_send(g, buf, -1, TYPE_DATA);
 	} else if (g->protocol == PROTO_OSCAR) {
-		GList *bcs = buddy_chats;
+		GSList *bcs = g->buddy_chats;
 		struct conversation *b = NULL;
 
 		while (bcs) {
@@ -578,17 +575,15 @@ void serv_chat_invite(int id, char *message, char *name)
 	}
 }
 
-void serv_chat_leave(int id)
+void serv_chat_leave(struct gaim_connection *g, int id)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char *buf = g_malloc(256);
 	        g_snprintf(buf, 255, "toc_chat_leave %d",  id);
 	        sflap_send(g, buf, -1, TYPE_DATA);
 	        g_free(buf);
 	} else if (g->protocol == PROTO_OSCAR) {
-		GList *bcs = buddy_chats;
+		GSList *bcs = g->buddy_chats;
 		struct conversation *b = NULL;
 		struct chat_connection *c = NULL;
 		int count = 0;
@@ -619,14 +614,12 @@ void serv_chat_leave(int id)
 			g_free(c);
 		}
 		/* we do this because with Oscar it doesn't tell us we left */
-		serv_got_chat_left(b->id);
+		serv_got_chat_left(g, b->id);
 	}
 }
 
-void serv_chat_whisper(int id, char *who, char *message)
+void serv_chat_whisper(struct gaim_connection *g, int id, char *who, char *message)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char buf2[MSG_LEN];
 	        g_snprintf(buf2, sizeof(buf2), "toc_chat_whisper %d %s \"%s\"", id, who, message);
@@ -637,10 +630,8 @@ void serv_chat_whisper(int id, char *who, char *message)
 	}
 }
 
-void serv_chat_send(int id, char *message)
+void serv_chat_send(struct gaim_connection *g, int id, char *message)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 	if (g->protocol == PROTO_TOC) {
 	        char buf[MSG_LEN];
 		escape_text(message);
@@ -648,7 +639,7 @@ void serv_chat_send(int id, char *message)
 	        sflap_send(g, buf, -1, TYPE_DATA);
 	} else if (g->protocol == PROTO_OSCAR) {
 		struct aim_conn_t *cn;
-		GList *bcs = buddy_chats;
+		GSList *bcs = g->buddy_chats;
 		struct conversation *b = NULL;
 
 		while (bcs) {
@@ -901,16 +892,16 @@ static void close_invite(GtkWidget *w, GtkWidget *w2)
 
 static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 {
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
+	struct gaim_connection *g = (struct gaim_connection *)
+					gtk_object_get_user_data(GTK_OBJECT(GTK_DIALOG(w2)->vbox));
 	if (g->protocol == PROTO_TOC) {
 	        int i = (int)gtk_object_get_user_data(GTK_OBJECT(w2));
-	        serv_accept_chat(i);
+	        serv_accept_chat(g, i);
 		gtk_widget_destroy(w2);
 	} else if (g->protocol == PROTO_OSCAR) {
 		char *i = (char *)gtk_object_get_user_data(GTK_OBJECT(w2));
 		int id = (int)gtk_object_get_user_data(GTK_OBJECT(w));
-		serv_join_chat(id, i);
+		serv_join_chat(g, id, i);
 		g_free(i);
 		gtk_widget_destroy(w2);
 	}
@@ -918,7 +909,7 @@ static void chat_invite_callback(GtkWidget *w, GtkWidget *w2)
 
 
 
-void serv_got_chat_invite(char *name, int id, char *who, char *message)
+void serv_got_chat_invite(struct gaim_connection *g, char *name, int id, char *who, char *message)
 {
         GtkWidget *d;
         GtkWidget *label;
@@ -926,16 +917,14 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         GtkWidget *nobtn;
 
         char buf2[BUF_LONG];
-	/* FIXME */
-	struct gaim_connection *g = connections->data;
 
 
 	plugin_event(event_chat_invited, who, name, message);
 
 	if (message)
-		g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n%s", who, name, message);
+		g_snprintf(buf2, sizeof(buf2), "User '%s' invites %s to buddy chat room: '%s'\n%s", who, g->username, name, message);
 	else
-		g_snprintf(buf2, sizeof(buf2), "User '%s' invites you to buddy chat room: '%s'\n", who, name);
+		g_snprintf(buf2, sizeof(buf2), "User '%s' invites %s to buddy chat room: '%s'\n", who, g->username, name);
 
         d = gtk_dialog_new();
         gtk_widget_realize(d);
@@ -944,9 +933,8 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
 
         label = gtk_label_new(buf2);
         gtk_widget_show(label);
-        yesbtn = gtk_button_new_with_label("Yes");
-        gtk_widget_show(yesbtn);
-        nobtn = gtk_button_new_with_label("No");
+        yesbtn = picture_button(d, _("Yes"), ok_xpm);
+        nobtn = picture_button(d, _("No"), cancel_xpm);
         gtk_widget_show(nobtn);
         gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->vbox),
                            label, FALSE, FALSE, 5);
@@ -955,16 +943,11 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         gtk_box_pack_start(GTK_BOX(GTK_DIALOG(d)->action_area),
                            nobtn, FALSE, FALSE, 5);
 
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(yesbtn), GTK_RELIEF_NONE);
-	if (display_options & OPT_DISP_COOL_LOOK)
-		gtk_button_set_relief(GTK_BUTTON(nobtn), GTK_RELIEF_NONE);
-
-        /*		gtk_widget_set_usize(d, 200, 110); */
-
-	if (g->protocol == PROTO_TOC)
+	gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
+	if (g->protocol == PROTO_TOC) {
 	        gtk_object_set_user_data(GTK_OBJECT(d), (void *)id);
-	else if (g->protocol == PROTO_OSCAR) {
+		gtk_object_set_user_data(GTK_OBJECT(GTK_DIALOG(d)->vbox), g);
+	} else if (g->protocol == PROTO_OSCAR) {
 		gtk_object_set_user_data(GTK_OBJECT(d), (void *)g_strdup(name));
 		gtk_object_set_user_data(GTK_OBJECT(yesbtn), (void *)id);
 	} else {
@@ -980,19 +963,20 @@ void serv_got_chat_invite(char *name, int id, char *who, char *message)
         gtk_widget_show(d);
 }
 
-void serv_got_joined_chat(int id, char *name)
+void serv_got_joined_chat(struct gaim_connection *gc, int id, char *name)
 {
         struct conversation *b;
 
 	plugin_event(event_chat_join, name, 0, 0);
 
         b = (struct conversation *)g_new0(struct conversation, 1);
-        buddy_chats = g_list_append(buddy_chats, b);
+        gc->buddy_chats = g_slist_append(gc->buddy_chats, b);
 
 	b->is_chat = TRUE;
         b->ignored = NULL;
         b->in_room = NULL;
         b->id = id;
+	b->gc = gc;
         g_snprintf(b->name, 80, "%s", name);
 
 	if ((general_options & OPT_GEN_LOG_ALL) || find_log_info(b->name)) {
@@ -1015,9 +999,9 @@ void serv_got_joined_chat(int id, char *name)
         show_new_buddy_chat(b);
 }
 
-void serv_got_chat_left(int id)
+void serv_got_chat_left(struct gaim_connection *g, int id)
 {
-        GList *bcs = buddy_chats;
+        GSList *bcs = g->buddy_chats;
         struct conversation *b = NULL;
 
 
@@ -1038,15 +1022,15 @@ void serv_got_chat_left(int id)
 	sprintf(debug_buff, "Leaving room %s.\n", b->name);
 	debug_print(debug_buff);
 
-        buddy_chats = g_list_remove(buddy_chats, b);
+        g->buddy_chats = g_slist_remove(g->buddy_chats, b);
 
         g_free(b);
 }
 
-void serv_got_chat_in(int id, char *who, int whisper, char *message)
+void serv_got_chat_in(struct gaim_connection *g, int id, char *who, int whisper, char *message)
 {
         int w;
-        GList *bcs = buddy_chats;
+        GSList *bcs = g->buddy_chats;
         struct conversation *b = NULL;
 
         while(bcs) {

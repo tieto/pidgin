@@ -23,6 +23,5 @@ Holy Crap.
 7. Get rid of dologin. Signons should be handled differently. The account editor should have final
    control over this. DONE
 8. I seriously doubt the applet will compile. If it compiles it definitely won't run.
-9. Chat is broken. Don't even try to join a room. It won't work.
 
 And that's just the large things. There are countless trivial issues that need to be addressed.

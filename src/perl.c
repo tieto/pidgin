@@ -476,6 +476,7 @@ XS (XS_AIM_print_to_conv)
 
 XS (XS_AIM_print_to_chat)
 {
+	/* FIXME: need to make this multi-connection based
 	char *nick, *what;
 	struct conversation *c = NULL;
 	GList *bcs = buddy_chats;
@@ -495,6 +496,7 @@ XS (XS_AIM_print_to_chat)
 	if (!c)
 		XSRETURN(0);
 	serv_chat_send(c->id, what);
+	*/
 }
 
 int perl_event(char *event, char *args)

@@ -448,6 +448,7 @@ int gaim_parse_login(struct aim_session_t *sess,
 int gaim_server_ready(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
 	static int id = 1;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 	switch (command->conn->type) {
 	case AIM_CONN_TYPE_BOS:
 		aim_setversions(sess, command->conn);
@@ -471,7 +472,7 @@ int gaim_server_ready(struct aim_session_t *sess,
 		aim_bos_reqrate(sess, command->conn);
 		aim_bos_ackrateresp(sess, command->conn);
 		aim_chat_clientready(sess, command->conn);
-		serv_got_joined_chat(id++, aim_chat_getname(command->conn));
+		serv_got_joined_chat(gc, id++, aim_chat_getname(command->conn));
 		break;
 	case AIM_CONN_TYPE_RENDEZVOUS:
 		aim_conn_addhandler(sess, command->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING, gaim_directim_incoming, 0);
@@ -736,7 +737,8 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 			lang     = va_arg(ap, char *);
 			va_end(ap);
 
-			serv_got_chat_invite(roominfo->name,
+			serv_got_chat_invite(gc,
+					     roominfo->name,
 					     roominfo->exchange,
 					     userinfo->sn,
 					     msg);
@@ -1000,8 +1002,9 @@ int gaim_chat_join(struct aim_session_t *sess,
 	va_list ap;
 	int count, i = 0;
 	struct aim_userinfo_s *info;
+	struct gaim_connection *g = find_gaim_conn_by_aim_sess(sess);
 
-	GList *bcs = buddy_chats;
+	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 
 	va_start(ap, command);
@@ -1030,8 +1033,9 @@ int gaim_chat_leave(struct aim_session_t *sess,
 	va_list ap;
 	int count, i = 0;
 	struct aim_userinfo_s *info;
+	struct gaim_connection *g = find_gaim_conn_by_aim_sess(sess);
 
-	GList *bcs = buddy_chats;
+	GSList *bcs = g->buddy_chats;
 	struct conversation *b = NULL;
 
 	va_start(ap, command);
@@ -1066,8 +1070,9 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	va_list ap;
 	struct aim_userinfo_s *info;
 	char *msg;
+	struct gaim_connection *gc = find_gaim_conn_by_aim_sess(sess);
 
-	GList *bcs = buddy_chats;
+	GSList *bcs = gc->buddy_chats;
 	struct conversation *b = NULL;
 
 	va_start(ap, command);
@@ -1084,7 +1089,7 @@ int gaim_chat_incoming_msg(struct aim_session_t *sess,
 	if (!b)
 		return 0;
 
-	serv_got_chat_in(b->id, info->sn, 0, msg);
+	serv_got_chat_in(gc, b->id, info->sn, 0, msg);
 
 	return 1;
 }

@@ -470,7 +470,6 @@ extern GList *log_conversations;
 extern GList *buddy_pounces;
 extern GSList *away_messages;
 extern GSList *groups;
-extern GList *buddy_chats;
 extern GList *conversations;
 extern GList *chat_rooms;
 extern GtkWidget *mainwindow;
@@ -580,7 +579,6 @@ extern void show_about(GtkWidget *, void *);
 
 /* Functions in buddy_chat.c */
 extern void join_chat();
-extern struct conversation *find_chat(char *name);
 extern void chat_write(struct conversation *, char *, int, char *);
 extern void add_chat_buddy(struct conversation *, char *);
 extern void remove_chat_buddy(struct conversation *, char *);
@@ -648,12 +646,12 @@ extern void serv_save_config();
 extern void serv_warn(char *, int);
 extern void serv_set_dir(char *, char *, char *, char *, char *, char *, char *, int);
 extern void serv_dir_search(char *, char *, char *, char *, char *, char *, char *, char *);
-extern void serv_accept_chat(int);
-extern void serv_join_chat(int, char *);
-extern void serv_chat_invite(int, char *, char *);
-extern void serv_chat_leave(int);
-extern void serv_chat_whisper(int, char *, char *);
-extern void serv_chat_send(int, char *);
+extern void serv_accept_chat(struct gaim_connection *, int);
+extern void serv_join_chat(struct gaim_connection *, int, char *);
+extern void serv_chat_invite(struct gaim_connection *, int, char *, char *);
+extern void serv_chat_leave(struct gaim_connection *, int);
+extern void serv_chat_whisper(struct gaim_connection *, int, char *, char *);
+extern void serv_chat_send(struct gaim_connection *, int, char *);
 extern void serv_do_imimage(GtkWidget *, char *);
 extern void serv_got_imimage(struct gaim_connection *, char *, char *, char *, struct aim_conn_t *, int);
 
@@ -661,10 +659,10 @@ extern void serv_got_imimage(struct gaim_connection *, char *, char *, char *, s
 extern void serv_got_update(char *, int, int, time_t, time_t, int, u_short);
 extern void serv_got_im(struct gaim_connection *, char *, char *, int);
 extern void serv_got_eviled(char *, int);
-extern void serv_got_chat_invite(char *, int, char *, char *);
-extern void serv_got_joined_chat(int, char *);
-extern void serv_got_chat_left(int);
-extern void serv_got_chat_in(int, char *, int, char *);
+extern void serv_got_chat_invite(struct gaim_connection *, char *, int, char *, char *);
+extern void serv_got_joined_chat(struct gaim_connection *, int, char *);
+extern void serv_got_chat_left(struct gaim_connection *, int);
+extern void serv_got_chat_in(struct gaim_connection *, int, char *, int, char *);
 extern void serv_rvous_accept(char *, char *, char *);
 extern void serv_rvous_cancel(char *, char *, char *);
 

@@ -48,6 +48,7 @@ struct gaim_connection {
 	char *create_name;
 
 	GSList *oscar_chats;
+	GSList *buddy_chats;
 
 	/* that's all we need for oscar. now then, on to TOC.... */
 	int toc_fd;

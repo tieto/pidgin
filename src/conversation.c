@@ -249,6 +249,9 @@ void delete_conversation(struct conversation *c)
 
 void update_log_convs()
 {
+	GSList *C = connections;
+	struct gaim_connection *g;
+	GSList *bcs;
 	GList *cnv = conversations;
 	struct conversation *c;
 
@@ -261,14 +264,18 @@ void update_log_convs()
 		cnv = cnv->next;
 	}
 
-	cnv = buddy_chats;
-	while(cnv) {
-		c = (struct conversation *)cnv->data;
+	while (C) {
+		g = (struct gaim_connection *)C->data;
+		bcs = g->buddy_chats;
+		while(bcs) {
+			c = (struct conversation *)bcs->data;
 
-		if (c->log_button)
-			gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
+			if (c->log_button)
+				gtk_widget_set_sensitive(c->log_button, ((general_options & OPT_GEN_LOG_ALL)) ? FALSE : TRUE);
 
-		cnv = cnv->next;
+			bcs = bcs->next;
+		}
+		C = C->next;
 	}
 }
 
@@ -381,7 +388,7 @@ int close_callback(GtkWidget *widget, struct conversation *c)
 	c->log_dialog = NULL;
 
 	if (c->is_chat) {
-		serv_chat_leave(c->id);
+		serv_chat_leave(c->gc, c->id);
 	} else {
 		if (c->is_direct) {
 			if (c->gc->protocol == PROTO_OSCAR) {
@@ -694,7 +701,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		if (c->makesound && (sound_options & OPT_SOUND_SEND))
 			play_sound(SEND);
 	} else {
-		serv_chat_send(c->id, buf);
+		serv_chat_send(c->gc, c->id, buf);
 
 		/* no sound because we do that when we receive our message */
 	}

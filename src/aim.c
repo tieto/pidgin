@@ -61,7 +61,6 @@ GList *log_conversations = NULL;
 GList *buddy_pounces = NULL;
 GSList *away_messages = NULL;
 GSList *groups = NULL;
-GList *buddy_chats = NULL;
 GList *conversations = NULL;
 GList *chat_rooms = NULL;
 

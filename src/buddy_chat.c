@@ -38,6 +38,7 @@
 #include "pixmaps/close.xpm"
 
 static GtkWidget *joinchat;
+static struct gaim_connection *joinchatgc;
 static GtkWidget *entry;
 static GtkWidget *invite;
 static GtkWidget *inviteentry;
@@ -60,25 +61,6 @@ static void destroy_invite()
 }
 
 
-struct conversation *find_chat(char *name)
-{
-	char cuser[64];
-	struct conversation *c = NULL;
-	GList *cnv = buddy_chats;
-
-	strcpy(cuser, normalize(name));
-
-	while (cnv) {
-		c = (struct conversation *)cnv->data;
-		if (!strcasecmp(cuser, normalize(c->name))) {
-			return c;
-		}
-		cnv = cnv->next;
-	}
-	return NULL;
-}
-
-
 static void do_join_chat()
 {
 	char *group;
@@ -86,12 +68,47 @@ static void do_join_chat()
 	group = gtk_entry_get_text(GTK_ENTRY(entry));
 
         if (joinchat) {
-                serv_join_chat(community + 4, group);
+                serv_join_chat(joinchatgc, community + 4, group);
 		gtk_widget_destroy(joinchat);
 	}
 	joinchat=NULL;
 }
 
+static void joinchat_choose(GtkWidget *w, struct gaim_connection *g)
+{
+	joinchatgc = g;
+}
+
+
+static void create_joinchat_menu(GtkWidget *box)
+{
+	GtkWidget *optmenu;
+	GtkWidget *menu;
+	GtkWidget *opt;
+	GSList *c = connections;
+	struct gaim_connection *g;
+
+	optmenu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
+	gtk_widget_show(optmenu);
+
+	menu = gtk_menu_new();
+
+	while (c) {
+		g = (struct gaim_connection *)c->data;
+		opt = gtk_menu_item_new_with_label(g->username);
+		gtk_object_set_user_data(GTK_OBJECT(opt), g);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		gtk_widget_show(opt);
+		c = c->next;
+	}
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), 0);
+
+	joinchatgc = connections->data;
+}
 
 
 void join_chat()
@@ -112,24 +129,48 @@ void join_chat()
                                       "Gaim");
 		gtk_window_set_policy(GTK_WINDOW(joinchat), FALSE, FALSE, TRUE);
 		gtk_widget_realize(joinchat);
-		bbox = gtk_hbox_new(TRUE, 10);
-		topbox = gtk_hbox_new(FALSE, 5);
-		vbox = gtk_vbox_new(FALSE, 5);
-		entry = gtk_entry_new();
-		hbox = gtk_hbox_new(TRUE, 10);
+		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
+			   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
+		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
+		gtk_container_set_border_width(GTK_CONTAINER(joinchat), 5);
+		aol_icon(joinchat->window);
 
 		frame = gtk_frame_new(_("Buddy Chat"));
+                gtk_container_add(GTK_CONTAINER(joinchat), frame);
+		gtk_widget_show(frame);
 
-		join = picture_button(joinchat, _("Join"), join_xpm);
-		cancel = picture_button(joinchat, _("Cancel"), cancel_xpm);
+		vbox = gtk_vbox_new(FALSE, 5);
+		gtk_container_add(GTK_CONTAINER(frame), vbox);
+		gtk_widget_show(vbox);
 
-		gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
-		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+		topbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
+		gtk_widget_show(topbox);
 
 		label = gtk_label_new(_("Join what group:"));
-		gtk_widget_show(label);
 		gtk_box_pack_start(GTK_BOX(topbox), label, FALSE, FALSE, 5);
+		gtk_widget_show(label);
+
+		entry = gtk_entry_new();
 		gtk_box_pack_start(GTK_BOX(topbox), entry, FALSE, FALSE, 5);
+		gtk_signal_connect(GTK_OBJECT(entry), "activate",
+			   GTK_SIGNAL_FUNC(do_join_chat), joinchat);
+		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
+		gtk_widget_show(entry);
+
+		hbox = gtk_hbox_new(TRUE, 10);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
+		gtk_widget_show(hbox);
+
+		label = gtk_label_new(_("Join Chat As:"));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+		gtk_widget_show(label);
+
+		create_joinchat_menu(hbox);
+
+		hbox = gtk_hbox_new(TRUE, 10);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
+		gtk_widget_show(hbox);
 
 		opt = gtk_radio_button_new_with_label(NULL,
 							_("AIM Private Chats"));
@@ -144,38 +185,19 @@ void join_chat()
 		gtk_box_pack_start(GTK_BOX(hbox), opt, FALSE, FALSE, 0);
 		gtk_widget_show(opt);
 
-		/* And the boxes in the box */
-		gtk_box_pack_start(GTK_BOX(vbox), topbox, TRUE, TRUE, 5);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 5);
+		bbox = gtk_hbox_new(TRUE, 10);
 		gtk_box_pack_start(GTK_BOX(vbox), bbox, TRUE, TRUE, 5);
-		
-		/* Handle closes right */
-		gtk_signal_connect(GTK_OBJECT(joinchat), "delete_event",
-			   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
+		gtk_widget_show(bbox);
 
-		gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
-			   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
+		join = picture_button(joinchat, _("Join"), join_xpm);
+		gtk_box_pack_start(GTK_BOX(bbox), join, FALSE, FALSE, 5);
 		gtk_signal_connect(GTK_OBJECT(join), "clicked",
 			   GTK_SIGNAL_FUNC(do_join_chat), joinchat);
-		gtk_signal_connect(GTK_OBJECT(entry), "activate",
-			   GTK_SIGNAL_FUNC(do_join_chat), joinchat);
-		/* Finish up */
-		gtk_widget_show(join);
-		gtk_widget_show(cancel);
-		gtk_widget_show(entry);
-		gtk_widget_show(topbox);
-		gtk_widget_show(hbox);
-		gtk_widget_show(bbox);
-		gtk_widget_show(vbox);
-		gtk_widget_show(frame);
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
-		gtk_window_set_title(GTK_WINDOW(joinchat), _("Join Chat"));
-		gtk_window_set_focus(GTK_WINDOW(joinchat), entry);
-                gtk_container_add(GTK_CONTAINER(joinchat), frame);
-		gtk_container_set_border_width(GTK_CONTAINER(joinchat), 5);
-                gtk_widget_realize(joinchat);
-		aol_icon(joinchat->window);
 
+		cancel = picture_button(joinchat, _("Cancel"), cancel_xpm);
+		gtk_box_pack_end(GTK_BOX(bbox), cancel, FALSE, FALSE, 5);
+		gtk_signal_connect(GTK_OBJECT(cancel), "clicked",
+			   GTK_SIGNAL_FUNC(destroy_join_chat), joinchat);
 	}
 	gtk_widget_show(joinchat);
 }
@@ -195,7 +217,7 @@ static void do_invite(GtkWidget *w, struct conversation *b)
 	mess = gtk_entry_get_text(GTK_ENTRY(invitemess));
 
         if (invite) {
-                serv_chat_invite(b->id, mess, buddy);
+                serv_chat_invite(b->gc, b->id, mess, buddy);
 		gtk_widget_destroy(invite);
 	}
 	invite=NULL;
@@ -359,7 +381,7 @@ void whisper_callback(GtkWidget *widget, struct conversation *b)
 	gtk_editable_delete_text(GTK_EDITABLE(b->entry), 0, -1);
 
         escape_text(buf); /* it's ok to leave this here because oscar can't whisper */
-        serv_chat_whisper(b->id, who, buf);
+        serv_chat_whisper(b->gc, b->id, who, buf);
                           
 	g_snprintf(buf2, sizeof(buf2), "%s->%s", b->gc->username, who);
 
@@ -705,7 +727,8 @@ void show_new_buddy_chat(struct conversation *b)
 void handle_click_chat(GtkWidget *widget, GdkEventButton *event, struct chat_room *cr)
 {
         if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
-                serv_join_chat(cr->exchange, cr->name);
+		/* FIXME */
+                serv_join_chat(connections->data, cr->exchange, cr->name);
         }
 }
 
@@ -779,22 +802,30 @@ static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, cha
 
 void update_chat_button_pix()
 {
-	GList *bcs = buddy_chats;
-	struct conversation *c;
-	int opt = 1;
+	GSList *C = connections;
+	struct gaim_connection *g;
 
-	while (bcs) {
-		c = (struct conversation *)bcs->data;
-		c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
-		c->whisper = change_text(c->window, _("Whisper"), c->whisper, tb_forward_xpm, opt);
-		c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm, opt);
-		c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
-		gtk_object_set_user_data(GTK_OBJECT(c->close), c);
-		gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback),c);
-		gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback),c);
-		gtk_signal_connect(GTK_OBJECT(c->invite), "clicked", GTK_SIGNAL_FUNC(invite_callback),c);
-		gtk_signal_connect(GTK_OBJECT(c->whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback),c);
-		bcs = bcs->next;
+	while (C) {
+		GSList *bcs;
+		struct conversation *c;
+		int opt = 1;
+		g = (struct gaim_connection *)C->data;
+		bcs = g->buddy_chats;
+
+		while (bcs) {
+			c = (struct conversation *)bcs->data;
+			c->send = change_text(c->window, _("Send"), c->send, tmp_send_xpm, opt);
+			c->whisper = change_text(c->window, _("Whisper"), c->whisper, tb_forward_xpm, opt);
+			c->invite = change_text(c->window, _("Invite"), c->invite, join_xpm, opt);
+			c->close = change_text(c->window, _("Close"), c->close, cancel_xpm, opt);
+			gtk_object_set_user_data(GTK_OBJECT(c->close), c);
+			gtk_signal_connect(GTK_OBJECT(c->close), "clicked", GTK_SIGNAL_FUNC(close_callback),c);
+			gtk_signal_connect(GTK_OBJECT(c->send), "clicked", GTK_SIGNAL_FUNC(send_callback),c);
+			gtk_signal_connect(GTK_OBJECT(c->invite), "clicked", GTK_SIGNAL_FUNC(invite_callback),c);
+			gtk_signal_connect(GTK_OBJECT(c->whisper), "clicked", GTK_SIGNAL_FUNC(whisper_callback),c);
+			bcs = bcs->next;
+		}
+		C = C->next;
 	}
 }
 
