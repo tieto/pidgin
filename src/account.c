@@ -116,6 +116,40 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 }
 
 static xmlnode *
+status_to_xmlnode(const GaimStatus *status)
+{
+	xmlnode *node;
+
+	node = xmlnode_new("status");
+	xmlnode_set_attrib(node, "type", gaim_status_get_id(status));
+	if (gaim_status_get_name(status) != NULL)
+		xmlnode_set_attrib(node, "name", gaim_status_get_name(status));
+	xmlnode_set_attrib(node, "active", gaim_status_is_active(status) ? "true" : "false");
+
+	/* QQQ: Need to save status->attr_values */
+
+	return node;
+}
+
+static xmlnode *
+statuses_to_xmlnode(const GaimPresence *presence)
+{
+	xmlnode *node, *child;
+	const GList *statuses, *status;
+
+	node = xmlnode_new("statuses");
+
+	statuses = gaim_presence_get_statuses(presence);
+	for (status = statuses; status != NULL; status = status->next)
+	{
+		child = status_to_xmlnode((GaimStatus *)status->data);
+		xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
+static xmlnode *
 proxy_settings_to_xmlnode(GaimProxyInfo *proxy_info)
 {
 	xmlnode *node, *child;
@@ -175,6 +209,7 @@ account_to_xmlnode(GaimAccount *account)
 {
 	xmlnode *node, *child;
 	const char *tmp;
+	GaimPresence *presence;
 	GaimProxyInfo *proxy_info;
 
 	node = xmlnode_new("account");
@@ -196,6 +231,12 @@ account_to_xmlnode(GaimAccount *account)
 	{
 		child = xmlnode_new_child(node, "alias");
 		xmlnode_insert_data(child, tmp, -1);
+	}
+
+	if ((presence = gaim_account_get_presence(account)) != NULL)
+	{
+		child = statuses_to_xmlnode(presence);
+		xmlnode_insert_child(node, child);
 	}
 
 	if ((tmp = gaim_account_get_user_info(account)) != NULL)
@@ -355,6 +396,56 @@ parse_settings(xmlnode *node, GaimAccount *account)
 }
 
 static void
+parse_status(xmlnode *node, GaimAccount *account)
+{
+	gboolean active = FALSE;
+	const char *data;
+	const char *type;
+	xmlnode *child;
+
+	/* Get the active/inactive state */
+	child = xmlnode_get_child(node, "active");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		if (strcasecmp(data, "true") == 0)
+			active = TRUE;
+		else if (strcasecmp(data, "false") == 0)
+			active = FALSE;
+		else
+			return;
+	}
+	else
+		return;
+
+	/* Get the type of the status */
+	child = xmlnode_get_child(node, "type");
+	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	{
+		type = data;
+	}
+	else
+		return;
+
+	/* QQQ: Need to read attributes into a vargs */
+
+	/* QQQ: This needs to do a better job of adding attributes and stuff */
+	/*      Use gaim_account_set_status_vargs(); */
+	gaim_account_set_status(account, type, active);
+}
+
+static void
+parse_statuses(xmlnode *node, GaimAccount *account)
+{
+	xmlnode *child;
+
+	for (child = xmlnode_get_child(node, "status"); child != NULL;
+			child = xmlnode_get_next_twin(child))
+	{
+		parse_status(child, account);
+	}
+}
+
+static void
 parse_proxy_info(xmlnode *node, GaimAccount *account)
 {
 	GaimProxyInfo *proxy_info;
@@ -489,6 +580,13 @@ parse_account(xmlnode *node)
 		g_free(data);
 	}
 
+	/* Read the statuses */
+	child = xmlnode_get_child(node, "statuses");
+	if (child != NULL)
+	{
+		parse_statuses(child, ret);
+	}
+
 	/* Read the userinfo */
 	child = xmlnode_get_child(node, "userinfo");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
@@ -592,8 +690,9 @@ gaim_account_new(const char *username, const char *protocol_id)
 	if (prpl == NULL)
 		return account;
 
+	/* TODO: Should maybe use gaim_prpl_get_statuses()? */
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info != NULL && prpl_info->status_types != NULL )
+	if (prpl_info != NULL && prpl_info->status_types != NULL)
 		gaim_account_set_status_types(account, prpl_info->status_types(account));
 
 	gaim_presence_set_status_active(account->presence, "offline", TRUE);
@@ -663,7 +762,7 @@ gaim_account_register(GaimAccount *account)
 }
 
 GaimConnection *
-gaim_account_connect(GaimAccount *account, GaimStatus *status)
+gaim_account_connect(GaimAccount *account)
 {
 	GaimConnection *gc;
 
@@ -677,7 +776,7 @@ gaim_account_connect(GaimAccount *account, GaimStatus *status)
 	gaim_debug_info("account", "Connecting to account %p. gc = %p\n",
 					account, gc);
 
-	gaim_connection_connect(gc, status);
+	gaim_connection_connect(gc);
 
 	return gc;
 }
@@ -990,9 +1089,19 @@ void
 gaim_account_set_status(GaimAccount *account, const char *status_id,
 						gboolean active, ...)
 {
+	va_list args;
+
+	va_start(args, active);
+	gaim_account_set_status_vargs(account, status_id, active, args);
+	va_end(args);
+}
+
+void
+gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
+							  gboolean active, va_list args)
+{
 	GaimStatus *status;
 	GaimStatusType *status_type;
-	va_list args;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(status_id != NULL);
@@ -1023,9 +1132,8 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 
 	/* TODO: Record the status in accounts.xml? */
 
-	va_start(args, active);
 	gaim_status_set_active_with_attrs(status, active, args);
-	va_end(args);
+	gaim_presence_set_status_active(gaim_account_get_presence(account), status_id, active);
 
 	/*
 	 * If this account should be connected, but is not, then connect.
@@ -1034,7 +1142,7 @@ gaim_account_set_status(GaimAccount *account, const char *status_id,
 		(gaim_status_type_get_primitive(status_type) != GAIM_STATUS_OFFLINE) &&
 		!gaim_account_is_connected(account))
 	{
-		gaim_account_connect(account, status);
+		gaim_account_connect(account);
 	}
 }
 
@@ -1305,6 +1413,14 @@ gaim_account_get_proxy_info(const GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->proxy_info;
+}
+
+GaimStatus *
+gaim_account_get_active_status(const GaimAccount *account)
+{
+	g_return_val_if_fail(account   != NULL, NULL);
+
+	return gaim_presence_get_active_status(account->presence);
 }
 
 GaimStatus *
@@ -1585,23 +1701,6 @@ gaim_accounts_delete(GaimAccount *account)
 	gaim_pounce_destroy_all_by_account(account);
 
 	gaim_account_destroy(account);
-}
-
-void
-gaim_accounts_auto_login(const char *ui)
-{
-	GaimAccount *account;
-	GList *l;
-
-	g_return_if_fail(ui != NULL);
-
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		account = l->data;
-
-		/* TODO: Shouldn't be be using some sort of saved status here? */
-		if (gaim_account_get_enabled(account, ui))
-			gaim_account_connect(account, gaim_account_get_status(account, "online"));
-	}
 }
 
 void

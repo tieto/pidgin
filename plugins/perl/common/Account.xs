@@ -7,8 +7,7 @@ Gaim::Connection
 gaim_account_connect(account)
 	Gaim::Account account
 CODE:
-	RETVAL = gaim_account_connect(account,
-								  gaim_account_get_status(account, "online"));
+	RETVAL = gaim_account_connect(account);
 OUTPUT:
 	RETVAL
 

@@ -447,7 +447,7 @@ static void irc_set_status(GaimAccount *account, GaimStatus *status)
 	args[0] = NULL;
 
 	if (strcmp(status_id, "offline") && !gc) {
-		gaim_account_connect(account, status);
+		gaim_account_connect(account);
 	} else if (!strcmp(status_id, "away")) {
 		args[0] = gaim_status_get_attr_string(status, "message");
 		irc_cmd_away(irc, "away", NULL, args);

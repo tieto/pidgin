@@ -831,7 +831,7 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 	gaim_debug_info("msn", "Set status to %s\n", gaim_status_get_name(status));
 
 	if (strcmp(state, "offline") && !gc) {
-		gaim_account_connect(account, status);
+		gaim_account_connect(account);
 		return;
 	}
 	else if (!strcmp(state, "away"))

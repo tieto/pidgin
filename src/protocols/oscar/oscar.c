@@ -5856,7 +5856,7 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 		return;
 
 	if (primitive == !GAIM_STATUS_OFFLINE && !gc) {
-		gaim_account_connect(account, status);
+		gaim_account_connect(account);
 	} else if (primitive == GAIM_STATUS_OFFLINE && gc) {
 		gaim_account_disconnect(account);
 	} else {

@@ -117,7 +117,7 @@ void gaim_account_destroy(GaimAccount *account);
  *
  * @return The gaim connection.
  */
-GaimConnection *gaim_account_connect(GaimAccount *account, GaimStatus *status);
+GaimConnection *gaim_account_connect(GaimAccount *account);
 
 /**
  * Registers an account.
@@ -276,7 +276,8 @@ void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
 void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
 
 /**
- * Activates or deactivates a status.
+ * Activates or deactivates a status.  All changes to the statuses of
+ * an account go through this function or gaim_account_set_status_vargs.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -289,6 +290,23 @@ void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
  */
 void gaim_account_set_status(GaimAccount *account, const char *status_id,
 							 gboolean active, ...);
+
+
+/**
+ * Activates or deactivates a status.  All changes to the statuses of
+ * an account go through this function or gaim_account_set_status.
+ *
+ * Only independent statuses can be deactivated with this. To deactivate
+ * an exclusive status, activate a different (and exclusive?) status.
+ *
+ * @param account   The account.
+ * @param status_id The ID of the status.
+ * @param active    The active state.
+ * @param vargs     The va_list of attributes.
+ */
+void gaim_account_set_status_vargs(GaimAccount *account,
+								   const char *status_id,
+								   gboolean active, va_list args);
 
 /**
  * Clears all protocol-specific settings on an account.
@@ -480,6 +498,18 @@ gboolean gaim_account_get_enabled(const GaimAccount *account,
 GaimProxyInfo *gaim_account_get_proxy_info(const GaimAccount *account);
 
 /**
+ * Returns the active status for this account.  This looks through
+ * the GaimPresence associated with this account and returns the
+ * GaimStatus that has its active flag set to "TRUE."  There can be
+ * only one active GaimStatus in a GaimPresence.
+ *
+ * @param account   The account.
+ *
+ * @return The active status.
+ */
+GaimStatus *gaim_account_get_active_status(const GaimAccount *account);
+
+/**
  * Returns the account status with the specified ID.
  *
  * Note that this works differently than gaim_buddy_get_status() in that
@@ -667,13 +697,6 @@ void gaim_accounts_remove(GaimAccount *account);
  * @param account The account.
  */
 void gaim_accounts_delete(GaimAccount *account);
-
-/**
- * Auto-logins to all accounts set to auto-login under the specified UI.
- *
- * @param ui The UI.
- */
-void gaim_accounts_auto_login(const char *ui);
 
 /**
  * Reorders an account.

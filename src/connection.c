@@ -89,8 +89,7 @@ request_pass_ok_cb(GaimAccount *account, const char *entry)
 {
 	gaim_account_set_password(account, (*entry != '\0') ? entry : NULL);
 
-	/* XXX - connect with correct status */
-	gaim_account_connect(account, gaim_account_get_status(account, "online"));
+	gaim_account_connect(account);
 }
 
 void
@@ -144,10 +143,11 @@ gaim_connection_register(GaimConnection *gc)
 
 
 void
-gaim_connection_connect(GaimConnection *gc, GaimStatus *status)
+gaim_connection_connect(GaimConnection *gc)
 {
 	GaimAccount *account;
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimStatus *status;
 
 	g_return_if_fail(gc != NULL);
 
@@ -200,6 +200,7 @@ gaim_connection_connect(GaimConnection *gc, GaimStatus *status)
 
 	gaim_debug_info("connection", "Calling serv_login\n");
 
+	status = gaim_account_get_active_status(account);
 	serv_login(account, status);
 }
 
@@ -265,13 +266,8 @@ gboolean
 gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;
-	GaimConnection *gc = gaim_account_get_connection(account);
 
-	if (!gaim_account_get_remember_password(account))
-		gaim_account_set_password(account,NULL);
-
-	if (gc != NULL)
-		gaim_connection_disconnect(gc);
+	gaim_account_disconnect(account);
 
 	return FALSE;
 }

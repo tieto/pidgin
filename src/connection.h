@@ -129,14 +129,21 @@ GaimConnection *gaim_connection_new(GaimAccount *account);
 void gaim_connection_destroy(GaimConnection *gc);
 
 /**
- * Logs in to this connection.
+ * This function should only be called by gaim_connection_connect()
+ * in account.c.  If you're trying to sign on an account, use that
+ * function instead.
+ *
+ * Logs in to this connection.  The connection uses the current
+ * active status in the account as the initial status.  So if
+ * you want to sign on as "away," for example, you need to
+ * have called gaim_account_set_status(account, "away").
+ * (And generally this has the effect of also signin on).
  *
  * @param gc The connection to log in.
- * @param status The status to login to.
  *
  * @see gaim_connection_disconnect()
  */
-void gaim_connection_connect(GaimConnection *gc, GaimStatus *status);
+void gaim_connection_connect(GaimConnection *gc);
 
 /**
  * Registers a connection.
@@ -146,6 +153,10 @@ void gaim_connection_connect(GaimConnection *gc, GaimStatus *status);
 void gaim_connection_register(GaimConnection *gc);
 
 /**
+ * This function should only be called by gaim_connection_disconnect()
+ * in account.c.  If you're trying to sign out an account, use that
+ * function instead.
+ *
  * Logs out of this connection.
  *
  * @param gc The connection to log out.

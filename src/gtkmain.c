@@ -114,14 +114,14 @@ dologin_named(const char *name)
 			account = gaim_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
 				ret = 0;
-				gaim_account_connect(account, gaim_account_get_status(account, "online"));
+				gaim_account_connect(account);
 			}
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
 		account = (GaimAccount *)gaim_accounts_get_all()->data;
 		ret = 0;
-		gaim_account_connect(account, gaim_account_get_status(account, "online"));
+		gaim_account_connect(account);
 	}
 
 	return ret;
@@ -456,7 +456,6 @@ int main(int argc, char *argv[])
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
-	gchar *gaimrc, *accountsxml;
 #if HAVE_SIGNAL_H
 	char errmsg[BUFSIZ];
 #endif
@@ -624,21 +623,6 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	/* TODO: Remove this check.  Maybe in 2005.  --KingAnt, 25 Jul 2004 */
-	gaimrc = g_build_filename(gaim_home_dir(), ".gaimrc", NULL);
-	accountsxml = g_build_filename(gaim_user_dir(), "accounts.xml", NULL);
-	if (g_file_test(gaimrc, G_FILE_TEST_EXISTS) &&
-		!g_file_test(accountsxml, G_FILE_TEST_EXISTS))
-	{
-		gaim_notify_error(NULL, NULL, _("Unable to load preferences"),
-						  _("Gaim was not able to load your preferences "
-							"because they are stored in an old format "
-							"that is no longer used.  Please reconfigure "
-							"your settings using the Preferences window."));
-	}
-	g_free(gaimrc);
-	g_free(accountsxml);
-
 	/* TODO: Move blist loading into gaim_blist_init() */
 	gaim_set_blist(gaim_blist_new());
 	gaim_blist_load();
@@ -681,8 +665,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct && !opt_nologin)
-		gaim_accounts_auto_login(GAIM_GTK_UI);
+	if (!opt_acct && opt_nologin)
+	{
+		/* TODO: Need to disable all accounts or set them all to offline */
+	}
 
 	if (opt_acct || (gaim_accounts_get_all() == NULL)) {
 		gaim_gtk_accounts_window_show();

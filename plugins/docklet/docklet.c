@@ -82,12 +82,6 @@ docklet_set_bool(GtkWidget *widget, const char *key)
 	gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 
-static void
-docklet_auto_login()
-{
-	gaim_accounts_auto_login(GAIM_GTK_UI);
-}
-
 #ifdef _WIN32
 #if 0 /* XXX NEW STATUS */
 /* This is workaround for a bug in windows GTK+. Clicking outside of the
@@ -137,7 +131,7 @@ static void docklet_menu() {
 	switch (status) {
 		case offline:
 		case offline_connecting:
-			gaim_new_item_from_stock(menu, _("Auto-login"), GAIM_STOCK_SIGN_ON, G_CALLBACK(docklet_auto_login), NULL, 0, 0, NULL);
+			/* No special menu items right now */
 			break;
 		default:
 			gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
@@ -356,14 +350,7 @@ docklet_clicked(int button_type)
 #endif
 			break;
 		case 2:
-			switch (status) {
-				case offline:
-				case offline_connecting:
-					docklet_auto_login();
-					break;
-				default:
-					break;
-			}
+			/* Don't do anything for middle click */
 			break;
 		case 3:
 			docklet_menu();

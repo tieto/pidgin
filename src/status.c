@@ -786,7 +786,9 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	}
 
 	if (status->active != active)
+	{
 		changed = TRUE;
+	}
 
 	status->active = active;
 
@@ -1272,17 +1274,15 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 					"(%s) inactive. Only independent statuses "
 					"can be specifically marked inactive.",
 					status_id);
-
 			return;
 		}
 
-	} else if (presence->active_status != NULL) {
-		gaim_status_set_active(presence->active_status, FALSE);
-
+		if (presence->active_status != NULL)
+			gaim_status_set_active(presence->active_status, FALSE);
+		presence->active_status = status;
 	}
 
 	gaim_status_set_active(status, active);
-	presence->active_status = status;
 }
 
 void

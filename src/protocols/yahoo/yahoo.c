@@ -2772,7 +2772,7 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_status_is_active(status))
 		return;
 	if (strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && !gc) {
-		gaim_account_connect(account, status);
+		gaim_account_connect(account);
 		return;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_OFFLINE) && gc) {
 		gaim_account_disconnect(account);

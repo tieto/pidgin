@@ -4344,7 +4344,6 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 
 	gtk_table_attach_defaults(GTK_TABLE(table), data->account_box, 1, 2, 3, 4);
 	gaim_set_accessible_label (data->account_box, label);
-
 	/* End of account box */
 
 	g_signal_connect(G_OBJECT(data->window), "response",

@@ -41,6 +41,8 @@
  * The changes to status.xml caused by the new status API
  * are fully backward compatible.  The new status API just
  * adds the optional sub-statuses to the XML file.
+ *
+ * TODO: This should probably just use a GaimStatus...
  */
 struct _GaimSavedStatus
 {

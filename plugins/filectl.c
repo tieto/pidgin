@@ -79,9 +79,7 @@ run_commands()
 			account = gaim_accounts_find(arg1, arg2);
 			if (account != NULL)
 			{
-				gc = gaim_account_get_connection(account);
-				if (gc != NULL)
-					gaim_connection_disconnect(gc);
+				gaim_account_disconnect(account);
 			}
 			else if (arg1 == NULL)
 				gaim_connections_disconnect_all();

@@ -392,8 +392,7 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 		memcpy(&id, data, sizeof(id));
 		account = g_list_nth_data(gaim_accounts_get_all(), id);
 		if (account)
-			/* XXX: someone might want to extend this to allow connecting with a different status */
-			gaim_account_connect(account, gaim_account_get_status(account, "online"));
+			gaim_account_connect(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
 
