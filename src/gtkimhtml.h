@@ -91,6 +91,7 @@ struct _GtkIMHtml {
 		GtkIMHtmlFormatSpan *sizespan;
 		int fontsize;
 	} edit;
+	char *clipboard_string;
 	GList *format_spans;
 };
 

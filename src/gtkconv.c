@@ -63,6 +63,9 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
+#define SEND_COLOR "#267726"
+#define RECV_COLOR "#A82F22F"
+
 static char nick_colors[][8] = {
 	"#ba55d3",              /* Medium Orchid */
 	"#ee82ee",              /* Violet */
@@ -4567,10 +4570,10 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 						strcpy(color, nick_colors[m]);
 					}
 					else
-						strcpy(color, "#A82F2F");
+						strcpy(color, RECV_COLOR);
 				}
 				else if (flags & GAIM_MESSAGE_SEND)
-					strcpy(color, "#16569E");
+					strcpy(color, SEND_COLOR);
 			}
 		}
 
