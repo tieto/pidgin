@@ -35,7 +35,8 @@ void show_remote_usage(char *name)
 	     "       convo                    Open a new conversation window\n"
 	     "       send                     Send message\n"
 	     "       add                      Add buddy to buddy list\n"
-	     "       remove                   Remove buddy from list\n\n"
+	     "       remove                   Remove buddy from list\n"
+	     "       quit                     Close running copy of Gaim\n\n"
 		 
 	     "    OPTIONS:\n"
 	     "       -m, --message=MESG       Message to send or show in conversation window\n"
@@ -135,9 +136,24 @@ int command_uri() {
 	return 0;
 }
 
+int command_quit() {
+	int fd = 0;
+	struct gaim_cui_packet *p = NULL;
+	fd = gaim_connect_to_session(0);
+	if (!fd) {
+		fprintf(stderr, "Gaim not running (on session 0)\n");
+		return 1;
+	}
+	p = cui_packet_new(CUI_TYPE_META, CUI_META_QUIT);
+	cui_send_packet (fd, p);
+	close(fd);
+	cui_packet_free(p);
+	return 0;
+}
+
 int command_info(){}
 
-int main (int argc, char *argv[]) 
+int main (int argc, char *argv[])
 {
 
 	if (get_options(argc, argv)) {
@@ -150,6 +166,8 @@ int main (int argc, char *argv[])
 		return command_uri();
 	} else if (!strcmp(opts.command, "info")) {
 		return command_info();
+	} else if (!strcmp(opts.command, "quit")) {
+		return command_quit();
 	} else {
 		show_remote_usage(argv[0]);
 		return 1;
