@@ -299,7 +299,7 @@ static gboolean pending_zloc(char *who)
 {
 	GList *curr;
 	for (curr = pending_zloc_names; curr != NULL; curr = curr->next) {
-		if (!g_ascii_strcasecmp(who, (char*)curr->data)) {
+		if (!g_ascii_strcasecmp(zephyr_normalize(who), (char*)curr->data)) {
 			g_free((char*)curr->data);
 			pending_zloc_names = g_list_remove(pending_zloc_names, curr->data);
 			return TRUE;
@@ -451,7 +451,7 @@ static gint check_loc(gpointer data)
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
 				GaimBuddy *b = (GaimBuddy *)bnode;
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
