@@ -514,22 +514,18 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 		buf3 = g_strdup(buf);
 		write_to_conv(c, buf3, WFLAG_SEND, NULL);
 		g_free(buf3);
-	}
+		escape_text(buf);
+		if (escape_message(buf) > MSG_LEN - hdrlen)
+			do_error_dialog(_("Message too long, some data truncated."), _("Error"));
 
-	escape_text(buf);
-	if (escape_message(buf) > MSG_LEN - hdrlen) {
-		do_error_dialog(_("Message too long, some data truncated."), _("Error"));
-	}
-
-	if (c->is_chat) {
-		serv_chat_send(c->id, buf);
-
-		/* no sound because we do that when we receive our message */
-	} else {
 	        serv_send_im(c->name, buf, 0);
 
 		if (c->makesound && (sound_options & OPT_SOUND_SEND))
 			play_sound(SEND);
+	} else {
+		serv_chat_send(c->id, buf); /* this does escape_text for us */
+
+		/* no sound because we do that when we receive our message */
 	}
         
 	quiet_set(c->bold, FALSE);
@@ -866,6 +862,73 @@ void check_everything(GtkWidget *entry)
 /*------------------------------------------------------------------------*/
 
 
+GdkPixmap *is_smiley(struct conversation *c, char *m, int *len) {
+	GdkBitmap *mask;
+	GdkPixmap *face = NULL;
+
+	if (strlen(m) < 2) return face;
+	*len = 2;
+	if (	   !strncmp(m, ":)", 2) ||
+		   !strncmp(m, "=)", 2)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_xpm);
+	} else if (!strncmp(m, ":(", 2) ||
+		   !strncmp(m, "=(", 2)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, sad_xpm);
+	} else if (!strncmp(m, ";)", 2)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, wink_xpm);
+	}
+
+	if (face || strlen(m) < 3) return face;
+	*len = 3;
+	if (	   !strncmp(m, ":-)", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_xpm);
+	} else if (!strncmp(m, ":-(", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, sad_xpm);
+	} else if (!strncmp(m, ";-)", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, wink_xpm);
+	} else if (!strncmp(m, ":-p", 3) ||
+		   !strncmp(m, ":-P", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, tongue_xpm);
+	} else if (!strncmp(m, "=-O", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, scream_xpm);
+	} else if (!strncmp(m, ":-*", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, kiss_xpm);
+	} else if (!strncmp(m, ">:o", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, yell_xpm);
+	} else if (!strncmp(m, "8-)", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile8_xpm);
+	} else if (!strncmp(m, ":-$", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, moneymouth_xpm);
+	} else if (!strncmp(m, ":-!", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, burp_xpm);
+	} else if (!strncmp(m, ":-[", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, embarrassed_xpm);
+	} else if (!strncmp(m, ":'(", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, cry_xpm);
+	} else if (!strncmp(m, ":-\\", 3) ||
+		   !strncmp(m, ":-/", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, think_xpm);
+	} else if (!strncmp(m, ":-X", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, crossedlips_xpm);
+	} else if (!strncmp(m, ":-D", 3)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, bigsmile_xpm);
+	}
+
+	if (face || strlen(m) < 4) return face;
+	*len = 4;
+	if (	   !strncmp(m, "O:-)", 4)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, angel_xpm);
+	}
+
+	if (face || strlen(m) < 6) return face;
+	*len = 6;
+	if (	   !strncmp(m, "&gt;:o", 6)) {
+		face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, yell_xpm);
+	}
+
+	return face;
+}
+
 /* this is going to be interesting since the conversation could either be a
  * normal IM conversation or a chat window. but hopefully it won't matter */
 void write_to_conv(struct conversation *c, char *what, int flags, char *who)
@@ -875,7 +938,6 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 	char *str;
         FILE *fd;
         char colour[10];
-	GdkBitmap *mask;
 	GdkPixmap *face;
 	int state;
 	int y;
@@ -967,85 +1029,21 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who)
 		{
 			for (i = 0; i < strlen(what); i++)
         		{
-               			buf2[y] = what[i];
-               			y++;
+				int len;
+				if ((face = is_smiley(c, &what[i], &len)) != NULL) {
+					buf2[y] = 0;
+					gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
+					gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);
+					y = 0;
+					i += len - 1;
+				} else {
+	               			buf2[y] = what[i];
+	               			y++;
 
-		                if ( (what[i] == ':') || (what[i] == ';') || (what[i] == '8') )
-               			{
-                       			if (state < 2)
-                        	  	{
-                                		smiley[state] = what[i];
-                                		state++; 
-                        		}
-                        		else
-					{
-                                		state = 0;
-					}
-                		}
-                		else if ( (what[i] == '-') || (what[i] == '^') || (what[i] == 'o') ) 
-                		{
-                        		if ((state == 1) || (state==2))
-                        		{
-                                		smiley[state] = what[i];
-						state++;
-					}
-                        		else
-					{
-                                		state = 0;
-					}
-                		}
-                		else if ((what[i] == ')') || (what[i] == '*') || (what[i] == '(') ||
-                         		(what[i] == 'p') || (what[i] == 'P') || (what[i] == '$') ||
-                         		(what[i] == '!') || (what[i] == 'D') || (what[i] == 'X') )
-                		{
-                        		if ( (state == 1) && (what[i] == ')') )
-                        		{
-                                		smiley[state] = what[i];
-                                		smiley[state+1] = 0;
-                                		buf2[y - state - 1] = 0;
-                                		y = 0;
-						if (!strcasecmp(smiley, ";)"))
-							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_wink_xpm);	
-						else
-							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);	
-						gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
-						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);			
-                                		state = 0;
-                        		}
-                        		else if ( (state == 2) || (state == 3))
-                        		{
-                                		smiley[state] = what[i];
-                                		smiley[state+1] = 0;
-                                		buf2[y - state - 1] = 0;
-                                		y = 0;
-
-						if (!strcasecmp(smiley, ":-("))
-						{
-							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_sad_xpm);
-						}
-						else if (!strcasecmp(smiley, ";-)"))
-						{
-							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_wink_xpm);
-						}
-						else
-						{
-							face = gdk_pixmap_create_from_xpm_d(c->window->window, &mask, &c->window->style->white, smile_happy_xpm);
-						}
-
-						gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
-						gtk_html_add_pixmap(GTK_HTML(c->text), face, 0);
-                                		state = 0;
-                        		}
-                        		else
-                                		state = 0;
-                		}
-               		 	else
-                		{
-                        		state = 0;
-                		}
+				}
         		}
 
-			if (buf2)
+			if (y)
 			{
 				buf2[y] = 0;
 				gtk_html_append_text(GTK_HTML(c->text), buf2, (display_options & OPT_DISP_IGNORE_COLOUR) ? HTML_OPTION_NO_COLOURS : 0);
