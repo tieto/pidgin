@@ -174,6 +174,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 {
 	g_return_if_fail(gc != NULL);
 
+	if (gc->state == state)
+		return;
+
 	gc->state = state;
 
 	if (gc->state == GAIM_CONNECTED) {
