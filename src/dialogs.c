@@ -3522,6 +3522,7 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 
 	gtk_widget_show(button);
 
+	gtk_widget_set_usize(button, 80, 30);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 
 	/* End of our create button code */
@@ -3547,8 +3548,9 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 		
-	gtk_widget_show(button);
 
+	gtk_widget_show(button);
+	gtk_widget_set_usize(button, 80, 30);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 5);
 
 	/* End of our cancel button code */
