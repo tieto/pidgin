@@ -31,6 +31,10 @@ Paths
 
   printf("File in DATADIR is: %s%s%s\n", DATADIR, G_DIR_SEPARATOR_S, "pic.png");
 
+- When writing out paths to .gaimrc, use wgaim_escape_dirsep. This is necessary
+  because the Windows dir separator '\' is being used to escape characters, when
+  paths are read in from the .gaimrc file.
+
 PLUGINS & PROTOS
 ----------------
 
