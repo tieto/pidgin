@@ -5904,7 +5904,9 @@ static void oscar_show_awaitingauth(struct gaim_connection *gc)
 static void oscar_show_chpassurl(struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
-	open_url(NULL, od->sess->authinfo->chpassurl);
+	gchar *substituted = gaim_strreplace(od->sess->authinfo->chpassurl, "%s", gc->username);
+	open_url(NULL, substituted);
+	g_free(substituted);
 }
 
 static GList *oscar_actions(struct gaim_connection *gc)
