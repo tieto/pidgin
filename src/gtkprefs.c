@@ -84,15 +84,6 @@ static guint auto_resp_pref_id = 0;
 static GtkTreeIter *prefs_notebook_add_page(const char*, GdkPixbuf*,
 											GtkWidget*, GtkTreeIter*,
 											GtkTreeIter*, int);
-static GtkWidget *prefs_checkbox(const char *, const char *, GtkWidget *);
-static GtkWidget *prefs_labeled_spin_button(GtkWidget *, const gchar *,
-											char *key, int, int,
-											GtkSizeGroup *);
-static GtkWidget *prefs_dropdown(GtkWidget *, const gchar *, GaimPrefType type,
-								 const char *, ...);
-static GtkWidget *prefs_dropdown_from_list(GtkWidget *, const gchar *,
-										   GaimPrefType type,
-										   const char *, GList *); 
 static GtkWidget *show_color_pref(GtkWidget *, gboolean);
 static void delete_prefs(GtkWidget *, void *);
 static void update_plugin_list(void *data);
@@ -110,7 +101,7 @@ update_spin_value(GtkWidget *w, GtkWidget *spin)
 	gaim_prefs_set_int(key, value);
 }
 
-static GtkWidget *
+GtkWidget *
 prefs_labeled_spin_button(GtkWidget *box, const gchar *title, char *key,
 						 int min, int max, GtkSizeGroup *sg)
 {
@@ -180,7 +171,7 @@ dropdown_set(GObject *w, const char *key)
 	}
 }
 
-static GtkWidget *
+GtkWidget *
 prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
 						 const char *key, GList *menuitems)
 {
@@ -265,7 +256,7 @@ prefs_dropdown_from_list(GtkWidget *box, const gchar *title, GaimPrefType type,
 	return label;
 }
 
-static GtkWidget *
+GtkWidget *
 prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
 			   const char *key, ...)
 {
@@ -2489,7 +2480,7 @@ set_bool_pref(GtkWidget *w, const char *key)
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
 }
 
-static GtkWidget *
+GtkWidget *
 prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 {
 	GtkWidget *button;
