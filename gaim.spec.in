@@ -10,12 +10,12 @@ Url:        http://gaim.sourceforge.net/
 Source:     %{name}-%{version}.tar.gz
 Packager:   Rob Flynn <rob@marko.net>
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
-%if %{_vendor} != MandrakeSoft
+%if "%{_vendor}" != "MandrakeSoft"
 Requires:   gtk2 >= 2.0.0
-BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel
+BuildRequires: libao-devel, gtk2-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
 %else
 Requires:   gtk+2.0 >= 2.0.0
-BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel
+BuildRequires: libao-devel, libgtk+2.0_0-devel, gtkspell-devel, libtool, audiofile-devel, pkgconfig
 %endif
 
 %package devel
@@ -71,23 +71,31 @@ rm -rf %{buildroot}
 %doc README ChangeLog
 %doc %{_mandir}/man1/*
 
+%dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/gaim/*
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
 %{_bindir}/*
 %{_datadir}/locale/*/*/*
 %{_datadir}/pixmaps/*
+%dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 
 %files devel
 
 %doc plugins/SIGNALS plugins/HOWTO plugins/PERL-HOWTO 
-%doc HACKING TODO
+%doc HACKING PROGRAMMING_NOTES TODO
 
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
+%dir %{_includedir}/gaim-remote
 %{_includedir}/gaim-remote/*.h
 
 %changelog
+* Sun Jul 20 2003 Bjoern Voigt <bjoern@cs.tu-berlin.de>
+- Added pkgconfig build dependency.
+- if "%{_vendor}" != "MandrakeSoft" now also works with rpm 3.x.
+- Added Gaim-specific directories to list of Gaim's files.
+
 * Wed Jul 16 2003 Ethan Blanton <eblanton@cs.ohiou.edu>
 - Complete spec file rewrite to take advantage of "new" RPM features
   and make things prettier.

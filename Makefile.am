@@ -4,6 +4,7 @@ EXTRA_DIST = \
 		gaim.desktop \
 		gaim2blt.pl \
 		HACKING \
+		PROGRAMMING_NOTES \
 		licq2gaim.pl \
 		setup-gettext \
 		ChangeLog.win32 \
