@@ -841,7 +841,7 @@ GtkWidget *hotkeys_page() {
 GtkWidget *list_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
-	GtkWidget *button, *b2;
+	GtkWidget *button, *warn_checkbox, *idle_checkbox;
 	int r = 0;
 	gboolean fnd = FALSE;
 	GList *l= NULL;
@@ -869,11 +869,11 @@ GtkWidget *list_page() {
 	prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREFS_INT,
 				   "/gaim/gtk/blist/button_style",
 				   GAIM_BUTTON_IMAGE,
-		      _("Pictures"), GAIM_BUTTON_IMAGE,
-		      _("Text"), GAIM_BUTTON_TEXT,
-		      _("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
-		      _("None"), GAIM_BUTTON_NONE,
-			  NULL);
+				   _("Pictures"), GAIM_BUTTON_IMAGE,
+				   _("Text"), GAIM_BUTTON_TEXT,
+				   _("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+				   _("None"), GAIM_BUTTON_NONE,
+				   NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Window"));
 	prefs_checkbox(_("_Raise window on events"),
@@ -887,24 +887,28 @@ GtkWidget *list_page() {
 	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
 	button = prefs_checkbox(_("Show buddy _icons"),
 						   "/gaim/gtk/blist/show_buddy_icons", vbox);
-	b2 = prefs_checkbox(_("Show _warning levels"),
-					   "/gaim/gtk/blist/show_warning_level", vbox);
+	warn_checkbox = prefs_checkbox(_("Show _warning levels"),
+								   "/gaim/gtk/blist/show_warning_level", vbox);
 
-	if (blist_options & OPT_BLIST_SHOW_ICONS)
-		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
+	idle_checkbox = prefs_checkbox(_("Show idle _times"),
+								   "/gaim/gtk/blist/show_idle_time", vbox);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
-	b2 = prefs_checkbox(_("Show idle _times"),
-					   "/gaim/gtk/blist/show_idle_time", vbox);
-	if (blist_options & OPT_BLIST_SHOW_ICONS)
-		gtk_widget_set_sensitive(GTK_WIDGET(b2), FALSE);
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), warn_checkbox);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), b2);
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), idle_checkbox);
+
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
+
+		gtk_widget_set_sensitive(GTK_WIDGET(warn_checkbox), FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(idle_checkbox), FALSE);
+	}
+
 	prefs_checkbox(_("Dim i_dle buddies"),
 				  "/gaim/gtk/blist/grey_idle_buddies", vbox);
 
 	gtk_widget_show_all(ret);
+
 	return ret;
 }
 
@@ -912,6 +916,7 @@ GtkWidget *conv_page() {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *label;
+	GtkWidget *button, *close_checkbox;
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 	int i;
@@ -925,22 +930,36 @@ GtkWidget *conv_page() {
 	/* Build a list of names. */
 	for (i = 0; i < gaim_conv_placement_get_fnc_count(); i++) {
 		names = g_list_append(names, (char *)gaim_conv_placement_get_name(i));
-		names = g_list_append(names, GINT_TO_POINTER(i));
+		names = g_list_append(names, (char *)gaim_conv_placement_get_name(i));
 	}
 
-	label = prefs_dropdown_from_list(vbox, _("_Placement:"),
-									&conv_placement_option, -1, names);
+	label = prefs_dropdown_from_list(vbox, _("_Placement:"), GAIM_PREF_STRING,
+									 "/gaim/gtk/conversations/placement", -1,
+									 names);
 
 	g_list_free(names);
 
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_size_group_add_widget(sg, label);
 
-	prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
-				  "/gaim/gtk/conversations/tabs", vbox);
-
 	prefs_checkbox(_("Send _URLs as Links"),
 				  "/core/conversations/send_urls_as_links", vbox);
+
+	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
+
+	button = prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
+							"/gaim/gtk/conversations/tabs", vbox);
+
+	close_checkbox = prefs_checkbox(_("Show _close button on tabs."),
+									"/gaim/gtk/conversations/close_on_tabs",
+									vbox);
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/tabs")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(close_checkbox), FALSE);
+	}
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), close_checkbox);
 
 	gtk_widget_show_all(ret);
 
@@ -959,10 +978,14 @@ GtkWidget *im_page() {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
-	widge = prefs_dropdown(vbox, _("Show _buttons as:"), &im_options, OPT_IM_BUTTON_TEXT | OPT_IM_BUTTON_XPM,
-		      _("Pictures"), OPT_IM_BUTTON_XPM,
-		      _("Text"), OPT_IM_BUTTON_TEXT,
-		      _("Pictures and text"), OPT_IM_BUTTON_XPM | OPT_IM_BUTTON_TEXT, NULL);
+	widge = prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
+						   "/gaim/gtk/conversations/im/button_type",
+						   GAIM_BUTTON_TEXT_IMAGE,
+						   _("Pictures"), GAIM_BUTTON_IMAGE,
+						   _("Text"), GAIM_BUTTON_TEXT,
+						   _("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+						   NULL);
+
 	gtk_size_group_add_widget(sg, widge);
 	gtk_misc_set_alignment(GTK_MISC(widge), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &conv_size.width, 25, 9999, sg);
@@ -1008,10 +1031,14 @@ GtkWidget *chat_page() {
 	sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Window"));
-	dd = prefs_dropdown(vbox, _("Show _buttons as:"), &chat_options, OPT_CHAT_BUTTON_TEXT | OPT_CHAT_BUTTON_XPM,
-			   _("Pictures"), OPT_CHAT_BUTTON_XPM,
-			   _("Text"), OPT_CHAT_BUTTON_TEXT,
-			   _("Pictures and text"), OPT_CHAT_BUTTON_XPM | OPT_CHAT_BUTTON_TEXT, NULL);
+	dd = prefs_dropdown(vbox, _("Show _buttons as:"), GAIM_PREF_INT,
+						"/gaim/gtk/conversations/chat/button_type",
+						GAIM_BUTTON_TEXT_IMAGE,
+						_("Pictures"), GAIM_BUTTON_IMAGE,
+						_("Text"), GAIM_BUTTON_TEXT,
+						_("Pictures and text"), GAIM_BUTTON_TEXT_IMAGE,
+						NULL);
+
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
 	gaim_labeled_spin_button(vbox, _("New window _width:"), &buddy_chat_size.width, 25, 9999, sg);
@@ -1049,29 +1076,7 @@ GtkWidget *tab_page() {
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	vbox = gaim_gtk_make_frame (ret, _("IM Tabs"));
-	dd = prefs_dropdown(vbox, _("Tab _placement:"), &im_options, OPT_IM_SIDE_TAB | OPT_IM_BR_TAB,
-		      _("Top"), 0,
-		      _("Bottom"), OPT_IM_BR_TAB,
-		      _("Left"), OPT_IM_SIDE_TAB,
-		      _("Right"), OPT_IM_BR_TAB | OPT_IM_SIDE_TAB, NULL);
-	gtk_size_group_add_widget(sg, dd);
-	prefs_checkbox(_("Show all _instant messages in one tabbed\nwindow"),
-				  &im_options, OPT_IM_ONE_WINDOW, vbox);
-
-
-	vbox = gaim_gtk_make_frame (ret, _("Chat Tabs"));
-	dd = prefs_dropdown(vbox, _("Tab _placement:"), &chat_options, OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB,
-			   _("Top"), 0,
-			   _("Bottom"), OPT_CHAT_BR_TAB,
-			   _("Left"), OPT_CHAT_SIDE_TAB,
-			   _("Right"), OPT_CHAT_SIDE_TAB | OPT_CHAT_BR_TAB, NULL);
-	gtk_size_group_add_widget(sg, dd);
-	prefs_checkbox(_("Show all c_hats in one tabbed window"), &chat_options, OPT_CHAT_ONE_WINDOW,
-		    vbox);
-
 	vbox = gaim_gtk_make_frame (ret, _("Tab Options"));
-	button = prefs_checkbox(_("Show _close button on tabs."), &convo_options, OPT_CONVO_NO_X_ON_TAB, vbox);
 	convo_options ^= OPT_CONVO_NO_X_ON_TAB;
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(button), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)));
 
@@ -2629,9 +2634,12 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
+	gaim_prefs_add_string("/gaim/gtk/conversations/placement", "");
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");
+	gaim_prefs_add_int("/gaim/gtk/conversations/chat/button_type",
+					   GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/color_nicks", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/old_tab_complete", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/chat/raise_on_events", FALSE);
@@ -2639,6 +2647,8 @@ gaim_gtk_prefs_init(void)
 
 	/* Conversations -> IM */
 	gaim_prefs_add_none("/gaim/gtk/conversations/im");
+	gaim_prefs_add_int("/gaim/gtk/conversations/im/button_type",
+					   GAIM_BUTTON_TEXT_IMAGE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/animate_buddy_icons", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/hide_on_send", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/im/raise_on_events", FALSE);

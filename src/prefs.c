@@ -134,7 +134,6 @@ void gaim_prefs_init() {
 
 	/* Proxy */
 	gaim_prefs_add_none("/core/proxy");
-	gaim_prefs_add_int("/core/proxy/type");
 
 	/* Sound */
 	gaim_prefs_add_none("/core/sound");
