@@ -116,6 +116,11 @@ void evt_quit(void *data)
 	printf("event_quit\n");
 }
 
+void evt_new_conversation(char *who, void *data)
+{
+	printf("event_new_conversation: %s\n", who);
+}
+
 int gaim_plugin_init(void *h)
 {
 	gaim_signal_connect(h, event_signon,           evt_signon, NULL);
@@ -139,6 +144,7 @@ int gaim_plugin_init(void *h)
 	gaim_signal_connect(h, event_warned,           evt_warned, NULL);
 	gaim_signal_connect(h, event_error,            evt_error, NULL);
 	gaim_signal_connect(h, event_quit,             evt_quit, NULL);
+	gaim_signal_connect(h, event_new_conversation, evt_new_conversation, NULL);
 	return 0;
 }
 

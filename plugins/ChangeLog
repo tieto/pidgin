@@ -16,6 +16,13 @@ version 0.10.0:
 	buddy. This got fixed, but now when you sign on, event_buddy_away may
 	be called before event_buddy_signon. Not that it should matter much.
 
+	Just after I finish saying that no more events will be added, I go and
+	add one. Go figure. Anyway, it's event_new_conversation. Enough people
+	asked me to add it, and I found it useful enough, that I finally did
+	add it. It gets passed a char *, the name of the person who the
+	conversation is with. This gets triggered when a new conversation
+	window is created, in case you couldn't figure it out on your own.
+
 version 0.9.20:
 	It's 3 am the night before finals, it's obviously a good time to hack
 	gaim.

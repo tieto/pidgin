@@ -602,6 +602,9 @@ char *event_name(enum gaim_event event)
 		case event_quit:
 			sprintf(buf, "event_quit");
 			break;
+		case event_new_conversation:
+			sprintf(buf, "event_new_conversaion");
+			break;
 		default:
 			sprintf(buf, "event_unknown");
 			break;
@@ -660,6 +663,7 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			case event_buddy_back:
 			case event_chat_join:
 			case event_chat_leave:
+			case event_new_conversation:
 				{
 					void (*function)(char *, void *) = g->function;
 					(*function)(arg1, g->data);
@@ -773,6 +777,9 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3) {
 			break;
 		case event_quit:
 			buf[0] = 0;
+			break;
+		case event_new_conversation:
+			sprintf(buf, "\"%s\"", (char *)arg1);
 			break;
 		default:
 			break;

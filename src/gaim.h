@@ -181,6 +181,7 @@ enum gaim_event {
 	event_warned,
 	event_error,
 	event_quit,
+	event_new_conversation,
 	/* any others? it's easy to add... */
 };
 
@@ -401,7 +402,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 816 $"
+#define REVISION "gaim:$Revision: 818 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"

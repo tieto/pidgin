@@ -19,7 +19,8 @@ enum gaim_event {
 	event_chat_send,
 	event_warned,
 	event_error,
-	event_quit
+	event_quit,
+	event_new_conversation
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -194,3 +195,10 @@ event_quit:
 	in the login window or the Quit option in the File menu on the buddy
 	list). If gaim dies or is murdered, this won't be called. It's not my
 	fault, it's Seg's.
+
+event_new_conversation:
+	char *who
+
+	'who' is who the conversation is with. This gets called when a new
+	conversation window is created. You can use find_conversation(char *)
+	to then find the struct conversation * and modify those values.

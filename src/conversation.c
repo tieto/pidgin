@@ -144,6 +144,7 @@ struct conversation *new_conversation(char *name)
 
         show_conv(c);
         conversations = g_list_append(conversations, c);
+	plugin_event(event_new_conversation, name, 0, 0);
         return c;
 }
 
