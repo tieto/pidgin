@@ -51,7 +51,7 @@ typedef struct
 static const PRIOMethods *_nss_methods = NULL;
 static PRDescIdentity _identity;
 
-static void 
+static void
 ssl_nss_init_nss(void)
 {
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
