@@ -1,10 +1,14 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.69
-	* Contact (aka Person, aka Meta-Contact, aka Buddy Merging, etc) Support
-	* Updated MSN support to the MSN Protocol version 9.
+	* Added Contact (aka Person, aka Meta-Contact, aka Buddy Merging, etc)
+	  support
 	* Added MSN 6 smileys.
 	* Added animated smiley support (Ka-Hing Cheung)
+	* Added SSL support, compatible with GNUTLS and Mozilla NSS.
+	* Added plugin IPC.
+	* Added support for gettext 0.12.x.
+	* Updated MSN support to the MSN Protocol version 9.
 	* Jabber now supports SSL
 	* Yahoo now shows people using the java chat client (Tim Ringenbach)
 	* Yahoo chat and conference (Tim Ringenbach)
@@ -14,9 +18,6 @@ version 0.69
 	* The accounts window now shows offline accounts as greyed out, and
 	  online accounts as colored.
 	* Fixed the text replacement plugin.
-	* Added SSL support, compatible with GNUTLS and Mozilla NSS.
-	* Added plugin IPC.
-	* Added support for gettext 0.12.x.
 	* The right-click menu for conversation tabs now shows the tab icon
 	  and status, if tab icons are enabled. (Jesse Farmer)
 	* Korean translation updated (Kyung-uk Son)
