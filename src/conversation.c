@@ -463,7 +463,7 @@ void add_callback(GtkWidget *widget, struct conversation *c)
 		debug_print(debug_buff);
 		remove_buddy(find_group_by_buddy(c->name), find_buddy(c->name));
 		build_edit_tree();
-		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Add"));
+/* FIXME !	gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Add")); */
 	}
 	else
 	{

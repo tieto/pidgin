@@ -767,8 +767,10 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         add_buddy(grp, who);
 
+/* FIXME ! pixmaps now
         if (c != NULL)
 		gtk_label_set_text(GTK_LABEL(GTK_BIN(c->add_button)->child), _("Remove"));
+*/
         
         build_edit_tree();
 
