@@ -109,15 +109,24 @@ buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 }
 
 static void
-buddy_extended_menu_cb(GaimBuddy *buddy, void *data)
+blist_node_extended_menu_cb(GaimBlistNode *node, void *data)
 {
-	gaim_debug_misc("signals test", "buddy-extended-menu (%s)\n", buddy->name);
-}
+	GaimContact *p = (GaimContact *)node;
+	GaimBuddy *b = (GaimBuddy *)node;
+	GaimChat *c = (GaimChat *)node;
+	GaimGroup *g = (GaimGroup *)node;
 
-static void
-group_extended_menu_cb(GaimGroup *group, void *data)
-{
-	gaim_debug_misc("signals test", "group-extended-menu (%s)\n", group->name);
+	if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Contact: %s)\n", p->alias);
+	else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Buddy: %s)\n", b->name);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Chat: %s)\n", c->alias);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Group: %s)\n", g->name);
+	else
+		gaim_debug_misc("signals test", "blist-node-extended-menu (UNKNOWN: %d)\n", node->type);
+
 }
 
 
@@ -166,10 +175,27 @@ displaying_im_msg_cb(GaimAccount *account, GaimConversation *conv,
 }
 
 static void
-displayed_im_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+displayed_im_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
 {
 	gaim_debug_misc("signals test", "displayed-im-msg (%s, %s)\n",
 					gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+writing_im_msg_cb(GaimAccount *account, GaimConversation  *conv, char **buffer, void *data)
+{
+	gaim_debug_misc("signals test", "writing-im-msg (%s, %s, %s)\n",
+					gaim_account_get_username(account), gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+
+}
+
+static void
+wrote_im_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug_misc("signals test", "wrote-im-msg (%s, %s, %s)\n",
+					gaim_account_get_username(account), gaim_conversation_get_name(conv), buffer);
 }
 
 static void
@@ -218,9 +244,26 @@ displaying_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
 }
 
 static void
-displayed_chat_msg_cb(GaimConversation *conv, const char *buffer, void *data)
+displayed_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
 {
 	gaim_debug_misc("signals test", "displayed-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), buffer);
+}
+
+static gboolean
+writing_chat_msg_cb(GaimAccount *account, GaimConversation *conv,
+		       char **buffer, void *data)
+{
+	gaim_debug_misc("signals test", "writing-chat-msg (%s, %s)\n",
+					gaim_conversation_get_name(conv), *buffer);
+
+	return FALSE;
+}
+
+static void
+wrote_chat_msg_cb(GaimAccount *account, GaimConversation *conv, const char *buffer, void *data)
+{
+	gaim_debug_misc("signals test", "wrote-chat-msg (%s, %s)\n",
 					gaim_conversation_get_name(conv), buffer);
 }
 
@@ -416,10 +459,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_signed_on_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, GAIM_CALLBACK(buddy_signed_off_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-extended-menu",
-						plugin, GAIM_CALLBACK(buddy_extended_menu_cb), NULL);
-	gaim_signal_connect(blist_handle, "group-extended-menu",
-						plugin, GAIM_CALLBACK(group_extended_menu_cb), NULL);
+	gaim_signal_connect(blist_handle, "blist-node-extended-menu",
+						plugin, GAIM_CALLBACK(blist_node_extended_menu_cb), NULL);
 
 	/* Connection subsystem signals */
 	gaim_signal_connect(conn_handle, "signing-on",
@@ -436,6 +477,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(displaying_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "displayed-im-msg",
 						plugin, GAIM_CALLBACK(displayed_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "writing-im-msg",
+						plugin, GAIM_CALLBACK(writing_im_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "wrote-im-msg",
+						plugin, GAIM_CALLBACK(wrote_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sending-im-msg",
 						plugin, GAIM_CALLBACK(sending_im_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sent-im-msg",
@@ -448,6 +493,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(displaying_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "displayed-chat-msg",
 						plugin, GAIM_CALLBACK(displayed_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "writing-chat-msg",
+						plugin, GAIM_CALLBACK(writing_chat_msg_cb), NULL);
+	gaim_signal_connect(conv_handle, "wrote-chat-msg",
+						plugin, GAIM_CALLBACK(wrote_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sending-chat-msg",
 						plugin, GAIM_CALLBACK(sending_chat_msg_cb), NULL);
 	gaim_signal_connect(conv_handle, "sent-chat-msg",

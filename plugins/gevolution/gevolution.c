@@ -199,23 +199,29 @@ signed_on_cb(GaimConnection *gc)
 }
 
 static void
-menu_item_activate_cb(GtkWidget *item, GaimBuddy *buddy)
+menu_item_activate_cb(GaimBlistNode *node)
 {
+	GaimBuddy *buddy = (GaimBuddy *)node;
 	gevo_associate_buddy_dialog_new(buddy);
 }
 
 static void
-drawing_menu_cb(GtkWidget *menu, GaimBuddy *buddy)
+blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
+	GaimBlistNodeAction *act;
+	GaimBuddy *buddy;
 	GtkWidget *item;
+
+	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+		return;
+
+	buddy = (GaimBuddy *)node;
 
 	if (gevo_prpl_is_supported(buddy->account, buddy))
 	{
-		item = gtk_menu_item_new_with_label(_("Add to Address Book"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-
-		g_signal_connect(G_OBJECT(item), "activate",
-						 G_CALLBACK(menu_item_activate_cb), buddy);
+		act = gaim_blist_node_action_new(_("Add to Address Book"),
+										 menu_item_activate_cb, NULL);
+		*menu = g_list_append(*menu, act);
 	}
 }
 
@@ -237,8 +243,8 @@ load_timeout(gpointer data)
 
 	e_book_query_unref(query);
 
-	gaim_signal_connect(GAIM_GTK_BLIST(gaim_get_blist()), "drawing-menu",
-						plugin, GAIM_CALLBACK(drawing_menu_cb), NULL);
+	gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu",
+						plugin, GAIM_CALLBACK(blist_node_extended_menu_cb), NULL);
 
 	return FALSE;
 }

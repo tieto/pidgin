@@ -226,4 +226,14 @@ gboolean gaim_gtk_blist_joinchat_is_showable(void);
  */
 void gaim_gtk_blist_joinchat_show(void);
 
+/**
+ * Appends the protocol specific menu items for a GaimBlistNode
+ */
+void gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node);
+
+/**
+ * Appends the extended menu items for a GaimBlistNode
+ */
+void gaim_gtk_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
+
 #endif /* _GAIM_GTK_LIST_H_ */

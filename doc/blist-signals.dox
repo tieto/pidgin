@@ -8,6 +8,7 @@
   @signal buddy-signed-on
   @signal buddy-signed-off
   @signal update-idle
+  @signal blist-node-extended-menu
  @endsignals
 
  <hr>
@@ -72,6 +73,15 @@ void (*update_idle)();
   @endsignalproto
   @signaldesc
    Emitted when the buddy list is refreshed and the idle times are updated.
+ @endsignaldef
+
+ @signaldef blist-node-extended-menu
+  @signalproto
+void (*blist_node_extended_menu)(GaimBlistNode *node, GList **menu)
+  @endsignalproto
+  @signaldesc
+   Emitted when a buddlist menu is being constructed @a menu is a pointer to
+   a GList of GaimBlistNodeAction's allowing a plugin to add menu items
  @endsignaldef
 
  */

@@ -1094,8 +1094,8 @@ append_blist_node_action (GtkWidget *menu, GaimBlistNodeAction *act,
 }
 
 
-static void
-append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node)
+void
+gaim_gtk_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node)
 {
 	GList *l, *ll;
 	gboolean dup_separator = FALSE;
@@ -1112,8 +1112,8 @@ append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode
 }
 
 
-static void
-append_blist_node_extended_menu (GtkWidget *menu, GaimBlistNode *node)
+void
+gaim_gtk_append_blist_node_extended_menu (GtkWidget *menu, GaimBlistNode *node)
 {
 	GList *l, *ll;
 	gboolean dup_separator = FALSE;
@@ -1139,11 +1139,8 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), b, 0, 0, NULL);
 
-	append_blist_node_proto_menu(menu, b->account->gc, (GaimBlistNode *) b);
-	append_blist_node_extended_menu(menu, (GaimBlistNode *) b);
-
-	/* moving on to the old ui-specific plugin menus */
-	gaim_signal_emit(gaim_gtk_blist_get_handle(), "drawing-menu", menu, b);
+	gaim_gtk_append_blist_node_proto_menu(menu, b->account->gc, (GaimBlistNode *) b);
+	gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *) b);
 
 	gaim_separator(menu);
 
@@ -1204,7 +1201,7 @@ create_group_menu (GaimBlistNode *node, GaimGroup *g)
 	gaim_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(show_rename_group), node, 0, 0, NULL);
 
-	append_blist_node_extended_menu(menu, node);
+	gaim_gtk_append_blist_node_extended_menu(menu, node);
 
 	return menu;
 }
@@ -1228,11 +1225,8 @@ create_chat_menu (GaimBlistNode *node,
 	gaim_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
 
-	append_blist_node_proto_menu(menu, c->account->gc, node);
-	append_blist_node_extended_menu(menu, node);
-
-	/* moving on to the old ui-specific plugin menus */
-	gaim_signal_emit(gaim_gtk_blist_get_handle(), "drawing-menu", menu, c);
+	gaim_gtk_append_blist_node_proto_menu(menu, c->account->gc, node);
+	gaim_gtk_append_blist_node_extended_menu(menu, node);
 
 	gaim_separator(menu);
 
@@ -1257,6 +1251,9 @@ create_contact_menu (GaimBlistNode *node)
 				 node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
+
+	gaim_gtk_append_blist_node_extended_menu(menu, node);
+
 	return menu;
 }
 
@@ -4497,12 +4494,6 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
-	gaim_signal_register(gtk_blist_handle, "drawing-menu",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_BOXED, "GtkMenu"),
-			     gaim_value_new(GAIM_TYPE_SUBTYPE,
-					    GAIM_SUBTYPE_BLIST_BUDDY));
-
 	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
 			     gaim_marshal_VOID__POINTER, NULL, 1,
 			     gaim_value_new(GAIM_TYPE_SUBTYPE,
