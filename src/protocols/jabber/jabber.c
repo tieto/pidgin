@@ -1778,35 +1778,30 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 			gaim_blist_add_buddy(b, g, NULL);
 			gaim_blist_save();
 		} else {
+			gboolean save = FALSE;
 			struct group *c_grp = gaim_find_buddys_group(b);
 
 			/*
 			 * If the buddy's in a new group or his/her alias is changed...
 			 */
 			if(groupname && c_grp && strcmp(c_grp->name, groupname)) {
-				int present = b->present;	/* save presence state */
-				int uc = b->uc;			/* and away state (?) */
-				int idle = b->idle;
-				int signon = b->signon;
-
-				/*
-				 * FIXME: this ugly hack is no longer needed
-				 * seems rude, but it seems to be the only way...
-				 */
-				gaim_blist_remove_buddy(b);
-				b = gaim_buddy_new(GJ_GC(gjc)->account, buddyname, name);
-				gaim_blist_add_buddy(b, gaim_find_group(groupname), NULL);
-				gaim_blist_save();
-				if(present > 0) {
-					serv_got_update(GJ_GC(gjc), buddyname, 1, 0, signon, idle,
-							uc);
+				struct group *g = gaim_find_group(groupname);
+				if(!g) {
+					g = gaim_group_new(groupname);
+					gaim_blist_add_group(g, NULL);
 				}
-			} else if(name != NULL && strcmp(b->alias, name)) {
-				g_free(b->alias);
-				b->alias = g_strdup(name);
-				gaim_blist_rename_buddy(b, buddyname);
-				gaim_blist_save();
+
+				gaim_blist_add_buddy(b, g, NULL);
+				save = TRUE;
 			}
+
+			if(name && (!b->alias || strcmp(b->alias, name))) {
+				gaim_blist_alias_buddy(b, name);
+				save = TRUE;
+			}
+
+			if(save)
+				gaim_blist_save();
 		}
 	}  else if (BUD_USUB_TO_PEND(sub, ask) || BUD_USUBD_TO(sub, ask) || !strcasecmp(sub, "remove")) {
 		jabber_remove_gaim_buddy(GJ_GC(gjc), buddyname);
