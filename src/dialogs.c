@@ -790,8 +790,6 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 		update_buttons_by_protocol(c);
 	}
         
-        build_edit_tree();
-
 	do_export( (GtkWidget *) NULL, 0 );
 
         destroy_dialog(NULL, a->window);
@@ -2969,8 +2967,6 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	}
 
         parse_toc_buddy_list(gc, buf, 1);
-
-        build_edit_tree();
 
 	fclose( f );
 

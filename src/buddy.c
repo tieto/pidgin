@@ -909,8 +909,6 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
 						add_buddy(pc, g->name, b->name, b->show);
 					mem = mem->next;
 				}
-				
-				build_edit_tree();
 			}
 		} else {
 			g = group;
@@ -1016,6 +1014,9 @@ void build_edit_tree()
 
 struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, char *show)
 {
+        GtkCTreeNode *p = NULL, *n;
+	char *text[1];
+	char buf[256];
 	struct buddy *b;
 	struct group *g;
 	struct group_show *gs = find_group_show(group);
@@ -1046,6 +1047,19 @@ struct buddy *add_buddy(struct gaim_connection *gc, char *group, char *buddy, ch
 	b->caps = 0;
 
 	if (gs) update_num_group(gs);
+
+	if (!blist) return b;
+
+	p = gtk_ctree_find_by_row_data(GTK_CTREE(edittree), NULL, g);
+	if (strcmp(b->name, b->show)) {
+		g_snprintf(buf, sizeof(buf), "%s (%s)", b->name, b->show);
+		text[0] = buf;
+	} else
+		text[0] = b->name;
+
+	n = gtk_ctree_insert_node(GTK_CTREE(edittree), p, NULL, text, 5,
+				  NULL, NULL, NULL, NULL, 1, 1);
+	gtk_ctree_node_set_row_data(GTK_CTREE(edittree), n, b);
 			
 	return b;
 }
@@ -2660,9 +2674,6 @@ void parse_toc_buddy_list(struct gaim_connection *gc, char *config, int from_do_
 		if (bud != NULL)
 			serv_add_buddies(gc, bud);
 		serv_set_permit_deny(gc);
-		if (blist) {
-			build_edit_tree();
-		}
 	}
 
 	/* perhaps the server dropped the buddy list, try importing from
