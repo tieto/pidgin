@@ -73,6 +73,7 @@
 #include "pixmaps/close_small.xpm"
 #endif
 #include "pixmaps/exit_small.xpm"
+#include "pixmaps/pounce_small.xpm"
 
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/tb_search.xpm"
@@ -1805,7 +1806,7 @@ void show_buddy_list()
         do_away_menu();
 
         bpmenu = gtk_menu_new();
-        menuitem = gaim_new_item(menu, _("Buddy Pounce"), NULL);
+        menuitem = gaim_new_item_with_pixmap(menu, _("Buddy Pounce"), pounce_small_xpm, NULL);
         gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), bpmenu);
         do_bp_menu();
 

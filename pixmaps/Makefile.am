@@ -74,6 +74,7 @@ EXTRA_DIST =	add.xpm				\
 		permadd.xpm			\
 		permdel.xpm			\
 		plugins_small.xpm		\
+		pounce_small.xpm		\
 		prefs_small.xpm			\
 		refresh.xpm			\
 		sad.xpm				\
