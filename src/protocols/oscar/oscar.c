@@ -1347,7 +1347,7 @@ static int gaim_parse_login(aim_session_t *sess, aim_frame_t *fr, ...) {
 					   gaim_account_get_password(account), &info, key);
 	} else {
 #if 0
-		struct client_info_s info = {"gaim", 4, 1, 2010, "us", "en", 0x0004, 0x0000, 0x04b};
+		struct client_info_s info = {"gaim", 7, 3, 2003, "us", "en", 0x0004, 0x0000, 0x04b};
 #endif
 		struct client_info_s info = CLIENTINFO_AIM_KNOWNGOOD;
 		aim_send_login(sess, fr->conn, gaim_account_get_username(ac),

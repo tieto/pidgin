@@ -11,33 +11,78 @@
 
 #include "md5.h"
 
-static int aim_encode_password(const char *password, fu8_t *encoded);
-
-/* 
- * This just pushes the passed cookie onto the passed connection, without
- * the SNAC header or any of that.
+/**
+ * Encode a password using old XOR method
  *
- * Very commonly used, as every connection except auth will require this to
- * be the first thing you send.
+ * This takes a const pointer to a (null terminated) string
+ * containing the unencoded password.  It also gets passed
+ * an already allocated buffer to store the encoded password.
+ * This buffer should be the exact length of the password without
+ * the null.  The encoded password buffer /is not %NULL terminated/.
  *
+ * The encoding_table seems to be a fixed set of values.  We'll
+ * hope it doesn't change over time!  
+ *
+ * This is only used for the XOR method, not the better MD5 method.
+ *
+ * @param password Incoming password.
+ * @param encoded Buffer to put encoded password.
  */
-faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16_t length, const fu8_t *chipsahoy)
+static int aim_encode_password(const char *password, fu8_t *encoded)
 {
-	aim_frame_t *fr;
-	aim_tlvlist_t *tl = NULL;
+	fu8_t encoding_table[] = {
+#if 0 /* old v1 table */
+		0xf3, 0xb3, 0x6c, 0x99,
+		0x95, 0x3f, 0xac, 0xb6,
+		0xc5, 0xfa, 0x6b, 0x63,
+		0x69, 0x6c, 0xc3, 0x9f
+#else /* v2.1 table, also works for ICQ */
+		0xf3, 0x26, 0x81, 0xc4,
+		0x39, 0x86, 0xdb, 0x92,
+		0x71, 0xa3, 0xb9, 0xe6,
+		0x53, 0x7a, 0x95, 0x7c
+#endif
+	};
+	int i;
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0001, 4+2+2+length)))
-		return -ENOMEM;
-
-	aimbs_put32(&fr->data, 0x00000001);
-	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
-	aim_tlvlist_write(&fr->data, &tl);
-	aim_tlvlist_free(&tl);
-
-	aim_tx_enqueue(sess, fr);
+	for (i = 0; i < strlen(password); i++)
+		encoded[i] = (password[i] ^ encoding_table[i]);
 
 	return 0;
 }
+
+#ifdef USE_OLD_MD5
+static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
+{
+	md5_state_t state;
+
+	md5_init(&state);	
+	md5_append(&state, (const md5_byte_t *)key, strlen(key));
+	md5_append(&state, (const md5_byte_t *)password, strlen(password));
+	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	md5_finish(&state, (md5_byte_t *)digest);
+
+	return 0;
+}
+#else
+static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
+{
+	md5_state_t state;
+	fu8_t passdigest[16];
+
+	md5_init(&state);
+	md5_append(&state, (const md5_byte_t *)password, strlen(password));
+	md5_finish(&state, (md5_byte_t *)&passdigest);
+
+	md5_init(&state);	
+	md5_append(&state, (const md5_byte_t *)key, strlen(key));
+	md5_append(&state, (const md5_byte_t *)&passdigest, 16);
+	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	md5_finish(&state, (md5_byte_t *)digest);
+
+	return 0;
+}
+#endif
 
 /*
  * Normally the FLAP version is sent as the first few bytes of the cookie,
@@ -62,85 +107,23 @@ faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)
 }
 
 /*
- * This is a bit confusing.
+ * This just pushes the passed cookie onto the passed connection, without
+ * the SNAC header or any of that.
  *
- * Normal SNAC login goes like this:
- *   - connect
- *   - server sends flap version
- *   - client sends flap version
- *   - client sends screen name (17/6)
- *   - server sends hash key (17/7)
- *   - client sends auth request (17/2 -- aim_send_login)
- *   - server yells
- *
- * XOR login (for ICQ) goes like this:
- *   - connect
- *   - server sends flap version
- *   - client sends auth request which contains flap version (aim_send_login)
- *   - server yells
- *
- * For the client API, we make them implement the most complicated version,
- * and for the simpler version, we fake it and make it look like the more
- * complicated process.
- *
- * This is done by giving the client a faked key, just so we can convince
- * them to call aim_send_login right away, which will detect the session
- * flag that says this is XOR login and ignore the key, sending an ICQ
- * login request instead of the normal SNAC one.
- *
- * As soon as AOL makes ICQ log in the same way as AIM, this is /gone/.
- *
- * XXX This may cause problems if the client relies on callbacks only
- * being called from the context of aim_rxdispatch()...
+ * Very commonly used, as every connection except auth will require this to
+ * be the first thing you send.
  *
  */
-static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
-{
-	aim_frame_t fr;
-	aim_rxcallback_t userfunc;
-	
-	sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
-	sess->flags |= AIM_SESS_FLAGS_XORLOGIN;
-
-	fr.conn = conn;
-	
-	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
-		userfunc(sess, &fr, "");
-
-	return 0;
-}
-
-/*
- * In AIM 3.5 protocol, the first stage of login is to request login from the 
- * Authorizer, passing it the screen name for verification.  If the name is 
- * invalid, a 0017/0003 is spit back, with the standard error contents.  If 
- * valid, a 0017/0007 comes back, which is the signal to send it the main 
- * login command (0017/0002). 
- *
- */
-faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+faim_export int aim_sendcookie(aim_session_t *sess, aim_conn_t *conn, const fu16_t length, const fu8_t *chipsahoy)
 {
 	aim_frame_t *fr;
-	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
-	
-	if (!sess || !conn || !sn)
-		return -EINVAL;
 
-	if ((sn[0] >= '0') && (sn[0] <= '9'))
-		return goddamnicq(sess, conn, sn);
-
-	sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
-
-	aim_sendflapver(sess, conn);
-
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x0001, 4+2+2+length)))
 		return -ENOMEM;
 
-	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
-	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
-
-	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
+	aimbs_put32(&fr->data, 0x00000001);
+	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
 
@@ -198,6 +181,8 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 }
 
 /*
+ * Subtype 0x0002
+ *
  * send_login(int socket, char *sn, char *password)
  *  
  * This is the initial login request packet.
@@ -239,11 +224,9 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	/*
 	 * What the XORLOGIN flag _really_ means is that its an ICQ login,
 	 * which is really stupid and painful, so its not done here.
-	 *
 	 */
 	if (sess->flags & AIM_SESS_FLAGS_XORLOGIN)
 		return goddamnicq2(sess, conn, sn, password, ci);
-
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 1152)))
 		return -ENOMEM;
@@ -256,9 +239,9 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_encode_password_md5(password, key, digest);
 	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
 
-	/*
-	 * Newer versions of winaim have an empty type x004c TLV here.
-	 */
+#ifndef USE_OLD_MD5
+	aim_tlvlist_add_noval(&tl, 0x004c);
+#endif
 
 	if (ci->clientstring)
 		aim_tlvlist_add_raw(&tl, 0x0003, strlen(ci->clientstring), ci->clientstring);
@@ -268,8 +251,8 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
 	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
 	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib);
-	aim_tlvlist_add_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 	aim_tlvlist_add_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
+	aim_tlvlist_add_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 
 #ifndef NOSSI
 	/*
@@ -284,59 +267,6 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_tlvlist_free(&tl);
 	
 	aim_tx_enqueue(sess, fr);
-
-	return 0;
-}
-
-faim_export int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
-{
-	md5_state_t state;
-
-	md5_init(&state);	
-	md5_append(&state, (const md5_byte_t *)key, strlen(key));
-	md5_append(&state, (const md5_byte_t *)password, strlen(password));
-	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	md5_finish(&state, (md5_byte_t *)digest);
-
-	return 0;
-}
-
-/**
- * aim_encode_password - Encode a password using old XOR method
- * @password: incoming password
- * @encoded: buffer to put encoded password
- *
- * This takes a const pointer to a (null terminated) string
- * containing the unencoded password.  It also gets passed
- * an already allocated buffer to store the encoded password.
- * This buffer should be the exact length of the password without
- * the null.  The encoded password buffer /is not %NULL terminated/.
- *
- * The encoding_table seems to be a fixed set of values.  We'll
- * hope it doesn't change over time!  
- *
- * This is only used for the XOR method, not the better MD5 method.
- *
- */
-static int aim_encode_password(const char *password, fu8_t *encoded)
-{
-	fu8_t encoding_table[] = {
-#if 0 /* old v1 table */
-		0xf3, 0xb3, 0x6c, 0x99,
-		0x95, 0x3f, 0xac, 0xb6,
-		0xc5, 0xfa, 0x6b, 0x63,
-		0x69, 0x6c, 0xc3, 0x9f
-#else /* v2.1 table, also works for ICQ */
-		0xf3, 0x26, 0x81, 0xc4,
-		0x39, 0x86, 0xdb, 0x92,
-		0x71, 0xa3, 0xb9, 0xe6,
-		0x53, 0x7a, 0x95, 0x7c
-#endif
-	};
-	int i;
-
-	for (i = 0; i < strlen(password); i++)
-		encoded[i] = (password[i] ^ encoding_table[i]);
 
 	return 0;
 }
@@ -438,7 +368,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	if (aim_tlv_gettlv(tlvlist, 0x0043, 1))
 		info->latestbeta.name = aim_tlv_getstr(tlvlist, 0x0043, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0048, 1))
-		; /* no idea what this is */
+		; /* beta serial */
 
 	if (aim_tlv_gettlv(tlvlist, 0x0044, 1))
 		info->latestrelease.build = aim_tlv_get32(tlvlist, 0x0044, 1);
@@ -449,7 +379,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	if (aim_tlv_gettlv(tlvlist, 0x0047, 1))
 		info->latestrelease.name = aim_tlv_getstr(tlvlist, 0x0047, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0049, 1))
-		; /* no idea what this is */
+		; /* lastest release serial */
 
 	/*
 	 * URL to change password.
@@ -474,6 +404,102 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 }
 
 /*
+ * Subtype 0x0007 (kind of) - Send a fake type 0x0007 SNAC to the client
+ *
+ * This is a bit confusing.
+ *
+ * Normal SNAC login goes like this:
+ *   - connect
+ *   - server sends flap version
+ *   - client sends flap version
+ *   - client sends screen name (17/6)
+ *   - server sends hash key (17/7)
+ *   - client sends auth request (17/2 -- aim_send_login)
+ *   - server yells
+ *
+ * XOR login (for ICQ) goes like this:
+ *   - connect
+ *   - server sends flap version
+ *   - client sends auth request which contains flap version (aim_send_login)
+ *   - server yells
+ *
+ * For the client API, we make them implement the most complicated version,
+ * and for the simpler version, we fake it and make it look like the more
+ * complicated process.
+ *
+ * This is done by giving the client a faked key, just so we can convince
+ * them to call aim_send_login right away, which will detect the session
+ * flag that says this is XOR login and ignore the key, sending an ICQ
+ * login request instead of the normal SNAC one.
+ *
+ * As soon as AOL makes ICQ log in the same way as AIM, this is /gone/.
+ *
+ * XXX This may cause problems if the client relies on callbacks only
+ * being called from the context of aim_rxdispatch()...
+ *
+ */
+static int goddamnicq(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+{
+	aim_frame_t fr;
+	aim_rxcallback_t userfunc;
+	
+	sess->flags &= ~AIM_SESS_FLAGS_SNACLOGIN;
+	sess->flags |= AIM_SESS_FLAGS_XORLOGIN;
+
+	fr.conn = conn;
+	
+	if ((userfunc = aim_callhandler(sess, conn, 0x0017, 0x0007)))
+		userfunc(sess, &fr, "");
+
+	return 0;
+}
+
+/*
+ * Subtype 0x0006
+ *
+ * In AIM 3.5 protocol, the first stage of login is to request login from the 
+ * Authorizer, passing it the screen name for verification.  If the name is 
+ * invalid, a 0017/0003 is spit back, with the standard error contents.  If 
+ * valid, a 0017/0007 comes back, which is the signal to send it the main 
+ * login command (0017/0002). 
+ *
+ */
+faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn)
+{
+	aim_frame_t *fr;
+	aim_snacid_t snacid;
+	aim_tlvlist_t *tl = NULL;
+	
+	if (!sess || !conn || !sn)
+		return -EINVAL;
+
+	if ((sn[0] >= '0') && (sn[0] <= '9'))
+		return goddamnicq(sess, conn, sn);
+
+	sess->flags |= AIM_SESS_FLAGS_SNACLOGIN;
+
+	aim_sendflapver(sess, conn);
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+2+2+strlen(sn) /*+8*/ )))
+		return -ENOMEM;
+
+	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
+	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
+
+	aim_tlvlist_add_raw(&tl, 0x0001, strlen(sn), sn);
+/*	aim_tlvlist_add_noval(&tl, 0x004b);
+	aim_tlvlist_add_noval(&tl, 0x005a); */
+	aim_tlvlist_write(&fr->data, &tl);
+	aim_tlvlist_free(&tl);
+
+	aim_tx_enqueue(sess, fr);
+
+	return 0;
+}
+
+/*
+ * Subtype 0x0007
+ *
  * Middle handler for 0017/0007 SNACs.  Contains the auth key prefixed
  * by only its length in a two byte word.
  *

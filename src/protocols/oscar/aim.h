@@ -205,6 +205,15 @@ struct client_info_s {
 	"us", "en", \
 }
 
+#define CLIENTINFO_AIM_5_5_3415 { \
+	"AOL Instant Messenger, version 5.5.3415/WIN32", \
+	0x0109, \
+	0x0005, 0x0005, \
+	0x0000, 0x0057, \
+	0x000000ef, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_ICHAT_1_0 { \
 	"Apple iChat", \
 	0x311a, \
@@ -546,7 +555,6 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const char *sn);
 faim_export int aim_send_login(aim_session_t *, aim_conn_t *, const char *, const char *, struct client_info_s *, const char *key);
-faim_export int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest);
 faim_export void aim_purge_rxqueue(aim_session_t *);
 faim_export void aim_cleansnacs(aim_session_t *, int maxage);
 
