@@ -1383,7 +1383,7 @@ void set_buddy(struct buddy *b)
 			
 			gtk_widget_show(b->item);
 			gtk_widget_show(b->label);
-                        b->log_timer = gtk_timeout_add(10000, (GtkFunction) log_timeout, b->name);
+                        b->log_timer = gtk_timeout_add(7500, (GtkFunction) log_timeout, b->name);
                         update_num_groups();
                         update_show_idlepix();
                         setup_buddy_chats();
@@ -1449,7 +1449,7 @@ void set_buddy(struct buddy *b)
 
 				}
 			}
-                        b->log_timer = gtk_timeout_add(10000, (GtkFunction)log_timeout, b->name);
+                        b->log_timer = gtk_timeout_add(7500, (GtkFunction)log_timeout, b->name);
                         update_num_groups();
                         update_show_idlepix();
 		}

@@ -147,9 +147,10 @@ int toc_login(char *username, char *password)
         
 #ifdef USE_APPLET
 	if (general_options & OPT_GEN_APP_BUDDY_SHOW) {
-                make_buddy();
+		make_buddy();
+                gnome_buddy_show();
                 parse_toc_buddy_list(config);
-                refresh_buddy_window();
+		createOnlinePopup();
                 set_applet_draw_open();
         } else {
                 make_buddy();
