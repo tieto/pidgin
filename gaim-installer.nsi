@@ -32,6 +32,7 @@ SetDateSave on
 
 !define MUI_ICON			.\pixmaps\gaim-install.ico
 !define MUI_UNICON			.\pixmaps\gaim-install.ico
+!define MUI_HEADERBITMAP		.\src\win32\nsis\gaim-header.bmp
 
 !define GAIM_NSIS_INCLUDE_PATH		".\src\win32\nsis"
 
