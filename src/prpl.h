@@ -370,18 +370,6 @@ void do_ask_dialog(const char *prim, const char *sec, void *data,
 				   GModule *handle, gboolean modal);
 
 /**
- * Prompts the user for data.
- *
- * @param text The text to present to the user.
- * @param def  The default data, or @c NULL.
- * @param data The data to be passed to the callback.
- * @param doit The callback function to call when the Accept button is clicked.
- * @param dont The callback function to call when the Cancel button is clicked.
- */
-void do_prompt_dialog(const char *text, const char *sdef, void *data,
-					  void *doit, void *dont);
-
-/**
  * Called to notify the user that the account has new mail.
  *
  * If @a count is less than 0, the dialog will display the the sender

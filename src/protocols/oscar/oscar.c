@@ -299,7 +299,7 @@ int ill_just_write_my_own_damn_round_function(double val) {
 		return val;
 }
 
-static void gaim_free_name_data(struct name_data *data) {
+static void gaim_free_name_data(const char *text, struct name_data *data) {
 	g_free(data->name);
 	g_free(data->nick);
 	g_free(data);
@@ -2408,7 +2408,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
  * methods of authorization (SSI and old-school channel 4 ICBM)
  */
 /* When you ask other people for authorization */
-static void gaim_auth_request(struct name_data *data, char *msg) {
+static void gaim_auth_request(char *msg, struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
 
 	if (g_slist_find(connections, gc)) {
@@ -2427,7 +2427,11 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 }
 
 static void gaim_auth_request_msgprompt(struct name_data *data) {
-	do_prompt_dialog(_("Authorization Request Message:"), _("Please authorize me!"), data, gaim_auth_request, gaim_free_name_data);
+	gaim_request_input(data->gc, NULL, _("Authorization Request Message:"),
+					   NULL, _("Please authorize me!"), TRUE,
+					   _("OK"), G_CALLBACK(gaim_auth_request),
+					   _("Cancel"), G_CALLBACK(gaim_free_name_data),
+					   data);
 }
 
 static void gaim_auth_dontrequest(struct name_data *data) {
@@ -2438,7 +2442,7 @@ static void gaim_auth_dontrequest(struct name_data *data) {
 		/* XXX - Take the buddy out of our buddy list */
 	}
 
-	gaim_free_name_data(data);
+	gaim_free_name_data(NULL, data);
 }
 
 static void gaim_auth_sendrequest(struct gaim_connection *gc, const char *name) {
@@ -2480,11 +2484,11 @@ static void gaim_auth_grant(struct name_data *data) {
 #endif
 	}
 
-	gaim_free_name_data(data);
+	gaim_free_name_data(NULL, data);
 }
 
 /* When other people ask you for authorization */
-static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
+static void gaim_auth_dontgrant(char *msg, struct name_data *data) {
 	struct gaim_connection *gc = data->gc;
 
 	if (g_slist_find(connections, gc)) {
@@ -2498,7 +2502,11 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 }
 
 static void gaim_auth_dontgrant_msgprompt(struct name_data *data) {
-	do_prompt_dialog(_("Authorization Denied Message:"), _("No reason given."), data, gaim_auth_dontgrant, gaim_free_name_data);
+	gaim_request_input(data->gc, NULL, _("Authorization Denied Message:"),
+					   NULL, _("No reason given."), TRUE,
+					   _("OK"), G_CALLBACK(gaim_auth_dontgrant),
+					   _("Cancel"), G_CALLBACK(gaim_free_name_data),
+					   data);
 }
 
 /* When someone sends you contacts  */
@@ -2509,7 +2517,7 @@ static void gaim_icq_contactadd(struct name_data *data) {
 		show_add_buddy(gc, data->name, NULL, data->nick);
 	}
 
-	gaim_free_name_data(data);
+	gaim_free_name_data(NULL, data);
 }
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args, time_t t) {
@@ -5735,7 +5743,7 @@ static GList *oscar_buddy_menu(struct gaim_connection *gc, const char *who) {
 	return m;
 }
 
-static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
+static void oscar_format_screenname(const char *nick, struct gaim_connection *gc) {
 	struct oscar_data *od = gc->proto_data;
 	if (!aim_sncmp(gc->username, nick)) {
 		if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH)) {
@@ -5753,7 +5761,11 @@ static void oscar_format_screenname(struct gaim_connection *gc, char *nick) {
 
 static void oscar_show_format_screenname(struct gaim_connection *gc)
 {
-	do_prompt_dialog(_("New screenname formatting:"), gc->displayname, gc, oscar_format_screenname, NULL);
+	gaim_request_input(gc, NULL, _("New screenname formatting:"), NULL,
+					   gc->displayname, FALSE,
+					   _("OK"), G_CALLBACK(oscar_format_screenname),
+					   _("Cancel"), NULL,
+					   gc);
 }
 
 static void oscar_confirm_account(struct gaim_connection *gc)
@@ -5782,7 +5794,7 @@ static void oscar_show_email(struct gaim_connection *gc)
 	}
 }
 
-static void oscar_change_email(struct gaim_connection *gc, char *email)
+static void oscar_change_email(const char *email, struct gaim_connection *gc)
 {
 	struct oscar_data *od = gc->proto_data;
 	aim_conn_t *conn = aim_getconn_type(od->sess, AIM_CONN_TYPE_AUTH);
@@ -5798,7 +5810,10 @@ static void oscar_change_email(struct gaim_connection *gc, char *email)
 
 static void oscar_show_change_email(struct gaim_connection *gc)
 {
-	do_prompt_dialog(_("Change Address To: "), NULL, gc, oscar_change_email, NULL);
+	gaim_request_input(gc, NULL, _("Change Address To:"), NULL, NULL, FALSE,
+					   _("OK"), G_CALLBACK(oscar_change_email),
+					   _("Cancel"), NULL,
+					   gc);
 }
 
 static void oscar_show_awaitingauth(struct gaim_connection *gc)

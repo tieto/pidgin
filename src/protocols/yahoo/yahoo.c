@@ -56,7 +56,7 @@ extern char *yahoo_crypt(char *, char *);
 /* for win32 compatability */
 G_MODULE_IMPORT GSList *connections;
 
-#define YAHOO_DEBUG
+/* #define YAHOO_DEBUG */
 
 #define USEROPT_MAIL 0
 
@@ -1184,7 +1184,7 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, const char *who)
 	return m;
 }
 
-static void yahoo_act_id(gpointer data, char *entry)
+static void yahoo_act_id(const char *entry, gpointer data)
 {
 	struct gaim_connection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
@@ -1199,7 +1199,10 @@ static void yahoo_act_id(gpointer data, char *entry)
 
 static void yahoo_show_act_id(struct gaim_connection *gc)
 {
-	do_prompt_dialog("Activate which ID:", gc->displayname, gc, yahoo_act_id, NULL);
+	gaim_request_input(gc, NULL, _("Active which ID?"), NULL,
+					   gc->displayname, FALSE,
+					   _("OK"), G_CALLBACK(yahoo_act_id),
+					   _("Cancel"), NULL, gc);
 }
 
 static GList *yahoo_actions(struct gaim_connection *gc) {

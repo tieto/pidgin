@@ -997,7 +997,7 @@ handle_roomlist(struct gaim_connection *gc, char *word[], char *word_eol[])
 }
 
 static void 
-irc_change_nick(void *a, char *b) {
+irc_change_nick(const char *b, void *a) {
 	struct gaim_connection *gc = a;
 	struct irc_data *id = gc->proto_data;
 	char buf[IRC_BUF_LEN];	
@@ -1111,7 +1111,11 @@ process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 						  _("IRC Error"));
 		break;		
 	case 433:
-		do_prompt_dialog(_("That nick is already in use.  Please enter a new nick"), gc->displayname, gc, irc_change_nick, NULL);
+		gaim_request_input(gc, NULL, _("That nick is already in use.  "
+									   "Please enter a new nick"),
+						   NULL, gc->displayname, FALSE,
+						   _("OK"), G_CALLBACK(irc_change_nick),
+						   _("Cancel"), NULL, gc);
 		break;
 	default:
 		/* Other error messages */
