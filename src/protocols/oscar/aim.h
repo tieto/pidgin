@@ -390,14 +390,24 @@ typedef struct {
 	fu32_t membersince;
 	fu32_t onlinesince;
 	fu32_t sessionlen; 
-	int capspresent;
 	fu32_t capabilities;
 	struct {
 		fu32_t status;
 		fu32_t ipaddr;
 		fu8_t crap[0x25]; /* until we figure it out... */
 	} icqinfo;
+	fu32_t present;
 } aim_userinfo_t;
+
+#define AIM_USERINFO_PRESENT_FLAGS        0x00000001
+#define AIM_USERINFO_PRESENT_MEMBERSINCE  0x00000002
+#define AIM_USERINFO_PRESENT_ONLINESINCE  0x00000004
+#define AIM_USERINFO_PRESENT_IDLE         0x00000008
+#define AIM_USERINFO_PRESENT_ICQEXTSTATUS 0x00000010
+#define AIM_USERINFO_PRESENT_ICQIPADDR    0x00000020
+#define AIM_USERINFO_PRESENT_ICQDATA      0x00000040
+#define AIM_USERINFO_PRESENT_CAPABILITIES 0x00000080
+#define AIM_USERINFO_PRESENT_SESSIONLEN   0x00000100
 
 faim_export const char *aim_userinfo_sn(aim_userinfo_t *ui);
 faim_export fu16_t aim_userinfo_flags(aim_userinfo_t *ui);
@@ -827,6 +837,7 @@ faim_export int aim_send_im_ext(aim_session_t *sess, struct aim_sendimext_args *
 faim_export int aim_send_im(aim_session_t *, const char *destsn, unsigned short flags, const char *msg);
 faim_export int aim_send_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 faim_export fu16_t aim_iconsum(const fu8_t *buf, int buflen);
+faim_export int aim_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing);
 faim_export int aim_send_im_direct(aim_session_t *, aim_conn_t *, const char *msg);
 faim_export const char *aim_directim_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_directim_initiate(aim_session_t *, const char *destsn);

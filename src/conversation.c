@@ -259,6 +259,8 @@ void delete_conversation(struct conversation *c)
 	if (c->save_icon)
 		gtk_widget_destroy(c->save_icon);
 #endif
+	if (c->typing_timeout)
+		gtk_timeout_remove(c->typing_timeout);
 	g_string_free(c->history, TRUE);
 	g_free(c);
 }
@@ -629,7 +631,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 		cnv = g_list_nth(chats, currpage - convlen);
 		while (cnv) {
 			d = cnv->data;
-			if (d->unseen)
+			if (d->unseen > 0)
 				break;
 			cnv = cnv->next;
 			d = NULL;
@@ -643,7 +645,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 		cnv = g_list_nth(conversations, currpage);
 		while (cnv) {
 			d = cnv->data;
-			if (d->unseen)
+			if (d->unseen > 0)
 				break;
 			cnv = cnv->next;
 			d = NULL;
@@ -660,7 +662,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 			cnv = conversations;
 			while (cnv) {
 				d = cnv->data;
-				if (d->unseen)
+				if (d->unseen > 0)
 					break;
 				cnv = cnv->next;
 				d = NULL;
@@ -674,7 +676,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 			cnv = chats;
 			while (cnv) {
 				d = cnv->data;
-				if (d->unseen)
+				if (d->unseen > 0)
 					break;
 				cnv = cnv->next;
 				d = NULL;
@@ -691,7 +693,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 		cnv = chats;
 		while (cnv) {
 			d = cnv->data;
-			if (d->unseen)
+			if (d->unseen > 0)
 				break;
 			cnv = cnv->next;
 			d = NULL;
@@ -705,7 +707,7 @@ static void move_next_tab(GtkNotebook *notebook, gboolean chat)
 		cnv = conversations;
 		while (cnv) {
 			d = cnv->data;
-			if (d->unseen)
+			if (d->unseen > 0)
 				break;
 			cnv = cnv->next;
 			d = NULL;
@@ -730,6 +732,7 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		if (convo_options & OPT_CONVO_ESC_CAN_CLOSE) {
 			gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 			close_callback(c->close, c);
+			c = NULL;
 		}
 	} else if (event->keyval == GDK_Page_Up) {
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
@@ -896,6 +899,27 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 		gtk_signal_emit_stop_by_name(GTK_OBJECT(entry), "key_press_event");
 	}
 
+	if (c && (!(misc_options & OPT_MISC_STEALTH_TYPING)) && !c->is_chat) {
+		char *txt = gtk_editable_get_chars(GTK_EDITABLE(c->entry), 0, -1);
+		if ((strlen(txt) == 0  && event->keyval < 256 && isprint(event->keyval)) ||
+		    (c->type_again != 0 && time(NULL) > c->type_again)) {
+			int timeout = serv_send_typing(c->gc, c->name);
+			if (timeout)
+				c->type_again = time(NULL) + timeout;
+			else
+				c->type_again = 0;
+		}
+		else if (strlen(txt) == 1) {
+			if ((GTK_OLD_EDITABLE(c->entry)->current_pos == 1 && event->keyval == GDK_BackSpace) ||
+			    (GTK_OLD_EDITABLE(c->entry)->current_pos == 0 && event->keyval == GDK_Delete))
+				serv_send_typing_stopped(c->gc, c->name);
+		} else if (GTK_OLD_EDITABLE(c->entry)->selection_start_pos == 0) {
+			if (GTK_OLD_EDITABLE(c->entry)->selection_end_pos == strlen(txt) &&
+			    (event->keyval == GDK_BackSpace || event->keyval == GDK_Delete))
+				serv_send_typing_stopped(c->gc, c->name);
+		}
+		g_free(txt);
+	}
 	return FALSE;
 }
 
@@ -1464,7 +1488,8 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	GString *logstr;
 	char buf2[BUF_LONG];
 	char mdate[64];
-
+	int unhighlight = 0;
+	
 	if (c->is_chat && (!c->gc || !g_slist_find(c->gc->buddy_chats, c)))
 		return;
 
@@ -1693,12 +1718,16 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			offs = 0;
 		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(chat_notebook)) ==
 				g_list_index(chats, c) + offs)
-			return;
+			unhighlight = 1;
 	} else {
 		if (gtk_notebook_get_current_page(GTK_NOTEBOOK(convo_notebook)) ==
 				g_list_index(conversations, c))
-			return;
+			unhighlight = 1;
 	}
+	if ((c->unseen != -1) && unhighlight) /* If there's no typing message
+						 and we're on the same tab, don't bother
+						 changing the color. */
+		return;
 
 	{
 		GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
@@ -1715,23 +1744,50 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 			gtk_widget_realize(label);
 		gdk_font_unref(gtk_style_get_font(style));
 		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
-		if (flags & WFLAG_NICK) {
+		if (!unhighlight && flags & WFLAG_NICK) {
 			style->fg[0].red = 0x0000;
 			style->fg[0].green = 0x0000;
 			style->fg[0].blue = 0xcccc;
 			c->unseen = 2;
-		} else {
+		} else if (!unhighlight) {
 			style->fg[0].red = 0xcccc;
 			style->fg[0].green = 0x0000;
 			style->fg[0].blue = 0x0000;
 			c->unseen = 1;
+		} else {
+			c->unseen = 0;
 		}
 		gtk_widget_set_style(label, style);
 		gtk_style_unref(style);
 	}
+	if (flags & WFLAG_RECV)
+		reset_typing(g_strdup(c->name));
 }
 
+void update_progress(struct conversation *c, float percent) {
+       while (gtk_events_pending())
+               gtk_main_iteration();
+       
+       if (percent >= 1 && !(c->progress))
+	       return;
 
+       if (percent >= 1) {
+	       gtk_widget_destroy(c->progress);
+               c->progress = NULL;
+               return;
+       }
+       
+       if (!c->progress) {
+               GtkBox *box = GTK_BOX(c->text->parent->parent);
+               c->progress = gtk_progress_bar_new();
+               gtk_box_pack_end(box, c->progress, FALSE, FALSE, 0);
+               gtk_widget_set_usize (c->progress, 1, 8);
+               gtk_widget_show (c->progress);
+       }
+       
+       if (percent < 1)
+               gtk_progress_set_percentage(GTK_PROGRESS(c->progress), percent);
+}
 
 GtkWidget *build_conv_toolbar(struct conversation *c)
 {
@@ -2231,6 +2287,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		gtk_window_set_focus(GTK_WINDOW(c->window), c->entry);
 	if (!GTK_WIDGET_REALIZED(label))
 		return;
+	if (c->unseen == -1) return;
 	style = gtk_style_new();
 	gdk_font_unref(gtk_style_get_font(style));
 	gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
@@ -2240,6 +2297,95 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 		c->unseen = 0;
 }
 
+void show_typing(struct conversation *c) {
+	
+	GtkStyle *style;
+	GtkNotebook *notebook = GTK_NOTEBOOK(c->is_chat ? chat_notebook : convo_notebook);
+	int offs = ((convo_options & OPT_CONVO_COMBINE) &&
+		    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
+		g_list_length(conversations) : 0;
+	GList *ws = (c->is_chat ? chats : conversations);
+	GtkWidget *label = gtk_notebook_get_tab_label(notebook,
+						      gtk_notebook_get_nth_page(notebook,
+										offs + g_list_index(ws, c)));
+	if (c->is_chat) /* We shouldn't be getting typing notifications from chats. */
+		return;
+	if (im_options & OPT_IM_ONE_WINDOW) { /* We'll make the tab green */
+		
+		style = gtk_style_new();
+		if (!GTK_WIDGET_REALIZED(label))
+			gtk_widget_realize(label);
+		gdk_font_unref(gtk_style_get_font(style));
+		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
+		style->fg[0].red = 0x0000;
+		style->fg[0].green = 0x9999;
+		style->fg[0].blue = 0x0000;
+		gtk_widget_set_style(label, style);
+			debug_printf("setting style\n");
+		gtk_style_unref(style);
+		c->unseen = -1;
+	} else {
+		GtkWindow *win = (GtkWindow *)c->window;
+		char *buf;
+		if (strstr(win->title, " [TYPING]"))
+			return;
+		buf = g_malloc(strlen(win->title) + strlen(" [TYPING]") + 1);
+		g_snprintf(buf, 
+			   strlen(win->title) + strlen(" [TYPING]") + 1, "%s [TYPING]", 
+			   win->title);
+		gtk_window_set_title(win, buf);
+		g_free(buf);
+	}
+	
+}
+
+/* This returns a boolean, so that it can timeout */
+gboolean reset_typing(char *name) {
+	struct conversation *c = find_conversation(name);
+	if (!c) {
+		g_free(name);
+		return FALSE;
+	}
+		/* Reset the title (if necessary) */
+	debug_printf("resetting style\n");
+	if (c->is_chat) {
+		g_free(name);
+		c->typing_timeout = 0;
+		return FALSE;
+	}
+	if (!(im_options & OPT_IM_ONE_WINDOW)) {
+		GtkWindow *win = (GtkWindow*)c->window;
+		char *new_title;
+		if (strstr(win->title, " [TYPING]")) {
+			new_title = g_malloc(strlen(win->title) - strlen("[TYPING]"));
+			g_snprintf(new_title, strlen(win->title) - strlen("[TYPING]"), win->title);
+			gtk_window_set_title(win, new_title);
+			g_free(new_title);
+			
+		}
+	} else if (c->unseen == -1) {
+		GtkNotebook *notebook = GTK_NOTEBOOK(convo_notebook);
+		int offs = ((convo_options & OPT_CONVO_COMBINE) &&
+			    (im_options & OPT_IM_ONE_WINDOW) && c->is_chat) ?
+			g_list_length(conversations) : 0;
+		GList *ws = (conversations);
+		GtkWidget *label = gtk_notebook_get_tab_label(notebook,
+							      gtk_notebook_get_nth_page(notebook,
+								      offs + g_list_index(ws, c)));
+		GtkStyle *style;
+		style = gtk_style_new();
+		if (!GTK_WIDGET_REALIZED(label))
+			gtk_widget_realize(label);
+		gdk_font_unref(gtk_style_get_font(style));
+		gtk_style_set_font(style, gdk_font_ref(gtk_style_get_font(label->style)));
+		c->unseen = 0;
+		gtk_widget_set_style(label, style);
+		gtk_style_unref(style);
+	}
+	g_free(name);
+	c->typing_timeout = 0;
+	return FALSE;
+}
 
 void show_conv(struct conversation *c)
 {

@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Clone thats good for the soul! 
 
-version 0.53:
+version 0.53 (02/28/2002):
 	* Updated Polish Translation (thanks Przemyslaw Sulek)
 	* Slovak translation added (Thanks Daniel Rezny)
 	* Minor bug fixes re: queued away messages
@@ -11,6 +11,9 @@ version 0.53:
 	* Editable buddy pounces (Thanks Jason Willis)
 	* Server side buddy lists in Oscar (Thanks KingAnt :-))
 	* Fix for the chatlist plugin
+	* Typing Notification (AIM Direct Connect, Yahoo, MSN)
+	* IM Images (Receive Only)
+	* Prettier GtkImHtml selection
 
 version 0.52 (02/17/2002):
 	* Better buddy icon transparency (thanks SeanEgan)

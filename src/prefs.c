@@ -183,6 +183,7 @@ static void general_page()
 	GtkWidget *sep;
 	GtkWidget *idle;
 	GtkWidget *opt;
+	GtkWidget *typingbutton;
 
 	parent = prefdialog->parent;
 	gtk_widget_destroy(prefdialog);
@@ -226,7 +227,15 @@ static void general_page()
 		misc_options ^= OPT_MISC_DEBUG;
 	debugbutton = gaim_button(_("Show Debug Window"), &misc_options, OPT_MISC_DEBUG, mbox);
 	gtk_signal_connect(GTK_OBJECT(debugbutton), "destroy", GTK_SIGNAL_FUNC(destdeb), 0);
+	
+	/* Preferences should be positive */
+	typingbutton = gaim_button(_("Notify buddies that you are typing to them"), &misc_options,
+				   OPT_MISC_STEALTH_TYPING, mbox);
 
+	/* So we have to toggle it */
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(typingbutton), !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(typingbutton)));
+	misc_options ^= OPT_MISC_STEALTH_TYPING;
+	
 	frame = gtk_frame_new(_("Report Idle Times"));
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 5);
 	gtk_widget_show(frame);

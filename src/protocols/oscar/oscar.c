@@ -101,6 +101,15 @@ struct oscar_data {
 	gboolean killme;
 	gboolean icq;
 	GSList *evilhack;
+
+	struct {
+		guint maxbuddies; /* max users you can watch */
+		guint maxwatchers; /* max users who can watch you */
+		guint maxpermits; /* max users on permit list */
+		guint maxdenies; /* max users on deny list */
+		guint maxsiglen; /* max size (bytes) of profile */
+		guint maxawaymsglen; /* max size (bytes) of posted away message */
+	} rights;
 };
 
 struct create_room {
@@ -244,6 +253,7 @@ static int conninitdone_admin    (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chat     (aim_session_t *, aim_frame_t *, ...);
 static int conninitdone_chatnav  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_msgerr     (aim_session_t *, aim_frame_t *, ...);
+static int gaim_parse_locaterights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_buddyrights(aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_locerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icbm_param_info  (aim_session_t *, aim_frame_t *, ...);
@@ -260,6 +270,7 @@ static int gaim_ssi_parselist    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_initiate(aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_incoming(aim_session_t *, aim_frame_t *, ...);
 static int gaim_directim_typing  (aim_session_t *, aim_frame_t *, ...);
+static int gaim_update_ui       (aim_session_t *, aim_frame_t *, ...);
 
 static char *msgerrreason[] = {
 	"Invalid error",
@@ -309,6 +320,7 @@ static void gaim_directim_disconnect(aim_session_t *sess, aim_conn_t *conn) {
 	g_snprintf(buf, sizeof buf, _("Direct IM with %s closed"), sn);
 	if ((cnv = find_conversation(sn)))
 		write_to_conv(cnv, buf, WFLAG_SYSTEM, NULL, time(NULL), -1);
+	update_progress(cnv, 100);
 
 	g_free(dim); /* I guess? I don't see it anywhere else... -- mid */
 	g_free(sn);
@@ -660,6 +672,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, 0x0009, 0x0003, gaim_bosrights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ACK, AIM_CB_ACK_ACK, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_REDIRECT, gaim_handle_redirect, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_RIGHTSINFO, gaim_parse_locaterights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_RIGHTSINFO, gaim_parse_buddyrights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING, gaim_parse_oncoming, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING, gaim_parse_offgoing, 0);
@@ -1108,22 +1121,23 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
-	aim_userinfo_t *info;
-	time_t time_idle;
-	int type = 0;
 	struct gaim_connection *gc = sess->aux_data;
 	struct oscar_data *od = gc->proto_data;
+	aim_userinfo_t *info;
+	time_t time_idle = 0, signon = 0;
+	int type = 0;
+	int caps = 0;
 	char *tmp;
-	int caps;
 
 	va_list ap;
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	caps = info->capabilities;
+	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
+		caps = info->capabilities;
 
-	if (!od->icq) {
+	if (!od->icq && (info->present & AIM_USERINFO_PRESENT_FLAGS)) {
 		if (info->flags & AIM_FLAG_ACTIVEBUDDY)
 			type |= UC_AB;
 		if (info->flags & AIM_FLAG_UNCONFIRMED)
@@ -1136,29 +1150,31 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			type |= UC_NORMAL;
 		if (info->flags & AIM_FLAG_AWAY)
 			type |= UC_UNAVAILABLE;
-	} else {
-		if (info->icqinfo.status) {
-			type = (info->icqinfo.status << 6);
-			if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
-				type |= UC_UNAVAILABLE;
-		}
-		if (caps & AIM_CAPS_ICQ)
-			caps ^= AIM_CAPS_ICQ;
-		debug_printf("icq status: %d\n", info->icqinfo.status);
 	}
 
-	if (info->idletime) {
+	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
+		type = (info->icqinfo.status << 6);
+		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT))
+			type |= UC_UNAVAILABLE;
+	}
+
+	if (caps & AIM_CAPS_ICQ)
+		caps ^= AIM_CAPS_ICQ;
+
+	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
 		time(&time_idle);
 		time_idle -= info->idletime*60;
-	} else
-		time_idle = 0;
+	}
+
+	if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
+		signon = time(NULL) - info->sessionlen;
 
 	tmp = g_strdup(normalize(gc->username));
 	if (!strcmp(tmp, normalize(info->sn)))
 		g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", info->sn);
 	g_free(tmp);
 
-	serv_got_update(gc, info->sn, 1, info->warnlevel/10, time(NULL) - info->sessionlen,
+	serv_got_update(gc, info->sn, 1, info->warnlevel/10, signon,
 			time_idle, type, caps);
 
 	return 1;
@@ -1246,7 +1262,8 @@ static int accept_direct_im(gpointer w, struct ask_direct *d) {
 				gaim_directim_incoming, 0);
 	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_directim_typing, 0);
-
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
+			        gaim_update_ui, 0);
 	for (i = 0; i < (int)strlen(d->ip); i++) {
 		if (d->ip[i] == ':') {
 			port = atoi(&(d->ip[i+1]));
@@ -1668,7 +1685,7 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GSList *l = od->evilhack;
 	gboolean evilhack = FALSE;
 	va_list ap;
-	char *asc;
+	gchar *membersince = NULL, *onlinesince = NULL, *idle = NULL;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
@@ -1685,23 +1702,38 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 			"<IMG SRC=\"admin_icon.gif\"> : Administrator <br>"
 			"<IMG SRC=\"ab_icon.gif\"> : ActiveBuddy Interactive Agent<br>"));
 
-	if (info->membersince)
-		asc = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
-				asctime(localtime(&info->membersince)));
-	else
-		asc = g_strdup("");
+	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
+		onlinesince = g_strdup_printf("Online Since : <B>%s</B><BR>\n",
+					asctime(localtime(&info->onlinesince)));
+	}
+
+	if (info->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
+		membersince = g_strdup_printf("Member Since : <B>%s</B><BR>\n",
+					asctime(localtime(&info->membersince)));
+	}
+
+	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
+		idle = g_strdup_printf("Idle : <B>%d minutes</B>",
+					info->idletime);
+	} else
+		idle = g_strdup("Idle: <B>Active</B>");
+
 	g_snprintf(header, sizeof header,
 			_("Username : <B>%s</B>  %s <BR>\n"
-			"%s"
 			"Warning Level : <B>%d %%</B><BR>\n"
-			"Online Since : <B>%s</B><BR>\n"
-			"Idle Minutes : <B>%d</B>\n<BR>\n<HR><BR>\n"),
+			"%s"
+			"%s"
+			"%s<BR>\n"
+			"<HR><BR>\n"),
 			info->sn, images(info->flags),
-			asc,
 			info->warnlevel/10,
-			asctime(localtime(&info->onlinesince)),
-			info->idletime);
-	g_free(asc);
+			onlinesince ? onlinesince : "",
+			membersince ? membersince : "",
+			idle ? idle : "");
+
+	g_free(onlinesince);
+	g_free(membersince);
+	g_free(idle);
 
 	while (l) {
 		char *x = l->data;
@@ -2040,20 +2072,10 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
-	struct gaim_connection *gc = sess->aux_data;
 
 	aim_reqpersonalinfo(sess, fr->conn);
 	aim_bos_reqlocaterights(sess, fr->conn);
-	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
 	aim_bos_reqbuddyrights(sess, fr->conn);
-
-	account_online(gc);
-	serv_finish_login(gc);
-
-	if (bud_list_cache_exists(gc))
-		do_import(gc, NULL);
-
-	debug_printf("buddy list loaded\n");
 
 	aim_reqicbmparams(sess);
 
@@ -2133,10 +2155,31 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-/* XXX this is frivelous... do you really want to know this info? */
+static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	va_list ap;
+	fu16_t maxsiglen;
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+
+	va_start(ap, fr);
+	maxsiglen = va_arg(ap, int);
+	va_end(ap);
+
+	debug_printf("locate rights: max sig len = %d\n", maxsiglen);
+
+	odata->rights.maxsiglen = odata->rights.maxawaymsglen = (guint)maxsiglen;
+
+	aim_bos_setprofile(sess, fr->conn, gc->user->user_info, NULL, gaim_caps);
+
+	return 1;
+}
+
 static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t maxbuddies, maxwatchers;
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxbuddies = (fu16_t)va_arg(ap, unsigned int);
@@ -2145,12 +2188,17 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
 
+	odata->rights.maxbuddies = (guint)maxbuddies;
+	odata->rights.maxwatchers = (guint)maxwatchers;
+
 	return 1;
 }
 
 static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t maxpermits, maxdenies;
 	va_list ap;
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t)va_arg(ap, unsigned int);
@@ -2158,6 +2206,17 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	debug_printf("BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
+
+	odata->rights.maxpermits = (guint)maxpermits;
+	odata->rights.maxdenies = (guint)maxdenies;
+
+	account_online(gc);
+	serv_finish_login(gc);
+
+	if (bud_list_cache_exists(gc))
+		do_import(gc, NULL);
+
+	debug_printf("buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
 
@@ -2344,6 +2403,23 @@ static char *oscar_name() {
 	return "Oscar";
 }
 
+static void oscar_send_typing_stopped(struct gaim_connection *gc, char *name) {
+        struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim = find_direct_im(odata, name);
+	if (!dim)
+		return;
+	aim_send_typing(odata->sess, dim->conn, FALSE);
+}
+
+static int oscar_send_typing(struct gaim_connection *gc, char *name) {
+	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
+	struct direct_im *dim = find_direct_im(odata, name);
+	if (!dim)
+		return;
+	aim_send_typing(odata->sess, dim->conn, TRUE);
+	return 0;
+}
+
 static int oscar_send_im(struct gaim_connection *gc, char *name, char *message, int imflags) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
@@ -2447,33 +2523,63 @@ static void oscar_set_idle(struct gaim_connection *g, int time) {
 
 static void oscar_set_info(struct gaim_connection *g, char *info) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
-	char inforeal[1025], away[1025];
-	g_snprintf(inforeal, sizeof(inforeal), "%s", info);
-	if (g->away)
-		g_snprintf(away, sizeof(away), "%s", g->away);
-	if (strlen(info) > 1024)
-		do_error_dialog("Maximum info length (1024) exceeded, truncating", "Info Too Long");
-	aim_bos_setprofile(odata->sess, odata->conn, inforeal, g->away ? NULL : "", gaim_caps);
+	gchar *inforeal;
+
+	if (odata->rights.maxsiglen == 0)
+		do_error_dialog("oscar_set_info called before locate rights received", "Protocol Error");
+
+	if (strlen(info) > odata->rights.maxsiglen) {
+		gchar *errstr;
+
+		errstr = g_strdup_printf("Maximum info length of %d bytes exceeded, truncating", odata->rights.maxsiglen);
+
+		do_error_dialog(errstr, "Info Too Long");
+
+		g_free(errstr);
+	}
+
+	inforeal = g_strndup(info, odata->rights.maxsiglen);
+
+	aim_bos_setprofile(odata->sess, odata->conn, inforeal, NULL, gaim_caps);
+
+	g_free(inforeal);
+
+	return;
 }
 
-static void oscar_set_away(struct gaim_connection *gc, char *state, char *message) {
-	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
-	char away[1025];
-	if (!od->icq) {
-		if (message)
-			g_snprintf(away, sizeof(away), "%s", message);
-		aim_bos_setprofile(od->sess, od->conn, NULL, message ? away : "", gaim_caps);
-		if (gc->away)
-			g_free (gc->away);
-		gc->away = NULL;
-		if (message) {
-			if (strlen(message) > sizeof(away)-1)
-				do_error_dialog("Maximum away length exceeded (1024), truncating",
-						"Info Too Long");
-			gc->away = g_strdup (message);
-		}
+static void oscar_set_away_aim(struct gaim_connection *gc, struct oscar_data *od, const char *message)
+{
+
+	if (od->rights.maxawaymsglen == 0)
+		do_error_dialog("oscar_set_away_aim called before locate rights received", "Protocol Error");
+
+	if (gc->away)
+		g_free(gc->away);
+	gc->away = NULL;
+
+	if (!message) {
+		aim_bos_setprofile(od->sess, od->conn, NULL, "", gaim_caps);
 		return;
 	}
+
+	if (strlen(message) > od->rights.maxawaymsglen) {
+		gchar *errstr;
+
+		errstr = g_strdup_printf("Maximum away message length of %d bytes exceeded, truncating", od->rights.maxawaymsglen);
+
+		do_error_dialog(errstr, "Away Message Too Long");
+
+		g_free(errstr);
+	}
+
+	gc->away = g_strndup(message, od->rights.maxawaymsglen);
+	aim_bos_setprofile(od->sess, od->conn, NULL, gc->away, gaim_caps);
+
+	return;
+}
+
+static void oscar_set_away_icq(struct gaim_connection *gc, struct oscar_data *od, const char *state, const char *message)
+{
 
 	if (gc->away)
 		gc->away = NULL;
@@ -2506,6 +2612,20 @@ static void oscar_set_away(struct gaim_connection *gc, char *state, char *messag
 			aim_setextstatus(od->sess, od->conn, AIM_ICQ_STATE_NORMAL);
 		}
 	}
+
+	return;
+}
+
+static void oscar_set_away(struct gaim_connection *gc, char *state, char *message)
+{
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+
+	if (od->icq)
+		oscar_set_away_icq(gc, od, state, message);
+	else
+		oscar_set_away_aim(gc, od, message);
+
+	return;
 }
 
 static void oscar_warn(struct gaim_connection *g, char *name, int anon) {
@@ -3002,6 +3122,31 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 				gaim_directim_incoming, 0);
 	aim_conn_addhandler(sess, newconn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING,
 				gaim_directim_typing, 0);
+	aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE,
+			    gaim_update_ui, 0);
+	return 1;
+}
+
+static int gaim_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
+	va_list ap;
+	char *sn;
+	double percent;
+	struct gaim_connection *gc = sess->aux_data;
+	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
+	struct conversation *c;
+	struct direct_im *dim;
+
+	va_start(ap, fr);
+	sn = va_arg(ap, char *);
+	percent = va_arg(ap, double);
+	va_end(ap);
+	
+	dim = find_direct_im(od, sn);
+	gaim_input_remove(dim->watcher);   /* Otherwise, the callback will callback */
+	if ((c = find_conversation(sn)))
+		update_progress(c, percent);
+	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
+				      oscar_callback, dim->conn);
 
 	return 1;
 }
@@ -3009,16 +3154,18 @@ static int gaim_directim_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *msg, *sn;
+	int len;
 	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
 	msg = va_arg(ap, char *);
+	len = va_arg(ap, int);
 	va_end(ap);
 
 	debug_printf("Got DirectIM message from %s\n", sn);
 
-	serv_got_im(gc, sn, msg, 0, time(NULL), -1);
+	serv_got_im(gc, sn, msg, 0, time(NULL), len);
 
 	return 1;
 }
@@ -3026,14 +3173,20 @@ static int gaim_directim_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_directim_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	char *sn;
+	int typing;
+	struct gaim_connection *gc = sess->aux_data;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
+	typing = va_arg(ap, int);
 	va_end(ap);
 
-	/* I had to leave this. It's just too funny. It reminds me of my sister. */
-	debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
-
+	if (typing) {
+		/* I had to leave this. It's just too funny. It reminds me of my sister. */
+		debug_printf("ohmigod! %s has started typing (DirectIM). He's going to send you a message! *squeal*\n", sn);
+		serv_got_typing(gc,sn,0);
+	} else
+		serv_got_typing_stopped(gc,sn);
 	return 1;
 }
 
@@ -3364,6 +3517,8 @@ void oscar_init(struct prpl *ret) {
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;
+	ret->send_typing = oscar_send_typing;
+	ret->send_typing_stopped = oscar_send_typing_stopped;
 	ret->set_info = oscar_set_info;
 	ret->get_info = oscar_get_info;
 	ret->set_away = oscar_set_away;

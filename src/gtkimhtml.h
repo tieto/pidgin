@@ -48,6 +48,8 @@ struct _GtkIMHtml {
 	GdkFont *default_font;
 	GdkColor *default_fg_color;
 	GdkColor *default_bg_color;
+	GdkColor *default_hl_color;
+	GdkColor *default_hlfg_color;
 
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
@@ -55,6 +57,7 @@ struct _GtkIMHtml {
 	GList *bits;
 	GList *click;
 	struct _GtkIMHtmlBit *tip_bit;
+	GList *im_images;
 	GtkWidget *tip_window;
 	guint tip_timer;
 

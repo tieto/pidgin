@@ -153,7 +153,10 @@ struct conversation {
 	GtkWidget *sep2;
 	GtkWidget *menu;
 	GtkWidget *check;
+	GtkWidget *progress;
 	gint unseen;
+	guint typing_timeout;
+	time_t type_again;
 
 	/* stuff used just for chat */
         GList *in_room;
@@ -399,6 +402,9 @@ extern void update_convo_color();
 extern void update_convo_font();
 extern void set_hide_icons();
 extern void set_convo_titles();
+extern void update_progress(struct conversation *, float);
+extern void show_typing(struct conversation *);
+extern gboolean reset_typing(char *);
 
 /* Functions in dialogs.c */
 extern void alias_dialog_bud(struct buddy *);

@@ -148,6 +148,7 @@ struct addbp {
 	GtkWidget *p_signon;
 	GtkWidget *p_unaway;
 	GtkWidget *p_unidle;
+	GtkWidget *p_typing;
 	GtkWidget *save;
 	GtkWidget *menu;
 	GtkWidget *sound;
@@ -641,9 +642,10 @@ void show_ee_dialog(int ee)
 		label = gtk_label_new("You should be me.  I'm so cute!");
 	else if (ee == 3)
 		label = gtk_label_new("Now that's what I like!");
-	else
+	else if (ee == 4)
 		label = gtk_label_new("Ahh, and excellent choice!");
-
+	else
+		label = gtk_label_new("Everytime you click my name, an angel gets its wings.");
 	gtk_widget_show(label);
 	gtk_widget_show(ok);
 
@@ -1124,6 +1126,9 @@ void do_new_bp(GtkWidget *w, struct addbp *b)
 
 	if (GTK_TOGGLE_BUTTON(b->p_unidle)->active)
 		bp->options |= OPT_POUNCE_UNIDLE;
+	
+	if (GTK_TOGGLE_BUTTON(b->p_typing)->active)
+		bp->options |= OPT_POUNCE_TYPING;
 
 	if (GTK_TOGGLE_BUTTON(b->save)->active)
 		bp->options |= OPT_POUNCE_SAVE;
@@ -1294,10 +1299,11 @@ void show_new_bp(char *name, struct gaim_connection *gc, int idle, int away, str
 				           (edit_bp->options & OPT_POUNCE_UNIDLE) ? TRUE : FALSE);
 	gtk_table_attach(GTK_TABLE(table), b->p_unidle, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
 	gtk_widget_show(b->p_unidle);
+	
+	b->p_typing = gtk_check_button_new_with_label(_("Pounce when buddy is typing to you"));
+	gtk_table_attach(GTK_TABLE(table), b->p_typing,1,2,1,2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
+	gtk_widget_show(b->p_typing);
 
-	label = gtk_label_new(NULL);
-	gtk_table_attach(GTK_TABLE(table), label, 1, 2, 1, 2, GTK_FILL | GTK_EXPAND, 0, 0, 0);
-	gtk_widget_show(label);
 	/* </pounce type="when"> */
 	
 	/* <pounce type="action"> */

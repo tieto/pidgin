@@ -109,24 +109,24 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 }
 
 /**
- * aim_send_im_direct - send IM client-to-client over established connection
+ * aim_send_typing - send client-to-client typing notification over established connection
  * @sess: session to conn
  * @conn: directim connection
- * @msg: null-terminated string to send; if this is NULL, it will send a "typing" notice. 
+ * @typing: If true, notify user has started typing; if false, notify user has stopped.
  *
- * Call this just like you would aim_send_im, to send a directim. You
- * _must_ have previously established the directim connection.
+ * The connection must have been previously established.
  */
-faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const char *msg)
+faim_export int aim_send_typing(aim_session_t *sess, aim_conn_t *conn, int typing)
 {
-	struct aim_directim_intdata *intdata = (struct aim_directim_intdata *)conn->internal;
+	
+struct aim_directim_intdata *intdata = (struct aim_directim_intdata *)conn->internal;
 	aim_frame_t *fr;
 	aim_bstream_t hdrbs; /* XXX this should be within aim_frame_t */
 
 	if (!sess || !conn || (conn->type != AIM_CONN_TYPE_RENDEZVOUS)) 
 		return -EINVAL; 
 
-	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, strlen(msg))))
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, 0)))
 	       return -ENOMEM;	
 
 	memcpy(fr->hdr.oft.magic, "ODC2", 4);
@@ -147,18 +147,18 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
-	aimbs_put32(&hdrbs, strlen(msg));
+	aimbs_put32(&hdrbs, 0x00000000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 
-	/* flags -- 0x000e for "typing", 0x0000 for message */
-	aimbs_put16(&hdrbs, msg ? 0x0000 : 0x000e);
+	/* flags -- 0x000e for "started typing", 0x0002 for "stopped typing */
+	aimbs_put16(&hdrbs, ( typing ? 0x000e : 0x0002));
 
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_putraw(&hdrbs, sess->sn, strlen(sess->sn));
-
+	
 	aim_bstream_setpos(&hdrbs, 52); /* bleeehh */
 
 	aimbs_put8(&hdrbs, 0x00);
@@ -172,22 +172,89 @@ faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const 
 
 	/* end of hdr2 */
 
-	if (msg) {
-#if 0 /* XXX this is how you send buddy icon info... */	
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0008);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x000c);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0000);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x1466);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0001);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x2e0f);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x393e);
-		i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0xcac8);
-#endif
-		aimbs_putraw(&fr->data, msg, strlen(msg));
-	} 
-
 	aim_tx_enqueue(sess, fr);
 
+	return 0;
+} 
+
+/**
+ * aim_send_im_direct - send IM client-to-client over established connection
+ * @sess: session to conn
+ * @conn: directim connection
+ * @msg: null-terminated string to send. 
+ * 
+ * Call this just like you would aim_send_im, to send a directim. You
+ * _must_ have previously established the directim connection.
+ */
+faim_export int aim_send_im_direct(aim_session_t *sess, aim_conn_t *conn, const char *msg)
+{
+	struct aim_directim_intdata *intdata = (struct aim_directim_intdata *)conn->internal;
+	aim_frame_t *fr;
+	aim_bstream_t hdrbs; /* XXX this should be within aim_frame_t */
+
+	if (!sess || !conn || !msg || (conn->type != AIM_CONN_TYPE_RENDEZVOUS)) 
+		return -EINVAL; 
+
+	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_OFT, 0x01, strlen(msg))))
+		return -ENOMEM;	
+
+	memcpy(fr->hdr.oft.magic, "ODC2", 4);
+	
+	fr->hdr.oft.hdr2len = 0x44;
+	
+	if (!(fr->hdr.oft.hdr2 = calloc(1, fr->hdr.oft.hdr2len))) { 
+		aim_frame_destroy(fr);
+		return -ENOMEM;
+	}
+	
+	aim_bstream_init(&hdrbs, fr->hdr.oft.hdr2, fr->hdr.oft.hdr2len);
+	
+	aimbs_put16(&hdrbs, 0x0006);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_putraw(&hdrbs, intdata->cookie, 8);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put32(&hdrbs, strlen(msg));
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	
+	/* flags -- 0x000e for "started typing", 0x0002 for "stopped typing, 0x0000 for message */
+	aimbs_put16(&hdrbs, 0x0000);
+	
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_putraw(&hdrbs, sess->sn, strlen(sess->sn));
+	
+	aim_bstream_setpos(&hdrbs, 52); /* bleeehh */
+	
+	aimbs_put8(&hdrbs, 0x00);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	aimbs_put16(&hdrbs, 0x0000);
+	
+	/* end of hdr2 */
+	
+#if 0 /* XXX this is how you send buddy icon info... */	
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0008);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x000c);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0000);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x1466);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x0001);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x2e0f);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0x393e);
+	i += aimutil_put16(newpacket->hdr.oft.hdr2+i, 0xcac8);
+#endif
+	aimbs_putraw(&fr->data, msg, strlen(msg));
+	
+	aim_tx_enqueue(sess, fr);
+	
 	return 0;
 } 
 
@@ -1021,26 +1088,45 @@ static int handlehdr_directim(aim_session_t *sess, aim_conn_t *conn, fu8_t *hdr)
 		int ret = 0;
 
 		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
-			ret = userfunc(sess, &fr, snptr);
+			ret = userfunc(sess, &fr, snptr, 1);
+
+		return ret;
+	
+	} else if (flags == 0x0002) {
+		int ret = 0;
+		
+		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
+			ret = userfunc(sess, &fr, snptr, 0);
 
 		return ret;
 
 	} else if ((flags == 0x0000) && payloadlength) { 
-		char *msg;
+		char *msg, *msg2;
 		int ret = 0;
+		int recvd = 0;
+		int i;
 
 		if (!(msg = calloc(1, payloadlength+1)))
 			return -1;
-
-		if (aim_recv(conn->fd, msg, payloadlength) < payloadlength) {
-			free(msg);
-			return -1;
+		msg2 = msg;
+		
+		while (payloadlength - recvd) {
+			if (payloadlength - recvd >= 1024)
+				i = aim_recv(conn->fd, msg2, 1024);
+			else 
+				i = aim_recv(conn->fd, msg2, payloadlength - recvd);
+			if (i == 0) {
+				free(msg);
+				return -1;
+			}
+			recvd = recvd + i;
+			msg2 = msg2 + i;
+			if ((userfunc=aim_callhandler(sess, conn, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_DOWNLOADIMAGE)))
+				userfunc(sess, &fr, snptr, (double)recvd / payloadlength);
 		}
-
-		msg[payloadlength] = '\0';
-
+		
 		if ( (userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMINCOMING)) )
-			ret = userfunc(sess, &fr, snptr, msg);
+			ret = userfunc(sess, &fr, snptr, msg, payloadlength);
 
 		free(msg);
 

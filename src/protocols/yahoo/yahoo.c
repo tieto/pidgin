@@ -48,7 +48,7 @@ extern char *yahoo_crypt(char *, char *);
 #include "pixmaps/status-here.xpm"
 #include "pixmaps/status-idle.xpm"
 
-#undef YAHOO_DEBUG
+#define YAHOO_DEBUG
 
 #define USEROPT_MAIL 0
 
@@ -56,6 +56,11 @@ extern char *yahoo_crypt(char *, char *);
 #define YAHOO_PAGER_HOST "cs.yahoo.com"
 #define USEROPT_PAGERPORT 4
 #define YAHOO_PAGER_PORT 5050
+
+/* I just made these values up.  Anyone know what they should be?
+ * -SeanEgan */
+#define YAHOO_TYPING_RECV_TIMEOUT 10
+#define YAHOO_TYPING_SEND_TIMEOUT 8
 
 enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_LOGON = 1,
@@ -92,6 +97,7 @@ enum yahoo_service { /* these are easier to see in hex */
 	YAHOO_SERVICE_GAMELOGOFF,
 	YAHOO_SERVICE_GAMEMSG = 0x2a,
 	YAHOO_SERVICE_FILETRANSFER = 0x46,
+	YAHOO_SERVICE_TYPING = 0x4B, /* may have other uses too */
 	YAHOO_SERVICE_LIST = 0x55,
 	YAHOO_SERVICE_ADDBUDDY = 0x83,
 	YAHOO_SERVICE_REMBUDDY = 0x84
@@ -111,7 +117,8 @@ enum yahoo_status {
 	YAHOO_STATUS_INVISIBLE = 12,
 	YAHOO_STATUS_CUSTOM = 99,
 	YAHOO_STATUS_IDLE = 999,
-	YAHOO_STATUS_OFFLINE = 0x5a55aa56 /* don't ask */
+	YAHOO_STATUS_OFFLINE = 0x5a55aa56, /* don't ask */
+	YAHOO_STATUS_TYPING = 0x16
 };
 
 struct yahoo_data {
@@ -459,6 +466,24 @@ static void yahoo_process_list(struct gaim_connection *gc, struct yahoo_packet *
 		do_export(gc);
 }
 
+static void yahoo_process_typing(struct gaim_connection *gc, struct yahoo_packet *pkt)
+{
+	char *msg = NULL;
+	char *from = NULL;
+	time_t tm = time(0);
+	GSList *l = pkt->hash;
+
+	while (l) {
+		struct yahoo_pair *pair = l->data;
+		if (pair->key == 4)
+			from = pair->value;
+		if (pair->key == 49)
+			msg = pair->value;
+		l = l->next;
+	}
+	serv_got_typing(gc, from, YAHOO_TYPING_RECV_TIMEOUT);
+}
+
 static void yahoo_process_message(struct gaim_connection *gc, struct yahoo_packet *pkt)
 {
 	char *msg = NULL;
@@ -589,6 +614,9 @@ static void yahoo_packet_process(struct gaim_connection *gc, struct yahoo_packet
 	case YAHOO_SERVICE_ISAWAY:
 	case YAHOO_SERVICE_ISBACK:
 		yahoo_process_status(gc, pkt);
+		break;
+	case YAHOO_SERVICE_TYPING:
+		yahoo_process_typing(gc, pkt);
 		break;
 	case YAHOO_SERVICE_MESSAGE:
 	case YAHOO_SERVICE_GAMEMSG:
@@ -886,6 +914,25 @@ static int yahoo_send_im(struct gaim_connection *gc, char *who, char *what, int 
 	return 1;
 }
 
+int yahoo_send_typing(struct gaim_connection *gc, char *who)
+{
+	struct yahoo_data *yd = gc->proto_data;
+	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_TYPING, YAHOO_STATUS_TYPING, 0);//x6431de4f);
+
+	yahoo_packet_hash(pkt, 49, "TYPING");
+	yahoo_packet_hash(pkt, 1, gc->displayname);
+	yahoo_packet_hash(pkt, 14, " ");
+	yahoo_packet_hash(pkt, 13, "1");
+	yahoo_packet_hash(pkt, 5, who);
+	yahoo_packet_hash(pkt, 1002, "1");
+
+	yahoo_send_packet(yd, pkt);
+
+	yahoo_packet_free(pkt);
+
+	return YAHOO_TYPING_SEND_TIMEOUT;
+}
+
 static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
@@ -1057,6 +1104,7 @@ void yahoo_init(struct prpl *ret) {
 	ret->keepalive = yahoo_keepalive;
 	ret->add_buddy = yahoo_add_buddy;
 	ret->remove_buddy = yahoo_remove_buddy;
+	ret->send_typing = yahoo_send_typing;
 
 	my_protocol = ret;
 }

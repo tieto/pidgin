@@ -142,7 +142,19 @@ void serv_finish_login(struct gaim_connection *gc)
 	update_keepalive(gc, TRUE);
 }
 
+/* This should return the elapsed time in seconds in which Gaim will not send
+ * typing notifications.
+ * if it returns zero, it will not send any more typing notifications */
+int serv_send_typing(struct gaim_connection *g, char *name) {
+	if (g && g->prpl && g->prpl->send_typing)
+		return g->prpl->send_typing(g, name);
+	else return 0;
+}
 
+void serv_send_typing_stopped(struct gaim_connection *g, char *name) {
+	if (g && g->prpl && g->prpl->send_typing_stopped)
+		g->prpl->send_typing_stopped(g, name);
+}
 
 int serv_send_im(struct gaim_connection *gc, char *name, char *message, int flags)
 {
@@ -153,6 +165,7 @@ int serv_send_im(struct gaim_connection *gc, char *name, char *message, int flag
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
 
+	serv_send_typing_stopped(gc, name);
 	return val;
 }
 
@@ -657,7 +670,7 @@ void serv_got_update(struct gaim_connection *gc, char *name, int loggedin, int e
 {
 	struct buddy *b = find_buddy(gc, name);
 
-	if (gc->prpl->options & OPT_PROTO_CORRECT_TIME) {
+	if (signon && (gc->prpl->options & OPT_PROTO_CORRECT_TIME)) {
 		char *tmp = g_strdup(normalize(name));
 		if (!g_strcasecmp(tmp, normalize(gc->username))) {
 			gc->evil = evil;
@@ -748,7 +761,29 @@ void serv_got_eviled(struct gaim_connection *gc, char *name, int lev)
 	do_error_dialog(buf2, _("Warned"));
 }
 
+void serv_got_typing(struct gaim_connection *gc, char *name, int timeout) {
+	struct conversation *cnv = find_conversation(name);
+	 if (cnv) {
+		 set_convo_gc(cnv, gc);
+		 show_typing(cnv);
+	} else return;
+	 plugin_event(event_got_typing, gc, name, 0, 0);
+	 do_pounce(gc, name, OPT_POUNCE_TYPING);
+	 if (timeout > 0) {
+		 if (cnv->typing_timeout)
+			 gtk_timeout_remove (cnv->typing_timeout);
+		 cnv->typing_timeout = gtk_timeout_add(timeout * 1000,(GtkFunction)reset_typing,
+						       g_strdup(name));
+	 }
+}
 
+void serv_got_typing_stopped(struct gaim_connection *gc, char *name) {
+	struct conversation *c = find_conversation(name);
+	if (c->typing_timeout) {
+		gtk_timeout_remove (c->typing_timeout);
+	}
+	reset_typing(g_strdup(name));
+}
 
 static void close_invite(GtkWidget *w, GtkWidget *w2)
 {

@@ -360,6 +360,9 @@ char *event_name(enum gaim_event event)
 	case event_chat_send_invite:
 		sprintf(buf, "event_chat_send_invite");
 		break;
+	case event_got_typing:
+		sprintf(buf, "event_got_typing");
+		break;
 	default:
 		sprintf(buf, "event_unknown");
 		break;
@@ -373,7 +376,7 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 		return;
 
 	switch (event) {
-		case event_quit:
+	        case event_quit:
 			debug_printf("%s\n", event_name(event));
 			break;
 		case event_signon:
@@ -392,9 +395,10 @@ static void debug_event(enum gaim_event event, void *arg1, void *arg2, void *arg
 		case event_buddy_away:
 		case event_buddy_back:
 		case event_buddy_idle:
-		case event_buddy_unidle:
-		case event_set_info:
-			debug_printf("%s: %s %s\n", event_name(event),
+	        case event_buddy_unidle:
+	        case event_set_info:
+	        case event_got_typing:
+		debug_printf("%s: %s %s\n", event_name(event),
 					((struct gaim_connection *)arg1)->username, (char *)arg2);
 			break;
 		case event_chat_leave:
@@ -512,6 +516,7 @@ int plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void
 			case event_chat_leave:
 			case event_set_info:
 			case event_draw_menu:
+			case event_got_typing:
 				two = g->function;
 				two(arg1, arg2, g->data);
 				break;

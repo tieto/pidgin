@@ -24,6 +24,7 @@
 #endif
 #include "gtkimhtml.h"
 #include <X11/Xlib.h>
+#include <stdlib.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 #include <string.h>
@@ -33,6 +34,11 @@
 #ifdef HAVE_LANGINFO_CODESET
 #include <langinfo.h>
 #include <locale.h>
+#endif
+
+#if USE_PIXBUF
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk-pixbuf/gdk-pixbuf-loader.h>
 #endif
 
 #if GTK_CHECK_VERSION(1,3,0)
@@ -248,10 +254,28 @@ gtk_imhtml_remove_smileys (GtkIMHtml *imhtml)
 	imhtml->smiley_data = gtk_smiley_tree_new ();
 }
 
+#if USE_PIXBUF
+struct im_image {
+	gchar *filename;
+	
+	gint len;
+	gpointer data;
+	GdkPixbuf *pb;
+
+	gint x,y;
+	gint width,height;
+	GtkIMHtml *imhtml;
+	GtkIMHtmlBit *bit;
+};
+#endif
+
 struct _GtkIMHtmlBit {
 	gint type;
 
 	gchar *text;
+#if USE_PIXBUF
+	struct im_image *img;
+#endif
 	GdkPixmap *pm;
 	GdkBitmap *bm;
 
@@ -337,7 +361,11 @@ gtk_imhtml_destroy (GtkObject *object)
 		gdk_color_free (imhtml->default_fg_color);
 	if (imhtml->default_bg_color)
 		gdk_color_free (imhtml->default_bg_color);
-
+	if (imhtml->default_hl_color)
+		gdk_color_free (imhtml->default_hl_color);
+	if (imhtml->default_hlfg_color)
+		gdk_color_free (imhtml->default_hlfg_color);
+	
 	gdk_cursor_destroy (imhtml->hand_cursor);
 	gdk_cursor_destroy (imhtml->arrow_cursor);
 
@@ -409,6 +437,8 @@ gtk_imhtml_realize (GtkWidget *widget)
 
 	imhtml->default_fg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_NORMAL]);
 	imhtml->default_bg_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->base [GTK_STATE_NORMAL]);
+	imhtml->default_hl_color = gdk_color_copy (&GTK_WIDGET (imhtml)->style->bg [GTK_STATE_SELECTED]);
+	imhtml->default_hlfg_color=gdk_color_copy (&GTK_WIDGET (imhtml)->style->fg [GTK_STATE_SELECTED]);
 
 	gdk_window_show (GTK_LAYOUT (imhtml)->bin_window);
 }
@@ -441,6 +471,7 @@ draw_text (GtkIMHtml        *imhtml,
 	GdkWindow *window = GTK_LAYOUT (imhtml)->bin_window;
 	gfloat xoff, yoff;
 	GdkColor *bg, *fg;
+	gchar *start = NULL, *end = NULL;
 
 	if (GTK_LAYOUT (imhtml)->freeze_count)
 		return;
@@ -481,7 +512,6 @@ draw_text (GtkIMHtml        *imhtml,
 
 	if (line->selected) {
 		gint width, x;
-		gchar *start, *end;
 		GdkColor col;
 
 		if ((line->sel_start > line->sel_end) && (line->sel_end != NULL)) {
@@ -498,18 +528,17 @@ draw_text (GtkIMHtml        *imhtml,
 			x = gdk_text_width (bit->font, line->text, start - line->text);
 
 		if (end == NULL)
-			width = gdk_string_width (bit->font, line->text) - x;
-		else
-			width = gdk_text_width (bit->font, line->text, end - line->text) - x;
+			end = strchr(line->text, '\0');
+		
+		width = gdk_text_width (bit->font, line->text, end - line->text) - x;
 
-		col.red = col.green = col.blue = 0xc000;
-		gdk_color_alloc (cmap, &col);
-		gdk_gc_set_foreground (gc, &col);
-
+		gdk_gc_set_foreground (gc, imhtml->default_hl_color);
+		
 		gdk_draw_rectangle (window, gc, TRUE, x + line->x - xoff, line->y - yoff,
 				    width, line->height);
+		gdk_gc_set_foreground (gc, imhtml->default_hlfg_color);
+		fg = gdk_color_copy(imhtml->default_hlfg_color);
 	}
-
 	if (bit->url) {
 		GdkColor *tc = gtk_imhtml_get_color ("#0000a0");
 		gdk_color_alloc (cmap, tc);
@@ -530,19 +559,60 @@ draw_text (GtkIMHtml        *imhtml,
 		gdk_color_alloc (cmap, fg);
 		gdk_gc_set_foreground (gc, fg);
 	}
+
+	if (start) {
+		int offset = 0;
+		gdk_draw_text (window, bit->font, gc, line->x - xoff,
+			       line->y - yoff + line->ascent, line->text, start - line->text);
+		offset = gdk_text_width(bit->font, line->text, start - line->text);
+		if (bit->underline || bit->url)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, 
+					    line->y - yoff + line->ascent + 1,
+					    offset, 1);
+		if (bit->strike)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
+					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
+					    offset, 1);
+		gdk_gc_set_foreground (gc, imhtml->default_hlfg_color);
+		gdk_draw_text (window, bit->font, gc, line->x - xoff + offset,
+			       line->y - yoff + line->ascent, start, end - start);
+		if (bit->underline || bit->url)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset, 
+					    line->y - yoff + line->ascent + 1,
+					    gdk_text_width(bit->font, line->text, end - start), 1);
+		if (bit->strike)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset,
+					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
+					    gdk_text_width(bit->font, line->text, end - start), 1);
+		offset = gdk_text_width(bit->font, line->text, end - line->text);
+		gdk_gc_set_foreground (gc, fg);
+		gdk_draw_string (window, bit->font, gc, line->x - xoff + offset,
+			       line->y - yoff + line->ascent, end);
+		if (bit->underline || bit->url)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset, 
+					    line->y - yoff + line->ascent + 1,
+					    gdk_string_width(bit->font, end), 1);
+		if (bit->strike)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff + offset,
+					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
+					    gdk_string_width(bit->font, end), 1);
+	} else {
+		gdk_draw_string (window, bit->font, gc, line->x - xoff,
+				 line->y - yoff + line->ascent, line->text);
+		
+		if (bit->underline || bit->url)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff + line->ascent + 1,
+					    gdk_string_width (bit->font, line->text), 1);
+		if (bit->strike)
+			gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
+					    line->y - yoff + line->ascent - (bit->font->ascent / 2),
+					    gdk_string_width (bit->font, line->text), 1);
+	}
+		
 	gdk_color_free (bg);
 	gdk_color_free (fg);
 
-	gdk_draw_string (window, bit->font, gc, line->x - xoff,
-			 line->y - yoff + line->ascent, line->text);
-
-	if (bit->underline || bit->url)
-		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff, line->y - yoff + line->ascent + 1,
-				    gdk_string_width (bit->font, line->text), 1);
-	if (bit->strike)
-		gdk_draw_rectangle (window, gc, TRUE, line->x - xoff,
-				    line->y - yoff + line->ascent - (bit->font->ascent / 2),
-				    gdk_string_width (bit->font, line->text), 1);
+	
 
 	gdk_gc_unref (gc);
 }
@@ -586,6 +656,10 @@ draw_img (GtkIMHtml        *imhtml,
 				    width, line->height);
 	}
 
+	if (bit->bm) {
+		gdk_gc_set_clip_mask(gc, bit->bm);
+		gdk_gc_set_clip_origin(gc, line->x - xoff, line->y - yoff + hoff);
+	}
 	gdk_draw_pixmap (window, gc, bit->pm, 0, 0, line->x - xoff, line->y - yoff + hoff, -1, -1);
 
 	gdk_gc_unref (gc);
@@ -1323,8 +1397,12 @@ gtk_imhtml_tip_paint (GtkIMHtml *imhtml)
 			   NULL, imhtml->tip_window, "tooltip", 0, 0, -1, -1);
 
 	y = font->ascent + 4;
-	gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
-			  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->url);
+	if (imhtml->tip_bit->url)
+		gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
+				  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->url);
+	else if (imhtml->tip_bit->img)
+		gtk_paint_string (style, imhtml->tip_window->window, GTK_STATE_NORMAL, NULL,
+				  imhtml->tip_window, "tooltip", 4, y, imhtml->tip_bit->img->filename);
 
 	return FALSE;
 }
@@ -1367,7 +1445,8 @@ gtk_imhtml_tip (gpointer data)
 		gap = 2;
 	baseline_skip = font->ascent + font->descent + gap;
 
-	w = 8 + gdk_string_width (font, imhtml->tip_bit->url);
+	w = 8 + gdk_string_width (font, imhtml->tip_bit->img ? imhtml->tip_bit->img->filename : 
+				  imhtml->tip_bit->url);
 	h = 8 - gap + baseline_skip;
 
 	gdk_window_get_pointer (NULL, &x, &y, NULL);
@@ -1452,7 +1531,8 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 		while (click) {
 			uw = (struct clickable *) click->data;
 			if ((x > uw->x) && (x < uw->x + uw->width) &&
-			    (y > uw->y) && (y < uw->y + uw->height)) {
+			    (y > uw->y) && (y < uw->y + uw->height) &&
+			    (uw->bit->url || uw->bit->img)) {
 				if (imhtml->tip_bit != uw->bit) {
 					imhtml->tip_bit = uw->bit;
 					if (imhtml->tip_timer != 0)
@@ -1465,8 +1545,9 @@ gtk_imhtml_motion_notify_event (GtkWidget      *widget,
 									     gtk_imhtml_tip,
 									     imhtml);
 				}
-				gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window,
-						       imhtml->hand_cursor);
+				if (uw->bit->url)
+					gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window,
+							       imhtml->hand_cursor);
 				return TRUE;
 			}
 			click = g_list_next (click);
@@ -1503,9 +1584,61 @@ gtk_imhtml_leave_notify_event (GtkWidget        *widget,
 		imhtml->tip_window = NULL;
 	}
 	imhtml->tip_bit = NULL;
-
-	return TRUE;
+return TRUE;
 }
+struct imgsv {
+	GtkWidget *savedialog;
+	struct im_image *img;
+};
+
+#if USE_PIXBUF
+static void
+save_img (GtkObject *object,
+	  gpointer data)
+{
+	struct imgsv *is = data;
+	struct im_image *img = is->img;
+	gchar *filename;
+	FILE *f;
+	filename = gtk_file_selection_get_filename(GTK_FILE_SELECTION(is->savedialog));
+	g_print("Saving %s\n", filename);
+	if (! (f=fopen(filename, "w"))) {
+		/* There should be some sort of dialog */
+		g_print("Could not open file for writing.\n");
+		gtk_widget_destroy(is->savedialog);
+		g_free(is);
+		return;
+	}
+	
+	fwrite(img->data, 1, img->len, f);
+	fclose(f);
+	gtk_widget_destroy(is->savedialog);
+	g_free(is);
+}
+
+static void
+save_img_dialog (GtkObject *object,
+		 gpointer data)
+{
+	struct imgsv *is = g_malloc(sizeof(struct imgsv)); 
+	struct im_image *img = data;
+	GtkWidget *savedialog = gtk_file_selection_new ("Gaim - Save Image");
+	gtk_file_selection_set_filename (GTK_FILE_SELECTION(savedialog), img->filename);
+	gtk_signal_connect_object (GTK_OBJECT (GTK_FILE_SELECTION(savedialog)->cancel_button),
+				   "clicked", GTK_SIGNAL_FUNC (gtk_widget_destroy),
+				   (gpointer) savedialog);
+	
+	is->img = img;
+	is->savedialog = savedialog;
+	
+	gtk_signal_connect (GTK_OBJECT (GTK_FILE_SELECTION(savedialog)->ok_button),
+				   "clicked", GTK_SIGNAL_FUNC (save_img), is);
+	gtk_widget_show (savedialog);
+
+
+}
+#endif
+
 
 static void
 menu_open_url (GtkObject *object,
@@ -1587,6 +1720,14 @@ gtk_imhtml_button_press_event (GtkWidget      *widget,
 					gtk_widget_show (button);
 				}
 
+				if (uw->bit->img) {
+					button = gtk_menu_item_new_with_label ("Save Image");
+					gtk_signal_connect (GTK_OBJECT (button), "activate",
+							    GTK_SIGNAL_FUNC (save_img_dialog), uw->bit->img);
+					gtk_menu_append (GTK_MENU (menu), button);
+					gtk_widget_show (button);
+				}
+				
 				gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, event->time);
 
 				if (imhtml->tip_timer) {
@@ -1876,42 +2017,6 @@ gtk_imhtml_get_font_name (GdkFont *font)
 #endif
 }
 
-#define TRY_FONT	tmp = g_strjoinv ("-", newvals); \
-			if (default_font->type == GDK_FONT_FONT) \
-				ret_font = gdk_font_load (tmp); \
-			else \
-				ret_font = gdk_fontset_load (tmp); \
-			g_free (tmp); \
-			if (ret_font) { \
-				g_free (newvals); \
-				g_strfreev (xnames); \
-				g_strfreev (xflds); \
-				g_strfreev (names); \
-				return ret_font; \
-			} else if (newvals [RGSTRY][0] != '*') { \
-				/* if the registry isn't "*" then try it as "*". this is evil. */ \
-				gchar *reg = newvals [RGSTRY]; \
-				gchar *enc = newvals [ENCDNG]; \
-				newvals [RGSTRY] = "*"; \
-				newvals [ENCDNG] = "*"; \
-				tmp = g_strjoinv ("-", newvals); \
-				if (default_font->type == GDK_FONT_FONT) \
-					ret_font = gdk_font_load (tmp); \
-				else \
-					ret_font = gdk_fontset_load (tmp); \
-				g_free (tmp); \
-				if (ret_font) { \
-					g_free (newvals); \
-					g_strfreev (xnames); \
-					g_strfreev (xflds); \
-					g_strfreev (names); \
-					return ret_font; \
-				} \
-				newvals [RGSTRY] = reg; \
-				newvals [ENCDNG] = enc; \
-			}
-
-
 static GdkFont*
 gtk_imhtml_font_load (GtkIMHtml *imhtml,
 		      gchar     *name,
@@ -1923,142 +2028,162 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 	gchar *default_name;
 	gchar **xnames;
 	gchar **pos;
+	gchar *tmp = NULL;
+	GdkFont *ret_font;
+	gchar *xname;
+	gchar **xflds;
+	gchar **newvals;
+	gchar **names = NULL;
 
+	char *italicstrings[] = {"i","o","*"};
+	int italicsind = 0, nameind = 0;
+	gboolean usebold = TRUE, usesize = TRUE, useregenc = TRUE;
+	
 	/* if we're not changing anything, use the default. this is the common case */
 	if (!name && !bold && !italics && !fontsize)
 		return gdk_font_ref (default_font);
-
+	
 	/* base things off of the default font name */
 	default_name = gtk_imhtml_get_font_name (default_font);
-
-	/* the default font name can actually be several names separated by ','. */
-	xnames = g_strsplit (default_name, ",", -1);
-	for (pos = xnames; pos && *pos; pos++) {
-		gchar *xname;
-		gchar **xflds;
-
-		gchar **newvals;
-		gint i, j;
-		gchar **names;
-		gchar fs[10];
-
-		gchar *tmp;
-		GdkFont *ret_font;
-
-		xname = *pos;
-		xname = g_strchomp (xname);
-		xname = g_strchug (xname);
-
-		xflds = g_strsplit (xname, "-", -1);
-
-		/* figure out if we have a valid name. i wish there were an
-		 * easier way for determining how many values g_strplit gave */
-		for (i = 0; xflds [i]; i++);
-		if (i != 15) {
-			int tmp;
-			newvals = g_malloc0 (16 * sizeof (gchar *));
-			newvals [0] = "";
-			for (tmp = 1; tmp < 15; tmp++)
-				newvals [tmp] = "*";
-		} else
-			newvals = g_memdup (xflds, 16 * sizeof (xflds));
-
-		/* we force foundry as "*" because i hate them. i should give a better reason. */
-		newvals [FNDRY] = "*";
-
-		/* if it's "*" then it defaults to (nil) anyway. some fonts don't want (nil) */
-		if ((i > ADSTYL) && !xflds [ADSTYL][0])
-			newvals [ADSTYL] = "*";
-
-		/* right. */
-		if (bold)
-			newvals [WGHT] = "bold";
-		if (italics)
-			newvals [SLANT] = "i";
-		if (fontsize) {
-			g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
-			newvals [PXLSZ] = "*";
-			newvals [PTSZ] = fs;
-		}
-
-		if (name) {
-			/* we got passed a name. it might be a list of names. */
-			gchar **tmp_nms = g_strsplit (name, ",", -1);
-			/* we do a bunch of weird things to also use the gtk font name as an option. */
-			for (j = 0; tmp_nms [j]; j++);
-			names = g_new0 (char *, j + 2);
-			for (j = 0; tmp_nms [j]; j++)
-				names [j] = tmp_nms [j];
-			g_free (tmp_nms);
-			if (i > FMLY)
-				names [j] = g_strdup (xflds [FMLY]);
-		} else if (i > FMLY) {
-			/* we didn't get a name. we come here if the gtk font name is valid */
-			names = g_new0 (gchar *, 2);
-			names [0] = g_strdup (xflds [FMLY]);
-		} else {
-			/* we got fucked */
-			names = g_new0 (gchar *, 2);
-			names [0] = g_strdup ("*");
-		}
-
-		/* for each name, try it */
-		for (j = 0; names [j]; j++) {
-			newvals [FMLY] = names [j];
-			TRY_FONT;
-		}
-
-		/* if italics is set, try various italics options for each name, including no italics */
-		for (j = 0; italics && names [j]; j++) {
-			newvals [FMLY] = names [j];
-
-			newvals [SLANT] = "o";
-			TRY_FONT;
-
-			if (i > SLANT)
-				newvals [SLANT] = xflds [SLANT];
-			else
-				newvals [SLANT] = "*";
-			TRY_FONT;
-		}
-
-		/* if font size was set, try ignoring font size. for each name. */
-		for (j = 0; fontsize && names [j]; j++) {
-			newvals [FMLY] = names [j];
-
-			if (i > PTSZ) {
-				newvals [PXLSZ] = xflds [PXLSZ];
-				newvals [PTSZ] = xflds [PTSZ];
-			} else {
-				newvals [PXLSZ] = "*";
-				newvals [PTSZ] = "*";
+	/* the default font name can actually be several names separated by ','.
+	 * This is a fontset... used in foreign encodings. */
+	do {
+		xnames = g_strsplit (default_name, ",", -1);
+		for (pos = xnames; pos && *pos; pos++) {
+			gint i, j;
+			gchar fs[10];
+			gchar *garbage;
+			xname = *pos;
+			xname = g_strchomp (xname);
+			xname = g_strchug (xname);
+			
+			xflds = g_strsplit (xname, "-", -1);
+			
+			/* figure out if we have a valid name. i wish there were an
+			 * easier way for determining how many values g_strplit gave */
+			for (i = 0; xflds [i]; i++);
+			if (i != 15) {
+				int tmp;
+				newvals = g_malloc0 (16 * sizeof (gchar *));
+				newvals [0] = "";
+				for (tmp = 1; tmp < 15; tmp++)
+					newvals [tmp] = "*";
+			} else
+				newvals = g_memdup (xflds, 16 * sizeof (xflds));
+			
+			/* we force foundry as "*" because i hate them. i should give a better reason. */
+			newvals [FNDRY] = "*";
+			
+			/* if it's "*" then it defaults to (nil) anyway. some fonts don't want (nil) */
+			if ((i > ADSTYL) && !xflds [ADSTYL][0])
+				newvals [ADSTYL] = "*";
+			
+			/* If the font doesn't work the first time, we try it with 
+			 * registry and encoding as "*" */
+			if (!useregenc) {
+				newvals [RGSTRY] = "*";
+				newvals [ENCDNG] = "*";
 			}
-			TRY_FONT;
+			/* right. */
+			if (bold)
+				if (usebold)
+					newvals [WGHT] = "bold";
+				else
+					newvals [WGHT] = "*";
+			if (italics)
+				/* We'll try "i" "o" to get italics and then just use "*" */
+				newvals [SLANT] = italicstrings[italicsind];
+			if (fontsize) {
+				if (usesize) {
+					g_snprintf (fs, sizeof (fs), "%d", POINT_SIZE (fontsize));
+					newvals [PTSZ] = fs;
+				} else 
+					newvals [PTSZ] = "*";
+				newvals [PXLSZ] = "*";
+			}
+			
+			if (name) {
+				/* we got passed a name. it might be a list of names. */
+				gchar **tmp_nms = g_strsplit (name, ",", -1);
+				for (j = 0; tmp_nms [j]; j++);
+				names = g_new0 (char *, j + 2);
+				for (j = 0; tmp_nms [j]; j++)
+					names [j] = tmp_nms [j];
+				g_free (tmp_nms);
+				/* Put the default font on the array. */
+				if (i > FMLY) {
+					names [j] = g_strdup (xflds [FMLY]);
+				}
+				newvals [FMLY] = names[nameind];
+			} else if (i > FMLY) {
+				/* we didn't get a name. we come here if the gtk font name is valid */
+				names = g_new0 (gchar *, 2);
+				names [0] = g_strdup (xflds [FMLY]);
+			} else {
+				/* we got fucked */
+				names = g_new0 (gchar *, 2);
+				names [0] = g_strdup ("*");
+			}
+			if (!tmp)
+				tmp = g_strjoinv("-", newvals);
+			else {
+				/* We have to concat the xlfds in the fontset */ 
+				garbage = tmp;
+				tmp = g_strconcat(garbage, ",", 
+						  g_strjoinv ("-", newvals), NULL); 
+				g_free(garbage);
+			}
+			g_free (newvals);
+			g_strfreev (xflds);
 		}
-
-		/* abandon bold */
-		for (j = 0; bold && names [j]; j++) {
-			newvals [FMLY] = names [j];
-
-			if (i > WGHT)
-				newvals [WGHT] = xflds [WGHT];
-			else
-				newvals [WGHT] = "*";
-			TRY_FONT;
+		g_strfreev (xnames);
+		
+		if (default_font->type == GDK_FONT_FONT) 
+			ret_font = gdk_font_load (tmp); 
+		else {
+			/* For some reason, fontsets must end with a single * as an xlfd */
+			gchar *garbage = tmp;
+			tmp = g_strconcat(garbage, ",*", NULL);
+			ret_font = gdk_fontset_load (tmp); 
 		}
-
-		g_free (newvals);
-		g_strfreev (xflds);
+				
+		/* If the font didn't load, we change some of the xlfds one by one
+		 * to get the closest we can.  */
+		if (!ret_font) {
+			if (!useregenc &&
+			    (!italics || italicsind == 2) && 
+			    (!bold || !usebold) && 
+			    (!fontsize || !usesize)) {
+				useregenc = TRUE;
+				usebold = TRUE;
+				italicsind = 0;
+				usesize = TRUE;
+				if (names && !names[nameind++]) {
+					ret_font = gdk_font_ref(default_font);
+					break;
+				}
+			}	
+			if (useregenc)
+				useregenc = FALSE;
+			else if (italics && italicsind != 2) {
+				useregenc = TRUE;
+				italicsind++;
+			}	else if (bold && usebold) {
+				useregenc = TRUE;
+				usebold = FALSE;
+			}	else if (fontsize && usesize)
+			  useregenc = TRUE;        
+			usesize = FALSE;
+		}
 		g_strfreev (names);
-
-	}
-
-	g_strfreev (xnames);
-
-	/* we couldn't get anything. so, we quit. you get the default. */
-	return gdk_font_ref (default_font);
+		names = NULL;
+		g_free(tmp);
+		tmp=NULL;
+	} while (!ret_font); /* Loop with the new options */
+	
+	return ret_font;
 }
-
+	
 static void
 gtk_imhtml_init (GtkIMHtml *imhtml)
 {
@@ -2143,6 +2268,10 @@ gtk_imhtml_new (GtkAdjustment *hadj,
 	GtkIMHtml *imhtml = gtk_type_new (GTK_TYPE_IMHTML);
 
 	gtk_imhtml_set_adjustments (imhtml, hadj, vadj);
+
+#if USE_PIXBUF
+	imhtml->im_images = NULL;
+#endif
 
 	imhtml->bits = NULL;
 	imhtml->click = NULL;
@@ -2276,7 +2405,8 @@ backwards_update (GtkIMHtml    *imhtml,
 	GList *ls = NULL;
 	struct line_info *li;
 	struct clickable *uw;
-
+	struct im_image *img;
+	
 	if (height > imhtml->llheight) {
 		diff = height - imhtml->llheight;
 
@@ -2298,6 +2428,16 @@ backwards_update (GtkIMHtml    *imhtml,
 				uw->y += diff;
 			ls = g_list_next (ls);
 		}
+
+#if USE_PIXBUF		
+		ls = imhtml->im_images;
+		while(ls) {
+			img = ls->data;
+			if (img->y + diff > imhtml->y)
+				img->y += diff;
+			ls = g_list_next(ls);
+		}
+#endif
 
 		imhtml->llheight = height;
 		if (ascent)
@@ -2366,7 +2506,11 @@ add_img_renderer (GtkIMHtml    *imhtml,
 	li->ascent = 0;
 	li->bit = bit;
 
+#if USE_PIXBUF
+	if (bit->url || bit->img) {
+#else
 	if (bit->url) {
+#endif
 		uw = g_new0 (struct clickable, 1);
 		uw->x = imhtml->x;
 		uw->y = imhtml->y;
@@ -2466,6 +2610,36 @@ gtk_imhtml_draw_bit (GtkIMHtml    *imhtml,
 
 		g_free (copy);
 	} else if ((bit->type == TYPE_SMILEY) || (bit->type == TYPE_IMG)) {
+#if USE_PIXBUF
+	  if (bit->img) {
+			GdkPixbuf *imagepb = bit->img->pb;
+			GdkPixbuf *tmp = NULL;
+			if (gdk_pixbuf_get_width(imagepb) > imhtml->xsize - imhtml->x)
+				new_line (imhtml);
+			
+			if (gdk_pixbuf_get_width(imagepb) > imhtml->xsize) {
+				tmp = gdk_pixbuf_scale_simple(imagepb, imhtml->xsize,
+							      gdk_pixbuf_get_height(imagepb) *
+							      imhtml->xsize/
+							      gdk_pixbuf_get_width(imagepb), 
+							      GDK_INTERP_TILES);
+				if (bit->pm)
+					gdk_pixmap_unref (bit->pm);
+				if (bit->bm)
+					gdk_bitmap_unref (bit->bm);
+				gdk_pixbuf_render_pixmap_and_mask(tmp, &(bit->pm), &(bit->bm), 100);
+				gdk_pixbuf_unref(tmp);
+			}
+			else {
+				if (bit->pm)
+					gdk_pixmap_unref (bit->pm);
+				if (bit->bm)
+					gdk_bitmap_unref (bit->bm);
+				gdk_pixbuf_render_pixmap_and_mask(imagepb, &(bit->pm), &(bit->bm), 100);
+			}
+	  }
+#endif
+		
 		gdk_window_get_size (bit->pm, &width, &height);
 
 		if ((imhtml->x != 0) && ((imhtml->x + width) > imhtml->xsize))
@@ -2802,8 +2976,10 @@ gtk_imhtml_is_tag (const gchar *string,
 	VALID_TAG ("/BODY");
 	VALID_TAG ("FONT");
 	VALID_TAG ("HEAD");
-	VALID_TAG ("HEAD");
-
+	VALID_TAG ("/HEAD");
+	VALID_TAG ("BINARY");
+	VALID_TAG ("/BINARY");
+	
 	VALID_OPT_TAG ("HR");
 	VALID_OPT_TAG ("FONT");
 	VALID_OPT_TAG ("BODY");
@@ -2851,17 +3027,14 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	if ((*t == '\"') || (*t == '\'')) {
 		e = a = ++t;
 		while (*e && (*e != *(t - 1))) e++;
-		if (*e != '\0') {
-			*e = '\0';
-			return g_strdup (a);
-		} else {
+		if  (*e == '\0') {
 			return NULL;
-		}
+		} else 
+			return g_strndup (a, e - a);
 	} else {
 		e = a = t;
 		while (*e && !isspace ((gint) *e)) e++;
-		*e = '\0';
-		return g_strdup (a);
+		return g_strndup (a, e - a);
 	}
 }
 
@@ -3055,12 +3228,27 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 			case 38:	/* HEAD */
 			case 39:	/* /HEAD */
 				break;
-
-			case 40:	/* HR (opt) */
+			case 40:        /* BINARY */
+				
+				NEW_BIT (NEW_TEXT_BIT);
+				while (pos < len) {
+					if (!g_strncasecmp("</BINARY>", c, strlen("</BINARY>"))) 
+						break;
+					else {
+						c++;
+						pos++;
+					}
+				}
+				c = c - tlen; /* Because it will add this later */
+				break;
+			case 41:        /* /BINARY */
+				break;
+				
+			case 42:	/* HR (opt) */
 				NEW_BIT (NEW_TEXT_BIT);
 				NEW_BIT (NEW_SEP_BIT);
 				break;
-			case 41:	/* FONT (opt) */
+			case 43:	/* FONT (opt) */
 			{
 				gchar *color, *back, *face, *size;
 				FontDetail *font;
@@ -3114,7 +3302,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				fonts = g_slist_prepend (fonts, font);
 			}
 				break;
-			case 42:	/* BODY (opt) */
+			case 44:	/* BODY (opt) */
 				if (!(options & GTK_IMHTML_NO_COLOURS)) {
 					gchar *bgcolor = gtk_imhtml_get_html_opt (tag, "BGCOLOR=");
 					if (bgcolor) {
@@ -3128,7 +3316,7 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 					}
 				}
 				break;
-			case 43:	/* A (opt) */
+			case 45:	/* A (opt) */
 			{
 				gchar *href = gtk_imhtml_get_html_opt (tag, "HREF=");
 				if (href) {
@@ -3138,16 +3326,94 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				}
 			}
 				break;
-			case 44:	/* IMG (opt) */
-			{
+			case 46:	/* IMG (opt) */
+				{
 				gchar *src = gtk_imhtml_get_html_opt (tag, "SRC=");
+				gchar *id = gtk_imhtml_get_html_opt (tag, "ID=");
+				gchar *datasize = gtk_imhtml_get_html_opt (tag, "DATASIZE=");
 				gchar **xpm;
 				GdkColor *clr;
 				GtkIMHtmlBit *bit;
 
 				if (!src)
 					break;
+				
+				if (!imhtml->img && id && datasize) { /* This is an embedded IM image */
+#if USE_PIXBUF
+					char *tmp, *imagedata, *e;
+					const gchar *alltext;
+					struct im_image *img;
+					GdkPixbufLoader *load;
+					GdkPixbuf *imagepb = NULL;
+					
+#endif
+					NEW_BIT (NEW_TEXT_BIT);
+#if USE_PIXBUF
+					if (!id || !datasize)
+						break;
+					tmp = g_malloc(strlen("<DATA ID=\"\" SIZE=\"\">") + 
+						       strlen(id) + strlen(datasize));
+					g_snprintf(tmp, strlen("<DATA ID=\"\" SIZE=\"\">") + 
+						   strlen(id) + strlen(datasize) + 1, 
+						   "<DATA ID=\"%s\" SIZE=\"%s\">", id, datasize);
+					alltext = c;
+					while (g_strncasecmp(alltext, tmp, strlen(tmp)) && alltext < (c + len))
+						alltext++;
+					alltext = alltext + strlen("<DATA ID=\"\" SIZE=\"\">") + strlen(id) + strlen(datasize);
+					g_free(tmp);
+					imagedata = g_malloc(atoi(datasize));
+					memcpy(imagedata, alltext, atoi(datasize));
+					
+					if (!GTK_WIDGET_REALIZED (imhtml))
+						gtk_widget_realize (GTK_WIDGET (imhtml));
+					
+					img = g_new0 (struct im_image, 1);
+					tmp = e = src;
+					while (*tmp){
+						if (*tmp == '/' || *tmp == '\\') {
+							tmp++;
+							src = tmp;
+						} else
+							tmp++;
+					}
+					
+					*tmp = '\0';
+					
+					img->filename = g_strdup(src);
+					img->len = atoi(datasize);
+					if (img->len) {
+						img->data = g_malloc(img->len);
+						memcpy(img->data, imagedata, img->len);
+						
+						load = gdk_pixbuf_loader_new();
+						if (!gdk_pixbuf_loader_write(load, imagedata, img->len))
+							g_print("IM Image corrupt or unreadable.\n");
+						else 
+							imagepb = gdk_pixbuf_loader_get_pixbuf(load);
+						img->pb = imagepb;
+					}
+					if (imagepb) {
+						bit = g_new0 (GtkIMHtmlBit, 1);
+						bit->type = TYPE_IMG;
+						bit->img = img;
+						if (url)
+							bit->url = g_strdup (url);
+						
+						NEW_BIT (bit);
+					} else {
+						g_free(img->filename);
+						g_free(img->data);
+						gdk_pixbuf_unref(img->pb);
+					}
+					g_free(imagedata);
+					g_free(e);
+					g_free(id);
+					g_free(datasize);
 
+#endif
+					break;
+				}
+				
 				if (!imhtml->img || ((xpm = imhtml->img (src)) == NULL)) {
 					g_free (src);
 					break;
@@ -3171,10 +3437,10 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 				g_free (src);
 			}
 				break;
-			case 45:	/* P (opt) */
-			case 46:	/* H3 (opt) */
+			case 47:	/* P (opt) */
+			case 48:	/* H3 (opt) */
 				break;
-			case 47:	/* comment */
+			case 49:	/* comment */
 				NEW_BIT (NEW_TEXT_BIT);
 				wpos = g_snprintf (ws, len, "%s", tag);
 				NEW_BIT (NEW_COMMENT_BIT);
@@ -3335,6 +3601,15 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 			gdk_pixmap_unref (bit->pm);
 		if (bit->bm)
 			gdk_bitmap_unref (bit->bm);
+#if USE_PIXBUF
+		if (bit->img) {
+			g_free(bit->img->filename);
+			g_free(bit->img->data);
+			gdk_pixbuf_unref(bit->img->pb);
+			g_free(bit->img);
+		}
+#endif 
+		
 		while (bit->chunks) {
 			struct line_info *li = bit->chunks->data;
 			if (li->text)
@@ -3349,7 +3624,13 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		g_free (imhtml->click->data);
 		imhtml->click = g_list_remove (imhtml->click, imhtml->click->data);
 	}
-
+	
+#if USE_PIXBUF
+	while (imhtml->im_images) {
+		imhtml->im_images = g_list_remove(imhtml->im_images, imhtml->im_images->data);
+	}
+#endif
+	
 	if (imhtml->selected_text) {
 		g_string_free (imhtml->selected_text, TRUE);
 		imhtml->selected_text = g_string_new ("");
@@ -3375,6 +3656,11 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 		gtk_timeout_remove (imhtml->scroll_timer);
 		imhtml->scroll_timer = 0;
 	}
+
+#if USE_PIXBUF
+	g_list_free(imhtml->im_images);
+	imhtml->im_images = NULL;
+#endif
 
 	imhtml->x = 0;
 	imhtml->y = TOP_BORDER;

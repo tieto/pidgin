@@ -714,6 +714,8 @@ static int handle_click_buddy(GtkWidget *widget, GdkEventButton *event, struct b
 			 show_ee_dialog(3);
 		else if (!g_strcasecmp("markster97", normalize (b->name)))
 			 show_ee_dialog(4);
+		else if (!g_strcasecmp("seanegn", normalize (b->name)))
+			show_ee_dialog(5);
 
 	} else {
 
@@ -1486,10 +1488,11 @@ void do_pounce(struct gaim_connection *gc, char *name, int when)
 				 * because I thought it'd be funny :-) */
 
 				g_snprintf(tmp, sizeof(tmp), "%s has %s", name, 
-					(b->options & OPT_POUNCE_SIGNON) ? "signed on" : 
-					(b->options & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
-					"returned from being away");
-
+					   (b->options & OPT_POUNCE_TYPING) ? "started typing to you" :
+					   (b->options & OPT_POUNCE_SIGNON) ? "signed on" : 
+					   (b->options & OPT_POUNCE_UNIDLE) ? "returned from being idle" : 
+					   "returned from being away");
+				
 				do_error_dialog(tmp, _("Buddy Pounce"));
 			}
 			if (b->options & OPT_POUNCE_SEND_IM) {

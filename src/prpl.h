@@ -104,6 +104,8 @@ struct prpl {
 	void (* close)		(struct gaim_connection *);
 	int  (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
+	int (* send_typing)    (struct gaim_connection *, char *name);
+	void (* send_typing_stopped)    (struct gaim_connection *, char *name);  
 	void (* get_info)	(struct gaim_connection *, char *who);
 	void (* set_away)	(struct gaim_connection *, char *state, char *message);
 	void (* get_away)       (struct gaim_connection *, char *who);

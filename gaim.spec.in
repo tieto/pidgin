@@ -99,6 +99,21 @@ make DESTDIR=$RPM_BUILD_ROOT prefix=%{prefix} sysconfdir=%{sysconfdir} install
 rm -r $RPM_BUILD_ROOT
 
 %changelog
+* Fri Feb 28 2002 Rob Flynn <rob@marko.net> (0.53 release)
+- Updated Polish Translation (thanks Przemyslaw Sulek)
+- Slovak translation added (Thanks Daniel Rezny)
+- Minor bug fixes re: queued away messages
+- Better buddy icon transparency (for real this time ;-))
+- Ability to change formatting of Oscar screen name
+- Better selection in HTML widget (Thanks BMiller)
+- New icons for ICQ (Thanks Kevin Miller)
+- Editable buddy pounces (Thanks Jason Willis)
+- Server side buddy lists in Oscar (Thanks KingAnt :-))
+- Fix for the chatlist plugin
+- Typing Notification (AIM Direct Connect, Yahoo, MSN)
+- IM Images (Receive Only)
+- Prettier GtkImHtml selection
+
 * Sun Feb 17 2002 Rob Flynn <rob@marko.net> (0.52 release)
 - Better buddy icon transparency (thanks SeanEgan)
 - Updated Polish Translation (thanks Przemyslaw Sulek)

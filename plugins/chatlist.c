@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define AOL_SRCHSTR "/community/aimcheck.adp/url="
+#define AOL_SRCHSTR "aim:GoChat?RoomName="
 
 struct chat_page {
 	GtkWidget *list1;

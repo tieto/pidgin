@@ -26,7 +26,8 @@ enum gaim_event {
 	event_draw_menu,
 	event_im_displayed_sent,
 	event_im_displayed_rcvd,
-	event_chat_send_invite
+	event_chat_send_invite,
+	event_got_typing,
 };
 
 To add a signal handler, call the fuction gaim_signal_connect with the
@@ -314,3 +315,16 @@ event_chat_send_invite:
 	'who' is who you're inviting.
 	'msg' is the message they'll receive when they're invited. It may be
 	NULL. Setting this to NULL won't stop the invitation from going thru.
+
+event_got_typing:
+	struct gaim_connection *gc, char *who
+
+	This is called when a buddy starts typing you and is called 
+	differently depending on the protocol.  MSN requires that a 
+	conversation is already in progress, and may send more than
+	one notification while typing.  OSCAR can receive typing 
+	notifications in direct IMs, and Yahoo can receive them any
+	time.
+
+	'gc' 	is the connection the typing is sent to.
+	'who' 	is the person typing to you.

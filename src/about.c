@@ -134,7 +134,7 @@ void show_about(GtkWidget *w, void *null)
 		text = gtk_text_new(NULL, NULL);
 
 		gtk_text_insert (GTK_TEXT (text), NULL, NULL, NULL,
-                   _("Active Developers\n====================\nRob Flynn (maintainer) [ rob@marko.net ]\nSean Egan (coder)      [ bj91704@binghamton.edu ]\n\nCrazy Patch Writers\n===================\nBenjamin Miller\nDecklin Foster\n\nRetired Developers\n===================\nJim Duchek\nEric Warmenhoven                   [ warmenhoven@yahoo.com ]\nMark Spencer (original author)   [ markster@marko.net ]"), 369);
+                   _("Active Developers\n====================\nRob Flynn (maintainer) [ rob@marko.net ]\nSean Egan (coder)      [ bj91704@binghamton.edu ]\n\nCrazy Patch Writers\n===================\nBenjamin Miller\nDecklin Foster\nMark Doliner\n\nRetired Developers\n===================\nJim Duchek\nEric Warmenhoven                   [ warmenhoven@yahoo.com ]\nMark Spencer (original author)   [ markster@marko.net ]"), 382);
 
 		sw = gtk_scrolled_window_new(NULL, NULL);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);

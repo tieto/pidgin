@@ -106,7 +106,7 @@ faim_export fu32_t aim_userinfo_sessionlen(aim_userinfo_t *ui)
 faim_export int aim_userinfo_hascap(aim_userinfo_t *ui, fu32_t cap)
 {
 
-	if (!ui || !ui->capspresent)
+	if (!ui || !(ui->present & AIM_USERINFO_PRESENT_CAPABILITIES))
 		return -1;
 
 	return !!(ui->capabilities & cap);
@@ -338,6 +338,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 *
 			 */
 			outinfo->flags = aimbs_get16(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_FLAGS;
 
 		} else if (type == 0x0002) {
 			/*
@@ -347,6 +348,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * the service, stored in time_t format.
 			 */
 			outinfo->membersince = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_MEMBERSINCE;
 
 		} else if (type == 0x0003) {
 			/*
@@ -356,6 +358,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * session, stored in time_t format.
 			 */
 			outinfo->onlinesince = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_ONLINESINCE;
 
 		} else if (type == 0x0004) {
 			/*
@@ -369,6 +372,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * related to reality.
 			 */
 			outinfo->idletime = aimbs_get16(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_IDLE;
 
 		} else if (type == 0x0006) {
 			/*
@@ -379,6 +383,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 */
 			aimbs_get16(bs);
 			outinfo->icqinfo.status = aimbs_get16(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_ICQEXTSTATUS;
 
 		} else if (type == 0x000a) {
 			/*
@@ -388,6 +393,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 * Ahh, the joy of ICQ security.
 			 */
 			outinfo->icqinfo.ipaddr = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_ICQIPADDR;
 
 		} else if (type == 0x000c) {
 			/* 
@@ -398,6 +404,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 *
 			 */
 			aimbs_getrawbuf(bs, outinfo->icqinfo.crap, 0x25);
+			outinfo->present |= AIM_USERINFO_PRESENT_ICQDATA;
 
 		} else if (type == 0x000d) {
 			/*
@@ -407,7 +414,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 *
 			 */
 			outinfo->capabilities = aim_getcap(sess, bs, length);
-			outinfo->capspresent = 1;
+			outinfo->present |= AIM_USERINFO_PRESENT_CAPABILITIES;
 
 		} else if (type == 0x000e) {
 			/*
@@ -433,6 +440,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			 *
 			 */
 			outinfo->sessionlen = aimbs_get32(bs);
+			outinfo->present |= AIM_USERINFO_PRESENT_SESSIONLEN;
 
 		} else {
 
@@ -644,7 +652,7 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 			aim_bstream_init(&cbs, ct->value, ct->length);
 
 			userinfo.capabilities = aim_getcap(sess, &cbs, ct->length);
-			userinfo.capspresent = 1;
+			userinfo.present = AIM_USERINFO_PRESENT_CAPABILITIES;
 		}
 	}
 

@@ -35,6 +35,9 @@
 
 #define USEROPT_HOTMAIL 0
 
+#define MSN_TYPING_RECV_TIMEOUT 6
+#define MSN_TYPING_SEND_TIMEOUT	4
+
 struct msn_data {
 	int fd;
 	int trId;
@@ -511,8 +514,14 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 	content = strstr(msg, "Content-Type: ");
 	if (!content)
 		return;
-	if (!g_strncasecmp(content, "Content-Type: text/plain",
-			     strlen("Content-Type: text/plain"))) {
+	if (!g_strncasecmp(content, "Content-Type: text/x-msmsgscontrol\r\n",
+			   strlen(  "Content-Type: text/x-msmsgscontrol\r\n"))) {
+		if (strstr(content,"TypingUser: ")) {
+			serv_got_typing(ms->gc, ms->msguser, MSN_TYPING_RECV_TIMEOUT);
+			return;
+		} 
+	} else if (!g_strncasecmp(content, "Content-Type: text/plain",
+				  strlen("Content-Type: text/plain"))) {
 		char *skiphead;
 		skiphead = strstr(msg, "\r\n\r\n");
 		if (!skiphead || !skiphead[4]) {
@@ -521,7 +530,7 @@ static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
 		skiphead += 4;
 		utf = utf8_to_str(skiphead);
 		strip_linefeed(utf);
-
+		
 		if (ms->chat)
 			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, utf, time(NULL));
 		else
@@ -1475,6 +1484,24 @@ static void msn_close(struct gaim_connection *gc)
 	g_free(md);
 }
 
+static int msn_send_typing(struct gaim_connection *gc, char *who) {
+	struct msn_switchboard *ms = msn_find_switch(gc, who);
+	char header[MSN_BUF_LEN] =   "MIME-Version: 1.0\r\n"
+				     "Content-Type: text/x-msmsgscontrol\r\n" 
+				     "User-Agent: Gaim/" VERSION "\r\n" 
+				     "TypingUser: ";
+	char buf [MSN_BUF_LEN];
+	if (!ms)
+		return;
+	g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s\r\n\r\n\r\n",
+		   ++ms->trId,
+		   strlen(header) + strlen("\r\n\r\n\r\n") + strlen(gc->username),
+		   header, gc->username);
+	if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+	           msn_kill_switch(ms);
+	return MSN_TYPING_SEND_TIMEOUT;
+}
+
 static int msn_send_im(struct gaim_connection *gc, char *who, char *message, int flags)
 {
 	struct msn_data *md = gc->proto_data;
@@ -1988,6 +2015,7 @@ void msn_init(struct prpl *ret)
 	ret->login = msn_login;
 	ret->close = msn_close;
 	ret->send_im = msn_send_im;
+	ret->send_typing = msn_send_typing;
 	ret->away_states = msn_away_states;
 	ret->set_away = msn_set_away;
 	ret->set_idle = msn_set_idle;

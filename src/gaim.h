@@ -154,7 +154,7 @@ enum log_event {
 #define OPT_POUNCE_SIGNON	0x010
 #define OPT_POUNCE_UNAWAY	0x020
 #define OPT_POUNCE_UNIDLE	0x040
-
+#define OPT_POUNCE_TYPING       0x080
 #define OPT_POUNCE_SAVE		0x100
 
 #define OPT_POUNCE_NOTIFY	0x200
@@ -184,6 +184,7 @@ extern guint misc_options;
 #define OPT_MISC_BROWSER_POPUP		0x00000002
 #define OPT_MISC_BUDDY_TICKER		0x00000004
 #define OPT_MISC_COOL_LOOK		0x00000008
+#define OPT_MISC_STEALTH_TYPING         0x00000010
 
 extern guint logging_options;
 #define OPT_LOG_ALL			0x00000001
@@ -359,6 +360,8 @@ extern void serv_set_idle(struct gaim_connection *, int);
 extern void serv_set_info(struct gaim_connection *, char *);
 extern void serv_set_away(struct gaim_connection *, char *, char *);
 extern void serv_set_away_all(char *);
+extern int  serv_send_typing(struct gaim_connection *, char *);
+extern void serv_send_typing_stopped(struct gaim_connection *, char *);
 extern void serv_change_passwd(struct gaim_connection *, char *, char *);
 extern void serv_add_buddy(struct gaim_connection *, char *);
 extern void serv_add_buddies(struct gaim_connection *, GList *);

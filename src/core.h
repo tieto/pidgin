@@ -84,6 +84,7 @@ enum gaim_event {
 	event_im_displayed_sent,
 	event_im_displayed_rcvd,
 	event_chat_send_invite,
+	event_got_typing,
 	/* any others? it's easy to add... */
 };
 
@@ -192,6 +193,8 @@ extern char *event_name(enum gaim_event);
 /* Functions in server.c */
 extern void serv_got_update(struct gaim_connection *, char *, int, int, time_t, time_t, int, guint);
 extern void serv_got_im(struct gaim_connection *, char *, char *, guint32, time_t, gint);
+extern void serv_got_typing(struct gaim_connection *, char *, int);
+extern void serv_got_typing_stopped(struct gaim_connection *, char *);
 extern void serv_got_eviled(struct gaim_connection *, char *, int);
 extern void serv_got_chat_invite(struct gaim_connection *, char *, char *, char *, GList *);
 extern struct conversation *serv_got_joined_chat(struct gaim_connection *, int, char *);
