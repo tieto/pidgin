@@ -1068,13 +1068,13 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	renderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "pixbuf", COLUMN_ICON);
+					   "pixbuf", COLUMN_ICON);
 
 	/* Protocol name */
 	renderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer,
-									   "text", COLUMN_PROTOCOL);
+					   "text", COLUMN_PROTOCOL);
 
 	/* Screennames */
 	renderer = gtk_cell_renderer_text_new();
@@ -1089,13 +1089,13 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 	renderer = gtk_cell_renderer_toggle_new();
 	
 	g_signal_connect(G_OBJECT(renderer), "toggled",
-					 G_CALLBACK(__online_cb), dialog);
-
+			 G_CALLBACK(__online_cb), dialog);
+	
 	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, _("Online"),
-												renderer,
-												"active", COLUMN_ONLINE,
-												NULL);
+						    -1, _("Online"),
+						    renderer,
+						    "active", COLUMN_ONLINE,
+						    NULL);
 
 	/* Auto-login? */
 	renderer = gtk_cell_renderer_toggle_new();
@@ -1107,13 +1107,9 @@ __add_columns(GtkWidget *treeview, AccountsDialog *dialog)
 			renderer, "active", COLUMN_AUTOLOGIN, NULL);
 
 	gtk_tree_view_insert_column(GTK_TREE_VIEW(treeview), column, -1);
+	g_object_set(renderer, "xalign", 0.0, "xpad", 10, NULL);
 
-	/* Filler */
-	renderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview),
-												-1, "", renderer,
-												"visible", COLUMN_FILLER,
-												NULL);
+
 }
 
 static void
@@ -1233,7 +1229,7 @@ gaim_gtk_account_dialog_show(void)
 
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "accounts");
-	gtk_window_set_title(GTK_WINDOW(win), "Accounts");
+	gtk_window_set_title(GTK_WINDOW(win), _("Accounts"));
 	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
