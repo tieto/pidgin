@@ -25,6 +25,7 @@
 /* XXX eww */
 #include "src/internal.h"
 
+#include "accountopt.h"
 #include "debug.h"
 #include "multi.h"
 #include "notify.h"
@@ -207,8 +208,29 @@ static char *zephyr_to_html(char *message)
 				new_f->has_closer = TRUE;
 				frames = new_f;
 				cnt += end+1; /* cnt points to char after opener */
-			} else if (!g_ascii_strcasecmp(buf, "bold")
-					|| !g_ascii_strcasecmp(buf, "b")) {
+			} else if (!g_ascii_strcasecmp(buf,"small")) {
+                                new_f = g_new(zframe,1);
+                                new_f->enclosing = frames;
+                                new_f->text = g_string_new("<font size=\"1\">");
+                                new_f->closing ="</font>";
+                                frames = new_f;
+                                cnt+= end+1;
+                        } else if (!g_ascii_strcasecmp(buf,"normal")) {
+                                new_f = g_new(zframe,1);
+                                new_f->enclosing = frames;
+                                new_f->text = g_string_new("<font size=\"3\">");
+                                new_f->closing ="</font>";
+                                frames = new_f;
+                                cnt+= end+1;
+                        } else if (!g_ascii_strcasecmp(buf,"large")) {
+                                new_f = g_new(zframe,1);
+                                new_f->enclosing = frames;
+                                new_f->text = g_string_new("<font size=\"5\">");
+                                new_f->closing ="</font>";
+                                frames = new_f;
+                                cnt+= end+1;
+                        } else if (!g_ascii_strcasecmp(buf, "bold")
+                                  || !g_ascii_strcasecmp(buf, "b")) {
 				new_f = g_new(zframe, 1);
 				new_f->enclosing = frames;
 				new_f->text = g_string_new("<b>");
@@ -365,6 +387,8 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 		char *send_inst;
 		char *realmptr;
 		char *sendertmp;
+                GaimConversation *gconv1;
+                GaimConvChat *gcc;
 		char *ptr = notice.z_message + strlen(notice.z_message) + 1;
 		int len = notice.z_message_len - ((int)ptr - (int)notice.z_message);
 		GaimConvImFlags flags = 0;
@@ -387,9 +411,15 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 				if (!zt2) {
 					/* we shouldn't be subscribed to this message. ignore. */
 				} else {
+                                        GList *gltmp;
+                                        int found=0;
 					if (!zt2->open) {
 						zt2->open = TRUE;
 						serv_got_joined_chat(zgc, zt2->id, zt2->name);
+                                                gconv1 = gaim_find_conversation_with_account(zt2->name,zgc->account);
+                                                gcc = gaim_conversation_get_chat_data(gconv1);
+                                                gaim_conv_chat_set_topic(gcc,sendertmp,notice.z_class_inst);
+
 					}
 					/* If the person is in the default Realm, then strip the 
 					   Realm from the sender field */
@@ -410,6 +440,24 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					}
 					serv_got_chat_in(zgc, zt2->id, send_inst, FALSE,
                                                          buf2, time(NULL));
+
+                                        gconv1 = gaim_find_conversation_with_account(zt2->name,zgc->account);
+                                        gcc = gaim_conversation_get_chat_data(gconv1);
+                                        gaim_conv_chat_set_topic(gcc,sendertmp,notice.z_class_inst); 
+                                        for(gltmp = gaim_conv_chat_get_users(gcc);gltmp;gltmp=gltmp->next) {
+                                                if (!g_ascii_strcasecmp(gltmp->data,sendertmp) )
+                                                    found = 1;
+                                        }
+                                        if (!found) {
+                                                /* force interpretation in network byte order */
+                                                unsigned char* addrs = (unsigned char *)&(notice.z_sender_addr.s_addr);
+                                                gaim_conv_chat_add_user(gcc,sendertmp,g_strdup_printf("%hhd.%hhd.%hhd.%hhd",
+                                                                                                      (unsigned char)addrs[0],
+                                                                                                      (unsigned char)addrs[1],
+                                                                                                      (unsigned char)addrs[2],
+                                                                                                      (unsigned char)addrs[3]));
+                                                
+                                        }
 					g_free(sendertmp);
 					g_free(send_inst);
 				}
@@ -591,8 +639,10 @@ static void process_anyone()
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
-                                b = gaim_buddy_new(zgc->account, buff, NULL);
-				gaim_blist_add_buddy(b, NULL, g, NULL);
+                                if(! (b=gaim_find_buddy(zgc->account,buff))) {
+                                        b = gaim_buddy_new(zgc->account, buff, NULL);
+                                        gaim_blist_add_buddy(b, NULL, g, NULL);
+                                }
                         }
 		}
 		fclose(fd);
@@ -617,7 +667,7 @@ static void zephyr_login(GaimAccount *account)
 
 	z_call_s(ZInitialize(), "Couldn't initialize zephyr");
 	z_call_s(ZOpenPort(NULL), "Couldn't open port");
-	z_call_s(ZSetLocation(get_exposure_level()), "Couldn't set location");
+	z_call_s(ZSetLocation(gaim_account_get_string(zgc->account,"exposure_level",EXPOSE_REALMVIS)), "Couldn't set location");
 
 	sub.zsub_class = "MESSAGE";
 	sub.zsub_classinst = "PERSONAL";
@@ -696,11 +746,11 @@ static void write_anyone()
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for(bnode = gnode->child; bnode; bnode = bnode->next) {
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (GaimBuddy *)bnode;
-				if(b->account->gc == zgc) {
+				if(b->account == zgc->account) {
 					if ((ptr = strchr(b->name, '@')) != NULL) {
 						ptr2 = ptr + 1;
 						/* We should only strip the realm name if the principal
@@ -733,8 +783,11 @@ static void zephyr_close(GaimConnection *gc)
 	}
 	g_list_free(pending_zloc_names);
 	
-	write_anyone();
-	write_zsubs();
+	if (gaim_account_get_bool(zgc->account,"write_anyone",FALSE))
+		write_anyone();
+        
+	if (gaim_account_get_bool(zgc->account,"write_zsubs",FALSE))
+		write_zsubs();
 	
 	s = subscrips;
 	while (s) {
@@ -755,8 +808,23 @@ static void zephyr_close(GaimConnection *gc)
 	z_call(ZClosePort());
 }
 
-static void zephyr_add_buddy(GaimConnection *gc, const char *buddy, GaimGroup *group) { }
-static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { }
+static void zephyr_add_buddy(GaimConnection *gc, const char *buddy, GaimGroup *group) { 
+        GaimBuddy *b;
+        if(! (b=gaim_find_buddy(zgc->account,buddy))) {
+                b = gaim_buddy_new(zgc->account, buddy, NULL);
+                gaim_blist_add_buddy(b, NULL, group, NULL);
+        }
+        
+}
+
+static void zephyr_remove_buddy(GaimConnection *gc, const char *buddy, const char *group) { 
+        GaimBuddy *b;
+        fprintf(stderr,"In zephyr_remove_buddy\n");
+        if ((b=gaim_find_buddy(zgc->account,buddy)))
+                gaim_blist_remove_buddy(b);
+        else 
+                fprintf(stderr,"attempt to remove non-existent buddy %s\n",buddy);
+}
 
 static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 {
@@ -764,6 +832,9 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	zephyr_triple *zt;
 	char *buf;
 	const char *sig;
+        GaimConversation * gconv1;
+        GaimConvChat* gcc;
+        char * inst;
 
 	zt = find_sub_by_id(id);
 	if (!zt)
@@ -776,12 +847,18 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 	}
 	buf = g_strdup_printf("%s%c%s", sig, '\0', im);
 
+        gconv1 = gaim_find_conversation_with_account(zt->name,zgc->account);
+        gcc = gaim_conversation_get_chat_data(gconv1);
+
+        if(!(inst = gaim_conv_chat_get_topic(gcc)))
+                inst = notice.z_class_inst;
+                
 	bzero((char *)&notice, sizeof(notice));
 	notice.z_kind = ACKED;
 	notice.z_port = 0;
 	notice.z_opcode = "";
 	notice.z_class = zt->class;
-	notice.z_class_inst = zt->instance;
+	notice.z_class_inst = inst;
 	if (!g_ascii_strcasecmp(zt->recipient, "*"))
 		notice.z_recipient = zephyr_normalize(gc->account, "");
 	else
@@ -791,7 +868,7 @@ static int zephyr_chat_send(GaimConnection *gc, int id, const char *im)
 		"Class $class, Instance $instance:\n"
 		"To: @bold($recipient) at $time $date\n"
 		"From: @bold($1) <$sender>\n\n$2";
-	notice.z_message_len = strlen(im) + strlen(sig) + 4;
+	notice.z_message_len = strlen(im) + strlen(sig) + 2;
 	notice.z_message = buf;
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
@@ -825,7 +902,7 @@ static int zephyr_send_im(GaimConnection *gc, const char *who, const char *im, G
 		"Class $class, Instance $instance:\n"
 		"To: @bold($recipient) at $time $date\n"
 		"From: @bold($1) <$sender>\n\n$2";
-	notice.z_message_len = strlen(im) + strlen(sig) + 4;
+	notice.z_message_len = strlen(im) + strlen(sig) + 2;
 	notice.z_message = buf;
 	ZSendNotice(&notice, ZAUTH);
 	g_free(buf);
@@ -978,11 +1055,25 @@ static const char *zephyr_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "zephyr";
 }
 
+
+static void zephyr_chat_set_topic(GaimConnection *gc, int id, const char *topic) {
+        zephyr_triple *zt;
+        GaimConversation *gconv;
+        GaimConvChat* gcc;
+        char* sender = ZGetSender();
+
+        zt = find_sub_by_id(id);
+        gconv = gaim_find_conversation_with_account(zt->name,zgc->account);
+        gcc = gaim_conversation_get_chat_data(gconv);
+        gaim_conv_chat_set_topic(gcc,sender,topic);
+        
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_NO_PASSWORD,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD, 
 	NULL,
 	NULL,
 	NULL,
@@ -1030,8 +1121,12 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,
 	NULL,
 	NULL,
-	NULL,
-	zephyr_normalize
+        NULL,
+	zephyr_normalize,
+        NULL,
+        NULL,
+        NULL,
+        zephyr_chat_set_topic
 };
 
 static GaimPluginInfo info =
@@ -1064,6 +1159,17 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
+	GaimAccountOption *option;
+        char* tmp = get_exposure_level();
+	option = gaim_account_option_bool_new(_("Export to .anyone"),"write_anyone",FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+
+	option = gaim_account_option_bool_new(_("Export to .zephyr.subs"),"write_zsubs",FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+
+        option = gaim_account_option_string_new(_("Exposure"),"exposure_level",tmp?tmp:EXPOSE_REALMVIS);
+        prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,option);
+
 	my_protocol = plugin;
 }
 
