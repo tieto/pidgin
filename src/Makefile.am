@@ -16,6 +16,7 @@ gaim_applet_SOURCES =	about.c \
 			idle.c \
 			network.c \
 			oscar.c \
+			perl.c \
 			plugins.c \
 			prefs.c \
 			proxy.c \
@@ -43,6 +44,7 @@ gaim_SOURCES =	about.c \
 		idle.c \
 		network.c \
 		oscar.c \
+		perl.c \
 		plugins.c \
 		prefs.c \
 		proxy.c \
