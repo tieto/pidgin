@@ -312,6 +312,20 @@ remove_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 static void
 clear_cb(GtkWidget *button, GaimGtkPrivacyDialog *dialog)
 {
+	GSList *l;
+	if (dialog->in_allow_list)
+		l = dialog->account->permit;
+	else
+		l = dialog->account->deny;
+	while (l) {
+		char *user;
+		user = l->data;
+		l = l->next;
+		if (dialog->in_allow_list)
+			gaim_privacy_permit_remove(dialog->account, user, FALSE);
+		else
+			gaim_privacy_deny_remove(dialog->account, user, FALSE);
+	}
 }
 
 static void
