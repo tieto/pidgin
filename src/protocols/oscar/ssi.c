@@ -858,7 +858,7 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, aim_conn_t *conn, const cha
 		return -EINVAL;
 
 	/* Find the item */
-	if (!(del = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, name, AIM_SSI_TYPE_PERMIT)))
+	if (!(del = aim_ssi_itemlist_finditem(sess->ssi.local, NULL, name, AIM_SSI_TYPE_DENY)))
 		return -EINVAL;
 
 	/* Remove the item from the list */
