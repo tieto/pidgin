@@ -1402,7 +1402,7 @@ void serv_got_chat_in(GaimConnection *g, int id, char *who,
 
 
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/urls_as_links"))
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/show_urls_as_links"))
 		buf = linkify_text(message);
 	else
 		buf = g_strdup(message);

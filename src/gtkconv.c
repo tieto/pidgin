@@ -5390,6 +5390,7 @@ gaim_gtk_conversation_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/use_custom_size", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_urls_as_links", TRUE);
 	gaim_prefs_add_string("/gaim/gtk/conversations/bgcolor", "#FFFFFF");
 	gaim_prefs_add_string("/gaim/gtk/conversations/fgcolor", "#000000");
 	gaim_prefs_add_string("/gaim/gtk/conversations/font_face", "");
