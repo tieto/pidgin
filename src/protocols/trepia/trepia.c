@@ -254,32 +254,9 @@ trepia_tooltip_text(struct buddy *b)
 		text = tmp2;
 	}
 
-	c = text + strlen(text);
-
-	if (*c == '\n')
-		*c = '\0';
+	text[strlen(text) - 1] = '\0';
 
 	return text;
-}
-
-static GList *
-trepia_away_states(GaimConnection *gc)
-{
-	GList *m = NULL;
-
-	return m;
-}
-
-static GList *
-trepia_actions(GaimConnection *gc)
-{
-	return NULL;
-}
-
-static GList *
-trepia_buddy_menu(GaimConnection *gc, const char *who)
-{
-	return NULL;
 }
 
 static void
