@@ -874,7 +874,12 @@ int main(int argc, char *argv[])
 
 	gaim_plugins_probe(NULL);
 
-	if (!gaim_prefs_load()) {
+	gaim_prefs_load();
+
+
+	/* we only read ~/.gaimrc (load_prefs()) if there is no accounts.xml
+	 * since prefs.xml existed alongside ~/.gaim in 0.64 */
+	if (!gaim_accounts_load()) {
 		load_prefs();
 		gaim_prefs_sync();
 	}
@@ -882,7 +887,6 @@ int main(int argc, char *argv[])
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved();
 
-	gaim_accounts_load();
 	gaim_pounces_load();
 
 #ifdef _WIN32
