@@ -13,7 +13,7 @@ version 0.10.0:
 	* Background colors
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
-	* Removed the Lag-O-Meter
+	* Removed the Lag-O-Meter (Lag-O-Meter is now a plugin)
 	* Socks 4/5 Proxy works
 	* Buddy Pounces are now saved in .gaimrc
 	* Buddy Chats are now saved in .gaimrc

@@ -80,6 +80,9 @@
 #include "pixmaps/tmp_send.xpm"
 #include "pixmaps/tb_search.xpm"
 #include "pixmaps/join.xpm"
+#include "pixmaps/gnome_add.xpm"
+#include "pixmaps/gnome_remove.xpm"
+#include "pixmaps/group.xpm"
 
 static GtkTooltips *tips;
 static GtkWidget *editpane;
@@ -244,15 +247,10 @@ static void adjust_pic(GtkWidget *button, const char *c, gchar **xpm)
 void update_button_pix()
 {
 
-	if (display_options & OPT_DISP_DEVIL_PIXMAPS) {
-		adjust_pic(addbutton, _("Add"), (gchar **)daemon_buddyadd_xpm);
-		adjust_pic(groupbutton, _("Group"), NULL);
-		adjust_pic(rembutton, _("Remove"), (gchar **)daemon_buddydel_xpm);
-	} else {
-		adjust_pic(addbutton, _("Add"), (gchar **)buddyadd_xpm);
-		adjust_pic(groupbutton, _("Group"), NULL);
-		adjust_pic(rembutton, _("Remove"), (gchar **)buddydel_xpm);
-	}
+	adjust_pic(addbutton, _("Add"), (gchar **)gnome_add_xpm);
+	adjust_pic(groupbutton, _("Group"), (gchar **)group_xpm);
+	adjust_pic(rembutton, _("Remove"), (gchar **)gnome_remove_xpm);
+
 	if (!(display_options & OPT_DISP_NO_BUTTONS)) {
 		adjust_pic(chatbutton, _("Chat"), (gchar **)join_xpm);
 	        adjust_pic(imbutton, _("IM"), (gchar **)tmp_send_xpm);
