@@ -183,9 +183,9 @@ event_error:
 
 	'error' is the number of the error as defined by the TOC PROTOCOL
 	document, which can be found in the docs/ directory of the source
-	tree. Note that if the person is using Oscar, this number can often
-	be misleading, as not all the errors have been worked out, and some
-	do not translate to TOC error codes cleanly.
+	tree. Note that if the person is using Oscar, this number is often
+	plain wrong, and this event may not always be triggered on error.
+	Experiment to find what is reliable.
 
 event_quit:
 	(none)

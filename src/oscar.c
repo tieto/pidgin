@@ -105,10 +105,43 @@ static int gaim_parse_ratechange (struct aim_session_t *, struct command_rx_stru
 static int gaim_parse_evilnotify (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_bosrights        (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_rateresp         (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_reportinterval   (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_msgerr     (struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_buddyrights(struct aim_session_t *, struct command_rx_struct *, ...);
+static int gaim_parse_locerr     (struct aim_session_t *, struct command_rx_struct *, ...);
 
 static int gaim_directim_incoming(struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_typing  (struct aim_session_t *, struct command_rx_struct *, ...);
 static int gaim_directim_initiate(struct aim_session_t *, struct command_rx_struct *, ...);
+
+static char *msgerrreason[] = {
+	"Invalid error",
+	"Invalid SNAC",
+	"Rate to host",
+	"Rate to client",
+	"Not logged in",
+	"Service unavailable",
+	"Service not defined",
+	"Obsolete SNAC",
+	"Not supported by host",
+	"Not supported by client",
+	"Refused by client",
+	"Reply too big",
+	"Responses lost",
+	"Request denied",
+	"Busted SNAC payload",
+	"Insufficient rights",
+	"In local permit/deny",
+	"Too evil (sender)",
+	"Too evil (receiver)",
+	"User temporarily unavailable",
+	"No match",
+	"List overflow",
+	"Request ambiguous",
+	"Queue full",
+	"Not while on AOL"
+};
+static int msgerrreasonlen = 25;
 
 extern void auth_failed();
 
@@ -275,15 +308,18 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 		switch (sess->logininfo.errorcode) {
 		case 0x18:
 			/* connecting too frequently */
-			show_error_dialog("983\0\0");
+			do_error_dialog(_("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."), _("Gaim - Error"));
+			plugin_event(event_error, (void *)983, 0, 0);
 			break;
 		case 0x05:
 			/* Incorrect nick/password */
-			show_error_dialog("980\0\0");
+			do_error_dialog(_("Incorrect nickname or password."), _("Gaim - Error"));
+			plugin_event(event_error, (void *)980, 0, 0);
 			break;
 		case 0x1c:
 			/* client too old */
-			show_error_dialog("981\0\0");
+			do_error_dialog(_("The client version you are using is too old. Please upgrade at http://www.marko.net/gaim/"), _("Gaim - Error"));
+			plugin_event(event_error, (void *)989, 0, 0);
 			break;
 		}
 		sprintf(debug_buff, "Login Error Code 0x%04x\n",
@@ -336,15 +372,16 @@ int gaim_parse_auth_resp(struct aim_session_t *sess,
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_SERVERREADY, gaim_server_ready, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATEINFO, NULL, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_REDIRECT, gaim_handle_redirect, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_STS, AIM_CB_STS_SETREPORTINTERVAL, NULL, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_STS, AIM_CB_STS_SETREPORTINTERVAL, gaim_reportinterval, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_RIGHTSINFO, gaim_parse_buddyrights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_ONCOMING, gaim_parse_oncoming, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_BUD, AIM_CB_BUD_OFFGOING, gaim_parse_offgoing, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_INCOMING, gaim_parse_incoming_im, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_ERROR, gaim_parse_locerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MISSEDCALL, gaim_parse_misses, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_RATECHANGE, gaim_parse_ratechange, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_EVIL, gaim_parse_evilnotify, 0);
-	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_misses, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ERROR, gaim_parse_msgerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_user_info, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_CTN, AIM_CB_CTN_DEFAULT, aim_parse_unknown, 0);
@@ -698,40 +735,69 @@ int gaim_parse_incoming_im(struct aim_session_t *sess,
 
 int gaim_parse_misses(struct aim_session_t *sess,
 		      struct command_rx_struct *command, ...) {
-	u_short family;
-	u_short subtype;
+	va_list ap;
+	u_short chan, nummissed, reason;
+	struct aim_userinfo_s *userinfo;
+	char buf[1024];
 
-	family  = aimutil_get16(command->data+0);
-	subtype = aimutil_get16(command->data+2);
+	va_start(ap, command);
+	chan = va_arg(ap, unsigned short);
+	userinfo = va_arg(ap, struct aim_userinfo_s *);
+	nummissed = (u_short)va_arg(ap, u_int);
+	reason = (u_short)va_arg(ap, u_int);
+	va_end(ap);
 
-	sprintf(debug_buff, "parse_misses: family = %d, subtype = %d\n", family, subtype);
-	debug_print(debug_buff);
-
-	switch (family) {
-	case 0x0001:
-		if (subtype == 0x000a) {
-			/* sending messages too fast */
-			/* this also gets sent to us when our warning level
-			 * changes, don't ask me why or how to interpret it */
-			show_error_dialog("960\0someone");
-		}
-		break;
-	case 0x0002:
-		if (subtype == 0x0001) {
-			/* unknown SNAC error */
-			show_error_dialog("970\0\0");
-		}
-		break;
-	case 0x0004:
-		if (subtype == 0x0001) {
-			/* user is not logged in */
-			show_error_dialog("901\0User");
-		} else if (subtype == 0x000a) {
-			/* message has been dropped */
-			show_error_dialog("903\0\0");
-		}
-		break;
+	switch(reason) {
+		case 1:
+			/* message too large */
+			sprintf(buf, _("You missed a message from %s because it was too large."), userinfo->sn);
+			do_error_dialog(buf, _("Gaim - Error"));
+			plugin_event(event_error, (void *)961, 0, 0);
+			break;
+		default:
+			sprintf(buf, _("You missed a message from %s for unknown reasons."), userinfo->sn);
+			do_error_dialog(buf, _("Gaim - Error"));
+			plugin_event(event_error, (void *)970, 0, 0);
+			break;
 	}
+
+	return 1;
+}
+
+int gaim_parse_msgerr(struct aim_session_t *sess,
+		      struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *destn;
+	u_short reason;
+	char buf[1024];
+
+	va_start(ap, command);
+	destn = va_arg(ap, char *);
+	reason = (u_short)va_arg(ap, u_int);
+	va_end(ap);
+
+	sprintf(buf, _("Your message to %s did not get sent: %s"), destn,
+			(reason < msgerrreasonlen) ? msgerrreason[reason] : _("Reason unknown"));
+	do_error_dialog(buf, _("Gaim - Error"));
+
+	return 1;
+}
+
+int gaim_parse_locerr(struct aim_session_t *sess,
+		      struct command_rx_struct *command, ...) {
+	va_list ap;
+	char *destn;
+	u_short reason;
+	char buf[1024];
+
+	va_start(ap, command);
+	destn = va_arg(ap, char *);
+	reason = (u_short)va_arg(ap, u_int);
+	va_end(ap);
+
+	sprintf(buf, _("User information for %s unavailable: %s"), destn,
+			(reason < msgerrreasonlen) ? msgerrreason[reason] : _("Reason unknown"));
+	do_error_dialog(buf, _("Gaim - Error"));
 
 	return 1;
 }
@@ -753,7 +819,10 @@ int gaim_parse_user_info(struct aim_session_t *sess,
 
 	if (prof == NULL || !strlen(prof)) {
 		/* no info/away message */
-		show_error_dialog("977\0\0");
+		char buf[1024];
+		sprintf(buf, _("%s has no info/away message."), info->sn);
+		do_error_dialog(buf, _("Gaim - Error"));
+		plugin_event(event_error, (void *)977, 0, 0);
 		return 1;
 	}
 
@@ -1036,7 +1105,42 @@ int gaim_rateresp(struct aim_session_t *sess, struct command_rx_struct *command,
 	return 1;
 }
 
+int gaim_reportinterval(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	if (command->data) {
+		sprintf(debug_buff, "minimum report interval: %d (seconds?)\n", aimutil_get16(command->data+10));
+		debug_print(debug_buff);
+	} else
+		debug_print("NULL minimum report interval!\n");
+	return 1;
+}
+
+int gaim_parse_buddyrights(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	va_list ap;
+	u_short maxbuddies, maxwatchers;
+
+	va_start(ap, command);
+	maxbuddies = (u_short)va_arg(ap, u_int);
+	maxwatchers = (u_short)va_arg(ap, u_int);
+	va_end(ap);
+
+	sprintf(debug_buff, "buddy list rights: Max buddies = %d / Max watchers = %d\n", maxbuddies, maxwatchers);
+	debug_print(debug_buff);
+
+	return 1;
+}
+
 int gaim_bosrights(struct aim_session_t *sess, struct command_rx_struct *command, ...) {
+	u_short maxpermits, maxdenies;
+	va_list ap;
+
+	va_start(ap, command);
+	maxpermits = (u_short)va_arg(ap, u_int);
+	maxdenies = (u_short)va_arg(ap, u_int);
+	va_end(ap);
+
+	sprintf(debug_buff, "BOS rights: Max permit = %d / Max deny = %d\n", maxpermits, maxdenies);
+	debug_print(debug_buff);
+
 	aim_bos_clientready(sess, command->conn);
 
 	aim_bos_reqservice(sess, command->conn, AIM_CONN_TYPE_CHATNAV);
