@@ -5071,7 +5071,7 @@ void re_show_multi_entry_textboxes(GtkWidget **texts_ibox,
 		gtk_text_set_editable(GTK_TEXT(mtd->textbox), TRUE);
 		gtk_text_set_word_wrap(GTK_TEXT(mtd->textbox), TRUE);
 		gtk_widget_set_usize(mtd->textbox, 300, 100);
-		gtk_text_insert(GTK_TEXT(mtd->textbox), NULL, NULL, NULL, mtd->text, -1);
+		gtk_text_insert(GTK_TEXT(mtd->textbox), NULL, NULL, NULL, mtd->text?mtd->text:"", -1);
 		gtk_box_pack_start(GTK_BOX (hbox), mtd->textbox, FALSE, FALSE, 0);
 		vscrollbar = gtk_vscrollbar_new (GTK_TEXT(mtd->textbox)->vadj);
 		gtk_box_pack_start(GTK_BOX (hbox), vscrollbar, FALSE, FALSE, 0);
