@@ -1986,10 +1986,19 @@ update_send_as_selection(struct gaim_window *win)
 		 child = child->next) {
 
 		GtkWidget *item = child->data;
+		GtkWidget *box;
+		GList *children;
 		GtkWidget *label;
 		const char *title;
 
-		label = gtk_bin_get_child(GTK_BIN(item));
+		box = gtk_bin_get_child(GTK_BIN(item));
+
+		children = gtk_container_get_children(GTK_CONTAINER(box));
+
+		if(g_list_length(children) < 2)
+			continue;
+
+		label = g_list_nth_data(children, 1);
 
 		if (!GTK_IS_LABEL(label))
 			continue;
