@@ -1,3 +1,5 @@
+EXTRA_DIST = PROTOCOL
+
 pkgdir = $(libdir)/gaim
 
 CFLAGS += -I\$(top_srcdir)/src $(st) $(DEBUG_CFLAGS)
