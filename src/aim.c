@@ -232,6 +232,7 @@ void show_login()
 	GtkWidget *button;
 	GtkWidget *hbox;
 	GtkWidget *label;
+	GtkWidget *vbox2;
 	GList *tmp;
 
 	/* Do we already have a main window opened? If so, bring it back, baby... ribs... yeah */
@@ -264,9 +265,12 @@ void show_login()
 	image = gaim_pixmap(NULL, "logo.png");
 	gtk_box_pack_start(GTK_BOX(vbox), image, FALSE, FALSE, 0);
 
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
+
 	label = gtk_label_new(_("Screen Name:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
 	name = gtk_combo_new();
 	tmp = combo_user_names();
@@ -276,16 +280,21 @@ void show_login()
 			   GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
 			   GTK_SIGNAL_FUNC(combo_changed), name);
-	gtk_box_pack_start(GTK_BOX(vbox), name, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), name, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
+
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox2), 5);
 
 	label = gtk_label_new(_("Password:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
 	pass = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	gtk_signal_connect(GTK_OBJECT(pass), "activate", GTK_SIGNAL_FUNC(doenter), mainwindow);
-	gtk_box_pack_start(GTK_BOX(vbox), pass, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), pass, FALSE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
 
 	/* Now for the button box */
 	hbox = gtk_hbox_new(TRUE, 0);
