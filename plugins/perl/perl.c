@@ -659,7 +659,7 @@ XS (XS_GAIM_print)
 
 	title = SvPV(ST(0), junk);
 	message = SvPV(ST(1), junk);
-	gaim_dialog_info(my_plugin, NULL, title, message);
+	gaim_notify_info(my_plugin, NULL, title, message);
 	XSRETURN(0);
 }
 
