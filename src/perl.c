@@ -954,10 +954,10 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		data = handler->data;
 		if (!strcmp(event_name(event), data->event_type)) {
 			handler_return = execute_perl(data->handler_name, buf);
-			if (SvIV(handler_return)) {
+			if (handler_return) {
 				if (buf)
 					g_free(buf);
-				return SvIV(handler_return);
+				return handler_return;
 			}
 		}
 	}
