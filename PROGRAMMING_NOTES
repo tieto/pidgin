@@ -12,6 +12,13 @@ General
 - Make sure when including win32dep.h that it is the last header to
   be included.
 
+- Open binary files when reading or writing with 'b' mode.
+
+  e.g: fopen("somefile", "wb");
+
+  Not doing so will open files in windows using defaut translation mode. 
+  i.e. newline -> <CR><LF>
+
 Paths
 -----
 
