@@ -1138,19 +1138,6 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
 
 	old_idle = b->idle;
 
-	if (gc->login_time_official && gc->login_time)
-		signon += gc->login_time_official - gc->login_time;
-	gaim_blist_update_buddy_signon(b, signon);
-	gaim_blist_update_buddy_idle(b, idle);
-	gaim_blist_update_buddy_evil(b, evil);
-/* LOG
-	if ((b->uc & UC_UNAVAILABLE) && !(type & UC_UNAVAILABLE))
-		system_log(log_back, gc, b, OPT_LOG_BUDDY_AWAY);
-	else if (!(b->uc & UC_UNAVAILABLE) && (type & UC_UNAVAILABLE))
-		system_log(log_away, gc, b, OPT_LOG_BUDDY_AWAY);
-*/
-	gaim_blist_update_buddy_status(b, type);
-
  	if (loggedin) {
  		if (!GAIM_BUDDY_IS_ONLINE(b)) {
  			signing_on = TRUE;
@@ -1279,6 +1266,13 @@ void serv_got_update(GaimConnection *gc, const char *name, int loggedin,
  			g_free(tmp);
  		}
 	}
+
+	if (gc->login_time_official && gc->login_time)
+		signon += gc->login_time_official - gc->login_time;
+	gaim_blist_update_buddy_signon(b, signon);
+	gaim_blist_update_buddy_idle(b, idle);
+	gaim_blist_update_buddy_evil(b, evil);
+	gaim_blist_update_buddy_status(b, type);
 
 
 	if (c != NULL)
