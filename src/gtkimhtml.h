@@ -200,11 +200,11 @@ enum {
 };
 
 #define GTK_IMHTML_DND_TARGETS	\
+	{ "_NETSCAPE_URL", 0, GTK_IMHTML_DRAG_URL }, \
 	{ "text/html", 0, GTK_IMHTML_DRAG_HTML }, \
 	{ "x-url/ftp", 0, GTK_IMHTML_DRAG_URL }, \
 	{ "x-url/http", 0, GTK_IMHTML_DRAG_URL }, \
 	{ "text/uri-list", 0, GTK_IMHTML_DRAG_URL }, \
-	{ "_NETSCAPE_URL", 0, GTK_IMHTML_DRAG_URL }, \
 	{ "UTF8_STRING", 0, GTK_IMHTML_DRAG_UTF8_STRING }, \
 	{ "COMPOUND_TEXT", 0, GTK_IMHTML_DRAG_COMPOUND_TEXT }, \
 	{ "STRING", 0, GTK_IMHTML_DRAG_STRING }, \

@@ -1332,7 +1332,6 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
 
-
 	if(gtk_imhtml_get_editable(imhtml) && sd->data){
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
@@ -1352,32 +1351,44 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			}
 			break;
 		case GTK_IMHTML_DRAG_HTML:
-			if (sd->length >= 2 &&
-			    (*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
-				/* This is UCS-2 */
-				char *tmp;
-				char *utf8 = g_convert(text, sd->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
-				g_free(text);
-				text = utf8;
-				if (!text) {
+			{
+			char *utf8 = NULL;
+			/* Ewww. This is all because mozilla thinks that text/html is 'for internal use only.'
+			 * as explained by this comment in gtkhtml:
+			 *
+			 * FIXME This hack decides the charset of the selection.  It seems that
+			 * mozilla/netscape alway use ucs2 for text/html
+			 * and openoffice.org seems to always use utf8 so we try to validate
+			 * the string as utf8 and if that fails we assume it is ucs2
+			 *
+			 * See also the comment on text/html here:
+			 * http://mail.gnome.org/archives/gtk-devel-list/2001-September/msg00114.html
+			 */
+			if (sd->length >= 2 && !g_utf8_validate(text, sd->length - 1, NULL)) {
+				utf8 = g_convert(text, sd->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
+
+				if (!utf8) {
 					gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
 					return;
 				}
-				tmp = g_utf8_next_char(text);
-				memmove(text, tmp, strlen(tmp) + 1);
-			}
 
-			if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
+				if (*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe || TRUE) {
+					char *tmp;
+					tmp = g_utf8_next_char(utf8);
+					memmove(utf8, tmp, strlen(tmp) + 1);
+				}
+			} else if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
 				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
-				g_free(text);
 				return;
 			}
-			gtk_imhtml_insert_html_at_iter(imhtml, text, 0, &iter);
+
+			gtk_imhtml_insert_html_at_iter(imhtml, utf8 ? utf8 : text, 0, &iter);
+			g_free(utf8);
 			break;
+			}
 		case GTK_IMHTML_DRAG_TEXT:
 			if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
 				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
-				g_free(text);
 				return;
 			} else {
 				char *tmp = gaim_escape_html(text);
