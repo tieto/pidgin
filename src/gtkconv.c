@@ -3944,12 +3944,44 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 	/* Status icon. */
 	account = gaim_conversation_get_account(conv);
 	b = gaim_find_buddy(account, name);
-	if (b != NULL)
+	if (b != NULL) {
 		gtkconv->icon = gtk_image_new_from_pixbuf(
-										gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
-																									 GAIM_STATUS_ICON_SMALL));
-	else
-		gtkconv->icon = gtk_image_new();
+							  gaim_gtk_blist_get_status_icon((GaimBlistNode *)b,
+											 GAIM_STATUS_ICON_SMALL));
+	} else {
+		GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol(account));
+		GaimPluginProtocolInfo *prpl_info;
+
+		if (plugin != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+
+		if (prpl_info != NULL) {
+			char buf[32];
+			char *filename;
+			GdkPixbuf *pixbuf, *scale;
+
+			const char *proto_name = prpl_info->list_icon(account, NULL);
+			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+						    "default", buf, NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+
+			g_free(filename);
+			
+			if (pixbuf != NULL) {
+				/* Scale and insert the image */
+				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+								GDK_INTERP_BILINEAR);
+				gtkconv->icon = gtk_image_new_from_pixbuf(scale);
+
+				g_object_unref(G_OBJECT(pixbuf));
+				g_object_unref(G_OBJECT(scale));
+			}
+			else
+				gtkconv->icon = gtk_image_new();
+		}
+	
+	}
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
