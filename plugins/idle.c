@@ -7,28 +7,29 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "multi.h"
+#include "plugin.h"
+#include "request.h"
 #include "server.h"
-
-#include "gtkplugin.h"
-#include "gtkutils.h"
 
 #define IDLE_PLUGIN_ID "gtk-idle"
 
-static GaimConnection *gc = NULL;
 
-static void set_idle(GtkWidget *button, GtkWidget *spinner) {
+static void
+idle_action_ok(void *ignored, GaimRequestFields *fields)
+{
 	time_t t;
-	int tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 0, G_MAXUSHORT);
-	GaimAccount *account;
+	int tm;
+	GaimAccount *acct;
+	GaimConnection *gc;
 
-	if (!gc)
-		return;
-
-	account = gaim_connection_get_account(gc);
+	tm = gaim_request_fields_get_integer(fields, "mins");
+	acct = gaim_request_fields_get_account(fields, "acct");
+	gc = gaim_account_get_connection(acct);
 
 	gaim_debug(GAIM_DEBUG_INFO, "idle",
-			   "setting idle time for %s to %d\n",
-			   gaim_account_get_username(account), tm);
+			"setting idle time for %s to %d\n",
+			gaim_account_get_username(acct), tm);
 	time(&t);
 	t -= 60 * tm;
 	gc->last_sent_time = t;
@@ -36,82 +37,60 @@ static void set_idle(GtkWidget *button, GtkWidget *spinner) {
 	gc->is_idle = 0;
 }
 
-static void select_account_cb(GtkWidget *opt, GaimAccount *account)
+
+static void
+idle_action(GaimPlugin *plugin)
 {
-	gc = gaim_account_get_connection(account);
-}
+	/* Use the super fancy request API */
 
-static void make_connect_menu(GtkWidget *box) {
-	GtkWidget *optmenu;
+	GaimRequestFields *request;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
 
-	optmenu = gaim_gtk_account_option_menu_new(NULL, FALSE,
-			G_CALLBACK(select_account_cb), NULL, NULL);
+	group = gaim_request_field_group_new(NULL);
 
-	gtk_box_pack_start(GTK_BOX(box), optmenu, FALSE, FALSE, 5);
-
-	if (gaim_connections_get_all())
-		gc = gaim_connections_get_all()->data;
-	else
-		gc = NULL;
-}
-
-static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
-{
-	GtkWidget *ret;
-	GtkWidget *frame, *label;
-	GtkWidget *vbox, *hbox;
-	GtkAdjustment *adj;
-	GtkWidget *spinner, *button;
-
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
-
-	frame = gaim_gtk_make_frame(ret, _("Idle Time"));
+	field = gaim_request_field_account_new("acct", "Account", NULL);
+	gaim_request_field_account_set_show_all(field, FALSE);
+	gaim_request_field_group_add_field(group, field);
 	
-	vbox = gtk_vbox_new(FALSE, 5);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
+	field = gaim_request_field_int_new("mins", "Minutes", 10);
+	gaim_request_field_group_add_field(group, field);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	request = gaim_request_fields_new();
+	gaim_request_fields_add_group(request, group);
 
-	label = gtk_label_new(_("Set"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
-	make_connect_menu(hbox);
-
-	label = gtk_label_new(_("idle for"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
-	adj = (GtkAdjustment *)gtk_adjustment_new(10, 0, G_MAXUSHORT, 1, 0, 0);
-	spinner = gtk_spin_button_new(adj, 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
-
-	label = gtk_label_new(_("minutes."));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-
-	button = gtk_button_new_with_mnemonic(_("_Set"));
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_idle), spinner);
-
-	gtk_widget_show_all(ret);
-
-	return ret;
+	gaim_request_fields(plugin,
+			N_("I'dle Mak'er"),
+			_("Set Account Idle Time"),
+			NULL,
+			request,
+			_("_Set"), G_CALLBACK(idle_action_ok),
+			_("_Cancel"), NULL,
+			NULL);
 }
 
-static GaimGtkPluginUiInfo ui_info =
+
+static GList *
+actions(GaimPlugin *plugin)
 {
-	get_config_frame
-};
+	GList *l = NULL;
+	struct plugin_actions_menu *pam;
+
+	pam = g_new0(struct plugin_actions_menu, 1);
+	pam->label = _("Set Account Idle Time");
+	pam->callback = idle_action;
+	pam->plugin = plugin;
+	l = g_list_append(l, pam);
+
+	return l;
+}
+
 
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_API_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	NULL,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,
@@ -125,13 +104,18 @@ static GaimPluginInfo info =
 	NULL,
 	NULL,
 	NULL,
-	&ui_info,
-	NULL
+	NULL,
+	NULL,
+	NULL,
+	actions
 };
+
 
 static void
 init_plugin(GaimPlugin *plugin)
 {
 }
 
+
 GAIM_INIT_PLUGIN(idle, init_plugin, info)
+

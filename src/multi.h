@@ -33,6 +33,12 @@ struct proto_actions_menu {
 	GaimConnection *gc;
 };
 
+struct plugin_actions_menu {
+	char *label;
+	void (*callback)(GaimPlugin *);
+	GaimPlugin *plugin;
+};
+
 struct proto_buddy_menu {
 	char *label;
 	void (*callback)(GaimConnection *, const char *);

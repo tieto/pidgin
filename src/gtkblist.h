@@ -209,6 +209,11 @@ void gaim_gtk_blist_setup_sort_methods();
 void gaim_gtk_blist_update_protocol_actions();
 
 /**
+ * Updates the plugin actions menu on the GTK+ buddy list window.
+ */
+void gaim_gtk_blist_update_plugin_actions();
+
+/**
  * Determines if showing the join chat dialog is a valid action.
  *
  * @return Returns TRUE if there are accounts online capable of

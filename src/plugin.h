@@ -25,6 +25,7 @@
 #ifndef _GAIM_PLUGIN_H_
 #define _GAIM_PLUGIN_H_
 
+#include <glib/glist.h>
 #include <gmodule.h>
 #include "signals.h"
 #include "value.h"
@@ -88,6 +89,7 @@ struct _GaimPluginInfo
 	void *ui_info;
 	void *extra_info;
 	GaimPluginUiInfo *prefs_info;
+	GList *(*actions)(GaimPlugin *plugin);
 };
 
 /**
@@ -159,6 +161,10 @@ struct _GaimPluginUiInfo {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+void *gaim_plugins_get_handle(void);
+
 
 /**************************************************************************/
 /** @name Plugin API                                                      */

@@ -73,6 +73,15 @@ static void *load_cb_data = NULL;
 static void (*unload_cb)(GaimPlugin *, void *) = NULL;
 static void *unload_cb_data = NULL;
 
+
+void *
+gaim_plugins_get_handle(void)
+{
+	static int handle;
+	return &handle;
+}
+
+
 #ifdef GAIM_PLUGINS
 static int
 is_so_file(const char *filename, const char *ext)
@@ -355,6 +364,8 @@ gaim_plugin_load(GaimPlugin *plugin)
 	if (load_cb != NULL)
 		load_cb(plugin, load_cb_data);
 
+	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-unload", plugin);
+
 	return TRUE;
 
 #else
@@ -425,6 +436,9 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	/* TODO */
 	if (unload_cb != NULL)
 		unload_cb(plugin, unload_cb_data);
+
+	/* I suppose this is the right place to call this... */
+	gaim_signal_emit(gaim_plugins_get_handle(), "plugin-unload", plugin);
 
 	return TRUE;
 #else
@@ -836,8 +850,21 @@ gaim_plugins_probe(const char *ext)
 	GaimPlugin *plugin;
 	size_t i;
 
+	void *handle;
+
 	if (!g_module_supported())
 		return;
+
+	handle = gaim_plugins_get_handle();
+
+	gaim_debug_info("plugins", "registering plugin-load signal\n");
+	gaim_signal_register(handle, "plugin-load", gaim_marshal_VOID__POINTER, NULL,
+			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
+
+	gaim_debug_info("plugins", "registering plugin-unload signal\n");
+	gaim_signal_register(handle, "plugin-unload", gaim_marshal_VOID__POINTER, NULL,
+			1, gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_PLUGIN));
+
 
 	for (i = 0; i < search_path_count; i++) {
 		if (search_paths[i] == NULL)
