@@ -684,8 +684,8 @@ silcgaim_attrs(GaimConnection *gc)
 			      "and your personal information. Please fill the information "
 			      "you would like other users to see about yourself."),
 			    fields,
-			    "OK", G_CALLBACK(silcgaim_attrs_cb),
-			    "Cancel", G_CALLBACK(silcgaim_attrs_cancel), gc);
+			    _("OK"), G_CALLBACK(silcgaim_attrs_cb),
+			    _("Cancel"), G_CALLBACK(silcgaim_attrs_cancel), gc);
 }
 
 static void
