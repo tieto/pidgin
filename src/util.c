@@ -351,7 +351,7 @@ static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
 
-char *tobase64(const unsigned char *in, size_t inlen)
+char *gaim_base64_encode(const unsigned char *in, size_t inlen)
 {
 	char *out, *rv;
 
@@ -383,7 +383,7 @@ char *tobase64(const unsigned char *in, size_t inlen)
 }
 
 
-void frombase64(const char *text, char **data, int *size)
+void gaim_base64_decode(const char *text, char **data, int *size)
 {
 	char *out = NULL;
 	char tmp = 0;
@@ -451,7 +451,7 @@ void frombase64(const char *text, char **data, int *size)
 /*
  * Converts raw data to a pretty, null-terminated base16 string.
  */
-unsigned char *tobase16(const unsigned char *data, int length)
+unsigned char *gaim_base16_encode(const unsigned char *data, int length)
 {
 	int i;
 	unsigned char *ascii = NULL;
@@ -470,7 +470,7 @@ unsigned char *tobase16(const unsigned char *data, int length)
 /*
  * Converts a null-terminated string of hexidecimal to raw data.
  */
-int frombase16(const char *ascii, unsigned char **raw)
+int gaim_base16_decode(const char *ascii, unsigned char **raw)
 {
 	int len, i, accumulator=0;
 	unsigned char *data;

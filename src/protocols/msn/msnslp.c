@@ -221,7 +221,7 @@ msn_slp_session_request_user_display(MsnSlpSession *slpsession,
 	g_return_if_fail(obj         != NULL);
 
 	msnobj_data = msn_object_to_string(obj);
-	msnobj_base64 = tobase64(msnobj_data, strlen(msnobj_data));
+	msnobj_base64 = gaim_base64_encode(msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
 #if 0

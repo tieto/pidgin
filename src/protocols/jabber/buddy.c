@@ -721,7 +721,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet)
 					char *data, *text2;
 					int size, imgid;
 					if((text2 = xmlnode_get_data(child2))) {
-						frombase64(text2, &data, &size);
+						gaim_base64_decode(text2, &data, &size);
 
 						imgid = gaim_imgstore_add(data, size, "logo.png");
 						g_string_append_printf(info_text,

@@ -58,7 +58,7 @@ char *normalize(const char *str);
  *
  * @see frombase64()
  */
-char *tobase64(const unsigned char *buf, size_t len);
+char *gaim_base64_encode(const unsigned char *buf, size_t len);
 
 /**
  * Converts a string back from its base-64 equivalent.
@@ -69,7 +69,7 @@ char *tobase64(const unsigned char *buf, size_t len);
  *
  * @see tobase64()
  */
-void frombase64(const char *str, char **ret_str, int *ret_len);
+void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
 
 /**
  * Converts a string to its base-16 equivalent.
@@ -81,7 +81,7 @@ void frombase64(const char *str, char **ret_str, int *ret_len);
  *
  * @see frombase16()
  */
-unsigned char *tobase16(const unsigned char *str, int len);
+unsigned char *gaim_base16_encode(const unsigned char *str, int len);
 
 /**
  * Converts a string back from its base-16 equivalent.
@@ -93,7 +93,7 @@ unsigned char *tobase16(const unsigned char *str, int len);
  *
  * @see tobase16()
  */
-int frombase16(const char *str, unsigned char **ret_str);
+int gaim_base16_decode(const char *str, unsigned char **ret_str);
 
 /**
  * Waits for all child processes to terminate.

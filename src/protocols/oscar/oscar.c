@@ -1820,7 +1820,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 		char *filename = NULL, *b16 = NULL, *saved_b16 = NULL;
 		GaimBuddy *b = NULL;
 
-		b16 = tobase16(info->iconcsum, info->iconcsumlen);
+		b16 = gaim_base16_encode(info->iconcsum, info->iconcsumlen);
 		b = gaim_find_buddy(gc->account, info->sn);
 		/*
 		 * If for some reason the checksum is valid, but cached file is not..
@@ -3441,7 +3441,7 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 		GaimBuddy *b = gaim_find_buddy(gc->account, sn);
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
 									  sn, icon, iconlen);
-		b16 = tobase16(iconcsum, iconcsumlen);
+		b16 = gaim_base16_encode(iconcsum, iconcsumlen);
 		if (b16) {
 			gaim_buddy_set_setting(b, "icon_checksum", b16);
 			gaim_blist_save();

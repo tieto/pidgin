@@ -215,13 +215,13 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	md5_append(&ctx, a1, strlen(a1));
 	md5_finish(&ctx, result);
 
-	ha1 = tobase16(result, 16);
+	ha1 = gaim_base16_encode(result, 16);
 
 	md5_init(&ctx);
 	md5_append(&ctx, a2, strlen(a2));
 	md5_finish(&ctx, result);
 
-	ha2 = tobase16(result, 16);
+	ha2 = gaim_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
@@ -229,7 +229,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	md5_append(&ctx, kd, strlen(kd));
 	md5_finish(&ctx, result);
 
-	z = tobase16(result, 16);
+	z = gaim_base16_encode(result, 16);
 
 	g_free(x);
 	g_free(y);
@@ -249,7 +249,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 	char *enc_out;
 	GHashTable *parts;
 
-	frombase64(enc_in, &dec_in, NULL);
+	gaim_base64_decode(enc_in, &dec_in, NULL);
 
 	parts = parse_challenge(dec_in);
 
@@ -299,7 +299,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		g_free(auth_resp);
 		g_free(cnonce);
 
-		enc_out = tobase64(response->str, response->len);
+		enc_out = gaim_base64_encode(response->str, response->len);
 
 		gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
 

@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -96,47 +96,6 @@ typedef struct
 static const char alphabet[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 	"0123456789+/";
-
-static char *
-base64_enc(const char *data, int len)
-{
-	char *dest;
-	char *buf;
-
-	buf = dest = g_malloc(4 * len / 3 + 4);
-
-	/* Encode 3 bytes at a time */
-	while (len >= 3) {
-		buf[0] = alphabet[(data[0] >> 2) & 0x3F];
-		buf[1] = alphabet[((data[0] << 4) & 0x30) | ((data[1] >> 4) & 0x0F)];
-		buf[2] = alphabet[((data[1] << 2) & 0x3C) | ((data[2] >> 6) & 0x03)];
-		buf[3] = alphabet[data[2] & 0x3F];
-		data += 3;
-		buf += 4;
-		len -= 3;
-	}
-
-	if (len > 0) {
-		buf[0] = alphabet[(data[0] >> 2) & 0x3F];
-		buf[1] = alphabet[(data[0] << 4) & 0x30];
-
-		if (len > 1) {
-			buf[1] += (data[1] >> 4) & 0x0F;
-			buf[2] = alphabet[(data[1] << 2) & 0x3C];
-		}
-
-		else
-			buf[2] = '=';
-
-		buf[3] = '=';
-		buf += 4;
-	}
-
-	*buf = '\0';
-
-	return dest;
-}
-
 
 static int
 trepia_write(int fd, const char *data, size_t len)
@@ -933,7 +892,7 @@ _parse_data(TrepiaSession *session, char *buf)
 					char *icon;
 					int icon_len;
 
-					frombase64(value, &icon, &icon_len);
+					gaim_base64_decode(value, &icon, &icon_len);
 
 					set_icon_data(session->gc, username, icon, icon_len);
 
@@ -1250,7 +1209,7 @@ trepia_set_buddy_icon(GaimConnection *gc, const char *filename)
 
 			buf[sb.st_size] = '\0';
 
-			temp = base64_enc(buf, sb.st_size);
+			temp = gaim_base64_encode(buf, sb.st_size);
 
 			out_buf = g_strdup_printf("<K><m>%s</m></K>", temp);
 
