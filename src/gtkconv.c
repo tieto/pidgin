@@ -2248,7 +2248,7 @@ generate_send_as_items(GaimWindow *win, GaimConversation *deleted_conv)
 			g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
 
 			g_signal_connect(G_OBJECT(menuitem), "activate",
-					G_CALLBACK(menu_conv_sel_send_cb), NULL);
+							 G_CALLBACK(menu_conv_sel_send_cb), NULL);
 
 			gtk_widget_show(menuitem);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -3617,10 +3617,11 @@ gaim_gtk_add_conversation(GaimWindow *win, GaimConversation *conv)
 		new_ui = TRUE;
 		
 		gtkconv->make_sound = TRUE;
-	}
 
-	g_signal_connect_swapped(G_OBJECT(pane), "focus",
-							 G_CALLBACK(gtk_widget_grab_focus), gtkconv->entry);
+		g_signal_connect_swapped(G_OBJECT(pane), "focus",
+								 G_CALLBACK(gtk_widget_grab_focus),
+								 gtkconv->entry);
+	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 5);
 
