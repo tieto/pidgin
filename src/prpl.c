@@ -158,6 +158,7 @@ static void do_ask_callback(GtkDialog *d, gint resp, struct doaskstruct *doask)
 			break;
 		}
 	g_free(doask);
+	gtk_widget_destroy(d);
 }
 
 
@@ -178,7 +179,7 @@ void do_ask_dialog(const char *prim, const char *sec, void *data, char *yestext,
 	g_free(filename);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
-	window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, yestext, GTK_RESPONSE_YES, notext, GTK_RESPONSE_NO, NULL);
+	window = gtk_dialog_new_with_buttons("", NULL, GTK_DIALOG_MODAL, notext, GTK_RESPONSE_NO, yestext, GTK_RESPONSE_YES, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_YES);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(do_ask_callback), doask);
 	
