@@ -146,14 +146,22 @@ gaim_pounce_execute(const struct gaim_account *pouncer,
 					const char *pouncee, GaimPounceEvent events)
 {
 	struct gaim_pounce *pounce;
+	GList *l;
 
 	if (events == GAIM_POUNCE_NONE || pouncer == NULL || pouncee == NULL)
 		return;
 
-	pounce = gaim_find_pounce(pouncer, pouncee, events);
+	for (l = gaim_get_pounces(); l != NULL; l = l->next) {
+		pounce = (struct gaim_pounce *)l->data;
 
-	if (pounce != NULL && pounce->callback != NULL)
-		pounce->callback(pounce, events, gaim_pounce_get_data(pounce));
+		if ((gaim_pounce_get_events(pounce) & events) &&
+			(gaim_pounce_get_pouncer(pounce) == pouncer) &&
+			!strcmp(gaim_pounce_get_pouncee(pounce), pouncee)) {
+
+			if (pounce->callback != NULL)
+				pounce->callback(pounce, events, gaim_pounce_get_data(pounce));
+		}
+	}
 }
 
 struct gaim_pounce *
