@@ -96,6 +96,39 @@ void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
 
 /*@}*/
 
+/**************************************************************************/
+/** @name Quoted Printable Functions                                      */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Converts a quoted printable string back to its readable equivalent.
+ *
+ * @param str     The string to convert back.
+ * @param ret_str The returned, readable string.
+ * @param ret_len The returned string length.
+ */
+void gaim_quotedp_decode (const char *str, char **ret_str, int *ret_len);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name MIME Functions                                                  */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Converts a MIME header field string back to its readable equivalent
+ * according to RFC 2047.
+ *
+ * @param str The string to convert back.
+ *
+ * @return The readble string.
+ */
+char *gaim_mime_decode_field (const char *str);
+
+/*@}*/
+
 
 /**************************************************************************/
 /** @name Date/Time Functions                                             */

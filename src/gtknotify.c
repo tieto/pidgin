@@ -215,13 +215,17 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 		char *from_text = NULL, *subject_text = NULL;
 
 		if (froms != NULL) {
+			char *from_decoded = gaim_mime_decode_field(*froms);
 			from_text = g_strdup_printf(
-				_("<span weight=\"bold\">From:</span> %s\n"), *froms);
+				_("<span weight=\"bold\">From:</span> %s\n"), from_decoded);
+			g_free(from_decoded);
 		}
 
 		if (subjects != NULL) {
+			char *subject_decoded = gaim_mime_decode_field(*subjects);
 			subject_text = g_strdup_printf(
-				_("<span weight=\"bold\">Subject:</span> %s\n"), *subjects);
+				_("<span weight=\"bold\">Subject:</span> %s\n"), subject_decoded);
+			g_free(subject_decoded);
 		}
 
 		label_text = g_strdup_printf(

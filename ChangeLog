@@ -1,10 +1,10 @@
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 0.75cvs :
-	* Yahoo file transfer (Tim Ringenbach)
+	* Yahoo! file transfer (Tim Ringenbach)
+	* Improved i18n support for MSN email notification (Felipe Contreras)
 	* Chinese (Simplified) translation updated (Funda Wang)
 	* Chinese (Traditional) translation updated (Ambrose C. Li)
-	* Esperanto translation added (Anthony Ehrhardt (cguru))
 	* Italian translation updated (Claudio Satriano)
 	* Portuguese (Brazilian) translation updated (Mauricio de Lemos
 	  Rodrigues Collares Neto)

@@ -244,6 +244,141 @@ gaim_base64_decode(const char *text, char **data, int *size)
 		*size = len;
 }
 
+/**************************************************************************
+ * Quoted Printable Functions
+ **************************************************************************/
+void
+gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
+{
+	char *p, *n, *new;
+	
+	n = new = malloc(strlen (str));
+
+	for (p = (char *)str; *p; p++, n++) {
+		if (*p == '=') {
+			sscanf(p + 1, "%2x\n", (int *)n);
+			p += 2;
+		}
+		else if (*p == '_')
+			*n = ' ';
+		else
+			*n = *p;
+	}
+
+	*n = '\0';
+
+	if (ret_len)
+		*ret_len = n - new;
+	
+	/* Resize to take less space */
+	/* new = realloc(new, n - new); */
+
+	*ret_str = new;
+}
+
+/**************************************************************************
+ * MIME Functions
+ **************************************************************************/
+#define OUT_CHARSET "utf-8"
+
+char *
+gaim_mime_decode_word(const char *charset, const char *encoding, const char *str)
+{
+	/* TODO: We need to check for nulls */
+	char *decoded, *converted;
+	int len = 0;
+
+	if (g_ascii_strcasecmp(encoding, "Q") == 0)
+		gaim_quotedp_decode(str, &decoded, &len);
+	else if (g_ascii_strcasecmp(encoding, "B") == 0)
+		gaim_base64_decode(str, &decoded, &len);
+	else
+		return NULL;
+
+	converted = g_convert(decoded, len, OUT_CHARSET, charset, NULL, NULL, NULL);
+	g_free(decoded);
+
+	return converted;
+}
+
+char *
+gaim_mime_decode_field(const char *str)
+{
+	char *cur, *mark;
+	char *unencoded_start, *unencoded_end;
+	char *charset, *encoding, *word, *decoded;
+	char *n, *new;
+
+	n = new = malloc(strlen(str));
+	charset = word = NULL;
+
+	/* Here we will be looking for encoded words and if they seem to be
+	 * valid then decode them */
+
+	for (	unencoded_start = cur = (char *)str;
+			(unencoded_end = cur = strstr(cur, "=?"));
+			unencoded_start = cur)
+	{
+		int len;
+		char *token;
+		GQueue *tokens = g_queue_new();
+		
+		for (cur += 2, mark = cur; *cur; cur++) {
+			if (*cur == '?') {
+				token = g_strndup(mark, cur - mark);
+				g_queue_push_head(tokens, token);
+
+				mark = (cur + 1);
+				
+				if (mark[0] == '=' && mark[1] == '\0')
+					break;
+			} else {
+				if ((tokens->length == 2) && (*cur == ' '))
+					break;
+				else if ((tokens->length < 2) && (strchr("()<>@,;:/[]", *cur)))
+					break;
+				else if (tokens->length > 2)
+					break;
+			}
+		}
+
+		cur += 2;
+
+		if ((tokens->length == 3) && (*mark == '=')) {
+			len = unencoded_end - unencoded_start;
+			n = strncpy(n, unencoded_start, len) + len;
+
+			charset = g_queue_pop_tail(tokens);
+			encoding = g_queue_pop_tail(tokens);
+			word = g_queue_pop_tail(tokens);
+			
+			if ((decoded = gaim_mime_decode_word(charset, encoding, word))) {
+				len = strlen(decoded);
+				n = strncpy(n, decoded, len) + len;
+				g_free(decoded);
+			}
+			
+			g_free(charset);
+			g_free(encoding);
+			g_free(word);
+		} else {
+			len = cur - unencoded_start;
+			n = strncpy(n, unencoded_start, len) + len;
+			
+			while ((token = g_queue_pop_tail(tokens)))
+				g_free(token);
+		}
+		
+		g_queue_free(tokens);
+	}
+
+	*n = '\0';
+
+	if (*unencoded_start)
+		n = strcpy(n, unencoded_start);
+
+	return new;
+}
 
 /**************************************************************************
  * Date/Time Functions
