@@ -21,5 +21,5 @@ gaimsound_DATA = $(gaim_SOUND)
 
 endif
 
-SUBDIRS = m4 libfaim sounds pixmaps doc src plugins
+SUBDIRS = m4 libfaim sounds pixmaps doc src
 ACLOCAL_AMFLAGS = -I m4
