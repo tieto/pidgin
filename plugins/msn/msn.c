@@ -452,6 +452,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 			if (md->fd == source) {
 				hide_login_progress(gc, "Read error");
 				signoff(gc);
+				return;
 			}
 
 			close(source);
@@ -1098,7 +1099,7 @@ static void msn_set_idle(struct gaim_connection *gc, int idle)
 static void msn_close(struct gaim_connection *gc)
 {
 	struct msn_data *md = (struct msn_data *)gc->proto_data;
-	char buf[MSN_BUF_LEN - 1];
+	char buf[MSN_BUF_LEN];
 	struct msn_conn *mc = NULL;
 
 	while (msn_connections) {
@@ -1108,7 +1109,7 @@ static void msn_close(struct gaim_connection *gc)
 	}	
 
 	if (md->fd) {
-		snprintf(buf, MSN_BUF_LEN, "OUT\n");
+		g_snprintf(buf, MSN_BUF_LEN, "OUT\n");
 		msn_write(md->fd, buf);
 		close(md->fd);
 	}
@@ -1117,7 +1118,7 @@ static void msn_close(struct gaim_connection *gc)
 		gdk_input_remove(gc->inpa);
 
 	if (md->friendly)
-		free(md->friendly);
+		g_free(md->friendly);
 
 	g_free(gc->proto_data);
 }
