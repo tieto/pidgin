@@ -751,12 +751,28 @@ static void msn_accept_add(gpointer w, struct msn_add_permit *map)
 		signoff(map->gc);
 		return;
 	}
+	map->gc->permit = g_slist_append(map->gc->permit, map->user);
 	build_allow_list(); /* er. right. we'll need to have a thing for this in CUI too */
 	show_got_added(map->gc, NULL, map->user, map->friend, NULL);
+	*(map->user) = 0;
 }
 
 static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 {
+	struct msn_data *md = map->gc->proto_data;
+	char buf[MSN_BUF_LEN];
+
+	if (*(map->user)) {
+		g_snprintf(buf, sizeof(buf), "ADD %d BL %s %s\r\n", ++md->trID, map->user, url_encode(map->friend));
+		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			hide_login_progress(map->gc, "Write error");
+			signoff(map->gc);
+			return;
+		}
+		map->gc->deny = g_slist_append(map->gc->deny, map->user);
+		build_block_list();
+	}
+	
 	g_free(map->user);
 	g_free(map->friend);
 	g_free(map);
