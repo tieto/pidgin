@@ -643,7 +643,11 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 {
 	struct aim_ssi_item *cur, *next;
 
-	/* Delete any buddies, permits, or denies with empty names */
+	/* Delete any buddies, permits, or denies with empty names. */
+	/* If there are any buddies directly in the master group, add them to a real group. */
+	/* DESTROY any buddies that are directly in the master group. */
+	/* Do the same for buddies that are in a non-existant group. */
+	/* This will kind of mess up if you hit the item limit, but this function isn't too critical */
 	cur = sess->ssi.local;
 	while (cur) {
 		next = cur->next;
@@ -654,22 +658,10 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess, aim_conn_t *conn)
 				aim_ssi_delpermit(sess, conn, cur->name);
 			else if (cur->type == AIM_SSI_TYPE_DENY)
 				aim_ssi_deldeny(sess, conn, cur->name);
-		}
-		cur = next;
-	}
-
-	/* If there are any buddies directly in the master group, put them in a real group */
-	/* This will kind of mess up if you hit the item limit, but this function isn't too critical */
-	for (cur=sess->ssi.local; cur; cur=cur->next)
-		if ((cur->type == AIM_SSI_TYPE_BUDDY) && (cur->gid == 0x0000))
+		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(sess->ssi.local, cur->gid, 0x0000)))) {
 			aim_ssi_addbuddy(sess, conn, cur->name, "orphans", NULL, NULL, NULL, 0);
-
-	/* Now DESTROY any buddies that are directly in the master group */
-	cur = sess->ssi.local;
-	while (cur) {
-		next = cur->next;
-		if ((cur->type == AIM_SSI_TYPE_BUDDY) && (cur->gid == 0x0000))
 			aim_ssi_delbuddy(sess, conn, cur->name, NULL);
+		}
 		cur = next;
 	}
 
