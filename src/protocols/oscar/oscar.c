@@ -819,6 +819,8 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	struct oscar_direct_im *dim;
 	char *host; int port = 5190;
 	int i, rc;
+	char *tmp;
+	GaimConversation *conv;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		destroy_direct_im_request(d);
@@ -864,6 +866,13 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	dim->conn->status |= AIM_CONN_STATUS_INPROGRESS;
 	dim->gpc_pend = TRUE;
 	rc = gaim_proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
+
+	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, d->sn);
+	tmp = g_strdup_printf(_("Attempting to connect to %s at %s:%hu for Direct IM."), d->sn, host,
+	                      port);
+	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+	g_free(tmp);
+	
 	g_free(host);
 	if (rc < 0) {
 		dim->gpc_pend = FALSE;
@@ -1233,6 +1242,7 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	OscarData *od;
 	struct oscar_direct_im *dim;
 	int listenfd;
+	const char *ip;
 
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		g_free(data->who);
@@ -1260,13 +1270,23 @@ static void oscar_direct_im(struct ask_do_dir_im *data) {
 	g_snprintf(dim->name, sizeof dim->name, "%s", data->who);
 
 	listenfd = gaim_network_listen_range(5190, 5199);
-	dim->conn = aim_odc_initiate(od->sess, data->who, listenfd, gaim_network_get_port_from_fd(listenfd));
+	ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
+	dim->conn = aim_odc_initiate(od->sess, data->who, listenfd, gaim_network_ip_atoi(ip), gaim_network_get_port_from_fd(listenfd), NULL);
 	if (dim->conn != NULL) {
+		char *tmp;
+		GaimConversation *conv;
+
 		od->direct_ims = g_slist_append(od->direct_ims, dim);
 		dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 						oscar_callback, dim->conn);
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
 					gaim_odc_initiate, 0);
+
+		conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, data->who);
+		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), data->who, ip,
+		                      gaim_network_get_port_from_fd(listenfd));
+		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		g_free(tmp);
 	} else {
 		gaim_notify_error(gc, NULL, _("Unable to open Direct IM"), NULL);
 		oscar_direct_im_destroy(od, dim);

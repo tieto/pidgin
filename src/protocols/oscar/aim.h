@@ -411,7 +411,7 @@ typedef struct aim_session_s {
 	 * Its really bad and the API/event model is quirky at best.
 	 *  
 	 */
-	aim_frame_t *queue_outgoing;   
+	aim_frame_t *queue_outgoing;
 	aim_frame_t *queue_incoming; 
 
 	/*
@@ -865,7 +865,7 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance);
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port);
+/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, bool usecookie, const char *sn, const fu8_t *ip, fu16_t port);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);
@@ -933,7 +933,8 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *msg, int len, int encoding, int isawaymsg);
 faim_export const char *aim_odc_getsn(aim_conn_t *conn);
 faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
-faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd, fu16_t port);
+faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
+                                         const fu8_t *localip, fu16_t port, const fu8_t *mycookie);
 faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
 
 faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename);
@@ -1470,7 +1471,6 @@ faim_internal void aim_tlvlist_remove(aim_tlvlist_t **list, const fu16_t type);
 
 faim_export int aimutil_putstr(char *, const char *, int);
 faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen);
-faim_export int aim_util_getlocalip(fu8_t *ip);
 faim_export int aimutil_tokslen(char *toSearch, int theindex, char dl);
 faim_export int aimutil_itemcnt(char *toSearch, char dl);
 faim_export char *aimutil_itemindex(char *toSearch, int theindex, char dl);

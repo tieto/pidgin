@@ -440,27 +440,31 @@ faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn)
 /**
  * For those times when we want to open up the direct connection channel ourselves.
  *
- * You'll want to set up some kind of watcher on this socket.  
- * When the state changes, call aim_handlerendconnection with 
- * the connection returned by this.  aim_handlerendconnection 
+ * You'll want to set up some kind of watcher on this socket.
+ * When the state changes, call aim_handlerendconnection with
+ * the connection returned by this.  aim_handlerendconnection
  * will accept the pending connection and stop listening.
  *
  * @param sess The session
  * @param sn The screen name to connect to.
  * @return The new connection.
  */
-faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd, fu16_t port)
+faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
+                                         const fu8_t *localip, fu16_t port, const fu8_t *mycookie)
 {
 	aim_conn_t *newconn;
 	aim_msgcookie_t *cookie;
 	struct aim_odc_intdata *priv;
-	fu8_t localip[4];
 	fu8_t ck[8];
 
-	if (aim_util_getlocalip(localip) == -1)
+	if (!localip)
 		return NULL;
 
-	aim_im_sendch2_odcrequest(sess, ck, sn, localip, port);
+	if (mycookie) {
+		memcpy(ck, mycookie, 8);
+		aim_im_sendch2_odcrequest(sess, ck, TRUE, sn, localip, port);
+	} else
+		aim_im_sendch2_odcrequest(sess, ck, FALSE, sn, localip, port);
 
 	cookie = (aim_msgcookie_t *)calloc(1, sizeof(aim_msgcookie_t));
 	memcpy(cookie->cookie, ck, 8);

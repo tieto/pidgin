@@ -139,24 +139,6 @@ faim_export fu16_t aimutil_iconsum(const fu8_t *buf, int buflen)
 	return sum;
 }
 
-faim_export int aim_util_getlocalip(fu8_t *ip)
-{
-	struct hostent *hptr;
-	char localhost[129];
-
-	/* XXX if available, use getaddrinfo() */
-	/* XXX allow client to specify which IP to use for multihomed boxes */
-
-	if (gethostname(localhost, 128) < 0)
-		return -1;
-
-	if (!(hptr = gethostbyname(localhost)))
-		return -1;
-	memcpy(ip, hptr->h_addr_list[0], 4);
-
-	return 0;
-}
-
 /**
  * Check if the given screen name is a valid AIM screen name.
  * Example: BobDole

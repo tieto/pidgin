@@ -680,7 +680,7 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
  * Subtype 0x0006 - Send an "I want to directly connect to you" message
  *
  */
-faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, const char *sn, const fu8_t *ip, fu16_t port)
+faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, bool usecookie, const char *sn, const fu8_t *ip, fu16_t port)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -709,11 +709,15 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, co
 	 * XXX - have I mentioned these should be generated in msgcookie.c?
 	 *
 	 */
-	for (i = 0; i < 7; i++)
-	       	ck[i] = 0x30 + ((fu8_t) rand() % 10);
+
+	if (cookie && usecookie) /* allow user-specified cookie */
+		memcpy(ck, cookie, 8);
+	else
+		for (i = 0; i < 7; i++)
+			ck[i] = 0x30 + ((fu8_t) rand() % 10);
 	ck[7] = '\0';
 
-	if (cookie)
+	if (cookie && !usecookie)
 		memcpy(cookie, ck, 8);
 
 	/* ICBM header */
