@@ -577,6 +577,9 @@ int gaim_parse_motd(struct aim_session_t *sess,
 
 	sprintf(debug_buff, "MOTD: %s\n", msg);
 	debug_print(debug_buff);
+	sprintf(debug_buff, "Gaim %s / Libfaim %s\n",
+			VERSION, aim_getbuildstring());
+	debug_print(debug_buff);
 
 	return 1;
 }

@@ -1,6 +1,14 @@
 
 No release numbers
 ------------------
+ - Tue May 30 22:32:31 UTC 2000
+   - Added lock around tx seqnum to prevent that race when transmitting
+       from diverse threads. (actually committed earlier today)
+   - Added aim_meta.c and a few constants and things to keep
+       track of "releases".  
+   - Added mkbuildinfo.sh to automatically update build string
+       "constants" on every invocation of 'make all'.
+
  - Mon May 29 12:08:28 GMT 2000
    - Rearranged aim_tx_flushqueue(); moved write operation 
        to aim_tx_sendframe()

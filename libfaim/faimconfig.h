@@ -6,13 +6,6 @@
  * that they'll get set here.  Notably, the 'debug' of this file is _not_ 
  * the same as the frontend 'debug'.  They can be different values.
  *
- * Changes by EWarmenhoven Mon May 29 20:08:17 UTC 2000:
- * - since gaim requires pthreads to be present at ./configure-time, all
- * systems gaim runs on theoretically have pthreads (this may not be true
- * since gaim does not use pthreads itself, hence there are ways around it).
- * Therefore, #define FAIM_USEPTHREADS should not be surrounded by
- * #ifdef __linux__/#endif.
- *
  */
 
 #ifndef __FAIMCONFIG_H__
@@ -115,13 +108,9 @@
  * 
  * Default: defined on Linux, otherwise undefined
  */
-/* gaim requires pthreads (though only at configure time), so this applies to
- * more than just linux
 #ifdef __linux__
 #define FAIM_USEPTHREADS
 #endif
-*/
-#define FAIM_USEPTHREADS
 
 #endif /* __FAIMCONFIG_H__ */
 

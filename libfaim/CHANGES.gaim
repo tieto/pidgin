@@ -1,4 +1,19 @@
 
+Wed May 31 00:40:42 UTC 2000 EWarmenhoven
+	- Adam added a file to libfaim, aim_meta.c, that has one main function:
+	  to return the libfaim version and when it was build (date/time). So
+	  I added it to gaim's copy.
+	- aim_meta.c included a file, aim_buildcode.h, which was created by a
+	  shell script, and defined two values at build time. Instead of have
+	  the Makefile run that script, I decided it would be easier to have
+	  the Makefile define those values itself. This marks now two minor
+	  changes to libfaim: changing some printf's to faimdprintf's, and not
+	  including the shell script in favor of the Makefile way of doing it.
+	- Just for grins (mostly to see if the code I added to Makefile.am did
+	  what I wanted it to), I added a line to oscar.c to print the gaim and
+	  libfaim versions to the debug window when you sign on. Maybe it'll be
+	  useful in debugging at some point?
+
 Tue May 30 23:40:11 UTC 2000 EWarmenhoven
 	- So today, somone IMs me and says that he thinks that allowing only the
 	  people on your buddy list to see you is a good thing, and that I
