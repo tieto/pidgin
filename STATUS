@@ -1,4 +1,4 @@
-STATUS of GAIM CVS tree. Last modified $Date: 2000-12-09 05:17:48 -0500 (Sat, 09 Dec 2000) $ by $Author: robflynn $.
+STATUS of GAIM CVS tree. Last modified $Date: 2000-12-14 03:33:41 -0500 (Thu, 14 Dec 2000) $ by $Author: robflynn $.
 
 This file is meant to provide gaim users who use the CVS version to see whether
 they actually want to compile what they just checked out. Gaim CVS is usually
@@ -93,6 +93,16 @@ joining chat rooms and holding conversations within them.  The buddylist
 also works and users have the ability to send ping requests to the user
 by right clicking their name.  /me support is also added.  Other commands
 and functionality are planned but not yet implemented.
+
+
+MSN
+===
+
+MSN currently supports signing on, sending and receiving messages.  The
+buddylist is functional. When sending the initial message (to start a
+conversation) there will be a small delay.  It will appear as if the
+client has frozen.  This will not always be the case.  I have a fix
+that I havent taken the time to write yet.
 
 
 ICQ
