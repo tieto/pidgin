@@ -8,6 +8,10 @@
 	This release has quite the number of bug fixes. I won't bother
 	going into detail here. Just ust it, love it, live it - SEGA!
 
+	Eric: Lots of fixes. Things compile well now. ICQ has stopped
+	crashing on PPC and Sparc. If you know someone who isn't using
+	Gaim because it was unstable, please get them to try this
+	version. It's much better, I promise.
 
 0.45 (10/04/2001):
 	Eric: Well, it seems that the time has come for yet another
