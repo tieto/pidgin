@@ -27,6 +27,8 @@
 #include <config.h>
 #endif
 
+#include <string.h>
+
 #include "gaim.h"
 
 #ifdef USE_SM
@@ -292,11 +294,11 @@ void session_init(gchar *argv0, gchar *previous_id) {
 	session_managed = TRUE;
 	gdk_set_sm_client_id(client_id);
 
-	g_strdup_printf("%d", (int) getpid());
+	tmp = g_strdup_printf("%d", (int) getpid());
 	session_set_string(session, SmProcessID, tmp);
 	g_free(tmp);
 
-	g_strdup(g_get_user_name());
+	tmp = g_strdup(g_get_user_name());
 	session_set_string(session, SmUserID, tmp);
 	g_free(tmp);
 
