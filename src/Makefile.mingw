@@ -112,6 +112,7 @@ DLL_C_SRC =	\
 			gtkroomlist.c \
 			gtksound.c \
 			gtksourceiter.c \
+			gtkstatusselector.c \
 			gtkutils.c \
 			idle.c \
 			imgstore.c \
