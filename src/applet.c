@@ -43,7 +43,6 @@ GtkWidget *applet_popup = NULL;
 
 GtkWidget *applet;
 GtkWidget *appletframe;
-GtkWidget *status_label;
 
 GtkWidget *icon;
 GdkPixmap *icon_offline_pm=NULL;
@@ -109,19 +108,16 @@ static gboolean update_applet(){
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_connect_pm,
 				icon_connect_bm );   
-		gtk_label_set( GTK_LABEL(status_label), _MSG_CONNECT_ );
 		applet_set_tooltips(_("Attempting to sign on...."));
 	} else if (!connections) {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_offline_pm,
 				icon_offline_bm );
-		gtk_label_set( GTK_LABEL(status_label), _MSG_OFFLINE_ );
 		applet_set_tooltips(_("Offilne. Click to bring up login box."));
 	} else if (!awaymessage) {
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
 				icon_online_bm );                
-		gtk_label_set( GTK_LABEL(status_label), _MSG_ONLINE_ );
 		g_snprintf(buf, sizeof buf, "Online: ");
 		while (c) {
 			strcat(buf, ((struct gaim_connection *)c->data)->username);
@@ -133,18 +129,17 @@ static gboolean update_applet(){
 		gtk_pixmap_set( GTK_PIXMAP(icon),
 				icon_online_pm,
 				icon_online_bm );   
-		gtk_label_set( GTK_LABEL(status_label), _("Away") );
 	}
 
 	return TRUE;
 }
 
 void update_pixmaps() {
-	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, (sizehint-16), (sizehint-12),
+	load_applet_icon( GAIM_GNOME_OFFLINE_ICON, (sizehint-1), (sizehint-1),
 			&icon_offline_pm, &icon_offline_bm );
-	load_applet_icon( GAIM_GNOME_CONNECT_ICON, (sizehint-16), (sizehint-12),
+	load_applet_icon( GAIM_GNOME_CONNECT_ICON, (sizehint-1), (sizehint-1),
 			&icon_connect_pm, &icon_connect_bm );
-	load_applet_icon( GAIM_GNOME_ONLINE_ICON, (sizehint-16), (sizehint-12),
+	load_applet_icon( GAIM_GNOME_ONLINE_ICON, (sizehint-1), (sizehint-1),
 			&icon_online_pm, &icon_online_bm );
 	update_applet();
 	gtk_widget_set_usize(appletframe, sizehint, sizehint);
@@ -319,6 +314,7 @@ gint init_applet_mgr(int argc, char *argv[]) {
 				GDK_BUTTON_PRESS_MASK);
 
         appletframe = gtk_frame_new(NULL);
+	gtk_frame_set_shadow_type(GTK_FRAME(appletframe), GTK_SHADOW_NONE);
 #ifdef HAVE_PANEL_PIXEL_SIZE
 	gtk_widget_set_usize(appletframe, 5, 5);
 #else
@@ -345,29 +341,11 @@ gint init_applet_mgr(int argc, char *argv[]) {
 	
 	gtk_box_pack_start(GTK_BOX(vbox), icon, FALSE, TRUE, 0);
 	
-	status_label = gtk_label_new(_("Offline"));
-
 	update_applet();
-	
-	/*set this label's font*/
-	label_style = gtk_widget_get_style( status_label );
-	
-	label_font = gdk_font_load( _MSG_FONT_ );
-	         
-	
-	if( label_font != NULL ){
-		label_style->font = label_font; 
-		gtk_widget_set_style( status_label, label_style );
-	} else {
-		debug_printf(_("Font does not exist") );
-	}
-	
-	gtk_box_pack_start(GTK_BOX(vbox), status_label, FALSE, TRUE, 0);
 	
 	gtk_container_add( GTK_CONTAINER(appletframe), vbox );
 	applet_widget_add(APPLET_WIDGET(applet), appletframe);
 	
-	gtk_widget_show( status_label );
 	gtk_widget_show( vbox );
 	gtk_widget_show( appletframe );
 	        

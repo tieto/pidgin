@@ -48,10 +48,12 @@ enum gaim_user_states {
 };
 
 
+/*
 #define _MSG_OFFLINE_ "Offline"
 #define _MSG_CONNECT_ "Connecting"
 #define _MSG_ONLINE_ "Online"
 #define _MSG_FONT_ "-*-helvetica-medium-r-*-*-*-80-*-*-*-*-*-*"
+*/
 
 #define GAIM_GNOME_DEVIL_OFFLINE "gaim/gnome/devil-offline.png"
 #define GAIM_GNOME_DEVIL_CONNECT "gaim/gnome/devil-connect.png"
