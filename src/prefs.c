@@ -191,9 +191,6 @@ GtkWidget *interface_page() {
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
 	vbox = make_frame(ret, _("Interface Options"));
-	/* This shouldn't have to wait for user to click OK or APPLY or whatnot */
-	/* This really shouldn't be in preferences at all */
-	debugbutton = gaim_button(_("Show _debug window"), &misc_options, OPT_MISC_DEBUG, vbox);
 
 	gaim_button(_("D_isplay remote nicknames if no alias is set"), &misc_options, OPT_MISC_USE_SERVER_ALIAS, vbox);
 
