@@ -629,11 +629,12 @@ static void irc_change_name(struct gaim_connection *gc, char *old, char *new)
 			if (*who == '+')
 				buf[n++] = *who++;
 			g_snprintf(buf + n, sizeof(buf) - n, "%s", new);
-			if (!g_strcasecmp(who, old)) {
+			if (!strcmp(who, old)) {
 				char *tmp = g_strdup(r->data);
 				rename_chat_buddy(b, tmp, buf);
 				r = b->in_room;
 				g_free(tmp);
+				break;;
 			} else
 				r = r->next;
 		}
