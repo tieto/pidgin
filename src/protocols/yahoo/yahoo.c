@@ -122,9 +122,9 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 	}
 
 	if (f->idle != 0)
-		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, TRUE, f->idle);	
+		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, TRUE, f->idle);
 	else
-		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, FALSE, 0);	
+		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, FALSE, 0);
 }
 
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -137,7 +137,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("You have been logged off as you have logged in on a different machine or device."));
+		gaim_connection_error(gc, _("You have signed on from another location."));
 		return;
 	}
 
