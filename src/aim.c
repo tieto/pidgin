@@ -49,6 +49,9 @@
 #ifndef USE_APPLET
 #include "pixmaps/logo.xpm"
 #endif /* USE_APPLET */
+#if HAVE_SIGNAL_H
+#include <signal.h>
+#endif
 #include "locale.h"
 #include "gtkticker.h"
 
@@ -527,11 +530,24 @@ void show_login()
 
 extern void show_debug(GtkObject *);
 
+#if HAVE_SIGNAL_H
+void sighandler(int sig)
+{
+	fprintf(stderr, "God damn, I tripped.\n");
+	exit(11); /* signal 11 */
+}
+#endif
+
 int main(int argc, char *argv[])
 {
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+#endif
+
+#if HAVE_SIGNAL_H
+	/* Let's not violate any PLA's!!!! */
+	signal(SIGSEGV, sighandler);
 #endif
 
 	if (argc > 1 && !strcmp(argv[1], "--version")) {

@@ -17,7 +17,7 @@ AC_CYGWIN
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h)
+AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h)
 AC_CHECK_HEADERS(pthread.h,,AC_MSG_ERROR([*** POSIX thread support not found ***]))
 
 dnl Checks for typedefs, structures, and compiler characteristics.
