@@ -1515,7 +1515,7 @@ void toggle_font(GtkWidget *font, struct conversation *c)
 
 void insert_link_cb(GtkWidget *w, struct conversation *c)
 {
-	show_add_link(c->link, c);
+	show_insert_link(c->link, c);
 }
 
 void toggle_link(GtkWidget *linky, struct conversation *c)
@@ -1524,7 +1524,7 @@ void toggle_link(GtkWidget *linky, struct conversation *c)
 		return;
 
 	if (GTK_TOGGLE_BUTTON(c->link)->active)
-		show_add_link(c->link, c);
+		show_insert_link(c->link, c);
 
 	else if (c->link_dialog)
 		cancel_link(c->link, c);

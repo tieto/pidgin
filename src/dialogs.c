@@ -240,6 +240,7 @@ struct linkdlg {
 	GtkWidget *text;
 	GtkWidget *toggle;
 	GtkWidget *entry;
+	struct conversation *c;
 };
 
 struct passwddlg {
@@ -2955,109 +2956,119 @@ void cancel_link(GtkWidget *widget, struct conversation *c)
 	c->link_dialog = NULL;
 }
 
-void do_add_link(GtkWidget *widget, struct linkdlg *b)
+void do_insert_link(GtkWidget *w, int resp, struct linkdlg *b)
 {
 	char *open_tag;
 	const char *urltext, *showtext;
-	open_tag = g_malloc(2048);
 
+	if (resp == GTK_RESPONSE_OK) {
 
-	urltext = gtk_entry_get_text(GTK_ENTRY(b->url));
-	showtext = gtk_entry_get_text(GTK_ENTRY(b->text));
+		open_tag = g_malloc(2048);
+		
+		urltext = gtk_entry_get_text(GTK_ENTRY(b->url));
+		showtext = gtk_entry_get_text(GTK_ENTRY(b->text));
 
-	g_snprintf(open_tag, 2048, "<A HREF=\"%s\">%s", urltext, showtext);
-/* FIXME	surround(b, open_tag, "</A>");*/
+		if (!strlen(showtext)) 
+			showtext = urltext;
 
-	g_free(open_tag);
+		g_snprintf(open_tag, 2048, "<A HREF=\"%s\">%s", urltext, showtext);
+		surround(b->c, open_tag, "</A>");
+
+		g_free(open_tag);
+	}
+
+	if (b->c->link) {
+		set_state_lock(1);
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->c->link), FALSE);
+		set_state_lock(0);
+	}
+
+	b->c->link_dialog = NULL;
 	destroy_dialog(NULL, b->window);
 }
 
-
-void show_add_link(GtkWidget *linky, struct conversation *c)
+void show_insert_link(GtkWidget *linky, struct conversation *c)
 {
-	GtkWidget *vbox;
-	GtkWidget *bbox;
-	GtkWidget *hbox;
+	GtkWidget *table;
 	GtkWidget *label;
-	GtkWidget *frame;
-	GtkWidget *fbox;
+	GtkWidget *hbox;
+	GtkWidget *vbox;
 
 	if (!c->link_dialog) {
-		struct linkdlg *b = g_new0(struct linkdlg, 1);
-		GAIM_DIALOG(c->link_dialog);
-		gtk_window_set_role(GTK_WINDOW(c->link_dialog), "add_link");
-		dialogwindows = g_list_prepend(dialogwindows, c->link_dialog);
+		struct linkdlg *a = g_new0(struct linkdlg, 1);
+		char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "dialogs", "gaim_question.png", NULL);
+		GtkWidget *img = gtk_image_new_from_file(filename);
 
-		gtk_widget_set_usize(c->link_dialog, 270, 165);
-		gtk_window_set_policy(GTK_WINDOW(c->link_dialog), FALSE, FALSE, TRUE);
-		gtk_widget_show(c->link_dialog);
+		g_free(filename);
 
-		vbox = gtk_vbox_new(FALSE, 10);
-		bbox = gtk_hbox_new(TRUE, 10);
-		frame = gtk_frame_new(_("Insert Link"));
-		fbox = gtk_vbox_new(FALSE, 5);
+		a->c = c;
+		GAIM_DIALOG(a->window);
+		a->window = gtk_dialog_new_with_buttons(_("Gaim - Insert Link"), GTK_WINDOW(c->window), GTK_DIALOG_MODAL,
+						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, _("Insert"), GTK_RESPONSE_OK, NULL);
 
-		/* Build OK Button */
-
-		b->ok = picture_button(c->link_dialog, _("OK"), ok_xpm);
-		b->cancel = picture_button(c->link_dialog, _("Cancel"), cancel_xpm);
-/*
-		gtk_widget_set_usize(b->ok, 75, 30);
-		gtk_widget_set_usize(b->cancel, 75, 30);
-*/
-		gtk_box_pack_start(GTK_BOX(bbox), b->ok, FALSE, FALSE, 10);
-		gtk_box_pack_end(GTK_BOX(bbox), b->cancel, FALSE, FALSE, 10);
-		gtk_widget_show(bbox);
-
-		b->url = gtk_entry_new();
-		b->text = gtk_entry_new();
-
-		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_dialog_set_default_response(GTK_DIALOG(a->window), GTK_RESPONSE_OK);
+		gtk_container_set_border_width(GTK_CONTAINER(a->window), 6);
+		gtk_window_set_resizable(GTK_WINDOW(a->window), FALSE);
+		gtk_dialog_set_has_separator(GTK_DIALOG(a->window), FALSE);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(a->window)->vbox), 12);
+		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), 6);
+		gtk_window_set_role(GTK_WINDOW(a->window), "insert_link");
+	
+		hbox = gtk_hbox_new(FALSE, 12);
+		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(a->window)->vbox), hbox);
+		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+	
+		vbox = gtk_vbox_new(FALSE, 0);
+		gtk_container_add(GTK_CONTAINER(hbox), vbox);
+	
+		label = gtk_label_new(_("Please enter the URL and description of the link that you want to insert.  The description is optional.\n"));
+	
+		gtk_widget_set_size_request(GTK_WIDGET(label), 335, -1);
+		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+	
+		hbox = gtk_hbox_new(FALSE, 6);
+		gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	
+		g_signal_connect(GTK_OBJECT(a->window), "destroy", G_CALLBACK(destroy_dialog), a->window);
+		g_signal_connect(GTK_OBJECT(a->window), "destroy", G_CALLBACK(free_dialog), a);
+		dialogwindows = g_list_prepend(dialogwindows, a->window);
+	
+		table = gtk_table_new(4, 2, FALSE);
+		gtk_table_set_row_spacings(GTK_TABLE(table), 5);
+		gtk_table_set_col_spacings(GTK_TABLE(table), 5);
+		gtk_container_set_border_width(GTK_CONTAINER(table), 0);
+		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
+	
 		label = gtk_label_new(_("URL"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-		gtk_box_pack_end(GTK_BOX(hbox), b->url, FALSE, FALSE, 5);
-		gtk_widget_show(label);
-		gtk_widget_show(hbox);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-
-		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 0, 1);
+	
+		a->url = gtk_entry_new();
+		gtk_table_attach_defaults(GTK_TABLE(table), a->url, 1, 2, 0, 1);
+		gtk_widget_grab_focus(a->url);
+		
+		gtk_entry_set_activates_default (GTK_ENTRY(a->url), TRUE);
+	
 		label = gtk_label_new(_("Description"));
-		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-		gtk_box_pack_end(GTK_BOX(hbox), b->text, FALSE, FALSE, 5);
-		gtk_widget_show(label);
-		gtk_widget_show(hbox);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_table_attach_defaults(GTK_TABLE(table), label, 0, 1, 1, 2);
+	
+		a->text = gtk_entry_new();
+		gtk_table_attach_defaults(GTK_TABLE(table), a->text, 1, 2, 1, 2);
+		gtk_entry_set_activates_default (GTK_ENTRY(a->text), TRUE);
 
-		gtk_widget_show(b->url);
-		gtk_widget_show(b->text);
-		gtk_widget_show(frame);
-		gtk_widget_show(fbox);
+		g_signal_connect(G_OBJECT(a->window), "response", G_CALLBACK(do_insert_link), a);
 
-		gtk_container_add(GTK_CONTAINER(frame), vbox);
-		gtk_box_pack_start(GTK_BOX(fbox), frame, FALSE, FALSE, 5);
-		gtk_box_pack_start(GTK_BOX(fbox), bbox, TRUE, TRUE, 5);
-		gtk_widget_show(vbox);
-
-		g_signal_connect(GTK_OBJECT(c->link_dialog), "destroy",
-				   G_CALLBACK(cancel_link), c);
-		g_signal_connect(GTK_OBJECT(b->cancel), "clicked", G_CALLBACK(cancel_link), c);
-		g_signal_connect(GTK_OBJECT(b->ok), "clicked", G_CALLBACK(do_add_link), b);
-
-		gtk_container_add(GTK_CONTAINER(c->link_dialog), fbox);
-		gtk_container_border_width(GTK_CONTAINER(c->link_dialog), 10);
-		gtk_window_set_title(GTK_WINDOW(c->link_dialog), _("Gaim - Add URL"));
-		gtk_window_set_focus(GTK_WINDOW(c->link_dialog), b->url);
-		b->window = c->link_dialog;
-		b->toggle = linky;
-/* FIXME		b->entry_view = c->entry_view;*/
-		gtk_widget_realize(c->link_dialog);
-
+		a->toggle = linky;
+		c->link_dialog = a->window;
 	}
 
-	gtk_widget_show(c->link_dialog);
+	gtk_widget_show_all(GTK_WIDGET(c->link_dialog));
 	gdk_window_raise(c->link_dialog->window);
 }
-
 
 /*------------------------------------------------------*/
 /* Color Selection Dialog                               */
