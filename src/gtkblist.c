@@ -1114,7 +1114,6 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 		GaimBuddy *buddy;
 		GaimConnection *gc;
 		GValue val = {0};
-		const char *prpl_id;
 		GString *str;
 		const char *protocol;
 		char *mime_str;
@@ -1145,8 +1144,6 @@ static void gaim_gtk_blist_drag_data_get_cb (GtkWidget *widget,
 		{
 			buddy = (GaimBuddy *)node;
 		}
-
-		prpl_id = gaim_account_get_protocol_id(buddy->account);
 
 		gc = gaim_account_get_connection(buddy->account);
 

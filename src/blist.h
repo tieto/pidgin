@@ -762,6 +762,14 @@ void gaim_blist_node_set_string(GaimBlistNode *node, const char *key,
 const char *gaim_blist_node_get_string(GaimBlistNode *node, const char *key);
 
 /**
+ * Removes a named setting from a blist node
+ *
+ * @param node  The node from which to remove the setting
+ * @param key   The name of the setting
+ */
+void gaim_blist_node_remove_setting(GaimBlistNode *node, const char *key);
+
+/**
  * Associates some data with the group in the xml buddy list
  *
  * @param g      The group the data is associated with
