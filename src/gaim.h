@@ -2,7 +2,7 @@
  * gaim
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,7 +37,6 @@ extern GSList *unread_message_queue;
 extern GSList *away_time_queue;
 
 /* Functions in dialogs.c */
-extern void g_show_info_text(GaimConnection *, const char *, int, const char *, ...);
 extern void show_change_passwd(GaimConnection *);
 extern void show_set_dir(GaimConnection *);
 extern void show_find_email(GaimConnection *);

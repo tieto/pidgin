@@ -2399,8 +2399,10 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* we failed to grab the profile URL */
 	if (!url_text) {
-		g_show_info_text(NULL, NULL, 2,
-				_("<html><body><b>Error retrieving profile</b></body></html>"), NULL);
+		gaim_notify_formatted(data, NULL, _("Buddy Information"), NULL,
+			_("<html><body><b>Error retrieving profile</b></body></html>"),
+			  NULL, NULL);
+
 		return;
 	}
 
@@ -2417,7 +2419,8 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 				_("If you wish to view this profile, you will need to visit this link in your web browser"),
 				1, YAHOO_PROFILE_URL);
 		strcat(buf, "</body></html>\n");
-		g_show_info_text(NULL, NULL, 2, buf, NULL);
+		gaim_notify_formatted(data, NULL, _("Buddy Information"), NULL,
+							  buf, NULL, NULL);
 		return;
 	}
 
@@ -2433,7 +2436,8 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 				_("If you wish to view this profile, you will need to visit this link in your web browser"),
 				1, YAHOO_PROFILE_URL);
 		strcat(buf, "</body></html>\n");
-		g_show_info_text(NULL, NULL, 2, buf, NULL);
+		gaim_notify_formatted(data, NULL, _("Buddy Information"), NULL,
+							  buf, NULL, NULL);
 		return;
 	}
 
@@ -2550,7 +2554,8 @@ static void yahoo_got_info(gpointer data, char *url_text, unsigned long len)
 	g_free(stripped);
 
 	/* show it to the user */
-	g_show_info_text(NULL, NULL, 2, url_text, NULL);
+	gaim_notify_formatted(data, NULL, _("Buddy Information"), NULL,
+						  url_text, NULL, NULL);
 }
 
 static void yahoo_get_info(GaimConnection *gc, const char *name)
@@ -2558,7 +2563,7 @@ static void yahoo_get_info(GaimConnection *gc, const char *name)
 	/* struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data; */
 	char url[256];
 	g_snprintf(url, sizeof url, "%s%s", YAHOO_PROFILE_URL, name);
-	grab_url(url, FALSE, yahoo_got_info, NULL, NULL, 0);
+	grab_url(url, FALSE, yahoo_got_info, gc, NULL, 0);
 }
 
 static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,

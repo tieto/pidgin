@@ -22,9 +22,6 @@
 
 #include "internal.h"
 
-/* XXX g_show_info_text */
-#include "gaim.h"
-
 #include "conversation.h"
 #include "blist.h"
 #include "notify.h"
@@ -170,6 +167,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 {
 	GaimConnection *gc;
 	GString *info;
+	char buffer[256];
 	char *str;
 
 	if (!irc->whois.nick) {
@@ -216,7 +214,11 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 
 	gc = gaim_account_get_connection(irc->account);
 	str = g_string_free(info, FALSE);
-	g_show_info_text(gc, irc->whois.nick, 2, str, NULL);
+
+	g_snprintf(buffer, sizeof(buffer),
+			   _("Buddy Information for %s"), irc->whois.nick);
+	gaim_notify_formatted(gc, NULL, buffer, NULL, str, NULL, NULL);
+
 	g_free(str);
 	memset(&irc->whois, 0, sizeof(irc->whois));
 }

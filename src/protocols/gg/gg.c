@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 7538 2003-09-27 19:17:21Z thekingant $
+ * $Id: gg.c 7626 2003-09-30 06:43:17Z chipx86 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -34,7 +34,7 @@
 #include "server.h"
 #include "util.h"
 
-/* XXX for g_show_info_text(), WEBSITE, and stuff */
+#warning Replace show_change_passwd and remove #include <gaim.h>
 #include "gaim.h"
 
 #define GG_CONNECT_STEPS 5
@@ -722,7 +722,8 @@ static void search_results(GaimConnection *gc, gchar *webdata)
 
 	g_strfreev(webdata_tbl);
 
-	g_show_info_text(gc, NULL, 2, buf, NULL);
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
+						  buf, NULL, NULL);
 
 	g_free(buf);
 }
@@ -1186,6 +1187,7 @@ static GList *agg_actions(GaimConnection *gc)
 	GList *m = NULL;
 	struct proto_actions_menu *pam;
 
+#if 0
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Directory Search");
 	pam->callback = show_find_info;
@@ -1193,6 +1195,7 @@ static GList *agg_actions(GaimConnection *gc)
 	m = g_list_append(m, pam);
 
 	m = g_list_append(m, NULL);
+#endif
 
 	pam = g_new0(struct proto_actions_menu, 1);
 	pam->label = _("Change Password");

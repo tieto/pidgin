@@ -1217,6 +1217,7 @@ msn_remove_group(GaimConnection *gc, const char *name)
 static void
 msn_got_info(gpointer data, char *url_text, unsigned long len)
 {
+	GaimConnection *gc = (GaimConnection *)data;
 	char *stripped, *p, *q;
 	char buf[1024];
 	char *user_url = NULL;
@@ -1224,9 +1225,9 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (url_text == NULL || strcmp(url_text,"") == 0)
 	{
-		g_show_info_text(NULL, NULL, 2,
-				_("<html><body><b>Error retrieving profile</b></body></html>"),
-				NULL);
+		gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
+			_("<html><body><b>Error retrieving profile</b></body></html>"),
+			  NULL, NULL);
 
 		return;
 	}
@@ -1421,7 +1422,10 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	/* Finish it off, and show it to them */
 	strcat(url_text, "</body></html>\n");
-	g_show_info_text(NULL, NULL, 2, url_text, NULL);
+
+	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
+						  url_text, NULL, NULL);
+
 	g_free(stripped);
 }
 
@@ -1430,7 +1434,8 @@ msn_get_info(GaimConnection *gc, const char *name)
 {
 	char url[256];
 	g_snprintf(url, sizeof url, "%s%s", PROFILE_URL, name);
-	grab_url(url, FALSE, msn_got_info, NULL,"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",1);
+	grab_url(url, FALSE, msn_got_info, gc,
+			 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",1);
 }
 
 static GaimPluginProtocolInfo prpl_info =

@@ -344,7 +344,8 @@ static void handle_message(ZNotice_t notice, struct sockaddr_in from)
 					g_string_append_printf(str, _("<br>At %s since %s"), locs.host,
 									locs.time);
 				}
-				g_show_info_text(NULL, NULL, 2, str->str, NULL);
+				gaim_notify_formatted(zgc, NULL, _("Buddy Information"),
+									  NULL, str->str, NULL, NULL);
 				g_string_free(str, TRUE);
 			} else
 				serv_got_update(zgc, b->name, nlocs, 0, 0, 0, 0);

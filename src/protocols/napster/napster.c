@@ -387,7 +387,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 604: /* MSG_SERVER_WHOIS_RESPONSE */
 		/* XXX - Format is:   "Elite" 37 " " "Active" 0 0 0 0 "gaim 0.63cvs" 0 0 192.168.1.41 32798 0 unknown flounder */
 		res = g_strsplit(buf, " ", 2);
-		g_show_info_text(gc, res[0], 2, res[1], NULL);
+		/* res[0] == username */
+		gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
+							  res[1], NULL, NULL);
 		g_strfreev(res);
 		break;
 
