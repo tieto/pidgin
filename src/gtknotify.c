@@ -408,19 +408,21 @@ uri_command(const char *command, const gboolean sync)
 	GError *error = NULL;
 	gint ret = 0;
 
+	gaim_debug_misc("gtknotify", "Executing %s\n", command);
+
 	if (!gaim_program_is_valid(command)) {
-		gchar *tmp = g_strdup_printf(_("The browser \"%s\" is invalid."), 
-						command);
+		gchar *tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."), 
+									 command);
 		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+
 		g_free(tmp);
 
 	} else if (sync) {
 		gint status;
  
 		if (!g_spawn_command_line_sync(command, NULL, NULL, &status, &error)) {
-			char *tmp = g_strdup_printf(
-				_("Error launching \"command\": %s"),
-				error->message);
+			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
+										command, error->message);
 
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 
@@ -432,9 +434,8 @@ uri_command(const char *command, const gboolean sync)
 
 	} else {
 		if (!g_spawn_command_line_async(command, &error)) {
-			char *tmp = g_strdup_printf(
-				_("Error launching \"command\": %s"),
-				error->message);
+			char *tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
+										command, error->message);
 
 			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 
