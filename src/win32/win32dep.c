@@ -270,6 +270,17 @@ static void move_settings_dir() {
         g_free(old_home);
 }
 
+static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
+        char *str = g_strdup_vprintf(format, args);
+        printf("%s%s%s", category?category:"", category?": ":"",str);
+        g_free(str);
+}
+
+static GaimDebugUiOps ops = 
+{
+	wgaim_debug_print
+};
+
 /*
  *  PUBLIC CODE
  */
@@ -501,6 +512,7 @@ void wgaim_init(HINSTANCE hint) {
 	char *perlenv;
         char *newenv;
 
+        gaim_debug_set_ui_ops(&ops);
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
 	gaimexe_hInstance = hint;
