@@ -1541,12 +1541,19 @@ static gchar**
 get_font_names ()
 {
 	gint num_fonts = 0;
-	gchar **xfontnames = XListFonts (GDK_DISPLAY (), "-*", MAX_FONTS, &num_fonts);
-	gchar **fonts = NULL;
+	gchar **xfontnames;
+	static gchar **fonts = NULL;
 	gint i;
 
-	if (!num_fonts)
+	if (fonts)
+		return fonts;
+
+	xfontnames = XListFonts (GDK_DISPLAY (), "-*", MAX_FONTS, &num_fonts);
+
+	if (!num_fonts) {
+		XFreeFontNames(xfontnames);
 		return g_new0 (char *, 1);
+	}
 
 	fonts = g_new0 (char *, num_fonts + 1);
 
@@ -1566,6 +1573,7 @@ get_font_names ()
 		fonts [i] = g_strndup (t1, (long) t2 - (long) t1);
 	}
 
+	XFreeFontNames(xfontnames);
 	return fonts;
 }
 
