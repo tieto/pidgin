@@ -22,14 +22,14 @@
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
 #endif
-#ifdef USE_THEMES
+#ifdef USE_GNOME
 #include <gnome.h>
 #else
 #ifdef USE_APPLET
 #include "gnome_applet_mgr.h"
 #include <gnome.h>
 #endif /* USE_APPLET */
-#endif /* USE_THEMES */
+#endif /* USE_GNOME */
 #ifdef GAIM_PLUGINS
 #include <dlfcn.h>
 #endif /* GAIM_PLUGINS */
@@ -565,11 +565,11 @@ int main(int argc, char *argv[])
 
 #ifdef USE_APPLET
         init_applet_mgr(argc, argv);
-#elif defined USE_THEMES         
-        gnome_init("GAIM",NULL,argc,argv);
+#elif defined USE_GNOME
+        gnome_init(PACKAGE,VERSION,argc,argv);
 #else
         gtk_init(&argc, &argv);
-#endif /* USE_THEMES */
+#endif /* USE_GNOME */
 
         set_defaults();
         load_prefs();
