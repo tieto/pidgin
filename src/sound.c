@@ -97,9 +97,7 @@ void gaim_sound_init()
 	ao_driver = ao_default_driver_id();
 
 	if(ao_driver == -1) {
-		do_error_dialog(_("Sound Driver Not Found"),
-				_("Gaim was unable to load a sound driver.  Sound files will "
-					"not be played."), GAIM_ERROR);
+		debug_printf("No suitable sound ouput driver found.\n");
 	} else {
 		ao_info *info = ao_driver_info(ao_driver);
 		debug_printf("Sound output driver loaded: %s\n", info->name);
