@@ -491,7 +491,7 @@ static unsigned char *roast_password(const char *pass)
 	return rp;
 }
 
-static void toc_got_info(gpointer data, char *url_text, unsigned long len)
+static void toc_got_info(void *data, const char *url_text, size_t len)
 {
 	if (!url_text)
 		return;
@@ -897,7 +897,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		g_snprintf(tmp, sizeof(tmp), "http://%s:%d/%s", tdt->toc_ip,
 				gaim_account_get_int(gc->account, "port", TOC_PORT),
 				url);
-		grab_url(tmp, FALSE, toc_got_info, gc, NULL, 0);
+		gaim_url_fetch(tmp, FALSE, NULL, FALSE, toc_got_info, gc);
 	} else if (!g_ascii_strcasecmp(c, "DIR_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_NICK_STATUS")) {
 	} else if (!g_ascii_strcasecmp(c, "ADMIN_PASSWD_STATUS")) {

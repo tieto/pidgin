@@ -1,7 +1,9 @@
 /*
- * gaim
+ * @file util.h Utility Functions
+ * @ingroup core
  *
  * Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
+ * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,15 +18,44 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-
 #include "internal.h"
 
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
 #include "prefs.h"
+#include "util.h"
+
+typedef struct
+{
+	void (*callback)(void *, const char *, size_t);
+	void *user_data;
+
+	struct
+	{
+		char *address;
+		int port;
+		char *page;
+
+	} website;
+
+	char *url;
+	gboolean full;
+	char *user_agent;
+	gboolean http11;
+
+	int inpa;
+
+	gboolean sentreq;
+	gboolean newline;
+	gboolean startsaving;
+	char *webdata;
+	unsigned long len;
+	unsigned long data_len;
+
+} GaimFetchUrlData;
+
 
 static char home_dir[MAXPATHLEN];
 
@@ -996,14 +1027,17 @@ char *gaim_get_size_string(size_t size)
 	}
 }
 
-gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const char **start, const char **end, GData **attributes) {
+gboolean
+gaim_markup_find_tag(const char *needle, const char *haystack,
+					 const char **start, const char **end, GData **attributes)
+{
 	GData *attribs;
 	const char *cur = haystack;
 	char *name = NULL;
 	gboolean found = FALSE;
 	gboolean in_tag = FALSE;
 	gboolean in_attr = FALSE;
-	char *in_quotes = NULL;
+	const char *in_quotes = NULL;
 	size_t needlelen = strlen(needle);
 
 	g_datalist_init(&attribs);
@@ -1132,4 +1166,333 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const ch
 	}
 
 	return found;
+}
+
+gboolean
+gaim_url_parse(const char *url, char **ret_host, int *ret_port,
+			   char **ret_path)
+{
+	char scan_info[255];
+	char port_str[5];
+	int f;
+	const char *turl;
+	char host[256], path[256];
+	int port = 0;
+	/* hyphen at end includes it in control set */
+	static char addr_ctrl[] = "A-Za-z0-9.-";
+	static char port_ctrl[] = "0-9";
+	static char page_ctrl[] = "A-Za-z0-9.~_/:*!@&%%?=+^-";
+
+	g_return_val_if_fail(url != NULL, FALSE);
+
+	if ((turl = strstr(url, "http://")) != NULL ||
+		(turl = strstr(url, "HTTP://")) != NULL)
+	{
+		turl += 7;
+		url = turl;
+	}
+
+	g_snprintf(scan_info, sizeof(scan_info),
+			   "%%[%s]:%%[%s]/%%[%s]", addr_ctrl, port_ctrl, page_ctrl);
+
+	f = sscanf(url, scan_info, host, port_str, path);
+
+	if (f == 1)
+	{
+		g_snprintf(scan_info, sizeof(scan_info),
+				   "%%[%s]/%%[%s]",
+				   addr_ctrl, page_ctrl);
+		f = sscanf(url, scan_info, host, path);
+		g_snprintf(port_str, sizeof(port_str), "80");
+	}
+
+	if (f == 1)
+		*path = '\0';
+
+	sscanf(port_str, "%d", &port);
+
+	if (ret_host != NULL) *ret_host = g_strdup(host);
+	if (ret_port != NULL) *ret_port = port;
+	if (ret_path != NULL) *ret_path = g_strdup(path);
+
+	return TRUE;
+}
+
+static void
+destroy_fetch_url_data(GaimFetchUrlData *gfud)
+{
+	if (gfud->webdata         != NULL) g_free(gfud->webdata);
+	if (gfud->url             != NULL) g_free(gfud->url);
+	if (gfud->user_agent      != NULL) g_free(gfud->user_agent);
+	if (gfud->website.address != NULL) g_free(gfud->website.address);
+	if (gfud->website.page    != NULL) g_free(gfud->website.page);
+
+	g_free(gfud);
+}
+
+static gboolean
+parse_redirect(const char *data, size_t data_len, gint sock,
+			   GaimFetchUrlData *gfud)
+{
+	gchar *s;
+
+	if ((s = g_strstr_len(data, data_len, "Location: ")) != NULL)
+	{
+		gchar *new_url, *temp_url, *end;
+		gboolean full;
+		int len;
+
+		s += strlen("Location: ");
+		end = strchr(s, '\r');
+
+		/* Just in case :) */
+		if (end == NULL)
+			end = strchr(s, '\n');
+
+		len = end - s;
+
+		new_url = g_malloc(len + 1);
+		strncpy(new_url, s, len);
+		new_url[len] = '\0';
+
+		full = gfud->full;
+
+		if (*new_url == '/' || g_strstr_len(new_url, len, "://") == NULL)
+		{
+			temp_url = new_url;
+
+			new_url = g_strdup_printf("%s:%d%s", gfud->website.address,
+									  gfud->website.port, temp_url);
+
+			g_free(temp_url);
+
+			full = FALSE;
+		}
+
+		/* Close the existing stuff. */
+		gaim_input_remove(gfud->inpa);
+		close(sock);
+
+		gaim_debug_info("gaim_url_fetch", "Redirecting to %s\n", new_url);
+
+		/* Try again, with this new location. */
+		gaim_url_fetch(new_url, full, gfud->user_agent, gfud->http11,
+					   gfud->callback, gfud->user_data);
+
+		/* Free up. */
+		g_free(new_url);
+		destroy_fetch_url_data(gfud);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static size_t
+parse_content_len(const char *data, size_t data_len)
+{
+	size_t content_len = 0;
+
+	sscanf(data, "Content-Length: %d", &content_len);
+
+	return content_len;
+}
+
+static void
+url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
+{
+	GaimFetchUrlData *gfud = url_data;
+	char data;
+
+	if (sock == -1)
+	{
+		gfud->callback(gfud->user_data, NULL, 0);
+
+		destroy_fetch_url_data(gfud);
+
+		return;
+	}
+
+	if (!gfud->sentreq)
+	{
+		char buf[1024];
+
+		if (gfud->user_agent)
+		{
+			if (gfud->http11)
+			{
+				g_snprintf(buf, sizeof(buf),
+						   "GET %s%s HTTP/1.1\r\n"
+						   "User-Agent: \"%s\"\r\n"
+						   "Host: %s\r\n\r\n",
+						   (gfud->full ? "" : "/"),
+						   (gfud->full ? gfud->url : gfud->website.page),
+						   gfud->user_agent, gfud->website.address);
+			}
+			else
+			{
+				g_snprintf(buf, sizeof(buf),
+						   "GET %s%s HTTP/1.0\r\n"
+						   "User-Agent: \"%s\"\r\n\r\n",
+						   (gfud->full ? "" : "/"),
+						   (gfud->full ? gfud->url : gfud->website.page),
+						   gfud->user_agent);
+			}
+		}
+		else
+		{
+			if (gfud->http11)
+			{
+				g_snprintf(buf, sizeof(buf),
+						   "GET %s%s HTTP/1.1\r\n"
+						   "Host: %s\r\n\r\n",
+						   (gfud->full ? "" : "/"),
+						   (gfud->full ? gfud->url : gfud->website.page),
+						   gfud->website.address);
+			}
+			else
+			{
+				g_snprintf(buf, sizeof(buf),
+						   "GET %s%s HTTP/1.0\r\n\r\n",
+						   (gfud->full ? "" : "/"),
+						   (gfud->full ? gfud->url : gfud->website.page));
+			}
+		}
+
+		gaim_debug_misc("gaim_url_fetch", "Request: %s\n", buf);
+
+		write(sock, buf, strlen(buf));
+		fcntl(sock, F_SETFL, O_NONBLOCK);
+		gfud->sentreq = TRUE;
+		gfud->inpa = gaim_input_add(sock, GAIM_INPUT_READ,
+									url_fetched_cb, url_data);
+		gfud->data_len = 4096;
+		gfud->webdata = g_malloc(gfud->data_len);
+
+		return;
+	}
+
+	if (read(sock, &data, 1) > 0 || errno == EWOULDBLOCK)
+	{
+		if (errno == EWOULDBLOCK)
+		{
+			errno = 0;
+
+			return;
+		}
+
+		gfud->len++;
+
+		if (gfud->len == gfud->data_len + 1)
+		{
+			gfud->data_len += (gfud->data_len) / 2;
+
+			gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
+		}
+
+		gfud->webdata[gfud->len - 1] = data;
+
+		if (!gfud->startsaving)
+		{
+			if (data == '\r')
+				return;
+
+			if (data == '\n')
+			{
+				if (gfud->newline)
+				{
+					size_t content_len;
+					gfud->startsaving = TRUE;
+
+					/* See if we can find a redirect. */
+					if (parse_redirect(gfud->webdata, gfud->len, sock, gfud))
+						return;
+
+					/* No redirect. See if we can find a content length. */
+					content_len = parse_content_len(gfud->webdata, gfud->len);
+
+					if (content_len == 0)
+					{
+						/* We'll stick with an initial 8192 */
+						content_len = 8192;
+					}
+
+					/* Out with the old... */
+					gfud->len = 0;
+					g_free(gfud->webdata);
+					gfud->webdata = NULL;
+
+					/* In with the new. */
+					gfud->data_len = content_len;
+					gfud->webdata = g_malloc(gfud->data_len);
+				}
+				else
+					gfud->newline = TRUE;
+
+				return;
+			}
+
+			gfud->newline = FALSE;
+		}
+	}
+	else if (errno != ETIMEDOUT)
+	{
+		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
+		gfud->webdata[gfud->len] = 0;
+
+		gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata);
+
+		gaim_input_remove(gfud->inpa);
+		close(sock);
+		gfud->callback(gfud->user_data, gfud->webdata, gfud->len);
+
+		if (gfud->webdata)
+			g_free(gfud->webdata);
+
+		destroy_fetch_url_data(gfud);
+	}
+	else
+	{
+		gaim_input_remove(gfud->inpa);
+		close(sock);
+
+		gfud->callback(gfud->user_data, NULL, 0);
+
+		destroy_fetch_url_data(gfud);
+	}
+}
+
+void
+gaim_url_fetch(const char *url, gboolean full,
+			   const char *user_agent, gboolean http11,
+			   void (*cb)(gpointer, const char *, size_t),
+			   void *user_data)
+{
+	int sock;
+	GaimFetchUrlData *gfud;
+
+	g_return_if_fail(url != NULL);
+	g_return_if_fail(cb  != NULL);
+
+	gfud = g_new0(GaimFetchUrlData, 1);
+
+	gfud->callback   = cb;
+	gfud->user_data  = user_data;
+	gfud->url        = g_strdup(url);
+	gfud->user_agent = (user_agent != NULL ? g_strdup(user_agent) : NULL);
+	gfud->http11     = http11;
+	gfud->full       = full;
+
+	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
+				   &gfud->website.page);
+
+	if ((sock = gaim_proxy_connect(NULL, gfud->website.address,
+								   gfud->website.port, url_fetched_cb,
+								   gfud)) < 0)
+	{
+		destroy_fetch_url_data(gfud);
+
+		cb(user_data, g_strdup(_("g003: Error opening connection.\n")), 0);
+	}
 }

@@ -1215,15 +1215,16 @@ msn_remove_group(GaimConnection *gc, const char *name)
 }
 
 static void
-msn_got_info(gpointer data, char *url_text, unsigned long len)
+msn_got_info(void *data, const char *url_text, size_t len)
 {
 	GaimConnection *gc = (GaimConnection *)data;
 	char *stripped, *p, *q;
 	char buf[1024];
 	char *user_url = NULL;
 	gboolean found;
+	char *url_buffer;
 
-	if (url_text == NULL || strcmp(url_text,"") == 0)
+	if (url_text == NULL || strcmp(url_text, "") == 0)
 	{
 		gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
 			_("<html><body><b>Error retrieving profile</b></body></html>"),
@@ -1231,6 +1232,8 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 		return;
 	}
+
+	url_buffer = g_strdup(url_text);
 
 	/* If they have a homepage link, MSN masks it such that we need to
 	 * fetch the url out before strip_html() nukes it */
@@ -1247,61 +1250,61 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 	 * strip_html() doesn't strip out character entities like &nbsp;
 	 * and &#183;
 	 */
-	while ((p = strstr(url_text, "&nbsp;")) != NULL)
+	while ((p = strstr(url_buffer, "&nbsp;")) != NULL)
 	{
 		memmove(p, p + 6, strlen(p + 6));
-		url_text[strlen(url_text) - 6] = '\0';
+		url_buffer[strlen(url_text) - 6] = '\0';
 	}
 
-	while ((p = strstr(url_text, "&#183;")) != NULL)
+	while ((p = strstr(url_buffer, "&#183;")) != NULL)
 	{
 		memmove(p, p + 6, strlen(p + 6));
-		url_text[strlen(url_text) - 6] = '\0';
+		url_buffer[strlen(url_buffer) - 6] = '\0';
 	}
 
 	/* Nuke the nasty \r's that just get in the way */
-	while ((p = strchr(url_text, '\r')) != NULL)
+	while ((p = strchr(url_buffer, '\r')) != NULL)
 	{
 		memmove(p, p + 1, strlen(p + 1));
-		url_text[strlen(url_text) - 1] = '\0';
+		url_buffer[strlen(url_buffer) - 1] = '\0';
 	}
 
 	/* MSN always puts in &#39; for apostrophies...replace them */
-	while ((p = strstr(url_text, "&#39;")) != NULL)
+	while ((p = strstr(url_buffer, "&#39;")) != NULL)
 	{
 		*p = '\'';
 		memmove(p + 1, p + 5, strlen(p + 5));
-		url_text[strlen(url_text) - 4] = '\0';
+		url_buffer[strlen(url_buffer) - 4] = '\0';
 	}
 
 	/* Nuke the html, it's easier than trying to parse the horrid stuff */
-	stripped = strip_html(url_text);
+	stripped = strip_html(url_buffer);
 
-	/* Gonna re-use the memory we've already got for url_text */
-	strcpy(url_text, "<html><body>\n");
+	/* Gonna re-use the memory we've already got for url_buffer */
+	strcpy(url_buffer, "<html><body>\n");
 
 	/* Extract their Name and put it in */
-	info_extract_field(stripped, url_text, "\tName", 0, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\tName", 0, "\t", '\n',
 					   "Undisclosed", _("Name"), 0, NULL);
 
 	/* Extract their Age and put it in */
-	info_extract_field(stripped, url_text, "\tAge", 0, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\tAge", 0, "\t", '\n',
 					   "Undisclosed", _("Age"), 0, NULL);
 
 	/* Extract their Gender and put it in */
-	info_extract_field(stripped, url_text, "\tGender", 6, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\tGender", 6, "\t", '\n',
 					   "Undisclosed", _("Gender"), 0, NULL);
 
 	/* Extract their MaritalStatus and put it in */
-	info_extract_field(stripped, url_text, "\tMaritalStatus", 0, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\tMaritalStatus", 0, "\t", '\n',
 					   "Undisclosed", _("Marital Status"), 0, NULL);
 
 	/* Extract their Location and put it in */
-	info_extract_field(stripped, url_text, "\tLocation", 0, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\tLocation", 0, "\t", '\n',
 					   "Undisclosed", _("Location"), 0, NULL);
 
 	/* Extract their Occupation and put it in */
-	info_extract_field(stripped, url_text, "\t Occupation", 6, "\t", '\n',
+	info_extract_field(stripped, url_buffer, "\t Occupation", 6, "\t", '\n',
 					   "Undisclosed", _("Occupation"), 0, NULL);
 
 	/*
@@ -1313,13 +1316,13 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 	 */
 
 	/* Check if they have A Little About Me */
-	found = info_extract_field(stripped, url_text, "\tA Little About Me",
+	found = info_extract_field(stripped, url_buffer, "\tA Little About Me",
 							   1, "Favorite Things", '\n', NULL,
 							   _("A Little About Me"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text,
+		found = info_extract_field(stripped, url_buffer,
 								   "\tA Little About Me", 1,
 								   "Hobbies and Interests", '\n', NULL,
 								   _("A Little About Me"), 0, NULL);
@@ -1327,7 +1330,7 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text,
+		found = info_extract_field(stripped, url_buffer,
 								   "\tA Little About Me", 1,
 								   "Favorite Quote", '\n', NULL,
 								   _("A Little About Me"), 0, NULL);
@@ -1335,7 +1338,7 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text,
+		found = info_extract_field(stripped, url_buffer,
 								   "\tA Little About Me", 1,
 								   "My Homepage\tTake a look", '\n', NULL,
 								   _("A Little About Me"), 0, NULL);
@@ -1343,45 +1346,45 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_text, "\tA Little About Me", 1,
+		info_extract_field(stripped, url_buffer, "\tA Little About Me", 1,
 						   "last updated", '\n',
 							NULL, _("A Little About Me"), 0, NULL);
 	}
 
 	/* Check if they have Favorite Things */
-	found = info_extract_field(stripped, url_text, "Favorite Things", 1,
+	found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
 							   "Hobbies and Interests", '\n', NULL,
 							   _("Favorite Things"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text, "Favorite Things", 1,
+		found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
 								   "Favorite Quote", '\n', NULL,
 								   "Favorite Things", 0, NULL);
 	}
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text, "Favorite Things", 1,
+		found = info_extract_field(stripped, url_buffer, "Favorite Things", 1,
 								   "My Homepage\tTake a look", '\n', NULL,
 								   _("Favorite Things"), 0, NULL);
 	}
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_text, "Favorite Things", 1,
+		info_extract_field(stripped, url_buffer, "Favorite Things", 1,
 						   "last updated", '\n', NULL,
 						   _("Favorite Things"), 0, NULL);
 	}
 
 	/* Check if they have Hobbies and Interests */
-	found = info_extract_field(stripped, url_text, "Hobbies and Interests",
+	found = info_extract_field(stripped, url_buffer, "Hobbies and Interests",
 							   1, "Favorite Quote", '\n', NULL,
 							   _("Hobbies and Interests"), 0, NULL);
 
 	if (!found)
 	{
-		found = info_extract_field(stripped, url_text,
+		found = info_extract_field(stripped, url_buffer,
 								   "Hobbies and Interests", 1,
 								   "My Homepage\tTake a look", '\n', NULL,
 								   _("Hobbies and Interests"), 0, NULL);
@@ -1389,25 +1392,25 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_text, "Hobbies and Interests",
+		info_extract_field(stripped, url_buffer, "Hobbies and Interests",
 						   1, "last updated", '\n', NULL,
 						   _("Hobbies and Interests"), 0, NULL);
 	}
 
 	/* Check if they have Favorite Quote */
-	found = info_extract_field(stripped, url_text, "Favorite Quote", 1,
+	found = info_extract_field(stripped, url_buffer, "Favorite Quote", 1,
 							   "My Homepage\tTake a look", '\n', NULL,
 							   _("Favorite Quote"), 0, NULL);
 
 	if (!found)
 	{
-		info_extract_field(stripped, url_text, "Favorite Quote", 1,
+		info_extract_field(stripped, url_buffer, "Favorite Quote", 1,
 						   "last updated", '\n', NULL,
 						   _("Favorite Quote"), 0, NULL);
 	}
 
 	/* Extract the last updated date and put it in */
-	info_extract_field(stripped, url_text, "\tlast updated:", 1, "\n", '\n',
+	info_extract_field(stripped, url_buffer, "\tlast updated:", 1, "\n", '\n',
 					   NULL, _("Last Updated"), 0, NULL);
 
 	/* If we were able to fetch a homepage url earlier, stick it in there */
@@ -1417,16 +1420,17 @@ msn_got_info(gpointer data, char *url_text, unsigned long len)
 				   "<b>%s:</b><br><a href=\"%s\">%s</a><br>\n",
 				   _("Homepage"), user_url, user_url);
 
-		strcat(url_text, buf);
+		strcat(url_buffer, buf);
 	}
 
 	/* Finish it off, and show it to them */
-	strcat(url_text, "</body></html>\n");
+	strcat(url_buffer, "</body></html>\n");
 
 	gaim_notify_formatted(gc, NULL, _("Buddy Information"), NULL,
-						  url_text, NULL, NULL);
+						  url_buffer, NULL, NULL);
 
 	g_free(stripped);
+	g_free(url_buffer);
 }
 
 static void
@@ -1434,8 +1438,9 @@ msn_get_info(GaimConnection *gc, const char *name)
 {
 	char url[256];
 	g_snprintf(url, sizeof url, "%s%s", PROFILE_URL, name);
-	grab_url(url, FALSE, msn_got_info, gc,
-			 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)",1);
+	gaim_url_fetch(url, FALSE,
+				   "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)", TRUE,
+				   msn_got_info, gc);
 }
 
 static GaimPluginProtocolInfo prpl_info =

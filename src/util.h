@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -332,10 +332,11 @@ const char *gaim_strcasestr(const char *haystack, const char *needle);
 char *gaim_get_size_string(size_t size);
 
 /**
- * Finds a HTML tag matching the given name, locating its start
- * and end, and storing its attributes in a GData hash table.
- * The names of the attributes are lower-cased in the hash table,
- * and the name of the tag is case insensitive.
+ * Finds a HTML tag matching the given name.
+ *
+ * This locates an HTML tag's start and end, and stores its attributes
+ * in a GData hash table. The names of the attributes are lower-cased
+ * in the hash table, and the name of the tag is case insensitive.
  *
  * @param needle	the name of the tag
  * @param haystack	the null-delimited string to search in
@@ -344,7 +345,38 @@ char *gaim_get_size_string(size_t size);
  * @param attributes	the attributes, if the tag was found
  * @return TRUE if the tag was found
  */
-gboolean gaim_markup_find_tag(const char *needle, const char *haystack, const char **start, const char **end, GData **attributes);
+gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
+							  const char **start, const char **end,
+							  GData **attributes);
+
+/**
+ * Parses a URL, returning its host, port, and file path.
+ *
+ * The returned data must be freed.
+ *
+ * @param url      The URL to parse.
+ * @param ret_host The returned host.
+ * @param ret_port The returned port.
+ * @param ret_path The returned path.
+ */
+gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
+						char **ret_path);
+
+/**
+ * Fetches the data from a URL, and passes it to a callback function.
+ *
+ * @param url        The URL.
+ * @param full       TRUE if this is the full URL, or FALSE if it's a
+ *                   partial URL.
+ * @param cb         The callback function.
+ * @param data       The user data to pass to the callback function.
+ * @param user_agent The user agent field to use, or NULL.
+ * @param http11     TRUE if HTTP/1.1 should be used to download the file.
+ */
+void gaim_url_fetch(const char *url, gboolean full,
+					const char *user_agent, gboolean http11,
+					void (*cb)(void *, const char *, size_t),
+					void *data);
 
 #ifdef __cplusplus
 }

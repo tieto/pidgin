@@ -44,9 +44,6 @@
 
 #include "ui.h"
 
-/* XXX for grab_url */
-#include "gaim.h"
-
 #define PROXYHOST 0
 #define PROXYPORT 1
 #define PROXYUSER 2
@@ -428,7 +425,10 @@ GtkTreePath *theme_refresh_theme_list()
 				   1, description,
 				   2, theme->path,
 				   -1);
-		g_object_unref(G_OBJECT(pixbuf));
+
+		if (pixbuf != NULL)
+			g_object_unref(G_OBJECT(pixbuf));
+
 		g_free(description);
 		themes = themes->next;
 		if (current_smiley_theme && !strcmp(theme->path, current_smiley_theme->path)) {
@@ -489,7 +489,9 @@ void theme_install_theme(char *path, char *extn) {
 	theme_refresh_theme_list();
 }
 
-static void theme_got_url(gpointer data, char *themedata, unsigned long len) {
+static void
+theme_got_url(void *data, const char *themedata, size_t len)
+{
 	FILE *f;
 	gchar *path;
 
@@ -534,7 +536,7 @@ void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, Gtk
 
 			/* We'll check this just to make sure. This also lets us do something different on
 			 * other platforms, if need be */
-			grab_url(name, TRUE, theme_got_url, ".tgz", NULL, 0);
+			gaim_url_fetch(name, TRUE, NULL, FALSE, theme_got_url, ".tgz");
 		}
 
 		gtk_drag_finish(dc, TRUE, FALSE, t);
