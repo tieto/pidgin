@@ -1717,7 +1717,7 @@ static void msn_add_buddy(struct gaim_connection *gc, char *name)
 		/* how did this happen? */
 		return;
 
-	if (strstr(who, ' '))
+	if (strchr(who, ' '))
 		/* This is a broken blist entry. */
 		return;
 
