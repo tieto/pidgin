@@ -6,5 +6,10 @@ EXTRA_DIST = \
 	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
+	account-signals.dox \
+	blist-signals.dox \
+	connection-signals.dox \
+	conversation-signals.dox \
 	gaim.1.in \
 	gaim-remote.1.in
+
