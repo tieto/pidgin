@@ -159,6 +159,7 @@ faim_export int aim_usersearch_interest(aim_session_t *sess, const char *region,
  */
 static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu16_t tmp, numresults;
 	struct aim_usersearch *results = NULL;
@@ -194,7 +195,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, results);
+		ret = userfunc(sess, rx, results);
 
 	/* Now free everything from above */
 	while (results) {
@@ -217,7 +218,7 @@ static int parseresults(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
 		free(del);
 	}
 
-	return 0;
+	return ret;
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)

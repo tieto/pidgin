@@ -392,6 +392,7 @@ faim_internal int aim_rates_delparam(aim_session_t *sess, aim_conn_t *conn)
 /* Subtype 0x000a - Rate Change */
 static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu16_t code, rateclass;
 	fu32_t currentavg, maxavg, windowsize, clear, alert, limit, disconnect;
@@ -408,9 +409,9 @@ static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	maxavg = aimbs_get32(bs);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
+		ret = userfunc(sess, rx, code, rateclass, windowsize, clear, alert, limit, disconnect, currentavg, maxavg);
 
-	return 0;
+	return ret;
 }
 
 /*
@@ -429,12 +430,13 @@ static int ratechange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 /* Subtype 0x000b - Service Pause */
 static int serverpause(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx);
+		ret = userfunc(sess, rx);
 
-	return 0;
+	return ret;
 }
 
 /*
@@ -477,12 +479,13 @@ faim_export int aim_sendpauseack(aim_session_t *sess, aim_conn_t *conn)
 /* Subtype 0x000d - Service Resume */
 static int serverresume(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx);
+		ret = userfunc(sess, rx);
 
-	return 0;
+	return ret;
 }
 
 /* Subtype 0x000e - Request self-info */
@@ -494,20 +497,22 @@ faim_export int aim_reqpersonalinfo(aim_session_t *sess, aim_conn_t *conn)
 /* Subtype 0x000f - Self User Info */
 static int selfinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	aim_userinfo_t userinfo;
 
 	aim_extractuserinfo(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, &userinfo);
+		ret = userfunc(sess, rx, &userinfo);
 
-	return 0;
+	return ret;
 }
 
 /* Subtype 0x0010 - Evil Notification */
 static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu16_t newevil;
 	aim_userinfo_t userinfo;
@@ -520,9 +525,9 @@ static int evilnotify(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		aim_extractuserinfo(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, newevil, &userinfo);
+		ret = userfunc(sess, rx, newevil, &userinfo);
 
-	return 0;
+	return ret;
 }
 
 /*
@@ -796,6 +801,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, aim_conn_t *conn, fu32_t s
 /* Subtype 0x001f - Client verification */
 static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_rxcallback_t userfunc;
 	fu32_t offset, len;
 	aim_tlvlist_t *list;
@@ -810,12 +816,12 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested\n", offset, len, modname ? modname : "aim.exe");
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, offset, len, modname);
+		ret = userfunc(sess, rx, offset, len, modname);
 
 	free(modname);
 	aim_freetlvchain(&list);
 
-	return 0;
+	return ret;
 }
 
 #if 0

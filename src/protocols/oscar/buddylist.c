@@ -241,15 +241,16 @@ faim_export int aim_sendbuddyoffgoing(aim_session_t *sess, aim_conn_t *conn, con
  */
 static int buddychange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
+	int ret = 0;
 	aim_userinfo_t userinfo;
 	aim_rxcallback_t userfunc;
 
 	aim_extractuserinfo(sess, bs, &userinfo);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		return userfunc(sess, rx, &userinfo);
+		ret = userfunc(sess, rx, &userinfo);
 
-	return 0;
+	return ret;
 }
 
 static int snachandler(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
