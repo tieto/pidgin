@@ -3411,22 +3411,16 @@ static void show_clear_log(GtkWidget *w, gchar *name)
 	return;
 }
 
-void show_log(char *name)
+static void log_show_convo(GtkWidget *w, GtkWidget *layout)
 {
-	gchar filename[256];
 	gchar buf[BUF_LONG];
-	GString *string;
+	long offset = (long)gtk_object_get_user_data(GTK_OBJECT(w));
+	int options = (int)gtk_object_get_data(GTK_OBJECT(w), "options");
+	gchar *name = gtk_object_get_data(GTK_OBJECT(w), "name");
 	FILE *fp;
-	GtkWidget *window;
-	GtkWidget *box;
-	GtkWidget *hbox;
-	GtkWidget *sw;
-	GtkWidget *layout;
-	GtkWidget *close_button;
-	GtkWidget *clear_button;
-	GtkWidget *save_button;
-	int options;
-	guint block;
+	char filename[256];
+	int i=0;
+	GString *string;
 
 	string = g_string_new("");
 
@@ -3444,6 +3438,58 @@ void show_log(char *name)
 		do_error_dialog(buf, "Error!");
 		return;
 	}
+
+	fseek(fp, offset, SEEK_SET);
+	gtk_imhtml_clear(GTK_IMHTML(layout));
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
+	while (fgets(buf, BUF_LONG, fp) && !strstr(buf, "---- New C")) {
+		i++;
+		if (strlen(buf) >= 5 && (!strncmp(buf + strlen(buf) - 5, "<BR>\n", 5)))
+			/* take off the \n */
+			buf[strlen(buf) - 1] = '\0';
+
+		if (i == 30) {
+			gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
+			g_string_free(string, TRUE);
+			string = g_string_new("");
+			while (gtk_events_pending())
+				gtk_main_iteration();
+			i = 0;
+		} else {
+			g_string_append(string, buf);
+		}
+
+	}
+	gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
+	gtk_imhtml_append_text(GTK_IMHTML(layout), "<BR>", options);
+	g_string_free(string, TRUE);
+	fclose(fp);
+}
+
+void show_log(char *name)
+{
+	gchar filename[256];
+	gchar buf[BUF_LONG];
+	FILE *fp;
+	GtkWidget *window;
+	GtkWidget *box;
+	GtkWidget *hbox;
+	GtkWidget *sw;
+	GtkWidget *layout;
+	GtkWidget *close_button;
+	GtkWidget *clear_button;
+	GtkWidget *save_button;
+	GtkWidget *list;
+	GtkWidget *item;
+	GtkWidget *frame;
+
+	int options;
+	guint block;
+	char convo_start[32];
+	long offset = 0;
+
 
 	options = GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL;
 	if (convo_options & OPT_CONVO_IGNORE_COLOUR)
@@ -3468,22 +3514,77 @@ void show_log(char *name)
 	gtk_widget_realize(window);
 	aol_icon(window->window);
 
+	layout = gtk_imhtml_new(NULL, NULL);
+
 	box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(window), box);
 
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 0);
+
+	if (name) {
+		char *tmp = gaim_user_dir();
+		g_snprintf(filename, 256, "%s/logs/%s.log", tmp, normalize(name));
+		g_free(tmp);
+		if ((fp = fopen(filename, "r")) == NULL) {
+			g_snprintf(buf, BUF_LONG, "Unable to open log file %s", filename);
+			do_error_dialog(buf, "Error!");
+			return;
+		}
+
+		list = gtk_list_new();
+
+		frame = gtk_frame_new(_("Date"));
+		gtk_widget_show(frame);
+
+		sw = gtk_scrolled_window_new(NULL, NULL);
+		gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), list);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
+		gtk_widget_set_usize(sw, 190, 220);
+		gtk_container_add(GTK_CONTAINER(frame), sw);
+		gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
+
+		while (fgets(buf, BUF_LONG, fp)) {
+			if (strstr(buf, "---- New C")) {
+				int length;
+				char *temp = strchr(buf, '@');
+				if (temp == NULL || strlen(temp) < 2)
+					continue;
+				temp++;
+				length = strcspn(temp, "-");
+				if (length > 31) length = 31;
+
+				offset = ftell(fp);
+				g_snprintf(convo_start, length, "%s", temp);
+				item = gtk_list_item_new_with_label(convo_start);
+				gtk_object_set_user_data(GTK_OBJECT(item), (gpointer)offset);
+				gtk_object_set_data(GTK_OBJECT(item), "options", (gpointer)options);
+				gtk_object_set_data(GTK_OBJECT(item), "name", (gpointer)name);
+				gtk_signal_connect(GTK_OBJECT(item), "select", GTK_SIGNAL_FUNC(log_show_convo), layout);
+				gtk_container_add(GTK_CONTAINER(list), item);
+				gtk_widget_show(item);
+			}
+		}
+		fclose(fp);
+	}
+
+	frame = gtk_frame_new(_("Conversation"));
+	gtk_widget_show(frame);
+
 	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_box_pack_start(GTK_BOX(box), sw, TRUE, TRUE, 0);
+	gtk_container_set_border_width(GTK_CONTAINER(sw), 5);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 	gtk_widget_set_usize(sw, 390, 220);
+	gtk_container_add(GTK_CONTAINER(frame), sw);
+	gtk_box_pack_start(GTK_BOX(hbox), frame, TRUE, TRUE, 0);
 
-	layout = gtk_imhtml_new(NULL, NULL);
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", open_url_nw, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
 	gaim_setup_imhtml(layout);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
 
 	close_button = picture_button(window, _("Close"), cancel_xpm);
 	gtk_box_pack_end(GTK_BOX(hbox), close_button, FALSE, FALSE, 5);
@@ -3498,36 +3599,26 @@ void show_log(char *name)
 	gtk_box_pack_end(GTK_BOX(hbox), save_button, FALSE, FALSE, 5);
 	gtk_widget_set_sensitive(save_button, FALSE);
 
-	gtk_widget_show_all(window);
-
-	while (fgets(buf, BUF_LONG, fp)) {
-		if (strlen(buf) >= 5 && (!strncmp(buf + strlen(buf) - 5, "<BR>\n", 5)))
-			/* take off the \n */
-			buf[strlen(buf) - 1] = '\0';
-		if (!name ||(strlen(buf) >= 21 && strstr(buf, "---- New C"))) {
-			gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
-			g_string_free(string, TRUE);
-			string = g_string_new(buf);
-		} else {
-			string = g_string_append(string, buf);
-		}
-		while (gtk_events_pending())
-			gtk_main_iteration();
+	gtk_widget_show_all(window);				
+	
+	if (!name) {
+		gtk_object_set_user_data(GTK_OBJECT(layout), (gpointer)0);
+		gtk_object_set_data(GTK_OBJECT(layout), "options", (gpointer)options);
+		gtk_object_set_data(GTK_OBJECT(layout), "name", (gpointer)NULL);
+		log_show_convo(layout, layout);
+	} else {
+		gtk_list_select_item(GTK_LIST(list), 0);
 	}
-	gtk_imhtml_append_text(GTK_IMHTML(layout), string->str, options);
-	gtk_imhtml_append_text(GTK_IMHTML(layout), "<BR>", options);
 
 	gtk_signal_disconnect(GTK_OBJECT(window), block);
 	gtk_signal_connect(GTK_OBJECT(window), "delete_event", GTK_SIGNAL_FUNC(destroy_dialog), window);
 	gtk_signal_connect(GTK_OBJECT(close_button), "clicked", GTK_SIGNAL_FUNC(destroy_dialog), window);
 	gtk_signal_connect(GTK_OBJECT(clear_button), "clicked", GTK_SIGNAL_FUNC(show_clear_log), name);
 	gtk_signal_connect(GTK_OBJECT(save_button), "clicked", GTK_SIGNAL_FUNC(show_save_log), name);
+	
 	gtk_widget_set_sensitive(close_button, TRUE);
 	gtk_widget_set_sensitive(clear_button, TRUE);
 	gtk_widget_set_sensitive(save_button, TRUE);
-
-	fclose(fp);
-	g_string_free(string, TRUE);
 
 	return;
 }
