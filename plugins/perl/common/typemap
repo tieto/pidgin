@@ -1,4 +1,5 @@
 TYPEMAP
+time_t                   T_IV
 gboolean                 T_BOOL
 const char *             T_PV
 Gaim::Account            T_GaimObj
