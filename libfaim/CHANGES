@@ -1,6 +1,21 @@
 
 No release numbers
 ------------------
+ - Thu May 10 17:37:23 PDT 2001
+  - I haven't had lunch yet.  What should I have?
+
+ - Wed May  9 15:21:51 PDT 2001
+  - I had pizza for lunch.
+
+ - Mon May  7 15:19:55 PDT 2001
+  - Rename rxhandler_t to aim_rxhandler_t.  This has been 
+     bugging me for a while.
+
+ - Thu May  3 15:47:23 PDT 2001
+  - Clean up getcap/putcaps
+  - Add GAMES2 and SENDBUDDYLIST caps (the latter is new in winaim 4.7beta)
+  - Update hash to latest value
+
  - Wed Apr 25 11:51:39 PDT 2001
   - I think this was a bug.
 

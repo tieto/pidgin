@@ -848,7 +848,7 @@ faim_export int aim_conn_completeconnect(struct aim_session_t *sess, struct aim_
   fd_set fds, wfds;
   struct timeval tv;
   int res, error = ETIMEDOUT;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
 
   if (!conn || (conn->fd == -1))
     return -1;

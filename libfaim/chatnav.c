@@ -94,7 +94,7 @@ faim_export unsigned long aim_chatnav_createroom(struct aim_session_t *sess,
 
 static int parseinfo_perms(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen, struct aim_snac_t *snac2)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int ret = 0;
   struct aim_tlvlist_t *tlvlist;
   struct aim_chat_exchangeinfo *exchanges = NULL;
@@ -258,7 +258,7 @@ static int parseinfo_perms(struct aim_session_t *sess, aim_module_t *mod, struct
 
 static int parseinfo_create(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen, struct aim_snac_t *snac2)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_tlvlist_t *tlvlist, *innerlist;
   char *ck = NULL, *fqcn = NULL, *name = NULL;
   unsigned short exchange = 0, instance = 0, unknown = 0, flags = 0, maxmsglen = 0, maxoccupancy = 0;

@@ -43,7 +43,7 @@ static int parse(struct aim_session_t *sess, aim_module_t *mod, struct command_r
 {
   struct aim_tlvlist_t *tlvlist;
   int ret = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   char *sn = NULL, *bosip = NULL, *errurl = NULL, *email = NULL;
   unsigned char *cookie = NULL;
   int errorcode = 0, regstatus = 0;
@@ -184,7 +184,7 @@ static int keyparse(struct aim_session_t *sess, aim_module_t *mod, struct comman
   unsigned char *key;
   int keylen;
   int ret = 1;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
 
   keylen = aimutil_get16(data);
   if (!(key = malloc(keylen+1)))

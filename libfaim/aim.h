@@ -474,7 +474,7 @@ faim_export int aim_logoff(struct aim_session_t *);
 faim_export void aim_conn_kill(struct aim_session_t *sess, struct aim_conn_t **deadconn);
 #endif /* ndef FAIM_INTERNAL */
 
-typedef int (*rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
+typedef int (*aim_rxcallback_t)(struct aim_session_t *, struct command_rx_struct *, ...);
 
 /* aim_login.c */
 faim_export int aim_sendconnack(struct aim_session_t *sess, struct aim_conn_t *conn);
@@ -498,14 +498,14 @@ faim_export void aim_tx_purgequeue(struct aim_session_t *);
 struct aim_rxcblist_t {
   u_short family;
   u_short type;
-  rxcallback_t handler;
+  aim_rxcallback_t handler;
   u_short flags;
   struct aim_rxcblist_t *next;
 };
 
 faim_export int aim_conn_setlatency(struct aim_conn_t *conn, int newval);
 
-faim_export int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, rxcallback_t newhandler, u_short flags);
+faim_export int aim_conn_addhandler(struct aim_session_t *, struct aim_conn_t *conn, u_short family, u_short type, aim_rxcallback_t newhandler, u_short flags);
 faim_export int aim_clearhandlers(struct aim_conn_t *conn);
 
 faim_export void aim_conn_close(struct aim_conn_t *deadconn);

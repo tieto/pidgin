@@ -37,7 +37,7 @@ static struct aim_fileheader_t *aim_oft_getfh(unsigned char *hdr);
 faim_export int aim_handlerendconnect(struct aim_session_t *sess, struct aim_conn_t *cur)
 { 
   int acceptfd = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct sockaddr cliaddr;
   int clilen = sizeof(cliaddr);
   int ret = 0;
@@ -824,7 +824,7 @@ faim_internal int aim_get_command_rendezvous(struct aim_session_t *sess, struct 
   unsigned char *hdr = NULL;
   int hdrlen, hdrtype;
   int flags = 0;
-  rxcallback_t userfunc = NULL;
+  aim_rxcallback_t userfunc = NULL;
   
   if (!sess || !conn || !conn->priv)
     return -1;

@@ -14,7 +14,7 @@
 static int buddychange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   struct aim_userinfo_s userinfo;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
 
   aim_extractuserinfo(sess, data, &userinfo);
 
@@ -26,7 +26,7 @@ static int buddychange(struct aim_session_t *sess, aim_module_t *mod, struct com
 
 static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_tlvlist_t *tlvlist;
   unsigned short maxbuddies = 0, maxwatchers = 0;
   int ret = 0;

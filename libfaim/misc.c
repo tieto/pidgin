@@ -830,7 +830,7 @@ static int generror(struct aim_session_t *sess, aim_module_t *mod, struct comman
 {
   int ret = 0;
   int error = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_snac_t *snac2;
 
   snac2 = aim_remsnac(sess, snac->id);
@@ -854,7 +854,7 @@ static int snachandler(struct aim_session_t *sess, aim_module_t *mod, struct com
   if (snac->subtype == 0x0001)
     return generror(sess, mod, rx, snac, data, datalen);
   else if ((snac->family == 0xffff) && (snac->subtype == 0xffff)) {
-    rxcallback_t userfunc;
+    aim_rxcallback_t userfunc;
 
     if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
       return userfunc(sess, rx);

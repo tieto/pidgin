@@ -542,7 +542,7 @@ faim_export int aim_0002_000b(struct aim_session_t *sess, struct aim_conn_t *con
 static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   struct aim_tlvlist_t *tlvlist;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int ret = 0;
 
   tlvlist = aim_readtlvchain(data, datalen);
@@ -561,7 +561,7 @@ static int userinfo(struct aim_session_t *sess, aim_module_t *mod, struct comman
   char *text_encoding = NULL;
   char *text = NULL;
   int i = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_tlvlist_t *tlvlist;
   struct aim_snac_t *origsnac = NULL;
   struct aim_priv_inforeq *inforeq;

@@ -188,7 +188,7 @@ faim_export unsigned long aim_send_im(struct aim_session_t *sess, struct aim_con
 static int outgoingim(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   unsigned int i, ret = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   unsigned char cookie[8];
   int channel;
   struct aim_tlvlist_t *tlvlist;
@@ -252,7 +252,7 @@ static int outgoingim(struct aim_session_t *sess, aim_module_t *mod, struct comm
 
 static int incomingim_ch1(struct aim_session_t *sess, aim_module_t *mod,  struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned short channel, struct aim_userinfo_s *userinfo, struct aim_tlvlist_t *tlvlist, unsigned char *cookie)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int i, j = 0, y = 0, z = 0, ret = 0;
   char *msg = NULL;
   unsigned long icbmflags = 0;
@@ -353,7 +353,7 @@ static int incomingim_ch1(struct aim_session_t *sess, aim_module_t *mod,  struct
 
 static int incomingim_ch2(struct aim_session_t *sess, aim_module_t *mod,  struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned short channel, struct aim_userinfo_s *userinfo, struct aim_tlvlist_t *tlvlist, unsigned char *cookie)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_tlv_t *block1;
   struct aim_tlvlist_t *list2;
   unsigned short reqclass = 0;
@@ -804,7 +804,7 @@ static int paraminfo(struct aim_session_t *sess, aim_module_t *mod, struct comma
 {
   unsigned long defflags, minmsginterval;
   unsigned short maxicbmlen, maxsenderwarn, maxrecverwarn, maxchannel;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int i = 0;
 
   maxchannel = aimutil_get16(data+i);
@@ -834,7 +834,7 @@ static int paraminfo(struct aim_session_t *sess, aim_module_t *mod, struct comma
 static int missedcall(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   int i = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   unsigned short channel, nummissed, reason;
   struct aim_userinfo_s userinfo;
  
@@ -868,7 +868,7 @@ static int missedcall(struct aim_session_t *sess, aim_module_t *mod, struct comm
 
 static int msgack(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   char sn[MAXSNLEN];
   unsigned char ck[8];
   unsigned short type;

@@ -38,7 +38,7 @@ faim_export unsigned long aim_usersearch_address(struct aim_session_t *sess,
 static int error(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   int ret = 0;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_snac_t *snac2;
 
   /* XXX the modules interface should have already retrieved this for us */
@@ -65,7 +65,7 @@ static int reply(struct aim_session_t *sess, aim_module_t *mod, struct command_r
   unsigned int j, m, ret = 0;
   struct aim_tlvlist_t *tlvlist;
   char *cur = NULL, *buf = NULL;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_snac_t *snac2;
 
   if (!(snac2 = aim_remsnac(sess, snac->id))) {

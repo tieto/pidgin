@@ -24,7 +24,7 @@ static int infochange(struct aim_session_t *sess, aim_module_t *mod, struct comm
     i += 2;
 
     while (tlvcount) {
-      rxcallback_t userfunc;
+      aim_rxcallback_t userfunc;
       struct aim_tlv_t *tlv;
       int str = 0;
 
@@ -58,7 +58,7 @@ static int infochange(struct aim_session_t *sess, aim_module_t *mod, struct comm
 
 static int accountconfirm(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int status;
 
   status = aimutil_get16(data);

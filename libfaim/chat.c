@@ -402,7 +402,7 @@ faim_export unsigned long aim_chat_invite(struct aim_session_t *sess,
 static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   struct aim_userinfo_s *userinfo = NULL;
-  rxcallback_t userfunc=NULL;	
+  aim_rxcallback_t userfunc=NULL;	
   int ret = 0, i = 0;
   int usercount = 0;
   unsigned char detaillevel = 0;
@@ -530,7 +530,7 @@ static int infoupdate(struct aim_session_t *sess, aim_module_t *mod, struct comm
 static int userlistchange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   struct aim_userinfo_s *userinfo = NULL;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int i = 0, curcount = 0, ret = 0;
 
   while (i < datalen) {
@@ -573,7 +573,7 @@ static int userlistchange(struct aim_session_t *sess, aim_module_t *mod, struct 
 static int incomingmsg(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
   struct aim_userinfo_s userinfo;
-  rxcallback_t userfunc=NULL;	
+  aim_rxcallback_t userfunc=NULL;	
   int ret = 0, i = 0;
   unsigned char cookie[8];
   int channel;

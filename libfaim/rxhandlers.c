@@ -295,11 +295,11 @@ faim_internal int bleck(struct aim_session_t *sess,struct command_rx_struct *wor
 }
 
 faim_export int aim_conn_addhandler(struct aim_session_t *sess,
-			struct aim_conn_t *conn,
-			u_short family,
-			u_short type,
-			rxcallback_t newhandler,
-			u_short flags)
+				    struct aim_conn_t *conn,
+				    u_short family,
+				    u_short type,
+				    aim_rxcallback_t newhandler,
+				    u_short flags)
 {
   struct aim_rxcblist_t *newcb;
 
@@ -353,10 +353,10 @@ faim_export int aim_clearhandlers(struct aim_conn_t *conn)
  return 0;
 }
 
-faim_internal rxcallback_t aim_callhandler(struct aim_session_t *sess,
-					   struct aim_conn_t *conn,
-					   unsigned short family,
-					   unsigned short type)
+faim_internal aim_rxcallback_t aim_callhandler(struct aim_session_t *sess,
+					       struct aim_conn_t *conn,
+					       unsigned short family,
+					       unsigned short type)
 {
   struct aim_rxcblist_t *cur;
 
@@ -386,7 +386,7 @@ faim_internal int aim_callhandler_noparam(struct aim_session_t *sess,
 					  u_short type,
 					  struct command_rx_struct *ptr)
 {
-  rxcallback_t userfunc = NULL;
+  aim_rxcallback_t userfunc = NULL;
   userfunc = aim_callhandler(sess, conn, family, type);
   if (userfunc)
     return userfunc(sess, ptr);
@@ -541,7 +541,7 @@ faim_internal int aim_negchan_middle(struct aim_session_t *sess,
   struct aim_tlvlist_t *tlvlist;
   char *msg = NULL;
   unsigned short code = 0;
-  rxcallback_t userfunc = NULL;
+  aim_rxcallback_t userfunc = NULL;
   int ret = 1;
 
   /* Used only by the older login protocol */

@@ -430,7 +430,7 @@ faim_export unsigned long aim_sendredirect(struct aim_session_t *sess,
 
 static int hostonline(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int ret = 0;
   unsigned short *families;
   int famcount, i;
@@ -456,7 +456,7 @@ static int redirect(struct aim_session_t *sess, aim_module_t *mod, struct comman
   int serviceid;
   unsigned char *cookie;
   char *ip;
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   struct aim_tlvlist_t *tlvlist;
   char *chathack = NULL;
   int chathackex = 0;
@@ -551,7 +551,7 @@ static int redirect(struct aim_session_t *sess, aim_module_t *mod, struct comman
 /* XXX parse this */
 static int rateresp(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
 
   if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
     return userfunc(sess, rx);
@@ -561,7 +561,7 @@ static int rateresp(struct aim_session_t *sess, aim_module_t *mod, struct comman
 
 static int ratechange(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int i = 0, code;
   unsigned long currentavg, maxavg;
   unsigned long rateclass, windowsize, clear, alert, limit, disconnect;
@@ -596,7 +596,7 @@ static int ratechange(struct aim_session_t *sess, aim_module_t *mod, struct comm
 /* XXX parse this */
 static int selfinfo(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
 
   if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
     return userfunc(sess, rx);
@@ -606,7 +606,7 @@ static int selfinfo(struct aim_session_t *sess, aim_module_t *mod, struct comman
 
 static int evilnotify(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc = NULL;
+  aim_rxcallback_t userfunc = NULL;
   int i = 0;
   unsigned short newevil;
   struct aim_userinfo_s userinfo;
@@ -627,7 +627,7 @@ static int evilnotify(struct aim_session_t *sess, aim_module_t *mod, struct comm
 
 static int motd(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   char *msg = NULL;
   int ret = 0;
   struct aim_tlvlist_t *tlvlist;
@@ -663,7 +663,7 @@ static int motd(struct aim_session_t *sess, aim_module_t *mod, struct command_rx
 
 static int hostversions(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int vercount;
 
   vercount = datalen/4;
@@ -713,7 +713,7 @@ static int hostversions(struct aim_session_t *sess, aim_module_t *mod, struct co
  */
 static int memrequest(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   unsigned long offset, len;
   int i = 0;
   struct aim_tlvlist_t *list;
@@ -813,19 +813,17 @@ faim_export int aim_sendmemblock(struct aim_session_t *sess, struct aim_conn_t *
       faimdprintf(sess, 0, "sendmemblock: WARNING: sending bad hash... you will be disconnected soon...\n");
 
     /* 
-     * This data is correct for AIM 3.5.1670, offset 0x1000, length 0 
+     * This data is correct for AIM 3.5.1670, offset 0x03ffffff, 
+     * length 0x03ffffff (invalid).
      *
      * Using this block is as close to "legal" as you can get without
      * using an AIM binary.
      *
-     * For the moment, this is the MD5 hash of nothing.  Yes, that's
-     * right.  Nothing.  AOL is smart.
-     *
      */
-    i += aimutil_put32(tx->data+i, 0xd41d8cd9);
-    i += aimutil_put32(tx->data+i, 0x8f00b204);
-    i += aimutil_put32(tx->data+i, 0xe9800998);
-    i += aimutil_put32(tx->data+i, 0xecf8427e);
+    i += aimutil_put32(tx->data+i, 0x1df8cbae);
+    i += aimutil_put32(tx->data+i, 0x5523b839);
+    i += aimutil_put32(tx->data+i, 0xa0e10db3);
+    i += aimutil_put32(tx->data+i, 0xa46d3b39);
 
   }
 

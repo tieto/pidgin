@@ -60,7 +60,7 @@ faim_internal int aim_tx_enqueue(struct aim_session_t *, struct command_tx_struc
 faim_internal int aim_tx_printqueue(struct aim_session_t *);
 faim_internal int aim_tx_cleanqueue(struct aim_session_t *, struct aim_conn_t *);
 
-faim_internal rxcallback_t aim_callhandler(struct aim_session_t *sess, struct aim_conn_t *conn, u_short family, u_short type);
+faim_internal aim_rxcallback_t aim_callhandler(struct aim_session_t *sess, struct aim_conn_t *conn, u_short family, u_short type);
 
 /*
  * Generic SNAC structure.  Rarely if ever used.

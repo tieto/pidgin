@@ -681,6 +681,9 @@ void damn_you(gpointer data, gint source, GdkInputCondition c)
 	g_free(pos);
 }
 
+/* size of icbmui.ocm, the largest module in AIM 3.5 */
+#define AIM_MAX_FILE_SIZE 98304
+
 int gaim_memrequest(struct aim_session_t *sess,
 		    struct command_rx_struct *command, ...) {
 	va_list ap;
@@ -695,8 +698,23 @@ int gaim_memrequest(struct aim_session_t *sess,
 	va_end(ap);
 
 	if (len == 0) {
+		debug_printf("len is 0, hashing NULL\n");
 		aim_sendmemblock(sess, command->conn, offset, len, NULL,
 				AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
+		return 1;
+	}
+	if (offset > AIM_MAX_FILE_SIZE || len > AIM_MAX_FILE_SIZE) {
+		char buf[8];
+		buf[0] = offset & 0xff;
+		buf[1] = (offset >> 8) & 0xff;
+		buf[2] = (offset >> 16) & 0xff;
+		buf[3] = (offset >> 24) & 0xff;
+		buf[4] = len & 0xff;
+		buf[5] = (len >> 8) & 0xff;
+		buf[6] = (len >> 16) & 0xff;
+		buf[7] = (len >> 24) & 0xff;
+		debug_printf("len + offset is invalid, hashing request\n");
+		aim_sendmemblock(sess, command->conn, offset, 8, buf, AIM_SENDMEMBLOCK_FLAG_ISREQUEST);
 		return 1;
 	}
 

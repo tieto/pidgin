@@ -21,7 +21,7 @@ faim_export unsigned long aim_bos_setgroupperm(struct aim_session_t *sess,
 
 static int rights(struct aim_session_t *sess, aim_module_t *mod, struct command_rx_struct *rx, aim_modsnac_t *snac, unsigned char *data, int datalen)
 {
-  rxcallback_t userfunc;
+  aim_rxcallback_t userfunc;
   int ret = 0;
   struct aim_tlvlist_t *tlvlist;
   unsigned short maxpermits = 0, maxdenies = 0;
