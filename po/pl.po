@@ -247,7 +247,7 @@ msgid ""
 msgstr ""
 "Nazwa u¿ytkownika : <B>%s</B>  %s <BR>\n"
 "%sPoziom ostrze¿eñ : <B>%d %%</B><BR>\n"
-"Na linii od  : <B>%s</B><BR>\n"
+"Dostêpny od  : <B>%s</B><BR>\n"
 "Bezczynny od : <B>%s</B><BR>\n"
 "<BR>\n"
 "<HR><BR>\n"
@@ -270,7 +270,7 @@ msgstr "<i>Brak podanych informacji</i>"
 
 #: src/protocols/oscar/oscar.c:1610
 msgid "<i>User has no away message</i>"
-msgstr "<i>U¿ytkownik nie ma wiadomo¶ci away</i>"
+msgstr "<i>U¿ytkownik nie ma wiadomo¶ci zajêto¶ci</i>"
 
 #: src/protocols/oscar/oscar.c:1635
 msgid "Your connection may be lost."
@@ -309,7 +309,7 @@ msgstr ""
 
 #: src/protocols/oscar/oscar.c:2531
 msgid "Get Away Msg"
-msgstr "Pobierz wiadomo¶æ Away"
+msgstr "Pobierz wiadomo¶æ Zajêty"
 
 #: src/protocols/oscar/oscar.c:2538
 msgid "Direct IM"
@@ -507,7 +507,7 @@ msgstr "Twoja wiadomo¶æ nie zosta³a wys³ana."
 #: src/protocols/yahoo/yay.c:187
 #, c-format
 msgid "%s has made %s their buddy%s%s"
-msgstr "%s wykona³ %s swojego buddy%s%s"
+msgstr "%s wykona³ %s swojego kolesia%s%s"
 
 #: src/protocols/yahoo/yay.c:189
 msgid "Gaim - Buddy"
@@ -515,7 +515,7 @@ msgstr "Gaim - Buddy"
 
 #: src/protocols/yahoo/yay.c:687
 msgid "Send offline message"
-msgstr "Wy¶lij wiadomo¶æ offline"
+msgstr "Wy¶lij wiadomo¶æ niedostêpny"
 
 #: src/protocols/zephyr/zephyr.c:786
 msgid "ZLocate"
@@ -681,15 +681,15 @@ msgstr "Próba zapisania siê..."
 
 #: src/applet.c:112
 msgid "Offline. Click to bring up login box."
-msgstr "Offline. Kliknij by uaktywniæ okno logowania."
+msgstr "Niedostêpny. Kliknij by uaktywniæ okno logowania."
 
 #: src/applet.c:164 src/buddy.c:476 src/buddy.c:2234 src/buddy.c:2368
 msgid "Away"
-msgstr "Away"
+msgstr "Zajêty"
 
 #: src/applet.c:167 src/away.c:334
 msgid "New Away Message"
-msgstr "Nowy komunikat away"
+msgstr "Nowy komunikat Zajêty"
 
 #: src/applet.c:309
 msgid "Can't create GAIM applet!"
@@ -701,7 +701,7 @@ msgstr "O ..."
 
 #: src/away.c:153
 msgid "Gaim - Away!"
-msgstr "Gaim - Away!"
+msgstr "Gaim - Zajêty!"
 
 #: src/away.c:196
 msgid "I'm Back!"
@@ -713,11 +713,11 @@ msgstr "Powrót"
 
 #: src/away.c:354
 msgid "Remove Away Message"
-msgstr "Usuñ wiadomo¶æ away"
+msgstr "Usuñ wiadomo¶æ Zajêty"
 
 #: src/away.c:542
 msgid "Set All Away"
-msgstr "Ustaw wszystkie away"
+msgstr "Ustaw wszystkie Zajêty"
 
 #. Put the buttons in the box
 #: src/buddy.c:471 src/buddy.c:2499 src/buddy_chat.c:1409
@@ -759,7 +759,7 @@ msgstr "Pseudo"
 
 #: src/buddy.c:624 src/buddy.c:778
 msgid "Add Buddy Pounce"
-msgstr "Dodaj wychwyconego buddy"
+msgstr "Dodaj wychwyconego kolesia"
 
 #: src/buddy.c:630 src/buddy.c:784
 msgid "View Log"
@@ -775,15 +775,15 @@ msgstr "Od-pseudo"
 
 #: src/buddy.c:1516
 msgid "New Buddy Pounce"
-msgstr "Nowe wychwycenie buddy"
+msgstr "Nowe wychwycenie kolesia"
 
 #: src/buddy.c:1534
 msgid "Remove Buddy Pounce"
-msgstr "Usuñ wychwycenie buddy"
+msgstr "Usuñ wychwycenie kolesia"
 
 #: src/buddy.c:1857
 msgid "Buddy Icon"
-msgstr "Ikona buddy"
+msgstr "Ikona kolesia"
 
 #: src/buddy.c:1860
 msgid "Voice"
@@ -852,7 +852,7 @@ msgstr "%s wylogowany."
 
 #: src/buddy.c:2266
 msgid "Information on selected Buddy"
-msgstr "Informacje o wybranym Buddy"
+msgstr "Informacje o wybranym kolesiu"
 
 #: src/buddy.c:2267 src/dialogs.c:569
 msgid "Send Instant Message"
@@ -860,11 +860,11 @@ msgstr "Wy¶lij IM"
 
 #: src/buddy.c:2268
 msgid "Start/join a Buddy Chat"
-msgstr "Rozpocznij/przy³±cz do chatu buddy"
+msgstr "Rozpocznij/przy³±cz do chatu kolesia"
 
 #: src/buddy.c:2269
 msgid "Activate Away Message"
-msgstr "Aktywuj wiadomo¶æ away"
+msgstr "Aktywuj wiadomo¶æ Zajêty"
 
 #: src/buddy.c:2332
 msgid "File"
@@ -872,7 +872,7 @@ msgstr "Plik"
 
 #: src/buddy.c:2336
 msgid "Add A Buddy"
-msgstr "Dodaj buddy"
+msgstr "Dodaj kolesia"
 
 #: src/buddy.c:2338
 msgid "Join A Chat"
@@ -884,7 +884,7 @@ msgstr "Nowa IM"
 
 #: src/buddy.c:2345
 msgid "Import Buddy List"
-msgstr "Importuj listê buddy"
+msgstr "Importuj listê kolesi"
 
 #: src/buddy.c:2363
 msgid "Tools"
@@ -892,11 +892,11 @@ msgstr "Narzêdzia"
 
 #: src/buddy.c:2373
 msgid "Buddy Pounce"
-msgstr "Wychwyæ buddy"
+msgstr "Wychwyæ kolesia"
 
 #: src/buddy.c:2382 src/dialogs.c:2101 src/dialogs.c:2264
 msgid "Search for Buddy"
-msgstr "Szukaj buddy"
+msgstr "Szukaj kolesia"
 
 #: src/buddy.c:2386
 msgid "by Email"
@@ -940,7 +940,7 @@ msgstr "Wczytaj skrypt"
 
 #: src/buddy.c:2443
 msgid "Unload All Scripts"
-msgstr "Roz³aduj wszystkie skrypty"
+msgstr "Wy³aduj wszystkie skrypty"
 
 #: src/buddy.c:2447
 msgid "List Scripts"
@@ -956,11 +956,11 @@ msgstr "O Gaim"
 
 #: src/buddy.c:2479 src/prefs.c:2630
 msgid "Buddy List"
-msgstr "Lista buddy"
+msgstr "Lista kolesi"
 
 #: src/buddy.c:2532
 msgid "Add a new Buddy"
-msgstr "Dodaj nowego buddy"
+msgstr "Dodaj nowego kolesia"
 
 #: src/buddy.c:2533
 msgid "Add a new Group"
@@ -968,19 +968,19 @@ msgstr "Dodaj now± grupê"
 
 #: src/buddy.c:2534
 msgid "Remove selected Buddy/Group"
-msgstr "Usuñ wybranego buddy/grupê"
+msgstr "Usuñ wybranego kolesia/grupê"
 
 #: src/buddy.c:2559
 msgid "Online"
-msgstr "Na linii"
+msgstr "Dostêpny"
 
 #: src/buddy.c:2561
 msgid "Edit Buddies"
-msgstr "Edytuj buddych"
+msgstr "Edytuj kolesi"
 
 #: src/buddy.c:2601
 msgid "Gaim - Buddy List"
-msgstr "Gaim - lista buddy"
+msgstr "Gaim - lista kolesi"
 
 #: src/buddy_chat.c:244
 msgid "Join Chat"
@@ -988,7 +988,7 @@ msgstr "Przy³±cz do chatu"
 
 #: src/buddy_chat.c:251
 msgid "Buddy Chat"
-msgstr "Chat buddy"
+msgstr "Chat z kolesiem"
 
 #: src/buddy_chat.c:262
 msgid "Join Chat As:"
@@ -1015,7 +1015,7 @@ msgstr "Wywo³aj"
 
 #: src/buddy_chat.c:391 src/dialogs.c:3292
 msgid "Buddy"
-msgstr "buddy"
+msgstr "Kole¶"
 
 #: src/buddy_chat.c:396 src/prefs.c:1792
 msgid "Message"
@@ -1023,7 +1023,7 @@ msgstr "Wiadomo¶æ"
 
 #: src/buddy_chat.c:433
 msgid "Gaim - Invite Buddy Into Chat Room"
-msgstr "Gaim - zawo³aj buddy do pokoju chat"
+msgstr "Gaim - zawo³aj kolesia do pokoju chat"
 
 #: src/buddy_chat.c:811
 msgid "Un-Ignore"
@@ -1063,11 +1063,11 @@ msgstr "Temat:"
 
 #: src/buddy_chat.c:1215
 msgid "0 people in room"
-msgstr "O ludziach w pokoju"
+msgstr "0 ludzi w pokoju"
 
 #: src/buddy_chat.c:1289 src/buddy_chat.c:1375
 msgid "Whisper"
-msgstr "Szepcz"
+msgstr "Szept"
 
 #: src/buddy_chat.c:1294 src/buddy_chat.c:1373 src/buddy_chat.c:1419
 #: src/conversation.c:2283
@@ -1090,7 +1090,7 @@ msgstr "Gaim - zapisz rozmowê"
 #: src/conversation.c:534
 #, c-format
 msgid "Removing '%s' from buddylist.\n"
-msgstr "Usuwanie '%s' z listy buddych.\n"
+msgstr "Usuwanie '%s' z listy kolesi.\n"
 
 #: src/conversation.c:904
 msgid "Unable to send message: too large"
@@ -1286,7 +1286,7 @@ msgstr "Gaim - pobierz informacje u¿ytkownika"
 
 #: src/dialogs.c:726
 msgid "Buddies"
-msgstr "buddy"
+msgstr "Kolesie"
 
 #: src/dialogs.c:779
 msgid "Add Group"
@@ -1298,11 +1298,11 @@ msgstr "Gaim - dodaj grupê"
 
 #: src/dialogs.c:831
 msgid "Gaim - Add Buddy"
-msgstr "Gaim - dodaj buddy"
+msgstr "Gaim - dodaj kolesia"
 
 #: src/dialogs.c:843
 msgid "Add Buddy"
-msgstr "Dodaj buddy"
+msgstr "Dodaj kolesia"
 
 #: src/dialogs.c:853
 msgid "Contact"
@@ -1310,23 +1310,23 @@ msgstr "Kontakt"
 
 #: src/dialogs.c:903
 msgid "Please enter a buddy to pounce."
-msgstr "Wprowad¼ buddy do wywo³ania."
+msgstr "Wprowad¼ kolesia do wywo³ania."
 
 #: src/dialogs.c:903
 msgid "Buddy Pounce Error"
-msgstr "B³±d wywo³ania buddy"
+msgstr "B³±d wywo³ania kolesia"
 
 #: src/dialogs.c:972
 msgid "Pounce buddy as:"
-msgstr "Wywo³aj buddy jako:"
+msgstr "Wywo³aj kolesia jako:"
 
 #: src/dialogs.c:1023
 msgid "Gaim - New Buddy Pounce"
-msgstr "Gaim - Nowe wywo³anie buddy"
+msgstr "Gaim - Nowe wywo³anie kolesia"
 
 #: src/dialogs.c:1039
 msgid "Buddy:"
-msgstr "Buddy:"
+msgstr "Kole¶:"
 
 #: src/dialogs.c:1054
 msgid "Pounce on sign on"
@@ -1334,7 +1334,7 @@ msgstr "Wywo³aj przy zapisywaniu siê"
 
 #: src/dialogs.c:1059
 msgid "Pounce on return from away"
-msgstr "Wywo³aj przy powrocie z away"
+msgstr "Wywo³aj przy powrocie z Zajêty"
 
 #: src/dialogs.c:1063
 msgid "Pounce on return from idle"
@@ -1502,11 +1502,11 @@ msgstr "Gaim - loguj rozmowê"
 
 #: src/dialogs.c:2229
 msgid "Gaim - Find Buddy By Info"
-msgstr "Gaim - znajd¼ buddy wg informacji"
+msgstr "Gaim - znajd¼ kolesia wg informacji"
 
 #: src/dialogs.c:2258
 msgid "Gaim - Find Buddy By Email"
-msgstr "Gaim - znajd¼ buddy wg adresu email"
+msgstr "Gaim - znajd¼ kolesia wg adresu email"
 
 #: src/dialogs.c:2271
 msgid "Email"
@@ -1535,29 +1535,29 @@ msgstr "Wybierz kolor t³a"
 
 #: src/dialogs.c:2801
 msgid "Gaim - Import Buddy List"
-msgstr "Gaim - importuj listê buddy"
+msgstr "Gaim - importuj listê kolesi"
 
 #. We shouldn't allow a blank title
 #: src/dialogs.c:2893
 msgid "You cannot create an away message with a blank title"
-msgstr "Nie mo¿esz stworzyæ wiadomo¶ci away bez tytu³u"
+msgstr "Nie mo¿esz stworzyæ wiadomo¶ci Zajêty bez tytu³u"
 
 #. We shouldn't allow a blank message
 #: src/dialogs.c:2900
 msgid "You cannot create an empty away message"
-msgstr "Nie mo¿esz stworzyæ pustej wiadomo¶ci away"
+msgstr "Nie mo¿esz stworzyæ pustej wiadomo¶ci Zajêty"
 
 #: src/dialogs.c:2968
 msgid "Gaim - New away message"
-msgstr "Gaim - nowa wiadomo¶æ away"
+msgstr "Gaim - nowa wiadomo¶æ zajêty"
 
 #: src/dialogs.c:2978
 msgid "New away message"
-msgstr "Nowa wiadomo¶æ away"
+msgstr "Nowa wiadomo¶æ zajêty"
 
 #: src/dialogs.c:2991
 msgid "Away title: "
-msgstr "Tytu³ away: "
+msgstr "Tytu³ Zajêty: "
 
 #: src/dialogs.c:3030
 msgid "Use"
@@ -1574,11 +1574,11 @@ msgstr "U¶miech!"
 
 #: src/dialogs.c:3290
 msgid "Alias Buddy"
-msgstr "Pseudo buddy"
+msgstr "Pseudo kolesia"
 
 #: src/dialogs.c:3323
 msgid "Gaim - Alias Buddy"
-msgstr "Gaim - pseudo buddy"
+msgstr "Gaim - pseudo kolesia"
 
 #: src/dialogs.c:3396
 msgid "Gaim - Save Log File"
@@ -1611,11 +1611,11 @@ msgstr "Nowa nazwa:"
 
 #: src/dialogs.c:3741
 msgid "Gaim - Rename Buddy"
-msgstr "Gaim - zmieñ nazwê buddy"
+msgstr "Gaim - zmieñ nazwê kolesia"
 
 #: src/dialogs.c:3751
 msgid "Rename Buddy"
-msgstr "Zmieñ nazwê buddy"
+msgstr "Zmieñ nazwê kolesia"
 
 #. Below is basically stolen from plugins.c
 #: src/dialogs.c:3835
@@ -1787,7 +1787,7 @@ msgstr "U¿ywaj przycisków bez obrysu"
 
 #: src/prefs.c:222
 msgid "Show Buddy Ticker"
-msgstr ""
+msgstr "Poka¿ wska¼nik kolesi"
 
 #: src/prefs.c:227
 msgid "Show Debug Window"
@@ -1803,7 +1803,7 @@ msgstr "Brak"
 
 #: src/prefs.c:239
 msgid "GAIM Use"
-msgstr "Gaim u¿yj"
+msgstr "U¿yj Gaim"
 
 #: src/prefs.c:241
 msgid "X Use"
@@ -1819,23 +1819,23 @@ msgstr "Wyci±gnij HTML z logów"
 
 #: src/prefs.c:259
 msgid "Log when buddies sign on/sign off"
-msgstr "Loguj gdy buddies zapisuj±/wypisuj± siê"
+msgstr "Loguj gdy kolesie zapisuj±/wypisuj± siê"
 
 #: src/prefs.c:261
 msgid "Log when buddies become idle/un-idle"
-msgstr "Loguj gdy buddies staj± siê bezczynni/od-bezczynni"
+msgstr "Loguj gdy kolesie staj± siê bezczynni/od-bezczynni"
 
 #: src/prefs.c:263
 msgid "Log when buddies go away/come back"
-msgstr "Loguj gdy buddies id± away/wracaj±"
+msgstr "Loguj gdy kolesie staj± siê zajêci/wracaj±"
 
 #: src/prefs.c:264
 msgid "Log your own signons/idleness/awayness"
-msgstr "Loguj swoje w³asne zapisywania/bezczynno¶ci/awayno¶ci"
+msgstr "Loguj swoje w³asne zapisywania/bezczynno¶ci/zajêto¶ci"
 
 #: src/prefs.c:266
 msgid "Individual log file for each buddy's signons"
-msgstr "Indywidualne pliki logów dla ka¿dego zapisania siê buddych"
+msgstr "Oddzielne pliki logów dla ka¿dego zapisania siê kolesia"
 
 #: src/prefs.c:269
 msgid "Browser"
@@ -1870,7 +1870,7 @@ msgid ""
 "Not all protocols can use these proxy options. Please see the README file "
 "for details."
 msgstr ""
-"Nie wszystkie protokpo³y mog± u¿ywaæ opcji proxy. Przeczytaj plik README "
+"Nie wszystkie protoko³y mog± u¿ywaæ proxy. Przeczytaj plik README "
 "by dowiedzieæ siê szczegó³ów"
 
 #: src/prefs.c:380
@@ -1915,11 +1915,11 @@ msgstr "Has³o"
 
 #: src/prefs.c:529
 msgid "Buddy List Options"
-msgstr "Opcje listy buddych"
+msgstr "Opcje listy kolesi"
 
 #: src/prefs.c:541
 msgid "Buddy List Window"
-msgstr "Okno listy buddych"
+msgstr "Okno listy kolesi"
 
 #: src/prefs.c:553
 msgid "Hide IM/Info/Chat buttons"
@@ -1927,7 +1927,7 @@ msgstr "Ukryj przyciski IM/Info/Chat"
 
 #: src/prefs.c:555
 msgid "Automatically show buddy list on sign on"
-msgstr "Automatycznie poka¿ po zapisaniu siê listê buddy"
+msgstr "Automatycznie poka¿ po zapisaniu siê listê kolesi"
 
 #: src/prefs.c:558
 msgid "Save Window Size/Position"
@@ -1939,7 +1939,7 @@ msgstr "Poka¿ obrazki na przyciskach"
 
 #: src/prefs.c:570
 msgid "Display Buddy List near applet"
-msgstr "Poka¿ listê buddy blisko apletu"
+msgstr "Poka¿ listê kolesi blisko apletu"
 
 #: src/prefs.c:573
 msgid "Group Displays"
@@ -1947,7 +1947,7 @@ msgstr "Ekrany grup"
 
 #: src/prefs.c:585
 msgid "Hide groups with no online buddies"
-msgstr "Ukryj grupy bez buddych na linii"
+msgstr "Ukryj grupy bez dostêpnych kolesi"
 
 #: src/prefs.c:591
 msgid "Show numbers in groups"
@@ -1955,11 +1955,11 @@ msgstr "Poka¿ liczby w grupach"
 
 #: src/prefs.c:593
 msgid "Buddy Displays"
-msgstr "Ekrany buddych"
+msgstr "Ekrany kolesi"
 
 #: src/prefs.c:605
 msgid "Show buddy type icons"
-msgstr "Poka¿ ikony typu buddych"
+msgstr "Poka¿ ikony typu kolesi"
 
 #: src/prefs.c:606
 msgid "Show warning levels"
@@ -1999,7 +1999,7 @@ msgstr "Control-(liczba) wstawia twarzyczki :-)"
 
 #: src/prefs.c:663
 msgid "F2 toggles timestamp display"
-msgstr "F2 prze³±cza wy¶wietlacz znacznika czasu"
+msgstr "F2 prze³±cza wy¶wietlanie znacznika czasu"
 
 #: src/prefs.c:665
 msgid "Display and General Options"
@@ -2023,11 +2023,11 @@ msgstr "Pod¶wietlaj ¼le napisane s³owa"
 
 #: src/prefs.c:681 src/prefs.c:1731
 msgid "Sending messages removes away status"
-msgstr "Wys³anie wiadomo¶ci usuwa stan away"
+msgstr "Wys³anie wiadomo¶ci usuwa stan Zajêty"
 
 #: src/prefs.c:682 src/prefs.c:1739
 msgid "Queue new messages when away"
-msgstr "Kolejkuj nowe wiadomo¶ci gdy away"
+msgstr "Kolejkuj nowe wiadomo¶ci gdy zajêty"
 
 #: src/prefs.c:688
 msgid "Ignore colors"
@@ -2035,7 +2035,7 @@ msgstr "Ignoruj kolory"
 
 #: src/prefs.c:689
 msgid "Ignore font faces"
-msgstr "Ignoruj twarze czcionki (?)"
+msgstr "Ignoruj krój czcionki"
 
 #: src/prefs.c:690
 msgid "Ignore font sizes"
@@ -2047,7 +2047,7 @@ msgstr "Ignoruj automatyzowane wiadomo¶ci TIK"
 
 #: src/prefs.c:692 src/prefs.c:1729
 msgid "Ignore new conversations when away"
-msgstr "Ignoruj nowe rozmowy gdy away"
+msgstr "Ignoruj nowe rozmowy gdy zajêty"
 
 #: src/prefs.c:858
 msgid "IM Options"
@@ -2075,7 +2075,7 @@ msgstr "Tekst"
 
 #: src/prefs.c:903
 msgid "Show all conversations in one tabbed window"
-msgstr "Poka¿ wszystkie rozmowy w jednym oknie tabbed"
+msgstr "Poka¿ wszystkie rozmowy w jednym oknie z zak³adkami"
 
 #: src/prefs.c:905 src/prefs.c:1042
 msgid "Raise windows on events"
@@ -2103,7 +2103,7 @@ msgstr "Wprowad¼ wysoko¶æ widgetu"
 
 #: src/prefs.c:920 src/prefs.c:1057
 msgid "Tab Placement"
-msgstr "Ustawienie Tab"
+msgstr "Ustawienie zak³adek"
 
 #: src/prefs.c:940 src/prefs.c:1077
 msgid "Top"
@@ -2123,11 +2123,11 @@ msgstr "Prawo"
 
 #: src/prefs.c:955
 msgid "Buddy Icons"
-msgstr "Ikony buddy"
+msgstr "Ikony kolesia"
 
 #: src/prefs.c:967
 msgid "Hide Buddy Icons"
-msgstr "Ukryj ikony buddy"
+msgstr "Ukryj ikony kolesia"
 
 #: src/prefs.c:993
 msgid "Chat Options"
@@ -2139,7 +2139,7 @@ msgstr "Okno grupy chatu"
 
 #: src/prefs.c:1040
 msgid "Show all chats in one tabbed window"
-msgstr "Poka¿ wszystkie chaty w jednym oknie tabbed"
+msgstr "Poka¿ wszystkie chaty w jednym oknie z zak³adkami"
 
 #: src/prefs.c:1043
 msgid "Show people joining/leaving in window"
@@ -2151,11 +2151,11 @@ msgstr "Uzupe³nianie tab"
 
 #: src/prefs.c:1103
 msgid "Tab-Complete Nicks"
-msgstr "Usupe³nianie nicków tabulatorem"
+msgstr "Uzupe³nianie nicków tabulatorem"
 
 #: src/prefs.c:1109
 msgid "Old-Style Tab Completion"
-msgstr "Usupe³nianie tab w starym stylu"
+msgstr "Uzupe³nianie tab w starym stylu"
 
 #: src/prefs.c:1211 src/prefs.c:2656
 msgid "Font Options"
@@ -2199,7 +2199,7 @@ msgstr "Bez d¼wiêków gdy siê logujesz"
 
 #: src/prefs.c:1524 src/prefs.c:1730
 msgid "Sounds while away"
-msgstr "D¼wiêki podczas away"
+msgstr "D¼wiêki podczas zajêto¶ci"
 
 #: src/prefs.c:1530
 msgid "Beep instead of playing sound"
@@ -2220,11 +2220,11 @@ msgstr "Zdarzenia"
 
 #: src/prefs.c:1559
 msgid "Sound when buddy logs in"
-msgstr "D¼wiêk gdy buddy siê loguje"
+msgstr "D¼wiêk gdy kole¶ siê loguje"
 
 #: src/prefs.c:1560
 msgid "Sound when buddy logs out"
-msgstr "D¼wiêk gdy buddy siê wylogowuje"
+msgstr "D¼wiêk gdy kole¶ siê wylogowuje"
 
 #: src/prefs.c:1566
 msgid "Sound when received message begins conversation"
@@ -2256,7 +2256,7 @@ msgstr "D¼wiêk w pokojach chat gdy inni rozmawiaj±"
 
 #: src/prefs.c:1701 src/prefs.c:2678
 msgid "Away Messages"
-msgstr "Wiadomo¶ci away"
+msgstr "Wiadomo¶ci Zajêty"
 
 #: src/prefs.c:1738
 msgid "Don't send auto-response"
@@ -2264,7 +2264,7 @@ msgstr "Nie wysy³aj automatycznej odpowiedzi"
 
 #: src/prefs.c:1749
 msgid "Auto Away after"
-msgstr "Automatycznie away po"
+msgstr "Automatycznie Zajêty po"
 
 #: src/prefs.c:1763
 msgid "minutes using"
@@ -2284,7 +2284,7 @@ msgstr "Edycja"
 
 #: src/prefs.c:1835
 msgid "Make Away"
-msgstr "Zrób away"
+msgstr "Zrób Zajêty"
 
 #: src/prefs.c:2112
 msgid "Privacy Options"
@@ -2361,7 +2361,7 @@ msgstr "B³±d protoko³u"
 #: src/prpl.c:91
 #, c-format
 msgid "%s was using %s, which got removed. %s is now offline."
-msgstr "%s u¿ywa³ %s, który usuniêto. %s jest teraz offline."
+msgstr "%s u¿ywa³ %s, który usuniêto. %s jest teraz niedostêpny."
 
 #: src/prpl.c:94
 msgid "Disconnect"
