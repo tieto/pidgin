@@ -131,7 +131,6 @@ void gaim_prefs_init() {
 
 	/* Buddies */
 	gaim_prefs_add_none("/core/buddies");
-	gaim_prefs_add_bool("/core/buddies/use_server_alias", TRUE);
 
 	/* Contact Priority Settings */
 	gaim_prefs_add_none("/core/contact");
