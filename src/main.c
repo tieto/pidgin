@@ -887,13 +887,6 @@ int main(int argc, char *argv[])
 	gaim_prefs_init();
 	gaim_gtk_prefs_init();
 
-	if (!gaim_prefs_load()) {
-		load_prefs();
-		gaim_prefs_sync();
-	}
-
-	gaim_gtk_debug_init();
-
 	plugin_search_paths[0] = LIBDIR;
 	plugin_search_paths[1] = gaim_user_dir();
 	plugin_search_paths[2] = g_strdup_printf("%s/plugins", gaim_user_dir());
@@ -905,6 +898,13 @@ int main(int argc, char *argv[])
 	g_free(plugin_search_paths[2]);
 
 	gaim_plugins_probe(NULL);
+
+	if (!gaim_prefs_load()) {
+		load_prefs();
+		gaim_prefs_sync();
+	}
+
+	gaim_gtk_debug_init();
 
 	gaim_accounts_load();
 

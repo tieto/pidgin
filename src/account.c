@@ -33,6 +33,7 @@
 
 #include "account.h"
 #include "prefs.h"
+#include "prpl.h"
 
 typedef enum
 {
@@ -248,9 +249,20 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 void
 gaim_account_set_protocol(GaimAccount *account, GaimProtocol protocol)
 {
+	GaimPlugin *plugin;
+
 	g_return_if_fail(account != NULL);
 
+	plugin = gaim_find_prpl(protocol);
+
+	g_return_if_fail(plugin != NULL);
+
 	account->protocol = protocol;
+
+	if (account->protocol_id != NULL)
+		g_free(account->protocol_id);
+
+	account->protocol_id = g_strdup(plugin->info->id);
 
 	schedule_accounts_save();
 }
