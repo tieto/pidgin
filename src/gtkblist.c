@@ -147,8 +147,8 @@ const double shadow_strip_l[5] = {
 
 const double bottom_left_corner[25] = {
   1.00, .682, .423, .333, .258,
-  1.00, .898, .800, .682, .584, 
-  1.00, .937, .874, .800, .737, 
+  1.00, .898, .800, .682, .584,
+  1.00, .937, .874, .800, .737,
   1.00, .968, .937, .898, .866,
   1.00, .988, .976, .960, .945
 };
@@ -158,24 +158,24 @@ const double bottom_right_corner[25] = {
   .584, .682, .800, .898, .960,
   .737, .800, .874, .937, .976,
   .866, .898, .937, .968, .988,
-  .945, .960, .976, .988, .996 
+  .945, .960, .976, .988, .996
 };
 
 const double top_right_corner[25] = {
-  1.00, 1.00, 1.00, 1.00, 1.00, 
-  .686, .898, .937, .968, .988, 
-  .423, .803, .874, .937, .976, 
+  1.00, 1.00, 1.00, 1.00, 1.00,
+  .686, .898, .937, .968, .988,
+  .423, .803, .874, .937, .976,
   .333, .686, .800, .898, .960,
   .258, .584, .737, .866, .945
 };
 
 const double top_left_corner[25] = {
   .988, .968, .937, .898, .498,
-  .976, .937, .874, .803, .423, 
-  .960, .898, .800, .686, .333, 
+  .976, .937, .874, .803, .423,
+  .960, .898, .800, .686, .333,
   .945, .866, .737, .584, .258,
   .941, .847, .698, .521, .215
-}; 
+};
 
 
 static GdkPixbuf *
@@ -209,24 +209,24 @@ get_pixbuf (GtkWidget *menu,
   g_free(workarea);
 #endif
 
-  if (x < 0) 
+  if (x < 0)
     {
       width += x;
       x = 0;
     }
 
-  if (y < 0) 
+  if (y < 0)
     {
       height += y;
       y = 0;
     }
 
-  if (x + width > screen_width) 
+  if (x + width > screen_width)
     {
       width = screen_width - x;
     }
 
-  if (y + height > screen_height) 
+  if (y + height > screen_height)
     {
       height = screen_height - y;
     }
@@ -234,14 +234,14 @@ get_pixbuf (GtkWidget *menu,
   if (width <= 0 || height <= 0)
     return NULL;
 
-  dest = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 
+  dest = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8,
                          original_width, original_height);
-  src = gdk_pixbuf_get_from_drawable (NULL, root, NULL, x, y, 0, 0, 
+  src = gdk_pixbuf_get_from_drawable (NULL, root, NULL, x, y, 0, 0,
                                       width, height);
   gdk_pixbuf_copy_area (src, 0, 0, width, height, dest, 0, 0);
 
   g_object_unref (G_OBJECT (src));
-  
+
   return dest;
 }
 
@@ -251,7 +251,7 @@ shadow_paint(GaimGtkBuddyList *blist, GdkRectangle *area, enum side shadow)
   gint width, height;
   GdkGC *gc = gtkblist->tipwindow->style->black_gc;
 
-  switch (shadow) 
+  switch (shadow)
     {
       case EAST_SIDE:
 	if (gtkblist->east != NULL)
@@ -303,17 +303,17 @@ pixbuf_add_shadow (GdkPixbuf *pb,
   rowstride = gdk_pixbuf_get_rowstride (pb);
   pixels = gdk_pixbuf_get_pixels (pb);
 
-  switch (shadow) 
+  switch (shadow)
     {
       case EAST_SIDE:
-	if (height > 5) 
+	if (height > 5)
 	  {
-	    for (i = 0; i < width; i++) 
+	    for (i = 0; i < width; i++)
 	      {
 		gint j, k;
 
 		p = pixels + (i * rowstride);
-		for (j = 0, k = 0; j < 3 * width; j += 3, k++) 
+		for (j = 0, k = 0; j < 3 * width; j += 3, k++)
 		  {
 		    p[j] = (guchar) (p[j] * top_right_corner [i * width + k]);
 		    p[j + 1] = (guchar) (p[j + 1] * top_right_corner [i * width + k]);
@@ -322,18 +322,18 @@ pixbuf_add_shadow (GdkPixbuf *pb,
 	      }
 
 	    i = 5;
-	  } 
-	else 
+	  }
+	else
 	  {
 	    i = 0;
 	  }
 
-	for (;i < height; i++) 
+	for (;i < height; i++)
 	  {
 	    gint j, k;
 
 	    p = pixels + (i * rowstride);
-	    for (j = 0, k = 0; j < 3 * width; j += 3, k++) 
+	    for (j = 0, k = 0; j < 3 * width; j += 3, k++)
 	      {
 		p[j] = (guchar) (p[j] * shadow_strip_l[width - 1 - k]);
 		p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[width - 1 - k]);
@@ -343,12 +343,12 @@ pixbuf_add_shadow (GdkPixbuf *pb,
 	break;
 
       case SOUTH_SIDE:
-	for (i = 0; i < height; i++) 
+	for (i = 0; i < height; i++)
 	  {
 	    gint j, k;
 
 	    p = pixels + (i * rowstride);
-	    for (j = 0, k = 0; j < 3 * height; j += 3, k++) 
+	    for (j = 0, k = 0; j < 3 * height; j += 3, k++)
 	      {
 		p[j] = (guchar) (p[j] * bottom_left_corner[i * height + k]);
 		p[j + 1] = (guchar) (p[j + 1] * bottom_left_corner[i * height + k]);
@@ -364,7 +364,7 @@ pixbuf_add_shadow (GdkPixbuf *pb,
 	      }
 
 	    p = pixels + (i * rowstride) + ((width * 3) - (3 * height));
-	    for (j = 0, k = 0; j < 3 * height; j += 3, k++) 
+	    for (j = 0, k = 0; j < 3 * height; j += 3, k++)
 	      {
 		p[j] = (guchar) (p[j] * bottom_right_corner[i * height + k]);
 		p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner[i * height + k]);
@@ -403,22 +403,22 @@ map_shadow_windows (gpointer data)
 	pixbuf = get_pixbuf (widget,
 			x, y + widget->allocation.height,
 			widget->allocation.width + 5, 5);
-	if (pixbuf != NULL) 
+	if (pixbuf != NULL)
 	{
 		pixbuf_add_shadow (pixbuf, SOUTH_SIDE);
-		if (blist->south != NULL) 
+		if (blist->south != NULL)
 		{
 			g_object_unref (G_OBJECT (blist->south));
 		}
 		blist->south = pixbuf;
 	}
 
-    gdk_window_move_resize (blist->east_shadow, 
-			  x + widget->allocation.width, y, 
+    gdk_window_move_resize (blist->east_shadow,
+			  x + widget->allocation.width, y,
 			  5, widget->allocation.height);
 
-  gdk_window_move_resize (blist->south_shadow, 
-			  x, y + widget->allocation.height, 
+  gdk_window_move_resize (blist->south_shadow,
+			  x, y + widget->allocation.height,
 			  widget->allocation.width + 5, 5);
   gdk_window_show (blist->east_shadow);
   gdk_window_show (blist->south_shadow);
@@ -1217,13 +1217,13 @@ create_buddy_menu (GaimBlistNode *node,
 	GtkWidget *menu;
 	GtkWidget *menuitem;
 	gboolean show_offline = gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies");
-	
+
 	menu = gtk_menu_new();
 	make_buddy_menu(menu, prpl_info, b);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_separator(menu);
-	
+
 		if(gtknode->contact_expanded) {
 			gaim_new_item_from_stock(menu, _("_Collapse"),
 						 GTK_STOCK_ZOOM_OUT,
@@ -1692,7 +1692,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 		GtkTreeViewDropPosition position;
 		memcpy(&n, sd->data, sizeof(n));
 		if(gtk_tree_view_get_dest_row_at_pos(GTK_TREE_VIEW(widget), x, y, &path, &position)) {
-			/* if we're here, I think it means the drop is ok */	
+			/* if we're here, I think it means the drop is ok */
 			GtkTreeIter iter;
 			GaimBlistNode *node;
 			GValue val = {0};
@@ -2055,7 +2055,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 			GdkRectangle rect;
 			gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
 			gtkblist->contact_rect.height += rect.height;
-			gtk_tree_path_next(path); 
+			gtk_tree_path_next(path);
 		}
 	}
 
@@ -2086,16 +2086,16 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	attr.wclass = GDK_INPUT_OUTPUT;
 	attr.visual = gtk_widget_get_visual (gtkblist->window);
 	attr.colormap = gtk_widget_get_colormap (gtkblist->window);
-                                                                                                                       
+
 	attr.event_mask = gtk_widget_get_events (gtkblist->tipwindow);
-	
+
 	attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
 			  GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
 	if(gtkblist->east_shadow) {
 		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
 		gdk_window_destroy (gtkblist->east_shadow);
 	}
-	gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr, 
+	gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
 	gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
@@ -2104,12 +2104,12 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
 		gdk_window_destroy (gtkblist->south_shadow);
 	}
-	gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr, 
+	gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 					       GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 	gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
 	gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
 #endif
-	
+
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(layout, 300000);
@@ -2138,7 +2138,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 	if (y < 0)
 		y = 0;
-	
+
 	if (y != 0) {
 		if ((x + w) > scr_w)
 			x -= (x + w + 5) - scr_w;
@@ -2166,6 +2166,12 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, gpointer null)
 {
 	GtkTreePath *path;
+	int delay;
+
+	delay = gaim_prefs_get_int("/gaim/gtk/blist/tooltip_delay");
+
+	if (delay == 0)
+		return FALSE;
 
 	if (gtkblist->timeout) {
 		if ((event->y > gtkblist->tip_rect.y) && ((event->y - gtkblist->tip_rect.height) < gtkblist->tip_rect.y))
@@ -2174,12 +2180,13 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 		gaim_gtk_blist_tooltip_destroy();
 		g_source_remove(gtkblist->timeout);
 	}
-	
+
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), event->x, event->y, &path, NULL, NULL, NULL);
 	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->tip_rect);
+
 	if (path)
 		gtk_tree_path_free(path);
-	gtkblist->timeout = g_timeout_add(500, (GSourceFunc)gaim_gtk_blist_tooltip_timeout, tv);
+	gtkblist->timeout = g_timeout_add(delay, (GSourceFunc)gaim_gtk_blist_tooltip_timeout, tv);
 
 	if (gtkblist->mouseover_contact) {
 		if ((event->y < gtkblist->contact_rect.y) || ((event->y - gtkblist->contact_rect.height) > gtkblist->contact_rect.y)) {
@@ -2187,7 +2194,7 @@ static gboolean gaim_gtk_blist_motion_cb (GtkWidget *tv, GdkEventMotion *event, 
 			gtkblist->mouseover_contact = NULL;
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -2200,7 +2207,7 @@ static void gaim_gtk_blist_leave_cb (GtkWidget *w, GdkEventCrossing *e, gpointer
 	}
 	gaim_gtk_blist_tooltip_destroy();
 
-	if (gtkblist->mouseover_contact && 
+	if (gtkblist->mouseover_contact &&
 	    !((e->x > gtkblist->contact_rect.x) && (e->x < (gtkblist->contact_rect.x + gtkblist->contact_rect.width)) &&
 	      (e->y > gtkblist->contact_rect.y) && (e->y < (gtkblist->contact_rect.y + gtkblist->contact_rect.height)))) {
 		    gaim_gtk_blist_collapse_contact_cb(NULL, gtkblist->mouseover_contact);
@@ -2236,7 +2243,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/_Signoff"), "<CTL>D", gaim_connections_disconnect_all, 0, "<StockItem>", GAIM_STOCK_SIGN_OFF },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
-	/* Tools */ 
+	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/_Away"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
@@ -2404,7 +2411,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				       idletime ? _("\n<b>Idle:</b>") : "", idletime ? idletime : "",
 				       b->evil ? _("\n<b>Warned:</b>") : "", b->evil ? warning : "",
 				       statustext ? "\n" : "", statustext ? statustext : "",
-				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") : 
+				       !g_ascii_strcasecmp(b->name, "robflynn") ? _("\n<b>Description:</b> Spooky") :
 				       !g_ascii_strcasecmp(b->name, "seanegn") ? _("\n<b>Status</b>: Awesome") :
 				       !g_ascii_strcasecmp(b->name, "chipx86") ? _("\n<b>Status</b>: Rockin'") : "");
 
@@ -2972,7 +2979,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* Set up dnd */
 	gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(gtkblist->treeview),
-										   GDK_BUTTON1_MASK, gte, 3, 
+										   GDK_BUTTON1_MASK, gte, 3,
 										   GDK_ACTION_COPY);
 	gtk_tree_view_enable_model_drag_dest(GTK_TREE_VIEW(gtkblist->treeview),
 										 gte, 3,
@@ -3781,10 +3788,10 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		serv_add_buddy(gaim_account_get_connection(data->account), who, g);
 
 		/*
-		 * It really seems like it would be better if the call to serv_add_buddy() 
-		 * and gaim_conversation_update() were done in blist.c, possibly in the 
-		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be 
-		 * renamed to gaim_blist_add_new_buddy() or something, and have it call 
+		 * It really seems like it would be better if the call to serv_add_buddy()
+		 * and gaim_conversation_update() were done in blist.c, possibly in the
+		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be
+		 * renamed to gaim_blist_add_new_buddy() or something, and have it call
 		 * gaim_blist_add_buddy() after it creates it.  --Mark
 		 */
 
@@ -4266,7 +4273,7 @@ gaim_gtk_blist_request_add_group(void)
 
 void gaim_gtk_blist_docklet_toggle() {
 	/* Useful for the docklet plugin and also for the win32 tray icon*/
-	/* This is called when one of those is clicked--it will show/hide the 
+	/* This is called when one of those is clicked--it will show/hide the
 	   buddy list/login window--depending on which is active */
 	if (gaim_connections_get_all()) {
 		if (gtkblist && gtkblist->window) {
@@ -4399,6 +4406,7 @@ void gaim_gtk_blist_init(void)
     gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
     gaim_prefs_add_int("/gaim/gtk/blist/width", 0);
     gaim_prefs_add_int("/gaim/gtk/blist/height", 0);
+    gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 }
 
