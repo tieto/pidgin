@@ -157,7 +157,227 @@ static int can_play_esd()
 	return 1;
 }
 
-#endif
+#endif /* ESD_SOUND */
+
+#ifdef ARTSC_SOUND
+
+/*
+** This routine converts from ulaw to 16 bit linear.
+**
+** Craig Reese: IDA/Supercomputing Research Center
+** 29 September 1989
+**
+** References:
+** 1) CCITT Recommendation G.711  (very difficult to follow)
+** 2) MIL-STD-188-113,"Interoperability and Performance Standards
+**     for Analog-to_Digital Conversion Techniques,"
+**     17 February 1987
+**
+** Input: 8 bit ulaw sample
+** Output: signed 16 bit linear sample
+** Z-note -- this is from libaudiofile.  Thanks guys!
+*/
+
+static int _af_ulaw2linear(unsigned char ulawbyte)
+{
+	static int exp_lut[8] = { 0, 132, 396, 924, 1980, 4092, 8316, 16764 };
+	int sign, exponent, mantissa, sample;
+
+	ulawbyte = ~ulawbyte;
+	sign = (ulawbyte & 0x80);
+	exponent = (ulawbyte >> 4) & 0x07;
+	mantissa = ulawbyte & 0x0F;
+	sample = exp_lut[exponent] + (mantissa << (exponent + 3));
+	if (sign != 0)
+		sample = -sample;
+
+	return (sample);
+}
+
+static int play_artsc(unsigned char *data, int size)
+{
+	arts_stream_t stream;
+	guint16 *lineardata;
+	int result = 1;
+	int error;
+	int i;
+
+	lineardata = g_malloc(size * 2);
+
+	for (i = 0; i < size; i++) {
+		lineardata[i] = _af_ulaw2linear(data[i]);
+	}
+
+	stream = arts_play_stream(8012, 16, 1, "gaim");
+
+	error = arts_write(stream, lineardata, size);
+	if (error < 0) {
+		result = 0;
+	}
+
+	arts_close_stream(stream);
+
+	g_free(lineardata);
+
+	arts_free();
+
+	return result;
+}
+
+static int can_play_artsc()
+{
+	int error;
+
+	error = arts_init();
+	if (error < 0)
+		return 0;
+
+	return 1;
+}
+
+static int artsc_play_file(char *file)
+{
+	struct stat stat_buf;
+	unsigned char *buf = NULL;
+	int result = 0;
+	int fd = -1;
+
+	if (!can_play_artsc())
+		return 0;
+
+	fd = open(file, O_RDONLY);
+	if (fd < 0)
+		return 0;
+
+	if (fstat(fd, &stat_buf)) {
+		close(fd);
+		return 0;
+	}
+
+	if (!stat_buf.st_size) {
+		close(fd);
+		return 0;
+	}
+
+	buf = g_malloc(stat_buf.st_size);
+	if (!buf) {
+		close(fd);
+		return 0;
+	}
+
+	if (read(fd, buf, stat_buf.st_size) < 0) {
+		g_free(buf);
+		close(fd);
+		return 0;
+	}
+
+	result = play_artsc(buf, stat_buf.st_size);
+
+	g_free(buf);
+	close(fd);
+	return result;
+}
+
+#endif /* ARTSC_SOUND */
+
+#ifdef NAS_SOUND
+
+char nas_server[] = "localhost";
+AuServer *nas_serv = NULL;
+
+static AuBool NasEventHandler(AuServer * aud, AuEvent * ev, AuEventHandlerRec * handler)
+{
+	AuElementNotifyEvent *event = (AuElementNotifyEvent *) ev;
+
+	if (ev->type == AuEventTypeElementNotify) {
+		switch (event->kind) {
+		case AuElementNotifyKindState:
+			switch (event->cur_state) {
+			case AuStateStop:
+				_exit(0);
+			}
+			break;
+		}
+	}
+	return AuTrue;
+}
+
+
+static int play_nas(unsigned char *data, int size)
+{
+	AuDeviceID device = AuNone;
+	AuFlowID flow;
+	AuElement elements[3];
+	int i, n, w;
+
+	/* look for an output device */
+	for (i = 0; i < AuServerNumDevices(nas_serv); i++) {
+		if ((AuDeviceKind(AuServerDevice(nas_serv, i)) ==
+		     AuComponentKindPhysicalOutput) &&
+		    AuDeviceNumTracks(AuServerDevice(nas_serv, i)) == 1) {
+			device = AuDeviceIdentifier(AuServerDevice(nas_serv, i));
+			break;
+		}
+	}
+
+	if (device == AuNone)
+		return 0;
+
+	if (!(flow = AuCreateFlow(nas_serv, NULL)))
+		return 0;
+
+
+	AuMakeElementImportClient(&elements[0], 8012, AuFormatULAW8, 1, AuTrue, size, size / 2, 0, NULL);
+	AuMakeElementExportDevice(&elements[1], 0, device, 8012, AuUnlimitedSamples, 0, NULL);
+	AuSetElements(nas_serv, flow, AuTrue, 2, elements, NULL);
+
+	AuStartFlow(nas_serv, flow, NULL);
+
+	AuWriteElement(nas_serv, flow, 0, size, data, AuTrue, NULL);
+
+	AuRegisterEventHandler(nas_serv, AuEventHandlerIDMask, 0, flow, NasEventHandler, NULL);
+
+	while (1) {
+		AuHandleEvents(nas_serv);
+	}
+
+	return 1;
+}
+
+static int can_play_nas()
+{
+	if ((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL)))
+		return 1;
+	return 0;
+}
+
+static int play_nas_file(char *file)
+{
+	struct stat stat_buf;
+	char *buf;
+	int ret;
+	int fd = open(file, O_RDONLY);
+	if (fd <= 0)
+		return 0;
+
+	if (!can_play_nas())
+		return 0;
+
+	if (stat(file, &stat_buf))
+		return 0;
+
+	if (!stat_buf.st_size)
+		return 0;
+
+	buf = malloc(stat_buf.st_size);
+	read(fd, buf, stat_buf.st_size);
+	ret = play_nas(buf, stat_buf.st_size);
+	free(buf);
+	return ret;
+}
+
+#endif /* NAS_SOUND */
+
 #endif /* !_WIN32 */
 
 void play_file(char *filename)
@@ -204,22 +424,20 @@ void play_file(char *filename)
 		}
 #endif
 
+#ifdef ARTSC_SOUND
 		else if (sound_options & OPT_SOUND_ARTSC) {
-			char *args[3];
-			args[0] = "artsplay";
-			args[1] = filename;
-			args[2] = NULL;
-			execvp(args[0], args);
-			_exit(0);
+			if (artsc_play_file(filename))
+				_exit(0);
 		}
+#endif
 
+#ifdef NAS_SOUND
 		else if (sound_options & OPT_SOUND_NAS) {
-			char *args[3];
-			args[0] = "auplay";
-			args[1] = filename;
-			args[2] = NULL;
-			execvp(args[0], args);
+			if (play_nas_file(filename))
+				_exit(0);
 		}
+#endif
+
 		else if ((sound_options & OPT_SOUND_NORMAL) &&
 			 can_play_audio()) {
 			play_audio_file(filename);
