@@ -410,20 +410,23 @@ void msn_callback(gpointer data, gint fd, GdkInputCondition condition)
 		int size;
 		int status;
 
-		if (strcasecmp("hotmail", resps[1]) == 0) {
-			/* We want to ignore these.  We can parse them
-			 * eventually if we ever plan on doing anything
-			 * with them */
-			g_strfreev(resps);
-			return;
-		}
-
 		/* Determine our message size */
 		size = atoi(resps[3]);
 
 		buf2 = (gchar *) g_malloc(sizeof(gchar) * (size + 1));
 		status = recv(fd, buf2, size, 0);
 		buf2[size] = 0;
+
+		if (strcasecmp("hotmail", resps[1]) == 0) {
+
+			if (strstr(buf2, "Content-Type: text/x-msmsgsemailnotification")) {
+				g_snprintf(buf, sizeof(buf), "%s has new hotmail", gc->username);
+				do_error_dialog(buf, "Gaim: MSN New Mail");
+			}
+			
+			g_strfreev(resps);
+			return;
+		}
 
 		/* Looks like we got the message. If it's blank, let's bail */
 		if (strcasecmp(strstr(buf2, "\r\n\r\n") + 4, "\r\n") == 0) {
@@ -506,18 +509,23 @@ void msn_login(struct aim_user *user)
 		return;
 	}
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
+
 	g_snprintf(buf, sizeof(buf), "Signon: %s", gc->username);
 	set_login_progress(gc, 2, buf);
 
 	while (gtk_events_pending())
 		gtk_main_iteration();
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	/* This is where we will attempt to sign on */
 	g_snprintf(buf, 4096, "VER %d %s\n", trId, mdata->protocol);
 	write(mdata->fd, buf, strlen(buf));
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	msn_read_line(&buf2, mdata->fd);
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	buf[strlen(buf) - 1] = '\0';
 	if (strcmp(buf, buf2) != 0) {
 		hide_login_progress(gc, buf2);
@@ -528,20 +536,25 @@ void msn_login(struct aim_user *user)
 	/* Looks like our versions matched up.  Let's find out
 	 * which policy we should use */
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	g_snprintf(buf, 4096, "INF %d\n", trId);
 	write(mdata->fd, buf, strlen(buf));
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	msn_read_line(&buf2, mdata->fd);
 	results = g_strsplit(buf2, " ", 0);
 	mdata->policy = g_strdup(results[2]);
 	g_strfreev(results);
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	/* We've set our policy.  Now, lets attempt a sign on */
 	g_snprintf(buf, 4096, "USR %d %s I %s\n", trId, mdata->policy, gc->username);
 	write(mdata->fd, buf, strlen(buf));
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	msn_read_line(&buf2, mdata->fd);
 
+	printf("AAA: %s (%d)\n", strerror(errno), errno);
 	/* This is where things get kinky */
 	results = g_strsplit(buf2, " ", 0);
 
