@@ -257,6 +257,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
 	name = gaim_gtk_account_option_menu_new(NULL, TRUE, G_CALLBACK(combo_changed), NULL, NULL);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), name);
 
 	gtk_box_pack_start(GTK_BOX(vbox2), name, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, TRUE, 0);
@@ -270,6 +271,7 @@ void show_login()
 	gtk_box_pack_start(GTK_BOX(vbox2), label, FALSE, FALSE, 0);
 
 	pass = gtk_entry_new();
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), pass);
 	gtk_entry_set_visibility(GTK_ENTRY(pass), FALSE);
 	g_signal_connect(G_OBJECT(pass), "activate",
 					 G_CALLBACK(dologin), mainwindow);
