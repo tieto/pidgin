@@ -1239,7 +1239,9 @@ GString* gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 	gtk_text_view_get_line_yrange(GTK_TEXT_VIEW(imhtml), &iter, &y, &height);
 
+#if GTK_CHECK_VERSION(2,2,0)
 	gtk_imhtml_clipboard_clear(NULL, imhtml);
+#endif
 	gtk_text_buffer_move_mark (imhtml->text_buffer,
 				   gtk_text_buffer_get_mark (imhtml->text_buffer, "insert"),
 				   &iter);
