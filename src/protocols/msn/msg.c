@@ -79,7 +79,7 @@ msn_message_new(void)
 	msn_message_set_attr(msg, "User-Agent", "Gaim/" VERSION);
 	msn_message_set_content_type(msg, "text/plain");
 	msn_message_set_charset(msg, "UTF-8");
-	msn_message_set_flag(msg, 'N');
+	msn_message_set_flag(msg, 'U');
 
 	msn_message_ref(msg);
 
