@@ -386,6 +386,7 @@ static void yahoo_process_status(struct gaim_connection *gc, struct yahoo_packet
 			if (pkt->service == YAHOO_SERVICE_LOGOFF ||
 			    strtol(pair->value, NULL, 10) == 0) {
 				serv_got_update(gc, name, 0, 0, 0, 0, 0, 0);
+				break;
 			}
 			if (state == YAHOO_STATUS_AVAILABLE)
 				serv_got_update(gc, name, 1, 0, 0, 0, 0, 0);
