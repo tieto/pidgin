@@ -304,7 +304,7 @@ WinMain (struct HINSTANCE__ *hInstance,
                 dll_prep();
 
         wgaim_set_locale();
-		if(!wgaim_set_running())
+		if(!getenv("GAIM_MULTI_INST") && !wgaim_set_running())
 			return 0;
 
         /* Now we are ready for Gaim .. */
