@@ -628,7 +628,7 @@ void toc_callback( gpointer          data,
 
 	                ft = g_new0(struct file_transfer, 1);
 
-	                ft->cookie = frombase64(cookie);
+	                ft->cookie = g_strdup(cookie);
 	                ft->ip = g_strdup(pip);
 	                ft->port = port;
 	                if (i)
@@ -638,6 +638,7 @@ void toc_callback( gpointer          data,
 	                ft->filename = g_strdup(name);
 	                ft->user = g_strdup(user);
 	                ft->size = totalsize;
+			sprintf(ft->UID, "%s", FILE_SEND_UID);
                 
 	                g_free(tmp);
 
@@ -647,16 +648,24 @@ void toc_callback( gpointer          data,
 	                accept_file_dialog(ft);
 		} else if (!strcmp(uuid, FILE_GET_UID)) {
 			/* we're sending a file */
-			/* FIXME */
-			/* here's what needs to happen:
-			 * 1. dialog to accept/reject transfer
-			 * 2. if cancel, toc_rvous_cancel
-			 * 3. if accept, first open a socket, then accept
-			 *    a. on connect, send header
-			 *    b. wait for header
-			 *    c. send file
-			 *    d. wait for info
-			 */
+			ft = g_new0(struct file_transfer, 1);
+
+			ft->cookie = g_strdup(cookie);
+			ft->ip = g_strdup(pip);
+			ft->port = port;
+			if (i)
+				ft->message = g_strdup(messages[0]);
+			else
+				ft->message = NULL;
+			ft->user = g_strdup(user);
+			sprintf(ft->UID, "%s", FILE_GET_UID);
+
+			g_free(tmp);
+
+			for (i--; i >= 0; i--)
+				g_free(messages[i]);
+
+			accept_file_dialog(ft);
 		/*
 		} else if (!strcmp(uuid, VOICE_UID)) {
 		} else if (!strcmp(uuid, B_ICON_UID)) {

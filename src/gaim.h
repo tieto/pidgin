@@ -234,6 +234,37 @@ struct conversation {
         time_t sent_away;
 };
 
+struct file_header {
+	short hdrtype;		/* 0 */
+	char  bcookie[8];	/* 2 */
+	short encrypt;		/* 10 */
+	short compress;		/* 12 */
+	short totfiles;		/* 14 */
+	short filesleft;	/* 16 */
+	short totparts;		/* 18 */
+	short partsleft;	/* 20 */
+	long  totsize;		/* 22 */
+	long  size;		/* 26 */
+	long  modtime;		/* 30 */
+	long  checksum;		/* 34 */
+	long  rfrcsum;		/* 38 */
+	long  rfsize;		/* 42 */
+	long  cretime;		/* 46 */
+	long  rfcsum;		/* 50 */
+	long  nrecvd;		/* 54 */
+	long  recvcsum;		/* 58 */
+	char  idstring[32];	/* 62 */
+	char  flags;		/* 94 */
+	char  lnameoffset;	/* 95 */
+	char  lsizeoffset;	/* 96 */
+	char  dummy[69];	/* 97 */
+	char  macfileinfo[16];	/* 166 */
+	short nencode;		/* 182 */
+	short nlanguage;	/* 184 */
+	char  name[64];		/* 186 */
+				/* 250 */
+};
+
 struct file_transfer {
         GtkWidget *window;
         char *cookie;
@@ -247,6 +278,7 @@ struct file_transfer {
         char *user;
         FILE *f;
         int fd;
+	char UID[2048];
 };
 
 struct sflap_hdr {
@@ -300,7 +332,7 @@ struct signon {
 #define TYPE_SIGNOFF   4
 #define TYPE_KEEPALIVE 5
 
-#define REVISION "gaim:$Revision: 207 $"
+#define REVISION "gaim:$Revision: 208 $"
 #define FLAPON "FLAPON\r\n\r\n"
 
 #define ROAST "Tic/Toc"
@@ -613,11 +645,13 @@ extern void show_register_dialog();
 extern void show_set_info();
 extern void show_set_dir();
 extern void show_color_dialog(GtkWidget *entrye, GtkWidget *color);
-extern void accept_file_dialog(struct file_transfer *);
 extern void create_away_mess(GtkWidget *, void *);
 extern void show_ee_dialog(int);
 extern void show_add_link(GtkWidget *, GtkWidget *);
 extern void show_change_passwd();
+
+/* Functions in rvous.c */
+extern void accept_file_dialog(struct file_transfer *);
 
 /* Functions in browser.c */
 extern void open_url(GtkWidget *, char *);
