@@ -57,6 +57,7 @@ gaim_SOURCES =	about.c \
 gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
+	@LIBOBJS@ \
 	$(GTK_LIBS) \
 	$(SOUND_LIBS) \
 	$(STATIC_LINK_LIBS) \
@@ -67,7 +68,8 @@ gaim_LDADD = \
 	$(GTKSPELL_LIBS)
 
 gaim_remote_SOURCES = gaim-remote.c socket.c
-gaim_remote_LDADD = $(GLIB_LIBS)
+gaim_remote_DEPENDENCIES = @LIBOBJS@
+gaim_remote_LDADD = @LIBOBJS@ $(GLIB_LIBS)
 
 AM_CPPFLAGS = \
 	$(PERL_CFLAGS) \

@@ -34,7 +34,7 @@ AC_STRUCT_TM
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(socket strdup strstr atexit getaddrinfo)
+AC_CHECK_FUNCS(strdup strstr atexit getaddrinfo)
 dnl Checks for getopt in standard library
 AC_CHECK_FUNCS(getopt_long , ,
 AC_LIBOBJ(getopt)
@@ -344,6 +344,7 @@ AC_C_BIGENDIAN
 dnl checks for jabber
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
+AC_CHECK_LIB(socket, socket)
 AC_CHECK_LIB(nsl, gethostent)
 
 dnl checks for zephyr
