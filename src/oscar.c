@@ -135,6 +135,11 @@ static void oscar_callback(gpointer data, gint source,
 					 * libfaim won't tell us which room */
 					debug_print("connection error for chat...\n");
 					aim_conn_kill(gaim_sess, &conn);
+				} else if (conn->type == AIM_CONN_TYPE_CHATNAV) {
+					gdk_input_remove(cnpa);
+					cnpa = -1;
+					debug_print("removing chatnav input watcher\n");
+					aim_conn_kill(gaim_sess, &conn);
 				} else {
 					sprintf(debug_buff, "holy crap! generic connection error! %d\n",
 							conn->type);
@@ -842,9 +847,6 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 				i++;
 			}
 			}
-			gdk_input_remove(cnpa);
-			cnpa = -1;
-			aim_conn_kill(sess, &command->conn);
 			break;
 		default:
 			va_end(ap);
