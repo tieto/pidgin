@@ -48,12 +48,13 @@ struct debug_window *dw = NULL;
 static GtkWidget *prefs = NULL;
 
 static GtkWidget *gaim_button(const char *, int *, int, GtkWidget *);
-static void prefs_build_general(GtkWidget *);
-static void prefs_build_buddy(GtkWidget *);
-static void prefs_build_convo(GtkWidget *);
-static void prefs_build_sound(GtkWidget *);
-static void prefs_build_away(GtkWidget *);
-static void prefs_build_browser(GtkWidget *);
+static void prefs_build_general();
+static void prefs_build_buddy();
+static void prefs_build_convo();
+static void prefs_build_sound();
+static void prefs_build_away();
+static void prefs_build_browser();
+static void prefs_build_deny();
 static gint handle_delete(GtkWidget *, GdkEvent *, void *);
 static void delete_prefs(GtkWidget *, void *);
 void set_default_away(GtkWidget *, gpointer);
@@ -62,6 +63,9 @@ static GtkWidget *prefdialog = NULL;
 static GtkWidget *debugbutton = NULL;
 GtkWidget *prefs_away_list = NULL;
 GtkWidget *prefs_away_menu = NULL;
+GtkWidget *preftree = NULL;
+GtkCTreeNode *general_node = NULL;
+GtkCTreeNode *deny_node = NULL;
 
 static void destdeb(GtkWidget *m, gpointer n)
 {
@@ -117,12 +121,12 @@ static void general_page()
 	/*
 	prefrem = gaim_button(_("Remember password"), &general_options, OPT_GEN_REMEMBER_PASS, box);
 	gtk_signal_connect(GTK_OBJECT(prefrem), "destroy", GTK_SIGNAL_FUNC(remdes), 0);
-	*/
-	/* gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box); */
+	gaim_button(_("Auto-login"), &general_options, OPT_GEN_AUTO_LOGIN, box);
 
 	sep = gtk_hseparator_new();
 	gtk_box_pack_start(GTK_BOX(box), sep, FALSE, FALSE, 5);
 	gtk_widget_show(sep);
+	*/
 
 	gaim_button(_("Use borderless buttons (requires restart for some buttons)"), &display_options, OPT_DISP_COOL_LOOK, box);
 	gaim_button(_("Show Buddy Ticker after restart"), &display_options, OPT_DISP_SHOW_BUDDYTICKER, box);
@@ -1347,6 +1351,281 @@ static void browser_page()
 	gtk_widget_show(prefdialog);
 }
 
+static GtkWidget *deny_conn_hbox = NULL;
+static GtkWidget *deny_opt_menu = NULL;
+static struct gaim_connection *current_deny_gc = NULL;
+static gboolean current_is_deny = FALSE;
+static GtkWidget *allow_list = NULL;
+static GtkWidget *block_list = NULL;
+
+static void set_deny_mode(GtkWidget *w, int data)
+{
+	current_deny_gc->permdeny = data;
+	serv_set_permit_deny(current_deny_gc);
+	do_export(NULL, 0);
+}
+
+static GtkWidget *deny_opt(char *label, int which, GtkWidget *box, GtkWidget *set)
+{
+	GtkWidget *opt;
+
+	if (!set)
+		opt = gtk_radio_button_new_with_label(NULL, label);
+	else
+		opt = gtk_radio_button_new_with_label(gtk_radio_button_group(GTK_RADIO_BUTTON(set)), label);
+	gtk_box_pack_start(GTK_BOX(box), opt, FALSE, FALSE, 0);
+	gtk_signal_connect(GTK_OBJECT(opt), "clicked", GTK_SIGNAL_FUNC(set_deny_mode), (void *)which);
+	gtk_widget_show(opt);
+	if (current_deny_gc->permdeny == which)
+		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(opt), TRUE);
+	
+	return opt;
+}
+
+static void des_deny_opt(GtkWidget *d, gpointer e)
+{
+	gtk_widget_destroy(d);
+	current_deny_gc = NULL;
+	deny_conn_hbox = NULL;
+	deny_opt_menu = NULL;
+	current_is_deny = FALSE;
+	allow_list = NULL;
+	block_list = NULL;
+}
+
+static void build_allow_list()
+{
+	GtkWidget *label;
+	GtkWidget *list_item;
+	GSList *p = current_deny_gc->permit;
+
+	gtk_list_remove_items(GTK_LIST(allow_list), GTK_LIST(allow_list)->children);
+
+	while (p) {
+		label = gtk_label_new(p->data);
+		list_item = gtk_list_item_new();
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), p->data);
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(allow_list), list_item);
+		gtk_widget_show(list_item);
+		p = p->next;
+	}
+}
+
+void build_block_list()
+{
+	GtkWidget *label;
+	GtkWidget *list_item;
+	GSList *d = current_deny_gc->deny;
+
+	if (!prefs) return;
+
+	gtk_list_remove_items(GTK_LIST(block_list), GTK_LIST(block_list)->children);
+
+	while (d) {
+		label = gtk_label_new(d->data);
+		list_item = gtk_list_item_new();
+		gtk_container_add(GTK_CONTAINER(list_item), label);
+		gtk_object_set_user_data(GTK_OBJECT(list_item), d->data);
+		gtk_widget_show(label);
+		gtk_container_add(GTK_CONTAINER(block_list), list_item);
+		gtk_widget_show(list_item);
+		d = d->next;
+	}
+}
+
+static void deny_gc_opt(GtkWidget *opt, struct gaim_connection *gc)
+{
+	current_deny_gc = gc;
+	build_allow_list();
+	build_block_list();
+}
+
+static void build_deny_menu()
+{
+	GtkWidget *menu;
+	GtkWidget *opt;
+	GSList *c = connections;
+	struct gaim_connection *gc;
+	int count = 0;
+	gboolean found = FALSE;
+
+	if (g_slist_length(connections) == 1) {
+		gtk_widget_hide(deny_conn_hbox);
+		return;
+	} else
+		gtk_widget_show(deny_conn_hbox);
+
+	menu = gtk_menu_new();
+
+	while (c) {
+		gc = (struct gaim_connection *)c->data;
+		opt = gtk_menu_item_new_with_label(gc->username);
+		gtk_signal_connect(GTK_OBJECT(opt), "activate",
+				   GTK_SIGNAL_FUNC(deny_gc_opt), gc);
+		gtk_widget_show(opt);
+		gtk_menu_append(GTK_MENU(menu), opt);
+		if (gc == current_deny_gc)
+			found = TRUE;
+		else if (!found)
+			count++;
+		c = c->next;
+	}
+
+	if (!found) {
+		current_deny_gc = connections->data;
+		count = 0;
+	}
+
+	gtk_option_menu_remove_menu(GTK_OPTION_MENU(deny_opt_menu));
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(deny_opt_menu), menu);
+	gtk_option_menu_set_history(GTK_OPTION_MENU(deny_opt_menu), count);
+
+	gtk_widget_show(menu);
+	gtk_widget_show(deny_opt_menu);
+}
+
+static void deny_page()
+{
+	GtkWidget *parent;
+	GtkWidget *box;
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *vbox;
+	GtkWidget *opt;
+	GtkWidget *sw;
+	GtkWidget *bbox;
+	GtkWidget *button;
+
+	current_deny_gc = connections->data; /* this is safe because this screen will only be
+						available when there are connections */
+	current_is_deny = TRUE;
+
+	parent = prefdialog->parent;
+	gtk_widget_destroy(prefdialog);
+
+	prefdialog = gtk_frame_new(_("Privacy Options"));
+	gtk_container_add(GTK_CONTAINER(parent), prefdialog);
+
+	box = gtk_vbox_new(FALSE, 5);
+	gtk_container_add(GTK_CONTAINER(prefdialog), box);
+	gtk_widget_show(box);
+
+	label = gtk_label_new(_("No. This doesn't work yet. Nothing actually gets sent to the"
+				" server. But the UI works. That's all I wanted."));
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	deny_conn_hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), deny_conn_hbox, FALSE, FALSE, 0);
+	gtk_widget_show(deny_conn_hbox);
+
+	label = gtk_label_new(_("Set privacy for:"));
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	deny_opt_menu = gtk_option_menu_new();
+	gtk_box_pack_start(GTK_BOX(deny_conn_hbox), deny_opt_menu, FALSE, FALSE, 5);
+	gtk_signal_connect(GTK_OBJECT(deny_opt_menu), "destroy",
+			   GTK_SIGNAL_FUNC(des_deny_opt), NULL);
+	gtk_widget_show(deny_opt_menu);
+
+	build_deny_menu();
+
+	hbox = gtk_hbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(box), hbox, TRUE, TRUE, 5);
+	gtk_widget_show(hbox);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	opt = deny_opt(_("Allow all users to contact me"), 1, vbox, NULL);
+	opt = deny_opt(_("Allow only the users below"), 3, vbox, opt);
+
+	label = gtk_label_new(_("Allow List"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	allow_list = gtk_list_new();
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), allow_list);
+	gtk_widget_show(allow_list);
+
+	build_allow_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	vbox = gtk_vbox_new(FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
+	gtk_widget_show(vbox);
+
+	opt = deny_opt(_("Deny all users"), 2, vbox, opt);
+	opt = deny_opt(_("Block the users below"), 4, vbox, opt);
+
+	label = gtk_label_new(_("Block List"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 5);
+	gtk_widget_show(label);
+
+	sw = gtk_scrolled_window_new(NULL, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+			GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 5);
+	gtk_widget_show(sw);
+
+	block_list = gtk_list_new();
+	gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), block_list);
+	gtk_widget_show(block_list);
+
+	build_block_list();
+
+	bbox = gtk_hbox_new(TRUE, 5);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+	gtk_widget_show(bbox);
+
+	button = picture_button(prefs, _("Add"), gnome_add_xpm);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	button = picture_button(prefs, _("Remove"), gnome_remove_xpm);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 5);
+
+	gtk_widget_show(prefdialog);
+}
+
+void update_connection_dependent_prefs() /* what a crappy name */
+{
+	if (!prefs) return;
+	if (!connections && deny_node) {
+		if (current_is_deny)
+			gtk_ctree_select(GTK_CTREE(preftree), general_node);
+		gtk_ctree_remove_node(GTK_CTREE(preftree), deny_node);
+		deny_node = NULL;
+	} else if (connections) {
+		if (!deny_node)
+			prefs_build_deny();
+		else {
+			build_deny_menu();
+			build_allow_list();
+			build_block_list();
+		}
+	}
+}
+
 static void try_me(GtkCTree *ctree, GtkCTreeNode *node)
 {
 	/* this is a hack */
@@ -1360,7 +1639,6 @@ void show_prefs()
 	GtkWidget *vbox;
 	GtkWidget *hpaned;
 	GtkWidget *scroll;
-	GtkWidget *preftree;
 	GtkWidget *container;
 	GtkWidget *hbox;
 	GtkWidget *close;
@@ -1413,12 +1691,13 @@ void show_prefs()
 	gtk_container_add(GTK_CONTAINER(container), prefdialog);
 	gtk_widget_show(prefdialog);
 
-	prefs_build_general(preftree);
-	prefs_build_buddy(preftree);
-	prefs_build_convo(preftree);
-	prefs_build_sound(preftree);
-	prefs_build_away(preftree);
-	prefs_build_browser(preftree);
+	prefs_build_general();
+	prefs_build_buddy();
+	prefs_build_convo();
+	prefs_build_sound();
+	prefs_build_away();
+	prefs_build_browser();
+	prefs_build_deny();
 
 	//general_page();
 
@@ -1538,6 +1817,8 @@ static void delete_prefs(GtkWidget *w, void *data)
 	}
 	prefs = NULL;
 	prefs_away_menu = NULL;
+	deny_node = NULL;
+	current_deny_gc = NULL;
 }
       
 
@@ -1616,20 +1897,19 @@ GtkWidget *gaim_button(const char *text, int *options, int option, GtkWidget *pa
 	return button;
 }
 
-void prefs_build_general(GtkWidget *preftree)
+void prefs_build_general()
 {
-	GtkCTreeNode *parent;
 	char *text[1];
 
 	text[0] = _("General");
-	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
+	general_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
-	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, general_page);
+	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), general_node, general_page);
 
-	gtk_ctree_select(GTK_CTREE(preftree), parent);
+	gtk_ctree_select(GTK_CTREE(preftree), general_node);
 }
 
-void prefs_build_buddy(GtkWidget *preftree)
+void prefs_build_buddy()
 {
 	GtkCTreeNode *parent;
 	char *text[1];
@@ -1640,7 +1920,7 @@ void prefs_build_buddy(GtkWidget *preftree)
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, buddy_page);
 }
 
-void prefs_build_convo(GtkWidget *preftree)
+void prefs_build_convo()
 {
 	GtkCTreeNode *parent, *node, *node2;
 	char *text[1];
@@ -1671,7 +1951,7 @@ void prefs_build_convo(GtkWidget *preftree)
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, font_page);
 }
 
-void prefs_build_sound(GtkWidget *preftree)
+void prefs_build_sound()
 {
 	GtkCTreeNode *parent, *node;
 	char *text[1];
@@ -1687,7 +1967,7 @@ void prefs_build_sound(GtkWidget *preftree)
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), node, event_page);
 }
 
-void prefs_build_away(GtkWidget *preftree)
+void prefs_build_away()
 {
 	GtkCTreeNode *parent;
 	char *text[1];
@@ -1698,7 +1978,7 @@ void prefs_build_away(GtkWidget *preftree)
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, away_page);
 }
 
-void prefs_build_browser(GtkWidget *preftree)
+void prefs_build_browser()
 {
 	GtkCTreeNode *parent;
 	char *text[1];
@@ -1707,4 +1987,16 @@ void prefs_build_browser(GtkWidget *preftree)
 	parent = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
 					text, 5, NULL, NULL, NULL, NULL, 0, 1);
 	gtk_ctree_node_set_row_data(GTK_CTREE(preftree), parent, browser_page);
+}
+
+void prefs_build_deny()
+{
+	char *text[1];
+
+	if (connections && !deny_node) {
+		text[0] = _("Privacy");
+		deny_node = gtk_ctree_insert_node(GTK_CTREE(preftree), NULL, NULL,
+						text, 5, NULL, NULL, NULL, NULL, 0, 1);
+		gtk_ctree_node_set_row_data(GTK_CTREE(preftree), deny_node, deny_page);
+	}
 }

@@ -162,7 +162,6 @@ static void dologin(GtkWidget *widget, GtkWidget *w)
 		aim_users = g_list_append(aim_users, u);
 	}
 	g_snprintf(u->password, sizeof u->password, "%s", password);
-	set_first_user(username);
 	save_prefs();
 	serv_login(u);
 }

@@ -613,6 +613,7 @@ extern void do_normal(GtkWidget *, GtkWidget *);
 extern void do_big(GtkWidget *, GtkWidget *);
 extern void set_font_face(char *, struct conversation *);
 extern void redo_convo_menus();
+extern void toggle_spellchk();
 
 /* Functions in toc.c */
 extern void parse_toc_buddy_list(struct gaim_connection *, char *, int);
@@ -697,6 +698,7 @@ extern void show_debug(GtkObject *);
 extern void update_color(GtkWidget *, GtkWidget *);
 extern void set_default_away(GtkWidget *, gpointer);
 extern void default_away_menu_init(GtkWidget *);
+extern void update_connection_dependent_prefs();
 extern GtkWidget *prefs_away_list;
 extern GtkWidget *prefs_away_menu;
 extern GtkWidget *pref_fg_picture;

@@ -121,15 +121,15 @@ static void delete_acctedit(GtkWidget *w, gpointer d)
 		gtk_widget_destroy(acctedit);
 	}
 	acctedit = NULL;
-	if (d == NULL && blist == NULL)
-		exit(0);
+	if (d == NULL && blist == NULL && mainwindow == NULL)
+		gtk_main_quit();
 }
 
 static gint acctedit_close(GtkWidget *w, gpointer d)
 {
 	gtk_widget_destroy(acctedit);
-	if (d == NULL && blist == NULL)
-		exit(0);
+	if (d == NULL && blist == NULL && mainwindow == NULL)
+		gtk_main_quit();
 	return FALSE;
 }
 
@@ -741,6 +741,7 @@ void account_online(struct gaim_connection *gc)
 #endif
 	setup_buddy_chats();
 
+	update_connection_dependent_prefs();
 	redo_convo_menus();
 	gaim_setup(gc);
 

@@ -286,6 +286,7 @@ void signoff(struct gaim_connection *gc)
 	if (connections)
 		set_user_state(online);
 #endif
+	update_connection_dependent_prefs();
 
 	if (connections) return;
 
@@ -1979,7 +1980,9 @@ GtkWidget *gaim_new_item_with_pixmap(GtkWidget *menu, const char *str, char **xp
 		gtk_menu_append(GTK_MENU(menu), menuitem);
 
 	if (sf)
-		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, NULL);
+		/* passing 1 is necessary so if we sign off closing the account editor doesn't
+		 * exit */
+		gtk_signal_connect(GTK_OBJECT(menuitem), "activate", sf, (void *)1);
 	return menuitem;
 }
 
