@@ -515,7 +515,7 @@ faim_internal int aim_extractuserinfo(aim_session_t *sess, aim_bstream_t *bs, ai
 			/*
 			 * Type = 0x0004: Idle time.
 			 *
-			 * Number of seconds since the user actively used the 
+			 * Number of minutes since the user actively used the 
 			 * service.
 			 *
 			 * Note that the client tells the server when to start
