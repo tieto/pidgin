@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: filesession.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ * $Id: filesession.c 2023 2001-06-13 23:39:26Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -215,7 +215,7 @@ void icq_FileSessionPrepareNextFile(icq_FileSession *p)
        p->current_file_progress=0;
        p->current_file_size=file_status.st_size;
 #ifdef _WIN32
-       p->current_fd=open(*files, O_RDONLY | _O_BINARY);
+       p->current_fd=open(*files, _O_RDONLY | _O_BINARY);
 #else
        p->current_fd=open(*files, O_RDONLY);
 #endif

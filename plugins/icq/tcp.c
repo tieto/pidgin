@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: tcp.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ * $Id: tcp.c 2023 2001-06-13 23:39:26Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -153,6 +153,47 @@ DWORD icq_TCPSendURL(icq_Link *icqlink, DWORD uin, const char *message, const ch
 
 #ifdef TCP_PACKET_TRACE
   printf("url packet queued for uin %lu { sequence=%lx }\n", uin, p->id);
+#endif
+
+  return sequence;
+}
+
+DWORD icq_TCPSendAwayMessageReq(icq_Link *icqlink, DWORD uin, int status)
+{
+  icq_TCPLink *plink;
+  icq_Packet *p;
+  DWORD sequence;
+  WORD type;
+  
+  plink=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
+
+  /* create and send the message packet */
+  switch(status)
+  {
+    case STATUS_AWAY:
+      type=ICQ_TCP_MSG_READAWAY;
+      break;
+    case STATUS_DND:
+      type=ICQ_TCP_MSG_READDND;
+      break;
+    case STATUS_NA:
+      type=ICQ_TCP_MSG_READNA;
+      break;
+    case STATUS_OCCUPIED:
+      type=ICQ_TCP_MSG_READOCCUPIED;
+      break;
+    case STATUS_FREE_CHAT:
+      type=ICQ_TCP_MSG_READFFC;
+      break;
+    default:
+      type=ICQ_TCP_MSG_READAWAY;
+      break;
+  }
+  p=icq_TCPCreateAwayReqPacket(plink, type);
+  sequence=icq_TCPLinkSendSeq(plink, p, 0);
+
+#ifdef TCP_PACKET_TRACE
+  printf("away msg request packet sent to uin %lu { sequence=%lx }\n", uin, p->id);
 #endif
 
   return sequence;

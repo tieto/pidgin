@@ -1,7 +1,7 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
- * $Id: contacts.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ * $Id: contacts.c 2023 2001-06-13 23:39:26Z warmenhoven $
  *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
@@ -49,6 +49,7 @@ void icq_ContactAdd(icq_Link *icqlink, DWORD cuin)
   icq_ContactItem *p = icq_ContactNew(icqlink);
   p->uin = cuin;
   p->vis_list = FALSE;
+  p->invis_list = FALSE;
 
   icq_ListEnqueue(icqlink->d->icq_ContactList, p);
 }

@@ -1,3 +1,15 @@
+2001-06-11  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/filesession.c:
+	Applied patch #431942 which fixes Win32-specific typo.
+
+	* icqlib/tcp.c:
+	Applied patch #431945 which adds icq_TCPSendAwayMessageReq() function.
+
+	* icqlib/contacts.c:
+	Applied patch #431950 which fixes bug with invisibility to a random
+	set of buddies.
+
 2001-06-08  Denis V. Dmitrienko  <denix@kde.org>
 
 	* admin/acinclude.m4.in, admin/config.guess, admin/config.sub,
