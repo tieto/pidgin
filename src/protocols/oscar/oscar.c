@@ -4286,8 +4286,10 @@ static int gaim_email_parseupdate(aim_session_t *sess, aim_frame_t *fr, ...) {
 	alerturl  = va_arg(ap, char *);
 	va_end(ap);
 
-	if (emailinfo && gaim_account_get_check_mail(gc->account)) {
-		gchar *to = g_strdup_printf("%s@%s", gaim_account_get_username(gaim_connection_get_account(gc)), emailinfo->domain);
+	if ((emailinfo != NULL) && gaim_account_get_check_mail(gc->account)) {
+		gchar *to = g_strdup_printf("%s%s%s", gaim_account_get_username(gaim_connection_get_account(gc)),
+									emailinfo->domain ? "@" : "",
+									emailinfo->domain ? emailinfo->domain : "");
 		if (emailinfo->unread && havenewmail)
 			gaim_notify_emails(gc, emailinfo->nummsgs, FALSE, NULL, NULL, (const char **)&to, (const char **)&emailinfo->url, NULL, NULL);
 		g_free(to);
