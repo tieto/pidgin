@@ -1065,6 +1065,13 @@ static void gaim_proto_menu_cb(GtkMenuItem *item, GaimBuddy *b)
 		pbm->callback(pbm->gc, b->name);
 }
 
+static void gaim_proto_group_menu_cb(GtkMenuItem *item, GaimGroup *g)
+{
+	struct proto_group_menu *pgm = g_object_get_data(G_OBJECT(item), "gaimcallback");
+	if (pgm->callback)
+		pgm->callback(g);
+}
+
 static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, GaimBuddy *b)
 {
 	GList *list = NULL, *l = NULL;
@@ -1186,9 +1193,12 @@ static gboolean gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event,
 }
 
 static GtkWidget *
-create_group_menu (GaimBlistNode *node)
+create_group_menu (GaimBlistNode *node, GaimGroup *g)
 {
 	GtkWidget *menu;
+	GList *list = NULL, *l = NULL;
+	gboolean dup_separator = FALSE;
+	GtkWidget *menuitem;
 
 	menu = gtk_menu_new();
 	gaim_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
@@ -1199,6 +1209,31 @@ create_group_menu (GaimBlistNode *node)
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(show_rename_group), node, 0, 0, NULL);
+
+	list = gaim_group_get_extended_menu(g);
+	for(l = list; l; l = l->next) {
+		struct proto_group_menu *pgm = l->data;
+
+		/* draw "-" titled menu items as a separator.  see previous,
+		   identical-looking code. (in make_buddy_menu)*/
+		if(pgm == NULL) {
+			if(! dup_separator) {
+				gaim_separator(menu);
+				dup_separator = TRUE;
+			}
+			continue;
+		} else {
+			dup_separator = FALSE;
+		}
+
+		menuitem = gtk_menu_item_new_with_mnemonic(pgm->label);
+		g_object_set_data(G_OBJECT(menuitem), "gaimcallback", pgm);
+		g_signal_connect(G_OBJECT(menuitem), "activate",
+			G_CALLBACK(gaim_proto_group_menu_cb), g);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	}
+	g_list_free(list);
+
 	return menu;
 }
 
@@ -1351,7 +1386,8 @@ gaim_gtk_blist_show_context_menu(GaimBlistNode *node,
 
 	/* Create a menu based on the thing we right-clicked on */
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
-		menu = create_group_menu(node);
+		GaimGroup *g = (GaimGroup *)node;
+		menu = create_group_menu(node, g);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
 		GaimChat *c = (GaimChat *)node;
 		GaimPlugin *prpl = NULL;

@@ -45,6 +45,11 @@ struct proto_chat_menu {
 	GaimConnection *gc;
 };
 
+struct proto_group_menu {
+	char *label;
+	void (*callback)(GaimGroup *);
+};
+
 struct proto_chat_entry {
 	char *label;
 	char *identifier;
