@@ -1333,6 +1333,22 @@ void do_pounce(char *name)
                         	write_to_conv(c, b->message, WFLAG_SEND, NULL);
                                 serv_send_im(u->gc, name, b->message, 0);
 			}
+			if (b->cmd == 1)
+			{
+				int pid = fork();
+
+				if (pid == 0) {
+					char *args[4];
+					args[0] = "sh";
+					args[1] = "-c";
+					args[2] = b->command;
+					args[3] = NULL;
+					execvp(args[0], args);
+					_exit(0);
+				} else if (pid > 0) {
+					gtk_timeout_add(100, (GtkFunction)clean_pid, NULL);
+				}
+			}
                         
                         rem_bp(NULL, b);
                         

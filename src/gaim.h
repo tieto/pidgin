@@ -243,8 +243,10 @@ struct log_conversation {
 struct buddy_pounce {
         char name[80];
         char message[2048];
+	char command[2048];
 	int popup;
 	int sendim;
+	int cmd;
 	
 	char pouncer[80];
 	int protocol;

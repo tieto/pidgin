@@ -47,7 +47,6 @@ int font_options;
 int report_idle, web_browser;
 struct save_pos blist_pos;
 char web_command[2048];
-char latest_ver[25];
 char *sound_file[NUM_SOUNDS];
 char sound_cmd[2048];
 
@@ -282,6 +281,7 @@ static void gaimrc_read_pounce(FILE *f)
 
 			g_snprintf(b->name, sizeof(b->name),  "%s", p->value[0]);
 			g_snprintf(b->message, sizeof(b->message), "%s", p->value[1]);
+			g_snprintf(b->command, sizeof(b->command), "%s", p->value[2]);
 
 			b->popup = atoi(p->value[2]);
 			b->sendim = atoi(p->value[3]);
@@ -295,6 +295,7 @@ static void gaimrc_read_pounce(FILE *f)
 				b->signon = atoi(p->value[6]);		
 				b->unaway = atoi(p->value[7]);		
 				b->unidle = atoi(p->value[8]);		
+				b->cmd = atoi(p->value[9]);
 			}
 			else
 			{
@@ -317,29 +318,26 @@ static void gaimrc_write_pounce(FILE *f)
 
 	fprintf(f, "pounce {\n");
 
-	if (pnc)
-	{
-		while (pnc) {
-			char *str1, *str2;
+	while (pnc) {
+		char *str1, *str2;
 
-			b = (struct buddy_pounce *)pnc->data;
+		b = (struct buddy_pounce *)pnc->data;
 
-			str1 = escape_text2(b->name);
-			if (strlen(b->message))
-				str2 = escape_text2(b->message);
-			else {
-				str2 = malloc(1);
-				str2[0] = 0;
-			}
-
-			fprintf(f, "\tentry { %s } { %s } { %d } { %d } { %s } { %d } { %d } { %d } { %d }\n", str1, str2, b->popup, b->sendim, b->pouncer, b->protocol, b->signon, b->unaway, b->unidle);
-
-			/* escape_text2 uses malloc(), so we don't want to g_free these */
-			free(str1);
-			free(str2);
-	
-			pnc = pnc->next;
+		str1 = escape_text2(b->name);
+		if (strlen(b->message))
+			str2 = escape_text2(b->message);
+		else {
+			str2 = malloc(1);
+			str2[0] = 0;
 		}
+
+		fprintf(f, "\tentry { %s } { %s } { %d } { %d } { %s } { %d } { %d } { %d } { %d } { %d }\n", str1, str2, b->popup, b->sendim, b->pouncer, b->protocol, b->signon, b->unaway, b->unidle, b->cmd);
+
+		/* escape_text2 uses malloc(), so we don't want to g_free these */
+		free(str1);
+		free(str2);
+
+		pnc = pnc->next;
 	}
 
 	fprintf(f, "}\n");
@@ -689,7 +687,6 @@ static void gaimrc_write_options(FILE *f)
         fprintf(f, "\tblist_pos { %d } { %d } { %d } { %d } { %d } { %d }\n",
                 blist_pos.x, blist_pos.y, blist_pos.width, blist_pos.height,
                 blist_pos.xoff, blist_pos.yoff);
-	fprintf(f, "\tlatest_ver { %s }\n", latest_ver);
 	fprintf(f, "}\n");
 }
 
@@ -801,7 +798,6 @@ void set_defaults(int saveinfo)
         	blist_pos.y = 0;
         	blist_pos.xoff = 0;
         	blist_pos.yoff = 0;
-		g_snprintf(latest_ver, BUF_LONG, "%s", VERSION);
 	}
 }
 
@@ -880,11 +876,11 @@ void save_prefs()
 			gaimrc_write_options(f);
 			gaimrc_write_sounds(f);
 			gaimrc_write_away(f);
+			gaimrc_write_pounce(f);
+			gaimrc_write_chat(f);
 #ifdef GAIM_PLUGINS
 			gaimrc_write_plugins(f);
 #endif
-			gaimrc_write_pounce(f);
-			gaimrc_write_chat(f);
 			fclose(f);
 			chmod(buf, S_IRUSR | S_IWUSR);
 		}
