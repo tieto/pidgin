@@ -328,7 +328,7 @@ struct _GaimPluginProtocolInfo
 #define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
 	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
 
-#define GAIM_PRPL_API_VERSION 2
+#define GAIM_PRPL_API_VERSION 3
 
 #ifdef __cplusplus
 extern "C" {
