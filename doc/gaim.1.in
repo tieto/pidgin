@@ -81,8 +81,16 @@ left of each buddy indicates the buddy's current state and the protocol
 they are using.  Double clicking a buddy will open a new \fBConversation\fR
 window.  Right clicking will pop up a menu:
 .TP
+.B Get Info
+Retrieves and displays information about the buddy.  This information is
+also known as a Profile.
+.TP
 .B IM
 Opens a new \fBConversation\fR window to the selected buddy.
+.TP
+.B Send File
+Sends a file to the selected buddy (only available on protocols that support
+file transfer).
 .TP
 .B Add Buddy Pounce
 A Buddy Pounce is a configurable automated action to be performed when the
@@ -106,17 +114,7 @@ name was 'John Q. Smith,' one could create an alias as to identify the
 buddy by his common name.
 .LP
 The remainder of the menu will consist of protocol specific commands.
-These commands vary depending on the protocol; below are the commands
-available when using OSCAR, the more popular and developer-recommended AIM
-protocol:
-.TP
-.B Get Info
-Retrieves and displays information about the buddy.  This information is
-also known as a Profile.
-.TP
-.B Get Away Msg
-If this buddy is in an Away state, this will retrieve and display the
-buddy's \fBAway Message\fR.
+These commands vary depending on the protocol.
 .LP
 At the bottom of the \fBBuddy List\fR are several buttons (if enabled in
 \fBPreferences\fR):
@@ -152,7 +150,7 @@ If \fIAuto-Login\fR is chosen, this account will automatically login upon
 starting \fBgaim\fR.
 
 Each protocol has it's own specific options that can be found in the
-protocol-specific tab on the modify screen.
+modify screen.
 
 .SH PREFERENCES
 
@@ -163,30 +161,7 @@ All options take effect immediately.
 \fIDisplay remote nicknames if no alias is set\fR: Toggles whether server
 nickname data should be used if no local alias exists.
 
-.TP
-.B Smiley Themes
-Allows the user to choose between different smiley themes. The "none" theme
-will disable graphical emoticons - they will be displayed as text instead.
-.TP
-.B Message Text
-\fIShow timestamp on messages\fR: Toggles the timestamp behavior for
-conversations.  Per-conversation behavior can be changed by pressing
-\fIF2\fR in the \fBConversation\fR window.
-
-\fIHighlight misspelled words\fR: Toggles highlighting of misspelled words
-as you type.
-
-\fIIgnore colors/font faces/font sizes\fR: Tells \fBgaim\fR to disregard
-buddies' color/font/size information in displaying IMs or Chats.
-
-\fIDefault Formatting\fR: Allows specifying the default formatting to apply
-to all outgoing messages (only applicable to protocols that support
-formatting in messages).
-.TP
-.B Shortcuts
-Allows the user to determine which keyboard shortcuts are available.
-.TP
-.B Buddy List
+.SH Buddy List
 \fISorting\fR: Toggles the order in which buddies are shown in your
 \fBBuddy List\fR between none, alphabetical, by status and by log size.
 
@@ -219,35 +194,19 @@ over the contact for a short period.
 
 .SH Conversations
 
-\fIPlacement...\fR: Determines where new conversations will be placed (Last
-created window / New window / windows grouped by group or account / maximum
-number of conversations per window).
+\fIShow buttons as...\fR: The selected item will determine whether
+picture-only, text-only, combined picture/text, or no buttons will be used
+for \fBConversation\fR windows.
+
+\fIEnable "slash" commands\fR: Determines whether messages starting with
+"slash" (eg. /help) will be interpreted as commands by \fBgaim\fR, or if they
+will just be sent as messages.
 
 \fIShow formatting toolbar\fR: Display the formatting toolbar between the
 upper and lower text boxes in conversations.
 
 \fIShow aliases in tabs/titles\fR: Displays buddy alias instead of screen
 name in window tabs and titles.
-
-\fIShow IMs and chats in tabbed windows\fR: Tabbed chatting allows one to
-have multiple conversations without multiple windows.
-
-\fIShow IMs and chats in same tabbed window\fR: Uses the same window for
-both IMs and chats.
-
-\fIShow close buttons on tabs\fR: Adds a close button to each tab.
-
-\fITab Placement...\fR: Specifies where tabs are shown in the conversation
-window.
-
-.TP
-.B IM Window
-\fIShow buttons as...\fR: The selected item will determine whether
-picture-only, text-only, combined picture/text, or no buttons will be used
-for \fBConversation\fR windows.
-
-\fIRaise windows on events\fR: If enabled, \fBConversation\fR windows will
-be brought to the top when new messages are received.
 
 \fIShow buddy icons\fR: For protocols that support it, buddy icons allow
 buddies to send small pictures to be displayed during the course of a
@@ -260,35 +219,54 @@ be displayed.
 \fINotify buddies that you are typing to them\fR: Some protocols allow
 clients to tell their buddies when they are typing. This option enables
 this feature for protocols that supports it.
+
+\fIRaise IM windows on events\fR: If enabled, IM \fBConversation\fR windows
+will be brought to the top when new messages are received.
+
+\fIRaise Chat windows on events\fR: If enabled, chat \fBConversation\fR windows
+will be brought to the top when new messages are received.
+
+\fIUse multi-colored screen names in chats\fR: Color code the screen names of
+users in chat rooms.
+
 .TP
-.B Chat Window
-\fIWindow\fR: The options in this section behave identically to the options
-of the same name in the \fBIM Window\fR preferences.
+.B Tab Options
+\fIShow IMs and chats in tabbed windows\fR: Tabbed chatting allows one to
+have multiple conversations without multiple windows.
 
-\fIColorize screennames\fR: Color code the screen names of users in chat rooms.
+\fIShow close buttons on tabs\fR: Adds a close button to each tab.
+
+\fITab Placement...\fR: Specifies where tabs are shown in the conversation
+window.
+
+\fI New conversation placement...\fR: Determines where new conversations will
+be placed (Last created window / New window / windows grouped by group or
+account / separate windows for IMs and Chats).
+
 .TP
+.B Message Text
+\fIShow timestamp on messages\fR: Toggles the timestamp behavior for
+conversations.  Per-conversation behavior can be changed by pressing
+\fIF2\fR in the \fBConversation\fR window.
 
-.SH Proxy
+\fIHighlight misspelled words\fR: Toggles highlighting of misspelled words
+as you type.
 
-The configuration section to enable \fBgaim\fR to operate through a proxy
-server.  \fBgaim\fR currently supports SOCKS 4/5 and HTTP proxies.
+\fIIgnore colors/font faces/font sizes\fR: Tells \fBgaim\fR to disregard
+buddies' color/font/size information in displaying IMs or Chats.
 
-.SH Browser
+\fIDefault Formatting\fR: Allows specifying the default formatting to apply
+to all outgoing messages (only applicable to protocols that support
+formatting in messages).
 
-Allows the user to select \fBgaim\fR's default web browser.  Galeon,
-Konqueror, Mozilla, Netscape, and Opera are supported natively.  The user
-can also manually enter a command to be executed when a link is clicked
-(\fI%s\fR expands to the URL).  For example, \fIxterm -e lynx "%s"\fR will
-open the link with lynx.  \fIOpen new window by default\fR makes the
-browser use a new window instead of using the current window (or spawning a
-new tab).
+.TP
+.B Shortcuts
+Allows the user to determine which keyboard shortcuts are available.
 
-.SH Logging
-
-\fIMessage Logs\fR lets the user choose whether \fBConversations\fR and/or
-\fBBuddy Chats\fR will be logged as well as whether logs will be in HTML or
-plain text format.  \fISystem Logs\fR describes the types of events to be
-logged.
+.TP
+.B Smiley Themes
+Allows the user to choose between different smiley themes. The "none" theme
+will disable graphical emoticons - they will be displayed as text instead.
 
 .SH Sounds
 
@@ -302,6 +280,43 @@ to be played (\fI%s\fR expands to the full path to the file name).
 .TP
 .B Sound Events
 Lets the user choose when and what sounds are to be played.
+
+.SH Network
+
+.TP
+.B IP Address
+\fIAutodetect IP Address\fR: \fBGaim\fR will attempt to automatically determine
+your IP address for use in file transfers and Direct IMs.
+
+\fIPublic IP\fR: What IP address to use for file transfer and Direct IMs. This
+is mainly useful for users with multiple network interfaces or behind NAT.
+
+.TP
+.B Ports
+\fIManually specify range of ports to listen on\fR: Specify specific ports to
+listen on, overriding any defaults.
+
+.TP
+.B Proxy Server
+The configuration section to enable \fBgaim\fR to operate through a proxy
+server.  \fBgaim\fR currently supports SOCKS 4/5 and HTTP proxies.
+
+.SH Browser
+
+Allows the user to select \fBgaim\fR's default web browser.  Firefox, Galeon,
+Konqueror, Mozilla, Netscape and Opera are supported natively.  The user
+can also manually enter a command to be executed when a link is clicked
+(\fI%s\fR expands to the URL).  For example, \fIxterm -e lynx "%s"\fR will
+open the link with lynx.  \fIOpen new window by default\fR makes the
+browser use a new window instead of using the current window (or spawning a
+new tab).
+
+.SH Logging
+
+\fIMessage Logs\fR lets the user choose whether \fBConversations\fR and/or
+\fBBuddy Chats\fR will be logged as well as whether logs will be in HTML or
+plain text format.  \fISystem Logs\fR describes the types of events to be
+logged.
 
 .SH Away / Idle
 
@@ -327,10 +342,6 @@ automatically turn on the Away status.
 .B Away Messages
 Lets the user add/edit/remove available \fBAway Messages\fR.
 
-.SH Protocols
-
-Protocols provide protocol specific preferences here.
-
 .SH Plugins
 
 Allows the user to enable add-on plugins for \fBgaim\fR.  Several of these
@@ -342,6 +353,10 @@ and file name/location information.
 Some plugins can be configured.  If you load such a plugin, its
 configuration preferences will appear as a submenu to \fBPlugins\fR, with
 the submenu title determined by the plugin's name.
+
+.SH Protocols
+
+Protocols provide protocol specific preferences here.
 
 .SH CONVERSATIONS
 When starting a new conversation, the user is presented with the
@@ -390,6 +405,10 @@ available in all protocols).
 .B Block
 This adds the other person to your deny list (not available in all
 protocols).
+.TP
+.B Send File
+Send a file to this user. This option is only available on protocols where
+\fBGaim\fR supports file transfer.
 .TP
 .B Add
 This adds this user to your buddy list.  This option is not available if
