@@ -160,18 +160,16 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 		if(!(jb = jabber_buddy_find(js, jid, TRUE)))
 			continue;
 
-		if(!subscription)
-			jb->subscription = JABBER_SUB_NONE;
-		else if(!strcmp(subscription, "to"))
-			jb->subscription = JABBER_SUB_TO;
-		else if(!strcmp(subscription, "from"))
-			jb->subscription = JABBER_SUB_FROM;
-		else if(!strcmp(subscription, "both"))
-			jb->subscription = JABBER_SUB_BOTH;
-		else if(!strcmp(subscription, "remove"))
-			jb->subscription = JABBER_SUB_REMOVE;
-		else
-			jb->subscription = JABBER_SUB_NONE;
+		if(subscription) {
+			if(!strcmp(subscription, "to"))
+				jb->subscription = JABBER_SUB_TO;
+			else if(!strcmp(subscription, "from"))
+				jb->subscription = JABBER_SUB_FROM;
+			else if(!strcmp(subscription, "both"))
+				jb->subscription = JABBER_SUB_BOTH;
+			else if(!strcmp(subscription, "remove"))
+				jb->subscription = JABBER_SUB_REMOVE;
+		}
 
 		if(ask && !strcmp(ask, "subscribe"))
 			jb->subscription |= JABBER_SUB_PENDING;

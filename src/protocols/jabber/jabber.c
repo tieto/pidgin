@@ -102,10 +102,13 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 		xmlnode *jid;
 		char *full_jid;
 		if((jid = xmlnode_get_child(bind, "jid")) && (full_jid = xmlnode_get_data(jid))) {
+			JabberBuddy *my_jb = NULL;
 			jabber_id_free(js->user);
 			if(!(js->user = jabber_id_new(full_jid))) {
 				gaim_connection_error(js->gc, _("Invalid response from server."));
 			}
+			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
+				my_jb->subscription |= JABBER_SUB_BOTH;
 		}
 	} else {
 		char *msg = jabber_parse_error(js, packet);
@@ -350,6 +353,7 @@ jabber_login(GaimAccount *account)
 			"connect_server", "");
 	const char *server;
 	JabberStream *js;
+	JabberBuddy *my_jb = NULL;
 
 	gc->flags |= GAIM_CONNECTION_HTML;
 	js = gc->proto_data = g_new0(JabberStream, 1);
@@ -384,6 +388,9 @@ jabber_login(GaimAccount *account)
 		gaim_account_set_username(account, me);
 		g_free(me);
 	}
+
+	if((my_jb = jabber_buddy_find(js, gaim_account_get_username(account), TRUE)))
+		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	server = connect_server[0] ? connect_server : js->user->domain;
 
@@ -681,6 +688,7 @@ static void jabber_register_account(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	JabberStream *js;
+	JabberBuddy *my_jb = NULL;
 	const char *connect_server = gaim_account_get_string(account,
 			"connect_server", "");
 	const char *server;
@@ -713,6 +721,9 @@ static void jabber_register_account(GaimAccount *account)
 		gaim_account_set_username(account, me);
 		g_free(me);
 	}
+
+	if((my_jb = jabber_buddy_find(js, gaim_account_get_username(account), TRUE)))
+		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	server = connect_server[0] ? connect_server : js->user->domain;
 
