@@ -3611,7 +3611,7 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	GtkWidget *cancel_p;
 	GdkBitmap *mask;
 	GtkWidget *win;
-	GtkWidget *frame;
+	GtkWidget *bbox;
 
 	if (c->smiley_dialog)
 		return;
@@ -3621,10 +3621,10 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	dialog = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(dialog), 0, 0, 1);
 
-	frame = gtk_frame_new(_("Smile!"));
-	
 	/* setup boxes */
-	vbox = gtk_vbox_new(TRUE, 0);
+	vbox = gtk_vbox_new(TRUE, 5);
+	bbox = gtk_hbox_new(FALSE, 5);
+
 	smiley_box_1 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 	smiley_box_2 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
 	smiley_box_3 = gtk_toolbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_TOOLBAR_ICONS);
@@ -3632,29 +3632,6 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 
 	/* setup buttons */
 
-	/* Build Cancel Button */
-
-	cancel_button = gtk_button_new();
-
-	cancel_button_box = gtk_hbox_new(FALSE, 5);
-	cancel_i = gdk_pixmap_create_from_xpm_d (win->window, &mask, NULL, cancel_xpm);
-
-	cancel_p = gtk_pixmap_new(cancel_i, mask);
-	
-	cancel_label = gtk_label_new(_("Cancel"));
-
-	gtk_box_pack_start(GTK_BOX(cancel_button_box), cancel_p, FALSE, FALSE, 2);
-	gtk_box_pack_end(GTK_BOX(cancel_button_box), cancel_label, FALSE, FALSE, 2);
-
-	gtk_widget_show(cancel_label);
-	gtk_widget_show(cancel_p);
-
-	gtk_widget_show(cancel_button_box);
-
-	gtk_container_add(GTK_CONTAINER(cancel_button), cancel_button_box);
-
-	/* End of Cancel Button */
-	
 	/* pack buttons */
 	toolbar_add_smiley(c, smiley_box_1, angel_xpm, win, FACE_ANGEL);
 	toolbar_add_smiley(c, smiley_box_1, bigsmile_xpm, win, FACE_BIGSMILE);
@@ -3681,13 +3658,10 @@ void show_smiley_dialog(struct conversation *c, GtkWidget *widget)
 	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_2, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_3, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), smiley_box_4, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), cancel_button, FALSE, FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(frame), vbox);
-	gtk_container_add(GTK_CONTAINER(dialog), frame);
+
+	gtk_container_add(GTK_CONTAINER(dialog), vbox);
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
 
-	/* connect signals */
-	gtk_signal_connect(GTK_OBJECT(cancel_button), "clicked", GTK_SIGNAL_FUNC(close_smiley_dialog), c);
 	/* show everything */
 	if (display_options & OPT_DISP_COOL_LOOK)
 		gtk_button_set_relief(GTK_BUTTON(cancel_button), GTK_RELIEF_NONE);
