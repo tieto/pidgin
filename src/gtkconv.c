@@ -2242,12 +2242,7 @@ toggle_font(GtkWidget *font, GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(font)))
-		show_font_dialog(conv, font);
-	else if (gtkconv->dialogs.font != NULL)
-		cancel_font(font, conv);
-	else
-		gaim_gtk_advance_past(gtkconv, "<FONT FACE>", "</FONT>");
+	show_font_dialog(conv, font);
 }
 
 static void

@@ -522,6 +522,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->edit.underline = NULL;
 	imhtml->edit.forecolor = NULL;
 	imhtml->edit.backcolor = NULL;
+	imhtml->edit.fontface = NULL;
 
 	imhtml->format_spans = NULL;
 	
@@ -1636,6 +1637,7 @@ gtk_imhtml_clear (GtkIMHtml *imhtml)
 	imhtml->edit.bold = NULL;
 	imhtml->edit.italic = NULL;
 	imhtml->edit.underline = NULL;
+	imhtml->edit.fontface = NULL;
 }
 
 void gtk_imhtml_page_up (GtkIMHtml *imhtml)
@@ -1960,6 +1962,7 @@ void gtk_imhtml_search_clear(GtkIMHtml *imhtml)
 static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gint len, GtkIMHtml *imhtml)
 {
 	GtkIMHtmlFormatSpan *span = NULL;
+	gtk_text_iter_forward_chars(iter, len);
 
 	if (!imhtml->editable)
 		return;
@@ -1974,24 +1977,26 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 	if ((span = imhtml->edit.italic)) {
 		GtkTextIter italic;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &italic, span->start);
-		gtk_text_iter_forward_chars(iter, len);
 		gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &italic, iter);
 	}
 	
 	if ((span = imhtml->edit.forecolor)) {
 		GtkTextIter fore;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &fore, span->start);
-		gtk_text_iter_forward_chars(iter, len);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &fore, iter);
 	}
 	
 	if ((span = imhtml->edit.backcolor)) {
 		GtkTextIter back;
 		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &back, span->start);
-		gtk_text_iter_forward_chars(iter, len);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &back, iter);
 	}
 	
+	if ((span = imhtml->edit.fontface)) {
+		GtkTextIter face;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &face, span->start);
+		gtk_text_buffer_apply_tag(imhtml->text_buffer, span->tag, &face, iter);
+	}
 }
 
 void gtk_imhtml_set_editable(GtkIMHtml *imhtml, gboolean editable) 
@@ -2124,6 +2129,30 @@ gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 		imhtml->edit.backcolor = NULL;
 	}
 	return imhtml->edit.backcolor != NULL;
+}
+
+gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
+{
+	GtkIMHtmlFormatSpan *span;
+	GtkTextMark *ins = gtk_text_buffer_get_insert(imhtml->text_buffer);
+	GtkTextIter iter;
+	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, ins);
+	if (!imhtml->edit.fontface) {
+		span = g_malloc(sizeof(GtkIMHtmlFormatSpan));
+		span->start = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		span->start_tag = g_strdup_printf("<font face='%s'>", face);
+		span->end = NULL;
+		span->end_tag = g_strdup("</font>");
+		span->buffer = imhtml->text_buffer;
+		span->tag = gtk_text_buffer_create_tag(imhtml->text_buffer, NULL, "family", face, NULL);
+		imhtml->edit.fontface = span;
+		imhtml->format_spans = g_list_append(imhtml->format_spans, span);
+	} else {
+		span = imhtml->edit.fontface;
+		span->end = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, &iter, TRUE);
+		imhtml->edit.fontface = NULL;
+	}
+	return imhtml->edit.fontface != NULL;
 }
 
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text)

@@ -91,6 +91,7 @@ struct _GtkIMHtml {
 		GtkIMHtmlFormatSpan *underline;
 		GtkIMHtmlFormatSpan *forecolor;
 		GtkIMHtmlFormatSpan *backcolor;
+		GtkIMHtmlFormatSpan *fontface;
 	} edit;
 	GList *format_spans;
 };
@@ -211,7 +212,7 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color);
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color);
-
+gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face);
 void gtk_imhtml_insert_link(GtkIMHtml *imhtml, const char *url, const char *text);
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml);

@@ -243,13 +243,10 @@ gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
 
 	gtkconv->has_font = TRUE;
 
-	pre_fontface = g_strconcat("<FONT FACE=\"",
-							   gtkconv->fontface, "\">", NULL);
-	gaim_gtk_surround(gtkconv, pre_fontface, "</FONT>");
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(gtkconv->entry), gtkconv->fontface);
 
 	gtk_widget_grab_focus(gtkconv->entry);
 
-	g_free(pre_fontface);
 }
 
 static int
