@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 8 -*- */
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
  * gaim
  *
@@ -472,7 +472,7 @@ static gboolean find_chat_buddy(struct conversation *b, char *name)
 
 static void jabber_handlemessage(gjconn j, jpacket p)
 {
-	xmlnode y;
+	xmlnode y, xmlns;
 	gboolean same = TRUE;
 
 	char *from = NULL, *msg = NULL, *type = NULL;
@@ -481,6 +481,11 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 	type = xmlnode_get_attrib(p->x, "type");
 
 	if (!type || !strcmp(type, "normal") || !strcmp(type, "chat")) {
+
+		/* XXX namespaces could be handled better. (mid) */
+		if ((xmlns = xmlnode_get_tag(p->x, "x")))
+			type = xmlnode_get_attrib(xmlns, "xmlns");
+
 		from = jid_full(p->from);
 		if ((y = xmlnode_get_tag(p->x, "body"))) {
 			msg = xmlnode_get_data(y);
@@ -490,16 +495,26 @@ static void jabber_handlemessage(gjconn j, jpacket p)
 			return;
 		}
 
-		if (!find_conversation(from) && jid_cmp(p->from, jid_new(j->p, GJ_GC(j)->username))) {
-			from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
-			same = FALSE;
+		if (type && !strcmp(type, "jabber:x:conference")) {
+			char *room;
+
+			room = xmlnode_get_attrib(xmlns, "jid");
+
+			serv_got_chat_invite(GJ_GC(j), room, 0, from, msg);
+
+		} else {
+			if (!find_conversation(from) && jid_cmp(p->from, jid_new(j->p, GJ_GC(j)->username))) {
+				from = g_strdup_printf("%s@%s", p->from->user, p->from->server);
+				same = FALSE;
+			}
+
+			g_snprintf(m, sizeof(m), "%s", msg);
+			serv_got_im(GJ_GC(j), from, m, 0);
+
+			if (!same)
+				g_free(from);
 		}
 
-		g_snprintf(m, sizeof(m), "%s", msg);
-		serv_got_im(GJ_GC(j), from, m, 0);
-
-		if (!same)
-			g_free(from);
 	} else if (!strcmp(type, "error")) {
 		if ((y = xmlnode_get_tag(p->x, "error"))) {
 			type = xmlnode_get_attrib(y, "code");
@@ -1041,6 +1056,61 @@ static void jabber_join_chat(struct gaim_connection *gc, int exch, char *name)
 	((struct jabber_data *)gc->proto_data)->pending_chats = g_slist_append(pc, realwho);
 }
 
+static void jabber_chat_invite(struct gaim_connection *gc, int id, char *message, char *name)
+{
+	xmlnode x, y;
+	GSList *bcs = gc->buddy_chats;
+	struct conversation *b;
+	struct jabber_data *jd = gc->proto_data;
+	gjconn j = jd->jc;
+	jid chat;
+	char *realwho, *subject;
+
+	if (!name)
+		return;
+
+	while (bcs) {
+		b = bcs->data;
+		if (id == b->id)
+			break;
+		bcs = bcs->next;
+	}
+	if (!bcs)
+		return;
+
+	bcs = jd->existing_chats;
+	while (bcs) {
+		chat = jid_new(j->p, bcs->data);
+		if (!strcasecmp(b->name, chat->user))
+			break;
+		bcs = bcs->next;
+	}
+	if (!bcs)
+		return;
+
+	x = xmlnode_new_tag("message");
+	if (!strchr(name, '@'))
+		realwho = g_strdup_printf("%s@%s", name, j->user->server);
+	else
+		realwho = g_strdup(name);
+	xmlnode_put_attrib(x, "to", realwho);
+	g_free(realwho);
+
+	y = xmlnode_insert_tag(x, "x");
+	xmlnode_put_attrib(y, "xmlns", "jabber:x:conference");
+	subject = g_strdup_printf("%s@%s", chat->user, chat->server);
+	xmlnode_put_attrib(y, "jid", subject);
+	g_free(subject);
+
+	if (message && strlen(message)) {
+		y = xmlnode_insert_tag(x, "body");
+		xmlnode_insert_cdata(y, message, -1);
+	}
+
+	gjab_send(((struct jabber_data *)gc->proto_data)->jc, x);
+	xmlnode_free(x);
+}
+
 static void jabber_chat_leave(struct gaim_connection *gc, int id)
 {
 	GSList *bcs = gc->buddy_chats;
@@ -1418,7 +1488,7 @@ void Jabber_init(struct prpl *ret)
 	ret->warn = NULL;
 	ret->accept_chat = NULL;
 	ret->join_chat = jabber_join_chat;
-	ret->chat_invite = NULL;
+	ret->chat_invite = jabber_chat_invite;
 	ret->chat_leave = jabber_chat_leave;
 	ret->chat_whisper = NULL;
 	ret->chat_send = jabber_chat_send;
