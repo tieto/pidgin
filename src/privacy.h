@@ -45,7 +45,7 @@ typedef struct
  * Adds a user to the account's permit list.
  *
  * @param account    The account.
- * @Param name       The name of the user to add to the list.
+ * @param name       The name of the user to add to the list.
  * @param local_only If TRUE, only the local list is updated, and not
  *                   the server.
  *
@@ -58,7 +58,7 @@ gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name,
  * Removes a user from the account's permit list.
  *
  * @param account    The account.
- * @Param name       The name of the user to add to the list.
+ * @param name       The name of the user to add to the list.
  * @param local_only If TRUE, only the local list is updated, and not
  *                   the server.
  *
@@ -71,7 +71,7 @@ gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
  * Adds a user to the account's deny list.
  *
  * @param account    The account.
- * @Param name       The name of the user to add to the list.
+ * @param name       The name of the user to add to the list.
  * @param local_only If TRUE, only the local list is updated, and not
  *                   the server.
  *
@@ -84,7 +84,7 @@ gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
  * Removes a user from the account's deny list.
  *
  * @param account    The account.
- * @Param name       The name of the user to add to the list.
+ * @param name       The name of the user to add to the list.
  * @param local_only If TRUE, only the local list is updated, and not
  *                   the server.
  *

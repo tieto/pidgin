@@ -333,7 +333,7 @@ const char *gaim_prpl_num_to_id(GaimProtocol protocol);
 /**
  * Returns the plugin number for a protocol ID.
  *
- * @param protocol_id The protocol ID.
+ * @param id The protocol ID.
  *
  * @return The protocol ID for valid protocol plugin IDs.
  */

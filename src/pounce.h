@@ -123,7 +123,7 @@ void gaim_pounce_set_pouncer(GaimPounce *pounce, GaimAccount *pouncer);
  * @param pounce  The buddy pounce.
  * @param pouncee The buddy to pounce on.
  */
-void gaim_pounce_set_pouncee(GaimPounce *pounce, const char *buddy);
+void gaim_pounce_set_pouncee(GaimPounce *pounce, const char *pouncee);
 
 /**
  * Sets whether or not the pounce should be saved after execution.
@@ -263,7 +263,7 @@ void gaim_pounce_execute(const GaimAccount *pouncer, const char *pouncee,
  * Finds a pounce with the specified event(s) and buddy.
  *
  * @param pouncer The account to match against.
- * @param buddy   The buddy to match against.
+ * @param pouncee The buddy to match against.
  * @param events  The event(s) to match against.
  *
  * @return The pounce if found, or @c NULL otherwise.

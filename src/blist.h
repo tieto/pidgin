@@ -248,8 +248,8 @@ void gaim_blist_update_buddy_idle(GaimBuddy *buddy, int idle);
 /**
  * Updates a buddy's warning level.
  *
- * @param buddy  The buddy whose warning level has changed
- * @param evil   The warning level as an int from 0 to 100 (or higher, I guess... but that'd be weird)
+ * @param buddy   The buddy whose warning level has changed.
+ * @param warning The warning level as an int from 0 to 100.
  */
 void gaim_blist_update_buddy_evil(GaimBuddy *buddy, int warning);
 
@@ -351,9 +351,10 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
  * group if node is NULL.  If both are NULL, the buddy will be added to
  * the "Buddies" group.
  *
- * @param buddy  The new buddy who gets added
- * @param group  The group to add the new buddy to.
- * @param node   The insertion point
+ * @param buddy   The new buddy who gets added
+ * @param contact The optional contact to place the buddy in.
+ * @param group   The group to add the new buddy to.
+ * @param node    The insertion point
  */
 void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *group, GaimBlistNode *node);
 
@@ -494,7 +495,8 @@ GaimContact *gaim_find_contact(GaimGroup *group, const char *name);
 /**
  * Finds a chat by name.
  *
- * @param name The chat's name.
+ * @param account The chat's account.
+ * @param name    The chat's name.
  *
  * @return The chat, or @c NULL if the chat does not exist.
  */
@@ -521,8 +523,9 @@ GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy);
 /**
  * Returns a list of accounts that have buddies in this group
  *
- * @param group   The group
- * @return        A list of gaim_accounts
+ * @param g The group
+ *
+ * @return A list of gaim_accounts
  */
 GSList *gaim_group_get_accounts(GaimGroup *g);
 
@@ -531,6 +534,8 @@ GSList *gaim_group_get_accounts(GaimGroup *g);
  *
  * @param g       The group to search through.
  * @param account The account.
+ *
+ * @return TRUE if there are any buddies in the group, or FALSE otherwise.
  */
 gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account);
 
@@ -616,7 +621,7 @@ char *gaim_group_get_setting(GaimGroup *g, const char *key);
 /**
  * Associates some data with the chat in the xml buddy list
  *
- * @param b      The chat the data is associated with
+ * @param c      The chat the data is associated with
  * @param key    The key used to retrieve the data
  * @param value  The data to set
  */
@@ -625,8 +630,9 @@ void gaim_blist_chat_set_setting(GaimBlistChat *c, const char *key, const char *
 /**
  * Retrieves data from the XML buddy list set by gaim_chat_set_setting())
  *
- * @param b      The chat to retrieve data from
+ * @param c      The chat to retrieve data from
  * @param key    The key to retrieve the data with
+ *
  * @return       The associated data or NULL if no data is associated
  */
 char *gaim_blist_chat_get_setting(GaimBlistChat *c, const char *key);

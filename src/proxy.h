@@ -88,38 +88,38 @@ GaimProxyInfo *gaim_proxy_info_new(void);
 /**
  * Destroys a proxy information structure.
  *
- * @param proxy The proxy information structure to destroy.
+ * @param info The proxy information structure to destroy.
  */
 void gaim_proxy_info_destroy(GaimProxyInfo *info);
 
 /**
  * Sets the type of proxy.
  *
- * @param proxy The proxy information.
- * @param type  The proxy type.
+ * @param info The proxy information.
+ * @param type The proxy type.
  */
 void gaim_proxy_info_set_type(GaimProxyInfo *info, GaimProxyType type);
 
 /**
  * Sets the proxy host.
  *
- * @param proxy The proxy information.
- * @param host  The host.
+ * @param info The proxy information.
+ * @param host The host.
  */
 void gaim_proxy_info_set_host(GaimProxyInfo *info, const char *host);
 
 /**
  * Sets the proxy port.
  *
- * @param proxy The proxy information.
- * @param port  The port.
+ * @param info The proxy information.
+ * @param port The port.
  */
 void gaim_proxy_info_set_port(GaimProxyInfo *info, int port);
 
 /**
  * Sets the proxy username.
  *
- * @param proxy    The proxy information.
+ * @param info     The proxy information.
  * @param username The username.
  */
 void gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username);
@@ -127,7 +127,7 @@ void gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username);
 /**
  * Sets the proxy password.
  *
- * @param proxy    The proxy information.
+ * @param info     The proxy information.
  * @param password The password.
  */
 void gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password);
@@ -135,7 +135,7 @@ void gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password);
 /**
  * Returns the proxy's type.
  *
- * @param The proxy information.
+ * @param info The proxy information.
  *
  * @return The type.
  */
@@ -144,7 +144,7 @@ GaimProxyType gaim_proxy_info_get_type(const GaimProxyInfo *info);
 /**
  * Returns the proxy's host.
  *
- * @param The proxy information.
+ * @param info The proxy information.
  *
  * @return The host.
  */
@@ -153,7 +153,7 @@ const char *gaim_proxy_info_get_host(const GaimProxyInfo *info);
 /**
  * Returns the proxy's port.
  *
- * @param The proxy information.
+ * @param info The proxy information.
  *
  * @return The port.
  */
@@ -162,7 +162,7 @@ int gaim_proxy_info_get_port(const GaimProxyInfo *info);
 /**
  * Returns the proxy's username.
  *
- * @param The proxy information.
+ * @param info The proxy information.
  *
  * @return The username.
  */
@@ -171,7 +171,7 @@ const char *gaim_proxy_info_get_username(const GaimProxyInfo *info);
 /**
  * Returns the proxy's password.
  *
- * @param The proxy information.
+ * @param info The proxy information.
  *
  * @return The password.
  */
@@ -228,8 +228,8 @@ void gaim_input_remove(gint handle);
  *
  * @param account The account making the connection.
  * @param host    The destination host.
- * @Param port    The destination port.
- * @Param func    The input handler function.
+ * @param port    The destination port.
+ * @param func    The input handler function.
  * @param data    User-defined data.
  *
  * @return The socket handle.

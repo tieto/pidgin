@@ -264,7 +264,7 @@ GENERATE_DEPRECATEDLIST= YES
 
 ALIASES                = "signal=- @ref"
 ALIASES               += "signaldef=@section"
-ALIASES               += "endsignaldef=@endsection"
+ALIASES               += "endsignaldef="
 ALIASES               += "signalproto=@code"
 ALIASES               += "endsignalproto=@endcode"
 ALIASES               += "signaldesc=@par Description:\n"

@@ -219,7 +219,7 @@ gchar *strdup_withhtml(const gchar *src);
  *
  * @return The string with carriage returns.
  */
-char *add_cr(const char *);
+char *add_cr(const char *str);
 
 /**
  * Strips all linefeeds from a string.

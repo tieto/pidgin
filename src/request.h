@@ -517,8 +517,8 @@ GaimRequestField *gaim_request_field_bool_new(const char *id,
 /**
  * Sets the default value in an boolean field.
  *
- * @param field The field.
- * @param value The default value.
+ * @param field         The field.
+ * @param default_value The default value.
  */
 void gaim_request_field_bool_set_default_value(GaimRequestField *field,
 											   gboolean default_value);
@@ -526,8 +526,8 @@ void gaim_request_field_bool_set_default_value(GaimRequestField *field,
 /**
  * Sets the value in an boolean field.
  *
- * @param field         The field.
- * @param default_value The default value.
+ * @param field The field.
+ * @param value The value.
  */
 void gaim_request_field_bool_set_value(GaimRequestField *field,
 									   gboolean value);
@@ -536,7 +536,7 @@ void gaim_request_field_bool_set_value(GaimRequestField *field,
  * Returns the default value in an boolean field.
  *
  * @param field The field.
- * 
+ *
  * @return The default value.
  */
 gboolean gaim_request_field_bool_get_default_value(
@@ -673,7 +673,7 @@ void *gaim_request_input(void *handle, const char *title,
  * @param cancel_cb     The callback for the cancel button.
  * @param user_data     The data to pass to the callback.
  * @param choice_count  The number of choices.
- * @param choice        The choices.
+ * @param ...           The choices.
  *
  * @return A UI-specific handle.
  */
@@ -722,7 +722,7 @@ void *gaim_request_choice_varg(void *handle, const char *title,
  * @param default_action The default value.
  * @param user_data      The data to pass to the callback.
  * @param action_count   The number of actions.
- * @param action         The first action.
+ * @param ...            A list of actions.
  *
  * @return A UI-specific handle.
  */
@@ -841,7 +841,7 @@ void gaim_set_request_ui_ops(GaimRequestUiOps *ops);
  * Returns the UI operations structure to be used when displaying a
  * request.
  *
- * @param ops The UI operations structure.
+ * @return The UI operations structure.
  */
 GaimRequestUiOps *gaim_get_request_ui_ops(void);
 

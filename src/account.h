@@ -145,8 +145,8 @@ void gaim_account_set_alias(GaimAccount *account, const char *alias);
 /**
  * Sets the account's user information
  *
- * @param account The account.
- * @param info    The user information.
+ * @param account   The account.
+ * @param user_info The user information.
  */
 void gaim_account_set_user_info(GaimAccount *account, const char *user_info);
 
@@ -251,7 +251,7 @@ void gaim_account_set_int(GaimAccount *account, const char *name, int value);
  * @param value   The setting's value.
  */
 void gaim_account_set_string(GaimAccount *account, const char *name,
-							 const char *string);
+							 const char *value);
 
 /**
  * Sets a protocol-specific boolean setting for an account.
@@ -283,7 +283,7 @@ void gaim_account_set_ui_int(GaimAccount *account, const char *ui,
  * @param value   The setting's value.
  */
 void gaim_account_set_ui_string(GaimAccount *account, const char *ui,
-								const char *name, const char *string);
+								const char *name, const char *value);
 
 /**
  * Sets a UI-specific boolean setting for an account.

@@ -446,10 +446,10 @@ GaimWindow *gaim_get_last_window_with_type(GaimConversationType type);
 /**
  * Creates a new conversation of the specified type.
  *
- * @param type The type of conversation.
- * @param user The account opening the conversation window on the gaim
- *             user's end.
- * @param name The name of the conversation.
+ * @param type    The type of conversation.
+ * @param account The account opening the conversation window on the gaim
+ *                user's end.
+ * @param name    The name of the conversation.
  *
  * @return The new conversation.
  */
@@ -542,7 +542,7 @@ void gaim_conversation_set_title(GaimConversation *conv, const char *title);
 /**
  * Returns the specified conversation's title.
  *
- * @param win The conversation.
+ * @param conv The conversation.
  *
  * @return The title.
  */
@@ -581,7 +581,7 @@ void gaim_conversation_set_unseen(GaimConversation *conv,
  *
  * @param conv The conversation.
  *
- * @param The conversation's unseen state.
+ * @return The conversation's unseen state.
  */
 GaimUnseenState gaim_conversation_get_unseen(const GaimConversation *conv);
 
@@ -597,12 +597,15 @@ const char *gaim_conversation_get_name(const GaimConversation *conv);
 /**
  * Enables or disables logging for this conversation.
  *
- * @param log @c TRUE if logging should be enabled, or @c FALSE otherwise.
+ * @param conv The conversation.
+ * @param log  @c TRUE if logging should be enabled, or @c FALSE otherwise.
  */
 void gaim_conversation_set_logging(GaimConversation *conv, gboolean log);
 
 /**
  * Returns whether or not logging is enabled for this conversation.
+ *
+ * @param conv The conversation.
  *
  * @return @c TRUE if logging is enabled, or @c FALSE otherwise.
  */
@@ -1159,6 +1162,7 @@ GList *gaim_conv_placement_get_options(void);
 /**
  * Adds a conversation placement function to the list of possible functions.
  *
+ * @param id   The unique ID of the placement function.
  * @param name The name of the function.
  * @param fnc  A pointer to the function.
  */

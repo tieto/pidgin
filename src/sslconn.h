@@ -78,18 +78,18 @@ void gaim_ssl_close(GaimSslConnection *gsc);
  *
  * @return The number of bytes read.
  */
-size_t gaim_ssl_read(GaimSslConnection *gsc, void *data, size_t len);
+size_t gaim_ssl_read(GaimSslConnection *gsc, void *buffer, size_t len);
 
 /**
  * Writes data to an SSL connection.
  *
- * @param gsc  The SSL connection handle.
- * @param data The data to write.
- * @param len  The length of the data to write.
+ * @param gsc    The SSL connection handle.
+ * @param buffer The buffer to write.
+ * @param len    The length of the data to write.
  *
  * @return The number of bytes written.
  */
-size_t gaim_ssl_write(GaimSslConnection *gsc, const void *data, size_t len);
+size_t gaim_ssl_write(GaimSslConnection *gsc, const void *buffer, size_t len);
 
 /*@}*/
 

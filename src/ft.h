@@ -531,7 +531,7 @@ void gaim_xfers_init(void);
 /**
  * Sets the UI operations structure to be used in all gaim file transfers.
  *
- * @param fnc The function.
+ * @param ops The UI operations structure.
  */
 void gaim_set_xfer_ui_ops(GaimXferUiOps *ops);
 

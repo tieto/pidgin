@@ -133,7 +133,7 @@ void *gaim_notify_email(void *handle, const char *subject,
  * @param subjects  The array of subjects.
  * @param froms     The array of from addresses.
  * @param tos       The array of destination addresses.
- * @param url       The URLs where the messages can be read.
+ * @param urls      The URLs where the messages can be read.
  * @param cb        The callback to call when the user closes
  *                  the notification.
  * @param user_data The data to pass to the callback.
@@ -158,6 +158,7 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
  * @param text      The formatted text.
  * @param cb        The callback to call when the user closes
  *                  the notification.
+ * @param user_data The data to pass to the callback.
  *
  * @return A UI-specific handle.
  */
@@ -169,7 +170,7 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * Opens a URI or somehow presents it to the user.
  *
  * @param handle The plugin or connection handle.
- * @param url    The URI to display or go to.
+ * @param uri    The URI to display or go to.
  *
  * @return A UI-specific handle, if any. This may only be presented if
  *         the UI code displays a dialog instead of a webpage, or something

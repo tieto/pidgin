@@ -173,7 +173,7 @@ gboolean gaim_plugin_register(GaimPlugin *plugin);
 /**
  * Attempts to load a previously probed plugin.
  *
- * @param filename The plugin's filename.
+ * @param plugin The plugin to load.
  *
  * @return @c TRUE if successful, or @c FALSE otherwise.
  *

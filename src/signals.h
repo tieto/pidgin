@@ -44,12 +44,12 @@ extern "C" {
 /**
  * Registers a signal in an instance.
  *
- * @param instance  The instance to register the signal for.
- * @param signal    The signal name.
- * @param marshal   The marshal function.
- * @param ret_value The return value type, or NULL for no return value.
- * @param num_types The number of values to be passed to the callbacks.
- * @param ...       The values to pass to the callbacks.
+ * @param instance   The instance to register the signal for.
+ * @param signal     The signal name.
+ * @param marshal    The marshal function.
+ * @param ret_value  The return value type, or NULL for no return value.
+ * @param num_values The number of values to be passed to the callbacks.
+ * @param ...        The values to pass to the callbacks.
  *
  * @return The signal ID local to that instance, or 0 if the signal
  *         couldn't be registered.
@@ -80,6 +80,7 @@ void gaim_signals_unregister_by_instance(void *instance);
  *
  * @param instance   The instance the signal is registered to.
  * @param signal     The signal.
+ * @param ret_value  The return value from the last signal handler.
  * @param num_values The returned number of values.
  * @param values     The returned list of values.
  */

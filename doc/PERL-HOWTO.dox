@@ -9,7 +9,6 @@
   functions. However, with the latest changes to Gaim's perl API, a much
   larger part of Gaim is now open. In time, even such things as Gtk+
   preference panes for perl scripts will be possible.
- @endsection
 
  @section first-script Writing your first perl script
   Enough of that. You want to know how to write a perl script, right?
@@ -80,7 +79,6 @@ sub plugin_unload {
            okay, as long as they're set to be local. Bad Things (TM) can
            happen if you don't follow this simple instruction.
 
- @endsection
 
  @section Timeouts
   One feature useful to many perl plugin writers are timeouts. Timeouts allow
@@ -131,7 +129,6 @@ sub plugin_load {
 
   The data parameter is optional. If you don't have data to pass to the
   callback, simply omit the parameter.
- @endsection
 
  @section Signals
   Signals are how gaim plugins get events. There are a number of
@@ -163,18 +160,15 @@ sub plugin_load {
 
   Like timeouts, the callback can be an embedded subroutine, and also
   like timeouts, the data parameter can be omitted.
- @endsection
 
  @section Notes
   The API in perl is very similar to Gaim's C API. The functions have been
   gathered into packages, but most are the same, and the documentation can
   be a big help at times.
- @endsection
 
  @section Resources
   @see Signals
   @see Perl API Reference
- @endsection
 
 */
 // vim: syntax=c tw=75 et

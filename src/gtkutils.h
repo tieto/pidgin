@@ -77,8 +77,8 @@ void gaim_gtk_advance_past(GaimGtkConversation *gtkconv,
 /**
  * Surrounds the selected text with the specified font.
  *
- * @param conv The conversation.
- * @param font The new font.
+ * @param gtkconv The GTK+ conversation.
+ * @param font    The new font.
  */
 void gaim_gtk_set_font_face(GaimGtkConversation *gtkconv,
 							const char *font);
@@ -129,8 +129,8 @@ void gaim_gtk_toggle_sensitive(GtkWidget *widget, GtkWidget *to_toggle);
 /**
  * Toggles the sensitivity of all widgets in a pointer array.
  *
- * @param widget    @c NULL. Used for signal handlers.
- * @param to_toggle The array containing the widgets to toggle.
+ * @param w    @c NULL. Used for signal handlers.
+ * @param data The array containing the widgets to toggle.
  */
 void gtk_toggle_sensitive_array(GtkWidget *w, GPtrArray *data);
 
@@ -200,7 +200,7 @@ GtkWidget *gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 /**
  * Creates a toolbar button with the stock icon.
  *
- * @param icon  The stock icon name.
+ * @param stock The stock icon name.
  *
  * @return The button.
  */
