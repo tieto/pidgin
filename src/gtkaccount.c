@@ -1678,38 +1678,6 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
  * Accounts Dialog
  **************************************************************************/
 static void
-account_pulse_update(GaimGtkPulseData *pulse_data)
-{
-	GdkPixbuf *pixbuf;
-	GtkTreeIter iter;
-	size_t index = g_list_index(gaim_accounts_get_all(), pulse_data->account);
-
-	if (gtk_tree_model_iter_nth_child(pulse_data->model, &iter, NULL, index))
-	{
-		pixbuf = gdk_pixbuf_copy(pulse_data->online_pixbuf);
-
-		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf,
-										 pulse_data->pulse_value, FALSE);
-
-		if (pulse_data->pulse_to_grey)
-			pulse_data->pulse_value += 0.20;
-		else
-			pulse_data->pulse_value -= 0.20;
-
-		if (pulse_data->pulse_value >= 1)
-			pulse_data->pulse_to_grey = FALSE;
-		else if (pulse_data->pulse_value <= 0)
-			pulse_data->pulse_to_grey = TRUE;
-
-		gtk_list_store_set(GTK_LIST_STORE(pulse_data->model), &iter,
-						   COLUMN_ICON, pixbuf, -1);
-
-		if (pixbuf != NULL)
-			g_object_unref(G_OBJECT(pixbuf));
-	}
-}
-
-static void
 signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);

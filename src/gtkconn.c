@@ -211,7 +211,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 			l_accts_iter = l_accts;
 			while (l_accts_iter != NULL) {
 				account = l_accts_iter->data;
-				/* gaim_account_connect(account); */
+				gaim_account_connect(account, gaim_account_get_status(account, "online"));
 				l_accts_iter = l_accts_iter->next;
 			}
 			g_list_free(l_accts);
@@ -268,7 +268,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 			g_list_free(l_del);
 		}
 
-		/* 	gaim_account_connect(account); */
+		gaim_account_connect(account, gaim_account_get_status(account, "online"));
 		disconnect_window_update_buttons(model);
 
 		break;

@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "internal.h"
 
 #include "conversation.h"
@@ -41,7 +39,8 @@ static int interval = 5 * 60 * 1000;
 
 static GSList *timestamp_timeouts = NULL;
 
-static gboolean do_timestamp (gpointer data)
+static gboolean
+do_timestamp(gpointer data)
 {
 	GaimConversation *c = (GaimConversation *)data;
 	GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
@@ -49,13 +48,13 @@ static gboolean do_timestamp (gpointer data)
 	char mdate[7];
 	int is_conversation_active;
 	time_t tim = time(NULL);
-	
+
 	if (!g_list_find(gaim_get_conversations(), c))
 		return FALSE;
 
 	/* is_conversation_active is true if an im has been displayed since the last timestamp */
 	is_conversation_active = GPOINTER_TO_INT(gaim_conversation_get_data(c, "timestamp-conv-active"));
-	
+
 	if (is_conversation_active){
 		int y, height;
 		GdkRectangle rect;
@@ -73,11 +72,11 @@ static gboolean do_timestamp (gpointer data)
 		}
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
 		if (scroll)
-			gtk_imhtml_scroll_to_end(imhtml);
+			gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml));
 	}
 	else
 		gaim_conversation_set_data(c, "timestamp-enabled", GINT_TO_POINTER(FALSE));
-	
+
 	return TRUE;
 }
 
@@ -87,20 +86,20 @@ timestamp_displaying_conv_msg(GaimAccount *account, GaimConversation *conv,
 							  char **buffer, void *data)
 {
 	int is_timestamp_enabled;
-	
+
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return FALSE;
-	
+
 	/* set to true, since there has been an im since the last timestamp */
 	gaim_conversation_set_data(conv, "timestamp-conv-active", GINT_TO_POINTER(TRUE));
-	
+
 	is_timestamp_enabled = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "timestamp-enabled"));
-	
+
 	if (!is_timestamp_enabled){
 		gaim_conversation_set_data(conv, "timestamp-enabled", GINT_TO_POINTER(TRUE));
 		do_timestamp((gpointer)conv);
 	}
-	
+
 	return FALSE;
 }
 
@@ -117,10 +116,10 @@ timestamp_receiving_msg(GaimAccount *account, char **sender, char **buffer,
 static void timestamp_new_convo(GaimConversation *conv)
 {
 	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
-	
+
 	if (!g_list_find(gaim_get_conversations(), conv))
 		return;
-	
+
 	gtk_imhtml_show_comments(GTK_IMHTML(c->imhtml), FALSE);
 
 	/*
@@ -151,7 +150,7 @@ static void destroy_timer_list()
 		g_source_remove(GPOINTER_TO_INT(to->data));
 
 	g_slist_free(timestamp_timeouts);
-	
+
 	timestamp_timeouts = NULL;
 }
 
@@ -159,10 +158,10 @@ static void init_timer_list()
 {
 	GList *cnvs;
 	GaimConversation *c;
-	
+
 	if (timestamp_timeouts != NULL)
 		destroy_timer_list();
-	
+
 	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
 		c = cnvs->data;
 		timestamp_new_convo(c);
@@ -183,7 +182,7 @@ static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
 
 	interval = tm;
 	gaim_prefs_set_int("/plugins/gtk/timestamp/interval", interval);
-	
+
 	destroy_timer_list();
 	init_timer_list();
 }
@@ -233,7 +232,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	void *conv_handle = gaim_conversations_get_handle();
-	
+
 	init_timer_list();
 
 	gaim_signal_connect(conv_handle, "conversation-created",
@@ -264,7 +263,7 @@ plugin_unload(GaimPlugin *plugin)
 					plugin, GAIM_CALLBACK(timestamp_receiving_msg));
 	gaim_signal_disconnect(conv_handle, "displaying-im-msg",
 					plugin, GAIM_CALLBACK(timestamp_displaying_conv_msg));
-	
+
 	destroy_timer_list();
 
 	for (cnvs = gaim_get_conversations(); cnvs != NULL; cnvs = cnvs->next) {
@@ -308,7 +307,7 @@ static GaimPluginInfo info =
 
 	&ui_info,                                         /**< ui_info        */
 	NULL,                                             /**< extra_info     */
-	NULL,	
+	NULL,
 	NULL
 };
 

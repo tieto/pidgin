@@ -1631,6 +1631,7 @@ gaim_accounts_auto_login(const char *ui)
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		account = l->data;
 
+		/* TODO: Shouldn't be be using some sort of saved status here? */
 		if (gaim_account_get_enabled(account, ui))
 			gaim_account_connect(account, gaim_account_get_status(account, "online"));
 	}

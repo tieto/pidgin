@@ -6462,10 +6462,10 @@ static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 static void oscar_chat_invite(GaimConnection *gc, int id, const char *message, const char *name) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	struct chat_connection *ccon = find_oscar_chat(gc, id);
-	
-	if (!ccon)
+
+	if (ccon == NULL)
 		return;
-	
+
 	aim_im_sendch2_chatinvite(od->sess, name, message ? message : "",
 			ccon->exchange, ccon->name, 0x0);
 }
@@ -6491,7 +6491,7 @@ static void oscar_chat_leave(GaimConnection *gc, int id) {
 
 	gaim_debug_info("oscar",
 			   "Attempting to leave room %s (currently in %d rooms)\n", b->name, count);
-	
+
 	c = find_oscar_chat(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(b)));
 	if (c != NULL) {
 		if (od)

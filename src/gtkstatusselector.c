@@ -183,14 +183,13 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 
 	g_signal_connect(G_OBJECT(entry), "key_press_event",
 	                 G_CALLBACK(key_press_cb), selector);
-#if 0
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 	                    selector, GAIM_CALLBACK(signed_on_off_cb),
 	                    selector);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
 	                    selector, GAIM_CALLBACK(signed_on_off_cb),
 	                    selector);
-#endif 
+
 	rebuild_list(selector);
 }
 
@@ -299,7 +298,7 @@ status_switched_cb(GtkWidget *combo, GaimGtkStatusSelector *selector)
 		{
 			GaimAccount *account = (GaimAccount*)l->data;
 			GaimStatusType *status_type;
-			
+
 			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 				continue;
 
@@ -359,7 +358,7 @@ insert_text_timeout_cb(gpointer data)
 		{
 			GaimAccount *account = (GaimAccount*)l->data;
 			GaimStatusType *status_type;
-			
+
 			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 				continue;
 
