@@ -14,8 +14,8 @@ GAIM_TOP :=		..
 GAIM_SRC :=		.
 PERL_LIB_DIR :=		../../win32-dev/perl56
 PERL_INCLUDE :=         $(PERL_LIB_DIR)/CORE
-ASPELL_TOP :=		../../win32-dev/aspell-15
-GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.3
+ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
+GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.4
 IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
 MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
@@ -113,7 +113,8 @@ DLL_C_SRC =		about.c \
 			win32/win32dep.c \
 			win32/MinimizeToTray.c \
 			win32/libc_interface.c \
-			win32/systray.c
+			win32/systray.c \
+			win32/wspell.c
 
 RC_SRC =		win32/gaimrc.rc
 
@@ -127,8 +128,7 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
 ## LIBRARIES
 ##
 
-DLL_LIBS =		-lgtkspell \
-			-lgtk-win32-2.0 \
+DLL_LIBS =		-lgtk-win32-2.0 \
 			-lpango-1.0 \
 			-lglib-2.0 \
 			-lgdk-win32-2.0 \
@@ -140,10 +140,8 @@ DLL_LIBS =		-lgtkspell \
 			-liberty \
 			-lwinmm \
 			-lperl56 \
-			-laspell-15 \
 			-lidletrack
 			
-
 
 EXE_LIBS = -lgaim -lglib-2.0
 
