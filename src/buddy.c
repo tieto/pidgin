@@ -72,6 +72,7 @@
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/group.xpm"
+#include "pixmaps/logout_menu.xpm"
 
 static GtkTooltips *tips;
 static GtkAccelGroup *accel;
@@ -2415,7 +2416,7 @@ void show_buddy_list()
 	/*gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,
 	   GTK_SIGNAL_FUNC(show_export_dialog), 0, 0, 0); */
 	gaim_separator(menu);
-	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_icon_xpm,
+	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_menu_xpm,
 				  GTK_SIGNAL_FUNC(signoff_all), 'd', GDK_CONTROL_MASK, "Ctl+D");
 
 #ifndef USE_APPLET

@@ -61,6 +61,7 @@ EXTRA_DIST =	ab.xpm				\
 		login_icon.xpm			\
 		logo.xpm			\
 		logout_icon.xpm			\
+		logout_menu.xpm			\
 		luke03.xpm			\
 		moneymouth.xpm			\
 		mrt.xpm				\
