@@ -398,12 +398,8 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 					 G_CALLBACK(formatted_input_cb), NULL);
 
 	/* Add the text to the gtkimhtml */
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_colors"))
-		options ^= GTK_IMHTML_NO_COLOURS;
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_fonts"))
-		options ^= GTK_IMHTML_NO_FONTS;
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_font_sizes"))
-		options ^= GTK_IMHTML_NO_SIZES;
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_formatting"))
+		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	options ^= GTK_IMHTML_NO_COMMENTS;
 	options ^= GTK_IMHTML_NO_TITLE;
