@@ -351,7 +351,13 @@ void show_login()
         gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(remember), (general_options & OPT_GEN_REMEMBER_PASS));
         
 	if (current_user) {
-		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(name)->entry), current_user->username);
+		GList *all = combo_user_names();
+		GList *srch = g_list_find(all, (void *)current_user->username);
+		int length = g_list_length(all) - g_list_length(srch);
+		g_list_free(srch);
+		g_list_free(all);
+		
+		gtk_combo_set_value_in_list(GTK_COMBO(name), length, 0);
                 if ((general_options & OPT_GEN_REMEMBER_PASS)) {
                         gtk_entry_set_text(GTK_ENTRY(pass), current_user->password);
                 }
