@@ -186,6 +186,8 @@ gtk_imhtml_destroy (GtkObject *object)
 	gdk_cursor_destroy (imhtml->arrow_cursor);
 
 	g_hash_table_destroy (imhtml->smiley_hash);
+	if (imhtml->smiley_start)
+		g_string_free (imhtml->smiley_start, TRUE);
 
 	if (GTK_OBJECT_CLASS (parent_class)->destroy != NULL)
 		(* GTK_OBJECT_CLASS (parent_class)->destroy) (object);
@@ -1480,6 +1482,12 @@ gtk_imhtml_associate_smiley (GtkIMHtml  *imhtml,
 	if (strlen (text) > imhtml->smax)
 		imhtml->smax = strlen (text);
 
+	if (!imhtml->smiley_start)
+		imhtml->smiley_start = g_string_new ("");
+
+	if (!strchr (imhtml->smiley_start->str, text [0]))
+		imhtml->smiley_start = g_string_append_c (imhtml->smiley_start, text [0]);
+
 	if (xpm == NULL)
 		g_hash_table_remove (imhtml->smiley_hash, text);
 	else
@@ -1804,6 +1812,9 @@ gtk_imhtml_is_smiley (GtkIMHtml   *imhtml,
 	g_return_val_if_fail (imhtml != NULL, 0);
 	g_return_val_if_fail (GTK_IS_IMHTML (imhtml), 0);
 	g_return_val_if_fail (text != NULL, 0);
+
+	if (!imhtml->smiley_start || !strchr (imhtml->smiley_start->str, text [0]))
+		return 0;
 
 	tmp = g_malloc (imhtml->smax + 1);
 

@@ -72,6 +72,7 @@ struct _GtkIMHtml {
 	gboolean comments;
 
 	GHashTable *smiley_hash;
+	GString *smiley_start;
 	gint smin, smax;
 };
 
