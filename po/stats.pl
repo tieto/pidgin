@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2003 Nathan Walp <faceprint@faceprint.com>
+# Copyright 2003-2004 Nathan Walp <faceprint@faceprint.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,9 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 50 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
+
+
+my $PACXAGE="gaim";
 
 
 use Locale::Language;
@@ -38,7 +41,7 @@ $now = `date`;
 
 system("./update.pl --pot > /dev/null");
 
-$_ = `msgfmt --statistics gaim.pot -o /dev/null 2>&1`;
+$_ = `msgfmt --statistics $PACKAGE.pot -o /dev/null 2>&1`;
 
 die "unable to get total: $!" unless (/(\d+) untranslated messages/);
 
@@ -54,7 +57,7 @@ foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
 	$po = $pos[$index];
 	print STDERR "$po..." if($ARGV[0] eq '-v');
-	system("msgmerge $po.po gaim.pot -o $po.new 2>/dev/null");
+	system("msgmerge $po.po $PACKAGE.pot -o $po.new 2>/dev/null");
 	$_ = `msgfmt --statistics $po.new -o /dev/null 2>&1`;
 	chomp;
 	if(/(\d+) translated messages/) { $trans = $1; }
@@ -85,7 +88,7 @@ foreach $index (0 .. $#pos) {
 	print STDERR "done ($untrans untranslated strings).\n" if($ARGV[0] eq '-v');
 }
 print "</table></td></tr></table>\n";
-print "Latest gaim.pot generated $now: <a href='gaim.pot'>gaim.pot</a><br />\n";
+print "Latest $PACKAGE.pot generated $now: <a href='$PACKAGE.pot'>$PACKAGE.pot</a><br />\n";
 print "</body>\n";
 print "</html>\n";
 
