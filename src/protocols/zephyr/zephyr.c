@@ -2345,6 +2345,9 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 	char *sender = (char *)zephyr->username;
 
 	zt = find_sub_by_id(gc->proto_data,id);
+        /* find_sub_by_id can return NULL */
+        if (!zt) 
+                return;
 	gconv = gaim_find_conversation_with_account(zt->name, gc->account);
 	gcc = gaim_conversation_get_chat_data(gconv);
 
