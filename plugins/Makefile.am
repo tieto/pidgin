@@ -13,7 +13,7 @@ if PLUGINS
 
 plugindir = $(libdir)/gaim
 
-plugin_DATA = autorecon.so chatlist.so iconaway.so notify.so spellchk.so history.so timestamp.so
+plugin_DATA = autorecon.so chatlist.so iconaway.so notify.so spellchk.so history.so timestamp.so idle.c
 
 $(plugin_DATA): $(top_srcdir)/src/gaim.h
 
@@ -29,4 +29,4 @@ endif
 
 EXTRA_DIST = ChangeLog PERL-HOWTO HOWTO SIGNALS autorecon.c filectl.c iconaway.c \
 		notify.c spellchk.c gaim.pl mailchk.c chatlist.c gtik.c error.c  \
-		history.c timestamp.c fortuneprofile.pl
+		history.c timestamp.c fortuneprofile.pl idle.c
