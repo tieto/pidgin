@@ -892,19 +892,19 @@ void create_away_mess(GtkWidget *widget, void *dummy)
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Save"), GTK_STOCK_SAVE, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(save_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Save & Use"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(su_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Use"), GTK_STOCK_EXECUTE, GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(use_away_mess), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
-	button = gaim_pixbuf_button_from_stock(_("Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
+	button = gaim_pixbuf_button_from_stock(_("_Cancel"), GTK_STOCK_CANCEL, GAIM_BUTTON_HORIZONTAL);
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(away_mess_destroy), ca);
 	gtk_box_pack_end(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 
