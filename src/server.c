@@ -158,7 +158,15 @@ void serv_finish_login()
 void serv_send_im(char *name, char *message, int away)
 {
 	struct conversation *cnv = find_conversation(name);
-	if (!cnv || !cnv->is_direct) {
+	if (cnv && cnv->is_direct) {
+		if (!USE_OSCAR) {
+			/* FIXME */
+		} else {
+			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
+			debug_print(debug_buff);
+			aim_send_im_direct(gaim_sess, cnv->conn, message);
+		}
+	} else {
 		if (!USE_OSCAR) {
 			char buf[MSG_LEN - 7];
 
@@ -170,14 +178,6 @@ void serv_send_im(char *name, char *message, int away)
 				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_AWAY, message);
 			else
 				aim_send_im(gaim_sess, gaim_conn, name, AIM_IMFLAGS_ACK, message);
-		}
-	} else {
-		if (!USE_OSCAR) {
-			/* FIXME */
-		} else {
-			sprintf(debug_buff, "Sending DirectIM to %s\n", name);
-			debug_print(debug_buff);
-			aim_send_im_direct(gaim_sess, cnv->conn, message);
 		}
 	}
         if (!away)
