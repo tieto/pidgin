@@ -126,7 +126,7 @@ u_char aim_caps[8][16] = {
 
   /* Games */
   {0x09, 0x46, 0x13, 0x4a, 0x4c, 0x7f, 0x11, 0xd1,
-   0x22, 0x82, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
+   0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00},
 };
 
 faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
@@ -153,7 +153,10 @@ faim_internal unsigned short aim_getcap(unsigned char *capblock, int buflen)
       }
     }
     if (!identified) {
-      printf("faim: unknown capability!\n");
+      printf("faim: unknown capability ");
+      for (y = 0; y < 0x10; y++)
+        printf("%02x ", capblock[offset+y]);
+      printf("\n");
       ret |= 0xff00;
     }
 
@@ -374,6 +377,8 @@ faim_internal int aim_extractuserinfo(u_char *buf, struct aim_userinfo_s *outinf
 	  break;
 	
 	outinfo->capabilities = aim_getcap(buf+i+4, len);
+	if (outinfo->capabilities & 0xff00)
+          printf("%s\n", outinfo->sn);
       }
       break;
       

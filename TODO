@@ -3,16 +3,15 @@
 	Make Yahoo plugin let you have two identities in the same connection
 		(different from multiple connections)
 	Figure out some way of not displaying a million new mail messages
-	Allow messages through server for ICQ
 	File transfer for IRC?  Maybe later?
-	Chat for Yahoo/ICQ
+	Chat for Yahoo/ICQ/Jabber
 	File transfer for Yahoo/ICQ/Oscar/Napster
 	Working file transfer for TOC
 	Other RVOUS actions for TOC/Oscar
-	Get Jabber working
+	Jabber Transports
 	Fix MSN signon process
 	Make it so you can register new accounts via gaim
-	Napster user registration
+	Jabber/ICQ/Napster user registration
 
 	Syd is cool and gave all of these ideas:
 		Have multiple tickers in the same window, one for buddies
