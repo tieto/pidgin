@@ -495,10 +495,10 @@ static int open_socket(char *name)
 		if (connect(fd, (struct sockaddr *)&saddr, sizeof(saddr)) != -1)
 			return fd;
 		else
-			debug_printf("Failed to assign %s to a socket (Error: %s)",
+			debug_printf("Failed to assign %s to a socket (Error: %s)\n",
 					saddr.sun_path, strerror(errno));
 	} else
-		debug_printf("Unable to open socket: %s", strerror(errno));
+		debug_printf("Unable to open socket: %s\n", strerror(errno));
 	close(fd);
 	return -1;
 }
