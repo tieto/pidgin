@@ -94,6 +94,7 @@ DLL_C_SRC =		about.c \
 			gtkplugin.c \
 			gtkpounce.c \
 			gtkprefs.c \
+			gtkrequest.c \
 			gtkutils.c \
 			html.c \
 			idle.c \
@@ -107,6 +108,7 @@ DLL_C_SRC =		about.c \
 			prefs.c \
 			proxy.c \
 			prpl.c \
+			request.c \
 			server.c \
 			sound.c \
 			stock.c \
