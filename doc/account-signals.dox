@@ -13,52 +13,52 @@
   @signalproto
 void (*account_away)(GaimAccount *account, const char *state, const char *message);
   @endsignalproto
+  @signaldesc
+   Emitted when an account goes away.
   @param account The account that went away.
   @param state   The away state.
   @param message The away message.
-  @signaldesc
-   Emitted when an account goes away.
  @endsignaldef
 
  @signaldef account-connecting
   @signalproto
 void (*account_connecting)(GaimAccount *account);
   @endsignalproto
-  @param account The account in the process of connecting.
   @signaldesc
    This is called when an account is in the process of connecting.
+  @param account The account in the process of connecting.
  @endsignaldef
 
  @signaldef account-setting-info
   @signalproto
 void (*account_setting_info)(GaimAccount *account, const char *new_info);
   @endsignalproto
-  @param account  The account that the info will be set on.
-  @param new_info The new information to set.
   @signaldesc
    Emitted when a user is about to send his new user info, or
    profile, to the server.
+  @param account  The account that the info will be set on.
+  @param new_info The new information to set.
  @endsignaldef
 
  @signaldef account-set-info
   @signalproto
 void (*account_set_info)(GaimAccount *account, const char *new_info);
   @endsignalproto
-  @param account  The account that the info was set on.
-  @param new_info The new information set.
   @signaldesc
    Emitted when a user sent his new user info, or profile, to the server.
+  @param account  The account that the info was set on.
+  @param new_info The new information set.
  @endsignaldef
 
  @signaldef account-warned
   @signalproto
 void (*account_warned)(GaimAccount *account, const char *warner, int level);
   @endsignalproto
+  @signaldesc
+   Emitted when an account got warned.
   @param account The account that was warned.
   @param warner  The screenname of the user that warned the account.
   @param level   The new warning level.
-  @signaldesc
-   Emitted when an account got warned.
  @endsignaldef
 
  */

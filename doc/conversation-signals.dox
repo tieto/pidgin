@@ -31,8 +31,6 @@
   @signalproto
 gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
   @endsignalproto
-  @param account The account the message is being displayed on.
-  @param message A pointer to the message that will be displayed.
   @signaldesc
    Emitted just before a message is displayed in an IM conversation.
    @a message is a pointer to a string, so the plugin can replace the
@@ -40,6 +38,8 @@ gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
    a message by returning @c TRUE.
   @note
    Make sure to free @a *message before you replace it!
+  @param account The account the message is being displayed on.
+  @param message A pointer to the message that will be displayed.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
  @endsignaldef
 
@@ -47,50 +47,50 @@ gboolean (*displaying_im_msg)(GaimAccount *account, char **message);
   @signalproto
 void (*displayed_im_msg)(GaimAccount *account, const char *message);
   @endsignalproto
-  @param account The account the message was displayed on.
-  @param message The message that was displayed.
   @signaldesc
    Emitted after a message is displayed in an IM conversation.
+  @param account The account the message was displayed on.
+  @param message The message that was displayed.
  @endsignaldef
 
  @signaldef sending-im-msg
   @signalproto
 void (*sending_im_msg)(GaimAccount *account, const char *receiver, char **message);
   @endsignalproto
-  @param conv     The account the message is being sent on.
-  @param receiver The username of the receiver.
-  @param message  A pointer to the outgoing message. This can be modified.
   @signaldesc
    Emitted before sending an IM to a user. @a message is a pointer to the
    message string, so the plugin can replace the message before being sent.
   @note
    Make sure to free @a *message before you replace it!
+  @param conv     The account the message is being sent on.
+  @param receiver The username of the receiver.
+  @param message  A pointer to the outgoing message. This can be modified.
  @endsignaldef
 
  @signaldef sent-im-msg
   @signalproto
 void (*sent_im_msg)(GaimAccount *account, const char *receiver, const char *message);
   @endsignalproto
+  @signaldesc
+   Emitted after sending an IM to a user.
   @param account  The account the message was sent on.
   @param receiver The username of the receiver.
   @param message  The message that was sent.
-  @signaldesc
-   Emitted after sending an IM to a user.
  @endsignaldef
 
  @signaldef received-im-msg
   @signalproto
 gboolean (*received_im_msg)(GaimAccount *account, char **sender, char **message, int *flags);
   @endsignalproto
-  @param account The account the message was received on.
-  @param sender  A pointer to the username of the sender.
-  @param message A pointer to the message that was sent.
   @signaldesc
    Emitted when an IM is received. The callback can replace the name of the
    sender, the message, or the flags by modifying the pointer to the
    strings and integer. This can also be used to cancel a message by
    returning @c TRUE.
   @return @c TRUE if the message should be canceled, or @c FALSE otherwise.
+  @param account The account the message was received on.
+  @param sender  A pointer to the username of the sender.
+  @param message A pointer to the message that was sent.
  @endsignaldef
 
  @signaldef displaying-chat-msg

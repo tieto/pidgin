@@ -16,54 +16,54 @@
   @signalproto
 void (*buddy_away)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that went away.
   @signaldesc
    Emitted when a buddy on your buddy list goes away.
+  @param buddy The buddy that went away.
  @endsignaldef
 
  @signaldef buddy-back
   @signalproto
 void (*buddy_back)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that came back from being away.
   @signaldesc
    Emitted when a buddy on your buddy list comes back from being away.
+  @param buddy The buddy that came back from being away.
  @endsignaldef
 
  @signaldef buddy-idle
   @signalproto
 void (*buddy_idle)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that became idle.
   @signaldesc
    Emitted when a buddy on your buddy list becomes idle.
+  @param buddy The buddy that became idle.
  @endsignaldef
 
  @signaldef buddy-unidle
   @signalproto
 void (*buddy_unidle)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that returned from being idle.
   @signaldesc
    Emitted when a buddy on your buddy list returns from being idle.
+  @param buddy The buddy that returned from being idle.
  @endsignaldef
 
  @signaldef buddy-signed-on
   @signalproto
 void (*buddy_signed_on)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that signed on.
   @signaldesc
    Emitted when a buddy on your buddy list signs on.
+  @param buddy The buddy that signed on.
  @endsignaldef
 
  @signaldef buddy-signed-off
   @signalproto
 void (*buddy_signed_off)(struct buddy *buddy);
   @endsignalproto
-  @param buddy The buddy that signed off.
   @signaldesc
    Emitted when a buddy on your buddy list signs off.
+  @param buddy The buddy that signed off.
  @endsignaldef
 
  @signaldef update-idle
