@@ -553,35 +553,39 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *from = NULL;
 	time_t tm = time(NULL);
 	GSList *l = pkt->hash;
-	
-	while (l) {
-		struct yahoo_pair *pair = l->data;
-		if (pair->key == 4)
-			from = pair->value;
-		if (pair->key == 14)
-			msg = pair->value;
-		if (pair->key == 15)
-			tm = strtol(pair->value, NULL, 10);
-		l = l->next;
-	}
 
 	if (pkt->status <= 1 || pkt->status == 5) {
-		char *m;
-		int i, j;
-		strip_linefeed(msg);
-		m = msg;
-		for (i = 0, j = 0; m[i]; i++) {
-			if (m[i] == 033) {
-				while (m[i] && (m[i] != 'm'))
-					i++;
-				if (!m[i])
-					i--;
-				continue;
+		while (l) {
+			struct yahoo_pair *pair = l->data;
+			if (pair->key == 4)
+				from = pair->value;
+			if (pair->key == 15)
+				tm = strtol(pair->value, NULL, 10);
+			if (pair->key == 14) {
+				char *m;
+				int i, j;
+
+				msg = pair->value;
+
+				strip_linefeed(msg);
+				m = msg;
+				for (i = 0, j = 0; m[i]; i++) {
+					if (m[i] == 033) {
+						while (m[i] && (m[i] != 'm'))
+							i++;
+						if (!m[i])
+							i--;
+						continue;
+					}
+					msg[j++] = m[i];
+				}
+				msg[j] = 0;
+				serv_got_im(gc, from, msg, 0, tm, -1);
+
+				tm = time(NULL);
 			}
-			msg[j++] = m[i];
+			l = l->next;
 		}
-		msg[j] = 0;
-		serv_got_im(gc, from, msg, 0, tm, -1);
 	} else if (pkt->status == 2) {
 		gaim_notify_error(gc, NULL,
 						  _("Your Yahoo! message did not get sent."), NULL);
