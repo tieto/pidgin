@@ -4438,10 +4438,7 @@ gaim_gtk_new_window(GaimConvWindow *win)
 	/* Create the window. */
 	gtkwin->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkwin->window), "conversation");
-	gtk_window_set_resizable(GTK_WINDOW(gtkwin->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->window), 0);
-	GTK_WINDOW(gtkwin->window)->allow_shrink = TRUE;
-	gtk_widget_realize(gtkwin->window);
 
 	g_signal_connect(G_OBJECT(gtkwin->window), "delete_event",
 					 G_CALLBACK(close_win_cb), win);
@@ -4507,25 +4504,6 @@ gaim_gtk_show(GaimConvWindow *win)
 	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
 
 	gtk_widget_show(gtkwin->window);
-
-#ifdef _WIN32
-	/* This works around a win32 gtk+ bug, where it can't handle
-	 * creating the button correctly before the window is shown.
-	 * That's why we get the appearance of a button, without all
-	 * the normal button-like properties, like being able to click
-	 * it. ;-)  --Nathan */
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs")) {
-		GaimConversation *conv;
-		GaimGtkConversation *gtkconv;
-
-		conv = gaim_conv_window_get_conversation_at(win, 0);
-		if(conv) {
-			gtkconv = GAIM_GTK_CONVERSATION(conv);
-			gtk_widget_hide(gtkconv->close);
-			gtk_widget_show_all(gtkconv->close);
-		}
-	}
-#endif
 }
 
 static void
@@ -4718,7 +4696,6 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gtk_misc_set_padding(GTK_MISC(gtkconv->tab_label), 4, 0);
 #endif
 
-
 	/* Pack it all together. */
 	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_icon,
@@ -4744,9 +4721,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gaim_gtkconv_update_buddy_icon(conv);
 
 	/* Add this pane to the conversation's notebook. */
-	gtk_notebook_append_page(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby);
-	gtk_notebook_set_menu_label(GTK_NOTEBOOK(gtkwin->notebook),
-								tab_cont, menu_tabby);
+	gtk_notebook_append_page_menu(GTK_NOTEBOOK(gtkwin->notebook), tab_cont, tabby, menu_tabby);
 
 	gtk_widget_show(tab_cont);
 

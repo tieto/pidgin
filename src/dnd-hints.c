@@ -66,7 +66,6 @@ dnd_hints_init_window(const gchar *fname)
 	gtk_widget_push_colormap(gdk_rgb_get_colormap());
 	win = gtk_window_new(GTK_WINDOW_POPUP);
 	pix = gtk_image_new_from_pixmap(pixmap, bitmap);
-	gtk_widget_realize(win);
 	gtk_container_add(GTK_CONTAINER(win), pix);
 	gtk_widget_shape_combine_mask(win, bitmap, 0, 0);
 	gtk_widget_pop_colormap();

@@ -388,8 +388,6 @@ privacy_dialog_new(void)
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
 
-	gtk_widget_realize(dialog->win);
-
 	/* Main vbox */
 	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);

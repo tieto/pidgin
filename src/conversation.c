@@ -812,10 +812,11 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		GaimConvWindow *win;
 
 		win = gaim_conv_window_new();
-		gaim_conv_window_add_conversation(win, conv);
-
+		
 		/* Ensure the window is visible. */
 		gaim_conv_window_show(win);
+		
+		gaim_conv_window_add_conversation(win, conv);
 	}
 	else
 	{
@@ -2085,7 +2086,7 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 	GaimConvChatBuddy *cb;
 	char tmp[BUF_LONG];
 	GList *l;
-	gboolean quiet;
+	gboolean quiet = FALSE;
 
 	g_return_if_fail(chat  != NULL);
 	g_return_if_fail(users != NULL);
@@ -2357,9 +2358,8 @@ conv_placement_last_created_win(GaimConversation *conv)
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
-
-		gaim_conv_window_add_conversation(win, conv);
 		gaim_conv_window_show(win);
+		gaim_conv_window_add_conversation(win, conv);
 	}
 	else
 		gaim_conv_window_add_conversation(win, conv);
@@ -2375,9 +2375,8 @@ conv_placement_last_created_win_type(GaimConversation *conv)
 
 	if (win == NULL) {
 		win = gaim_conv_window_new();
-
-		gaim_conv_window_add_conversation(win, conv);
 		gaim_conv_window_show(win);
+		gaim_conv_window_add_conversation(win, conv);
 	}
 	else
 		gaim_conv_window_add_conversation(win, conv);

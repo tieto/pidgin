@@ -227,7 +227,6 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		gtk_window_set_title(GTK_WINDOW(imaway), _("Away!"));
 	g_signal_connect(G_OBJECT(imaway), "destroy",
 			G_CALLBACK(do_im_back), imaway);
-	gtk_widget_realize(imaway);
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(imaway), vbox);

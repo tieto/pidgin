@@ -387,7 +387,6 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 						  ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
-	gtk_widget_realize(window);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

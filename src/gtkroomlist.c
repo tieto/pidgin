@@ -330,7 +330,6 @@ GaimGtkRoomlistDialog *gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *ac
 	gtk_window_set_title(GTK_WINDOW(window), _("Room List"));
 
 	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
-	gtk_widget_realize(window);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

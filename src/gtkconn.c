@@ -201,7 +201,6 @@ static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		gtk_window_set_role(GTK_WINDOW(meter_win->window), "signon");
 		gtk_container_set_border_width(GTK_CONTAINER(meter_win->window), 5);
 		gtk_window_set_title(GTK_WINDOW(meter_win->window), _("Signon"));
-		gtk_widget_realize(meter_win->window);
 
 		vbox = gtk_vbox_new (FALSE, 0);
 		gtk_container_add(GTK_CONTAINER(meter_win->window), vbox);

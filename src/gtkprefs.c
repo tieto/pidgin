@@ -2481,7 +2481,6 @@ void gaim_gtk_prefs_show(void)
 	/* Create the window */
 	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
-	gtk_widget_realize(prefs);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(prefs), 12);

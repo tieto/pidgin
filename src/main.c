@@ -230,8 +230,6 @@ void show_login()
 	gtk_window_set_role(GTK_WINDOW(mainwindow), "login");
 	gtk_window_set_resizable(GTK_WINDOW(mainwindow), FALSE);
 	gtk_window_set_title(GTK_WINDOW(mainwindow), _("Login"));
-	gtk_widget_realize(mainwindow);
-	gdk_window_set_group(mainwindow->window, mainwindow->window);
 	gtk_container_set_border_width(GTK_CONTAINER(mainwindow), 5);
 	g_signal_connect(G_OBJECT(mainwindow), "delete_event",
 					 G_CALLBACK(login_window_closed), mainwindow);

@@ -3061,8 +3061,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
 
-	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
-
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
