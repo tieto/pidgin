@@ -4117,9 +4117,12 @@ char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml)
 	gtk_text_iter_forward_to_line_end(&end);
 
 	for (i = 0, j = 0; i < lines; i++) {
-		ret[j] = gtk_imhtml_get_markup_range(imhtml, &start, &end);
-		if (ret[j] != NULL)
-			j++;
+		if (gtk_text_iter_get_char(&start) != '\n') {
+			ret[j] = gtk_imhtml_get_markup_range(imhtml, &start, &end);
+			if (ret[j] != NULL)
+				j++;
+		}
+
 		gtk_text_iter_forward_line(&start);
 		end = start;
 		gtk_text_iter_forward_to_line_end(&end);
