@@ -4218,7 +4218,7 @@ void show_log(char *nm)
 	g_signal_handler_disconnect(G_OBJECT(window), block);
 	g_signal_connect(G_OBJECT(window), "delete_event", G_CALLBACK(destroy_dialog), window);
 
-	frame = gtk_frame_new(_("Conversation"));
+	frame = gtk_frame_new(_("Log"));
 	gtk_widget_show(frame);
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
