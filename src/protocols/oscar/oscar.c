@@ -516,8 +516,10 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 		} else {
 			if (aim_get_command(od->sess, conn) >= 0) {
 				aim_rxdispatch(od->sess);
-				if (od->killme)
-					gaim_connection_destroy(gc);
+				if (od->killme) {
+					gaim_debug(GAIM_DEBUG_ERROR, "oscar", "Waiting to be destroyed\n");
+					return;
+				}
 			} else {
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS))) {
@@ -1028,16 +1030,15 @@ static void oscar_ask_sendfile(GaimConnection *gc, const char *destsn) {
 }
 
 static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
+	GaimConnection *gc = sess->aux_data;
+	struct oscar_data *od = gc->proto_data;
+	GaimAccount *account = gc->account;
+	aim_conn_t *bosconn;
+	char *host; int port;
+	int i, rc;
 	va_list ap;
 	struct aim_authresp_info *info;
-	int i, rc;
-	char *host; int port;
-	GaimAccount *account;
-	aim_conn_t *bosconn;
 
-	GaimConnection *gc = sess->aux_data;
-        struct oscar_data *od = gc->proto_data;
-	account = gc->account;
 	port = gaim_account_get_int(account, "port", FAIM_LOGIN_PORT);
 
 	va_start(ap, fr);

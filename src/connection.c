@@ -172,6 +172,16 @@ gaim_connection_disconnect(GaimConnection *gc)
 	gaim_connection_destroy(gc);
 }
 
+gboolean
+gaim_connection_disconnect_cb(gpointer data)
+{
+	GaimConnection *gc = data;
+
+	gaim_connection_disconnect(gc);
+
+	return FALSE;
+}
+
 /*
  * d:)->-< 
  *
@@ -361,7 +371,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	if (ops != NULL && ops->disconnected != NULL)
 		ops->disconnected(gc, text);
 
-	gaim_connection_disconnect(gc);
+	g_timeout_add(0, gaim_connection_disconnect_cb, gc);
 }
 
 void
