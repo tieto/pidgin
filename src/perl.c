@@ -28,7 +28,6 @@
 #endif
 #undef PACKAGE
 
-#ifndef USE_APPLET /* FIXME: _ conflicts */
 #ifdef USE_PERL
 
 #include <EXTERN.h>
@@ -43,6 +42,12 @@
 #include <fcntl.h>
 #undef PACKAGE
 #include <stdio.h>
+
+/* perl module support */
+extern void xs_init _((void));
+extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
+
+#undef _
 #include "gaim.h"
 
 struct perlscript {
@@ -79,10 +84,6 @@ XS(XS_AIM_add_message_handler);
 XS(XS_AIM_add_command_handler);
 XS(XS_AIM_add_timeout_handler);
 
-
-/* perl module support */
-extern void xs_init _((void));
-extern void boot_DynaLoader _((CV * cv)); /* perl is so wacky */
 
 void xs_init()
 {
@@ -300,7 +301,18 @@ XS (XS_AIM_online_list)
 
 XS (XS_AIM_deny_list)
 {
-	/* FIXME */
+	char *name;
+	GList *list = deny;
+	int i = 0;
+	dXSARGS;
+	items = 0;
+
+	while (list) {
+		name = (char *)list->data;
+		XST_mPV(i++, name);
+		list = list->next;
+	}
+	XSRETURN(i);
 }
 
 XS (XS_AIM_command)
@@ -369,4 +381,3 @@ XS (XS_AIM_add_timeout_handler)
 }
 
 #endif /* USE_PERL */
-#endif /* ifndef USE_APPLET */
