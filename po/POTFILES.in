@@ -23,6 +23,7 @@ src/buddy.c
 src/buddy_chat.c
 src/conversation.c
 src/dialogs.c
+src/ft.c
 src/gaimrc.c
 src/html.c
 src/module.c
