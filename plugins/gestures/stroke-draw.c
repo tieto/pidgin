@@ -22,7 +22,7 @@
 
 static void gstroke_invisible_window_init (GtkWidget *widget);
 /*FIXME: Maybe these should be put in a structure, and not static...*/
-static Display * gstroke_disp;
+static Display * gstroke_disp = NULL;
 static Window gstroke_window;
 static GC gstroke_gc;
 static int mouse_button = 2;
@@ -139,7 +139,7 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 		  gdk_pointer_ungrab (event->button.time);
 		  timer_id = 0;
 
-		  if (gstroke_draw_strokes()) {
+		  if (gstroke_draw_strokes() && gstroke_disp != NULL) {
 			  /* get rid of the invisible stroke window */
 			  XUnmapWindow (gstroke_disp, gstroke_window);
 			  XFlush (gstroke_disp);
