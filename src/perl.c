@@ -717,7 +717,7 @@ int perl_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, void *
 		char *t3, *t4;
 		t3 = g_strdup(escape_quotes(arg3));
 		t4 = arg4 ? g_strdup(escape_quotes(arg4)) : g_malloc0(1);
-		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, t3, t4);
+		buf = g_strdup_printf("'%lu','%d','%s','%s'", (unsigned long)arg1, (int)arg2, *t3, *t4);
 		g_free(t3);
 		g_free(t4);
 		}
