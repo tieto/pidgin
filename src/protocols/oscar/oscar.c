@@ -4078,7 +4078,8 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	debug_printf("ssi rights:");
 	for (i=0; i<numtypes; i++)
-		debug_printf(" max type %d = %hu, ", i, maxitems[i]);
+		debug_printf(" max type 0x%04x = %hx, ", i, maxitems[i]);
+	debug_printf("\n");
 
 	if (numtypes >= 0)
 		od->rights.maxbuddies = maxitems[0];
@@ -4201,7 +4202,6 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		GSList *cur;
 
 		/* Buddies */
-		cur = gc->groups;
 		for (cur=gc->groups; cur; cur=g_slist_next(cur)) {
 			GSList *curb;
 			struct group *group = cur->data;

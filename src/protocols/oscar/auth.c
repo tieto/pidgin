@@ -267,11 +267,13 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_addtlvtochain_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 	aim_addtlvtochain_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
 
+#ifndef NOSSI
 	/*
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
 	aim_addtlvtochain8(&tl, 0x004a, 0x01);
+#endif
 
 	aim_writetlvchain(&fr->data, &tl);
 
@@ -401,6 +403,7 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	 *   Not available for ICQ or @mac.com logins.
 	 *   If you receive this TLV, then you are allowed to use 
 	 *   family 0x0018 to check the status of your email.
+	 * XXX - Not really true!
 	 */
 	if (aim_gettlv(tlvlist, 0x0011, 1))
 		info->email = aim_gettlv_str(tlvlist, 0x0011, 1);

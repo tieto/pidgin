@@ -231,6 +231,15 @@ struct client_info_s {
 	"us", "en", \
 }
 
+#define CLIENTINFO_Netscape_7_0_1 { \
+	"Netscape 2000 an approved user of AOL Instant Messenger (SM)", \
+	0x1d0d, \
+	0x0007, 0x0000, \
+	0x0001, 0x0000, \
+	0x00000058, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
 #define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
 

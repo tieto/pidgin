@@ -115,9 +115,6 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
  *        but the chain is not at the end of the SNAC, and the chain is 
  *        preceeded by the number of TLVs.  So you can limit that with this.
  *
- * AAA - Change this.  It would never need to read in unlimited, right?
- * That's what aim_readtlvchain() is for.  Dumb ass.
- *
  * Reads and parses a series of TLV patterns from a data buffer; the
  * returned structure is manipulatable with the rest of the TLV
  * routines.  When done with a TLV chain, aim_freetlvchain() should
@@ -133,7 +130,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain(aim_bstream_t *bs)
 faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 {
 	aim_tlvlist_t *list = NULL, *cur;
-	
+
 	while ((aim_bstream_empty(bs) > 0) && (num != 0)) {
 		fu16_t type, length;
 
@@ -161,7 +158,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 		}
 		cur->tlv->type = type;
 		if ((cur->tlv->length = length)) {
-		       cur->tlv->value = aimbs_getraw(bs, length);	
+		       cur->tlv->value = aimbs_getraw(bs, length);
 		       if (!cur->tlv->value) {
 			       freetlv(&cur->tlv);
 			       free(cur);
@@ -179,7 +176,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 }
 
 /**
- * aim_readtlvchain_num - Read a TLV chain from a buffer.
+ * aim_readtlvchain_len - Read a TLV chain from a buffer.
  * @param bs Input bstream
  * @param len The max length in bytes that will be read.
  *        There are a number of places where you want to read in a tlvchain, 
@@ -201,7 +198,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_num(aim_bstream_t *bs, fu16_t num)
 faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len)
 {
 	aim_tlvlist_t *list = NULL, *cur;
-	
+
 	while ((aim_bstream_empty(bs) > 0) && (len > 0)) {
 		fu16_t type, length;
 
@@ -229,7 +226,7 @@ faim_internal aim_tlvlist_t *aim_readtlvchain_len(aim_bstream_t *bs, fu16_t len)
 		}
 		cur->tlv->type = type;
 		if ((cur->tlv->length = length)) {
-		       cur->tlv->value = aimbs_getraw(bs, length);	
+		       cur->tlv->value = aimbs_getraw(bs, length);
 		       if (!cur->tlv->value) {
 			       freetlv(&cur->tlv);
 			       free(cur);
