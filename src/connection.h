@@ -24,6 +24,7 @@
 #define _GAIM_CONNECTION_H_
 
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct _GaimConnection GaimConnection;
 
