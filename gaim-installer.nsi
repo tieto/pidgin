@@ -40,6 +40,7 @@ SetDateSave on
 !define MUI_HEADERBITMAP		.\src\win32\nsis\gaim-header.bmp
 
 !define GAIM_NSIS_INCLUDE_PATH		".\src\win32\nsis"
+!define GAIM_INSTALLER_DEPS		"..\win32-dev\gaim-inst-deps"
 
 !define GAIM_REG_KEY			"SOFTWARE\gaim"
 !define GAIM_UNINSTALL_KEY		"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
@@ -345,14 +346,14 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     SetOverwrite on
     File /r .\win32-install-dir\*.*
     !ifdef DEBUG
-    File ..\win32-dev\drmingw\exchndl.dll
+    File "${GAIM_INSTALLER_DEPS}\exchndl.dll"
     !endif
 
     ; Install shfolder.dll if need be..
     SearchPath $R4 "shfolder.dll"
     StrCmp $R4 "" 0 got_shfolder
       SetOutPath "$SYSDIR"
-      File ..\win32-dev\ms-deps\shfolder.dll
+      File "${GAIM_INSTALLER_DEPS}\shfolder.dll"
       SetOutPath "$INSTDIR"
     got_shfolder:
 
