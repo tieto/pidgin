@@ -6463,9 +6463,6 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 			g_free(charset);
 			if (away_utf8 != NULL) {
 				gchar *tmp1, *tmp2;
-				/* tmp1 = gaim_strcasereplace(away_utf8, "<BR>", "\n"); This replacement is handled in strip_html. 
-				 *  g_free(away_utf8);
-				 */
 				tmp2 = gaim_markup_strip_html(away_utf8);
 				g_free(away_utf8);
 				tmp1 = gaim_escape_html(tmp2);
@@ -6473,7 +6470,6 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
 				g_free(tmp1);
 				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
-			
 				g_free(tmp2);
 			}
 		}
