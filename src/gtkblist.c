@@ -1552,9 +1552,11 @@ static void gaim_gtk_blist_remove(struct gaim_buddy_list *list, GaimBlistNode *n
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
 {
-	GaimBlistNode *old_selection = gtkblist->selected_node;
+	GaimBlistNode *old_selection = NULL;
 
-	if(new_selection != gtkblist->selected_node) {
+	/* test for gtkblist because crazy timeout means we can be called after the blist is gone */
+	if (gtkblist && new_selection != gtkblist->selected_node) {
+		old_selection = gtkblist->selected_node;
 		gtkblist->selected_node = new_selection;
 		if(new_selection)
 			gaim_gtk_blist_update(NULL, new_selection);
@@ -1574,6 +1576,7 @@ static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpoint
 		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
 				NODE_COLUMN, &new_selection, -1);
 	}
+
 	/* we set this up as a timeout, otherwise the blist flickers */
 	g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
 }
