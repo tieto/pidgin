@@ -1074,7 +1074,8 @@ gtk_imhtml_tip (gpointer data)
 		y = y + imhtml->tip_bit->font->ascent + imhtml->tip_bit->font->descent;
 
 	gtk_widget_set_usize (imhtml->tip_window, w, h);
-	gtk_widget_popup (imhtml->tip_window, x, y);
+	gtk_widget_set_uposition (imhtml->tip_window, x, y);
+	gtk_widget_show (imhtml->tip_window);
 
 	imhtml->tip_timer = 0;
 	return FALSE;
@@ -1326,12 +1327,67 @@ gtk_imhtml_selection_clear_event (GtkWidget         *widget,
 }
 
 static void
+gtk_imhtml_adjustment_changed (GtkAdjustment *adjustment,
+			       GtkIMHtml     *imhtml)
+{
+	if (!GTK_WIDGET_MAPPED (imhtml))
+		return;
+
+	gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
+	gtk_imhtml_draw_exposed (imhtml);
+}
+
+static void
 gtk_imhtml_set_scroll_adjustments (GtkLayout     *layout,
 				   GtkAdjustment *hadj,
 				   GtkAdjustment *vadj)
 {
-	if (parent_class->set_scroll_adjustments)
-		(* parent_class->set_scroll_adjustments) (layout, hadj, vadj);
+	gboolean need_adjust = FALSE;
+
+	g_return_if_fail (layout != NULL);
+	g_return_if_fail (GTK_IS_IMHTML (layout));
+
+	if (hadj)
+		g_return_if_fail (GTK_IS_ADJUSTMENT (hadj));
+	else
+		hadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	if (vadj)
+		g_return_if_fail (GTK_IS_ADJUSTMENT (vadj));
+	else
+		vadj = GTK_ADJUSTMENT (gtk_adjustment_new (0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+
+	if (layout->hadjustment && (layout->hadjustment != hadj)) {
+		gtk_signal_disconnect_by_data (GTK_OBJECT (layout->hadjustment), layout);
+		gtk_object_unref (GTK_OBJECT (layout->hadjustment));
+	}
+
+	if (layout->vadjustment && (layout->vadjustment != vadj)) {
+		gtk_signal_disconnect_by_data (GTK_OBJECT (layout->vadjustment), layout);
+		gtk_object_unref (GTK_OBJECT (layout->vadjustment));
+	}
+
+	if (layout->hadjustment != hadj) {
+		layout->hadjustment = hadj;
+		gtk_object_ref (GTK_OBJECT (layout->hadjustment));
+		gtk_object_sink (GTK_OBJECT (layout->hadjustment));
+
+		gtk_signal_connect (GTK_OBJECT (layout->hadjustment), "value_changed",
+				    (GtkSignalFunc) gtk_imhtml_adjustment_changed, layout);
+		need_adjust = TRUE;
+	}
+	
+	if (layout->vadjustment != vadj) {
+		layout->vadjustment = vadj;
+		gtk_object_ref (GTK_OBJECT (layout->vadjustment));
+		gtk_object_sink (GTK_OBJECT (layout->vadjustment));
+
+		gtk_signal_connect (GTK_OBJECT (layout->vadjustment), "value_changed",
+				    (GtkSignalFunc) gtk_imhtml_adjustment_changed, layout);
+		need_adjust = TRUE;
+	}
+
+	if (need_adjust)
+		gtk_imhtml_adjustment_changed (NULL, GTK_IMHTML (layout));
 }
 
 static void
