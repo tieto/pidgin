@@ -212,7 +212,6 @@ src/idle.c
 src/log.c
 src/main.c
 src/md5.c
-src/multi.c
 src/pounce.c
 src/prefs.c
 src/proxy.c
@@ -229,7 +228,6 @@ src/win_gaim.c
 src/win32/IdleTracker/idletrack.c
 src/win32/MinimizeToTray.c
 src/win32/libc_interface.c
-src/win32/systray.c
 src/win32/untar.c
 src/win32/win32dep.c
 src/win32/wspell.c
