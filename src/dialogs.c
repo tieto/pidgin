@@ -1645,9 +1645,11 @@ void show_find_email()
 
 void cancel_link(GtkWidget *widget, struct linkdlg *b)
 {
-	if (b->toggle)
+	if (b->toggle) {
+		set_state_lock(1);
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(b->toggle), FALSE);
-	
+		set_state_lock(0);
+	}	
 	destroy_dialog(NULL, b->window);
 }
 
