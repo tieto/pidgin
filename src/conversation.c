@@ -86,6 +86,7 @@ GdkBitmap *dark_icon_bm = NULL;
 
 GtkWidget *all_convos = NULL;
 GtkWidget *convo_notebook = NULL;
+GtkWidget *convo_menubar = NULL;
 
 char fontface[128] = { 0 };
 
@@ -2893,6 +2894,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 			gtk_notebook_get_nth_page(notebook, page_num));
 	GtkStyle *style;
 	struct conversation *c;
+	
 	if ((convo_options & OPT_CONVO_COMBINE) &&
 	    (im_options & OPT_IM_ONE_WINDOW) &&
 	    (chat_options & OPT_CHAT_ONE_WINDOW)) {
@@ -2916,6 +2918,23 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 	gtk_style_unref(style);
 	if (c)
 		c->unseen = 0;
+
+	if (!c->is_chat) {
+			GtkWidget *menubar;
+			GtkWidget *parent = convo_menubar->parent;
+
+			gtk_widget_freeze_child_notify(GTK_WIDGET(c->window));
+			
+			gtk_widget_destroy(convo_menubar);
+			menubar = build_conv_menubar(c);
+			gtk_box_pack_start(GTK_BOX(parent), menubar, FALSE, TRUE, 0);
+			gtk_box_reorder_child(GTK_BOX(parent), menubar, 0);
+			convo_menubar = menubar;
+
+			gtk_widget_thaw_child_notify(GTK_WIDGET(c->window));
+	} else {
+		gtk_widget_destroy(convo_menubar);
+	}
 }
 
 void show_typing(struct conversation *c) {
@@ -3043,6 +3062,7 @@ void show_conv(struct conversation *c)
 
 	if (im_options & OPT_IM_ONE_WINDOW) {
 		if (!all_convos) {
+			GtkWidget *testidea;
 			win = all_convos = c->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			if ((convo_options & OPT_CONVO_COMBINE) && (chat_options & OPT_CHAT_ONE_WINDOW))
 				all_chats = all_convos;
@@ -3076,9 +3096,18 @@ void show_conv(struct conversation *c)
 			}
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(convo_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(convo_notebook));
-			gtk_container_add(GTK_CONTAINER(win), convo_notebook);
+
+			testidea = gtk_vbox_new(FALSE, 0);
+			
+			menubar = build_conv_menubar(c);
+			gtk_box_pack_start(GTK_BOX(testidea), menubar, FALSE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(testidea), convo_notebook, FALSE, TRUE, 0);
+			convo_menubar = menubar;
+
+			gtk_container_add(GTK_CONTAINER(win), testidea);
 			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
 					   GTK_SIGNAL_FUNC(convo_switch), NULL);
+			gtk_widget_show(testidea);
 			gtk_widget_show(convo_notebook);
 		} else
 			win = c->window = all_convos;
@@ -3111,8 +3140,10 @@ void show_conv(struct conversation *c)
 	gtk_paned_pack1(GTK_PANED(paned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
 
-	menubar = build_conv_menubar(c);
-	gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
+	if (!(im_options & OPT_IM_ONE_WINDOW)) {
+		menubar = build_conv_menubar(c);
+		gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
+	}
 
 	sw = gtk_scrolled_window_new(NULL, NULL);
 	c->sw = sw;
@@ -3383,6 +3414,11 @@ void toggle_smileys()
 
 void im_tabize()
 {
+	if (convo_menubar) {
+			gtk_widget_destroy(convo_menubar);
+			convo_menubar = NULL;
+	}
+
 	/* evil, evil i tell you! evil! */
 	if (im_options & OPT_IM_ONE_WINDOW) {
 		GList *x = conversations;
