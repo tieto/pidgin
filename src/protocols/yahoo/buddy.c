@@ -20,6 +20,7 @@
  */
 
 #include "internal.h"
+#include <string.h>
 
 int yahoo_add_buddy(struct yahoo_session *session, const char *active_id,
 		const char *group, const char *buddy, const char *message)

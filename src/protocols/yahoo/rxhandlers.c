@@ -37,7 +37,7 @@ static void yahoo_parse_config(struct yahoo_session *session, struct yahoo_conn 
 			if (session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)
 				(*session->callbacks[YAHOO_HANDLE_BADPASSWORD].function)(session);
 			return;
-		} else if (!strncmp(*it, "Set-Cookie: ", strlen("Set-Cookie: "))) {
+		} else if (!strncmp(*it, "Set-Cookie: Y=", strlen("Set-Cookie: Y="))) {
 			char **sa;
 			char **m;
 
