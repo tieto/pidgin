@@ -136,7 +136,7 @@ struct conversation {
 	GtkWidget *sep2;
 	GtkWidget *menu;
 	GtkWidget *check;
-	gboolean unseen;
+	gint unseen;
 
 	/* stuff used just for chat */
         GList *in_room;

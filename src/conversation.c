@@ -1597,17 +1597,27 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 											(notebook),
 											g_list_index(ws,
 												     c)));
-		GtkStyle *style = gtk_style_new();
+		GtkStyle *style;
+		if ((c->unseen == 2) || ((c->unseen == 1) && !(flags & WFLAG_NICK)))
+			return;
+		style = gtk_style_new();
 		if (!GTK_WIDGET_REALIZED(label))
 			gtk_widget_realize(label);
 		gdk_font_unref(style->font);
 		style->font = gdk_font_ref(label->style->font);
-		style->fg[0].red = 0xcccc;
-		style->fg[0].green = 0x0000;
-		style->fg[0].blue = 0x0000;
+		if (flags & WFLAG_NICK) {
+			style->fg[0].red = 0x0000;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0xcccc;
+			c->unseen = 2;
+		} else {
+			style->fg[0].red = 0xcccc;
+			style->fg[0].green = 0x0000;
+			style->fg[0].blue = 0x0000;
+			c->unseen = 1;
+		}
 		gtk_widget_set_style(label, style);
 		gtk_style_unref(style);
-		c->unseen = TRUE;
 	}
 }
 
@@ -2102,7 +2112,7 @@ static void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, 
 	style->font = gdk_font_ref(label->style->font);
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
-	c->unseen = FALSE;
+	c->unseen = 0;
 }
 
 

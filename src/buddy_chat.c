@@ -1074,7 +1074,7 @@ static void chat_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, g
 	style->font = gdk_font_ref(label->style->font);
 	gtk_widget_set_style(label, style);
 	gtk_style_unref(style);
-	b->unseen = FALSE;
+	b->unseen = 0;
 }
 
 void show_new_buddy_chat(struct conversation *b)
