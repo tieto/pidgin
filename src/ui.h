@@ -129,6 +129,7 @@ extern void alias_dialog_blist_chat(GaimChat *);
 extern void show_warn_dialog(GaimConnection *, const char *);
 extern void show_im_dialog();
 extern void show_info_dialog();
+extern void show_log_dialog();
 extern void destroy_all_dialogs();
 extern void show_fgcolor_dialog(GaimConversation *c, GtkWidget *color);
 extern void show_bgcolor_dialog(GaimConversation *c, GtkWidget *color);

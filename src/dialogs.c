@@ -37,6 +37,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
+#include "gtklog.h"
 #include "stock.h"
 
 #include "ui.h"
@@ -525,6 +526,58 @@ show_info_dialog(void)
 						  "info you would like to view."),
 						fields,
 						_("OK"), G_CALLBACK(get_info_cb),
+						_("Cancel"), NULL,
+						NULL);
+}
+
+static void
+get_log_cb(gpointer data, GaimRequestFields *fields)
+{
+	char *username;
+	GaimAccount *account;
+
+	account  = gaim_request_fields_get_account(fields, "account");
+
+	username = g_strdup(gaim_normalize(account,
+		gaim_request_fields_get_string(fields,  "screenname")));
+
+	if( username != NULL && *username != '\0' && account != NULL )
+		gaim_gtk_log_show( username, account );
+
+	g_free(username);
+}
+
+void
+show_log_dialog(void)
+{
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	fields = gaim_request_fields_new();
+
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("screenname", _("_Screen name"),
+										  NULL, FALSE);
+	gaim_request_field_set_type_hint(field, "screenname");
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_visible(field,
+		(gaim_connections_get_all() != NULL &&
+		 gaim_connections_get_all()->next != NULL));
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(gaim_get_blist(), _("Get User Log"),
+						NULL,
+						_("Please enter the screen name of the person whose "
+						  "log you would like to view."),
+						fields,
+						_("OK"), G_CALLBACK(get_log_cb),
 						_("Cancel"), NULL,
 						NULL);
 }

@@ -10,6 +10,7 @@ version 0.78cvs
 	  Add Buddy Pounce dialog.
 	* Pounce notification now includes time (Mike Lundy)
 	* The history plugin now shows history for chats in addition to IMs
+	* Menu item to view log (Tom Samstag)
 
 	Bug Fixes:
 	* Compiles again with gcc 2.96 (Ignacio J. Elia)
