@@ -789,8 +789,9 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 {
 	GaimConversation *conv;
 
-	if (type == GAIM_CONV_UNKNOWN)
-		return NULL;
+	g_return_val_if_fail(type    != GAIM_CONV_UNKNOWN, NULL);
+	g_return_val_if_fail(account != NULL, NULL);
+	g_return_val_if_fail(name    != NULL, NULL);
 
 	/* Check if this conversation already exists. */
 	if ((conv = gaim_find_conversation_with_account(name, account)) != NULL)
