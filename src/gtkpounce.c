@@ -828,23 +828,30 @@ fill_menu(GtkWidget *menu, GCallback cb)
 	GtkWidget *item;
 	GdkPixbuf *pixbuf, *scale;
 	GaimPounce *pounce;
-	const char *buddy;
+	GaimBuddy *buddy;
+	const char *buddyname;
 	gboolean has_items = FALSE;
 	GList *bp;
 
 	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next)
 	{
 		pounce = (GaimPounce *)bp->data;
-		buddy = gaim_buddy_get_contact_alias(gaim_find_buddy(gaim_pounce_get_pouncer(pounce), gaim_pounce_get_pouncee(pounce)));
 
 		/* Check if account is online, if not skip it */
-		if (!gaim_account_is_connected(pounce->pouncer))
+		if (!gaim_account_is_connected(gaim_pounce_get_pouncer(pounce)))
 			continue;
+
+		buddy = gaim_find_buddy(gaim_pounce_get_pouncer(pounce), gaim_pounce_get_pouncee(pounce));
+
+		if (buddy != NULL)
+			buddyname = gaim_buddy_get_contact_alias(buddy);
+		else
+			buddyname = gaim_pounce_get_pouncee(pounce);
 
 		has_items = TRUE;
 
 		/* Build the menu item */
-		item = gtk_image_menu_item_new_with_label(buddy);
+		item = gtk_image_menu_item_new_with_label(buddyname);
 
 		/* Create a pixmap for the protocol icon. */
 		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
