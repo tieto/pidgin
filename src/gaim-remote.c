@@ -69,7 +69,7 @@ void show_remote_usage(char *name)
 	     "       quit                     Close running copy of Gaim\n\n"
 
 	     "    OPTIONS:\n"
-	     "       -h, --help [command]    Show help for command\n"), name);
+	     "       -h, --help [command]     Show help for command\n"), name);
 
 	message(text,1);
 	g_free(text);
