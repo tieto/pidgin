@@ -1,4 +1,4 @@
-CFLAGS = -g -O2 -I../../src -I../../libfaim/faim -I../../libfaim $(GTK_CFLAGS)
+CFLAGS += -I../../src -I../../libfaim/faim -I../../libfaim
 LIBS = $(GTK_LIBS)
 
 pkgdir = $(libdir)/gaim
