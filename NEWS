@@ -10,6 +10,18 @@
 	Oscar blocking? It took me a while to get it, too. But no, really,
 	I think that the permit/deny list in Oscar might be working.
 
+	Rob: MSN got some fixes and should be really stable now.  It had 
+	a little 100% CPU eating bug but that's taken care of now.  Next
+	on my list of repairs is the napster plugin.  It works -- sorta --
+	sometimes.  Heh.   As all of you probably know already, our Oscar
+	support was broken yesterday.  There's a little battle going on
+	between AOL and Jabber and we caught a bullet during the crossfire.
+	I think I just won the award for the most cliches used in one
+	paragraph, as a matter of fact. ;-). 
+
+	** Good luck to the Jabber guys in getting this resolved **
+
+
 0.11.0-pre7 (03/16/2001):
 	Rob: Hey! I finally rewrote the MSN plugin.  Sorry, I'm just 
 	a lazy code whore sometimes, heheh.  It pretty much has the same
