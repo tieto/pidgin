@@ -76,22 +76,8 @@ install:
 ## BUILD DLL
 ##
 
-$(TARGET).def: $(OBJECTS)
-	dlltool --dllname $(TARGET).dll -z $(TARGET).def $(OBJECTS)
-
-$(TARGET).base: $(OBJECTS)
-	$(CC) -mdll -o junk.tmp -Wl,--base-file,$@ $(OBJECTS) $(LIB_PATHS) $(LIBS)
-	rm -rf junk.tmp
-
-$(TARGET).exp: $(TARGET).def $(TARGET).base
-	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
-		--output-exp $(TARGET).exp --def $(TARGET).def
-	rm -rf $(TARGET).base
-
-$(TARGET).dll: $(OBJECTS) $(TARGET).exp
-	$(CC) -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
-	dlltool -D $(TARGET).dll -d $(TARGET).def -l $(TARGET).lib
-	rm -rf $(TARGET).exp
+$(TARGET).dll: $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
 
 ##
 ## CLEAN RULES

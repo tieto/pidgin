@@ -19,22 +19,17 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
 TARGET = winprefs
 
-CC = gcc.exe
-
-VERSION := $(shell cat $(GAIM_TOP)/VERSION)
-
 # Compiler Options
 
-CFLAGS = -O2 -Wall -Werror -mno-cygwin -fnative-struct
+CFLAGS =
 
-DEFINES =	-DVERSION=\"$(VERSION)\" \
-		-DGTK_ENABLE_BROKEN
-
+DEFINES =
 
 ##
 ## INCLUDE  MAKEFILES
 ##
 
+include $(GAIM_TOP)/src/win32/global.mak
 
 ##
 ## INCLUDE PATHS
@@ -113,23 +108,8 @@ $(GAIM_TOP)/src/gaim.lib:
 ## BUILD DLL
 ##
 
-$(TARGET).def: $(OBJECTS)
-	dlltool --dllname $(TARGET).dll -z $(TARGET).def \
-		$(OBJECTS)
-
-$(TARGET).base: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	gcc -mdll -o junk.tmp -Wl,--base-file,$@ $(OBJECTS) $(LIB_PATHS) $(LIBS)
-	rm -rf junk.tmp
-
-$(TARGET).exp: $(TARGET).def $(TARGET).base
-	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
-		--output-exp $(TARGET).exp --def $(TARGET).def
-	rm -rf $(TARGET).base
-
-$(TARGET).dll: $(OBJECTS) $(TARGET).exp $(GAIM_TOP)/src/gaim.lib
-	gcc -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
-	rm -rf $(TARGET).exp
-
+$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
@@ -138,4 +118,3 @@ $(TARGET).dll: $(OBJECTS) $(TARGET).exp $(GAIM_TOP)/src/gaim.lib
 clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
-	rm -rf $(TARGET).def

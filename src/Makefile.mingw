@@ -26,7 +26,7 @@ TARGET = gaim
 
 # Compiler and Linker Options
 
-CFLAGS = -g
+CFLAGS =
 
 DEFINES =
 
@@ -153,7 +153,8 @@ DLL_LIBS =		-lgtk-win32-2.0 \
 			-lidletrack
 			
 
-EXE_LIBS = -lgaim -lglib-2.0
+EXE_LIBS =		-lgaim \
+			-lglib-2.0
 
 ##
 ## RULES
@@ -185,30 +186,14 @@ $(IDLETRACK_TOP)/idletrack.dll:
 # BUILD DLL
 #
 
-$(TARGET).def: $(DLL_OBJECTS)
-	dlltool -D $(TARGET).dll -z $(TARGET).def --export-all-symbols \
-		--exclude-symbols WinMain@16 $^
-
-$(TARGET).base: $(DLL_OBJECTS)
-	$(CC) -mdll $(LDFLAGS) -o junk.tmp -Wl,--base-file,$@ $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS)
-	rm -rf junk.tmp
-
-$(TARGET).exp: $(TARGET).base $(TARGET).def
-	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
-		--output-exp $(TARGET).exp --def $(TARGET).def
-
-$(TARGET).dll: $(DLL_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll $(TARGET).exp
-	$(CC) -mdll $(LDFLAGS) -o $(TARGET).dll $(DLL_OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(DLL_LIBS)
-	rm -rf $(TARGET).exp $(TARGET).def $(TARGET).base
-
-$(TARGET).lib: $(TARGET).def
-	dlltool -D $(TARGET).dll -d $(TARGET).def -l $(TARGET).lib
+$(TARGET).lib $(TARGET).dll: $(DLL_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll
+	$(CC) -shared $(DLL_OBJECTS) $(LIB_PATHS) $(DLL_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
 
 #
 # BUILD EXE
 #
 
-$(TARGET).exe: $(TARGET).lib $(EXE_OBJECTS)
+$(TARGET).exe: $(TARGET).dll $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(TARGET).exe
 
 ##

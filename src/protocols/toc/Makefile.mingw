@@ -68,7 +68,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =		toc.c
+C_SRC =			toc.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -78,10 +78,14 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgmodule-2.0 -lgobject-2.0 -lws2_32 -lintl -lgaim
-
-# -liberty
-
+LIBS = 			-lgtk-win32-2.0 \
+			-lglib-2.0 \
+			-lgdk-win32-2.0 \
+			-lgmodule-2.0 \
+			-lgobject-2.0 \
+			-lws2_32 \
+			-lintl \
+			-lgaim
 
 ##
 ## RULES
@@ -115,23 +119,8 @@ $(GAIM_TOP)/src/gaim.lib:
 ## BUILD DLL
 ##
 
-$(TARGET).def: $(OBJECTS)
-	dlltool --dllname $(TARGET).dll -z $(TARGET).def \
-		$(OBJECTS)
-
-$(TARGET).base: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
-	$(CC) -mdll -o junk.tmp -Wl,--base-file,$@ $(OBJECTS) $(LIB_PATHS) $(LIBS)
-	rm -rf junk.tmp
-
-$(TARGET).exp: $(TARGET).def $(TARGET).base
-	dlltool --dllname $(TARGET).dll --base-file $(TARGET).base \
-		--output-exp $(TARGET).exp --def $(TARGET).def
-	rm -rf $(TARGET).base
-
-$(TARGET).dll: $(OBJECTS) $(TARGET).exp $(GAIM_TOP)/src/gaim.lib
-	dlltool -D $(TARGET).dll -d $(TARGET).def -l $(TARGET).lib
-	$(CC) -mdll -o $(TARGET).dll $(OBJECTS) -Wl,$(TARGET).exp $(LIB_PATHS) $(LIBS)
-	rm -rf $(TARGET).exp
+$(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
 
 
 ##
@@ -142,4 +131,3 @@ clean:
 	rm -rf *.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib
-	rm -rf $(TARGET).def

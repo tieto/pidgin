@@ -62,7 +62,14 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ## LIBRARIES
 ##
 
-LIBS = -lgtk-win32-2.0 -lglib-2.0 -lgdk-win32-2.0 -lgobject-2.0 -lgmodule-2.0 -lintl -lws2_32 -liberty -lgaim
+LIBS =			-lgtk-win32-2.0 \
+			-lglib-2.0 \
+			-lgdk-win32-2.0 \
+			-lgobject-2.0 \
+			-lgmodule-2.0 \
+			-lintl \
+			-lws2_32 \
+			-lgaim
 
 ##
 ## RULES
@@ -92,12 +99,8 @@ install:
 #
 
 .c.dll:
-	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o tmp$@.o -c $<
-	dlltool -D $@ -z $@.def tmp$@.o
-	$(CC) -mdll -o junk.tmp -Wl,--base-file,$@.base tmp$@.o $(LIB_PATHS) $(LIBS)
-	dlltool -D $@ -b $@.base -e $@.exp -d $@.def
-	$(CC) -mdll -o $@ tmp$@.o -Wl,$@.exp $(LIB_PATHS) $(LIBS)
-	rm -rf $@.base $@.def $@.exp junk.tmp
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
+	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 
 plugins: iconaway.dll spellchk.dll autorecon.dll
 

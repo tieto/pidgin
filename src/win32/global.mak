@@ -7,8 +7,15 @@
 
 CC = gcc.exe
 
-# Don't use -g flag when building Plugin DLLs
+# Use -g flag when building debug version of Gaim (including plugins)
 CFLAGS += -O2 -Wall -mno-cygwin -fnative-struct
+
+# If not specified, dlls are built with the default base address of 0x10000000.
+# When loaded into a process address space a dll will be rebased if its base
+# address colides with the base address of an existing dll.  To avoid rebasing 
+# we do the following.  Rebasing can slow down the load time of dlls and it
+# also renders debug info useless.
+DLL_LD_FLAGS += -Wl,--enable-auto-image-base
 
 VERSION := $(shell cat $(GAIM_TOP)/VERSION)
 
