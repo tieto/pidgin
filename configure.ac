@@ -1137,6 +1137,7 @@ AC_CONFIG_COMMANDS_PRE([
 
 AC_CONFIG_COMMANDS_POST([
 	cmp VERSION VERSION.ac-save || touch -r VERSION.ac-save VERSION
+	rm -f VERSION.ac-save
 ])
 
 AC_OUTPUT([Makefile
