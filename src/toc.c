@@ -899,29 +899,31 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 			how_many++;
 			bud = g_list_append(bud, c+2);
         } else if (*c == 'p') {
-	    GList *d = deny;
+	    GList *d = permit;
+	    char *n;
             name = g_malloc(strlen(c+2) + 2);
             g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
+	    n = g_strdup(normalize(name));
 	    while (d) {
-	        char *n = g_strdup(normalize(name));
-	    	if (!strcmp(n, normalize(d->data)))
+	    	if (!strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
-		g_free(n);
 	    }
+	    g_free(n);
 	    if (!d)
 	            permit = g_list_append(permit, name);
         } else if (*c == 'd') {
-	    GList *d = permit;
+	    GList *d = deny;
+	    char *n;
             name = g_malloc(strlen(c+2) + 2);
             g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
+	    n = g_strdup(normalize(name));
 	    while (d) {
-	        char *n = g_strdup(normalize(name));
-	    	if (!strcmp(n, normalize(d->data)))
+	    	if (!strcasecmp(n, normalize(d->data)))
 			break;
 		d = d->next;
-		g_free(n);
 	    }
+	    g_free(n);
 	    if (!d)
 		    deny = g_list_append(deny, name);
         } else if (*c == 'm') {

@@ -1721,26 +1721,26 @@ static void do_add_perm(GtkWidget *w, struct addperm *p)
 
         if (d) {
 		GList *d = deny;
+		char *n = g_strdup(normalize(name));
 		while (d) {
-			char *n = g_strdup(normalize(name));
 			if (!strcmp(n, normalize(d->data)))
 				break;
 			d = d->next;
-			g_free(n);
 		}
+		g_free(n);
 		if (!d) {
 	                deny = g_list_append(deny, name);
         	        serv_add_deny(name);
 		}
         } else {
 		GList *d = permit;
+		char *n = g_strdup(normalize(name));
 		while (d) {
-			char *n = g_strdup(normalize(name));
 			if (!strcmp(n, normalize(d->data)))
 				break;
 			d = d->next;
-			g_free(n);
 		}
+		g_free(n);
 		if (!d) {
 			permit = g_list_append(permit, name);
 			serv_add_permit(name);
