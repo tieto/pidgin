@@ -1067,9 +1067,7 @@ void show_new_bp(char *name)
 	GtkWidget *label;
 	GtkWidget *bbox;
 	GtkWidget *vbox;
-	GtkWidget *hbox;
 	GtkWidget *button;
-	GtkWidget *sep;
 	GtkWidget *frame;
 	GtkWidget *table;
 	GtkWidget *optmenu;
