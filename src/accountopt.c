@@ -169,6 +169,16 @@ gaim_account_option_set_default_string(GaimAccountOption *option,
 }
 
 void
+gaim_account_option_set_masked(GaimAccountOption *option, gboolean masked)
+{
+	g_return_if_fail(option != NULL);
+	g_return_if_fail(option->type == GAIM_PREF_STRING);
+
+	option->masked = masked;
+}
+
+
+void
 gaim_account_option_set_list(GaimAccountOption *option, GList *values)
 {
 	g_return_if_fail(option != NULL);
@@ -247,6 +257,15 @@ gaim_account_option_get_default_string(const GaimAccountOption *option)
 	g_return_val_if_fail(option->type == GAIM_PREF_STRING, NULL);
 
 	return option->default_value.string;
+}
+
+gboolean
+gaim_account_option_get_masked(const GaimAccountOption *option)
+{
+	g_return_val_if_fail(option != NULL, FALSE);
+	g_return_val_if_fail(option->type == GAIM_PREF_STRING, FALSE);
+
+	return option->masked;
 }
 
 const GList *

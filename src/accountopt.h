@@ -49,6 +49,8 @@ typedef struct
 
 	} default_value;
 
+	gboolean masked;
+
 } GaimAccountOption;
 
 /**
@@ -179,6 +181,15 @@ void gaim_account_option_set_default_string(GaimAccountOption *option,
 											const char *value);
 
 /**
+ * Sets the masking for an account option.
+ *
+ * @param option The account option.
+ * @param masked  The masking.
+ */
+void
+gaim_account_option_set_masked(GaimAccountOption *option, gboolean masked);
+
+/**
  * Sets the list values for an account option.
  *
  * The list passed will be owned by the account option, and the
@@ -256,6 +267,16 @@ int gaim_account_option_get_default_int(const GaimAccountOption *option);
  */
 const char *gaim_account_option_get_default_string(
 	const GaimAccountOption *option);
+
+/**
+ * Returns the masking for an account option.
+ *
+ * @param option The account option.
+ *
+ * @return The masking.
+ */
+gboolean
+gaim_account_option_get_masked(const GaimAccountOption *option);
 
 /**
  * Returns the list values for an account option.

@@ -1019,6 +1019,8 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				}
 
 				entry = gtk_entry_new();
+				if (gaim_account_option_get_masked(option))
+					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
