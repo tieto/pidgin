@@ -263,14 +263,16 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	return data;
 }
 
-static
-gboolean formatted_input_cb(GtkWidget *dialog,
-		GdkEventKey *event, gpointer data)
+static gboolean
+formatted_input_cb(GtkWidget *dialog, GdkEventKey *event, gpointer data)
 {
-	if (event->keyval == GDK_Escape) {
-		gtk_object_destroy(GTK_OBJECT(dialog));
+	if (event->keyval == GDK_Escape)
+	{
+		gtk_widget_destroy(dialog);
+
 		return TRUE;
 	}
+
 	return FALSE;
 }
 
