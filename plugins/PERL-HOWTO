@@ -89,6 +89,13 @@ GAIM::user_info(nick)
 	Since buddy lists are per-connection this goes through the connections
 	until it finds a matching buddy name.
 
+GAIM::write_to_conv(to, wflags, what, who)
+	This displays a message into a conversation window. <wflags> is the
+	message-style and works like that:
+		wflags==0: display message as if received by <who>
+		wflags==1: display message as if sent by <who>
+		wflags==2: display system message
+
 GAIM::print_to_conv(who, what, auto)
 	The question is not what does this do, it's who does this do it as. The
 	answer is "whatever the default is". It uses whichever connection is
@@ -101,6 +108,8 @@ GAIM::print_to_chat(room, what)
 	This goes through each connection. If it finds a room matching the name,
 	it'll print the message to that room.
 
+GAIM::serv_send_im(who, what, auto)
+	Same as print_to_conv, but it does not display the message.
 
 GAIM::add_event_handler(event, function)
 	This is the most important of them all. This is basically exactly like

@@ -87,6 +87,7 @@ static char* last_dir = NULL;
 XS(XS_GAIM_register); /* set up hooks for script */
 XS(XS_GAIM_get_info); /* version, last to attempt signon, protocol */
 XS(XS_GAIM_print); /* lemme figure this one out... */
+XS(XS_GAIM_write_to_conv); /* write into conversation window */
 
 /* list stuff */
 XS(XS_GAIM_buddy_list); /* all buddies */
@@ -97,6 +98,7 @@ XS(XS_GAIM_command); /* send command to server */
 XS(XS_GAIM_user_info); /* given name, return struct buddy members */
 XS(XS_GAIM_print_to_conv); /* send message to someone */
 XS(XS_GAIM_print_to_chat); /* send message to chat room */
+XS(XS_GAIM_serv_send_im); /* send message to someone (but do not display) */
 
 /* handler commands */
 XS(XS_GAIM_add_event_handler); /* when servers talk */
@@ -216,6 +218,7 @@ void perl_init()
 	newXS ("GAIM::register", XS_GAIM_register, "GAIM");
 	newXS ("GAIM::get_info", XS_GAIM_get_info, "GAIM");
 	newXS ("GAIM::print", XS_GAIM_print, "GAIM");
+	newXS ("GAIM::write_to_conv", XS_GAIM_write_to_conv, "GAIM");
 
 	newXS ("GAIM::buddy_list", XS_GAIM_buddy_list, "GAIM");
 	newXS ("GAIM::online_list", XS_GAIM_online_list, "GAIM");
@@ -224,6 +227,7 @@ void perl_init()
 	newXS ("GAIM::user_info", XS_GAIM_user_info, "GAIM");
 	newXS ("GAIM::print_to_conv", XS_GAIM_print_to_conv, "GAIM");
 	newXS ("GAIM::print_to_chat", XS_GAIM_print_to_chat, "GAIM");
+	newXS ("GAIM::serv_send_im", XS_GAIM_serv_send_im, "GAIM");
 
 	newXS ("GAIM::add_event_handler", XS_GAIM_add_event_handler, "GAIM");
 	newXS ("GAIM::add_timeout_handler", XS_GAIM_add_timeout_handler, "GAIM");
@@ -500,6 +504,52 @@ XS (XS_GAIM_user_info)
 	XST_mIV(6, buddy->uc);
 	XST_mIV(7, buddy->caps);
 	XSRETURN(8);
+}
+
+XS (XS_GAIM_write_to_conv)
+{
+	char *nick, *who, *what;
+	struct conversation *c;
+	int junk;
+	int send, wflags;
+	dXSARGS;
+	items = 0;
+
+	nick = SvPV(ST(0), junk);
+	send = atoi(SvPV(ST(1), junk));
+	what = SvPV(ST(2), junk);
+	who = SvPV(ST(3), junk);
+	
+	if (!*who) who=NULL;
+	
+	switch (send) {
+		case 0: wflags=WFLAG_SEND; break;
+		case 1: wflags=WFLAG_RECV; break;
+		case 2: wflags=WFLAG_SYSTEM; break;
+		default: wflags=WFLAG_RECV;
+	}	
+		
+	c = find_conversation(nick);
+	if (!c)
+		c = new_conversation(nick);
+		
+	write_to_conv(c, what, wflags, who, time((time_t)NULL));
+}
+
+XS (XS_GAIM_serv_send_im)
+{
+	char *nick, *what, *isauto;
+	int junk;
+	dXSARGS;
+	items = 0;
+
+	nick = SvPV(ST(0), junk);
+	what = SvPV(ST(1), junk);
+	isauto = SvPV(ST(2), junk);
+
+	if (!connections)
+		return;
+	serv_send_im(connections->data, nick, what, atoi(isauto));
 }
 
 XS (XS_GAIM_print_to_conv)
