@@ -4112,6 +4112,8 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 	GaimChat *chat;
 	GaimGroup *group;
 	const char *group_name;
+	char *chat_name = NULL;
+	GaimConversation *conv = NULL;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal,
 									   g_free, g_free);
@@ -4148,6 +4150,18 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 	if (chat != NULL)
 	{
 		gaim_blist_add_chat(chat, group, NULL);
+
+		if (GAIM_PLUGIN_PROTOCOL_INFO(data->account->gc->prpl)->get_chat_name != NULL)
+			chat_name = GAIM_PLUGIN_PROTOCOL_INFO(
+							data->account->gc->prpl)->get_chat_name(chat->components);
+		
+		if (chat_name != NULL) {
+			conv = gaim_find_conversation_with_account(chat_name, data->account);
+			g_free(chat_name);
+		}
+
+		if (conv != NULL)
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_ADD);
 	}
 
 	gtk_widget_destroy(data->window);

@@ -865,7 +865,21 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 static void
 gaim_gtkdialogs_remove_chat_cb(GaimChat *chat)
 {
+	char *name = NULL;
+	GaimConversation *conv = NULL;
+
+	if (GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->get_chat_name != NULL)
+		name = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->get_chat_name(chat->components);
+
 	gaim_blist_remove_chat(chat);
+
+	if (name != NULL) {
+		conv = gaim_find_conversation_with_account(name, chat->account);
+		g_free(name);
+	}
+
+	if (conv != NULL)
+		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
 }
 
 void
