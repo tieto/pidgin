@@ -131,15 +131,6 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	return ret;
 }
 
-static gboolean plugin_load(GaimPlugin *plugin)
-{
-  gaim_prefs_add_none("/plugins/gtk/win32");
-  gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
-  gaim_prefs_add_bool("/plugins/gtk/win32/winprefs/auto_start", FALSE);
-
-  return TRUE;
-}
-
 static GaimGtkPluginUiInfo ui_info =
 {
 	get_config_frame
@@ -160,7 +151,7 @@ static GaimPluginInfo info =
 	N_("Options specific to Windows Gaim."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	WEBSITE,
-	plugin_load,
+	NULL,
 	NULL,
 	NULL,
 	&ui_info,
@@ -168,8 +159,11 @@ static GaimPluginInfo info =
 };
 
 static void
-__init_plugin(GaimPlugin *plugin)
+init_plugin(GaimPlugin *plugin)
 {
+  gaim_prefs_add_none("/plugins/gtk/win32");
+  gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
+  gaim_prefs_add_bool("/plugins/gtk/win32/winprefs/auto_start", FALSE);
 }
 
-GAIM_INIT_PLUGIN(winprefs, __init_plugin, info);
+GAIM_INIT_PLUGIN(winprefs, init_plugin, info);
