@@ -1890,7 +1890,7 @@ gtk_imhtml_font_load (GtkIMHtml *imhtml,
 	gchar *default_name;
 	gchar **xflds;
 
-	gchar *newvals[15];
+	gchar *newvals[16];
 	gint i;
 	gchar **names;
 	gchar fs[10];
