@@ -423,6 +423,14 @@ gaim_new_conversation(GaimConversation *conv, void *data)
 	g_idle_add(docklet_update_status, &handle);
 }
 
+/* We need this because the blist purge_away_queue cb won't be called before the
+   plugin is unloaded, when quitting */
+static void gaim_quit_cb() {
+	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "dealing with queued messages on exit\n");
+	docklet_flush_queue();
+}
+
+
 /* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
 }
 
@@ -445,6 +453,7 @@ plugin_load(GaimPlugin *plugin)
 	void *conn_handle = gaim_connections_get_handle();
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
+	void *core_handle = gaim_get_core();
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin loaded\n");
 
@@ -467,6 +476,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(conv_handle, "conversation-created",
 						plugin, GAIM_CALLBACK(gaim_new_conversation), NULL);
 
+	gaim_signal_connect(core_handle, "quitting",
+						plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
 /*	gaim_signal_connect(plugin, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(plugin, event_buddy_signoff, gaim_buddy_signoff, NULL);
 	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);
