@@ -1,4 +1,5 @@
 plugins/docklet/docklet.c
+plugins/docklet/docklet-win32.c
 plugins/docklet/eggtrayicon.c
 plugins/autorecon.c
 plugins/chkmail.c
