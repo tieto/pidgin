@@ -1175,6 +1175,8 @@ void show_new_buddy_chat(struct conversation *b)
 
 	if (chat_options & OPT_CHAT_ONE_WINDOW) {
 		if (!all_chats) {
+			GtkWidget *testidea;
+
 			win = all_chats = b->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			if ((convo_options & OPT_CONVO_COMBINE) && (im_options & OPT_IM_ONE_WINDOW))
 				all_convos = all_chats;
@@ -1206,9 +1208,14 @@ void show_new_buddy_chat(struct conversation *b)
 								 GTK_POS_TOP);
 				}
 			}
+			
+			testidea = gtk_vbox_new(FALSE, 0);
+			gtk_box_pack_start(GTK_BOX(testidea), chat_notebook, TRUE, TRUE, 0);
+			gtk_widget_show(testidea);
+
 			gtk_notebook_set_scrollable(GTK_NOTEBOOK(chat_notebook), TRUE);
 			gtk_notebook_popup_enable(GTK_NOTEBOOK(chat_notebook));
-			gtk_container_add(GTK_CONTAINER(win), chat_notebook);
+			gtk_container_add(GTK_CONTAINER(win), testidea);
 			gtk_signal_connect(GTK_OBJECT(chat_notebook), "switch-page",
 					   GTK_SIGNAL_FUNC(convo_switch), NULL);
 			gtk_widget_show(chat_notebook);

@@ -2900,6 +2900,8 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 	GtkStyle *style;
 	struct conversation *c;
 	
+	printf("THIS GOT CALLED.\n");
+
 	if ((convo_options & OPT_CONVO_COMBINE) &&
 	    (im_options & OPT_IM_ONE_WINDOW) &&
 	    (chat_options & OPT_CHAT_ONE_WINDOW)) {
@@ -2926,11 +2928,13 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 
 	if (!c->is_chat) {
 			GtkWidget *menubar;
-			GtkWidget *parent = convo_menubar->parent;
+			GtkWidget *parent = convo_notebook->parent;
 
 			gtk_widget_freeze_child_notify(GTK_WIDGET(c->window));
-			
-			gtk_widget_destroy(convo_menubar);
+	
+			if (convo_menubar != NULL)
+					gtk_widget_destroy(convo_menubar);
+
 			menubar = build_conv_menubar(c);
 			gtk_box_pack_start(GTK_BOX(parent), menubar, FALSE, TRUE, 0);
 			gtk_box_reorder_child(GTK_BOX(parent), menubar, 0);
@@ -2939,6 +2943,7 @@ void convo_switch(GtkNotebook *notebook, GtkWidget *page, gint page_num, gpointe
 			gtk_widget_thaw_child_notify(GTK_WIDGET(c->window));
 	} else {
 		gtk_widget_destroy(convo_menubar);
+		convo_menubar = NULL;
 	}
 }
 
@@ -3106,14 +3111,17 @@ void show_conv(struct conversation *c)
 			
 			menubar = build_conv_menubar(c);
 			gtk_box_pack_start(GTK_BOX(testidea), menubar, FALSE, TRUE, 0);
-			gtk_box_pack_start(GTK_BOX(testidea), convo_notebook, FALSE, TRUE, 0);
+			gtk_box_pack_start(GTK_BOX(testidea), convo_notebook, TRUE, TRUE, 0);
+			gtk_widget_show(testidea);
+			gtk_widget_show(convo_notebook);
 			convo_menubar = menubar;
+
+			printf("I GOT HERE BIZNOTCHY.\n");
 
 			gtk_container_add(GTK_CONTAINER(win), testidea);
 			gtk_signal_connect(GTK_OBJECT(convo_notebook), "switch-page",
 					   GTK_SIGNAL_FUNC(convo_switch), NULL);
-			gtk_widget_show(testidea);
-			gtk_widget_show(convo_notebook);
+
 		} else
 			win = c->window = all_convos;
 
