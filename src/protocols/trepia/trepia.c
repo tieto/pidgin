@@ -794,6 +794,8 @@ trepia_close(GaimConnection *gc)
 {
 	__clear_user_list(gaim_connection_get_account(gc));
 
+	g_free(gc->proto_data);
+
 	gc->proto_data = NULL;
 }
 
