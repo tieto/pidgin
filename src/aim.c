@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "gaim.h"
 #ifndef USE_APPLET
 #include "pixmaps/logo.xpm"
@@ -117,11 +118,14 @@ static void sound_timeout() {
 	gtk_timeout_remove(snd_tmout);
 }
 
+char g_screenname[ 64 ];	/* gotta be enough */
+
 void dologin(GtkWidget *widget, GtkWidget *w)
 {
 	static gboolean running = FALSE;
 	char *username = gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(name)->entry));
         char *password = gtk_entry_get_text(GTK_ENTRY(pass));
+	int i;
 
         if (query_state() != STATE_OFFLINE)
                 return;
@@ -134,6 +138,16 @@ void dologin(GtkWidget *widget, GtkWidget *w)
 		hide_login_progress("You must give your password");
 		return;
 	}
+
+	/* save screenname away for cache file use */
+
+	strcpy( g_screenname, username );
+
+	/* fold cache screen name file to upper case to avoid problems
+	   finding file later if user uses different case at login time */
+
+	for ( i = 0; i < strlen( g_screenname ); i++ )
+		g_screenname[i] = toupper( g_screenname[i] );
 
 #ifdef USE_APPLET
 	set_applet_draw_closed();

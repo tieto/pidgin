@@ -484,6 +484,10 @@ void remove_buddy(struct group *rem_g, struct buddy *rem_b)
         g_free(delb);
 
         serv_save_config();
+
+	// flush buddy list to cache
+
+	do_export( (GtkWidget *) NULL, 0 );
         
 	update_num_groups();
 
@@ -516,6 +520,10 @@ void remove_group(struct group *rem_g)
 	g_free(delg);
 
         serv_save_config();
+
+        // flush buddy list to cache
+
+        do_export( (GtkWidget *) NULL, 0 );
 }
 
 
@@ -754,6 +762,10 @@ static void edit_tree_move (GtkCTree *ctree, GtkCTreeNode *child, GtkCTreeNode *
         }
 
         serv_save_config();
+
+        // flush buddy list to cache
+
+        do_export( (GtkWidget *) NULL, 0 );
 }
 
 
@@ -935,6 +947,11 @@ static void do_del_buddy(GtkWidget *w, GtkCTree *ctree)
                 
                 build_edit_tree();
                 serv_save_config();
+
+        	// flush buddy list to cache
+
+        	do_export( (GtkWidget *) NULL, 0 );
+
         } else {
                 /* Nothing selected. */
         }

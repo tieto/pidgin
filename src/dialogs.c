@@ -676,6 +676,8 @@ void do_add_buddy(GtkWidget *w, struct addbuddy *a)
 
         serv_add_buddy(who);
 
+	do_export( (GtkWidget *) NULL, 0 );
+
         update_num_groups();
 
         destroy_dialog(NULL, a->window);
@@ -1934,26 +1936,45 @@ void show_color_dialog(GtkWidget *entry, GtkWidget *color)
 /*  The dialog for import/export                                          */
 /*------------------------------------------------------------------------*/
 
+#define PATHSIZE 1024
+
+/* if dummy is 0, save to ~/.gaimbdcache_screenname */
+
 void do_export(GtkWidget *w, void *dummy)
 {
         FILE *f;
+	gint show_dialog = (int) dummy;
         char *buf = g_malloc(BUF_LONG);
-        char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
+        char *file;
+	char path[PATHSIZE];
+	extern char g_screenname[];
 
-        if ((f = fopen(file,"w"))) {
-                toc_build_config(buf, BUF_LONG - 1);
+	if ( show_dialog == 1 ) {
+		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(exportdialog));
+		strncpy( path, file, PATHSIZE - 1 );
+	}
+	else {
+		file = getenv( "HOME" );
+		if ( file != (char *) NULL )
+                        sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
+		else
+			return;
+	}
+        if ((f = fopen(path,"w"))) {
+                toc_build_config(buf, 1024 - 1);
                 fprintf(f, "%s\n", buf);
                 fclose(f);
                 chmod(buf, S_IRUSR | S_IWUSR);
-        } else {
+        } else if ( show_dialog == 1 ) {
                 g_snprintf(buf, BUF_LONG / 2, "Error writing file %s", file);
                 do_error_dialog(buf, "Error");
         }
-        destroy_dialog(NULL, exportdialog);
-        exportdialog = NULL;
+	if ( show_dialog == 1 ) {
+        	destroy_dialog(NULL, exportdialog);
+        	exportdialog = NULL;
+	}
         
         g_free(buf);
-        
         
 }
 
@@ -1973,7 +1994,7 @@ void show_export_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
                 
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_export), NULL);
+                                   "clicked", GTK_SIGNAL_FUNC(do_export), 1);
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(exportdialog)->cancel_button),
                                    "clicked", GTK_SIGNAL_FUNC(destroy_dialog), exportdialog);
                 
@@ -1987,20 +2008,39 @@ void show_export_dialog()
 
 }
 
+/* if dummy is 0, then import from ~/.gaimbdcache_screenname */
+
 void do_import(GtkWidget *w, void *dummy)
 {
+	gint show_dialog = (int) dummy;
         GList *grp, *grp2;
         char *buf = g_malloc(BUF_LONG);
         char *buf2;
         char *first = g_malloc(64);
-        char *file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
+	char *file;
+	char path[PATHSIZE];
         FILE *f;
-        
-        if (!(f = fopen(file,"r"))) {
-                g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
-                do_error_dialog(buf, "Error");
-                destroy_dialog(NULL, importdialog);
-                importdialog = NULL;
+	extern char g_screenname[];
+
+        if ( show_dialog == 1 ) {
+        	file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
+                strncpy( path, file, PATHSIZE - 1 );
+        }
+        else {
+                file = getenv( "HOME" );
+                if ( file != (char *) NULL )
+                        sprintf( path, "%s/.gaimbdcache_%s", file, g_screenname );
+                else
+			return;
+        }
+
+        if (!(f = fopen(path,"r"))) {
+		if ( show_dialog == 1 ) {
+                	g_snprintf(buf, BUF_LONG / 2, "Error reading file %s", file);
+                	do_error_dialog(buf, "Error");
+                	destroy_dialog(NULL, importdialog);
+                	importdialog = NULL;
+		}
                 g_free(buf);
 		g_free(first);
                 return;
@@ -2009,10 +2049,13 @@ void do_import(GtkWidget *w, void *dummy)
         fgets(first, 64, f);
 
         if (!strcasecmp(first, "Config {\n")) {
-                destroy_dialog(NULL, importdialog);
-                importdialog = NULL;
+		if ( show_dialog == 1 ) {
+                	destroy_dialog(NULL, importdialog);
+                	importdialog = NULL;
+		}
 		g_free(buf);
 		g_free(first);
+		fclose( f );
                 return;
         } else if (buf[0] == 'm') {
                 buf2 = buf;
@@ -2041,12 +2084,18 @@ void do_import(GtkWidget *w, void *dummy)
         build_edit_tree();
         build_permit_tree();
         
-        destroy_dialog(NULL, importdialog);
-        importdialog = NULL;
+	fclose( f );
+
+	if ( show_dialog == 1 ) {
+		/* save what we just did to cache */
+
+		do_export( (GtkWidget *) NULL, 0 );
+               	destroy_dialog(NULL, importdialog);
+               	importdialog = NULL;
+	} 
         
         g_free(buf);
         g_free(first);
-	
 }
 
 void show_import_dialog()
@@ -2064,7 +2113,7 @@ void show_import_dialog()
                                    GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->ok_button),
-                                   "clicked", GTK_SIGNAL_FUNC(do_import), NULL);
+                                   "clicked", GTK_SIGNAL_FUNC(do_import), 1);
                 gtk_signal_connect(GTK_OBJECT(GTK_FILE_SELECTION(importdialog)->cancel_button),
                                    "clicked", GTK_SIGNAL_FUNC(destroy_dialog), importdialog);
                 

@@ -849,13 +849,14 @@ void parse_toc_buddy_list(char *config)
         char current[256];
 	char *name;
 	GList *bud;
+	int how_many = 0;
+
         /* Clean out the permit/deny list!*/
         g_list_free(permit);
         g_list_free(deny);
         permit = NULL;
 	deny = NULL;
 	bud = NULL;
-
         
         /* skip "CONFIG:" (if it exists)*/
 
@@ -868,8 +869,10 @@ void parse_toc_buddy_list(char *config)
 		if (*c == 'g') {
 			strncpy(current,c+2, sizeof(current));
 			add_group(current);
+			how_many++;
 		} else if (*c == 'b') {
 			add_buddy(current, c+2);
+			how_many++;
 			bud = g_list_append(bud, c+2);
         } else if (*c == 'p') {
             name = g_malloc(strlen(c+2) + 2);
@@ -888,7 +891,14 @@ void parse_toc_buddy_list(char *config)
 #if 0
 	fprintf(stdout, "Sending message '%s'\n",buf);
 #endif
-       
+      
 	serv_add_buddies(bud);
         serv_set_permit_deny();
+
+	/* perhaps the server dropped the buddy list, try importing from
+           cache */
+
+	if ( how_many == 0 ) {
+		do_import( (GtkWidget *) NULL, 0 );
+	}
  }
