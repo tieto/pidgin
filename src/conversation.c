@@ -1131,15 +1131,14 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if (gaim_prefs_get_bool("/core/conversations/use_alias_for_title")) {
-		if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
-			if(account && ((b = gaim_find_buddy(account, name)) != NULL))
-				text = gaim_buddy_get_local_alias(b);
-		} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
-			if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
-				text = chat->alias;
-		}
+	if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+		if(account && ((b = gaim_find_buddy(account, name)) != NULL))
+			text = gaim_buddy_get_local_alias(b);
+	} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+		if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
+			text = chat->alias;
 	}
+	
 
 	if(text == NULL)
 		text = name;
@@ -2768,7 +2767,6 @@ gaim_conversations_init(void)
 
 	/* Conversations */
 	gaim_prefs_add_none("/core/conversations");
-	gaim_prefs_add_bool("/core/conversations/use_alias_for_title", TRUE);
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/core/conversations/chat");
@@ -2778,9 +2776,6 @@ gaim_conversations_init(void)
 	gaim_prefs_add_none("/core/conversations/im");
 	gaim_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
 
-	/* Connect callbacks for changed preferences */
-	gaim_prefs_connect_callback(handle, "/core/conversations/use_alias_for_title",
-			update_titles_pref_cb, NULL);
 
 	/**********************************************************************
 	 * Register signals

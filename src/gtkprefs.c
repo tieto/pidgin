@@ -891,8 +891,6 @@ GtkWidget *conv_page() {
 
 	gaim_gtk_prefs_checkbox(_("Show _formatting toolbar"),
 				  "/gaim/gtk/conversations/show_formatting_toolbar", vbox);
-	gaim_gtk_prefs_checkbox(_("Show _aliases in tabs/titles"),
-			"/core/conversations/use_alias_for_title", vbox);
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
@@ -2358,6 +2356,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/conversations/im/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
+	gaim_prefs_remove("/core/conversations/use_alias_for_title");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
