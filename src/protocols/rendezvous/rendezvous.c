@@ -39,6 +39,9 @@ typedef struct _RendezvousData {
 } RendezvousData;
 
 typedef struct _RendezvousBuddy {
+#if 0
+	guint ttltimer;
+#endif
 	gchar *firstandlast;
 	gchar *aim;
 	int p2pjport;
@@ -87,6 +90,7 @@ static gchar *rendezvous_extract_name(gchar *domain)
 /****************************/
 /* Buddy List Functions     */
 /****************************/
+
 static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const char *domain)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
@@ -106,6 +110,19 @@ static void rendezvous_addtolocal(GaimConnection *gc, const char *name, const ch
 	b = gaim_buddy_new(account, name, NULL);
 	gaim_blist_add_buddy(b, NULL, g, NULL);
 	serv_got_update(gc, b->name, 1, 0, 0, 0, 0);
+
+#if 0
+	RendezvousBuddy *rb;
+	rb = g_hash_table_lookup(rd->buddies, name);
+	if (rb == NULL) {
+		rb = g_malloc0(sizeof(RendezvousBuddy));
+		g_hash_table_insert(rd->buddies, g_strdup(name), rb);
+	}
+	rb->ttltimer = gaim_timeout_add(time * 10000, rendezvous_buddy_timeout, gc);
+
+	gaim_timeout_remove(rb->ttltimer);
+	rb->ttltimer = 0;
+#endif
 }
 
 static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, const char *domain)
@@ -125,6 +142,11 @@ static void rendezvous_removefromlocal(GaimConnection *gc, const char *name, con
 	serv_got_update(gc, b->name, 0, 0, 0, 0, 0);
 	gaim_blist_remove_buddy(b);
 	/* XXX - This results in incorrect group counts--needs to be fixed in the core */
+
+	/*
+	 * XXX - Instead of removing immediately, wait 10 seconds and THEN remove
+	 * them.  If you do it immediately you don't see the door close icon.
+	 */
 }
 
 static void rendezvous_removeallfromlocal(GaimConnection *gc)
@@ -209,7 +231,7 @@ static void rendezvous_handle_rr_txt(GaimConnection *gc, ResourceRecord *rr, con
 			/* Idle */
 			tmp2 = g_hash_table_lookup(rdata, "away");
 			rb->idle = atoi(tmp2);
-			gaim_debug_error("XXX", "User has been idle for %d\n", rb->idle);
+			gaim_debug_error("XXX", "User has been idle since %d\n", rb->idle);
 			rb->status = UC_IDLE;
 		} else if (!strcmp(tmp1, "avail")) {
 			/* Away */
@@ -276,7 +298,6 @@ static void rendezvous_handle_rr(GaimConnection *gc, ResourceRecord *rr)
 					rendezvous_addtolocal(gc, name, "Rendezvous");
 				else
 					rendezvous_removefromlocal(gc, name, "Rendezvous");
-
 				g_free(name);
 			}
 		} break;
@@ -407,6 +428,7 @@ static void rendezvous_prpl_login(GaimAccount *account)
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 
 	mdns_query(rd->fd, "_presence._tcp.local");
+	/* mdns_advertise_ptr(rd->fd, "_presence._tcp.local", "mark@diverge._presence._tcp.local"); */
 
 #if 0
 	text_record_add("txtvers", "1");

@@ -120,17 +120,32 @@ typedef struct _DNSPacket {
  */
 int mdns_establish_socket();
 
+
+/**
+ * Sends a multicast DNS datagram.  Generally this is called
+ * by other convenience functions such as mdns_query(), however
+ * a client CAN construct its own DNSPacket if it wishes.
+ *
+ * @param fd The file descriptor of a pre-established socket to
+ *        be used for sending the outgoing mDNS datagram.
+ * @param dns The DNS datagram you wish to send.
+ * @return 0 on success, otherwise return the error number.
+ */
+int mdns_send_dns(int fd, const DNSPacket *dns);
+
 /**
  * Send a multicast DNS query for the given domain across the given
  * socket.
  *
  * @param fd The file descriptor of a pre-established socket to
- *        be used for sending the outgoing mDNS query.
+ *        be used for sending the outgoing mDNS datagram.
  * @param domain This is the domain name you wish to query.  It should 
  *        be of the format "_presence._tcp.local" for example.
  * @return 0 if sucessful.
  */
 int mdns_query(int fd, const char *domain);
+
+int mdns_advertise_ptr(int fd, const char *name, const char *domain);
 
 /**
  * Read a UDP packet from the given file descriptor and parse it

@@ -25,7 +25,8 @@
 
 /*
  * If you want to understand this, read RFC1035 and 
- * draft-cheshire-dnsext-multicastdns.txt
+ * draft-cheshire-dnsext-multicastdns.txt, and buy
+ * me a doughnut.  thx k bye.
  */
 
 /*
@@ -39,6 +40,10 @@
 
 #include "mdns.h"
 #include "util.h"
+
+/******************************************/
+/* Functions for connection establishment */
+/******************************************/
 
 int
 mdns_establish_socket()
@@ -103,67 +108,228 @@ mdns_establish_socket()
 	return fd;
 }
 
-int
-mdns_query(int fd, const char *domain)
+static int
+mdns_send_raw(int fd, unsigned int datalen, unsigned char *data)
 {
 	struct sockaddr_in addr;
-	unsigned int querylen;
-	unsigned char *query;
-	char *b, *c;
-	int i, n;
+	int n;
 
-	if (strlen(domain) > 255) {
-		return -EINVAL;
-	}
-
-	/*
-	 * Build the outgoing query packet.  It is made of the header with a
-	 * query made up of the given domain.  The header is 12 bytes.
-	 */
-	querylen = 12 + strlen(domain) + 2 + 4;
-	if (!(query = (unsigned char *)g_malloc(querylen))) {
-		return -ENOMEM;
-	}
-
-	/* The header section */
-	util_put32(&query[0], 0); /* The first 32 bits of the header are all 0's in mDNS */
-	util_put16(&query[4], 1); /* QDCOUNT */
-	util_put16(&query[6], 0); /* ANCOUNT */
-	util_put16(&query[8], 0); /* NSCOUNT */
-	util_put16(&query[10], 0); /* ARCOUNT */
-
-	/* The question section */
-	i = 12; /* Destination in query */
-	b = (char *)domain;
-	while ((c = strchr(b, '.'))) {
-		i += util_put8(&query[i], c - b); /* Length of domain-name segment */
-		memcpy(&query[i], b, c - b); /* Domain-name segment */
-		i += c - b; /* Increment the destination pointer */
-		b = c + 1;
-	}
-	i += util_put8(&query[i], strlen(b)); /* Length of domain-name segment */
-	strcpy(&query[i], b); /* Domain-name segment */
-	i += strlen(b) + 1; /* Increment the destination pointer */
-	i += util_put16(&query[i], 0x000c); /* QTYPE */
-	i += util_put16(&query[i], 0x8001); /* QCLASS */
-
-	/* Actually send the DNS query */
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(5353);
 	addr.sin_addr.s_addr = inet_addr("224.0.0.251");
-	n = sendto(fd, query, querylen, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-	g_free(query);
+	n = sendto(fd, data, datalen, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
 
 	if (n == -1) {
 		gaim_debug_error("mdns", "Error sending packet: %d\n", errno);
 		return -1;
-	} else if (n != querylen) {
-		gaim_debug_error("mdns", "Only sent %d of %d bytes of query.\n", n, querylen);
+	} else if (n != datalen) {
+		gaim_debug_error("mdns", "Only sent %d of %d bytes of data.\n", n, datalen);
 		return -1;
 	}
 
 	return 0;
 }
+
+/***************************************/
+/* Functions for sending mDNS messages */
+/***************************************/
+
+static int
+mdns_getlength_RR(const ResourceRecord *rr)
+{
+	int ret = 0;
+
+	ret += strlen(rr->name) + 2;
+	ret += 10;
+
+	switch (rr->type) {
+		case RENDEZVOUS_RRTYPE_PTR:
+			ret += strlen((const char *)rr->rdata) + 2;
+		break;
+	}
+
+	return ret;
+}
+
+static int
+mdns_put_name(char *data, int datalen, int offset, const char *name)
+{
+	int i = 0;
+	char *b, *c;
+
+	b = (char *)name;
+	while ((c = strchr(b, '.'))) {
+		i += util_put8(&data[offset + i], c - b); /* Length of domain-name segment */
+		memcpy(&data[offset + i], b, c - b); /* Domain-name segment */
+		i += c - b; /* Increment the destination pointer */
+		b = c + 1;
+	}
+	i += util_put8(&data[offset + i], strlen(b)); /* Length of domain-name segment */
+	strcpy(&data[offset + i], b); /* Domain-name segment */
+	i += strlen(b) + 1; /* Increment the destination pointer */
+
+	return i;
+}
+
+static int
+mdns_put_RR(char *data, int datalen, int offset, const ResourceRecord *rr)
+{
+	int i = 0;
+
+	i += mdns_put_name(data, datalen, offset + i, rr->name);
+	i += util_put16(&data[offset + i], rr->type);
+	i += util_put16(&data[offset + i], rr->class);
+	i += util_put32(&data[offset + i], rr->ttl);
+	i += util_put16(&data[offset + i], rr->rdlength);
+
+	switch (rr->type) {
+		case RENDEZVOUS_RRTYPE_PTR:
+			i += mdns_put_name(data, datalen, offset + i, (const char *)rr->rdata);
+		break;
+	}
+
+	return i;
+}
+
+int
+mdns_send_dns(int fd, const DNSPacket *dns)
+{
+	int ret;
+	unsigned int datalen;
+	unsigned char *data;
+	int offset;
+	int i;
+
+	/* Calculate the length of the buffer we'll need to hold the DNS packet */
+	datalen = 0;
+
+	/* Header */
+	datalen += 12;
+
+	/* Questions */
+	for (i = 0; i < dns->header.numquestions; i++)
+		datalen += strlen(dns->questions[i].name) + 2 + 4;
+
+	/* Resource records */
+	for (i = 0; i < dns->header.numanswers; i++)
+		datalen += mdns_getlength_RR(&dns->answers[i]);
+	for (i = 0; i < dns->header.numauthority; i++)
+		datalen += mdns_getlength_RR(&dns->authority[i]);
+	for (i = 0; i < dns->header.numadditional; i++)
+		datalen += mdns_getlength_RR(&dns->additional[i]);
+
+	/* Allocate a buffer */
+	if (!(data = (unsigned char *)g_malloc(datalen))) {
+		return -ENOMEM;
+	}
+
+	/* Construct the datagram */
+	/* Header */
+	offset = 0;
+	offset += util_put16(&data[offset], dns->header.id); /* ID */
+	offset += util_put16(&data[offset], dns->header.flags);
+	offset += util_put16(&data[offset], dns->header.numquestions); /* QDCOUNT */
+	offset += util_put16(&data[offset], dns->header.numanswers); /* ANCOUNT */
+	offset += util_put16(&data[offset], dns->header.numauthority); /* NSCOUNT */
+	offset += util_put16(&data[offset], dns->header.numadditional); /* ARCOUNT */
+
+	/* Questions */
+	for (i = 0; i < dns->header.numquestions; i++) {
+		offset += mdns_put_name(data, datalen, offset, dns->questions[i].name); /* QNAME */
+		offset += util_put16(&data[offset], dns->questions[i].type); /* QTYPE */
+		offset += util_put16(&data[offset], dns->questions[i].class); /* QCLASS */
+	}
+
+	/* Resource records */
+	for (i = 0; i < dns->header.numanswers; i++)
+		offset += mdns_put_RR(data, datalen, offset, &dns->answers[i]);
+	for (i = 0; i < dns->header.numauthority; i++)
+		offset += mdns_put_RR(data, datalen, offset, &dns->authority[i]);
+	for (i = 0; i < dns->header.numadditional; i++)
+		offset += mdns_put_RR(data, datalen, offset, &dns->additional[i]);
+
+	/* Send the datagram */
+	ret = mdns_send_raw(fd, datalen, data);
+
+	g_free(data);
+
+	return ret;
+}
+
+int
+mdns_query(int fd, const char *domain)
+{
+	int ret;
+	DNSPacket *dns;
+
+	if (strlen(domain) > 255) {
+		return -EINVAL;
+	}
+
+	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
+	dns->header.id = 0x0000;
+	dns->header.flags = 0x0000;
+	dns->header.numquestions = 0x0001;
+	dns->header.numanswers = 0x0000;
+	dns->header.numauthority = 0x0000;
+	dns->header.numadditional = 0x0000;
+
+	dns->questions = (Question *)g_malloc(1 * sizeof(Question));
+	dns->questions[0].name = g_strdup(domain);
+	dns->questions[0].type = RENDEZVOUS_RRTYPE_PTR;
+	dns->questions[0].class = 0x8001;
+
+	dns->answers = NULL;
+	dns->authority = NULL;
+	dns->additional = NULL;
+
+	mdns_send_dns(fd, dns);
+
+	mdns_free(dns);
+
+	return ret;
+}
+
+int
+mdns_advertise_ptr(int fd, const char *name, const char *domain)
+{
+	int ret;
+	DNSPacket *dns;
+
+	if ((strlen(name) > 255) || (strlen(domain) > 255)) {
+		return -EINVAL;
+	}
+
+	dns = (DNSPacket *)g_malloc(sizeof(DNSPacket));
+	dns->header.id = 0x0000;
+	dns->header.flags = 0x8400;
+	dns->header.numquestions = 0x0000;
+	dns->header.numanswers = 0x0001;
+	dns->header.numauthority = 0x0000;
+	dns->header.numadditional = 0x0000;
+	dns->questions = NULL;
+
+	dns->answers = (ResourceRecord *)g_malloc(1 * sizeof(ResourceRecord));
+	dns->answers[0].name = g_strdup(name);
+	dns->answers[0].type = RENDEZVOUS_RRTYPE_PTR;
+	dns->answers[0].class = 0x0001;
+	dns->answers[0].ttl = 0x00001c20;
+	dns->answers[0].rdlength = strlen(domain) + 2;
+	dns->answers[0].rdata = (void *)g_strdup(domain);
+
+	dns->authority = NULL;
+	dns->additional = NULL;
+
+	mdns_send_dns(fd, dns);
+
+	mdns_free(dns);
+
+	return ret;
+}
+
+/***************************************/
+/* Functions for parsing mDNS messages */
+/***************************************/
 
 /*
  * XXX - Needs bounds checking!
@@ -444,7 +610,8 @@ mdns_read(int fd)
 {
 	DNSPacket *ret = NULL;
 	int i; /* Current position in datagram */
-	/* char data[512]; */ /* XXX - Find out what to use as a maximum incoming UDP packet size */
+	/* XXX - Find out what to use as a maximum incoming UDP packet size */
+	/* char data[512]; */
 	char data[10096];
 	int datalen;
 	struct sockaddr_in addr;
@@ -526,6 +693,11 @@ mdns_free_rr_rdata(unsigned short type, void *rdata)
 
 			case RENDEZVOUS_RRTYPE_TXT:
 				g_hash_table_destroy(rdata);
+			break;
+
+			case RENDEZVOUS_RRTYPE_SRV:
+				g_free(((ResourceRecordSRV *)rdata)->target);
+				g_free(rdata);
 			break;
 	}
 }
