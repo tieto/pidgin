@@ -41,7 +41,8 @@
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
 #define PROTO_GADUGADU 11
-#define PROTO_UNTAKEN  17
+#define PROTO_SAMETIME 12
+#define PROTO_UNTAKEN  13
 
 /* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Rob or Sean if you'd like
  * to create a new PRPL. */
