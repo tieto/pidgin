@@ -38,6 +38,13 @@ struct msn_data {
 	int fd;
 	int trId;
 	int inpa;
+
+	char *rxqueue;
+	int rxlen;
+	gboolean msg;
+	char *msguser;
+	int msglen;
+
 	GSList *switches;
 	GSList *fl;
 	GSList *permit;
@@ -49,6 +56,13 @@ struct msn_switchboard {
 	struct conversation *chat;
 	int fd;
 	int inpa;
+
+	char *rxqueue;
+	int rxlen;
+	gboolean msg;
+	char *msguser;
+	int msglen;
+
 	char *sessid;
 	char *auth;
 	int trId;
@@ -342,6 +356,9 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	if (ms->inpa)
 		gaim_input_remove(ms->inpa);
 	close(ms->fd);
+	g_free(ms->rxqueue);
+	if (ms->msg)
+		g_free(ms->msguser);
 	if (ms->sessid)
 		g_free(ms->sessid);
 	g_free(ms->auth);
@@ -359,25 +376,11 @@ static void msn_kill_switch(struct msn_switchboard *ms)
 	g_free(ms);
 }
 
-static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
+static int msn_process_switch(struct msn_switchboard *ms, char *buf)
 {
-	struct msn_switchboard *ms = data;
 	struct gaim_connection *gc = ms->gc;
-	char buf[MSN_BUF_LEN];
+	char sendbuf[MSN_BUF_LEN];
 	static int id = 0;
-	int i = 0;
-
-	bzero(buf, sizeof(buf));
-	while ((read(ms->fd, buf + i, 1) > 0) && (buf[i++] != '\n'))
-		if (i == sizeof(buf))
-			i--; /* yes i know this loses data but we shouldn't get messages this long
-				and it's better than possibly writing past our buffer */
-	if (i == 0 || buf[i - 1] != '\n') {
-		msn_kill_switch(ms);
-		return;
-	}
-	debug_printf("MSN S: %s", buf);
-	g_strchomp(buf);
 
 	if (!g_strncasecmp(buf, "ACK", 3)) {
 	} else if (!g_strncasecmp(buf, "ANS", 3)) {
@@ -389,8 +392,10 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 			GET_NEXT(tmp);
 			user = tmp;
 			remove_chat_buddy(ms->chat, user);
-		} else
+		} else {
 			msn_kill_switch(ms);
+			return 0;
+		}
 	} else if (!g_strncasecmp(buf, "CAL", 3)) {
 	} else if (!g_strncasecmp(buf, "IRO", 3)) {
 		char *tot, *user, *tmp = buf;
@@ -429,23 +434,21 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 			char *send = add_cr(ms->txqueue->data);
 			char *utf8 = str_to_utf8(send);
 			g_free(send);
-			g_snprintf(buf, sizeof(buf), "MSG %d N %d\r\n%s%s", ++ms->trId,
+			g_snprintf(sendbuf, sizeof(sendbuf), "MSG %d N %d\r\n%s%s", ++ms->trId,
 					strlen(MIME_HEADER) + strlen(utf8),
 					MIME_HEADER, utf8);
 			g_free(utf8);
 			g_free(ms->txqueue->data);
 			ms->txqueue = g_slist_remove(ms->txqueue, ms->txqueue->data);
-			if (msn_write(ms->fd, buf, strlen(buf)) < 0) {
+			if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
 				msn_kill_switch(ms);
-				return;
+				return 0;
 			}
 			debug_printf("\n");
 		}
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
-		int length, len, r;
-		char *msg, *content, *agent, *utf;
-		int flags = 0;
+		int length;
 
 		GET_NEXT(tmp);
 		user = tmp;
@@ -455,47 +458,9 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 		GET_NEXT(tmp);
 		length = atoi(tmp);
 
-		msg = g_malloc0(length + 1);
-
-		for (len = 0; len < length; len += r) {
-			if ((r = read(ms->fd, msg+len, length-len)) <= 0) {
-				g_free(msg);
-				hide_login_progress(gc, "Unable to read message");
-				signoff(gc);
-				return;
-			}
-		}
-
-		agent = strstr(msg, "User-Agent: ");
-		if (agent) {
-			if (!g_strncasecmp(agent, "User-Agent: Gaim", strlen("User-Agent: Gaim")))
-				flags |= IM_FLAG_GAIMUSER;
-		}
-		content = strstr(msg, "Content-Type: ");
-		if (!content) {
-			g_free(msg);
-			return;
-		}
-		if (!g_strncasecmp(content, "Content-Type: text/plain",
-				     strlen("Content-Type: text/plain"))) {
-			char *skiphead;
-			skiphead = strstr(msg, "\r\n\r\n");
-			if (!skiphead || !skiphead[4]) {
-				g_free(msg);
-				return;
-			}
-			skiphead += 4;
-			utf = utf8_to_str(skiphead);
-			strip_linefeed(utf);
-
-			if (ms->chat)
-				serv_got_chat_in(gc, ms->chat->id, user, flags, utf, time(NULL));
-			else
-				serv_got_im(gc, user, utf, flags, time(NULL));
-
-			g_free(utf);
-		}
-		g_free(msg);
+		ms->msg = TRUE;
+		ms->msguser = g_strdup(user);
+		ms->msglen = length;
 	} else if (!g_strncasecmp(buf, "NAK", 3)) {
 		do_error_dialog("A message may not have been received.", "MSN Error");
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
@@ -503,20 +468,134 @@ static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondit
 		if (ms->chat)
 			serv_got_chat_left(gc, ms->chat->id);
 		msn_kill_switch(ms);
+		return 0;
 	} else if (!g_strncasecmp(buf, "USR", 3)) {
 		/* good, we got USR, now we need to find out who we want to talk to */
 		struct msn_switchboard *ms = msn_find_writable_switch(gc);
 
 		if (!ms)
-			return;
+			return 0;
 
-		g_snprintf(buf, sizeof(buf), "CAL %d %s\r\n", ++ms->trId, ms->user);
-		if (msn_write(ms->fd, buf, strlen(buf)) < 0)
+		g_snprintf(sendbuf, sizeof(sendbuf), "CAL %d %s\r\n", ++ms->trId, ms->user);
+		if (msn_write(ms->fd, sendbuf, strlen(sendbuf)) < 0) {
 			msn_kill_switch(ms);
+			return 0;
+		}
 	} else if (isdigit(*buf)) {
 		handle_errcode(buf, TRUE);
 	} else {
 		debug_printf("Unhandled message!\n");
+	}
+
+	return 1;
+}
+
+static void msn_process_switch_msg(struct msn_switchboard *ms, char *msg)
+{
+	char *content, *agent, *utf;
+	int flags = 0;
+
+	agent = strstr(msg, "User-Agent: ");
+	if (agent) {
+		if (!g_strncasecmp(agent, "User-Agent: Gaim", strlen("User-Agent: Gaim")))
+			flags |= IM_FLAG_GAIMUSER;
+	}
+	content = strstr(msg, "Content-Type: ");
+	if (!content)
+		return;
+	if (!g_strncasecmp(content, "Content-Type: text/plain",
+			     strlen("Content-Type: text/plain"))) {
+		char *skiphead;
+		skiphead = strstr(msg, "\r\n\r\n");
+		if (!skiphead || !skiphead[4]) {
+			return;
+		}
+		skiphead += 4;
+		utf = utf8_to_str(skiphead);
+		strip_linefeed(utf);
+
+		if (ms->chat)
+			serv_got_chat_in(ms->gc, ms->chat->id, ms->msguser, flags, utf, time(NULL));
+		else
+			serv_got_im(ms->gc, ms->msguser, utf, flags, time(NULL));
+
+		g_free(utf);
+	}
+}
+
+static void msn_switchboard_callback(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct msn_switchboard *ms = data;
+	char buf[MSN_BUF_LEN];
+	int cont = 1;
+	int len;
+
+	len = read(ms->fd, buf, sizeof(buf));
+
+	if (len <= 0) {
+		msn_kill_switch(ms);
+		return;
+	}
+
+	ms->rxqueue = g_realloc(ms->rxqueue, len + ms->rxlen);
+	memcpy(ms->rxqueue + ms->rxlen, buf, len);
+	ms->rxlen += len;
+
+	while (cont) {
+		if (!ms->rxlen)
+			return;
+
+		if (ms->msg) {
+			char *msg;
+			if (ms->msglen > ms->rxlen)
+				return;
+			msg = ms->rxqueue;
+			ms->rxlen -= ms->msglen;
+			if (ms->rxlen) {
+				ms->rxqueue = g_memdup(msg + ms->msglen, ms->rxlen);
+			} else {
+				ms->rxqueue = NULL;
+				msg = g_realloc(msg, ms->msglen + 1);
+			}
+			msg[ms->msglen] = 0;
+			ms->msglen = 0;
+			ms->msg = FALSE;
+
+			msn_process_switch_msg(ms, msg);
+
+			g_free(ms->msguser);
+			g_free(msg);
+		} else {
+			char *end = ms->rxqueue;
+			int cmdlen;
+			char *cmd;
+			int i = 0;
+
+			while (i + 1 < ms->rxlen) {
+				if (*end == '\r' && end[1] == '\n')
+					break;
+				end++; i++;
+			}
+			if (i + 1 == ms->rxlen)
+				return;
+
+			cmdlen = end - ms->rxqueue + 2;
+			cmd = ms->rxqueue;
+			ms->rxlen -= cmdlen;
+			if (ms->rxlen) {
+				ms->rxqueue = g_memdup(cmd + cmdlen, ms->rxlen);
+			} else {
+				ms->rxqueue = NULL;
+				cmd = g_realloc(cmd, cmdlen + 1);
+			}
+			cmd[cmdlen] = 0;
+
+			debug_printf("MSN S: %s", cmd);
+			g_strchomp(cmd);
+			cont = msn_process_switch(ms, cmd);
+
+			g_free(cmd);
+		}
 	}
 }
 
@@ -610,25 +689,10 @@ static void msn_cancel_add(gpointer w, struct msn_add_permit *map)
 	g_free(map);
 }
 
-static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
+static int msn_process_main(struct gaim_connection *gc, char *buf)
 {
-	struct gaim_connection *gc = data;
 	struct msn_data *md = gc->proto_data;
-	char buf[MSN_BUF_LEN];
-	int i = 0;
-
-	bzero(buf, sizeof(buf));
-	while ((read(md->fd, buf + i, 1) > 0) && (buf[i++] != '\n'))
-		if (i == sizeof(buf))
-			i--; /* yes i know this loses data but we shouldn't get messages this long
-				and it's better than possibly writing past our buffer */
-	if (i == 0 || buf[i - 1] != '\n') {
-		hide_login_progress(gc, "Error reading from server");
-		signoff(gc);
-		return;
-	}
-	debug_printf("MSN S: %s", buf);
-	g_strchomp(buf);
+	char sendbuf[MSN_BUF_LEN];
 
 	if (!g_strncasecmp(buf, "ADD", 3)) {
 		char *list, *user, *friend, *tmp = buf;
@@ -648,11 +712,11 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		friend = tmp;
 
 		if (g_strcasecmp(list, "RL"))
-			return;
+			return 1;
 
 		while (perm) {
 			if (!g_strcasecmp(perm->data, user))
-				return;
+				return 1;
 			perm = perm->next;
 		}
 
@@ -704,13 +768,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		md5_append(&st, (const md5_byte_t *)"Q1P7W2E4J9R8U3S5", strlen("Q1P7W2E4J9R8U3S5"));
 		md5_finish(&st, di);
 
-		g_snprintf(buf, sizeof(buf), "QRY %d msmsgs@msnmsgr.com 32\r\n", ++md->trId);
+		g_snprintf(sendbuf, sizeof(sendbuf), "QRY %d msmsgs@msnmsgr.com 32\r\n", ++md->trId);
 		for (i = 0; i < 16; i++) {
 			g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
-			strcat(buf, buf2);
+			strcat(sendbuf, buf2);
 		}
 
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 			hide_login_progress(gc, "Unable to write to server");
 			signoff(gc);
 		}
@@ -790,13 +854,13 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			gc->deny = g_slist_append(gc->deny, g_strdup(who));
 		} else if (!g_strcasecmp(which, "RL")) {
 			if (pos != tot)
-				return;
+				return 1;
 
-			g_snprintf(buf, sizeof(buf), "CHG %d NLN\r\n", ++md->trId);
-			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			g_snprintf(sendbuf, sizeof(sendbuf), "CHG %d NLN\r\n", ++md->trId);
+			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, "Unable to write");
 				signoff(gc);
-				return;
+				return 0;
 			}
 
 			account_online(gc);
@@ -808,11 +872,11 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			if (bud_list_cache_exists(gc))
 				do_import(gc, NULL);
 			else {
-				g_snprintf(buf, sizeof(buf), "BLP %d AL\r\n", ++md->trId);
-				if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+				g_snprintf(sendbuf, sizeof(sendbuf), "BLP %d AL\r\n", ++md->trId);
+				if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 					hide_login_progress(gc, "Unable to write");
 					signoff(gc);
-					return;
+					return 0;
 				}
 			}
 			while (md->fl) {
@@ -833,8 +897,6 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 	} else if (!g_strncasecmp(buf, "MSG", 3)) {
 		char *user, *tmp = buf;
 		int length;
-		char *msg, *skiphead, *utf;
-		int len, r;
 
 		GET_NEXT(tmp);
 		user = tmp;
@@ -844,36 +906,9 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		GET_NEXT(tmp);
 		length = atoi(tmp);
 
-		msg = g_new0(char, MAX(length + 1, MSN_BUF_LEN));
-
-		for (len = 0; len < length; len += r) {
-			if ((r = read(md->fd, msg+len, length-len)) <= 0) {
-				g_free(msg);
-				hide_login_progress(gc, "Unable to read message");
-				signoff(gc);
-				return;
-			}
-		}
-
-		if (!g_strcasecmp(user, "hotmail")) {
-			handle_hotmail(gc, msg);
-			g_free(msg);
-			return;
-		}
-
-		skiphead = strstr(msg, "\r\n\r\n");
-		if (!skiphead || !skiphead[4]) {
-			g_free(msg);
-			return;
-		}
-		skiphead += 4;
-		utf = utf8_to_str(skiphead);
-		strip_linefeed(utf);
-
-		serv_got_im(gc, user, utf, 0, time(NULL));
-
-		g_free(utf);
-		g_free(msg);
+		md->msg = TRUE;
+		md->msguser = g_strdup(user);
+		md->msglen = length;
 	} else if (!g_strncasecmp(buf, "NLN", 3)) {
 		char *state, *user, *friend, *tmp = buf;
 		struct buddy *b;
@@ -957,7 +992,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		ms->fd = proxy_connect(ssaddr, port, msn_rng_connect, ms);
 		if (ms->fd < 0) {
 			g_free(ms);
-			return;
+			return 1;
 		}
 		ms->user = g_strdup(user);
 		ms->sessid = g_strdup(sessid);
@@ -977,7 +1012,7 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 			if (!host) {
 				hide_login_progress(gc, "Got invalid XFR\n");
 				signoff(gc);
-				return;
+				return 0;
 			}
 			switchboard = FALSE;
 		}
@@ -999,14 +1034,14 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		if (switchboard) {
 			struct msn_switchboard *ms = msn_find_writable_switch(gc);
 			if (!ms)
-				return;
+				return 1;
 
 			GET_NEXT(tmp);
 
 			ms->fd = proxy_connect(host, port, msn_ss_xfr_connect, ms);
 			if (ms->fd < 0) {
 				msn_kill_switch(ms);
-				return;
+				return 1;
 			}
 			ms->auth = g_strdup(tmp);
 		} else {
@@ -1023,6 +1058,108 @@ static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
 		handle_errcode(buf, TRUE);
 	} else {
 		debug_printf("Unhandled message!\n");
+	}
+
+	return 1;
+}
+
+static void msn_process_main_msg(struct gaim_connection *gc, char *msg)
+{
+	struct msn_data *md = gc->proto_data;
+	char *skiphead, *utf;
+
+	if (!g_strcasecmp(md->msguser, "hotmail")) {
+		handle_hotmail(gc, msg);
+		return;
+	}
+
+	skiphead = strstr(msg, "\r\n\r\n");
+	if (!skiphead || !skiphead[4])
+		return;
+	skiphead += 4;
+	utf = utf8_to_str(skiphead);
+	strip_linefeed(utf);
+
+	serv_got_im(gc, md->msguser, utf, 0, time(NULL));
+
+	g_free(utf);
+}
+
+static void msn_callback(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+	int cont = 1;
+	int len;
+
+	len = read(md->fd, buf, sizeof(buf));
+
+	if (len <= 0) {
+		hide_login_progress(gc, "Error reading from server");
+		signoff(gc);
+		return;
+	}
+
+	md->rxqueue = g_realloc(md->rxqueue, len + md->rxlen);
+	memcpy(md->rxqueue + md->rxlen, buf, len);
+	md->rxlen += len;
+
+	while (cont) {
+		if (!md->rxlen)
+			return;
+
+		if (md->msg) {
+			char *msg;
+			if (md->msglen > md->rxlen)
+				return;
+			msg = md->rxqueue;
+			md->rxlen -= md->msglen;
+			if (md->rxlen) {
+				md->rxqueue = g_memdup(msg + md->msglen, md->rxlen);
+			} else {
+				md->rxqueue = NULL;
+				msg = g_realloc(msg, md->msglen + 1);
+			}
+			msg[md->msglen] = 0;
+			md->msglen = 0;
+			md->msg = FALSE;
+
+			msn_process_main_msg(gc, msg);
+
+			g_free(md->msguser);
+			g_free(msg);
+		} else {
+			char *end = md->rxqueue;
+			int cmdlen;
+			char *cmd;
+			int i = 0;
+
+			while (i + 1 < md->rxlen) {
+				if (*end == '\r' && end[1] == '\n')
+					break;
+				end++; i++;
+			}
+			if (i + 1 == md->rxlen)
+				return;
+
+			cmdlen = end - md->rxqueue + 2;
+			cmd = md->rxqueue;
+			md->rxlen -= cmdlen;
+			if (md->rxlen) {
+				md->rxqueue = g_memdup(cmd + cmdlen, md->rxlen);
+			} else {
+				md->rxqueue = NULL;
+				cmd = g_realloc(cmd, cmdlen + 1);
+			}
+			cmd[cmdlen] = 0;
+
+			debug_printf("MSN S: %s", cmd);
+			g_strchomp(cmd);
+			cont = msn_process_main(gc, cmd);
+
+			g_free(cmd);
+		}
 	}
 }
 
@@ -1058,53 +1195,38 @@ static void msn_login_xfr_connect(gpointer data, gint source, GaimInputCondition
 	md->inpa = gaim_input_add(md->fd, GAIM_INPUT_READ, msn_login_callback, gc);
 }
 
-static void msn_login_callback(gpointer data, gint source, GaimInputCondition cond)
+static int msn_process_login(struct gaim_connection *gc, char *buf)
 {
-	struct gaim_connection *gc = data;
 	struct msn_data *md = gc->proto_data;
-	char buf[MSN_BUF_LEN];
-	int i = 0;
-
-	bzero(buf, sizeof(buf));
-	while ((read(md->fd, buf + i, 1) > 0) && (buf[i++] != '\n'))
-		if (i == sizeof(buf))
-			i--; /* yes i know this loses data but we shouldn't get messages this long
-				and it's better than possibly writing past our buffer */
-	if (i == 0 || buf[i - 1] != '\n') {
-		hide_login_progress(gc, "Error reading from server");
-		signoff(gc);
-		return;
-	}
-	debug_printf("MSN S: %s", buf);
-	g_strchomp(buf);
+	char sendbuf[MSN_BUF_LEN];
 
 	if (!g_strncasecmp(buf, "VER", 3)) {
 		/* we got VER, check to see that MSNP5 is in the list, then send INF */
 		if (!strstr(buf, "MSNP5")) {
 			hide_login_progress(gc, "Protocol not supported");
 			signoff(gc);
-			return;
+			return 0;
 		}
 
-		g_snprintf(buf, sizeof(buf), "INF %d\r\n", ++md->trId);
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		g_snprintf(sendbuf, sizeof(sendbuf), "INF %d\r\n", ++md->trId);
+		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 			hide_login_progress(gc, "Unable to request INF\n");
 			signoff(gc);
-			return;
+			return 0;
 		}
 	} else if (!g_strncasecmp(buf, "INF", 3)) {
 		/* check to make sure we can use md5 */
 		if (!strstr(buf, "MD5")) {
 			hide_login_progress(gc, "Unable to login using MD5");
 			signoff(gc);
-			return;
+			return 0;
 		}
 
-		g_snprintf(buf, sizeof(buf), "USR %d MD5 I %s\r\n", ++md->trId, gc->username);
-		if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+		g_snprintf(sendbuf, sizeof(sendbuf), "USR %d MD5 I %s\r\n", ++md->trId, gc->username);
+		if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 			hide_login_progress(gc, "Unable to send USR\n");
 			signoff(gc);
-			return;
+			return 0;
 		}
 
 		set_login_progress(gc, 3, "Requesting to send password");
@@ -1124,11 +1246,11 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		if (!g_strcasecmp(resp, "OK")) {
 			g_snprintf(gc->displayname, sizeof(gc->displayname), "%s", friend);
 
-			g_snprintf(buf, sizeof(buf), "SYN %d 0\r\n", ++md->trId);
-			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			g_snprintf(sendbuf, sizeof(sendbuf), "SYN %d 0\r\n", ++md->trId);
+			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, "Unable to write");
 				signoff(gc);
-				return;
+				return 0;
 			}
 
 			gaim_input_remove(md->inpa);
@@ -1145,17 +1267,17 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 			md5_append(&st, (const md5_byte_t *)buf2, strlen(buf2));
 			md5_finish(&st, di);
 
-			g_snprintf(buf, sizeof(buf), "USR %d MD5 S ", ++md->trId);
+			g_snprintf(sendbuf, sizeof(sendbuf), "USR %d MD5 S ", ++md->trId);
 			for (i = 0; i < 16; i++) {
 				g_snprintf(buf2, sizeof(buf2), "%02x", di[i]);
-				strcat(buf, buf2);
+				strcat(sendbuf, buf2);
 			}
-			strcat(buf, "\n");
+			strcat(sendbuf, "\n");
 
-			if (msn_write(md->fd, buf, strlen(buf)) < 0) {
+			if (msn_write(md->fd, sendbuf, strlen(sendbuf)) < 0) {
 				hide_login_progress(gc, "Unable to send password");
 				signoff(gc);
-				return;
+				return 0;
 			}
 
 			set_login_progress(gc, 4, "Password sent");
@@ -1168,7 +1290,7 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 		if (!host) {
 			hide_login_progress(gc, "Got invalid XFR\n");
 			signoff(gc);
-			return;
+			return 0;
 		}
 
 		GET_NEXT(host);
@@ -1189,13 +1311,72 @@ static void msn_login_callback(gpointer data, gint source, GaimInputCondition co
 			hide_login_progress(gc, "Unable to transfer");
 			signoff(gc);
 		}
+		return 0;
 	} else {
 		if (isdigit(*buf))
 			hide_login_progress(gc, handle_errcode(buf, FALSE));
 		else
 			hide_login_progress(gc, "Unable to parse message");
 		signoff(gc);
+		return 0;
+	}
+
+	return 1;
+}
+
+static void msn_login_callback(gpointer data, gint source, GaimInputCondition cond)
+{
+	struct gaim_connection *gc = data;
+	struct msn_data *md = gc->proto_data;
+	char buf[MSN_BUF_LEN];
+	int cont = 1;
+	int len;
+
+	len = read(md->fd, buf, sizeof(buf));
+
+	if (len <= 0) {
+		hide_login_progress(gc, "Error reading from server");
+		signoff(gc);
 		return;
+	}
+
+	md->rxqueue = g_realloc(md->rxqueue, len + md->rxlen);
+	memcpy(md->rxqueue + md->rxlen, buf, len);
+	md->rxlen += len;
+
+	while (cont) {
+		char *end = md->rxqueue;
+		int cmdlen;
+		char *cmd;
+		int i = 0;
+
+		if (!md->rxlen)
+			return;
+
+		while (i + 1 < md->rxlen) {
+			if (*end == '\r' && end[1] == '\n')
+				break;
+			end++; i++;
+		}
+		if (i + 1 == md->rxlen)
+			return;
+
+		cmdlen = end - md->rxqueue + 2;
+		cmd = md->rxqueue;
+		md->rxlen -= cmdlen;
+		if (md->rxlen) {
+			md->rxqueue = g_memdup(cmd + cmdlen, md->rxlen);
+		} else {
+			md->rxqueue = NULL;
+			cmd = g_realloc(cmd, cmdlen + 1);
+		}
+		cmd[cmdlen] = 0;
+
+		debug_printf("MSN S: %s", cmd);
+		g_strchomp(cmd);
+		cont = msn_process_login(gc, cmd);
+
+		g_free(cmd);
 	}
 }
 
@@ -1254,6 +1435,9 @@ static void msn_close(struct gaim_connection *gc)
 	close(md->fd);
 	if (md->inpa)
 		gaim_input_remove(md->inpa);
+	g_free(md->rxqueue);
+	if (md->msg)
+		g_free(md->msguser);
 	while (md->switches)
 		msn_kill_switch(md->switches->data);
 	while (md->fl) {
