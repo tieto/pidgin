@@ -1914,6 +1914,7 @@ update_typing_icon(struct gaim_conversation *conv)
 {
 	struct gaim_gtk_window *gtkwin;
 	struct gaim_im *im = NULL;
+	struct gaim_gtk_conversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
@@ -1930,7 +1931,7 @@ update_typing_icon(struct gaim_conversation *conv)
 				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
 				gtk_image_new_from_stock(GAIM_STOCK_TYPING,
 					GTK_ICON_SIZE_MENU));
-		gtk_tooltips_set_tip(gtk_tooltips_new(), gtkwin->menu.typing_icon,
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User is typing..."), NULL);
 	} else if(im && gaim_im_get_typing_state(im) == TYPED) {
 		gtkwin->menu.typing_icon = gtk_image_menu_item_new();
@@ -1938,7 +1939,7 @@ update_typing_icon(struct gaim_conversation *conv)
 				GTK_IMAGE_MENU_ITEM(gtkwin->menu.typing_icon),
 				gtk_image_new_from_stock(GAIM_STOCK_TYPED,
 					GTK_ICON_SIZE_MENU));
-		gtk_tooltips_set_tip(gtk_tooltips_new(), gtkwin->menu.typing_icon,
+		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User has typed something and paused"), NULL);
 	}
 
@@ -4277,6 +4278,7 @@ gaim_gtkconv_updated(struct gaim_conversation *conv, GaimConvUpdateType type)
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
+		pango_font_description_free(style->font_desc);
 		style->font_desc = pango_font_description_copy(
 				gtk_widget_get_style(gtkconv->tab_label)->font_desc);
 
@@ -4615,6 +4617,8 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	FILE *file;
 	GError *err = NULL;
 
+	struct buddy *buddy;
+
 	void *data;
 	int len, delay;
 
@@ -4643,34 +4647,43 @@ gaim_gtkconv_update_buddy_icon(struct gaim_conversation *conv)
 	if (gaim_conversation_get_gc(conv) == NULL)
 		return;
 
-	data = get_icon_data(gaim_conversation_get_gc(conv),
-						 normalize(gaim_conversation_get_name(conv)),
-						 &len);
+	if((buddy = gaim_find_buddy(gaim_conversation_get_account(conv),
+					gaim_conversation_get_name(conv))) != NULL) {
+		char *file = gaim_buddy_get_setting(buddy, "buddy_icon");
+		if(file) {
+			gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(file, &err);
+			g_free(file);
+		}
+	} else {
+		data = get_icon_data(gaim_conversation_get_gc(conv),
+				normalize(gaim_conversation_get_name(conv)),
+				&len);
 
-	if (!data)
-		return;
+		if (!data)
+			return;
 
-	/* this is such an evil hack, i don't know why i'm even considering it.
-	 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
-	g_snprintf(filename, sizeof(filename),
-			   "%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
-			   g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
+		/* this is such an evil hack, i don't know why i'm even considering it.
+		 * we'll do it differently when gdk-pixbuf-loader isn't leaky anymore. */
+		g_snprintf(filename, sizeof(filename),
+				"%s" G_DIR_SEPARATOR_S "gaimicon-%s.%d",
+				g_get_tmp_dir(), gaim_conversation_get_name(conv), getpid());
 
-	if (!(file = fopen(filename, "wb")))
-		return;
+		if (!(file = fopen(filename, "wb")))
+			return;
 
-	fwrite(data, 1, len, file);
-	fclose(file);
+		fwrite(data, 1, len, file);
+		fclose(file);
 
-	gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
+		gtkconv->u.im->anim = gdk_pixbuf_animation_new_from_file(filename, &err);
+		/* make sure we remove the file as soon as possible */
+		unlink(filename);
+	}
 
 	if (err) {
 		debug_printf("Buddy icon error: %s\n", err->message);
 		g_error_free(err);
 	}
 
-	/* make sure we remove the file as soon as possible */
-	unlink(filename);
 
 	if (!gtkconv->u.im->anim)
 		return;

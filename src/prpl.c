@@ -559,6 +559,7 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 	struct icon_data tmp;
 	GList *l;
 	struct icon_data *id;
+	struct buddy *b;
 	tmp.gc = gc;
 	tmp.who = normalize(who);
 	tmp.data=NULL;
@@ -594,21 +595,40 @@ void set_icon_data(struct gaim_connection *gc, char *who, void *data, int len)
 	/* XXX Buddy Icon should probalby be part of struct buddy instead of this weird global
 	 * linked list stuff. */
 
-	if (gaim_find_buddy(gc->account, who)) { 
-		/* This is one of our buddies, so we'll cache this icon for our buddy list */
-		
-		/* Because only OSCAR does buddy icons right now, I don't feel so bad doing nothing to
-		   save what protocol this is from. */
-		char *filename = g_build_filename(gaim_user_dir(), "icons", normalize(who), NULL);
+	if ((b = gaim_find_buddy(gc->account, who)) != NULL) {
+		char *random = g_strdup_printf("%x", g_random_int());
+		char *filename = g_build_filename(gaim_user_dir(), "icons", random,
+				NULL);
+		char *dirname = g_build_filename(gaim_user_dir(), "icons", NULL);
+		char *old_icon = gaim_buddy_get_setting(b, "buddy_icon");
 		FILE *file = NULL;
 
+		g_free(random);
+
+		if(!g_file_test(dirname, G_FILE_TEST_IS_DIR))
+			mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR);
+
+		g_free(dirname);
+
 		file = fopen(filename, "wb");
-		if (!file)
-			return;
-		fwrite(data, 1, len, file);
-		fclose(file);
+		if (file) {
+			fwrite(data, 1, len, file);
+			fclose(file);
+		}
+
+		if(old_icon) {
+			unlink(old_icon);
+			g_free(old_icon);
+		}
+
+		gaim_buddy_set_setting(b, "buddy_icon", filename);
+		gaim_blist_save();
+
+		g_free(filename);
+
+		gaim_blist_update_buddy_icon(b);
 	}
-	
+
 	if (conv != NULL && gaim_conversation_get_gc(conv) == gc)
 		gaim_gtkconv_update_buddy_icon(conv);
 }

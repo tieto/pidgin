@@ -192,11 +192,19 @@ void gaim_blist_update_buddy_idle(struct buddy *buddy, int idle);
 
 /**
  * Updates a buddy's warning level.
- * 
+ *
  * @param buddy  The buddy whose warning level has changed
  * @param evil   The warning level as an int from 0 to 100 (or higher, I guess... but that'd be weird)
  */
 void gaim_blist_update_buddy_evil(struct buddy *buddy, int warning);
+
+/**
+ * Updates a buddy's warning level.
+ *
+ * @param buddy  The buddy whose buddy icon has changed
+ */
+void gaim_blist_update_buddy_icon(struct buddy *buddy);
+
 
 
 /**

@@ -164,6 +164,11 @@ void  gaim_blist_update_buddy_evil (struct buddy *buddy, int warning)
 	if (ops)
 		ops->update(gaimbuddylist,(GaimBlistNode*)buddy);
 }
+void gaim_blist_update_buddy_icon(struct buddy *buddy) {
+	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
+	if(ops)
+		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+}
 void  gaim_blist_rename_buddy (struct buddy *buddy, const char *name)
 {
 	struct gaim_blist_ui_ops *ops = gaimbuddylist->ui_ops;
@@ -353,19 +358,26 @@ char *  gaim_get_buddy_alias (struct buddy *buddy)
 
 struct buddy *gaim_find_buddy(struct gaim_account *account, const char *name)
 {
-	GaimBlistNode *group = gaimbuddylist->root;
+	GaimBlistNode *group;
 	GaimBlistNode *buddy;
+	char *norm_name = g_strdup(normalize(name));
+
 	if (!gaimbuddylist)
 		return NULL;
+
+	group = gaimbuddylist->root;
 	while (group) {
 		buddy = group->child;
 		while (buddy) {
-			if (!g_strcasecmp(((struct buddy*)buddy)->name, name) && account == ((struct buddy*)buddy)->account)
+			if (!g_strcasecmp(normalize(((struct buddy*)buddy)->name), norm_name) && account == ((struct buddy*)buddy)->account) {
+				g_free(norm_name);
 				return (struct buddy*)buddy;
+			}
 			buddy = buddy->next;
 		}
 		group = group->next;
 	}
+	g_free(norm_name);
 	return NULL;
 }
 

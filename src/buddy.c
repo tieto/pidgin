@@ -735,7 +735,9 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(struct buddy *b)
 	if (!(blist_options & OPT_BLIST_SHOW_ICONS))
 		return NULL;
 
-	file = g_build_filename(gaim_user_dir(), "icons", normalize(b->name), NULL);
+	if ((file = gaim_buddy_get_setting(b, "buddy_icon")) == NULL)
+		return NULL;
+
 	buf = gdk_pixbuf_new_from_file(file, NULL);
 	g_free(file);
 
@@ -783,31 +785,31 @@ static gchar *gaim_gtk_blist_get_name_markup(struct buddy *b)
 
 		if(tmp) {
 			if(strlen(tmp) > 20)
-				statustext = g_strdup_printf("%.16s...", tmp);
+				statustext = g_strdup_printf("%.20s... ", tmp);
 			else
-				statustext = g_strdup(tmp);
+				statustext = g_strdup_printf("%s ", tmp);
 			g_free(tmp);
 		}
 	}
 
 	if (b->idle) {
 		if (ihrs)
-			idletime = g_strdup_printf(_("Idle (%dh%02dm)"), ihrs, imin);
+			idletime = g_strdup_printf(_("Idle (%dh%02dm) "), ihrs, imin);
 		else
-			idletime = g_strdup_printf(_("Idle (%dm)"), imin);
+			idletime = g_strdup_printf(_("Idle (%dm) "), imin);
 	}
-	
+
 	if (b->evil > 0)
-		warning = g_strdup_printf(_("Warned (%d%%)"), b->evil);
-	
+		warning = g_strdup_printf(_("Warned (%d%%) "), b->evil);
+
 	if (b->idle && blist_options & OPT_BLIST_GREY_IDLERS)
-		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s %s %s</span>",
+		text =  g_strdup_printf("<span color='dim grey'>%s</span>\n<span color='dim grey' size='smaller'>%s%s%s</span>",
 					esc,
 					statustext != NULL ? statustext : "",
 					idletime != NULL ? idletime : "", 
 					warning != NULL ? warning : "");
 	else
-		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s %s %s</span>", esc, 
+		text = g_strdup_printf("%s\n<span color='dim grey' size='smaller'>%s%s%s</span>", esc,
 				       statustext != NULL ? statustext :  "",
 				       idletime != NULL ? idletime : "", 
 				       warning != NULL ? warning : "");
@@ -1096,6 +1098,8 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 
 				if(node->parent && !get_iter_from_node(node->parent, &groupiter)) {
 					/* This buddy's group has not yet been added.  We do that here */
+					GdkPixbuf *groupicon = gtk_widget_render_icon(gtkblist->treeview,
+							GTK_STOCK_OPEN, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
 					char *mark = g_strdup_printf("<span weight='bold'>%s</span>",  ((struct group*)node->parent)->name);
 					oldersibling = node->parent->prev;
 
@@ -1106,13 +1110,13 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 					/* This is where we create the node and add it. */
 					gtk_tree_store_insert_after(gtkblist->treemodel, &groupiter, NULL, oldersibling ? &oldersiblingiter : NULL);
 					gtk_tree_store_set(gtkblist->treemodel, &groupiter,
-							   STATUS_ICON_COLUMN, gtk_widget_render_icon
-							   (gtkblist->treeview,GTK_STOCK_OPEN,GTK_ICON_SIZE_SMALL_TOOLBAR,NULL),
+							   STATUS_ICON_COLUMN, groupicon,
 							   NAME_COLUMN, mark,
 							   NODE_COLUMN, node->parent,
 							   -1);
 
 					g_free(mark);
+					g_object_unref(G_OBJECT(groupicon));
 
 					expand = TRUE;
 				}
