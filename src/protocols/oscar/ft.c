@@ -650,7 +650,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 
 	aim_bstream_setpos(bs, 36);
 	/* XXX - create an aimbs_getnullstr function? */
-	snptr = aimbs_getstr(bs, MAXSNLEN);
+	snptr = aimbs_getstr(bs, 32); /* Next 32 bytes contain the sn, padded with null chars */
 
 	faimdprintf(sess, 2, "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
 
