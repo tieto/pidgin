@@ -8,6 +8,7 @@ version 0.73cvs:
 	* Fix several Jabber bugs
 	* The border on the close buttons on inactive tabs are no longer shown,
 	  thanks to a fix used by Galeon.
+	* Compatible with autoconf 2.58.
 	* German translation updated (Bjoern Voigt)
 
 version 0.72 (10/31/2003):
