@@ -6,7 +6,7 @@
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -36,6 +36,7 @@ static struct StockIcon
 {
 	{ GAIM_STOCK_ABOUT,           "buttons", "about_menu.png"           },
 	{ GAIM_STOCK_ACCOUNTS,        "buttons", "accounts.png"             },
+	{ GAIM_STOCK_ALIAS,           "buttons", "edit.png"                 },
 	{ GAIM_STOCK_BGCOLOR,         "buttons", "change-bgcolor-small.png" },
 	{ GAIM_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
 	{ GAIM_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
@@ -82,6 +83,7 @@ static struct StockIcon
 
 const GtkStockItem stock_items[] =
 {
+	{ GAIM_STOCK_ALIAS,     N_("_Alias"),     0, 0, NULL },
 	{ GAIM_STOCK_MODIFY,    N_("_Modify"),    0, 0, NULL },
 	{ GAIM_STOCK_OPEN_MAIL, N_("_Open Mail"), 0, 0, NULL },
 	{ GAIM_STOCK_PAUSE,     N_("_Pause"),     0, 0, NULL },

@@ -31,6 +31,7 @@
 /*@{*/
 #define GAIM_STOCK_ABOUT           "gaim-about"
 #define GAIM_STOCK_ACCOUNTS        "gaim-accounts"
+#define GAIM_STOCK_ALIAS           "gaim-alias"
 #define GAIM_STOCK_AWAY            "gaim-away"
 #define GAIM_STOCK_BGCOLOR         "gaim-bgcolor"
 #define GAIM_STOCK_BLOCK           "gaim-block"

@@ -833,7 +833,7 @@ static void make_buddy_menu(GtkWidget *menu, GaimPluginProtocolInfo *prpl_info, 
 			"drawing-menu", menu, b);
 
 	gaim_separator(menu);
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_EDIT,
+	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 			G_CALLBACK(gtk_blist_menu_alias_cb), b, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 			G_CALLBACK(gaim_gtk_blist_remove_cb), b,
@@ -905,7 +905,7 @@ create_chat_menu (GaimBlistNode *node)
 	gaim_new_check_item(menu, _("Auto-Join"),
 			    G_CALLBACK(gtk_blist_menu_autojoin_cb), node,
 				autojoin);
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_EDIT,
+	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
@@ -918,7 +918,7 @@ create_contact_menu (GaimBlistNode *node)
 	GtkWidget *menu;
 
 	menu = gtk_menu_new();
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_EDIT,
+	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Collapse"), GTK_STOCK_ZOOM_OUT,
 				 G_CALLBACK(gaim_gtk_blist_collapse_contact_cb),

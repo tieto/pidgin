@@ -1231,7 +1231,7 @@ alias_dialog_blist_chat(GaimChat *chat)
 	gaim_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE,
-					   _("_Alias"), G_CALLBACK(alias_chat_cb),
+					   _("Alias"), G_CALLBACK(alias_chat_cb),
 					   _("Cancel"), NULL, chat);
 }
 
@@ -1248,7 +1248,7 @@ alias_dialog_contact(GaimContact *contact)
 	gaim_request_input(NULL, _("Alias Contact"), NULL,
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE,
-					   _("_Alias"), G_CALLBACK(alias_contact_cb),
+					   _("Alias"), G_CALLBACK(alias_contact_cb),
 					   _("Cancel"), NULL, contact);
 }
 
@@ -1267,7 +1267,7 @@ alias_dialog_bud(GaimBuddy *b)
 
 	gaim_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, b->alias, FALSE, FALSE,
-					   _("_Alias"), G_CALLBACK(alias_buddy_cb),
+					   _("Alias"), G_CALLBACK(alias_buddy_cb),
 					   _("Cancel"), NULL, b);
 
 	g_free(secondary);
