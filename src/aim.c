@@ -48,6 +48,11 @@
 #include "gaim.h"
 #ifndef USE_APPLET
 #include "pixmaps/logo.xpm"
+#include "pixmaps/gnome_preferences.xpm"
+#include "pixmaps/join.xpm"
+#include "pixmaps/cancel.xpm"
+#include "pixmaps/plugins.xpm"
+#include "pixmaps/register.xpm"
 #endif /* USE_APPLET */
 #if HAVE_SIGNAL_H
 #include <signal.h>
@@ -326,6 +331,7 @@ void show_login()
 	GtkWidget *reg;
 	GtkWidget *bbox;
 	GtkWidget *hbox;
+	GtkWidget *rbox;
 	GtkWidget *sbox;
 	GtkWidget *label;
 	GtkWidget *table;
@@ -344,20 +350,21 @@ void show_login()
         }
        
 	mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        signon   = gtk_button_new_with_label(_("Signon"));
-	cancel   = gtk_button_new_with_label(_("Cancel"));
-	reg      = gtk_button_new_with_label(_("Register"));
-	options  = gtk_button_new_with_label(_("Options"));
+	gtk_widget_realize(mainwindow);
+	signon   = picture_button(mainwindow, _("Signon"), join_xpm);
+	cancel   = picture_button(mainwindow, _("Cancel"), cancel_xpm);
+	reg      = picture_button(mainwindow, _("Create Account"), register_xpm);
+	options  = picture_button(mainwindow, _("Options"), gnome_preferences_xpm);
 #ifdef GAIM_PLUGINS
-	plugs    = gtk_button_new_with_label(_("Plugins"));
+	plugs    = picture_button(mainwindow, _("Plugins"), plugins_xpm);
 #endif
 	table    = gtk_table_new(8, 2, FALSE);
 	name     = gtk_combo_new();
 	pass     = gtk_entry_new();
 	notice   = gtk_statusbar_new();
-        progress = gtk_progress_bar_new();
+	progress = gtk_progress_bar_new();
 
-        gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
+	gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
 
 	if (display_options & OPT_DISP_COOL_LOOK)
 	{
@@ -403,9 +410,10 @@ void show_login()
 	/* Homogenous spacing, 10 padding */
 	bbox = gtk_hbox_new(TRUE, 10);
 	hbox = gtk_hbox_new(TRUE, 10);
-	sbox = gtk_vbox_new(TRUE, 10);
+	rbox = gtk_hbox_new(TRUE, 10);
+	sbox = gtk_vbox_new(TRUE, 5);
 	
-	gtk_box_pack_start(GTK_BOX(bbox), reg, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(rbox), reg, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), cancel, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), signon, TRUE, TRUE, 0);
 
@@ -416,6 +424,7 @@ void show_login()
 
 	gtk_box_pack_start(GTK_BOX(sbox), bbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(sbox), hbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(sbox), rbox, TRUE, TRUE, 0);
 
 	/* Labels for selectors and text boxes */
 #if 0	
@@ -439,8 +448,8 @@ void show_login()
 #endif
 	
         /* Adjust sizes of inputs */
-	gtk_widget_set_usize(name,95,0);
-	gtk_widget_set_usize(pass,95,0);
+	gtk_widget_set_usize(name,100,0);
+	gtk_widget_set_usize(pass,100,0);
 
 
 	/* Status and label */
@@ -460,6 +469,7 @@ void show_login()
 	gtk_widget_show(reg);
 	gtk_widget_show(bbox);
 	gtk_widget_show(hbox);
+	gtk_widget_show(rbox);
 	gtk_widget_show(sbox);
 	gtk_table_attach(GTK_TABLE(table), sbox, 0,2,7,8,0,0, 5, 5);
 	

@@ -34,6 +34,7 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "pixmaps/join.xpm"
 
 GtkWidget *imaway=NULL;
 #ifdef USE_APPLET
@@ -108,7 +109,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 		imaway = gtk_window_new(GTK_WINDOW_DIALOG);
 		gtk_widget_realize(imaway);
 		aol_icon(imaway->window);
-		back = gtk_button_new_with_label(_("I'm Back!"));
+		back = picture_button(imaway, _("I'm Back!"), join_xpm);
 		bbox = gtk_hbox_new(TRUE, 10);
 		topbox = gtk_hbox_new(FALSE, 5);
                 vbox = gtk_vbox_new(FALSE, 5);
