@@ -773,7 +773,7 @@ static void gaimrc_read_options(FILE *f)
 	}
 
 	/* this is where we do bugs and compatibility stuff */
-	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC)))
+	if (!(sound_options & (OPT_SOUND_BEEP | OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC | OPT_SOUND_CMD)))
 		sound_options |= OPT_SOUND_ESD | OPT_SOUND_NORMAL | OPT_SOUND_NAS | OPT_SOUND_ARTSC;
 
 	if (conv_size.width == 0 &&
