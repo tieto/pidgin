@@ -78,6 +78,18 @@ gboolean keypress_callback(GtkWidget *entry, GdkEventKey * event, struct convers
 /*------------------------------------------------------------------------*/
 
 
+void gaim_setup_imhtml(GtkIMHtml *imhtml)
+{
+	if (!(display_options & OPT_DISP_SHOW_SMILEY))
+		gtk_imhtml_show_smileys(GTK_IMHTML(imhtml), FALSE);
+	gtk_signal_connect(GTK_OBJECT(imhtml), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "C:-)", luke03_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), "O-)", oneeye_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:)", crazy4_xpm);
+	gtk_imhtml_associate_smiley(GTK_IMHTML(imhtml), ">:-)", crazy4_xpm);
+}
+
 void quiet_set(GtkWidget *tb, int state)
 {
 	state_lock = 1;
@@ -2044,16 +2056,9 @@ void show_conv(struct conversation *c)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
-	if (!(display_options & OPT_DISP_SHOW_SMILEY))
-		gtk_imhtml_show_smileys(GTK_IMHTML(text), FALSE);
 	if (display_options & OPT_DISP_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
-	gtk_signal_connect(GTK_OBJECT(text), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
+	gaim_setup_imhtml(GTK_IMHTML(text));
 	gtk_widget_show(text);
 
 	vbox2 = gtk_vbox_new(FALSE, 5);

@@ -127,6 +127,8 @@ GString*   gtk_imhtml_append_text      (GtkIMHtml        *imhtml,
 					const gchar      *text,
 					GtkIMHtmlOptions  options);
 
+void       gtk_imhtml_clear            (GtkIMHtml        *imhtml);
+
 #ifdef __cplusplus
 }
 #endif

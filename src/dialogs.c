@@ -58,9 +58,7 @@
 #include "pixmaps/cry.xpm"
 #include "pixmaps/embarrassed.xpm"
 #include "pixmaps/kiss.xpm"
-#include "pixmaps/luke03.xpm"
 #include "pixmaps/moneymouth.xpm"
-#include "pixmaps/oneeye.xpm"
 #include "pixmaps/sad.xpm"
 #include "pixmaps/scream.xpm"
 #include "pixmaps/smile.xpm"
@@ -69,7 +67,6 @@
 #include "pixmaps/tongue.xpm"
 #include "pixmaps/wink.xpm"
 #include "pixmaps/yell.xpm"
-#include "pixmaps/crazy4.xpm"
 
 #include "pixmaps/aol_icon.xpm"
 #include "pixmaps/free_icon.xpm"
@@ -1757,14 +1754,7 @@ void g_show_info_text(char *info)
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
 	gtk_widget_set_usize(sw, 300, 250);
 	gtk_imhtml_set_img_handler(GTK_IMHTML(text), info_img_handler);
-	if (!(display_options & OPT_DISP_SHOW_SMILEY))
-		gtk_imhtml_show_smileys(GTK_IMHTML(b->text), FALSE);
-	gtk_signal_connect(GTK_OBJECT(text), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
+	gaim_setup_imhtml(GTK_IMHTML(text));
 
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), sw, TRUE, TRUE, 0);
@@ -3720,13 +3710,7 @@ show_log (char *name)
 	layout = gtk_imhtml_new(NULL, NULL);
 	gtk_signal_connect(GTK_OBJECT(layout), "url_clicked", open_url_nw, NULL);
 	gtk_container_add(GTK_CONTAINER(sw), layout);
-	if (!(display_options & OPT_DISP_SHOW_SMILEY))
-		gtk_imhtml_show_smileys(GTK_IMHTML(layout), FALSE);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "C:-)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), "O-)", oneeye_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), ">:)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(layout), ">:-)", crazy4_xpm);
+	gaim_setup_imhtml(GTK_IMHTML(layout));
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);

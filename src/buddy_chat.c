@@ -39,10 +39,6 @@
 #include "pixmaps/join.xpm"
 #include "pixmaps/close.xpm"
 
-#include "pixmaps/luke03.xpm"
-#include "pixmaps/oneeye.xpm"
-#include "pixmaps/crazy4.xpm"
-
 static GtkWidget *joinchat;
 static struct gaim_connection *joinchatgc;
 static GtkWidget *entry;
@@ -845,16 +841,9 @@ void show_new_buddy_chat(struct conversation *b)
 	gtk_container_add(GTK_CONTAINER(sw), text);
 	GTK_LAYOUT(text)->hadjustment->step_increment = 10.0;
 	GTK_LAYOUT(text)->vadjustment->step_increment = 10.0;
-	if (!(display_options & OPT_DISP_SHOW_SMILEY))
-		gtk_imhtml_show_smileys(GTK_IMHTML(text), FALSE);
 	if (display_options & OPT_DISP_SHOW_TIME)
 		gtk_imhtml_show_comments(GTK_IMHTML(text), TRUE);
-	gtk_signal_connect(GTK_OBJECT(text), "url_clicked", GTK_SIGNAL_FUNC(open_url_nw), NULL);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "C:-)", luke03_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), "O-)", oneeye_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:)", crazy4_xpm);
-	gtk_imhtml_associate_smiley(GTK_IMHTML(text), ">:-)", crazy4_xpm);
+	gaim_setup_imhtml(GTK_IMHTML(text));
 	gtk_widget_show(text);
 
 	lbox = gtk_vbox_new(FALSE, 5);

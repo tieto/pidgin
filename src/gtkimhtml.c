@@ -179,6 +179,16 @@ gtk_imhtml_destroy (GtkObject *object)
 	if (imhtml->selected_text)
 		g_string_free (imhtml->selected_text, TRUE);
 
+	if (imhtml->tip_timer) {
+		gtk_timeout_remove (imhtml->tip_timer);
+		imhtml->tip_timer = 0;
+	}
+	if (imhtml->tip_window) {
+		gtk_widget_destroy (imhtml->tip_window);
+		imhtml->tip_window = NULL;
+	}
+	imhtml->tip_bit = NULL;
+
 	gdk_font_unref (imhtml->default_font);
 	gdk_color_free (imhtml->default_fg_color);
 	gdk_color_free (imhtml->default_bg_color);
@@ -2989,4 +2999,71 @@ gtk_imhtml_append_text (GtkIMHtml        *imhtml,
 	g_free (tag);
 
 	return retval;
+}
+
+void
+gtk_imhtml_clear (GtkIMHtml *imhtml)
+{
+	g_return_if_fail (imhtml != NULL);
+	g_return_if_fail (GTK_IS_IMHTML (imhtml));
+
+	while (imhtml->bits) {
+		GtkIMHtmlBit *bit = imhtml->bits->data;
+		imhtml->bits = g_list_remove (imhtml->bits, bit);
+		if (bit->text)
+			g_free (bit->text);
+		if (bit->font)
+			gdk_font_unref (bit->font);
+		if (bit->fore)
+			gdk_color_free (bit->fore);
+		if (bit->back)
+			gdk_color_free (bit->back);
+		if (bit->bg)
+			gdk_color_free (bit->bg);
+		if (bit->url)
+			g_free (bit->url);
+		if (bit->pm)
+			gdk_pixmap_unref (bit->pm);
+		if (bit->bm)
+			gdk_bitmap_unref (bit->bm);
+		while (bit->chunks) {
+			struct line_info *li = bit->chunks->data;
+			if (li->text)
+				g_free (li->text);
+			bit->chunks = g_list_remove (bit->chunks, li);
+			g_free (li);
+		}
+		g_free (bit);
+	}
+
+	while (imhtml->urls) {
+		g_free (imhtml->urls->data);
+		imhtml->urls = g_list_remove (imhtml->urls, imhtml->urls->data);
+	}
+
+	if (imhtml->selected_text) {
+		g_string_free (imhtml->selected_text, TRUE);
+		imhtml->selected_text = g_string_new ("");
+	}
+
+	if (imhtml->tip_timer) {
+		gtk_timeout_remove (imhtml->tip_timer);
+		imhtml->tip_timer = 0;
+	}
+	if (imhtml->tip_window) {
+		gtk_widget_destroy (imhtml->tip_window);
+		imhtml->tip_window = NULL;
+	}
+	imhtml->tip_bit = NULL;
+
+	gdk_window_set_cursor (GTK_LAYOUT (imhtml)->bin_window, imhtml->arrow_cursor);
+
+	imhtml->x = BORDER_SIZE;
+	imhtml->y = BORDER_SIZE + 10;
+	imhtml->llheight = 0;
+	imhtml->llascent = 0;
+	imhtml->line = NULL;
+
+	if (GTK_WIDGET_REALIZED (GTK_WIDGET (imhtml)))
+		gdk_window_clear (GTK_LAYOUT (imhtml)->bin_window);
 }
