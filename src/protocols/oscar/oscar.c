@@ -1,3 +1,4 @@
+
 /*
  * gaim
  *
@@ -157,9 +158,10 @@ struct icon_req {
 	gboolean request;
 };
 
-struct icq_auth {
+struct channel4_data {
 	struct gaim_connection *gc;
-	fu32_t uin;
+	gchar *uin;
+	gchar *nick;
 };
 
 static struct direct_im *find_direct_im(struct oscar_data *od, const char *who) {
@@ -1445,25 +1447,26 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	return 1;
 }
 
-static void gaim_icq_authgrant(gpointer w, struct icq_auth *data) {
-	char *uin, message;
+/*
+ * Next 2 functions are for when other people ask you for authorization
+ */
+static void gaim_icq_authgrant(gpointer w, struct channel4_data *data) {
+	char message;
 	struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
-	uin = g_strdup_printf("%lu", data->uin);
 	message = 0;
-	aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHGRANTED, &message);
-	show_got_added(data->gc, NULL, uin, NULL, NULL);
-	g_free(uin);
-	data->uin = 0;
+	aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHGRANTED, &message);
+	show_got_added(data->gc, NULL, data->uin, NULL, NULL);
+	g_free(data->uin);
+	data->uin = NULL;
 }
 
-static void gaim_icq_authdeny(gpointer w, struct icq_auth *data) {
+static void gaim_icq_authdeny(gpointer w, struct channel4_data *data) {
 	if (data->uin) {
-		char *uin, *message;
+		gchar *message;
 		struct oscar_data *od = (struct oscar_data *)data->gc->proto_data;
-		uin = g_strdup_printf("%lu", data->uin);
 		message = g_strdup_printf("No reason given.");
-		aim_send_im_ch4(od->sess, uin, AIM_ICQMSG_AUTHDENIED, message);
-		g_free(uin);
+		aim_send_im_ch4(od->sess, data->uin, AIM_ICQMSG_AUTHDENIED, message);
+		g_free(data->uin);
 		g_free(message);
 	}
 	g_free(data);
@@ -1473,28 +1476,56 @@ static void gaim_icq_authdeny(gpointer w, struct icq_auth *data) {
  * For when other people ask you for authorization
  */
 static void gaim_icq_authask(struct gaim_connection *gc, fu32_t uin, char *msg) {
-	struct icq_auth *data = g_new(struct icq_auth, 1);
+	struct channel4_data *data = g_new(struct channel4_data, 1);
 	/* The first 6 chars of the message are some type of alien gibberish, so skip them */
 	char *dialog_msg = g_strdup_printf("The user %lu wants to add you to their buddy list for the following reason:\n\n%s", uin, (msg && strlen(msg)>6) ? msg+6 : "No reason given.");
 	debug_printf("Received an authorization request from UIN %lu\n", uin);
 	data->gc = gc;
-	data->uin = uin;
+	data->uin = g_strdup_printf("%lu", uin);
 	do_ask_dialog(dialog_msg, data, gaim_icq_authgrant, gaim_icq_authdeny);
 	g_free(dialog_msg);
+}
+
+/*
+ * Next 2 functions are for when someone sends you contacts
+ */
+static void gaim_icq_contactadd(gpointer w, struct channel4_data *data) {
+	show_add_buddy(data->gc, data->uin, NULL, data->nick);
+}
+
+static void gaim_icq_contactdontadd(gpointer w, struct channel4_data *data) {
+	free(data->uin);
+	free(data->nick);
+	g_free(data);
 }
 
 static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_t *userinfo, struct aim_incomingim_ch4_args *args) {
 	struct gaim_connection *gc = sess->aux_data;
 
-	switch (args->type) {
+	switch (args->type) 
+		{
 		case 0x0001: { /* An almost-normal instant message.  Mac ICQ sends this.  It's peculiar. */
-			char *uin, *message;
+			gchar *uin, *message;
 			uin = g_strdup_printf("%lu", args->uin);
 			message = g_strdup(args->msg);
 			strip_linefeed(message);
 			serv_got_im(gc, uin, message, 0, time(NULL), -1);
 			g_free(uin);
 			g_free(message);
+		} break;
+
+		case 0x0004: { /* Someone sent you a URL */
+			gchar **text, *uin, *message;
+			text = g_strsplit(args->msg, "þ", 2);
+			if (text) {
+				uin = g_strdup_printf("%lu", args->uin);
+				message = g_strdup_printf("<A HREF=\"%s\">%s</A>", text[1], text[0]);
+				strip_linefeed(message);
+				serv_got_im(gc, uin, message, 0, time(NULL), -1);
+				g_strfreev(text);
+				g_free(uin);
+				g_free(message);
+			}
 		} break;
 
 		case 0x0006: { /* Someone requested authorization */
@@ -1517,6 +1548,31 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 
 		case 0x0012: {
 			/* Ack for authorizing/denying someone.  Or possibly an ack for sending any system notice */
+		} break;
+
+		case 0x0013: { /* Someone has sent you some ICQ contacts */
+			int i, num;
+			gchar **text;
+			text = g_strsplit(args->msg, "þ", 0);
+			if (text) {
+				num = 0;
+				for (i=0; i<strlen(text[0]); i++)
+					num = num*10 + text[0][i]-48;
+				for (i=0; i<num; i++) {
+					struct channel4_data *data = g_new(struct channel4_data, 1);
+					gchar *message = g_strdup_printf("ICQ user %lu has sent you a contact: %s (%s)\nDo you want to add this contact to your contact list?", args->uin, text[i*2+2], text[i*2+1]);
+					data->gc = gc;
+					data->uin = g_strdup(text[i*2+2]);
+					data->nick = g_strdup(text[i*2+1]);
+					do_ask_dialog(message, data, gaim_icq_contactadd, gaim_icq_contactdontadd);
+					g_free(message);
+				}
+				g_strfreev(text);
+			}
+		} break;
+
+		case 0x001a: { /* Someone has requested that you send them from ICQ contacts */
+			/* This is boring and silly. */
 		} break;
 
 		default: {

@@ -841,6 +841,21 @@ static void chat_press_away(GtkObject *obj, struct conversation *b)
 	}
 }
 
+/* Added by Jonas <jonas@birme.se> */
+static void chat_press_add(GtkObject *obj, struct conversation *c)
+{
+	char *name = gtk_object_get_user_data(obj);
+	struct buddy *b = find_buddy(c->gc, name);
+
+	if (b) {
+		show_confirm_del(c->gc, name);
+	} else if (c->gc)
+		show_add_buddy(c->gc, name, NULL, NULL);
+	
+	gtk_widget_grab_focus(c->entry);	
+}
+/* End Jonas */
+
 static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conversation *b)
 {
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
@@ -894,6 +909,21 @@ static gint right_click_chat(GtkObject *obj, GdkEventButton *event, struct conve
 			gtk_widget_show(button);
 		}
 
+		/* Added by Jonas <jonas@birme.se> */
+		if (b->gc) {
+			if (find_buddy(b->gc, gtk_object_get_user_data(obj)))
+				button = gtk_menu_item_new_with_label(_("Remove"));
+			else
+				button = gtk_menu_item_new_with_label(_("Add"));
+			gtk_signal_connect(GTK_OBJECT(button), "activate",
+					   GTK_SIGNAL_FUNC(chat_press_add), b);
+			gtk_object_set_user_data(GTK_OBJECT(button), 
+						 gtk_object_get_user_data(obj));
+			gtk_menu_append(GTK_MENU(menu), button);
+			gtk_widget_show(button);
+		}
+		/* End Jonas */
+		
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, event->button, event->time);
 		return TRUE;
 	}
