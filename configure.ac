@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/main.c)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE([gaim], [0.65cvs])
+AM_INIT_AUTOMAKE([gaim], [0.65])
 
 AC_PREREQ([2.50])
 
@@ -386,6 +386,9 @@ if test "$kerberos" != "no" ; then
 	LIBS="$orig_LIBS"
 	LDFLAGS="$orig_LDFLAGS"
 fi
+
+AC_MSG_CHECKING(for me pot o' gold)
+AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48)
 AC_CHECK_FUNCS(memcpy memmove random strchr strerror vprintf)
 AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
@@ -399,6 +402,15 @@ AC_OUTPUT([Makefile
            doc/Makefile
 	   intl/Makefile
            pixmaps/Makefile
+	   pixmaps/protocols/Makefile
+           pixmaps/protocols/msn/Makefile
+           pixmaps/protocols/yahoo/Makefile
+	   pixmaps/protocols/oscar/Makefile
+	   pixmaps/protocols/napster/Makefile
+	   pixmaps/protocols/jabber/Makefile
+	   pixmaps/protocols/icq/Makefile
+	   pixmaps/protocols/irc/Makefile
+	   pixmaps/protocols/gg/Makefile
 	   pixmaps/smileys/Makefile
 	   pixmaps/smileys/default/Makefile
 	   pixmaps/status/Makefile
@@ -420,7 +432,6 @@ AC_OUTPUT([Makefile
 	   src/protocols/napster/Makefile
 	   src/protocols/oscar/Makefile
 	   src/protocols/toc/Makefile
-	   src/protocols/trepia/Makefile
 	   src/protocols/yahoo/Makefile
 	   src/protocols/zephyr/Makefile
 	   gaim.spec

@@ -33,7 +33,7 @@ EXTRA_DIST = \
 		text_normal.png			\
 		text_smaller.png		\
 		typed.png			\
-		typing.png
+		typing.gif
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
 gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png
@@ -45,7 +45,7 @@ gaimiconpixdir = $(datadir)/pixmaps/gaim/icons
 gaimiconpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
-gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png
+gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.gif
 
 distpixmapdir = $(datadir)/pixmaps
 distpixmap_DATA = gaim.png
