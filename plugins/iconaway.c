@@ -16,6 +16,8 @@ extern void applet_destroy_buddy();
 void iconify_windows(struct gaim_connection *gc, char *state, char *message, void *data) {
 	if (!gc->away)
 		return;
+	if (!imaway)
+		return;
 	XIconifyWindow(GDK_DISPLAY(),
 			GDK_WINDOW_XWINDOW(imaway->window),
 			((_XPrivDisplay)GDK_DISPLAY())->default_screen);
