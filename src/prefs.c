@@ -288,9 +288,10 @@ static void general_page()
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 5);
 	gtk_widget_show(vbox);
 
-	opt = browser_radio(_("KFM"), BROWSER_KFM, vbox, NULL);
+	opt = browser_radio(_("Konqueror"), BROWSER_KONQ, vbox, NULL);
 	opt = browser_radio(_("Opera"), BROWSER_OPERA, vbox, opt);
 	opt = browser_radio(_("Netscape"), BROWSER_NETSCAPE, vbox, opt);
+	opt = browser_radio(_("Mozilla"), BROWSER_MOZILLA, vbox, opt);
 
 	new_window =
 	    gaim_button(_("Pop up new window by default"), &misc_options, OPT_MISC_BROWSER_POPUP, vbox);

@@ -586,22 +586,31 @@ void open_url(GtkWidget *w, char *url)
 			char command[1024];
 
 			if (web_browser == BROWSER_OPERA) {
-				args[0] = g_strdup("opera");
-				args[1] = g_strdup("-newwindow");
+				args[0] = "opera";
+				args[1] = "-newwindow";
 				args[2] = url;
 				args[3] = NULL;
-			} else if (web_browser == BROWSER_KFM) {
-				args[0] = g_strdup("kfmclient");
-				args[1] = g_strdup("openURL");
+			} else if (web_browser == BROWSER_KONQ) {
+				args[0] = "kfmclient";
+				args[1] = "openURL";
 				args[2] = url;
 				args[3] = NULL;
 			} else if (web_browser == BROWSER_GALEON) {
-				args[0] = g_strdup("galeon");
+				args[0] = "galeon";
+				if (misc_options & OPT_MISC_BROWSER_POPUP) {
+					args[1] = "-w";
+					args[2] = url;
+					args[3] = NULL;
+				} else {
+					args[1] = url;
+					args[2] = NULL;
+				}
+			} else if (web_browser == BROWSER_MOZILLA) {
+				args[0] = "mozilla";
 				args[1] = url;
 				args[2] = NULL;
 			} else if (web_browser == BROWSER_MANUAL) {
 				g_snprintf(command, sizeof(command), web_command, url);
-
 				args[0] = "sh";
 				args[1] = "-c";
 				args[2] = command;
