@@ -1133,7 +1133,7 @@ void show_new_bp(char *name)
         b->window = gtk_window_new(GTK_WINDOW_DIALOG);
 	gtk_window_set_policy(GTK_WINDOW(b->window), FALSE, FALSE, TRUE);
 	gtk_window_set_wmclass(GTK_WINDOW(b->window), "new_bp", "Gaim");
-	gtk_widget_show(b->window);
+	gtk_widget_realize(b->window);
         dialogwindows = g_list_prepend(dialogwindows, b->window);
         bbox = gtk_hbox_new(TRUE, 10);
         vbox = gtk_vbox_new(FALSE, 5);
@@ -1232,8 +1232,8 @@ void show_new_bp(char *name)
                 gtk_window_set_focus(GTK_WINDOW(b->window), b->nameentry);
         gtk_container_add(GTK_CONTAINER(b->window), vbox);
         gtk_container_border_width(GTK_CONTAINER(b->window), 10);
-        gtk_widget_realize(b->window);
         aol_icon(b->window->window);
+        gtk_widget_show(b->window);
 }
 
 

@@ -78,13 +78,11 @@ gint check_idle(struct gaim_connection *gc)
 		a = g_slist_nth_data(away_messages, default_away);
 		do_away_message((GtkWidget*)NULL, a);
 		auto_is_away = 1;
-	} else if (auto_is_away == 1 && awaymessage != NULL &&
-		   idle_time < 60*auto_away) {
-		do_im_back((GtkWidget*)NULL, (GtkWidget*)NULL);
+	} else if (auto_is_away == 1 && idle_time < 60*auto_away) {
 		auto_is_away = 0;
+		if (awaymessage != NULL)
+			do_im_back((GtkWidget*)NULL, (GtkWidget*)NULL);
 	}
-	if (auto_is_away == 1 && awaymessage == NULL)
-		auto_is_away = 0;
 
 
 	/* If we're not reporting idle times to the server, still use Gaim
