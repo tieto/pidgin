@@ -87,7 +87,8 @@ GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
  * @param title The text to be displayed as the dropdown label
  * @param type  The type of preference to be stored in the generated dropdown
  * @param key   The key of the pref that will be represented by the dropdown
- * @param ...   The choices to be added to the dropdown
+ * @param ...   The choices to be added to the dropdown, choices should be
+ *              paired as label/value
  */
 GtkWidget *gaim_gtk_prefs_dropdown(GtkWidget *page, const gchar *title,
 		GaimPrefType type, const char *key, ...);
@@ -99,7 +100,8 @@ GtkWidget *gaim_gtk_prefs_dropdown(GtkWidget *page, const gchar *title,
  * @param title     The text to be displayed as the dropdown label
  * @param type      The type of preference to be stored in the dropdown
  * @param key       The key of the pref that will be represented by the dropdown
- * @param menuitems The choices to be added to the dropdown
+ * @param menuitems The choices to be added to the dropdown, choices should
+ *                  be paired as label/value
  */
 GtkWidget *gaim_gtk_prefs_dropdown_from_list(GtkWidget *page,
 		const gchar * title, GaimPrefType type, const char *key,

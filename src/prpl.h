@@ -209,7 +209,6 @@ struct _GaimPluginProtocolInfo
 
 	GList *user_splits;      /* A GList of GaimAccountUserSplit */
 	GList *protocol_options; /* A GList of GaimAccountOption    */
-	GList *protocol_prefs;   /* protocol specific options */
 
 	/**
 	 * Returns the base icon name for the given buddy and account.

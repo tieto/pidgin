@@ -91,6 +91,8 @@ CORESOURCES = \
 	notify.h \
 	plugin.c \
 	plugin.h \
+	pluginpref.c \
+	pluginpref.h \
 	pounce.c \
 	pounce.h \
 	privacy.c \
@@ -165,6 +167,8 @@ gaim_SOURCES = \
 	gtknotify.h \
 	gtkplugin.c \
 	gtkplugin.h \
+	gtkpluginpref.c \
+	gtkpluginpref.h \
 	gtkprefs.c \
 	gtkprefs.h \
 	gtkprivacy.c \

@@ -121,6 +121,7 @@ DLL_C_SRC =		about.c \
 			network.c \
 			notify.c \
 			plugin.c \
+			pluginpref.c \
 			pounce.c \
 			prefs.c \
 			privacy.c \
@@ -229,5 +230,3 @@ clean:
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib
 	rm -rf $(TARGET).exe
-
-

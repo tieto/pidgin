@@ -95,6 +95,7 @@ src/protocols/msn/session.c
 src/protocols/msn/state.c
 src/protocols/msn/switchboard.c
 src/protocols/napster/napster.c
+src/protocols/novell/novell.c
 src/protocols/oscar/oscar.c
 src/protocols/toc/toc.c
 src/protocols/trepia/trepia.c

@@ -2339,7 +2339,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	0,
 	NULL,
 	NULL,
-	NULL,
 	novell_list_icon,
 	novell_list_emblems,
 	novell_status_text,

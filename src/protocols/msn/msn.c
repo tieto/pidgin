@@ -25,6 +25,7 @@
 #include "accountopt.h"
 #include "msg.h"
 #include "page.h"
+#include "pluginpref.h"
 #include "prefs.h"
 #include "session.h"
 #include "state.h"
@@ -1610,10 +1611,36 @@ msn_get_info(GaimConnection *gc, const char *name)
 	g_free(url);
 }
 
+static GaimPluginPrefFrame *
+get_plugin_pref_frame(GaimPlugin *plugin) {
+	GaimPluginPrefFrame *frame;
+	GaimPluginPref *ppref;
+
+	frame = gaim_plugin_pref_frame_new();
+
+	ppref = gaim_plugin_pref_new_with_label(_("Conversations"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label(
+								"/plugins/prpl/msn/conv_close_notice",
+								_("Display conversation closed notices"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label(
+								"/plugins/prpl/msn/conv_timeout_notice",
+								_("Display timeout notices"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	return frame;
+}
+
+static GaimPluginUiInfo prefs_info = {
+	get_plugin_pref_frame
+};
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK /* | OPT_PROTO_BUDDY_ICON */,
-	NULL,
 	NULL,
 	NULL,
 	msn_list_icon,
@@ -1697,14 +1724,14 @@ static GaimPluginInfo info =
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
-	&prpl_info                                        /**< extra_info     */
+	&prpl_info,                                        /**< extra_info     */
+	&prefs_info                                        /**< prefs_info     */
 };
 
 static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
-	struct proto_pref *ppref;
 
 	option = gaim_account_option_string_new(_("Login server"), "server",
 											MSN_SERVER);
@@ -1725,21 +1752,6 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/prpl/msn");
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_close_notice",   TRUE);
 	gaim_prefs_add_bool("/plugins/prpl/msn/conv_timeout_notice", TRUE);
-
-	ppref = g_new0(struct proto_pref, 1);
-	ppref->key = NULL;
-	ppref->label = _("Conversations");
-	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
-
-	ppref = g_new0(struct proto_pref, 1);
-	ppref->key = "/plugins/prpl/msn/conv_close_notice";
-	ppref->label = _("Display conversation closed notices");
-	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
-
-	ppref = g_new0(struct proto_pref, 1);
-	ppref->key = "/plugins/prpl/msn/conv_timeout_notice";
-	ppref->label = _("Display timeout notices");
-	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
 }
 
 GAIM_INIT_PLUGIN(msn, init_plugin, info);

@@ -29,11 +29,14 @@
 #include "signals.h"
 #include "value.h"
 
-typedef struct _GaimPlugin     GaimPlugin;         /**< GaimPlugin       */
-typedef struct _GaimPluginInfo GaimPluginInfo;     /**< GaimPluginInfo   */
+typedef struct _GaimPlugin           GaimPlugin;         /**< GaimPlugin       */
+typedef struct _GaimPluginInfo       GaimPluginInfo;     /**< GaimPluginInfo   */
+typedef struct _GaimPluginUiInfo     GaimPluginUiInfo;   /**< GaimPluginUiInfo */
 typedef struct _GaimPluginLoaderInfo GaimPluginLoaderInfo;
 
 typedef int GaimPluginPriority; /**< Plugin priority. */
+
+#include "pluginpref.h"
 
 /**
  * Plugin types.
@@ -81,6 +84,7 @@ struct _GaimPluginInfo
 
 	void *ui_info;
 	void *extra_info;
+	void *prefs_info;
 };
 
 /**
@@ -113,6 +117,18 @@ struct _GaimPlugin
 
 #define GAIM_PLUGIN_LOADER_INFO(plugin) \
 	((GaimPluginLoaderInfo *)(plugin)->info->extra_info)
+
+struct _GaimPluginUiInfo {
+	GaimPluginPrefFrame *(*get_plugin_pref_frame)(GaimPlugin *plugin);
+
+	void *iter;                                           /**< Reserved */
+};
+
+#define GAIM_PLUGIN_HAS_PREF_FRAME(plugin) \
+	((plugin)->info != NULL && (plugin)->info->prefs_info != NULL)
+
+#define GAIM_PLUGIN_UI_INFO(plugin) \
+	((GaimPluginUiInfo*)(plugin)->info->prefs_info)
 
 /**
  * Handles the initialization of modules.

@@ -1300,7 +1300,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
 	NULL,
 	NULL,
-	NULL,
 	zephyr_list_icon,
 	NULL,
 	NULL,

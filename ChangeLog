@@ -13,8 +13,10 @@ version 0.77cvs
 	* Rich-text copy and paste
 	* Plugins can now add menu items to the buddy context menu
 	  (Christopher O'Brien)
+	* Plugins can now add preferences (Gary Kramlich)
 
 	Bug Fixes:
+	* Formatting in the Log viewwer is fixed
 	* TOC has been removed from the default build list. I do not support
 	  it, as no one is making sure that the updated code to keep it
 	  compiling actually works, nor is anyone fixing bugs in it.

@@ -40,6 +40,7 @@
 #include "gtkdebug.h"
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
+#include "gtkpluginpref.h"
 #include "gtkprefs.h"
 #include "gtksound.h"
 #include "gtkutils.h"
@@ -75,7 +76,7 @@ static GtkWidget *prefs_proxy_frame = NULL;
 static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
-static GtkTreeIter plugin_iter;
+static GtkTreeIter proto_iter, plugin_iter;
 
 static guint browser_pref1_id = 0;
 static guint browser_pref2_id = 0;
@@ -123,6 +124,7 @@ gaim_gtk_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(title);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
@@ -199,7 +201,8 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_container_add (GTK_CONTAINER (box), hbox);
+	/*gtk_container_add (GTK_CONTAINER (box), hbox);*/
+	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(title);
@@ -1713,86 +1716,6 @@ protocol_page() {
 	return ret;
 }
 
-static gboolean 
-protocol_pref_entry_cb(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
-	char *pref = data;
-	
-	gaim_prefs_set_string(pref, gtk_entry_get_text(GTK_ENTRY(entry)));
-	
-	return FALSE;
-}
-
-static GtkWidget *
-protocol_pref_page(GaimPluginProtocolInfo *prpl_info) {
-	GtkWidget *ret, *parent, *frame, *hbox, *label, *misc;
-	GtkSizeGroup *sg;
-	GList *pp = NULL;
-
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
-	gtk_widget_show(ret);
-	
-	parent = ret;
-
-	for(pp = prpl_info->protocol_prefs; pp != NULL; pp = pp->next) {
-		struct proto_pref *pref = pp->data;
-		
-		if(pref->key != NULL) {
-			switch(gaim_prefs_get_type(pref->key)) {
-				case GAIM_PREF_BOOLEAN:
-					misc = gaim_gtk_prefs_checkbox(pref->label,
-												   pref->key,
-												   parent);
-					break;
-				case GAIM_PREF_INT:
-					misc = gaim_gtk_prefs_labeled_spin_button(parent,
-															  pref->label,
-															  pref->key,
-															  pref->min,
-															  pref->max,
-															  sg);
-					break;
-				case GAIM_PREF_STRING:
-					hbox = gtk_hbox_new(FALSE, 6);
-					gtk_widget_show(hbox);
-					gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
-
-					label = gtk_label_new_with_mnemonic(pref->label);
-					gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-					gtk_size_group_add_widget(sg, label);
-					gtk_widget_show(label);
-					gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-					misc = gtk_entry_new();
-					gtk_entry_set_text(GTK_ENTRY(misc),
-									   gaim_prefs_get_string(pref->key));
-					g_signal_connect(G_OBJECT(misc), "focus-out-event", 
-									 G_CALLBACK(protocol_pref_entry_cb),
-									 (gpointer)pref->key);
-					gtk_label_set_mnemonic_widget(GTK_LABEL(label), misc);
-					gtk_widget_show(misc);
-					gtk_box_pack_start(GTK_BOX(hbox), misc, FALSE, FALSE, 0);
-
-					break;
-				case GAIM_PREF_NONE: /* XXX No use for this, if you want a
-										frame, set key to NULL */
-				case GAIM_PREF_STRING_LIST: /*XXX No one should need this */
-				default:
-					break;
-			}
-		} else {
-			frame = gaim_gtk_make_frame(ret, pref->label);
-			gtk_widget_show(frame);
-
-			parent = frame;
-		}
-	}
-
-	return ret;
-}
-
 static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
@@ -1908,6 +1831,36 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				}
 			}
 		}
+
+		if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
+			GtkTreeIter iter;			
+			GtkWidget *pref_frame;
+			GaimPluginUiInfo *prefs_info;
+
+			if(plug->info->type == GAIM_PLUGIN_PROTOCOL)
+				iter = proto_iter;
+			else
+				iter = plugin_iter;
+
+			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
+			pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->get_plugin_pref_frame(plug));
+
+			if(pref_frame != NULL) {
+				prefs_info->iter = g_new0(GtkTreeIter, 1);
+				prefs_notebook_add_page(_(plug->info->name), NULL,
+										pref_frame, prefs_info->iter,
+										&iter, notebook_page++);
+
+				if(gtk_tree_model_iter_n_children(GTK_TREE_MODEL(prefstree), &iter) == 1)
+				{
+					GtkTreePath *path2;
+
+					path2 = gtk_tree_model_get_path(GTK_TREE_MODEL(prefstree), &iter);
+					gtk_tree_view_expand_row(GTK_TREE_VIEW(tree_v), path2, TRUE);
+					gtk_tree_path_free(path2);
+				}
+			}
+		}
 	}
 	else {
 		if (GAIM_IS_GTK_PLUGIN(plug)) {
@@ -1919,6 +1872,16 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				gtk_tree_store_remove(GTK_TREE_STORE(prefstree), ui_info->iter);
 				g_free(ui_info->iter);
 				ui_info->iter = NULL;
+			}
+		} else if (GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
+			GaimPluginUiInfo *prefs_info;
+
+			prefs_info = GAIM_PLUGIN_UI_INFO(plug);
+
+			if(prefs_info != NULL && prefs_info->iter != NULL) {
+				gtk_tree_store_remove(GTK_TREE_STORE(prefstree), prefs_info->iter);
+				g_free(prefs_info->iter);
+				prefs_info->iter = NULL;
 			}
 		}
 
@@ -2540,26 +2503,12 @@ void prefs_notebook_init() {
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away Messages"), NULL, away_message_page(), &c, &p, notebook_page++);
 
-	prefs_notebook_add_page(_("Protocols"), NULL, protocol_page(), &p, NULL, notebook_page++);
-	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
-		plug = l->data;
-
-		if (GAIM_IS_PROTOCOL_PLUGIN(plug)) {
-			GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plug);
-
-			if (prpl_info->protocol_prefs != NULL) {
-				prefs_notebook_add_page(_(plug->info->name), NULL,
-										protocol_pref_page(prpl_info), &c,
-										&p, notebook_page++);
-			}
-		}
-	}
-
 	if (gaim_plugins_enabled()) {
+		prefs_notebook_add_page(_("Protocols"), NULL, protocol_page(), &proto_iter, NULL, notebook_page++);
 		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
 
 		for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
-			plug = l->data;
+			plug = (GaimPlugin *)l->data;
 
 			if (GAIM_IS_GTK_PLUGIN(plug)) {
 				GtkWidget *config_frame;
@@ -2573,6 +2522,22 @@ void prefs_notebook_init() {
 					prefs_notebook_add_page(_(plug->info->name), NULL,
 											config_frame, ui_info->iter,
 											&plugin_iter, notebook_page++);
+				}
+			}
+
+			if(GAIM_PLUGIN_HAS_PREF_FRAME(plug)) {
+				GtkWidget *pref_frame;
+				GaimPluginUiInfo *prefs_info;
+
+				prefs_info = GAIM_PLUGIN_UI_INFO(plug);
+				pref_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->get_plugin_pref_frame(plug));
+
+				if(pref_frame != NULL) {
+					prefs_info->iter = g_new0(GtkTreeIter, 1);
+					prefs_notebook_add_page(_(plug->info->name), NULL,
+										pref_frame, prefs_info->iter,
+										(plug->info->type == GAIM_PLUGIN_PROTOCOL) ? &proto_iter : &plugin_iter,
+										notebook_page++);
 				}
 			}
 		}
@@ -2691,7 +2656,7 @@ void gaim_gtk_prefs_show(void)
 	gtk_widget_show(sep);
 	gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
 
-	/* The buttons^H to press! */
+	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
 	gtk_box_set_spacing(GTK_BOX(bbox), 6);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);

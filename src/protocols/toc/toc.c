@@ -2094,7 +2094,6 @@ static GaimPluginProtocolInfo prpl_info =
 	OPT_PROTO_CORRECT_TIME,
 	NULL,
 	NULL,
-	NULL,
 	toc_list_icon,
 	toc_list_emblems,
 	NULL,

@@ -1,10 +1,13 @@
-/*
+/**
+ * @file gtkpluginpref.h GTK+ Plugin Preferences
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,42 +23,31 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+#ifndef _GTK_PLUGIN_PREF_H_
+#define _GTK_PLUGIN_PREF_H_
 
-#ifndef _MULTI_H_
-#define _MULTI_H_
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "account.h"
-#include "plugin.h"
+#include <gtk/gtk.h>
 
-struct proto_actions_menu {
-	char *label;
-	void (*callback)(GaimConnection *);
-	GaimConnection *gc;
-};
+#include "pluginpref.h"
 
-struct proto_buddy_menu {
-	char *label;
-	void (*callback)(GaimConnection *, const char *);
-	GaimConnection *gc;
-};
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-struct proto_chat_menu {
-	char *label;
-	void (*callback)(GaimConnection *, GHashTable *);
-	GaimConnection *gc;
-};
+/**
+ * Creates a Gtk Preference frame for a GaimPluginPrefFrame
+ *
+ * @param frame GaimPluginPrefFrame
+ * @return The gtk preference frame
+ */
+GtkWidget *gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame);
 
-struct proto_chat_entry {
-	char *label;
-	char *identifier;
-	char *def;
-	gboolean is_int;
-	int min;
-	int max;
-	gboolean secret;
-};
+#ifdef __cplusplus
+}
+#endif
 
-#endif /* _MULTI_H_ */
-
-/* A big line. */
-/* -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- */
+#endif /* _GTK_PLUGIN_PREF_H_ */

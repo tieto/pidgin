@@ -26,6 +26,7 @@
 #include "message.h"
 #include "multi.h"
 #include "notify.h"
+#include "pluginpref.h"
 #include "prpl.h"
 #include "request.h"
 #include "server.h"
@@ -1261,10 +1262,30 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 	}
 }
 
+static GaimPluginPrefFrame *
+get_plugin_pref_frame(GaimPlugin *plugin) {
+	GaimPluginPrefFrame *frame;
+	GaimPluginPref *ppref;
+
+	frame = gaim_plugin_pref_frame_new();
+
+	ppref = gaim_plugin_pref_new_with_label(_("Privacy"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/jabber/hide_os",
+													 _("Hide Operating System"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	return frame;
+}
+
+static GaimPluginUiInfo prefs_info = {
+	get_plugin_pref_frame
+};
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
-	NULL,
 	NULL,
 	NULL,
 	jabber_list_icon,
@@ -1348,7 +1369,8 @@ static GaimPluginInfo info =
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
-	&prpl_info                                        /**< extra_info     */
+	&prpl_info,                                        /**< extra_info     */
+	&prefs_info                                        /**< prefs_info      */
 };
 
 static void
@@ -1356,7 +1378,6 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
-	struct proto_pref *ppref;
 
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
@@ -1392,16 +1413,6 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_add_none("/plugins/prpl/jabber");
 	gaim_prefs_add_bool("/plugins/prpl/jabber/hide_os", FALSE);
-
-	ppref = g_new0(struct proto_pref, 1);
-	ppref->key = NULL;
-	ppref->label = _("Privacy");
-	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
-
-	ppref = g_new0(struct proto_pref, 1);
-	ppref->key = "/plugins/prpl/jabber/hide_os";
-	ppref->label = _("Hide Operating System");
-	prpl_info.protocol_prefs = g_list_append(prpl_info.protocol_prefs, ppref);
 }
 
 GAIM_INIT_PLUGIN(jabber, init_plugin, info);
