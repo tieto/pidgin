@@ -854,8 +854,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		  
 		  
 		  
-		  temp = (gchar *)g_malloc(strlen(people[j]) + 1);
-		  temp_new = (gchar *)g_malloc(strlen(people[j]) + 1);
+		  temp = (gchar *)g_malloc(strlen(people[j]) + 3);
+		  temp_new = (gchar *)g_malloc(strlen(people[j]) + 3);
 		  g_snprintf(temp, strlen(people[j]) + 2, "@%s", people[j]);
 		  
 		  if (u_mode[1] == 'v' && u_mode[0] == '+') {
@@ -970,15 +970,16 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			 * @nick and +nick.  Truly wasteful.
 			 */
 			  
-			temp = (gchar *) g_malloc(strlen(u_who) + 1);
+			temp = (gchar *) g_malloc(strlen(u_who) + 3);
 			g_snprintf(temp, strlen(u_who) + 2, "@%s", u_who);
 			remove_chat_buddy(convo, temp);
+			g_free(temp);
+			temp = (gchar *) g_malloc(strlen(u_who) + 3);
 			g_snprintf(temp, strlen(u_who) + 2, "+%s", u_who);
 			remove_chat_buddy(convo, temp);
  			remove_chat_buddy(convo, u_who);
 			
-			if (temp)
-			  g_free(temp);
+			g_free(temp);
 			
 		}
 
@@ -1136,6 +1137,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
 			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
 			remove_chat_buddy(convo, temp);
+			g_free(temp);
+			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
 			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
 			remove_chat_buddy(convo, temp);
  			remove_chat_buddy(convo, u_nick);
@@ -1145,8 +1148,7 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 			templist = templist->next;
 		}
 
-		if (temp)
-		  g_free(temp);
+		 g_free(temp);
 		
 		return;
 	}
@@ -1193,48 +1195,50 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 		}
 		
 		if (g_strcasecmp(u_nick, gc->username) == 0) {
-
-			/* Looks like we're going to leave the channel for 
-			 * real now.  Let's create a valid channel structure 
-			 * and add it to our list */
-
-			serv_got_chat_left(gc, channel->id);
-			
-			idata->channels = g_list_remove(idata->channels, channel);
-		} else {
-			struct conversation *convo = NULL;
-
-			/* Find their conversation window */
-			convo = find_conversation_by_id(gc, channel->id);
-
-			if (!convo) {
+		  
+		  /* Looks like we're going to leave the channel for 
+		   * real now.  Let's create a valid channel structure 
+		   * and add it to our list */
+		  
+		  serv_got_chat_left(gc, channel->id);
+		  
+		  idata->channels = g_list_remove(idata->channels, channel);
+		} 
+		else {
+		  struct conversation *convo = NULL;
+		  
+		  /* Find their conversation window */
+		  convo = find_conversation_by_id(gc, channel->id);
+		  
+		  if (!convo) {
 				/* Some how the window doesn't exist. 
 				 * Let's get out of here */
-				return;
-			}
-
-			/* And remove their name */
-			/* If the person is an op or voice, this won't work.
-			 * so we'll just do a nice hack and remove nick and
-			 * @nick and +nick.  Truly wasteful.
-			 */
-			
-			temp = (gchar *) g_malloc(strlen(u_nick) + 2);
-			g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
-			remove_chat_buddy(convo, temp);
-			g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
-			remove_chat_buddy(convo, temp);
- 			remove_chat_buddy(convo, u_nick);
-	
-			if (temp)
-			  g_free(temp);
-
+		    return;
+		  }
+		  
+		  /* And remove their name */
+		  /* If the person is an op or voice, this won't work.
+		   * so we'll just do a nice hack and remove nick and
+		   * @nick and +nick.  Truly wasteful.
+		   */
+		  
+		  temp = (gchar *) g_malloc(strlen(u_nick) + 3);
+		  g_snprintf(temp, strlen(u_nick) + 2, "@%s", u_nick);
+		  remove_chat_buddy(convo, temp);
+		  g_free(temp);
+		  temp = (gchar *) g_malloc(strlen(u_nick) + 3);
+		  g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
+		  remove_chat_buddy(convo, temp);
+		  g_free(temp);
+		  remove_chat_buddy(convo, u_nick);
+		     
+		  
 		}
-
+		
 		/* Go Home! */
 		return;
 	}
-
+	
 	if ((strstr(buf, " NOTICE ")) && (buf[0] == ':')) {
 		gchar u_nick[128];
 		gchar u_host[255];
@@ -1308,6 +1312,8 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	  gchar u_command[32];
 	  gchar u_channel[128];
 	  gchar u_message[IRC_BUF_LEN];
+	  gboolean is_closing;	  
+
 	  int j;
 	  
 	  
@@ -1391,6 +1397,9 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	  /* OK, It is a chat or IM message.  Here, let's translate the IRC formatting into
 	   * good ol' fashioned gtkimhtml style hypertext markup. */
 
+	 
+	  is_closing = FALSE;
+
 	  while(strchr(u_message, '\002')) {         // \002 = ^B
 	    gchar *current;
 	    gchar *temp, *free_here;
@@ -1403,6 +1412,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	    current = strchr(u_message, '\002');
 	    *current = '<';
 	    current++;
+	    if (is_closing) {
+	      *current = '/';
+	      current++;
+	    }
 	    *current = 'b';
 	    current++;
 	    *current = '>';
@@ -1417,8 +1430,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	    *current = '\0';
 	    g_free(free_here);
 
+	    is_closing = !is_closing;
 	  }
- 
+
+	  is_closing = FALSE;
 	  while(strchr(u_message, '\037')) {         // \037 = ^_
 	    gchar *current;
 	    gchar *temp, *free_here;
@@ -1431,6 +1446,10 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	    current = strchr(u_message, '\037');
 	    *current = '<';
 	    current++;
+	    if (is_closing) {
+	      *current = '/';
+	      current++;
+	    }
 	    *current = 'u';
 	    current++;
 	    *current = '>';
@@ -1443,7 +1462,195 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	      temp++;
 	    }
 	    *current = '\0';
-	    g_free(free_here);
+	    g_free(free_here); 
+	    is_closing = !is_closing;
+
+	  }
+
+	  while(strchr(u_message, '\003')) {         // \003 = ^C
+	    
+	    /* This is color formatting.  IRC uses its own weird little system
+	     * that we must translate to HTML. */
+	    
+	    
+	    /* The format is something like this:
+	     *         ^C5 or ^C5,3
+	     * The number before the comma is the foreground color, after is the
+	     * background color.  Either number can be 1 or two digits.
+	     */
+	      
+	    gchar *current;
+	    gchar *temp, *free_here;
+	    gchar *font_tag, *body_tag;     
+	    int fg_color, bg_color;
+       
+	    temp =  g_strdup(strchr(u_message, '\003'));
+	    free_here = temp;
+	    temp++;
+	   
+	    fg_color = bg_color = -1; 	    
+	    body_tag = font_tag  = "";
+	    
+	    /* Parsing the color information: */
+	    do {
+	      if (!isdigit(*temp)) break;      // This translates to </font>
+	      fg_color = (int)(*temp - 48);
+	      temp++;
+	      if (isdigit(*temp)) {
+		fg_color = (fg_color * 10) + (int)(*temp - 48);   
+		temp++;
+	      }
+	      if (*temp != ',') break;
+	      temp++;
+	      if (!isdigit(*temp)) break;      // This translates to </font>
+	      bg_color = (int)(*temp - 48);
+	      temp++;
+	      if (isdigit(*temp)) {
+		bg_color = (bg_color * 10) + (int)(*temp - 48);   
+		temp++;
+	      } 
+	    }while (FALSE);
+	    
+	    if (fg_color > 15)
+	      fg_color = fg_color % 16;
+	    if (bg_color > 15)
+	      bg_color = bg_color % 16;
+	    
+	    switch (fg_color) {
+	    case -1:
+	      font_tag = "</font></body>";
+	      break;
+	    case 0:                    // WHITE
+	      font_tag = "<font color=\"#ffffff\">";
+	      /* If no background color is specified, we're going to make it black anyway.
+	       * That's probably what the sender anticipated the background color to be. 
+	       * White on white would be illegible.
+	       */
+	      if (bg_color == -1) {
+		body_tag = "<body bgcolor=\"#000000\">";
+	      }
+	      break;
+	    case 1:                    // BLACK
+	      font_tag = "<font color=\"#000000\">";
+	      break;
+	    case 2:                    // NAVY BLUE
+	      font_tag = "<font color=\"#000066\">";
+	      break;
+	    case 3:                    // GREEN
+	      font_tag = "<font color=\"#006600\">";
+	      break;
+	    case 4:                    // RED
+	      font_tag = "<font color=\"#ff0000\">";
+	      break;
+	    case 5:                    // MAROON
+	      font_tag = "<font color=\"#660000\">";
+	      break;
+	    case 6:                    // PURPLE
+	      font_tag = "<font color=\"#660066\">";
+	      break;
+	    case 7:                    // DISGUSTING PUKE COLOR
+	      font_tag = "<font color=\"#666600\">";
+	      break;
+	    case 8:                    // YELLOW
+	      font_tag = "<font color=\"#cccc00\">";
+	      break;
+	    case 9:                    // LIGHT GREEN
+	      font_tag = "<font color=\"#33cc33\">";
+	      break;
+	    case 10:                    // TEAL
+	      font_tag = "<font color=\"#00acac\">";
+	      break;
+	    case 11:                    // CYAN
+	      font_tag = "<font color=\"#00ccac\">";
+	      break;
+	    case 12:                    // BLUE
+	      font_tag = "<font color=\"#0000ff\">";
+	      break;
+	    case 13:                    // PINK
+	      font_tag = "<font color=\"#cc00cc\">";
+	      break;
+	    case 14:                    // GREY
+	      font_tag = "<font color=\"#666666\">";
+	      break;
+	    case 15:                    // SILVER
+	      font_tag = "<font color=\"#00ccac\">";
+	      break;
+	    }
+	      
+	    switch (bg_color) {
+	    case 0:                    // WHITE
+	      body_tag = "<body bgcolor=\"#ffffff\">";
+	      break;
+	    case 1:                    // BLACK
+	      body_tag = "<body bgcolor=\"#000000\">";
+	      break;
+	    case 2:                    // NAVY BLUE
+	      body_tag = "<body bgcolor=\"#000066\">";
+	      break;
+	    case 3:                    // GREEN
+	      body_tag = "<body bgcolor=\"#006600\">";
+	      break;
+	    case 4:                    // RED
+	      body_tag = "<body bgcolor=\"#ff0000\">";
+	      break;
+	    case 5:                    // MAROON
+	      body_tag = "<body bgcolor=\"#660000\">";
+	      break;
+	    case 6:                    // PURPLE
+	      body_tag = "<body bgcolor=\"#660066\">";
+	      break;
+	    case 7:                    // DISGUSTING PUKE COLOR
+	      body_tag = "<body bgcolor=\"#666600\">";
+	      break;
+	    case 8:                    // YELLOW
+	      body_tag = "<body bgcolor=\"#cccc00\">";
+	      break;
+	    case 9:                    // LIGHT GREEN
+	      body_tag = "<body bgcolor=\"#33cc33\">";
+	      break;
+	    case 10:                    // TEAL
+	      body_tag = "<body bgcolor=\"#00acac\">";
+	      break;
+	    case 11:                    // CYAN
+	      body_tag = "<body bgcolor=\"#00ccac\">";
+	      break;
+	    case 12:                    // BLUE
+	      body_tag = "<body bgcolor=\"#0000ff\">";
+	      break;
+	    case 13:                    // PINK
+	      body_tag = "<body bgcolor=\"#cc00cc\">";
+	      break;
+	    case 14:                    // GREY
+	      body_tag = "<body bgcolor=\"#666666\">";
+	      break;
+	    case 15:                    // SILVER
+	      body_tag = "<body bgcolor=\"#00ccac\">";
+	      break;
+	    }
+	      
+	    current = strchr(u_message, '\003');
+	    
+	    while (*body_tag != '\0') {
+	      *current = *body_tag;
+	      current++;
+	      body_tag++;
+	    }	    
+	    
+	    while (*font_tag != '\0') {
+	      *current = *font_tag;
+	      current++;
+	      font_tag++;
+	    }	    
+
+	    while (*temp != '\0') {
+	      *current = *temp;
+	      current++;
+	      temp++;
+	    }
+	    *current = '\0';
+	    g_free(free_here); 
+	    is_closing = !is_closing;
+
 	  }
 
 	    while(strchr(u_message, '\017')) {         // \017 = ^O
@@ -1512,20 +1719,20 @@ static void irc_callback(gpointer data, gint source, GdkInputCondition condition
 	    
 	    if (find_conversation(temp)){ 
 	      serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
-	      if (temp)
-		g_free(temp); 
+	      g_free(temp);
+	      return; 
 	    }
 	    else {
 	      g_snprintf(temp, strlen(u_nick) + 2, "+%s", u_nick);
 	      if (find_conversation(temp)) { 
 		serv_got_im(gc, temp, u_message, 0, time((time_t)NULL));
-		if (temp)
-		  g_free(temp); 
+		g_free(temp);
+		return; 
 	      }
 	      else {
 		g_free(temp);
 		serv_got_im(gc, u_nick, u_message, 0, time((time_t)NULL));
-		 
+		return;
 	      }
 	    }
 	  }
