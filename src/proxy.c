@@ -225,11 +225,13 @@ typedef struct {
 static void req_free(pending_dns_request_t *req)
 {
 	g_return_if_fail(req != NULL);
-	if(req->host)
-		g_free(req->host);
+
 	close(req->fd_in);
 	close(req->fd_out);
+
+	g_free(req->host);
 	g_free(req);
+
 	number_of_dns_children--;
 }
 
@@ -239,7 +241,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 	int rc;
 
 	/* Are you alive? */
-	if(kill(req->dns_pid, 0) != 0) {
+	if (kill(req->dns_pid, 0) != 0) {
 		gaim_debug_warning("dns",
 				   "DNS child %d no longer exists\n", req->dns_pid);
 		return -1;
@@ -247,7 +249,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 
 	/* Let's contact this lost child! */
 	rc = write(req->fd_in, dns_params, sizeof(*dns_params));
-	if(rc<0) {
+	if (rc < 0) {
 		gaim_debug_error("dns",
 				   "Unable to write to DNS child %d: %d\n",
 				   req->dns_pid, strerror(errno));
@@ -258,8 +260,9 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 	g_return_val_if_fail(rc == sizeof(*dns_params), -1);
 
 	/* Did you hear me? (This avoids some race conditions) */
-	rc = read(req->fd_out, &ch, 1);
-	if(rc != 1 || ch!='Y') {
+	rc = read(req->fd_out, &ch, sizeof(ch));
+	if (rc != 1 || ch != 'Y')
+	{
 		gaim_debug_warning("dns",
 				   "DNS child %d not responding. Killing it!\n",
 				   req->dns_pid);
@@ -269,6 +272,7 @@ static int send_dns_request_to_child(pending_dns_request_t *req, dns_params_t *d
 
 	gaim_debug_info("dns",
 			   "Successfully sent DNS request to child %d\n", req->dns_pid);
+
 	return 0;
 }
 
@@ -277,9 +281,9 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond);
 static void release_dns_child(pending_dns_request_t *req)
 {
 	g_free(req->host);
-	req->host=NULL;
+	req->host = NULL;
 
-	if(queued_requests && !g_queue_is_empty(queued_requests)) {
+	if (queued_requests && !g_queue_is_empty(queued_requests)) {
 		queued_dns_request_t *r = g_queue_pop_head(queued_requests);
 		req->host = g_strdup(r->params.hostname);
 		req->port = r->params.port;
@@ -290,7 +294,7 @@ static void release_dns_child(pending_dns_request_t *req)
 				   "Processing queued DNS query for '%s' with child %d\n",
 				   req->host, req->dns_pid);
 
-		if(send_dns_request_to_child(req, &(r->params)) != 0) {
+		if (send_dns_request_to_child(req, &(r->params)) != 0) {
 			req_free(req);
 			req = NULL;
 
@@ -322,8 +326,9 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 	gaim_debug_info("dns", "Host '%s' resolved\n", req->host);
 	gaim_input_remove(req->inpa);
 
-	rc=read(req->fd_out, &err, sizeof(err));
-	if((rc==4) && (err!=0)) {
+	rc = read(req->fd_out, &err, sizeof(err));
+	if ((rc == 4) && (err != 0))
+	{
 		char message[1024];
 #if HAVE_GETADDRINFO
 		g_snprintf(message, sizeof(message), "DNS error: %s (pid=%d)",
@@ -337,26 +342,27 @@ static void host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		release_dns_child(req);
 		return;
 	}
-	if(rc>0) {
-		while(rc > 0) {
-			rc=read(req->fd_out, &addrlen, sizeof(addrlen));
-			if(rc>0 && addrlen > 0) {
-				addr=g_malloc(addrlen);
-				rc=read(req->fd_out, addr, addrlen);
+	if (rc > 0)
+	{
+		while (rc > 0) {
+			rc = read(req->fd_out, &addrlen, sizeof(addrlen));
+			if (rc > 0 && addrlen > 0) {
+				addr = g_malloc(addrlen);
+				rc = read(req->fd_out, addr, addrlen);
 				hosts = g_slist_append(hosts, GINT_TO_POINTER(addrlen));
 				hosts = g_slist_append(hosts, addr);
 			} else {
 				break;
 			}
 		}
-	} else if(rc==-1) {
+	} else if (rc == -1) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "Error reading from DNS child: %s",strerror(errno));
 		gaim_debug_error("dns", "%s\n", message);
 		req->callback(NULL, req->data, message);
 		req_free(req);
 		return;
-	} else if(rc==0) {
+	} else if (rc == 0) {
 		char message[1024];
 		g_snprintf(message, sizeof(message), "EOF reading from DNS child");
 		close(req->fd_out);
@@ -419,7 +425,7 @@ static void cope_with_gdb_brokenness()
 static void
 gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboolean show_debug)
 {
-	const size_t zero = 0;
+	const int zero = 0;
 	int rc;
 #if HAVE_GETADDRINFO
 	struct addrinfo hints, *res, *tmp;
@@ -440,7 +446,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 
 	while (1) {
 		if (dns_params->hostname[0] == '\0') {
-			const char Y = 'Y';
+			const char ch = 'Y';
 			fd_set fds;
 			struct timeval tv = { .tv_sec = 40 , .tv_usec = 0 };
 			FD_ZERO(&fds);
@@ -456,7 +462,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 				perror("read()");
 				break;
 			}
-			if (rc==0) {
+			if (rc == 0) {
 				if (show_debug)
 					fprintf(stderr,"dns[%d]: Oops, father has gone, wait for me, wait...!\n", getpid());
 				_exit(0);
@@ -465,12 +471,12 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 				fprintf(stderr, "dns[%d]: hostname = \"\" (port = %d)!!!\n", getpid(), dns_params->port);
 				_exit(1);
 			}
-			write(child_out, &Y, 1);
+			write(child_out, &ch, sizeof(ch));
 		}
 
 #if HAVE_GETADDRINFO
 		g_snprintf(servname, sizeof(servname), "%d", dns_params->port);
-		memset(&hints,0,sizeof(hints));
+		memset(&hints, 0, sizeof(hints));
 
 		/* This is only used to convert a service
 		 * name to a port number. As we know we are
@@ -480,8 +486,8 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 		 */
 		hints.ai_socktype = SOCK_STREAM;
 		rc = getaddrinfo(dns_params->hostname, servname, &hints, &res);
-		if (rc) {
-			write(child_out, &rc, sizeof(int));
+		if (rc != 0) {
+			write(child_out, &rc, sizeof(rc));
 			close(child_out);
 			if (show_debug)
 				fprintf(stderr,"dns[%d] Error: getaddrinfo returned %d\n",
@@ -491,7 +497,7 @@ gaim_dns_childthread(int child_out, int child_in, dns_params_t *dns_params, gboo
 		}
 		write(child_out, &zero, sizeof(zero));
 		tmp = res;
-		while(res) {
+		while (res) {
 			size_t ai_addrlen = res->ai_addrlen;
 			write(child_out, &ai_addrlen, sizeof(ai_addrlen));
 			write(child_out, res->ai_addr, res->ai_addrlen);
