@@ -23,6 +23,8 @@ CORESOURCES = \
 	event.h \
 	ft.c \
 	ft.h \
+	md5.c \
+	md5.h \
 	multi.h \
 	notify.c \
 	notify.h \
@@ -98,8 +100,6 @@ gaim_SOURCES = \
 	log.c \
 	log.h \
 	main.c \
-	md5.c \
-	md5.h \
 	session.c \
 	stock.c \
 	stock.h \
