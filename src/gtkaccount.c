@@ -393,6 +393,43 @@ buddy_icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	/*gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), "");*/
 }
 
+
+static void
+account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
+		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
+{
+	gchar *name = sd->data;
+	
+	if ((sd->length >= 0) && (sd->format == 8)) {
+		/* Well, it looks like the drag event was cool. 
+		 * Let's do something with it */
+		if (!g_ascii_strncasecmp(name, "file://", 7)) {
+			GError *converr = NULL;
+			gchar *tmp, *rtmp;
+			/* It looks like we're dealing with a local file. Let's 
+			 * just untar it in the right place */
+			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
+				gaim_debug(GAIM_DEBUG_ERROR, "buddyicon", "%s\n",
+					   (converr ? converr->message :
+					    "g_filename_from_uri error"));
+				return;
+			}
+			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
+				*rtmp = '\0';
+			if (dialog->buddy_icon_path)
+				g_free(dialog->buddy_icon_path);
+			printf("Really huh? %s\n", tmp);
+			dialog->buddy_icon_path = g_strdup(tmp);
+			gtk_image_set_from_file(GTK_IMAGE(dialog->buddy_icon_entry), tmp);
+			gtk_widget_show(dialog->buddy_icon_entry);
+			g_free(tmp);
+		} 
+		gtk_drag_finish(dc, TRUE, FALSE, t);
+	}
+	gtk_drag_finish(dc, FALSE, FALSE, t);
+}
+
+
 #if GTK_CHECK_VERSION(2,4,0)
 gboolean str_array_match(char **a, char **b)
 {
@@ -662,7 +699,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(hbox), dialog->buddy_icon_entry, TRUE, TRUE, 0);
 	gtk_widget_show(dialog->buddy_icon_entry);
 	gaim_set_accessible_label (dialog->buddy_icon_entry, label);
-
+	dialog->buddy_icon_path = NULL;
+	
 	button = gtk_button_new_with_mnemonic(_("_Browse"));
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -1368,6 +1406,13 @@ register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	gaim_account_register(account);
 }
 
+
+static const GtkTargetEntry dnd_targets[] = {
+       {"text/plain", 0, 0},
+	{"text/uri-list", 0, 1},
+	{"STRING", 0, 2}
+};
+
 void
 gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 							 GaimAccount *account)
@@ -1505,6 +1550,17 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	gtk_widget_show(button);
 
 	dialog->ok_button = button;
+
+	/* Set up DND */
+	gtk_drag_dest_set(dialog->window,
+			  GTK_DEST_DEFAULT_MOTION |
+			  GTK_DEST_DEFAULT_DROP,
+			  dnd_targets,
+			  sizeof(dnd_targets) / sizeof(GtkTargetEntry),
+			  GDK_ACTION_COPY);
+
+	g_signal_connect(G_OBJECT(dialog->window), "drag_data_received",
+			 G_CALLBACK(account_dnd_recv), dialog);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(ok_account_prefs_cb), dialog);
