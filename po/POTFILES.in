@@ -130,6 +130,7 @@ src/protocols/yahoo/yahoo.c
 src/protocols/yahoo/yahoo_filexfer.c
 src/protocols/yahoo/yahoo_profile.c
 src/protocols/yahoo/yahoochat.c
+src/protocols/yahoo/ycht.c
 src/protocols/zephyr/zephyr.c
 src/proxy.c
 src/prpl.h
