@@ -860,9 +860,9 @@ int gaim_chatnav_info(struct aim_session_t *sess,
 			while (i < exchangecount) {
 				sprintf(debug_buff, "chat info: \t\t%x: %s (%s/%s)\n",
 						exchanges[i].number,
-						exchanges[i].name,
-						exchanges[i].charset1,
-						exchanges[i].lang1);
+						exchanges[i].name ? exchanges[i].name : "NULL",
+						exchanges[i].charset1 ? exchanges[i].charset1 : "NULL",
+						exchanges[i].lang1 ? exchanges[i].lang1 : "NULL");
 				debug_print(debug_buff);
 				i++;
 			}

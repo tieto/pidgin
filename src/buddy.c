@@ -88,12 +88,12 @@ void BuddyTickerLogoutTimeout( gpointer data );
 
 /* Predefine some functions */
 static void new_bp_callback(GtkWidget *w, char *name);
-static void log_callback(GtkWidget *w, char *name);
 
 /* stuff for actual display of buddy list */
 struct group_show {
 	GtkWidget *item;
 	GtkWidget *label;
+	GtkWidget *count;
 	GtkWidget *tree;
 	GSList *members;
 	char *name;
@@ -1087,30 +1087,6 @@ static void new_bp_callback(GtkWidget *w, char *name)
         show_new_bp(name);
 }
 
-static void log_callback(GtkWidget *w, char *name)
-{
-	struct conversation *c = find_conversation(name);
-
-	if (find_log_info(name))
-	{
-		if (c) { 
-			set_state_lock(1);
-			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->log_button), FALSE);
-			set_state_lock(0);
-		}
-		rm_log(find_log_info(name));
-	}
-	else
-	{
-		if (c) {
-			show_log_dialog(c);
-			set_state_lock(1);
-			gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(c->log_button), TRUE);
-			set_state_lock(0);
-		}
-	}
-}
-
 void do_bp_menu()
 {
 	GtkWidget *menuitem, *mess, *messmenu;
@@ -1433,7 +1409,6 @@ static int log_timeout(struct buddy_show *b) {
 
 void set_buddy(struct gaim_connection *gc, struct buddy *b)
 {
-	time_t t;
 	struct group *g = find_group_by_buddy(gc, b->name);
 	struct group_show *gs;
 	struct buddy_show *bs;
@@ -1447,6 +1422,15 @@ void set_buddy(struct gaim_connection *gc, struct buddy *b)
 			bs = new_buddy_show(gs, b);
 		if (b->present == 1) {
 			play_sound(BUDDY_ARRIVE);
+			pm = gdk_pixmap_create_from_xpm_d(blist->window, &bm,
+							NULL, (char **)login_icon_xpm);
+			gtk_widget_hide(bs->pix);
+			gtk_pixmap_set(GTK_PIXMAP(bs->pix), pm, bm);
+			gtk_widget_show(bs->pix);
+			if (ticker_prefs & OPT_DISP_SHOW_BUDDYTICKER)
+				BuddyTickerSetPixmap(b->name, pm, bm);
+			gdk_pixmap_unref(pm);
+			gdk_bitmap_unref(bm);
 			b->present = 2;
 			if (bs->log_timer > 0)
 				gtk_timeout_remove(bs->log_timer);

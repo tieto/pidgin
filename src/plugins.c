@@ -759,22 +759,22 @@ void plugin_event(enum gaim_event event, void *arg1, void *arg2, void *arg3, voi
 			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", ((struct gaim_connection *)arg1)->username, (char *)arg2, *(char **)arg3);
 			break;
 		case event_buddy_signon:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_buddy_signoff:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_buddy_away:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_buddy_back:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_buddy_idle:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_buddy_unidle:
-			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg1);
+			g_snprintf(buf, sizeof buf, "\"%s\"", (char *)arg2);
 			break;
 		case event_chat_invited:
 			g_snprintf(buf, sizeof buf, "\"%s\" \"%s\" %s", (char *)arg2, (char *)arg3, (char *)arg4);
