@@ -91,37 +91,33 @@ gchar *strip_html(const gchar *text)
 
 struct g_url *parse_url(char *url)
 {
-	struct g_url *test = g_new0(struct g_url, 1);
+	struct g_url *test = (struct g_url*)malloc(sizeof(struct g_url));
 	char scan_info[255];
 	char port[5];
 	int f;
+	char* turl;
+	/* hyphen at end includes it in control set */
+	char addr_ctrl[] = "A-Za-z0-9.-";
+	char port_ctrl[] = "0-9";
+	char page_ctrl[] = "A-Za-z0-9.~_/&%%?=+^-";
 
-	if (strstr(url, "http://"))
-		g_snprintf(scan_info, sizeof(scan_info),
-			   "http://%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?=+]");
-	else
-		g_snprintf(scan_info, sizeof(scan_info),
-			   "%%[A-Za-z0-9.]:%%[0-9]/%%[A-Za-z0-9.~_-/&%%?=+^]");
+	if((turl=strstr(url, "http://")) || (turl=strstr(url, "HTTP://")))
+		url=turl+=7;
+
+	snprintf(scan_info, sizeof(scan_info),
+		 "%%[%s]:%%[%s]/%%[%s]",
+		 addr_ctrl, port_ctrl, page_ctrl);
+
 	f = sscanf(url, scan_info, test->address, port, test->page);
 	if (f == 1) {
-		if (strstr(url, "http://"))
-			g_snprintf(scan_info, sizeof(scan_info),
-				   "http://%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?=+^]");
-		else
-			g_snprintf(scan_info, sizeof(scan_info),
-				   "%%[A-Za-z0-9.]/%%[A-Za-z0-9.~_-/&%%?=+^]");
+		snprintf(scan_info, sizeof(scan_info),
+			 "%%[%s]/%%[%s]",
+			 addr_ctrl, page_ctrl);
 		f = sscanf(url, scan_info, test->address, test->page);
-		g_snprintf(port, sizeof(test->port), "80");
-		port[2] = 0;
+		snprintf(port, sizeof(port), "80");
 	}
-	if (f == 1) {
-		if (strstr(url, "http://"))
-			g_snprintf(scan_info, sizeof(scan_info), "http://%%[A-Za-z0-9.]");
-		else
-			g_snprintf(scan_info, sizeof(scan_info), "%%[A-Za-z0-9.]");
-		f = sscanf(url, scan_info, test->address);
-		g_snprintf(test->page, sizeof(test->page), "%c", '\0');
-	}
+	if (f == 1)
+		snprintf(test->page, sizeof(test->page), "");
 
 	sscanf(port, "%d", &test->port);
 	return test;
