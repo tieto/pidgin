@@ -1619,19 +1619,20 @@ static int gaim_parse_user_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (evilhack) {
 			g_show_info_text(gc, info->sn, 2,
 					 header,
-					 (prof && *prof) ? prof :
+					 (prof && *prof) ? away_subs(prof, gc->username) :
 						_("<i>User has no away message</i>"),
 					 legend, NULL);
 		} else {
 			g_show_info_text(gc, info->sn, 0,
 					 header,
-					 (prof && *prof) ? prof : NULL,
+					 (prof && *prof) ? away_subs(prof, gc->username) : NULL,
 					 NULL);
 		}
 	} else {
 		g_show_info_text(gc, info->sn, 1,
 				 "<BR><HR><BR>",
-				 (prof && *prof) ? prof : _("<i>No Information Provided</i>"),
+				 (prof && *prof) ? away_subs(prof, gc->username) :
+					_("<i>No Information Provided</i>"),
 				 legend,
 				 NULL);
 	}
