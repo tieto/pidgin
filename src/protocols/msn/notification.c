@@ -1912,6 +1912,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "QNG", NULL);
 	msn_table_add_cmd(cbs_table, NULL, "FLN", fln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NLN", nln_cmd);
+	msn_table_add_cmd(cbs_table, NULL, "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "OUT", out_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "RNG", rng_cmd);
 
