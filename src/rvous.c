@@ -293,13 +293,13 @@ static void do_get_file(GtkWidget *w, struct file_transfer *ft)
 			gtk_main_iteration();
 	}
 	fclose(ft->f);
+	gtk_widget_destroy(fw);
+	fw = NULL;
 
 	if (!cont) {
 		char *tmp = frombase64(ft->cookie);
 		sprintf(buf, "toc_rvous_cancel %s %s %s", ft->user, tmp, ft->UID);
 		sflap_send(buf, strlen(buf), TYPE_DATA);
-		gtk_widget_destroy(fw);
-		fw = NULL;
 		close(ft->fd);
 		free_ft(ft);
 		return;
@@ -369,9 +369,10 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	/* here's where we differ from do_get_file */
 	/* 1. build/send header
 	 * 2. receive header
-	 * 3. send header again
-	 * 4. send file
-	 * 5. receive header
+	 * 3. send listing file
+	 * 4. receive header
+	 *
+	 * then we need to wait to actually send the file.
 	 */
 
 	/* 1. build/send header */
@@ -440,27 +441,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 		return;
 	}
 
-	/* 3. send header again */
-	fhdr->hdrtype = 0x303;
-	fhdr->encrypt = htons(0);
-	fhdr->compress = htons(0);
-	snprintf(fhdr->idstring, 32, "Gaim");
-	read_rv = write(ft->fd, bmagic, 6);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write ack header\n");
-		debug_print(debug_buff);
-		close(ft->fd);
-		return;
-	}
-	read_rv = write(ft->fd, fhdr, 250);
-	if (read_rv <= -1) {
-		sprintf(debug_buff, "Couldn't write ack header 2\n");
-		debug_print(debug_buff);
-		close(ft->fd);
-		return;
-	}
-
-	/* 4. send file */
+	/* 3. send listing file */
 	sprintf(debug_buff, "Sending file\n");
 	debug_print(debug_buff);
 	rcv = 0;
@@ -507,7 +488,7 @@ static void do_send_file(GtkWidget *w, struct file_transfer *ft) {
 	}
 	gtk_widget_destroy(fw);
 
-	/* 5. receive header */
+	/* 4. receive header */
 	sprintf(debug_buff, "Receiving closing header\n");
 	debug_print(debug_buff);
 	read_rv = read(ft->fd, bmagic, 6);
