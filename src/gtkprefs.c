@@ -1352,7 +1352,7 @@ GtkWidget *logging_page() {
 	sys_box = gaim_gtk_prefs_checkbox(_("_Enable system log"),
 									  "/core/logging/log_system", vbox);
 
-	box = gaim_gtk_prefs_checkbox(_("Log when buddies _sign on/sign off"),
+	box = gaim_gtk_prefs_checkbox(_("Log when buddies log in/log _out"),
 								  "/core/logging/log_signon_signoff", vbox);
 	g_signal_connect(G_OBJECT(sys_box), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
@@ -1370,7 +1370,7 @@ GtkWidget *logging_page() {
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
 	gtk_widget_set_sensitive(box, syslog_enabled);
 
-	box = gaim_gtk_prefs_checkbox(_("Log your _own signons/idleness/awayness"),
+	box = gaim_gtk_prefs_checkbox(_("Log your own _signons/idleness/awayness"),
 								  "/core/logging/log_own_states", vbox);
 	g_signal_connect(G_OBJECT(sys_box), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);

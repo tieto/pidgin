@@ -93,7 +93,7 @@ struct _GaimConnection
 	gboolean is_auto_away;       /**< Whether or not it's auto-away.     */
 
 	gboolean wants_to_die;	     /**< Wants to Die state.  This is set
-	                                  when the user chooses to sign off,
+	                                  when the user chooses to log out,
 	                                  or when the protocol is
 	                                  disconnected and should not be
 	                                  automatically reconnected
@@ -127,9 +127,9 @@ GaimConnection *gaim_connection_new(GaimAccount *account);
 void gaim_connection_destroy(GaimConnection *gc);
 
 /**
- * Signs a connection on.
+ * Logs in to this connection.
  *
- * @param gc The connection to sign on.
+ * @param gc The connection to log in.
  *
  * @see gaim_connection_disconnect()
  */
@@ -143,9 +143,9 @@ void gaim_connection_connect(GaimConnection *gc);
 void gaim_connection_register(GaimConnection *gc);
 
 /**
- * Signs a connection off.
+ * Logs out of this connection.
  *
- * @param gc The connection to sign off.
+ * @param gc The connection to log out.
  *
  * @see gaim_connection_connect()
  */

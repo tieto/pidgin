@@ -57,7 +57,7 @@ run_commands()
 		gaim_debug_misc("filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 
-		if (!strncasecmp(command, "signon", 6)) {
+		if (!strncasecmp(command, "login", 6)) {
 			GaimAccount *account;
 
 			arg1 = getarg(buffer, 1, 0);
@@ -70,7 +70,7 @@ run_commands()
 			free(arg1);
 			free(arg2);
 
-		} else if (!strncasecmp(command, "signoff", 7)) {
+		} else if (!strncasecmp(command, "logout", 7)) {
 			GaimAccount *account;
 			GaimConnection *gc;
 

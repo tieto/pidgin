@@ -221,7 +221,7 @@ static void docklet_menu() {
 		case offline_connecting:
 			break;
 		default:
-			gaim_new_item_from_stock(menu, _("Signoff"), GTK_STOCK_CLOSE, G_CALLBACK(gaim_connections_disconnect_all), NULL, 0, 0, 0);
+			gaim_new_item_from_stock(menu, _("Log Out"), GTK_STOCK_CLOSE, G_CALLBACK(gaim_connections_disconnect_all), NULL, 0, 0, 0);
 			break;
 	}
 
@@ -410,13 +410,13 @@ docklet_set_ui_ops(struct docklet_ui_ops *ops)
 /* callbacks */
 
 static void
-gaim_signon(GaimConnection *gc, void *data)
+gaim_login(GaimConnection *gc, void *data)
 {
 	docklet_update_status();
 }
 
 static void
-gaim_signoff(GaimConnection *gc, void *data)
+gaim_logout(GaimConnection *gc, void *data)
 {
 	/* do this when idle so that if the prpl was connecting
 	   and was cancelled, we register that connecting_count
@@ -504,9 +504,9 @@ plugin_load(GaimPlugin *plugin)
 		ui_ops->create();
 
 	gaim_signal_connect(conn_handle, "signed-on",
-						plugin, GAIM_CALLBACK(gaim_signon), NULL);
+						plugin, GAIM_CALLBACK(gaim_login), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
-						plugin, GAIM_CALLBACK(gaim_signoff), NULL);
+						plugin, GAIM_CALLBACK(gaim_logout), NULL);
 	gaim_signal_connect(accounts_handle, "account-connecting",
 						plugin, GAIM_CALLBACK(gaim_connecting), NULL);
 	gaim_signal_connect(accounts_handle, "account-away",
