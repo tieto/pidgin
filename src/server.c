@@ -179,11 +179,15 @@ int serv_send_typing(struct gaim_connection *g, char *name, int typing) {
 int serv_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
 {
 	int val = -EINVAL;
+	struct conversation *cnv = find_conversation(name);
 	if (gc->prpl && gc->prpl->send_im)
 		val = gc->prpl->send_im(gc, name, message, len, flags);
 
 	if (!(flags & IM_FLAG_AWAY))
 		serv_touch_idle(gc);
+
+	if (cnv && cnv->type_again_timeout)
+		gtk_timeout_remove(cnv->type_again_timeout);
 
 	serv_send_typing(gc, name, FALSE);
 	return val;
