@@ -51,6 +51,9 @@ static GList *windows = NULL;
 static GList *conv_placement_fncs = NULL;
 static GaimConvPlacementFunc place_conv = NULL;
 
+static void ensure_default_funcs(void);
+static void conv_placement_last_created_win(GaimConversation *conv);
+
 static gint
 insertname_compare(gconstpointer one, gconstpointer two)
 {
@@ -851,7 +854,14 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		gaim_conv_window_show(win);
 	}
 	else {
-		if (!place_conv)
+		if (place_conv == NULL)
+		{
+			ensure_default_funcs();
+
+			place_conv = conv_placement_last_created_win;
+		}
+
+		if (place_conv == NULL)
 			gaim_debug(GAIM_DEBUG_ERROR, "conversation",
 					   "This is about to suck.\n");
 
@@ -2324,7 +2334,6 @@ conv_placement_by_account(GaimConversation *conv)
 	GList *wins, *convs;
 	GaimAccount *account;
 
-
 	account = gaim_conversation_get_account(conv);
 	type = gaim_conversation_get_type(conv);
 
@@ -2357,7 +2366,8 @@ conv_placement_by_account(GaimConversation *conv)
 	conv_placement_new_window(conv);
 }
 
-static ConvPlacementData *get_conv_placement_data(const char *id)
+static ConvPlacementData *
+get_conv_placement_data(const char *id)
 {
 	ConvPlacementData *data = NULL;
 	GList *n;
@@ -2373,7 +2383,7 @@ static ConvPlacementData *get_conv_placement_data(const char *id)
 
 static void
 add_conv_placement_fnc(const char *id, const char *name,
-		GaimConvPlacementFunc fnc)
+					   GaimConvPlacementFunc fnc)
 {
 	ConvPlacementData *data;
 
@@ -2384,13 +2394,13 @@ add_conv_placement_fnc(const char *id, const char *name,
 	data->fnc  = fnc;
 
 	conv_placement_fncs = g_list_append(conv_placement_fncs, data);
-
 }
 
 static void
 ensure_default_funcs(void)
 {
-	if (conv_placement_fncs == NULL) {
+	if (conv_placement_fncs == NULL)
+	{
 		add_conv_placement_fnc("last", _("Last created window"),
 							   conv_placement_last_created_win);
 		add_conv_placement_fnc("new", _("New window"),
