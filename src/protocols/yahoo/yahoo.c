@@ -880,16 +880,17 @@ static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 static char *yahoo_decode(const char *text)
 {
 	char *converted;
-	char *p, *n, *new, *end;
+	char *n, *new;
+	const char *end, *p;
 	int i;
-	
+
 	n = new = g_malloc(strlen (text) + 1);
 	end = text + strlen(text);
 
-	for (p = (char *)text; p < end; p++, n++) {
+	for (p = text; p < end; p++, n++) {
 		if (*p == '\\') {
 			sscanf(p + 1, "%3o\n", &i);
-			*n = (char)i;
+			*n = i;
 			p += 3;
 		}
 		else
@@ -897,7 +898,7 @@ static char *yahoo_decode(const char *text)
 	}
 
 	*n = '\0';
-	
+
 	converted = g_convert(new, n - new, OUT_CHARSET, "iso-8859-1", NULL, NULL, NULL);
 	g_free(new);
 

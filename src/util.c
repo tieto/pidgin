@@ -250,16 +250,17 @@ gaim_base64_decode(const char *text, char **data, int *size)
 void
 gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
-	char *p, *n, *new, *end;
+	char *n, *new;
+	const char *end, *p;
 	int i;
 
 	n = new = g_malloc(strlen (str) + 1);
-	end = (char *)str + strlen(str);
+	end = str + strlen(str);
 
-	for (p = (char *)str; p < end; p++, n++) {
+	for (p = str; p < end; p++, n++) {
 		if (*p == '=') {
 			sscanf(p + 1, "%2x\n", &i);
-			*n = (char)i;
+			*n = i;
 			p += 2;
 		}
 		else if (*p == '_')
