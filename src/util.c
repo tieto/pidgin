@@ -121,7 +121,7 @@ char *sec_to_text(int sec)
 gint linkify_text(char *text)
 {
         char *c, *t;
-        char cpy[BUF_LONG];
+        char *cpy = g_malloc(strlen(text) * 2 + 1);
         char url_buf[512];
         int cnt=0;
         /* Assumes you have a buffer able to cary at least BUF_LEN * 2 bytes */
@@ -305,6 +305,7 @@ gint linkify_text(char *text)
 
         }
         text[cnt]=0;
+	g_free(cpy);
         return cnt; 
 }
 

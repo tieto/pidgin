@@ -764,7 +764,7 @@ static GtkWidget *change_text(GtkWidget *win, char *text, GtkWidget *button, cha
 	GtkWidget *parent = button->parent;
 	gtk_widget_destroy(button);
 	button = picture_button2(win, text, xpm, dispstyle);
-	gtk_box_pack_start(GTK_BOX(parent), button, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(parent), button, dispstyle, dispstyle, 5);
 	gtk_widget_show(button);
 	return button;
 }
