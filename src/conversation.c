@@ -1367,10 +1367,13 @@ void write_to_conv(struct conversation *c, char *what, int flags, char *who, tim
 	/* XXX CUI: this is really bad and should be moved somewhere else later. */
 	if (!c->is_chat && c->gc) {
 		int index = g_slist_index(connections, c->gc);
+		int sconv = strlen(c->name);
 		int sname = strlen(who);
 		int swhat = strlen(what);
 		UI_build_broadcast(CUI_TYPE_MESSAGE, CUI_MESSAGE_RECV,
 				sizeof(index), &index,
+				sizeof(sconv), &sconv,
+				sconv, c->name,
 				sizeof(sname), &sname,
 				sname, who,
 				sizeof(flags), &flags,
