@@ -197,7 +197,8 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 	awaymessage = NULL;
 	awayqueue = NULL;
 	awayqueuesw = NULL;
-	g_object_unref(G_OBJECT(awayqueuestore));
+	if (awayqueuestore != NULL)
+		g_object_unref(G_OBJECT(awayqueuestore));
 	awayqueuestore = NULL;
 	serv_set_away_all(NULL);
 }

@@ -48,7 +48,7 @@ void message(char *text,int channel)
 
 	text_output=(text_conv ? text_conv : text);
 	
-	switch(channel) {
+	switch (channel) {
 	case 1:  puts(text_output); break;
 	case 2:  fputs(text_output, stderr); break;
 	default: break;
@@ -60,22 +60,20 @@ void message(char *text,int channel)
 
 void show_remote_usage(char *name)
 {
-	char *text=NULL;
+	char *text = NULL;
 
-	text=g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
+	text = g_strdup_printf(_("Usage: %s command [OPTIONS] [URI]\n\n"
+		"    COMMANDS:\n"
+		"       uri                      Handle AIM: URI\n"
+		"       away                     Popup the away dialog with the default message\n"
+		"       back                     Remove the away dialog\n"
+		"       quit                     Close running copy of Gaim\n\n"
+		"    OPTIONS:\n"
+		"       -h, --help [command]     Show help for command\n"), name);
 
-	     "    COMMANDS:\n"
-	     "       uri                      Handle AIM: URI\n"
-             "       away                     Popup the away dialog with the default message\n"
-             "       back                     Remove the away dialog\n"
-	     "       quit                     Close running copy of Gaim\n\n"
-
-	     "    OPTIONS:\n"
-	     "       -h, --help [command]     Show help for command\n"), name);
-
-	message(text,1);
+	message(text, 1);
 	g_free(text);
-	
+
 	return;
 }
 
@@ -149,18 +147,18 @@ int get_options(int argc, char *argv[])
 	else
 		return 1;
 
-	if(opts.help)
+	if (opts.help)
 		return 0;
 
 	/* And we can have another argument--the URI. */
 	/* but only if we're using the uri command. */
 	if (!strcmp(opts.command, "uri")) {
-		if(argc-optind==1)
+		if (argc-optind == 1)
 			opts.uri = g_strdup(argv[optind++]);
 		else
 			return 1;
 	}
-	else if(optind==argc)
+	else if (optind == argc)
 		return 0;
 	else
 		return 1;
@@ -232,7 +230,7 @@ int command_back()
 }
 
 
-void show_longhelp_uri( char *name, char *command)
+void show_longhelp( char *name, char *command)
 {
 	if(!strcmp(command, "uri")) {
 		message(_("\n"
@@ -261,12 +259,6 @@ void show_longhelp_uri( char *name, char *command)
 	}
 }
 
-/* Work in progress - JBS
-int command_info(){
-	fprintf(stderr, "Info not yet implemented\n");
-    return 1;
-}*/
-
 int main (int argc, char *argv[])
 {
 
@@ -281,27 +273,37 @@ int main (int argc, char *argv[])
 		show_remote_usage(argv[0]);
 		return 0;
 	}
-	
-	
+
+
 	if (!strcmp(opts.command, "uri")) {
-		if(opts.help){
-			show_longhelp_uri(argv[0], "uri");
-		}else{
+		if (opts.help)
+			show_longhelp(argv[0], "uri");
+		else
 			return command_uri();
-		}
-/*	} else if (!strcmp(opts.command, "info")) {
-		return command_info();*/
-        } else if (!strcmp(opts.command, "away")) {
-                return command_away();
-        } else if (!strcmp(opts.command, "back")) {
-                return command_back();
-	} else if (!strcmp(opts.command, "quit")) {
-		if(opts.help){
-			show_longhelp_uri(argv[0], "quit");
-		}else{
+	}
+
+	else if (!strcmp(opts.command, "away")) {
+		if (opts.help)
+			show_longhelp(argv[0], "away");
+		else
+			return command_away();
+	}
+
+	else if (!strcmp(opts.command, "back")) {
+		if (opts.help)
+			show_longhelp(argv[0], "back");
+		else
+			return command_back();
+	}
+
+	else if (!strcmp(opts.command, "quit")) {
+		if (opts.help)
+			show_longhelp(argv[0], "quit");
+		else
 			return command_quit();
-		}
-	} else {
+	}
+
+	else {
 		show_remote_usage(argv[0]);
 		return 1;
 	}
