@@ -251,8 +251,8 @@ void
 gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 {
 	char *p, *n, *new;
-	
-	n = new = malloc(strlen (str));
+
+	n = new = g_malloc(strlen (str));
 
 	for (p = (char *)str; *p; p++, n++) {
 		if (*p == '=') {
@@ -269,7 +269,7 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 
 	if (ret_len)
 		*ret_len = n - new;
-	
+
 	/* Resize to take less space */
 	/* new = realloc(new, n - new); */
 
@@ -309,7 +309,7 @@ gaim_mime_decode_field(const char *str)
 	char *charset, *encoding, *word, *decoded;
 	char *n, *new;
 
-	n = new = malloc(strlen(str));
+	n = new = g_malloc(strlen(str));
 	charset = word = NULL;
 
 	/* Here we will be looking for encoded words and if they seem to be
