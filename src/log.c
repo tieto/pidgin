@@ -450,7 +450,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	} else if (type & GAIM_MESSAGE_RECV)
 		fprintf(log->logger_data, "<font color=\"#A82F2F\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
 			date, from, gc->prpl->info->name, message);
-	else if (type & GAIM_MESSAGE_RECV)
+	else if (type & GAIM_MESSAGE_SEND)
 		fprintf(log->logger_data, "<font color=\"#16569E\">(%s) <b>%s:</b></font> <font sml=\"%s\">%s</font><br/>\n", 
 			date, from, gc->prpl->info->name, message);
 	fflush(log->logger_data);
