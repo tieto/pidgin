@@ -666,7 +666,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	GaimXferUiOps *ui_ops;
 	GaimXfer *xfer = (GaimXfer *)data;
 	char *buffer = NULL;
-	ssize_t r;
+	ssize_t r = 0;
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
@@ -677,13 +677,14 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 			return;
 		}
 	}
-	else {
+
+	if (condition & GAIM_INPUT_WRITE) {
 		size_t s = MIN(gaim_xfer_get_bytes_remaining(xfer), 4096);
 
 		/* this is so the prpl can keep the connection open
 		   if it needs to for some odd reason. */
 		if (s == 0) {
-			if(xfer->watcher) {
+			if (xfer->watcher) {
 				gaim_input_remove(xfer->watcher);
 				xfer->watcher = 0;
 			}

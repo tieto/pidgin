@@ -253,11 +253,11 @@ ssize_t yahoo_xfer_read(char **buffer, GaimXfer *xfer)
 
 	if (len <= 0) {
 		if ((gaim_xfer_get_size(xfer) > 0) &&
-		   (gaim_xfer_get_bytes_sent(xfer) >= gaim_xfer_get_size(xfer)))
+		    (gaim_xfer_get_bytes_sent(xfer) >= gaim_xfer_get_size(xfer))) {
 			gaim_xfer_set_completed(xfer, TRUE);
-		else
-			gaim_xfer_cancel_remote(xfer);
-		return 0;
+			return 0;
+		} else
+			return -1;
 	}
 
 
@@ -302,10 +302,10 @@ ssize_t yahoo_xfer_write(const char *buffer, size_t size, GaimXfer *xfer)
 	struct yahoo_xfer_data *xd = xfer->data;
 
 	if (!xd)
-		return 0;
+		return -1;
 
 	if (gaim_xfer_get_type(xfer) != GAIM_XFER_SEND) {
-		return 0;
+		return -1;
 	}
 
 	len = write(xfer->fd, buffer, size);
@@ -314,7 +314,7 @@ ssize_t yahoo_xfer_write(const char *buffer, size_t size, GaimXfer *xfer)
 		if (gaim_xfer_get_bytes_sent(xfer) >= gaim_xfer_get_size(xfer))
 			gaim_xfer_set_completed(xfer, TRUE);
 		if ((errno != EAGAIN) && (errno != EINTR))
-			gaim_xfer_cancel_remote(xfer);
+			return -1;
 		return 0;
 	}
 
