@@ -1320,7 +1320,7 @@ gaim_markup_strip_html(const char *str)
 					cdata_close_tag = "</style>";
 				}
 				/* Update the index and continue checking after the tag */
-				i = (str2[k] == '<')? k - 1: k;
+				i = (str2[k] == '<' || str2[k] == '\0')? k - 1: k;
 				continue;
 			}
 		}
