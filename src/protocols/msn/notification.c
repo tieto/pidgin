@@ -433,9 +433,7 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 {
 	MsnSession *session = servconn->session;
 	struct gaim_connection *gc = session->account->gc;
-	struct buddy *b;
 	const char *passport, *type, *value;
-	int status = 0;
 	MsnUser *user;
 
 	passport = params[1];
@@ -445,24 +443,25 @@ __bpr_cmd(MsnServConn *servconn, const char *command, const char **params,
 	user = msn_users_find_with_passport(session->users, passport);
 
 	if (value != NULL) {
-		if (!strcmp(type, "MOB")) {
-			if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
-				if (GAIM_BUDDY_IS_ONLINE(b)) {
-					if (!strcmp(value, "Y"))
-						status = (b->uc | (1 << 5));
-					else if (!strcmp(value, "N"))
-						status = (b->uc ^ (1 << 5));
-
-					serv_got_update(gc, (char *)passport, 1, 0, 0, 0, status);
-				}
-			}
-		}
+		if (!strcmp(type, "MOB"))
+			user->mobile = (!strcmp(value, "Y"));
+		else if (!strcmp(type, "MBE"))
+			user->allow_pages = (!strcmp(value, "Y"));
 		else if (!strcmp(type, "PHH"))
 			msn_user_set_home_phone(user, msn_url_decode(value));
 		else if (!strcmp(type, "PHW"))
 			msn_user_set_work_phone(user, msn_url_decode(value));
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(user, msn_url_decode(value));
+	}
+
+	if (!strcmp(type, "MOB") || !strcmp(type, "MBE")) {
+		struct buddy *b;
+
+		if ((b = gaim_find_buddy(gc->account, passport)) != NULL) {
+			if (GAIM_BUDDY_IS_ONLINE(b))
+				serv_got_update(gc, (char *)passport, 1, 0, 0, 0, b->uc);
+		}
 	}
 
 	return TRUE;
@@ -669,7 +668,7 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 		while (session->lists.forward != NULL) {
 			MsnUser *user = session->lists.forward->data;
 			struct buddy *b;
-			
+
 			b = gaim_find_buddy(gc->account, msn_user_get_passport(user));
 
 			session->lists.forward = g_slist_remove(session->lists.forward,
@@ -709,10 +708,10 @@ __lst_cmd(MsnServConn *servconn, const char *command, const char **params,
 				b = gaim_buddy_new(gc->account,
 								   msn_user_get_passport(user), NULL);
 
-				b->proto_data = user;
-
 				gaim_blist_add_buddy(b, g, NULL);
 			}
+
+			b->proto_data = user;
 
 			serv_got_alias(gc, (char *)msn_user_get_passport(user),
 						   (char *)msn_user_get_name(user));

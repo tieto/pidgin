@@ -32,24 +32,27 @@ typedef struct _MsnUsers MsnUsers;
  */
 struct _MsnUser
 {
-	MsnSession *session;    /**< The MSN session.        */
+	MsnSession *session;    /**< The MSN session.           */
 
-	char *passport;         /**< The passport account.   */
-	char *name;             /**< The friendly name.      */
+	char *passport;         /**< The passport account.      */
+	char *name;             /**< The friendly name.         */
 
 	struct
 	{
-		char *home;         /**< Home phone number.      */
-		char *work;         /**< Work phone number.      */
-		char *mobile;       /**< Mobile phone number.    */
+		char *home;         /**< Home phone number.         */
+		char *work;         /**< Work phone number.         */
+		char *mobile;       /**< Mobile phone number.       */
 
 	} phone;
 
-	int group_id;           /**< The group ID.           */
+	gboolean allow_pages;   /**< Allows mobile messages.    */
+	gboolean mobile;        /**< Signed up with MSN Mobile. */
 
-	size_t ref_count;       /**< The reference count.    */
+	int group_id;           /**< The group ID.              */
 
-	GHashTable *clientinfo; /**< The client information. */
+	size_t ref_count;       /**< The reference count.       */
+
+	GHashTable *clientinfo; /**< The client information.    */
 };
 
 /**

@@ -39,15 +39,7 @@ typedef enum
 
 } MsnAwayType;
 
-/*
- * 0 0 0 0 0 0 0 0
- *     | `--_--'
- *     |    +----- Away state
- *     |
- *     +--- Mobile flag
- */
 #define MSN_AWAY_TYPE(x)   (((x) >> 1) & 0x0F)
-#define MSN_MOBILE(x)      (((x) >> 5) & 0x01)
 
 /**
  * Returns the string representation of an away type.

@@ -255,9 +255,12 @@ static void
 msn_list_emblems(struct buddy *b, char **se, char **sw,
 				 char **nw, char **ne)
 {
+	MsnUser *user;
 	char *emblems[4] = { NULL, NULL, NULL, NULL };
 	int away_type = MSN_AWAY_TYPE(b->uc);
 	int i = 0;
+
+	user = b->proto_data;
 
 	if (b->present == GAIM_BUDDY_OFFLINE)
 		emblems[i++] = "offline";
@@ -266,7 +269,7 @@ msn_list_emblems(struct buddy *b, char **se, char **sw,
 	else if (away_type != 0)
 		emblems[i++] = "away";
 
-	if (MSN_MOBILE(b->uc))
+	if (user->mobile)
 		emblems[i++] = "wireless";
 
 	*se = emblems[0];
@@ -368,13 +371,15 @@ msn_actions(struct gaim_connection *gc)
 static GList *
 msn_buddy_menu(struct gaim_connection *gc, const char *who)
 {
+	MsnUser *user;
 	struct proto_buddy_menu *pbm;
 	struct buddy *b;
 	GList *m = NULL;
 
 	b = gaim_find_buddy(gc->account, who);
+	user = b->proto_data;
 
-	if (MSN_MOBILE(b->uc)) {
+	if (user->mobile) {
 		pbm = g_new0(struct proto_buddy_menu, 1);
 		pbm->label    = _("Send to Mobile");
 		pbm->callback = __show_send_to_mobile_cb;
