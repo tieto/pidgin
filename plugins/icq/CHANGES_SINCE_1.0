@@ -1,5 +1,4 @@
-
-This file is intendended to be a list of source incompatable changes 
+This file is intended to be a list of source incompatible changes 
 that have been made since icqlib-1.0.0.
 
 2000-12-19: ICQLINKs have been reworked.  Members that provide no useful 
@@ -46,7 +45,7 @@ icq_RequestNotify/ICQ_NOTIFY_FILE      icq_FileNotify/FILE_NOTIFY_STATUS
 icq_RequestNotify/ICQ_NOTIFY_FILEDATA  icq_FileNotify/FILE_NOTIFY_DATAPACKET
 icq_RequestNotify/ICQ_NOTIFY_SUCCESS   icq_FileNotify/FILE_NOTIFY_CLOSE
 
-Finally, some fake file status values now come through seperate 
+Finally, some fake file status values now come through separate 
 FILE_NOTIFY events, and one has been renamed:
 
 Old status                         New Notification/Status
@@ -65,7 +64,7 @@ socket will be the socket number, type will be either ICQ_SOCKET_READ or
 ICQ_SOCKET_WRITE, and status will be either true or false, true indicating 
 icqlib now needs notification, and false indicating icqlib no longer needs 
 notification.  Your application should use this to install some sort of 
-socket notification object (e.g., in Kicq, we use a QSocketNotifier).  
+socket notification object (e.g., in kicq, we use a QSocketNotifier).  
 When the socket is ready, you should invoke the new 
 icq_HandleReadySocket(socket, type) function.
 
@@ -76,3 +75,7 @@ wasting CPU cycles and poor TCP file transfer performance, though.
 2001-02-20: The icq_SetTimeout callback has been moved outside of the 
 ICQLINK structure, and icq_HandleTimeout no longer requires an ICQLINK 
 parameter.
+
+2001-03-03: ICQLINK is now icq_Link, to fit better with the icqlib
+naming conventions.  ICQLINK should be considered depreciated - it is 
+still supported for now, but may disappear in a future icqlib release.

@@ -1,9 +1,13 @@
 Core Developers
 ---------------
-Denis V. Dmitrienko <denis@null.net>
+Denis V. Dmitrienko <denix@kde.org>
 Bill Soudan <soudan@kde.org>
 
-Secondary Developers
---------------------
+Python Bindings
+---------------
+Michael Hudson <mwh21@cam.ac.uk>
+
+Retired Developers and Contributors
+-----------------------------------
 Vadim Zaliva <lord@crocodile.org>
-Nikita I. Makeev <whale@nichego.net> (retired ;)
+Nikita I. Makeev <whale@nichego.net>

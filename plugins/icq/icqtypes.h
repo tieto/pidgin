@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: icqtypes.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -27,10 +29,11 @@
 #include <config.h>
 #endif
 
-#ifndef _WIN32
 typedef unsigned long DWORD;
 typedef unsigned short WORD;
 typedef unsigned char BYTE;
+
+#ifndef _WIN32
 typedef unsigned char BOOL;
 #endif
 

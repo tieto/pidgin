@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: tcphandle.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -74,6 +76,11 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
     case ICQ_TCP_MSG_MSG:
     case ICQ_TCP_MSG_URL:
     case ICQ_TCP_MSG_CONTACTLIST:
+    case ICQ_TCP_MSG_READAWAY:
+    case ICQ_TCP_MSG_READNA:
+    case ICQ_TCP_MSG_READDND:
+    case ICQ_TCP_MSG_READOCCUPIED:
+    case ICQ_TCP_MSG_READFFC:
       p->id=icq_PacketRead32(p);
       break;
 
@@ -138,6 +145,8 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
       break;
 
     case ICQ_TCP_ACK:
+      invoke_callback(plink->icqlink, icq_RequestNotify)
+        (plink->icqlink, p->id, ICQ_NOTIFY_ACK, status, (void *)message);
       switch(type)
       {
         case ICQ_TCP_MSG_CHAT:
@@ -150,16 +159,23 @@ void icq_TCPProcessPacket(icq_Packet *p, icq_TCPLink *plink)
 
         case ICQ_TCP_MSG_MSG:
         case ICQ_TCP_MSG_URL:
-          if(plink->icqlink->icq_RequestNotify)
-          {
-            icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", p->id);
-            invoke_callback(plink->icqlink, icq_RequestNotify)
-              (plink->icqlink, p->id, ICQ_NOTIFY_ACK, status, (void *)message);
-            invoke_callback(plink->icqlink, icq_RequestNotify)
-              (plink->icqlink, p->id, ICQ_NOTIFY_SUCCESS, 0, NULL);
-          }
+          icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, "received ack %d\n", 
+            p->id);
+          break;
+
+        case ICQ_TCP_MSG_READAWAY:
+        case ICQ_TCP_MSG_READNA:
+        case ICQ_TCP_MSG_READDND:
+        case ICQ_TCP_MSG_READOCCUPIED:
+        case ICQ_TCP_MSG_READFFC:
+          icq_FmtLog(plink->icqlink, ICQ_LOG_MESSAGE, 
+            "received away msg, seq %d\n", p->id);
+          invoke_callback(plink->icqlink, icq_RecvAwayMsg)
+            (plink->icqlink, p->id, message);
           break;
       }
+      invoke_callback(plink->icqlink, icq_RequestNotify)
+        (plink->icqlink, p->id, ICQ_NOTIFY_SUCCESS, 0, NULL);
       break;
 
     case ICQ_TCP_CANCEL:
@@ -234,7 +250,7 @@ int icq_TCPProcessHello(icq_Packet *p, icq_TCPLink *plink)
 
 void icq_TCPOnMessageReceived(icq_Link *icqlink, DWORD uin, const char *message, DWORD id, icq_TCPLink *plink)
 {
-  char data[512];
+  char data[ICQ_MAX_MESSAGE_SIZE];
 
   /* use the current system time for time received */
   time_t t=time(0);
@@ -246,8 +262,9 @@ void icq_TCPOnMessageReceived(icq_Link *icqlink, DWORD uin, const char *message,
          uin, (int)id);
 #endif
 
-  strncpy(data,message,512) ;
-  icq_RusConv("wk",data) ;
+  strncpy(data,message,sizeof(data));
+  data[sizeof(data)-1]='\0';
+  icq_RusConv("wk",data);
 
   invoke_callback(icqlink,icq_RecvMessage)(icqlink, uin, ptime->tm_hour, 
     ptime->tm_min, ptime->tm_mday, ptime->tm_mon+1, ptime->tm_year+1900, data);

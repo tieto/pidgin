@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: udp.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -77,7 +79,8 @@
 #define UDP_SRV_STATUS_UPDATE      0x01A4
 #define UDP_SRV_X1                 0x021C
 #define UDP_SRV_X2                 0x00E6
-#define UDP_SRV_UPDATE             0x01E0
+#define UDP_SRV_UPDATE_OK          0x01E0
+#define UDP_SRV_UPDATE_FAIL        0x01EA
 #define UDP_SRV_UPDATE_EXT         0x00C8
 #define UDP_SRV_NEW_UIN            0x0046
 #define UDP_SRV_NEW_USER           0x00B4

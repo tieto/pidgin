@@ -1,5 +1,5 @@
-icqlib v1.0.0
-Denis V. Dmitrienko <denis@null.net>
+icqlib v1.2.0
+Denis V. Dmitrienko <denix@kde.org>
 Bill Soudan <soudan@kde.org>
 
 DESCRIPTION
@@ -24,8 +24,8 @@ DOWNLOAD
 Home page:
       http://kicq.sourceforge.net/icqlib.shtml
 Direct download:
-      http://download.sourceforge.net/icqlib/icqlib-1.0.0.tar.gz
-      ftp://ftp.kde.org/pub/kde/unstable/apps/network/icqlib-1.0.0.tar.gz
+      http://download.sourceforge.net/icqlib/icqlib-1.2.0.tar.gz
+      ftp://ftp.kde.org/pub/kde/unstable/apps/network/icqlib-1.2.0.tar.gz
 
 INSTALL
 -------

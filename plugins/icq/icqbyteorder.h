@@ -1,4 +1,6 @@
 /*
+ * $Id: icqbyteorder.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *
  * Vadim Zaliva <lord@crocodile.org>
@@ -39,39 +41,6 @@
 #include <config.h>
 #endif         
 
-/* linux way */
-#ifdef HAVE_ENDIAN_H
-# include <endian.h> 
-#endif
-#ifdef HAVE_BYTESWAP_H
-# include <byteswap.h>
-#endif
-
-/* BSD way */
-#ifdef HAVE_MACHINE_ENDIAN_H
-# include <machine/endian.h>
-#endif
-
-/* HP-UX way */
-#ifdef hpux
-# ifdef HAVE_ARPA_NAMESER_H
-#  include <arpa/nameser.h>
-# endif
-#endif
-
-/* Cygwin way */
-#ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
-#endif
-
-/*
- * Kind of portable way. this common header, at least I found it on BSD and Solaris.
- * On Solaris this is only place where endiannes is defined.
- */
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-# include <arpa/nameser_compat.h>
-#endif
-
 /*
  * I am really trying to use builtin optimized byte swap routines.
  * they are highly optimised on some platforms.
@@ -86,41 +55,16 @@ extern unsigned short bswap_16(unsigned short v);
 # endif
 #endif
 
-#ifdef BYTE_ORDER_LITTLE_ENDIAN
-# define htoicql(x)   (x)
-# define icqtohl(x)   (x)
-# define htoicqs(x)   (x)
-# define icqtohs(x)   (x)
-#else
-
-#ifndef BYTE_ORDER
-#   error "Unknown byte order!"
-#endif
-
-#if BYTE_ORDER == BIG_ENDIAN
-/* host is different from ICQ byte order */
+#ifdef WORDS_BIGENDIAN
 # define htoicql(x)   bswap_32(x)
 # define icqtohl(x)   bswap_32(x)
 # define htoicqs(x)   bswap_16(x)
 # define icqtohs(x)   bswap_16(x)
 #else
-# if BYTE_ORDER == LITTLE_ENDIAN
-/* host byte order match ICQ byte order */
-#   define htoicql(x)   (x)
-#   define icqtohl(x)   (x)
-#   define htoicqs(x)   (x)
-#   define icqtohs(x)   (x)
-# else
-#   error "Unsupported byte order!"
-# endif
+# define htoicql(x)   (x)
+# define icqtohl(x)   (x)
+# define htoicqs(x)   (x)
+# define icqtohs(x)   (x)
 #endif
-
-#endif
-
-/* ICQ byte order is always different from network byte order. */
-# define ntoicql(x)   bswap_32(x)
-# define icqtonl(x)   bswap_32(x)
-# define ntoicqs(x)   bswap_16(x)
-# define icqtons(x)   bswap_16(x)
 
 #endif

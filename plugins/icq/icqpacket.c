@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: icqpacket.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -234,6 +236,12 @@ WORD icq_PacketReadUDPInCmd(icq_Packet *p)
   return icq_PacketRead16(p);
 }
 
+WORD icq_PacketReadUDPInCmdV3(icq_Packet *p)
+{
+  icq_PacketGoto(p, 2);
+  return icq_PacketRead16(p);
+}
+
 WORD icq_PacketReadUDPInSeq1(icq_Packet *p)
 {
   icq_PacketGoto(p, 9);
@@ -269,8 +277,8 @@ const void *icq_PacketRead(icq_Packet *p, int length)
 
 void icq_PacketShortDump(icq_Packet *p)
 {
-  printf("icq_Packet %x { id=%d, cursor=%x, length=%d }\n", 
-         (int)p, (int)p->id, p->cursor, p->length);
+  printf("icq_Packet %lx { id=%d, cursor=%x, length=%d }\n", 
+         (long)p, (int)p->id, p->cursor, p->length);
 }
 
 void icq_PacketDump(icq_Packet *p)

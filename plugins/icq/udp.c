@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: udp.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -415,10 +417,11 @@ message to send.
 ***************************************************/
 WORD icq_UDPSendMessage(icq_Link *icqlink, DWORD uin, const char *text) /* V5 */
 {
-  char buf[512]; /* message may be only 450 bytes long */
+  char buf[ICQ_MAX_UDP_MESSAGE_SIZE];
   icq_Packet *p;
 
-  strncpy(buf, text, 512);
+  strncpy(buf, text, sizeof(buf));
+  buf[sizeof(buf)-1] = 0;
   icq_RusConv("kw", buf);
 
   p = icq_UDPCreateStdPacket(icqlink, UDP_CMD_SEND_THRU_SRV);
@@ -432,12 +435,14 @@ WORD icq_UDPSendMessage(icq_Link *icqlink, DWORD uin, const char *text) /* V5 */
 
 WORD icq_UDPSendURL(icq_Link *icqlink, DWORD uin, const char *url, const char *descr) /* V5 */
 {
-  char buf1[512], buf2[512];
+  char buf1[ICQ_MAX_UDP_MESSAGE_SIZE], buf2[ICQ_MAX_UDP_MESSAGE_SIZE];
   icq_Packet *p;
 
-  strncpy(buf1, descr, 512);
+  strncpy(buf1, descr, sizeof(buf1));
+  buf1[sizeof(buf1)-1] = 0;
   icq_RusConv("kw", buf1);
-  strncpy(buf2, url, 512);
+  strncpy(buf2, url, sizeof(buf2));
+  buf2[sizeof(buf2)-1] = 0;
 
   p = icq_UDPCreateStdPacket(icqlink, UDP_CMD_SEND_THRU_SRV);
   icq_PacketAppend32(p, uin);

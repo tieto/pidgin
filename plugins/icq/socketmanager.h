@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: socketmanager.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -28,7 +30,16 @@
 #endif
 
 #include <sys/types.h>
+
+#ifndef _WIN32
+#ifdef NEED_SOCKLEN_T
+typedef unsigned int socklen_t;
+#endif
 #include <sys/socket.h>
+#else
+#include <winsock.h>
+typedef unsigned __int32 socklen_t;
+#endif
 
 #include "icq.h"
 #include "list.h"
@@ -45,7 +56,7 @@ struct icq_Socket_s
 };
 
 int icq_SocketNew(int domain, int type, int protocol);
-int icq_SocketAccept(int listens, struct sockaddr *addr, unsigned int *addrlen);
+int icq_SocketAccept(int listens, struct sockaddr *addr, socklen_t *addrlen);
 void icq_SocketAlloc(int socket_fd);
 int icq_SocketDelete(int socket_fd);
 void icq_SocketSetHandler(int socket_fd, int type, icq_SocketHandler handler,

@@ -1,4 +1,6 @@
 /*
+ * $Id: icqbyteorder.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * This header defines macros to handle ICQ protocol byte order conversion.
  *
  * Vadim Zaliva <lord@crocodile.org>

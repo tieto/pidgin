@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: icq.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -42,10 +44,10 @@
 #include <time.h>
 
 /* ICQLIB version defines */
-#define ICQLIBVER   0x010105
+#define ICQLIBVER   0x010200
 #define ICQLIBMAJOR 1
-#define ICQLIBMINOR 1
-#define ICQLIBMICRO 5
+#define ICQLIBMINOR 2
+#define ICQLIBMICRO 0
 
 
 #define ICQ_LOG_OFF     0
@@ -76,6 +78,9 @@
 
 #define ICQ_NOTIFY_CHATSESSION    7
 #define ICQ_NOTIFY_FILESESSION    8
+
+#define ICQ_MAX_MESSAGE_SIZE     1024
+#define ICQ_MAX_UDP_MESSAGE_SIZE 480
 
 #ifdef __cplusplus
 extern "C" {
@@ -227,12 +232,16 @@ struct icq_Link_s
        const char *nick, const char *first, const char *last,
        const char *email, char auth);
   void (*icq_SearchDone)(icq_Link *icqlink);
+  void (*icq_UpdateSuccess)(icq_Link *icqlink);
+  void (*icq_UpdateFailure)(icq_Link *icqlink);
   void (*icq_UserOnline)(icq_Link *icqlink, unsigned long uin,
        unsigned long status, unsigned long ip, unsigned short port,
        unsigned long real_ip, unsigned char tcp_flag );
   void (*icq_UserOffline)(icq_Link *icqlink, unsigned long uin);
   void (*icq_UserStatusUpdate)(icq_Link *icqlink, unsigned long uin,
        unsigned long status);
+  void (*icq_RecvAwayMsg)(icq_Link *icqlink, unsigned long id,
+       const char *msg);
   void (*icq_InfoReply)(icq_Link *icqlink, unsigned long uin,
        const char *nick, const char *first, const char *last,
        const char *email, char auth);
@@ -371,8 +380,8 @@ void icq_FmtLog(icq_Link *icqlink, int level, const char *fmt, ...);
 void icq_ContactAdd(icq_Link *icqlink, unsigned long cuin);
 void icq_ContactRemove(icq_Link *icqlink, unsigned long cuin);
 void icq_ContactClear(icq_Link *icqlink );
-void icq_ContactSetVis(icq_Link *icqlink, unsigned long cuin, unsigned char vu);
-void icq_ContactSetInvis(icq_Link *icqlink, unsigned long cuin, unsigned char vu);
+void icq_ContactSetVis(icq_Link *icqlink, unsigned long cuin, unsigned char on);
+void icq_ContactSetInvis(icq_Link *icqlink, unsigned long cuin, unsigned char on);
 
 /*** TCP ***/
 void icq_TCPMain(icq_Link *icqlink);
@@ -383,6 +392,8 @@ unsigned long icq_TCPSendMessage(icq_Link *icqlink, unsigned long uin,
      const char *message);
 unsigned long icq_TCPSendURL(icq_Link *icqlink, unsigned long uin,
      const char *message, const char *url);
+unsigned long icq_TCPSendAwayMessageReq(icq_Link *icqlink, unsigned long
+     uin, int status);
 unsigned long icq_SendChatRequest(icq_Link *icqlink, unsigned long uin,
      const char *message);
 void icq_AcceptChatRequest(icq_Link *icqlink, unsigned long uin, unsigned long seq);

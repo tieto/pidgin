@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: contacts.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -80,18 +82,18 @@ icq_ContactItem *icq_ContactFind(icq_Link *icqlink, DWORD cuin)
   return icq_ListTraverse(icqlink->d->icq_ContactList, _icq_ContactFind, cuin);
 }
 
-void icq_ContactSetVis(icq_Link *icqlink, DWORD cuin, BYTE vu)
+void icq_ContactSetVis(icq_Link *icqlink, DWORD cuin, BOOL on)
 {
   icq_ContactItem *p = icq_ContactFind(icqlink, cuin);
   if(p)
-    p->vis_list = vu;
+    p->vis_list = on;
 }
 
-void icq_ContactSetInvis(icq_Link *icqlink, DWORD cuin, BYTE vu)
+void icq_ContactSetInvis(icq_Link *icqlink, DWORD cuin, BOOL on)
 {
   icq_ContactItem *p = icq_ContactFind(icqlink, cuin);
   if(p)
-    p->invis_list = vu;
+    p->invis_list = on;
 }
 
 icq_ContactItem *icq_ContactGetFirst(icq_Link *icqlink)

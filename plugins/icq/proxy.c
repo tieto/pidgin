@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: proxy.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -57,6 +59,26 @@ void icq_SetProxy(icq_Link *icqlink, const char *phost, unsigned short pport,
     free(icqlink->icq_ProxyName);
   if(icqlink->icq_ProxyPass)
     free(icqlink->icq_ProxyPass);
+
+  if(!phost)
+  {
+    icq_FmtLog(icqlink, ICQ_LOG_ERROR, "[SOCKS] Proxy host is empty\n");
+    icqlink->icq_UseProxy = 0;
+    return;
+  }
+  if(!pname)
+  {
+    icq_FmtLog(icqlink, ICQ_LOG_ERROR, "[SOCKS] User name is empty\n");
+    icqlink->icq_UseProxy = 0;
+    return;
+  }
+  if(!pname)
+  {
+    icq_FmtLog(icqlink, ICQ_LOG_ERROR, "[SOCKS] User password is empty\n");
+    icqlink->icq_UseProxy = 0;
+    return;
+  }
+
   if(strlen(pname)>255)
   {
     icq_FmtLog(icqlink, ICQ_LOG_ERROR, "[SOCKS] User name greater than 255 chars\n");
@@ -69,6 +91,7 @@ void icq_SetProxy(icq_Link *icqlink, const char *phost, unsigned short pport,
     icqlink->icq_UseProxy = 0;
     return;
   }
+
   icqlink->icq_UseProxy = 1;
   icqlink->icq_ProxyHost = strdup(phost);
   icqlink->icq_ProxyPort = pport;

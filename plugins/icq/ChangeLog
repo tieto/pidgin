@@ -1,3 +1,207 @@
+2001-06-08  Denis V. Dmitrienko  <denix@kde.org>
+
+	* admin/acinclude.m4.in, admin/config.guess, admin/config.sub,
+	admin/install-sh, admin/libtool.m4.in, admin/ltcf-c.sh,
+	admin/ltcf-cxx.sh, admin/ltcf-gcj.sh, admin/ltconfig,
+	admin/ltmain.sh, admin/Makefile.am, admin/missing,
+	admin/mkinstalldirs, configure.in:
+	Updated autoconf/automake files from KDE to support autoconf 2.50
+
+	* doc/bindings/python/.cvsignore, doc/bindings/python/Makefile.am,
+	doc/bindings/.cvsignore, doc/bindings/Makefile.am, doc/.cvsignore,
+	doc/Makefile.am, bindings/python/.cvsignore,
+	bindings/python/Makefile.am, bindings/cpp/.cvsignore,
+	bindings/cpp/Makefile.am, bindings/.cvsignore,
+	bindings/Makefile.am, admin/.cvsignore, admin/Makefile.am,
+	configure.in, Makefile.am, README, VERSION:
+	Version bumped to 1.2.0
+
+	* icqlib/icqpacket.c, icqlib/list.c: Fixed Alpha-specific warnings.
+
+	* admin/icqlib.m4.in, icqlib.spec.in, icqlib-1.0.0.lsm, DEVEL,
+	AUTHORS:
+	Changed email address.
+
+	* icqlib/icqlib.c:
+	Added UpdateSuccess & UpdateFailure callacks initialization.
+
+2001-06-05  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/icqbyteorder.h, configure.in:
+	Applied patch by Lars Christensen <larsch@cs.auc.dk> to use portable
+	autoconf's endianness test.
+
+	* icqlib/icq.h.in, icqlib/udp.h, icqlib/udphandle.c:
+	Applied patch by Lars Christensen <larsch@cs.auc.dk> which adds 2 new
+	callbacks - icq_UpdateSuccess & icq_UpdateFailure
+
+2001-06-05  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/udphandle.c: Added code to send invisible list on login.
+
+	* AUTHORS: Added Michael Hudson.
+
+	* CHANGES_SINCE_0.1.3:
+	Added 0.1.3 -> 1.0.0 migration comments by Peter M. Lemmen
+	<pmlemmen@users.sourceforge.net>
+
+	* icqlib/icq.h.in, icqlib/contacts.c:
+	Changed parameter's name for readability.
+
+	* icqlib/icqlib.c, icqlib/tcp.c: Cleanups.
+
+	* CHANGES_SINCE_1.0: Spell-checked.
+
+2001-06-05  Michael Hudson  <mwh21@cam.ac.uk>
+
+	* bindings/python/icqlibmodule.c:
+	Whitespace prettyification; no functional changes.
+	These have been sitting around here for weeks!  Oops.
+
+2001-06-04  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/udphandle.c:
+	Make sure to send Acknowledgement packet before callback.
+
+	* icqlib/udp.c: Added use of ICQ_MAX_UDP_MESSAGE_SIZE constant.
+
+	* icqlib/icqpacket.c, icqlib/icqpacket.h, icqlib/udphandle.c:
+	Added handling for V3 Wrong Password packet.
+
+	* icqlib/proxy.c: "Do it right" fix for the previous one. ;)
+
+	* icqlib/icqtypes.h: More Win32 compatibility fixes.
+
+2001-06-04  Bill Soudan  <soudan@kde.org>
+
+	Applied patch via email from Richard Hughes <richard@rhughes.net>.
+	Applied sf patches #429108 and #429111 from Michael Möller
+	<mcmoe@users.sourceforge.net>.
+
+	* icqlib/filesession.c: win32 compatability fixes, bugfixes.
+
+	* icqlib/icq.h.in: add ICQ_MAX_* constants, away message request
+	and callback.
+
+	* icqlib/icqlib.c: fix crash in icq_LinkDestroy when tcp was
+	disabled, cleanups.
+
+	* icqlib/proxy.c: don't crash if NULL is passed in for pname and
+	ppass to icq_SetProxy
+
+	* icqlib/socketmanager.h, icqlib/tcplink.c: win32 compatability
+	fixes.
+
+	* icqlib/stdpackets.c, icqlib/stdpackets.h: added 
+	icq_TCPCreateAwayReqPacket
+
+	* icqlib/tcp.c: use ICQ_MAX_MESSAGE_SIZE constant, win32 fixes,
+	copy files array in icq_SendFileRequest, bugfix for file xfer.
+
+	* icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c: factoring
+
+	* icqlib/tcphandle.c: away message request support
+
+2001-05-28  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/contacts.c, icqlib/list.h, icqlib/queue.c, 
+	icqlib/socketmanager.c, icqlib/tcplink.c, icqlib/util.c:
+	fix typo, icq_LinkEnqueue->icq_ListEnqueue, icq_LinkDequeue->
+	icq_ListDequeue
+
+	* icqlib/timeout.c: fix icq_Link->icq_List typo, fix memory
+	leak in icq_HandleTimeout
+
+	* icqlib/list.c: don't delete list items if NULL is passed into
+	icq_ListDelete for item_free_f
+
+2001-05-24  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/udp.c:
+	Fixed memory leak - acknowledgement packet never been freed!!!
+
+2001-05-23  Denis V. Dmitrienko  <denix@kde.org>
+
+	* icqlib/icqlib.c, icqlib/udphandle.c:
+	UDP implementation of the Receive Contact List feature.
+
+	* icqlib/icqbyteorder.c, icqlib/icqbyteorder.h, configure.in:
+	Portability changes.
+
+	* icqlib/icqlib.h, CHANGES_SINCE_1.0: Cleanup.
+
+	* icqlib/cyrillic.c:
+	Applied koi8-u related patch by Kunytsa Olexander <xakep@snark.ukma.kiev.ua>
+
+2001-04-04  Bill Soudan  <soudan@kde.org>
+
+	Reverted my previous commit.
+
+2001-03-08  Bill Soudan  <soudan@kde.org>
+
+	First partial merge from patch by Jindrich Makovicka 
+	<makovick@KMLinux.fjfi.cvut.cz>: add support for czech encoding.
+	
+	* icqlib/cyrillic.c: renamed to encoding.c
+
+	* icqlib/encoding.c, icqlib/encoding.h: added
+
+	* icqlib/filesession.c, icqlib/icqpacket.c,
+	icqlib/icqpacket.h, icqlib/stdpackets.c, icqlib/stdpackets.h,
+	icqlib/tcp.c, icqlib/tcpchathandle.c, icqlib/tcpfilehandle.c,
+	icqlib/tcphandle.c, icqlib/tcplink.c, icqlib/udp.c,
+	icqlib/udphandle.c: Generalized icq_RusConv function to
+	icq_Translate, moved encoding/decoding to icq_Packet abstraction.
+	Encoding/decoding now happens automatically when reading and
+	writing strings to packets.
+
+	* icqlib/icqlib.c, icqlib/icq.h.in: added icq_LinkSetEncoding
+	and new ICQ_ENCODING_NONE, ICQ_ENCODING_RUSSIAN, and
+	ICQ_ENCODING_CZECH constants.
+
+	* icqlib/Makefile.am: cyrillic.c -> encoding.c
+
+2001-03-07  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/*: More source cleanup - simplified dependencies.
+
+2001-03-06  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/*: Many source cleanups!
+
+	1. linked list functions and structures renamed to avoid symbol
+	clashes (from list * to icq_List*) with MySQL
+
+	2. ICQLINK renamed to icq_Link to match existing icqlib style
+	(Note ICQLINK is still defined in the headers to maintain
+	source compatability)
+
+	3. Standard GNU header added to all source files
+
+	4. Many, many --enable-strict cleanups.
+
+	5. new invoke_callback macro used to invoke icqlink callbacks.
+
+	* icqlib/icqlib.c, icqlib/icq.h.in: Added icq_LinkInit and 
+	icq_LinkDestroy functions, to support C++ bindings, removed
+	ICQLINK parameter from icq_Main.
+
+	* icqlib/timeout.c: fixed bug in icq_TimeoutDelete that resulted
+	in erroneous icq_SetTimeout calls
+
+2001-03-05  Bill Soudan  <soudan@kde.org>
+
+	* icqlib/tcplink.c: applied patch from Eric Warmenhoven 
+	<warmenhoven@yahoo.com>, corrects TCP recv error bug that
+	causes 100% cpu usage
+
+	* bindings/cpp/build_icqlink.py, bindings/cpp/icqlink.h.tpl,
+	bindings/cpp/icqlink.cpp.tpl: added very beginnings of C++
+	bindings
+
+	* icqlib/icq.h.in: wrap callbacks with special begin and end
+	indicators for use with C++ bindings build script
+
 2001-03-03  Bill Soudan  <soudan@kde.org>
 
 	* icqlib/chatsession.c, icqlib/filesession.c, icqlib/icq.h.in:

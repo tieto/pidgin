@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: udphandle.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -182,8 +184,8 @@ void icq_HandleInfoReply(icq_Link *icqlink, icq_Packet *p)
   icq_RusConv("wk", ptr3);
   icq_RusConv("wk", ptr4);
   icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "Info reply for %lu\n", uin);
-  invoke_callback(icqlink,icq_InfoReply)(icqlink, uin, ptr1, ptr2, ptr3, ptr4, icq_PacketRead8(p));
   icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
+  invoke_callback(icqlink,icq_InfoReply)(icqlink, uin, ptr1, ptr2, ptr3, ptr4, icq_PacketRead8(p));
   free(ptr1);
   free(ptr2);
   free(ptr3);
@@ -214,9 +216,9 @@ void icq_HandleExtInfoReply(icq_Link *icqlink, icq_Packet *p)
   icq_RusConv("wk", ptr4);
   icq_RusConv("wk", ptr5);
   icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "Extended info reply for %lu\n", uin);
+  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
   invoke_callback(icqlink,icq_ExtInfoReply)(icqlink, uin, (char*)ptr1, cnt_code, cnt_stat, (char*)ptr2,
                                             age, gender, (char*)ptr3, (char*)ptr4, (char*)ptr5);
-  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
   free(ptr1);
   free(ptr2);
   free(ptr3);
@@ -241,9 +243,9 @@ void icq_HandleSearchReply(icq_Link *icqlink, icq_Packet *p)
   auth = icq_PacketRead8(p);
   icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "User found %lu, Nick: %s, First Name: %s, Last Name: %s, "
              "EMail: %s, Auth: %s\n", uin, ptr1, ptr2, ptr3, ptr4, auth==1?"no":"yes");
+  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
   invoke_callback(icqlink,icq_UserFound)(icqlink, uin, (char*)ptr1, (char*)ptr2,
                                          (char*)ptr3, (char*)ptr4, auth);
-  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
   free(ptr1);
   free(ptr2);
   free(ptr3);
@@ -261,7 +263,6 @@ void icq_HandleUserOffline(icq_Link *icqlink, icq_Packet *p)
   icq_PacketGotoUDPInData(p, 0);
   remote_uin = icq_PacketRead32(p);
   icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "User %lu logged off\n", remote_uin);
-  invoke_callback(icqlink,icq_UserOffline)(icqlink, remote_uin);
 
   ptr=icq_ContactFind(icqlink, remote_uin);
   if(ptr)
@@ -270,6 +271,7 @@ void icq_HandleUserOffline(icq_Link *icqlink, icq_Packet *p)
     ptr->remote_port = 0;
   }
   icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
+  invoke_callback(icqlink,icq_UserOffline)(icqlink, remote_uin);
 }
 
 void icq_HandleUserOnline(icq_Link *icqlink, icq_Packet *p)
@@ -291,8 +293,6 @@ void icq_HandleUserOnline(icq_Link *icqlink, icq_Packet *p)
              "User %lu (%s = 0x%X) logged on. tcp_flag=0x%X IP=%08X, real IP=%08X, port=%d\n",
              remote_uin, icq_ConvertStatus2Str(new_status), new_status, tcp_flag, remote_ip,
              remote_real_ip, remote_port);
-  invoke_callback(icqlink,icq_UserOnline)(icqlink, remote_uin, new_status, remote_ip,
-                                          remote_port, remote_real_ip, tcp_flag);
 
   ptr=icq_ContactFind(icqlink, remote_uin);
   if(ptr)
@@ -303,6 +303,8 @@ void icq_HandleUserOnline(icq_Link *icqlink, icq_Packet *p)
     ptr->tcp_flag = tcp_flag;
   }
   icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
+  invoke_callback(icqlink,icq_UserOnline)(icqlink, remote_uin, new_status, remote_ip,
+                                          remote_port, remote_real_ip, tcp_flag);
 }
 
 void icq_HandleStatusChange(icq_Link *icqlink, icq_Packet *p)
@@ -314,8 +316,8 @@ void icq_HandleStatusChange(icq_Link *icqlink, icq_Packet *p)
   new_status = icq_PacketRead32(p);
   icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "%lu changed status to %s (0x%X)\n", remote_uin,
              icq_ConvertStatus2Str(new_status), new_status);
-  invoke_callback(icqlink,icq_UserStatusUpdate)(icqlink, remote_uin, new_status);
   icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
+  invoke_callback(icqlink,icq_UserStatusUpdate)(icqlink, remote_uin, new_status);
 }
 
 void icq_HandleMetaUserInfo(icq_Link *icqlink, icq_Packet *p)
@@ -346,6 +348,7 @@ void icq_HandleMetaUserInfo(icq_Link *icqlink, icq_Packet *p)
   icq_PacketGotoUDPInData(p, 0);
   subcmd = icq_PacketRead16(p);
   res = icq_PacketRead8(p);
+  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
   if(res == META_SRV_FAILURE)
   {
     icq_FmtLog(icqlink, ICQ_LOG_WARNING, "META failure\n");
@@ -585,7 +588,6 @@ void icq_HandleMetaUserInfo(icq_Link *icqlink, icq_Packet *p)
         icq_PacketUDPDump(p);
         break;
     }
-  icq_UDPAck(icqlink, icq_PacketReadUDPInSeq1(p));
 }
 
 void icq_HandleMultiPacket(icq_Link *icqlink, icq_Packet *p)
@@ -615,13 +617,14 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
   int len;
   struct in_addr in_a;
   DWORD uin;
-  WORD year, type, seq, cmd;
+  WORD year, type, seq, cmd, ver;
   BYTE month, day, hour, minute;
 
   seq = icq_PacketReadUDPInSeq1(p);
   cmd = icq_PacketReadUDPInCmd(p);
+  ver = icq_PacketReadUDPInVer(p);
 
-  if(icq_PacketReadUDPInVer(p) == 5) /* We understand only V5 packets! */
+  if(ver == 5) /* We understand only V5 packets! */
   {
     switch(cmd)
     {
@@ -651,6 +654,7 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
         icq_SendLogin1(icqlink);
         icq_SendContactList(icqlink);
         icq_SendVisibleList(icqlink);
+        icq_SendInvisibleList(icqlink);
         invoke_callback(icqlink,icq_Logged)(icqlink);
         break;
       case UDP_SRV_OFFLINE_MESSAGE: /* Offline message through the server */
@@ -663,8 +667,8 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
         minute = icq_PacketRead8(p);
         type = icq_PacketRead16(p);
         len = icq_PacketRead16(p);
-        icq_DoMsg(icqlink, type, len, (char*)&p->data[p->cursor], uin, hour, minute, day, month, year);
         icq_UDPAck(icqlink, seq);
+        icq_DoMsg(icqlink, type, len, (char*)&p->data[p->cursor], uin, hour, minute, day, month, year);
         break;
       case UDP_SRV_X1: /* unknown message sent after login*/
         icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "Acknowleged UDP_SRV_X1 (Begin messages)\n");
@@ -696,13 +700,23 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
         break;
       case UDP_SRV_GO_AWAY:
         icq_FmtLog(icqlink, ICQ_LOG_ERROR, "Server has forced us to disconnect\n");
-        if(icqlink->icq_Disconnected)
-          (*icqlink->icq_Disconnected)(icqlink);
+        icq_UDPAck(icqlink, seq);
+        invoke_callback(icqlink, icq_Disconnected)(icqlink);
         break;
       case UDP_SRV_END_OF_SEARCH:
         icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "Search done\n");
-        invoke_callback(icqlink,icq_SearchDone)(icqlink);
         icq_UDPAck(icqlink, seq);
+        invoke_callback(icqlink, icq_SearchDone)(icqlink);
+        break;
+      case UDP_SRV_UPDATE_OK:
+        icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "User info successfully updated\n");
+        icq_UDPAck(icqlink, seq);
+        invoke_callback(icqlink, icq_UpdateSuccess)(icqlink);
+        break;
+      case UDP_SRV_UPDATE_FAIL:
+        icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "User info update failed\n");
+        icq_UDPAck(icqlink, seq);
+        invoke_callback(icqlink, icq_UpdateFailure)(icqlink);
         break;
       case UDP_SRV_USER_FOUND:
         icq_HandleSearchReply(icqlink, p);
@@ -714,9 +728,9 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
         uin = icq_PacketRead32(p);
         type = icq_PacketRead16(p);
         len = icq_PacketRead16(p);
+        icq_UDPAck(icqlink, seq);
         icq_DoMsg(icqlink, type, len, (char*)&p->data[p->cursor], uin, tm_str->tm_hour,
                   tm_str->tm_min, tm_str->tm_mday, tm_str->tm_mon+1, tm_str->tm_year+1900);
-        icq_UDPAck(icqlink, seq);
         break;
       case UDP_SRV_WRONG_PASSWORD:
         icq_FmtLog(icqlink, ICQ_LOG_ERROR, "Wrong password\n");
@@ -733,8 +747,24 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
         break;
       default: /* commands we dont handle yet */
         icq_FmtLog(icqlink, ICQ_LOG_WARNING, "Unhandled message %04x, Version: %x, "
-                   "Sequence: %04x, Size: %d\n", cmd, icq_PacketReadUDPInVer(p),
-                   seq, p->length);
+                   "Sequence: %04x, Size: %d\n", cmd, ver, seq, p->length);
+        icq_UDPAck(icqlink, seq); /* fake like we know what we're doing */
+        break;
+    }
+  }
+  else if(ver == 3) /* And some of V3... */
+  {
+    cmd = icq_PacketReadUDPInCmdV3(p);
+    switch(cmd)
+    {
+      case UDP_SRV_WRONG_PASSWORD:
+        icq_FmtLog(icqlink, ICQ_LOG_ERROR, "Wrong password\n");
+        icq_UDPAck(icqlink, seq);
+        invoke_callback(icqlink,icq_WrongPassword)(icqlink);
+        break;
+      default: /* commands we dont handle yet */
+        icq_FmtLog(icqlink, ICQ_LOG_WARNING, "Unhandled message %04x, Version: %x, "
+                   "Sequence: %04x, Size: %d\n", cmd, ver, seq, p->length);
         icq_UDPAck(icqlink, seq); /* fake like we know what we're doing */
         break;
     }
@@ -742,8 +772,7 @@ void icq_ServerResponse(icq_Link *icqlink, icq_Packet *p)
   else
   {
     icq_FmtLog(icqlink, ICQ_LOG_WARNING, "Unhandled protocol version! Message %04x, Version: %x, "
-               "Sequence: %04x, Size: %d\n", cmd, icq_PacketReadUDPInVer(p),
-               seq, p->length);
+               "Sequence: %04x, Size: %d\n", cmd, ver, seq, p->length);
 /*    icq_UDPAck(icqlink, seq);  DO NOT ACK unhandled protocol version! */
   }
 }
@@ -765,6 +794,7 @@ void icq_HandleServerResponse(icq_Link *icqlink)
     icq_FmtLog(icqlink, ICQ_LOG_FATAL, "Connection terminated\n");
     icq_Disconnect(icqlink);
     invoke_callback(icqlink,icq_Disconnected)(icqlink);
+    return;
   }
   seq = icq_PacketReadUDPInSeq1(p);
   cmd = icq_PacketReadUDPInCmd(p);

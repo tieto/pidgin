@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: icqlib.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -146,6 +148,8 @@ void icq_LinkInit(icq_Link *icqlink, DWORD uin, const char *password,
   icqlink->icq_RecvAuthReq = 0L;
   icqlink->icq_UserFound = 0L;
   icqlink->icq_SearchDone = 0L;
+  icqlink->icq_UpdateSuccess = 0L;
+  icqlink->icq_UpdateFailure = 0L;
   icqlink->icq_UserOnline = 0L;
   icqlink->icq_UserOffline = 0L;
   icqlink->icq_UserStatusUpdate = 0L;
@@ -206,7 +210,8 @@ void icq_LinkInit(icq_Link *icqlink, DWORD uin, const char *password,
 
 void icq_LinkDestroy(icq_Link *icqlink)
 {
-  icq_TCPDone(icqlink);
+  if(icqlink->icq_UseTCP)
+    icq_TCPDone(icqlink);
   if(icqlink->icq_Password)
     free(icqlink->icq_Password);
   if(icqlink->icq_Nick)
@@ -271,6 +276,10 @@ int icq_Connect(icq_Link *icqlink, const char *hostname, int port)
   icqlink->icq_ProxyOurPort = ntohs(saddr.sin_port);
   if(icqlink->icq_UseProxy)
   {
+    int hasName = icqlink->icq_ProxyName && strlen(icqlink->icq_ProxyName);
+    int hasPass = icqlink->icq_ProxyPass && strlen(icqlink->icq_ProxyPass);
+    int authEnabled = icqlink->icq_ProxyAuth && hasName && hasPass;
+
     icq_FmtLog(icqlink, ICQ_LOG_MESSAGE, "[SOCKS] Trying to use SOCKS5 proxy\n");
     prsin.sin_addr.s_addr = inet_addr(icqlink->icq_ProxyHost);
     if(prsin.sin_addr.s_addr  == (unsigned long)-1) /* name isn't n.n.n.n so must be DNS */
@@ -304,10 +313,8 @@ int icq_Connect(icq_Link *icqlink, const char *hostname, int port)
     }
     buf[0] = 5; /* protocol version */
     buf[1] = 1; /* number of methods */
-    if(!strlen(icqlink->icq_ProxyName) || !strlen(icqlink->icq_ProxyPass) || !icqlink->icq_ProxyAuth)
-      buf[2] = 0; /* no authorization required */
-    else
-      buf[2] = 2; /* method username/password */
+    buf[2] = authEnabled ? 2 : 0; /* authentication method */
+
 #ifdef _WIN32
     send(icqlink->icq_ProxySok, buf, 3, 0);
     res = recv(icqlink->icq_ProxySok, buf, 2, 0);
@@ -315,7 +322,8 @@ int icq_Connect(icq_Link *icqlink, const char *hostname, int port)
     write(icqlink->icq_ProxySok, buf, 3);
     res = read(icqlink->icq_ProxySok, buf, 2);
 #endif
-    if(strlen(icqlink->icq_ProxyName) && strlen(icqlink->icq_ProxyPass) && icqlink->icq_ProxyAuth)
+
+    if(authEnabled)
     {
       if(res != 2 || buf[0] != 5 || buf[1] != 2) /* username/password authentication*/
       {
@@ -460,9 +468,7 @@ void icq_Disconnect(icq_Link *icqlink)
 {
   icq_SocketDelete(icqlink->icq_UDPSok);
   if(icqlink->icq_UseProxy)
-  {
     icq_SocketDelete(icqlink->icq_ProxySok);
-  }
   icq_UDPQueueFree(icqlink);
 }
 

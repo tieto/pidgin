@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: stdpackets.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -82,6 +84,7 @@ icq_Packet *icq_TCPCreateStdPacket(icq_TCPLink *plink, WORD icq_TCPCommand,
 icq_Packet *icq_TCPCreateMessagePacket(icq_TCPLink *plink, const char *message);
 icq_Packet *icq_TCPCreateURLPacket(icq_TCPLink *plink, const char *message,
    const char *url);
+icq_Packet *icq_TCPCreateAwayReqPacket(icq_TCPLink *plink, WORD statusMode);
 icq_Packet *icq_TCPCreateChatReqPacket(icq_TCPLink *plink, const char *message);
 icq_Packet *icq_TCPCreateFileReqPacket(icq_TCPLink *plink, 
    const char *message, const char *filename, DWORD size);

@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: list.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -200,12 +202,12 @@ int icq_ListDump(icq_List *plist)
 {
   icq_ListNode *p=plist->head;
 
-  printf("list %x { head=%x, tail=%x, count=%d }\ncontents: ",
-         (int)plist, (int)plist->head, (int)plist->tail, plist->count);
+  printf("list %lx { head=%lx, tail=%lx, count=%d }\ncontents: ",
+         (long)plist, (long)plist->head, (long)plist->tail, plist->count);
 
   while(p)
   {
-    printf("%x, ", (int)p->item);
+    printf("%lx, ", (long)p->item);
     p=p->next;
   }
   printf("end\n");

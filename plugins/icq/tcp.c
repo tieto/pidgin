@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: tcp.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -80,9 +82,18 @@ void icq_TCPDone(icq_Link *icqlink)
 {
   /* close and deallocate all tcp links, this will also close any attached 
    * file or chat sessions */
-  icq_ListDelete(icqlink->d->icq_TCPLinks, icq_TCPLinkDelete);
-  icq_ListDelete(icqlink->d->icq_ChatSessions, icq_ChatSessionDelete);
-  icq_ListDelete(icqlink->d->icq_FileSessions, icq_FileSessionDelete);
+  if (icqlink->d->icq_TCPLinks) {
+    icq_ListDelete(icqlink->d->icq_TCPLinks, icq_TCPLinkDelete);
+    icqlink->d->icq_TCPLinks = 0;
+  }
+  if (icqlink->d->icq_ChatSessions) {
+    icq_ListDelete(icqlink->d->icq_ChatSessions, icq_ChatSessionDelete);
+    icqlink->d->icq_ChatSessions = 0;
+  }
+  if (icqlink->d->icq_FileSessions) {
+    icq_ListDelete(icqlink->d->icq_FileSessions, icq_FileSessionDelete);
+    icqlink->d->icq_FileSessions = 0;
+  }
 }
 
 icq_TCPLink *icq_TCPCheckLink(icq_Link *icqlink, DWORD uin, int type)
@@ -97,7 +108,6 @@ icq_TCPLink *icq_TCPCheckLink(icq_Link *icqlink, DWORD uin, int type)
   }
 
   return plink;
-
 }
 
 DWORD icq_TCPSendMessage(icq_Link *icqlink, DWORD uin, const char *message)
@@ -105,9 +115,10 @@ DWORD icq_TCPSendMessage(icq_Link *icqlink, DWORD uin, const char *message)
   icq_TCPLink *plink;
   icq_Packet *p;
   DWORD sequence;
-  char data[512] ;
+  char data[ICQ_MAX_MESSAGE_SIZE] ;
   
-  strncpy(data,message,512) ;
+  strncpy(data,message,sizeof(data)) ;
+  data[sizeof(data)-1]='\0';
   icq_RusConv("kw", data) ;
 
   plink=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
@@ -128,12 +139,12 @@ DWORD icq_TCPSendURL(icq_Link *icqlink, DWORD uin, const char *message, const ch
   icq_TCPLink *plink;
   icq_Packet *p;
   DWORD sequence;
-  char data[512];
+  char data[ICQ_MAX_MESSAGE_SIZE];
 
   plink=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
   
-  strncpy(data, message, 512);
-  data[511] = '\0';
+  strncpy(data, message, sizeof(data));
+  data[sizeof(data)-1] = '\0';
   icq_RusConv("kw", data);
 
   /* create and send the url packet */
@@ -152,12 +163,12 @@ DWORD icq_SendChatRequest(icq_Link *icqlink, DWORD uin, const char *message)
   icq_TCPLink *plink;
   icq_Packet *p;
   DWORD sequence;
-  char data[512];
+  char data[ICQ_MAX_MESSAGE_SIZE];
 
   plink=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
   
-  strncpy(data, message, 512);
-  data[511] = '\0';
+  strncpy(data, message, sizeof(data));
+  data[sizeof(data)-1] = '\0';
   icq_RusConv("kw", data);
 
   /* create and send the url packet */
@@ -179,7 +190,9 @@ unsigned long icq_SendFileRequest(icq_Link *icqlink, unsigned long uin,
   icq_Packet *p;
   unsigned long sequence;
   char filename[64];
-  char data[512];
+  char data[ICQ_MAX_MESSAGE_SIZE];
+  char **filesiterator;
+  char **pfilesiterator;
 
   plink=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
 
@@ -192,20 +205,36 @@ unsigned long icq_SendFileRequest(icq_Link *icqlink, unsigned long uin,
 
   /* count the number and size of the files */
   pfile->total_files=0;
-  while(*files) {
+  filesiterator = files;
+  while(*filesiterator) {
+#ifdef _WIN32
+    struct _stat file_status;
+    if(_stat(*filesiterator, &file_status)==0) {
+#else
     struct stat file_status;
-
-    if(stat(*files, &file_status)==0) {
+    if(stat(*filesiterator, &file_status)==0) {
+#endif
       pfile->total_files++;
       pfile->total_bytes+=file_status.st_size;
     }
-    files++;
+    filesiterator++;
   }
+
+  pfile->files=(char **)malloc(sizeof(char *)*(pfile->total_files +1));
+  filesiterator = files;
+  pfilesiterator = pfile->files;
+  while (*filesiterator) {
+    *pfilesiterator=(char *)malloc(strlen(*filesiterator)+1);
+    strcpy(*pfilesiterator,*filesiterator);
+    filesiterator++;
+    pfilesiterator++;
+  }
+  *pfilesiterator = NULL;
 
   strncpy(filename, *(pfile->files), 64);
 
-  strncpy(data, message, 512);
-  data[511] = '\0';
+  strncpy(data, message, sizeof(data));
+  data[sizeof(data)-1]='\0';
   icq_RusConv("kw", data);  
 
   /* create and send the file req packet */
@@ -256,19 +285,18 @@ void icq_AcceptChatRequest(icq_Link *icqlink, DWORD uin, unsigned long sequence)
 void icq_TCPSendChatData(icq_Link *icqlink, DWORD uin, const char *data)
 {
   icq_TCPLink *plink=icq_FindTCPLink(icqlink, uin, TCP_LINK_CHAT);
-  char data1[512];
+  char data1[ICQ_MAX_MESSAGE_SIZE];
   int data1_len;
 
   if(!plink)
     return;  
 
-  strncpy(data1,data,512) ;
-  data1[511] = '\0';
+  strncpy(data1,data,sizeof(data1)) ;
+  data1[sizeof(data1)-1] = '\0';
   data1_len = strlen(data);
   icq_ChatRusConv_n("kw", data1, data1_len);
 
   send(plink->socket, data1, data1_len, 0);
-
 }
 
 void icq_TCPSendChatData_n(icq_Link *icqlink, DWORD uin, const char *data, int len)
@@ -284,7 +312,6 @@ void icq_TCPSendChatData_n(icq_Link *icqlink, DWORD uin, const char *data, int l
   icq_ChatRusConv_n("kw", data1, len);  
 
   send(plink->socket, data1, len, 0);
-
 }
 
 icq_FileSession *icq_AcceptFileRequest(icq_Link *icqlink, DWORD uin,
@@ -310,6 +337,7 @@ icq_FileSession *icq_AcceptFileRequest(icq_Link *icqlink, DWORD uin,
   pfile->id=sequence;
   pfile->remote_uin=uin;
   pfile->direction=FILE_STATUS_RECEIVING;
+  pfile->tcplink=plisten;
   icq_FileSessionSetStatus(pfile, FILE_STATUS_LISTENING);
 
   /* create and send the ack packet */
@@ -322,7 +350,6 @@ icq_FileSession *icq_AcceptFileRequest(icq_Link *icqlink, DWORD uin,
 #endif
 
   return pfile;
-
 }
 
 void icq_RefuseFileRequest(icq_Link *icqlink, DWORD uin, 
@@ -340,7 +367,6 @@ void icq_RefuseFileRequest(icq_Link *icqlink, DWORD uin,
   printf("file req refuse sent to uin %lu { sequence=%lx, reason=\"%s\" }\n",
     uin, sequence, reason);
 #endif
-
 }
 
 void icq_CancelFileRequest(icq_Link *icqlink, DWORD uin, unsigned long sequence)
@@ -359,7 +385,6 @@ void icq_CancelFileRequest(icq_Link *icqlink, DWORD uin, unsigned long sequence)
 #ifdef TCP_PACKET_TRACE
   printf("file req cancel sent to uin %lu { sequence=%lx }\n", uin, sequence);
 #endif
-
 }
 
 void icq_RefuseChatRequest(icq_Link *icqlink, DWORD uin, 
@@ -377,17 +402,16 @@ void icq_RefuseChatRequest(icq_Link *icqlink, DWORD uin,
   printf("chat req refuse sent to uin %lu { sequence=%lx, reason=\"%s\" }\n",
     uin, sequence, reason);
 #endif
-
 }
 
 void icq_CancelChatRequest(icq_Link *icqlink, DWORD uin, unsigned long sequence)
 {
   icq_TCPLink *pmessage=icq_TCPCheckLink(icqlink, uin, TCP_LINK_MESSAGE);
-  icq_FileSession *psession=icq_FindFileSession(icqlink, uin, sequence);
+  icq_ChatSession *psession=icq_FindChatSession(icqlink, uin);
   icq_Packet *p;
 
   if (psession)
-    icq_FileSessionClose(psession);
+    icq_ChatSessionClose(psession);
 
   /* create and send the cancel packet */
   p=icq_TCPCreateChatReqCancel(pmessage,
@@ -397,5 +421,4 @@ void icq_CancelChatRequest(icq_Link *icqlink, DWORD uin, unsigned long sequence)
 #ifdef TCP_PACKET_TRACE
   printf("chat req cancel sent to uin %lu { sequence=%lx }\n", uin, sequence);
 #endif
-
 }

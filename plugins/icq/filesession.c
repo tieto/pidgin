@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: filesession.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -75,6 +77,7 @@ void icq_FileSessionDelete(void *pv)
     while(*p2)
       free(*(p2++));
     free(p->files);
+    p->files=NULL;
   }
 
   if (p->current_fd > -1 ) {
@@ -125,7 +128,11 @@ void icq_FileSessionSetHandle(icq_FileSession *p, const char *handle)
 
 void icq_FileSessionSetCurrentFile(icq_FileSession *p, const char *filename)
 {
+#ifdef _WIN32
+  struct _stat file_status;
+#else
   struct stat file_status;
+#endif
   char file[1024];
 
   strcpy(file, p->working_dir);
@@ -140,13 +147,22 @@ void icq_FileSessionSetCurrentFile(icq_FileSession *p, const char *filename)
   p->current_file_progress=0;
 
   /* does the file already exist? */
+#ifdef _WIN32
+  if (_stat(file, &file_status)==0) {
+#else
   if (stat(file, &file_status)==0) {
+#endif
     p->current_file_progress=file_status.st_size;
     p->total_transferred_bytes+=file_status.st_size;
+#ifdef _WIN32
+    p->current_fd=open(file, _O_WRONLY | _O_APPEND | _O_BINARY);
+#else
     p->current_fd=open(file, O_WRONLY | O_APPEND);
+#endif
   } else {
 #ifdef _WIN32
-    p->current_fd=open(file, O_WRONLY | O_CREAT);
+    p->current_fd=open(file, _O_WRONLY | _O_CREAT | _O_BINARY, 
+      _S_IREAD|_S_IWRITE);
 #else
     p->current_fd=open(file, O_WRONLY | O_CREAT, S_IRWXU);
 #endif
@@ -174,21 +190,35 @@ void icq_FileSessionPrepareNextFile(icq_FileSession *p)
   }
 
   if(*files) {
+#ifdef _WIN32
+    struct _stat file_status;
+#else
     struct stat file_status;
+#endif
 
     if (p->current_fd>-1) {
        close(p->current_fd);
        p->current_fd=-1;
     }
 
+#ifdef _WIN32
+    if (_stat(*files, &file_status)==0) {
+       char *basename=*files;
+       char *pos=strrchr(basename, '\\');
+#else
     if (stat(*files, &file_status)==0) {
        char *basename=*files;
        char *pos=strrchr(basename, '/');
+#endif
        if(pos) basename=pos+1;
        strncpy(p->current_file, basename, 64);
        p->current_file_progress=0;
        p->current_file_size=file_status.st_size;
+#ifdef _WIN32
+       p->current_fd=open(*files, O_RDONLY | _O_BINARY);
+#else
        p->current_fd=open(*files, O_RDONLY);
+#endif
     }
 
     /* make sure we have a valid filehandle */
@@ -244,14 +274,15 @@ void icq_FileSessionClose(icq_FileSession *p)
     icq_TCPLinkClose(plink);
   }
 
+  icq_ListRemove(p->icqlink->d->icq_FileSessions, p);
   icq_FileSessionDelete(p);
-
-  icq_ListRemove(p->icqlink->d->icq_FileSessions, p);		
 }   
 
 void icq_FileSessionSetWorkingDir(icq_FileSession *p, const char *dir)
 {
-  strncpy(p->working_dir, dir, 512);
+  int length = sizeof(p->working_dir);
+  strncpy(p->working_dir, dir, length);
+  p->working_dir[length-1]='\0';
 }  
 
 void icq_FileSessionSetFiles(icq_FileSession *p, char **files)

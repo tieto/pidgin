@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: icqpacket.h 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -66,6 +68,7 @@ WORD icq_PacketReadUDPOutSeq1(icq_Packet*);
 WORD icq_PacketReadUDPOutSeq2(icq_Packet*);
 WORD icq_PacketReadUDPInVer(icq_Packet*);
 WORD icq_PacketReadUDPInCmd(icq_Packet*);
+WORD icq_PacketReadUDPInCmdV3(icq_Packet*);
 WORD icq_PacketReadUDPInSeq1(icq_Packet*);
 WORD icq_PacketReadUDPInSeq2(icq_Packet*);
 DWORD icq_PacketReadUDPInUIN(icq_Packet*);

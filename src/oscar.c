@@ -1018,7 +1018,7 @@ static void oscar_auth_connect(gpointer data, gint source, GdkInputCondition con
 	aim_auth_sendcookie(sess, tstconn, tstconn->priv);
 	g_free(tstconn->priv);
 	tstconn->priv = NULL;
-	odata->cnpa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
+	odata->paspa = gdk_input_add(tstconn->fd, GDK_INPUT_READ | GDK_INPUT_EXCEPTION,
 				oscar_callback, tstconn);
 	debug_printf("chatnav: connected\n");
 }

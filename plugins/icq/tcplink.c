@@ -1,6 +1,8 @@
 /* -*- Mode: C; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 /*
+ * $Id: tcplink.c 1987 2001-06-09 14:46:51Z warmenhoven $
+ *
  * Copyright (C) 1998-2001, Denis V. Dmitrienko <denis@null.net> and
  *                          Bill Soudan <soudan@kde.org>
  *
@@ -184,20 +186,20 @@ int icq_TCPLinkProxyRequestAuthorization(icq_TCPLink *plink)
 {
   char buf[1024];
 
+  int hasName = plink->icqlink->icq_ProxyName &&
+    strlen(plink->icqlink->icq_ProxyName);
+  int hasPass = plink->icqlink->icq_ProxyPass &&
+    strlen(plink->icqlink->icq_ProxyPass);
+  int authEnabled = hasName && hasPass && plink->icqlink->icq_ProxyAuth;
+
   plink->mode = (plink->mode & (~TCP_LINK_SOCKS_CONNECTING));
   buf[0] = 5; /* protocol version */
   buf[1] = 1; /* number of methods */
-  if(!strlen(plink->icqlink->icq_ProxyName) || !strlen(plink->icqlink->icq_ProxyPass) ||
-     !plink->icqlink->icq_ProxyAuth)
-  {
-    buf[2] = 0; /* no authorization required */
-    plink->mode |= TCP_LINK_SOCKS_NOAUTHSTATUS;
-  }
-  else
-  {
-    buf[2] = 2; /* method username/password */
-    plink->mode |= TCP_LINK_SOCKS_AUTHORIZATION;
-  }
+  buf[2] = authEnabled ? 2 : 0; /* authentication method */
+
+  plink->mode |= authEnabled ? TCP_LINK_SOCKS_AUTHORIZATION :
+    TCP_LINK_SOCKS_NOAUTHSTATUS;
+
 #ifdef _WIN32
   if(send(plink->socket, buf, 3, 0) != 3)
     return errno;
@@ -496,7 +498,7 @@ icq_TCPLink *icq_TCPLinkAccept(icq_TCPLink *plink)
   /* set the socket to non-blocking */
 #ifdef _WIN32
   iosflag = TRUE;
-  ioctlsocket(plink->socket, FIONBIO, &iosflag);
+  ioctlsocket(pnewlink->socket, FIONBIO, &iosflag);
 #else
   flags=fcntl(pnewlink->socket, F_GETFL, 0);
   fcntl(pnewlink->socket, F_SETFL, flags | O_NONBLOCK);
@@ -665,11 +667,17 @@ void icq_TCPLinkOnDataReceived(icq_TCPLink *plink)
 
   } while (recv_result > 0);
 
+#ifdef _WIN32
+  if (recv_result <= 0 && WSAGetLastError()!=EWOULDBLOCK) {
+    /* receive error - log it */
+    icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "recv failed from %d (%d),"
+      " closing link\n", plink->remote_uin, WSAGetLastError());
+#else
   if (recv_result <= 0 && errno!=EWOULDBLOCK) {
-
     /* receive error - log it */
     icq_FmtLog(plink->icqlink, ICQ_LOG_WARNING, "recv failed from %d (%d-%s),"
       " closing link\n", plink->remote_uin, errno, strerror(errno));
+#endif
 
     icq_TCPLinkClose(plink);
 

@@ -2889,13 +2889,16 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 	gboolean from_dialog = FALSE;
 
 	if ( !gc ) {
+		debug_printf("want to import file ");
 		file = gtk_file_selection_get_filename(GTK_FILE_SELECTION(importdialog));
-				strncpy( path, file, PATHSIZE - 1 );
-		if (file_is_dir(path, importdialog)) {
+		debug_printf("%s", file);
+		if (file_is_dir(file, importdialog)) {
+			debug_printf(" but it is a directory\n");
 			g_free (buf);
 			g_free (first);
 			return;
 		}
+		strncpy( path, file, PATHSIZE - 1 );
 		/* FIXME : import buddy list file. moderately important */
 		gc = connections->data;
 		from_dialog = TRUE;
@@ -2910,12 +2913,15 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 			g_free(g_screenname);
 		} else {
 			g_free(g_screenname);
+			g_free(buf);
+			g_free(first);
 			return;
 		}
 	}
 
 	if (!(f = fopen(path,"r"))) {
-		if ( !gc ) {
+		if (from_dialog) {
+			debug_printf(" but it can't be opened\n");
                 	g_snprintf(buf, BUF_LONG / 2, _("Error reading file %s"), path);
                 	do_error_dialog(buf, _("Error"));
                 	destroy_dialog(NULL, importdialog);
@@ -2960,7 +2966,8 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
                 g_free(buf2);
 	/* Something else */
         } else {
-		if ( !gc ) {
+		if (from_dialog) {
+			debug_printf(" but I don't recognize the format\n");
                 	destroy_dialog(NULL, importdialog);
                 	importdialog = NULL;
 		}
@@ -2969,6 +2976,9 @@ void do_import(GtkWidget *w, struct gaim_connection *gc)
 		fclose( f );
                 return;
 	}
+
+	if (from_dialog)
+		debug_printf("\n");
 
         parse_toc_buddy_list(gc, buf, 1);
 
