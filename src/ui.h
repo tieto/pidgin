@@ -31,7 +31,6 @@
 
 #define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
-
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 #define DEFAULT_FONT_FACE "Helvetica"
@@ -331,7 +330,6 @@ extern void toggle_show_empty_groups();
 extern void update_all_buddies();
 extern void update_num_groups(void);
 extern void show_buddy_list();
-extern void refresh_buddy_window();
 extern void signoff_all();
 extern void do_im_back();
 extern void set_buddy(struct gaim_connection *, struct buddy *);
@@ -349,6 +347,7 @@ extern void hide_buddy_list();
 extern void unhide_buddy_list();
 extern void docklet_add();
 extern void docklet_remove();
+extern void docklet_toggle();
 
 /* Functions in buddy_chat.c */
 extern void join_chat();

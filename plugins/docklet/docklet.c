@@ -63,10 +63,17 @@ static void docklet_toggle_queue(GtkWidget *widget, void *data) {
 	away_options ^= OPT_AWAY_QUEUE_UNREAD;
 	save_prefs();
 }
-  
+
+/* static void docklet_toggle_blist_show(GtkWidget *widget, void *data) {
+	blist_options ^= OPT_BLIST_APP_BUDDY_SHOW;
+	save_prefs();
+} */
+
 static void docklet_flush_queue() {
-	purge_away_queue(unread_message_queue);
-	unread_message_queue = NULL;
+	if (unread_message_queue) {
+		purge_away_queue(unread_message_queue);
+		unread_message_queue = NULL;
+	}
 }
 
 static void docklet_menu(GdkEventButton *event) {
@@ -158,10 +165,9 @@ static void docklet_clicked(GtkWidget *button, GdkEventButton *event, void *data
 	switch (event->button) {
 		case 1:
 			if (unread_message_queue) {
- 				docklet_flush_queue();
+				docklet_flush_queue();
 				docklet_update_status();
-			}
-			else {
+			} else {
 				docklet_toggle();
 			}
 			break;
@@ -187,8 +193,7 @@ static void docklet_update_icon() {
 		case away_pending:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgpend.png", NULL);
 			break;
-	        case unread_pending:
-			/* XXX MAKE ME BLINK! */
+		case unread_pending:
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "msgunread.png", NULL);
 			break;
 		case connecting:
@@ -249,30 +254,27 @@ static void docklet_update_status() {
 }
 
 static void docklet_embedded(GtkWidget *widget, void *data) {
-       debug_printf("Docklet: embedded\n");
-       docklet_add();
+	debug_printf("Docklet: embedded\n");
+	docklet_add();
 }
 
 static void docklet_destroyed(GtkWidget *widget, void *data) {
-       debug_printf("Docklet: destroyed\n");
-       docklet_flush_queue();
-       docklet_remove();
-       docklet_create();
+	debug_printf("Docklet: destroyed\n");
+	docklet_flush_queue();
+	docklet_remove();
+	docklet_create();
 }
 
 static void docklet_create() {
 	GtkWidget *box;
 
-       	if (docklet) {
-               /* if this is being called when a docklet exists, it's because that
-                  docklet is in the process of being destroyed. all we need to do
-                  is tell gobject we're not interested in it any more, and throw
-                  the pointer away. Alan Cox said so. */
-
-		/* Ooooh, look at me!  I'm Robot101! I know Alan Cox!  I talk to him
-		   all the time!  I'm sooooo special! --Sean Egan */
-               g_object_unref(G_OBJECT(docklet));
-               docklet = NULL;
+	if (docklet) {
+		/* if this is being called when a docklet exists, it's because that
+		   docklet is in the process of being destroyed. all we need to do
+		   is tell gobject we're not interested in it any more, and throw
+		   the pointer away. */
+		g_object_unref(G_OBJECT(docklet));
+		docklet = NULL;
 	}
 
 	docklet = egg_tray_icon_new("Gaim");
@@ -312,13 +314,13 @@ static void gaim_away(struct gaim_connection *gc, char *state, char *message, vo
 	docklet_update_status();
 }
 
-static void gaim_im_recv(struct gaim_connection *gc, char **who, char **what, void *data) {
+static void gaim_im_displayed_recv(struct gaim_connection *gc, char **who, char **what, void *data) {
 	/* if message queuing while away is enabled, this event could be the first
 	   message so we need to see if the status (and hence icon) needs changing */
 	docklet_update_status();
 }
 
-static void gaim_buddy_signon(struct gaim_connection *gc, char *who, void *data) {
+/* static void gaim_buddy_signon(struct gaim_connection *gc, char *who, void *data) {
 }
 
 static void gaim_buddy_signoff(struct gaim_connection *gc, char *who, void *data) {
@@ -331,7 +333,7 @@ static void gaim_buddy_back(struct gaim_connection *gc, char *who, void *data) {
 }
 
 static void gaim_new_conversation(char *who, void *data) {
-}
+} */
 
 char *gaim_plugin_init(GModule *handle) {
 	docklet_create();
@@ -340,74 +342,71 @@ char *gaim_plugin_init(GModule *handle) {
 	gaim_signal_connect(handle, event_signoff, gaim_signoff, NULL);
 	gaim_signal_connect(handle, event_connecting, gaim_connecting, NULL);
 	gaim_signal_connect(handle, event_away, gaim_away, NULL);
-	gaim_signal_connect(handle, event_im_displayed_rcvd, gaim_im_recv, NULL);
-	gaim_signal_connect(handle, event_im_recv, gaim_im_recv, NULL);
-	gaim_signal_connect(handle, event_buddy_signon, gaim_buddy_signon, NULL);
+	gaim_signal_connect(handle, event_im_displayed_rcvd, gaim_im_displayed_recv, NULL);
+/*	gaim_signal_connect(handle, event_buddy_signon, gaim_buddy_signon, NULL);
 	gaim_signal_connect(handle, event_buddy_signoff, gaim_buddy_signoff, NULL);
 	gaim_signal_connect(handle, event_buddy_away, gaim_buddy_away, NULL);
 	gaim_signal_connect(handle, event_buddy_back, gaim_buddy_back, NULL);
-	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL);
+	gaim_signal_connect(handle, event_new_conversation, gaim_new_conversation, NULL); */
 
 	return NULL;
 }
 
 void gaim_plugin_remove() {
-       if (GTK_WIDGET_VISIBLE(docklet)) {
-               docklet_remove();
-       }
+	if (GTK_WIDGET_VISIBLE(docklet)) {
+		docklet_remove();
+	}
 
-       docklet_flush_queue();
+	docklet_flush_queue();
 
-       g_object_unref(G_OBJECT(docklet));
-       g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
-       gtk_widget_destroy(GTK_WIDGET(docklet));
+	g_object_unref(G_OBJECT(docklet));
+	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_destroyed), NULL);
+	gtk_widget_destroy(GTK_WIDGET(docklet));
 
-       debug_printf("Docklet: removed\n");
+	debug_printf("Docklet: removed\n");
 }
 
-static void config_close() {
-	configwin = NULL;
+GtkWidget *gaim_plugin_config_gtk() {
+	GtkWidget *frame;
+	GtkWidget *vbox, *hbox;
+	GtkWidget *toggle;
+
+	frame = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
+
+	vbox = make_frame(frame, _("Docklet Configuration"));
+	hbox = gtk_hbox_new(FALSE, 18);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+/*	toggle = gtk_check_button_new_with_mnemonic(_("_Automatically show buddy list on sign on"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), blist_options & OPT_BLIST_APP_BUDDY_SHOW);
+	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_blist_show), NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0); */
+
+	toggle = gtk_check_button_new_with_mnemonic(_("_Hide new messages until docklet is clicked"));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), away_options & OPT_AWAY_QUEUE_UNREAD);
+	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_toggle_queue), NULL);
+	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
+
+	gtk_widget_show_all(frame);
+	return frame;
 }
 
-void gaim_plugin_config() {
-	/* This is the sorriest dialog ever written ever */
-	/* It's a good thing I plan on rewriting it later tonight */
-	GtkWidget *button;
-	GtkWidget *vbox;
-
-	if (configwin) 
-		return;
-	GAIM_DIALOG(configwin);
-	g_signal_connect(G_OBJECT(configwin), "destroy", GTK_SIGNAL_FUNC(config_close), NULL);
-
-	vbox = gtk_vbox_new(0, 6);
-	gtk_container_add(GTK_CONTAINER(configwin), vbox);
-	gtk_window_set_title(GTK_WINDOW(configwin), "Docklet Configuration");
-	
-	button = gtk_check_button_new_with_mnemonic("_Hide new messages until docklet is clicked");
-	gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(button), away_options & OPT_AWAY_QUEUE_UNREAD);
-	g_signal_connect(G_OBJECT(button), "clicked", GTK_SIGNAL_FUNC(docklet_toggle_queue), NULL);
-	gtk_box_pack_end(GTK_BOX(vbox), button, 0, 0, 0);
-
-	gtk_widget_show_all(configwin);
-}
-      
 struct gaim_plugin_description desc; 
 struct gaim_plugin_description *gaim_plugin_desc() {
 	desc.api_version = PLUGIN_API_VERSION;
-	desc.name = g_strdup("System Tray Docklet");
+	desc.name = g_strdup(_("System Tray Docklet"));
 	desc.version = g_strdup(VERSION);
-	desc.description = g_strdup("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window.");
-	desc.authors = g_strdup("Robert McQueen &lt;robot101@debian.org>");
+	desc.description = g_strdup(_("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window."));
+	desc.authors = g_strdup(_("Robert McQueen &lt;robot101@debian.org>"));
 	desc.url = g_strdup(WEBSITE);
 	return &desc;
 }
- 
 
-const char *name() {
+char *name() {
 	return _("System Tray Docklet");
 }
 
-const char *description() {
+char *description() {
 	return _("Interacts with a System Tray applet (in GNOME or KDE, for example) to display the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window.");
 }

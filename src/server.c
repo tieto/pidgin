@@ -56,6 +56,7 @@ void serv_login(struct aim_user *user)
 		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
 		user->connecting = TRUE;
 		connecting_count++;
+		debug_printf("connecting_count: %d\n", connecting_count);
 		plugin_event(event_connecting, user);
 		p->login(user);
 	}

@@ -1993,35 +1993,6 @@ static struct group_show *find_gs_by_bs(struct buddy_show *b)
 	return g;
 }
 
-
-void docklet_toggle() {
-	/* Useful for the docklet plugin and also for the win32 tray icon*/
-	/* This is called when one of those is clicked--it will show/hide the 
-	   buddy list/login window--depending on which is active */
-	if (connections) {
-		if (GTK_WIDGET_VISIBLE(blist)) {
-			if (GAIM_WINDOW_ICONIFIED(blist)) {
-				unhide_buddy_list();
-			} else {
-				hide_buddy_list();
-			}
-		} else {
-			unhide_buddy_list();
-		}
-	} else {
-		if (GTK_WIDGET_VISIBLE(mainwindow)) {
-			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
-				gtk_window_present(GTK_WINDOW(mainwindow));
-			} else {
-				gtk_widget_hide(mainwindow);
-			}
-		} else {
-			gtk_window_present(GTK_WINDOW(mainwindow));
-		}
-	}
-}
-
-
 /* used by this file, and by iconaway.so */
 void hide_buddy_list() {
 	if (blist) {
@@ -2066,6 +2037,33 @@ void docklet_remove() {
 	if (!docklet_count) {
 		if (connections) {
 			unhide_buddy_list();
+		} else {
+			gtk_window_present(GTK_WINDOW(mainwindow));
+		}
+	}
+}
+
+void docklet_toggle() {
+	/* Useful for the docklet plugin and also for the win32 tray icon*/
+	/* This is called when one of those is clicked--it will show/hide the 
+	   buddy list/login window--depending on which is active */
+	if (connections) {
+		if (GTK_WIDGET_VISIBLE(blist)) {
+			if (GAIM_WINDOW_ICONIFIED(blist)) {
+				unhide_buddy_list();
+			} else {
+				hide_buddy_list();
+			}
+		} else {
+			unhide_buddy_list();
+		}
+	} else {
+		if (GTK_WIDGET_VISIBLE(mainwindow)) {
+			if (GAIM_WINDOW_ICONIFIED(mainwindow)) {
+				gtk_window_present(GTK_WINDOW(mainwindow));
+			} else {
+				gtk_widget_hide(mainwindow);
+			}
 		} else {
 			gtk_window_present(GTK_WINDOW(mainwindow));
 		}
@@ -2460,10 +2458,10 @@ static void configure_blist_window(GtkWidget *w, GdkEventConfigure *event, void 
 }
 
 static void change_state_blist_window(GtkWidget *w, GdkEventWindowState *event, void *dummy) {
-       if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED &&
-           docklet_count) {
-               gtk_widget_hide(blist);
-       }
+	if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED &&
+	    docklet_count) {
+		gtk_widget_hide(blist);
+	}
 }
 
 /*******************************************************************
@@ -2501,7 +2499,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
-	
+
 	return menuitem;
 }
 
@@ -2625,7 +2623,7 @@ void clicked_debug (GtkWidget *widg, gpointer pntr)
 	}
 }
 
-void show_buddy_list()
+void make_buddy_list()
 {
 
 	/* Build the buddy list, based on *config */
@@ -2648,27 +2646,25 @@ void show_buddy_list()
 	GtkWidget *tbox;
 
 	if (blist) {
-		unhide_buddy_list();
 		return;
 	}
 
 	blist = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
+	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_STATIC);
+	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
+	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
 	gtk_window_set_wmclass(GTK_WINDOW(blist), "buddy_list", "Gaim");
 
 	gtk_widget_realize(blist);
 
-	gtk_window_set_gravity(GTK_WINDOW(blist), GDK_GRAVITY_STATIC);
-	gtk_window_set_policy(GTK_WINDOW(blist), TRUE, TRUE, TRUE);
-
 	accel = gtk_accel_group_new();
-	gtk_window_add_accel_group(G_OBJECT(blist), accel);
+	gtk_window_add_accel_group(GTK_WINDOW(blist), accel);
 
 	menubar = gtk_menu_bar_new();
 
 	menu = gtk_menu_new();
 	gtk_menu_set_accel_group(GTK_MENU(menu), accel);
-
 
 	menuitem = gaim_new_item(NULL, _("File"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), menu);
@@ -2687,15 +2683,13 @@ void show_buddy_list()
 
 	gaim_new_item_with_pixmap(menu, _("Import Buddy List"), import_small_xpm,
 				  GTK_SIGNAL_FUNC(import_callback), NULL, 0, 0, 0);
-	/*gaim_new_item_with_pixmap(menu, _("Export Buddy List"), export_small_xpm,
-	   GTK_SIGNAL_FUNC(show_export_dialog), 0, 0, 0); */
+
 	gaim_separator(menu);
+
 	gaim_new_item_with_pixmap(menu, _("Signoff"), logout_menu_xpm,
 				  GTK_SIGNAL_FUNC(signoff_all), (void*)1, 'd', GDK_CONTROL_MASK, "Ctl+D");
-
 	gaim_new_item_with_pixmap(menu, _("Hide"), close_small_xpm,
 				  GTK_SIGNAL_FUNC(hide_buddy_list), NULL, 'h', GDK_CONTROL_MASK, "Ctl+H");
-
 	gaim_new_item_with_pixmap(menu, _("Quit"), exit_small_xpm,
 				  GTK_SIGNAL_FUNC(do_quit), NULL, 'q', GDK_CONTROL_MASK, "Ctl+Q");
 
@@ -2723,8 +2717,7 @@ void show_buddy_list()
 #endif
 
 	protomenu = gtk_menu_new();
-	menuitem =
-	    gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, NULL, 0, 0, 0);
+	menuitem = gaim_new_item_with_pixmap(menu, _("Protocol Actions"), prefs_small_xpm, NULL, NULL, 0, 0, 0);
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), protomenu);
 	do_proto_menu();
 
@@ -2744,7 +2737,6 @@ void show_buddy_list()
 	gaim_new_item_with_pixmap(menu, _("Online Help"), add_small_xpm, GTK_SIGNAL_FUNC(open_url), WEBSITE"documentation.php", GDK_F1, 0, NULL);
 	gaim_new_item_with_pixmap(menu, _("Debug Window"), search_small_xpm, GTK_SIGNAL_FUNC(clicked_debug), NULL, 0, 0, NULL);
 	gaim_new_item_with_pixmap(menu, _("About Gaim"), about_small_xpm, GTK_SIGNAL_FUNC(show_about), NULL, GDK_F1, GDK_CONTROL_MASK, NULL);
-	
 	
 	gtk_widget_show(menubar);
 
@@ -2777,19 +2769,8 @@ void show_buddy_list()
 	if (!(blist_options & OPT_BLIST_NO_BUTTONS))
 		build_imchat_box(TRUE);
 
-
 	/* Swing the edit buddy */
 	editpane = gtk_vbox_new(FALSE, 1);
-
-	addbutton = gtk_button_new_with_label(_("Add"));
-	groupbutton = gtk_button_new_with_label(_("Group"));
-	rembutton = gtk_button_new_with_label(_("Remove"));
-
-	if (misc_options & OPT_MISC_COOL_LOOK) {
-		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
-		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
-	}
 
 	edittree = gtk_ctree_new(1, 0);
 	gtk_ctree_set_line_style(GTK_CTREE(edittree), GTK_CTREE_LINES_SOLID);;
@@ -2809,7 +2790,18 @@ void show_buddy_list()
 	bbox = gtk_hbox_new(TRUE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(bbox), 5);
 	tbox = gtk_scrolled_window_new(NULL, NULL);
-	/* Put the buttons in the box */
+
+	/* buttons */
+	addbutton = gtk_button_new_with_label(_("Add"));
+	groupbutton = gtk_button_new_with_label(_("Group"));
+	rembutton = gtk_button_new_with_label(_("Remove"));
+
+	if (misc_options & OPT_MISC_COOL_LOOK) {
+		gtk_button_set_relief(GTK_BUTTON(addbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(groupbutton), GTK_RELIEF_NONE);
+		gtk_button_set_relief(GTK_BUTTON(rembutton), GTK_RELIEF_NONE);
+	}
+
 	gtk_box_pack_start(GTK_BOX(bbox), addbutton, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), groupbutton, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bbox), rembutton, TRUE, TRUE, 0);
@@ -2818,13 +2810,13 @@ void show_buddy_list()
 	gtk_tooltips_set_tip(tips, groupbutton, _("Add a new Group"), "Penguin");
 	gtk_tooltips_set_tip(tips, rembutton, _("Remove selected Buddy/Group"), "Penguin");
 
+	g_signal_connect(G_OBJECT(rembutton), "clicked", G_CALLBACK(do_del_buddy), edittree);
+	g_signal_connect(G_OBJECT(addbutton), "clicked", G_CALLBACK(add_buddy_callback), NULL);
+	g_signal_connect(G_OBJECT(groupbutton), "clicked", G_CALLBACK(add_group_callback), NULL);
+
 	/* And the boxes in the box */
 	gtk_box_pack_start(GTK_BOX(editpane), tbox, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(editpane), bbox, FALSE, FALSE, 0);
-
-	/* Handle closes right */
-
-
 
 	/* Finish up */
 	gtk_widget_show(addbutton);
@@ -2835,11 +2827,7 @@ void show_buddy_list()
 	gtk_widget_show(bbox);
 	gtk_widget_show(editpane);
 
-
-
 	update_button_pix();
-
-
 
 	label = gtk_label_new(_("Online"));
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), buddypane, label);
@@ -2853,47 +2841,24 @@ void show_buddy_list()
 
 	/* Pack things in the vbox */
 	gtk_widget_show(vbox);
-
-
-	gtk_widget_show(notebook);
-
-	/* Enable buttons */
-
-	gtk_signal_connect(GTK_OBJECT(rembutton), "clicked", GTK_SIGNAL_FUNC(do_del_buddy), edittree);
-	gtk_signal_connect(GTK_OBJECT(addbutton), "clicked", GTK_SIGNAL_FUNC(add_buddy_callback), NULL);
-	gtk_signal_connect(GTK_OBJECT(groupbutton), "clicked", GTK_SIGNAL_FUNC(add_group_callback),
-			   NULL);
 	gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), notebook, TRUE, TRUE, 0);
-
 	gtk_container_add(GTK_CONTAINER(blist), vbox);
 
-	gtk_signal_connect(GTK_OBJECT(blist), "delete_event", GTK_SIGNAL_FUNC(close_buddy_list),
-			   NULL);
-
-	gtk_signal_connect(GTK_OBJECT(blist), "configure_event", GTK_SIGNAL_FUNC(configure_blist_window),
-			   NULL);
-	gtk_signal_connect(GTK_OBJECT(blist), "window_state_event", GTK_SIGNAL_FUNC(change_state_blist_window),
-			   NULL);
-
-
+	g_signal_connect(G_OBJECT(blist), "delete_event", G_CALLBACK(close_buddy_list), NULL);
+	g_signal_connect(G_OBJECT(blist), "configure_event", G_CALLBACK(configure_blist_window), NULL);
+	g_signal_connect(G_OBJECT(blist), "window_state_event", G_CALLBACK(change_state_blist_window), NULL);
 
 	/* The edit tree */
 	gtk_container_add(GTK_CONTAINER(tbox), edittree);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tbox),
 				       GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-
-	gtk_window_set_title(GTK_WINDOW(blist), _("Gaim - Buddy List"));
-
-	/* this conveniently moves it to the right place and stuff */
-	unhide_buddy_list();
 }
 
-void refresh_buddy_window()
+void show_buddy_list()
 {
+	make_buddy_list();
+	unhide_buddy_list();
 	build_edit_tree();
-
 	update_button_pix();
-	gtk_widget_show(blist);
 }

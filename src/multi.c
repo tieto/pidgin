@@ -1132,7 +1132,6 @@ void account_online(struct gaim_connection *gc)
 		gtk_widget_hide(mainwindow);
 
 	show_buddy_list();
-	refresh_buddy_window();
 
 	update_privacy_connections();
 	do_away_menu();
@@ -1141,8 +1140,11 @@ void account_online(struct gaim_connection *gc)
 	gaim_setup(gc);
 
 	gc->user->connecting = FALSE;
-	connecting_count--;
-		
+	if (connecting_count) {
+		connecting_count--;
+	}
+	debug_printf("connecting_count: %d\n", connecting_count);
+
 	plugin_event(event_signon, gc);
 	system_log(log_signon, gc, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON);
 
@@ -1439,8 +1441,11 @@ void signoff(struct gaim_connection *gc)
 	   this user was ever on-line or not */
 	if (gc->user->connecting) {
 		gc->user->connecting = FALSE;
-		connecting_count--;
+		if (connecting_count) {
+			connecting_count--;
+		}
 	}
+	debug_printf("connecting_count: %d\n", connecting_count);
 	serv_close(gc);
 
 	/* more UI stuff */

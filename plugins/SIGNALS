@@ -344,8 +344,8 @@ event_del_conversation:
 	access any data related to the conversation without breaking
 	anything.
 
-	'c'	is he conversation being closed.
-	
+	'c'	is the conversation being closed.
+
 event_connecting:
 	struct aim_user *u
 
@@ -355,5 +355,5 @@ event_connecting:
 	being called, depending upon whether the attempt was a sucess or
 	a failure. In both cases, u->connecting is set to false and the
 	counter decremented.
-	
+
 	'u'	is the account being connected.
