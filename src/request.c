@@ -762,6 +762,19 @@ gaim_request_field_list_get_items(const GaimRequestField *field)
 	return field->u.list.items;
 }
 
+GaimRequestField *
+gaim_request_field_label_new(const char *id, const char *text)
+{
+	GaimRequestField *field;
+
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
+
+	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LABEL);
+
+	return field;
+}
+
 /* -- */
 
 void *

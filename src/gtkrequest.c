@@ -854,8 +854,9 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 					gtk_size_group_add_widget(sg, label);
 
-					if (type == GAIM_REQUEST_FIELD_STRING &&
-						gaim_request_field_string_is_multiline(field))
+					if (type == GAIM_REQUEST_FIELD_LABEL ||
+						(type == GAIM_REQUEST_FIELD_STRING &&
+						 gaim_request_field_string_is_multiline(field)))
 					{
 						gtk_table_attach_defaults(GTK_TABLE(table), label,
 												  0, 2 * cols,

@@ -49,7 +49,8 @@ typedef enum
 	GAIM_REQUEST_FIELD_INTEGER,
 	GAIM_REQUEST_FIELD_BOOLEAN,
 	GAIM_REQUEST_FIELD_CHOICE,
-	GAIM_REQUEST_FIELD_LIST
+	GAIM_REQUEST_FIELD_LIST,
+	GAIM_REQUEST_FIELD_LABEL
 
 } GaimRequestFieldType;
 
@@ -797,6 +798,23 @@ const GList *gaim_request_field_list_get_items(const GaimRequestField *field);
 
 /*@}*/
 
+/**************************************************************************/
+/** @name Label Field API                                                 */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates a label field.
+ *
+ * @param id   The field ID.
+ * @param text The optional label of the field.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_label_new(const char *id,
+											   const char *text);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Request API                                                     */
