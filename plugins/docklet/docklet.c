@@ -22,12 +22,13 @@
  * 02111-1307, USA.
  */
 
-/* todo (in order of importance):
-    - unify the queue so we can have a global away without the dialog
-    - handle and update tooltips to show your current accounts/queued messages?
-    - show a count of queued messages in the unified queue
-    - dernyi's account status menu in the right click
-    - optional pop up notices when GNOME2's system-tray-applet supports it */
+/* TODO (in order of importance):
+ * - unify the queue so we can have a global away without the dialog
+ * - handle and update tooltips to show your current accounts/queued messages?
+ * - show a count of queued messages in the unified queue
+ * - dernyi's account status menu in the right click
+ * - optional pop up notices when GNOME2's system-tray-applet supports it
+ */
 
 #include "internal.h"
 #include "gtkgaim.h"

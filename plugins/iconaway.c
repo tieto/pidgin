@@ -49,6 +49,7 @@ iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 
 	gc = gaim_account_get_connection(account);
 
+#if 0 /* STATUS */
 	if (!imaway || !gc->away)
 		return;
 
@@ -69,6 +70,7 @@ iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
 		}
 	}
+#endif /* STATUS */
 }
 
 /*

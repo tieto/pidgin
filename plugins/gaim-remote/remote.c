@@ -396,6 +396,7 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
 			gaim_account_connect(account);
 		/* don't need to do anything here because the UI will get updates from other handlers */
 		break;
+#if 0 /* STATUS */
        case CUI_USER_AWAY:
                 {
                     GSList* l;
@@ -412,6 +413,7 @@ user_handler(struct UI *ui, guchar subtype, gchar *data)
        case CUI_USER_BACK:
                 do_im_back(NULL, NULL);
                 break;
+#endif /* STATUS */
 	default:
 		gaim_debug(GAIM_DEBUG_WARNING, "cui",
 				   "Unhandled user subtype %d\n", subtype);
