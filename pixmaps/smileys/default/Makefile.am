@@ -168,7 +168,27 @@ YAHOO_SMILEYS = \
 	yahoo_tongue.gif		\
 	yahoo_whistling.gif		\
 	yahoo_wink.gif			\
-	yahoo_worried.gif
+	yahoo_worried.gif		\
+	yahoo_malefighter1.gif		\
+	yahoo_malefighter2.gif		\
+	yahoo_femalefighter.gif		\
+	yahoo_yingyang.gif		\
+	yahoo_brokenheart.gif		\
+	yahoo_sweating.gif		\
+	yahoo_rotfl.gif			\
+	yahoo_loser.gif			\
+	yahoo_party.gif			\
+	yahoo_nailbiting.gif		\
+	yahoo_waiting.gif		\
+	yahoo_sighing.gif		\
+	yahoo_madtongue.gif		\
+	yahoo_waving.gif		\
+	yahoo_giggle.gif		\
+	yahoo_talktohand.gif		\
+	yahoo_worship.gif		\
+	yahoo_youkiddingme.gif		\
+	yahoo_star.gif
+
 
 gaimsmileypixdir = $(datadir)/pixmaps/gaim/smileys/default
 gaimsmileypix_DATA = \
