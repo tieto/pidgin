@@ -523,7 +523,7 @@ static void generate_prpl_options(struct aim_user *u, GtkWidget *book)
 			entry = gtk_entry_new();
 			gtk_box_pack_end(GTK_BOX(hbox), entry, FALSE, FALSE, 0);
 			gtk_object_set_user_data(GTK_OBJECT(entry), (void *)puo->pos);
-			if (u->proto_opt[puo->pos][0]) {
+			if (u && u->proto_opt[puo->pos][0]) {
 				debug_printf("setting text %s\n", u->proto_opt[puo->pos]);
 				gtk_entry_set_text(GTK_ENTRY(entry), u->proto_opt[puo->pos]);
 			} else {
