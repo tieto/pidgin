@@ -666,7 +666,7 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	}
 
 	if(p->register_user != NULL) {
-		u->register_user = gtk_check_button_new_with_label("Register with server");
+		u->register_user = gtk_check_button_new_with_label(_("Register with server"));
 		gtk_toggle_button_set_state(GTK_TOGGLE_BUTTON(u->register_user), FALSE);
 		gtk_box_pack_start(GTK_BOX(vbox), u->register_user, FALSE, FALSE, 0);
 		gtk_widget_show(u->register_user);

@@ -467,6 +467,7 @@ typedef struct multi_entry_dlg {
 
 	GtkWidget *entries_table;		/* table widget containing m-e lables & entries */
 	GtkWidget *entries_frame;		/* frame widget containing the table widget */
+	gchar *entries_title;			/* title of multi-entries list */
 	GSList *multi_entry_items;		/* entry dialogs parameters */
 
 	GtkWidget *texts_ibox;			/* inner vbox containing multi-text frames */

@@ -690,13 +690,13 @@ static void jabber_track_away(gjconn gjc, jpacket p, char *name)
 
 	if((show = xmlnode_get_tag_data(p->x, "show")) != NULL) {
 		if (!strcasecmp(show, "away")) {
-			vshow = "Away";
+			vshow = _("Away");
 		} else if (!strcasecmp(show, "chat")) {
-			vshow = "Online";
+			vshow = _("Online");
 		} else if (!strcasecmp(show, "xa")) {
-			vshow = "Extended Away";
+			vshow = _("Extended Away");
 		} else if (!strcasecmp(show, "dnd")) {
-			vshow = "Do Not Disturb";
+			vshow = _("Do Not Disturb");
 		}
 	}
 
@@ -1085,7 +1085,7 @@ static void jabber_handlebuddy(gjconn gjc, xmlnode x)
 	buddyname = g_strdup_printf("%s@%s", who->user, who->server);
 
 	if((g = xmlnode_get_tag(x, "group")) == NULL || (groupname = xmlnode_get_data(g)) == NULL) {
-		groupname = "Buddies";
+		groupname = _("Buddies");
 	}
 
 
@@ -1138,7 +1138,7 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 	if (jpacket_subtype(p) == JPACKET__RESULT) {
 		if (xmlnode_has_children(p->x)) {
 			xmlnode query = xmlnode_get_tag(p->x, "query");
-			set_login_progress(GJ_GC(gjc), 4, "Authenticating");
+			set_login_progress(GJ_GC(gjc), 4, _("Authenticating"));
 			if (!xmlnode_get_tag(query, "digest")) {
 				g_free(gjc->sid);
 				gjc->sid = NULL;
@@ -1175,7 +1175,7 @@ static void jabber_handleauthresp(gjconn gjc, jpacket p)
 				g_snprintf(msg, sizeof(msg), "%s", errmsg);
 			hide_login_progress(GJ_GC(gjc), msg);
 		} else {
-			hide_login_progress(GJ_GC(gjc), "Unknown login error");
+			hide_login_progress(GJ_GC(gjc), _("Unknown login error"));
 		}
 
 		jd->die = TRUE;
@@ -1405,14 +1405,14 @@ static void jabber_handlestate(gjconn gjc, int state)
 {
 	switch (state) {
 	case JCONN_STATE_OFF:
-		hide_login_progress(GJ_GC(gjc), "Unable to connect");
+		hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
 		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
-		set_login_progress(GJ_GC(gjc), 2, "Connected");
+		set_login_progress(GJ_GC(gjc), 2, _("Connected"));
 		break;
 	case JCONN_STATE_ON:
-		set_login_progress(GJ_GC(gjc), 3, "Requesting Authentication Method");
+		set_login_progress(GJ_GC(gjc), 3, _("Requesting Authentication Method"));
 		gjab_reqauth(gjc);
 		break;
 	default:
@@ -1430,12 +1430,12 @@ static void jabber_login(struct aim_user *user)
 	jd->hash = g_hash_table_new(g_str_hash, g_str_equal);
 	jd->chats = NULL;	/* we have no chats yet */
 
-	set_login_progress(gc, 1, "Connecting");
+	set_login_progress(gc, 1, _("Connecting"));
 
 	if (!(jd->gjc = gjab_new(loginname, user->password, gc))) {
 		g_free(loginname);
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 		return;
 	}
@@ -1968,7 +1968,7 @@ static void jabber_get_away_msg(struct gaim_connection *gc, char *who) {
 	*ap++ = g_strdup_printf("<B>Jabber ID:</B> %s<BR>\n", realwho);
 
 	if((status = g_hash_table_lookup(jd->hash, realwho)) == NULL) {
-		status = "Online";
+		status = _("Online");
 	}
 	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
 
@@ -2205,25 +2205,25 @@ struct vcard_template {
 	char *ptag;			/* parent tag "path" text */
 	char *url;			/* vCard display format if URL */
 } vcard_template_data[] = {
-	{"Full Name",          NULL, TRUE, TRUE, "FN",        NULL,  NULL},
-	{"Family Name",        NULL, TRUE, TRUE, "FAMILY",    "N",   NULL},
-	{"Given Name",         NULL, TRUE, TRUE, "GIVEN",     "N",   NULL},
-	{"Nickname",           NULL, TRUE, TRUE, "NICKNAME",  NULL,  NULL},
-	{"URL",                NULL, TRUE, TRUE, "URL",       NULL,  "<A HREF=\"%s\">%s</A>"},
-	{"Street Address",     NULL, TRUE, TRUE, "STREET",    "ADR", NULL},
-	{"Extended Address",   NULL, TRUE, TRUE, "EXTADD",    "ADR", NULL},
-	{"Locality",           NULL, TRUE, TRUE, "LOCALITY",  "ADR", NULL},
-	{"Region",             NULL, TRUE, TRUE, "REGION",    "ADR", NULL},
-	{"Postal Code",        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
-	{"Country",            NULL, TRUE, TRUE, "COUNTRY",   "ADR", NULL},
-	{"Telephone",          NULL, TRUE, TRUE, "TELEPHONE", NULL,  NULL},
-	{"Email",              NULL, TRUE, TRUE, "EMAIL",     NULL,  "<A HREF=\"mailto:%s\">%s</A>"},
-	{"Organization Name",  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
-	{"Organization Unit",  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
-	{"Title",              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
-	{"Role",               NULL, TRUE, TRUE, "ROLE",      NULL,  NULL},
-	{"Birthday",           NULL, TRUE, TRUE, "BDAY",      NULL,  NULL},
-	{"Description",        NULL, TRUE, TRUE, "DESC",      NULL,  NULL},
+	{N_("Full Name"),          NULL, TRUE, TRUE, "FN",        NULL,  NULL},
+	{N_("Family Name"),        NULL, TRUE, TRUE, "FAMILY",    "N",   NULL},
+	{N_("Given Name"),         NULL, TRUE, TRUE, "GIVEN",     "N",   NULL},
+	{N_("Nickname"),           NULL, TRUE, TRUE, "NICKNAME",  NULL,  NULL},
+	{N_("URL"),                NULL, TRUE, TRUE, "URL",       NULL,  "<A HREF=\"%s\">%s</A>"},
+	{N_("Street Address"),     NULL, TRUE, TRUE, "STREET",    "ADR", NULL},
+	{N_("Extended Address"),   NULL, TRUE, TRUE, "EXTADD",    "ADR", NULL},
+	{N_("Locality"),           NULL, TRUE, TRUE, "LOCALITY",  "ADR", NULL},
+	{N_("Region"),             NULL, TRUE, TRUE, "REGION",    "ADR", NULL},
+	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
+	{N_("Country"),            NULL, TRUE, TRUE, "COUNTRY",   "ADR", NULL},
+	{N_("Telephone"),          NULL, TRUE, TRUE, "TELEPHONE", NULL,  NULL},
+	{N_("Email"),              NULL, TRUE, TRUE, "EMAIL",     NULL,  "<A HREF=\"mailto:%s\">%s</A>"},
+	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
+	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
+	{N_("Title"),              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
+	{N_("Role"),               NULL, TRUE, TRUE, "ROLE",      NULL,  NULL},
+	{N_("Birthday"),           NULL, TRUE, TRUE, "BDAY",      NULL,  NULL},
+	{N_("Description"),        NULL, TRUE, TRUE, "DESC",      NULL,  NULL},
 	{"", NULL, TRUE, TRUE, "N",     NULL, NULL},
 	{"", NULL, TRUE, TRUE, "ADR",   NULL, NULL},
 	{"", NULL, TRUE, TRUE, "ORG",   NULL, NULL},
@@ -2248,7 +2248,8 @@ struct tag_attr {
  * V-Card user instructions
  */
 static char *multi_entry_instructions =
-	"Enter the stuff you feel comfortable with.  Leave the rest blank.";
+	N_("All items below are optional. Enter only the information with which you feel comfortable");
+static char *entries_title = N_("User Identity");
 
 /*
  * Used by routines to parse an XML-encoded string into an xmlnode tree
@@ -2306,7 +2307,7 @@ static void jabber_handlevcard(gjconn gjc, xmlnode querynode, char *from)
 	}
 
 	if((status = g_hash_table_lookup(jd->hash, buddy)) == NULL) {
-		status = "Online";
+		status = _("Online");
 	}
 	*ap++ = g_strdup_printf("<B>Status:</B> %s<BR>\n", status);
 
@@ -2664,10 +2665,11 @@ static void jabber_setup_set_info(struct gaim_connection *gc)
 		g_free(user_info);
 	}
 
-	b->title = "Gaim - vCard Wizzard";
+	b->title = _("Gaim - Edit Jabber vCard");
 	b->wmclass_name = "set_info";
 	b->wmclass_class = "Gaim";
 	b->instructions->text = g_strdup(multi_entry_instructions);
+	b->entries_title = g_strdup(entries_title);
 
 	b->custom = (void *) jabber_format_info;
 
@@ -2737,7 +2739,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 		} else {
 			debug_printf("registration successful!\n");
 
-			hide_login_progress_notice(GJ_GC(gjc), "Server Registration successful!");
+			hide_login_progress_notice(GJ_GC(gjc), _("Server Registration successful!"));
 			/*
 			 * TBD: is this the correct way to do away with a
 			 * gaim_connection and all its associated memory
@@ -2764,7 +2766,7 @@ static void jabber_handleregresp(gjconn gjc, jpacket p)
 				g_snprintf(msg, sizeof(msg), "%s", errmsg);
 			hide_login_progress(GJ_GC(gjc), msg);
 		} else {
-			hide_login_progress(GJ_GC(gjc), "Unknown registration error");
+			hide_login_progress(GJ_GC(gjc), _("Unknown registration error"));
 		}
 
 		jd->die = TRUE;
@@ -2840,19 +2842,19 @@ static void jabber_handle_registration_state(gjconn gjc, int state)
 {
 	switch (state) {
 	case JCONN_STATE_OFF:
-		hide_login_progress(GJ_GC(gjc), "Unable to connect");
+		hide_login_progress(GJ_GC(gjc), _("Unable to connect"));
 		signoff(GJ_GC(gjc));
 		break;
 	case JCONN_STATE_CONNECTED:
 		/*
 		 * TBD?
-		set_login_progress(GJ_GC(gjc), 2, "Connected");
+		set_login_progress(GJ_GC(gjc), 2, _("Connected"));
 		 */
 		break;
 	case JCONN_STATE_ON:
 		/*
 		 * TBD?
-		set_login_progress(GJ_GC(gjc), 3, "Requesting Authentication Method");
+		set_login_progress(GJ_GC(gjc), 3, _("Requesting Authentication Method"));
 		 */
 		gjab_reqreg(gjc);
 		/*
@@ -2884,7 +2886,7 @@ void jabber_register_user(struct aim_user *au)
 	if ((jd->gjc = gjab_new(loginname, au->password, gc)) == NULL) {
 		g_free(loginname);
 		debug_printf("jabber: unable to connect (jab_new failed)\n");
-		hide_login_progress(gc, "Unable to connect");
+		hide_login_progress(gc, _("Unable to connect"));
 		signoff(gc);
 	} else {
 		gjab_state_handler(jd->gjc, jabber_handle_registration_state);
@@ -2902,12 +2904,12 @@ void jabber_register_user(struct aim_user *au)
 
 static void jabber_do_action(struct gaim_connection *gc, char *act)
 {
-	if (!strcmp(act, "Set User Info")) {
+	if (!strcmp(act, _("Set User Info"))) {
 		jabber_setup_set_info(gc);
 	/*
-	} else if (!strcmp(act, "Set Dir Info")) {
+	} else if (!strcmp(act, _("Set Dir Info"))) {
 		show_set_dir(gc);
-	} else if (!strcmp(act, "Change Password")) {
+	} else if (!strcmp(act, _("Change Password"))) {
 		show_change_passwd(gc);
 	 */
 	}
@@ -2917,10 +2919,10 @@ static GList *jabber_actions()
 {
 	GList *m = NULL;
 
-	m = g_list_append(m, "Set User Info");
+	m = g_list_append(m, _("Set User Info"));
 	/*
-	m = g_list_append(m, "Set Dir Info");
-	m = g_list_append(m, "Change Password");
+	m = g_list_append(m, _("Set Dir Info"));
+	m = g_list_append(m, _("Change Password"));
 	 */
 
 	return m;

@@ -4355,7 +4355,7 @@ MultiEntryData *multi_entry_list_update(GSList **list, const char *label, const 
 	GSList *found;
 	MultiEntryData *data;
 
-	if((found = g_slist_find_custom(*list, label, multi_entry_data_label_compare)) == NULL) {
+	if((found = g_slist_find_custom(*list, (void *)label, multi_entry_data_label_compare)) == NULL) {
 		if(add_it) {
 			data = (MultiEntryData *) g_slist_last(*list =
 				g_slist_append(*list, g_malloc(sizeof(MultiEntryData))))->data;
@@ -4408,7 +4408,7 @@ MultiTextData *multi_text_list_update(GSList **list, const char *label, const ch
 	GSList *found;
 	MultiTextData *data;
 
-	if((found = g_slist_find_custom(*list, label, multi_text_data_label_compare)) == NULL) {
+	if((found = g_slist_find_custom(*list, (void *)label, multi_text_data_label_compare)) == NULL) {
 		if(add_it) {
 			data = (MultiTextData *) g_slist_last(*list =
 				g_slist_append(*list, g_malloc(sizeof(MultiTextData))))->data;
@@ -4443,6 +4443,7 @@ void multi_entry_free(struct multi_entry_dlg *b)
 	multi_text_items_free_all(&(b->multi_text_items));
 	g_free(b->instructions->text);
 	g_free(b->instructions);
+	g_free(b->entries_title);
 	g_free(b);
 }
 
@@ -4485,45 +4486,52 @@ void re_show_multi_entry_entries(GtkWidget **entries_table,
 	GtkWidget *label;
 	GSList *multi_entry;
 	MultiEntryData *med;
-	int rows = 0;
-	int rowNum;
+	int rows, row_num, col_num, col_offset;
+	int cols = 1;
 
 	/* Figure-out number of rows needed for table */
-	rows = g_slist_length(multi_entry_items);
+	if((rows = g_slist_length(multi_entry_items)) > 9) {
+		rows /= 2;
+		++cols;
+	}
 
 	if(*entries_table != NULL) {
 		gtk_widget_destroy(GTK_WIDGET (*entries_table));
 	}
-	*entries_table = gtk_table_new(rows, 3, FALSE);
-	gtk_table_set_col_spacings(GTK_TABLE(*entries_table), 5);
-	gtk_table_set_row_spacings(GTK_TABLE(*entries_table), 5);
-	gtk_container_set_border_width(GTK_CONTAINER(*entries_table), 5);
+	*entries_table = gtk_table_new(rows, 3 * cols, FALSE);
 	gtk_container_add(GTK_CONTAINER (entries_frame), *entries_table);
 
-	for(rowNum = 0, multi_entry = multi_entry_items;
-		multi_entry != NULL; ++rowNum, multi_entry = multi_entry->next) {
+	for(col_num = 0, multi_entry = multi_entry_items; col_num < cols && multi_entry != NULL;
+			++col_num) {
+		col_offset = col_num * 3;
+		for(row_num = 0; row_num < rows && multi_entry != NULL;
+				++row_num, multi_entry = multi_entry->next) {
 
-		med = (MultiEntryData *) multi_entry->data;
+			med = (MultiEntryData *) multi_entry->data;
 
-		label = gtk_label_new(med->label);
-		gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 1.0, (gfloat) 0.5);
-		gtk_table_attach_defaults(GTK_TABLE (*entries_table), label, 0, 1, rowNum, rowNum +1);
-		gtk_widget_show(label);
+			label = gtk_label_new(med->label);
+			gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 1.0, (gfloat) 0.5);
+			gtk_table_attach_defaults(GTK_TABLE (*entries_table), label,
+				    col_offset, 1 + col_offset, row_num, row_num +1);
+			gtk_widget_show(label);
 
-		label = gtk_label_new(": ");
-		gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 0.0, (gfloat) 0.5);
-		gtk_table_attach_defaults(GTK_TABLE (*entries_table), label, 1, 2, rowNum, rowNum +1);
-		gtk_widget_show(label);
+			label = gtk_label_new(": ");
+			gtk_misc_set_alignment(GTK_MISC(label), (gfloat) 0.0, (gfloat) 0.5);
+			gtk_table_attach_defaults(GTK_TABLE (*entries_table), label,
+				1 + col_offset, 2 + col_offset, row_num, row_num +1);
+			gtk_widget_show(label);
 
-		med->widget = gtk_entry_new_with_max_length(50);
-		if(med->text != NULL) {
-			gtk_entry_set_text(GTK_ENTRY (med->widget), med->text);
+			med->widget = gtk_entry_new_with_max_length(50);
+			if(med->text != NULL) {
+				gtk_entry_set_text(GTK_ENTRY (med->widget), med->text);
+			}
+			gtk_entry_set_visibility(GTK_ENTRY (med->widget), med->visible);
+			gtk_entry_set_editable(GTK_ENTRY (med->widget), med->editable);
+			gtk_table_attach(GTK_TABLE (*entries_table), med->widget,
+				2 + col_offset, 3 + col_offset, row_num, row_num +1,
+				GTK_FILL|GTK_EXPAND, GTK_FILL|GTK_EXPAND, 5, 0);
+			gtk_widget_show(med->widget);
 		}
-		gtk_entry_set_visibility(GTK_ENTRY (med->widget), med->visible);
-		gtk_entry_set_editable(GTK_ENTRY (med->widget), med->editable);
-		gtk_table_attach_defaults(GTK_TABLE (*entries_table),
-			med->widget, 2, 3, rowNum, rowNum +1);
-		gtk_widget_show(med->widget);
 	}
 
 	gtk_widget_show(*entries_table);
@@ -4628,7 +4636,7 @@ void show_multi_entry_dialog(gpointer data)
 	gtk_box_pack_start(GTK_BOX (vbox), b->instructions->label, TRUE, TRUE, 5);
 	re_show_multi_entry_instr(b->instructions);
 
-	b->entries_frame = gtk_frame_new(NULL);
+	b->entries_frame = gtk_frame_new(b->entries_title);
 	gtk_box_pack_start(GTK_BOX (vbox), b->entries_frame, TRUE, TRUE, 5);
 	gtk_widget_show(b->entries_frame);
 	b->entries_table = NULL;
