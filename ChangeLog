@@ -1,6 +1,7 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.11.0:
+	* Away messages arranged alphabetically (Thanks Justin)
 
 version 0.11.0-pre2 (12/04/2000):
 	* Fixed a segfault with a bad util.c 

@@ -721,6 +721,7 @@ extern void set_defaults(int);
 extern void load_prefs();
 extern void save_prefs();
 
+gint sort_awaymsg_list(gconstpointer, gconstpointer);
 
 /* Functions in dialogs.c */
 extern void alias_dialog(struct buddy_show *);

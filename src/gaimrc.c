@@ -211,7 +211,7 @@ static void gaimrc_read_away(FILE *f)
 			g_snprintf(a->name, sizeof(a->name),  "%s", p->value[0]);
 			g_snprintf(a->message, sizeof(a->message), "%s", p->value[1]);
 			filter_break(a->message);
-			away_messages = g_slist_append(away_messages, a);
+			away_messages = g_slist_insert_sorted(away_messages, a, sort_awaymsg_list);
 		}
 		/* auto { time } { default message } */
 		else if (!strcmp(p->option, "auto"))
@@ -889,3 +889,20 @@ void save_prefs()
 	}
 }
 
+
+
+/* This function is called by g_slist_insert_sorted to compare the item
+ * being compared to the rest of the items on the list.
+ */
+
+gint sort_awaymsg_list(gconstpointer a, gconstpointer b)
+{
+	  struct away_message *msg_a;
+	  struct away_message *msg_b;
+	
+	  msg_a = (struct away_message *)a;
+	  msg_b = (struct away_message *)b;
+	
+	  return (strcmp(msg_a->name, msg_b->name));
+	
+}
