@@ -898,6 +898,7 @@ void parse_toc_buddy_list(char *config, int from_do_import)
 			} else if (*c == 'p') {
 				GList *d = permit;
 				char *n;
+				name = g_malloc(strlen(c+2) + 2);
 				g_snprintf(name, strlen(c+2) + 1, "%s", c+2);
 				n = g_strdup(normalize(name));
 				while (d) {
