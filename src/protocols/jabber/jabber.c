@@ -1021,10 +1021,14 @@ static void jabber_change_passwd(GaimConnection *gc, const char *old, const char
  */
 static struct jabber_buddy_data* jabber_find_buddy(GaimConnection *gc, const char *buddy, gboolean create)
 {
-	struct jabber_data *jd = gc->proto_data;
+	struct jabber_data *jd;
 	gpointer val;
 	char *realwho;
 
+	if (gc == NULL)
+		return NULL;
+
+	jd = gc->proto_data;
 	if((realwho = get_realwho(jd->gjc, buddy, FALSE, NULL)) == NULL)
 		return NULL;
 
