@@ -4,9 +4,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: gaim 0.59\n"
-"POT-Creation-Date: 2002-06-25 00:10-0400\n"
-"PO-Revision-Date: 2002-06-02 20:01+0100\n"
+"Project-Id-Version: gaim 0.60\n"
+"POT-Creation-Date: 2002-06-30 01:05-0400\n"
+"PO-Revision-Date: 2002-06-30 07:59+0100\n"
 "Last-Translator: Przemys³aw Su³ek <pbs@linux.net.pl>\n"
 "Language-Team: POLISH <pl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +24,7 @@ msgstr "Gaim Czat"
 
 #: plugins/chatlist.c:339 src/about.c:165 src/aim.c:320 src/buddy.c:2716
 #: src/buddy_chat.c:1322 src/buddy_chat.c:1419 src/buddy_chat.c:1449
-#: src/conversation.c:2864 src/dialogs.c:567 src/dialogs.c:3899
+#: src/conversation.c:2866 src/dialogs.c:567 src/dialogs.c:3899
 #: src/multi.c:1069 src/plugins.c:277 src/prefs.c:2547 src/prpl.c:438
 #: src/prpl.c:685 src/server.c:1072
 msgid "Close"
@@ -40,14 +40,14 @@ msgstr "Od¶wie¿"
 
 #. Put the buttons in the box
 #: plugins/chatlist.c:364 src/buddy.c:492 src/buddy.c:2827
-#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2879
+#: src/buddy_chat.c:1454 src/conversation.c:2389 src/conversation.c:2881
 #: src/dialogs.c:932 src/dialogs.c:1114 src/dialogs.c:2095 src/multi.c:1053
 #: src/prefs.c:2041 src/prefs.c:2383 src/prefs.c:2417
 msgid "Add"
 msgstr "Dodaj"
 
 #: plugins/chatlist.c:365 src/buddy.c:494 src/buddy.c:2829
-#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2876
+#: src/buddy_chat.c:1456 src/conversation.c:2375 src/conversation.c:2878
 #: src/prefs.c:2055 src/prefs.c:2387 src/prefs.c:2421
 msgid "Remove"
 msgstr "Usuñ"
@@ -98,7 +98,7 @@ msgid "Available for friends only"
 msgstr "Dostêpny tylko dla przyjació³"
 
 #: src/applet.c:197 src/buddy.c:497 src/buddy.c:2582 src/buddy.c:2727
-#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1118
+#: src/protocols/gg/gg.c:73 src/protocols/jabber/jabber.c:1141
 msgid "Away"
 msgstr "Zajêty"
 
@@ -114,7 +114,7 @@ msgstr "Niewidoczny"
 msgid "Invisible for friends only"
 msgstr "Niewidoczny tylko dla przyjació³"
 
-#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1114
+#: src/protocols/gg/gg.c:77 src/protocols/jabber/jabber.c:1137
 msgid "Unavailable"
 msgstr "Niedostêpny"
 
@@ -351,7 +351,7 @@ msgstr "Przeszukiwanie Katalogu"
 #. show_set_dir(gc);
 #.
 #: src/dialogs.c:1741 src/protocols/gg/gg.c:1160 src/protocols/gg/gg.c:1177
-#: src/protocols/jabber/jabber.c:3748 src/protocols/jabber/jabber.c:3761
+#: src/protocols/jabber/jabber.c:3904 src/protocols/jabber/jabber.c:3917
 msgid "Change Password"
 msgstr "Zmieñ has³o"
 
@@ -372,7 +372,7 @@ msgid "Send message through server"
 msgstr "Wy¶lij wiadomo¶æ poprzez serwer"
 
 #: src/protocols/icq/gaim_icq.c:469 src/protocols/irc/irc.c:1851
-#: src/protocols/jabber/jabber.c:2860 src/protocols/oscar/oscar.c:3593
+#: src/protocols/jabber/jabber.c:2992 src/protocols/oscar/oscar.c:3593
 #: src/protocols/toc/toc.c:1219
 msgid "Get Info"
 msgstr "Pobierz informacjê"
@@ -446,214 +446,226 @@ msgstr "Has³o"
 msgid "DCC Chat"
 msgstr "Chat DCC"
 
-#: src/protocols/jabber/jabber.c:942
+#: src/protocols/jabber/jabber.c:950
 msgid "Incorrect current password! Password NOT Changed!"
 msgstr "Niepoprawne obezne has³o! Has³o NIE zmienione!"
 
-#: src/protocols/jabber/jabber.c:943 src/protocols/jabber/jabber.c:948
+#: src/protocols/jabber/jabber.c:951 src/protocols/jabber/jabber.c:956
 msgid "Password Change Error!"
 msgstr "B³±d zmiany has³a!"
 
-#: src/protocols/jabber/jabber.c:947
+#: src/protocols/jabber/jabber.c:955
 msgid "New password same as old password! Password NOT Changed!"
 msgstr "Nowe has³o takie samo jak stare! Has³o NIE zmienione!"
 
-#: src/protocols/jabber/jabber.c:1092
+#: src/protocols/jabber/jabber.c:1115
 msgid "Unknown"
 msgstr "Nieznany"
 
-#: src/buddy.c:2887 src/protocols/jabber/jabber.c:1120
-#: src/protocols/jabber/jabber.c:1138
+#: src/buddy.c:2887 src/protocols/jabber/jabber.c:1143
+#: src/protocols/jabber/jabber.c:1161
 msgid "Online"
 msgstr "Dostêpny"
 
-#: src/protocols/jabber/jabber.c:1122
+#: src/protocols/jabber/jabber.c:1145
 msgid "Extended Away"
 msgstr "Rozszerzona zajêto¶æ"
 
-#: src/protocols/jabber/jabber.c:1124
+#: src/protocols/jabber/jabber.c:1147
 msgid "Do Not Disturb"
 msgstr "Nie przeszkadzaæ"
 
-#: src/protocols/jabber/jabber.c:1434
+#: src/protocols/jabber/jabber.c:1457
 #, c-format
 msgid "Error %s: %s"
 msgstr "B³±d %s: %s"
 
-#: src/protocols/jabber/jabber.c:1437
+#: src/protocols/jabber/jabber.c:1460
 msgid "Unknown Error in presence"
 msgstr "Nieznany b³±d w prezencji."
 
-#: src/protocols/jabber/jabber.c:1607
+#: src/protocols/jabber/jabber.c:1630
 #, c-format
 msgid "The user %s wants to add you to their buddy list."
 msgstr "U¿ytkownik %s chce dodaæ Ciê do swojej listy kumpli."
 
-#: src/protocols/jabber/jabber.c:1632
+#: src/protocols/jabber/jabber.c:1655
 msgid "No such user"
 msgstr "Brak u¿ytkownika"
 
-#: src/protocols/jabber/jabber.c:1634 src/protocols/jabber/jabber.c:2341
-#: src/protocols/jabber/jabber.c:2506
+#: src/protocols/jabber/jabber.c:1657 src/protocols/jabber/jabber.c:2364
+#: src/protocols/jabber/jabber.c:2632
 msgid "Jabber Error"
 msgstr "B³±d Jabber"
 
-#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1719
+#: src/dialogs.c:887 src/protocols/jabber/jabber.c:1742
 #: src/protocols/msn/msn.c:1110
 msgid "Buddies"
 msgstr "Kumple"
 
-#: src/protocols/jabber/jabber.c:1782
+#: src/protocols/jabber/jabber.c:1805
 msgid "Authenticating"
 msgstr "Autentykowanie"
 
-#: src/protocols/jabber/jabber.c:1819
+#: src/protocols/jabber/jabber.c:1842
 msgid "Unknown login error"
 msgstr "Nieznany b³±d logowania."
 
-#: src/protocols/jabber/jabber.c:2010
+#: src/protocols/jabber/jabber.c:2033
 msgid "Password successfully changed."
 msgstr "Zmiana has³a powiod³a siê."
 
-#: src/protocols/jabber/jabber.c:2012
+#: src/protocols/jabber/jabber.c:2035
 msgid "Password Change"
 msgstr "Zmiana has³a"
 
-#: src/protocols/jabber/jabber.c:2054 src/protocols/jabber/jabber.c:3676
+#: src/protocols/jabber/jabber.c:2077 src/protocols/jabber/jabber.c:3832
 msgid "Connection lost"
 msgstr "Po³±czenie utracone"
 
-#: src/protocols/jabber/jabber.c:2056 src/protocols/jabber/jabber.c:2088
-#: src/protocols/jabber/jabber.c:3678 src/protocols/jabber/jabber.c:3724
+#: src/protocols/jabber/jabber.c:2079 src/protocols/jabber/jabber.c:2111
+#: src/protocols/jabber/jabber.c:3834 src/protocols/jabber/jabber.c:3880
 #: src/protocols/msn/msn.c:1741 src/protocols/msn/msn.c:1770
 msgid "Unable to connect"
 msgstr "Nie mo¿na siê po³±czyæ"
 
-#: src/protocols/jabber/jabber.c:2062
+#: src/protocols/jabber/jabber.c:2085
 msgid "Connected"
 msgstr "Po³±czony"
 
-#: src/protocols/jabber/jabber.c:2065
+#: src/protocols/jabber/jabber.c:2088
 msgid "Requesting Authentication Method"
 msgstr "¯±danie metody autentykacji"
 
 #. we have no chats yet
-#: src/protocols/jabber/jabber.c:2083 src/protocols/msn/msn.c:1762
+#: src/protocols/jabber/jabber.c:2106 src/protocols/msn/msn.c:1762
 msgid "Connecting"
 msgstr "£±czenie"
 
-#: src/protocols/jabber/jabber.c:2340 src/protocols/jabber/jabber.c:2505
+#: src/protocols/jabber/jabber.c:2363 src/protocols/jabber/jabber.c:2631
 msgid "Invalid Jabber I.D."
 msgstr "Niepoprawna ID Jabber"
 
-#: src/protocols/jabber/jabber.c:2473
+#: src/protocols/jabber/jabber.c:2599
 msgid "Room:"
 msgstr "Pokój:"
 
-#: src/protocols/jabber/jabber.c:2477
+#: src/protocols/jabber/jabber.c:2603
 msgid "Server:"
 msgstr "Serwer:"
 
-#: src/protocols/jabber/jabber.c:2482
+#: src/protocols/jabber/jabber.c:2608
 msgid "Handle:"
 msgstr "Uchwyt:"
 
-#: src/protocols/jabber/jabber.c:2539
+#: src/protocols/jabber/jabber.c:2665
 msgid "Chats"
 msgstr "Czaty"
 
-#: src/protocols/jabber/jabber.c:2854
+#: src/protocols/jabber/jabber.c:2980
 msgid "View Error Msg"
 msgstr "Poka¿ komunikat b³êdu"
 
-#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2865
+#: src/buddy_chat.c:886 src/protocols/jabber/jabber.c:2997
 #: src/protocols/oscar/oscar.c:3606
 msgid "Get Away Msg"
 msgstr "Pobierz wiadomo¶æ Zajêty"
 
-#: src/protocols/jabber/jabber.c:2882
+#: src/protocols/jabber/jabber.c:3004
+msgid "Un-hide From"
+msgstr "Ods³oñ Od"
+
+#: src/protocols/jabber/jabber.c:3007
+msgid "Temporarily Hide From"
+msgstr "Tymczasowo schowaj Od"
+
+#: src/protocols/jabber/jabber.c:3025
 msgid "Remove From Roster"
 msgstr "Usuñ ze spisu"
 
-#: src/protocols/jabber/jabber.c:3076
+#: src/protocols/jabber/jabber.c:3030
+msgid "Cancel Presence Notification"
+msgstr "Anuluj pokazywanie powiadomienia"
+
+#: src/protocols/jabber/jabber.c:3232
 msgid "Full Name"
 msgstr "Pe³na nazwa"
 
-#: src/protocols/jabber/jabber.c:3077
+#: src/protocols/jabber/jabber.c:3233
 msgid "Family Name"
 msgstr "Nazwisko"
 
-#: src/protocols/jabber/jabber.c:3078
+#: src/protocols/jabber/jabber.c:3234
 msgid "Given Name"
 msgstr "Nazwisko panieñskie"
 
-#: src/protocols/jabber/jabber.c:3079
+#: src/protocols/jabber/jabber.c:3235
 msgid "Nickname"
 msgstr "Pseudonim"
 
-#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3080
+#: src/dialogs.c:2525 src/protocols/jabber/jabber.c:3236
 msgid "URL"
 msgstr "URL"
 
-#: src/protocols/jabber/jabber.c:3081
+#: src/protocols/jabber/jabber.c:3237
 msgid "Street Address"
 msgstr "Adres ulica"
 
-#: src/protocols/jabber/jabber.c:3082
+#: src/protocols/jabber/jabber.c:3238
 msgid "Extended Address"
 msgstr "Rozszerzony adres"
 
-#: src/protocols/jabber/jabber.c:3083
+#: src/protocols/jabber/jabber.c:3239
 msgid "Locality"
 msgstr "Miejsce (lokalizacja)"
 
-#: src/protocols/jabber/jabber.c:3084
+#: src/protocols/jabber/jabber.c:3240
 msgid "Region"
 msgstr "Region"
 
-#: src/protocols/jabber/jabber.c:3085
+#: src/protocols/jabber/jabber.c:3241
 msgid "Postal Code"
 msgstr "Kod pocztowy"
 
 #. Line 7
-#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3086
+#: src/dialogs.c:1646 src/dialogs.c:2354 src/protocols/jabber/jabber.c:3242
 msgid "Country"
 msgstr "Kraj"
 
-#: src/protocols/jabber/jabber.c:3087
+#: src/protocols/jabber/jabber.c:3243
 msgid "Telephone"
 msgstr "Telefon"
 
-#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3088
+#: src/dialogs.c:2430 src/protocols/jabber/jabber.c:3244
 msgid "Email"
 msgstr "Email"
 
-#: src/protocols/jabber/jabber.c:3089
+#: src/protocols/jabber/jabber.c:3245
 msgid "Organization Name"
 msgstr "Nazwa organizacji"
 
-#: src/protocols/jabber/jabber.c:3090
+#: src/protocols/jabber/jabber.c:3246
 msgid "Organization Unit"
 msgstr "Jednostka organizacyjna"
 
-#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3091
+#: src/prefs.c:2000 src/protocols/jabber/jabber.c:3247
 msgid "Title"
 msgstr "Tytu³"
 
-#: src/protocols/jabber/jabber.c:3092
+#: src/protocols/jabber/jabber.c:3248
 msgid "Role"
 msgstr "Rola"
 
-#: src/protocols/jabber/jabber.c:3093
+#: src/protocols/jabber/jabber.c:3249
 msgid "Birthday"
 msgstr "Data urodzenia"
 
 #. Right side: frame with description and the filepath of plugin
-#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3094
+#: src/dialogs.c:2533 src/plugins.c:211 src/protocols/jabber/jabber.c:3250
 msgid "Description"
 msgstr "Opis"
 
-#: src/protocols/jabber/jabber.c:3119
+#: src/protocols/jabber/jabber.c:3275
 msgid ""
 "All items below are optional. Enter only the information with which you feel "
 "comfortable"
@@ -661,23 +673,23 @@ msgstr ""
 "Wszystkie poni¿sze pola s± opcjonalne. Wprowad¼ jedynie te informacje, które "
 "uwa¿asz za stosowne"
 
-#: src/protocols/jabber/jabber.c:3120
+#: src/protocols/jabber/jabber.c:3276
 msgid "User Identity"
 msgstr "Identyfikacja u¿ytkownika"
 
-#: src/protocols/jabber/jabber.c:3532
+#: src/protocols/jabber/jabber.c:3688
 msgid "Gaim - Edit Jabber vCard"
 msgstr "Gaim - Edycja vCard Jabber"
 
-#: src/protocols/jabber/jabber.c:3606
+#: src/protocols/jabber/jabber.c:3762
 msgid "Server Registration successful!"
 msgstr "Poprawa rejestracja na serwerze!"
 
-#: src/protocols/jabber/jabber.c:3633
+#: src/protocols/jabber/jabber.c:3789
 msgid "Unknown registration error"
 msgstr "Nieznany b³±d rejestracji"
 
-#: src/protocols/jabber/jabber.c:3742 src/protocols/jabber/jabber.c:3757
+#: src/protocols/jabber/jabber.c:3898 src/protocols/jabber/jabber.c:3913
 msgid "Set User Info"
 msgstr "Ustaw informacje o u¿ytkowniku"
 
@@ -1769,7 +1781,7 @@ msgid "IM"
 msgstr "IM"
 
 #: src/buddy.c:500 src/buddy.c:2580 src/buddy_chat.c:877 src/buddy_chat.c:1286
-#: src/buddy_chat.c:1462 src/conversation.c:2897
+#: src/buddy_chat.c:1462 src/conversation.c:2899
 msgid "Info"
 msgstr "Info"
 
@@ -2050,15 +2062,15 @@ msgid "Whisper"
 msgstr "Szept"
 
 #: src/buddy_chat.c:1338 src/buddy_chat.c:1415 src/buddy_chat.c:1464
-#: src/conversation.c:2908
+#: src/conversation.c:2910
 msgid "Send"
 msgstr "Wy¶lij "
 
-#: src/buddy_chat.c:1458 src/conversation.c:2885
+#: src/buddy_chat.c:1458 src/conversation.c:2887
 msgid "Block"
 msgstr "Blokuj"
 
-#: src/buddy_chat.c:1460 src/conversation.c:2891 src/dialogs.c:424
+#: src/buddy_chat.c:1460 src/conversation.c:2893 src/dialogs.c:424
 #: src/dialogs.c:453
 msgid "Warn"
 msgstr "Ostrze¿"
@@ -2222,23 +2234,23 @@ msgstr "Gaim - rozmowy"
 msgid "Send message as: "
 msgstr "Wy¶lij wiadomo¶æ jako: "
 
-#: src/conversation.c:3453
+#: src/conversation.c:3455
 msgid "Gaim - Save Icon"
 msgstr "Gaim - zapisz ikonê"
 
-#: src/conversation.c:3487
+#: src/conversation.c:3489
 msgid "Disable Animation"
 msgstr "Wy³±cz animacjê"
 
-#: src/conversation.c:3492
+#: src/conversation.c:3494
 msgid "Enable Animation"
 msgstr "Za³±cz animacjê"
 
-#: src/conversation.c:3498
+#: src/conversation.c:3500
 msgid "Hide Icon"
 msgstr "Ukryj ikonê"
 
-#: src/conversation.c:3504
+#: src/conversation.c:3506
 msgid "Save Icon As..."
 msgstr "Zapisz ikonê jako..."
 
