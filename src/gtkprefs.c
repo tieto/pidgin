@@ -794,7 +794,7 @@ GtkWidget *hotkeys_page() {
 			"/gaim/gtk/conversations/escape_closes", vbox);
 
 	vbox = gaim_gtk_make_frame(ret, _("Insertions"));
-	gaim_gtk_prefs_checkbox(_("Control-{B/I/U} inserts _HTML tags"),
+	gaim_gtk_prefs_checkbox(_("Control-{B/I/U} changes _formatting"),
 			"/gaim/gtk/conversations/html_shortcuts", vbox);
 	gaim_gtk_prefs_checkbox(_("Control-(number) _inserts smileys"),
 			"/gaim/gtk/conversations/smiley_shortcuts", vbox);
