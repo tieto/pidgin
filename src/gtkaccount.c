@@ -281,9 +281,9 @@ static void buddy_icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(buddy_icon_preview_change_cb), dialog);
 
-	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "delete-event", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
-	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
-			 G_CALLBACK(gtk_widget_destroy), NULL);
+	g_signal_connect(G_OBJECT(dialog->buddy_icon_filesel), "delete_event", G_CALLBACK(buddy_icon_filesel_delete_cb), dialog);
+	g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->cancel_button), "clicked",
+			 G_CALLBACK(gtk_widget_destroy), dialog->buddy_icon_filesel);
 	g_signal_connect(G_OBJECT(GTK_FILE_SELECTION(dialog->buddy_icon_filesel)->ok_button), "clicked", G_CALLBACK(buddy_icon_filesel_choose),
 			 dialog);
 
