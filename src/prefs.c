@@ -1771,7 +1771,7 @@ void show_prefs()
 	aol_icon(prefs->window);
 	gtk_container_border_width(GTK_CONTAINER(prefs), 10);
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Gaim - Preferences"));
-	gtk_widget_set_usize(prefs, 600, 550);
+	gtk_widget_set_usize(prefs, 630, 550);
 	gtk_signal_connect(GTK_OBJECT(prefs), "destroy",
 			   GTK_SIGNAL_FUNC(delete_prefs), NULL);
 
