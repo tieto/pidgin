@@ -42,7 +42,7 @@
 	really don't think I did anything.  I meant to do some gaim_
 	prepension and documentation for IRC and Tcl, and handle IRC errors
 	more responsibly, but I've been meaning to do that for months.
-	Except the Tcl part, the Tcl plugin hasn't even exited for months.
+	Except the Tcl part, the Tcl plugin hasn't even existed for months.
 	I figure if I write enough NEWS no one will notice I didn't do
 	anything during the release cycle.  Oh, I did close some bugs.  I
 	didn't fix them, mind you, I just closed them.  With abandon.
