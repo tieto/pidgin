@@ -2975,7 +2975,7 @@ msgstr "«вук"
 
 #: src/prefs.c:2950
 msgid "Privacy"
-msgstr "”единиение
+msgstr "”единиение"
 
 #: src/prpl.c:70
 msgid ""
