@@ -567,7 +567,10 @@ static void do_im(GtkWidget *widget, int resp, struct getuserinfo *info)
 		who = gtk_entry_get_text(GTK_ENTRY(info->entry));
 
 		if (!g_strcasecmp(who, "")) {
+/*
+SOMEONE FIX THIS CORRECTLY
 			g_free(info);
+*/
 			return;
 		}
 
