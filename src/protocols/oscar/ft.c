@@ -314,6 +314,7 @@ faim_export aim_conn_t *aim_directim_initiate(aim_session_t *sess, aim_conn_t *c
 	memcpy(cookie->cookie, ck, 8);
 	cookie->type = AIM_COOKIETYPE_OFTIM;
 
+	/* this one is for the cookie */
 	priv = (struct aim_directim_intdata *)calloc(1, sizeof(struct aim_directim_intdata));
 
 	memcpy(priv->cookie, ck, 8);

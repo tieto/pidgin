@@ -1,6 +1,9 @@
 
 No release numbers
 ------------------
+ - Sun Sep  9 03:01:28 PDT 2001
+  - Three fixes in directim for gaim.  It works now. Yay.
+
  - Sat Sep  8 21:26:27 PDT 2001
   - Minor bug directim_connect
 
