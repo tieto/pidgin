@@ -927,11 +927,6 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static char *toc_name()
-{
-	return "TOC";
-}
-
 static int toc_send_im(struct gaim_connection *gc, char *name, char *message, int len, int flags)
 {
 	char buf[BUF_LEN * 2];
@@ -1230,26 +1225,6 @@ static GList *toc_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static GList *toc_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "TOC Host:";
-	puo->def = "toc.oscar.aol.com";
-	puo->pos = USEROPT_AUTH;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "TOC Port:";
-	puo->def = "9898";
-	puo->pos = USEROPT_AUTHPORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static void toc_add_permit(struct gaim_connection *gc, char *who)
 {
 	char buf2[BUF_LEN * 2];
@@ -1382,16 +1357,16 @@ static GList *toc_actions()
 static struct prpl *my_protocol = NULL;
 
 void toc_init(struct prpl *ret)
-{
+{	
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_TOC;
 	ret->options = OPT_PROTO_CORRECT_TIME;
-	ret->name = toc_name;
+	ret->name = g_strdup("TOC");
 	ret->list_icon = toc_list_icon;
 	ret->away_states = toc_away_states;
 	ret->actions = toc_actions;
 	ret->do_action = toc_do_action;
 	ret->buddy_menu = toc_buddy_menu;
-	ret->user_opts = toc_user_opts;
 	ret->login = toc_login;
 	ret->close = toc_close;
 	ret->send_im = toc_send_im;
@@ -1421,32 +1396,27 @@ void toc_init(struct prpl *ret)
 	ret->chat_send = toc_chat_send;
 	ret->keepalive = toc_keepalive;
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("TOC Host:");
+	puo->def = g_strdup("toc.oscar.aol.com");
+	puo->pos = USEROPT_AUTH;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("TOC Port:");
+	puo->def = g_strdup("9898");
+	puo->pos = USEROPT_AUTHPORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(toc_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_TOC);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "TOC";
-}
-
-char *description()
-{
-	return PRPL_DESC("TOC");
+	toc_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

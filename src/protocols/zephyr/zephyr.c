@@ -62,11 +62,6 @@ struct _zephyr_triple {
 	int id;
 };
 
-static char *zephyr_name()
-{
-	return "Zephyr";
-}
-
 #define z_call(func)		if (func != ZERR_NONE)\
 					return;
 #define z_call_r(func)		if (func != ZERR_NONE)\
@@ -945,7 +940,7 @@ void zephyr_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_ZEPHYR;
 	ret->options = OPT_PROTO_NO_PASSWORD;
-	ret->name = zephyr_name;
+	ret->name = g_strdup("Zephyr");
 	ret->login = zephyr_login;
 	ret->close = zephyr_close;
 	ret->add_buddy = zephyr_add_buddy;
@@ -966,27 +961,11 @@ void zephyr_init(struct prpl *ret)
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(zephyr_init, sizeof(struct prpl));
-	return NULL;
+	zephyr_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_ZEPHYR);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Zephyr";
-}
-
-char *description()
-{
-	return PRPL_DESC("Zephyr");
-}
 
 #endif

@@ -41,6 +41,8 @@
 #define PROTO_NAPSTER	9
 #define PROTO_ZEPHYR   10
 #define PROTO_GADUGADU 11
+#define PROTO_UNTAKEN  17
+
 /* DON'T TAKE AN UNASSIGNED NUMBER! Talk to Rob or Sean if you'd like
  * to create a new PRPL. */
 
@@ -86,7 +88,8 @@ struct _prpl_smiley {
 struct prpl {
 	int protocol;
 	int options;
-	char *(* name)();
+	struct gaim_plugin *plug;
+	char *name;
 
 	/* for ICQ and Yahoo, who have off/on per-conversation options */
 	/* char *checkbox; this should be per-connection */
@@ -96,8 +99,8 @@ struct prpl {
 	GList *(* away_states)(struct gaim_connection *gc);
 	GList *(* actions)();
 	void   (* do_action)(struct gaim_connection *, char *);
-	/* user_opts returns a GList* of g_malloc'd struct proto_user_opts */
-	GList *(* user_opts)();
+	/* user_opts is a GList* of g_malloc'd struct proto_user_opts */
+	GList *user_opts;
 	GList *(* buddy_menu)(struct gaim_connection *, char *);
 	GList *(* edit_buddy_menu)(struct gaim_connection *, char *);
 	GList *(* chat_info)(struct gaim_connection *);
@@ -180,13 +183,16 @@ struct prpl {
 };
 
 extern GSList *protocols;
+extern prpl_accounts[];
 
 /* this is mostly just for aim.c, when it initializes the protocols */
 extern void static_proto_init();
 
 /* this is what should actually load the protocol. pass it the protocol's initializer */
-extern void load_protocol(proto_init, int);
+extern gboolean load_prpl(struct prpl *);
+extern void load_protocol(proto_init);
 extern void unload_protocol(struct prpl *);
+extern gint proto_compare(struct prpl *, struct prpl *);
 
 extern struct prpl *find_prpl(int);
 extern void do_proto_menu();

@@ -834,7 +834,7 @@ void show_info_dialog()
 
 		while (g) {
 			c = (struct gaim_connection *)g->data;
-			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name());
+			g_snprintf(buf, sizeof(buf), "%s (%s)", c->username, c->prpl->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), info);
 
@@ -1045,7 +1045,7 @@ static void create_online_user_names(struct addbuddy *b)
 	while (g) {
 		c = (struct gaim_connection *)g->data;
 		g_snprintf(buf, sizeof(buf), "%s (%s)", 
-				c->username, c->prpl->name());
+				c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), b);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate",
@@ -1321,7 +1321,7 @@ static void build_deny_menu()
 		c = c->next;
 		if (!gc->prpl->set_permit_deny)
 			continue;
-		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name());
+		g_snprintf(buf, sizeof buf, "%s (%s)", gc->username, gc->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(deny_gc_opt), gc);
 		gtk_widget_show(opt);
@@ -1649,7 +1649,7 @@ static GtkWidget *pounce_user_menu(struct addbp *b, struct gaim_connection *gc)
 	while (u) {
 		a = (struct aim_user *)u->data;
 		p = (struct prpl *)find_prpl(a->protocol);
-		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name():"Unknown");
+		g_snprintf(buf, sizeof buf, "%s (%s)", a->username, (p && p->name)?p->name:"Unknown");
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), a);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(pounce_choose), b);
@@ -3345,7 +3345,7 @@ static void create_import_dropdown(GtkFileSelection *fs)
 
 	while (g) {
 		c = (struct gaim_connection *)g->data;
-		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name());
+		g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(set_import_gc), c);
 		gtk_widget_show(opt);

@@ -63,12 +63,6 @@ struct nap_data {
 	GSList *channels;
 };
 
-static char *nap_name()
-{
-	return "Napster";
-}
-
-
 /* FIXME: Make this use va_arg stuff */
 static void nap_write_packet(struct gaim_connection *gc, unsigned short command, const char *message)
 {
@@ -550,27 +544,6 @@ static void nap_add_buddies(struct gaim_connection *gc, GList *buddies)
 	}
 }
 
-
-static GList *nap_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Server:";
-	puo->def = NAP_SERVER;
-	puo->pos = USEROPT_NAPSERVER;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Port:";
-	puo->def = "8888";
-	puo->pos = USEROPT_NAPPORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static char** nap_list_icon(int uc)
 {
 	return napster_xpm;
@@ -580,10 +553,24 @@ static struct prpl *my_protocol = NULL;
 
 void napster_init(struct prpl *ret)
 {
+	struct proto_user_opt *puo;
+	ret->add_buddies = nap_add_buddies;
+	ret->remove_buddy = nap_remove_buddy;
+	ret->add_permit = NULL;
+	ret->rem_permit = NULL;
+	ret->add_deny = NULL;
+	ret->rem_deny = NULL;
+	ret->warn = NULL;
+	ret->chat_info = nap_chat_info;
+	ret->join_chat = nap_join_chat;
+	ret->chat_invite = NULL;
+	ret->chat_leave = nap_chat_leave;
+	ret->chat_whisper = NULL;
+	ret->chat_send = nap_chat_send;
+	ret->keepalive = NULL;
 	ret->protocol = PROTO_NAPSTER;
-	ret->name = nap_name;
+	ret->name = g_strdup("Napster");
 	ret->list_icon = nap_list_icon;
-	ret->user_opts = nap_user_opts;
 	ret->login = nap_login;
 	ret->close = nap_close;
 	ret->send_im = nap_send_im;
@@ -611,32 +598,26 @@ void napster_init(struct prpl *ret)
 	ret->chat_send = nap_chat_send;
 	ret->keepalive = NULL;
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Server:");
+	puo->def = g_strdup(NAP_SERVER);
+	puo->pos = USEROPT_NAPSERVER;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Port:");
+	puo->def = g_strdup("8888");
+	puo->pos = USEROPT_NAPPORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule * handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(napster_init, sizeof(struct prpl));
-	return NULL;
+	napster_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_NAPSTER);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Napster";
-}
-
-char *description()
-{
-	return PRPL_DESC("Napster");
-}
-
 #endif

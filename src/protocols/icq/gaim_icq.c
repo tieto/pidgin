@@ -23,10 +23,6 @@ struct icq_data {
 
 static guint ack_timer = 0;
 
-static char *icq_name() {
-	return "ICQ";
-}
-
 static void icq_do_log(icq_Link *link, time_t time, unsigned char level, const char *log) {
 	debug_printf("ICQ debug %d: %s", level, log);
 }
@@ -474,19 +470,6 @@ static GList *icq_buddy_menu(struct gaim_connection *gc, char *who) {
 	return m;
 }
 
-static GList *icq_user_opts() {
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Nick:";
-	puo->def = "Gaim User";
-	puo->pos = USEROPT_NICK;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static GList *icq_away_states(struct gaim_connection *gc) {
 	GList *m = NULL;
 
@@ -504,12 +487,12 @@ static GList *icq_away_states(struct gaim_connection *gc) {
 static struct prpl *my_protocol = NULL;
 
 void icq_init(struct prpl *ret) {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_ICQ;
-	ret->name = icq_name;
+	ret->name = g_strdup("ICQ");
 	ret->list_icon = icq_list_icon;
 	ret->away_states = icq_away_states;
 	ret->buddy_menu = icq_buddy_menu;
-	ret->user_opts = icq_user_opts;
 	ret->login = icq_login;
 	ret->close = icq_close;
 	ret->send_im = icq_send_msg;
@@ -520,6 +503,12 @@ void icq_init(struct prpl *ret) {
 	ret->set_away = icq_set_away;
 	ret->keepalive = icq_keepalive;
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Nick:");
+	puo->def = g_strdup("Gaim User");
+	puo->pos = USEROPT_NICK;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 
 	icq_SocketNotify = icq_sock_notify;
@@ -528,27 +517,9 @@ void icq_init(struct prpl *ret) {
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(icq_init, sizeof(struct prpl));
-	return NULL;
+	icq_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_ICQ);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "ICQ";
-}
-
-char *description()
-{
-	return PRPL_DESC("ICQ");
-}
-
 #endif

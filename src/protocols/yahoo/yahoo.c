@@ -173,10 +173,6 @@ struct yahoo_packet {
 	GSList *hash;
 };
 
-static char *yahoo_name() {
-	return "Yahoo";
-}
-
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
 static struct yahoo_packet *yahoo_packet_new(enum yahoo_service service, enum yahoo_status status, int id)
@@ -1128,26 +1124,6 @@ static GList *yahoo_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static GList *yahoo_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Pager Host:";
-	puo->def = YAHOO_PAGER_HOST;
-	puo->pos = USEROPT_PAGERHOST;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Pager Port:";
-	puo->def = "5050";
-	puo->pos = USEROPT_PAGERPORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static void yahoo_act_id(gpointer data, char *entry)
 {
 	struct gaim_connection *gc = data;
@@ -1435,10 +1411,10 @@ GSList *yahoo_smiley_list()
 static struct prpl *my_protocol = NULL;
 
 void yahoo_init(struct prpl *ret) {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_YAHOO;
 	ret->options = OPT_PROTO_MAIL_CHECK;
-	ret->name = yahoo_name;
-	ret->user_opts = yahoo_user_opts;
+	ret->name = g_strdup("Yahoo");
 	ret->login = yahoo_login;
 	ret->close = yahoo_close;
 	ret->buddy_menu = yahoo_buddy_menu;
@@ -1455,32 +1431,27 @@ void yahoo_init(struct prpl *ret) {
 	ret->send_typing = yahoo_send_typing;
 	ret->smiley_list = yahoo_smiley_list;
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Pager Host:");
+	puo->def = g_strdup(YAHOO_PAGER_HOST);
+	puo->pos = USEROPT_PAGERHOST;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Pager Port:");
+	puo->def = g_strdup("5050");
+	puo->pos = USEROPT_PAGERPORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(yahoo_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_YAHOO);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Yahoo";
-}
-
-char *description()
-{
-	return PRPL_DESC("Yahoo");
+	yahoo_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

@@ -217,7 +217,7 @@ static void create_joinchat_menu(GtkWidget *box)
 			continue;
 		if (!joinchatgc)
 			joinchatgc = g;
-		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, g->prpl->name());
+		g_snprintf(buf, sizeof buf, "%s (%s)", g->username, g->prpl->name);
 		opt = gtk_menu_item_new_with_label(buf);
 		gtk_object_set_user_data(GTK_OBJECT(opt), g);
 		gtk_signal_connect(GTK_OBJECT(opt), "activate", GTK_SIGNAL_FUNC(joinchat_choose), g);

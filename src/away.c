@@ -464,7 +464,7 @@ void do_away_menu()
 				}
 
 				g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gc->username, gc->prpl->name());
+					   gc->username, gc->prpl->name);
 				menuitem = gtk_menu_item_new_with_label(buf);
 				gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 				gtk_widget_show(menuitem);

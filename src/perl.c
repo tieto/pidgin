@@ -550,7 +550,7 @@ XS (XS_GAIM_get_info)
 		{
 			struct gaim_connection *gc = (struct gaim_connection *)SvIV(ST(1));
 			if (g_slist_find(connections, gc))
-				XST_mPV(i++, gc->prpl->name());
+				XST_mPV(i++, gc->prpl->name);
 			else
 				XST_mPV(i++, "Unknown");
 		}

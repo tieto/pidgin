@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 3516 2002-08-29 01:47:15Z seanegan $
+ * $Id: gg.c 3670 2002-09-30 01:05:18Z seanegan $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 
@@ -99,10 +99,6 @@ struct agg_http {
 	int type;
 };
 
-static char *agg_name()
-{
-	return "Gadu-Gadu";
-}
 
 static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
 {
@@ -304,20 +300,6 @@ static GList *agg_buddy_menu(struct gaim_connection *gc, char *who)
 	pbm->callback = NULL;
 	pbm->gc = gc;
 	m = g_list_append(m, pbm);
-
-	return m;
-}
-
-static GList *agg_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = _("Nick:");
-	puo->def = _("Gadu-Gadu User");
-	puo->pos = USEROPT_NICK;
-	m = g_list_append(m, puo);
 
 	return m;
 }
@@ -1241,14 +1223,14 @@ static struct prpl *my_protocol = NULL;
 
 void gg_init(struct prpl *ret)
 {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_GADUGADU;
 	ret->options = 0;
-	ret->name = agg_name;
+	ret->name = g_strdup("Gadu-Gadu");
 	ret->list_icon = agg_list_icon;
 	ret->away_states = agg_away_states;
 	ret->actions = agg_actions;
 	ret->do_action = agg_do_action;
-	ret->user_opts = agg_user_opts;
 	ret->buddy_menu = agg_buddy_menu;
 	ret->chat_info = NULL;
 	ret->login = agg_login;
@@ -1278,32 +1260,22 @@ void gg_init(struct prpl *ret)
 	ret->chat_send = NULL;
 	ret->keepalive = agg_keepalive;
 	ret->normalize = NULL;
+     
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup(_("Nick:"));
+	puo->def = g_strdup(_("Gadu-Gadu User"));
+	puo->pos = USEROPT_NICK;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(gg_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_GADUGADU);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Gadu-Gadu";
-}
-
-char *description()
-{
-	return PRPL_DESC("Gadu-Gadu");
+	gg_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

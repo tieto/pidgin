@@ -2723,10 +2723,6 @@ static void oscar_keepalive(struct gaim_connection *gc) {
 	aim_flap_nop(odata->sess, odata->conn);
 }
 
-static char *oscar_name() {
-	return "AIM / ICQ";
-}
-
 static int oscar_send_typing(struct gaim_connection *gc, char *name, int typing) {
 	struct oscar_data *odata = (struct oscar_data *)gc->proto_data;
 	struct direct_im *dim = find_direct_im(odata, name);
@@ -3743,26 +3739,6 @@ static GList *oscar_edit_buddy_menu(struct gaim_connection *gc, char *who)
 	return m;
 }
 
-static GList *oscar_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Auth Host:";
-	puo->def = "login.oscar.aol.com";
-	puo->pos = USEROPT_AUTH;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Auth Port:";
-	puo->def = "5190";
-	puo->pos = USEROPT_AUTHPORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static void oscar_set_permit_deny(struct gaim_connection *gc) {
 	struct oscar_data *od = (struct oscar_data *)gc->proto_data;
 	if (od->icq) {
@@ -3983,16 +3959,16 @@ static void oscar_convo_closed(struct gaim_connection *gc, char *who)
 static struct prpl *my_protocol = NULL;
 
 void oscar_init(struct prpl *ret) {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_BUDDY_ICON | OPT_PROTO_IM_IMAGE;
-	ret->name = oscar_name;
+	ret->name = g_strdup("Oscar");
 	ret->list_icon = oscar_list_icon;
 	ret->away_states = oscar_away_states;
 	ret->actions = oscar_actions;
 	ret->do_action = oscar_do_action;
 	ret->buddy_menu = oscar_buddy_menu;
 	ret->edit_buddy_menu = oscar_edit_buddy_menu;
-	ret->user_opts = oscar_user_opts;
 	ret->login = oscar_login;
 	ret->close = oscar_close;
 	ret->send_im = oscar_send_im;
@@ -4027,32 +4003,27 @@ void oscar_init(struct prpl *ret) {
 	ret->keepalive = oscar_keepalive;
 	ret->convo_closed = oscar_convo_closed;
 
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Auth Host:");
+	puo->def = g_strdup("login.oscar.aol.com");
+	puo->pos = USEROPT_AUTH;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Auth Port:");
+	puo->def = g_strdup("5190");
+	puo->pos = USEROPT_AUTHPORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(oscar_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_OSCAR);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Oscar";
-}
-
-char *description()
-{
-	return PRPL_DESC("Oscar");
+	oscar_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

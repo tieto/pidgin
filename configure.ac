@@ -67,7 +67,7 @@ AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(multi,   [  --disable-multi         disable multiple connections],,enable_multi=yes)
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
-AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="oscar")
+AC_ARG_WITH(static-prpls,    [  --with-static-prpls     link in certain protocols statically],[STATIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`],STATIC_PRPLS="")
 if test "x$STATIC_PRPLS" = "xall" ; then
 	STATIC_PRPLS="gg irc jabber msn napster oscar toc yahoo zephyr"
 fi
@@ -78,7 +78,7 @@ load_proto=
 for i in $STATIC_PRPLS ; do
 	STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
 	extern_init="$extern_init extern void ${i}_init(struct prpl *);"
-	load_proto="$load_proto load_protocol(${i}_init, sizeof(struct prpl));"
+	load_proto="$load_proto load_protocol(${i}_init);"
 	case $i in
 		gg) static_gg=yes ;;
 		irc) static_irc=yes ;;

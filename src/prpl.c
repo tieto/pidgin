@@ -32,6 +32,7 @@
 GSList *protocols = NULL;
 
 GtkWidget *protomenu = NULL;
+int prpl_accounts[PROTO_UNTAKEN];
 
 struct _prompt {
 	GtkWidget *window;
@@ -56,30 +57,39 @@ struct prpl *find_prpl(int prot)
 	return NULL;
 }
 
-static gint proto_compare(struct prpl *a, struct prpl *b)
+gint proto_compare(struct prpl *a, struct prpl *b)
 {
 	/* neg if a before b, 0 if equal, pos if a after b */
 	return a->protocol - b->protocol;
 }
 
-void load_protocol(proto_init pi, int size)
+#ifdef GAIM_PLUGINS
+gboolean load_prpl(struct prpl *p)
+{
+	char *(*gaim_prpl_init)(struct prpl *);
+	debug_printf("Loading protocol %d\n", p->protocol);
+
+	if (!p->plug)
+		return TRUE;
+	
+	p->plug->handle = g_module_open(p->plug->path, 0);
+	if (!p->plug->handle) {
+		debug_printf("%s is unloadable: %s\n", p->plug->path, g_module_error());
+		return TRUE;
+	}
+
+	if (!g_module_symbol(p->plug->handle, "gaim_prpl_init", (gpointer *)&gaim_prpl_init)) {
+		return TRUE;
+	}
+
+	gaim_prpl_init(p);
+	return FALSE;
+}
+#endif
+
+void load_protocol(proto_init pi)
 {
 	struct prpl *p;
-	struct prpl *old;
-	if (size != sizeof(struct prpl)) {
-		do_error_dialog(_("Incompatible protocol detected."),
-				_("You have attempted to load a protocol which was not compiled"
-				  " from the same version of the source as this application was."
-				  " Unfortunately, because it is not the same version I cannot"
-				  " safely tell you which one it was. Needless to say, it was not"
-				  " successfully loaded."), GAIM_ERROR);
-		return;
-	}
-	
-	p = g_new0(struct prpl, 1);
-	pi(p);
-	if ((old = find_prpl(p->protocol)) != NULL)
-		unload_protocol(old);
 
 	if (p->protocol == PROTO_ICQ) 
 		do_error_dialog(_("Libicq.so detected."),
@@ -89,31 +99,26 @@ void load_protocol(proto_init pi, int size)
 				  "It is reccomended that you use the AIM/ICQ protocol to connect to ICQ"),
 				GAIM_WARNING);
 
-
 	protocols = g_slist_insert_sorted(protocols, p, (GCompareFunc)proto_compare);
 	regenerate_user_list();
 }
 
 void unload_protocol(struct prpl *p)
 {
-	GSList *c = connections;
-	struct gaim_connection *g;
+	GList *c;
+	struct proto_user_opt *puo;
+	if (p->name)
+		g_free(p->name);
+	c = p->user_opts;
 	while (c) {
-		g = (struct gaim_connection *)c->data;
-		if (g->prpl == p) {
-			char buf[256];
-			g_snprintf(buf, sizeof buf, _("%s was using %s, which got removed."
-						      " %s is now offline."), g->username,
-				   p->name(), g->username);
-			do_error_dialog(buf, NULL, GAIM_ERROR);
-			signoff(g);
-			c = connections;
-		} else
-			c = c->next;
+		puo = c->data;
+		g_free(puo->label);
+		g_free(puo->def);
+		g_free(puo);
+		c = c->next;
 	}
-	protocols = g_slist_remove(protocols, p);
-	g_free(p);
-	regenerate_user_list();
+	g_list_free(p->user_opts);
+	p->user_opts = NULL;
 }
 
 STATIC_PROTO_INIT
@@ -321,7 +326,7 @@ void do_proto_menu()
 				continue;
 			}
 
-			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name());
+			g_snprintf(buf, sizeof(buf), "%s (%s)", gc->username, gc->prpl->name);
 			menuitem = gtk_menu_item_new_with_label(buf);
 			gtk_menu_append(GTK_MENU(protomenu), menuitem);
 			gtk_widget_show(menuitem);

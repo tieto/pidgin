@@ -225,11 +225,6 @@ struct jabber_chat {
 #define JCS_CLOSED  3	/* closed */
 
 
-static char *jabber_name()
-{
-	return "Jabber";
-}
-
 #define STATE_EVT(arg) if(gjc->on_state) { (gjc->on_state)(gjc, (arg) ); }
 
 static void jabber_handlevcard(gjconn, xmlnode, char *);
@@ -3193,20 +3188,6 @@ static void jabber_keepalive(struct gaim_connection *gc) {
 	gjab_send_raw(jd->gjc, "  \t  ");
 }
 
-static GList *jabber_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Port:";
-	puo->def = "5222";
-	puo->pos = USEROPT_PORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 /*---------------------------------------*/
 /* Jabber "set info" (vCard) support     */
 /*---------------------------------------*/
@@ -3982,16 +3963,16 @@ static struct prpl *my_protocol = NULL;
 void jabber_init(struct prpl *ret)
 {
 	/* the NULL's aren't required but they're nice to have */
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_JABBER;
 	ret->options = OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_CHAT_TOPIC;
-	ret->name = jabber_name;
+	ret->name = g_strdup("Jabber");
 	ret->list_icon = jabber_list_icon;
 	ret->away_states = jabber_away_states;
 	ret->actions = jabber_actions;
 	ret->do_action = jabber_do_action;
 	ret->buddy_menu = jabber_buddy_menu;
 	ret->edit_buddy_menu = jabber_edit_buddy_menu;
-	ret->user_opts = jabber_user_opts;
 	ret->login = jabber_login;
 	ret->close = jabber_close;
 	ret->send_im = jabber_send_im;
@@ -4028,33 +4009,22 @@ void jabber_init(struct prpl *ret)
 	ret->send_typing = jabber_send_typing;
 	ret->convo_closed = jabber_convo_closed;
 	ret->rename_group = jabber_rename_group;
+       
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Port:");
+	puo->def = g_strdup("5222");
+	puo->pos = USEROPT_PORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(jabber_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_JABBER);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "Jabber";
-}
-
-char *description()
-{
-	return PRPL_DESC("Jabber");
+	jabber_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

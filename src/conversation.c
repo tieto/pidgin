@@ -2480,7 +2480,7 @@ static void create_convo_menu(struct conversation *cnv)
 
 		while (g) {
 			c = (struct gaim_connection *)g->data;
-			g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name());
+			g_snprintf(buf, sizeof buf, "%s (%s)", c->username, c->prpl->name);
 			opt = gtk_menu_item_new_with_label(buf);
 			gtk_object_set_user_data(GTK_OBJECT(opt), cnv);
 			gtk_signal_connect(GTK_OBJECT(opt), "activate",

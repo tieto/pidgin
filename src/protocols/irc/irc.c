@@ -101,11 +101,6 @@ find_dcc_chat (struct gaim_connection *gc, char *nick)
 	return NULL;
 }
 
-static char *irc_name()
-{
-	return "IRC";
-}
-
 static int irc_write(int fd, char *data, int len)
 {
 	debug_printf("IRC C: %s", data);
@@ -1401,26 +1396,6 @@ static void irc_close(struct gaim_connection *gc)
 	g_free(gc->proto_data);
 }
 
-static GList *irc_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Server:";
-	puo->def = "irc.openprojects.net";
-	puo->pos = USEROPT_SERV;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Port:";
-	puo->def = "6667";
-	puo->pos = USEROPT_PORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 static void set_mode_3(struct gaim_connection *gc, char *who, int sign, int mode,
 			int start, int end, char *word[])
 {
@@ -1987,10 +1962,10 @@ static struct prpl *my_protocol = NULL;
 
 void irc_init(struct prpl *ret)
 {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_IRC;
 	ret->options = OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD;
-	ret->name = irc_name;
-	ret->user_opts = irc_user_opts;
+	ret->name = g_strdup("IRC");
 	ret->list_icon = irc_list_icon;
 	ret->login = irc_login;
 	ret->close = irc_close;
@@ -2007,32 +1982,28 @@ void irc_init(struct prpl *ret)
 	ret->buddy_menu = irc_buddy_menu;
 	ret->chat_invite = irc_chat_invite;
 	ret->convo_closed = irc_convo_closed;
-	my_protocol = ret;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Server:");
+	puo->def = g_strdup("irc.openprojects.net");
+	puo->pos = USEROPT_SERV;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Port:");
+	puo->def = g_strdup("6667");
+	puo->pos = USEROPT_PORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+       	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl* prpl)
 {
-	load_protocol(irc_init, sizeof(struct prpl));
-	return NULL;
-}
-
-void gaim_plugin_remove()
-{
-	struct prpl *p = find_prpl(PROTO_IRC);
-	if (p == my_protocol)
-		unload_protocol(p);
-}
-
-char *name()
-{
-	return "IRC";
-}
-
-char *description()
-{
-	return PRPL_DESC("IRC");
+	irc_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 #endif

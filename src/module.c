@@ -35,6 +35,7 @@
 #endif
 
 #include "gaim.h"
+#include "prpl.h"
 
 #include <string.h>
 #include <sys/time.h>
@@ -92,7 +93,9 @@ void gaim_probe_plugins() {
 	int l;
 #if GAIM_PLUGINS     
 	char *(*gaim_plugin_init)(GModule *);
+	char *(*gaim_prpl_init)(struct prpl *);
 	char *(*cfunc)();
+	struct prpl * new_prpl;
 	struct gaim_plugin_description *(*desc)();
 	GModule *handle;
 #endif
@@ -111,6 +114,25 @@ void gaim_probe_plugins() {
 						debug_printf("%s is unloadable: %s\n", file, g_module_error());
 						continue;
 					}
+					if (g_module_symbol(handle, "gaim_prpl_init", (gpointer *)&gaim_prpl_init)) {
+						plug = g_new0(struct gaim_plugin, 1);
+						g_snprintf(plug->path, sizeof(plug->path), path);
+						plug->type = plugin;
+
+						new_prpl = g_new0(struct prpl, 1);
+						new_prpl->plug = plug;
+						gaim_prpl_init(new_prpl);
+						if (new_prpl->protocol == PROTO_ICQ ||
+						    find_prpl(new_prpl->protocol)) {
+							/* Nothing to see here--move along, move along */
+							unload_protocol(new_prpl);
+							continue;
+						}
+						protocols = g_slist_insert_sorted(protocols, new_prpl, (GCompareFunc)proto_compare);
+						g_module_close(handle);
+						continue;
+					}
+					
 					if (!g_module_symbol(handle, "gaim_plugin_init", (gpointer *)&gaim_plugin_init)) {
 						debug_printf("%s is unloadable %s\n", file, g_module_error());
 						g_module_close(handle);

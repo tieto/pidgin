@@ -47,13 +47,25 @@ void serv_login(struct aim_user *user)
 	if (user->gc != NULL)
 		return;
 
+#ifdef GAIM_PLUGINS
+	if (p->plug) { /* This protocol is a plugin */
+		prpl_accounts[p->protocol]++;
+		debug_printf("Protocol %s is now being used by %d connections.\n", p->name, prpl_accounts[p->protocol]);
+		if (!p->plug->handle) { /* But the protocol isn't yet loaded. */
+			unload_protocol(p); /* Unload it to free the old name and options */
+			if (load_prpl(p)) /* And load the plugin */
+				return;
+		}
+	}
+#endif
+
 	if (p && p->login) {
 		if (!strlen(user->password) && !(p->options & OPT_PROTO_NO_PASSWORD)) {
 			do_error_dialog(_("Please enter your password"), NULL, GAIM_ERROR);
 			return;
 		}
 
-		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name());
+		debug_printf(PACKAGE " " VERSION " logging in %s using %s\n", user->username, p->name);
 		user->connecting = TRUE;
 		connecting_count++;
 		debug_printf("connecting_count: %d\n", connecting_count);
@@ -84,6 +96,7 @@ static void update_keepalive(struct gaim_connection *gc, gboolean on)
 
 void serv_close(struct gaim_connection *gc)
 {
+	struct prpl *prpl;
 	while (gc->buddy_chats) {
 		struct conversation *b = gc->buddy_chats->data;
 		gc->buddy_chats = g_slist_remove(gc->buddy_chats, b);
@@ -99,9 +112,23 @@ void serv_close(struct gaim_connection *gc)
 
 	if (gc->prpl && gc->prpl->close)
 		gc->prpl->close(gc);
-
+	
+	prpl = gc->prpl;
 	account_offline(gc);
 	destroy_gaim_conn(gc);
+
+#ifdef GAIM_PLUGINS
+	if (prpl->plug) { /* This is a plugin */
+		prpl_accounts[prpl->protocol]--;
+		debug_printf("Prpl %s is now being used by %d accounts\n", prpl->name, prpl_accounts[prpl->protocol]);
+		if (prpl_accounts[prpl->protocol] == 0) { /* We don't need this protocol anymore */
+			debug_printf("Throwing out prpl %s\n", prpl->name);
+			g_module_close(prpl->plug->handle);
+			prpl->plug->handle = NULL;
+		}
+	}
+#endif
+		
 }
 
 void serv_touch_idle(struct gaim_connection *gc)

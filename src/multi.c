@@ -155,7 +155,7 @@ static char *proto_name(int proto)
 {
 	struct prpl *p = find_prpl(proto);
 	if (p && p->name)
-		return p->name();
+		return p->name;
 	else
 		return "Unknown";
 }
@@ -396,7 +396,7 @@ static GtkWidget *make_protocol_menu(GtkWidget *box, struct mod_user *u)
 		if (!found)
 			count++;
 		if (e->name)
-			opt = gtk_menu_item_new_with_label(e->name());
+			opt = gtk_menu_item_new_with_label(e->name);
 		else
 			opt = gtk_menu_item_new_with_label("Unknown");
 		gtk_object_set_user_data(GTK_OBJECT(opt), u);
@@ -655,12 +655,12 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 	if (!p->user_opts)
 		return;
 
-	tmp = op = p->user_opts();
+	tmp = op = p->user_opts;
 
 	if (!op)
 		return;
 
-	g_snprintf(buf, sizeof(buf), "%s Options", p->name());
+	g_snprintf(buf, sizeof(buf), "%s Options", p->name);
 	u->proto_frame = gtk_frame_new(buf);
 	gtk_box_pack_start(GTK_BOX(box), u->proto_frame, FALSE, FALSE, 0);
 	gtk_widget_show(u->proto_frame);
@@ -693,8 +693,7 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		gtk_widget_show(entry);
 
 		u->opt_entries = g_list_append(u->opt_entries, entry);
-
-		g_free(puo);
+		
 		op = op->next;
 	}
 
@@ -705,7 +704,6 @@ static void generate_protocol_options(struct mod_user *u, GtkWidget *box)
 		gtk_widget_show(u->register_user);
 	}
 
-	g_list_free(tmp);
 }
 
 static void show_acct_mod(struct aim_user *a)
@@ -1166,7 +1164,7 @@ void account_online(struct gaim_connection *gc)
 		return;
 	i = gtk_clist_find_row_from_data(GTK_CLIST(list), gc->user);
 	gtk_clist_set_text(GTK_CLIST(list), i, 1, "Yes");
-	gtk_clist_set_text(GTK_CLIST(list), i, 3, gc->prpl->name());
+	gtk_clist_set_text(GTK_CLIST(list), i, 3, gc->prpl->name);
 
 	return;
 }
@@ -1324,7 +1322,7 @@ void set_login_progress(struct gaim_connection *gc, float howfar, char *message)
 		meter->gc = gc;
 		meters = g_slist_append(meters, meter);
 
-		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name());
+		g_snprintf(buf, sizeof(buf), "%s Signing On (using %s)", gc->username, gc->prpl->name);
 	}
 
 	gtk_progress_bar_update(GTK_PROGRESS_BAR(meter->progress), howfar / LOGIN_STEPS);

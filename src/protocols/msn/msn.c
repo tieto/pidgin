@@ -153,10 +153,6 @@ static void msn_login_xfr_connect(gpointer, gint, GaimInputCondition);
 			while (*(tmp) && isspace(*(tmp))) \
 				(tmp)++;
 
-static char *msn_name()
-{
-	return "MSN";
-}
 
 static char *msn_normalize(const char *s)
 {
@@ -2404,26 +2400,6 @@ static void msn_buddy_free(struct buddy *b)
 		g_free(b->proto_data);
 }
 
-static GList *msn_user_opts()
-{
-	GList *m = NULL;
-	struct proto_user_opt *puo;
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Server:";
-	puo->def = MSN_SERVER;
-	puo->pos = USEROPT_MSNSERVER;
-	m = g_list_append(m, puo);
-
-	puo = g_new0(struct proto_user_opt, 1);
-	puo->label = "Port:";
-	puo->def = "1863";
-	puo->pos = USEROPT_MSNPORT;
-	m = g_list_append(m, puo);
-
-	return m;
-}
-
 GSList *msn_smiley_list() 
 { 
 	GSList *smilies = NULL;
@@ -2530,9 +2506,10 @@ static struct prpl *my_protocol = NULL;
 
 void msn_init(struct prpl *ret)
 {
+	struct proto_user_opt *puo;
 	ret->protocol = PROTO_MSN;
 	ret->options = OPT_PROTO_MAIL_CHECK;
-	ret->name = msn_name;
+	ret->name = g_strdup("MSN");
 	ret->list_icon = msn_list_icon;
 	ret->buddy_menu = msn_buddy_menu;
 	ret->login = msn_login;
@@ -2559,17 +2536,28 @@ void msn_init(struct prpl *ret)
 	ret->rem_deny = msn_rem_deny;
 	ret->buddy_free = msn_buddy_free;
 	ret->smiley_list = msn_smiley_list;
-	ret->user_opts = msn_user_opts;
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Server:");
+	puo->def = g_strdup(MSN_SERVER);
+	puo->pos = USEROPT_MSNSERVER;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
+
+	puo = g_new0(struct proto_user_opt, 1);
+	puo->label = g_strdup("Port:");
+	puo->def = g_strdup("1863");
+	puo->pos = USEROPT_MSNPORT;
+	ret->user_opts = g_list_append(ret->user_opts, puo);
 
 	my_protocol = ret;
 }
 
 #ifndef STATIC
 
-char *gaim_plugin_init(GModule *handle)
+void *gaim_prpl_init(struct prpl *prpl)
 {
-	load_protocol(msn_init, sizeof(struct prpl));
-	return NULL;
+	msn_init(prpl);
+	prpl->plug->desc.api_version = PLUGIN_API_VERSION;
 }
 
 void gaim_plugin_remove()
