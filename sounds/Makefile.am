@@ -26,3 +26,8 @@ gnomedata = `@GNOME_CONFIG@ --datadir`
 gaimsoundsdir = $(gnomedata)/sounds/gaim
 gaimsounds_DATA = $(EXTRA_DIST)
 endif
+
+if DISTRIB
+gaimdistribdir = $(datadir)/sounds/gaim
+gaimdistrib_DATA = $(EXTRA_DIST)
+endif

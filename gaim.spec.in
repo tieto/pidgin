@@ -27,16 +27,38 @@ stored on AOL's servers and can be retrieved from anywhere.
 It contains many of the same features as AOL's IM client while at
 the same time incorporating many new features.
 
+%package applet
+Summary:	A Gnome client compatible with AOL's 'Instant Messenger'
+Group:		Applications/Internet
+Requires:	gtk+ >= 1.2.3
+
+%description applet
+Gaim allows you to talk to anyone using AOL's 
+Instant Messenger service (you can sign up at http://www.aim.aol.com).  
+
+It uses the TOC version of the AOL protocol, so your buddy list is 
+stored on AOL's servers and can be retrieved from anywhere.
+
+It contains many of the same features as AOL's IM client while at
+the same time incorporating many new features.
+
+The applet sits in your Gnome panel. It has all the same functionality
+as the regular application but takes less desktop space.
+
 %prep
 %setup
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
 make
-
-%install
 if [ -d $RPM_BUILD_ROOT ]; then rm -r $RPM_BUILD_ROOT; fi;
 mkdir -p $RPM_BUILD_ROOT%{prefix}
+make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
+make distclean
+CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=${prefix} --enable-distrib
+make
+
+%install
 make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 
 %files
@@ -47,5 +69,17 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install-strip
 %{prefix}/share/locale/*/*/*
 %{prefix}/share/pixmaps/gaim.xpm
 %{prefix}/share/gnome/apps/Internet/gaim.desktop
+
+%files applet
+%defattr(-,root,root)
+%attr(755,root,root) %{prefix}/bin/gaim_applet
+%doc doc/the_penguin.txt doc/PROTOCOL doc/CREDITS NEWS COPYING AUTHORS doc/FAQ README README.plugins ChangeLog
+%{prefix}/lib/gaim/*
+%{prefix}/share/locale/*/*/*
+%{prefix}/share/sounds/gaim/*
+%{prefix}/share/pixmaps/gaim.xpm
+%{prefix}/share/pixmaps/gaim/gnome/*
+%{prefix}/share/gnome/apps/Internet/gaim.desktop
+
 %clean
 rm -r $RPM_BUILD_ROOT
