@@ -169,6 +169,8 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 
 	serv_set_away_all(NULL);
 	awaymessage = NULL;
+	clistqueue = NULL;
+	clistqueuesw = NULL;
 #ifdef USE_APPLET
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
 	set_user_state(online);
