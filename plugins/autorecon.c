@@ -19,7 +19,7 @@ char *description() {
 
 static gboolean do_signon(gpointer data) {
 	struct aim_user *u = data;
-	if (g_list_index(aim_users, u) < 0)
+	if (g_slist_index(aim_users, u) < 0)
 		return FALSE;
 	serv_login(u);
 	tim = 0;
