@@ -1,6 +1,4 @@
 <todo version="0.1.17">
-    <note priority="medium" time="1036040446">
-        Y!M
         <note priority="high" time="1036041328">
             bug: won't allow me to delete myself from my list past sign on
         </note>
@@ -40,5 +38,4 @@
         <note priority="verylow" time="1036041449">
             voice chat
         </note>
-    </note>
 </todo>

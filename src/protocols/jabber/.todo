@@ -1,6 +1,4 @@
 <todo version="0.1.17">
-    <note priority="medium" time="1036040682">
-        Jabber
         <note priority="veryhigh" time="1037475141">
             remove the defaultation to @jabber.org as this increases the level of confusion associated with the need to use user@server formats with jabber
         </note>
@@ -88,14 +86,4 @@
         <note priority="verylow" time="1036044192">
             Jabber Transports (having them show up on the buddy list should be fairly easy; having an appropriate right-click menu for them should also be somewhat easy. Providing a UI for adding transports should be rather difficult.)
         </note>
-    </note>
-    <note priority="medium" time="1036040693">
-        Gadu-Gadu
-        <note priority="medium" time="1036046603">
-            New User Registration
-        </note>
-        <note priority="medium" time="1036046614">
-            There's probably 100 other things but since I've hardly used the Windows client before I'm not sure what any of them are
-        </note>
-    </note>
 </todo>
