@@ -6241,7 +6241,7 @@ gaim_gtk_conversations_init(void)
 #else
 	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_formatting", FALSE);
 #endif
-	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/html_shortcuts", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/smiley_shortcuts", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/enable_commands", TRUE);
