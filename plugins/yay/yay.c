@@ -299,12 +299,47 @@ static void yahoo_send_im(struct gaim_connection *gc, char *who, char *message, 
 	yahoo_cmd_msg(yd->ctxt, gc->username, who, message);
 }
 
-static void yahoo_set_away(struct gaim_connection *gc, char *msg) {
+static void yahoo_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 
 	if (msg) {
 		yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_CUSTOM, msg);
 		yd->current_status = YAHOO_STATUS_CUSTOM;
+	} else if (state) {
+		if (!strcmp(state, "Available")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_AVAILABLE, msg);
+			yd->current_status = YAHOO_STATUS_AVAILABLE;
+		} else if (!strcmp(state, "Be Right Back")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_BRB, msg);
+			yd->current_status = YAHOO_STATUS_BRB;
+		} else if (!strcmp(state, "Busy")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_BUSY, msg);
+			yd->current_status = YAHOO_STATUS_BUSY;
+		} else if (!strcmp(state, "Not At Home")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTATHOME, msg);
+			yd->current_status = YAHOO_STATUS_NOTATHOME;
+		} else if (!strcmp(state, "Not At Desk")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTATDESK, msg);
+			yd->current_status = YAHOO_STATUS_NOTATDESK;
+		} else if (!strcmp(state, "Not In Office")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_NOTINOFFICE, msg);
+			yd->current_status = YAHOO_STATUS_NOTINOFFICE;
+		} else if (!strcmp(state, "On Phone")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_ONPHONE, msg);
+			yd->current_status = YAHOO_STATUS_ONPHONE;
+		} else if (!strcmp(state, "On Vacation")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_ONVACATION, msg);
+			yd->current_status = YAHOO_STATUS_ONVACATION;
+		} else if (!strcmp(state, "Out To Lunch")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_OUTTOLUNCH, msg);
+			yd->current_status = YAHOO_STATUS_OUTTOLUNCH;
+		} else if (!strcmp(state, "Stepped Out")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_STEPPEDOUT, msg);
+			yd->current_status = YAHOO_STATUS_STEPPEDOUT;
+		} else if (!strcmp(state, "Invisible")) {
+			yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_INVISIBLE, msg);
+			yd->current_status = YAHOO_STATUS_INVISIBLE;
+		}
 	} else if (gc->is_idle) {
 		yahoo_cmd_set_away_mode(yd->ctxt, YAHOO_STATUS_IDLE, NULL);
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -399,6 +434,25 @@ static void yahoo_action_menu(GtkWidget *menu, struct gaim_connection *gc, char 
 	gtk_widget_show(button);
 }
 
+static GList *yahoo_away_states() {
+	GList *m = NULL;
+
+	m = g_list_append(m, "Available");
+	m = g_list_append(m, "Be Right Back");
+	m = g_list_append(m, "Busy");
+	m = g_list_append(m, "Not At Home");
+	m = g_list_append(m, "Not At Desk");
+	m = g_list_append(m, "Not In Office");
+	m = g_list_append(m, "On Phone");
+	m = g_list_append(m, "On Vacation");
+	m = g_list_append(m, "Out To Lunch");
+	m = g_list_append(m, "Stepped Out");
+	m = g_list_append(m, "Invisible");
+	m = g_list_append(m, GAIM_AWAY_CUSTOM);
+
+	return m;
+}
+
 static struct prpl *my_protocol = NULL;
 
 void Yahoo_init(struct prpl *ret) {
@@ -406,6 +460,7 @@ void Yahoo_init(struct prpl *ret) {
 	ret->protocol = PROTO_YAHOO;
 	ret->name = yahoo_name;
 	ret->list_icon = yahoo_list_icon;
+	ret->away_states = yahoo_away_states;
 	ret->action_menu = yahoo_action_menu;
 	ret->user_opts = NULL;
 	ret->login = yahoo_login;

@@ -34,6 +34,7 @@
 
 #include <gtk/gtk.h>
 #include "gaim.h"
+#include "prpl.h"
 #include "pixmaps/join.xpm"
 
 GtkWidget *imaway = NULL;
@@ -59,7 +60,7 @@ void do_im_back(GtkWidget *w, GtkWidget *x)
 		plugin_event(event_back, 0, 0, 0, 0);
 	}
 
-	serv_set_away(NULL);
+	serv_set_away_all(NULL);
 	awaymessage = NULL;
 #ifdef USE_APPLET
 	applet_widget_unregister_callback(APPLET_WIDGET(applet), "away");
@@ -156,7 +157,7 @@ void do_away_message(GtkWidget *w, struct away_message *a)
 
 	buf2 = g_malloc(strlen(awaymessage->message) * 4 + 1);
 	strncpy_withhtml(buf2, awaymessage->message, strlen(awaymessage->message) * 4 + 1);
-	serv_set_away(buf2);
+	serv_set_away_all(buf2);
 	g_free(buf2);
 	gtk_widget_show(imaway);
 	plugin_event(event_away, 0, 0, 0, 0);
@@ -187,11 +188,28 @@ void rem_away_mess(GtkWidget *w, struct away_message *a)
 	save_prefs();
 }
 
+static void set_gc_away(GtkObject *obj, struct gaim_connection *gc)
+{
+	struct away_message *awy = gtk_object_get_user_data(obj);
+
+	if (awy)
+		serv_set_away(gc, GAIM_AWAY_CUSTOM, awy->message);
+	else
+		serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
+}
+
+static void set_gc_state(GtkObject *obj, struct gaim_connection *gc)
+{
+	char *awy = gtk_object_get_user_data(obj);
+
+	serv_set_away(gc, awy, NULL);
+}
 
 void do_away_menu()
 {
 	GtkWidget *menuitem;
-	static GtkWidget *remmenu;
+	GtkWidget *remmenu;
+	GtkWidget *submenu, *submenu2;
 	GtkWidget *remitem;
 	GtkWidget *label;
 	GtkWidget *sep;
@@ -199,6 +217,9 @@ void do_away_menu()
 	GtkWidget *list_item;
 	GSList *awy = away_messages;
 	struct away_message *a;
+	GSList *con = connections;
+	struct gaim_connection *gc;
+	int count = 0;
 
 #ifdef USE_APPLET
 	remove_applet_away();
@@ -276,19 +297,186 @@ void do_away_menu()
 		gtk_widget_show(menuitem);
 		gtk_widget_show(sep);
 
-		awy = away_messages;
+		while (con) {
+			gc = con->data;
+			if (gc->prpl->away_states && gc->prpl->set_away)
+				count++;
+			con = g_slist_next(con);
+		}
+		con = connections;
 
-		while (awy) {
-			a = (struct away_message *)awy->data;
+		if (count == 0) {
+		} else if (count == 1) {
+			GList *msgs, *tmp;
+			while (con) {
+				gc = con->data;
+				if (gc->prpl->away_states && gc->prpl->set_away)
+					break;
+				con = g_slist_next(con);
+			}
 
-			menuitem = gtk_menu_item_new_with_label(a->name);
+			tmp = msgs = (*gc->prpl->away_states)();
+
+			if ((g_list_length(msgs) == 1) && !strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
+				awy = away_messages;
+
+				while (awy) {
+					a = (struct away_message *)awy->data;
+
+					menuitem = gtk_menu_item_new_with_label(a->name);
+					gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
+					gtk_menu_append(GTK_MENU(awaymenu), menuitem);
+					gtk_widget_show(menuitem);
+					gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+							   GTK_SIGNAL_FUNC(do_away_message), a);
+
+					awy = g_slist_next(awy);
+				}
+			} else while (msgs) {
+				awy = away_messages;
+
+				menuitem = gtk_menu_item_new_with_label(msgs->data);
+				gtk_object_set_user_data(GTK_OBJECT(menuitem), msgs->data);
+				gtk_menu_append(GTK_MENU(awaymenu), menuitem);
+				gtk_widget_show(menuitem);
+
+				if (strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
+					gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+							   GTK_SIGNAL_FUNC(set_gc_state), gc);
+				} else {
+					submenu = gtk_menu_new();
+					gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+					gtk_widget_show(submenu);
+
+					while (awy) {
+						a = (struct away_message *)awy->data;
+
+						menuitem = gtk_menu_item_new_with_label(a->name);
+						gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
+						gtk_menu_append(GTK_MENU(submenu), menuitem);
+						gtk_widget_show(menuitem);
+						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+								   GTK_SIGNAL_FUNC(set_gc_away), gc);
+
+						awy = g_slist_next(awy);
+					}
+				}
+				msgs = g_list_next(msgs);
+			}
+		} else {
+			while (con) {
+				char buf[256];
+				GList *msgs, *tmp;
+				gc = con->data;
+
+				if (!gc->prpl->away_states || !gc->prpl->set_away)
+					continue;
+
+				g_snprintf(buf, sizeof(buf), "%s (%s)",
+					   gc->username, (*gc->prpl->name)());
+				menuitem = gtk_menu_item_new_with_label(buf);
+				gtk_menu_append(GTK_MENU(awaymenu), menuitem);
+				gtk_widget_show(menuitem);
+
+				submenu = gtk_menu_new();
+				gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+				gtk_widget_show(submenu);
+
+				tmp = msgs = (*gc->prpl->away_states)();
+
+				if ((g_list_length(msgs) == 1) &&
+						(!strcmp(msgs->data, GAIM_AWAY_CUSTOM))) {
+					menuitem = gtk_menu_item_new_with_label(_("Back"));
+					gtk_menu_append(GTK_MENU(submenu), menuitem);
+					gtk_widget_show(menuitem);
+					gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+							   GTK_SIGNAL_FUNC(set_gc_away), gc);
+
+					sep = gtk_hseparator_new();
+					menuitem = gtk_menu_item_new();
+					gtk_menu_append(GTK_MENU(submenu), menuitem);
+					gtk_container_add(GTK_CONTAINER(menuitem), sep);
+					gtk_widget_set_sensitive(menuitem, FALSE);
+					gtk_widget_show(menuitem);
+					gtk_widget_show(sep);
+
+					awy = away_messages;
+
+					while (awy) {
+						a = (struct away_message *)awy->data;
+
+						menuitem = gtk_menu_item_new_with_label(a->name);
+						gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
+						gtk_menu_append(GTK_MENU(submenu), menuitem);
+						gtk_widget_show(menuitem);
+						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+								   GTK_SIGNAL_FUNC(set_gc_away), gc);
+
+						awy = g_slist_next(awy);
+					}
+				} else while (msgs) {
+					awy = away_messages;
+
+					menuitem = gtk_menu_item_new_with_label(msgs->data);
+					gtk_object_set_user_data(GTK_OBJECT(menuitem), msgs->data);
+					gtk_menu_append(GTK_MENU(submenu), menuitem);
+					gtk_widget_show(menuitem);
+
+					if (strcmp(msgs->data, GAIM_AWAY_CUSTOM)) {
+						gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+								   GTK_SIGNAL_FUNC(set_gc_state), gc);
+					} else {
+						submenu2 = gtk_menu_new();
+						gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem),
+									  submenu2);
+						gtk_widget_show(submenu2);
+
+						while (awy) {
+							a = (struct away_message *)awy->data;
+
+							menuitem = gtk_menu_item_new_with_label(a->name);
+							gtk_object_set_user_data(GTK_OBJECT(menuitem),
+										 a);
+							gtk_menu_append(GTK_MENU(submenu2), menuitem);
+							gtk_widget_show(menuitem);
+							gtk_signal_connect(GTK_OBJECT(menuitem),
+									   "activate",
+									   GTK_SIGNAL_FUNC(set_gc_away),
+									   gc);
+
+							awy = g_slist_next(awy);
+						}
+					}
+					msgs = g_list_next(msgs);
+				}
+
+				g_list_free(tmp);
+
+				con = g_slist_next(con);
+			}
+
+			menuitem = gtk_menu_item_new_with_label(_("Set All Away"));
 			gtk_menu_append(GTK_MENU(awaymenu), menuitem);
 			gtk_widget_show(menuitem);
-			gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
-					   GTK_SIGNAL_FUNC(do_away_message), a);
 
-			awy = g_slist_next(awy);
+			submenu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+			gtk_widget_show(submenu);
 
+			awy = away_messages;
+
+			while (awy) {
+				a = (struct away_message *)awy->data;
+
+				menuitem = gtk_menu_item_new_with_label(a->name);
+				gtk_object_set_user_data(GTK_OBJECT(menuitem), a);
+				gtk_menu_append(GTK_MENU(submenu), menuitem);
+				gtk_widget_show(menuitem);
+				gtk_signal_connect(GTK_OBJECT(menuitem), "activate",
+						   GTK_SIGNAL_FUNC(do_away_message), a);
+
+				awy = g_slist_next(awy);
+			}
 		}
 	}
 	if (prefs_away_menu) {

@@ -706,7 +706,7 @@ void send_callback(GtkWidget *widget, struct conversation *c)
 	quiet_set(c->link, FALSE);
 
 	if ((general_options & OPT_GEN_BACK_ON_IM) && awaymessage != NULL) {
-		do_im_back();
+		serv_set_away(c->gc, GAIM_AWAY_CUSTOM, NULL);
 	}
 
 	gtk_widget_grab_focus(c->entry);

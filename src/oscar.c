@@ -1739,7 +1739,7 @@ static void oscar_set_info(struct gaim_connection *g, char *info) {
 					NULL, gaim_caps);
 }
 
-static void oscar_set_away(struct gaim_connection *g, char *message) {
+static void oscar_set_away(struct gaim_connection *g, char *state, char *message) {
 	struct oscar_data *odata = (struct oscar_data *)g->proto_data;
 	aim_bos_setprofile(odata->sess, odata->conn, g->user->user_info, message, gaim_caps);
 }
@@ -2274,11 +2274,17 @@ static void oscar_do_new_user()
 	open_url(NULL, "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
 }
 
+static GList *oscar_away_states()
+{
+	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
+}
+
 void oscar_init(struct prpl *ret) {
 	ret->protocol = PROTO_OSCAR;
 	ret->options = OPT_PROTO_HTML;
 	ret->name = oscar_name;
 	ret->list_icon = oscar_list_icon;
+	ret->away_states = oscar_away_states;
 	ret->action_menu = oscar_action_menu;
 	ret->user_opts = oscar_user_opts;
 	ret->draw_new_user = oscar_draw_new_user;

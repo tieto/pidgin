@@ -314,14 +314,26 @@ static void icq_rem_buddy(struct gaim_connection *gc, char *who) {
 	icq_ContactRemove(id->link, atol(who));
 }
 
-static void icq_set_away(struct gaim_connection *gc, char *msg) {
+static void icq_set_away(struct gaim_connection *gc, char *state, char *msg) {
 	struct icq_data *id = (struct icq_data *)gc->proto_data;
 
-	if (msg && msg[0]) {
-		icq_ChangeStatus(id->link, STATUS_NA);
-	} else {
+	if (!strcmp(state, "Online"))
 		icq_ChangeStatus(id->link, STATUS_ONLINE);
-	}
+	else if (!strcmp(state, "Away"))
+		icq_ChangeStatus(id->link, STATUS_AWAY);
+	else if (!strcmp(state, "Do Not Disturb"))
+		icq_ChangeStatus(id->link, STATUS_DND);
+	else if (!strcmp(state, "Not Available"))
+		icq_ChangeStatus(id->link, STATUS_NA);
+	else if (!strcmp(state, "Occupied"))
+		icq_ChangeStatus(id->link, STATUS_OCCUPIED);
+	else if (!strcmp(state, "Free For Chat"))
+		icq_ChangeStatus(id->link, STATUS_FREE_CHAT);
+	else if (!strcmp(state, "Invisible"))
+		icq_ChangeStatus(id->link, STATUS_INVISIBLE);
+	else if (!strcmp(state, GAIM_AWAY_CUSTOM))
+		/* we have to do this even though we don't have a custom state */
+		icq_ChangeStatus(id->link, STATUS_NA);
 }
 
 static char **icq_list_icon(int uc) {
@@ -411,10 +423,23 @@ static void icq_user_opts(GtkWidget *book, struct aim_user *user) {
 	gtk_widget_show(hbox);
 }
 
+static GList *icq_away_states() {
+	GList *m = NULL;
+
+	m = g_list_append(m, "Online");
+	m = g_list_append(m, "Away");
+	m = g_list_append(m, "Do Not Disturb");
+	m = g_list_append(m, "Not Available");
+	m = g_list_append(m, "Occupied");
+	m = g_list_append(m, "Free For Chat");
+	m = g_list_append(m, "Invisible");
+}
+
 static void icq_init(struct prpl *ret) {
 	ret->protocol = PROTO_ICQ;
 	ret->name = icq_name;
 	ret->list_icon = icq_list_icon;
+	ret->away_states = icq_away_states;
 	ret->action_menu = icq_action_menu;
 	ret->user_opts = icq_user_opts;
 	ret->login = icq_login;

@@ -158,7 +158,13 @@ void serv_dir_search(struct gaim_connection *g, char *first, char *middle, char 
 }
 
 
-void serv_set_away(char *message)
+void serv_set_away(struct gaim_connection *gc, char *state, char *message)
+{
+	if (gc && gc->prpl && gc->prpl->set_away)
+		(*gc->prpl->set_away)(gc, state, message);
+}
+
+void serv_set_away_all(char *message)
 {
 	GSList *c = connections;
 	struct gaim_connection *g;
@@ -166,7 +172,7 @@ void serv_set_away(char *message)
 	while (c) {
 		g = (struct gaim_connection *)c->data;
 		if (g->prpl && g->prpl->set_away)
-			(*g->prpl->set_away)(g, message);
+			(*g->prpl->set_away)(g, GAIM_AWAY_CUSTOM, message);
 		c = c->next;
 	}
 }

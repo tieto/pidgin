@@ -46,7 +46,7 @@
 #include "pixmaps/dt_icon.xpm"
 #include "pixmaps/free_icon.xpm"
 
-#define REVISION "gaim:$Revision: 1393 $"
+#define REVISION "gaim:$Revision: 1411 $"
 
 #define TYPE_SIGNON    1
 #define TYPE_DATA      2
@@ -712,7 +712,7 @@ static void toc_dir_search(struct gaim_connection *g, char *first, char *middle,
 	sflap_send(g, buf, -1, TYPE_DATA);
 }
 
-static void toc_set_away(struct gaim_connection *g, char *message)
+static void toc_set_away(struct gaim_connection *g, char *state, char *message)
 {
 	char buf[MSG_LEN];
 	if (message) {
@@ -1169,12 +1169,18 @@ static void toc_do_new_user()
 	open_url(NULL, "http://aim.aol.com/aimnew/Aim/register.adp?promo=106723&pageset=Aim&client=no");
 }
 
+static GList *toc_away_states()
+{
+	return g_list_append(NULL, GAIM_AWAY_CUSTOM);
+}
+
 void toc_init(struct prpl *ret)
 {
 	ret->protocol = PROTO_TOC;
 	ret->options = OPT_PROTO_HTML;
 	ret->name = toc_name;
 	ret->list_icon = toc_list_icon;
+	ret->away_states = toc_away_states;
 	ret->action_menu = toc_action_menu;
 	ret->user_opts = toc_user_opts;
 	ret->draw_new_user = toc_draw_new_user;

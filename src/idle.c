@@ -34,6 +34,7 @@
 
 #include "multi.h"
 #include "gaim.h"
+#include "prpl.h"
 
 
 int auto_is_away = 0;
@@ -74,12 +75,12 @@ gint check_idle(struct gaim_connection *gc)
 		set_default_away((GtkWidget*)NULL, 
 				 (gpointer)g_slist_index(away_messages,
 							 default_away));
-		do_away_message((GtkWidget*)NULL, default_away);
+		serv_set_away(gc, GAIM_AWAY_CUSTOM, default_away->message);
 		auto_is_away = 1;
 	} else if (auto_is_away == 1 && idle_time < 60 * auto_away) {
 		auto_is_away = 0;
 		if (awaymessage != NULL)
-			do_im_back((GtkWidget *)NULL, (GtkWidget *)NULL);
+			serv_set_away(gc, GAIM_AWAY_CUSTOM, NULL);
 	}
 
 

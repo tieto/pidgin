@@ -284,6 +284,7 @@ void signoff(struct gaim_connection *gc)
 	update_keepalive(gc, FALSE);
 	serv_close(gc);
 	redo_buddy_list();
+	do_away_menu();
 #ifdef USE_APPLET
 	if (connections)
 		set_user_state(online);

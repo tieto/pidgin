@@ -40,6 +40,8 @@
  * plugins can't do (for example, TOC and Oscar and Jabber can do HTML in messages,
  * but IRC etc can't, so TOC/Oscar/Jabber have _HTML set but not IRC. */
 
+#define GAIM_AWAY_CUSTOM "Custom"
+
 typedef void (*proto_init)(struct prpl *);
 
 struct prpl {
@@ -49,6 +51,7 @@ struct prpl {
 
 	/* returns the XPM associated with the given user class */
 	char **(* list_icon)(int);
+	GList *(* away_states)();
 
 	/* when UI plugins come, these will have to be reconciled by returning
 	 * structs indicating what kinds of information they want displayed. */
@@ -63,7 +66,7 @@ struct prpl {
 	void (* send_im)	(struct gaim_connection *, char *who, char *message, int away);
 	void (* set_info)	(struct gaim_connection *, char *info);
 	void (* get_info)	(struct gaim_connection *, char *who);
-	void (* set_away)	(struct gaim_connection *, char *message);
+	void (* set_away)	(struct gaim_connection *, char *state, char *message);
 	void (* get_away_msg)	(struct gaim_connection *, char *who);
 	void (* set_dir)	(struct gaim_connection *, char *first,
 							   char *middle,

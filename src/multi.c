@@ -707,6 +707,7 @@ void account_online(struct gaim_connection *gc)
 	setup_buddy_chats();
 
 	update_connection_dependent_prefs();
+	do_away_menu();
 	redo_convo_menus();
 	gaim_setup(gc);
 
@@ -717,6 +718,8 @@ void account_online(struct gaim_connection *gc)
 		away_on_login(opt_away_arg);
 		/* don't do it again */
 		opt_away = 0;
+	} else if (awaymessage) {
+		serv_set_away(gc, GAIM_AWAY_CUSTOM, awaymessage->message);
 	}
 	if (opt_away_arg != NULL) {
 		g_free (opt_away_arg);
