@@ -62,16 +62,9 @@ echo "Running gettextize, please ignore non-fatal messages...."
 
 if [ $USE_AUTOPOINT -eq 1 ]; then
 	mv -f m4 m4~
-
-	echo n | autopoint --force || exit;
-
- 	# Now restore the things that brain-dead gettext modified.
-	[ -e configure.in~ ] && mv -f configure.in~ configure.in
-	[ -e configure.ac~ ] && mv -f configure.ac~ configure.ac
-	[ -e Makefile.am~ ]  && mv -f Makefile.am~  Makefile.am
+	echo n | autopoint --force || abort;
 	rm -rf m4
 	mv -f m4~ m4
-	mv -f po/Makevars.template po/Makevars
 else
 	echo n | gettextize --copy --force || exit;
 fi
