@@ -315,7 +315,10 @@ static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 			   text_color.red / 256,
 			   text_color.green / 256,
 			   text_color.blue / 256);
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), open_tag);
+	if (gtk_text_buffer_get_selection_bounds(GTK_IMHTML(toolbar->imhtml)->text_buffer, NULL, NULL))
+		gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), open_tag);
+	else
+		gtk_imhtml_toggle_background(GTK_IMHTML(toolbar->imhtml), open_tag);
 
 	g_free(open_tag);
 	cancel_toolbar_bgcolor(NULL, toolbar);

@@ -531,7 +531,9 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	int buf_x, buf_y;
 	GSList *tags, *l;
 	GdkRectangle visible_rect;
-
+	GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
+	GdkColor gcolor;
+	
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &visible_rect);
 	gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(widget),
 					      GTK_TEXT_WINDOW_TEXT,
@@ -543,6 +545,29 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(widget), GTK_TEXT_WINDOW_TEXT,
 	                                      event->area.x, event->area.y, &buf_x, &buf_y);
 
+	if (GTK_IMHTML(widget)->editable || GTK_IMHTML(widget)->wbfo) {
+		
+		if (GTK_IMHTML(widget)->edit.background) {
+			gdk_color_parse(GTK_IMHTML(widget)->edit.background, &gcolor);
+			gdk_gc_set_rgb_fg_color(gc, &gcolor);
+		} else {
+			gdk_gc_set_rgb_fg_color(gc, &(widget->style->base[GTK_WIDGET_STATE(widget)]));
+		}
+		
+		gdk_draw_rectangle(event->window,
+				   gc,
+				   TRUE,
+				   visible_rect.x, visible_rect.y, visible_rect.width, visible_rect.height);
+		gdk_gc_unref(gc);
+		
+		if (GTK_WIDGET_CLASS (parent_class)->expose_event)
+			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
+				(widget, event);
+		
+		return FALSE;
+
+	}
+	
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &start, buf_x, buf_y);
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &end,
 	                                   buf_x + event->area.width, buf_y + event->area.height);
@@ -552,7 +577,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	cur = start;
 
 	while (gtk_text_iter_in_range(&cur, &start, &end)) {
-		GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
 		tags = gtk_text_iter_get_tags(&cur);
 
 		for (l = tags; l; l = l->next) {
@@ -560,8 +584,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			GdkRectangle rect;
 			GdkRectangle tag_area;
 			const char *color;
-			GdkColor gcolor;
-
+		
 			if (strncmp(tag->name, "BACKGROUND ", 11))
 				continue;
 
@@ -612,7 +635,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		}
 
 		g_slist_free(tags);
-		gdk_gc_unref(gc);
 		gtk_text_iter_forward_to_tag_toggle(&cur, NULL);
 	}
 #if 0
@@ -684,6 +706,8 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		l = l->next;
 	}
 #endif
+	gdk_gc_unref(gc);
+
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 		return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
 			(widget, event);
