@@ -1,6 +1,7 @@
 # gaim@marko.net
 # Copyright (C) 2002 Free Software Foundation, Inc.
 # FIRST AUTHOR <sebfrance@ifrance.com>, 2001.
+# sebfrance <sebfrance@ifrance.com>, 2002.
 # Stéphane Pontier <stephane.pontier@free.fr>, 2002.
 # Stephane Wirtel <stephane.wirtel@belgacom.net>, 2002.
 #
@@ -8,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim 0.9.20\n"
 "POT-Creation-Date: 2002-06-25 00:10-0400\n"
-"PO-Revision-Date: 2002-03-24 02:00GMT\n"
-"Last-Translator: Stéphane Pontier <stephane.pontier@free.fr>\n"
+"PO-Revision-Date: 2002-07-10 13:17GMT\n"
+"Last-Translator: sebfrance <sebfrance@ifrance.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -87,7 +88,7 @@ msgstr "Vérifier que cette boite défile de gauche à droite"
 #: plugins/gtik.c:974
 #, fuzzy
 msgid "(No"
-msgstr "Non"
+msgstr "(Non"
 
 #: plugins/gtik.c:975
 #, fuzzy
@@ -3141,7 +3142,7 @@ msgstr "Griser les contacts inactifs"
 
 #: src/prefs.c:659
 msgid "Conversation Options"
-msgstr "Option de Conversation"
+msgstr "Options de Conversation"
 
 #: src/prefs.c:671
 msgid "Keyboard Options"
@@ -3149,7 +3150,7 @@ msgstr "Options du Clavier"
 
 #: src/prefs.c:683
 msgid "Enter sends message"
-msgstr "La touche Entrer envoie les messages"
+msgstr "La touche Entrée envoie les messages"
 
 #: src/prefs.c:684
 msgid "Control-Enter sends message"
@@ -3162,7 +3163,7 @@ msgstr "Echap ferme la fenêtre"
 #: src/prefs.c:686
 #, fuzzy
 msgid "Control-W closes window"
-msgstr "Echap ferme la fenêtre"
+msgstr "Ctrl-W ferme la fenêtre"
 
 #: src/prefs.c:692
 msgid "Control-{B/I/U/S} inserts HTML tags"
@@ -3190,7 +3191,7 @@ msgstr "Afficher l'heure sur les messages"
 
 #: src/prefs.c:710
 msgid "Show URLs as links"
-msgstr "Envoyer les URL comme des liens"
+msgstr "Envoyer les URLs comme des liens"
 
 #: src/prefs.c:711
 msgid "Highlight misspelled words"
@@ -3202,7 +3203,7 @@ msgstr "L'envoi de message change le statut d'absence"
 
 #: src/prefs.c:713 src/prefs.c:1936
 msgid "Queue new messages when away"
-msgstr "messages mis en attente lors d'une absence"
+msgstr "Mise en attente des messages quand absent"
 
 #: src/prefs.c:719
 msgid "Ignore colors"
@@ -3271,7 +3272,7 @@ msgstr "Montre les alias dans les onglets/titres"
 
 #: src/prefs.c:970
 msgid "Hide window on send"
-msgstr "cacher la fenêtre lors de l'envoi"
+msgstr "Cacher la fenêtre lors de l'envoi"
 
 #: src/prefs.c:972 src/prefs.c:1122
 msgid "Window Sizes"
@@ -3327,7 +3328,7 @@ msgstr "Afficher tous les chats dans une fenêtre avec onglets"
 
 #: src/prefs.c:1112
 msgid "Show conversations in the same tabbed window"
-msgstr "Afficher les conversations dans la même fenêtre avec des onglets"
+msgstr "Afficher les conversations dans une même fenêtre avec onglets"
 
 #: src/prefs.c:1120
 msgid "Show people joining/leaving in window"
@@ -3404,7 +3405,7 @@ msgstr ""
 
 #: src/prefs.c:1751
 msgid "Sound played when:"
-msgstr "Son joué quand:"
+msgstr "Son joué lorsque:"
 
 #: src/prefs.c:1893 src/prefs.c:2953
 msgid "Away Messages"
@@ -3440,11 +3441,11 @@ msgstr "Editer"
 
 #: src/prefs.c:2049
 msgid "Make Away"
-msgstr "Etre absent maintenant"
+msgstr "Passer en mode 'absent'"
 
 #: src/prefs.c:2326
 msgid "Privacy Options"
-msgstr "Options d'Intimité"
+msgstr "Options de filtrage"
 
 #: src/prefs.c:2342
 msgid "Set privacy for:"
@@ -3511,7 +3512,7 @@ msgid ""
 msgstr ""
 "Vous avez essayé de charger un protocole qui n'a pas été compilé à partir de "
 "la même version des sources que cette application. Malheureusement, à cause "
-"de cette différence Je ne peux vous dire laquelle c'était. Evidement, le "
+"de cette différence, je ne peux vous dire laquelle c'était. Evidement, le "
 "chargement a échoué."
 
 #: src/prpl.c:74
@@ -3558,7 +3559,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"Voulez vous les ajouter a votre liste de contacts?"
+"Voulez vous l'ajouter à votre liste de contacts?"
 
 #: src/prpl.c:621
 msgid ""
@@ -3612,17 +3613,17 @@ msgstr "Plus d'informations"
 #: src/sound.c:63
 #, fuzzy
 msgid "Buddy logs in"
-msgstr "Icone du contact"
+msgstr "Le contact s'est connecté"
 
 #: src/sound.c:64
 #, fuzzy
 msgid "Buddy logs out"
-msgstr "Liste de Contacts"
+msgstr "Le ontact s'est déconnecté"
 
 #: src/sound.c:65
 #, fuzzy
 msgid "Message received"
-msgstr "Erreur de Message"
+msgstr "Message reçu"
 
 #: src/sound.c:66
 msgid "Message received begins conversation"
@@ -3631,7 +3632,7 @@ msgstr "Début de la conversation"
 #: src/sound.c:67
 #, fuzzy
 msgid "Message sent"
-msgstr "Messages"
+msgstr "Message envoyé"
 
 #: src/sound.c:68
 msgid "Person enters chat"
@@ -3651,7 +3652,7 @@ msgstr "D'autres parlent dans le chat"
 
 #: src/sound.c:74
 msgid "Someone says your name in chat"
-msgstr "Quelqu'un dit votre pseudo dans le chat"
+msgstr "Quelqu'un a dit votre pseudo dans le chat"
 
 #~ msgid "Enable sounds"
 #~ msgstr "Activer le son"
