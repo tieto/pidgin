@@ -175,11 +175,12 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 	int ret = 0;
 	aim_conn_t *newconn;
 	char ip[20];
-	unsigned short int port;
+	unsigned short port;
 
 	if ((acceptfd = accept(cur->fd, &addr, &addrlen)) == -1)
 		return 0; /* not an error */
 
+	/* Also accept inet6? */
 	if (addr.sa_family != AF_INET) {
 		close(acceptfd);
 		aim_conn_close(cur);

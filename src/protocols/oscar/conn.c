@@ -1,5 +1,5 @@
 /*
- * conn.c
+ * Low-level connection handling.
  *
  * Does all this gloriously nifty connection handling stuff...
  *
@@ -19,7 +19,7 @@
 #include "win32dep.h"
 #endif
 
-/*
+/**
  * In OSCAR, every connection has a set of SNAC groups associated
  * with it.  These are the groups that you can send over this connection
  * without being guaranteed a "Not supported" SNAC error.  
@@ -191,9 +191,9 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
- * Clears out connection list, killing remaining connections.
+ * Clears out the connection list, killing remaining connections.
  *
- * @param sess Session to be cleared
+ * @param sess Session to be cleared.
  */
 static void aim_connrst(aim_session_t *sess)
 {
@@ -215,10 +215,9 @@ static void aim_connrst(aim_session_t *sess)
 }
 
 /**
- * Reset a connection to default values.
- * Initializes and/or resets a connection structure.
+ * Initializes and/or resets a connection structure to the default values.
  *
- * @param deadconn Connection to be reset
+ * @param deadconn Connection to be reset.
  */
 static void aim_conn_init(aim_conn_t *deadconn)
 {
@@ -240,12 +239,10 @@ static void aim_conn_init(aim_conn_t *deadconn)
 }
 
 /**
- * aim_conn_getnext - Gets a new connection structure.
- *
  * Allocate a new empty connection structure.
  *
  * @param sess Session
- * @return Returns new connection structure
+ * @return Returns the new connection structure.
  */
 static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
 {
@@ -270,13 +267,11 @@ static aim_conn_t *aim_conn_getnext(aim_session_t *sess)
 }
 
 /**
- * aim_conn_kill - Close and free a connection.
- *
  * Close, clear, and free a connection structure. Should never be
  * called from within libfaim.
  *
- * @param sess Session for the connection
- * @param deadconn Connection to be freed
+ * @param sess Session for the connection.
+ * @param deadconn Connection to be freed.
  */
 faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 {
@@ -302,15 +297,16 @@ faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn)
 }
 
 /**
- * aim_conn_close - Close a connection
- *
  * Close (but not free) a connection.
  *
  * This leaves everything untouched except for clearing the 
  * handler list and setting the fd to -1 (used to recognize
  * dead connections).  It will also remove cookies if necessary.
  *
- * @param deadconn Connection to close
+ * Why only if fd >= 3?  Seems rather implementation specific...
+ * fd's do not have to be distributed in a particular order, do they?
+ *
+ * @param deadconn The connection to close.
  */
 faim_export void aim_conn_close(aim_conn_t *deadconn)
 {
@@ -331,17 +327,16 @@ faim_export void aim_conn_close(aim_conn_t *deadconn)
 }
 
 /**
- * aim_getconn_type - Find a connection of a specific type
- *
- * Searches for a connection of the specified type in the 
+ * Locates a connection of the specified type in the 
  * specified session.
  *
- * XXX except for RENDEZVOUS, all uses of this should be removed and
- * use aim_conn_findbygroup() instead.
+ * XXX - Except for rendezvous, all uses of this should be removed and
+ * aim_conn_findbygroup() should be used instead.
  *
- * @param sess Session to search
- * @param type Type of connection to look for
- * @return Returns the first connection found of target type
+ * @param sess The session to search.
+ * @param type The type of connection to look for.
+ * @return Returns the first connection found of the given target type,
+ *         or NULL if none could be found.
  */
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *sess, int type)
 {
@@ -382,18 +377,21 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 }
 
 /**
- * aim_proxyconnect - An extrememly quick and dirty SOCKS5 interface. 
+ * Handle normal connections or SOCKS5 via an extrememly quick and 
+ * dirty SOCKS5 interface. 
  *
  * Attempts to connect to the specified host via the configured
  * proxy settings, if present.  If no proxy is configured for
  * this session, the connection is done directly.
  *
- * XXX this is really awful.
+ * XXX - this is really awful.
+ * XXX - Split the SOCKS5 and the normal connection stuff into two
+ *        separate functions.
  *
- * @param sess Session to connect
- * @param host Host to connect to
- * @param port Port to connect to
- * @param statusret Return value of the connection
+ * @param sess Session to connect.
+ * @param host Host to connect to.
+ * @param port Port to connect to.
+ * @param statusret Return value of the connection.
  */
 static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, fu32_t *statusret)
 {
@@ -550,16 +548,16 @@ static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, 
 }
 
 /**
- * aim_cloneconn - clone an aim_conn_t
+ * Clone an aim_conn_t.
  *
  * A new connection is allocated, and the values are filled in
  * appropriately. Note that this function sets the new connnection's
  * ->priv pointer to be equal to that of its parent: only the pointer
  * is copied, not the data it points to.
  *
- * @param sess session containing parent
- * @param src connection to clone
- * @return Returns a pointer to the new aim_conn_t, or %NULL on error
+ * @param sess The session containing this connection.
+ * @param src The connection to clone.
+ * @return Returns a pointer to the new aim_conn_t, or %NULL on error.
  */
 faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 {
@@ -593,8 +591,6 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 }
 
 /**
- * aim_newconn - Open a new connection
- *
  * Opens a new connection to the specified dest host of specified
  * type, using the proxy settings if available.  If @host is %NULL,
  * the connection is allocated and returned, but no connection 
@@ -659,33 +655,11 @@ faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *d
 }
 
 /**
- * aim_conngetmaxfd - Return the highest valued file discriptor in session
- *
- * @param sess Session to search
- * @return Returns the highest values file descriptor of
- *         all open connections in @sess
- */
-faim_export int aim_conngetmaxfd(aim_session_t *sess)
-{
-	int j;
-	aim_conn_t *cur;
-
-	for (cur = sess->connlist, j = 0; cur; cur = cur->next) {
-		if (cur->fd > j)
-			j = cur->fd;
-	}
-
-	return j;
-}
-
-/**
- * aim_conn_in_sess - Predicate to test the presense of a connection in a sess
- *
  * Searches @sess for the passed connection.
  *
- * @param sess Session to look in
- * @param conn Connection to look for
- * @return Returns 1 if the passed connection is present, zero otherwise
+ * @param sess Session in which to look.
+ * @param conn Connection to look for.
+ * @return Returns 1 if the passed connection is present, zero otherwise.
  */
 faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
 {
@@ -700,8 +674,6 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
 }
 
 /**
- * aim_select - Wait for a socket with data or timeout
- *
  * Waits for a socket with data or for timeout, whichever comes first.
  * See select(2).
  * 
@@ -783,9 +755,8 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
 }
 
 /**
- * aim_conn_setlatency - Set a forced latency value for connection
- *
- * Causes @newval seconds to be spent between transmits on a connection.
+ * Set a forced latency value for connection.  Basically causes 
+ * @newval seconds to be spent between transmits on a connection.
  *
  * This is my lame attempt at overcoming not understanding the rate
  * limiting. 
@@ -793,9 +764,9 @@ faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout,
  * XXX: This should really be replaced with something that scales and
  * backs off like the real rate limiting does.
  *
- * @param conn Conn to set latency for
- * @param newval Number of seconds to force between transmits
- * @return Returns -1 if the connection does not exist, zero otherwise
+ * @param conn Conn to set latency for.
+ * @param newval Number of seconds to force between transmits.
+ * @return Returns -1 if the connection does not exist, zero otherwise.
  */
 faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 {
@@ -810,7 +781,7 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 }
 
 /**
- * aim_setupproxy - Configure a proxy for this session
+ * Configure a proxy for this session.
  *
  * Call this with your SOCKS5 proxy server parameters before
  * the first call to aim_newconn().  If called with all %NULL
@@ -818,10 +789,10 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
  *
  * Set username and password to %NULL if not applicable.
  *
- * @param sess Session to set proxy for
- * @param server SOCKS server
- * @param username SOCKS username
- * @param password SOCKS password
+ * @param sess Session to set proxy for.
+ * @param server SOCKS server.
+ * @param username SOCKS username.
+ * @param password SOCKS password.
  */
 faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password)
 {
@@ -930,7 +901,7 @@ faim_export void aim_session_init(aim_session_t *sess, bool nonblocking, int deb
 }
 
 /**
- * aim_session_kill - Deallocate a session
+ * Logoff and deallocate a session.
  *
  * @param sess Session to kill
  */
@@ -946,15 +917,15 @@ faim_export void aim_session_kill(aim_session_t *sess)
 }
 
 /**
- * aim_setdebuggingcb - Set the function to call when outputting debugging info
+ * Set the function to call when outputting debugging info.
  *
  * The function specified is called whenever faimdprintf() is used within
  * libfaim, and the session's debugging level is greater tha nor equal to
  * the value faimdprintf was called with.
  *
- * @param sess Session to change
- * @param cb Function to call
- * @return Returns -1 if the session does not exist, zero otherwise
+ * @param sess Session to change.
+ * @param cb Function to call.
+ * @return Returns -1 if the session does not exist, zero otherwise.
  */
 faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t cb)
 {
@@ -968,9 +939,9 @@ faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_
 }
 
 /**
- * aim_conn_isconnecting - Determine if a connection is connecting
+ * Determine if a connection is connecting.
  *
- * @param conn Connection to examine
+ * @param conn Connection to examine.
  * @return Returns nonzero if the connection is in the process of
  *         connecting (or if it just completed and
  *         aim_conn_completeconnect() has yet to be called on it).
@@ -1019,25 +990,22 @@ faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn)
 	return (aim_session_t *)conn->sessv;
 }
 
-/*
- * aim_logoff()
+/**
+ * Close -ALL- open connections.
  *
- * Closes -ALL- open connections.
- *
+ * @param sess The session.
+ * @return Zero.
  */
 faim_export int aim_logoff(aim_session_t *sess)
 {
-
 	aim_connrst(sess);  /* in case we want to connect again */
 
 	return 0;
 }
 
-/*
- * aim_flap_nop()
- *
- * No-op.  WinAIM 4.x sends these _every minute_ to keep
- * the connection alive.
+/**
+ * No-op.  This sends an empty channel 5 SNAC.  WinAIM 4.x and higher
+ * sends these _every minute_ to keep the connection alive.
  */
 faim_export int aim_flap_nop(aim_session_t *sess, aim_conn_t *conn)
 {

@@ -1,9 +1,7 @@
 /*
- * rxqueue.c
- *
  * This file contains the management routines for the receive
  * (incoming packet) queue.  The actual packet handlers are in
- * aim_rxhandlers.c.
+ * rxhandlers.c.
  */
 
 #define FAIM_INTERNAL
