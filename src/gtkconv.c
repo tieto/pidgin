@@ -1438,7 +1438,7 @@ create_chat_menu(GaimConversation *conv, gchar *who,
 
 	if (gc && prpl_info && prpl_info->send_file
 			&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
-		button = gtk_new_item_from_stock(menu, _("Send File"), 
+		button = gaim_new_item_from_stock(menu, _("Send File"), 
 			GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 			conv, 0, 0, NULL);
 		g_object_set_data(G_OBJECT(button), "user_data", who);
