@@ -122,6 +122,7 @@ DLL_C_SRC =		about.c \
 			stock.c \
 			themes.c \
 			util.c \
+			value.c \
 			win32/win32dep.c \
 			win32/MinimizeToTray.c \
 			win32/libc_interface.c \
