@@ -190,7 +190,7 @@ static GList *combo_user_names()
 
 	while (usr) {
 		u = (struct aim_user *)usr->data;
-		tmp = g_list_append(tmp, g_strdup(u->username));
+		tmp = g_list_append(tmp, u->username);
 		usr = usr->next;
 	}
 
@@ -220,6 +220,8 @@ void show_login()
 	GdkPixmap *pm;
 	GtkStyle *style;
 	GdkBitmap *mask;
+
+	GList *tmp;
 
 	if (mainwindow) {
 		gtk_widget_show(mainwindow);
@@ -254,7 +256,9 @@ void show_login()
 	gtk_widget_show(label);
 
 	name = gtk_combo_new();
-	gtk_combo_set_popdown_strings(GTK_COMBO(name), combo_user_names());
+	tmp = combo_user_names();
+	gtk_combo_set_popdown_strings(GTK_COMBO(name), tmp);
+	g_list_free(tmp);
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "activate",
 			   GTK_SIGNAL_FUNC(doenter), mainwindow);
 	gtk_signal_connect(GTK_OBJECT(GTK_COMBO(name)->entry), "changed",
