@@ -338,7 +338,6 @@ initiate_chat_cb(GaimBlistNode *node, gpointer data)
 	/* TODO: This might move somewhere else, after USR might be */
 	swboard->chat_id = session->conv_seq++;
 	swboard->conv = serv_got_joined_chat(gc, swboard->chat_id, "MSN Chat");
-	swboard->flag = MSN_SB_FLAG_IM;
 
 	gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
 							gaim_account_get_username(buddy->account), NULL, GAIM_CBFLAGS_NONE, TRUE);
@@ -739,7 +738,7 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 		MsnSwitchBoard *swboard;
 
 		session = gc->proto_data;
-		swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
+		swboard = msn_session_get_swboard(session, who);
 
 		msn_switchboard_send_msg(swboard, msg, TRUE);
 	}
@@ -795,7 +794,7 @@ msn_send_typing(GaimConnection *gc, const char *who, int typing)
 		return MSN_TYPING_SEND_TIMEOUT;
 	}
 
-	swboard = msn_session_find_swboard(session, who, MSN_SB_FLAG_IM);
+	swboard = msn_session_find_swboard(session, who);
 
 	if (swboard == NULL || !msn_switchboard_can_send(swboard))
 		return 0;
@@ -1082,7 +1081,7 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 
 	session = gc->proto_data;
 
-	swboard = msn_session_find_swboard_with_id(session, id, MSN_SB_FLAG_IM);
+	swboard = msn_session_find_swboard_with_id(session, id);
 
 	if (swboard == NULL)
 	{
@@ -1091,7 +1090,6 @@ msn_chat_invite(GaimConnection *gc, int id, const char *msg,
 		msn_switchboard_request(swboard);
 		swboard->chat_id = id;
 		swboard->conv = gaim_find_chat(gc, id);
-		swboard->flag = MSN_SB_FLAG_IM;
 	}
 
 	msn_switchboard_request_add_user(swboard, who);
@@ -1102,16 +1100,27 @@ msn_chat_leave(GaimConnection *gc, int id)
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	GaimConversation *conv;
 
 	session = gc->proto_data;
 
-	swboard = msn_session_find_swboard_with_id(session, id, MSN_SB_FLAG_IM);
+	swboard = msn_session_find_swboard_with_id(session, id);
 
 	/* if swboard is NULL we were the only person left anyway */
 	if (swboard == NULL)
 		return;
 
+	conv = swboard->conv;
+
 	msn_switchboard_close(swboard);
+
+	/* If other switchboards managed to associate themselves with this
+	 * conv, make sure they know it's gone! */
+	if (conv != NULL)
+	{
+		while ((swboard = msn_session_find_swboard_with_conv(session, conv)) != NULL)
+			swboard->conv = NULL;
+	}
 }
 
 static int
@@ -1126,7 +1135,7 @@ msn_chat_send(GaimConnection *gc, int id, const char *message)
 
 	account = gaim_connection_get_account(gc);
 	session = gc->proto_data;
-	swboard = msn_session_find_swboard_with_id(session, id, MSN_SB_FLAG_IM);
+	swboard = msn_session_find_swboard_with_id(session, id);
 
 	if (swboard == NULL)
 		return -EINVAL;
@@ -1219,10 +1228,11 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
+	GaimConversation *conv;
 
 	session = gc->proto_data;
 
-	swboard = msn_session_find_swboard(session, who, MSN_SB_FLAG_IM);
+	swboard = msn_session_find_swboard(session, who);
 
 	/*
 	 * Don't perform an assertion here. If swboard is NULL, then the
@@ -1232,10 +1242,20 @@ msn_convo_closed(GaimConnection *gc, const char *who)
 	if (swboard == NULL)
 		return;
 
+	conv = swboard->conv;
+
 	if (!(swboard->flag & MSN_SB_FLAG_FT))
 		msn_switchboard_close(swboard);
 	else
 		swboard->conv = NULL;
+
+	/* If other switchboards managed to associate themselves with this
+	 * conv, make sure they know it's gone! */
+	if (conv != NULL)
+	{
+		while ((swboard = msn_session_find_swboard_with_conv(session, conv)) != NULL)
+			swboard->conv = NULL;
+	}
 }
 
 static void

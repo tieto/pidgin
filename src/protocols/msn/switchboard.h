@@ -54,8 +54,7 @@ typedef enum
  */
 typedef enum
 {
-	MSN_SB_FLAG_IM = 0x01, /**< This switchboard is used for instant messaging. */
-	MSN_SB_FLAG_FT = 0x02, /**< This switchboard is used for file transfer. */
+	MSN_SB_FLAG_FT = 0x01, /**< This switchboard is being used for file transfer. */
 
 } MsnSBFlag;
 

@@ -162,11 +162,8 @@ msn_slplink_find_slp_session(MsnSlpLink *slplink, long session_id)
 void
 msn_slplink_add_slpcall(MsnSlpLink *slplink, MsnSlpCall *slpcall)
 {
-	if (slplink->slp_calls == NULL)
-	{
-		if (slplink->swboard != NULL)
-			slplink->swboard->flag |= MSN_SB_FLAG_FT;
-	}
+	if (slplink->swboard != NULL)
+		slplink->swboard->flag |= MSN_SB_FLAG_FT;
 
 	slplink->slp_calls = g_list_append(slplink->slp_calls, slpcall);
 }
@@ -233,8 +230,7 @@ msn_slplink_send_msg(MsnSlpLink *slplink, MsnMessage *msg)
 		if (slplink->swboard == NULL)
 		{
 			slplink->swboard = msn_session_get_swboard(slplink->session,
-													   slplink->remote_user,
-													   MSN_SB_FLAG_FT);
+													   slplink->remote_user);
 
 			if (slplink->swboard == NULL)
 				return;

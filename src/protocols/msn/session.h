@@ -160,36 +160,43 @@ void msn_session_disconnect(MsnSession *session);
  *
  * @param session The MSN session.
  * @param username The username to search for.
- * @param flag The flag of the switchboard.
  *
  * @return The switchboard, if found.
  */
 MsnSwitchBoard *msn_session_find_swboard(MsnSession *session,
-										 const char *username, MsnSBFlag flag);
+										 const char *username);
 
+ /**
+ * Finds a switchboard with the given conversation.
+ *
+ * @param session The MSN session.
+ * @param conv    The conversation to search for.
+ *
+ * @return The switchboard, if found.
+ */
+MsnSwitchBoard *msn_session_find_swboard_with_conv(MsnSession *session,
+												   GaimConversation *conv);
 /**
  * Finds a switchboard with the given chat ID.
  *
  * @param session The MSN session.
  * @param chat_id The chat ID to search for.
- * @param flag The flag of the switchboard.
  *
  * @return The switchboard, if found.
  */
 MsnSwitchBoard *msn_session_find_swboard_with_id(const MsnSession *session,
-												 int chat_id, MsnSBFlag flag);
+												 int chat_id);
 
 /**
  * Returns a switchboard to communicate with certain username.
  *
  * @param session The MSN session.
  * @param username The username to search for.
- * @param flag The flag of the switchboard.
  *
  * @return The switchboard.
  */
 MsnSwitchBoard *msn_session_get_swboard(MsnSession *session,
-										const char *username, MsnSBFlag flag);
+										const char *username);
 
 /**
  * Sets an error for the MSN session.
