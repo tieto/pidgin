@@ -10,6 +10,9 @@ version 0.79cvs:
 	  in the account editor, to use your Yahoo! Japan account.
 	* Gtk themes can now theme the Gaim buddy list independently of
 	  other things (Stu Tomlinson)
+	* Show timestamps now has a per-conversation option in addition
+	  to the global one, bringing it in line with the other conver-
+	  sation options (Stu Tomlinson).
 
 	Bug Fixes:
 	* Non-looping animated icons no longer cause Gaim to freeze
