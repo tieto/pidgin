@@ -169,13 +169,22 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	len = st.st_size;
 
 	buf = g_malloc(len + 1);
-	if ((fread(buf, len, 1, fp)) != 1) {
+	
+	cur = buf;	
+	while (fgets(cur, (int) buf - (buf - cur), fp)) {
+		cur += strlen(cur);
+		if (feof(fp)) 
+			break;
+	}
+
+	if (ferror(fp)) {
+		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, strerror(errno));
 		g_free(buf);
 		fclose(fp);
 		return FALSE;
 	}
+
 	fclose(fp);
-	buf[len] = '\0';
 
 	if ((interp = tcl_create_interp()) == NULL) {
 		return FALSE;
