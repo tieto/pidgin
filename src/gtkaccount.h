@@ -5,7 +5,7 @@
  * gaim
  *
  * Copyright (C) 2002-2003, Christian Hammond <chipx86@gnupdate.org>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -51,6 +51,13 @@ void gaim_gtk_accounts_window_hide(void);
  */
 void gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 								  GaimAccount *account);
+
+/**
+ * Returns the GTK+ account UI ops
+ *
+ * @return The UI operations structure.
+ */
+GaimAccountUiOps *gaim_gtk_accounts_get_ui_ops(void);
 
 #endif /* _GAIM_GTK_ACCOUNT_H_ */
 

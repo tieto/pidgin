@@ -490,6 +490,7 @@ static void
 gaim_gtk_ui_init(void)
 {
 	/* Set the UI operation structures. */
+	gaim_accounts_set_ui_ops(gaim_gtk_accounts_get_ui_ops());
 	gaim_set_win_ui_ops(gaim_get_gtk_window_ui_ops());
 	gaim_set_xfer_ui_ops(gaim_get_gtk_xfer_ui_ops());
 	gaim_set_blist_ui_ops(gaim_get_gtk_blist_ui_ops());

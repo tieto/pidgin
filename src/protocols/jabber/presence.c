@@ -115,7 +115,7 @@ static void authorize_add_cb(struct _jabber_add_permit *jap)
 				"subscribed");
 
 		if(!gaim_find_buddy(jap->gc->account, jap->who))
-			show_got_added(jap->gc, NULL, jap->who, NULL, NULL);
+			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
 	}
 
 	g_free(jap->who);
@@ -129,7 +129,7 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 				"unsubscribed");
 
 		if(!gaim_find_buddy(jap->gc->account, jap->who))
-			show_got_added(jap->gc, NULL, jap->who, NULL, NULL);
+			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
 	}
 
 	g_free(jap->who);

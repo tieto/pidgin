@@ -25,7 +25,8 @@
 #ifndef _GAIM_ACCOUNTS_H_
 #define _GAIM_ACCOUNTS_H_
 
-typedef struct _GaimAccount GaimAccount;
+typedef struct _GaimAccountUiOps GaimAccountUiOps;
+typedef struct _GaimAccount      GaimAccount;
 
 #include "connection.h"
 #include "proxy.h"
@@ -37,6 +38,13 @@ enum
 	PERMIT_NONE,
 	PERMIT_SOME,
 	DENY_SOME
+};
+
+struct _GaimAccountUiOps
+{
+	void (*notify_added)(GaimAccount *account, const char *remote_user,
+						 const char *id, const char *alias,
+						 const char *message);
 };
 
 struct _GaimAccount
@@ -117,6 +125,23 @@ GaimConnection *gaim_account_register(GaimAccount *account);
  * @return The gaim connection.
  */
 void gaim_account_disconnect(GaimAccount *account);
+
+/**
+ * Notifies the user that the account was added to a remote user's
+ * buddy list.
+ *
+ * This will present a dialog so that the local user can add the buddy,
+ * if not already added.
+ *
+ * @param account The account that was added.
+ * @param remote_user The name of the user that added this account.
+ * @param id          The optional ID of the local account. Rarely used.
+ * @param alias       The optional alias of the user.
+ * @param message     The optional message sent from the user adding you.
+ */
+void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
+							   const char *id, const char *alias,
+							   const char *message);
 
 /**
  * Sets the account's username.
@@ -592,6 +617,20 @@ GaimAccount *gaim_accounts_find_with_prpl_id(const char *name,
 /** @name Accounts Subsystem                                              */
 /**************************************************************************/
 /*@{*/
+
+/**
+ * Sets the UI operations structure to be used for accounts.
+ *
+ * @param ops The UI operations structure.
+ */
+void gaim_accounts_set_ui_ops(GaimAccountUiOps *ops);
+
+/**
+ * Returns the UI operations structure used for accounts.
+ *
+ * @return The UI operations structure in use.
+ */
+GaimAccountUiOps *gaim_accounts_get_ui_ops(void);
 
 /**
  * Returns the accounts subsystem handle.

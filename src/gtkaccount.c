@@ -26,6 +26,7 @@
 #include "accountopt.h"
 #include "core.h"
 #include "debug.h"
+#include "notify.h"
 #include "plugin.h"
 #include "prefs.h"
 #include "request.h"
@@ -50,6 +51,14 @@ enum
 	COLUMN_DATA,
 	NUM_COLUMNS
 };
+
+typedef struct
+{
+	GaimAccount *account;
+	char *username;
+	char *alias;
+
+} GaimGtkAccountAddUserData;
 
 typedef struct
 {
@@ -1905,4 +1914,87 @@ gaim_gtk_accounts_window_hide(void)
 
 		gaim_core_quit();
 	}
+}
+
+static void
+free_add_user_data(GaimGtkAccountAddUserData *data)
+{
+	g_free(data->username);
+
+	if (data->alias != NULL)
+		g_free(data->alias);
+
+	g_free(data);
+}
+
+static void
+add_user_cb(GaimGtkAccountAddUserData *data)
+{
+	GaimConnection *gc = gaim_account_get_connection(data->account);
+
+	if (g_list_find(gaim_connections_get_all(), gc))
+		show_add_buddy(gc, data->username, NULL, data->alias);
+
+	free_add_user_data(data);
+}
+
+static void
+gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
+							   const char *id, const char *alias,
+							   const char *msg)
+{
+	char *buffer;
+	GaimConnection *gc;
+	GaimGtkAccountAddUserData *data;
+	GaimBuddy *buddy;
+
+	gc = gaim_account_get_connection(account);
+
+	buddy = gaim_find_buddy(account, remote_user);
+
+	data = g_new0(GaimGtkAccountAddUserData, 1);
+	data->account  = account;
+	data->username = g_strdup(remote_user);
+	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
+
+	buffer = g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s%s"),
+		remote_user,
+		(alias != NULL ? " ("  : ""),
+		(alias != NULL ? alias : ""),
+		(alias != NULL ? ")"   : ""),
+		(id != NULL
+		 ? id
+		 : (gaim_connection_get_display_name(gc) != NULL
+			? gaim_connection_get_display_name(gc)
+			: gaim_account_get_username(account))),
+		(msg != NULL ? ": " : "."),
+		(msg != NULL ? msg  : ""),
+		(buddy != NULL
+		 ? ""
+		 : _("\n\nDo you wish to add him or her to your buddy list?")));
+
+	if (buddy != NULL)
+	{
+		gaim_notify_info(NULL, NULL, _("Gaim - Information"), buffer);
+	}
+	else
+	{
+		gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
+							buffer, 0, data, 2,
+							_("Add"),    G_CALLBACK(add_user_cb),
+							_("Cancel"), G_CALLBACK(free_add_user_data));
+	}
+
+	g_free(buffer);
+}
+
+static GaimAccountUiOps ui_ops =
+{
+	gaim_gtk_accounts_notify_added
+};
+
+GaimAccountUiOps *
+gaim_gtk_accounts_get_ui_ops(void)
+{
+	return &ui_ops;
 }

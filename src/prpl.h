@@ -349,19 +349,6 @@ GaimProtocol gaim_prpl_id_to_num(const char *id);
  */
 GaimPlugin *gaim_find_prpl(GaimProtocol type);
 
-/**
- * Shows a message saying that somebody added you as a buddy, and asks
- * if you would like to do the same.
- *
- * @param gc    The gaim connection.
- * @param id    The ID of the user.
- * @param who   The username.
- * @param alias The user's alias.
- * @param msg   The message to go along with the request.
- */
-void show_got_added(GaimConnection *gc, const char *id,
-					const char *who, const char *alias, const char *msg);
-
 #ifdef __cplusplus
 }
 #endif

@@ -722,7 +722,7 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	}
 
 	if (id)
-		show_got_added(gc, id, who, NULL, msg);
+		gaim_account_notify_added(gc->account, id, who, NULL, msg);
 }
 
 static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *pkt)

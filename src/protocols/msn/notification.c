@@ -182,8 +182,9 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 
 		gaim_privacy_permit_add(pa->gc->account,
 								msn_user_get_passport(pa->user), TRUE);
-		show_got_added(pa->gc, NULL, msn_user_get_passport(pa->user),
-					   msn_user_get_name(pa->user), NULL);
+		gaim_account_notify_added(pa->gc->account, NULL,
+								  msn_user_get_passport(pa->user),
+								  msn_user_get_name(pa->user), NULL);
 	}
 
 	msn_user_destroy(pa->user);

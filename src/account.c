@@ -81,6 +81,9 @@ typedef struct
 
 } AccountParserData;
 
+
+static GaimAccountUiOps *account_ui_ops = NULL;
+
 static GList   *accounts = NULL;
 static guint    accounts_save_timer = 0;
 static gboolean accounts_loaded = FALSE;
@@ -227,6 +230,22 @@ gaim_account_disconnect(GaimAccount *account)
 	gaim_account_set_connection(account, NULL);
 
 	gaim_connection_disconnect(gc);
+}
+
+void
+gaim_account_notify_added(GaimAccount *account, const char *remote_user,
+						  const char *id, const char *alias,
+						  const char *message)
+{
+	GaimAccountUiOps *ui_ops;
+
+	g_return_if_fail(account     != NULL);
+	g_return_if_fail(remote_user != NULL);
+
+	ui_ops = gaim_accounts_get_ui_ops();
+
+	if (ui_ops != NULL && ui_ops->notify_added != NULL)
+		ui_ops->notify_added(account, remote_user, id, alias, message);
 }
 
 void
@@ -1444,6 +1463,18 @@ gaim_accounts_find_with_prpl_id(const char *name, const char *protocol_id)
 	g_free(who);
 
 	return account;
+}
+
+void
+gaim_accounts_set_ui_ops(GaimAccountUiOps *ops)
+{
+	account_ui_ops = ops;
+}
+
+GaimAccountUiOps *
+gaim_accounts_get_ui_ops(void)
+{
+	return account_ui_ops;
 }
 
 void *
