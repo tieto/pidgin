@@ -1251,7 +1251,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 					break;
 
 				case '-':
-					do_small(NULL, gtkconv);
+					set_toggle(gtkconv->toolbar.smaller_size,
+							!gtk_toggle_button_get_active(
+								GTK_TOGGLE_BUTTON(gtkconv->toolbar.smaller_size)));
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
@@ -1259,7 +1261,9 @@ entry_key_pressed_cb_2(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 				case '=':
 				case '+':
-					do_big(NULL, gtkconv);
+					set_toggle(gtkconv->toolbar.larger_size,
+							!gtk_toggle_button_get_active(
+								GTK_TOGGLE_BUTTON(gtkconv->toolbar.larger_size)));
 
 					g_signal_stop_emission_by_name(G_OBJECT(entry),
 												 "key_press_event");
