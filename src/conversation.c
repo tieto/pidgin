@@ -2199,3 +2199,8 @@ void set_convo_tab_label(struct conversation *c, char *text)
 					gtk_notebook_get_nth_page(GTK_NOTEBOOK(convo_notebook),
 						g_list_index(conversations, c)))), text);
 }
+
+void raise_convo_tab(struct conversation *c)
+{
+	gtk_notebook_set_page(GTK_NOTEBOOK(convo_notebook), g_list_index(conversations, c));
+}
