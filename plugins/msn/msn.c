@@ -103,10 +103,16 @@ unsigned long long globalc = 0;
 static void msn_callback(gpointer data, gint source, GdkInputCondition condition);
 static void msn_add_permit(struct gaim_connection *gc, char *who);
 static void process_hotmail_msg(struct gaim_connection *gc, gchar *msgdata);
+void msn_des_win(GtkWidget *a, GtkWidget *b);
+void msn_newmail_dialog(const char *text);
 
 void msn_accept_add_permit(gpointer w, struct msn_ask_add_permit *ap)
 {
 	msn_add_permit(ap->gc, ap->user);
+	/* leak if we don't free these? */
+	g_free(ap->user);
+	g_free(ap->friendly);
+	g_free(ap);
 }
 
 void msn_cancel_add_permit(gpointer w, struct msn_ask_add_permit *ap)
@@ -169,7 +175,7 @@ struct msn_conn *find_msn_conn_by_trid(time_t trid)
 
 		if (mc != NULL) {
 
-			printf("Comparing: %d <==> %d\n", mc->last_trid, trid);
+			debug_printf("Comparing: %d <==> %d\n", mc->last_trid, trid);
 			if (mc->last_trid == trid) {
 				return mc;
 			}
@@ -180,9 +186,6 @@ struct msn_conn *find_msn_conn_by_trid(time_t trid)
 
 	return NULL;
 }
-
-void msn_des_win(GtkWidget *a, GtkWidget *b);
-void msn_newmail_dialog(const char *text);
 
 static char *msn_name()
 {
@@ -208,7 +211,29 @@ time_t trId(struct msn_data *md)
 void msn_write(int fd, char *buf)
 {
 	write(fd, buf, strlen(buf));
-	printf("MSN(%d) <== %s", fd, buf);
+	debug_printf("MSN(%d) <== %s", fd, buf);
+}
+
+void msn_add_request(struct gaim_connection *gc, char *buf)
+{
+	char **res;
+
+	res = g_strsplit(buf, " ", 0);
+
+	if (!strcasecmp(res[2], "RL"))
+	{
+		struct msn_ask_add_permit *ap = g_new0(struct msn_ask_add_permit, 1);
+
+		snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
+
+		ap->user = g_strdup(res[4]);
+		ap->friendly = g_strdup(res[5]);
+		ap->gc = gc;
+
+		do_ask_dialog(buf, ap, (GtkFunction) msn_accept_add_permit, (GtkFunction) msn_cancel_add_permit);
+	}
+
+	g_strfreev(res);
 }
 
 static void msn_answer_callback(gpointer data, gint source, GdkInputCondition condition)
@@ -263,14 +288,14 @@ static void msn_invite_callback(gpointer data, gint source, GdkInputCondition co
 
 	g_strchomp(buf);
 
-	printf("MSN(%d) ==> %s\n", source, buf);
+	debug_printf("MSN(%d) ==> %s\n", source, buf);
 
 	if (!strncmp("USR ", buf, 4))
 	{
 		char **res;
 
 		res = g_strsplit(buf, " ", 0);
-		printf("%s\n",res[2]);
+		debug_printf("%s\n",res[2]);
 		if (strcasecmp("OK", res[2]))
 		{
 			g_strfreev(res);
@@ -328,7 +353,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 	g_strchomp(buf);
 
-	printf("MSN(%d) ==> %s\n", source, buf);
+	debug_printf("MSN(%d) ==> %s\n", source, buf);
 
 	if (!strncmp("NLN ", buf, 4) || !strncmp("ILN ", buf, 4))
 	{
@@ -407,7 +432,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		msgdata[size] = 0;
 
 		if (num < size)
-			printf("MSN: Uhh .. we gots a problem!. Expected %d but got %d.\n", size, num);
+			debug_printf("MSN: Uhh .. we gots a problem!. Expected %d but got %d.\n", size, num);
 
 		/* We should ignore messages from the user Hotmail */
 		if (!strcasecmp("hotmail", res[1]))
@@ -478,8 +503,8 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		res = g_strsplit(buf, " ", 0);
 
-		printf("Last trid is: %d\n", md->last_trid);
-		printf("This TrId is: %d\n", atoi(res[1]));
+		debug_printf("Last trid is: %d\n", md->last_trid);
+		debug_printf("This TrId is: %d\n", atoi(res[1]));
 
 		mc = find_msn_conn_by_trid(atoi(res[1]));
 
@@ -502,7 +527,7 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 		if (!(mc->fd = msn_connect(res[0], atoi(res[1]))))
 			return;
 
-		printf("Connected to: %s:%s\n", res[0], res[1]);
+		debug_printf("Connected to: %s:%s\n", res[0], res[1]);
 
 		if (mc->inpa)
 			gdk_input_remove(mc->inpa);
@@ -556,6 +581,11 @@ static void msn_callback(gpointer data, gint source, GdkInputCondition condition
 
 		g_strfreev(res);
 
+		return;
+	}
+	else if (!strncmp("ADD ", buf, 4))
+	{
+		msn_add_request(gc,buf);
 		return;
 	}
 	if ( (!strncmp("NLN ", buf, 4)) || (!strncmp("ILN ", buf, 4)))
@@ -625,7 +655,7 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 		else
 		{
 			/* Otherwise, send an initial request */
-			set_login_progress(gc, 2, "Verifiying");
+			set_login_progress(gc, 2, "Verifying");
 
 			g_snprintf(md->protocol, 6, "MSNP2");
 
@@ -651,12 +681,12 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 
 	g_strchomp(buf);
 
-	printf("MSN ==> %s\n", buf);
+	debug_printf("MSN ==> %s\n", buf);
 
 	/* Check to see what was just sent back to us.  We should be seeing a VER tag. */
 	if (!strncmp("VER ", buf, 4) && (!strstr("MSNP2", buf)))
 	{
-		/* Now that we got our ver, we shoudl send a policy request */
+		/* Now that we got our ver, we should send a policy request */
 		g_snprintf(buf, MSN_BUF_LEN, "INF %d\n", trId(md));
 		msn_write(md->fd, buf);
 
@@ -682,27 +712,9 @@ static void msn_login_callback(gpointer data, gint source, GdkInputCondition con
 	}
 	else if (!strncmp("ADD ", buf, 4))
 	{
-		char **res;
-
-		res = g_strsplit(buf, " ", 0);
-
-		if (!strcasecmp(res[2], "RL"))
-		{
-			struct msn_ask_add_permit *ap = g_new0(struct msn_ask_add_permit, 1);
-
-			snprintf(buf, MSN_BUF_LEN, "The user %s (%s) wants to add you to their buddylist.", res[4], res[5]);
-
-			ap->user = g_strdup(res[4]);
-			ap->friendly = g_strdup(res[5]);
-			ap->gc = gc;
-
-			do_ask_dialog(buf, ap, (GtkFunction) msn_accept_add_permit, (GtkFunction) msn_cancel_add_permit);
-		}
-
-		g_strfreev(res);
+		msn_add_request(gc,buf);
 		return;
 	}
-
 	else if (!strncmp("XFR ", buf, 4))
 	{
 		char **res;
@@ -828,7 +840,7 @@ int msn_connect(char *server, int port)
 
 	if (!(host = gethostbyname(server)))
 	{
-		printf("Could not resolve host name: %s\n", server);
+		debug_printf("Could not resolve host name: %s\n", server);
 		return -1;
 	}
 
@@ -845,7 +857,7 @@ int msn_connect(char *server, int port)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			printf("Connection would block\n");
+			debug_printf("Connection would block\n");
 			return fd;
 		}
 
@@ -882,7 +894,7 @@ void msn_login(struct aim_user *user)
 
 	md->inpa = gdk_input_add(md->fd, GDK_INPUT_WRITE, msn_login_callback, gc);
 
-	printf("Connected.\n");
+	debug_printf("Connected.\n");
 }
 
 void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
@@ -893,7 +905,7 @@ void msn_send_im(struct gaim_connection *gc, char *who, char *message, int away)
 
 	if (!g_strcasecmp(who, gc->username))
 	{
-		do_error_dialog("You can not send a message to  yourself!", "Gaim: MSN Error");
+		do_error_dialog("You can not send a message to yourself!", "Gaim: MSN Error");
 		return;
 	}
 

@@ -1,8 +1,13 @@
 GAIM: The Pimpin' Penguin IM Clone thats good for the soul! 
 
 version 0.11.0-pre11:
+	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
+	* Jabber can send/accept chat invites (due to mid)
 	* MSN has the option to notify you of new hotmail
 	  messages
+	* Fixed a problem with ADD requests in MSN
+	* Fixed a small memory leak with MSN
+	* Moved MSN's spammy debug output into debug_printf's
 	* Zephyr updates and additions, thanks Neil Sanchala (nsanch)
 	* Jabber can send/accept chat invites (due to mid)
 	* Can rename groups/buddies in the Edit Buddies pane
