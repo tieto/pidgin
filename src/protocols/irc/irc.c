@@ -813,6 +813,14 @@ static void handle_roomlist(struct gaim_connection *gc, char *word[], char *word
 	id->liststr = g_string_append(id->liststr, word_eol[4]);
 }
 
+static void irc_change_nick(void *a, char *b) {
+	struct gaim_connection *gc = a;
+	struct irc_data *id = gc->proto_data;
+	char buf[IRC_BUF_LEN];	
+	g_snprintf(buf, sizeof(buf), "NICK %s\r\n", b);
+	irc_write(id->fd, buf, strlen(buf));
+}
+
 static void process_numeric(struct gaim_connection *gc, char *word[], char *word_eol[])
 {
 	struct irc_data *id = gc->proto_data;
@@ -898,6 +906,8 @@ static void process_numeric(struct gaim_connection *gc, char *word[], char *word
 	case 431:
 		do_error_dialog(_("No IRC nickname given"), NULL, GAIM_ERROR);
 		break;
+	case 433:
+		do_prompt_dialog(_("That nick is already in use.  Please enter a new nick"), gc->displayname, gc, irc_change_nick, NULL);
 	default:
 		if (n > 400 && n < 502) {
 			char errmsg[IRC_BUF_LEN];

@@ -49,7 +49,7 @@ gchar *title_string = "(*) ";
 /* predefine some functions, less warnings */
 void options(GtkWidget *widget, gpointer data);
 void un_star(GtkWidget *widget, gpointer data);
-void un_star_window(GtkWidget *widget, gpointer data);
+int un_star_window(GtkWidget *widget, gpointer data);
 void string_remove(GtkWidget *widget);
 void count_remove(GtkWidget *widget);
 void quote_remove(GtkWidget *widget);
@@ -177,10 +177,11 @@ void un_star(GtkWidget *widget, gpointer data) {
 	return;
 }
 
-void un_star_window(GtkWidget *widget, gpointer data) {
+int un_star_window(GtkWidget *widget, gpointer data) {
 	GtkWidget *parent = gtk_widget_get_ancestor(widget, GTK_TYPE_WINDOW);
 	gtk_object_set_user_data(GTK_OBJECT(parent), gtk_object_get_user_data(GTK_OBJECT(widget)));
 	un_star(parent, data);
+	return 0;
 }
 
 /* This function returns the number in [ ]'s or 0 */
