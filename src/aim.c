@@ -596,7 +596,6 @@ int main(int argc, char *argv[])
         
 
         show_login();
-	new_conversation("Roo");
         gtk_main();
         
 #endif /* USE_APPLET */

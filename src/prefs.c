@@ -41,7 +41,8 @@
 #include "pixmaps/gnome_add.xpm"
 #include "pixmaps/gnome_remove.xpm"
 #include "pixmaps/gnome_preferences.xpm"
-#include "pixmaps/palette.xpm"
+#include "pixmaps/bgcolor.xpm"
+#include "pixmaps/fgcolor.xpm"
 #include "pixmaps/save.xpm"
 
 struct debug_window *dw = NULL;
@@ -1012,7 +1013,7 @@ static void font_page()
 	
 	button = gaim_button(_("Text Color"), &font_options, OPT_FONT_FGCOL, hbox);
 
-	select = picture_button(prefs, _("Select"), palette_xpm);
+	select = picture_button(prefs, _("Select"), fgcolor_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
 	if (!(font_options & OPT_FONT_FGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
@@ -1027,7 +1028,7 @@ static void font_page()
 	
 	button = gaim_button(_("Background Color"), &font_options, OPT_FONT_BGCOL, hbox);
 
-	select = picture_button(prefs, _("Select"), palette_xpm);
+	select = picture_button(prefs, _("Select"), bgcolor_xpm);
 	gtk_box_pack_start(GTK_BOX(hbox), select, FALSE, FALSE, 5);
 	if (!(font_options & OPT_FONT_BGCOL))
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
