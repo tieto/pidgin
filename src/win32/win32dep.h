@@ -37,30 +37,28 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
-void wgaim_set_hinstance(HINSTANCE);
-HINSTANCE wgaim_hinstance(void);
-FARPROC wgaim_find_and_loadproc(char*, char*);
-gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
+extern HINSTANCE wgaim_hinstance(void);
+extern FARPROC   wgaim_find_and_loadproc(char*, char*);
+extern gboolean  wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
+extern char*     wgaim_escape_dirsep(char*);
 /* Determine Gaim paths */
-extern char* wgaim_install_dir(void);
-extern char* wgaim_lib_dir(void);
-extern char* wgaim_locale_dir(void);
-extern char* wgaim_data_dir(void);
-extern char* wgaim_escape_dirsep(char*);
+extern char*     wgaim_install_dir(void);
+extern char*     wgaim_lib_dir(void);
+extern char*     wgaim_locale_dir(void);
+extern char*     wgaim_data_dir(void);
 /* UI related */
-extern void wgaim_conv_im_blink(GtkWidget*);
-extern void wgaim_conv_im_blink_state(gboolean val);
-extern void wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
+extern void      wgaim_conv_im_blink(GtkWidget*);
+extern void      wgaim_conv_im_blink_state(gboolean val);
+extern void      wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
 /* Utility */
-extern int wgaim_gz_decompress(const char* in, const char* out);
-extern int wgaim_gz_untar(const char* filename, const char* destdir);
+extern int       wgaim_gz_decompress(const char* in, const char* out);
+extern int       wgaim_gz_untar(const char* filename, const char* destdir);
 /* Docklet */
-extern void wgaim_systray_minimize( GtkWidget* );
-extern void wgaim_systray_maximize( GtkWidget* );
+extern void      wgaim_systray_minimize( GtkWidget* );
+extern void      wgaim_systray_maximize( GtkWidget* );
 /* init / cleanup */
-extern void wgaim_pre_plugin_init(void);
-extern void wgaim_init(void);
-extern void wgaim_cleanup(void);
+extern void      wgaim_init(HINSTANCE);
+extern void      wgaim_cleanup(void);
 
 /*
  *  MACROS

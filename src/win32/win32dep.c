@@ -44,16 +44,31 @@
 #include "zlib.h"
 #include "untar.h"
 
-#  include <libintl.h>
-#  define _(x) gettext(x)
+#include <libintl.h>
 
 /*
  *  DEFINES & MACROS
  */
+#define _(x) gettext(x)
 
 /*
  * DATA STRUCTS
  */
+
+/* For shfolder.dll */
+typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATH)(HWND, int, HANDLE, DWORD, LPTSTR);
+
+typedef enum {
+    SHGFP_TYPE_CURRENT  = 0,   // current value for user, verify it exists
+    SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
+} SHGFP_TYPE;
+
+#define CSIDL_APPDATA 0x001a
+#define CSIDL_FLAG_CREATE 0x8000
+
+/* flash info */
+typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
+
 struct _WGAIM_FLASH_INFO {
 	guint t_handle;
 	guint sig_handler;
@@ -63,7 +78,7 @@ typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
 /*
  * LOCALS
  */
-static char app_data_dir[MAX_PATH];
+static char app_data_dir[MAX_PATH] = "C:";
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
@@ -78,11 +93,12 @@ HINSTANCE gaimdll_hInstance = 0;
 /*
  *  PROTOS
  */
-BOOL (*MyFlashWindowEx)(PFLASHWINFO pfwi)=NULL;
-HRESULT (*SHGetFolderPath)(HWND, int, HANDLE, DWORD, LPTSTR) = NULL;
+LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
+LPFNSHGETFOLDERPATH MySHGetFolderPath = NULL;
 
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
+char* wgaim_data_dir(void);
 
 /*
  *  STATIC CODE
@@ -105,16 +121,158 @@ static void halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, WGAIM_FLA
 
 static void load_winver_specific_procs(void) {
 	/* Used for Win98+ and WinNT5+ */
-	MyFlashWindowEx = (void*)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
+	MyFlashWindowEx = (LPFNFLASHWINDOWEX)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
+}
+
+static char* base_name(char* path) {
+        char *tmp = path;
+        char *prev = NULL;
+
+        while((tmp=strchr(tmp, '\\'))) {
+                prev = tmp;
+                tmp += 1;
+        }
+        if(prev)
+                return ++prev;
+        else
+                return NULL;
+}
+
+BOOL folder_exists(char *folder) {
+        BOOL ret = FALSE;
+        WIN32_FIND_DATA fileinfo;
+        HANDLE fh;
+
+        memset(&fileinfo, 0, sizeof(WIN32_FIND_DATA));
+        if((fh=FindFirstFile(folder, &fileinfo))) {
+                if(fileinfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                        ret = TRUE;
+                        SetLastError(ERROR_SUCCESS);
+                }
+                else
+                        SetLastError(ERROR_FILE_EXISTS);
+                FindClose(fh);
+        }
+        return ret;
+}
+
+/* Recursively create directories in the dest path */
+static BOOL CreateDirectoryR(char *dest) {
+        static BOOL start = TRUE;
+        BOOL ret = FALSE;
+
+        if(!dest)
+                return ret;
+
+        if(start) {
+                char *str = g_strdup(dest);
+                start = FALSE;
+                ret = CreateDirectoryR(str);
+                g_free(str);
+                start = TRUE;
+        }
+        else {
+                char *tmp1 = dest;
+                char *tmp=NULL;
+
+                while((tmp1=strchr(tmp1, '\\'))) {
+                        tmp = tmp1;
+                        tmp1+=1;
+                }
+                
+                if(tmp) {
+                        tmp[0] = '\0';
+                        CreateDirectoryR(dest);
+                        tmp[0] = '\\';
+                        if(CreateDirectory(dest, NULL) == 0 && GetLastError() != ERROR_ALREADY_EXISTS) {
+                                gaim_debug(GAIM_DEBUG_ERROR, "wgaim",
+                                           "Error creating directory: %s. Errno: %u\n", 
+                                           dest, (UINT)GetLastError());
+                        }
+                        else
+                                ret = TRUE;
+                }
+        }
+        return ret;
+}
+
+static BOOL move_folder(char *src, char* dest, char* copytitle, BOOL overwrite) {
+        char *tsrc, *tdest;
+        SHFILEOPSTRUCT dirmove;
+        BOOL ret = FALSE;
+
+        g_return_val_if_fail(src!=NULL, ret);
+        g_return_val_if_fail(dest!=NULL, ret);
+
+        if(!folder_exists(src)) {
+                gaim_debug(GAIM_DEBUG_WARNING, "wgaim", 
+                           "move_folder: Source folder %s, does not exist\n", src);
+                return ret;
+        }
+        if(!overwrite) {
+                char *dstpath = g_strdup_printf("%s\\%s", dest, base_name(src));
+
+                if(folder_exists(dstpath)) {
+                        gaim_debug(GAIM_DEBUG_WARNING, "wgaim", 
+                                   "move_folder: Destination Folder %s, already exists\n", dstpath);
+                        g_free(dstpath);
+                        return ret;
+                }
+                g_free(dstpath);
+        }
+
+        /* Create dest folder if it doesn't exist */
+        if(!CreateDirectoryR(dest)) {
+                gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Error creating directory: %s\n", dest);
+                return ret;
+        }
+
+        tsrc = g_strdup_printf("%s%c", src, '\0');
+        tdest = g_strdup_printf("%s%c", dest, '\0');
+
+        memset(&dirmove, 0, sizeof(SHFILEOPSTRUCT));
+        dirmove.wFunc = FO_MOVE;
+        dirmove.pFrom = tsrc;
+        dirmove.pTo = tdest;
+        dirmove.fFlags = FOF_NOCONFIRMATION | FOF_SIMPLEPROGRESS;
+        dirmove.hNameMappings = 0;
+        dirmove.lpszProgressTitle = copytitle;
+
+        if(SHFileOperation(&dirmove)==0)
+                ret = TRUE;
+
+        g_free(tsrc);
+        g_free(tdest);
+        return ret;
+}
+
+static void move_settings_dir() {
+        char *old_home = g_strdup_printf("%s%s", g_get_home_dir() ? g_get_home_dir() : "C:", "\\.gaim");
+        char *new_home = g_strdup_printf("%s%s", wgaim_data_dir(), "\\.gaim");
+
+        if(folder_exists(old_home) && !folder_exists(new_home)) {
+                if(move_folder(old_home, wgaim_data_dir(), _("Moving Gaim Settings.."), FALSE)) {
+                        char *locenc, *locenc1, *str;
+                        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Success moving '.gaim' directory\n");
+                        str = g_strdup_printf("%s%s", _("Moving Gaim user settings to: "), new_home);
+                        locenc=g_locale_from_utf8(str, -1, NULL, NULL, NULL);
+                        locenc1=g_locale_from_utf8(_("Notification"), -1, NULL, NULL, NULL);
+                        MessageBox(NULL, locenc, locenc1, MB_OK | MB_TOPMOST);
+                        g_free(locenc);
+                        g_free(locenc1);
+                        g_free(str);
+                }
+                else
+                        gaim_debug(GAIM_DEBUG_ERROR, "wgaim", 
+                                   "Failed to move '.gaim' directory to %s.\n", wgaim_data_dir());
+        }
+        g_free(new_home);
+        g_free(old_home);
 }
 
 /*
  *  PUBLIC CODE
  */
-
-void wgaim_set_hinstance(HINSTANCE hint) {
-	gaimexe_hInstance = hint;
-}
 
 HINSTANCE wgaim_hinstance(void) {
 	return gaimexe_hInstance;
@@ -245,7 +403,7 @@ void wgaim_conv_im_blink(GtkWidget *window) {
                 return;
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
-
+                memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(window->window);
 		info.dwFlags = FLASHW_ALL | FLASHW_TIMERNOFG;
@@ -337,16 +495,42 @@ void wgaim_systray_maximize( GtkWidget *window ) {
 	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
 
-/* Windows Initializations */
-typedef enum {
-    SHGFP_TYPE_CURRENT  = 0,   // current value for user, verify it exists
-    SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
-} SHGFP_TYPE;
+void wgaim_init(HINSTANCE hint) {
+	WORD wVersionRequested;
+	WSADATA wsaData;
+	char *perlenv;
+        char *newenv;
 
-#define CSIDL_APPDATA 0x001a
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
-void wgaim_pre_plugin_init(void) {
-        char *perlenv, *newenv;
+	gaimexe_hInstance = hint;
+
+	load_winver_specific_procs();
+
+	/* Winsock init */
+	wVersionRequested = MAKEWORD( 2, 2 );
+	WSAStartup( wVersionRequested, &wsaData );
+
+	/* Confirm that the winsock DLL supports 2.2 */
+	/* Note that if the DLL supports versions greater than
+	   2.2 in addition to 2.2, it will still return 2.2 in 
+	   wVersion since that is the version we requested. */
+	if ( LOBYTE( wsaData.wVersion ) != 2 ||
+             HIBYTE( wsaData.wVersion ) != 2 ) {
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
+		WSACleanup();
+	}
+
+        /* Set Environmental Variables */
+	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
+	   future because there will most likely be a check to see if we need this.
+	   For now we need to set this in order to avoid poor performance for some 
+	   windows machines.
+	*/
+	newenv = g_strdup("PANGO_WIN32_NO_UNISCRIBE=1");
+	if(putenv(newenv)<0)
+		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
+        g_free(newenv);
 
         /* Tell perl where to find Gaim's perl modules */
         perlenv = (char*)g_getenv("PERL5LIB");
@@ -359,93 +543,31 @@ void wgaim_pre_plugin_init(void) {
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
         g_free(newenv);
 
-        /* Set app data dir, where to save Gaim user settings */
+        /* Set app data dir, used by gaim_home_dir */
         newenv = (char*)g_getenv("HOME");
         if(!newenv) {
-                SHGetFolderPath = (void*)wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
-                if(SHGetFolderPath) {
-                        HRESULT hrResult = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, app_data_dir);
-                        if(hrResult != S_FALSE && hrResult != E_FAIL && hrResult != E_INVALIDARG) {
-                                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "APP DATA PATH set to: %s\n", app_data_dir);
-                        }
-                        else
-                                strcpy(app_data_dir, "C:");
+                if((MySHGetFolderPath = (LPFNSHGETFOLDERPATH)wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA"))) {
+                        MySHGetFolderPath(NULL,
+                                          CSIDL_APPDATA, 
+                                          NULL, SHGFP_TYPE_CURRENT, app_data_dir);
                 }
-
+                else
+                        strcpy(app_data_dir, "C:");
                 /* As of 0.69, using SHGetFolderPath to determine app settings directory.
                    Move app settings to new location if need be. */
-                { 
-                        char *old_home = g_strdup_printf("%s%s", g_get_home_dir() ? g_get_home_dir() : "C:", "\\.gaim");
-                        char *new_home = g_strdup_printf("%s\\.gaim", wgaim_data_dir());
-                        GDir *dir_old, *dir_new;
-
-                        dir_old = g_dir_open(old_home, 0, NULL);
-                        dir_new = g_dir_open(new_home, 0, NULL);
-                        if(dir_old && !dir_new) {
-                                gaim_notify_message(NULL, 
-                                                    GAIM_NOTIFY_MSG_INFO,
-                                                    _("Notification"), 
-                                                    _("Moving Gaim user settings directory to:"),
-                                                    new_home,
-                                                    NULL,
-                                                    NULL);
-                                if(MoveFile(old_home, new_home) != 0)
-                                        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Success moving '.gaim' directory\n");
-                        }
-                        g_free(new_home);
-                        g_free(old_home);
-                        if(dir_old) g_dir_close(dir_old);
-                        if(dir_new) g_dir_close(dir_new);
-                }
+                move_settings_dir();
         }
         else {
                 strcpy(app_data_dir, newenv);
         }
-}
+        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Gaim settings dir: %s\n", app_data_dir);
 
-void wgaim_init(void) {
-	WORD wVersionRequested;
-	WSADATA wsaData;
-	char newenv[128];
-
-	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init\n");
-
-	load_winver_specific_procs();
-
-	/*
-	 *  Winsock init
-	 */
-	wVersionRequested = MAKEWORD( 2, 2 );
-
-	WSAStartup( wVersionRequested, &wsaData );
-
-	/* Confirm that the winsock DLL supports 2.2 */
-	/* Note that if the DLL supports versions greater than
-	   2.2 in addition to 2.2, it will still return 2.2 in 
-	   wVersion since that is the version we requested. */
-
-	if ( LOBYTE( wsaData.wVersion ) != 2 ||
-			HIBYTE( wsaData.wVersion ) != 2 ) {
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
-		WSACleanup( );
-	}
-
-	/* Disable PANGO UNISCRIBE (for GTK 2.2.0). This may not be necessary in the
-	   future because there will most likely be a check to see if we need this,
-	   but for now we need to set this in order to avoid poor performance for some 
-	   windows machines.
-	*/
-	sprintf(newenv, "PANGO_WIN32_NO_UNISCRIBE=1");
-	if(putenv(newenv)<0)
-		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
-
-	/*
-	 *  IdleTracker Initialization
-	 */
+	/* IdleTracker Initialization */
 	if(!wgaim_set_idlehooks())
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
+        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
 /* Windows Cleanup */
@@ -454,7 +576,7 @@ void wgaim_cleanup(void) {
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_cleanup\n");
 
 	/* winsock cleanup */
-	WSACleanup( );
+	WSACleanup();
 
 	/* Idle tracker cleanup */
 	wgaim_remove_idlehooks();
