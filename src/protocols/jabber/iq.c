@@ -361,9 +361,11 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 			jabber_disco_items_parse(js, packet);
 			return;
 		}
+	/*
 	} else if(xmlnode_get_child(packet, "si")) {
 		jabber_si_parse(js, packet);
 		return;
+	*/
 	}
 
 	/* If we got here, no pre-defined handlers got it, lets see if a special

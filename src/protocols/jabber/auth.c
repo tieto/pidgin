@@ -127,47 +127,52 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	JabberIq *iq;
 	xmlnode *query, *x;
 	gboolean digest = FALSE;
+	const char *type = xmlnode_get_attrib(packet, "type");
 	const char *pw = gaim_account_get_password(js->gc->account);
 
-	/* XXX: check for an <iq type='error' /> */
-
-	query = xmlnode_get_child(packet, "query");
-	if(js->stream_id && xmlnode_get_child(query, "digest")) {
-		digest = TRUE;
-	} else if(!xmlnode_get_child(query, "password")) {
-		gaim_connection_error(js->gc,
-				_("Server does not use any supported authentication method"));
+	if(!type) {
 		return;
+	} else if(strcmp(type, "error")) {
+		/* XXX: handle error */
+	} else if(strcmp(type, "result")) {
+		query = xmlnode_get_child(packet, "query");
+		if(js->stream_id && xmlnode_get_child(query, "digest")) {
+			digest = TRUE;
+		} else if(!xmlnode_get_child(query, "password")) {
+			gaim_connection_error(js->gc,
+					_("Server does not use any supported authentication method"));
+			return;
+		}
+
+		iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
+		query = xmlnode_get_child(iq->node, "query");
+		x = xmlnode_new_child(query, "username");
+		xmlnode_insert_data(x, js->user->node, -1);
+		x = xmlnode_new_child(query, "resource");
+		xmlnode_insert_data(x, js->user->resource, -1);
+
+		if(digest) {
+			unsigned char hashval[20];
+			char *s, h[41], *p;
+			int i;
+
+			x = xmlnode_new_child(query, "digest");
+			s = g_strdup_printf("%s%s", js->stream_id, pw);
+			shaBlock((unsigned char *)s, strlen(s), hashval);
+			p = h;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
+			xmlnode_insert_data(x, h, -1);
+			g_free(s);
+		} else {
+			x = xmlnode_new_child(query, "password");
+			xmlnode_insert_data(x, pw, -1);
+		}
+
+		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
+
+		jabber_iq_send(iq);
 	}
-
-	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:auth");
-	query = xmlnode_get_child(iq->node, "query");
-	x = xmlnode_new_child(query, "username");
-	xmlnode_insert_data(x, js->user->node, -1);
-	x = xmlnode_new_child(query, "resource");
-	xmlnode_insert_data(x, js->user->resource, -1);
-
-	if(digest) {
-		unsigned char hashval[20];
-		char *s, h[41], *p;
-		int i;
-
-		x = xmlnode_new_child(query, "digest");
-		s = g_strdup_printf("%s%s", js->stream_id, pw);
-		shaBlock((unsigned char *)s, strlen(s), hashval);
-		p = h;
-		for(i=0; i<20; i++, p+=2)
-			snprintf(p, 3, "%02x", hashval[i]);
-		xmlnode_insert_data(x, h, -1);
-		g_free(s);
-	} else {
-		x = xmlnode_new_child(query, "password");
-		xmlnode_insert_data(x, pw, -1);
-	}
-
-	jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
-
-	jabber_iq_send(iq);
 }
 
 void jabber_auth_start_old(JabberStream *js)
