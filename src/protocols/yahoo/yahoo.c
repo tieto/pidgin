@@ -2458,9 +2458,18 @@ static void yahoo_login(GaimAccount *account) {
 
 static void yahoo_close(GaimConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
+	GSList *l;
+
+	for (l = yd->confs; l; l = l->next) {
+		GaimConversation *conv = l->data;
+
+		yahoo_conf_leave(yd, gaim_conversation_get_name(conv),
+		                 gaim_connection_get_display_name(gc),
+				 gaim_conv_chat_get_users(GAIM_CONV_CHAT(conv)));
+	}
+	g_slist_free(yd->confs);
 
 	g_hash_table_destroy(yd->friends);
-	g_slist_free(yd->confs);
 	if (yd->chat_name)
 		g_free(yd->chat_name);
 

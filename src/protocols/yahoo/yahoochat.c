@@ -586,12 +586,13 @@ void yahoo_process_chat_goto(GaimConnection *gc, struct yahoo_packet *pkt)
  * I think conference names are always ascii.
  */
 
-static void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who)
+void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who)
 {
 	struct yahoo_packet *pkt;
 	GList *w;
 
-
+	gaim_debug_misc("yahoo", "leaving conference %s\n", room);
+	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, 1, dn);

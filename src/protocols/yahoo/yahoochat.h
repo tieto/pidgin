@@ -48,6 +48,8 @@ GHashTable *yahoo_c_info_defaults(GaimConnection *gc, const char *chat_name);
 void yahoo_c_join(GaimConnection *gc, GHashTable *data);
 void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *name);
 
+void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who);
+
 void yahoo_chat_goto(GaimConnection *gc, const char *name);
 
 /* room listing functions */
