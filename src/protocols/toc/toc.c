@@ -379,7 +379,7 @@ static void toc_got_info(gpointer data, char *url_text)
 	g_show_info_text(url_text, NULL);
 }
 
-static char *show_error_message(char *d)
+static char *show_error_message()
 {
 	int no = atoi(strtok(NULL, ":"));
 	char *w = strtok(NULL, ":");
@@ -528,8 +528,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 				     buf + sizeof(struct sflap_hdr));
 			if (!g_strncasecmp(buf + sizeof(struct sflap_hdr), "ERROR", 5)) {
 				strtok(buf + sizeof(struct sflap_hdr), ":");
-				hide_login_progress(gc, show_error_message(buf +
-							sizeof(struct sflap_hdr)));
+				hide_login_progress(gc, show_error_message());
 			} else
 				hide_login_progress(gc, _("Authentication Failed"));
 			signoff(gc);
@@ -656,8 +655,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		serv_got_update(gc, c, logged, evil, signon, time_idle, type, 0);
 	} else if (!strcasecmp(c, "ERROR")) {
-		c = strtok(NULL, ":");
-		show_error_message(c);
+		do_error_dialog(show_error_message(), "TOC Error");
 	} else if (!strcasecmp(c, "EVILED")) {
 		int lev;
 		char *name;
