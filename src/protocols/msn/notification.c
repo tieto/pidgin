@@ -280,7 +280,7 @@ __usr_cmd(MsnServConn *servconn, const char *command, const char **params,
 
 	/* We're either getting the challenge or the OK. Let's find out. */
 	if (!g_ascii_strcasecmp(params[1], "OK")) {
-		const char *friendly = params[3];
+		const char *friendly = msn_url_decode(params[3]);
 
 		/* OK */
 
