@@ -775,7 +775,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			name = g_markup_escape_text(chat->alias, -1);
 		} else {
 			struct proto_chat_entry *pce;
-			GList *parts;
+			GList *parts, *tmp;
 			prpl = gaim_find_prpl(chat->account->protocol);
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
@@ -783,6 +783,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			pce = parts->data;
 			name = g_markup_escape_text(g_hash_table_lookup(chat->components,
 						pce->identifier), -1);
+			for(tmp = parts; tmp; tmp = tmp->next)
+				g_free(tmp->data);
 			g_list_free(parts);
 		}
 
@@ -1713,12 +1715,14 @@ static void gaim_gtk_blist_update(struct gaim_buddy_list *list, GaimBlistNode *n
 			name = g_markup_escape_text(chat->alias, -1);
 		} else {
 			struct proto_chat_entry *pce;
-			GList *parts;
+			GList *parts, *tmp;
 
 			parts = GAIM_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
 			pce = parts->data;
 			name = g_markup_escape_text(g_hash_table_lookup(chat->components,
 						pce->identifier), -1);
+			for(tmp = parts; tmp; tmp = tmp->next)
+				g_free(tmp->data);
 			g_list_free(parts);
 		}
 

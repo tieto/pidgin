@@ -1309,6 +1309,7 @@ static void rebuild_addchat_entries(struct addchat *ac) {
 			g_signal_connect(G_OBJECT(entry), "activate",
 					G_CALLBACK(do_add_chat), ac);
 		}
+		g_free(pce);
 	}
 
 	gtk_widget_show_all(ac->entries_box);
