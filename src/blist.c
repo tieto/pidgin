@@ -130,7 +130,7 @@ static void gaim_contact_compute_priority_buddy(GaimContact *contact)
  		else
  		{
  			int cmp;
- 
+
 			cmp = gaim_presence_compare(gaim_buddy_get_presence(new_priority),
 			                            gaim_buddy_get_presence(buddy));
 
@@ -2177,7 +2177,7 @@ static gboolean blist_contact_should_save(GaimAccount *exp_acct, GaimContact *co
 		if (blist_buddy_should_save(exp_acct, (GaimBuddy *) bnode))
 			return TRUE;
 	}
-	
+
 	return FALSE;
 }
 
@@ -2186,7 +2186,7 @@ static void blist_write_contact(FILE *file, GaimAccount *exp_acct, GaimContact *
 {
 	GaimBlistNode *bnode, *cnode = (GaimBlistNode *) contact;
 
-	if (! blist_contact_should_save(exp_acct, contact))
+	if (!blist_contact_should_save(exp_acct, contact))
 		return;
 
 	fprintf(file, "\t\t\t<contact");

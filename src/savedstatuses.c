@@ -68,6 +68,7 @@ static GList   *saved_statuses = NULL;
 static guint    statuses_save_timer = 0;
 static gboolean statuses_loaded = FALSE;
 
+
 /**************************************************************************
 * Helper functions
 **************************************************************************/
@@ -199,9 +200,8 @@ save_callback(gpointer data)
 static void
 schedule_save(void)
 {
-	if (statuses_save_timer != 0)
-		gaim_timeout_remove(statuses_save_timer);
-	statuses_save_timer = gaim_timeout_add(1000, save_callback, NULL);
+	if (statuses_save_timer == 0)
+		statuses_save_timer = gaim_timeout_add(5000, save_callback, NULL);
 }
 
 

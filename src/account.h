@@ -644,11 +644,6 @@ void gaim_account_destroy_log(GaimAccount *account);
 gboolean gaim_accounts_load();
 
 /**
- * Force an immediate write of accounts.
- */
-void gaim_accounts_sync();
-
-/**
  * Adds an account to the list of accounts.
  *
  * @param account The account.
