@@ -44,6 +44,7 @@
 #include "gtkimhtml.h"
 #include "dnd-hints.h"
 #include "sound.h"
+#include "gtklist.h"
 
 #ifdef _WIN32
 #include "win32dep.h"
@@ -2002,26 +2003,26 @@ generate_send_as_items(struct gaim_window *win,
 		GtkWidget *box;
 		GtkWidget *label;
 		GtkWidget *image;
-		GdkPixmap *pixmap = NULL;
-		GdkBitmap *mask   = NULL;
+		GdkPixbuf *pixbuf, *scale;
 
 		found_online = TRUE;
 
 		gc = (struct gaim_connection *)gcs->data;
 
 		/* Create a pixmap for the protocol icon. */
-		create_prpl_icon(gtkwin->window, gc, &pixmap, &mask);
+		pixbuf = create_prpl_icon(gc->account);
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 
 		/* Now convert it to GtkImage */
-		if (pixmap == NULL)
+		if (pixbuf == NULL)
 			image = gtk_image_new();
 		else
-			image = gtk_image_new_from_pixmap(pixmap, mask);
+			image = gtk_image_new_from_pixbuf(scale);
 
 		gtk_size_group_add_widget(sg, image);
 
-		if (pixmap != NULL) g_object_unref(pixmap);
-		if (mask   != NULL) g_object_unref(mask);
+		g_object_unref(G_OBJECT(scale));
+		g_object_unref(G_OBJECT(pixbuf));
 
 		/* Make our menu item */
 		menuitem = gtk_radio_menu_item_new_with_label(group, gc->username);
@@ -2069,8 +2070,7 @@ generate_send_as_items(struct gaim_window *win,
 		GtkWidget *box;
 		GtkWidget *label;
 		GtkWidget *image;
-		GdkPixmap *pixmap = NULL;
-		GdkBitmap *mask   = NULL;
+		GdkPixbuf *pixbuf, *scale;
 
 		conv = (struct gaim_conversation *)convs->data;
 
@@ -2089,18 +2089,20 @@ generate_send_as_items(struct gaim_window *win,
 			}
 
 			/* Create a pixmap for the protocol icon. */
-			create_prpl_icon(gtkwin->window, account->gc, &pixmap, &mask);
+			pixbuf = create_prpl_icon(account);
+			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+											GDK_INTERP_BILINEAR);
 
 			/* Now convert it to GtkImage */
-			if (pixmap == NULL)
+			if (pixbuf == NULL)
 				image = gtk_image_new();
 			else
-				image = gtk_image_new_from_pixmap(pixmap, mask);
+				image = gtk_image_new_from_pixbuf(scale);
 
 			gtk_size_group_add_widget(sg, image);
 
-			if (pixmap != NULL) g_object_unref(pixmap);
-			if (mask   != NULL) g_object_unref(mask);
+			if (scale  != NULL) g_object_unref(scale);
+			if (pixbuf != NULL) g_object_unref(pixbuf);
 
 			/* Make our menu item */
 			menuitem = gtk_radio_menu_item_new_with_label(group,
@@ -2530,8 +2532,9 @@ setup_im_buttons(struct gaim_conversation *conv, GtkWidget *parent)
 	/* Now, um, just kind of all over the place. Huh? */
 
 	/* Add button */
-	if (gaim_find_buddy(gaim_conversation_get_gc(conv),
-				   gaim_conversation_get_name(conv)) == NULL) {
+	if (gaim_find_buddy(gaim_conversation_get_account(conv),
+						gaim_conversation_get_name(conv)) == NULL) {
+
 		gtkim->add = gaim_gtk_change_text(_("Add"), gtkim->add,
 										  GTK_STOCK_ADD, type);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkim->add,
@@ -3193,6 +3196,13 @@ move_next_tab(struct gaim_conversation *conv)
 	}
 }
 
+static void
+conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
+			  GtkSelectionData *sd, guint info, guint t, gpointer data)
+{
+	do_error_dialog("MWAHAHAHA! I AM A TROLL! I AM GOING TO EAT YOU!",
+					NULL, GAIM_WARNING);
+}
 
 /**************************************************************************
  * GTK+ window ops
@@ -3322,6 +3332,13 @@ gaim_gtk_switch_conversation(struct gaim_window *win, unsigned int index)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), index);
 }
 
+static const GtkTargetEntry te[] =
+{
+	{"text/plain", 0, 0},
+	{"text/uri-list", 1, 0},
+	{"STRING", 2, 0}
+};
+
 static void
 gaim_gtk_add_conversation(struct gaim_window *win,
 						  struct gaim_conversation *conv)
@@ -3381,6 +3398,33 @@ gaim_gtk_add_conversation(struct gaim_window *win,
 
 			return;
 		}
+
+		/* Setup drag-and-drop */
+		gtk_drag_dest_set(pane,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_DROP,
+						  te, sizeof(te) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_COPY);
+		gtk_drag_dest_set(gtkconv->imhtml,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_HIGHLIGHT |
+						  GTK_DEST_DEFAULT_DROP,
+						  te, sizeof(te) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_DEFAULT | GDK_ACTION_COPY | GDK_ACTION_MOVE);
+		gtk_drag_dest_set(gtkconv->entry,
+						  GTK_DEST_DEFAULT_MOTION |
+						  GTK_DEST_DEFAULT_DROP,
+						  te, sizeof(te) / sizeof(GtkTargetEntry),
+						  GDK_ACTION_COPY);
+
+		g_signal_connect(G_OBJECT(pane), "drag_data_received",
+						 G_CALLBACK(conv_dnd_recv), conv);
+		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
+						 G_CALLBACK(conv_dnd_recv), conv);
+#if 0
+		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
+						 G_CALLBACK(conv_dnd_recv), conv);
+#endif
 
 		/*
 		 * Write the New Conversation log string.
