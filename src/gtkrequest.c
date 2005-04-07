@@ -673,6 +673,7 @@ get_online_names(void)
 				names = g_list_append(names, ((GaimContact *)cnode)->alias);
 				names = g_list_append(names,
 					(gpointer)gaim_buddy_get_contact_alias(buddy));
+				names = g_list_append(names, buddy->account);
 #endif /* NEW_STYLE_COMPLETION */
 
 				names = g_list_append(names, buddy->name);
@@ -805,13 +806,54 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 }
 
 static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
-		GtkTreeModel *model, GtkTreeIter *iter, gpointer user_data) {
+		GtkTreeModel *model, GtkTreeIter *iter, gpointer *user_data) {
 
 	GValue val = { 0, };
+	GaimRequestField *screen_field = user_data[1];
+	GList *fields = screen_field->group->fields;
 
 	gtk_tree_model_get_value(model, iter, 1, &val);
-	gtk_entry_set_text(GTK_ENTRY(user_data), g_value_get_string(&val));
+	gtk_entry_set_text(GTK_ENTRY(user_data[0]), g_value_get_string(&val));
 	g_value_unset(&val);
+
+	do {
+		GaimRequestField *field = fields->data;
+
+		if (gaim_request_field_get_type(field) == GAIM_REQUEST_FIELD_ACCOUNT) {
+			const char *type_hint = gaim_request_field_get_type_hint(field);
+
+			if (type_hint != NULL && !strcmp(type_hint, "account")) {
+				/* We found the corresponding account field. */
+				GaimAccount *account;
+				GtkOptionMenu *optmenu = GTK_OPTION_MENU(field->ui_data);
+
+				gtk_tree_model_get_value(model, iter, 3, &val);
+				account = g_value_get_pointer(&val);
+				g_value_unset(&val);
+
+				/* Set the account in the request API. */
+				gaim_request_field_account_set_value(field, account);
+
+				if (optmenu != NULL) {
+					GList *items = GTK_MENU_SHELL(gtk_option_menu_get_menu(optmenu))->children;
+					guint index = 0;
+
+					do {
+						if (account == g_object_get_data(G_OBJECT(items->data), "account")) {
+							/* Set the account in the GUI. */
+
+							gtk_option_menu_set_history(GTK_OPTION_MENU(field->ui_data), index);
+							return TRUE;
+						}
+						index++;
+					} while ((items = items->next) != NULL);
+				}
+
+				return TRUE;
+			}
+		}
+
+	} while ((fields = fields->next) != NULL);
 
 	return TRUE;
 }
@@ -824,19 +866,22 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 	GtkListStore *store;
 	GtkTreeIter iter;
 	GtkEntryCompletion *completion;
-	GList *aliases_and_screennames, *l;
+	GList *aliases_and_screennames;
+	GList *l;
+	gpointer *data;
 
 	/* Store the displayed completion value, the screenname, and the value for comparison. */
-	store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
 	aliases_and_screennames = get_online_names();
 
-	/* Loop through the list three elements at a time. */
-	for (l = aliases_and_screennames; l != NULL; l = l->next->next->next)
+	/* Loop through the list four elements at a time. */
+	for (l = aliases_and_screennames; l != NULL; l = l->next->next->next->next)
 	{
 		char *contact_alias = l->data;
 		char *buddy_alias = l->next->data;
-		char *screenname = l->next->next->data;
+		GaimAccount *account = l->next->next->data;
+		char *screenname = l->next->next->next->data;
 		gboolean completion_added = FALSE;
 
 		/* There's no sense listing things like: 'xxx "xxx"'
@@ -848,6 +893,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 					0, completion_entry,
 					1, screenname,
 					2, buddy_alias,
+					3, account,
 					-1);
 			g_free(completion_entry);
 			completion_added = TRUE;
@@ -865,6 +911,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 						0, completion_entry,
 						1, screenname,
 						2, contact_alias,
+						3, account,
 						-1);
 				g_free(completion_entry);
 				completion_added = TRUE;
@@ -878,6 +925,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 					0, screenname,
 					1, screenname,
 					2, NULL,
+					3, account,
 					-1);
 		}
 	}
@@ -886,8 +934,13 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 
 	completion = gtk_entry_completion_new();
 	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
+
+	data = g_new0(gpointer, 2);
+	data[0] = entry;
+	data[1] = field;
 	g_signal_connect(G_OBJECT(completion), "match-selected",
-		G_CALLBACK(screenname_completion_match_selected_cb), entry);
+		G_CALLBACK(screenname_completion_match_selected_cb), data);
+
 	gtk_entry_set_completion(GTK_ENTRY(entry), completion);
 	g_object_unref(completion);
 

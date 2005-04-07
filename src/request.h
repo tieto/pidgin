@@ -450,7 +450,7 @@ void gaim_request_field_set_visible(GaimRequestField *field, gboolean visible);
  * Sets the type hint for the field.
  *
  * This is optionally used by the UIs to provide such features as
- * auto-completion for type hints like "screenname."
+ * auto-completion for type hints like "account" and "screenname".
  *
  * @param field     The field.
  * @param type_hint The type hint.

@@ -458,6 +458,7 @@ gaim_gtkdialogs_im(void)
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_type_hint(field, "account");
 	gaim_request_field_set_visible(field,
 		(gaim_connections_get_all() != NULL &&
 		 gaim_connections_get_all()->next != NULL));
@@ -600,6 +601,7 @@ gaim_gtkdialogs_info(void)
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_type_hint(field, "account");
 	gaim_request_field_set_visible(field,
 		(gaim_connections_get_all() != NULL &&
 		 gaim_connections_get_all()->next != NULL));
@@ -654,6 +656,7 @@ gaim_gtkdialogs_log(void)
 	gaim_request_field_group_add_field(group, field);
 
 	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	gaim_request_field_set_type_hint(field, "account");
 	gaim_request_field_account_set_show_all(field, TRUE);
 	gaim_request_field_set_visible(field,
 		(gaim_accounts_get_all() != NULL &&
