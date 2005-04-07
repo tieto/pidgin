@@ -226,23 +226,29 @@ void gaim_signal_emit(void *instance, const char *signal, ...);
 void gaim_signal_emit_vargs(void *instance, const char *signal, va_list args);
 
 /**
- * Emits a signal and returns the return value from the last handler.
+ * Emits a signal and returns the first non-NULL return value.
+ *
+ * Further signal handlers are NOT called after a handler returns
+ * something other than NULL.
  *
  * @param instance The instance emitting the signal.
  * @param signal   The signal being emitted.
  *
- * @return The return value from the last handler.
+ * @return The first non-NULL return value
  */
 void *gaim_signal_emit_return_1(void *instance, const char *signal, ...);
 
 /**
- * Emits a signal and returns the return value from the last handler.
+ * Emits a signal and returns the first non-NULL return value.
+ *
+ * Further signal handlers are NOT called after a handler returns
+ * something other than NULL.
  *
  * @param instance The instance emitting the signal.
  * @param signal   The signal being emitted.
  * @param args     The arguments list.
  *
- * @return The return value from the last handler.
+ * @return The first non-NULL return value
  */
 void *gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 									  va_list args);

@@ -512,7 +512,6 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 	GaimInstanceData *instance_data;
 	GaimSignalData *signal_data;
 	GaimSignalHandlerData *handler_data;
-	void *ret_val = NULL;
 	GList *l, *l_next;
 	va_list tmp;
 
@@ -536,6 +535,8 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 
 	for (l = signal_data->handlers; l != NULL; l = l_next)
 	{
+		void *ret_val = NULL;
+
 		l_next = l->next;
 
 		handler_data = (GaimSignalHandlerData *)l->data;
@@ -552,9 +553,12 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 								 handler_data->data, &ret_val);
 		}
 		va_end(tmp);
+
+		if (ret_val != NULL)
+			return ret_val;
 	}
 
-	return ret_val;
+	return NULL;
 }
 
 void
