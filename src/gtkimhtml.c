@@ -2487,6 +2487,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 35:	/* BODY */
 					break;
 				case 36:	/* /BODY */
+					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+					ws[0] = '\0'; wpos = 0;
 					gtk_imhtml_toggle_background(imhtml, NULL);
 					break;
 				case 37:	/* FONT */
