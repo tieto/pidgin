@@ -150,9 +150,8 @@ void gaim_cmd_unregister(GaimCmdId id);
  * @param markup This is the same as cmd, but is the formatted version. It should be in
  *               HTML, with < > and &, at least, escaped to html entities, and should
  *               include both the default formatting and any extra manual formatting.
- * @param errormsg If the command failed and errormsg is not NULL, it is filled in with
- *                 the appropriate error message. It should be freed by the caller with
- *                 g_free().
+ * @param errormsg If the command failed errormsg is filled in with the appropriate error
+ *                 message. It must be freed by the caller with g_free().
  * @return A GaimCmdStatus indicated if the command succeeded or failed.
  */
 GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
