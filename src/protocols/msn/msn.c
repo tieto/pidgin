@@ -820,7 +820,7 @@ static void
 msn_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
-	MsnSession *session;
+	MsnSession *session = NULL;
 	const char *state;
 	int msnstatus;
 
