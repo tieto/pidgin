@@ -529,7 +529,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 {
 	GtkTextIter start, end, cur;
 	int buf_x, buf_y;
-	GSList *tags, *l;
 	GdkRectangle visible_rect;
 	GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
 	GdkColor gcolor;
@@ -577,7 +576,8 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	cur = start;
 
 	while (gtk_text_iter_in_range(&cur, &start, &end)) {
-		tags = gtk_text_iter_get_tags(&cur);
+		GSList *tags = gtk_text_iter_get_tags(&cur);
+		GSList *l;
 
 		gaim_debug_info("gtkimhtml", "cur = %d, start = %d, end = %d\n",
 		                gtk_text_iter_get_offset(&cur), gtk_text_iter_get_offset(&start),
@@ -605,8 +605,10 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			rect.x = visible_rect.x;
 			rect.y = tag_area.y;
 
-			while (!gtk_text_iter_is_end(&cur) && gtk_text_iter_begins_tag(&cur, tag))
+			do
 				gtk_text_iter_forward_to_tag_toggle(&cur, tag);
+			while (!gtk_text_iter_is_end(&cur) && gtk_text_iter_begins_tag(&cur, tag));
+
 			gtk_text_view_get_iter_location(GTK_TEXT_VIEW(widget), &cur, &tag_area);
 			gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(widget),
 			                                      GTK_TEXT_WINDOW_TEXT,
@@ -634,14 +636,20 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                   rect.x, rect.y, rect.width, rect.height);
 			gaim_debug_info("gtkimhtml", "drawing rect at %d,%d to %d,%d\n",
 			                rect.x, rect.y, rect.x+rect.width, rect.y+rect.height);
-			gtk_text_iter_backward_char(&cur);
+			gtk_text_iter_backward_char(&cur); /* go back one, in case the end is the begining is the end
+			                                    * note that above, we always moved cur ahead by at least
+			                                    * one character */
 			break;
 		}
 
 		g_slist_free(tags);
-		while (gtk_text_iter_forward_to_tag_toggle(&cur, NULL) && gtk_text_iter_begins_tag(&cur, NULL));
-	}
 
+		/* loop until another tag begins, or no tag begins */
+		while (gtk_text_iter_forward_to_tag_toggle(&cur, NULL) &&
+		       !gtk_text_iter_is_end(&cur) &&
+		       !gtk_text_iter_begins_tag(&cur, NULL));
+	} 
+	
 	gdk_gc_unref(gc);
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
