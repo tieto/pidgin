@@ -579,6 +579,10 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	while (gtk_text_iter_in_range(&cur, &start, &end)) {
 		tags = gtk_text_iter_get_tags(&cur);
 
+		gaim_debug_info("gtkimhtml", "cur = %d, start = %d, end = %d\n",
+		                gtk_text_iter_get_offset(&cur), gtk_text_iter_get_offset(&start),
+		                gtk_text_iter_get_offset(&end));
+
 		for (l = tags; l; l = l->next) {
 			GtkTextTag *tag = l->data;
 			GdkRectangle rect;
@@ -635,7 +639,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		}
 
 		g_slist_free(tags);
-		gtk_text_iter_forward_to_tag_toggle(&cur, NULL);
+		while (gtk_text_iter_forward_to_tag_toggle(&cur, NULL) && gtk_text_iter_begins_tag(&cur, NULL));
 	}
 #if 0
        	while (l) {
