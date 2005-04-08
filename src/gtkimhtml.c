@@ -641,75 +641,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		g_slist_free(tags);
 		while (gtk_text_iter_forward_to_tag_toggle(&cur, NULL) && gtk_text_iter_begins_tag(&cur, NULL));
 	}
-#if 0
-       	while (l) {
-		struct backcolor_tag *tag = (struct backcolor_tag*)l->data;
-		GdkRectangle visible_rect;
-		GdkRectangle redraw_rect;
-		int top, bottom, height, win_top, win_bottom;
-		GtkTextIter start, end;
-		
-		GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
-		GdkColor color;
 
-		gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &visible_rect);
-		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
-						       GTK_TEXT_WINDOW_TEXT,
-						       visible_rect.x,
-						       visible_rect.y,
-						       &redraw_rect.x,
-						       &redraw_rect.y);
-		
-		if (GTK_IMHTML(widget)->edit.backcolor &&
-		    (GTK_IMHTML(widget)->editable || GTK_IMHTML(widget)->wbfo)) {
-			gdk_color_parse(GTK_IMHTML(widget)->edit.backcolor, &color);
-			gdk_gc_set_rgb_fg_color(gc, &color);
-			gdk_draw_rectangle(event->window,
-					   gc,
-					   TRUE,
-					   redraw_rect.x, redraw_rect.y, redraw_rect.width, redraw_rect.height);
-			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
-				(widget, event);
-		}
-		
-		gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &start, tag->start);
-
-		if (tag->end)
-			gtk_text_buffer_get_iter_at_mark (GTK_IMHTML(widget)->text_buffer, &end, tag->end);
-		else
-			gtk_text_buffer_get_end_iter (GTK_IMHTML(widget)->text_buffer, &end);
-
-		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &start, &top, NULL);
-		gtk_text_view_get_line_yrange   (GTK_TEXT_VIEW(widget), &end, &bottom, &height);
-		
-	
-		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
-						       GTK_TEXT_WINDOW_TEXT,
-						       0,
-						       top,
-						       NULL,
-						       &win_top);
-		gtk_text_view_buffer_to_window_coords (GTK_TEXT_VIEW(widget),
-						       GTK_TEXT_WINDOW_TEXT,
-						       0,
-						       bottom + height,
-						       NULL,
-						       &win_bottom);
-		redraw_rect.width = visible_rect.width;
-		redraw_rect.height = visible_rect.height;
-		
-		gdk_color_parse(tag->color, &color);
-		gdk_gc_set_rgb_fg_color(gc, &color);
-
-	
-		gdk_draw_rectangle(event->window,
-				   gc,
-				   TRUE,
-				   redraw_rect.x, win_top, redraw_rect.width, win_bottom - win_top);
-		gdk_gc_unref(gc);
-		l = l->next;
-	}
-#endif
 	gdk_gc_unref(gc);
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
