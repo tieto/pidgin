@@ -75,7 +75,6 @@ typedef enum {
 struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
-	GtkTextMark *scrollpoint;
 	GdkCursor *hand_cursor;
 	GdkCursor *arrow_cursor;
 	GdkCursor *text_cursor;
