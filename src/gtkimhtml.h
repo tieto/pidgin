@@ -81,6 +81,8 @@ struct _GtkIMHtml {
 	GHashTable *smiley_data;
 	GtkSmileyTree *default_smilies;
 	char *protocol_name;
+	guint scroll_src;
+	GTimer *scroll_time;
 
 	gboolean show_comments;
 

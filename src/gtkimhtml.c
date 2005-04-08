@@ -1061,6 +1061,11 @@ gtk_imhtml_finalize (GObject *object)
 	GList *scalables;
 	GSList *l;
 
+	if (imhtml->scroll_src)
+		g_source_remove(imhtml->scroll_src);
+	if (imhtml->scroll_time)
+		g_timer_destroy(imhtml->scroll_time);
+
 	g_hash_table_destroy(imhtml->smiley_data);
 	gtk_smiley_tree_destroy(imhtml->default_smilies);
 	gdk_cursor_unref(imhtml->hand_cursor);
@@ -2165,21 +2170,51 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 }
 
+#define MAX_SCROLL_TIME 0.5
+
+gboolean scroll_cb(gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
+	gdouble val = adj->upper - adj->page_size;
+	gdouble t;
+
+	t = g_timer_elapsed(imhtml->scroll_time, NULL);
+
+
+	gaim_debug_info("gtkimhtml", "in scroll_cb\n");
+
+	if (adj->value >= val || t >= MAX_SCROLL_TIME) {
+		gaim_debug_info("gtkimhtml", "scroll_cb:  out of time\n");
+		gtk_adjustment_set_value(adj, val);
+	} else {
+		gtk_adjustment_set_value(adj,
+		                        adj->value + (((val - adj->value) * t ) / MAX_SCROLL_TIME));
+	}
+
+	if (adj->value >= val) {
+		g_timer_destroy(imhtml->scroll_time);
+		imhtml->scroll_time = NULL;
+		return FALSE;
+	} else
+		return TRUE;
+}
+
 gboolean scroll_idle_cb(gpointer data)
 {
-	GtkTextView *imhtml = data;
-	GtkAdjustment *adj;
-
-	gaim_debug_info("gtkimhtml", "in scroll_idle_cb\n");
-	adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
-	gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
-
+	GtkIMHtml *imhtml = data;
+	imhtml->scroll_src = g_timeout_add(33, scroll_cb, imhtml);
 	return FALSE;
 }
 
 void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml)
 {
-	g_idle_add_full(GTK_TEXT_VIEW_PRIORITY_VALIDATE + 10, scroll_idle_cb, imhtml, NULL);
+	if (imhtml->scroll_time)
+		g_timer_destroy(imhtml->scroll_time);
+	imhtml->scroll_time = g_timer_new();
+	if (imhtml->scroll_src)
+		g_source_remove(imhtml->scroll_src);
+	imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
