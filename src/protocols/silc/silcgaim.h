@@ -48,6 +48,7 @@
 /* Status IDs */
 #define SILCGAIM_STATUS_ID_OFFLINE	"offline"
 #define SILCGAIM_STATUS_ID_ONLINE	"online"
+#define SILCGAIM_STATUS_ID_AVAILABLE "available"
 #define SILCGAIM_STATUS_ID_HYPER	"hyper"
 #define SILCGAIM_STATUS_ID_AWAY		"away"
 #define SILCGAIM_STATUS_ID_BUSY		"busy"

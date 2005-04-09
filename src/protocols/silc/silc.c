@@ -43,9 +43,11 @@ silcgaim_away_states(GaimAccount *account)
 	GaimStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, SILCGAIM_STATUS_ID_OFFLINE, _("Offline"), FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, SILCGAIM_STATUS_ID_OFFLINE, _("Offline"), FALSE, FALSE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new(GAIM_STATUS_ONLINE, SILCGAIM_STATUS_ID_ONLINE, _("Online"), FALSE);
+	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, SILCGAIM_STATUS_ID_ONLINE, _("Online"), FALSE, FALSE, FALSE);
+	types = g_list_append(types, type);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_AVAILABLE, _("Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
@@ -65,17 +67,29 @@ static void
 silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	SilcGaim sg;
+	SilcGaim sg = NULL;
 	SilcUInt32 mode;
 	SilcBuffer idp;
 	unsigned char mb[4];
 	const char *state;
 
-	g_return_if_fail(gc != NULL);
+	if (gc != NULL)
+		sg = gc->proto_data;
 
-	sg = gc->proto_data;
+	if (status == NULL)
+		return;
 
-	if ((status == NULL) || (sg->conn == NULL))
+	state = gaim_status_get_id(status);
+
+	if (state == NULL)
+		return;
+
+	if (strcmp(state, "offline") && !gc) {
+		gaim_account_connect(account);
+		return;
+	}
+
+	if ((sg == NULL) || (sg->conn == NULL))
 		return;
 
 	mode = sg->conn->local_entry->mode;
@@ -84,11 +98,6 @@ silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 		  SILC_UMODE_BUSY |
 		  SILC_UMODE_INDISPOSED |
 		  SILC_UMODE_PAGE);
-
-	state = gaim_status_get_id(status);
-
-	if (state == NULL)
-		return;
 
 	if (!strcmp(state, "hyper"))
 		mode |= SILC_UMODE_HYPER;
