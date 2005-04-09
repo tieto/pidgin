@@ -27,6 +27,8 @@ NOVELL = $(GAIM_PROTOS)/novell
 SILC = $(GAIM_PROTOS)/silc
 PO = ./po
 
+MAKENSIS := makensis.exe
+
 VERSION := $(shell cat ./VERSION)
 
 NEEDED_DLLS =		$(GTKSPELL_TOP)/libgtkspell.dll \
@@ -91,13 +93,13 @@ install: all
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
 installer:
-	makensis.exe /DGAIM_VERSION="$(VERSION)" /DWITH_GTK gaim-installer.nsi
+	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" /DWITH_GTK gaim-installer.nsi
 
 installer_nogtk:
-	makensis.exe /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
+	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" gaim-installer.nsi
 
 installer_debug:
-	makensis.exe /DGAIM_VERSION="$(VERSION)" /DDEBUG gaim-installer.nsi
+	$(MAKENSIS) /DGAIM_VERSION="$(VERSION)" /DDEBUG gaim-installer.nsi
 
 installers: installer installer_nogtk
 

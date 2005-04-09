@@ -11,8 +11,8 @@ AUTOSPLIT = lib/auto/Gaim/autosplit.ix
 ## TOOLS
 ##
 
-CC = gcc
-PERL = /cygdrive/c/perl/bin/perl
+CC := gcc
+PERL := /cygdrive/c/perl/bin/perl
 
 ##
 ## PATHS

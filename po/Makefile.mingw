@@ -19,7 +19,7 @@ GTK_BIN = ../../win32-dev/gtk_2_0/bin
 ## TOOLS
 ##
 
-GMSGFMT = $(GTK_BIN)/msgfmt
+GMSGFMT := $(GTK_BIN)/msgfmt
 
 
 .SUFFIXES:

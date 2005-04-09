@@ -21,7 +21,7 @@ DLL_INSTALL_DIR :=	$(GAIM_INSTALL_DIR)/plugins
 
 TARGET = perl
 
-CC = gcc.exe
+CC := gcc.exe
 
 # Compiler Options
 

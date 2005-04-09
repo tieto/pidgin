@@ -37,6 +37,8 @@ LDFLAGS = -mwindows
 #-mconsole
 #-mwindows
 
+WINDRES := windres
+
 ##
 ## INCLUDE  MAKEFILES
 ##
@@ -194,7 +196,7 @@ EXE_LIBS =
 
 # How to make an RC file
 %.o: %.rc
-	windres -i $< -o $@
+	$(WINDRES) -i $< -o $@
 
 ##
 ## TARGET DEFINITIONS
