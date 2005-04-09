@@ -87,6 +87,8 @@ silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 	if (strcmp(state, "offline") && !gc) {
 		gaim_account_connect(account);
 		return;
+	} else if (!strcmp(state, "offline")) {
+		return;
 	}
 
 	if ((sg == NULL) || (sg->conn == NULL))
