@@ -3075,9 +3075,9 @@ gaim_url_encode(const char *str)
 	iter = str;
 	for (; *iter && j < (BUF_LEN - 1) ; iter = g_utf8_next_char(iter)) {
 		gunichar c = g_utf8_get_char(iter);
-		/* If the character is an ASCII character and is alphanumeric,
-		 * or one of the specified values, no need to escape */
-		if (c < 256 && isalnum(c)) {
+		/* If the character is an ASCII character and is alphanumeric
+		 * no need to escape */
+		if (c < 128 && isalnum(c)) {
 			buf[j++] = c;
 		} else {
 			int bytes = g_unichar_to_utf8(c, utf_char);
@@ -3452,7 +3452,7 @@ gaim_escape_filename(const char *str)
 		gunichar c = g_utf8_get_char(iter);
 		/* If the character is an ASCII character and is alphanumeric,
 		 * or one of the specified values, no need to escape */
-		if (c < 256 && (isalnum(c) || c == '@' || c == '-' ||
+		if (c < 128 && (isalnum(c) || c == '@' || c == '-' ||
 				c == '_' || c == '.' || c == '#')) {
 			buf[j++] = c;
 		} else {
