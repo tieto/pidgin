@@ -112,11 +112,19 @@ else
 	silc_manual_check="no"
 fi
 if test "x$silc_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(SILC, silc, [
+	PKG_CHECK_MODULES(SILC, silcclient, [
 		have_silc="yes"
 		silcincludes="yes"
 		silcclient="yes"
 	], have_silc="no")
+	dnl If silcclient.pc wasn't found, check for just silc.pc
+	if test "x$have_silc" = "xno"; then
+		PKG_CHECK_MODULES(SILC, silc, [
+			have_silc="yes"
+			silcincludes="yes"
+			silcclient="yes"
+		], have_silc="no")
+	fi
 else
 	if test "$ac_silc_includes" != "no"; then
 		SILC_CFLAGS="-I$ac_silc_includes"
