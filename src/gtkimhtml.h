@@ -89,6 +89,7 @@ struct _GtkIMHtml {
 	GtkWidget *tip_window;
 	char *tip;
 	guint tip_timer;
+	GtkTextTag *prelit_tag;
 
 	GList *scalables;
 	GdkRectangle old_rect;

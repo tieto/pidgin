@@ -420,19 +420,45 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	int x, y;
 	char *tip = NULL;
 	GSList *tags = NULL, *templist = NULL;
+	GdkColor *norm, *pre;
+	GtkTextTag *tag = NULL, *oldprelit_tag;
+
+	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
+
 	gdk_window_get_pointer(GTK_WIDGET(imhtml)->window, NULL, NULL, NULL);
 	gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(imhtml), GTK_TEXT_WINDOW_WIDGET,
-										  event->x, event->y, &x, &y);
+	                                      event->x, event->y, &x, &y);
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(imhtml), &iter, x, y);
 	tags = gtk_text_iter_get_tags(&iter);
 
 	templist = tags;
 	while (templist) {
-		GtkTextTag *tag = templist->data;
+		tag = templist->data;
 		tip = g_object_get_data(G_OBJECT(tag), "link_url");
 		if (tip)
 			break;
 		templist = templist->next;
+	}
+
+	if (tip) {
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-prelight-color", &pre, NULL);
+		GTK_IMHTML(imhtml)->prelit_tag = tag;
+		if (tag != oldprelit_tag) {
+			if (pre)
+				g_object_set(G_OBJECT(tag), "foreground-gdk", pre, NULL);
+			else
+				g_object_set(G_OBJECT(tag), "foreground", "light blue", NULL);
+		}
+	} else {
+		GTK_IMHTML(imhtml)->prelit_tag = NULL;
+	}
+	
+	if (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag) {
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
+		if (norm)
+			g_object_set(G_OBJECT(oldprelit_tag), "foreground-gdk", norm, NULL);
+		else
+			g_object_set(G_OBJECT(oldprelit_tag), "foreground", "blue", NULL);
 	}
 
 	if (GTK_IMHTML(imhtml)->tip) {
@@ -453,7 +479,7 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
 
-	if(tip){
+	if (tip){
 		if (!GTK_IMHTML(imhtml)->editable)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
@@ -468,6 +494,16 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
+	if (GTK_IMHTML(imhtml)->prelit_tag) {
+		GdkColor *norm;
+		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
+		if (norm)
+			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground-gdk", norm, NULL);
+		else
+			g_object_set(G_OBJECT(GTK_IMHTML(imhtml)->prelit_tag), "foreground", "blue", NULL);
+		GTK_IMHTML(imhtml)->prelit_tag = NULL;
+	}
+
 	if (GTK_IMHTML(imhtml)->tip_window) {
 		gtk_widget_destroy(GTK_IMHTML(imhtml)->tip_window);
 		GTK_IMHTML(imhtml)->tip_window = NULL;
@@ -1174,6 +1210,10 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-color",
 	                                        _("Hyperlink color"),
 	                                        _("Color to draw hyperlinks."),
+	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
+	gtk_widget_class_install_style_property(widget_class, g_param_spec_boxed("hyperlink-prelight-color",
+	                                        _("Hyperlink prelight color"),
+	                                        _("Color to draw hyperlinks when mouse is over them."),
 	                                        GDK_TYPE_COLOR, G_PARAM_READABLE));
 
 	binding_set = gtk_binding_set_by_class (parent_class);
