@@ -226,12 +226,10 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 					swboard->current_users);
 #endif
 
-	if (!(swboard->flag & MSN_SB_FLAG_IM))
+	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 	{
 		/* This is a helper switchboard. */
-		if (swboard->conv != NULL)
-			gaim_debug_error("msn", "switchboard_add_user: conv != NULL\n");
-
+		gaim_debug_error("msn", "switchboard_add_user: conv != NULL\n");
 		return;
 	}
 
@@ -261,7 +259,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 
 			cmdproc->session->conv_seq++;
 			swboard->chat_id = cmdproc->session->conv_seq;
-
+			swboard->flag |= MSN_SB_FLAG_IM;
 			swboard->conv = serv_got_joined_chat(account->gc,
 												 swboard->chat_id,
 												 "MSN Chat");
