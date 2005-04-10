@@ -1351,42 +1351,6 @@ gaim_get_chats(void)
 }
 
 
-/*
- * This is deprecated, right?  --SomeOne
- *
- * I don't know, I could see uses for it.  Specifically, a plugin
- * that wants to know if you're talking to a specific person.
- *        --KingAnt
- */
-GaimConversation *
-gaim_find_conversation(GaimConversationType type,
-					   const char *name)
-{
-	GaimConversation *c = NULL;
-	gchar *name1;
-	const gchar *name2;
-	GList *cnv;
-
-	g_return_val_if_fail(name != NULL, NULL);
-
-	name1 = g_strdup(gaim_normalize(NULL, name));
-
-	for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
-		c = (GaimConversation *)cnv->data;
-		name2 = gaim_normalize(NULL, gaim_conversation_get_name(c));
-
-		if (((type == GAIM_CONV_ANY) || (type == gaim_conversation_get_type(c))) &&
-				!gaim_utf8_strcasecmp(name1, name2))
-			break;
-
-		c = NULL;
-	}
-
-	g_free(name1);
-
-	return c;
-}
-
 GaimConversation *
 gaim_find_conversation_with_account(GaimConversationType type,
 									const char *name,

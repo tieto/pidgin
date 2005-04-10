@@ -799,19 +799,6 @@ GList *gaim_get_ims(void);
 GList *gaim_get_chats(void);
 
 /**
- * Finds the conversation with the specified type and name.  In most
- * cases you should use gaim_find_conversation_with_account() instead
- * of this.
- *
- * @param type The type of the conversation.
- * @param name The name of the conversation.
- *
- * @return The conversation if found, or @c NULL otherwise.
- */
-GaimConversation *gaim_find_conversation(GaimConversationType type,
-										 const char *name);
-
-/**
  * Finds a conversation with the specified type, name, and Gaim account.
  *
  * @param type The type of the conversation.
