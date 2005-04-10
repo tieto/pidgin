@@ -4109,7 +4109,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		 * just move the conv to this window.  Otherwise, create a new
 		 * conv and add it to this window.
 		 */
-		c = gaim_find_conversation(GAIM_CONV_IM, b->name);
+		c = gaim_find_conversation_with_account(GAIM_CONV_IM, b->name, b->account);
 		if (c != NULL) {
 			GaimConvWindow *oldwin;
 			oldwin = gaim_conversation_get_window(c);
