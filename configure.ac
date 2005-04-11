@@ -344,9 +344,12 @@ if test "x$enable_gevolution" = "xyes"; then
 	LIBEBOOK_MINOR_VER=`echo $LIBEBOOK_VERSION | sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
 	LIBEBOOK_MICRO_VER=`echo $LIBEBOOK_VERSION | sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
 	AC_MSG_RESULT($LIBEBOOK_VERSION)
-	AC_DEFINE_UNQUOTED(LIBEBOOK_MAJOR_VER, $LIBEBOOK_MAJOR_VER, [libebook major version.])
-	AC_DEFINE_UNQUOTED(LIBEBOOK_MINOR_VER, $LIBEBOOK_MINOR_VER, [libebook minor version.])
-	AC_DEFINE_UNQUOTED(LIBEBOOK_MICRO_VER, $LIBEBOOK_MICRO_VER, [libebook micro version.])
+
+	if test "x$LIBEBOOK_MAJOR_VER" != "x" -a "x$LIBEBOOK_MINOR_VER" != "x" -a "x$LIBEBOOK_MICRO_VER" != "x"; then
+		AC_DEFINE_UNQUOTED(LIBEBOOK_MAJOR_VER, $LIBEBOOK_MAJOR_VER, [libebook major version.])
+		AC_DEFINE_UNQUOTED(LIBEBOOK_MINOR_VER, $LIBEBOOK_MINOR_VER, [libebook minor version.])
+		AC_DEFINE_UNQUOTED(LIBEBOOK_MICRO_VER, $LIBEBOOK_MICRO_VER, [libebook micro version.])
+	fi
 fi
 
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
