@@ -1965,20 +1965,6 @@ gtk_imhtml_is_tag (const gchar *string,
 	if (!g_ascii_strncasecmp(string, "!--", strlen ("!--"))) {
 		gchar *e = strstr (string + strlen("!--"), "-->");
 		if (e) {
-			/*
-			 * If we uncomment the following line then HTML comments will be
-			 * hidden.  This is good because it means when a WinAIM users pastes
-			 * part of a conversation to you, the screen names won't be
-			 * duplicated (because WinAIM pastes an HTML comment containing the
-			 * screen name, for some reason).
-			 *
-			 * However, uncommenting this is bad because we use HTML comment
-			 * tags to print timestamps to conversations (at least, I think...)
-			 *
-			 * KingAnt thinks it would be best to display timestamps using
-			 * something other than comment tags.
-			 */
-			/* *type = -1; */
 			*len = e - string + strlen ("-->");
 			*tag = g_strndup (string + strlen ("!--"), *len - strlen ("!---->"));
 			return TRUE;
@@ -2805,8 +2791,12 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS))
+					if (imhtml->show_comments && !(options & GTK_IMHTML_NO_COMMENTS)) {
 						wpos = g_snprintf (ws, len, "%s", tag);
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+					}
+					ws[0] = '\0'; wpos = 0;
+
 					/* NEW_BIT (NEW_COMMENT_BIT); */
 					break;
 				default:
