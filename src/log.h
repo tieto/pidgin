@@ -61,10 +61,10 @@ struct _GaimLogLogger {
 
 	/** This gets called when the log is first created.
 	    I don't think this is actually needed. */
-	void(*create)(GaimLog *log);
+	void (*create)(GaimLog *log);
 
 	/** This is used to write to the log file */
-	void(*write)(GaimLog *log,
+	void (*write)(GaimLog *log,
 		     GaimMessageFlags type,
 		     const char *from,
 		     time_t time,

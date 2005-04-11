@@ -3,7 +3,7 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 2.0.0cvs:
 	* Changed: All the status stuff. Yay!
 	* Changed: gaim_prefs_connect_callback(), added handle parameter
-	* Added: gaim_prefs_disconnect_by_handle()
+	* Added:   gaim_prefs_disconnect_by_handle()
 	* Removed: gaim_gtk_sound_{get,set}_mute() (replaced by the
 	           /gaim/gtk/sound/mute preference)
 	* Changed: gtk_imhtml_toolbar now descends from GtkHBox making it
@@ -32,7 +32,7 @@ version 2.0.0cvs:
 	           no longer return a GaimConnection
 	* Added:   a password field to GaimConnection, which only persists for the
 	           session (when "remember password" is false, account->password is NEVER set)
-			   Use gaim_connection_get_password(GaimConnection *gc)
+	           Use gaim_connection_get_password(GaimConnection *gc)
 	* Removed: serv_login
 	* Removed: serv_close
 	* Removed: serv_finish_login

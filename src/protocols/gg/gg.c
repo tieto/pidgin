@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12354 2005-03-27 17:50:35Z thekingant $
+ * $Id: gg.c 12465 2005-04-11 04:32:26Z lschiere $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1346,7 +1346,7 @@ static void http_req_callback(gpointer data, gint source, GaimInputCondition con
 						  _("Error communicating with Gadu-Gadu server"),
 						  _("Gaim was unable to complete your request due "
 							"to a problem communicating with the Gadu-Gadu "
-							"HTTP server.  Please try again later."));
+							"HTTP server. Please try again later."));
 		return;
 	}
 
@@ -1375,7 +1375,7 @@ static void import_buddies_server(GaimConnection *gc)
 		gaim_notify_error(gc, NULL,
 						  _("Unable to import Gadu-Gadu buddy list"),
 						  _("Gaim was unable to connect to the Gadu-Gadu "
-							"buddy list server.  Please try again later."));
+							"buddy list server. Please try again later."));
 		g_free(hi->request);
 		g_free(hi);
 		return;
@@ -1449,7 +1449,7 @@ static void export_buddies_server(GaimConnection *gc)
 		gaim_notify_error(gc, NULL,
 						  _("Couldn't export buddy list"),
 						  _("Gaim was unable to connect to the buddy "
-							"list server.  Please try again later."));
+							"list server. Please try again later."));
 		g_free(he->request);
 		g_free(he);
 		return;
@@ -1472,7 +1472,7 @@ static void delete_buddies_server(GaimConnection *gc)
 		gaim_notify_error(gc, NULL,
 						  _("Unable to delete Gadu-Gadu buddy list"),
 						  _("Gaim was unable to connect to the buddy "
-							"list server.  Please try again later."));
+							"list server. Please try again later."));
 		g_free(he->request);
 		g_free(he);
 		return;
@@ -1524,7 +1524,7 @@ static void agg_dir_search(GaimConnection *gc, const char *first, const char *mi
 						  _("Unable to access directory"),
 						  _("Gaim was unable to search the Directory "
 							"because it was unable to connect to the "
-							"directory server.  Please try again later."));
+							"directory server. Please try again later."));
 		g_free(srch->request);
 		g_free(srch);
 		return;
@@ -1559,7 +1559,7 @@ static void agg_change_passwd(GaimConnection *gc, const char *old, const char *n
 							  _("Unable to change Gadu-Gadu password"),
 							  _("Gaim was unable to change your password "
 								"due to an error connecting to the "
-								"Gadu-Gadu server.  Please try again "
+								"Gadu-Gadu server. Please try again "
 								"later."));
 		g_free(hpass->request);
 		g_free(hpass);
@@ -1626,7 +1626,7 @@ static void agg_get_info(GaimConnection *gc, const char *who)
 						  _("Unable to access user profile."),
 						  _("Gaim was unable to access this user's "
 							"profile due to an error connecting to the "
-							"directory server.  Please try again later."));
+							"directory server. Please try again later."));
 		g_free(srch->request);
 		g_free(srch);
 		return;

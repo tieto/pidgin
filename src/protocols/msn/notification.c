@@ -1263,13 +1263,13 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 				g_snprintf(buf, sizeof(buf), ngettext(
 							"The MSN server will shut down for maintenance "
 							"in %d minute. You will automatically be "
-							"signed out at that time.  Please finish any "
+							"signed out at that time. Please finish any "
 							"conversations in progress.\n\nAfter the "
 							"maintenance has been completed, you will be "
 							"able to successfully sign in.",
 							"The MSN server will shut down for maintenance "
 							"in %d minutes. You will automatically be "
-							"signed out at that time.  Please finish any "
+							"signed out at that time. Please finish any "
 							"conversations in progress.\n\nAfter the "
 							"maintenance has been completed, you will be "
 							"able to successfully sign in.", minutes),

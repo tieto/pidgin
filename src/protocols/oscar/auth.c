@@ -286,7 +286,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 /*
  * This is sent back as a general response to the login command.
  * It can be either an error or a success, depending on the
- * precense of certain TLVs.  
+ * presence of certain TLVs.  
  *
  * The client should check the value passed as errorcode. If
  * its nonzero, there was an error.

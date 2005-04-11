@@ -252,7 +252,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		int tmp = read(source, buf + i, len - i);
 		if (tmp <= 0) {
 			g_free(buf);
-			buf = g_strdup_printf(_("Unable to read message from server: %s.  Command is %hd, length is %hd."), strerror(errno), len, command); 
+			buf = g_strdup_printf(_("Unable to read message from server: %s. Command is %hd, length is %hd."), strerror(errno), len, command);
 			gaim_connection_error(gc, buf);
 			g_free(buf);
 			return;

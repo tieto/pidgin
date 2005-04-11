@@ -81,7 +81,7 @@ static GdkColor nick_colors[] = {
 	{0, 57344, 46592, 44800},       /* Red Hilight */
 	{0, 49408, 26112, 23040},       /* Red Medium */
 	{0, 34816, 17920, 12544},       /* Red Dark */
-	{0, 49408, 14336, 8704},        /* Red Shadow */
+	{0, 49408, 14336,  8704},       /* Red Shadow */
 	{0, 34816, 32512, 41728},       /* Purple Medium */
 	{0, 25088, 23296, 33024},       /* Purple Dark */
 	{0, 18688, 16384, 26112},       /* Purple Shadow */
@@ -90,11 +90,11 @@ static GdkColor nick_colors[] = {
 	{0, 57344, 49920, 40448},       /* Face Skin Medium */
 	{0, 45824, 37120, 26880},       /* Face skin Dark */
 	{0, 33280, 26112, 18176},       /* Face Skin Shadow */
-	{0, 57088, 16896, 7680},        /* Accent Red */
-	{0, 39168, 0, 0},               /* Accent Red Dark */
+	{0, 57088, 16896,  7680},       /* Accent Red */
+	{0, 39168,     0,     0},       /* Accent Red Dark */
 	{0, 60928, 54784, 32768},       /* Accent Yellow */
 	{0, 17920, 40960, 17920},       /* Accent Green */
-	{0, 9728, 50944, 9728}          /* Accent Green Dark */
+	{0,  9728, 50944,  9728}        /* Accent Green Dark */
 };
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
@@ -4977,8 +4977,7 @@ gaim_gtkconv_chat_add_user(GaimConversation *conv, const char *user, gboolean ne
 
 	g_snprintf(tmp, sizeof(tmp),
 			   ngettext("%d person in room", "%d people in room",
-						num_users),
-			   num_users);
+						num_users), num_users);
 
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
@@ -5133,8 +5132,7 @@ gaim_gtkconv_chat_remove_users(GaimConversation *conv, GList *users)
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
 
-		if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model),
-					&iter))
+		if (!gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 			continue;
 
 		do {
@@ -5248,7 +5246,7 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 
 	/* this is wrong, this file ought not call g_new on GtkIMHtmlSmiley */
 	/* Let gtk_imhtml have a gtk_imhtml_smiley_new function, and let
-	   GtkIMHtmlSmiley by opque */
+	   GtkIMHtmlSmiley by opaque */
 	smiley = g_new0(GtkIMHtmlSmiley, 1);
 	smiley->file   = NULL;
 	smiley->smile  = g_strdup(smile);

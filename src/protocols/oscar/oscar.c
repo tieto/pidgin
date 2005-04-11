@@ -403,7 +403,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	if (utf8 == NULL) {
 		if (textlen != 0 && *text != '\0'
                     && !g_utf8_validate(text, textlen, NULL))
-			utf8 = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
+			utf8 = g_strdup(_("(There was an error receiving this message. The buddy you are speaking to most likely has a buggy client.)"));
 		else
 			utf8 = g_strndup(text, textlen);
 	}
@@ -486,7 +486,7 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 	if (ret == NULL)
 		ret = gaim_plugin_oscar_convert_to_utf8(data, datalen, charsetstr2, TRUE);
 	if (ret == NULL)
-		ret = g_strdup(_("(There was an error receiving this message.  The buddy you are speaking to most likely has a buggy client.)"));
+		ret = g_strdup(_("(There was an error receiving this message. The buddy you are speaking to most likely has a buggy client.)"));
 
 	return ret;
 }
@@ -1573,7 +1573,7 @@ static void oscar_ask_direct_im(GaimBlistNode *node, gpointer ignored) {
 
 	gaim_request_action(gc, NULL, buf,
 			_("Because this reveals your IP address, it "
-			  "may be considered a privacy risk.  Do you "
+			  "may be considered a privacy risk. Do you "
 			  "wish to continue?"),
 			0, data, 2,
 			_("Connect"), G_CALLBACK(oscar_direct_im),
@@ -1629,8 +1629,8 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				if ((conn->type == AIM_CONN_TYPE_BOS) ||
 					   !(aim_getconn_type(od->sess, AIM_CONN_TYPE_BOS)))
 				{
-					gaim_debug_error("oscar", "Major connection error.  i.e. "
-						"invalid data was received on the oscar TCP stream\n");
+					gaim_debug_error("oscar", "Major connection error. "
+						"Invalid data was received on the oscar TCP stream\n");
 					gaim_connection_error(gc, _("Disconnected."));
 				} else if (conn->type == AIM_CONN_TYPE_CHAT) {
 					struct chat_connection *cc = find_oscar_chat_by_conn(gc, conn);
@@ -1768,7 +1768,7 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 
 	if (!aim_snvalid(gaim_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), gaim_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid. Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), gaim_account_get_username(account));
 		gaim_connection_error(gc, buf);
 		g_free(buf);
 	}
@@ -2433,7 +2433,7 @@ static void damn_you(gpointer data, gint source, GaimInputCondition c)
 	}
 	if (in != '\n') {
 		char buf[256];
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly. You may want to use TOC until "
 			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
 							_("Gaim was unable to get a valid AIM login hash."),
@@ -2552,8 +2552,8 @@ int gaim_memrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 		if (pos->modname)
 			g_free(pos->modname);
 		g_free(pos);
-		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  You may want to use TOC until "
-			"this is fixed.  Check %s for updates."), GAIM_WEBSITE);
+		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly. You may want to use TOC until "
+			"this is fixed. Check %s for updates."), GAIM_WEBSITE);
 		gaim_notify_warning(pos->gc, NULL,
 							_("Gaim was unable to get a valid login hash."),
 							buf);
@@ -3495,7 +3495,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 						   "information.\n", userinfo->sn);
 				if (args->proxyip)
 					gaim_debug_warning("oscar",
-							   "IP for a proxy server was given.  Gaim "
+							   "IP for a proxy server was given. Gaim "
 							   "does not support this yet.\n");
 				g_free(message);
 				return 1;
@@ -3614,7 +3614,7 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		gaim_request_action(gc, NULL, buf,
 							_("This requires a direct connection between "
 							  "the two computers and is necessary for IM "
-							  "Images.  Because your IP address will be "
+							  "Images. Because your IP address will be "
 							  "revealed, this may be considered a privacy "
 							  "risk."),
 							GAIM_DEFAULT_ACTION_NONE, d, 2,
@@ -3690,7 +3690,7 @@ static void gaim_auth_sendrequest(GaimConnection *gc, char *name) {
 	else
 		nombre = NULL;
 
-	dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list.  Do you want to send an authorization request?"), (nombre ? nombre : name));
+	dialog_msg = g_strdup_printf(_("The user %s requires authorization before being added to a buddy list. Do you want to send an authorization request?"), (nombre ? nombre : name));
 	data->gc = gc;
 	data->name = g_strdup(name);
 	data->nick = NULL;
@@ -4102,7 +4102,7 @@ static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_
 		default: {
 			gaim_debug_warning("oscar",
 					   "Received an unknown rendezvous client auto-response "
-					   "from %s.  Type 0x%04hx\n", who, reason);
+					   "from %s. Type 0x%04hx\n", who, reason);
 		}
 
 	}
@@ -4134,7 +4134,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 
 		default: {
 			gaim_debug_warning("oscar",
-					   "Received an unknown client auto-response from %s.  "
+					   "Received an unknown client auto-response from %s. "
 					   "Type 0x%04hx\n", who, reason);
 		} break;
 	} /* end of switch */
@@ -4258,7 +4258,7 @@ static int gaim_parse_mtn(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} break;
 
 		default: {
-			gaim_debug_error("oscar", "Received unknown typing notification message from %s.  Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
+			gaim_debug_error("oscar", "Received unknown typing notification message from %s. Type1 is 0x%04x and type2 is 0x%04hx.\n", sn, type1, type2);
 		} break;
 	}
 
@@ -4869,7 +4869,7 @@ static int gaim_connerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 	msg = va_arg(ap, char *);
 	va_end(ap);
 
-	gaim_debug_info("oscar", "Disconnected.  Code is 0x%04x and msg is %s\n",
+	gaim_debug_info("oscar", "Disconnected. Code is 0x%04x and msg is %s\n",
 					code, (msg != NULL ? msg : ""));
 
 	g_return_val_if_fail(fr       != NULL, 1);
@@ -5103,7 +5103,7 @@ static int gaim_offlinemsg(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_info("oscar",
-			   "Received offline message.  Converting to channel 4 ICBM...\n");
+			   "Received offline message. Converting to channel 4 ICBM...\n");
 	args.uin = msg->sender;
 	args.type = msg->type;
 	args.flags = msg->flags;
@@ -5661,7 +5661,7 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	if (od->rights.maxsiglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM profile."),
 							_("You have probably requested to set your "
-							  "profile before the login procedure completed.  "
+							  "profile before the login procedure completed. "
 							  "Your profile remains unset; try setting it "
 							  "again when you are fully connected."));
 
@@ -5688,9 +5688,9 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 	if (msglen > od->rights.maxsiglen) {
 		gchar *errstr;
 		errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
-								 "has been exceeded.  Gaim has truncated it for you.",
+								 "has been exceeded. Gaim has truncated it for you.",
 								 "The maximum profile length of %d bytes "
-								 "has been exceeded.  Gaim has truncated it for you.",
+								 "has been exceeded. Gaim has truncated it for you.",
 								 od->rights.maxsiglen), od->rights.maxsiglen);
 		gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
 		g_free(errstr);
@@ -5725,7 +5725,7 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
 				    _("You have probably requested to set your "
 				      "away message before the login procedure "
-				      "completed.  You remain in a \"present\" "
+				      "completed. You remain in a \"present\" "
 				      "state; try setting it again when you are "
 				      "fully connected."));
 		return;
@@ -5771,9 +5771,9 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 			gchar *errstr;
 
 			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded. Gaim has truncated it for you.",
 									 "The maximum away message length of %d bytes "
-									 "has been exceeded.  Gaim has truncated it for you.",
+									 "has been exceeded. Gaim has truncated it for you.",
 									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
 			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
 			g_free(errstr);
@@ -5873,7 +5873,7 @@ oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid. Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!gaim_conv_present_error(buddy->name, gaim_connection_get_account(gc), buf))
 			gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
@@ -6038,7 +6038,7 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (reason == 0x0005) {
 		gaim_notify_error(gc, NULL, _("Unable To Retrieve Buddy List"),
-						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers.  Your buddy list is not lost, and will probably become available in a few hours."));
+						  _("Gaim was temporarily unable to retrieve your buddy list from the AIM servers. Your buddy list is not lost, and will probably become available in a few hours."));
 		od->getblisttimer = gaim_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
 	}
 
@@ -6109,7 +6109,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "ssi: syncing local list and server list\n");
 
 	if ((timestamp == 0) || (numitems == 0)) {
-		gaim_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing.  This probably means your buddy list is empty.", NULL);
+		gaim_debug_info("oscar", "Got AIM SSI with a 0 timestamp or 0 numitems--not syncing. This probably means your buddy list is empty.", NULL);
 		return 1;
 	}
 
@@ -6329,7 +6329,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 			case 0x000c: { /* you are over the limit, the cheat is to the limit, come on fhqwhgads */
 				gchar *buf;
-				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list.  Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
+				buf = g_strdup_printf(_("Could not add the buddy %s because you have too many buddies in your buddy list. Please remove one and try again."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
 					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
@@ -6343,7 +6343,7 @@ static int gaim_ssi_parseack(aim_session_t *sess, aim_frame_t *fr, ...) {
 			default: { /* La la la */
 				gchar *buf;
 				gaim_debug_error("oscar", "ssi: Action 0x%04hx was unsuccessful with error 0x%04hx\n", retval->action, retval->ack);
-				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason.  The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
+				buf = g_strdup_printf(_("Could not add the buddy %s for an unknown reason. The most common reason for this is that you have the maximum number of allowed buddies in your buddy list."), (retval->name ? retval->name : _("(no name)")));
 				if ((retval->name != NULL) && !gaim_conv_present_error(retval->name, gaim_connection_get_account(gc), buf))
 					gaim_notify_error(gc, NULL, _("Unable To Add"), buf);
 				g_free(buf);
@@ -6426,7 +6426,7 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list.  Do you want to add them?"), nombre);
+	dialog_msg = g_strdup_printf(_("The user %s has given you permission to add you to their buddy list. Do you want to add them?"), nombre);
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
@@ -6497,7 +6497,7 @@ static int gaim_ssi_authreply(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	gaim_debug_info("oscar",
-			   "ssi: received authorization reply from %s.  Reply is 0x%04hhx\n", sn, reply);
+			   "ssi: received authorization reply from %s. Reply is 0x%04hhx\n", sn, reply);
 
 	buddy = gaim_find_buddy(gc->account, sn);
 	if (buddy && (gaim_buddy_get_alias_only(buddy)))

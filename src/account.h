@@ -50,37 +50,37 @@ struct _GaimAccountUiOps
 
 struct _GaimAccount
 {
-	char *username;             /**< The username.                        */
-	char *alias;                /**< The current alias.                   */
-	char *password;             /**< The account password.                */
-	char *user_info;            /**< User information.                    */
+	char *username;             /**< The username.                          */
+	char *alias;                /**< The current alias.                     */
+	char *password;             /**< The account password.                  */
+	char *user_info;            /**< User information.                      */
 
-	char *buddy_icon;           /**< The buddy icon.                      */
+	char *buddy_icon;           /**< The buddy icon.                        */
 
-	gboolean remember_pass;     /**< Remember the password.               */
+	gboolean remember_pass;     /**< Remember the password.                 */
 
-	char *protocol_id;          /**< The ID of the protocol.              */
+	char *protocol_id;          /**< The ID of the protocol.                */
 
-	GaimConnection *gc;         /**< The connection handle.               */
+	GaimConnection *gc;         /**< The connection handle.                 */
 	gboolean disconnecting;     /**< The account is currently disconnecting */
 
-	GHashTable *settings;       /**< Protocol-specific settings.          */
-	GHashTable *ui_settings;    /**< UI-specific settings.                */
+	GHashTable *settings;       /**< Protocol-specific settings.            */
+	GHashTable *ui_settings;    /**< UI-specific settings.                  */
 
-	GaimProxyInfo *proxy_info;  /**< Proxy information.  This will be set */
-								/*   to NULL when the account inherits    */
-								/*   proxy settings from global prefs.    */
+	GaimProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
+								/*   to NULL when the account inherits      */
+								/*   proxy settings from global prefs.      */
 
-	GSList *permit;             /**< Permit list.                         */
-	GSList *deny;               /**< Deny list.                           */
-	int perm_deny;              /**< The permit/deny setting.             */
+	GSList *permit;             /**< Permit list.                           */
+	GSList *deny;               /**< Deny list.                             */
+	int perm_deny;              /**< The permit/deny setting.               */
 
-	GList *status_types;        /**< Status types.                        */
+	GList *status_types;        /**< Status types.                          */
 
-	GaimPresence *presence;     /**< Presence.                            */
-	GaimLog *system_log;        /**< The system log                       */
+	GaimPresence *presence;     /**< Presence.                              */
+	GaimLog *system_log;        /**< The system log                         */
 
-	void *ui_data;             /**< The UI can put data here.			  */
+	void *ui_data;              /**< The UI can put data here.              */
 };
 
 #ifdef __cplusplus

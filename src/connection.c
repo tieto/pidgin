@@ -130,7 +130,7 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 
 	if (regist)
 	{
-		gaim_debug_info("connection", "Registering.  gc = %p\n", gc);
+		gaim_debug_info("connection", "Registering. gc = %p\n", gc);
 
 		/* set this so we don't auto-reconnect after registering */
 		gc->wants_to_die = TRUE;
