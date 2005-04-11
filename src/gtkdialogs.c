@@ -91,24 +91,25 @@ static struct developer patch_writers[] = {
 
 static struct developer retired_developers[] = {
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
-	{"Adam Fritzler",		N_("former libfaim maintainer"), NULL},
-	{"Eric Warmenhoven",	N_("former lead developer"), "warmenhoven@yahoo.com"},
-	{"Jim Duchek",			N_("former maintainer"), NULL},
-	{"Jim Seymour",			N_("former Jabber developer"), NULL},
+	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
+	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
+	{"Jim Duchek",			N_("maintainer"), NULL},
+	{"Jim Seymour",			N_("Jabber developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{NULL, NULL, NULL}
 };
 
 static struct translator current_translators[] = {
-	{N_("Bulgarian"),			"bg", "Alexander Shopov", "al_shopov@users.sf.net"},
+	{N_("Bulgarian"),			"bg", "Vladimira Girginova", "missing@here.is"},
+	{N_("Bulgarian"),			"bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
 	{N_("Catalan"),				"ca", "Josep Puigdemont", "tradgnome@softcatala.org"},
 	{N_("Czech"),				"cs", "Miloslav Trmac", "mitr@volny.cz"},
 	{N_("Danish"),				"da", "Morten Brix Pedersen", "morten@wtf.dk"},
+	{N_("German"),				"de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
 	{N_("Australian English"),	"en_AU", "Peter Lawler", "trans@six-by-nine.com.au"},
 	{N_("British English"),		"en_GB", "Luke Ross", "lukeross@sys3175.co.uk"},
 	{N_("Canadian English"),	"en_CA", "Adam Weinberger", "adamw@gnome.org"},
-	{N_("German"),				"de", "Björn Voigt", "bjoern@cs.tu-berlin.de"},
 	{N_("Spanish"),				"es", "Javier Fernández-Sanguino Peña", "jfs@debian.org"},
 	{N_("Finnish"),				"fi", "Arto Alakulju", "arto@alakulju.net"},
 	{N_("French"),				"fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
@@ -119,10 +120,11 @@ static struct translator current_translators[] = {
 	{N_("Japanese"),			"ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
 	{N_("Lithuanian"),			"lt", "Gediminas Čičinskas", "gediminas@parok.lt"},
 	{N_("Korean"),				"ko", "Kyung-uk Son", "vvs740@chol.com"},
-	{N_("Dutch; Flemish"),		"nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
+	{N_("Dutch, Flemish"),		"nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
 	{N_("Macedonian"),			"mk", "Tomislav Markovski", "herrera@users.sf.net"},
 	{N_("Norwegian"),			"no", "Petter Johan Olsen", "petter.olsen@cc.uit.no"},
-	{N_("Polish"),				"pl", "Krzysztof Foltman, Emil Nowak", "krzysztof@foltman.com;emil5@go2.pl"},
+	{N_("Polish"),				"pl", "Emil Nowak", "emil5@go2.pl"},
+	{N_("Polish"),				"pl", "Krzysztof Foltman", "krzysztof@foltman.com"},
 	{N_("Portuguese"),			"pt", "Duarte Henriques", "duarte_henriques@myrealbox.com"},
 	{N_("Portuguese-Brazil"),	"pt_BR", "Maurício de Lemos Rodrigues Collares Neto", "mauricioc@gmail.com"},
 	{N_("Romanian"),			"ro", "Mişu Moldovan", "dumol@go.ro"},
@@ -132,7 +134,8 @@ static struct translator current_translators[] = {
 	{N_("Swedish"),				"sv", "Tore Lundqvist", "tlt@mima.x.se"},
 	{N_("Vietnamese"),			"vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),	"zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
-	{N_("Traditional Chinese"),	"zh_TW", "Ambrose C. Li, Paladin R. Liu", "acli@ada.dhs.org;paladin@ms1.hinet.net"},
+	{N_("Traditional Chinese"),	"zh_TW", "Ambrose C. Li", "acli@ada.dhs.org"},
+	{N_("Traditional Chinese"),	"zh_TW", "Paladin R. Liu", "paladin@ms1.hinet.net"},
 	{NULL, NULL, NULL, NULL}
 };
 
@@ -155,7 +158,8 @@ static struct translator past_translators[] = {
 	{N_("Russian"),				"ru", "Alexandre Prokoudine", NULL},
 	{N_("Slovak"),				"sk", "Daniel Režný", NULL},
 	{N_("Swedish"),				"sv", "Christian Rose", NULL},
-	{N_("Chinese"),				"zh_CN, zh_TW", "Hashao, Rocky S. Lee", NULL},
+	{N_("Simplified Chinese"),	"zh_CN", "Hashao, Rocky S. Lee", NULL},
+	{N_("Traditional Chinese"),	"zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
 };
 
@@ -224,7 +228,7 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 					  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
 					  "Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 					  "all at once.  It is written using "
-					  "Gtk+ and is licensed under the GPL.<BR><BR>"));
+					  "GTK+ and is licensed under the GNU GPL.<BR><BR>"));
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					GAIM_WEBSITE "\">" GAIM_WEBSITE "</A><BR/><BR/>");
@@ -321,81 +325,118 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 	}
 	g_string_append(str, "<BR/>");
 
+	g_string_append_printf(str, "<FONT SIZE=\"4\">%s</FONT><br/>", _("Debugging Information"));
+
 	/* The following primarly intented for user/developer interaction and thus
 	   ought not be translated */
-	g_string_append(str, "<b>Gaim was compiled with the following:</b><br/>");
+
 #ifdef CONFIG_ARGS /* win32 build doesn't use configure */
-	g_string_append(str, "Arguments to <i>./configure</i>:  " CONFIG_ARGS "<br/>");
+	g_string_append(str, "  <b>Arguments to <i>./configure</i>:</b>  " CONFIG_ARGS "<br/>");
 #endif
+
 #ifdef DEBUG
-	g_string_append(str, "Print debugging messages:  Yes<br/>");
+	g_string_append(str, "  <b>Print debugging messages:</b> Yes<br/>");
 #else
-	g_string_append(str, "Print debugging messages:  No<br/>");
-#endif /* DEBUG */
+	g_string_append(str, "  <b>Print debugging messages:</b> No<br/>");
+#endif
+
 #ifdef ENABLE_BINRELOC
-	g_string_append(str, "Binary relocation:  Enabled<br/>");
+	g_string_append(str, "  <b>Binary relocation:</b> Enabled<br/>");
 #else
-	g_string_append(str, "Binary relocation:  Disabled<br/>");
-#endif /* ENABLE_BINRELOC */
+	g_string_append(str, "  <b>Binary relocation:</b> Disabled<br/>");
+#endif
+
 #ifdef GAIM_PLUGINS
-	g_string_append(str, "Plugins:  Enabled<br/>");
+	g_string_append(str, "  <b>Plugins:</b> Enabled<br/>");
 #else
-	g_string_append(str, "Plugins:  Disabled<br/>");
-#endif /* GAIM_PLUGINS */
+	g_string_append(str, "  <b>Plugins:</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_SSL
-	g_string_append(str, "SSL:  Gaim was compiled with SSL support<br/>");
+	g_string_append(str, "  <b>SSL:</b> Gaim was compiled with SSL support.<br/>");
 #else
-	g_string_append(str, "SSL:  Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "  <b>SSL:</b> Gaim was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
 #endif
-#ifdef HAVE_GNUTLS
-	g_string_append(str, "GNUTLS:  Enabled<br/>");
+
+
+g_string_append(str, "<br/>  <b>Library Support</b><br/>");
+
+#if defined(LIBEBOOK_MAJOR_VER) && defined(LIBEBOOK_MINOR_VER) && defined(LIBEBOOK_MICRO_VER)
+	g_string_append_printf(str, "    <b>Evolution:</b> Enabled (Version %i.%i.%i)<br/>", LIBEBOOK_MAJOR_VER, LIBEBOOK_MINOR_VER, LIBEBOOK_MICRO_VER);
 #else
-	g_string_append(str, "GNUTLS:  Disabled<br/>");
+	g_string_append_printf(str, "    <b>Evolution:</b> Disabled<br/>");
 #endif
-#ifdef HAVE_NSS
-	g_string_append(str, "NSS:  Enabled<br/>");
-#else
-	g_string_append(str, "NSS:  Disabled<br/>");
-#endif
-#ifdef HAVE_TK
-	g_string_append(str, "TK:  Yes<br/>");
-#else
-	g_string_append(str, "TK:  No<br/>");
-#endif
-#ifdef LIBZEPHYR_EXT
-	g_string_append(str, "External libzephyr:  Yes<br/>");
-#else
-	g_string_append(str, "External libzephyr:  No<br/>");
-#endif
-#ifdef ZEPHYR_USES_KERBEROS
-	g_string_append(str, "Zephyr uses Kerberos: Yes<br/>");
-#else
-	g_string_append(str, "Zephyr uses Kerberos: No<br/>");
-#endif
-#ifdef USE_AO
-	g_string_append(str, "AO:  Yes<br/>");
-#else
-	g_string_append(str, "AO:  No<br/>");
-#endif
-#ifdef USE_NAS_AUDIO
-	g_string_append(str, "NAS Audio:  Yes<br/>");
-#else
-	g_string_append(str, "NAS Audio:  No<br/>");
-#endif
+
 #ifdef USE_GTKSPELL
-	g_string_append(str, "GtkSpell:  Enabled<br/>");
+	g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
 #else
-	g_string_append(str, "GtkSpell:  Disabled<br/>");
+	g_string_append(str, "    <b>GtkSpell:</b> Disabled<br/>");
 #endif
-#ifdef USE_SCREENSAVER
-	g_string_append(str, "XScreenSaver support:  Yes<br/>");
+
+#ifdef HAVE_GNUTLS
+	g_string_append(str, "    <b>GnuTLS:</b> Enabled<br/>");
 #else
-	g_string_append(str, "XScreenSaver support:  No<br/>");
+	g_string_append(str, "    <b>GnuTLS:</b> Disabled<br/>");
 #endif
+
+#ifdef USE_AO
+	g_string_append(str, "    <b>libao:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>libao:</b> Disabled<br/>");
+#endif
+
+#ifdef USE_NAS_AUDIO
+	g_string_append(str, "    <b>Network Audio System (NAS):</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Network Audio System (NAS):</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_NSS
+	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_STARTUP_NOTIFICATION
+	g_string_append(str, "    <b>Startup Notification:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_TCL
+	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Tcl:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_TK
+	g_string_append(str, "    <b>Tk:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
+#endif
+
 #ifdef USE_SM
-	g_string_append(str, "X SM support:  Yes<br/>");
+	g_string_append(str, "    <b>X Session Management:</b> Enabled<br/>");
 #else
-	g_string_append(str, "X SM support:  No<br/>");
+	g_string_append(str, "    <b>X Session Management:</b> Disabled<br/>");
+#endif
+
+#ifdef USE_SCREENSAVER
+	g_string_append(str, "    <b>XScreenSaver:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>XScreenSaver:</b> Disabled<br/>");
+#endif
+
+#ifdef LIBZEPHYR_EXT
+	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> External<br/>");
+#else
+	g_string_append(str, "    <b>Zephyr library (libzephyr):</b> Not External<br/>");
+#endif
+
+#ifdef ZEPHYR_USES_KERBEROS
+	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> Yes<br/>");
+#else
+	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> No<br/>");
 #endif
 
 	/* End of not to be translated section */
