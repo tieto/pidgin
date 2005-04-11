@@ -113,12 +113,12 @@ typedef struct
 static GtkWidget *invite_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
-static void got_typing_keypress(GaimConversation *conv, gboolean first);
+static void got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv,
 								  const char *name);
 static gboolean tab_complete(GaimConversation *conv);
-static void update_typing_icon(GaimConversation *conv);
+static void update_typing_icon(GaimGtkConversation *gtkconv);
 static gboolean update_send_as_selection(GaimConvWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
@@ -136,19 +136,26 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 }
 
 static gint
-close_conv_cb(GtkWidget *w, gpointer d)
+close_conv_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
-	GaimConversation *conv = (GaimConversation *)d;
-
-	gaim_conversation_destroy(conv);
-
+	GList *list = g_list_copy(gtkconv->convs), *l;
+	
+	l = list;
+	while (l) {
+		GaimConversation *conv = l->data;
+		gaim_conversation_destroy(conv);
+		l = l->next;
+	}
+	
+	g_list_free(list);
+	
 	return TRUE;
 }
 
 static gboolean
-size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv)
+size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimConvWindow *win = gaim_conversation_get_window(conv);
 	
 	if (!GTK_WIDGET_VISIBLE(w))
@@ -156,8 +163,6 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimConversation *conv
 
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return FALSE;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the tab bar
 	 * will fit, but then I don't want new windows taking up the entire screen.  I check to see if there is only one
@@ -196,9 +201,9 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 }
 
 static void
-default_formatize(GaimConversation *conv)
+default_formatize(GaimGtkConversation *c)
 {
-	GaimGtkConversation *c = GAIM_GTK_CONVERSATION(conv);
+	GaimConversation *conv = c->active_conv;
 		
 	if (conv->features & GAIM_CONNECTION_HTML)
 	{
@@ -451,14 +456,13 @@ check_for_and_do_command(GaimConversation *conv)
 }
 
 static void
-send_cb(GtkWidget *widget, GaimConversation *conv)
+send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 	GaimConnection *gc;
 	char *buf, *clean;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	account = gaim_conversation_get_account(conv);
 
 	if (!gaim_account_is_connected(account))
@@ -470,7 +474,7 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 
 	if (check_for_and_do_command(conv)) {
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-		default_formatize(conv);
+		default_formatize(gtkconv);
 		return;
 	}
 
@@ -512,14 +516,15 @@ send_cb(GtkWidget *widget, GaimConversation *conv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-	default_formatize(conv);
+	default_formatize(gtkconv);
 }
 
 static void
-add_remove_cb(GtkWidget *widget, GaimConversation *conv)
+add_remove_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
 	GaimAccount *account;
 	const char *name;
+	GaimConversation *conv = gtkconv->active_conv;
 
 	account = gaim_conversation_get_account(conv);
 	name    = gaim_conversation_get_name(conv);
@@ -545,8 +550,9 @@ add_remove_cb(GtkWidget *widget, GaimConversation *conv)
 	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 }
 
-static void chat_do_info(GaimConversation *conv, const char *who)
+static void chat_do_info(GaimGtkConversation *gtkconv, const char *who)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
 
@@ -569,11 +575,9 @@ static void chat_do_info(GaimConversation *conv, const char *who)
 
 
 static void
-info_cb(GtkWidget *widget, GaimConversation *conv)
+info_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GaimConversation *conv = gtkconv->active_conv;
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
 		serv_get_info(gaim_conversation_get_gc(conv),
@@ -598,14 +602,15 @@ info_cb(GtkWidget *widget, GaimConversation *conv)
 		else
 			return;
 
-		chat_do_info(conv, name);
+		chat_do_info(gtkconv, name);
 		g_free(name);
 	}
 }
 
 static void
-block_cb(GtkWidget *widget, GaimConversation *conv)
+block_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 
 	account = gaim_conversation_get_account(conv);
@@ -717,8 +722,9 @@ static const GtkTargetEntry dnd_targets[] =
 };
 
 static void
-invite_cb(GtkWidget *widget, GaimConversation *conv)
+invite_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	InviteBuddyInfo *info = NULL;
 
 	if (invite_dialog == NULL) {
@@ -861,6 +867,9 @@ menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 	gaim_gtkdialogs_im();
 }
 
+/* XXX change how this works, unless someone can justify it, i think
+ * it's really stupid, lets just grab the text from the imhtml, not
+ * keep an extra copy of it! */
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
@@ -1119,7 +1128,7 @@ menu_get_info_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	info_cb(NULL, conv);
+	info_cb(NULL, GAIM_GTK_CONVERSATION(conv));
 }
 
 static void
@@ -1130,7 +1139,7 @@ menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	invite_cb(NULL, conv);
+	invite_cb(NULL, GAIM_GTK_CONVERSATION(conv));
 }
 
 static void
@@ -1156,7 +1165,7 @@ menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	block_cb(NULL, conv);
+	block_cb(NULL, GAIM_GTK_CONVERSATION(conv));
 }
 
 static void
@@ -1167,7 +1176,7 @@ menu_add_remove_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
-	add_remove_cb(NULL, conv);
+	add_remove_cb(NULL, GAIM_GTK_CONVERSATION(conv));
 }
 
 static void
@@ -1175,7 +1184,7 @@ menu_close_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
 
-	close_conv_cb(NULL, gaim_conv_window_get_active_conversation(win));
+	close_conv_cb(NULL, GAIM_GTK_CONVERSATION(gaim_conv_window_get_active_conversation(win)));
 }
 
 static void
@@ -1250,8 +1259,9 @@ menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-chat_do_im(GaimConversation *conv, const char *who)
+chat_do_im(GaimGtkConversation *gtkconv, const char *who)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -1280,16 +1290,14 @@ chat_do_im(GaimConversation *conv, const char *who)
 }
 
 static void
-chat_im_button_cb(GtkWidget *widget, GaimConversation *conv)
+chat_im_button_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
 	char *name;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -1300,14 +1308,14 @@ chat_im_button_cb(GtkWidget *widget, GaimConversation *conv)
 	else
 		return;
 
-	chat_do_im(conv, name);
+	chat_do_im(gtkconv, name);
 	g_free(name);
 }
 
 static void
-ignore_cb(GtkWidget *w, GaimConversation *conv)
+ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkChatPane *gtkchat;
 	GaimConvChat *chat;
 	GtkTreeIter iter;
@@ -1316,7 +1324,6 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 	char *name;
 
 	chat    = GAIM_CONV_CHAT(conv);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -1339,16 +1346,17 @@ ignore_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
-menu_chat_im_cb(GtkWidget *w, GaimConversation *conv)
+menu_chat_im_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
 	const char *who = g_object_get_data(G_OBJECT(w), "user_data");
 
-	chat_do_im(conv, who);
+	chat_do_im(gtkconv, who);
 }
 
 static void
-menu_chat_send_file_cb(GtkWidget *w, GaimConversation *conv)
+menu_chat_send_file_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	const char *who = g_object_get_data(G_OBJECT(w), "user_data");
 	GaimConnection *gc  = gaim_conversation_get_gc(conv);
 
@@ -1356,18 +1364,19 @@ menu_chat_send_file_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
-menu_chat_info_cb(GtkWidget *w, GaimConversation *conv)
+menu_chat_info_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
 	char *who;
 
 	who = g_object_get_data(G_OBJECT(w), "user_data");
 
-	chat_do_info(conv, who);
+	chat_do_info(gtkconv, who);
 }
 
 static void
-menu_chat_get_away_cb(GtkWidget *w, GaimConversation *conv)
+menu_chat_get_away_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
 	char *who;
@@ -1391,8 +1400,9 @@ menu_chat_get_away_cb(GtkWidget *w, GaimConversation *conv)
 }
 
 static void
-menu_chat_add_remove_cb(GtkWidget *w, GaimConversation *conv)
+menu_chat_add_remove_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 	GaimBuddy *b;
 	char *name;
@@ -1475,9 +1485,9 @@ create_chat_menu(GaimConversation *conv, const char *who,
 
 
 static gint
-gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
+gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
@@ -1515,9 +1525,9 @@ gtkconv_chat_popup_menu_cb(GtkWidget *widget, GaimConversation *conv)
 
 static gint
 right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
-					GaimConversation *conv)
+					GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
@@ -1529,7 +1539,6 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	gchar *who;
 	int x, y;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 	account = gaim_conversation_get_account(conv);
 	gc      = account->gc;
@@ -1552,7 +1561,7 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
 
 	if (event->button == 1 && event->type == GDK_2BUTTON_PRESS) {
-		chat_do_im(conv, who);
+		chat_do_im(gtkconv, who);
 	} else if (event->button == 3 && event->type == GDK_BUTTON_PRESS) {
 		GtkWidget *menu = create_chat_menu (conv, who, prpl_info, gc);
 		gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL,
@@ -1632,8 +1641,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	int numconvs;
 	int curconv;
 
-	conv     = (GaimConversation *)data;
-	gtkconv  = GAIM_GTK_CONVERSATION(conv);
+	gtkconv  = (GaimGtkConversation *)data;
+	conv     = gtkconv->active_conv;;
 	win      = gaim_conversation_get_window(conv);
 	gtkwin   = GAIM_GTK_WINDOW(win);
 	numconvs = gaim_conv_window_get_conversation_count(win);
@@ -1837,32 +1846,38 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 gaim_account_get_protocol_name(conv->account));
+	                             gaim_account_get_protocol_name(conv->account));
 }
 
 static void
 insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 			   gchar *new_text, gint new_text_length, gpointer user_data)
 {
-	GaimConversation *conv = (GaimConversation *)user_data;
+	GaimGtkConversation *gtkconv = (GaimGtkConversation *)user_data;
+	GaimConversation *conv;
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(gtkconv != NULL);
+	
+	conv = gtkconv->active_conv;
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 		return;
 
-	got_typing_keypress(conv, (gtk_text_iter_is_start(position) &&
-							   gtk_text_iter_is_end(position)));
+	got_typing_keypress(gtkconv, (gtk_text_iter_is_start(position) &&
+	                    gtk_text_iter_is_end(position)));
 }
 
 static void
 delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 			   GtkTextIter *end_pos, gpointer user_data)
 {
-	GaimConversation *conv = (GaimConversation *)user_data;
+	GaimGtkConversation *gtkconv = (GaimGtkConversation *)user_data;
+	GaimConversation *conv;
 	GaimConvIm *im;
 
-	g_return_if_fail(conv != NULL);
+	g_return_if_fail(gtkconv != NULL);
+	
+	conv = gtkconv->active_conv;
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 		return;
@@ -1881,7 +1896,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 	}
 	else {
 		/* We're deleting, but not all of it, so it counts as typing. */
-		got_typing_keypress(conv, FALSE);
+		got_typing_keypress(gtkconv, FALSE);
 	}
 }
 
@@ -2369,8 +2384,8 @@ update_tab_icon(GaimConversation *conv)
 static gboolean
 redraw_icon(gpointer data)
 {
-	GaimConversation *conv = (GaimConversation *)data;
-	GaimGtkConversation *gtkconv;
+	GaimGtkConversation *gtkconv = (GaimGtkConversation *)data;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -2427,15 +2442,10 @@ redraw_icon(gpointer data)
 }
 
 static void
-start_anim(GtkObject *obj, GaimConversation *conv)
+start_anim(GtkObject *obj, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	int delay;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtkconv->u.im->anim == NULL)
 		return;
@@ -2451,19 +2461,12 @@ start_anim(GtkObject *obj, GaimConversation *conv)
 	if (delay < 100)
 		delay = 100;
 
-    gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
+	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
 }
 
 static void
-stop_anim(GtkObject *obj, GaimConversation *conv)
+stop_anim(GtkObject *obj, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
 	if (gtkconv->u.im->icon_timer != 0)
 		g_source_remove(gtkconv->u.im->icon_timer);
 
@@ -2471,33 +2474,24 @@ stop_anim(GtkObject *obj, GaimConversation *conv)
 }
 
 static void
-toggle_icon_animate_cb(GtkWidget *w, GaimConversation *conv)
+toggle_icon_animate_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
-
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
-		return;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
 	gtkconv->u.im->animate =
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w));
 
 	if (gtkconv->u.im->animate)
-		start_anim(NULL, conv);
+		start_anim(NULL, gtkconv);
 	else
-		stop_anim(NULL, conv);
+		stop_anim(NULL, gtkconv);
 }
 
 static void
-remove_icon(GaimConversation *conv)
+remove_icon(GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;;
 	GaimGtkWindow *gtkwin;
 
 	g_return_if_fail(conv != NULL);
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	if (gtkconv->u.im->icon_container != NULL)
 		gtk_widget_destroy(gtkconv->u.im->icon_container);
@@ -2525,7 +2519,8 @@ remove_icon(GaimConversation *conv)
 static void
 saveicon_writefile_cb(void *user_data, const char *filename)
 {
-	GaimConversation *conv = (GaimConversation *)user_data;
+	GaimGtkConversation *gtkconv = (GaimGtkConversation *)user_data;
+	GaimConversation *conv = gtkconv->active_conv;
 	FILE *fp;
 	GaimBuddyIcon *icon;
 	const void *data;
@@ -2549,8 +2544,9 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 }
 
 static void
-icon_menu_save_cb(GtkWidget *widget, GaimConversation *conv)
+icon_menu_save_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	gchar *buf;
 
 	g_return_if_fail(conv != NULL);
@@ -2568,16 +2564,14 @@ icon_menu_save_cb(GtkWidget *widget, GaimConversation *conv)
 }
 
 static gboolean
-icon_menu(GtkObject *obj, GdkEventButton *e, GaimConversation *conv)
+icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	static GtkWidget *menu = NULL;
 	GtkWidget *button;
 
 	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	/*
 	 * If a menu already exists, destroy it before creating a new one,
@@ -2633,7 +2627,7 @@ menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
 	if (active)
 		gaim_gtkconv_update_buddy_icon(conv);
 	else
-		remove_icon(conv);
+		remove_icon(gtkconv);
 }
 
 /**************************************************************************
@@ -2647,11 +2641,11 @@ menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
  * account signs on or off.
  */
 static void
-gray_stuff_out(GaimConversation *conv)
+gray_stuff_out(GaimGtkConversation *gtkconv)
 {
 	GaimConvWindow *win;
 	GaimGtkWindow *gtkwin;
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GdkPixbuf *window_icon = NULL;
@@ -2852,7 +2846,7 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	stop_anim(NULL, conv);
+	stop_anim(NULL, gtkconv);
 }
 
 static void
@@ -2875,9 +2869,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 
 	/* Update the menubar */
-	gray_stuff_out(conv);
+	gray_stuff_out(gtkconv);
 
-	update_typing_icon(conv);
+	update_typing_icon(gtkconv);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkwin->menu.logging),
 				       gaim_conversation_is_logging(conv));
@@ -2901,7 +2895,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	 */
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
 		(gtkconv->u.im->animate))
-		start_anim(NULL, conv);
+		start_anim(NULL, gtkconv);
 
 	gtk_window_set_title(GTK_WINDOW(gtkwin->window),
 			     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -2912,8 +2906,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
  **************************************************************************/
 
 static void
-got_typing_keypress(GaimConversation *conv, gboolean first)
+got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimConvIm *im;
 
 	/*
@@ -2943,12 +2938,12 @@ got_typing_keypress(GaimConversation *conv, gboolean first)
 }
 
 static void
-update_typing_icon(GaimConversation *conv)
+update_typing_icon(GaimGtkConversation *gtkconv)
 {
 	GaimGtkWindow *gtkwin;
 	GaimConvIm *im = NULL;
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-
+	GaimConversation *conv = gtkconv->active_conv;
+	
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
 	if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
@@ -3710,11 +3705,11 @@ setup_menubar(GaimConvWindow *win)
 	return gtkwin->menu.menubar;
 }
 
-static void topic_callback(GtkWidget *w, GaimConversation *conv)
+static void topic_callback(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc;
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkChatPane *gtkchat;
 	const char *new_topic;
 	const char *current_topic;
@@ -3766,10 +3761,10 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 }
 
 static GtkWidget *
-setup_chat_pane(GaimConversation *conv)
+setup_chat_pane(GaimGtkConversation *gtkconv)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimGtkConversation *gtkconv;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkChatPane *gtkchat;
 	GaimConnection *gc;
 	GtkWidget *vpaned, *hpaned;
@@ -3784,7 +3779,6 @@ setup_chat_pane(GaimConversation *conv)
 	GtkTreeViewColumn *col;
 	GList *focus_chain = NULL;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 	gc      = gaim_conversation_get_gc(conv);
 
@@ -3816,7 +3810,7 @@ setup_chat_pane(GaimConversation *conv)
 			gtk_editable_set_editable(GTK_EDITABLE(gtkchat->topic_text), FALSE);
 		} else {
 			g_signal_connect(GTK_OBJECT(gtkchat->topic_text), "activate",
-					G_CALLBACK(topic_callback), conv);
+					G_CALLBACK(topic_callback), gtkconv);
 		}
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
@@ -3839,7 +3833,7 @@ setup_chat_pane(GaimConversation *conv)
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/default_height"));
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), conv);
+					 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
 						   G_CALLBACK(entry_stop_rclick_cb), NULL);
@@ -3918,7 +3912,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(gtkconv->tooltips, button, _("IM the user"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(chat_im_button_cb), conv);
+					 G_CALLBACK(chat_im_button_cb), gtkconv);
 
 	gtk_widget_show(button);
 
@@ -3931,7 +3925,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_tooltips_set_tip(gtkconv->tooltips, button,
 						 _("Ignore the user"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(ignore_cb), conv);
+					 G_CALLBACK(ignore_cb), gtkconv);
 	gtk_widget_show(button);
 
 	/* Info */
@@ -3943,7 +3937,7 @@ setup_chat_pane(GaimConversation *conv)
 	gtk_tooltips_set_tip(gtkconv->tooltips, button,
 						 _("Get the user's information"), NULL);
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(info_cb), conv);
+	                 G_CALLBACK(info_cb), gtkconv);
 
 	gtk_widget_show(button);
 
@@ -3972,18 +3966,18 @@ setup_chat_pane(GaimConversation *conv)
 			gaim_prefs_get_int("/gaim/gtk/conversations/chat/entry_height"));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-					 G_CALLBACK(entry_key_press_cb), conv);
+	                 G_CALLBACK(entry_key_press_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send",
-			 G_CALLBACK(send_cb), conv);
+	                 G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
-						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), conv);
+	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
-	default_formatize(conv);
+	default_formatize(gtkconv);
 
 	/*
 	 * Focus for chat windows should be as follows:
@@ -3997,18 +3991,14 @@ setup_chat_pane(GaimConversation *conv)
 }
 
 static GtkWidget *
-setup_im_pane(GaimConversation *conv)
+setup_im_pane(GaimGtkConversation *gtkconv)
 {
-	GaimGtkConversation *gtkconv;
-	GaimGtkImPane *gtkim;
+	GaimConversation *conv = gtkconv->active_conv;
 	GtkWidget *frame;
 	GtkWidget *paned;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
 	GList *focus_chain = NULL;
-
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkim   = gtkconv->u.im;
 
 	/* Setup the outer pane */
 	paned = gtk_vpaned_new();
@@ -4030,14 +4020,14 @@ setup_im_pane(GaimConversation *conv)
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_width"),
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/default_height"));
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), conv);
+	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
-						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
-						   G_CALLBACK(refocus_entry_cb), gtkconv);
+	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
-						   G_CALLBACK(refocus_entry_cb), gtkconv);
+	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	/* Setup the bottom half of the conversation window */
 	vbox2 = gtk_vbox_new(FALSE, 6);
@@ -4064,25 +4054,25 @@ setup_im_pane(GaimConversation *conv)
 			gaim_prefs_get_int("/gaim/gtk/conversations/im/entry_height"));
 	gtkconv->entry_buffer =
 		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", conv);
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-			 G_CALLBACK(entry_key_press_cb), conv);
-	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send", G_CALLBACK(send_cb), conv);
+	                 G_CALLBACK(entry_key_press_cb), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->entry), "message_send", G_CALLBACK(send_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
-						   G_CALLBACK(entry_stop_rclick_cb), NULL);
+	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), conv);
+	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
-					 G_CALLBACK(insert_text_cb), conv);
+	                 G_CALLBACK(insert_text_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
-					 G_CALLBACK(delete_text_cb), conv);
+	                 G_CALLBACK(delete_text_cb), gtkconv);
 
 	/* had to move this after the imtoolbar is attached so that the
 	 * signals get fired to toggle the buttons on the toolbar as well.
 	 */
-	default_formatize(conv);
+	default_formatize(gtkconv);
 
 	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 	gtkconv->u.im->show_icon = TRUE;
@@ -4099,9 +4089,10 @@ setup_im_pane(GaimConversation *conv)
 
 static void
 conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
-			  GtkSelectionData *sd, guint info, guint t,
-			  GaimConversation *conv)
+              GtkSelectionData *sd, guint info, guint t,
+              GaimGtkConversation *gtkconv)
 {
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimConvWindow *win = conv->window;
 	GaimConversation *c;
 	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
@@ -4313,6 +4304,31 @@ static const GtkTargetEntry te[] =
 	{"application/x-im-contact", 0, GTK_IMHTML_DRAG_NUM + 1}
 };
 
+static GaimGtkConversation *
+gaim_gtk_conv_find_gtkconv(GaimConversation * conv)
+{
+	GaimBuddy *bud = gaim_find_buddy(conv->account, conv->name), *b;
+	GaimContact *c;
+	GaimBlistNode *cn;
+	
+	if (!bud)
+		return NULL;
+	
+	if (!(c = gaim_buddy_get_contact(bud)))
+		return NULL;
+	
+	cn = (GaimBlistNode *)c;
+	for (b = (GaimBuddy *)cn->child; b; b = (GaimBuddy *) ((GaimBlistNode *)b)->next) {
+		GaimConversation *conv;
+		if ((conv = gaim_find_conversation_with_account(GAIM_CONV_IM, b->name, b->account))) {
+			if (conv->ui_data)
+				return conv->ui_data;
+		}
+	}
+	
+	return NULL;
+}
+
 static void
 gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 {
@@ -4338,10 +4354,17 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		tab_cont = gtkconv->tab_cont;
 
 		new_ui = FALSE;
-	}
-	else {
+	} else if (conv_type == GAIM_CONV_IM && (gtkconv = gaim_gtk_conv_find_gtkconv(conv))) {
+		conv->ui_data = gtkconv;
+		gtkconv->active_conv = conv;
+		if (!g_list_find(gtkconv->convs, conv))
+			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
+		return;
+	} else {
 		gtkconv = g_malloc0(sizeof(GaimGtkConversation));
 		conv->ui_data = gtkconv;
+		gtkconv->active_conv = conv;
+		gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
 
 		/* Setup some initial variables. */
 		gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
@@ -4351,12 +4374,12 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 			gtkconv->u.im = g_malloc0(sizeof(GaimGtkImPane));
 			gtkconv->u.im->a_virgin = TRUE;
 
-			pane = setup_im_pane(conv);
+			pane = setup_im_pane(gtkconv);
 		}
 		else if (conv_type == GAIM_CONV_CHAT) {
 			gtkconv->u.chat = g_malloc0(sizeof(GaimGtkChatPane));
 
-			pane = setup_chat_pane(conv);
+			pane = setup_chat_pane(gtkconv);
 		}
 
 		if (pane == NULL) {
@@ -4389,11 +4412,11 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 				  GDK_ACTION_COPY);
 
 		g_signal_connect(G_OBJECT(pane), "drag_data_received",
-				 G_CALLBACK(conv_dnd_recv), conv);
+				 G_CALLBACK(conv_dnd_recv), gtkconv);
 		g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
-				 G_CALLBACK(conv_dnd_recv), conv);
+				 G_CALLBACK(conv_dnd_recv), gtkconv);
 		g_signal_connect(G_OBJECT(gtkconv->entry), "drag_data_received",
-				 G_CALLBACK(conv_dnd_recv), conv);
+				 G_CALLBACK(conv_dnd_recv), gtkconv);
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 6);
@@ -4414,8 +4437,8 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
 
 		g_signal_connect_swapped(G_OBJECT(pane), "focus",
-								 G_CALLBACK(gtk_widget_grab_focus),
-								 gtkconv->entry);
+		                         G_CALLBACK(gtk_widget_grab_focus),
+		                         gtkconv->entry);
 	}
 
 	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, 6);
@@ -4445,14 +4468,14 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 						 _("Close conversation"), NULL);
 
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
-					 G_CALLBACK(close_conv_cb), conv);
+	                 G_CALLBACK(close_conv_cb), gtkconv);
 
 	/*
 	 * I love Galeon. They have a fix for that stupid annoying visible
 	 * border bug. I love you guys! -- ChipX86
 	 */
 	g_signal_connect(G_OBJECT(gtkconv->close), "state_changed",
-					 G_CALLBACK(tab_close_button_state_changed_cb), NULL);
+	                 G_CALLBACK(tab_close_button_state_changed_cb), NULL);
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
@@ -4575,7 +4598,7 @@ gaim_gtk_move_conversation(GaimConvWindow *win, GaimConversation *conv,
 }
 
 static int
-gaim_gtk_get_active_index(const GaimConvWindow *win)
+gaim_gtk_get_active_index(const GaimConvWindow *win) /* FIXME: XXX: This is wrong due to contact aware convo changes */
 {
 	GaimGtkWindow *gtkwin;
 	int index;
@@ -4634,6 +4657,11 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
+	gtkconv->convs = g_list_remove(gtkconv->convs, conv);
+	/* Don't destroy ourselves until all our convos are gone */
+	if (gtkconv->convs)
+		return;
+	
 	/* If the "Save Conversation" or "Save Icon" dialogs are open then close them */
 	gaim_request_close_with_handle(conv);
 
@@ -4669,6 +4697,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv->active_conv = conv;
 	gaimwin = gaim_conversation_get_window(conv);
 	gtkwin = GAIM_GTK_WINDOW(gaimwin);
 
@@ -4706,6 +4735,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv->active_conv = conv;
 	gaimwin = gaim_conversation_get_window(conv);
 	gtkwin = GAIM_GTK_WINDOW(gaimwin);
 
@@ -4754,6 +4784,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	size_t length = strlen(message) + 1;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv->active_conv = conv;
 	gc = gaim_conversation_get_gc(conv);
 
 	win = gaim_conversation_get_window(conv);
@@ -5300,6 +5331,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	win     = gaim_conversation_get_window(conv);
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	conv = gtkconv->active_conv; /* Gross hack */
 
 	if (type == GAIM_CONV_UPDATE_ACCOUNT)
 	{
@@ -5377,7 +5409,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			gtk_label_set_text(GTK_LABEL(gtkconv->tab_label), title);
 
 		if (conv == gaim_conv_window_get_active_conversation(win))
-			update_typing_icon(conv);
+			update_typing_icon(gtkconv);
 
 		if (type == GAIM_CONV_UPDATE_TITLE) {
 			gtk_label_set_text(GTK_LABEL(gtkconv->menu_label), title);
@@ -5402,7 +5434,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	else if (type == GAIM_CONV_ACCOUNT_ONLINE ||
 			 type == GAIM_CONV_ACCOUNT_OFFLINE)
 	{
-		gray_stuff_out(gaim_conv_window_get_active_conversation(win));
+		gray_stuff_out(GAIM_GTK_CONVERSATION(gaim_conv_window_get_active_conversation(win)));
 		generate_send_as_items(win, NULL);
 		update_tab_icon(conv);
 		gaim_conversation_autoset_title(conv);
@@ -5415,7 +5447,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	         type == GAIM_CONV_UPDATE_CHATLEFT)
 	{
 		gaim_conversation_autoset_title(conv);
-		gray_stuff_out(conv);
+		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
 	}
 	else if (type == GAIM_CONV_UPDATE_ICON)
 	{
@@ -5423,7 +5455,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	}
 	else if (type == GAIM_CONV_UPDATE_FEATURES)
 	{
-		gray_stuff_out(conv);
+		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
 	}
 }
 
@@ -5558,7 +5590,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 			gdk_pixbuf_animation_get_iter(gtkconv->u.im->anim, NULL); /* LEAK */
 		buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 		if (gtkconv->u.im->animate)
-			start_anim(NULL, conv);
+			start_anim(NULL, gtkconv);
 	}
 
 	gaim_gtk_buddy_icon_get_scale_size(buf, prpl_info ? &prpl_info->icon_spec :
@@ -5621,7 +5653,7 @@ gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv)
 	win = gaim_conversation_get_window(conv);
 
 	if (win != NULL && gaim_conv_window_get_active_conversation(win) == conv)
-		gray_stuff_out(conv);
+		gray_stuff_out(GAIM_GTK_CONVERSATION(conv));
 }
 
 GaimConvWindow *

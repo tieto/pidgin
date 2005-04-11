@@ -154,6 +154,9 @@ struct _GaimGtkChatPane
  */
 struct _GaimGtkConversation
 {
+	GaimConversation *active_conv;
+	GList *convs;
+	
 	gboolean make_sound;
 	gboolean show_formatting_toolbar;
 	gboolean show_timestamps;
