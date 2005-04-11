@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Wieloplatformowe narzêdzie GUI, u¿ywane w Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Tematy GTK+ mog¹ zmieniæ wygl¹d i dzia³anie aplikacji GTK+ ."
 !define GTK_NO_THEME_DESC			"Nie instaluj tematów GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) to temat GTK który doskonale wkomponowuje siê w œrodowisko systemu Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) to temat GTK+ który doskonale wkomponowuje siê w œrodowisko systemu Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Temat The Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Temat Lighthouseblue."
 

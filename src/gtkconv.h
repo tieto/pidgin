@@ -205,16 +205,16 @@ struct _GaimGtkConversation
 /*@{*/
 
 /**
- * Returns the UI operations structure for GTK windows.
+ * Returns the UI operations structure for GTK+ windows.
  *
- * @return The GTK window operations structure.
+ * @return The GTK+ window operations structure.
  */
 GaimConvWindowUiOps *gaim_gtk_conversations_get_win_ui_ops(void);
 
 /**
- * Returns the UI operations structure for GTK conversations.
+ * Returns the UI operations structure for GTK+ conversations.
  *
- * @return The GTK conversation operations structure.
+ * @return The GTK+ conversation operations structure.
  */
 GaimConversationUiOps *gaim_gtk_conversations_get_conv_ui_ops(void);
 

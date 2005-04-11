@@ -29,7 +29,7 @@
 !define GTK_SECTION_DESCRIPTION		"Ein Multi-Plattform GUI Toolkit, verwendet von Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themen können Aussehen und Bedienung von GTK+ Anwendungen verändern."
 !define GTK_NO_THEME_DESC			"Installiere kein GTK+ Thema"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows Imitator) ist ein GTK Theme, daß sich besonders gut in den Windows Desktop integriert."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows Imitator) ist ein GTK+ Theme, daß sich besonders gut in den Windows Desktop integriert."
 !define GTK_BLUECURVE_THEME_DESC		"Das Bluecurve Thema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Das Lighthouseblue Thema."
  

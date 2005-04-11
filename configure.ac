@@ -1218,7 +1218,7 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo
-echo UI Library.................... : GTK 2.x
+echo UI Library.................... : GTK+ 2.x
 echo SSL Library/Libraries......... : $msg_ssl
 echo
 echo Build with Plugin support..... : $enable_plugins

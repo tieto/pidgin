@@ -925,8 +925,8 @@ FunctionEnd
 ;   0 - We have the correct version
 ;       Second Pop: Key where Version was found
 ;   1 - We have an old version that needs to be upgraded
-;       Second Pop: HKLM or HKCU depending on where GTK was found.
-;   2 - We don't have Gtk+ at all
+;       Second Pop: HKLM or HKCU depending on where GTK+ was found.
+;   2 - We don't have GTK+ at all
 ;       Second Pop: "NONE, HKLM or HKCU" depending on our rights..
 ;
 Function DoWeNeedGtk
@@ -1031,7 +1031,7 @@ Function .onInit
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   StrCpy $ISSILENT "/NOUI"
 
-  ; GTK installer has two silent states.. one with Message boxes, one without
+  ; GTK+ installer has two silent states.. one with Message boxes, one without
   ; If gaim installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
       StrCpy $ISSILENT "/S"

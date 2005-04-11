@@ -942,7 +942,7 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
-/* Boring GTK stuff */
+/* Boring GTK+ stuff */
 static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 {
 	GtkObjectClass *object_class;

@@ -552,7 +552,7 @@ gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data
 			return TRUE;
 			break;
 			
-#endif /* !(Gtk+ >= 2.2.0) */
+#endif /* !(GTK+ >= 2.2.0) */
 		}
 	
 	return FALSE;
@@ -964,7 +964,7 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
-	   clipboard before we try to paste from the GTK buffer */
+	   clipboard before we try to paste from the GTK+ buffer */
 	HGLOBAL hdata;
 	DWORD err;
 	char *buffer;
@@ -1140,7 +1140,7 @@ gtk_imhtml_finalize (GObject *object)
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
-/* Boring GTK stuff */
+/* Boring GTK+ stuff */
 static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 {
 	GtkWidgetClass *widget_class = (GtkWidgetClass *) klass;

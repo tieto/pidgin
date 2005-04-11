@@ -3167,11 +3167,11 @@ msgstr "Gaim névjegy"
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim egy moduláris üzenetküldõ kliens AIM, ICQ, Yahoo!, MSN, IRC, Jabber, "
 "Napster, Zephyr, és Gadu-Gadu protokollok egyidejû használatának "
-"képességével.  Gtk+ segítségével készül GPL licensz alatt.<BR><BR>"
+"képességével.  GTK+ segítségével készül GPL licensz alatt.<BR><BR>"
 
 #: src/gtkdialogs.c:217
 #, fuzzy

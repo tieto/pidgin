@@ -50,9 +50,9 @@ void gaim_gtk_debug_window_show(void);
 void gaim_gtk_debug_window_hide(void);
 
 /**
- * Returns the UI operations structure for GTK debug output.
+ * Returns the UI operations structure for GTK+ debug output.
  *
- * @return The GTK UI debug operations structure.
+ * @return The GTK+ UI debug operations structure.
  */
 GaimDebugUiOps *gaim_gtk_debug_get_ui_ops(void);
 

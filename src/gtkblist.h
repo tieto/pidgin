@@ -117,7 +117,7 @@ void gaim_gtk_blist_uninit(void);
 /**
  * Returns the UI operations structure for the buddy list.
  *
- * @return The GTK list operations structure.
+ * @return The GTK+ list operations structure.
  */
 GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
 
@@ -128,7 +128,7 @@ GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
  * returns the GaimGtkBuddyList we're most likely wanting to work with. This is slightly
  * cleaner than an externed global.
  * 
- * @return The default GTK buddy list
+ * @return The default GTK+ buddy list
  */
 GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();
 

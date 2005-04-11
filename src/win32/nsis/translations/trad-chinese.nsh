@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Gaim 所使用的跨平台圖形介面函式庫"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ 佈景主題可以用來改變 GTK+ 應用程式的外觀。"
 !define GTK_NO_THEME_DESC			"不安裝 GTK+ 佈景主題"
-!define GTK_WIMP_THEME_DESC			"「GTK-Wimp」(Windows impersonator) 主題可讓 GTK 融入 Windows 卓面環環之中。"
+!define GTK_WIMP_THEME_DESC			"「GTK-Wimp」(Windows impersonator) 主題可讓 GTK+ 融入 Windows 卓面環環之中。"
 !define GTK_BLUECURVE_THEME_DESC		"「Bluecurve」主題"
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"「Lighthouseblue」主題。"
 

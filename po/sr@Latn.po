@@ -1178,7 +1178,7 @@ msgstr ""
 
 #: plugins/win32/winprefs/winprefs.c:344
 msgid "GTK+ Runtime Version"
-msgstr "Gtk+ biblioteka izdanje"
+msgstr "GTK+ biblioteka izdanje"
 
 #. Autostart
 #: plugins/win32/winprefs/winprefs.c:352
@@ -3086,11 +3086,11 @@ msgstr "O Gaimu"
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim je proširivi klijent za brze poruke koji može da koristi AIM, ICQ, "
 "Jahu, MSN, IRC, DŽaber, Napster, Zefir i Gadu-Gadu istovremeno. Napisan je "
-"pomoću Gtk+ i licenciran pod Gnuovom Opštom javnom licencom (GPL).<BR><BR>"
+"pomoću GTK+ i licenciran pod Gnuovom Opštom javnom licencom (GPL).<BR><BR>"
 
 #: src/gtkdialogs.c:217
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"

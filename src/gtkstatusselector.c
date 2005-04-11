@@ -159,7 +159,7 @@ gaim_gtk_status_selector_init(GaimGtkStatusSelector *selector)
 	gtk_box_pack_start(GTK_BOX(selector), combo, FALSE, FALSE, 0);
 
 
-#else /* GTK < 2.4.0 */
+#else /* GTK+ < 2.4.0 */
 	selector->priv->optmenu = optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
 

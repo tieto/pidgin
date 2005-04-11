@@ -22,7 +22,7 @@
 !define GTK_SECTION_DESCRIPTION		"Un mediu de dezvoltare multiplatformã utilizat de Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Temele GTK+ schimbã aparenþa aplicaþiilor GTK+."
 !define GTK_NO_THEME_DESC			"Nu instala o temã GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp este o temã GTK în acord cu mediul Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp este o temã GTK+ în acord cu mediul Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Tema Lighthouseblue."
 

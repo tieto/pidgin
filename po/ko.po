@@ -3025,10 +3025,10 @@ msgstr "게임은"
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "게임은 AIM, ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu 등을 지"
-"원하는 모듈 기반의 메신저입니다.  Gtk+를 이용하여 만들어졌으며 GPL 라이센스"
+"원하는 모듈 기반의 메신저입니다.  GTK+를 이용하여 만들어졌으며 GPL 라이센스"
 "를 따릅니다.<BR><BR>"
 
 #: src/gtkdialogs.c:217

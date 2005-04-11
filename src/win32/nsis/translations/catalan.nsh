@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Una eina IGU multiplataforma, utilitzada per Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes can change the look and feel of GTK+ applications."
 !define GTK_NO_THEME_DESC			"No instal.lis un tema GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Imwi (imitador Windows) és un tema GTK que s'integra perfectament en un entorn d'escriptori Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Imwi (imitador Windows) és un tema GTK+ que s'integra perfectament en un entorn d'escriptori Windows."
 !define GTK_BLUECURVE_THEME_DESC		"El tema Corba Blava."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
 

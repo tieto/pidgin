@@ -12,7 +12,7 @@
   plugin, and appears in the list of plugins in Gaim's preferences pane.
   Until now, they have been very basic, and consisted of only a few
   functions. However, with the latest changes to Gaim's perl API, a much
-  larger part of Gaim is now open. In time, even such things as Gtk+
+  larger part of Gaim is now open. In time, even such things as GTK+
   preference panes for perl scripts will be possible.
 
  @section first-script Writing your first perl script
@@ -62,7 +62,7 @@ sub plugin_unload {
 
   The first thing you see is a hash called @c @%PLUGIN_INFO. It contains
   the basic information on your plugin. In the future, additional fields
-  may be allowed, such as ones to setup a Gtk+ preferences pane.
+  may be allowed, such as ones to setup a GTK+ preferences pane.
 
   The @c plugin_init function is required in all perl scripts. Its job
   is to return the @c @%PLUGIN_INFO hash, which Gaim will use to register

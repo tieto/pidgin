@@ -1,4 +1,4 @@
-Summary:    A Gtk+ based multiprotocol instant messaging client
+Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    @VERSION@
 Release:    0

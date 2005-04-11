@@ -853,7 +853,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 
 
 /**************************************************************************
-* GTK saved status glue
+* GTK+ saved status glue
 **************************************************************************/
 
 void *

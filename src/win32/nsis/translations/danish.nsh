@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Et multi-platform grafisk interface udviklingsværktøj, bruges af Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Temaer kan ændre GTK+ programmers generelle udseende."
 !define GTK_NO_THEME_DESC			"Installér ikke noget GTK+ tema"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows efterligner) er et GTK tema som falder i med Windows skrivebordsmiljøet."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows efterligner) er et GTK+ tema som falder i med Windows skrivebordsmiljøet."
 !define GTK_BLUECURVE_THEME_DESC		"The Bluecurve tema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue tema."
 

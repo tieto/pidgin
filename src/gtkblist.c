@@ -143,7 +143,7 @@ struct _gaim_gtk_blist_node {
 
 #ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
-/* This is based on a patch for drop shadows in GTK menus available at 
+/* This is based on a patch for drop shadows in GTK+ menus available at 
  * http://www.xfce.org/gtkmenu-shadow/
  */
 
@@ -227,7 +227,7 @@ get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 	 *
 	 * In Win32, GDK gets the workarea that isn't occupied by toolbars
 	 * (including the taskbar) and uses that region as the screen size.
-	 * GTK returns positions based on a screen size that ignores these
+	 * GTK+ returns positions based on a screen size that ignores these
 	 * toolbars.  Since we want a pixmap with real X,Y coordinates, we
 	 * need to find out the offset from GTK's screen to GDK's screen,
 	 * and adjust the pixmaps we grab accordingly.  GDK will not deal
@@ -1500,7 +1500,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 
 #if (1)
 	/*
-	 * This code only exists because GTK doesn't work.  If we return
+	 * This code only exists because GTK+ doesn't work.  If we return
 	 * FALSE here, as would be normal the event propoagates down and
 	 * somehow gets interpreted as the start of a drag event.
 	 *

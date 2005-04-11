@@ -446,12 +446,12 @@ msgid "Select Interface Font"
 msgstr "Select Interface Font"
 
 #: plugins/gaimrc.c:343
-msgid "Gtk interface font"
-msgstr "GTK interface font"
+msgid "GTK+ Interface Font"
+msgstr "GTK+ Interface Font"
 
 #: plugins/gaimrc.c:362
-msgid "Gtk text shortcut theme"
-msgstr "GTK text shortcut theme"
+msgid "GTK+ Text Shortcut Theme"
+msgstr "GTK+ Text Shortcut Theme"
 
 #: plugins/gaimrc.c:460
 msgid "Gaim GTK+ Theme Control"
@@ -3100,11 +3100,11 @@ msgstr "About Gaim"
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licenced under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licenced under the GPL.<BR><BR>"
 
 #: src/gtkdialogs.c:231
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"

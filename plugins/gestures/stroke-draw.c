@@ -319,7 +319,7 @@ gstroke_cleanup (GtkWidget *widget)
 }
 
 
-/* This function should be written using Gtk+ primitives*/
+/* This function should be written using GTK+ primitives*/
 static void
 gstroke_invisible_window_init (GtkWidget *widget)
 {

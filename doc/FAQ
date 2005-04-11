@@ -13,7 +13,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
                still using the old version.
          1.7.  Are the packages signed? If so, by who, and how can I get the
                key?
-         1.8.  Can I use Gaim for GTK+1.2?
+         1.8.  Can I use Gaim for GTK+ 1.2?
          1.9.  Can I run Gaim on IRIX?
          1.10. Can I run gaim on MacOSX?
          1.11. How do I apply the patch "something.diff"?
@@ -422,7 +422,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   On Windows, this file is located at C:\Documents and Settings\username
   \.themes\Default\gtk-2.0\gtkrc.
 
-  You can also just switch to a different GTK theme. You can find GTK themes
+  You can also just switch to a different GTK+ theme. You can find GTK+ themes
   (and information on using them) by visiting themes.freshmeat.net,
   art.gnome.org, or searching on Google.
 
@@ -517,7 +517,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   client has multiple windows with identical WM_CLASS and WM_NAME properties,
   then it should provide a WM_WINDOW_ROLE property."
 
-  Gtk+ sets these WM_CLASS values for us so that they are unique for Gaim
+  GTK+ sets these WM_CLASS values for us so that they are unique for Gaim
   instances, and the documentation for the gtk_window_set_wmclass function says
   explicitly not to use it for anything else. Gaim uses the WM_WINDOW_ROLE hint
   to differentiate windows. If your window manager is having problems

@@ -340,7 +340,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-	check = gaim_gtk_prefs_checkbox(_("Gtk interface font"),
+	check = gaim_gtk_prefs_checkbox(_("GTK+ Interface Font"),
 	                                "/plugins/gtk/gaimrc/set/gtk-font-name",
 	                                hbox);
 	gtk_size_group_add_widget(sg, check);
@@ -359,7 +359,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	hbox = gtk_hbox_new(FALSE, 18);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
-	check = gaim_gtk_prefs_checkbox(_("Gtk text shortcut theme"),
+	check = gaim_gtk_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
 	                                "/plugins/gtk/gaimrc/set/gtk-key-theme-name",
 	                                hbox);
 	gtk_size_group_add_widget(sg, check);

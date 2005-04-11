@@ -32,7 +32,7 @@
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_SECTION_DESCRIPTION		"A multi-platform GUI toolkit, used by Gaim"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes can change the look and feel of GTK+ applications."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_NO_THEME_DESC			"Don't install a GTK+ theme"
-!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK+ theme that blends well into the Windows desktop environment."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BLUECURVE_THEME_DESC		"The Bluecurve theme."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
 

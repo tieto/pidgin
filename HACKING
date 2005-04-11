@@ -18,7 +18,7 @@ you going.
 If you don't know how event-driven programs work, stop right now. Gaim
 uses GTK+'s main loop (actually GLib's but I won't talk about how GTK
 works) and uses GLib functions for timeouts and socket notification. If
-you don't know GTK you should go learn that first.
+you don't know GTK+ you should go learn that first.
 
 If you're going to hack gaim, PLEASE, PLEASE PLEASE PLEASE send patches
 against the absolute latest CVS. I get really annoyed when I get patches
@@ -131,8 +131,8 @@ create the new window. All sorts of neat things happen there, but it's
 mostly drawing the window. show_conv is the best place to edit the UI.
 
 That's pretty much it for the quick tutorial. I know it wasn't much but
-it's enough to get you started. Make sure you know GTK before you get too
-involved. Most of the back-end stuff is pretty basic; most of gaim is GTK.
+it's enough to get you started. Make sure you know GTK+ before you get too
+involved. Most of the back-end stuff is pretty basic; most of gaim is GTK+.
 
 
 SOURCE FILES  (this should probly be utterly removed)
@@ -256,7 +256,7 @@ util.c:
   like the name says.
 
 plugins/ticker/gtkticker.c:
-  Syd, our resident GTK God, wrote a GtkWidget, GtkTicker. This is that
+  Syd, our resident GTK+ God, wrote a GtkWidget, GtkTicker. This is that
   widget. It's cool, and it's tiny. This is actually a really good example
   widget for those of you looking to write your own.
 
@@ -426,14 +426,14 @@ populate your struct prpl; the most important function is actually name(),
 because without it, Gaim will most likely segfault. The second most
 important function is login(). Not all functions need to be implemented.
 
-There should be absolutely *ZERO* GTK in the PRPLs. PRPLs should *NEVER*
+There should be absolutely *ZERO* GTK+ in the PRPLs. PRPLs should *NEVER*
 say what the UI *looks* like, only what information needs to be there.
-There's currently an effort to get the GTK that is contained in the PRPLs
-directory out of there. If you submit a patch that adds GTK to those
+There's currently an effort to get the GTK+ that is contained in the PRPLs
+directory out of there. If you submit a patch that adds GTK+ to those
 directories it's very likely to be refused, unless if I'm in a good mood
 and decide to relocate things for you. That's not likely.
 
-You're probably wondering how you can do certain things without GTK. Well,
+You're probably wondering how you can do certain things without GTK+. Well,
 you're just going to have to make do. Rely on the UI, that's why it's
 there.  A PRPL should have absolutely ZERO interaction with the user, it
 should all be handled by the UI.

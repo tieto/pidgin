@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas multi-plataforma para interface do usuário, usado pelo Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Os temas do GTK+ podem mudar a aparência e o funcionamento dos aplicativos GTK+."
 !define GTK_NO_THEME_DESC			"Não instalar um tema do GTK+"
-!define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK que combina bem com o ambiente de área de trabalho do Windows."
+!define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK+ que combina bem com o ambiente de área de trabalho do Windows."
 !define GTK_BLUECURVE_THEME_DESC		"O tema 'Bluecurve'."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema 'Lighthouseblue'."
 

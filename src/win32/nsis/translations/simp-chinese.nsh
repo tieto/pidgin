@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Gaim 所用的多平台 GUI 工具包"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ 主题可以更改 GTK+ 程序的观感。"
 !define GTK_NO_THEME_DESC			"不安装 GTK+ 主题"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator)是 is a GTK theme that blends well into the Windows desktop environment."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator)是 is a GTK+ theme that blends well into the Windows desktop environment."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve 主题。"
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue 主题。"
 

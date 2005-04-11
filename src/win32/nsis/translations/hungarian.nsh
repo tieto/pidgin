@@ -22,7 +22,7 @@
 !define GTK_SECTION_DESCRIPTION		"Gaim által használt több-platformos grafikus környezet"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ témák megváltoztatják a GTK+ alkalmazások kinézetét."
 !define GTK_NO_THEME_DESC			"Ne installálja a GTK+ témákat"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows utánzat) egy Windows környezettel harmonizáló GTK téma."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows utánzat) egy Windows környezettel harmonizáló GTK+ téma."
 !define GTK_BLUECURVE_THEME_DESC		"A Bluecurve téma."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"A Lighthouseblue téma."
 

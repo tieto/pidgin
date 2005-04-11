@@ -3096,10 +3096,10 @@ msgstr "Относно Gaim"
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
 "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
-"at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
+"at once.  It is written using GTK+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim клиент за изпращане на съобщения чрез·AIM,·ICQ,·Yahoo!,·MSN,·IRC,"
-"·Jabber,·Napster,·Zephyr,·и·Gadu-Gadu.Написан е чрез·Gtk+·и е лицензиран "
+"·Jabber,·Napster,·Zephyr,·и·Gadu-Gadu.Написан е чрез·GTK+·и е лицензиран "
 "под·GPL.<BR><BR>"
 
 #: src/gtkdialogs.c:217

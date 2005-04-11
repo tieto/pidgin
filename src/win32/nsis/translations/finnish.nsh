@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Monipohjainen GUI (käyttäjäulkoasu) työkalupakki, Gaimin käyttämä"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ teemat voivat muuttaa GTK+ ohjelmien ulkonäköä ja tuntua."
 !define GTK_NO_THEME_DESC			"Älä asenna GTK+ teemoja"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windowsiin mukautuminen) on GTK teema joka sulautuu hyvin Windowsin ympäristöön."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windowsiin mukautuminen) on GTK+ teema joka sulautuu hyvin Windowsin ympäristöön."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve teema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue teema."
 

@@ -30,7 +30,7 @@
 /*@{*/
 
 /**
- * Gets GTK Connection UI ops
+ * Gets GTK+ Connection UI ops
  *
  * @return UI operations struct
  */

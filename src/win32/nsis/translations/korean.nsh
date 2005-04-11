@@ -22,7 +22,7 @@
 !define GTK_SECTION_DESCRIPTION		"가임이 사용하는 멀티 플랫폼 GUI 툴킷"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ 테마는 GTK+ 프로그램의 룩앤필을 바꿀 수 있습니다."
 !define GTK_NO_THEME_DESC			"GTK+ 테마를 설치하지 않습니다."
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator)는 윈도우 데스크탑 환경에 잘 조화되는 GTK 테마입니다."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator)는 윈도우 데스크탑 환경에 잘 조화되는 GTK+ 테마입니다."
 !define GTK_BLUECURVE_THEME_DESC		"블루커브 테마."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
 
