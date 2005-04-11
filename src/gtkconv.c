@@ -900,6 +900,9 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimConvWindow *win = (GaimConvWindow *)data;
 	GaimConversation *conv;
 	GaimLogType type;
+	const char *name;
+	GaimAccount *account;
+	GaimBuddy *buddy;
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
@@ -910,8 +913,19 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	else
 		return;
 
-	gaim_gtk_log_show(type, gaim_conversation_get_name(conv),
-					  gaim_conversation_get_account(conv));
+	name = gaim_conversation_get_name(conv);
+	account = gaim_conversation_get_account(conv);
+
+	buddy = gaim_find_buddy(account, name);
+	if (buddy != NULL &&
+	    buddy->node.parent != NULL &&
+	    GAIM_BLIST_NODE_IS_CONTACT(buddy->node.parent)) {
+
+		gaim_gtk_log_show_contact((GaimContact *)buddy->node.parent);
+		return;
+	}
+
+	gaim_gtk_log_show(type, name, account);
 }
 
 static void
@@ -3608,6 +3622,7 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.view_log =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/View Log"));
+
 	/* --- */
 
 	gtkwin->menu.send_file =
