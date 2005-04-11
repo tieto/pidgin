@@ -414,7 +414,7 @@ gaim_buddy_icons_is_caching(void)
 void
 gaim_buddy_icons_set_cache_dir(const char *dir)
 {
-	g_return_if_fail(cache_dir != NULL);
+	g_return_if_fail(dir != NULL);
 
 	if (cache_dir != NULL)
 		g_free(cache_dir);
