@@ -831,7 +831,7 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.set_status			= rendezvous_prpl_set_status;
 
 	if (gethostname(hostname, 255) != 0) {
-		gaim_debug_warning("rendezvous", "Error %d when getting host name. Using \"localhost.\"\n", errno);
+		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
 	}
 

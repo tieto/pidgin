@@ -549,12 +549,12 @@ static char *show_error_message()
 			g_snprintf(buf, sizeof(buf), _("Your warning level is currently too high to log in."));
 			break;
 		case 983:
-			g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
+			g_snprintf(buf, sizeof(buf), _("You have been connecting and disconnecting too frequently.  Wait ten minutes and try again.  If you continue to try, you will need to wait even longer."));
 			break;
 			g_snprintf(buf, sizeof(buf), _("An unknown signon error has occurred: %s."), w);
 			break;
 		default:
-			g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occurred. Info: %s"), no, w);
+			g_snprintf(buf, sizeof(buf), _("An unknown error, %d, has occurred.  Info: %s"), no, w);
 	}
 
  return buf;
@@ -2059,7 +2059,7 @@ static void toc_get_file_connect(gpointer data, gint src, GaimInputCondition con
 	g_snprintf(hdr->name, 64, "listing.txt");
 	if (write(src, hdr, 256) < 0) {
 		gaim_notify_error(ft->gc, NULL,
-						  _("Could not write file header. The file will "
+						  _("Could not write file header.  The file will "
 							"not be transferred."), NULL);
 		fclose(ft->file);
 		g_free(ft->filename);

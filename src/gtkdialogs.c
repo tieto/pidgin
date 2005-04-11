@@ -556,7 +556,7 @@ gaim_gtkdialogs_ee(const char *ee)
 				     "<span weight=\"bold\" size=\"large\" foreground=\"#1f6bad\">Pimpin\' Penguin Style! *Waddle Waddle*</span>");
 	else if (!strcmp(norm, "flynorange"))
 		gtk_label_set_markup(GTK_LABEL(label),
-				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me. I'm so cute!</span>");
+				      "<span weight=\"bold\" size=\"large\" foreground=\"blue\">You should be me.  I'm so cute!</span>");
 	else if (!strcmp(norm, "ewarmenhoven"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"orange\">Now that's what I like!</span>");
@@ -571,7 +571,7 @@ gaim_gtkdialogs_ee(const char *ee)
 				     "<span weight=\"bold\" size=\"large\" foreground=\"red\">This sunflower seed taste like pizza.</span>");
 	else if (!strcmp(norm, "markdoliner"))
 		gtk_label_set_markup(GTK_LABEL(label),
-				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey! I was in that tumbleweed!</span>");
+				     "<span weight=\"bold\" size=\"large\" foreground=\"#6364B1\">Hey!  I was in that tumbleweed!</span>");
 	else if (!strcmp(norm, "lschiere"))
 		gtk_label_set_markup(GTK_LABEL(label),
 				     "<span weight=\"bold\" size=\"large\" foreground=\"gray\">I'm not anything.</span>");
@@ -886,10 +886,10 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 		text = g_strdup_printf(
 					ngettext(
 						"You are about to remove the contact containing %s "
-						"and %d other buddy from your buddy list. Do you "
+						"and %d other buddy from your buddy list.  Do you "
 						"want to continue?",
 						"You are about to remove the contact containing %s "
-						"and %d other buddies from your buddy list. Do you "
+						"and %d other buddies from your buddy list.  Do you "
 						"want to continue?", contact->totalsize - 1),
 					buddy->name, contact->totalsize - 1);
 
@@ -952,7 +952,7 @@ gaim_gtkdialogs_remove_group(GaimGroup *group)
 
 	g_return_if_fail(group != NULL);
 
-	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list. Do you want to continue?"),
+	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 						   group->name);
 
 	gaim_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
@@ -994,7 +994,7 @@ gaim_gtkdialogs_remove_buddy(GaimBuddy *buddy)
 
 	g_return_if_fail(buddy != NULL);
 
-	text = g_strdup_printf(_("You are about to remove %s from your buddy list. Do you want to continue?"),
+	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
 	gaim_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
@@ -1031,7 +1031,7 @@ void
 gaim_gtkdialogs_remove_chat(GaimChat *chat)
 {
 	const gchar *name = gaim_chat_get_name(chat);
-	gchar *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list. Do you want to continue?"), name);
+	gchar *text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"), name);
 
 	g_return_if_fail(chat != NULL);
 
