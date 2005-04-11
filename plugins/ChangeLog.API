@@ -46,6 +46,10 @@ version 2.0.0cvs:
 	           now pass a conversation pointer and a pointer to the flags.
 	* Changed: "drawing-tooltip," the second argument is now a GString*
 	           instead of a char**
+	* Changed: Signal propagation now stops after a handler returns a
+	           non-NULL value. This value is now returned. Previously,
+	           all registered handlers were called and the value from the
+	           last handler was used.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
