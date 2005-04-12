@@ -8,7 +8,6 @@ version 2.0.0cvs:
 	           /gaim/gtk/sound/mute preference)
 	* Changed: gtk_imhtml_toolbar now descends from GtkHBox making it
 	           easier to add your own widgets to it
-	* Changed: gaim_find_conversation, added a "type" parameter
 	* Changed: gaim_find_conversation_with_account, added a "type" parameter
 	* Changed: gaim_gtk_prefs_labeled_spin_button, the "key" parameter is
 	           now a const char* instead of just a char*
@@ -28,6 +27,7 @@ version 2.0.0cvs:
 	* Removed: gaim_connection_disconnect
 	* Removed: gaim_connection_register
 	* Removed: gaim_accounts_auto_login
+	* Removed: gaim_find_conversation, use gaim_find_conversation_with_account instead
 	* Changed: gaim_connection_new, gaim_account_connect and gaim_account_register
 	           no longer return a GaimConnection
 	* Added:   a password field to GaimConnection, which only persists for the
