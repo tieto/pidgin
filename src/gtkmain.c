@@ -611,7 +611,6 @@ int main(int argc, char *argv[])
 
 	/* Set plugin search directories */
 	gaim_plugins_add_search_path(LIBDIR);
-	gaim_plugins_add_search_path(gaim_user_dir());
 	search_path = g_build_filename(gaim_user_dir(), "plugins", NULL);
 	gaim_plugins_add_search_path(search_path);
 	g_free(search_path);
