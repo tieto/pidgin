@@ -518,7 +518,8 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 		if (account != NULL) {
 			convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, Tcl_GetString(objv[argsused]), account);
 		} else {
-			convo = gaim_find_conversation(GAIM_CONV_ANY, Tcl_GetString(objv[argsused]));
+			/* TODO: What should we do here? */
+			convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, Tcl_GetString(objv[argsused]), NULL);
 		}
 		Tcl_SetIntObj(result, (int)convo);
 		break;
