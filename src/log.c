@@ -173,7 +173,7 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
-static char *
+char *
 gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
 {
 	GaimPlugin *prpl;
@@ -361,16 +361,10 @@ void gaim_log_init(void)
  * LOGGERS ******************************************************************
  ****************************************************************************/
 
-struct generic_logger_data {
-	char *path;
-	FILE *file;
-};
-
-static void log_writer_common(GaimLog *log, GaimMessageFlags type,
-		time_t time, const char *ext)
+void gaim_log_common_writer(GaimLog *log, time_t time, const char *ext)
 {
 	char date[64];
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 
 	if(!data) {
 		/* This log is new */
@@ -390,7 +384,7 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 		g_free(dir);
 		g_free(filename);
 
-		log->logger_data = data = g_new0(struct generic_logger_data, 1);
+		log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 
 		data->file = g_fopen(path, "a");
 		if (!data->file) {
@@ -403,7 +397,7 @@ static void log_writer_common(GaimLog *log, GaimMessageFlags type,
 	}
 }
 
-static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
+GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
 {
 	GDir *dir;
 	GList *list = NULL;
@@ -426,12 +420,12 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 		if (gaim_str_has_suffix(filename, ext) &&
 				strlen(filename) == 17 + strlen(ext)) {
 			GaimLog *log;
-			struct generic_logger_data *data;
+			GaimLogCommonLoggerData *data;
 			time_t stamp = gaim_str_to_time(filename, FALSE);
 
 			log = gaim_log_new(type, name, account, stamp);
 			log->logger = logger;
-			log->logger_data = data = g_new0(struct generic_logger_data, 1);
+			log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 			data->path = g_build_filename(path, filename, NULL);
 			list = g_list_append(list, log);
 		}
@@ -441,11 +435,10 @@ static GList *log_lister_common(GaimLogType type, const char *name, GaimAccount 
 	return list;
 }
 
-/* Only to be used with logs listed from log_lister_common */
-int log_sizer_common(GaimLog *log)
+int gaim_log_common_sizer(GaimLog *log)
 {
 	struct stat st;
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 
 	if (!data->path || g_stat(data->path, &st))
 		st.st_size = 0;
@@ -538,7 +531,7 @@ static void xml_logger_write(GaimLog *log,
 
 static GList *xml_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(type, sn, account, ".xml", &xml_logger);
+	return gaim_log_common_lister(type, sn, account, ".xml", &xml_logger);
 }
 
 static GaimLogLogger xml_logger =  {
@@ -562,12 +555,12 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	char *msg_fixed;
 	char date[64];
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 
 	if(!data) {
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		log_writer_common(log, type, time, ".html");
+		gaim_log_common_writer(log, time, ".html");
 
 		data = log->logger_data;
 
@@ -630,7 +623,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 static void html_logger_finalize(GaimLog *log)
 {
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 	if (data) {
 		if(data->file) {
 			fprintf(data->file, "</body></html>");
@@ -643,18 +636,18 @@ static void html_logger_finalize(GaimLog *log)
 
 static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(type, sn, account, ".html", &html_logger);
+	return gaim_log_common_lister(type, sn, account, ".html", &html_logger);
 }
 
 static GList *html_logger_list_syslog(GaimAccount *account)
 {
-	return log_lister_common(GAIM_LOG_SYSTEM, ".system", account, ".html", &html_logger);
+	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".html", &html_logger);
 }
 
 static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
 	char *read, *minus_header;
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 	*flags = GAIM_LOG_READ_NO_NEWLINE;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
@@ -677,7 +670,7 @@ static GaimLogLogger html_logger = {
 	html_logger_finalize,
 	html_logger_list,
 	html_logger_read,
-	log_sizer_common,
+	gaim_log_common_sizer,
 	NULL,
 	html_logger_list_syslog
 };
@@ -695,7 +688,7 @@ static void txt_logger_write(GaimLog *log,
 {
 	char date[64];
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 	char *stripped = NULL;
 
 	if(!data) {
@@ -705,7 +698,7 @@ static void txt_logger_write(GaimLog *log,
 		 */
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		log_writer_common(log, type, time, ".txt");
+		gaim_log_common_writer(log, time, ".txt");
 
 		data = log->logger_data;
 
@@ -761,7 +754,7 @@ static void txt_logger_write(GaimLog *log,
 
 static void txt_logger_finalize(GaimLog *log)
 {
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 	if (data) {
 		if(data->file)
 			fclose(data->file);
@@ -773,18 +766,18 @@ static void txt_logger_finalize(GaimLog *log)
 
 static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return log_lister_common(type, sn, account, ".txt", &txt_logger);
+	return gaim_log_common_lister(type, sn, account, ".txt", &txt_logger);
 }
 
 static GList *txt_logger_list_syslog(GaimAccount *account)
 {
-	return log_lister_common(GAIM_LOG_SYSTEM, ".system", account, ".txt", &txt_logger);
+	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".txt", &txt_logger);
 }
 
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
 	char *read, *minus_header, *minus_header2;
-	struct generic_logger_data *data = log->logger_data;
+	GaimLogCommonLoggerData *data = log->logger_data;
 	*flags = 0;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
@@ -809,7 +802,7 @@ static GaimLogLogger txt_logger = {
 	txt_logger_finalize,
 	txt_logger_list,
 	txt_logger_read,
-	log_sizer_common,
+	gaim_log_common_sizer,
 	NULL,
 	txt_logger_list_syslog
 };

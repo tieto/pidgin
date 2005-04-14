@@ -34,6 +34,7 @@
 
 typedef struct _GaimLog GaimLog;
 typedef struct _GaimLogLogger GaimLogLogger;
+typedef struct _GaimLogCommonLoggerData GaimLogCommonLoggerData;
 
 typedef enum {
 	GAIM_LOG_IM,
@@ -107,6 +108,15 @@ struct _GaimLog {
 	void *logger_data;                    /**< Data used by the log logger */
 };
 
+/**
+ * A common logger_data struct containing a file handle and path, as well
+ * as a pointer to something else for additional data.
+ */
+struct _GaimLogCommonLoggerData {
+	char *path;
+	FILE *file;
+	void *extra_data;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,7 +192,7 @@ GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *accoun
 GList *gaim_log_get_system_logs(GaimAccount *account);
 
 /**
- * Returns the size of a log 
+ * Returns the size of a log
  *
  * @param log                 The log
  * @return                    The size of the log, in bytes
@@ -200,6 +210,18 @@ int gaim_log_get_size(GaimLog *log);
 int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account);
 
 /**
+ * Returns the default logger directory Gaim uses for a given account
+ * and username.  This would be where Gaim stores logs created by
+ * the built-in text or HTML loggers.
+ *
+ * @param type                The type of the log.
+ * @param name                The name of the log.
+ * @param account             The account.
+ * @return                    The default logger directory for Gaim.
+ */
+char *gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account);
+
+/**
  * Implements GCompareFunc
  *
  * @param y				   A GaimLog
@@ -207,6 +229,54 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
  * @return					A value as specified by GCompareFunc
  */
 gint gaim_log_compare(gconstpointer y, gconstpointer z);
+/*@}*/
+
+/******************************************/
+/** @name Common Logger Functions         */
+/******************************************/
+/*@{*/
+
+/**
+ * Opens a new log file in the standard Gaim log location
+ * with the given file extension, named for the current time,
+ * for writing.  If a log file is already open, the existing
+ * file handle is retained.  The log's logger_data value is
+ * set to a GaimLogCommonLoggerData struct containing the log
+ * file handle and log path.
+ *
+ * @param log   The log to write to.
+ * @param time  The time of the item being logged.
+ * @param ext   The file extension to give to this log file.
+ */
+void gaim_log_common_writer(GaimLog *log, time_t time, const char *ext);
+
+/**
+ * Returns a sorted GList of GaimLogs of the requested type.
+ * This function should only be used with logs that are written
+ * with gaim_log_common_writer().
+ *
+ * @param type     The type of the logs being listed.
+ * @param name     The name of the log.
+ * @param account  The account of the log.
+ * @param ext      The file extension this log format uses.
+ * @param logger   A reference to the logger struct for this log.
+ *
+ * @return A sorted GList of GaimLogs matching the parameters.
+ */
+GList *gaim_log_common_lister(GaimLogType type, const char *name,
+							  GaimAccount *account, const char *ext,
+							  GaimLogLogger *logger);
+
+/**
+ * Returns the size of a given GaimLog.
+ * This function should only be used with logs that are written
+ * with gaim_log_common_writer().
+ *
+ * @param log      The GaimLog to size.
+ *
+ * @return An integer indicating the size of the log in bytes.
+ */
+int gaim_log_common_sizer(GaimLog *log);
 /*@}*/
 
 /******************************************/
