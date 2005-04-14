@@ -38,6 +38,12 @@ version 2.0.0cvs:
 	* Removed: serv_finish_login
 	* Changed: keep_alive in GaimConnection is renamed to keepalive
 	* Removed: gaim_chat_get_display_name
+	* Added:   gaim_log_common_writer, gaim_log_common_lister,
+	           gaim_log_common_sizer, and gaim_log_get_log_dir
+	           to allow log formats that use standard Gaim log directory
+	           to use Gaim's built-in code for these purposes.
+	* Added:   GaimLogCommonLoggerData struct for a basic logger_data
+	           struct to be used with "common" logger functions.
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both
