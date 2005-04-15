@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 Pekka Riikonen
+  Copyright (C) 2004 - 2005 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -260,6 +260,7 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 	SilcClient client;
 	SilcClientParams params;
 	GaimConnection *gc;
+	char pkd[256], prd[256];
 
 	gc = account->gc;
 	if (!gc)
@@ -281,7 +282,10 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 
 	/* Get username, real name and local hostname for SILC library */
 	if (gaim_account_get_username(account)) {
-		client->username = strdup(gaim_account_get_username(account));
+		const char *u = gaim_account_get_username(account);
+		char **up = g_strsplit(u, "@", 2);
+		client->username = strdup(up[0]);
+		g_strfreev(up);
 	} else {
 		client->username = silc_get_username();
 		gaim_account_set_username(account, client->username);
@@ -312,8 +316,10 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 	gaim_connection_update_progress(gc, _("Connecting to SILC Server"), 1, 5);
 
 	/* Load SILC key pair */
-	if (!silc_load_key_pair(gaim_prefs_get_string("/plugins/prpl/silc/pubkey"),
-				gaim_prefs_get_string("/plugins/prpl/silc/privkey"),
+	g_snprintf(pkd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcgaim_silcdir());
+	if (!silc_load_key_pair((char *)gaim_account_get_string(account, "public-key", prd),
+							(char *)gaim_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
 		gaim_connection_error(gc, ("Could not load SILC key pair"));
@@ -771,7 +777,11 @@ silcgaim_change_pass(GaimPluginAction *action)
 static void
 silcgaim_change_passwd(GaimConnection *gc, const char *old, const char *new)
 {
-	silc_change_private_key_passphrase(gaim_prefs_get_string("/plugins/prpl/silc/privkey"), old, new);
+        char prd[256];
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcgaim_silcdir());
+	silc_change_private_key_passphrase(gaim_account_get_string(gc->account,
+								   "private-key",
+								   prd), old, new);
 }
 
 static void
@@ -1473,19 +1483,6 @@ silcgaim_pref_frame(GaimPlugin *plugin)
 			    _("Verify all channel message signatures"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_label(_("Default SILC Key Pair"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/pubkey",
-			    _("SILC Public Key"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/privkey",
-			    _("SILC Private Key"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
 	return frame;
 }
 
@@ -1592,9 +1589,13 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
+	GaimAccountUserSplit *split;
 	char tmp[256];
 
 	silc_plugin = plugin;
+
+	split = gaim_account_user_split_new(_("Network"), "silcnet.org", '@');
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Account options */
 	option = gaim_account_option_string_new(_("Connect server"),
@@ -1603,21 +1604,17 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = gaim_account_option_int_new(_("Port"), "port", 706);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_bool_new(_("Public key authentication"),
-					      "pubkey-auth", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-#if 0   /* XXX Public key auth interface with explicit key pair is
-	   broken in SILC Toolkit */
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
-	option = gaim_account_option_string_new(_("Public Key File"),
+	option = gaim_account_option_string_new(_("Public Key file"),
 						"public-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
-	option = gaim_account_option_string_new(_("Private Key File"),
-						"public-key", tmp);
+	option = gaim_account_option_string_new(_("Private Key file"),
+						"private-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-#endif
+	option = gaim_account_option_bool_new(_("Public key authentication"),
+					      "pubkey-auth", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_bool_new(_("Reject watching by other users"),
 					      "reject-watch", FALSE);
@@ -1638,10 +1635,6 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_bool("/plugins/prpl/silc/verify_im", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/silc/sign_chat", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/silc/verify_chat", FALSE);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
-	gaim_prefs_add_string("/plugins/prpl/silc/pubkey", tmp);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
-	gaim_prefs_add_string("/plugins/prpl/silc/privkey", tmp);
 	gaim_prefs_add_string("/plugins/prpl/silc/vcard", "");
 
 	silcgaim_register_commands();

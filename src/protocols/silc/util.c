@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 Pekka Riikonen
+  Copyright (C) 2004 - 2005 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -71,6 +71,7 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 {
 	char filename[256], file_public_key[256], file_private_key[256];
 	char servfilename[256], clientfilename[256], friendsfilename[256];
+	char pkd[256], prd[256];
 	struct stat st;
 	struct passwd *pw;
 
@@ -191,10 +192,12 @@ gboolean silcgaim_check_silc_dir(GaimConnection *gc)
 	/*
 	 * Check Public and Private keys
 	 */
+	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
 	g_snprintf(file_public_key, sizeof(file_public_key) - 1, "%s",
-		   gaim_prefs_get_string("/plugins/prpl/silc/pubkey"));
+		   gaim_account_get_string(gc->account, "public-key", pkd));
 	g_snprintf(file_private_key, sizeof(file_public_key) - 1, "%s",
-		   gaim_prefs_get_string("/plugins/prpl/silc/privkey"));
+		   gaim_account_get_string(gc->account, "private-key", prd));
 
 	if ((g_stat(file_public_key, &st)) == -1) {
 		/* If file doesn't exist */
@@ -304,8 +307,8 @@ void silcgaim_show_public_key(SilcGaim sg,
 
 	s = g_string_new("");
 	if (ident->realname)
-		/* Hint for translators: Please check the tabulator width here and in 
-		   the next strings (short strings: 2 tabs, longer strings 1 tab, 
+		/* Hint for translators: Please check the tabulator width here and in
+		   the next strings (short strings: 2 tabs, longer strings 1 tab,
 		   sum: 3 tabs or 24 characters) */
 		g_string_append_printf(s, _("Real Name: \t%s\n"), ident->realname);
 	if (ident->username)
