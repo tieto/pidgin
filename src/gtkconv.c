@@ -1575,60 +1575,46 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static void
-move_to_next_unread_tab(GaimConversation *conv)
+move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 {
-	GaimConversation *next_conv = NULL;
+	GaimGtkConversation *next_gtkconv = NULL;
 	GaimConvWindow *win;
 	GList *l;
 	int index, i;
 
-	win   = gaim_conversation_get_window(conv);
-	index = gaim_conversation_get_index(conv);
+	win   = gaim_conversation_get_window(gtkconv->active_conv);
+	index = gtk_notebook_page_num(GTK_NOTEBOOK(GAIM_GTK_WINDOW(win)->notebook), gtkconv->tab_cont);
 
 	/* First check the tabs after this position. */
-	for (l = g_list_nth(gaim_conv_window_get_conversations(win), index);
-		 l != NULL;
-		 l = l->next) {
-
-		next_conv = (GaimConversation *)l->data;
-
-		if (gaim_conversation_get_unseen(next_conv) > 0)
-			break;
-
-		next_conv = NULL;
+	for (i = index; (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
+		for (l = next_gtkconv->convs; l; l = l->next) {
+			GaimConversation *c = l->data;
+			if (gaim_conversation_get_unseen(c) > 0)
+				break;
+		}
 	}
 
-	if (next_conv == NULL) {
+	if (next_gtkconv == NULL) {
 
 		/* Now check before this position. */
-		for (l = gaim_conv_window_get_conversations(win), i = 0;
-			 l != NULL && i < index;
-			 l = l->next) {
-
-			next_conv = (GaimConversation *)l->data;
-
-			if (gaim_conversation_get_unseen(next_conv) > 0)
-				break;
-
-			next_conv = NULL;
-		}
-
-		if (next_conv == NULL) {
-			/* Okay, just grab the next conversation tab. */
-			if (index == gaim_conv_window_get_conversation_count(win) - 1)
-				next_conv = gaim_conv_window_get_conversation_at(win, 0);
-			else
-			{
-				next_conv = gaim_conv_window_get_conversation_at(win,
-																 index + 1);
+		for (i = index; i >= 0 && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i--) {
+			for (l = next_gtkconv->convs; l; l = l->next) {
+				GaimConversation *c = l->data;
+				if (gaim_conversation_get_unseen(c) > 0)
+					break;
 			}
 		}
+
+		if (next_gtkconv == NULL) {
+			/* Okay, just grab the next conversation tab. */
+			if (!(next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index + 1)))
+				next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index - 1);
+				
+		}
 	}
 
-	if (next_conv != NULL && next_conv != conv) {
-		gaim_conv_window_switch_conversation(win,
-			gaim_conversation_get_index(next_conv));
-	}
+	if (next_gtkconv != NULL && next_gtkconv != gtkconv)
+		gaim_conv_window_switch_conversation(win,next_gtkconv->active_conv);
 }
 
 static gboolean
@@ -1638,16 +1624,14 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *gtkwin;
-	int numconvs;
 	int curconv;
 
 	gtkconv  = (GaimGtkConversation *)data;
 	conv     = gtkconv->active_conv;;
 	win      = gaim_conversation_get_window(conv);
 	gtkwin   = GAIM_GTK_WINDOW(win);
-	numconvs = gaim_conv_window_get_conversation_count(win);
-	curconv  = gaim_conversation_get_index(conv);
-
+	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
+	
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
@@ -1713,22 +1697,24 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Page_Down:
 			case ']':
-				gaim_conv_window_switch_conversation(win,
-					(curconv + 1) % numconvs);
-
+				if (!gaim_gtk_get_gtkconv_at_index(win, curconv + 1))
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), 0);
+				else
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), curconv + 1);
 				return TRUE;
 				break;
 
 			case GDK_Page_Up:
 			case '[':
-				gaim_conv_window_switch_conversation(win,
-					(curconv + numconvs - 1) % numconvs);
-
+				if (!gaim_gtk_get_gtkconv_at_index(win, curconv - 1))
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), -1);
+				else
+					gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), curconv - 1);
 				return TRUE;
 				break;
 
 			case GDK_Tab:
-				move_to_next_unread_tab(conv);
+				move_to_next_unread_tab(gtkconv);
 
 				return TRUE;
 				break;
@@ -1736,6 +1722,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		} /* End of switch */
 	}
 
+#if 0
 	/* If ALT (or whatever) was held down... */
 	else if (event->state & GDK_MOD1_MASK)
 	{
@@ -1748,6 +1735,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			return TRUE;
 		}
 	}
+#endif
 
 	/* If neither CTRL nor ALT were held down... */
 	else
@@ -2265,6 +2253,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 			gaim_conv_window_show(dest_win);
 		}
 	} else {
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 		dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
 
 		/* Get the destination notebook. */
@@ -2275,20 +2264,15 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 								e->x_root, e->y_root);
 
 		if (win == dest_win) {
-			gaim_conv_window_move_conversation(win,
-				gaim_conversation_get_index(conv), dest_page_num);
+			gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook), gtkconv->tab_cont, dest_page_num);
 		}
 		else {
-			size_t pos;
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 			gaim_conv_window_remove_conversation(win, conv);
-
-			pos = gaim_conv_window_add_conversation(dest_win, conv);
-
-			if (pos != dest_page_num)
-				gaim_conv_window_move_conversation(dest_win, pos, dest_page_num);
-
-			gaim_conv_window_switch_conversation(dest_win, dest_page_num);
+			gaim_conv_window_add_conversation(dest_win, conv);
+			gtk_notebook_reorder_child(GTK_NOTEBOOK(GAIM_GTK_WINDOW(dest_win)->notebook), gtkconv->tab_cont, dest_page_num);
+			gaim_conv_window_switch_conversation(dest_win, gtkconv->active_conv);
 		}
 
 		gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
@@ -2858,12 +2842,12 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	GaimGtkWindow *gtkwin;
 
 	win = (GaimConvWindow *)user_data;
-	conv = gaim_conv_window_get_conversation_at(win, page_num);
+	gtkconv = gaim_gtk_get_gtkconv_at_index(win, page_num);
+	conv = gtkconv->active_conv;
 
 	g_return_if_fail(conv != NULL);
 
 	gtkwin  = GAIM_GTK_WINDOW(win);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 
@@ -4098,7 +4082,6 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	{
 		GaimBlistNode *n = NULL;
 		GaimBuddy *b;
-		unsigned int index;
 
 		memcpy(&n, sd->data, sizeof(n));
 
@@ -4128,8 +4111,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		}
 
 		/* Make this conversation the active conversation */
-		index = gaim_conversation_get_index(c);
-		gaim_conv_window_switch_conversation(win, index);
+		gaim_conv_window_switch_conversation(win, c);
 
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
@@ -4286,13 +4268,14 @@ gaim_gtk_flash(GaimConvWindow *win)
 }
 
 static void
-gaim_gtk_switch_conversation(GaimConvWindow *win, unsigned int index)
+gaim_gtk_switch_conversation(GaimConvWindow *win, GaimConversation *conv)
 {
 	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv = conv->ui_data;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
-	gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), index);
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), gtk_notebook_page_num(GTK_NOTEBOOK(gtkwin->notebook), gtkconv->tab_cont));
 }
 
 static const GtkTargetEntry te[] =
@@ -4418,6 +4401,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		/* Setup the container for the tab. */
 		gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, 6);
+		g_object_set_data(G_OBJECT(tab_cont), "GaimGtkConversation", gtkconv);
 		gtk_container_set_border_width(GTK_CONTAINER(tab_cont), 6);
 		gtk_container_add(GTK_CONTAINER(tab_cont), pane);
 		gtk_widget_show(pane);
@@ -4553,10 +4537,9 @@ gaim_gtk_remove_conversation(GaimConvWindow *win, GaimConversation *conv)
 	GaimConversationType conv_type;
 
 	conv_type = gaim_conversation_get_type(conv);
-	index = gaim_conversation_get_index(conv);
-
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	index = gtk_notebook_page_num(GTK_NOTEBOOK(gtkwin->notebook), gtkconv->tab_cont);
 
 	g_object_ref(gtkconv->tab_cont);
 	gtk_object_sink(GTK_OBJECT(gtkconv->tab_cont));
@@ -4580,7 +4563,7 @@ gaim_gtk_remove_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 static void
 gaim_gtk_move_conversation(GaimConvWindow *win, GaimConversation *conv,
-						   unsigned int new_index)
+                           unsigned int new_index)
 {
 	GaimGtkWindow *gtkwin;
 	GaimGtkConversation *gtkconv;
@@ -4588,15 +4571,12 @@ gaim_gtk_move_conversation(GaimConvWindow *win, GaimConversation *conv,
 	gtkwin  = GAIM_GTK_WINDOW(win);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	if (new_index > gaim_conversation_get_index(conv))
-		new_index--;
-
 	gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook),
-							   gtkconv->tab_cont, new_index);
+	                           gtkconv->tab_cont, new_index);
 }
 
 static int
-gaim_gtk_get_active_index(const GaimConvWindow *win) /* FIXME: XXX: This is wrong due to contact aware convo changes */
+gaim_gtk_get_active_index(const GaimConvWindow *win)
 {
 	GaimGtkWindow *gtkwin;
 	int index;
@@ -4610,6 +4590,40 @@ gaim_gtk_get_active_index(const GaimConvWindow *win) /* FIXME: XXX: This is wron
 	 * appear in the notebook just yet. -- ChipX86
 	 */
 	return (index == -1 ? 0 : index);
+}
+
+GaimGtkConversation *
+gaim_gtk_get_gtkconv_at_index(const GaimConvWindow *win, int index)
+{
+	GaimGtkWindow *gtkwin;
+	GtkWidget *tab_cont;
+
+	gtkwin = GAIM_GTK_WINDOW(win);
+
+	if (index == -1)
+		index = 0;
+	tab_cont = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), index);
+	return g_object_get_data(G_OBJECT(tab_cont), "GaimGtkConversation");
+}
+
+static GaimConversation *
+gaim_gtk_get_active_conversation(const GaimConvWindow *win)
+{
+	GaimGtkWindow *gtkwin;
+	GaimGtkConversation *gtkconv;
+	int index;
+	GtkWidget *tab_cont;
+
+	gtkwin = GAIM_GTK_WINDOW(win);
+
+	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
+	if (index == -1)
+		index = 0;
+	tab_cont = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), index);
+	if (!tab_cont)
+		return NULL;
+	gtkconv = g_object_get_data(G_OBJECT(tab_cont), "GaimGtkConversation");
+	return gtkconv->active_conv;
 }
 
 static gboolean
@@ -4636,8 +4650,7 @@ static GaimConvWindowUiOps window_ui_ops =
 	gaim_gtk_switch_conversation,
 	gaim_gtk_add_conversation,
 	gaim_gtk_remove_conversation,
-	gaim_gtk_move_conversation,
-	gaim_gtk_get_active_index,
+	gaim_gtk_get_active_conversation,
 	gaim_gtk_has_focus
 };
 

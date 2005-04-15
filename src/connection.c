@@ -199,6 +199,8 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (gaim_presence_is_online(presence) == TRUE)
 		gaim_presence_set_status_active(presence, "offline", TRUE);
 
+#if 0
+/* see comment later in file on if 0'd same code	
 	/*
 	 * XXX This is a hack! Remove this and replace it with a better event
 	 *     notification system.
@@ -208,6 +210,7 @@ gaim_connection_destroy(GaimConnection *gc)
 		gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
 								 GAIM_CONV_ACCOUNT_OFFLINE);
 	}
+#endif
 
 	gaim_request_close_with_handle(gc);
 	gaim_notify_close_with_handle(gc);
@@ -293,12 +296,15 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		 * XXX This is a hack! Remove this and replace it with a better event
 		 *     notification system.
 		 */
+#if 0
+		/* This looks like it was horribly broken before I got here... */
+		/* Why is it updating the first tab of each window? */
 		for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
 			GaimConvWindow *win = (GaimConvWindow *)wins->data;
 			gaim_conversation_update(gaim_conv_window_get_conversation_at(win, 0),
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
-
+#endif
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
 		/* let the prpl know what buddies we pulled out of the local list */

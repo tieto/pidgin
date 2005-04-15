@@ -292,6 +292,7 @@ int gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y);
  */
 int gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y);
 
+GaimGtkConversation *gaim_gtk_get_gtkconv_at_index(const GaimConvWindow *win, int index);
 /*@}*/
 
 /**************************************************************************/

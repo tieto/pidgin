@@ -162,13 +162,11 @@ struct _GaimConvWindowUiOps
 	void (*raise)(GaimConvWindow *win);
 	void (*flash)(GaimConvWindow *win);
 
-	void (*switch_conversation)(GaimConvWindow *win, unsigned int index);
+	void (*switch_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*add_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*remove_conversation)(GaimConvWindow *win, GaimConversation *conv);
-	void (*move_conversation)(GaimConvWindow *win, GaimConversation *conv,
-	                          unsigned int newIndex);
 
-	int (*get_active_index)(const GaimConvWindow *win);
+	GaimConversation *(*get_active_conversation)(const GaimConvWindow *win);
 	gboolean (*has_focus)(GaimConvWindow *win);
 };
 
@@ -377,7 +375,7 @@ void gaim_conv_window_flash(GaimConvWindow *win);
  * @param ops The UI window operations structure.
  */
 void gaim_conv_window_set_ui_ops(GaimConvWindow *win,
-								 GaimConvWindowUiOps *ops);
+                                 GaimConvWindowUiOps *ops);
 
 /**
  * Returns the specified window's UI window operations structure.
@@ -399,7 +397,7 @@ GaimConvWindowUiOps *gaim_conv_window_get_ui_ops(const GaimConvWindow *win);
  * @return The new index of the conversation in the window.
  */
 int gaim_conv_window_add_conversation(GaimConvWindow *win,
-									  GaimConversation *conv);
+                                      GaimConversation *conv);
 
 /**
  * Removes the conversation from the window.
@@ -411,31 +409,6 @@ int gaim_conv_window_add_conversation(GaimConvWindow *win,
  */
 GaimConversation *gaim_conv_window_remove_conversation(GaimConvWindow *win,
                                                        GaimConversation *conv);
-
-/**
- * Moves the conversation at the specified index in a window to a new index.
- *
- * @param win      The window.
- * @param index     The index of the conversation to move.
- * @param new_index The new index.
- */
-void gaim_conv_window_move_conversation(GaimConvWindow *win,
-										unsigned int index,
-										unsigned int new_index);
-
-/**
- * Returns the conversation in the window at the specified index.
- *
- * If the index is out of range, this returns @c NULL.
- *
- * @param win   The window.
- * @param index The index containing a conversation.
- *
- * @return The conversation at the specified index.
- */
-GaimConversation *gaim_conv_window_get_conversation_at(
-		const GaimConvWindow *win, unsigned int index);
-
 /**
  * Returns the number of conversations in the window.
  *
@@ -454,7 +427,7 @@ size_t gaim_conv_window_get_conversation_count(const GaimConvWindow *win);
  * @param index The new index.
  */
 void gaim_conv_window_switch_conversation(GaimConvWindow *win,
-										  unsigned int index);
+                                          GaimConversation *conv);
 
 /**
  * Returns the active conversation in the window.
@@ -579,7 +552,7 @@ GaimConversationUiOps *gaim_conversation_get_ui_ops(
  * @param account The gaim_account.
  */
 void gaim_conversation_set_account(GaimConversation *conv,
-								   GaimAccount *account);
+                                   GaimAccount *account);
 
 /**
  * Returns the specified conversation's gaim_account.
@@ -632,22 +605,13 @@ const char *gaim_conversation_get_title(const GaimConversation *conv);
 void gaim_conversation_autoset_title(GaimConversation *conv);
 
 /**
- * Returns the specified conversation's index in the parent window.
- *
- * @param conv The conversation.
- *
- * @return The current index in the parent window.
- */
-int gaim_conversation_get_index(const GaimConversation *conv);
-
-/**
  * Sets the conversation's unseen state.
  *
  * @param conv  The conversation.
  * @param state The new unseen state.
  */
 void gaim_conversation_set_unseen(GaimConversation *conv,
-								  GaimUnseenState state);
+                                  GaimUnseenState state);
 
 /**
  * Returns the conversation's unseen state.

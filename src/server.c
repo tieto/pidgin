@@ -1094,8 +1094,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 	gaim_conv_chat_set_id(chat, id);
 
 	gaim_conv_window_show(gaim_conversation_get_window(conv));
-	gaim_conv_window_switch_conversation(gaim_conversation_get_window(conv),
-									gaim_conversation_get_index(conv));
+	gaim_conv_window_switch_conversation(gaim_conversation_get_window(conv), conv);
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "chat-joined", conv);
 

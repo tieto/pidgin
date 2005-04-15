@@ -260,22 +260,6 @@ common_send(GaimConversation *conv, const char *message)
 	g_free(sent);
 }
 
-static void
-update_conv_indexes(GaimConvWindow *win)
-{
-	GList *l;
-	int i;
-
-	for (l = gaim_conv_window_get_conversations(win), i = 0;
-		 l != NULL;
-		 l = l->next, i++) {
-
-		GaimConversation *conv = (GaimConversation *)l->data;
-
-		conv->conversation_pos = i;
-	}
-}
-
 GaimConvWindow *
 gaim_conv_window_new(void)
 {
@@ -476,8 +460,6 @@ gaim_conv_window_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	win->conversations = g_list_append(win->conversations, conv);
 	win->conversation_count++;
 
-	conv->conversation_pos = win->conversation_count - 1;
-
 	if (ops != NULL) {
 		conv->window = win;
 
@@ -520,71 +502,8 @@ gaim_conv_window_remove_conversation(GaimConvWindow *win, GaimConversation *conv
 
 	if (gaim_conv_window_get_conversation_count(win) == 0)
 		gaim_conv_window_destroy(win);
-	else {
-		/* Change all the indexes. */
-		update_conv_indexes(win);
-	}
 
 	return conv;
-}
-
-void
-gaim_conv_window_move_conversation(GaimConvWindow *win, unsigned int index,
-							  unsigned int new_index)
-{
-	GaimConvWindowUiOps *ops;
-	GaimConversation *conv;
-	GList *l;
-
-	g_return_if_fail(win != NULL);
-	g_return_if_fail(index < gaim_conv_window_get_conversation_count(win));
-	g_return_if_fail(index != new_index);
-
-	/* We can't move this past the last index. */
-	if (new_index > gaim_conv_window_get_conversation_count(win))
-		new_index = gaim_conv_window_get_conversation_count(win);
-
-	/* Get the list item for this conversation at its current index. */
-	l = g_list_nth(gaim_conv_window_get_conversations(win), index);
-
-	if (l == NULL) {
-		/* Should never happen. */
-		gaim_debug(GAIM_DEBUG_ERROR, "conversation",
-				   "Misordered conversations list in window %p\n", win);
-
-		return;
-	}
-
-	conv = (GaimConversation *)l->data;
-
-	/* Update the UI part of this. */
-	ops = gaim_conv_window_get_ui_ops(win);
-
-	if (ops != NULL && ops->move_conversation != NULL)
-		ops->move_conversation(win, conv, new_index);
-
-	if (new_index > index)
-		new_index--;
-
-	/* Remove the old one. */
-	win->conversations = g_list_delete_link(win->conversations, l);
-
-	/* Insert it where it should go. */
-	win->conversations = g_list_insert(win->conversations, conv, new_index);
-
-	update_conv_indexes(win);
-}
-
-GaimConversation *
-gaim_conv_window_get_conversation_at(const GaimConvWindow *win, unsigned int index)
-{
-	g_return_val_if_fail(win != NULL, NULL);
-	g_return_val_if_fail(index >= 0 &&
-						 index < gaim_conv_window_get_conversation_count(win),
-						 NULL);
-
-	return (GaimConversation *)g_list_nth_data(
-		gaim_conv_window_get_conversations(win), index);
 }
 
 size_t
@@ -596,17 +515,15 @@ gaim_conv_window_get_conversation_count(const GaimConvWindow *win)
 }
 
 void
-gaim_conv_window_switch_conversation(GaimConvWindow *win, unsigned int index)
+gaim_conv_window_switch_conversation(GaimConvWindow *win, GaimConversation *conv)
 {
 	GaimConvWindowUiOps *ops;
-	GaimConversation *old_conv, *conv;
+	GaimConversation *old_conv;
 
 	g_return_if_fail(win != NULL);
-	g_return_if_fail(index >= 0 &&
-					 index < gaim_conv_window_get_conversation_count(win));
+	g_return_if_fail(conv != NULL);
 
 	old_conv = gaim_conv_window_get_active_conversation(win);
-	conv = gaim_conv_window_get_conversation_at(win, index);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "conversation-switching", old_conv, conv);
@@ -614,7 +531,7 @@ gaim_conv_window_switch_conversation(GaimConvWindow *win, unsigned int index)
 	ops = gaim_conv_window_get_ui_ops(win);
 
 	if (ops != NULL && ops->switch_conversation != NULL)
-		ops->switch_conversation(win, index);
+		ops->switch_conversation(win, conv);
 
 	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
 
@@ -634,8 +551,8 @@ gaim_conv_window_get_active_conversation(const GaimConvWindow *win)
 
 	ops = gaim_conv_window_get_ui_ops(win);
 
-	if (ops != NULL && ops->get_active_index != NULL)
-		return gaim_conv_window_get_conversation_at(win, ops->get_active_index(win));
+	if (ops != NULL && ops->get_active_conversation != NULL)
+		return ops->get_active_conversation(win);
 
 	return NULL;
 }
@@ -1177,14 +1094,6 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 		text = name;
 
 	gaim_conversation_set_title(conv, text);
-}
-
-int
-gaim_conversation_get_index(const GaimConversation *conv)
-{
-	g_return_val_if_fail(conv != NULL, 0);
-
-	return conv->conversation_pos;
 }
 
 void
@@ -1734,7 +1643,7 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 	 * user is already using this window.
 	 */
 	if (!gaim_conv_window_has_focus(window))
-		gaim_conv_window_switch_conversation(window, gaim_conversation_get_index(conv));
+		gaim_conv_window_switch_conversation(window, conv);
 
 	gaim_conv_window_raise(window);
 
