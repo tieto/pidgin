@@ -615,10 +615,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		GSList *tags = gtk_text_iter_get_tags(&cur);
 		GSList *l;
 
-		gaim_debug_info("gtkimhtml", "cur = %d, start = %d, end = %d\n",
-		                gtk_text_iter_get_offset(&cur), gtk_text_iter_get_offset(&start),
-		                gtk_text_iter_get_offset(&end));
-
 		for (l = tags; l; l = l->next) {
 			GtkTextTag *tag = l->data;
 			GdkRectangle rect;
@@ -670,8 +666,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                   gc,
 			                   TRUE,
 			                   rect.x, rect.y, rect.width, rect.height);
-			gaim_debug_info("gtkimhtml", "drawing rect at %d,%d to %d,%d\n",
-			                rect.x, rect.y, rect.x+rect.width, rect.y+rect.height);
 			gtk_text_iter_backward_char(&cur); /* go back one, in case the end is the begining is the end
 			                                    * note that above, we always moved cur ahead by at least
 			                                    * one character */
@@ -2196,7 +2190,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 }
 
-#define MAX_SCROLL_TIME 0.5
+#define MAX_SCROLL_TIME 0.4
 
 gboolean scroll_cb(gpointer data)
 {
