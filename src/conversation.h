@@ -402,17 +402,15 @@ int gaim_conv_window_add_conversation(GaimConvWindow *win,
 									  GaimConversation *conv);
 
 /**
- * Removes the conversation at the specified index from the window.
- *
- * If there is no conversation at this index, this will do nothing.
+ * Removes the conversation from the window.
  *
  * @param win   The window.
- * @param index The index of the conversation.
+ * @param conv The conversation.
  *
  * @return The conversation removed.
  */
 GaimConversation *gaim_conv_window_remove_conversation(GaimConvWindow *win,
-													   unsigned int index);
+                                                       GaimConversation *conv);
 
 /**
  * Moves the conversation at the specified index in a window to a new index.

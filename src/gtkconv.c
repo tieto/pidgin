@@ -2250,8 +2250,8 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 			dest_win = gaim_conv_window_new();
 
 			gaim_conv_window_add_conversation(dest_win,
-					gaim_conv_window_remove_conversation(win,
-							gaim_conversation_get_index(conv)));
+			                                  gaim_conv_window_remove_conversation(win,
+			                                  conv));
 
 			dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
 
@@ -2281,8 +2281,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 		else {
 			size_t pos;
 
-			gaim_conv_window_remove_conversation(win,
-				gaim_conversation_get_index(conv));
+			gaim_conv_window_remove_conversation(win, conv);
 
 			pos = gaim_conv_window_add_conversation(dest_win, conv);
 
@@ -4119,9 +4118,8 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		if (c != NULL) {
 			GaimConvWindow *oldwin;
 			oldwin = gaim_conversation_get_window(c);
-			index = gaim_conversation_get_index(c);
 			if (oldwin != win) {
-				gaim_conv_window_remove_conversation(oldwin, index);
+				gaim_conv_window_remove_conversation(oldwin, c);
 				gaim_conv_window_add_conversation(win, c);
 			}
 		} else {

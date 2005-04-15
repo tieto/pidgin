@@ -56,6 +56,8 @@ version 2.0.0cvs:
 	           non-NULL value. This value is now returned. Previously,
 	           all registered handlers were called and the value from the
 	           last handler was used.
+	* Changed: gaim_conv_window_remove_conversation()'s last argument to
+	           be a GaimConversation.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

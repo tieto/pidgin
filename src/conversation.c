@@ -468,7 +468,7 @@ gaim_conv_window_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	if (gaim_conversation_get_window(conv) != NULL) {
 		gaim_conv_window_remove_conversation(
 			gaim_conversation_get_window(conv),
-			gaim_conversation_get_index(conv));
+			conv);
 	}
 
 	ops = gaim_conv_window_get_ui_ops(win);
@@ -492,20 +492,21 @@ gaim_conv_window_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 }
 
 GaimConversation *
-gaim_conv_window_remove_conversation(GaimConvWindow *win, unsigned int index)
+gaim_conv_window_remove_conversation(GaimConvWindow *win, GaimConversation *conv)
 {
 	GaimConvWindowUiOps *ops;
-	GaimConversation *conv;
 	GList *node;
 
 	g_return_val_if_fail(win != NULL, NULL);
-	g_return_val_if_fail(index < gaim_conv_window_get_conversation_count(win), NULL);
+	g_return_val_if_fail(conv != NULL, NULL);
 
 	ops = gaim_conv_window_get_ui_ops(win);
 
-	node = g_list_nth(gaim_conv_window_get_conversations(win), index);
-	conv = (GaimConversation *)node->data;
+	node = g_list_find(gaim_conv_window_get_conversations(win), conv);
 
+	if (!node)
+		return NULL;
+	
 	if (ops != NULL && ops->remove_conversation != NULL)
 		ops->remove_conversation(win, conv);
 
@@ -1019,8 +1020,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 	conv->data = NULL;
 
 	if (win != NULL) {
-		gaim_conv_window_remove_conversation(win,
-			gaim_conversation_get_index(conv));
+		gaim_conv_window_remove_conversation(win, conv);
 	}
 
 	if (ops != NULL && ops->destroy_conversation != NULL)

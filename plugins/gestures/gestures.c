@@ -104,7 +104,7 @@ stroke_new_win(GtkWidget *widget, void *data)
 
 	new_win = gaim_conv_window_new();
 
-	gaim_conv_window_remove_conversation(old_win, gaim_conversation_get_index(conv));
+	gaim_conv_window_remove_conversation(old_win, conv);
 	gaim_conv_window_add_conversation(new_win, conv);
 
 	gaim_conv_window_show(new_win);
