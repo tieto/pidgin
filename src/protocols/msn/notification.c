@@ -752,6 +752,37 @@ rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	MsnSession *session = cmdproc->session;
+	const char *type, *value;
+
+	g_return_if_fail(cmd->param_count >= 3);
+
+	type  = cmd->params[2];
+
+	if (cmd->param_count == 4)
+	{
+		value = cmd->params[3];
+		if (!strcmp(type, "PHH"))
+			msn_user_set_home_phone(session->user, gaim_url_decode(value));
+		else if (!strcmp(type, "PHW"))
+			msn_user_set_work_phone(session->user, gaim_url_decode(value));
+		else if (!strcmp(type, "PHM"))
+			msn_user_set_mobile_phone(session->user, gaim_url_decode(value));
+	}
+	else
+	{
+		if (!strcmp(type, "PHH"))
+			msn_user_set_home_phone(session->user, NULL);
+		else if (!strcmp(type, "PHW"))
+			msn_user_set_work_phone(session->user, NULL);
+		else if (!strcmp(type, "PHM"))
+			msn_user_set_mobile_phone(session->user, NULL);
+	}
+}
+
+static void
 reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
@@ -1347,7 +1378,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "CVR", "CVR", cvr_cmd);
 	msn_table_add_cmd(cbs_table, "VER", "VER", ver_cmd);
 	msn_table_add_cmd(cbs_table, "REA", "REA", rea_cmd);
-	/* msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd); */
+	msn_table_add_cmd(cbs_table, "PRP", "PRP", prp_cmd);
 	/* msn_table_add_cmd(cbs_table, "BLP", "BLP", blp_cmd); */
 	msn_table_add_cmd(cbs_table, "BLP", "BLP", NULL);
 	msn_table_add_cmd(cbs_table, "REG", "REG", reg_cmd);
