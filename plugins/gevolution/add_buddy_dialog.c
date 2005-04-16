@@ -71,7 +71,7 @@ new_person_cb(GtkWidget *w, GevoAddBuddyDialog *dialog)
 	group_name =
 		gtk_entry_get_text(GTK_ENTRY(GTK_COMBO(dialog->group_combo)->entry));
 
-	gevo_new_person_dialog_show(dialog->book, NULL, dialog->account, NULL,
+	gevo_new_person_dialog_show(dialog->book, NULL, dialog->account, dialog->username,
 								(*group_name ? group_name : NULL),
 								NULL, FALSE);
 
@@ -109,7 +109,7 @@ select_buddy_cb(GtkWidget *w, GevoAddBuddyDialog *dialog)
 
 	if (username == NULL || *username == '\0')
 	{
-		gevo_new_person_dialog_show(dialog->book, NULL, dialog->account, NULL,
+		gevo_new_person_dialog_show(dialog->book, NULL, dialog->account, dialog->username,
 									(*group_name ? group_name : NULL),
 									NULL, FALSE);
 	}
