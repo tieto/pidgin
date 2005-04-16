@@ -459,8 +459,6 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	enum { CMD_CONV_FIND, CMD_CONV_HANDLE, CMD_CONV_LIST, CMD_CONV_NEW, CMD_CONV_WRITE } cmd;
 	const char *styles[] = { "send", "recv", "system", NULL };
 	enum { CMD_CONV_WRITE_SEND, CMD_CONV_WRITE_RECV, CMD_CONV_WRITE_SYSTEM } style;
-	const char *findopts[] = { "-account", NULL };
-	enum { CMD_CONV_FIND_ACCOUNT } findopt;
 	const char *newopts[] = { "-chat", "-im" };
 	enum { CMD_CONV_NEW_CHAT, CMD_CONV_NEW_IM } newopt;
 	GaimConversation *convo;
@@ -480,47 +478,19 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 
 	switch (cmd) {
 	case CMD_CONV_FIND:
-		if (objc < 3) {
-			Tcl_WrongNumArgs(interp, 2, objv, "?options? name");
+		if (objc != 4) {
+			Tcl_WrongNumArgs(interp, 2, objv, "account name");
 			return TCL_ERROR;
 		}
-		argsused = 2;
 		account = NULL;
-		while (argsused < objc) {
-			opt = Tcl_GetString(objv[argsused]);
-			if (*opt == '-') {
-				if ((error = Tcl_GetIndexFromObj(interp, objv[argsused], findopts,
-								 "option", 0, (int *)&findopt)) != TCL_OK)
-					return error;
-				argsused++;
-				switch (findopt) {
-				case CMD_CONV_FIND_ACCOUNT:
-					if (argsused == objc - 1) {
-						Tcl_SetStringObj(result, "-account requires an argument", -1);
-						return TCL_ERROR;
-					}
-					if ((error = Tcl_GetIntFromObj(interp, objv[argsused],
-								       (int *)&account)) != TCL_OK)
-						return error;
-					if (!tcl_validate_account(account, interp))
-						return TCL_ERROR;
-					argsused++;
-					break;
-				}
-			} else {
-				break;
-			}
-		}
-		if (objc - argsused != 1) {
-			Tcl_WrongNumArgs(interp, 2, objv, "?options? name");
+		if ((error = Tcl_GetIntFromObj(interp, objv[2],
+					       (int *)&account)) != TCL_OK)
 			return error;
-		}
-		if (account != NULL) {
-			convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, Tcl_GetString(objv[argsused]), account);
-		} else {
-			/* TODO: What should we do here? */
-			convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, Tcl_GetString(objv[argsused]), NULL);
-		}
+		if (!tcl_validate_account(account, interp))
+			return TCL_ERROR;
+		convo = gaim_find_conversation_with_account(GAIM_CONV_ANY,
+							    Tcl_GetString(objv[3]),
+							    account);
 		Tcl_SetIntObj(result, (int)convo);
 		break;
 	case CMD_CONV_HANDLE:
