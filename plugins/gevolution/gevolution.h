@@ -25,12 +25,6 @@
 # include "config.h"
 #endif
 
-#define EBOOK_CHECK_VERSION(major, minor, micro) \
-	(LIBEBOOK_MAJOR_VER > (major) || \
-	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER > (minor)) || \
-	 (LIBEBOOK_MAJOR_VER == (major) && LIBEBOOK_MINOR_VER == (minor) && \
-	  LIBEBOOK_MICRO_VER >= (micro)))
-
 #include <libebook/e-book.h>
 
 enum

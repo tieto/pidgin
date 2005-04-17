@@ -361,10 +361,10 @@ void gaim_gtkdialogs_about(GtkWidget *w, void *data)
 
 g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 
-#if defined(LIBEBOOK_MAJOR_VER) && defined(LIBEBOOK_MINOR_VER) && defined(LIBEBOOK_MICRO_VER)
-	g_string_append_printf(str, "    <b>Evolution:</b> Enabled (Version %i.%i.%i)<br/>", LIBEBOOK_MAJOR_VER, LIBEBOOK_MINOR_VER, LIBEBOOK_MICRO_VER);
+#ifdef HAVE_EVOLUTION_ADDRESSBOOK
+	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Enabled<br/>");
 #else
-	g_string_append_printf(str, "    <b>Evolution:</b> Disabled<br/>");
+	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Disabled<br/>");
 #endif
 
 #ifdef USE_GTKSPELL

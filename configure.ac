@@ -330,26 +330,21 @@ build_gevo=no
 AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
 
 if test "x$enable_gevolution" = "xyes"; then
-	evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
-	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+	evo_deps="libxml-2.0 libebook-1.2 libedata-book-1.2"
+	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
+		AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
+		build_gevo=yes
+	], build_gevo=no)
+	if test "x$build_gevo" = "xno"; then
+		evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
+		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
+			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
+			build_gevo=yes
+		], build_gevo=no)
+	fi
 
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_LIBS)
-
-	dnl This can be removed in a few releases of Evolution, especially when
-	dnl it goes stable!
-	AC_MSG_CHECKING([libebook version])
-	LIBEBOOK_VERSION=`$PKG_CONFIG --modversion libebook-1.0`
-	LIBEBOOK_MAJOR_VER=`echo $LIBEBOOK_VERSION | sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\1/'`
-	LIBEBOOK_MINOR_VER=`echo $LIBEBOOK_VERSION | sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
-	LIBEBOOK_MICRO_VER=`echo $LIBEBOOK_VERSION | sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
-	AC_MSG_RESULT($LIBEBOOK_VERSION)
-
-	if test "x$LIBEBOOK_MAJOR_VER" != "x" -a "x$LIBEBOOK_MINOR_VER" != "x" -a "x$LIBEBOOK_MICRO_VER" != "x"; then
-		AC_DEFINE_UNQUOTED(LIBEBOOK_MAJOR_VER, $LIBEBOOK_MAJOR_VER, [libebook major version.])
-		AC_DEFINE_UNQUOTED(LIBEBOOK_MINOR_VER, $LIBEBOOK_MINOR_VER, [libebook minor version.])
-		AC_DEFINE_UNQUOTED(LIBEBOOK_MICRO_VER, $LIBEBOOK_MICRO_VER, [libebook micro version.])
-	fi
 fi
 
 AM_CONDITIONAL(BUILD_GEVOLUTION, test "x$build_gevo" = "xyes")
