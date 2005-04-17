@@ -453,7 +453,7 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
 	}
 	
-	if (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag) {
+	if ((oldprelit_tag != NULL) && (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag)) {
 		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
 		if (norm)
 			g_object_set(G_OBJECT(oldprelit_tag), "foreground-gdk", norm, NULL);
