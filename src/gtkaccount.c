@@ -46,6 +46,8 @@
 #include "gtkstatusbox.h"
 #include "gtkstock.h"
 
+
+
 enum
 {
 	COLUMN_ICON,
