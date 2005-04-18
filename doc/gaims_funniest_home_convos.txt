@@ -288,3 +288,12 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (20:41:44) marv: then what were those patches i applied from you earlier?
 (20:42:05) nosnilmot: you don't need to know C to write patches
 (20:42:12) marv: oh okay
+
+---
+
+-!- seanegan [~sean@...] has quit [Remote closed the connection]
+-!- seanegan [~sean@...] has joined #gaim
+<seanegan> Someone should fix that bug where if you click on the user list
+	in an IRC channel, it crashes.
+-!- LSchiere2 [~luke@...] has quit [Remote closed the connection]
+<seanegan> I guess that was "reproducing"
