@@ -294,12 +294,6 @@ attach_signals(GaimConversation *conv)
 	gtkwin  = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_focus")) {
-		GtkWidget *child = NULL;
-		gint page_num;
-
-		page_num = gaim_conversation_get_index(conv);
-		child = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), page_num);
-
 		/* TODO should really find a way to make this work no matter where the
 		 * focus is inside the conv window, without having to bind to
 		 * focus-in-event on the g(d|t)kwindow */
