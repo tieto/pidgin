@@ -32,7 +32,7 @@ version 2.0.0
 	  or change your nick (Richard Laager)
 	* Text Replacement Plugin rewritten, works in real time and far more
 	  intuitively (Benjamin Kahn with help from Richard Laager)
-	* Full message bckground colors are now supported
+	* Full message background colors are now supported
 	* Smooth scrolling when receiving a new message
 	* Themeable mouse-over hyperlink coloring
 
