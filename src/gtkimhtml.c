@@ -521,6 +521,7 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 	return FALSE;
 }
 
+#if (!GTK_CHECK_VERSION(2,2,0))
 /*
  * XXX - This should be removed eventually.
  *
@@ -534,30 +535,17 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 
 gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
 {
-	char buf[7];
-	buf[0] = '\0';
-
-	if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
-#if (!GTK_CHECK_VERSION(2,2,0))
-		case 'a':
-			return TRUE;
-			break;
-
-		case GDK_Home:
-			return TRUE;
-			break;
-			
-		case GDK_End:
-			return TRUE;
-			break;
-			
-#endif /* !(GTK+ >= 2.2.0) */
+			case 'a':
+			case GDK_Home:
+			case GDK_End:
+				return TRUE;
 		}
-	
+	}
 	return FALSE;
 }
-
+#endif /* !(GTK+ >= 2.2.0) */
 
 static gint
 gtk_imhtml_expose_event (GtkWidget      *widget,
@@ -568,7 +556,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	GdkRectangle visible_rect;
 	GdkGC *gc = gdk_gc_new(GDK_DRAWABLE(event->window));
 	GdkColor gcolor;
-	
+
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &visible_rect);
 	gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(widget),
 					      GTK_TEXT_WINDOW_TEXT,
@@ -1262,7 +1250,10 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
+#if (!GTK_CHECK_VERSION(2,2,0))
+	/* See the comment for gtk_key_pressed_cb */
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
+#endif
 	g_signal_connect(G_OBJECT(imhtml), "button_press_event", G_CALLBACK(gtk_imhtml_button_press_event), NULL);
 	g_signal_connect(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(preinsert_cb), imhtml);
 	g_signal_connect_after(G_OBJECT(imhtml->text_buffer), "insert-text", G_CALLBACK(insert_cb), imhtml);
