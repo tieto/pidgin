@@ -911,7 +911,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimLogType type;
 	const char *name;
 	GaimAccount *account;
-	GaimBuddy *buddy;
+	GSList *buddies, *cur;
 
 	conv = gaim_conv_window_get_active_conversation(win);
 
@@ -925,14 +925,18 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
 
-	buddy = gaim_find_buddy(account, name);
-	if (buddy != NULL &&
-	    buddy->node.parent != NULL &&
-	    GAIM_BLIST_NODE_IS_CONTACT(buddy->node.parent)) {
-
-		gaim_gtk_log_show_contact((GaimContact *)buddy->node.parent);
-		return;
+	buddies = gaim_find_buddies(account, name);
+	for (cur = buddies; cur != NULL; cur = cur->next)
+	{
+		GaimBlistNode *node = cur->data;
+		if ((node != NULL) && (node->next != NULL))
+		{
+			gaim_gtk_log_show_contact((GaimContact *)node->parent);
+			g_slist_free(buddies);
+			return;
+		}
 	}
+	g_slist_free(buddies);
 
 	gaim_gtk_log_show(type, name, account);
 }
