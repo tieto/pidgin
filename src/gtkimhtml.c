@@ -532,8 +532,8 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
  * It's supposed to be fixed in gtk2.2.  You can view the bug report at
  * http://bugzilla.gnome.org/show_bug.cgi?id=107939
  */
-
-gboolean gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
+static gboolean
+gtk_key_pressed_cb(GtkIMHtml *imhtml, GdkEventKey *event, gpointer data)
 {
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {

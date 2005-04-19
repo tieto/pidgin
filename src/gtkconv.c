@@ -867,15 +867,13 @@ menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 	gaim_gtkdialogs_im();
 }
 
-/* XXX change how this works, unless someone can justify it, i think
- * it's really stupid, lets just grab the text from the imhtml, not
- * keep an extra copy of it! */
 static void
 savelog_writefile_cb(void *user_data, const char *filename)
 {
 	GaimConversation *conv = (GaimConversation *)user_data;
 	FILE *fp;
 	const char *name;
+	gchar *text;
 
 	if ((fp = g_fopen(filename, "w+")) == NULL) {
 		gaim_notify_error(conv, NULL, _("Unable to open file."), NULL);
@@ -883,11 +881,22 @@ savelog_writefile_cb(void *user_data, const char *filename)
 	}
 
 	name = gaim_conversation_get_name(conv);
+	fprintf(fp, "<html>\n<head><title>%s</title></head>\n<body>", name);
 	fprintf(fp, _("<h1>Conversation with %s</h1>\n"), name);
-	fprintf(fp, "%s", conv->history->str);
+
+	text = gtk_imhtml_get_markup(
+		GTK_IMHTML(GAIM_GTK_CONVERSATION(conv)->imhtml));
+	fprintf(fp, "%s", text);
+	g_free(text);
+
+	fprintf(fp, "\n</body>\n</html>\n");
 	fclose(fp);
 }
 
+/*
+ * It would be kinda cool if this gave the option of saving a
+ * plaintext v. HTML file.
+ */
 static void
 menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
@@ -897,8 +906,8 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 
 	buf = g_strdup_printf("%s.html", gaim_normalize(conv->account, conv->name));
 
-	gaim_request_file(conv, _("Save Conversation"), buf, TRUE,
-					  G_CALLBACK(savelog_writefile_cb), NULL, conv);
+	gaim_request_file(conv, _("Save Conversation"), gaim_escape_filename(buf),
+					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL, conv);
 
 	g_free(buf);
 }
@@ -952,8 +961,6 @@ menu_clear_cb(gpointer data, guint action, GtkWidget *widget)
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-	g_string_free(conv->history, TRUE);
-	conv->history = g_string_new("");
 }
 
 struct _search {
@@ -1631,7 +1638,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	int curconv;
 
 	gtkconv  = (GaimGtkConversation *)data;
-	conv     = gtkconv->active_conv;;
+	conv     = gtkconv->active_conv;
 	win      = gaim_conversation_get_window(conv);
 	gtkwin   = GAIM_GTK_WINDOW(win);
 	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
@@ -2475,7 +2482,7 @@ toggle_icon_animate_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 static void
 remove_icon(GaimGtkConversation *gtkconv)
 {
-	GaimConversation *conv = gtkconv->active_conv;;
+	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkWindow *gtkwin;
 
 	g_return_if_fail(conv != NULL);
@@ -4807,10 +4814,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
-		/* Add the message to a conversations scrollback buffer */
-		conv->history = g_string_append(conv->history, buf);
-		conv->history = g_string_append(conv->history, "<BR>\n");
-
 	} else if (flags & GAIM_MESSAGE_ERROR) {
 		g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
 				   mdate, message);
@@ -4821,9 +4824,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
-		/* Add the message to a conversations scrollback buffer */
-		conv->history = g_string_append(conv->history, buf);
-		conv->history = g_string_append(conv->history, "<BR>\n");
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf, BUF_LONG,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
@@ -4930,10 +4930,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options);
-
-		conv->history = g_string_append(conv->history, buf);
-		conv->history = g_string_append(conv->history, new_message);
-		conv->history = g_string_append(conv->history, "<BR>\n");
 
 		g_free(with_font_tag);
 		g_free(new_message);

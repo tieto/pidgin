@@ -291,7 +291,6 @@ struct _GaimConversation
 	GaimLog *log;               /**< This conversation's log            */
 
 	GList *send_history;        /**< The send history.                  */
-	GString *history;           /**< The conversation history.          */
 
 	GaimUnseenState unseen;     /**< The unseen tab state.              */
 
@@ -307,7 +306,7 @@ struct _GaimConversation
 	void *ui_data;                           /**< UI-specific data.       */
 
 	GHashTable *data;                        /**< Plugin-specific data.   */
-  
+
 	GaimConnectionFlags features; /**< The supported features */
 
 };
@@ -664,23 +663,6 @@ gboolean gaim_conversation_is_logging(const GaimConversation *conv);
  * @return The conversation's send history.
  */
 GList *gaim_conversation_get_send_history(const GaimConversation *conv);
-
-/**
- * Sets the specified conversation's history.
- *
- * @param conv    The conversation.
- * @param history The history.
- */
-void gaim_conversation_set_history(GaimConversation *conv, GString *history);
-
-/**
- * Returns the specified conversation's history.
- *
- * @param conv The conversation.
- *
- * @return The conversation's history.
- */
-GString *gaim_conversation_get_history(const GaimConversation *conv);
 
 /**
  * Returns the specified conversation's parent window.

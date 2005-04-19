@@ -695,7 +695,6 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->name         = g_strdup(name);
 	conv->title        = g_strdup(name);
 	conv->send_history = g_list_append(NULL, NULL);
-	conv->history      = g_string_new("");
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
 	conv->log          = gaim_log_new(type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT :
@@ -876,10 +875,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 	}
 
 	g_list_free(g_list_first(conv->send_history));
-
-	if (conv->history != NULL)
-		g_string_free(conv->history, TRUE);
-	conv->history = NULL;
 
 	conversations = g_list_remove(conversations, conv);
 
@@ -1174,22 +1169,6 @@ gaim_conversation_get_send_history(const GaimConversation *conv)
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	return conv->send_history;
-}
-
-void
-gaim_conversation_set_history(GaimConversation *conv, GString *history)
-{
-	g_return_if_fail(conv != NULL);
-
-	conv->history = history;
-}
-
-GString *
-gaim_conversation_get_history(const GaimConversation *conv)
-{
-	g_return_val_if_fail(conv != NULL, NULL);
-
-	return conv->history;
 }
 
 GaimConvWindow *

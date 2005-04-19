@@ -44,6 +44,9 @@ version 2.0.0cvs:
 	           to use Gaim's built-in code for these purposes.
 	* Added:   GaimLogCommonLoggerData struct for a basic logger_data
 	           struct to be used with "common" logger functions.
+	* Removed: gaim_conversation_set_history, gaim_conversation_get_history,
+	           and GaimConversation->history.  Use gtk_imhtml_get_markup
+	           instead.
 
 	Signals:
 	* Changed: "received-im-msg and "received-chat-msg" to match, both
