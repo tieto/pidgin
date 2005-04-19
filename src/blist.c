@@ -751,7 +751,8 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	presence = gaim_buddy_get_presence(buddy);
 	status = gaim_presence_get_active_status(presence);
 
-	gaim_debug_info("blist", "Updating buddy status\n");
+	gaim_debug_info("blist", "Updating buddy status for %s (%s)\n",
+			buddy->name, gaim_account_get_protocol_name(buddy->account));
 
 	if (gaim_status_is_online(status) &&
 		!gaim_status_is_online(old_status)) {
