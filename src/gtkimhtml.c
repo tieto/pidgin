@@ -2192,9 +2192,6 @@ gboolean scroll_cb(gpointer data)
 
 	t = g_timer_elapsed(imhtml->scroll_time, NULL);
 
-
-	gaim_debug_info("gtkimhtml", "in scroll_cb\n");
-
 	if (adj->value >= val || t >= MAX_SCROLL_TIME) {
 		gaim_debug_info("gtkimhtml", "scroll_cb:  out of time\n");
 		gtk_adjustment_set_value(adj, val);
