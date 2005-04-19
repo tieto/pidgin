@@ -438,10 +438,10 @@ check_for_and_do_command(GaimConversation *conv)
 				return TRUE;
 			case GAIM_CMD_STATUS_WRONG_TYPE:
 				if(gaim_conversation_get_type(conv) == GAIM_CONV_IM)
-					gaim_conversation_write(conv, "", _("That command only works in Chats, not IMs."),
+					gaim_conversation_write(conv, "", _("That command only works in chats, not IMs."),
 							GAIM_MESSAGE_NO_LOG, time(NULL));
 				else
-					gaim_conversation_write(conv, "", _("That command only works in IMs, not Chats."),
+					gaim_conversation_write(conv, "", _("That command only works in IMs, not chats."),
 							GAIM_MESSAGE_NO_LOG, time(NULL));
 				return TRUE;
 			case GAIM_CMD_STATUS_WRONG_PRPL:
@@ -674,7 +674,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		{
 			gaim_notify_error(NULL, NULL,
 							  _("That buddy is not on the same protocol as this "
-								"chat"), NULL);
+								"chat."), NULL);
 		}
 		else
 			gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(info->entry)->entry), buddy->name);
@@ -700,7 +700,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			{
 				gaim_notify_error(NULL, NULL,
 								  _("That buddy is not on the same protocol as this "
-									"chat"), NULL);
+									"chat."), NULL);
 			}
 			else
 			{
