@@ -57,18 +57,28 @@ stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
 	GaimConvWindow *win;
-	unsigned int index;
+	GList *conversations;
 
 	conv  = (GaimConversation *)data;
 	win   = gaim_conversation_get_window(conv);
-	index = gaim_conversation_get_index(conv);
 
-	if (index == 0)
-		index = gaim_conv_window_get_conversation_count(win) - 1;
-	else
-		index--;
+	for (conversations = gaim_conv_window_get_conversations(win);
+			conversations != NULL;
+			conversations = conversations->next)
+	{
+		if (conversations->data == conv)
+		{
+			if (conversations->prev != NULL) {
+				gaim_conv_window_switch_conversation(win,
+						conversations->prev->data);
+			} else {
+				gaim_conv_window_switch_conversation(win,
+						g_list_last(conversations)->data);
+			}
 
-	gaim_conv_window_switch_conversation(win, index);
+			return;
+		}
+	}
 }
 
 static void
@@ -76,18 +86,28 @@ stroke_next_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
 	GaimConvWindow *win;
-	unsigned int index;
+	GList *conversations;
 
 	conv  = (GaimConversation *)data;
 	win   = gaim_conversation_get_window(conv);
-	index = gaim_conversation_get_index(conv);
 
-	if (index == gaim_conv_window_get_conversation_count(win) - 1)
-		index = 0;
-	else
-		index++;
+	for (conversations = gaim_conv_window_get_conversations(win);
+			conversations != NULL;
+			conversations = conversations->next)
+	{
+		if (conversations->data == conv)
+		{
+			if (conversations->next != NULL) {
+				gaim_conv_window_switch_conversation(win,
+						conversations->next->data);
+			} else {
+				gaim_conv_window_switch_conversation(win,
+						g_list_first(conversations)->data);
+			}
 
-	gaim_conv_window_switch_conversation(win, index);
+			return;
+		}
+	}
 }
 
 void
