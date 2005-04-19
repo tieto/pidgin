@@ -150,7 +150,9 @@ void
 gaim_connection_destroy(GaimConnection *gc)
 {
 	GaimAccount *account;
+#if 0
 	GList *wins;
+#endif
 	GaimPresence *presence = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
@@ -200,7 +202,7 @@ gaim_connection_destroy(GaimConnection *gc)
 		gaim_presence_set_status_active(presence, "offline", TRUE);
 
 #if 0
-/* see comment later in file on if 0'd same code	
+	/* see comment later in file on if 0'd same code */
 	/*
 	 * XXX This is a hack! Remove this and replace it with a better event
 	 *     notification system.
@@ -264,7 +266,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 	if (gc->state == GAIM_CONNECTED) {
 		GaimBlistNode *gnode,*cnode,*bnode;
+#if 0
 		GList *wins;
+#endif
 		GList *add_buds = NULL;
 		GaimAccount *account;
 		GaimPresence *presence;
