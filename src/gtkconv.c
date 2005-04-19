@@ -929,7 +929,7 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	for (cur = buddies; cur != NULL; cur = cur->next)
 	{
 		GaimBlistNode *node = cur->data;
-		if ((node != NULL) && (node->next != NULL))
+		if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 		{
 			gaim_gtk_log_show_contact((GaimContact *)node->parent);
 			g_slist_free(buddies);
