@@ -1631,7 +1631,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	win      = gaim_conversation_get_window(conv);
 	gtkwin   = GAIM_GTK_WINDOW(win);
 	curconv = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
-	
+
 	/* If CTRL was held down... */
 	if (event->state & GDK_CONTROL_MASK) {
 		switch (event->keyval) {
@@ -4559,37 +4559,6 @@ gaim_gtk_remove_conversation(GaimConvWindow *win, GaimConversation *conv)
 
 		generate_send_as_items(win, conv);
 	}
-}
-
-static void
-gaim_gtk_move_conversation(GaimConvWindow *win, GaimConversation *conv,
-                           unsigned int new_index)
-{
-	GaimGtkWindow *gtkwin;
-	GaimGtkConversation *gtkconv;
-
-	gtkwin  = GAIM_GTK_WINDOW(win);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook),
-	                           gtkconv->tab_cont, new_index);
-}
-
-static int
-gaim_gtk_get_active_index(const GaimConvWindow *win)
-{
-	GaimGtkWindow *gtkwin;
-	int index;
-
-	gtkwin = GAIM_GTK_WINDOW(win);
-
-	index = gtk_notebook_get_current_page(GTK_NOTEBOOK(gtkwin->notebook));
-
-	/*
-	 * A fix, because the first conversation may be active, but not
-	 * appear in the notebook just yet. -- ChipX86
-	 */
-	return (index == -1 ? 0 : index);
 }
 
 GaimGtkConversation *
