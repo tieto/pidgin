@@ -988,9 +988,43 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 		ops->update(gaimbuddylist, (GaimBlistNode*)source);
 
 	/* Notify all PRPLs */
-	for (accts = gaim_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
-		GaimAccount *account = accts->data;
-		serv_rename_group(account->gc, old_name, source, moved_buddies);
+	if(old_name && source && strcmp(source->name, old_name)) {
+		for (accts = gaim_group_get_accounts(source); accts; accts = g_slist_remove(accts, accts->data)) {
+			GaimAccount *account = accts->data;
+			GaimPluginProtocolInfo *prpl_info = NULL;
+			GList *l = NULL, *buddies = NULL;
+
+			if(account->gc && account->gc->prpl)
+				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+
+			if(!prpl_info)
+				continue;
+
+			for(l = moved_buddies; l; l = l->next) {
+				GaimBuddy *buddy = (GaimBuddy *)l->data;
+
+				if(buddy && buddy->account == account)
+					buddies = g_list_append(buddies, (GaimBlistNode *)buddy);
+			}
+
+			if(prpl_info->rename_group) {
+				prpl_info->rename_group(account->gc, old_name, source, buddies);
+			} else {
+				GList *cur, *groups = NULL;
+
+				/* Make a list of what the groups each buddy is in */
+				for(cur = buddies; cur; cur = cur->next) {
+					GaimBlistNode *node = (GaimBlistNode *)cur->data;
+					groups = g_list_append(groups, node->parent->parent);
+				}
+
+				serv_remove_buddies(account->gc, buddies, groups);
+				g_list_free(groups);
+				serv_add_buddies(account->gc, buddies);
+			}
+
+			g_list_free(buddies);
+		}
 	}
 	g_list_free(moved_buddies);
 	g_free(old_name);

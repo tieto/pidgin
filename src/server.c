@@ -381,38 +381,6 @@ void serv_move_buddy(GaimBuddy *b, GaimGroup *og, GaimGroup *ng)
 	}
 }
 
-/*
- * Rename a group on server roster/list.
- */
-void serv_rename_group(GaimConnection *gc, const char *old_name,
-					   GaimGroup *group, GList *moved_buddies)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	if (prpl_info && old_name && group && strcmp(old_name, group->name)) {
-		if (prpl_info->rename_group) {
-			/* prpl's might need to check if the group already
-			 * exists or not, and handle that differently */
-			prpl_info->rename_group(gc, old_name, group, moved_buddies);
-		} else {
-			GList *cur, *groups = NULL;
-
-			/* Make a list of what the groups each buddy is in */
-			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
-				GaimBlistNode *node = cur->data;
-				groups = g_list_append(groups, node->parent->parent);
-			}
-
-			serv_remove_buddies(gc, moved_buddies, groups);
-			g_list_free(groups);
-			serv_add_buddies(gc, moved_buddies);
-		}
-	}
-}
-
 void serv_add_permit(GaimConnection *g, const char *name)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

@@ -47,7 +47,6 @@ void serv_remove_buddy(GaimConnection *, GaimBuddy *, GaimGroup *);
 void serv_remove_buddies(GaimConnection *, GList *, GList *);
 void serv_remove_group(GaimConnection *, GaimGroup *);
 void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);
-void serv_rename_group(GaimConnection *, const char *, GaimGroup *, GList *);
 void serv_add_permit(GaimConnection *, const char *);
 void serv_add_deny(GaimConnection *, const char *);
 void serv_rem_permit(GaimConnection *, const char *);
