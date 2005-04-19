@@ -114,7 +114,7 @@ xmlnode *xmlnode_get_next_twin(xmlnode *node);
  * @param size   The size of the data to insert.  If data is
  *               null-terminated you can pass in -1.
  */
-void xmlnode_insert_data(xmlnode *node, const char *data, size_t size);
+void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
 
 /**
  * Gets data from a node.
@@ -185,7 +185,7 @@ char *xmlnode_to_formatted_str(xmlnode *node, int *len);
  *
  * @return The new node.
  */
-xmlnode *xmlnode_from_str(const char *str, size_t size);
+xmlnode *xmlnode_from_str(const char *str, gssize size);
 
 /**
  * Creates a new node from the source node.

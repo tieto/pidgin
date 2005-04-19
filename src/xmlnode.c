@@ -87,10 +87,10 @@ xmlnode_insert_child(xmlnode *parent, xmlnode *child)
 }
 
 void
-xmlnode_insert_data(xmlnode *node, const char *data, size_t size)
+xmlnode_insert_data(xmlnode *node, const char *data, gssize size)
 {
 	xmlnode *child;
-	size_t real_size;
+	gsize real_size;
 
 	g_return_if_fail(node != NULL);
 	g_return_if_fail(data != NULL);
@@ -403,12 +403,12 @@ static GMarkupParser xmlnode_parser = {
 
 
 xmlnode *
-xmlnode_from_str(const char *str, size_t size)
+xmlnode_from_str(const char *str, gssize size)
 {
 	struct _xmlnode_parser_data *xpd = g_new0(struct _xmlnode_parser_data, 1);
 	xmlnode *ret;
 	GMarkupParseContext *context;
-	size_t real_size = size == -1 ? strlen(str) : size;
+	gsize real_size = size == -1 ? strlen(str) : size;
 
 	context = g_markup_parse_context_new(&xmlnode_parser, 0, xpd, NULL);
 
