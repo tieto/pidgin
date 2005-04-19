@@ -1,0 +1,1503 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gaim 1.1.2\n"
+"Report-Msgid-Bugs-To: temuri@mail.ge\n"
+"POT-Creation-Date: 2005-02-17 21:15-0500\n"
+"PO-Revision-Date: 2005-03-05 13:45+03\n"
+"Last-Translator: Temuri Doghonadze <temuri@mail.ge>\n"
+"Language-Team: GEORGIAN <temuri@mail.ge>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "%s (%d new/%d total)"
+msgstr "%s (%d ახალი/%d სულ)"
+
+msgid "%s Options"
+msgstr "%s პარამეტრები"
+
+msgid "(no name)"
+msgstr "(უსახელო)"
+
+msgid "/Tools/A_ccounts"
+msgstr "/ხელსაწყოები/წევრები"
+
+msgid "/Tools/_Away"
+msgstr "/ხელსაწყოები/გასული"
+
+msgid "/_Tools"
+msgstr "/ხელსაწყოები"
+
+msgid "<b>_Account:</b>"
+msgstr "<b>წევრი:</b>"
+
+msgid "<b>_Password:</b>"
+msgstr "<b>პაროლი:</b>"
+
+msgid ""
+"<span weight=\"bold\" size=\"larger\">%s has been disconnected.</span>\n"
+"\n"
+"%s\n"
+"%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">%s გაითიშა.</span>\n"
+"\n"
+"%s\n"
+"%s"
+
+msgid "AIM/ICQ Protocol Plugin"
+msgstr "AIM/ICQ პროტოკოლის პლაგინი"
+
+msgid "A_ccounts"
+msgstr "წევრები"
+
+msgid "A_way"
+msgstr "გასულია"
+
+msgid "About Gaim"
+msgstr "Gaim-ის შესახებ"
+
+msgid "Account"
+msgstr "წევრი"
+
+msgid "Account Info"
+msgstr "ინფორმაცია წევრის შესახებ"
+
+msgid "Account type:"
+msgstr "წევრის ტიპი:"
+
+msgid "Accounts"
+msgstr "წევრები"
+
+msgid "Add"
+msgstr "ჩამატება"
+
+msgid "Add / Remove"
+msgstr "ჩამატება / წაშლა"
+
+msgid "Add Account"
+msgstr "წევრის ჩამატება"
+
+msgid "Add Group"
+msgstr "ჯგუფის ჩამატება"
+
+msgid "Add to Address Book"
+msgstr "მისამართების წიგნში ჩამატება"
+
+msgid "Additional Information"
+msgstr "დამატებითი ინფორმაცია"
+
+msgid "Albanian"
+msgstr "ალბანური"
+
+msgid "Alias"
+msgstr "სინონიმი"
+
+msgid "Alias Contact"
+msgstr "კონტაქტის სინონიმი"
+
+msgid "Alias Contact..."
+msgstr "კონტაქტის სინონიმი..."
+
+msgid "Alias:"
+msgstr "სინონიმი:"
+
+msgid "Allows you to control Gaim by entering commands in a file."
+msgstr "გაძლევთ Gaim-ის კონტროლის საშუალებას ფაილში ბრძანებების შეტანით "
+
+msgid "Animate"
+msgstr "ანიმირება"
+
+msgid "Apply"
+msgstr "გამოყენება"
+
+msgid "Are you sure you want to delete %s?"
+msgstr "დარწმუნებული ხართ რომ გსურთ %s მომხმარებლის წაშლა"
+
+msgid "Australian English"
+msgstr "ავსტრალიური ინგლისური"
+
+msgid "Auth host"
+msgstr "დამადასტ. ჰოსტი"
+
+msgid "Auth port"
+msgstr "დამადასტ. პორტი"
+
+msgid "Authentication failed."
+msgstr "აუტენტიფიკაცია შეუძლებელია"
+
+msgid "Authorization Denied Message:"
+msgstr "ავტორიზაციის უარყოფის შეტყობინება"
+
+msgid "Authorization Given"
+msgstr "ავტორიზაცია მიღებულია"
+
+msgid "Authorization Request Message:"
+msgstr "ავტორიზაციის მოთხოვნის შეტყობინება"
+
+msgid "Authorize"
+msgstr "ავტორიზაცია"
+
+msgid "Auto-Reconnect"
+msgstr "თვითგადაკავშირება"
+
+msgid "Auto-away"
+msgstr "თვითგასვლა"
+
+msgid "Auto-login"
+msgstr "თვითშესვლა"
+
+msgid "Automatic"
+msgstr "ავტომატური"
+
+msgid "Available"
+msgstr "მისაწვდომია"
+
+msgid "Available for friends only"
+msgstr "ხელმისაწვდომია მხოლოდ მეგობრებისთვის"
+
+msgid "Away"
+msgstr "გასული"
+
+msgid "Away for friends only"
+msgstr "გასულია მხოლოდ მეგობრებისთვის"
+
+msgid "Away m_essage:"
+msgstr "გასულობის შეტყობინება"
+
+msgid "Away!"
+msgstr "გასულია!"
+
+msgid "B_rowse..."
+msgstr "დათვალიერება..."
+
+msgid "Back"
+msgstr "დაბრუნება"
+
+msgid "Background color"
+msgstr "ფონის ფერი"
+
+msgid "Balancer handshake"
+msgstr "დაბალანსებული მისალმება"
+
+msgid "Birthday"
+msgstr "დაბადების დღე"
+
+msgid "Block"
+msgstr "ბლოკირება"
+
+msgid "Block the user"
+msgstr "მომხმარებლის ბლოკირება"
+
+msgid "Bold"
+msgstr "მუქი"
+
+msgid "Bottom"
+msgstr "ქვემოთ"
+
+msgid "British English"
+msgstr "ბრიტანული ინგლისური"
+
+msgid "Bro_wse..."
+msgstr "დათვალიერება..."
+
+msgid "Browser"
+msgstr "Browser-ი"
+
+msgid "Browser Selection"
+msgstr "Browser-ის არჩევა"
+
+msgid "Bulgarian"
+msgstr "ბულგარული"
+
+msgid "Calculating..."
+msgstr "გაანგარიშება..."
+
+msgid "Camera"
+msgstr "კამერა"
+
+msgid "Canadian English"
+msgstr "კანადური ინგლისური"
+
+msgid "Cancel"
+msgstr "გაუქმება"
+
+msgid "Cancel All"
+msgstr "ყველას გაუქმება"
+
+msgid "Canceled"
+msgstr "გაუქმებულია"
+
+msgid "Catalan"
+msgstr "კატალანური"
+
+msgid "Change Password (URL)"
+msgstr "პაროლის შეცვლა (URL)"
+
+msgid "Change Password..."
+msgstr "პაროლის შეცვლა..."
+
+msgid "Change password for %s"
+msgstr "პაროლის შეცვლა %s -თვის"
+
+msgid "Change user information for %s"
+msgstr "ინფორმაციის შეცვლა %s მომხმარებლისათვის"
+
+msgid "Check Mail"
+msgstr "ფოსტის შემოწმება"
+
+msgid "Check email every X seconds.\n"
+msgstr "ფოსტის შემოწმება ყოველ  X წამში.\n"
+
+msgid "Checks for new local mail."
+msgstr "ლოკალური ფოსტის შემმოწმებელი"
+
+msgid "Chinese"
+msgstr "ჩინური"
+
+msgid "Choose..."
+msgstr "აირჩიეთ..."
+
+msgid "Close"
+msgstr "დახურვა"
+
+msgid "Command"
+msgstr "ბრძანება"
+
+msgid "Company"
+msgstr "კომპანია"
+
+msgid "Confirm Account"
+msgstr "წევრის დადასტურება"
+
+msgid "Connect"
+msgstr "დაკავშირება"
+
+msgid "Connecting"
+msgstr "დაკავშირება"
+
+msgid "Connecting..."
+msgstr "დაკავშირება..."
+
+msgid "Connection Error"
+msgstr "კავშირის შეცდომა"
+
+msgid "Connection established, cookie sent"
+msgstr "კავშირი დამყარებულია, ბმული გაგზავნილია"
+
+msgid "Contact Priority"
+msgstr "კონტაქტის პრიორიტეტი"
+
+msgid "Conversations with %s"
+msgstr "საუბარი %s-თან"
+
+msgid "Could Not Connect"
+msgstr "ვერ ვუკავშირდები"
+
+msgid "Could not connect"
+msgstr "ვერ ვუკავშირდები"
+
+msgid "Couldn't connect to host"
+msgstr "შეუძლებელია ჰოსტთან დაკავშირება"
+
+msgid "Couldn't create socket"
+msgstr "შეუძლებელია სოკეტის შექმნა"
+
+msgid "Country"
+msgstr "ქვეყანა"
+
+msgid "Current Translators"
+msgstr "მიმდინარე თარგმანები"
+
+msgid "Czech"
+msgstr "ჩეხური"
+
+msgid "D_isplay remote nicknames if no alias is set"
+msgstr "აჩვენოს დისტანციური მეტსახელები თუ სინონიმები არაა მითითებული"
+
+msgid "Danish"
+msgstr "დანიური"
+
+msgid "Delay"
+msgstr "დაყოვნება"
+
+msgid "Delete"
+msgstr "წაშლა"
+
+msgid "Deny"
+msgstr "უარყოფა"
+
+msgid "Description"
+msgstr "აღწერილობა"
+
+msgid "Details"
+msgstr "დეტალები"
+
+msgid "Display"
+msgstr "დისპლეი"
+
+msgid "Division"
+msgstr "დანაყოფი"
+
+msgid "Done."
+msgstr "შესრულებულია."
+
+msgid "E-mail:"
+msgstr "ელ-ფოსტა"
+
+msgid "E_xecute a command"
+msgstr "ბრძანების შესრულება"
+
+msgid "Edit This Message"
+msgstr "დაარედატირეთ ეს შეტყობინება"
+
+msgid "Email"
+msgstr "ელ.ფოსტა"
+
+msgid "Encoding"
+msgstr "კოდირება"
+
+msgid "Enter an alias for this contact."
+msgstr "ამ კონტაქტისთვის სინონიმის შექმნა"
+
+msgid "Enter password for %s (%s)"
+msgstr "შეიყვანეთ პაროლი %s (%s) სათვის"
+
+msgid "Error saving image: %s"
+msgstr "%s სურათის შენახვის შეცდომა"
+
+msgid "Error while reading from socket."
+msgstr "სოკეტის კითხვისას შეცდომაა."
+
+msgid "Error while writing to socket."
+msgstr "სოკეტში წერისას შეცდომაა"
+
+msgid "Event"
+msgstr "შემთხვევა"
+
+msgid "Evolution Integration"
+msgstr "Evolution-ში ინტეგრაცია"
+
+msgid "Exchanging key hash"
+msgstr "ჰეშ-გასაღების გაცვლა"
+
+msgid "Existing window"
+msgstr "არსებული ფანჯარა"
+
+msgid "Extended Address"
+msgstr "მთლიანი მისამართი"
+
+msgid "Family Name"
+msgstr "ოჯახური სახელი"
+
+msgid "Female"
+msgstr "მდედრობითი"
+
+msgid "File Transfers"
+msgstr "ფაილების გადაგზავნა"
+
+msgid "Filename"
+msgstr "ფაილის სახელი"
+
+msgid "Filename:"
+msgstr "ფაილის სახელი:"
+
+msgid "Fill out all fields completely."
+msgstr "შეავსეთ ყველა ველი ბოლომდე"
+
+msgid "Finalizing connection"
+msgstr "კავშირის დასრულება"
+
+msgid "Find"
+msgstr "ძებნა"
+
+msgid "Finished"
+msgstr "დასრულებულია"
+
+msgid "Finnish"
+msgstr "ფინური"
+
+msgid "Firebird"
+msgstr "Firebird"
+
+msgid "Firefox"
+msgstr "Firefox"
+
+msgid "First name:"
+msgstr "სახელი"
+
+msgid "Font Face"
+msgstr "ფონტი"
+
+msgid "Foreground font color"
+msgstr "ფონტის ფერი"
+
+msgid "Format Screen Name..."
+msgstr "ეკრანული სახელი ფორმატირება"
+
+msgid "French"
+msgstr "ფრანგული"
+
+msgid "Full Name"
+msgstr "სრული სახელი\t"
+
+msgid "GTK Signals Test"
+msgstr "GTK-ს სიგნალების ტესტი"
+
+msgid "Gaim - Away"
+msgstr "Gaim - გასულია"
+
+msgid "Gaim - Signed off"
+msgstr "Gaim - გათიშულია"
+
+msgid "Gaim Demonstration Plugin"
+msgstr "Gaim-ის სადემონსტრაციო პლაგინი"
+
+msgid "Gaim File Control"
+msgstr "Gaim - ის ფაილკონტროლი"
+
+msgid "Gaim User"
+msgstr "Gaim-ის მომხმარებელი"
+
+msgid "Gaim was unable to load your plugin."
+msgstr "Gaim-მა ვერ შეძლო თქვენი პლაგინის ჩატვირთვა"
+
+msgid "Galeon"
+msgstr "Galeon"
+
+msgid "Games"
+msgstr "თამაში"
+
+msgid "German"
+msgstr "გერმანული"
+
+msgid "Get File"
+msgstr "ფილის მიღება"
+
+msgid "Get User Info"
+msgstr "მომხმარებლის ინფორმაციის გაგება"
+
+msgid "Get _Info"
+msgstr "ინფორმაცია"
+
+msgid "Get the user's information"
+msgstr "მომხმარებლის შესახებ ინფორმაცია"
+
+msgid "Getting cookie"
+msgstr "ბმულის მიღება"
+
+msgid ""
+"Gives Gaim the ability to be remote-controlled through third-party "
+"applications or through the gaim-remote tool."
+msgstr ""
+"აძლევს Gaim-ს საშუალებას გაკონტროლდეს დისტანციური მართვის სხვა პროგრამებითან "
+"დისტანციური Gaim ინსტრუმენტით"
+
+msgid "Group not removed"
+msgstr "ჯგუფი არაა წაშლილი"
+
+msgid "Group:"
+msgstr "ჯგუფი:"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "Handshaking"
+msgstr "მისალმება"
+
+msgid "Hebrew"
+msgstr "ივრითი"
+
+msgid "Hide Disconnect Errors"
+msgstr "დაიმალოს დაკავშირების შეცდომები"
+
+msgid "Hide Login Errors"
+msgstr "დაიმალოს შესვლის შეცდომები"
+
+msgid "Hide transfer details"
+msgstr "გადაცემის დეტალების დამალვა"
+
+msgid "Hide user details"
+msgstr "მომხმარებლის მონაცემების დამალვა"
+
+msgid "Hindi"
+msgstr "ინდური"
+
+msgid "History"
+msgstr "ისტორია"
+
+msgid "Home Address"
+msgstr "სახლის მისამართი"
+
+msgid "Hungarian"
+msgstr "უნგრული"
+
+msgid "I'm Back!"
+msgstr "დავბრუნდი!"
+
+msgid "ICQ Info for %s"
+msgstr "ICQ ინფორმაცია %s-თვის"
+
+msgid "ICQ Server Relay"
+msgstr "ICQ-ზე სერვერზე დაყრდნობა"
+
+msgid "IM Conversation Windows"
+msgstr "IMის საუბრის ფანჯარა"
+
+msgid "IP Address"
+msgstr "IP მისამართი"
+
+msgid "Ignore"
+msgstr "იგნორირება"
+
+msgid "Ignore c_olors"
+msgstr "ფერის იგნორირება"
+
+msgid "Ignore font _faces"
+msgstr "ფონტის სახის იგნორირება"
+
+msgid "Ignore font si_zes"
+msgstr "ფონტის ზომის იგნორირება"
+
+msgid "Incorrect nickname or password."
+msgstr "არასწორია მეტსახელი ან პაროლი"
+
+msgid "Info"
+msgstr "ინფორმაცია"
+
+msgid "Info for %s"
+msgstr "ინფორმაცია %s-თვის"
+
+msgid "Information"
+msgstr "ინფორმაცია"
+
+msgid "Insert Image"
+msgstr "გამოსახულების ჩამატება"
+
+msgid "Insert Link"
+msgstr "ბმულის ჩამატება"
+
+msgid "Insert image"
+msgstr "გამოსახულების ჩამატება"
+
+msgid "Insert link"
+msgstr "ბმულის ჩამატება"
+
+msgid "Insert smiley"
+msgstr "სიცილაკის ჩამატება"
+
+msgid "Insertions"
+msgstr "ჩასმა"
+
+msgid "Interface"
+msgstr "ინტერფეისი"
+
+msgid "Interface Options"
+msgstr "ინტერფეისის პარამეტრები"
+
+msgid "Internal Error"
+msgstr "შიგანის შეცდომა"
+
+msgid "Invalid AIM URI"
+msgstr "არასწორი AIM URI"
+
+msgid "Invalid response from server."
+msgstr "სერვერის არასწორი პასუხი"
+
+msgid "Invisible"
+msgstr "უხილავია"
+
+msgid "Invisible for friends only"
+msgstr "უხილავია მხოლოდ მეგობრებისათვის"
+
+msgid "Invite"
+msgstr "დაპატიჟება"
+
+msgid "Invite a user"
+msgstr "მომხმარებლის დაპატიჟება"
+
+msgid "Italian"
+msgstr "იტალიური"
+
+msgid "Italic"
+msgstr "დახრილი"
+
+msgid "Japanese"
+msgstr "იაპონური"
+
+msgid "Join A Chat..."
+msgstr "საუბარში ჩართვა"
+
+msgid "Konqueror"
+msgstr "Konqueror"
+
+msgid "Korean"
+msgstr "კორეული"
+
+msgid "Larger font size"
+msgstr "უფრო დიდი ფონტი"
+
+msgid "Last name:"
+msgstr "გვარი"
+
+msgid "Left"
+msgstr "მარცხენა "
+
+msgid "Lithuanian"
+msgstr "ლიტვური"
+
+msgid "Load"
+msgstr "ჩატვირთვა"
+
+msgid "Locality"
+msgstr "მდებარეობა"
+
+msgid "Login"
+msgstr "შესვლა"
+
+msgid "Login Options"
+msgstr "შესვლის პარამეტრები\t"
+
+msgid "Macedonian"
+msgstr "მაკედონიური"
+
+msgid "Mail Checker"
+msgstr "ელ-ფოსტის შემმოწმებელი"
+
+msgid "Mail Server"
+msgstr "ელ.ფოსტის სერვერი"
+
+msgid "Male"
+msgstr "მამრობითი"
+
+msgid "Manual"
+msgstr "ხელით."
+
+msgid "Message Text"
+msgstr "შეტყობინების ტექსტი"
+
+msgid "Message received"
+msgstr "შეტყობინება მიღებულია"
+
+msgid "Message sent"
+msgstr "შეტყობინება გაგზავნილია"
+
+msgid "Middle mouse button"
+msgstr "მაუსის შუა ღილაკი"
+
+msgid "Minutes"
+msgstr "წუთი"
+
+msgid "Mobile Phone"
+msgstr "მობილური ტელეფონი"
+
+msgid "Modify Account"
+msgstr "წევრის პარამეტრების შეცვლა"
+
+msgid "Mozilla"
+msgstr "Mozilla"
+
+msgid "Mute Sounds"
+msgstr "გაჩუმება"
+
+msgid "Name"
+msgstr "სახელი"
+
+msgid "Netscape"
+msgstr "Netscape"
+
+msgid "Network"
+msgstr "ქსელი"
+
+msgid "Never"
+msgstr "არასოდეს"
+
+msgid "New Message..."
+msgstr "ახალი შეტყობინება"
+
+msgid "New Person"
+msgstr "ახალი პერსონა"
+
+msgid "New mail notifications"
+msgstr "ახალი ელ.ფოსტის შეტყობინებები"
+
+msgid "New password"
+msgstr "ახალი პაროლი"
+
+msgid "New password (again)"
+msgstr "ახალი პაროლი(თავიდან)"
+
+msgid "New passwords do not match."
+msgstr "ახალი პაროლები არ ემთხვევა"
+
+msgid "New..."
+msgstr "ახალი..."
+
+msgid "Nick:"
+msgstr "მეტსახელი:"
+
+msgid "Nickname"
+msgstr "მეტსახელი"
+
+msgid "Nihilist"
+msgstr "ნიჰილისტი"
+
+msgid "No"
+msgstr "არა"
+
+msgid "No Proxy"
+msgstr "უპროქსიოდ"
+
+msgid "No actions available"
+msgstr "მოქმედებები მიუღებელია"
+
+msgid "No proxy"
+msgstr "უპროქსიოდ"
+
+msgid "No reason given."
+msgstr "მიზეზი მითითებული არაა"
+
+msgid "No results found for email address %s"
+msgstr "ელ.ფოსტის ძიების შედეგები %s-თვის არაა ნაპოვნი "
+
+msgid "No roomname given."
+msgstr "ოთახის სახელი არაა მითითებული."
+
+msgid "None"
+msgstr "არა"
+
+msgid "Norwegian"
+msgstr "ნორვეგიული"
+
+msgid "Not Available"
+msgstr "ხელმიუწვდომელია"
+
+msgid "Not connected to AIM"
+msgstr "არაა კავშირი AIM-თან"
+
+msgid "Not specified"
+msgstr "არაა მითითებული"
+
+msgid "Occupied"
+msgstr "დაკავებულია"
+
+msgid "Old ICQ UTF8"
+msgstr "ძველი ICQ UTF8"
+
+msgid "Online"
+msgstr "ხაზზე"
+
+msgid "Open File..."
+msgstr "ფაილის გახსნა..."
+
+msgid "Open..."
+msgstr "გახსნა..."
+
+msgid "Opera"
+msgstr "Opera"
+
+msgid "Organization Name"
+msgstr "ორგანიზაცია"
+
+msgid "Organization Unit"
+msgstr "დანაყოფი"
+
+msgid "Original password"
+msgstr "არსებული პაროლი"
+
+msgid "P_lay a sound"
+msgstr "ხმის დაკვრა"
+
+msgid "P_references"
+msgstr "პარამეტრები"
+
+msgid "Pa_ssword:"
+msgstr "პაროლი"
+
+msgid "Pa_ste As Text"
+msgstr "ტექსტის ჩასმა"
+
+msgid "Password sent"
+msgstr "პაროლი გაგზავნილია"
+
+msgid "Password:"
+msgstr "პაროლი"
+
+msgid "Past Translators"
+msgstr "წინა თარგმანები"
+
+msgid "Pause"
+msgstr "პაუზა"
+
+msgid "Permit"
+msgstr "დაშვება"
+
+msgid "Pictures"
+msgstr "სურათები"
+
+msgid "Pictures and text"
+msgstr "სურათები და ტექსტი"
+
+msgid "Plain text"
+msgstr "ტექსტი"
+
+msgid "Plaintext Authentication"
+msgstr "ტექსტური დადასტურება"
+
+msgid "Play"
+msgstr "დაკვრა"
+
+msgid "Please authorize me!"
+msgstr "გთხოვთ დამიდასტუროთ ჩამატება!"
+
+msgid "Please create an account."
+msgstr "გთხოვთ შექმნათ წევრი"
+
+msgid "Please enter the name of the group to be added."
+msgstr "ჩასამატებელი ჯგუფის სახელი"
+
+msgid "Please enter the person's information below."
+msgstr "გთხოვთ ქვემოთ შეიტანოთ ინფორმაცია პერსონის შესახებ"
+
+msgid "Please enter your current password and your new password."
+msgstr "შეიყვანეთ თქვენი არსებული და ახალი პაროლი"
+
+msgid "Plugins"
+msgstr "პლაგინები"
+
+msgid "Polish"
+msgstr "პოლონური"
+
+msgid "Ports"
+msgstr "პორტები"
+
+msgid "Portuguese"
+msgstr "პორტუგალიური"
+
+msgid "Portuguese-Brazil"
+msgstr "ბრაზილიური პორტუგალიური"
+
+msgid "Position"
+msgstr "თანამდებობა"
+
+msgid "Postal Code"
+msgstr "საფოსტო კოდი"
+
+msgid "Pre_view"
+msgstr "ჩვენება"
+
+msgid "Preferences"
+msgstr "პარამეტრები"
+
+msgid "Profile too long."
+msgstr "პროფილი ძალიან გრძელია"
+
+msgid "Protocol"
+msgstr "პროტოკოლი"
+
+msgid "Protocol:"
+msgstr "პროტოკოლი:"
+
+msgid "Provides integration with Ximian Evolution."
+msgstr "აწარმოებს ინტეგრაციას Ximian Evolution-თან."
+
+msgid "Provides remote control for gaim applications."
+msgstr "უზრუნველყოფს gaim-ის აპლიკაციების დისტანციურ კონტროლს"
+
+msgid "Proxy Options"
+msgstr "პროქსის პარამეტრები"
+
+msgid "Proxy Server"
+msgstr "პროქსი სერვერი"
+
+msgid "Proxy _type:"
+msgstr "პროქსის ტიპი"
+
+msgid "Public _IP:"
+msgstr "გარე IP"
+
+msgid "Quit"
+msgstr "გამოსვლა"
+
+msgid "Read error"
+msgstr "კითხვის შეცდომა"
+
+msgid "Reading data"
+msgstr "მონაცემების წაკითხვა"
+
+msgid "Reading server key"
+msgstr "სერვერის გასაღების კითხვა"
+
+msgid "Reason Unknown."
+msgstr "მიზეზი უცნობია"
+
+msgid "Received authorization"
+msgstr "ავტორიზაცია მიღებულია"
+
+msgid "Reconnect _All"
+msgstr "ყველას გადაკავშირება"
+
+msgid "Region"
+msgstr "რეგიონი"
+
+msgid "Register"
+msgstr "რესგისტრაცია"
+
+msgid "Registration Error"
+msgstr "რეგისტრაციის შეცდომა"
+
+msgid "Remember password"
+msgstr "პაროლის დამახსოვრება"
+
+msgid "Remote Control"
+msgstr "დისტანციური კონტროლი"
+
+msgid "Remove"
+msgstr "წაშლა"
+
+msgid "Remove Contact"
+msgstr "კონტატის წაშლა"
+
+msgid "Remove Group"
+msgstr "ჯგუფის წაშლა"
+
+msgid "Request Authorization"
+msgstr "დადასტურების მოთხოვნა"
+
+msgid "Reset"
+msgstr "განულება"
+
+msgid "Restore Away State On Reconnect"
+msgstr "აღადგინოს გასულია-ს სტატუსი გადაკავშირებისას"
+
+msgid "Right"
+msgstr "მარჯვენა"
+
+msgid "Right mouse button"
+msgstr "მაუსის მარჯვენა ღილაკი"
+
+msgid "Role"
+msgstr "როლი"
+
+msgid "Romanian"
+msgstr "რუმინული"
+
+msgid "Room List"
+msgstr "ოთახების სია"
+
+msgid "Russian"
+msgstr "რუსული"
+
+msgid "Sa_ve & Use"
+msgstr "შენახვა და გამოყენება"
+
+msgid "Save"
+msgstr "შენახვა"
+
+msgid "Save Conversation"
+msgstr "საუბრის შენახვა"
+
+msgid "Save File..."
+msgstr "ფაილის შენახვა..."
+
+msgid "Save Image"
+msgstr "სურათის შენახვა"
+
+msgid "Screen Name"
+msgstr "ეკრანული სახელი"
+
+msgid "Screen Name:"
+msgstr "ეკრანული სახელი:"
+
+msgid "Screen name sent"
+msgstr "ეკრანული სახელი გაგზავნილია"
+
+msgid "Search"
+msgstr "ძებნა"
+
+msgid "Search Results"
+msgstr "ძებნის შედეგები"
+
+msgid "Security Enabled"
+msgstr "დაცვა ჩართულია"
+
+msgid "Select Background Color"
+msgstr "ფონიდ ფერის არჩევა"
+
+msgid "Select Font"
+msgstr "ფონტის არჩევა"
+
+msgid "Select Text Color"
+msgstr "ფონტის ფერის არჩევა"
+
+msgid "Select a file"
+msgstr "ფაილის არჩევა"
+
+msgid "Send"
+msgstr "გაგზავნა"
+
+msgid "Send File"
+msgstr "ფაილის გაგზავნა"
+
+msgid "Send Message"
+msgstr "შეტყობინების გაგზავნა"
+
+msgid "Send a _message"
+msgstr "შეტყობინების გაგზავნა"
+
+msgid "Send a file to the user"
+msgstr "ფაილის გაგზავნს მომხმარებლისთვის"
+
+msgid "Send message"
+msgstr "შეტყობინების გაგზავნა"
+
+msgid "Send message through server"
+msgstr "შეტყობინების გაგზავნა სერვერის გავლით"
+
+msgid "Send unknown \"_slash\" commands as messages"
+msgstr "გავაგზავნოთ უცნობი 'დახრილი ხაზი' ბრძანებები როგორც შეტყობინებები"
+
+msgid "Sending cookie"
+msgstr "ქუკის გაგზავნა"
+
+msgid "Serbian"
+msgstr "სერბული"
+
+msgid "Server has disconnected"
+msgstr "სერვერი გაითიშა"
+
+msgid "Set User Info (URL)..."
+msgstr "მომხმარებლის ინფორმაციის შეცვლა (URL)"
+
+msgid "Set User Info..."
+msgstr "მომხმარებლის ინფორმაციის შეტანა..."
+
+msgid "Shortcuts"
+msgstr "მალმხმობები"
+
+msgid "Show fewer options"
+msgstr "ნაკლები პარამეტრის ჩვენება"
+
+msgid "Show more options"
+msgstr "მეტი პარამეტრის ჩვენება"
+
+msgid "Show transfer details"
+msgstr "გადაცემის დეტალების ჩვენება"
+
+msgid "Show user details"
+msgstr "მომხმარებლის მონაცემების ჩვენება"
+
+msgid "Si_gn on"
+msgstr "შესვლა"
+
+msgid "Sign _off"
+msgstr "გამოსვლა"
+
+msgid "Signoff"
+msgstr "გამოსვლა"
+
+msgid "Signon"
+msgstr "შესვლა"
+
+msgid "Signon: "
+msgstr "შესვლა: "
+
+msgid "Simplified Chinese"
+msgstr "გამარტივებული ჩინური"
+
+msgid "Size"
+msgstr "ზომა"
+
+msgid "Slovak"
+msgstr "სლოვაკური"
+
+msgid "Slovenian"
+msgstr "სლოვაკური"
+
+msgid "Smaller font size"
+msgstr "უფრო პატარა ფონტი"
+
+msgid "Smile!"
+msgstr "სიცილაკი"
+
+msgid "Smiley Themes"
+msgstr "სიცილაკების თემები"
+
+msgid "Sound Events"
+msgstr "ხმოვანი შემთხვევები"
+
+msgid "Sound Method"
+msgstr "ხმოვანი მეთოდი"
+
+msgid "Sound Options"
+msgstr "ხმის პარამეტრები"
+
+msgid "Sound Selection"
+msgstr "ხმის არჩევა"
+
+msgid "Sounds"
+msgstr "ხმები"
+
+msgid "Spanish"
+msgstr "ესპანური"
+
+msgid "Speed:"
+msgstr "სიჩქარე"
+
+msgid "Starting authentication"
+msgstr "დადასტურების დაწყება"
+
+msgid "Status:"
+msgstr "სტატუსი"
+
+msgid "Status: %s"
+msgstr "%s-ს სტატუსი "
+
+msgid "Street Address"
+msgstr "ქუჩის მისამართი"
+
+msgid "Summary"
+msgstr "ჯამური"
+
+msgid "Swedish"
+msgstr "შვედური"
+
+msgid "Telephone"
+msgstr "ტელეფონი"
+
+msgid "Test"
+msgstr "ტესტი"
+
+msgid "Text"
+msgstr "ტექსტი"
+
+msgid "That file already exists"
+msgstr "ფალი უკვე არსებობს"
+
+msgid "The email address for %s is %s"
+msgstr "ელ.ფოსტის მისამართი %s-თვის არის  %s"
+
+msgid "The message is too large."
+msgstr "შეტყობინება ძალიან დიდია"
+
+msgid "The required plugin %s was unable to load."
+msgstr "%s პლაკინის ჩატვირთვა შეუძლებელია"
+
+msgid "The user %s (%s%s%s%s%s) wants you to authorize them."
+msgstr "მომხმარებელი %s (%s%s%s%s%s) ითხოვს დადასტურებას თქვენგან  "
+
+msgid ""
+"This is how your outgoing message text will appear when you use protocols "
+"that support formatting. :)"
+msgstr ""
+"ეს არის სახე იმ შეტყობინებისა, რომელიც გაიგზავნება თქვენს მიერ გამოყენებული "
+"პროტოკოლით,რომელიც იყენებს ფორმატირებას. :)"
+
+msgid "Time"
+msgstr "დრო"
+
+msgid "Time Elapsed:"
+msgstr "გასული დრო"
+
+msgid "Time Remaining:"
+msgstr "დარჩენილი დრო"
+
+msgid "Timestamp"
+msgstr "დროის შტამპი"
+
+msgid "Title"
+msgstr "სათაური"
+
+msgid "Top"
+msgstr "ზემოთ"
+
+msgid "Topic"
+msgstr "თემა"
+
+msgid "Traditional Chinese"
+msgstr "ტრადიციული ჩინური"
+
+msgid "Transferring"
+msgstr "გადაგზავნა"
+
+msgid "Transparency"
+msgstr "გამჭირვალობა"
+
+msgid "Trillian Encryption"
+msgstr "Trillian შიფრი"
+
+msgid "Turkish"
+msgstr "თურქული"
+
+msgid "Ukrainian"
+msgstr "უკრაინული"
+
+msgid "Un-Ignore"
+msgstr "არა იგნორორებას"
+
+msgid "Unable To Add"
+msgstr "ჩამატება შეუძლებელია"
+
+msgid "Unable to authenticate: %s"
+msgstr "დადასტურება შეუძლებელ იქნა: %s"
+
+msgid "Unable to connect to server."
+msgstr "შეუძლებელია სერვერთან დაკავშირება"
+
+msgid "Unable to connect."
+msgstr "დაკავშირება შეუძლებელია"
+
+msgid "Unable to create new connection."
+msgstr "ახალი კავშირის დამყარება შეუძლებელია"
+
+msgid "Unable to load preferences"
+msgstr "პარამეტრების ჩატვირთვა შუძლებელია"
+
+msgid "Unable to open socket"
+msgstr "სოკეტის გახსნა შეუძლებელია"
+
+msgid "Unable to read socket"
+msgstr "ვერ ვკითხულობ სოკეტს"
+
+msgid "Unable to send message to %s:"
+msgstr "შეუძლებელია შეტყობინების გაგზავნა %s -თან"
+
+msgid "Unable to send message."
+msgstr "შეუძლებელია შეტყობინების გაგზავნა."
+
+msgid "Unable to send message. The message is too large."
+msgstr "შეუძლებელია შეტყობინების გაგზავნა მისი სიდიდის გამო."
+
+msgid "Unavailable"
+msgstr "მიუწვდომელია"
+
+msgid "Underline"
+msgstr "ხაზგასმული"
+
+msgid "Unknown"
+msgstr "უცნობი"
+
+msgid "Unknown Error Code."
+msgstr "უცნობი შეცდომა"
+
+msgid "Unknown reason."
+msgstr "უცნობი მიზეზი."
+
+msgid "Unknown."
+msgstr "უცნობი"
+
+msgid "Use Environmental Settings"
+msgstr "გარემოს ცვლადების გამოყენება"
+
+msgid "Use Global Proxy Settings"
+msgstr "გამოვიყენოთ პროქსის გლობალური პარამეტრები"
+
+msgid "User Options"
+msgstr "მომხმარებლის პარამეტრები"
+
+msgid "User is typing..."
+msgstr "მომხმარებელი კრიფას..."
+
+msgid "Users"
+msgstr "მომხმარებლები"
+
+msgid "Vietnamese"
+msgstr "ვიეტნამური"
+
+msgid "Visible"
+msgstr "გამოსაჩენი"
+
+msgid "Voice"
+msgstr "ხმა"
+
+msgid "Warn User"
+msgstr "მომხმარებლის გაფრთხილება"
+
+msgid "Warning Level"
+msgstr "შენშვნის დონე"
+
+msgid "When away"
+msgstr "როდესაც გასულია"
+
+msgid "When you are kicked offline, this reconnects you."
+msgstr "როცა გამოგაგდებენ, გადაგაკავშიროს"
+
+msgid "Window Closing"
+msgstr "ფანჯრის დახურვა"
+
+msgid "Work Address"
+msgstr "სამსახურის მისამართი"
+
+msgid "Work Information"
+msgstr "ინფორმაცია სამსახურის შესახებ"
+
+msgid "Would you like to overwrite it?"
+msgstr "გადავაწერო მას?"
+
+msgid "Yes"
+msgstr "დიახ"
+
+msgid "_Account"
+msgstr "წევრი"
+
+msgid "_Account:"
+msgstr "წევრი"
+
+msgid "_Alias"
+msgstr "სინონიმი"
+
+msgid "_Alias..."
+msgstr "სინონიმი"
+
+msgid "_Apply"
+msgstr "გამოყენება"
+
+msgid "_Auto-reply:"
+msgstr "ავტოგამოხმაურება"
+
+msgid "_Autodetect IP Address"
+msgstr "IP მისამართის თვითდადგენა"
+
+msgid "_Browser:"
+msgstr "_Browser:"
+
+msgid "_Clear Formatting"
+msgstr "ფორმატირების წაშლა"
+
+msgid "_Delete Group"
+msgstr "ჯგუფის წაშლა"
+
+msgid "_Description"
+msgstr "აღწერილობა"
+
+msgid "_Edit"
+msgstr "ჩამატება"
+
+msgid "_End Port:"
+msgstr "საბოლოო"
+
+msgid "_Exchange:"
+msgstr "გაცვლა"
+
+msgid "_Get List"
+msgstr "სიის მიღება"
+
+msgid "_Host:"
+msgstr "ჰოსტი"
+
+msgid "_IM window transparency"
+msgstr "IMის ფანჯრის გამჭირვალობა"
+
+msgid "_Insert"
+msgstr "ჩამატება"
+
+msgid "_Invite"
+msgstr "მოწვევა"
+
+msgid "_Manually specify range of ports to listen on"
+msgstr "ხელით მიეთითოს მოსასმენი პორტების შუალედი"
+
+msgid "_Method:"
+msgstr "მეთოდი:"
+
+msgid "_Modify"
+msgstr "შეცვლა"
+
+msgid "_Open Mail"
+msgstr "ელ.ფოსტის გახსნა"
+
+msgid "_Open link in:"
+msgstr "გახსნას მაჩვენებელი :"
+
+msgid "_Pause"
+msgstr "პაუზა"
+
+msgid "_Port:"
+msgstr "პორტი"
+
+msgid "_Reconnect"
+msgstr "გადაკავშირება"
+
+msgid "_Remove"
+msgstr "წაშლა"
+
+msgid "_Rename"
+msgstr "სახელის შეცვლა"
+
+msgid "_Resume"
+msgstr "გაგრძელება"
+
+msgid "_Return from away"
+msgstr "დაბრუნება"
+
+msgid "_Save"
+msgstr "შენახვა"
+
+msgid "_Save Image..."
+msgstr "სურათის შენახვა...."
+
+msgid "_Screen name"
+msgstr "ეკრანული სახელი"
+
+msgid "_Send As"
+msgstr "გაგზავნა როგორც"
+
+msgid "_Send File"
+msgstr "ფაილის გაგზავნა"
+
+msgid "_Sign on"
+msgstr "შესვლა"
+
+msgid "_Sorting:"
+msgstr "დალაგება"
+
+msgid "_Sounds while away"
+msgstr "ხმები როცა გასულია"
+
+msgid "_Start Port:"
+msgstr "საწყისი პორტი"
+
+msgid "_Use"
+msgstr "გამოყენება"
+
+msgid "_User:"
+msgstr "მომხმარებელი"
+
+msgid "_Username:"
+msgstr "მომხმარებელი"
+
+msgid "_Warn"
+msgstr "გაფრთხილება"
+
+msgid "day"
+msgid_plural "days"
+msgstr[0] "დღე"
+msgstr[1] "დღე"
+
+msgid "g003: Error opening connection.\n"
+msgstr "კავშირის შეცდომა.\n"
+
+msgid "hour"
+msgid_plural "hours"
+msgstr[0] "საათი"
+msgstr[1] "საათი"
+
+msgid "iChat Timestamp"
+msgstr "iChatის დროის შტამპი "
+
+msgid "minute"
+msgid_plural "minutes"
+msgstr[0] "წუთი"
+msgstr[1] "წუთი"
+
+msgid "minutes."
+msgstr "წუთი."
+
+msgid "original author"
+msgstr "თავდაპირველი ავტორი"
+
+msgid "second"
+msgid_plural "seconds"
+msgstr[0] "წამი"
+msgstr[1] "წამი"
