@@ -152,11 +152,11 @@ enum side {
   SOUTH_SIDE
 };
 
-const double shadow_strip_l[5] = {
+static const double shadow_strip_l[5] = {
   .937, .831, .670, .478, .180
 };
 
-const double bottom_left_corner[25] = {
+static const double bottom_left_corner[25] = {
   1.00, .682, .423, .333, .258,
   1.00, .898, .800, .682, .584,
   1.00, .937, .874, .800, .737,
@@ -164,7 +164,7 @@ const double bottom_left_corner[25] = {
   1.00, .988, .976, .960, .945
 };
 
-const double bottom_right_corner[25] = {
+static const double bottom_right_corner[25] = {
   .258, .584, .737, .866, .945,
   .584, .682, .800, .898, .960,
   .737, .800, .874, .937, .976,
@@ -172,7 +172,7 @@ const double bottom_right_corner[25] = {
   .945, .960, .976, .988, .996
 };
 
-const double top_right_corner[25] = {
+static const double top_right_corner[25] = {
   1.00, 1.00, 1.00, 1.00, 1.00,
   .686, .898, .937, .968, .988,
   .423, .803, .874, .937, .976,
@@ -180,7 +180,7 @@ const double top_right_corner[25] = {
   .258, .584, .737, .866, .945
 };
 
-const double top_left_corner[25] = {
+static const double top_left_corner[25] = {
   .988, .968, .937, .898, .498,
   .976, .937, .874, .803, .423,
   .960, .898, .800, .686, .333,

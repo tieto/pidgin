@@ -79,7 +79,8 @@ struct last_auto_response {
 	time_t sent;
 };
 
-gboolean expire_last_auto_responses(gpointer data)
+static gboolean
+expire_last_auto_responses(gpointer data)
 {
 	GSList *tmp, *cur;
 	struct last_auto_response *lar;
@@ -100,7 +101,8 @@ gboolean expire_last_auto_responses(gpointer data)
 	return FALSE; /* do not run again */
 }
 
-struct last_auto_response *get_last_auto_response(GaimConnection *gc, const char *name)
+static struct last_auto_response *
+get_last_auto_response(GaimConnection *gc, const char *name)
 {
 	GSList *tmp;
 	struct last_auto_response *lar;
@@ -127,25 +129,6 @@ struct last_auto_response *get_last_auto_response(GaimConnection *gc, const char
 	last_auto_responses = g_slist_append(last_auto_responses, lar);
 
 	return lar;
-}
-
-void flush_last_auto_responses(GaimConnection *gc)
-{
-	GSList *tmp, *cur;
-	struct last_auto_response *lar;
-
-	tmp = last_auto_responses;
-
-	while (tmp) {
-		cur = tmp;
-		tmp = tmp->next;
-		lar = (struct last_auto_response *)cur->data;
-
-		if (lar->gc == gc) {
-			last_auto_responses = g_slist_remove(last_auto_responses, lar);
-			g_free(lar);
-		}
-	}
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,

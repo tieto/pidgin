@@ -91,7 +91,7 @@ struct disconnect_window {
 	GtkWidget *reconnect_btn;
 	GtkWidget *reconnectall_btn;
 };
-struct disconnect_window *disconnect_window = NULL;
+static struct disconnect_window *disconnect_window = NULL;
 
 static void disconnect_connection_change_cb(GaimConnection *gc, void *data);
 
@@ -485,40 +485,4 @@ GaimConnectionUiOps *
 gaim_gtk_connections_get_ui_ops(void)
 {
 	return &conn_ui_ops;
-}
-
-/*
- * This function needs to be moved out of here once away messages are
- * core/UI split.
- */
-void away_on_login(const char *mesg)
-{
-#if 0 /* XXX CORE/UI */
-	GSList *awy = away_messages;
-	struct away_message *a, *message = NULL;
-	GaimGtkBuddyList *gtkblist;
-
-	gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-
-	if (!gtkblist->window) {
-		return;
-	}
-
-	if (mesg == NULL)
-		mesg = gaim_prefs_get_string("/core/away/default_message");
-	while (awy) {
-		a = (struct away_message *)awy->data;
-		if (strcmp(a->name, mesg) == 0) {
-			message = a;
-			break;
-		}
-		awy = awy->next;
-	}
-	if (message == NULL) {
-		if(!away_messages)
-			return;
-		message = away_messages->data;
-	}
-	do_away_message(NULL, message);
-#endif
 }

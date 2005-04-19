@@ -104,7 +104,7 @@ gaim_pref *find_pref(const char *name)
  * This function recursively creates the xmlnode tree from the prefs
  * tree structure.  Yay recursion!
  */
-void
+static void
 pref_to_xmlnode(xmlnode *parent, struct gaim_pref *pref)
 {
 	xmlnode *node, *childnode;

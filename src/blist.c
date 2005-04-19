@@ -142,7 +142,7 @@ chat_component_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 	xmlnode_insert_data(child, data, -1);
 }
 
-xmlnode *
+static xmlnode *
 buddy_to_xmlnode(GaimBlistNode *bnode)
 {
 	xmlnode *node, *child;
@@ -169,7 +169,7 @@ buddy_to_xmlnode(GaimBlistNode *bnode)
 	return node;
 }
 
-xmlnode *
+static xmlnode *
 contact_to_xmlnode(GaimBlistNode *cnode)
 {
 	xmlnode *node, *child;
@@ -203,7 +203,7 @@ contact_to_xmlnode(GaimBlistNode *cnode)
 	return node;
 }
 
-xmlnode *
+static xmlnode *
 chat_to_xmlnode(GaimBlistNode *cnode)
 {
 	xmlnode *node, *child;
@@ -230,7 +230,7 @@ chat_to_xmlnode(GaimBlistNode *cnode)
 	return node;
 }
 
-xmlnode *
+static xmlnode *
 group_to_xmlnode(GaimBlistNode *gnode)
 {
 	xmlnode *node, *child;
@@ -265,7 +265,7 @@ group_to_xmlnode(GaimBlistNode *gnode)
 	return node;
 }
 
-xmlnode *
+static xmlnode *
 accountprivacy_to_xmlnode(GaimAccount *account)
 {
 	xmlnode *node, *child;
@@ -293,7 +293,7 @@ accountprivacy_to_xmlnode(GaimAccount *account)
 	return node;
 }
 
-xmlnode *
+static xmlnode *
 blist_to_xmlnode()
 {
 	xmlnode *node, *child, *grandchild;

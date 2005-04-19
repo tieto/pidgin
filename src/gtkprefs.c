@@ -660,7 +660,9 @@ gint gaim_sort_smileys (GtkTreeModel	*model,
 	return ret;
 }
 
-GtkWidget *theme_page() {
+static GtkWidget *
+theme_page()
+{
 	GtkWidget *ret;
 	GtkWidget *sw;
 	GtkWidget *view;
@@ -804,7 +806,9 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *bah)
 	}
 }
 
-GtkWidget *messages_page() {
+static GtkWidget *
+messages_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox, *fontvbox;
 	GtkWidget *imhtml;
@@ -871,7 +875,9 @@ GtkWidget *messages_page() {
 	return ret;
 }
 
-GtkWidget *list_page() {
+static GtkWidget *
+list_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GList *l= NULL;
@@ -915,7 +921,9 @@ conversation_usetabs_cb(const char *name, GaimPrefType type, gpointer value,
 		gtk_widget_set_sensitive(GTK_WIDGET(data), FALSE);
 }
 
-GtkWidget *conv_page() {
+static GtkWidget *
+conv_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox, *vbox2;
 	GtkWidget *label;
@@ -1010,7 +1018,9 @@ static void proxy_print_option(GtkEntry *entry, int entrynum)
 		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
 }
 
-GtkWidget *network_page() {
+static GtkWidget *
+network_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
@@ -1252,7 +1262,9 @@ browser_changed2_cb(const char *name, GaimPrefType type, gpointer value,
 	gtk_widget_set_sensitive(hbox, !strcmp(browser, "custom"));
 }
 
-GtkWidget *browser_page() {
+static GtkWidget *
+browser_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
@@ -1321,7 +1333,9 @@ GtkWidget *browser_page() {
 }
 #endif /*_WIN32*/
 
-GtkWidget *logging_page() {
+static GtkWidget *
+logging_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GList *names;
@@ -1526,7 +1540,9 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	g_value_unset (&val);
 }
 
-GtkWidget *sound_page() {
+static GtkWidget *
+sound_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox, *sw, *button;
 	GtkSizeGroup *sg;
@@ -1738,7 +1754,9 @@ set_default_away(GtkWidget *w, gpointer data)
 }
 #endif
 
-GtkWidget *away_page() {
+static GtkWidget *
+away_page()
+{
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *hbox;

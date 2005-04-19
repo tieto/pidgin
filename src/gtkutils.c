@@ -59,7 +59,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkutils.h"
 
-guint accels_save_timer = 0;
+static guint accels_save_timer = 0;
 
 static gboolean
 url_clicked_idle_cb(gpointer data)
@@ -1361,21 +1361,21 @@ typedef struct {
 	char *who;
 } _DndData;
 
-void dnd_set_icon_ok_cb(_DndData *data)
+static void dnd_set_icon_ok_cb(_DndData *data)
 {
 	free(data->filename);
 	free(data->who);
 	free(data);
 }
 
-void dnd_set_icon_cancel_cb(_DndData *data)
+static void dnd_set_icon_cancel_cb(_DndData *data)
 {
 	free(data->filename);
 	free(data->who);
 	free (data);
 }
 
-void dnd_image_ok_callback(_DndData *data, int choice)
+static void dnd_image_ok_callback(_DndData *data, int choice)
 {
 	char *filedata;
 	size_t size;
@@ -1440,7 +1440,7 @@ void dnd_image_ok_callback(_DndData *data, int choice)
 	free(data);
 }
 
-void dnd_image_cancel_callback(_DndData *data, int choice)
+static void dnd_image_cancel_callback(_DndData *data, int choice)
 {
 	free(data->filename);
 	free(data->who);
