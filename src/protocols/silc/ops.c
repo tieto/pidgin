@@ -1246,6 +1246,14 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			(void)va_arg(vp, SilcChannelEntry);
 			name = va_arg(vp, char *);
+			if (!name) {
+				gaim_notify_error(gc, _("Roomlist"), _("Cannot get room list"),
+						  silc_get_status_message(status));
+				gaim_roomlist_set_in_progress(sg->roomlist, FALSE);
+				gaim_roomlist_unref(sg->roomlist);
+				sg->roomlist = NULL;
+				return;
+			}
 			topic = va_arg(vp, char *);
 			usercount = va_arg(vp, int);
 
