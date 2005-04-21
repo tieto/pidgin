@@ -25,10 +25,6 @@ void
 gaim_conversation_autoset_title(conv)
 	Gaim::Conversation conv
 
-int
-gaim_conversation_get_index(conv)
-	Gaim::Conversation conv
-
 const char *
 gaim_conversation_get_name(conv)
 	Gaim::Conversation conv

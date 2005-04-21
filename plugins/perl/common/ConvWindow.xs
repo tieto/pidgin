@@ -35,29 +35,18 @@ gaim_conv_window_add_conversation(win, conv)
 	Gaim::Conversation conv
 
 Gaim::Conversation
-gaim_conv_window_remove_conversation(win, index)
+gaim_conv_window_remove_conversation(win, conv)
 	Gaim::ConvWindow win
-	unsigned int index
-
-void
-gaim_conv_window_move_conversation(win, index, new_index)
-	Gaim::ConvWindow win
-	unsigned int index
-	unsigned int new_index
-
-Gaim::Conversation
-gaim_conv_window_get_conversation_at(win, index)
-	Gaim::ConvWindow win
-	unsigned int index
+	Gaim::Conversation conv
 
 size_t
 gaim_conv_window_get_conversation_count(win)
 	Gaim::ConvWindow win
 
 void
-gaim_conv_window_switch_conversation(win, index)
+gaim_conv_window_switch_conversation(win, conv)
 	Gaim::ConvWindow win
-	unsigned int index
+	Gaim::Conversation conv
 
 Gaim::Conversation
 gaim_conv_window_get_active_conversation(win)
