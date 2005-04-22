@@ -647,10 +647,12 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			color = tag->name + 11;
 
 			if (!gdk_color_parse(color, &gcolor)) {
-				gchar *tmp = g_strdup_printf("#%s", color);
+				gchar tmp[8];
+				tmp[0] = '#';
+				strncpy(&tmp[1], color, 7);
+				tmp[7] = '\0';
 				if (!gdk_color_parse(tmp, &gcolor))
 					gdk_color_parse("white", &gcolor);
-				g_free(tmp);
 			}
 			gdk_gc_set_rgb_fg_color(gc, &gcolor);
 
@@ -3348,8 +3350,18 @@ static GtkTextTag *find_font_forecolor_tag(GtkIMHtml *imhtml, gchar *color)
 	g_snprintf(str, sizeof(str), "FORECOLOR %s", color);
 
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), str);
-	if (!tag)
-		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground", color, NULL);
+	if (!tag) {
+		GdkColor gcolor;
+		if (!gdk_color_parse(color, &gcolor)) {
+			gchar tmp[8];
+			tmp[0] = '#';
+			strncpy(&tmp[1], color, 7);
+			tmp[7] = '\0';
+			if (!gdk_color_parse(tmp, &gcolor))
+				gdk_color_parse("black", &gcolor);
+		}
+		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "foreground-gdk", &gcolor, NULL);
+	}
 
 	return tag;
 }
@@ -3362,8 +3374,18 @@ static GtkTextTag *find_font_backcolor_tag(GtkIMHtml *imhtml, gchar *color)
 	g_snprintf(str, sizeof(str), "BACKCOLOR %s", color);
 
 	tag = gtk_text_tag_table_lookup(gtk_text_buffer_get_tag_table(imhtml->text_buffer), str);
-	if (!tag)
-		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "background", color, NULL);
+	if (!tag) {
+		GdkColor gcolor;
+		if (!gdk_color_parse(color, &gcolor)) {
+			gchar tmp[8];
+			tmp[0] = '#';
+			strncpy(&tmp[1], color, 7);
+			tmp[7] = '\0';
+			if (!gdk_color_parse(tmp, &gcolor))
+				gdk_color_parse("white", &gcolor);
+		}
+		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "background-gdk", &gcolor, NULL);
+	}
 
 	return tag;
 }
