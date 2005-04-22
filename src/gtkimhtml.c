@@ -646,7 +646,12 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			
 			color = tag->name + 11;
 
-			gdk_color_parse(color, &gcolor);
+			if (!gdk_color_parse(color, &gcolor)) {
+				gchar *tmp = g_strdup_printf("#%s", color);
+				if (!gdk_color_parse(tmp, &gcolor))
+					gdk_color_parse("white", &gcolor);
+				g_free(tmp);
+			}
 			gdk_gc_set_rgb_fg_color(gc, &gcolor);
 
 	
