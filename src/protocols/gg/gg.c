@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12471 2005-04-11 15:26:51Z lschiere $
+ * $Id: gg.c 12546 2005-04-24 20:49:55Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -180,15 +180,32 @@ static void agg_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	struct agg_data *gd;
+	gboolean connected;
+	GaimStatusType *type;
+	int primitive;
 	int status_num;
 	const char *status_id;
 	char *msg = NULL;
 
-	gc = gaim_account_get_connection(account);
+	connected = gaim_account_is_connected(account);
+	type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(type);
 
-	if (gc == NULL)
+	if (!gaim_status_is_active(status))
 		return;
 
+	if (!connected) {
+		if (primitive != GAIM_STATUS_OFFLINE)
+			gaim_account_connect(account);
+		return;
+	}
+
+	if (primitive == GAIM_STATUS_OFFLINE) {
+		gaim_account_disconnect(account);
+		return;
+	}
+
+	gc = gaim_account_get_connection(account);
 	gd = (struct agg_data *)gc->proto_data;
 	status_num = gd->own_status;
 	status_id = gaim_status_get_id(status);
