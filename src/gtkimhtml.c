@@ -1656,23 +1656,39 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 			break;
 
 		if(*x == '&' && gtk_imhtml_is_amp_escape(x, &amp, &alen)) {
-		    len += alen - strlen(amp);
-		    x += alen - strlen(amp);
-		    pos = strchr (t->values->str, *amp);
+			gboolean matched = TRUE;
+			/* Make sure all chars of the unescaped value match */
+			while (*(amp + 1)) {
+				pos = strchr (t->values->str, *amp);
+				if (pos)
+					t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
+				else {
+					matched = FALSE;
+					break;
+				}
+				amp++;
+			}
+			if (!matched)
+				break;
+
+			pos = strchr (t->values->str, *amp);
 		}
 		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' 
 				     * char should only appear as the start of a tag.  Perhaps a safer (but costlier)
 				     * check would be to call gtk_imhtml_is_tag on it */
 			break;
-		else
-		    pos = strchr (t->values->str, *x);
+		else {
+			alen = 1;
+			pos = strchr (t->values->str, *x);
+		}
 
 		if (pos)
 			t = t->children [GPOINTER_TO_INT(pos) - GPOINTER_TO_INT(t->values->str)];
 		else
 			break;
 
-		x++; len++;
+		x += alen;
+		len += alen;
 	}
 
 	if (t->image)
