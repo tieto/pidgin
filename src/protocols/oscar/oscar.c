@@ -3010,11 +3010,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	if (caps & AIM_CAPS_ICQ_DIRECT)
 		caps ^= AIM_CAPS_ICQ_DIRECT;
 
-	if (info->present & AIM_USERINFO_PRESENT_IDLE) {
-		time(&time_idle);
-		time_idle -= info->idletime*60;
-		/* time_idle should be the seconds since epoch at which the user became idle */
-	}
+	/* info->idletime is the number of minutes that this user has been idle */
+	if (info->present & AIM_USERINFO_PRESENT_IDLE)
+		time_idle = time(NULL) - info->idletime * 60;
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		signon = info->onlinesince;

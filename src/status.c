@@ -130,15 +130,15 @@ static int primitive_scores[] =
 	-75,    /* unavailable              */
 	-50,    /* hidden                   */
 	-100,   /* away                     */
-	-200    /* extended away            */
+	-200,   /* extended away            */
 	-10,    /* idle, special case.      */
 	-5      /* idle time, special case. */
 };
 
 static GHashTable *buddy_presences = NULL;
 
-#define SCORE_IDLE      5
-#define SCORE_IDLE_TIME 6
+#define SCORE_IDLE      8
+#define SCORE_IDLE_TIME 9
 
 /**************************************************************************
  * GaimStatusPrimitive API
@@ -1565,7 +1565,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 		const GaimPresence *presence2)
 {
 	gboolean idle1, idle2;
-	size_t idle_time_1, idle_time_2;
+	time_t idle_time_1, idle_time_2;
 	int score1 = 0, score2 = 0;
 	const GList *l;
 
@@ -1605,8 +1605,8 @@ gaim_presence_compare(const GaimPresence *presence1,
 	if (idle2)
 		score2 += primitive_scores[SCORE_IDLE];
 
-	idle_time_1 = gaim_presence_get_idle_time(presence1);
-	idle_time_2 = gaim_presence_get_idle_time(presence2);
+	idle_time_1 = time(NULL) - gaim_presence_get_idle_time(presence1);
+	idle_time_2 = time(NULL) - gaim_presence_get_idle_time(presence2);
 
 	if (idle_time_1 > idle_time_2)
 		score1 += primitive_scores[SCORE_IDLE_TIME];

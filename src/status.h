@@ -794,7 +794,9 @@ void gaim_presence_switch_status(GaimPresence *presence,
  *
  * @param presence  The presence.
  * @param idle      The idle state.
- * @param idle_time The idle time, if @a idle is TRUE.
+ * @param idle_time The idle time, if @a idle is TRUE.  This
+ *                  is the time at which the user became idle,
+ *                  in seconds since the epoch.
  */
 void gaim_presence_set_idle(GaimPresence *presence, gboolean idle,
 							time_t idle_time);
@@ -980,9 +982,9 @@ time_t gaim_presence_get_login_time(const GaimPresence *presence);
  * @param presence1 The first presence.
  * @param presence2 The second presence.
  *
- * @return -1 if @a presence1 is less available than @a presence2.
+ * @return -1 if @a presence1 is more available than @a presence2.
  *          0 if @a presence1 is equal to @a presence2.
- *          1 if @a presence2 is more available than @a presence1.
+ *          1 if @a presence1 is less available than @a presence2.
  */
 gint gaim_presence_compare(const GaimPresence *presence1,
 						   const GaimPresence *presence2);

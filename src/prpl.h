@@ -368,7 +368,9 @@ void gaim_prpl_got_account_warning_level(GaimAccount *account,
  * @param account   The account the user is on.
  * @param name      The screen name of the user.
  * @param idle      The user's idle state.
- * @param idle_time The user's idle time.
+ * @param idle_time The user's idle time.  This is the time at
+ *                  which the user became idle, in seconds since
+ *                  the epoch.
  */
 void gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 							 gboolean idle, time_t idle_time);

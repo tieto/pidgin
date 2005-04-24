@@ -5104,7 +5104,7 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist,
 			gaim_buddy_get_presence(this_buddy));
 
 		if (this_buddy == NULL ||
-			(presence_cmp > 0 ||
+			(presence_cmp < 0 ||
 			 (presence_cmp == 0 &&
 			  (name_cmp < 0 || (name_cmp == 0 && node < n)))))
 		{
