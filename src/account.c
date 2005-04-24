@@ -1086,6 +1086,8 @@ gaim_account_set_enabled(GaimAccount *account, const char *ui,
 	g_return_if_fail(ui      != NULL);
 
 	gaim_account_set_ui_bool(account, ui, "auto-login", value);
+	if (gaim_presence_is_online(account->presence))
+		gaim_account_connect(account);
 }
 
 void
@@ -1154,11 +1156,14 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 		return;
 	}
 
-	/* Our current statuses are saved to accounts.xml */
-	schedule_accounts_save();
-
 	if (active || gaim_status_is_independent(status))
 		gaim_status_set_active_with_attrs(status, active, args);
+
+	/*
+	 * Our current statuses are saved to accounts.xml (so that when we
+	 * reconnect, we go back to the previous status).
+	 */
+	schedule_accounts_save();
 }
 
 void
