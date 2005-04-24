@@ -57,53 +57,53 @@ static void gtk_gaim_status_box_init (GtkGaimStatusBox *status_box);
 GType
 gtk_gaim_status_box_get_type (void)
 {
-  static GType status_box_type = 0;
+	static GType status_box_type = 0;
 
-  if (!status_box_type)
-    {
-      static const GTypeInfo status_box_info =
-        {
-          sizeof (GtkGaimStatusBoxClass),
-          NULL, /* base_init */
-          NULL, /* base_finalize */
-          (GClassInitFunc) gtk_gaim_status_box_class_init,
-          NULL, /* class_finalize */
-          NULL, /* class_data */
-          sizeof (GtkGaimStatusBox),
-          0,
-          (GInstanceInitFunc) gtk_gaim_status_box_init
-        };
+	if (!status_box_type)
+	{
+		static const GTypeInfo status_box_info =
+		{
+			sizeof (GtkGaimStatusBoxClass),
+			NULL, /* base_init */
+			NULL, /* base_finalize */
+			(GClassInitFunc) gtk_gaim_status_box_class_init,
+			NULL, /* class_finalize */
+			NULL, /* class_data */
+			sizeof (GtkGaimStatusBox),
+			0,
+			(GInstanceInitFunc) gtk_gaim_status_box_init
+		};
 
-      status_box_type = g_type_register_static (GTK_TYPE_COMBO_BOX,
-                                               "GtkGaimStatusBox",
-                                               &status_box_info,
-                                               0);
-   }
+		status_box_type = g_type_register_static(GTK_TYPE_COMBO_BOX,
+												 "GtkGaimStatusBox",
+												 &status_box_info,
+												 0);
+	}
 
-  return status_box_type;
+	return status_box_type;
 }
 
 static void
 gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 {
-  GObjectClass *object_class;
-  GtkWidgetClass *widget_class;
-  GtkComboBoxClass *parent_class = (GtkComboBoxClass*)klass;
-  GtkContainerClass *container_class = (GtkContainerClass*)klass;
- 
-  parent_class->changed = gtk_gaim_status_box_changed;
-  widget_class = (GtkWidgetClass*)klass;
-  combo_box_size_request = widget_class->size_request;
-  widget_class->size_request = gtk_gaim_status_box_size_request;
-  combo_box_size_allocate = widget_class->size_allocate;
-  widget_class->size_allocate = gtk_gaim_status_box_size_allocate;
-  combo_box_expose_event = widget_class->expose_event;
-  widget_class->expose_event = gtk_gaim_status_box_expose_event;
+	GObjectClass *object_class;
+	GtkWidgetClass *widget_class;
+	GtkComboBoxClass *parent_class = (GtkComboBoxClass*)klass;
+	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
-  combo_box_forall = container_class->forall;
-  container_class->forall = gtk_gaim_status_box_forall;
+	parent_class->changed = gtk_gaim_status_box_changed;
+	widget_class = (GtkWidgetClass*)klass;
+	combo_box_size_request = widget_class->size_request;
+	widget_class->size_request = gtk_gaim_status_box_size_request;
+	combo_box_size_allocate = widget_class->size_allocate;
+	widget_class->size_allocate = gtk_gaim_status_box_size_allocate;
+	combo_box_expose_event = widget_class->expose_event;
+	widget_class->expose_event = gtk_gaim_status_box_expose_event;
 
-  object_class = (GObjectClass *)klass;
+	combo_box_forall = container_class->forall;
+	container_class->forall = gtk_gaim_status_box_forall;
+
+	object_class = (GObjectClass *)klass;
 }
 
 static void
@@ -126,25 +126,21 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 
 	if (status_box->error) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>", 
-				       title, status_box->error);
+							   title, status_box->error);
 	} else if (status_box->typing) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-					       title, 
-					       aa_color,
-					       _("Typing"));
+		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
+							   title, aa_color, _("Typing"));
 	} else if (status_box->connecting) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-				       title, 
-				       aa_color,
-				       _("Connecting"));
-       	} else if (status_box->desc) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>", 
-				       title, aa_color, status_box->desc);
+		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
+							   title, aa_color, _("Connecting"));
+	} else if (status_box->desc) {
+		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
+							   title, aa_color, status_box->desc);
 	} else {
 		text = g_strdup_printf("%s", title);
 	}
-		
-	if (status_box->error) 
+
+	if (status_box->error)
 		pixbuf = status_box->error_pixbuf;
 	else if (status_box->typing)
 		pixbuf = status_box->typing_pixbufs[status_box->typing_index];
@@ -155,9 +151,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 
 	gtk_list_store_set(status_box->store, &(status_box->iter),
 			   ICON_COLUMN, pixbuf,
-			   TEXT_COLUMN, text, 
+			   TEXT_COLUMN, text,
 			   TITLE_COLUMN, title,
-			   DESC_COLUMN, status_box->desc, 
+			   DESC_COLUMN, status_box->desc,
 			   TYPE_COLUMN, NULL, -1);
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
@@ -179,13 +175,13 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
 							   icon_size, "GtkGaimStatusBox");
 	status_box->connecting_index = 0;
-	status_box->connecting_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT0,
+	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT0,
 								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT1,
+	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT1,
 								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT2,
+	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT2,
 								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT3,
+	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT3,
 								     icon_size, "GtkGaimStatusBox");
 
 	status_box->typing_index = 0;
@@ -200,10 +196,10 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->connecting = FALSE;
 	status_box->typing = FALSE;
 	status_box->title = NULL;
-	status_box->pixbuf = NULL;	
+	status_box->pixbuf = NULL;
 	status_box->cell_view = gtk_cell_view_new();
 	gtk_widget_show (status_box->cell_view);
-	
+
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
@@ -213,12 +209,12 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), gtk_tree_path_new_from_string("0"));
 	gtk_container_add(GTK_CONTAINER(status_box), status_box->cell_view);
-	
+
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
 
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), icon_rend, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), text_rend, TRUE); 
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box), text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), text_rend, "markup", TEXT_COLUMN, NULL);
 
@@ -257,34 +253,35 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 
 static void
-gtk_gaim_status_box_size_request (GtkWidget      *widget,
-                            GtkRequisition *requisition)
+gtk_gaim_status_box_size_request(GtkWidget *widget,
+								 GtkRequisition *requisition)
 {
 	GtkRequisition box_req;
 	combo_box_size_request(widget, requisition);
-	
+
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
 		requisition->height = requisition->height + box_req.height + 6;
-	
+
 	requisition->width = 1;
 
 }
 
 static void
-gtk_gaim_status_box_size_allocate (GtkWidget *widget,
-			       GtkAllocation *allocation)
+gtk_gaim_status_box_size_allocate(GtkWidget *widget,
+								  GtkAllocation *allocation)
 {
 	GtkRequisition req = {0,0};
 	GtkAllocation parent_alc = *allocation, box_alc = *allocation ;
 	combo_box_size_request(widget, &req);
-		
+
 	/* EVIL XXX */
-	box_alc.height =  80;//MAX(1,box_alc.height - req.height - 6);
-	
+	box_alc.height = 80;
+	/* box_alc.height = MAX(1,box_alc.height - req.height - 6); */
+
 	box_alc.y = box_alc.y + req.height + 6;
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
-	
+
 	parent_alc.height = MAX(1,req.height);
 	combo_box_size_allocate(widget, &parent_alc);
 	widget->allocation = *allocation;
@@ -292,32 +289,31 @@ gtk_gaim_status_box_size_allocate (GtkWidget *widget,
 
 
 static gboolean
-gtk_gaim_status_box_expose_event (GtkWidget      *widget,
-			      GdkEventExpose *event)
+gtk_gaim_status_box_expose_event(GtkWidget *widget,
+								 GdkEventExpose *event)
 {
+	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
+	combo_box_expose_event(widget, event);
 
-  GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX (widget);
-  combo_box_expose_event(widget, event);
-
-	  gtk_container_propagate_expose (GTK_CONTAINER (widget),
-					  status_box->vbox, event);
-  return FALSE;
+	gtk_container_propagate_expose(GTK_CONTAINER(widget),
+								   status_box->vbox, event);
+	return FALSE;
 }
 
 static void
-gtk_gaim_status_box_forall (GtkContainer *container,
-                      gboolean      include_internals,
-                      GtkCallback   callback,
-                      gpointer      callback_data)
+gtk_gaim_status_box_forall(GtkContainer *container,
+						   gboolean include_internals,
+						   GtkCallback callback,
+						   gpointer callback_data)
 {
-  GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX (container);
+	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX (container);
 
-  if (include_internals)
-    {
-	    (* callback) (status_box->vbox, callback_data);
-    }
+	if (include_internals)
+	{
+		(* callback) (status_box->vbox, callback_data);
+	}
 
-  combo_box_forall(container, include_internals, callback, callback_data);
+	combo_box_forall(container, include_internals, callback, callback_data);
 }
 
 GtkWidget *
@@ -332,25 +328,25 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const c
 {
 	GtkTreeIter iter;
 	char *t;
-	
+
 	if (sec_text) {
 		char aa_color[8];
 		GtkStyle *style = gtk_widget_get_style(GTK_WIDGET(status_box));
 		snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
 			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
-			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);	
+			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
 		t = g_strdup_printf("%s\n<span color=\"%s\">%s</span>", text, aa_color, sec_text);
 	} else {
 		t = g_strdup(text);
 	}
-	
+
 	gtk_list_store_append(status_box->dropdown_store, &iter);
 	gtk_list_store_set(status_box->dropdown_store, &iter,
 			   ICON_COLUMN, pixbuf,
-			   TEXT_COLUMN, t, 
+			   TEXT_COLUMN, t,
 			   TITLE_COLUMN, text,
-			   DESC_COLUMN, sec_text, 
+			   DESC_COLUMN, sec_text,
 			   TYPE_COLUMN, edit, -1);
 }
 
@@ -377,7 +373,7 @@ gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box)
 		return;
 	if (status_box->connecting_index == 3)
 		status_box->connecting_index = 0;
-	else 
+	else
 		status_box->connecting_index++;
 	gtk_gaim_status_box_refresh(status_box);
 }
@@ -387,7 +383,7 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 {
 	if (status_box->typing_index == 3)
 		status_box->typing_index = 0;
-	else 
+	else
 		status_box->typing_index++;
 	gtk_gaim_status_box_refresh(status_box);
 }
@@ -403,7 +399,7 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		GaimAccount *account = (GaimAccount*)l->data;
 		GaimStatusType *status_type;
-		
+
 		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 			continue;
 
@@ -411,7 +407,7 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 
 		if (status_type == NULL)
 			continue;
-		gaim_account_set_status(account, status_type_id, TRUE, 
+		gaim_account_set_status(account, status_type_id, TRUE,
 					"message",gtk_imhtml_get_markup(GTK_IMHTML(box->imhtml)), NULL);
 	}
 	g_source_remove(box->typing);
@@ -434,18 +430,18 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter, TITLE_COLUMN, &text,
-			   DESC_COLUMN, &sec_text, ICON_COLUMN, &pixbuf, 
+			   DESC_COLUMN, &sec_text, ICON_COLUMN, &pixbuf,
 			   TYPE_COLUMN, &status_type_id, -1);
 	if (status_box->title)
 		g_free(status_box->title);
 	status_box->title = g_strdup(text);
 	if (status_box->desc && sec_text)
- 	  g_free(status_box->desc);
+ 		g_free(status_box->desc);
 	status_box->desc = g_strdup(sec_text);
 	if (status_box->pixbuf)
 		g_object_unref(status_box->pixbuf);
 	status_box->pixbuf = pixbuf;
-	
+
 	if (!strcmp(status_type_id, "away")) {
 		gtk_widget_show_all(status_box->vbox);
 		status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
@@ -480,7 +476,7 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 	if (box->typing) {
 		gtk_gaim_status_box_pulse_typing(box);
 		g_source_remove(box->typing);
-	} 
+	}
 	box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
 	gtk_gaim_status_box_refresh(box);
 }
@@ -490,7 +486,7 @@ const char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
 	GtkTreeIter iter;
 	char *type;
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter, 
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type, -1);
 	return type;
 }
