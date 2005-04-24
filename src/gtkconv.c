@@ -1733,20 +1733,18 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		} /* End of switch */
 	}
 
-#if 0
 	/* If ALT (or whatever) was held down... */
 	else if (event->state & GDK_MOD1_MASK)
 	{
-		/* XXX - Make sure the conv exists before switching to it */
-		if (event->keyval > '0' && event->keyval <= '9') {
+		if (event->keyval > '0' && event->keyval <= '9')
+		{
 			int switchto = event->keyval - '1';
-			if (switchto < numconvs)
-				gaim_conv_window_switch_conversation(win, switchto);
+			if (switchto < gaim_conv_window_get_conversation_count(win))
+				gtk_notebook_set_current_page(GTK_NOTEBOOK(gtkwin->notebook), switchto);
 
 			return TRUE;
 		}
 	}
-#endif
 
 	/* If neither CTRL nor ALT were held down... */
 	else
