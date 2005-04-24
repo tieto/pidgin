@@ -1779,7 +1779,7 @@ away_page()
 		GAIM_PREF_STRING, "/core/away/auto_reply",
 		_("Never"), "never",
 		_("When away"), "away",
-		_("if (away && idle)"), "awayidle",
+		_("When both away and idle"), "awayidle",
 		NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
