@@ -463,7 +463,7 @@ static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	g_value_unset (&val);
 }
 
-GtkTreePath *theme_refresh_theme_list()
+static GtkTreePath *theme_refresh_theme_list()
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
@@ -518,7 +518,7 @@ GtkTreePath *theme_refresh_theme_list()
 	return path;
 }
 
-void theme_install_theme(char *path, char *extn) {
+static void theme_install_theme(char *path, char *extn) {
 #ifndef _WIN32
 	gchar *command, *escaped;
 #endif
@@ -585,7 +585,7 @@ theme_got_url(void *data, const char *themedata, size_t len)
 	g_free(path);
 }
 
-void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
+static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
 				guint info, guint t, gpointer data) {
 	gchar *name = sd->data;
 
@@ -2109,7 +2109,7 @@ int prefs_notebook_add_page(const char *text,
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
 }
 
-void prefs_notebook_init() {
+static void prefs_notebook_init() {
 	GtkTreeIter p, c, c2;
 	GList *l;
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);

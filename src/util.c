@@ -1868,7 +1868,7 @@ gaim_user_dir(void)
 	return home_dir;
 }
 
-void set_gaim_user_dir(const char *dir)
+void gaim_util_set_user_dir(const char *dir)
 {
 	if (dir != NULL && strlen(dir) > 0) {
 		g_strlcpy((char*) &custom_home_dir, dir,

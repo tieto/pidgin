@@ -362,7 +362,7 @@ const char *gaim_user_dir(void);
  * Define a custom gaim settings directory, overriding the default (user's home directory/.gaim)
  * @param dir The custom settings directory
  */
-void set_gaim_user_dir(const char *dir);
+void gaim_util_set_user_dir(const char *dir);
 
 /**
  * Builds a complete path from the root, making any directories along

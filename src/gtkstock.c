@@ -95,7 +95,7 @@ static struct StockIcon
 	{ GAIM_STOCK_WARN,            NULL,      GTK_STOCK_DIALOG_WARNING   }
 };
 
-const GtkStockItem stock_items[] =
+static const GtkStockItem stock_items[] =
 {
 	{ GAIM_STOCK_ALIAS,     N_("_Alias"),     0, 0, NULL },
 	{ GAIM_STOCK_CHAT,      N_("_Join"),      0, 0, NULL },

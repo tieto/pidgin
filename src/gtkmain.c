@@ -145,7 +145,7 @@ clean_pid(void)
 	}
 }
 
-void
+static void
 sighandler(int sig)
 {
 	switch (sig) {
@@ -593,7 +593,7 @@ int main(int argc, char *argv[])
 
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
-		set_gaim_user_dir(opt_config_dir_arg);
+		gaim_util_set_user_dir(opt_config_dir_arg);
 	}
 
 	/*

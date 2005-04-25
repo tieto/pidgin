@@ -75,7 +75,7 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 	g_idle_add(url_clicked_idle_cb, g_strdup(uri));
 }
 
-GtkIMHtmlFuncs gtkimhtml_cbs = {
+static GtkIMHtmlFuncs gtkimhtml_cbs = {
 	(GtkIMHtmlGetImageFunc)gaim_imgstore_get,
 	(GtkIMHtmlGetImageDataFunc)gaim_imgstore_get_data,
 	(GtkIMHtmlGetImageSizeFunc)gaim_imgstore_get_size,

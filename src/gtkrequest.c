@@ -646,7 +646,7 @@ req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 		gaim_request_fields_all_required_filled(field->group->fields_list));
 }
 
-GList *
+static GList *
 get_online_names(void)
 {
 	GList *names = NULL;

@@ -72,7 +72,7 @@ int serv_send_typing(GaimConnection *g, const char *name, int typing) {
 	return 0;
 }
 
-GSList *last_auto_responses = NULL;
+static GSList *last_auto_responses = NULL;
 struct last_auto_response {
 	GaimConnection *gc;
 	char name[80];

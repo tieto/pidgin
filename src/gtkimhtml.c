@@ -121,14 +121,14 @@ enum {
 };
 static guint signals [LAST_SIGNAL] = { 0 };
 
-GtkTargetEntry selection_targets[] = {
+static GtkTargetEntry selection_targets[] = {
 	{ "text/html", 0, TARGET_HTML },
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "STRING", 0, TARGET_STRING },
 	{ "TEXT", 0, TARGET_TEXT}};
 
-GtkTargetEntry link_drag_drop_targets[] = {
+static GtkTargetEntry link_drag_drop_targets[] = {
 	GTK_IMHTML_DND_TARGETS
 };
 
@@ -1370,7 +1370,7 @@ static void url_copy(GtkWidget *w, gchar *url) {
 }
 
 /* The callback for an event on a link tag. */
-gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused) {
+static gboolean tag_event(GtkTextTag *tag, GObject *imhtml, GdkEvent *event, GtkTextIter *arg2, gpointer unused) {
 	GdkEventButton *event_button = (GdkEventButton *) event;
 	if (GTK_IMHTML(imhtml)->editable)
 		return FALSE;
@@ -2206,7 +2206,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 
 #define MAX_SCROLL_TIME 0.4
 
-gboolean scroll_cb(gpointer data)
+static gboolean scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
@@ -2231,7 +2231,7 @@ gboolean scroll_cb(gpointer data)
 		return TRUE;
 }
 
-gboolean scroll_idle_cb(gpointer data)
+static gboolean scroll_idle_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	imhtml->scroll_src = g_timeout_add(33, scroll_cb, imhtml);

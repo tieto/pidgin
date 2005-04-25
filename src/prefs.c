@@ -605,7 +605,7 @@ gaim_prefs_add_string_list(const char *name, GList *value)
 				g_strdup(tmp->data));
 }
 
-void
+static void
 remove_pref(struct gaim_pref *pref)
 {
 	char *name;

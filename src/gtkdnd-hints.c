@@ -45,7 +45,7 @@ typedef struct
 /**
  * Info about each hint widget. See DndHintWindowId enum.
  */
-HintWindowInfo hint_windows[] = { 
+static HintWindowInfo hint_windows[] = { 
 	{ NULL, "tb_drag_arrow_up.xpm",   -13/2,     0 },
 	{ NULL, "tb_drag_arrow_down.xpm", -13/2,   -16 },
 	{ NULL, "tb_drag_arrow_left.xpm",     0, -13/2 },
