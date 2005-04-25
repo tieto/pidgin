@@ -266,13 +266,11 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	aim_tlvlist_add_raw(&tl, 0x000f, strlen(ci->lang), ci->lang);
 	aim_tlvlist_add_raw(&tl, 0x000e, strlen(ci->country), ci->country);
 
-#ifndef NOSSI
 	/*
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
 	aim_tlvlist_add_8(&tl, 0x004a, 0x01);
-#endif
 
 	aim_tlvlist_write(&fr->data, &tl);
 

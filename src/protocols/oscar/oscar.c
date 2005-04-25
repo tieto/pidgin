@@ -269,7 +269,6 @@ static int gaim_offlinemsgdone   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icqalias         (aim_session_t *, aim_frame_t *, ...);
 static int gaim_icqinfo          (aim_session_t *, aim_frame_t *, ...);
 static int gaim_popup            (aim_session_t *, aim_frame_t *, ...);
-#ifndef NOSSI
 static int gaim_ssi_parseerr     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parserights  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_parselist    (aim_session_t *, aim_frame_t *, ...);
@@ -279,7 +278,6 @@ static int gaim_ssi_authgiven    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_authrequest  (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_authreply    (aim_session_t *, aim_frame_t *, ...);
 static int gaim_ssi_gotadded     (aim_session_t *, aim_frame_t *, ...);
-#endif
 
 /* for DirectIM/image transfer */
 static int gaim_odc_initiate     (aim_session_t *, aim_frame_t *, ...);
@@ -2322,7 +2320,6 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_POP, 0x0002, gaim_popup, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_ALIAS, gaim_icqalias, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_ICQ, AIM_CB_ICQ_INFO, gaim_icqinfo, 0);
-#ifndef NOSSI
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ERROR, gaim_ssi_parseerr, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RIGHTSINFO, gaim_ssi_parserights, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_LIST, gaim_ssi_parselist, 0);
@@ -2333,7 +2330,6 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREQ, gaim_ssi_authrequest, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_RECVAUTHREP, gaim_ssi_authreply, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_SSI, AIM_CB_SSI_ADDED, gaim_ssi_gotadded, 0);
-#endif
 
 	od->conn = bosconn;
 	for (i = 0; i < (int)strlen(info->bosip); i++) {
@@ -3721,16 +3717,7 @@ static void gaim_auth_grant(struct name_data *data) {
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
 		OscarData *od = gc->proto_data;
-#ifdef NOSSI
-		GaimBuddy *buddy;
-		gchar message;
-		message = 0;
-		buddy = gaim_find_buddy(gc->account, data->name);
-		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHGRANTED, &message);
-		gaim_account_notify_added(gc->account, NULL, data->name, (buddy ? gaim_buddy_get_alias_only(buddy) : NULL), NULL);
-#else
 		aim_ssi_sendauthreply(od->sess, data->name, 0x01, NULL);
-#endif
 	}
 
 	oscar_free_name_data(data);
@@ -3742,11 +3729,7 @@ static void gaim_auth_dontgrant(struct name_data *data, char *msg) {
 
 	if (g_list_find(gaim_connections_get_all(), gc)) {
 		OscarData *od = gc->proto_data;
-#ifdef NOSSI
-		aim_im_sendch4(od->sess, data->name, AIM_ICQMSG_AUTHDENIED, msg ? msg : _("No reason given."));
-#else
 		aim_ssi_sendauthreply(od->sess, data->name, 0x00, msg ? msg : _("No reason given."));
-#endif
 	}
 }
 
@@ -4907,23 +4890,14 @@ static int conninitdone_bos(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	aim_reqpersonalinfo(sess, fr->conn);
 
-#ifndef NOSSI
 	gaim_debug_info("oscar", "ssi: requesting rights and list\n");
 	aim_ssi_reqrights(sess);
 	aim_ssi_reqdata(sess);
-#endif
 
 	aim_locate_reqrights(sess);
 	aim_buddylist_reqrights(sess, fr->conn);
 	aim_im_reqparams(sess);
 	aim_bos_reqrights(sess, fr->conn); /* XXX - Don't call this with ssi */
-
-#ifdef NOSSI
-	gaim_debug_info("oscar", "bos: requesting rights\n");
-	aim_bos_reqrights(sess, fr->conn);
-	aim_bos_setgroupperm(sess, fr->conn, AIM_FLAG_ALLUSERS);
-	aim_bos_setprivacyflags(sess, fr->conn, AIM_PRIVFLAGS_ALLOWIDLE | AIM_PRIVFLAGS_ALLOWMEMBERSINCE);
-#endif
 
 	gaim_connection_update_progress(gc, _("Finalizing connection"), 5, OSCAR_CONNECT_STEPS);
 
@@ -5882,9 +5856,6 @@ oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 		return;
 	}
 
-#ifdef NOSSI
-	aim_buddylist_addbuddy(od->sess, od->conn, buddy->name);
-#else
 	if ((od->sess->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
 		if (buddy && group) {
 			gaim_debug_info("oscar",
@@ -5892,83 +5863,22 @@ oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 			aim_ssi_addbuddy(od->sess, buddy->name, group->name, gaim_buddy_get_alias_only(buddy), NULL, NULL, 0);
 		}
 	}
-#endif
 
 	/* XXX - Should this be done from AIM accounts, as well? */
 	if (od->icq)
 		aim_icq_getalias(od->sess, buddy->name);
 }
 
-static void oscar_add_buddies(GaimConnection *gc, GList *buddies, GList *groups) {
-	OscarData *od = (OscarData *)gc->proto_data;
-#ifdef NOSSI
-	char buf[MSG_LEN];
-	int n=0;
-
-	while (buddies) {
-		GaimBuddy *buddy = buddies->data;
-		if (n > MSG_LEN - 18) {
-			aim_buddylist_set(od->sess, od->conn, buf);
-			n = 0;
-		}
-		n += g_snprintf(buf + n, sizeof(buf) - n, "%s&", buddy->name);
-		buddies = buddies->next;
-	}
-	aim_buddylist_set(od->sess, od->conn, buf);
-#else
-
-	if (od->sess->ssi.received_data) {
-		GList *curb = buddies;
-		GList *curg = groups;
-		while ((curb != NULL) && (curg != NULL)) {
-			GaimBuddy *buddy = curb->data;
-			GaimGroup *group = curg->data;
-			oscar_add_buddy(gc, buddy, group);
-			curb = curb->next;
-			curg = curg->next;
-		}
-	}
-#endif
-}
-
 static void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 
-#ifdef NOSSI
-	aim_buddylist_removebuddy(od->sess, od->conn, buddy->name);
-#else
 	if (od->sess->ssi.received_data) {
 		gaim_debug_info("oscar",
 				   "ssi: deleting buddy %s from group %s\n", buddy->name, group->name);
 		aim_ssi_delbuddy(od->sess, buddy->name, group->name);
 	}
-#endif
 }
 
-static void oscar_remove_buddies(GaimConnection *gc, GList *buddies, GList *groups) {
-	OscarData *od = (OscarData *)gc->proto_data;
-
-#ifdef NOSSI
-	for (cur = buddies; cur != NULL; cur = cur->next) {
-		GaimBuddy *buddy = cur->data;
-		aim_buddylist_removebuddy(od->sess, od->conn, buddy->name);
-	}
-#else
-	if (od->sess->ssi.received_data) {
-		GList *curb = buddies;
-		GList *curg = groups;
-		while ((curb != NULL) && (curg != NULL)) {
-			GaimBuddy *buddy = curb->data;
-			GaimGroup *group = curg->data;
-			oscar_remove_buddy(gc, buddy, group);
-			curb = curb->next;
-			curg = curg->next;
-		}
-	}
-#endif
-}
-
-#ifndef NOSSI
 static void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	if (od->sess->ssi.received_data && strcmp(old_group, new_group)) {
@@ -6003,8 +5913,8 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 				groups = g_list_append(groups, node->parent);
 			}
 
-			oscar_remove_buddies(gc, moved_buddies, groups);
-			oscar_add_buddies(gc, moved_buddies, groups);
+			serv_remove_buddies(gc, moved_buddies, groups);
+			serv_add_buddies(gc, moved_buddies);
 			g_list_free(groups);
 			gaim_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, group->name);
@@ -6535,7 +6445,6 @@ static int gaim_ssi_gotadded(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	return 1;
 }
-#endif
 
 static GList *oscar_chat_info(GaimConnection *gc) {
 	GList *m = NULL;
@@ -6899,40 +6808,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 static void oscar_set_permit_deny(GaimConnection *gc) {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
-#ifdef NOSSI
-	GSList *list;
-	char buf[MAXMSGLEN];
-	int at;
 
-	switch(account->perm_deny) {
-	case GAIM_PRIVACY_ALLOW_ALL: 
-		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, gaim_account_get_username(account));
-		break;
-	case GAIM_PRIVACY_DENY_ALL:
-		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, gaim_account_get_username(account));
-		break;
-	case GAIM_PRIVACY_ALLOW_USERS:
-		list = account->permit;
-		at = 0;
-		while (list) {
-			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
-			list = list->next;
-		}
-		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_PERMITADD, buf);
-		break;
-	case GAIM_PRIVACY_DENY_USERS:
-		list = account->deny;
-		at = 0;
-		while (list) {
-			at += g_snprintf(buf + at, sizeof(buf) - at, "%s&", (char *)list->data);
-			list = list->next;
-		}
-		aim_bos_changevisibility(od->sess, od->conn, AIM_VISIBILITYCHANGE_DENYADD, buf);
-		break;
-	default:
-		break;
-	}
-#else
 	if (od->sess->ssi.received_data) {
 		switch (account->perm_deny) {
 			case GAIM_PRIVACY_ALLOW_ALL:
@@ -6955,55 +6831,34 @@ static void oscar_set_permit_deny(GaimConnection *gc) {
 				break;
 		}
 	}
-#endif
 }
 
 static void oscar_add_permit(GaimConnection *gc, const char *who) {
-#ifdef NOSSI
-	if (gc->account->perm_deny == 3)
-		oscar_set_permit_deny(gc);
-#else
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to add a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_addpermit(od->sess, who);
-#endif
 }
 
 static void oscar_add_deny(GaimConnection *gc, const char *who) {
-#ifdef NOSSI
-	if (gc->account->perm_deny == 4)
-		oscar_set_permit_deny(gc);
-#else
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to add a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_adddeny(od->sess, who);
-#endif
 }
 
 static void oscar_rem_permit(GaimConnection *gc, const char *who) {
-#ifdef NOSSI
-	if (gc->account->perm_deny == 3)
-		oscar_set_permit_deny(gc);
-#else
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to delete a permit\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_delpermit(od->sess, who);
-#endif
 }
 
 static void oscar_rem_deny(GaimConnection *gc, const char *who) {
-#ifdef NOSSI
-	if (gc->account->perm_deny == 4)
-		oscar_set_permit_deny(gc);
-#else
 	OscarData *od = (OscarData *)gc->proto_data;
 	gaim_debug_info("oscar", "ssi: About to delete a deny\n");
 	if (od->sess->ssi.received_data)
 		aim_ssi_deldeny(od->sess, who);
-#endif
 }
 
 static GList *
@@ -7649,9 +7504,9 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_set_idle,			/* set_idle */
 	oscar_change_passwd,	/* change_passwd */
 	oscar_add_buddy,		/* add_buddy */
-	oscar_add_buddies,		/* add_buddies */
+	NULL,					/* add_buddies */
 	oscar_remove_buddy,		/* remove_buddy */
-	oscar_remove_buddies,	/* remove_buddies */
+	NULL,					/* remove_buddies */
 	oscar_add_permit,		/* add_permit */
 	oscar_add_deny,			/* add_deny */
 	oscar_rem_permit,		/* rem_permit */
@@ -7669,15 +7524,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
-#ifndef NOSSI
 	oscar_alias_buddy,		/* alias_buddy */
 	oscar_move_buddy,		/* group_buddy */
 	oscar_rename_group,		/* rename_group */
-#else
-	NULL,					/* alias_buddy */
-	NULL,					/* group_buddy */
-	NULL,					/* rename_group */
-#endif
 	NULL,					/* buddy_free */
 	oscar_convo_closed,		/* convo_closed */
 	NULL,					/* normalize */
