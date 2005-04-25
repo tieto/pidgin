@@ -860,7 +860,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			gaim_connection_set_display_name(gc, c);
 			/* XXX - What should the second parameter be here? */
 			gaim_prpl_got_account_warning_level(account, NULL, evil);
-			gaim_prpl_got_account_login_time(account, NULL, signon);
+			gaim_prpl_got_account_login_time(account, signon);
 		}
 		g_free(tmp);
 

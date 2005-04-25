@@ -43,13 +43,11 @@ gaim_prpl_got_account_idle(GaimAccount *account, gboolean idle,
 }
 
 void
-gaim_prpl_got_account_login_time(GaimAccount *account, const char *name,
-		time_t login_time)
+gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time)
 {
 	GaimPresence *presence;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(name != NULL && *name != '\0');
 	g_return_if_fail(gaim_account_is_connected(account));
 
 	if (login_time == 0)
