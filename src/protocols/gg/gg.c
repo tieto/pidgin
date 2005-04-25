@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12546 2005-04-24 20:49:55Z thekingant $
+ * $Id: gg.c 12555 2005-04-25 03:41:16Z datallah $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -936,7 +936,6 @@ static void agg_close(GaimConnection *gc)
 static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, GaimConvImFlags flags)
 {
 	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	gchar *imsg;
 
 	if (invalid_uin(who)) {
 		gaim_notify_error(gc, NULL,
@@ -946,11 +945,14 @@ static int agg_send_im(GaimConnection *gc, const char *who, const char *msg, Gai
 	}
 
 	if (strlen(msg) > 0) {
-		imsg = charset_convert(msg, "UTF-8", "CP1250");
-		if (gg_send_message(gd->sess, GG_CLASS_CHAT,
+		gchar *imsg = charset_convert(msg, "UTF-8", "CP1250");
+		if (imsg != NULL && strlen(imsg) > 0) {
+			if (gg_send_message(gd->sess, GG_CLASS_CHAT,
 				    strtol(who, (char **)NULL, 10), imsg) < 0)
-			return -1;
-		g_free(imsg);
+				return -1;
+		}
+		if (imsg != NULL)
+			g_free(imsg);
 	}
 	return 1;
 }
