@@ -265,11 +265,9 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	}
 
 	if (gc->state == GAIM_CONNECTED) {
-		GaimBlistNode *gnode,*cnode,*bnode;
 #if 0
 		GList *wins;
 #endif
-		GList *add_buds = NULL;
 		GaimAccount *account;
 		GaimPresence *presence;
 
@@ -310,32 +308,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		}
 #endif
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
-
-		/* let the prpl know what buddies we pulled out of the local list */
-		/* XXX - Remove this and let the prpl take care of it itself? */
-		for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-			if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for(cnode = gnode->child; cnode; cnode = cnode->next) {
-				if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for(bnode = cnode->child; bnode; bnode = bnode->next) {
-					GaimBuddy *b;
-					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-
-					b = (GaimBuddy *)bnode;
-					if(b->account == gc->account) {
-						add_buds = g_list_append(add_buds, b);
-					}
-				}
-			}
-		}
-
-		if(add_buds) {
-			serv_add_buddies(gc, add_buds);
-			g_list_free(add_buds);
-		}
 
 		serv_set_permit_deny(gc);
 

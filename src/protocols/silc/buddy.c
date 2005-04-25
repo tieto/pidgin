@@ -1330,12 +1330,31 @@ void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	silcgaim_add_buddy_i(gc, buddy, FALSE);
 }
 
-void silcgaim_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
+void silcgaim_send_buddylist(GaimConnection *gc)
 {
-	GList *curb = buddies;
-	while (curb != NULL) {
-		silcgaim_add_buddy_i(gc, curb->data, TRUE);
-		curb = curb->next;
+	GaimBuddyList *blist;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *buddy;
+
+	if ((blist = gaim_get_blist()) != NULL)
+	{
+		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+			{
+				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+				{
+					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					buddy = (GaimBuddy *)bnode;
+					silcgaim_add_buddy_i(gc, buddy, TRUE);
+				}
+			}
+		}
 	}
 }
 

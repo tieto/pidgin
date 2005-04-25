@@ -350,6 +350,7 @@ const gchar *gaim_home_dir(void);
 
 /**
  * Returns the gaim settings directory in the user's home directory.
+ * This is usually ~/.gaim
  *
  * @return The gaim settings directory.
  *

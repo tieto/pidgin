@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12555 2005-04-25 03:41:16Z datallah $
+ * $Id: gg.c 12556 2005-04-25 03:55:11Z thekingant $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -758,6 +758,49 @@ static void main_callback(gpointer data, gint source, GaimInputCondition cond)
 	gg_free_event(e);
 }
 
+static void agg_send_buddylist(GaimConnection *gc)
+{
+	GaimBuddyList *blist;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *buddy;
+	struct agg_data *gd = (struct agg_data *)gc->proto_data;
+	uin_t *userlist = NULL;
+	int userlist_size = 0;
+
+	if ((blist = gaim_get_blist()) != NULL)
+	{
+		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+			{
+				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+				{
+					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					buddy = (GaimBuddy *)bnode;
+					if (invalid_uin(buddy->name))
+						continue;
+					userlist_size++;
+					userlist = g_renew(uin_t, userlist, userlist_size);
+					userlist[userlist_size - 1] =
+					    (uin_t) strtol(buddy->name, (char **)NULL, 10);
+				}
+			}
+		}
+	}
+
+	if (userlist) {
+		gg_notify(gd->sess, userlist, userlist_size);
+		g_free(userlist);
+	}
+
+	agg_save_buddy_list(gc, NULL);
+}
+
 void login_callback(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -854,6 +897,9 @@ void login_callback(gpointer data, gint source, GaimInputCondition cond)
 
 		/* Our signon is complete */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+		/* Send the server our buddy list */
+		agg_send_buddylist(gc);
 
 		break;
 	case GG_EVENT_CONN_FAILED:
@@ -972,31 +1018,6 @@ static void agg_rem_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group
 	if (invalid_uin(buddy->name))
 		return;
 	gg_remove_notify(gd->sess, strtol(buddy->name, (char **)NULL, 10));
-	agg_save_buddy_list(gc, NULL);
-}
-
-static void agg_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
-{
-	struct agg_data *gd = (struct agg_data *)gc->proto_data;
-	uin_t *userlist = NULL;
-	int userlist_size = 0;
-
-	while (buddies) {
-		GaimBuddy *buddy = buddies->data;
-		if (!invalid_uin(buddy->name)) {
-			userlist_size++;
-			userlist = g_renew(uin_t, userlist, userlist_size);
-			userlist[userlist_size - 1] =
-			    (uin_t) strtol(buddy->name, (char **)NULL, 10);
-		}
-		buddies = g_list_next(buddies);
-	}
-
-	if (userlist) {
-		gg_notify(gd->sess, userlist, userlist_size);
-		g_free(userlist);
-	}
-
 	agg_save_buddy_list(gc, NULL);
 }
 
@@ -1735,10 +1756,10 @@ static GaimPluginProtocolInfo prpl_info =
 	agg_get_info,			/* get_info */
 	agg_set_status,			/* set_away */
 	NULL,						/* set_idle */
-	agg_change_passwd,		/* change_passwd */
-	agg_add_buddy,			/* add_buddy */
-	agg_add_buddies,		/* add_buddies */
-	agg_rem_buddy,			/* remove_buddy */
+	agg_change_passwd,			/* change_passwd */
+	agg_add_buddy,				/* add_buddy */
+	NULL,						/* add_buddies */
+	agg_rem_buddy,				/* remove_buddy */
 	NULL,						/* remove_buddies */
 	agg_permit_deny_dummy,		/* add_permit */
 	agg_permit_deny_dummy,		/* add_deny */

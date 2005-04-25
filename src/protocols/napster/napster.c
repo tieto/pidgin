@@ -147,12 +147,31 @@ static void nap_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group
 }
 
 /* 208 - MSG_CLIENT_ADD_HOTLIST_SEQ */
-static void nap_add_buddies(GaimConnection *gc, GList *buddies, GList *groups)
+static void nap_send_buddylist(GaimConnection *gc)
 {
-	while (buddies) {
-		GaimBuddy *buddy = buddies->data;
-		nap_write_packet(gc, 208, "%s", buddy->name);
-		buddies = buddies->next;
+	GaimBuddyList *blist;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *buddy;
+
+	if ((blist = gaim_get_blist()) != NULL)
+	{
+		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+			{
+				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+				{
+					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+						continue;
+					buddy = (GaimBuddy *)bnode;
+					nap_write_packet(gc, 208, "%s", buddy->name);
+				}
+			}
+		}
 	}
 }
 
@@ -277,6 +296,9 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 		/* Our signon is complete */
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+		/* Send the server our buddy list */
+		nap_send_buddylist(gc);
 
 		break;
 
@@ -609,7 +631,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* set_idle */
 	NULL,					/* change_passwd */
 	nap_add_buddy,			/* add_buddy */
-	nap_add_buddies,		/* add_buddies */
+	NULL,					/* add_buddies */
 	nap_remove_buddy,		/* remove_buddy */
 	NULL,					/* remove_buddies */
 	NULL,					/* add_permit */

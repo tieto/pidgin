@@ -99,7 +99,7 @@ void silcgaim_verify_public_key(SilcClient client, SilcClientConnection conn,
 				SilcVerifyPublicKey completion, void *context);
 GList *silcgaim_buddy_menu(GaimBuddy *buddy);
 void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
-void silcgaim_add_buddies(GaimConnection *gc, GList *buddies, GList *groups);
+void silcgaim_send_buddylist(GaimConnection *gc);
 void silcgaim_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
 void silcgaim_buddy_keyagr_request(SilcClient client,
 				   SilcClientConnection conn,

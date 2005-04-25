@@ -1472,6 +1472,10 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 	case SILC_CLIENT_CONN_SUCCESS:
 	case SILC_CLIENT_CONN_SUCCESS_RESUME:
 		gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+		/* Send the server our buddy list */
+		silcgaim_send_buddylist(gc);
+
 		g_unlink(silcgaim_session_file(gaim_account_get_username(sg->account)));
 
 		/* Send any UMODEs configured for account */

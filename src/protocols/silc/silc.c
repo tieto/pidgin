@@ -1516,7 +1516,7 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_idle_set,			/* set_idle */
 	silcgaim_change_passwd,		/* change_passwd */
 	silcgaim_add_buddy,			/* add_buddy */
-	silcgaim_add_buddies,		/* add_buddies */
+	NULL,						/* add_buddies */
 	silcgaim_remove_buddy,		/* remove_buddy */
 	NULL,						/* remove_buddies */
 	NULL,						/* add_permit */
