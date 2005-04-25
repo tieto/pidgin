@@ -4,7 +4,7 @@
  *	Created by:	Greg Hudson
  *
  *	$Source$
- *	$Author: warmenhoven $
+ *	$Author: thekingant $
  *	$Zephyr: /mit/zephyr/src/include/zephyr/RCS/zephyr_conf.h,v 1.8 90/12/21 17:40:40 raeburn Exp $
  *
  *	Copyright (c) 1988,1991 by the Massachusetts Institute of Technology.
@@ -21,7 +21,10 @@
 #include <ctype.h>
 #include <time.h>
 #include <signal.h>
+#ifndef WIN32
 #include <syslog.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -163,15 +166,21 @@ ZEPHYR_INT32 gethostid();
 /* Kerberos compatibility. */
 #ifdef ZEPHYR_USES_KERBEROS
 # include <krb.h>
+#ifdef WIN32
+
+#else
 # include <krb_err.h>
+#endif /* WIN32 */
 # include <des.h>
+#ifndef WIN32
 # ifndef HAVE_KRB_GET_ERR_TEXT
 #  define krb_get_err_text(n)	krb_err_txt[n]
 # endif
+#endif /* WIN32 */
 # ifndef HAVE_KRB_LOG
 #  define krb_log		log
 # endif
-#endif
+#endif /* ZEPHYR_USES_KERBEROS */
 
 #ifdef HAVE_SYS_UIO_H
 # include <sys/uio.h>

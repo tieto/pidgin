@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -17,12 +17,22 @@ static char rcsid_ZInitialize_c[] =
     "$Zephyr: /afs/athena.mit.edu/astaff/project/zephyr/src/lib/RCS/ZInitialize.c,v 1.17 89/05/30 18:11:25 jtkohl Exp $";
 #endif
 
-#include "internal.h"
-
-#include <sys/socket.h>
 #ifdef ZEPHYR_USES_KERBEROS
+#ifdef WIN32
+
+#else
 #include <krb_err.h>
 #endif
+#endif
+
+#include "internal.h"
+
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <sys/socket.h>
+#endif
+
 
 #ifndef INADDR_NONE
 #define INADDR_NONE 0xffffffff
@@ -43,7 +53,7 @@ Code_t ZInitialize()
     int krbval;
     char d1[ANAME_SZ], d2[INST_SZ];
 
-    initialize_krb_error_table();
+    /*    initialize_krb_error_table(); */
 #endif
 
     initialize_zeph_error_table();

@@ -143,6 +143,9 @@ struct _zephyr_triple {
 					return;\
 				}
 
+#ifdef WIN32
+extern const char *username;
+#endif
 
 Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, char *recipient, char* galaxy) {
 
@@ -203,16 +206,16 @@ char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
 /* just for debugging */
 static void handle_unknown(ZNotice_t notice)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_packet: %s\n", notice.z_packet);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_version: %s\n", notice.z_version);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_kind: %d\n", (int)(notice.z_kind));
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_class: %s\n", notice.z_class);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_class_inst: %s\n", notice.z_class_inst);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_opcode: %s\n", notice.z_opcode);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_sender: %s\n", notice.z_sender);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_recipient: %s\n", notice.z_recipient);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_message: %s\n", notice.z_message);
-	gaim_debug(GAIM_DEBUG_MISC, "zephyr","z_message_len: %d\n", notice.z_message_len);
+	gaim_debug_error("zephyr","z_packet: %s\n", notice.z_packet);
+	gaim_debug_error("zephyr","z_version: %s\n", notice.z_version);
+	gaim_debug_error("zephyr","z_kind: %d\n", (int)(notice.z_kind));
+	gaim_debug_error("zephyr","z_class: %s\n", notice.z_class);
+	gaim_debug_error("zephyr","z_class_inst: %s\n", notice.z_class_inst);
+	gaim_debug_error("zephyr","z_opcode: %s\n", notice.z_opcode);
+	gaim_debug_error("zephyr","z_sender: %s\n", notice.z_sender);
+	gaim_debug_error("zephyr","z_recipient: %s\n", notice.z_recipient);
+	gaim_debug_error("zephyr","z_message: %s\n", notice.z_message);
+	gaim_debug_error("zephyr","z_message_len: %d\n", notice.z_message_len);
 }
 
 
@@ -325,7 +328,7 @@ static gchar *zephyr_recv_convert(GaimConnection *gc,gchar *string, int len)
 	} else {
 		utf8 = g_convert(string, len, "UTF-8", zephyr->encoding, NULL, NULL, &err);
 		if (err) {
-			gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "recv conversion error: %s\n", err->message);
+			gaim_debug_error("zephyr", "recv conversion error: %s\n", err->message);
 			utf8 = g_strdup(_("(There was an error converting this message.	 Check the 'Encoding' option in the Account Editor)"));
 			g_error_free(err);
 		}
@@ -846,7 +849,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 			send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
 			send_inst_utf8 = zephyr_recv_convert(gc,send_inst, strlen(send_inst));
 			if (!send_inst_utf8) {
-				gaim_debug(GAIM_DEBUG_ERROR, "zephyr","send_inst %s became null\n", send_inst);
+				gaim_debug_error("zephyr","send_inst %s became null\n", send_inst);
 				send_inst_utf8 = "malformed instance";
 			}
 
@@ -1196,6 +1199,46 @@ static gint check_notify_zeph02(gpointer data)
 	return TRUE;
 }
 
+#ifdef WIN32
+
+static gint check_loc(gpointer_data)
+{
+        GaimBlistNode *gnode, *cnode, *bnode;
+        ZLocations_t locations;
+        int numlocs;
+        int one = 1;
+
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for (cnode = gnode->child; cnode; cnode = cnode->next) {
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for (bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b = (GaimBuddy *) bnode;
+
+				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				if (b->account->gc == zgc) {
+					char *chk;
+                                        chk = local_zephyr_normalize(b->name);
+                                        ZLocateUser(chk,&numlocs, ZAUTH);
+                                        if (numlocs) {
+                                                int i;
+                                                for(i=0;i<numlocs;i++) {
+                                                        ZGetLocations(&locations,&one);
+                                                        serv_got_update(zgc,b->name,1,0,0,0,0);
+                                                }
+                                        }
+                                }
+                        }
+                }
+        }
+        return TRUE;
+}
+
+#else
+
 static gint check_loc(gpointer data)
 {
 	GaimBlistNode *gnode, *cnode, *bnode;
@@ -1261,6 +1304,8 @@ static gint check_loc(gpointer data)
 	return TRUE;
 }
 
+#endif /* WIN32 */
+
 static char *get_exposure_level()
 {
 	/* XXX add real error reporting */
@@ -1297,14 +1342,14 @@ static void zephyr_inithosts(zephyr_account *zephyr)
 	struct hostent *hent;
 	
 	if (gethostname(zephyr->ourhost, sizeof(zephyr->ourhost)) == -1) {
-		gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
+		gaim_debug_error("zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
 		g_strlcpy(zephyr->ourhost, "unknown", sizeof(zephyr->ourhost));
 		g_strlcpy(zephyr->ourhostcanon, "unknown", sizeof(zephyr->ourhostcanon));
 		return;
 	}
 	
 	if (!(hent = gethostbyname(zephyr->ourhost))) {
-		gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
+		gaim_debug_error("zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
 		g_strlcpy(zephyr->ourhostcanon, zephyr->ourhost, sizeof(zephyr->ourhostcanon));
 		return;
 	}
@@ -1395,7 +1440,7 @@ static void process_zsubs(zephyr_account *zephyr)
 
 					if (zephyr_subscribe_to(zephyr,z_class, z_instance, recip,z_galaxy) != ZERR_NONE) {
 
-						gaim_debug(GAIM_DEBUG_ERROR, "zephyr", "Couldn't subscribe to %s, %s, %s\n", z_class,z_instance,recip);
+						gaim_debug_error("zephyr", "Couldn't subscribe to %s, %s, %s\n", z_class,z_instance,recip);
 					}
 
 					zephyr->subscrips = g_slist_append(zephyr->subscrips, new_triple(zephyr,z_class,z_instance,recip));
@@ -1474,6 +1519,9 @@ static void zephyr_login(GaimAccount * account, GaimStatus *status)
 	read_zsubs = gaim_account_get_bool(gc->account,"read_zsubs",TRUE);
 	exposure = (gchar *)gaim_account_get_string(gc->account, "exposure_level", EXPOSE_REALMVIS); 
 
+#ifdef WIN32
+	username = gaim_account_get_username(account);
+#endif
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
 	gc->proto_data = zephyr=g_new0(zephyr_account,1); 
 
@@ -2105,7 +2153,7 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 static const char *zephyr_normalize(const GaimAccount * account, const char *orig)
 {
 	/* returns the string you gave it. Maybe this function shouldn't be here */
-	char * buf = g_malloc0(80);
+	static char buf[80];
 	/*	gaim_debug_error("zephyr","entering zephyr_normalize\n"); */
 
 	if (!g_ascii_strcasecmp(orig, "")) {
@@ -2691,19 +2739,19 @@ static void zephyr_action_get_subs_from_server(GaimPluginAction *action)
 		title = g_strdup_printf("Server subscriptions for %s", zephyr->username);
 		
 		if (zephyr->port == 0) {
-			gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving port");
+			gaim_debug_error("zephyr", "error while retrieving port");
 			return;
 		} 
 		if ((retval = ZRetrieveSubscriptions(zephyr->port,&nsubs)) != ZERR_NONE) {
 			/* XXX better error handling */
-			gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving subscriptions from server");
+			gaim_debug_error("zephyr", "error while retrieving subscriptions from server");
 			return;
 		}
 		for(i=0;i<nsubs;i++) {
 			one = 1;
 			if ((retval = ZGetSubscriptions(&subs,&one)) != ZERR_NONE) {
 				/* XXX better error handling */
-				gaim_debug(GAIM_DEBUG_ERROR,"zephyr", "error while retrieving individual subscription");
+				gaim_debug_error("zephyr", "error while retrieving individual subscription");
 				return;
 			}
 			g_string_append_printf(subout, "Class %s Instance %s Recipient %s<br>",

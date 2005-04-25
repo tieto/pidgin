@@ -3,7 +3,7 @@
  *
  *      Created by:     Marc Horowitz
  *
- *      $Id: ZhmStat.c 9554 2004-04-24 09:02:28Z chipx86 $
+ *      $Id: ZhmStat.c 12553 2005-04-25 01:53:01Z thekingant $
  *
  *      Copyright (c) 1996 by the Massachusetts Institute of Technology.
  *      For copying and distribution information, see the file
@@ -11,7 +11,12 @@
  */
 
 #include "internal.h"
+
+#ifdef WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
+#endif
 
 #ifndef INADDR_LOOPBACK
 #define INADDR_LOOPBACK 0x7f000001

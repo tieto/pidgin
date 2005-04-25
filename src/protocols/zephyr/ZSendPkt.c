@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -18,8 +18,11 @@ static char rcsid_ZSendPacket_c[] =
 #endif
 
 #include "internal.h"
+#ifdef WIN32
+#include <winsock.h>
+#else
 #include <sys/socket.h>
-
+#endif
 static int wait_for_hmack();
 
 Code_t ZSendPacket(packet, len, waitforack)

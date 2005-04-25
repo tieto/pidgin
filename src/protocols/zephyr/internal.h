@@ -1,10 +1,31 @@
 
 #ifndef __INTERNAL_H__
 #define __INTERNAL_H__
+#if 0
+struct timezone {
+	int tz_minuteswest;
+	int tz_dsttime;
+};
+#endif
 
 #include <sysdep.h>
-#include <zephyr/zephyr.h>
+
+#include <zephyr.h>
+#ifndef WIN32
 #include <netdb.h>
+#endif
+
+
+
+#ifdef WIN32
+
+#ifndef MAXHOSTNAMELEN
+#define MAXHOSTNAMELEN 512
+#endif
+
+#define ETIMEDOUT WSAETIMEDOUT
+#define EADDRINUSE WSAEADDRINUSE
+#endif
 
 #ifdef ZEPHYR_USES_HESIOD
 #include <hesiod.h>

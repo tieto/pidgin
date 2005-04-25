@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: lschiere $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -16,10 +16,12 @@
 
 #ifndef lint
 static const char rcsid_ZGetSender_c[] =
-    "$Id: ZGetSender.c 10997 2004-09-18 22:25:12Z lschiere $";
+    "$Id: ZGetSender.c 12553 2005-04-25 01:53:01Z thekingant $";
 #endif
 
+#ifndef WIN32
 #include <pwd.h>
+#endif
 
 char *ZGetSender()
 {
@@ -27,8 +29,13 @@ char *ZGetSender()
 #ifdef ZEPHYR_USES_KERBEROS
     char pname[ANAME_SZ], pinst[INST_SZ], prealm[REALM_SZ];
     static char sender[ANAME_SZ+INST_SZ+REALM_SZ+3] = "";
+	long int kerror;
 #else
     static char sender[128] = "";
+#endif
+
+#ifdef WIN32
+	unsigned long sender_size = 127;
 #endif
 
     /* Return it if already cached */
@@ -38,19 +45,26 @@ char *ZGetSender()
     */
 
 #ifdef ZEPHYR_USES_KERBEROS
-    if (krb_get_tf_fullname((char *)TKT_FILE, pname, pinst, prealm) == KSUCCESS)
+	if ((kerror = krb_get_tf_fullname((char *)TKT_FILE, pname, pinst, prealm)) == KSUCCESS)
     {
 	(void) sprintf(sender, "%s%s%s@%s", pname, (pinst[0]?".":""),
 		       pinst, prealm);
+	return (sender);
+    } else {
+	sprintf(sender,"%s@%s",(username?username:"unknown"),__Zephyr_realm);
 	return (sender);
     }
 #endif
 
     /* XXX a uid_t is a u_short (now),  but getpwuid
      * wants an int. AARGH! */
+#ifdef WIN32
+    GetUserName(sender, &sender_size);
+#else
     pw = getpwuid((int) getuid());
     if (!pw)
 	return ("unknown");
     (void) sprintf(sender, "%s@%s", pw->pw_name, __Zephyr_realm);
+#endif
     return (sender);
 }

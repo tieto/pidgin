@@ -5,7 +5,7 @@
  *
  *	$Source$
  *	$Author: thekingant $
- *	$Id: zephyr.h 8088 2003-11-11 07:08:13Z thekingant $
+ *	$Id: zephyr.h 12553 2005-04-25 01:53:01Z thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
@@ -20,10 +20,12 @@
 #include <sys/types.h>
 #include <sys/time.h>
 
-#include <zephyr/zephyr_err.h>
+#include <zephyr_err.h>
 
 #ifndef IPPROTO_MAX	/* Make sure not already included */
+#ifndef WIN32
 #include <netinet/in.h>
+#endif
 #endif
 
 /* Use __STDC__ to guess whether we can use stdarg, prototypes, and const.
@@ -35,6 +37,16 @@
 #else
 # define ZP(x) ()
 # define ZCONST
+#endif
+
+#ifdef WIN32
+/* this really should be uint32_t */
+/*typedef unsigned int in_addr_t;
+struct in_addr
+{
+  in_addr_t s_addr;
+}; */
+#include <winsock2.h>
 #endif
 
 /* Service names */
@@ -243,7 +255,7 @@ void ZSetDebug ZP((void (*)(ZCONST char *, va_list, void *), void *));
 #define ZERR_NONE		0
 
 /* Hostmanager wait time (in secs) */
-#define HM_TIMEOUT		10
+#define HM_TIMEOUT		1
 
 /* Server wait time (in secs) */
 #define	SRV_TIMEOUT		30

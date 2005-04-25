@@ -20,7 +20,9 @@ static char rcsid_ZLocations_c[] =
 
 #include "internal.h"
 
+#ifndef WIN32
 #include <pwd.h>
+#endif
 
 extern char *getenv();
 extern int errno;
@@ -55,11 +57,14 @@ Code_t Z_SendLocation(class, opcode, auth, format)
     int retval;
     time_t ourtime;
     ZNotice_t notice, retnotice;
-    char *bptr[3], *p;
+    char *bptr[3];
 #ifndef X_DISPLAY_MISSING
     char *display;
 #endif
+#ifndef WIN32
     char *ttyp;
+    char *p;
+#endif
     struct hostent *hent;
     short wg_port = ZGetWGPort();
 
@@ -95,6 +100,9 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 		    mytty[sizeof(mytty)-1] = '\0';
 	    } else {
 #endif
+#ifdef WIN32
+              	    strcpy(mytty,"WinGaim");
+#else
 		    ttyp = ttyname(0);
 		    if (ttyp && *ttyp) {
 			p = strchr(ttyp + 1, '/');
@@ -102,6 +110,7 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 		    } else {
 			strcpy(mytty, "unknown");
 		    }
+#endif
 #ifndef X_DISPLAY_MISSING
 	    }
 #endif

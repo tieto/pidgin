@@ -4,7 +4,7 @@
  *	Created by:	Marc Horowitz
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1990,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -15,12 +15,12 @@
 #include "internal.h"
 
 #ifndef lint
-static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 9553 2004-04-24 09:00:37Z chipx86 $";
+static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 12553 2005-04-25 01:53:01Z thekingant $";
 #endif
 
 Code_t ZRequestLocations(user, zald, kind, auth)
      const char *user;
-     register ZAsyncLocateData_t *zald;
+     ZAsyncLocateData_t *zald;
      ZNotice_Kind_t kind;	/* UNSAFE, UNACKED, or ACKED */
      Z_AuthProc auth;
 {
@@ -60,8 +60,8 @@ Code_t ZRequestLocations(user, zald, kind, auth)
 }
 
 Code_t ZParseLocations(notice,zald,nlocs,user)
-     register ZNotice_t *notice;
-     register ZAsyncLocateData_t *zald;
+     ZNotice_t *notice;
+     ZAsyncLocateData_t *zald;
      int *nlocs;
      char **user;
 {
@@ -160,7 +160,7 @@ int ZCompareALDPred(notice, zald)
 }
 
 void ZFreeALD(zald)
-     register ZAsyncLocateData_t *zald;
+     ZAsyncLocateData_t *zald;
 {
    if (!zald) return;
 

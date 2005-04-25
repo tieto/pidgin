@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: datallah $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -23,10 +23,18 @@ int ZGetWGPort()
     char *envptr, name[128];
     FILE *fp;
     int wgport;
-	
+#ifdef WIN32
+    long int buffsize= 128;
+    char tempdir[buffsize];
+#endif	
     envptr = getenv("WGFILE");
     if (!envptr) {
+#ifdef WIN32
+         GetTempPath(buffsize,tempdir);
+         GetTempFileName(tempdir,"wg.",0,name);
+#else
 	(void) sprintf(name, "/tmp/wg.%d", getuid());
+#endif
 	envptr = name;
     } 
     if (!(fp = fopen(envptr, "r")))

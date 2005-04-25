@@ -4,7 +4,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: chipx86 $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology.
@@ -14,13 +14,32 @@
 /* $Header$ */
 
 #include "internal.h"
+#ifdef WIN32
+#include <winsock2.h>
+
+#ifndef ZEPHYR_USES_KERBEROS
+   int gettimeofday(struct timeval* p, struct timezone* tz ){
+     union {
+       long long ns100; /*time since 1 Jan 1601 in 100ns units */
+       FILETIME ft;
+     } _now;
+
+     GetSystemTimeAsFileTime( &(_now.ft) );
+     p->tv_usec=(long)((_now.ns100 / 10LL) % 1000000LL );
+     p->tv_sec= (long)((_now.ns100-(116444736000000000LL))/10000000LL);
+     return 0;
+   }
+#endif 
+
+#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <utmp.h>
+#endif
 
 #ifndef lint
 static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 9554 2004-04-24 09:02:28Z chipx86 $";
+  "$Id: Zinternal.c 12553 2005-04-25 01:53:01Z thekingant $";
 static const char copyright[] =
   "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif

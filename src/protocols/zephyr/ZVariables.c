@@ -5,7 +5,7 @@
  *	Created by:	Robert French
  *
  *	$Source$
- *	$Author: nosnilmot $
+ *	$Author: thekingant $
  *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
@@ -21,7 +21,9 @@ static char rcsid_ZVariables_c[] = "$Header$";
 #include "util.h"
 
 #include <ctype.h>
+#ifndef WIN32
 #include <pwd.h>
+#endif
 
 static int get_localvarfile __P((char *bfr));
 static char *get_varval __P((char *fn, char *val));
@@ -38,7 +40,11 @@ char *ZGetVariable(var)
     if ((ret = get_varval(varfile, var)) != ZERR_NONE)
 	return (ret);
 
+#ifdef WIN32
+    sprintf(varfile, "C:\\zephyr\\zephyr.var");
+#else
     sprintf(varfile, "%s/zephyr.vars", CONFDIR);
+#endif
     return (get_varval(varfile, var));
 }
 
@@ -116,17 +122,26 @@ static int get_localvarfile(bfr)
     char *bfr;
 {
     const char *envptr;
+#ifndef WIN32
     struct passwd *pwd;
-
     envptr = gaim_home_dir();
+#else
+    envptr = getenv("HOME");
+    if (!envptr)
+        envptr = getenv("HOMEPATH");
+    if (!envptr) 
+        envptr = "C:\\";
+#endif
     if (envptr)
 	(void) strcpy(bfr, envptr);
     else {
+#ifndef WIN32
 	if (!(pwd = getpwuid((int) getuid()))) {
 	    fprintf(stderr, "Zephyr internal failure: Can't find your entry in /etc/passwd\n");
 	    return (1);
 	}
 	(void) strcpy(bfr, pwd->pw_dir);
+#endif
     }
 
     (void) strcat(bfr, "/");
@@ -174,7 +189,9 @@ static int varline(bfr, var)
     while (*cp && !isspace(*cp) && (*cp != '='))
 	cp++;
 
+#ifndef WIN32
 #define max(a,b) ((a > b) ? (a) : (b))
+#endif
 
     if (strncasecmp(bfr, var, max(strlen(var),cp - bfr)))
 	return(0);			/* var is not the var in
