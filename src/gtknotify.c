@@ -330,11 +330,11 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 }
 
 static gboolean
-formatted_input_cb(GtkWidget *dialog, GdkEventKey *event, gpointer data)
+formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 {
 	if (event->keyval == GDK_Escape)
 	{
-		gtk_widget_destroy(dialog);
+		gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
 
 		return TRUE;
 	}
