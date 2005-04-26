@@ -553,6 +553,8 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 					tzoff *= -1;
 			}
 
+			t->tm_isdst = -1;
+
 			if (tzoff || utc) {
 #ifdef HAVE_TM_GMTOFF
 				tzoff += t->tm_gmtoff;
@@ -560,13 +562,13 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 #	ifdef HAVE_TIMEZONE
 				tzset();    /* making sure */
 				tzoff -= timezone;
+				t->tm_isdst = 0; /* I think this might fix it */
 #	endif
 #endif
 			}
 		}
 	}
 
-	t->tm_isdst = -1;
 	retval = mktime(t);
 	retval += tzoff;
 
