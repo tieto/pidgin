@@ -5358,7 +5358,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
 		{
-			strcpy(color, "#314E6C");
+			strcpy(color, "#0D4E91");
 		}
 		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
 		{
