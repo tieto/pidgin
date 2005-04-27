@@ -1,0 +1,85 @@
+* conversation api {{{
+	* need to handle: {{{
+		* unnamed chats
+		* chats with the same name as a buddy
+		* jabber Messages (one off messages vrs a conversation with a backlog)
+		* multiple conversations with a single buddy (jabber, with thread tag)
+		* bugs
+	}}}
+	* notes: {{{
+		* (12:58:39) Robot101: user list always|auto|never
+		* topic only where supported by the protocol
+		* how do we log this? {{{
+			* rlaager's proposal: {{{
+				* the goal of logging is to be able to find something again.
+				* you expect to see the logs for a person IFF they are in that conversation
+				* you don't really need to see the log of a chat before or after said person joined it
+					*if you did, you'd be looking at some other person(s)'s log
+				* so:
+					* each conversation has 1 or more logs associated with it.
+					* when someone joins, a new log is opened to log everything that happens in the
+					  conversation, but to that person's logs.
+					* when someone parts, that one persons' log is closed
+					* this causes some duplication, the way to avoid this would be to close everyone's
+					  log on a join/part and use a new file.  we could then use links of some sort (hard
+					  or soft) to "put" that one file in each user's directory.  but this would
+					  needlessly split the logs of someone who had been there all along.  I think this
+					  duplication is acceptable.
+					* this would not solve the problem of chats with the same name as a buddy.
+			}}}
+		}}}
+	}}}
+}}}
+* buddy list {{{
+	* we have not committed any gobjectification, so this is not a blocker for 2.0.0 until we do.
+		* if we do, it is only a blocker to the extent that gaim needs to run.  That is, we do not
+		  *necessarily* have to gobjectifiy everything as long as we preserve functionality.
+		* That being said, my understanding of the signals mess says that it is probly more work to
+		  try to do this in stages than to start it or not start it.
+	* This would require some sort of signal aggregation, as gobject signals are unique to the instance.
+		* one way to do this would be to emit the signals from a non-descript buddy object.  this would
+		  most closely mimic the current functionality
+		* a second way would be to actually try to aggregate them in some way. I really don't know how
+		  possible this is, but it would allow us to do things like set a pounce on everyone in a group
+		  or define sounds on a per-group basis.
+		* we could look at replacing the UI ops with signals/call backs
+	* bugs
+}}}
+* build targets {{{
+  * this is not a blocker
+  * we need build targets for libgaim, we need to test them, and make sure they work.
+  * we ought to use our own build targets to build the executable itself.
+  * due to the limitations of cvs, this cannot accompany moving files to other directories at this time.
+}}}
+* status {{{
+	* Sean's segment of the UI needs to be finished.  We need to have support for the (new) default case
+	  of one global status at all times.  we currently do not, unless that happens to be "online/present"
+	* Tim's modifications to Sean's ui should be included to allow exceptions. refer to gaim-devel
+	  archives for this.
+}}}
+* account editor {{{
+	* this is not a blocker for 2.0.0
+	* account editor is not intuitive, users do not find it.
+	* Luke: my temptation is to get rid of this entirely, in favor of deryni's account menu. {{{
+		* at this point, tools->accounts is only used for add/delete account, modify account, and
+		  enable account.
+		* most users do not have the 15+ accounts that some gaim developers do. a menu scales well for
+		  anything from 2 to n, n "small" accounts.
+		* this would allow ready access to the buddy icon stuff, and account actions could go here
+		* status is handled as per the new api, status stuff need not go here beyond enabled.
+		* the account modify dialog is already too big.  this would let us split it, for instance
+		  buddy icon need not be in it this way.  Similarly, alias need not be in it.
+	}}}
+}}}
+* Privacy {{{
+	* this is not a blocker for 2.0.0
+	* Privacy sucks. it doesn't handle many of the protocols in a way that users understand. notably
+	  msn, but also yahoo, jabber, and icq.
+	* We want to sync to the server as much as possible, entirely local-only privacy is not an option
+	  except on protocols like irc that have no server-side.
+	* We want to be as consistent across protocols as possible.  this will require renaming things on
+	  some protocols.
+	* Bleeter suggests that we create a privacy.xml, remove privacy from blist.xml.  He suggests
+	  that each protocol define certain capabilities & defaults, with accounts.xml holding exceptions
+	  to the defaults.
+}}}
