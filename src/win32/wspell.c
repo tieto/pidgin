@@ -65,39 +65,98 @@ static void load_gtkspell() {
 	wgaim_gtkspell_recheck_all = (void*)wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_recheck_all");
 }
 
-void wgaim_gtkspell_init() {
-	    HKEY hKey;
-	    char buffer[1024] = "";
-	    DWORD size = sizeof(buffer);
-	    DWORD type;
+static char* lookup_aspell_path() {
+	char *path = NULL;
+	HKEY reg_key;
+	DWORD type;
+	DWORD nbytes;
+	gboolean found_reg_key;
+	LPCTSTR subkey = NULL;
+	if (G_WIN32_HAVE_WIDECHAR_API ()) {
+		if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Aspell", 0,
+					KEY_QUERY_VALUE,
+					&reg_key) == ERROR_SUCCESS) {
+			subkey = (LPCTSTR) L"Path";
+			if (!(found_reg_key = RegQueryValueExW(reg_key,
+							(WCHAR*) subkey, NULL,
+							&type, NULL, &nbytes
+							) == ERROR_SUCCESS)) {
+				subkey = NULL;
+				found_reg_key = (RegQueryValueExW(reg_key,
+							(WCHAR*) subkey, NULL,
+							&type, NULL, &nbytes
+					     ) == ERROR_SUCCESS);
+			}
+			if (found_reg_key) {
+				wchar_t *wc_temp = g_new (wchar_t, (nbytes + 1) / 2 + 1);
+				RegQueryValueExW(reg_key, (WCHAR*) subkey,
+						NULL, &type, (LPBYTE) wc_temp,
+						&nbytes);
+				wc_temp[nbytes / 2] = '\0';
+				path = g_utf16_to_utf8(
+						wc_temp, -1, NULL, NULL, NULL);
+				g_free (wc_temp);
+			}
+		}
+    	} else {
+		if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "Software\\Aspell", 0,
+					KEY_QUERY_VALUE, &reg_key
+					) == ERROR_SUCCESS) {
+			subkey = "Path";
+			if (!(found_reg_key = RegQueryValueExA(reg_key, subkey,
+							NULL, &type, NULL,
+							&nbytes
+							) == ERROR_SUCCESS)) {
+				subkey = NULL;
+				found_reg_key = (RegQueryValueExA(reg_key,
+							subkey, NULL, &type,
+							NULL, &nbytes
+							) == ERROR_SUCCESS);
+			}
+			if (found_reg_key) {
+				char *cp_temp = g_malloc (nbytes + 1);
+				RegQueryValueExA(reg_key, subkey, NULL, &type,
+						cp_temp, &nbytes);
+				cp_temp[nbytes] = '\0';
+				path = g_locale_to_utf8(
+						cp_temp, -1, NULL, NULL, NULL);
+				g_free (cp_temp);
+			}
+		}
+	}
 
-	    if(ERROR_SUCCESS == RegOpenKeyEx(HKEY_LOCAL_MACHINE, 
-					     "Software\\Aspell", 
-					     0,  
-					     KEY_QUERY_VALUE,  
-					     &hKey)) {
-		    /* Official aspell.net win32 installation or Gaim's aspell installation */
-		    if(ERROR_SUCCESS == RegQueryValueEx(hKey, "Path", NULL, &type, (LPBYTE)buffer, &size) ||
-		       ERROR_SUCCESS == RegQueryValueEx(hKey, "", NULL, &type, (LPBYTE)buffer, &size)) {
-			    int mark = strlen(buffer);
-			    strcat(buffer, "\\aspell-15.dll");
-			    if(_access( buffer, 0 ) < 0)
-				    gaim_debug(GAIM_DEBUG_WARNING, "wspell", "Couldn't find aspell-15.dll\n");
-			    else {
-				    char* tmp=NULL;
-				    buffer[mark] = '\0';
-				    gaim_debug(GAIM_DEBUG_INFO, "wspell", "Found Aspell in %s\n", buffer);
-				    /* Add path to Aspell dlls to PATH */
-				    tmp = g_malloc0(strlen(getenv("PATH")) + strlen(buffer) + 7);
-				    sprintf(tmp, "PATH=%s;%s", getenv("PATH"), buffer);
-				    putenv(tmp);
-				    g_free(tmp);
-				    load_gtkspell();
-			    }
-		    }
-		    else {
-			    gaim_debug(GAIM_DEBUG_WARNING, "wspell", "Couldn't find path for Aspell\n");
-		    }
-		    RegCloseKey(hKey);
-	    }
+	if (reg_key != NULL) {
+		RegCloseKey(reg_key);
+	}
+
+	return path;
+}
+
+void wgaim_gtkspell_init() {
+	char *aspell_path = lookup_aspell_path();
+
+	if (aspell_path != NULL) {
+		char *tmp = g_strconcat(aspell_path, "\\aspell-15.dll", NULL);
+		if (g_file_test(tmp, G_FILE_TEST_EXISTS)) {
+			const char *path = g_getenv("PATH");
+			gaim_debug_info("wspell", "Found Aspell in %s\n", aspell_path);
+
+			g_free(tmp);
+
+			tmp = g_strdup_printf("%s%s%s", (path ? path : ""),
+					(path ? G_SEARCHPATH_SEPARATOR_S : ""),
+					aspell_path);
+
+			g_setenv("PATH", tmp, TRUE);
+
+			load_gtkspell();
+		} else {
+			gaim_debug_warning("wspell", "Couldn't find aspell-15.dll\n");
+		}
+
+		g_free(tmp);
+		g_free(aspell_path);
+	} else {
+		gaim_debug_warning("wspell", "Couldn't find path for Aspell\n");
+	}
 }
