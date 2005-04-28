@@ -85,6 +85,7 @@
 }}}
 * Perl {{{
 	* Update to match as much as possible of the C api
-	* Test each call to make sure it actually works
-	* Make it work with G_MODULE_BIND_LOCAL
+	* Block for 2.0.0 or remove perl:
+		* Test each call to make sure it actually works
+		* Make it work with G_MODULE_BIND_LOCAL
 }}}
