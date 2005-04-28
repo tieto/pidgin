@@ -83,3 +83,8 @@
 	  that each protocol define certain capabilities & defaults, with accounts.xml holding exceptions
 	  to the defaults.
 }}}
+* Perl {{{
+	* Update to match as much as possible of the C api
+	* Test each call to make sure it actually works
+	* Make it work with G_MODULE_BIND_LOCAL
+}}}
