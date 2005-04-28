@@ -1,4 +1,8 @@
-Summary:    A GTK+ based multiprotocol instant messaging client
+# Older RPM doesn't define these by default
+%{!?perl_vendorlib: %define perl_vendorlib %(eval "`%{__perl} -V:installvendorlib`"; echo $installvendorlib)}
+%{!?perl_archlib: %define perl_archlib %(eval "`%{__perl} -V:installarchlib`"; echo $installarchlib)}
+
+Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    @VERSION@
 Release:    0
@@ -10,25 +14,38 @@ Packager:   %{packager}
 Source:     %{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
-%if "%{_vendor}" == "MandrakeSoft"
-Requires:   gtk+2.0 >= 2.0.0, libnss3
-BuildRequires: libao-devel, libgtk+2.0_0-devel, libtool, audiofile-devel, pkgconfig, libnss3-devel, perl-devel
-Provides:   libgaim-remote0
-%else
-Requires:   gtk2 >= 2.0.0, mozilla-nss, audiofile, libao
-BuildRequires: libao-devel, gtk2-devel, libtool, audiofile-devel, pkgconfig, mozilla-nss-devel
-%endif
-%{?_with_silc:BuildRequires: libsilc-devel}
-%{?_with_tcl:BuildRequires: tcl, tk}
+# Generic build requirements
+BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
+%{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
+%{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
+%{!?_without_gtkspell:BuildRequires: gtkspell-devel}
+# For some reason perl isn't always automatically detected as a requirement :(
+Requires: perl
 
-%if %{?_with_silc:1}%{!?_with_silc:0}
+%if "%{_vendor}" == "MandrakeSoft"
+# Mandrake/Mandriva requirements
+BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
+Provides:  libgaim-remote0
+%else
+
+# SuSE & Red Hat / Fedora requirements
+BuildRequires: gtk2-devel
+
+%if "%{_vendor}" == "suse"
+BuildRequires: gnutls-devel
+%else
+BuildRequires: mozilla-nss-devel
+%endif
+%endif
+
+%if 0%{?_with_silc:1}
 %package silc
 Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
 
-%if %{?_with_tcl:1}%{!?_with_tcl:0}
+%if 0%{?_with_tcl:1}
 %package tcl
 Summary:    Tcl scripting support for Gaim
 Group:      Applications/Internet
@@ -38,27 +55,27 @@ Requires:   gaim = %{epoch}:%{version}
 %package devel
 Summary:    Development headers, documentation, and libraries for Gaim.
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pkgconfig, gaim = %{epoch}:%{version}
 
 %description
-Gaim allows you to talk to anyone using a variety of messaging 
-protocols, including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, 
-MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These 
-protocols are implemented using a modular, easy to use design.  
+Gaim allows you to talk to anyone using a variety of messaging
+protocols, including AIM, ICQ, IRC, Yahoo!, Novell Groupwise,
+MSN Messenger, Jabber, Gadu-Gadu, Napster, and Zephyr.  These
+protocols are implemented using a modular, easy to use design.
 To use a protocol, just add an account using the account editor.
 
-Gaim supports many common features of other clients, as well as many 
+Gaim supports many common features of other clients, as well as many
 unique features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is NOT affiliated with or endorsed by America Online, Inc., 
+Gaim is NOT affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
-%if %{?_with_silc:1}%{!?_with_silc:0}
+%if 0%{?_with_silc:1}
 %description silc
 SILC (Secure Internet Live Conferencing) plugin for Gaim
 %endif
 
-%if %{?_with_tcl:1}%{!?_with_tcl:0}
+%if 0%{?_with_tcl:1}
 %description tcl
 Tcl plugin loader for Gaim.  This package will allow you to write or
 use Gaim plugins written in the Tcl programming language.
@@ -70,7 +87,7 @@ documentation, and libraries required for development of gaim scripts
 and plugins.
 
 %prep
-%setup
+%setup -q
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -80,10 +97,12 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --libdir=%{_libdir} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
+                                    --with-ao=%{_libdir} \
                                     --with-perl-lib=%{buildroot}%{_prefix} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
-                                    %{!?_with_tcl:--disable-tcl}
+                                    %{!?_with_tcl:--disable-tcl} \
+                                    %{?_without_gtkspell:--disable-gtkspell}
 
 make %{?_smp_mflags}
 
@@ -95,20 +114,20 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/perl5/*/*/perllocal.pod
+rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
 
-%if %{!?_with_silc:1}%{?_with_silc:0}
+%if 0%{!?_with_silc:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 %endif
 
-%if %{!?_with_tcl:1}%{?_with_tcl:0}
+%if 0%{!?_with_tcl:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
 %endif
 
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
-	sed "s@^$RPM_BUILD_ROOT@@g" | \
-	grep -v libsilcgaim.so |
+        sed "s@^$RPM_BUILD_ROOT@@g" | \
+        grep -v libsilcgaim.so |
         grep -v tcl.so |
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
@@ -125,7 +144,7 @@ rm -rf %{buildroot}
 
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
-%attr(755, root, root) %{_libdir}/perl5
+%attr(755, root, root) %{perl_vendorlib}
 
 %{_bindir}/*
 %{_datadir}/locale/*/*/*
@@ -134,14 +153,14 @@ rm -rf %{buildroot}
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 
-%if %{?_with_silc:1}%{!?_with_silc:0}
+%if 0%{?_with_silc:1}
 %files silc
 %defattr(-, root, root)
 
 %{_libdir}/gaim/libsilcgaim.*
 %endif
 
-%if %{?_with_tcl:1}%{!?_with_tcl:0}
+%if 0%{?_with_tcl:1}
 %files tcl
 %defattr(-, root, root)
 
@@ -151,9 +170,8 @@ rm -rf %{buildroot}
 %files devel
 %defattr(-, root, root)
 
-%doc HACKING PROGRAMMING_NOTES
 %doc plugins/HOWTO
-%doc plugins/tcl/TCL-HOWTO
+%doc HACKING PROGRAMMING_NOTES
 
 %attr(755, root, root) %{_libdir}/libgaim-remote.so
 %attr(755, root, root) %{_libdir}/libgaim-remote.la
@@ -162,6 +180,16 @@ rm -rf %{buildroot}
 %{_libdir}/pkgconfig/gaim.pc
 
 %changelog
+* Thu Apr 28 2005 <stu@nosnilmot.com>
+- Use perl_vendorlib & perl_archlib for better 64bit compat (Jeff Mahoney)
+- Clean up Requires, most should be auto-detected
+- Restore gtkspell-devel build requirement (and add --without gtkspell option)
+- Fix Tcl build requirements to work across more distros
+- Fix SILC build requirements to work across more distros
+
+* Mon Oct 11 2004 John Jolly <john.jolly@gmail.com>
+- Added if "%{_vendor}" == "suse" to handle GnuTLS libraries for SuSE
+
 * Sat Oct  2 2004 Stu Tomlinson <stu@nosnilmot.com>
 - If --with tcl or silc are not specified, make sure the plugins don't
   exist to prevent RPM complaining about unpackaged files
