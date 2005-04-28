@@ -4880,7 +4880,7 @@ gaim_gtk_blist_uninit(void) {
  *********************************************************************/
 
 GdkPixbuf *
-create_prpl_icon(GaimAccount *account)
+gaim_gtk_create_prpl_icon(GaimAccount *account)
 {
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -5323,7 +5323,7 @@ gaim_gtk_blist_update_protocol_actions(void)
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 			g_free(buf);
 
-			pixbuf = create_prpl_icon(account);
+			pixbuf = gaim_gtk_create_prpl_icon(account);
 			if (pixbuf) {
 				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 						GDK_INTERP_BILINEAR);

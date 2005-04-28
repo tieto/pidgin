@@ -139,7 +139,7 @@ GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();
  *
  * @return         The icon
  */
-GdkPixbuf *create_prpl_icon(GaimAccount *account);
+GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account);
 
 /**
  * Populates a menu with the items shown on the buddy list for a buddy.

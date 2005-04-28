@@ -463,7 +463,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	}
 
 	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
-			title, create_prpl_icon(account));
+			title, gaim_gtk_create_prpl_icon(account));
 	g_free(title);
 }
 

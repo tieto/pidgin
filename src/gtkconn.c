@@ -316,7 +316,7 @@ static void disconnect_connection_change_cb(GaimConnection *gc, void *data) {
 		return;
 
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
-	icon = create_prpl_icon(account);
+	icon = gaim_gtk_create_prpl_icon(account);
 	scale = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
 
 	/* Mark all disconnections w/ the account type disconnected /w grey icon */

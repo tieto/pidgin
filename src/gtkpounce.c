@@ -851,7 +851,7 @@ fill_menu(GtkWidget *menu, GCallback cb)
 		item = gtk_image_menu_item_new_with_label(buddyname);
 
 		/* Create a pixmap for the protocol icon. */
-		pixbuf = create_prpl_icon(gaim_pounce_get_pouncer(pounce));
+		pixbuf = gaim_gtk_create_prpl_icon(gaim_pounce_get_pouncer(pounce));
 		if (pixbuf != NULL)
 		{
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,

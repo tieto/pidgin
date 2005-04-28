@@ -644,7 +644,7 @@ status_editor_set_account(GtkListStore *store, GaimAccount *account, GtkTreeIter
 
 	scale = NULL;
 
-	pixbuf = create_prpl_icon(account);
+	pixbuf = gaim_gtk_create_prpl_icon(account);
 
 	if (pixbuf != NULL)
 	{

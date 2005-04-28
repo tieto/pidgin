@@ -415,7 +415,7 @@ get_config_frame(GaimPlugin *plugin)
 
 		gtk_list_store_append(model, &iter);
 
-		pixbuf = create_prpl_icon(account);
+		pixbuf = gaim_gtk_create_prpl_icon(account);
 
 		if (pixbuf != NULL)
 		{

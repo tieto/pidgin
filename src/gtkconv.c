@@ -2321,7 +2321,7 @@ get_tab_icon(GaimConversation *conv, gboolean small_icon)
 
 	if (!status) {
 		GdkPixbuf *pixbuf;
-		pixbuf = create_prpl_icon(account);
+		pixbuf = gaim_gtk_create_prpl_icon(account);
 
 		if (small_icon && pixbuf != NULL)
 		{
@@ -3080,7 +3080,7 @@ generate_send_as_items(GaimConvWindow *win, GaimConversation *deleted_conv)
 		gc = (GaimConnection *)gcs->data;
 
 		/* Create a pixmap for the protocol icon. */
-		pixbuf = create_prpl_icon(gc->account);
+		pixbuf = gaim_gtk_create_prpl_icon(gc->account);
 		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 
 		/* Now convert it to GtkImage */
@@ -3162,7 +3162,7 @@ generate_send_as_items(GaimConvWindow *win, GaimConversation *deleted_conv)
 			}
 
 			/* Create a pixmap for the protocol icon. */
-			pixbuf = create_prpl_icon(account);
+			pixbuf = gaim_gtk_create_prpl_icon(account);
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 											GDK_INTERP_BILINEAR);
 
@@ -4763,7 +4763,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	GaimConvWindow *win;
 	GaimConnection *gc;
 	int gtk_font_options = 0;
-	char buf[BUF_LONG];
 	char buf2[BUF_LONG];
 	char mdate[64];
 	char color[10];
@@ -4803,9 +4802,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & GAIM_MESSAGE_SYSTEM) {
-		g_snprintf(buf, BUF_LONG, "<FONT SIZE=\"2\">(%s)</FONT> <B>%s</B>",
-				   mdate, message);
-
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, message);
@@ -4813,9 +4809,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
 	} else if (flags & GAIM_MESSAGE_ERROR) {
-		g_snprintf(buf, BUF_LONG, "<FONT COLOR=\"#ff0000\"><FONT SIZE=\"2\">(%s)</FONT> <B>%s</B></FONT>",
-				   mdate, message);
-
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, message);
@@ -4823,11 +4816,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
-		g_snprintf(buf, BUF_LONG,
+		g_snprintf(buf2, BUF_LONG,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
 			   sml_attrib ? sml_attrib : "", message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 	} else if (flags & GAIM_MESSAGE_RAW) {
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, 0);
 	} else {
@@ -4893,11 +4886,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if(who_escaped)
 				g_free(who_escaped);
 		}
-		g_snprintf(buf, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\">(%s)</FONT> "
-				   "<B>%s</B></FONT> ", color,
-				   sml_attrib ? sml_attrib : "", mdate, str);
-
 		g_snprintf(buf2, BUF_LONG,
 			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 			   "<B>%s</B></FONT> ",
@@ -4905,8 +4893,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 		g_free(str);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
-										   buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
 		if(gc){
 			char *pre = g_strdup_printf("<font %s>", sml_attrib ? sml_attrib : "");
@@ -4932,7 +4919,6 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		g_free(with_font_tag);
 		g_free(new_message);
 	}
-
 
 	if(sml_attrib)
 		g_free(sml_attrib);

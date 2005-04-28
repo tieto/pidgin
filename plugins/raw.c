@@ -1,3 +1,4 @@
+#define GAIM_PLUGINS
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
@@ -13,6 +14,7 @@
 #endif
 
 #include "protocols/jabber/jabber.h"
+#undef GAIM_PLUGINS
 #include "protocols/msn/session.h"
 
 #define RAW_PLUGIN_ID "gtk-raw"

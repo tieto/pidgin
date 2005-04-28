@@ -537,7 +537,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	gtk_widget_show(close_button);
 
 	/* Add the buddies to the tree view */
-	icon = create_prpl_icon(gc->account);
+	icon = gaim_gtk_create_prpl_icon(gc->account);
 	scaled = gdk_pixbuf_scale_simple(icon, 16, 16, GDK_INTERP_BILINEAR);
 
 	for (i = 0; results[i] != NULL; i++)

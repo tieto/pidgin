@@ -184,7 +184,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 	if (account == NULL)
 		return;
 
-	pixbuf = create_prpl_icon(account);
+	pixbuf = gaim_gtk_create_prpl_icon(account);
 
 	if (pixbuf != NULL)
 		icon = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
@@ -611,7 +611,7 @@ gevo_add_buddy_dialog_add_person(GevoAddBuddyDialog *dialog,
 	GdkPixbuf *pixbuf, *icon = NULL;
 	GtkTreeIter iter;
 
-	pixbuf = create_prpl_icon(account);
+	pixbuf = gaim_gtk_create_prpl_icon(account);
 
 	if (pixbuf != NULL)
 		icon = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);

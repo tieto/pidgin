@@ -216,7 +216,7 @@ gaim_plugin_probe(const char *filename)
 		 *       space.  However, it caused problems with using a
 		 *       perl script for me.  If it works for you then go for it.
 		 */
-		plugin->handle = g_module_open(filename, 0);
+		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
 
 		if (plugin->handle == NULL)
 		{

@@ -1744,7 +1744,7 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 			g_free(pulse_data);
 		}
 
-		pixbuf = create_prpl_icon(account);
+		pixbuf = gaim_gtk_create_prpl_icon(account);
 
 		if (pixbuf != NULL)
 		{
@@ -2131,7 +2131,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 
 	scale = NULL;
 
-	pixbuf = create_prpl_icon(account);
+	pixbuf = gaim_gtk_create_prpl_icon(account);
 
 	if (pixbuf != NULL)
 	{
