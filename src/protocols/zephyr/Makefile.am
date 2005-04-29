@@ -73,7 +73,7 @@ ZEPHYRLIBS = $(KRB4_LDFLAGS) $(KRB4_LIBS)
 
 ZEPHYRLIBSEXT = $(ZEPHYR_LDFLAGS) $(ZEPHYR_LIBS)
 
-libzephyr_la_LDFLAGS = -module -avoid-version
+libzephyr_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_ZEPHYR
 

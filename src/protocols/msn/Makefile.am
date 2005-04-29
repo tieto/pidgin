@@ -65,7 +65,7 @@ MSNSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libmsn_la_LDFLAGS = -module -avoid-version
+libmsn_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_MSN
 

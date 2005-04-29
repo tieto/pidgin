@@ -4,7 +4,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-docklet_la_LDFLAGS = -module -avoid-version
+docklet_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
 

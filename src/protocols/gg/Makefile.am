@@ -12,7 +12,7 @@ GGSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libgg_la_LDFLAGS = -module -avoid-version
+libgg_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_GG
 

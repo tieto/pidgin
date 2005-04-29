@@ -14,7 +14,7 @@ RENDEZVOUSSOURCES = \
 
 AM_CFLAGS = $(st)
 
-librendezvous_la_LDFLAGS = -module -avoid-version
+librendezvous_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_RENDEZVOUS
 

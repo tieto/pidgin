@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-ticker_la_LDFLAGS = -module -avoid-version
+ticker_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
 

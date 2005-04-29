@@ -28,7 +28,7 @@ NOVELLSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libnovell_la_LDFLAGS = -module -avoid-version
+libnovell_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_NOVELL
 

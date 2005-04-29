@@ -7,7 +7,7 @@ NAPSTERSOURCES = napster.c
 
 AM_CFLAGS = $(st)
 
-libnapster_la_LDFLAGS = -module -avoid-version
+libnapster_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_NAPSTER
 

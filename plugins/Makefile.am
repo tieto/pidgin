@@ -18,17 +18,17 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-autorecon_la_LDFLAGS    = -module -avoid-version
-extplacement_la_LDFLAGS = -module -avoid-version
-gaimrc_la_LDFLAGS       = -module -avoid-version
-history_la_LDFLAGS      = -module -avoid-version
-iconaway_la_LDFLAGS     = -module -avoid-version
-idle_la_LDFLAGS         = -module -avoid-version
-notify_la_LDFLAGS       = -module -avoid-version
-relnot_la_LDFLAGS       = -module -avoid-version
-spellchk_la_LDFLAGS     = -module -avoid-version
-statenotify_la_LDFLAGS  = -module -avoid-version
-timestamp_la_LDFLAGS    = -module -avoid-version
+autorecon_la_LDFLAGS    = -module -avoid-version $(GLIB_LIBS)
+extplacement_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+gaimrc_la_LDFLAGS       = -module -avoid-version $(GTK_LIBS)
+history_la_LDFLAGS      = -module -avoid-version $(GTK_LIBS)
+iconaway_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
+idle_la_LDFLAGS         = -module -avoid-version $(GLIB_LIBS)
+notify_la_LDFLAGS       = -module -avoid-version $(GTK_LIBS)
+relnot_la_LDFLAGS       = -module -avoid-version $(GLIB_LIBS)
+spellchk_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
+statenotify_la_LDFLAGS  = -module -avoid-version $(GLIB_LIBS)
+timestamp_la_LDFLAGS    = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
 

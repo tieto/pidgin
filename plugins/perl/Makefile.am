@@ -4,7 +4,7 @@ perl_dirs = common
 
 plugin_LTLIBRARIES = perl.la
 
-perl_la_LDFLAGS = -module -avoid-version $(PERL_LIBS)
+perl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(PERL_LIBS)
 perl_la_LIBADD = $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \

@@ -18,7 +18,7 @@ if PLUGINS
 plugin_LTLIBRARIES = gaim-remote.la
 
 gaim_remote_la_SOURCES = remote.c
-gaim_remote_la_LIBADD = libgaim-remote.la $(GLIB_LIBS)
+gaim_remote_la_LIBADD = libgaim-remote.la $(GTK_LIBS)
 
 endif
 

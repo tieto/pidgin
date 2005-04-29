@@ -6,7 +6,7 @@ SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c
 
 AM_CFLAGS = $(st)
 
-libsilcgaim_la_LDFLAGS = -module -avoid-version
+libsilcgaim_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_SILC
 

@@ -6,7 +6,7 @@ IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h dcc_send.c
 
 AM_CFLAGS = $(st)
 
-libirc_la_LDFLAGS = -module -avoid-version
+libirc_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_IRC
 

@@ -26,7 +26,7 @@ YAHOOSOURCES = \
 
 AM_CFLAGS = $(st)
 
-libyahoo_la_LDFLAGS = -module -avoid-version
+libyahoo_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
 if STATIC_YAHOO
 

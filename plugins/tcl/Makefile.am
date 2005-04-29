@@ -1,6 +1,6 @@
 plugindir = $(libdir)/gaim
 
-tcl_la_LDFLAGS = -module -avoid-version $(TCL_LIBS) $(TK_LIBS)
+tcl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(TCL_LIBS) $(TK_LIBS)
 
 plugin_LTLIBRARIES = tcl.la
 

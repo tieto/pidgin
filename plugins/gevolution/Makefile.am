@@ -2,7 +2,8 @@ plugindir = $(libdir)/gaim
 
 gevolution_la_LDFLAGS = \
 	-module -avoid-version \
-	$(EVOLUTION_ADDRESSBOOK_LIBS)
+	$(EVOLUTION_ADDRESSBOOK_LIBS) \
+	$(GTK_LIBS)
 
 if PLUGINS
 

@@ -1,6 +1,6 @@
 plugindir = $(libdir)/gaim
 
-gestures_la_LDFLAGS = -module -avoid-version
+gestures_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
 
