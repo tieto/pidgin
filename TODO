@@ -12,7 +12,7 @@
 		* how do we log this? {{{
 			* rlaager's proposal: {{{
 				* the goal of logging is to be able to find something again.
-				* you expect to see the logs for a person IF they are in that conversation
+				* you expect to see the logs for a person IFF they are in that conversation
 				* you don't really need to see the log of a chat before or after said person joined it
 					*if you did, you'd be looking at some other person(s)'s log
 				* so:
@@ -89,3 +89,24 @@
 		* Test each call to make sure it actually works
 		* Make it work with G_MODULE_BIND_LOCAL
 }}}
+* Prefs {{{
+	* this blocks for 2.0.0
+	* Prefs cannot stay as-is.  the dialog is far too wide and not at all usable.
+	* The biggest problem is that each new plugin creates horizontal space. {{{
+		* I do not see it as a solution to remove the posability of plugin preferences.
+		* In the past, we had a separate plugin management dialog.  People never found it,
+		  and were often surprised to learn that gaim had plugins at all.  I am unsure that
+		  people find the current plugin page of preferences any more frequently, but I
+		  *suspect* that it is the case.  This leads to a conundrum, how do plugins
+		  display preferences?
+		}}}
+	* Currently the window is, at my font size, 1129x505 (or should that be 505x1129?).  It *should* fit
+	  in 800x600 at worst, I'm unsure that 480x640 is a reasonable goal.  still, this leaves us with
+	  something either considerably wider or considerably taller than we are currently using (on any
+	  given pane, the tabs force the width, not the contents).  Further, taking "Message Text" as an
+	  example, it has 3 preferences and a text area, each in its own category (the text area sharing a
+	  category with 1 preference). obvious waste of space here.  All 3 could clearly be uncategorised
+	  without loss of meaning, categories only make sense for groups of preferences.  It may even be
+	  possible to combine this with "Conversations" entirely.
+}}}
+
