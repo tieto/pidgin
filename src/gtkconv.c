@@ -4881,11 +4881,15 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				}
 				else if (flags & GAIM_MESSAGE_SEND)
 					strcpy(color, SEND_COLOR);
+				else {
+					gaim_debug_error("gtkconv", "message missing flags\n");
+					strcpy(color, "#000000");
+				}
 			}
-
-			if(who_escaped)
-				g_free(who_escaped);
 		}
+
+		if(who_escaped)
+			g_free(who_escaped);
 		g_snprintf(buf2, BUF_LONG,
 			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 			   "<B>%s</B></FONT> ",
