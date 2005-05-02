@@ -1591,35 +1591,39 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 	GaimGtkConversation *next_gtkconv = NULL;
 	GaimConvWindow *win;
 	GList *l;
-	int index, i;
+	int index, i, found = 0;
 
 	win   = gaim_conversation_get_window(gtkconv->active_conv);
 	index = gtk_notebook_page_num(GTK_NOTEBOOK(GAIM_GTK_WINDOW(win)->notebook), gtkconv->tab_cont);
 
 	/* First check the tabs after this position. */
-	for (i = index; (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
+	for (i = index; !found && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
 		for (l = next_gtkconv->convs; l; l = l->next) {
 			GaimConversation *c = l->data;
 			if (gaim_conversation_get_unseen(c) > 0)
+			{
+				found = 1;
 				break;
+			}
 		}
 	}
-
-	if (next_gtkconv == NULL) {
-
-		/* Now check before this position. */
-		for (i = index; i >= 0 && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i--) {
+	
+	if (!found) {
+		/* Now check from the beginning up to this position. */
+		for (i = 0; !found && i < index && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
 			for (l = next_gtkconv->convs; l; l = l->next) {
 				GaimConversation *c = l->data;
-				if (gaim_conversation_get_unseen(c) > 0)
+				if (gaim_conversation_get_unseen(c) > 0) {
+					found = 1;
 					break;
+				}
 			}
 		}
 
-		if (next_gtkconv == NULL) {
+		if (!found) {
 			/* Okay, just grab the next conversation tab. */
 			if (!(next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index + 1)))
-				next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index - 1);
+				next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, 0);
 				
 		}
 	}
