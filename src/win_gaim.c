@@ -104,7 +104,7 @@ static void dll_prep() {
         printf("GTK+ path found: %s\n", path);
 
         if((hmod=GetModuleHandle("kernel32.dll"))) {
-                MySetDllDirectory = (LPFNSETDLLDIRECTORY)GetProcAddress(hmod, "SetDllDirectory");
+                MySetDllDirectory = (LPFNSETDLLDIRECTORY)GetProcAddress(hmod, "SetDllDirectoryA");
                 if(!MySetDllDirectory)
                         printf("SetDllDirectory not supported\n");
         }
