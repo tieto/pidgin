@@ -483,6 +483,8 @@ gaim_status_type_find_with_id(GList *status_types, const char *id)
 
 		if (!strcmp(id, status_type->id))
 			return status_type;
+
+		status_types = status_types->next;
 	}
 
 	return NULL;
