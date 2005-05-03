@@ -1658,29 +1658,10 @@ static void list_delete()
 
 static void save_list()
 {
-	FILE *f;
-	char *name;
+	GString *data;
 	GtkTreeIter iter;
-	char tempfilename[BUF_LONG];
-	int fd;
 
-	name = g_build_filename(gaim_user_dir(), "dict", NULL);
-	strcpy(tempfilename, name);
-	strcat(tempfilename,".XXXXXX");
-	fd = g_mkstemp(tempfilename);
-	if (fd < 0) {
-		perror(tempfilename);
-		g_free(name);
-		return;
-	}
-	if (!(f = fdopen(fd, "w"))) {
-		perror("fdopen");
-		close(fd);
-		g_free(name);
-		return;
-	}
-
-	fchmod(fd, S_IRUSR | S_IWUSR);
+	data = g_string_new("");
 
 	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter)) {
 		do {
@@ -1690,7 +1671,7 @@ static void save_list()
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
 			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 1, &val1);
 
-			fprintf(f, "BAD %s\nGOOD %s\n\n", g_value_get_string(&val0), g_value_get_string(&val1));
+			g_string_append_printf(data, "BAD %s\nGOOD %s\n\n", g_value_get_string(&val0), g_value_get_string(&val1));
 
 			g_value_unset(&val0);
 			g_value_unset(&val1);
@@ -1698,15 +1679,9 @@ static void save_list()
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
 
-	if (fclose(f)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "spellchk",
-				   "Error writing to %s: %m\n", tempfilename);
-		g_unlink(tempfilename);
-		g_free(name);
-		return;
-	}
-	g_rename(tempfilename, name);
-	g_free(name);
+	gaim_util_write_data_to_file("dict", data->str, -1);
+
+	g_string_free(data, TRUE);
 }
 
 static void
