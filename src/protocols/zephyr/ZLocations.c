@@ -97,20 +97,20 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 #ifndef X_DISPLAY_MISSING
 	    if ((display = getenv("DISPLAY")) && *display) {
 		    (void) strncpy(mytty, display, sizeof(mytty));
-		    mytty[sizeof(mytty)-1] = '\0';
 	    } else {
 #endif
 #ifdef WIN32
-              	    strcpy(mytty,"WinGaim");
+              	    strncpy(mytty, "WinGaim", sizeof(mytty));
 #else
 		    ttyp = ttyname(0);
 		    if (ttyp && *ttyp) {
 			p = strchr(ttyp + 1, '/');
 			strcpy(mytty, (p) ? p + 1 : ttyp);
 		    } else {
-			strcpy(mytty, "unknown");
+			strncpy(mytty, "unknown", sizeof(mytty));
 		    }
 #endif
+		    mytty[sizeof(mytty)-1] = '\0';
 #ifndef X_DISPLAY_MISSING
 	    }
 #endif
