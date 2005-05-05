@@ -44,6 +44,7 @@
 #include <locale.h>
 #endif
 #ifdef _WIN32
+#include <gdk/gdkwin32.h>
 #include <windows.h>
 #endif
 
@@ -95,6 +96,7 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
+static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext);
 
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
@@ -220,6 +222,80 @@ clipboard_html_to_win32(char *html) {
 #endif
 
 	return ret;
+}
+
+static void clipboard_copy_html_win32(GtkIMHtml *imhtml) {
+	gchar *clipboard = clipboard_html_to_win32(imhtml->clipboard_html_string);
+	if (clipboard != NULL) {
+		HWND hwnd = GDK_WINDOW_HWND(GTK_WIDGET(imhtml)->window);
+		if (OpenClipboard(hwnd)) {
+			if (EmptyClipboard()) {
+				gint length = strlen(clipboard);
+				HGLOBAL hdata = GlobalAlloc(GMEM_MOVEABLE, length);
+				if (hdata != NULL) {
+					gchar *buffer = GlobalLock(hdata);
+					memcpy(buffer, clipboard, length);
+					GlobalUnlock(hdata);
+
+					if (SetClipboardData(win_html_fmt, hdata) == NULL) {
+						gchar *err_msg =
+							g_win32_error_message(GetLastError());
+						gaim_debug_info("html clipboard",
+								"Unable to set clipboard data: %s\n",
+								err_msg ? err_msg : "Unknown Error");
+						g_free(err_msg);
+					}
+				}
+			}
+			CloseClipboard();
+		}
+		g_free(clipboard);
+	}
+}
+
+static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
+	gboolean pasted = FALSE;
+
+	if (gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml))
+				&& IsClipboardFormatAvailable(win_html_fmt)) {
+		gboolean error_reading_clipboard = FALSE;
+		HWND hwnd = GDK_WINDOW_HWND(GTK_WIDGET(imhtml)->window);
+
+		if (OpenClipboard(hwnd)) {
+			HGLOBAL hdata = GetClipboardData(win_html_fmt);
+			if (hdata == NULL) {
+				error_reading_clipboard = TRUE;
+			} else {
+				char *buffer = GlobalLock(hdata);
+				if (buffer == NULL) {
+					error_reading_clipboard = TRUE;
+				} else {
+					char *text = clipboard_win32_to_html(
+							buffer);
+					imhtml_paste_insert(imhtml, text,
+							FALSE);
+					g_free(text);
+					pasted = TRUE;
+				}
+				GlobalUnlock(hdata);
+			}
+
+			CloseClipboard();
+
+		} else {
+			error_reading_clipboard = TRUE;
+		}
+
+		if (error_reading_clipboard) {
+			gchar *err_msg = g_win32_error_message(GetLastError());
+			gaim_debug_info("html clipboard",
+					"Unable to read clipboard data: %s\n",
+					err_msg ? err_msg : "Unknown Error");
+			g_free(err_msg);
+		}
+	}
+
+	return pasted;
 }
 #endif
 
@@ -791,20 +867,7 @@ static void copy_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 #ifdef _WIN32
 	/* We're going to still copy plain text, but let's toss the "HTML Format"
 	   we need into the windows clipboard now as well.	*/
-	HGLOBAL hdata;
-	gchar *clipboard = clipboard_html_to_win32(imhtml->clipboard_html_string);
-	gchar *buffer;
-	gint length = strlen(clipboard);
-	if(clipboard != NULL) {
-		OpenClipboard(NULL);
-		hdata = GlobalAlloc(GMEM_MOVEABLE, length);
-		buffer = GlobalLock(hdata);
-        memcpy(buffer, clipboard, length);
-		GlobalUnlock(hdata);
-        SetClipboardData(win_html_fmt, hdata);
-		CloseClipboard();
-		g_free(clipboard);
-	}
+	clipboard_copy_html_win32(imhtml);
 #endif
 
 	g_signal_stop_emission_by_name(imhtml, "copy-clipboard");
@@ -835,20 +898,7 @@ static void cut_clipboard_cb(GtkIMHtml *imhtml, gpointer unused)
 #ifdef _WIN32
 	/* We're going to still copy plain text, but let's toss the "HTML Format"
 	   we need into the windows clipboard now as well.	*/
-	HGLOBAL hdata;
-	gchar *clipboard = clipboard_html_to_win32(imhtml->clipboard_html_string);
-	gchar *buffer;
-	gint length = strlen(clipboard);
-	if(clipboard != NULL) {
-		OpenClipboard(NULL);
-		hdata = GlobalAlloc(GMEM_MOVEABLE, length);
-		buffer = GlobalLock(hdata);
-        memcpy(buffer, clipboard, length);
-		GlobalUnlock(hdata);
-        SetClipboardData(win_html_fmt, hdata);
-		CloseClipboard();
-		g_free(clipboard);
-	}
+	clipboard_copy_html_win32(imhtml);
 #endif
 
 	if (imhtml->editable)
@@ -952,38 +1002,8 @@ static void paste_clipboard_cb(GtkIMHtml *imhtml, gpointer blah)
 {
 #ifdef _WIN32
 	/* If we're on windows, let's see if we can get data from the HTML Format
-	   clipboard before we try to paste from the GTK+ buffer */
-	HGLOBAL hdata;
-	DWORD err;
-	char *buffer;
-	char *text;
-
-	if (!gtk_text_view_get_editable(GTK_TEXT_VIEW(imhtml)))
-		return;
-
-	if (IsClipboardFormatAvailable(win_html_fmt)) {
-		OpenClipboard(NULL);
-		hdata = GetClipboardData(win_html_fmt);
-		if (hdata == NULL) {
-		    err = GetLastError();
-			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
-			CloseClipboard();
-			return;
-		}
-		buffer = GlobalLock(hdata);
-		if (buffer == NULL) {
-			err = GetLastError();
-			gaim_debug_info("html clipboard", "error number %u!  See http://msdn.microsoft.com/library/en-us/debug/base/system_error_codes.asp\n", err);
-			CloseClipboard();
-			return;
-		}
-		text = clipboard_win32_to_html(buffer);
-		GlobalUnlock(hdata);
-		CloseClipboard();
-
-		imhtml_paste_insert(imhtml, text, FALSE);
-		g_free(text);
-	} else {
+	   clipboard before we try to paste from the GTK buffer */
+	if (!clipboard_paste_html_win32(imhtml)) {
 #endif
 	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(imhtml), GDK_SELECTION_CLIPBOARD);
 	gtk_clipboard_request_contents(clipboard, gdk_atom_intern("text/html", FALSE),
