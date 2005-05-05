@@ -142,9 +142,9 @@ gaim_remote_session_read_packet(int fd)
 	}
 
 	if (p->length) {
-		data = g_malloc(p->length);
+		data = g_try_malloc(p->length);
 
-		if ((read(fd, data, p->length)) != p->length) {
+		if ((data == NULL) || (read(fd, data, p->length)) != p->length) {
 			g_free(p);
 			return NULL;
 		}

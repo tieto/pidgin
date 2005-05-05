@@ -96,10 +96,9 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
 
-/* POINT_SIZE converts from AIM font sizes to point sizes.  It probably should be redone in such a
- * way that it base the sizes off the default font size rather than using arbitrary font sizes. */
+/* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
-#define POINT_SIZE(x) (options & GTK_IMHTML_USE_POINTSIZE ? x : _point_sizes [MIN ((x), MAX_FONT_SIZE) - 1])
+#define POINT_SIZE(x) (_point_sizes [MIN ((x > 0 ? x : 1), MAX_FONT_SCALE) - 1])
 static gdouble _point_sizes [] = { .69444444, .8333333, 1, 1.2, 1.44, 1.728, 2.0736};
 
 enum {
@@ -3453,7 +3452,7 @@ static GtkTextTag *find_font_size_tag(GtkIMHtml *imhtml, int size)
 		GtkTextAttributes *attr = gtk_text_view_get_default_attributes(GTK_TEXT_VIEW(imhtml));
 		tag = gtk_text_buffer_create_tag(imhtml->text_buffer, str, "size",
 		                                 (gint) (pango_font_description_get_size(attr->font) *
-		                                 (double) _point_sizes[size-1]), NULL);
+		                                 (double) POINT_SIZE(size)), NULL);
 		gtk_text_attributes_unref(attr);
 	}
 

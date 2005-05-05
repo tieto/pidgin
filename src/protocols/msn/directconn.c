@@ -315,12 +315,20 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	body = g_malloc(body_len);
+	body = g_try_malloc(body_len);
 
-	/* Let's read the data. */
-	len = read(directconn->fd, body, body_len);
+	if (body != NULL)
+	{
+		/* Let's read the data. */
+		len = read(directconn->fd, body, body_len);
 
-	gaim_debug_info("msn", "len=%d\n", len);
+		gaim_debug_info("msn", "len=%d\n", len);
+	}
+	else
+	{
+		gaim_debug_error("msn", "Failed to allocate memory for read\n");
+		len = 0;
+	}
 
 	if (len > 0)
 	{
