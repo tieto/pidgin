@@ -3447,7 +3447,8 @@ tab_complete(GaimConversation *conv)
 			g_free(tmp);
 		}
 
-		matches = g_list_append(matches, name);
+		matches = g_list_insert_sorted(matches, name,
+		                               (GCompareFunc)gaim_utf8_strcasecmp);
 	}
 
 	g_free(nick_partial);
@@ -3747,7 +3748,7 @@ sort_chat_users(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, gpointer us
 		/* sort more important users first */
 		ret = (f1 > f2) ? -1 : 1;
 	} else {
-		ret = g_utf8_collate(user1, user2);
+		ret = gaim_utf8_strcasecmp(user1, user2);
 	}
 
 	g_free(user1);
