@@ -1528,7 +1528,7 @@ gaim_markup_linkify(const char *text)
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
 						t--;
 					}
-					g_strndup(c, t - c);
+					url_buf = g_strndup(c, t - c);
 					tmpurlbuf = gaim_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							tmpurlbuf, url_buf);
@@ -1592,7 +1592,7 @@ gaim_markup_linkify(const char *text)
 			}
 		} else if (c != text && (*c == '@')) {
 			int flag;
-			GString *gurl_buf;
+			GString *gurl_buf = NULL;
 			const char illegal_chars[] = "!@#$%^&*()[]{}/|\\<>\":;\r\n \0";
 
 			if (strchr(illegal_chars,*(c - 1)) || strchr(illegal_chars, *(c + 1)))
