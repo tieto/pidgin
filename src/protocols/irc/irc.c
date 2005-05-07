@@ -292,6 +292,7 @@ static gboolean do_login(GaimConnection *gc) {
 		buf = irc_format(irc, "vv", "PASS", pass);
 		if (irc_send(irc, buf) < 0) {
 			gaim_connection_error(gc, "Error sending password");
+			g_free(buf);
 			return FALSE;
 		}
 		g_free(buf);
@@ -305,12 +306,14 @@ static gboolean do_login(GaimConnection *gc) {
 			      strlen(realname) ? realname : IRC_DEFAULT_ALIAS);
 	if (irc_send(irc, buf) < 0) {
 		gaim_connection_error(gc, "Error registering with server");
+		g_free(buf);
 		return FALSE;
 	}
 	g_free(buf);
 	buf = irc_format(irc, "vn", "NICK", gaim_connection_get_display_name(gc));
 	if (irc_send(irc, buf) < 0) {
 		gaim_connection_error(gc, "Error sending nickname");
+		g_free(buf);
 		return FALSE;
 	}
 	g_free(buf);
