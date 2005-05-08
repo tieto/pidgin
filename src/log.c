@@ -969,7 +969,7 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
 	FILE *file = g_fopen(gaim_stringref_value(data->pathref), "rb");
-	char *read = g_malloc(data->length + 1);
+	char *tmp, *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
 	fclose(file);
@@ -977,6 +977,11 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	*flags = 0;
 	if(strstr(read, "<BR>"))
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
+	else {
+		tmp = g_markup_escape_text(read, -1);
+		g_free(read);
+		read = tmp;
+	}
 	return read;
 }
 
