@@ -615,6 +615,12 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
 {
 	MsnSlpCall *slpcall;
 
+	if (body == NULL)
+	{
+		gaim_debug_warning("msn", "received bogus message\n");
+		return NULL;
+	}
+
 	if (!strncmp(body, "INVITE", strlen("INVITE")))
 	{
 		char *branch;
