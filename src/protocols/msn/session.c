@@ -412,10 +412,11 @@ msn_session_finish_login(MsnSession *session)
 	msn_user_set_buddy_icon(session->user,
 							gaim_account_get_buddy_icon(session->account));
 
-	msn_change_status(session, MSN_ONLINE);
+	session->logged_in = TRUE;
+
+	msn_change_status(session, session->state == 0 ? MSN_ONLINE : session->state);
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
-	session->logged_in = TRUE;
 
 	/* Sync users */
 	msn_session_sync_users(session);

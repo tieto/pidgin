@@ -52,6 +52,13 @@ msn_change_status(MsnSession *session, MsnAwayType state)
 	cmdproc = session->notification->cmdproc;
 	user = session->user;
 	state_text = msn_state_get_text(state);
+	session->state = state;
+
+	/* If we're not logged in yet, don't send the status to the server,
+	 * it will be sent when login completes
+	 */
+	if (!session->logged_in)
+		return;
 
 	msnobj = msn_user_get_object(user);
 
@@ -68,12 +75,6 @@ msn_change_status(MsnSession *session, MsnAwayType state)
 
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
 						 MSN_CLIENT_ID, gaim_url_encode(msnobj_str));
-
-		/*
-		 * We need to set this just in case someone tries to set icon
-		 * quickly on us - Justin
-		 */
-		session->state = state;
 
 		g_free(msnobj_str);
 	}
