@@ -302,12 +302,14 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc, ("Cannot initialize SILC protocol"));
 		return;
 	}
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
 	if (!silcgaim_check_silc_dir(gc)) {
+		gc->wants_to_die = TRUE;
 		gaim_connection_error(gc, ("Cannot find/access ~/.silc directory"));
 		return;
 	}
@@ -316,9 +318,9 @@ silcgaim_login(GaimAccount *account, GaimStatus *status)
 	gaim_connection_update_progress(gc, _("Connecting to SILC Server"), 1, 5);
 
 	/* Load SILC key pair */
-	g_snprintf(pkd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
-	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcgaim_silcdir());
-	if (!silc_load_key_pair((char *)gaim_account_get_string(account, "public-key", prd),
+	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
+	if (!silc_load_key_pair((char *)gaim_account_get_string(account, "public-key", pkd),
 							(char *)gaim_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
