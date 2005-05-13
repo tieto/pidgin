@@ -83,35 +83,34 @@ docklet_set_bool(GtkWidget *widget, const char *key)
 }
 
 #ifdef _WIN32
-#if 0 /* XXX NEW STATUS */
-/* This is workaround for a bug in windows GTK+. Clicking outside of the
-   parent menu (including on a submenu-item) close the whole menu before
-   the "activate" event is thrown for the given submenu-item. Fixed by
-   replacing "activate" by "button-release-event". */
-static gboolean
-docklet_menu_do_away_message(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
-{
-	do_away_message(widget, user_data);
-	return FALSE;
-}
-
-static gboolean
-docklet_menu_create_away_mess(GtkWidget *widget, GdkEventButton *event, gpointer user_data)
-{
-	create_away_mess(widget, user_data);
-	return FALSE;
-}
-#endif
-
 /* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
-static gboolean
-docklet_menu_leave(GtkWidget *menu, GdkEventCrossing *event, void *data)
+static gboolean hide_docklet_menu(gpointer data)
 {
-	if(event->detail == GDK_NOTIFY_ANCESTOR) {
+	if (data != NULL) {
+		gtk_menu_popdown(GTK_MENU(data));
+	}
+	return FALSE;
+}
+static gboolean
+docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
+{
+	static guint hide_docklet_timer = 0;
+	if (event->type == GDK_LEAVE_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
 		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "menu leave-notify-event\n");
-		gtk_menu_popdown(GTK_MENU(menu));
+		/* Add some slop so that the menu doesn't annoyingly disappear when mousing around */
+		if (hide_docklet_timer == 0) {
+			hide_docklet_timer = gaim_timeout_add(500,
+					hide_docklet_menu, menu);
+		}
+	} else if (event->type == GDK_ENTER_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
+		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "menu enter-notify-event\n");
+		if (hide_docklet_timer != 0) {
+			/* Cancel the hiding if we reenter */
+			gaim_timeout_remove(hide_docklet_timer);
+			hide_docklet_timer = 0;
+		}
 	}
 	return FALSE;
 }
@@ -159,11 +158,7 @@ static void docklet_menu() {
 				a = (struct away_message *)awy->data;
 
 				entry = gtk_menu_item_new_with_label(a->name);
-#ifdef _WIN32
-				g_signal_connect(G_OBJECT(entry), "button-release-event", G_CALLBACK(docklet_menu_do_away_message), a);
-#else
 				g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_away_message), a);
-#endif
 				gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 				awy = g_slist_next(awy);
@@ -173,11 +168,7 @@ static void docklet_menu() {
 				gaim_separator(docklet_awaymenu);
 
 			entry = gtk_menu_item_new_with_label(_("New..."));
-#ifdef _WIN32
-			g_signal_connect(G_OBJECT(entry), "button-release-event", G_CALLBACK(docklet_menu_create_away_mess), NULL);
-#else
 			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
-#endif
 			gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
 
 			entry = gtk_menu_item_new_with_label(_("Away"));
@@ -213,7 +204,8 @@ static void docklet_menu() {
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
-	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave), NULL);
+	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
+	g_signal_connect(menu, "enter-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
 #endif
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
