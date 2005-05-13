@@ -64,6 +64,7 @@ struct _GaimGtkXferDialog
 	GtkWidget *remote_user_label;
 	GtkWidget *protocol_label;
 	GtkWidget *filename_label;
+	GtkWidget *localfile_label;
 	GtkWidget *status_label;
 	GtkWidget *speed_label;
 	GtkWidget *time_elapsed_label;
@@ -243,6 +244,9 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label), tmp);
 		g_free(tmp);
 	}
+
+	gtk_label_set_text(GTK_LABEL(dialog->localfile_label),
+			gaim_xfer_get_local_filename(xfer));
 
 	gtk_label_set_text(GTK_LABEL(dialog->status_label), status);
 
@@ -551,8 +555,9 @@ make_info_table(GaimGtkXferDialog *dialog)
 	{
 		{ &dialog->local_user_desc_label, &dialog->local_user_label, NULL },
 		{ &dialog->remote_user_desc_label, &dialog->remote_user_label, NULL },
-		{ &label, &dialog->protocol_label,		 _("Protocol:") },
+		{ &label, &dialog->protocol_label,       _("Protocol:") },
 		{ &label, &dialog->filename_label,       _("Filename:") },
+		{ &label, &dialog->localfile_label,      _("Local File:") },
 		{ &label, &dialog->status_label,         _("Status:") },
 		{ &label, &dialog->speed_label,          _("Speed:") },
 		{ &label, &dialog->time_elapsed_label,   _("Time Elapsed:") },
