@@ -1576,9 +1576,13 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (buf[1] == 0x02) {
 		unsigned int i, j;
+		const char *u, *p;
 
-		i = strlen(gaim_proxy_info_get_username(phb->gpi));
-		j = strlen(gaim_proxy_info_get_password(phb->gpi));
+		u = gaim_proxy_info_get_username(phb->gpi);
+		p = gaim_proxy_info_get_password(phb->gpi);
+
+		i = (u == NULL) ? 0 : strlen(u);
+		j = (p == NULL) ? 0 : strlen(p);
 
 		buf[0] = 0x01;	/* version 1 */
 		buf[1] = i;
