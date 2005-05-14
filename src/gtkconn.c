@@ -126,9 +126,12 @@ static void disconnect_window_update_buttons()
 	char *label_text;
 	GaimAccount *account = NULL;
 
+	if (disconnect_window == NULL)
+		return;
+
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
 
-	if ((disconnect_window == NULL) || (model == NULL))
+	if (model == NULL)
 		return;
 
 	if (!gtk_tree_model_get_iter_first(model, &iter)) {
