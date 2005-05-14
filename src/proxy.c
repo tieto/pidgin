@@ -1586,9 +1586,11 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		buf[0] = 0x01;	/* version 1 */
 		buf[1] = i;
-		memcpy(buf + 2, gaim_proxy_info_get_username(phb->gpi), i);
+		if (u != NULL)
+			memcpy(buf + 2, u, i);
 		buf[2 + i] = j;
-		memcpy(buf + 2 + i + 1, gaim_proxy_info_get_password(phb->gpi), j);
+		if (p != NULL)
+			memcpy(buf + 2 + i + 1, p, j);
 
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
