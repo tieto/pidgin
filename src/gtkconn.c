@@ -118,12 +118,15 @@ static void disconnect_window_hide()
  * is more than one account then make sure the GtkTreeView is shown.  
  * If there are no accounts disconnected then hide the dialog.
  */
-static void disconnect_window_update_buttons(GtkTreeModel *model)
+static void disconnect_window_update_buttons()
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *sel;
+	GtkTreeModel *model;
 	char *label_text;
 	GaimAccount *account = NULL;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(disconnect_window->treeview));
 
 	if ((disconnect_window == NULL) || (model == NULL))
 		return;
@@ -229,7 +232,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 
 		}
 
-		disconnect_window_update_buttons(model);
+		disconnect_window_update_buttons();
 
 		break;
 
@@ -280,7 +283,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
 		}
 
 		gaim_account_connect(account);
-		disconnect_window_update_buttons(model);
+		disconnect_window_update_buttons();
 
 		break;
 
@@ -297,7 +300,7 @@ static void disconnect_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget
  */
 static void disconnect_tree_cb(GtkTreeSelection *sel, GtkTreeModel *model)
 {
-	disconnect_window_update_buttons(model);
+	disconnect_window_update_buttons();
 }
 
 /*
@@ -348,7 +351,7 @@ static void disconnect_connection_change_cb(GaimConnection *gc, void *data) {
 	if (scale  != NULL)
 		g_object_unref(G_OBJECT(scale));
 
-	disconnect_window_update_buttons(model);
+	disconnect_window_update_buttons();
 }
 
 static void
@@ -464,7 +467,7 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(disconnect_window->treeview));
 	gtk_tree_selection_select_iter(sel, &new_iter);
 
-	disconnect_window_update_buttons(GTK_TREE_MODEL(list_store));
+	disconnect_window_update_buttons();
 
 	g_free(label_text);
 }
