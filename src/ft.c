@@ -140,24 +140,27 @@ gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error)
 
 static void gaim_xfer_show_file_error(GaimXfer *xfer, const char *filename)
 {
-	gchar *msg = NULL;
+	int err = errno;
+	gchar *msg = NULL, *utf8;
 	GaimXferType xfer_type = gaim_xfer_get_type(xfer);
 	GaimAccount *account = gaim_xfer_get_account(xfer);
 
+	utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 	switch(xfer_type) {
 		case GAIM_XFER_SEND:
 			msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
-								  filename, strerror(errno));
+								  utf8, strerror(err));
 			break;
 		case GAIM_XFER_RECEIVE:
 			msg = g_strdup_printf(_("Error writing %s: \n%s.\n"),
-								  filename, strerror(errno));
+								  utf8, strerror(err));
 			break;
 		default:
 			msg = g_strdup_printf(_("Error accessing %s: \n%s.\n"),
-								  filename, strerror(errno));
+								  utf8, strerror(err));
 			break;
-		}
+	}
+	g_free(utf8);
 
 	gaim_xfer_conversation_write(xfer, msg, TRUE);
 	gaim_xfer_error(xfer_type, account, xfer->who, msg);
@@ -202,8 +205,11 @@ gaim_xfer_choose_file_ok_cb(void *user_data, const char *filename)
 	}
 	else if ((gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) &&
 			 S_ISDIR(st.st_mode)) {
-				char *msg = g_strdup_printf(
-					_("%s is not a regular file. Cowardly refusing to overwrite it.\n"), filename);
+		char *msg, *utf8;
+		utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
+		msg = g_strdup_printf(
+					_("%s is not a regular file. Cowardly refusing to overwrite it.\n"), utf8);
+		g_free(utf8);
 		gaim_notify_error(NULL, NULL, msg, NULL);
 		g_free(msg);
 		gaim_xfer_request_denied(xfer);
@@ -347,7 +353,7 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 {
 	GaimXferType type;
 	struct stat st;
-	char *msg;
+	char *msg, *utf8;
 	GaimAccount *account;
 	GaimBuddy *buddy;
 
@@ -368,9 +374,11 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 	if (type == GAIM_XFER_SEND) {
 		/* Check the filename. */
 		if (g_strrstr(filename, "..")) {
+			char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 
-			msg = g_strdup_printf(_("%s is not a valid filename.\n"), filename);
+			msg = g_strdup_printf(_("%s is not a valid filename.\n"), utf8);
 			gaim_xfer_error(type, account, xfer->who, msg);
+			g_free(utf8);
 			g_free(msg);
 
 			gaim_xfer_unref(xfer);
@@ -384,11 +392,15 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 		}
 
 		gaim_xfer_set_local_filename(xfer, filename);
-		gaim_xfer_set_filename(xfer, g_basename(filename));
 		gaim_xfer_set_size(xfer, st.st_size);
 
+		utf8 = g_filename_to_utf8(g_basename(filename), -1, NULL, NULL, NULL);
+		gaim_xfer_set_filename(xfer, utf8);
+
 		msg = g_strdup_printf(_("Offering to send %s to %s"),
-				filename, buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
+				utf8, buddy ? gaim_buddy_get_alias(buddy) : xfer->who);
+		g_free(utf8);
+
 		gaim_xfer_conversation_write(xfer, msg, FALSE);
 		g_free(msg);
 	}

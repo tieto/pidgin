@@ -187,7 +187,7 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
 	GaimGtkXferUiData *data;
 	char *kbsec, *time_elapsed, *time_remaining;
-	char *status;
+	char *status, *utf8;
 
 	if (dialog == NULL || xfer == NULL)
 		return;
@@ -240,13 +240,18 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 					   gaim_xfer_get_filename(xfer));
 	} else {
 		char *tmp;
+
 		tmp = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
-		gtk_label_set_text(GTK_LABEL(dialog->filename_label), tmp);
+		utf8 = g_filename_to_utf8(tmp, -1, NULL, NULL, NULL);
 		g_free(tmp);
+
+		gtk_label_set_text(GTK_LABEL(dialog->filename_label), utf8);
+		g_free(utf8);
 	}
 
-	gtk_label_set_text(GTK_LABEL(dialog->localfile_label),
-			gaim_xfer_get_local_filename(xfer));
+	utf8 = g_filename_to_utf8((gaim_xfer_get_local_filename(xfer)), -1, NULL, NULL, NULL);
+	gtk_label_set_text(GTK_LABEL(dialog->localfile_label), utf8);
+	g_free(utf8);
 
 	gtk_label_set_text(GTK_LABEL(dialog->status_label), status);
 
@@ -803,7 +808,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	GaimXferType type;
 	GdkPixbuf *pixbuf;
 	char *size_str, *remaining_str;
-	char *lfilename;
+	char *lfilename, *utf8;
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
@@ -831,6 +836,9 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 
 	gtk_list_store_append(dialog->model, &data->iter);
 	lfilename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+	utf8 = g_filename_to_utf8(lfilename, -1, NULL, NULL, NULL);
+	g_free(lfilename);
+	lfilename = utf8;
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
 					   COLUMN_PROGRESS, 0.0,
