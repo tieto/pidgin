@@ -1014,44 +1014,84 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 	if (gaim_pounce_action_is_enabled(pounce, "execute-command"))
 	{
 		const char *command;
-		char *localecmd;
 
-		command = gaim_pounce_action_get_attribute(pounce, "execute-command",
-												   "command");
-		localecmd = g_locale_from_utf8(command, -1, NULL, NULL, NULL);
+		command = gaim_pounce_action_get_attribute(pounce,
+				"execute-command", "command");
 
-		if (localecmd != NULL)
+		if (command != NULL)
 		{
 #ifndef _WIN32
-			int pid = fork();
+			char *localecmd = g_locale_from_utf8(command, -1, NULL,
+					NULL, NULL);
 
-			if (pid == 0) {
-				char *args[4];
+			if (localecmd != NULL)
+			{
+				int pid = fork();
 
-				args[0] = "sh";
-				args[1] = "-c";
-				args[2] = (char *)localecmd;
-				args[3] = NULL;
+				if (pid == 0) {
+					char *args[4];
 
-				execvp(args[0], args);
+					args[0] = "sh";
+					args[1] = "-c";
+					args[2] = (char *)localecmd;
+					args[3] = NULL;
 
-				_exit(0);
+					execvp(args[0], args);
+
+					_exit(0);
+				}
+				g_free(localecmd);
 			}
 #else /* !_WIN32 */
-			STARTUPINFO StartInfo;
-			PROCESS_INFORMATION ProcInfo;
+			PROCESS_INFORMATION pi;
+			BOOL retval;
+			gchar *message = NULL;
 
-			memset(&ProcInfo, 0, sizeof(ProcInfo));
-			memset(&StartInfo, 0 , sizeof(StartInfo));
-			StartInfo.cb = sizeof(StartInfo);
-			CreateProcess(NULL, (char *)command, NULL, NULL, 0, 0, NULL,
-						  NULL, &StartInfo, &ProcInfo);
+			memset(&pi, 0, sizeof(pi));
+
+			if (G_WIN32_HAVE_WIDECHAR_API ()) {
+				STARTUPINFOW si;
+				wchar_t *wc_cmd = g_utf8_to_utf16(command,
+						-1, NULL, NULL, NULL);
+
+				memset(&si, 0 , sizeof(si));
+				si.cb = sizeof(si);
+
+				retval = CreateProcessW(NULL, wc_cmd, NULL,
+						NULL, 0, 0, NULL, NULL,
+						&si, &pi);
+				g_free(wc_cmd);
+			} else {
+				STARTUPINFOA si;
+				char *l_cmd = g_locale_from_utf8(command,
+						-1, NULL, NULL, NULL);
+
+				memset(&si, 0 , sizeof(si));
+				si.cb = sizeof(si);
+
+				retval = CreateProcessA(NULL, l_cmd, NULL,
+						NULL, 0, 0, NULL, NULL,
+						&si, &pi);
+				g_free(l_cmd);
+			}
+
+			if (retval) {
+				CloseHandle(pi.hProcess);
+				CloseHandle(pi.hThread);
+			} else {
+				message = g_win32_error_message(GetLastError());
+			}
+
 			gaim_debug_info("pounce",
-							"Pounce execute command called for: %s\n",
-							command);
+					"Pounce execute command called for: "
+					"%s\n%s%s%s",
+						command,
+						retval ? "" : "Error: ",
+						retval ? "" : message,
+						retval ? "" : "\n");
+			g_free(message);
 #endif /* !_WIN32 */
 		}
-		g_free(localecmd);
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "play-sound"))
