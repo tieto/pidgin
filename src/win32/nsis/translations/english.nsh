@@ -28,6 +28,9 @@
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_SECTION_TITLE		"Wimp Theme"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BLUECURVE_SECTION_TITLE	"Bluecurve Theme"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SHORTCUTS_SECTION_TITLE "Shortcuts"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_DESKTOP_SHORTCUT_SECTION_TITLE "Desktop"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_STARTMENU_SHORTCUT_SECTION_TITLE "Start Menu"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SECTION_DESCRIPTION		"Core Gaim files and dlls"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_SECTION_DESCRIPTION		"A multi-platform GUI toolkit, used by Gaim"
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes can change the look and feel of GTK+ applications."
@@ -35,6 +38,9 @@
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK+ theme that blends well into the Windows desktop environment."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_BLUECURVE_THEME_DESC		"The Bluecurve theme."
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue theme."
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_SHORTCUTS_SECTION_DESCRIPTION   "Shortcuts for starting Gaim"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_DESKTOP_SHORTCUT_DESC   "Create a shortcut to Gaim on the Desktop"
+!insertmacro GAIM_MACRO_DEFAULT_STRING GAIM_STARTMENU_SHORTCUT_DESC   "Create a Start Menu entry for Gaim"
 
 ; GTK+ Directory Page
 !insertmacro GAIM_MACRO_DEFAULT_STRING GTK_UPGRADE_PROMPT			"An old version of the GTK+ runtime was found. Do you wish to upgrade?$\rNote: Gaim may not work unless you do."
