@@ -1153,6 +1153,46 @@ AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
+dnl #######################################################################
+dnl # Doxygen Stuff
+dnl #######################################################################
+AC_ARG_ENABLE(doxygen, [  --enable-doxygen    enable documentation with doxygen],,enable_doxygen=yes)
+AC_ARG_ENABLE(dot,     [  --enable-dot        enable graphs in doxygen via 'dot'],,enable_dot=yes)
+
+if test "x$enable_doxygen" = xyes; then
+	AC_CHECK_PROG(DOXYGEN, doxygen, true, false)
+	if test $DOXYGEN = false; then
+		AC_MSG_WARN([*** doxygen not found, docs will not be available])
+		enable_doxygen=no
+	else
+		AC_DEFINE_UNQUOTED(HAVE_DOXYGEN, 1, [whether or not we have doxygen])
+
+		if test "x$enable_dot" = xyes; then
+			AC_CHECK_PROG(DOT, dot, true, false)
+
+			if test $DOT = false; then
+				enable_dot = no;
+				AC_MSG_WARN([*** dot not found, graphs will not be available])
+			else
+				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
+			fi
+		else
+			AC_MSG_WARN([*** dot not found, graphs will not be available])
+		fi
+	fi
+else
+	enable_dot="no"
+fi
+
+if test "x$enable_doxygen" = xyes; then
+	AM_CONDITIONAL(HAVE_DOXYGEN, true)
+else
+	AM_CONDITIONAL(HAVE_DOXYGEN, false)
+fi
+
+AC_SUBST(enable_doxygen)
+AC_SUBST(enable_dot)
+
 AC_CONFIG_COMMANDS_PRE([
 	if test -e VERSION; then
 		cp -p VERSION VERSION.ac-save

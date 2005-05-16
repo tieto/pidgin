@@ -43,4 +43,10 @@ apps_DATA = gaim.desktop
 SUBDIRS = doc intl pixmaps plugins po sounds src
 
 docs: Doxyfile
+if HAVE_DOXYGEN
+	@echo "Running doxygen..."
 	@doxygen
+else
+	@echo "doxygen was not found during configure.  Aborting."
+	@echo;
+endif
