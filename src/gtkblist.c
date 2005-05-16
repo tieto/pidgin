@@ -218,30 +218,6 @@ get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
 	gint original_width = width;
 	gint original_height = height;
 
-#ifdef _WIN32
-#if !GTK_CHECK_VERSION(2,4,8)
-	/* XXX: Kill this entire block someday.
-	 *
-	 * 2004-08-22: This bug fix should land in GTK+ version 2.4.8:
-	 *   http://bugzilla.gnome.org/show_bug.cgi?id=149013
-	 *
-	 * In Win32, GDK gets the workarea that isn't occupied by toolbars
-	 * (including the taskbar) and uses that region as the screen size.
-	 * GTK+ returns positions based on a screen size that ignores these
-	 * toolbars.  Since we want a pixmap with real X,Y coordinates, we
-	 * need to find out the offset from GTK's screen to GDK's screen,
-	 * and adjust the pixmaps we grab accordingly.  GDK will not deal
-	 * with toolbar position updates, so we're stuck restarting Gaim
-	 * if that happens. - SimGuy
-	 */
-	RECT *workarea = g_malloc(sizeof(RECT));
-	SystemParametersInfo(SPI_GETWORKAREA, 0, (void *)workarea, 0);
-	x += (workarea->left);
-	y += (workarea->top);
-	g_free(workarea);
-#endif
-#endif
-
 	if (x < 0) {
 		width += x;
 		x = 0;
@@ -2701,7 +2677,9 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				g_free(tmp);
 				value = g_markup_escape_text(g_hash_table_lookup(
 										chat->components, pce->identifier), -1);
-				g_string_append_printf(str, "\n<b>%s</b> %s", name, value);
+				g_string_append_printf(str, "\n<b>%s</b> %s",
+							name ? name : "",
+							value ? value : "");
 				g_free(name);
 				g_free(value);
 			}
