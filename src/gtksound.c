@@ -390,8 +390,19 @@ gaim_gtk_sound_play_file(const char *filename)
 #else /* _WIN32 */
 	gaim_debug_info("sound", "Playing %s\n", filename);
 
-	if (!PlaySound(filename, 0, SND_ASYNC | SND_FILENAME))
-		gaim_debug_error("sound", "Error playing sound.\n");
+	if (G_WIN32_HAVE_WIDECHAR_API ()) {
+		wchar_t *wc_filename = g_utf8_to_utf16(filename,
+				-1, NULL, NULL, NULL);
+		if (!PlaySoundW(wc_filename, NULL, SND_ASYNC | SND_FILENAME))
+			gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
+		g_free(wc_filename);
+	} else {
+		char *l_filename = g_locale_from_utf8(filename,
+				-1, NULL, NULL, NULL);
+		if (!PlaySoundA(l_filename, NULL, SND_ASYNC | SND_FILENAME))
+			gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
+		g_free(l_filename);
+	}
 #endif /* _WIN32 */
 }
 
