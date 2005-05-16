@@ -293,11 +293,11 @@ update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		gtk_widget_show(dialog->remove_button);
 
 #ifdef _WIN32 /* Only supported in Win32 right now */
-        if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
-            gtk_widget_set_sensitive(dialog->open_button, TRUE);
-        } else {
-            gtk_widget_set_sensitive(dialog->open_button, FALSE);
-        }
+		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+			gtk_widget_set_sensitive(dialog->open_button, TRUE);
+		} else {
+			gtk_widget_set_sensitive(dialog->open_button, FALSE);
+		}
 #endif
 		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
 		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
@@ -407,20 +407,41 @@ static void
 open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
 #ifdef _WIN32 /* Only supported in Win32 right now */
-    int code = (int)ShellExecute(NULL, NULL,
-                                 gaim_xfer_get_local_filename(dialog->selected_xfer),
-                                 NULL, NULL, SW_SHOW);
-    if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
-    {
-        gaim_notify_error(NULL, NULL,
-                          _("There is no application configured to open this type of file."), NULL);
-    }
-    else if (code < 32)
-    {
-        gaim_notify_error(NULL, NULL,
-                          _("An error occurred while opening the file."), NULL);
-        gaim_debug_warning("ft", "filename: %s; code: %d\n", gaim_xfer_get_local_filename(dialog->selected_xfer), code);
-    }
+	int code;
+	if (G_WIN32_HAVE_WIDECHAR_API ()) {
+		wchar_t *wc_filename = g_utf8_to_utf16(
+				gaim_xfer_get_local_filename(
+					dialog->selected_xfer),
+				-1, NULL, NULL, NULL);
+	
+		code = (int) ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(wc_filename);
+	} else {
+		char *l_filename = g_locale_from_utf8(
+				gaim_xfer_get_local_filename(
+					dialog->selected_xfer),
+				-1, NULL, NULL, NULL);
+	
+		code = (int) ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
+				SW_SHOW);
+
+		g_free(l_filename);
+	}
+
+	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
+	{
+		gaim_notify_error(NULL, NULL,
+				_("There is no application configured to open this type of file."), NULL);
+	}
+	else if (code < 32)
+	{
+		gaim_notify_error(NULL, NULL,
+				_("An error occurred while opening the file."), NULL);
+		gaim_debug_warning("ft", "filename: %s; code: %d\n",
+				gaim_xfer_get_local_filename(dialog->selected_xfer), code);
+	}
 #endif
 }
 
