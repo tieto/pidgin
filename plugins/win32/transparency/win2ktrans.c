@@ -163,16 +163,21 @@ static slider_win* find_slidwin( GtkWidget *win ) {
 	return NULL;
 }
 
-static gboolean win_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data) {
-	slider_win *slidwin=NULL;
-	/* Remove window from the window list */
-	gaim_debug_info(WINTRANS_PLUGIN_ID, "Conv window destoyed.. removing from list\n");
+static void gaim_conversation_delete(GaimConversation *conv) {
+	GaimConvWindow *win = gaim_conversation_get_window(conv);
+	//If it is the last conversation in the window, get rid of the sliders
+	if (gaim_conv_window_get_conversation_count(win) == 1) {
+		GtkWidget *widget = GAIM_GTK_WINDOW(win)->window;
+		slider_win *slidwin = NULL;
 
-	if((slidwin=find_slidwin(widget))) {
-		window_list = g_list_remove(window_list, (gpointer)slidwin);
-		g_free(slidwin);
+		/* Remove window from the window list */
+		gaim_debug_info(WINTRANS_PLUGIN_ID, "Conv window destoyed.. removing from list\n");
+
+		if ((slidwin=find_slidwin(widget))) {
+			window_list = g_list_remove(window_list, (gpointer)slidwin);
+			g_free(slidwin);
+		}
 	}
-	return FALSE;
 }
 
 static void set_trans_option(GtkWidget *w, const char *pref) {
@@ -225,8 +230,6 @@ static void add_slider(GtkWidget *win) {
 		slidwin->win = win;
 		slidwin->slider = slider_box;
 		window_list = g_list_append(window_list, (gpointer)slidwin);
-		/* Set callback to remove window from the list, if the window is destroyed */
-		g_signal_connect(GTK_OBJECT(win), "destroy_event", G_CALLBACK(win_destroy_cb), NULL);
 	}
 }
 
@@ -344,6 +347,12 @@ gboolean plugin_load(GaimPlugin *plugin) {
 						"conversation-created",
 						plugin,
 						GAIM_CALLBACK(gaim_new_conversation),
+						NULL);
+	/* Set callback to remove window from the list, if the window is destroyed */
+	gaim_signal_connect(gaim_conversations_get_handle(),
+						"deleting-conversation",
+						plugin,
+						GAIM_CALLBACK(gaim_conversation_delete),
 						NULL);
 	gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin, GAIM_CALLBACK(blist_created), NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
