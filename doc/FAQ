@@ -80,15 +80,19 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
          6.9.  I heard AOL is combining ICQ and AIM, does that mean I can send
                a message from an AIM account to an ICQ account and vice-versa?
          6.10. Why can't I connect via either Oscar or TOC?
-               English is not my native language, and some of my friends have
-         6.11. trouble seeing my IMs/I have trouble seeing my friends' IMs. How
+         6.11. English is not my native language, and some of my friends have
+               trouble seeing my IMs/I have trouble seeing my friends' IMs. How
                do I use a native language character set with ICQ?
+         6.12. Can I set myself invisible?
 
 7. IRC Protocol
 
          7.1. How do I join a channel with the IRC plugin?
          7.2. Is there a way to make Gaim automatically identify me and/or join
               IRC chats on login?
+         7.3. Is it possible to change the user name that appears in
+              username@hostname?
+         7.4. How can I set/change my real name?
 
 8. Jabber Protocol
 
@@ -798,6 +802,10 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   Gaim 0.82 and higher allow you to specify a character encoding to use when
   conversing with ICQ users. Use the account editor to set this encoding.
 
+6.12  Can I set myself invisible?
+
+  Yes. Go to Tools->Away->account->Invisible.
+
 +------------------------------------------------------------------------------
 | 7. IRC Protocol
 +------------------------------------------------------------------------------
@@ -817,6 +825,16 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 
   In version 0.64 or higher, you can add a chat to your buddy list, right click
   it, and tell Gaim to auto-join it.
+
+7.3  Is it possible to change the user name that appears in username@hostname?
+
+  Yes. Go to Tools->Accounts. Select your IRC account and click Modify. Expand
+  the Show more options section. Enter a name in the Username field.
+
+7.4  How can I set/change my real name?
+
+  Go to Tools->Accounts. Select your IRC account and click modify. Expand the
+  Show more options section. Enter a name in the Real name field.
 
 +------------------------------------------------------------------------------
 | 8. Jabber Protocol
@@ -947,6 +965,8 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   "http://insider.msg.yahoo.com/ycontent/". You can add a country code prefix
   to the url to fetch the list for another country. For example, for the German
   list, you would use "http://de.insider.msg.yahoo.com/ycontent/".
+
+  This has recently stopped working, we are investigating alternatives.
 
   The list of known country codes for this url is:
 
@@ -1225,7 +1245,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
   and perl scripts must be modified in order to work. The plugin or perl script
   must be located in $prefix/lib/gaim/ or in ~/.gaim/plugins/, and must
   implement the new API, as documented by the make docs command from the root
-  of the Gaim source code tree. This will generated html documentation in the
+  of the Gaim source code tree. This will generate html documentation in the
   doc/html directory. Also note that plugins and perl scripts are now
   controlled from preferences.
 
@@ -1301,7 +1321,7 @@ Gaim: The Pimpin' Penguin IM Clone Thats Good For The Soul
 17.4  Does Gaim support secure instant messaging (encrypted IMs)?
  
   Short answer: Yes, use the SILC protocol.
-  Long Answer(for other protocols): Not natively. Doing secure instant
+  Long Answer (for other protocols): Not natively. Doing secure instant
   messaging right is a big deal and requires, among other things, an
   authentication scheme. Simply encrypting your data stream without verifying
   the party with whom you are chatting is not secure in any way; some other
