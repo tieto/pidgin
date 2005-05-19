@@ -56,8 +56,6 @@ typedef enum
 } GaimBrowserPlace;
 #endif /* _WIN32 */
 
-extern guint accels_save_timer;
-
 /**
  * Sets up a gtkimhtml widget, loads it with smileys, and sets the
  * default signal handlers.
