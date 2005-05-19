@@ -1538,6 +1538,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		}
 	}
 
+	gaim_presence_set_status_active(dialog->account->presence, "online", TRUE);
 	ret = dialog->account;
 
 	account_win_destroy_cb(NULL, NULL, dialog);
