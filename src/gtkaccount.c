@@ -1348,6 +1348,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	char *username;
 	char *tmp;
 	size_t index;
+	gboolean new = FALSE;
 	GtkTreeIter iter;
 	GaimAccount *ret;
 
@@ -1359,6 +1360,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
 		gaim_account_set_enabled(dialog->account, GAIM_GTK_UI, TRUE);
+		new = TRUE;
 	}
 	else
 	{
@@ -1538,12 +1540,16 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		}
 	}
 
-	gaim_presence_set_status_active(dialog->account->presence, "online", TRUE);
 	ret = dialog->account;
 
 	account_win_destroy_cb(NULL, NULL, dialog);
 
 	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", ret);
+
+	/* XXX: make the new account sign on with the currently active global status
+	 * instead of hardcoding "online" */
+	if (new)
+		gaim_presence_set_status_active(dialog->account->presence, "online", TRUE);
 
 	return ret;
 }
