@@ -1426,7 +1426,7 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GtkTreeModel *model = (GtkTreeModel *)data;
 	GtkTreeIter iter;
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
-	const char *pref;
+	char *pref;
 
 	gtk_tree_model_get_iter (model, &iter, path);
 	gtk_tree_model_get (model, &iter,
@@ -1434,6 +1434,7 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 						-1);
 
 	gaim_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
+	g_free(pref);
 
 	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
 					   0, !gtk_cell_renderer_toggle_get_active(cell),
