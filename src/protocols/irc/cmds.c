@@ -74,7 +74,7 @@ int irc_cmd_away(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	GaimConnection *gc = gaim_account_get_connection(irc->account);
-	char *action, *dst, **newargs;
+	char *action, *escaped, *dst, **newargs;
 	const char *src;
 	GaimConversation *convo;
 
@@ -112,7 +112,9 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 
 	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, target, irc->account);
 	if (convo) {
-		action = g_strdup_printf("/me %s", args[0]);
+		escaped = g_markup_escape_text(args[0], -1);
+		action = g_strdup_printf("/me %s", escaped);
+		g_free(escaped);
 		if (action[strlen(action) - 1] == '\n')
 			action[strlen(action) - 1] = '\0';
 		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
