@@ -72,6 +72,17 @@ account_warned_cb(GaimAccount *account, const char *warner, int level,
 }
 
 /**************************************************************************
+ * Buddy Icons signal callbacks
+ **************************************************************************/
+static void
+buddy_icon_cached_cb(GaimBuddyIcon *icon, GaimBuddy *buddy,
+		     const char *filename, const char *old_icon)
+{
+	gaim_debug_misc("signals test", "buddy icon cached (%s, %s, %s)\n",
+					gaim_buddy_get_name(buddy), filename, old_icon);
+}
+
+/**************************************************************************
  * Buddy List subsystem signal callbacks
  **************************************************************************/
 static void
@@ -475,6 +486,7 @@ plugin_load(GaimPlugin *plugin)
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *ciphers_handle = gaim_ciphers_get_handle();
+	void *buddy_icons_handle = gaim_buddy_icons_get_handle();
 
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
@@ -487,6 +499,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(account_set_info_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-warned",
 						plugin, GAIM_CALLBACK(account_warned_cb), NULL);
+
+	/* Buddy Icon subsystem signals */
+	gaim_signal_connect(buddy_icons_handle, "buddy-icon-cached",
+						plugin, GAIM_CALLBACK(buddy_icon_cached_cb), NULL);
 
 	/* Buddy List subsystem signals */
 	gaim_signal_connect(blist_handle, "buddy-away",
