@@ -188,4 +188,13 @@ char *yahoo_tooltip_text(GaimBuddy *b);
 /* yahoo_profile.c */
 void yahoo_get_info(GaimConnection *gc, const char *name);
 
+/**
+ * Check to see whether the sender is permitted to send
+ *
+ * @param gc The gc handle.
+ * @param who The sender of the packet to check
+*/
+gboolean yahoo_privacy_check
+	(GaimConnection *gc, const char *who);
+
 #endif /* _YAHOO_H_ */

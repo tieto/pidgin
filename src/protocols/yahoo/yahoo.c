@@ -54,6 +54,92 @@ extern char *yahoo_crypt(const char *, const char *);
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
 static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len);
 
+static void
+yahoo_add_permit(GaimConnection *gc, const char *who)
+{
+	gaim_debug_info("yahoo",
+			"Permitting ID %s local contact rights for account %s\n", who, gc->account);
+	gaim_privacy_permit_add(gc->account,who,TRUE);
+}
+
+static void
+yahoo_rem_permit(GaimConnection *gc, const char *who)
+{
+	gaim_debug_info("yahoo",
+			"Denying ID %s local contact rights for account %s\n", who, gc->account);
+	gaim_privacy_permit_remove(gc->account,who,TRUE);
+}
+
+gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
+{
+	/* returns TRUE if allowed through, FALSE otherwise */
+	GSList *list;
+	gboolean permitted=FALSE;
+
+	switch (gc->account->perm_deny) {
+		case 0:
+			gaim_debug_warning("yahoo", "Privacy setting was 0.  If you can "
+							   "reproduce this, please file a bug report.\n");
+			permitted = TRUE;
+			break;
+
+		case GAIM_PRIVACY_ALLOW_ALL:
+			permitted = TRUE;
+			break;
+
+		case GAIM_PRIVACY_DENY_ALL:
+			gaim_debug_info("yahoo",
+			    "%s blocked data received from %s (GAIM_PRIVACY_DENY_ALL)\n",
+			    gc->account->username,who);
+			break;
+
+		case GAIM_PRIVACY_ALLOW_USERS:
+			for( list=gc->account->permit; list!=NULL; list=list->next ) {
+				if ( !gaim_utf8_strcasecmp(who, gaim_normalize(gc->account,
+					      (char *)list->data)) ) {
+					permitted=TRUE;
+					gaim_debug_info("yahoo",
+					    "%s allowed data received from %s (GAIM_PRIVACY_ALLOW_USERS)\n",
+					    gc->account->username,who);
+					break;
+				}
+			}
+			break;
+
+		case GAIM_PRIVACY_DENY_USERS:
+			/* seeing we're letting everyone through, except the deny list*/
+			permitted=TRUE;
+			for( list=gc->account->deny; list!=NULL; list=list->next ) {
+				if ( !gaim_utf8_strcasecmp(who, gaim_normalize( gc->account,
+					      (char *)list->data )) ) {
+					permitted=FALSE;
+					gaim_debug_info("yahoo",
+					    "%s blocked data received from %s (GAIM_PRIVACY_DENY_USERS)\n",
+					    gc->account->username,who);
+					}
+				break;
+			}
+			break;
+
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+			if ( gaim_find_buddy(gc->account,who) != NULL ) {
+				permitted = TRUE;
+			} else {
+				gaim_debug_info("yahoo",
+				    "%s blocked data received from %s (GAIM_PRIVACY_ALLOW_BUDDYLIST)\n",
+				    gc->account->username,who);
+			}
+		break;
+
+		default:
+			gaim_debug_warning("yahoo", "Privacy setting was unknown.  If you can "
+							   "reproduce this, please file a bug report.\n");
+			permitted = FALSE;
+			break;
+	}
+
+	return permitted;
+}
 
 static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
 {
@@ -521,10 +607,16 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		yd->tmp_serv_ilist = NULL;
 	}
 
-	if (got_serv_list) {
-		gc->account->perm_deny = 4;
-		serv_set_permit_deny(gc);
+	if (got_serv_list &&
+		((gc->account->perm_deny != GAIM_PRIVACY_ALLOW_BUDDYLIST) &&
+		(gc->account->perm_deny != GAIM_PRIVACY_DENY_ALL) &&
+		(gc->account->perm_deny != GAIM_PRIVACY_ALLOW_USERS)))
+	{
+		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
+		gaim_debug_info("yahoo", "Privacy defaulting to GAIM_PRIVACY_DENY_USERS.\n",
+		      gc->account->username);
 	}
+
 }
 
 static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -552,7 +644,8 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (!from || !msg)
 		return;
 
-	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))) {
+	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
+		&& (yahoo_privacy_check(gc, from)))  {
 		if (*stat == '1')
 			serv_got_typing(gc, from, 0, GAIM_TYPING);
 		else
@@ -632,6 +725,11 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		if (!im->from || !im->msg) {
 			g_free(im);
 			continue;
+		}
+
+		if (!yahoo_privacy_check(gc, im->from)) {
+			gaim_debug_info("yahoo", "Message from %s dropped.\n", im->from);
+			return;
 		}
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
@@ -1813,7 +1911,11 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
-
+	if (!yahoo_privacy_check(gc, who)) {
+		gaim_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
+		      gc->account->username, who);
+		return;
+	}
 	serv_got_im(gc, who, msg, 0, time(NULL));
 }
 
@@ -3189,6 +3291,8 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 	g_free(gpo);
 }
 
+/********************************* Commands **********************************/
+
 static GaimCmdRet
 yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
 
@@ -3207,7 +3311,6 @@ yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args, gchar **
 
 static GaimPlugin *my_protocol = NULL;
 
-/********************************* Commands **********************************/
 
 static GaimCmdRet
 yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
@@ -3279,9 +3382,9 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* add_buddies */
 	yahoo_remove_buddy,
 	NULL, /*remove_buddies */
-	NULL, /* add_permit */
+	yahoo_add_permit,
 	yahoo_add_deny,
-	NULL, /* rem_permit */
+	yahoo_rem_permit,
 	yahoo_rem_deny,
 	yahoo_set_permit_deny,
 	NULL, /* warn */
