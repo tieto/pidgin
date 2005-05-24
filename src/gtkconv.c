@@ -4203,6 +4203,7 @@ gaim_gtk_new_window(GaimConvWindow *win)
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(gtkwin->notebook), TRUE);
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(gtkwin->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(gtkwin->notebook), FALSE);
+	gtk_notebook_set_show_border(GTK_NOTEBOOK(gtkwin->notebook), FALSE);
 
 	gtk_widget_show(gtkwin->notebook);
 
@@ -4305,13 +4306,13 @@ gaim_gtk_conv_find_gtkconv(GaimConversation * conv)
 	GaimBuddy *bud = gaim_find_buddy(conv->account, conv->name), *b;
 	GaimContact *c;
 	GaimBlistNode *cn;
-	
+
 	if (!bud)
 		return NULL;
-	
+
 	if (!(c = gaim_buddy_get_contact(bud)))
 		return NULL;
-	
+
 	cn = (GaimBlistNode *)c;
 	for (b = (GaimBuddy *)cn->child; b; b = (GaimBuddy *) ((GaimBlistNode *)b)->next) {
 		GaimConversation *conv;
@@ -4320,7 +4321,7 @@ gaim_gtk_conv_find_gtkconv(GaimConversation * conv)
 				return conv->ui_data;
 		}
 	}
-	
+
 	return NULL;
 }
 
