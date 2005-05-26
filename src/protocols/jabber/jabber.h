@@ -97,6 +97,7 @@ typedef struct _JabberStream
 	gboolean registration;
 
 	char *avatar_hash;
+	GSList *pending_avatar_requests;
 } JabberStream;
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);

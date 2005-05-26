@@ -384,13 +384,14 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 			gsize avatar_len;
 
 			if(avatar_file && g_file_get_contents(avatar_file, (gchar **)&avatar_data, &avatar_len, &error)) {
-				xmlnode *photo;
+				xmlnode *photo, *binval;
 				unsigned char *enc;
 				int i;
 				unsigned char hashval[20];
 				char *p, hash[41];
 
 				photo = xmlnode_new_child(vc_node, "PHOTO");
+				binval = xmlnode_new_child(photo, "BINVAL");
 				enc = gaim_base64_encode(avatar_data, avatar_len);
 
 				gaim_cipher_digest_region("sha1", (guint8 *)avatar_data,
@@ -402,7 +403,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 					snprintf(p, 3, "%02x", hashval[i]);
 				js->avatar_hash = g_strdup(hash);
 
-				xmlnode_insert_data(photo, enc, -1);
+				xmlnode_insert_data(binval, enc, -1);
 				g_free(enc);
 				g_free(avatar_data);
 			} else if (error != NULL) {
@@ -804,30 +805,36 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 						_("Description"), text);
 			} else if(!strcmp(child->name, "PHOTO") ||
 					!strcmp(child->name, "LOGO")) {
-				int size, i;
-				unsigned char hashval[20];
-				char *data, *p, hash[41];
-				gboolean photo = (strcmp(child->name, "PHOTO") == 0);
+				char *bintext = NULL;
+				xmlnode *binval;
+				if((binval = xmlnode_get_child(child, "BINVAL")) &&
+						(bintext = xmlnode_get_data(binval))) {
+					int size, i;
+					unsigned char hashval[20];
+					char *data, *p, hash[41];
+					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
-				gaim_base64_decode(text, &data, &size);
+					gaim_base64_decode(text, &data, &size);
 
-				imgids = g_slist_prepend(imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
-				g_string_append_printf(info_text,
-						"<b>%s:</b> <img id='%d'><br/>",
-						photo ? _("Photo") : _("Logo"),
-						GPOINTER_TO_INT(imgids->data));
+					imgids = g_slist_prepend(imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
+					g_string_append_printf(info_text,
+							"<b>%s:</b> <img id='%d'><br/>",
+							photo ? _("Photo") : _("Logo"),
+							GPOINTER_TO_INT(imgids->data));
 
-				gaim_buddy_icons_set_for_user(js->gc->account, bare_jid,
-						data, size);
+					gaim_buddy_icons_set_for_user(js->gc->account, bare_jid,
+							data, size);
 
-				gaim_cipher_digest_region("sha1", (guint8 *)data, size,
-										  sizeof(hashval), hashval, NULL);
-				p = hash;
-				for(i=0; i<20; i++, p+=2)
-					snprintf(p, 3, "%02x", hashval[i]);
-				gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
+					gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+							sizeof(hashval), hashval, NULL);
+					p = hash;
+					for(i=0; i<20; i++, p+=2)
+						snprintf(p, 3, "%02x", hashval[i]);
+					gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
 
-				g_free(data);
+					g_free(data);
+					g_free(bintext);
+				}
 			}
 			g_free(text);
 		}

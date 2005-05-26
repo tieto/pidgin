@@ -883,5 +883,50 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *wh
 	return TRUE;
 }
 
+static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	JabberChat *chat;
+	xmlnode *query, *x, *error;
+	int id = GPOINTER_TO_INT(data);
+
+	if(!(chat = jabber_chat_find_by_id(js, id)))
+		return;
+
+	if((error = xmlnode_get_child(packet, "error"))) {
+		/* defaults, in case the conference server doesn't
+		 * support this request */
+		chat->xhtml = TRUE;
+		return;
+	}
+
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
+		const char *var = xmlnode_get_attrib(x, "var");
+
+		if(var && !strcmp(var, "http://jabber.org/protocol/xhtml-im")) {
+			chat->xhtml = TRUE;
+		}
+	}
+}
+
+void jabber_chat_disco_traffic(JabberChat *chat)
+{
+	JabberIq *iq;
+	xmlnode *query;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
+			"http://jabber.org/protocol/disco#info");
+
+	query = xmlnode_get_child(iq->node, "query");
+
+	xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/muc#traffic");
+
+	jabber_iq_set_callback(iq, jabber_chat_disco_traffic_cb, GINT_TO_POINTER(chat->id));
+
+	jabber_iq_send(iq);
+}
+
 
 

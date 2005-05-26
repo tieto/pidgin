@@ -170,6 +170,9 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 				jb->subscription = JABBER_SUB_BOTH;
 			else if(!strcmp(subscription, "remove"))
 				jb->subscription = JABBER_SUB_REMOVE;
+			/* XXX: if subscription is now "from" or "none" we need to
+			 * fake a signoff, since we won't get any presence from them
+			 * anymore */
 		}
 
 		if(ask && !strcmp(ask, "subscribe"))

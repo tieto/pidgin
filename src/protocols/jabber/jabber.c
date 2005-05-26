@@ -826,11 +826,11 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			jabber_stream_init(js);
 			break;
 		case JABBER_STREAM_CONNECTED:
-			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_roster_request(js);
 			gpresence = gaim_account_get_presence(js->gc->account);
 			status = gaim_presence_get_active_status(gpresence);
 			jabber_presence_send(js->gc->account, status);
+			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
 			jabber_disco_items_server(js);
 			break;
 	}
@@ -947,6 +947,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 				stripped = gaim_markup_strip_html(jbr->status);
 				text = g_markup_escape_text(stripped, -1);
 				g_free(stripped);
+				/* XXX: need some nl to br love here */
 			}
 
 			g_string_append_printf(ret, "\n<b>%s:</b> %s%s%s",
@@ -1618,7 +1619,10 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
-	option = gaim_account_option_bool_new(_("Force old SSL"), "old_ssl", FALSE);
+	option = gaim_account_option_bool_new(_("Require TLS"), "require_tls", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = gaim_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 

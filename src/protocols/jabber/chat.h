@@ -83,5 +83,7 @@ gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
 GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc);
 void jabber_roomlist_cancel(GaimRoomlist *list);
 
+void jabber_chat_disco_traffic(JabberChat *chat);
+
 
 #endif /* _GAIM_JABBER_CHAT_H_ */

@@ -21,6 +21,7 @@
 #include "internal.h"
 #include "debug.h"
 #include "prefs.h"
+#include "util.h"
 
 #include "buddy.h"
 #include "disco.h"
@@ -179,6 +180,7 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	id = xmlnode_get_attrib(packet, "id");
 
 	if(type && !strcmp(type, "get")) {
+		char *utf8;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
 		jabber_iq_set_id(iq, id);
@@ -188,10 +190,18 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 		strftime(buf, sizeof(buf), "%Y%m%dT%T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "utc"), buf, -1);
+
 		strftime(buf, sizeof(buf), "%Z", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "tz"), buf, -1);
+		if((utf8 = gaim_utf8_try_convert(buf))) {
+			xmlnode_insert_data(xmlnode_new_child(query, "tz"), utf8, -1);
+			g_free(utf8);
+		}
+
 		strftime(buf, sizeof(buf), "%d %b %Y %T", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "display"), buf, -1);
+		if((utf8 = gaim_utf8_try_convert(buf))) {
+			xmlnode_insert_data(xmlnode_new_child(query, "display"), utf8, -1);
+			g_free(utf8);
+		}
 
 		jabber_iq_send(iq);
 	}
@@ -202,11 +212,12 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 	JabberIq *iq;
 	const char *type, *from, *id;
 	xmlnode *query;
+	char *os = NULL;
 
 	type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "get")) {
-#if 0
+
 		if(!gaim_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
 			struct utsname osinfo;
 
@@ -214,7 +225,7 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 			os = g_strdup_printf("%s %s %s", osinfo.sysname, osinfo.release,
 					osinfo.machine);
 		}
-#endif
+
 		from = xmlnode_get_attrib(packet, "from");
 		id = xmlnode_get_attrib(packet, "id");
 
@@ -226,12 +237,11 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 		xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
 		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
-#if 0
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
 			g_free(os);
 		}
-#endif
+
 		jabber_iq_send(iq);
 	}
 }

@@ -202,8 +202,9 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 
 static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointer blah)
 {
+	JabberBuddy *jb = NULL;
 	GaimBuddy *b = NULL;
-	xmlnode *vcard, *photo;
+	xmlnode *vcard, *photo, *binval;
 	char *text, *data;
 	int size;
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -211,26 +212,31 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 	if(!from)
 		return;
 
+	jb = jabber_buddy_find(js, from, TRUE);
+
+	js->pending_avatar_requests = g_slist_remove(js->pending_avatar_requests, jb);
+
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
-		if((photo = xmlnode_get_child(vcard, "PHOTO"))) {
-			if((text = xmlnode_get_data(photo))) {
-				gaim_base64_decode(text, &data, &size);
+		if((photo = xmlnode_get_child(vcard, "PHOTO")) &&
+				(binval = xmlnode_get_child(photo, "BINVAL")) &&
+				(text = xmlnode_get_data(binval))) {
+			gaim_base64_decode(text, &data, &size);
 
-				gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);
-				if((b = gaim_find_buddy(js->gc->account, from))) {
-					unsigned char hashval[20];
-					char hash[41], *p;
-					int i;
+			gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);
+			if((b = gaim_find_buddy(js->gc->account, from))) {
+				unsigned char hashval[20];
+				char hash[41], *p;
+				int i;
 
-					gaim_cipher_digest_region("sha1", (guint8 *)data, size,
-											  sizeof(hashval), hashval, NULL);
- 					p = hash;
-					for(i=0; i<20; i++, p+=2)
-						snprintf(p, 3, "%02x", hashval[i]);
-					gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
-				}
+				gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+						sizeof(hashval), hashval, NULL);
+				p = hash;
+				for(i=0; i<20; i++, p+=2)
+					snprintf(p, 3, "%02x", hashval[i]);
+				gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
 			}
+			g_free(text);
 		}
 	}
 }
@@ -464,28 +470,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
 				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), chat->handle);
 
-				/* <iq to='room@server'
-				   type='get'>
-				   <query xmlns='http://jabber.org/protocol/disco#info'
-				   node='http://jabber.org/protocol/muc#traffic'/>
-				   </iq>
-				   */
-				/* expected response format:
-				   <iq from='room@server'
-				   type='get'>
-				   <query xmlns='http://jabber.org/protocol/disco#info'
-				   node='http://jabber.org/protocol/muc#traffic'>
-				   <feature var='http://jabber.org/protocol/xhtml-im'/>
-				   <feature var='jabber:x:roster/'/>
-				   </query>
-				   </iq>
-				   */
-				/*
-				 * XXX: i'm not sure if we turn off XHTML unless we get
-				 * xhtml back in this, or if we turn it off only if we
-				 * get a response, and it's not there.  Ask stpeter to
-				 * clarify.
-				 */
+				jabber_chat_disco_traffic(chat);
 			}
 
 			jabber_buddy_track_resource(jb, jid->resource, priority, state,
@@ -529,13 +514,23 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				JabberIq *iq;
 				xmlnode *vcard;
 
-				iq = jabber_iq_new(js, JABBER_IQ_GET);
-				xmlnode_set_attrib(iq->node, "to", buddy_name);
-				vcard = xmlnode_new_child(iq->node, "vCard");
-				xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
+				/* XXX this is a crappy way of trying to prevent
+				 * someone from spamming us with presence packets
+				 * and causing us to DoS ourselves...what we really
+				 * need is a queue system that can throttle itself,
+				 * but i'm too tired to write that right now */
+				if(!g_slist_find(js->pending_avatar_requests, jb)) {
 
-				jabber_iq_set_callback(iq, jabber_vcard_parse_avatar, NULL);
-				jabber_iq_send(iq);
+					js->pending_avatar_requests = g_slist_prepend(js->pending_avatar_requests, jb);
+
+					iq = jabber_iq_new(js, JABBER_IQ_GET);
+					xmlnode_set_attrib(iq->node, "to", buddy_name);
+					vcard = xmlnode_new_child(iq->node, "vCard");
+					xmlnode_set_attrib(vcard, "xmlns", "vcard-temp");
+
+					jabber_iq_set_callback(iq, jabber_vcard_parse_avatar, NULL);
+					jabber_iq_send(iq);
+				}
 			}
 		}
 
