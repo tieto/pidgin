@@ -681,7 +681,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	JabberSIXfer *jsx;
 	GaimXfer *xfer;
 	xmlnode *si, *file, *feature, *x, *field, *option, *value;
-	const char *stream_id, *filename, *filesize_c, *profile;
+	const char *stream_id, *filename, *filesize_c, *profile, *from;
 	size_t filesize = 0;
 
 	if(!(si = xmlnode_get_child(packet, "si")))
@@ -707,6 +707,15 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	if(!(x = xmlnode_get_child_with_namespace(feature, "x", "jabber:x:data")))
+		return;
+
+	if(!(from = xmlnode_get_attrib(packet, "from")))
+		return;
+
+	/* if they've already sent us this file transfer with the same damn id
+	 * then we're gonna ignore it, until I think of something better to do
+	 * with it */
+	if((xfer = jabber_si_xfer_find(js, stream_id, from)))
 		return;
 
 	jsx = g_new0(JabberSIXfer, 1);
@@ -742,8 +751,7 @@ void jabber_si_parse(JabberStream *js, xmlnode *packet)
 	jsx->stream_id = g_strdup(stream_id);
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE,
-			xmlnode_get_attrib(packet, "from"));
+	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE, from);
 	xfer->data = jsx;
 
 	gaim_xfer_set_filename(xfer, filename);
