@@ -202,10 +202,12 @@ reconnected(GaimConnection *gc, void *m)
 
 	g_return_if_fail(gc != NULL);
 
+	account = gaim_connection_get_account(gc);
+
+	g_hash_table_remove(hash, account);
+
 	if (accountReconnecting == NULL)
 		return;
-
-	account = gaim_connection_get_account(gc);
 
 	accountReconnecting = g_slist_remove(accountReconnecting, account);
 }
