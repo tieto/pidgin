@@ -77,12 +77,6 @@ gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 	gboolean permitted=FALSE;
 
 	switch (gc->account->perm_deny) {
-		case 0:
-			gaim_debug_warning("yahoo", "Privacy setting was 0.  If you can "
-							   "reproduce this, please file a bug report.\n");
-			permitted = TRUE;
-			break;
-
 		case GAIM_PRIVACY_ALLOW_ALL:
 			permitted = TRUE;
 			break;
