@@ -207,7 +207,8 @@ field_choice_option_cb(GtkRadioButton *button, GaimRequestField *field)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
 		gaim_request_field_choice_set_value(field,
-				g_slist_index(gtk_radio_button_get_group(button), button));
+				(g_slist_length(gtk_radio_button_get_group(button)) -
+				 g_slist_index(gtk_radio_button_get_group(button), button)) - 1);
 }
 
 static void
@@ -1149,6 +1150,7 @@ create_choice_field(GaimRequestField *field)
 		GtkWidget *box;
 		GtkWidget *first_radio = NULL;
 		GtkWidget *radio;
+		gint i;
 
 		if (g_list_length(labels) == 2)
 			box = gtk_hbox_new(FALSE, 6);
@@ -1157,7 +1159,7 @@ create_choice_field(GaimRequestField *field)
 
 		widget = box;
 
-		for (l = labels; l != NULL; l = l->next)
+		for (l = labels, i = 0; l != NULL; l = l->next, i++)
 		{
 			const char *text = l->data;
 
@@ -1166,6 +1168,9 @@ create_choice_field(GaimRequestField *field)
 
 			if (first_radio == NULL)
 				first_radio = radio;
+
+			if (i == gaim_request_field_choice_get_default_value(field))
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 
 			gtk_box_pack_start(GTK_BOX(box), radio, TRUE, TRUE, 0);
 			gtk_widget_show(radio);
