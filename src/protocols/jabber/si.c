@@ -45,6 +45,8 @@ struct bytestreams_streamhost {
 typedef struct _JabberSIXfer {
 	JabberStream *js;
 
+	gboolean accepted;
+
 	char *stream_id;
 	char *iq_id;
 
@@ -187,6 +189,10 @@ void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	jsx = xfer->data;
+
+	if(!jsx->accepted)
+		return;
+
 	if(jsx->iq_id)
 		g_free(jsx->iq_id);
 	jsx->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
@@ -621,6 +627,8 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 		xmlnode_set_attrib(iq->node, "to", xfer->who);
 		if(jsx->iq_id)
 			jabber_iq_set_id(iq, jsx->iq_id);
+
+		jsx->accepted = TRUE;
 
 		si = xmlnode_new_child(iq->node, "si");
 		xmlnode_set_attrib(si, "xmlns", "http://jabber.org/protocol/si");
