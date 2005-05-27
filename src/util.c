@@ -1901,6 +1901,14 @@ int gaim_build_dir (const char *path, int mode)
 
 		if(g_file_test(dir, G_FILE_TEST_IS_DIR)) {
 			continue;
+#ifdef _WIN32
+		/* allow us to create subdirs on UNC paths
+		 * (\\machinename\path\to\blah)
+		 * g_file_test() doesn't work on "\\machinename" */
+		} else if (cur == 2 && dir[0] == '\\' && dir[1] == '\\'
+				&& components[cur + 1] != NULL) {
+			continue;
+#endif
 		} else if(g_file_test(dir, G_FILE_TEST_EXISTS)) {
 			gaim_debug_warning("build_dir", "bad path: %s\n", path);
 			g_strfreev(components);
