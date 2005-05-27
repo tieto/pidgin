@@ -566,6 +566,23 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	return FALSE;
 }
 
+gboolean gtk_enter_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
+{
+	if (GTK_IMHTML(imhtml)->editable)
+		gdk_window_set_cursor(
+				gtk_text_view_get_window(GTK_TEXT_VIEW(imhtml),
+					GTK_TEXT_WINDOW_TEXT),
+				GTK_IMHTML(imhtml)->text_cursor);
+	else
+		gdk_window_set_cursor(
+				gtk_text_view_get_window(GTK_TEXT_VIEW(imhtml),
+					GTK_TEXT_WINDOW_TEXT),
+				GTK_IMHTML(imhtml)->arrow_cursor);
+
+	/* propagate the event normally */
+	return FALSE;
+}
+
 gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
@@ -587,10 +604,9 @@ gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 		g_source_remove(GTK_IMHTML(imhtml)->tip_timer);
 		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
-	if (GTK_IMHTML(imhtml)->editable)
-		gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->text_cursor);
-	else
-		gdk_window_set_cursor(event->window, GTK_IMHTML(imhtml)->arrow_cursor);
+	gdk_window_set_cursor(
+			gtk_text_view_get_window(GTK_TEXT_VIEW(imhtml),
+				GTK_TEXT_WINDOW_TEXT), NULL);
 
 	/* propagate the event normally */
 	return FALSE;
@@ -1276,6 +1292,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "size-allocate", G_CALLBACK(gtk_size_allocate_cb), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "motion-notify-event", G_CALLBACK(gtk_motion_event_notify), NULL);
 	g_signal_connect(G_OBJECT(imhtml), "leave-notify-event", G_CALLBACK(gtk_leave_event_notify), NULL);
+	g_signal_connect(G_OBJECT(imhtml), "enter-notify-event", G_CALLBACK(gtk_enter_event_notify), NULL);
 #if (!GTK_CHECK_VERSION(2,2,0))
 	/* See the comment for gtk_key_pressed_cb */
 	g_signal_connect(G_OBJECT(imhtml), "key_press_event", G_CALLBACK(gtk_key_pressed_cb), NULL);
@@ -1299,7 +1316,8 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set",
 		               G_CALLBACK(mark_set_so_update_selection_cb), imhtml);
 
-	gtk_widget_add_events(GTK_WIDGET(imhtml), GDK_LEAVE_NOTIFY_MASK);
+	gtk_widget_add_events(GTK_WIDGET(imhtml),
+			GDK_LEAVE_NOTIFY_MASK | GDK_ENTER_NOTIFY_MASK);
 
 	imhtml->clipboard_text_string = NULL;
 	imhtml->clipboard_html_string = NULL;
