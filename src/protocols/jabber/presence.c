@@ -282,7 +282,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jb->error_msg = msg ? msg : g_strdup(_("Unknown Error in presence"));
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
-		char *msg = g_strdup_printf(_("The user %s wants to add you to their buddy list."), from);
+		char *msg;
+
+		msg = g_strdup_printf(_("The user %s wants to add %s to his or "
+								"her buddy list."),
+							  from, gaim_account_get_username(js->gc->account));
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 

@@ -3832,7 +3832,10 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
-				gchar *dialog_msg = g_strdup_printf(_("The user %u wants to add you to their buddy list for the following reason:\n%s"), args->uin, msg2[5] ? msg2[5] : _("No reason given."));
+				gchar *dialog_msg = g_strdup_printf(
+													_("The user %u wants to add %s to their buddy list for the following reason:\n%s"), 
+													args->uin, gaim_account_get_username(gc->account),
+													(msg2[5] ? msg2[5] : _("No reason given.")));
 				gaim_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
 						   args->uin);
@@ -6373,7 +6376,11 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else
 		nombre = g_strdup(sn);
 
-	dialog_msg = g_strdup_printf(_("The user %s wants to add you to their buddy list for the following reason:\n%s"), nombre, msg ? msg : _("No reason given."));
+	dialog_msg = g_strdup_printf(
+								 _("The user %s wants to add %s to their buddy list for the following reason:\n%s"), 
+								 nombre, gaim_account_get_username(gc->account),
+								 (msg ? msg : _("No reason given.")));
+
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
