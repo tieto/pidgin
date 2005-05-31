@@ -983,6 +983,7 @@ GList *yahoo_c_info(GaimConnection *gc)
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
+	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
 	return m;
