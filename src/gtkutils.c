@@ -1511,8 +1511,8 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 			if (im && ft)
 				gaim_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    _("You can send this image as a file transfer,"
-						      " embed it into this message, or use it as the buddy icon for this user."),
+						    _("You can send this image as a file transfer, "
+						      "embed it into this message, or use it as the buddy icon for this user."),
 						    DND_BUDDY_ICON, "OK", (GCallback)dnd_image_ok_callback,
 						    "Cancel", (GCallback)dnd_image_cancel_callback, data,
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
@@ -1525,7 +1525,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 			else
 				gaim_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    ft ? _("You can send this image as a file transfer or"
+						    ft ? _("You can send this image as a file transfer or "
 							   "embed it into this message, or use it as the buddy icon for this user.") :
 						    _("You can insert this image into this message, or use it as the buddy icon for this user"),
 						    DND_BUDDY_ICON, "OK", (GCallback)dnd_image_ok_callback,
