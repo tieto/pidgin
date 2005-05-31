@@ -158,6 +158,15 @@ const char *gaim_buddy_icon_get_username(const GaimBuddyIcon *icon);
  */
 const void *gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len);
 
+/**
+ * Returns an extension corresponding to the buddy icon's file type.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return The icon's extension.
+ */
+const char *gaim_buddy_icon_get_type(const GaimBuddyIcon *icon);
+
 /*@}*/
 
 /**************************************************************************/

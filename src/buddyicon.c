@@ -331,6 +331,32 @@ gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len)
 	return icon->data;
 }
 
+const char *
+gaim_buddy_icon_get_type(const GaimBuddyIcon *icon)
+{
+	const void *data;
+	size_t len;
+
+	g_return_val_if_fail(icon != NULL, NULL);
+
+	data = gaim_buddy_icon_get_data(icon, &len);
+
+	/* TODO: Find a way to do this with GDK */
+	if (len >= 4)
+	{
+		if (!strncmp(data, "BM", 2))
+			return "bmp";
+		else if (!strncmp(data, "GIF8", 4))
+			return "gif";
+		else if (!strncmp(data, "\xff\xd8\xff\xe0", 4))
+			return "jpg";
+		else if (!strncmp(data, "\x89PNG", 4))
+			return "png";
+	}
+
+	return NULL;
+}
+
 void
 gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
 							  void *icon_data, size_t icon_len)
