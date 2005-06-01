@@ -243,6 +243,7 @@ static void irc_login(GaimAccount *account, GaimStatus *status)
 	}
 
 	gc->proto_data = irc = g_new0(struct irc_conn, 1);
+	irc->fd = -1;
 	irc->account = account;
 
 	userparts = g_strsplit(username, "@", 2);
