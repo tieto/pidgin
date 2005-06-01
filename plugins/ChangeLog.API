@@ -51,7 +51,9 @@ version 2.0.0cvs:
 	* Renamed: set_gaim_user_dir to gaim_util_set_user_dir
 	* Renamed: create_prpl_icon to gaim_gtk_create_prpl_icon
 	* Changed: gaim_mkstemp, added a second argument, a boolean, of whether
-               or not the file is binary
+	           or not the file is binary
+	* Added:   gaim_buddy_icon_get_type, can be used to attempt to
+	           determine the file type of a given buddy icon.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
