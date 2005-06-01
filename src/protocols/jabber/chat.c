@@ -40,16 +40,19 @@ GList *jabber_chat_info(GaimConnection *gc)
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Room:");
 	pce->identifier = "room";
+	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Server:");
 	pce->identifier = "server";
+	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
 	pce->label = _("_Handle:");
 	pce->identifier = "handle";
+	pce->required = TRUE;
 	m = g_list_append(m, pce);
 
 	pce = g_new0(struct proto_chat_entry, 1);
