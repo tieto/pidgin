@@ -249,7 +249,7 @@ common_send(GaimConversation *conv, const char *message)
 			msg = _("Unable to send message.");
 
 			if (!gaim_conv_present_error(who, account, msg)) {
-				msg = g_strdup_printf(_("Unable to send messge to %s."), who);
+				msg = g_strdup_printf(_("Unable to send message to %s."), who);
 				gaim_notify_error(gc, NULL, msg, NULL);
 				g_free(msg);
 			}
