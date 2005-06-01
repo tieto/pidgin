@@ -2140,11 +2140,15 @@ gaim_conv_chat_remove_users(GaimConvChat *chat, GList *users, const char *reason
 
 		*tmp = '\0';
 
-		for (l = users, i = 0; i < max; i++, l = l->next) {
-			g_strlcat(tmp, (char *)l->data, sizeof(tmp));
+		for (l = users, i = 0; i < max; i++, l = l->next)
+		{
+			if (!gaim_conv_chat_is_user_ignored(chat, (char *)l->data))
+			{
+				g_strlcat(tmp, (char *)l->data, sizeof(tmp));
 
-			if (i < max - 1)
-				g_strlcat(tmp, ", ", sizeof(tmp));
+				if (i < max - 1)
+					g_strlcat(tmp, ", ", sizeof(tmp));
+			}
 		}
 
 		if (size > 10)
