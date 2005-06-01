@@ -4761,6 +4761,90 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	gaim_conversation_write(conv, who, message, flags, mtime);
 }
 
+/* The callback for an event on a link tag. */
+static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
+		GdkEvent *event, GtkTextIter *arg2, gpointer data) {
+	if (event->type == GDK_BUTTON_PRESS
+			|| event->type == GDK_2BUTTON_PRESS) {
+		GdkEventButton *btn_event = (GdkEventButton*) event;
+		GaimConversation *conv = data;
+		char *buddyname;
+
+		/* strlen("BUDDY ") == 6 */
+		g_return_val_if_fail((tag->name != NULL)
+				&& (strlen(tag->name) > 6), FALSE);
+
+		buddyname = (tag->name) + 6;
+
+		if (btn_event->button == 1
+				&& event->type == GDK_2BUTTON_PRESS) {
+			chat_do_im(GAIM_GTK_CONVERSATION(conv), buddyname);
+
+			return TRUE;
+		} else if (btn_event->button == 2
+				&& event->type == GDK_2BUTTON_PRESS) {
+			chat_do_info(GAIM_GTK_CONVERSATION(conv), buddyname);
+
+			return TRUE;
+		} else if (btn_event->button == 3
+				&& event->type == GDK_BUTTON_PRESS) {
+			GtkTextIter start, end;
+
+			/* we shouldn't display the popup
+			 * if the user has selected something: */
+			if (!gtk_text_buffer_get_selection_bounds(
+						gtk_text_iter_get_buffer(arg2),
+						&start, &end)) {
+				GaimPluginProtocolInfo *prpl_info = NULL;
+				GtkWidget *menu = NULL;
+				GaimConnection *gc =
+					gaim_conversation_get_gc(conv);
+
+
+				if (gc != NULL)
+					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(
+							gc->prpl);
+
+				menu = create_chat_menu(conv, buddyname,
+						prpl_info, gc);
+				gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
+						NULL, GTK_WIDGET(imhtml), 3,
+						GDK_CURRENT_TIME);
+
+				/* Don't propagate the event any further */
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
+	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GtkTextTag *buddytag;
+	/* strlen("BUDDY ") == 6 */
+	gchar str[strlen(who) + 7];
+
+	g_snprintf(str, sizeof(str), "BUDDY %s", who);
+	str[sizeof(str)] = '\0';
+
+	buddytag = gtk_text_tag_table_lookup(
+			gtk_text_buffer_get_tag_table(
+				GTK_IMHTML(gtkconv->imhtml)->text_buffer), str);
+
+	if (buddytag == NULL) {
+		buddytag = gtk_text_buffer_create_tag(
+				GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+				str, NULL);
+
+		g_signal_connect(G_OBJECT(buddytag), "event",
+				G_CALLBACK(buddytag_event), conv);
+	}
+
+	return buddytag;
+}
+
 static void
 gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 						const char *message, GaimMessageFlags flags,
@@ -4902,9 +4986,24 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			   "<B>%s</B></FONT> ",
 			   color, sml_attrib ? sml_attrib : "", mdate, str);
 
-		g_free(str);
-
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+			GtkTextIter start, end;
+			GtkTextTag *buddytag = get_buddy_tag(conv, who);
+			gtk_text_buffer_get_end_iter(
+					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+					&end);
+			gtk_text_buffer_get_end_iter(
+					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+					&start);
+			gtk_text_iter_backward_chars(&start, strlen(str) + 1);
+			gtk_text_buffer_apply_tag(
+					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
+					buddytag, &start, &end);
+		}
+
+		g_free(str);
 
 		if(gc){
 			char *pre = g_strdup_printf("<font %s>", sml_attrib ? sml_attrib : "");
