@@ -1920,7 +1920,8 @@ gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_
 	ops  = gaim_conversation_get_ui_ops(conv);
 
 	quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-					 "chat-buddy-joining", conv, user, flags));
+					 "chat-buddy-joining", conv, user, flags)) |
+			gaim_conv_chat_is_user_ignored(chat, user);
 
 	cb = gaim_conv_chat_cb_new(user, flags);
 
@@ -2028,7 +2029,8 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 		its_me = TRUE;
 	}
 
-	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change")) {
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change") ||
+		gaim_conv_chat_is_user_ignored(chat, new_user)) {
 		if(its_me) {
 			g_snprintf(tmp, sizeof(tmp),
 					_("You are now known as %s"), new_user);
@@ -2057,7 +2059,8 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	ops  = gaim_conversation_get_ui_ops(conv);
 
 	quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-				"chat-buddy-leaving", conv, user, reason));
+				"chat-buddy-leaving", conv, user, reason)) |
+			gaim_conv_chat_is_user_ignored(chat, user);
 
 	if (ops != NULL && ops->chat_remove_user != NULL)
 		ops->chat_remove_user(conv, user);
