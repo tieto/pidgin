@@ -4776,12 +4776,7 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 
 		buddyname = (tag->name) + 6;
 
-		if (btn_event->button == 1
-				&& event->type == GDK_2BUTTON_PRESS) {
-			chat_do_im(GAIM_GTK_CONVERSATION(conv), buddyname);
-
-			return TRUE;
-		} else if (btn_event->button == 2
+		if (btn_event->button == 2
 				&& event->type == GDK_2BUTTON_PRESS) {
 			chat_do_info(GAIM_GTK_CONVERSATION(conv), buddyname);
 
@@ -4835,8 +4830,9 @@ static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
 
 	if (buddytag == NULL) {
 		buddytag = gtk_text_buffer_create_tag(
-				GTK_IMHTML(gtkconv->imhtml)->text_buffer,
-				str, NULL);
+				GTK_IMHTML(gtkconv->imhtml)->text_buffer, str,
+				"underline", PANGO_UNDERLINE_SINGLE,
+				"underline-set", TRUE, NULL);
 
 		g_signal_connect(G_OBJECT(buddytag), "event",
 				G_CALLBACK(buddytag_event), conv);
@@ -4917,6 +4913,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	} else {
 		char *new_message = g_memdup(message, length);
 		char *who_escaped = (who ? g_markup_escape_text(who, strlen(who)) : g_strdup(""));
+		int tag_start_offset = 0, tag_end_offset = 0;
 
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
@@ -4925,9 +4922,12 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if (gaim_message_meify(new_message, -1 )) {
 				g_snprintf(str, 1024, "***%s", who_escaped);
 				strcpy(color, "#6C2585");
+				tag_start_offset = 3;
 			}
 			else {
 				g_snprintf(str, 1024, "*%s*:", who_escaped);
+				tag_start_offset = 1;
+				tag_end_offset = 2;
 				strcpy(color, "#00FF00");
 			}
 		}
@@ -4935,10 +4935,14 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if (gaim_message_meify(new_message, -1)) {
 				str = g_malloc(1024);
 
-				if (flags & GAIM_MESSAGE_AUTO_RESP)
+				if (flags & GAIM_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who_escaped);
-				else
+					tag_start_offset = 4
+						+ strlen(AUTO_RESPONSE);
+				} else {
 					g_snprintf(str, 1024, "***%s", who_escaped);
+					tag_start_offset = 3;
+				}
 
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
@@ -4947,10 +4951,14 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			}
 			else {
 				str = g_malloc(1024);
-				if (flags & GAIM_MESSAGE_AUTO_RESP)
+				if (flags & GAIM_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s %s", who_escaped, AUTO_RESPONSE);
-				else
+					tag_start_offset = 1
+						+ strlen(AUTO_RESPONSE);
+				} else {
 					g_snprintf(str, 1024, "%s:", who_escaped);
+					tag_end_offset = 1;
+				}
 				if (flags & GAIM_MESSAGE_NICK)
 					strcpy(color, "#AF7F00");
 				else if (flags & GAIM_MESSAGE_RECV) {
@@ -4991,13 +4999,19 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
 			GtkTextIter start, end;
 			GtkTextTag *buddytag = get_buddy_tag(conv, who);
+
 			gtk_text_buffer_get_end_iter(
 					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
 					&end);
+			gtk_text_iter_backward_chars(&end,
+					tag_end_offset + 1);
+
 			gtk_text_buffer_get_end_iter(
 					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
 					&start);
-			gtk_text_iter_backward_chars(&start, strlen(str) + 1);
+			gtk_text_iter_backward_chars(&start,
+					strlen(str) + 1 - tag_start_offset);
+
 			gtk_text_buffer_apply_tag(
 					GTK_IMHTML(gtkconv->imhtml)->text_buffer,
 					buddytag, &start, &end);
