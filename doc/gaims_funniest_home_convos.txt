@@ -297,3 +297,27 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 	in an IRC channel, it crashes.
 -!- LSchiere2 [~luke@...] has quit [Remote closed the connection]
 <seanegan> I guess that was "reproducing"
+
+---
+
+18:33:26 <fmiranda> hello there
+18:34:03 <fmiranda> I just wanted to share some bevavior that I think its kinda of
+                    unsafe when using GAIM with yahoo messenges accounts
+18:34:43 <fmiranda> Whenever you transfer files between users, no receiving
+                    confirmation is requested, the file gets transfered
+                    automatically
+18:37:32 <Paco-Paco> surely you have to accept file transfers
+18:37:57 <fmiranda> Paco-Paco, nope, Whenever people sends me files, I get no
+                    confirmation request
+18:38:30 <fmiranda> Paco-Paco, and the files gets right through my home directory
+18:39:00 <deryni> I find this a bit hard to believe since most people come in here
+                  asking for some way to auto-accept.
+18:39:48 <fmiranda> deryni, I just installed fc3 , fully updated it, no extra
+                    configuration was done and that's the default behavior
+18:40:06 <fmiranda> deryni, I searched the settings and there is no configuration
+                    on this issue
+18:40:29 <deryni> I know there's no configuration on it, that's what everyone keeps
+                  asking for.
+18:41:08 <fmiranda> deryni, sometimes I get pictures of naked girls in my computer
+                    and I guess that GAIM is the one responsible for that since it
+                    does not ask for file transfer confirmation
