@@ -1549,7 +1549,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* XXX: make the new account sign on with the currently active global status
 	 * instead of hardcoding "online" */
 	if (new)
-		gaim_presence_set_status_active(dialog->account->presence, "online", TRUE);
+		gaim_presence_set_status_active(ret->presence, "online", TRUE);
 
 	return ret;
 }
