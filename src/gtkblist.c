@@ -60,8 +60,12 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-#if (GTK_CHECK_VERSION(2,2,0) && !(defined(__APPLE__) && defined(__MACH__)))
-#define WANT_DROP_SHADOW
+/* if someone explicitly asked for drop shadows, we also need to make
+   sure that their environment can support it. If not, tough */
+#ifdef WANT_DROP_SHADOW
+# if !GTK_CHECK_VERSION(2,2,0) || (defined(__APPLE__) && defined(__MACH__))
+#  undef WANT_DROP_SHADOW
+# endif
 #endif
 
 typedef struct
@@ -134,12 +138,11 @@ static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node
 
 static void show_rename_group(GtkWidget *unused, GaimGroup *g);
 
-static gboolean xcomposite_is_present();
-
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
 };
+
 
 #ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
@@ -417,7 +420,8 @@ map_shadow_windows (gpointer data)
 }
 
 /**************** END WEIRD DROP SHADOW STUFF ***********************************/
-#endif
+#endif /* ifdef WANT_DROP_SHADOW */
+
 
 static char dim_grey_string[8] = "";
 static char *dim_grey()
@@ -2379,7 +2383,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
 		gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
 	}
-#endif
+#endif /* ifdef WANT_DROP_SHADOW */
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
