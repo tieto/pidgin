@@ -1,6 +1,6 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
-version 2.0.0
+version 2.0.0:
 	New Features:
 	* Insane rewrite of all code dealing with buddy and account status, away
 	  messages, away states, online/offline, etc.  Huge thanks to Christian,

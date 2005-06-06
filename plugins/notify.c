@@ -179,8 +179,8 @@ notify(GaimConversation *conv, gboolean increment)
 	             "has-toplevel-focus", &has_focus, NULL);
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ||
-	    (has_focus && gaim_conv_window_get_active_conversation(gaimwin) != conv) ||
-	    !has_focus) {
+	    !has_focus ||
+	    gaim_conv_window_get_active_conversation(gaimwin) != conv) {
 		if (increment) {
 			count = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count"));
 			count++;
@@ -196,6 +196,9 @@ notify(GaimConversation *conv, gboolean increment)
 static void
 notify_win(GaimConvWindow *gaimwin)
 {
+	if (count_messages(gaimwin) <= 0)
+		return;
+
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_count"))
 		handle_count(gaimwin);
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/method_string"))
@@ -382,12 +385,20 @@ conv_created(GaimConversation *conv)
 	attach_signals(conv);
 }
 
-#if 0
 static void
 conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 {
+#if 0
 	GaimConvWindow *gaimwin = gaim_conversation_get_window(new_conv);
+#endif
 
+	/*
+	 * If the conversation was switched, then make sure we re-notify
+	 * because Gaim will have overwritten our custom window title.
+	 */
+	notify(new_conv, FALSE);
+
+#if 0
 	printf("conv_switched - %p - %p\n", old_conv, new_conv);
 	printf("count - %d\n", count_messages(gaimwin));
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_switch"))
@@ -398,8 +409,8 @@ conv_switched(GaimConversation *old_conv, GaimConversation *new_conv)
 		if (count_messages(gaimwin))
 			notify_win(gaimwin);
 	}
-}
 #endif
+}
 
 static void
 deleting_conv(GaimConversation *conv)
@@ -779,9 +790,9 @@ plugin_load(GaimPlugin *plugin)
 	                    GAIM_CALLBACK(conv_created), NULL);
 	gaim_signal_connect(conv_handle, "deleting-conversation", plugin,
 	                    GAIM_CALLBACK(deleting_conv), NULL);
-#if 0
 	gaim_signal_connect(conv_handle, "conversation-switched", plugin,
 	                    GAIM_CALLBACK(conv_switched), NULL);
+#if 0
 	gaim_signal_connect(gtk_conv_handle, "conversation-drag-ended", plugin,
 	                    GAIM_CALLBACK(conversation_drag_ended), NULL);
 #endif
