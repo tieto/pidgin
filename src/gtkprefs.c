@@ -973,14 +973,14 @@ conv_page()
 			_("Left"), GTK_POS_LEFT,
 			_("Right"), GTK_POS_RIGHT,
 			NULL);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_size_group_add_widget(sg, label);
 
 	names = gaim_conv_placement_get_options();
 	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("New conversation _placement:"),
 			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	g_list_free(names);
 
 	gtk_widget_show_all(ret);
@@ -1284,7 +1284,7 @@ browser_page()
 		label = gaim_gtk_prefs_dropdown_from_list(vbox,_("_Browser:"), GAIM_PREF_STRING,
 										 "/gaim/gtk/browsers/browser",
 										 browsers);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(sg, label);
 
 		hbox = gtk_hbox_new(FALSE, 0);
@@ -1295,7 +1295,7 @@ browser_page()
 			_("New window"), GAIM_BROWSER_NEW_WINDOW,
 			_("New tab"), GAIM_BROWSER_NEW_TAB,
 			NULL);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(sg, label);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -1587,7 +1587,7 @@ sound_page()
 			_("No sounds"), "none",
 			NULL);
 	gtk_size_group_add_widget(sg, dd);
-	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
@@ -1798,7 +1798,7 @@ away_page()
 			NULL);
 
 	gtk_size_group_add_widget(sg, dd);
-	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
 	button = gaim_gtk_prefs_checkbox(_("Set away _when idle"),
@@ -1815,7 +1815,7 @@ away_page()
 
 	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
 	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
