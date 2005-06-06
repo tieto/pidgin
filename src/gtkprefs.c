@@ -956,7 +956,7 @@ conv_page()
 	 * Connect a signal to the above preference.  When conversations are not
 	 * shown in a tabbed window then all tabbing options should be disabled.
 	 */
-	vbox2 = gtk_vbox_new(FALSE, 0);
+	vbox2 = gtk_vbox_new(FALSE, 9);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	gaim_prefs_connect_callback(prefs, "/gaim/gtk/conversations/tabs",
 	                            conversation_usetabs_cb, vbox2);
