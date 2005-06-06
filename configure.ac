@@ -420,6 +420,10 @@ GC_TM_GMTOFF
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
+if test "$enable_plugins" = no ; then
+	enable_perl=no
+fi
+
 if test "$enable_perl" = yes ; then
 	AC_PATH_PROG(perlpath, perl)
 	AC_MSG_CHECKING(for Perl compile flags)
@@ -910,6 +914,10 @@ elif test "x$msg_gnutls" != "x"; then
 fi
 
 dnl Check for Tcl
+if test "$enable_plugins" = no; then
+	enable_tcl=no
+fi
+
 if test "$enable_tcl" = yes; then
 	AC_MSG_CHECKING([for tclConfig.sh])
         TCLCONFIG=no
