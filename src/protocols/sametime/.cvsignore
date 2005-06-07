@@ -1,4 +1,7 @@
+*.a
+.deps
 .libs
+*.la
 *.lo
 *.o
 Makefile
