@@ -76,6 +76,7 @@ gaim_coresources = \
 	ft.c \
 	imgstore.c \
 	log.c \
+	mime.c \
 	network.c \
 	notify.c \
 	plugin.c \
@@ -115,6 +116,7 @@ gaim_coreheaders = \
 	ft.h \
 	imgstore.h \
 	log.h \
+	mime.h \
 	network.h \
 	notify.h \
 	plugin.h \

@@ -153,7 +153,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
+	STATIC_PRPLS="gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
@@ -175,6 +175,7 @@ for i in $STATIC_PRPLS ; do
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
 		rendezvous)	static_rendezvous=yes ;;
+		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		toc)		static_toc=yes ;;
 		trepia)		static_trepia=yes ;;
@@ -191,6 +192,7 @@ AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
+AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
@@ -202,7 +204,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $l
 
 AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
+	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
@@ -218,6 +220,7 @@ for i in $DYNAMIC_PRPLS ; do
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
 		rendezvous)	dynamic_rendezvous=yes ;;
+		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		toc)		dynamic_toc=yes ;;
 		trepia)		dynamic_trepia=yes ;;
@@ -234,6 +237,7 @@ AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
@@ -1247,6 +1251,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/rendezvous/Makefile
+		   src/protocols/sametime/Makefile
 		   src/protocols/silc/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile

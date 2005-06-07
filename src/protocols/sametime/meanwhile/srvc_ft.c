@@ -538,7 +538,7 @@ int mwFileTransfer_offer(struct mwFileTransfer *ft) {
 int mwFileTransfer_close(struct mwFileTransfer *ft, guint32 code) {
   struct mwServiceFileTransfer *srvc;
   struct mwFileTransferHandler *handler;
-  int ret;
+  int ret = 0;
 
   g_return_val_if_fail(ft != NULL, -1);
 

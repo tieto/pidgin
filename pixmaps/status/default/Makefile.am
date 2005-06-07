@@ -32,6 +32,7 @@ EXTRA_DIST = \
 	offline.png \
 	op.png \
 	rendezvous.png \
+	sametime.png \
 	secure.png \
 	silc.png \
 	trepia.png \
