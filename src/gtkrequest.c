@@ -140,7 +140,7 @@ choice_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
 	GtkWidget *radio = g_object_get_data(G_OBJECT(dialog), "radio");
 	GSList *group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio));
-	if (id < data->cb_count)
+	if (id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
 				((GaimRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
