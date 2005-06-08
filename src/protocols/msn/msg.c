@@ -205,7 +205,10 @@ msn_message_parse_payload(MsnMessage *msg,
 	/* TODO? some clients use \r delimiters instead of \r\n, the official client
 	 * doesn't send such messages, but does handle receiving them. We'll just
 	 * avoid crashing for now */
-	g_return_if_fail(end != NULL);
+	if (end == NULL) {
+		g_free(tmp_base);
+		g_return_if_reached();
+	}
 	*end = '\0';
 
 	elems = g_strsplit(tmp, "\r\n", 0);
@@ -252,6 +255,7 @@ msn_message_parse_payload(MsnMessage *msg,
 
 	g_strfreev(elems);
 
+	/* Proceed to the end of the "\r\n\r\n" */
 	tmp = end + 4;
 
 	/* Now we *should* be at the body. */
@@ -262,6 +266,12 @@ msn_message_parse_payload(MsnMessage *msg,
 	{
 		MsnSlpHeader header;
 		MsnSlpFooter footer;
+		int body_len;
+
+		if (payload_len - (tmp - tmp_base) < sizeof(header)) {
+			g_free(tmp_base);
+			g_return_if_reached();
+		}
 
 		msg->msnslp_message = TRUE;
 
@@ -279,24 +289,28 @@ msn_message_parse_payload(MsnMessage *msg,
 		msg->msnslp_header.ack_sub_id = GUINT32_FROM_LE(header.ack_sub_id);
 		msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
 
+		body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
+
 		/* Import the body. */
-		msg->body_len = payload_len - (tmp - tmp_base) - sizeof(footer);
-
-		if (msg->body_len > 0)
+		if (body_len > 0) {
+			msg->body_len = body_len;
 			msg->body = g_memdup(tmp, msg->body_len);
-
-		tmp += msg->body_len;
+			tmp += body_len;
+		}
 
 		/* Import the footer. */
-		memcpy(&footer, tmp, sizeof(footer));
-		tmp += sizeof(footer);
-
-		msg->msnslp_footer.value = GUINT32_FROM_BE(footer.value);
+		if (body_len >= 0) {
+			memcpy(&footer, tmp, sizeof(footer));
+			tmp += sizeof(footer);
+			msg->msnslp_footer.value = GUINT32_FROM_BE(footer.value);
+		}
 	}
 	else
 	{
-		msg->body_len = payload_len - (tmp - tmp_base);
-		msg->body = g_memdup(tmp, msg->body_len);
+		if (payload_len - (tmp - tmp_base) > 0) {
+			msg->body_len = payload_len - (tmp - tmp_base);
+			msg->body = g_memdup(tmp, msg->body_len);
+		}
 	}
 
 	g_free(tmp_base);
