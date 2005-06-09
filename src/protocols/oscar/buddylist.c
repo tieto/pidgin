@@ -88,7 +88,7 @@ faim_export int aim_buddylist_addbuddy(aim_session_t *sess, aim_conn_t *conn, co
 	aim_putsnac(&fr->data, 0x0003, 0x0004, 0x0000, snacid);
 
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -135,7 +135,7 @@ faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const c
 		faimdprintf(sess, 2, "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
 
 		aimbs_put8(&fr->data, strlen(tmpptr));
-		aimbs_putraw(&fr->data, tmpptr, strlen(tmpptr));
+		aimbs_putstr(&fr->data, tmpptr);
 		tmpptr = strtok(NULL, "&");
 	}
 
@@ -168,7 +168,7 @@ faim_export int aim_buddylist_removebuddy(aim_session_t *sess, aim_conn_t *conn,
 	aim_putsnac(&fr->data, 0x0003, 0x0005, 0x0000, snacid);
 
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -223,7 +223,7 @@ faim_export int aim_buddylist_offgoing(aim_session_t *sess, aim_conn_t *conn, co
 
 	aim_putsnac(&fr->data, 0x0003, 0x000c, 0x0000, snacid);
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 

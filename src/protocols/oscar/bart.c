@@ -92,7 +92,7 @@ faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	/* Some numbers.  You like numbers, right? */
 	aimbs_put8(&fr->data, 0x01);

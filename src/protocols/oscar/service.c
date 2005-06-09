@@ -860,7 +860,7 @@ faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg)
 		aimbs_put8(&fr->data, 0x04);
 		aimbs_put8(&fr->data, strlen(msg)+4);
 		aimbs_put16(&fr->data, strlen(msg));
-		aimbs_putraw(&fr->data, msg, strlen(msg));
+		aimbs_putstr(&fr->data, msg);
 		aimbs_put16(&fr->data, 0x0000);
 	} else {
 		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + 8)))

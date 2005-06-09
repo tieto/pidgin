@@ -54,7 +54,7 @@ faim_export int aim_search_address(aim_session_t *sess, aim_conn_t *conn, const 
 	snacid = aim_cachesnac(sess, 0x000a, 0x0002, 0x0000, strdup(address), strlen(address)+1);
 	aim_putsnac(&fr->data, 0x000a, 0x0002, 0x0000, snacid);
 	
-	aimbs_putraw(&fr->data, address, strlen(address)); 
+	aimbs_putstr(&fr->data, address); 
 
 	aim_tx_enqueue(sess, fr);
 

@@ -131,6 +131,50 @@ faim_internal fu32_t aimbs_getle32(aim_bstream_t *bs)
 	return aimutil_getle32(bs->data + bs->offset - 4);
 }
 
+faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, fu8_t *buf, int len)
+{
+
+	if (aim_bstream_empty(bs) < len)
+		return 0;
+
+	memcpy(buf, bs->data + bs->offset, len);
+	bs->offset += len;
+
+	return len;
+}
+
+faim_internal fu8_t *aimbs_getraw(aim_bstream_t *bs, int len)
+{
+	fu8_t *ob;
+
+	if (!(ob = malloc(len)))
+		return NULL;
+
+	if (aimbs_getrawbuf(bs, ob, len) < len) {
+		free(ob);
+		return NULL;
+	}
+
+	return ob;
+}
+
+faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
+{
+	char *ob;
+
+	if (!(ob = malloc(len+1)))
+		return NULL;
+
+	if (aimbs_getrawbuf(bs, ob, len) < len) {
+		free(ob);
+		return NULL;
+	}
+
+	ob[len] = '\0';
+
+	return ob;
+}
+
 faim_internal int aimbs_put8(aim_bstream_t *bs, fu8_t v)
 {
 
@@ -197,49 +241,6 @@ faim_internal int aimbs_putle32(aim_bstream_t *bs, fu32_t v)
 	return 1;
 }
 
-faim_internal int aimbs_getrawbuf(aim_bstream_t *bs, fu8_t *buf, int len)
-{
-
-	if (aim_bstream_empty(bs) < len)
-		return 0;
-
-	memcpy(buf, bs->data + bs->offset, len);
-	bs->offset += len;
-
-	return len;
-}
-
-faim_internal fu8_t *aimbs_getraw(aim_bstream_t *bs, int len)
-{
-	fu8_t *ob;
-
-	if (!(ob = malloc(len)))
-		return NULL;
-
-	if (aimbs_getrawbuf(bs, ob, len) < len) {
-		free(ob);
-		return NULL;
-	}
-
-	return ob;
-}
-
-faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
-{
-	char *ob;
-
-	if (!(ob = malloc(len+1)))
-		return NULL;
-
-	if (aimbs_getrawbuf(bs, ob, len) < len) {
-		free(ob);
-		return NULL;
-	}
-
-	ob[len] = '\0';
-
-	return ob;
-}
 
 faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len)
 {
@@ -251,6 +252,11 @@ faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len)
 	bs->offset += len;
 
 	return len;
+}
+
+faim_internal int aimbs_putstr(aim_bstream_t *bs, const char *str)
+{
+	aimbs_putraw(bs, str, strlen(str));
 }
 
 faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len)

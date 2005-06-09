@@ -293,7 +293,7 @@ faim_export int aim_odc_send_typing(aim_session_t *sess, aim_conn_t *conn, int t
 
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putraw(hdrbs, sess->sn, strlen(sess->sn));
+	aimbs_putstr(hdrbs, sess->sn);
 
 	aim_bstream_setpos(hdrbs, 52); /* bleeehh */
 
@@ -368,7 +368,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 
 	aimbs_put16(hdrbs, 0x0000);
 	aimbs_put16(hdrbs, 0x0000);
-	aimbs_putraw(hdrbs, sess->sn, strlen(sess->sn));
+	aimbs_putstr(hdrbs, sess->sn);
 
 	aim_bstream_setpos(hdrbs, 52); /* bleeehh */
 

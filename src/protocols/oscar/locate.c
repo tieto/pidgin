@@ -827,7 +827,7 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 		return -EINVAL;
 
 	aimbs_put8(bs, strlen(info->sn));
-	aimbs_putraw(bs, info->sn, strlen(info->sn));
+	aimbs_putstr(bs, info->sn);
 
 	aimbs_put16(bs, info->warnlevel);
 
@@ -1239,7 +1239,7 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
 	
 	aim_putsnac(&fr->data, 0x0002, 0x000b, 0x0000, snacid);
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1319,7 +1319,7 @@ faim_export int aim_locate_getinfoshort(aim_session_t *sess, const char *sn, fu3
 	aim_putsnac(&fr->data, 0x0002, 0x0015, 0x0000, snacid);
 	aimbs_put32(&fr->data, flags);
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 

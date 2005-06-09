@@ -472,7 +472,7 @@ faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, co
  */
 faim_internal int aim_tlvlist_add_string(aim_tlvlist_t **list, const fu16_t type, const char *value)
 {
-	return aim_tlvlist_add_raw(list, type, strlen(value), (fu8_t)value);
+	return aim_tlvlist_add_raw(list, type, strlen(value), (fu8_t *)value);
 }
 
 /**
@@ -549,7 +549,7 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu
 
 	aimbs_put16(&bs, exchange);
 	aimbs_put8(&bs, strlen(roomname));
-	aimbs_putraw(&bs, roomname, strlen(roomname));
+	aimbs_putstr(&bs, roomname);
 	aimbs_put16(&bs, instance);
 
 	len = aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);

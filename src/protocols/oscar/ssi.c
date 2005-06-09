@@ -1331,7 +1331,7 @@ faim_export int aim_ssi_addmoddel(aim_session_t *sess)
 	for (cur=sess->ssi.pending; cur; cur=cur->next) {
 		aimbs_put16(&fr->data, cur->item->name ? strlen(cur->item->name) : 0);
 		if (cur->item->name)
-			aimbs_putraw(&fr->data, cur->item->name, strlen(cur->item->name));
+			aimbs_putstr(&fr->data, cur->item->name);
 		aimbs_put16(&fr->data, cur->item->gid);
 		aimbs_put16(&fr->data, cur->item->bid);
 		aimbs_put16(&fr->data, cur->item->type);
@@ -1678,12 +1678,12 @@ faim_export int aim_ssi_sendauth(aim_session_t *sess, char *sn, char *msg)
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	/* Message (null terminated) */
 	aimbs_put16(&fr->data, msg ? strlen(msg) : 0);
 	if (msg) {
-		aimbs_putraw(&fr->data, msg, strlen(msg));
+		aimbs_putstr(&fr->data, msg);
 		aimbs_put8(&fr->data, 0x00);
 	}
 
@@ -1753,12 +1753,12 @@ faim_export int aim_ssi_sendauthrequest(aim_session_t *sess, char *sn, char *msg
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	/* Message (null terminated) */
 	aimbs_put16(&fr->data, msg ? strlen(msg) : 0);
 	if (msg) {
-		aimbs_putraw(&fr->data, msg, strlen(msg));
+		aimbs_putstr(&fr->data, msg);
 		aimbs_put8(&fr->data, 0x00);
 	}
 
@@ -1831,7 +1831,7 @@ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply
 
 	/* Screen name */
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	/* Grant or deny */
 	aimbs_put8(&fr->data, reply);
@@ -1839,7 +1839,7 @@ faim_export int aim_ssi_sendauthreply(aim_session_t *sess, char *sn, fu8_t reply
 	/* Message (null terminated) */
 	aimbs_put16(&fr->data, msg ? (strlen(msg)+1) : 0);
 	if (msg) {
-		aimbs_putraw(&fr->data, msg, strlen(msg));
+		aimbs_putstr(&fr->data, msg);
 		aimbs_put8(&fr->data, 0x00);
 	}
 

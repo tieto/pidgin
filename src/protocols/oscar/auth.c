@@ -580,7 +580,7 @@ faim_export int aim_auth_securid_send(aim_session_t *sess, const char *securid)
 	aim_putsnac(&fr->data, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_RESPONSE, 0x0000, 0);
 
 	aimbs_put16(&fr->data, len);
-	aimbs_putraw(&fr->data, securid, len);
+	aimbs_putstr(&fr->data, securid);
 
 	aim_tx_enqueue(sess, fr);
 

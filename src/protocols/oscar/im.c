@@ -48,7 +48,7 @@ static int aim_im_puticbm(aim_bstream_t *bs, const fu8_t *c, fu16_t ch, const ch
 	aimbs_putraw(bs, c, 8);
 	aimbs_put16(bs, ch);
 	aimbs_put8(bs, strlen(sn));
-	aimbs_putraw(bs, sn, strlen(sn));
+	aimbs_putstr(bs, sn);
 	return 8+2+1+strlen(sn);
 }
 
@@ -465,7 +465,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 	aimbs_putraw(&fr->data, ck, 8); /* Cookie */
 	aimbs_put16(&fr->data, 0x0002); /* Channel */
 	aimbs_put8(&fr->data, strlen(sn)); /* Screename length */
-	aimbs_putraw(&fr->data, sn, strlen(sn)); /* Screenname */
+	aimbs_putstr(&fr->data, sn); /* Screenname */
 
 	/*
 	 * TLV t(0005)
@@ -565,7 +565,7 @@ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const f
 	aimbs_put32(&fr->data, iconlen);
 	aimbs_put32(&fr->data, stamp);
 	aimbs_putraw(&fr->data, icon, iconlen);
-	aimbs_putraw(&fr->data, AIM_ICONIDENT, strlen(AIM_ICONIDENT));
+	aimbs_putstr(&fr->data, AIM_ICONIDENT);
 
 	/* TLV t(0003) */
 	aimbs_put16(&fr->data, 0x0003);
@@ -801,7 +801,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
 		aimbs_put32(&bs, oft_info->fh.totsize);
 
 		/* Filename - NULL terminated, for some odd reason */
-		aimbs_putraw(&bs, oft_info->fh.name, strlen(oft_info->fh.name));
+		aimbs_putstr(&bs, oft_info->fh.name);
 		aimbs_put8(&bs, 0x00);
 
 		aim_tlvlist_add_raw(&subtl, 0x2711, bs.len, bs.data);
@@ -2102,7 +2102,7 @@ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *s
 
 	aimbs_put16(&fr->data, (flags & AIM_WARN_ANON) ? 0x0001 : 0x0000);
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -2162,7 +2162,7 @@ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, con
 
 	aimbs_put16(&fr->data, 0x0002); /* channel */
 	aimbs_put8(&fr->data, strlen(sender));
-	aimbs_putraw(&fr->data, sender, strlen(sender));
+	aimbs_putstr(&fr->data, sender);
 
 	aim_tlvlist_add_16(&tl, 0x0003, code);
 	aim_tlvlist_write(&fr->data, &tl);
@@ -2331,7 +2331,7 @@ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn
 	 * Dest sn
 	 */
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	/*
 	 * Type 2 (should be 0x0000, 0x0001, or 0x0002 for mtn)
