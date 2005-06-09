@@ -201,7 +201,7 @@ faim_export int aim_icq_changepasswd(aim_session_t *sess, const char *passwd)
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x042e); /* shrug. */
 	aimbs_putle16(&fr->data, passwdlen+1);
-	aimbs_putraw(&fr->data, passwd, passwdlen);
+	aimbs_putstr(&fr->data, passwd);
 	aimbs_putle8(&fr->data, '\0');
 
 	aim_tx_enqueue(sess, fr);
@@ -367,7 +367,7 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 	aimbs_putle16(&fr->data, snacid); /* eh. */
 	aimbs_putle16(&fr->data, 0x0998); /* shrug. */
 	aimbs_putle16(&fr->data, strlen(xml) + 1);
-	aimbs_putraw(&fr->data, xml, strlen(xml) + 1);
+	aimbs_putraw(&fr->data, (fu8_t *)xml, strlen(xml) + 1);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -458,7 +458,7 @@ faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const cha
 
 	aimbs_put16(&fr->data, 0x0000);
 	aimbs_put16(&fr->data, xmllen);
-	aimbs_putraw(&fr->data, xml, xmllen);
+	aimbs_putstr(&fr->data, xml);
 
 	aim_tx_enqueue(sess, fr);
 
