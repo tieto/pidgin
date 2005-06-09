@@ -179,8 +179,7 @@ notify(GaimConversation *conv, gboolean increment)
 	             "has-toplevel-focus", &has_focus, NULL);
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_focused") ||
-	    !has_focus ||
-	    gaim_conv_window_get_active_conversation(gaimwin) != conv) {
+	    !has_focus) {
 		if (increment) {
 			count = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "notify-message-count"));
 			count++;
