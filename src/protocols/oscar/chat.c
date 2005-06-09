@@ -382,13 +382,13 @@ faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t f
 	 * SubTLV: Type 2: Encoding
 	 */
 	if (encoding != NULL)
-		aim_tlvlist_add_raw(&itl, 0x0002, strlen(encoding), encoding);
+		aim_tlvlist_add_string(&itl, 0x0002, encoding);
 
 	/*
 	 * SubTLV: Type 3: Language
 	 */
 	if (language != NULL)
-		aim_tlvlist_add_raw(&itl, 0x0003, strlen(language), language);
+		aim_tlvlist_add_string(&itl, 0x0003, language);
 
 	/*
 	 * Type 5: Message block.  Contains more TLVs.

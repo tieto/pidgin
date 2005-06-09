@@ -1412,6 +1412,7 @@ faim_internal int aim_tlvlist_add_noval(aim_tlvlist_t **list, const fu16_t type)
 faim_internal int aim_tlvlist_add_8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value);
 faim_internal int aim_tlvlist_add_16(aim_tlvlist_t **list, const fu16_t type, const fu16_t value);
 faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, const fu32_t value);
+faim_internal int aim_tlvlist_add_string(aim_tlvlist_t **list, const fu16_t type, const char *value);
 faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, const fu32_t caps);
 faim_internal int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, fu16_t type, aim_userinfo_t *userinfo);
 faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu16_t exchange, const char *roomname, fu16_t instance);

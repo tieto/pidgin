@@ -30,9 +30,9 @@ faim_export int aim_odir_email(aim_session_t *sess, const char *region, const ch
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_raw(&tl, 0x001c, strlen(region), region);
+	aim_tlvlist_add_string(&tl, 0x001c, region);
 	aim_tlvlist_add_16(&tl, 0x000a, 0x0001); /* Type of search */
-	aim_tlvlist_add_raw(&tl, 0x0005, strlen(email), email);
+	aim_tlvlist_add_string(&tl, 0x0005, email);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
@@ -79,28 +79,28 @@ faim_export int aim_odir_name(aim_session_t *sess, const char *region, const cha
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_raw(&tl, 0x001c, strlen(region), region);
+	aim_tlvlist_add_string(&tl, 0x001c, region);
 	aim_tlvlist_add_16(&tl, 0x000a, 0x0000); /* Type of search */
 	if (first)
-		aim_tlvlist_add_raw(&tl, 0x0001, strlen(first), first);
+		aim_tlvlist_add_string(&tl, 0x0001, first);
 	if (last)
-		aim_tlvlist_add_raw(&tl, 0x0002, strlen(last), last);
+		aim_tlvlist_add_string(&tl, 0x0002, last);
 	if (middle)
-		aim_tlvlist_add_raw(&tl, 0x0003, strlen(middle), middle);
+		aim_tlvlist_add_string(&tl, 0x0003, middle);
 	if (maiden)
-		aim_tlvlist_add_raw(&tl, 0x0004, strlen(maiden), maiden);
+		aim_tlvlist_add_string(&tl, 0x0004, maiden);
 	if (country)
-		aim_tlvlist_add_raw(&tl, 0x0006, strlen(country), country);
+		aim_tlvlist_add_string(&tl, 0x0006, country);
 	if (state)
-		aim_tlvlist_add_raw(&tl, 0x0007, strlen(state), state);
+		aim_tlvlist_add_string(&tl, 0x0007, state);
 	if (city)
-		aim_tlvlist_add_raw(&tl, 0x0008, strlen(city), city);
+		aim_tlvlist_add_string(&tl, 0x0008, city);
 	if (nick)
-		aim_tlvlist_add_raw(&tl, 0x000c, strlen(nick), nick);
+		aim_tlvlist_add_string(&tl, 0x000c, nick);
 	if (zip)
-		aim_tlvlist_add_raw(&tl, 0x000d, strlen(zip), zip);
+		aim_tlvlist_add_string(&tl, 0x000d, zip);
 	if (address)
-		aim_tlvlist_add_raw(&tl, 0x0021, strlen(address), address);
+		aim_tlvlist_add_string(&tl, 0x0021, address);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
@@ -134,10 +134,10 @@ faim_export int aim_odir_interest(aim_session_t *sess, const char *region, const
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_raw(&tl, 0x001c, strlen(region), region);
+	aim_tlvlist_add_string(&tl, 0x001c, region);
 	aim_tlvlist_add_16(&tl, 0x000a, 0x0001); /* Type of search */
 	if (interest)
-		aim_tlvlist_add_raw(&tl, 0x0001, strlen(interest), interest);
+		aim_tlvlist_add_string(&tl, 0x0001, interest);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;

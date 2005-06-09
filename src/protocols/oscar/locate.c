@@ -1003,7 +1003,7 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 			return -ENOMEM;
 		}
 		snprintf(encoding, strlen(defencoding) + strlen(profile_encoding), defencoding, profile_encoding);
-		aim_tlvlist_add_raw(&tl, 0x0001, strlen(encoding), encoding);
+		aim_tlvlist_add_string(&tl, 0x0001, encoding);
 		aim_tlvlist_add_raw(&tl, 0x0002, profile_len, profile);
 		free(encoding);
 	}
@@ -1023,7 +1023,7 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 				return -ENOMEM;
 			}
 			snprintf(encoding, strlen(defencoding) + strlen(awaymsg_encoding), defencoding, awaymsg_encoding);
-			aim_tlvlist_add_raw(&tl, 0x0003, strlen(encoding), encoding);
+			aim_tlvlist_add_string(&tl, 0x0003, encoding);
 			aim_tlvlist_add_raw(&tl, 0x0004, awaymsg_len, awaymsg);
 			free(encoding);
 		} else
@@ -1183,26 +1183,26 @@ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, co
 	aim_tlvlist_add_16(&tl, 0x000a, privacy);
 
 	if (first)
-		aim_tlvlist_add_raw(&tl, 0x0001, strlen(first), first);
+		aim_tlvlist_add_string(&tl, 0x0001, first);
 	if (last)
-		aim_tlvlist_add_raw(&tl, 0x0002, strlen(last), last);
+		aim_tlvlist_add_string(&tl, 0x0002, last);
 	if (middle)
-		aim_tlvlist_add_raw(&tl, 0x0003, strlen(middle), middle);
+		aim_tlvlist_add_string(&tl, 0x0003, middle);
 	if (maiden)
-		aim_tlvlist_add_raw(&tl, 0x0004, strlen(maiden), maiden);
+		aim_tlvlist_add_string(&tl, 0x0004, maiden);
 
 	if (state)
-		aim_tlvlist_add_raw(&tl, 0x0007, strlen(state), state);
+		aim_tlvlist_add_string(&tl, 0x0007, state);
 	if (city)
-		aim_tlvlist_add_raw(&tl, 0x0008, strlen(city), city);
+		aim_tlvlist_add_string(&tl, 0x0008, city);
 
 	if (nickname)
-		aim_tlvlist_add_raw(&tl, 0x000c, strlen(nickname), nickname);
+		aim_tlvlist_add_string(&tl, 0x000c, nickname);
 	if (zip)
-		aim_tlvlist_add_raw(&tl, 0x000d, strlen(zip), zip);
+		aim_tlvlist_add_string(&tl, 0x000d, zip);
 
 	if (street)
-		aim_tlvlist_add_raw(&tl, 0x0021, strlen(street), street);
+		aim_tlvlist_add_string(&tl, 0x0021, street);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;
@@ -1266,15 +1266,15 @@ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interes
 	aim_tlvlist_add_16(&tl, 0x000a, privacy);
 
 	if (interest1)
-		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest1), interest1);
+		aim_tlvlist_add_string(&tl, 0x0000b, interest1);
 	if (interest2)
-		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest2), interest2);
+		aim_tlvlist_add_string(&tl, 0x0000b, interest2);
 	if (interest3)
-		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest3), interest3);
+		aim_tlvlist_add_string(&tl, 0x0000b, interest3);
 	if (interest4)
-		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest4), interest4);
+		aim_tlvlist_add_string(&tl, 0x0000b, interest4);
 	if (interest5)
-		aim_tlvlist_add_raw(&tl, 0x0000b, strlen(interest5), interest5);
+		aim_tlvlist_add_string(&tl, 0x0000b, interest5);
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10+aim_tlvlist_size(&tl))))
 		return -ENOMEM;

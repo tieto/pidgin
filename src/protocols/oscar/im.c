@@ -487,7 +487,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 
 	aim_tlvlist_add_16(&itl, 0x000a, 0x0001);
 	aim_tlvlist_add_noval(&itl, 0x000f);
-	aim_tlvlist_add_raw(&itl, 0x000c, strlen(msg), msg);
+	aim_tlvlist_add_string(&itl, 0x000c, msg);
 	aim_tlvlist_add_chatroom(&itl, 0x2711, exchange, roomname, instance);
 	aim_tlvlist_write(&hdrbs, &itl);
 
