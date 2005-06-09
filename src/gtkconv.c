@@ -4826,8 +4826,9 @@ static gboolean buddytag_event(GtkTextTag *tag, GObject *imhtml,
 				menu = create_chat_menu(conv, buddyname,
 						prpl_info, gc);
 				gtk_menu_popup(GTK_MENU(menu), NULL, NULL,
-						NULL, GTK_WIDGET(imhtml), 3,
-						GDK_CURRENT_TIME);
+						NULL, GTK_WIDGET(imhtml),
+						btn_event->button,
+						btn_event->time);
 
 				/* Don't propagate the event any further */
 				return TRUE;
@@ -4936,7 +4937,10 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	} else {
 		char *new_message = g_memdup(message, length);
 		char *who_escaped = (who ? g_markup_escape_text(who, strlen(who)) : g_strdup(""));
-		int tag_start_offset = 0, tag_end_offset = 0;
+		/* The initial offset is to deal with
+		 * escaped entities making the string longer */
+		int tag_start_offset = (who ? (strlen(who_escaped) - strlen(who)) : 0);
+		int tag_end_offset = 0;
 
 		if (flags & GAIM_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
@@ -4945,11 +4949,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 			if (gaim_message_meify(new_message, -1 )) {
 				g_snprintf(str, 1024, "***%s", who_escaped);
 				strcpy(color, "#6C2585");
-				tag_start_offset = 3;
+				tag_start_offset += 3;
 			}
 			else {
 				g_snprintf(str, 1024, "*%s*:", who_escaped);
-				tag_start_offset = 1;
+				tag_start_offset += 1;
 				tag_end_offset = 2;
 				strcpy(color, "#00FF00");
 			}
@@ -4960,11 +4964,11 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 				if (flags & GAIM_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s ***%s", AUTO_RESPONSE, who_escaped);
-					tag_start_offset = 4
+					tag_start_offset += 4
 						+ strlen(AUTO_RESPONSE);
 				} else {
 					g_snprintf(str, 1024, "***%s", who_escaped);
-					tag_start_offset = 3;
+					tag_start_offset += 3;
 				}
 
 				if (flags & GAIM_MESSAGE_NICK)
@@ -4976,7 +4980,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 				str = g_malloc(1024);
 				if (flags & GAIM_MESSAGE_AUTO_RESP) {
 					g_snprintf(str, 1024, "%s %s", who_escaped, AUTO_RESPONSE);
-					tag_start_offset = 1
+					tag_start_offset += 1
 						+ strlen(AUTO_RESPONSE);
 				} else {
 					g_snprintf(str, 1024, "%s:", who_escaped);
