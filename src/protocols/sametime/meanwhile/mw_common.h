@@ -367,6 +367,9 @@ void mwPrivacyInfo_get(struct mwGetBuffer *b, struct mwPrivacyInfo *info);
 
 void mwPrivacyInfo_clear(struct mwPrivacyInfo *info);
 
+void mwPrivacyInfo_clone(struct mwPrivacyInfo *to,
+			 const struct mwPrivacyInfo *from);
+
 
 void mwUserStatus_put(struct mwPutBuffer *b,
 		      const struct mwUserStatus *stat);
