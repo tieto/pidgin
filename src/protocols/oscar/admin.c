@@ -110,7 +110,7 @@ faim_export int aim_admin_setnick(aim_session_t *sess, aim_conn_t *conn, const c
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
-	aim_tlvlist_add_string(&tl, 0x0001, newnick);
+	aim_tlvlist_add_str(&tl, 0x0001, newnick);
 
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
@@ -138,10 +138,10 @@ faim_export int aim_admin_changepasswd(aim_session_t *sess, aim_conn_t *conn, co
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	/* new password TLV t(0002) */
-	aim_tlvlist_add_string(&tl, 0x0002, newpw);
+	aim_tlvlist_add_str(&tl, 0x0002, newpw);
 
 	/* current password TLV t(0012) */
-	aim_tlvlist_add_string(&tl, 0x0012, curpw);
+	aim_tlvlist_add_str(&tl, 0x0012, curpw);
 
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);
@@ -167,7 +167,7 @@ faim_export int aim_admin_setemail(aim_session_t *sess, aim_conn_t *conn, const 
 	snacid = aim_cachesnac(sess, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
-	aim_tlvlist_add_string(&tl, 0x0011, newemail);
+	aim_tlvlist_add_str(&tl, 0x0011, newemail);
 	
 	aim_tlvlist_write(&fr->data, &tl);
 	aim_tlvlist_free(&tl);

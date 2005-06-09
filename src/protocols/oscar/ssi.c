@@ -722,11 +722,11 @@ faim_export int aim_ssi_addbuddy(aim_session_t *sess, const char *name, const ch
 	if (needauth)
 		aim_tlvlist_add_noval(&data, 0x0066);
 	if (alias)
-		aim_tlvlist_add_string(&data, 0x0131, alias);
+		aim_tlvlist_add_str(&data, 0x0131, alias);
 	if (smsnum)
-		aim_tlvlist_add_string(&data, 0x013a, smsnum);
+		aim_tlvlist_add_str(&data, 0x013a, smsnum);
 	if (comment)
-		aim_tlvlist_add_string(&data, 0x013c, comment);
+		aim_tlvlist_add_str(&data, 0x013c, comment);
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&sess->ssi.local, name, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, data);

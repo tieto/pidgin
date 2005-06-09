@@ -470,7 +470,7 @@ faim_internal int aim_tlvlist_add_32(aim_tlvlist_t **list, const fu16_t type, co
  * @param value Value to add.
  * @return The size of the value added.
  */
-faim_internal int aim_tlvlist_add_string(aim_tlvlist_t **list, const fu16_t type, const char *value)
+faim_internal int aim_tlvlist_add_str(aim_tlvlist_t **list, const fu16_t type, const char *value)
 {
 	return aim_tlvlist_add_raw(list, type, strlen(value), (fu8_t *)value);
 }

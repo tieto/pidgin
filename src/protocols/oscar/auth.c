@@ -158,19 +158,19 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	aim_encode_password(password, password_encoded);
 
 	aimbs_put32(&fr->data, 0x00000001); /* FLAP Version */
-	aim_tlvlist_add_string(&tl, 0x0001, sn);
+	aim_tlvlist_add_str(&tl, 0x0001, sn);
 	aim_tlvlist_add_raw(&tl, 0x0002, passwdlen, password_encoded);
 
 	if (ci->clientstring)
-		aim_tlvlist_add_string(&tl, 0x0003, ci->clientstring);
+		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
 	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
 	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
 	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
 	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
 	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
 	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib); /* distribution chan */
-	aim_tlvlist_add_string(&tl, 0x000f, ci->lang);
-	aim_tlvlist_add_string(&tl, 0x000e, ci->country);
+	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
+	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
 
 	aim_tlvlist_write(&fr->data, &tl);
 
@@ -234,7 +234,7 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 	snacid = aim_cachesnac(sess, 0x0017, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0017, 0x0002, 0x0000, snacid);
 
-	aim_tlvlist_add_string(&tl, 0x0001, sn);
+	aim_tlvlist_add_str(&tl, 0x0001, sn);
 
 	/* Truncate ICQ passwords, if necessary */
 	if (isdigit(sn[0]) && (strlen(password) > MAXICQPASSLEN))
@@ -256,15 +256,15 @@ faim_export int aim_send_login(aim_session_t *sess, aim_conn_t *conn, const char
 #endif
 
 	if (ci->clientstring)
-		aim_tlvlist_add_string(&tl, 0x0003, ci->clientstring);
+		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
 	aim_tlvlist_add_16(&tl, 0x0016, (fu16_t)ci->clientid);
 	aim_tlvlist_add_16(&tl, 0x0017, (fu16_t)ci->major);
 	aim_tlvlist_add_16(&tl, 0x0018, (fu16_t)ci->minor);
 	aim_tlvlist_add_16(&tl, 0x0019, (fu16_t)ci->point);
 	aim_tlvlist_add_16(&tl, 0x001a, (fu16_t)ci->build);
 	aim_tlvlist_add_32(&tl, 0x0014, (fu32_t)ci->distrib);
-	aim_tlvlist_add_string(&tl, 0x000f, ci->lang);
-	aim_tlvlist_add_string(&tl, 0x000e, ci->country);
+	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
+	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
 
 	/*
 	 * If set, old-fashioned buddy lists will not work. You will need
@@ -494,7 +494,7 @@ faim_export int aim_request_login(aim_session_t *sess, aim_conn_t *conn, const c
 	snacid = aim_cachesnac(sess, 0x0017, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0017, 0x0006, 0x0000, snacid);
 
-	aim_tlvlist_add_string(&tl, 0x0001, sn);
+	aim_tlvlist_add_str(&tl, 0x0001, sn);
 
 	/* Tell the server we support SecurID logins. */
 	aim_tlvlist_add_noval(&tl, 0x004b);
