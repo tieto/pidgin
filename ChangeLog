@@ -36,6 +36,7 @@ version 2.0.0:
 	* Themeable mouse-over hyperlink coloring
 	* Attempt to detect the file type of a buddy icon when saving
 	  (Richard Laager)
+	* Yahoo! Stealth Settings have been implemented.
 
 	Bug fixes:
 	* People using input methods can now use Enter again.

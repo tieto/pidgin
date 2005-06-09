@@ -514,6 +514,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	char **buddies;
 	char **tmp, **bud, *norm_bud;
 	char *grp = NULL;
+	char *perm_stealth_buddies = NULL;
 
 	if (pkt->id)
 		yd->session_id = pkt->id;
@@ -537,6 +538,9 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 59: /* cookies, yum */
 			yahoo_process_cookie(yd, pair->value);
+			break;
+		case YAHOO_SERVICE_STEALTH_PERM:
+			perm_stealth_buddies = pair->value;
 			break;
 		}
 	}
@@ -611,6 +615,16 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		      gc->account->username);
 	}
 
+	if (perm_stealth_buddies) {
+		buddies = g_strsplit(perm_stealth_buddies, ",", -1);
+		for (bud = buddies; bud && *bud; bud++) {
+			f = yahoo_friend_find(gc, *bud);
+			if (f)
+				f->stealth = YAHOO_STEALTH_PERM_OFFLINE;
+		}
+		g_strfreev(buddies);
+
+	}
 }
 
 static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -1998,6 +2012,10 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_COMMENT:
 		yahoo_process_chat_message(gc, pkt);
 		break;
+	case YAHOO_SERVICE_STEALTH_PERM:
+	case YAHOO_SERVICE_STEALTH_SESSION:
+		yahoo_process_stealth(gc, pkt);
+		break;
 	case YAHOO_SERVICE_P2PFILEXFER:
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
@@ -2569,6 +2587,17 @@ static void yahoo_initiate_conference(GaimBlistNode *node, gpointer data) {
 	yahoo_c_invite(gc, id, "Join my conference...", buddy->name);
 }
 
+static void yahoo_stealth_settings(GaimBlistNode *node, gpointer data) {
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	int stealth_val = GPOINTER_TO_INT(data);
+
+	buddy = (GaimBuddy *) node;
+	gc = gaim_account_get_connection(buddy->account);
+
+	yahoo_friend_update_stealth(gc, buddy->name, stealth_val);
+}
+
 static void yahoo_game(GaimBlistNode *node, gpointer data) {
 
 	GaimBuddy *buddy;
@@ -2633,12 +2662,13 @@ static char *yahoo_status_text(GaimBuddy *b)
 char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	YahooFriend *f;
-	char *escaped, *status, *ret;
+	char *escaped, *status, *stealth = NULL;
+	GString *s = g_string_new("");
 
 	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
 		status = g_strdup_printf("\n%s", _("Not on server list"));
-	else
+	else {
 		switch (f->status) {
 		case YAHOO_STATUS_IDLE:
 			if (f->idle == -1) {
@@ -2656,12 +2686,30 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 			break;
 		}
 
+		switch (f->stealth) {
+			case YAHOO_STEALTH_ONLINE:
+				stealth = _("Appear Online");
+				break;
+			case YAHOO_STEALTH_PERM_OFFLINE:
+				stealth = _("Appear Permanently Offline");
+				break;
+			case YAHOO_STEALTH_DEFAULT:
+			default:
+				stealth = _("None");
+				break;
+		}
+	}
+
 	escaped = g_markup_escape_text(status, strlen(status));
-	ret = g_strdup_printf(_("\n<b>%s:</b> %s"), _("Status"), escaped);
+	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"), escaped);
 	g_free(status);
 	g_free(escaped);
 
-	return ret;
+	if (stealth != NULL)
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"),
+				_("Stealth"), stealth);
+
+	return g_string_free(s, FALSE);
 }
 
 static void yahoo_addbuddyfrommenu_cb(GaimBlistNode *node, gpointer data)
@@ -2691,6 +2739,44 @@ static void yahoo_chat_goto_menu(GaimBlistNode *node, gpointer data)
 	yahoo_chat_goto(gc, buddy->name);
 }
 
+static GList *build_stealth_submenu(YahooFriend *f, GaimConnection *gc) {
+	GList *m = NULL;
+	GaimBlistNodeAction *act;
+	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
+
+	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
+		if (f->stealth != YAHOO_STEALTH_ONLINE) {
+			act = gaim_blist_node_action_new(_("Appear Online"),
+					yahoo_stealth_settings,
+					GINT_TO_POINTER(YAHOO_STEALTH_ONLINE),
+					NULL);
+			m = g_list_append(m, act);
+		} else if (f->stealth != YAHOO_STEALTH_DEFAULT) {
+			act = gaim_blist_node_action_new(_("Appear Offline"),
+					yahoo_stealth_settings,
+					GINT_TO_POINTER(YAHOO_STEALTH_DEFAULT),
+					NULL);
+			m = g_list_append(m, act);
+		}
+	}
+
+	if (f->stealth == YAHOO_STEALTH_PERM_OFFLINE) {
+		act = gaim_blist_node_action_new(
+				_("Don't Appear Permanently Offline"),
+				yahoo_stealth_settings,
+				GINT_TO_POINTER(YAHOO_STEALTH_DEFAULT), NULL);
+		m = g_list_append(m, act);
+	} else {
+		act = gaim_blist_node_action_new(
+				_("Appear Permanently Offline"),
+				yahoo_stealth_settings,
+				GINT_TO_POINTER(YAHOO_STEALTH_PERM_OFFLINE),
+				NULL);
+		m = g_list_append(m, act);
+	}
+
+	return m;
+}
 
 static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 {
@@ -2711,36 +2797,42 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 		return m;
 
-	} else if (f->status == YAHOO_STATUS_OFFLINE) {
-		return NULL;
 	}
 
-	if (!yd->wm) {
-		act = gaim_blist_node_action_new(_("Join in Chat"),
+	if (f && f->status != YAHOO_STATUS_OFFLINE) {
+		if (!yd->wm) {
+			act = gaim_blist_node_action_new(_("Join in Chat"),
 				yahoo_chat_goto_menu, NULL, NULL);
+			m = g_list_append(m, act);
+		}
+
+		act = gaim_blist_node_action_new(_("Initiate Conference"),
+			yahoo_initiate_conference, NULL, NULL);
 		m = g_list_append(m, act);
+
+		if (yahoo_friend_get_game(f)) {
+			const char *game = yahoo_friend_get_game(f);
+			char *room;
+			char *t;
+
+			if ((room = strstr(game, "&follow="))) {/* skip ahead to the url */
+				while (*room && *room != '\t')          /* skip to the tab */
+					room++;
+				t = room++;                             /* room as now at the name */
+				while (*t != '\n')
+					t++;                            /* replace the \n with a space */
+				*t = ' ';
+				g_snprintf(buf2, sizeof buf2, "%s", room);
+
+				act = gaim_blist_node_action_new(buf2, yahoo_game, NULL, NULL);
+				m = g_list_append(m, act);
+			}
+		}
 	}
 
-	act = gaim_blist_node_action_new(_("Initiate Conference"),
-			yahoo_initiate_conference, NULL, NULL);
-	m = g_list_append(m, act);
-
-	if (yahoo_friend_get_game(f)) {
-		const char *game = yahoo_friend_get_game(f);
-		char *room;
-		char *t;
-
-		if (!(room = strstr(game, "&follow="))) /* skip ahead to the url */
-			return m;
-		while (*room && *room != '\t')          /* skip to the tab */
-			room++;
-		t = room++;                             /* room as now at the name */
-		while (*t != '\n')
-			t++;                            /* replace the \n with a space */
-		*t = ' ';
-		g_snprintf(buf2, sizeof buf2, "%s", room);
-
-		act = gaim_blist_node_action_new(buf2, yahoo_game, NULL, NULL);
+	if (f) {
+		act = gaim_blist_node_action_new(_("Stealth Settings"),
+				NULL, NULL, build_stealth_submenu(f, gc));
 		m = g_list_append(m, act);
 	}
 
@@ -2853,6 +2945,13 @@ int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 	return 0;
 }
 
+static void yahoo_session_stealth_remove(gpointer key, gpointer value, gpointer data)
+{
+	YahooFriend *f = value;
+	if (f && f->stealth == YAHOO_STEALTH_ONLINE)
+		f->stealth = YAHOO_STEALTH_DEFAULT;
+}
+
 static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -2955,6 +3054,10 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
 		yahoo_packet_hash_str(pkt, 13, "1");
 		yahoo_packet_send_and_free(pkt, yd);
+
+		/* Any per-session stealth settings are removed */
+		g_hash_table_foreach(yd->friends, yahoo_session_stealth_remove, NULL);
+
 	}
 }
 

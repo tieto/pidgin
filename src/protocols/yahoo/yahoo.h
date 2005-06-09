@@ -116,7 +116,7 @@ struct yahoo_data {
 	char *cookie_t;
 	int session_id;
 	gboolean jp;
-	gboolean wm;
+	gboolean wm; /* connected w/ web messenger method */
 	/* picture aka buddy icon stuff */
 	char *picture_url;
 	int picture_checksum;
