@@ -648,6 +648,21 @@ faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t typ
 /**
  * Substitute a TLV of a given type with a new TLV of the same type.  If 
  * you attempt to replace a TLV that does not exist, this function will 
+ * just add a new TLV as if you called aim_tlvlist_add_str().
+ *
+ * @param list Desination chain (%NULL pointer if empty).
+ * @param type TLV type.
+ * @param str String to add.
+ * @return The length of the TLV.
+ */
+faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const fu16_t type, const char *str)
+{
+	return aim_tlvlist_replace_raw(list, type, strlen(str), str);
+}
+
+/**
+ * Substitute a TLV of a given type with a new TLV of the same type.  If 
+ * you attempt to replace a TLV that does not exist, this function will 
  * just add a new TLV as if you called aim_tlvlist_add_raw().
  *
  * @param list Desination chain (%NULL pointer if empty).

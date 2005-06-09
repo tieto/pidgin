@@ -396,7 +396,7 @@ faim_export char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, co
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
 		if (tlv && tlv->length) {
 			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, tlv->value, tlv->length);
+			strncpy(alias, (char *)tlv->value, tlv->length);
 			alias[tlv->length] = 0;
 			return alias;
 		}
@@ -421,7 +421,7 @@ faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, 
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x013c, 1);
 		if (tlv && tlv->length) {
 			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, tlv->value, tlv->length);
+			strncpy(alias, (char *)tlv->value, tlv->length);
 			alias[tlv->length] = 0;
 			return alias;
 		}
@@ -922,7 +922,7 @@ faim_export int aim_ssi_aliasbuddy(aim_session_t *sess, const char *gn, const ch
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
 	if ((alias != NULL) && (strlen(alias) > 0))
-		aim_tlvlist_replace_raw(&tmp->data, 0x0131, strlen(alias), alias);
+		aim_tlvlist_replace_str(&tmp->data, 0x0131, alias);
 	else
 		aim_tlvlist_remove(&tmp->data, 0x0131);
 
@@ -954,7 +954,7 @@ faim_export int aim_ssi_editcomment(aim_session_t *sess, const char *gn, const c
 
 	/* Either add or remove the 0x0131 TLV from the TLV chain */
 	if ((comment != NULL) && (strlen(comment) > 0))
-		aim_tlvlist_replace_raw(&tmp->data, 0x013c, strlen(comment), comment);
+		aim_tlvlist_replace_str(&tmp->data, 0x013c, comment);
 	else
 		aim_tlvlist_remove(&tmp->data, 0x013c);
 

@@ -162,10 +162,10 @@ faim_internal char *aimbs_getstr(aim_bstream_t *bs, int len)
 {
 	char *ob;
 
-	if (!(ob = malloc(len+1)))
+	if (!(ob = malloc(len + 1)))
 		return NULL;
 
-	if (aimbs_getrawbuf(bs, ob, len) < len) {
+	if (aimbs_getrawbuf(bs, (fu8_t *)ob, len) < len) {
 		free(ob);
 		return NULL;
 	}
@@ -256,7 +256,7 @@ faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len)
 
 faim_internal int aimbs_putstr(aim_bstream_t *bs, const char *str)
 {
-	aimbs_putraw(bs, str, strlen(str));
+	return aimbs_putraw(bs, (fu8_t *)str, strlen(str));
 }
 
 faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len)

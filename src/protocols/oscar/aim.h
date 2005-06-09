@@ -1419,6 +1419,7 @@ faim_internal int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, fu16_t type, fu
 faim_internal int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, fu16_t type, aim_tlvlist_t **tl);
 
 faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t type, const fu16_t lenth, const fu8_t *value);
+faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const fu16_t type, const char *str);
 faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const fu16_t type);
 faim_internal int aim_tlvlist_replace_8(aim_tlvlist_t **list, const fu16_t type, const fu8_t value);
 faim_internal int aim_tlvlist_replace_16(aim_tlvlist_t **list, const fu16_t type, const fu16_t value);
