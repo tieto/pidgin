@@ -88,7 +88,7 @@ static int parseinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	cookie16 = aimbs_getraw(bs, 16); /* Mail cookie sent above */
 
 	/* See if we already have some info associated with this cookie */
-	for (new=sess->emailinfo; (new && strncmp(cookie16, new->cookie16, 16)); new=new->next);
+	for (new = sess->emailinfo; (new && memcmp(cookie16, new->cookie16, 16)); new = new->next);
 	if (new) {
 		/* Free some of the old info, if it exists */
 		free(new->cookie8);
