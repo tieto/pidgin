@@ -2662,7 +2662,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 char *yahoo_tooltip_text(GaimBuddy *b)
 {
 	YahooFriend *f;
-	char *escaped, *status, *stealth = NULL;
+	char *escaped, *status = NULL, *stealth = NULL;
 	GString *s = g_string_new("");
 
 	f = yahoo_friend_find(b->account->gc, b->name);
@@ -2680,6 +2680,8 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 			if (!yahoo_friend_get_status_message(f))
 				return NULL;
 			status = g_strdup(yahoo_friend_get_status_message(f));
+			break;
+		case YAHOO_STATUS_OFFLINE:
 			break;
 		default:
 			status = g_strdup(yahoo_get_status_string(f->status));
@@ -2700,10 +2702,12 @@ char *yahoo_tooltip_text(GaimBuddy *b)
 		}
 	}
 
-	escaped = g_markup_escape_text(status, strlen(status));
-	g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"), escaped);
-	g_free(status);
-	g_free(escaped);
+	if (status != NULL) {
+		escaped = g_markup_escape_text(status, strlen(status));
+		g_string_append_printf(s, _("\n<b>%s:</b> %s"), _("Status"), escaped);
+		g_free(status);
+		g_free(escaped);
+	}
 
 	if (stealth != NULL)
 		g_string_append_printf(s, _("\n<b>%s:</b> %s"),

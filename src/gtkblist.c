@@ -2760,7 +2760,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 
 		/* Logged In */
 		signon = gaim_presence_get_login_time(presence);
-		if (signon > 0)
+		if (GAIM_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
 			tmp = gaim_str_seconds_to_string(time(NULL) - signon);
 			g_string_append_printf(str, _("\n<b>Logged In:</b> %s"), tmp);
@@ -2806,7 +2806,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
 			g_string_append_printf(str, _("\n<b>Status:</b> Offline"));
 		}
-		else if (prpl_info && prpl_info->tooltip_text)
+
+		if (prpl_info && prpl_info->tooltip_text)
 		{
 			/* Additional text from the PRPL */
 			const char *end;
