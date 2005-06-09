@@ -320,7 +320,7 @@ static int userlistchange(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
  *
  * XXX convert this to use tlvchains 
  */
-faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const char *msg, int msglen, const char *encoding, const char *language)
+faim_export int aim_chat_send_im(aim_session_t *sess, aim_conn_t *conn, fu16_t flags, const fu8_t *msg, int msglen, const char *encoding, const char *language)
 {
 	int i;
 	aim_frame_t *fr;
