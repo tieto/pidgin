@@ -54,7 +54,7 @@ faim_export int aim_chatnav_createroom(aim_session_t *sess, aim_conn_t *conn, co
 	 * the value of the room name in create requests is ignored.
 	 */
 	aimbs_put8(&fr->data, strlen(ck));
-	aimbs_putraw(&fr->data, ck, strlen(ck));
+	aimbs_putstr(&fr->data, ck);
 
 	/* 
 	 * instance
