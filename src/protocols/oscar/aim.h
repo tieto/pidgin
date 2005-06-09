@@ -1088,7 +1088,7 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const c
 faim_export void aim_locate_dorequest(aim_session_t *sess);
 
 /* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
-/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const char *profile, const int profile_len, const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len);
+/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const fu8_t *profile, const int profile_len, const char *awaymsg_encoding, const fu8_t *awaymsg, const int awaymsg_len);
 /* 0x0004 */ faim_export int aim_locate_setcaps(aim_session_t *sess, fu32_t caps);
 /* 0x0005 */ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *, fu16_t);
 /* 0x0009 */ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);

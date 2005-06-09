@@ -975,8 +975,8 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * 
  */
 faim_export int aim_locate_setprofile(aim_session_t *sess,
-				  const char *profile_encoding, const char *profile, const int profile_len,
-				  const char *awaymsg_encoding, const char *awaymsg, const int awaymsg_len)
+				  const char *profile_encoding, const fu8_t *profile, const int profile_len,
+				  const char *awaymsg_encoding, const fu8_t *awaymsg, const int awaymsg_len)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -1099,7 +1099,7 @@ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *sn, fu16_t i
 	aim_putsnac(&fr->data, 0x0002, 0x0005, 0x0000, snacid);
 	aimbs_put16(&fr->data, infotype);
 	aimbs_put8(&fr->data, strlen(sn));
-	aimbs_putraw(&fr->data, sn, strlen(sn));
+	aimbs_putstr(&fr->data, sn);
 
 	aim_tx_enqueue(sess, fr);
 
