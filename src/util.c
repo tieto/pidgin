@@ -556,6 +556,17 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 			t->tm_isdst = -1;
 
 			if (tzoff || utc) {
+#ifdef _WIN32
+				TIME_ZONE_INFORMATION tzi;
+				DWORD ret;
+				if ((ret = GetTimeZoneInformation(&tzi))
+						!= TIME_ZONE_ID_INVALID) {
+					tzoff -= tzi.Bias * 60;
+					if (ret == TIME_ZONE_ID_DAYLIGHT) {
+						tzoff -= tzi.DaylightBias * 60;
+					}
+				}
+#else
 #ifdef HAVE_TM_GMTOFF
 				tzoff += t->tm_gmtoff;
 #else
@@ -565,6 +576,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc)
 				t->tm_isdst = 0; /* I think this might fix it */
 #	endif
 #endif
+#endif /* _WIN32 */
 			}
 		}
 	}
