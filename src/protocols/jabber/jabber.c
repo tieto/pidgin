@@ -128,7 +128,9 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 			return;
 	}
 
-	if(xmlnode_get_child(packet, "mechanisms")) {
+	if(js->registration) {
+		jabber_register_start(js);
+	} else if(xmlnode_get_child(packet, "mechanisms")) {
 		jabber_auth_start(js, packet);
 	} else if(xmlnode_get_child(packet, "bind")) {
 		xmlnode *bind, *resource;
