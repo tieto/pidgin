@@ -340,7 +340,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		aimbs_put16(&fr->data, args->charsubset);
 
 		/* Message.  Not terminated */
-		aimbs_putraw(&fr->data, args->msg, args->msglen);
+		aimbs_putstr(&fr->data, args->msg);
 	}
 
 	/* Set the Autoresponse flag */
@@ -658,12 +658,12 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
 	aimbs_putle16(&fr->data, 0x0001);
 	aimbs_putle32(&fr->data, 0);
 	aimbs_putle16(&fr->data, strlen(args->rtfmsg)+1);
-	aimbs_putraw(&fr->data, args->rtfmsg, strlen(args->rtfmsg)+1);
+	aimbs_putraw(&fr->data, (fu8_t *)args->rtfmsg, strlen(args->rtfmsg)+1);
 
 	aimbs_putle32(&fr->data, args->fgcolor);
 	aimbs_putle32(&fr->data, args->bgcolor);
 	aimbs_putle32(&fr->data, strlen(rtfcap)+1);
-	aimbs_putraw(&fr->data, rtfcap, strlen(rtfcap)+1);
+	aimbs_putraw(&fr->data, (fu8_t *)rtfcap, strlen(rtfcap)+1);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -1028,13 +1028,13 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
  * @param message The message you want to send, it should be null terminated.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message)
+faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, fu16_t type, const char *message)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
 	aim_snacid_t snacid;
 	int i;
-	char ck[8];
+	fu8_t ck[8];
 
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0002)))
 		return -EINVAL;
@@ -1073,7 +1073,7 @@ faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t
 	 */
 	aimbs_putle16(&fr->data, type);
 	aimbs_putle16(&fr->data, strlen(message)+1);
-	aimbs_putraw(&fr->data, message, strlen(message)+1);
+	aimbs_putraw(&fr->data, (fu8_t *)message, strlen(message)+1);
 
 	/*
 	 * TLV t(0006) l(0000) v()
@@ -1143,7 +1143,7 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		flag1 = aimbs_get16(&mbs);
 		flag2 = aimbs_get16(&mbs);
 
-		msg = aimbs_getstr(&mbs, msglen);
+		msg = aimbs_getraw(&mbs, msglen);
 	}
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
@@ -1249,7 +1249,7 @@ faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const 
 {
 	fu8_t *dup;
 
-	if (!(dup = strdup(ascii)))
+	if (!(dup = (fu8_t *)strdup(ascii)))
 		return -1;
 
 	if (mpmsg_addsection(sess, mpm, 0x0000, 0x0000, dup, strlen(ascii)) == -1) {
@@ -1358,7 +1358,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 		 * the received messages are given in network byte order.
 		 *
 		 */
-		msgbuf = aimbs_getstr(&mbs, msglen);
+		msgbuf = aimbs_getraw(&mbs, msglen);
 		mpmsg_addsection(sess, &args->mpmsg, flag1, flag2, msgbuf, msglen);
 
 	} /* while */
@@ -2142,7 +2142,7 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
  * 
  */
-faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, fu16_t code)
+faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const fu8_t *cookie, fu16_t code)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;

@@ -789,7 +789,7 @@ struct aim_incomingim_ch1_args {
 	fu32_t icbmflags; /* some flags apply only to ->msg, not all mpmsg */
 
 	/* Only provided if message has a human-readable section */
-	char *msg;
+	fu8_t *msg;
 	int msglen;
 
 	/* Only provided if AIM_IMFLAGS_HASICON is set */
@@ -863,7 +863,7 @@ struct aim_incomingim_ch4_args {
 	fu32_t uin; /* Of the sender of the ICBM */
 	fu8_t type;
 	fu8_t flags;
-	char *msg; /* Reason for auth request, deny, or accept */
+	fu8_t *msg; /* Reason for auth request, deny, or accept */
 	int msglen;
 };
 
@@ -880,9 +880,9 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type);
-/* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, char *sn, fu16_t type, fu8_t *message);
+/* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, fu16_t type, const char *message);
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
-/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const char *cookie, fu16_t code);
+/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const fu8_t *cookie, fu16_t code);
 /* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn, fu16_t type2);
 
 
@@ -924,7 +924,7 @@ struct aim_fileheader_t {
 };
 
 struct aim_oft_info {
-	char cookie[8];
+	fu8_t cookie[8];
 	char *sn;
 	char *proxyip;
 	char *clientip;
