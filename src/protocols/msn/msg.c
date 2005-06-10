@@ -159,8 +159,13 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {
 	MsnSlpHeader header;
 	const char *tmp;
+	int body_len;
 
 	tmp = body;
+
+	if (len < sizeof(header)) {
+		g_return_if_reached();
+	}
 
 	/* Import the header. */
 	memcpy(&header, tmp, sizeof(header));
@@ -177,13 +182,14 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 	msg->msnslp_header.ack_size   = GUINT64_FROM_LE(header.ack_size);
 
 	/* Import the body. */
+	body_len = len - (tmp - body);
 	/* msg->body_len = msg->msnslp_header.length; */
-	msg->body_len = len - (tmp - body);
 
-	if (msg->body_len > 0)
+	if (body_len > 0) {
+		msg->body_len = len - (tmp - body);
 		msg->body = g_memdup(tmp, msg->body_len);
-
-	tmp += msg->body_len;
+		tmp += body_len;
+	}
 }
 
 void
