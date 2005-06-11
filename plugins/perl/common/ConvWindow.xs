@@ -25,10 +25,6 @@ void
 gaim_conv_window_raise(win)
 	Gaim::ConvWindow win
 
-void
-gaim_conv_window_flash(win)
-	Gaim::ConvWindow win
-
 int
 gaim_conv_window_add_conversation(win, conv)
 	Gaim::ConvWindow win

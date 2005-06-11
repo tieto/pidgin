@@ -4297,16 +4297,6 @@ gaim_gtk_raise(GaimConvWindow *win)
 }
 
 static void
-gaim_gtk_flash(GaimConvWindow *win)
-{
-#ifdef _WIN32
-	GaimGtkWindow *gtkwin = GAIM_GTK_WINDOW(win);
-
-	wgaim_conv_im_blink(gtkwin->window);
-#endif
-}
-
-static void
 gaim_gtk_switch_conversation(GaimConvWindow *win, GaimConversation *conv)
 {
 	GaimGtkWindow *gtkwin;
@@ -4654,7 +4644,6 @@ static GaimConvWindowUiOps window_ui_ops =
 	gaim_gtk_show,
 	gaim_gtk_hide,
 	gaim_gtk_raise,
-	gaim_gtk_flash,
 	gaim_gtk_switch_conversation,
 	gaim_gtk_add_conversation,
 	gaim_gtk_remove_conversation,

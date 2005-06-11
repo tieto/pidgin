@@ -160,7 +160,6 @@ struct _GaimConvWindowUiOps
 	void (*show)(GaimConvWindow *win);
 	void (*hide)(GaimConvWindow *win);
 	void (*raise)(GaimConvWindow *win);
-	void (*flash)(GaimConvWindow *win);
 
 	void (*switch_conversation)(GaimConvWindow *win, GaimConversation *conv);
 	void (*add_conversation)(GaimConvWindow *win, GaimConversation *conv);
@@ -359,13 +358,6 @@ void gaim_conv_window_hide(GaimConvWindow *win);
  * @param win The window.
  */
 void gaim_conv_window_raise(GaimConvWindow *win);
-
-/**
- * Causes the window to flash for IM notification, if the UI supports this.
- *
- * @param win The window.
- */
-void gaim_conv_window_flash(GaimConvWindow *win);
 
 /**
  * Sets the specified window's UI window operations structure.

@@ -72,15 +72,6 @@ typedef enum {
     SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
 } SHGFP_TYPE;
 
-/* flash info */
-typedef BOOL (CALLBACK* LPFNFLASHWINDOWEX)(PFLASHWINFO);
-
-struct _WGAIM_FLASH_INFO {
-	guint t_handle;
-	guint sig_handler;
-};
-typedef struct _WGAIM_FLASH_INFO WGAIM_FLASH_INFO;
-
 /*
  * LOCALS
  */
@@ -88,7 +79,6 @@ static char *app_data_dir;
 static char install_dir[MAXPATHLEN];
 static char lib_dir[MAXPATHLEN];
 static char locale_dir[MAXPATHLEN];
-static gboolean blink_turned_on = TRUE;
 
 /*
  *  GLOBALS
@@ -99,7 +89,6 @@ HINSTANCE gaimdll_hInstance = 0;
 /*
  *  PROTOS
  */
-LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
 
 FARPROC wgaim_find_and_loadproc(char*, char*);
 extern void wgaim_gtkspell_init();
@@ -108,44 +97,6 @@ char* wgaim_data_dir(void);
 /*
  *  STATIC CODE
  */
-
-/* Window flasher */
-static gboolean flash_window_cb(gpointer data) {
-	FlashWindow((HWND)data, TRUE);
-	return TRUE;
-}
-
-static int halt_flash_filter(GtkWidget *widget, GdkEventFocus *event, gpointer data) {
-        if(MyFlashWindowEx) {
-                HWND hWnd = data;
-                FLASHWINFO info;
-
-                if(!IsWindow(hWnd))
-                        return 0;
-                memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = hWnd;
-		info.dwFlags = FLASHW_STOP;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-        }
-        else {
-                WGAIM_FLASH_INFO *finfo = data;        
-                /* Stop flashing and remove filter */
-                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Removing timeout\n");
-                gaim_timeout_remove(finfo->t_handle);
-                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "Disconnecting signal handler\n");
-                g_signal_handler_disconnect(G_OBJECT(widget),finfo->sig_handler);
-                gaim_debug(GAIM_DEBUG_INFO, "wgaim", "done\n");
-                g_free(finfo);
-        }
-	return 0;
-}
-
-static void load_winver_specific_procs(void) {
-	/* Used for Win98+ and WinNT5+ */
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX)wgaim_find_and_loadproc("user32.dll", "FlashWindowEx" );
-}
 
 static void wgaim_debug_print(GaimDebugLevel level, const char *category, const char *format, va_list args) {
 	char *str = NULL;
@@ -332,43 +283,6 @@ gboolean wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE d
         return ret;
 }
 
-/* FlashWindowEx is only supported by Win98+ and WinNT5+. If its
-   not supported we do it our own way */
-void wgaim_conv_im_blink(GtkWidget *window) {
-        if(!blink_turned_on)
-                return;
-	if(MyFlashWindowEx) {
-		FLASHWINFO info;
-                if(GetForegroundWindow() == GDK_WINDOW_HWND(window->window))
-                        return;
-                memset(&info, 0, sizeof(FLASHWINFO));
-		info.cbSize = sizeof(FLASHWINFO);
-		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
-		info.dwTimeout = 0;
-		MyFlashWindowEx(&info);
-                /* Stop flashing when window receives focus */
-                g_signal_connect(G_OBJECT(window), 
-                                 "focus-in-event", 
-                                 G_CALLBACK(halt_flash_filter), info.hwnd);
-	}
-	else {
-		WGAIM_FLASH_INFO *finfo = g_new0(WGAIM_FLASH_INFO, 1);
-
-		/* Start Flashing window */
-		finfo->t_handle = gaim_timeout_add(1000, 
-						flash_window_cb, 
-						GDK_WINDOW_HWND(window->window));
-		finfo->sig_handler = g_signal_connect(G_OBJECT(window), 
-						      "focus-in-event", 
-						      G_CALLBACK(halt_flash_filter), finfo);
-	}
-}
-
-void wgaim_conv_im_blink_state(gboolean val) {
-        blink_turned_on = val;
-}
-
 int wgaim_gz_decompress(const char* in, const char* out) {
 	gzFile fin;
 	FILE *fout;
@@ -465,8 +379,6 @@ void wgaim_init(HINSTANCE hint) {
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
 	gaimexe_hInstance = hint;
-
-	load_winver_specific_procs();
 
 	/* Winsock init */
 	wVersionRequested = MAKEWORD( 2, 2 );

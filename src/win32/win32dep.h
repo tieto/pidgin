@@ -49,8 +49,6 @@ extern char*     wgaim_lib_dir(void);
 extern char*     wgaim_locale_dir(void);
 extern char*     wgaim_data_dir(void);
 /* UI related */
-extern void      wgaim_conv_im_blink(GtkWidget*);
-extern void      wgaim_conv_im_blink_state(gboolean val);
 extern void      wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
 /* Utility */
 extern int       wgaim_gz_decompress(const char* in, const char* out);

@@ -367,21 +367,6 @@ gaim_conv_window_raise(GaimConvWindow *win)
 	ops->raise(win);
 }
 
-void
-gaim_conv_window_flash(GaimConvWindow *win)
-{
-	GaimConvWindowUiOps *ops;
-
-	g_return_if_fail(win != NULL);
-
-	ops = gaim_conv_window_get_ui_ops(win);
-
-	if (ops == NULL || ops->flash == NULL)
-		return;
-
-	ops->flash(win);
-}
-
 gboolean
 gaim_conv_window_has_focus(GaimConvWindow *win)
 {

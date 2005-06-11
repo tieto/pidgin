@@ -771,7 +771,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
-			gaim_conv_window_flash(gaim_conversation_get_window(cnv));
 		}
 
 		/*
@@ -892,7 +891,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
-			gaim_conv_window_flash(gaim_conversation_get_window(cnv));
 #if 0
 		}
 #endif

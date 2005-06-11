@@ -54,6 +54,9 @@ version 2.0.0:
 	           or not the file is binary
 	* Added:   gaim_buddy_icon_get_type, can be used to attempt to
 	           determine the file type of a given buddy icon.
+	* Removed: Window flashing support in the core: gaim_conv_window_flash,
+	           and flash UI operation for conversations.  Use signal
+	           "received-im-msg" or similar.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
