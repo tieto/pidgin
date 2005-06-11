@@ -5913,12 +5913,16 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 			/* Make a list of what the groups each buddy is in */
 			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
 				GaimBlistNode *node = cur->data;
-				groups = g_list_append(groups, node->parent);
+				/* node is GaimBuddy, parent is a GaimContact.
+				 * We must go two levels up to get the Group */
+				groups = g_list_append(groups,
+						node->parent->parent);
 			}
 
 			serv_remove_buddies(gc, moved_buddies, groups);
 			serv_add_buddies(gc, moved_buddies);
 			g_list_free(groups);
+			/** XXX: Shouldn't be we deleting the old group on the server here??? */
 			gaim_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, group->name);
 		} else {
