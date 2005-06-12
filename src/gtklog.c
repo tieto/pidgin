@@ -297,6 +297,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response",
 					 G_CALLBACK(destroy_cb), ht);
+	gtk_window_set_role(GTK_WINDOW(lv->window), "log_viewer");
 
 	/* Icon *************/
 	if (pixbuf != NULL) {
