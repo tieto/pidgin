@@ -2241,37 +2241,39 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 }
 
-#define MAX_SCROLL_TIME 0.4
+#define MAX_SCROLL_TIME 0.4 /* seconds */
+#define SCROLL_DELAY 33 /* milliseconds */
 
+/*
+ * Smoothly scroll a GtkIMHtml.
+ *
+ * @return TRUE if the window needs to be scrolled further, FALSE if we're at the bottom.
+ */
 static gboolean scroll_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
-	gdouble val = adj->upper - adj->page_size;
-	gdouble t;
+	gdouble max_val = adj->upper - adj->page_size;
 
-	t = g_timer_elapsed(imhtml->scroll_time, NULL);
+	g_return_val_if_fail(imhtml->scroll_time != NULL, FALSE);
 
-	if (adj->value >= val || t >= MAX_SCROLL_TIME) {
-		gaim_debug_info("gtkimhtml", "scroll_cb:  out of time\n");
-		gtk_adjustment_set_value(adj, val);
-	} else {
-		gtk_adjustment_set_value(adj,
-		                        adj->value + (((val - adj->value) * t ) / MAX_SCROLL_TIME));
-	}
-
-	if (adj->value >= val) {
+	if (g_timer_elapsed(imhtml->scroll_time, NULL) > MAX_SCROLL_TIME) {
+		/* time's up. jump to the end and kill the timer */
+		gtk_adjustment_set_value(adj, max_val);
 		g_timer_destroy(imhtml->scroll_time);
 		imhtml->scroll_time = NULL;
 		return FALSE;
-	} else
-		return TRUE;
+	}
+
+	/* scroll by 1/3rd the remaining distance */
+	gtk_adjustment_set_value(adj, gtk_adjustment_get_value(adj) + ((max_val - gtk_adjustment_get_value(adj)) / 3));
+	return TRUE;
 }
 
 static gboolean scroll_idle_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
-	imhtml->scroll_src = g_timeout_add(33, scroll_cb, imhtml);
+	imhtml->scroll_src = g_timeout_add(SCROLL_DELAY, scroll_cb, imhtml);
 	return FALSE;
 }
 
