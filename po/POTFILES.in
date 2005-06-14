@@ -1,5 +1,4 @@
 plugins/autorecon.c
-plugins/chkmail.c
 plugins/contact_priority.c
 plugins/docklet/docklet-win32.c
 plugins/docklet/docklet.c
