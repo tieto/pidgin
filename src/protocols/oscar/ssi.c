@@ -660,8 +660,29 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 			else if (cur->type == AIM_SSI_TYPE_DENY)
 				aim_ssi_deldeny(sess, NULL);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(sess->ssi.local, cur->gid, 0x0000)))) {
-			aim_ssi_addbuddy(sess, cur->name, "orphans", NULL, NULL, NULL, 0);
+			char *alias = aim_ssi_getalias(sess->ssi.local, NULL, cur->name);
+			aim_ssi_addbuddy(sess, cur->name, "orphans", alias, NULL, NULL, 0);
 			aim_ssi_delbuddy(sess, cur->name, NULL);
+			free(alias);
+		}
+		cur = next;
+	}
+
+	/* Make sure there aren't any duplicate buddies in a group, or duplicate permits or denies */
+	cur = sess->ssi.local;
+	while (cur) {
+		next = cur->next;
+		if ((cur->type == AIM_SSI_TYPE_BUDDY) || (cur->type == AIM_SSI_TYPE_PERMIT) || (cur->type == AIM_SSI_TYPE_DENY))
+		{
+			struct aim_ssi_item *cur2, *next2;
+			cur2 = next;
+			while (cur2) {
+				next2 = cur2->next;
+				if ((cur->type == cur2->type) && (cur->gid == cur2->gid) && (!strcmp(cur->name, cur2->name))) {
+					aim_ssi_itemlist_del(&sess->ssi.local, cur2);
+				}
+				cur2 = next2;
+			}
 		}
 		cur = next;
 	}
@@ -681,6 +702,9 @@ faim_export int aim_ssi_cleanlist(aim_session_t *sess)
 	/* Check if the master group is empty */
 	if ((cur = aim_ssi_itemlist_find(sess->ssi.local, 0x0000, 0x0000)) && (!cur->data))
 		aim_ssi_itemlist_del(&sess->ssi.local, cur);
+
+	/* If we've made any changes then sync our list with the server's */
+	aim_ssi_sync(sess);
 
 	return 0;
 }
@@ -895,8 +919,10 @@ faim_export int aim_ssi_deldeny(aim_session_t *sess, const char *name)
  */
 faim_export int aim_ssi_movebuddy(aim_session_t *sess, const char *oldgn, const char *newgn, const char *sn)
 {
-	aim_ssi_addbuddy(sess, sn, newgn, aim_ssi_getalias(sess->ssi.local, oldgn, sn), NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
+	char *alias = aim_ssi_getalias(sess->ssi.local, oldgn, sn);
+	aim_ssi_addbuddy(sess, sn, newgn, alias, NULL, NULL, aim_ssi_waitingforauth(sess->ssi.local, oldgn, sn));
 	aim_ssi_delbuddy(sess, sn, oldgn);
+	free(alias);
 	return 0;
 }
 
