@@ -164,7 +164,7 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(message_response_cb), dialog);
 
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);

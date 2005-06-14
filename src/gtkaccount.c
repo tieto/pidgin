@@ -188,7 +188,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 12);
 	gtk_widget_show(widget);
 	gaim_set_accessible_label (widget, label);
 
@@ -466,14 +466,14 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
 	gchar *name = sd->data;
-	
+
 	if ((sd->length >= 0) && (sd->format == 8)) {
-		/* Well, it looks like the drag event was cool. 
+		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
-			/* It looks like we're dealing with a local file. Let's 
+			/* It looks like we're dealing with a local file. Let's
 			 * just untar it in the right place */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				gaim_debug(GAIM_DEBUG_ERROR, "buddyicon", "%s\n",
@@ -489,7 +489,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
 			gtk_widget_show(dialog->icon_entry);
 			g_free(tmp);
-		} 
+		}
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
 	gtk_drag_finish(dc, FALSE, FALSE, t);
@@ -850,7 +850,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox2);
 
 	hbox2 = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 12);
 	gtk_widget_show(hbox2);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
@@ -1223,7 +1223,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Setup the second vbox, which may be hidden at times. */
 	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 12);
 	gtk_widget_show(vbox2);
 
 	/* Host */
@@ -1579,7 +1579,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	GtkWidget *vbox;
 	GtkWidget *bbox;
 	GtkWidget *dbox;
-	GtkWidget *disclosure;
+	GtkWidget *notebook;
 	GtkWidget *button;
 
 	if (accounts_window != NULL && account != NULL &&
@@ -1638,30 +1638,30 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	gtk_container_add(GTK_CONTAINER(win), main_vbox);
 	gtk_widget_show(main_vbox);
 
+	notebook = gtk_notebook_new();
+	gtk_box_pack_start(GTK_BOX(main_vbox), notebook, FALSE, FALSE, 0);
+
 	/* Setup the inner vbox */
-	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, 18);
-	gtk_box_pack_start(GTK_BOX(main_vbox), vbox, FALSE, FALSE, 0);
+	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox,
+			gtk_label_new_with_mnemonic("_Basic"));
 	gtk_widget_show(vbox);
 
 	/* Setup the top frames. */
 	add_login_options(dialog, vbox);
 	add_user_options(dialog, vbox);
 
-	/* Add the disclosure */
-	disclosure = gaim_disclosure_new(_("Show more options"),
-									 _("Show fewer options"));
-	gtk_box_pack_start(GTK_BOX(vbox), disclosure, FALSE, FALSE, 0);
-	gtk_widget_show(disclosure);
-
-	/* Setup the box that the disclosure will cover. */
-	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, 18);
-	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
-
-	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
+	/* Setup the page with 'Advanced'. */
+	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_set_border_width(GTK_CONTAINER(dbox), 12);
+	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
+			gtk_label_new_with_mnemonic("_Advanced"));
 
 	/** Setup the bottom frames. */
 	add_protocol_options(dialog, dbox);
 	add_proxy_options(dialog, dbox);
+	gtk_widget_show_all(GTK_WIDGET(notebook));
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
