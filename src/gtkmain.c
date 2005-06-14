@@ -289,6 +289,7 @@ gaim_gtk_quit(void)
 	gaim_gtk_status_uninit();
 	gaim_gtk_blist_uninit();
 	gaim_gtk_account_uninit();
+	gaim_gtk_xfers_uninit();
 
 	/* and end it all... */
 	gtk_main_quit();

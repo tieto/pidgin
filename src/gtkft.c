@@ -292,11 +292,19 @@ update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 		gtk_widget_hide(dialog->stop_button);
 		gtk_widget_show(dialog->remove_button);
 
-#ifdef _WIN32 /* Only supported in Win32 right now */
+#ifdef _WIN32
+		/* If using Win32... */
 		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive(dialog->open_button, FALSE);
+		}
+#else
+		/* If using GNOME, use gnome-open */
+		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE && gaim_running_gnome()) {
+			gtk_widget_set_sensitive(dialog->open_button, TRUE);
+		} else {
+			gtk_widget_set_sensitive (dialog->open_button, FALSE);
 		}
 #endif
 		gtk_widget_set_sensitive(dialog->pause_button,  FALSE);
@@ -406,14 +414,15 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 static void
 open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 {
-#ifdef _WIN32 /* Only supported in Win32 right now */
+#ifdef _WIN32
+	/* If using Win32... */
 	int code;
 	if (G_WIN32_HAVE_WIDECHAR_API ()) {
 		wchar_t *wc_filename = g_utf8_to_utf16(
 				gaim_xfer_get_local_filename(
 					dialog->selected_xfer),
 				-1, NULL, NULL, NULL);
-	
+
 		code = (int) ShellExecuteW(NULL, NULL, wc_filename, NULL, NULL,
 				SW_SHOW);
 
@@ -423,7 +432,7 @@ open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 				gaim_xfer_get_local_filename(
 					dialog->selected_xfer),
 				-1, NULL, NULL, NULL);
-	
+
 		code = (int) ShellExecuteA(NULL, NULL, l_filename, NULL, NULL,
 				SW_SHOW);
 
@@ -432,15 +441,48 @@ open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
-		gaim_notify_error(NULL, NULL,
+		gaim_notify_error(dialog, NULL,
 				_("There is no application configured to open this type of file."), NULL);
 	}
 	else if (code < 32)
 	{
-		gaim_notify_error(NULL, NULL,
+		gaim_notify_error(dialog, NULL,
 				_("An error occurred while opening the file."), NULL);
 		gaim_debug_warning("ft", "filename: %s; code: %d\n",
 				gaim_xfer_get_local_filename(dialog->selected_xfer), code);
+	}
+#else
+	/* If using GNOME, use gnome-open */
+	if (gaim_running_gnome())
+	{
+		char *command = NULL;
+		char *tmp = NULL;
+		GError *error = NULL;
+
+		command = g_strdup_printf("gnome-open \"%s\"",
+				gaim_xfer_get_local_filename(dialog->selected_xfer));
+
+		if (gaim_program_is_valid(command))
+		{
+			gint exit_status;
+			if (!g_spawn_command_line_sync(command, NULL, NULL, &exit_status, &error))
+			{
+				tmp = g_strdup_printf(_("Error launching %s: %s"),
+								gaim_xfer_get_local_filename(dialog->selected_xfer),
+								error->message);
+				gaim_notify_error(dialog, NULL, _("Unable to open file."), tmp);
+				g_free(tmp);
+				g_error_free(error);
+			}
+			if (exit_status != 0)
+			{
+				char *primary = g_strdup_printf(_("Error running %s"), command);
+				char *secondary = g_strdup_printf(_("Process returned error code %d"),
+										exit_status);
+				gaim_notify_error(dialog, NULL, primary, secondary);
+				g_free(tmp);
+			}
+		}
 	}
 #endif
 }
@@ -785,6 +827,8 @@ gaim_gtkxfer_dialog_destroy(GaimGtkXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
 
+	gaim_notify_close_with_handle(dialog);
+
 	gtk_widget_destroy(dialog->window);
 
 	g_free(dialog);
@@ -802,6 +846,8 @@ void
 gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
+
+	gaim_notify_close_with_handle(dialog);
 
 	gtk_widget_hide(dialog->window);
 }
@@ -1089,6 +1135,12 @@ gaim_gtk_xfers_init(void)
 	gaim_prefs_add_none("/gaim/gtk/filetransfer");
 	gaim_prefs_add_bool("/gaim/gtk/filetransfer/clear_finished", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/filetransfer/keep_open", FALSE);
+}
+
+void
+gaim_gtk_xfers_uninit(void)
+{
+	gaim_gtkxfer_dialog_destroy(xfer_dialog);
 }
 
 void
