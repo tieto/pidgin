@@ -107,8 +107,6 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 	if(primitive != GAIM_STATUS_OFFLINE && !connected) {
 		gaim_account_connect(account);
-	} else if(primitive == GAIM_STATUS_OFFLINE && connected) {
-		gaim_account_disconnect(account);
 	}
 
 	if(!connected)
@@ -139,6 +137,9 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 	jabber_presence_fake_to_self(js, status);
 
+	if(primitive == GAIM_STATUS_OFFLINE && connected) {
+		gaim_account_disconnect(account);
+	}
 }
 
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
