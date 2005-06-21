@@ -63,7 +63,10 @@ struct _GaimGtkBuddyList {
 	GtkTreeStore *treemodel;        /**< This is the treemodel.  */
 	GtkTreeViewColumn *idle_column,
 		*warning_column,
-		*buddy_icon_column;
+		*buddy_icon_column,
+		*text_column;
+
+	GtkCellRenderer *text_rend;
 
 	GtkItemFactory *ift;
 	GtkWidget *bpmenu;              /**< The buddy pounce menu. */

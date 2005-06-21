@@ -534,14 +534,92 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, GaimChat *chat)
 	serv_join_chat(chat->account->gc, chat->components);
 }
 
+static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
+					 char *arg2, gpointer nada)
+{
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GValue val = {0,};
+	GaimBlistNode *node;
+
+	path = gtk_tree_path_new_from_string (arg1);
+	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	gtk_tree_path_free (path);
+	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+	node = g_value_get_pointer(&val);
+	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
+	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", FALSE, NULL);
+	switch (node->type){
+	case GAIM_BLIST_CONTACT_NODE:
+		gaim_blist_alias_buddy(gaim_contact_get_priority_buddy((GaimContact*)node), arg2);
+		break;
+	case GAIM_BLIST_BUDDY_NODE:
+		gaim_blist_alias_buddy((GaimBuddy*)node, arg2);
+		break;
+	case GAIM_BLIST_GROUP_NODE:
+		gaim_blist_rename_group((GaimGroup*)node, arg2);
+		break;
+	case GAIM_BLIST_CHAT_NODE:
+		gaim_blist_alias_chat((GaimChat*)node, arg2);
+		break;
+	default:
+		break;
+	}
+}
+
+static void 
+gtk_blist_edit_starting(GtkCellRenderer *renderer,
+                        GtkCellEditable *editable,
+                        gchar *pathstr,
+                        gpointer user_data)
+{
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	GaimBlistNode *node;
+	GValue val = {0,};
+	
+	path = gtk_tree_path_new_from_string (pathstr);
+	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	gtk_tree_path_free (path);
+	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+	node = g_value_get_pointer(&val);
+	
+	switch (node->type) {
+	case GAIM_BLIST_BUDDY_NODE:
+		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimBuddy*)node)->alias);
+		break;
+	case GAIM_BLIST_CONTACT_NODE:
+		gtk_entry_set_text(GTK_ENTRY(editable), (gaim_contact_get_priority_buddy((GaimContact*)node))->alias);
+		break;
+	case GAIM_BLIST_GROUP_NODE:
+		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimGroup*)node)->name);
+		break;
+	case GAIM_BLIST_CHAT_NODE:
+		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimChat*)node)->alias);
+		break;
+	default:
+		break;
+	}
+}
+
 static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 {
-	if(GAIM_BLIST_NODE_IS_BUDDY(node))
-		gaim_gtkdialogs_alias_buddy((GaimBuddy*)node);
-	else if(GAIM_BLIST_NODE_IS_CONTACT(node))
-		gaim_gtkdialogs_alias_contact((GaimContact*)node);
-	else if(GAIM_BLIST_NODE_IS_CHAT(node))
-		gaim_gtkdialogs_alias_chat((GaimChat*)node);
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	
+       	if (!(get_iter_from_node(node, &iter))) {
+		/* This is either a bug, or the buddy is in a collapsed contact */
+		node = node->parent;
+		if (!get_iter_from_node(node, &iter))
+			/* Now it's definitely a bug */
+			return;
+	}
+	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
+	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
+	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), FALSE);
+	gtk_widget_grab_focus(gtkblist->treeview);
+	gtk_tree_view_set_cursor(GTK_TREE_VIEW(gtkblist->treeview), path, gtkblist->text_column, TRUE);
+	gtk_tree_path_free(path);
 }
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
@@ -1254,7 +1332,7 @@ create_group_menu (GaimBlistNode *node, GaimGroup *g)
 	gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Rename"), NULL,
-				 G_CALLBACK(show_rename_group), node, 0, 0, NULL);
+				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 
 	gaim_gtk_append_blist_node_extended_menu(menu, node);
 
@@ -2616,24 +2694,6 @@ static GtkItemFactoryEntry blist_menu[] =
 /*********************************************************
  * Private Utility functions                             *
  *********************************************************/
-static void
-rename_group_cb(GaimGroup *g, const char *new_name)
-{
-	gaim_blist_rename_group(g, new_name);
-}
-
-/*
- * Should disallow empty group names.
- */
-static void
-show_rename_group(GtkWidget *unused, GaimGroup *g)
-{
-	gaim_request_input(NULL, _("Rename Group"), _("New group name"),
-					   _("Please enter a new name for the selected group."),
-					   g->name, FALSE, FALSE, NULL,
-					   _("OK"), G_CALLBACK(rename_group_cb),
-					   _("Cancel"), NULL, g);
-}
 
 static char *gaim_get_tooltip_text(GaimBlistNode *node)
 {
@@ -3471,7 +3531,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(gtkblist->treeview), FALSE);
 
-	column = gtk_tree_view_column_new ();
+	gtkblist->text_column = column = gtk_tree_view_column_new ();
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
@@ -3481,11 +3541,13 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 										NULL);
 	g_object_set(rend, "xalign", 0.0, "ypad", 0, NULL);
 
-	rend = gtk_cell_renderer_text_new();
+	gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
 	gtk_tree_view_column_set_attributes(column, rend,
 										"markup", NAME_COLUMN,
 										NULL);
+	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), NULL);
+	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_edit_starting), NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (column, TRUE);
@@ -3647,11 +3709,7 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 	struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
 	GtkTreePath *path;
 
-	/* XXX: why do we assume we have a buddy here? */
 	if (!gtknode) {
-#if 0
-		gaim_debug_error("gtkblist", "buddy %s has no ui_data\n", ((GaimBuddy *)node)->name);
-#endif
 		return FALSE;
 	}
 
@@ -3662,9 +3720,11 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 
 	if (!gtknode->row)
 		return FALSE;
+	
 
 	if ((path = gtk_tree_row_reference_get_path(gtknode->row)) == NULL)
 		return FALSE;
+
 	if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(gtkblist->treemodel), iter, path)) {
 		gtk_tree_path_free(path);
 		return FALSE;
@@ -3758,6 +3818,7 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	gtknode->row =
 		gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel),
 				newpath);
+	
 	gtk_tree_path_free(newpath);
 
 	gtk_tree_store_set(gtkblist->treemodel, iter,
