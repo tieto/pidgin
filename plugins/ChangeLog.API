@@ -57,6 +57,9 @@ version 2.0.0:
 	* Removed: Window flashing support in the core: gaim_conv_window_flash,
 	           and flash UI operation for conversations.  Use signal
 	           "received-im-msg" or similar.
+	* Added:   gaim_gtk_blist_node_is_contact_expanded, returns TRUE if
+	           the given blist node is a buddy inside an expanded contact,
+	           or is itself an expanded contact
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

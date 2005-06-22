@@ -184,6 +184,17 @@ void gaim_gtk_blist_update_refresh_timeout();
 GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
 		GaimStatusIconSize size);
 
+/**
+ * Returns a boolean indicating if @a node is part of an expanded contact.
+ *
+ * This only makes sense for contact and buddy nodes. @c FALSE is returned
+ * for other types of nodes.
+ *
+ * @param node The node in question.
+ * @return A boolean indicating if @a node is part of an expanded contact.
+ */
+gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node);
+
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/

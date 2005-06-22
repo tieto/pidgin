@@ -3342,6 +3342,16 @@ static void gaim_gtk_blist_new_node(GaimBlistNode *node)
 	node->ui_data = g_new0(struct _gaim_gtk_blist_node, 1);
 }
 
+gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node)
+{
+	if GAIM_BLIST_NODE_IS_BUDDY(node)
+		node = node->parent;
+
+	g_return_val_if_fail(GAIM_BLIST_NODE_IS_CONTACT(node), FALSE);
+
+	return ((struct _gaim_gtk_blist_node *)node->ui_data)->contact_expanded;
+}
+
 void gaim_gtk_blist_update_columns()
 {
 	if(!gtkblist)
