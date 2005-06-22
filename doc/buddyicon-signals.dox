@@ -1,0 +1,24 @@
+/** @page buddyicon-signals Buddy Icon Signals
+
+ @signals
+  @signal buddy-icon-cached
+ @endsignals
+
+ <hr>
+
+ @signaldef buddy-icon-cached
+  @signalproto
+void (*buddy-icon-cached)(GaimBuddyIcon *icon, GaimBuddy *buddy, const char *filename, const char *old_icon);
+  @endsignalproto
+  @signaldesc
+   Emitted when a buddy icon is cached.
+  @param icon     The icon that was just cached.
+  @param buddy    The buddy the icon belongs to.
+  @param filename The full filename for the newly created icon cache file.
+  @param old_icon The filename of the icon cache file for the buddy's previous icon, or @c NULL if the buddy
+                  had no icon when this new icon was set. This filename is generally the full filename of the
+                  previous icon cache file, but if the previous buddy icon was set in an old version of Gaim,
+                  this may just be the basename of the icon cache file. The directory can be obtained with
+                  gaim_buddy_icons_get_cache_dir().
+ @endsignaldef
+*/

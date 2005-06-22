@@ -74,6 +74,8 @@ version 2.0.0:
 	           last handler was used.
 	* Changed: gaim_conv_window_remove_conversation()'s last argument to
 	           be a GaimConversation.
+	* Added:   "buddy-icon-cached", which is called when a new buddy icon
+	           is cached.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
