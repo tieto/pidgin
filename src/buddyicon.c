@@ -238,6 +238,11 @@ gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 		fwrite(data, 1, len, file);
 		fclose(file);
 	}
+	else
+	{
+		gaim_debug_error("buddy icons", "Unable to create file %s: %s\n",
+						 filename, strerror(errno));
+	}
 
 	gaim_signal_emit(gaim_buddy_icons_get_handle(), "buddy-icon-cached",
 					 icon, buddy, filename, old_icon);
