@@ -842,7 +842,9 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 	if (new == NULL)
 		return FALSE;
 
-	if (old != NULL && !strcmp(old, new))
+	/* If the old and new checksums are the same, and the file actually exists,
+	 * then return TRUE */
+	if (old != NULL && !strcmp(old, new) && (gaim_buddy_icons_find(account, gaim_buddy_get_name(buddy)) != NULL))
 		return TRUE;
 
 	return FALSE;
