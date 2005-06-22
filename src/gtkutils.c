@@ -652,9 +652,16 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 		gtk_widget_show(image);
 
-		g_snprintf(buf, sizeof(buf), "%s (%s)",
-				   gaim_account_get_username(account),
-				   gaim_account_get_protocol_name(account));
+		if (gaim_account_get_alias(account)) {
+			g_snprintf(buf, sizeof(buf), "%s (%s) (%s)",
+					   gaim_account_get_username(account),
+					   gaim_account_get_alias(account),
+					   gaim_account_get_protocol_name(account));
+		} else {
+			g_snprintf(buf, sizeof(buf), "%s (%s)",
+					   gaim_account_get_username(account),
+					   gaim_account_get_protocol_name(account));
+		}
 
 		/* Create the label. */
 		label = gtk_label_new(buf);
