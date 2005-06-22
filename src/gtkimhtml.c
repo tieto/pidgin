@@ -3118,16 +3118,20 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 	/* If I can't find a valid type, I will just tell the user about it and then assume
 	   it's a png */
 	if (!type){
-		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-						_("Unable to guess the image type based on the file extension supplied.  Defaulting to PNG."));
+		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+						_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
+		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
+		gtk_widget_show(dialog);
 		type = g_strdup("png");
 	}
 
 	gdk_pixbuf_save(image->pixbuf, filename, type, &error, NULL);
 
 	if (error){
-		gtk_message_dialog_new(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-				_("Error saving image: %s"), error->message);
+		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+				_("<span size='larger' weight='bold'>Error saving image</span>\n\n%s"), error->message);
+		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
+		gtk_widget_show(dialog);
 		g_error_free(error);
 	}
 
