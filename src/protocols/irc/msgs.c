@@ -363,7 +363,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 		names = cur = g_string_free(irc->names, FALSE);
 		irc->names = NULL;
 		if (irc->nameconv) {
-			msg = g_strdup_printf(_("Users on %s: %s"), args[1], names);
+			msg = g_strdup_printf(_("Users on %s: %s"), args[1], names ? names : "");
 			if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
 				gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 			else
