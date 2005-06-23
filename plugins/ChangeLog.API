@@ -60,6 +60,10 @@ version 2.0.0:
 	* Added:   gaim_gtk_blist_node_is_contact_expanded, returns TRUE if
 	           the given blist node is a buddy inside an expanded contact,
 	           or is itself an expanded contact
+	* Added:   GaimLogSet struct, get_log_sets function to GaimLogLogger,
+	           gaim_log_get_log_sets, gaim_log_set_compare
+	* Changed: gaim_log_logger_new, added total_size, list_syslog, and get_log_sets
+	           parameters to bring the function up-to-date with GaimLogLogger
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

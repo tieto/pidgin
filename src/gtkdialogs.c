@@ -694,7 +694,7 @@ gaim_gtkdialogs_log(void)
 	gaim_request_fields_add_group(fields, group);
 
 	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
-	gaim_request_field_set_type_hint(field, "screenname");
+	gaim_request_field_set_type_hint(field, "screenname-all");
 	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
@@ -707,7 +707,7 @@ gaim_gtkdialogs_log(void)
 	gaim_request_field_set_required(field, TRUE);
 	gaim_request_field_group_add_field(group, field);
 
-	gaim_request_fields(gaim_get_blist(), _("Get User Log"),
+	gaim_request_fields(gaim_get_blist(), _("View User Log"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "whose log you would like to view."),

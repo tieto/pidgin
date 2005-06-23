@@ -648,10 +648,12 @@ req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 }
 
 static GList *
-get_online_names(void)
+get_screenname_completion_data(gboolean all)
 {
 	GList *names = NULL;
 	GaimBlistNode *gnode, *cnode, *bnode;
+	GList *log_sets;
+	GList *log_set;
 
 	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
@@ -667,7 +669,7 @@ get_online_names(void)
 			{
 				GaimBuddy *buddy = (GaimBuddy *)bnode;
 
-				if (!gaim_account_is_connected(buddy->account))
+				if (!all && !gaim_account_is_connected(buddy->account))
 					continue;
 
 #ifdef NEW_STYLE_COMPLETION
@@ -677,9 +679,32 @@ get_online_names(void)
 				names = g_list_append(names, buddy->account);
 #endif /* NEW_STYLE_COMPLETION */
 
-				names = g_list_append(names, buddy->name);
+				names = g_list_append(names, g_strdup(buddy->name));
 			}
 		}
+	}
+
+	log_sets = gaim_log_get_log_sets();
+	for (log_set = log_sets ; log_set != NULL ; log_set = log_set->next) {
+		GaimLogSet *set = log_set->data;
+
+		/* 1. Don't show buddies because we will have gotten them above.
+		 * 2. If we're not showing all accounts, then only show those with
+		 *    non-NULL accounts that are currently connected.
+		 * 3. The boxes that use this autocomplete code handle only IMs. */
+		if (!set->buddy &&
+			(all || (set->account != NULL && gaim_account_is_connected(set->account))) &&
+		    set->type != GAIM_LOG_CHAT) {
+#ifdef NEW_STYLE_COMPLETION
+				names = g_list_append(names, NULL);
+				names = g_list_append(names, NULL);
+				names = g_list_append(names, set->account);
+#endif /* NEW_STYLE_COMPLETION */
+
+				names = g_list_append(names, set->name);
+		}
+
+		g_free(set);
 	}
 
 	return names;
@@ -759,6 +784,7 @@ completion_entry_event(GtkEditable *entry, GdkEventKey *event,
 static void
 destroy_completion_data(GtkWidget *w, GaimGtkCompletionData *data)
 {
+	g_list_foreach(data->completion->items, (GFunc)g_free, NULL);
 	g_completion_free(data->completion);
 
 	g_free(data);
@@ -861,23 +887,23 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 #endif /* !NEW_STYLE_COMPLETION */
 
 static void
-setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
+setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field, gboolean all)
 {
 #ifdef NEW_STYLE_COMPLETION
 	GtkListStore *store;
 	GtkTreeIter iter;
 	GtkEntryCompletion *completion;
-	GList *aliases_and_screennames;
+	GList *screenname_completion_data;
 	GList *l;
 	gpointer *data;
 
-	/* Store the displayed completion value, the screenname, and the value for comparison. */
+	/* Store the displayed completion value, the screenname, the value for comparison, and the account. */
 	store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
-	aliases_and_screennames = get_online_names();
+	screenname_completion_data = get_screenname_completion_data(all);
 
 	/* Loop through the list four elements at a time. */
-	for (l = aliases_and_screennames; l != NULL; l = l->next->next->next->next)
+	for (l = screenname_completion_data; l != NULL; l = l->next->next->next->next)
 	{
 		char *contact_alias = l->data;
 		char *buddy_alias = l->next->data;
@@ -929,9 +955,15 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 					3, account,
 					-1);
 		}
+
+		g_free(screenname);
 	}
 
-	g_list_free(aliases_and_screennames);
+	g_list_free(screenname_completion_data);
+
+	/* Sort the completion list by screenname. */
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
+	                                     1, GTK_SORT_ASCENDING);
 
 	completion = gtk_entry_completion_new();
 	gtk_entry_completion_set_match_func(completion, screenname_completion_match_func, NULL, NULL);
@@ -960,7 +992,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field)
 
 	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
 
-	screennames = get_online_names();
+	screennames = get_screenname_completion_data(all);
 
 	g_completion_add_items(data->completion, screennames);
 
@@ -989,9 +1021,9 @@ setup_entry_field(GtkWidget *entry, GaimRequestField *field)
 
 	if ((type_hint = gaim_request_field_get_type_hint(field)) != NULL)
 	{
-		if (!strcmp(type_hint, "screenname"))
+		if (!strncmp(type_hint, "screenname", sizeof("screenname") - 1))
 		{
-			setup_screenname_autocomplete(entry, field);
+			setup_screenname_autocomplete(entry, field, !strcmp(type_hint, "screenname-all"));
 		}
 	}
 }

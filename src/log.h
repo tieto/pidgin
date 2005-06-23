@@ -35,6 +35,7 @@
 typedef struct _GaimLog GaimLog;
 typedef struct _GaimLogLogger GaimLogLogger;
 typedef struct _GaimLogCommonLoggerData GaimLogCommonLoggerData;
+typedef struct _GaimLogSet GaimLogSet;
 
 typedef enum {
 	GAIM_LOG_IM,
@@ -91,6 +92,13 @@ struct _GaimLogLogger {
 
 	/** This function returns a sorted GList of available system GaimLogs */
 	GList *(*list_syslog)(GaimAccount *account);
+
+	/** Returns a list of GaimLogSets. By passing the data in the GaimLogSets
+	 *  to list, the caller can get every available GaimLog from the logger.
+	 *  Loggers using gaim_log_common_writer() (or otherwise storing their
+	 *  logs in the same directory structure as the stock loggers) do not
+	 *  need to implement this function. */
+	GList *(*get_log_sets)(void);
 };
 
 /**
@@ -118,6 +126,26 @@ struct _GaimLogCommonLoggerData {
 	void *extra_data;
 };
 
+/**
+ * Describes available logs.
+ *
+ * By passing the elements of this struct to gaim_log_get_logs(), the caller
+ * can get all available GaimLogs.
+ */
+struct _GaimLogSet {
+	GaimLogType type;                     /**< The type of logs available */
+	char *name;                           /**< The name of the logs available */
+	GaimAccount *account;                 /**< The account the available logs
+	                                           took place on. This will be
+	                                           NULL if the account no longer
+	                                           exists. (Depending on a
+	                                           logger's implementation of
+	                                           list, it may not be possible
+	                                           to load such logs.) */
+	gboolean buddy;                       /**< Is this (account, name) a buddy
+	                                           on the buddy list? */
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -131,7 +159,7 @@ extern "C" {
  * Creates a new log
  *
  * @param type        The type of log this is.
- * @param name        The name of this conversation (Screenname, chat name,
+ * @param name        The name of this conversation (screenname, chat name,
  *                    etc.)
  * @param account     The account the conversation is occurring on
  * @param time        The time this conversation started
@@ -184,6 +212,20 @@ char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags);
 GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account);
 
 /**
+ * Returns a list of GaimLogSets.
+ *
+ * A "log set" here means the information necessary to gather the
+ * GaimLogs for a given buddy/chat. This information would be passed
+ * to gaim_log_list to get a list of GaimLogs.
+ *
+ * The primary use of this function is to get a list of everyone the
+ * user has ever talked to (assuming he or she uses logging).
+ *
+ * @return A sorted list of all available unique GaimLogSets
+ */
+GList *gaim_log_get_log_sets(void);
+
+/**
  * Returns a list of all available system logs
  *
  * @param account The account
@@ -222,13 +264,23 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 char *gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account);
 
 /**
- * Implements GCompareFunc
+ * Implements GCompareFunc for GaimLogs
  *
  * @param y				   A GaimLog
  * @param z				   Another GaimLog
  * @return					A value as specified by GCompareFunc
  */
 gint gaim_log_compare(gconstpointer y, gconstpointer z);
+
+/**
+ * Implements GCompareFunc for GaimLogSets
+ *
+ * @param y                   A GaimLogSet
+ * @param z                   Another GaimLogSet
+ * @return                    A value as specified by GCompareFunc
+ */
+gint gaim_log_set_compare(gconstpointer y, gconstpointer z);
+
 /*@}*/
 
 /******************************************/
@@ -287,12 +339,15 @@ int gaim_log_common_sizer(GaimLog *log);
 /**
  * Creates a new logger
  *
- * @param create   The logger's new function.
- * @param write    The logger's write function.
- * @param finalize The logger's finalize function.
- * @param list     The logger's list function.
- * @param read     The logger's read function.
- * @param size     The logger's size function.
+ * @param create       The logger's new function.
+ * @param write        The logger's write function.
+ * @param finalize     The logger's finalize function.
+ * @param list         The logger's list function.
+ * @param read         The logger's read function.
+ * @param size         The logger's size function.
+ * @param total_size   The logger's total_size function.
+ * @param list_syslog  The logger's list_syslog function.
+ * @param get_log_sets The logger's get_log_sets function.
  *
  * @return The new logger
  */
@@ -302,7 +357,11 @@ GaimLogLogger *gaim_log_logger_new(
 				void(*finalize)(GaimLog *),
 				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
 				char*(*read)(GaimLog*, GaimLogReadFlags*),
-				int(*size)(GaimLog*));
+				int(*size)(GaimLog*),
+				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
+				GList*(*list_syslog)(GaimAccount *account),
+				GList*(*get_log_sets)(void));
+
 /**
  * Frees a logger
  *
@@ -342,13 +401,16 @@ void gaim_log_logger_set (GaimLogLogger *logger);
 GaimLogLogger *gaim_log_logger_get (void);
 
 /**
- * Returns a GList containing the IDs and Names of the registered log
+ * Returns a GList containing the IDs and names of the registered
  * loggers.
  *
  * @return The list of IDs and names.
  */
 GList *gaim_log_logger_get_options(void);
 
+/**
+ * Initializes the log subsystem.
+ */
 void gaim_log_init(void);
 /*@}*/
 

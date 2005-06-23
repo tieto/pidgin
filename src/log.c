@@ -43,6 +43,7 @@ struct _gaim_logsize_user {
 };
 static GHashTable *logsize_users = NULL;
 
+static GList *log_get_log_sets_common();
 
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
@@ -238,15 +239,23 @@ GaimLogLogger *gaim_log_logger_new(
 				void(*finalize)(GaimLog *),
 				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
 				char*(*read)(GaimLog*, GaimLogReadFlags*),
-				int(*size)(GaimLog*))
+				int(*size)(GaimLog*),
+				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
+				GList*(*list_syslog)(GaimAccount *account),
+				GList*(*get_log_sets)(void))
 {
 	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
+
 	logger->create = create;
 	logger->write = write;
 	logger->finalize = finalize;
 	logger->list = list;
 	logger->read = read;
 	logger->size = size;
+	logger->total_size = total_size;
+	logger->list_syslog = list_syslog;
+	logger->get_log_sets = get_log_sets;
+
 	return logger;
 }
 
@@ -317,6 +326,103 @@ GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *accoun
 	}
 
 	return g_list_sort(logs, gaim_log_compare);
+}
+
+gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
+{
+	const GaimLogSet *a = y;
+	const GaimLogSet *b = z;
+	gint ret = 0;
+	char *tmp;
+
+	/* This logic seems weird at first...
+	 * If either account is NULL, we pretend the accounts are
+	 * equal. This allows us to detect duplicates that will
+	 * exist if one logger knows the account and another
+	 * doesn't. */
+	if (a->account != NULL && b->account != NULL) {
+		ret = gaim_utf8_strcasecmp(gaim_account_get_username(a->account), gaim_account_get_username(b->account));
+		if (ret != 0)
+			return ret;
+	}
+
+	tmp = g_strdup(gaim_normalize(a->account, a->name));
+	ret = gaim_utf8_strcasecmp(tmp, gaim_normalize(b->account, b->name));
+	g_free(tmp);
+	if (ret != 0)
+		return ret;
+
+	return (gint)b->type - (gint)a->type;
+}
+
+guint log_set_hash(gconstpointer key)
+{
+	const GaimLogSet *set = key;
+
+	/* The account isn't hashed because we need GaimLogSets with NULL accounts
+	 * to be found when we search by a GaimLogSet that has a non-NULL account
+	 * but the same type and name. */
+	return g_int_hash((gint *)&set->type) + g_str_hash(set->name);
+}
+
+gboolean log_set_equal(gconstpointer a, gconstpointer b)
+{
+	/* I realize that the choices made for GList and GHashTable
+	 * make sense for those data types, but I wish the comparison
+	 * functions were compatible. */
+	return !gaim_log_set_compare(a, b);
+}
+
+void log_set_build_list(gpointer key, gpointer value, gpointer user_data)
+{
+	*((GList **)user_data) = g_list_append(*((GList **)user_data), key);
+}
+
+GList *gaim_log_get_log_sets()
+{
+	GSList *n;
+	GList *sets = NULL;
+	GList *set;
+	GHashTable *sets_ht = g_hash_table_new(log_set_hash, log_set_equal);
+
+	/* Get the log sets from all the loggers. */
+	for (n = loggers; n; n = n->next) {
+		GaimLogLogger *logger = n->data;
+
+		if (!logger->get_log_sets)
+			continue;
+
+		sets = g_list_concat(sets, logger->get_log_sets());
+	}
+
+	/* Get the log sets for loggers that use the common logger functions. */
+	sets = g_list_concat(sets, log_get_log_sets_common());
+
+	for (set = sets; set != NULL ; set = set->next) {
+		GaimLogSet *existing_set = g_hash_table_lookup(sets_ht, set->data);
+
+		if (existing_set == NULL) {
+			g_hash_table_insert(sets_ht, set->data, set->data);
+		} else if (existing_set->account == NULL && ((GaimLogSet *)set->data)->account != NULL) {
+			/* The existing entry in the hash table has no account.
+			 * This one does. We'll delete the old one and keep this one. */
+			g_hash_table_replace(sets_ht, set->data, set->data);
+			g_free(existing_set->name);
+			g_free(existing_set);
+		} else {
+			g_free(((GaimLogSet *)set->data)->name);
+			g_free(set->data);
+		}
+	}
+	g_list_free(sets);
+
+	/* At this point, we've built a GHashTable of unique GaimLogSets.
+	 * So, we build a list of those keys and destroy the GHashTable. */
+	sets = NULL;
+	g_hash_table_foreach(sets_ht, log_set_build_list, &sets);
+	g_hash_table_destroy(sets_ht);
+
+	return g_list_sort(sets, gaim_log_set_compare);
 }
 
 GList *gaim_log_get_system_logs(GaimAccount *account)
@@ -446,6 +552,124 @@ int gaim_log_common_sizer(GaimLog *log)
 	return st.st_size;
 }
 
+/* This will build log sets for all loggers that use the common logger
+ * functions because they use the same directory structure. */
+static GList *log_get_log_sets_common()
+{
+	gchar *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
+	GDir *log_dir = g_dir_open(log_path, 0, NULL);
+	const gchar *protocol;
+	GList *sets = NULL;
+
+	if (log_dir == NULL) {
+		g_free(log_path);
+		return NULL;
+	}
+
+	while ((protocol = g_dir_read_name(log_dir)) != NULL) {
+		gchar *protocol_path = g_build_filename(log_path, protocol, NULL);
+		GDir *protocol_dir;
+		const gchar *username;
+		gchar *protocol_unescaped;
+		GList *account_iter;
+		GList *accounts = NULL;
+
+		if ((protocol_dir = g_dir_open(protocol_path, 0, NULL)) == NULL) {
+			g_free(protocol_path);
+			continue;
+		}
+
+		/* Using g_strdup() to cover the one-in-a-million chance that a
+		 * prpl's list_icon function uses gaim_unescape_filename(). */
+		protocol_unescaped = g_strdup(gaim_unescape_filename(protocol));
+
+		/* Find all the accounts for protocol. */
+		for (account_iter = gaim_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
+			GaimPlugin *prpl;
+			GaimPluginProtocolInfo *prpl_info;
+		
+			prpl = gaim_find_prpl(gaim_account_get_protocol_id((GaimAccount *)account_iter->data));
+			if (!prpl)
+				continue;
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+			if (!strcmp(protocol_unescaped, prpl_info->list_icon((GaimAccount *)account_iter->data, NULL)))
+				accounts = g_list_append(accounts, account_iter->data);
+		}
+		g_free(protocol_unescaped);
+
+		while ((username = g_dir_read_name(protocol_dir)) != NULL) {
+			gchar *username_path = g_build_filename(protocol_path, username, NULL);
+			GDir *username_dir;
+			const gchar *username_unescaped;
+			GaimAccount *account = NULL;
+			gchar *name;
+
+			if ((username_dir = g_dir_open(username_path, 0, NULL)) == NULL) {
+				g_free(username_path);
+				continue;
+			}
+
+			/* Find the account for username in the list of accounts for protocol. */
+			username_unescaped = gaim_unescape_filename(username);
+			for (account_iter = g_list_first(accounts) ; account_iter != NULL ; account_iter = account_iter->next) {
+				if (!strcmp(((GaimAccount *)account_iter->data)->username, username_unescaped)) {
+					account = account_iter->data;
+					break;
+				}
+			}
+
+			/* Don't worry about the cast, name will point to dynamically allocated memory shortly. */
+			while ((name = (gchar *)g_dir_read_name(username_dir)) != NULL) {
+				size_t len;
+				GaimLogSet *set = g_new0(GaimLogSet, 1);
+
+				/* Unescape the filename. */
+				name = g_strdup(gaim_unescape_filename(name));
+
+				/* Get the (possibly new) length of name. */
+				len = strlen(name);
+
+				set->account = account;
+				set->name = name;
+
+				/* Chat for .chat or .system at the end of the name to determine the type. */
+				set->type = GAIM_LOG_IM;
+				if (len > 7) {
+					gchar *tmp = &name[len - 7];
+					if (!strcmp(tmp, ".system")) {
+						set->type = GAIM_LOG_SYSTEM;
+						*tmp = '\0';
+					}
+				}
+				if (len > 5) {
+					gchar *tmp = &name[len - 5];
+					if (!strcmp(tmp, ".chat")) {
+						set->type = GAIM_LOG_CHAT;
+						*tmp = '\0';
+					}
+				}
+
+				/* Determine if this (account, name) combination exists as a buddy. */
+				if (gaim_find_buddy(account, name) != NULL)
+					set->buddy = TRUE;
+				else
+					set->buddy = FALSE;
+
+				sets = g_list_append(sets, set);
+			}
+			g_free(username_path);
+			g_dir_close(username_dir);
+		}
+		g_free(protocol_path);
+		g_dir_close(protocol_dir);
+	}
+	g_free(log_path);
+	g_dir_close(log_dir);
+
+	return sets;
+}
+
 #if 0 /* Maybe some other time. */
 /****************
  ** XML LOGGER **
@@ -540,6 +764,7 @@ static GaimLogLogger xml_logger =  {
 	xml_logger_write,
 	xml_logger_finalize,
 	xml_logger_list,
+	NULL,
 	NULL,
 	NULL
 };
@@ -672,7 +897,8 @@ static GaimLogLogger html_logger = {
 	html_logger_read,
 	gaim_log_common_sizer,
 	NULL,
-	html_logger_list_syslog
+	html_logger_list_syslog,
+	NULL
 };
 
 
@@ -804,7 +1030,8 @@ static GaimLogLogger txt_logger = {
 	txt_logger_read,
 	gaim_log_common_sizer,
 	NULL,
-	txt_logger_list_syslog
+	txt_logger_list_syslog,
+	NULL
 };
 
 /****************
@@ -991,6 +1218,89 @@ static int old_logger_size (GaimLog *log)
 	return data ? data->length : 0;
 }
 
+static GList *old_logger_get_log_sets()
+{
+	char *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
+	GDir *log_dir = g_dir_open(log_path, 0, NULL);
+	gchar *name;
+	GList *sets = NULL;
+	GaimBlistNode *gnode, *cnode, *bnode;
+
+	g_free(log_path);
+	if (log_dir == NULL)
+		return NULL;
+
+	/* Don't worry about the cast, name will be filled with a dynamically allocated data shortly. */
+	while ((name = (gchar *)g_dir_read_name(log_dir)) != NULL) {
+		size_t len;
+		gchar *ext;
+		GaimLogSet *set;
+		gboolean found = FALSE;
+
+		/* Unescape the filename. */
+		name = g_strdup(gaim_unescape_filename(name));
+
+		/* Get the (possibly new) length of name. */
+		len = strlen(name);
+
+		if (len < 5) {
+			g_free(name);
+			continue;
+		}
+
+		/* Make sure we're dealing with a log file. */
+		ext = &name[len - 4];
+		if (strcmp(ext, ".log")) {
+			g_free(name);
+			continue;
+		}
+
+		set = g_new0(GaimLogSet, 1);
+
+		/* Chat for .chat at the end of the name to determine the type. */
+		*ext = '\0';
+		set->type = GAIM_LOG_IM;
+		if (len > 9) {
+			char *tmp = &name[len - 9];
+			if (!strcmp(tmp, ".chat")) {
+				set->type = GAIM_LOG_CHAT;
+				*tmp = '\0';
+			}
+		}
+
+		set->name = name;
+
+		/* Search the buddy list to find the account and to determine if this is a buddy. */
+		for (gnode = gaim_get_blist()->root; !found && gnode != NULL; gnode = gnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+				continue;
+
+			for (cnode = gnode->child; !found && cnode != NULL; cnode = cnode->next)
+			{
+				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+					continue;
+
+				for (bnode = cnode->child; !found && bnode != NULL; bnode = bnode->next)
+				{
+					GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+					if (!strcmp(buddy->name, name)) {
+						set->account = buddy->account;
+						set->buddy = TRUE;
+						found = TRUE;
+					}
+				}
+			}
+		}
+
+		sets = g_list_append(sets, set);
+	}
+	g_dir_close(log_dir);
+
+	return sets;
+}
+
 static void old_logger_finalize(GaimLog *log)
 {
 	struct old_logger_data *data = log->logger_data;
@@ -1006,5 +1316,6 @@ static GaimLogLogger old_logger = {
 	old_logger_read,
 	old_logger_size,
 	old_logger_total_size,
-	NULL
+	NULL,
+	old_logger_get_log_sets
 };
