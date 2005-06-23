@@ -76,7 +76,7 @@ static int uploadack(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_t *iconcsum, fu16_t iconcsumlen)
+faim_export int aim_bart_request(aim_session_t *sess, const char *sn, fu8_t iconcsumtype, const fu8_t *iconcsum, fu16_t iconcsumlen)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -97,7 +97,7 @@ faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_
 	/* Some numbers.  You like numbers, right? */
 	aimbs_put8(&fr->data, 0x01);
 	aimbs_put16(&fr->data, 0x0001);
-	aimbs_put8(&fr->data, 0x01);
+	aimbs_put8(&fr->data, iconcsumtype);
 
 	/* Icon string */
 	aimbs_put8(&fr->data, iconcsumlen);
@@ -119,18 +119,18 @@ static int parseicon(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, ai
 	aim_rxcallback_t userfunc;
 	char *sn;
 	fu16_t flags, iconlen;
-	fu8_t number, iconcsumlen, *iconcsum, *icon;
+	fu8_t iconcsumtype, iconcsumlen, *iconcsum, *icon;
 
 	sn = aimbs_getstr(bs, aimbs_get8(bs));
 	flags = aimbs_get16(bs);
-	number = aimbs_get8(bs);
+	iconcsumtype = aimbs_get8(bs);
 	iconcsumlen = aimbs_get8(bs);
 	iconcsum = aimbs_getraw(bs, iconcsumlen);
 	iconlen = aimbs_get16(bs);
 	icon = aimbs_getraw(bs, iconlen);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-		ret = userfunc(sess, rx, sn, iconcsum, iconcsumlen, icon, iconlen);
+		ret = userfunc(sess, rx, sn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
 
 	free(sn);
 	free(iconcsum);

@@ -746,8 +746,9 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 					} break;
 
 					case 0x0001: { /* A buddy icon checksum */
-						if ((length2 > 0) && (number == 0x01)) {
+						if ((length2 > 0) && ((number == 0x00) || (number == 0x01))) {
 							free(outinfo->iconcsum);
+							outinfo->iconcsumtype = number;
 							outinfo->iconcsum = aimbs_getraw(bs, length2);
 							outinfo->iconcsumlen = length2;
 						} else

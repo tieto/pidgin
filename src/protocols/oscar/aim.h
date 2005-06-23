@@ -1007,6 +1007,7 @@ typedef struct aim_userinfo_s {
 	} icqinfo;
 	fu32_t present;
 
+	fu8_t iconcsumtype;
 	fu16_t iconcsumlen;
 	fu8_t *iconcsum;
 
@@ -1173,7 +1174,7 @@ faim_export int aim_odir_interest(aim_session_t *, const char *, const char *);
 
 /* 0x0010 - icon.c */
 faim_export int aim_bart_upload(aim_session_t *sess, const fu8_t *icon, fu16_t iconlen);
-faim_export int aim_bart_request(aim_session_t *sess, const char *sn, const fu8_t *iconstr, fu16_t iconstrlen);
+faim_export int aim_bart_request(aim_session_t *sess, const char *sn, fu8_t iconcsumtype, const fu8_t *iconstr, fu16_t iconstrlen);
 
 
 

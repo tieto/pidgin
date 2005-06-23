@@ -4632,18 +4632,23 @@ static int gaim_icon_parseicon(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GSList *cur;
 	va_list ap;
 	char *sn;
-	fu8_t *iconcsum, *icon;
+	fu8_t iconcsumtype, *iconcsum, *icon;
 	fu16_t iconcsumlen, iconlen;
 
 	va_start(ap, fr);
 	sn = va_arg(ap, char *);
+	iconcsumtype = va_arg(ap, int);
 	iconcsum = va_arg(ap, fu8_t *);
 	iconcsumlen = va_arg(ap, int);
 	icon = va_arg(ap, fu8_t *);
 	iconlen = va_arg(ap, int);
 	va_end(ap);
 
-	if (iconlen > 0) {
+	/*
+	 * Some AIM clients will send a blank GIF image with iconlen 90 when
+	 * no icon is set.  Ignore these.
+	 */
+	if ((iconlen > 0) && (iconlen != 90)) {
 		char *b16;
 		GaimBuddy *b = gaim_find_buddy(gc->account, sn);
 		gaim_buddy_icons_set_for_user(gaim_connection_get_account(gc),
@@ -4722,7 +4727,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 
 	userinfo = aim_locate_finduserinfo(od->sess, (char *)od->requesticon->data);
 	if ((userinfo != NULL) && (userinfo->iconcsumlen > 0)) {
-		aim_bart_request(od->sess, od->requesticon->data, userinfo->iconcsum, userinfo->iconcsumlen);
+		aim_bart_request(od->sess, od->requesticon->data, userinfo->iconcsumtype, userinfo->iconcsum, userinfo->iconcsumlen);
 		return FALSE;
 	} else {
 		char *sn = od->requesticon->data;
