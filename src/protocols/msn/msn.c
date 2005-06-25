@@ -827,14 +827,18 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 
 	gc = gaim_account_get_connection(account);
 
-	if (gc) 
+	if (gc != NULL)
 		session = gc->proto_data;
 
 	state = gaim_status_get_id(status);
 
 	gaim_debug_info("msn", "Set status to %s\n", gaim_status_get_name(status));
 
-	if (strcmp(state, "offline") && !gc) {
+	if (!strcmp(state, "offline") && (gc != NULL)) {
+		gaim_account_disconnect(account);
+		return;
+	}
+	else if (strcmp(state, "offline") && (gc == NULL)) {
 		gaim_account_connect(account);
 		return;
 	}
