@@ -62,15 +62,15 @@ endif # PLUGINS
 EXTRA_DIST = \
 	ChangeLog HOWTO \
 	ChangeLog.API \
+	Makefile.mingw \
 	filectl.c \
+	fortuneprofile.pl \
+	gaim.pl \
 	mailchk.c \
 	pluginpref_example.c \
 	raw.c \
 	signals-test.c \
 	simple.c \
-	gaim.pl \
-	fortuneprofile.pl \
-	Makefile.mingw
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
