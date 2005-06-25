@@ -4,7 +4,7 @@
  *	Created by:	Greg Hudson
  *
  *	$Source$
- *	$Author: thekingant $
+ *	$Author: nosnilmot $
  *	$Zephyr: /mit/zephyr/src/include/zephyr/RCS/zephyr_conf.h,v 1.8 90/12/21 17:40:40 raeburn Exp $
  *
  *	Copyright (c) 1988,1991 by the Massachusetts Institute of Technology.
@@ -30,7 +30,7 @@
 #include <sys/param.h>
 #include <sys/time.h>
 
-#ifdef STDC_HEADERS
+#if defined(STDC_HEADERS) || defined(HAVE_STDLIB_H)
 # include <stdlib.h>
 #else
 # ifdef HAVE_MALLOC_H
@@ -59,7 +59,7 @@ extern char *sys_errlist[];
 #endif
 
 /* Strings. */
-#ifdef STDC_HEADERS
+#if defined(STDC_HEADERS) || defined(HAVE_STRING_H)
 # include <string.h>
 #else
 # ifndef HAVE_STRCHR
