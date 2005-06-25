@@ -1660,8 +1660,8 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	/** Setup the bottom frames. */
 	add_protocol_options(dialog, dbox);
-	add_proxy_options(dialog, dbox);
 	gtk_widget_show_all(GTK_WIDGET(notebook));
+	add_proxy_options(dialog, dbox);
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
