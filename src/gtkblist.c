@@ -136,8 +136,6 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove);
 static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node);
 
-static void show_rename_group(GtkWidget *unused, GaimGroup *g);
-
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
