@@ -70,7 +70,7 @@ EXTRA_DIST = \
 	pluginpref_example.c \
 	raw.c \
 	signals-test.c \
-	simple.c \
+	simple.c
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
