@@ -352,7 +352,6 @@ debug_window_new(void)
 
 		gtk_tree_view_append_column(GTK_TREE_VIEW(win->treeview), column);
 		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(win->treeview), FALSE);
-		gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(win->treeview), TRUE);
 		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(liststore), 0, GTK_SORT_ASCENDING);
 
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(win->treeview));
