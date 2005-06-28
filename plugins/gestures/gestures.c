@@ -185,6 +185,8 @@ plugin_load(GaimPlugin *plugin)
 	GaimConversation *conv;
 	GList *l;
 
+	gaim_debug_register_category("gestures");
+
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
 
@@ -218,6 +220,8 @@ plugin_unload(GaimPlugin *plugin)
 
 		gstroke_cleanup(gtkconv->imhtml);
 	}
+
+	gaim_debug_register_category("gestures");
 
 	return TRUE;
 }

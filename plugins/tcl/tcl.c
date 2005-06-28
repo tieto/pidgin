@@ -319,6 +319,8 @@ static void tcl_destroy_plugin(GaimPlugin *plugin)
 
 static gboolean tcl_load(GaimPlugin *plugin)
 {
+	gaim_debug_register_category("tcl");
+
         if(!tcl_loaded)
                 return FALSE;
 	tcl_glib_init();
@@ -336,6 +338,8 @@ static gboolean tcl_unload(GaimPlugin *plugin)
 {
 	g_hash_table_destroy(tcl_plugins);
 	tcl_plugins = NULL;
+
+	gaim_debug_unregister_category("tcl");
 
 	return TRUE;
 }

@@ -33,6 +33,11 @@
 void gaim_gtk_debug_init(void);
 
 /**
+ * Uninitialized the GTK+ debug system.
+ */
+void gaim_gtk_debug_uninit(void);
+
+/**
  * Get the handle for the GTK+ debug system.
  *
  * @return the handle to the debug system

@@ -1,6 +1,6 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12556 2005-04-25 03:55:11Z thekingant $
+ * $Id: gg.c 12919 2005-06-28 06:13:07Z deryni9 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
@@ -1831,6 +1831,8 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
+
+	gaim_debug_register_category("gg");
 
 	option = gaim_account_option_string_new(_("Nick"), "nick",
 			"Gadu-Gadu User");

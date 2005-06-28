@@ -57,7 +57,6 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 	gaim_gtk_blist_update_protocol_actions();
-
 }
 
 static void gaim_gtk_connection_disconnected(GaimConnection *gc)

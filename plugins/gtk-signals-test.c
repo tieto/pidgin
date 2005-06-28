@@ -70,6 +70,8 @@ plugin_load(GaimPlugin *plugin)
 	void *blist_handle = gaim_gtk_blist_get_handle();
 	void *conv_handle = gaim_gtk_conversations_get_handle();
 
+	gaim_debug_register_category("gtk-signal-test");
+
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-modified",
 						plugin, GAIM_CALLBACK(account_modified_cb), NULL);
@@ -85,6 +87,12 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(conversation_drag_end_cb), NULL);
 
 	return TRUE;
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	gaim_debug_unregister_category("gtk-signal-test");
 }
 
 static GaimPluginInfo info =
@@ -109,7 +117,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

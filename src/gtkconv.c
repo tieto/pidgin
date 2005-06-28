@@ -6092,6 +6092,8 @@ gaim_gtk_conversations_init(void)
 {
 	void *handle = gaim_gtk_conversations_get_handle();
 
+	gaim_debug_register_category("gtkconv");
+
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
@@ -6189,4 +6191,6 @@ gaim_gtk_conversations_uninit(void)
 {
 	gaim_prefs_disconnect_by_handle(gaim_gtk_conversations_get_handle());
 	gaim_signals_unregister_by_instance(gaim_gtk_conversations_get_handle());
+
+	gaim_debug_unregister_category("gtkconv");
 }

@@ -179,8 +179,17 @@ cipher_test_sha1() {
  **************************************************************************/
 static gboolean
 plugin_load(GaimPlugin *plugin) {
+	gaim_debug_register_category("cipher-test");
+
 	cipher_test_md5();
 	cipher_test_sha1();
+
+	return TRUE;
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin) {
+	gaim_debug_unregister_category("cipher-test");
 
 	return TRUE;
 }
@@ -207,7 +216,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,										/**< homepage       */
 
 	plugin_load,										/**< load           */
-	NULL,												/**< unload         */
+	plugin_unload,										/**< unload         */
 	NULL,												/**< destroy        */
 
 	NULL,												/**< ui_info        */

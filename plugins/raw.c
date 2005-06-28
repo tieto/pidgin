@@ -94,6 +94,8 @@ plugin_load(GaimPlugin *plugin)
 	GtkWidget *entry;
 	GtkWidget *dropdown;
 
+	gaim_debug_register_category("raw");
+
 	/* Setup the window. */
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_container_set_border_width(GTK_CONTAINER(window), 6);
@@ -133,6 +135,8 @@ plugin_unload(GaimPlugin *plugin)
 		gtk_widget_destroy(window);
 
 	window = NULL;
+
+	gaim_debug_register_category("raw");
 
 	return TRUE;
 }

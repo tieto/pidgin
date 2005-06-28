@@ -44,6 +44,8 @@ sub_func(int i1, int i2)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	gaim_debug_register_category("ipc-test-server");
+
 	gaim_plugin_ipc_register(plugin, "add", GAIM_CALLBACK(add_func),
 							 gaim_marshal_INT__INT_INT,
 							 gaim_value_new(GAIM_TYPE_INT), 2,
@@ -57,6 +59,12 @@ plugin_load(GaimPlugin *plugin)
 							 gaim_value_new(GAIM_TYPE_INT));
 
 	return TRUE;
+}
+
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	gaim_debug_unregister_category("ipc-test-server");
 }
 
 static GaimPluginInfo info =
@@ -82,7 +90,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

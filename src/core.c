@@ -76,14 +76,7 @@ gaim_core_init(const char *ui)
 	 * for protocol prefs to work. */
 	gaim_prefs_init();
 
-	/* Initialize all static protocols. */
-	static_proto_init();
-
-	/* Since plugins get probed so early we should probably initialize their
-	 * subsystem right away too.
-	 */
-	gaim_plugins_init();
-	gaim_plugins_probe(GAIM_PLUGIN_EXT);
+	gaim_debug_init();
 
 	if (ops != NULL)
 	{
@@ -94,13 +87,23 @@ gaim_core_init(const char *ui)
 			ops->debug_ui_init();
 	}
 
+	gaim_debug_register_category("main");
+
+	/* Initialize all static protocols. */
+	static_proto_init();
+
+	/* Since plugins get probed so early we should probably initialize their
+	 * subsystem right away too.
+	 */
+	gaim_plugins_init();
+	gaim_plugins_probe(GAIM_PLUGIN_EXT);
+
 	gaim_status_init();
 	gaim_savedstatuses_init();
 	gaim_accounts_init();
 	gaim_ciphers_init();
 	gaim_connections_init();
 	gaim_conversations_init();
-	gaim_debug_init();
 	gaim_blist_init();
 	gaim_log_init();
 	gaim_buddy_icons_init();
@@ -159,6 +162,9 @@ gaim_core_quit(void)
 		g_free(core->ui);
 		core->ui = NULL;
 	}
+
+	/* I think this is where this should go */
+	gaim_debug_unregister_category("main");
 
 	g_free(core);
 

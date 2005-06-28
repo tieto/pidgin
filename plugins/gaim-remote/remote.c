@@ -770,6 +770,9 @@ plugin_load(GaimPlugin *plugin)
 	GIOChannel *channel;
 	char *buf = NULL;
 
+	gaim_debug_register_category("cui");
+	gaim_debug_register_category("gaim_remote_handle_uri");
+
 	if ((UI_fd = open_socket(&buf)) < 0) {
 		gaim_notify_error(NULL, NULL, _("Unable to open socket"), buf);
 		g_free(buf);
@@ -802,6 +805,9 @@ plugin_unload(GaimPlugin *plugin)
 	g_unlink(buf);
 
 	gaim_debug_misc("core", "Removed core\n");
+
+	gaim_debug_unregister_category("cui");
+	gaim_debug_unregister_category("gaim_remote_handle_uri");
 
 	return TRUE;
 #else

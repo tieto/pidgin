@@ -3330,6 +3330,10 @@ static void yahoo_set_permit_deny(GaimConnection *gc) {
 static gboolean yahoo_unload_plugin(GaimPlugin *plugin)
 {
 	yahoo_dest_colorht();
+
+	gaim_debug_unregister_category("yahoo");
+	gaim_debug_unregister_category("yahoo_filexfer");
+
 	return TRUE;
 }
 
@@ -3556,6 +3560,9 @@ static void
 init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
+
+	gaim_debug_register_category("yahoo");
+	gaim_debug_register_category("yahoo_filexfer");
 
 	option = gaim_account_option_bool_new(_("Yahoo Japan"), "yahoojp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

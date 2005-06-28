@@ -473,6 +473,8 @@ gaim_buddy_icons_get_handle()
 void
 gaim_buddy_icons_init()
 {
+	gaim_debug_register_category("buddy icons");
+
 	account_cache = g_hash_table_new_full(
 		g_direct_hash, g_direct_equal,
 		NULL, (GFreeFunc)g_hash_table_destroy);
@@ -484,7 +486,7 @@ gaim_buddy_icons_init()
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_BUDDY_ICON),
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-						 				GAIM_SUBTYPE_BLIST_BUDDY),
+										GAIM_SUBTYPE_BLIST_BUDDY),
 						 gaim_value_new(GAIM_TYPE_STRING),
 						 gaim_value_new(GAIM_TYPE_STRING));
 }
@@ -493,6 +495,8 @@ void
 gaim_buddy_icons_uninit()
 {
 	g_hash_table_destroy(account_cache);
+
+	gaim_debug_unregister_category("buddy icons");
 }
 
 void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height)

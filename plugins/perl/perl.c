@@ -504,9 +504,19 @@ destroy_perl_plugin(GaimPlugin *plugin)
 }
 
 static gboolean
+plugin_load(GaimPlugin *plugin)
+{
+	gaim_debug_register_category("perl");
+
+	return TRUE;
+}
+
+static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	perl_end();
+
+	gaim_debug_unregister_category("perl");
 
 	return TRUE;
 }
@@ -539,7 +549,7 @@ static GaimPluginInfo info =
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
-	NULL,                                             /**< load           */
+	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 

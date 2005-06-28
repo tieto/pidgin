@@ -815,6 +815,8 @@ void
 gaim_plugins_init(void) {
 	void *handle = gaim_plugins_get_handle();
 
+	gaim_debug_register_category("plugins");
+
 	gaim_signal_register(handle, "plugin-load",
 						 gaim_marshal_VOID__POINTER,
 						 NULL, 1,
@@ -830,6 +832,8 @@ gaim_plugins_init(void) {
 void
 gaim_plugins_uninit(void) {
 	gaim_signals_disconnect_by_handle(gaim_plugins_get_handle());
+
+	gaim_debug_unregister_category("plugins");
 }
 
 /**************************************************************************

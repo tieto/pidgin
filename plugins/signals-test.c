@@ -488,6 +488,8 @@ plugin_load(GaimPlugin *plugin)
 	void *ciphers_handle = gaim_ciphers_get_handle();
 	void *buddy_icons_handle = gaim_buddy_icons_get_handle();
 
+	gaim_debug_register_category("signals-test");
+
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
 						plugin, GAIM_CALLBACK(account_connecting_cb), NULL);
@@ -609,6 +611,12 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	gaim_debug_unregister_category("signals-test");
+}
+
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -631,7 +639,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

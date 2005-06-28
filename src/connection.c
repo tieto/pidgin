@@ -501,6 +501,8 @@ gaim_connections_init(void)
 {
 	void *handle = gaim_connections_get_handle();
 
+	gaim_debug_register_category("connection");
+
 	gaim_signal_register(handle, "signing-on",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
@@ -526,6 +528,8 @@ void
 gaim_connections_uninit(void)
 {
 	gaim_signals_unregister_by_instance(gaim_connections_get_handle());
+
+	gaim_debug_unregister_category("connection");
 }
 
 void *

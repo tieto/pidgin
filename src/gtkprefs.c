@@ -2230,6 +2230,8 @@ smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
 void
 gaim_gtk_prefs_init(void)
 {
+	gaim_debug_register_category("theme dnd");
+
 	gaim_prefs_add_none("/gaim");
 	gaim_prefs_add_none("/gaim/gtk");
 	gaim_prefs_add_none("/plugins/gtk");

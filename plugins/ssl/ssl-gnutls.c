@@ -187,12 +187,15 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
+	gaim_debug_register_category("gnutls");
+
 	if (!gaim_ssl_get_ops()) {
 		gaim_ssl_set_ops(&ssl_ops);
 	}
 
-   /* Init GNUTLS now so others can use it even if sslconn never does */
-   ssl_gnutls_init_gnutls();
+	/* Init GNUTLS now so others can use it even if sslconn never does */
+	ssl_gnutls_init_gnutls();
+
 	return TRUE;
 #else
 	return FALSE;
@@ -207,6 +210,8 @@ plugin_unload(GaimPlugin *plugin)
 		gaim_ssl_set_ops(NULL);
 	}
 #endif
+
+	gaim_debug_unregister_category("gnutls");
 
 	return TRUE;
 }

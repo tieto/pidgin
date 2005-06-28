@@ -1820,6 +1820,8 @@ gaim_accounts_init(void)
 {
 	void *handle = gaim_accounts_get_handle();
 
+	gaim_debug_register_category("account");
+
 	gaim_signal_register(handle, "account-connecting",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
@@ -1874,4 +1876,6 @@ gaim_accounts_uninit(void)
 	}
 
 	gaim_signals_unregister_by_instance(gaim_accounts_get_handle());
+
+	gaim_debug_unregister_category("account");
 }

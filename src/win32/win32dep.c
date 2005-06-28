@@ -376,6 +376,9 @@ void wgaim_init(HINSTANCE hint) {
         char *newenv;
 
         gaim_debug_set_ui_ops(&ops);
+	gaim_debug_register_category("wgaim");
+	gaim_debug_register_category("wgaim_gz_decompress");
+	gaim_debug_register_category("wgaim_gz_untar");
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
 	gaimexe_hInstance = hint;
@@ -439,6 +442,10 @@ void wgaim_cleanup(void) {
 	wgaim_remove_idlehooks();
 
 	g_free(app_data_dir);
+
+	gaim_debug_unregister_category("wgaim");
+	gaim_debug_unregister_category("wgaim_gz_decompress");
+	gaim_debug_unregister_category("wgaim_gz_untar");
 }
 
 /* DLL initializer */

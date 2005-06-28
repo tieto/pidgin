@@ -279,12 +279,15 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 #ifdef HAVE_NSS
+	gaim_debug_register_category("nss");
+
 	if (!gaim_ssl_get_ops()) {
 		gaim_ssl_set_ops(&ssl_ops);
 	}
 
-   /* Init NSS now, so others can use it even if sslconn never does */
-   ssl_nss_init_nss();
+	/* Init NSS now, so others can use it even if sslconn never does */
+	ssl_nss_init_nss();
+
 	return TRUE;
 #else
 	return FALSE;
@@ -299,6 +302,8 @@ plugin_unload(GaimPlugin *plugin)
 		gaim_ssl_set_ops(NULL);
 	}
 #endif
+
+	gaim_debug_unregister_category("nss");
 
 	return TRUE;
 }

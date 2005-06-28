@@ -1201,7 +1201,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	gaim_debug_info("s4 proxy", "Connected.\n");
+	gaim_debug_info("socks4 proxy", "Connected.\n");
 
 	if (phb->inpa > 0)
 		gaim_input_remove(phb->inpa);
@@ -1958,6 +1958,12 @@ void
 gaim_proxy_init(void)
 {
 	void *handle;
+
+	gaim_debug_register_category("dns");
+	gaim_debug_register_category("proxy");
+	gaim_debug_register_category("http proxy");
+	gaim_debug_register_category("socks5 proxy");
+	gaim_debug_register_category("socks4 proxy");
 
 	/* Initialize a default proxy info struct. */
 	global_proxy_info = gaim_proxy_info_new();

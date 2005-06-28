@@ -508,7 +508,7 @@ gaim_pounces_load(void)
 	}
 
 	if (!g_file_get_contents(filename, &contents, &length, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "pounces",
+		gaim_debug(GAIM_DEBUG_ERROR, "pounce",
 				   "Error reading pounces: %s\n", error->message);
 
 		g_free(filename);
@@ -534,7 +534,7 @@ gaim_pounces_load(void)
 	}
 
 	if (!g_markup_parse_context_end_parse(context, NULL)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "pounces", "Error parsing %s\n",
+		gaim_debug(GAIM_DEBUG_ERROR, "pounce", "Error parsing %s\n",
 				   filename);
 
 		g_markup_parse_context_free(context);
@@ -980,6 +980,8 @@ gaim_pounces_init(void)
 	void *blist_handle = gaim_blist_get_handle();
 	void *conv_handle  = gaim_conversations_get_handle();
 
+	gaim_debug_register_category("pounce");
+
 	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, free_pounce_handler);
 
@@ -1019,4 +1021,6 @@ gaim_pounces_uninit()
 	}
 
 	gaim_signals_disconnect_by_handle(gaim_pounces_get_handle());
+
+	gaim_debug_unregister_category("pounce");
 }

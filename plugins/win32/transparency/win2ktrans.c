@@ -340,6 +340,8 @@ static void bl_alpha_change(GtkWidget *w, gpointer data) {
  *  EXPORTED FUNCTIONS
  */
 gboolean plugin_load(GaimPlugin *plugin) {
+	gaim_debug_register_category(WINTRANS_PLUGIN_ID);
+
 	imalpha = gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA);
 	blalpha = gaim_prefs_get_int(OPT_WINTRANS_BL_ALPHA);
 
@@ -375,6 +377,8 @@ gboolean plugin_unload(GaimPlugin *plugin) {
 
 	if(blist)
 		set_wintrans_off(blist);
+
+	gaim_debug_unregister_category(WINTRANS_PLUGIN_ID);
 
 	return TRUE;
 }

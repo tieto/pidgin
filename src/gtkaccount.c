@@ -2507,6 +2507,8 @@ gaim_gtk_account_get_handle() {
 void
 gaim_gtk_account_init(void)
 {
+	gaim_debug_register_category("buddyicon");
+
 	gaim_prefs_add_none("/gaim/gtk/accounts");
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
@@ -2522,4 +2524,6 @@ void
 gaim_gtk_account_uninit(void)
 {
 	gaim_signals_unregister_by_instance(gaim_gtk_account_get_handle());
+
+	gaim_debug_unregister_category("buddyicon");
 }

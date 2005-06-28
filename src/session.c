@@ -284,6 +284,8 @@ void session_init(gchar *argv0, gchar *previous_id, gchar *config_dir) {
 	gchar *tmp = NULL;
 	gchar **cmd = NULL;
 
+	gaim_debug_register_category("Session Management");
+
 	if (session != NULL) {
 		/* session is already established, what the hell is going on? */
 		gaim_debug(GAIM_DEBUG_WARNING, "Session Management",
@@ -390,5 +392,7 @@ void session_end() {
 
 	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 			   "Connection closed.\n");
+
+	gaim_debug_unregister_category("Session Management");
 #endif /* USE_SM */
 }

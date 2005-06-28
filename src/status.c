@@ -1683,6 +1683,8 @@ gaim_status_init(void)
 {
 	void *handle = gaim_status_get_handle;
 
+	gaim_debug_register_category("status");
+
 	gaim_prefs_add_none("/core/status");
 	gaim_prefs_add_none("/core/status/scores");
 
@@ -1732,4 +1734,6 @@ gaim_status_uninit(void)
 
 		buddy_presences = NULL;
 	}
+
+	gaim_debug_unregister_category("status");
 }

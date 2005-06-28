@@ -40,6 +40,8 @@ static GaimDebugUiOps *debug_ui_ops = NULL;
  */
 static gboolean debug_enabled = FALSE;
 
+/* XXX I want to make this static but gg uses this for internal debug level
+ * stuff and I don't really feel like unwrapping it right now. -Etan */
 void
 gaim_debug_vargs(GaimDebugLevel level, const char *category,
 				 const char *format, va_list args)
@@ -153,6 +155,32 @@ gaim_debug_fatal(const char *category, const char *format, ...)
 	va_start(args, format);
 	gaim_debug_vargs(GAIM_DEBUG_FATAL, category, format, args);
 	va_end(args);
+}
+
+void
+gaim_debug_register_category(const char *category)
+{
+	GaimDebugUiOps *ops;
+
+	g_return_if_fail(category != NULL);
+
+	ops = gaim_debug_get_ui_ops();
+
+	if (ops != NULL && ops->register_category != NULL)
+		ops->register_category(category);
+}
+
+void
+gaim_debug_unregister_category(const char *category)
+{
+	GaimDebugUiOps *ops;
+
+	g_return_if_fail(category != NULL);
+
+	ops = gaim_debug_get_ui_ops();
+
+	if (ops != NULL && ops->unregister_category != NULL)
+		ops->unregister_category(category);
 }
 
 void

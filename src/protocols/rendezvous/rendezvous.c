@@ -813,6 +813,9 @@ static void init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 	char hostname[255];
 
+	gaim_debug_register_category("mdns");
+	gaim_debug_register_category("rendezvous");
+
 	prpl_info.options				= OPT_PROTO_NO_PASSWORD;
 	prpl_info.icon_spec.format		= "jpeg";
 	prpl_info.icon_spec.min_width	= 0;

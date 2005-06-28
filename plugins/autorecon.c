@@ -227,6 +227,7 @@ free_auto_recon(gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
+	gaim_debug_register_category("autorecon");
 
 	/* this was the suggested way to override a single function of the
 	real ui ops. However, there's a mild concern of having more than one
@@ -278,6 +279,8 @@ plugin_unload(GaimPlugin *plugin)
 	gaim_connections_set_ui_ops(old_ops);
 	g_free(new_ops);
 	old_ops = new_ops = NULL;
+
+	gaim_debug_unregister_category("autorecon");
 
 	return TRUE;
 }

@@ -42,6 +42,9 @@ typedef struct
 	GtkWidget *text;
 	GtkWidget *find;
 
+	/* The category filter tree view. */
+	GtkWidget *treeview;
+
 	gboolean timestamps;
 	gboolean paused;
 
@@ -57,6 +60,9 @@ static char debug_fg_colors[][8] = {
 };
 
 static DebugWindow *debug_win = NULL;
+
+static GHashTable *debug_categories = NULL;
+static gboolean filter_enabled = FALSE;
 
 struct _find {
 	DebugWindow *window;
@@ -220,6 +226,26 @@ timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), GPOINTER_TO_INT(value));
 }
 
+static void
+filter_cb(GtkToggleButton *button, DebugWindow *win)
+{
+	if (gtk_toggle_button_get_active(button)) {
+		filter_enabled = TRUE;
+	} else {
+		filter_enabled = FALSE;
+	}
+}
+
+static void
+debug_liststore_append(gpointer key, gpointer value, gpointer user_data)
+{
+	GtkTreeIter iter;
+	GtkListStore **liststore = (GtkListStore **)user_data;
+
+	gtk_list_store_append(*liststore, &iter);
+	gtk_list_store_set(*liststore, &iter, 0, key, -1);
+}
+
 static DebugWindow *
 debug_window_new(void)
 {
@@ -229,6 +255,10 @@ debug_window_new(void)
 	GtkWidget *frame;
 	GtkWidget *button;
 	GtkWidget *image;
+	GtkListStore *liststore = NULL;
+	GtkCellRenderer *renderer = NULL;
+	GtkTreeSelection *selection = NULL;
+	GtkTreeViewColumn *column = NULL;
 	int width, height;
 
 	win = g_new0(DebugWindow, 1);
@@ -238,16 +268,16 @@ debug_window_new(void)
 
 	GAIM_DIALOG(win->window);
 	gaim_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
-			   width, height);
+	                width, height);
 
 	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);
 	gtk_window_set_role(GTK_WINDOW(win->window), "debug");
 	gtk_window_set_title(GTK_WINDOW(win->window), _("Debug Window"));
 
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
-					 G_CALLBACK(debug_window_destroy), NULL);
+	                 G_CALLBACK(debug_window_destroy), NULL);
 	g_signal_connect(G_OBJECT(win->window), "configure_event",
-					 G_CALLBACK(configure_cb), win);
+	                 G_CALLBACK(configure_cb), win);
 
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 0);
@@ -256,45 +286,85 @@ debug_window_new(void)
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
-		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_BOTH_HORIZ);
+		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),
+		                      GTK_TOOLBAR_BOTH_HORIZ);
 		gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
-								  GTK_ICON_SIZE_SMALL_TOOLBAR);
+		                          GTK_ICON_SIZE_SMALL_TOOLBAR);
 
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
 		/* Find button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-								 NULL, NULL, G_CALLBACK(find_cb), win, -1);
+		                         NULL, NULL, G_CALLBACK(find_cb),
+		                         win, -1);
 
 		/* Save */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-								 NULL, NULL, G_CALLBACK(save_cb), win, -1);
+		                         NULL, NULL, G_CALLBACK(save_cb),
+		                         win, -1);
 
 		/* Clear button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-								 NULL, NULL, G_CALLBACK(clear_cb), win, -1);
+		                         NULL, NULL, G_CALLBACK(clear_cb),
+		                         win, -1);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
 		/* Pause */
 		image = gtk_image_new_from_stock(GAIM_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-											GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-											NULL, _("Pause"), NULL, NULL,
-											image, G_CALLBACK(pause_cb), win);
+		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+		                                    NULL, _("Pause"), NULL,
+		                                    NULL, image,
+		                                    G_CALLBACK(pause_cb), win);
 
 		/* Timestamps */
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-											GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-											NULL, _("Timestamps"), NULL, NULL,
-											NULL, G_CALLBACK(timestamps_cb),
-											win);
+		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+		                                    NULL, _("Timestamps"),
+		                                    NULL, NULL, NULL,
+		                                    G_CALLBACK(timestamps_cb),
+		                                    win);
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-						gaim_prefs_get_bool("/core/debug/timestamps"));
+		                             gaim_prefs_get_bool("/core/debug/timestamps"));
 
-		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(), "/core/debug/timestamps",
-									timestamps_pref_cb, button);
+		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(),
+		                            "/core/debug/timestamps",
+		                            timestamps_pref_cb, button);
+
+		button = gtk_check_button_new_with_label(_("Filter"));
+		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(filter_cb), win);
+		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+		                                    GTK_TOOLBAR_CHILD_WIDGET,
+						    button, NULL, NULL, NULL,
+						    NULL, NULL, NULL);
+
+		button = gtk_scrolled_window_new(NULL, NULL);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(button),
+		                               GTK_POLICY_NEVER,
+		                               GTK_POLICY_AUTOMATIC);
+
+		liststore = gtk_list_store_new(1, G_TYPE_STRING);
+		win->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(liststore));
+		renderer = gtk_cell_renderer_text_new();
+		column = gtk_tree_view_column_new_with_attributes(_("Filter"), renderer, "text", 0, NULL);
+
+		gtk_tree_view_append_column(GTK_TREE_VIEW(win->treeview), column);
+		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(win->treeview), FALSE);
+		gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(win->treeview), TRUE);
+		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(liststore), 0, GTK_SORT_ASCENDING);
+
+		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(win->treeview));
+		gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+
+		g_hash_table_foreach(debug_categories, (GHFunc)debug_liststore_append, &liststore);
+
+		gtk_container_add(GTK_CONTAINER(button), win->treeview);
+		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+		                                    GTK_TOOLBAR_CHILD_WIDGET,
+		                                    button, NULL, NULL,
+		                                    NULL, NULL, NULL, NULL);
 	}
 
 	/* Add the gtkimhtml */
@@ -375,6 +445,8 @@ gaim_glib_dummy_print_handler(const gchar *string)
 void
 gaim_gtk_debug_init(void)
 {
+	gaim_debug_register_category("gtkdebug");
+
 	/* Debug window preferences. */
 	/*
 	 * NOTE: This must be set before prefs are loaded, and the callbacks
@@ -417,6 +489,14 @@ gaim_gtk_debug_init(void)
 }
 
 void
+gaim_gtk_debug_uninit(void)
+{
+	gaim_debug_unregister_category("gtkdebug");
+
+	gaim_debug_set_ui_ops(NULL);
+}
+
+void
 gaim_gtk_debug_window_show(void)
 {
 	if (debug_win == NULL)
@@ -437,6 +517,47 @@ gaim_gtk_debug_window_hide(void)
 }
 
 static void
+create_debug_selected_categories(GtkTreeModel *model, GtkTreePath *path,
+                                 GtkTreeIter *iter, gpointer data)
+{
+	GHashTable **hashtable = (GHashTable **)data;
+	char *text = NULL;
+
+	gtk_tree_model_get(model, iter, 0, &text, -1);
+
+	g_hash_table_insert(*hashtable, text, NULL);
+}
+
+static gboolean
+debug_is_filtered_out(const char *category)
+{
+	GtkTreeSelection *selection = NULL;
+	GHashTable *hashtable = NULL;
+	gboolean found = FALSE;
+
+	if (category == NULL)
+		return FALSE;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debug_win->treeview));
+	hashtable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
+	                                  NULL);
+
+	gtk_tree_selection_selected_foreach(selection,
+	                                    create_debug_selected_categories,
+	                                    &hashtable);
+
+	if (filter_enabled) {
+		if (g_hash_table_lookup_extended(hashtable, category, NULL, NULL))
+			found = FALSE;
+		else
+			found = TRUE;
+	}
+
+	g_hash_table_destroy(hashtable);
+	return found;
+}
+
+static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
@@ -445,7 +566,8 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	gchar *esc_s, *cat_s, *tmp, *s;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/debug/enabled") ||
-					(debug_win == NULL) || debug_win->paused) {
+	    (debug_win == NULL) || debug_win->paused ||
+	    debug_is_filtered_out(category)) {
 		return;
 	}
 
@@ -454,8 +576,8 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	arg_s = g_strdup_vprintf(format, args);
 
 	/*
- 	 * For some reason we only print the timestamp if category is
- 	 * not NULL.  Why the hell do we do that?  --Mark
+	 * For some reason we only print the timestamp if category is
+	 * not NULL.  Why the hell do we do that?  --Mark
 	 */
 	if ((category != NULL) && (timestamps)) {
 		gchar mdate[64];
@@ -498,9 +620,70 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 	g_free(s);
 }
 
+static void
+gaim_gtk_debug_register_category(const char *category)
+{
+	/* XXX I'd like to be able to put this creation in _init, but that
+	 * would require that this be init:ed before anything that wants to
+	 * register a category, and I'm not sure I can count on this coming
+	 * first */
+	if (debug_categories == NULL)
+		debug_categories = g_hash_table_new_full(g_str_hash,
+		                                         g_str_equal,
+		                                         g_free, NULL);
+
+	if (!g_hash_table_lookup_extended(debug_categories, category, NULL, NULL)) {
+		g_hash_table_insert(debug_categories, g_strdup(category), NULL);
+
+		if (debug_win != NULL && debug_win->treeview != NULL) {
+			GtkTreeModel *model = NULL;
+			GtkTreeIter iter;
+
+			model = gtk_tree_view_get_model(GTK_TREE_VIEW(debug_win->treeview));
+
+			gtk_list_store_append(GTK_LIST_STORE(model), &iter);
+			gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
+			                   category, -1);
+		}
+	}
+}
+
+static gboolean
+find_and_remove_category(GtkTreeModel *model, GtkTreePath *path,
+                         GtkTreeIter *iter, gpointer data)
+{
+	GValue value = {0};
+
+	gtk_tree_model_get_value(model, iter, 0, &value);
+
+	if (strcmp(g_value_get_string(&value), data) == 0) {
+		gtk_list_store_remove(GTK_LIST_STORE(model), iter);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+gaim_gtk_debug_unregister_category(const char *category)
+{
+	GtkTreeModel *model = NULL;
+
+	model = gtk_tree_view_get_model(GTK_TREE_VIEW(debug_win->treeview));
+
+	gtk_tree_model_foreach(model,
+	                       (GtkTreeModelForeachFunc)find_and_remove_category,
+	                       (char *)category);
+
+	g_hash_table_remove(debug_categories, category);
+}
+
 static GaimDebugUiOps ops =
 {
-	gaim_gtk_debug_print
+	gaim_gtk_debug_print,
+	gaim_gtk_debug_register_category,
+	gaim_gtk_debug_unregister_category
 };
 
 GaimDebugUiOps *

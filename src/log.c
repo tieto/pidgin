@@ -441,6 +441,8 @@ GList *gaim_log_get_system_logs(GaimAccount *account)
 
 void gaim_log_init(void)
 {
+	gaim_debug_register_category("log");
+
 	gaim_prefs_add_none("/core/logging");
 	gaim_prefs_add_bool("/core/logging/log_ims", FALSE);
 	gaim_prefs_add_bool("/core/logging/log_chats", FALSE);
