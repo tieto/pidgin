@@ -56,7 +56,6 @@ typedef enum {
  * This struct gets filled out and is included in the GaimLog.  It contains everything
  * needed to write and read from logs.
  */
-/*@{*/
 struct _GaimLogLogger {
 	char *name;               /**< The logger's name */
 	char *id;                 /**< an identifier to refer to this logger */

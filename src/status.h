@@ -1,7 +1,4 @@
-/**
- * @file status.h Status API
- * @ingroup core
- *
+/*
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -26,8 +23,8 @@
 #define _GAIM_STATUS_H_
 
 /**
- * TODO: Someone figure out if we need to do something to get
- *       this in the Doxygen generated docs.
+ * @file status.h Status API
+ * @ingroup core
  *
  * A brief explanation of the status API:
  *

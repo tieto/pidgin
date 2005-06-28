@@ -412,10 +412,8 @@ size_t gaim_conv_window_get_conversation_count(const GaimConvWindow *win);
 /**
  * Switches the active conversation to the one at the specified index.
  *
- * If @a index is out of range, this does nothing.
- *
- * @param win   The window.
- * @param index The new index.
+ * @param win  The window.
+ * @param conv The converstion to switch to.
  */
 void gaim_conv_window_switch_conversation(GaimConvWindow *win,
                                           GaimConversation *conv);

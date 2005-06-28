@@ -1,5 +1,4 @@
 /**
- * @file gtkdialogs.h Assorted GTK+ dialogs
  * @defgroup gtkui GTK+ User Interface
  *
  * gaim

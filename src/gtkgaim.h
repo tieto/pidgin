@@ -42,7 +42,7 @@
 # define GAIM_ALERT_TITLE "Gaim"
 #endif
 
-/*
+/**
  * This is backwards-compatibility code for older versions of GTK+ (< 2.4.x)
  * It defines the new wrap behavior (unknown in earlier versions)
  * as the old (slightly buggy) wrap behavior.

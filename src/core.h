@@ -1,5 +1,4 @@
 /**
- * @file core.h Gaim Core API
  * @defgroup core Gaim Core
  *
  * gaim

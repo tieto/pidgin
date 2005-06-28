@@ -74,7 +74,7 @@ typedef struct {
 } GaimBuddyIconSpec;
 
 /**
- * This #define exists just to make it easier to fill out the buddy icon
+ * This \#define exists just to make it easier to fill out the buddy icon
  * field in the prpl info struct for protocols that couldn't care less.
  */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}

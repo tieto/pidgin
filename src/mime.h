@@ -156,7 +156,7 @@ char *gaim_mime_part_get_field_decoded(GaimMimePart *part,
 
 /** Set or replace the value of a specific field in the header of a
     document
-    @param doc    the MIME document
+    @param part   the part of the MIME document
     @param field  case-insensitive field name
     @param value  value to associate with the indicated header field,
                   of NULL to remove the field
@@ -179,7 +179,8 @@ const char *gaim_mime_part_get_data(GaimMimePart *part);
     return NULL.
 
     @param part the MIME documemt part
-    @param 
+    @param data Buffer for the data
+	@param len  The length of the buffer
 */
 void gaim_mime_part_get_data_decoded(GaimMimePart *part,
 				     char **data, gsize *len);
