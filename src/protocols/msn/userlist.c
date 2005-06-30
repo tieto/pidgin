@@ -258,6 +258,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	else if (list_id == MSN_LIST_RL)
 	{
 		GaimConnection *gc;
+		GaimConversation *convo;
 
 		gc = gaim_account_get_connection(account);
 
@@ -265,6 +266,20 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 						"%s has added you to his or her contact list.\n",
 						passport);
 
+ 		convo = gaim_find_conversation_with_account(GAIM_CONV_IM, passport, account);
+ 		if (convo) {
+ 			GaimBuddy *buddy;
+ 			char *msg;
+ 
+ 			buddy = gaim_find_buddy(account, passport);
+ 			msg = g_strdup_printf(
+ 				_("%s has added you to his or her contact list."),
+ 				buddy ? gaim_buddy_get_contact_alias(buddy) : passport);
+ 			gaim_conv_im_write(GAIM_CONV_IM(convo), passport, msg,
+ 				GAIM_MESSAGE_SYSTEM, time(NULL));
+ 			g_free(msg);
+ 		}
+ 
 		if (!(user->list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
 		{
 			got_new_entry(gc, passport, friendly);
@@ -309,9 +324,25 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
+		GaimConversation *convo;
+
 		gaim_debug_info("msn",
 						"%s has removed you from his or her contact list.\n",
 						passport);
+
+		convo = gaim_find_conversation_with_account(GAIM_CONV_IM, passport, account);
+		if (convo) {
+			GaimBuddy *buddy;
+			char *msg;
+
+			buddy = gaim_find_buddy(account, passport);
+			msg = g_strdup_printf(
+				_("%s has removed you from his or her contact list."),
+				buddy ? gaim_buddy_get_contact_alias(buddy) : passport);
+			gaim_conv_im_write(GAIM_CONV_IM(convo), passport, msg,
+				GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(msg);
+		}
 	}
 
 	user->list_op &= ~(1 << list_id);
