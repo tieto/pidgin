@@ -186,6 +186,8 @@ build_allow_list(GaimGtkPrivacyDialog *dialog)
 
 	dialog->allow_store = gtk_list_store_new(1, G_TYPE_STRING);
 
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->allow_store), 0, GTK_SORT_ASCENDING);
+
 	widget = build_list(dialog, dialog->allow_store, &list);
 
 	dialog->allow_list = list;
@@ -202,6 +204,8 @@ build_block_list(GaimGtkPrivacyDialog *dialog)
 	GtkWidget *list;
 
 	dialog->block_store = gtk_list_store_new(1, G_TYPE_STRING);
+
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->block_store), 0, GTK_SORT_ASCENDING);
 
 	widget = build_list(dialog, dialog->block_store, &list);
 
