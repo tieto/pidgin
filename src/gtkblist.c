@@ -1152,10 +1152,14 @@ append_blist_node_action(GtkWidget *menu, GaimBlistNodeAction *act,
 			*dup_separator = FALSE;
 
 			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
-			g_object_set_data(G_OBJECT(menuitem), "gaimcallback",
-			                  act);
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-			                 G_CALLBACK(blist_node_menu_cb), node);
+			if (act->callback != NULL) {
+				g_object_set_data(G_OBJECT(menuitem), "gaimcallback",
+				                  act);
+				g_signal_connect(G_OBJECT(menuitem), "activate",
+				                 G_CALLBACK(blist_node_menu_cb), node);
+			} else {
+				gtk_widget_set_sensitive(menuitem, FALSE);
+			}
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 		} else {
 			GtkWidget *submenu = NULL;
