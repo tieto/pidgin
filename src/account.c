@@ -756,13 +756,22 @@ gaim_account_register(GaimAccount *account)
 }
 
 static void
-request_password_ok_cb(GaimAccount *account, const char *entry)
+request_password_ok_cb(GaimAccount *account, GaimRequestFields *fields)
 {
+	const char *entry;
+	gboolean remember;
+	
+	entry = gaim_request_fields_get_string(fields, "password");
+	remember = gaim_request_fields_get_bool(fields, "remember");
+	
 	if (!entry || !*entry)
 	{
 		gaim_notify_error(account, NULL, _("Password is required to sign on."), NULL);
 		return;
 	}
+
+	if(remember)
+		gaim_account_set_remember_password(account, TRUE);
 
 	if (gaim_account_get_remember_password(account))
 		gaim_account_set_password(account, entry);
@@ -770,15 +779,14 @@ request_password_ok_cb(GaimAccount *account, const char *entry)
 	gaim_connection_new(account, FALSE, entry);
 }
 
-/*
- * TODO: Make the entry box a required field, and add a
- *       "save password" checkbox.
- */
 static void
 request_password(GaimAccount *account)
 {
 	gchar *primary;
 	const gchar *username;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+	GaimRequestFields *fields;
 
 	/* Close any previous password request windows */
 	gaim_request_close_with_handle(account);
@@ -786,10 +794,27 @@ request_password(GaimAccount *account)
 	username = gaim_account_get_username(account);
 	primary = g_strdup_printf(_("Enter password for %s (%s)"), username,
 								  gaim_account_get_protocol_name(account));
-	gaim_request_input(account, _("Enter Password"), primary, NULL, NULL,
-					   FALSE, TRUE, NULL,
-					   _("OK"), G_CALLBACK(request_password_ok_cb),
-					   _("Cancel"), NULL, account);
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("password", _("Enter Password"), NULL, FALSE);
+	gaim_request_field_string_set_masked(field, TRUE);
+	gaim_request_field_set_required(field, TRUE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_bool_new("remember", _("Save password"), FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(account,
+                        NULL,
+                        primary,
+                        NULL,
+                        fields,
+                        _("OK"), G_CALLBACK(request_password_ok_cb),
+                        _("Cancel"), NULL,
+                        account);
 	g_free(primary);
 }
 
