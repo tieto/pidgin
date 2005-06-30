@@ -158,6 +158,7 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	if (!yahoo_privacy_check(gc, who)) {
 		gaim_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
+		g_string_free(members, TRUE);
 		return;
 	}
 	serv_got_chat_invite(gc, room, who, msg, components);
@@ -186,6 +187,12 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 			msg = yahoo_string_decode(gc, pair->value, FALSE);
 			break;
 		}
+	}
+	if (!yahoo_privacy_check(gc, who)) {
+		g_free(room);
+		if (msg != NULL)
+			g_free(msg);
+		return;
 	}
 
 	if (who && room) {
@@ -586,6 +593,10 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 		if (!yahoo_privacy_check(gc, who)) {
 			gaim_debug_info("yahoo",
 			"Invite to room %s from %s has been dropped.\n", room, who);
+			if (room != NULL)
+				g_free(room);
+			if (msg != NULL)
+				g_free(msg);
 			return;
 		}
 		serv_got_chat_invite(gc, room, who, msg, components);
