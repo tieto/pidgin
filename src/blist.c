@@ -1097,7 +1097,7 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 	if (buddy->icon)
 		gaim_buddy_icon_cache(icon, buddy);
 	else
-		gaim_blist_node_remove_setting((GaimBlistNode *)buddy, "buddy_icon");
+		gaim_buddy_icon_uncache(buddy);
 
 	gaim_blist_schedule_save();
 

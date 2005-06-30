@@ -106,6 +106,13 @@ void gaim_buddy_icon_update(GaimBuddyIcon *icon);
 void gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy);
 
 /**
+ * Removes cached buddy icon for a specific buddy.
+ *
+ * @param buddy The buddy for which to remove the cached icon.
+ */
+void gaim_buddy_icon_uncache(GaimBuddy *buddy);
+
+/**
  * Sets the buddy icon's account.
  *
  * @param icon    The buddy icon.
