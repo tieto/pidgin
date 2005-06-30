@@ -2437,8 +2437,6 @@ static void yahoo_login(GaimAccount *account, GaimStatus *status) {
 			return;
 		}
 	}
-
-
 }
 
 static void yahoo_close(GaimConnection *gc) {
@@ -3585,9 +3583,12 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Chat Room List Url"), "room_list", YAHOO_ROOMLIST_URL);
+	option = gaim_account_option_string_new(_("Chat Room Locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #if 0
+	option = gaim_account_option_string_new(_("Chat Room List Url"), "room_list", YAHOO_ROOMLIST_URL);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = gaim_account_option_string_new(_("YCHT Host"), "ycht-server", YAHOO_YCHT_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
