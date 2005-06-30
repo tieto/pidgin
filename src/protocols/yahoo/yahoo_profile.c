@@ -116,9 +116,9 @@ static const profile_lang_node_t profile_langs[] = {
 	{ DA,    "Opdateret sidste gang&nbsp;",                          NULL },
 	{ DE,    "Letzter Update&nbsp;",                                 NULL },
 	{ EL,    "Last Updated:",              "http://gr.profiles.yahoo.com" },
-	{ EN_GB, "Last Updated&nbsp;",                      "Favourite Quote" },
-	{ EN,    "Last Updated:",                                        NULL },
-	{ EN,    "Last Updated&nbsp;",                                   NULL },
+	{ EN_GB, "Last Update&nbsp;",                      "Favourite Quote" },
+	{ EN,    "Last Update:",                                        NULL },
+	{ EN,    "Last Update&nbsp;",                                   NULL },
 	{ ES_AR, "\332ltima actualizaci\363n&nbsp;",                     NULL },
 	{ ES_ES, "Actualizada el&nbsp;",       "http://es.profiles.yahoo.com" },
 	{ ES_MX, "Actualizada el &nbsp;",      "http://mx.profiles.yahoo.com" },
@@ -213,46 +213,46 @@ static const profile_strings_node_t profile_strings[] = {
 		"Yahoo! ID:",
 		"Private",
 		"No Answer",
-		"My Email",
+		"My Email:",
 		"Real Name:",
 		"Location:",
 		"Age:",
 		"Marital Status:",
 		"Gender:",
 		"Occupation:",
-		"Hobbies:",
+		"Hobbies",
 		"Latest News",
 		"Favorite Quote",
 		"Links",
 		"No home page specified",
 		"Home Page:",
 		"No cool link specified",
-		"Cool Link 1:",
-		"Cool Link 2:",
-		"Cool Link 3:",
+		"Cool Link 1",
+		"Cool Link 2",
+		"Cool Link 3",
 		NULL
 	},
 	{ EN_GB, "en_GB", "ISO-8859-1", /* Same as EN except spelling of "Favourite" */
 		"Yahoo! ID:",
 		"Private",
 		"No Answer",
-		"My Email",
+		"My Email:",
 		"Real Name:",
 		"Location:",
 		"Age:",
 		"Marital Status:",
 		"Gender:",
 		"Occupation:",
-		"Hobbies:",
+		"Hobbies",
 		"Latest News",
 		"Favourite Quote",
 		"Links",
 		"No home page specified",
 		"Home Page:",
 		"No cool link specified",
-		"Cool Link 1:",
-		"Cool Link 2:",
-		"Cool Link 3:",
+		"Cool Link 1",
+		"Cool Link 2",
+		"Cool Link 3",
 		NULL
 	},
 	{ ES_AR, "es_AR", "ISO-8859-1",
@@ -676,9 +676,7 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 			if ((ip = yahoo_friend_get_ip(f)))
 				g_string_append_printf(s, _("<b>IP Address:</b> %s<br>"), ip);
 		}
-
 	}
-
 	return g_string_free(s, FALSE);
 }
 
@@ -689,16 +687,20 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 	char *p;
 	char *it = NULL;
 
-	g_string_printf(s, " alt=\"%s\">", name);
+	/*g_string_printf(s, " alt=\"%s\">", name);*/
+	/* Y! newformat */
+	g_string_printf(s, " alt=%s>", name);
 	p = strstr(url_text, s->str);
 
 	if (p) {
 		/* Search backwards for "http://". This is stupid, but it works. */
 		for (; !it && p > url_text; p -= 1) {
-			if (strncmp(p, "\"http://", 8) == 0) {
+			/*if (strncmp(p, "\"http://", 8) == 0) {*/
+			/* Y! newformat*/
+			if (strncmp(p, "=http://", 8) == 0) {
 				char *q;
-				p += 1; /* skip only the " */
-				q = strchr(p, '"');
+				p += 1; /* skip only the ' ' */
+				q = strchr(p, ' ');
 				if (q) {
 					it = g_strndup(p, q - p);
 				}
@@ -832,7 +834,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	 * profile. We try to support all languages, but nothing is guaranteed.
 	 * If we cannot determine the language, it means either (1) the profile
 	 * is written in an unsupported language, (2) our language support is
-	 * out of date, or (3) the user is not found.
+	 * out of date, or (3) the user is not found, or (4) Y! have changed their
+	 * webpage layout
 	 */
 	if (!p || strings->lang == XX) {
 		if (!strstr(url_text, "Yahoo! Member Directory - User not found")
@@ -866,7 +869,6 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 	gaim_str_strip_cr(url_buffer);
 
 #if PHOTO_SUPPORT
-
 	/* Marshall the existing state */
 	info2_data = g_malloc(sizeof(YahooGetInfoStepTwoData));
 	info2_data->info_data = info_data;
@@ -921,8 +923,13 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* We continue here from yahoo_got_info, as if nothing has happened */
 #endif /* PHOTO_SUPPORT */
 
+	/* Jun 29 05 Bleeter: Y! changed their profile pages. Terminators now seem to be */
+	/* </dd> and not \n. The prpl's need to be audited before it can be moved */
+	/* in to gaim_markup_strip_html*/
+	char *fudged_buffer;
+	fudged_buffer = gaim_strcasereplace(url_buffer, "</dd>", "</dd><br>");
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
-	stripped = gaim_markup_strip_html(url_buffer);
+	stripped = gaim_markup_strip_html(fudged_buffer);
 	stripped_len = strlen(stripped);
 
 	gaim_debug_misc("yahoo", "stripped = %p\n", stripped);
@@ -967,7 +974,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
-			strings->yahoo_id_string, 2, "\n", 0,
+			strings->yahoo_id_string, 10, "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL))
 		;
 #endif
@@ -993,7 +1000,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	/* extract their Email address and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
-			strings->my_email_string, 5, "\n", 0,
+			strings->my_email_string, 1, " ", 0,
 			strings->private_string, _("Email"), 0, NULL);
 
 	/* extract the Nickname if it exists */
@@ -1042,15 +1049,15 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->hobbies_string, 1, strings->latest_news_string,
-			'\n', NULL, _("Hobbies"), 0, NULL))
+			'\n', "\n", _("Hobbies"), 0, NULL))
 	{
 		if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 				strings->hobbies_string, 1, strings->favorite_quote_string,
-				'\n', NULL, _("Hobbies"), 0, NULL))
+				'\n', "\n", _("Hobbies"), 0, NULL))
 		{
 			found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 					strings->hobbies_string, 1, strings->links_string,
-					'\n', NULL, _("Hobbies"), 0, NULL);
+					'\n', "\n", _("Hobbies"), 0, NULL);
 		}
 		else
 			found = TRUE;
@@ -1060,18 +1067,18 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->latest_news_string, 1, strings->favorite_quote_string,
-			'\n', NULL, _("Latest News"), 0, NULL))
+			'\n', "\n", _("Latest News"), 0, NULL))
 	{
 		found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 				strings->latest_news_string, 1, strings->links_string,
-				'\n', NULL, _("Latest News"), 0, NULL);
+				'\n', "\n", _("Latest News"), 0, NULL);
 	}
 	else
 		found = TRUE;
 
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
 			strings->favorite_quote_string, 1, strings->links_string,
-			'\n', NULL, _("Favorite Quote"), 0, NULL);
+			'\n', "\n", _("Favorite Quote"), 0, NULL);
 
 	/* Home Page will either be "No home page specified",
 	 * or "Home Page: " and a link.
@@ -1121,9 +1128,8 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	/* extract the Last Updated date and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, s,
-			last_updated_utf8_string, 0, "\n", '\n', NULL,
-			_("Last Updated"), 0, NULL);
-
+			last_updated_utf8_string, 1, " ", '\n', NULL,
+			_("Last Update"), 0, NULL);
 	} /* if (profile_state == PROFILE_STATE_DEFAULT) */
 
 	if(!found)
@@ -1187,6 +1193,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);
+	g_free(fudged_buffer);
 	g_string_free(s, TRUE);
 	g_free(profile_url_text);
 	g_free(tooltip_text);
