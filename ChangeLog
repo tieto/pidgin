@@ -34,8 +34,6 @@ version 2.0.0:
 	* Full message background colors are now supported
 	* Smooth scrolling when receiving a new message
 	* Themeable mouse-over hyperlink coloring
-	* Attempt to detect the file type of a buddy icon when saving
-	  (Richard Laager)
 	* Yahoo! Stealth Settings have been implemented.
 	* The modify account dialog now contains two tabs, which should display
 	  better at lower resolutions (Sadrul Habib Chowdhury)
