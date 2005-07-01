@@ -1366,6 +1366,14 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	gaim_conversation_set_unseen(conv, unseen);
 
 	/*
+	 * TODO: This is #if 0'ed out because we don't have a way of
+	 *       telling if a conversation window is minimized.  This
+	 *       should probably be done in gtkconv.c anyway.
+	 */
+#if 0
+	/*
+	 * This is auto-tab switching.
+	 *
 	 * If we received an IM, and the GaimConvWindow is not active,
 	 * then make this conversation the active tab in this GaimConvWindow.
 	 *
@@ -1377,10 +1385,12 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	 */
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
 		(flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_ERROR)) &&
-		(!gaim_conv_window_has_focus(win)))
+		(!gaim_conv_window_has_focus(win)) &&
+		(gaim_conv_window_is_minimized(win)))
 	{
 		gaim_conv_window_switch_conversation(win, conv);
 	}
+#endif
 }
 
 void
