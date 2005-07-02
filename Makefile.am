@@ -5,11 +5,9 @@ EXTRA_DIST = \
 		gaim.spec.in \
 		gaim.apspec.in \
 		gaim.desktop \
-		gaim2blt.pl \
 		gaim-installer.nsi \
 		HACKING \
 		PROGRAMMING_NOTES \
-		licq2gaim.pl \
 		setup-gettext \
 		ChangeLog.win32 \
 		config.h.mingw \
