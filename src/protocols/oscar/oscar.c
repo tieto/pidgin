@@ -5,6 +5,7 @@
  * Some code copyright (C) 1999-2001, Eric Warmenhoven
  * Some code copyright (C) 2001-2003, Sean Egan
  * Some code copyright (C) 2001-2004, Mark Doliner <thekingant@users.sourceforge.net>
+ * Some code copyright (C) 2005, Jonathan Clark <ardentlygnarly@users.sourceforge.net>
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
  * Some libfaim code copyright (C) 2001-2004 Mark Doliner <thekingant@users.sourceforge.net>
@@ -2159,7 +2160,7 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 	gboolean can_receive = FALSE;
 	OscarData *od = gc->proto_data;
 
-	if (od != NULL && !od->icq) {
+	if (od != NULL) {
 		aim_userinfo_t *userinfo;
 		userinfo = aim_locate_finduserinfo(od->sess, who);
 		if (userinfo && userinfo->capabilities & AIM_CAPS_SENDFILE)
