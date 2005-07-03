@@ -71,6 +71,11 @@
 # include <gdk/gdkx.h>
 #endif
 
+#ifdef HAVE_DBUS
+#  include "dbus-server.h"
+#endif
+
+
 #ifdef HAVE_STARTUP_NOTIFICATION
 static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
@@ -714,6 +719,11 @@ int main(int argc, char *argv[])
 	gaim_debug_register_category("prpl");
 	gaim_debug_register_category("server");
 	gaim_debug_register_category("stringref");
+
+#ifdef HAVE_DBUS
+	/* Starting DBUS */
+	dbus_server_init();
+#endif
 
 	gtk_main();
 

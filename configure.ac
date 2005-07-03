@@ -306,6 +306,32 @@ else
 fi
 
 dnl #######################################################################
+dnl # Check for DBUS libraries
+dnl #######################################################################
+
+AC_ARG_ENABLE(dbus,     [  --enable-dbus           enable DBUS support],,enable_dbus=no)
+
+if test "x$enable_dbus" = "xyes"; then
+   AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
+fi
+
+if test "x$enable_dbus" = "xyes"; then
+   	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.34 dbus-glib-1 >= 0.34],
+	[
+		AC_DEFINE(HAVE_DBUS, 1, [Define if we're using DBUS.])
+		AC_SUBST(DBUS_CFLAGS)
+		AC_SUBST(DBUS_LIBS)   	
+		echo "Building with DBUS support"
+	])
+else
+	echo "Building without DBUS support"
+	enable_dbus=no
+fi
+
+AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
+
+
+dnl #######################################################################
 dnl # Check for startup notification
 dnl #######################################################################
 AC_ARG_ENABLE(startup-notification, [  --disable-startup-notification    compile without startup notification support],,enable_startup_notification=yes)
@@ -1279,6 +1305,7 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with DBUS support....... : $enable_dbus
 echo Has you....................... : yes
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos

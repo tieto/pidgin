@@ -143,6 +143,28 @@ gaim_coreheaders = \
 
 bin_PROGRAMS = gaim gaim-remote
 
+
+if ENABLE_DBUS
+
+gaim_coresources  += dbus-server.c 
+gaim_coreheaders  += dbus-server.h
+bin_PROGRAMS      += gaim-client
+
+dbus-client-bindings.c: dbus-service.xml
+	dbus-binding-tool --prefix=gaim_object --mode=glib-client --output=$@ $<
+
+dbus-server-bindings.c: dbus-service.xml
+	dbus-binding-tool --prefix=gaim_object --mode=glib-server --output=$@ $<
+
+dbus-client.$(OBJEXT): dbus-client-bindings.c
+dbus-server.$(OBJEXT): dbus-server-bindings.c
+
+gaim_client_SOURCES      = dbus-client.c
+gaim_client_DEPENDENCIES = @LIBOBJS@
+gaim_client_LDADD        = @LIBOBJS@ $(GLIB_LIBS) $(DBUS_LIBS) $(INTLLIBS) 
+
+endif
+
 gaim_SOURCES = \
 	$(gaim_coresources) \
 	gtkcombobox.c \
@@ -231,6 +253,7 @@ gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
 	@LIBOBJS@ \
 	$(GTK_LIBS) \
+	$(DBUS_LIBS) \
 	$(SOUND_LIBS) \
 	$(STATIC_LINK_LIBS) \
 	$(XSS_LIBS) \
@@ -260,5 +283,6 @@ AM_CPPFLAGS = \
 	$(AO_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(DBUS_CFLAGS) \
 	$(GTKSPELL_CFLAGS) \
 	$(STARTUP_NOTIFICATION_CFLAGS)

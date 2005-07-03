@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node name="/org/gaim/GaimObject">
+  <interface name="org.gaim.GaimInterface">
+    <method name="Ping">
+    </method>
+    <method name="Quit">
+    </method>
+    <method name="ConnectAll">
+    </method>
+  </interface>
+</node>
+
