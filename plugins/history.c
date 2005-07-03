@@ -30,43 +30,89 @@ static gboolean _scroll_imhtml_to_end(gpointer data)
 
 static void historize(GaimConversation *c)
 {
-	GaimGtkConversation *gtkconv;
+	GaimAccount *account = gaim_conversation_get_account(c);
+	const char *name = gaim_conversation_get_name(c);
 	GaimConversationType convtype;
-	char *history = NULL;
-	guint flags;
-	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
 	GList *logs = NULL;
+	const char *alias = name;
+	guint flags;
+	char *history;
+	GaimGtkConversation *gtkconv;
+	GtkIMHtmlOptions options = GTK_IMHTML_NO_COLOURS;
+	time_t tm;
+	char day[64];
+	char *header;
 
 	convtype = gaim_conversation_get_type(c);
 	if (convtype == GAIM_CONV_IM)
-		logs = gaim_log_get_logs(GAIM_LOG_IM,
-				gaim_conversation_get_name(c), gaim_conversation_get_account(c));
-	else if (convtype == GAIM_CONV_CHAT)
-		logs = gaim_log_get_logs(GAIM_LOG_CHAT,
-				gaim_conversation_get_name(c), gaim_conversation_get_account(c));
+	{
+		GSList *buddies;
+		GSList *cur;
 
-	if (!logs)
+		/* Find buddies for this conversation. */
+	        buddies = gaim_find_buddies(account, name);
+
+		/* If we found at least one buddy, save the first buddy's alias. */
+		if (buddies != NULL)
+			alias = gaim_buddy_get_contact_alias((GaimBuddy *)buddies->data);
+
+	        for (cur = buddies; cur != NULL; cur = cur->next)
+	        {
+	                GaimBlistNode *node = cur->data;
+	                if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
+	                {
+				GaimBlistNode *node2;
+
+				alias = gaim_buddy_get_contact_alias((GaimBuddy *)node);
+
+				/* We've found a buddy that matches this conversation.  It's part of a
+				 * GaimContact with more than one GaimBuddy.  Loop through the GaimBuddies
+				 * in the contact and get all the logs. */
+				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
+				{
+					logs = g_list_concat(
+						gaim_log_get_logs(GAIM_LOG_IM,
+							gaim_buddy_get_name((GaimBuddy *)node2),
+							gaim_buddy_get_account((GaimBuddy *)node2)),
+						logs);
+				}
+				break;
+	                }
+	        }
+	        g_slist_free(buddies);
+
+		if (logs == NULL)
+			logs = gaim_log_get_logs(GAIM_LOG_IM, name, account);
+		else
+        		logs = g_list_sort(logs, gaim_log_compare);
+	}
+	else if (convtype == GAIM_CONV_CHAT)
+		logs = gaim_log_get_logs(GAIM_LOG_CHAT, name, account);
+
+	if (logs == NULL)
 		return;
 
 	history = gaim_log_read((GaimLog*)logs->data, &flags);
 	gtkconv = GAIM_GTK_CONVERSATION(c);
 	if (flags & GAIM_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<br>", options);
+
+	tm = ((GaimLog *)logs->data)->time;
+	gaim_strftime(day, sizeof(day), "%c", localtime(&tm));
+	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias, day);
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
+	g_free(header);
+
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), history, options);
-	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
-	g_object_ref(G_OBJECT(gtkconv->imhtml));
-	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
 	g_free(history);
 
-	while (logs) {
-		GaimLog *log = logs->data;
-		GList *logs2;
-	    gaim_log_free(log);
-		logs2 = logs->next;
-		g_list_free_1(logs);
-		logs = logs2;
-	}
+	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+
+	g_object_ref(G_OBJECT(gtkconv->imhtml));
+	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
+
+	g_list_foreach(logs, (GFunc)gaim_log_free, NULL);
+	g_list_free(logs);
 }
 
 static gboolean
