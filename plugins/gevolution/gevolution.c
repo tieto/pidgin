@@ -111,6 +111,7 @@ update_buddies_from_contact(EContact *contact)
 	update_ims_from_contact(contact, name, "prpl-yahoo",  E_CONTACT_IM_YAHOO);
 	update_ims_from_contact(contact, name, "prpl-msn",    E_CONTACT_IM_MSN);
 	update_ims_from_contact(contact, name, "prpl-oscar",  E_CONTACT_IM_ICQ);
+	update_ims_from_contact(contact, name, "prpl-novell", E_CONTACT_IM_GROUPWISE);
 }
 
 static void

@@ -112,6 +112,8 @@ gevo_prpl_get_field(GaimAccount *account, GaimBuddy *buddy)
 		protocol_field = E_CONTACT_IM_YAHOO;
 	else if (!strcmp(protocol_id, "prpl-jabber"))
 		protocol_field = E_CONTACT_IM_JABBER;
+	else if (!strcmp(protocol_id, "prpl-novell"))
+		protocol_field = E_CONTACT_IM_GROUPWISE;
 
 	return protocol_field;
 }

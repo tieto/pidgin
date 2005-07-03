@@ -291,7 +291,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 	{
 		EContact *contact = E_CONTACT(c->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -300,9 +300,10 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 		yahoos  = e_contact_get(contact, E_CONTACT_IM_YAHOO);
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
+		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL)
+			msns == NULL && icqs == NULL && novells == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -320,6 +321,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
+			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
 	}
 
@@ -361,7 +363,7 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 	{
 		EContact *contact = E_CONTACT(l->data);
 		const char *name;
-		GList *aims, *jabbers, *yahoos, *msns, *icqs;
+		GList *aims, *jabbers, *yahoos, *msns, *icqs, *novells;
 
 		name = e_contact_get_const(contact, E_CONTACT_FULL_NAME);
 
@@ -376,9 +378,10 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 		yahoos  = e_contact_get(contact, E_CONTACT_IM_YAHOO);
 		msns    = e_contact_get(contact, E_CONTACT_IM_MSN);
 		icqs    = e_contact_get(contact, E_CONTACT_IM_ICQ);
+		novells = e_contact_get(contact, E_CONTACT_IM_GROUPWISE);
 
 		if (aims == NULL && jabbers == NULL && yahoos == NULL &&
-			msns == NULL && icqs == NULL)
+			msns == NULL && icqs == NULL && novells == NULL)
 		{
 			GtkTreeIter iter;
 
@@ -396,6 +399,7 @@ search_changed_cb(GtkEntry *entry, GevoAddBuddyDialog *dialog)
 			add_ims(dialog, contact, name, yahoos,  "prpl-yahoo");
 			add_ims(dialog, contact, name, msns,    "prpl-msn");
 			add_ims(dialog, contact, name, icqs,    "prpl-oscar");
+			add_ims(dialog, contact, name, novells, "prpl-novell");
 		}
 	}
 }
