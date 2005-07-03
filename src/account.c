@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 #include "account.h"
+#include "core.h"
 #include "debug.h"
 #include "notify.h"
 #include "pounce.h"
@@ -1790,6 +1791,24 @@ GList *
 gaim_accounts_get_all(void)
 {
 	return accounts;
+}
+
+GList *
+gaim_accounts_get_all_active(void)
+{
+	GList *list = NULL;
+	GList *all = gaim_accounts_get_all();
+
+	while (all != NULL) {
+		GaimAccount *account = all->data;
+
+		if (gaim_account_get_enabled(account, gaim_core_get_ui()))
+			list = g_list_append(list, account);
+
+		all = all->next;
+	}
+
+	return list;
 }
 
 GaimAccount *
