@@ -1956,6 +1956,7 @@ update_plugin_list(void *data)
 	GaimPlugin *plug;
 
 	gtk_list_store_clear(ls);
+	gaim_plugins_probe(GAIM_PLUGIN_EXT);
 
 	for (probes = gaim_plugins_get_all();
 		 probes != NULL;
