@@ -669,6 +669,9 @@ gaim_gtk_debug_unregister_category(const char *category)
 {
 	GtkTreeModel *model = NULL;
 
+	if (debug_win == NULL)
+		return;
+
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(debug_win->treeview));
 
 	gtk_tree_model_foreach(model,
