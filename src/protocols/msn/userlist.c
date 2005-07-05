@@ -650,6 +650,15 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	group_id = -1;
 
+	if (!gaim_email_is_valid(who))
+	{
+		char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
+		gaim_notify_error(NULL, NULL, str,
+						  _("MSN screennames cannot contain spaces."));
+		g_free(str);
+		return;
+	}
+
 	if (group_name != NULL)
 	{
 		group_id = msn_userlist_find_group_id(userlist, group_name);
