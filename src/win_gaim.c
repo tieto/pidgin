@@ -24,14 +24,24 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+#ifndef _WIN32_WINNT
+# define _WIN32_WINNT 0x0501
+#endif
 #include <windows.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
+/** Currently missing from win32-api */
+#ifndef ATTACH_PARENT_PROCESS
+# define ATTACH_PARENT_PROCESS -1
+#endif
+
 typedef int (CALLBACK* LPFNGAIMMAIN)(HINSTANCE, int, char**);
 typedef void (CALLBACK* LPFNSETDLLDIRECTORY)(LPCTSTR);
+typedef BOOL (CALLBACK* LPFNATTACHCONSOLE)(DWORD);
 
 /*
  *  PROTOTYPES
@@ -289,11 +299,18 @@ WinMain (struct HINSTANCE__ *hInstance,
         char gaimdir[MAX_PATH];
         HMODULE hmod;
 
-        /* If debug flag used, create console for output */
-        if(strstr(lpszCmdLine, "-d")) {
-                if(AllocConsole())
-                        freopen ("CONOUT$", "w", stdout);
-        }
+	/* If debug or help flag used, create console for output */
+	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h")) {
+		LPFNATTACHCONSOLE MyAttachConsole = NULL;
+		if ((hmod = GetModuleHandle("kernel32.dll"))) {
+			MyAttachConsole =
+				(LPFNATTACHCONSOLE)
+				GetProcAddress(hmod, "AttachConsole");
+		}
+		if ((MyAttachConsole && MyAttachConsole(ATTACH_PARENT_PROCESS))
+				|| AllocConsole())
+			freopen("CONOUT$", "w", stdout);
+	}
 
         /* Load exception handler if we have it */
         if(GetModuleFileName(NULL, gaimdir, MAX_PATH) != 0) {
