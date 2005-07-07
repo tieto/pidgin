@@ -62,6 +62,8 @@ version 2.0.0:
 	           gaim_log_get_log_sets, gaim_log_set_compare
 	* Changed: gaim_log_logger_new, added total_size, list_syslog, and get_log_sets
 	           parameters to bring the function up-to-date with GaimLogLogger
+	* Changed: gaim_conv_window_remove_conversation()'s last argument to
+	           be a GaimConversation.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
@@ -74,8 +76,6 @@ version 2.0.0:
 	           non-NULL value. This value is now returned. Previously,
 	           all registered handlers were called and the value from the
 	           last handler was used.
-	* Changed: gaim_conv_window_remove_conversation()'s last argument to
-	           be a GaimConversation.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
