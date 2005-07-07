@@ -34,7 +34,7 @@ Hopefully, most of the steps from point 3 will soon be automated.
       executable.
 
 
-4. Start DBUS if you haven't done it already
+4. Start Session DBUS if you haven't done it already
 
    eval `dbus-launch --session`
    export DBUS_SESSION_BUS_ADDRESS DBUS_SESSION_BUS_PID
@@ -42,12 +42,7 @@ Hopefully, most of the steps from point 3 will soon be automated.
    These commands will set the two above shell variables.  These
    variables must be set before running any dbus-aware programs.
 
+Start gaim as usual.  To communicate with it, use "gaim-send".  When
+you execute gaim-send, the dbus system will automatically start a gaim
+process if one is not running already.
 
-Now you can start gaim as usual.  A new program, gaim-client can be
-used to issue commands to a running gaim process
-
-   gaim-client command1 command2 ...
-
-At the moment there are only three commands: ping, quit, and connect.
-When you execute gaim-client, the dbus system will automatically start
-a gaim process if one is not running already.

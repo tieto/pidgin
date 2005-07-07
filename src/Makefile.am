@@ -148,7 +148,9 @@ if ENABLE_DBUS
 
 gaim_coresources  += dbus-server.c 
 gaim_coreheaders  += dbus-server.h
-bin_PROGRAMS      += gaim-client
+
+# do not use gaim-client, use gaim-send instead
+# bin_PROGRAMS      += gaim-client  
 
 dbus-client-bindings.c: dbus-service.xml
 	dbus-binding-tool --prefix=gaim_object --mode=glib-client --output=$@ $<

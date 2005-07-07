@@ -615,6 +615,12 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	wgaim_init(hint);
 #endif
+
+#ifdef HAVE_DBUS
+	/* start dbus pointer registration system */
+	gaim_dbus_init_ids();
+#endif
+
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
 

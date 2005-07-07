@@ -23,6 +23,7 @@
 #include "internal.h"
 #include "blist.h"
 #include "conversation.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
@@ -1053,6 +1054,7 @@ GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *com
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((GaimBlistNode *)chat);
 
+	GAIM_DBUS_REGISTER_POINTER(chat, DBUS_POINTER_CHAT);
 	return chat;
 }
 
@@ -1078,6 +1080,7 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)buddy);
 
+	GAIM_DBUS_REGISTER_POINTER(buddy, DBUS_POINTER_BUDDY);
 	return buddy;
 }
 
@@ -1346,6 +1349,7 @@ GaimContact *gaim_contact_new()
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)contact);
 
+	GAIM_DBUS_REGISTER_POINTER(contact, DBUS_POINTER_CONTACT);
 	return contact;
 }
 
@@ -1425,6 +1429,7 @@ GaimGroup *gaim_group_new(const char *name)
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)group);
 
+	GAIM_DBUS_REGISTER_POINTER(group, DBUS_POINTER_GROUP);
 	return group;
 }
 
@@ -1681,6 +1686,7 @@ void gaim_blist_remove_contact(GaimContact *contact)
 
 		/* Delete the node */
 		g_hash_table_destroy(contact->node.settings);
+		GAIM_DBUS_UNREGISTER_POINTER(contact);
 		g_free(contact);
 	}
 }
@@ -1753,6 +1759,8 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	g_free(buddy->name);
 	g_free(buddy->alias);
 	g_free(buddy->server_alias);
+
+	GAIM_DBUS_UNREGISTER_POINTER(buddy);
 	g_free(buddy);
 
 	/* If the contact is empty then remove it */
@@ -1797,6 +1805,7 @@ void gaim_blist_remove_chat(GaimChat *chat)
 	g_hash_table_destroy(chat->components);
 	g_hash_table_destroy(chat->node.settings);
 	g_free(chat->alias);
+	GAIM_DBUS_UNREGISTER_POINTER(chat);
 	g_free(chat);
 }
 
@@ -1859,6 +1868,7 @@ void gaim_blist_remove_group(GaimGroup *group)
 	/* Delete the node */
 	g_hash_table_destroy(group->node.settings);
 	g_free(group->name);
+	GAIM_DBUS_UNREGISTER_POINTER(group);
 	g_free(group);
 }
 

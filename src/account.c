@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "account.h"
 #include "core.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "notify.h"
 #include "pounce.h"
@@ -701,6 +702,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 
 	gaim_presence_set_status_active(account->presence, "offline", TRUE);
 
+	GAIM_DBUS_REGISTER_POINTER(account, DBUS_POINTER_ACCOUNT);
 	return account;
 }
 
@@ -742,6 +744,7 @@ gaim_account_destroy(GaimAccount *account)
 	if(account->system_log)
 		gaim_log_free(account->system_log);
 
+	GAIM_DBUS_UNREGISTER_POINTER(account);
 	g_free(account);
 }
 

@@ -318,14 +318,19 @@ fi
 if test "x$enable_dbus" = "xyes"; then
    	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.34 dbus-glib-1 >= 0.34],
 	[
-		AC_DEFINE(HAVE_DBUS, 1, [Define if we're using DBUS.])
 		AC_SUBST(DBUS_CFLAGS)
 		AC_SUBST(DBUS_LIBS)   	
-		echo "Building with DBUS support"
+	],
+	[
+		enable_dbus=no
 	])
+fi
+
+if test "x$enable_dbus" = "xyes"; then
+   	AC_DEFINE(HAVE_DBUS, 1, [Define if we're using DBUS.])
+	echo "Building with DBUS support"
 else
 	echo "Building without DBUS support"
-	enable_dbus=no
 fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")

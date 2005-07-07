@@ -1,0 +1,35 @@
+#!/bin/bash
+# 
+# A little shell script for communicating with gaim using dbus
+
+METHOD_NAME=$1
+
+if test -z "$METHOD_NAME" 
+then
+    cat <<EOF 
+This program uses dbus to talk to gaim.  If the gaim is not running and
+the dbus engine is set up correctly, a new instance of gaim will be started.
+
+   Syntax: gaim-send method-name parameter1 parameter2 ..."
+
+This shell script just invokes dbus-send, see man dbus-send for how 
+to specify the parameters.  
+
+Examples:
+
+   gaim-send Ping 
+   gaim-send Quit
+   gaim-send GetBuddyList
+   gaim-send GetBuddyProperty int32:5 string:alias
+   gaim-send StartIMConversation int32:5
+
+See src/dbus-services.xml for the list of supported operations.  
+EOF
+
+    exit 1
+fi
+
+shift
+dbus-send --dest=org.gaim.GaimService --print-reply --type=method_call /org/gaim/GaimObject org.gaim.GaimInterface.$METHOD_NAME "$@"
+
+echo 

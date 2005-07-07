@@ -21,6 +21,8 @@
  *
  */
 
+/* Do not use this program.  Use gaim-send instead. */
+
 #define DBUS_API_SUBJECT_TO_CHANGE
 
 #include <string.h>
