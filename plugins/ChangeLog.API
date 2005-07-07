@@ -76,6 +76,9 @@ version 2.0.0:
 	           non-NULL value. This value is now returned. Previously,
 	           all registered handlers were called and the value from the
 	           last handler was used.
+	* Changed: "chat-invited" handlers can now return a value to control
+	           what happens to the invite (accept, reject, prompt the user).
+	           See the Doxygen documentation for the details.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

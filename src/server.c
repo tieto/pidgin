@@ -999,30 +999,40 @@ void serv_got_chat_invite(GaimConnection *gc, const char *name,
 	GaimAccount *account;
 	char buf2[BUF_LONG];
 	struct chat_invite_data *cid = g_new0(struct chat_invite_data, 1);
+	int plugin_return;
 
 	account = gaim_connection_get_account(gc);
 
-	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "chat-invited", account, who, name, message, data);
-
-	if (message != NULL)
-	{
-		g_snprintf(buf2, sizeof(buf2),
-				   _("%s has invited %s to the chat room %s:\n%s"),
-				   who, gaim_account_get_username(account), name, message);
-	}
-	else
-		g_snprintf(buf2, sizeof(buf2),
-				   _("%s has invited %s to the chat room %s\n"),
-				   who, gaim_account_get_username(account), name);
+	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
+					gaim_conversations_get_handle(),
+					"chat-invited", account, who, name, message, data));
 
 	cid->gc = gc;
 	cid->components = data;
 
-	gaim_request_accept_cancel(gc, NULL, _("Accept chat invitation?"), buf2,
+	if (plugin_return == 0)
+	{
+		if (message != NULL)
+		{
+			g_snprintf(buf2, sizeof(buf2),
+				   _("%s has invited %s to the chat room %s:\n%s"),
+				   who, gaim_account_get_username(account), name, message);
+		}
+		else
+			g_snprintf(buf2, sizeof(buf2),
+				   _("%s has invited %s to the chat room %s\n"),
+				   who, gaim_account_get_username(account), name);
+
+
+		gaim_request_accept_cancel(gc, NULL, _("Accept chat invitation?"), buf2,
 							   GAIM_DEFAULT_ACTION_NONE, cid,
 							   G_CALLBACK(chat_invite_accept),
 							   G_CALLBACK(chat_invite_reject));
+	}
+	else if (plugin_return > 0)
+		chat_invite_accept(cid);
+	else
+		chat_invite_reject(cid);
 }
 
 GaimConversation *serv_got_joined_chat(GaimConnection *gc,

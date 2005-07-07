@@ -303,6 +303,8 @@ void gaim_marshal_INT__INT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
 void gaim_marshal_INT__INT_INT(
 		GaimCallback cb, va_list args, void *data, void **return_val);
+void gaim_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER(
+		GaimCallback cb, va_list args, void *data, void **return_val);
 
 void gaim_marshal_BOOLEAN__POINTER(
 		GaimCallback cb, va_list args, void *data, void **return_val);
