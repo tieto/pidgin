@@ -180,7 +180,7 @@ const char *gaim_mime_part_get_data(GaimMimePart *part);
 
     @param part the MIME documemt part
     @param data Buffer for the data
-	@param len  The length of the buffer
+    @param len  The length of the buffer
 */
 void gaim_mime_part_get_data_decoded(GaimMimePart *part,
 				     char **data, gsize *len);

@@ -323,6 +323,10 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
     *data = g_strdup(part->data->str);
     *len = part->data->len;
 
+  } else if(! g_ascii_strcasecmp(enc, "8bit")) {
+    *data = g_strdup(part->data->str);
+    *len = part->data->len;
+
   } else if(! g_ascii_strcasecmp(enc, "base16")) {
     *len = gaim_base16_decode(part->data->str, (unsigned char **) data);
 
