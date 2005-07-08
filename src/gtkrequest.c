@@ -684,27 +684,29 @@ get_screenname_completion_data(gboolean all)
 		}
 	}
 
-	log_sets = gaim_log_get_log_sets();
-	for (log_set = log_sets ; log_set != NULL ; log_set = log_set->next) {
-		GaimLogSet *set = log_set->data;
+	if (all)
+	{
+		log_sets = gaim_log_get_log_sets();
+		for (log_set = log_sets ; log_set != NULL ; log_set = log_set->next) {
+			GaimLogSet *set = log_set->data;
 
-		/* 1. Don't show buddies because we will have gotten them above.
-		 * 2. If we're not showing all accounts, then only show those with
-		 *    non-NULL accounts that are currently connected.
-		 * 3. The boxes that use this autocomplete code handle only IMs. */
-		if (!set->buddy &&
-			(all || (set->account != NULL && gaim_account_is_connected(set->account))) &&
-		    set->type != GAIM_LOG_CHAT) {
+			/* 1. Don't show buddies because we will have gotten them above.
+			 * 2. Only show those with non-NULL accounts that are currently connected.
+			 * 3. The boxes that use this autocomplete code handle only IMs. */
+			if (!set->buddy &&
+			    (set->account != NULL && gaim_account_is_connected(set->account)) &&
+			    set->type != GAIM_LOG_CHAT) {
 #ifdef NEW_STYLE_COMPLETION
-				names = g_list_append(names, NULL);
-				names = g_list_append(names, NULL);
-				names = g_list_append(names, set->account);
+					names = g_list_append(names, NULL);
+					names = g_list_append(names, NULL);
+					names = g_list_append(names, set->account);
 #endif /* NEW_STYLE_COMPLETION */
 
-				names = g_list_append(names, set->name);
-		}
+					names = g_list_append(names, set->name);
+			}
 
-		g_free(set);
+			g_free(set);
+		}
 	}
 
 	return names;
