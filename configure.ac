@@ -319,7 +319,8 @@ if test "x$enable_dbus" = "xyes"; then
    	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.34 dbus-glib-1 >= 0.34],
 	[
 		AC_SUBST(DBUS_CFLAGS)
-		AC_SUBST(DBUS_LIBS)   	
+		AC_SUBST(DBUS_LIBS)
+		enable_dbus=yes
 	],
 	[
 		enable_dbus=no

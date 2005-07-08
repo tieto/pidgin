@@ -150,7 +150,10 @@ gaim_coresources  += dbus-server.c
 gaim_coreheaders  += dbus-server.h
 
 # do not use gaim-client, use gaim-send instead
-# bin_PROGRAMS      += gaim-client  
+# bin_PROGRAMS      += gaim-client
+#gaim_client_SOURCES      = dbus-client.c
+#gaim_client_DEPENDENCIES = @LIBOBJS@
+#gaim_client_LDADD        = @LIBOBJS@ $(GLIB_LIBS) $(DBUS_LIBS) $(INTLLIBS)
 
 dbus-client-bindings.c: dbus-service.xml
 	dbus-binding-tool --prefix=gaim_object --mode=glib-client --output=$@ $<
@@ -160,10 +163,6 @@ dbus-server-bindings.c: dbus-service.xml
 
 dbus-client.$(OBJEXT): dbus-client-bindings.c
 dbus-server.$(OBJEXT): dbus-server-bindings.c
-
-gaim_client_SOURCES      = dbus-client.c
-gaim_client_DEPENDENCIES = @LIBOBJS@
-gaim_client_LDADD        = @LIBOBJS@ $(GLIB_LIBS) $(DBUS_LIBS) $(INTLLIBS) 
 
 endif
 
