@@ -2149,7 +2149,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	yd = gc->proto_data;
 	yd->fd = source;
 
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, 0);
 
 	yahoo_packet_hash_str(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
