@@ -162,14 +162,6 @@ static void connkill_real(aim_session_t *sess, aim_conn_t **deadconn)
 		aim_conn_close(*deadconn);
 
 	/*
-	 * XXX ->priv should never be touched by the library. I know
-	 * it used to be, but I'm getting rid of all that.  Use
-	 * ->internal instead.
-	 */
-	if ((*deadconn)->priv)
-		free((*deadconn)->priv);
-
-	/*
 	 * This will free ->internal if it necessary...
 	 */
 	if ((*deadconn)->type == AIM_CONN_TYPE_CHAT)

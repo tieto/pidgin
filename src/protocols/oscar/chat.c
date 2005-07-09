@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-/* Stored in the ->priv of chat connections */
+/* Stored in the ->internal of chat connections */
 struct chatconnpriv {
 	fu16_t exchange;
 	char *name;
@@ -17,7 +17,7 @@ struct chatconnpriv {
 
 faim_internal void aim_conn_kill_chat(aim_session_t *sess, aim_conn_t *conn)
 {
-	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->priv;
+	struct chatconnpriv *ccp = (struct chatconnpriv *)conn->internal;
 
 	if (ccp)
 		free(ccp->name);
@@ -36,7 +36,7 @@ faim_export char *aim_chat_getname(aim_conn_t *conn)
 	if (conn->type != AIM_CONN_TYPE_CHAT)
 		return NULL;
 
-	ccp = (struct chatconnpriv *)conn->priv;
+	ccp = (struct chatconnpriv *)conn->internal;
 
 	return ccp->name;
 }
@@ -47,11 +47,11 @@ faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 	aim_conn_t *cur;
 
 	for (cur = sess->connlist; cur; cur = cur->next) {
-		struct chatconnpriv *ccp = (struct chatconnpriv *)cur->priv;
+		struct chatconnpriv *ccp = (struct chatconnpriv *)cur->internal;
 
 		if (cur->type != AIM_CONN_TYPE_CHAT)
 			continue;
-		if (!cur->priv) {
+		if (!cur->internal) {
 			faimdprintf(sess, 0, "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
 			continue;
 		}
@@ -70,8 +70,8 @@ faim_export int aim_chat_attachname(aim_conn_t *conn, fu16_t exchange, const cha
 	if (!conn || !roomname)
 		return -EINVAL;
 
-	if (conn->priv)
-		free(conn->priv);
+	if (conn->internal)
+		free(conn->internal);
 
 	if (!(ccp = malloc(sizeof(struct chatconnpriv))))
 		return -ENOMEM;
@@ -80,7 +80,7 @@ faim_export int aim_chat_attachname(aim_conn_t *conn, fu16_t exchange, const cha
 	ccp->name = strdup(roomname);
 	ccp->instance = instance;
 
-	conn->priv = (void *)ccp;
+	conn->internal = (void *)ccp;
 
 	return 0;
 }
