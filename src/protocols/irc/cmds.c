@@ -365,7 +365,7 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 	char *buf;
 
 	if (!irc->quitting) {
-		buf = irc_format(irc, "v:", "QUIT", (args && args[0]) ? args[0] : "Download Gaim: " GAIM_WEBSITE);
+		buf = irc_format(irc, "v:", "QUIT", (args && args[0]) ? args[0] : gaim_prefs_get_string("/plugins/prpl/irc/quitmsg"));
 		irc_send(irc, buf);
 		g_free(buf);
 

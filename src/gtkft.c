@@ -1142,7 +1142,8 @@ gaim_gtk_xfers_init(void)
 void
 gaim_gtk_xfers_uninit(void)
 {
-	gaim_gtkxfer_dialog_destroy(xfer_dialog);
+	if (xfer_dialog != NULL)
+		gaim_gtkxfer_dialog_destroy(xfer_dialog);
 }
 
 void

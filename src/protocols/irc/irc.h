@@ -35,6 +35,8 @@
 #define IRC_DEFAULT_CHARSET "UTF-8"
 #define IRC_DEFAULT_ALIAS "gaim"
 
+#define IRC_DEFAULT_QUIT "Download Gaim: " GAIM_WEBSITE
+
 #define IRC_INITIAL_BUFSIZE 1024
 
 

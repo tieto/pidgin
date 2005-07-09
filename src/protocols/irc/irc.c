@@ -715,6 +715,27 @@ static void irc_roomlist_cancel(GaimRoomlist *list)
 	}
 }
 
+static GaimPluginPrefFrame *
+irc_pref_frame(GaimPlugin *plugin) {
+	GaimPluginPrefFrame *frame;
+	GaimPluginPref *ppref;
+
+	frame = gaim_plugin_pref_frame_new();
+
+	ppref = gaim_plugin_pref_new_with_label(_("IRC"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/irc/quitmsg",
+													 _("Quit message"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	return frame;
+}
+
+static GaimPluginUiInfo prefs_info = {
+	irc_pref_frame
+};
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
@@ -803,7 +824,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	NULL,
+	&prefs_info,                                      /**< prefs_info     */
 	irc_actions
 };
 
@@ -833,6 +854,9 @@ static void _init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	_irc_plugin = plugin;
+
+	gaim_prefs_add_none("/plugins/prpl/irc");
+	gaim_prefs_add_string("/plugins/prpl/irc/quitmsg", IRC_DEFAULT_QUIT);
 
 	irc_register_commands();
 }
