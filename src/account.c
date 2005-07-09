@@ -407,15 +407,12 @@ parse_status(xmlnode *node, GaimAccount *account)
 
 	/* Get the active/inactive state */
 	data = xmlnode_get_attrib(node, "active");
-	if (data != NULL)
-	{
-		if (strcasecmp(data, "true") == 0)
-			active = TRUE;
-		else if (strcasecmp(data, "false") == 0)
-			active = FALSE;
-		else
-			return;
-	}
+	if (data == NULL)
+		return;
+	if (strcasecmp(data, "true") == 0)
+		active = TRUE;
+	else if (strcasecmp(data, "false") == 0)
+		active = FALSE;
 	else
 		return;
 
@@ -427,8 +424,7 @@ parse_status(xmlnode *node, GaimAccount *account)
 	/* QQQ: Need to read attributes into a vargs */
 
 	/* QQQ: This needs to do a better job of adding attributes and stuff */
-	/*      Use gaim_account_set_status_vargs(); */
-	gaim_account_set_status(account, type, active);
+	gaim_account_set_status_vargs(account, type, active, NULL);
 }
 
 static void

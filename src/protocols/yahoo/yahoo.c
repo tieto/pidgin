@@ -2135,7 +2135,7 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 	GaimConnection *gc = data;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
-	
+
 	if (!g_list_find(gaim_connections_get_all(), gc)) {
 		close(source);
 		return;
@@ -2148,8 +2148,8 @@ static void yahoo_got_connected(gpointer data, gint source, GaimInputCondition c
 
 	yd = gc->proto_data;
 	yd->fd = source;
-	
-	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, YAHOO_STATUS_AVAILABLE, 0);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, 0);
 
 	yahoo_packet_hash_str(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
@@ -2380,7 +2380,7 @@ static void yahoo_login(GaimAccount *account, GaimStatus *status) {
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
-		
+
 	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE) || !strcmp(id, YAHOO_STATUS_TYPE_ONLINE)) {
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BRB)) {
