@@ -404,11 +404,10 @@ parse_status(xmlnode *node, GaimAccount *account)
 	gboolean active = FALSE;
 	const char *data;
 	const char *type;
-	xmlnode *child;
 
 	/* Get the active/inactive state */
-	child = xmlnode_get_child(node, "active");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+	data = xmlnode_get_attrib(node, "active");
+	if (data != NULL)
 	{
 		if (strcasecmp(data, "true") == 0)
 			active = TRUE;
@@ -421,12 +420,8 @@ parse_status(xmlnode *node, GaimAccount *account)
 		return;
 
 	/* Get the type of the status */
-	child = xmlnode_get_child(node, "type");
-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
-	{
-		type = data;
-	}
-	else
+	type = xmlnode_get_attrib(node, "type");
+	if (type == NULL)
 		return;
 
 	/* QQQ: Need to read attributes into a vargs */
