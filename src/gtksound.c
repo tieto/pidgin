@@ -36,11 +36,6 @@
 # include <audiofile.h>
 #endif /* USE_AO */
 
-#ifdef USE_NAS_AUDIO
-# include <audio/audiolib.h>
-# include <audio/soundlib.h>
-#endif /* USE_NAS_AUDIO */
-
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
@@ -117,6 +112,8 @@ _pref_sound_method_changed(const char *name, GaimPrefType type,
 		ao_driver = ao_driver_id("esd");
 	else if(!strcmp(val, "arts"))
 		ao_driver = ao_driver_id("arts");
+	else if(!strcmp(val, "nas"))
+		ao_driver = ao_driver_id("nas");
 	else if(!strcmp(val, "automatic"))
 		ao_driver = ao_default_driver_id();
 
@@ -126,11 +123,6 @@ _pref_sound_method_changed(const char *name, GaimPrefType type,
 						"Sound output driver loaded: %s\n", info->name);
 	}
 #endif /* USE_AO */
-#ifdef USE_NAS
-	if (!strcmp(val, "nas"))
-		gaim_debug_info("sound",
-						"Sound output driver loaded: NAS output\n");
-#endif /* USE_NAS */
 }
 
 const char *
@@ -220,24 +212,7 @@ gaim_gtk_sound_uninit(void)
 	gaim_debug_unregister_category("sound");
 }
 
-#ifdef USE_NAS_AUDIO
-static gboolean
-play_file_nas(const char *filename)
-{
-	AuServer *nas_serv;
-	gboolean ret = FALSE;
-
-	if((nas_serv = AuOpenServer(NULL, 0, NULL, 0, NULL, NULL))) {
-		ret = AuSoundPlaySynchronousFromFile(nas_serv, filename, 100);
-		AuCloseServer(nas_serv);
-	}
-
-	return ret;
-}
-
-#endif /* USE_NAS_AUDIO */
-
-#if defined(USE_NAS_AUDIO) || defined(USE_AO)
+#if defined(USE_AO)
 static gboolean
 expire_old_child(gpointer data)
 {
@@ -260,7 +235,7 @@ static void
 gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
-#if defined(USE_NAS_AUDIO) || defined(USE_AO)
+#if defined(USE_AO)
 	pid_t pid;
 #ifdef USE_AO
 	AFfilehandle file;
@@ -320,18 +295,11 @@ gaim_gtk_sound_play_file(const char *filename)
 		g_free(command);
 		return;
 	}
-#if defined(USE_NAS_AUDIO) || defined(USE_AO)
+#if defined(USE_AO)
 	pid = fork();
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
-#ifdef USE_NAS_AUDIO
-		if (!strcmp(method, "nas")) {
-			if (play_file_nas(filename))
-				_exit(0);
-		}
-#endif /* USE_NAS_AUDIO */
-
 #ifdef USE_AO
 		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
@@ -387,10 +355,10 @@ gaim_gtk_sound_play_file(const char *filename)
 	} else {
 		gaim_timeout_add(PLAY_SOUND_TIMEOUT, expire_old_child, GINT_TO_POINTER(pid));
 	}
-#else /* USE_NAS_AUDIO || USE_AO */
+#else /* USE_AO */
 	gdk_beep();
 	return;
-#endif /* USE_NAS_AUDIO || USE_AO */
+#endif /* USE_AO */
 #else /* _WIN32 */
 	gaim_debug_info("sound", "Playing %s\n", filename);
 

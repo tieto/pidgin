@@ -388,12 +388,6 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>libao:</b> Disabled<br/>");
 #endif
 
-#ifdef USE_NAS_AUDIO
-	g_string_append(str, "    <b>Network Audio System (NAS):</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Network Audio System (NAS):</b> Disabled<br/>");
-#endif
-
 #ifdef HAVE_NSS
 	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
 #else

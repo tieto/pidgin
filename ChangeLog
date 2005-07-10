@@ -42,6 +42,8 @@ version 2.0.0:
 	* Newly installed plugins can now be activated without restarting Gaim
 	  (Sadrul Habib Chowdhury)
 	* The Evolution Integration plugin now supports Groupwise contacts
+	* Use libao for playing sounds via NAS instead of accessing NAS
+	  directly
 
 	Bug fixes:
 	* People using input methods can now use Enter again.

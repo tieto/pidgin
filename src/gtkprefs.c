@@ -1557,7 +1557,7 @@ sound_page()
 	GtkWidget *hbox;
 	int j;
 	const char *file;
-	char *pref;	
+	char *pref;
 #ifndef _WIN32
 	GtkWidget *dd;
 	GtkWidget *label;
@@ -1577,10 +1577,8 @@ sound_page()
 			_("Console beep"), "beep",
 #ifdef USE_AO
 			_("Automatic"), "automatic",
-			"ESD", "esd",
 			"Arts", "arts",
-#endif
-#ifdef USE_NAS_AUDIO
+			"ESD", "esd",
 			"NAS", "nas",
 #endif
 			_("Command"), "custom",

@@ -245,7 +245,6 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
-AC_ARG_ENABLE(nas,     [  --enable-nas            enable NAS (Network Audio System) support],,enable_nas=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
@@ -1065,11 +1064,6 @@ if test "$enable_gtkspell" = yes ; then
 	fi
 fi
 
-if test "$enable_nas" = yes ; then
-	AC_DEFINE(USE_NAS_AUDIO, 1, [Define if we have NAS sound support.])
-	SOUND_LIBS="$SOUND_LIBS -laudio -lXt"
-fi
-
 if test "$enable_audio" = yes ; then
 	GAIM_PATH_AO(found_ao_lib=true)
 
@@ -1309,7 +1303,6 @@ echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
-echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
 echo Has you....................... : yes
