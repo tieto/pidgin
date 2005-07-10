@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "signals.h"
 #include "value.h"
@@ -57,6 +58,7 @@ typedef struct
 
 	gulong next_handler_id;
 
+	int dbus_id;
 } GaimSignalData;
 
 typedef struct
@@ -166,6 +168,15 @@ gaim_signal_register(void *instance, const char *signal,
 
 	instance_data->next_signal_id++;
 	instance_data->signal_count++;
+
+#ifdef HAVE_DBUS
+	/* DBus messages are sent directly to the bus so the
+	   marshalling function is never called. */
+	signal_data->dbus_id = 
+		gaim_dbus_signal_register_gaim(gaim_dbus_object, signal,
+					       gaim_dbus_invalid_marshaller, 
+					       num_values, signal_data->values);
+#endif	/* HAVE_DBUS */
 
 	return signal_data->id;
 }
@@ -487,6 +498,13 @@ gaim_signal_emit_vargs(void *instance, const char *signal, va_list args)
 
 		va_end(tmp);
 	}
+
+#ifdef HAVE_DBUS
+	gaim_dbus_signal_emit_gaim(gaim_dbus_object, signal_data->dbus_id, 
+				   signal_data->num_values, 
+				   signal_data->values, args);
+#endif	/* HAVE_DBUS */
+
 }
 
 void *
@@ -532,6 +550,12 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 				   "Signal data for %s not found!\n", signal);
 		return 0;
 	}
+
+#ifdef HAVE_DBUS
+	gaim_dbus_signal_emit_gaim(gaim_dbus_object, signal_data->dbus_id, 
+				   signal_data->num_values, 
+				   signal_data->values, args);
+#endif	/* HAVE_DBUS */
 
 	for (l = signal_data->handlers; l != NULL; l = l_next)
 	{

@@ -494,6 +494,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 #endif
 
+
 #if HAVE_SIGNAL_H
 	/* Let's not violate any PLA's!!!! */
 	/* jseymour: whatever the fsck that means */
@@ -617,8 +618,7 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef HAVE_DBUS
-	/* start dbus pointer registration system */
-	gaim_dbus_init_ids();
+	gaim_dbus_init();
 #endif
 
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
@@ -727,8 +727,7 @@ int main(int argc, char *argv[])
 	gaim_debug_register_category("stringref");
 
 #ifdef HAVE_DBUS
-	/* Starting DBUS */
-	dbus_server_init();
+ 	gaim_dbus_connect(gaim_dbus_object); 
 #endif
 
 	gtk_main();

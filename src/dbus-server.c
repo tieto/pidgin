@@ -29,6 +29,7 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <glib/gquark.h>
+#include <glib.h>
 
 #include "account.h"
 #include "blist.h"
@@ -39,46 +40,281 @@
 #include "core.h"
 #include "value.h"
 
-/**************************************************************************/
-/** @name Lots of GObject crap I don't understand                         */
-/**************************************************************************/
+static gint gaim_dbus_pointer_to_id(gpointer node);
+static gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusPointerType type);
 
-typedef struct GaimObject GaimObject;
-typedef struct GaimObjectClass GaimObjectClass;
+
+/**************************************************************************/
+/** @name Lots of GObject stuff I don't really understand                 */
+/**************************************************************************/
 
 GType gaim_object_get_type(void);
 
-struct GaimObject {
+struct _GaimObject {
 	GObject parent;
+
+	int ping_signal_id;
 };
 
-struct GaimObjectClass {
+typedef struct {
 	GObjectClass parent;
-};
+} GaimObjectClass;
 
-#define GAIM_TYPE_OBJECT              (gaim_object_get_type ())
-#define GAIM_OBJECT(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GAIM_TYPE_OBJECT, GaimObject))
-#define GAIM_OBJECT_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_TYPE_OBJECT, GaimObjectClass))
-#define GAIM_IS_OBJECT(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GAIM_TYPE_OBJECT))
-#define GAIM_IS_OBJECT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GAIM_TYPE_OBJECT))
-#define GAIM_OBJECT_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_TYPE_OBJECT, GaimObjectClass))
+
+
+#define GAIM_DBUS_TYPE_OBJECT              (gaim_object_get_type ())
+#define GAIM_DBUS_OBJECT(object)           (G_TYPE_CHECK_INSTANCE_CAST ((object), GAIM_DBUS_TYPE_OBJECT, GaimObject))
+#define GAIM_DBUS_OBJECT_CLASS(klass)      (G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_DBUS_TYPE_OBJECT, GaimObjectClass))
+#define GAIM_DBUS_IS_OBJECT(object)        (G_TYPE_CHECK_INSTANCE_TYPE ((object), GAIM_DBUS_TYPE_OBJECT))
+#define GAIM_DBUS_IS_OBJECT_CLASS(klass)   (G_TYPE_CHECK_CLASS_TYPE ((klass), GAIM_DBUS_TYPE_OBJECT))
+#define GAIM_DBUS_OBJECT_GET_CLASS(obj)    (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_DBUS_TYPE_OBJECT, GaimObjectClass))
 
 G_DEFINE_TYPE(GaimObject, gaim_object, G_TYPE_OBJECT)
 
+GaimObject *gaim_dbus_object;
+static GQuark gaim_object_error_quark;
 
-static void 
-gaim_object_init(GaimObject *obj) 
-{
+static const char* null_to_empty(const char *s) {
+	if (s)
+		return s;
+	else
+		return "";
 }
 
-static void 
-gaim_object_class_init(GaimObjectClass *mobject_class) 
+
+
+static void gaim_object_class_init(GaimObjectClass *klass) 
 { 
 }
 
-static GObject *gaim_object;
-static GQuark gaim_object_error_quark;
 
+
+/**************************************************************************/
+/** @name Signals                                                         */
+/**************************************************************************/
+
+/* used in #gaim_values_to_gvalues, undefined afterwards */
+#define my_arg(type) (ptr != NULL ? * ((type *)ptr) : va_arg(data, type))
+
+/**
+   Converts from a list of data into an GValue array.
+
+   @param gvalus      Array of empty gvalues to be filled.
+   @param number      The number of data items.
+   @param gaim_value  Array of #number pointers to GaimValues.  
+                      The types of of these GaimValues determine the type
+		      of data items.  The values do not matter.
+   @param mainptr     A pointer to a single data item.  If this pointer is not #NULL,
+                      then #number must be 1.
+   @param data        A va_list containing data items.  If 		      
+
+   Exactly one of #mainptr and #data must be not #NULL.  If #mainptr
+   is not #NULL, then there is a single piece of data at the address
+   pointed at by #mainptr.  If #data is not #NULL, then there are
+   #number data items in the #va_list #data.
+ */
+static void gaim_values_to_gvalues(GValue *gvalue, int number,  
+		       GaimValue **gaim_values, gpointer mainptr, va_list data) 
+{
+	int i;
+	gpointer ptr;
+
+	g_assert(mainptr == NULL || data == NULL);
+	g_assert(mainptr != NULL || data != NULL);
+	g_assert(number == 1 || data != NULL);
+
+	for(i=0; i<number; i++, gvalue++) {
+		ptr = mainptr;
+		if (gaim_value_is_outgoing(gaim_values[i])) {
+			ptr = my_arg(gpointer);
+			g_assert(ptr);
+		}
+
+		switch(gaim_values[i]->type) {
+		case  GAIM_TYPE_CHAR:  	
+			g_value_init(gvalue, G_TYPE_CHAR);
+			g_value_set_char(gvalue, (char) my_arg(int));
+			break;
+		case  GAIM_TYPE_INT:  
+			g_value_init(gvalue, G_TYPE_INT);
+			g_value_set_int(gvalue, my_arg(gint));
+			break;
+		case  GAIM_TYPE_UINT:  
+			g_value_init(gvalue, G_TYPE_UINT);
+			g_value_set_uint(gvalue, my_arg(guint));
+			break;
+		case  GAIM_TYPE_BOOLEAN:  
+			g_value_init(gvalue, G_TYPE_BOOLEAN);
+			g_value_set_boolean(gvalue, my_arg(gboolean));
+			break;
+		case GAIM_TYPE_STRING: 
+			g_value_init(gvalue, G_TYPE_STRING);
+			g_value_set_string(gvalue, null_to_empty(my_arg(char*)));
+			break;
+		case GAIM_TYPE_SUBTYPE: /* registered pointers only! */
+			g_value_init(gvalue, G_TYPE_INT);
+			g_value_set_int(gvalue, 
+					gaim_dbus_pointer_to_id(my_arg(gpointer)));
+			break;
+		case GAIM_TYPE_POINTER:
+ 		case GAIM_TYPE_OBJECT: 
+		case GAIM_TYPE_BOXED:
+			my_arg(gpointer); /* cannot pass general pointers */
+			g_value_init(gvalue, G_TYPE_INT);
+			g_value_set_int(gvalue, 0);
+			break;
+		
+		default:		/* no conversion implemented */
+			g_assert_not_reached();
+		}
+	}
+
+	if (data) 
+		va_end(data);
+}
+
+#undef my_arg			/* my_arg was only used in gaim_values_to_gvalues  */
+
+
+
+/**
+   Converts from GaimTypes to GTypes.
+
+   @param type   A GaimType to be converted.
+   @result       The result of the conversion (GType).
+*/
+static GType gaim_type_to_g_type(GaimType type)
+{
+	switch(type) {
+	case  GAIM_TYPE_CHAR: 
+		return G_TYPE_CHAR;
+	case  GAIM_TYPE_INT:  
+		return G_TYPE_INT;
+	case  GAIM_TYPE_UINT:  
+		return G_TYPE_UINT;
+	case  GAIM_TYPE_BOOLEAN:  
+		return G_TYPE_BOOLEAN;
+	case GAIM_TYPE_STRING: 
+		return G_TYPE_STRING;
+	case GAIM_TYPE_SUBTYPE:    /* registered pointers only! */
+		return G_TYPE_INT;
+	case GAIM_TYPE_POINTER:
+	case GAIM_TYPE_BOXED:
+ 	case GAIM_TYPE_OBJECT: 
+		return G_TYPE_INT; /* always 0 */
+	default:		   /* no conversion implemented */
+		g_assert_not_reached();
+	}	
+}
+
+
+static const char *gaim_dbus_convert_signal_name(const char *gaim_name) 
+{
+	int gaim_index, g_index;
+	char *g_name = g_new(char, strlen(gaim_name)+1);
+	gboolean capitalize_next = TRUE;
+
+	for(gaim_index = g_index = 0; gaim_name[gaim_index]; gaim_index++)
+		if (gaim_name[gaim_index] != '-' && gaim_name[gaim_index] != '_') {
+			if (capitalize_next)
+				g_name[g_index++] = g_ascii_toupper(gaim_name[gaim_index]);
+			else
+				g_name[g_index++] = gaim_name[gaim_index];
+			capitalize_next = FALSE;
+		} else
+			capitalize_next = TRUE;
+	g_name[g_index] = 0;
+	
+	return g_name;
+}
+
+/* Public signal-related functions */
+
+
+void gaim_dbus_invalid_marshaller(GClosure *closure,
+				  GValue *return_value,
+				  guint n_param_values,
+				  const GValue *param_values,
+				  gpointer invocation_hint,
+				  gpointer marshal_data)
+{
+	g_assert_not_reached();
+}
+
+int gaim_dbus_signal_register(GaimObject *object, const char *name, 
+			      GSignalCMarshaller marshaller,
+			      int num_values, ...) 
+{
+	va_list args;
+
+	va_start(args, num_values);
+
+	return g_signal_new_valist(name, G_OBJECT_TYPE(object),
+				   G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+				   NULL, NULL, NULL, marshaller,
+				   G_TYPE_NONE, num_values, args);
+}
+
+void gaim_dbus_signal_emit(GaimObject *object, int dbus_id, ...) {
+	va_list args;
+	
+	va_start(args, dbus_id);
+	
+	gaim_dbus_signal_emit_valist(object, dbus_id, args);
+}
+
+void gaim_dbus_signal_emit_valist(GaimObject *object, int dbus_id, va_list args) {
+	g_signal_emit_valist(object, dbus_id, 0, args);
+}
+
+int gaim_dbus_signal_register_gaim(GaimObject *object, const char *name, 
+				   GSignalCMarshaller marshaller, 
+				   int num_values, GaimValue **values)
+{
+	int i;
+	int dbus_id;
+	GType *types;
+	
+	types = g_new0(GType, num_values);
+
+	for(i=0; i<num_values; i++) 
+		types[i] = gaim_type_to_g_type(values[i]->type);
+		
+	dbus_id = 
+		g_signal_newv(gaim_dbus_convert_signal_name(name),
+			      G_OBJECT_TYPE(object),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+			      NULL, NULL, NULL, marshaller,
+			      G_TYPE_NONE, num_values, types);
+
+	g_free(types);
+
+	return dbus_id;
+}
+
+
+void gaim_dbus_signal_emit_gaim(GaimObject *object, int dbus_id, int num_values, 
+				GaimValue **values, va_list vargs)
+{
+	GValue *args;
+	int i;
+
+	g_return_if_fail(dbus_id);
+
+	args = g_new0(GValue, num_values + 1);
+
+	g_value_init(args + 0, G_OBJECT_TYPE(object));
+	g_value_set_object(args + 0, object);
+
+	gaim_values_to_gvalues(args + 1, num_values, values, NULL, vargs);
+	
+	g_signal_emitv(args, dbus_id, 0, NULL);
+
+	for(i = 1; i <= num_values; i++)
+		g_value_unset(args + i);
+	
+	g_free(args);		
+}
 
 
 /**************************************************************************/
@@ -100,13 +336,6 @@ static GQuark gaim_object_error_quark;
 				str, a,b);			\
 		    return FALSE;				\
 	    }
-
-static const char* null_to_empty(const char *s) {
-	if (s)
-		return s;
-	else
-		return "";
-}
 
 typedef gboolean (*GaimNodeFilter)(GaimBlistNode *node, gpointer *user_data);
 
@@ -152,8 +381,9 @@ get_buddy_list (GList *created_list,		/**< can be NULL */
 /**************************************************************************/
 
 static gboolean 
-gaim_object_ping(GaimObject *obj, GError **error) 
+gaim_object_ping(GaimObject *object, GError **error) 
 {
+ 	gaim_dbus_signal_emit(object, object->ping_signal_id, "Ping Pong!"); 
 	return TRUE;
 }
 
@@ -204,7 +434,7 @@ gaim_object_get_buddy_list (GaimObject *obj, GArray **out_buddy_ids,
 
 
 static gboolean
-gaim_object_find_account(GaimObject *unused, 
+gaim_object_find_account(GaimObject *object, 
 			 const char *account_name, const char *protocol_name,
 			 gint *account_id, GError **error) 
 {
@@ -218,7 +448,7 @@ gaim_object_find_account(GaimObject *unused,
 }
 
 static gboolean
-gaim_object_find_buddy(GaimObject *unused, gint account_id, const char *buddy_name,
+gaim_object_find_buddy(GaimObject *object, gint account_id, const char *buddy_name,
 		       gint *buddy_id, GError **error)
 {
 	GaimAccount *account;
@@ -235,7 +465,7 @@ gaim_object_find_buddy(GaimObject *unused, gint account_id, const char *buddy_na
 }
 
 static gboolean
-gaim_object_start_im_conversation (GaimObject *obj, gint buddy_id, GError **error)
+gaim_object_start_im_conversation (GaimObject *object, gint buddy_id, GError **error)
 {
 	GaimBuddy *buddy = (GaimBuddy*) gaim_dbus_id_to_pointer(buddy_id, 
 								DBUS_POINTER_BUDDY);
@@ -271,31 +501,16 @@ gaim_dbus_get_property(GaimDBusProperty *list, int list_len,
 
 	for(i=0; i<list_len; i++) {
 		if (!strcmp(list[i].name, name)) {
-			gpointer ptr = G_STRUCT_MEMBER_P(data, list[i].offset);
-			switch(list[i].type) {
-			case GAIM_TYPE_STRING: 
-				g_value_init(value, G_TYPE_STRING);
-				g_value_set_string (value, g_strdup(null_to_empty(*(char **)ptr)));
-				break;
+			gpointer ptr;
+			GaimValue gaim_value, *gaim_value_ptr;
 
-			case GAIM_TYPE_INT: 
-				g_value_init(value, G_TYPE_INT);
-				g_value_set_int (value, *(int*) ptr);
-				break;
-				
-			case GAIM_TYPE_BOOLEAN: 
-				g_value_init(value, G_TYPE_BOOLEAN);
-				g_value_set_int (value, *(gboolean*) ptr);
-				break;
-				
-			case GAIM_TYPE_POINTER: /* registered pointers only! */
-				g_value_init(value, G_TYPE_INT);
-				g_value_set_int (value, 
-						 gaim_dbus_pointer_to_id (*(gpointer *)ptr));
-				break;
-			default:
-				g_assert_not_reached();
-			}
+			ptr = G_STRUCT_MEMBER_P(data, list[i].offset);
+			gaim_value.type = list[i].type;
+			gaim_value.flags = 0;
+			gaim_value_ptr = &gaim_value;
+			
+			gaim_values_to_gvalues(value, 1, &gaim_value_ptr, 
+					       ptr, NULL);
 			return TRUE;
 		}
 	}
@@ -312,7 +527,7 @@ GaimDBusProperty buddy_properties [] = {
 	DECLARE_PROPERTY(GaimBuddy, name, GAIM_TYPE_STRING),
 	DECLARE_PROPERTY(GaimBuddy, alias, GAIM_TYPE_STRING),
 	DECLARE_PROPERTY(GaimBuddy, server_alias, GAIM_TYPE_STRING),
-	DECLARE_PROPERTY(GaimBuddy, account, GAIM_TYPE_POINTER) 
+	DECLARE_PROPERTY(GaimBuddy, account, GAIM_TYPE_SUBTYPE) 
 };
 
 GaimDBusProperty account_properties [] = {
@@ -327,7 +542,7 @@ GaimDBusProperty contact_properties [] = {
 	DECLARE_PROPERTY(GaimContact, totalsize, GAIM_TYPE_INT),
 	DECLARE_PROPERTY(GaimContact, currentsize, GAIM_TYPE_INT),
 	DECLARE_PROPERTY(GaimContact, online, GAIM_TYPE_INT),
-	DECLARE_PROPERTY(GaimContact, priority, GAIM_TYPE_POINTER),
+	DECLARE_PROPERTY(GaimContact, priority, GAIM_TYPE_SUBTYPE),
 	DECLARE_PROPERTY(GaimContact, priority_valid, GAIM_TYPE_BOOLEAN),
 };
 
@@ -340,23 +555,23 @@ GaimDBusProperty group_properties [] = {
 
 GaimDBusProperty chat_properties [] = {
 	DECLARE_PROPERTY(GaimChat, alias, GAIM_TYPE_STRING),
-	DECLARE_PROPERTY(GaimChat, account, GAIM_TYPE_POINTER),
+	DECLARE_PROPERTY(GaimChat, account, GAIM_TYPE_SUBTYPE),
 };
 
 
 #define DECLARE_PROPERTY_HANDLER(type, gaim_type)			\
 	static gboolean							\
-	gaim_object_get_##type##_property (GaimObject *unused,		\
+	gaim_object_get_##type##_property (GaimObject *object,		\
 					   gint id, const char *property_name, \
 					   GValue *value, GError **error) \
 	{								\
-		gpointer object = gaim_dbus_id_to_pointer(id, gaim_type); \
+		gpointer ptr = gaim_dbus_id_to_pointer(id, gaim_type); \
 									\
-		error_unless_1(object, "Invalid " #type " id: %i", id);	\
+		error_unless_1(ptr, "Invalid " #type " id: %i", id);	\
 									\
 		return gaim_dbus_get_property(type##_properties,	\
 					      G_N_ELEMENTS(type##_properties), \
-					      object, property_name, value, error); \
+					      ptr, property_name, value, error); \
 	}
 
 DECLARE_PROPERTY_HANDLER(buddy, DBUS_POINTER_BUDDY)
@@ -378,6 +593,8 @@ static GHashTable *map_id_type;
 static GHashTable *map_node_id; 
 
 void gaim_dbus_init_ids(void) {
+
+
 	map_id_node = g_hash_table_new (g_direct_hash, g_direct_equal);
 	map_id_type = g_hash_table_new (g_direct_hash, g_direct_equal);
 	map_node_id = g_hash_table_new (g_direct_hash, g_direct_equal);
@@ -386,6 +603,8 @@ void gaim_dbus_init_ids(void) {
 void gaim_dbus_register_pointer(gpointer node, GaimDBusPointerType type) 
 {
 	static gint last_id = 0;
+
+	g_assert(map_node_id);
 	g_assert(g_hash_table_lookup(map_node_id, node) == NULL);
 	
 
@@ -405,13 +624,15 @@ void gaim_dbus_unregister_pointer(gpointer node) {
 	g_hash_table_remove(map_id_node, GINT_TO_POINTER(id));
 }
 
-gint gaim_dbus_pointer_to_id(gpointer node) {
+static gint gaim_dbus_pointer_to_id(gpointer node) {
+	g_assert(map_node_id);
+
 	gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
-	g_assert(id);
+	g_return_val_if_fail(id, 0);
 	return id;
 }
 	
-gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusPointerType type) {
+static gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusPointerType type) {
 	if (type != GPOINTER_TO_INT(g_hash_table_lookup(map_id_type, 
 							GINT_TO_POINTER(id))))
 		return NULL;
@@ -425,16 +646,13 @@ gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusPointerType type) {
 /**************************************************************************/
 
 
-gboolean 
-dbus_server_init(void) 
+gboolean gaim_dbus_connect(GaimObject *object) 
 {
 	DBusGConnection *connection;
 	GError *error = NULL;
 	DBusGProxy *driver_proxy;
 	guint32 request_name_ret;
 
-	gaim_object_error_quark =
-		g_quark_from_static_string("org.gaim.GaimError");
 
 	gaim_debug_misc("dbus", "launching dbus server\n");
 					
@@ -453,14 +671,14 @@ dbus_server_init(void)
 
 	/* Instantiate the gaim dbus object and register it */
 	
-	gaim_object = g_object_new (GAIM_TYPE_OBJECT, NULL);
 
 
-	dbus_g_object_type_install_info (GAIM_TYPE_OBJECT,
+
+	dbus_g_object_type_install_info (GAIM_DBUS_TYPE_OBJECT,
 					 &dbus_glib_gaim_object_object_info);
 
 	dbus_g_connection_register_g_object (connection, DBUS_PATH_GAIM,
-					     gaim_object);
+					     (GObject*) object);
 
 
 	/* Obtain a proxy for the DBus object  */
@@ -493,6 +711,28 @@ dbus_server_init(void)
 	gaim_debug_misc ("dbus", "GLib test service has name '%s'\n", 
 			 DBUS_SERVICE_GAIM);
 	gaim_debug_misc ("dbus", "GLib test service entering main loop\n");
+
+	return TRUE;
+}
+
+
+static void gaim_object_init(GaimObject *object) 
+{
+
+	object->ping_signal_id =
+		gaim_dbus_signal_register(object, "PingSignal", 
+					  g_cclosure_marshal_VOID__STRING,
+					  1, G_TYPE_STRING);
+}
+
+
+gboolean gaim_dbus_init(void) 
+{
+	gaim_dbus_init_ids();
+	gaim_object_error_quark =
+		g_quark_from_static_string("org.gaim.GaimError");
+
+	gaim_dbus_object = GAIM_DBUS_OBJECT(g_object_new (GAIM_DBUS_TYPE_OBJECT, NULL));
 
 	return TRUE;
 }
