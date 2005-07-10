@@ -315,8 +315,8 @@ static fu32_t oscar_charset_check(const char *utf8)
 	int i = 0;
 	int charset = AIM_CHARSET_ASCII;
 
-	/* Determine how we can send this message.  Per the warnings elsewhere 
-	 * in this file, these little checks determine the simplest encoding 
+	/* Determine how we can send this message.  Per the warnings elsewhere
+	 * in this file, these little checks determine the simplest encoding
 	 * we can use for a given message send using it. */
 	while (utf8[i]) {
 		if ((unsigned char)utf8[i] > 0x7f) {
@@ -346,7 +346,7 @@ static fu32_t oscar_charset_check(const char *utf8)
 
 /*
  * Take a string of the form charset="bleh" where bleh is
- * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and 
+ * one of us-ascii, utf-8, iso-8859-1, or unicode-2-0, and
  * return a newly allocated string containing bleh.
  */
 static gchar *oscar_encoding_extract(const char *encoding)
@@ -440,6 +440,8 @@ gaim_plugin_oscar_convert_to_utf8(const fu8_t *data, fu16_t datalen, const char 
 }
 
 /*
+ * This attemps to decode an incoming IM into a UTF8 string.
+ *
  * We try decoding using two different character sets.  The charset
  * specified in the IM determines the order in which we attempt to
  * decode.  We do this because there are lots of broken ICQ clients
@@ -490,6 +492,9 @@ gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu1
 	return ret;
 }
 
+/*
+ * Figure out what encoding to use when sending a given outgoing message.
+ */
 static void
 gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *destsn, const gchar *from,
 										   gchar **msg, int *msglen_int,
