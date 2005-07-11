@@ -4,5 +4,7 @@
 *.la
 *.lo
 *.o
+*.dll
+*.lib
 Makefile
 Makefile.in

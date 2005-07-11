@@ -25,6 +25,7 @@ TREPIA = $(GAIM_PROTOS)/trepia
 GG = $(GAIM_PROTOS)/gg
 NOVELL = $(GAIM_PROTOS)/novell
 SILC = $(GAIM_PROTOS)/silc
+SAMETIME = $(GAIM_PROTOS)/sametime
 PO = ./po
 
 MAKENSIS := makensis.exe
@@ -57,6 +58,7 @@ GG_TYPE = PLUGIN
 NOVELL_TYPE = PLUGIN
 TREPIA_TYPE = PLUGIN
 SILC_TYPE = PLUGIN
+SAMETIME_TYPE = PLUGIN
 
 all:
 	cp config.h.mingw config.h
@@ -69,6 +71,7 @@ all:
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw
 	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw
+	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
@@ -89,6 +92,7 @@ install: all
 	$(MAKE) TYPE='$(GG_TYPE)' -C $(GG) -f Makefile.mingw install
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw install
 	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw install
+	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
@@ -115,6 +119,7 @@ clean:
 	$(MAKE) -C $(GG) -f Makefile.mingw clean
 	$(MAKE) -C $(NOVELL) -f Makefile.mingw clean
 	$(MAKE) -C $(SILC) -f Makefile.mingw clean
+	$(MAKE) -C $(SAMETIME) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw clean
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw clean
 	rm -rf config.h $(GAIM_INSTALL_DIR)

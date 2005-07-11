@@ -125,6 +125,7 @@ DLL_C_SRC =	\
 			idle.c \
 			imgstore.c \
 			log.c \
+			mime.c \
 			network.c \
 			notify.c \
 			plugin.c \

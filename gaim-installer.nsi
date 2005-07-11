@@ -612,6 +612,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
+    Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\relnot.dll"
     Delete "$INSTDIR\plugins\spellchk.dll"
