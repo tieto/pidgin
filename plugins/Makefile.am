@@ -14,7 +14,7 @@ endif
 
 SUBDIRS = \
 	docklet gaim-remote $(GEVOLUTION_DIR) gestures \
-	$(PERL_DIR) ssl $(TCL_DIR) ticker
+	$(PERL_DIR) ssl $(TCL_DIR) ticker musicmessaging
 
 plugindir = $(libdir)/gaim
 
