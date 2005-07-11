@@ -120,7 +120,7 @@ LIBS =		-lgtk-win32-2.0 \
 all: $(TARGET).dll
 
 install:
-	cp $(OSCAR_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(SAMETIME_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
 
 
 ##
