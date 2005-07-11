@@ -9,7 +9,7 @@ if PLUGINS
 
 plugin_LTLIBRARIES = musicmessaging.la
 
-ticker_la_SOURCES = \
+musicmessaging_la_SOURCES = \
 	musicmessaging.c
 
 endif
