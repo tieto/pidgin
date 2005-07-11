@@ -51,6 +51,7 @@ static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType err
 static void irc_close(GaimConnection *gc);
 static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags);
 static int irc_chat_send(GaimConnection *gc, int id, const char *what);
+static void irc_ping_server(GaimConnection *gc);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
 static void irc_input_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
@@ -627,6 +628,16 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 	return 0;
 }
 
+static void irc_ping_server(GaimConnection *gc)
+{
+	struct irc_conn *irc = gc->proto_data;
+	gchar *buf;
+
+	buf = irc_format(irc, "vv", "PING", irc->server);
+	irc_send(irc, buf);
+	g_free(buf);
+}
+
 static guint irc_nick_hash(const char *nick)
 {
 	char *lc;
@@ -778,7 +789,7 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper */
 	irc_chat_send,		/* chat_send */
-	NULL,					/* keepalive */
+	irc_ping_server,	/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
