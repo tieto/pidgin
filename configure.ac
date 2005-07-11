@@ -1260,6 +1260,7 @@ AC_OUTPUT([Makefile
 		   plugins/gevolution/Makefile
 		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
+		   plugins/musicmessaging/Makefile
 		   plugins/perl/Makefile
 		   plugins/perl/common/Makefile.PL
 		   plugins/ssl/Makefile
