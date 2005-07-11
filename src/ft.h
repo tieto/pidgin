@@ -539,6 +539,24 @@ void gaim_xfer_error(GaimXferType type, GaimAccount *account, const char *who, c
  */
 void gaim_xfer_update_progress(GaimXfer *xfer);
 
+/**
+ * Updates file transfer progress.
+ *
+ * @param xfer      The file transfer.
+ */
+void gaim_xfer_update_progress(GaimXfer *xfer);
+
+/**
+ * Displays a file transfer-related message in the conversation window
+ *
+ * This is a wrapper around gaim_conversation_write
+ *
+ * @param xfer The file transfer to which this message relates.
+ * @param message The message to display.
+ * @param gboolean Is this an error message?.
+ */
+void gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_error);
+
 /*@}*/
 
 /**************************************************************************/
