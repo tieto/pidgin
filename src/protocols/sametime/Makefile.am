@@ -1,4 +1,4 @@
-
+SUBDIRS = meanwhile
 
 EXTRA_DIST = # Makefile.mingw
 
@@ -6,46 +6,9 @@ EXTRA_DIST = # Makefile.mingw
 pkgdir = $(libdir)/gaim
 
 
-noinst_HEADERS = \
-	meanwhile/mw_channel.h \
-	meanwhile/mw_cipher.h \
-	meanwhile/mw_common.h \
-	meanwhile/mw_debug.h \
-	meanwhile/mw_error.h \
-	meanwhile/mw_message.h \
-	meanwhile/mw_service.h \
-	meanwhile/mw_session.h \
-	meanwhile/mw_srvc_aware.h \
-	meanwhile/mw_srvc_conf.h \
-	meanwhile/mw_srvc_ft.h \
-	meanwhile/mw_srvc_im.h \
-	meanwhile/mw_srvc_resolve.h \
-	meanwhile/mw_srvc_store.h \
-	meanwhile/mw_st_list.h \
-	meanwhile/mw_util.h \
-	sametime.h
+noinst_HEADERS = sametime.h
 
-meanwhile_SOURCES = \
-	meanwhile/channel.c \
-	meanwhile/cipher.c \
-	meanwhile/common.c \
-	meanwhile/error.c \
-	meanwhile/message.c \
-	meanwhile/mw_debug.c \
-	meanwhile/mw_util.c \
-	meanwhile/service.c \
-	meanwhile/session.c \
-	meanwhile/srvc_aware.c \
-	meanwhile/srvc_conf.c \
-	meanwhile/srvc_ft.c \
-	meanwhile/srvc_im.c \
-	meanwhile/srvc_store.c \
-	meanwhile/srvc_resolve.c \
-	meanwhile/st_list.c
-
-sametime_SOURCES = \
-	$(meanwhile_SOURCES) \
-	sametime.c
+sametime_SOURCES = sametime.c
 
 
 if STATIC_SAMETIME
@@ -61,11 +24,12 @@ st =
 pkg_LTLIBRARIES     = libsametime.la
 libsametime_la_SOURCES = $(sametime_SOURCES)
 
+
 endif
 
 
 libsametime_la_LDFLAGS = -module -avoid-version -no-undefined
-libsametime_la_LIBADD = $(GLIB_LIBS)
+libsametime_la_LIBADD = $(GLIB_LIBS) meanwhile/libmeanwhile.la
 
 
 AM_CFLAGS = \

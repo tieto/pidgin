@@ -1279,6 +1279,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/rendezvous/Makefile
 		   src/protocols/sametime/Makefile
+		   src/protocols/sametime/meanwhile/Makefile
 		   src/protocols/silc/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
