@@ -797,8 +797,8 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 
 		strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(data->file, "<html><head>");
-		fprintf(data->file, "<title>");
 		fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+		fprintf(data->file, "<title>");
 		fprintf(data->file, "Conversation with %s at %s on %s (%s)",
 			log->name, date, gaim_account_get_username(log->account), prpl);
 		fprintf(data->file, "</title></head><body>");
