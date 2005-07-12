@@ -146,8 +146,8 @@ bin_PROGRAMS = gaim gaim-remote
 
 if ENABLE_DBUS
 
-gaim_coresources  += dbus-server.c 
-gaim_coreheaders  += dbus-server.h
+dbus_sources = dbus-server.c  
+dbus_headers  = dbus-server.h
 
 # do not use gaim-client, use gaim-send instead
 # bin_PROGRAMS      += gaim-client
@@ -168,6 +168,7 @@ endif
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
+	$(dbus_sources) \
 	gtkcombobox.c \
 	gtkcelllayout.c \
 	gtkcellview.c \
@@ -206,6 +207,7 @@ gaim_SOURCES = \
 	session.c
 
 gaim_headers = \
+	$(dbus_headers) \
 	gaim.h \
 	gtkcombobox.h \
 	gtkcelllayout.h \
