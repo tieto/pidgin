@@ -4843,9 +4843,7 @@ static GtkTextTag *get_buddy_tag(GaimConversation *conv, const char *who) {
 
 	if (buddytag == NULL) {
 		buddytag = gtk_text_buffer_create_tag(
-				GTK_IMHTML(gtkconv->imhtml)->text_buffer, str,
-				"underline", PANGO_UNDERLINE_SINGLE,
-				"underline-set", TRUE, NULL);
+				GTK_IMHTML(gtkconv->imhtml)->text_buffer, str, NULL);
 
 		g_signal_connect(G_OBJECT(buddytag), "event",
 				G_CALLBACK(buddytag_event), conv);
