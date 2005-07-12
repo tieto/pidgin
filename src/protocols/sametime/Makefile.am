@@ -1,6 +1,6 @@
 SUBDIRS = meanwhile
 
-EXTRA_DIST = # Makefile.mingw
+EXTRA_DIST = Makefile.mingw
 
 
 pkgdir = $(libdir)/gaim
