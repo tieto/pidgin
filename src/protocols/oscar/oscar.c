@@ -3923,15 +3923,24 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		case 0x06: { /* Someone requested authorization */
 			if (i >= 6) {
 				struct name_data *data = g_new(struct name_data, 1);
-				gchar *dialog_msg = g_strdup_printf(
+				gchar *sn = g_strdup_printf("%u", args->uin);
+				gchar *reason;
+				gchar *dialog_msg;
+
+				if (msg2[5] != NULL)
+					reason = gaim_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg2[5], strlen(msg2[5]));
+				else
+					reason = g_strdup(_("No reason given."));
+
+				dialog_msg = g_strdup_printf(
 													_("The user %u wants to add %s to their buddy list for the following reason:\n%s"), 
-													args->uin, gaim_account_get_username(gc->account),
-													(msg2[5] ? msg2[5] : _("No reason given.")));
+													args->uin, gaim_account_get_username(gc->account), reason);
+				g_free(reason);
 				gaim_debug_info("oscar",
 						   "Received an authorization request from UIN %u\n",
 						   args->uin);
 				data->gc = gc;
-				data->name = g_strdup_printf("%u", args->uin);
+				data->name = sn;
 				data->nick = NULL;
 
 				gaim_request_action(gc, NULL, _("Authorization Request"),
@@ -4409,7 +4418,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
 		g_free(tmp);
 		if (away_utf8 != NULL) {
-			g_string_append_printf(str, "\n<hr>%s", away_utf8);
+			g_string_append_printf(str, "\n<hr>%s<br>", away_utf8);
 			g_free(away_utf8);
 		}
 	}
@@ -4419,7 +4428,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
 		g_free(tmp);
 		if (info_utf8 != NULL) {
-			g_string_append_printf(str, "\n<hr>%s", info_utf8);
+			g_string_append_printf(str, "\n<hr>%s<br>", info_utf8);
 			g_free(info_utf8);
 		}
 	}
@@ -6459,8 +6468,12 @@ static int gaim_ssi_authgiven(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
 	va_list ap;
-	char *sn, *msg;
-	gchar *dialog_msg, *nombre;
+	char *sn;
+	char *msg;
+	GaimAccount *account = gaim_connection_get_account(gc);
+	gchar *nombre;
+	gchar *reason;
+	gchar *dialog_msg;
 	struct name_data *data;
 	GaimBuddy *buddy;
 
@@ -6472,16 +6485,21 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug_info("oscar",
 			   "ssi: received authorization request from %s\n", sn);
 
-	buddy = gaim_find_buddy(gc->account, sn);
+	buddy = gaim_find_buddy(account, sn);
 	if (buddy && (gaim_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, gaim_buddy_get_alias_only(buddy));
 	else
 		nombre = g_strdup(sn);
 
+	if (msg != NULL)
+		reason = gaim_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
+	else
+		reason = g_strdup(_("No reason given."));
+
 	dialog_msg = g_strdup_printf(
 								 _("The user %s wants to add %s to their buddy list for the following reason:\n%s"), 
-								 nombre, gaim_account_get_username(gc->account),
-								 (msg ? msg : _("No reason given.")));
+								 nombre, gaim_account_get_username(account), reason);
+	g_free(reason);
 
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
