@@ -1170,6 +1170,9 @@ void gaim_blist_add_chat(GaimChat *chat, GaimGroup *group, GaimBlistNode *node)
 			cnode->parent->child = cnode->next;
 
 		ops->remove(gaimbuddylist, cnode);
+		/* ops->remove() cleaned up the cnode's ui_data, so we need to
+		 * reinitialize it */
+		ops->new_node(cnode);
 
 		gaim_blist_schedule_save();
 	}
