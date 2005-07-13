@@ -6401,7 +6401,7 @@ msgid "%s has set the topic to: %s"
 msgstr "%s har sat emnet til: %s"
 
 #: src/protocols/jabber/message.c:177
-#, c-format
+#, c-format, fuzzy
 msgid "The topic is: %s"
 msgstr "Emnet for %s er: %s"
 
@@ -9031,7 +9031,7 @@ msgid "<b>Channel Name:</b> %s"
 msgstr "<b>Kanal navn:</b> %s"
 
 #: src/protocols/silc/chat.c:120
-#, c-format
+#, c-format, fuzzy
 msgid "<br><b>User Count:</b> %d"
 msgstr "<br><b>Bruger antal:</b> %s"
 

@@ -16,7 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: plugins/autorecon.c:276
 msgid "Error Message Suppression"
@@ -1323,7 +1324,7 @@ msgid "Chats"
 msgstr "Чаты"
 
 #: src/blist.c:1352
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "%d buddy from group %s was not removed because its account was not logged "
 "in.  This buddy and the group were not removed.\n"
@@ -2805,7 +2806,7 @@ msgid "Close conversation"
 msgstr "Закрыть беседу"
 
 #: src/gtkconv.c:5169 src/gtkconv.c:5198 src/gtkconv.c:5294 src/gtkconv.c:5352
-#, c-format
+#, c-format, fuzzy
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d пользователь в комнате"
@@ -3582,7 +3583,7 @@ msgstr ""
 
 #. Descriptive label
 #: src/gtknotify.c:218
-#, c-format
+#, c-format, fuzzy
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] "%s имеет %d новое сообщение."
@@ -6965,7 +6966,7 @@ msgid ""
 msgstr ""
 
 #: src/protocols/msn/notification.c:1128
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
 "automatically be signed out at that time.  Please finish any conversations "
@@ -7991,14 +7992,14 @@ msgid "Decline"
 msgstr "Отклонить"
 
 #: src/protocols/oscar/oscar.c:3890
-#, c-format
+#, c-format, fuzzy
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Вы не получили %hu сообщение от %s, так как оно было некорректно."
 msgstr[1] "Вы не получили %hu сообщений от %s, так как они были некорректны."
 
 #: src/protocols/oscar/oscar.c:3899
-#, c-format
+#, c-format, fuzzy
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
@@ -8007,7 +8008,7 @@ msgstr[1] ""
 "Вы не получили %hu сообщений от %s, так как они были слишком велики."
 
 #: src/protocols/oscar/oscar.c:3908
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
 msgid_plural ""
@@ -8018,7 +8019,7 @@ msgstr[1] ""
 "Вы не получили %hu сообщений от %s, так как был превышен предел оценки."
 
 #: src/protocols/oscar/oscar.c:3917
-#, c-format
+#, c-format, fuzzy
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] ""
@@ -8027,7 +8028,7 @@ msgstr[1] ""
 "Вы не получили %hu сообщений от %s, потому что он слишком надоедлив."
 
 #: src/protocols/oscar/oscar.c:3926
-#, c-format
+#, c-format, fuzzy
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] ""
@@ -8036,7 +8037,7 @@ msgstr[1] ""
 "Вы не получили %hu сообщений от %s, потому что вы слишком надоедливы."
 
 #: src/protocols/oscar/oscar.c:3935
-#, c-format
+#, c-format, fuzzy
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Вы не получили %hu сообщение от %s по неизвестной причине."
@@ -8320,7 +8321,7 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5533
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
 "it for you."
@@ -8346,7 +8347,7 @@ msgid ""
 msgstr ""
 
 #: src/protocols/oscar/oscar.c:5615
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
 "truncated it for you."
@@ -10109,7 +10110,7 @@ msgid "Gaim - Save As..."
 msgstr "Gaim - Сохранить как..."
 
 #: src/protocols/toc/toc.c:2100
-#, c-format
+#, c-format, fuzzy
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] ""
@@ -10784,7 +10785,7 @@ msgid "%s is now known as %s.\n"
 msgstr "%s теперь известен как %s.\n"
 
 #: src/server.c:895
-#, c-format
+#, c-format, fuzzy
 msgid "(%d message)"
 msgid_plural "(%d messages)"
 msgstr[0] "(%d сообщение)"
@@ -10841,24 +10842,28 @@ msgid "Unknown."
 msgstr "Неизвестно."
 
 #: src/util.c:2387
+#, fuzzy
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "секунда"
 msgstr[1] "секунд"
 
 #: src/util.c:2401
+#, fuzzy
 msgid "day"
 msgid_plural "days"
 msgstr[0] "день"
 msgstr[1] "дней"
 
 #: src/util.c:2409
+#, fuzzy
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "час"
 msgstr[1] "часов"
 
 #: src/util.c:2417
+#, fuzzy
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "минута"

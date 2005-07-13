@@ -7391,7 +7391,7 @@ msgid "Could not get details for user %s (%s)."
 msgstr "Impossível obter detalhes do utilizador %s (%s)."
 
 #: src/protocols/novell/novell.c:736 src/protocols/novell/novell.c:882
-#, c-format
+#, c-format, fuzzy
 msgid "Unable to add user to privacy list (%s)."
 msgstr "Impossível adicionar %s à lista privada (%s)."
 

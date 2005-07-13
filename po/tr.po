@@ -3,10 +3,9 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Onur Küçüktunç onurcc@gmail.com, 2004.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: gaim\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-11-28 00:03-0500\n"
 "PO-Revision-Date: 2004-11-30 23:34+MET\n"
@@ -15,7 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-9\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: plugins/autorecon.c:234
 msgid "Error Message Suppression"
@@ -1362,7 +1361,6 @@ msgid_plural ""
 "%d buddies from group %s were not removed because their accounts were not "
 "logged in.  These buddies and the group were not removed.\n"
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/blist.c:1358
 msgid "Group not removed"
@@ -2717,7 +2715,6 @@ msgstr "Tartýþmayý kapat"
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d kiþi odada"
-msgstr[1] "%d kiþi odada"
 
 #: src/gtkconv.c:6079 src/gtkconv.c:6082
 msgid "<main>/Conversation/Close"
@@ -3384,7 +3381,6 @@ msgstr "Sistem Kayýtlarý"
 msgid "%s has %d new message."
 msgid_plural "%s has %d new messages."
 msgstr[0] "%s, %d yeni mesaj."
-msgstr[1] "%s, %d yeni mesaj."
 
 #: src/gtknotify.c:230
 #, c-format
@@ -6736,7 +6732,6 @@ msgid_plural ""
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/msn/notification.c:1152
 msgid "Syncing with server"
@@ -7709,14 +7704,12 @@ msgstr ""
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3878
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3887
 #, c-format
@@ -7725,28 +7718,24 @@ msgid ""
 msgid_plural ""
 "You missed %hu messages from %s because the rate limit has been exceeded."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3896
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3905
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3914
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:3968 src/protocols/oscar/oscar.c:4200
 #, c-format
@@ -8012,7 +8001,6 @@ msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:5511
 msgid "Profile too long."
@@ -8042,7 +8030,6 @@ msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  Gaim has "
 "truncated it for you."
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/oscar/oscar.c:5591
 msgid "Away message too long."
@@ -9742,7 +9729,6 @@ msgstr "Gaim - Farklý Kaydet..."
 msgid "%s requests %s to accept %d file: %s (%.2f %s)%s%s"
 msgid_plural "%s requests %s to accept %d files: %s (%.2f %s)%s%s"
 msgstr[0] ""
-msgstr[1] ""
 
 #: src/protocols/toc/toc.c:2100
 #, c-format
@@ -10397,7 +10383,6 @@ msgstr "%s ismini deðiþtirdi: %s.\n"
 msgid "(%d message)"
 msgid_plural "(%d messages)"
 msgstr[0] "(%d mesaj)"
-msgstr[1] "(%d mesaj)"
 
 #: src/server.c:958
 msgid "(1 message)"
@@ -10513,25 +10498,21 @@ msgstr "Bilinmeyen."
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "saniye"
-msgstr[1] "saniye"
 
 #: src/util.c:2401
 msgid "day"
 msgid_plural "days"
 msgstr[0] "gün"
-msgstr[1] "gün"
 
 #: src/util.c:2409
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "saat"
-msgstr[1] "saat"
 
 #: src/util.c:2417
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "dakika"
-msgstr[1] "dakika"
 
 #: src/util.c:2834
 msgid "g003: Error opening connection.\n"

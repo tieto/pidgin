@@ -17,6 +17,7 @@ msgstr ""
 "X-Generator: KBabel 1.0.2\n"
 "X-Poedit-Language: Albanian\n"
 "X-Poedit-Country: ALBANIA\n"
+"Plural-Form: nplurals=2; plural=n != 1;\n"
 
 #: plugins/autorecon.c:281
 msgid "Error Message Suppression"
