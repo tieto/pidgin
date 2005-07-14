@@ -314,5 +314,3 @@ swój wk³ad w poznanie protoko³u mieli:
 
 ----------------------------------------------------------------------------
 
-$Id: protocol.txt 2819 2001-11-27 22:54:32Z warmenhoven $
-
