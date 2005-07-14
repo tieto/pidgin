@@ -3,8 +3,6 @@
  *
  *      Created by:     Marc Horowitz
  *
- *      $Id: ZhmStat.c 12553 2005-04-25 01:53:01Z thekingant $
- *
  *      Copyright (c) 1996 by the Massachusetts Institute of Technology.
  *      For copying and distribution information, see the file
  *      "mit-copyright.h". 

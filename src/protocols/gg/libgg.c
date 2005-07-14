@@ -1,5 +1,3 @@
-/* $Id: libgg.c 12166 2005-03-02 11:54:08Z nosnilmot $ */
-
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
  *                     Robert J. Wo¼ny <speedy@ziew.org>
@@ -63,16 +61,6 @@ int gg_debug_level = (GG_DEBUG_NET | GG_DEBUG_TRAFFIC | GG_DEBUG_DUMP | GG_DEBUG
 int gg_http_use_proxy = 0;
 int gg_http_proxy_port = 0;
 char *gg_http_proxy_host = NULL;
-
-#ifndef lint 
-
-static char rcsid[]
-#ifdef __GNUC__
-__attribute__ ((unused))
-#endif
-= "$Id: libgg.c 12166 2005-03-02 11:54:08Z nosnilmot $";
-
-#endif 
 
 /*
  * fix32() // funkcja wewnêtrzna

@@ -3,15 +3,11 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
 
 #include "internal.h"
 #ifdef WIN32
@@ -35,13 +31,6 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <utmp.h>
-#endif
-
-#ifndef lint
-static const char rcsid_Zinternal_c[] =
-  "$Id: Zinternal.c 12553 2005-04-25 01:53:01Z thekingant $";
-static const char copyright[] =
-  "Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.";
 #endif
 
 extern char *inet_ntoa ();

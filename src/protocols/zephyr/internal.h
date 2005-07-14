@@ -1,12 +1,6 @@
 
 #ifndef __INTERNAL_H__
 #define __INTERNAL_H__
-#if 0
-struct timezone {
-	int tz_minuteswest;
-	int tz_dsttime;
-};
-#endif
 
 #include <sysdep.h>
 

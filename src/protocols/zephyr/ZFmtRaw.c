@@ -3,18 +3,10 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: chipx86 $
- *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
-
-#ifndef lint
-static char rcsid_ZFormatRawNotice_c[] = "$Id: ZFmtRaw.c 9554 2004-04-24 09:02:28Z chipx86 $";
-#endif
 
 #include "internal.h"
 

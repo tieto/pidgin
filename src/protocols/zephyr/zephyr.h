@@ -3,10 +3,6 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: thekingant $
- *	$Id: zephyr.h 12553 2005-04-25 01:53:01Z thekingant $
- *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of
  *	Technology. For copying and distribution information, see the
  *	file "mit-copyright.h".

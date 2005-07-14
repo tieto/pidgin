@@ -3,20 +3,12 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Id: ZMkAuth.c 12553 2005-04-25 01:53:01Z thekingant $ */
 
 #include "internal.h"
-
-#ifndef lint
-static const char rcsid_ZMakeAuthentication_c[] = "$Id: ZMkAuth.c 12553 2005-04-25 01:53:01Z thekingant $";
-#endif
 
 #ifndef ERROR_TABLE_BASE_krb
 #define ERROR_TABLE_BASE_krb (39525376L)

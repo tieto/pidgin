@@ -2,21 +2,10 @@
  * It contains the ZCheckIfNotice/select loop used for waiting for
  * a notice, with a timeout.
  *
- *	Created by:	<Joe Random Hacker>
- *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-
-#include "mit-copyright.h"
-
-#ifndef lint
-static char rcsid_ZWaitForNotice_c[] = "$Zephyr$";
-#endif
 
 #include "internal.h"
 

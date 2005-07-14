@@ -1,8 +1,4 @@
 /*
- * $Header$
- * $Source$
- * $Locker$
- *
  * Copyright 1987 by the Student Information Processing Board
  * of the Massachusetts Institute of Technology
  *
@@ -10,14 +6,8 @@
  */
 
 #include "error_table.h"
-#include "mit-sipb-copyright.h"
 #include "com_err.h"
 #include <sysdep.h>
-
-static const char rcsid[] =
-    "$Header$";
-static const char copyright[] =
-    "Copyright 1986, 1987, 1988 by the Student Information Processing Board\nand the department of Information Systems\nof the Massachusetts Institute of Technology";
 
 char *error_table_name_r __P((int, char *));
 

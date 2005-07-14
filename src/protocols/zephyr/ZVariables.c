@@ -4,18 +4,10 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1987 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
-
-#ifndef lint
-static char rcsid_ZVariables_c[] = "$Header$";
-#endif
 
 #include "internal.h"
 #include "util.h"

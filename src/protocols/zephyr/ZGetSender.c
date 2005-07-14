@@ -3,21 +3,12 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1987, 1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
 
 #include "internal.h"
-
-#ifndef lint
-static const char rcsid_ZGetSender_c[] =
-    "$Id: ZGetSender.c 12553 2005-04-25 01:53:01Z thekingant $";
-#endif
 
 #ifndef WIN32
 #include <pwd.h>

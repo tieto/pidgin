@@ -3,19 +3,10 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: chipx86 $
- *
  *	Copyright (c) 1987,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
-
-#ifndef lint
-static char rcsid_ZCheckAuthentication_c[] =
-    "$Zephyr: /mit/zephyr/src/lib/RCS/ZCheckAuthentication.c,v 1.14 89/03/24 14:17:38 jtkohl Exp Locker: raeburn $";
-#endif
 
 #include "internal.h"
 

@@ -1,5 +1,3 @@
-/* $Id: common.c 10064 2004-06-11 03:58:48Z eblanton $ */
-
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
  *                     Robert J. Wo¼ny <speedy@ziew.org>

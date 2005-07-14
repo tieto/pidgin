@@ -4,21 +4,12 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: chipx86 $
- *
  *	Copyright (c) 1987,1988,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
 
 #include "internal.h"
-
-#ifndef lint
-static const char rcsid_ZRetrieveSubscriptions_c[] =
-    "$Id: ZRetSubs.c 9554 2004-04-24 09:02:28Z chipx86 $";
-#endif
 
 static Code_t Z_RetSubs ();
 

@@ -1,5 +1,3 @@
-/* $Id: libgg.h 11615 2004-12-16 03:50:54Z faceprint $ */
-
 /*
  *  (C) Copyright 2001 Wojtek Kaniewski <wojtekka@irc.pl>,
  *                     Robert J. Wo¼ny <speedy@ziew.org>

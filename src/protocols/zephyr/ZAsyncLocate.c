@@ -3,20 +3,12 @@
  *
  *	Created by:	Marc Horowitz
  *
- *	$Source$
- *	$Author: thekingant $
- *
  *	Copyright (c) 1990,1991 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
 
 #include "internal.h"
-
-#ifndef lint
-static const char rcsid_ZAsyncLocate_c[] = "$Id: ZAsyncLocate.c 12553 2005-04-25 01:53:01Z thekingant $";
-#endif
 
 Code_t ZRequestLocations(user, zald, kind, auth)
      const char *user;

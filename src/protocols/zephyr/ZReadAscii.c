@@ -3,36 +3,13 @@
  *
  *	Created by:	Robert French
  *
- *	$Source$
- *	$Author: chipx86 $
- *
  *	Copyright (c) 1987, 1990 by the Massachusetts Institute of Technology.
  *	For copying and distribution information, see the file
  *	"mit-copyright.h". 
  */
-/* $Header$ */
-
-#ifndef lint
-static char rcsid_ZReadAscii_c[] = "$Header$";
-#endif /* lint */
 
 #include "internal.h"
 #include <assert.h>
-
-#if 0
-static __inline__
-int
-Z_cnvt_xtoi (char c)
-{
-    c -= '0';
-    if (c < 10)
-	return c;
-    c -= 'A'-'9'-1;
-    if (c < 16)
-	return c;
-    return -1;
-}
-#endif
 
 #define Z_cnvt_xtoi(c)  ((temp=(c)-'0'),(temp<10)?temp:((temp-='A'-'9'-1),(temp<16)?temp:-1))
 

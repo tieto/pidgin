@@ -1,6 +1,5 @@
 /*
  * gaim - Gadu-Gadu Protocol Plugin
- * $Id: gg.c 12919 2005-06-28 06:13:07Z deryni9 $
  *
  * Copyright (C) 2001 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
