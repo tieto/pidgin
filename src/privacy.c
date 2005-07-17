@@ -170,6 +170,40 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 	return TRUE;
 }
 
+gboolean
+gaim_privacy_check(GaimAccount *account, const char *who)
+{
+	GSList *list;
+
+	switch (account->perm_deny) {
+		case GAIM_PRIVACY_ALLOW_ALL:
+			return TRUE;
+
+		case GAIM_PRIVACY_DENY_ALL:
+			return FALSE;
+
+		case GAIM_PRIVACY_ALLOW_USERS:
+			for (list=account->permit; list!=NULL; list=list->next) {
+				if (!gaim_utf8_strcasecmp(who, gaim_normalize(account, (char *)list->data)))
+					return TRUE;
+			}
+			return FALSE;
+
+		case GAIM_PRIVACY_DENY_USERS:
+			for (list=account->deny; list!=NULL; list=list->next) {
+				if (!gaim_utf8_strcasecmp(who, gaim_normalize( account, (char *)list->data )))
+					return FALSE;
+			}
+			return TRUE;
+
+		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+			return (gaim_find_buddy(account, who) != NULL);
+
+		default:
+			g_return_val_if_reached(TRUE);
+	}
+}
+
 void
 gaim_privacy_set_ui_ops(GaimPrivacyUiOps *ops)
 {

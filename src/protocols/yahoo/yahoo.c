@@ -73,63 +73,30 @@ yahoo_rem_permit(GaimConnection *gc, const char *who)
 gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
-	GSList *list;
-	gboolean permitted=FALSE;
+	gboolean permitted;
 
-	switch (gc->account->perm_deny) {
-		case GAIM_PRIVACY_ALLOW_ALL:
-			permitted = TRUE;
-			break;
+	permitted = gaim_privacy_check(gc->account, who);
 
-		case GAIM_PRIVACY_DENY_ALL:
+	/* print some debug info */
+	if (!permitted) {
+		char *deb = NULL;
+		switch (gc->account->perm_deny)
+		{
+			case GAIM_PRIVACY_DENY_ALL:
+				deb = "GAIM_PRIVACY_DENY_ALL";		break;
+			case GAIM_PRIVACY_DENY_USERS:
+				deb = "GAIM_PRIVACY_DENY_USERS";	break;
+			case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+				deb = "GAIM_PRIVACY_ALLOW_BUDDYLIST"; break;
+		}
+		if(deb)
 			gaim_debug_info("yahoo",
-			    "%s blocked data received from %s (GAIM_PRIVACY_DENY_ALL)\n",
-			    gc->account->username,who);
-			break;
-
-		case GAIM_PRIVACY_ALLOW_USERS:
-			for( list=gc->account->permit; list!=NULL; list=list->next ) {
-				if ( !gaim_utf8_strcasecmp(who, gaim_normalize(gc->account,
-					      (char *)list->data)) ) {
-					permitted=TRUE;
-					gaim_debug_info("yahoo",
-					    "%s allowed data received from %s (GAIM_PRIVACY_ALLOW_USERS)\n",
-					    gc->account->username,who);
-					break;
-				}
-			}
-			break;
-
-		case GAIM_PRIVACY_DENY_USERS:
-			/* seeing we're letting everyone through, except the deny list*/
-			permitted=TRUE;
-			for( list=gc->account->deny; list!=NULL; list=list->next ) {
-				if ( !gaim_utf8_strcasecmp(who, gaim_normalize( gc->account,
-					      (char *)list->data )) ) {
-					permitted=FALSE;
-					gaim_debug_info("yahoo",
-					    "%s blocked data received from %s (GAIM_PRIVACY_DENY_USERS)\n",
-					    gc->account->username,who);
-					break;
-				}
-			}
-			break;
-
-		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
-			if ( gaim_find_buddy(gc->account,who) != NULL ) {
-				permitted = TRUE;
-			} else {
-				gaim_debug_info("yahoo",
-				    "%s blocked data received from %s (GAIM_PRIVACY_ALLOW_BUDDYLIST)\n",
-				    gc->account->username,who);
-			}
-		break;
-
-		default:
-			gaim_debug_warning("yahoo", "Privacy setting was unknown.  If you can "
-							   "reproduce this, please file a bug report.\n");
-			permitted = FALSE;
-			break;
+				"%s blocked data received from %s (%s)\n",
+				gc->account->username,who, deb);
+	} else if (gc->account->perm_deny == GAIM_PRIVACY_ALLOW_USERS) {
+		gaim_debug_info("yahoo",
+			"%s allowed data received from %s (GAIM_PRIVACY_ALLOW_USERS)\n",
+			gc->account->username,who);
 	}
 
 	return permitted;

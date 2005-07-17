@@ -64,6 +64,9 @@ version 2.0.0:
 	           parameters to bring the function up-to-date with GaimLogLogger
 	* Changed: gaim_conv_window_remove_conversation()'s last argument to
 	           be a GaimConversation.
+	* Added:   gaim_privacy_check(), to check if a given user is allowed to
+	           to send messages to the specified account
+	* Changed: A new blocked icon: pixmaps/status/default/blocked.png
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

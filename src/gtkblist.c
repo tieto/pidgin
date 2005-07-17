@@ -3079,6 +3079,27 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		{
 			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.25, FALSE);
 		}
+
+		if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy)))
+		{
+			GdkPixbuf *emblem;
+			char *filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "blocked.png", NULL);
+
+			emblem = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+			if (emblem)
+			{
+				gdk_pixbuf_composite(emblem, scale,
+						0, 0, scalesize, scalesize,
+						0, 0,
+						(double)scalesize / gdk_pixbuf_get_width(emblem),
+						(double)scalesize / gdk_pixbuf_get_height(emblem),
+						GDK_INTERP_BILINEAR,
+						224);
+				g_object_unref(emblem);
+			}
+		}
 	}
 
 	return scale;

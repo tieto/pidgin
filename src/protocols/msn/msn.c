@@ -458,8 +458,6 @@ msn_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	{
 		if (user->mobile)
 			emblems[i++] = "wireless";
-		if (user->list_op & (1 << MSN_LIST_BL))
-			emblems[i++] = "blocked";
 		if (!(user->list_op & (1 << MSN_LIST_RL)))
 			emblems[i++] = "nr";
 	}

@@ -107,6 +107,17 @@ gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
 gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
 								  gboolean local_only);
 
+
+/**
+ * Check the privacy-setting for a user.
+ *
+ * @param account	The account.
+ * @param who		The name of the user.
+ *
+ * @return TRUE if the user is allowed to send messages, or @c FALSE otherwise.
+ */
+gboolean gaim_privacy_check(GaimAccount *account, const char *who);
+
 /**
  * Sets the UI operations structure for the privacy subsystem.
  *

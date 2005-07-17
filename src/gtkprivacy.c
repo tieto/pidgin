@@ -31,6 +31,7 @@
 #include "request.h"
 #include "util.h"
 
+#include "gtkblist.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 
@@ -271,6 +272,7 @@ type_changed_cb(GtkOptionMenu *optmenu, GaimGtkPrivacyDialog *dialog)
 	}
 
 	gaim_blist_schedule_save();
+	gaim_gtk_blist_refresh(gaim_get_blist());
 }
 
 static void
