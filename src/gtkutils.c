@@ -1368,20 +1368,6 @@ typedef struct {
 	char *who;
 } _DndData;
 
-static void dnd_set_icon_ok_cb(_DndData *data)
-{
-	free(data->filename);
-	free(data->who);
-	free(data);
-}
-
-static void dnd_set_icon_cancel_cb(_DndData *data)
-{
-	free(data->filename);
-	free(data->who);
-	free (data);
-}
-
 static void dnd_image_ok_callback(_DndData *data, int choice)
 {
 	char *filedata;
@@ -1448,6 +1434,18 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 }
 
 static void dnd_image_cancel_callback(_DndData *data, int choice)
+{
+	free(data->filename);
+	free(data->who);
+	free(data);
+}
+
+static void dnd_set_icon_ok_cb(_DndData *data)
+{
+	dnd_image_ok_callback(data, DND_BUDDY_ICON);
+}
+
+static void dnd_set_icon_cancel_cb(_DndData *data)
 {
 	free(data->filename);
 	free(data->who);
