@@ -798,21 +798,71 @@ static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pk
 	g_free(escmsg);
 }
 
+struct yahoo_add_request {
+	GaimConnection *gc;
+	char *id;
+	char *who;
+	char *msg;
+};
+
+static void
+yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req, const char *msg) {
+	gaim_account_notify_added(add_req->gc->account, add_req->id,
+			add_req->who, NULL, add_req->msg);
+
+	g_free(add_req->id);
+	g_free(add_req->who);
+	g_free(add_req->msg);
+	g_free(add_req);
+}
+
+static void
+yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
+	struct yahoo_packet *pkt;
+	char *encoded_msg = NULL;
+	struct yahoo_data *yd = add_req->gc->proto_data;
+
+	if (msg)
+		encoded_msg = yahoo_string_encode(add_req->gc, msg, NULL);
+
+	pkt = yahoo_packet_new(YAHOO_SERVICE_REJECTCONTACT,
+			YAHOO_STATUS_AVAILABLE, 0);
+
+	yahoo_packet_hash(pkt, "sss",
+			1, gaim_normalize(add_req->gc->account,
+				gaim_account_get_username(
+					gaim_connection_get_account(
+						add_req->gc))),
+			7, add_req->who,
+			14, encoded_msg ? encoded_msg : "");
+
+	yahoo_packet_send_and_free(pkt, yd);
+
+	g_free(encoded_msg);
+
+	g_free(add_req->id);
+	g_free(add_req->who);
+	g_free(add_req->msg);
+	g_free(add_req);
+}
+
 static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
-	char *id = NULL;
-	char *who = NULL;
-	char *msg = NULL, *tmpmsg = NULL;
+	struct yahoo_add_request *add_req;
+	char *msg = NULL;
 	GSList *l = pkt->hash;
+
+	add_req = g_new0(struct yahoo_add_request, 1);
+	add_req->gc = gc;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
 
 		switch (pair->key) {
 		case 1:
-			id = pair->value;
+			add_req->id = g_strdup(pair->value);
 			break;
 		case 3:
-			who = pair->value;
+			add_req->who = g_strdup(pair->value);
 			break;
 		case 15: /* time, for when they add us and we're offline */
 			break;
@@ -823,12 +873,33 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 		l = l->next;
 	}
 
-	if (id) {
+	if (add_req->id) {
+		char *prompt_msg;
 		if (msg)
-			tmpmsg = yahoo_string_decode(gc, msg, FALSE);
-		gaim_account_notify_added(gc->account, id, who, NULL, tmpmsg);
-		if (tmpmsg)
-			g_free(tmpmsg);
+			add_req->msg = yahoo_string_decode(gc, msg, FALSE);
+
+		/* TODO: this is almost exactly the same as what MSN does,
+		 * this should probably be moved to the core.
+		 * */
+		prompt_msg = g_strdup_printf(_("The user %s wants to add %s to "
+					"his or her buddy list%s%s."),
+				add_req->who, add_req->id,
+				add_req->msg ? ": " : "",
+				add_req->msg ? add_req->msg : "");
+		gaim_request_input(gc, NULL, prompt_msg,
+				_("Message (optional) :"),
+				NULL, TRUE, FALSE, NULL,
+				_("Authorize"), G_CALLBACK(
+					yahoo_buddy_add_authorize_cb),
+				_("Deny"), G_CALLBACK(
+					yahoo_buddy_add_deny_cb),
+				add_req);
+		g_free(prompt_msg);
+	} else {
+		g_free(add_req->id);
+		g_free(add_req->who);
+		/*g_free(add_req->msg);*/
+		g_free(add_req);
 	}
 }
 
