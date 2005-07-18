@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	login.png \
 	logout.png \
 	male.png \
+	meanwhile.png \
 	msn.png \
 	na.png \
 	napster.png \
@@ -32,7 +33,6 @@ EXTRA_DIST = \
 	offline.png \
 	op.png \
 	rendezvous.png \
-	sametime.png \
 	secure.png \
 	silc.png \
 	trepia.png \
