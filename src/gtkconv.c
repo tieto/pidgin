@@ -3554,7 +3554,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 		0, NULL },
-	{ N_("/Conversation/_Get Info"), "<CTL>G", menu_get_info_cb, 0,
+	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INFO },
 	{ N_("/Conversation/_Warn..."), NULL, menu_warn_cb, 0,
 	  "<StockItem>", GAIM_STOCK_WARN },
