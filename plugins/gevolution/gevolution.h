@@ -127,9 +127,9 @@ gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
 
 GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(GaimBuddy *buddy);
 
-
 GtkTreeModel *gevo_addrbooks_model_new(void);
 void gevo_addrbooks_model_unref(GtkTreeModel *model);
 void gevo_addrbooks_model_populate(GtkTreeModel *model);
+EContact *gevo_search_buddy_in_contacts(GaimBuddy *buddy, EBookQuery *query);
 
 #endif /* _GEVOLUTION_H_ */

@@ -24,6 +24,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "prefs.h"
+#include "notify.h"
 #include "signals.h"
 #include "util.h"
 #include "version.h"
@@ -40,6 +41,8 @@
 #include <libebook/e-book-listener.h>
 #include <libedata-book/e-data-book-factory.h>
 #include <bonobo/bonobo-main.h>
+
+#include <glib.h>
 
 #define GEVOLUTION_PLUGIN_ID "gtk-x11-gevolution"
 
@@ -211,6 +214,63 @@ menu_item_activate_cb(GaimBlistNode *node, gpointer user_data)
 }
 
 static void
+menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
+{
+	GaimBuddy *buddy = (GaimBuddy *)node;
+	EContact *contact;
+	char *mail = NULL;
+
+	contact = gevo_search_buddy_in_contacts(buddy, NULL);
+
+	if (contact != NULL)
+	{
+		mail = g_strdup(e_contact_get(contact, E_CONTACT_EMAIL_1));
+		g_object_unref(contact);
+	}
+	else
+	{
+		GaimAccount *account = gaim_buddy_get_account(buddy);
+		const char *prpl_id = gaim_account_get_protocol_id(account);
+
+		if (!strcmp(prpl_id, "prpl-msn"))
+		{
+			mail = g_strdup(gaim_normalize(account,
+										   gaim_buddy_get_name(buddy)));
+		}
+		else if (!strcmp(prpl_id, "prpl-yahoo"))
+		{
+			mail = g_strdup_printf("%s@yahoo.com",
+								   gaim_normalize(account,
+												  gaim_buddy_get_name(buddy)));
+		}
+	}
+
+	if (mail != NULL)
+	{
+		char *app = g_find_program_in_path("evolution");
+		if (app != NULL)
+		{
+			char *command_line = g_strdup_printf("%s mailto:%s", app, mail);
+			g_free(app);
+			g_free(mail);
+
+			g_spawn_command_line_async(command_line, NULL);
+			g_free(command_line);
+		}
+		else
+		{
+			gaim_notify_error(NULL, NULL, _("Unable to send e-mail"),
+							  _("The evolution executable was not found in the PATH."));
+		}
+	}
+	else
+	{
+		gaim_notify_error(NULL, NULL, _("Unable to send e-mail"),
+						  _("The specified buddy was not found in the Evolution Contacts."));
+	}
+}
+
+static void
 blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 {
 	GaimBlistNodeAction *act;
@@ -225,6 +285,10 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 	{
 		act = gaim_blist_node_action_new(_("Add to Address Book"),
 		                                 menu_item_activate_cb,
+		                                 NULL, NULL);
+		*menu = g_list_append(*menu, act);
+		act = gaim_blist_node_action_new(_("Send E-Mail"),
+		                                 menu_item_send_mail_activate_cb,
 		                                 NULL, NULL);
 		*menu = g_list_append(*menu, act);
 	}
@@ -470,9 +534,9 @@ static GaimPluginInfo info =
 	N_("Evolution Integration"),                      /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Provides integration with Ximian Evolution."),
+	N_("Provides integration with Evolution."),
 	                                                  /**  description    */
-	N_("Provides integration with Ximian Evolution."),
+	N_("Provides integration with Evolution."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
