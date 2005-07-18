@@ -2653,7 +2653,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Разговор/Покана..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Разговор/Псе_вдоним..."
 
 #: src/gtkconv.c:3590
@@ -2699,7 +2699,7 @@ msgstr "/Настройки/Показване на лентата за _фор�
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "iChat - индикатор за времето"
 
 #: src/gtkconv.c:3656

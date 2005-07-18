@@ -2644,7 +2644,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Konverzace/_Pozvat..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Konverzace/A_lias..."
 
 #: src/gtkconv.c:3590
@@ -2689,7 +2689,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Možnosti/Zobrazovat lištu nástrojů _Formátování"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Možnosti/Zobrazovat _časové značky"
 
 #: src/gtkconv.c:3656

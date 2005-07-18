@@ -2677,7 +2677,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Бесіда/_Запросити..."
 
 #: src/gtkconv.c:3647
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Бесіда/_Псевдонім..."
 
 #: src/gtkconv.c:3649
@@ -2722,7 +2722,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Параметри/Показувати панель _форматування"
 
 #: src/gtkconv.c:3673
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Параметри/Показувати _час"
 
 #: src/gtkconv.c:3715

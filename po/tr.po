@@ -2515,7 +2515,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/_Tartýþma/Davet _Et"
 
 #: src/gtkconv.c:3647
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/_Tartýþma/_Ýsmi Deðiþtir"
 
 #: src/gtkconv.c:3649
@@ -2560,7 +2560,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/_Seçenekler/_Biçimleme Çubuðunu Göster"
 
 #: src/gtkconv.c:3673
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/_Seçenekler/_Zamaný Göster"
 
 #: src/gtkconv.c:3715

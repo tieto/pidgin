@@ -2650,7 +2650,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Gesprek/_Uitnodigen..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Gesprek/A_lias..."
 
 #: src/gtkconv.c:3590
@@ -2695,7 +2695,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opties/_Opmaakwerkbalk weergeven"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Opties/Berichttijd _weergeven"
 
 #: src/gtkconv.c:3656

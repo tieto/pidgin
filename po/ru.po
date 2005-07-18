@@ -2619,7 +2619,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Беседа/Пригласить..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Беседа/Псевдоним..."
 
 #: src/gtkconv.c:3590
@@ -2664,7 +2664,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Параметры/Показывать панель инструментов форматирования"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Параметры/Показывать время сообщений"
 
 #: src/gtkconv.c:3656

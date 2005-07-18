@@ -2660,7 +2660,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Samtale/In_vitér..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Samtale/A_lias..."
 
 #: src/gtkconv.c:3590
@@ -2705,7 +2705,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Valgmuligheder/Vis _formatteringslinje"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Valgmuligheder/Vis _tidsstempler"
 
 #: src/gtkconv.c:3656

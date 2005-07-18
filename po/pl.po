@@ -2655,7 +2655,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Rozmowa/Z_apro¶..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Rozmowa/A_lias..."
 
 #: src/gtkconv.c:3590
@@ -2700,7 +2700,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opcje/Pasek narzêdzio_wy formatowania"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Opcje/Datown_ik"
 
 #: src/gtkconv.c:3656

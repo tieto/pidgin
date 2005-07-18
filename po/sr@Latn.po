@@ -2646,7 +2646,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Razgovor/_Pozovi..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Razgovor/_Nadeni ime..."
 
 #: src/gtkconv.c:3590
@@ -2691,7 +2691,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Izbori/Prikaži _alatke za formatiranje"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Izbori/Prikazuj vremenske oznake"
 
 #: src/gtkconv.c:3656

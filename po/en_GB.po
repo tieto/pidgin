@@ -2639,8 +2639,8 @@ msgid "/Conversation/In_vite..."
 msgstr "/Conversation/In_vite..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
-msgstr "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
+msgstr "/Conversation/Al_ias..."
 
 #: src/gtkconv.c:3590
 msgid "/Conversation/_Block..."
@@ -2684,8 +2684,8 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Options/Show Formatting _Toolbar"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
-msgstr "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
+msgstr "/Options/Show Ti_mestamps"
 
 #: src/gtkconv.c:3656
 msgid "/Conversation/View Log"

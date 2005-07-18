@@ -2838,7 +2838,7 @@ msgstr "वार्तालाप"
 #  Conversations
 #: src/gtkconv.c:3588
 #, fuzzy
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "वार्तालाप"
 
 #  Conversations
@@ -2896,7 +2896,7 @@ msgstr ""
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "आईचैट अंकित समय"
 
 #  Conversations

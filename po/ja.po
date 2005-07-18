@@ -2637,7 +2637,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/会話/招待(_V)..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/会話/エイリアス(_L)..."
 
 #: src/gtkconv.c:3590
@@ -2682,7 +2682,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/オプション/書式ツールバーを表示する(_T)"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/オプション/タイムスタンプを表示する(_I)"
 
 #: src/gtkconv.c:3656

@@ -2660,7 +2660,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Konversation/_Bjud in..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Konversation/_Alias..."
 
 #: src/gtkconv.c:3590
@@ -2707,7 +2707,7 @@ msgstr "/Alternativ/Visa formateringsverktyg"
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "iChat-tidsstämpel"
 
 #: src/gtkconv.c:3656

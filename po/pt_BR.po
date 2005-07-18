@@ -2631,7 +2631,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Conversa/_Convidar..."
 
 #: src/gtkconv.c:3506
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Conversa/A_pelidar..."
 
 #: src/gtkconv.c:3508
@@ -2676,7 +2676,7 @@ msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Opções/Mostrar barras de ferramen_tas de formatação"
 
 #: src/gtkconv.c:3532
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Opções/Mostrar marcações de t_empo"
 
 #: src/gtkconv.c:3576

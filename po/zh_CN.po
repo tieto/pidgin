@@ -2766,7 +2766,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/对话(C)/邀请(_V)..."
 
 #: src/gtkconv.c:3566
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/对话(C)/别名(_L)..."
 
 #: src/gtkconv.c:3568
@@ -2811,7 +2811,7 @@ msgid "/Options/Show Formatting _Toolbars"
 msgstr "/选项(O)/显示格式工具栏(_T)"
 
 #: src/gtkconv.c:3592
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/选项(O)/显示时间戳(_I)"
 
 #: src/gtkconv.c:3593

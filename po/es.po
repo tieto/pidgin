@@ -2709,7 +2709,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Conversación/In_vitar..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Conversación/A_podo..."
 
 #: src/gtkconv.c:3590
@@ -2754,7 +2754,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opciones/Mostrar _barra de formato"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Opciones/Mostrar _marcas de tiempo"
 
 #: src/gtkconv.c:3656

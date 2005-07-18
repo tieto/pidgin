@@ -2666,7 +2666,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Cuộc thoại/_Mời..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Cuộc thoại/Bí _danh..."
 
 #: src/gtkconv.c:3590
@@ -2712,7 +2712,7 @@ msgstr "/Tùy chọn/Hiển thị thanh định _dạng"
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "Nhãn thời gian iChat"
 
 #: src/gtkconv.c:3656

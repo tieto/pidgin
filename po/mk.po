@@ -2552,7 +2552,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Разговор/П_окани..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Разговор/А_лиас..."
 
 #: src/gtkconv.c:3590
@@ -2597,7 +2597,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Опции/Прикажи алатник за форматирање"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr ""
 
 #: src/gtkconv.c:3656

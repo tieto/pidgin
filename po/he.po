@@ -2593,7 +2593,7 @@ msgstr "הפעל _במסוף"
 
 #: src/gtkconv.c:3588
 #, fuzzy
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "שנוי &כינוי..."
 
 #: src/gtkconv.c:3590
@@ -2646,7 +2646,7 @@ msgstr "הצג או הסתר סרגל כלים"
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "הטבע חותמת זמן על שיחות"
 
 #: src/gtkconv.c:3656

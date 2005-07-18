@@ -2862,7 +2862,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Bashkëbisedim/F_to..."
 
 #: src/gtkconv.c:3540
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Bashkëbisedim/A_lias..."
 
 #: src/gtkconv.c:3542
@@ -2908,7 +2908,7 @@ msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Mundësi/Shfaq _Panele Formatimi"
 
 #: src/gtkconv.c:3566
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Mundësi/Shfaq _Vula kohore"
 
 #: src/gtkconv.c:3567

@@ -3563,7 +3563,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>" },
 
-	{ N_("/Conversation/A_lias..."), NULL, menu_alias_cb, 0,
+	{ N_("/Conversation/Al_ias..."), NULL, menu_alias_cb, 0,
 	  "<StockItem>", GAIM_STOCK_EDIT },
 	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
 	  "<StockItem>", GAIM_STOCK_BLOCK },
@@ -3589,7 +3589,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Options/Enable _Logging"), NULL, menu_logging_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Enable _Sounds"), NULL, menu_sounds_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show Formatting _Toolbars"), NULL, menu_toolbar_cb, 0, "<CheckItem>" },
-	{ N_("/Options/Show T_imestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
+	{ N_("/Options/Show Ti_mestamps"), "F2", menu_timestamps_cb, 0, "<CheckItem>" },
 	{ N_("/Options/Show Buddy _Icon"), NULL, menu_buddyicon_cb, 0, "<CheckItem>" },
 };
 

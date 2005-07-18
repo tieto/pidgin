@@ -2667,7 +2667,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/Conversazione/In_vita..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/Conversazione/A_lias..."
 
 #: src/gtkconv.c:3590
@@ -2712,7 +2712,7 @@ msgid "/Options/Show Formatting _Toolbar"
 msgstr "/Opzioni/Mostra la _barra di formattazione"
 
 #: src/gtkconv.c:3614
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "/Opzioni/Mostra i t_imestamp"
 
 #: src/gtkconv.c:3656

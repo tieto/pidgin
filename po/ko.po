@@ -2584,7 +2584,7 @@ msgid "/Conversation/In_vite..."
 msgstr "/대화(C)/초대(_V)..."
 
 #: src/gtkconv.c:3588
-msgid "/Conversation/A_lias..."
+msgid "/Conversation/Al_ias..."
 msgstr "/대화(C)/별칭(_L)..."
 
 #: src/gtkconv.c:3590
@@ -2630,7 +2630,7 @@ msgstr "/옵션(O)/꾸밈 도구모음 보이기"
 
 #: src/gtkconv.c:3614
 #, fuzzy
-msgid "/Options/Show T_imestamps"
+msgid "/Options/Show Ti_mestamps"
 msgstr "iChat 타임스탬프"
 
 #: src/gtkconv.c:3656
