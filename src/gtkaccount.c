@@ -2210,20 +2210,25 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 {
 	AccountsWindow *dialog;
 	GtkTreePath *path;
+	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
 	GaimAccount *account;
+	const gchar *title;
 
 	dialog = (AccountsWindow *)user_data;
 
 	/* Figure out which node was clicked */
-	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, NULL, NULL, NULL))
+	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, &column, NULL, NULL))
 		return FALSE;
+	title = gtk_tree_view_column_get_title(column);
+	column = gtk_tree_view_get_column(treeview, COLUMN_ENABLED-1); /* -1 required by weirdness in GtkTreeView */
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_path_free(path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
 
 	if ((account != NULL) && (event->button == 1) &&
-		(event->type == GDK_2BUTTON_PRESS))
+		(event->type == GDK_2BUTTON_PRESS) && 
+		(strcmp(gtk_tree_view_column_get_title(column), title)))
 	{
 		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
 		return TRUE;
