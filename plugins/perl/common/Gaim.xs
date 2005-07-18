@@ -1,12 +1,18 @@
 #include "module.h"
 #include "../perl-handlers.h"
-
 #include "const-c.inc"
 
 MODULE = Gaim  PACKAGE = Gaim  PREFIX = gaim_
 PROTOTYPES: ENABLE
 
 INCLUDE: const-xs.inc
+
+Gaim::PluginUiInfo
+plugin_ui_info()
+CODE:
+	RETVAL = gaim_perl_plugin_pref();
+OUTPUT:
+	RETVAL
 
 void
 timeout_add(plugin, seconds, callback, data = 0)
@@ -85,12 +91,30 @@ CODE:
 BOOT:
 	GAIM_PERL_BOOT(Account);
 	GAIM_PERL_BOOT(BuddyList);
-	GAIM_PERL_BOOT(BuddyList__Group);
-	GAIM_PERL_BOOT(BuddyList__Buddy);
-	GAIM_PERL_BOOT(BuddyList__Chat);
+	GAIM_PERL_BOOT(Account__Option); 
+	GAIM_PERL_BOOT(Buddy__Icon);
+	GAIM_PERL_BOOT(Cipher);
+	GAIM_PERL_BOOT(Conv);
 	GAIM_PERL_BOOT(Connection);
-	GAIM_PERL_BOOT(Conversation);
-	GAIM_PERL_BOOT(Conversation__Chat);
-	GAIM_PERL_BOOT(Conversation__IM);
-	GAIM_PERL_BOOT(ConvWindow);
-
+	GAIM_PERL_BOOT(Plugin);
+	GAIM_PERL_BOOT(Prefs);
+	GAIM_PERL_BOOT(Cmds);
+	GAIM_PERL_BOOT(Xfer);
+	GAIM_PERL_BOOT(ImgStore);
+	GAIM_PERL_BOOT(Log);
+	GAIM_PERL_BOOT(Network);
+	GAIM_PERL_BOOT(Notify);
+	GAIM_PERL_BOOT(Pounce);
+	GAIM_PERL_BOOT(Pref); 
+	GAIM_PERL_BOOT(Privacy);
+	GAIM_PERL_BOOT(Proxy);
+	GAIM_PERL_BOOT(Prpl);
+	GAIM_PERL_BOOT(Request);
+	GAIM_PERL_BOOT(Roomlist);
+	GAIM_PERL_BOOT(SavedStatus);
+	GAIM_PERL_BOOT(Sound);
+	GAIM_PERL_BOOT(SSL);
+	GAIM_PERL_BOOT(Status);
+	GAIM_PERL_BOOT(Stringref);
+	GAIM_PERL_BOOT(Util);
+	GAIM_PERL_BOOT(XMLNode); 
