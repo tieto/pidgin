@@ -114,7 +114,7 @@ gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
  * @param account	The account.
  * @param who		The name of the user.
  *
- * @return TRUE if the user is allowed to send messages, or @c FALSE otherwise.
+ * @return @c FALSE if the specified account's privacy settings block the user or @c TRUE otherwise. The meaning of "block" is protocol-dependent and generally relates to status and/or sending of messages.
  */
 gboolean gaim_privacy_check(GaimAccount *account, const char *who);
 
