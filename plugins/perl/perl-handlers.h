@@ -2,6 +2,8 @@
 #define _GAIM_PERL_HANDLERS_H_
 
 #include "plugin.h"
+#include "prefs.h"
+#include "pluginpref.h"
 
 typedef struct
 {
@@ -22,6 +24,8 @@ typedef struct
 
 } GaimPerlSignalHandler;
 
+GaimPluginUiInfo *gaim_perl_plugin_pref(char * frame_cb);
+GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin);
 
 void gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback,
 						   SV *data);

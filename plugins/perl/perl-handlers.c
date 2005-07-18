@@ -6,8 +6,56 @@
 
 static GList *timeout_handlers = NULL;
 static GList *signal_handlers = NULL;
-
+static char *perl_plugin_pref_cb;
 extern PerlInterpreter *my_perl;
+
+
+/* Called to create a pointer to GaimPluginUiInfo for the GaimPluginInfo 	*/
+/*	It will then inturn create ui_info with the C function pointer 		*/
+/*	that will eventually do a call_pv to call a perl functions so users	*/
+/*	can create their own frames in the prefs				*/
+GaimPluginUiInfo *gaim_perl_plugin_pref(char * frame_cb) {
+	GaimPluginUiInfo *ui_info;
+	
+	ui_info = g_new0(GaimPluginUiInfo, 1);
+	
+	perl_plugin_pref_cb = frame_cb;
+	
+	ui_info->get_plugin_pref_frame = gaim_perl_get_plugin_frame;
+
+	return ui_info;
+}
+
+GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin) {
+	/* Sets up the Perl Stack for our call back into the script to run the 	*/
+	/*	plugin_pref... sub						*/
+	GaimPluginPrefFrame *ret_frame;
+	dSP;
+	int count;
+
+	ENTER;
+	SAVETMPS;
+	/* Some perl magic to run perl_plugin_pref_frame_SV perl sub and return	*/
+	/* 	the frame							*/
+	PUSHMARK(SP);
+	PUTBACK;
+
+	count = call_pv(perl_plugin_pref_cb, G_SCALAR | G_NOARGS);
+
+	SPAGAIN;
+
+	if (count != 1)
+		croak("call_pv: Did not return the correct number of values.\n");
+	/* the frame was created in a perl sub and is returned */
+	ret_frame = (GaimPluginPrefFrame *)gaim_perl_ref_object(POPs);
+
+	/* Tidy up the Perl stack */
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+		
+	return ret_frame;
+}
 
 static void
 destroy_timeout_handler(GaimPerlTimeoutHandler *handler)

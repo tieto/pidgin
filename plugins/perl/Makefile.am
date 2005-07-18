@@ -2,10 +2,10 @@ plugindir = $(libdir)/gaim
 
 perl_dirs = common
 
-plugin_LTLIBRARIES = perl.la
+plugin_LTLIBRARIES = perl.la 
 
 perl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(PERL_LIBS)
-perl_la_LIBADD = $(PERL_LIBS)
+perl_la_LIBADD = $(PERL_LIBS) -L. -lgaimperl
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -15,7 +15,11 @@ perl_la_SOURCES = \
 
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \
-	.libs/DynaLoader.a
+	.libs/DynaLoader.a \
+	libgaimperl.so
+
+libgaimperl.so:
+	$(CC) -shared -fPIC -olibgaimperl.so libgaimperl.c	
 
 .libs/libperl_orig.a:
 	@mkdir -p .libs
@@ -35,24 +39,45 @@ perl_la_DEPENDENCIES = \
 		$(LN_S) $(DYNALOADER_A) .libs/DynaLoader.a; \
 	fi
 
+
 common_sources = \
-	common/fallback/const-c.inc \
-	common/fallback/const-xs.inc \
-	common/Account.xs \
-	common/BuddyList.xs \
-	common/BuddyList_Buddy.xs \
-	common/BuddyList_Chat.xs \
-	common/BuddyList_Group.xs \
-	common/Connection.xs \
-	common/ConvWindow.xs \
-	common/Conversation.xs \
-	common/Conversation_Chat.xs \
-	common/Conversation_IM.xs \
-	common/Gaim.xs \
-	common/Gaim.pm \
-	common/Makefile.PL.in \
-	common/typemap \
-	common/module.h
+        common/Account.xs \
+        common/AccountOpts.xs \
+        common/BuddyIcon.xs \
+        common/BuddyList.xs \
+        common/Cipher.xs \
+        common/Cmds.xs \
+        common/Connection.xs \
+        common/Conversation.xs \
+        common/FT.xs \
+        common/Gaim.pm \
+        common/Gaim.xs \
+        common/ImgStore.xs \
+        common/Log.xs \
+        common/Makefile.PL.in \
+        common/Network.xs \
+        common/Notify.xs \
+        common/Plugin.xs \
+        common/PluginPref.xs \
+        common/Pounce.xs \
+        common/Prefs.xs \
+        common/Privacy.xs \
+        common/Proxy.xs \
+        common/Prpl.xs \
+        common/Request.xs \
+        common/Roomlist.xs \
+        common/SSLConn.xs \
+        common/SavedStatuses.xs \
+        common/Server.xs \
+        common/Sound.xs \
+        common/Status.xs \
+        common/Stringref.xs \
+        common/Util.xs \
+        common/XMLNode.xs \
+        common/fallback/const-c.inc \
+        common/fallback/const-xs.inc \
+        common/module.h \
+        common/typemap
 
 
 EXTRA_DIST = \
@@ -88,6 +113,7 @@ install-exec-local:
 		$(MAKE) install; \
 		cd ..; \
 	done
+	cp libgaimperl.so $(libdir)
 
 # Evil Hack (TM)
 uninstall-local:
@@ -103,6 +129,7 @@ clean-generic:
 		$(MAKE) clean; \
 		cd ..; \
 	done
+	rm *.so
 
 distclean-generic:
 	@for dir in $(perl_dirs); do \

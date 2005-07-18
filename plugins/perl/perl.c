@@ -334,6 +334,11 @@ probe_perl_plugin(GaimPlugin *plugin)
 				gps->unload_sub = g_strdup_printf("%s::%s", gps->package,
 												  SvPV(*key, len));
 
+			if ((key = hv_fetch(plugin_info, "prefs_info", strlen("prefs_info"), 0))) {
+				/* key now is the name of the Perl sub that will create a frame for us */
+				info->prefs_info = gaim_perl_plugin_pref(g_strdup_printf("%s::%s", gps->package, SvPV(*key, len)));
+			}
+
 			plugin->info = info;
 			info->extra_info = gps;
 
