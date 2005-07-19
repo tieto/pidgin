@@ -7,13 +7,6 @@ PROTOTYPES: ENABLE
 
 INCLUDE: const-xs.inc
 
-Gaim::PluginUiInfo
-plugin_ui_info()
-CODE:
-	RETVAL = gaim_perl_plugin_pref();
-OUTPUT:
-	RETVAL
-
 void
 timeout_add(plugin, seconds, callback, data = 0)
 	Gaim::Plugin plugin
