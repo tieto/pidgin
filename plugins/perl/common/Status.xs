@@ -74,7 +74,7 @@ void
 gaim_presence_get_buddies(presence)
 	Gaim::Presence presence
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_presence_get_buddies(presence); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
@@ -109,7 +109,7 @@ void
 gaim_presence_get_statuses(presence)
 	Gaim::Presence presence
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_presence_get_statuses(presence); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
@@ -370,7 +370,7 @@ void
 gaim_status_type_get_attrs(status_type)
 	Gaim::StatusType status_type
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_status_type_get_attrs(status_type); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));

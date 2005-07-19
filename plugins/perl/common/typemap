@@ -29,6 +29,7 @@ const struct tm *			T_PTR
 xmlnode *				T_PTR
 const xmlnode *				T_PTR
 gssize					T_IV
+const void *				T_PTR
 
 Gaim::Account           		T_GaimObj
 Gaim::Account::Option   		T_GaimObj

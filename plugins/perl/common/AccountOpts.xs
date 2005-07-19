@@ -83,7 +83,7 @@ void
 gaim_account_option_get_list(option)
 	Gaim::Account::Option option
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_account_option_get_list(option); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));

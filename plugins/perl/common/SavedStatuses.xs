@@ -49,7 +49,7 @@ PROTOTYPES: ENABLE
 void
 gaim_savedstatuses_get_all()
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_savedstatuses_get_all(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));

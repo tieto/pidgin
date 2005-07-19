@@ -22,8 +22,8 @@ gboolean
 gaim_cipher_digest_region(name, data, data_len, in_len, digest, out_len)
 	const gchar * name
 	const guint8 * data 
-	size_t &data_len
-	size_t &in_len
+	size_t data_len
+	size_t in_len
 	guint8 &digest 
 	size_t * out_len
 

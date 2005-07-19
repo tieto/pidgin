@@ -61,9 +61,13 @@ Gaim::Account
 gaim_request_field_account_get_default_value(field)
 	Gaim::Request::Field field
 
-SV *
+IV
 gaim_request_field_account_get_filter(field)
 	Gaim::Request::Field field
+CODE:
+	RETVAL = PTR2IV(gaim_request_field_account_get_filter(field));
+OUTPUT:
+	RETVAL
 
 gboolean 
 gaim_request_field_account_get_show_all(field)
@@ -271,7 +275,7 @@ void
 gaim_request_field_list_get_items(field)
 	Gaim::Request::Field field
 PREINIT:
-        GList *l;
+        const GList *l;
 PPCODE:
         for (l = gaim_request_field_list_get_items(field); l != NULL; l = l->next) {
                 XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
@@ -285,7 +289,7 @@ void
 gaim_request_field_list_get_selected(field)
 	Gaim::Request::Field field
 PREINIT:
-        GList *l;
+        const GList *l;
 PPCODE:
         for (l = gaim_request_field_list_get_selected(field); l != NULL; l = l->next) {
                 XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
@@ -439,7 +443,7 @@ void
 gaim_request_fields_get_required(fields)
 	Gaim::Request::Fields fields
 PREINIT:
-        GList *l;
+        const GList *l;
 PPCODE:
         for (l = gaim_request_fields_get_required(fields); l != NULL; l = l->next) {
                 XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));

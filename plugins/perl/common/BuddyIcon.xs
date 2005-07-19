@@ -56,7 +56,7 @@ const char *
 gaim_buddy_icon_get_username(icon)
 	Gaim::Buddy::Icon icon
 
-void *
+const void *
 gaim_buddy_icon_get_data(icon, len)
 	Gaim::Buddy::Icon icon
 	size_t &len

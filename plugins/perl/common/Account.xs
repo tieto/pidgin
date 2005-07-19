@@ -185,7 +185,7 @@ void
 gaim_account_get_status_types(account)
 	Gaim::Account account
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Status::Type")));
