@@ -97,8 +97,8 @@ void gaim_dbus_init_ids(void);
 /** 
     Registers a typed pointer.
 
-    @node   The pointer to register.
-    @type   Type of that pointer.
+    @param node   The pointer to register.
+    @param type   Type of that pointer.
  */
 void gaim_dbus_register_pointer(gpointer node, GaimDBusPointerType type);
 
@@ -106,7 +106,7 @@ void gaim_dbus_register_pointer(gpointer node, GaimDBusPointerType type);
     Unregisters a pointer previously registered with
     gaim_dbus_register_pointer.
 
-    @node   The pointer to register.
+    @param node   The pointer to register.
  */
 void gaim_dbus_unregister_pointer(gpointer node);
 
@@ -194,7 +194,7 @@ void gaim_dbus_signal_emit(GaimObject *object, int dbus_id, ...);
 
     @param object      The #GaimObject (usually #gaim_dbus_object)
     @param dbus_id     Id of the signal.
-    @param vargs       A va_list containing the actual parameters.
+    @param args       A va_list containing the actual parameters.
   */
 void gaim_dbus_signal_emit_valist(GaimObject *object, int dbus_id, va_list args);
 

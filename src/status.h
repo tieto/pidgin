@@ -1,4 +1,7 @@
 /*
+ * @file status.h Status API
+ * @ingroup core
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -23,9 +26,6 @@
 #define _GAIM_STATUS_H_
 
 /**
- * @file status.h Status API
- * @ingroup core
- *
  * A brief explanation of the status API:
  *
  * GaimStatusType's are created by each PRPL.  They outline the
