@@ -78,23 +78,6 @@ serv_chat_whisper(con, a, b, c)
 	const char * c
 
 void 
-serv_dir_search(con, a, b, c,d,e,f,g,h)
-	Gaim::Connection con
-	const char * a
-	const char * b
-	const char * c
-	const char * d
-	const char * e
-	const char * f
-	const char * g
-	const char * h
-
-void 
-serv_get_dir(con, a)
-	Gaim::Connection con 
-	const char * a
-
-void 
 serv_get_info(con, a)
 	Gaim::Connection con 
 	const char * a
@@ -299,18 +282,6 @@ void
 serv_set_buddyicon(gc, filename)
 	Gaim::Connection gc
 	const char *filename
-
-void 
-serv_set_dir(con, a, b, c,d,e,f,g,h)
-	Gaim::Connection con
-	const char * a
-	const char * b
-	const char * c
-	const char * d 
-	const char * e
-	const char * f
-	const char * g
-	int h
 
 void 
 serv_set_idle(con, a)

@@ -36,7 +36,6 @@ extern "C" {
 void serv_touch_idle(GaimConnection *);
 int  serv_send_im(GaimConnection *, const char *, const char *, GaimConvImFlags);
 void serv_get_info(GaimConnection *, const char *);
-void serv_get_dir(GaimConnection *, const char *);
 void serv_set_idle(GaimConnection *, int);
 void serv_set_info(GaimConnection *, const char *);
 int  serv_send_typing(GaimConnection *, const char *, int);
@@ -53,12 +52,6 @@ void serv_rem_permit(GaimConnection *, const char *);
 void serv_rem_deny(GaimConnection *, const char *);
 void serv_set_permit_deny(GaimConnection *);
 void serv_warn(GaimConnection *, const char *, gboolean);
-void serv_set_dir(GaimConnection *, const char *, const char *,
-				  const char *, const char *, const char *,
-				  const char *, const char *, int);
-void serv_dir_search(GaimConnection *, const char *, const char *,
-					 const char *, const char *, const char *, const char *,
-					 const char *, const char *);
 void serv_join_chat(GaimConnection *, GHashTable *);
 void serv_reject_chat(GaimConnection *, GHashTable *);
 void serv_chat_invite(GaimConnection *, int, const char *, const char *);
