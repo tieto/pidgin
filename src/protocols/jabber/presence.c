@@ -206,8 +206,9 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 	JabberBuddy *jb = NULL;
 	GaimBuddy *b = NULL;
 	xmlnode *vcard, *photo, *binval;
-	char *text, *data;
-	int size;
+	char *text;
+	guint8 *data;
+	gsize size;
 	const char *from = xmlnode_get_attrib(packet, "from");
 
 	if(!from)
@@ -222,7 +223,7 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 		if((photo = xmlnode_get_child(vcard, "PHOTO")) &&
 				(binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) {
-			gaim_base64_decode(text, &data, &size);
+			data = gaim_base64_decode(text, &size);
 
 			gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);
 			if((b = gaim_find_buddy(js->gc->account, from))) {

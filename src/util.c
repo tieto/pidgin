@@ -67,34 +67,34 @@ static char home_dir[MAXPATHLEN];
 /**************************************************************************
  * Base16 Functions
  **************************************************************************/
-unsigned char *
-gaim_base16_encode(const unsigned char *data, int length)
+gchar *
+gaim_base16_encode(const guint8 *data, gsize len)
 {
 	int i;
-	unsigned char *ascii = NULL;
+	gchar *ascii = NULL;
 
 	g_return_val_if_fail(data != NULL, NULL);
-	g_return_val_if_fail(length > 0,   NULL);
+	g_return_val_if_fail(len > 0,   NULL);
 
-	ascii = g_malloc(length * 2 + 1);
+	ascii = g_malloc(len * 2 + 1);
 
-	for (i = 0; i < length; i++)
+	for (i = 0; i < len; i++)
 		snprintf(&ascii[i * 2], 3, "%02hhx", data[i]);
 
 	return ascii;
 }
 
-int
-gaim_base16_decode(const char *ascii, unsigned char **raw)
+guint8 *
+gaim_base16_decode(const char *str, gsize *ret_len)
 {
 	int len, i, accumulator = 0;
-	unsigned char *data;
+	guint8 *data;
 
-	g_return_val_if_fail(ascii != NULL, 0);
+	g_return_val_if_fail(str != NULL, NULL);
 
-	len = strlen(ascii);
+	len = strlen(str);
 
-	g_return_val_if_fail(strlen(ascii) > 0, 0);
+	g_return_val_if_fail(strlen(str) > 0, 0);
 	g_return_val_if_fail(len % 2 > 0,       0);
 
 	data = g_malloc(len / 2);
@@ -106,11 +106,11 @@ gaim_base16_decode(const char *ascii, unsigned char **raw)
 		else
 			accumulator <<= 4;
 
-		if (isdigit(ascii[i]))
-			accumulator |= ascii[i] - 48;
+		if (isdigit(str[i]))
+			accumulator |= str[i] - 48;
 		else
 		{
-			switch(ascii[i])
+			switch(str[i])
 			{
 				case 'a':  case 'A':  accumulator |= 10;  break;
 				case 'b':  case 'B':  accumulator |= 11;  break;
@@ -125,9 +125,10 @@ gaim_base16_decode(const char *ascii, unsigned char **raw)
 			data[(i - 1) / 2] = accumulator;
 	}
 
-	*raw = data;
+	if (ret_len != NULL)
+		*ret_len = len / 2;
 
-	return (len / 2);
+	return data;
 }
 
 /**************************************************************************
@@ -140,37 +141,37 @@ static const char alphabet[] =
 static const char xdigits[] =
 	"0123456789abcdef";
 
-unsigned char *
-gaim_base64_encode(const unsigned char *in, size_t inlen)
+gchar *
+gaim_base64_encode(const guint8 *data, gsize len)
 {
 	char *out, *rv;
 
-	g_return_val_if_fail(in != NULL, NULL);
-	g_return_val_if_fail(inlen > 0,  NULL);
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len > 0,  NULL);
 
-	rv = out = g_malloc(((inlen/3)+1)*4 + 1);
+	rv = out = g_malloc(((len/3)+1)*4 + 1);
 
-	for (; inlen >= 3; inlen -= 3)
+	for (; len >= 3; len -= 3)
 	{
-		*out++ = alphabet[in[0] >> 2];
-		*out++ = alphabet[((in[0] << 4) & 0x30) | (in[1] >> 4)];
-		*out++ = alphabet[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
-		*out++ = alphabet[in[2] & 0x3f];
-		in += 3;
+		*out++ = alphabet[data[0] >> 2];
+		*out++ = alphabet[((data[0] << 4) & 0x30) | (data[1] >> 4)];
+		*out++ = alphabet[((data[1] << 2) & 0x3c) | (data[2] >> 6)];
+		*out++ = alphabet[data[2] & 0x3f];
+		data += 3;
 	}
 
-	if (inlen > 0)
+	if (len > 0)
 	{
 		unsigned char fragment;
 
-		*out++ = alphabet[in[0] >> 2];
-		fragment = (in[0] << 4) & 0x30;
+		*out++ = alphabet[data[0] >> 2];
+		fragment = (data[0] << 4) & 0x30;
 
-		if (inlen > 1)
-			fragment |= in[1] >> 4;
+		if (len > 1)
+			fragment |= data[1] >> 4;
 
 		*out++ = alphabet[fragment];
-		*out++ = (inlen < 2) ? '=' : alphabet[(in[1] << 2) & 0x3c];
+		*out++ = (len < 2) ? '=' : alphabet[(data[1] << 2) & 0x3c];
 		*out++ = '=';
 	}
 
@@ -179,19 +180,18 @@ gaim_base64_encode(const unsigned char *in, size_t inlen)
 	return rv;
 }
 
-void
-gaim_base64_decode(const char *text, char **data, int *size)
+guint8 *
+gaim_base64_decode(const char *str, gsize *ret_len)
 {
-	char *out = NULL;
+	guint8 *out = NULL;
 	char tmp = 0;
 	const char *c;
 	gint32 tmp2 = 0;
 	int len = 0, n = 0;
 
-	g_return_if_fail(text != NULL);
-	g_return_if_fail(data != NULL);
+	g_return_val_if_fail(str != NULL, NULL);
 
-	c = text;
+	c = str;
 
 	while (*c) {
 		if (*c >= 'A' && *c <= 'Z') {
@@ -210,13 +210,13 @@ gaim_base64_decode(const char *text, char **data, int *size)
 		} else if (*c == '=') {
 			if (n == 3) {
 				out = g_realloc(out, len + 2);
-				out[len] = (char)(tmp2 >> 10) & 0xff;
+				out[len] = (guint8)(tmp2 >> 10) & 0xff;
 				len++;
-				out[len] = (char)(tmp2 >> 2) & 0xff;
+				out[len] = (guint8)(tmp2 >> 2) & 0xff;
 				len++;
 			} else if (n == 2) {
 				out = g_realloc(out, len + 1);
-				out[len] = (char)(tmp2 >> 4) & 0xff;
+				out[len] = (guint8)(tmp2 >> 4) & 0xff;
 				len++;
 			}
 			break;
@@ -225,11 +225,11 @@ gaim_base64_decode(const char *text, char **data, int *size)
 		n++;
 		if (n == 4) {
 			out = g_realloc(out, len + 3);
-			out[len] = (char)((tmp2 >> 16) & 0xff);
+			out[len] = (guint8)((tmp2 >> 16) & 0xff);
 			len++;
-			out[len] = (char)((tmp2 >> 8) & 0xff);
+			out[len] = (guint8)((tmp2 >> 8) & 0xff);
 			len++;
-			out[len] = (char)(tmp2 & 0xff);
+			out[len] = (guint8)(tmp2 & 0xff);
 			len++;
 			tmp2 = 0;
 			n = 0;
@@ -240,10 +240,10 @@ gaim_base64_decode(const char *text, char **data, int *size)
 	out = g_realloc(out, len + 1);
 	out[len] = 0;
 
-	*data = out;
+	if (ret_len != NULL)
+		*ret_len = len;
 
-	if (size)
-		*size = len;
+	return out;
 }
 
 /**************************************************************************
@@ -410,12 +410,12 @@ gaim_mime_decode_field(const char *str)
 				char *charset = g_strndup(charset0, encoding0 - charset0 - 1);
 				char *encoding = g_strndup(encoding0, encoded_text0 - encoding0 - 1);
 				char *encoded_text = g_strndup(encoded_text0, cur - encoded_text0 - 1);
-				char *decoded = NULL;
-				int dec_len;
+				guint8 *decoded = NULL;
+				gsize dec_len;
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
 					gaim_quotedp_decode(encoded_text, &decoded, &dec_len);
 				else if (g_ascii_strcasecmp(encoding, "B") == 0)
-					gaim_base64_decode(encoded_text, &decoded, &dec_len);
+					decoded = gaim_base64_decode(encoded_text, &dec_len);
 				else
 					decoded = NULL;
 				if (decoded) {

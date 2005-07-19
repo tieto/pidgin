@@ -253,7 +253,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		const char *sha1c;
 		const char *file_name;
 		char *content;
-		int len;
+		gsize len;
 		int type;
 
 		/* Send Ok */
@@ -267,7 +267,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		slplink = slpcall->slplink;
 
-		gaim_base64_decode(context, &msnobj_data, &len);
+		msnobj_data = (char *)gaim_base64_decode(context, &len);
 		obj = msn_object_new_from_string(msnobj_data);
 		type = msn_object_get_type(obj);
 		sha1c = msn_object_get_sha1c(obj);
@@ -322,7 +322,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		GaimAccount *account;
 		GaimXfer *xfer;
 		char *bin;
-		int bin_len;
+		gsize bin_len;
 		guint32 file_size;
 		char *file_name;
 		gunichar2 *uni_name;
@@ -339,7 +339,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 		xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE,
 							 slpcall->slplink->remote_user);
 
-		gaim_base64_decode(context, &bin, &bin_len);
+		bin = (char *)gaim_base64_decode(context, &bin_len);
 		file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
 
 		uni_name = (gunichar2 *)(bin + 20);

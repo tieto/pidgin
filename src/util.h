@@ -43,28 +43,34 @@ extern "C" {
 /*@{*/
 
 /**
- * Converts a string to its base-16 equivalent.
+ * Converts a chunk of binary data to its base-16 equivalent.
  *
- * @param str The string to convert.
- * @param len The length of the string.
+ * @param data The data to convert.
+ * @param len  The length of the data.
  *
- * @return The base-16 string.
+ * @return The base-16 string in the ASCII encoding.  Must be
+ *         g_free'd when no longer needed.
  *
  * @see gaim_base16_decode()
  */
-unsigned char *gaim_base16_encode(const unsigned char *str, int len);
+gchar *gaim_base16_encode(const guint8 *data, gsize len);
 
 /**
- * Converts a string back from its base-16 equivalent.
+ * Converts an ASCII string of base-16 encoded data to
+ * the binary equivalent.
  *
- * @param str     The string to convert back.
- * @param ret_str The returned, non-base-16 string.
+ * @param str     The base-16 string to convert to raw data.
+ * @param ret_len The length of the returned data.  You can
+ *                pass in NULL if you're sure that you know
+ *                the length of the decoded data, or if you
+ *                know you'll be able to use strlen to
+ *                determine the length, etc.
  *
- * @return The length of the returned string.
+ * @return The raw data.  Must be g_free'd when no longer needed.
  *
  * @see gaim_base16_encode()
  */
-int gaim_base16_decode(const char *str, unsigned char **ret_str);
+guint8 *gaim_base16_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -75,27 +81,34 @@ int gaim_base16_decode(const char *str, unsigned char **ret_str);
 /*@{*/
 
 /**
- * Converts a string to its base-64 equivalent.
+ * Converts a chunk of binary data to its base-64 equivalent.
  *
- * @param buf The data to convert.
- * @param len The length of the data.
+ * @param data The data to convert.
+ * @param len  The length of the data.
  *
- * @return The base-64 version of @a str.
+ * @return The base-64 string in the ASCII encoding.  Must be
+ *         g_free'd when no longer needed.
  *
  * @see gaim_base64_decode()
  */
-unsigned char *gaim_base64_encode(const unsigned char *buf, size_t len);
+gchar *gaim_base64_encode(const guint8 *data, gsize len);
 
 /**
- * Converts a string back from its base-64 equivalent.
+ * Converts an ASCII string of base-64 encoded data to
+ * the binary equivalent.
  *
- * @param str     The string to convert back.
- * @param ret_str The returned, non-base-64 string.
- * @param ret_len The returned string length.
+ * @param str     The base-64 string to convert to raw data.
+ * @param ret_len The length of the returned data.  You can
+ *                pass in NULL if you're sure that you know
+ *                the length of the decoded data, or if you
+ *                know you'll be able to use strlen to
+ *                determine the length, etc.
+ *
+ * @return The raw data.  Must be g_free'd when no longer needed.
  *
  * @see gaim_base64_encode()
  */
-void gaim_base64_decode(const char *str, char **ret_str, int *ret_len);
+guint8 *gaim_base64_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 

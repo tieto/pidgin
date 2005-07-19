@@ -64,7 +64,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 	if(js->auth_type == JABBER_AUTH_PLAIN) {
 		xmlnode *auth;
 		GString *response;
-		unsigned char *enc_out;
+		gchar *enc_out;
 
 		auth = xmlnode_new("auth");
 		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
@@ -76,7 +76,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		response = g_string_append(response,
 				gaim_connection_get_password(js->gc));
 
-		enc_out = gaim_base64_encode(response->str, response->len);
+		enc_out = gaim_base64_encode((guint8 *)response->str, response->len);
 
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 		xmlnode_insert_data(auth, enc_out, -1);
@@ -307,7 +307,8 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	guint8 result[16];
 	size_t a1len;
 
-	unsigned char *x, *a1, *ha1, *ha2, *kd, *z, *convnode, *convpasswd;
+	unsigned char *x, *a1, *kd, *convnode, *convpasswd;
+	gchar *ha1, *ha2, *z;
 
 	if((convnode = g_convert(jid->node, strlen(jid->node), "iso-8859-1", "utf-8",
 					NULL, NULL, NULL)) == NULL) {
@@ -376,7 +377,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			return;
 		}
 
-		gaim_base64_decode(enc_in, &dec_in, NULL);
+		dec_in = (char *)gaim_base64_decode(enc_in, NULL);
 		gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
 				strlen(dec_in), dec_in);
 
@@ -444,7 +445,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			g_free(auth_resp);
 			g_free(cnonce);
 
-			enc_out = gaim_base64_encode(response->str, response->len);
+			enc_out = gaim_base64_encode((guint8 *)response->str, response->len);
 
 			gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
 

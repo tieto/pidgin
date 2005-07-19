@@ -307,11 +307,12 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 197: /* Avatars */
 		{
-			char *decoded, *tmp;
-			guint len;
+			guint8 *decoded;
+			char *tmp;
+			gsize len;
 
 			if (pair->value) {
-				gaim_base64_decode(pair->value, &decoded, &len);
+				decoded = gaim_base64_decode(pair->value, &len);
 				if (len) {
 					tmp = gaim_str_binary_to_ascii(decoded, len);
 					gaim_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
@@ -1860,8 +1861,8 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	char *who = NULL;
 	char *base64 = NULL;
-	char *decoded;
-	int len;
+	guint8 *decoded;
+	gsize len;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -1901,7 +1902,7 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 		char *tmp2;
 		YahooFriend *f;
 
-		gaim_base64_decode(base64, &decoded, &len);
+		decoded = gaim_base64_decode(base64, &len);
 		if (len) {
 			char *tmp = gaim_str_binary_to_ascii(decoded, len);
 			gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);

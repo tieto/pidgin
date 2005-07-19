@@ -385,7 +385,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 
 			if(avatar_file && g_file_get_contents(avatar_file, (gchar **)&avatar_data, &avatar_len, &error)) {
 				xmlnode *photo, *binval;
-				unsigned char *enc;
+				gchar *enc;
 				int i;
 				unsigned char hashval[20];
 				char *p, hash[41];
@@ -809,12 +809,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				xmlnode *binval;
 				if((binval = xmlnode_get_child(child, "BINVAL")) &&
 						(bintext = xmlnode_get_data(binval))) {
-					int size, i;
+					gsize size;
+					guint8 *data;
+					int i;
 					unsigned char hashval[20];
-					char *data, *p, hash[41];
+					char *p, hash[41];
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
-					gaim_base64_decode(text, &data, &size);
+					data = gaim_base64_decode(text, &size);
 
 					imgids = g_slist_prepend(imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
 					g_string_append_printf(info_text,

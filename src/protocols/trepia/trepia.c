@@ -851,7 +851,7 @@ _parse_data(TrepiaSession *session, char *buf)
 					char *icon;
 					int icon_len;
 
-					gaim_base64_decode(value, &icon, &icon_len);
+					icon = gaim_base64_decode(value, &icon_len);
 
 					gaim_buddy_icons_set_for_user(account,
 							username, icon, icon_len);
