@@ -127,6 +127,5 @@ gaim_plugin_pref_set_type(pref, type)
 	Gaim::PluginPref pref
 	Gaim::PluginPrefType type
 CODE:
-	printf("gaim_plugin_pref_set_type(): %d\n", (int)GAIM_PLUGIN_PREF_CHOICE);
-	gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_CHOICE);
+	gaim_plugin_pref_set_type(pref, type);
 

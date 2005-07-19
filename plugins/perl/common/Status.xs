@@ -351,7 +351,7 @@ gaim_status_type_find_with_id(status_types, id)
 PREINIT:
 	GList *t_GL;
 	int i, t_len;
-PPCODE:
+CODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(status_types));
 

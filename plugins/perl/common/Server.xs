@@ -109,7 +109,6 @@ INIT:
 	HE * t_HE;
 	SV * t_SV;
 	GHashTable * t_GHash;
-	int i;
 	I32 len;
 	char *t_key, *t_value;
 CODE:
@@ -165,7 +164,6 @@ INIT:
 	HE * t_HE;
 	SV * t_SV;
 	GHashTable * t_GHash;
-	int i;
 	I32 len;
 	char *t_key, *t_value;
 CODE:
@@ -196,7 +194,6 @@ INIT:
 	HE * t_HE;
 	SV * t_SV;
 	GHashTable * t_GHash;
-	int i;
 	I32 len;
 	char *t_key, *t_value;
 CODE:

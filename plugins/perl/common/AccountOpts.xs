@@ -45,7 +45,7 @@ gaim_account_option_list_new(text, pref_name, values)
 PREINIT:
 	GList *t_GL;
 	int i, t_len;
-PPCODE:
+CODE:
 	t_GL = NULL;
 	t_len = av_len((AV *)SvRV(values));
 
@@ -53,7 +53,9 @@ PPCODE:
 		STRLEN t_sl;
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(values), i, 0), t_sl));
 	}
-	gaim_account_option_list_new(text, pref_name, t_GL);
+	RETVAL  = gaim_account_option_list_new(text, pref_name, t_GL);
+OUTPUT:
+	RETVAL
 
 Gaim::Account::Option
 gaim_account_option_string_new(text, pref_name, default_value)
