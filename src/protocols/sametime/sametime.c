@@ -83,7 +83,7 @@
 
 
 /* stages of connecting-ness */
-#define MW_CONNECT_STEPS  9
+#define MW_CONNECT_STEPS  10
 
 
 /* stages of conciousness */
@@ -129,7 +129,8 @@
 #define GROUP_KEY_COLLAPSED  "collapsed"
 
 
-#define SESSION_NO_SECRET  "meanwhile.no_secret"
+/* verification replacement */
+#define mwSession_NO_SECRET  "meanwhile.no_secret"
 
 
 /* keys to get/set gaim plugin information */
@@ -169,14 +170,6 @@
 #define BLIST_CHOICE_IS_NONE() BLIST_CHOICE_IS(BLIST_CHOICE_NONE)
 #define BLIST_CHOICE_IS_LOAD() BLIST_CHOICE_IS(BLIST_CHOICE_LOAD)
 #define BLIST_CHOICE_IS_SAVE() BLIST_CHOICE_IS(BLIST_CHOICE_SAVE)
-
-
-/** warning text placed next to blist option */
-#define BLIST_WARNING \
- ("Please note:\n" \
-  "The 'merge and save' option above is still mildly experimental." \
-  " You should back-up your buddy list with an official client" \
-  " before enabling this option. Loading takes effect at login.")
 
 
 /* debugging output */
@@ -349,8 +342,12 @@ static int mw_session_io_write(struct mwSession *session,
   if(len > 0) {
     DEBUG_ERROR("write returned %i, %i bytes left unwritten\n", ret, len);
     gaim_connection_error(pd->gc, "Connection closed (writing)");
+
+#if 0
     close(pd->socket);
     pd->socket = 0;
+#endif
+
     return -1;
   }
 
@@ -360,11 +357,21 @@ static int mw_session_io_write(struct mwSession *session,
 
 static void mw_session_io_close(struct mwSession *session) {
   struct mwGaimPluginData *pd;
+  GaimConnection *gc;
 
   pd = mwSession_getClientData(session);
+  g_return_if_fail(pd != NULL);
+
+  gc = pd->gc;
+  
   if(pd->socket) {
     close(pd->socket);
     pd->socket = 0;
+  }
+    
+  if(gc->inpa) {
+    gaim_input_remove(gc->inpa);
+    gc->inpa = 0;
   }
 }
 
@@ -572,6 +579,11 @@ static void blist_export(GaimConnection *gc, struct mwSametimeList *stlist) {
     mwSametimeGroup_setAlias(stg, grp->name);
     mwSametimeGroup_setOpen(stg, gopen);
 
+    /* don't attempt to put buddies in a dynamic group, it breaks
+       other clients */
+    if(gtype == mwSametimeGroup_DYNAMIC)
+      continue;
+
     for(cn = gn->child; cn; cn = cn->next) {
       if(! GAIM_BLIST_NODE_IS_CONTACT(cn)) continue;
 
@@ -728,6 +740,7 @@ static GaimBuddy *buddy_ensure(GaimConnection *gc, GaimGroup *group,
 }
 
 
+/** add aware watch for a dynamic group */
 static void group_add(struct mwGaimPluginData *pd,
 		      GaimGroup *group) {
 
@@ -755,13 +768,15 @@ static GaimGroup *group_ensure(GaimConnection *gc,
   GaimAccount *acct;
   GaimGroup *group;
   GaimBlistNode *gn;
-  const char *name = mwSametimeGroup_getName(stgroup);
-  const char *alias = mwSametimeGroup_getAlias(stgroup);
-  const char *owner;
-  enum mwSametimeGroupType type = mwSametimeGroup_getType(stgroup);
+  const char *name, *alias, *owner;
+  enum mwSametimeGroupType type;
 
   acct = gaim_connection_get_account(gc);
   owner = gaim_account_get_username(acct);
+
+  name = mwSametimeGroup_getName(stgroup);
+  alias = mwSametimeGroup_getAlias(stgroup);
+  type = mwSametimeGroup_getType(stgroup);
 
   group = gaim_find_group(alias);
   if(! group) {
@@ -855,7 +870,8 @@ static void fetch_msg_cb(struct mwServiceStorage *srvc,
   struct mwSession *session;
   char *msg, *m;
 
-  g_return_if_fail(result == ERR_SUCCESS);
+  /* it's no big deal if these entries don't exist on the server */
+  if(result != ERR_SUCCESS) return;
 
   g_return_if_fail(pd != NULL);
 
@@ -1136,14 +1152,18 @@ static void mw_session_stateChange(struct mwSession *session,
     gaim_connection_update_progress(gc, msg, 6, MW_CONNECT_STEPS);
     break;
 
+  case mwSession_LOGIN_CONT:
+    msg = _("Forcing Login");
+    gaim_connection_update_progress(gc, msg, 7, MW_CONNECT_STEPS);
+
   case mwSession_LOGIN_ACK:
     msg = _("Login Acknowledged");
-    gaim_connection_update_progress(gc, msg, 7, MW_CONNECT_STEPS);
+    gaim_connection_update_progress(gc, msg, 8, MW_CONNECT_STEPS);
     break;
 
   case mwSession_STARTED:
     msg = _("Connected to Sametime Community Server");
-    gaim_connection_update_progress(gc, msg, 8, MW_CONNECT_STEPS);
+    gaim_connection_update_progress(gc, msg, 9, MW_CONNECT_STEPS);
     gaim_connection_set_state(gc, GAIM_CONNECTED);
     /* XXX serv_finish_login(gc); */
 
@@ -1169,8 +1189,6 @@ static void mw_session_stateChange(struct mwSession *session,
 
 
 static void mw_session_setPrivacyInfo(struct mwSession *session) {
-  /** @todo implement privacy one of these days */
-
   struct mwGaimPluginData *pd;
   GaimConnection *gc;
   GaimAccount *acct;
@@ -1266,15 +1284,17 @@ static void read_cb(gpointer data, gint source,
   struct mwGaimPluginData *pd = data;
   int ret = 0, err = 0;
 
-  g_return_if_fail(pd != NULL);
+  if(! cond) return;
 
-  if(cond & GAIM_INPUT_READ) {
-    ret = read_recv(pd->session, pd->socket);
-  }
+  g_return_if_fail(pd != NULL);
+  g_return_if_fail(cond & GAIM_INPUT_READ);
+
+  ret = read_recv(pd->session, pd->socket);
 
   /* normal operation ends here */
   if(ret > 0) return;
 
+  /* fetch the global error value */
   err = errno;
 
   /* read problem occured if we're here, so we'll need to take care of
@@ -1296,6 +1316,7 @@ static void read_cb(gpointer data, gint source,
 
   } else if(ret < 0) {
     char *msg = strerror(err);
+
     DEBUG_INFO("error in read callback: %s\n", msg);
 
     msg = g_strdup_printf("Error reading from socket: %s", msg);
@@ -1453,11 +1474,8 @@ static void mw_conf_invited(struct mwConference *conf,
 #define CHAT_TO_ID(chat)   (gaim_conv_chat_get_id(chat))
 #define ID_TO_CHAT(id)     (gaim_find_chat(id))
 
-#define CHAT_TO_CONF(pd, chat) \
-  (ID_TO_CONF((pd), CHAT_TO_ID(chat)))
-
-#define CONF_TO_CHAT(conf) \
-  (ID_TO_CHAT(CONF_TO_ID(conf)))
+#define CHAT_TO_CONF(pd, chat)  (ID_TO_CONF((pd), CHAT_TO_ID(chat)))
+#define CONF_TO_CHAT(conf)      (ID_TO_CHAT(CONF_TO_ID(conf)))
 
 
 static struct mwConference *
@@ -2038,12 +2056,9 @@ static void convo_nofeatures(struct mwConversation *conv) {
   if(! gconv) return;
 
   gc = gaim_conversation_get_gc(gconv);
+  if(! gc) return;
 
-  /* If the account is disconnecting, then the conversation's closing
-     will call this, and gc will be NULL */
-  if(gc) {
-    gaim_conversation_set_features(gconv, gc->flags);
-  }
+  gaim_conversation_set_features(gconv, gc->flags);
 }
 
 
@@ -2174,9 +2189,18 @@ static void mw_conversation_closed(struct mwConversation *conv,
 
   g_return_if_fail(conv != NULL);
 
+  /* if there's a error code and a non-typing message in the queue,
+     print an error message to the conversation */
   cd = mwConversation_getClientData(conv);
   if(reason && cd && cd->queue) {
-    convo_error(conv, reason);
+    GList *l;
+    for(l = cd->queue; l; l = l->next) {
+      struct convo_msg *m = l->data;
+      if(m->type != mwImSend_TYPING) {
+	convo_error(conv, reason);
+	break;
+      }
+    }
   }
 
 #if 0
@@ -2318,6 +2342,7 @@ static void im_recv_mime(struct mwConversation *conv,
 
       /* add image to the gaim image store */
       img = gaim_imgstore_add(d_dat, d_len, cid);
+      g_free(d_dat);
 
       /* map the cid to the image store identifier */
       g_hash_table_insert(img_by_cid, cid, GINT_TO_POINTER(img));
@@ -2325,8 +2350,6 @@ static void im_recv_mime(struct mwConversation *conv,
       /* recall the image for dereferencing later */
       images = g_list_append(images, GINT_TO_POINTER(img));
       
-      /* TODO: Don't we need to g_free 'd_dat'?! */
-
     } else if(g_str_has_prefix(type, "text")) {
 
       /* concatenate all the text parts together */
@@ -2335,10 +2358,12 @@ static void im_recv_mime(struct mwConversation *conv,
       gsize len;
 
       gaim_mime_part_get_data_decoded(part, &data, &len);
+
       txt = gaim_utf8_try_convert((const char *)data);
+      g_free(data);
+
       g_string_append(str, txt);
       g_free(txt);
-      /* TODO: Don't we need to g_free 'data'?! */
     }
   }
 
@@ -2686,7 +2711,11 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b) {
   g_string_append_printf(str, "\n<b>Status</b>: %s", tmp);
 
   tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
-  if(tmp) g_string_append_printf(str, "\n<b>Message</b>: %s", tmp);
+  if(tmp) {
+    tmp = g_markup_escape_text(tmp, -1);
+    g_string_append_printf(str, "\n<b>Message</b>: %s", tmp);
+    g_free((char *) tmp);
+  }
 
   tmp = user_supports_text(pd->srvc_aware, b->name);
   if(tmp) {
@@ -2931,8 +2960,7 @@ static void blist_menu_conf(GaimBlistNode *node, gpointer data) {
   pd = gc->proto_data;
   g_return_if_fail(pd != NULL);
 
-  /* @todo prompt for which conference to join
-
+  /*
     - get a list of all conferences on this session
     - if none, prompt to create one, and invite buddy to it
     - else, prompt to select a conference or create one
@@ -2989,8 +3017,6 @@ static GHashTable *mw_prpl_chat_info_defaults(GaimConnection *gc,
   GHashTable *table;
 
   g_return_val_if_fail(gc != NULL, NULL);
-  
-  DEBUG_INFO("mw_prpl_chat_info_defaults for %s\n", NSTR(name));
 
   table = g_hash_table_new_full(g_str_hash, g_str_equal,
 				NULL, g_free);
@@ -3067,9 +3093,6 @@ static void mw_prpl_login(GaimAccount *account, GaimStatus *stat) {
   user = g_strdup(gaim_account_get_username(account));
   pass = (char *) gaim_account_get_password(account);
 
-  DEBUG_INFO("mw_prpl_login\n");
-
-#if 1
   host = strrchr(user, ':');
   if(host) {
     /* annoying user split from 1.2.0, need to undo it */
@@ -3081,34 +3104,6 @@ static void mw_prpl_login(GaimAccount *account, GaimStatus *stat) {
     host = (char *) gaim_account_get_string(account, MW_KEY_HOST,
 					    MW_PLUGIN_DEFAULT_HOST);
   }
-
-#else
-  /* the 1.2.0 way to obtain the host string from an account split.  I
-     didn't like this, it didn't solve a problem, but it created a
-     few. The above code undoes it. */
-  host = strrchr(user, ':');
-  if(host) *host++ = '\0';
-
-  if(! host) {
-    const char *h;
-    char *t;
-
-    /* for those without the host string, let's see if they have host
-       specified in the account setting instead. */
-
-    h = gaim_account_get_string(account, MW_KEY_HOST, MW_PLUGIN_DEFAULT_HOST);
-    if(h) {
-      t = g_strdup_printf("%s:%s", user, h);
-      gaim_account_set_username(account, t);
-      g_free(t);
-      host = (char *) h;
-    }
-  }
-
-  /* de-uglify */
-  if(! gaim_account_get_alias(account))
-    gaim_account_set_alias(account, user);
-#endif
 
   if(! host || ! *host) {
     /* somehow, we don't have a host to connect to. Well, we need one
@@ -3123,7 +3118,7 @@ static void mw_prpl_login(GaimAccount *account, GaimStatus *stat) {
   DEBUG_INFO("host: '%s'\n", host);
   DEBUG_INFO("port: %u\n", port);
 
-  mwSession_setProperty(pd->session, SESSION_NO_SECRET,
+  mwSession_setProperty(pd->session, mwSession_NO_SECRET,
 			(char *) no_secret, NULL);
   mwSession_setProperty(pd->session, mwSession_AUTH_USER_ID, user, g_free);
   mwSession_setProperty(pd->session, mwSession_AUTH_PASSWORD, pass, NULL);
@@ -3170,6 +3165,7 @@ static void mw_prpl_close(GaimConnection *gc) {
 }
 
 
+/** generates a random-ish content id string */
 static char *im_mime_content_id() {
   const char *c = "%03x@%05xmeanwhile";
   srand(time(0) ^ rand());
@@ -3177,6 +3173,8 @@ static char *im_mime_content_id() {
 }
 
 
+/** generates a multipart/related content type with a random-ish
+    boundary value */
 static char *im_mime_content_type() {
   const char *c = "multipart/related; boundary=related_MW%03x_%04x";
   srand(time(0) ^ rand());
@@ -3338,9 +3336,6 @@ static int mw_prpl_send_im(GaimConnection *gc,
      conversation will receive a plaintext message with html contents,
      which is bad. I'm not sure how to fix this correctly. */
 
-  /* @todo support chunking messages over a certain size into multiple
-     smaller messages */
-
   if(strstr(message, "<img ") || strstr(message, "<IMG "))
     flags |= GAIM_CONV_IM_IMAGES;
 
@@ -3366,15 +3361,20 @@ static int mw_prpl_send_im(GaimConnection *gc,
     
     g_free(msg);
     return !ret;
+
+  } else {
+    char *msg;
+
+    /* queue up the message safely as plain text */
+    msg = gaim_markup_strip_html(message);
+    convo_queue(conv, mwImSend_PLAIN, msg);
+    g_free(msg);
+
+    if(! mwConversation_isPending(conv))
+      mwConversation_open(conv);
+
+    return 1;
   }
-
-  /* queue up the message */
-  convo_queue(conv, mwImSend_PLAIN, message);
-  
-  if(! mwConversation_isPending(conv))
-    mwConversation_open(conv);
-
-  return 1;
 }
 
 
@@ -3842,8 +3842,6 @@ static void mw_prpl_add_buddies(GaimConnection *gc,
 				GList *buddies,
 				GList *groups) {
 
-  /** @todo make this use a single call to each mwAwareList */
-
   struct mwGaimPluginData *pd;
   GHashTable *group_sets;
   struct mwAwareIdBlock *idbs, *idb;
@@ -3916,10 +3914,8 @@ static void privacy_fill(struct mwPrivacyInfo *priv,
   struct mwUserItem *u;
   guint count;
 
-  DEBUG_INFO("privacy_fill\n");
-
   count = g_slist_length(members);
-  DEBUG_INFO("  %u (%i) members\n", count, (int) count);
+  DEBUG_INFO("privacy_fill: %u members\n", count);
 
   priv->count = count;
   priv->users = g_new0(struct mwUserItem, count);
@@ -3958,7 +3954,8 @@ static void mw_prpl_set_permit_deny(GaimConnection *gc) {
   case GAIM_PRIVACY_DENY_USERS:
     DEBUG_INFO("GAIM_PRIVACY_DENY_USERS\n");
     privacy_fill(&privacy, acct->deny);
-    /* fall-through */
+    privacy.deny = TRUE;
+    break;
 
   case GAIM_PRIVACY_ALLOW_ALL:
     DEBUG_INFO("GAIM_PRIVACY_ALLOW_ALL\n");
@@ -3968,7 +3965,8 @@ static void mw_prpl_set_permit_deny(GaimConnection *gc) {
   case GAIM_PRIVACY_ALLOW_USERS:
     DEBUG_INFO("GAIM_PRIVACY_ALLOW_USERS\n");
     privacy_fill(&privacy, acct->permit);
-    /* fall-through */
+    privacy.deny = FALSE;
+    break;
 
   case GAIM_PRIVACY_DENY_ALL:
     DEBUG_INFO("GAIM_PRIVACY_DENY_ALL\n");
@@ -3977,7 +3975,7 @@ static void mw_prpl_set_permit_deny(GaimConnection *gc) {
     
   default:
     DEBUG_INFO("acct->perm_deny is 0x%x\n", acct->perm_deny);
-    g_return_if_reached();
+    return;
   }
 
   mwSession_setPrivacyInfo(session, &privacy);
@@ -4352,9 +4350,6 @@ static void ft_outgoing_cancel(GaimXfer *xfer) {
 static void mw_prpl_send_file(GaimConnection *gc,
 			      const char *who, const char *file) {
 
-  /** @todo depends on the meanwhile implementation of the file
-      transfer service */
-
   GaimAccount *acct;
   GaimXfer *xfer;
 
@@ -4441,10 +4436,6 @@ static GaimPluginPrefFrame *
 mw_plugin_get_plugin_pref_frame(GaimPlugin *plugin) {
   GaimPluginPrefFrame *frame;
   GaimPluginPref *pref;
-
-#if 0
-  char *msg;
-#endif
   
   frame = gaim_plugin_pref_frame_new();
   
@@ -4474,11 +4465,6 @@ mw_plugin_get_plugin_pref_frame(GaimPlugin *plugin) {
 
   gaim_plugin_pref_frame_add(frame, pref);
 
-  pref = gaim_plugin_pref_new();
-  gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_INFO);
-  gaim_plugin_pref_set_label(pref, BLIST_WARNING);
-  gaim_plugin_pref_frame_add(frame, pref);
-
   pref = gaim_plugin_pref_new_with_label("General Options");
   gaim_plugin_pref_frame_add(frame, pref);
 
@@ -4496,21 +4482,6 @@ mw_plugin_get_plugin_pref_frame(GaimPlugin *plugin) {
   gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_NONE);
   gaim_plugin_pref_set_label(pref, "Save NAB group members locally");
   gaim_plugin_pref_frame_add(frame, pref);
-
-#if 0
-  pref = gaim_plugin_pref_new_with_label("Credits");
-  gaim_plugin_pref_frame_add(frame, pref);
-
-  msg = ( PLUGIN_NAME " - " PLUGIN_DESC "\n"
-	  "Version " VERSION "\n"
-	  PLUGIN_AUTHOR "\n"
-	  PLUGIN_HOMEPAGE );
-
-  pref = gaim_plugin_pref_new();
-  gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_INFO);
-  gaim_plugin_pref_set_label(pref, msg);
-  gaim_plugin_pref_frame_add(frame, pref);
-#endif
 
   return frame;
 }
@@ -4865,11 +4836,11 @@ static void remote_group_multi(struct mwResolveResult *result,
 static void remote_group_resolved(struct mwServiceResolve *srvc,
 				  guint32 id, guint32 code, GList *results,
 				  gpointer b) {
+
+  struct mwResolveResult *res = NULL;
   struct mwSession *session;
   struct mwGaimPluginData *pd;
   GaimConnection *gc;
-
-  struct mwResolveResult *res = NULL;
 
   session = mwService_getSession(MW_SERVICE(srvc));
   g_return_if_fail(session != NULL);
