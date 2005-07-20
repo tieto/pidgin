@@ -2304,7 +2304,7 @@ static void im_recv_mime(struct mwConversation *conv,
     } else if(g_str_has_prefix(type, "image")) {
       /* put images into the image store */
 
-      char *d_dat;
+      guint8 *d_dat;
       gsize d_len;
       char *cid;
       int img;
@@ -2325,16 +2325,20 @@ static void im_recv_mime(struct mwConversation *conv,
       /* recall the image for dereferencing later */
       images = g_list_append(images, GINT_TO_POINTER(img));
       
+      /* TODO: Don't we need to g_free 'd_dat'?! */
+
     } else if(g_str_has_prefix(type, "text")) {
 
       /* concatenate all the text parts together */
-      char *data, *txt;
+      guint8 *data;
+      char *txt;
       gsize len;
 
       gaim_mime_part_get_data_decoded(part, &data, &len);
-      txt = gaim_utf8_try_convert(data);
+      txt = gaim_utf8_try_convert((const char *)data);
       g_string_append(str, txt);
       g_free(txt);
+      /* TODO: Don't we need to g_free 'data'?! */
     }
   }
 

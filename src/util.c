@@ -247,10 +247,10 @@ gaim_base64_decode(const char *str, gsize *ret_len)
 }
 
 /**************************************************************************
- * Quoted Printable Functions (see RFC 1341)
+ * Quoted Printable Functions (see RFC 2045).
  **************************************************************************/
-void
-gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
+guint8 *
+gaim_quotedp_decode(const char *str, gsize *ret_len)
 {
 	char *n, *new;
 	const char *end, *p;
@@ -287,13 +287,13 @@ gaim_quotedp_decode(const char *str, char **ret_str, int *ret_len)
 
 	*n = '\0';
 
-	if (ret_len)
+	if (ret_len != NULL)
 		*ret_len = n - new;
 
 	/* Resize to take less space */
 	/* new = realloc(new, n - new); */
 
-	*ret_str = new;
+	return (guint8 *)new;
 }
 
 /**************************************************************************
@@ -413,14 +413,14 @@ gaim_mime_decode_field(const char *str)
 				guint8 *decoded = NULL;
 				gsize dec_len;
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
-					gaim_quotedp_decode(encoded_text, &decoded, &dec_len);
+					decoded = gaim_quotedp_decode(encoded_text, &dec_len);
 				else if (g_ascii_strcasecmp(encoding, "B") == 0)
 					decoded = gaim_base64_decode(encoded_text, &dec_len);
 				else
 					decoded = NULL;
 				if (decoded) {
 					gsize len;
-					char *converted = g_convert(decoded, dec_len, "utf-8", charset, NULL, &len, NULL);
+					char *converted = g_convert((const gchar *)decoded, dec_len, "utf-8", charset, NULL, &len, NULL);
 
 					if (converted) {
 						n = strncpy(n, converted, len) + len;

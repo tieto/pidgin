@@ -119,12 +119,22 @@ guint8 *gaim_base64_decode(const char *str, gsize *ret_len);
 
 /**
  * Converts a quoted printable string back to its readable equivalent.
+ * What is a quoted printable string, you ask?  It's an encoding used
+ * to transmit binary data as ASCII.  It's intended purpose is to send
+ * e-mails containing non-ASCII characters.  Wikipedia has a pretty good
+ * explanation.  Also see RFC 2045.
  *
- * @param str     The string to convert back.
+ * @param str     The quoted printable ASCII string to convert to raw data.
  * @param ret_str The returned, readable string.
- * @param ret_len The returned string length.
+ * @param ret_len The length of the returned data.  You can
+ *                pass in NULL if you're sure that you know
+ *                the length of the decoded data, or if you
+ *                know you'll be able to use strlen to
+ *                determine the length, etc.
+ *
+ * @return The raw data.  Must be g'free'd when no longer needed.
  */
-void gaim_quotedp_decode (const char *str, char **ret_str, int *ret_len);
+guint8 *gaim_quotedp_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 

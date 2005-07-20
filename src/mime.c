@@ -304,7 +304,7 @@ const char *gaim_mime_part_get_data(GaimMimePart *part) {
 
 
 void gaim_mime_part_get_data_decoded(GaimMimePart *part,
-				     char **data, gsize *len) {
+				     guint8 **data, gsize *len) {
   const char *enc;
 
   g_return_if_fail(part != NULL);
@@ -316,15 +316,15 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
   enc = gaim_mime_part_get_field(part, "content-transfer-encoding");
 
   if(! enc) {
-    *data = g_strdup(part->data->str);
+    *data = (guint8 *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "7bit")) {
-    *data = g_strdup(part->data->str);
+    *data = (guint8 *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "8bit")) {
-    *data = g_strdup(part->data->str);
+    *data = (guint8 *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "base16")) {
@@ -334,7 +334,7 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
 	*data = gaim_base64_decode(part->data->str, len);
 
   } else if(! g_ascii_strcasecmp(enc, "quoted-printable")) {
-    gaim_quotedp_decode(part->data->str, data, len);
+    *data = gaim_quotedp_decode(part->data->str, len);
 
   } else {
     gaim_debug_warning("mime", "gaim_mime_part_get_data_decoded:"
