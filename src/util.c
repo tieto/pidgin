@@ -3170,8 +3170,10 @@ gaim_email_is_valid(const char *address)
 	return ((c - domain) > 3 ? TRUE : FALSE);
 }
 
-/** Stolen from gnome_uri_list_extract_uris **/
-GList* gaim_uri_list_extract_uris (const gchar* uri_list) {
+/* Stolen from gnome_uri_list_extract_uris */
+GList *
+gaim_uri_list_extract_uris(const gchar *uri_list)
+{
 	const gchar *p, *q;
 	gchar *retval;
 	GList *result = NULL;
@@ -3215,13 +3217,15 @@ GList* gaim_uri_list_extract_uris (const gchar* uri_list) {
 }
 
 
-/** Stolen from gaim_uri_list_extract_filenames **/
-GList* gaim_uri_list_extract_filenames (const gchar* uri_list) {
+/* Stolen from gnome_uri_list_extract_filenames */
+GList *
+gaim_uri_list_extract_filenames(const gchar *uri_list)
+{
 	GList *tmp_list, *node, *result;
 
 	g_return_val_if_fail (uri_list != NULL, NULL);
 
-	result = gaim_uri_list_extract_uris (uri_list);
+	result = gaim_uri_list_extract_uris(uri_list);
 
 	tmp_list = result;
 	while (tmp_list) {

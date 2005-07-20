@@ -1457,7 +1457,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 {
 	GList *tmp;
 	GdkPixbuf *pb;
-	GList *files = gaim_uri_list_extract_filenames(sd->data);
+	GList *files = gaim_uri_list_extract_filenames((const gchar *)sd->data);
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	gboolean file_send_ok = FALSE;

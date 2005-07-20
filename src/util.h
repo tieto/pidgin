@@ -132,7 +132,7 @@ guint8 *gaim_base64_decode(const char *str, gsize *ret_len);
  *                know you'll be able to use strlen to
  *                determine the length, etc.
  *
- * @return The raw data.  Must be g'free'd when no longer needed.
+ * @return The raw data.  Must be g_free'd when no longer needed.
  */
 guint8 *gaim_quotedp_decode(const char *str, gsize *ret_len);
 
@@ -150,15 +150,19 @@ guint8 *gaim_quotedp_decode(const char *str, gsize *ret_len);
  * of an encoded word is =?ISO-8859-1?Q?Keld_J=F8rn_Simonsen?=
  * =? designates the beginning of the encoded-word
  * ?= designates the end of the encoded-word
- * ? segments the encoded word into three pieces.  The first piece is
- *   the character set, the second piece is the encoding, and the
- *   third piece is the encoded text.
  *
- * @param str The string to convert back.
+ * An encoded word is segmented into three pieces by the use of a
+ * question mark.  The first piece is the character set, the second
+ * piece is the encoding, and the third piece is the encoded text.
  *
- * @return The readable string.
+ * @param str The ASCII string, possibly containing any number of
+ *            encoded-word sections.
+ *
+ * @return The string, with any encoded-word sections decoded and
+ *         converted to UTF-8.  Must be g_free'd when no longer
+ *         needed.
  */
-char *gaim_mime_decode_field (const char *str);
+char *gaim_mime_decode_field(const char *str);
 
 /*@}*/
 
@@ -222,6 +226,9 @@ time_t gaim_str_to_time(const char *timestamp, gboolean utc);
  *
  * This function just calls strftime. The only advantage to using it
  * is that gcc won't give a warning if you use %c
+ *
+ * TODO: The warning is gone in gcc4, and this function can
+ *       eventually be removed.
  */
 size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *tm);
 
@@ -234,7 +241,7 @@ size_t gaim_strftime(char *s, size_t max, const char *format, const struct tm *t
 /*@{*/
 
 /**
- * Finds a HTML tag matching the given name.
+ * Finds an HTML tag matching the given name.
  *
  * This locates an HTML tag's start and end, and stores its attributes
  * in a GData hash table. The names of the attributes are lower-cased
@@ -714,27 +721,29 @@ const char *gaim_url_encode(const char *str);
 gboolean gaim_email_is_valid(const char *address);
 
 /**
- * This function extracts a list of URIs from the a "text/uri-list" string
- * It was "borrowed" from gnome_uri_list_extract_uris
- * 
- * @param uri_list an uri-list in the standard format.
+ * This function extracts a list of URIs from the a "text/uri-list"
+ * string.  It was "borrowed" from gnome_uri_list_extract_uris
  *
- * @return a GList containing strings allocated with g_malloc that have been 
- *	splitted from uri-list.
+ * @param uri_list An uri-list in the standard format.
+ *
+ * @return A GList containing strings allocated with g_malloc
+ *         that have been splitted from uri-list.
  */
-GList* gaim_uri_list_extract_uris (const gchar* uri_list);
+GList *gaim_uri_list_extract_uris(const gchar *uri_list);
 
 /**
- * This function extracts a list of filenames from the a "text/uri-list" string
- * It was "borrowed" from gnome_uri_list_extract_filenames
- * 
- * @param uri_list an uri-list in the standard format.
+ * This function extracts a list of filenames from a
+ * "text/uri-list" string.  It was "borrowed" from
+ * gnome_uri_list_extract_filenames
  *
- * @return a GList containing strings allocated with g_malloc that contain the 
- * 	filenames in the uri-list. Note that unlike gaim_uri_list_extract_uris() 
- * 	function, this will discard any non-file uri from the result value.
+ * @param uri_list A uri-list in the standard format.
+ *
+ * @return A GList containing strings allocated with g_malloc that
+ *         contain the filenames in the uri-list. Note that unlike
+ *         gaim_uri_list_extract_uris() function, this will discard
+ *         any non-file uri from the result value.
  */
-GList* gaim_uri_list_extract_filenames (const gchar* uri_list);
+GList *gaim_uri_list_extract_filenames(const gchar *uri_list);
 
 /*@}*/
 
