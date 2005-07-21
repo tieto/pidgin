@@ -152,7 +152,7 @@ msn_xfer_end_cb(MsnSlpCall *slpcall)
 }
 
 void
-msn_xfer_completed_cb(MsnSlpCall *slpcall, guchar *body,
+msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 					  gsize size)
 {
 	gaim_xfer_set_completed(slpcall->xfer, TRUE);

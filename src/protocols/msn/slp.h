@@ -26,6 +26,7 @@
 
 #include "slpcall.h"
 
+#include "internal.h"
 #include "ft.h"
 
 void msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize
@@ -37,7 +38,7 @@ MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
 void send_bye(MsnSlpCall *slpcall, const char *type);
 
 void msn_xfer_completed_cb(MsnSlpCall *slpcall,
-						   const char *body, long long size);
+						   const guchar *body, gsize size);
 
 void msn_xfer_cancel(GaimXfer *xfer);
 void msn_xfer_end_cb(MsnSlpCall *slpcall);
