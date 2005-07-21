@@ -465,7 +465,7 @@ static void
 account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		 GtkSelectionData *sd, guint info, guint t, AccountPrefsDialog *dialog)
 {
-	gchar *name = sd->data;
+	gchar *name = (gchar *)sd->data;
 
 	if ((sd->length >= 0) && (sd->format == 8)) {
 		/* Well, it looks like the drag event was cool.

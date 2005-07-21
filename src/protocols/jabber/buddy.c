@@ -810,7 +810,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 				if((binval = xmlnode_get_child(child, "BINVAL")) &&
 						(bintext = xmlnode_get_data(binval))) {
 					gsize size;
-					guint8 *data;
+					guchar *data;
 					int i;
 					unsigned char hashval[20];
 					char *p, hash[41];

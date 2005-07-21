@@ -152,8 +152,8 @@ msn_xfer_end_cb(MsnSlpCall *slpcall)
 }
 
 void
-msn_xfer_completed_cb(MsnSlpCall *slpcall, const char *body,
-					  long long size)
+msn_xfer_completed_cb(MsnSlpCall *slpcall, guchar *body,
+					  gsize size)
 {
 	gaim_xfer_set_completed(slpcall->xfer, TRUE);
 }
@@ -755,9 +755,9 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	msn_slplink_process_msg(slplink, msg);
 }
 
-void
+static void
 got_emoticon(MsnSlpCall *slpcall,
-			 const char *data, long long size)
+			 const guchar *data, gsize size)
 {
 
 	GaimConversation *conv;
@@ -945,7 +945,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 
 void
 got_user_display(MsnSlpCall *slpcall,
-				 const char *data, long long size)
+				 const guchar *data, gsize size)
 {
 	MsnUserList *userlist;
 	const char *info;

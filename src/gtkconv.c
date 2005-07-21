@@ -703,7 +703,7 @@ invite_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		char *username = NULL;
 		GaimAccount *account;
 
-		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+		if (gaim_gtk_parse_x_im_contact((const char *)sd->data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)
@@ -4156,7 +4156,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		char *username = NULL;
 		GaimAccount *account;
 
-		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+		if (gaim_gtk_parse_x_im_contact((const char *)sd->data, FALSE, &account,
 						&protocol, &username, NULL))
 		{
 			if (account == NULL)
@@ -5365,7 +5365,7 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 
 static void
 gaim_gtkconv_custom_smiley_write(GaimConversation *conv, const char *smile,
-                                      const char * data, gint64 size)
+                                      const guchar *data, gsize size)
 {
 	GaimGtkConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;

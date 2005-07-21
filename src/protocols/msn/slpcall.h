@@ -24,10 +24,12 @@
 #ifndef _MSN_SLPCALL_H_
 #define _MSN_SLPCALL_H_
 
+#include "internal.h"
+
 typedef struct _MsnSlpCall MsnSlpCall;
 
 typedef void (*MsnSlpCb)(MsnSlpCall *slpcall,
-						 const char *data, long long size);
+						 const guchar *data, gsize size);
 typedef void (*MsnSlpEndCb)(MsnSlpCall *slpcall);
 
 #include "slplink.h"

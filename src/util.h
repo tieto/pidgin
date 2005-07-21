@@ -53,7 +53,7 @@ extern "C" {
  *
  * @see gaim_base16_decode()
  */
-gchar *gaim_base16_encode(const guint8 *data, gsize len);
+gchar *gaim_base16_encode(const guchar *data, gsize len);
 
 /**
  * Converts an ASCII string of base-16 encoded data to
@@ -70,7 +70,7 @@ gchar *gaim_base16_encode(const guint8 *data, gsize len);
  *
  * @see gaim_base16_encode()
  */
-guint8 *gaim_base16_decode(const char *str, gsize *ret_len);
+guchar *gaim_base16_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -91,7 +91,7 @@ guint8 *gaim_base16_decode(const char *str, gsize *ret_len);
  *
  * @see gaim_base64_decode()
  */
-gchar *gaim_base64_encode(const guint8 *data, gsize len);
+gchar *gaim_base64_encode(const guchar *data, gsize len);
 
 /**
  * Converts an ASCII string of base-64 encoded data to
@@ -108,7 +108,7 @@ gchar *gaim_base64_encode(const guint8 *data, gsize len);
  *
  * @see gaim_base64_encode()
  */
-guint8 *gaim_base64_decode(const char *str, gsize *ret_len);
+guchar *gaim_base64_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -134,7 +134,7 @@ guint8 *gaim_base64_decode(const char *str, gsize *ret_len);
  *
  * @return The raw data.  Must be g_free'd when no longer needed.
  */
-guint8 *gaim_quotedp_decode(const char *str, gsize *ret_len);
+guchar *gaim_quotedp_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 

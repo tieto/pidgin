@@ -76,7 +76,7 @@ static void finish_plaintext_authentication(JabberStream *js)
 		response = g_string_append(response,
 				gaim_connection_get_password(js->gc));
 
-		enc_out = gaim_base64_encode((guint8 *)response->str, response->len);
+		enc_out = gaim_base64_encode((guchar *)response->str, response->len);
 
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 		xmlnode_insert_data(auth, enc_out, -1);
@@ -304,7 +304,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint8 result[16];
+	guchar result[16];
 	size_t a1len;
 
 	unsigned char *x, *a1, *kd, *convnode, *convpasswd;
@@ -445,7 +445,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			g_free(auth_resp);
 			g_free(cnonce);
 
-			enc_out = gaim_base64_encode((guint8 *)response->str, response->len);
+			enc_out = gaim_base64_encode((guchar *)response->str, response->len);
 
 			gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
 

@@ -307,7 +307,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 197: /* Avatars */
 		{
-			guint8 *decoded;
+			guchar *decoded;
 			char *tmp;
 			gsize len;
 
@@ -1080,7 +1080,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint8 digest[16];
+	guchar digest[16];
 
 	char *crypt_result;
 	char password_hash[25];
@@ -1186,7 +1186,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 	GaimCipher			*md5_cipher;
 	GaimCipherContext	*md5_ctx;
-	guint8				md5_digest[16];
+	guchar				md5_digest[16];
 
 	GaimCipher			*sha1_cipher;
 	GaimCipherContext	*sha1_ctx1;
@@ -1861,7 +1861,7 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	char *who = NULL;
 	char *base64 = NULL;
-	guint8 *decoded;
+	guchar *decoded;
 	gsize len;
 
 	while (l) {

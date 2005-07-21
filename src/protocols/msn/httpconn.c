@@ -105,7 +105,7 @@ msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
 	if (username != NULL) {
 		char *tmp;
 		auth = g_strdup_printf("%s:%s", username, password ? password : "");
-		tmp = gaim_base64_encode(auth, strlen(auth));
+		tmp = gaim_base64_encode((const guchar *)auth, strlen(auth));
 		g_free(auth);
 		auth = g_strdup_printf("Proxy-Authorization: Basic %s\r\n", tmp);
 		g_free(tmp);

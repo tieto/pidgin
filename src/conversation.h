@@ -203,7 +203,7 @@ struct _GaimConversationUiOps
 	/* Custom Smileys */
 	gboolean (*custom_smiley_add)(GaimConversation *conv, const char *smile);
 	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
-	                            const char * data, gint64 size);
+	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
 
 
@@ -1017,8 +1017,9 @@ gboolean gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
  */
 
 void gaim_conv_custom_smiley_write(GaimConversation *conv,
-                                   const char *smile, const char * data,
-                                   gint64 size);
+                                   const char *smile,
+                                   const guchar *data,
+                                   gsize size);
 
 /**
  * Close the custom smiley, all data has been written with

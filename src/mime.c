@@ -304,7 +304,7 @@ const char *gaim_mime_part_get_data(GaimMimePart *part) {
 
 
 void gaim_mime_part_get_data_decoded(GaimMimePart *part,
-				     guint8 **data, gsize *len) {
+				     guchar **data, gsize *len) {
   const char *enc;
 
   g_return_if_fail(part != NULL);
@@ -316,15 +316,15 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
   enc = gaim_mime_part_get_field(part, "content-transfer-encoding");
 
   if(! enc) {
-    *data = (guint8 *)g_strdup(part->data->str);
+    *data = (guchar *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "7bit")) {
-    *data = (guint8 *)g_strdup(part->data->str);
+    *data = (guchar *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "8bit")) {
-    *data = (guint8 *)g_strdup(part->data->str);
+    *data = (guchar *)g_strdup(part->data->str);
     *len = part->data->len;
 
   } else if(! g_ascii_strcasecmp(enc, "base16")) {

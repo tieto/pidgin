@@ -848,8 +848,8 @@ _parse_data(TrepiaSession *session, char *buf)
 
 				/* Buddy Icon */
 				if ((value = g_hash_table_lookup(info, "q")) != NULL) {
-					char *icon;
-					int icon_len;
+					guchar *icon;
+					gsize icon_len;
 
 					icon = gaim_base64_decode(value, &icon_len);
 
@@ -1160,7 +1160,7 @@ trepia_set_buddy_icon(GaimConnection *gc, const char *filename)
 		FILE *fp;
 
 		if ((fp = g_fopen(filename, "rb")) != NULL) {
-			char *buf = g_malloc(sb.st_size + 1);
+			guchar *buf = g_malloc(sb.st_size + 1);
 			char *temp;
 			char *out_buf;
 

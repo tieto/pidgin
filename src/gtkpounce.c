@@ -305,7 +305,7 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		char *username = NULL;
 		GaimAccount *account;
 
-		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+		if (gaim_gtk_parse_x_im_contact((const char *)sd->data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)

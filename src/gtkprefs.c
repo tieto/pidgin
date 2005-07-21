@@ -585,18 +585,18 @@ theme_got_url(void *data, const char *themedata, size_t len)
 	g_free(path);
 }
 
-static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, 
+static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd,
 				guint info, guint t, gpointer data) {
-	gchar *name = sd->data;
+	gchar *name = (gchar *)sd->data;
 
 	if ((sd->length >= 0) && (sd->format == 8)) {
-		/* Well, it looks like the drag event was cool. 
+		/* Well, it looks like the drag event was cool.
 		 * Let's do something with it */
 
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp;
-			/* It looks like we're dealing with a local file. Let's 
+			/* It looks like we're dealing with a local file. Let's
 			 * just untar it in the right place */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				gaim_debug(GAIM_DEBUG_ERROR, "theme dnd", "%s\n",

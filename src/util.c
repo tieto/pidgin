@@ -68,7 +68,7 @@ static char home_dir[MAXPATHLEN];
  * Base16 Functions
  **************************************************************************/
 gchar *
-gaim_base16_encode(const guint8 *data, gsize len)
+gaim_base16_encode(const guchar *data, gsize len)
 {
 	int i;
 	gchar *ascii = NULL;
@@ -84,11 +84,11 @@ gaim_base16_encode(const guint8 *data, gsize len)
 	return ascii;
 }
 
-guint8 *
+guchar *
 gaim_base16_decode(const char *str, gsize *ret_len)
 {
 	int len, i, accumulator = 0;
-	guint8 *data;
+	guchar *data;
 
 	g_return_val_if_fail(str != NULL, NULL);
 
@@ -142,7 +142,7 @@ static const char xdigits[] =
 	"0123456789abcdef";
 
 gchar *
-gaim_base64_encode(const guint8 *data, gsize len)
+gaim_base64_encode(const guchar *data, gsize len)
 {
 	char *out, *rv;
 
@@ -180,10 +180,10 @@ gaim_base64_encode(const guint8 *data, gsize len)
 	return rv;
 }
 
-guint8 *
+guchar *
 gaim_base64_decode(const char *str, gsize *ret_len)
 {
-	guint8 *out = NULL;
+	guchar *out = NULL;
 	char tmp = 0;
 	const char *c;
 	gint32 tmp2 = 0;
@@ -210,13 +210,13 @@ gaim_base64_decode(const char *str, gsize *ret_len)
 		} else if (*c == '=') {
 			if (n == 3) {
 				out = g_realloc(out, len + 2);
-				out[len] = (guint8)(tmp2 >> 10) & 0xff;
+				out[len] = (guchar)(tmp2 >> 10) & 0xff;
 				len++;
-				out[len] = (guint8)(tmp2 >> 2) & 0xff;
+				out[len] = (guchar)(tmp2 >> 2) & 0xff;
 				len++;
 			} else if (n == 2) {
 				out = g_realloc(out, len + 1);
-				out[len] = (guint8)(tmp2 >> 4) & 0xff;
+				out[len] = (guchar)(tmp2 >> 4) & 0xff;
 				len++;
 			}
 			break;
@@ -225,11 +225,11 @@ gaim_base64_decode(const char *str, gsize *ret_len)
 		n++;
 		if (n == 4) {
 			out = g_realloc(out, len + 3);
-			out[len] = (guint8)((tmp2 >> 16) & 0xff);
+			out[len] = (guchar)((tmp2 >> 16) & 0xff);
 			len++;
-			out[len] = (guint8)((tmp2 >> 8) & 0xff);
+			out[len] = (guchar)((tmp2 >> 8) & 0xff);
 			len++;
-			out[len] = (guint8)(tmp2 & 0xff);
+			out[len] = (guchar)(tmp2 & 0xff);
 			len++;
 			tmp2 = 0;
 			n = 0;
@@ -249,7 +249,7 @@ gaim_base64_decode(const char *str, gsize *ret_len)
 /**************************************************************************
  * Quoted Printable Functions (see RFC 2045).
  **************************************************************************/
-guint8 *
+guchar *
 gaim_quotedp_decode(const char *str, gsize *ret_len)
 {
 	char *n, *new;
@@ -293,7 +293,7 @@ gaim_quotedp_decode(const char *str, gsize *ret_len)
 	/* Resize to take less space */
 	/* new = realloc(new, n - new); */
 
-	return (guint8 *)new;
+	return (guchar *)new;
 }
 
 /**************************************************************************
@@ -410,7 +410,7 @@ gaim_mime_decode_field(const char *str)
 				char *charset = g_strndup(charset0, encoding0 - charset0 - 1);
 				char *encoding = g_strndup(encoding0, encoded_text0 - encoding0 - 1);
 				char *encoded_text = g_strndup(encoded_text0, cur - encoded_text0 - 1);
-				guint8 *decoded = NULL;
+				guchar *decoded = NULL;
 				gsize dec_len;
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
 					decoded = gaim_quotedp_decode(encoded_text, &dec_len);

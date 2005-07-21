@@ -484,7 +484,7 @@ rendezvous_add_to_txt_iconhash(RendezvousData *rd, const char *iconfile)
 {
 	guchar *icondata;
 	unsigned short iconlength;
-	unsigned char hash[20];
+	guchar hash[20];
 	gchar *base16;
 
 	g_return_if_fail(rd != NULL);

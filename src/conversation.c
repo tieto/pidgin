@@ -1674,7 +1674,7 @@ gaim_conv_custom_smiley_add(GaimConversation *conv, const char *smile,
 
 void
 gaim_conv_custom_smiley_write(GaimConversation *conv, const char *smile,
-                                   const char * data, gint64 size)
+                                   const guchar *data, gsize size)
 {
 	g_return_if_fail(conv != NULL);
 	g_return_if_fail(smile != NULL && *smile);

@@ -163,7 +163,7 @@ const char *gaim_buddy_icon_get_username(const GaimBuddyIcon *icon);
  *
  * @return The icon data.
  */
-const void *gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len);
+const guchar *gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len);
 
 /**
  * Returns an extension corresponding to the buddy icon's file type.

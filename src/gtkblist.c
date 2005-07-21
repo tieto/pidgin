@@ -1913,7 +1913,7 @@ static void gaim_gtk_blist_drag_data_get_cb(GtkWidget *widget,
 		gtk_selection_data_set(data,
 					gdk_atom_intern("application/x-im-contact", FALSE),
 					8, /* bits */
-					mime_str,
+					(const guchar *)mime_str,
 					strlen(mime_str) + 1);
 
 		g_free(mime_str);
@@ -2111,7 +2111,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			}
 		}
 
-		if (gaim_gtk_parse_x_im_contact(sd->data, FALSE, &account,
+		if (gaim_gtk_parse_x_im_contact((const char *)sd->data, FALSE, &account,
 										&protocol, &username, &alias))
 		{
 			if (account == NULL)
@@ -2172,7 +2172,7 @@ static void gaim_gtk_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *d
 			}
 		}
 
-		result = parse_vcard(sd->data, group);
+		result = parse_vcard((const gchar *)sd->data, group);
 
 		gtk_drag_finish(dc, result, (dc->action == GDK_ACTION_MOVE), t);
 	} else if (sd->target == gdk_atom_intern("text/uri-list", FALSE) && sd->data) {
@@ -2209,8 +2209,8 @@ static GdkPixbuf *gaim_gtk_blist_get_buddy_icon(GaimBlistNode *node,
 	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
 	GaimBuddyIcon *icon;
-	const char *data;
-	size_t len;
+	const guchar *data;
+	gsize len;
 	GaimBuddy *buddy = (GaimBuddy *)node;
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {

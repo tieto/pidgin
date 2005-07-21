@@ -218,7 +218,7 @@ delete_icon_cache_file(const char *dirname, const char *old_icon)
 void
 gaim_buddy_icon_cache(GaimBuddyIcon *icon, GaimBuddy *buddy)
 {
-	const void *data;
+	const guchar *data;
 	const char *dirname;
 	char *random;
 	char *filename;
@@ -357,7 +357,7 @@ gaim_buddy_icon_get_username(const GaimBuddyIcon *icon)
 	return icon->username;
 }
 
-const void *
+const guchar *
 gaim_buddy_icon_get_data(const GaimBuddyIcon *icon, size_t *len)
 {
 	g_return_val_if_fail(icon != NULL, NULL);

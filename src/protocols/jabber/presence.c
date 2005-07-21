@@ -207,7 +207,7 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 	GaimBuddy *b = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
-	guint8 *data;
+	guchar *data;
 	gsize size;
 	const char *from = xmlnode_get_attrib(packet, "from");
 
