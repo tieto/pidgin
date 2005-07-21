@@ -119,7 +119,6 @@ typedef GaimInputCondition *            Gaim__InputCondition;
 typedef GaimEventLoopUiOps *            Gaim__EventLoopUiOps;
 
 	/* ft.h */
-
 typedef GaimXfer *              	Gaim__Xfer;
 typedef GaimXferType            	Gaim__XferType;
 typedef GaimXferStatusType              Gaim__XferStatusType;
@@ -133,7 +132,9 @@ typedef GaimStatusIconSize              Gaim__StatusIconSize;
 	/* gtkutils.h */
 typedef GaimButtonOrientation		Gaim__ButtonOrientation;
 typedef GaimButtonStyle			Gaim__ButtonStyle;
+#ifndef _WIN32
 typedef GaimBrowserPlace		Gaim__BrowserPlace;
+#endif /* _WIN32 */
 
 	/* gtkconv.h */
 typedef GdkPixbuf *			Gaim__GDK__Pixbuf;
