@@ -11,7 +11,6 @@ typedef struct group *Gaim__Group;
 #include <EXTERN.h>
 #include <perl.h>
 #include <XSUB.h>
-#include <embedvar.h>
 
 #undef group
 
