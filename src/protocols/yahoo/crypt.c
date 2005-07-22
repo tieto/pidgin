@@ -73,32 +73,32 @@ char *yahoo_crypt(const char *key, const char *salt)
 	key_len = strlen (key);
 
 	/* Add the key string.  */
-	gaim_cipher_context_append(context1, key, key_len);
+	gaim_cipher_context_append(context1, (const guint8 *)key, key_len);
 
 	/* Because the SALT argument need not always have the salt prefix we
 	 * add it separately.
 	 */
-	gaim_cipher_context_append(context1, md5_salt_prefix,
+	gaim_cipher_context_append(context1, (const guint8 *)md5_salt_prefix,
 							   sizeof(md5_salt_prefix) - 1);
 
 	/* The last part is the salt string.  This must be at most 8
 	 * characters and it ends at the first `$' character (for
 	 * compatibility which existing solutions).
 	 */
-	gaim_cipher_context_append(context1, salt, salt_len);
+	gaim_cipher_context_append(context1, (const guint8 *)salt, salt_len);
 
 	/* Compute alternate MD5 sum with input KEY, SALT, and KEY.  The
 	 * final result will be added to the first context.
 	 */
 
 	/* Add key.  */
-	gaim_cipher_context_append(context2, key, key_len);
+	gaim_cipher_context_append(context2, (const guint8 *)key, key_len);
 
 	/* Add salt.  */
-	gaim_cipher_context_append(context2, salt, salt_len);
+	gaim_cipher_context_append(context2, (const guint8 *)salt, salt_len);
 
 	/* Add key again.  */
-	gaim_cipher_context_append(context2, key, key_len);
+	gaim_cipher_context_append(context2, (const guint8 *)key, key_len);
 
 	/* Now get result of this (16 bytes) and add it to the other context.  */
 	gaim_cipher_context_digest(context2, sizeof(digest), digest, NULL);
@@ -133,23 +133,23 @@ char *yahoo_crypt(const char *key, const char *salt)
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
-			gaim_cipher_context_append(context2, key, key_len);
+			gaim_cipher_context_append(context2, (const guint8 *)key, key_len);
 		else
 			gaim_cipher_context_append(context2, digest, 16);
 
 		/* Add salt for numbers not divisible by 3.  */
 		if (cnt % 3 != 0)
-			gaim_cipher_context_append(context2, salt, salt_len);
+			gaim_cipher_context_append(context2, (const guint8 *)salt, salt_len);
 
 		/* Add key for numbers not divisible by 7.  */
 		if (cnt % 7 != 0)
-			gaim_cipher_context_append(context2, key, key_len);
+			gaim_cipher_context_append(context2, (const guint8 *)key, key_len);
 
 		/* Add key or last result.  */
 		if ((cnt & 1) != 0)
 			gaim_cipher_context_append(context2, digest, 16);
 		else
-			gaim_cipher_context_append(context2, key, key_len);
+			gaim_cipher_context_append(context2, (const guint8 *)key, key_len);
 
 		/* Create intermediate result.  */
 		gaim_cipher_context_digest(context2, sizeof(digest), digest, NULL);

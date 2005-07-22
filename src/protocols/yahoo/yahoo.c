@@ -1033,7 +1033,7 @@ char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 
 /* This is taken from Sylpheed by Hiroyuki Yamamoto.  We have our own tobase64 function
  * in util.c, but it has a bug I don't feel like finding right now ;) */
-void to_y64(unsigned char *out, const unsigned char *in, int inlen)
+void to_y64(char *out, const unsigned char *in, gsize inlen)
      /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
 {
 	for (; inlen >= 3; inlen -= 3)
@@ -1101,7 +1101,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, pass, strlen(pass));
+	gaim_cipher_context_append(context, (const guint8 *)pass, strlen(pass));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 
 	to_y64(password_hash, digest, 16);
@@ -1109,7 +1109,7 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, crypt_result, strlen(crypt_result));
+	gaim_cipher_context_append(context, (const guint8 *)crypt_result, strlen(crypt_result));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	to_y64(crypt_hash, digest, 16);
 
@@ -1155,12 +1155,12 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	}
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, hash_string_p, strlen(hash_string_p));
+	gaim_cipher_context_append(context, (const guint8 *)hash_string_p, strlen(hash_string_p));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	to_y64(result6, digest, 16);
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, hash_string_c, strlen(hash_string_c));
+	gaim_cipher_context_append(context, (const guint8 *)hash_string_c, strlen(hash_string_c));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
 	to_y64(result96, digest, 16);
@@ -1203,10 +1203,10 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	char				*crypt_hash		= (char *)g_malloc(25);
 	char				*crypt_result		= NULL;
 
-	char				pass_hash_xor1[64];
-	char				pass_hash_xor2[64];
-	char				crypt_hash_xor1[64];
-	char				crypt_hash_xor2[64];
+	unsigned char		pass_hash_xor1[64];
+	unsigned char		pass_hash_xor2[64];
+	unsigned char		crypt_hash_xor1[64];
+	unsigned char		crypt_hash_xor2[64];
 	char				resp_6[100];
 	char				resp_96[100];
 
@@ -1214,7 +1214,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	unsigned char		digest2[20];
 	unsigned char		comparison_src[20];
 	unsigned char		magic_key_char[4];
-	const unsigned char		*magic_ptr;
+	const char			*magic_ptr;
 
 	unsigned int		magic[64];
 	unsigned int		magic_work = 0;
@@ -1419,14 +1419,14 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 	/* Get password and crypt hashes as per usual. */
 	gaim_cipher_context_reset(md5_ctx, NULL);
-	gaim_cipher_context_append(md5_ctx, pass, strlen(pass));
+	gaim_cipher_context_append(md5_ctx, (const guint8 *)pass, strlen(pass));
 	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(password_hash, md5_digest, 16);
 
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 	gaim_cipher_context_reset(md5_ctx, NULL);
-	gaim_cipher_context_append(md5_ctx, crypt_result, strlen(crypt_result));
+	gaim_cipher_context_append(md5_ctx, (const guint8 *)crypt_result, strlen(crypt_result));
 	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(crypt_hash, md5_digest, 16);
@@ -1909,7 +1909,7 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 			g_free(tmp);
 		}
 
-		tmp2 = g_strndup(decoded, len); /* so its \0 terminated...*/
+		tmp2 = g_strndup((const gchar *)decoded, len); /* so its \0 terminated...*/
 		ip = strtol(tmp2, NULL, 10);
 		g_free(tmp2);
 		g_free(decoded);
@@ -2339,7 +2339,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, pass, strlen(pass));
+	gaim_cipher_context_append(context, (const guint8 *)pass, strlen(pass));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
@@ -2348,7 +2348,7 @@ static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len)
 
 	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, chal, strlen(chal));
+	gaim_cipher_context_append(context, (const guint8 *)chal, strlen(chal));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
