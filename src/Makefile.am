@@ -146,23 +146,37 @@ bin_PROGRAMS = gaim gaim-remote
 
 if ENABLE_DBUS
 
-dbus_sources = dbus-server.c  
-dbus_headers  = dbus-server.h
+dbus_sources = dbus-server.c dbus-useful.c
+dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h 
+dbus_exported_headers = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h
 
-# do not use gaim-client, use gaim-send instead
-# bin_PROGRAMS      += gaim-client
-#gaim_client_SOURCES      = dbus-client.c
-#gaim_client_DEPENDENCIES = @LIBOBJS@
-#gaim_client_LDADD        = @LIBOBJS@ $(GLIB_LIBS) $(DBUS_LIBS) $(INTLLIBS)
+CLEANFILES=dbus-auto-enum-types.h dbus-auto-enums.txt dbus-auto-structs.txt dbus-generated-code.c dbus-generated-code.xml dbus-service-all.xml dbus-server-bindings.c
 
-dbus-client-bindings.c: dbus-service.xml
-	dbus-binding-tool --prefix=gaim_object --mode=glib-client --output=$@ $<
+dbus-auto-structs.txt: dbus-analyze-types.py $(gaim_coreheaders)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct --list > $@
 
-dbus-server-bindings.c: dbus-service.xml
-	dbus-binding-tool --prefix=gaim_object --mode=glib-server --output=$@ $<
+dbus-auto-enums.txt: dbus-analyze-types.py $(gaim_coreheaders)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=enum --list > $@
 
-dbus-client.$(OBJEXT): dbus-client-bindings.c
-dbus-server.$(OBJEXT): dbus-server-bindings.c
+dbus-auto-enum-types.h: dbus-analyze-types.py $(gaim_coreheaders)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct --enum > $@
+
+dbus-generated-code.c: dbus-analyze-functions.py dbus-auto-structs.txt dbus-auto-enums.txt $(dbus_exported_headers)
+	cat $(dbus_exported_headers) | $(PYTHON) dbus-analyze-functions.py --mode=c > $@
+
+dbus-generated-code.xml: dbus-analyze-functions.py dbus-auto-structs.txt dbus-auto-enums.txt $(dbus_exported_headers)
+	cat $(dbus_exported_headers) | $(PYTHON) dbus-analyze-functions.py --mode=xml > $@
+
+dbus-service-all.xml: dbus-service.xml dbus-generated-code.xml dbus-service-end.xml
+	cat $^ > $@
+
+dbus-server-bindings.c: dbus-service-all.xml $(DBUS_BINDING_TOOL)
+	$(DBUS_BINDING_TOOL) --prefix=gaim_object --mode=glib-server --output=$@ $<
+
+
+$(gaim_OBJECTS): dbus-auto-enum-types.h
+
+dbus-server.$(OBJEXT): dbus-server-bindings.c dbus-generated-code.c
 
 endif
 

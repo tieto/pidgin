@@ -129,7 +129,7 @@ clean-generic:
 		$(MAKE) clean; \
 		cd ..; \
 	done
-	rm *.so
+	rm -f *.so
 
 distclean-generic:
 	@for dir in $(perl_dirs); do \

@@ -22,6 +22,7 @@
 #include "internal.h"
 #include "blist.h"
 #include "conversation.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "notify.h"
@@ -266,6 +267,7 @@ gaim_conv_window_new(void)
 	GaimConvWindow *win;
 
 	win = g_new0(GaimConvWindow, 1);
+	GAIM_DBUS_REGISTER_POINTER(win, GaimConvWindow);
 
 	windows = g_list_append(windows, win);
 
@@ -318,6 +320,7 @@ gaim_conv_window_destroy(GaimConvWindow *win)
 
 		windows = g_list_remove(windows, win);
 
+		GAIM_DBUS_UNREGISTER_POINTER(win);
 		g_free(win);
 	}
 }
@@ -672,6 +675,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	g_return_val_if_fail(gc != NULL, NULL);
 
 	conv = g_new0(GaimConversation, 1);
+	GAIM_DBUS_REGISTER_POINTER(conv, GaimConversation);
 
 	conv->type         = type;
 	conv->account      = account;
@@ -692,6 +696,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		GaimBuddyIcon *icon;
 		conv->u.im = g_new0(GaimConvIm, 1);
 		conv->u.im->conv = conv;
+		GAIM_DBUS_REGISTER_POINTER(conv->u.im, GaimConvIm);
 
 		ims = g_list_append(ims, conv);
 		if ((icon = gaim_buddy_icons_find(account, name)))
@@ -706,6 +711,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 
 		conv->u.chat = g_new0(GaimConvChat, 1);
 		conv->u.chat->conv = conv;
+		GAIM_DBUS_REGISTER_POINTER(conv->u.chat, GaimConvChat);
 
 		chats = g_list_append(chats, conv);
 
@@ -905,6 +911,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 		if(conv->u.chat->nick)
 			g_free(conv->u.chat->nick);
 
+		GAIM_DBUS_UNREGISTER_POINTER(conv->u.chat);
 		g_free(conv->u.chat);
 		conv->u.chat = NULL;
 
@@ -922,6 +929,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 		ops->destroy_conversation(conv);
 
 	gaim_log_free(conv->log);
+	GAIM_DBUS_UNREGISTER_POINTER(conv);
 	g_free(conv);
 	conv = NULL;
 }
@@ -2338,6 +2346,7 @@ gaim_conv_chat_cb_new(const char *name, GaimConvChatBuddyFlags flags)
 	cb->name = g_strdup(name);
 	cb->flags = flags;
 
+	GAIM_DBUS_REGISTER_POINTER(cb, GaimConvChatBuddy);
 	return cb;
 }
 
@@ -2368,6 +2377,8 @@ gaim_conv_chat_cb_destroy(GaimConvChatBuddy *cb)
 		g_free(cb->name);
 	cb->name = NULL;
 	cb->flags = 0;
+
+	GAIM_DBUS_UNREGISTER_POINTER(cb);
 	g_free(cb);
 }
 

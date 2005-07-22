@@ -666,6 +666,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 		return account;
 
 	account = g_new0(GaimAccount, 1);
+	GAIM_DBUS_REGISTER_POINTER(account, GaimAccount);
 
 	gaim_account_set_username(account, username);
 
@@ -693,7 +694,6 @@ gaim_account_new(const char *username, const char *protocol_id)
 
 	gaim_presence_set_status_active(account->presence, "offline", TRUE);
 
-	GAIM_DBUS_REGISTER_POINTER(account, DBUS_POINTER_ACCOUNT);
 	return account;
 }
 

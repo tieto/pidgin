@@ -26,6 +26,7 @@
 #include "account.h"
 #include "blist.h"
 #include "connection.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "gaim.h"
 #include "log.h"
@@ -118,6 +119,9 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 	}
 
 	gc = g_new0(GaimConnection, 1);
+	GAIM_DBUS_REGISTER_POINTER(gc, GaimConnection);
+
+
 	gc->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);
@@ -230,6 +234,7 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (gc->disconnect_timeout)
 		gaim_timeout_remove(gc->disconnect_timeout);
 
+	GAIM_DBUS_UNREGISTER_POINTER(gc);
 	g_free(gc);
 }
 

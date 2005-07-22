@@ -43,11 +43,9 @@ typedef enum {
 /* Types of pointers that can be registered with the gaim dbus pointer
    registration engine.  See below */
 typedef enum {
-  DBUS_POINTER_GROUP,
-  DBUS_POINTER_CONTACT,
-  DBUS_POINTER_BUDDY,
-  DBUS_POINTER_CHAT,
-  DBUS_POINTER_ACCOUNT
+  DBUS_POINTER_NONE = 0,
+#include "dbus-auto-enum-types.h"
+  DBUS_POINTER_LASTTYPE
 } GaimDBusPointerType;
 
 typedef struct _GaimObject GaimObject;
@@ -110,31 +108,7 @@ void gaim_dbus_register_pointer(gpointer node, GaimDBusPointerType type);
  */
 void gaim_dbus_unregister_pointer(gpointer node);
 
-/**
-    Registers a gaim signal with a #GaimObject.  
 
-    @param object      The #GaimObject (usually #gaim_dbus_object)
-    @param name        Name of the signal
-    @param marshaller  Marshaller for the signal.
-    @param num_values  The number of parameters.
-    @param values      Array of pointers to #GaimValue objects representing
-                       the types of the parameters.
-    @result            The dbus id of the registered signal.
-
-    This function is intended to be used in signal.h, where it
-    automatically registers all gaim signals with dbus.  For your own
-    dbus signals, use #gaim_dbus_register.
-
-    The name of the signal, usually in the form "aaa-bbb-ccc", is
-    converted into DBus standard, "AaaBbbCcc", because "aaa-bbb-ccc"
-    doesn't work with DBus GObject binding version 0.34 (cvs version is ok).
-
-    The #marshaller can be set to gaim_dbus_invalid_marshaller because
-    DBus signals are never passed to any local handler.
-  */
-int gaim_dbus_signal_register_gaim(GaimObject *object, const char *name, 
-				   GSignalCMarshaller marshaller, 
-				   int num_values, GaimValue **values);
 
 /**
     Emits a dbus signal.
@@ -150,53 +124,10 @@ int gaim_dbus_signal_register_gaim(GaimObject *object, const char *name,
     automatically emits all gaim signals to dbus.  For your own dbus
     signals, use #gaim_dbus_emit.
   */
-void gaim_dbus_signal_emit_gaim(GaimObject *object, int dbus_id, 
-				int num_values, GaimValue **values, va_list vargs);
+void gaim_dbus_signal_emit_gaim(GaimObject *object, char *name,
+				int num_values, GaimValue **values, 
+				va_list vargs);
 
-/**
-    A marshaller that emits an "assertion failed" message if called.  
-
-    This marshaller is intended to use with signal that will never need to be marshalled.
-  */
-void gaim_dbus_invalid_marshaller(GClosure *closure,
-				  GValue *return_value,
-				  guint n_param_values,
-				  const GValue *param_values,
-				  gpointer invocation_hint,
-				  gpointer marshal_data);
-
-/**
-    Registers a gaim signal with a #GaimObject.  
-
-    @param object      The #GaimObject (usually #gaim_dbus_object)
-    @param name        Name of the signal
-    @param marshaller  Marshaller for the signal.
-    @param num_values  The number of parameters.
-    @param ...         List of GType of the parameter types.
-
-    @result            The dbus id of the registered signal.
-  */
-int gaim_dbus_signal_register(GaimObject *object, const char *name, 
-			      GSignalCMarshaller marshaller, 
-			      int num_values, ...);
-
-/**
-    Emits a dbus signal.
-
-    @param object      The #GaimObject (usually #gaim_dbus_object)
-    @param dbus_id     Id of the signal.
-    @param ...         Actual parameters.
-  */
-void gaim_dbus_signal_emit(GaimObject *object, int dbus_id, ...);
-
-/**
-    Emits a dbus signal.
-
-    @param object      The #GaimObject (usually #gaim_dbus_object)
-    @param dbus_id     Id of the signal.
-    @param args       A va_list containing the actual parameters.
-  */
-void gaim_dbus_signal_emit_valist(GaimObject *object, int dbus_id, va_list args);
 
 
 G_END_DECLS

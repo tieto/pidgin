@@ -1,0 +1,18 @@
+
+  </interface>
+  
+
+  <interface name="org.freedesktop.DBus.Properties">
+    <!-- We implement properties ourselves rather than relying on
+	 GObject property access.  This is because currently in gaim
+	 we have one GObject that represents many dbus objects such as
+	 buddies, accounts, etc.  Not for long! -->
+
+<!--      <method name="Get"> > -->
+<!--        <arg type="s" name="interface_name" />  -->
+<!--        <arg type="s" name="property_name" />  -->
+<!--        <arg type="v" name="value" direction="out" />  -->
+<!--      </method>  -->
+   </interface> 
+</node>
+

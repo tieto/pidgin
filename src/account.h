@@ -267,6 +267,8 @@ void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
  *
  * @param account  The account.
  * @param presence The presence.
+ *
+ * This function does not seem to be implemented anywhere ...
  */
 void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
 

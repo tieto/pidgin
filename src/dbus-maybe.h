@@ -10,7 +10,11 @@
 
 #include "dbus-server.h"
 
-#define GAIM_DBUS_REGISTER_POINTER(ptr, type) gaim_dbus_register_pointer(ptr, type)
+/* this provides a type check */
+#define GAIM_DBUS_REGISTER_POINTER(ptr, type) { \
+    type *typed_ptr = ptr; \
+    gaim_dbus_register_pointer(typed_ptr, DBUS_POINTER_##type); \
+}
 #define GAIM_DBUS_UNREGISTER_POINTER(ptr) gaim_dbus_unregister_pointer(ptr)
 
 #else  /* !HAVE_DBUS */

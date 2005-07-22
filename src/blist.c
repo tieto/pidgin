@@ -658,6 +658,7 @@ gaim_contact_compute_priority_buddy(GaimContact *contact)
 GaimBuddyList *gaim_blist_new()
 {
 	GaimBuddyList *gbl = g_new0(GaimBuddyList, 1);
+	GAIM_DBUS_REGISTER_POINTER(gbl, GaimBuddyList);
 
 	gbl->ui_ops = gaim_blist_get_ui_ops();
 
@@ -1054,7 +1055,7 @@ GaimChat *gaim_chat_new(GaimAccount *account, const char *alias, GHashTable *com
 	if (ops != NULL && ops->new_node != NULL)
 		ops->new_node((GaimBlistNode *)chat);
 
-	GAIM_DBUS_REGISTER_POINTER(chat, DBUS_POINTER_CHAT);
+	GAIM_DBUS_REGISTER_POINTER(chat, GaimChat);
 	return chat;
 }
 
@@ -1080,7 +1081,7 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)buddy);
 
-	GAIM_DBUS_REGISTER_POINTER(buddy, DBUS_POINTER_BUDDY);
+	GAIM_DBUS_REGISTER_POINTER(buddy, GaimBuddy);
 	return buddy;
 }
 
@@ -1352,7 +1353,7 @@ GaimContact *gaim_contact_new()
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)contact);
 
-	GAIM_DBUS_REGISTER_POINTER(contact, DBUS_POINTER_CONTACT);
+	GAIM_DBUS_REGISTER_POINTER(contact, GaimContact);
 	return contact;
 }
 
@@ -1432,7 +1433,7 @@ GaimGroup *gaim_group_new(const char *name)
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)group);
 
-	GAIM_DBUS_REGISTER_POINTER(group, DBUS_POINTER_GROUP);
+	GAIM_DBUS_REGISTER_POINTER(group, GaimGroup);
 	return group;
 }
 
