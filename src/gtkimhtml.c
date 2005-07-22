@@ -828,7 +828,7 @@ static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *
 		str = g_string_append(str, text);
 		str = g_string_append_unichar(str, 0x0000);
 		selection = g_convert(str->str, str->len, "UCS-2", "UTF-8", NULL, &len, NULL);
-		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, selection, len);
+		gtk_selection_data_set(selection_data, gdk_atom_intern("text/html", FALSE), 16, (const guchar *)selection, len);
 		g_string_free(str, TRUE);
 		g_free(selection);
 	} else {
@@ -1546,11 +1546,11 @@ gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint
 
 static void
 gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
- 			    GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml)
+			    GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml)
 {
 	gchar **links;
 	gchar *link;
-	char *text = sd->data;
+	char *text = (char *)sd->data;
 	GtkTextMark *mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 	GtkTextIter iter;
 	gint i = 0;
@@ -1560,9 +1560,10 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 	if(gtk_imhtml_get_editable(imhtml) && sd->data){
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
-			gaim_str_strip_cr(sd->data);
+			/* TODO: Is it really ok to change sd->data...? */
+			gaim_str_strip_cr((char *)sd->data);
 
-			links = g_strsplit(sd->data, "\n", 0);
+			links = g_strsplit((char *)sd->data, "\n", 0);
 			while((link = links[i]) != NULL){
 				if(gaim_str_has_prefix(link, "http://") ||
 				   gaim_str_has_prefix(link, "https://") ||

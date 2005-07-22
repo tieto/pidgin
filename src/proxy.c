@@ -1083,9 +1083,9 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		char *t1, *t2;
 		t1 = g_strdup_printf("%s:%s",
 				     gaim_proxy_info_get_username(phb->gpi),
-				     gaim_proxy_info_get_password(phb->gpi) ? 
+				     gaim_proxy_info_get_password(phb->gpi) ?
 				     gaim_proxy_info_get_password(phb->gpi) : "");
-		t2 = gaim_base64_encode(t1, strlen(t1));
+		t2 = gaim_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
 		request_len += g_snprintf(request + request_len,
@@ -1418,7 +1418,7 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	unsigned char Kxoropad[65];
 	int pwlen;
 	char * pwinput;
-	char md5buf[16];
+	guint8 md5buf[16];
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	ctx = gaim_cipher_context_new(cipher, NULL);
@@ -1426,7 +1426,7 @@ static void hmacmd5_chap(const unsigned char * challenge, int challen, const cha
 	pwinput=(char *)passwd;
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
-		gaim_cipher_context_append(ctx, passwd, strlen(passwd));
+		gaim_cipher_context_append(ctx, (const guint8 *)passwd, strlen(passwd));
 		gaim_cipher_context_digest(ctx, sizeof(md5buf), md5buf, NULL);
 		pwinput=(char *)md5buf;
 		pwlen=16;

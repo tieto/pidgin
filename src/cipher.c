@@ -650,7 +650,7 @@ gaim_cipher_digest_region(const gchar *name, const guint8 *data,
 	context = gaim_cipher_context_new(cipher, NULL);
 	gaim_cipher_context_append(context, data, data_len);
 	ret = gaim_cipher_context_digest(context, in_len, digest, out_len);
- 	gaim_cipher_context_destroy(context);
+	gaim_cipher_context_destroy(context);
 
 	return ret;
 }
