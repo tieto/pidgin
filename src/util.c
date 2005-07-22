@@ -2437,19 +2437,14 @@ void
 gaim_str_strip_cr(char *text)
 {
 	int i, j;
-	char *text2;
 
 	g_return_if_fail(text != NULL);
 
-	text2 = g_malloc(strlen(text) + 1);
-
 	for (i = 0, j = 0; text[i]; i++)
 		if (text[i] != '\r')
-			text2[j++] = text[i];
-	text2[j] = '\0';
+			text[j++] = text[i];
 
-	strcpy(text, text2);
-	g_free(text2);
+	text[j++] = '\0';
 }
 
 gchar *
