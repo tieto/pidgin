@@ -343,6 +343,19 @@ debug_command_cb(GaimConversation *conv,
 }
 
 static GaimCmdRet
+clear_command_cb(GaimConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	GaimGtkConversation *gtkconv = NULL;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+
+	return GAIM_CMD_STATUS_OK;
+}
+
+static GaimCmdRet
 help_command_cb(GaimConversation *conv,
                  const char *cmd, char **args, char **error, void *data)
 {
@@ -6178,7 +6191,9 @@ gaim_gtk_conversations_init(void)
 	gaim_cmd_register("debug", "w", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
 	                  debug_command_cb, _("debug &lt;option&gt;:  Send various debug information to the current conversation."), NULL);
-
+	gaim_cmd_register("clear", "", GAIM_CMD_P_DEFAULT,
+	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	                  clear_command_cb, _("clear: Clears the conversation scrollback."), NULL);
 	gaim_cmd_register("help", "w", GAIM_CMD_P_DEFAULT,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
