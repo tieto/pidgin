@@ -1282,6 +1282,7 @@ AC_OUTPUT([Makefile
 		   doc/gaim.1
 		   doc/gaim-remote.1
 		   intl/Makefile
+		   m4macros/Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
 		   pixmaps/smileys/default/Makefile
