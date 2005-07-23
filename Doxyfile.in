@@ -148,13 +148,13 @@ TAB_SIZE               = 4
 # You can put \n's in the value part of an alias to insert newlines.
 
 ALIASES                = "signal=- @ref" \
-                         signaldef=@section \
-                         endsignaldef= \
-                         signalproto=@code \
-                         endsignalproto=@endcode \
-                         "signaldesc=@par Description:\n" \
-                         "signals=@b Signals:\n" \
-                         endsignals=
+                         "signaldef=@section" \
+                         "endsignaldef=" \
+                         "signalproto=@code" \
+                         "endsignalproto=@endcode" \
+                         "signaldesc=@par Description:" \
+                         "signals=@b Signals:" \
+                         "endsignals="
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C sources 
 # only. Doxygen will then generate output that is more tailored for C. 
