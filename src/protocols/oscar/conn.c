@@ -395,8 +395,8 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 }
 
 /**
- * Handle normal connections or SOCKS5 via an extrememly quick and 
- * dirty SOCKS5 interface. 
+ * Handle normal connections or SOCKS5 via an extrememly quick and
+ * dirty SOCKS5 interface.
  *
  * Attempts to connect to the specified host via the configured
  * proxy settings, if present.  If no proxy is configured for
@@ -639,12 +639,12 @@ faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *d
 		return connstruct;
 	}
 
-	/* 
-	 * As of 23 Jul 1999, AOL now sends the port number, preceded by a 
-	 * colon, in the BOS redirect.  This fatally breaks all previous 
+	/*
+	 * As of 23 Jul 1999, AOL now sends the port number, preceded by a
+	 * colon, in the BOS redirect.  This fatally breaks all previous
 	 * libfaims.  Bad, bad AOL.
 	 *
-	 * We put this here to catch every case. 
+	 * We put this here to catch every case.
 	 *
 	 */
 
@@ -692,92 +692,11 @@ faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn)
 }
 
 /**
- * Waits for a socket with data or for timeout, whichever comes first.
- * See select(2).
- * 
- * Return codes in *status:
- *   -1  error in select() (%NULL returned)
- *    0  no events pending (%NULL returned)
- *    1  outgoing data pending (%NULL returned)
- *    2  incoming data pending (connection with pending data returned)
- *
- * @param sess Session to wait on
- * @param timeout How long to wait
- * @param status Return status
- * @return If @status is 2, returns connection with pending data, otherwise %NULL
- */
-faim_export aim_conn_t *aim_select(aim_session_t *sess, struct timeval *timeout, int *status)
-{
-	aim_conn_t *cur;
-	fd_set fds, wfds;
-	int maxfd, i, haveconnecting = 0;
-
-	if (!sess->connlist) {
-		*status = -1;
-		return NULL;
-	}
-
-	FD_ZERO(&fds);
-	FD_ZERO(&wfds);
-
-	for (cur = sess->connlist, maxfd = 0; cur; cur = cur->next) {
-		if (cur->fd == -1) {
-			/* don't let invalid/dead connections sit around */
-			*status = 2;
-			return cur;
-		} else if (cur->status & AIM_CONN_STATUS_INPROGRESS) {
-			FD_SET(cur->fd, &wfds);
-
-			haveconnecting++;
-		}
-		FD_SET(cur->fd, &fds);
-		if (cur->fd > maxfd)
-			maxfd = cur->fd;
-	}
-
-	/* 
-	 * If we have data waiting to be sent, return
-	 *
-	 * We have to not do this if theres at least one
-	 * connection thats still connecting, since that connection
-	 * may have queued data and this return would prevent
-	 * the connection from ever completing!  This is a major
-	 * inadequacy of the libfaim way of doing things.  It means
-	 * that nothing can transmit as long as there's connecting
-	 * sockets. Evil.
-	 *
-	 * But its still better than having blocking connects.
-	 *
-	 */
-	if (!haveconnecting && sess->queue_outgoing) {
-		*status = 1;
-		return NULL;
-	}
-
-	if ((i = select(maxfd+1, &fds, &wfds, NULL, timeout))>=1) {
-		for (cur = sess->connlist; cur; cur = cur->next) {
-			if ((FD_ISSET(cur->fd, &fds)) || 
-					((cur->status & AIM_CONN_STATUS_INPROGRESS) && 
-					FD_ISSET(cur->fd, &wfds))) {
-				*status = 2;
-				return cur;
-			}
-		}
-		*status = 0; /* shouldn't happen */
-	} else if ((i == -1) && (errno == EINTR)) /* treat interrupts as a timeout */
-		*status = 0;
-	else
-		*status = i; /* can be 0 or -1 */
-
-	return NULL;  /* no waiting or error, return */
-}
-
-/**
- * Set a forced latency value for connection.  Basically causes 
+ * Set a forced latency value for connection.  Basically causes
  * @newval seconds to be spent between transmits on a connection.
  *
  * This is my lame attempt at overcoming not understanding the rate
- * limiting. 
+ * limiting.
  *
  * XXX: This should really be replaced with something that scales and
  * backs off like the real rate limiting does.
@@ -796,39 +715,6 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 	conn->lastactivity = 0; /* reset this just to make sure */
 
 	return 0;
-}
-
-/**
- * Configure a proxy for this session.
- *
- * Call this with your SOCKS5 proxy server parameters before
- * the first call to aim_newconn().  If called with all %NULL
- * args, it will clear out a previously set proxy.  
- *
- * Set username and password to %NULL if not applicable.
- *
- * @param sess Session to set proxy for.
- * @param server SOCKS server.
- * @param username SOCKS username.
- * @param password SOCKS password.
- */
-faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password)
-{
-	/* clear out the proxy info */
-	if (!server || !strlen(server)) {
-		memset(sess->socksproxy.server, 0, sizeof(sess->socksproxy.server));
-		memset(sess->socksproxy.username, 0, sizeof(sess->socksproxy.username));
-		memset(sess->socksproxy.password, 0, sizeof(sess->socksproxy.password));
-		return;
-	}
-
-	strncpy(sess->socksproxy.server, server, sizeof(sess->socksproxy.server));
-	if (username && strlen(username))
-		strncpy(sess->socksproxy.username, username, sizeof(sess->socksproxy.username));
-	if (password && strlen(password))
-		strncpy(sess->socksproxy.password, password, sizeof(sess->socksproxy.password));
-
-	return;
 }
 
 static void defaultdebugcb(aim_session_t *sess, int level, const char *format, va_list va)

@@ -414,7 +414,7 @@ typedef struct aim_session_s {
 	 * These are only used when you don't use your own lowlevel
 	 * I/O.  I don't suggest that you use libfaim's internal I/O.
 	 * Its really bad and the API/event model is quirky at best.
-	 *  
+	 *
 	 */
 	aim_frame_t *queue_outgoing;
 	aim_frame_t *queue_incoming;
@@ -443,7 +443,7 @@ typedef struct aim_session_s {
 	void (*debugcb)(struct aim_session_s *sess, int level, const char *format, va_list va); /* same as faim_debugging_callback_t */
 
 	/*
-	 * Outstanding snac handling 
+	 * Outstanding snac handling
 	 *
 	 * XXX: Should these be per-connection? -mid
 	 */
@@ -580,7 +580,6 @@ faim_export aim_conn_t *aim_conn_findbygroup(aim_session_t *sess, fu16_t group);
 faim_export aim_session_t *aim_conn_getsess(aim_conn_t *conn);
 faim_export void aim_conn_close(aim_conn_t *deadconn);
 faim_export aim_conn_t *aim_newconn(aim_session_t *, int type, const char *dest);
-faim_export aim_conn_t *aim_select(aim_session_t *, struct timeval *, int *);
 faim_export int aim_conn_in_sess(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_conn_isready(aim_conn_t *);
 faim_export int aim_conn_setstatus(aim_conn_t *, int);
@@ -591,7 +590,6 @@ typedef void (*faim_debugging_callback_t)(aim_session_t *sess, int level, const 
 faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t);
 faim_export void aim_session_init(aim_session_t *, fu8_t nonblocking, int debuglevel);
 faim_export void aim_session_kill(aim_session_t *);
-faim_export void aim_setupproxy(aim_session_t *sess, const char *server, const char *username, const char *password);
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
