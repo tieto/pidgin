@@ -172,7 +172,6 @@ Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, 
 }
 
 char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
-static const char *zephyr_normalize(const GaimAccount *, const char *);
 static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic);
 char* zephyr_tzc_deescape_str(const char *message);
 
@@ -2150,24 +2149,6 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 	return 1;
 }
 
-static const char *zephyr_normalize(const GaimAccount * account, const char *orig)
-{
-	/* returns the string you gave it. Maybe this function shouldn't be here */
-	static char buf[80];
-	/*	gaim_debug_error("zephyr","entering zephyr_normalize\n"); */
-
-	if (!g_ascii_strcasecmp(orig, "")) {
-		buf[0] = '\0';
-		return buf;
-	} else {
-		g_snprintf(buf, 80, "%s", orig);
-	}
-	/*	gaim_debug_error("zephyr","leaving zephyr_normalize\n"); */
-
-	return buf;
-}
-
-
 char *local_zephyr_normalize(zephyr_account *zephyr,const char *orig)
 {
 	/* 
@@ -2830,7 +2811,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* rename_group */
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
-	zephyr_normalize,			/* normalize */
+	NULL,					/* normalize */
 	NULL,					/* XXX set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* XXX get_cb_real_name */
