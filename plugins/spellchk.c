@@ -212,13 +212,30 @@ spellchk_free(spellchk *spell)
 static gboolean
 spellchk_inside_word(GtkTextIter *iter)
 {
+	gunichar ucs4_char = gtk_text_iter_get_char(iter);
+	gchar *utf8_str;
+	gchar c = 0;
 	gboolean result;
 	gboolean output;
+
+	utf8_str = g_ucs4_to_utf8(&ucs4_char, 1, NULL, NULL, NULL);
+	if (utf8_str != NULL)
+	{
+		c = utf8_str[0];
+		g_free(utf8_str);
+	}
+
+	/* Hack because otherwise typing things like U.S. gets difficult
+	 * if you have 'u' -> 'you' set as a correction...
+	 *
+	 * Part 1 of 2: This marks . as being an inside-word character. */
+	if (c == '.')
+		return TRUE;
 
 	if (gtk_text_iter_inside_word (iter) == TRUE)
 		return TRUE;
 
-	if (gtk_text_iter_get_char(iter) == '\'') {
+	if (c == '\'') {
 		result = gtk_text_iter_backward_char(iter);
 		output = gtk_text_iter_inside_word(iter);
 
@@ -269,6 +286,8 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 				GtkTextIter start, GtkTextIter end) {
 
 	gboolean result;
+	gchar *tmp;
+	int period_count = 0;
 	gchar *word;
 
 	/* We need to go backwords to find out if we are inside a word or not. */
@@ -294,10 +313,36 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 	/* Move backwards to the beginning of the word. */
 	spellchk_backward_word_start(&start);
 
-	spell->word = g_strdup(gtk_text_iter_get_text(&start, &end));
-	if ((word = substitute_word(gtk_text_iter_get_text(&start, &end)))) {
+	spell->word = gtk_text_iter_get_text(&start, &end);
+
+	/* Hack because otherwise typing things like U.S. gets difficult
+	 * if you have 'u' -> 'you' set as a correction...
+	 *
+	 * Part 2 of 2: This chops periods off the end of the word so
+	 * the right substitution entry is found. */
+	tmp = g_strdup(spell->word);
+	if (tmp != NULL && *tmp != '\0') {
+		gchar *c;
+		for (c = tmp + strlen(tmp) - 1 ; c != tmp ; c--) {
+			if (*c == '.') {
+				*c = '\0';
+				period_count++;
+			} else
+				break;
+		}
+	}
+
+	if ((word = substitute_word(tmp))) {
 		GtkTextMark *mark;
 		GtkTextIter pos;
+		gchar *tmp2;
+		int i;
+
+		for (i = 1 ; i <= period_count ; i++) {
+			tmp2 = g_strconcat(word, ".", NULL);
+			g_free(word);
+			word = tmp2;
+		}
 
 		gtk_text_buffer_delete(buffer, &start, &end);
 		gtk_text_buffer_insert(buffer, &start, word, -1);
@@ -306,8 +351,11 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 		gtk_text_buffer_get_iter_at_mark(buffer, &pos, mark);
 		spell->pos = gtk_text_iter_get_offset(&pos);
 
+		g_free(word);
+		g_free(tmp);
 		return;
 	}
+	g_free(tmp);
 
 	/*   g_free(spell->word); */
 	spell->word = NULL;
@@ -526,6 +574,7 @@ static void load_conf()
 			"BAD agressive\nGOOD aggressive\n"
 			"BAD agressiveness\nGOOD aggressiveness\n"
 			"BAD ahd\nGOOD had\n"
+			"BAD ahold\nGOOD a hold\n"
 			"BAD ahppen\nGOOD happen\n"
 			"BAD ahve\nGOOD have\n"
 			"BAD allready\nGOOD already\n"
@@ -697,6 +746,7 @@ static void load_conf()
 			"BAD conected\nGOOD connected\n"
 			"BAD conferance\nGOOD conference\n"
 			"BAD confirmmation\nGOOD confirmation\n"
+			"BAD congradulations\nGOOD congratulations\n"
 			"BAD considerit\nGOOD considerate\n"
 			"BAD considerite\nGOOD considerate\n"
 			"BAD consonent\nGOOD consonant\n"
@@ -721,6 +771,7 @@ static void load_conf()
 			"BAD cpoy\nGOOD copy\n"
 			"BAD creme\nGOOD crème\n"
 			"BAD ctaegory\nGOOD category\n"
+			"BAD cu\nGOOD see you\n"
 			"BAD cusotmer\nGOOD customer\n"
 			"BAD cusotmers\nGOOD customers\n"
 			"BAD cutsomer\nGOOD customer\n"
@@ -795,6 +846,7 @@ static void load_conf()
 			"BAD doind\nGOOD doing\n"
 			"BAD dollers\nGOOD dollars\n"
 			"BAD donig\nGOOD doing\n"
+			"BAD donno\nGOOD don't know\n"
 			"BAD dont\nGOOD don't\n"
 			"BAD do'nt\nGOOD don't\n"
 			"BAD don;t\nGOOD don't\n"
@@ -802,6 +854,7 @@ static void load_conf()
 			"BAD dosn't\nGOOD doesn't\n"
 			"BAD driveing\nGOOD driving\n"
 			"BAD drnik\nGOOD drink\n"
+			"BAD dunno\nGOOD don't know\n"
 			"BAD eclair\nGOOD éclair\n"
 			"BAD efel\nGOOD feel\n"
 			"BAD effecient\nGOOD efficient\n"
@@ -813,6 +866,7 @@ static void load_conf()
 			"BAD emigre\nGOOD émigré\n"
 			"BAD enought\nGOOD enough\n"
 			"BAD entree\nGOOD entrée\n"
+			"BAD enuf\nGOOD enough\n"
 			"BAD equippment\nGOOD equipment\n"
 			"BAD equivalant\nGOOD equivalent\n"
 			"BAD esle\nGOOD else\n"
@@ -915,6 +969,7 @@ static void load_conf()
 			"BAD hge\nGOOD he\n"
 			"BAD hismelf\nGOOD himself\n"
 			"BAD hlep\nGOOD help\n"
+			"BAD hott\nGOOD hot\n"
 			"BAD hows\nGOOD how's\n"
 			"BAD hsa\nGOOD has\n"
 			"BAD hse\nGOOD she\n"
@@ -933,6 +988,7 @@ static void load_conf()
 			"BAD hvaing\nGOOD having\n"
 			"BAD hwich\nGOOD which\n"
 			"BAD i\nGOOD I\n"
+			"BAD i c\nGOOD I see\n"
 			"BAD i;d\nGOOD I'd\n"
 			"BAD i'd\nGOOD I'd\n"
 			"BAD I;d\nGOOD I'd\n"
@@ -1014,6 +1070,7 @@ static void load_conf()
 			"BAD konws\nGOOD knows\n"
 			"BAD labratory\nGOOD laboratory\n"
 			"BAD lastyear\nGOOD last year\n"
+			"BAD laterz\nGOOD later\n"
 			"BAD learnign\nGOOD learning\n"
 			"BAD lenght\nGOOD length\n"
 			"BAD let;s\nGOOD let's\n"
@@ -1066,7 +1123,11 @@ static void load_conf()
 			"BAD mysefl\nGOOD myself\n"
 			"BAD myu\nGOOD my\n"
 			"BAD naive\nGOOD naïve\n"
+			"BAD ne way\nGOOD anyway\n"
+			"BAD ne ways\nGOOD anyways\n"
 			"BAD ne1\nGOOD anyone\n"
+			"BAD neway\nGOOD anyway\n"
+			"BAD neways\nGOOD anyways\n"
 			"BAD necassarily\nGOOD necessarily\n"
 			"BAD necassary\nGOOD necessary\n"
 			"BAD neccessarily\nGOOD necessarily\n"
@@ -1083,6 +1144,7 @@ static void load_conf()
 			"BAD obediant\nGOOD obedient\n"
 			"BAD ocasion\nGOOD occasion\n"
 			"BAD occassion\nGOOD occasion\n"
+			"BAD occurance\nGOOD occurrence\n"
 			"BAD occured\nGOOD occurred\n"
 			"BAD occurence\nGOOD occurrence\n"
 			"BAD occurrance\nGOOD occurrence\n"
@@ -1145,12 +1207,16 @@ static void load_conf()
 			"BAD porvide\nGOOD provide\n"
 			"BAD possable\nGOOD possible\n"
 			"BAD postition\nGOOD position\n"
+			"BAD potatoe\nGOOD potato\n"
+			"BAD potatos\nGOOD potatoes\n"
 			"BAD potentialy\nGOOD potentially\n"
 			"BAD ppl\nGOOD people\n"
 			"BAD pregnent\nGOOD pregnant\n"
 			"BAD presance\nGOOD presence\n"
+			"BAD primative\nGOOD primitive\n"
 			"BAD probelm\nGOOD problem\n"
 			"BAD probelms\nGOOD problems\n"
+			"BAD probly\nGOOD probably\n"
 			"BAD prominant\nGOOD prominent\n"
 			"BAD protege\nGOOD protégé\n"
 			"BAD protoge\nGOOD protégé\n"
@@ -1169,6 +1235,7 @@ static void load_conf()
 			"BAD quetion\nGOOD question\n"
 			"BAD quetions\nGOOD questions\n"
 			"BAD r\nGOOD are\n"
+			"BAD raeson\nGOOD reason\n"
 			"BAD realyl\nGOOD really\n"
 			"BAD reccomend\nGOOD recommend\n"
 			"BAD reccommend\nGOOD recommend\n"
@@ -1183,6 +1250,7 @@ static void load_conf()
 			"BAD reconize\nGOOD recognize\n"
 			"BAD recrod\nGOOD record\n"
 			"BAD rediculous\nGOOD ridiculous\n"
+			"BAD reguard\nGOOD regard\n"
 			"BAD religous\nGOOD religious\n"
 			"BAD reluctent\nGOOD reluctant\n"
 			"BAD remeber\nGOOD remember\n"
@@ -1214,6 +1282,8 @@ static void load_conf()
 			"BAD saidthat\nGOOD said that\n"
 			"BAD saidthe\nGOOD said the\n"
 			"BAD saidt he\nGOOD said the\n"
+			"BAD sandwhich\nGOOD sandwich\n"
+			"BAD sandwitch\nGOOD sandwich\n"
 			"BAD saturday\nGOOD Saturday\n"
 			"BAD scedule\nGOOD schedule\n"
 			"BAD sceduled\nGOOD scheduled\n"
@@ -1268,6 +1338,7 @@ static void load_conf()
 			"BAD speach\nGOOD speech\n"
 			"BAD specificaly\nGOOD specifically\n"
 			"BAD specificalyl\nGOOD specifically\n"
+			"BAD spelt\nGOOD spelled\n"
 			"BAD sry\nGOOD sorry\n"
 			"BAD statment\nGOOD statement\n"
 			"BAD statments\nGOOD statements\n"
@@ -1292,6 +1363,7 @@ static void load_conf()
 			"BAD suppossed\nGOOD supposed\n"
 			"BAD suprise\nGOOD surprise\n"
 			"BAD suprised\nGOOD surprised\n"
+			"BAD sux\nGOOD sucks\n"
 			"BAD swiming\nGOOD swimming\n"
 			"BAD tahn\nGOOD than\n"
 			"BAD taht\nGOOD that\n"
@@ -1307,6 +1379,7 @@ static void load_conf()
 			"BAD tghe\nGOOD the\n"
 			"BAD tghis\nGOOD this\n"
 			"BAD thansk\nGOOD thanks\n"
+			"BAD thanx\nGOOD thanks\n"
 			"BAD thats\nGOOD that's\n"
 			"BAD thatthe\nGOOD that the\n"
 			"BAD thatt he\nGOOD that the\n"
@@ -1346,6 +1419,7 @@ static void load_conf()
 			"BAD thne\nGOOD then\n"
 			"BAD thnig\nGOOD thing\n"
 			"BAD thnigs\nGOOD things\n"
+			"BAD tho\nGOOD though\n"
 			"BAD threatend\nGOOD threatened\n"
 			"BAD thsi\nGOOD this\n"
 			"BAD thsoe\nGOOD those\n"
@@ -1368,6 +1442,7 @@ static void load_conf()
 			"BAD tomorow\nGOOD tomorrow\n"
 			"BAD tongiht\nGOOD tonight\n"
 			"BAD tonihgt\nGOOD tonight\n"
+			"BAD tonite\nGOOD tonight\n"
 			"BAD totaly\nGOOD totally\n"
 			"BAD totalyl\nGOOD totally\n"
 			"BAD tothe\nGOOD to the\n"
@@ -1406,11 +1481,13 @@ static void load_conf()
 			"BAD wa snot\nGOOD was not\n"
 			"BAD wasnt\nGOOD wasn't\n"
 			"BAD wasn;t\nGOOD wasn't\n"
+			"BAD wat\nGOOD what\n"
 			"BAD watn\nGOOD want\n"
 			"BAD we;d\nGOOD we'd\n"
 			"BAD wednesday\nGOOD Wednesday\n"
-			"BAD wehn\nGOOD when\n"
 			"BAD wel\nGOOD we'll\n"
+			"BAD wehn\nGOOD when\n"
+			"BAD we'l\nGOOD we'll\n"
 			"BAD we;ll\nGOOD we'll\n"
 			"BAD we;re\nGOOD we're\n"
 			"BAD werent\nGOOD weren't\n"
@@ -1476,6 +1553,7 @@ static void load_conf()
 			"BAD wut\nGOOD what\n"
 			"BAD wya\nGOOD way\n"
 			"BAD y\nGOOD why\n"
+			"BAD yeh\nGOOD yeah\n"
 			"BAD yera\nGOOD year\n"
 			"BAD yeras\nGOOD years\n"
 			"BAD yersa\nGOOD years\n"
