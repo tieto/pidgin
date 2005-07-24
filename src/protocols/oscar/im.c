@@ -340,7 +340,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		aimbs_put16(&fr->data, args->charsubset);
 
 		/* Message.  Not terminated */
-		aimbs_putstr(&fr->data, args->msg);
+		aimbs_putraw(&fr->data, args->msg, args->msglen);
 	}
 
 	/* Set the Autoresponse flag */

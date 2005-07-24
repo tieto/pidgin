@@ -4,7 +4,7 @@
  * Some code copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
  * Some code copyright (C) 1999-2001, Eric Warmenhoven
  * Some code copyright (C) 2001-2003, Sean Egan
- * Some code copyright (C) 2001-2004, Mark Doliner <thekingant@users.sourceforge.net>
+ * Some code copyright (C) 2001-2005, Mark Doliner <thekingant@users.sourceforge.net>
  * Some code copyright (C) 2005, Jonathan Clark <ardentlygnarly@users.sourceforge.net>
  *
  * Most libfaim code copyright (C) 1998-2001 Adam Fritzler <afritz@auk.cx>
