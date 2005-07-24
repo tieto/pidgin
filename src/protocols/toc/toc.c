@@ -1475,6 +1475,33 @@ static void toc_keepalive(GaimConnection *gc)
 	sflap_send(gc, "", 0, TYPE_KEEPALIVE);
 }
 
+static const char *
+toc_normalize(const GaimAccount *account, const char *str)
+{
+	static char buf[BUF_LEN];
+	char *tmp1, *tmp2;
+	int i, j;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	strncpy(buf, str, BUF_LEN);
+	for (i=0, j=0; buf[j]; i++, j++)
+	{
+		while (buf[j] == ' ')
+			j++;
+		buf[i] = buf[j];
+	}
+	buf[i] = '\0';
+
+	tmp1 = g_utf8_strdown(buf, -1);
+	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(buf, sizeof(buf), "%s", tmp2);
+	g_free(tmp2);
+	g_free(tmp1);
+
+	return buf;
+}
+
 static const char *toc_list_icon(GaimAccount *a, GaimBuddy *b)
 {
 	if (!b || (b && b->name && b->name[0] == '+')) {
@@ -2259,7 +2286,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* rename_group */
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
-	NULL,					/* normalize */
+	toc_normalize,			/* normalize */
 	NULL,					/* set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */

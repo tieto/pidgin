@@ -2243,7 +2243,7 @@ gaim_fd_get_ip(int fd)
  * String Functions
  **************************************************************************/
 const char *
-gaim_normalize(const GaimAccount *account, const char *s)
+gaim_normalize(const GaimAccount *account, const char *str)
 {
 	GaimPlugin *prpl = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -2256,33 +2256,43 @@ gaim_normalize(const GaimAccount *account, const char *s)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if(prpl_info && prpl_info->normalize)
-		ret = prpl_info->normalize(account, s);
+		ret = prpl_info->normalize(account, str);
 
-	if(!ret) {
+	if(!ret)
+	{
 		static char buf[BUF_LEN];
 		char *tmp;
-		int i, j;
 
-		g_return_val_if_fail(s != NULL, NULL);
-
-		strncpy(buf, s, BUF_LEN);
-		for (i=0, j=0; buf[j]; i++, j++) {
-			while (buf[j] == ' ')
-				j++;
-			buf[i] = buf[j];
-		}
-		buf[i] = '\0';
-
-		tmp = g_utf8_strdown(buf, -1);
-		g_snprintf(buf, sizeof(buf), "%s", tmp);
-		g_free(tmp);
-		tmp = g_utf8_normalize(buf, -1, G_NORMALIZE_DEFAULT);
+		tmp = g_utf8_normalize(str, -1, G_NORMALIZE_DEFAULT);
 		g_snprintf(buf, sizeof(buf), "%s", tmp);
 		g_free(tmp);
 
 		ret = buf;
 	}
+
 	return ret;
+}
+
+/*
+ * You probably don't want to call this directly, it is
+ * mainly for use as a PRPL callback function.  See the
+ * comments in util.h.
+ */
+const char *
+gaim_normalize_nocase(const GaimAccount *account, const char *str)
+{
+	static char buf[BUF_LEN];
+	char *tmp1, *tmp2;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	tmp1 = g_utf8_strdown(str, -1);
+	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(buf, sizeof(buf), "%s", tmp2);
+	g_free(tmp2);
+	g_free(tmp1);
+
+	return buf;
 }
 
 gchar *

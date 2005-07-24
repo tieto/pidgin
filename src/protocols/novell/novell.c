@@ -3508,7 +3508,7 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_rename_group,		/* rename_group */
 	NULL,						/* buddy_free */
 	novell_convo_closed,		/* convo_closed */
-	NULL,						/* normalize */
+	gaim_normalize_nocase,		/* normalize */
 	NULL,						/* set_buddy_icon */
 	novell_remove_group,		/* remove_group */
 	NULL,						/* get_cb_real_name */

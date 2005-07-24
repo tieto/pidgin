@@ -3549,7 +3549,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_rename_group,
 	NULL, /* buddy_free */
 	NULL, /* convo_closed */
-	NULL, /* normalize */
+	gaim_normalize_nocase, /* normalize */
 	yahoo_set_buddy_icon,
 	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
 	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */

@@ -798,7 +798,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* rename_group */
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
-	NULL,					/* normalize */
+	gaim_normalize_nocase,	/* normalize */
 	NULL,					/* set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */

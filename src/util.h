@@ -505,6 +505,20 @@ char *gaim_fd_get_ip(int fd);
 const char *gaim_normalize(const GaimAccount *account, const char *str);
 
 /**
+ * Normalizes a string, so that it is suitable for comparison.
+ *
+ * This is one possible implementation for the PRPL callback
+ * function "normalize."  It returns a lowercase and UTF-8
+ * normalized version of the string.
+ *
+ * @param account  The account the string belongs to.
+ * @param str      The string to normalize.
+ *
+ * @return A pointer to the normalized version stored in a static buffer.
+ */
+const char *gaim_normalize_nocase(const GaimAccount *account, const char *str);
+
+/**
  * Compares two strings to see if the first contains the second as
  * a proper prefix.
  *

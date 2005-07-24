@@ -7606,6 +7606,33 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 }
 #endif
 
+static const char *
+oscar_normalize(const GaimAccount *account, const char *str)
+{
+	static char buf[BUF_LEN];
+	char *tmp1, *tmp2;
+	int i, j;
+
+	g_return_val_if_fail(str != NULL, NULL);
+
+	strncpy(buf, str, BUF_LEN);
+	for (i=0, j=0; buf[j]; i++, j++)
+	{
+		while (buf[j] == ' ')
+			j++;
+		buf[i] = buf[j];
+	}
+	buf[i] = '\0';
+
+	tmp1 = g_utf8_strdown(buf, -1);
+	tmp2 = g_utf8_normalize(tmp1, -1, G_NORMALIZE_DEFAULT);
+	g_snprintf(buf, sizeof(buf), "%s", tmp2);
+	g_free(tmp2);
+	g_free(tmp1);
+
+	return buf;
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
@@ -7656,7 +7683,7 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_rename_group,		/* rename_group */
 	NULL,					/* buddy_free */
 	oscar_convo_closed,		/* convo_closed */
-	NULL,					/* normalize */
+	oscar_normalize,		/* normalize */
 	oscar_set_icon,			/* set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */
