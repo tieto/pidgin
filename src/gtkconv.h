@@ -239,22 +239,6 @@ void gaim_gtkconv_update_tabs(void);
 void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
 
 /**
- * Creates a conversation button
- *
- * @param icon     The stock icon name.
- * @param text     The text for the button.
- * @param tooltip  The tooltip text.
- * @param tooltips The group of tooltips.
- * @param callback A function to call when the button is clicked.
- * @param data     Data to pass to the callback.
- *
- * @return The button
- */
-GtkWidget *gaim_gtkconv_button_new(const char *icon, const char *text,
-								   const char *tooltip, GtkTooltips *tooltips,
-								   void *callback, void *data);
-
-/**
  * Returns the window at the specified X, Y location.
  *
  * If the window is not a GTK+ window, @c NULL is returned.
