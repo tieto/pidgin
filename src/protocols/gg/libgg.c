@@ -1086,8 +1086,11 @@ static int gg_watch_fd_connected(struct gg_session *sess, struct gg_event *e)
 
 			    e->event.status60.descr = buf;
 
-			    if (len > 4 && p[h->length - 5] == 0)
-				    e->event.status60.time = *((int*) (p + h->length - 4));
+			    if (len > 4 && p[h->length - 5] == 0) {
+				    uint32_t t;
+				    memcpy(&t, p + h->length - 4, sizeof(uint32_t));
+				    e->event.status60.time = t;
+			    }
 		    }
 
 		    break;
