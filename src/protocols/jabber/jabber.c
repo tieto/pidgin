@@ -1490,7 +1490,7 @@ static void jabber_register_commands(void)
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_invite,
-	                  _("invite &lt;user&gt; [room]:  Invite a user to the room."),
+	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
 	                  NULL);
 	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
