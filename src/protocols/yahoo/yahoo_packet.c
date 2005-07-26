@@ -188,15 +188,15 @@ void yahoo_packet_write(struct yahoo_packet *pkt, guchar *data)
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
-		guchar buf[100];
+		gchar buf[100];
 
 		g_snprintf(buf, sizeof(buf), "%d", pair->key);
-		strcpy(data + pos, buf);
+		strcpy((char *)&data[pos], buf);
 		pos += strlen(buf);
 		data[pos++] = 0xc0;
 		data[pos++] = 0x80;
 
-		strcpy(data + pos, pair->value);
+		strcpy((char *)&data[pos], pair->value);
 		pos += strlen(pair->value);
 		data[pos++] = 0xc0;
 		data[pos++] = 0x80;
