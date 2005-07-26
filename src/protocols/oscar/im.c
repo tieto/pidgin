@@ -324,7 +324,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 			aimbs_put16(&fr->data, sec->datalen + 4);
 			aimbs_put16(&fr->data, sec->charset);
 			aimbs_put16(&fr->data, sec->charsubset);
-			aimbs_putraw(&fr->data, sec->data, sec->datalen);
+			aimbs_putraw(&fr->data, (guchar *)sec->data, sec->datalen);
 		}
 
 	} else {
@@ -340,7 +340,7 @@ faim_export int aim_im_sendch1_ext(aim_session_t *sess, struct aim_sendimext_arg
 		aimbs_put16(&fr->data, args->charsubset);
 
 		/* Message.  Not terminated */
-		aimbs_putraw(&fr->data, args->msg, args->msglen);
+		aimbs_putraw(&fr->data, (guchar *)args->msg, args->msglen);
 	}
 
 	/* Set the Autoresponse flag */
@@ -1200,7 +1200,7 @@ faim_export int aim_mpmsg_init(aim_session_t *sess, aim_mpmsg_t *mpm)
 	return 0;
 }
 
-static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, gchar *data, fu16_t datalen)
 {
 	aim_mpmsg_section_t *sec;
 
@@ -1228,9 +1228,9 @@ static int mpmsg_addsection(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charse
 	return 0;
 }
 
-faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, const fu8_t *data, fu16_t datalen)
+faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t charset, fu16_t charsubset, const gchar *data, fu16_t datalen)
 {
-	fu8_t *dup;
+	gchar *dup;
 
 	if (!(dup = malloc(datalen)))
 		return -1;
@@ -1247,9 +1247,9 @@ faim_export int aim_mpmsg_addraw(aim_session_t *sess, aim_mpmsg_t *mpm, fu16_t c
 /* XXX - should provide a way of saying ISO-8859-1 specifically */
 faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const char *ascii)
 {
-	fu8_t *dup;
+	gchar *dup;
 
-	if (!(dup = (fu8_t *)strdup(ascii)))
+	if (!(dup = strdup(ascii)))
 		return -1;
 
 	if (mpmsg_addsection(sess, mpm, 0x0000, 0x0000, dup, strlen(ascii)) == -1) {
@@ -1262,14 +1262,14 @@ faim_export int aim_mpmsg_addascii(aim_session_t *sess, aim_mpmsg_t *mpm, const 
 
 faim_export int aim_mpmsg_addunicode(aim_session_t *sess, aim_mpmsg_t *mpm, const fu16_t *unicode, fu16_t unicodelen)
 {
-	fu8_t *buf;
+	gchar *buf;
 	aim_bstream_t bs;
 	int i;
 
 	if (!(buf = malloc(unicodelen * 2)))
 		return -1;
 
-	aim_bstream_init(&bs, buf, unicodelen * 2);
+	aim_bstream_init(&bs, (guchar *)buf, unicodelen * 2);
 
 	/* We assume unicode is in /host/ byte order -- convert to network */
 	for (i = 0; i < unicodelen; i++)
@@ -1325,7 +1325,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 
 	while (aim_bstream_empty(&mbs)) {
 		fu16_t msglen, flag1, flag2;
-		fu8_t *msgbuf;
+		gchar *msgbuf;
 
 		aimbs_get8(&mbs); /* 01 */
 		aimbs_get8(&mbs); /* 01 */
@@ -1358,7 +1358,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 		 * the received messages are given in network byte order.
 		 *
 		 */
-		msgbuf = aimbs_getraw(&mbs, msglen);
+		msgbuf = (gchar *)aimbs_getraw(&mbs, msglen);
 		mpmsg_addsection(sess, &args->mpmsg, flag1, flag2, msgbuf, msglen);
 
 	} /* while */
@@ -1964,7 +1964,7 @@ static int incomingim_ch4(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	args.type = aimbs_getle8(&meat);
 	args.flags = aimbs_getle8(&meat);
 	args.msglen = aimbs_getle16(&meat);
-	args.msg = aimbs_getraw(&meat, args.msglen);
+	args.msg = (gchar *)aimbs_getraw(&meat, args.msglen);
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, channel, userinfo, &args);
@@ -2140,7 +2140,7 @@ static int missedcall(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
  *    AIM_TRANSFER_DENY_NOTSUPPORTED -- "client does not support"
  *    AIM_TRANSFER_DENY_DECLINE -- "client has declined transfer"
  *    AIM_TRANSFER_DENY_NOTACCEPTING -- "client is not accepting transfers"
- * 
+ *
  */
 faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const fu8_t *cookie, fu16_t code)
 {
@@ -2185,7 +2185,8 @@ static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	aim_rxcallback_t userfunc;
 	fu16_t channel, reason;
 	char *sn;
-	fu8_t *ck, snlen;
+	guchar *ck;
+	guint8 snlen;
 
 	ck = aimbs_getraw(bs, 8);
 	channel = aimbs_get16(bs);

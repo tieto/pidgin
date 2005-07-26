@@ -394,7 +394,7 @@ faim_export int aim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const cha
 	aimbs_put16(hdrbs, 0x393e);
 	aimbs_put16(hdrbs, 0xcac8);
 #endif
-	aimbs_putraw(hdrbs, msg, len);
+	aimbs_putraw(hdrbs, (guchar *)msg, len);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -429,7 +429,7 @@ faim_export const char *aim_odc_getsn(aim_conn_t *conn)
  * @param conn The ODC connection.
  * @return The cookie, an 8 byte unterminated string, or NULL if there was an anomaly.
  */
-faim_export const char *aim_odc_getcookie(aim_conn_t *conn)
+faim_export const guchar *aim_odc_getcookie(aim_conn_t *conn)
 {
 	struct aim_odc_intdata *intdata;
 
@@ -789,7 +789,7 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
 	fh->rfcsum = aimbs_get32(bs);
 	fh->nrecvd = aimbs_get32(bs);
 	fh->recvcsum = aimbs_get32(bs);
-	aimbs_getrawbuf(bs, fh->idstring, 32);
+	aimbs_getrawbuf(bs, (guchar *)fh->idstring, 32);
 	fh->flags = aimbs_get8(bs);
 	fh->lnameoffset = aimbs_get8(bs);
 	fh->lsizeoffset = aimbs_get8(bs);
@@ -797,7 +797,7 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
 	aimbs_getrawbuf(bs, fh->macfileinfo, 16);
 	fh->nencode = aimbs_get16(bs);
 	fh->nlanguage = aimbs_get16(bs);
-	aimbs_getrawbuf(bs, fh->name, 64); /* XXX - filenames longer than 64B */
+	aimbs_getrawbuf(bs, (guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
 	fh->name[63] = '\0';
 
 	return fh;
@@ -838,7 +838,7 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 	aimbs_put32(bs, fh->rfcsum);
 	aimbs_put32(bs, fh->nrecvd);
 	aimbs_put32(bs, fh->recvcsum);
-	aimbs_putraw(bs, fh->idstring, 32);
+	aimbs_putraw(bs, (const guchar *)fh->idstring, 32);
 	aimbs_put8(bs, fh->flags);
 	aimbs_put8(bs, fh->lnameoffset);
 	aimbs_put8(bs, fh->lsizeoffset);
@@ -846,7 +846,7 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 	aimbs_putraw(bs, fh->macfileinfo, 16);
 	aimbs_put16(bs, fh->nencode);
 	aimbs_put16(bs, fh->nlanguage);
-	aimbs_putraw(bs, fh->name, 64);	/* XXX - filenames longer than 64B */
+	aimbs_putraw(bs, (const guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
 
 	return 0;
 }

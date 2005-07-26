@@ -963,21 +963,21 @@ static int rights(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_m
  * profile_encoding and awaymsg_encoding MUST be set if profile or
  * away are set, respectively, and their value may or may not be
  * restricted to a few choices.  I am currently aware of:
- * 
+ *
  * us-ascii		Just that
  * unicode-2-0		UCS2-BE
- * 
+ *
  * profile_len and awaymsg_len MUST be set similarly, and they MUST
  * be the length of their respective strings in bytes.
  *
  * To get the previous behavior of awaymsg == "" un-setting the away
  * message, set awaymsg non-NULL and awaymsg_len to 0 (this is the
  * obvious equivalent).
- * 
+ *
  */
 faim_export int aim_locate_setprofile(aim_session_t *sess,
-				  const char *profile_encoding, const fu8_t *profile, const int profile_len,
-				  const char *awaymsg_encoding, const fu8_t *awaymsg, const int awaymsg_len)
+				  const char *profile_encoding, const gchar *profile, const int profile_len,
+				  const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -1005,7 +1005,7 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 		}
 		snprintf(encoding, strlen(defencoding) + strlen(profile_encoding), defencoding, profile_encoding);
 		aim_tlvlist_add_str(&tl, 0x0001, encoding);
-		aim_tlvlist_add_raw(&tl, 0x0002, profile_len, profile);
+		aim_tlvlist_add_raw(&tl, 0x0002, profile_len, (const guchar *)profile);
 		free(encoding);
 	}
 
@@ -1025,7 +1025,7 @@ faim_export int aim_locate_setprofile(aim_session_t *sess,
 			}
 			snprintf(encoding, strlen(defencoding) + strlen(awaymsg_encoding), defencoding, awaymsg_encoding);
 			aim_tlvlist_add_str(&tl, 0x0003, encoding);
-			aim_tlvlist_add_raw(&tl, 0x0004, awaymsg_len, awaymsg);
+			aim_tlvlist_add_raw(&tl, 0x0004, awaymsg_len, (const guchar *)awaymsg);
 			free(encoding);
 		} else
 			aim_tlvlist_add_noval(&tl, 0x0004);

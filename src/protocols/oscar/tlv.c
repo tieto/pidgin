@@ -92,7 +92,7 @@ faim_internal aim_tlvlist_t *aim_tlvlist_read(aim_bstream_t *bs)
 				return NULL;
 			}
 			if (cur->tlv->length > 0) {
-				cur->tlv->value = aimbs_getraw(bs, length);	
+				cur->tlv->value = aimbs_getraw(bs, length);
 				if (!cur->tlv->value) {
 					freetlv(&cur->tlv);
 					free(cur);
@@ -646,8 +646,8 @@ faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t typ
 }
 
 /**
- * Substitute a TLV of a given type with a new TLV of the same type.  If 
- * you attempt to replace a TLV that does not exist, this function will 
+ * Substitute a TLV of a given type with a new TLV of the same type.  If
+ * you attempt to replace a TLV that does not exist, this function will
  * just add a new TLV as if you called aim_tlvlist_add_str().
  *
  * @param list Desination chain (%NULL pointer if empty).
@@ -657,12 +657,12 @@ faim_internal int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const fu16_t typ
  */
 faim_internal int aim_tlvlist_replace_str(aim_tlvlist_t **list, const fu16_t type, const char *str)
 {
-	return aim_tlvlist_replace_raw(list, type, strlen(str), str);
+	return aim_tlvlist_replace_raw(list, type, strlen(str), (const guchar *)str);
 }
 
 /**
- * Substitute a TLV of a given type with a new TLV of the same type.  If 
- * you attempt to replace a TLV that does not exist, this function will 
+ * Substitute a TLV of a given type with a new TLV of the same type.  If
+ * you attempt to replace a TLV that does not exist, this function will
  * just add a new TLV as if you called aim_tlvlist_add_raw().
  *
  * @param list Desination chain (%NULL pointer if empty).
@@ -675,8 +675,8 @@ faim_internal int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const fu16_t t
 }
 
 /**
- * Substitute a TLV of a given type with a new TLV of the same type.  If 
- * you attempt to replace a TLV that does not exist, this function will 
+ * Substitute a TLV of a given type with a new TLV of the same type.  If
+ * you attempt to replace a TLV that does not exist, this function will
  * just add a new TLV as if you called aim_tlvlist_add_raw().
  *
  * @param list Desination chain (%NULL pointer if empty).
@@ -844,8 +844,8 @@ faim_internal int aim_tlv_getlength(aim_tlvlist_t *list, const fu16_t type, cons
  * @param list Source TLV chain.
  * @param type TLV type to search for.
  * @param nth Index of TLV to return.
- * @return The value of the TLV you were looking for, or NULL if one could 
- *         not be found.  This is a dynamic buffer and must be freed by the 
+ * @return The value of the TLV you were looking for, or NULL if one could
+ *         not be found.  This is a dynamic buffer and must be freed by the
  *         caller.
  */
 faim_internal char *aim_tlv_getstr(aim_tlvlist_t *list, const fu16_t type, const int nth)

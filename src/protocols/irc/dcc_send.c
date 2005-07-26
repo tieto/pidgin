@@ -51,7 +51,7 @@ static void irc_dccsend_recv_destroy(GaimXfer *xfer)
  * It sends the acknowledgement (in the form of a total byte count as an
  * unsigned 4 byte integer in network byte order)
  */
-static void irc_dccsend_recv_ack(GaimXfer *xfer, const char *data, size_t size) {
+static void irc_dccsend_recv_ack(GaimXfer *xfer, const guchar *data, size_t size) {
 	unsigned long l;
 
 	l = htonl(xfer->bytes_sent);
@@ -214,7 +214,7 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 	}
 }
 
-ssize_t irc_dccsend_send_write(const char *buffer, size_t size, GaimXfer *xfer)
+ssize_t irc_dccsend_send_write(const guchar *buffer, size_t size, GaimXfer *xfer)
 {
 	ssize_t s;
 

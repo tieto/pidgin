@@ -297,7 +297,7 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 
 static gboolean gaim_icon_timerfunc(gpointer data);
 static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
-static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const char *cookie);
+static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie);
 static void oscar_set_info(GaimConnection *gc, const char *text);
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 static void oscar_xfer_init_recv(GaimXfer *xfer);
@@ -415,7 +415,7 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 }
 
 static gchar *
-gaim_plugin_oscar_convert_to_utf8(const fu8_t *data, fu16_t datalen, const char *charsetstr, gboolean fallback)
+gaim_plugin_oscar_convert_to_utf8(const gchar *data, gsize datalen, const char *charsetstr, gboolean fallback)
 {
 	gchar *ret = NULL;
 	GError *err = NULL;
@@ -454,7 +454,7 @@ gaim_plugin_oscar_convert_to_utf8(const fu8_t *data, fu16_t datalen, const char 
  * charsetstr1 is always set to what the correct encoding should be.
  */
 static gchar *
-gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu16_t charset, fu16_t charsubset, fu8_t *data, fu16_t datalen)
+gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, fu16_t charset, fu16_t charsubset, const gchar *data, gsize datalen)
 {
 	gchar *ret = NULL;
 	const gchar *charsetstr1, *charsetstr2;
@@ -1009,9 +1009,9 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 			oscar_direct_im_disconnect(od, dim);
 			return;
 		} else {
-			fu8_t cookie[8];
+			guchar cookie[8];
 			char *who = g_strdup(dim->name);
-			const char *tmp = aim_odc_getcookie(dim->conn);
+			const guchar *tmp = aim_odc_getcookie(dim->conn);
 
 			memcpy(cookie, tmp, 8);
 			oscar_direct_im_destroy(od, dim);
@@ -1038,9 +1038,9 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 			oscar_direct_im_disconnect(od, dim);
 			return;
 		} else {
-			fu8_t cookie[8];
+			guchar cookie[8];
 			char *who = g_strdup(dim->name);
-			const char *tmp = aim_odc_getcookie(dim->conn);
+			const guchar *tmp = aim_odc_getcookie(dim->conn);
 
 			memcpy(cookie, tmp, 8);
 			oscar_direct_im_destroy(od, dim);
@@ -1498,7 +1498,7 @@ static void oscar_cancel_direct_im(struct ask_do_dir_im *data) {
  *
  * note that cookie is an 8 byte string that isn't NULL terminated
  */
-static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const char *cookie) {
+static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie) {
 	OscarData *od;
 	struct oscar_direct_im *dim;
 	int listenfd;
@@ -2141,7 +2141,7 @@ static void oscar_xfer_cancel_recv(GaimXfer *xfer)
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
-static void oscar_xfer_ack_recv(GaimXfer *xfer, const char *buffer, size_t size)
+static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t size)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 
@@ -2211,7 +2211,7 @@ static void oscar_xfer_cancel_send(GaimXfer *xfer)
 	od->file_transfers = g_slist_remove(od->file_transfers, xfer);
 }
 
-static void oscar_xfer_ack_send(GaimXfer *xfer, const char *buffer, size_t size)
+static void oscar_xfer_ack_send(GaimXfer *xfer, const guchar *buffer, size_t size)
 {
 	struct aim_oft_info *oft_info = xfer->data;
 
@@ -3188,7 +3188,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 }
 
 static void gaim_check_comment(OscarData *od, const char *str) {
-	if ((str == NULL) || strcmp(str, ck))
+	if ((str == NULL) || strcmp(str, (const char *)ck))
 		aim_locate_setcaps(od->sess, caps_aim);
 	else
 		aim_locate_setcaps(od->sess, caps_aim | AIM_CAPS_SECUREIM);
@@ -3443,7 +3443,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		struct stat st;
 
 		if (!g_stat(iconfile, &st)) {
-			char *buf = g_malloc(st.st_size);
+			guchar *buf = g_malloc(st.st_size);
 			file = g_fopen(iconfile, "rb");
 			if (file) {
 				/* XXX - Use g_file_get_contents() */
@@ -3467,8 +3467,8 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	message = g_string_new("");
 	curpart = args->mpmsg.parts;
 	while (curpart != NULL) {
-		tmp = gaim_plugin_oscar_decode_im_part(account, userinfo->sn, curpart->charset, curpart->charsubset,
-											curpart->data, curpart->datalen);
+		tmp = gaim_plugin_oscar_decode_im_part(account, userinfo->sn, curpart->charset,
+				curpart->charsubset, curpart->data, curpart->datalen);
 		if (tmp != NULL) {
 			g_string_append(message, tmp);
 			g_free(tmp);
@@ -4162,7 +4162,7 @@ static int gaim_parse_misses(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const char *cookie) {
+static int gaim_parse_clientauto_ch2(aim_session_t *sess, const char *who, fu16_t reason, const guchar *cookie) {
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
 
@@ -4237,7 +4237,7 @@ static int gaim_parse_clientauto(aim_session_t *sess, aim_frame_t *fr, ...) {
 	reason = (fu16_t)va_arg(ap, unsigned int);
 
 	if (chan == 0x0002) { /* File transfer declined */
-		char *cookie = va_arg(ap, char *);
+		guchar *cookie = va_arg(ap, guchar *);
 		return gaim_parse_clientauto_ch2(sess, who, reason, cookie);
 	} else if (chan == 0x0004) { /* ICQ message */
 		fu32_t state = 0;
@@ -4799,7 +4799,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 		if (iconfile == NULL) {
 			aim_ssi_delicon(od->sess);
 		} else if (!g_stat(iconfile, &st)) {
-			char *buf = g_malloc(st.st_size);
+			guchar *buf = g_malloc(st.st_size);
 			FILE *file = g_fopen(iconfile, "rb");
 			if (file) {
 				/* XXX - Use g_file_get_contents()? */
@@ -5645,7 +5645,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		if (iconfile && !g_stat(iconfile, &st)) {
 			FILE *file = g_fopen(iconfile, "rb");
 			if (file) {
-				char *buf = g_malloc(st.st_size);
+				guchar *buf = g_malloc(st.st_size);
 				/* XXX - Use g_file_get_contents()? */
 				fread(buf, 1, st.st_size, file);
 				fclose(file);
@@ -6872,7 +6872,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	fu16_t type;
 	fu8_t flags = 0, length = 0;
-	char *md5 = NULL;
+	guchar *md5 = NULL;
 
 
 	va_start(ap, fr);
@@ -6883,7 +6883,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 		case 0x0001: {
 			flags = va_arg(ap, int);
 			length = va_arg(ap, int);
-			md5 = va_arg(ap, char *);
+			md5 = va_arg(ap, guchar *);
 
 			if (flags == 0x41) {
 				if (!aim_getconn_type(od->sess, AIM_CONN_TYPE_ICON) && !od->iconconnecting) {
@@ -6896,7 +6896,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 					if (iconfile == NULL) {
 						aim_ssi_delicon(od->sess);
 					} else if (!g_stat(iconfile, &st)) {
-						char *buf = g_malloc(st.st_size);
+						guchar *buf = g_malloc(st.st_size);
 						FILE *file = g_fopen(iconfile, "rb");
 						if (file) {
 							/* XXX - Use g_file_get_contents()? */
@@ -7427,11 +7427,11 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 	if (iconfile == NULL) {
 		aim_ssi_delicon(od->sess);
 	} else if (!g_stat(iconfile, &st)) {
-		char *buf = g_malloc(st.st_size);
+		guchar *buf = g_malloc(st.st_size);
 		file = g_fopen(iconfile, "rb");
 		if (file) {
 			md5_state_t *state;
-			char md5[16];
+			guchar md5[16];
 			/* XXX - Use g_file_get_contents()? */
 			int len = fread(buf, 1, st.st_size, file);
 			fclose(file);
