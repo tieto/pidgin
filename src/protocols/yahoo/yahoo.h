@@ -34,7 +34,7 @@
 #define YAHOO_XFER_HOST "filetransfer.msg.yahoo.com"
 #define YAHOO_XFER_PORT 80
 #define YAHOO_ROOMLIST_URL "http://insider.msg.yahoo.com/ycontent/"
-#define YAHOO_ROOMLIST_LOCALE ""
+#define YAHOO_ROOMLIST_LOCALE "us"
 /* really we should get the list of servers from
  http://update.messenger.yahoo.co.jp/servers.html */
 #define YAHOOJP_PAGER_HOST "cs.yahoo.co.jp"
