@@ -104,7 +104,7 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
 	else
-		slpmsg->buffer = g_new0(char, size);
+		slpmsg->buffer = g_new0(guchar, size);
 
 	slpmsg->size = size;
 }

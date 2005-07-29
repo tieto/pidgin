@@ -57,7 +57,7 @@ struct _MsnSlpMessage
 	long flags;
 
 	FILE *fp;
-	char *buffer;
+	guchar *buffer;
 	long long offset;
 	long long size;
 

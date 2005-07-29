@@ -411,12 +411,12 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, cmd->params[1],
+	gaim_cipher_context_append(context, (const guint8 *)cmd->params[1],
 							   strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	gaim_cipher_context_append(context, challenge_resp,
+	gaim_cipher_context_append(context, (const guint8 *)challenge_resp,
 							   strlen(challenge_resp));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
@@ -921,7 +921,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimCipherContext *context;
 	guint8 digest[16];
 	FILE *fd;
-	char buf[2048];
+	char *buf;
 	char buf2[3];
 	char sendbuf[64];
 	int i;
@@ -932,7 +932,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	rru = cmd->params[1];
 	url = cmd->params[2];
 
-	g_snprintf(buf, sizeof(buf), "%s%lu%s",
+	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth,
 			   time(NULL) - session->passport_info.sl,
 			   gaim_connection_get_password(account->gc));
@@ -940,9 +940,11 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, buf, strlen(buf));
+	gaim_cipher_context_append(context, (const guint8 *)buf, strlen(buf));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
+
+	g_free(buf);
 
 	memset(sendbuf, 0, sizeof(sendbuf));
 

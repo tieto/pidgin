@@ -221,7 +221,7 @@ MsnSlpCall *
 msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 {
 	MsnSlpCall *slpcall;
-	const char *body;
+	const guchar *body;
 	gsize body_len;
 
 	slpcall = NULL;
@@ -230,7 +230,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 
 	if (slpmsg->flags == 0x0)
 	{
-		slpcall = msn_slp_sip_recv(slplink, body, body_len);
+		slpcall = msn_slp_sip_recv(slplink, (const char *)body, body_len);
 	}
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
