@@ -1,9 +1,60 @@
 #include "module.h"
 
+typedef struct {
+	char *cancel_cb;
+	char *ok_cb;
+} GaimPerlRequestData;
+
+/********************************************************/
+/*							*/
+/* Callback function that calls a perl subroutine 	*/
+/*							*/
+/* The void * field data is being used as a way to hide	*/
+/* the perl sub's name in a GaimPerlRequestData		*/
+/*							*/
+/********************************************************/
+void gaim_perl_request_ok_cb(void * data, GaimRequestFields *fields) {
+
+	GaimPerlRequestData *gpr = (GaimPerlRequestData *)data;
+
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(sp);
+	
+	XPUSHs(gaim_perl_bless_object(fields, "Gaim::Request::Fields"));
+	PUTBACK;
+	
+	call_pv(gpr->ok_cb, G_EVAL | G_SCALAR);
+	SPAGAIN;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+}
+
+void gaim_perl_request_cancel_cb(void * data, GaimRequestFields *fields) {
+
+	GaimPerlRequestData *gpr = (GaimPerlRequestData *)data;
+
+	dSP;
+	ENTER;
+	SAVETMPS;
+	PUSHMARK(sp);
+	
+	XPUSHs(gaim_perl_bless_object(fields, "Gaim::Request::Fields"));
+	PUTBACK;
+	call_pv(gpr->cancel_cb, G_EVAL | G_SCALAR);
+	SPAGAIN;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;
+}
+
+
 /* TODO
 
-void *
-gaim_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb, user_data)
 
 void *
 gaim_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb, user_data)
@@ -33,6 +84,42 @@ gaim_request_choice_varg(handle, title, primary, secondary, default_value, ok_te
 
 MODULE = Gaim::Request  PACKAGE = Gaim::Request  PREFIX = gaim_request_
 PROTOTYPES: ENABLE
+
+void *
+gaim_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb)
+	Gaim::Plugin handle
+	const char * title
+	const char * primary
+	const char * secondary
+	Gaim::Request::Fields fields
+	const char * ok_text
+	SV * ok_cb
+	const char * cancel_text
+	SV * cancel_cb
+CODE:
+	GaimPerlRequestData *gpr;
+	STRLEN len;
+	char *basename, *package;
+	
+	basename = g_path_get_basename(handle->path);
+	gaim_perl_normalize_script_name(basename);
+	package = g_strdup_printf("Gaim::Script::%s", basename);
+	gpr = g_new(GaimPerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+	
+	RETVAL = gaim_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(gaim_perl_request_ok_cb), cancel_text, G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
+OUTPUT:
+	RETVAL
+
+
+
+
+
+
+
+
+
 
 
 void *

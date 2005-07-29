@@ -144,6 +144,7 @@ Gaim::Ssl::Ops			T_GaimObj
 
 Gaim::Status				T_GaimObj
 Gaim::StatusType			T_GaimObj
+const Gaim::StatusType			T_GaimObj
 Gaim::StatusAttr  		         T_GaimObj
 Gaim::Presence 			         T_GaimObj
 Gaim::PresenceContext           	T_IV

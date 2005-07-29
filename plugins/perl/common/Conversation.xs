@@ -68,7 +68,10 @@ CODE:
 OUTPUT:
 	RETVAL
 
-
+int
+gaim_conv_window_add_conversation(win, conv)
+	Gaim::ConvWindow win
+	Gaim::Conversation conv
 
 
 MODULE = Gaim::Conv  PACKAGE = Gaim::Conv  PREFIX = gaim_conversation_
@@ -225,9 +228,18 @@ void
 gaim_conversation_update(conv, type)
 	Gaim::Conversation conv
 	Gaim::ConvUpdateType type
+	
+Gaim::Conversation 
+gaim_conversation_new(type, account, name)
+	Gaim::ConversationType type		  
+	Gaim::Account account
+	const char *name
 
-
-
+void 
+gaim_conversation_set_account(conv, account);
+	Gaim::Conversation conv
+	Gaim::Account account
+	
 
 
 MODULE = Gaim::Conv  PACKAGE = Gaim::Conv::IM  PREFIX = gaim_conv_im_
@@ -300,9 +312,13 @@ gaim_conv_im_send(im, message)
 	Gaim::Conversation::IM im
 	const char *message
 
-
-
-
+void 
+gaim_conv_im_write(im, who, message, flags, mtime)
+	Gaim::Conversation::IM im
+	const char *who
+	const char *message
+	Gaim::MessageFlags flags
+	time_t mtime
 
 
 MODULE = Gaim::Conv  PACKAGE = Gaim::Conv  PREFIX = gaim_conv_

@@ -45,6 +45,7 @@ PPCODE:
 	
 */
 
+/***************************XS Code Status.xs**************************/
 MODULE = Gaim::Status  PACKAGE = Gaim::Presence  PREFIX = gaim_presence_
 PROTOTYPES: ENABLE
 
@@ -359,7 +360,9 @@ CODE:
 		STRLEN t_sl;
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(status_types), i, 0), t_sl));
 	}
-	gaim_status_type_find_with_id(t_GL, id);
+	RETVAL = (GaimStatusType *)gaim_status_type_find_with_id(t_GL, id);
+OUTPUT:
+	RETVAL
 	
 Gaim::StatusAttr
 gaim_status_type_get_attr(status_type, id)

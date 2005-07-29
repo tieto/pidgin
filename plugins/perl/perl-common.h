@@ -23,6 +23,9 @@
 		gaim_perl_callXS(boot_Gaim__##x, cv, mark); \
 	}
 
+void gaim_perl_normalize_script_name(char *name);
+
+
 SV *newSVGChar(const char *str);
 
 void gaim_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark);

@@ -7,6 +7,23 @@ extern PerlInterpreter *my_perl;
 
 static GHashTable *object_stashes = NULL;
 
+void gaim_perl_normalize_script_name(char *name)
+{
+        char *c;
+
+        c = strrchr(name, '.');
+
+        if (c != NULL)
+                *c = '\0';
+
+        for (c = name; *c != '\0'; c++)
+        {
+                if (*c != '_' && !g_ascii_isalnum(*c))
+                        *c = '_';
+        }
+}
+
+
 static int
 magic_free_object(pTHX_ SV *sv, MAGIC *mg)
 {

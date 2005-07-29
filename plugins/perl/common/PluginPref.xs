@@ -127,5 +127,12 @@ gaim_plugin_pref_set_type(pref, type)
 	Gaim::PluginPref pref
 	Gaim::PluginPrefType type
 CODE:
-	gaim_plugin_pref_set_type(pref, type);
+	GaimPluginPrefType gpp_type = GAIM_PLUGIN_PREF_NONE;
+
+	if (type == 1) {
+		gpp_type = GAIM_PLUGIN_PREF_CHOICE;
+	} else if (type == 2) {
+		gpp_type = GAIM_PLUGIN_PREF_INFO;
+	}
+	gaim_plugin_pref_set_type(pref, gpp_type);
 

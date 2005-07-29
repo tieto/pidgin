@@ -4,23 +4,113 @@
 #include "debug.h"
 #include "signals.h"
 
+
 static GList *timeout_handlers = NULL;
 static GList *signal_handlers = NULL;
 static char *perl_plugin_pref_cb;
+static char *perl_gtk_plugin_pref_cb;
 extern PerlInterpreter *my_perl;
+
+/* For now a plugin can only have one action */
+void gaim_perl_plugin_action_cb(GaimPluginAction * gpa) {
+
+        dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(sp);
+
+	/* We put the plugin handle on the stack so it can pass it along 	*/
+	/* to anythng called from the callback.  It is supposed to pass		*/
+	/* the Action, but there is no way to access the plugin handle from	*/
+	/* the GaimPluginAction in perl...yet.					*/
+
+	XPUSHs(gaim_perl_bless_object(gpa->plugin, "Gaim::Plugin"));
+        PUTBACK;
+
+	/* gaim_perl_plugin_action_callback_sub defined in the header is set	*/
+	/* in perl.c during plugin probe by a PLUGIN_INFO hash value limiting	*/
+	/* us to only one action for right now even though the action member of	*/
+	/* GaimPluginInfo can take (does take) a GList.				*/
+        call_pv(gaim_perl_plugin_action_callback_sub, G_EVAL | G_SCALAR);
+        SPAGAIN;
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+}
+
+GList *gaim_perl_plugin_action(GaimPlugin *plugin, gpointer context) {
+        GaimPluginAction *act = NULL;
+        GList *gl = NULL;
+
+	/* TODO: Fix the way we create action handlers so we can have mroe than	*/
+	/* one action in perl.  Maybe there is a clever work around, but so far	*/
+	/* I have not figured it out.  There is no way to tie the perl sub's	*/
+	/* name to the callback function without these global variables and 	*/
+	/* there is no way to create a callback on the fly so each would have	*/
+	/* to be hardcoded--more than one would just be arbitrary.		*/
+        act = gaim_plugin_action_new(gaim_perl_plugin_action_label, gaim_perl_plugin_action_cb);
+        gl = g_list_append(gl, act);
+
+        return gl;
+}
+
+
+GaimGtkPluginUiInfo *gaim_perl_gtk_plugin_pref(const char * frame_cb) {
+
+	GaimGtkPluginUiInfo *ui_info;
+	
+	ui_info = g_new0(GaimGtkPluginUiInfo, 1);
+	perl_gtk_plugin_pref_cb = g_strdup(frame_cb);
+	ui_info->get_config_frame = gaim_perl_gtk_get_plugin_frame;
+	
+	return ui_info;
+}
+
+GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin) {
+	
+	SV * sv;
+	GtkWidget *ret;
+	MAGIC *mg;
+	dSP;
+	int count;
+
+	ENTER;
+	SAVETMPS;
+
+	count = call_pv(perl_gtk_plugin_pref_cb, G_SCALAR | G_NOARGS);
+	if (count != 1)
+		croak("call_pv: Did not return the correct number of values.\n");
+	
+	/* the frame was created in a perl sub and is returned */
+	SPAGAIN;
+
+	/* We have a Gtk2::Frame on top of the stack */
+	sv = POPs;	
+
+	/* The magic field hides the pointer to the actuale GtkWidget */
+	mg = mg_find(SvRV(sv), PERL_MAGIC_ext);
+	ret = (GtkWidget *)mg->mg_ptr;
+
+	PUTBACK;
+	FREETMPS;
+	LEAVE;		
+	
+	return ret;
+}
+
+
 
 
 /* Called to create a pointer to GaimPluginUiInfo for the GaimPluginInfo 	*/
 /*	It will then inturn create ui_info with the C function pointer 		*/
 /*	that will eventually do a call_pv to call a perl functions so users	*/
 /*	can create their own frames in the prefs				*/
-GaimPluginUiInfo *gaim_perl_plugin_pref(char * frame_cb) {
+GaimPluginUiInfo *gaim_perl_plugin_pref(const char * frame_cb) {
 	GaimPluginUiInfo *ui_info;
 	
 	ui_info = g_new0(GaimPluginUiInfo, 1);
-	
-	perl_plugin_pref_cb = frame_cb;
-	
+	perl_plugin_pref_cb = g_strdup(frame_cb);
 	ui_info->get_plugin_pref_frame = gaim_perl_get_plugin_frame;
 
 	return ui_info;
@@ -53,7 +143,7 @@ GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin) {
 	PUTBACK;
 	FREETMPS;
 	LEAVE;
-		
+	
 	return ret_frame;
 }
 

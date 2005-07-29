@@ -169,7 +169,7 @@ typedef GaimPluginType			Gaim__PluginType;
 typedef GaimPluginInfo *                Gaim__PluginInfo;
 typedef GaimPluginUiInfo *              Gaim__PluginUiInfo;
 typedef GaimPluginLoaderInfo *          Gaim__PluginLoaderInfo;
-typedef GaimPluginAction *              Gaim__PluginAction;
+typedef GaimPluginAction *              Gaim__Plugin__Action;
 
 	/* pluginpref.h */
 typedef GaimPluginPrefFrame *           Gaim__PluginPrefFrame;
