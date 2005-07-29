@@ -510,7 +510,7 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
 	aim_cachecookie(sess, cookie);
 
 	/* XXX - switch to aim_cloneconn()? */
-	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER, NULL))) {
+	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
 		close(listenfd);
 		return NULL;
 	}
@@ -558,7 +558,7 @@ faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, con
 		strncpy(intdata->ip, addr, sizeof(intdata->ip));
 
 	/* XXX - verify that non-blocking connects actually work */
-	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS, addr))) {
+	if (!(newconn = aim_newconn(sess, AIM_CONN_TYPE_RENDEZVOUS))) {
 		free(intdata);
 		return NULL;
 	}
@@ -746,7 +746,7 @@ faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *of
 	if (!oft_info)
 		return -EINVAL;
 
-	if (!(oft_info->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER, NULL))) {
+	if (!(oft_info->conn = aim_newconn(sess, AIM_CONN_TYPE_LISTENER))) {
 		close(listenfd);
 		return -ENOMEM;
 	}

@@ -347,7 +347,7 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
 	for (cur = sess->queue_outgoing; cur; cur = cur->next) {
 
 		if (cur->handled)
-	       		continue; /* already been sent */
+			continue; /* already been sent */
 
 		if (cur->conn && (cur->conn->status & AIM_CONN_STATUS_INPROGRESS))
 			continue;
@@ -357,8 +357,8 @@ faim_export int aim_tx_flushqueue(aim_session_t *sess)
 		 * latency and avoid missed messages.
 		 */
 		if ((cur->conn->lastactivity + cur->conn->forcedlatency) >= time(NULL)) {
-			/* 
-			 * XXX should be a break! we don't want to block the 
+			/*
+			 * XXX should be a break! we don't want to block the
 			 * upper layers
 			 *
 			 * XXX or better, just do this right.

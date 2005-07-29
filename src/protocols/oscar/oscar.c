@@ -1793,7 +1793,7 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	aim_session_init(sess, TRUE, FAIM_DEBUG_LEVEL);
 	aim_setdebuggingcb(sess, oscar_debug);
 	/*
-	 * We need an immediate queue because we don't use a while-loop 
+	 * We need an immediate queue because we don't use a while-loop
 	 * to see if things need to be sent.
 	 */
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
@@ -1803,7 +1803,7 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	/* Connect to core Gaim signals */
 	gaim_prefs_connect_callback(gc, "/plugins/prpl/oscar/recent_buddies", recent_buddies_cb, gc);
 
-	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
+	conn = aim_newconn(sess, AIM_CONN_TYPE_AUTH);
 	if (conn == NULL) {
 		gaim_debug_error("oscar", "internal connection error\n");
 		gaim_connection_error(gc, _("Unable to login to AIM"));
@@ -2023,12 +2023,12 @@ static gboolean oscar_clientip_timeout(gpointer data) {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	char *msg = NULL;
-	
+
 	gaim_debug_info("oscar","AAA - in oscar_clientip_timeout\n");
 	xfer = (GaimXfer*) data;
 	if(xfer->data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
-		
+
 		/* Check to see if the clientip has produced any results */
 		if(oft_info->conn && oft_info->conn->status != AIM_CONN_STATUS_INPROGRESS) {
 			msg = g_strdup_printf(_("Transfer of file %s timed out."),gaim_xfer_get_filename(xfer));
@@ -2073,7 +2073,7 @@ static gboolean oscar_verifiedip_timeout(gpointer data) {
 	}
 	return FALSE;
 }
- 
+
 static void oscar_xfer_init_recv(GaimXfer *xfer)
 {
 	struct aim_oft_info *oft_info = xfer->data;
@@ -2081,7 +2081,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_recv_init\n");
-	
+
 	/* Start a timer for this ip address
 	 * If the verifiedip fails, try the clientip
 	 * If clientip fails, declare the whole file transfer dead
@@ -2097,7 +2097,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 		}
 	}
 
-	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS, NULL);
+	oft_info->conn = aim_newconn(od->sess, AIM_CONN_TYPE_RENDEZVOUS);
 	if (oft_info->conn) {
 		oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
 		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
@@ -2362,7 +2362,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Closing auth connection...\n");
 	aim_conn_kill(sess, &fr->conn);
 
-	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS, NULL);
+	bosconn = aim_newconn(sess, AIM_CONN_TYPE_BOS);
 	if (bosconn == NULL) {
 		gaim_connection_error(gc, _("Internal Error"));
 		od->killme = TRUE;
@@ -2912,7 +2912,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	case 0x7: /* Authorizer */
 		gaim_debug_info("oscar",
 				   "Reconnecting with authorizor...\n");
-		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH, NULL);
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_AUTH);
 		if (tstconn == NULL) {
 			gaim_debug_error("oscar",
 					   "unable to reconnect with authorizer\n");
@@ -2934,7 +2934,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	break;
 
 	case 0xd: /* ChatNav */
-		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV, NULL);
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHATNAV);
 		if (tstconn == NULL) {
 			gaim_debug_error("oscar",
 					   "unable to connect to chatnav server\n");
@@ -2958,7 +2958,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	case 0xe: { /* Chat */
 		struct chat_connection *ccon;
 
-		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT, NULL);
+		tstconn = aim_newconn(sess, AIM_CONN_TYPE_CHAT);
 		if (tstconn == NULL) {
 			gaim_debug_error("oscar",
 					   "unable to connect to chat server\n");
@@ -2995,7 +2995,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	case 0x0010: { /* icon */
-		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON, NULL))) {
+		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_ICON))) {
 			gaim_debug_error("oscar",
 					   "unable to connect to icon server\n");
 			g_free(host);
@@ -3016,7 +3016,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	} break;
 
 	case 0x0018: { /* email */
-		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL, NULL))) {
+		if (!(tstconn = aim_newconn(sess, AIM_CONN_TYPE_EMAIL))) {
 			gaim_debug_error("oscar",
 					   "unable to connect to email server\n");
 			g_free(host);

@@ -395,177 +395,6 @@ faim_export aim_conn_t *aim_getconn_fd(aim_session_t *sess, int fd)
 }
 
 /**
- * Handle normal connections or SOCKS5 via an extrememly quick and
- * dirty SOCKS5 interface.
- *
- * Attempts to connect to the specified host via the configured
- * proxy settings, if present.  If no proxy is configured for
- * this session, the connection is done directly.
- *
- * XXX - this is really awful.
- * XXX - Split the SOCKS5 and the normal connection stuff into two
- *        separate functions.
- *
- * @param sess Session to connect.
- * @param host Host to connect to.
- * @param port Port to connect to.
- * @param statusret Return value of the connection.
- */
-static int aim_proxyconnect(aim_session_t *sess, const char *host, fu16_t port, fu32_t *statusret)
-{
-	int fd = -1;
-
-	if (strlen(sess->socksproxy.server)) { /* connecting via proxy */
-		int i;
-		unsigned char buf[512];
-		struct sockaddr_in sa;
-		struct hostent *hp;
-		char *proxy;
-		unsigned short proxyport = 1080;
-
-		for(i=0;i<(int)strlen(sess->socksproxy.server);i++) {
-			if (sess->socksproxy.server[i] == ':') {
-				proxyport = atoi(&(sess->socksproxy.server[i+1]));
-				break;
-			}
-		}
-
-		proxy = (char *)malloc(i+1);
-		strncpy(proxy, sess->socksproxy.server, i);
-		proxy[i] = '\0';
-
-		if (!(hp = gethostbyname(proxy))) {
-			faimdprintf(sess, 0, "proxyconnect: unable to resolve proxy name\n");
-			*statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-			return -1;
-		}
-		free(proxy);
-
-		memset(&sa.sin_zero, 0, 8);
-		sa.sin_port = htons(proxyport);
-		memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
-		sa.sin_family = hp->h_addrtype;
-
-		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
-		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
-			faimdprintf(sess, 0, "proxyconnect: unable to connect to proxy\n");
-			close(fd);
-			return -1;
-		}
-
-		i = 0;
-		buf[0] = 0x05; /* SOCKS version 5 */
-		if (strlen(sess->socksproxy.username)) {
-			buf[1] = 0x02; /* two methods */
-			buf[2] = 0x00; /* no authentication */
-			buf[3] = 0x02; /* username/password authentication */
-			i = 4;
-		} else {
-			buf[1] = 0x01;
-			buf[2] = 0x00;
-			i = 3;
-		}
-		if (write(fd, buf, i) < i) {
-			*statusret = errno;
-			close(fd);
-			return -1;
-		}
-		if (read(fd, buf, 2) < 2) {
-			*statusret = errno;
-			close(fd);
-			return -1;
-		}
-
-		if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-			*statusret = EINVAL;
-			close(fd);
-			return -1;
-		}
-
-		/* check if we're doing username authentication */
-		if (buf[1] == 0x02) {
-			i  = aimutil_put8(buf, 0x01); /* version 1 */
-			i += aimutil_put8(buf+i, strlen(sess->socksproxy.username));
-			i += aimutil_putstr(buf+i, sess->socksproxy.username, strlen(sess->socksproxy.username));
-			i += aimutil_put8(buf+i, strlen(sess->socksproxy.password));
-			i += aimutil_putstr(buf+i, sess->socksproxy.password, strlen(sess->socksproxy.password));
-			if (write(fd, buf, i) < i) {
-				*statusret = errno;
-				close(fd);
-				return -1;
-			}
-			if (read(fd, buf, 2) < 2) {
-				*statusret = errno;
-				close(fd);
-				return -1;
-			}
-			if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
-				*statusret = EINVAL;
-				close(fd);
-				return -1;
-			}
-		}
-
-		i  = aimutil_put8(buf, 0x05);
-		i += aimutil_put8(buf+i, 0x01); /* CONNECT */
-		i += aimutil_put8(buf+i, 0x00); /* reserved */
-		i += aimutil_put8(buf+i, 0x03); /* address type: host name */
-		i += aimutil_put8(buf+i, strlen(host));
-		i += aimutil_putstr(buf+i, host, strlen(host));
-		i += aimutil_put16(buf+i, port);
-
-		if (write(fd, buf, i) < i) {
-			*statusret = errno;
-			close(fd);
-			return -1;
-		}
-
-		if (read(fd, buf, 10) < 10) {
-			*statusret = errno;
-			close(fd);
-			return -1;
-		}
-		if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
-			*statusret = EINVAL;
-			close(fd);
-			return -1;
-		}
-
-	} else { /* connecting directly */
-		struct sockaddr_in sa;
-		struct hostent *hp;
-
-		if (!(hp = gethostbyname(host))) {
-			*statusret = (h_errno | AIM_CONN_STATUS_RESOLVERR);
-			return -1;
-		}
-
-		memset(&sa, 0, sizeof(struct sockaddr_in));
-		sa.sin_port = htons(port);
-		memcpy(&sa.sin_addr, hp->h_addr, hp->h_length);
-		sa.sin_family = hp->h_addrtype;
-
-		fd = socket(hp->h_addrtype, SOCK_STREAM, 0);
-
-		if (sess->nonblocking)
-			fcntl(fd, F_SETFL, O_NONBLOCK); /* XXX save flags */
-
-		if (connect(fd, (struct sockaddr *)&sa, sizeof(struct sockaddr_in)) < 0) {
-			if (sess->nonblocking) {
-				if ((errno == EINPROGRESS) || (errno == EINTR)) {
-					if (statusret)
-						*statusret |= AIM_CONN_STATUS_INPROGRESS;
-					return fd;
-				}
-			}
-			close(fd);
-			fd = -1;
-		}
-	}
-	return fd;
-}
-
-/**
  * Clone an aim_conn_t.
  *
  * A new connection is allocated, and the values are filled in
@@ -611,65 +440,27 @@ faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src)
 /**
  * Opens a new connection to the specified dest host of specified
  * type, using the proxy settings if available.  If @host is %NULL,
- * the connection is allocated and returned, but no connection 
+ * the connection is allocated and returned, but no connection
  * is made.
  *
  * FIXME: Return errors in a more sane way.
  *
  * @param sess Session to create connection in
  * @param type Type of connection to create
- * @param dest Host to connect to (in "host:port" syntax)
  */
-faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type, const char *dest)
+faim_export aim_conn_t *aim_newconn(aim_session_t *sess, int type)
 {
-	aim_conn_t *connstruct;
-	fu16_t port = FAIM_LOGIN_PORT;
-	char *host;
-	int i, ret;
+	aim_conn_t *conn;
 
-	if (!(connstruct = aim_conn_getnext(sess)))
+	if (!(conn = aim_conn_getnext(sess)))
 		return NULL;
 
-	connstruct->sessv = (void *)sess;
-	connstruct->type = type;
+	conn->sessv = (void *)sess;
+	conn->type = type;
 
-	if (!dest) { /* just allocate a struct */
-		connstruct->fd = -1;
-		connstruct->status = 0;
-		return connstruct;
-	}
-
-	/*
-	 * As of 23 Jul 1999, AOL now sends the port number, preceded by a
-	 * colon, in the BOS redirect.  This fatally breaks all previous
-	 * libfaims.  Bad, bad AOL.
-	 *
-	 * We put this here to catch every case.
-	 *
-	 */
-
-	for(i = 0; i < (int)strlen(dest); i++) {
-		if (dest[i] == ':') {
-			port = atoi(&(dest[i+1]));
-			break;
-		}
-	}
-
-	host = (char *)malloc(i+1);
-	strncpy(host, dest, i);
-	host[i] = '\0';
-
-	if ((ret = aim_proxyconnect(sess, host, port, &connstruct->status)) < 0) {
-		connstruct->fd = -1;
-		connstruct->status = (errno | AIM_CONN_STATUS_CONNERR);
-		free(host);
-		return connstruct;
-	} else
-		connstruct->fd = ret;
-
-	free(host);
-
-	return connstruct;
+	conn->fd = -1;
+	conn->status = 0;
+	return conn;
 }
 
 /**
