@@ -1,11 +1,14 @@
-#EXTRA_DIST = \
-#		Makefile.mingw
+EXTRA_DIST = \
+	music.png
 
 plugindir = $(libdir)/gaim
 
 musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
+
+musicmessagingpixdir = $(DATADIR)/pixmaps/gaim/buttons
+musicmessagingpix_DATA = music.png
 
 plugin_LTLIBRARIES = musicmessaging.la
 
