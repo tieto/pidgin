@@ -748,7 +748,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 	SilcAttributeObjMime message, extension;
 	SilcAttributeObjPk serverpk, usersign, serversign;
 	gboolean usign_success = TRUE, ssign_success = TRUE;
-	unsigned char filename[256], filename2[256], *fingerprint = NULL, *tmp;
+	char filename[512], filename2[512], *fingerprint = NULL, *tmp;
 	SilcUInt32 len;
 	int i;
 
