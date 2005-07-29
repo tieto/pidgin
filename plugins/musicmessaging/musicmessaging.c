@@ -15,6 +15,7 @@
 static gboolean start_session(void);
 static void run_editor(void);
 static void add_button (GaimConversation *conv);
+static void remove_button (GtkWidget *button);
 
 typedef struct {
 	GaimBuddy *buddy;
@@ -27,6 +28,9 @@ typedef struct {
 
 /* List of sessions */
 GList *sessions;
+
+/* List of created buttons */
+GList *widgets;
 
 /* Pointer to this plugin */
 GaimPlugin *plugin_pointer;
@@ -56,7 +60,7 @@ plugin_unload(GaimPlugin *plugin) {
 	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Unloaded",
 						gaim_prefs_get_string ("/plugins/gtk/musicmessaging/editor_path"), NULL, NULL, NULL);
 	
-	
+	g_list_foreach(widgets, (GFunc) remove_button, NULL);
 	return TRUE;
 }
 
@@ -67,14 +71,21 @@ start_session(void)
 	return TRUE;
 }
 
+static void music_button_toggled (GtkWidget *widget, gpointer data)
+{
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) 
+    {
+		start_session();    
+    } else {
+    
+        /* kill program */
+    }
+}
+
 static void set_editor_path (GtkWidget *button, GtkWidget *text_field)
 {
 	const char * path = gtk_entry_get_text((GtkEntry*)text_field);
 	gaim_prefs_set_string("/plugins/gtk/musicmessaging/editor_path", path);
-	
-	/*Testing*
-	start_session();
-	*/
 	
 }
 
@@ -93,25 +104,35 @@ static void run_editor (void)
 
 static void add_button (GaimConversation *conv)
 {
-	GtkWidget *button, *image, *bbox;
+	GtkWidget *button, *image, *sep;
 
 	button = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
-	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(start_session), NULL);
-
-	bbox = gtk_vbox_new(FALSE, 0);
-
-	gtk_container_add (GTK_CONTAINER(button), bbox);
+	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), NULL);
 
 	gchar *file_path = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", "music.png", NULL);
-	image = gtk_image_new_from_file(file_path);
+	image = gtk_image_new_from_file("/usr/local/share/pixmaps/gaim/buttons/music.png");
 
-	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(bbox);
-
+	gtk_container_add((GtkContainer *)button, image);
+	
+	sep = gtk_vseparator_new();
+	
+	g_list_append(widgets, sep);
+	g_list_append(widgets, button);
+	
+	gtk_widget_show(sep);
+	gtk_widget_show(image);
+	gtk_widget_show(button);
+	
+	gtk_box_pack_start(GTK_BOX(GAIM_GTK_CONVERSATION(conv)->toolbar), sep, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(GAIM_GTK_CONVERSATION(conv)->toolbar), button, FALSE, FALSE, 0);
+}
+
+static void remove_button (GtkWidget *button)
+{
+	gtk_widget_hide(button);
+	gtk_widget_destroy(button);		
 }
 
 static GtkWidget *
