@@ -489,8 +489,7 @@ gaim_signal_emit_vargs(void *instance, const char *signal, va_list args)
 	}
 
 #ifdef HAVE_DBUS
-	gaim_dbus_signal_emit_gaim(gaim_dbus_object, signal, 
-				   signal_data->num_values, 
+	gaim_dbus_signal_emit_gaim(signal, signal_data->num_values, 
 				   signal_data->values, args);
 #endif	/* HAVE_DBUS */
 
@@ -541,8 +540,7 @@ gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 	}
 
 #ifdef HAVE_DBUS
-	gaim_dbus_signal_emit_gaim(gaim_dbus_object, signal,
-				   signal_data->num_values, 
+	gaim_dbus_signal_emit_gaim(signal, signal_data->num_values, 
 				   signal_data->values, args);
 #endif	/* HAVE_DBUS */
 

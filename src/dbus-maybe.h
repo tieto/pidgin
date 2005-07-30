@@ -13,7 +13,7 @@
 /* this provides a type check */
 #define GAIM_DBUS_REGISTER_POINTER(ptr, type) { \
     type *typed_ptr = ptr; \
-    gaim_dbus_register_pointer(typed_ptr, DBUS_POINTER_##type); \
+    gaim_dbus_register_pointer(typed_ptr, GAIM_DBUS_TYPE(type));	\
 }
 #define GAIM_DBUS_UNREGISTER_POINTER(ptr) gaim_dbus_unregister_pointer(ptr)
 
@@ -21,6 +21,7 @@
 
 #define GAIM_DBUS_REGISTER_POINTER(ptr, type) 
 #define GAIM_DBUS_UNREGISTER_POINTER(ptr)
+#define DBUS_EXPORT
 
 #endif	/* HAVE_DBUS */
 

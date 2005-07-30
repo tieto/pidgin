@@ -875,6 +875,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 			gaim_buddy_icon_unref(conv->u.im->icon);
 		conv->u.im->icon = NULL;
 
+		GAIM_DBUS_UNREGISTER_POINTER(conv->u.im);
 		g_free(conv->u.im);
 		conv->u.im = NULL;
 

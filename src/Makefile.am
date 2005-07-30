@@ -146,37 +146,25 @@ bin_PROGRAMS = gaim gaim-remote
 
 if ENABLE_DBUS
 
-dbus_sources = dbus-server.c dbus-useful.c
+dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h 
-dbus_exported_headers = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h
 
-CLEANFILES=dbus-auto-enum-types.h dbus-auto-enums.txt dbus-auto-structs.txt dbus-generated-code.c dbus-generated-code.xml dbus-service-all.xml dbus-server-bindings.c
+CLEANFILES    = dbus-bindings.c
 
-dbus-auto-structs.txt: dbus-analyze-types.py $(gaim_coreheaders)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct --list > $@
-
-dbus-auto-enums.txt: dbus-analyze-types.py $(gaim_coreheaders)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=enum --list > $@
-
-dbus-auto-enum-types.h: dbus-analyze-types.py $(gaim_coreheaders)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct --enum > $@
-
-dbus-generated-code.c: dbus-analyze-functions.py dbus-auto-structs.txt dbus-auto-enums.txt $(dbus_exported_headers)
-	cat $(dbus_exported_headers) | $(PYTHON) dbus-analyze-functions.py --mode=c > $@
-
-dbus-generated-code.xml: dbus-analyze-functions.py dbus-auto-structs.txt dbus-auto-enums.txt $(dbus_exported_headers)
-	cat $(dbus_exported_headers) | $(PYTHON) dbus-analyze-functions.py --mode=xml > $@
-
-dbus-service-all.xml: dbus-service.xml dbus-generated-code.xml dbus-service-end.xml
-	cat $^ > $@
-
-dbus-server-bindings.c: dbus-service-all.xml $(DBUS_BINDING_TOOL)
-	$(DBUS_BINDING_TOOL) --prefix=gaim_object --mode=glib-server --output=$@ $<
+dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h
 
 
-$(gaim_OBJECTS): dbus-auto-enum-types.h
+dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
+	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py > $@
 
-dbus-server.$(OBJEXT): dbus-server-bindings.c dbus-generated-code.c
+dbus-server.$(OBJEXT): dbus-bindings.c 
+
+# dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
+# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct '--pattern=GAIM_DBUS_DEFINE_TYPE(%s)' > $@
+
+# dbus-types.h: dbus-analyze-types.py $(gaim_coreheaders)
+# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct '--pattern=GAIM_DBUS_DECLARE_TYPE(%s)' > $@
+
 
 endif
 

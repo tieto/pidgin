@@ -10,49 +10,56 @@ import re
 import string
 import sys
 
-# mode: "c" or "xml"
-
-mode = None
+options = {}
 
 for arg in sys.argv[1:]:
-    if arg.startswith("--mode="):
-        mode = arg[len("--mode="):]
+    if arg[0:2] == "--":
+        mylist = arg[2:].split("=",1)
+        command = mylist[0]
+        if len(mylist) > 1:
+            options[command] = mylist[1]
+        else:
+            options[command] = None
 
 # list of object types
 
-objecttypes = []
+# objecttypes = []
 
-for objecttype in file("dbus-auto-structs.txt"):
-    objecttypes.append(objecttype.strip())
+# for objecttype in file("dbus-auto-structs.txt"):
+#     objecttypes.append(objecttype.strip())
 
 # a dictionary of simple types
 # each TYPE maps into a pair (dbus-type-name, compatible-c-type-name)
 # if compatible-c-type-name is None then it is the same as TYPE
 
-simpletypes = {
-    "int" : ("i", None),
-    "gint" : ("i", None),
-    "guint" : ("u", None),
-    "gboolean" : ("i", "int")
-    }
+# simpletypes = {
+#     "int" : ("i", None),
+#     "gint" : ("i", None),
+#     "guint" : ("u", None),
+#     "gboolean" : ("i", "int")
+#     }
 
-for enum in file("dbus-auto-enums.txt"):
-    simpletypes[enum.strip()] = ("i", "int")
+simpletypes = ["int", "gint", "guint", "gboolean"]
+
+# for enum in file("dbus-auto-enums.txt"):
+#     simpletypes[enum.strip()] = ("i", "int")
 
 # functions that shouldn't be exported 
 
-excluded = ["gaim_accounts_load", "gaim_account_set_presence"]
+excluded = ["gaim_accounts_load", "gaim_account_set_presence",
+            "gaim_conv_placement_get_fnc_id", "gaim_conv_placement_add_fnc"]
 
 pointer = "#pointer#"
-prefix = "gaim_object_"
+
+functions = []
 
 cparams = []
+cparamsout = []
 cdecls  = []
 ccode  = []
-dargs  = []
+ccodeout  = []
 
 myexception = "My Exception"
-
 
 def ctopascal(name):
     newname = ""
@@ -60,63 +67,74 @@ def ctopascal(name):
         newname += word.capitalize()
     return newname
 
-def dbus_print(function):
-    print '<method name="%s">' % ctopascal(function)
-
-    for name, type, direction in dargs:
-        print '<arg type="%s" name="%s" direction="%s" />' % \
-              (type, name, direction)
-
-    print '</method>'
-    print 
-
-def dbus_clear():
-    global dargs
-    dargs = []
-
 def c_print(function):
-    print "static gboolean %s%s(GaimObject *gaim_object," % (prefix, function),
+    print "static DBusMessage *%s_DBUS(DBusMessage *message_DBUS, DBusError *error_DBUS) {" \
+          % function
 
-    for param in cparams:
-        print "%s," % param,
-
-    print "GError **error) {"
+    print "DBusMessage *reply_DBUS;"
 
     for decl in cdecls:
         print decl
 
+    print "dbus_message_get_args(message_DBUS, error_DBUS, ",
+    for param in cparams:
+        print "DBUS_TYPE_%s, &%s," % param,
+    print "DBUS_TYPE_INVALID);"
+
+    print "CHECK_ERROR(error_DBUS);"
+
     for code in ccode:
         print code
 
-    print "return TRUE;\n}\n"
-   
+    print "reply_DBUS =  dbus_message_new_method_return (message_DBUS);"
+
+    print "dbus_message_append_args(reply_DBUS, ",
+    for param in cparamsout:
+        if type(param) is str:
+            print "%s, " % param
+        else:
+            print "DBUS_TYPE_%s, &%s, " % param,
+    print "DBUS_TYPE_INVALID);"
+
+    for code in ccodeout:
+        print code
+
+    print "return reply_DBUS;\n}\n"
+
+    functions.append(function)
+
 def c_clear():
-    global cparams, cdecls, ccode
+    global cparams, cdecls, ccode, cparamsout, ccodeout
     cparams = []
     cdecls  = []
     ccode  = []
+    cparamsout = []
+    ccodeout = []
 
+
+def printdispatchtable():
+    print "static GaimDBusBinding bindings_DBUS[] = { "
+    for function in functions:
+        print '{"%s", %s_DBUS},' % (ctopascal(function), function)
+    print "{NULL, NULL}"
+    print "};"
+    
+    print "#define GAIM_DBUS_REGISTER_BINDINGS(handle) gaim_dbus_register_bindings(handle, bindings_DBUS)"
 
 # processing an input parameter
 
 def inputvar(mytype, name):
-    global dargs, ccode, cparams, cdecls
+    global ccode, cparams, cdecls
     const = False
     if mytype[0] == "const":
         mytype = mytype[1:]
         const = True
 
     # simple types (int, gboolean, etc.) and enums
-    if (len(mytype) == 1) and (mytype[0] in simpletypes):
-        dbustype, ctype = simpletypes[mytype[0]]
-        dargs.append((name, dbustype, "in"))
-        if ctype is None:
-            cparams.append(mytype[0] + " " + name)
-        else:
-            cparams.append(ctype + " " + name + "_ORIG")
-            cdecls .append("%s %s;\n" % (mytype[0], name))
-            ccode  .append("%s = (%s) %s_ORIG;\n" % \
-                           (name, mytype[0], name))
+    if (len(mytype) == 1) and \
+           ((mytype[0] in simpletypes) or (mytype[0].startswith("Gaim"))):
+        cdecls.append("dbus_int32_t %s;" % name)
+        cparams.append(("INT32", name))
         return
 
     # pointers ...
@@ -125,27 +143,27 @@ def inputvar(mytype, name):
         # strings
         if mytype[0] == "char":
             if const:
-                dargs  .append((name, "s", "in"))
-                cparams.append("const char *" + name)
+                cdecls.append("const char *%s;" % name)
+                cparams.append(("STRING", name))
                 ccode  .append("NULLIFY(%s);" % name)
                 return
             else:
                 raise myexception
 
         # known object types are transformed to integer handles
-        elif mytype[0] in objecttypes:
-            dargs  .append((name, "i", "in"))
-            cparams.append("int " + name + "_ID")
-            cdecls .append("%s *%s;" % (mytype[0], name))
-            ccode  .append("GAIM_DBUS_ID_TO_POINTER(%s, %s_ID, %s);"  % \
+        elif mytype[0].startswith("Gaim"):
+            cdecls.append("dbus_int32_t %s_ID;" %  name)
+            cdecls.append("%s *%s;" % (mytype[0], name))
+            cparams.append(("INT32", name + "_ID"))
+            ccode.append("GAIM_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);"  % \
                            (name, name, mytype[0]))
             return
 
         # unknown pointers are always replaced with NULL
         else:
-            dargs  .append((name, "i", "in"))
-            cparams.append("int " + name + "_NULL")
+            cdecls.append("dbus_int32_t %s_NULL;" %  name)
             cdecls .append("%s *%s;" % (mytype[0], name))
+            cparams.append(("INT32", name + "_NULL"))
             ccode  .append("%s = NULL;" % name)
             return
 
@@ -163,40 +181,40 @@ def outputvar(mytype, name, call):
 
     # a constant string
     if mytype == ["const", "char", pointer]:
-        dargs  .append((name, "s", "out"))
-        cparams.append("char **%s" % name)
-        ccode  .append("*%s = g_strdup(null_to_empty(%s));" % (name, call))
+        cdecls.append("const char *%s;" % name)
+        ccode.append("%s = null_to_empty(%s);" % (name, call))
+        cparamsout.append(("STRING", name))
         return
 
     # simple types (ints, booleans, enums, ...)
-    if (len(mytype) == 1) and (mytype[0] in simpletypes): 
-        dbustype, ctype = simpletypes[mytype[0]]
-
-        if ctype is None:
-            ctype = mytype[0]
-            
-        dargs  .append((name, dbustype, "out"))
-        ccode  .append("*%s = %s;" % (name, call))
-        cparams.append("%s *%s" % (ctype, name))
+    if (len(mytype) == 1) and \
+           ((mytype[0] in simpletypes) or (mytype[0].startswith("Gaim"))):
+        cdecls.append("dbus_int32_t %s;" % name)
+        ccode.append("%s = %s;" % (name, call))
+        cparamsout.append(("INT32", name))
         return
             
     # pointers ...
     if (len(mytype) == 2) and (mytype[1] == pointer):
 
         # handles
-        if mytype[0] in objecttypes:
-            dargs  .append((name, "i", "out"))
-            cparams.append("int *%s" % name)
-            ccode  .append("GAIM_DBUS_POINTER_TO_ID(*%s, %s);" % (name, call))
+        if mytype[0].startswith("Gaim"):
+            cdecls.append("dbus_int32_t %s;" % name)
+            ccode .append("GAIM_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name, call))
+            cparamsout.append(("INT32", name))
             return
 
         # GList*, GSList*, assume that list is a list of objects
         # not a list of strings!!!
+        # this does NOT release memory occupied by the list
         if mytype[0] in ["GList", "GSList"]:
-            dargs  .append((name, "ai", "out"))
-            cparams.append("GArray **%s" % name)
-            ccode  .append("*%s = gaim_dbusify_%s(%s, TRUE);" % \
-                           (name, mytype[0],call))
+            cdecls.append("dbus_int32_t %s_LEN;" % name)
+            cdecls.append("dbus_int32_t *%s;" % name)
+            ccode.append("%s = gaim_dbusify_%s(%s, FALSE, &%s_LEN);" % \
+                         (name, mytype[0], call, name))
+            cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
+                              % (name, name))
+            ccodeout.append("g_free(%s);" % name)
             return
 
     raise myexception
@@ -204,7 +222,6 @@ def outputvar(mytype, name, call):
 
 
 def processfunction(functionparam, paramlist):
-    dbus_clear()
     c_clear()
 
     ftokens = functionparam.split()
@@ -228,20 +245,24 @@ def processfunction(functionparam, paramlist):
     outputvar(functiontype, "RESULT",
               "%s(%s)" % (origfunction, ", ".join(names)))
 
-    if mode == "c":
-        c_print(function)
-
-    if mode == "xml":
-        dbus_print(function)
+    c_print(function)
 
 
-if mode == "c":
-    print "/* Generated by %s.  Do not edit! */" % sys.argv[0]
 
-if mode == "xml":
-    print "<!-- Generated by %s.  Do not edit! -->" % sys.argv[0]
+    
+print "/* Generated by %s.  Do not edit! */" % sys.argv[0]
 
-functionregexp = re.compile(r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$")
+
+
+regexp = r"^(\w[^()]*)\(([^()]*)\)\s*;\s*$";
+
+
+if "export-only" in options:
+    fprefix = "DBUS_EXPORT\s+"
+else:
+    fprefix = ""
+    
+functionregexp = re.compile("^%s(\w[^()]*)\(([^()]*)\)\s*;\s*$" % fprefix)
 
 inputiter = iter(sys.stdin)
 
@@ -286,7 +307,5 @@ for line in inputiter:
             sys.stderr.write(myline + "\n")
             raise
 
-
-
-
+printdispatchtable()
 

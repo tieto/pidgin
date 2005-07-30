@@ -324,11 +324,6 @@ if test "x$enable_dbus" = "xyes" ; then
 	[
 		enable_dbus=no
 	])
-	AC_PATH_PROG([DBUS_BINDING_TOOL], [dbus-binding-tool], [no])
-	if test x$DBUS_BINDING_TOOL = "xno" ; then
-		AC_MSG_WARN([dbus-binding-tool executable not found in your path])
-		enable_dbus=no
-	fi
 fi
 
 dnl  Why do we need python?  

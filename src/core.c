@@ -40,6 +40,11 @@
 #include "status.h"
 #include "sound.h"
 
+#ifdef HAVE_DBUS
+#  include "dbus-server.h"
+#endif
+
+
 struct GaimCore
 {
 	char *ui;
@@ -88,6 +93,10 @@ gaim_core_init(const char *ui)
 	}
 
 	gaim_debug_register_category("main");
+
+#ifdef HAVE_DBUS
+	gaim_dbus_init();
+#endif
 
 	/* Initialize all static protocols. */
 	static_proto_init();

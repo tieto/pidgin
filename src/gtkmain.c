@@ -71,9 +71,6 @@
 # include <gdk/gdkx.h>
 #endif
 
-#ifdef HAVE_DBUS
-#  include "dbus-server.h"
-#endif
 
 
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -617,10 +614,6 @@ int main(int argc, char *argv[])
 	wgaim_init(hint);
 #endif
 
-#ifdef HAVE_DBUS
-	gaim_dbus_init();
-#endif
-
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
 
@@ -725,10 +718,6 @@ int main(int argc, char *argv[])
 	gaim_debug_register_category("prpl");
 	gaim_debug_register_category("server");
 	gaim_debug_register_category("stringref");
-
-#ifdef HAVE_DBUS
- 	gaim_dbus_connect(gaim_dbus_object); 
-#endif
 
 	gtk_main();
 

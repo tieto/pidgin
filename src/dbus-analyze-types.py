@@ -18,35 +18,20 @@
 import re
 import sys
 
-myinput = iter(sys.stdin)
-
-def outputenum(name):
-    print "DBUS_POINTER_%s," % name
-
-def outputdeclare(name):
-    print "DECLARE_TYPE(%s, NONE);" % name
-
-def outputtext(name):
-    print name
-
-myoutput = outputtext
 keyword = "struct"
+pattern = "%s"
 
 for arg in sys.argv[1:]:
     if arg[0:2] == "--":
-        mylist = arg[2:].split("=")
+        mylist = arg[2:].split("=",1)
         command = mylist[0]
         if len(mylist) > 1:
             value = mylist[1]
         else:
             value = None
             
-    if command == "enum":
-        myoutput = outputenum
-    if command == "declare":
-        myoutput = outputdeclare
-    if command == "list":
-        myoutput = outputtext
+    if command == "pattern":
+        pattern = value
     if command == "keyword":
         keyword = value
         
@@ -55,10 +40,12 @@ structregexp1 = re.compile(r"^(typedef\s+)?%s\s+\w+\s+(\w+)\s*;" % keyword)
 structregexp2 = re.compile(r"^(typedef\s+)?%s" % keyword)
 structregexp3 = re.compile(r"^}\s+(\w+)\s*;")
 
+myinput = iter(sys.stdin)
+
 for line in myinput:
     match = structregexp1.match(line)
     if match is not None:
-        myoutput(match.group(2))        
+        print pattern % match.group(2)
         continue
 
     match = structregexp2.match(line)
@@ -67,7 +54,7 @@ for line in myinput:
             line = myinput.next()
             match = structregexp3.match(line)
             if match is not None:
-                myoutput(match.group(1))
+                print pattern % match.group(1)
                 break
             if line[0] not in [" ", "\t", "{", "\n"]:
                 break
