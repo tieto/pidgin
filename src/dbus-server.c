@@ -194,7 +194,6 @@ dbus_int32_t* gaim_dbusify_GSList(GSList *list, gboolean free_memory,
 	return array;
 }
 
-
 /**************************************************************/
 /* DBus bindings ...                                          */
 /**************************************************************/
@@ -224,15 +223,15 @@ gaim_dbus_dispatch_cb(DBusConnection *connection,
 
     bindings = (GaimDBusBinding*) user_data;
 
-    if (dbus_message_get_type(message) != DBUS_MESSAGE_TYPE_METHOD_CALL)
-	return FALSE;
-
-    if (!dbus_message_has_path(message, DBUS_PATH_GAIM))
+    if (!dbus_message_has_path(message, DBUS_PATH_GAIM)) 
 	return FALSE;
 
     name = dbus_message_get_member(message);
 
-    if (name == NULL)
+    if (name == NULL) 
+	return FALSE;
+
+    if (dbus_message_get_type(message) != DBUS_MESSAGE_TYPE_METHOD_CALL) 
 	return FALSE;
 
     for(i=0; bindings[i].name; i++)
@@ -260,6 +259,74 @@ gaim_dbus_dispatch_cb(DBusConnection *connection,
     return FALSE;
 }
 
+
+/* Introspection */
+
+static const char *gettext(const char **ptr) {
+    const char *text = *ptr;
+    *ptr += strlen(text) + 1;
+    return text;
+}
+
+static void
+gaim_dbus_introspect_cb(GList **bindings_list, void *bindings) {
+    *bindings_list = g_list_prepend(*bindings_list, bindings);
+}
+
+static DBusMessage *gaim_dbus_introspect(DBusMessage *message) 
+{
+    DBusMessage *reply;
+    GString *str;
+    GList *bindings_list, *node;
+
+    str = g_string_sized_new(0x1000); /* fixme: why this size? */
+
+    g_string_append(str, "<!DOCTYPE node PUBLIC '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN' 'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>\n");
+    g_string_append_printf(str, "<node name='%s'>\n", DBUS_PATH_GAIM);
+    g_string_append_printf(str, "<interface name='%s'>\n", DBUS_INTERFACE_GAIM);
+
+    bindings_list = NULL;
+    gaim_signal_emit(gaim_dbus_get_handle(), "dbus-introspect", &bindings_list); 
+
+    for(node = bindings_list; node; node = node->next) {
+	GaimDBusBinding *bindings;
+	int i;
+
+	bindings = (GaimDBusBinding*) node->data;
+    
+	for(i=0; bindings[i].name; i++) {
+	    const char *text;
+
+	    g_string_append_printf(str, "<method name='%s'>\n", bindings[i].name);
+	
+	    text = bindings[i].parameters;
+	    while (*text) {		
+		const char *name, *direction, *type;
+		
+		direction = gettext(&text);
+		type = gettext(&text);
+		name = gettext(&text);
+		
+	    g_string_append_printf(str, 
+				   "<arg name='%s' type='%s' direction='%s'/>\n",
+				   name, type, direction);
+	    }
+	    g_string_append(str, "</method>\n");
+	}
+    }
+
+    g_string_append(str, "</interface>\n</node>\n");
+
+    reply = dbus_message_new_method_return (message);
+    dbus_message_append_args(reply,  DBUS_TYPE_STRING, &(str->str),  
+			     DBUS_TYPE_INVALID);
+    g_string_free(str, TRUE);	
+    g_list_free(bindings_list);
+
+    return reply;
+
+}
+
 static DBusHandlerResult gaim_dbus_dispatch(DBusConnection *connection,
 					    DBusMessage *message,
 					    void *user_data)
@@ -268,14 +335,30 @@ static DBusHandlerResult gaim_dbus_dispatch(DBusConnection *connection,
 				  "dbus-method-called", 
 				  connection, message))
 	return DBUS_HANDLER_RESULT_HANDLED;
-    else 
-	return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+
+    if (dbus_message_get_type(message) == DBUS_MESSAGE_TYPE_METHOD_CALL &&
+	dbus_message_has_path(message, DBUS_PATH_GAIM) &&
+	dbus_message_has_interface(message, DBUS_INTERFACE_INTROSPECTABLE) &&
+	dbus_message_has_member(message, "Introspect"))
+    {
+	DBusMessage *reply;
+	reply = gaim_dbus_introspect(message);
+	dbus_connection_send (connection, reply, NULL);
+	dbus_message_unref(reply);
+	return DBUS_HANDLER_RESULT_HANDLED;
+    }
+	
+    return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
 }
 
 void gaim_dbus_register_bindings(void *handle, GaimDBusBinding *bindings) {
     gaim_signal_connect(gaim_dbus_get_handle(), "dbus-method-called",
 			handle, 
 			GAIM_CALLBACK(gaim_dbus_dispatch_cb),
+			bindings);
+    gaim_signal_connect(gaim_dbus_get_handle(), "dbus-introspect",
+			handle, 
+			GAIM_CALLBACK(gaim_dbus_introspect_cb),
 			bindings);
 }
 
@@ -325,6 +408,10 @@ gboolean gaim_dbus_dispatch_init(void)
 			 gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
 			 gaim_value_new(GAIM_TYPE_POINTER),
 			 gaim_value_new(GAIM_TYPE_POINTER));
+
+    gaim_signal_register(gaim_dbus_get_handle(), "dbus-introspect",
+			 gaim_marshal_VOID__POINTER, NULL, 1,
+			 gaim_value_new_outgoing(GAIM_TYPE_POINTER));
 
     GAIM_DBUS_REGISTER_BINDINGS(gaim_dbus_get_handle());
 
@@ -446,5 +533,9 @@ gboolean gaim_dbus_init(void)
     gaim_dbus_init_ids();
     return gaim_dbus_dispatch_init() ;
 }
+
+
+/* Introspection support */
+
 
 

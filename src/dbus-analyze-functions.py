@@ -53,6 +53,7 @@ pointer = "#pointer#"
 
 functions = []
 
+dparams = ""
 cparams = []
 cparamsout = []
 cdecls  = []
@@ -101,10 +102,11 @@ def c_print(function):
 
     print "return reply_DBUS;\n}\n"
 
-    functions.append(function)
+    functions.append((function, dparams))
 
 def c_clear():
-    global cparams, cdecls, ccode, cparamsout, ccodeout
+    global cparams, cdecls, ccode, cparamsout, ccodeout, dparams
+    dparams = ""
     cparams = []
     cdecls  = []
     ccode  = []
@@ -112,10 +114,21 @@ def c_clear():
     ccodeout = []
 
 
+def addstring(*items):
+    global dparams
+    for item in items:
+        dparams += item + r"\0"
+
+def addintype(type, name):
+    addstring("in", type, name)
+
+def addouttype(type, name):
+    addstring("out", type, name)
+
 def printdispatchtable():
     print "static GaimDBusBinding bindings_DBUS[] = { "
-    for function in functions:
-        print '{"%s", %s_DBUS},' % (ctopascal(function), function)
+    for function, params in functions:
+        print '{"%s", "%s", %s_DBUS},' % (ctopascal(function), params, function)
     print "{NULL, NULL}"
     print "};"
     
@@ -135,6 +148,7 @@ def inputvar(mytype, name):
            ((mytype[0] in simpletypes) or (mytype[0].startswith("Gaim"))):
         cdecls.append("dbus_int32_t %s;" % name)
         cparams.append(("INT32", name))
+        addintype("i", name)
         return
 
     # pointers ...
@@ -146,6 +160,7 @@ def inputvar(mytype, name):
                 cdecls.append("const char *%s;" % name)
                 cparams.append(("STRING", name))
                 ccode  .append("NULLIFY(%s);" % name)
+                addintype("s", name)
                 return
             else:
                 raise myexception
@@ -157,6 +172,7 @@ def inputvar(mytype, name):
             cparams.append(("INT32", name + "_ID"))
             ccode.append("GAIM_DBUS_ID_TO_POINTER(%s, %s_ID, %s, error_DBUS);"  % \
                            (name, name, mytype[0]))
+            addintype("i", name)
             return
 
         # unknown pointers are always replaced with NULL
@@ -165,6 +181,7 @@ def inputvar(mytype, name):
             cdecls .append("%s *%s;" % (mytype[0], name))
             cparams.append(("INT32", name + "_NULL"))
             ccode  .append("%s = NULL;" % name)
+            addintype("i", name)
             return
 
     raise myexception
@@ -184,6 +201,7 @@ def outputvar(mytype, name, call):
         cdecls.append("const char *%s;" % name)
         ccode.append("%s = null_to_empty(%s);" % (name, call))
         cparamsout.append(("STRING", name))
+        addouttype("s", name)
         return
 
     # simple types (ints, booleans, enums, ...)
@@ -192,6 +210,7 @@ def outputvar(mytype, name, call):
         cdecls.append("dbus_int32_t %s;" % name)
         ccode.append("%s = %s;" % (name, call))
         cparamsout.append(("INT32", name))
+        addouttype("i", name)
         return
             
     # pointers ...
@@ -202,6 +221,7 @@ def outputvar(mytype, name, call):
             cdecls.append("dbus_int32_t %s;" % name)
             ccode .append("GAIM_DBUS_POINTER_TO_ID(%s, %s, error_DBUS);" % (name, call))
             cparamsout.append(("INT32", name))
+            addouttype("i", name)
             return
 
         # GList*, GSList*, assume that list is a list of objects
@@ -215,6 +235,7 @@ def outputvar(mytype, name, call):
             cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
                               % (name, name))
             ccodeout.append("g_free(%s);" % name)
+            addouttype("ai", name)
             return
 
     raise myexception
