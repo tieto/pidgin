@@ -76,6 +76,7 @@ static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE
 
 static fu8_t features_aim[] = {0x01, 0x01, 0x01, 0x02};
 static fu8_t features_icq[] = {0x01, 0x06};
+static fu8_t features_icq_offline[] = {0x01};
 static fu8_t ck[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 typedef struct _OscarData OscarData;
@@ -5624,8 +5625,21 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 		if (od->icq) {
-			args.features = features_icq;
-			args.featureslen = sizeof(features_icq);
+						/* We have to present different "features" (whose meaning
+			   is unclear and are merely a result of protocol inspection)
+			   to offline ICQ buddies. Otherwise, the official
+			   ICQ client doesn't treat those messages as being "ANSI-
+			   encoded" (and instead, assumes them to be UTF-8).
+			   For more details, see SF issue 1179452.
+			*/
+			GaimBuddy *buddy = gaim_find_buddy(gc->account, name);
+			if (buddy && buddy->present != 0) {
+				args.features = features_icq;
+				args.featureslen = sizeof(features_icq);
+			} else {
+				args.features = features_icq_offline;
+				args.featureslen = sizeof(features_icq_offline);
+			}
 			args.flags |= AIM_IMFLAGS_OFFLINE;
 		} else {
 			args.features = features_aim;
