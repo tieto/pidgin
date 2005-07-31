@@ -383,58 +383,64 @@ static char *html_to_zephyr(const char *message)
 				retcount += 1;
 			} else if (!g_ascii_strncasecmp(message + cnt + 1, "a href=\"mailto:", 15)) {
 				cnt += 16;
-				while (g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
+				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
 					ret[retcount] = message[cnt];
 					retcount++;
 					cnt++;
 				}
-				cnt += 2;
+				if (message[cnt] != '\0')
+					cnt += 2;
 				/* ignore descriptive string */
-				while (g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
+				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
 					cnt++;
 				}
-				cnt += 4;
+				if (message[cnt] != '\0')
+					cnt += 4;
 			} else if (!g_ascii_strncasecmp(message + cnt + 1, "a href=\"", 8)) {
 				cnt += 9;
-				while (g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
+				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
 					ret[retcount] = message[cnt];
 					retcount++;
 					cnt++;
 				}
-				cnt += 2;
+				if (message[cnt] != '\0')
+					cnt += 2;
 				/* ignore descriptive string */
-				while (g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
+				while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "</a>", 4) != 0) {
 					cnt++;
 				}
-				cnt += 4;
+				if (message[cnt] != '\0')
+					cnt += 4;
 			} else if (!g_ascii_strncasecmp(message + cnt + 1, "font", 4)) {
 				cnt += 5;
-				while (!g_ascii_strncasecmp(message + cnt, " ", 1))
+				while ((message[cnt] != '\0') && (message[cnt] != ' '))
 					cnt++;
-				if (!g_ascii_strncasecmp(message + cnt, "color=\"", 7)) {
+				if ((message[cnt] != '\0') && !g_ascii_strncasecmp(message + cnt, "color=\"", 7)) {
 					cnt += 7;
 					strncpy(ret + retcount, "@color(", 7);
 					retcount += 7;
-					while (g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
+					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
 						ret[retcount] = message[cnt];
 						retcount++;
 						cnt++;
 					}
 					ret[retcount] = ')';
 					retcount++;
-					cnt += 2;
+					if (message[cnt] != '\0')
+						cnt += 2;
 				} else if (!g_ascii_strncasecmp(message + cnt, "face=\"", 6)) {
 					cnt += 6;
 					strncpy(ret + retcount, "@font(", 6);
 					retcount += 6;
-					while (g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
+					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
 						ret[retcount] = message[cnt];
 						retcount++;
 						cnt++;
 					}
 					ret[retcount] = ')';
 					retcount++;
-					cnt += 2;
+					if (message[cnt] != '\0')
+						cnt += 2;
 				} else if (!g_ascii_strncasecmp(message + cnt, "size=\"", 6)) {
 					cnt += 6;
 					if ((message[cnt] == '1') || (message[cnt] == '2')) {
@@ -453,10 +459,11 @@ static char *html_to_zephyr(const char *message)
 					cnt += 3;
 				} else {
 					/* Drop all unrecognized/misparsed font tags */
-					while (g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
+					while ((message[cnt] != '\0') && g_ascii_strncasecmp(message + cnt, "\">", 2) != 0) {
 						cnt++;
 					}
-					cnt += 2;
+					if (message[cnt] != '\0')
+						cnt += 2;
 				}
 			} else if (!g_ascii_strncasecmp(message + cnt + 1, "/i>", 3)
 				   || !g_ascii_strncasecmp(message + cnt + 1, "/b>", 3)) {
@@ -469,7 +476,7 @@ static char *html_to_zephyr(const char *message)
 				retcount += 12;
 			} else {
 				/* Catch all for all unrecognized/misparsed <foo> tage */
-				while (g_ascii_strncasecmp(message + cnt, ">", 1) != 0) {
+				while ((message[cnt] != '\0') && (message[cnt] != '>')) {
 					ret[retcount] = message[cnt];
 					retcount++;
 					cnt++;

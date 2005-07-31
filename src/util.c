@@ -1619,7 +1619,9 @@ gaim_markup_linkify(const char *text)
 				/* iterate backwards grabbing the local part of an email address */
 				g = g_utf8_get_char(t);
 				if (badchar(*t) || (g >= 127) || (*t == '(') ||
-						((*t == ';') && (t > (text+2)) && !g_ascii_strncasecmp(t - 3, "&lt;", 4))) {
+					((*t == ';') && ((t > (text+2) && (!g_ascii_strncasecmp(t - 3, "&lt;", 4) ||
+				                                       !g_ascii_strncasecmp(t - 3, "&gt;", 4))) ||
+				                     (t > (text+4) && (!g_ascii_strncasecmp(t - 5, "&quot;", 6)))))) {
 					/* local part will already be part of ret, strip it out */
 					ret = g_string_truncate(ret, ret->len - (c - t));
 					ret = g_string_append_unichar(ret, g);

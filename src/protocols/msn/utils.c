@@ -221,22 +221,24 @@ msn_import_html(const char *html, char **attributes, char **message)
 				if (!g_ascii_strncasecmp(c, "mailto:", 7))
 					c += 7;
 
-				while (g_ascii_strncasecmp(c, "\">", 2))
+				while ((*c != '\0') && g_ascii_strncasecmp(c, "\">", 2))
 					msg[retcount++] = *c++;
 
-				c += 2;
+				if (*c != '\0')
+					c += 2;
 
 				/* ignore descriptive string */
-				while (g_ascii_strncasecmp(c, "</a>", 4))
+				while ((*c != '\0') && g_ascii_strncasecmp(c, "</a>", 4))
 					c++;
 
-				c += 4;
+				if (*c != '\0')
+					c += 4;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "font", 4))
 			{
 				c += 5;
 
-				while (!g_ascii_strncasecmp(c, " ", 1))
+				while ((*c != '\0') && !g_ascii_strncasecmp(c, " ", 1))
 					c++;
 
 				if (!g_ascii_strncasecmp(c, "color=\"#", 7))
@@ -273,18 +275,19 @@ msn_import_html(const char *html, char **attributes, char **message)
 				else
 				{
 					/* Drop all unrecognized/misparsed font tags */
-					while (g_ascii_strncasecmp(c, "\">", 2))
+					while ((*c != '\0') && g_ascii_strncasecmp(c, "\">", 2))
 						c++;
 
-					c += 2;
+					if (*c != '\0')
+						c += 2;
 				}
 			}
 			else
 			{
-				while (g_ascii_strncasecmp(c, ">", 1))
+				while ((*c != '\0') && (*c != '>'))
 					c++;
-
-				c++;
+				if (*c != '\0')
+					c++;
 			}
 		}
 		else if (*c == '&')
