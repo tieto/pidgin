@@ -7,7 +7,7 @@ musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
 
 if PLUGINS
 
-musicmessagingpixdir = $(DATADIR)/pixmaps/gaim/buttons
+musicmessagingpixdir = $(datadir)/pixmaps/gaim/buttons
 musicmessagingpix_DATA = music.png
 
 plugin_LTLIBRARIES = musicmessaging.la
