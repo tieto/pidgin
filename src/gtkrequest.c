@@ -896,7 +896,7 @@ static void get_log_set_name(GaimLogSet *set, gpointer value, gpointer **set_has
 	    (GPOINTER_TO_INT(set_hash_data[1]) ||
 	     (set->account != NULL && gaim_account_is_connected(set->account))) &&
 		set->type == GAIM_LOG_IM) {
-#if NEW_STYLE_COMPLETION
+#ifdef NEW_STYLE_COMPLETION
 			add_screenname_autocomplete_entry((GtkListStore *)set_hash_data[0],
 											  NULL, NULL, set->account, set->name);
 #else
