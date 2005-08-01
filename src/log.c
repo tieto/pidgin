@@ -43,7 +43,7 @@ struct _gaim_logsize_user {
 };
 static GHashTable *logsize_users = NULL;
 
-static GList *log_get_log_sets_common();
+static void log_get_log_sets_common(GHashTable *sets);
 
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
@@ -242,7 +242,7 @@ GaimLogLogger *gaim_log_logger_new(
 				int(*size)(GaimLog*),
 				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
 				GList*(*list_syslog)(GaimAccount *account),
-				GList*(*get_log_sets)(void))
+				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets))
 {
 	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
 
@@ -333,7 +333,6 @@ gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
 	const GaimLogSet *a = y;
 	const GaimLogSet *b = z;
 	gint ret = 0;
-	char *tmp;
 
 	/* This logic seems weird at first...
 	 * If either account is NULL, we pretend the accounts are
@@ -341,14 +340,12 @@ gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
 	 * exist if one logger knows the account and another
 	 * doesn't. */
 	if (a->account != NULL && b->account != NULL) {
-		ret = gaim_utf8_strcasecmp(gaim_account_get_username(a->account), gaim_account_get_username(b->account));
+		ret = strcmp(gaim_account_get_username(a->account), gaim_account_get_username(b->account));
 		if (ret != 0)
 			return ret;
 	}
 
-	tmp = g_strdup(gaim_normalize(a->account, a->name));
-	ret = gaim_utf8_strcasecmp(tmp, gaim_normalize(b->account, b->name));
-	g_free(tmp);
+	ret = strcmp(a->normalized_name, b->normalized_name);
 	if (ret != 0)
 		return ret;
 
@@ -373,17 +370,23 @@ gboolean log_set_equal(gconstpointer a, gconstpointer b)
 	return !gaim_log_set_compare(a, b);
 }
 
-void log_set_build_list(gpointer key, gpointer value, gpointer user_data)
+void log_add_log_set_to_hash(GHashTable *sets, GaimLogSet *set)
 {
-	*((GList **)user_data) = g_list_append(*((GList **)user_data), key);
+	GaimLogSet *existing_set = g_hash_table_lookup(sets, set);
+
+	if (existing_set == NULL)
+		g_hash_table_insert(sets, set, set);
+	else if (existing_set->account == NULL && set->account != NULL)
+		g_hash_table_replace(sets, set, set);
+	else
+		gaim_log_set_free(set);
 }
 
-GList *gaim_log_get_log_sets()
+GHashTable *gaim_log_get_log_sets(void)
 {
 	GSList *n;
-	GList *sets = NULL;
-	GList *set;
-	GHashTable *sets_ht = g_hash_table_new(log_set_hash, log_set_equal);
+	GHashTable *sets = g_hash_table_new_full(log_set_hash, log_set_equal,
+											 (GDestroyNotify)gaim_log_set_free, NULL);
 
 	/* Get the log sets from all the loggers. */
 	for (n = loggers; n; n = n->next) {
@@ -392,37 +395,23 @@ GList *gaim_log_get_log_sets()
 		if (!logger->get_log_sets)
 			continue;
 
-		sets = g_list_concat(sets, logger->get_log_sets());
+		logger->get_log_sets(log_add_log_set_to_hash, sets);
 	}
 
-	/* Get the log sets for loggers that use the common logger functions. */
-	sets = g_list_concat(sets, log_get_log_sets_common());
+	log_get_log_sets_common(sets);
 
-	for (set = sets; set != NULL ; set = set->next) {
-		GaimLogSet *existing_set = g_hash_table_lookup(sets_ht, set->data);
+	/* Return the GHashTable of unique GaimLogSets. */
+	return sets;
+}
 
-		if (existing_set == NULL) {
-			g_hash_table_insert(sets_ht, set->data, set->data);
-		} else if (existing_set->account == NULL && ((GaimLogSet *)set->data)->account != NULL) {
-			/* The existing entry in the hash table has no account.
-			 * This one does. We'll delete the old one and keep this one. */
-			g_hash_table_replace(sets_ht, set->data, set->data);
-			g_free(existing_set->name);
-			g_free(existing_set);
-		} else {
-			g_free(((GaimLogSet *)set->data)->name);
-			g_free(set->data);
-		}
-	}
-	g_list_free(sets);
+void gaim_log_set_free(GaimLogSet *set)
+{
+	g_return_if_fail(set != NULL);
 
-	/* At this point, we've built a GHashTable of unique GaimLogSets.
-	 * So, we build a list of those keys and destroy the GHashTable. */
-	sets = NULL;
-	g_hash_table_foreach(sets_ht, log_set_build_list, &sets);
-	g_hash_table_destroy(sets_ht);
-
-	return g_list_sort(sets, gaim_log_set_compare);
+	g_free(set->name);
+	if (set->normalized_name != set->name)
+		g_free(set->normalized_name);
+	g_free(set);
 }
 
 GList *gaim_log_get_system_logs(GaimAccount *account)
@@ -556,16 +545,15 @@ int gaim_log_common_sizer(GaimLog *log)
 
 /* This will build log sets for all loggers that use the common logger
  * functions because they use the same directory structure. */
-static GList *log_get_log_sets_common()
+static void log_get_log_sets_common(GHashTable *sets)
 {
 	gchar *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
 	GDir *log_dir = g_dir_open(log_path, 0, NULL);
 	const gchar *protocol;
-	GList *sets = NULL;
 
 	if (log_dir == NULL) {
 		g_free(log_path);
-		return NULL;
+		return;
 	}
 
 	while ((protocol = g_dir_read_name(log_dir)) != NULL) {
@@ -634,6 +622,7 @@ static GList *log_get_log_sets_common()
 
 				set->account = account;
 				set->name = name;
+				set->normalized_name = g_strdup(gaim_normalize(account, name));
 
 				/* Chat for .chat or .system at the end of the name to determine the type. */
 				set->type = GAIM_LOG_IM;
@@ -653,12 +642,9 @@ static GList *log_get_log_sets_common()
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				if (gaim_find_buddy(account, name) != NULL)
-					set->buddy = TRUE;
-				else
-					set->buddy = FALSE;
+				set->buddy = (gaim_find_buddy(account, name) != NULL);
 
-				sets = g_list_append(sets, set);
+				log_add_log_set_to_hash(sets, set);
 			}
 			g_free(username_path);
 			g_dir_close(username_dir);
@@ -668,8 +654,6 @@ static GList *log_get_log_sets_common()
 	}
 	g_free(log_path);
 	g_dir_close(log_dir);
-
-	return sets;
 }
 
 #if 0 /* Maybe some other time. */
@@ -1222,17 +1206,16 @@ static int old_logger_size (GaimLog *log)
 	return data ? data->length : 0;
 }
 
-static GList *old_logger_get_log_sets()
+static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 {
 	char *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
 	GDir *log_dir = g_dir_open(log_path, 0, NULL);
 	gchar *name;
-	GList *sets = NULL;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	g_free(log_path);
 	if (log_dir == NULL)
-		return NULL;
+		return;
 
 	/* Don't worry about the cast, name will be filled with a dynamically allocated data shortly. */
 	while ((name = (gchar *)g_dir_read_name(log_dir)) != NULL) {
@@ -1272,7 +1255,7 @@ static GList *old_logger_get_log_sets()
 			}
 		}
 
-		set->name = name;
+		set->name = set->normalized_name = name;
 
 		/* Search the buddy list to find the account and to determine if this is a buddy. */
 		for (gnode = gaim_get_blist()->root; !found && gnode != NULL; gnode = gnode->next)
@@ -1298,11 +1281,9 @@ static GList *old_logger_get_log_sets()
 			}
 		}
 
-		sets = g_list_append(sets, set);
+		cb(sets, set);
 	}
 	g_dir_close(log_dir);
-
-	return sets;
 }
 
 static void old_logger_finalize(GaimLog *log)

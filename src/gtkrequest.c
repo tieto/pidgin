@@ -44,7 +44,7 @@ typedef struct
 	GaimRequestType type;
 
 	void *user_data;
-GtkWidget *dialog;
+	GtkWidget *dialog;
 
 	GtkWidget *ok_button;
 
@@ -647,71 +647,6 @@ req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
 		gaim_request_fields_all_required_filled(field->group->fields_list));
 }
 
-static GList *
-get_screenname_completion_data(gboolean all)
-{
-	GList *names = NULL;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GList *log_sets;
-	GList *log_set;
-
-	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
-	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-			{
-				GaimBuddy *buddy = (GaimBuddy *)bnode;
-
-				if (!all && !gaim_account_is_connected(buddy->account))
-					continue;
-
-#ifdef NEW_STYLE_COMPLETION
-				names = g_list_append(names, ((GaimContact *)cnode)->alias);
-				names = g_list_append(names,
-					(gpointer)gaim_buddy_get_contact_alias(buddy));
-				names = g_list_append(names, buddy->account);
-#endif /* NEW_STYLE_COMPLETION */
-
-				names = g_list_append(names, g_strdup(buddy->name));
-			}
-		}
-	}
-
-	if (all)
-	{
-		log_sets = gaim_log_get_log_sets();
-		for (log_set = log_sets ; log_set != NULL ; log_set = log_set->next) {
-			GaimLogSet *set = log_set->data;
-
-			/* 1. Don't show buddies because we will have gotten them above.
-			 * 2. Only show those with non-NULL accounts that are currently connected.
-			 * 3. The boxes that use this autocomplete code handle only IMs. */
-			if (!set->buddy &&
-			    (set->account != NULL && gaim_account_is_connected(set->account)) &&
-			    set->type != GAIM_LOG_CHAT) {
-#ifdef NEW_STYLE_COMPLETION
-					names = g_list_append(names, NULL);
-					names = g_list_append(names, NULL);
-					names = g_list_append(names, set->account);
-#endif /* NEW_STYLE_COMPLETION */
-
-					names = g_list_append(names, set->name);
-			}
-
-			g_free(set);
-		}
-	}
-
-	return names;
-}
-
 #ifndef NEW_STYLE_COMPLETION
 static gboolean
 completion_entry_event(GtkEditable *entry, GdkEventKey *event,
@@ -797,41 +732,29 @@ destroy_completion_data(GtkWidget *w, GaimGtkCompletionData *data)
 static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 		const gchar *key, GtkTreeIter *iter, gpointer user_data) {
 
-	GValue val = { 0, };
+	GValue val1 = { 0, };
+	GValue val2 = { 0, };
 	GtkTreeModel *model;
-	char *screenname = NULL;
-	char *alias = NULL;
-	char *temp;
-	gboolean ret = FALSE;
 
 	model = gtk_entry_completion_get_model (completion);
 
-	gtk_tree_model_get_value(model, iter, 1, &val);
-	temp = (gchar *)g_value_get_string(&val);
-	if (temp) {
-		temp = g_utf8_normalize(temp, -1, G_NORMALIZE_DEFAULT);
-		screenname = g_utf8_casefold(temp, -1);
-		g_free(temp);
+	gtk_tree_model_get_value(model, iter, 2, &val1);
+	if (g_str_has_prefix(g_value_get_string(&val1), key))
+	{
+		g_value_unset(&val1);
+		return TRUE;
 	}
-	g_value_unset(&val);
+	g_value_unset(&val1);
 
-	gtk_tree_model_get_value(model, iter, 2, &val);
-	temp = (gchar *)g_value_get_string(&val);
-	if (temp) {
-		temp = g_utf8_normalize(temp, -1, G_NORMALIZE_DEFAULT);
-		alias = g_utf8_casefold(temp, -1);
-		g_free(temp);
+	gtk_tree_model_get_value(model, iter, 3, &val2);
+	if (g_str_has_prefix(g_value_get_string(&val2), key))
+	{
+		g_value_unset(&val2);
+		return TRUE;
 	}
-	g_value_unset(&val);
+	g_value_unset(&val2);
 
-	if (g_str_has_prefix(screenname, key) ||
-	    g_str_has_prefix(alias, key))
-		ret = TRUE;
-
-	g_free(screenname);
-	g_free(alias);
-
-	return ret;
+	return FALSE;
 }
 
 static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
@@ -856,7 +779,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 				GaimAccount *account;
 				GtkOptionMenu *optmenu = GTK_OPTION_MENU(field->ui_data);
 
-				gtk_tree_model_get_value(model, iter, 3, &val);
+				gtk_tree_model_get_value(model, iter, 4, &val);
 				account = g_value_get_pointer(&val);
 				g_value_unset(&val);
 
@@ -886,82 +809,150 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 
 	return TRUE;
 }
-#endif /* !NEW_STYLE_COMPLETION */
+
+static void
+add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
+								  const GaimAccount *account, const char *screenname)
+{
+	GtkTreeIter iter;
+	gboolean completion_added = FALSE;
+	gchar *normalized_screenname;
+	gchar *tmp;
+
+	tmp = g_utf8_normalize(screenname, -1, G_NORMALIZE_DEFAULT);
+	normalized_screenname = g_utf8_casefold(tmp, -1);
+	g_free(tmp);
+
+	/* There's no sense listing things like: 'xxx "xxx"'
+	   when the screenname and buddy alias match. */
+	if (buddy_alias && strcmp(buddy_alias, screenname)) {
+		char *completion_entry = g_strdup_printf("%s \"%s\"", screenname, buddy_alias);
+		char *tmp2 = g_utf8_normalize(buddy_alias, -1, G_NORMALIZE_DEFAULT);
+
+		tmp = g_utf8_casefold(tmp2, -1);
+		g_free(tmp2);
+
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+				0, completion_entry,
+				1, screenname,
+				2, normalized_screenname,
+				3, tmp,
+				4, account,
+				-1);
+		g_free(completion_entry);
+		g_free(tmp);
+		completion_added = TRUE;
+	}
+
+	/* There's no sense listing things like: 'xxx "xxx"'
+	   when the screenname and contact alias match. */
+	if (contact_alias && strcmp(contact_alias, screenname)) {
+		/* We don't want duplicates when the contact and buddy alias match. */
+		if (!buddy_alias || strcmp(contact_alias, buddy_alias)) {
+			char *completion_entry = g_strdup_printf("%s \"%s\"",
+							screenname, contact_alias);
+			char *tmp2 = g_utf8_normalize(contact_alias, -1, G_NORMALIZE_DEFAULT);
+
+			tmp = g_utf8_casefold(tmp2, -1);
+			g_free(tmp2);
+
+			gtk_list_store_append(store, &iter);
+			gtk_list_store_set(store, &iter,
+					0, completion_entry,
+					1, screenname,
+					2, normalized_screenname,
+					3, tmp,
+					4, account,
+					-1);
+			g_free(completion_entry);
+			g_free(tmp);
+			completion_added = TRUE;
+		}
+	}
+
+	if (completion_added == FALSE) {
+		/* Add the buddy's screenname. */
+		gtk_list_store_append(store, &iter);
+		gtk_list_store_set(store, &iter,
+				0, screenname,
+				1, screenname,
+				2, normalized_screenname,
+				3, NULL,
+				4, account,
+				-1);
+	}
+
+	g_free(normalized_screenname);
+}
+#endif /* NEW_STYLE_COMPLETION */
+
+static void get_log_set_name(GaimLogSet *set, gpointer value, gpointer **set_hash_data)
+{
+	/* 1. Don't show buddies because we will have gotten them already.
+	 * 2. Only show those with non-NULL accounts that are currently connected.
+	 * 3. The boxes that use this autocomplete code handle only IMs. */
+	if (!set->buddy &&
+	    (GPOINTER_TO_INT(set_hash_data[1]) ||
+	     (set->account != NULL && gaim_account_is_connected(set->account))) &&
+		set->type == GAIM_LOG_IM) {
+#if NEW_STYLE_COMPLETION
+			add_screenname_autocomplete_entry((GtkListStore *)set_hash_data[0],
+											  NULL, NULL, set->account, set->name);
+#else
+			GList **items = ((GList **)set_hash_data[0]);
+			/* Steal the name for the GCompletion. */
+			*items = g_list_append(*items, set->name);
+			set->name = set->normalized_name = NULL;
+#endif /* NEW_STYLE_COMPLETION */
+	}
+}
 
 static void
 setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field, gboolean all)
 {
 #ifdef NEW_STYLE_COMPLETION
-	GtkListStore *store;
-	GtkTreeIter iter;
+	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
+	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
+	GtkListStore *store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GHashTable *sets;
+	gpointer set_hash_data[] = {store, GINT_TO_POINTER(all)};
 	GtkEntryCompletion *completion;
-	GList *screenname_completion_data;
-	GList *l;
 	gpointer *data;
 
-	/* Store the displayed completion value, the screenname, the value for comparison, and the account. */
-	store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-
-	screenname_completion_data = get_screenname_completion_data(all);
-
-	/* Loop through the list four elements at a time. */
-	for (l = screenname_completion_data; l != NULL; l = l->next->next->next->next)
+	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
-		char *contact_alias = l->data;
-		char *buddy_alias = l->next->data;
-		GaimAccount *account = l->next->next->data;
-		char *screenname = l->next->next->next->data;
-		gboolean completion_added = FALSE;
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
 
-		/* There's no sense listing things like: 'xxx "xxx"'
-		   when the screenname and buddy alias match. */
-		if (buddy_alias && strcmp(buddy_alias, screenname)) {
-			char *completion_entry = g_strdup_printf("%s \"%s\"", screenname, buddy_alias);
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-					0, completion_entry,
-					1, screenname,
-					2, buddy_alias,
-					3, account,
-					-1);
-			g_free(completion_entry);
-			completion_added = TRUE;
-		}
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
 
-		/* There's no sense listing things like: 'xxx "xxx"'
-		   when the screenname and contact alias match. */
-		if (contact_alias && strcmp(contact_alias, screenname)) {
-			/* We don't want duplicates when the contact and buddy alias match. */
-			if (strcmp(contact_alias, buddy_alias)) {
-				char *completion_entry = g_strdup_printf("%s \"%s\"",
-								screenname, contact_alias);
-				gtk_list_store_append(store, &iter);
-				gtk_list_store_set(store, &iter,
-						0, completion_entry,
-						1, screenname,
-						2, contact_alias,
-						3, account,
-						-1);
-				g_free(completion_entry);
-				completion_added = TRUE;
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+			{
+				GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+				if (!all && !gaim_account_is_connected(buddy->account))
+					continue;
+
+				add_screenname_autocomplete_entry(store,
+												  ((GaimContact *)cnode)->alias,
+												  gaim_buddy_get_contact_alias(buddy),
+												  buddy->account,
+												  buddy->name
+												 );
 			}
 		}
-
-		if (completion_added == FALSE) {
-			/* Add the buddy's screenname. */
-			gtk_list_store_append(store, &iter);
-			gtk_list_store_set(store, &iter,
-					0, screenname,
-					1, screenname,
-					2, NULL,
-					3, account,
-					-1);
-		}
-
-		g_free(screenname);
 	}
 
-	g_list_free(screenname_completion_data);
+	sets = gaim_log_get_log_sets();
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+	g_hash_table_destroy(sets);
+
 
 	/* Sort the completion list by screenname. */
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(store),
@@ -986,7 +977,10 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field, gboolea
 
 #else /* !NEW_STYLE_COMPLETION */
 	GaimGtkCompletionData *data;
-	GList *screennames;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GList *item = g_list_append(NULL, NULL);
+	GHashTable *sets;
+	gpointer set_hash_data[2];
 
 	data = g_new0(GaimGtkCompletionData, 1);
 
@@ -994,11 +988,38 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field, gboolea
 
 	g_completion_set_compare(data->completion, g_ascii_strncasecmp);
 
-	screennames = get_screenname_completion_data(all);
+	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	{
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
 
-	g_completion_add_items(data->completion, screennames);
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
 
-	g_list_free(screennames);
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
+			{
+				GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+				if (!all && !gaim_account_is_connected(buddy->account))
+					continue;
+
+				item->data = g_strdup(buddy->name);
+				g_completion_add_items(data->completion, item);
+			}
+		}
+	}
+	g_list_free(item);
+
+	sets = gaim_log_get_log_sets();
+	item = NULL;
+	set_hash_data[0] = &item;
+	set_hash_data[1] = GINT_TO_POINTER(all);
+	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
+	g_hash_table_destroy(sets);
+	g_completion_add_items(data->completion, item);
+	g_list_free(item);
 
 	g_signal_connect(G_OBJECT(entry), "event",
 					 G_CALLBACK(completion_entry_event), data);

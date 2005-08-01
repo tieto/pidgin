@@ -50,6 +50,8 @@ typedef enum {
 #include "account.h"
 #include "conversation.h"
 
+typedef void (*GaimLogSetCallback) (GHashTable *sets, GaimLogSet *set);
+
 /**
  * A log logger.
  *
@@ -92,12 +94,15 @@ struct _GaimLogLogger {
 	/** This function returns a sorted GList of available system GaimLogs */
 	GList *(*list_syslog)(GaimAccount *account);
 
-	/** Returns a list of GaimLogSets. By passing the data in the GaimLogSets
+	/** Adds GaimLogSets to a GHashTable. By passing the data in the GaimLogSets
 	 *  to list, the caller can get every available GaimLog from the logger.
 	 *  Loggers using gaim_log_common_writer() (or otherwise storing their
 	 *  logs in the same directory structure as the stock loggers) do not
-	 *  need to implement this function. */
-	GList *(*get_log_sets)(void);
+	 *  need to implement this function.
+	 *
+	 *  Loggers which implement this function must create a GaimLogSet,
+	 *  then call @a cb with @a sets and the newly created GaimLogSet. */
+	void (*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets);
 };
 
 /**
@@ -143,6 +148,10 @@ struct _GaimLogSet {
 	                                           to load such logs.) */
 	gboolean buddy;                       /**< Is this (account, name) a buddy
 	                                           on the buddy list? */
+	char *normalized_name;                /**< The normalized version of
+	                                           @a name. It must be set, and
+	                                           may be set to the same pointer
+	                                           value as @a name. */
 };
 
 #ifdef __cplusplus
@@ -211,7 +220,7 @@ char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags);
 GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account);
 
 /**
- * Returns a list of GaimLogSets.
+ * Returns a GHashTable of GaimLogSets.
  *
  * A "log set" here means the information necessary to gather the
  * GaimLogs for a given buddy/chat. This information would be passed
@@ -220,15 +229,19 @@ GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *accoun
  * The primary use of this function is to get a list of everyone the
  * user has ever talked to (assuming he or she uses logging).
  *
- * @return A sorted list of all available unique GaimLogSets
+ * The GHashTable that's returned will free all log sets in it when
+ * destroyed. If a GaimLogSet is removed from the GHashTable, it
+ * must be freed with gaim_log_set_free().
+ *
+ * @return A GHashTable of all available unique GaimLogSets
  */
-GList *gaim_log_get_log_sets(void);
+GHashTable *gaim_log_get_log_sets(void);
 
 /**
  * Returns a list of all available system logs
  *
  * @param account The account
- * @return		A sorted list of GaimLogs
+ * @return        A sorted list of GaimLogs
  */
 GList *gaim_log_get_system_logs(GaimAccount *account);
 
@@ -265,9 +278,9 @@ char *gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *acco
 /**
  * Implements GCompareFunc for GaimLogs
  *
- * @param y				   A GaimLog
- * @param z				   Another GaimLog
- * @return					A value as specified by GCompareFunc
+ * @param y                   A GaimLog
+ * @param z                   Another GaimLog
+ * @return                    A value as specified by GCompareFunc
  */
 gint gaim_log_compare(gconstpointer y, gconstpointer z);
 
@@ -279,6 +292,13 @@ gint gaim_log_compare(gconstpointer y, gconstpointer z);
  * @return                    A value as specified by GCompareFunc
  */
 gint gaim_log_set_compare(gconstpointer y, gconstpointer z);
+
+/**
+ * Frees a log set
+ *
+ * @param set         The log set to destroy
+ */
+void gaim_log_set_free(GaimLogSet *set);
 
 /*@}*/
 
@@ -359,7 +379,7 @@ GaimLogLogger *gaim_log_logger_new(
 				int(*size)(GaimLog*),
 				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
 				GList*(*list_syslog)(GaimAccount *account),
-				GList*(*get_log_sets)(void));
+				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets));
 
 /**
  * Frees a logger
