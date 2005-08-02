@@ -2059,7 +2059,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
-	case YAHOO_SERVICE_PEEPTOPEER:
+	case YAHOO_SERVICE_PEERTOPEER:
 		yahoo_process_p2p(gc, pkt);
 		break;
 	case YAHOO_SERVICE_PICTURE:
