@@ -177,6 +177,7 @@ for i in $STATIC_PRPLS ; do
 		rendezvous)	static_rendezvous=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
+		simple)		static_silc=yes ;;
 		toc)		static_toc=yes ;;
 		trepia)		static_trepia=yes ;;
 		yahoo)		static_yahoo=yes ;;
@@ -194,6 +195,7 @@ AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
@@ -222,6 +224,7 @@ for i in $DYNAMIC_PRPLS ; do
 		rendezvous)	dynamic_rendezvous=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
+		simple)		dynamic_simple=yes ;;
 		toc)		dynamic_toc=yes ;;
 		trepia)		dynamic_trepia=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
@@ -239,6 +242,7 @@ AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
@@ -1310,6 +1314,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/sametime/Makefile
 		   src/protocols/sametime/meanwhile/Makefile
 		   src/protocols/silc/Makefile
+		   src/protocols/simple/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
