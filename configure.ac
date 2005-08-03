@@ -177,7 +177,7 @@ for i in $STATIC_PRPLS ; do
 		rendezvous)	static_rendezvous=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
-		simple)		static_silc=yes ;;
+		simple)		static_simple=yes ;;
 		toc)		static_toc=yes ;;
 		trepia)		static_trepia=yes ;;
 		yahoo)		static_yahoo=yes ;;
