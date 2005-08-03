@@ -26,6 +26,7 @@
 
 #include "blist.h"
 #include "core.h"
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "notify.h"
 #include "prefs.h"
@@ -221,6 +222,7 @@ gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
 	g_return_val_if_fail(name      != NULL,              NULL);
 
 	status_type = g_new0(GaimStatusType, 1);
+	GAIM_DBUS_REGISTER_POINTER(status_type, GaimStatusType);
 
 	status_type->primitive     = primitive;
 	status_type->id            = g_strdup(id);
@@ -296,6 +298,7 @@ gaim_status_type_destroy(GaimStatusType *status_type)
 		g_list_free(status_type->attrs);
 	}
 
+	GAIM_DBUS_UNREGISTER_POINTER(status_type);
 	g_free(status_type);
 }
 
@@ -504,6 +507,7 @@ gaim_status_attr_new(const char *id, const char *name, GaimValue *value_type)
 	g_return_val_if_fail(value_type != NULL, NULL);
 
 	attr = g_new0(GaimStatusAttr, 1);
+	GAIM_DBUS_REGISTER_POINTER(attr, GaimStatusAttr);
 
 	attr->id         = g_strdup(id);
 	attr->name       = g_strdup(name);
@@ -522,6 +526,7 @@ gaim_status_attr_destroy(GaimStatusAttr *attr)
 
 	gaim_value_destroy(attr->value_type);
 
+	GAIM_DBUS_UNREGISTER_POINTER(attr);
 	g_free(attr);
 }
 
@@ -563,6 +568,7 @@ gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
 	g_return_val_if_fail(presence    != NULL, NULL);
 
 	status = g_new0(GaimStatus, 1);
+	GAIM_DBUS_REGISTER_POINTER(status, GaimStatus);
 
 	status->type     = status_type;
 	status->presence = presence;
@@ -599,6 +605,7 @@ gaim_status_destroy(GaimStatus *status)
 
 	g_hash_table_destroy(status->attr_values);
 
+	GAIM_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
 }
 
@@ -1066,6 +1073,7 @@ gaim_presence_new(GaimPresenceContext context)
 	g_return_val_if_fail(context != GAIM_PRESENCE_CONTEXT_UNSET, NULL);
 
 	presence = g_new0(GaimPresence, 1);
+	GAIM_DBUS_REGISTER_POINTER(presence, GaimPresence);
 
 	presence->context = context;
 
@@ -1174,6 +1182,7 @@ gaim_presence_destroy(GaimPresence *presence)
 
 	g_hash_table_destroy(presence->status_table);
 
+	GAIM_DBUS_UNREGISTER_POINTER(presence);
 	g_free(presence);
 }
 

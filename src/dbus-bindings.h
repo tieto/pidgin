@@ -56,10 +56,40 @@ gpointer gaim_dbus_id_to_pointer_error(gint id, GaimDBusType *type,
 	CHECK_ERROR(error);						\
     } G_STMT_END
 
+
+dbus_bool_t
+gaim_dbus_message_get_args (DBusMessage     *message,
+			    DBusError       *error,
+			    int              first_arg_type,
+			    ...);
+dbus_bool_t
+gaim_dbus_message_get_args_valist (DBusMessage     *message,
+				   DBusError       *error,
+				   int              first_arg_type,
+				   va_list          var_args);
+
+dbus_bool_t
+gaim_dbus_message_iter_get_args (DBusMessageIter *iter,
+				 DBusError       *error,
+				 int              first_arg_type,
+				 ...);
+
+dbus_bool_t
+gaim_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
+					DBusError       *error,
+					int              first_arg_type,
+					va_list          var_args);
+
 dbus_int32_t* gaim_dbusify_GList(GList *list, gboolean free_memory, 
 				 dbus_int32_t *len);
 dbus_int32_t* gaim_dbusify_GSList(GSList *list, gboolean free_memory,
 				  dbus_int32_t *len);
+gpointer* gaim_GList_to_array(GList *list, gboolean free_memory,
+			      dbus_int32_t *len);
+gpointer* gaim_GSList_to_array(GSList *list, gboolean free_memory,
+			      dbus_int32_t *len);
+GHashTable *gaim_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
+
 const char* empty_to_null(const char *str);
 const char* null_to_empty(const char *s);
 

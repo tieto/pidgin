@@ -39,6 +39,7 @@ for arg in sys.argv[1:]:
 #     "gboolean" : ("i", "int")
 #     }
 
+
 simpletypes = ["int", "gint", "guint", "gboolean"]
 
 # for enum in file("dbus-auto-enums.txt"):
@@ -47,7 +48,10 @@ simpletypes = ["int", "gint", "guint", "gboolean"]
 # functions that shouldn't be exported 
 
 excluded = ["gaim_accounts_load", "gaim_account_set_presence",
-            "gaim_conv_placement_get_fnc_id", "gaim_conv_placement_add_fnc"]
+            "gaim_conv_placement_get_fnc_id", "gaim_conv_placement_add_fnc",
+            "gaim_presence_add_list"]
+
+stringlists = []
 
 pointer = "#pointer#"
 
@@ -77,7 +81,7 @@ def c_print(function):
     for decl in cdecls:
         print decl
 
-    print "dbus_message_get_args(message_DBUS, error_DBUS, ",
+    print "%s(message_DBUS, error_DBUS, " % argfunc,
     for param in cparams:
         print "DBUS_TYPE_%s, &%s," % param,
     print "DBUS_TYPE_INVALID);"
@@ -105,13 +109,14 @@ def c_print(function):
     functions.append((function, dparams))
 
 def c_clear():
-    global cparams, cdecls, ccode, cparamsout, ccodeout, dparams
+    global cparams, cdecls, ccode, cparamsout, ccodeout, dparams, argfunc
     dparams = ""
     cparams = []
     cdecls  = []
     ccode  = []
     cparamsout = []
     ccodeout = []
+    argfunc = "dbus_message_get_args"
 
 
 def addstring(*items):
@@ -137,22 +142,30 @@ def printdispatchtable():
 # processing an input parameter
 
 def inputvar(mytype, name):
-    global ccode, cparams, cdecls
+    global ccode, cparams, cdecls, ccodeout, argfunc
     const = False
     if mytype[0] == "const":
         mytype = mytype[1:]
         const = True
 
-    # simple types (int, gboolean, etc.) and enums
-    if (len(mytype) == 1) and \
-           ((mytype[0] in simpletypes) or (mytype[0].startswith("Gaim"))):
-        cdecls.append("dbus_int32_t %s;" % name)
-        cparams.append(("INT32", name))
-        addintype("i", name)
-        return
+        
 
-    # pointers ...
 
+    if len(mytype) == 1:
+        # simple types (int, gboolean, etc.) and enums
+        if (mytype[0] in simpletypes) or (mytype[0].startswith("Gaim")):
+            cdecls.append("dbus_int32_t %s;" % name)
+            cparams.append(("INT32", name))
+            addintype("i", name)
+            return
+
+        # va_list, replace by NULL
+        if mytype[0] == "va_list":
+            cdecls.append("va_list %s;" % name);
+            ccode.append("%s = NULL;" % name);
+            return
+
+    # pointers ... 
     if (len(mytype) == 2) and (mytype[1] == pointer):
         # strings
         if mytype[0] == "char":
@@ -164,6 +177,19 @@ def inputvar(mytype, name):
                 return
             else:
                 raise myexception
+
+        # memory leak if an error occurs later ...
+        elif mytype[0] == "GHashTable":
+            argfunc = "gaim_dbus_message_get_args"
+            cdecls.append("DBusMessageIter %s_ITER;" % name)
+            cdecls.append("GHashTable *%s;" % name)
+            cparams.append(("ARRAY", "%s_ITER" % name))
+            ccode.append("%s = gaim_dbus_iter_hash_table(&%s_ITER, error_DBUS);" \
+                         % (name, name))
+            ccode.append("CHECK_ERROR(error_DBUS);")
+            ccodeout.append("g_hash_table_destroy(%s);" % name)
+            addintype("a{ss}", name)
+            return
 
         # known object types are transformed to integer handles
         elif mytype[0].startswith("Gaim"):
@@ -190,18 +216,26 @@ def inputvar(mytype, name):
 
 # processing an output parameter
 
-def outputvar(mytype, name, call):
+def outputvar(mytype, name, call, function):
     # the "void" type is simple ...
     if mytype == ["void"]:
         ccode.append("%s;" % call) # just call the function
         return
 
-    # a constant string
-    if mytype == ["const", "char", pointer]:
+    const = False
+    if mytype[0] == "const":
+        mytype = mytype[1:]
+        const = True
+
+
+    # a string
+    if mytype == ["char", pointer]:
         cdecls.append("const char *%s;" % name)
         ccode.append("%s = null_to_empty(%s);" % (name, call))
         cparamsout.append(("STRING", name))
         addouttype("s", name)
+        if not const:
+            ccodeout.append("g_free(%s);" % name)
         return
 
     # simple types (ints, booleans, enums, ...)
@@ -225,17 +259,31 @@ def outputvar(mytype, name, call):
             return
 
         # GList*, GSList*, assume that list is a list of objects
-        # not a list of strings!!!
-        # this does NOT release memory occupied by the list
+
+        # fixme: at the moment, we do NOT free the memory occupied by
+        # the list, we should free it if the list has NOT been declared const
+
+        # fixme: we assume that this is a list of objects, not a list
+        # of strings
+
         if mytype[0] in ["GList", "GSList"]:
             cdecls.append("dbus_int32_t %s_LEN;" % name)
-            cdecls.append("dbus_int32_t *%s;" % name)
-            ccode.append("%s = gaim_dbusify_%s(%s, FALSE, &%s_LEN);" % \
-                         (name, mytype[0], call, name))
-            cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
-                              % (name, name))
             ccodeout.append("g_free(%s);" % name)
-            addouttype("ai", name)
+
+            if function in stringlists:
+                cdecls.append("char **%s;" % name)
+                ccode.append("%s = gaim_%s_to_array(%s, FALSE, &%s_LEN);" % \
+                             (name, mytype[0], call, name))
+                cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
+                              % (name, name))
+                addouttype("as", name)
+            else:
+                cdecls.append("dbus_int32_t *%s;" % name)
+                ccode.append("%s = gaim_dbusify_%s(%s, FALSE, &%s_LEN);" % \
+                             (name, mytype[0], call, name))
+                cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
+                                  % (name, name))
+                addouttype("ai", name)
             return
 
     raise myexception
@@ -255,16 +303,21 @@ def processfunction(functionparam, paramlist):
     function = function.lower()
 
     names = []
+    unnamed = 0
     for param in paramlist:
         tokens = param.split()
-        if len(tokens) < 2:
+        if len(tokens) == 0:
             raise myexception
-        type, name = tokens[:-1], tokens[-1]
+        if (len(tokens) == 1) or (tokens[-1] == pointer):
+            unnamed += 1
+            type, name = tokens, "param%i" % unnamed
+        else:
+            type, name = tokens[:-1], tokens[-1]
         inputvar(type, name)
         names.append(name)
 
     outputvar(functiontype, "RESULT",
-              "%s(%s)" % (origfunction, ", ".join(names)))
+              "%s(%s)" % (origfunction, ", ".join(names)), function)
 
     c_print(function)
 

@@ -96,7 +96,7 @@ void gaim_dbus_unregister_pointer(gpointer node) {
 
 gint gaim_dbus_pointer_to_id(gpointer node) {
     gint id = GPOINTER_TO_INT(g_hash_table_lookup(map_node_id, node));
-    g_return_val_if_fail(id, 0);
+    g_return_val_if_fail(id || node == NULL, 0);
     return id;
 }
 	
@@ -136,7 +136,109 @@ gpointer gaim_dbus_id_to_pointer_error(gint id, GaimDBusType *type,
     
     return ptr;
 }
+
+
+/**************************************************************************/
+/** @name Modified versions of some DBus functions                        */
+/**************************************************************************/
+
+dbus_bool_t
+gaim_dbus_message_get_args (DBusMessage     *message,
+                       DBusError       *error,
+		       int              first_arg_type,
+		       ...)
+{
+  dbus_bool_t retval;
+  va_list var_args;
+
+  va_start (var_args, first_arg_type);
+  retval = gaim_dbus_message_get_args_valist (message, error, first_arg_type, var_args);
+  va_end (var_args);
+
+  return retval;
+}
+
+dbus_bool_t
+gaim_dbus_message_get_args_valist (DBusMessage     *message,
+				   DBusError       *error,
+				   int              first_arg_type,
+				   va_list          var_args)
+{
+  DBusMessageIter iter;
+
+  dbus_message_iter_init (message, &iter);
+  return gaim_dbus_message_iter_get_args_valist (&iter, error, first_arg_type, var_args);
+}
+
+dbus_bool_t
+gaim_dbus_message_iter_get_args(DBusMessageIter *iter,
+				DBusError       *error,
+				int              first_arg_type,
+				...)
+{
+  dbus_bool_t retval;
+  va_list var_args;
+
+  va_start (var_args, first_arg_type);
+  retval = gaim_dbus_message_iter_get_args_valist(iter, error, first_arg_type, var_args);
+  va_end (var_args);
+
+  return retval;
+}
+
+#define TYPE_IS_CONTAINER(typecode)             \
+    ((typecode) == DBUS_TYPE_STRUCT ||          \
+     (typecode) == DBUS_TYPE_DICT_ENTRY ||      \
+     (typecode) == DBUS_TYPE_VARIANT ||         \
+     (typecode) == DBUS_TYPE_ARRAY)
+
+
+dbus_bool_t
+gaim_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
+					DBusError       *error,
+					int              first_arg_type,
+					va_list          var_args)
+{
+    int spec_type, msg_type, i;
+
+    spec_type = first_arg_type;
+    
+    for(i=0; spec_type != DBUS_TYPE_INVALID; i++) {
+	msg_type = dbus_message_iter_get_arg_type (iter);
+
+	if (msg_type != spec_type) {
+	    dbus_set_error (error, DBUS_ERROR_INVALID_ARGS,
+			    "Argument %d is specified to be of type \"%i\", but "
+			    "is actually of type \"%i\"\n", i,
+			    spec_type, msg_type);
+          return FALSE;
+	}
+
+	if (!TYPE_IS_CONTAINER(spec_type)) {
+	    gpointer ptr;
+	    ptr = va_arg (var_args, gpointer);
+	    dbus_message_iter_get_basic(iter, ptr);
+	}
+	else {
+	    DBusMessageIter *sub;
+	    sub = va_arg (var_args, DBusMessageIter*);
+	    dbus_message_iter_recurse(iter, sub);
+	    g_print("subiter %i:%i\n", (int) sub, * (int*) sub);
+	    break;		/* for testing only! */
+	}
 	
+	spec_type = va_arg (var_args, int);
+	if (!dbus_message_iter_next(iter) && spec_type != DBUS_TYPE_INVALID) {
+	    dbus_set_error (error, DBUS_ERROR_INVALID_ARGS,
+			    "Message has only %d arguments, but more were expected", i);
+	    return FALSE;
+        }
+    }
+  return TRUE;
+}
+
+
+
 /**************************************************************************/
 /** @name Useful functions                                                */
 /**************************************************************************/
@@ -154,9 +256,6 @@ const char* null_to_empty(const char *s) {
 	else
 		return "";
 }
-
-
-
 
 dbus_int32_t* gaim_dbusify_GList(GList *list, gboolean free_memory,
 				 dbus_int32_t *len)
@@ -192,6 +291,78 @@ dbus_int32_t* gaim_dbusify_GSList(GSList *list, gboolean free_memory,
 		g_slist_free(list);
 
 	return array;
+}
+
+gpointer* gaim_GList_to_array(GList *list, gboolean free_memory,
+			      dbus_int32_t *len)
+{
+	gpointer *array;
+	int i;
+	GList *elem;
+
+	*len = g_list_length(list);
+	array = g_new0(gpointer, g_list_length(list));
+	for(i = 0, elem = list; elem != NULL; elem = elem->next, i++) 
+		array[i] = elem->data;
+
+	if (free_memory)
+		g_list_free(list);
+
+	return array;
+}
+
+gpointer* gaim_GSList_to_array(GSList *list, gboolean free_memory,
+			      dbus_int32_t *len)
+{
+	gpointer *array;
+	int i;
+	GSList *elem;
+
+	*len = g_slist_length(list);
+	array = g_new0(gpointer, g_slist_length(list));
+	for(i = 0, elem = list; elem != NULL; elem = elem->next, i++) 
+		array[i] = elem->data;
+
+	if (free_memory)
+		g_slist_free(list);
+
+	return array;
+}
+
+GHashTable *gaim_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error) {
+    GHashTable *hash;
+
+    /* we do not need to destroy strings because they are part of the message */
+    hash = g_hash_table_new(g_str_hash, g_str_equal); 
+
+    do {
+	char *key, *value;
+	DBusMessageIter subiter;
+
+	if (dbus_message_iter_get_arg_type(iter) != DBUS_TYPE_DICT_ENTRY) 
+	    goto error;		/* With all due respect to Dijkstra,
+				   this goto is for exception
+				   handling, and it is ok because it
+				   avoids duplication of the code
+				   responsible for destroying the hash
+				   table.  Exceptional instructions
+				   for exceptional situations. */	    
+
+	dbus_message_iter_recurse(iter, &subiter);
+	if (!gaim_dbus_message_iter_get_args(&subiter, error, 
+					     DBUS_TYPE_STRING, &key,
+					     DBUS_TYPE_STRING, &value,
+					     DBUS_TYPE_INVALID))
+	    goto error;		/* same here */
+
+	g_hash_table_insert(hash, key, value);
+    } while (dbus_message_iter_next(iter));
+    
+    return hash;
+
+ error:
+    g_hash_table_destroy(hash);
+    return NULL;
 }
 
 /**************************************************************/
@@ -260,7 +431,9 @@ gaim_dbus_dispatch_cb(DBusConnection *connection,
 }
 
 
-/* Introspection */
+/**************************************************************************/
+/** @name Signals                                                         */
+/**************************************************************************/
 
 static const char *gettext(const char **ptr) {
     const char *text = *ptr;
@@ -307,9 +480,9 @@ static DBusMessage *gaim_dbus_introspect(DBusMessage *message)
 		type = gettext(&text);
 		name = gettext(&text);
 		
-	    g_string_append_printf(str, 
-				   "<arg name='%s' type='%s' direction='%s'/>\n",
-				   name, type, direction);
+		g_string_append_printf(str, 
+				       "<arg name='%s' type='%s' direction='%s'/>\n",
+				       name, type, direction);
 	    }
 	    g_string_append(str, "</method>\n");
 	}
@@ -533,9 +706,5 @@ gboolean gaim_dbus_init(void)
     gaim_dbus_init_ids();
     return gaim_dbus_dispatch_init() ;
 }
-
-
-/* Introspection support */
-
 
 

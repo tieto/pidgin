@@ -146,12 +146,12 @@ bin_PROGRAMS = gaim gaim-remote
 
 if ENABLE_DBUS
 
-dbus_sources  = dbus-server.c dbus-useful.c
+dbus_sources  = dbus-server.c dbus-useful.c 
 dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h 
 
 CLEANFILES    = dbus-bindings.c
 
-dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h
+dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
