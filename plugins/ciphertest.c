@@ -38,8 +38,8 @@
 #include "version.h"
 
 struct test {
-	const guint8 *question;
-	const guint8 *answer;
+	const guchar *question;
+	const guchar *answer;
 };
 
 /**************************************************************************
@@ -147,7 +147,7 @@ cipher_test_sha1() {
 									   strlen(sha1_tests[i].question));
 		} else {
 			gint j;
-			guint8 buff[1000];
+			guchar buff[1000];
 
 			memset(buff, 'a', 1000);
 

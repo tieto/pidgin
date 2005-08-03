@@ -405,18 +405,18 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *challenge_resp;
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint8 digest[16];
+	guchar digest[16];
 	int i;
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guint8 *)cmd->params[1],
+	gaim_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	gaim_cipher_context_append(context, (const guint8 *)challenge_resp,
+	gaim_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
@@ -919,7 +919,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	const char *url;
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint8 digest[16];
+	guchar digest[16];
 	FILE *fd;
 	char *buf;
 	char buf2[3];
@@ -940,7 +940,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guint8 *)buf, strlen(buf));
+	gaim_cipher_context_append(context, (const guchar *)buf, strlen(buf));
 	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	gaim_cipher_context_destroy(context);
 

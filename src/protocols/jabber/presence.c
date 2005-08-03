@@ -231,7 +231,7 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				char hash[41], *p;
 				int i;
 
-				gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+				gaim_cipher_digest_region("sha1", (guchar *)data, size,
 						sizeof(hashval), hashval, NULL);
 				p = hash;
 				for(i=0; i<20; i++, p+=2)

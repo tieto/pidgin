@@ -227,7 +227,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
-			gaim_cipher_digest_region("sha1", (guint8 *)s, strlen(s),
+			gaim_cipher_digest_region("sha1", (guchar *)s, strlen(s),
 									  sizeof(hashval), hashval, NULL);
 
 			p = h;
@@ -322,7 +322,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	context = gaim_cipher_context_new(cipher, NULL);
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd);
-	gaim_cipher_context_append(context, (const guint8 *)x, strlen(x));
+	gaim_cipher_context_append(context, (const guchar *)x, strlen(x));
 	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
@@ -330,13 +330,13 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	g_memmove(a1, result, 16);
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guint8 *)a1, a1len);
+	gaim_cipher_context_append(context, (const guchar *)a1, a1len);
 	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	ha1 = gaim_base16_encode(result, 16);
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guint8 *)a2, strlen(a2));
+	gaim_cipher_context_append(context, (const guchar *)a2, strlen(a2));
 	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	ha2 = gaim_base16_encode(result, 16);
@@ -344,7 +344,7 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
 	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guint8 *)kd, strlen(kd));
+	gaim_cipher_context_append(context, (const guchar *)kd, strlen(kd));
 	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 	gaim_cipher_context_destroy(context);
 

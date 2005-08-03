@@ -21,10 +21,10 @@ gaim_cipher_get_capabilities(cipher)
 gboolean 
 gaim_cipher_digest_region(name, data, data_len, in_len, digest, out_len)
 	const gchar * name
-	const guint8 * data 
+	const guchar * data 
 	size_t data_len
 	size_t in_len
-	guint8 &digest 
+	guchar &digest 
 	size_t * out_len
 
 Gaim::Cipher
@@ -91,49 +91,49 @@ gaim_cipher_context_destroy(context)
 void 
 gaim_cipher_context_set_iv(context, iv, len)
 	Gaim::Cipher::Context context
-	guint8 * iv
+	guchar * iv
 	size_t len
 
 void 
 gaim_cipher_context_append(context, data, len)
 	Gaim::Cipher::Context context
-	guint8 * data
+	guchar * data
 	size_t len
 
 gboolean 
 gaim_cipher_context_digest(context, in_len, digest, out_len)
 	Gaim::Cipher::Context context
 	size_t in_len
-	guint8 &digest
+	guchar &digest
 	size_t &out_len
 
 gboolean 
 gaim_cipher_context_digest_to_str(context, in_len, digest_s, out_len)
 	Gaim::Cipher::Context context
 	size_t in_len
-	guint8 &digest_s
+	guchar &digest_s
 	size_t &out_len
 
 gint 
 gaim_cipher_context_encrypt(context, data, len, output, outlen)
 	Gaim::Cipher::Context context
-	guint8 &data
+	guchar &data
 	size_t len
-	guint8 &output
+	guchar &output
 	size_t &outlen
 
 gint 
 gaim_cipher_context_decrypt(context, data, len, output, outlen)
 	Gaim::Cipher::Context context
-	guint8 &data
+	guchar &data
 	size_t len
-	guint8 &output
+	guchar &output
 	size_t &outlen
 
 void 
 gaim_cipher_context_set_salt(context, salt)
 	Gaim::Cipher::Context context 
-	guint8 *salt
+	guchar *salt
 
 size_t 
 gaim_cipher_context_get_salt_size(context)
@@ -142,7 +142,7 @@ gaim_cipher_context_get_salt_size(context)
 void 
 gaim_cipher_context_set_key(context, key)
 	Gaim::Cipher::Context context 
-	guint8 *key
+	guchar *key
 
 size_t 
 gaim_cipher_context_get_key_size(context)

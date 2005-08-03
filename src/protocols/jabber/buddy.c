@@ -394,7 +394,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 				binval = xmlnode_new_child(photo, "BINVAL");
 				enc = gaim_base64_encode(avatar_data, avatar_len);
 
-				gaim_cipher_digest_region("sha1", (guint8 *)avatar_data,
+				gaim_cipher_digest_region("sha1", (guchar *)avatar_data,
 										  avatar_len, sizeof(hashval),
 										  hashval, NULL);
 
@@ -827,7 +827,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					gaim_buddy_icons_set_for_user(js->gc->account, bare_jid,
 							data, size);
 
-					gaim_cipher_digest_region("sha1", (guint8 *)data, size,
+					gaim_cipher_digest_region("sha1", (guchar *)data, size,
 							sizeof(hashval), hashval, NULL);
 					p = hash;
 					for(i=0; i<20; i++, p+=2)

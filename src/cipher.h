@@ -77,28 +77,28 @@ struct _GaimCipherOps {
 	void (*uninit)(GaimCipherContext *context);
 
 	/** The set initialization vector function */
-	void (*set_iv)(GaimCipherContext *context, guint8 *iv, size_t len);
+	void (*set_iv)(GaimCipherContext *context, guchar *iv, size_t len);
 
 	/** The append data function */
-	void (*append)(GaimCipherContext *context, const guint8 *data, size_t len);
+	void (*append)(GaimCipherContext *context, const guchar *data, size_t len);
 
 	/** The digest function */
-	gboolean (*digest)(GaimCipherContext *context, size_t in_len, guint8 digest[], size_t *out_len);
+	gboolean (*digest)(GaimCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
 
 	/** The encrypt function */
-	int (*encrypt)(GaimCipherContext *context, const guint8 data[], size_t len, guint8 output[], size_t *outlen);
+	int (*encrypt)(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 	/** The decrypt function */
-	int (*decrypt)(GaimCipherContext *context, const guint8 data[], size_t len, guint8 output[], size_t *outlen); 
+	int (*decrypt)(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 	/** The set salt function */
-	void (*set_salt)(GaimCipherContext *context, guint8 *salt);
+	void (*set_salt)(GaimCipherContext *context, guchar *salt);
 
 	/** The get salt size function */
 	size_t (*get_salt_size)(GaimCipherContext *context);
 
 	/** The set key function */
-	void (*set_key)(GaimCipherContext *context, guint8 *key);
+	void (*set_key)(GaimCipherContext *context, guchar *key);
 
 	/** The get key size function */
 	size_t (*get_key_size)(GaimCipherContext *context);
@@ -143,7 +143,7 @@ guint gaim_cipher_get_capabilities(GaimCipher *cipher);
  *
  * @return @c TRUE if successful, @c FALSE otherwise
  */
-gboolean gaim_cipher_digest_region(const gchar *name, const guint8 *data, size_t data_len, size_t in_len, guint8 digest[], size_t *out_len); 
+gboolean gaim_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, size_t in_len, guchar digest[], size_t *out_len);
 
 /*@}*/
 /******************************************************************************/
@@ -278,7 +278,7 @@ void gaim_cipher_context_destroy(GaimCipherContext *context);
  * @param iv      The initialization vector to set
  * @param len     The len of the IV
  */
-void gaim_cipher_context_set_iv(GaimCipherContext *context, guint8 *iv, size_t len);
+void gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t len);
 
 /**
  * Appends data to the context
@@ -287,7 +287,7 @@ void gaim_cipher_context_set_iv(GaimCipherContext *context, guint8 *iv, size_t l
  * @param data    The data to append
  * @param len     The length of the data
  */
-void gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data, size_t len);
+void gaim_cipher_context_append(GaimCipherContext *context, const guchar *data, size_t len);
 
 /**
  * Digests a context
@@ -297,10 +297,10 @@ void gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data, 
  * @param digest  The return buffer for the digest
  * @param out_len The length of the returned value
  */
-gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len, guint8 digest[], size_t *out_len);
+gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
 
 /**
- * Converts a guint8 digest into a hex string
+ * Converts a guchar digest into a hex string
  *
  * @param context  The context to get a digest from
  * @param in_len   The length of the buffer
@@ -320,7 +320,7 @@ gboolean gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in
  *
  * @return A cipher specific status code
  */
-gint gaim_cipher_context_encrypt(GaimCipherContext *context, const guint8 data[], size_t len, guint8 output[], size_t *outlen);
+gint gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 /**
  * Decrypts data using the context
@@ -333,7 +333,7 @@ gint gaim_cipher_context_encrypt(GaimCipherContext *context, const guint8 data[]
  *
  * @return A cipher specific status code
  */
-gint gaim_cipher_context_decrypt(GaimCipherContext *context, const guint8 data[], size_t len, guint8 output[], size_t *outlen);
+gint gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 /**
  * Sets the salt on a context
@@ -341,7 +341,7 @@ gint gaim_cipher_context_decrypt(GaimCipherContext *context, const guint8 data[]
  * @param context The context who's salt to set
  * @param salt    The salt
  */
-void gaim_cipher_context_set_salt(GaimCipherContext *context, guint8 *salt);
+void gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt);
 
 /**
  * Gets the size of the salt if the cipher supports it
@@ -358,7 +358,7 @@ size_t gaim_cipher_context_get_salt_size(GaimCipherContext *context);
  * @param context The context who's key to set
  * @param key     The key
  */
-void gaim_cipher_context_set_key(GaimCipherContext *context, guint8 *key);
+void gaim_cipher_context_set_key(GaimCipherContext *context, guchar *key);
 
 /**
  * Gets the key size for a context

@@ -204,7 +204,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		memset(digest, 0, sizeof(digest));
 
 		ctx = gaim_cipher_context_new_by_name("sha1", NULL);
-		gaim_cipher_context_append(ctx, (const guint8 *)buf, st.st_size);
+		gaim_cipher_context_append(ctx, (const guchar *)buf, st.st_size);
 		gaim_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		g_free(buf);
 
@@ -227,7 +227,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		memset(digest, 0, sizeof(digest));
 
 		gaim_cipher_context_reset(ctx, NULL);
-		gaim_cipher_context_append(ctx, (const guint8 *)buf, strlen(buf));
+		gaim_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
 		gaim_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		gaim_cipher_context_destroy(ctx);
 		g_free(buf);

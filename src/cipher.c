@@ -38,7 +38,7 @@
 struct MD5Context {
 	guint32 total[2];
 	guint32 state[4];
-	guint8 buffer[64];
+	guchar buffer[64];
 };
 
 #define MD5_GET_GUINT32(n,b,i) {			\
@@ -47,11 +47,11 @@ struct MD5Context {
 		| ((guint32)(b) [(i) + 2] << 16)	\
 		| ((guint32)(b) [(i) + 3] << 24);	\
 }
-#define MD5_PUT_GUINT32(n,b,i) { 			\
-	(b)[(i)    ] = (guint8)((n)      );		\
-    (b)[(i) + 1] = (guint8)((n) >>  8);     \
-	(b)[(i) + 2] = (guint8)((n) >> 16); 	\
-	(b)[(i) + 3] = (guint8)((n) >> 24); 	\
+#define MD5_PUT_GUINT32(n,b,i) {			\
+	(b)[(i)    ] = (guchar)((n)      );		\
+    (b)[(i) + 1] = (guchar)((n) >>  8);		\
+	(b)[(i) + 2] = (guchar)((n) >> 16);		\
+	(b)[(i) + 3] = (guchar)((n) >> 24);		\
 }
 
 static void
@@ -96,7 +96,7 @@ md5_uninit(GaimCipherContext *context) {
 }
 
 static void
-md5_process(struct MD5Context *md5_context, const guint8 data[64]) {
+md5_process(struct MD5Context *md5_context, const guchar data[64]) {
 	guint32 X[16], A, B, C, D;
 
 	A = md5_context->state[0];
@@ -166,7 +166,7 @@ md5_process(struct MD5Context *md5_context, const guint8 data[64]) {
 	P(C, D, A, B,  7, 14, 0x676F02D9);
 	P(B, C, D, A, 12, 20, 0x8D2A4C8A);
 	#undef F
-    
+
 	/* third pass */
 	#define F(x,y,z) (x ^ y ^ z)
 	P(A, B, C, D,  5,  4, 0xFFFA3942);
@@ -216,7 +216,7 @@ md5_process(struct MD5Context *md5_context, const guint8 data[64]) {
 }
 
 static void
-md5_append(GaimCipherContext *context, const guint8 *data, size_t len) {
+md5_append(GaimCipherContext *context, const guchar *data, size_t len) {
 	struct MD5Context *md5_context = NULL;
 	guint32 left = 0, fill = 0;
 
@@ -254,14 +254,14 @@ md5_append(GaimCipherContext *context, const guint8 *data, size_t len) {
 }
 
 static gboolean
-md5_digest(GaimCipherContext *context, size_t in_len, guint8 digest[16],
+md5_digest(GaimCipherContext *context, size_t in_len, guchar digest[16],
 		   size_t *out_len)
 {
 	struct MD5Context *md5_context = NULL;
 	guint32 last, pad;
 	guint32 high, low;
-	guint8 message[8];
-	guint8 padding[64] = {
+	guchar message[8];
+	guchar padding[64] = {
 		0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -386,7 +386,7 @@ sha1_hash_block(struct SHA1Context *sha1_ctx) {
 	sha1_ctx->H[1] += B;
 	sha1_ctx->H[2] += C;
 	sha1_ctx->H[3] += D;
-	sha1_ctx->H[4] += E;	
+	sha1_ctx->H[4] += E;
 }
 
 static void
@@ -471,7 +471,7 @@ sha1_uninit(GaimCipherContext *context) {
 
 
 static void
-sha1_append(GaimCipherContext *context, const guint8 *data, size_t len) {
+sha1_append(GaimCipherContext *context, const guchar *data, size_t len) {
 	struct SHA1Context *sha1_ctx;
 	gint i;
 
@@ -494,12 +494,12 @@ sha1_append(GaimCipherContext *context, const guint8 *data, size_t len) {
 }
 
 static gboolean
-sha1_digest(GaimCipherContext *context, size_t in_len, guint8 digest[20],
+sha1_digest(GaimCipherContext *context, size_t in_len, guchar digest[20],
 			size_t *out_len)
 {
 	struct SHA1Context *sha1_ctx;
-	guint8 pad0x80 = 0x80, pad0x00 = 0x00;
-	guint8 padlen[8];
+	guchar pad0x80 = 0x80, pad0x00 = 0x00;
+	guchar padlen[8];
 	gint i;
 
 	g_return_val_if_fail(in_len >= 20, FALSE);
@@ -508,14 +508,14 @@ sha1_digest(GaimCipherContext *context, size_t in_len, guint8 digest[20],
 
 	g_return_val_if_fail(sha1_ctx, FALSE);
 
-	padlen[0] = (guint8)((sha1_ctx->sizeHi >> 24) & 255);
-	padlen[1] = (guint8)((sha1_ctx->sizeHi >> 16) & 255);
-	padlen[2] = (guint8)((sha1_ctx->sizeHi >> 8) & 255);
-	padlen[3] = (guint8)((sha1_ctx->sizeHi >> 0) & 255);
-	padlen[4] = (guint8)((sha1_ctx->sizeLo >> 24) & 255);
-	padlen[5] = (guint8)((sha1_ctx->sizeLo >> 16) & 255);
-	padlen[6] = (guint8)((sha1_ctx->sizeLo >> 8) & 255);
-	padlen[7] = (guint8)((sha1_ctx->sizeLo >> 0) & 255);
+	padlen[0] = (guchar)((sha1_ctx->sizeHi >> 24) & 255);
+	padlen[1] = (guchar)((sha1_ctx->sizeHi >> 16) & 255);
+	padlen[2] = (guchar)((sha1_ctx->sizeHi >> 8) & 255);
+	padlen[3] = (guchar)((sha1_ctx->sizeHi >> 0) & 255);
+	padlen[4] = (guchar)((sha1_ctx->sizeLo >> 24) & 255);
+	padlen[5] = (guchar)((sha1_ctx->sizeLo >> 16) & 255);
+	padlen[6] = (guchar)((sha1_ctx->sizeLo >> 8) & 255);
+	padlen[7] = (guchar)((sha1_ctx->sizeLo >> 0) & 255);
 
 	/* pad with a 1, then zeroes, then length */
 	gaim_cipher_context_append(context, &pad0x80, 1);
@@ -524,7 +524,7 @@ sha1_digest(GaimCipherContext *context, size_t in_len, guint8 digest[20],
 	gaim_cipher_context_append(context, padlen, 8);
 
 	for(i = 0; i < 20; i++) {
-		digest[i] = (guint8)(sha1_ctx->H[i / 4] >> 24);
+		digest[i] = (guchar)(sha1_ctx->H[i / 4] >> 24);
 		sha1_ctx->H[i / 4] <<= 8;
 	}
 
@@ -625,9 +625,9 @@ gaim_cipher_get_capabilities(GaimCipher *cipher) {
 }
 
 gboolean
-gaim_cipher_digest_region(const gchar *name, const guint8 *data,
+gaim_cipher_digest_region(const gchar *name, const guchar *data,
 						  size_t data_len, size_t in_len,
-						  guint8 digest[], size_t *out_len)
+						  guchar digest[], size_t *out_len)
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
@@ -867,7 +867,7 @@ gaim_cipher_context_destroy(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_iv(GaimCipherContext *context, guint8 *iv, size_t len)
+gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t len)
 {
 	GaimCipher *cipher = NULL;
 
@@ -885,7 +885,7 @@ gaim_cipher_context_set_iv(GaimCipherContext *context, guint8 *iv, size_t len)
 }
 
 void
-gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data,
+gaim_cipher_context_append(GaimCipherContext *context, const guchar *data,
 								size_t len)
 {
 	GaimCipher *cipher = NULL;
@@ -904,7 +904,7 @@ gaim_cipher_context_append(GaimCipherContext *context, const guint8 *data,
 
 gboolean
 gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len,
-						   guint8 digest[], size_t *out_len)
+						   guchar digest[], size_t *out_len)
 {
 	GaimCipher *cipher = NULL;
 
@@ -927,7 +927,7 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
 								   gchar digest_s[], size_t *out_len)
 {
 	/* 8k is a bit excessive, will tweak later. */
-	guint8 digest[BUF_LEN * 4];
+	guchar digest[BUF_LEN * 4];
 	gint n = 0;
 	size_t dlen = 0;
 
@@ -952,8 +952,8 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
 }
 
 gint
-gaim_cipher_context_encrypt(GaimCipherContext *context, const guint8 data[],
-							size_t len, guint8 output[], size_t *outlen)
+gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[],
+							size_t len, guchar output[], size_t *outlen)
 {
 	GaimCipher *cipher = NULL;
 
@@ -976,8 +976,8 @@ gaim_cipher_context_encrypt(GaimCipherContext *context, const guint8 data[],
 }
 
 gint
-gaim_cipher_context_decrypt(GaimCipherContext *context, const guint8 data[],
-							size_t len, guint8 output[], size_t *outlen)
+gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[],
+							size_t len, guchar output[], size_t *outlen)
 {
 	GaimCipher *cipher = NULL;
 
@@ -1000,7 +1000,7 @@ gaim_cipher_context_decrypt(GaimCipherContext *context, const guint8 data[],
 }
 
 void
-gaim_cipher_context_set_salt(GaimCipherContext *context, guint8 *salt) {
+gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt) {
 	GaimCipher *cipher = NULL;
 
 	g_return_if_fail(context);
@@ -1035,7 +1035,7 @@ gaim_cipher_context_get_salt_size(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_key(GaimCipherContext *context, guint8 *key) {
+gaim_cipher_context_set_key(GaimCipherContext *context, guchar *key) {
 	GaimCipher *cipher = NULL;
 
 	g_return_if_fail(context);

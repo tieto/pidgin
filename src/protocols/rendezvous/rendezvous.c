@@ -493,7 +493,7 @@ rendezvous_add_to_txt_iconhash(RendezvousData *rd, const char *iconfile)
 		return;
 
 	icondata = rendezvous_read_icon_data(iconfile, &iconlength);
-	gaim_cipher_digest_region("sha1", (guint8 *)icondata, iconlength, sizeof(hash), hash, NULL);
+	gaim_cipher_digest_region("sha1", (guchar *)icondata, iconlength, sizeof(hash), hash, NULL);
 	g_free(icondata);
 
 	base16 = gaim_base16_encode(hash, 20);

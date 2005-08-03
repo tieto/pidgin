@@ -2328,7 +2328,7 @@ static void im_recv_mime(struct mwConversation *conv,
     } else if(g_str_has_prefix(type, "image")) {
       /* put images into the image store */
 
-      guint8 *d_dat;
+      guchar *d_dat;
       gsize d_len;
       char *cid;
       int img;
@@ -2353,7 +2353,7 @@ static void im_recv_mime(struct mwConversation *conv,
     } else if(g_str_has_prefix(type, "text")) {
 
       /* concatenate all the text parts together */
-      guint8 *data;
+      guchar *data;
       char *txt;
       gsize len;
 

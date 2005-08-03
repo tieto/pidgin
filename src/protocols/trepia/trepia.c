@@ -984,7 +984,7 @@ _login_cb(gpointer data, gint source, GaimInputCondition cond)
 	char md5_password[17];
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint8 di[16];
+	guchar di[16];
 	int i;
 
 	if (source < 0) {
@@ -1004,7 +1004,7 @@ _login_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, password, strlen(password));
+	gaim_cipher_context_append(context, (const guchar *)password, strlen(password));
 	gaim_cipher_context_digest(context, sizeof(di), di, NULL);
 
 	*md5_password = '\0';

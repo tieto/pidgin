@@ -157,7 +157,7 @@ static void jabber_si_bytestreams_attempt_connect(GaimXfer *xfer)
 	dstaddr = g_strdup_printf("%s%s%s@%s/%s", jsx->stream_id, xfer->who, jsx->js->user->node,
 			jsx->js->user->domain, jsx->js->user->resource);
 
-	gaim_cipher_digest_region("sha1", (guint8 *)dstaddr, strlen(dstaddr),
+	gaim_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
 							  sizeof(hashval), hashval, NULL);
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
@@ -277,7 +277,7 @@ jabber_si_xfer_bytestreams_send_read_again_cb(gpointer data, gint source,
 			jsx->js->user->node, jsx->js->user->domain,
 			jsx->js->user->resource, xfer->who);
 
-	gaim_cipher_digest_region("sha1", (guint8 *)dstaddr, strlen(dstaddr),
+	gaim_cipher_digest_region("sha1", (guchar *)dstaddr, strlen(dstaddr),
 							  sizeof(hashval), hashval, NULL);
 	g_free(dstaddr);
 	dstaddr = g_malloc(41);
