@@ -37,16 +37,13 @@
 extern "C" {
 #endif
 
-/* XXX adjust these based on autoconf-detected platform */
-typedef unsigned char fu8_t;
-typedef unsigned short fu16_t;
-typedef unsigned int fu32_t;
-typedef fu32_t aim_snacid_t;
-typedef fu16_t flap_seqnum_t;
+/* TODO: Remove these three typedefs and use guints everywhere. */
+typedef guint8  fu8_t;
+typedef guint16 fu16_t;
+typedef guint32 fu32_t;
 
-#if defined(mach) && defined(__APPLE__)
-#define gethostbyname(x) gethostbyname2(x, AF_INET) 
-#endif
+typedef guint32 aim_snacid_t;
+typedef guint16 flap_seqnum_t;
 
 #if defined(_WIN32) && !defined(WIN32_STATIC)
 /*

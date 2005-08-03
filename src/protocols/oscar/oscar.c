@@ -5625,7 +5625,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 
 		args.flags = AIM_IMFLAGS_ACK | AIM_IMFLAGS_CUSTOMFEATURES;
 		if (od->icq) {
-						/* We have to present different "features" (whose meaning
+			/* We have to present different "features" (whose meaning
 			   is unclear and are merely a result of protocol inspection)
 			   to offline ICQ buddies. Otherwise, the official
 			   ICQ client doesn't treat those messages as being "ANSI-
