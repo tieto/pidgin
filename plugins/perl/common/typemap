@@ -15,6 +15,9 @@ const char *           			T_PV
 const char **				T_PTR
 char **					T_PTR
 gchar *					T_PV
+guchar					T_IV
+guchar *				T_PTR
+const guchar *				T_PV
 char *					T_PV
 int *					T_PTR
 size_t *				T_PTR
