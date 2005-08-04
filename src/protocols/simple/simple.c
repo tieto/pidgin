@@ -33,6 +33,7 @@
 #include "version.h"
 #include "network.h"
 #include "xmlnode.h"
+#include "stun.h"
 
 #include "simple.h"
 #include "sipmsg.h"
@@ -259,7 +260,7 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	int error = 0;
 	if(!sip->connecting) {
-	        serveradr = getserver(sip->servername);
+	        serveradr = getserver(sip->servername, "_sip._tcp");
 	        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
 	        error = gaim_proxy_connect(sip->account, serveradr->name, serveradr->port, send_later_cb, gc);
 	        if(error) {
@@ -278,17 +279,23 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 static int sendout_pkt(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	time_t currtime = time(NULL);
-	int ret;
+	int ret = 0;
 	
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "\n\nsending - %s\n######\n%s\n######\n\n", ctime(&currtime), buf);
-	if(sip->fd <0 ) {
-		sendlater(gc, buf);
-	      	return 0;
-	}
-	ret = write(sip->fd, buf, strlen(buf));
-	if(ret < 0) {
-		sendlater(gc,buf);
-		return 0;
+	if(sip->udp) {
+		if(sendto(sip->fd, buf, strlen(buf), 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in)) < strlen(buf)) {
+			gaim_debug_info("simple", "could not send packet\n");
+		}
+	} else {
+		if(sip->fd <0 ) {
+			sendlater(gc, buf);
+		      	return 0;
+		}
+		ret = write(sip->fd, buf, strlen(buf));
+		if(ret < 0) {
+			sendlater(gc,buf);
+			return 0;
+		}
 	}
 	return ret;
 }
@@ -416,7 +423,7 @@ static void do_register(GaimConnection *gc) {
 	
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=tcp>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: 900\r\n", sip->username, sip->ip, sip->listenport);
+	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: 900\r\n", sip->username, sip->ip, sip->listenport, sip->udp ? "udp" : "tcp");
 	
 	// allow one auth try per register
 	sip->proxy.fouroseven = 0;
@@ -804,13 +811,78 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	send_notify(sip, watcher);
 }
 
+static void process_input_message(struct simple_account_data *sip, struct sipmsg *msg) {
+	int found = 0;
+	if( msg->response == 0 ) { // request
+		if(!strcmp(msg->method, "MESSAGE")) {
+			process_incoming_message(sip, msg);
+			found = 1;
+		}
+		if(!strcmp(msg->method, "NOTIFY")) {
+			process_incoming_notify(sip, msg);
+			found = 1;
+		}
+		if(!strcmp(msg->method, "SUBSCRIBE")) {
+			process_incoming_subscribe(sip, msg);
+			found = 1;
+		}
+	} else { // response
+		struct transaction *trans = transactions_find(sip, msg);
+		if(trans) {
+			if(msg->response == 407) {
+				if(sip->proxy.fouroseven>3) return;
+				sip->proxy.fouroseven++;
+				// do proxy authentication
+
+				gchar *ptmp = sipmsg_find_header(msg,"Proxy-Authenticate");
+				gchar *resend;
+				gchar *auth;
+					
+			        HASHHEX HA2;
+				HASHHEX response;
+				gchar noncecount[90];
+				fill_auth(sip, ptmp, &sip->proxy);
+				sprintf(noncecount, "%08d", sip->proxy.nc++);
+	
+				DigestCalcResponse(sip->proxy.HA1, sip->proxy.nonce, noncecount, "", "", trans->msg->method, trans->msg->target, HA2, response);
+				gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
+				auth = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, sip->proxy.realm, sip->proxy.nonce, trans->msg->target, noncecount, response);
+				sipmsg_remove_header(msg, "Proxy-Authorization");
+				sipmsg_add_header(trans->msg, "Proxy-Authorization", auth);
+				g_free(auth);
+				resend = sipmsg_to_string(trans->msg);
+				// resend request
+				sendout_pkt(sip->gc, resend);
+				g_free(resend);
+			} else {
+				sip->proxy.fouroseven = 0;
+				if(msg->response == 401) sip->registrar.fouroseven++;
+				else sip->registrar.fouroseven = 0;
+				if(trans->callback) {
+					// call the callback to process response
+					(trans->callback)(sip, msg, trans);
+						sip->transactions = g_slist_remove(sip->transactions, trans);
+				} else {
+					// transaction has no callback - just remove it
+					sip->transactions = g_slist_remove(sip->transactions, trans);
+				}
+			}
+			found = 1;
+		} else {
+			gaim_debug(GAIM_DEBUG_MISC, "simple", "received response to unknown transaction");
+		}
+	}
+	if(!found) {
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %sand response %d\n",msg->method, msg->response);
+	}
+}
+
 static void process_input(struct simple_account_data *sip, struct sip_connection *conn)
 {
 	char *cur;
 	char *dummy;
 	struct sipmsg *msg;
 	int restlen;
-	int found=0;
 	
 	cur = conn->inbuf;
 
@@ -846,73 +918,26 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 			return;
 		}
 	//	sipmsg_print(msg);
-	        gaim_debug(GAIM_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
-		if( msg->response == 0 ) { // request
-			if(!strcmp(msg->method, "MESSAGE")) {
-				process_incoming_message(sip, msg);
-				found = 1;
-			}
-			if(!strcmp(msg->method, "NOTIFY")) {
-				process_incoming_notify(sip, msg);
-				found = 1;
-			}
-			if(!strcmp(msg->method, "SUBSCRIBE")) {
-				process_incoming_subscribe(sip, msg);
-				found = 1;
-			}
-		} else { // response
-			struct transaction *trans = transactions_find(sip, msg);
-			if(trans) {
-				if(msg->response == 407) {
-					if(sip->proxy.fouroseven>3) return;
-					sip->proxy.fouroseven++;
-					// do proxy authentication
-
-					gchar *ptmp = sipmsg_find_header(msg,"Proxy-Authenticate");
-					gchar *resend;
-					gchar *auth;
-					
-				        HASHHEX HA2;
-					HASHHEX response;
-					gchar noncecount[90];
-					fill_auth(sip, ptmp, &sip->proxy);
-					sprintf(noncecount, "%08d", sip->proxy.nc++);
-	
-					DigestCalcResponse(sip->proxy.HA1, sip->proxy.nonce, noncecount, "", "", trans->msg->method, trans->msg->target, HA2, response);
-					gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
-					auth = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, sip->proxy.realm, sip->proxy.nonce, trans->msg->target, noncecount, response);
-					sipmsg_remove_header(msg, "Proxy-Authorization");
-					sipmsg_add_header(trans->msg, "Proxy-Authorization", auth);
-					g_free(auth);
-					resend = sipmsg_to_string(trans->msg);
-					// resend request
-					sendout_pkt(sip->gc, resend);
-					g_free(resend);
-				} else {
-					sip->proxy.fouroseven = 0;
-					if(msg->response == 401) sip->registrar.fouroseven++;
-					else sip->registrar.fouroseven = 0;
-					if(trans->callback) {
-						// call the callback to process response
-						(trans->callback)(sip, msg, trans);
-
-						sip->transactions = g_slist_remove(sip->transactions, trans);
-					} else {
-						// transaction has no callback - just remove it
-						sip->transactions = g_slist_remove(sip->transactions, trans);
-					}
-				}
-				found = 1;
-			} else {
-				gaim_debug(GAIM_DEBUG_MISC, "simple", "received response to unknown transaction");
-			}
-		}
-		if(!found) {
-			gaim_debug(GAIM_DEBUG_MISC, "simple", "received a unknown sip message with method %sand response %d\n",msg->method, msg->response);
-		}
+        	gaim_debug(GAIM_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
+		process_input_message(sip,msg);
 	} else {
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a incomplete sip msg: %s\n", conn->inbuf);
 	}
+}
+
+static void simple_udp_process(gpointer data, gint source, GaimInputCondition con) {
+	GaimConnection *gc = data;
+	struct simple_account_data *sip = gc->proto_data;
+	struct sipmsg *msg;
+	int len;
+	time_t currtime;
+
+	static char buffer[65536];
+	len = recv(source, buffer, 65536, 0);
+	buffer[len] = 0;
+	gaim_debug_info("simple","\n\nreceived - %s\n######\n%s\n#######\n\n",ctime(&currtime), buffer);
+	msg = sipmsg_parse_msg(buffer);
+	if(msg) process_input_message(sip, msg);
 }
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond)
@@ -1015,7 +1040,9 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	
 	gc->proto_data = sip = g_new0(struct simple_account_data,1);
 	sip->gc=gc;
-	sip->account = account;	
+	sip->account = account;
+
+	sip->udp = gaim_account_get_bool(account, "udp", FALSE);	
         if (strpbrk(username, " \t\v\r\n") != NULL) {
                 gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
        	        return;
@@ -1034,26 +1061,58 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
         gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	sip->status = g_strdup("available");
-	
-	// search for SRV record
-	serveradr = getserver(sip->servername);
-        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
 
-	// open tcp connection to the server
-	error = gaim_proxy_connect(account, serveradr->name, serveradr->port, login_cb, gc);
-	if(error) {
-		gaim_connection_error(gc, _("Couldn't create socket"));
+	// TCP case
+	if(! sip->udp) {	
+		// search for SRV record
+		serveradr = getserver(sip->servername, "_sip._tcp");
+	        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
+
+		// open tcp connection to the server
+		error = gaim_proxy_connect(account, serveradr->name, serveradr->port, login_cb, gc);
+		if(error) {
+			gaim_connection_error(gc, _("Couldn't create socket"));
+		}
+
+		// create socket for incoming connections
+		sip->listenfd = gaim_network_listen_range(5060, 5080);
+		if(sip->listenfd == -1) {
+			gaim_connection_error(gc, _("Could not create listen socket"));
+			return;
+		}
+		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
+		gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, gc);
+	} else { // UDP
+		// search for SRV record
+		struct sockaddr_in addr;
+		struct hostent *h;
+		
+		serveradr = getserver(sip->servername, "_sip._udp");
+		gaim_debug_info("simple", "using udp with server %s and port %d", serveradr->name, serveradr->port);
+		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(5060);
+		addr.sin_addr.s_addr = INADDR_ANY;
+		while((bind(sip->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) <0) && ntohs(addr.sin_port)<5160) {
+			addr.sin_port = htons(ntohs(addr.sin_port)+1);
+		}
+		sip->listenport = ntohs(addr.sin_port);
+		sip->listenfd = sip->fd;
+
+		gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, gc);
+		// TODO - change to new SRV impl.
+		sip->serveraddr.sin_family = AF_INET;
+		sip->serveraddr.sin_port = htons(serveradr->port);
+		
+		h = gethostbyname(serveradr->name);
+		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
+	        sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
+
+	        do_register(gc);
+		
 	}
-
-	// create socket for incoming connections
-	sip->listenfd = gaim_network_listen_range(5060, 5080);
-	if(sip->listenfd == -1) {
-		gaim_connection_error(gc, _("Could not create listen socket"));
-		return;
-	}
-	sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
-	gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, gc);
-
+		
 	// register timeout callback for register / subscribe renewal
 	sip->registertimeout = gaim_timeout_add((rand()%10)+10*1000, (GSourceFunc)register_timeout, sip);
 }
@@ -1175,12 +1234,15 @@ static GaimPluginInfo info =
 static void _init_plugin(GaimPlugin *plugin)
 {
         GaimAccountUserSplit *split;
+	GaimAccountOption *option;
 			
 	gaim_debug_register_category("simple");
 
         split = gaim_account_user_split_new(_("Server"), "blubb.com", '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
+	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 //	_simple_plugin = plugin;
 }
 

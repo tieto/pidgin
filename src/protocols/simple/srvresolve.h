@@ -36,6 +36,6 @@ struct getserver_return {
 	int port;
 };
 
-struct getserver_return *getserver(const char *domain);
+struct getserver_return *getserver(const char *domain, const char *srv);
 
 #endif /* _GAIM_SRVRESOLVE_H */

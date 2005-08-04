@@ -27,7 +27,7 @@ typedef union {
 	u_char buf[1024];
 } queryans;
 
-struct getserver_return *getserver(const char *domain) {
+struct getserver_return *getserver(const char *domain, const char *srv) {
 	static struct getserver_return ret;
 	queryans answer;
 	int size;
@@ -40,9 +40,8 @@ struct getserver_return *getserver(const char *domain) {
 	int bestport = 5060;
 	int bestpri=99999;
 	int type, dlen, pref, weight, port;
-	gchar *query = g_strdup_printf("_sip._tcp.%s",domain);
+	gchar *query = g_strdup_printf("%s.%s",srv,domain);
 
-	gaim_debug_info("simple","searching for %s\r\n",domain);
 	
 	size = res_query( query, C_IN, T_SRV, (u_char*)&answer, sizeof( answer));
 
@@ -51,7 +50,6 @@ struct getserver_return *getserver(const char *domain) {
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
 
-        gaim_debug_info("simple","ancount %d\r\n",ancount);
 	
 	cp = (char*)&answer + sizeof(HEADER);
 	end = (char*)&answer + size;

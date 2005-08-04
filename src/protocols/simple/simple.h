@@ -80,6 +80,8 @@ struct simple_account_data {
 	GSList *transactions;
 	GSList *watcher;
 	GSList *openconns;
+	gboolean udp;
+	struct sockaddr_in serveraddr;
 };
 
 struct sip_connection {
