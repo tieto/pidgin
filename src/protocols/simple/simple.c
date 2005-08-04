@@ -378,7 +378,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 
 	
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
-			"Via: SIP/2.0/TCP %s:%d;branch=%s\r\n"
+			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			"From: <sip:%s@%s>;tag=%s\r\n"
 			"To: <%s>%s%s\r\n"
 			"Max-Forwards: 10\r\n"
@@ -389,6 +389,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 			"Content-Length: %d\r\n\r\n%s",
 			method,
 			url,
+			sip->udp ? "UDP" : "TCP",
 			sip->ip,	
 			sip->listenport,
 			branch,
@@ -825,6 +826,9 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		if(!strcmp(msg->method, "SUBSCRIBE")) {
 			process_incoming_subscribe(sip, msg);
 			found = 1;
+		}
+		if(!found) {
+	                send_sip_response(sip->gc, msg, 501, "Not implemented", NULL);
 		}
 	} else { // response
 		struct transaction *trans = transactions_find(sip, msg);
