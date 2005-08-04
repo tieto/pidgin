@@ -2300,17 +2300,28 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 	const char *c = buf;
 	char *d;
 	char name[64], value[64];
-	int count = sizeof(name)-1;
-	while ((c < (buf + len)) && (c = strstr(c, "<input "))) {
-		c = strstr(c, "name=\"") + strlen("name=\"");
-		for (d = name; *c!='"' && count; c++, d++, count--)
+	int count;
+	int input_len = strlen("<input ");
+	int name_len = strlen("name=\"");
+	int value_len = strlen("value=\"");
+	while ((len > ((c - buf) + input_len))
+			&& (c = strstr(c, "<input "))) {
+		if (!(c = g_strstr_len(c, len - (c - buf), "name=\"")))
+			continue;
+		c += name_len;
+		count = sizeof(name)-1;
+		for (d = name; (len > ((c - buf) + 1)) && *c!='"'
+				&& count; c++, d++, count--)
 			*d = *c;
 		*d = '\0';
 		count = sizeof(value)-1;
-		d = strstr(c, "value=\"") + strlen("value=\"");
+		if (!(d = g_strstr_len(c, len - (c - buf), "value=\"")))
+			continue;
+		d += value_len;
 		if (strchr(c, '>') < d)
 			break;
-		for (c = d, d = value; *c!='"' && count; c++, d++, count--)
+		for (c = d, d = value; (len > ((c - buf) + 1))
+				&& *c!='"' && count; c++, d++, count--)
 			*d = *c;
 		*d = '\0';
 		g_hash_table_insert(hash, g_strdup(name), g_strdup(value));
