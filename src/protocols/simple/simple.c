@@ -198,7 +198,8 @@ static void simple_get_buddies(GaimConnection *gc) {
 			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode)) continue;
 			for(bnode = cnode->child; bnode; bnode = bnode->next) {
 				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode)) continue;
-				simple_add_buddy(gc, (GaimBuddy*)bnode, (GaimGroup *)gnode);
+				if(((GaimBuddy*)bnode)->account == gc->account)
+					simple_add_buddy(gc, (GaimBuddy*)bnode, (GaimGroup *)gnode);
 			}
 		}
 	}
