@@ -33,7 +33,6 @@
 #include "version.h"
 #include "network.h"
 #include "xmlnode.h"
-#include "stun.h"
 
 #include "simple.h"
 #include "sipmsg.h"
