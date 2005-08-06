@@ -68,7 +68,14 @@ static const char *simple_list_icon(GaimAccount *a, GaimBuddy *b) {
 }
 
 static void simple_keep_alive(GaimConnection *gc) {
-	return; // need it?
+	struct simple_account_data *sip = gc->proto_data;
+	if(sip->udp) { // in case of UDP send a packet only with a 0 byte to
+			// stay in the NAT table
+		gchar buf[2]={0,0};
+		gaim_debug_info("simple", "sending keep alive\n");
+		sendto(sip->fd, buf, 1, 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in));
+	}
+	return; 
 }
 
 static gboolean process_register_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc);
@@ -300,6 +307,28 @@ static int sendout_pkt(GaimConnection *gc, const char *buf) {
 	return ret;
 }
 
+static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) {
+	gchar *oldstr;
+	gchar *outstr = g_strdup_printf("%s %s SIP/2.0\r\n", msg->method, msg->target);
+	gchar *name;
+	gchar *value;
+	GSList *tmp = msg->headers;
+	while(tmp) {
+		oldstr = outstr;
+                name = ((struct siphdrelement*)(tmp->data))->name;
+                value = ((struct siphdrelement*)(tmp->data))->value;
+                outstr = g_strdup_printf("%s%s: %s\r\n",oldstr, name, value);
+		g_free(oldstr);
+		tmp = g_slist_next(tmp);
+	}
+	oldstr = outstr;
+	if(msg->body) outstr = g_strdup_printf("%s\r\n%s", outstr, msg->body);
+	else outstr = g_strdup_printf("%s\r\n", outstr);
+	g_free(oldstr);
+	sendout_pkt(sip->gc, outstr);
+        g_free(outstr);
+}
+
 static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, char *text, char *body) {
 	GSList *tmp = msg->headers;
 	char *oldstr;
@@ -320,6 +349,12 @@ static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, 
 	g_free(oldstr);
 	sendout_pkt(gc, outstr);
 	g_free(outstr);
+}
+
+static void transactions_remove(struct simple_account_data *sip, struct transaction *trans) {
+	if(trans->msg) sipmsg_free(trans->msg);
+	sip->transactions = g_slist_remove(sip->transactions, trans);
+	g_free(trans);
 }
 
 static void transactions_add_buf(struct simple_account_data *sip, gchar *buf, void *callback) {
@@ -418,22 +453,29 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	g_free(buf);
 }
 
-static void do_register(GaimConnection *gc) {
-        struct simple_account_data *sip = gc->proto_data;
+static void do_register_exp(struct simple_account_data *sip, int expire) {
 	sip->registerstatus = 1;
 	
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: 900\r\n", sip->username, sip->ip, sip->listenport, sip->udp ? "udp" : "tcp");
+	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip, sip->listenport, sip->udp ? "udp" : "tcp", expire);
 	
 	// allow one auth try per register
 	sip->proxy.fouroseven = 0;
 	sip->registrar.fouroseven = 0;
 	
-	sip->reregister = time(NULL) + 540;
-	send_sip_request(gc,"REGISTER",uri,to, contact, "", NULL, process_register_response);
+	if(expire) {
+		sip->reregister = time(NULL) + expire - 50;
+	} else {
+		sip->reregister = time(NULL) + 600;
+	}
+	send_sip_request(sip->gc,"REGISTER",uri,to, contact, "", NULL, process_register_response);
 	g_free(uri);
 	g_free(to);
+}
+
+static void do_register(struct simple_account_data *sip) {
+	do_register_exp(sip, sip->registerexpire);
 }
 
 static gchar *parse_from(gchar *hdr) {
@@ -505,12 +547,31 @@ static void simple_buddy_resub(char *name, struct simple_buddy *buddy, struct si
 	}
 }
 
+static gboolean resend_timeout(struct simple_account_data *sip) {
+	GSList *tmp = sip->transactions;
+	time_t currtime = time(NULL);
+	while(tmp) {
+		struct transaction *trans = tmp->data;
+		tmp = tmp->next;
+		gaim_debug_info("simple", "have open transaction age: %d\n", currtime- trans->time);
+		if((currtime - trans->time > 5) && trans->retries >= 1) {
+			// TODO 408
+		} else {
+			if((currtime - trans->time > 2) && trans->retries == 0) {
+				trans->retries++;
+				sendout_sipmsg(sip, trans->msg);
+			}
+		}
+	}
+	return TRUE;
+}
+
 static gboolean register_timeout(struct simple_account_data *sip) {
 	GSList *tmp;
 	time_t curtime = time(NULL);
 	// register again if first registration expires
 	if(sip->reregister < curtime) {
-		do_register(sip->gc);
+		do_register(sip);
 	}
 	
 	// check for every subscription if we need to resubscribe
@@ -645,7 +706,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				fill_auth(sip, tmp, &sip->registrar);
 				sip->registerstatus=2;
 				gaim_debug(GAIM_DEBUG_MISC, "simple", "HA1: %s\n",sip->registrar.HA1);
-				do_register(sip->gc);
+				do_register(sip);
 			}
 			break;
 		}
@@ -865,11 +926,8 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				if(trans->callback) {
 					// call the callback to process response
 					(trans->callback)(sip, msg, trans);
-						sip->transactions = g_slist_remove(sip->transactions, trans);
-				} else {
-					// transaction has no callback - just remove it
-					sip->transactions = g_slist_remove(sip->transactions, trans);
 				}
+				transactions_remove(sip, trans);
 			}
 			found = 1;
 		} else {
@@ -1013,7 +1071,7 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 	// get the local ip
 	sip->ip = g_strdup(gaim_network_get_my_ip(source));
 	
-	do_register(gc);
+	do_register(sip);
 	
 	conn->inputhandler = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_input_cb, gc);
 }
@@ -1045,7 +1103,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	gc->proto_data = sip = g_new0(struct simple_account_data,1);
 	sip->gc=gc;
 	sip->account = account;
-
+	sip->registerexpire = 900;
 	sip->udp = gaim_account_get_bool(account, "udp", FALSE);	
         if (strpbrk(username, " \t\v\r\n") != NULL) {
                 gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
@@ -1112,18 +1170,21 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 		h = gethostbyname(serveradr->name);
 		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
 	        sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
-
-	        do_register(gc);
+		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
+	        do_register(sip);
 		
 	}
 		
 	// register timeout callback for register / subscribe renewal
-	sip->registertimeout = gaim_timeout_add((rand()%10)+10*1000, (GSourceFunc)register_timeout, sip);
+	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)register_timeout, sip);
 }
 
 static void simple_close(GaimConnection *gc)
 {
 	struct simple_account_data *sip = gc->proto_data;
+
+	// unregister
+	do_register_exp(sip, 0);
 //	if(sip) {
 	if(0) {
 		if(sip->servername) g_free(sip->servername);

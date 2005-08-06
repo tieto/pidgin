@@ -74,6 +74,7 @@ struct simple_account_data {
 	gchar *status;
 	GHashTable *buddies;
 	guint registertimeout;
+	guint resendtimeout;
 	int connecting;
 	GaimAccount *account;
 	gchar *sendlater;
@@ -82,6 +83,7 @@ struct simple_account_data {
 	GSList *openconns;
 	gboolean udp;
 	struct sockaddr_in serveraddr;
+	int registerexpire;
 };
 
 struct sip_connection {
