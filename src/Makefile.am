@@ -96,6 +96,7 @@ gaim_coresources = \
 	stringref.c \
 	sound.c \
 	sslconn.c \
+	upnp.c \
 	util.c \
 	value.c \
 	xmlnode.c
@@ -136,6 +137,7 @@ gaim_coreheaders = \
 	stringref.h \
 	sound.h \
 	sslconn.h \
+	upnp.h \
 	util.h \
 	value.h \
 	version.h \

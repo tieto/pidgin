@@ -29,6 +29,7 @@
 #include "account.h"
 #include "network.h"
 #include "prefs.h"
+#include "upnp.h"
 
 const unsigned char *
 gaim_network_ip_atoi(const char *ip)
@@ -134,6 +135,7 @@ const char *
 gaim_network_get_my_ip(int fd)
 {
 	const char *ip = NULL;
+  const char *controlURL = NULL;
 
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -141,6 +143,13 @@ gaim_network_get_my_ip(int fd)
 		if (ip != NULL)
 			return ip;
 	}
+
+  /* attempt to get the ip from a NAT device */
+  if ((controlURL = gaim_upnp_discover()) != NULL) {
+    ip = gaim_upnp_get_public_ip(controlURL);
+    if (ip != NULL)
+      return ip;
+  }
 
 	/* Just fetch the IP of the local system */
 	return gaim_network_get_local_system_ip(fd);
@@ -151,6 +160,7 @@ gaim_network_do_listen(unsigned short port)
 {
 	int listenfd = -1;
 	const int on = 1;
+  const char *controlURL = NULL;
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
@@ -166,13 +176,9 @@ gaim_network_do_listen(unsigned short port)
 	hints.ai_socktype = SOCK_STREAM;
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
-#ifndef _WIN32
 		gaim_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
 			gaim_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
-#else
-		gaim_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
-#endif
 		return -1;
 	}
 
@@ -224,6 +230,13 @@ gaim_network_do_listen(unsigned short port)
 		return -1;
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
+
+  if((controlURL = gaim_upnp_discover()) != NULL) {
+    if(!gaim_upnp_set_port_mapping(controlURL, port, "TCP")) {
+      gaim_upnp_remove_port_mapping(controlURL, port, "TCP");
+      gaim_upnp_set_port_mapping(controlURL, port, "TCP");
+    }
+  }
 
 	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));
 	return listenfd;
@@ -279,8 +292,6 @@ gaim_network_get_port_from_fd(int fd)
 void
 gaim_network_init(void)
 {
-	gaim_debug_register_category("network");
-
 	gaim_prefs_add_none  ("/core/network");
 	gaim_prefs_add_bool  ("/core/network/auto_ip", TRUE);
 	gaim_prefs_add_string("/core/network/public_ip", "");
