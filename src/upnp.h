@@ -44,7 +44,7 @@ extern "C" {
  *
  * @return The control URL for the IGD we'll use to use the IGD services
  */
-char *gaim_upnp_discover(void);
+const char *gaim_upnp_discover(void);
 
 
 /**
@@ -56,7 +56,7 @@ char *gaim_upnp_discover(void);
  *
  * @return The IP address of the network, or NULL if something went wrong
  */
-char* gaim_upnp_get_public_ip(const char* controlURL);
+const char* gaim_upnp_get_public_ip(const char* controlURL);
 
 
 /**
