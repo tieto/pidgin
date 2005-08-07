@@ -73,7 +73,7 @@ char* gaim_upnp_get_public_ip(const char* controlURL);
  */
 gboolean gaim_upnp_set_port_mapping(const char* controlURL, 
                                     unsigned short portMap,
-                           const char* protocol, const char* internalIP);
+                                    const char* protocol);
 
 /**
  * Deletes a port mapping in a UPnP enabled IGD that sits on the local network
