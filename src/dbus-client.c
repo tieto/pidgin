@@ -31,7 +31,7 @@
 #include <glib-object.h>
 
 #include "dbus-gaim.h"
-#include "dbus-client-bindings.c"
+//#include "dbus-client-bindings.c"
 
 int
 main (int argc, char **argv)
