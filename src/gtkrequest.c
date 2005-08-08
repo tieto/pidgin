@@ -763,10 +763,18 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 	GValue val = { 0, };
 	GaimRequestField *screen_field = user_data[1];
 	GList *fields = screen_field->group->fields;
+	GaimAccount *account;
 
 	gtk_tree_model_get_value(model, iter, 1, &val);
 	gtk_entry_set_text(GTK_ENTRY(user_data[0]), g_value_get_string(&val));
 	g_value_unset(&val);
+
+	gtk_tree_model_get_value(model, iter, 4, &val);
+	account = g_value_get_pointer(&val);
+	g_value_unset(&val);
+
+	if (account == NULL)
+		return TRUE;
 
 	do {
 		GaimRequestField *field = fields->data;
@@ -776,12 +784,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 
 			if (type_hint != NULL && !strcmp(type_hint, "account")) {
 				/* We found the corresponding account field. */
-				GaimAccount *account;
 				GtkOptionMenu *optmenu = GTK_OPTION_MENU(field->ui_data);
-
-				gtk_tree_model_get_value(model, iter, 4, &val);
-				account = g_value_get_pointer(&val);
-				g_value_unset(&val);
 
 				/* Set the account in the request API. */
 				gaim_request_field_account_set_value(field, account);
@@ -793,7 +796,6 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 					do {
 						if (account == g_object_get_data(G_OBJECT(items->data), "account")) {
 							/* Set the account in the GUI. */
-
 							gtk_option_menu_set_history(GTK_OPTION_MENU(field->ui_data), index);
 							return TRUE;
 						}
@@ -914,7 +916,7 @@ setup_screenname_autocomplete(GtkWidget *entry, GaimRequestField *field, gboolea
 #ifdef NEW_STYLE_COMPLETION
 	/* Store the displayed completion value, the screenname, the UTF-8 normalized & casefolded screenname,
 	 * the UTF-8 normalized & casefolded value for comparison, and the account. */
-	GtkListStore *store = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	GtkListStore *store = gtk_list_store_new(5, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GHashTable *sets;
