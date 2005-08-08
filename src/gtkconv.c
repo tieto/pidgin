@@ -177,7 +177,7 @@ static void build_warn_close_dialog(GaimConvWindow *win)
 	vbox = gtk_vbox_new(FALSE, 12);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
-	label = gtk_label_new(_("You have unread messages. Are you sure you want to continue?"));
+	label = gtk_label_new(_("You have unread messages. Are you sure you want to close the window?"));
 	gtk_widget_set_size_request(label, 350, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
