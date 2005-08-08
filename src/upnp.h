@@ -47,6 +47,7 @@ extern "C" {
 char* gaim_upnp_discover(void);
 
 
+
 /**
  * Gets the IP address from a UPnP enabled IGD that sits on the local
  * network, so when getting the network IP, instead of returning the
@@ -67,7 +68,6 @@ char* gaim_upnp_get_public_ip(const char* controlURL);
  * @param controlURL The control URL retrieved from gaim_upnp_discover.
  * @param portMap The port to map to this client
  * @param protocol The protocol to map, either "TCP" or "UDP"
- * @param internalIP The internal IP to map to
  *
  * @return TRUE if success, FALSE if something went wrong.
  */

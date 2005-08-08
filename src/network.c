@@ -134,8 +134,8 @@ gaim_network_get_local_system_ip(int fd)
 const char *
 gaim_network_get_my_ip(int fd)
 {
-	const char *ip = NULL;
-  const char *controlURL = NULL;
+  char *ip = NULL;
+  char *controlURL = NULL;
 
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -147,6 +147,7 @@ gaim_network_get_my_ip(int fd)
   /* attempt to get the ip from a NAT device */
   if ((controlURL = gaim_upnp_discover()) != NULL) {
     ip = gaim_upnp_get_public_ip(controlURL);
+    free(controlURL);
     if (ip != NULL)
       return ip;
   }
@@ -160,7 +161,7 @@ gaim_network_do_listen(unsigned short port)
 {
 	int listenfd = -1;
 	const int on = 1;
-  const char *controlURL = NULL;
+  char *controlURL = NULL;
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
@@ -236,6 +237,7 @@ gaim_network_do_listen(unsigned short port)
       gaim_upnp_remove_port_mapping(controlURL, port, "TCP");
       gaim_upnp_set_port_mapping(controlURL, port, "TCP");
     }
+    free(controlURL);
   }
 
 	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));

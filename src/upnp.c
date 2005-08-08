@@ -151,7 +151,7 @@ gaim_upnp_validate_url(const char* url)
 
 static void
 gaim_upnp_timeout(gpointer data,
-                  gint source, 
+                  gint source,
                   GaimInputCondition cond)
 {
   HRD* hrd = data;
@@ -244,7 +244,7 @@ gaim_upnp_http_request(const char* address,
   hrd->done = FALSE;
 
   hrd->recvBuffer = (char*)malloc(MAX_DESCRIPTION_RECIEVE_SIZE);
-  if(hrd == NULL) {
+  if(hrd->recvBuffer == NULL) {
     gaim_debug_info("upnp",
       "gaim_upnp_http_request(): Failed in recvBuffer MALLOC\n\n");
     free(hrd);
@@ -644,7 +644,6 @@ gaim_upnp_discover_udp_read(gpointer data,
 
   gaim_timeout_remove(hrd->tima);
   length = sizeof(struct sockaddr_in);
-  hrd->recvBuffer = (char*)malloc(MAX_DISCOVERY_RECIEVE_SIZE);
 
   do {
     sizeRecv = recvfrom(sock, hrd->recvBuffer,
@@ -665,6 +664,7 @@ gaim_upnp_discover_udp_read(gpointer data,
 }
 
 
+
 char*
 gaim_upnp_discover(void)
 {
@@ -678,14 +678,19 @@ gaim_upnp_discover(void)
   char *controlURL = NULL;
 
   HRD* hrd = (HRD*)malloc(sizeof(HRD));
-  hrd->recvBuffer = NULL;
-  hrd->done = FALSE;
+  if(hrd == NULL) {
+    gaim_debug_info("upnp",
+      "gaim_upnp_discover(): Failed in hrd MALLOC\n\n");
+    return NULL;
+  }
 
   sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (sock == -1) {
     close(sock);
     gaim_debug_info("upnp",
           "gaim_upnp_discover(): Failed In sock creation\n\n");
+    free(hrd->recvBuffer);
+    free(hrd);
     return NULL;
   }
 
@@ -695,6 +700,8 @@ gaim_upnp_discover(void)
     close(sock);
     gaim_debug_info("upnp",
           "gaim_upnp_discover(): Failed In gethostbyname\n\n");
+    free(hrd->recvBuffer);
+    free(hrd);
     return NULL;
   }
 
@@ -709,6 +716,18 @@ gaim_upnp_discover(void)
     sentSuccess = TRUE;
     recvSuccess = TRUE;
     totalSizeSent = 0;
+
+    hrd->recvBuffer = NULL;
+    hrd->totalSizeRecv = 0;
+    hrd->done = FALSE;
+
+    hrd->recvBuffer = (char*)malloc(MAX_DISCOVERY_RECIEVE_SIZE);
+    if(hrd->recvBuffer == NULL) {
+      gaim_debug_info("upnp",
+        "gaim_upnp_discover(): Failed in hrd->recvBuffer MALLOC\n\n");
+      free(hrd);
+      return NULL;
+    }
 
     while(totalSizeSent < strlen(sendMessage)) {
       sizeSent = sendto(sock,(void*)&sendMessage[totalSizeSent],
@@ -742,6 +761,8 @@ gaim_upnp_discover(void)
                                          strlen(hrd->recvBuffer)))==NULL) {
           gaim_debug_info("upnp",
                        "gaim_upnp_discover(): Failed In parse response\n\n");
+          free(hrd->recvBuffer);
+          free(hrd);
           return NULL;
         }
       }
@@ -752,6 +773,12 @@ gaim_upnp_discover(void)
       i = NUM_UDP_ATTEMPTS;
     }
   }
+
+  if(hrd->recvBuffer != NULL) {
+    free(hrd->recvBuffer);
+  }
+  free(hrd);
+
   if(!sentSuccess || !recvSuccess) {
     close(sock);
     gaim_debug_info("upnp",
