@@ -209,7 +209,7 @@ void gaim_proxy_init(void);
  * @param func    The input handler function.
  * @param data    User-defined data.
  *
- * @return The socket handle.
+ * @return Zero indicates the connection is pending. Any other value indicates failure.
  */
 int gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 					   GaimInputFunction func, gpointer data);
@@ -223,7 +223,7 @@ int gaim_proxy_connect(GaimAccount *account, const char *host, int port,
  * @param func    The input handler function.
  * @param data    User-defined data.
  *
- * @return The socket handle.
+ * @return Zero indicates the connection is pending. Any other value indicates failure.
  */
 int gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 					   GaimInputFunction func, gpointer data);
