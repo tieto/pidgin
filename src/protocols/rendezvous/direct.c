@@ -155,7 +155,7 @@ rendezvous_direct_send_message(GaimConnection *gc, const char *who, const char *
 	{
 		rendezvous_direct_connect(rb);
 		/* TODO: Queue message */
-		//gaim_debug_warning("rendezvous", "Could not send message to %s: Unable to establish connection.\n", who);
+		/* gaim_debug_warning("rendezvous", "Could not send message to %s: Unable to establish connection.\n", who); */
 	}
 	else
 	{
