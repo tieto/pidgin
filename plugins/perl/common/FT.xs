@@ -90,7 +90,7 @@ gaim_xfer_is_completed(xfer)
 ssize_t 
 gaim_xfer_read(xfer, buffer)
 	Gaim::Xfer xfer
-	char **buffer
+	guchar **buffer
 
 void 
 gaim_xfer_ref(xfer)
@@ -145,7 +145,7 @@ gaim_xfer_update_progress(xfer)
 ssize_t 
 gaim_xfer_write(xfer, buffer, size)
 	Gaim::Xfer xfer
-	const char *buffer
+	const guchar *buffer
 	size_t size
 
 MODULE = Gaim::Xfer  PACKAGE = Gaim::Xfers  PREFIX = gaim_xfers_

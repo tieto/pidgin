@@ -58,7 +58,7 @@ struct gg_session {
 	int client_port;	/* port, na którym klient s³ucha */
 
 	uin_t uin;		/* numerek klienta */
-	unsigned char *password;		/* i jego has³o. zwalniane automagicznie */
+	char *password;		/* i jego has³o. zwalniane automagicznie */
         
 	int initial_status;	/* pocz±tkowy stan klienta */
 

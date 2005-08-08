@@ -1452,7 +1452,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			struct gg_welcome *w;
 			struct gg_login60 l;
 			unsigned int hash;
-			unsigned char *password = sess->password;
+			char *password = sess->password;
 
 			gg_debug(GG_DEBUG_MISC, "== GG_STATE_READING_KEY\n");
 

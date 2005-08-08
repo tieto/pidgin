@@ -111,7 +111,7 @@ gboolean
 gaim_cipher_context_digest_to_str(context, in_len, digest_s, out_len)
 	Gaim::Cipher::Context context
 	size_t in_len
-	guchar &digest_s
+	gchar &digest_s
 	size_t &out_len
 
 gint 
