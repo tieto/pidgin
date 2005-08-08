@@ -14,7 +14,7 @@ endif
 
 SUBDIRS = \
 	docklet gaim-remote $(GEVOLUTION_DIR) gestures \
-	$(PERL_DIR) ssl $(TCL_DIR) ticker musicmessaging
+	$(PERL_DIR) ssl $(TCL_DIR) ticker
 
 plugindir = $(libdir)/gaim
 
@@ -59,6 +59,9 @@ statenotify_la_SOURCES  = statenotify.c
 timestamp_la_SOURCES    = timestamp.c
 
 if ENABLE_DBUS
+
+# Only use music messaging if dbus is enabled
+SUBDIRS += musicmessaging
 
 CLEANFILES              = dbus-example-bindings.c
 dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
