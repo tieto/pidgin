@@ -1068,7 +1068,19 @@ GaimFilterAccountFunc gaim_request_field_account_get_filter(
 /**
  * Prompts the user for text input.
  *
- * @param handle        The plugin or connection handle.
+ * @param handle        The plugin or connection handle.  For some
+ *                      things this is EXTREMELY important.  The
+ *                      handle is used to programmatically close
+ *                      the request dialog when it is no longer
+ *                      needed.  For PRPLs this is often a pointer
+ *                      to the GaimConnection instance.  For plugins
+ *                      this should be a similar, unique memory
+ *                      location.  This value is important because
+ *                      it allows a request to be closed, say, when
+ *                      you sign offline.  If the request is NOT
+ *                      closed it is VERY likely to cause a crash
+ *                      whenever the callback handler functions are
+ *                      triggered.
  * @param title         The title of the message.
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
@@ -1097,7 +1109,9 @@ void *gaim_request_input(void *handle, const char *title,
 /**
  * Prompts the user for multiple-choice input.
  *
- * @param handle        The plugin or connection handle.
+ * @param handle        The plugin or connection handle.  For some
+ *                      things this is EXTREMELY important.  See
+ *                      the comments on gaim_request_input.
  * @param title         The title of the message.
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
@@ -1122,7 +1136,9 @@ void *gaim_request_choice(void *handle, const char *title,
 /**
  * Prompts the user for multiple-choice input.
  *
- * @param handle        The plugin or connection handle.
+ * @param handle        The plugin or connection handle.  For some
+ *                      things this is EXTREMELY important.  See
+ *                      the comments on gaim_request_input.
  * @param title         The title of the message.
  * @param primary       The main point of the message.
  * @param secondary     The secondary information.
@@ -1149,7 +1165,9 @@ void *gaim_request_choice_varg(void *handle, const char *title,
  *
  * This is often represented as a dialog with a button for each action.
  *
- * @param handle         The plugin or connection handle.
+ * @param handle         The plugin or connection handle.  For some
+ *                       things this is EXTREMELY important.  See
+ *                       the comments on gaim_request_input.
  * @param title          The title of the message.
  * @param primary        The main point of the message.
  * @param secondary      The secondary information.
@@ -1170,7 +1188,9 @@ void *gaim_request_action(void *handle, const char *title,
  *
  * This is often represented as a dialog with a button for each action.
  *
- * @param handle         The plugin or connection handle.
+ * @param handle         The plugin or connection handle.  For some
+ *                       things this is EXTREMELY important.  See
+ *                       the comments on gaim_request_input.
  * @param title          The title of the message.
  * @param primary        The main point of the message.
  * @param secondary      The secondary information.
@@ -1190,7 +1210,9 @@ void *gaim_request_action_varg(void *handle, const char *title,
 /**
  * Displays groups of fields for the user to fill in.
  *
- * @param handle      The plugin or connection handle.
+ * @param handle      The plugin or connection handle.  For some
+ *                    things this is EXTREMELY important.  See
+ *                    the comments on gaim_request_input.
  * @param title       The title of the message.
  * @param primary     The main point of the message.
  * @param secondary   The secondary information.
@@ -1257,7 +1279,9 @@ void gaim_request_close_with_handle(void *handle);
  * Displays a file selector request dialog.  Returns the selected filename into
  * the callback.  Can be used for either opening a file or saving a file.
  *
- * @param handle      The plugin or connection handle.
+ * @param handle      The plugin or connection handle.  For some
+ *                    things this is EXTREMELY important.  See
+ *                    the comments on gaim_request_input.
  * @param title       The title for the dialog (may be NULL)
  * @param filename    The default filename (may be NULL)
  * @param savedialog  True if this dialog is being used to save a file.

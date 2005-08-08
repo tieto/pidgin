@@ -716,7 +716,7 @@ silcgaim_attrs(GaimPluginAction *action)
 	gaim_request_fields_add_group(fields, g);
 
 
-	gaim_request_fields(NULL, _("User Online Status Attributes"),
+	gaim_request_fields(gc, _("User Online Status Attributes"),
 			    _("User Online Status Attributes"),
 			    _("You can let other users see your online status information "
 			      "and your personal information. Please fill the information "

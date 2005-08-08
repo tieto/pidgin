@@ -329,7 +329,7 @@ void silcgaim_show_public_key(SilcGaim sg,
 
 	buf = g_string_free(s, FALSE);
 
-	gaim_request_action(NULL, _("Public Key Information"),
+	gaim_request_action(sg->gc, _("Public Key Information"),
 			    _("Public Key Information"),
 			    buf, 0, context, 1,
 			    _("Close"), callback);

@@ -1077,7 +1077,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			buf = g_string_free(s, FALSE);
 #if 0 /* XXX for now, let's not show attrs here */
 			if (client_entry->attrs)
-				gaim_request_action(NULL, _("User Information"),
+				gaim_request_action(gc, _("User Information"),
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcgaim_whois_more),
@@ -1695,7 +1695,7 @@ silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 		return;
 	internal->completion = completion;
 	internal->context = context;
-	gaim_request_input(NULL, _("Passphrase"), NULL,
+	gaim_request_input(client->application, _("Passphrase"), NULL,
 			   _("Passphrase required"), NULL, FALSE, TRUE, NULL,
 			   _("OK"), G_CALLBACK(silc_ask_passphrase_cb),
 			   _("Cancel"), G_CALLBACK(silc_ask_passphrase_cb),

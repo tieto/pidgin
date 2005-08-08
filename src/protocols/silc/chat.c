@@ -286,7 +286,7 @@ silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
 	f = gaim_request_fields_get_field(fields, "list");
 	if (!gaim_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		gaim_request_file(NULL, _("Open Public Key..."), NULL, FALSE,
+		gaim_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
 				  G_CALLBACK(silcgaim_chat_chpk_add),
 				  G_CALLBACK(silcgaim_chat_chpk_cancel), sgc);
 		return;
@@ -416,7 +416,7 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 	if (!channel_pubkeys) {
 		f = gaim_request_field_list_new("list", NULL);
 		gaim_request_field_group_add_field(g, f);
-		gaim_request_fields(NULL, _("Channel Authentication"),
+		gaim_request_fields(sg->gc, _("Channel Authentication"),
 				    _("Channel Authentication"), t, fields,
 				    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
 				    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
@@ -454,7 +454,7 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 	}
 
 	gaim_request_field_list_set_multi_select(f, FALSE);
-	gaim_request_fields(NULL, _("Channel Authentication"),
+	gaim_request_fields(sg->gc, _("Channel Authentication"),
 			    _("Channel Authentication"), t, fields,
 			    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
 			    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
@@ -590,7 +590,7 @@ silcgaim_chat_prv(GaimBlistNode *node, gpointer data)
 	g_snprintf(tmp, sizeof(tmp),
 		   _("Please enter the %s channel private group name and passphrase."),
 		   p->channel);
-	gaim_request_fields(NULL, _("Add Channel Private Group"), NULL, tmp, fields,
+	gaim_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
 			    _("Add"), G_CALLBACK(silcgaim_chat_prv_add),
 			    _("Cancel"), G_CALLBACK(silcgaim_chat_prv_cancel), p);
 }
@@ -717,7 +717,7 @@ silcgaim_chat_ulimit(GaimBlistNode *node, gpointer data)
 	s->channel = ch;
 	s->sg = sg;
 	g_snprintf(tmp, sizeof(tmp), "%d", (int)channel->user_limit);
-	gaim_request_input(NULL, _("User Limit"), NULL,
+	gaim_request_input(gc, _("User Limit"), NULL,
 			   _("Set user limit on channel. Set to zero to reset user limit."),
 			   tmp, FALSE, FALSE, NULL,
 			   _("OK"), G_CALLBACK(silcgaim_chat_ulimit_cb),

@@ -302,7 +302,7 @@ void silcgaim_buddy_keyagr_request(SilcClient client,
 		a->hostname = strdup(hostname);
 	a->port = port;
 
-	gaim_request_action(NULL, _("Key Agreement Request"), tmp,
+	gaim_request_action(client->application, _("Key Agreement Request"), tmp,
 			    hostname ? tmp2 : NULL, 1, a, 2,
 			    _("Yes"), G_CALLBACK(silcgaim_buddy_keyagr_request_cb),
 			    _("No"), G_CALLBACK(silcgaim_buddy_keyagr_request_cb));
@@ -455,7 +455,7 @@ silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
 	p->client = sg->client;
 	p->conn = sg->conn;
 	p->client_id = *clients[0]->id;
-        gaim_request_input(NULL, _("IM With Password"), NULL,
+        gaim_request_input(gc, _("IM With Password"), NULL,
                            _("Set IM Password"), NULL, FALSE, TRUE, NULL,
                            _("OK"), G_CALLBACK(silcgaim_buddy_privkey_cb),
                            _("Cancel"), G_CALLBACK(silcgaim_buddy_privkey_cb),
@@ -1020,7 +1020,7 @@ silcgaim_add_buddy_ask_pk_cb(SilcGaimBuddyRes r, gint id)
 	}
 
 	/* Open file selector to select the public key. */
-	gaim_request_file(NULL, _("Open..."), NULL, FALSE,
+	gaim_request_file(r->client->application, _("Open..."), NULL, FALSE,
 			  G_CALLBACK(silcgaim_add_buddy_ask_import),
 			  G_CALLBACK(silcgaim_add_buddy_ask_pk_cancel), r);
 }
@@ -1031,7 +1031,7 @@ silcgaim_add_buddy_ask_pk(SilcGaimBuddyRes r)
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not present in the network"),
 		   r->b->name);
-	gaim_request_action(NULL, _("Add Buddy"), tmp,
+	gaim_request_action(r->client->application, _("Add Buddy"), tmp,
 			    _("To add the buddy you must import his/her public key. "
 			      "Press Import to import a public key."), 0, r, 2,
 			    _("Cancel"), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb),
@@ -1121,7 +1121,7 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 		gaim_request_field_list_add(f, tmp, clients[i]);
 	}
 
-	gaim_request_fields(NULL, _("Add Buddy"),
+	gaim_request_fields(r->client->application, _("Add Buddy"),
 				_("Select correct user"),
 				r->pubkey_search
 					? _("More than one user was found with the same public key. Select "
