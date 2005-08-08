@@ -45,7 +45,6 @@
 #include "imgstore.h"
 #include "log.h"
 #include "notify.h"
-#include "prefs.h"
 #include "prpl.h"
 #include "request.h"
 #include "sound.h"
@@ -59,6 +58,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
 #include "gtkpounce.h"
+#include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
@@ -111,6 +111,7 @@ typedef struct
 } InviteBuddyInfo;
 
 static GtkWidget *invite_dialog = NULL;
+static GtkWidget *warn_close_dialog = NULL;
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first);
@@ -122,6 +123,75 @@ static void update_typing_icon(GaimGtkConversation *gtkconv);
 static gboolean update_send_as_selection(GaimConvWindow *win);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
+static void
+do_close(GtkWidget *w, int resp, GaimConvWindow *win)
+{
+	gtk_widget_destroy(warn_close_dialog);
+	warn_close_dialog = NULL;
+
+	if (resp == GTK_RESPONSE_OK)
+		gaim_conv_window_destroy(win);
+}
+
+static void build_warn_close_dialog(GaimConvWindow *win)
+{
+	GaimGtkWindow *gtkwin;
+	GtkWidget *label;
+	GtkWidget *vbox, *hbox;
+	GtkWidget *img;
+
+	g_return_if_fail(warn_close_dialog == NULL);
+
+	gtkwin = GAIM_GTK_WINDOW(win);
+
+	warn_close_dialog = gtk_dialog_new_with_buttons(
+		_("Confirm close"),
+		GTK_WINDOW(gtkwin->window), GTK_DIALOG_MODAL,
+		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+		GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
+
+	gtk_dialog_set_default_response(GTK_DIALOG(warn_close_dialog),
+					GTK_RESPONSE_OK);
+
+	gtk_container_set_border_width(GTK_CONTAINER(warn_close_dialog),
+				       6);
+	gtk_window_set_resizable(GTK_WINDOW(warn_close_dialog), FALSE);
+	gtk_dialog_set_has_separator(GTK_DIALOG(warn_close_dialog),
+				     FALSE);
+
+	/* Setup the outside spacing. */
+	vbox = GTK_DIALOG(warn_close_dialog)->vbox;
+
+	gtk_box_set_spacing(GTK_BOX(vbox), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), 6);
+
+	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_WARNING,
+				       GTK_ICON_SIZE_DIALOG);
+	/* Setup the inner hbox and put the dialog's icon in it. */
+	hbox = gtk_hbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
+
+	/* Setup the right vbox. */
+	vbox = gtk_vbox_new(FALSE, 12);
+	gtk_container_add(GTK_CONTAINER(hbox), vbox);
+
+	label = gtk_label_new(_("You have unread messages. Are you sure you want to continue?"));
+	gtk_widget_set_size_request(label, 350, -1);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+	gaim_gtk_prefs_checkbox(_("Warn me when I close the window with unread messages"),
+				"/gaim/gtk/conversations/warn_on_unread_close", vbox);
+
+	/* Connect the signals. */
+	g_signal_connect(G_OBJECT(warn_close_dialog), "response",
+			 G_CALLBACK(do_close), win);
+
+}
+
 /**************************************************************************
  * Callbacks
  **************************************************************************/
@@ -130,6 +200,26 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	GaimConvWindow *win = (GaimConvWindow *)d;
 
+	if (gaim_prefs_get_bool(
+			"/gaim/gtk/conversations/warn_on_unread_close"))
+	{
+		GList *l;
+		for (l = gaim_conv_window_get_conversations(win);
+		     l != NULL; l = l->next)
+		{
+			GaimConversation *conv = l->data;
+			if (gaim_conversation_get_type(conv)
+				== GAIM_CONV_IM
+			    && gaim_conversation_get_unseen(conv)
+				== GAIM_UNSEEN_TEXT)
+			{
+				build_warn_close_dialog(win);
+				gtk_widget_show_all(warn_close_dialog);
+
+				return TRUE;
+			}
+		}
+	}
 	gaim_conv_window_destroy(win);
 
 	return TRUE;
@@ -6131,6 +6221,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/warn_on_unread_close", TRUE);
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");
