@@ -665,8 +665,7 @@ gaim_upnp_discover_udp_read(gpointer data,
 }
 
 
-
-const char*
+char*
 gaim_upnp_discover(void)
 {
   int sock, i;
@@ -873,7 +872,7 @@ gaim_upnp_generate_action_message_and_send(const char* controlURL,
 
 
 
-const char*
+char*
 gaim_upnp_get_public_ip(const char* controlURL)
 {
   char* extIPAddress;
