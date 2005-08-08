@@ -1095,6 +1095,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	gchar **userserver;
 	int error=0;
 	struct getserver_return *serveradr;
+	gchar *hosttoconnect;
 	       
 	const char *username = gaim_account_get_username(account);
 
@@ -1124,10 +1125,16 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 
 	sip->status = g_strdup("available");
 
+	if(!gaim_account_get_bool(account, "useproxy", FALSE)) {
+		hosttoconnect = g_strdup(sip->servername);
+	} else {
+		hosttoconnect = g_strdup(gaim_account_get_string(account, "proxy", sip->servername));
+	}
+	
 	// TCP case
 	if(! sip->udp) {	
 		// search for SRV record
-		serveradr = getserver(sip->servername, "_sip._tcp");
+		serveradr = getserver(hosttoconnect, "_sip._tcp");
 	        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
 
 		// open tcp connection to the server
@@ -1149,7 +1156,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 		struct sockaddr_in addr;
 		struct hostent *h;
 		
-		serveradr = getserver(sip->servername, "_sip._udp");
+		serveradr = getserver(hosttoconnect, "_sip._udp");
 		gaim_debug_info("simple", "using udp with server %s and port %d", serveradr->name, serveradr->port);
 		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -1174,6 +1181,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	        do_register(sip);
 		
 	}
+	g_free(hosttoconnect);
 		
 	// register timeout callback for register / subscribe renewal
 	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)register_timeout, sip);
@@ -1307,6 +1315,10 @@ static void _init_plugin(GaimPlugin *plugin)
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_bool_new(_("Use Proxy"), "useproxy", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_string_new(_("Proxy"), "proxy", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 //	_simple_plugin = plugin;
 }
