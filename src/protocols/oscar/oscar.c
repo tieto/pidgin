@@ -1599,7 +1599,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	aim_session_t *sess = aim_conn_getsess(conn);
 	GaimConnection *gc = sess ? sess->aux_data : NULL;
 	OscarData *od;
-
+	
 	if (!gc) {
 		gaim_debug_info("oscar",
 				   "oscar callback for closed connection (1).\n");
@@ -1700,6 +1700,7 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 				} else if (conn->type == AIM_CONN_TYPE_RENDEZVOUS) {
 					if (conn->subtype == AIM_CONN_SUBTYPE_OFT_DIRECTIM)
 						gaim_odc_disconnect(od->sess, conn);
+					gaim_debug_info("oscar","killing rendezvous connection\n");
 					aim_conn_kill(od->sess, &conn);
 				} else {
 					gaim_debug_error("oscar",
@@ -2024,19 +2025,21 @@ static gboolean oscar_clientip_timeout(gpointer data) {
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
 	char *msg = NULL;
-
+	
 	gaim_debug_info("oscar","AAA - in oscar_clientip_timeout\n");
 	xfer = (GaimXfer*) data;
 	if(xfer->data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
-
+		
 		/* Check to see if the clientip has produced any results */
-		if(oft_info->conn && oft_info->conn->status != AIM_CONN_STATUS_INPROGRESS) {
+		if(!oft_info->success) {
 			msg = g_strdup_printf(_("Transfer of file %s timed out."),gaim_xfer_get_filename(xfer));
 			gaim_xfer_conversation_write(xfer, msg, TRUE);
 			g_free(msg);
 			gaim_xfer_unref(xfer);
 			gaim_xfer_cancel_local(xfer);
+		} else {
+			gaim_debug_info("oscar","connection successful; no action taken\n");
 		}
 	}
 	return FALSE;
@@ -2058,18 +2061,21 @@ static gboolean oscar_verifiedip_timeout(gpointer data) {
 		oft_info = (struct aim_oft_info*) xfer->data;
 		
 		/* Check to see if the verifiedip has produced any results */
-		if(oft_info->conn && oft_info->conn->status != AIM_CONN_STATUS_INPROGRESS) {
+		if(!oft_info->success) {
 			/* gaim_xfer_conversation_write(xfer,
 				"Attempting file transfer via secondary IP address...", FALSE); */
 		
 			/* The verifiedip connection has worn out its welcome. Goodbye. */
+			close(oft_info->conn->fd);
 			aim_conn_kill(oft_info->sess, &oft_info->conn);
 			
 			/* Try the file transfer again with the clientip */
 			g_free(xfer->remote_ip);
 			xfer->remote_ip = g_strdup(oft_info->clientip);
-			gaim_debug_info("oscar","attempting connection using clientip\n");
+			gaim_debug_info("oscar","attempting connection using clientip: %s\n", xfer->remote_ip);
 			oscar_xfer_init_recv(xfer);
+		} else {
+			gaim_debug_info("oscar","connection successful; no action taken\n");
 		}
 	}
 	return FALSE;
@@ -2082,7 +2088,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 	OscarData *od = gc->proto_data;
 
 	gaim_debug_info("oscar", "AAA - in oscar_xfer_recv_init\n");
-
+	
 	/* Start a timer for this ip address
 	 * If the verifiedip fails, try the clientip
 	 * If clientip fails, declare the whole file transfer dead
@@ -2103,7 +2109,7 @@ static void oscar_xfer_init_recv(GaimXfer *xfer)
 		oft_info->conn->subtype = AIM_CONN_SUBTYPE_OFT_SENDFILE;
 		aim_conn_addhandler(od->sess, oft_info->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_PROMPT, oscar_sendfile_prompt, 0);
 		oft_info->conn->fd = xfer->fd = gaim_proxy_connect(gaim_connection_get_account(gc),
-					xfer->remote_ip, xfer->remote_port,	oscar_sendfile_connected, xfer);
+					xfer->remote_ip, xfer->remote_port, oscar_sendfile_connected, xfer);
 		if (xfer->fd == -1) {
 			gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer), xfer->who,
 							_("Unable to establish file descriptor."));
@@ -3272,9 +3278,23 @@ static void oscar_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	if (!(oft_info = xfer->data))
 		return;
 	if (source < 0) {
-		gaim_xfer_cancel_remote(xfer);
-		return;
+		/* This will also be called 3 minutes after the verifiedip times out.
+		 * However, we might have made a successful connection with the clientip
+		 * so we need to make sure the verifiedip's failures aren't taken out
+		 * on the poor little clientip, which might actually have been a success. */
+		if(oft_info->success) {
+			gaim_debug_info("oscar","fd of %d for verifiedip, but clientip succeeded; ignoring\n",
+				source);
+			return;
+		} else {
+			gaim_debug_info("oscar","received fd of %d; aborting transfer\n", source);
+			gaim_xfer_cancel_remote(xfer);
+			return;
+		}
 	}
+	
+	gaim_debug_info("oscar","marking connection as success; fd is %d\n", source);
+	oft_info->success = TRUE; /* Mark this connection as successful before it times out */
 
 	xfer->fd = source;
 	oft_info->conn->fd = source;
@@ -3642,6 +3662,8 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			 * get this, then maybe a third party connected 
 			 * to us, and we shouldn't send them anything.
 			 */
+			 gaim_debug_info("oscar",
+			 	"AAA - received chan 2 AIM_RENDEZVOUS_ACCEPT; ignoring\n");
 		} else {
 			gaim_debug_error("oscar",
 					   "unknown rendezvous status!\n");

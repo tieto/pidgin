@@ -925,6 +925,7 @@ struct aim_oft_info {
 	fu16_t port;
 	aim_conn_t *conn;
 	aim_session_t *sess;
+	int success; /* Was the connection successful? Used for timing out the transfer. */
 	struct aim_fileheader_t fh;
 	struct aim_oft_info *next;
 };

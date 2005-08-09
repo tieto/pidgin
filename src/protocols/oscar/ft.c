@@ -672,6 +672,7 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	if (sn)
 		new->sn = strdup(sn);
 	new->port = port;
+	new->success = FALSE;
 	new->fh.totfiles = 1;
 	new->fh.filesleft = 1;
 	new->fh.totparts = 1;

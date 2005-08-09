@@ -172,8 +172,10 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	if (conn->fd == -1)
 		return -1; /* it's an aim_conn_close()'d connection */
 
-	if (conn->fd < 3) /* can happen when people abuse the interface */
+	/* If stdin is closed, then zero becomes a valid fd
+	if (conn->fd < 3)
 		return -1;
+	*/
 
 	if (conn->status & AIM_CONN_STATUS_INPROGRESS)
 		return aim_conn_completeconnect(sess, conn);
