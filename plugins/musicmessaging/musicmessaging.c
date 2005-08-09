@@ -399,7 +399,7 @@ static GaimPluginInfo info = {
     "Music Messaging",
     VERSION,
     "Music Messaging Plugin for collabrative composition.",
-    "The Music Messaging Plugin allows a number of users to simultaniously work on a piece of music by editting a common score in real-time.",
+    "The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time.",
     "Christian Muise <christian.muise@gmail.com>",
     GAIM_WEBSITE,
     plugin_load,
