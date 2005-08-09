@@ -177,9 +177,13 @@ gaim_network_do_listen(unsigned short port)
 	hints.ai_socktype = SOCK_STREAM;
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
+#ifndef _WIN32
 		gaim_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
 			gaim_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
+#else
+	gaim_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
+#endif
 		return -1;
 	}
 
@@ -294,6 +298,8 @@ gaim_network_get_port_from_fd(int fd)
 void
 gaim_network_init(void)
 {
+	gaim_debug_register_category("network");
+
 	gaim_prefs_add_none  ("/core/network");
 	gaim_prefs_add_bool  ("/core/network/auto_ip", TRUE);
 	gaim_prefs_add_string("/core/network/public_ip", "");
