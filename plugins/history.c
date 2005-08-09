@@ -7,6 +7,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "log.h"
+#include "notify.h"
 #include "prefs.h"
 #include "signals.h"
 #include "util.h"
@@ -49,6 +50,11 @@ static void historize(GaimConversation *c)
 		GSList *buddies;
 		GSList *cur;
 
+		/* If we're not logging, don't show anything.
+		 * Otherwise, we might show a very old log. */
+		if (!gaim_prefs_get_bool("/core/logging/log_ims"))
+			return;
+
 		/* Find buddies for this conversation. */
 	        buddies = gaim_find_buddies(account, name);
 
@@ -87,7 +93,14 @@ static void historize(GaimConversation *c)
         		logs = g_list_sort(logs, gaim_log_compare);
 	}
 	else if (convtype == GAIM_CONV_CHAT)
+	{
+		/* If we're not logging, don't show anything.
+		 * Otherwise, we might show a very old log. */
+		if (!gaim_prefs_get_bool("/core/logging/log_chats"))
+			return;
+
 		logs = gaim_log_get_logs(GAIM_LOG_CHAT, name, account);
+	}
 
 	if (logs == NULL)
 		return;
@@ -115,12 +128,37 @@ static void historize(GaimConversation *c)
 	g_list_free(logs);
 }
 
+static void
+history_prefs_check(GaimPlugin *plugin)
+{
+	if (!gaim_prefs_get_bool("/core/logging/log_ims") &&
+	    !gaim_prefs_get_bool("/core/logging/log_chats"))
+	{
+		gaim_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
+							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
+							  "Enabling logs for instant messages and/or chats will activate "
+							  "history for the same conversation type(s)."));
+	}
+}
+
+static void history_prefs_cb(const char *name, GaimPrefType type, gpointer val, gpointer data)
+{
+	history_prefs_check((GaimPlugin *)data);
+}
+
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	gaim_signal_connect(gaim_conversations_get_handle(),
 						"conversation-created",
 						plugin, GAIM_CALLBACK(historize), NULL);
+
+	gaim_prefs_connect_callback(plugin, "/core/logging/log_ims",
+								history_prefs_cb, plugin);
+	gaim_prefs_connect_callback(plugin, "/core/logging/log_chats",
+								history_prefs_cb, plugin);
+
+	history_prefs_check(plugin);
 
 	return TRUE;
 }
@@ -139,7 +177,13 @@ static GaimPluginInfo info =
 	N_("History"),
 	VERSION,
 	N_("Shows recently logged conversations in new conversations."),
-	N_("When a new conversation is opened this plugin will insert the last conversation into the current conversation."),
+	N_("When a new conversation is opened this plugin will insert "
+	   "the last conversation into the current conversation.\n\n"
+       "The history plugin requires logging be enabled. Logging can "
+	   "be enabled from Tools -> Preferences -> Logging. Enabling logs "
+	   "for instant messages and/or chats will activate history for "
+	   "the same conversation type(s)."
+	),
 	"Sean Egan <bj91704@binghamton.edu>",
 	GAIM_WEBSITE,
 	plugin_load,
