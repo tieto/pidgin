@@ -134,7 +134,7 @@ gaim_network_get_local_system_ip(int fd)
 const char *
 gaim_network_get_my_ip(int fd)
 {
-  char *ip = NULL;
+  const char *ip = NULL;
   char *controlURL = NULL;
 
 	/* Check if the user specified an IP manually */
