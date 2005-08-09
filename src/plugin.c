@@ -1030,7 +1030,7 @@ gaim_plugins_probe(const char *ext)
 	for (cur = plugins; cur != NULL; cur = cur->next)
 	{
 		plugin = cur->data;
-		if (plugin->info->type == GAIM_PLUGIN_PROTOCL)
+		if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
 			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
 													(GCompareFunc)compare_prpl);
 	}
