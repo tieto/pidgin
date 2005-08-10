@@ -347,11 +347,21 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml);
 
 /**
+ * Delete the contents of a GTK+ IM/HTML between start and end.
+ *
+ * @param imhtml  The GTK+ IM/HTML.
+ * @param start   a postition in the imhtml's buffer
+ * @param end     another postition in the imhtml's buffer
+ */
+void gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
+
+/**
  * Purges the contents from a GTK+ IM/HTML and resets formatting.
  *
  * @param imhtml  The GTK+ IM/HTML.
  */
-void gtk_imhtml_clear(GtkIMHtml *imhtml);
+#define gtk_imhtml_clear(imhtml) \
+ gtk_imhtml_delete(imhtml, NULL, NULL)
 
 /**
  * Scrolls a GTK+ IM/HTML up by one page.

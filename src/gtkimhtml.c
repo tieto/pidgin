@@ -77,6 +77,17 @@
 
 static GtkTextViewClass *parent_class = NULL;
 
+struct scalable_data {
+	GtkIMHtmlScalable *scalable;
+	GtkTextMark *mark;
+};
+
+
+struct im_image_data {
+	int id;
+	GtkTextMark *mark;
+};
+
 static gboolean
 gtk_text_view_drag_motion (GtkWidget        *widget,
                            GdkDragContext   *context,
@@ -371,7 +382,8 @@ static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gp
 		         gtk_text_view_get_right_margin(GTK_TEXT_VIEW(widget));
 
 		while(iter){
-			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(iter->data);
+			struct scalable_data *sd = iter->data;
+			GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(sd->scalable);
 			scale->scale(scale, rect.width - xminus, rect.height);
 
 			iter = iter->next;
@@ -1139,15 +1151,17 @@ gtk_imhtml_finalize (GObject *object)
 		gtk_timeout_remove(imhtml->tip_timer);
 
 	for(scalables = imhtml->scalables; scalables; scalables = scalables->next) {
-		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(scalables->data);
+		struct scalable_data *sd = scalables->data;
+		GtkIMHtmlScalable *scale = GTK_IMHTML_SCALABLE(sd->scalable);
 		scale->free(scale);
+		g_free(sd);
 	}
 
 	for (l = imhtml->im_images; l; l = l->next) {
-		int id;
-		id = GPOINTER_TO_INT(l->data);
+		struct im_image_data *img_data = l->data;
 		if (imhtml->funcs->image_unref)
-			imhtml->funcs->image_unref(id);
+			imhtml->funcs->image_unref(img_data->id);
+		g_free(img_data);
 	}
 
 	if (imhtml->clipboard_text_string) {
@@ -2463,17 +2477,19 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 42:        /* HR (opt) */
 				{
 					int minus;
+					struct scalable_data *sd = g_new(struct scalable_data, 1);
 
 					ws[wpos++] = '\n';
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-					scalable = gtk_imhtml_hr_new();
+					sd->scalable = scalable = gtk_imhtml_hr_new();
 					gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 					scalable->add_to(scalable, imhtml, iter);
 					minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
 					        gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
 					scalable->scale(scalable, rect.width - minus, rect.height);
-					imhtml->scalables = g_list_append(imhtml->scalables, scalable);
+					sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
+					imhtml->scalables = g_list_append(imhtml->scalables, sd);
 					ws[0] = '\0'; wpos = 0;
 					ws[wpos++] = '\n';
 
@@ -2969,23 +2985,53 @@ gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name) {
 }
 
 void
-gtk_imhtml_clear (GtkIMHtml *imhtml)
-{
-	GList *del;
-	GtkTextIter start, end;
+gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end) {
+	GList *l;
+	GSList *sl;
+	GtkTextIter i;
 	GObject *object = g_object_ref(G_OBJECT(imhtml));
-	
-	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &start);
-	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &end);
-	gtk_text_buffer_delete(imhtml->text_buffer, &start, &end);
 
-	for(del = imhtml->scalables; del; del = del->next) {
-		GtkIMHtmlScalable *scale = del->data;
-		scale->free(scale);
+	if (start == NULL) {
+		GtkTextIter i_s;
+		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &i_s);
+		start = &i_s;
 	}
-	
-	g_list_free(imhtml->scalables);
-	imhtml->scalables = NULL;
+
+	if (end == NULL) {
+		GtkTextIter i_e;
+		gtk_text_buffer_get_end_iter(imhtml->text_buffer, &i_e);
+		end = &i_e;
+	}
+
+	l = imhtml->scalables;
+	while (l) {
+		GList *next = l->next;
+		struct scalable_data *sd = l->data;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer,
+			&i, sd->mark);
+		if (gtk_text_iter_in_range(&i, start, end)) {
+			GtkIMHtmlScalable *scale = sd->scalable;
+			scale->free(scale);
+			imhtml->scalables = g_list_remove_link(imhtml->scalables, l);
+		}
+		l = next;
+	}
+
+	sl = imhtml->im_images;
+	while (sl) {
+		GSList *next = sl->next;
+		struct im_image_data *img_data = sl->data;
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer,
+			&i, img_data->mark);
+		if (gtk_text_iter_in_range(&i, start, end)) {
+			if (imhtml->funcs->image_unref)
+				imhtml->funcs->image_unref(img_data->id);
+			imhtml->im_images = g_slist_delete_link(imhtml->im_images, sl);
+			g_free(img_data);
+		}
+		sl = next;
+	}
+	gtk_text_buffer_delete(imhtml->text_buffer, start, end);
 
 	g_object_unref(object);
 }
@@ -4194,6 +4240,7 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 	gpointer image;
 	GdkRectangle rect;
 	GtkIMHtmlScalable *scalable = NULL;
+	struct scalable_data *sd;
 	int minus;
 
 	if (!imhtml->funcs || !imhtml->funcs->image_get ||
@@ -4226,19 +4273,24 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 	if (pixbuf) {
 		filename = imhtml->funcs->image_get_filename(image);
 		imhtml->funcs->image_ref(id);
-		imhtml->im_images = g_slist_prepend(imhtml->im_images, GINT_TO_POINTER(id));
+		struct im_image_data *t = g_new(struct im_image_data, 1);
+		t->id = id;
+		t->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
+		imhtml->im_images = g_slist_prepend(imhtml->im_images, t);
 	} else {
 		pixbuf = gtk_widget_render_icon(GTK_WIDGET(imhtml), GTK_STOCK_MISSING_IMAGE,
 						GTK_ICON_SIZE_BUTTON, "gtkimhtml-missing-image");
 	}
 
-	scalable = gtk_imhtml_image_new(pixbuf, filename, id);
+	sd = g_new(struct scalable_data, 1);
+	sd->scalable = scalable = gtk_imhtml_image_new(pixbuf, filename, id);
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 	scalable->add_to(scalable, imhtml, iter);
 	minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
 		gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
 	scalable->scale(scalable, rect.width - minus, rect.height);
-	imhtml->scalables = g_list_append(imhtml->scalables, scalable);
+	sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
+	imhtml->scalables = g_list_append(imhtml->scalables, sd);
 
 	g_object_unref(G_OBJECT(pixbuf));
 }

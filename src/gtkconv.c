@@ -4964,6 +4964,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	GaimConvWindow *win;
 	GaimConnection *gc;
 	int gtk_font_options = 0;
+	int max_scrollback_lines = gaim_prefs_get_int(
+		"/gaim/gtk/conversations/scrollback_lines");
+	int line_count;
 	char buf2[BUF_LONG];
 	char mdate[64];
 	char color[10];
@@ -4977,6 +4980,24 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	gc = gaim_conversation_get_gc(conv);
 
 	win = gaim_conversation_get_window(conv);
+
+	line_count = gtk_text_buffer_get_line_count(
+			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
+				gtkconv->imhtml)));
+printf("writing to conv - max_scrollback_lines = %d our lines = %d\n", max_scrollback_lines, line_count);
+	/* If we're sitting at more than 100 lines more than the
+	   max scrollback, trim down to max scrollback */
+	if (max_scrollback_lines > 0
+			&& line_count > (max_scrollback_lines + 100)) {
+		GtkTextBuffer *text_buffer = gtk_text_view_get_buffer(
+			GTK_TEXT_VIEW(gtkconv->imhtml));
+		GtkTextIter start, end;
+
+		gtk_text_buffer_get_start_iter(text_buffer, &start);
+		gtk_text_buffer_get_iter_at_line(text_buffer, &end,
+			(line_count - max_scrollback_lines));
+		gtk_imhtml_delete(GTK_IMHTML(gtkconv->imhtml), &start, &end);
+	}
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
@@ -6222,6 +6243,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/warn_on_unread_close", TRUE);
+	gaim_prefs_add_int("/gaim/gtk/conversations/scrollback_lines", 4000);
 
 	/* Conversations -> Chat */
 	gaim_prefs_add_none("/gaim/gtk/conversations/chat");

@@ -46,6 +46,8 @@ version 2.0.0:
 	  directly
 	* Yahoo! buddy requests to add you to their buddy list now prompt for
 	  authorization.
+	* Conversation buffer scrollback limited to avoid large memory
+	  usage in active conversations.
 
 	Bug fixes:
 	* People using input methods can now use Enter again.
