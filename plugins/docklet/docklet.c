@@ -136,6 +136,8 @@ static void docklet_menu() {
 			gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
 			menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
 			gtk_widget_set_sensitive(menuitem, online_account_supports_chat);
+
+			gaim_separator(menu);
 			break;
 	}
 
@@ -185,8 +187,6 @@ static void docklet_menu() {
 #endif
 			break;
 	}
-
-	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
