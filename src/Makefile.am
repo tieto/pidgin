@@ -94,6 +94,7 @@ gaim_coresources = \
 	signals.c \
 	status.c \
 	stringref.c \
+	stun.c \
 	sound.c \
 	sslconn.c \
 	upnp.c \
@@ -135,6 +136,7 @@ gaim_coreheaders = \
 	signals.h \
 	status.h \
 	stringref.h \
+	stun.h \
 	sound.h \
 	sslconn.h \
 	upnp.h \
