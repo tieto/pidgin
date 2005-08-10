@@ -4984,7 +4984,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 	line_count = gtk_text_buffer_get_line_count(
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
 				gtkconv->imhtml)));
-printf("writing to conv - max_scrollback_lines = %d our lines = %d\n", max_scrollback_lines, line_count);
+
 	/* If we're sitting at more than 100 lines more than the
 	   max scrollback, trim down to max scrollback */
 	if (max_scrollback_lines > 0
