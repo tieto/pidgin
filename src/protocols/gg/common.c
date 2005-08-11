@@ -306,7 +306,7 @@ char *gg_urlencode(const char *str)
  * manipulacjach w³asnego wpisu w katalogu publicznym.
  */
 
-int gg_http_hash(const unsigned char *email, const unsigned char *password)
+int gg_http_hash(const char *email, const char *password)
 {
 	unsigned int a, c;
 	int b, i;

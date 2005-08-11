@@ -148,7 +148,7 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
 
-	char *ip = gaim_prefs_get_string("/core/network/stun_ip");
+	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
 	int port = gaim_prefs_get_int("/core/network/stun_port");
 	
 	if(port == 0 || ip == NULL || ip[0] == '\0') return NULL;

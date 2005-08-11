@@ -445,7 +445,7 @@ int gg_connect(void *addr, int port, int async);
 void gg_read_line(int sock, char *buf, int length);
 void gg_chomp(char *line);
 char *gg_urlencode(const char *str);
-int gg_http_hash(const unsigned char *email, const unsigned char *password);
+int gg_http_hash(const char *email, const char *password);
 
 #define GG_APPMSG_HOST "appmsg.gadu-gadu.pl"
 #define GG_APPMSG_PORT 80

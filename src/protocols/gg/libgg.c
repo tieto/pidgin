@@ -503,7 +503,7 @@ struct gg_session *gg_login(uin_t uin, char *password, int async)
  *
  * hash.
  */
-unsigned int gg_login_hash(const unsigned char *password, unsigned int seed)
+unsigned int gg_login_hash(const char *password, unsigned int seed)
 {
 	unsigned int x, y, z;
 
