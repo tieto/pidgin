@@ -2988,17 +2988,15 @@ void
 gtk_imhtml_delete(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end) {
 	GList *l;
 	GSList *sl;
-	GtkTextIter i;
+	GtkTextIter i, i_s, i_e;
 	GObject *object = g_object_ref(G_OBJECT(imhtml));
 
 	if (start == NULL) {
-		GtkTextIter i_s;
 		gtk_text_buffer_get_start_iter(imhtml->text_buffer, &i_s);
 		start = &i_s;
 	}
 
 	if (end == NULL) {
-		GtkTextIter i_e;
 		gtk_text_buffer_get_end_iter(imhtml->text_buffer, &i_e);
 		end = &i_e;
 	}
