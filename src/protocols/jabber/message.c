@@ -313,7 +313,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				if(timestamp)
 					jm->sent = gaim_str_to_time(timestamp, TRUE);
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
-					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE) {
+					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
+					jm->type != JABBER_MESSAGE_ERROR) {
 				const char *jid = xmlnode_get_attrib(child, "jid");
 				if(jid) {
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
@@ -321,7 +322,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 					jm->to = g_strdup(jid);
 				}
 			} else if(xmlns && !strcmp(xmlns,
-						"http://jabber.org/protocol/muc#user")) {
+						"http://jabber.org/protocol/muc#user") &&
+					jm->type != JABBER_MESSAGE_ERROR) {
 				xmlnode *invite = xmlnode_get_child(child, "invite");
 				if(invite) {
 					xmlnode *reason, *password;
