@@ -1078,9 +1078,9 @@ gaim_xfer_error(GaimXferType type, GaimAccount *account, const char *who, const 
 	}
 
 	if (type == GAIM_XFER_SEND)
-		title = g_strdup_printf(_("File transfer to %s failed.\n"), who);
+		title = g_strdup_printf(_("File transfer to %s failed."), who);
 	else
-		title = g_strdup_printf(_("File transfer from %s failed.\n"), who);
+		title = g_strdup_printf(_("File transfer from %s failed."), who);
 
 	gaim_notify_error(NULL, NULL, title, msg);
 
