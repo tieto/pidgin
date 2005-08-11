@@ -2483,12 +2483,12 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
 					sd->scalable = scalable = gtk_imhtml_hr_new();
+					sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 					gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 					scalable->add_to(scalable, imhtml, iter);
 					minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
 					        gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
 					scalable->scale(scalable, rect.width - minus, rect.height);
-					sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 					imhtml->scalables = g_list_append(imhtml->scalables, sd);
 					ws[0] = '\0'; wpos = 0;
 					ws[wpos++] = '\n';
@@ -4284,12 +4284,12 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 
 	sd = g_new(struct scalable_data, 1);
 	sd->scalable = scalable = gtk_imhtml_image_new(pixbuf, filename, id);
+	sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 	scalable->add_to(scalable, imhtml, iter);
 	minus = gtk_text_view_get_left_margin(GTK_TEXT_VIEW(imhtml)) +
 		gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
 	scalable->scale(scalable, rect.width - minus, rect.height);
-	sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 	imhtml->scalables = g_list_append(imhtml->scalables, sd);
 
 	g_object_unref(G_OBJECT(pixbuf));
