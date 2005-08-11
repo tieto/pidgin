@@ -237,9 +237,9 @@ gaim_network_do_listen(unsigned short port)
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
   if((controlURL = gaim_upnp_discover()) != NULL) {
-    if(!gaim_upnp_set_port_mapping(controlURL, port, "TCP")) {
-      gaim_upnp_remove_port_mapping(controlURL, port, "TCP");
-      gaim_upnp_set_port_mapping(controlURL, port, "TCP");
+    if(!gaim_upnp_set_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP")) {
+      gaim_upnp_remove_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP");
+      gaim_upnp_set_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP");
     }
     free(controlURL);
   }
