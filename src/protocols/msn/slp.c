@@ -611,7 +611,7 @@ got_ok(MsnSlpCall *slpcall,
 }
 
 MsnSlpCall *
-msn_slp_sip_recv(MsnSlpLink *slplink, const char *body, gsize len)
+msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 {
 	MsnSlpCall *slpcall;
 

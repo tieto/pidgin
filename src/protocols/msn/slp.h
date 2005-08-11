@@ -33,7 +33,7 @@ void msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize
 						  len, gsize offset);
 
 MsnSlpCall * msn_slp_sip_recv(MsnSlpLink *slplink,
-							  const char *body, gsize len);
+							  const char *body);
 
 void send_bye(MsnSlpCall *slpcall, const char *type);
 
