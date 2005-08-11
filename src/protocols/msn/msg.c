@@ -187,7 +187,8 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 
 	if (body_len > 0) {
 		msg->body_len = len - (tmp - body);
-		msg->body = g_memdup(tmp, msg->body_len);
+		msg->body = g_malloc0(msg->body_len + 1);
+		memcpy(msg->body, tmp, msg->body_len);
 		tmp += body_len;
 	}
 }
@@ -300,7 +301,8 @@ msn_message_parse_payload(MsnMessage *msg,
 		/* Import the body. */
 		if (body_len > 0) {
 			msg->body_len = body_len;
-			msg->body = g_memdup(tmp, msg->body_len);
+			msg->body = g_malloc0(msg->body_len + 1);
+			memcpy(msg->body, tmp, msg->body_len);
 			tmp += body_len;
 		}
 
@@ -315,7 +317,8 @@ msn_message_parse_payload(MsnMessage *msg,
 	{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
-			msg->body = g_memdup(tmp, msg->body_len);
+			msg->body = g_malloc0(msg->body_len + 1);
+			memcpy(msg->body, tmp, msg->body_len);
 		}
 	}
 
@@ -511,7 +514,8 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 
 	if (data != NULL && len > 0)
 	{
-		msg->body = g_memdup(data, len);
+		msg->body = g_malloc0(len + 1);
+		memcpy(msg->body, data, len);
 		msg->body_len = len;
 	}
 	else
