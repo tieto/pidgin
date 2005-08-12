@@ -145,20 +145,20 @@ gaim_coreheaders = \
 	version.h \
 	xmlnode.h
 
-bin_PROGRAMS = gaim gaim-remote 
+bin_PROGRAMS = gaim gaim-remote
 
 
 if ENABLE_DBUS
 
 CLEANFILES    = \
 	dbus-bindings.c \
-	dbus-client-binding.c \ 
+	dbus-client-binding.c \
 	dbus-client-binding.h
 
-# gaim dbus server 
+# gaim dbus server
 
-dbus_sources  = dbus-server.c dbus-useful.c 
-dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h 
+dbus_sources  = dbus-server.c dbus-useful.c
+dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
@@ -166,7 +166,7 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h c
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py > $@
 
-dbus-server.$(OBJEXT): dbus-bindings.c 
+dbus-server.$(OBJEXT): dbus-bindings.c
 
 
 # libgaim-client
@@ -186,9 +186,9 @@ $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
 # gaim-client-example
 
-gaim_client_example_SOURCES = gaim-client-example.c 
+gaim_client_example_SOURCES = gaim-client-example.c
 
-gaim_client_example_DEPENDENCIES = 	@LIBOBJS@ 
+gaim_client_example_DEPENDENCIES = @LIBOBJS@
 gaim_client_example_LDADD = \
 	@LIBOBJS@ \
 	libgaim-client.la \
