@@ -311,15 +311,15 @@ gaim_gtk_request_input(const char *title, const char *primary,
 					 G_CALLBACK(input_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -329,7 +329,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
@@ -469,14 +469,14 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 			 G_CALLBACK(choice_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -486,7 +486,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -509,7 +509,7 @@ gaim_gtk_request_choice(const char *title, const char *primary,
 
 	g_free(label_text);
 
-	vbox2 = gtk_vbox_new(FALSE, 6);
+	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
 		       int resp = va_arg(args, int);
@@ -578,14 +578,14 @@ gaim_gtk_request_action(const char *title, const char *primary,
 					 G_CALLBACK(action_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -595,7 +595,7 @@ gaim_gtk_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -1210,7 +1210,7 @@ create_choice_field(GaimRequestField *field)
 		gint i;
 
 		if (g_list_length(labels) == 2)
-			box = gtk_hbox_new(FALSE, 6);
+			box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		else
 			box = gtk_vbox_new(FALSE, 0);
 
@@ -1386,14 +1386,14 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		gtk_window_set_title(GTK_WINDOW(win), title);
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), hbox);
 	gtk_widget_show(hbox);
 
@@ -1405,7 +1405,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 	gtk_widget_show(img);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -1440,7 +1440,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(sw);
 
-		vbox2 = gtk_vbox_new(FALSE, 12);
+		vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox2);
 		gtk_widget_show(vbox2);
 	} else {
@@ -1526,8 +1526,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 		}
 
 		table = gtk_table_new(rows, 2 * cols, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-		gtk_table_set_col_spacings(GTK_TABLE(table), 6);
+		gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
+		gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
 
 		gtk_container_add(GTK_CONTAINER(frame), table);
 		gtk_widget_show(table);
@@ -1658,7 +1658,7 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

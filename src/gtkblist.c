@@ -784,7 +784,7 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 
 		pce = tmp->data;
 
-		rowbox = gtk_hbox_new(FALSE, 12);
+		rowbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
 
 		label = gtk_label_new_with_mnemonic(pce->label);
@@ -904,14 +904,14 @@ gaim_gtk_blist_joinchat_show(void)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		GAIM_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), 12);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
 	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
+		GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "join_chat");
 
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -926,7 +926,7 @@ gaim_gtk_blist_joinchat_show(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	rowbox = gtk_hbox_new(FALSE, 12);
+	rowbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, TRUE, TRUE, 0);
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -4391,15 +4391,15 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 			NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_buddy");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
 							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -4418,7 +4418,7 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	g_signal_connect(G_OBJECT(data->window), "destroy",
@@ -4776,15 +4776,15 @@ gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), 6);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_chat");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
 							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);

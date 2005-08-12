@@ -930,7 +930,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	toolbar->tooltips = gtk_tooltips_new();
 
-	gtk_box_set_spacing(GTK_BOX(toolbar), 6);
+	gtk_box_set_spacing(GTK_BOX(toolbar), GAIM_HIG_BOX_SPACE);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	/* Bold */

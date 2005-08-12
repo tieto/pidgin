@@ -292,7 +292,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	/* Window ***********/
 	lv->window = gtk_dialog_new_with_buttons(title, NULL, 0,
 					     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE, NULL);
-	gtk_container_set_border_width (GTK_CONTAINER(lv->window), 6);
+	gtk_container_set_border_width (GTK_CONTAINER(lv->window), GAIM_HIG_BOX_SPACE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response",
@@ -304,8 +304,8 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		GdkPixbuf *scale;
 		GtkWidget *icon;
 
-		title_box = gtk_hbox_new(FALSE, 6);
-		gtk_container_set_border_width(GTK_CONTAINER(title_box), 6);
+		title_box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(title_box), GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
 
 		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
@@ -339,7 +339,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 
 		/* Pane *************/
 		pane = gtk_hpaned_new();
-		gtk_container_set_border_width(GTK_CONTAINER(pane), 6);
+		gtk_container_set_border_width(GTK_CONTAINER(pane), GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
 
 		/* List *************/
@@ -367,7 +367,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		gaim_set_accessible_label(lv->treeview, lv->label);
 	
 		/* A fancy little box ************/
-		vbox = gtk_vbox_new(FALSE, 6);
+		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_paned_add2(GTK_PANED(pane), vbox);
 	
 		/* Viewer ************/
@@ -378,7 +378,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		gtk_widget_show(frame);
 	
 		/* Search box **********/
-		hbox = gtk_hbox_new(FALSE, 6);
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		lv->entry = gtk_entry_new();
 		gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);

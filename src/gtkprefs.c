@@ -673,8 +673,8 @@ theme_page()
 	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
 
@@ -817,8 +817,8 @@ messages_page()
 	GtkWidget *option;
 	GtkWidget *button;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame (ret, _("Display"));
 #ifdef USE_GTKSPELL
@@ -882,8 +882,8 @@ list_page()
 	GtkWidget *vbox;
 	GList *l= NULL;
 	GSList *sl;
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 
 	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
@@ -930,8 +930,8 @@ conv_page()
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
@@ -1027,8 +1027,8 @@ network_page()
 	GtkSizeGroup *sg;
 	GaimProxyInfo *proxy_info;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
 
@@ -1273,8 +1273,8 @@ browser_page()
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame (ret, _("Browser Selection"));
@@ -1343,8 +1343,8 @@ logging_page()
 	GtkWidget *box;
 	int syslog_enabled = gaim_prefs_get_bool("/core/logging/log_system");
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	vbox = gaim_gtk_make_frame (ret, _("Message Logs"));
 	names = gaim_log_logger_get_options();
@@ -1565,8 +1565,8 @@ sound_page()
 	const char *cmd;
 #endif
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1696,7 +1696,7 @@ sound_page()
 	g_object_unref(G_OBJECT(event_store));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
@@ -1765,8 +1765,8 @@ away_page()
 	GtkWidget *dd;
 	GtkSizeGroup *sg;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1989,8 +1989,8 @@ static GtkWidget *plugin_page ()
 	GtkTreePath *path;
 	GtkWidget *nb;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
@@ -2052,7 +2052,7 @@ static GtkWidget *plugin_page ()
 	gtk_label_set_selectable(GTK_LABEL(plugin_description), TRUE);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_description), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_description), 0, 0);
-	gtk_misc_set_padding(GTK_MISC(plugin_description), 6, 6);
+	gtk_misc_set_padding(GTK_MISC(plugin_description), GAIM_HIG_BOX_SPACE, GAIM_HIG_BOX_SPACE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Description")));
 
 	/* Details */
@@ -2070,7 +2070,7 @@ static GtkWidget *plugin_page ()
 	gtk_label_set_selectable(GTK_LABEL(plugin_details), TRUE);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(plugin_details), 0, 0);
-	gtk_misc_set_padding(GTK_MISC(plugin_details), 6, 6);
+	gtk_misc_set_padding(GTK_MISC(plugin_details), GAIM_HIG_BOX_SPACE, GAIM_HIG_BOX_SPACE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Details")));
 	gtk_box_pack_start(GTK_BOX(ret), nb, TRUE, TRUE, 0);
 
@@ -2160,11 +2160,11 @@ void gaim_gtk_prefs_show(void)
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(prefs), GAIM_HIG_BORDER);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
@@ -2175,7 +2175,7 @@ void gaim_gtk_prefs_show(void)
 
 	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show (bbox);

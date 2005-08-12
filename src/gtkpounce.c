@@ -390,25 +390,25 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 						 (cur_pounce == NULL
 						  ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, 12);
+	vbox1 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox1);
 	gtk_widget_show(vbox1);
 
 	/* Create the vbox that will contain all the prefs stuff. */
-	vbox2 = gtk_vbox_new(FALSE, 18);
+	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 
 	/* Create the "Pounce Who" frame. */
 	frame = gaim_gtk_make_frame(vbox2, _("Pounce Who"));
 
 	/* Account: */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -428,7 +428,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gaim_set_accessible_label (dialog->account_menu, label);
 
 	/* Buddy: */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -460,7 +460,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	table = gtk_table_new(2, 4, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
 	gtk_widget_show(table);
 
 	dialog->signon =
@@ -511,7 +511,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
 	gtk_widget_show(table);
 
 	dialog->open_win
@@ -619,7 +619,7 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 
 	/* Now the button box! */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);

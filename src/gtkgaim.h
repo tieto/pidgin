@@ -53,5 +53,13 @@
 #endif
 /** @endcond */
 
+/*
+ * Spacings between components, as defined by the
+ * Gnome Human Interface Guidelines.
+ */
+#define GAIM_HIG_CAT_SPACE     18
+#define GAIM_HIG_BORDER        12
+#define GAIM_HIG_BOX_SPACE      6
+
 #endif /* _GAIM_GTKGAIM_H_ */
 

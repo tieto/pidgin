@@ -178,7 +178,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	GtkWidget *hbox;
 	GtkWidget *label;
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -188,7 +188,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, 12);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, GAIM_HIG_BORDER);
 	gtk_widget_show(widget);
 	gaim_set_accessible_label (widget, label);
 
@@ -422,7 +422,7 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 										current_folder);
 
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
 		hbox, FALSE, FALSE, 0);
@@ -671,7 +671,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->login_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -818,7 +818,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->user_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -829,7 +829,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->new_mail_check);
 
 	/* Buddy icon */
-	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, 6);
+	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -849,8 +849,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
-	hbox2 = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, 12);
+	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, GAIM_HIG_BORDER);
 	gtk_widget_show(hbox2);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_OPEN);
@@ -932,7 +932,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->protocol_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -1208,7 +1208,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->proxy_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -1222,8 +1222,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
 
 	/* Setup the second vbox, which may be hidden at times. */
-	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 12);
+	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, GAIM_HIG_BORDER);
 	gtk_widget_show(vbox2);
 
 	/* Host */
@@ -1628,13 +1628,13 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(account_win_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	main_vbox = gtk_vbox_new(FALSE, 12);
+	main_vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), main_vbox);
 	gtk_widget_show(main_vbox);
 
@@ -1642,8 +1642,8 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	gtk_box_pack_start(GTK_BOX(main_vbox), notebook, FALSE, FALSE, 0);
 
 	/* Setup the inner vbox */
-	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
+	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox,
 			gtk_label_new_with_mnemonic("_Basic"));
 	gtk_widget_show(vbox);
@@ -1653,8 +1653,8 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	add_user_options(dialog, vbox);
 
 	/* Setup the page with 'Advanced'. */
-	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, 12);
-	gtk_container_set_border_width(GTK_CONTAINER(dbox), 12);
+	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(dbox), GAIM_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
 			gtk_label_new_with_mnemonic("_Advanced"));
 
@@ -1665,7 +1665,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
@@ -2325,7 +2325,7 @@ gaim_gtk_accounts_window_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "accounts");
 	gtk_window_set_title(GTK_WINDOW(win), _("Accounts"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(accedit_win_destroy_cb), accounts_window);
@@ -2333,7 +2333,7 @@ gaim_gtk_accounts_window_show(void)
 					 G_CALLBACK(configure_cb), accounts_window);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
 
@@ -2344,7 +2344,7 @@ gaim_gtk_accounts_window_show(void)
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

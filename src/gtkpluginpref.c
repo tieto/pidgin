@@ -65,7 +65,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 			break;
 		case GAIM_PLUGIN_PREF_NONE:
 		default:
-			hbox = gtk_hbox_new(FALSE, 6);
+			hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 			gtk_widget_show(hbox);
 			gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
 
@@ -146,7 +146,7 @@ gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	parent = ret = gtk_vbox_new(FALSE, 16);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 	gtk_widget_show(ret);
 
 	for(pp = gaim_plugin_pref_frame_get_prefs(frame);

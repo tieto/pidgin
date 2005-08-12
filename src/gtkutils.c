@@ -380,7 +380,7 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	GtkWidget *vbox, *label, *hbox;
 	char labeltitle[256];
 
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -394,7 +394,7 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	gtk_widget_show(label);
 	gaim_set_accessible_label (vbox, label);
 
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -402,7 +402,7 @@ gaim_gtk_make_frame(GtkWidget *parent, const char *title)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	vbox = gtk_vbox_new(FALSE, 6);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 

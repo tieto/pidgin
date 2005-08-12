@@ -378,19 +378,19 @@ gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 		disconnect_window->window = gtk_dialog_new_with_buttons(_("Disconnected"), NULL, GTK_DIALOG_NO_SEPARATOR, NULL);
 		g_signal_connect(G_OBJECT(disconnect_window->window), "response", G_CALLBACK(disconnect_response_cb), disconnect_window);
 
-		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), 6);
+		gtk_container_set_border_width(GTK_CONTAINER(disconnect_window->window), GAIM_HIG_BOX_SPACE);
 		gtk_window_set_resizable(GTK_WINDOW(disconnect_window->window), FALSE);
 		gtk_dialog_set_has_separator(GTK_DIALOG(disconnect_window->window), FALSE);
-		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(disconnect_window->window)->vbox), 12);
-		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), 6);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(disconnect_window->window)->vbox), GAIM_HIG_BORDER);
+		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), GAIM_HIG_BOX_SPACE);
 
-		hbox = gtk_hbox_new(FALSE, 12);
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(disconnect_window->window)->vbox), hbox);
 		img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
-		vbox = gtk_vbox_new(FALSE, 12);
+		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 		gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 		disconnect_window->label = gtk_label_new(label_text);

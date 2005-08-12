@@ -397,7 +397,7 @@ gaim_gtk_status_window_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "statuses");
 	gtk_window_set_title(GTK_WINDOW(win), _("Saved Statuses"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_window_destroy_cb), dialog);
@@ -405,7 +405,7 @@ gaim_gtk_status_window_show(void)
 					 G_CALLBACK(configure_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
 
@@ -415,7 +415,7 @@ gaim_gtk_status_window_show(void)
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
@@ -713,20 +713,20 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_window_set_role(GTK_WINDOW(win), "status");
 	gtk_window_set_title(GTK_WINDOW(win), _("Status"));
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(win), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Title */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -748,7 +748,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 					 G_CALLBACK(editor_title_changed_cb), dialog);
 
 	/* Status type */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -767,7 +767,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_widget_show(dropdown);
 
 	/* Status message */
-	hbox = gtk_hbox_new(FALSE, 6);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -793,7 +793,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	gtk_widget_show(disclosure);
 
 	/* Setup the box that the disclosure will cover */
-	dbox = gtk_vbox_new(FALSE, 18);
+	dbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
 	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
 
@@ -826,7 +826,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), 6);
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

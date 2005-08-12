@@ -164,13 +164,13 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(message_response_cb), dialog);
 
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	if (img != NULL)
@@ -242,14 +242,14 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 					 G_CALLBACK(email_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 6);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), 6);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), 12);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, 12);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon */
@@ -259,7 +259,7 @@ gaim_gtk_notify_emails(size_t count, gboolean detailed,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
@@ -360,13 +360,13 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), title);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
@@ -455,13 +455,13 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), (title ? title :_("Search Results")));
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), 12);
+	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
 							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, 12);
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
@@ -523,7 +523,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	button_area = gtk_hbutton_box_new();
 	gtk_box_pack_start(GTK_BOX(vbox), button_area, FALSE, FALSE, 0);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_area), GTK_BUTTONBOX_END);
-	gtk_box_set_spacing(GTK_BOX(button_area), 12);
+	gtk_box_set_spacing(GTK_BOX(button_area), GAIM_HIG_BORDER);
 	gtk_widget_show(button_area);
 
 	/* Add the Add button */
