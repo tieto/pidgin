@@ -210,8 +210,9 @@ clipboard_win32_to_html(char *clipboard) {
 static gchar *
 clipboard_html_to_win32(char *html) {
 	int length;
-	gchar *ret;
 	GString *clipboard;
+	gchar *tmp;
+	gchar *ret;
 
 	if (html == NULL)
 		return NULL;
@@ -219,9 +220,13 @@ clipboard_html_to_win32(char *html) {
 	length = strlen(html);
 	clipboard = g_string_new ("Version:1.0\r\n");
 	g_string_append(clipboard, "StartHTML:0000000105\r\n");
-	g_string_append(clipboard, g_strdup_printf("EndHTML:%010d\r\n", 147 + length));
+	tmp = g_strdup_printf("EndHTML:%010d\r\n", 147 + length);
+	g_string_append(clipboard, tmp);
+	g_free(tmp);
 	g_string_append(clipboard, "StartFragment:0000000127\r\n");
-	g_string_append(clipboard, g_strdup_printf("EndFragment:%010d\r\n", 127 + length));
+	tmp = g_strdup_printf("EndFragment:%010d\r\n", 127 + length);
+	g_string_append(clipboard, tmp);
+	g_free(tmp);
 	g_string_append(clipboard, "<!--StartFragment-->\r\n");
 	g_string_append(clipboard, html);
 	g_string_append(clipboard, "\r\n<!--EndFragment-->");
