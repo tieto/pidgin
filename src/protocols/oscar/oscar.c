@@ -3617,7 +3617,18 @@ static int incomingim_chan2(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			xfer = gaim_xfer_new(gc->account, GAIM_XFER_RECEIVE, userinfo->sn);
 			xfer->remote_ip = g_strdup(args->verifiedip);
 			xfer->remote_port = args->port;
-			gaim_xfer_set_filename(xfer, args->info.sendfile.filename);
+
+			if (g_utf8_validate(args->info.sendfile.filename, -1,
+						NULL)) {
+				gaim_xfer_set_filename(xfer,
+						args->info.sendfile.filename);
+			} else {
+				gchar * utf8_filename = gaim_utf8_salvage(
+						args->info.sendfile.filename);
+				gaim_xfer_set_filename(xfer, utf8_filename);
+				g_free(utf8_filename);
+			}
+
 			gaim_xfer_set_size(xfer, args->info.sendfile.totsize);
 			
 			/* Ignore <ICQ_COOL_FT> XML that is sent along with ICQ sendfile requests */
