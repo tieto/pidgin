@@ -2301,8 +2301,7 @@ gchar *
 gaim_str_sub_away_formatters(const char *str, const char *name)
 {
 	char *c;
-	gchar *cpy;
-	int cnt = 0;
+	GString *cpy;
 	time_t t;
 	struct tm *tme;
 	char tmp[20];
@@ -2310,12 +2309,12 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 	g_return_val_if_fail(str  != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	cpy = g_malloc(BUF_LONG);
+	/* Create an empty GString that is hopefully big enough for most messages */
+	cpy = g_string_sized_new(1024);
 
 	t = time(NULL);
 	tme = localtime(&t);
 
-	cpy[0] = '\0';
 	c = (char *)str;
 	while (*c) {
 		switch (*c) {
@@ -2324,39 +2323,35 @@ gaim_str_sub_away_formatters(const char *str, const char *name)
 				switch (*(c + 1)) {
 				case 'n':
 					/* append name */
-					strcpy(cpy + cnt, name);
-					cnt += strlen(name);
+					g_string_append(cpy, name);
 					c++;
 					break;
 				case 'd':
 					/* append date */
 					strftime(tmp, 20, "%m/%d/%Y", tme);
-					strcpy(cpy + cnt, tmp);
-					cnt += strlen(tmp);
+					g_string_append(cpy, tmp);
 					c++;
 					break;
 				case 't':
 					/* append time */
 					strftime(tmp, 20, "%I:%M:%S %p", tme);
-					strcpy(cpy + cnt, tmp);
-					cnt += strlen(tmp);
+					g_string_append(cpy, tmp);
 					c++;
 					break;
 				default:
-					cpy[cnt++] = *c;
+					g_string_append_c(cpy, *c);
 				}
 			} else {
-				cpy[cnt++] = *c;
+				g_string_append_c(cpy, *c);
 			}
 			break;
 		default:
-			cpy[cnt++] = *c;
+			g_string_append_c(cpy, *c);
 		}
 		c++;
 	}
-	cpy[cnt] = '\0';
 
-	return cpy;
+	return g_string_free(cpy, FALSE);
 }
 
 gchar *
