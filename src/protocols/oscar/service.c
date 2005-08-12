@@ -934,7 +934,7 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	modname = aim_tlv_getstr(list, 0x0001, 1);
 
-	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested\n", offset, len, modname ? modname : "aim.exe");
+	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, offset, len, modname);
