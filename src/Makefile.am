@@ -145,15 +145,20 @@ gaim_coreheaders = \
 	version.h \
 	xmlnode.h
 
-bin_PROGRAMS = gaim gaim-remote
+bin_PROGRAMS = gaim gaim-remote 
 
 
 if ENABLE_DBUS
 
+CLEANFILES    = \
+	dbus-bindings.c \
+	dbus-client-binding.c \ 
+	dbus-client-binding.h
+
+# gaim dbus server 
+
 dbus_sources  = dbus-server.c dbus-useful.c 
 dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h 
-
-CLEANFILES    = dbus-bindings.c
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
@@ -163,11 +168,36 @@ dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 
 dbus-server.$(OBJEXT): dbus-bindings.c 
 
-# dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
-# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct '--pattern=GAIM_DBUS_DEFINE_TYPE(%s)' > $@
 
-# dbus-types.h: dbus-analyze-types.py $(gaim_coreheaders)
-# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=struct '--pattern=GAIM_DBUS_DECLARE_TYPE(%s)' > $@
+# libgaim-client
+
+lib_LTLIBRARIES = libgaim-client.la
+
+libgaim_client_la_SOURCES = gaim-client.c
+
+gaim-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
+	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client > $@
+
+gaim-client-bindings.h: dbus-analyze-functions.py $(dbus_exported)
+	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client --headers > $@
+
+$(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
+
+
+# gaim-client-example
+
+gaim_client_example_SOURCES = gaim-client-example.c 
+
+gaim_client_example_DEPENDENCIES = 	@LIBOBJS@ 
+gaim_client_example_LDADD = \
+	@LIBOBJS@ \
+	libgaim-client.la \
+	$(GTK_LIBS) \
+	$(DBUS_LIBS)
+
+bin_PROGRAMS += gaim-client-example
+
+gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 
 endif

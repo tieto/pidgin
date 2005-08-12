@@ -2,4 +2,4 @@
 Name=org.gaim.GaimService
 
 #replace this by the path to the gaim executable in your system
-Exec=/usr/local/bin/gaim
+Exec=/home/pz215/projects/gaim/src/gaim

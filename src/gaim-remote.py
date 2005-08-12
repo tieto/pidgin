@@ -46,6 +46,20 @@ def convert(value):
     except:
         return value
 
+def findaccount(accountname, protocolname):
+    try:
+        # prefer connected accounts
+        account = cgaim.GaimAccountsFindConnected(accountname, protocolname)
+        return account
+    except:
+        # try to get any account and connect it
+        account = cgaim.GaimAccountsFindAny(accountname, protocolname)
+        print gaim.GaimAccountGetUsername(account)
+        gaim.GaimAccountSetStatusVargs(account, "online", 1)
+        gaim.GaimAccountConnect(account)
+        return account
+    
+
 def execute(uri):
     match = re.match(urlregexp, uri)
     protocol = match.group(2)
@@ -62,7 +76,8 @@ def execute(uri):
     accountname = params.get("account", "")
 
     if command == "goim":
-        account = cgaim.GaimAccountsFindConnected(accountname, protocol)
+        print params
+        account = findaccount(accountname, protocol)
         conversation = cgaim.GaimConversationNew(1, account, params["screenname"])
         if "message" in params:
             im = cgaim.GaimConversationGetImData(conversation)
@@ -70,28 +85,33 @@ def execute(uri):
         return None
 
     elif command == "gochat":
-        account = cgaim.GaimAccountsFindConnected(accountname, protocol)
+        account = findaccount(accountname, protocol)
         connection = cgaim.GaimAccountGetConnection(account)
         return gaim.ServJoinChat(connection, params)
 
     elif command == "addbuddy":
-        account = cgaim.GaimAccountsFindConnected(accountname, protocol)
+        account = findaccount(accountname, protocol)
         return cgaim.GaimBlistRequestAddBuddy(account, params["screenname"],
                                               params.get("group", ""), "")
 
     elif command == "setstatus":
         if "account" in params:
-            accounts = [cgaim.GaimAccountsFindConnected(accountname, protocol)]
+            accounts = [cgaim.GaimAccountsFindAny(accountname, protocol)]
         else:
             accounts = gaim.GaimAccountsGetAllActive()
 
         for account in accounts:
-            status = gaim.GaimAccountGetStatus(account, params["status"])
+            status = cgaim.GaimAccountGetStatus(account, params["status"])
             for key, value in params.items():
-                if key not in ["state", "account"]:
+                if key not in ["status", "account"]:
                     gaim.GaimStatusSetAttrString(status, key, value)
             gaim.GaimAccountSetStatusVargs(account, params["status"], 1)
         return None
+
+    elif command == "getinfo":
+        account = findaccount(accountname, protocol)
+        connection = cgaim.GaimAccountGetConnection(account)
+        gaim.ServGetInfo(connection, params["screenname"])
 
     elif command == "quit":
         return gaim.GaimCoreQuit()
