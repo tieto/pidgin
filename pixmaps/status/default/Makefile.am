@@ -5,6 +5,7 @@ EXTRA_DIST = \
 	aol.png \
 	away.png \
 	blocked.png \
+	bonjour.png \
 	dnd.png \
 	extendedaway.png \
 	female.png \
@@ -32,7 +33,6 @@ EXTRA_DIST = \
 	occupied.png \
 	offline.png \
 	op.png \
-	rendezvous.png \
 	secure.png \
 	silc.png \
 	trepia.png \

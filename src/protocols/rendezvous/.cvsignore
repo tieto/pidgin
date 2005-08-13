@@ -1,9 +1,0 @@
-Makefile.in
-Makefile
-.deps
-.libs
-librendezvous.def
-librendezvous.dll
-librendezvous.lib
-*.la
-*.lo
