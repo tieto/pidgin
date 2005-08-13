@@ -1316,6 +1316,8 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 							who = gaim_buddy_get_contact_alias(b);
 						else if (gaim_connection_get_display_name(gc) != NULL)
 							who = gaim_connection_get_display_name(gc);
+						else
+							who = gaim_account_get_username(account);
 					}
 					else
 						who = gaim_account_get_username(account);

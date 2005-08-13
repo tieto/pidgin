@@ -570,7 +570,8 @@ parse_account(xmlnode *node)
 	child = xmlnode_get_child(node, "alias");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
-		gaim_account_set_alias(ret, data);
+		if (*data != '\0')
+			gaim_account_set_alias(ret, data);
 		g_free(data);
 	}
 
