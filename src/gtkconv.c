@@ -183,9 +183,6 @@ static void build_warn_close_dialog(GaimConvWindow *win)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	gaim_gtk_prefs_checkbox(_("Warn me when I close the window with unread messages"),
-				"/gaim/gtk/conversations/warn_on_unread_close", vbox);
-
 	/* Connect the signals. */
 	g_signal_connect(G_OBJECT(warn_close_dialog), "response",
 			 G_CALLBACK(do_close), win);
@@ -199,27 +196,23 @@ static gint
 close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	GaimConvWindow *win = (GaimConvWindow *)d;
+	GList *l;
 
-	if (gaim_prefs_get_bool(
-			"/gaim/gtk/conversations/warn_on_unread_close"))
+	/* If there are unread messages then show a warning dialog */
+	for (l = gaim_conv_window_get_conversations(win);
+	     l != NULL; l = l->next)
 	{
-		GList *l;
-		for (l = gaim_conv_window_get_conversations(win);
-		     l != NULL; l = l->next)
+		GaimConversation *conv = l->data;
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
+		    gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
 		{
-			GaimConversation *conv = l->data;
-			if (gaim_conversation_get_type(conv)
-				== GAIM_CONV_IM
-			    && gaim_conversation_get_unseen(conv)
-				== GAIM_UNSEEN_TEXT)
-			{
-				build_warn_close_dialog(win);
-				gtk_widget_show_all(warn_close_dialog);
+			build_warn_close_dialog(win);
+			gtk_widget_show_all(warn_close_dialog);
 
-				return TRUE;
-			}
+			return TRUE;
 		}
 	}
+
 	gaim_conv_window_destroy(win);
 
 	return TRUE;
@@ -6242,7 +6235,6 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_int("/gaim/gtk/conversations/font_size", 3);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/tabs", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/tab_side", GTK_POS_TOP);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/warn_on_unread_close", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/conversations/scrollback_lines", 4000);
 
 	/* Conversations -> Chat */
