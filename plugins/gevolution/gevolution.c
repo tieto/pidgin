@@ -321,8 +321,6 @@ load_timeout(gpointer data)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_debug_register_category("evolution");
-
 	bonobo_activate();
 
 	backup_blist_ui_ops = gaim_blist_get_ui_ops();
@@ -362,8 +360,6 @@ plugin_unload(GaimPlugin *plugin)
 		g_object_unref(book);
 		book = NULL;
 	}
-
-	gaim_debug_unregister_category("evolution");
 
 	return TRUE;
 }

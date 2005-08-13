@@ -216,8 +216,6 @@ getarg(char *line, int which, int remain)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_debug_register_category("filectl");
-
 	init_file();
 	check = gaim_timeout_add(5000, (GSourceFunc)check_file, NULL);
 
@@ -228,8 +226,6 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	gaim_timeout_remove(check);
-
-	gaim_debug_unregister_category("filectl");
 
 	return TRUE;
 }

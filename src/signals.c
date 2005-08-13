@@ -577,8 +577,6 @@ gaim_signals_init()
 {
 	g_return_if_fail(instance_table == NULL);
 
-	gaim_debug_register_category("signals");
-
 	instance_table =
 		g_hash_table_new_full(g_direct_hash, g_direct_equal,
 							  NULL, (GDestroyNotify)destroy_instance_data);
@@ -591,8 +589,6 @@ gaim_signals_uninit()
 
 	g_hash_table_destroy(instance_table);
 	instance_table = NULL;
-
-	gaim_debug_unregister_category("signals");
 }
 
 /**************************************************************************

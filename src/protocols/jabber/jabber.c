@@ -1610,8 +1610,6 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
 
-	gaim_debug_register_category("jabber");
-
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 

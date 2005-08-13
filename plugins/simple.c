@@ -6,8 +6,6 @@
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_debug_register_category("simple");
-
 	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin loaded.\n");
 
 	return TRUE;
@@ -17,8 +15,6 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin unloaded.\n");
-
-	gaim_debug_unregister_category("simple");
 
 	return TRUE;
 }

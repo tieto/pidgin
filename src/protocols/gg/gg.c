@@ -1831,8 +1831,6 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	gaim_debug_register_category("gg");
-
 	option = gaim_account_option_string_new(_("Nick"), "nick",
 			"Gadu-Gadu User");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,

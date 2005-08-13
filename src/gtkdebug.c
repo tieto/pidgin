@@ -36,18 +36,33 @@
 #include "gtkutils.h"
 #include "gtkstock.h"
 
+#ifdef HAVE_REGEX_H
+# include <regex.h>
+#endif /* HAVE_REGEX_H */
+
 typedef struct
 {
 	GtkWidget *window;
 	GtkWidget *text;
-	GtkWidget *find;
 
-	/* The category filter tree view. */
-	GtkWidget *treeview;
+	GtkListStore *store;
 
 	gboolean timestamps;
 	gboolean paused;
 
+#ifdef HAVE_REGEX_H
+	GtkWidget *filter;
+	GtkWidget *expression;
+
+	gboolean invert;
+	gboolean highlight;
+	
+	guint timer;
+	
+	regex_t regex;
+#else
+	GtkWidget *find;
+#endif /* HAVE_REGEX_H */
 } DebugWindow;
 
 static char debug_fg_colors[][8] = {
@@ -61,18 +76,28 @@ static char debug_fg_colors[][8] = {
 
 static DebugWindow *debug_win = NULL;
 
-static GHashTable *debug_categories = NULL;
-static gboolean filter_enabled = FALSE;
-
-struct _find {
-	DebugWindow *window;
-	GtkWidget *entry;
-};
+#ifdef HAVE_REGEX_H
+static void regex_filter_all(DebugWindow *win);
+static void regex_show_all(DebugWindow *win);
+#endif /* HAVE_REGEX_H */
 
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
 	gaim_prefs_disconnect_by_handle(gaim_gtk_debug_get_handle());
+
+#ifdef HAVE_REGEX_H
+	if(debug_win->timer != 0) {
+		const gchar *text;
+
+		g_source_remove(debug_win->timer);
+
+		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
+		gaim_prefs_set_string("/gaim/gtk/debug/regex", text);
+	}
+
+	regfree(&debug_win->regex);
+#endif
 
 	/* If the "Save Log" dialog is open then close it */
 	gaim_request_close_with_handle(debug_win);
@@ -96,12 +121,18 @@ configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 	return FALSE;
 }
 
+#ifndef HAVE_REGEX_H
+struct _find {
+	DebugWindow *window;
+	GtkWidget *entry;
+};
+
 static void
 do_find_cb(GtkWidget *widget, gint response, struct _find *f)
 {
 	switch (response) {
 	case GTK_RESPONSE_OK:
-	    gtk_imhtml_search_find(GTK_IMHTML(f->window->text),
+		gtk_imhtml_search_find(GTK_IMHTML(f->window->text),
 							   gtk_entry_get_text(GTK_ENTRY(f->entry)));
 		break;
 
@@ -171,6 +202,7 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	gtk_widget_show_all(win->find);
 	gtk_widget_grab_focus(f->entry);
 }
+#endif /* HAVE_REGEX_H */
 
 static void
 save_writefile_cb(void *user_data, const char *filename)
@@ -203,12 +235,25 @@ static void
 clear_cb(GtkWidget *w, DebugWindow *win)
 {
 	gtk_imhtml_clear(GTK_IMHTML(win->text));
+
+#ifdef HAVE_REGEX_H
+	gtk_list_store_clear(win->store);
+#endif /* HAVE_REGEX_H */
 }
 
 static void
 pause_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->paused = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+
+#ifdef HAVE_REGEX_H
+	if(!win->paused) {
+		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+			regex_filter_all(win);
+		else
+			regex_show_all(win);
+	}
+#endif /* HAVE_REGEX_H */
 }
 
 static void
@@ -226,25 +271,329 @@ timestamps_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), GPOINTER_TO_INT(value));
 }
 
+/******************************************************************************
+ * regex stuff
+ *****************************************************************************/
+#ifdef HAVE_REGEX_H
 static void
-filter_cb(GtkToggleButton *button, DebugWindow *win)
-{
-	if (gtk_toggle_button_get_active(button)) {
-		filter_enabled = TRUE;
-	} else {
-		filter_enabled = FALSE;
+regex_clear_color(GtkWidget *w) {
+	gtk_widget_modify_base(w, GTK_STATE_NORMAL, NULL);
+}
+
+static void
+regex_change_color(GtkWidget *w, guint16 r, guint16 g, guint16 b) {
+	GdkColor color;
+
+	color.red = r;
+	color.green = g;
+	color.blue = b;
+
+	gtk_widget_modify_base(w, GTK_STATE_NORMAL, &color);
+}
+
+static void
+regex_highlight_clear(DebugWindow *win) {
+	GtkIMHtml *imhtml = GTK_IMHTML(win->text);
+	GtkTextIter s, e;
+
+	gtk_text_buffer_get_start_iter(imhtml->text_buffer, &s);
+	gtk_text_buffer_get_end_iter(imhtml->text_buffer, &e);
+	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "regex", &s, &e);
+}
+
+static void
+regex_match(DebugWindow *win, const gchar *text) {
+	GtkIMHtml *imhtml = GTK_IMHTML(win->text);
+	regmatch_t matches[4]; /* adjust if necessary */
+	size_t n_matches = sizeof(matches) / sizeof(matches[0]);
+	gchar *plaintext;
+	gint inverted;
+
+	if(!text)
+		return;
+
+	inverted = (win->invert) ? REG_NOMATCH : 0;
+
+	/* I don't like having to do this, but we need it for highlighting.  Plus
+	 * it makes the ^ and $ operators work :)
+	 */
+	plaintext = gaim_markup_strip_html(text);
+
+	/* we do a first pass to see if it matches at all.  If it does we append
+	 * it, and work out the offsets to highlight.
+	 */
+	if(regexec(&win->regex, plaintext, n_matches, matches, 0) == inverted) {
+		GtkTextIter ins;
+		gchar *p = plaintext;
+		gint i, offset = 0;
+
+		gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &ins,
+							gtk_text_buffer_get_insert(imhtml->text_buffer));
+		i = gtk_text_iter_get_offset(&ins);
+
+		gtk_imhtml_append_text(imhtml, text, 0);
+
+		if(!win->highlight) {
+			g_free(plaintext);
+			return;
+		}
+
+		/* we use a do-while to highlight the first match, and then continue
+		 * if necessary...
+		 */
+		do {
+			gint m;
+
+			for(m = 0; m < n_matches; m++) {
+				GtkTextIter ms, me;
+
+				if(matches[m].rm_eo == -1)
+					break;
+
+				i += offset;
+
+				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &ms,
+												   i + matches[m].rm_so);
+				gtk_text_buffer_get_iter_at_offset(imhtml->text_buffer, &me,
+												   i + matches[m].rm_eo);
+				gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "regex",
+												  &ms, &me);
+				offset = matches[m].rm_eo;
+			}
+
+			p += offset;
+		} while(regexec(&win->regex, p, n_matches, matches, REG_NOTBOL) == inverted);
 	}
+
+	g_free(plaintext);
+}
+
+static gboolean
+regex_filter_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
+				    gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	gchar *text;
+
+	gtk_tree_model_get(m, iter, 0, &text, -1);
+
+	regex_match(win, text);
+
+	g_free(text);
+
+	return FALSE;
 }
 
 static void
-debug_liststore_append(gpointer key, gpointer value, gpointer user_data)
-{
-	GtkTreeIter iter;
-	GtkListStore **liststore = (GtkListStore **)user_data;
+regex_filter_all(DebugWindow *win) {
+	gtk_imhtml_clear(GTK_IMHTML(win->text));
 
-	gtk_list_store_append(*liststore, &iter);
-	gtk_list_store_set(*liststore, &iter, 0, key, -1);
+	if(win->highlight)
+		regex_highlight_clear(win);
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(win->store), regex_filter_all_cb,
+						   win);
 }
+
+static gboolean
+regex_show_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
+				  gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	gchar *text;
+
+	gtk_tree_model_get(m, iter, 0, &text, -1);
+	gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
+	g_free(text);
+
+	return FALSE;
+}
+
+static void
+regex_show_all(DebugWindow *win) {
+	gtk_imhtml_clear(GTK_IMHTML(win->text));
+
+	if(win->highlight)
+		regex_highlight_clear(win);
+
+	gtk_tree_model_foreach(GTK_TREE_MODEL(win->store), regex_show_all_cb,
+						   win);
+}
+
+static void
+regex_compile(DebugWindow *win) {
+	const gchar *text;
+
+	text = gtk_entry_get_text(GTK_ENTRY(win->expression));
+
+	if(text == NULL || *text == '\0') {
+		regex_clear_color(win->expression);
+		gtk_widget_set_sensitive(win->filter, FALSE);
+		return;
+	}
+
+	regfree(&win->regex);
+
+	if(regcomp(&win->regex, text, REG_EXTENDED | REG_ICASE) != 0) {
+		/* failed to compile */
+		regex_change_color(win->expression, 0xFFFF, 0xAFFF, 0xAFFF);
+		gtk_widget_set_sensitive(win->filter, FALSE);
+	} else {
+		/* compiled successfully */
+		regex_change_color(win->expression, 0xAFFF, 0xFFFF, 0xAFFF);
+		gtk_widget_set_sensitive(win->filter, TRUE);
+	}
+
+	/* we check if the filter is on in case it was only of the options that
+	 * got changed, and not the expression.
+	 */
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		regex_filter_all(win);
+}
+
+static void
+regex_pref_filter_cb(const gchar *name, GaimPrefType type,
+					 gpointer val, gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	gboolean active = GPOINTER_TO_INT(val), current;
+
+	if(!win || !win->window)
+		return;
+
+	current = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter));
+	if(active != current)
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), active);
+}
+
+static void
+regex_pref_expression_cb(const gchar *name, GaimPrefType type,
+						 gpointer val, gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	const gchar *exp = (const gchar *)val;
+
+	gtk_entry_set_text(GTK_ENTRY(win->expression), exp);
+}
+
+static void
+regex_pref_invert_cb(const gchar *name, GaimPrefType type,
+					 gpointer val, gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	gboolean active = GPOINTER_TO_INT(val);
+
+	win->invert = active;
+
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		regex_filter_all(win);
+}
+
+static void
+regex_pref_highlight_cb(const gchar *name, GaimPrefType type,
+						gpointer val, gpointer data)
+{
+	DebugWindow *win = (DebugWindow *)data;
+	gboolean active = GPOINTER_TO_INT(val);
+
+	win->highlight = active;
+
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+		regex_filter_all(win);
+}
+
+static void
+regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
+					 GtkTreeIter *iter, DebugWindow *win)
+{
+	gchar *text;
+
+	if(!win || !win->window)
+		return;
+
+	/* If the debug window is paused, we just return since it's in the store.
+	 * We don't call regex_match because it doesn't make sense to check the
+	 * string if it's paused.  When we unpause we clear the imhtml and
+	 * reiterate over the store to handle matches that were outputted when
+	 * we were paused.
+	 */
+	if(win->paused)
+		return;
+	
+	gtk_tree_model_get(model, iter, 0, &text, -1);
+
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
+		regex_match(win, text);
+	} else {
+		gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
+	}
+
+	g_free(text);
+}
+
+static gboolean
+regex_timer_cb(DebugWindow *win) {
+	const gchar *text;
+
+	text = gtk_entry_get_text(GTK_ENTRY(win->expression));
+	gaim_prefs_set_string("/gaim/gtk/debug/regex", text);
+
+	win->timer = 0;
+
+	return FALSE;
+}
+
+static void
+regex_changed_cb(GtkWidget *w, DebugWindow *win) {
+	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+									 FALSE);
+	}
+
+	if(win->timer == 0)
+		win->timer = gaim_timeout_add(5000, (GSourceFunc)regex_timer_cb, win);
+
+	regex_compile(win);
+}
+
+static void
+regex_menu_cb(GtkWidget *item, const gchar *pref) {
+	gboolean active;
+
+	active = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item));
+
+	gaim_prefs_set_bool(pref, active);
+}
+
+static void
+regex_popup_cb(GtkEntry *entry, GtkWidget *menu, DebugWindow *win) {
+	gaim_separator(menu);
+	gaim_new_check_item(menu, _("Invert"),
+						G_CALLBACK(regex_menu_cb),
+						"/gaim/gtk/debug/invert", win->invert);
+	gaim_new_check_item(menu, _("Highlight matches"),
+						G_CALLBACK(regex_menu_cb),
+						"/gaim/gtk/debug/highlight", win->highlight);
+}
+
+static void
+regex_filter_toggled_cb(GtkToggleButton *button, DebugWindow *win) {
+	gboolean active;
+
+	active = gtk_toggle_button_get_active(button);
+
+	gaim_prefs_set_bool("/gaim/gtk/debug/filter", active);
+
+	if(!GTK_IS_IMHTML(win->text))
+		return;
+
+	if(active)
+		regex_filter_all(win);
+	else
+		regex_show_all(win);
+}
+
+#endif /* HAVE_REGEX_H */
 
 static DebugWindow *
 debug_window_new(void)
@@ -255,11 +604,8 @@ debug_window_new(void)
 	GtkWidget *frame;
 	GtkWidget *button;
 	GtkWidget *image;
-	GtkListStore *liststore = NULL;
-	GtkCellRenderer *renderer = NULL;
-	GtkTreeSelection *selection = NULL;
-	GtkTreeViewColumn *column = NULL;
-	int width, height;
+	gint width, height;
+	void *handle;
 
 	win = g_new0(DebugWindow, 1);
 
@@ -268,7 +614,7 @@ debug_window_new(void)
 
 	GAIM_DIALOG(win->window);
 	gaim_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
-	                width, height);
+					width, height);
 
 	gtk_window_set_default_size(GTK_WINDOW(win->window), width, height);
 	gtk_window_set_role(GTK_WINDOW(win->window), "debug");
@@ -279,6 +625,22 @@ debug_window_new(void)
 	g_signal_connect(G_OBJECT(win->window), "configure_event",
 	                 G_CALLBACK(configure_cb), win);
 
+	handle = gaim_gtk_debug_get_handle();
+	
+#ifdef HAVE_REGEX_H
+	/* the list store for all the messages */
+	win->store = gtk_list_store_new(1, G_TYPE_STRING);
+
+	/* row-changed gets called when we do gtk_list_store_set, and row-inserted
+	 * gets called with gtk_list_store_append, which is a
+	 * completely empty row. So we just ignore row-inserted, and deal with row
+	 * changed. -Gary
+	 */
+	g_signal_connect(G_OBJECT(win->store), "row-changed",
+					 G_CALLBACK(regex_row_changed_cb), win);
+
+#endif /* HAVE_REGEX_H */
+
 	/* Setup the vbox */
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(win->window), vbox);
@@ -286,6 +648,8 @@ debug_window_new(void)
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
+		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
+
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),
 		                      GTK_TOOLBAR_BOTH_HORIZ);
 		gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
@@ -293,19 +657,21 @@ debug_window_new(void)
 
 		gtk_box_pack_start(GTK_BOX(vbox), toolbar, FALSE, FALSE, 0);
 
+#ifndef HAVE_REGEX_H
 		/* Find button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_FIND,
-		                         NULL, NULL, G_CALLBACK(find_cb),
+		                         _("Find"), NULL, G_CALLBACK(find_cb),
 		                         win, -1);
+#endif /* HAVE_REGEX_H */
 
 		/* Save */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_SAVE,
-		                         NULL, NULL, G_CALLBACK(save_cb),
+		                         _("Save"), NULL, G_CALLBACK(save_cb),
 		                         win, -1);
 
 		/* Clear button */
 		gtk_toolbar_insert_stock(GTK_TOOLBAR(toolbar), GTK_STOCK_CLEAR,
-		                         NULL, NULL, G_CALLBACK(clear_cb),
+		                         _("Clear"), NULL, G_CALLBACK(clear_cb),
 		                         win, -1);
 
 		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
@@ -314,7 +680,7 @@ debug_window_new(void)
 		image = gtk_image_new_from_stock(GAIM_STOCK_PAUSE, GTK_ICON_SIZE_MENU);
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-		                                    NULL, _("Pause"), NULL,
+		                                    NULL, _("Pause"), _("Pause"),
 		                                    NULL, image,
 		                                    G_CALLBACK(pause_cb), win);
 
@@ -322,48 +688,61 @@ debug_window_new(void)
 		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
 		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
 		                                    NULL, _("Timestamps"),
-		                                    NULL, NULL, NULL,
+		                                    _("Timestamps"), NULL, NULL,
 		                                    G_CALLBACK(timestamps_cb),
 		                                    win);
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
 		                             gaim_prefs_get_bool("/core/debug/timestamps"));
 
-		gaim_prefs_connect_callback(gaim_gtk_debug_get_handle(),
-		                            "/core/debug/timestamps",
+		gaim_prefs_connect_callback(handle, "/core/debug/timestamps",
 		                            timestamps_pref_cb, button);
 
-		button = gtk_check_button_new_with_label(_("Filter"));
-		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(filter_cb), win);
-		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                                    GTK_TOOLBAR_CHILD_WIDGET,
-						    button, NULL, NULL, NULL,
-						    NULL, NULL, NULL);
+#ifdef HAVE_REGEX_H
+		/* regex stuff */
+		gtk_toolbar_insert_space(GTK_TOOLBAR(toolbar), -1);
 
-		button = gtk_scrolled_window_new(NULL, NULL);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(button),
-		                               GTK_POLICY_NEVER,
-		                               GTK_POLICY_AUTOMATIC);
+		/* regex toggle button */
+		win->filter =
+			gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+									   GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+									   NULL, _("Filter"), _("Filter"), 
+									   NULL, NULL,
+									   G_CALLBACK(regex_filter_toggled_cb),
+									   win);
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
+									 gaim_prefs_get_bool("/gaim/gtk/debug/filter"));
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/filter",
+									regex_pref_filter_cb, win);
 
-		liststore = gtk_list_store_new(1, G_TYPE_STRING);
-		win->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(liststore));
-		renderer = gtk_cell_renderer_text_new();
-		column = gtk_tree_view_column_new_with_attributes(_("Filter"), renderer, "text", 0, NULL);
+		/* regex entry */
+		win->expression = gtk_entry_new();
+		gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
+								   GTK_TOOLBAR_CHILD_WIDGET, win->expression,
+								   NULL, _("Right click for more options."),
+								   NULL, NULL, NULL, NULL);
+		/* this needs to be before the text is set from the pref if we want it
+		 * to colorize a stored expression.
+		 */
+		g_signal_connect(G_OBJECT(win->expression), "changed",
+						 G_CALLBACK(regex_changed_cb), win);
+		gtk_entry_set_text(GTK_ENTRY(win->expression),
+						   gaim_prefs_get_string("/gaim/gtk/debug/regex"));
+		g_signal_connect(G_OBJECT(win->expression), "populate-popup",
+						 G_CALLBACK(regex_popup_cb), win);
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/regex",
+									regex_pref_expression_cb, win);
 
-		gtk_tree_view_append_column(GTK_TREE_VIEW(win->treeview), column);
-		gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(win->treeview), FALSE);
-		gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(liststore), 0, GTK_SORT_ASCENDING);
+		/* connect the rest of our pref callbacks */
+		win->invert = gaim_prefs_get_bool("/gaim/gtk/debug/invert");
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/invert",
+									regex_pref_invert_cb, win);
 
-		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(win->treeview));
-		gtk_tree_selection_set_mode(selection, GTK_SELECTION_MULTIPLE);
+		win->highlight = gaim_prefs_get_bool("/gaim/gtk/debug/highlight");
+		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/highlight",
+									regex_pref_highlight_cb, win);
 
-		g_hash_table_foreach(debug_categories, (GHFunc)debug_liststore_append, &liststore);
-
-		gtk_container_add(GTK_CONTAINER(button), win->treeview);
-		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                                    GTK_TOOLBAR_CHILD_WIDGET,
-		                                    button, NULL, NULL,
-		                                    NULL, NULL, NULL, NULL);
+#endif /* HAVE_REGEX_H */
 	}
 
 	/* Add the gtkimhtml */
@@ -372,6 +751,14 @@ debug_window_new(void)
 									GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY ^ GTK_IMHTML_IMAGE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
+
+#ifdef HAVE_REGEX_H
+	/* add the tag for regex highlighting */
+	gtk_text_buffer_create_tag(GTK_IMHTML(win->text)->text_buffer, "regex",
+							   "background", "#FFAFAF",
+							   "weight", "bold",
+							   NULL);
+#endif /* HAVE_REGEX_H */
 
 	gtk_widget_show_all(win->window);
 
@@ -444,8 +831,6 @@ gaim_glib_dummy_print_handler(const gchar *string)
 void
 gaim_gtk_debug_init(void)
 {
-	gaim_debug_register_category("gtkdebug");
-
 	/* Debug window preferences. */
 	/*
 	 * NOTE: This must be set before prefs are loaded, and the callbacks
@@ -462,6 +847,14 @@ gaim_gtk_debug_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/debug/toolbar", TRUE);
 	gaim_prefs_add_int("/gaim/gtk/debug/width",  450);
 	gaim_prefs_add_int("/gaim/gtk/debug/height", 250);
+
+#ifdef HAVE_REGEX_H
+	gaim_prefs_add_string("/gaim/gtk/debug/regex", "");
+	gaim_prefs_add_bool("/gaim/gtk/debug/filter", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/invert", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/case_insensitive", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/debug/highlight", FALSE);
+#endif /* HAVE_REGEX_H */
 
 	gaim_prefs_connect_callback(NULL, "/gaim/gtk/debug/enabled",
 								debug_enabled_cb, NULL);
@@ -490,8 +883,6 @@ gaim_gtk_debug_init(void)
 void
 gaim_gtk_debug_uninit(void)
 {
-	gaim_debug_unregister_category("gtkdebug");
-
 	gaim_debug_set_ui_ops(NULL);
 }
 
@@ -516,57 +907,17 @@ gaim_gtk_debug_window_hide(void)
 }
 
 static void
-create_debug_selected_categories(GtkTreeModel *model, GtkTreePath *path,
-                                 GtkTreeIter *iter, gpointer data)
-{
-	GHashTable **hashtable = (GHashTable **)data;
-	char *text = NULL;
-
-	gtk_tree_model_get(model, iter, 0, &text, -1);
-
-	g_hash_table_insert(*hashtable, text, NULL);
-}
-
-static gboolean
-debug_is_filtered_out(const char *category)
-{
-	GtkTreeSelection *selection = NULL;
-	GHashTable *hashtable = NULL;
-	gboolean found = FALSE;
-
-	if (category == NULL)
-		return FALSE;
-
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(debug_win->treeview));
-	hashtable = g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-	                                  NULL);
-
-	gtk_tree_selection_selected_foreach(selection,
-	                                    create_debug_selected_categories,
-	                                    &hashtable);
-
-	if (filter_enabled) {
-		if (g_hash_table_lookup_extended(hashtable, category, NULL, NULL))
-			found = FALSE;
-		else
-			found = TRUE;
-	}
-
-	g_hash_table_destroy(hashtable);
-	return found;
-}
-
-static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
+	GtkTreeIter iter;
 	gboolean timestamps;
 	gchar *arg_s, *ts_s;
 	gchar *esc_s, *cat_s, *tmp, *s;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/debug/enabled") ||
-	    (debug_win == NULL) || debug_win->paused ||
-	    debug_is_filtered_out(category)) {
+	    (debug_win == NULL))
+	{
 		return;
 	}
 
@@ -614,78 +965,21 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 		s = tmp;
 	}
 
-	gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
+#ifdef HAVE_REGEX_H
+	/* add the text to the list store */
+	gtk_list_store_append(debug_win->store, &iter);
+	gtk_list_store_set(debug_win->store, &iter, 0, s, -1);
+#else /* HAVE_REGEX_H */
+	if(!debug_win->paused)
+		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
+#endif /* !HAVE_REGEX_H */
 
 	g_free(s);
-}
-
-static void
-gaim_gtk_debug_register_category(const char *category)
-{
-	/* XXX I'd like to be able to put this creation in _init, but that
-	 * would require that this be init:ed before anything that wants to
-	 * register a category, and I'm not sure I can count on this coming
-	 * first */
-	if (debug_categories == NULL)
-		debug_categories = g_hash_table_new_full(g_str_hash,
-		                                         g_str_equal,
-		                                         g_free, NULL);
-
-	if (!g_hash_table_lookup_extended(debug_categories, category, NULL, NULL)) {
-		g_hash_table_insert(debug_categories, g_strdup(category), NULL);
-
-		if (debug_win != NULL && debug_win->treeview != NULL) {
-			GtkTreeModel *model = NULL;
-			GtkTreeIter iter;
-
-			model = gtk_tree_view_get_model(GTK_TREE_VIEW(debug_win->treeview));
-
-			gtk_list_store_append(GTK_LIST_STORE(model), &iter);
-			gtk_list_store_set(GTK_LIST_STORE(model), &iter, 0,
-			                   category, -1);
-		}
-	}
-}
-
-static gboolean
-find_and_remove_category(GtkTreeModel *model, GtkTreePath *path,
-                         GtkTreeIter *iter, gpointer data)
-{
-	GValue value = {0};
-
-	gtk_tree_model_get_value(model, iter, 0, &value);
-
-	if (strcmp(g_value_get_string(&value), data) == 0) {
-		gtk_list_store_remove(GTK_LIST_STORE(model), iter);
-
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-static void
-gaim_gtk_debug_unregister_category(const char *category)
-{
-	GtkTreeModel *model = NULL;
-
-	if (debug_win == NULL)
-		return;
-
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(debug_win->treeview));
-
-	gtk_tree_model_foreach(model,
-	                       (GtkTreeModelForeachFunc)find_and_remove_category,
-	                       (char *)category);
-
-	g_hash_table_remove(debug_categories, category);
 }
 
 static GaimDebugUiOps ops =
 {
 	gaim_gtk_debug_print,
-	gaim_gtk_debug_register_category,
-	gaim_gtk_debug_unregister_category
 };
 
 GaimDebugUiOps *

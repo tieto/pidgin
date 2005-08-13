@@ -83,22 +83,6 @@ actions(GaimPlugin *plugin, gpointer context)
 	return l;
 }
 
-static gboolean
-plugin_load(GaimPlugin *plugin)
-{
-	gaim_debug_register_category("idle");
-
-	return TRUE;
-}
-
-static gboolean
-plugin_unload(GaimPlugin *plugin)
-{
-	gaim_debug_unregister_category("idle");
-
-	return TRUE;
-}
-
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -116,8 +100,8 @@ static GaimPluginInfo info =
 	N_("Allows you to hand-configure how long you've been idle for"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
-	plugin_load,
-	plugin_unload,
+	NULL,
+	NULL,
 	NULL,
 	NULL,
 	NULL,

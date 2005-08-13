@@ -2721,8 +2721,6 @@ gaim_conversations_init(void)
 {
 	void *handle = gaim_conversations_get_handle();
 
-	gaim_debug_register_category("conversation");
-
 	/**********************************************************************
 	 * Register preferences
 	 **********************************************************************/
@@ -3014,6 +3012,4 @@ gaim_conversations_uninit(void)
 	while (conversations)
 		gaim_conversation_destroy((GaimConversation*)conversations->data);
 	gaim_signals_unregister_by_instance(gaim_conversations_get_handle());
-
-	gaim_debug_unregister_category("conversation");
 }

@@ -179,8 +179,6 @@ cipher_test_sha1() {
  **************************************************************************/
 static gboolean
 plugin_load(GaimPlugin *plugin) {
-	gaim_debug_register_category("cipher-test");
-
 	cipher_test_md5();
 	cipher_test_sha1();
 
@@ -189,8 +187,6 @@ plugin_load(GaimPlugin *plugin) {
 
 static gboolean
 plugin_unload(GaimPlugin *plugin) {
-	gaim_debug_unregister_category("cipher-test");
-
 	return TRUE;
 }
 

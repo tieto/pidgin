@@ -49,8 +49,6 @@ typedef struct
 {
 	void (*print)(GaimDebugLevel level, const char *category,
 				  const char *format, va_list args);
-	void (*register_category)(const char *category);
-	void (*unregister_category)(const char *category);
 } GaimDebugUiOps;
 
 #ifdef __cplusplus
@@ -149,20 +147,6 @@ void gaim_debug_error(const char *category, const char *format, ...);
  * @see gaim_debug()
  */
 void gaim_debug_fatal(const char *category, const char *format, ...);
-
-/**
- * Registers a debug category so that it can be filtered on.
- *
- * @param category The category to register.
- */
-void gaim_debug_register_category(const char *category);
-
-/**
- * Remove a registered category.
- *
- * @param category The category to unregister.
- */
-void gaim_debug_unregister_category(const char *category);
 
 /**
  * Enable or disable printing debug output to the console.

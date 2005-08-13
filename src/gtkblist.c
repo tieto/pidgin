@@ -4979,8 +4979,6 @@ void gaim_gtk_blist_init(void)
 {
 	void *gtk_blist_handle = gaim_gtk_blist_get_handle();
 
-	gaim_debug_register_category("gtkblist");
-
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtk_blist_handle, GAIM_CALLBACK(account_signon_cb),
 						NULL);
@@ -5013,8 +5011,6 @@ void gaim_gtk_blist_init(void)
 void
 gaim_gtk_blist_uninit(void) {
 	gaim_signals_unregister_by_instance(gaim_gtk_blist_get_handle());
-
-	gaim_debug_unregister_category("gtkblist");
 }
 
 /*********************************************************************

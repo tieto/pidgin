@@ -32,8 +32,6 @@ plugin_load(GaimPlugin *plugin)
 	gboolean ok;
 	int result;
 
-	gaim_debug_register_category("ipc-test-client");
-
 	server_plugin = gaim_plugins_find_with_id("core-ipc-test-server");
 
 	if (server_plugin == NULL)
@@ -74,12 +72,6 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static gboolean
-plugin_unload(GaimPlugin *plugin)
-{
-	gaim_debug_unregister_category("ipc-test-client");
-}
-
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -103,7 +95,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
-	plugin_unload,                                    /**< unload         */
+	NULL,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */

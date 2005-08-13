@@ -7779,8 +7779,6 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	gaim_debug_register_category("oscar");
-
 	option = gaim_account_option_string_new(_("Auth host"), "server", FAIM_LOGIN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

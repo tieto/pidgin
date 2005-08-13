@@ -233,8 +233,6 @@ plugin_load(GaimPlugin *plugin)
 {
 	void *conv_handle = gaim_conversations_get_handle();
 
-	gaim_debug_register_category("timestamp");
-
 	init_timer_list();
 
 	gaim_signal_connect(conv_handle, "conversation-created",
@@ -265,8 +263,6 @@ plugin_unload(GaimPlugin *plugin)
 		GaimGtkConversation *conv = GAIM_GTK_CONVERSATION(c);
 		gtk_imhtml_show_comments(GTK_IMHTML(conv->imhtml), TRUE);
 	}
-
-	gaim_debug_unregister_category("timestamp");
 
 	return TRUE;
 }

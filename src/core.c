@@ -92,8 +92,6 @@ gaim_core_init(const char *ui)
 			ops->debug_ui_init();
 	}
 
-	gaim_debug_register_category("main");
-
 #ifdef HAVE_DBUS
 	gaim_dbus_init();
 #endif
@@ -171,9 +169,6 @@ gaim_core_quit(void)
 		g_free(core->ui);
 		core->ui = NULL;
 	}
-
-	/* I think this is where this should go */
-	gaim_debug_unregister_category("main");
 
 	g_free(core);
 

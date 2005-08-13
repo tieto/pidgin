@@ -156,8 +156,6 @@ gaim_gtk_sound_init(void)
 {
 	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
 
-	gaim_debug_register_category("sound");
-
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtk_sound_handle, GAIM_CALLBACK(account_signon_cb),
 						NULL);
@@ -208,8 +206,6 @@ gaim_gtk_sound_uninit(void)
 	ao_shutdown();
 #endif
 	sound_initialized = FALSE;
-
-	gaim_debug_unregister_category("sound");
 }
 
 #if defined(USE_AO)

@@ -2866,8 +2866,6 @@ static void init_plugin(GaimPlugin * plugin)
 	GaimAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	gaim_debug_register_category("zepyhr");
-
 	option = gaim_account_option_bool_new("Use tzc", "use_tzc", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 

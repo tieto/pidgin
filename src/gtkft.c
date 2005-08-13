@@ -1135,8 +1135,6 @@ gaim_gtk_xfers_init(void)
 	gaim_prefs_add_none("/gaim/gtk/filetransfer");
 	gaim_prefs_add_bool("/gaim/gtk/filetransfer/clear_finished", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/filetransfer/keep_open", FALSE);
-
-	gaim_debug_register_category("ft");
 }
 
 void

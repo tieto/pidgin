@@ -1594,8 +1594,6 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountUserSplit *split;
 	char tmp[256];
 
-	gaim_debug_register_category("silc");
-
 	silc_plugin = plugin;
 
 	split = gaim_account_user_split_new(_("Network"), "silcnet.org", '@');

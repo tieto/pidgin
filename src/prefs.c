@@ -1075,8 +1075,6 @@ gaim_prefs_init(void)
 {
 	void *handle = gaim_prefs_get_handle();
 
-	gaim_debug_register_category("prefs");
-
 	prefs_hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	gaim_prefs_connect_callback(handle, "/", prefs_save_cb, NULL);
@@ -1133,6 +1131,4 @@ gaim_prefs_uninit()
 	}
 
 	gaim_prefs_disconnect_by_handle(gaim_prefs_get_handle());
-
-	gaim_debug_unregister_category("prefs");
 }

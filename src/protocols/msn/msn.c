@@ -1804,8 +1804,6 @@ msn_get_info(GaimConnection *gc, const char *name)
 
 static gboolean msn_load(GaimPlugin *plugin)
 {
-	gaim_debug_register_category("msn");
-
 	msn_notification_init();
 	msn_switchboard_init();
 	msn_sync_init();
@@ -1818,8 +1816,6 @@ static gboolean msn_unload(GaimPlugin *plugin)
 	msn_notification_end();
 	msn_switchboard_end();
 	msn_sync_end();
-
-	gaim_debug_unregister_category("msn");
 
 	return TRUE;
 }

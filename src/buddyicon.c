@@ -505,8 +505,6 @@ gaim_buddy_icons_get_handle()
 void
 gaim_buddy_icons_init()
 {
-	gaim_debug_register_category("buddy icons");
-
 	account_cache = g_hash_table_new_full(
 		g_direct_hash, g_direct_equal,
 		NULL, (GFreeFunc)g_hash_table_destroy);
@@ -527,8 +525,6 @@ void
 gaim_buddy_icons_uninit()
 {
 	g_hash_table_destroy(account_cache);
-
-	gaim_debug_unregister_category("buddy icons");
 }
 
 void gaim_buddy_icon_get_scale_size(GaimBuddyIconSpec *spec, int *width, int *height)

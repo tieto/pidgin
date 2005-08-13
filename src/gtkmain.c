@@ -685,39 +685,9 @@ int main(int argc, char *argv[])
 	startup_notification_complete();
 #endif
 
-	gaim_debug_register_category("sighandler");
-	gaim_debug_register_category("ui_main");
-
-	/* XXX These don't really belong here, but I don't have a better place for
-	 * them right now */
-	gaim_debug_register_category("gtkimhtml");
-	gaim_debug_register_category("gtk_imhtml_tip");
-	gaim_debug_register_category("html clipboard");
-	/* #if 0'ed out for Windows stuff
-	gaim_debug_register_category("imhtml clipboard");
-	*/
-	gaim_debug_register_category("imgstore");
-	gaim_debug_register_category("pluginpref");
-	gaim_debug_register_category("request");
-	gaim_debug_register_category("roomlist");
-	/* gtkutils.c */
-	gaim_debug_register_category("accels");
-	gaim_debug_register_category("gtkspell");
-	/* These are from util.c */
-	gaim_debug_register_category("build_dir");
-	gaim_debug_register_category("gaim_mkstemp");
-	gaim_debug_register_category("gaim_str_add_cr");
-	gaim_debug_register_category("gaim_url_fetch");
-	gaim_debug_register_category("gaim_utf8_strcasecmp");
-	gaim_debug_register_category("parse_content_len");
-	gaim_debug_register_category("program_is_valid");
-	gaim_debug_register_category("util");
-	/* These only show up once */
-	gaim_debug_register_category("gtknotify");
-	gaim_debug_register_category("gtksound");
-	gaim_debug_register_category("prpl");
-	gaim_debug_register_category("server");
-	gaim_debug_register_category("stringref");
+#ifdef HAVE_DBUS
+ 	gaim_dbus_connect(gaim_dbus_object); 
+#endif
 
 	gtk_main();
 

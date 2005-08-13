@@ -471,8 +471,6 @@ plugin_load(GaimPlugin *plugin)
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *core_handle = gaim_get_core();
 
-	gaim_debug_register_category("tray icon");
-
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin loaded\n");
 
 	handle = plugin;
@@ -513,8 +511,6 @@ plugin_unload(GaimPlugin *plugin)
 	docklet_remove_callbacks();
 
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin unloaded\n");
-
-	gaim_debug_register_category("tray icon");
 
 	return TRUE;
 }

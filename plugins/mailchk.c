@@ -117,8 +117,6 @@ plugin_load(GaimPlugin *plugin)
 	GaimBuddyList *list = gaim_get_blist();
 	void *conn_handle = gaim_connections_get_handle();
 
-	gaim_debug_register_category("mailchk");
-
 	if (!check_timeout(NULL)) {
 		gaim_debug_warning("mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
 		return FALSE;
@@ -144,8 +142,6 @@ plugin_unload(GaimPlugin *plugin)
 	if (mail)
 		gtk_widget_destroy(mail);
 	mail = NULL;
-
-	gaim_debug_unregister_category("mailchk");
 
 	return TRUE;
 }

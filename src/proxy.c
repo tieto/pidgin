@@ -1959,12 +1959,6 @@ gaim_proxy_init(void)
 {
 	void *handle;
 
-	gaim_debug_register_category("dns");
-	gaim_debug_register_category("proxy");
-	gaim_debug_register_category("http proxy");
-	gaim_debug_register_category("socks5 proxy");
-	gaim_debug_register_category("socks4 proxy");
-
 	/* Initialize a default proxy info struct. */
 	global_proxy_info = gaim_proxy_info_new();
 

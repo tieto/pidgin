@@ -532,8 +532,6 @@ destroy_perl_plugin(GaimPlugin *plugin)
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	gaim_debug_register_category("perl");
-
 	return TRUE;
 }
 
@@ -541,8 +539,6 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	perl_end();
-
-	gaim_debug_unregister_category("perl");
 
 	return TRUE;
 }

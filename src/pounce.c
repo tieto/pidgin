@@ -980,8 +980,6 @@ gaim_pounces_init(void)
 	void *blist_handle = gaim_blist_get_handle();
 	void *conv_handle  = gaim_conversations_get_handle();
 
-	gaim_debug_register_category("pounce");
-
 	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, free_pounce_handler);
 
@@ -1021,6 +1019,4 @@ gaim_pounces_uninit()
 	}
 
 	gaim_signals_disconnect_by_handle(gaim_pounces_get_handle());
-
-	gaim_debug_unregister_category("pounce");
 }

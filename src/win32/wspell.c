@@ -135,8 +135,6 @@ static char* lookup_aspell_path() {
 void wgaim_gtkspell_init() {
 	char *aspell_path = lookup_aspell_path();
 
-	gaim_debug_register_category("wspell");
-
 	if (aspell_path != NULL) {
 		char *tmp = g_strconcat(aspell_path, "\\aspell-15.dll", NULL);
 		if (g_file_test(tmp, G_FILE_TEST_EXISTS)) {

@@ -298,8 +298,6 @@ gaim_network_get_port_from_fd(int fd)
 void
 gaim_network_init(void)
 {
-	gaim_debug_register_category("network");
-
 	gaim_prefs_add_none  ("/core/network");
 	gaim_prefs_add_bool  ("/core/network/auto_ip", TRUE);
 	gaim_prefs_add_string("/core/network/public_ip", "");

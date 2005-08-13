@@ -329,9 +329,6 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flag
  */
 
 gboolean plugin_load(GaimPlugin *plugin) {
-	gaim_debug_register_category("gtkappbar");
-	gaim_debug_register_category(WINPREFS_PLUGIN_ID);
-
 	/* Find out how to go blinky */
 	load_winver_specific_procs();
 
@@ -361,9 +358,6 @@ gboolean plugin_load(GaimPlugin *plugin) {
 gboolean plugin_unload(GaimPlugin *plugin) {
 	blist_set_dockable(FALSE);
 	blist_set_ontop(FALSE);
-
-	gaim_debug_unregister_category("gtkappbar");
-	gaim_debug_unregister_category(WINPREFS_PLUGIN_ID);
 
 	return TRUE;
 }

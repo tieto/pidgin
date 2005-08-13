@@ -2335,8 +2335,6 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	gaim_debug_register_category("toc");
-
 	option = gaim_account_option_string_new(_("TOC host"), "server", TOC_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);

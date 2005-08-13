@@ -2564,8 +2564,6 @@ gaim_blist_init(void)
 {
 	void *handle = gaim_blist_get_handle();
 
-	gaim_debug_register_category("blist");
-
 	gaim_signal_register(handle, "buddy-away",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
@@ -2619,6 +2617,4 @@ gaim_blist_uninit(void)
 	}
 
 	gaim_signals_unregister_by_instance(gaim_blist_get_handle());
-
-	gaim_debug_unregister_category("blist");
 }
