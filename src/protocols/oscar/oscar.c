@@ -6885,28 +6885,34 @@ static char *oscar_status_text(GaimBuddy *b)
 {
 	GaimConnection *gc;
 	OscarData *od;
-	GaimStatus *status;
+	GaimPresence *presence;
 	gchar *ret = NULL;
 
 	gc = gaim_account_get_connection(gaim_buddy_get_account(b));
 	od = gc->proto_data;
-	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
+	presence = gaim_buddy_get_presence(b);
 
-	if (gaim_status_is_available(status) == FALSE || (((b->uc & 0xffff0000) >> 16) & AIM_ICQ_STATE_CHAT)) {
-		if (aim_sn_is_icq(b->name))
-			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
-		else
-			ret = g_strdup(_("Away"));
-	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
-		struct buddyinfo *bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
-		if ((bi != NULL) && (bi->availmsg != NULL))
-			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-	} else {
+	if (!gaim_presence_is_online(presence))
+	{
 		char *gname = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->sess->ssi.local, gname, b->name))
 			ret = g_strdup(_("Not Authorized"));
 		else
 			ret = g_strdup(_("Offline"));
+	}
+	else if (gaim_presence_is_available(presence))
+	{
+		struct buddyinfo *bi;
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
+		if ((bi != NULL) && (bi->availmsg != NULL))
+			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+	}
+	else
+	{
+		if (aim_sn_is_icq(b->name))
+			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
+		else
+			ret = g_strdup(_("Away"));
 	}
 
 	return ret;
