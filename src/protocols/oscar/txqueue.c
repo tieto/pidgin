@@ -31,19 +31,19 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 	aim_frame_t *fr;
 
 	if (!sess || !conn) {
-		faimdprintf(sess, 0, "aim_tx_new: No session or no connection specified!\n");
+		gaim_debug_misc("oscar", "aim_tx_new: No session or no connection specified!\n");
 		return NULL;
 	}
 
 	/* For sanity... */
 	if ((conn->type == AIM_CONN_TYPE_RENDEZVOUS) || (conn->type == AIM_CONN_TYPE_LISTENER)) {
 		if (framing != AIM_FRAMETYPE_OFT) {
-			faimdprintf(sess, 0, "aim_tx_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
+			gaim_debug_misc("oscar", "aim_tx_new: attempted to allocate inappropriate frame type for rendezvous connection\n");
 			return NULL;
 		}
 	} else {
 		if (framing != AIM_FRAMETYPE_FLAP) {
-			faimdprintf(sess, 0, "aim_tx_new: attempted to allocate inappropriate frame type for FLAP connection\n");
+			gaim_debug_misc("oscar", "aim_tx_new: attempted to allocate inappropriate frame type for FLAP connection\n");
 			return NULL;
 		}
 	}
@@ -58,7 +58,7 @@ faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8
 	else if (fr->hdrtype == AIM_FRAMETYPE_OFT)
 		fr->hdr.rend.type = chan;
 	else
-		faimdprintf(sess, 0, "tx_new: unknown framing\n");
+		gaim_debug_misc("oscar", "tx_new: unknown framing\n");
 
 	if (datalen > 0) {
 		fu8_t *data;
@@ -105,7 +105,7 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
 {
 
 	if (!fr->conn) {
-		faimdprintf(sess, 1, "aim_tx_enqueue: WARNING: enqueueing packet with no connecetion\n");
+		gaim_debug_warning("oscar", "aim_tx_enqueue: enqueueing packet with no connecetion\n");
 		fr->conn = aim_getconn_type(sess, AIM_CONN_TYPE_BOS);
 	}
 
@@ -134,15 +134,15 @@ static int aim_tx_enqueue__queuebased(aim_session_t *sess, aim_frame_t *fr)
  *
  * Basically the same as its __queuebased couterpart, however
  * instead of doing a list append, it just calls aim_tx_sendframe()
- * right here. 
- * 
+ * right here.
+ *
  */
 static int aim_tx_enqueue__immediate(aim_session_t *sess, aim_frame_t *fr)
 {
 	int ret;
 
 	if (!fr->conn) {
-		faimdprintf(sess, 1, "aim_tx_enqueue: ERROR: packet has no connection\n");
+		gaim_debug_error("oscar", "aim_tx_enqueue: packet has no connection\n");
 		aim_frame_destroy(fr);
 		return 0;
 	}

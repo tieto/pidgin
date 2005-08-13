@@ -52,7 +52,7 @@ faim_export aim_conn_t *aim_chat_getconn(aim_session_t *sess, const char *name)
 		if (cur->type != AIM_CONN_TYPE_CHAT)
 			continue;
 		if (!cur->internal) {
-			faimdprintf(sess, 0, "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
+			gaim_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", cur->fd);
 			continue;
 		}
 
@@ -142,7 +142,7 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	detaillevel = aimbs_get8(bs);
 
 	if (detaillevel != 0x02) {
-		faimdprintf(sess, 0, "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
+		gaim_debug_misc("oscar", "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
 		return 1;
 	}
 
@@ -469,7 +469,7 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	channel = aimbs_get16(bs);
 
 	if (channel != 0x0003) {
-		faimdprintf(sess, 0, "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
+		gaim_debug_misc("oscar", "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
 		return 0;
 	}
 

@@ -21,7 +21,7 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 
 	/* XXX the modules interface should have already retrieved this for us */
 	if (!(snac2 = aim_remsnac(sess, snac->id))) {
-		faimdprintf(sess, 2, "search error: couldn't get a snac for 0x%08lx\n", snac->id);
+		gaim_debug_misc("oscar", "search error: couldn't get a snac for 0x%08lx\n", snac->id);
 		return 0;
 	}
 

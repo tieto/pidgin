@@ -12,6 +12,7 @@
 #include "faimconfig.h"
 #include "aim_cbtypes.h"
 
+#include "debug.h"
 #include "internal.h"
 
 #include <stdio.h>
@@ -434,9 +435,6 @@ typedef struct aim_session_s {
 
 	fu8_t nonblocking;
 
-	int debug;
-	void (*debugcb)(struct aim_session_s *sess, int level, const char *format, va_list va); /* same as faim_debugging_callback_t */
-
 	/*
 	 * Outstanding snac handling
 	 *
@@ -581,9 +579,7 @@ faim_export int aim_conn_setstatus(aim_conn_t *, int);
 faim_export int aim_conn_completeconnect(aim_session_t *sess, aim_conn_t *conn);
 faim_export int aim_conn_isconnecting(aim_conn_t *conn);
 
-typedef void (*faim_debugging_callback_t)(aim_session_t *sess, int level, const char *format, va_list va);
-faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t);
-faim_export void aim_session_init(aim_session_t *, fu8_t nonblocking, int debuglevel);
+faim_export void aim_session_init(aim_session_t *, fu8_t nonblocking);
 faim_export void aim_session_kill(aim_session_t *);
 faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);

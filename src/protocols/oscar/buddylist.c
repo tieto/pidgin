@@ -117,7 +117,7 @@ faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const c
 		return -EINVAL;
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
-		faimdprintf(sess, 2, "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+		gaim_debug_misc("oscar", "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
 		len += 1 + strlen(tmpptr);
 		tmpptr = strtok(NULL, "&");
 	}
@@ -132,7 +132,7 @@ faim_export int aim_buddylist_set(aim_session_t *sess, aim_conn_t *conn, const c
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
 
-		faimdprintf(sess, 2, "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
+		gaim_debug_misc("oscar", "---adding: %s (%d)\n", tmpptr, strlen(tmpptr));
 
 		aimbs_put8(&fr->data, strlen(tmpptr));
 		aimbs_putstr(&fr->data, tmpptr);

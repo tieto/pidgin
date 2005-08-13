@@ -2,7 +2,7 @@
  * Family 0x0002 - Locate.
  *
  * The functions here are responsible for requesting and parsing information-
- * gathering SNACs.  Or something like that.  This family contains the SNACs 
+ * gathering SNACs.  Or something like that.  This family contains the SNACs
  * for getting and setting info, away messages, directory profile thingy, etc.
  */
 
@@ -13,7 +13,7 @@
 #endif
 
 /*
- * Capability blocks. 
+ * Capability blocks.
  *
  * These are CLSIDs. They should actually be of the form:
  *
@@ -400,7 +400,7 @@ faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, 
 		}
 
 		if (!identified)
-			faimdprintf(sess, 0, "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+			gaim_debug_misc("oscar", "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
 					cap[0], cap[1], cap[2], cap[3],
 					cap[4], cap[5],
 					cap[6], cap[7],
@@ -434,7 +434,7 @@ faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t
 		}
 
 		if (!identified)
-			faimdprintf(sess, 0, "unknown short capability: {%02x%02x}\n", cap[0], cap[1]);
+			gaim_debug_misc("oscar", "unknown short capability: {%02x%02x}\n", cap[0], cap[1]);
 
 		free(cap);
 	}
@@ -469,17 +469,17 @@ static void dumptlv(aim_session_t *sess, fu16_t type, aim_bstream_t *bs, fu8_t l
 	if (!sess || !bs || !len)
 		return;
 
-	faimdprintf(sess, 0, "userinfo:   type  =0x%04x\n", type);
-	faimdprintf(sess, 0, "userinfo:   length=0x%04x\n", len);
-	faimdprintf(sess, 0, "userinfo:   value:\n");
+	gaim_debug_misc("oscar", "userinfo:   type  =0x%04x\n", type);
+	gaim_debug_misc("oscar", "userinfo:   length=0x%04x\n", len);
+	gaim_debug_misc("oscar", "userinfo:   value:\n");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 8) == 0)
-			faimdprintf(sess, 0, "\nuserinfo:        ");
-		faimdprintf(sess, 0, "0x%2x ", aimbs_get8(bs));
+			gaim_debug_misc("oscar", "\nuserinfo:        ");
+		gaim_debug_misc("oscar", "0x%2x ", aimbs_get8(bs));
 	}
 
-	faimdprintf(sess, 0, "\n");
+	gaim_debug_misc("oscar", "\n");
 
 	return;
 }
@@ -803,8 +803,8 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			 * recovery.
 			 *
 			 */
-			faimdprintf(sess, 0, "userinfo: **warning: unexpected TLV:\n");
-			faimdprintf(sess, 0, "userinfo:   sn    =%s\n", outinfo->sn);
+			gaim_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
+			gaim_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
 			dumptlv(sess, type, bs, length);
 		}
 
@@ -877,17 +877,17 @@ static int error(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	int was_explicit;
 
 	if (!(snac2 = aim_remsnac(sess, snac->id))) {
-		faimdprintf(sess, 0, "faim: locate.c, error(): received response from unknown request!\n");
+		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from unknown request!\n");
 		return 0;
 	}
 
 	if ((snac2->family != 0x0002) && (snac2->type != 0x0015)) {
-		faimdprintf(sess, 0, "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
+		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
 		return 0;
 	}
 
 	if (!(sn = snac2->data)) {
-		faimdprintf(sess, 0, "faim: locate.c, error(): received response from request without a screen name!\n");
+		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from request without a screen name!\n");
 		return 0;
 	}
 

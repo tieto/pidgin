@@ -28,7 +28,7 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
 
 	/*
 	 * Send only the tool versions that the server cares about (that it
-	 * marked as supporting in the server ready SNAC).  
+	 * marked as supporting in the server ready SNAC).
 	 */
 	for (sg = ins->groups; sg; sg = sg->next) {
 		aim_module_t *mod;
@@ -39,7 +39,7 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
 			aimbs_put16(&fr->data, mod->toolid);
 			aimbs_put16(&fr->data, mod->toolversion);
 		} else
-			faimdprintf(sess, 1, "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
+			gaim_debug_misc("oscar", "aim_clientready: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
 	aim_tx_enqueue(sess, fr);
@@ -49,7 +49,7 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
 
 /*
  * Subtype 0x0003 - Host Online
- * 
+ *
  * See comments in conn.c about how the group associations are supposed
  * to work, and how they really work.
  *
@@ -57,9 +57,9 @@ faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
  *
  * We don't actually call the client here.  This starts off the connection
  * initialization routine required by all AIM connections.  The next time
- * the client is called is the CONNINITDONE callback, which should be 
+ * the client is called is the CONNINITDONE callback, which should be
  * shortly after the rate information is acknowledged.
- * 
+ *
  */
 static int hostonline(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)
 {
@@ -335,7 +335,7 @@ static int rateresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		if (mod->version >= 3)
 			aimbs_getrawbuf(bs, rc.unknown, sizeof(rc.unknown));
 
-		faimdprintf(sess, 1, "--- Adding rate class %d to connection type %d: window size = %ld, clear = %ld, alert = %ld, limit = %ld, disconnect = %ld, current = %ld, max = %ld\n", rx->conn->type, rc.classid, rc.windowsize, rc.clear, rc.alert, rc.limit, rc.disconnect, rc.current, rc.max);
+		gaim_debug_misc("oscar", "--- Adding rate class %d to connection type %d: window size = %ld, clear = %ld, alert = %ld, limit = %ld, disconnect = %ld, current = %ld, max = %ld\n", rx->conn->type, rc.classid, rc.windowsize, rc.clear, rc.alert, rc.limit, rc.disconnect, rc.current, rc.max);
 
 		rc_addclass(&ins->rates, &rc);
 	}
@@ -628,7 +628,7 @@ static int migrate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_
 
 		group = aimbs_get16(bs);
 
-		faimdprintf(sess, 0, "bifurcated migration unsupported -- group 0x%04x\n", group);
+		gaim_debug_misc("oscar", "bifurcated migration unsupported -- group 0x%04x\n", group);
 	}
 
 	tl = aim_tlvlist_read(bs);
@@ -754,7 +754,7 @@ faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn)
 			aimbs_put16(&fr->data, mod->family);
 			aimbs_put16(&fr->data, mod->version);
 		} else
-			faimdprintf(sess, 1, "aim_setversions: server supports group 0x%04x but we don't!\n", sg->group);
+			gaim_debug_misc("oscar", "aim_setversions: server supports group 0x%04x but we don't!\n", sg->group);
 	}
 
 	aim_tx_enqueue(sess, fr);
@@ -934,7 +934,7 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	modname = aim_tlv_getstr(list, 0x0001, 1);
 
-	faimdprintf(sess, 1, "data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
+	gaim_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
 	if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
 		ret = userfunc(sess, rx, offset, len, modname);
@@ -944,29 +944,6 @@ static int memrequest(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 
 	return ret;
 }
-
-#if 0
-static void dumpbox(aim_session_t *sess, unsigned char *buf, int len)
-{
-	int i;
-
-	if (!sess || !buf || !len)
-		return;
-
-	faimdprintf(sess, 1, "\nDump of %d bytes at %p:", len, buf);
-
-	for (i = 0; i < len; i++) {
-		if ((i % 8) == 0)
-			faimdprintf(sess, 1, "\n\t");
-
-		faimdprintf(sess, 1, "0x%2x ", buf[i]);
-	}
-
-	faimdprintf(sess, 1, "\n\n");
-
-	return;
-}
-#endif
 
 /* Subtype 0x0020 - Client verification reply */
 faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t offset, fu32_t len, const fu8_t *buf, fu8_t flag)
@@ -1046,7 +1023,7 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 			aimbs_put32(&fr->data, 0xecf8427e);
 
 		} else
-			faimdprintf(sess, 0, "sendmemblock: WARNING: unknown hash request\n");
+			gaim_debug_warning("oscar", "sendmemblock: unknown hash request\n");
 
 	}
 
@@ -1058,8 +1035,8 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 /*
  * Subtype 0x0021 - Receive our extended status
  *
- * This is used for iChat's "available" messages, and maybe ICQ extended 
- * status messages?  It's also used to tell the client whether or not it 
+ * This is used for iChat's "available" messages, and maybe ICQ extended
+ * status messages?  It's also used to tell the client whether or not it
  * needs to upload an SSI buddy icon... who engineers this stuff, anyway?
  */
 static int aim_parse_extstatus(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_modsnac_t *snac, aim_bstream_t *bs)

@@ -13,22 +13,6 @@
 #include "win32dep.h"
 #endif
 
-faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...)
-{
-	if (!sess) {
-		fprintf(stderr, "faimdprintf: no session! boo! (%d, %s)\n", dlevel, format);
-		return;
-	}
-	if ((dlevel <= sess->debug) && sess->debugcb) {
-		va_list ap;
-		va_start(ap, format);
-		sess->debugcb(sess, dlevel, format, ap);
-		va_end(ap);
-	}
-
-	return;
-}
-
 faim_export int aimutil_putstr(char *dest, const char *src, int len)
 {
 	memcpy(dest, src, len);

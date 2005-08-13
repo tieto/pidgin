@@ -175,9 +175,9 @@ struct rateclass {
 /*
  * This is inside every connection.  But it is a void * to anything
  * outside of libfaim.  It should remain that way.  It's called data
- * abstraction.  Maybe you've heard of it.  (Probably not if you're a 
+ * abstraction.  Maybe you've heard of it.  (Probably not if you're a
  * libfaim user.)
- * 
+ *
  */
 typedef struct aim_conn_inside_s {
 	struct snacgroup *groups;
@@ -212,8 +212,6 @@ faim_internal int aim_setversions(aim_session_t *sess, aim_conn_t *conn);
 faim_internal int aim_reqrates(aim_session_t *, aim_conn_t *);
 faim_internal int aim_rates_addparam(aim_session_t *, aim_conn_t *);
 faim_internal int aim_rates_delparam(aim_session_t *, aim_conn_t *);
-
-faim_internal void faimdprintf(aim_session_t *sess, int dlevel, const char *format, ...);
 
 #endif /* __AIM_INTERNAL_H__ */
 #endif /* FAIM_INTERNAL */

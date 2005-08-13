@@ -113,7 +113,7 @@ static int aim_get_command_flap(aim_session_t *sess, aim_conn_t *conn, aim_frame
 	 * or we break.  We must handle it just in case.
 	 */
 	if (aimbs_get8(&hdr) != 0x2a) {
-		faimdprintf(sess, 0, "Invalid FLAP frame received on FLAP connection!");
+		gaim_debug_misc("oscar", "Invalid FLAP frame received on FLAP connection!");
 		aim_conn_close(conn);
 		return -1;
 	}
@@ -190,7 +190,7 @@ faim_export int aim_get_command(aim_session_t *sess, aim_conn_t *conn)
 	if (conn->type == AIM_CONN_TYPE_RENDEZVOUS)
 		payloadlen = aim_get_command_rendezvous(sess, conn, fr);
 	else if (conn->type == AIM_CONN_TYPE_LISTENER) {
-		faimdprintf(sess, 0, "AIM_CONN_TYPE_LISTENER on fd %d\n", conn->fd);
+		gaim_debug_misc("oscar", "AIM_CONN_TYPE_LISTENER on fd %d\n", conn->fd);
 		free(fr);
 		return -1;
 	} else

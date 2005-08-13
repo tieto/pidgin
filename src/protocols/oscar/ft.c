@@ -231,7 +231,7 @@ faim_export int aim_handlerendconnect(aim_session_t *sess, aim_conn_t *cur)
 			ret = userfunc(sess, NULL, newconn, cur);
 
 	} else {
-		faimdprintf(sess, 1,"Got a connection on a listener that's not rendezvous.  Closing connection.\n");
+		gaim_debug_warning("oscar", "Got a connection on a listener that's not rendezvous.  Closing connection.\n");
 		aim_conn_close(newconn);
 		ret = -1;
 	}
@@ -603,7 +603,7 @@ static int handlehdr_odc(aim_session_t *sess, aim_conn_t *conn, aim_frame_t *frr
 	/* XXX - create an aimbs_getnullstr function? */
 	snptr = aimbs_getstr(bs, 32); /* Next 32 bytes contain the sn, padded with null chars */
 
-	faimdprintf(sess, 2, "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
+	gaim_debug_misc("oscar", "faim: OFT frame: handlehdr_odc: %04x / %04x / %s\n", payloadlength, flags, snptr);
 
 	if (flags & 0x0008) {
 		if ((userfunc = aim_callhandler(sess, conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIMTYPING)))
@@ -919,7 +919,7 @@ faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr
 		if (fr->hdr.rend.type == 0x0001)
 			ret = handlehdr_odc(sess, conn, fr, &fr->data);
 		else
-			faimdprintf(sess, 0, "faim: ODC directim frame unknown, type is %04x\n", fr->hdr.rend.type);
+			gaim_debug_info("oscar", "ODC directim frame unknown, type is %04x\n", fr->hdr.rend.type);
 
 	} else {
 		aim_rxcallback_t userfunc;

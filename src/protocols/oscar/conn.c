@@ -82,7 +82,7 @@ faim_internal void aim_conn_addgroup(aim_conn_t *conn, fu16_t group)
 	if (!(sg = malloc(sizeof(struct snacgroup))))
 		return;
 
-	faimdprintf(aim_conn_getsess(conn), 1, "adding group 0x%04x\n", group);
+	gaim_debug_misc("oscar", "adding group 0x%04x\n", group);
 	sg->group = group;
 
 	sg->next = ins->groups;
@@ -508,23 +508,14 @@ faim_export int aim_conn_setlatency(aim_conn_t *conn, int newval)
 	return 0;
 }
 
-static void defaultdebugcb(aim_session_t *sess, int level, const char *format, va_list va)
-{
-
-	vfprintf(stderr, format, va);
-
-	return;
-}
-
 /**
- * Initializes a session structure by setting the initial values 
+ * Initializes a session structure by setting the initial values
  * stuff in the aim_session_t struct.
  *
  * @param sess Session to initialize.
  * @param nonblocking Set to true if you want connections to be non-blocking.
- * @param debuglevel Level of debugging output (zero is least).
  */
-faim_export void aim_session_init(aim_session_t *sess, fu8_t nonblocking, int debuglevel)
+faim_export void aim_session_init(aim_session_t *sess, fu8_t nonblocking)
 {
 
 	if (!sess)
@@ -537,8 +528,6 @@ faim_export void aim_session_init(aim_session_t *sess, fu8_t nonblocking, int de
 	aim_initsnachash(sess);
 	sess->msgcookies = NULL;
 	sess->nonblocking = nonblocking;
-	sess->debug = debuglevel;
-	sess->debugcb = defaultdebugcb;
 	sess->modlistv = NULL;
 	sess->snacid_next = 0x00000001;
 
@@ -609,28 +598,6 @@ faim_export void aim_session_kill(aim_session_t *sess)
 	aim__shutdownmodules(sess);
 
 	return;
-}
-
-/**
- * Set the function to call when outputting debugging info.
- *
- * The function specified is called whenever faimdprintf() is used within
- * libfaim, and the session's debugging level is greater tha nor equal to
- * the value faimdprintf was called with.
- *
- * @param sess Session to change.
- * @param cb Function to call.
- * @return Returns -1 if the session does not exist, zero otherwise.
- */
-faim_export int aim_setdebuggingcb(aim_session_t *sess, faim_debugging_callback_t cb)
-{
-
-	if (!sess)
-		return -1;
-
-	sess->debugcb = cb;
-
-	return 0;
 }
 
 /**

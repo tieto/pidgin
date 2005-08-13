@@ -516,7 +516,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 
 	if (!(tl = aim_tlvlist_read(bs)) || !(datatlv = aim_tlv_gettlv(tl, 0x0001, 1))) {
 		aim_tlvlist_free(&tl);
-		faimdprintf(sess, 0, "corrupt ICQ response\n");
+		gaim_debug_misc("oscar", "corrupt ICQ response\n");
 		return 0;
 	}
 
@@ -527,7 +527,7 @@ static int icqresponse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, 
 	cmd = aimbs_getle16(&qbs);
 	reqid = aimbs_getle16(&qbs);
 
-	faimdprintf(sess, 1, "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
+	gaim_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
 	if (cmd == 0x0041) { /* offline message */
 		struct aim_icq_offlinemsg msg;

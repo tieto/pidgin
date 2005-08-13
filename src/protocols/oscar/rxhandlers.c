@@ -68,7 +68,7 @@ faim_internal int aim__registermodule(aim_session_t *sess, int (*modfirst)(aim_s
 	mod->next = (aim_module_t *)sess->modlistv;
 	sess->modlistv = mod;
 
-	faimdprintf(sess, 1, "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
+	gaim_debug_misc("oscar", "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
 
 	return 0;
 }
@@ -376,15 +376,15 @@ faim_internal int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 		subtype = aimbs_get16(&frame->data);
 		
 		if ((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->hdr.flap.channel], family, subtype, literals[family][subtype+1]);
+			gaim_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->hdr.flap.channel], family, subtype, literals[family][subtype+1]);
 		else
-			faimdprintf(sess, 0, "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->hdr.flap.channel], family, subtype);
+			gaim_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->hdr.flap.channel], family, subtype);
 	} else {
 
 		if (frame->hdr.flap.channel <= maxchannels)
-			faimdprintf(sess, 0, "bleck: channel %s (0x%02x)\n", channels[frame->hdr.flap.channel], frame->hdr.flap.channel);
+			gaim_debug_misc("oscar", "bleck: channel %s (0x%02x)\n", channels[frame->hdr.flap.channel], frame->hdr.flap.channel);
 		else
-			faimdprintf(sess, 0, "bleck: unknown channel 0x%02x\n", frame->hdr.flap.channel);
+			gaim_debug_misc("oscar", "bleck: unknown channel 0x%02x\n", frame->hdr.flap.channel);
 
 	}
 		
@@ -398,7 +398,7 @@ faim_export int aim_conn_addhandler(aim_session_t *sess, aim_conn_t *conn, fu16_
 	if (!conn)
 		return -1;
 
-	faimdprintf(sess, 1, "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
+	gaim_debug_misc("oscar", "aim_conn_addhandler: adding for %04x/%04x\n", family, type);
 
 	if (!(newcb = (struct aim_rxcblist_s *)calloc(1, sizeof(struct aim_rxcblist_s))))
 		return -1;
@@ -448,7 +448,7 @@ faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *
 	if (!conn)
 		return NULL;
 
-	faimdprintf(sess, 1, "aim_callhandler: calling for %04x/%04x\n", family, type);
+	/* gaim_debug_misc("oscar", "aim_callhandler: calling for %04x/%04x\n", family, type); */
 
 	for (cur = (struct aim_rxcblist_s *)conn->handlerlist; cur; cur = cur->next) {
 		if ((cur->family == family) && (cur->type == type))
@@ -456,11 +456,11 @@ faim_internal aim_rxcallback_t aim_callhandler(aim_session_t *sess, aim_conn_t *
 	}
 
 	if (type == AIM_CB_SPECIAL_DEFAULT) {
-		faimdprintf(sess, 1, "aim_callhandler: no default handler for family 0x%04x\n", family);
+		/* gaim_debug_misc("oscar", "aim_callhandler: no default handler for family 0x%04x\n", family); */
 		return NULL; /* prevent infinite recursion */
 	}
 
-	faimdprintf(sess, 1, "aim_callhandler: no handler for  0x%04x/0x%04x\n", family, type);
+	/* gaim_debug_misc("oscar", "aim_callhandler: no handler for  0x%04x/0x%04x\n", family, type); */
 
 	return aim_callhandler(sess, conn, family, AIM_CB_SPECIAL_DEFAULT);
 }
@@ -541,7 +541,7 @@ faim_export void aim_rxdispatch(aim_session_t *sess)
 
 			} else if (cur->conn->type == AIM_CONN_TYPE_LISTENER) {
 				/* not possible */
-				faimdprintf(sess, 0, "rxdispatch called on LISTENER connection!\n");
+				gaim_debug_misc("oscar", "rxdispatch called on LISTENER connection!\n");
 				cur->handled = 1;
 				continue;
 			}
@@ -553,7 +553,7 @@ faim_export void aim_rxdispatch(aim_session_t *sess)
 		}
 	}
 
-	/* 
+	/*
 	 * This doesn't have to be called here.  It could easily be done
 	 * by a separate thread or something. It's an administrative operation,
 	 * and can take a while. Though the less you call it the less memory
@@ -568,16 +568,16 @@ faim_internal int aim_parse_unknown(aim_session_t *sess, aim_frame_t *frame, ...
 {
 	int i;
 
-	faimdprintf(sess, 1, "\nRecieved unknown packet:");
+	gaim_debug_misc("oscar", "\nRecieved unknown packet:");
 
 	for (i = 0; aim_bstream_empty(&frame->data); i++) {
 		if ((i % 8) == 0)
-			faimdprintf(sess, 1, "\n\t");
+			gaim_debug_misc("oscar", "\n\t");
 
-		faimdprintf(sess, 1, "0x%2x ", aimbs_get8(&frame->data));
+		gaim_debug_misc("oscar", "0x%2x ", aimbs_get8(&frame->data));
 	}
 
-	faimdprintf(sess, 1, "\n\n");
+	gaim_debug_misc("oscar", "\n\n");
 
 	return 1;
 }

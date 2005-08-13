@@ -69,8 +69,6 @@
 /* Seconds each file transfer ip address will be given to make a connection */
 #define FT_IP_TIMEOUT	15
 
-#define FAIM_DEBUG_LEVEL 0
-
 static int caps_aim = AIM_CAPS_CHAT | AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 static int caps_icq = AIM_CAPS_BUDDYICON | AIM_CAPS_DIRECTIM | AIM_CAPS_SENDFILE | AIM_CAPS_ICQUTF8 | AIM_CAPS_INTEROPERATE | AIM_CAPS_ICHAT;
 
@@ -1713,19 +1711,6 @@ static void oscar_callback(gpointer data, gint source, GaimInputCondition condit
 	}
 }
 
-static void oscar_debug(aim_session_t *sess, int level, const char *format, va_list va) {
-	GaimConnection *gc = sess->aux_data;
-	gchar *s = g_strdup_vprintf(format, va);
-	gchar *buf;
-
-	buf = g_strdup_printf("%s %d: %s", gaim_account_get_username(gaim_connection_get_account(gc)), level, s);
-	gaim_debug_info("oscar", buf);
-	if (buf[strlen(buf)-1] != '\n')
-		gaim_debug_info(NULL, "\n");
-	g_free(buf);
-	g_free(s);
-}
-
 static void oscar_login_connect(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimConnection *gc = data;
@@ -1792,8 +1777,7 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	od->buddyinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, oscar_free_buddyinfo);
 
 	sess = g_new0(aim_session_t, 1);
-	aim_session_init(sess, TRUE, FAIM_DEBUG_LEVEL);
-	aim_setdebuggingcb(sess, oscar_debug);
+	aim_session_init(sess, TRUE);
 	/*
 	 * We need an immediate queue because we don't use a while-loop
 	 * to see if things need to be sent.

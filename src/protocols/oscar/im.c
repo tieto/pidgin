@@ -1111,7 +1111,7 @@ static int outgoingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	channel = aimbs_get16(bs);
 
 	if (channel != 0x01) {
-		faimdprintf(sess, 0, "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
+		gaim_debug_misc("oscar", "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
 		return 0;
 	}
 
@@ -1334,7 +1334,7 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 		msglen = aimbs_get16(&mbs);
 		if (msglen > aim_bstream_empty(&mbs))
 		{
-			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
+			gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
 			break;
 		}
 
@@ -1434,7 +1434,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 
 		if (length > aim_bstream_empty(bs))
 		{
-			faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+			gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 			break;
 		}
 
@@ -1457,7 +1457,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			args.featureslen = aimbs_get16(bs);
 			if (args.featureslen > aim_bstream_empty(bs))
 			{
-				faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
 			if (args.featureslen == 0)
@@ -1523,7 +1523,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 			args.extdatalen = length;
 			if (args.extdatalen > aim_bstream_empty(bs))
 			{
-				faimdprintf(sess, 0, "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
 			if (args.extdatalen == 0)
@@ -1532,7 +1532,7 @@ static int incomingim_ch1(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 				args.extdata = aimbs_getraw(bs, args.extdatalen);
 
 		} else {
-			faimdprintf(sess, 0, "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
+			gaim_debug_misc("oscar", "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
 		}
 
 		/*
@@ -1595,7 +1595,7 @@ static void incomingim_ch2_buddylist(aim_session_t *sess, aim_module_t *mod, aim
 			bnlen = aimbs_get16(servdata);
 			bn = aimbs_getstr(servdata, bnlen);
 
-			faimdprintf(sess, 0, "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
+			gaim_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
 
 			free(bn);
 		}
@@ -1774,7 +1774,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 */
 	cookie2 = aimbs_getraw(&bbs, 8);
 	if (memcmp(cookie, cookie2, 8) != 0)
-		faimdprintf(sess, 0, "rend: warning cookies don't match!\n");
+		gaim_debug_misc("oscar", "rend: warning cookies don't match!\n");
 	memcpy(args.cookie, cookie2, 8);
 	free(cookie2);
 
@@ -2069,7 +2069,7 @@ static int incomingim(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 		aim_tlvlist_free(&tlvlist);
 
 	} else {
-		faimdprintf(sess, 0, "icbm: ICBM received on an unsupported channel.  Ignoring.  (chan = %04x)\n", channel);
+		gaim_debug_misc("oscar", "icbm: ICBM received on an unsupported channel.  Ignoring.  (chan = %04x)\n", channel);
 	}
 
 	aim_info_free(&userinfo);
