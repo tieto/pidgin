@@ -198,13 +198,12 @@ static void intercept_sent(GaimAccount *account, GaimConversation *conv, char **
 	GaimConvIm *imData = gaim_conversation_get_im_data(conv);
 	GaimConnection *connection = gaim_conversation_get_gc(conv);
 	const char *convName = gaim_conversation_get_name(conv);
-	const char *who = gaim_account_get_username(account);
+	/* const char *who = gaim_account_get_username(account); */
 	
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
 		message = 0;
 		gaim_debug(GAIM_DEBUG_MISC, "gaim-musicmessaging", "Received MM Message\n");
-		send_change_confirmed("the command", "the params");
 	}
 	else if (0 == strncmp(*message, MUSICMESSAGING_START_TAG, strlen(MUSICMESSAGING_START_TAG)))
 	{
@@ -213,7 +212,7 @@ static void intercept_sent(GaimAccount *account, GaimConversation *conv, char **
 	else
 	{
 		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
-		gaim_conv_im_write (imData, NULL, *message, GAIM_MESSAGE_SYSTEM, time(NULL));
+		gaim_conv_im_write (imData, NULL, *message, GAIM_MESSAGE_SEND, time(NULL));
 	}
 }
 
@@ -226,7 +225,11 @@ static void intercept_received(GaimAccount *account, char **sender, char **messa
 static gboolean
 start_session(MMConversation *mmconv)
 {
-	mmconv->started = TRUE;
+	if (!mmconv->requested)
+	{
+		mmconv->originator = TRUE;
+	}
+	
 	run_editor(mmconv);
 	return TRUE;
 }
@@ -235,9 +238,10 @@ static void music_button_toggled (GtkWidget *widget, gpointer data)
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) 
     {
-		start_session((MMConversation *) data);    
+		start_session((MMConversation *) data);
     } else {
-        kill_editor((MMConversation *) data);
+        ((MMConversation *)data)->started = FALSE;
+		kill_editor((MMConversation *) data);
     }
 }
 
@@ -258,6 +262,11 @@ static void run_editor (MMConversation *mmconv)
 	{
 		gaim_notify_error(plugin_pointer, "Error Running Editor",
 						"The following error has occured:", spawn_error->message);
+		mmconv->started = FALSE;
+	}
+	else
+	{
+		mmconv->started = TRUE;
 	}
 }
 
@@ -320,8 +329,9 @@ static void add_button (MMConversation *mmconv)
 
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), mmconv);
 
-	gchar *file_path = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", "music.png", NULL);
-	image = gtk_image_new_from_file("/usr/local/share/pixmaps/gaim/buttons/music.png");
+	/* gchar *file_path = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", "music.png", NULL); */
+	gchar *file_path = "/usr/local/share/pixmaps/gaim/buttons/music.png";
+	image = gtk_image_new_from_file(file_path);
 
 	gtk_container_add((GtkContainer *)button, image);
 	
