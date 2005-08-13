@@ -104,14 +104,15 @@ gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 
 static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
 {
-	gboolean online = TRUE;
 	char *status = NULL;
 
 	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
 		return;
 
 	if (f->status == YAHOO_STATUS_OFFLINE)
-		online = FALSE;
+	{
+		return;
+	}
 
 	switch (f->status) {
 	case YAHOO_STATUS_AVAILABLE:
