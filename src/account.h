@@ -403,6 +403,24 @@ void gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 gboolean gaim_account_is_connected(const GaimAccount *account);
 
 /**
+ * Returns whether or not the account is connecting.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if connecting, or @c FALSE otherwise.
+ */
+gboolean gaim_account_is_connecting(const GaimAccount *account);
+
+/**
+ * Returns whether or not the account is disconnected.
+ *
+ * @param account The account.
+ *
+ * @return @c TRUE if disconnected, or @c FALSE otherwise.
+ */
+gboolean gaim_account_is_disconnected(const GaimAccount *account);
+
+/**
  * Returns the account's username.
  *
  * @param account The account.

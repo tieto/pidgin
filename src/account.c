@@ -1002,7 +1002,7 @@ gaim_account_disconnect(GaimAccount *account)
 	GaimConnection *gc;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(gaim_account_is_connected(account));
+	g_return_if_fail(!gaim_account_is_disconnected(account));
 
 	gaim_debug_info("account", "Disconnecting account %p\n", account);
 
@@ -1513,18 +1513,36 @@ gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
 	schedule_accounts_save();
 }
 
-gboolean
-gaim_account_is_connected(const GaimAccount *account)
+static GaimConnectionState
+gaim_account_get_state(const GaimAccount *account)
 {
 	GaimConnection *gc;
 
-	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(account != NULL, GAIM_DISCONNECTED);
 
 	gc = gaim_account_get_connection(account);
+	if (!gc)
+		return GAIM_DISCONNECTED;
 
-	/* TODO: The first way is better... but it doesn't work quite right yet */
-	/* return ((gc != NULL) && GAIM_CONNECTION_IS_CONNECTED(gc)); */
-	return ((gc != NULL) && gaim_connection_get_state(gc) != GAIM_DISCONNECTED);
+	return gaim_connection_get_state(gc);
+}
+
+gboolean
+gaim_account_is_connected(const GaimAccount *account)
+{
+	return (gaim_account_get_state(account) == GAIM_CONNECTED);
+}
+
+gboolean
+gaim_account_is_connecting(const GaimAccount *account)
+{
+	return (gaim_account_get_state(account) == GAIM_CONNECTING);
+}
+
+gboolean
+gaim_account_is_disconnected(const GaimAccount *account)
+{
+	return (gaim_account_get_state(account) == GAIM_DISCONNECTED);
 }
 
 const char *

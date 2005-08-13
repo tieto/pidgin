@@ -83,7 +83,7 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 
 	g_return_if_fail(account != NULL);
 
-	if (gaim_account_is_connected(account))
+	if (!gaim_account_is_disconnected(account))
 		return;
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));

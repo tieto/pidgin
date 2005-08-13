@@ -5963,7 +5963,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 static void
 oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
-	gboolean connected = gaim_account_is_connected(account);
+	gboolean disconnected = gaim_account_is_disconnected(account);
 	GaimStatusType *type = gaim_status_get_type(status);
 	int primitive = gaim_status_type_get_primitive(type);
 
@@ -5972,12 +5972,12 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (primitive != GAIM_STATUS_OFFLINE && !connected) {
+	if (primitive != GAIM_STATUS_OFFLINE && disconnected) {
 		gaim_account_connect(account);
-	} else if (primitive == GAIM_STATUS_OFFLINE && connected) {
+	} else if (primitive == GAIM_STATUS_OFFLINE && !disconnected) {
 		gaim_account_disconnect(account);
 	} else {
-		if (!connected)
+		if (!gaim_account_is_connected(account))
 			return;
 
 		if (aim_sn_is_icq(gaim_account_get_username(account)))

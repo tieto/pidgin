@@ -1758,7 +1758,7 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 											GDK_INTERP_BILINEAR);
 
-			if (!gaim_account_is_connected(account))
+			if (gaim_account_is_disconnected(account))
 				gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 		}
 		gtk_list_store_set(dialog->model, &iter,
@@ -2144,7 +2144,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 	{
 		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 
-		if (!gaim_account_is_connected(account))
+		if (gaim_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 	}
 
