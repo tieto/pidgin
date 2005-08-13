@@ -1719,7 +1719,7 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 			}
 		}
 	}
-	
+
 	if (!found) {
 		/* Now check from the beginning up to this position. */
 		for (i = 0; !found && i < index && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
@@ -1736,7 +1736,6 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 			/* Okay, just grab the next conversation tab. */
 			if (!(next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index + 1)))
 				next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, 0);
-				
 		}
 	}
 
@@ -1844,6 +1843,18 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				move_to_next_unread_tab(gtkconv);
 
 				return TRUE;
+				break;
+
+			case GDK_comma:
+				gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), curconv),
+						curconv - 1);
+				break;
+
+			case GDK_period:
+				gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook),
+						gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), curconv),
+						(curconv + 1) % gtk_notebook_get_n_pages(GTK_NOTEBOOK(gtkwin->notebook)));
 				break;
 
 		} /* End of switch */
