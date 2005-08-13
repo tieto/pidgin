@@ -1867,6 +1867,7 @@ static void
 _evt_conference_invite(NMUser * user, NMEvent * event)
 {
 	NMUserRecord *ur;
+	GaimConnection *gc;
 	GSList *parms = NULL;
 	const char *title = NULL;
 	const char *secondary = NULL;
@@ -1896,7 +1897,8 @@ _evt_conference_invite(NMUser * user, NMEvent * event)
 	parms = g_slist_append(parms, nm_event_get_conference(event));
 
 	/* Prompt the user */
-	gaim_request_action(NULL, title, primary, secondary, 
+	gc = gaim_account_get_connection(user->client_data);
+	gaim_request_action(gc, title, primary, secondary,
 						GAIM_DEFAULT_ACTION_NONE, parms, 2,
 						_("Yes"), G_CALLBACK(_join_conference_cb),
 						_("No"), G_CALLBACK(_reject_conference_cb));
