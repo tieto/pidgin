@@ -437,13 +437,13 @@ const char *gaim_status_attr_get_id(const GaimStatusAttr *attr);
 const char *gaim_status_attr_get_name(const GaimStatusAttr *attr);
 
 /**
- * Returns the value type of a status attribute.
+ * Returns the value of a status attribute.
  *
  * @param attr The status attribute.
  *
- * @return The status attribute's value type.
+ * @return The status attribute's value.
  */
-GaimValue *gaim_status_attr_get_value_type(const GaimStatusAttr *attr);
+GaimValue *gaim_status_attr_get_value(const GaimStatusAttr *attr);
 
 /*@}*/
 
@@ -494,6 +494,20 @@ void gaim_status_set_active(GaimStatus *status, gboolean active);
  */
 void gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active,
 									   va_list args);
+
+/**
+ * Sets whether or not a status is active.
+ *
+ * This should only be called by the account, conversation, and buddy APIs.
+ *
+ * @param status The status.
+ * @param active The active state.
+ * @param list   A list of attributes to set on the status.  This list is
+ *               composed of key/value pairs, where each key is a valid
+ *               attribute name for this GaimStatusType.
+ */
+void gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
+											const GList *attrs);
 
 /**
  * Sets the boolean value of an attribute in a status with the specified ID.

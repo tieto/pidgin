@@ -119,9 +119,102 @@ ui_setting_to_xmlnode(gpointer key, gpointer value, gpointer user_data)
 }
 
 static xmlnode *
-status_to_xmlnode(const GaimStatus *status)
+status_attr_to_xmlnode(const GaimStatus *status, const GaimStatusType *type, const GaimStatusAttr *attr)
 {
 	xmlnode *node;
+	const char *id;
+	char *value = NULL;
+	GaimStatusAttr *default_attr;
+	GaimValue *default_value;
+	GaimType attr_type;
+	GaimValue *attr_value;
+
+	id = gaim_status_attr_get_id(attr);
+	g_return_val_if_fail(id, NULL);
+
+	attr_value = gaim_status_get_attr_value(status, id);
+	g_return_val_if_fail(attr_value, NULL);
+	attr_type = gaim_value_get_type(attr_value);
+
+	/*
+	 * If attr_value is a different type than it should be
+	 * then don't write it to the file.
+	 */
+	default_attr = gaim_status_type_get_attr(type, id);
+	default_value = gaim_status_attr_get_value(default_attr);
+	if (attr_type != gaim_value_get_type(default_value))
+		return NULL;
+
+	/*
+	 * If attr_value is the same as the default for this status
+	 * then there is no need to write it to the file.
+	 */
+	if (attr_type == GAIM_TYPE_STRING)
+	{
+		const char *string_value = gaim_value_get_string(attr_value);
+		const char *default_string_value = gaim_value_get_string(default_value);
+		if (((string_value == NULL) && (default_string_value == NULL)) ||
+			((string_value != NULL) && (default_string_value != NULL) &&
+			 !strcmp(string_value, default_string_value)))
+			return NULL;
+		value = g_strdup(gaim_value_get_string(attr_value));
+	}
+	else if (attr_type == GAIM_TYPE_INT)
+	{
+		int int_value = gaim_value_get_int(attr_value);
+		if (int_value == gaim_value_get_int(default_value))
+			return NULL;
+		value = g_strdup_printf("%d", int_value);
+	}
+	else if (attr_type == GAIM_TYPE_BOOLEAN)
+	{
+		gboolean boolean_value = gaim_value_get_boolean(attr_value);
+		if (boolean_value == gaim_value_get_boolean(default_value))
+			return NULL;
+		value = g_strdup(boolean_value ?
+								"true" : "false");
+	}
+	else
+	{
+		return NULL;
+	}
+
+	g_return_val_if_fail(value, NULL);
+
+	node = xmlnode_new("attribute");
+
+	xmlnode_set_attrib(node, "id", id);
+	xmlnode_set_attrib(node, "value", value);
+
+	g_free(value);
+
+	return node;
+}
+
+static xmlnode *
+status_attrs_to_xmlnode(const GaimStatus *status)
+{
+	GaimStatusType *type = gaim_status_get_type(status);
+	xmlnode *node, *child;
+	const GList *attrs, *attr;
+
+	node = xmlnode_new("attributes");
+
+	attrs = gaim_status_type_get_attrs(type);
+	for (attr = attrs; attr != NULL; attr = attr->next)
+	{
+		child = status_attr_to_xmlnode(status, type, (const GaimStatusAttr *)attr->data);
+		if (child)
+			xmlnode_insert_child(node, child);
+	}
+
+	return node;
+}
+
+static xmlnode *
+status_to_xmlnode(const GaimStatus *status)
+{
+	xmlnode *node, *child;
 
 	node = xmlnode_new("status");
 	xmlnode_set_attrib(node, "type", gaim_status_get_id(status));
@@ -129,7 +222,8 @@ status_to_xmlnode(const GaimStatus *status)
 		xmlnode_set_attrib(node, "name", gaim_status_get_name(status));
 	xmlnode_set_attrib(node, "active", gaim_status_is_active(status) ? "true" : "false");
 
-	/* QQQ: Need to save status->attr_values */
+	child = status_attrs_to_xmlnode(status);
+	xmlnode_insert_child(node, child);
 
 	return node;
 }
@@ -398,12 +492,59 @@ parse_settings(xmlnode *node, GaimAccount *account)
 	}
 }
 
+static GList *
+parse_status_attrs(xmlnode *node, GaimStatus *status)
+{
+	GList *list = NULL;
+	xmlnode *child;
+	GaimValue *attr_value;
+
+	for (child = xmlnode_get_child(node, "attribute"); child != NULL;
+			child = xmlnode_get_next_twin(child))
+	{
+		const char *id = xmlnode_get_attrib(child, "id");
+		const char *value = xmlnode_get_attrib(child, "value");
+
+		if (!id || !*id || !value || !*value)
+			continue;
+
+		attr_value = gaim_status_get_attr_value(status, id);
+		if (!attr_value)
+			continue;
+
+		list = g_list_append(list, (char *)id);
+
+		switch (gaim_value_get_type(attr_value))
+		{
+			case GAIM_TYPE_STRING:
+				list = g_list_append(list, (char *)value);
+				break;
+			case GAIM_TYPE_INT:
+			case GAIM_TYPE_BOOLEAN:
+			{
+				int v;
+				if (sscanf(value, "%d", &v) == 1)
+					list = g_list_append(list, GINT_TO_POINTER(v));
+				else
+					list = g_list_remove(list, id);
+				break;
+			}
+			default:
+				break;
+		}
+	}
+
+	return list;
+}
+
 static void
 parse_status(xmlnode *node, GaimAccount *account)
 {
 	gboolean active = FALSE;
 	const char *data;
 	const char *type;
+	xmlnode *child;
+	GList *attrs = NULL;
 
 	/* Get the active/inactive state */
 	data = xmlnode_get_attrib(node, "active");
@@ -421,10 +562,17 @@ parse_status(xmlnode *node, GaimAccount *account)
 	if (type == NULL)
 		return;
 
-	/* QQQ: Need to read attributes into a vargs */
+	/* Read attributes into a GList */
+	child = xmlnode_get_child(node, "attributes");
+	if (child != NULL)
+	{
+		attrs = parse_status_attrs(child,
+						gaim_account_get_status(account, type));
+	}
 
-	/* QQQ: This needs to do a better job of adding attributes and stuff */
-	gaim_account_set_status_vargs(account, type, active, NULL);
+	gaim_account_set_status_list(account, type, active, attrs);
+
+	g_list_free(attrs);
 }
 
 static void
@@ -1162,6 +1310,27 @@ void
 gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 							  gboolean active, va_list args)
 {
+	GList *attrs = NULL;
+	const gchar *id;
+	gpointer data;
+
+	if (args != NULL)
+	{
+		while ((id = va_arg(args, const char *)) != NULL)
+		{
+			attrs = g_list_append(attrs, (char *)id);
+			data = va_arg(args, void *);
+			attrs = g_list_append(attrs, data);
+		}
+	}
+	gaim_account_set_status_list(account, status_id, active, attrs);
+	g_list_free(attrs);
+}
+
+void
+gaim_account_set_status_list(GaimAccount *account, const char *status_id,
+							 gboolean active, GList *attrs)
+{
 	GaimStatus *status;
 
 	g_return_if_fail(account   != NULL);
@@ -1181,7 +1350,7 @@ gaim_account_set_status_vargs(GaimAccount *account, const char *status_id,
 	}
 
 	if (active || gaim_status_is_independent(status))
-		gaim_status_set_active_with_attrs(status, active, args);
+		gaim_status_set_active_with_attrs_list(status, active, attrs);
 
 	/*
 	 * Our current statuses are saved to accounts.xml (so that when we

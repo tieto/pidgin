@@ -69,7 +69,7 @@ struct _GaimPresence
 
 	gboolean idle;
 	time_t idle_time;
- 	time_t login_time;
+	time_t login_time;
 
 	unsigned int warning_level;
 
@@ -547,7 +547,7 @@ gaim_status_attr_get_name(const GaimStatusAttr *attr)
 }
 
 GaimValue *
-gaim_status_attr_get_value_type(const GaimStatusAttr *attr)
+gaim_status_attr_get_value(const GaimStatusAttr *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -580,7 +580,7 @@ gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
 	for (l = gaim_status_type_get_attrs(status_type); l != NULL; l = l->next)
 	{
 		GaimStatusAttr *attr = (GaimStatusAttr *)l->data;
-		GaimValue *value = gaim_status_attr_get_value_type(attr);
+		GaimValue *value = gaim_status_attr_get_value(attr);
 		GaimValue *new_value = gaim_value_dup(value);
 
 		g_hash_table_insert(status->attr_values,
@@ -747,8 +747,35 @@ gaim_status_set_active(GaimStatus *status, gboolean active)
 	gaim_status_set_active_with_attrs(status, active, NULL);
 }
 
+/*
+ * This used to parse the va_list directly, but now it creates a GList
+ * and passes it to gaim_status_set_active_with_attrs_list().  That
+ * function was created because accounts.c needs to pass a GList of
+ * attributes to the status API.
+ */
 void
 gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list args)
+{
+	GList *attrs = NULL;
+	const gchar *id;
+	gpointer data;
+
+	if (args != NULL)
+	{
+		while ((id = va_arg(args, const char *)) != NULL)
+		{
+			attrs = g_list_append(attrs, (char *)id);
+			data = va_arg(args, void *);
+			attrs = g_list_append(attrs, data);
+		}
+	}
+	gaim_status_set_active_with_attrs_list(status, active, attrs);
+	g_list_free(attrs);
+}
+
+void
+gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
+									   const GList *attrs)
 {
 	gboolean changed = FALSE;
 	const gchar *id;
@@ -771,23 +798,26 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 	status->active = active;
 
 	/* Set any attributes */
-	if (args != NULL)
-	while ((id = va_arg(args, const char *)) != NULL)
+	while (attrs)
 	{
 		GaimValue *value;
+
+		id = attrs->data;
+		attrs = attrs->next;
 		value = gaim_status_get_attr_value(status, id);
 		if (value == NULL)
 		{
 			gaim_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
 							   "not supported.\n", id, status->type->name);
 			/* Skip over the data and move on to the next attribute */
-			va_arg(args, void *);
+			attrs = attrs->next;
 			continue;
 		}
 
 		if (value->type == GAIM_TYPE_STRING)
 		{
-			const gchar *string_data = va_arg(args, const char *);
+			const gchar *string_data = attrs->data;
+			attrs = attrs->next;
 			if (((string_data == NULL) && (value->data.string_data == NULL)) ||
 				((string_data != NULL) && (value->data.string_data != NULL) &&
 				!strcmp(string_data, value->data.string_data)))
@@ -799,7 +829,8 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 		}
 		else if (value->type == GAIM_TYPE_INT)
 		{
-			int int_data = va_arg(args, int);
+			int int_data = (int)attrs->data;
+			attrs = attrs->next;
 			if (int_data == value->data.int_data)
 				continue;
 			gaim_status_set_attr_int(status, id, int_data);
@@ -807,7 +838,8 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 		}
 		else if (value->type == GAIM_TYPE_BOOLEAN)
 		{
-			gboolean boolean_data = va_arg(args, gboolean);
+			gboolean boolean_data = (gboolean)attrs->data;
+			attrs = attrs->next;
 			if (boolean_data == value->data.boolean_data)
 				continue;
 			gaim_status_set_attr_int(status, id, boolean_data);
@@ -816,13 +848,12 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 		else
 		{
 			/* We don't know what the data is--skip over it */
-			va_arg(args, void *);
+			attrs = attrs->next;
 		}
 	}
 
 	if (!changed)
 		return;
-
 	status_has_changed(status);
 }
 

@@ -218,7 +218,7 @@ gaim_status_attr_get_name(attr)
 	Gaim::StatusAttr attr
 
 Gaim::Value
-gaim_status_attr_get_value_type(attr)
+gaim_status_attr_get_value(attr)
 	Gaim::StatusAttr attr
 
 Gaim::StatusAttr

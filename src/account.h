@@ -274,7 +274,8 @@ void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status_vargs.
+ * an account go through this function or gaim_account_set_status_vargs
+ * or gaim_account_set_status_list.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -291,7 +292,8 @@ void gaim_account_set_status(GaimAccount *account, const char *status_id,
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status.
+ * an account go through this function or gaim_account_set_status or
+ * gaim_account_set_status_list.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -304,6 +306,23 @@ void gaim_account_set_status(GaimAccount *account, const char *status_id,
 void gaim_account_set_status_vargs(GaimAccount *account,
 								   const char *status_id,
 								   gboolean active, va_list args);
+
+/**
+ * Activates or deactivates a status.  All changes to the statuses of
+ * an account go through this function or gaim_account_set_status or
+ * gaim_account_set_status_vargs.
+ *
+ * Only independent statuses can be deactivated with this. To deactivate
+ * an exclusive status, activate a different (and exclusive?) status.
+ *
+ * @param account   The account.
+ * @param status_id The ID of the status.
+ * @param active    The active state.
+ * @param attrs		A list of attributes in key/value pairs
+ */
+void gaim_account_set_status_list(GaimAccount *account,
+								  const char *status_id,
+								  gboolean active, GList *attrs);
 
 /**
  * Clears all protocol-specific settings on an account.
