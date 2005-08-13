@@ -972,10 +972,10 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 		aimbs_put16(&fr->data, 0x0036);
 		{ /* V */
 			aimbs_putle16(&fr->data, 0x001b); /* L */
-			aimbs_putle16(&fr->data, 0x0008); /* XXX - Protocol version */
+			aimbs_putle16(&fr->data, 0x0009); /* Protocol version */
 			aim_putcap(&fr->data, AIM_CAPS_EMPTY);
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
-			aimbs_putle16(&fr->data, 0x0003); /* Client features? */
+			aimbs_putle16(&fr->data, 0x0001); /* Client features? */
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
 			aimbs_putle8(&fr->data, 0x00); /* Unkizown */
 			aimbs_putle16(&fr->data, 0xffff); /* Sequence number?  XXX - This should decrement by 1 with each request */
@@ -988,15 +988,19 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 
 			/* The type of status message being requested */
 			if (type & AIM_ICQ_STATE_CHAT)
-				aimbs_putle16(&fr->data, 0x03ec);
+				aimbs_putle8(&fr->data, 0xec);
 			else if(type & AIM_ICQ_STATE_DND)
-				aimbs_putle16(&fr->data, 0x03eb);
+				aimbs_putle8(&fr->data, 0xeb);
 			else if(type & AIM_ICQ_STATE_OUT)
-				aimbs_putle16(&fr->data, 0x03ea);
+				aimbs_putle8(&fr->data, 0xea);
 			else if(type & AIM_ICQ_STATE_BUSY)
-				aimbs_putle16(&fr->data, 0x03e9);
+				aimbs_putle8(&fr->data, 0xe9);
 			else if(type & AIM_ICQ_STATE_AWAY)
-				aimbs_putle16(&fr->data, 0x03e8);
+				aimbs_putle8(&fr->data, 0xe8);
+			else
+				/* This should not happen */
+				aimbs_putle8(&fr->data, 0x00);
+			aimbs_putle8(&fr->data, 0x03); /* Message Flags */
 
 			aimbs_putle16(&fr->data, 0x0000); /* Status? */
 			aimbs_putle16(&fr->data, 0x0001); /* Priority of this message? */
@@ -2194,11 +2198,106 @@ static int clientautoresp(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	sn = aimbs_getstr(bs, snlen);
 	reason = aimbs_get16(bs);
 
-	if (channel == 0x0002) { /* File transfer declined */
-		aimbs_get16(bs); /* Unknown */
-		aimbs_get16(bs); /* Unknown */
-		if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
-			ret = userfunc(sess, rx, channel, sn, reason, ck);
+	if (channel == 0x0002) {
+		switch (reason) {
+			case 0x0003: {
+				/* This is exactly like the Extended Data TLV (2711) */
+				fu16_t len;
+				fu16_t version;
+				fu8_t plugin_uuid[16];
+
+				len = aimbs_getle16(bs); /* Usually 0x001b */
+				version = aimbs_getle16(bs);
+				aimbs_getrawbuf(bs, plugin_uuid, sizeof(plugin_uuid));
+				aim_bstream_advance(bs, len - sizeof(version) - sizeof(plugin_uuid)); /* Rest is unknown */
+
+				len = aimbs_getle16(bs); /* Usually 0x000e */
+				aim_bstream_advance(bs, len); /* Unknown */
+
+				if (plugin_uuid[0] == 0 &&
+				    plugin_uuid[1] == 0 &&
+				    plugin_uuid[2] == 0 &&
+				    plugin_uuid[3] == 0 &&
+				    plugin_uuid[4] == 0 &&
+				    plugin_uuid[5] == 0 &&
+				    plugin_uuid[6] == 0 &&
+				    plugin_uuid[7] == 0 &&
+				    plugin_uuid[8] == 0 &&
+				    plugin_uuid[9] == 0 &&
+				    plugin_uuid[10] == 0 &&
+				    plugin_uuid[11] == 0 &&
+				    plugin_uuid[12] == 0 &&
+				    plugin_uuid[13] == 0 &&
+				    plugin_uuid[14] == 0 &&
+				    plugin_uuid[15] == 0)
+				{
+					fu8_t msg_type, msg_flags, *msg;
+					fu16_t status_code, priority_code, msg_length;
+					fu32_t state;
+
+					msg_type = aimbs_getle8(bs);
+					switch (msg_type) {
+						case 0xe8:
+							state = AIM_ICQ_STATE_AWAY;
+							break;
+						case 0xe9:
+							state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_BUSY;
+							break;
+						case 0xea:
+							state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_OUT;
+							break;
+						case 0xeb:
+							state = AIM_ICQ_STATE_AWAY | AIM_ICQ_STATE_DND | AIM_ICQ_STATE_BUSY;
+							break;
+						case 0xec:
+							state = AIM_ICQ_STATE_CHAT;
+							break;
+						default:
+							state = 0;
+							break;
+					}
+					msg_flags = aimbs_getle8(bs); /* would usually have 0x03 == auto msg */
+					status_code = aimbs_getle16(bs);
+					priority_code = aimbs_getle16(bs);
+
+					msg_length = aimbs_getle16(bs);
+					msg = aimbs_getraw(bs, msg_length);
+
+					if (state & AIM_ICQ_STATE_AWAY)
+					{
+						aim_userinfo_t *userinfo = aim_locate_finduserinfo(sess, sn);
+						free(userinfo->away);
+						free(userinfo->away_encoding);
+						if (msg_length > 0)
+						{
+							userinfo->away = (char *)malloc(msg_length);
+							memcpy(userinfo->away, msg, msg_length);
+						}
+						else
+						{
+							userinfo->away = NULL;
+						}
+						userinfo->away_len = msg_length - 1; /* msg_length includes a terminating '\0' */
+						userinfo->away_encoding = strdup("text/x-aolrtf; charset=\"utf-8\"");
+					}
+
+					if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+						ret = userfunc(sess, rx, channel, sn, reason, state, msg);
+				}
+				else
+				{
+					if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+						ret = userfunc(sess, rx, channel, sn, reason, ck);
+				}
+				break;
+			}
+
+			default: {
+				/* File transfer declined? */
+				if ((userfunc = aim_callhandler(sess, rx->conn, snac->family, snac->subtype)))
+					ret = userfunc(sess, rx, channel, sn, reason, ck);
+			}
+		}
 	} else if (channel == 0x0004) { /* ICQ message */
 		switch (reason) {
 			case 0x0003: { /* ICQ status message.  Maybe other stuff too, you never know with these people. */

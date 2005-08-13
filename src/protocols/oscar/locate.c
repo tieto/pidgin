@@ -67,8 +67,8 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x45, 0x53, 0x54, 0x00}},
 
 	/*
-	 * Not really sure about this one.  In an email from 
-	 * 26 Sep 2003, Matthew Sachs suggested that, "this 
+	 * Not really sure about this one.  In an email from
+	 * 26 Sep 2003, Matthew Sachs suggested that, "this
 	 * is probably the capability for the SMS features."
 	 */
 	{AIM_CAPS_SMS,
@@ -124,9 +124,9 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/*
-	 * Indeed, there are two of these.  The former appears to be correct, 
-	 * but in some versions of winaim, the second one is set.  Either they 
-	 * forgot to fix endianness, or they made a typo. It really doesn't 
+	 * Indeed, there are two of these.  The former appears to be correct,
+	 * but in some versions of winaim, the second one is set.  Either they
+	 * forgot to fix endianness, or they made a typo. It really doesn't
 	 * matter which.
 	 */
 	{AIM_CAPS_GAMES,
@@ -141,12 +141,12 @@ static const struct {
 	  0x82, 0x22, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}},
 
 	/*
-	 * Setting this lets AIM users receive messages from ICQ users, and ICQ 
-	 * users receive messages from AIM users.  It also lets ICQ users show 
-	 * up in buddy lists for AIM users, and AIM users show up in buddy lists 
-	 * for ICQ users.  And ICQ privacy/invisibility acts like AIM privacy, 
-	 * in that if you add a user to your deny list, you will not be able to 
-	 * see them as online (previous you could still see them, but they 
+	 * Setting this lets AIM users receive messages from ICQ users, and ICQ
+	 * users receive messages from AIM users.  It also lets ICQ users show
+	 * up in buddy lists for AIM users, and AIM users show up in buddy lists
+	 * for ICQ users.  And ICQ privacy/invisibility acts like AIM privacy,
+	 * in that if you add a user to your deny list, you will not be able to
+	 * see them as online (previous you could still see them, but they
 	 * couldn't see you.
 	 */
 	{AIM_CAPS_INTEROPERATE,
@@ -183,7 +183,7 @@ static const struct {
 	 {0x97, 0xb1, 0x27, 0x51, 0x24, 0x3c, 0x43, 0x34,
 	  0xad, 0x22, 0xd6, 0xab, 0xf7, 0x3f, 0x14, 0x09}},
 
-	{AIM_CAPS_APINFO, 
+	{AIM_CAPS_APINFO,
 	 {0xaa, 0x4a, 0x32, 0xb5, 0xf8, 0x84, 0x48, 0xc6,
 	  0xa3, 0xd7, 0x8c, 0x50, 0x97, 0x19, 0xfd, 0x5b}},
 
@@ -199,7 +199,7 @@ static const struct {
 };
 
 /*
- * Add the userinfo to our linked list.  If we already have userinfo 
+ * Add the userinfo to our linked list.  If we already have userinfo
  * for this buddy, then just overwrite parts of the old data.
  *
  * @param userinfo Contains the new information for the buddy.
@@ -295,12 +295,12 @@ faim_export void aim_locate_dorequest(aim_session_t *sess) {
 }
 
 /**
- * Remove this screen name from our queue.  If this info was requested 
+ * Remove this screen name from our queue.  If this info was requested
  * by our info request queue, then pop the next element off of the queue.
  *
  * @param sess The aim session.
  * @param sn Screen name of the info we just received.
- * @return True if the request was explicit (client requested the info), 
+ * @return True if the request was explicit (client requested the info),
  *         false if the request was implicit (libfaim request the info).
  */
 static int aim_locate_gotuserinfo(aim_session_t *sess, const char *sn) {
@@ -497,7 +497,7 @@ faim_internal void aim_info_free(aim_userinfo_t *info)
 }
 
 /*
- * AIM is fairly regular about providing user info.  This is a generic 
+ * AIM is fairly regular about providing user info.  This is a generic
  * routine to extract it in its standard form.
  */
 faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *outinfo)
@@ -512,7 +512,7 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 	memset(outinfo, 0x00, sizeof(aim_userinfo_t));
 
 	/*
-	 * Screen name.  Stored as an unterminated string prepended with a 
+	 * Screen name.  Stored as an unterminated string prepended with a
 	 * byte containing its length.
 	 */
 	snlen = aimbs_get8(bs);
@@ -524,12 +524,12 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 	outinfo->warnlevel = aimbs_get16(bs);
 
 	/*
-	 * TLV Count. Unsigned short representing the number of 
+	 * TLV Count. Unsigned short representing the number of
 	 * Type-Length-Value triples that follow.
 	 */
 	tlvcnt = aimbs_get16(bs);
 
-	/* 
+	/*
 	 * Parse out the Type-Length-Value triples as they're found.
 	 */
 	for (curtlv = 0; curtlv < tlvcnt; curtlv++) {
@@ -1135,6 +1135,19 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		userinfo->away = (char *)malloc(tlv->length);
 		memcpy(userinfo->away, tlv->value, tlv->length);
 		userinfo->away_len = tlv->length;
+		/*
+		 * ICQ cannot be trusted with non-Latin-1 away messages
+		 * delivered in 0x02,0x06; see SF issue 1175975.
+		 * Therefore, we try to get its Away information
+		 * in an alternative fashion -- same as used
+		 * by the official client.
+		 */
+		if (((userinfo->icqinfo.status & AIM_ICQ_STATE_AWAY) ||
+		     (userinfo->icqinfo.status & AIM_ICQ_STATE_CHAT)) &&
+		    (userinfo->sn != NULL) && aim_sn_is_icq(userinfo->sn))
+		{
+			aim_im_sendch2_geticqaway(sess, userinfo->sn, userinfo->icqinfo.status);
+		}
 	}
 
 	/* Caps will be 5 */
@@ -1152,8 +1165,8 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	free(userinfo);
 
 	/*
-	 * Remove this screen name from our queue.  If the client requested 
-	 * this buddy's info explicitly, then notify them that we have info 
+	 * Remove this screen name from our queue.  If the client requested
+	 * this buddy's info explicitly, then notify them that we have info
 	 * for this buddy.
 	 */
 	was_explicit = aim_locate_gotuserinfo(sess, userinfo2->sn);
@@ -1164,14 +1177,14 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 	return ret;
 }
 
-/* 
+/*
  * Subtype 0x0009 - Set directory profile data.
  *
  * This is not the same as aim_location_setprofile!
  * privacy: 1 to allow searching, 0 to disallow.
  *
  */
-faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy) 
+faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
@@ -1237,7 +1250,7 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
 		return -ENOMEM;
 
 	snacid = aim_cachesnac(sess, 0x0002, 0x000b, 0x0000, NULL, 0);
-	
+
 	aim_putsnac(&fr->data, 0x0002, 0x000b, 0x0000, snacid);
 	aimbs_put8(&fr->data, strlen(sn));
 	aimbs_putstr(&fr->data, sn);
@@ -1249,7 +1262,7 @@ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn)
 
 /*
  * Subtype 0x000f
- * 
+ *
  * XXX pass these in better
  *
  */
@@ -1292,7 +1305,7 @@ faim_export int aim_locate_setinterests(aim_session_t *sess, const char *interes
 }
 
 /*
- * Subtype 0x0015 - Request the info a user using the short method.  This is 
+ * Subtype 0x0015 - Request the info a user using the short method.  This is
  * what iChat uses.  It normally is VERY leniently rate limited.
  *
  * @param sn The screen name whose info you wish to request.
