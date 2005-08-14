@@ -71,8 +71,6 @@ struct _GaimPresence
 	time_t idle_time;
 	time_t login_time;
 
-	unsigned int warning_level;
-
 	GList *statuses;
 	GHashTable *status_table;
 
@@ -1382,35 +1380,6 @@ gaim_presence_set_login_time(GaimPresence *presence, time_t login_time)
 	presence->login_time = login_time;
 }
 
-void
-gaim_presence_set_warning_level(GaimPresence *presence, unsigned int level)
-{
-	g_return_if_fail(presence != NULL);
-	g_return_if_fail(level <= 100);
-
-	if (presence->warning_level == level)
-		return;
-
-	presence->warning_level = level;
-
-	if (gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_BUDDY)
-	{
-		GaimBlistUiOps *ops = gaim_get_blist()->ui_ops;
-
-		if (ops != NULL && ops->update != NULL)
-		{
-			const GList *l;
-
-			for (l = gaim_presence_get_buddies(presence);
-					l != NULL;
-					l = l->next)
-			{
-				ops->update(gaim_get_blist(), (GaimBlistNode *)l->data);
-			}
-		}
-	}
-}
-
 GaimPresenceContext
 gaim_presence_get_context(const GaimPresence *presence)
 {
@@ -1584,14 +1553,6 @@ gaim_presence_get_idle_time(const GaimPresence *presence)
 	g_return_val_if_fail(presence != NULL, 0);
 
 	return presence->idle_time;
-}
-
-unsigned int
-gaim_presence_get_warning_level(const GaimPresence *presence)
-{
-	g_return_val_if_fail(presence != NULL, 0);
-
-	return presence->warning_level;
 }
 
 time_t

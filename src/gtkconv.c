@@ -1266,21 +1266,6 @@ menu_invite_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-menu_warn_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	GaimConvWindow *win = (GaimConvWindow *)data;
-	GaimConversation *conv;
-	GaimConnection *gc;
-
-	conv = gaim_conv_window_get_active_conversation(win);
-	gc = gaim_conversation_get_gc(conv);
-
-	gaim_gtkdialogs_warn(gc, gaim_conversation_get_name(conv));
-
-	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
-}
-
-static void
 menu_block_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimConvWindow *win = (GaimConvWindow *)data;
@@ -2800,7 +2785,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_show(gtkwin->menu.send_file);
 		gtk_widget_show(gtkwin->menu.add_pounce);
 		gtk_widget_show(gtkwin->menu.get_info);
-		gtk_widget_show(gtkwin->menu.warn);
 		gtk_widget_hide(gtkwin->menu.invite);
 		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_show(gtkwin->menu.block);
@@ -2824,7 +2808,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_hide(gtkwin->menu.send_file);
 		gtk_widget_hide(gtkwin->menu.add_pounce);
 		gtk_widget_hide(gtkwin->menu.get_info);
-		gtk_widget_hide(gtkwin->menu.warn);
 		gtk_widget_show(gtkwin->menu.invite);
 		gtk_widget_show(gtkwin->menu.alias);
 		gtk_widget_hide(gtkwin->menu.block);
@@ -2876,7 +2859,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(gtkwin->menu.view_log, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, (prpl_info->get_info != NULL));
-		gtk_widget_set_sensitive(gtkwin->menu.warn, (prpl_info->warn != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.invite, (prpl_info->chat_invite != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.block, (prpl_info->add_deny != NULL));
 		gtk_widget_set_sensitive(gtkwin->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
@@ -2913,7 +2895,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(gtkwin->menu.send_file, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(gtkwin->menu.get_info, FALSE);
-		gtk_widget_set_sensitive(gtkwin->menu.warn, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.invite, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.alias, FALSE);
 		gtk_widget_set_sensitive(gtkwin->menu.block, FALSE);
@@ -3663,8 +3644,6 @@ static GtkItemFactoryEntry menu_items[] =
 		0, NULL },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Conversation/_Warn..."), NULL, menu_warn_cb, 0,
-	  "<StockItem>", GAIM_STOCK_WARN },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
 	  "<StockItem>", GAIM_STOCK_INVITE },
 
@@ -3758,10 +3737,6 @@ setup_menubar(GaimConvWindow *win)
 	gtkwin->menu.get_info =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
 									N_("/Conversation/Get Info"));
-
-	gtkwin->menu.warn =
-		gtk_item_factory_get_widget(gtkwin->menu.item_factory,
-									N_("/Conversation/Warn..."));
 
 	gtkwin->menu.invite =
 		gtk_item_factory_get_widget(gtkwin->menu.item_factory,

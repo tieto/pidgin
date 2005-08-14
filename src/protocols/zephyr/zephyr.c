@@ -2801,7 +2801,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	zephyr_remove_permit,			/* remove_permit */
 	zephyr_remove_deny,			/* remove_deny */
 	zephyr_set_permit_deny,			/* set_permit_deny */
-	NULL,					/* warn	 -- not supported in zephyr */
 	zephyr_join_chat,			/* join_chat */
 	NULL,					/* reject_chat -- No chat invites*/
 	zephyr_get_chat_name,			/* get_chat_name */

@@ -3493,7 +3493,6 @@ static GaimPluginProtocolInfo prpl_info = {
 	novell_rem_permit,			/* rem_permit */
 	novell_rem_deny,			/* rem_deny */
 	novell_set_permit_deny,		/* set_permit_deny */
-	NULL,						/* warn */
 	NULL,						/* join_chat */
 	NULL,						/* reject_chat */
 	NULL,					/* get_chat_name */

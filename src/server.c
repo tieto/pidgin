@@ -454,16 +454,6 @@ void serv_set_idle(GaimConnection *g, int time)
 		prpl_info->set_idle(g, time);
 }
 
-void serv_warn(GaimConnection *g, const char *name, gboolean anonymous)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->warn)
-		prpl_info->warn(g, name, anonymous);
-}
 
 void serv_join_chat(GaimConnection *g, GHashTable *data)
 {

@@ -4402,7 +4402,6 @@ static GaimPluginProtocolInfo mw_prpl_info = {
   .rem_permit                = mw_prpl_rem_permit,
   .rem_deny                  = mw_prpl_rem_deny,
   .set_permit_deny           = mw_prpl_set_permit_deny,
-  .warn                      = NULL,
   .join_chat                 = mw_prpl_join_chat,
   .reject_chat               = mw_prpl_reject_chat,
   .get_chat_name             = mw_prpl_get_chat_name,

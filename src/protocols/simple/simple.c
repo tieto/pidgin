@@ -1244,7 +1244,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* rem_permit */
 	NULL,					/* rem_deny */
 	NULL,					/* set_permit_deny */
-	NULL,					/* warn */
 	NULL,		/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,	/* get_chat_name */

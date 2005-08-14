@@ -42,13 +42,6 @@ static GList *dialogwindows = NULL;
 
 static GtkWidget *about = NULL;
 
-struct warning {
-	GtkWidget *window;
-	GtkWidget *anon;
-	char *who;
-	GaimConnection *gc;
-};
-
 struct developer {
 	char *name;
 	char *role;
@@ -710,85 +703,6 @@ gaim_gtkdialogs_log(void)
 						_("OK"), G_CALLBACK(gaim_gtkdialogs_log_cb),
 						_("Cancel"), NULL,
 						NULL);
-}
-
-static void
-gaim_gtkdialogs_warn_cb(GtkWidget *widget, gint resp, struct warning *w)
-{
-	if (resp == GTK_RESPONSE_OK)
-		serv_warn(w->gc, w->who, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w->anon)));
-
-	dialogwindows = g_list_remove(dialogwindows, w->window);
-	gtk_widget_destroy(w->window);
-
-	g_free(w->who);
-	g_free(w);
-}
-
-/*
- * TODO - Make this use the request API, if possible.
- */
-void
-gaim_gtkdialogs_warn(GaimConnection *gc, const char *who)
-{
-	gchar *labeltext;
-	GtkWidget *hbox, *vbox;
-	GtkWidget *label;
-	GtkWidget *img;
-	struct warning *w;
-
-	g_return_if_fail(gc != NULL);
-	g_return_if_fail(who != NULL);
-
-	w = g_new0(struct warning, 1);
-	w->who = g_strdup(who);
-	w->gc = gc;
-
-	w->window = gtk_dialog_new_with_buttons(_("Warn User"), NULL, 0,
-			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-			GAIM_STOCK_WARN, GTK_RESPONSE_OK, NULL);
-	gtk_dialog_set_default_response (GTK_DIALOG(w->window), GTK_RESPONSE_OK);
-	g_signal_connect(G_OBJECT(w->window), "response", G_CALLBACK(gaim_gtkdialogs_warn_cb), w);
-
-	gtk_container_set_border_width (GTK_CONTAINER(w->window), GAIM_HIG_BOX_SPACE);
-	gtk_window_set_resizable(GTK_WINDOW(w->window), FALSE);
-	gtk_dialog_set_has_separator(GTK_DIALOG(w->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(w->window)->vbox), GAIM_HIG_BORDER);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(w->window)->vbox), GAIM_HIG_BOX_SPACE);
-
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(w->window)->vbox), hbox);
-
-	img = gtk_image_new_from_stock(GAIM_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_DIALOG);
-	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-
-	vbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox), vbox);
-	labeltext = g_strdup_printf(_("<span weight=\"bold\" size=\"larger\">Warn %s?</span>\n\n"
-				      "This will increase %s's warning level and he or she will be subject to harsher rate limiting.\n"), who, who);
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), labeltext);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
-	g_free(labeltext);
-
-	w->anon = gtk_check_button_new_with_mnemonic(_("Warn _anonymously?"));
-	gtk_box_pack_start(GTK_BOX(vbox), w->anon, FALSE, FALSE, 0);
-
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-	img = gtk_image_new_from_stock(GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_MENU);
-	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
-	labeltext = _("<b>Anonymous warnings are less severe.</b>");
-	label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), labeltext);
-	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-
-	dialogwindows = g_list_prepend(dialogwindows, w->window);
-	gtk_widget_show_all(w->window);
 }
 
 static void

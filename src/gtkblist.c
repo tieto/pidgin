@@ -2792,7 +2792,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		char *tmp;
 		gboolean idle;
 		time_t idle_secs, signon;
-		unsigned int warning_level;
 
 		if (GAIM_BLIST_NODE_IS_CONTACT(node))
 		{
@@ -2906,14 +2905,6 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 			}
 		}
 
-		/* Warning */
-		warning_level = gaim_presence_get_warning_level(presence);
-		if (warning_level > 0)
-		{
-			tmp = g_strdup_printf(_("%d%%"), warning_level);
-			g_string_append_printf(str, _("\n<b>Warned:</b> %s"), tmp);
-			g_free(tmp);
-		}
 
 		/* Offline? */
 		if (!GAIM_BUDDY_IS_ONLINE(b)) {
@@ -3114,8 +3105,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	GaimContact *contact;
 	GaimPresence *presence;
 	struct _gaim_gtk_blist_node *gtkcontactnode = NULL;
-	char *idletime = NULL, *warning = NULL, *statustext = NULL;
-	unsigned int warning_level;
+	char *idletime = NULL, *statustext = NULL;
 	time_t t;
 	/* XXX Clean up this crap */
 
@@ -3214,50 +3204,35 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			idletime = g_strdup(_("Idle "));
 	}
 
-	warning_level = gaim_presence_get_warning_level(presence);
-
-	if (warning_level > 0) {
-		warning = g_strdup_printf(_("Warned (%d%%) "), warning_level);
-	}
-
 	if(!GAIM_BUDDY_IS_ONLINE(b) && !statustext)
 		statustext = g_strdup(_("Offline "));
 
 	if (gaim_presence_is_idle(presence) && !selected) {
 		text =  g_strdup_printf("<span color='%s'>%s</span>\n"
-					"<span color='%s' size='smaller'>%s%s%s%s%s</span>",
+					"<span color='%s' size='smaller'>%s%s%s</span>",
 					dim_grey(), esc, dim_grey(),
 					statustext != NULL ? statustext : "",
 					(idletime != NULL && statustext != NULL) ? " - " : "",
-					idletime != NULL ? idletime : "",
-					(warning != NULL && (statustext != NULL || idletime != NULL)) ? " - " : "",
-					warning != NULL ? warning : "");
-	} else if (statustext == NULL && idletime == NULL && warning == NULL &&
-			GAIM_BUDDY_IS_ONLINE(b)) {
+					idletime != NULL ? idletime : "");
+	} else if (statustext == NULL && idletime == NULL && GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup(esc);
 	} else {
 		if (selected)
 			text = g_strdup_printf("%s\n"
-					       "<span size='smaller'>%s%s%s%s%s</span>", esc,
+					       "<span size='smaller'>%s%s%s</span>", esc,
 					       statustext != NULL ? statustext :  "",
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       idletime != NULL ? idletime : "",
-					       (warning != NULL && (statustext != NULL || idletime != NULL)) ? " - " : "",
-					       warning != NULL ? warning : "");
+					       idletime != NULL ? idletime : "");
 		else
 			text = g_strdup_printf("%s\n"
-					       "<span color='%s' size='smaller'>%s%s%s%s%s</span>", esc,
+					       "<span color='%s' size='smaller'>%s%s%s</span>", esc,
 					       dim_grey(),
 					       statustext != NULL ? statustext :  "",
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       idletime != NULL ? idletime : "",
-					       (warning != NULL && (statustext != NULL || idletime != NULL)) ? " - " : "",
-					       warning != NULL ? warning : "");
+					       idletime != NULL ? idletime : "");
 	}
 	if (idletime)
 		g_free(idletime);
-	if (warning)
-		g_free(warning);
 	if (statustext)
 		g_free(statustext);
 	if (esc)
@@ -3440,10 +3415,8 @@ void gaim_gtk_blist_update_columns()
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons")) {
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, TRUE);
 		gtk_tree_view_column_set_visible(gtkblist->idle_column, FALSE);
-		gtk_tree_view_column_set_visible(gtkblist->warning_column, FALSE);
 	} else {
 		gtk_tree_view_column_set_visible(gtkblist->idle_column, TRUE);
-		gtk_tree_view_column_set_visible(gtkblist->warning_column, TRUE);
 		gtk_tree_view_column_set_visible(gtkblist->buddy_icon_column, FALSE);
 	}
 }
@@ -3591,8 +3564,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
-			GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, G_TYPE_STRING,
-			G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
+			GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, 
+                        G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
 	gtk_widget_show(gtkblist->treeview);
@@ -3651,11 +3624,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	rend = gtk_cell_renderer_text_new();
 	gtkblist->idle_column = gtk_tree_view_column_new_with_attributes("Idle", rend, "markup", IDLE_COLUMN, NULL);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->idle_column);
-	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
-
-	rend = gtk_cell_renderer_text_new();
-	gtkblist->warning_column = gtk_tree_view_column_new_with_attributes("Warning", rend, "markup", WARNING_COLUMN, NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(gtkblist->treeview), gtkblist->warning_column);
 	g_object_set(rend, "xalign", 1.0, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
@@ -3981,8 +3949,7 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	GaimPresence *presence;
 	GdkPixbuf *status, *avatar;
 	char *mark;
-	char *warning = NULL, *idle = NULL;
-	unsigned int warning_level;
+	char *idle = NULL;
 	gboolean selected = (gtkblist->selected_node == node);
 
 	presence = gaim_buddy_get_presence(buddy);
@@ -4013,20 +3980,8 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 		}
 	}
 
-	warning_level = gaim_presence_get_warning_level(presence);
-
-	if (warning_level > 0)
-		warning = g_strdup_printf("%d%%", warning_level);
-
 	if (gaim_presence_is_idle(presence))
 	{
-		if (warning && !selected) {
-			char *w2 = g_strdup_printf("<span color='%s'>%s</span>",
-						   dim_grey(), warning);
-			g_free(warning);
-			warning = w2;
-		}
-
 		if (idle && !selected) {
 			char *i2 = g_strdup_printf("<span color='%s'>%s</span>",
 						   dim_grey(), idle);
@@ -4039,7 +3994,6 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			STATUS_ICON_COLUMN, status,
 			STATUS_ICON_VISIBLE_COLUMN, TRUE,
 			NAME_COLUMN, mark,
-			WARNING_COLUMN, warning,
 			IDLE_COLUMN, idle,
 			BUDDY_ICON_COLUMN, avatar,
 			-1);
@@ -4047,8 +4001,6 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 	g_free(mark);
 	if(idle)
 		g_free(idle);
-	if(warning)
-		g_free(warning);
 	if(status)
 		g_object_unref(status);
 	if(avatar)
@@ -4095,7 +4047,6 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 					STATUS_ICON_COLUMN, status,
 					STATUS_ICON_VISIBLE_COLUMN, TRUE,
 					NAME_COLUMN, mark,
-					WARNING_COLUMN, NULL,
 					IDLE_COLUMN, NULL,
 					BUDDY_ICON_COLUMN, NULL,
 					-1);
@@ -4237,7 +4188,7 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
 	gtkblist->window = gtkblist->vbox = gtkblist->treeview = NULL;
 	gtkblist->treemodel = NULL;
 	gtkblist->idle_column = NULL;
-	gtkblist->warning_column = gtkblist->buddy_icon_column = NULL;
+        gtkblist->buddy_icon_column = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
 	pluginmenu = NULL;

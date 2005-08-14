@@ -235,7 +235,6 @@ struct _GaimPluginProtocolInfo
 	void (*rem_permit)(GaimConnection *, const char *name);
 	void (*rem_deny)(GaimConnection *, const char *name);
 	void (*set_permit_deny)(GaimConnection *);
-	void (*warn)(GaimConnection *, const char *who, gboolean anonymous);
 	void (*join_chat)(GaimConnection *, GHashTable *components);
 	void (*reject_chat)(GaimConnection *, GHashTable *components);
 	char *(*get_chat_name)(GHashTable *components);
@@ -343,21 +342,6 @@ void gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time);
 void gaim_prpl_got_account_status(GaimAccount *account,
 								  const char *status_id, const char *attr_id,
 								  ...);
-
-/**
- * Notifies Gaim that an account's warning level has changed.
- *
- * This is meant to be called from protocol plugins.
- *
- * @param account  The account the user is on.
- * @param username The user that warned the account.
- * @param level    The new warning level.
- */
-void gaim_prpl_got_account_warning_level(GaimAccount *account,
-										 const char *username,
-										 unsigned int level);
-
-
 /**
  * Notifies Gaim that a user's idle state and time have changed.
  *
@@ -399,19 +383,6 @@ void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
  */
 void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 							   const char *status_id, const char *attr_id, ...);
-
-/**
- * Notifies Gaim that a user's warning level has changed.
- *
- * This is meant to be called from protocol plugins.
- *
- * @param account The account the user is on.
- * @param name    The screen name of the user.
- * @param level   The new warning level.
- */
-void gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
-									  unsigned int level);
-
 /**
  * Informs the server that an account's status changed.
  *

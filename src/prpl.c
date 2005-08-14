@@ -185,43 +185,6 @@ gaim_prpl_got_account_status(GaimAccount *account, const char *status_id,
 }
 
 void
-gaim_prpl_got_account_warning_level(GaimAccount *account, const char *username,
-		unsigned int level)
-{
-	GaimPresence *presence;
-	unsigned int old_level;
-	gchar *buf;
-
-	g_return_if_fail(account != NULL);
-
-	presence = gaim_account_get_presence(account);
-
-	gaim_signal_emit(gaim_accounts_get_handle(), "account-warned",
-					 account, username, level);
-
-	old_level = gaim_presence_get_warning_level(presence);
-	gaim_presence_set_warning_level(presence, level);
-
-	if (old_level >= level)
-		return;
-
-	if (username == NULL)
-		buf = g_strdup_printf(_("%s has just been warned by an anonymous "
-								"person.\nYour new warning level is %d%%"),
-							  gaim_account_get_username(account),
-							  level);
-	else
-		buf = g_strdup_printf(_("%s has just been warned by %s.\n"
-								"Your new warning level is %d%%"),
-							  gaim_account_get_username(account),
-							  username, level);
-
-	gaim_notify_info(NULL, NULL, buf, NULL);
-
-	g_free(buf);
-}
-
-void
 gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {
@@ -312,28 +275,6 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		old_status = gaim_presence_get_active_status(presence);
 		gaim_presence_set_status_active(presence, status_id, TRUE);
 		gaim_blist_update_buddy_status(buddy, old_status);
-	}
-}
-
-void
-gaim_prpl_got_user_warning_level(GaimAccount *account, const char *name,
-		unsigned int level)
-{
-	GSList *l;
-
-	g_return_if_fail(account != NULL);
-	g_return_if_fail(name    != NULL);
-
-	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next)
-	{
-		GaimBuddy *buddy;
-		GaimPresence *presence;
-
-		buddy = (GaimBuddy *)l->data;
-
-		presence = gaim_buddy_get_presence(buddy);
-
-		gaim_presence_set_warning_level(presence, level);
 	}
 }
 

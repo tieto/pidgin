@@ -859,7 +859,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		if (!strcmp(tmp, gaim_normalize(account, c))) {
 			gaim_connection_set_display_name(gc, c);
 			/* XXX - What should the second parameter be here? */
-			gaim_prpl_got_account_warning_level(account, NULL, evil);
+			/*			gaim_prpl_got_account_warning_level(account, NULL, evil);*/
 			gaim_prpl_got_account_login_time(account, signon);
 		}
 		g_free(tmp);
@@ -879,7 +879,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		sscanf(strtok(NULL, ":"), "%d", &lev);
 		name = strtok(NULL, ":");
 
-		gaim_prpl_got_account_warning_level(account, name, lev);
+		/*	gaim_prpl_got_account_warning_level(account, name, lev); */
 	} else if (!g_ascii_strcasecmp(c, "CHAT_JOIN")) {
 		char *name;
 		int id;
@@ -2269,7 +2269,6 @@ static GaimPluginProtocolInfo prpl_info =
 	toc_rem_permit,			/* rem_permit */
 	toc_rem_deny,			/* rem_deny */
 	toc_set_permit_deny,	/* set_permit_deny */
-	toc_warn,				/* warn */
 	toc_join_chat,			/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,				/* get_chat_name */

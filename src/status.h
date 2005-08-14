@@ -820,15 +820,6 @@ void gaim_presence_set_idle(GaimPresence *presence, gboolean idle,
  */
 void gaim_presence_set_login_time(GaimPresence *presence, time_t login_time);
 
-/**
- * Sets the warning level on a presence.
- *
- * @param presence The presence.
- * @param level    The warning level.  An integer between 0 and 100
- *                 (inclusive) representing the percentage warned.
- */
-void gaim_presence_set_warning_level(GaimPresence *presence,
-									 unsigned int level);
 
 /**
  * Returns the presence's context.
@@ -968,15 +959,6 @@ gboolean gaim_presence_is_idle(const GaimPresence *presence);
  * @return The presence's idle time.
  */
 time_t gaim_presence_get_idle_time(const GaimPresence *presence);
-
-/**
- * Returns the presence's warning level.
- *
- * @param presence The presence.
- *
- * @return The presence's warning level.
- */
-unsigned int gaim_presence_get_warning_level(const GaimPresence *presence);
 
 /**
  * Returns the presence's login time.

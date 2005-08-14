@@ -773,6 +773,13 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		g_free(tmp);
 	}
 
+
+	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
+		tmp = g_strdup_printf("%d", userinfo->warnlevel/10.0 + .5);
+		oscar_string_append(str, newline, _("Warning Level"), tmp);
+		g_free(tmp);
+	}
+
 	if ((userinfo != NULL) && (userinfo->capabilities != 0)) {
 		tmp = oscar_caps_to_string(userinfo->capabilities);
 		oscar_string_append(str, newline, _("Capabilities"), tmp);
@@ -3168,7 +3175,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AVAILABLE, NULL);
 	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
-	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
+	//	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
 
 	if (time_idle > 0)
 		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
@@ -4940,7 +4947,7 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_end(ap);
 
 	/* XXX - What's with the + 0.5? */
-	gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
+	//gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
 
 	return 1;
 }
@@ -4959,7 +4966,7 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	warning_level = info->warnlevel/10.0 + 0.5;
 
-	gaim_presence_set_warning_level(presence, warning_level);
+	//	gaim_presence_set_warning_level(presence, warning_level);
 
 	return 1;
 }
@@ -7703,7 +7710,6 @@ static GaimPluginProtocolInfo prpl_info =
 	oscar_rem_permit,		/* rem_permit */
 	oscar_rem_deny,			/* rem_deny */
 	oscar_set_permit_deny,	/* set_permit_deny */
-	oscar_warn,				/* warn */
 	oscar_join_chat,		/* join_chat */
 	NULL,					/* reject_chat */
 	oscar_get_chat_name,	/* get_chat_name */

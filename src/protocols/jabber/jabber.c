@@ -1543,7 +1543,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,							/* rem_permit */
 	NULL,							/* rem_deny */
 	NULL,							/* set_permit_deny */
-	NULL,							/* warn */
 	jabber_chat_join,				/* join_chat */
 	NULL,							/* reject_chat */
 	jabber_get_chat_name,			/* get_chat_name */

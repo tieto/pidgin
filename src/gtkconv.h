@@ -77,7 +77,6 @@ struct _GaimGtkWindow
 		GtkWidget *send_file;
 		GtkWidget *add_pounce;
 		GtkWidget *get_info;
-		GtkWidget *warn;
 		GtkWidget *invite;
 
 		GtkWidget *alias;
