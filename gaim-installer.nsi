@@ -56,7 +56,7 @@ SetDateSave on
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
-!define GTK_DEFAULT_INSTALL_PATH		"$PROGRAMFILES\Common Files\GTK\2.0"
+!define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
 !define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
 !define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
