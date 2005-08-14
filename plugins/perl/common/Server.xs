@@ -298,9 +298,3 @@ void
 serv_touch_idle(con)
 	Gaim::Connection con 
 
-void 
-serv_warn(con, a, b)
-	Gaim::Connection con 
-	const char * a
-	gboolean b
-

@@ -116,10 +116,6 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
 	}
 
-unsigned int 
-gaim_presence_get_warning_level(presence)
-	Gaim::Presence presence
-
 gboolean 
 gaim_presence_is_available(presence)
 	Gaim::Presence presence
@@ -179,11 +175,6 @@ gaim_presence_set_status_active(presence, status_id, active)
 	Gaim::Presence presence
 	const char *status_id
 	gboolean active
-
-void 
-gaim_presence_set_warning_level(presence, level)
-	Gaim::Presence presence
-	unsigned int level
 
 void 
 gaim_presence_switch_status(presence, status_id)

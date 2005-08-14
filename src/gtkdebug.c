@@ -910,7 +910,9 @@ static void
 gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 					 const char *format, va_list args)
 {
+#ifdef HAVE_REGEX_H
 	GtkTreeIter iter;
+#endif /* HAVE_REGEX_H */
 	gboolean timestamps;
 	gchar *arg_s, *ts_s;
 	gchar *esc_s, *cat_s, *tmp, *s;

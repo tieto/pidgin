@@ -24,7 +24,7 @@ void
 gaim_network_init()
  
 
-const char *
+const unsigned char *
 gaim_network_ip_atoi(ip)
 	const char *ip
 

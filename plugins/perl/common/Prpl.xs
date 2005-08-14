@@ -49,12 +49,6 @@ gaim_prpl_got_account_login_time(account, login_time)
 	time_t login_time
 
 void 
-gaim_prpl_got_account_warning_level(account, username, level)
-	Gaim::Account account
-	const char *username
-	unsigned int level
-
-void 
 gaim_prpl_got_user_idle(account, name, idle, idle_time)
 	Gaim::Account account
 	const char *name
@@ -66,10 +60,4 @@ gaim_prpl_got_user_login_time(account, name, login_time)
 	Gaim::Account account
 	const char *name
 	time_t login_time
-
-void 
-gaim_prpl_got_user_warning_level(account, name, level)
-	Gaim::Account account
-	const char *name
-	unsigned int level
 
