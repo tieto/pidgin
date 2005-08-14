@@ -567,53 +567,39 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	}
 }
 
-static void 
-gtk_blist_edit_starting(GtkCellRenderer *renderer,
-                        GtkCellEditable *editable,
-                        gchar *pathstr,
-                        gpointer user_data)
-{
-	GtkTreePath *path;
-	GtkTreeIter iter;
-	GaimBlistNode *node;
-	GValue val = {0,};
-	
-	path = gtk_tree_path_new_from_string (pathstr);
-	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
-	gtk_tree_path_free (path);
-	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
-	node = g_value_get_pointer(&val);
-	
-	switch (node->type) {
-	case GAIM_BLIST_BUDDY_NODE:
-		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimBuddy*)node)->alias);
-		break;
-	case GAIM_BLIST_CONTACT_NODE:
-		gtk_entry_set_text(GTK_ENTRY(editable), (gaim_contact_get_priority_buddy((GaimContact*)node))->alias);
-		break;
-	case GAIM_BLIST_GROUP_NODE:
-		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimGroup*)node)->name);
-		break;
-	case GAIM_BLIST_CHAT_NODE:
-		gtk_entry_set_text(GTK_ENTRY(editable), ((GaimChat*)node)->alias);
-		break;
-	default:
-		break;
-	}
-}
-
 static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
+	const char *text = NULL;
 	
-       	if (!(get_iter_from_node(node, &iter))) {
+	if (!(get_iter_from_node(node, &iter))) {
 		/* This is either a bug, or the buddy is in a collapsed contact */
 		node = node->parent;
 		if (!get_iter_from_node(node, &iter))
 			/* Now it's definitely a bug */
 			return;
 	}
+
+	switch (node->type) {
+	case GAIM_BLIST_BUDDY_NODE:
+		text = gaim_buddy_get_alias((GaimBuddy *)node);
+		break;
+	case GAIM_BLIST_CONTACT_NODE:
+		text = gaim_buddy_get_alias(gaim_contact_get_priority_buddy((GaimContact *)node));
+		break;
+	case GAIM_BLIST_GROUP_NODE:
+		text = ((GaimGroup *)node)->name;
+		break;
+	case GAIM_BLIST_CHAT_NODE:
+		text = gaim_chat_get_name((GaimChat *)node);
+		break;
+	default:
+		g_return_if_reached();
+	}
+
+	gtk_tree_store_set(gtkblist->treemodel, &iter, NAME_COLUMN, text, -1);
+
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), FALSE);
@@ -3613,7 +3599,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 										"markup", NAME_COLUMN,
 										NULL);
 	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), NULL);
-	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_edit_starting), NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	gtk_tree_view_column_set_expand (column, TRUE);
