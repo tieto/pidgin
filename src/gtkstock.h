@@ -36,6 +36,7 @@
 #define GAIM_STOCK_BGCOLOR         "gaim-bgcolor"
 #define GAIM_STOCK_BLOCK           "gaim-block"
 #define GAIM_STOCK_CHAT            "gaim-chat"
+#define GAIM_STOCK_CLEAR           "gaim-clear"
 #define GAIM_STOCK_DIALOG_AUTH     "gaim-dialog-auth"
 #define GAIM_STOCK_DIALOG_COOL     "gaim-dialog-cool"
 #define GAIM_STOCK_DIALOG_ERROR    "gaim-dialog-error"

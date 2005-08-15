@@ -60,6 +60,8 @@ struct _GtkIMHtmlToolbar {
 	GtkWidget *fgcolor;
 	GtkWidget *bgcolor;
 
+	GtkWidget *clear;
+
 	GtkWidget *image;
 	GtkWidget *link;
 	GtkWidget *smiley;

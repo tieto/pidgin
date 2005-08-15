@@ -818,11 +818,6 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 	}
 }
 
-static void
-formatting_reset_cb(GtkWidget *w, GtkWidget *imhtml) {
-	gtk_imhtml_clear_formatting(GTK_IMHTML(imhtml));
-}
-
 static GtkWidget *
 list_page()
 {
@@ -873,14 +868,14 @@ static GtkWidget *
 conv_page()
 {
 	GtkWidget *ret;
-	GtkWidget *vbox, *vbox2;
-	GtkWidget *hbox;
+	GtkWidget *vbox;
 	GtkWidget *label;
 	GList *names = NULL;
 	GtkWidget *frame;
 	GtkWidget *imhtml;
 	GtkWidget *toolbar;
-	GtkWidget *button;
+	GtkWidget *hbox;
+	GtkWidget *vbox2;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
@@ -902,9 +897,6 @@ conv_page()
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_container_add(GTK_CONTAINER(vbox), hbox);
-
 	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
 	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
@@ -921,12 +913,7 @@ conv_page()
 
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
-
-	vbox2 = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
-	button = gtk_button_new_with_mnemonic(_("_Clear Formatting"));
-	gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
 		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
@@ -939,9 +926,6 @@ conv_page()
 	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"));
 	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
 	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(formatting_reset_cb), imhtml);
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);

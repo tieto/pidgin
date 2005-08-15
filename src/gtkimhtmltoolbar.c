@@ -322,6 +322,13 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 }
 
 static void
+clear_formatting_cb(GtkWidget *clear, GtkIMHtmlToolbar *toolbar)
+{
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->clear), FALSE);
+	gtk_imhtml_clear_formatting(GTK_IMHTML(toolbar->imhtml));
+}
+
+static void
 cancel_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
@@ -1004,6 +1011,22 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 			 G_CALLBACK(toggle_bg_color), toolbar);
 
 	toolbar->bgcolor = button;
+
+	/* Sep */
+	sep = gtk_vseparator_new();
+	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+
+	/* Clear Formatting */
+	button = gaim_pixbuf_toolbar_button_from_stock(GAIM_STOCK_CLEAR);
+	gtk_size_group_add_widget(sg, button);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	gtk_tooltips_set_tip(toolbar->tooltips, button,
+			     _("Clear formatting"), NULL);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(clear_formatting_cb), toolbar);
+
+	toolbar->clear = button;
 
 	/* Sep */
 	sep = gtk_vseparator_new();
