@@ -108,6 +108,12 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data);
 static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *selection_data, gpointer data);
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data);
 static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean plaintext);
+static void imhtml_toggle_bold(GtkIMHtml *imhtml);
+static void imhtml_toggle_italic(GtkIMHtml *imhtml);
+static void imhtml_toggle_strike(GtkIMHtml *imhtml);
+static void imhtml_toggle_underline(GtkIMHtml *imhtml);
+static void imhtml_font_grow(GtkIMHtml *imhtml);
+static void imhtml_font_shrink(GtkIMHtml *imhtml);
 
 /* POINT_SIZE converts from AIM font sizes to a point size scale factor. */
 #define MAX_FONT_SIZE 7
@@ -952,9 +958,9 @@ static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean pl
 		gtk_imhtml_close_tags(imhtml, &iter);
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
-        if (!imhtml->wbfo && !plaintext)
-                  gtk_imhtml_close_tags(imhtml, &iter);
-  	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
+	if (!imhtml->wbfo && !plaintext)
+		gtk_imhtml_close_tags(imhtml, &iter);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
 	                             0, FALSE, 0.0, 0.0);
 }
@@ -1112,19 +1118,22 @@ static void imhtml_toggle_format(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons)
 
 	switch (buttons) {
 	case GTK_IMHTML_BOLD:
-		gtk_imhtml_toggle_bold(imhtml);
+		imhtml_toggle_bold(imhtml);
 		break;
 	case GTK_IMHTML_ITALIC:
-		gtk_imhtml_toggle_italic(imhtml);
+		imhtml_toggle_italic(imhtml);
 		break;
 	case GTK_IMHTML_UNDERLINE:
-		gtk_imhtml_toggle_underline(imhtml);
+		imhtml_toggle_underline(imhtml);
+		break;
+	case GTK_IMHTML_STRIKE:
+		imhtml_toggle_strike(imhtml);
 		break;
 	case GTK_IMHTML_SHRINK:
-		gtk_imhtml_font_shrink(imhtml);
+		imhtml_font_shrink(imhtml);
 		break;
 	case GTK_IMHTML_GROW:
-		gtk_imhtml_font_grow(imhtml);
+		imhtml_font_grow(imhtml);
 		break;
 	default:
 		break;
@@ -3799,6 +3808,15 @@ gtk_imhtml_get_current_backcolor(GtkIMHtml *imhtml)
 		return NULL;
 }
 
+char *
+gtk_imhtml_get_current_background(GtkIMHtml *imhtml)
+{
+	if (imhtml->edit.background)
+		return g_strdup(imhtml->edit.background);
+	else
+		return NULL;
+}
+
 gint
 gtk_imhtml_get_current_fontsize(GtkIMHtml *imhtml)
 {
@@ -3886,9 +3904,8 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextMark *m
 	g_slist_free(tags);
 }
 
-gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
+static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 {
-	GObject *object;
 	GtkTextIter start, end;
 
 	imhtml->edit.bold = !imhtml->edit.bold;
@@ -3906,15 +3923,21 @@ gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 
 	}
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_object_unref(object);
-
-	return (imhtml->edit.bold != FALSE);
 }
 
-gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
+void gtk_imhtml_toggle_bold(GtkIMHtml *imhtml)
 {
 	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_BOLD);
+	g_object_unref(object);
+}
+
+static void imhtml_toggle_italic(GtkIMHtml *imhtml)
+{
 	GtkTextIter start, end;
 
 	imhtml->edit.italic = !imhtml->edit.italic;
@@ -3931,15 +3954,20 @@ gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 	}
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_object_unref(object);
-
-	return imhtml->edit.italic != FALSE;
 }
 
-gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
+void gtk_imhtml_toggle_italic(GtkIMHtml *imhtml)
 {
 	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_ITALIC);
+	g_object_unref(object);}
+
+static void imhtml_toggle_underline(GtkIMHtml *imhtml)
+{
 	GtkTextIter start, end;
 
 	imhtml->edit.underline = !imhtml->edit.underline;
@@ -3956,15 +3984,21 @@ gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 	}
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_object_unref(object);
-
-	return imhtml->edit.underline != FALSE;
 }
 
-gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
+void gtk_imhtml_toggle_underline(GtkIMHtml *imhtml)
 {
 	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_UNDERLINE);
+	g_object_unref(object);
+}
+
+static void imhtml_toggle_strike(GtkIMHtml *imhtml)
+{
 	GtkTextIter start, end;
 
 	imhtml->edit.strike = !imhtml->edit.strike;
@@ -3981,20 +4015,25 @@ gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
 	}
-	object = g_object_ref(G_OBJECT(imhtml));
-	g_object_unref(object);
+}
 
-	return imhtml->edit.strike != FALSE;
+void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml)
+{
+	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
+	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_STRIKE);
+	g_object_unref(object);
 }
 
 void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 {
 	GObject *object;
 	GtkTextIter start, end;
-	GtkIMHtmlButtons b = 0;
 
 	imhtml->edit.fontsize = size;
-
 
 	if (imhtml->wbfo) {
 		gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
@@ -4008,14 +4047,12 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 	}
 
 	object = g_object_ref(G_OBJECT(imhtml));
-	b |= GTK_IMHTML_SHRINK;
-	b |= GTK_IMHTML_GROW;
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK | GTK_IMHTML_GROW);
 	g_object_unref(object);
 }
 
-void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
+static void imhtml_font_shrink(GtkIMHtml *imhtml)
 {
-	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.fontsize == 1)
@@ -4036,13 +4073,21 @@ void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
+}
+
+void gtk_imhtml_font_shrink(GtkIMHtml *imhtml)
+{
+	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
 	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_SHRINK);
 	g_object_unref(object);
 }
 
-void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
+static void imhtml_font_grow(GtkIMHtml *imhtml)
 {
-	GObject *object;
 	GtkTextIter start, end;
 
 	if (imhtml->edit.fontsize == MAX_FONT_SIZE)
@@ -4063,11 +4108,20 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
 	}
+}
+
+void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
+{
+	GObject *object;
+
+	g_return_if_fail(imhtml != NULL);
+
 	object = g_object_ref(G_OBJECT(imhtml));
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, GTK_IMHTML_GROW);
 	g_object_unref(object);
 }
 
-#define gtk_imhtml_toggle_str_tag(imhtml, color, edit_field, remove_func, find_func) { \
+#define gtk_imhtml_toggle_str_tag(imhtml, color, edit_field, remove_func, find_func, button) { \
 	GObject *object; \
 	GtkTextIter start, end; \
 \
@@ -4101,6 +4155,7 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 	} \
 \
 	object = g_object_ref(G_OBJECT(imhtml)); \
+	g_signal_emit(object, signals[TOGGLE_FORMAT], 0, button); \
 	g_object_unref(object); \
 \
 	return edit_field != NULL; \
@@ -4108,22 +4163,22 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 
 gboolean gtk_imhtml_toggle_forecolor(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.forecolor, remove_font_forecolor, find_font_forecolor_tag);
+	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.forecolor, remove_font_forecolor, find_font_forecolor_tag, GTK_IMHTML_FORECOLOR);
 }
 
 gboolean gtk_imhtml_toggle_backcolor(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.backcolor, remove_font_backcolor, find_font_backcolor_tag);
+	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.backcolor, remove_font_backcolor, find_font_backcolor_tag, GTK_IMHTML_BACKCOLOR);
 }
 
 gboolean gtk_imhtml_toggle_background(GtkIMHtml *imhtml, const char *color)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.background, remove_font_background, find_font_background_tag);
+	gtk_imhtml_toggle_str_tag(imhtml, color, imhtml->edit.background, remove_font_background, find_font_background_tag, GTK_IMHTML_BACKGROUND);
 }
 
 gboolean gtk_imhtml_toggle_fontface(GtkIMHtml *imhtml, const char *face)
 {
-	gtk_imhtml_toggle_str_tag(imhtml, face, imhtml->edit.fontface, remove_font_face, find_font_face_tag);
+	gtk_imhtml_toggle_str_tag(imhtml, face, imhtml->edit.fontface, remove_font_face, find_font_face_tag, GTK_IMHTML_FACE);
 }
 
 void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
@@ -4136,8 +4191,6 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 	GdkColor *color = NULL;
 
 	imhtml->edit.link = NULL;
-
-
 
 	if (url) {
 		g_snprintf(str, sizeof(str), "LINK %d", linkno++);

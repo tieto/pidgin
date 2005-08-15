@@ -579,37 +579,29 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
  * Toggles bold at the cursor location or selection in a GTK+ IM/HTML.
  *
  * @param imhtml The GTK+ IM/HTML.
- *
- * @return @c TRUE if bold was turned on, or @c FALSE if it was turned off.
  */
-gboolean gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
+void gtk_imhtml_toggle_bold(GtkIMHtml *imhtml);
 
 /**
  * Toggles italic at the cursor location or selection in a GTK+ IM/HTML.
  *
  * @param imhtml The GTK+ IM/HTML.
- *
- * @return @c TRUE if italic was turned on, or @c FALSE if it was turned off.
  */
-gboolean gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
+void gtk_imhtml_toggle_italic(GtkIMHtml *imhtml);
 
 /**
  * Toggles underline at the cursor location or selection in a GTK+ IM/HTML.
  *
  * @param imhtml The GTK+ IM/HTML.
- *
- * @return @c TRUE if underline was turned on, or @c FALSE if it was turned off.
  */
-gboolean gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
+void gtk_imhtml_toggle_underline(GtkIMHtml *imhtml);
 
 /**
  * Toggles strikethrough at the cursor location or selection in a GTK+ IM/HTML.
  *
  * @param imhtml The GTK+ IM/HTML.
- *
- * @return @c TRUE if strikethrough was turned on, or @c FALSE if it was turned off.
  */
-gboolean gtk_imhtml_toggle_strike(GtkIMHtml *imhtml);
+void gtk_imhtml_toggle_strike(GtkIMHtml *imhtml);
 
 /**
  * Toggles a foreground color at the current location or selection in a GTK

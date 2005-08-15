@@ -40,67 +40,32 @@ static GtkHBoxClass *parent_class = NULL;
 
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
-	GObject *object;
-
-	g_return_if_fail(toolbar);
-
-	/* block the format_function_toggle handler */
-	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
-	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									NULL, toolbar);
+	g_return_if_fail(toolbar != NULL);
 	gtk_imhtml_toggle_bold(GTK_IMHTML(toolbar->imhtml));
-	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									  NULL, toolbar);
-	g_object_unref(object);
-
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
 static void
 do_italic(GtkWidget *italic, GtkIMHtmlToolbar *toolbar)
 {
-	GObject *object;
-
-	g_return_if_fail(toolbar);
-
-	/* block the format_function_toggle handler */
-	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
-	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									NULL, toolbar);
+	g_return_if_fail(toolbar != NULL);
 	gtk_imhtml_toggle_italic(GTK_IMHTML(toolbar->imhtml));
-	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									  NULL, toolbar);
-	g_object_unref(object);
-
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
 static void
 do_underline(GtkWidget *underline, GtkIMHtmlToolbar *toolbar)
 {
-	GObject *object;
-
-	g_return_if_fail(toolbar);
-
-	/* block the format_function_toggle handler */
-	object = g_object_ref(G_OBJECT(GTK_IMHTML(toolbar->imhtml)));
-	g_signal_handlers_block_matched(object,	G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									NULL, toolbar);
+	g_return_if_fail(toolbar != NULL);
 	gtk_imhtml_toggle_underline(GTK_IMHTML(toolbar->imhtml));
-	g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
-									  NULL, toolbar);
-	g_object_unref(object);
-
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
 static void
 do_small(GtkWidget *smalltb, GtkIMHtmlToolbar *toolbar)
 {
-	g_return_if_fail(toolbar);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size)))
-		gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
+	g_return_if_fail(toolbar != NULL);
+	gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -108,9 +73,7 @@ static void
 do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar);
-	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->larger_size)))
-		gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->larger_size), FALSE);
+	gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -119,7 +82,7 @@ destroy_toolbar_font(GtkWidget *widget, GdkEvent *event,
 					 GtkIMHtmlToolbar *toolbar)
 {
 	if (widget != NULL)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->font), FALSE);
+		gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml), "");
 
 	if (toolbar->font_dialog != NULL)
 	{
@@ -161,7 +124,6 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 		*space = '\0';
 
 	gtk_imhtml_toggle_fontface(GTK_IMHTML(toolbar->imhtml), fontname);
-
 	g_free(fontname);
 
 	cancel_toolbar_font(NULL, toolbar);
@@ -170,40 +132,39 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 static void
 toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 {
-	char *fontname;
-
 	g_return_if_fail(toolbar);
 
-	fontname = gtk_imhtml_get_current_fontface(GTK_IMHTML(toolbar->imhtml));
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(font))) {
+		char *fontname = gtk_imhtml_get_current_fontface(GTK_IMHTML(toolbar->imhtml));
 
-	if (!toolbar->font_dialog) {
-		toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
+		if (!toolbar->font_dialog) {
+			toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
-		g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
+			g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
 
-		if(fontname) {
-			char fonttif[128];
-			g_snprintf(fonttif, sizeof(fonttif), "%s 12", fontname);
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
-													fonttif);
-			g_free(fontname);
-		} else {
-			gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
-													DEFAULT_FONT_FACE);
+			if(fontname) {
+				char *fonttif = g_strdup_printf("%s 12", fontname);
+				g_free(fontname);
+				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+														fonttif);
+				g_free(fonttif);
+			} else {
+				gtk_font_selection_dialog_set_font_name(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog),
+														DEFAULT_FONT_FACE);
+			}
+
+			g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
+							 G_CALLBACK(destroy_toolbar_font), toolbar);
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button), "clicked",
+							 G_CALLBACK(apply_font), toolbar->font_dialog);
+			g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
+							 G_CALLBACK(cancel_toolbar_font), toolbar);
+			g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
+							 G_CALLBACK(realize_toolbar_font), toolbar);
 		}
-
-		g_signal_connect(G_OBJECT(toolbar->font_dialog), "delete_event",
-						 G_CALLBACK(destroy_toolbar_font), toolbar);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->ok_button), "clicked",
-						 G_CALLBACK(apply_font), toolbar->font_dialog);
-		g_signal_connect(G_OBJECT(GTK_FONT_SELECTION_DIALOG(toolbar->font_dialog)->cancel_button), "clicked",
-						 G_CALLBACK(cancel_toolbar_font), toolbar);
-		g_signal_connect_after(G_OBJECT(toolbar->font_dialog), "realize",
-						 G_CALLBACK(realize_toolbar_font), toolbar);
-
 		gtk_window_present(GTK_WINDOW(toolbar->font_dialog));
 	} else {
-		cancel_toolbar_font(NULL, toolbar);
+		cancel_toolbar_font(font, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -213,7 +174,7 @@ destroy_toolbar_fgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
 	if (widget != NULL)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->fgcolor), FALSE);
+		gtk_imhtml_toggle_forecolor(GTK_IMHTML(toolbar->imhtml), "");
 
 	if (toolbar->fgcolor_dialog != NULL)
 	{
@@ -241,8 +202,8 @@ static void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 			   text_color.green / 256,
 			   text_color.blue / 256);
 	gtk_imhtml_toggle_forecolor(GTK_IMHTML(toolbar->imhtml), open_tag);
-
 	g_free(open_tag);
+
 	cancel_toolbar_fgcolor(NULL, toolbar);
 }
 
@@ -272,13 +233,10 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 							 G_CALLBACK(do_fgcolor), colorsel);
 			g_signal_connect(G_OBJECT (GTK_COLOR_SELECTION_DIALOG(toolbar->fgcolor_dialog)->cancel_button), "clicked",
 							 G_CALLBACK(cancel_toolbar_fgcolor), toolbar);
-
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->fgcolor_dialog));
-	} else if (toolbar->fgcolor_dialog != NULL) {
-		cancel_toolbar_fgcolor(color, toolbar);
 	} else {
-		/* gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>"); */
+		cancel_toolbar_fgcolor(color, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -287,8 +245,12 @@ static void
 destroy_toolbar_bgcolor(GtkWidget *widget, GdkEvent *event,
 						GtkIMHtmlToolbar *toolbar)
 {
-	if (widget != NULL)
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->bgcolor), FALSE);
+	if (widget != NULL) {
+		if (gtk_text_buffer_get_selection_bounds(GTK_IMHTML(toolbar->imhtml)->text_buffer, NULL, NULL))
+			gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), "");
+		else
+			gtk_imhtml_toggle_background(GTK_IMHTML(toolbar->imhtml), "");
+	}
 
 	if (toolbar->bgcolor_dialog != NULL)
 	{
@@ -319,8 +281,8 @@ static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 		gtk_imhtml_toggle_backcolor(GTK_IMHTML(toolbar->imhtml), open_tag);
 	else
 		gtk_imhtml_toggle_background(GTK_IMHTML(toolbar->imhtml), open_tag);
-
 	g_free(open_tag);
+
 	cancel_toolbar_bgcolor(NULL, toolbar);
 }
 
@@ -353,10 +315,8 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 
 		}
 		gtk_window_present(GTK_WINDOW(toolbar->bgcolor_dialog));
-	} else if (toolbar->bgcolor_dialog != NULL) {
-		cancel_toolbar_bgcolor(color, toolbar);
 	} else {
-		/* gaim_gtk_advance_past(gtkconv, "<FONT COLOR>", "</FONT>"); */
+		cancel_toolbar_bgcolor(color, toolbar);
 	}
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
@@ -805,24 +765,6 @@ static void toggle_button_set_active_block(GtkToggleButton *button,
 	g_object_unref(object);
 }
 
-static void toggle_button_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
-{
-	if (buttons & GTK_IMHTML_BOLD)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold),
-									   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)),
-									   toolbar);
-
-	if (buttons & GTK_IMHTML_ITALIC)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic),
-									   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)),
-									   toolbar);
-
-	if (buttons & GTK_IMHTML_UNDERLINE)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
-									   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)),
-									   toolbar);
-}
-
 static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 {
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)))
@@ -840,6 +782,8 @@ static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
 
 static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	gboolean bold, italic, underline;
+	char *tmp;
+	char *tmp2;
 
 	bold = italic = underline = FALSE;
 	gtk_imhtml_get_current_format(GTK_IMHTML(toolbar->imhtml),
@@ -856,6 +800,32 @@ static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)) != underline)
 		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
 									   underline, toolbar);
+
+	/* These buttons aren't ever "active". */
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->smaller_size), FALSE);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->larger_size), FALSE);
+
+	tmp = gtk_imhtml_get_current_fontface(GTK_IMHTML(toolbar->imhtml));
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->font),
+								   (tmp != NULL), toolbar);
+	g_free(tmp);
+
+	tmp = gtk_imhtml_get_current_forecolor(GTK_IMHTML(toolbar->imhtml));
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->fgcolor),
+								   (tmp != NULL), toolbar);
+	g_free(tmp);
+
+	tmp = gtk_imhtml_get_current_backcolor(GTK_IMHTML(toolbar->imhtml));
+	tmp2 = gtk_imhtml_get_current_background(GTK_IMHTML(toolbar->imhtml));
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bgcolor),
+								   (tmp != NULL || tmp2 != NULL), toolbar);
+	g_free(tmp);
+	g_free(tmp2);
+}
+
+static void toggle_button_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIMHtmlToolbar *toolbar)
+{
+	update_buttons(toolbar);
 }
 
 static void update_format_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar) {
@@ -1117,7 +1087,7 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 	toolbar->imhtml = imhtml;
 	g_signal_connect(G_OBJECT(imhtml), "format_buttons_update", G_CALLBACK(update_buttons_cb), toolbar);
-	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(reset_buttons_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
@@ -1129,17 +1099,7 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 
 	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
 
-	if(bold)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), bold,
-									   toolbar);
-
-	if(italic)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic), italic,
-									   toolbar);
-
-	if(underline)
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
-									   underline, toolbar);
+	update_buttons(toolbar);
 }
 
 void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *proto_id)

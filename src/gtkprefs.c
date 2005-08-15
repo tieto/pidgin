@@ -205,7 +205,7 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		GaimPrefType type, const char *key, GList *menuitems)
 {
 	GtkWidget  *dropdown, *opt, *menu;
-	GtkWidget  *label;
+	GtkWidget  *label = NULL;
 	GtkWidget  *hbox;
 	gchar      *text;
 	const char *stored_str = NULL;
@@ -216,14 +216,18 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	g_return_val_if_fail(menuitems != NULL, NULL);
 
-	hbox = gtk_hbox_new(FALSE, 5);
-	/*gtk_container_add (GTK_CONTAINER (box), hbox);*/
-	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
-	gtk_widget_show(hbox);
+	if (title != NULL) {
+		hbox = gtk_hbox_new(FALSE, 5);
+		/*gtk_container_add (GTK_CONTAINER (box), hbox);*/
+		gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
+		gtk_widget_show(hbox);
 
-	label = gtk_label_new_with_mnemonic(title);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_widget_show(label);
+		label = gtk_label_new_with_mnemonic(title);
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_widget_show(label);
+	} else {
+		hbox = box;
+	}
 
 #if 0 /* GTK_CHECK_VERSION(2,4,0) */
 	if(type == GAIM_PREF_INT)
@@ -236,7 +240,10 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	menu = gtk_menu_new();
 #endif
 
-	gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
+	if (label != NULL) {
+		gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
+		gaim_set_accessible_label (dropdown, label);
+	}
 
 	if (type == GAIM_PREF_INT)
 		stored_int = gaim_prefs_get_int(key);
@@ -289,7 +296,6 @@ gaim_gtk_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
-	gaim_set_accessible_label (dropdown, label);
 
 	return label;
 }
@@ -741,26 +747,7 @@ theme_page()
 }
 
 static void
-formatting_reset_cb(GtkWidget *w, GtkWidget *imhtml) {
-	gboolean bold, italic, uline;
-	bold = italic = uline = FALSE;
-
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &uline);
-	if (bold)
-		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (italic)
-		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (uline)
-		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
-
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), 3);
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), NULL);
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), NULL);
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), NULL);
-}
-
-static void
-formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *bah)
+formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 {
 	gboolean bold, italic, uline;
 
@@ -797,7 +784,32 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *bah)
 	}
 
 	if (buttons & GTK_IMHTML_BACKCOLOR) {
-		char *color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(imhtml));
+		char *color;
+		GObject *object;
+
+		color = gtk_imhtml_get_current_backcolor(GTK_IMHTML(imhtml));
+		if (!color)
+			color = g_strdup("");
+
+		/* Block the signal to prevent a loop. */
+		object = g_object_ref(G_OBJECT(imhtml));
+		g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+										NULL, toolbar);
+		/* Clear the backcolor. */
+		gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), "");
+		/* Unblock the signal. */
+		g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+										  NULL, toolbar);
+		g_object_unref(object);
+
+		/* This will fire a toggle signal and get saved below. */
+		gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), color);
+
+		g_free(color);
+	}
+
+	if (buttons & GTK_IMHTML_BACKGROUND) {
+		char *color = gtk_imhtml_get_current_background(GTK_IMHTML(imhtml));
 		if (!color)
 			color = g_strdup("");
 
@@ -806,73 +818,27 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *bah)
 	}
 }
 
-static GtkWidget *
-messages_page()
-{
-	GtkWidget *ret;
-	GtkWidget *vbox, *fontvbox;
-	GtkWidget *imhtml;
-	GtkWidget *toolbar;
-	GtkWidget *frame;
-	GtkWidget *option;
-	GtkWidget *button;
+static void
+formatting_reset_cb(GtkWidget *w, GtkWidget *imhtml) {
+	gboolean bold, italic, uline;
+	bold = italic = uline = FALSE;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
-
-	vbox = gaim_gtk_make_frame (ret, _("Display"));
-#ifdef USE_GTKSPELL
-	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
-			"/gaim/gtk/conversations/spellcheck", vbox);
-#endif
-	vbox = gaim_gtk_make_frame (ret, _("Ignore"));
-	gaim_gtk_prefs_checkbox(_("Ignore _formatting"),
-				"/gaim/gtk/conversations/ignore_formatting", vbox);
-
-	vbox = gaim_gtk_make_frame (ret, _("Default Formatting"));
-
-	option = gaim_gtk_prefs_checkbox(_("_Send default formatting with outgoing messages"),
-									 "/gaim/gtk/conversations/send_formatting", vbox);
-
-
-	fontvbox = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(vbox), fontvbox);
-
-	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
-	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
-	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
-	gtk_box_pack_start(GTK_BOX(fontvbox), frame, FALSE, FALSE, 0);
-
-	button = gtk_button_new_with_mnemonic(_("_Clear Formatting"));
-	gtk_box_pack_start(GTK_BOX(fontvbox), button, FALSE, FALSE, 0);
-
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
-		gtk_widget_set_sensitive(fontvbox, FALSE);
-
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &uline);
+	if (bold)
 		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+	if (italic)
 		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+	if (uline)
 		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
 
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"));
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), 3);
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), NULL);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(formatting_reset_cb), imhtml);
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), NULL);
+	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), NULL);
+	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), NULL);
 
-	g_signal_connect(G_OBJECT(option), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), fontvbox);
-
-	g_signal_connect(G_OBJECT(imhtml), "format_function_toggle",
-					 G_CALLBACK(formatting_toggle_cb), NULL);
-
-	gtk_widget_show_all(ret);
-	return ret;
+	gtk_widget_grab_focus(imhtml);
 }
 
 static GtkWidget *
@@ -926,25 +892,78 @@ conv_page()
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *vbox2;
+	GtkWidget *hbox;
 	GtkWidget *label;
-	GtkSizeGroup *sg;
 	GList *names = NULL;
+	GtkWidget *frame;
+	GtkWidget *imhtml;
+	GtkWidget *toolbar;
+	GtkWidget *button;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
 	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
 	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
-
+	gaim_gtk_prefs_checkbox(_("Show _formatting on incoming messages"),
+				"/gaim/gtk/conversations/show_incoming_formatting", vbox);
 	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
+#ifdef USE_GTKSPELL
+	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
+			"/gaim/gtk/conversations/spellcheck", vbox);
+#endif
+
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
+
+	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
+	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
+	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
+									GTK_IMHTML_BOLD |
+									GTK_IMHTML_ITALIC |
+									GTK_IMHTML_UNDERLINE |
+									GTK_IMHTML_GROW |
+									GTK_IMHTML_SHRINK |
+									GTK_IMHTML_FACE |
+									GTK_IMHTML_FORECOLOR |
+									GTK_IMHTML_BACKCOLOR |
+									GTK_IMHTML_BACKGROUND);
+
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
+
+	gtk_box_pack_start(GTK_BOX(hbox), frame, FALSE, FALSE, 0);
+
+	vbox2 = gtk_vbox_new(FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox2, FALSE, FALSE, 0);
+	button = gtk_button_new_with_mnemonic(_("_Clear Formatting"));
+	gtk_box_pack_start(GTK_BOX(vbox2), button, FALSE, FALSE, 0);
+
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
+
+	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"));
+	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(formatting_reset_cb), imhtml);
+
+	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
+					 G_CALLBACK(formatting_toggle_cb), toolbar);
+
 
 	/* All the tab options! */
 	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
@@ -966,21 +985,20 @@ conv_page()
 	gaim_gtk_prefs_checkbox(_("Show close b_utton on tabs"),
 							"/gaim/gtk/conversations/close_on_tabs", vbox2);
 
-	label = gaim_gtk_prefs_dropdown(vbox2, _("Tab p_lacement:"), GAIM_PREF_INT,
+	hbox = gtk_hbox_new(FALSE, 9);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox, FALSE, FALSE, 0);
+
+	label = gaim_gtk_prefs_dropdown(hbox, _("_Placement:"), GAIM_PREF_INT,
 			"/gaim/gtk/conversations/tab_side",
 			_("Top"), GTK_POS_TOP,
 			_("Bottom"), GTK_POS_BOTTOM,
 			_("Left"), GTK_POS_LEFT,
 			_("Right"), GTK_POS_RIGHT,
 			NULL);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_size_group_add_widget(sg, label);
 
 	names = gaim_conv_placement_get_options();
-	label = gaim_gtk_prefs_dropdown_from_list(vbox2, _("New conversation _placement:"),
+	label = gaim_gtk_prefs_dropdown_from_list(hbox, _("N_ew conversations:"),
 			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	g_list_free(names);
 
 	gtk_widget_show_all(ret);
@@ -2114,7 +2132,6 @@ static void prefs_notebook_init() {
 	GList *l;
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
-	prefs_notebook_add_page(_("Message Text"), NULL, messages_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Network"), NULL, network_page(), &p, NULL, notebook_page++);
@@ -2283,8 +2300,14 @@ void gaim_gtk_prefs_update_old() {
 					  "/gaim/gtk/conversations/send_formatting");
 
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
-	gaim_prefs_rename("/gaim/gtk/conversations/ignore_colors", "/gaim/gtk/conversations/ignore_formatting");
 	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
+
+	/* I'm leaving both of these to support people that were running 2.0.0cvs before this change.
+	 * The latter can be removed before 2.0.0 is released, or after that if it's forgotten. */
+	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_colors",
+									 "/gaim/gtk/conversations/show_incoming_formatting");
+	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_formatting",
+									 "/gaim/gtk/conversations/show_incoming_formatting");
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
@@ -2299,6 +2322,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/enter_sends");
 	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
+	gaim_prefs_remove("/gaim/gtk/conversations/send_formatting");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_timestamps");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");

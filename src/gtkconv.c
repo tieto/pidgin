@@ -300,64 +300,85 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 }
 
 static void
+clear_format(GaimGtkConversation *c)
+{
+	gboolean bold, italic, uline;
+	bold = italic = uline = FALSE;
+
+	gtk_imhtml_get_current_format(GTK_IMHTML(c->entry), &bold, &italic, &uline);
+	if (bold)
+		gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
+	if (italic)
+		gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
+	if (uline)
+		gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
+
+	gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), 3);
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry), NULL);
+
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), NULL);
+	gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), NULL);
+	gtk_imhtml_toggle_background(GTK_IMHTML(c->entry), NULL);
+
+	gtk_widget_grab_focus(c->entry);
+}
+
+static void
 default_formatize(GaimGtkConversation *c)
 {
 	GaimConversation *conv = c->active_conv;
 		
 	if (conv->features & GAIM_CONNECTION_HTML)
 	{
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting"))
+		char *color;
+		GdkColor fg_color, bg_color;
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold") != GTK_IMHTML(c->entry)->edit.bold)
+			gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic") != GTK_IMHTML(c->entry)->edit.italic)
+			gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
+
+		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline") != GTK_IMHTML(c->entry)->edit.underline)
+			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
+
+		gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),
+			gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+
+		if (!(conv->features & GAIM_CONNECTION_NO_FONTSIZE))
+			gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
+				gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
+
+		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
 		{
-			char *color;
-			GdkColor fg_color, bg_color;
-
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold") != GTK_IMHTML(c->entry)->edit.bold)
-				gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
-
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic") != GTK_IMHTML(c->entry)->edit.italic)
-				gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
-
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline") != GTK_IMHTML(c->entry)->edit.underline)
-				gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
-
-			gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),
-				gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
-
-			if (!(conv->features & GAIM_CONNECTION_NO_FONTSIZE))
-				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry),
-					gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
-
-			if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
-			{
-				gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
-								&fg_color);
-				color = g_strdup_printf("#%02x%02x%02x",
-										fg_color.red   / 256,
-										fg_color.green / 256,
-										fg_color.blue  / 256);
-			}
-			else
-				color = g_strdup("");
-
-			gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
-			g_free(color);
-
-			if(!(conv->features & GAIM_CONNECTION_NO_BGCOLOR) &&
-			   strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
-			{
-				gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
-								&bg_color);
-				color = g_strdup_printf("#%02x%02x%02x",
-										bg_color.red   / 256,
-										bg_color.green / 256,
-										bg_color.blue  / 256);
-			}
-			else
-				color = g_strdup("");
-
-			gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), color);
-			g_free(color);
+			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+							&fg_color);
+			color = g_strdup_printf("#%02x%02x%02x",
+									fg_color.red   / 256,
+									fg_color.green / 256,
+									fg_color.blue  / 256);
 		}
+		else
+			color = g_strdup("");
+
+		gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
+		g_free(color);
+
+		if(!(conv->features & GAIM_CONNECTION_NO_BGCOLOR) &&
+		   strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
+		{
+			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+							&bg_color);
+			color = g_strdup_printf("#%02x%02x%02x",
+									bg_color.red   / 256,
+									bg_color.green / 256,
+									bg_color.blue  / 256);
+		}
+		else
+			color = g_strdup("");
+
+		gtk_imhtml_toggle_background(GTK_IMHTML(c->entry), color);
+		g_free(color);
 
 
 		if (conv->features & GAIM_CONNECTION_FORMATTING_WBFO)
@@ -586,7 +607,6 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 
 	if (check_for_and_do_command(conv)) {
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-		default_formatize(gtkconv);
 		return;
 	}
 
@@ -628,7 +648,6 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-	default_formatize(gtkconv);
 }
 
 static void
@@ -1771,6 +1790,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->next;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+					clear_format(gtkconv);
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
@@ -1794,13 +1814,19 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->prev;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+					clear_format(gtkconv);
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
 					/* this is mainly just a hack so the formatting at the
 					 * cursor gets picked up. */
-					gtk_text_buffer_get_end_iter(buffer, &iter);
-					gtk_text_buffer_move_mark_by_name(buffer, "insert", &iter);
+					if (*(char *)conv->send_history->data) {
+						gtk_text_buffer_get_end_iter(buffer, &iter);
+						gtk_text_buffer_move_mark_by_name(buffer, "insert", &iter);
+					} else {
+						/* Restore the default formatting */
+						default_formatize(gtkconv);
+					}
 				}
 
 				return TRUE;
@@ -4998,7 +5024,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *who,
 
 	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/ignore_formatting"))
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_incoming_formatting"))
 		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	/* this is gonna crash one day, I can feel it. */
@@ -6207,13 +6233,8 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
-#if 0
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_colors", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_fonts", FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_font_sizes", FALSE);
-#else
-	gaim_prefs_add_bool("/gaim/gtk/conversations/ignore_formatting", FALSE);
-#endif
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_incoming_formatting", TRUE);
+
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 

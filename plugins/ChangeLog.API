@@ -68,6 +68,9 @@ version 2.0.0:
 	           to send messages to the specified account
 	* Changed: A new blocked icon: pixmaps/status/default/blocked.png
 	* Removed: All warning stuff from the core.
+	* Changed: gtk_imhtml_toggle_bold, gtk_imhtml_toggle_italic,
+	           gtk_imhtml_toggle_underline, gtk_imhtml_toggle_strike:
+	           no longer return a value
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
