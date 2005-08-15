@@ -820,25 +820,7 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 
 static void
 formatting_reset_cb(GtkWidget *w, GtkWidget *imhtml) {
-	gboolean bold, italic, uline;
-	bold = italic = uline = FALSE;
-
-	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &uline);
-	if (bold)
-		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (italic)
-		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (uline)
-		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
-
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), 3);
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), NULL);
-
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), NULL);
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(imhtml), NULL);
-	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), NULL);
-
-	gtk_widget_grab_focus(imhtml);
+	gtk_imhtml_clear_formatting(GTK_IMHTML(imhtml));
 }
 
 static GtkWidget *
@@ -2296,9 +2278,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_rename("/core/conversations/placement",
 					  "/gaim/gtk/conversations/placement");
 
-	gaim_prefs_rename("/gaim/gtk/conversations/use_custom_font",
-					  "/gaim/gtk/conversations/send_formatting");
-
 	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
 	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
@@ -2329,6 +2308,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_bgcolor");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_fgcolor");
+	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_font");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_size");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");

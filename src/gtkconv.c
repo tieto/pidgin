@@ -300,30 +300,6 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 }
 
 static void
-clear_format(GaimGtkConversation *c)
-{
-	gboolean bold, italic, uline;
-	bold = italic = uline = FALSE;
-
-	gtk_imhtml_get_current_format(GTK_IMHTML(c->entry), &bold, &italic, &uline);
-	if (bold)
-		gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
-	if (italic)
-		gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
-	if (uline)
-		gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
-
-	gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), 3);
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry), NULL);
-
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), NULL);
-	gtk_imhtml_toggle_backcolor(GTK_IMHTML(c->entry), NULL);
-	gtk_imhtml_toggle_background(GTK_IMHTML(c->entry), NULL);
-
-	gtk_widget_grab_focus(c->entry);
-}
-
-static void
 default_formatize(GaimGtkConversation *c)
 {
 	GaimConversation *conv = c->active_conv;
@@ -1790,7 +1766,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->next;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-					clear_format(gtkconv);
+					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
@@ -1814,7 +1790,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->prev;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-					clear_format(gtkconv);
+					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);

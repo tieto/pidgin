@@ -3828,6 +3828,30 @@ gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml)
 	return imhtml->editable;
 }
 
+void
+gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
+{
+	gboolean bold, italic, uline;
+	bold = italic = uline = FALSE;
+
+	gtk_imhtml_get_current_format(imhtml, &bold, &italic, &uline);
+	if (bold)
+		gtk_imhtml_toggle_bold(imhtml);
+	if (italic)
+		gtk_imhtml_toggle_italic(imhtml);
+	if (uline)
+		gtk_imhtml_toggle_underline(imhtml);
+
+	gtk_imhtml_font_set_size(imhtml, 3);
+	gtk_imhtml_toggle_fontface(imhtml, NULL);
+
+	gtk_imhtml_toggle_forecolor(imhtml, NULL);
+	gtk_imhtml_toggle_backcolor(imhtml, NULL);
+	gtk_imhtml_toggle_background(imhtml, NULL);
+
+	gtk_widget_grab_focus(GTK_WIDGET(imhtml));
+}
+
 /*
  * I had this crazy idea about changing the text cursor color to reflex the foreground color
  * of the text about to be entered. This is the place you'd do it, along with the place where

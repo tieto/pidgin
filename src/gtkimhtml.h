@@ -576,6 +576,13 @@ gint gtk_imhtml_get_current_fontsize(GtkIMHtml *imhtml);
 gboolean gtk_imhtml_get_editable(GtkIMHtml *imhtml);
 
 /**
+ * Clear all the formatting on a GTK+ IM/HTML.
+ *
+ * @param imhtml The GTK+ IM/HTML.
+ */
+void gtk_imhtml_clear_formatting(GtkIMHtml *imhtml);
+
+/**
  * Toggles bold at the cursor location or selection in a GTK+ IM/HTML.
  *
  * @param imhtml The GTK+ IM/HTML.
