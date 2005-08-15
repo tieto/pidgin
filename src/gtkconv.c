@@ -364,6 +364,12 @@ default_formatize(GaimGtkConversation *c)
 	}
 }
 
+static void
+clear_formatting_cb(GtkIMHtml *imhtml, GaimGtkConversation *gtkconv)
+{
+	default_formatize(gtkconv);
+}
+
 static const char *
 gaim_gtk_get_cmd_prefix(void)
 {
@@ -1766,7 +1772,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->next;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
@@ -1790,7 +1795,6 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 					conv->send_history = conv->send_history->prev;
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
-					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
 						0, NULL);
@@ -4181,6 +4185,9 @@ setup_im_pane(GaimGtkConversation *gtkconv)
 	 * signals get fired to toggle the buttons on the toolbar as well.
 	 */
 	default_formatize(gtkconv);
+
+	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
+						   G_CALLBACK(clear_formatting_cb), gtkconv);
 
 	gtkconv->u.im->animate = gaim_prefs_get_bool("/gaim/gtk/conversations/im/animate_buddy_icons");
 	gtkconv->u.im->show_icon = TRUE;

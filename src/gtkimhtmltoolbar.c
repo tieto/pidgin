@@ -38,6 +38,11 @@
 
 static GtkHBoxClass *parent_class = NULL;
 
+static void toggle_button_set_active_block(GtkToggleButton *button,
+										   gboolean is_active,
+										   GtkIMHtmlToolbar *toolbar);
+
+
 static void do_bold(GtkWidget *bold, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar != NULL);
@@ -324,7 +329,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 static void
 clear_formatting_cb(GtkWidget *clear, GtkIMHtmlToolbar *toolbar)
 {
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->clear), FALSE);
+	toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->clear), FALSE, toolbar);
 	gtk_imhtml_clear_formatting(GTK_IMHTML(toolbar->imhtml));
 }
 
@@ -772,21 +777,6 @@ static void toggle_button_set_active_block(GtkToggleButton *button,
 	g_object_unref(object);
 }
 
-static void reset_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlToolbar *toolbar)
-{
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->bold)))
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->bold), FALSE,
-									   toolbar);
-
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->italic)))
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->italic),
-									   FALSE, toolbar);
-
-	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->underline)))
-		toggle_button_set_active_block(GTK_TOGGLE_BUTTON(toolbar->underline),
-									   FALSE, toolbar);
-}
-
 static void update_buttons(GtkIMHtmlToolbar *toolbar) {
 	gboolean bold, italic, underline;
 	char *tmp;
@@ -1111,7 +1101,7 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	toolbar->imhtml = imhtml;
 	g_signal_connect(G_OBJECT(imhtml), "format_buttons_update", G_CALLBACK(update_buttons_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
-	g_signal_connect(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(reset_buttons_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
 

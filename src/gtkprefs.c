@@ -818,6 +818,20 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 	}
 }
 
+static void
+formatting_clear_cb(GtkIMHtml *imhtml, void *data)
+{
+	gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold", FALSE);
+	gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic", FALSE);
+	gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline", FALSE);
+
+	gaim_prefs_set_int("/gaim/gtk/conversations/font_size", 3);
+
+	gaim_prefs_set_string("/gaim/gtk/conversations/font_face", "");
+	gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", "");
+	gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", "");
+}
+
 static GtkWidget *
 list_page()
 {
@@ -929,7 +943,8 @@ conv_page()
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
-
+	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear",
+					 G_CALLBACK(formatting_clear_cb), NULL);
 
 	/* All the tab options! */
 	vbox = gaim_gtk_make_frame(ret, _("Tab Options"));
