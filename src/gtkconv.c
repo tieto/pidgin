@@ -1765,12 +1765,24 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 						gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 				}
 
-				if (conv->send_history->next &&
-					conv->send_history->next->data) {
+				if (conv->send_history->next && conv->send_history->next->data) {
+					GObject *object;
 					GtkTextIter iter;
 					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
 					conv->send_history = conv->send_history->next;
+
+					/* Block the signal to prevent application of default formatting. */
+					object = g_object_ref(G_OBJECT(gtkconv->entry));
+					g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+													NULL, gtkconv);
+					/* Clear the formatting. */
+					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
+					/* Unblock the signal. */
+					g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+													  NULL, gtkconv);
+					g_object_unref(object);
+
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,
@@ -1788,12 +1800,24 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (!conv->send_history)
 					break;
 
-				if (conv->send_history->prev &&
-					conv->send_history->prev->data) {
+				if (conv->send_history->prev &&	conv->send_history->prev->data) {
+					GObject *object;
 					GtkTextIter iter;
 					GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
 
 					conv->send_history = conv->send_history->prev;
+
+					/* Block the signal to prevent application of default formatting. */
+					object = g_object_ref(G_OBJECT(gtkconv->entry));
+					g_signal_handlers_block_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+													NULL, gtkconv);
+					/* Clear the formatting. */
+					gtk_imhtml_clear_formatting(GTK_IMHTML(gtkconv->entry));
+					/* Unblock the signal. */
+					g_signal_handlers_unblock_matched(object, G_SIGNAL_MATCH_DATA, 0, 0, NULL,
+													  NULL, gtkconv);
+					g_object_unref(object);
+
 					gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 					gtk_imhtml_append_text_with_images(
 						GTK_IMHTML(gtkconv->entry), conv->send_history->data,

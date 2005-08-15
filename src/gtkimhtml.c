@@ -3835,13 +3835,13 @@ gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
 
 	gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
 
-	/* Move the selection bounds, so the format functions will know we want to
-	 * manipulate the formatting on the entire buffer. */
+	/* Move the selection bounds (to select everything), so the format functions
+	 * will know we want to manipulate the formatting on the entire buffer. */
 #if GTK_CHECK_VERSION(2,4,0)
-	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &end);
+	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &start);
 #else
 	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
-	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &end);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &start);
 #endif
 
 	gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
@@ -3865,9 +3865,18 @@ gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
 
 	object = g_object_ref(G_OBJECT(imhtml));
 	g_signal_emit(object, signals[CLEAR_FORMAT], 0);
-	g_object_unref(object);
+
+	/* Remove the selection, placing the cursor at the end. */
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_text_buffer_select_range(imhtml->text_buffer, &end, &end);
+#else
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &end);
+	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "selection_bound", &end);
+#endif
 
 	gtk_widget_grab_focus(GTK_WIDGET(imhtml));
+
+	g_object_unref(object);
 }
 
 /*
@@ -3958,14 +3967,12 @@ static void imhtml_toggle_bold(GtkIMHtml *imhtml)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		if (imhtml->edit.bold)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "BOLD", &start, &end);
+
 	}
 }
 
@@ -3992,11 +3999,8 @@ static void imhtml_toggle_italic(GtkIMHtml *imhtml)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
-		if (imhtml->edit.bold)
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.italic)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "ITALICS", &start, &end);
@@ -4025,11 +4029,8 @@ static void imhtml_toggle_underline(GtkIMHtml *imhtml)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
-		if (imhtml->edit.bold)
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.underline)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "UNDERLINE", &start, &end);
@@ -4059,11 +4060,8 @@ static void imhtml_toggle_strike(GtkIMHtml *imhtml)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
-		if (imhtml->edit.bold)
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
+		if (imhtml->edit.strike)
 			gtk_text_buffer_apply_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
 		else
 			gtk_text_buffer_remove_tag_by_name(imhtml->text_buffer, "STRIKE", &start, &end);
@@ -4093,10 +4091,7 @@ void gtk_imhtml_font_set_size(GtkIMHtml *imhtml, gint size)
 		remove_font_size(imhtml, &start, &end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		remove_font_size(imhtml, &start, &end, FALSE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
@@ -4124,10 +4119,7 @@ static void imhtml_font_shrink(GtkIMHtml *imhtml)
 		remove_font_size(imhtml, &start, &end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		remove_font_size(imhtml, &start, &end, FALSE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
@@ -4162,10 +4154,7 @@ static void imhtml_font_grow(GtkIMHtml *imhtml)
 		remove_font_size(imhtml, &start, &end, TRUE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
-	} else if (imhtml->editable) {
-		if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
+	} else if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 		remove_font_size(imhtml, &start, &end, FALSE);
 		gtk_text_buffer_apply_tag(imhtml->text_buffer,
 		                                  find_font_size_tag(imhtml, imhtml->edit.fontsize), &start, &end);
@@ -4201,10 +4190,7 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		} else { \
 			gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &start, \
 							 gtk_text_buffer_get_mark(imhtml->text_buffer, "insert")); \
-			if (imhtml->editable) { \
-				if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) \
-					gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end); \
-\
+			if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) { \
 				remove_func(imhtml, &start, &end, FALSE); \
 				gtk_text_buffer_apply_tag(imhtml->text_buffer, \
 							  find_func(imhtml, \
@@ -4271,10 +4257,7 @@ void gtk_imhtml_toggle_link(GtkIMHtml *imhtml, const char *url)
 		g_object_set_data_full(G_OBJECT(linktag), "link_url", g_strdup(url), g_free);
 		g_signal_connect(G_OBJECT(linktag), "event", G_CALLBACK(tag_event), NULL);
 
-		if (imhtml->editable) {
-			if (!gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end))
-				gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end);
-
+		if (imhtml->editable && gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) {
 			remove_font_link(imhtml, &start, &end, FALSE);
 			gtk_text_buffer_apply_tag(imhtml->text_buffer, linktag, &start, &end);
 		}
