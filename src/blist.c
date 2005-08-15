@@ -1929,8 +1929,6 @@ const char *gaim_buddy_get_contact_alias(GaimBuddy *buddy)
 
 const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 {
-	GaimContact *c;
-
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	/* Search for an alias for the buddy. In order of precedence: */
