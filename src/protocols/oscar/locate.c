@@ -1135,19 +1135,6 @@ static int userinfo(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim
 		userinfo->away = (char *)malloc(tlv->length);
 		memcpy(userinfo->away, tlv->value, tlv->length);
 		userinfo->away_len = tlv->length;
-		/*
-		 * ICQ cannot be trusted with non-Latin-1 away messages
-		 * delivered in 0x02,0x06; see SF issue 1175975.
-		 * Therefore, we try to get its Away information
-		 * in an alternative fashion -- same as used
-		 * by the official client.
-		 */
-		if (((userinfo->icqinfo.status & AIM_ICQ_STATE_AWAY) ||
-		     (userinfo->icqinfo.status & AIM_ICQ_STATE_CHAT)) &&
-		    (userinfo->sn != NULL) && aim_sn_is_icq(userinfo->sn))
-		{
-			aim_im_sendch2_geticqaway(sess, userinfo->sn, userinfo->icqinfo.status);
-		}
 	}
 
 	/* Caps will be 5 */
