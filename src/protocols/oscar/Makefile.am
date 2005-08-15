@@ -1,8 +1,5 @@
 EXTRA_DIST = \
-		README \
-		CHANGES \
 		COPYING \
-		BUGS \
 		AUTHORS \
 		Makefile.mingw
 
