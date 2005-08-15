@@ -1938,14 +1938,9 @@ const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 	if (buddy->alias != NULL)
 		return buddy->alias;
 
-	/* The server alias, if preferences say so */
+	/* The server alias */
 	if ((buddy->server_alias) && (*buddy->server_alias))
 		return buddy->server_alias;
-
-	/* The contact alias */
-	c = gaim_buddy_get_contact(buddy);
-	if ((c != NULL) && (c->alias != NULL))
-		return c->alias;
 
 	/* The buddy's user name (i.e. no alias) */
 	return buddy->name;
