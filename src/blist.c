@@ -1929,6 +1929,8 @@ const char *gaim_buddy_get_contact_alias(GaimBuddy *buddy)
 
 const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 {
+	GaimContact *c;
+
 	g_return_val_if_fail(buddy != NULL, NULL);
 
 	/* Search for an alias for the buddy. In order of precedence: */
@@ -1939,6 +1941,11 @@ const char *gaim_buddy_get_alias(GaimBuddy *buddy)
 	/* The server alias, if preferences say so */
 	if ((buddy->server_alias) && (*buddy->server_alias))
 		return buddy->server_alias;
+
+	/* The contact alias */
+	c = gaim_buddy_get_contact(buddy);
+	if ((c != NULL) && (c->alias != NULL))
+		return c->alias;
 
 	/* The buddy's user name (i.e. no alias) */
 	return buddy->name;
