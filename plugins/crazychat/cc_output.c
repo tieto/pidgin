@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <math.h>
-#include "util.h"
+/*#include "util.h"*/
 #include "cc_interface.h"
 #include "crazychat.h"
 #include <stdio.h>

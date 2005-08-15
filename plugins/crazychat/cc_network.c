@@ -110,7 +110,7 @@ void cc_net_send_invite(struct crazychat *cc, char *name, GaimAccount *account)
 	}
 	im = gaim_conversation_get_im_data(conv);
 	snprintf(buf, BUFSIZ, "%s%s!%d", CRAZYCHAT_INVITE_CODE,
-		gaim_network_get_ip_for_account(account, -1), cc->tcp_port);
+		gaim_network_get_my_ip(-1), cc->tcp_port);
 	Debug("Sent invite to %s for port: %d\n", name, cc->tcp_port);
 	gaim_conv_im_send(im, buf);
 }
@@ -196,7 +196,7 @@ static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
 	struct sockaddr_in my_addr;
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(session->cc->tcp_port);
-	assert(inet_aton(gaim_network_get_ip_for_account(account, -1),
+	assert(inet_aton(gaim_network_get_my_ip(-1),
 			&my_addr.sin_addr));
 	memset(&my_addr.sin_zero, 0, sizeof(my_addr.sin_zero));
 	assert(bind(session->tcp_sock, (struct sockaddr*)&my_addr,
@@ -271,7 +271,7 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 		session->peer_ip = args->peer_ip;
 		session->peer_port = args->peer_port;
 		snprintf(buf, BUFSIZ, "%s%s", CRAZYCHAT_ACCEPT_CODE,
-			gaim_network_get_ip_for_account(args->account, -1));
+			gaim_network_get_my_ip(-1));
 		conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, args->name,
 				args->account);
 		if (!conv) {
@@ -375,7 +375,7 @@ static void init_cc_net_session(GaimAccount *account,
 	
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(session->cc->udp_port);
-	assert(inet_aton(gaim_network_get_ip_for_account(account, -1),
+	assert(inet_aton(gaim_network_get_my_ip(-1),
 				&my_addr.sin_addr));
 	memset(my_addr.sin_zero, 0, sizeof(my_addr.sin_zero));
 	assert(!bind(session->udp_sock, (struct sockaddr*)&my_addr,
