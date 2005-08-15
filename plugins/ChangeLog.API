@@ -67,6 +67,7 @@ version 2.0.0:
 	* Added:   gaim_privacy_check(), to check if a given user is allowed to
 	           to send messages to the specified account
 	* Changed: A new blocked icon: pixmaps/status/default/blocked.png
+	* Removed: All warning stuff from the core.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
