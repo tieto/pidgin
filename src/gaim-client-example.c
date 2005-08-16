@@ -22,10 +22,19 @@
 int main (int argc, char **argv)
 {
     GaimAccount *account;
+    GList *alist, *node;
+
     gaim_init();
     
-    account = gaim_accounts_find_any("", "");
-    g_print("Alias: %s\n", gaim_account_get_alias(account));
+    alist = gaim_accounts_get_all();
+    for (node = alist; node; node = node->next) {
+	GaimAccount *account = (GaimAccount*) node->data;
+	char *name = gaim_account_get_username(account);
+	g_print("Name: %s\n", name);
+	g_free(name);
+    }
+
+    g_list_free(alist);
 
     return 0;
 }

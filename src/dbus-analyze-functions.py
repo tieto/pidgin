@@ -190,11 +190,11 @@ class ClientBinding (Binding):
         print 'dbus_g_proxy_call(gaim_proxy, "%s", NULL,' % ctopascal(self.function.name)
         
         for type_name in self.inputparams:
-            print "G_TYPE_%s, %s, " % type_name,
+            print "%s, %s, " % type_name,
         print "G_TYPE_INVALID,"
 
         for type_name in self.outputparams:
-            print "G_TYPE_%s, &%s, " % type_name,
+            print "%s, &%s, " % type_name,
         print "G_TYPE_INVALID);"
         
         for code in self.returncode:
@@ -209,7 +209,8 @@ class ClientBinding (Binding):
             print "typedef struct _%s %s;" % (type[0], type[0])
             self.knowntypes.append(type[0])
 
-    # fixme
+    # fixme: import the definitions of the enumerations from gaim
+    # header files
     def definegaimenum(self, type):
         if (self.headersonly) and (type[0] not in self.knowntypes) \
                and (type[0] not in simpletypes):
@@ -218,28 +219,29 @@ class ClientBinding (Binding):
        
     def inputsimple(self, type, name):
         self.paramshdr.append("%s %s" % (type[0], name))
-        self.inputparams.append(("INT", name))
+        self.inputparams.append(("G_TYPE_INT", name))
         self.definegaimenum(type)
 
     def inputvalist(self, type, name):
-        self.paramshdr.append("...")
+        self.paramshdr.append("va_list %s_NULL" % name)
 
     def inputstring(self, type, name):
         self.paramshdr.append("const char *%s" % name)
-        self.inputparams.append(("STRING", name))
+        self.inputparams.append(("G_TYPE_STRING", name))
         
     def inputgaimstructure(self, type, name):
-        self.paramshdr.append("%s *%s" % (type[0], name))
-        self.inputparams.append(("INT", "GPOINTER_TO_INT(%s)" % name))
+        self.paramshdr.append("const %s *%s" % (type[0], name))
+        self.inputparams.append(("G_TYPE_INT", "GPOINTER_TO_INT(%s)" % name))
         self.definegaimstructure(type)
 
     def inputpointer(self, type, name):
-        self.paramshdr.append("%s *%s" % (type[0], name))
-        self.inputparams.append(("INT", "0"))
+        name += "_NULL"
+        self.paramshdr.append("const %s *%s" % (type[0], name))
+        self.inputparams.append(("G_TYPE_INT", "0"))
         
     def inputhash(self, type, name):
-        raise myexception
-
+        self.paramshdr.append("const GHashTable *%s" % name)
+        self.inputparams.append(('dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_STRING)', name))
 
     def outputvoid(self, type, name):
         self.functiontype = "void"
@@ -247,28 +249,33 @@ class ClientBinding (Binding):
     def outputstring(self, type, name, const):
         self.functiontype = "char*"
         self.decls.append("char *%s = NULL;" % name)
-        self.outputparams.append(("STRING", name))
+        self.outputparams.append(("G_TYPE_STRING", name))
 #        self.returncode.append("NULLIFY(%s);" % name)
         self.returncode.append("return %s;" % name);
 
     def outputsimple(self, type, name):
         self.functiontype = type[0]
         self.decls.append("%s %s = 0;" % (type[0], name))
-        self.outputparams.append(("INT", name))
+        self.outputparams.append(("G_TYPE_INT", name))
         self.returncode.append("return %s;" % name);
         self.definegaimenum(type)
 
+    # we could add "const" to the return type but this would probably
+    # be a nuisance
     def outputgaimstructure(self, type, name):
         name = name + "_ID"
         self.functiontype = "%s*" % type[0]
         self.decls.append("int %s = 0;" % name)
-        self.outputparams.append(("INT", "%s" % name))
+        self.outputparams.append(("G_TYPE_INT", "%s" % name))
         self.returncode.append("return (%s*) GINT_TO_POINTER(%s);" % (type[0], name));
         self.definegaimstructure(type)
 
     def outputlist(self, type, name):
-        raise myexception
-
+        self.functiontype = "%s*" % type[0]
+        self.decls.append("GArray *%s;" % name)
+        self.outputparams.append(('dbus_g_type_get_collection("GArray", G_TYPE_INT)', name))
+        self.returncode.append("return garray_int_to_%s(%s);" %
+                               (type[0].lower(), name));
 
  
 class ServerBinding (Binding):
@@ -534,6 +541,8 @@ if "export-only" in options:
     fprefix = "DBUS_EXPORT\s+"
 else:
     fprefix = ""
+
+sys.stderr.write("%s: Functions not exported:\n" % sys.argv[0])
 
 if "client" in options:
     bindings = ClientBindingSet(sys.stdin, fprefix,

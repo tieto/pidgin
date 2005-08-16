@@ -10,6 +10,28 @@
 static DBusGConnection *bus;
 static DBusGProxy *gaim_proxy;
 
+static GList *garray_int_to_glist(GArray *array) {
+    GList *list = NULL;
+    int i;
+
+    for(i = 0; i < array->len; i++) 
+	list = g_list_append(list, GINT_TO_POINTER(g_array_index(array,gint,i)));
+
+    g_array_free(array, TRUE);
+    return list;
+}
+
+static GSList *garray_int_to_gslist(GArray *array) {
+    GSList *list = NULL;
+    int i;
+
+    for(i = 0; i < array->len; i++) 
+	list = g_slist_append(list, GINT_TO_POINTER(g_array_index(array,gint,i)));
+
+    g_array_free(array, TRUE);
+    return list;
+}
+
 #include "gaim-client-bindings.c"
 
 static void lose (const char *fmt, ...) G_GNUC_NORETURN G_GNUC_PRINTF (1, 2);

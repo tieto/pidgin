@@ -188,7 +188,8 @@ $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
 gaim_client_example_SOURCES = gaim-client-example.c
 
-gaim_client_example_DEPENDENCIES = @LIBOBJS@
+gaim_client_example_DEPENDENCIES = @LIBOBJS@ libgaim-client.la 
+
 gaim_client_example_LDADD = \
 	@LIBOBJS@ \
 	libgaim-client.la \

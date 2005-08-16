@@ -685,10 +685,6 @@ int main(int argc, char *argv[])
 	startup_notification_complete();
 #endif
 
-#ifdef HAVE_DBUS
- 	gaim_dbus_connect(gaim_dbus_object); 
-#endif
-
 	gtk_main();
 
 #ifdef _WIN32

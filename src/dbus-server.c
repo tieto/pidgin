@@ -144,9 +144,9 @@ gpointer gaim_dbus_id_to_pointer_error(gint id, GaimDBusType *type,
 
 dbus_bool_t
 gaim_dbus_message_get_args (DBusMessage     *message,
-                       DBusError       *error,
-		       int              first_arg_type,
-		       ...)
+			    DBusError       *error,
+			    int              first_arg_type,
+			    ...)
 {
   dbus_bool_t retval;
   va_list var_args;
@@ -431,10 +431,6 @@ gaim_dbus_dispatch_cb(DBusConnection *connection,
 }
 
 
-/**************************************************************************/
-/** @name Signals                                                         */
-/**************************************************************************/
-
 static const char *gettext(const char **ptr) {
     const char *text = *ptr;
     *ptr += strlen(text) + 1;
@@ -675,13 +671,19 @@ static void gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 void gaim_dbus_signal_emit_gaim(char *name, int num_values, 
 				GaimValue **values, va_list vargs)
 {
-	/* pass name */
     DBusMessage *signal;
     DBusMessageIter iter;
     char *newname;
 
     g_return_if_fail(gaim_dbus_connection);
     
+    /* The test below is a hack that prevents our "dbus-method-called"
+       signal from being propagated to dbus.  What we really need is a
+       flag for each signal that states whether this signal is to be
+       dbus-propagated or not. */
+    if (!strcmp(name, "dbus-method-called"))
+	return;
+
     newname =  gaim_dbus_convert_signal_name(name);
     signal = dbus_message_new_signal(DBUS_PATH_GAIM, DBUS_INTERFACE_GAIM, newname);
     dbus_message_iter_init_append(signal, &iter);
@@ -701,8 +703,6 @@ void gaim_dbus_signal_emit_gaim(char *name, int num_values,
 
 gboolean gaim_dbus_init(void) 
 {
-    gaim_debug_register_category("dbus");
-
     gaim_dbus_init_ids();
     return gaim_dbus_dispatch_init() ;
 }
