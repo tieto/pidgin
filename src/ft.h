@@ -558,6 +558,23 @@ void gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_err
 /*@{*/
 
 /**
+ * Returns the handle to the file transfer subsystem
+ *
+ * @return The handle
+ */
+void *gaim_xfers_get_handle(void);
+
+/**
+ * Initializes the file transfer subsystem
+ */
+void gaim_xfers_init(void);
+
+/**
+ * Uninitializes the file transfer subsystem
+ */
+void gaim_xfers_uninit(void);
+
+/**
  * Sets the UI operations structure to be used in all gaim file transfers.
  *
  * @param ops The UI operations structure.

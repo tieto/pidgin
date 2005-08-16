@@ -1,0 +1,97 @@
+/** @page xfer-signals File Transfer Signals
+
+ @signals
+  @signal file-recv-accept
+  @signal file-recv-start
+  @signal file-recv-cancel
+  @signal file-recv-complete
+  @signal file-send-accept
+  @signal file-send-start
+  @signal file-send-cancel
+  @signal file-send-complete
+ @endsignals
+
+ <hr>
+
+ @signaldef file-recv-accept
+  @signalproto
+void (*file_recv_accept)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an incoming file transfer has been accepted.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-recv-start
+  @signalproto
+void (*file_recv_start)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an incoming file transfer has been started.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-recv-cancel
+  @signalproto
+void (*file_recv_cancel)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an incoming file transfer has been canceled.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-recv-complete
+  @signalproto
+void (*file_recv_complete)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an incoming file transfer has been completed.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-send-accept
+  @signalproto
+void (*file_send_accept)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an outgoing file transfer has been accepted.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-send-start
+  @signalproto
+void (*file_send_start)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an outgoing file transfer has started.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-send-cancel
+  @signalproto
+void (*file_send_cancel)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an outgoing file transfer has been canceled.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-send-complete
+  @signalproto
+void (*file_send_complete)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted when an outgoing file transfer has been completed.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et

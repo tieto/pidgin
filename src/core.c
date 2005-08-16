@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "ft.h"
 #include "network.h"
 #include "plugin.h"
 #include "pounce.h"
@@ -120,6 +121,7 @@ gaim_core_init(const char *ui)
 	gaim_proxy_init();
 	gaim_sound_init();
 	gaim_ssl_init();
+	gaim_xfers_init();
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
@@ -154,6 +156,7 @@ gaim_core_quit(void)
 	gaim_status_uninit();
 	gaim_prefs_uninit();
 	gaim_sound_uninit();
+	gaim_xfers_uninit();
 
 	gaim_debug_info("main", "Unloading all plugins\n");
 	gaim_plugins_destroy_all();

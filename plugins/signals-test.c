@@ -28,6 +28,7 @@
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
+#include "ft.h"
 #include "signals.h"
 #include "version.h"
 
@@ -477,6 +478,49 @@ quitting_cb(void *data)
 }
 
 /**************************************************************************
+ * File transfer signal callbacks
+ **************************************************************************/
+static void
+ft_recv_accept_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file receive accepted\n");
+}
+
+static void
+ft_send_accept_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file send accepted\n");
+}
+
+static void
+ft_recv_start_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file receive started\n");
+}
+
+static void
+ft_send_start_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file send started\n");
+}
+
+static void
+ft_recv_cancel_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file receive canceled\n");
+}
+
+static void
+ft_send_cancel_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file send canceled\n");
+}
+
+static void
+ft_recv_complete_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file receive completed\n");
+}
+
+static void
+ft_send_complete_cb(GaimXfer *xfer, gpointer data) {
+	gaim_debug_misc("signals test", "file send completed\n");
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
@@ -489,6 +533,7 @@ plugin_load(GaimPlugin *plugin)
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *ciphers_handle = gaim_ciphers_get_handle();
 	void *buddy_icons_handle = gaim_buddy_icons_get_handle();
+	void *ft_handle = gaim_xfers_get_handle();
 
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
@@ -607,6 +652,24 @@ plugin_load(GaimPlugin *plugin)
 	/* Core signals */
 	gaim_signal_connect(core_handle, "quitting",
 						plugin, GAIM_CALLBACK(quitting_cb), NULL);
+
+	/* file transfer signals */
+	gaim_signal_connect(ft_handle, "file-recv-accept",
+						plugin, GAIM_CALLBACK(ft_recv_accept_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-recv-start",
+						plugin, GAIM_CALLBACK(ft_recv_start_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-recv-cancel",
+						plugin, GAIM_CALLBACK(ft_recv_cancel_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-recv-complete",
+						plugin, GAIM_CALLBACK(ft_recv_complete_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-send-accept",
+						plugin, GAIM_CALLBACK(ft_send_accept_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-send-start",
+						plugin, GAIM_CALLBACK(ft_send_start_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-send-cancel",
+						plugin, GAIM_CALLBACK(ft_send_cancel_cb), NULL);
+	gaim_signal_connect(ft_handle, "file-send-complete",
+						plugin, GAIM_CALLBACK(ft_send_complete_cb), NULL);
 
 	return TRUE;
 }

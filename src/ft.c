@@ -110,6 +110,44 @@ gaim_xfer_set_status(GaimXfer *xfer, GaimXferStatusType status)
 {
 	g_return_if_fail(xfer != NULL);
 
+	if(xfer->type == GAIM_XFER_SEND) {
+		switch(status) {
+			case GAIM_XFER_STATUS_ACCEPTED:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-send-accept", xfer);
+				break;
+			case GAIM_XFER_STATUS_STARTED:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-send-start", xfer);
+				break;
+			case GAIM_XFER_STATUS_DONE:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-send-complete", xfer);
+				break;
+			case GAIM_XFER_STATUS_CANCEL_LOCAL:
+			case GAIM_XFER_STATUS_CANCEL_REMOTE:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-send-cancel", xfer);
+				break;
+			default:
+				break;
+		}
+	} else if(xfer->type == GAIM_XFER_RECEIVE) {
+		switch(status) {
+			case GAIM_XFER_STATUS_ACCEPTED:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-recv-accept", xfer);
+				break;
+			case GAIM_XFER_STATUS_STARTED:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-recv-start", xfer);
+				break;
+			case GAIM_XFER_STATUS_DONE:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-recv-complete", xfer);
+				break;
+			case GAIM_XFER_STATUS_CANCEL_LOCAL:
+			case GAIM_XFER_STATUS_CANCEL_REMOTE:
+				gaim_signal_emit(gaim_xfers_get_handle(), "file-recv-cancel", xfer);
+				break;
+			default:
+				break;
+		}
+	}
+
 	xfer->status = status;
 }
 
@@ -1103,15 +1141,63 @@ gaim_xfer_update_progress(GaimXfer *xfer)
 /**************************************************************************
  * File Transfer Subsystem API
  **************************************************************************/
+void *
+gaim_xfers_get_handle(void) {
+	static int handle = 0;
+
+	return &handle;
+}
 
 void
-gaim_xfers_set_ui_ops(GaimXferUiOps *ops)
-{
+gaim_xfers_init(void) {
+	void *handle = gaim_xfers_get_handle();
+
+	/* register signals */
+	gaim_signal_register(handle, "file-recv-accept",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-send-accept",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-recv-start",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-send-start",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-send-cancel",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-recv-cancel",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-send-complete",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+	gaim_signal_register(handle, "file-recv-complete",
+						 gaim_marshal_VOID__POINTER,
+						 NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+}
+
+void
+gaim_xfers_uninit(void) {
+	gaim_signals_disconnect_by_handle(gaim_xfers_get_handle());
+}
+
+void
+gaim_xfers_set_ui_ops(GaimXferUiOps *ops) {
 	xfer_ui_ops = ops;
 }
 
 GaimXferUiOps *
-gaim_xfers_get_ui_ops(void)
-{
+gaim_xfers_get_ui_ops(void) {
 	return xfer_ui_ops;
 }

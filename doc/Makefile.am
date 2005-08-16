@@ -19,4 +19,5 @@ EXTRA_DIST = \
 	gtkimhtml-signals.dox \
 	plugin-ids.dox \
 	gaim.1.in \
-	gaim-remote.1.in
+	gaim-remote.1.in \
+	xfer-signals.dox
