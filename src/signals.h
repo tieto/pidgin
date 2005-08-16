@@ -108,7 +108,8 @@ void gaim_signal_get_values(void *instance, const char *signal,
  * @param handle   The handle of the receiver.
  * @param func     The callback function.
  * @param data     The data to pass to the callback function.
- * @param priority The order in which the signal should be added to the list
+ * @param priority The priority with which the handler should be called. Signal handlers are called
+ *                 in order from GAIM_SIGNAL_PRIORITY_LOWEST to GAIM_SIGNAL_PRIORITY_HIGHEST.
  *
  * @return The signal handler ID.
  *
