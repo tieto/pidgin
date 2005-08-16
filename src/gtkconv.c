@@ -2093,11 +2093,10 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 		GaimConvWindow *dest_win;
 		GaimGtkWindow *dest_gtkwin;
 		GtkNotebook *dest_notebook;
-		GtkWidget *tab, *last_vis_tab = NULL;
-		gint nb_x, nb_y, page_num, i, last_vis_tab_loc = -1;
+		GtkWidget *tab;
+		gint nb_x, nb_y, page_num;
 		gint arrow1_x, arrow1_y, arrow2_x, arrow2_y;
-		gboolean horiz_tabs = FALSE, tab_found = FALSE;
-		GList *l;
+		gboolean horiz_tabs = FALSE;
 
 		/* Get the window that the cursor is over. */
 		dest_win = gaim_gtkwin_get_at_xy(e->x_root, e->y_root);
@@ -2126,66 +2125,29 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 			horiz_tabs = TRUE;
 		}
 
-		/* Find out where to put the arrows. */
-		for (l = gaim_conv_window_get_conversations(dest_win), i = 0;
-			 l != NULL;
-			 l = l->next, i++) {
+		tab = gaim_gtk_get_gtkconv_at_index(dest_win, page_num)->tabby;
 
-			GaimConversation *conv = l->data;
+		if (horiz_tabs) {
+			arrow1_x = arrow2_x = nb_x + tab->allocation.x;
 
-			tab = GAIM_GTK_CONVERSATION(conv)->tabby;
-
-			/*
-			 * If this is the correct tab, record the positions
-			 * for the arrows.
-			 */
-			if (i == page_num) {
-				if (horiz_tabs) {
-					arrow1_x = arrow2_x = nb_x + tab->allocation.x;
-					arrow1_y = nb_y + tab->allocation.y;
-					arrow2_y = nb_y + tab->allocation.y +
-					                  tab->allocation.height;
-				}
-				else {
-					arrow1_x = nb_x + tab->allocation.x;
-					arrow2_x = nb_x + tab->allocation.x +
-					                  tab->allocation.width;
-					arrow1_y = arrow2_y = nb_y + tab->allocation.y;
-				}
-
-				tab_found = TRUE;
-				break;
+			if ((gpointer)gtkwin == (gpointer)dest_gtkwin && gtkwin->drag_tab < page_num) {
+				arrow1_x += tab->allocation.width;
+				arrow2_x += tab->allocation.width;
 			}
-			else { /* Keep track of the right-most tab that we see. */
-				if (horiz_tabs && tab->allocation.x > last_vis_tab_loc) {
-					last_vis_tab     = tab;
-					last_vis_tab_loc = tab->allocation.x;
-				}
-				else if (!horiz_tabs && tab->allocation.y > last_vis_tab_loc) {
-					last_vis_tab     = tab;
-					last_vis_tab_loc = tab->allocation.y;
-				}
-			}
+			
+			arrow1_y = nb_y + tab->allocation.y;
+			arrow2_y = nb_y + tab->allocation.y +
+							  tab->allocation.height;
 		}
+		else {
+			arrow1_x = nb_x + tab->allocation.x;
+			arrow2_x = nb_x + tab->allocation.x +
+							  tab->allocation.width;
+			arrow1_y = arrow2_y = nb_y + tab->allocation.y + tab->allocation.height/2;
 
-		/*
-		 * If we didn't find the tab, then we'll just place the
-		 * arrows to the right/bottom of the last visible tab.
-		 */
-		if (!tab_found && last_vis_tab) {
-			if (horiz_tabs) {
-				arrow1_x = arrow2_x = nb_x + last_vis_tab->allocation.x +
-				                             last_vis_tab->allocation.width;
-				arrow1_y = nb_y + last_vis_tab->allocation.y;
-				arrow2_y = nb_y + last_vis_tab->allocation.y +
-				                  last_vis_tab->allocation.height;
-			}
-			else {
-				arrow1_x = nb_x + last_vis_tab->allocation.x;
-				arrow2_x = nb_x + last_vis_tab->allocation.x +
-				                  last_vis_tab->allocation.width;
-				arrow1_y = arrow2_y = nb_y + last_vis_tab->allocation.y +
-				                             last_vis_tab->allocation.height;
+			if ((gpointer)gtkwin == (gpointer)dest_win && gtkwin->drag_tab > page_num) {
+				arrow1_y += tab->allocation.height;
+				arrow2_y += tab->allocation.height;
 			}
 		}
 
@@ -2232,8 +2194,8 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 {
 	GaimGtkWindow *gtkwin;
 	gint nb_x, nb_y, x_rel, y_rel;
-	GList *l;
 	int tab_clicked;
+	GtkWidget *page;
 
 	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -2271,22 +2233,13 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	gtkwin->drag_max_y = 0;
 
 	/* Find out which tab was dragged. */
-	for (l = gaim_conv_window_get_conversations(win); l != NULL; l = l->next) {
-		GaimConversation *conv = l->data;
-		GtkWidget *tab = GAIM_GTK_CONVERSATION(conv)->tabby;
-
-		if (!GTK_WIDGET_VISIBLE(tab))
-			continue;
-
-		if (tab->allocation.x > x_rel || tab->allocation.y > y_rel)
-			break;
-
-		/* Save the borders of the tab. */
-		gtkwin->drag_min_x = tab->allocation.x      + nb_x;
-		gtkwin->drag_min_y = tab->allocation.y      + nb_y;
-		gtkwin->drag_max_x = tab->allocation.width  + gtkwin->drag_min_x;
-		gtkwin->drag_max_y = tab->allocation.height + gtkwin->drag_min_y;
-	}
+	page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), tab_clicked);
+	GtkWidget *tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(gtkwin->notebook), page);
+	
+	gtkwin->drag_min_x = tab->allocation.x      + nb_x;
+	gtkwin->drag_min_y = tab->allocation.y      + nb_y;
+	gtkwin->drag_max_x = tab->allocation.width  + gtkwin->drag_min_x;
+	gtkwin->drag_max_y = tab->allocation.height + gtkwin->drag_min_y;
 
 	/* Make sure the click occurred in the tab. */
 	if (e->x_root <  gtkwin->drag_min_x ||
@@ -2298,6 +2251,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	}
 
 	gtkwin->in_predrag = TRUE;
+	gtkwin->drag_tab = tab_clicked;
 
 	/* Connect the new motion signals. */
 	gtkwin->drag_motion_signal =
@@ -5930,12 +5884,12 @@ int
 gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y)
 {
 	GaimGtkWindow *gtkwin;
-	GList *l;
 	gint nb_x, nb_y, x_rel, y_rel;
 	GtkNotebook *notebook;
-	GtkWidget *tab;
-	gint i, page_num = 0;
-	gboolean first_visible = TRUE;
+	GtkWidget *page, *tab;
+	gint i, page_num = -1;
+	gint count;
+	gboolean horiz;
 
 	if (!GAIM_IS_GTK_WINDOW(win))
 		return -1;
@@ -5947,49 +5901,30 @@ gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y)
 	x_rel = x - nb_x;
 	y_rel = y - nb_y;
 
-	for (l = gaim_conv_window_get_conversations(win), i = 0;
-		 l != NULL;
-		 l = l->next, i++) {
+	horiz = (gtk_notebook_get_tab_pos(notebook) == GTK_POS_TOP ||
+			gtk_notebook_get_tab_pos(notebook) == GTK_POS_BOTTOM);
 
-		GaimConversation *conv = l->data;
-		tab = GAIM_GTK_CONVERSATION(conv)->tab_label;
+	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(notebook));
 
-		if (!GTK_WIDGET_MAPPED(tab))
-			continue;
+	for (i = 0; i < count; i++) {
 
-		if (first_visible) {
-			first_visible = FALSE;
+		page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(notebook), i);
+		tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(notebook), page);
 
-			if (x_rel < tab->allocation.x) x_rel = tab->allocation.x;
-			if (y_rel < tab->allocation.y) y_rel = tab->allocation.y;
-		}
-
-		if (gtk_notebook_get_tab_pos(notebook) == GTK_POS_TOP ||
-			gtk_notebook_get_tab_pos(notebook) == GTK_POS_BOTTOM) {
-
-			if (tab->allocation.x <= x_rel) {
-				if (tab->allocation.x + tab->allocation.width <= x_rel)
-					page_num = i + 1;
-				else
-					page_num = i;
-			}
-			else
+		if (horiz) {
+			if (x_rel >= tab->allocation.x - GAIM_HIG_BOX_SPACE &&
+					x_rel <= tab->allocation.x + tab->allocation.width + GAIM_HIG_BOX_SPACE) {
+				page_num = i;
 				break;
-		}
-		else {
-			if (tab->allocation.y <= y_rel) {
-				if (tab->allocation.y + tab->allocation.height <= y_rel)
-					page_num = i + 1;
-				else
-					page_num = i;
 			}
-			else
+		} else {
+			if (y_rel >= tab->allocation.y - GAIM_HIG_BOX_SPACE &&
+					y_rel <= tab->allocation.y + tab->allocation.height + GAIM_HIG_BOX_SPACE) {
+				page_num = i;
 				break;
+			}
 		}
 	}
-
-	if (i == gaim_conv_window_get_conversation_count(win) + 1)
-		return -1;
 
 	return page_num;
 }
@@ -5997,61 +5932,7 @@ gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y)
 int
 gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y)
 {
-	GaimGtkWindow *gtkwin;
-	GList *l;
-	gint nb_x, nb_y, x_rel, y_rel;
-	GtkNotebook *notebook;
-	GtkWidget *tab;
-	gint i, page_num = 0;
-
-	if (!GAIM_IS_GTK_WINDOW(win))
-		return -1;
-
-	gtkwin   = GAIM_GTK_WINDOW(win);
-	notebook = GTK_NOTEBOOK(gtkwin->notebook);
-
-	gdk_window_get_origin(gtkwin->notebook->window, &nb_x, &nb_y);
-	x_rel = x - nb_x;
-	y_rel = y - nb_y;
-
-	for (l = gaim_conv_window_get_conversations(win), i = 0;
-		 l != NULL;
-		 l = l->next, i++) {
-
-		GaimConversation *conv = l->data;
-		tab = GAIM_GTK_CONVERSATION(conv)->tab_label;
-
-		if (!GTK_WIDGET_MAPPED(tab))
-			continue;
-
-		if (gtk_notebook_get_tab_pos(notebook) == GTK_POS_TOP ||
-			gtk_notebook_get_tab_pos(notebook) == GTK_POS_BOTTOM) {
-
-			if (tab->allocation.x <= x_rel) {
-				if (tab->allocation.x + (tab->allocation.width / 2) <= x_rel)
-					page_num = i + 1;
-				else
-					page_num = i;
-			}
-			else
-				break;
-		}
-		else {
-			if (tab->allocation.y <= y_rel) {
-				if (tab->allocation.y + (tab->allocation.height / 2) <= y_rel)
-					page_num = i + 1;
-				else
-					page_num = i;
-			}
-			else
-				break;
-		}
-	}
-
-	if (i == gaim_conv_window_get_conversation_count(win) + 1)
-		return -1;
-
-	return page_num;
+	return gaim_gtkconv_get_tab_at_xy(win, x, y);
 }
 
 static void

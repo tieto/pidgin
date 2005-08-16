@@ -105,6 +105,8 @@ struct _GaimGtkWindow
 	gboolean in_drag;
 	gboolean in_predrag;
 
+	gint drag_tab;
+
 	gint drag_min_x, drag_max_x, drag_min_y, drag_max_y;
 
 	gint drag_motion_signal;
