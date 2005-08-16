@@ -2116,7 +2116,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 		arrow1_x = arrow2_x = nb_x;
 		arrow1_y = arrow2_y = nb_y;
 
-		page_num = gaim_gtkconv_get_dest_tab_at_xy(dest_win,
+		page_num = gaim_gtkconv_get_tab_at_xy(dest_win,
 												   e->x_root, e->y_root);
 
 		if (gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_TOP ||
@@ -2145,7 +2145,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 							  tab->allocation.width;
 			arrow1_y = arrow2_y = nb_y + tab->allocation.y + tab->allocation.height/2;
 
-			if ((gpointer)gtkwin == (gpointer)dest_win && gtkwin->drag_tab > page_num) {
+			if ((gpointer)gtkwin == (gpointer)dest_win && gtkwin->drag_tab < page_num) {
 				arrow1_y += tab->allocation.height;
 				arrow2_y += tab->allocation.height;
 			}
@@ -2365,7 +2365,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 		dest_notebook = GTK_NOTEBOOK(gtkwin->notebook);
 
 		/* Get the destination page number. */
-		dest_page_num = gaim_gtkconv_get_dest_tab_at_xy(dest_win,
+		dest_page_num = gaim_gtkconv_get_tab_at_xy(dest_win,
 								e->x_root, e->y_root);
 
 		if (win == dest_win) {
@@ -5927,12 +5927,6 @@ gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y)
 	}
 
 	return page_num;
-}
-
-int
-gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y)
-{
-	return gaim_gtkconv_get_tab_at_xy(win, x, y);
 }
 
 static void

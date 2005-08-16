@@ -262,21 +262,6 @@ GaimConvWindow *gaim_gtkwin_get_at_xy(int x, int y);
  */
 int gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y);
 
-/**
- * Returns the index of the destination tab at the
- * specified X, Y location in a notebook.
- *
- * This is used for drag-and-drop functions when the tab at the index
- * is a destination tab.
- *
- * @param win The GTK+ window containing the notebook.
- * @param x   The X coordinate.
- * @param y   The Y coordinate.
- *
- * @return The index of the tab at the location.
- */
-int gaim_gtkconv_get_dest_tab_at_xy(GaimConvWindow *win, int x, int y);
-
 GaimGtkConversation *gaim_gtk_get_gtkconv_at_index(const GaimConvWindow *win, int index);
 /*@}*/
 

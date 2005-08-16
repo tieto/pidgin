@@ -72,6 +72,8 @@ version 2.0.0:
 	           gtk_imhtml_toggle_underline, gtk_imhtml_toggle_strike:
 	           no longer return a value
 	* Added:   gtk_imhtml_clear_formatting()
+	* Removed: gaim_gtkconv_get_dest_tab_at_xy(), instead use
+	           gaim_gtkconv_get_tab_at_xy()
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
