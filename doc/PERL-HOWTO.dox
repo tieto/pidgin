@@ -1,180 +1,515 @@
 /** @page perl-howto Perl Scripting HOWTO
 
- @section Introduction
-  THERE ARE SIGNIFICANT BUGS IN THIS CODE. HOWEVER, IT _MOSTLY_ WORKS _IF_
-  YOU ARE VERY CAREFUL. DO _NOT_ COMPLAIN ABOUT THIS API. SUBMIT A PATCH.
+@section Introduction
+Gaim Perl Plugins are setup very similarly to their C counterparts.  Most of the API calls are implemented and are divided into pacakges.  There are some significant differences between the Perl and C API.  Much like the C API, the best place to seek guidances is the source located in the plugins/perl/common directory.  The tutorial that follows will be example based and attempt to touch on the salient features of the embedded perl interpreter.  It is also important to note that some of the C API is missing in Gaim's perl API.  
 
-  Really?  Like what?  Don't you think you're overreacting just a tad bit?
+It is possible to get Gtk2-Perl to work with Gaim's perl API, but only by encasing it in @c eval blocks for the time being until a better workaround comes up.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use any perl modules that are dynamically loaded (i.e. @c use @c Math; ).  Eventually this should be corrected.
 
-  Perl is the first scripting language compatible with Gaim, and has been a
-  valuable aid to developers wishing to write scripts to modify the behavior
-  of their favorite instant messenger. A perl script acts like a normal
-  plugin, and appears in the list of plugins in Gaim's preferences pane.
-  Until now, they have been very basic, and consisted of only a few
-  functions. However, with the latest changes to Gaim's perl API, a much
-  larger part of Gaim is now open. In time, even such things as GTK+
-  preference panes for perl scripts will be possible.
+@section first-script Writing your first script
 
- @section first-script Writing your first perl script
-  Enough of that. You want to know how to write a perl script, right?
+Let us start with a simple example of a Gaim perl plugin.  The following code sample is a complete plugin that can be copied and used as is.
 
-  First off, we're going to assume here that you are familiar with perl. Perl
-  scripts in Gaim are just normal perl scripts, which happen to use Gaim's
-  loadable perl module.
-
-  Now, you're going to want to place your script in $HOME/.gaim/plugins/.
-  That's the place where all plugins and scripts go, regardless of language.
-
-  The first thing you're going to write in your script is the necessary code
-  to actually register and initialize your script, which looks something like
-  this:
-
-
-  @code
+@code
 use Gaim;
 
 %PLUGIN_INFO = (
-    perl_api_version => 2,
-    name             => "Your Plugin's Name",
-    version          => "0.1",
-    summary          => "Brief summary of your plugin.",
-    description      => "Detailed description of what your plugin does.",
-    author           => "Your Name <email\@address>",
-    url              => "http://yoursite.com/",
+        perl_api_version => 2,
+        name => "Perl Test Plugin",
+        version => "0.1",
+        summary => "Test plugin for the Perl interpreter.",
+        description => "Your description here",
+        author => "John H. Kelm <johnhkelm\@gmail.com",
+        url => "http://gaim.sourceforge.net/",
 
-    load             => "plugin_load",
-    unload           => "plugin_unload"
+        load => "plugin_load",
+        unload => "plugin_unload"
 );
 
 sub plugin_init {
-    return %PLUGIN_INFO;
+        return %PLUGIN_INFO;
 }
 
 sub plugin_load {
-    my $plugin = shift;
+        my $plugin = shift;
+	Gaim::debug_info("plugin_load()", "Test Plugin Loaded.");
 }
 
 sub plugin_unload {
-    my $plugin = shift;
+        my $plugin = shift;
+        Gaim::debug_info("plugin_unload()", "Test Plugin Unloaded.");
 }
-  @endcode
+@endcode
 
+It is necessary to load the Gaim perl package with the line @code use Gaim; @endcode which will make all the Gaim perl API available to the script.  The @c \%PLUGIN_INFO has contains all the information that will be displayed in the Plugin frame of the Preferences dialog.  In addition to information needed to describe the plugin to the user, information about how the plugin is to be handled is present.  The keys @c load and @c unload specify and action to take when the plugin is loaded and when it is unloaded from the Preferences dialog respectively.  There are other key values that may be present in the @c \%PLUGIN_INFO hash that will be covered in the following sections.  
 
-  The first thing you see is a hash called @c @%PLUGIN_INFO. It contains
-  the basic information on your plugin. In the future, additional fields
-  may be allowed, such as ones to setup a GTK+ preferences pane.
+The Perl subroutine @c plugin_init is executed when the plugin is probed by the plugin subsystem.  What this means is as soon as Gaim is started, this subroutine is run once, regardless of whether the plugin is loaded or not. The other two subroutines present are those defined by the @c \%PLUGIN_INFO hash and take the plugin handle as an argument.  When the plugin is loaded and subsequently unloaded it will print a message to the debug window using the @c Gaim::debug_info() Gaim perl API call.
 
-  The @c plugin_init function is required in all perl scripts. Its job
-  is to return the @c @%PLUGIN_INFO hash, which Gaim will use to register
-  and initialize your plugin.
+The last step is to save the script with a .pl file extention in your ~/.gaim/plugins directory.  After restarting gaim the plugin "Perl Test Plugin" should now appear under "Tools->Preferences->Plugins".  To view the messages make sure you run Gaim from the console with the '-d' flag or open the Debug Window from inside Gaim under "Help".  When you enable the checkbox next the plugin you should see a message appear in the Debug Window (or console) and when you disable the checkbox you should see another message appear.  You have now created the framework that will allow you to create almost any kind of Gaim plugin you can imagine.
 
-  The @c plugin_load function is called when the user loads your plugin
-  from the preferences, or on startup. It is passed one variable, which
-  is a handle to the plugin. This must be used when registering signal
-  handlers or timers.
+@section account-api Account and Account Option Functions
 
-  The @c plugin_unload function is called when the user is unloading your
-  plugin. Its job is to clean up anything that must be dealt with before
-  unloading, such as removing temporary files or saving configuration
-  information. It does @em not have to unregister signal handlers or timers,
-  as Gaim will do that for you.
+The Account API is in the @c Gaim::Account:: and @c Gaim::Accounts:: packages and both are nearly identical to their C counterparts @c gaim_account_ and @c gaim_accounts_.  The Account Option API is in the package @c Gaim::Account::Option and is identical to its C implementation @c gaim_account_option .  
 
-  @warning Do @b NOT put any executable code outside of these functions
-           or your own user-defined functions. Variable declarations are
-           okay, as long as they're set to be local. Bad Things (TM) can
-           happen if you don't follow this simple instruction.
+The Account* APIs allow for scripts to create, remove, and edit accounts of the type GaimAccount. (Note: Gaim type have no real meaning in perl scripts other than the types of the arguments of the perl subroutines need to be of the expected type.)  This section will not go into detail about the @c Gaim::Account::Option package for its use in building protocol plugins which are outside the scope of this document.  However, most of the API calls for the @c Gaim::Account::Option package should function as expected so if there is a need to access any of the Account Options the function calls necessary are avaialbe in the Gaim perl API.
 
+To reduce redundant code the following code examples are going to use the template shown in the previous section.  To highlight some of the more useful features of the Account API we will be replacing the @c plugin_load perl subroutine.  For testing purposes we will display output on the command line by using perl @c print commands.   
 
- @section Timeouts
-  One feature useful to many perl plugin writers are timeouts. Timeouts allow
-  code to be ran after a specified number of seconds, and are rather
-  simple to setup. Here's one way of registering a timeout.
+@code
+sub plugin_load {
+	$plugin = shift;
 
+	# Testing was done using Oscar, but this should work regardless of the protocol chosen
+	my $protocol = "prpl-oscar";
 
-  @code
+        #################################
+        #                               #
+        #       Gaim::Account           #
+        #                               #
+        #################################
+
+	# Create a new Account
+        print "Testing: Gaim::Account::new()...";
+        $account = Gaim::Account::new("TEST_NAME", $protocol);
+        if ($account) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# Add a new Account
+        print "Testing: Gaim::Account::add()...";
+        Gaim::Accounts::add($account);
+                print "pending find...\n";
+
+	# Find the account we just added to verify its existence
+        print "Testing: Gaim::Accounts::find()...";
+        $account = Gaim::Accounts::find("TEST_NAME", $protocol);
+        if ($account) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# Return the username 
+        print "Testing: Gaim::Account::get_username()...";
+        $user_name = Gaim::Account::get_username($account);
+        if ($user_name) { print $user_name . "...ok.\n"; } else { print "fail.\n"; }
+
+	# Verify if the user is connected
+        print "Testing: Gaim::Account::is_connected()";
+        $user_connected = Gaim::Account::is_connected($account);
+        if (!($user_connected)) { print "...not connected...ok..\n"; } else { print "...connected...ok.\n"; }
+
+	# The status mechanism is how users are Connected, set Away, Disconnected (status set to Offline), etc
+	#  $status is now a Gaim::Status perl type.
+        print "Testing: Gaim::Accounts::get_active_status()...";
+        $status = Gaim::Account::get_active_status($account);
+        if ($status) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# It follows that to connect a user you mest set the account status to "available"
+	#  similarly we can disconnect a user by setting the account status to "offline"
+        $account = Gaim::Accounts::find("TEST_NAME", $protocol);
+        print "Testing: Gaim::Accounts::connect()...pending...\n";
+
+        Gaim::Account::set_status($account, "available", TRUE);
+        Gaim::Account::connect($account);
+}
+@endcode
+
+For the most part the code listed above is explained by the comments, however there are a few other points to make.  The variables above are all specialized Perl types that contain pointers to the actual Gaim types.  They can be reasigned at will just like any other variable in Perl.  The only way to edit the values of a Gaim type from within perl are through accessor methods such as @c Gaim::Account::get_username().  For arguments that you would make @c NULL in C should be set to @c undef in Perl.  
+
+@section buddylist-api Buddylist, Group and Chat API
+
+The BuddList, Group and Chat APIs are very similar and whatever is shown for the @c Gaim::BuddlyList API should carry over to @c Gaim::Chat and @c Gaim::Group.  Note that there is a @c Gaim::Find pacakge that was created to keep the naming consistent with how these functions are named in the C API.
+
+@code
+sub plugin_load {
+	my $plugin = shift;
+	my $protocol = "prpl-oscar";
+	
+	# This is how we get an account to use in the following tests.  You should replace the username 
+	#  with an existent user
+        $account = Gaim::Accounts::find("USERNAME", $protocol);
+
+        #################################
+        #                               #
+        #       Gaim::BuddyList         #
+        #                               #
+        #################################
+
+	# Testing a find function: Note Gaim::Find not Gaim::Buddy:find!
+	#  Furthermore, this should work the same for chats and groups
+        print "Testing: Gaim::Find::buddy()...";
+        $buddy = Gaim::Find::buddy($account, "BUDDYNAME");
+        if ($buddy) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# If you should need the handle for some reason, here is how you do it	
+        print "Testing: Gaim::BuddyList::get_handle()...";
+        $handle = Gaim::BuddyList::get_handle();
+        if ($handle) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# This gets the Gaim::BuddyList and references it by $blist
+        print "Testing: Gaim::BuddyList::get_blist()...";
+        $blist = Gaim::BuddyList::get_blist();
+        if ($blist) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# This is how you would add a buddy named "NEWNAME" with the alias "ALIAS"
+        print "Testing: Gaim::Buddy::new...";
+        $buddy = Gaim::Buddy::new($account, "NEWNAME", "ALIAS");
+        if ($buddy) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# Here we add the new buddy '$buddy' to the group "GROUP"
+	#  so first we must find the group
+        print "Testing: Gaim::Find::group...";
+        $group = Gaim::Find::group("GROUP");
+        if ($group) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# To add the buddy we need to have the buddy, contact, group and node for insertion.
+	#  For this example we can let contact be undef and set the insertion node as the group
+        print "Testing: Gaim::BuddyList::add_buddy...";
+        Gaim::BuddyList::add_buddy($buddy, undef, $group, $group);
+        if ($buddy) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# The example that follows gives an indiction of how an API call that returns a list is handled.
+	#  In this case the buddies of the account found earlier are retrieved and put in an array '@buddy_array'
+ 	#  Further down an accessor method is used, 'get_name()' -- see source for details on the full set of methods
+       print "Testing: Gaim::Find::buddies...\n";
+       @buddy_array = Gaim::Find::buddies($account, "USERNAME");
+       if (@buddy_array) {
+                print "Buddies in list (" . @buddy_array . "): \n";
+                foreach $bud (@buddy_array) {
+                        print Gaim::Buddy::get_name($bud) . "\n";
+                }
+        }
+}
+@endcode
+
+The BuddyList API allows for plugins to edit buddies in the list, find the buddies on a given account, set alias, and manipulate the structer as needed.  It is also contains the methods for accessing @c Gaim::Group and @c Gaim::Chat types.  
+
+@section conn-api Connection API
+
+The @c Gaim::Connection API is one of the many packages that will not be covered in depth in this tutorial.  They are more useful to protocol plugin developers.  However, the entire @c gaim_connection_ API has corresponding, functioning perl subroutines.    
+
+@section conv-api Conversation API
+
+The Gaim perl API for @c gaim_conversation_ and @c gaim_conv_window_ allow plugins to interact with open conversations, create new conversations, and modify conversations at will.  The following example again replaces the @c plugin_load subroutine.  In the example script, a new window is created, displayed and a new conversation instant message is created.  The @c Gaim::Conv::Chat package handles the @c gaim_conv_chat_ portion of the API very similarly to the examples that follow.   
+
+@code
+sub plugin_load {
+        my $plugin = shift;
+        my $protocol = "prpl-oscar";
+
+        $account = Gaim::Accounts::find("USERNAME", $protocol);
+
+        #################################
+        #                               #
+        #       Gaim::Conv		#
+        #                               #
+        #################################
+
+	# First we create two new conversations.
+        print "Testing Gaim::Conv::new()...";
+        $conv1 = Gaim::Conv::new(1, $account, "Test Conv. 1");
+        if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
+
+        print "Testing Gaim::Conv::new()...";
+        $conv2 = Gaim::Conv::new(1, $account, "Test Conv. 2");
+        if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
+	
+	# Second we create a window to display the conversations in.
+	#  Note that the package here is Gaim::Conv::Window
+        print "Testing Gaim::Conv::Window::new()...\n";
+        $win = Gaim::Conv::Window::new();
+
+	# The third thing to do is to add the two conversations to the windows.
+	#  The subroutine add_conversation() returns the number of conversations present in the window.
+        print "Testing Gaim::Conv::Window::add_conversation()...";
+        $conv_count = Gaim::Conv::Window::add_conversation($win, $conv1);
+        if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
+
+        print "Testing Gaim::Conv::Window::add_conversation()...";
+        $conv_count = Gaim::Conv::Window::add_conversation($win, $conv2);
+        if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
+
+	# Now the window is displayed to the user.
+        print "Testing Gaim::Conv::Window::show()...\n";
+        Gaim::Conv::Window::show($win);
+
+	# Use Gaim::Conv::get_im_data to get a handle for the conversation	
+        print "Testing Gaim::Conv::get_im_data()...\n";
+        $im = Gaim::Conv::get_im_data($conv1);
+        if ($im) { print "ok.\n"; } else { print "fail.\n"; }
+
+	# Here we send messages to the conversation
+        print "Testing Gaim::Conv::IM::send()...\n";
+        Gaim::Conv::IM::send($im, "Message Test.");
+
+        print "Testing Gaim::Conv::IM::write()...\n";
+        Gaim::Conv::IM::write($im, "SENDER", "<b>Message</b> Test.", 0, 0);
+}
+@endcode
+
+The next block of code shows how a script can close a known conversation window @c $win.
+
+@code
+        print "Testing Gaim::Conv::Window::get_conversation_count()...\n";
+        $conv_count = Gaim::Conv::Window::get_conversation_count($win);
+        if ($conv_count > 0) {
+                print "Testing Gaim::Conv::Window::destroy()...\n";
+                Gaim::Conv::Window::destroy($win);
+        }
+@endcode
+
+@section plugin-pref-api Plugin Preference and Gtk Preference API
+
+The plugin preference API allows the plugin to display options in a preference pane that the user can change to manipulate the behaviour of the particular perl plugin.  The method used for creating the pane in C does not allow a direct mapping into perl.  Therefore perl plugin writers must be aware that there will be significant differences in how they create plugin preference panes.
+
+To first create a standard plugin preference tab we need to add some key/value pairs to the @c \%PLUGIN_INFO hash.  The first line contains the perl subroutine that must be provided and will return a @c Gaim::Pref::Frame.
+
+@code
+%PLUGIN_INFO = {
+	...,
+	prefs_info => "prefs_info_cb"
+};
+@endcode
+
+The perl subroutine @c prefs_info_cb will be called to create the tab for the perl plugin in the Preferences dialog.  An example of this function will explain the details of creating a preference frame.  However, it is necessary to first create the preferences from @c plugin_load as follows.
+
+@code
+sub plugin_load {
+        my $plugin = shift;
+
+	# Here we are adding a set of preferences
+	#  The second argument is the default value for the preference.
+        Gaim::Prefs::add_none("/plugins/core/perl_test");
+        Gaim::Prefs::add_bool("/plugins/core/perl_test/bool", 1);
+        Gaim::Prefs::add_string("/plugins/core/perl_test/choice", "ch1");
+        Gaim::Prefs::add_string("/plugins/core/perl_test/text", "Foobar");
+}
+@endcode
+
+Now we can add these preferences from inside our function specified in @c \%PLUGIN_INFO .
+
+@code
+sub prefs_info_cb {
+	# The first step is to initialize the Gaim::Pref::Frame that will be returned
+        $frame = Gaim::Pref::frame_new();
+
+	# Create a new boolean option with a label "Boolean Label" and then add it to the frame
+        $ppref = Gaim::Pref::new_with_label("Boolean Label");
+        Gaim::Pref::frame_add($frame, $ppref);
+
+        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/bool", "Boolean Preference");
+        Gaim::Pref::frame_add($frame, $ppref);
+
+	# Create a set of choices.  To do so we must set the type to 1 which is the numerical equivelant of 
+	#  the GaimPrefType for choice.
+        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/choice", "Choice Preference");
+        Gaim::Pref::set_type($ppref, 1);
+        Gaim::Pref::add_choice($ppref, "ch0", $frame);
+	# The following will be the default value as set from plugin_load
+        Gaim::Pref::add_choice($ppref, "ch1", $frame);
+        Gaim::Pref::frame_add($frame, $ppref);
+
+	# Create a text box.  The default value will be "Foobar" as set by plugin_load
+        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/text", "Text Box Preference");
+        Gaim::Pref::set_max_length($ppref, 16);
+        Gaim::Pref::frame_add($frame, $ppref);
+
+        return $frame;
+}
+@endcode
+
+Using the Gtk2-Perl module for Perl it is possible to create tailored @c GtkFrame elements and display them in a preference window.  Currently it is required that all dynamically loaded modules be encased in @c eval blocks otherwise the Gaim perl plugin will crash.  A work around is in progress, but for the time being a perl Gtk::Frame can be created and used as the plugin preference tab.  The first step is to create the proper key/value pairs in the @c \%PLUGIN_INFO hash noting that the @c prefs_info key is no longer valid. Instead the keys @c GTK_UI and @c gtk_prefs_info must be set as follows.
+
+@code
+%PLUGIN_INFO = {
+	...,
+	# Used to differentiate between a regular and a Gtk preference frame
+	GTK_UI => TRUE,
+	gtk_prefs_info => "gtk_prefs_info_cb",
+}
+@endcode
+
+To finish this example @c gtk_prefs_info_cb needs to be defined.  To introduce some of the flexibility of using Gtk2-Perl the example also includes a button and a callback for the button.  Explaining Gtk2-Perl is beyond the scope of this tutorial and more info can be found at the project's website <a href="http://gtk2-perl.sourceforge.net/">http://gtk2-perl.sourceforge.net/</a>.
+
+@code
+# A simple call back that prints out whatever value it is given as an argument.
+sub button_cb {
+        my $widget = shift;
+        my $data = shift;
+        print "Clicked button with message: " . $data . "\n";
+}
+
+sub gtk_prefs_info_cb {
+	# For now it is necessary to encase this code in an eval block.
+	#  All it does is create a button that prints a message to the console and places it in the frame.
+        eval '
+                use Glib;
+                use Gtk2 \'-init\';
+
+                $frame = Gtk2::Frame->new(\'Gtk Test Frame\');
+                $button = Gtk2::Button->new(\'Print Message\');
+
+                $frame->set_border_width(10);
+                $button->set_border_width(150);
+                $button->signal_connect("clicked" => \&button_cb, "Message Text");
+                $frame->add($button);
+
+                $button->show();
+                $frame->show();
+        ';
+        return $frame;
+}
+@endcode
+
+@section request-api Request Dialog Box API
+
+The @c Gaim::Request package allows for plugins to have interactive dialog boxes without the need for creating them in Gtk creating a seperation between the user interfaace and the plugin.  The portion of the Request API available to perl scripts is listed below followed by an example illustrating their use.
+
+These arguments are the same for each of the three request types:
+@args
+	@arg @em handle 	- The plugin handle.
+	@arg @em title 	- String title for the dialog.
+	@arg @em primary	- The first sub-heading.
+	@arg @em secondary	- The second sub-heading.
+	@arg @em ok_text	- The Text for the OK button.
+	@arg @em ok_cb	- The string name of the perl subroutine to call when the OK button is clicked.
+	@arg @em cancel_text - The text for the Cancel button.
+	@arg @em cancel_cb	- The string name of the perl subroutine to call when the Cancel button is clicked.	
+	@arg @em default_value - Default text string to display in the input box.
+	@arg @em multiline	- Boolean where true indicates multiple line input boxes are allowed.
+	@arg @em masked 	- Boolean indicating if the user can edit the text.
+	@arg @em hint 	- See source for more information - can be left blank.
+	@arg @em filename	- String defualt file name value.
+	@arg @em savedialog	- Boolean where true indicates use as a save file dialog and false indicates an open file dialog.
+@args
+
+@code
+# Create a simple text input box
+Gaim::Request::input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb);
+
+# Propt user to select a file
+Gaim::Request::file(handle, title, filename, savedialog, ok_cb, cancel_cb);
+
+# Create a unique input dialog as shown in the following example
+Gaim::Request::fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb);
+@endcode
+
+What follows is an example of a @c Gaim::Request::fields() dialog box with two callbacks for an OK button and a Cancel Button.
+
+@code
+sub ok_cb_test{
+	# The $fields is passed to the callback function when the button is clicked.
+	#  To get the values they must be extracted from $fields by name.
+        $fields = shift;
+        $account = Gaim::Request::fields_get_account($fields, "acct_test");
+        $int = Gaim::Request::fields_get_integer($fields, "int_test");
+        $choice = Gaim::Request::fields_get_choice($fields, "ch_test");
+}
+
+sub cancel_cb_test{
+	# Cancel does nothing but is symmetric to the ok_cb_test
+}
+
+sub plugin_load {
+        my $plugin = shift;
+
+	# Create a group to pool together mutltiple fields.
+        $group = Gaim::Request::field_group_new("Group Name");
+	
+	# Each fields is created with Gaim::Request::*_new(), is made viewable with Gaim::Request::field_*_set_show_all()
+	#  and is then added to the group with Gaim::Request::field_group_add_field()
+
+	# Add an account drop down list showing all active accounts	
+        $field = Gaim::Request::field_account_new("acct_test", "Account Text", undef);
+        Gaim::Request::field_account_set_show_all($field, 0);
+        Gaim::Request::field_group_add_field($group, $field);
+
+	# Add an integer input box
+        $field = Gaim::Request::field_int_new("int_test", "Integer Text", 33);
+        Gaim::Request::field_group_add_field($group, $field);
+
+	# Add a list of choices
+        $field = Gaim::Request::field_choice_new("ch_test", "Choice Text", 1);
+        Gaim::Request::field_choice_add($field, "Choice 0");
+        Gaim::Request::field_choice_add($field, "Choice 1");
+        Gaim::Request::field_choice_add($field, "Choice 2");
+
+        Gaim::Request::field_group_add_field($group, $field);
+
+	# Create a Gaim::Request and add the group that was just created.
+        $request = Gaim::Request::fields_new();
+        Gaim::Request::fields_add_group($request, $group);
+
+	#  Display the dialog box with the input fields added earlier with the appropriate titles.
+        Gaim::Request::fields(
+                $plugin,
+                "Request Title!",
+                "Primary Title",
+                "Secondary Title",
+                $request,
+                "Ok Text", "ok_cb_test",
+                "Cancel Text", "cancel_cb_test");
+}
+@endcode
+
+@section timeout-cb Misc: Plugin Actions, Timeouts and Callbacks
+
+This section of the manual covers some of the more important features that can be added to Gaim perl Plugins.  Plugin actions are callback functions that are accessible to the user from the Gaim main window under "Tools->Plugin Actions".  Timeouts allow a plugin to exectue a perl subroutine after a given period of time.  Note that timeouts only occur once, so if the timeout must occur periodically just add a new timeout at the end of the timeout callback function.  Callbacks are functions that are called when an event occurs such as a buddy signing-on or a message being received.  These three tools will be discussed in the following three examples.
+
+The Plugin Action requires the @c \%PLUGIN_INFO hash to have two key/value pairs added and a callback perl subroutine defined.  Note the difference between the C API that allows for a GList of actions--only one plugin action is allowed in Gaim perl plugins.
+
+@code
+%PLUGIN_INFO = {
+	...,
+	# The callback subroutine that is called when "Tools->Plugin Action->Plugin Action Label" is selected
+	plugin_action => "plugin_action_cb",
+	plugin_action_label => "Plugin Action Label"
+}
+
+sub plugin_action_cb {
+	# Note the function receives the plugin handle as its argument
+	$plugin = shift;
+	print "Plugin Action Selected.\n";
+}
+@endcode
+
+Timeouts allow a perl subroutine to be exectued after a specified time.  They only occur once, so as stated earlier the timeout must be reregistered after every time it is called.
+
+@code
 sub timeout_cb {
-    my $data = shift;
-
-    Gaim::debug_info("my perl plugin",
-                     "Timeout callback called! data says: $data\n");
+	my $plugin = shift;
+	print "Timeout occured.";
+	
+	# Reschedule timeout 
+        Gaim::timeout_add($plugin, 10, \&timeout_cb, $plugin); 
 }
 
 sub plugin_load {
-    my $plugin = shift;
+	$plugin = shift;
 
-    # Start a timeout for 5 seconds.
-    Gaim::timeout_add($plugin, 5, \&timeout_cb, "Hello!");
+	# Schedule a timeout for ten seconds from now 
+	Gaim::timeout_add($plugin, 10, \&timeout_cb, $plugin); 
 }
-  @endcode
+@endcode
 
+Callbacks are handled by creating a perl subroutine to serve as the callback and then attaching the callback to a signal.  To use callbacks it is necessary to first obtain the plugin handle with the @c Gaim::Plugin::get_handle() subroutine to pass as an argument for the callback.
 
-  Here's another way of calling a timeout:
-
-
-  @code
-sub plugin_load {
-    my $plugin = shift;
-
-    # Start a timeout for 5 seconds.
-    Gaim::timeout_add($plugin, 5,
-        sub {
-            my $data = shift;
-
-            Gaim::debug_info("my perl plugin",
-                             "Timeout callback called! data says: $data\n");
-        }, "Hello!");
-}
-  @endcode
-
-
-  A timeout automatically unregisters when it reaches 0 (which is also
-  when the callback is called). If you want a timeout to call a function
-  every specified number of seconds, just re-register the timeout
-  at the end of the callback.
-
-  The data parameter is optional. If you don't have data to pass to the
-  callback, simply omit the parameter.
-
- @section Signals
-  Signals are how gaim plugins get events. There are a number of
-  @ref Signals signals available.
-
-  A signal is registered by connecting a signal name owned by an
-  instance handle to a callback on the plugin handle. This is best
-  illustrated with an example.
-
-
-  @code
-sub signed_on_cb {
-    my ($gc, $data) = @_;
-    my $account = $gc->get_account();
-
-    Gaim::debug_info("my perl plugin",
-                     "Account " . $account->get_username() . " signed on.\n");
+@code
+sub signal_cb {
+	# The handle and the user data come in as arguments
+	my ($handle, $data) = @_;
+	print "User just connected.";
 }
 
 sub plugin_load {
-    my $plugin = shift;
-    my $data = "";
+	$plugin = shift;
 
-    Gaim::signal_connect(Gaim::Connections::handle, "signed-on",
-                         $plugin, \&signed_on_cb, $data);
+	# User data to be given as an argument to the callback perl subroutine.
+	$data = "";
+
+	# A pointer to the actual plugin handle needed by the callback function
+	$plugin_handle = Gaim::Accounts::get_handle();
+
+	# Connect the perl subroutine 'signal_cb' to the event 'account-connecting' 
+	Gaim::signal_connect($plugin_handle, "account-connecting", $plugin, \&signal_cb, $data); 
 }
-  @endcode
+@endcode
 
-
-  Like timeouts, the callback can be an embedded subroutine, and also
-  like timeouts, the data parameter can be omitted.
-
- @section Notes
-  The API in perl is very similar to Gaim's C API. The functions have been
-  gathered into packages, but most are the same, and the documentation can
-  be a big help at times.
-
- @section Resources
-  @see Signals
-  @see Perl API Reference
+@section Resources
+	@see API Documentation
 
 */
-
-// vim: syntax=c tw=75 et
