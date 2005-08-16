@@ -74,6 +74,7 @@ version 2.0.0:
 	* Added:   gtk_imhtml_clear_formatting()
 	* Removed: gaim_gtkconv_get_dest_tab_at_xy(), instead use
 	           gaim_gtkconv_get_tab_at_xy()
+	* Added:   gtk_imhtml_delete to clear out part of a imhtml buffer
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
@@ -89,7 +90,10 @@ version 2.0.0:
 	* Changed: "chat-invited" handlers can now return a value to control
 	           what happens to the invite (accept, reject, prompt the user).
 	           See the Doxygen documentation for the details.
-	* Added:   gtk_imhtml_delete to clear out part of a imhtml buffer
+	* Added:   "file-recv-accept", "file-recv-start", "file-recv-cancel",
+	           "file-recv-complete", "file-send-accept", "file-send-start",
+	           "file-send-cancel", and "file-send-complete" signals.  See
+	           the Doxygen documentation for the details.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
