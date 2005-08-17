@@ -448,7 +448,7 @@ delete_range_after(GtkTextBuffer *buffer,
 	spell->word = NULL;
 }
 
-spellchk*
+void
 spellchk_new_attach(GaimConversation *c) {
 	spellchk *spell;
 	GtkTextBuffer *buffer;
@@ -461,7 +461,8 @@ spellchk_new_attach(GaimConversation *c) {
 	view = GTK_TEXT_VIEW(gtkconv->entry);
 
 	spell = g_object_get_data(G_OBJECT(view), SPELLCHK_OBJECT_KEY);
-	g_assert(spell == NULL);
+	if (spell == NULL)
+		return;
 
 	/* attach to the widget */
 	spell = g_new0(spellchk, 1);
@@ -494,7 +495,7 @@ spellchk_new_attach(GaimConversation *c) {
 			"insert-text",
 			G_CALLBACK(insert_text_after), spell);
 
-	return spell;
+	return;
 }
 
 static int buf_get_line(char *ibuf, char **buf, int *position, int len)
