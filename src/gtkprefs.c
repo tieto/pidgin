@@ -1781,9 +1781,8 @@ away_page()
 		NULL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Idle"));
-	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _time reporting:"),
-			GAIM_PREF_STRING, "/gaim/gtk/idle/reporting_method",
-			_("None"), "none",
+	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle _Tracking:"),
+			GAIM_PREF_STRING, "/gaim/gtk/idle/method",
 			_("Gaim usage"), "gaim",
 #ifdef USE_SCREENSAVER
 #ifndef _WIN32
@@ -1793,6 +1792,9 @@ away_page()
 #endif
 #endif
 			NULL);
+
+	button = gaim_gtk_prefs_checkbox(_("_Report idle time"),
+			"/gaim/gtk/idle/report", vbox);
 
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
@@ -2249,7 +2251,14 @@ gaim_gtk_prefs_init(void)
 
 	/* Idle */
 	gaim_prefs_add_none("/gaim/gtk/idle");
-	gaim_prefs_add_string("/gaim/gtk/idle/reporting_method", "system");
+	gaim_prefs_add_string("/gaim/gtk/idle/method",
+#ifdef USE_SCREENSAVER
+		"system"
+#else
+		"gaim"
+#endif
+	);
+	gaim_prefs_add_bool("/gaim/gtk/idle/report", TRUE);
 
 	/* Plugins */
 	gaim_prefs_add_none("/gaim/gtk/plugins");
@@ -2271,6 +2280,7 @@ gaim_gtk_prefs_init(void)
 }
 
 void gaim_gtk_prefs_update_old() {
+	const char *idle_method;
 	/* Rename some old prefs */
 	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
@@ -2286,6 +2296,20 @@ void gaim_gtk_prefs_update_old() {
 									 "/gaim/gtk/conversations/show_incoming_formatting");
 	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_formatting",
 									 "/gaim/gtk/conversations/show_incoming_formatting");
+
+	gaim_prefs_rename("/gaim/gtk/idle/reporting_method",
+			"/gaim/gtk/idle/method");
+	idle_method = gaim_prefs_get_string("/gaim/gtk/idle/method");
+	if (idle_method == NULL || !strcmp("none", idle_method)) {
+		gaim_prefs_set_string("/gaim/gtk/idle/method",
+#ifdef USE_SCREENSAVER
+			"system"
+#else
+			"gaim"
+#endif
+		);
+		gaim_prefs_set_bool("/gaim/gtk/idle/report", FALSE);
+	}
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");

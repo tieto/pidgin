@@ -114,7 +114,8 @@ gint
 check_idle(gpointer data)
 {
 	GaimConnection *gc = data;
-	const char *report_idle;
+	gboolean report_idle;
+	const char *idle_method;
 	GaimAccount *account;
 	time_t t;
 	int idle_time;
@@ -125,10 +126,11 @@ check_idle(gpointer data)
 
 	time(&t);
 
-	report_idle = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
+	idle_method = gaim_prefs_get_string("/gaim/gtk/idle/method");
+	report_idle = gaim_prefs_get_bool("/gaim/gtk/idle/report");
 
 #ifdef USE_SCREENSAVER
-	if (report_idle != NULL && !strcmp(report_idle, "system"))
+	if (idle_method != NULL && !strcmp(idle_method, "system"))
 		idle_time = get_idle_time_from_system();
 	else
 #endif /* USE_SCREENSAVER */
@@ -173,24 +175,14 @@ check_idle(gpointer data)
 		/* Need to set this connection to available here */
 	}
 
-	/*
-	 * If we're not reporting idle times to the server, still use Gaim
-	 * usage for auto-away, but quit here so we don't report to the 
-	 * server.
-	 *
-	 * Hmm.  What if _while_ we're idle we toggle the pref for reporting
-	 * idle time to the server?  We would never become unidle...
-	 */
-	if (report_idle != NULL && !strcmp(report_idle, "none"))
-		return TRUE;
-
-	if (idle_time >= IDLEMARK && !gc->is_idle) {
+	/* Deal with reporting idleness to the server, if appropriate */
+	if (report_idle && idle_time >= IDLEMARK && !gc->is_idle) {
 		gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 				   gaim_account_get_username(account), idle_time);
 		serv_set_idle(gc, idle_time);
 		gc->is_idle = 1;
 		/* LOG	system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
-	} else if (idle_time < IDLEMARK && gc->is_idle) {
+	} else if ((!report_idle || idle_time < IDLEMARK) && gc->is_idle) {
 		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
 		serv_touch_idle(gc);
