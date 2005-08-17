@@ -2070,13 +2070,6 @@ gaim_accounts_init(void)
 										GAIM_SUBTYPE_ACCOUNT),
 						 gaim_value_new(GAIM_TYPE_STRING));
 
-	gaim_signal_register(handle, "account-warned",
-						 gaim_marshal_VOID__POINTER_POINTER_UINT, NULL, 3,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_STRING),
-						 gaim_value_new(GAIM_TYPE_UINT));
-
 	gaim_signal_register(handle, "account-added",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_ACCOUNT));
