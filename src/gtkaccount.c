@@ -196,6 +196,23 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
+delete_buddy_icon(const char *filename)
+{
+	const char *dirname;
+
+	if (filename == NULL)
+		return;
+
+	/* XXX: This is a hack so we only delete the file if it's
+	 * in the cache dir. Otherwise, people who upgrade (who
+	 * may have buddy icon filenames set outside of the cache
+	 * dir) could lose files. */
+	dirname = gaim_buddy_icons_get_cache_dir();
+	if (!strncmp(dirname, filename, strlen(dirname)))
+		g_unlink(filename);
+}
+
+static void
 set_account_protocol_cb(GtkWidget *item, const char *id,
 						AccountPrefsDialog *dialog)
 {
@@ -528,7 +545,28 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	struct stat st;
 	void *data = NULL;
 #endif
+#endif
+	const char *dirname = gaim_buddy_icons_get_cache_dir();
+	char *random   = g_strdup_printf("%x", g_random_int());
+	char *filename = g_build_filename(dirname, random, NULL);
+	g_free(random);
 
+	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
+		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
+
+		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
+			gaim_debug_error("buddyicon",
+							 "Unable to create directory %s: %s\n",
+							 dirname, strerror(errno));
+#if GTK_CHECK_VERSION(2,2,0)
+			g_strfreev(prpl_formats);
+#endif
+			g_free(filename);
+			return NULL;
+		}
+	}
+
+#if GTK_CHECK_VERSION(2,2,0)
 #if GTK_CHECK_VERSION(2,4,0)
 	format = gdk_pixbuf_get_file_info (path, &width, &height);
 #else
@@ -549,24 +587,60 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 #endif
 	pixbuf_formats =  gdk_pixbuf_format_get_extensions(format);
 
-	if (str_array_match(pixbuf_formats, prpl_formats) &&                                 /* This is an acceptable format AND */
-		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||                   /* The prpl doesn't scale before it sends OR */
+	if (str_array_match(pixbuf_formats, prpl_formats) &&                  /* This is an acceptable format AND */
+		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||   /* The prpl doesn't scale before it sends OR */
 		  (prpl_info->icon_spec.min_width <= width &&
 		   prpl_info->icon_spec.max_width >= width &&
 		   prpl_info->icon_spec.min_height <= height &&
-		   prpl_info->icon_spec.max_height >= height))) {                                  /* The icon is the correct size */
+		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
+#endif
+	{
+		gchar *contents;
+		gsize length;
+		FILE *image;
+
+#if GTK_CHECK_VERSION(2,2,0)
 		g_strfreev(prpl_formats);
 		g_strfreev(pixbuf_formats);
 #endif
-		return g_strdup(path);
+
+		/* Copy the image to the cache folder as "filename". */
+
+		if (!g_file_get_contents(path, &contents, &length, NULL) ||
+		    (image = g_fopen(filename, "wb")) == NULL)
+		{
+			g_free(filename);
+#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
+			g_object_unref(G_OBJECT(pixbuf));
+#endif
+			return NULL;
+		}
+
+		if (fwrite(contents, 1, length, image) != length)
+		{
+			fclose(image);
+			g_unlink(filename);
+
+			g_free(filename);
+#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
+			g_object_unref(G_OBJECT(pixbuf));
+#endif
+			return NULL;
+		}
+		fclose(image);
+
+#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
+			g_object_unref(G_OBJECT(pixbuf));
+#endif
+
+		return filename;
+	}
 #if GTK_CHECK_VERSION(2,2,0)
-	} else {
+	else
+	{
 		int i;
 		GError *error = NULL;
 		GdkPixbuf *scale;
-		char *random   = g_strdup_printf("%x", g_random_int());
-		const char *dirname = gaim_buddy_icons_get_cache_dir();
-		char *filename = g_build_filename(dirname, random, NULL);
 		pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		g_strfreev(pixbuf_formats);
 		if (!error && (prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
@@ -602,23 +676,10 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		}
 		if (error) {
 			g_free(filename);
-			g_free(random);
 			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
 			g_strfreev(prpl_formats);
 			return NULL;
-		}
-
-		if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-			gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
-
-			if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-				gaim_debug_error("buddyicon",
-								 "Unable to create directory %s: %s\n",
-								 dirname, strerror(errno));
-				g_strfreev(prpl_formats);
-				return NULL;
-			}
 		}
 
 		for (i = 0; prpl_formats[i]; i++) {
@@ -633,7 +694,6 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		}
 		g_strfreev(prpl_formats);
 		if (!error) {
-			g_free(random);
 			g_object_unref(G_OBJECT(pixbuf));
 			return filename;
 		} else {
@@ -641,7 +701,6 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			g_error_free(error);
 		}
 		g_free(filename);
-		g_free(random);
 		g_object_unref(G_OBJECT(pixbuf));
 	}
 	return NULL;
@@ -1377,8 +1436,11 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(dialog->account, NULL);
 
 	/* Buddy Icon */
-	value = dialog->icon_path;
-	gaim_account_set_buddy_icon(dialog->account, value);
+	value = gaim_account_get_buddy_icon(dialog->account);
+	if (value == NULL || dialog->icon_path == NULL || strcmp(value, dialog->icon_path)) {
+		delete_buddy_icon(value);
+		gaim_account_set_buddy_icon(dialog->account, dialog->icon_path);
+	}
 
 	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
