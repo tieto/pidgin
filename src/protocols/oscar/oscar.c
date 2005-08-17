@@ -775,7 +775,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 
 
 	if ((userinfo != NULL) && (userinfo->warnlevel != 0)) {
-		tmp = g_strdup_printf("%d", userinfo->warnlevel/10.0 + .5);
+		tmp = g_strdup_printf("%d", (int)(userinfo->warnlevel/10.0 + .5));
 		oscar_string_append(str, newline, _("Warning Level"), tmp);
 		g_free(tmp);
 	}
@@ -4935,8 +4935,6 @@ static int gaim_parse_ratechange(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GaimConnection *gc = sess->aux_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
 	va_list ap;
 	fu16_t newevil;
 	aim_userinfo_t *userinfo;
@@ -4946,16 +4944,14 @@ static int gaim_parse_evilnotify(aim_session_t *sess, aim_frame_t *fr, ...) {
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	/* XXX - What's with the + 0.5? */
-	//gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
+#ifdef CRAZY_WARNING
+	gaim_prpl_got_account_warning_level(account, (userinfo && userinfo->sn) ? userinfo->sn : NULL, (newevil/10.0) + 0.5);
+#endif
 
 	return 1;
 }
 
 static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GaimConnection *gc = sess->aux_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimPresence *presence = gaim_account_get_presence(account);
 	int warning_level;
 	va_list ap;
 	aim_userinfo_t *info;
@@ -4964,9 +4960,18 @@ static int gaim_selfinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
+	/*
+	 * What's with the + 0.5?
+	 * The 0.5 is basically poor-man's rounding.  Normally
+	 * casting "13.7" to an int will truncate to "13," but
+	 * with 13.7 + 0.5 = 14.2, which becomes "14" when
+	 * truncated.
+	 */
 	warning_level = info->warnlevel/10.0 + 0.5;
 
-	//	gaim_presence_set_warning_level(presence, warning_level);
+#ifdef CRAZY_WARNING
+	gaim_presence_set_warning_level(presence, warning_level);
+#endif
 
 	return 1;
 }
@@ -5979,11 +5984,13 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 	}
 }
 
+#ifdef CRAZY_WARN
 static void
 oscar_warn(GaimConnection *gc, const char *name, gboolean anonymous) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	aim_im_warn(od->sess, od->conn, name, anonymous ? AIM_WARN_ANON : 0);
 }
+#endif
 
 static void
 oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {

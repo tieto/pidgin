@@ -501,7 +501,7 @@ faim_internal int aim_tlvlist_add_caps(aim_tlvlist_t **list, const fu16_t type, 
 
 	aim_bstream_init(&bs, buf, sizeof(buf));
 
-	aim_putcap(&bs, caps);
+	aimbs_putcaps(&bs, caps);
 
 	return aim_tlvlist_add_raw(list, type, aim_bstream_curpos(&bs), buf);
 }

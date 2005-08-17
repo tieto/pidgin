@@ -89,6 +89,7 @@ faim_internal int aimbs_putle32(aim_bstream_t *bs, fu32_t v);
 faim_internal int aimbs_putraw(aim_bstream_t *bs, const fu8_t *v, int len);
 faim_internal int aimbs_putstr(aim_bstream_t *bs, const char *str);
 faim_internal int aimbs_putbs(aim_bstream_t *bs, aim_bstream_t *srcbs, int len);
+faim_internal int aimbs_putcaps(aim_bstream_t *bs, fu32_t caps);
 
 /* conn.c */
 faim_internal aim_conn_t *aim_cloneconn(aim_session_t *sess, aim_conn_t *src);
@@ -141,7 +142,7 @@ struct chatsnacinfo {
 	fu16_t instance;
 };
 
-/* 
+/*
  * In SNACland, the terms 'family' and 'group' are synonymous -- the former
  * is my term, the latter is AOL's.
  */
@@ -198,7 +199,6 @@ faim_internal int aim_cookie_free(aim_session_t *sess, aim_msgcookie_t *cookie);
 faim_internal void aim_locate_requestuserinfo(aim_session_t *sess, const char *sn);
 faim_internal fu32_t aim_locate_getcaps(aim_session_t *sess, aim_bstream_t *bs, int len);
 faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t *bs, int len);
-faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps);
 faim_internal void aim_info_free(aim_userinfo_t *);
 faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_userinfo_t *);
 faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info);

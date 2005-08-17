@@ -442,7 +442,7 @@ faim_internal fu32_t aim_locate_getcaps_short(aim_session_t *sess, aim_bstream_t
 	return flags;
 }
 
-faim_internal int aim_putcap(aim_bstream_t *bs, fu32_t caps)
+faim_internal int aimbs_putcaps(aim_bstream_t *bs, fu32_t caps)
 {
 	int i;
 

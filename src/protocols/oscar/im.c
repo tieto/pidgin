@@ -483,7 +483,7 @@ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, c
 
 	aimbs_put16(&hdrbs, 0x0000); /* Unknown! */
 	aimbs_putraw(&hdrbs, ck, sizeof(ck)); /* I think... */
-	aim_putcap(&hdrbs, AIM_CAPS_CHAT);
+	aimbs_putcaps(&hdrbs, AIM_CAPS_CHAT);
 
 	aim_tlvlist_add_16(&itl, 0x000a, 0x0001);
 	aim_tlvlist_add_noval(&itl, 0x000f);
@@ -546,7 +546,7 @@ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const f
 
 	aimbs_put16(&fr->data, 0x0000);
 	aimbs_putraw(&fr->data, ck, 8);
-	aim_putcap(&fr->data, AIM_CAPS_BUDDYICON);
+	aimbs_putcaps(&fr->data, AIM_CAPS_BUDDYICON);
 
 	/* TLV t(000a) */
 	aimbs_put16(&fr->data, 0x000a);
@@ -626,7 +626,7 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
 
 	aimbs_put16(&fr->data, 0x0000);
 	aimbs_putraw(&fr->data, ck, 8);
-	aim_putcap(&fr->data, AIM_CAPS_ICQSERVERRELAY);
+	aimbs_putcaps(&fr->data, AIM_CAPS_ICQSERVERRELAY);
 
 	/* t(000a) l(0002) v(0001) */
 	aimbs_put16(&fr->data, 0x000a);
@@ -643,7 +643,7 @@ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg
 
 	aimbs_putle16(&fr->data, 11 + 16 /* 11 + (sizeof CLSID) */);
 	aimbs_putle16(&fr->data, 9);
-	aim_putcap(&fr->data, AIM_CAPS_EMPTY);
+	aimbs_putcaps(&fr->data, AIM_CAPS_EMPTY);
 	aimbs_putle16(&fr->data, 0);
 	aimbs_putle32(&fr->data, 0);
 	aimbs_putle8(&fr->data, 0);
@@ -725,7 +725,7 @@ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, fu
 
 	aimbs_put16(&hdrbs, 0x0000);
 	aimbs_putraw(&hdrbs, ck, 8);
-	aim_putcap(&hdrbs, AIM_CAPS_DIRECTIM);
+	aimbs_putcaps(&hdrbs, AIM_CAPS_DIRECTIM);
 
 	aim_tlvlist_add_16(&itl, 0x000a, 0x0001);
 	aim_tlvlist_add_raw(&itl, 0x0003, 4, ip);
@@ -819,7 +819,7 @@ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_
 		aim_bstream_init(&bs, buf, buflen);
 		aimbs_put16(&bs, AIM_RENDEZVOUS_PROPOSE);
 		aimbs_putraw(&bs, oft_info->cookie, 8);
-		aim_putcap(&bs, AIM_CAPS_SENDFILE);
+		aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);
 		aim_tlvlist_write(&bs, &subtl);
 		aim_tlvlist_free(&subtl);
 		aim_tlvlist_add_raw(&tl, 0x0005, bs.len, bs.data);
@@ -874,7 +874,7 @@ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_o
 	aimbs_put16(&fr->data, 0x001a);
 	aimbs_put16(&fr->data, AIM_RENDEZVOUS_ACCEPT);
 	aimbs_putraw(&fr->data, oft_info->cookie, 8);
-	aim_putcap(&fr->data, AIM_CAPS_SENDFILE);
+	aimbs_putcaps(&fr->data, AIM_CAPS_SENDFILE);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -907,7 +907,7 @@ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_o
 	aimbs_put16(&fr->data, 0x001a);
 	aimbs_put16(&fr->data, AIM_RENDEZVOUS_CANCEL);
 	aimbs_putraw(&fr->data, oft_info->cookie, 8);
-	aim_putcap(&fr->data, AIM_CAPS_SENDFILE);
+	aimbs_putcaps(&fr->data, AIM_CAPS_SENDFILE);
 
 	aim_tx_enqueue(sess, fr);
 
@@ -956,7 +956,7 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 		aimbs_putraw(&fr->data, ck, 8);
 
 		/* Put the 16 byte server relay capability */
-		aim_putcap(&fr->data, AIM_CAPS_ICQSERVERRELAY);
+		aimbs_putcaps(&fr->data, AIM_CAPS_ICQSERVERRELAY);
 
 		/* TLV t(000a) */
 		aimbs_put16(&fr->data, 0x000a);
@@ -973,7 +973,7 @@ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, i
 		{ /* V */
 			aimbs_putle16(&fr->data, 0x001b); /* L */
 			aimbs_putle16(&fr->data, 0x0008); /* XXX - Protocol version */
-			aim_putcap(&fr->data, AIM_CAPS_EMPTY);
+			aimbs_putcaps(&fr->data, AIM_CAPS_EMPTY);
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
 			aimbs_putle16(&fr->data, 0x0003); /* Client features? */
 			aimbs_putle16(&fr->data, 0x0000); /* Unknown */
