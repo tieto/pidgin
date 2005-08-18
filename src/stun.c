@@ -61,6 +61,9 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct in_addr in;
 	struct stun_attrib *attrib;
 	struct stun_header *hdr;
+	struct ifconf ifc;
+	struct ifreq *ifr;
+	struct sockaddr_in *sinptr;
 	
 	len = recv(source, buffer, 10240, 0);
 
@@ -85,9 +88,6 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	nattype.type = 1;
 	
 	// is it a NAT?
-	struct ifconf ifc;
-	struct ifreq *ifr;
-	struct sockaddr_in *sinptr;
 
 	ifc.ifc_len = sizeof(buffer);
 	ifc.ifc_req = (struct ifreq *) buffer;
@@ -119,6 +119,8 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	struct sockaddr_in addr;
 	struct stun_header data;
 	int ret = 0;
+	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
+	int port = gaim_prefs_get_int("/core/network/stun_port");
 	
 	if(nattype.status == 1) { // currently discovering
 		callbacks = g_slist_append(callbacks, cb);
@@ -147,9 +149,6 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 		return &nattype;
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
-
-	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
-	int port = gaim_prefs_get_int("/core/network/stun_port");
 	
 	if(port == 0 || ip == NULL || ip[0] == '\0') return NULL;
 	
