@@ -1711,6 +1711,9 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	contact = (GaimContact *)cnode;
 	group = (GaimGroup *)gnode;
 
+	/* Delete any buddy icon. */
+	gaim_buddy_set_icon(buddy, NULL);
+
 	/* Remove the node from its parent */
 	if (node->prev)
 		node->prev->next = node->next;
