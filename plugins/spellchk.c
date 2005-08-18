@@ -506,14 +506,18 @@ static int buf_get_line(char *ibuf, char **buf, int *position, int len)
 	if (pos == len)
 		return 0;
 
-	while (ibuf[pos++] != '\n') {
+	while (!(ibuf[pos] == '\n' ||
+	         (ibuf[pos] == '\r' && ibuf[pos + 1] != '\n')))
+	{
+		pos++;
 		if (pos == len)
 			return 0;
 	}
 
-	pos--;
+	if (pos != 0 && ibuf[pos] == '\n' && ibuf[pos - 1] == '\r')
+		ibuf[pos - 1] = '\0';
 
-	ibuf[pos] = 0;
+	ibuf[pos] = '\0';
 	*buf = &ibuf[spos];
 
 	pos++;
