@@ -781,6 +781,12 @@ load_accounts(void)
 		GaimAccount *new_acct;
 		new_acct = parse_account(child);
 		gaim_accounts_add(new_acct);
+
+		if (gaim_account_get_enabled(new_acct, gaim_core_get_ui()) &&
+			(gaim_presence_is_online(new_acct->presence)))
+		{
+			gaim_account_connect(new_acct);
+		}
 	}
 }
 
@@ -1258,7 +1264,7 @@ gaim_account_set_enabled(GaimAccount *account, const char *ui,
 	g_return_if_fail(ui      != NULL);
 
 	gaim_account_set_ui_bool(account, ui, "auto-login", value);
-	if (gaim_presence_is_online(account->presence))
+	if (value && gaim_presence_is_online(account->presence))
 		gaim_account_connect(account);
 }
 
