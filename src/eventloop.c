@@ -67,7 +67,7 @@ gaim_eventloop_set_ui_ops(GaimEventLoopUiOps *ops)
 GaimEventLoopUiOps *
 gaim_eventloop_get_ui_ops(void)
 {
-	g_assert(eventloop_ui_ops != NULL);
+	g_return_val_if_fail(eventloop_ui_ops != NULL, NULL);
 
 	return eventloop_ui_ops;
 }

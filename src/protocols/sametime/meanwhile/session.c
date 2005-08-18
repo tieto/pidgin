@@ -548,7 +548,7 @@ static void session_process(struct mwSession *s,
   struct mwGetBuffer *b;
   struct mwMessage *msg;
 
-  g_assert(s != NULL);
+  g_return_if_fail(s != NULL);
   g_return_if_fail(buf != NULL);
 
   /* ignore zero-length messages */

@@ -77,8 +77,8 @@ void gaim_dbus_register_pointer(gpointer node, GaimDBusType *type)
 {
     static gint last_id = 0;
 
-    g_assert(map_node_id);
-    g_assert(g_hash_table_lookup(map_node_id, node) == NULL);
+    g_return_if_fail(map_node_id);
+    g_return_if_fail(g_hash_table_lookup(map_node_id, node) == NULL);
 	
     last_id++;
     g_hash_table_insert(map_node_id, node, GINT_TO_POINTER(last_id));
@@ -633,7 +633,7 @@ static void gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 	gpointer ptr = NULL;
 	if (gaim_value_is_outgoing(gaim_values[i])) {
 	    ptr = my_arg(gpointer);
-	    g_assert(ptr);
+	    g_return_if_fail(ptr);
 	}
 	
 	switch(gaim_values[i]->type) {
@@ -661,7 +661,7 @@ static void gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 	    dbus_message_iter_append_basic(iter, DBUS_TYPE_INT32, &id);
 	    break;
 	default:		/* no conversion implemented */
-	    g_assert_not_reached();
+	    g_return_if_reached();
 	}
     }
 }

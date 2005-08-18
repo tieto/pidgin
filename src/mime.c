@@ -66,8 +66,8 @@ static void fields_set(struct mime_fields *mf,
 		       const char *key, const char *val) {
   char *k, *v;
 
-  g_assert(mf != NULL);
-  g_assert(mf->map != NULL);
+  g_return_if_fail(mf != NULL);
+  g_return_if_fail(mf->map != NULL);
 
   k = g_ascii_strdown(key, -1);
   v = g_strdup(val);
@@ -89,8 +89,8 @@ static const char *fields_get(struct mime_fields *mf,
   char *kdown;
   const char *ret;
 
-  g_assert(mf != NULL);
-  g_assert(mf->map != NULL);
+  g_return_val_if_fail(mf != NULL, NULL);
+  g_return_val_if_fail(mf->map != NULL, NULL);
 
   kdown = g_ascii_strdown(key, -1);
   ret = g_hash_table_lookup(mf->map, kdown);
@@ -101,7 +101,7 @@ static const char *fields_get(struct mime_fields *mf,
 
 
 static void fields_init(struct mime_fields *mf) {
-  g_assert(mf != NULL);
+  g_return_if_fail(mf != NULL);
 
   mf->map = g_hash_table_new_full(g_str_hash, g_str_equal,
 				  g_free, g_free);
@@ -190,7 +190,7 @@ static void field_write(const char *key, const char *val, GString *str) {
 
 
 static void fields_write(struct mime_fields *mf, GString *str) {
-  g_assert(mf != NULL);
+  g_return_if_fail(mf != NULL);
 
   g_hash_table_foreach(mf->map, (GHFunc) field_write, str);
   g_string_append(str, "\r\n");
@@ -198,7 +198,7 @@ static void fields_write(struct mime_fields *mf, GString *str) {
 
 
 static void fields_destroy(struct mime_fields *mf) {
-  g_assert(mf != NULL);
+  g_return_if_fail(mf != NULL);
 
   g_hash_table_destroy(mf->map);
   g_list_free(mf->keys);
@@ -297,7 +297,7 @@ void gaim_mime_part_set_field(GaimMimePart *part,
 
 const char *gaim_mime_part_get_data(GaimMimePart *part) {
   g_return_val_if_fail(part != NULL, NULL);
-  g_assert(part->data != NULL);
+  g_return_val_if_fail(part->data != NULL, NULL);
 
   return part->data->str;
 }
@@ -311,7 +311,7 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
   g_return_if_fail(data != NULL);
   g_return_if_fail(len != NULL);
 
-  g_assert(part->data != NULL);
+  g_return_if_fail(part->data != NULL);
 
   enc = gaim_mime_part_get_field(part, "content-transfer-encoding");
 
@@ -347,7 +347,7 @@ void gaim_mime_part_get_data_decoded(GaimMimePart *part,
 
 gsize gaim_mime_part_get_length(GaimMimePart *part) {
   g_return_val_if_fail(part != NULL, 0);
-  g_assert(part->data != NULL);
+  g_return_val_if_fail(part->data != NULL, 0);
 
   return part->data->len;
 }

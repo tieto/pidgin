@@ -671,7 +671,7 @@ int mwConference_open(struct mwConference *conf) {
   g_return_val_if_fail(conf->channel == NULL, -1);
 
   session = mwService_getSession(MW_SERVICE(conf->service));
-  g_assert(session != NULL);
+  g_return_val_if_fail(session != NULL, -1);
 
   if(! conf->name) {
     char *user = mwSession_getProperty(session, mwSession_AUTH_USER_ID);

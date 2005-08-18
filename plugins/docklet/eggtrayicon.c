@@ -159,7 +159,7 @@ egg_tray_icon_get_orientation_property (EggTrayIcon *icon)
   gulong bytes_after;
   int error, result;
 
-  g_assert (icon->manager_window != None);
+  g_return_if_fail(icon->manager_window != None);
 
 #if GTK_CHECK_VERSION(2,1,0)
   xdisplay = GDK_DISPLAY_XDISPLAY (gtk_widget_get_display (GTK_WIDGET (icon)));

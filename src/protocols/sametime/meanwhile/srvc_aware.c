@@ -141,8 +141,8 @@ static void attrib_free(struct mwAwareAttribute *attrib) {
 
 static struct aware_entry *aware_find(struct mwServiceAware *srvc,
 				      struct mwAwareIdBlock *srch) {
-  g_assert(srvc != NULL);
-  g_assert(srvc->entries != NULL);
+  g_return_val_if_fail(srvc != NULL, NULL);
+  g_return_val_if_fail(srvc->entries != NULL, NULL);
   g_return_val_if_fail(srch != NULL, NULL);
   
   return g_hash_table_lookup(srvc->entries, srch);
