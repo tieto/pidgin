@@ -198,7 +198,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 static void
 set_dialog_icon(AccountPrefsDialog *dialog)
 {
-	char *filename = gaim_buddy_icons_get_full_path(dialog>icon_path);
+	char *filename = gaim_buddy_icons_get_full_path(dialog->icon_path);
 	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), filename);
 	g_free(filename);
 }
