@@ -4378,9 +4378,9 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 	}
 
 	if (pixbuf) {
+		struct im_image_data *t = g_new(struct im_image_data, 1);
 		filename = imhtml->funcs->image_get_filename(image);
 		imhtml->funcs->image_ref(id);
-		struct im_image_data *t = g_new(struct im_image_data, 1);
 		t->id = id;
 		t->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 		imhtml->im_images = g_slist_prepend(imhtml->im_images, t);

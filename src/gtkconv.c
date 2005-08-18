@@ -2196,6 +2196,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	gint nb_x, nb_y, x_rel, y_rel;
 	int tab_clicked;
 	GtkWidget *page;
+	GtkWidget *tab;
 
 	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -2234,7 +2235,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 
 	/* Find out which tab was dragged. */
 	page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), tab_clicked);
-	GtkWidget *tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(gtkwin->notebook), page);
+	tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(gtkwin->notebook), page);
 	
 	gtkwin->drag_min_x = tab->allocation.x      + nb_x;
 	gtkwin->drag_min_y = tab->allocation.y      + nb_y;
