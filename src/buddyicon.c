@@ -494,6 +494,18 @@ gaim_buddy_icons_get_cache_dir(void)
 	return cache_dir;
 }
 
+char *gaim_buddy_icons_get_full_path(const char *icon) {
+	struct stat st;
+
+	if (icon == NULL)
+		return NULL;
+
+	if (g_stat(icon, &st) == 0)
+		return g_strdup(icon);
+	else
+		return g_build_filename(gaim_buddy_icons_get_cache_dir(), icon, NULL);
+}
+
 void *
 gaim_buddy_icons_get_handle()
 {

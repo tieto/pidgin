@@ -1210,6 +1210,31 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 {
 	g_return_if_fail(account != NULL);
 
+	/* Delete an existing icon from the cache. */
+	if (account->buddy_icon != NULL && (icon == NULL || strcmp(account->buddy_icon, icon)))
+	{
+		const char *dirname = gaim_buddy_icons_get_cache_dir();
+		struct stat st;
+
+		if (g_stat(account->buddy_icon, &st) == 0)
+		{
+			/* The file exists. This is a full path. */
+
+			/* XXX: This is a hack so we only delete the file if it's
+			 * in the cache dir. Otherwise, people who upgrade (who
+			 * may have buddy icon filenames set outside of the cache
+			 * dir) could lose files. */
+			if (!strncmp(dirname, account->buddy_icon, strlen(dirname)))
+				g_unlink(account->buddy_icon);
+		}
+		else
+		{
+			char *filename = g_build_filename(dirname, account->buddy_icon, NULL);
+			g_unlink(filename);
+			g_free(filename);
+		}
+	}
+
 	g_free(account->buddy_icon);
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
 	if (gaim_account_is_connected(account))
@@ -1939,6 +1964,9 @@ gaim_accounts_delete(GaimAccount *account)
 
 	/* Remove this account's pounces */
 	gaim_pounce_destroy_all_by_account(account);
+
+	/* This will cause the deletion of an old buddy icon. */
+	gaim_account_set_buddy_icon(account, NULL);
 
 	gaim_account_destroy(account);
 }

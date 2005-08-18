@@ -3413,7 +3413,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimConvImFlags flags = 0;
 	struct buddyinfo *bi;
-	const char *iconfile;
+	char *iconfile;
 	GString *message;
 	gchar *tmp;
 	aim_mpmsg_section_t *curpart;
@@ -3449,7 +3449,8 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 		}
 	}
 
-	if ((iconfile = gaim_account_get_buddy_icon(account)) &&
+	iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
+	if ((iconfile != NULL) &&
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
 		FILE *file;
 		struct stat st;
@@ -3475,6 +3476,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 			gaim_debug_error("oscar",
 					   "Can't stat buddy icon file!\n");
 	}
+	g_free(iconfile);
 
 	message = g_string_new("");
 	curpart = args->mpmsg.parts;
@@ -4820,7 +4822,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 
 	if (od->set_icon) {
 		struct stat st;
-		const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+		char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gaim_connection_get_account(gc)));
 		if (iconfile == NULL) {
 			aim_ssi_delicon(od->sess);
 		} else if (!g_stat(iconfile, &st)) {
@@ -4841,6 +4843,7 @@ static gboolean gaim_icon_timerfunc(gpointer data) {
 			gaim_debug_error("oscar",
 				   "Can't stat buddy icon file!\n");
 		}
+		g_free(iconfile);
 		od->set_icon = FALSE;
 	}
 
@@ -5625,7 +5628,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
 	int ret = 0;
-	const char *iconfile = gaim_account_get_buddy_icon(account);
+	char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
 	char *tmpmsg = NULL;
 
 	if (dim && dim->connected) {
@@ -5715,6 +5718,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 				g_free(buf);
 			}
 		}
+		g_free(iconfile);
 
 		args.destsn = name;
 
@@ -6943,7 +6947,7 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 					aim_reqservice(od->sess, od->conn, AIM_CONN_TYPE_ICON);
 				} else {
 					struct stat st;
-					const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+					char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gaim_connection_get_account(gc)));
 					if (iconfile == NULL) {
 						aim_ssi_delicon(od->sess);
 					} else if (!g_stat(iconfile, &st)) {
@@ -6964,13 +6968,16 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug_error("oscar",
 										 "Can't stat buddy icon file!\n");
 					}
+					g_free(iconfile);
 				}
 			} else if (flags == 0x81) {
-				const char *iconfile = gaim_account_get_buddy_icon(gaim_connection_get_account(gc));
+				char *iconfile = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gaim_connection_get_account(gc)));
 				if (iconfile == NULL)
 					aim_ssi_delicon(od->sess);
-				else
+				else {
 					aim_ssi_seticon(od->sess, md5, length);
+					g_free(iconfile);
+				}
 			}
 		} break;
 

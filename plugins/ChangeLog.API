@@ -76,6 +76,8 @@ version 2.0.0:
 	           gaim_gtkconv_get_tab_at_xy()
 	* Added:   gtk_imhtml_delete to clear out part of a imhtml buffer
 	* Changed: gaim_log_new(), added conv parameter
+	* Added:   gaim_buddy_icons_get_full_path(), to get the full path
+	           of a buddy icon setting
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

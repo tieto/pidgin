@@ -360,7 +360,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	JabberIq *iq;
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
-	const char *avatar_file = NULL;
+	char *avatar_file = NULL;
 
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
@@ -370,7 +370,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	 * Send only if there's actually any *information* to send
 	 */
 	vc_node = xmlnode_from_str(info, -1);
-	avatar_file = gaim_account_get_buddy_icon(gc->account);
+	avatar_file == gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gc->account));
 
 	if(!vc_node && avatar_file) {
 		vc_node = xmlnode_new("vCard");
@@ -409,6 +409,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 			} else if (error != NULL) {
 				g_error_free(error);
 			}
+			g_free(avatar_file);
 
 			iq = jabber_iq_new(js, JABBER_IQ_SET);
 			xmlnode_insert_child(iq->node, vc_node);

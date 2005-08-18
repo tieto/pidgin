@@ -402,6 +402,7 @@ msn_session_finish_login(MsnSession *session)
 {
 	GaimAccount *account;
 	GaimConnection *gc;
+	char *icon;
 
 	if (session->logged_in)
 		return;
@@ -409,8 +410,9 @@ msn_session_finish_login(MsnSession *session)
 	account = session->account;
 	gc = gaim_account_get_connection(account);
 
-	msn_user_set_buddy_icon(session->user,
-							gaim_account_get_buddy_icon(session->account));
+	icon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(session->account));
+	msn_user_set_buddy_icon(session->user, icon);
+	g_free(icon);
 
 	session->logged_in = TRUE;
 

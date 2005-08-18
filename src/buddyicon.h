@@ -239,6 +239,18 @@ void gaim_buddy_icons_set_cache_dir(const char *cache_dir);
 const char *gaim_buddy_icons_get_cache_dir(void);
 
 /**
+ * Takes a buddy icon and returns a full path.
+ *
+ * If @a icon is a full path to an existing file, a copy of
+ * @a icon is returned. Otherwise, a newly allocated string
+ * consiting of gaim_buddy_icons_get_cache_dir() + @a icon is
+ * returned.
+ *
+ * @return The full path for an icon.
+ */
+char *gaim_buddy_icons_get_full_path(const char *icon);
+
+/**
  * Returns the buddy icon subsystem handle.
  *
  * @return The subsystem handle.

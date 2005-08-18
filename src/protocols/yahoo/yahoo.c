@@ -2410,10 +2410,11 @@ static void yahoo_server_check(GaimAccount *account)
 static void yahoo_picture_check(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	const char *buddyicon;
+	char *buddyicon;
 
-	buddyicon = gaim_account_get_buddy_icon(account);
+	buddyicon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
 	yahoo_set_buddy_icon(gc, buddyicon);
+	g_free(buddyicon);
 }
 
 

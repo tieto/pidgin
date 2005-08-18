@@ -196,20 +196,11 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
-delete_buddy_icon(const char *filename)
+set_dialog_icon(AccountPrefsDialog *dialog)
 {
-	const char *dirname;
-
-	if (filename == NULL)
-		return;
-
-	/* XXX: This is a hack so we only delete the file if it's
-	 * in the cache dir. Otherwise, people who upgrade (who
-	 * may have buddy icon filenames set outside of the cache
-	 * dir) could lose files. */
-	dirname = gaim_buddy_icons_get_cache_dir();
-	if (!strncmp(dirname, filename, strlen(dirname)))
-		g_unlink(filename);
+	char *filename = gaim_buddy_icons_get_full_path(dialog>icon_path);
+	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), filename);
+	g_free(filename);
 }
 
 static void
@@ -308,7 +299,7 @@ icon_filesel_choose_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	if (dialog->icon_path)
 		g_free(dialog->icon_path);
 	dialog->icon_path = convert_buddy_icon(dialog->plugin, filename);
-	gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
+	set_dialog_icon(dialog);
 	gtk_widget_show(dialog->icon_entry);
 
 	gtk_widget_destroy(dialog->icon_filesel);
@@ -503,7 +494,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			if (dialog->icon_path)
 				g_free(dialog->icon_path);
 			dialog->icon_path = convert_buddy_icon(dialog->plugin, tmp);
-			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry), dialog->icon_path);
+			set_dialog_icon(dialog);
 			gtk_widget_show(dialog->icon_entry);
 			g_free(tmp);
 		}
@@ -549,7 +540,6 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	const char *dirname = gaim_buddy_icons_get_cache_dir();
 	char *random   = g_strdup_printf("%x", g_random_int());
 	char *filename = g_build_filename(dirname, random, NULL);
-	g_free(random);
 
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
 		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
@@ -561,6 +551,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 #if GTK_CHECK_VERSION(2,2,0)
 			g_strfreev(prpl_formats);
 #endif
+			g_free(random);
 			g_free(filename);
 			return NULL;
 		}
@@ -609,6 +600,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		if (!g_file_get_contents(path, &contents, &length, NULL) ||
 		    (image = g_fopen(filename, "wb")) == NULL)
 		{
+			g_free(random);
 			g_free(filename);
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 			g_object_unref(G_OBJECT(pixbuf));
@@ -621,6 +613,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			fclose(image);
 			g_unlink(filename);
 
+			g_free(random);
 			g_free(filename);
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 			g_object_unref(G_OBJECT(pixbuf));
@@ -633,7 +626,8 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			g_object_unref(G_OBJECT(pixbuf));
 #endif
 
-		return filename;
+		g_free(filename);
+		return random;
 	}
 #if GTK_CHECK_VERSION(2,2,0)
 	else
@@ -675,6 +669,7 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			pixbuf = scale;
 		}
 		if (error) {
+			g_free(random);
 			g_free(filename);
 			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
@@ -695,11 +690,13 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		g_strfreev(prpl_formats);
 		if (!error) {
 			g_object_unref(G_OBJECT(pixbuf));
-			return filename;
+			g_free(filename);
+			return random;
 		} else {
 			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
 			g_error_free(error);
 		}
+		g_free(random);
 		g_free(filename);
 		g_object_unref(G_OBJECT(pixbuf));
 	}
@@ -938,7 +935,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		if (gaim_account_get_buddy_icon(dialog->account) != NULL) {
 			dialog->icon_path = g_strdup(gaim_account_get_buddy_icon(dialog->account));
-			gtk_image_set_from_file(GTK_IMAGE(dialog->icon_entry),dialog->icon_path);
+			set_dialog_icon(dialog);
 		}
 	}
 
@@ -1384,7 +1381,19 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 		g_free(dialog->protocol_id);
 
 	if (dialog->icon_path != NULL)
+	{
+		const char *icon = gaim_account_get_buddy_icon(dialog->account);
+		if (dialog->icon_path != NULL && (icon == NULL || strcmp(dialog->icon_path, icon)))
+		{
+			/* The user set an icon, which would've been cached by convert_buddy_icon,
+			 * but didn't save the changes. Delete the cache file. */
+			char *filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), dialog->icon_path, NULL);
+			g_unlink(filename);
+			g_free(filename);
+		}
+
 		g_free(dialog->icon_path);
+	}
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
@@ -1436,11 +1445,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		gaim_account_set_alias(dialog->account, NULL);
 
 	/* Buddy Icon */
-	value = gaim_account_get_buddy_icon(dialog->account);
-	if (value == NULL || dialog->icon_path == NULL || strcmp(value, dialog->icon_path)) {
-		delete_buddy_icon(value);
-		gaim_account_set_buddy_icon(dialog->account, dialog->icon_path);
-	}
+	gaim_account_set_buddy_icon(dialog->account, dialog->icon_path);
 
 	/* Remember Password */
 	gaim_account_set_remember_password(dialog->account,
