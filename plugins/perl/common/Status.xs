@@ -1,4 +1,3 @@
-
 #include "module.h"
 
 /* TODO
@@ -26,6 +25,11 @@ gaim_status_type_new_with_attrs(primitive, id, name, saveable, user_settable, in
 	Gaim::Value attr_value
 	...
 
+*/
+
+MODULE = Gaim::Status  PACKAGE = Gaim::Presence  PREFIX = gaim_presence_
+PROTOTYPES: ENABLE
+
 void 
 gaim_presence_add_list(presence, source_list)
 	Gaim::Presence presence
@@ -43,12 +47,6 @@ PPCODE:
 	}
 	gaim_presence_add_list(presence, t_GL);
 	
-*/
-
-/***************************XS Code Status.xs**************************/
-MODULE = Gaim::Status  PACKAGE = Gaim::Presence  PREFIX = gaim_presence_
-PROTOTYPES: ENABLE
-
 void 
 gaim_presence_add_status(presence, status)
 	Gaim::Presence presence

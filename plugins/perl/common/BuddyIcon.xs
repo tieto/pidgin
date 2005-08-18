@@ -1,15 +1,7 @@
-
 #include "module.h"
-
-/*
-TODO
-
-*/
-
 
 MODULE = Gaim::Buddy::Icon PACKAGE = Gaim::Buddy::Icon   PREFIX = gaim_buddy_icon_
 PROTOTYPES: ENABLE
-
 
 void
 gaim_buddy_icon_destroy(icon)

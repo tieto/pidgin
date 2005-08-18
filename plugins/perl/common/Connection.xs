@@ -1,19 +1,5 @@
 #include "module.h"
 
-/* TODO
-;
-
-;
-;
-;
-;;;;;
-;;;
-
-
-
-*/
-
-/**********************XS Code for Conversation.xs*********************************/
 MODULE = Gaim::Connection  PACKAGE = Gaim::GTK::Connection  PREFIX = gaim_gtk_connections_
 PROTOTYPES: ENABLE
 

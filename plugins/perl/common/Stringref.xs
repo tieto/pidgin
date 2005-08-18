@@ -1,15 +1,5 @@
 #include "module.h"
 
-/* TODO
-
-Gaim::Stringref
-gaim_stringref_printf(format, gaim_stringref_printf)
-	const char *format
-	...
-
-
-*/
-
 MODULE = Gaim::Stringref  PACKAGE = Gaim::Stringref  PREFIX = gaim_stringref_
 PROTOTYPES: ENABLE
 

@@ -52,38 +52,63 @@ void gaim_perl_request_cancel_cb(void * data, GaimRequestFields *fields) {
 	LEAVE;
 }
 
-
-/* TODO
-
-
-void *
-gaim_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb, user_data)
- 
-
-void *
-gaim_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb, user_data)
-
-void 
-gaim_request_field_account_set_filter(field, filter_func)
-
-
-void *
-gaim_request_action(handle, title, primary, secondary, default_action, user_data, action_count, gaim_request_action)
-
-
-void *
-gaim_request_choice(handle, title, primary, secondary, default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data, gaim_request_choice)
-
-void *
-gaim_request_choice_varg(handle, title, primary, secondary, default_value, ok_text, ok_cb, cancel_text, cancel_cb, user_data, choices)
-
-
-
-*/
-
-
 MODULE = Gaim::Request  PACKAGE = Gaim::Request  PREFIX = gaim_request_
 PROTOTYPES: ENABLE
+
+void *
+gaim_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb)
+	Gaim::Plugin handle
+	const char * title
+	const char * primary
+	const char * secondary
+	const char * default_value
+	gboolean multiline
+	gboolean masked
+	gchar * hint
+	const char * ok_text
+	SV * ok_cb
+	const char * cancel_text
+	SV * cancel_cb
+CODE:
+	GaimPerlRequestData *gpr;
+	STRLEN len;
+	char *basename, *package;
+	
+	basename = g_path_get_basename(handle->path);
+	gaim_perl_normalize_script_name(basename);
+	package = g_strdup_printf("Gaim::Script::%s", basename);
+	gpr = g_new(GaimPerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+	
+	RETVAL = gaim_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, G_CALLBACK(gaim_perl_request_ok_cb), cancel_text, G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
+OUTPUT:
+	RETVAL
+	
+void *
+gaim_request_file(handle, title, filename, savedialog, ok_cb, cancel_cb)
+	Gaim::Plugin handle
+	const char * title
+	const char * filename
+	gboolean savedialog
+	SV * ok_cb
+	SV * cancel_cb
+CODE:
+	GaimPerlRequestData *gpr;
+	STRLEN len;
+	char *basename, *package;
+
+	basename = g_path_get_basename(handle->path);
+	gaim_perl_normalize_script_name(basename);
+	package = g_strdup_printf("Gaim::Script::%s", basename);
+	gpr = g_new(GaimPerlRequestData, 1);
+	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
+	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
+
+	RETVAL = gaim_request_file(handle, title, filename, savedialog, G_CALLBACK(gaim_perl_request_ok_cb), G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
+OUTPUT:
+	RETVAL
+			
 
 void *
 gaim_request_fields(handle, title, primary, secondary, fields, ok_text, ok_cb, cancel_text, cancel_cb)
@@ -112,16 +137,6 @@ CODE:
 OUTPUT:
 	RETVAL
 
-
-
-
-
-
-
-
-
-
-
 void *
 gaim_request_action_varg(handle, title, primary, secondary, default_action, user_data, action_count, actions)
  	void * handle
@@ -132,8 +147,6 @@ gaim_request_action_varg(handle, title, primary, secondary, default_action, user
 	void *user_data 
 	size_t action_count
 	va_list actions
-
-
 
 void 
 gaim_request_close(type, uihandle)

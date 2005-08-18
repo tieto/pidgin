@@ -1,15 +1,7 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Notify  PACKAGE = Gaim::Notify  PREFIX = gaim_notify_
 PROTOTYPES: ENABLE
-
-
 
 void 
 gaim_notify_close(type, ui_handle)

@@ -3,7 +3,6 @@
 MODULE = Gaim::Xfer  PACKAGE = Gaim::Xfer  PREFIX = gaim_xfer_
 PROTOTYPES: ENABLE
 
-
 void 
 gaim_xfer_add(xfer)
 	Gaim::Xfer xfer

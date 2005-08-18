@@ -1,25 +1,51 @@
-
-
 #include "module.h"
 
-/* TODO
+typedef struct {
+	char *cb;
+} GaimPerlUrlData;
 
-void 
-gaim_url_fetch(url, full, user_agent, http11, void *, char *, size_t), data)
-	const char *url
-	gboolean full
-	const char *user_agent
-	gboolean http11
- 
-	const char *
-	size_t)
+void gaim_perl_util_url_cb(void *data, const char *url_data, size_t size) {
+        GaimPerlUrlData *gpr = (GaimPerlUrlData *)data;
+        dSP;
+        ENTER;
+        SAVETMPS;
+        PUSHMARK(sp);
 
-*/
+        XPUSHs(sv_2mortal(newSVpv(url_data, 0)));
+        PUTBACK;
 
-/**********************XS Code for Account.xs*********************************/
+        call_pv(gpr->cb, G_EVAL | G_SCALAR);
+        SPAGAIN;
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
+}
+
+
 MODULE = Gaim::Util  PACKAGE = Gaim::Util  PREFIX = gaim_
 PROTOTYPES: ENABLE	
-	
+
+void
+gaim_url_fetch(handle, url, full, user_agent, http11, cb)
+        Gaim::Plugin handle
+        const char *url
+        gboolean full
+        const char *user_agent
+        gboolean http11
+        SV * cb
+CODE:
+        GaimPerlUrlData *gpr;
+        STRLEN len;
+        char *basename, *package;
+
+        basename = g_path_get_basename(handle->path);
+        gaim_perl_normalize_script_name(basename);
+        package = g_strdup_printf("Gaim::Script::%s", basename);
+        gpr = g_new(GaimPerlUrlData, 1);
+
+	gpr->cb = g_strdup_printf("%s::%s", package, SvPV(cb, len));
+        gaim_url_fetch(url, full, user_agent, http11, gaim_perl_util_url_cb, gpr);
 
 int 
 gaim_build_dir(path, mode)

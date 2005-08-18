@@ -1,11 +1,4 @@
-
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Roomlist  PACKAGE = Gaim::Roomlist  PREFIX = gaim_roomlist_
 PROTOTYPES: ENABLE

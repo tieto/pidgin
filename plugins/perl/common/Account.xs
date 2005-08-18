@@ -1,7 +1,7 @@
-
 #include "module.h"
 
-/* TODO
+MODULE = Gaim::Account  PACKAGE = Gaim::Account  PREFIX = gaim_account_
+PROTOTYPES: ENABLE
 
 Gaim::Presence
 gaim_account_get_presence(account)
@@ -11,12 +11,6 @@ void
 gaim_account_set_presence(account, presence)
 	Gaim::Account account
 	Gaim::Presence presence
-
-*/
-
-/**********************XS Code for Account.xs*********************************/
-MODULE = Gaim::Account  PACKAGE = Gaim::Account  PREFIX = gaim_account_
-PROTOTYPES: ENABLE
 
 Gaim::Account
 gaim_account_new(username, protocol_id)

@@ -1,11 +1,7 @@
-
 #include "module.h"
-
 
 MODULE = Gaim::ImgStore  PACKAGE = Gaim::ImgStore  PREFIX = gaim_imgstore_
 PROTOTYPES: ENABLE
-
-
 
 int 
 gaim_imgstore_add(data, size, filename)

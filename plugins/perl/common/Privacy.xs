@@ -1,10 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Privacy  PACKAGE = Gaim::Privacy  PREFIX = gaim_privacy_
 PROTOTYPES: ENABLE

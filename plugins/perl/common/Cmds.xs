@@ -3,7 +3,6 @@
 MODULE = Gaim::Cmds  PACKAGE = Gaim::Cmds  PREFIX = gaim_cmd_
 PROTOTYPES: ENABLE
 
-
 void
 gaim_cmd_help(conv, cmd)
 	Gaim::Conversation conv

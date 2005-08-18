@@ -1,10 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Sound  PACKAGE = Gaim::Sound  PREFIX = gaim_sound_
 PROTOTYPES: ENABLE

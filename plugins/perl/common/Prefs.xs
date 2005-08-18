@@ -3,7 +3,6 @@
 MODULE = Gaim::Prefs  PACKAGE = Gaim::Prefs  PREFIX = gaim_prefs_
 PROTOTYPES: ENABLE
 
-
 void 
 gaim_prefs_add_bool(name, value)
 	const char *name

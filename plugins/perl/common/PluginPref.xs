@@ -1,11 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
-
 
 MODULE = Gaim::Pref  PACKAGE = Gaim::Pref  PREFIX = gaim_plugin_pref_
 PROTOTYPES: ENABLE

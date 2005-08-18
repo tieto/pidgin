@@ -1,10 +1,7 @@
 #include "module.h"
 
-
 MODULE = Gaim::Log  PACKAGE = Gaim::Log  PREFIX = gaim_log_
 PROTOTYPES: ENABLE
-
-
 
 int 
 gaim_log_common_sizer(log)
@@ -35,11 +32,10 @@ gaim_log_get_log_dir(type, name, account)
 void
 gaim_log_get_log_sets()
 PREINIT:
-        GList *l;
+        GHashTable *l;
 PPCODE:
-        for (l = gaim_log_get_log_sets(); l != NULL; l = l->next) {
-                XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListEntry")));
-        }
+        l = gaim_log_get_log_sets(); 
+        XPUSHs(sv_2mortal(gaim_perl_bless_object(l, "GHashTable")));
 
 void
 gaim_log_get_logs(type, name, account)

@@ -33,7 +33,6 @@
 
 #undef PACKAGE
 
-
 #define group perl_group
 
 #ifdef _WIN32
@@ -175,6 +174,8 @@ perl_init(void)
 	};
 
 	my_perl = perl_alloc();
+        PERL_SET_CONTEXT(my_perl);
+	PL_perl_destruct_level = 1;
 	perl_construct(my_perl);
 #ifdef DEBUG
 	perl_parse(my_perl, xs_init, 4, perl_args, NULL);
@@ -186,7 +187,6 @@ perl_init(void)
 #else
 	perl_eval_pv(perl_definitions, TRUE); /* deprecated */
 #endif
-
 	perl_run(my_perl);
 }
 
@@ -195,7 +195,9 @@ perl_end(void)
 {
 	if (my_perl == NULL)
 		return;
-
+	
+	PL_perl_destruct_level = 1;
+        PERL_SET_CONTEXT(my_perl);
 	perl_eval_pv(
 		"foreach my $lib (@DynaLoader::dl_modules) {"
 		  "if ($lib =~ /^Gaim\\b/) {"
@@ -205,6 +207,8 @@ perl_end(void)
 		"}",
 		TRUE);
 
+	PL_perl_destruct_level = 1;
+        PERL_SET_CONTEXT(my_perl);
 	perl_destruct(my_perl);
 	perl_free(my_perl);
 	my_perl = NULL;
@@ -226,13 +230,17 @@ probe_perl_plugin(GaimPlugin *plugin)
 {
 	/* XXX This would be much faster if I didn't create a new
 	 *     PerlInterpreter every time I probed a plugin */
+	
 	PerlInterpreter *prober = perl_alloc();
 	char *argv[] = {"", plugin->path };
 	gboolean status = TRUE;
 	HV *plugin_info;
-
+        PERL_SET_CONTEXT(prober);
+	PL_perl_destruct_level = 1;
 	perl_construct(prober);
+
 	perl_parse(prober, xs_init, 2, argv, NULL);
+
 	perl_run(prober);
 
 	plugin_info = perl_get_hv("PLUGIN_INFO", FALSE);
@@ -367,9 +375,10 @@ probe_perl_plugin(GaimPlugin *plugin)
 		}
 	}
 	
+	PL_perl_destruct_level = 1;
+        PERL_SET_CONTEXT(prober);
 	perl_destruct(prober);
 	perl_free(prober);
-
 	return status;
 }
 
@@ -390,10 +399,12 @@ load_perl_plugin(GaimPlugin *plugin)
 	plugin->handle = gps;
 
 	atmp[1] = gps->package;
-
+	
+        PERL_SET_CONTEXT(my_perl);
 	execute_perl("Gaim::PerlLoader::load_n_eval", 2, atmp);
 
 	{
+		PERL_SET_CONTEXT(my_perl);
 		dSP;
 		ENTER;
 		SAVETMPS;
@@ -423,6 +434,7 @@ load_perl_plugin(GaimPlugin *plugin)
 static void
 destroy_package(const char *package)
 {
+        PERL_SET_CONTEXT(my_perl);
 	dSP;
 
 	ENTER;
@@ -454,6 +466,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 
 	if (gps->unload_sub != NULL)
 	{
+        	PERL_SET_CONTEXT(my_perl);
 		dSP;
 		ENTER;
 		SAVETMPS;

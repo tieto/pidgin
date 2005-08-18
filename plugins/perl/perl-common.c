@@ -178,7 +178,7 @@ execute_perl(const char *function, int argc, char **args)
 	int count = 0, i, ret_value = 1;
 	SV *sv_args[argc];
 	STRLEN na;
-
+        PERL_SET_CONTEXT(my_perl);
 	/*
 	 * Set up the perl environment, push arguments onto the
 	 * perl stack, then call the given function
@@ -196,6 +196,7 @@ execute_perl(const char *function, int argc, char **args)
 	}
 
 	PUTBACK;
+        PERL_SET_CONTEXT(my_perl);
 	count = call_pv(function, G_EVAL | G_SCALAR);
 	SPAGAIN;
 

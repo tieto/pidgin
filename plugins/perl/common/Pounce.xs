@@ -1,10 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Pounce  PACKAGE = Gaim::Pounce  PREFIX = gaim_pounce_
 PROTOTYPES: ENABLE

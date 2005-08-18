@@ -3,7 +3,6 @@
 MODULE = Gaim::Network  PACKAGE = Gaim::Network  PREFIX = gaim_network_
 PROTOTYPES: ENABLE
 
-
 const char *
 gaim_network_get_local_system_ip(fd)
 	int fd

@@ -1,12 +1,5 @@
-
 #include "module.h"
 
-/* TODO
-
-
-*/
-
-/**********************XS Code for Account.xs*********************************/
 MODULE = Gaim::Cipher  PACKAGE = Gaim::Cipher  PREFIX = gaim_cipher_
 PROTOTYPES: ENABLE
 

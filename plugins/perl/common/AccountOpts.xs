@@ -1,10 +1,5 @@
 #include "module.h"
 
-/* TODO
-
-*/
-
-/**********************XS Code for Account.xs*********************************/
 MODULE = Gaim::Account::Option  PACKAGE = Gaim::Account::Option  PREFIX = gaim_account_option_
 PROTOTYPES: ENABLE
 

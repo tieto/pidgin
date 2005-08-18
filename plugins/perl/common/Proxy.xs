@@ -1,14 +1,7 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::Proxy  PACKAGE = Gaim::Proxy  PREFIX = gaim_proxy_
 PROTOTYPES: ENABLE
-
 
 Gaim::ProxyInfo
 gaim_global_proxy_get_info()

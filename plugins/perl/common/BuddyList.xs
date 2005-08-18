@@ -1,23 +1,6 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
-/*
-TODO
-
-void *
-gaim_blist_node_action_new(label, cb, data, children)
-	char * label
-	SV * cb
-	SV * data
-	SV * children
-CODE:
-	RETVAL = gaim_perl_blist_node_action(label, cb, data, children);
-OUTPUT:
-	RETVAL
-
-*/
-
-
 MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList  PREFIX = gaim_
 PROTOTYPES: ENABLE
 

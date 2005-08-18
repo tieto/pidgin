@@ -1,16 +1,10 @@
-
 #include "module.h"
-
-/* TODO
-
-
-void *
-gaim_savedstatuses_get_handle()
-
-*/
 
 MODULE = Gaim::SavedStatus  PACKAGE = Gaim::SavedStatus  PREFIX = gaim_savedstatus_
 PROTOTYPES: ENABLE
+
+void *
+gaim_savedstatuses_get_handle()
 
 
 gboolean 

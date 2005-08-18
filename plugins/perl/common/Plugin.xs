@@ -3,8 +3,6 @@
 MODULE = Gaim::Plugin  PACKAGE = Gaim::Plugin  PREFIX = gaim_plugin_
 PROTOTYPES: ENABLE
 
-
-
 void 
 gaim_plugin_destroy(plugin)
 	Gaim::Plugin plugin

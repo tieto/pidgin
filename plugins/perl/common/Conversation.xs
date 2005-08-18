@@ -1,6 +1,5 @@
 #include "module.h"
 
-/**********************XS Code for Conversation.xs*********************************/
 MODULE = Gaim::Conv  PACKAGE = Gaim::Conv::Window  PREFIX = gaim_conv_window_
 PROTOTYPES: ENABLE
 

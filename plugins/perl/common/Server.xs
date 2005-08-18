@@ -1,11 +1,5 @@
 #include "module.h"
 
-/*
-TODO
-
-*/
-
-
 MODULE = Gaim::Serv  PACKAGE = Gaim::Serv  PREFIX = serv_
 PROTOTYPES: ENABLE
 

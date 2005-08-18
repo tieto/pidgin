@@ -1,10 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-gaim_prpl_got_account_statu(s) ... variable arguments lists suck.
-
-*/
 
 MODULE = Gaim::Prpl  PACKAGE = Gaim::Find  PREFIX = gaim_find_
 PROTOTYPES: ENABLE

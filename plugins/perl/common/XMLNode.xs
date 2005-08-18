@@ -1,10 +1,4 @@
-
 #include "module.h"
-
-/* TODO
-
-
-*/
 
 MODULE = Gaim::XMLNode  PACKAGE = Gaim::XMLNode  PREFIX = xmlnode_
 PROTOTYPES: ENABLE
