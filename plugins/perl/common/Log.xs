@@ -8,9 +8,8 @@ gaim_log_common_sizer(log)
 	Gaim::Log log
 
 void 
-gaim_log_common_writer(log, time, ext)
+gaim_log_common_writer(log, ext)
 	Gaim::Log log
-	time_t time
 	const char *ext
 
 
