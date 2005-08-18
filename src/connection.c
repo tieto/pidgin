@@ -157,7 +157,6 @@ gaim_connection_destroy(GaimConnection *gc)
 #if 0
 	GList *wins;
 #endif
-	GaimPresence *presence = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
 	g_return_if_fail(gc != NULL);
@@ -200,10 +199,6 @@ gaim_connection_destroy(GaimConnection *gc)
 	/* LOG	system_log(log_signoff, gc, NULL,
 	   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 	gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
-
-	presence = gaim_account_get_presence(account);
-	if (gaim_presence_is_online(presence) == TRUE)
-		gaim_presence_set_status_active(presence, "offline", TRUE);
 
 #if 0
 	/* see comment later in file on if 0'd same code */
