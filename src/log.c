@@ -49,11 +49,13 @@ static void log_get_log_sets_common(GHashTable *sets);
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
 
-GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account, time_t time)
+GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
+					  GaimConversation *conv, time_t time)
 {
 	GaimLog *log = g_new0(GaimLog, 1);
 	log->name = g_strdup(gaim_normalize(account, name));
 	log->account = account;
+	log->conv = conv;
 	log->time = time;
 	log->type = type;
 	log->logger_data = NULL;
@@ -456,12 +458,13 @@ void gaim_log_init(void)
  * LOGGERS ******************************************************************
  ****************************************************************************/
 
-void gaim_log_common_writer(GaimLog *log, time_t time, const char *ext)
+void gaim_log_common_writer(GaimLog *log, const char *ext)
 {
 	char date[64];
 	GaimLogCommonLoggerData *data = log->logger_data;
 
-	if(!data) {
+	if (data == NULL)
+	{
 		/* This log is new */
 		char *dir, *filename, *path;
 
@@ -482,9 +485,15 @@ void gaim_log_common_writer(GaimLog *log, time_t time, const char *ext)
 		log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 
 		data->file = g_fopen(path, "a");
-		if (!data->file) {
+		if (data->file == NULL)
+		{
 			gaim_debug(GAIM_DEBUG_ERROR, "log",
 					"Could not create log file %s\n", path);
+
+			if (log->conv != NULL)
+				gaim_conversation_write(log->conv, NULL, _("Logging of this conversation failed."),
+										GAIM_MESSAGE_ERROR, time(NULL));
+
 			g_free(path);
 			return;
 		}
@@ -518,7 +527,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 			GaimLogCommonLoggerData *data;
 			time_t stamp = gaim_str_to_time(filename, FALSE);
 
-			log = gaim_log_new(type, name, account, stamp);
+			log = gaim_log_new(type, name, account, NULL, stamp);
 			log->logger = logger;
 			log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 			data->path = g_build_filename(path, filename, NULL);
@@ -769,7 +778,7 @@ static void html_logger_write(GaimLog *log, GaimMessageFlags type,
 	if(!data) {
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		gaim_log_common_writer(log, time, ".html");
+		gaim_log_common_writer(log, ".html");
 
 		data = log->logger_data;
 
@@ -910,7 +919,7 @@ static void txt_logger_write(GaimLog *log,
 		 */
 		const char *prpl =
 			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		gaim_log_common_writer(log, time, ".txt");
+		gaim_log_common_writer(log, ".txt");
 
 		data = log->logger_data;
 
@@ -1092,7 +1101,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					newlen--;
 
 				if (newlen != 0) {
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
+					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
 					log->logger = &old_logger;
 					log->time = lasttime;
 					data = g_new0(struct old_logger_data, 1);
@@ -1143,7 +1152,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, -1);
+			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
 			log->logger = &old_logger;
 			log->time = lasttime;
 			data = g_new0(struct old_logger_data, 1);

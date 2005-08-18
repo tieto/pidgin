@@ -113,6 +113,7 @@ struct _GaimLog {
 	char *name;                           /**< The name of this log */
 	GaimAccount *account;                 /**< The account this log is taking
 											   place on */
+	GaimConversation *conv;               /**< The conversation being logged */
 	time_t time;                          /**< The time this conversation
 											   started */
 	GaimLogLogger *logger;                /**< The logging mechanism this log
@@ -170,11 +171,12 @@ extern "C" {
  * @param name        The name of this conversation (screenname, chat name,
  *                    etc.)
  * @param account     The account the conversation is occurring on
+ * @param conv        The conversation being logged
  * @param time        The time this conversation started
  * @return            The new log
  */
-GaimLog *gaim_log_new(GaimLogType type, const char *name,
-		GaimAccount *account, time_t time);
+GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
+					  GaimConversation *conv, time_t time);
 
 /**
  * Frees a log
@@ -316,10 +318,9 @@ void gaim_log_set_free(GaimLogSet *set);
  * file handle and log path.
  *
  * @param log   The log to write to.
- * @param time  The time of the item being logged.
  * @param ext   The file extension to give to this log file.
  */
-void gaim_log_common_writer(GaimLog *log, time_t time, const char *ext);
+void gaim_log_common_writer(GaimLog *log, const char *ext);
 
 /**
  * Returns a sorted GList of GaimLogs of the requested type.

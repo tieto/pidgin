@@ -628,7 +628,7 @@ gaim_conversation_chat_cleanup_for_rejoin(GaimConversation *conv)
 
 	gaim_log_free(conv->log);
 	conv->log = gaim_log_new(GAIM_LOG_CHAT, gaim_conversation_get_name(conv),
-							 account, time(NULL));
+							 account, conv, time(NULL));
 
 	gc = gaim_account_get_connection(account);
 
@@ -686,7 +686,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 											   g_free, NULL);
 	conv->log          = gaim_log_new(type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT :
 									  GAIM_LOG_IM, conv->name, account,
-									  time(NULL));
+									  conv, time(NULL));
 	/* copy features from the connection. */
 	conv->features = gc->flags;
 	

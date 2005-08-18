@@ -1842,7 +1842,7 @@ gaim_account_get_log(GaimAccount *account)
 		gc = gaim_account_get_connection(account);
 
 		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM,
-				gaim_account_get_username(account), account,
+				gaim_account_get_username(account), account, NULL,
 				(gc != NULL && gc->login_time != 0) ? gc->login_time : time(NULL));
 	}
 
