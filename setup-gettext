@@ -27,6 +27,7 @@ VERBOSE=0
 
 parse_gettext_version() {
 	GETTEXT_VERSION=`$GETTEXT_TOOL --version | sed -n 's/^.*\([0-9][0-9]*\)\.\([0-9][0-9]*\)\.\([0-9][0-9]*\).*$/\1.\2.\3/p'`
+	test -z "$GETTEXT_VERSION" && GETTEXT_VERSION=`$GETTEXT_TOOL --version | sed -n 's/^.*\([0-9]\+\)\.\([0-9]\+\).*$/\1.\2/p'`
 	GETTEXT_MAJOR_VERSION=`echo $GETTEXT_VERSION | cut -d. -f1`
 	GETTEXT_MINOR_VERSION=`echo $GETTEXT_VERSION | cut -d. -f2`
 	GETTEXT_MICRO_VERSION=`echo $GETTEXT_VERSION | cut -d. -f3`
