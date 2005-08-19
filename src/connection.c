@@ -121,7 +121,6 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 	gc = g_new0(GaimConnection, 1);
 	GAIM_DBUS_REGISTER_POINTER(gc, GaimConnection);
 
-
 	gc->prpl = prpl;
 	if ((password != NULL) && (*password != '\0'))
 		gc->password = g_strdup(password);

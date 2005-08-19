@@ -62,7 +62,6 @@ src/gtkroomlist.c
 src/gtksavedstatuses.c
 src/gtksound.c
 src/gtkstatusbox.c
-src/gtkstatusselector.c
 src/gtkstock.c
 src/gtkutils.c
 src/log.c
