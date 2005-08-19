@@ -247,6 +247,12 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2, _("Away"), NULL, "away");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
+	/*
+	 * TODO: This triggers a callback of gaim_gtk_status_box_changed().
+	 *       That's bad.  We should at least try not figure out what
+	 *       status the user's accounts are set to instead of always
+	 *       using "Available."
+	 */
 	gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
 
 }
@@ -415,10 +421,6 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 	gtk_gaim_status_box_refresh(box);
 }
 
-/*
- * TODO: This callback is triggered immediately, without the user actually
- *       changing anything.  That's bad.
- */
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
 {
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(box);
