@@ -752,16 +752,6 @@ static void update_buttons_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, GtkIM
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->fgcolor), buttons & GTK_IMHTML_FORECOLOR);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->bgcolor), buttons & GTK_IMHTML_BACKCOLOR);
 
-	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->clear),
-							 (buttons & GTK_IMHTML_BOLD ||
-							  buttons & GTK_IMHTML_ITALIC ||
-							  buttons & GTK_IMHTML_UNDERLINE ||
-							  buttons & GTK_IMHTML_GROW ||
-							  buttons & GTK_IMHTML_SHRINK ||
-							  buttons & GTK_IMHTML_FACE ||
-							  buttons & GTK_IMHTML_FORECOLOR ||
-							  buttons & GTK_IMHTML_BACKCOLOR));
-
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->image), buttons & GTK_IMHTML_IMAGE);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->link), buttons & GTK_IMHTML_LINK);
 	gtk_widget_set_sensitive(GTK_WIDGET(toolbar->smiley), buttons & GTK_IMHTML_SMILEY);
