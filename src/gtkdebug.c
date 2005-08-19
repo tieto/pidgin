@@ -333,8 +333,8 @@ regex_match(DebugWindow *win, const gchar *text) {
 
 		gtk_imhtml_append_text(imhtml, text, 0);
 
-		/* If we're not highlighting and the expression isn't inverted,
-		 * we're done and move on.
+		/* If we're not highlighting ir the expression is inverted, we're
+		 * done and move on.
 		 */
 		if(!win->highlight || inverted == REG_NOMATCH) {
 			g_free(plaintext);
