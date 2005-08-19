@@ -272,7 +272,7 @@ if test "x$enable_deprecated" = no; then
 fi
 
 if test "x$GCC" = "xyes"; then
-	CFLAGS="$CFLAGS -Wall -Wdeclaration-after-statement -g3"
+	CFLAGS="$CFLAGS -Wall -g3"
 fi
 AC_SUBST(CFLAGS)
 
