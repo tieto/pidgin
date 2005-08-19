@@ -47,13 +47,13 @@ typedef BOOL WINAPI gaim_GetMonitorInfo(HMONITOR, LPMONITORINFO);
 static gboolean
 get_rect_from_monitor(HMODULE hmod, HMONITOR monitor, RECT *rect) {
 	gaim_GetMonitorInfo *the_GetMonitorInfo;
+	MONITORINFO info;
 
 	if (!(the_GetMonitorInfo = (gaim_GetMonitorInfo*)
 		GetProcAddress(hmod, "GetMonitorInfoA"))) {
 		return FALSE;
 	}
 
-	MONITORINFO info;
 	info.cbSize = sizeof(info);
 	if (!the_GetMonitorInfo(monitor, &info)) {
 		return FALSE;
@@ -71,18 +71,19 @@ get_rect_from_monitor(HMODULE hmod, HMONITOR monitor, RECT *rect) {
 static gboolean
 get_rect_at_point_multimonitor(POINT pt, RECT *rect) {
 	HMODULE hmod;
+	gaim_MonitorFromPoint *the_MonitorFromPoint;
+	HMONITOR monitor;
 
 	if (!(hmod = GetModuleHandle("user32"))) {
 		return FALSE;
 	}
 
-	gaim_MonitorFromPoint *the_MonitorFromPoint;
 	if (!(the_MonitorFromPoint = (gaim_MonitorFromPoint*)
 		GetProcAddress(hmod, "MonitorFromPoint"))) {
 		return FALSE;
 	}
 
-	HMONITOR monitor =
+	monitor =
 		the_MonitorFromPoint(pt, MONITOR_DEFAULTTOPRIMARY);
 
 	return get_rect_from_monitor(hmod, monitor, rect);
@@ -95,18 +96,19 @@ get_rect_at_point_multimonitor(POINT pt, RECT *rect) {
 static gboolean
 get_rect_of_window_multimonitor(HWND window, RECT *rect) {
 	HMODULE hmod;
+	gaim_MonitorFromWindow *the_MonitorFromWindow;
+	HMONITOR monitor;
 
 	if (!(hmod = GetModuleHandle("user32"))) {
 		return FALSE;
 	}
 
-	gaim_MonitorFromWindow *the_MonitorFromWindow;
 	if (!(the_MonitorFromWindow = (gaim_MonitorFromWindow*)
 		GetProcAddress(hmod, "MonitorFromWindow"))) {
 		return FALSE;
 	}
 
-	HMONITOR monitor =
+	monitor =
 		the_MonitorFromWindow(window, MONITOR_DEFAULTTOPRIMARY);
 
 	return get_rect_from_monitor(hmod, monitor, rect);
