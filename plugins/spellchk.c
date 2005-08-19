@@ -56,7 +56,6 @@
 enum {
 	BAD_COLUMN,
 	GOOD_COLUMN,
-	WORD_ONLY_COLUMN,
 	N_COLUMNS
 };
 
@@ -76,7 +75,7 @@ typedef struct _spellchk spellchk;
 static GtkListStore *model;
 
 static gboolean
-is_word_uppercase(const gchar *word)
+is_word_uppercase(gchar *word)
 {
 	for (; word[0] != '\0'; word = g_utf8_find_next_char (word, NULL)) {
 		if (!g_unichar_isupper(g_utf8_get_char(word)) &&
@@ -88,7 +87,7 @@ is_word_uppercase(const gchar *word)
 }
 
 static gboolean
-is_word_lowercase(const gchar *word)
+is_word_lowercase(gchar *word)
 {
 	for (; word[0] != '\0'; word = g_utf8_find_next_char(word, NULL)) {
 		if (!g_unichar_islower(g_utf8_get_char(word)) &&
@@ -100,7 +99,7 @@ is_word_lowercase(const gchar *word)
 }
 
 static gboolean
-is_word_proper(const gchar *word)
+is_word_proper(gchar *word)
 {
 	if (word[0] == '\0')
 		return FALSE;
@@ -112,73 +111,13 @@ is_word_proper(const gchar *word)
 }
 
 static gchar *
-make_word_proper(const gchar *word)
+make_word_proper(gchar *word)
 {
 	gchar *state = g_utf8_strdown(word, -1);
 
 	state[0] = g_unichar_toupper(g_utf8_get_char(word));
 
 	return state;
-}
-
-static void
-substitute_simple_buffer(GtkTextBuffer *buffer)
-{
-	GtkTextIter start;
-	GtkTextIter end;
-	GtkTreeIter treeiter;
-	gchar *text = NULL;
-
-	gtk_text_buffer_get_iter_at_offset(buffer, &start, 0);
-	gtk_text_buffer_get_iter_at_offset(buffer, &end, 0);
-	gtk_text_iter_forward_to_end(&end);
-
-	text = gtk_text_buffer_get_text(buffer, &start, &end, FALSE);
-
-	if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &treeiter) && text) {
-		do{
-			GValue val0 = {0, };
-			GValue val1 = {0, };
-			GValue val2 = {0, };
-			const gchar *bad;
-			const gchar *good;
-			gchar *tmpbad;
-			gchar *tmptext;
-			gchar *cursor;
-			gboolean word_only;
-			glong char_pos;
-
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, BAD_COLUMN, &val0);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, GOOD_COLUMN, &val1);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &treeiter, WORD_ONLY_COLUMN, &val2);
-
-			bad = g_value_get_string(&val0);
-			good = g_value_get_string(&val1);
-			word_only = g_value_get_boolean(&val2);
-
-			tmpbad = g_utf8_casefold(bad, -1);
-			tmptext = g_utf8_casefold(text, -1);
-
-			/* using g_utf8_* to get /character/ offsets instead of byte offsets for buffer */
-			if (!word_only && (cursor = g_strrstr(tmptext, tmpbad)))
-			{
-				char_pos = g_utf8_pointer_to_offset(tmptext, cursor);
-				gtk_text_buffer_get_iter_at_offset(buffer, &start, char_pos);
-				gtk_text_buffer_get_iter_at_offset(buffer, &end, char_pos + g_utf8_strlen(bad, -1));
-				gtk_text_buffer_delete(buffer, &start, &end);
-
-				gtk_text_buffer_get_iter_at_offset(buffer, &start, char_pos);
-				gtk_text_buffer_insert(buffer, &start, good, -1);
-			}
-
-			g_value_unset(&val0);
-			g_value_unset(&val1);
-			g_value_unset(&val2);
-			g_free(tmpbad);
-			g_free(tmptext);
-
-		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &treeiter));
-	}
 }
 
 static gchar *
@@ -197,28 +136,21 @@ substitute_word(gchar *word)
 		do {
 			GValue val0 = {0, };
 			GValue val1 = {0, };
-			GValue val2 = {0, };
-			const char *bad;
-			const char *good;
+			char *bad;
+			char *good;
 			gchar *tmpbad;
 			gchar *tmpword;
-			gboolean word_only;
 
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val1);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 1, &val1);
 
-			bad = g_value_get_string(&val0);
-			good = g_value_get_string(&val1);
-			word_only = g_value_get_boolean(&val2);
+			bad = (char *) g_value_get_string(&val0);
+			good = (char *) g_value_get_string(&val1);
 
 			tmpbad = g_utf8_casefold(bad, -1);
 			tmpword = g_utf8_casefold(word, -1);
 
-			if (word_only && (!strcmp(bad, lowerword) || (!is_word_lowercase(bad) && !strcmp(tmpbad, tmpword)))) {
-				g_free(tmpbad);
-				g_free(tmpword);
-
+			if (!strcmp(bad, lowerword) || (!is_word_lowercase(bad) && !strcmp(tmpbad, tmpword))) {
 				outword = g_strdup(good);
 
 				if (is_word_lowercase(bad) && is_word_lowercase(good)) {
@@ -240,14 +172,15 @@ substitute_word(gchar *word)
 
 				g_value_unset(&val0);
 				g_value_unset(&val1);
-				g_value_unset(&val2);
+
+				g_free(tmpbad);
+				g_free(tmpword);
 
 				return outword;
 			}
-
 			g_value_unset(&val0);
 			g_value_unset(&val1);
-			g_value_unset(&val2);
+
 			g_free(tmpbad);
 			g_free(tmpword);
 
@@ -356,17 +289,6 @@ check_range(spellchk *spell, GtkTextBuffer *buffer,
 	gchar *tmp;
 	int period_count = 0;
 	gchar *word;
-	GtkTextMark *mark;
-	GtkTextIter pos;
-
-	substitute_simple_buffer(buffer);
-
-	mark = gtk_text_buffer_get_insert(buffer);
-	gtk_text_buffer_get_iter_at_mark(buffer, &pos, mark);
-	spell->pos = gtk_text_iter_get_offset(&pos);
-
-	gtk_text_buffer_get_iter_at_mark(buffer, &start, mark);
-	gtk_text_buffer_get_iter_at_mark(buffer, &end, mark);
 
 	/* We need to go backwords to find out if we are inside a word or not. */
 	gtk_text_iter_backward_char(&end);
@@ -480,7 +402,6 @@ insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 	if (len == 1)
 	  check_range(spell, buffer, start, *iter);
 
-	gtk_text_buffer_get_iter_at_offset(buffer, iter, spell->pos);
 	gtk_text_buffer_move_mark(buffer, spell->mark_insert_end, iter);
 
 	spell->inserting = FALSE;
@@ -527,7 +448,7 @@ delete_range_after(GtkTextBuffer *buffer,
 	spell->word = NULL;
 }
 
-static void
+spellchk*
 spellchk_new_attach(GaimConversation *c) {
 	spellchk *spell;
 	GtkTextBuffer *buffer;
@@ -540,8 +461,9 @@ spellchk_new_attach(GaimConversation *c) {
 	view = GTK_TEXT_VIEW(gtkconv->entry);
 
 	spell = g_object_get_data(G_OBJECT(view), SPELLCHK_OBJECT_KEY);
-	if (spell != NULL)
-		return;
+	if(spell){
+			return spell;
+	}
 
 	/* attach to the widget */
 	spell = g_new0(spellchk, 1);
@@ -574,7 +496,7 @@ spellchk_new_attach(GaimConversation *c) {
 			"insert-text",
 			G_CALLBACK(insert_text_after), spell);
 
-	return;
+	return spell;
 }
 
 static int buf_get_line(char *ibuf, char **buf, int *position, int len)
@@ -607,10 +529,18 @@ static int buf_get_line(char *ibuf, char **buf, int *position, int len)
 
 static void load_conf()
 {
-	/* Corrections to change "...", "(c)", "(r)", and "(tm)" to their
+	/* There are things in this word list that the plugin can't yet correct.
+	 * For example, BAD "words" with spaces in them. I've left them in the
+	 * list because if the plugin is enhanced in the future, they'll be
+	 * useful corrections.
+	 *
+	 * Corrections to change "...", "(c)", "(r)", and "(tm)" to their
 	 * Unicode character equivalents were not added here even though
-	 * they existed in the source list(s). I think these corrections
+	 * they existed in the source list(s). This plugin doesn't yet
+	 * handle them and it seems that even if it did, those corrections
 	 * would be more trouble than they're worth.
+	 *
+	 * - Richard Laager (rlaager)
 	 */
 	const char * const defaultconf =
 			"BAD abbout\nGOOD about\n"
@@ -639,7 +569,7 @@ static void load_conf()
 			"BAD advanage\nGOOD advantage\n"
 			"BAD affraid\nGOOD afraid\n"
 			"BAD afterthe\nGOOD after the\n"
-			"COMPLETE 0\nBAD againstt he\nGOOD against the\n"
+			"BAD againstt he\nGOOD against the\n"
 			"BAD aganist\nGOOD against\n"
 			"BAD aggresive\nGOOD aggressive\n"
 			"BAD agian\nGOOD again\n"
@@ -675,7 +605,7 @@ static void load_conf()
 			"BAD andone\nGOOD and one\n"
 			"BAD andteh\nGOOD and the\n"
 			"BAD andthe\nGOOD and the\n"
-			"COMPLETE 0\nBAD andt he\nGOOD and the\n"
+			"BAD andt he\nGOOD and the\n"
 			"BAD anothe\nGOOD another\n"
 			"BAD anual\nGOOD annual\n"
 			"BAD any1\nGOOD anyone\n"
@@ -692,15 +622,15 @@ static void load_conf()
 			"BAD aquisition\nGOOD acquisition\n"
 			"BAD aquisitions\nGOOD acquisitions\n"
 			"BAD arent\nGOOD aren't\n"
-			"COMPLETE 0\nBAD aren;t\nGOOD aren't\n"
+			"BAD aren;t\nGOOD aren't\n"
 			"BAD arguement\nGOOD argument\n"
 			"BAD arguements\nGOOD arguments\n"
-			"COMPLETE 0\nBAD arn't\nGOOD aren't\n"
+			"BAD arn't\nGOOD aren't\n"
 			"BAD arond\nGOOD around\n"
 			"BAD artical\nGOOD article\n"
 			"BAD articel\nGOOD article\n"
 			"BAD asdvertising\nGOOD advertising\n"
-			"COMPLETE 0\nBAD askt he\nGOOD ask the\n"
+			"BAD askt he\nGOOD ask the\n"
 			"BAD assistent\nGOOD assistant\n"
 			"BAD asthe\nGOOD as the\n"
 			"BAD atention\nGOOD attention\n"
@@ -752,7 +682,7 @@ static void load_conf()
 			"BAD brodcast\nGOOD broadcast\n"
 			"BAD butthe\nGOOD but the\n"
 			"BAD bve\nGOOD be\n"
-			"COMPLETE 0\nBAD byt he\nGOOD by the\n"
+			"BAD byt he\nGOOD by the\n"
 			"BAD cafe\nGOOD café\n"
 			"BAD caharcter\nGOOD character\n"
 			"BAD calcullated\nGOOD calculated\n"
@@ -760,8 +690,8 @@ static void load_conf()
 			"BAD candidtae\nGOOD candidate\n"
 			"BAD candidtaes\nGOOD candidates\n"
 			"BAD cant\nGOOD can't\n"
-			"COMPLETE 0\nBAD can;t\nGOOD can't\n"
-			"COMPLETE 0\nBAD can't of been\nGOOD can't have been\n"
+			"BAD can;t\nGOOD can't\n"
+			"BAD can't of been\nGOOD can't have been\n"
 			"BAD catagory\nGOOD category\n"
 			"BAD categiory\nGOOD category\n"
 			"BAD certian\nGOOD certain\n"
@@ -806,7 +736,7 @@ static void load_conf()
 			"BAD comntain\nGOOD contain\n"
 			"BAD comntains\nGOOD contains\n"
 			"BAD compair\nGOOD compare\n"
-			"COMPLETE 0\nBAD company;s\nGOOD company's\n"
+			"BAD company;s\nGOOD company's\n"
 			"BAD competetive\nGOOD competitive\n"
 			"BAD compleated\nGOOD completed\n"
 			"BAD compleatly\nGOOD completely\n"
@@ -836,12 +766,12 @@ static void load_conf()
 			"BAD corruptable\nGOOD corruptible\n"
 			"BAD cotten\nGOOD cotton\n"
 			"BAD coudl\nGOOD could\n"
-			"COMPLETE 0\nBAD coudln't\nGOOD couldn't\n"
-			"COMPLETE 0\nBAD coudn't\nGOOD couldn't\n"
+			"BAD coudln't\nGOOD couldn't\n"
+			"BAD coudn't\nGOOD couldn't\n"
 			"BAD couldnt\nGOOD couldn't\n"
-			"COMPLETE 0\nBAD couldn;t\nGOOD couldn't\n"
-			"COMPLETE 0\nBAD could of been\nGOOD could have been\n"
-			"COMPLETE 0\nBAD could of had\nGOOD could have had\n"
+			"BAD couldn;t\nGOOD couldn't\n"
+			"BAD could of been\nGOOD could have been\n"
+			"BAD could of had\nGOOD could have had\n"
 			"BAD couldthe\nGOOD could the\n"
 			"BAD couldve\nGOOD could've\n"
 			"BAD cpoy\nGOOD copy\n"
@@ -862,7 +792,7 @@ static void load_conf()
 			"BAD decor\nGOOD décor\n"
 			"BAD defendent\nGOOD defendant\n"
 			"BAD definately\nGOOD definitely\n"
-			"COMPLETE 0\nBAD deja vu\nGOOD déjà vu\n"
+			"BAD deja vu\nGOOD déjà vu\n"
 			"BAD deptartment\nGOOD department\n"
 			"BAD desicion\nGOOD decision\n"
 			"BAD desicions\nGOOD decisions\n"
@@ -888,7 +818,7 @@ static void load_conf()
 			"BAD didint\nGOOD didn't\n"
 			"BAD didnot\nGOOD did not\n"
 			"BAD didnt\nGOOD didn't\n"
-			"COMPLETE 0\nBAD didn;t\nGOOD didn't\n"
+			"BAD didn;t\nGOOD didn't\n"
 			"BAD difefrent\nGOOD different\n"
 			"BAD diferences\nGOOD differences\n"
 			"BAD differance\nGOOD difference\n"
@@ -912,11 +842,11 @@ static void load_conf()
 			"BAD documetn\nGOOD document\n"
 			"BAD documnet\nGOOD document\n"
 			"BAD documnets\nGOOD documents\n"
-			"COMPLETE 0\nBAD doens't\nGOOD doesn't\n"
+			"BAD doens't\nGOOD doesn't\n"
 			"BAD doese\nGOOD does\n"
-			"COMPLETE 0\nBAD doe snot\nGOOD does not\n"
+			"BAD doe snot\nGOOD does not\n"
 			"BAD doesnt\nGOOD doesn't\n"
-			"COMPLETE 0\nBAD doesn;t\nGOOD doesn't\n"
+			"BAD doesn;t\nGOOD doesn't\n"
 			"BAD doign\nGOOD doing\n"
 			"BAD doimg\nGOOD doing\n"
 			"BAD doind\nGOOD doing\n"
@@ -924,10 +854,10 @@ static void load_conf()
 			"BAD donig\nGOOD doing\n"
 			"BAD donno\nGOOD don't know\n"
 			"BAD dont\nGOOD don't\n"
-			"COMPLETE 0\nBAD do'nt\nGOOD don't\n"
-			"COMPLETE 0\nBAD don;t\nGOOD don't\n"
-			"COMPLETE 0\nBAD don't no\nGOOD don't know\n"
-			"COMPLETE 0\nBAD dosn't\nGOOD doesn't\n"
+			"BAD do'nt\nGOOD don't\n"
+			"BAD don;t\nGOOD don't\n"
+			"BAD don't no\nGOOD don't know\n"
+			"BAD dosn't\nGOOD doesn't\n"
 			"BAD driveing\nGOOD driving\n"
 			"BAD drnik\nGOOD drink\n"
 			"BAD dunno\nGOOD don't know\n"
@@ -993,7 +923,7 @@ static void load_conf()
 			"BAD friday\nGOOD Friday\n"
 			"BAD frmo\nGOOD from\n"
 			"BAD fromthe\nGOOD from the\n"
-			"COMPLETE 0\nBAD fromt he\nGOOD from the\n"
+			"BAD fromt he\nGOOD from the\n"
 			"BAD furneral\nGOOD funeral\n"
 			"BAD fwe\nGOOD few\n"
 			"BAD garantee\nGOOD guarantee\n"
@@ -1015,7 +945,7 @@ static void load_conf()
 			"BAD guidlines\nGOOD guidelines\n"
 			"BAD hadbeen\nGOOD had been\n"
 			"BAD hadnt\nGOOD hadn't\n"
-			"COMPLETE 0\nBAD hadn;t\nGOOD hadn't\n"
+			"BAD hadn;t\nGOOD hadn't\n"
 			"BAD haev\nGOOD have\n"
 			"BAD hapen\nGOOD happen\n"
 			"BAD hapened\nGOOD happened\n"
@@ -1024,22 +954,22 @@ static void load_conf()
 			"BAD happend\nGOOD happened\n"
 			"BAD hasbeen\nGOOD has been\n"
 			"BAD hasnt\nGOOD hasn't\n"
-			"COMPLETE 0\nBAD hasn;t\nGOOD hasn't\n"
+			"BAD hasn;t\nGOOD hasn't\n"
 			"BAD havebeen\nGOOD have been\n"
 			"BAD haveing\nGOOD having\n"
 			"BAD havent\nGOOD haven't\n"
-			"COMPLETE 0\nBAD haven;t\nGOOD haven't\n"
+			"BAD haven;t\nGOOD haven't\n"
 			"BAD hda\nGOOD had\n"
 			"BAD hearign\nGOOD hearing\n"
-			"COMPLETE 0\nBAD he;d\nGOOD he'd\n"
+			"BAD he;d\nGOOD he'd\n"
 			"BAD hel\nGOOD he'll\n"
-			"COMPLETE 0\nBAD he;ll\nGOOD he'll\n"
+			"BAD he;ll\nGOOD he'll\n"
 			"BAD helpfull\nGOOD helpful\n"
 			"BAD herat\nGOOD heart\n"
 			"BAD heres\nGOOD here's\n"
-			"COMPLETE 0\nBAD here;s\nGOOD here's\n"
+			"BAD here;s\nGOOD here's\n"
 			"BAD hes\nGOOD he's\n"
-			"COMPLETE 0\nBAD he;s\nGOOD he's\n"
+			"BAD he;s\nGOOD he's\n"
 			"BAD hesaid\nGOOD he said\n"
 			"BAD hewas\nGOOD he was\n"
 			"BAD hge\nGOOD he\n"
@@ -1057,27 +987,27 @@ static void load_conf()
 			"BAD hting\nGOOD thing\n"
 			"BAD htink\nGOOD think\n"
 			"BAD htis\nGOOD this\n"
-			"COMPLETE 0\nBAD htp:\nGOOD http:\n"
-			"COMPLETE 0\nBAD http:\\\\nGOOD http://\n"
+			"BAD htp:\nGOOD http:\n"
+			"BAD http:\\\\nGOOD http://\n"
 			"BAD httpL\nGOOD http:\n"
 			"BAD hvae\nGOOD have\n"
 			"BAD hvaing\nGOOD having\n"
 			"BAD hwich\nGOOD which\n"
 			"BAD i\nGOOD I\n"
-			"COMPLETE 0\nBAD i c\nGOOD I see\n"
-			"COMPLETE 0\nBAD i;d\nGOOD I'd\n"
-			"COMPLETE 0\nBAD i'd\nGOOD I'd\n"
-			"COMPLETE 0\nBAD I;d\nGOOD I'd\n"
+			"BAD i c\nGOOD I see\n"
+			"BAD i;d\nGOOD I'd\n"
+			"BAD i'd\nGOOD I'd\n"
+			"BAD I;d\nGOOD I'd\n"
 			"BAD idae\nGOOD idea\n"
 			"BAD idaes\nGOOD ideas\n"
 			"BAD identofy\nGOOD identify\n"
 			"BAD ihs\nGOOD his\n"
 			"BAD iits the\nGOOD it's the\n"
-			"COMPLETE 0\nBAD i'll\nGOOD I'll\n"
-			"COMPLETE 0\nBAD I;ll\nGOOD I'll\n"
-			"COMPLETE 0\nBAD i;m\nGOOD I'm\n"
-			"COMPLETE 0\nBAD i'm\nGOOD I'm\n"
-			"COMPLETE 0\nBAD I\"m\nGOOD I'm\n"
+			"BAD i'll\nGOOD I'll\n"
+			"BAD I;ll\nGOOD I'll\n"
+			"BAD i;m\nGOOD I'm\n"
+			"BAD i'm\nGOOD I'm\n"
+			"BAD I\"m\nGOOD I'm\n"
 			"BAD imediate\nGOOD immediate\n"
 			"BAD imediatly\nGOOD immediately\n"
 			"BAD immediatly\nGOOD immediately\n"
@@ -1103,33 +1033,33 @@ static void load_conf()
 			"BAD inteh\nGOOD in the\n"
 			"BAD interum\nGOOD interim\n"
 			"BAD inthe\nGOOD in the\n"
-			"COMPLETE 0\nBAD int he\nGOOD in the\n"
+			"BAD int he\nGOOD in the\n"
 			"BAD inturn\nGOOD intern\n"
 			"BAD inwhich\nGOOD in which\n"
-			"COMPLETE 0\nBAD i snot\nGOOD is not\n"
+			"BAD i snot\nGOOD is not\n"
 			"BAD isnt\nGOOD isn't\n"
-			"COMPLETE 0\nBAD isn;t\nGOOD isn't\n"
+			"BAD isn;t\nGOOD isn't\n"
 			"BAD isthe\nGOOD is the\n"
 			"BAD itd\nGOOD it'd\n"
-			"COMPLETE 0\nBAD it;d\nGOOD it'd\n"
+			"BAD it;d\nGOOD it'd\n"
 			"BAD itis\nGOOD it is\n"
 			"BAD ititial\nGOOD initial\n"
 			"BAD itll\nGOOD it'll\n"
-			"COMPLETE 0\nBAD it;ll\nGOOD it'll\n"
+			"BAD it;ll\nGOOD it'll\n"
 			"BAD itnerest\nGOOD interest\n"
 			"BAD itnerested\nGOOD interested\n"
 			"BAD itneresting\nGOOD interesting\n"
 			"BAD itnerests\nGOOD interests\n"
-			"COMPLETE 0\nBAD it;s\nGOOD it's\n"
+			"BAD it;s\nGOOD it's\n"
 			"BAD itsa\nGOOD it's a\n"
-			"COMPLETE 0\nBAD its a\nGOOD it's a\n"
-			"COMPLETE 0\nBAD it snot\nGOOD it's not\n"
-			"COMPLETE 0\nBAD it' snot\nGOOD it's not\n"
-			"COMPLETE 0\nBAD its the\nGOOD it's the\n"
+			"BAD its a\nGOOD it's a\n"
+			"BAD it snot\nGOOD it's not\n"
+			"BAD it' snot\nGOOD it's not\n"
+			"BAD its the\nGOOD it's the\n"
 			"BAD itwas\nGOOD it was\n"
 			"BAD ive\nGOOD I've\n"
-			"COMPLETE 0\nBAD i;ve\nGOOD I've\n"
-			"COMPLETE 0\nBAD i've\nGOOD I've\n"
+			"BAD i;ve\nGOOD I've\n"
+			"BAD i've\nGOOD I've\n"
 			"BAD iwll\nGOOD will\n"
 			"BAD iwth\nGOOD with\n"
 			"BAD jsut\nGOOD just\n"
@@ -1149,9 +1079,9 @@ static void load_conf()
 			"BAD laterz\nGOOD later\n"
 			"BAD learnign\nGOOD learning\n"
 			"BAD lenght\nGOOD length\n"
-			"COMPLETE 0\nBAD let;s\nGOOD let's\n"
-			"COMPLETE 0\nBAD let's him\nGOOD lets him\n"
-			"COMPLETE 0\nBAD let's it\nGOOD lets it\n"
+			"BAD let;s\nGOOD let's\n"
+			"BAD let's him\nGOOD lets him\n"
+			"BAD let's it\nGOOD lets it\n"
 			"BAD levle\nGOOD level\n"
 			"BAD libary\nGOOD library\n"
 			"BAD librarry\nGOOD library\n"
@@ -1176,14 +1106,14 @@ static void load_conf()
 			"BAD managment\nGOOD management\n"
 			"BAD mantain\nGOOD maintain\n"
 			"BAD marraige\nGOOD marriage\n"
-			"COMPLETE 0\nBAD may of been\nGOOD may have been\n"
-			"COMPLETE 0\nBAD may of had\nGOOD may have had\n"
+			"BAD may of been\nGOOD may have been\n"
+			"BAD may of had\nGOOD may have had\n"
 			"BAD memeber\nGOOD member\n"
 			"BAD merchent\nGOOD merchant\n"
 			"BAD mesage\nGOOD message\n"
 			"BAD mesages\nGOOD messages\n"
-			"COMPLETE 0\nBAD might of been\nGOOD might have been\n"
-			"COMPLETE 0\nBAD might of had\nGOOD might have had\n"
+			"BAD might of been\nGOOD might have been\n"
+			"BAD might of had\nGOOD might have had\n"
 			"BAD mispell\nGOOD misspell\n"
 			"BAD mispelling\nGOOD misspelling\n"
 			"BAD mispellings\nGOOD misspellings\n"
@@ -1194,13 +1124,13 @@ static void load_conf()
 			"BAD monday\nGOOD Monday\n"
 			"BAD morgage\nGOOD mortgage\n"
 			"BAD mroe\nGOOD more\n"
-			"COMPLETE 0\nBAD must of been\nGOOD must have been\n"
-			"COMPLETE 0\nBAD must of had\nGOOD must have had\n"
+			"BAD must of been\nGOOD must have been\n"
+			"BAD must of had\nGOOD must have had\n"
 			"BAD mysefl\nGOOD myself\n"
 			"BAD myu\nGOOD my\n"
 			"BAD naive\nGOOD naïve\n"
-			"COMPLETE 0\nBAD ne way\nGOOD anyway\n"
-			"COMPLETE 0\nBAD ne ways\nGOOD anyways\n"
+			"BAD ne way\nGOOD anyway\n"
+			"BAD ne ways\nGOOD anyways\n"
 			"BAD ne1\nGOOD anyone\n"
 			"BAD neway\nGOOD anyway\n"
 			"BAD neways\nGOOD anyways\n"
@@ -1237,7 +1167,7 @@ static void load_conf()
 			"BAD oneof\nGOOD one of\n"
 			"BAD onepoint\nGOOD one point\n"
 			"BAD onthe\nGOOD on the\n"
-			"COMPLETE 0\nBAD ont he\nGOOD on the\n"
+			"BAD ont he\nGOOD on the\n"
 			"BAD onyl\nGOOD only\n"
 			"BAD oppasite\nGOOD opposite\n"
 			"BAD opperation\nGOOD operation\n"
@@ -1357,7 +1287,7 @@ static void load_conf()
 			"BAD saidit\nGOOD said it\n"
 			"BAD saidthat\nGOOD said that\n"
 			"BAD saidthe\nGOOD said the\n"
-			"COMPLETE 0\nBAD saidt he\nGOOD said the\n"
+			"BAD saidt he\nGOOD said the\n"
 			"BAD sandwhich\nGOOD sandwich\n"
 			"BAD sandwitch\nGOOD sandwich\n"
 			"BAD saturday\nGOOD Saturday\n"
@@ -1374,20 +1304,21 @@ static void load_conf()
 			"BAD seperate\nGOOD separate\n"
 			"BAD sercumstances\nGOOD circumstances\n"
 			"BAD shcool\nGOOD school\n"
-			"COMPLETE 0\nBAD she;d\nGOOD she'd\n"
-			"COMPLETE 0\nBAD she;ll\nGOOD she'll\n"
+			"BAD she'\nGOOD she'll\n"
+			"BAD she;d\nGOOD she'd\n"
+			"BAD she;ll\nGOOD she'll\n"
 			"BAD shes\nGOOD she's\n"
-			"COMPLETE 0\nBAD she;s\nGOOD she's\n"
+			"BAD she;s\nGOOD she's\n"
 			"BAD shesaid\nGOOD she said\n"
 			"BAD shineing\nGOOD shining\n"
 			"BAD shiped\nGOOD shipped\n"
 			"BAD shoudl\nGOOD should\n"
-			"COMPLETE 0\nBAD shoudln't\nGOOD shouldn't\n"
+			"BAD shoudln't\nGOOD shouldn't\n"
 			"BAD shouldent\nGOOD shouldn't\n"
 			"BAD shouldnt\nGOOD shouldn't\n"
-			"COMPLETE 0\nBAD shouldn;t\nGOOD shouldn't\n"
-			"COMPLETE 0\nBAD should of been\nGOOD should have been\n"
-			"COMPLETE 0\nBAD should of had\nGOOD should have had\n"
+			"BAD shouldn;t\nGOOD shouldn't\n"
+			"BAD should of been\nGOOD should have been\n"
+			"BAD should of had\nGOOD should have had\n"
 			"BAD shouldve\nGOOD should've\n"
 			"BAD showinf\nGOOD showing\n"
 			"BAD signifacnt\nGOOD significant\n"
@@ -1407,7 +1338,7 @@ static void load_conf()
 			"BAD somewaht\nGOOD somewhat\n"
 			"BAD somthing\nGOOD something\n"
 			"BAD somtimes\nGOOD sometimes\n"
-			"COMPLETE 0\nBAD sot hat\nGOOD so that\n"
+			"BAD sot hat\nGOOD so that\n"
 			"BAD soudn\nGOOD sound\n"
 			"BAD soudns\nGOOD sounds\n"
 			"BAD speach\nGOOD speech\n"
@@ -1448,7 +1379,7 @@ static void load_conf()
 			"BAD tecnical\nGOOD technical\n"
 			"BAD teh\nGOOD the\n"
 			"BAD tehy\nGOOD they\n"
-			"COMPLETE 0\nBAD tellt he\nGOOD tell the\n"
+			"BAD tellt he\nGOOD tell the\n"
 			"BAD termoil\nGOOD turmoil\n"
 			"BAD tets\nGOOD test\n"
 			"BAD tghe\nGOOD the\n"
@@ -1457,33 +1388,33 @@ static void load_conf()
 			"BAD thanx\nGOOD thanks\n"
 			"BAD thats\nGOOD that's\n"
 			"BAD thatthe\nGOOD that the\n"
-			"COMPLETE 0\nBAD thatt he\nGOOD that the\n"
+			"BAD thatt he\nGOOD that the\n"
 			"BAD thecompany\nGOOD the company\n"
 			"BAD thefirst\nGOOD the first\n"
 			"BAD thegovernment\nGOOD the government\n"
-			"COMPLETE 0\nBAD their are\nGOOD there are\n"
-			"COMPLETE 0\nBAD their is\nGOOD there is\n"
+			"BAD their are\nGOOD there are\n"
+			"BAD their is\nGOOD there is\n"
 			"BAD themself\nGOOD themselves\n"
 			"BAD themselfs\nGOOD themselves\n"
 			"BAD thenew\nGOOD the new\n"
 			"BAD theres\nGOOD there's\n"
-			"COMPLETE 0\nBAD there's is\nGOOD theirs is\n"
+			"BAD there's is\nGOOD theirs is\n"
 			"BAD theri\nGOOD their\n"
 			"BAD thesame\nGOOD the same\n"
 			"BAD thetwo\nGOOD the two\n"
 			"BAD theyd\nGOOD they'd\n"
-			"COMPLETE 0\nBAD they;d\nGOOD they'd\n"
-			"COMPLETE 0\nBAD they;l\nGOOD they'll\n"
+			"BAD they;d\nGOOD they'd\n"
+			"BAD they;l\nGOOD they'll\n"
 			"BAD theyll\nGOOD they'll\n"
-			"COMPLETE 0\nBAD they;ll\nGOOD they'll\n"
-			"COMPLETE 0\nBAD they;r\nGOOD they're\n"
-			"COMPLETE 0\nBAD theyre\nGOOD they're\n"
-			"COMPLETE 0\nBAD they;re\nGOOD they're\n"
-			"COMPLETE 0\nBAD they're are\nGOOD there are\n"
-			"COMPLETE 0\nBAD they're is\nGOOD there is\n"
-			"COMPLETE 0\nBAD they;v\nGOOD they've\n"
+			"BAD they;ll\nGOOD they'll\n"
+			"BAD they;r\nGOOD they're\n"
+			"BAD theyre\nGOOD they're\n"
+			"BAD they;re\nGOOD they're\n"
+			"BAD they're are\nGOOD there are\n"
+			"BAD they're is\nGOOD there is\n"
+			"BAD they;v\nGOOD they've\n"
 			"BAD theyve\nGOOD they've\n"
-			"COMPLETE 0\nBAD they;ve\nGOOD they've\n"
+			"BAD they;ve\nGOOD they've\n"
 			"BAD thgat\nGOOD that\n"
 			"BAD thge\nGOOD the\n"
 			"BAD thier\nGOOD their \n"
@@ -1513,7 +1444,7 @@ static void load_conf()
 			"BAD tnx\nGOOD thanks\n"
 			"BAD todya\nGOOD today\n"
 			"BAD togehter\nGOOD together\n"
-			"COMPLETE 0\nBAD toldt he\nGOOD told the\n"
+			"BAD toldt he\nGOOD told the\n"
 			"BAD tomorow\nGOOD tomorrow\n"
 			"BAD tongiht\nGOOD tonight\n"
 			"BAD tonihgt\nGOOD tonight\n"
@@ -1521,7 +1452,7 @@ static void load_conf()
 			"BAD totaly\nGOOD totally\n"
 			"BAD totalyl\nGOOD totally\n"
 			"BAD tothe\nGOOD to the\n"
-			"COMPLETE 0\nBAD tot he\nGOOD to the\n"
+			"BAD tot he\nGOOD to the\n"
 			"BAD towrad\nGOOD toward\n"
 			"BAD traditionalyl\nGOOD traditionally\n"
 			"BAD transfered\nGOOD transferred\n"
@@ -1535,7 +1466,7 @@ static void load_conf()
 			"BAD u\nGOOD you\n"
 			"BAD udnerstand\nGOOD understand\n"
 			"BAD understnad\nGOOD understand\n"
-			"COMPLETE 0\nBAD undert he\nGOOD under the\n"
+			"BAD undert he\nGOOD under the\n"
 			"BAD unforseen\nGOOD unforeseen\n"
 			"BAD UnitedStates\nGOOD United States\n"
 			"BAD unliek\nGOOD unlike\n"
@@ -1548,44 +1479,44 @@ static void load_conf()
 			"BAD veyr\nGOOD very\n"
 			"BAD virtualyl\nGOOD virtually\n"
 			"BAD visavis\nGOOD vis-a-vis\n"
-			"COMPLETE 0\nBAD vis-a-vis\nGOOD vis-à-vis\n"
+			"BAD vis-a-vis\nGOOD vis-à-vis\n"
 			"BAD vrey\nGOOD very\n"
 			"BAD vulnerible\nGOOD vulnerable\n"
 			"BAD waht\nGOOD what\n"
 			"BAD warrent\nGOOD warrant\n"
-			"COMPLETE 0\nBAD wa snot\nGOOD was not\n"
-			"COMPLETE 0\nBAD wasnt\nGOOD wasn't\n"
-			"COMPLETE 0\nBAD wasn;t\nGOOD wasn't\n"
+			"BAD wa snot\nGOOD was not\n"
+			"BAD wasnt\nGOOD wasn't\n"
+			"BAD wasn;t\nGOOD wasn't\n"
 			"BAD wat\nGOOD what\n"
 			"BAD watn\nGOOD want\n"
-			"COMPLETE 0\nBAD we;d\nGOOD we'd\n"
+			"BAD we;d\nGOOD we'd\n"
 			"BAD wednesday\nGOOD Wednesday\n"
 			"BAD wel\nGOOD we'll\n"
 			"BAD wehn\nGOOD when\n"
-			"COMPLETE 0\nBAD we'l\nGOOD we'll\n"
-			"COMPLETE 0\nBAD we;ll\nGOOD we'll\n"
-			"COMPLETE 0\nBAD we;re\nGOOD we're\n"
+			"BAD we'l\nGOOD we'll\n"
+			"BAD we;ll\nGOOD we'll\n"
+			"BAD we;re\nGOOD we're\n"
 			"BAD werent\nGOOD weren't\n"
-			"COMPLETE 0\nBAD weren;t\nGOOD weren't\n"
-			"COMPLETE 0\nBAD wern't\nGOOD weren't\n"
+			"BAD weren;t\nGOOD weren't\n"
+			"BAD wern't\nGOOD weren't\n"
 			"BAD werre\nGOOD were\n"
 			"BAD weve\nGOOD we've\n"
-			"COMPLETE 0\nBAD we;ve\nGOOD we've\n"
+			"BAD we;ve\nGOOD we've\n"
 			"BAD whats\nGOOD what's\n"
-			"COMPLETE 0\nBAD what;s\nGOOD what's\n"
+			"BAD what;s\nGOOD what's\n"
 			"BAD whcih\nGOOD which\n"
-			"COMPLETE 0\nBAD whent he\nGOOD when the\n"
+			"BAD whent he\nGOOD when the\n"
 			"BAD wheres\nGOOD where's\n"
-			"COMPLETE 0\nBAD where;s\nGOOD where's\n"
+			"BAD where;s\nGOOD where's\n"
 			"BAD wherre\nGOOD where\n"
 			"BAD whic\nGOOD which\n"
-			"COMPLETE 0\nBAD whicht he\nGOOD which the\n"
+			"BAD whicht he\nGOOD which the\n"
 			"BAD whihc\nGOOD which\n"
 			"BAD wholl\nGOOD who'll\n"
 			"BAD whos\nGOOD who's\n"
-			"COMPLETE 0\nBAD who;s\nGOOD who's\n"
+			"BAD who;s\nGOOD who's\n"
 			"BAD whove\nGOOD who've\n"
-			"COMPLETE 0\nBAD who;ve\nGOOD who've\n"
+			"BAD who;ve\nGOOD who've\n"
 			"BAD whta\nGOOD what\n"
 			"BAD whys\nGOOD why's\n"
 			"BAD wief\nGOOD wife\n"
@@ -1593,12 +1524,12 @@ static void load_conf()
 			"BAD wihch\nGOOD which\n"
 			"BAD wiht\nGOOD with\n"
 			"BAD willbe\nGOOD will be\n"
-			"COMPLETE 0\nBAD will of been\nGOOD will have been\n"
-			"COMPLETE 0\nBAD will of had\nGOOD will have had\n"
+			"BAD will of been\nGOOD will have been\n"
+			"BAD will of had\nGOOD will have had\n"
 			"BAD windoes\nGOOD windows\n"
 			"BAD witha\nGOOD with a\n"
 			"BAD withe\nGOOD with\n"
-			"COMPLETE 0\nBAD withthe\nGOOD with the\n"
+			"BAD withthe\nGOOD with the\n"
 			"BAD witht he\nGOOD with the\n"
 			"BAD wiull\nGOOD will\n"
 			"BAD wnat\nGOOD want\n"
@@ -1608,15 +1539,15 @@ static void load_conf()
 			"BAD wohle\nGOOD whole\n"
 			"BAD wokr\nGOOD work\n"
 			"BAD wont\nGOOD won't\n"
-			"COMPLETE 0\nBAD wo'nt\nGOOD won't\n"
-			"COMPLETE 0\nBAD won;t\nGOOD won't\n"
+			"BAD wo'nt\nGOOD won't\n"
+			"BAD won;t\nGOOD won't\n"
 			"BAD woudl\nGOOD would\n"
-			"COMPLETE 0\nBAD woudln't\nGOOD wouldn't\n"
+			"BAD woudln't\nGOOD wouldn't\n"
 			"BAD wouldbe\nGOOD would be\n"
 			"BAD wouldnt\nGOOD wouldn't\n"
-			"COMPLETE 0\nBAD wouldn;t\nGOOD wouldn't\n"
-			"COMPLETE 0\nBAD would of been\nGOOD would have been\n"
-			"COMPLETE 0\nBAD would of had\nGOOD would have had\n"
+			"BAD wouldn;t\nGOOD wouldn't\n"
+			"BAD would of been\nGOOD would have been\n"
+			"BAD would of had\nGOOD would have had\n"
 			"BAD wouldve\nGOOD would've\n"
 			"BAD wriet\nGOOD write\n"
 			"BAD writting\nGOOD writing\n"
@@ -1635,22 +1566,22 @@ static void load_conf()
 			"BAD yoiu\nGOOD you\n"
 			"BAD youare\nGOOD you are\n"
 			"BAD youd\nGOOD you'd\n"
-			"COMPLETE 0\nBAD you;d\nGOOD you'd\n"
+			"BAD you;d\nGOOD you'd\n"
 			"BAD youll\nGOOD you'll\n"
-			"COMPLETE 0\nBAD your a\nGOOD you're a\n"
-			"COMPLETE 0\nBAD your an\nGOOD you're an\n"
+			"BAD your a\nGOOD you're a\n"
+			"BAD your an\nGOOD you're an\n"
 			"BAD youre\nGOOD you're\n"
-			"COMPLETE 0\nBAD you;re\nGOOD you're\n"
-			"COMPLETE 0\nBAD you're own\nGOOD your own\n"
-			"COMPLETE 0\nBAD your her\nGOOD you're her\n"
-			"COMPLETE 0\nBAD your here\nGOOD you're here\n"
-			"COMPLETE 0\nBAD your his\nGOOD you're his\n"
-			"COMPLETE 0\nBAD your my\nGOOD you're my\n"
-			"COMPLETE 0\nBAD your the\nGOOD you're the\n"
-			"COMPLETE 0\nBAD your their\nGOOD you're their\n"
-			"COMPLETE 0\nBAD your your\nGOOD you're your\n"
+			"BAD you;re\nGOOD you're\n"
+			"BAD you're own\nGOOD your own\n"
+			"BAD your her\nGOOD you're her\n"
+			"BAD your here\nGOOD you're here\n"
+			"BAD your his\nGOOD you're his\n"
+			"BAD your my\nGOOD you're my\n"
+			"BAD your the\nGOOD you're the\n"
+			"BAD your their\nGOOD you're their\n"
+			"BAD your your\nGOOD you're your\n"
 			"BAD youve\nGOOD you've\n"
-			"COMPLETE 0\nBAD you;ve\nGOOD you've\n"
+			"BAD you;ve\nGOOD you've\n"
 			"BAD ytou\nGOOD you\n"
 			"BAD yuo\nGOOD you\n"
 			"BAD yuor\nGOOD your\n";
@@ -1659,10 +1590,8 @@ static void load_conf()
 	GHashTable *hashes;
 	char bad[82] = "";
 	char good[256] = "";
-	char completestr[BUFSIZ] = "";
 	int pnt = 0;
 	gsize size;
-	gboolean complete = TRUE;
 
 	buf = g_build_filename(gaim_user_dir(), "dict", NULL);
 	g_file_get_contents(buf, &ibuf, &size, NULL);
@@ -1672,22 +1601,14 @@ static void load_conf()
 		size = strlen(defaultconf);
 	}
 
-	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN);
-	hashes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+	model = gtk_list_store_new((gint)N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING);
+	hashes = g_hash_table_new(g_str_hash, g_str_equal);
 
 	while (buf_get_line(ibuf, &buf, &pnt, size)) {
 		if (*buf != '#') {
 			if (!strncasecmp(buf, "BAD ", 4))
-			{
 				strncpy(bad, buf + 4, 81);
-			}
-			else if(!strncasecmp(buf, "COMPLETE ", 9))
-			{
-				strncpy(completestr, buf+9, BUFSIZ-1);
-				complete = (gboolean)strtol(completestr, NULL, 10);
-			}
-			else if (!strncasecmp(buf, "GOOD ", 5))
-			{
+			else if (!strncasecmp(buf, "GOOD ", 5)) {
 				strncpy(good, buf + 5, 255);
 
 				if (*bad && *good && g_hash_table_lookup(hashes, bad) == NULL) {
@@ -1695,7 +1616,6 @@ static void load_conf()
 
 					/* We don't actually need to store the good string, since this
 					 * hash is just being used to eliminate duplicate bad strings.
-					 * The value has to be non-NULL so the lookup above will work.
 					 */
 					g_hash_table_insert(hashes, g_strdup(bad), GINT_TO_POINTER(1));
 
@@ -1703,15 +1623,14 @@ static void load_conf()
 					gtk_list_store_set(model, &iter,
 						0, bad,
 						1, good,
-						2, complete,
 						-1);
 				}
 				bad[0] = '\0';
-				complete = TRUE;
 			}
 		}
 	}
 	g_free(ibuf);
+	g_hash_table_foreach(hashes, (GHFunc)g_free, NULL);
 	g_hash_table_destroy(hashes);
 
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(model),
@@ -1721,7 +1640,6 @@ static void load_conf()
 static GtkWidget *tree;
 static GtkWidget *bad_entry;
 static GtkWidget *good_entry;
-static GtkWidget *complete_toggle;
 
 static void save_list();
 
@@ -1746,24 +1664,6 @@ static void on_edited(GtkCellRendererText *cellrenderertext,
 	g_value_unset(&val);
 }
 
-
-static void on_toggled(GtkCellRendererToggle *cellrenderertoggle,
-						gchar *path, gpointer data){
-	GtkTreeIter iter;
-	gboolean enabled;
-
-	g_return_if_fail(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(model), &iter, path));
-	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-					   WORD_ONLY_COLUMN, &enabled,
-					   -1);
-
-	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
-					   WORD_ONLY_COLUMN, !enabled,
-					   -1);
-
-	save_list();
-}
-
 static void list_add_new()
 {
 	GtkTreeIter iter;
@@ -1775,7 +1675,7 @@ static void list_add_new()
 			GValue val0 = {0, };
 			char *bad;
 
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
 			bad = g_utf8_casefold(g_value_get_string(&val0), -1);
 
 			if (!strcmp(bad, tmpword)) {
@@ -1800,14 +1700,11 @@ static void list_add_new()
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
-		BAD_COLUMN, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
-		GOOD_COLUMN, gtk_entry_get_text(GTK_ENTRY(good_entry)),
-		WORD_ONLY_COLUMN, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(complete_toggle)),
+		0, gtk_entry_get_text(GTK_ENTRY(bad_entry)),
+		1, gtk_entry_get_text(GTK_ENTRY(good_entry)),
 		-1);
-
 	gtk_editable_delete_text(GTK_EDITABLE(bad_entry), 0, -1);
 	gtk_editable_delete_text(GTK_EDITABLE(good_entry), 0, -1);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
 	gtk_widget_grab_focus(bad_entry);
 
 	save_list();
@@ -1854,17 +1751,14 @@ static void save_list()
 		do {
 			GValue val0 = {0, };
 			GValue val1 = {0, };
-			GValue val2 = {0, };
 
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, BAD_COLUMN, &val0);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, GOOD_COLUMN, &val1);
-			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, WORD_ONLY_COLUMN, &val2);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 0, &val0);
+			gtk_tree_model_get_value(GTK_TREE_MODEL(model), &iter, 1, &val1);
 
-			g_string_append_printf(data, "COMPLETE %d\nBAD %s\nGOOD %s\n\n", g_value_get_boolean(&val2), g_value_get_string(&val0), g_value_get_string(&val1));
+			g_string_append_printf(data, "BAD %s\nGOOD %s\n\n", g_value_get_string(&val0), g_value_get_string(&val1));
 
 			g_value_unset(&val0);
 			g_value_unset(&val1);
-			g_value_unset(&val2);
 
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
@@ -1927,16 +1821,17 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *hbox, *label;
 	GtkWidget *button;
 	GtkSizeGroup *sg;
-	GtkSizeGroup *sg2;
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
+
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER(ret), 12);
 
 	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
-	gtk_widget_set_size_request(vbox, 445, -1);
+	gtk_widget_set_size_request(vbox, 300, -1);
 	gtk_widget_show(vbox);
 
 	win = gtk_scrolled_window_new(0, 0);
@@ -1950,7 +1845,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(model));
 	/* gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(tree), TRUE); */
-	gtk_widget_set_size_request(tree, 445, 200);
+	gtk_widget_set_size_request(tree, 260,200);
 
 	renderer = gtk_cell_renderer_text_new();
 	g_object_set(G_OBJECT(renderer),
@@ -1972,18 +1867,6 @@ get_config_frame(GaimPlugin *plugin)
 		G_CALLBACK(on_edited), GINT_TO_POINTER(1));
 	column = gtk_tree_view_column_new_with_attributes(_("You send"),
 		renderer, "text", GOOD_COLUMN, NULL);
-	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
-	gtk_tree_view_column_set_fixed_width(column, 150);
-	/* gtk_tree_view_column_set_resizable(column, TRUE); */
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
-	renderer = gtk_cell_renderer_toggle_new();
-	g_object_set(G_OBJECT(renderer),
-		"activatable", TRUE,
-		NULL);
-	g_signal_connect(G_OBJECT(renderer), "toggled",
-		G_CALLBACK(on_toggled), GINT_TO_POINTER(2));
-	column = gtk_tree_view_column_new_with_attributes(_("Complete words"),
-		renderer, "active", WORD_ONLY_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_fixed_width(column, 130);
 	/* gtk_tree_view_column_set_resizable(column, TRUE); */
@@ -2011,22 +1894,17 @@ get_config_frame(GaimPlugin *plugin)
 	vbox = gaim_gtk_make_frame(ret, _("Add a new text replacement"));
 	gtk_widget_set_size_request(vbox, 300, -1);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-	sg2 = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
-
 	hbox = gtk_hbox_new(FALSE, 2);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
 	label = gtk_label_new_with_mnemonic(_("You _type:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	bad_entry = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(bad_entry), 40);
 	gtk_box_pack_start(GTK_BOX(hbox), bad_entry, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(sg2, bad_entry);
+	gtk_size_group_add_widget(sg, bad_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), bad_entry);
 	gtk_widget_show(bad_entry);
 
@@ -2036,20 +1914,13 @@ get_config_frame(GaimPlugin *plugin)
 
 	label = gtk_label_new_with_mnemonic(_("You _send:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
 	good_entry = gtk_entry_new();
 	gtk_entry_set_max_length(GTK_ENTRY(good_entry), 255);
 	gtk_box_pack_start(GTK_BOX(hbox), good_entry, TRUE, TRUE, 0);
-	gtk_size_group_add_widget(sg2, good_entry);
+	gtk_size_group_add_widget(sg, good_entry);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
 	gtk_widget_show(good_entry);
-
-	complete_toggle=gtk_check_button_new_with_mnemonic(_("Only replace _complete words"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
-	gtk_widget_show(complete_toggle);
-	gtk_box_pack_start(GTK_BOX(vbox), complete_toggle, FALSE, FALSE, 0);
 
 	hbox = gtk_hbutton_box_new();
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
