@@ -3858,7 +3858,7 @@ gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
 	imhtml->edit.italic = 0;
 	imhtml->edit.underline = 0;
 	imhtml->edit.strike = 0;
-	imhtml->edit.fontsize = 3;
+	imhtml->edit.fontsize = 0;
 	imhtml->edit.forecolor = NULL;
 	imhtml->edit.backcolor = NULL;
 	imhtml->edit.background = NULL;
