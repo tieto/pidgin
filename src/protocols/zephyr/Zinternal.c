@@ -233,7 +233,8 @@ Code_t Z_ReadWait()
     ZNotice_t notice;
     ZPacket_t packet;
     struct sockaddr_in olddest, from;
-    int from_len, packet_len, zvlen, part, partof;
+    int packet_len, zvlen, part, partof;
+    socklen_t from_len;
     char *slash;
     Code_t retval;
     fd_set fds;
@@ -595,7 +596,7 @@ Code_t Z_FormatHeader(notice, buffer, buffer_len, len, cert_routine)
     Code_t retval;
     static char version[BUFSIZ]; /* default init should be all \0 */
     struct sockaddr_in name;
-    int namelen = sizeof(name);
+    socklen_t namelen = sizeof(name);
 
     if (!notice->z_sender)
 	notice->z_sender = ZGetSender();

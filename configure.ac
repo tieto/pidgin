@@ -1237,7 +1237,7 @@ if test "x$enable_doxygen" = xyes; then
 			AC_CHECK_PROG(DOT, dot, true, false)
 
 			if test $DOT = false; then
-				enable_dot = no;
+				enable_dot="no";
 				AC_MSG_WARN([*** dot not found, graphs will not be available])
 			else
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])

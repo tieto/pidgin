@@ -153,6 +153,7 @@ rm -rf %{buildroot}
 
 %dir %{_libdir}/gaim
 %attr(755, root, root) %{_libdir}/libgaim-remote.so.*
+%attr(755, root, root) %{_libdir}/libgaimperl.so
 %attr(755, root, root) %{perl_vendorlib}
 
 %{_bindir}/*
@@ -187,8 +188,13 @@ rm -rf %{buildroot}
 %dir %{_includedir}/gaim
 %{_includedir}/gaim/*.h
 %{_libdir}/pkgconfig/gaim.pc
+%{_datadir}/aclocal/gaim.m4
 
 %changelog
+* Sat Aug 20 2005 <stu@nosnilmot.com>
+- Include libgaimperl.so
+- Include gaim.m4 in gaim-devel
+
 * Thu Apr 28 2005 <stu@nosnilmot.com>
 - Use perl_vendorlib & perl_archlib for better 64bit compat (Jeff Mahoney)
 - Clean up Requires, most should be auto-detected

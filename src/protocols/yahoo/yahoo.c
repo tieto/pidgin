@@ -2110,7 +2110,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		if (yd->rxlen < YAHOO_PACKET_HDRLEN)
 			return;
 
-		if (strncmp(yd->rxqueue, "YMSG", MIN(4, yd->rxlen)) != 0) {
+		if (strncmp((char *)yd->rxqueue, "YMSG", MIN(4, yd->rxlen)) != 0) {
 			/* HEY! This isn't even a YMSG packet. What
 			 * are you trying to pull? */
 			guchar *start;
@@ -2156,7 +2156,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 		yd->rxlen -= YAHOO_PACKET_HDRLEN + pktlen;
 		if (yd->rxlen) {
-			char *tmp = g_memdup(yd->rxqueue + YAHOO_PACKET_HDRLEN + pktlen, yd->rxlen);
+			guchar *tmp = g_memdup(yd->rxqueue + YAHOO_PACKET_HDRLEN + pktlen, yd->rxlen);
 			g_free(yd->rxqueue);
 			yd->rxqueue = tmp;
 		} else {

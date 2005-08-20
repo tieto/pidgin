@@ -193,7 +193,7 @@ static void ycht_progress_online_friends(YchtConn *ycht, YchtPkt *pkt)
 /*****************************************************************************
  * Functions dealing with YCHT packets and their contents directly.
  *****************************************************************************/
-static void ycht_packet_dump(const char *data, int len)
+static void ycht_packet_dump(const guchar *data, int len)
 {
 #ifdef YAHOO_YCHT_DEBUG
 	int i;
@@ -431,7 +431,7 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 		if (ycht->rxlen < YCHT_HEADER_LEN)
 			return;
 
-		if (strncmp("YCHT", ycht->rxqueue, 4) != 0)
+		if (strncmp("YCHT", (char *)ycht->rxqueue, 4) != 0)
 			gaim_debug_error("yahoo", "YCHT: protocol error.\n");
 
 		pos += 4; /* YCHT */
@@ -453,11 +453,11 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 		ycht_packet_dump(ycht->rxqueue, YCHT_HEADER_LEN + pktlen);
 
 		pkt = ycht_packet_new(version, service, status);
-		ycht_packet_read(pkt, ycht->rxqueue + pos, pktlen);
+		ycht_packet_read(pkt, (char *)ycht->rxqueue + pos, pktlen);
 
 		ycht->rxlen -= YCHT_HEADER_LEN + pktlen;
 		if (ycht->rxlen) {
-			char *tmp = g_memdup(ycht->rxqueue + YCHT_HEADER_LEN + pktlen, ycht->rxlen);
+			guchar *tmp = g_memdup(ycht->rxqueue + YCHT_HEADER_LEN + pktlen, ycht->rxlen);
 			g_free(ycht->rxqueue);
 			ycht->rxqueue = tmp;
 		} else {

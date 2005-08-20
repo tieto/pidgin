@@ -7,11 +7,6 @@ Gaim::Presence
 gaim_account_get_presence(account)
 	Gaim::Account account
 
-void 
-gaim_account_set_presence(account, presence)
-	Gaim::Account account
-	Gaim::Presence presence
-
 Gaim::Account
 gaim_account_new(username, protocol_id)
 	const char * username

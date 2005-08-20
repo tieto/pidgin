@@ -34,7 +34,7 @@ magic_free_object(pTHX_ SV *sv, MAGIC *mg)
 
 static MGVTBL vtbl_free_object =
 {
-	NULL, NULL, NULL, NULL, magic_free_object
+	NULL, NULL, NULL, NULL, magic_free_object, NULL, NULL
 };
 
 static SV *
@@ -178,12 +178,13 @@ execute_perl(const char *function, int argc, char **args)
 	int count = 0, i, ret_value = 1;
 	SV *sv_args[argc];
 	STRLEN na;
-        PERL_SET_CONTEXT(my_perl);
+	dSP;
+	PERL_SET_CONTEXT(my_perl);
 	/*
 	 * Set up the perl environment, push arguments onto the
 	 * perl stack, then call the given function
 	 */
-	dSP;
+	SPAGAIN;
 	ENTER;
 	SAVETMPS;
 	PUSHMARK(sp);

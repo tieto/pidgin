@@ -404,8 +404,9 @@ load_perl_plugin(GaimPlugin *plugin)
 	execute_perl("Gaim::PerlLoader::load_n_eval", 2, atmp);
 
 	{
-		PERL_SET_CONTEXT(my_perl);
 		dSP;
+		PERL_SET_CONTEXT(my_perl);
+		SPAGAIN;
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);
@@ -434,8 +435,9 @@ load_perl_plugin(GaimPlugin *plugin)
 static void
 destroy_package(const char *package)
 {
-        PERL_SET_CONTEXT(my_perl);
 	dSP;
+	PERL_SET_CONTEXT(my_perl);
+	SPAGAIN;
 
 	ENTER;
 	SAVETMPS;
@@ -466,8 +468,9 @@ unload_perl_plugin(GaimPlugin *plugin)
 
 	if (gps->unload_sub != NULL)
 	{
-        	PERL_SET_CONTEXT(my_perl);
 		dSP;
+		PERL_SET_CONTEXT(my_perl);
+		SPAGAIN;
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);

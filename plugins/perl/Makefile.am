@@ -83,7 +83,8 @@ common_sources = \
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	$(common_sources) 
+	$(common_sources) \
+	libgaimperl.c
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \

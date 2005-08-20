@@ -1307,8 +1307,6 @@ static void _init_plugin(GaimPlugin *plugin)
 {
         GaimAccountUserSplit *split;
 	GaimAccountOption *option;
-			
-	gaim_debug_register_category("simple");
 
         split = gaim_account_user_split_new(_("Server"), "blubb.com", '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);

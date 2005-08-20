@@ -311,11 +311,6 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimGtkPluginUiInfo ui_info =
-{
-	NULL                                            /**< get_config_frame */
-};
-
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
@@ -341,7 +336,7 @@ static GaimPluginInfo info =
 	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
-	&ui_info,                                         /**< ui_info        */
+	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,
 	NULL

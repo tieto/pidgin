@@ -2072,7 +2072,7 @@ nm_rtfize_text(char *text)
 	gunichar uc;
 
 	gstr = g_string_sized_new(strlen(text)*2);
-	pch = text;
+	pch = (unsigned char *)text;
 	while (*pch) {
 		if ((*pch) <= 0x7F) {
 			switch (*pch) {

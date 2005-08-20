@@ -263,16 +263,6 @@ void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
 void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
 
 /**
- * Sets the account's presence.
- *
- * @param account  The account.
- * @param presence The presence.
- *
- * TODO: This function does not seem to be implemented anywhere...
- */
-void gaim_account_set_presence(GaimAccount *account, GaimPresence *presence);
-
-/**
  * Activates or deactivates a status.  All changes to the statuses of
  * an account go through this function or gaim_account_set_status_vargs
  * or gaim_account_set_status_list.

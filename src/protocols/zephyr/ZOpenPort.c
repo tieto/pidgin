@@ -19,7 +19,7 @@ Code_t ZOpenPort(port)
     unsigned short *port;
 {
     struct sockaddr_in bindin;
-    int len;
+    socklen_t len;
     
     (void) ZClosePort();
 

@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gevolution gaim-remote gestures perl ssl tcl ticker
+DIST_SUBDIRS = docklet gevolution gaim-remote gestures musicmessaging perl ssl tcl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution

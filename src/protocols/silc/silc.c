@@ -181,7 +181,7 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 	/* Get session detachment data, if available */
 	memset(&params, 0, sizeof(params));
 	dfile = silcgaim_session_file(gaim_account_get_username(sg->account));
-	params.detach_data = silc_file_readfile(dfile, &params.detach_data_len);
+	params.detach_data = (unsigned char *)silc_file_readfile(dfile, &params.detach_data_len);
 	if (params.detach_data)
 		params.detach_data[params.detach_data_len] = 0;
 
@@ -524,7 +524,7 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 		tmp = silc_file_readfile(val, &tmp_len);
 		if (tmp) {
 			tmp[tmp_len] = 0;
-			if (silc_vcard_decode(tmp, tmp_len, &vcard))
+			if (silc_vcard_decode((unsigned char *)tmp, tmp_len, &vcard))
 				silc_client_attribute_add(client, conn,
 							  SILC_ATTRIBUTE_USER_INFO,
 							  (void *)&vcard,
@@ -835,7 +835,7 @@ silcgaim_actions(GaimPlugin *plugin, gpointer context)
 
 typedef struct {
 	char *nick;
-	unsigned char *message;
+	char *message;
 	SilcUInt32 message_len;
 	SilcMessageFlags flags;
 } *SilcGaimIM;
@@ -880,7 +880,7 @@ silcgaim_send_im_resolved(SilcClient client,
 
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
-					 im->message, im->message_len, TRUE);
+					 (unsigned char *)im->message, im->message_len, TRUE);
 	gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
 			   im->message, 0, time(NULL));
 
@@ -955,7 +955,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 
 	/* Send private message directly */
 	ret = silc_client_send_private_message(client, conn, clients[0],
-					       mflags, (char *)msg,
+					       mflags, (unsigned char *)msg,
 					       strlen(msg), TRUE);
 
 	silc_free(nickname);

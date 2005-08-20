@@ -36,7 +36,8 @@ Code_t ZInitialize()
     char addr[4], hostname[MAXHOSTNAMELEN];
     struct in_addr servaddr;
     struct sockaddr_in sin;
-    int s, sinsize = sizeof(sin);
+    int s;
+    socklen_t sinsize = sizeof(sin);
     Code_t code;
     ZNotice_t notice;
 #ifdef ZEPHYR_USES_KERBEROS

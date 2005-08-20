@@ -1249,7 +1249,7 @@ gaim_presence_add_status(GaimPresence *presence, GaimStatus *status)
 }
 
 void
-gaim_presence_add_presence(GaimPresence *presence, const GList *source_list)
+gaim_presence_add_list(GaimPresence *presence, const GList *source_list)
 {
 	const GList *l;
 

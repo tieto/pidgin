@@ -1650,7 +1650,6 @@ static void load_conf()
 	GHashTable *hashes;
 	char bad[82] = "";
 	char good[256] = "";
-	char completestr[BUFSIZ] = "";
 	int pnt = 0;
 	gsize size;
 	gboolean complete = TRUE;
@@ -1674,8 +1673,7 @@ static void load_conf()
 			}
 			else if(!strncasecmp(buf, "COMPLETE ", 9))
 			{
-				strncpy(completestr, buf + 9, BUFSIZ - 1);
-				complete = (gboolean)strtol(completestr, NULL, 10);
+				complete = *(buf+9) == '0' ? FALSE : TRUE;
 			}
 			else if (!strncasecmp(buf, "GOOD ", 5))
 			{

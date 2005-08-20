@@ -455,6 +455,14 @@ gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 	return saved_status->message;
 }
 
+void *
+gaim_savedstatuses_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
 void
 gaim_savedstatuses_init(void)
 {

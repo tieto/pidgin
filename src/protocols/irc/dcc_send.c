@@ -185,7 +185,7 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 	xd->rxlen += len;
 
 	while (1) {
-		int acked;
+		size_t acked;
 
 		if (xd->rxlen < 4)
 			break;

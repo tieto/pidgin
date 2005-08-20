@@ -1316,7 +1316,7 @@ static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputConditio
 
 	if (!yrl->started) {
 		yrl->started = TRUE;
-		start = g_strstr_len(yrl->rxqueue, yrl->rxlen, "\r\n\r\n");
+		start = (guchar *)g_strstr_len((char *)yrl->rxqueue, yrl->rxlen, "\r\n\r\n");
 		if (!start || (start - yrl->rxqueue + 4) >= yrl->rxlen)
 			return;
 		start += 4;
@@ -1330,7 +1330,7 @@ static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputConditio
 		             (GDestroyNotify)yahoo_chatxml_state_destroy);
 	}
 
-	if (!g_markup_parse_context_parse(yrl->parse, start, (yrl->rxlen - (start - yrl->rxqueue)), NULL)) {
+	if (!g_markup_parse_context_parse(yrl->parse, (char *)start, (yrl->rxlen - (start - yrl->rxqueue)), NULL)) {
 
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
