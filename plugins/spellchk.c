@@ -461,7 +461,8 @@ static void
 insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 					gchar *text, gint len, spellchk *spell)
 {
-	GtkTextIter start;
+	GtkTextIter start, end;
+	GtkTextMark *mark;
 
 	if (spell->ignore_correction) {
 		spell->ignore_correction = FALSE;
@@ -474,7 +475,10 @@ insert_text_after(GtkTextBuffer *buffer, GtkTextIter *iter,
 	if (len == 1)
 	  check_range(spell, buffer, start, *iter);
 
-	gtk_text_buffer_move_mark(buffer, spell->mark_insert_end, iter);
+	/* if check_range modified the buffer, iter has been invalidated */
+	mark = gtk_text_buffer_get_insert(buffer);
+	gtk_text_buffer_get_iter_at_mark(buffer, &end, mark);
+	gtk_text_buffer_move_mark(buffer, spell->mark_insert_end, &end);
 
 	spell->inserting = FALSE;
 
