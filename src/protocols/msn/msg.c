@@ -163,7 +163,6 @@ msn_message_new_nudge(void)
 	msn_message_set_content_type(msg, "text/x-msnmsgr-datacast\r\n");
 	msn_message_set_flag(msg, 'N');
 	msn_message_set_attr(msg,"ID","1\r\n");
-	//msn_message_set_bin_data(msg, "\r\n\r\n", 4);
 
 	return msg;
 }
