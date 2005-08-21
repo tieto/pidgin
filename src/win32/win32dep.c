@@ -30,12 +30,7 @@
 
 #include <gtk/gtk.h>
 #include <glib.h>
-#if GLIB_CHECK_VERSION(2,6,0)
-#	include <glib/gstdio.h>
-#else
-#	define g_fopen fopen
-#	define g_unlink unlink
-#endif
+#include <glib/gstdio.h>
 #include <gdk/gdkwin32.h>
 
 #include "gaim.h"
@@ -75,10 +70,7 @@ typedef enum {
 /*
  * LOCALS
  */
-static char *app_data_dir;
-static char install_dir[MAXPATHLEN];
-static char lib_dir[MAXPATHLEN];
-static char locale_dir[MAXPATHLEN];
+static char *app_data_dir, *install_dir, *lib_dir, *locale_dir;
 
 /*
  *  GLOBALS
@@ -228,39 +220,72 @@ char *wgaim_get_special_folder(int folder_type) {
 }
 
 char* wgaim_install_dir(void) {
-	HMODULE hmod;
-	char* buf;
+	static gboolean initialized = FALSE;
 
-	hmod = GetModuleHandle(NULL);
-	if( hmod == 0 ) {
-		buf = g_win32_error_message( GetLastError() );
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleHandle error: %s\n", buf);
-		g_free(buf);
-		return NULL;
-	}
-	if(GetModuleFileName( hmod, (char*)&install_dir, MAXPATHLEN ) == 0) {
-		buf = g_win32_error_message( GetLastError() );
-		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "GetModuleFileName error: %s\n", buf);
-		g_free(buf);
-		return NULL;
-	}
-	buf = g_path_get_dirname( install_dir );
-	strcpy( (char*)&install_dir, buf );
-	g_free( buf );
+	if (!initialized) {
+		char *tmp = NULL;
+		if (G_WIN32_HAVE_WIDECHAR_API()) {
+			wchar_t winstall_dir[MAXPATHLEN];
+			if (GetModuleFileNameW(NULL, winstall_dir,
+					MAXPATHLEN) > 0) {
+				tmp = g_utf16_to_utf8(winstall_dir, -1,
+					NULL, NULL, NULL);
+			}
+		} else {
+			gchar cpinstall_dir[MAXPATHLEN];
+			if (GetModuleFileNameA(NULL, cpinstall_dir,
+					MAXPATHLEN) > 0) {
+				tmp = g_locale_to_utf8(cpinstall_dir,
+					-1, NULL, NULL, NULL);
+			}
+		}
 
-	return (char*)&install_dir;
+		if (tmp == NULL) {
+			tmp = g_win32_error_message(GetLastError());
+			gaim_debug(GAIM_DEBUG_ERROR, "wgaim",
+				"GetModuleFileName error: %s\n", tmp);
+			g_free(tmp);
+			return NULL;
+		} else {
+			install_dir = g_path_get_dirname(tmp);
+			g_free(tmp);
+			initialized = TRUE;
+		}
+	}
+
+	return install_dir;
 }
 
 char* wgaim_lib_dir(void) {
-	strcpy(lib_dir, wgaim_install_dir());
-	g_strlcat(lib_dir, G_DIR_SEPARATOR_S "plugins", sizeof(lib_dir));
-	return (char*)&lib_dir;
+	static gboolean initialized = FALSE;
+
+	if (!initialized) {
+		char *inst_dir = wgaim_install_dir();
+		if (inst_dir != NULL) {
+			lib_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "plugins", inst_dir);
+			initialized = TRUE;
+		} else {
+			return NULL;
+		}
+	}
+
+	return lib_dir;
 }
 
 char* wgaim_locale_dir(void) {
-	strcpy(locale_dir, wgaim_install_dir());
-	g_strlcat(locale_dir, G_DIR_SEPARATOR_S "locale", sizeof(locale_dir));
-	return (char*)&locale_dir;
+	static gboolean initialized = FALSE;
+
+	if (!initialized) {
+		char *inst_dir = wgaim_install_dir();
+		if (inst_dir != NULL) {
+			locale_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "locale", inst_dir);
+			initialized = TRUE;
+		} else {
+			return NULL;
+		}
+	}
+
+	return locale_dir;
 }
 
 char* wgaim_data_dir(void) {
@@ -373,9 +398,9 @@ void wgaim_init(HINSTANCE hint) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	char *perlenv;
-        char *newenv;
+	char *newenv;
 
-        gaim_debug_set_ui_ops(&ops);
+	gaim_debug_set_ui_ops(&ops);
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init start\n");
 
 	gaimexe_hInstance = hint;
@@ -394,17 +419,17 @@ void wgaim_init(HINSTANCE hint) {
 		WSACleanup();
 	}
 
-        /* Set Environmental Variables */
-        /* Tell perl where to find Gaim's perl modules */
-        perlenv = (char*)g_getenv("PERL5LIB");
-        newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
-                                 perlenv ? perlenv : "", 
-                                 perlenv ? ";" : "", 
-                                 wgaim_install_dir(), 
-                                 "\\perlmod;");
-        if(putenv(newenv)<0)
+	/* Set Environmental Variables */
+	/* Tell perl where to find Gaim's perl modules */
+	perlenv = (char*) g_getenv("PERL5LIB");
+	newenv = g_strdup_printf("PERL5LIB=%s%s%s%s",
+		perlenv ? perlenv : "",
+		perlenv ? ";" : "",
+		wgaim_install_dir(),
+		"\\perlmod;");
+	if (putenv(newenv) < 0)
 		gaim_debug(GAIM_DEBUG_WARNING, "wgaim", "putenv failed\n");
-        g_free(newenv);
+	g_free(newenv);
 
         /* Set app data dir, used by gaim_home_dir */
 	newenv = (char*) g_getenv("GAIMHOME");
@@ -424,7 +449,7 @@ void wgaim_init(HINSTANCE hint) {
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
 	wgaim_gtkspell_init();
-        gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
+	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
 /* Windows Cleanup */
