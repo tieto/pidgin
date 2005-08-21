@@ -1238,7 +1238,11 @@ gaim_account_set_buddy_icon(GaimAccount *account, const char *icon)
 	g_free(account->buddy_icon);
 	account->buddy_icon = (icon == NULL ? NULL : g_strdup(icon));
 	if (gaim_account_is_connected(account))
-		serv_set_buddyicon(gaim_account_get_connection(account), icon);
+	{
+		char *filename = gaim_buddy_icons_get_full_path(icon);
+		serv_set_buddyicon(gaim_account_get_connection(account), filename);
+		g_free(filename);
+	}
 
 	schedule_accounts_save();
 }
