@@ -367,7 +367,9 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len);
-	/* msn_message_show_readable(msg, "Notification", TRUE); */
+#ifdef MSN_DEBUG_NS
+	msn_message_show_readable(msg, "Notification", TRUE);
+#endif
 
 	msn_cmdproc_process_msg(cmdproc, msg);
 
@@ -1177,9 +1179,6 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if (!gaim_account_get_check_mail(session->account))
-		return;
-
 	if (session->passport_info.file == NULL)
 	{
 		MsnTransaction *trans;
@@ -1190,6 +1189,9 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		return;
 	}
+
+	if (!gaim_account_get_check_mail(session->account))
+		return;
 
 	table = msn_message_get_hashtable_from_body(msg);
 
@@ -1230,9 +1232,6 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if (!gaim_account_get_check_mail(session->account))
-		return;
-
 	if (session->passport_info.file == NULL)
 	{
 		MsnTransaction *trans;
@@ -1243,6 +1242,9 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		return;
 	}
+
+	if (!gaim_account_get_check_mail(session->account))
+		return;
 
 	table = msn_message_get_hashtable_from_body(msg);
 

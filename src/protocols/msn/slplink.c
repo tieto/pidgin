@@ -384,6 +384,7 @@ msn_slplink_release_slpmsg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		msg->msnslp_header.session_id = slpmsg->session_id;
 		msg->msnslp_header.ack_id = slpmsg->ack_id;
 		msg->msnslp_header.ack_size = slpmsg->ack_size;
+		msg->msnslp_header.ack_sub_id = slpmsg->ack_sub_id;
 	}
 	else if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 	{
@@ -671,7 +672,7 @@ gen_context(const char *file_name, const char *file_path)
 	gsize size = 0;
 	MsnContextHeader header;
 	gchar *u8 = NULL;
-	guchar *base, *n;
+	guchar *base, *n, *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
 	glong uni_len = 0;
@@ -717,7 +718,9 @@ gen_context(const char *file_name, const char *file_path)
 	n += 4;
 
 	g_free(uni);
-	return gaim_base64_encode(base, len);
+	ret = gaim_base64_encode(base, len);
+	g_free(base);
+	return ret;
 }
 
 void

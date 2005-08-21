@@ -265,6 +265,14 @@ void msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 void msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
 
 /**
+ * Processes nudge messages.
+ *
+ * @param cmdproc The command processor.
+ * @param msg     The message.
+ */
+void msn_nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg);
+
+/**
  * Processes INVITE messages.
  *
  * @param cmdproc The command processor.

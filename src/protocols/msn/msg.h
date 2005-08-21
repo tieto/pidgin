@@ -50,7 +50,8 @@ typedef enum
 	MSN_MSG_TEXT,
 	MSN_MSG_TYPING,
 	MSN_MSG_CAPS,
-	MSN_MSG_SLP
+	MSN_MSG_SLP,
+	MSN_MSG_NUDGE
 
 } MsnMsgType;
 
@@ -138,6 +139,18 @@ MsnMessage *msn_message_new(MsnMsgType type);
  */
 MsnMessage *msn_message_new_msnslp(void);
 
+/**
+ * Creates a new nudge message.
+ *
+ * @return A new nudge message.
+ */
+MsnMessage *msn_message_new_nudge(void);
+
+/**
+ * Creates a new plain message.
+ *
+ * @return A new plain message.
+ */
 MsnMessage *msn_message_new_plain(const char *message);
 
 /**

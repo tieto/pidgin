@@ -34,6 +34,7 @@
 #include "session.h"
 #include "state.h"
 #include "utils.h"
+#include "cmds.h"
 #include "prpl.h"
 #include "util.h"
 #include "version.h"
@@ -89,6 +90,30 @@ msn_normalize(const GaimAccount *account, const char *str)
 	g_free(tmp);
 
 	return buf;
+}
+
+static GaimCmdRet
+msn_cmd_nudge(GaimConversation *conv, const gchar *cmd, gchar **args, gchar **error, void *data)
+{
+	GaimAccount *account = gaim_conversation_get_account(conv);
+	GaimConnection *gc = gaim_account_get_connection(account);
+	const char *username = gaim_account_get_username(account);
+	MsnMessage *msg;
+	MsnSession *session;
+	MsnSwitchBoard *swboard;
+
+	msg = msn_message_new_nudge();
+	session = gc->proto_data;
+	swboard = msn_session_get_swboard(session, gaim_conversation_get_name(conv), MSN_SB_FLAG_IM);
+
+	if (session == NULL || swboard == NULL)
+		return GAIM_CMD_RET_FAILED;
+
+	msn_switchboard_send_msg(swboard, msg, TRUE);
+
+	gaim_conversation_write(conv, NULL, _("You have just sent a Nudge!"), GAIM_MESSAGE_SYSTEM, time(NULL));
+
+	return GAIM_CMD_RET_OK;
 }
 
 static void
@@ -287,6 +312,25 @@ msn_show_set_mobile_pages(GaimPluginAction *action)
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
 						_("Cancel"), NULL);
+}
+
+static void
+msn_show_hotmail_inbox(GaimPluginAction *action)
+{
+	GaimConnection *gc;
+	MsnSession *session;
+
+	gc = (GaimConnection *) action->context;
+	session = gc->proto_data;
+
+	if (session->passport_info.file == NULL)
+	{
+		gaim_notify_error(gc, NULL,
+						  _("This Hotmail account may not be active."), NULL);
+		return;
+	}
+
+	gaim_notify_uri(gc, session->passport_info.file);
 }
 
 static void
@@ -564,6 +608,10 @@ msn_status_types(GaimAccount *account)
 static GList *
 msn_actions(GaimPlugin *plugin, gpointer context)
 {
+	GaimConnection *gc = (GaimConnection *)context;
+	GaimAccount *account;
+	const char *user;
+
 	GList *m = NULL;
 	GaimPluginAction *act;
 
@@ -594,6 +642,17 @@ msn_actions(GaimPlugin *plugin, gpointer context)
 	act = gaim_plugin_action_new(_("Allow/Disallow Mobile Pages"),
 			msn_show_set_mobile_pages);
 	m = g_list_append(m, act);
+
+	account = gaim_connection_get_account(gc);
+	user = msn_normalize(account, gaim_account_get_username(account));
+
+	if (strstr(user, "@hotmail.com") != NULL)
+	{
+		m = g_list_append(m, NULL);
+		act = gaim_plugin_action_new(_("Open Hotmail Inbox"),
+				msn_show_hotmail_inbox);
+		m = g_list_append(m, act);
+	}
 
 	return m;
 }
@@ -1930,6 +1989,11 @@ init_plugin(GaimPlugin *plugin)
 										  "http_method", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
+
+	gaim_cmd_register("nudge", "", GAIM_CMD_P_PRPL,
+	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
+	                 "prpl-msn", msn_cmd_nudge,
+	                  _("nudge: nudge a contact to get their attention"), NULL);
 
 	gaim_prefs_remove("/plugins/prpl/msn");
 }

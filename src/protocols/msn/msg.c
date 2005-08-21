@@ -154,6 +154,20 @@ msn_message_new_msnslp(void)
 	return msg;
 }
 
+MsnMessage *
+msn_message_new_nudge(void)
+{
+	MsnMessage *msg;
+
+	msg = msn_message_new(MSN_MSG_NUDGE);
+	msn_message_set_content_type(msg, "text/x-msnmsgr-datacast\r\n");
+	msn_message_set_flag(msg, 'N');
+	msn_message_set_attr(msg,"ID","1\r\n");
+	//msn_message_set_bin_data(msg, "\r\n\r\n", 4);
+
+	return msg;
+}
+
 void
 msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 {

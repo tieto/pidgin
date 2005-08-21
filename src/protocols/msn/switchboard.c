@@ -29,8 +29,6 @@
 
 #include "error.h"
 
-/* #define MSN_DEBUG_SWBOARD */
-
 static MsnTable *cbs_table;
 
 static void msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg,
@@ -72,7 +70,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	MsnMessage *msg;
 	GList *l;
 
-#ifdef MSN_DEBUG_SWBOARD
+#ifdef MSN_DEBUG_SB
 	gaim_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
 #endif
 
@@ -527,7 +525,9 @@ release_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 
 	payload = msn_message_gen_payload(msg, &payload_len);
 
-	/* msn_message_show_readable(msg, "SB SEND", FALSE); */
+#ifdef MSN_DEBUG_SB
+	msn_message_show_readable(msg, "SB SEND", FALSE);
+#endif
 
 	trans = msn_transaction_new(cmdproc, "MSG", "%c %d",
 								msn_message_get_flag(msg), payload_len);
@@ -641,19 +641,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	swboard = cmdproc->data;
 	user = cmd->params[0];
 
-#if 0
-	if (!(swboard->flag & MSN_SB_FLAG_IM))
-	{
-		/* TODO: This is a helper switchboard. It would be better if
-		 * swboard->conv is NULL, but it isn't. */
-		/* Umm? I think swboard->conv is NULL for all helper switchboards now? */
-		msn_switchboard_destroy(swboard);
-		return;
-	}
-#else
-	if (!(swboard->flag & MSN_SB_FLAG_IM))
+	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 		gaim_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
-#endif
 
 	if (swboard->conv == NULL)
 	{
@@ -672,28 +661,6 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	else
 	{
 		/* This is a switchboard used for a im session */
-
-		if (cmd->param_count == 1)
-		{
-			char *username, *str;
-			GaimAccount *account;
-			GaimBuddy *b;
-
-			account = cmdproc->session->account;
-
-			if ((b = gaim_find_buddy(account, user)) != NULL)
-				username = g_markup_escape_text(gaim_buddy_get_alias(b), -1);
-			else
-				username = g_markup_escape_text(user, -1);
-
-			str = g_strdup_printf(_("%s has closed the conversation window."),
-								  username);
-
-			g_free(username);
-			msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
-			g_free(str);
-		}
-
 		msn_switchboard_destroy(swboard);
 	}
 }
@@ -749,7 +716,9 @@ msg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 	msg = msn_message_new_from_cmd(cmdproc->session, cmd);
 
 	msn_message_parse_payload(msg, payload, len);
-	/* msn_message_show_readable(msg, "SB RECV", FALSE); */
+#ifdef MSN_DEBUG_SB
+	msn_message_show_readable(msg, "SB RECV", FALSE);
+#endif
 
 	if (msg->remote_user != NULL)
 		g_free (msg->remote_user);
@@ -960,6 +929,30 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	clientcaps = msn_message_get_hashtable_from_body(msg);
 #endif
+}
+
+void
+nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
+{
+	MsnSwitchBoard *swboard;
+	char *username, *str;
+	GaimAccount *account;
+	GaimBuddy *buddy;
+	const char *user;
+
+	swboard = cmdproc->data;
+	account = cmdproc->session->account;
+	user = msg->remote_user;
+
+	if ((buddy = gaim_find_buddy(account, user)) != NULL)
+		username = g_markup_escape_text(gaim_buddy_get_alias(buddy), -1);
+	else
+		username = g_markup_escape_text(user, -1);
+
+	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
+	g_free(username);
+	msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
+	g_free(str);
 }
 
 /**************************************************************************
@@ -1240,6 +1233,8 @@ msn_switchboard_init(void)
 						   msn_p2p_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
 						   msn_emoticon_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
+						   nudge_msg);
 #if 0
 	msn_table_add_msg_type(cbs_table, "text/x-msmmsginvite",
 						   msn_invite_msg);

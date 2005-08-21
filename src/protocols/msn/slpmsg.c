@@ -121,7 +121,7 @@ msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
 }
 
 #ifdef MSN_DEBUG_SLP
-const void
+void
 msn_slpmsg_show(MsnMessage *msg)
 {
 	const char *info;

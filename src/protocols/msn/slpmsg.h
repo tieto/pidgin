@@ -99,7 +99,7 @@ MsnSlpMessage * msn_slpmsg_sip_new(MsnSlpCall *slpcall, int cseq,
 								   const char *content);
 
 #ifdef MSN_DEBUG_SLP
-const void msn_slpmsg_show(MsnMessage *msg);
+void msn_slpmsg_show(MsnMessage *msg);
 #endif
 
 #endif /* _MSN_SLPMSG_H_ */
