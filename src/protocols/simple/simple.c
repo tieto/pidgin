@@ -1308,7 +1308,7 @@ static void _init_plugin(GaimPlugin *plugin)
         GaimAccountUserSplit *split;
 	GaimAccountOption *option;
 
-        split = gaim_account_user_split_new(_("Server"), "blubb.com", '@');
+        split = gaim_account_user_split_new(_("Server"), "", '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
