@@ -2509,7 +2509,7 @@ redraw_icon(gpointer data)
 		    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
 		MAX(gdk_pixbuf_get_height(buf) * scale_height /
 		    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
-		GDK_INTERP_NEAREST);
+		GDK_INTERP_BILINEAR);
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	g_object_unref(G_OBJECT(scale));
@@ -5797,7 +5797,7 @@ gaim_gtkconv_update_buddy_icon(GaimConversation *conv)
 				    gdk_pixbuf_animation_get_width(gtkconv->u.im->anim), 1),
 				MAX(gdk_pixbuf_get_height(buf) * scale_height /
 				    gdk_pixbuf_animation_get_height(gtkconv->u.im->anim), 1),
-				GDK_INTERP_NEAREST);
+				GDK_INTERP_BILINEAR);
 
 	gdk_pixbuf_render_pixmap_and_mask(scale, &pm, &bm, 100);
 	g_object_unref(G_OBJECT(scale));
