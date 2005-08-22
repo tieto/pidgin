@@ -1,6 +1,13 @@
-The majority of the below was written by Eric Warmenhoven way back in 
+Lots of this is pretty grossly out of date...
+Some of it might still be useful.  For coding style, your
+best bet is to browse through some of the files in src and
+emulate what you see there.
+--Mark
+
+
+The majority of the below was written by Eric Warmenhoven way back in
 antiquity. I have taken the liberty of attempting to PARTIALLY update
-it. I still think its helpful, but use it at your own risk. 
+it. I still think its helpful, but use it at your own risk.
 --Luke
 
 
