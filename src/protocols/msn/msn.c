@@ -97,7 +97,6 @@ msn_cmd_nudge(GaimConversation *conv, const gchar *cmd, gchar **args, gchar **er
 {
 	GaimAccount *account = gaim_conversation_get_account(conv);
 	GaimConnection *gc = gaim_account_get_connection(account);
-	const char *username = gaim_account_get_username(account);
 	MsnMessage *msg;
 	MsnSession *session;
 	MsnSwitchBoard *swboard;
