@@ -690,14 +690,6 @@ void gaim_account_destroy_log(GaimAccount *account);
 /*@{*/
 
 /**
- * Loads the accounts.
- *
- * @return TRUE if accounts.xml was loaded successfully.  Otherwise
- *         FALSE is returned.
- */
-gboolean gaim_accounts_load();
-
-/**
  * Adds an account to the list of accounts.
  *
  * @param account The account.

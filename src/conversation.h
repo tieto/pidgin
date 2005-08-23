@@ -1434,16 +1434,6 @@ void gaim_conv_placement_set_current_func(GaimConvPlacementFunc func);
  */
 GaimConvPlacementFunc gaim_conv_placement_get_current_func(void);
 
-/**
- * Returns the id of the specified conversation placement function.
- *
- * @param fnc A pointer to the registered function.
- *
- * @return The id of the conversation, or NULL if the function is not
- *         registered.
- */
-const char *gaim_conv_placement_get_fnc_id(GaimConvPlacementFunc fnc);
-
 /*@}*/
 
 /**************************************************************************/

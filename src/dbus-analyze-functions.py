@@ -35,8 +35,7 @@ simpletypes = ["int", "gint", "guint", "gboolean"]
 
 # functions that shouldn't be exported 
 
-excluded = ["gaim_accounts_load", "gaim_account_set_presence",
-            "gaim_conv_placement_get_fnc_id", "gaim_conv_placement_add_fnc",
+excluded = ["gaim_conv_placement_add_fnc",
             "gaim_presence_add_list"]
 
 stringlists = []
