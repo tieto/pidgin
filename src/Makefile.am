@@ -153,7 +153,10 @@ if ENABLE_DBUS
 CLEANFILES    = \
 	dbus-bindings.c \
 	dbus-client-binding.c \
-	dbus-client-binding.h
+	dbus-client-binding.h \
+	gaim.service
+#	dbus-types.c 
+#	dbus-types.h 
 
 # gaim dbus server
 
@@ -162,12 +165,25 @@ dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
+#Although dbus-types.[ch] are generated automatically, they are
+#included in the distribution (and CVS) as normal source
+#files. Otherwise, we would have to compile the src directory before
+#the plugins directory, because some of the plugins depend on the
+#dbus-types.h.  On the other hand, gaim-remote from the src directory
+#requires libgaim-remote from the the plugins directory, which forces
+#us to compile the plugins directory before src.  
+
+# dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
+# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DEFINE_TYPE\(%s\) > $@
+
+# dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
+# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py > $@
 
-dbus-server.$(OBJEXT): dbus-bindings.c
-
+dbus-server.$(OBJEXT): dbus-bindings.c dbus-types.c dbus-types.h
+$(gaim_OBJECTS): dbus-types.h
 
 # libgaim-client
 
@@ -178,8 +194,9 @@ libgaim_client_la_SOURCES = gaim-client.c
 gaim-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client > $@
 
-gaim-client-bindings.h: dbus-analyze-functions.py $(dbus_exported)
-	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client --headers > $@
+gaim-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(gaim_coreheaders) $(dbus_exported)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=enum --verbatim > $@
+	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client --headers >> $@
 
 $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
@@ -198,8 +215,22 @@ gaim_client_example_LDADD = \
 
 bin_PROGRAMS += gaim-client-example
 
-gaim-client-example.$(OBJEXT): gaim-client-bindings.h
+gaim-client-example.$(OBJEXT): gaim-client-bindings.h 
 
+# scripts
+
+bin_SCRIPTS = gaim-remote.py gaim-notifications-example.py gaim-send gaim-send-async
+
+
+# gaim.service
+
+gaim.service:
+	echo "[Gaim]" > $@
+	echo "Name=org.gaim.GaimService" >> $@
+	echo "Exec=$(bindir)/gaim" >> $@
+
+dbus_servicesdir = /usr/share/dbus-1
+dbus_services_DATA = gaim.service
 
 endif
 

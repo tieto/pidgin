@@ -1,43 +1,41 @@
-# This programs takes a C header file as the input and produces:
-#
-# with option --mode=xml:  xml dbus specification 
-# with option --mode=c:    C wrappers 
-#
-
 import re
 import string
 import sys
 
 
-# list of object types
-
-# objecttypes = []
-
-# for objecttype in file("dbus-auto-structs.txt"):
-#     objecttypes.append(objecttype.strip())
-
-# a dictionary of simple types
-# each TYPE maps into a pair (dbus-type-name, compatible-c-type-name)
-# if compatible-c-type-name is None then it is the same as TYPE
-
-# simpletypes = {
-#     "int" : ("i", None),
-#     "gint" : ("i", None),
-#     "guint" : ("u", None),
-#     "gboolean" : ("i", "int")
-#     }
-
-
+# types translated into "int"
 simpletypes = ["int", "gint", "guint", "gboolean"]
 
-# for enum in file("dbus-auto-enums.txt"):
-#     simpletypes[enum.strip()] = ("i", "int")
+# List "excluded" contains functions that shouldn't be exported via
+# DBus.  If you remove a function from this list, please make sure
+# that it does not break "make" with the configure option
+# "--enable-dbus" turned on.
 
-# functions that shouldn't be exported 
+excluded = [\
+    # I don't remember why this function is excluded; something to do
+    # with the fact that it takes a (const) GList as a parameter.
+    "gaim_presence_add_list",
 
-excluded = ["gaim_conv_placement_add_fnc",
-            "gaim_presence_add_list"]
+    # these two macros are excluded because they occur both as
+    # macros and as enum constants, which breaks libgaim-client.
+    "GAIM_CONV_IM",
+    "GAIM_CONV_CHAT",
 
+    # These functions are excluded because they involve value of the
+    # type GaimConvPlacementFunc, which is a pointer to a function and
+    # (currently?) can't be translated into a DBus type.  Normally,
+    # functions with untranslatable types are skipped, but this script
+    # assumes that all non-pointer type names beginning with "Gaim"
+    # are enums, which is not true in this case.
+    "gaim_conv_placement_add_fnc",
+    "gaim_conv_placement_get_fnc",
+    "gaim_conv_placement_get_current_func",
+    "gaim_conv_placement_set_current_func",
+    ]
+
+# This is a list of functions that return a GList* whose elements are
+# string, not pointers to objects.  Don't put any functions here, it
+# won't work.
 stringlists = []
 
 pointer = "#pointer#"
@@ -208,18 +206,9 @@ class ClientBinding (Binding):
             print "typedef struct _%s %s;" % (type[0], type[0])
             self.knowntypes.append(type[0])
 
-    # fixme: import the definitions of the enumerations from gaim
-    # header files
-    def definegaimenum(self, type):
-        if (self.headersonly) and (type[0] not in self.knowntypes) \
-               and (type[0] not in simpletypes):
-            print "typedef int %s;" % type[0]
-            self.knowntypes.append(type[0])
-       
     def inputsimple(self, type, name):
         self.paramshdr.append("%s %s" % (type[0], name))
         self.inputparams.append(("G_TYPE_INT", name))
-        self.definegaimenum(type)
 
     def inputvalist(self, type, name):
         self.paramshdr.append("va_list %s_NULL" % name)
@@ -257,7 +246,6 @@ class ClientBinding (Binding):
         self.decls.append("%s %s = 0;" % (type[0], name))
         self.outputparams.append(("G_TYPE_INT", name))
         self.returncode.append("return %s;" % name);
-        self.definegaimenum(type)
 
     # we could add "const" to the return type but this would probably
     # be a nuisance

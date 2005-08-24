@@ -111,7 +111,7 @@ def execute(uri):
     elif command == "getinfo":
         account = findaccount(accountname, protocol)
         connection = cgaim.GaimAccountGetConnection(account)
-        gaim.ServGetInfo(connection, params["screenname"])
+        return gaim.ServGetInfo(connection, params["screenname"])
 
     elif command == "quit":
         return gaim.GaimCoreQuit()
@@ -151,25 +151,41 @@ def execute(uri):
                                 methodparams.append(int(value))
                             else:
                                 raise "Don't know how to handle type \"%s\"" % type
-                            return gaim.__getattr__(command)(*methodparams)
+                    return gaim.__getattr__(command)(*methodparams)
             raise "Unknown command: %s" % command
 
-def example_code_do_not_call():
-    execute("jabber:addbuddy?screenname=friend")
-    execute("setstatus?status=away&message=don't disturb")
 
-    account = execute("GaimAccountsFindConnected?name=&protocol=")
-    execute("GaimConversationNew?type=1&account=%i&name=testone@localhost" % account)
+if len(sys.argv) == 1:
+    print """This program uses DBus to communicate with gaim.
 
-    execute("jabber:addbuddy?screenname=friend")
-    execute("jabber:goim?screenname=testone@localhost&message=hi")
+Usage:
 
-    execute("jabber:gochat?room=TestRoom&server=conference.localhost")
-    execute("jabber:goim?screenname=testone@localhost&message=hi")
+    %s "command1" "command2" ...
 
+Each command is of one of the three types:
 
+    [protocol:]commandname?param1=value1&param2=value2&...
+    FunctionName?param1=value1&param2=value2&...
+    FunctionName(value1,value2,...)
 
+The second and third form are provided for completeness but their use
+is not recommended; use gaim-send or gaim-send-async instead.  The
+second form uses introspection to find out the parameter names and
+their types, therefore it is rather slow.
 
+Examples of commands:
+
+    jabber:goim?screenname=testone@localhost&message=hi
+    jabber:gochat?room=TestRoom&server=conference.localhost
+    jabber:getinfo?screenname=testone@localhost
+    jabber:addbuddy?screenname=my friend
+
+    setstatus?status=away&message=don't disturb
+    quit
+
+    GaimAccountsFindConnected?name=&protocol=prpl-jabber
+    GaimAccountFindConnected(,prpl-jabber)
+""" % sys.argv[0]
 
 for arg in sys.argv[1:]:
     print execute(arg)
