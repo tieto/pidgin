@@ -1,0 +1,30 @@
+#!/bin/bash
+
+METHOD_NAME=$1
+
+if test -z "$METHOD_NAME" 
+then
+    cat <<EOF 
+This program calls gaim API functions using DBus.  As opposed to gaim-send, 
+it does not print the return value.
+
+Usage:
+
+   $0 method-name type1:parameter1 type2:parameter2 ...
+
+This shell script just invokes dbus-send, see man dbus-send for how 
+to specify the parameters.  
+
+Examples:
+
+   $0 GaimCoreQuit
+
+Use dbus-viewer to get the list of supported functions and their parameters.
+EOF
+    exit 1
+fi
+
+shift
+dbus-send --dest=org.gaim.GaimService --type=method_call /org/gaim/GaimObject org.gaim.GaimInterface.$METHOD_NAME "$@"
+
+echo 
