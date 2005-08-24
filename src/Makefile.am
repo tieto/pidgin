@@ -145,7 +145,6 @@ gaim_coreheaders = \
 	version.h \
 	xmlnode.h
 
-bin_PROGRAMS = gaim gaim-remote
 
 
 if ENABLE_DBUS
@@ -213,7 +212,7 @@ gaim_client_example_LDADD = \
 	$(GTK_LIBS) \
 	$(DBUS_LIBS)
 
-bin_PROGRAMS += gaim-client-example
+gaim_clientbP = gaim-client-example
 
 gaim-client-example.$(OBJEXT): gaim-client-bindings.h 
 
@@ -233,6 +232,8 @@ dbus_servicesdir = /usr/share/dbus-1
 dbus_services_DATA = gaim.service
 
 endif
+
+bin_PROGRAMS = gaim gaim-remote $(gaim_clientbP)
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
