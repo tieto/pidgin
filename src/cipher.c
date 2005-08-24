@@ -372,7 +372,6 @@ static inline void le32_to_cpu_array(guint32 *buf, unsigned int words)
 {
 	while (words--) {
 		*buf=GUINT_FROM_LE(*buf);
-		//		__le32_to_cpus(buf);
 		buf++;
 	}
 }
@@ -380,7 +379,6 @@ static inline void le32_to_cpu_array(guint32 *buf, unsigned int words)
 static inline void cpu_to_le32_array(guint32 *buf, unsigned int words)
 {
 	while (words--) {
-//		__cpu_to_le32s(buf);
 		*buf=GUINT_TO_LE(*buf);
 		buf++;
 	}
