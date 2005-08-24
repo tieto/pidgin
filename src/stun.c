@@ -4,6 +4,8 @@
  *
  * gaim
  *
+ * STUN implementation inspired by jstun [http://jstun.javawi.de/]
+ *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
@@ -45,17 +47,19 @@ static gint transid[4];
 static GSList *callbacks = 0;
 static int fd = -1;
 gint incb = -1;
+gint timeout = -1;
 
 static void do_callbacks() {
 	while(callbacks) {
 		StunCallback cb = callbacks->data;
-		cb(&nattype);
+		if(cb)
+			cb(&nattype);
 		callbacks = g_slist_remove(callbacks, cb);
 	}
 }
 
 static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
-	char buffer[10240];
+	char buffer[1024];
 	char *tmp;
 	int len;
 	struct in_addr in;
@@ -65,7 +69,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
 	
-	len = recv(source, buffer, 10240, 0);
+	len = recv(source, buffer, 1024, 0);
 
 	hdr = (struct stun_header*)buffer;
 	if(hdr->transid[0]!=transid[0] || hdr->transid[1]!=transid[1] || hdr->transid[2]!=transid[2] || hdr->transid[3]!=transid[3]) { // wrong transaction
@@ -112,28 +116,48 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	}
 				
 	do_callbacks();
+	gaim_timeout_remove(timeout);
 	gaim_input_remove(incb);
 }
 
+static gboolean timeoutfunc(void *blah) {	
+	/* remove input */
+	gaim_input_remove(incb);
+	
+	/* set unknown */
+	nattype.status = 0;
+
+	/* callbacks */
+	do_callbacks();
+	
+	return FALSE;
+}
+
+	
 struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	struct sockaddr_in addr;
 	struct stun_header data;
 	int ret = 0;
 	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
 	int port = gaim_prefs_get_int("/core/network/stun_port");
-	
-	if(nattype.status == 1) { // currently discovering
-		callbacks = g_slist_append(callbacks, cb);
-		return NULL;
-	}
-	if(nattype.status == 2 || nattype.status == 0) { // already discovered
-		cb(&nattype);
+
+	if(!ip || !port) {
+		nattype.status = 0;
+		if(cb) cb(&nattype);
 		return &nattype;
 	}
-
+	
+	if(nattype.status == 1) { // currently discovering
+		if(cb) callbacks = g_slist_append(callbacks, cb);
+		return NULL;
+	}
+	if(nattype.status != -1) { // already discovered
+		if(cb) cb(&nattype);
+		return &nattype;
+	}
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		nattype.status = 0;
-		cb(&nattype);
+		if(cb) cb(&nattype);
 		return &nattype;
 	}
 
@@ -145,7 +169,7 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	}
 	if( ret < 0 ) {
 		nattype.status = 0;
-		cb(&nattype);
+		if(cb) cb(&nattype);
 		return &nattype;
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
@@ -165,8 +189,10 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	
 	if( sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
 			nattype.status = 0;
-			cb(&nattype);
+			if(cb) cb(&nattype);
 			return &nattype;
 	}
+	if(cb) callbacks = g_slist_append(callbacks, cb);
+	timeout = gaim_timeout_add(2000, (GSourceFunc)timeoutfunc, NULL);
 	return NULL;
 }
