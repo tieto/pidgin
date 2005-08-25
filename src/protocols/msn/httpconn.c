@@ -142,7 +142,7 @@ write_raw(MsnHttpConn *httpconn, const char *header,
 
 	do
 	{
-		res = write(httpconn->fd, buf, buf_len);
+		res = write(httpconn->fd, buf + s, buf_len - s);
 		if (res >= 0)
 		{
 			s += res;
