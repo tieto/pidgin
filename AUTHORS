@@ -6,13 +6,6 @@ We've got an IRC room now too, #gaim on irc.freenode.net. Come check us out.
 Active Developers:
 ------------------
 
-Rob Flynn <gaim@robflynn.com> - Maintainer
-	AIM: RobFlynn
-	ICQ: 1358450
-	MSN: rmf410@hotmail.com
-	Yahoo: IBRRob
-	Jabber: robflynn@jabber.org
-
 Sean Egan <bj91704@binghamton.edu> - Lead Developer
 	AIM: SeanEgn
 	ICQ: 96642211
@@ -31,6 +24,7 @@ Luke 'LSchiere' Schierer - Support
 Etan 'deryni' Reisner - Developer
 Stu 'nosnilmot' Tomlinson - Developer
 Gary 'grim' Kramlich - Developer
+Richard 'rlaager' Laager
 
 Crazy Patch Writers:
 --------------------
@@ -38,13 +32,14 @@ Crazy Patch Writers:
 Ka-Hing 'javabsp' Cheung
 Felipe 'shx' Contreras
 Decklin Foster
-Richard 'rlaager' Laager
+Peter 'Bleeter' Lawler
 Robert 'Robot101' McQueen
 Benjamin Miller
 Kevin 'SimGuy' Stange
 
 Retired:
 --------
+Rob Flynn <gaim@robflynn.com> - Former Maintainer
 Adam Fritzler - Former libfaim Maintainer
 Eric Warmenhoven <eric@warmenhoven.org> - Former Lead Developer
 Jim Duchek <jimduchek@ou.edu> - Former Maintainer
