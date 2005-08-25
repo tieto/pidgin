@@ -20,7 +20,6 @@ OSCARSOURCES = \
 	chatnav.c      \
 	conn.c         \
 	email.c        \
-	faimconfig.h   \
 	ft.c           \
 	icq.c          \
 	im.c           \
