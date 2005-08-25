@@ -97,6 +97,11 @@ version 2.0.0:
 	           "file-recv-complete", "file-send-accept", "file-send-start",
 	           "file-send-cancel", and "file-send-complete" signals.  See
 	           the Doxygen documentation for the details.
+	* Changed: GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
+	* Changed: GAIM_CONV_IM to GAIM_CONV_TYPE_IM.
+	* Changed: GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
+	* Changed: GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
+	* Changed: GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
