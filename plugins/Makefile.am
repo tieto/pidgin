@@ -68,11 +68,16 @@ dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 dbus_example_la_SOURCES = dbus-example.c
 plugin_LTLIBRARIES     += dbus-example.la
 
-dbus-example-bindings.c: ../src/dbus-analyze-functions.py $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS)
-	cat $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS) | \
-	$(PYTHON) ../src/dbus-analyze-functions.py --export-only > $@
+.PHONY: always
 
-$(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.c
+$(top_builddir)/src/dbus-types.h: always
+	cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
+
+dbus-example-bindings.c: $(top_srcdir)/src/dbus-analyze-functions.py $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS)
+	cat $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS) | \
+	$(PYTHON) $(top_srcdir)/src/dbus-analyze-functions.py --export-only > $@
+
+$(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.c $(top_builddir)/src/dbus-types.h
 
 
 endif # ENABLE_DBUS

@@ -149,13 +149,13 @@ gaim_coreheaders = \
 
 if ENABLE_DBUS
 
-CLEANFILES    = \
+CLEANFILES = \
 	dbus-bindings.c \
 	dbus-client-binding.c \
 	dbus-client-binding.h \
-	gaim.service
-#	dbus-types.c 
-#	dbus-types.h 
+	gaim.service \
+	dbus-types.c \
+	dbus-types.h 
 
 # gaim dbus server
 
@@ -164,19 +164,12 @@ dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
-#Although dbus-types.[ch] are generated automatically, they are
-#included in the distribution (and CVS) as normal source
-#files. Otherwise, we would have to compile the src directory before
-#the plugins directory, because some of the plugins depend on the
-#dbus-types.h.  On the other hand, gaim-remote from the src directory
-#requires libgaim-remote from the the plugins directory, which forces
-#us to compile the plugins directory before src.  
 
-# dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
-# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DEFINE_TYPE\(%s\) > $@
+dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DEFINE_TYPE\(%s\) > $@
 
-# dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
-# 	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DECLARE_TYPE\(%s\) > $@
+dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
+	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py > $@

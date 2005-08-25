@@ -14,17 +14,22 @@ plugin_LTLIBRARIES = musicmessaging.la
 
 musicmessaging_la_SOURCES = \
 	musicmessaging.c
-	
-	
+
+
 
 CLEANFILES              = music-messaging-bindings.c
 musicmessaging_la_LDFLAGS += $(DBUS_LIBS)
+
+.PHONY: always
+
+$(top_builddir)/src/dbus-types.h: always
+	cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
 music-messaging-bindings.c: ../../src/dbus-analyze-functions.py $(musicmessaging_la_SOURCES) $(musicmessaging_la_HEADERS)
 	cat $(musicmessaging_la_SOURCES) $(musicmessaging_la_HEADERS) | \
 	$(PYTHON) ../../src/dbus-analyze-functions.py --export-only > $@
 
-$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c
+$(musicmessaging_la_OBJECTS) musicmessaging.so: music-messaging-bindings.c $(top_builddir)/src/dbus-types.h
 
 
 
