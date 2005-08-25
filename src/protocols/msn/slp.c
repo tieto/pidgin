@@ -767,7 +767,7 @@ got_emoticon(MsnSlpCall *slpcall,
 	gc = slpcall->slplink->session->account->gc;
 	who = slpcall->slplink->remote_user;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, gc->account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who, gc->account);
 
 	/* FIXME: it would be better if we wrote the data as we received it
 	          instead of all at once, calling write multiple times and
@@ -813,7 +813,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	gc = slplink->session->account->gc;
 
-	conversation = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, gc->account);
+	conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who, gc->account);
 
 	if (gaim_conv_custom_smiley_add(conversation, smile, "sha1", sha1c)) {
 		msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);

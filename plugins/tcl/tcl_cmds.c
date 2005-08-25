@@ -488,7 +488,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			return error;
 		if (!tcl_validate_account(account, interp))
 			return TCL_ERROR;
-		convo = gaim_find_conversation_with_account(GAIM_CONV_ANY,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
 							    Tcl_GetString(objv[3]),
 							    account);
 		Tcl_SetIntObj(result, (int)convo);
@@ -514,7 +514,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			return TCL_ERROR;
 		}
 		argsused = 2;
-		type = GAIM_CONV_IM;
+		type = GAIM_CONV_TYPE_IM;
 		while (argsused < objc) {
 			opt = Tcl_GetString(objv[argsused]);
 			if (*opt == '-') {
@@ -524,10 +524,10 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 				argsused++;
 				switch (newopt) {
 				case CMD_CONV_NEW_CHAT:
-					type = GAIM_CONV_CHAT;
+					type = GAIM_CONV_TYPE_CHAT;
 					break;
 				case CMD_CONV_NEW_IM:
-					type = GAIM_CONV_IM;
+					type = GAIM_CONV_TYPE_IM;
 					break;
 				}
 			} else {
@@ -570,7 +570,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 			flags = GAIM_MESSAGE_SYSTEM;
 			break;
 		}
-		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
+		if (gaim_conversation_get_type(convo) == GAIM_CONV_TYPE_CHAT)
 			gaim_conv_chat_write(GAIM_CONV_CHAT(convo), from, what, flags, time(NULL));
 		else
 			gaim_conv_im_write(GAIM_CONV_IM(convo), from, what, flags, time(NULL));

@@ -34,14 +34,14 @@ static void irc_do_mode(struct irc_conn *irc, const char *target, const char *si
 
 int irc_cmd_default(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
-	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, target, irc->account);
+	GaimConversation *convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, target, irc->account);
 	char *buf;
 
 	if (!convo)
 		return 1;
 
 	buf = g_strdup_printf(_("Unknown command: %s"), cmd);
-	if (gaim_conversation_get_type(convo) == GAIM_CONV_IM)
+	if (gaim_conversation_get_type(convo) == GAIM_CONV_TYPE_IM)
 		gaim_conv_im_write(GAIM_CONV_IM(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
 	else
 		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
@@ -110,14 +110,14 @@ int irc_cmd_ctcp_action(struct irc_conn *irc, const char *cmd, const char *targe
 	g_free(newargs[1]);
 	g_free(newargs);
 
-	convo = gaim_find_conversation_with_account(GAIM_CONV_ANY, target, irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, target, irc->account);
 	if (convo) {
 		escaped = g_markup_escape_text(args[0], -1);
 		action = g_strdup_printf("/me %s", escaped);
 		g_free(escaped);
 		if (action[strlen(action) - 1] == '\n')
 			action[strlen(action) - 1] = '\0';
-		if (gaim_conversation_get_type(convo) == GAIM_CONV_CHAT)
+		if (gaim_conversation_get_type(convo) == GAIM_CONV_TYPE_CHAT)
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
 			         	 gaim_connection_get_display_name(gc),
 				         0, action, time(NULL));
@@ -169,7 +169,7 @@ int irc_cmd_kick(struct irc_conn *irc, const char *cmd, const char *target, cons
 	if (!args || !args[0])
 		return 0;
 
-	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, target, irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, target, irc->account);
 	if (!convo)
 		return 0;
 
@@ -397,7 +397,7 @@ int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args || !args[0])
 		return 0;
 
-	convo = gaim_conversation_new(GAIM_CONV_IM, irc->account, args[0]);
+	convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, irc->account, args[0]);
 
 	if (args[1]) {
 		gc = gaim_account_get_connection(irc->account);
@@ -449,7 +449,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 	if (!args)
 		return 0;
 
-	convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, target, irc->account);
+	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, target, irc->account);
 	if (!convo)
 		return 0;
 

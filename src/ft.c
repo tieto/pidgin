@@ -160,7 +160,7 @@ void gaim_xfer_conversation_write(GaimXfer *xfer, char *message, gboolean is_err
 	g_return_if_fail(xfer != NULL);
 	g_return_if_fail(message != NULL);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, xfer->who,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, xfer->who,
 											   gaim_xfer_get_account(xfer));
 
 	if (conv == NULL)

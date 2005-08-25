@@ -61,6 +61,8 @@
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
 #define OSCAR_CONNECT_STEPS 6
+#define OSCAR_DEFAULT_LOGIN_SERVER "login.oscar.aol.com"
+#define OSCAR_DEFAULT_LOGIN_PORT 5190
 #define OSCAR_DEFAULT_CUSTOM_ENCODING "ISO-8859-1"
 #define OSCAR_DEFAULT_AUTHORIZATION TRUE
 #define OSCAR_DEFAULT_HIDE_IP TRUE
@@ -952,7 +954,7 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
 	else
 		g_snprintf(buf, sizeof buf, _("Direct IM with %s failed"), dim->name);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, dim->name,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, dim->name,
 											   gaim_connection_get_account(dim->gc));
 	if (conv) {
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -1030,7 +1032,7 @@ static void oscar_odc_callback(gpointer data, gint source, GaimInputCondition co
 
 	dim->conn->fd = source;
 	aim_conn_completeconnect(od->sess, dim->conn);
-	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, dim->name);
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, dim->name);
 
 	/* This is the best way to see if we're connected or not */
 	/* Is this really needed? */
@@ -1115,7 +1117,7 @@ static void accept_direct_im_request(struct ask_direct *d) {
 	dim->gpc_pend = TRUE;
 	rc = gaim_proxy_connect(gc->account, host, port, oscar_odc_callback, dim);
 
-	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, d->sn);
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, d->sn);
 	tmp = g_strdup_printf(_("Attempting to connect to %s at %s:%hu for Direct IM."), d->sn, host,
 	                      port);
 	gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -1161,7 +1163,7 @@ static int gaim_odc_initiate(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "DirectIM: initiate success to %s\n", sn);
 	dim = oscar_direct_im_find(od, sn);
 
-	conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, sn);
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, sn);
 	gaim_input_remove(dim->watcher);
 	dim->conn = newconn;
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ, oscar_callback, dim->conn);
@@ -1204,7 +1206,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		dim->watcher = 0;
 	}
 
-	c = gaim_find_conversation_with_account(GAIM_CONV_IM, sn,
+	c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sn,
 											gaim_connection_get_account(gc));
 	if (c != NULL)
 		gaim_conversation_update_progress(c, percent);
@@ -1541,7 +1543,7 @@ static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const 
 		aim_conn_addhandler(od->sess, dim->conn, AIM_CB_FAM_OFT, AIM_CB_OFT_DIRECTIM_ESTABLISHED,
 					gaim_odc_initiate, 0);
 
-		conv = gaim_conversation_new(GAIM_CONV_IM, dim->gc->account, who);
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, dim->gc->account, who);
 		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for Direct IM."), who, ip,
 		                      gaim_network_get_port_from_fd(listenfd));
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -1809,8 +1811,8 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	aim_conn_addhandler(sess, conn, AIM_CB_FAM_ATH, AIM_CB_ATH_SECURID_REQUEST, gaim_parse_auth_securid_request, 0);
 
 	conn->status |= AIM_CONN_STATUS_INPROGRESS;
-	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server", FAIM_LOGIN_SERVER),
-			  gaim_account_get_int(account, "port", FAIM_LOGIN_PORT),
+	if (gaim_proxy_connect(account, gaim_account_get_string(account, "server", OSCAR_DEFAULT_LOGIN_SERVER),
+			  gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT),
 			  oscar_login_connect, gc) < 0) {
 		gaim_connection_error(gc, _("Couldn't connect to host"));
 		return;
@@ -2297,7 +2299,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct aim_authresp_info *info;
 
-	port = gaim_account_get_int(account, "port", FAIM_LOGIN_PORT);
+	port = gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
 	va_start(ap, fr);
 	info = va_arg(ap, struct aim_authresp_info *);
@@ -2892,7 +2894,7 @@ static int gaim_handle_redirect(aim_session_t *sess, aim_frame_t *fr, ...) {
 	va_list ap;
 	struct aim_redirect_data *redir;
 
-	port = gaim_account_get_int(account, "port", FAIM_LOGIN_PORT);
+	port = gaim_account_get_int(account, "port", OSCAR_DEFAULT_LOGIN_PORT);
 
 	va_start(ap, fr);
 	redir = va_arg(ap, struct aim_redirect_data *);
@@ -5122,6 +5124,7 @@ static int gaim_icbm_param_info(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
 	va_list ap;
 	fu16_t maxsiglen;
@@ -5139,7 +5142,8 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 		aim_locate_setcaps(od->sess, caps_icq);
 	else
 		aim_locate_setcaps(od->sess, caps_aim);
-	oscar_set_info(gc, gc->account->user_info);
+	oscar_set_info(gc, account->user_info);
+	/* TODO: Should set the status here, as well. */
 
 	return 1;
 }
@@ -5641,7 +5645,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		gsize len;
 		GaimConversation *conv;
 
-		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
 
 		if (strstr(message, "<IMG "))
 			gaim_conversation_write(conv, "",
@@ -7799,15 +7803,15 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Auth host"), "server", FAIM_LOGIN_SERVER);
+	option = gaim_account_option_string_new(_("Auth host"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Auth port"), "port", FAIM_LOGIN_PORT);
+	option = gaim_account_option_int_new(_("Auth port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	
+
 	gaim_prefs_add_none("/plugins/prpl/oscar");
 	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
 	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);

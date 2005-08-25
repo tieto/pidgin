@@ -104,9 +104,9 @@ void cc_net_send_invite(struct crazychat *cc, char *name, GaimAccount *account)
 	if (session) return; /* already have a session with this guy */
 	session = cc_add_session(cc, name);
 	session->state = INVITE;
-	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, name, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, name, account);
 	if (!conv) {
-		conv = gaim_conversation_new(GAIM_CONV_IM, account, name);
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
 	}
 	im = gaim_conversation_get_im_data(conv);
 	snprintf(buf, BUFSIZ, "%s%s!%d", CRAZYCHAT_INVITE_CODE,
@@ -131,7 +131,7 @@ void cc_net_recv_invite(GaimAccount *account, struct crazychat *cc, char *name,
 	session = cc_find_session(cc, name);
 	if (!session) {
 		Debug("Creating a CrazyChat session invite dialog box!\n");
-		conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, name, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, name, account);
 		if (conv) convwin = gaim_conversation_get_window(conv);
 		else convwin = NULL;
 		/* pop gtk window asking if want to accept */
@@ -208,9 +208,9 @@ static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
 	GaimConversation *conv;
 	GaimConvIm *im;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, session->name, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, session->name, account);
 	if (!conv) {
-		conv = gaim_conversation_new(GAIM_CONV_IM, account,
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account,
 				session->name);
 	}
 	im = gaim_conversation_get_im_data(conv);
@@ -272,10 +272,10 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 		session->peer_port = args->peer_port;
 		snprintf(buf, BUFSIZ, "%s%s", CRAZYCHAT_ACCEPT_CODE,
 			gaim_network_get_my_ip(-1));
-		conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, args->name,
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, args->name,
 				args->account);
 		if (!conv) {
-			conv = gaim_conversation_new(GAIM_CONV_IM,
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM,
 				args->account, args->name);
 		}
 		im = gaim_conversation_get_im_data(conv);

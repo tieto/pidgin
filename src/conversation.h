@@ -44,11 +44,11 @@ typedef struct _GaimConvChatBuddy     GaimConvChatBuddy;
  */
 typedef enum
 {
-	GAIM_CONV_UNKNOWN = 0, /**< Unknown conversation type. */
-	GAIM_CONV_IM,          /**< Instant Message.           */
-	GAIM_CONV_CHAT,        /**< Chat room.                 */
-	GAIM_CONV_MISC,        /**< A misc. conversation.      */
-	GAIM_CONV_ANY          /**< Any type of conversation.  */
+	GAIM_CONV_TYPE_UNKNOWN = 0, /**< Unknown conversation type. */
+	GAIM_CONV_TYPE_IM,          /**< Instant Message.           */
+	GAIM_CONV_TYPE_CHAT,        /**< Chat room.                 */
+	GAIM_CONV_TYPE_MISC,        /**< A misc. conversation.      */
+	GAIM_CONV_TYPE_ANY          /**< Any type of conversation.  */
 
 } GaimConversationType;
 
@@ -666,7 +666,7 @@ GaimConvWindow *gaim_conversation_get_window(const GaimConversation *conv);
 /**
  * Returns the specified conversation's IM-specific data.
  *
- * If the conversation type is not GAIM_CONV_IM, this will return @c NULL.
+ * If the conversation type is not GAIM_CONV_TYPE_IM, this will return @c NULL.
  *
  * @param conv The conversation.
  *
@@ -679,7 +679,7 @@ GaimConvIm *gaim_conversation_get_im_data(const GaimConversation *conv);
 /**
  * Returns the specified conversation's chat-specific data.
  *
- * If the conversation type is not GAIM_CONV_CHAT, this will return @c NULL.
+ * If the conversation type is not GAIM_CONV_TYPE_CHAT, this will return @c NULL.
  *
  * @param conv The conversation.
  *

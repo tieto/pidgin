@@ -232,7 +232,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 
 	if ((swboard->conv != NULL) &&
-		(gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
+		(gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
 	{
 		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL,
 								GAIM_CBFLAGS_NONE, TRUE);
@@ -240,7 +240,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
 		if (swboard->conv == NULL ||
-			gaim_conversation_get_type(swboard->conv) != GAIM_CONV_CHAT)
+			gaim_conversation_get_type(swboard->conv) != GAIM_CONV_TYPE_CHAT)
 		{
 			GList *l;
 
@@ -290,8 +290,8 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else if (swboard->conv == NULL)
 	{
-		/* XXX - I think this should probably be GAIM_CONV_CHAT, but I'm hedging */
-		swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_ANY,
+		/* XXX - I think this should probably be GAIM_CONV_TYPE_CHAT, but I'm hedging */
+		swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
 															user, account);
 	}
 	else
@@ -314,8 +314,8 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 
 	account = swboard->session->account;
 
-	/* XXX - I think this should probably be GAIM_CONV_IM, but I'm hedging */
-	return gaim_find_conversation_with_account(GAIM_CONV_IM,
+	/* XXX - I think this should probably be GAIM_CONV_TYPE_IM, but I'm hedging */
+	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 											   swboard->im_user, account);
 }
 
@@ -650,7 +650,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_switchboard_destroy(swboard);
 	}
 	else if ((swboard->current_users > 1) ||
-			 (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
+			 (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
 	{
 		/* This is a switchboard used for a chat */
 		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
@@ -862,7 +862,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
-		 gaim_conversation_get_type(swboard->conv) == GAIM_CONV_CHAT))
+		 gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
 	{
 		/* If current_users is always ok as it should then there is no need to
 		 * check if this is a chat. */
@@ -883,7 +883,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
 		if (swboard->conv == NULL)
 		{
-			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
+			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 									passport, gaim_connection_get_account(gc));
 			swboard->flag |= MSN_SB_FLAG_IM;
 		}

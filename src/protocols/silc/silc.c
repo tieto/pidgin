@@ -854,7 +854,7 @@ silcgaim_send_im_resolved(SilcClient client,
 	char tmp[256], *nickname = NULL;
 	SilcClientEntry client_entry;
 
-	convo = gaim_find_conversation_with_account(GAIM_CONV_IM, im->nick,
+	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, im->nick,
 							sg->account);
 	if (!convo)
 		return;
@@ -992,7 +992,7 @@ static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
 		return GAIM_CMD_RET_FAILED;
 
 	if(args && args[0]) {
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT, args[0],
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, args[0],
 									gc->account);
 	} else
 		convo = conv;
@@ -1131,7 +1131,7 @@ static GaimCmdRet silcgaim_cmd_query(GaimConversation *conv,
 
 	account = gaim_connection_get_account(gc);
 
-	convo = gaim_conversation_new(GAIM_CONV_IM, account, args[0]);
+	convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, args[0]);
 
 	if (args[1]) {
 		ret = silcgaim_send_im(gc, args[0], args[1], GAIM_MESSAGE_SEND);

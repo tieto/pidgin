@@ -92,7 +92,7 @@ run_commands()
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
 
-			conv = gaim_find_conversation(GAIM_CONV_ANY, arg1);
+			conv = gaim_find_conversation(GAIM_CONV_TYPE_ANY, arg1);
 			if (conv != NULL)
 			{
 				/*

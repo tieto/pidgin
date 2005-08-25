@@ -944,10 +944,10 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
 	{
-		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, pouncee, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
 
 		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
 	}
 
 	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
@@ -999,10 +999,10 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 
 		if (message != NULL)
 		{
-			conv = gaim_find_conversation_with_account(GAIM_CONV_IM, pouncee, account);
+			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
 
 			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_IM, account, pouncee);
+				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
 
 			gaim_conversation_write(conv, NULL, message,
 									GAIM_MESSAGE_SEND, time(NULL));

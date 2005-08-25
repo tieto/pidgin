@@ -147,7 +147,7 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	account  = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, imflags);
@@ -343,7 +343,7 @@ serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
 		b = buds->data;
 		gaim_blist_server_alias_buddy(b, alias);
 
-		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, b->name, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, b->name, account);
 
 		if (conv != NULL && b->server_alias != NULL &&
 			strcmp(b->server_alias, alias))
@@ -628,7 +628,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * We should update the conversation window buttons and menu,
 	 * if it exists.
 	 */
-	cnv = gaim_find_conversation_with_account(GAIM_CONV_IM, who, gc->account);
+	cnv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, gc->account);
 
 	/*
 	 * Plugin stuff. we pass a char ** but we don't want to pass what's
@@ -758,7 +758,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 			 * while away), and then write it to the convo window.
 			 */
 			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_IM, account, name);
+				cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 		}
@@ -861,7 +861,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 #if 0
 		if (docklet_count &&
 		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
-		    !gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account)) {
+		    !gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account)) {
 			/*
 			 * We're gonna queue it up and wait for the user to ask for
 			 * it... probably by clicking the docklet or windows tray icon.
@@ -878,7 +878,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		else {
 #endif
 			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_IM, gc->account, name);
+				cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, name);
 
 			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 #if 0
@@ -897,7 +897,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 	GaimConversation *cnv;
 	GaimConvIm *im;
 
-	cnv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
+	cnv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 	if (!cnv)
 		return;
 
@@ -933,7 +933,7 @@ void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 	GaimConvIm *im;
 	GaimBuddy *b;
 
-	c = gaim_find_conversation_with_account(GAIM_CONV_IM, name, gc->account);
+	c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 	if (!c)
 		return;
 
@@ -1034,7 +1034,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 
 	account = gaim_connection_get_account(gc);
 
-	conv = gaim_conversation_new(GAIM_CONV_CHAT, account, name);
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_CHAT, account, name);
 	chat = GAIM_CONV_CHAT(conv);
 
 	if (!g_slist_find(gc->buddy_chats, conv))

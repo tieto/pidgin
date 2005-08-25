@@ -89,7 +89,7 @@ static void buddy_ticker_create_window() {
 static gboolean buddy_click_cb(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
 	GaimBuddy *b = user_data;
 
-	gaim_conversation_new(GAIM_CONV_IM, b->account, b->name);
+	gaim_conversation_new(GAIM_CONV_TYPE_IM, b->account, b->name);
 	return TRUE;
 }
 

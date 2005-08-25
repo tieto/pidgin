@@ -266,7 +266,7 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 						"%s has added you to his or her contact list.\n",
 						passport);
 
- 		convo = gaim_find_conversation_with_account(GAIM_CONV_IM, passport, account);
+ 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, passport, account);
  		if (convo) {
  			GaimBuddy *buddy;
  			char *msg;
@@ -330,7 +330,7 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 						"%s has removed you from his or her contact list.\n",
 						passport);
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_IM, passport, account);
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, passport, account);
 		if (convo) {
 			GaimBuddy *buddy;
 			char *msg;

@@ -4288,7 +4288,7 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 		 * and gaim_blist_add_buddy().  Or something.  --Mark
 		 */
 
-		c = gaim_find_conversation_with_account(GAIM_CONV_IM, who, data->account);
+		c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, data->account);
 		if (c != NULL) {
 			gaim_buddy_icon_update(gaim_conv_im_get_icon(GAIM_CONV_IM(c)));
 			gaim_conversation_update(c, GAIM_CONV_UPDATE_ADD);
@@ -4482,7 +4482,7 @@ add_chat_cb(GtkWidget *w, GaimGtkAddChatData *data)
 							data->account->gc->prpl)->get_chat_name(chat->components);
 
 		if (chat_name != NULL) {
-			conv = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 													   chat_name,
 													   data->account);
 			g_free(chat_name);

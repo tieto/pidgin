@@ -63,13 +63,13 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		for (l = sg->grps; l; l = l->next)
 			if (((SilcGaimPrvgrp)l->data)->key == key) {
 				prv = l->data;
-				convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+				convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 										prv->channel, sg->account);
 				break;
 			}
 	}
 	if (!convo)
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 								channel->channel_name, sg->account);
 	if (!convo)
 		return;
@@ -149,8 +149,8 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		return;
 
 	if (sender->nickname)
-		/* XXX - Should this be GAIM_CONV_IM? */
-		convo = gaim_find_conversation_with_account(GAIM_CONV_ANY,
+		/* XXX - Should this be GAIM_CONV_TYPE_IM? */
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY,
 								sender->nickname, sg->account);
 
 	if (flags & SILC_MESSAGE_FLAG_SIGNED &&
@@ -265,7 +265,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		if (client_entry == conn->local_entry)
 			break;
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 								channel->channel_name, sg->account);
 		if (!convo)
 			break;
@@ -282,7 +282,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		client_entry = va_arg(va, SilcClientEntry);
 		channel = va_arg(va, SilcChannelEntry);
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 								channel->channel_name, sg->account);
 		if (!convo)
 			break;
@@ -303,7 +303,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		/* Remove from all channels */
 		silc_hash_table_list(client_entry->channels, &htl);
 		while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-			convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									chu->channel->channel_name, sg->account);
 			if (!convo)
 				continue;
@@ -323,7 +323,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			tmp = va_arg(va, char *);
 			channel = va_arg(va, SilcChannelEntry);
 
-			convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									channel->channel_name, sg->account);
 			if (!convo)
 				break;
@@ -381,7 +381,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		/* Change nick on all channels */
 		silc_hash_table_list(client_entry2->channels, &htl);
 		while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-			convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									chu->channel->channel_name, sg->account);
 			if (!convo)
 				continue;
@@ -405,7 +405,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		buffer = va_arg(va, SilcBuffer);
 		channel = va_arg(va, SilcChannelEntry);
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 								channel->channel_name, sg->account);
 		if (!convo)
 			break;
@@ -442,7 +442,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			client_entry2 = va_arg(va, SilcClientEntry);
 			channel = va_arg(va, SilcChannelEntry);
 
-			convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									channel->channel_name, sg->account);
 			if (!convo)
 				break;
@@ -488,7 +488,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 		client_entry2 = va_arg(va, SilcClientEntry);
 		channel = va_arg(va, SilcChannelEntry);
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 								channel->channel_name, sg->account);
 		if (!convo)
 			break;
@@ -543,7 +543,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			/* Remove us from all channels */
 			silc_hash_table_list(client_entry->channels, &htl);
 			while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-				convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+				convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 										chu->channel->channel_name, sg->account);
 				if (!convo)
 					continue;
@@ -574,7 +574,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 			/* Remove user from all channels */
 			silc_hash_table_list(client_entry->channels, &htl);
 			while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-				convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+				convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 										chu->channel->channel_name, sg->account);
 				if (!convo)
 					continue;
@@ -607,7 +607,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				silc_hash_table_list(clients[i]->channels, &htl);
 				while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
 					convo =
-						gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+						gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 											chu->channel->channel_name, sg->account);
 					if (!convo)
 						continue;
@@ -1174,7 +1174,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 
 			channel = va_arg(vp, SilcChannelEntry);
 
-			convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									channel->channel_name, sg->account);
 			if (!convo) {
 				gaim_debug_error("silc", "Got a topic for %s, which doesn't exist\n",
@@ -1209,7 +1209,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			/* Change nick on all channels */
 			silc_hash_table_list(local_entry->channels, &htl);
 			while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-				convo = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+				convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 									chu->channel->channel_name, sg->account);
 				if (!convo)
 					continue;

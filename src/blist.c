@@ -731,7 +731,7 @@ static gboolean presence_update_timeout_cb(GaimBuddy *buddy)
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, buddy->name,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name,
 											   buddy->account);
 	if (conv) {
 		if (buddy->present == GAIM_BUDDY_ONLINE)
@@ -882,7 +882,7 @@ void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, buddy->name,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name,
 											   buddy->account);
 	if (conv)
 		gaim_conversation_autoset_title(conv);
@@ -906,7 +906,7 @@ void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, buddy->name,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name,
 											   buddy->account);
 	if (conv)
 		gaim_conversation_autoset_title(conv);

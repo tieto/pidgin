@@ -216,9 +216,9 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 	*error = NULL;
 	prpl_id = gaim_account_get_protocol_id(gaim_conversation_get_account(conv));
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		is_im = TRUE;
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 		is_im = FALSE;
 	else
 		return GAIM_CMD_STATUS_FAILED;
@@ -317,10 +317,10 @@ GList *gaim_cmd_list(GaimConversation *conv)
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_IM))
+		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM))
 			if (!(c->flags & GAIM_CMD_FLAG_IM))
 				continue;
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT))
+		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT))
 			if (!(c->flags & GAIM_CMD_FLAG_CHAT))
 				continue;
 
@@ -347,10 +347,10 @@ GList *gaim_cmd_help(GaimConversation *conv, const gchar *cmd)
 		if (cmd && (strcmp(cmd, c->cmd) != 0))
 			continue;
 
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_IM))
+		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM))
 			if (!(c->flags & GAIM_CMD_FLAG_IM))
 				continue;
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT))
+		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT))
 			if (!(c->flags & GAIM_CMD_FLAG_CHAT))
 				continue;
 

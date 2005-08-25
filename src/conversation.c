@@ -147,7 +147,7 @@ common_send(GaimConversation *conv, const char *message)
 	plugin_return =
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
 			gaim_conversations_get_handle(),
-			(type == GAIM_CONV_IM ? "writing-im-msg" : "writing-chat-msg"),
+			(type == GAIM_CONV_TYPE_IM ? "writing-im-msg" : "writing-chat-msg"),
 			account, conv, &displayed));
 
 	if (displayed == NULL)
@@ -159,14 +159,14 @@ common_send(GaimConversation *conv, const char *message)
 	}
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
-		(type == GAIM_CONV_IM ? "wrote-im-msg" : "wrote-chat-msg"),
+		(type == GAIM_CONV_TYPE_IM ? "wrote-im-msg" : "wrote-chat-msg"),
 		account, conv, displayed);
 
 	sent = g_strdup(displayed);
 
 	plugin_return =
 		GPOINTER_TO_INT(gaim_signal_emit_return_1(
-			gaim_conversations_get_handle(), (type == GAIM_CONV_IM ?
+			gaim_conversations_get_handle(), (type == GAIM_CONV_TYPE_IM ?
 			"displaying-im-msg" : "displaying-chat-msg"),
 			account, conv, &displayed));
 
@@ -175,11 +175,11 @@ common_send(GaimConversation *conv, const char *message)
 		displayed = NULL;
 	} else {
 		gaim_signal_emit(gaim_conversations_get_handle(),
-			(type == GAIM_CONV_IM ? "displayed-im-msg" : "displayed-chat-msg"),
+			(type == GAIM_CONV_TYPE_IM ? "displayed-im-msg" : "displayed-chat-msg"),
 			account, conv, displayed);
 	}
 
-	if (type == GAIM_CONV_IM) {
+	if (type == GAIM_CONV_TYPE_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
 
 		gaim_signal_emit(gaim_conversations_get_handle(), "sending-im-msg",
@@ -564,7 +564,7 @@ gaim_get_first_window_with_type(GaimConversationType type)
 	GaimConvWindow *win;
 	GaimConversation *conv;
 
-	if (type == GAIM_CONV_UNKNOWN)
+	if (type == GAIM_CONV_TYPE_UNKNOWN)
 		return NULL;
 
 	for (wins = gaim_get_windows(); wins != NULL; wins = wins->next) {
@@ -591,7 +591,7 @@ gaim_get_last_window_with_type(GaimConversationType type)
 	GaimConvWindow *win;
 	GaimConversation *conv;
 
-	if (type == GAIM_CONV_UNKNOWN)
+	if (type == GAIM_CONV_TYPE_UNKNOWN)
 		return NULL;
 
 	for (wins = g_list_last(gaim_get_windows());
@@ -654,17 +654,17 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	GaimConversation *conv;
 	GaimConnection *gc;
 
-	g_return_val_if_fail(type    != GAIM_CONV_UNKNOWN, NULL);
+	g_return_val_if_fail(type    != GAIM_CONV_TYPE_UNKNOWN, NULL);
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(name    != NULL, NULL);
 
 	/* Check if this conversation already exists. */
 	if ((conv = gaim_find_conversation_with_account(type, name, account)) != NULL)
 	{
-		if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT ||
+		if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT ||
 		    gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)))
 		{
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+			if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 				gaim_conversation_chat_cleanup_for_rejoin(conv);
 
 			return conv;
@@ -684,14 +684,14 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->send_history = g_list_append(NULL, NULL);
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
-	conv->log          = gaim_log_new(type == GAIM_CONV_CHAT ? GAIM_LOG_CHAT :
+	conv->log          = gaim_log_new(type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
 									  GAIM_LOG_IM, conv->name, account,
 									  conv, time(NULL));
 	/* copy features from the connection. */
 	conv->features = gc->flags;
 	
 
-	if (type == GAIM_CONV_IM)
+	if (type == GAIM_CONV_TYPE_IM)
 	{
 		GaimBuddyIcon *icon;
 		conv->u.im = g_new0(GaimConvIm, 1);
@@ -705,7 +705,7 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		gaim_conversation_set_logging(conv,
 				gaim_prefs_get_bool("/core/logging/log_ims"));
 	}
-	else if (type == GAIM_CONV_CHAT)
+	else if (type == GAIM_CONV_TYPE_CHAT)
 	{
 		const char *disp;
 
@@ -791,7 +791,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 		/* Still connected */
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		{
 			if (gaim_prefs_get_bool("/core/conversations/im/send_typing"))
 				serv_send_typing(gc, name, GAIM_NOT_TYPING);
@@ -799,7 +799,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 			if (gc && prpl_info->convo_closed != NULL)
 				prpl_info->convo_closed(gc, name);
 		}
-		else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+		else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 		{
 			int chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
 #if 0
@@ -867,7 +867,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 	conversations = g_list_remove(conversations, conv);
 
-	if (conv->type == GAIM_CONV_IM) {
+	if (conv->type == GAIM_CONV_TYPE_IM) {
 		gaim_conv_im_stop_typing_timeout(conv->u.im);
 		gaim_conv_im_stop_type_again_timeout(conv->u.im);
 
@@ -881,7 +881,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 		ims = g_list_remove(ims, conv);
 	}
-	else if (conv->type == GAIM_CONV_CHAT) {
+	else if (conv->type == GAIM_CONV_TYPE_CHAT) {
 
 		for (node = conv->u.chat->in_room; node != NULL; node = node->next) {
 			if (node->data != NULL)
@@ -962,7 +962,7 @@ gaim_conversation_get_features(GaimConversation *conv)
 GaimConversationType
 gaim_conversation_get_type(const GaimConversation *conv)
 {
-	g_return_val_if_fail(conv != NULL, GAIM_CONV_UNKNOWN);
+	g_return_val_if_fail(conv != NULL, GAIM_CONV_TYPE_UNKNOWN);
 
 	return conv->type;
 }
@@ -1068,10 +1068,10 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 	account = gaim_conversation_get_account(conv);
 	name = gaim_conversation_get_name(conv);
 
-	if(gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+	if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		if(account && ((b = gaim_find_buddy(account, name)) != NULL))
 			text = gaim_buddy_get_alias(b);
-	} else if(gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) {
+	} else if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
 		if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
 			text = chat->alias;
 	}
@@ -1176,7 +1176,7 @@ gaim_conversation_get_im_data(const GaimConversation *conv)
 {
 	g_return_val_if_fail(conv != NULL, NULL);
 
-	if (gaim_conversation_get_type(conv) != GAIM_CONV_IM)
+	if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_IM)
 		return NULL;
 
 	return conv->u.im;
@@ -1187,7 +1187,7 @@ gaim_conversation_get_chat_data(const GaimConversation *conv)
 {
 	g_return_val_if_fail(conv != NULL, NULL);
 
-	if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
+	if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT)
 		return NULL;
 
 	return conv->u.chat;
@@ -1249,7 +1249,7 @@ gaim_find_conversation_with_account(GaimConversationType type,
 		c = (GaimConversation *)cnv->data;
 		name2 = gaim_normalize(account, gaim_conversation_get_name(c));
 
-		if (((type == GAIM_CONV_ANY) || (type == gaim_conversation_get_type(c))) &&
+		if (((type == GAIM_CONV_TYPE_ANY) || (type == gaim_conversation_get_type(c))) &&
 				(account == gaim_conversation_get_account(c)) &&
 				!gaim_utf8_strcasecmp(name1, name2)) {
 
@@ -1291,25 +1291,25 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	if (account != NULL)
 		gc = gaim_account_get_connection(account);
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT &&
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
 		(gc == NULL || !g_slist_find(gc->buddy_chats, conv)))
 		return;
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM &&
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM &&
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
 	if (account != NULL) {
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)));
 
-		if (gaim_conversation_get_type(conv) == GAIM_CONV_IM ||
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM ||
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
 			if (who == NULL) {
 				if (flags & GAIM_MESSAGE_SEND) {
 					b = gaim_find_buddy(account,
 							    gaim_account_get_username(account));
-					if (gaim_conversation_get_type(conv) != GAIM_CONV_CHAT) {
+					if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) {
 						if (gaim_account_get_alias(account) != NULL)
 							who = account->alias;
 						else if (b != NULL && strcmp(b->name, gaim_buddy_get_contact_alias(b)))
@@ -1326,13 +1326,13 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 					b = gaim_find_buddy(account,
 							    gaim_conversation_get_name(conv));
 
-					if (b != NULL && gaim_conversation_get_type(conv) != GAIM_CONV_CHAT)
+					if (b != NULL && gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT)
 						who = gaim_buddy_get_contact_alias(b);
 					else
 						who = gaim_conversation_get_name(conv);
 				}
 			}
-			else if ((who != NULL) && (*who != '\0') && gaim_conversation_get_type(conv) != GAIM_CONV_CHAT) {
+			else if ((who != NULL) && (*who != '\0') && gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) {
 				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
@@ -1351,7 +1351,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	if (!(flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_SYSTEM) && !(flags & GAIM_MESSAGE_ERROR))
 		return;
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM) {
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		if ((flags & GAIM_MESSAGE_RECV) == GAIM_MESSAGE_RECV)
 			gaim_conv_im_set_typing_state(GAIM_CONV_IM(conv), GAIM_NOT_TYPING);
 	}
@@ -1394,7 +1394,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	 * taskbar--we want the title of the window to be set to the name
 	 * of the person that IMed them most recently.
 	 */
-	if ((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
+	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
 		(flags & (GAIM_MESSAGE_RECV | GAIM_MESSAGE_ERROR)) &&
 		(!gaim_conv_window_has_focus(win)) &&
 		(gaim_conv_window_is_minimized(win)))
@@ -1635,7 +1635,7 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 	g_return_val_if_fail(account !=NULL, FALSE);
 	g_return_val_if_fail(what != NULL, FALSE);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_ANY, who, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who, account);
 	if (conv != NULL)
 		gaim_conversation_write(conv, NULL, what, GAIM_MESSAGE_ERROR, time(NULL));
 	else
@@ -2450,7 +2450,7 @@ conv_get_group(GaimConversation *conv)
 {
 	GaimGroup *group = NULL;
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_IM)
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 	{
 		GaimBuddy *buddy;
 
@@ -2461,7 +2461,7 @@ conv_get_group(GaimConversation *conv)
 			group = gaim_find_buddys_group(buddy);
 
 	}
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_CHAT)
+	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 	{
 		GaimChat *chat;
 

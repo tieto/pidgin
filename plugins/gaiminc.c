@@ -49,7 +49,7 @@ static void
 bud(GaimBuddy *who)
 {
 	GaimAccount *acct = who->account;
-	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_IM, acct, who->name);
+	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, who->name);
 
 	gaim_conv_im_send(GAIM_CONV_IM(conv), "Hello!");
 }

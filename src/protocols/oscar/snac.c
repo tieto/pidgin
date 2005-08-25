@@ -1,10 +1,10 @@
 /*
  *
- * Various SNAC-related dodads... 
+ * Various SNAC-related dodads...
  *
  * outstanding_snacs is a list of aim_snac_t structs.  A SNAC should be added
  * whenever a new SNAC is sent and it should remain in the list until the
- * response for it has been received.  
+ * response for it has been received.
  *
  * cleansnacs() should be called periodically by the client in order
  * to facilitate the aging out of unreplied-to SNACs. This can and does

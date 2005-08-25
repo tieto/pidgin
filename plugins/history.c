@@ -45,7 +45,7 @@ static void historize(GaimConversation *c)
 	char *header;
 
 	convtype = gaim_conversation_get_type(c);
-	if (convtype == GAIM_CONV_IM)
+	if (convtype == GAIM_CONV_TYPE_IM)
 	{
 		GSList *buddies;
 		GSList *cur;
@@ -92,7 +92,7 @@ static void historize(GaimConversation *c)
 		else
         		logs = g_list_sort(logs, gaim_log_compare);
 	}
-	else if (convtype == GAIM_CONV_CHAT)
+	else if (convtype == GAIM_CONV_TYPE_CHAT)
 	{
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */

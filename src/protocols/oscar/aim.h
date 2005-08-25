@@ -9,7 +9,6 @@
 #ifndef __AIM_H__
 #define __AIM_H__
 
-#include "faimconfig.h"
 #include "aim_cbtypes.h"
 
 #include "debug.h"
@@ -46,11 +45,12 @@ typedef guint32 fu32_t;
 typedef guint32 aim_snacid_t;
 typedef guint16 flap_seqnum_t;
 
+#define WIN32_STATIC
 #if defined(_WIN32) && !defined(WIN32_STATIC)
 /*
  * For a win32 DLL, we define WIN32_INDLL if this file
- * is included while compiling the DLL. If its not 
- * defined (its included in a client app), the symbols
+ * is included while compiling the DLL. If it's not
+ * defined (it's included in a client app), the symbols
  * will be imported instead of exported.
  */
 #ifdef WIN32_INDLL
@@ -75,8 +75,10 @@ typedef guint16 flap_seqnum_t;
 #define TRUE (!FALSE)
 #endif
 
-/* 
- * Current Maximum Length for Screen Names (not including NULL) 
+#define FAIM_SNAC_HASH_SIZE 16
+
+/*
+ * Current Maximum Length for Screen Names (not including NULL)
  *
  * Currently only names up to 16 characters can be registered
  * however it is apparently legal for them to be larger.

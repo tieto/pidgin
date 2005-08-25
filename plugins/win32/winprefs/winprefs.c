@@ -285,7 +285,7 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flag
 	if (gaim_prefs_get_bool(PREF_IM_BLINK) == FALSE)
 		return;
 
-	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_IM, sender, account);
+	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sender, account);
 	if (conv == NULL) {
 	  gaim_debug_info("winprefs", "gar!\n");
 	  return;

@@ -121,7 +121,7 @@ gaim_remote_handle_uri(const char *uri)
 			g_string_free(str, TRUE);
 		}
 
-		c = gaim_conversation_new(GAIM_CONV_IM, gc->account, who);
+		c = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, who);
 		g_free(who);
 
 		if (what) {
@@ -566,8 +566,8 @@ remote_handler(struct UI *ui, guchar subtype, gchar *data, int len)
 			/* end acct find */
 
 			/* gaim_debug_info("cui", "g-r>To: %s; From: %s; Protocol: %s; Message: %s; Quiet: %d\n",who,from,proto,msg,quiet); */
-   			conv = gaim_conversation_new(GAIM_CONV_IM, gaim_connection_get_account(gc), who);
-   			gaim_conv_im_send(GAIM_CONV_IM(conv), msg);
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gaim_connection_get_account(gc), who);
+			gaim_conv_im_send(GAIM_CONV_IM(conv), msg);
 
 			/* likely to be used for quiet:
 			serv_send_im(gc, who, msg, -1, 0);

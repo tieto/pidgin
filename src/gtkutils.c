@@ -1401,7 +1401,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		serv_send_file(gaim_account_get_connection(data->account), data->who, data->filename);
 		break;
 	case DND_IM_IMAGE:
-		conv = gaim_conversation_new(GAIM_CONV_IM, data->account, data->who);
+		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, data->account, data->who);
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if (!g_file_get_contents(data->filename, &filedata, &size,
@@ -1574,7 +1574,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 				GaimGtkConversation *gtkconv;
 
 			case GAIM_DESKTOP_ITEM_TYPE_LINK:
-				conv = gaim_conversation_new(GAIM_CONV_IM, account, who);
+				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, who);
 				gtkconv =  GAIM_GTK_CONVERSATION(conv);
 				gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry),
 						       gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer),

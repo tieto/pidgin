@@ -93,12 +93,12 @@ silcgaim_buddy_keyagr_cb(SilcClient client,
 			silc_ske_free_key_material(key);
 
 			/* Open IM window */
-			convo = gaim_find_conversation_with_account(GAIM_CONV_IM,
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 									client_entry->nickname, sg->account);
 			if (convo)
 				gaim_conv_window_show(gaim_conversation_get_window(convo));
 			else
-				convo = gaim_conversation_new(GAIM_CONV_IM, sg->account,
+				convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, sg->account,
 							      client_entry->nickname);
 			g_snprintf(tmp, sizeof(tmp), "%s [private key]", client_entry->nickname);
 			gaim_conversation_set_title(convo, tmp);

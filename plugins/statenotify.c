@@ -20,7 +20,7 @@ write_status(GaimBuddy *buddy, const char *message)
 	char buf[256];
 	char *escaped;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM,
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 											   buddy->name, buddy->account);
 
 	if (conv == NULL)

@@ -169,9 +169,9 @@ notify(GaimConversation *conv, gboolean increment)
 	gaimwin = gaim_conversation_get_window(conv);
 
 	/* If we aren't doing notifications for this type of conversation, return */
-	if (((gaim_conversation_get_type(conv) == GAIM_CONV_IM) &&
+	if (((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
 	     !gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_im")) ||
-	    ((gaim_conversation_get_type(conv) == GAIM_CONV_CHAT) &&
+	    ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) &&
 	     !gaim_prefs_get_bool("/plugins/gtk/X11/notify/type_chat")))
 		return 0;
 
@@ -268,7 +268,7 @@ im_sent_im(GaimAccount *account, char *receiver, const char *message) {
 	GaimConversation *conv = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_send")) {
-		conv = gaim_find_conversation_with_account(GAIM_CONV_IM, receiver, account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, receiver, account);
 		unnotify(conv, TRUE);
 	}
 }

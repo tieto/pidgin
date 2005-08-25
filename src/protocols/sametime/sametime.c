@@ -961,7 +961,7 @@ static void conversation_created_cb(GaimConversation *g_conv,
   if(pd->gc != gc)
     return; /* not ours */
 
-  if(gaim_conversation_get_type(g_conv) != GAIM_CONV_IM)
+  if(gaim_conversation_get_type(g_conv) != GAIM_CONV_TYPE_IM)
     return; /* wrong type */
 
   who.user = (char *) gaim_conversation_get_name(g_conv);
@@ -1968,7 +1968,7 @@ static GaimConversation *convo_get_gconv(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  return gaim_find_conversation_with_account(GAIM_CONV_IM,idb->user, acct);
+  return gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,idb->user, acct);
 }
 
 
@@ -2119,9 +2119,9 @@ static void convo_do_psychic(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  gconv = gaim_find_conversation_with_account(GAIM_CONV_IM, idb->user, acct);
+  gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, idb->user, acct);
   if(! gconv) {
-    gconv = gaim_conversation_new(GAIM_CONV_IM, acct, idb->user);
+    gconv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, idb->user);
   }
 
   g_return_if_fail(gconv != NULL);

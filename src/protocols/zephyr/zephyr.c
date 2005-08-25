@@ -861,7 +861,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
 			g_free(send_inst);
-			gconv1 = gaim_find_conversation_with_account(GAIM_CONV_CHAT,
+			gconv1 = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
 														 zt2->name, gc->account);
 			gcc = gaim_conversation_get_chat_data(gconv1);
 
@@ -2008,7 +2008,7 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
 
 	sig = zephyr_get_signature();
 
-	gconv1 = gaim_find_conversation_with_account(GAIM_CONV_CHAT, zt->name,
+	gconv1 = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, zt->name,
 												 gc->account);
 	gcc = gaim_conversation_get_chat_data(gconv1);
 
@@ -2469,7 +2469,7 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 	/* find_sub_by_id can return NULL */
 	if (!zt) 
 		return;
-	gconv = gaim_find_conversation_with_account(GAIM_CONV_CHAT, zt->name,
+	gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, zt->name,
 												gc->account);
 	gcc = gaim_conversation_get_chat_data(gconv);
 

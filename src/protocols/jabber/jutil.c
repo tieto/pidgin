@@ -224,7 +224,7 @@ jabber_find_unnormalized_conv(const char *name, GaimAccount *account)
 
 	for(cnv = gaim_get_conversations(); cnv; cnv = cnv->next) {
 		c = (GaimConversation*)cnv->data;
-		if(gaim_conversation_get_type(c) == GAIM_CONV_IM &&
+		if(gaim_conversation_get_type(c) == GAIM_CONV_TYPE_IM &&
 				!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
 				account == gaim_conversation_get_account(c))
 			return c;

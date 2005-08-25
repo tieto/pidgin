@@ -16,11 +16,6 @@ excluded = [\
     # with the fact that it takes a (const) GList as a parameter.
     "gaim_presence_add_list",
 
-    # these two macros are excluded because they occur both as
-    # macros and as enum constants, which breaks libgaim-client.
-    "GAIM_CONV_IM",
-    "GAIM_CONV_CHAT",
-
     # These functions are excluded because they involve value of the
     # type GaimConvPlacementFunc, which is a pointer to a function and
     # (currently?) can't be translated into a DBus type.  Normally,

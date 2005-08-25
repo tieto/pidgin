@@ -713,7 +713,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_str_strip_cr(m);
 
 		if (!strcmp(m, "<ding>")) {
-			GaimConversation *c = gaim_conversation_new(GAIM_CONV_IM,
+			GaimConversation *c = gaim_conversation_new(GAIM_CONV_TYPE_IM,
 			                                            gaim_connection_get_account(gc), im->from);
 			gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_RECV,
 			                   im->time);
@@ -1688,7 +1688,7 @@ static void ignore_buddy(GaimBuddy *buddy) {
 	serv_add_deny(account->gc, name);
 
 	/* The follow should really be done by the core... */
-	conv = gaim_find_conversation_with_account(GAIM_CONV_IM, name, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
 
 	if (conv != NULL)
 		gaim_conversation_update(conv, GAIM_CONV_UPDATE_REMOVE);
