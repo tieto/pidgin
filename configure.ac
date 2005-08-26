@@ -363,6 +363,38 @@ fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 
+dnl  Here we locate the directory containing DBus .service files for
+dnl  the session bus.  Adapted from the guifications project.
+
+AC_ARG_WITH(dbus-session-dir, [  --with-dbus-session-dir=<dir>   Location of the D-BUS session directory.])
+
+AC_MSG_CHECKING([location of the D-BUS session directory])
+if ! test -z "$with_dbus_session_dir"; then
+	if ! test -d "$with_dbus_session_dir"; then
+		AC_MSG_ERROR([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
+	fi
+
+	DBUS_SESSION_DIR="$with_dbus_session_dir"
+else
+	dnl # add more to this as needed
+	servicesprefixes="$DATADIR $LIBDIR /usr/share /usr/local/share"
+	DBUS_SESSION_DIR=""
+
+	for p in $servicesprefixes; do
+		dir="$p/dbus-1/services"
+		if test -d $dir; then
+			DBUS_SESSION_DIR="$dir"
+			break
+		fi
+	done
+
+	if test -z $DBUS_SESSION_DIR; then
+		AC_MSG_ERROR([D-BUS session directory was not found!  Please use --with-dbus-session-dir and specify it's location.])
+	fi
+fi
+AC_MSG_RESULT([$DBUS_SESSION_DIR])
+AC_SUBST(DBUS_SESSION_DIR)
+
 
 dnl #######################################################################
 dnl # Check for startup notification
@@ -1336,6 +1368,9 @@ echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with DBUS support....... : $enable_dbus
+if test x$enable_dbus = xyes ; then
+echo DBUS session directory........ : $DBUS_SESSION_DIR
+fi
 echo Has you....................... : yes
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos

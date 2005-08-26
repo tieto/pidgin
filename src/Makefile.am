@@ -223,8 +223,8 @@ gaim.service:
 
 #Ideally, this directory should be autodetected, and the user should
 #be able to specify it as an option to "configure"
-dbus_servicesdir = /usr/share/dbus-1/services
-dbus_services_DATA = gaim.service
+dbus_sessiondir = $(DBUS_SESSION_DIR)
+dbus_session_DATA = gaim.service
 
 endif
 
