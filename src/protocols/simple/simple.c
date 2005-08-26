@@ -181,6 +181,16 @@ static void connection_remove(struct simple_account_data *sip, int fd) {
 	g_free(conn);
 }
 
+static void connection_free_all(struct simple_account_data *sip) {
+	struct sip_connection *ret = NULL;
+	GSList *entry = sip->openconns;
+	while(entry) {
+		ret = entry->data;
+		connection_remove(sip, ret->fd);
+		entry = sip->openconns;
+	}
+}
+
 static void simple_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
 	struct simple_account_data *sip = (struct simple_account_data *)gc->proto_data;
@@ -246,6 +256,43 @@ static GList *simple_status_types(GaimAccount *acc) {
         types = g_list_append(types, type);
 	
 	return types;
+}
+
+static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth, gchar *method, gchar *target) {
+	gchar noncecount[9];
+        HASHHEX HA2;
+	HASHHEX response;
+	gchar *ret;
+	
+	sprintf(noncecount, "%08d", auth->nc++);
+	DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
+	gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
+	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, auth->realm, auth->nonce, target, noncecount, response);
+	return ret;
+}
+
+static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
+	if(!hdr) {
+		gaim_debug_info("simple", "fill_auth: hdr==NULL\n");
+		return;
+	}
+	int i=0;
+	gchar **parts = g_strsplit(hdr, " ", 0);
+	while(parts[i]) {
+		if(!strncmp(parts[i],"nonce",5)) {
+			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-1);
+		}
+		if(!strncmp(parts[i],"realm",5)) {
+			auth->realm = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
+		}
+		i++;
+	}
+	
+	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
+	
+	DigestCalcHA1("md5", sip->username, auth->realm, sip->password, auth->nonce, "", auth->HA1);
+
+	auth->nc=1;
 }
 
 static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond);
@@ -397,25 +444,19 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	char *addh="";
 	gchar *branch = genbranch();
 	char *buf;
-	HASHHEX response;
-	HASHHEX HA2;	
        
 	if(addheaders) addh=addheaders;
-	if(sip->registrar.nonce && !strcmp(method,"REGISTER") && sip->registrar.fouroseven<4) {
-		gchar noncecount[90];
-		sprintf(noncecount,"%08d",sip->registrar.nc++);
-		DigestCalcResponse(sip->registrar.HA1, sip->registrar.nonce, noncecount, "", "", method, url, HA2, response);
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s", response);	
-		auth = g_strdup_printf("Authorization: Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, sip->registrar.realm, sip->registrar.nonce, url, noncecount, response);
+	if(sip->registrar.nonce && !strcmp(method,"REGISTER")) {
+		buf = auth_header(sip, &sip->registrar, method, url);	
+		auth = g_strdup_printf("Authorization: %s",buf);
+		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
 	if(sip->proxy.nonce && strcmp(method,"REGISTER")) {
-		gchar noncecount[90];
-		sprintf(noncecount, "%08d", sip->proxy.nc++);
-		DigestCalcResponse(sip->proxy.HA1, sip->proxy.nonce, noncecount, "", "", method, url, HA2, response);
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s", response);	
-		auth = g_strdup_printf("Proxy-Authorization: Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, sip->proxy.realm, sip->proxy.nonce, url, noncecount, response);
+		buf = auth_header(sip, &sip->proxy, method, url);
+		auth = g_strdup_printf("Proxy-Authorization: %s",buf);
+		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
@@ -467,10 +508,6 @@ static void do_register_exp(struct simple_account_data *sip, int expire) {
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
 	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip, sip->listenport, sip->udp ? "udp" : "tcp", expire);
-	
-	/* allow one auth try per register */
-	sip->proxy.fouroseven = 0;
-	sip->registrar.fouroseven = 0;
 	
 	if(expire) {
 		sip->reregister = time(NULL) + expire - 50;
@@ -674,30 +711,6 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 	g_free(from);
 }
 
-static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
-	if(!hdr) {
-		gaim_debug_info("simple", "fill_auth: hdr==NULL\n");
-		return;
-	}
-	int i=0;
-	gchar **parts = g_strsplit(hdr, " ", 0);
-	while(parts[i]) {
-		if(!strncmp(parts[i],"nonce",5)) {
-			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-1);
-		}
-		if(!strncmp(parts[i],"realm",5)) {
-			auth->realm = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
-		}
-		i++;
-	}
-	
-	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
-	
-	DigestCalcHA1("md5", sip->username, auth->realm, sip->password, auth->nonce, "", auth->HA1);
-
-	auth->nc=1;
-}
-
 
 gboolean process_register_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
 	gchar *tmp;
@@ -719,6 +732,11 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 			break;
 		case 401:
 			if(sip->registerstatus!=2) {
+				gaim_debug_info("simple","REGISTER retries %d\n",sip->registrar.retries);
+				if(sip->registrar.retries>3) {
+			                gaim_connection_error(sip->gc,"Wrong Password");
+					return TRUE;
+				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
 				fill_auth(sip, tmp, &sip->registrar);
 				sip->registerstatus=2;
@@ -922,23 +940,16 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		struct transaction *trans = transactions_find(sip, msg);
 		if(trans) {
 			if(msg->response == 407) {
-				if(sip->proxy.fouroseven>3) return;
-				sip->proxy.fouroseven++;
+				if(sip->proxy.retries>3) return;
+				sip->proxy.retries++;
 				/* do proxy authentication */
 
 				gchar *ptmp = sipmsg_find_header(msg,"Proxy-Authenticate");
 				gchar *resend;
 				gchar *auth;
 					
-			        HASHHEX HA2;
-				HASHHEX response;
-				gchar noncecount[90];
 				fill_auth(sip, ptmp, &sip->proxy);
-				sprintf(noncecount, "%08d", sip->proxy.nc++);
-	
-				DigestCalcResponse(sip->proxy.HA1, sip->proxy.nonce, noncecount, "", "", trans->msg->method, trans->msg->target, HA2, response);
-				gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
-				auth = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, sip->proxy.realm, sip->proxy.nonce, trans->msg->target, noncecount, response);
+				auth = auth_header(sip, &sip->proxy, trans->msg->method, trans->msg->target);
 				sipmsg_remove_header(msg, "Proxy-Authorization");
 				sipmsg_add_header(trans->msg, "Proxy-Authorization", auth);
 				g_free(auth);
@@ -947,9 +958,9 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				sendout_pkt(sip->gc, resend);
 				g_free(resend);
 			} else {
-				sip->proxy.fouroseven = 0;
-				if(msg->response == 401) sip->registrar.fouroseven++;
-				else sip->registrar.fouroseven = 0;
+				sip->proxy.retries = 0;
+				if(msg->response == 401) sip->registrar.retries++;
+				else sip->registrar.retries = 0;
 				if(trans->callback) {
 					/* call the callback to process response*/
 					(trans->callback)(sip, msg, trans);
@@ -1216,6 +1227,7 @@ static void simple_close(GaimConnection *gc)
 
 	/* unregister */
 	do_register_exp(sip, 0);
+	connection_free_all(sip);
 	if(sip) {
 		if(sip->servername) g_free(sip->servername);
 		if(sip->username) g_free(sip->username);
@@ -1226,11 +1238,11 @@ static void simple_close(GaimConnection *gc)
 		if(sip->proxy.realm) g_free(sip->proxy.realm);
 		if(sip->sendlater) g_free(sip->sendlater);
 		if(sip->ip) g_free(sip->ip);
+		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
 		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = NULL;
 	}
 	if(gc->proto_data) g_free(gc->proto_data);
 	gc->proto_data = 0;
-	/* TODO free connections */
 }
 
 /* not needed since privacy is checked for every subscribe */

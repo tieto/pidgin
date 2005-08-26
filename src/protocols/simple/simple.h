@@ -49,11 +49,12 @@ struct simple_buddy {
 };
 
 struct sip_auth {
+	int type; /* 1 = Digest / 2 = NTLM */
         gchar *nonce;
         gchar *realm;
 	int nc;
         HASHHEX HA1;
-	int fouroseven;
+	int retries;
 };
 
 struct simple_account_data {
