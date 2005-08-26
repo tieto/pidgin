@@ -4,6 +4,10 @@
  * gaim
  *
  * Copyright (C) 2005 Thomas Butter <butter@uni-mannheim.de>
+ * 
+ * ***
+ * Thanks to Google's Summer of Code Program and the helpful mentors
+ * ***
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +31,7 @@
 #include "conversation.h"
 #include "debug.h"
 #include "notify.h"
+#include "privacy.h"
 #include "prpl.h"
 #include "plugin.h"
 #include "util.h"
@@ -86,8 +91,11 @@ static void send_publish(struct simple_account_data *sip);
 static void do_notifies(struct simple_account_data *sip) {
 	GSList *tmp = sip->watcher;
 	gaim_debug_info("simple", "do_notifies()\n");
-	if((sip->republish != -1) || sip->republish < time(NULL))
-		send_publish(sip);
+	if((sip->republish != -1) || sip->republish < time(NULL)) {
+	        if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
+			send_publish(sip);
+		}
+	}
 
 	while(tmp) {
 		gaim_debug_info("simple", "notifying %s\n", ((struct simple_watcher*)tmp->data)->name);
@@ -697,7 +705,9 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 	switch (msg->response) {
 		case 200:
 			if(sip->registerstatus<3) { /* registered */
-				send_publish(sip);	
+			        if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
+					send_publish(sip);
+				}
 			}
 			sip->registerstatus=3;
 			gaim_connection_set_state(sip->gc, GAIM_CONNECTED);
@@ -831,7 +841,7 @@ static void send_notify(struct simple_account_data *sip, struct simple_watcher *
 }
 
 static gboolean process_publish_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
-	if(msg->response != 200) {
+	if(msg->response != 200 && msg->response != 408) {
 		/* never send again */
 		sip->republish = -1;
 	}
@@ -860,6 +870,10 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 		ourtag = gentag();
 	}
 	if(!watcher) { /* new subscription */
+		if(!gaim_privacy_check(sip->account, from)) {
+			send_sip_response(sip->gc, msg, 202, "Ok", NULL);
+			goto privend;
+		}
 		watcher = watcher_create(sip, from, callid, ourtag, theirtag);
 	}
 	if(tagadded) {
@@ -878,6 +892,12 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 	send_sip_response(sip->gc, msg, 200, "Ok", NULL);
 	g_free(tmp);
 	send_notify(sip, watcher);
+privend:
+	g_free(from);
+	g_free(theirtag);
+	g_free(ourtag);
+	g_free(callid);
+	g_free(expire);
 }
 
 static void process_input_message(struct simple_account_data *sip, struct sipmsg *msg) {
@@ -1213,6 +1233,13 @@ static void simple_close(GaimConnection *gc)
 	/* TODO free connections */
 }
 
+/* not needed since privacy is checked for every subscribe */
+static void dummy_add_deny(GaimConnection *gc, const char *name) {
+}
+
+static void dummy_permit_deny(GaimConnection *gc) {
+}
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	0,
@@ -1240,11 +1267,11 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	simple_remove_buddy,	/* remove_buddy */
 	NULL,					/* remove_buddies */
-	NULL,					/* add_permit */
-	NULL,					/* add_deny */
-	NULL,					/* rem_permit */
-	NULL,					/* rem_deny */
-	NULL,					/* set_permit_deny */
+	dummy_add_deny,					/* add_permit */
+	dummy_add_deny,					/* add_deny */
+	dummy_add_deny,					/* rem_permit */
+	dummy_add_deny,					/* rem_deny */
+	dummy_permit_deny,					/* set_permit_deny */
 	NULL,		/* join_chat */
 	NULL,					/* reject_chat */
 	NULL,	/* get_chat_name */
@@ -1311,6 +1338,9 @@ static void _init_plugin(GaimPlugin *plugin)
 
         split = gaim_account_user_split_new(_("Server"), "", '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+
+	option = gaim_account_option_bool_new(_("Publish Status (note: everyone may watch you)"), "dopublish", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
