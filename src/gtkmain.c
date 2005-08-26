@@ -672,9 +672,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct && opt_nologin)
+	if (!opt_acct && !opt_nologin)
 	{
-		/* TODO: Need to disable all accounts or set them all to offline */
+		/* Everything is good to go--sign on already */
+		gaim_accounts_restore_previous_statuses();
 	}
 
 	if (opt_acct || (gaim_accounts_get_all() == NULL)) {

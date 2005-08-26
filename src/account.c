@@ -781,12 +781,6 @@ load_accounts(void)
 		GaimAccount *new_acct;
 		new_acct = parse_account(child);
 		gaim_accounts_add(new_acct);
-
-		if (gaim_account_get_enabled(new_acct, gaim_core_get_ui()) &&
-			(gaim_presence_is_online(new_acct->presence)))
-		{
-			gaim_account_connect(new_acct);
-		}
 	}
 }
 
@@ -1295,6 +1289,8 @@ gaim_account_set_enabled(GaimAccount *account, const char *ui,
 	gaim_account_set_ui_bool(account, ui, "auto-login", value);
 	if (value && gaim_presence_is_online(account->presence))
 		gaim_account_connect(account);
+	else if (!value && !gaim_account_is_disconnected(account))
+		gaim_account_disconnect(account);
 }
 
 void
@@ -2057,6 +2053,23 @@ gaim_accounts_find(const char *name, const char *protocol_id)
 	g_free(who);
 
 	return account;
+}
+
+void
+gaim_accounts_restore_previous_statuses()
+{
+	GList *l;
+	GaimAccount *account;
+
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+	{
+		account = (GaimAccount *)l->data;
+		if (gaim_account_get_enabled(account, gaim_core_get_ui()) &&
+			(gaim_presence_is_online(account->presence)))
+		{
+			gaim_account_connect(account);
+		}
+	}
 }
 
 void
