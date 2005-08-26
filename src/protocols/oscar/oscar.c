@@ -299,7 +299,7 @@ static int oscar_sendfile_done   (aim_session_t *, aim_frame_t *, ...);
 static gboolean gaim_icon_timerfunc(gpointer data);
 static void oscar_callback(gpointer data, gint source, GaimInputCondition condition);
 static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie);
-static void oscar_set_info(GaimConnection *gc, const char *text);
+static void oscar_set_info(GaimConnection *gc, const char *info);
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 static void oscar_xfer_init_recv(GaimXfer *xfer);
 
@@ -5143,7 +5143,6 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		aim_locate_setcaps(od->sess, caps_aim);
 	oscar_set_info(gc, account->user_info);
-	/* TODO: Should set the status here, as well. */
 
 	return 1;
 }
@@ -5782,12 +5781,55 @@ static void oscar_set_idle(GaimConnection *gc, int time) {
 	aim_srv_setidle(od->sess, time);
 }
 
-static void oscar_set_info(GaimConnection *gc, const char *text) {
-	OscarData *od = (OscarData *)gc->proto_data;
+static
+gchar *gaim_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, char **encoding)
+{
 	int charset = 0;
-	char *text_html = NULL;
-	char *msg = NULL;
-	gsize msglen = 0;
+	char *encoded = NULL;
+
+	charset = oscar_charset_check(str);
+	if (charset == AIM_CHARSET_UNICODE) {
+		encoded = g_convert(str, strlen(str), "UCS-2BE", "UTF-8", NULL, ret_len, NULL);
+		*encoding = "unicode-2-0";
+	} else if (charset == AIM_CHARSET_CUSTOM) {
+		encoded = g_convert(str, strlen(str), "ISO-8859-1", "UTF-8", NULL, ret_len, NULL);
+		*encoding = "iso-8859-1";
+	} else {
+		encoded = g_strdup(str);
+		*ret_len = strlen(str);
+		*encoding = "us-ascii";
+	}
+
+	return encoded;
+}
+
+/*
+ * If we're away, this will also send the away message to the server.
+ */
+static void
+oscar_set_info(GaimConnection *gc, const char *rawinfo)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	OscarData *od = (OscarData *)gc->proto_data;
+	GaimPresence *presence;
+	GaimStatus *status;
+	GaimStatusType *status_type;
+	GaimStatusPrimitive primitive;
+
+	char *htmlinfo;
+	char *info_encoding = NULL;
+	char *info = NULL;
+	gsize infolen = 0;
+
+	const char *htmlaway;
+	char *away_encoding = NULL;
+	char *away = NULL;
+	gsize awaylen = 0;
+
+	presence = gaim_account_get_presence(account);
+	status = gaim_presence_get_active_status(presence);
+	status_type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(status_type);
 
 	if (od->rights.maxsiglen == 0)
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM profile."),
@@ -5796,61 +5838,78 @@ static void oscar_set_info(GaimConnection *gc, const char *text) {
 							  "Your profile remains unset; try setting it "
 							  "again when you are fully connected."));
 
-	if (!text) {
-		aim_locate_setprofile(od->sess, NULL, "", 0, NULL, NULL, 0);
-		return;
+	if (rawinfo != NULL)
+	{
+		htmlinfo = gaim_strdup_withhtml(rawinfo);
+		info = gaim_prpl_oscar_convert_to_infotext(htmlinfo, &infolen, &info_encoding);
+		g_free(htmlinfo);
+
+		if (infolen > od->rights.maxsiglen)
+		{
+			gchar *errstr;
+			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 "The maximum profile length of %d bytes "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 od->rights.maxsiglen), od->rights.maxsiglen);
+			gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
+			g_free(errstr);
+		}
+	}
+	else
+	{
+		/* TODO: It's very possible that this isn't necessary */
+		info = g_strdup("");
 	}
 
-	text_html = gaim_strdup_withhtml(text);
-	charset = oscar_charset_check(text_html);
-	if (charset == AIM_CHARSET_UNICODE) {
-		msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-		aim_locate_setprofile(od->sess, "unicode-2-0", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
-		g_free(msg);
-	} else if (charset == AIM_CHARSET_CUSTOM) {
-		msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-		aim_locate_setprofile(od->sess, "iso-8859-1", msg, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
-		g_free(msg);
-	} else {
-		msglen = strlen(text_html);
-		aim_locate_setprofile(od->sess, "us-ascii", text_html, (msglen > od->rights.maxsiglen ? od->rights.maxsiglen : msglen), NULL, NULL, 0);
+	if (primitive == GAIM_STATUS_AWAY)
+	{
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+
+		htmlaway = gaim_status_get_attr_string(status, "message");
+		if (htmlaway == NULL)
+			htmlaway = _("Away");
+		away = gaim_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
+
+		if (awaylen > od->rights.maxawaymsglen)
+		{
+			gchar *errstr;
+
+			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 "The maximum away message length of %d bytes "
+									 "has been exceeded.  Gaim has truncated it for you.",
+									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
+			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
+			g_free(errstr);
+		}
 	}
 
-	if (msglen > od->rights.maxsiglen) {
-		gchar *errstr;
-		errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
-								 "has been exceeded.  Gaim has truncated it for you.",
-								 "The maximum profile length of %d bytes "
-								 "has been exceeded.  Gaim has truncated it for you.",
-								 od->rights.maxsiglen), od->rights.maxsiglen);
-		gaim_notify_warning(gc, NULL, _("Profile too long."), errstr);
-		g_free(errstr);
-	}
-
-	g_free(text_html);
+	aim_locate_setprofile(od->sess, info_encoding, info, MIN(infolen, od->rights.maxsiglen),
+									away_encoding, away, MIN(awaylen, od->rights.maxawaymsglen));
+	g_free(info);
+	g_free(away);
 }
 
 static void
 oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	OscarData *od = NULL;
+	OscarData *od = (OscarData *)gc->proto_data;
+	GaimPresence *presence;
 	GaimStatusType *status_type;
 	GaimStatusPrimitive primitive;
-	GaimPresence *presence;
 	const gchar *status_id;
-	int charset = 0;
+
 	const gchar *text_html = NULL;
-	char *msg = NULL;
-	gsize msglen = 0;
+	char *away_encoding = NULL;
+	char *away = NULL;
+	gsize awaylen = 0;
 
 	status_type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(status_type);
 	status_id = gaim_status_get_id(status);
 	presence = gaim_account_get_presence(account);
-
-	if (gc)
-		od = (OscarData *)gc->proto_data;
 
 	if ((od == NULL) || (od->rights.maxawaymsglen == 0)) {
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
@@ -5873,32 +5932,20 @@ oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
 		}
 
 	} else if (primitive == GAIM_STATUS_AWAY) {
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
 
 		text_html = gaim_status_get_attr_string(status, "message");
 
-		if (text_html == NULL) {
+		if ((text_html == NULL) || (*text_html == '\0')) {
 			text_html = _("Away");
 		}
 
-		charset = oscar_charset_check(text_html);
-		if (charset == AIM_CHARSET_UNICODE) {
-			msg = g_convert(text_html, strlen(text_html), "UCS-2BE", "UTF-8", NULL, &msglen, NULL);
-			aim_locate_setprofile(od->sess, NULL, NULL, 0, "unicode-2-0", msg,
-				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-			g_free(msg);
-		} else if (charset == AIM_CHARSET_CUSTOM) {
-			msg = g_convert(text_html, strlen(text_html), "ISO-8859-1", "UTF-8", NULL, &msglen, NULL);
-			aim_locate_setprofile(od->sess, NULL, NULL, 0, "iso-8859-1", msg,
-				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-			g_free(msg);
-		} else {
-			msglen = strlen(text_html);
-			aim_locate_setprofile(od->sess, NULL, NULL, 0, "us-ascii", text_html,
-				(msglen > od->rights.maxawaymsglen ? od->rights.maxawaymsglen : msglen));
-		}
+		away = gaim_prpl_oscar_convert_to_infotext(text_html, &awaylen, &away_encoding);
+		aim_locate_setprofile(od->sess, NULL, NULL, 0, away_encoding, away,
+				MIN(awaylen, od->rights.maxawaymsglen));
+		g_free(away);
 
-		if (msglen > od->rights.maxawaymsglen) {
+		if (awaylen > od->rights.maxawaymsglen) {
 			gchar *errstr;
 
 			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "

@@ -253,7 +253,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	 *       status the user's accounts are set to instead of always
 	 *       using "Available."
 	 */
-	gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+	/* gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0); */
 
 }
 
