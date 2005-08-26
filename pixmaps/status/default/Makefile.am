@@ -35,6 +35,7 @@ EXTRA_DIST = \
 	op.png \
 	secure.png \
 	silc.png \
+	simple.png \
 	trepia.png \
 	voice.png \
 	wireless.png \
