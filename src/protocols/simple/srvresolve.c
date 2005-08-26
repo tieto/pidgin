@@ -1,5 +1,5 @@
 /**
- * @file simple.c
+ * @file srvresolve.c
  *
  * gaim
  *
