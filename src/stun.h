@@ -51,6 +51,12 @@ struct stun_attrib {
 	short len;
 };
 
+struct stun_change {
+	struct stun_header hdr;
+	struct stun_attrib attrib;
+	char value[4];
+};
+
 typedef void (*StunCallback) (struct stun_nattype *);
 
 /**

@@ -24,7 +24,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * TODO: currently only detects if there is a NAT and not the type of NAT
  */
 
 #include <sys/socket.h>
@@ -42,12 +41,15 @@
 
 struct stun_nattype nattype = {-1, 0, "\0"};
 
-static gint transid[4];
-
 static GSList *callbacks = 0;
 static int fd = -1;
-gint incb = -1;
-gint timeout = -1;
+static gint incb = -1;
+static gint timeout = -1;
+static struct stun_header *packet;
+static int packetsize = 0;
+static int test = 0;
+static int retry = 0;
+static struct sockaddr_in addr;
 
 static void do_callbacks() {
 	while(callbacks) {
@@ -57,6 +59,45 @@ static void do_callbacks() {
 		callbacks = g_slist_remove(callbacks, cb);
 	}
 }
+
+static gboolean timeoutfunc(void *blah) {
+	if(retry > 2) {
+		if(test == 2) nattype.type = 5;
+		/* remove input */
+		gaim_input_remove(incb);
+	
+		/* set unknown */
+		nattype.status = 0;
+
+		/* callbacks */
+		do_callbacks();
+
+		return FALSE;
+	}
+	retry++;
+	sendto(fd, packet, packetsize, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+	return TRUE;
+}
+
+#ifdef NOTYET
+static void do_test2() {
+	struct stun_change data;
+        data.hdr.type = htons(0x0001);
+        data.hdr.len = 0;
+        data.hdr.transid[0] = rand();
+        data.hdr.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
+        data.hdr.transid[2] = rand();
+        data.hdr.transid[3] = rand();							data.attrib.type = htons(0x003);
+	data.attrib.len = htons(4);
+	data.value[3] = 6;
+	packet = (struct stun_header*)&data;
+	packetsize = sizeof(struct stun_change);
+	retry = 0;
+	test = 2;
+	sendto(fd, packet, packetsize, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
+        timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
+}
+#endif
 
 static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	char buffer[1024];
@@ -72,71 +113,64 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	len = recv(source, buffer, 1024, 0);
 
 	hdr = (struct stun_header*)buffer;
-	if(hdr->transid[0]!=transid[0] || hdr->transid[1]!=transid[1] || hdr->transid[2]!=transid[2] || hdr->transid[3]!=transid[3]) { // wrong transaction
+	if(hdr->transid[0]!=packet->transid[0] || hdr->transid[1]!=packet->transid[1] || hdr->transid[2]!=packet->transid[2] || hdr->transid[3]!=packet->transid[3]) { // wrong transaction
 		gaim_debug_info("simple", "got wrong transid\n");
 		return;
 	}
-	
-	tmp = buffer + sizeof(struct stun_header);
-	while(buffer+len > tmp) {
+	if(test==1) {	
+		tmp = buffer + sizeof(struct stun_header);
+		while(buffer+len > tmp) {
 
-		attrib = (struct stun_attrib*) tmp;
-		if(attrib->type == htons(0x0001) && attrib->len == htons(8)) {
-			memcpy(&in.s_addr, tmp+sizeof(struct stun_attrib)+2+2, 4);
-			strcpy(nattype.publicip, inet_ntoa(in));
+			attrib = (struct stun_attrib*) tmp;
+			if(attrib->type == htons(0x0001) && attrib->len == htons(8)) {
+				memcpy(&in.s_addr, tmp+sizeof(struct stun_attrib)+2+2, 4);
+				strcpy(nattype.publicip, inet_ntoa(in));
+			}
+			tmp += sizeof(struct stun_attrib) + attrib->len;
 		}
-		tmp += sizeof(struct stun_attrib) + attrib->len;
-	}
-	gaim_debug_info("simple", "got public ip %s\n",nattype.publicip);
-	nattype.status = 2;
-	nattype.type = 1;
-	
-	// is it a NAT?
+		gaim_debug_info("simple", "got public ip %s\n",nattype.publicip);
+		nattype.status = 2;
+		nattype.type = 1;
 
-	ifc.ifc_len = sizeof(buffer);
-	ifc.ifc_req = (struct ifreq *) buffer;
-	ioctl(source, SIOCGIFCONF, &ifc);
+		// is it a NAT?
 
-	tmp = buffer;
-	while(tmp < buffer + ifc.ifc_len) {
-		ifr = (struct ifreq *) tmp;
-		len = sizeof(struct sockaddr);
+		ifc.ifc_len = sizeof(buffer);
+		ifc.ifc_req = (struct ifreq *) buffer;
+		ioctl(source, SIOCGIFCONF, &ifc);
 
-		tmp += sizeof(ifr->ifr_name) + len;
+		tmp = buffer;
+		while(tmp < buffer + ifc.ifc_len) {
+			ifr = (struct ifreq *) tmp;
+			len = sizeof(struct sockaddr);
 
-		if(ifr->ifr_addr.sa_family == AF_INET) {
-			// we only care about ipv4 interfaces
-			sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
-			if(sinptr->sin_addr.s_addr == in.s_addr) {
-				// no NAT
-				gaim_debug_info("simple","no nat");
-				nattype.type = 0;
+			tmp += sizeof(ifr->ifr_name) + len;
+
+			if(ifr->ifr_addr.sa_family == AF_INET) {
+				// we only care about ipv4 interfaces
+				sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+				if(sinptr->sin_addr.s_addr == in.s_addr) {
+					// no NAT
+					gaim_debug_info("simple","no nat");
+					nattype.type = 0;
+				}
 			}
 		}
+		gaim_timeout_remove(timeout);
+
+#ifdef NOTYET
+		do_test2();
+#endif
+		return;
+	} else if(test == 2) {
+		do_callbacks();
+		gaim_input_remove(incb);
+		gaim_timeout_remove(timeout);
+		nattype.type = 2;
 	}
-				
-	do_callbacks();
-	gaim_timeout_remove(timeout);
-	gaim_input_remove(incb);
 }
-
-static gboolean timeoutfunc(void *blah) {	
-	/* remove input */
-	gaim_input_remove(incb);
-	
-	/* set unknown */
-	nattype.status = 0;
-
-	/* callbacks */
-	do_callbacks();
-	
-	return FALSE;
-}
-
 	
 struct stun_nattype *gaim_stun_discover(StunCallback cb) {
-	struct sockaddr_in addr;
-	struct stun_header data;
+	static struct stun_header data;
 	int ret = 0;
 	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
 	int port = gaim_prefs_get_int("/core/network/stun_port");
@@ -182,17 +216,20 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 
 	data.type = htons(0x0001);
 	data.len = 0;
-	transid[0] = data.transid[0] = rand();
-	transid[1] = data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
-	transid[2] = data.transid[2] = rand();
-	transid[3] = data.transid[3] = rand();
+	data.transid[0] = rand();
+	data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
+	data.transid[2] = rand();
+	data.transid[3] = rand();
 	
 	if( sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
 			nattype.status = 0;
 			if(cb) cb(&nattype);
 			return &nattype;
 	}
+	test = 1;
+	packet = &data;
+	packetsize = sizeof(struct stun_header);
 	if(cb) callbacks = g_slist_append(callbacks, cb);
-	timeout = gaim_timeout_add(2000, (GSourceFunc)timeoutfunc, NULL);
+	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
 	return NULL;
 }
