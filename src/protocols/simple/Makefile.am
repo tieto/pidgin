@@ -7,6 +7,8 @@ SIMPLESOURCES = \
 	sipmsg.h \
 	digcalc.c \
 	digcalc.h \
+	ntlm.c \
+	ntlm.h \
 	srvresolve.h \
 	srvresolve.c
 
