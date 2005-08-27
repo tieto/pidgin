@@ -110,6 +110,7 @@ static void intercept_sent(GaimAccount *account, GaimConversation *conv, char **
 static void intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags);
 
 
+/* DBus commands that can be sent to the editor */
 G_BEGIN_DECLS
 DBusConnection *gaim_dbus_get_connection(void);
 G_END_DECLS
