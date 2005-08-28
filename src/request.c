@@ -978,6 +978,71 @@ gaim_request_field_label_new(const char *id, const char *text)
 	return field;
 }
 
+GaimRequestField *
+gaim_request_field_image_new(const char *id, const char *text, const char *buf, gsize size)
+{
+	GaimRequestField *field;
+
+	g_return_val_if_fail(id   != NULL, NULL);
+	g_return_val_if_fail(text != NULL, NULL);
+	g_return_val_if_fail(buf  != NULL, NULL);
+	g_return_val_if_fail(size > 0, NULL);
+
+	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_IMAGE);
+
+	field->u.image.buffer  = g_memdup(buf, size);
+	field->u.image.size    = size;
+	field->u.image.scale_x = 1;
+	field->u.image.scale_y = 1;
+
+	return field;
+}
+
+void
+gaim_request_field_image_set_scale(GaimRequestField *field, unsigned int x, unsigned int y)
+{
+	g_return_if_fail(field != NULL);
+	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE);
+
+	field->u.image.scale_x = x;
+	field->u.image.scale_y = y;
+}
+
+const char *
+gaim_request_field_image_get_buffer(GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, NULL);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, NULL);
+
+	return field->u.image.buffer;
+}
+
+gsize
+gaim_request_field_image_get_size(GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, 0);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+
+	return field->u.image.size;
+}
+
+unsigned int
+gaim_request_field_image_get_scale_x(GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, 0);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+
+	return field->u.image.scale_x;
+}
+
+unsigned int
+gaim_request_field_image_get_scale_y(GaimRequestField *field)
+{
+	g_return_val_if_fail(field != NULL, 0);
+	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+
+	return field->u.image.scale_y;
+}
 
 GaimRequestField *
 gaim_request_field_account_new(const char *id, const char *text,

@@ -58,6 +58,7 @@ typedef enum
 	GAIM_REQUEST_FIELD_CHOICE,
 	GAIM_REQUEST_FIELD_LIST,
 	GAIM_REQUEST_FIELD_LABEL,
+	GAIM_REQUEST_FIELD_IMAGE,
 	GAIM_REQUEST_FIELD_ACCOUNT
 
 } GaimRequestFieldType;
@@ -160,6 +161,14 @@ typedef struct
 			GaimFilterAccountFunc filter_func;
 
 		} account;
+
+		struct
+		{
+			unsigned int scale_x;
+			unsigned int scale_y;
+			const char *buffer;
+			gsize size;
+		} image;
 
 	} u;
 
@@ -948,6 +957,61 @@ const GList *gaim_request_field_list_get_items(const GaimRequestField *field);
  */
 GaimRequestField *gaim_request_field_label_new(const char *id,
 											   const char *text);
+
+/*@}*/
+
+/**************************************************************************/
+/** @name Image Field API                                                 */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Creates an image field.
+ *
+ * @param id   The field ID.
+ * @param text The label of the field.
+ * @param path Path to the image to be displayed.
+ *
+ * @return The new field.
+ */
+GaimRequestField *gaim_request_field_image_new(const char *id, const char *text,
+											   const char *buf, gsize size);
+
+/**
+ * Returns pointer to the image.
+ *
+ * @param field The image field.
+ *
+ * @return Pointer to the image.
+ */
+const char *gaim_request_field_image_get_buffer(GaimRequestField *field);
+
+/**
+ * Returns size (in bytes) of the image.
+ *
+ * @param field The image field.
+ *
+ * @return Size of the image.
+ */
+gsize gaim_request_field_image_get_size(GaimRequestField *field);
+
+/**
+ * Returns X scale coefficient of the image.
+ *
+ * @param field The image field.
+ *
+ * @return X scale coefficient of the image.
+ */
+unsigned int gaim_request_field_image_get_scale_x(GaimRequestField *field);
+
+/**
+ * Returns Y scale coefficient of the image.
+ *
+ * @param field The image field.
+ *
+ * @return Y scale coefficient of the image.
+ */
+unsigned int gaim_request_field_image_get_scale_y(GaimRequestField *field);
 
 /*@}*/
 

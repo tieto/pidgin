@@ -1241,6 +1241,32 @@ create_choice_field(GaimRequestField *field)
 }
 
 static GtkWidget *
+create_image_field(GaimRequestField *field)
+{
+	GtkWidget *widget;
+	GdkPixbuf *buf, *scale;
+	GdkPixbufLoader *loader;
+
+	loader = gdk_pixbuf_loader_new();
+	gdk_pixbuf_loader_write(loader,
+							(const guchar *)gaim_request_field_image_get_buffer(field),
+							gaim_request_field_image_get_size(field),
+							NULL);
+	gdk_pixbuf_loader_close(loader, NULL);
+	buf = gdk_pixbuf_loader_get_pixbuf(loader);
+
+	scale = gdk_pixbuf_scale_simple(buf,
+			gaim_request_field_image_get_scale_x(field) * gdk_pixbuf_get_width(buf),
+			gaim_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
+			GDK_INTERP_BILINEAR);
+	widget = gtk_image_new_from_pixbuf(scale);
+	g_object_unref(G_OBJECT(buf));
+	g_object_unref(G_OBJECT(scale));
+
+	return widget;
+}
+
+static GtkWidget *
 create_account_field(GaimRequestField *field)
 {
 	GtkWidget *widget;
@@ -1604,6 +1630,8 @@ gaim_gtk_request_fields(const char *title, const char *primary,
 					widget = create_choice_field(field);
 				else if (type == GAIM_REQUEST_FIELD_LIST)
 					widget = create_list_field(field);
+				else if (type == GAIM_REQUEST_FIELD_IMAGE)
+					widget = create_image_field(field);
 				else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
 					widget = create_account_field(field);
 				else
