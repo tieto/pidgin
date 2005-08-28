@@ -339,6 +339,7 @@ dnl  can generate all of it before shipping.  But I thought adding
 dnl  auto-generated stuff to the CVS is inelegant.  Alternatively,
 dnl  these python scripts could be rewritten in C (brrrr ...).
 
+
 if test "x$enable_dbus" = "xyes" ; then
         AC_PATH_PROG([PYTHON], [python], [no])
 	if test "x$PYTHON" = "xno" ; then
@@ -354,46 +355,56 @@ if test "x$enable_dbus" = "xyes" ; then
 	fi	
 fi
 
-if test "x$enable_dbus" = "xyes" ; then
-   	AC_DEFINE(HAVE_DBUS, 1, [Define if we're using DBUS.])
-	echo "Building with DBUS support"
-else
-	echo "Building without DBUS support"
-fi
-
-AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
-
 dnl  Here we locate the directory containing DBus .service files for
 dnl  the session bus.  Adapted from the guifications project.
 
 AC_ARG_WITH(dbus-session-dir, [  --with-dbus-session-dir=<dir>   Location of the D-BUS session directory.])
 
-AC_MSG_CHECKING([location of the D-BUS session directory])
-if ! test -z "$with_dbus_session_dir"; then
-	if ! test -d "$with_dbus_session_dir"; then
-		AC_MSG_ERROR([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
+if test "x$enable_dbus" = "xyes" ; then
+    AC_MSG_CHECKING([location of the D-BUS session directory])
+    if ! test -z "$with_dbus_session_dir"; then
+      	if ! test -d "$with_dbus_session_dir"; then
+	    AC_MSG_WARN([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
+	    enable_dbus=no
 	fi
 
 	DBUS_SESSION_DIR="$with_dbus_session_dir"
-else
+    else
 	dnl # add more to this as needed
 	servicesprefixes="$DATADIR $LIBDIR /usr/share /usr/local/share"
 	DBUS_SESSION_DIR=""
 
 	for p in $servicesprefixes; do
-		dir="$p/dbus-1/services"
-		if test -d $dir; then
-			DBUS_SESSION_DIR="$dir"
-			break
-		fi
+	    dir="$p/dbus-1/services"
+	    if test -d $dir; then
+		DBUS_SESSION_DIR="$dir"
+		break
+	    fi
 	done
 
 	if test -z $DBUS_SESSION_DIR; then
-		AC_MSG_ERROR([D-BUS session directory was not found!  Please use --with-dbus-session-dir and specify it's location.])
+	    AC_MSG_WARN([D-BUS session directory was not found!  Please use --with-dbus-session-dir and specify its location.])
+	    enable_dbus=no
 	fi
+    fi
+
+
 fi
-AC_MSG_RESULT([$DBUS_SESSION_DIR])
-AC_SUBST(DBUS_SESSION_DIR)
+
+if test "x$enable_dbus" = "xyes" ; then
+    AC_MSG_RESULT([$DBUS_SESSION_DIR])
+    AC_SUBST(DBUS_SESSION_DIR)
+    AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
+    echo "Building with DBUS support"
+else
+    echo "Building without DBUS support"
+fi
+
+AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
+
+
+
+
 
 
 dnl #######################################################################
