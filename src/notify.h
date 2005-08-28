@@ -58,6 +58,49 @@ typedef enum
 } GaimNotifyMsgType;
 
 /**
+ * The types of buttons
+ */
+typedef enum
+{
+	GAIM_NOTIFY_BUTTON_CONTINUE = 0,
+	GAIM_NOTIFY_BUTTON_ADD_BUDDY
+
+} GaimNotifySearchButtonType;
+
+/**
+ * Search results object.
+ */
+typedef struct
+{
+	GList *columns;        /**< List of the search column objects. */
+	GList *rows;           /**< List of rows in the result. */
+	GList *buttons;        /**< List of buttons to display. */
+
+} GaimNotifySearchResults;
+
+/**
+ * Single column of a search result.
+ */
+typedef struct
+{
+	char *title; /**< Title of the column. */
+
+} GaimNotifySearchColumn;
+
+typedef void (*GaimNotifySearchResultsCallback)(GaimConnection *, GList *);
+
+
+/**
+ * Definition of a button.
+ */
+typedef struct
+{
+	GaimNotifySearchButtonType type;
+	GaimNotifySearchResultsCallback callback; /**< Function to be called when clicked. */
+
+} GaimNotifySearchButton;
+
+/**
  * Notification UI operations.
  */
 typedef struct
@@ -77,8 +120,11 @@ typedef struct
 							  GCallback cb, void *user_data);
 	void *(*notify_searchresults)(GaimConnection *gc, const char *title,
 								  const char *primary, const char *secondary,
-								  const char **results, GCallback cb,
+								  GaimNotifySearchResults *results, GCallback cb,
 								  void *user_data);
+	void (*notify_searchresults_new_rows)(GaimConnection *gc,
+										  GaimNotifySearchResults *results,
+										  void *data, void *user_data);
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
 							  const char *title, const char *primary,
 							  const char *secondary, const char *text,
@@ -89,10 +135,137 @@ typedef struct
 
 } GaimNotifyUiOps;
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**************************************************************************/
+/** Search results notification API                                       */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Displays results from a buddy search.  This can be, for example,
+ * a window with a list of all found buddies, where you are given the
+ * option of adding buddies to your buddy list.
+ *
+ * @param gc        The GaimConnection handle associated with the information.
+ * @param title     The title of the message.  If this is NULL, the title
+ *                  will be "Search	Results."
+ * @param primary   The main point of the message.
+ * @param secondary The secondary information.
+ * @param results   The GaimNotifySearchResults instance.
+ * @param cb        The callback to call when the user closes
+ *                  the notification.
+ * @param user_data The data to pass to the callback.
+ *
+ * @return A UI-specific handle.
+ */
+void *gaim_notify_searchresults(GaimConnection *gc, const char *title,
+								const char *primary, const char *secondary,
+								GaimNotifySearchResults *results, GCallback cb,
+								void *user_data);
+
+void gaim_notify_searchresults_free(GaimNotifySearchResults *results);
+
+/**
+ * Replace old rows with the new. Reuse an existing window.
+ *
+ * @param gc        The GaimConnection structure.
+ * @param results   The GaimNotifySearchResults structure.
+ * @param data      Data returned by the gaim_notify_searchresults().
+ * @param user_data User defined data.
+ */
+void gaim_notify_searchresults_new_rows(GaimConnection *gc,
+										GaimNotifySearchResults *results,
+										void *data, void *user_data);
+
+/**
+ * Adds a button that will be displayed in the search results dialog.
+ *
+ * @param results The search results object.
+ * @param type    Type of the button. (TODO: Only one button of a given type can be displayed.)
+ * @param cb      Function that will be called on the click event.
+ */
+void gaim_notify_searchresults_button_add(GaimNotifySearchResults *results,
+										  GaimNotifySearchButtonType type,
+										  GaimNotifySearchResultsCallback cb);
+
+/**
+ * Returns a newly created search results object.
+ *
+ * @return The new search results object.
+ */
+GaimNotifySearchResults *gaim_notify_searchresults_new();
+
+/**
+ * Returns a newly created search result column object.
+ *
+ * @param title Title of the column. NOTE: Title will get g_strdup()ed.
+ * 
+ * @return The new search column object.
+ */
+GaimNotifySearchColumn *gaim_notify_searchresults_column_new(const char *title);
+
+/**
+ * Adds a new column to the search result object.
+ *
+ * @param results The result object to which the column will be added.
+ * @param columnt The column that will be added to the result object.
+ */
+void gaim_notify_searchresults_column_add(GaimNotifySearchResults *results,
+										  GaimNotifySearchColumn *column);
+
+/**
+ * Adds a new row of the results to the search results object.
+ *
+ * @param results The search results object.
+ * @param row     The row of the results.
+ */
+void gaim_notify_searchresults_row_add(GaimNotifySearchResults *results,
+									   GList *row);
+
+/**
+ * Returns a number of the rows in the search results object.
+ * 
+ * @param results The search results object.
+ *
+ * @return Number of the result rows. Or -1 if an error occurrs.
+ */
+int gaim_notify_searchresults_get_rows_count(GaimNotifySearchResults *results);
+
+/**
+ * Returns a number of the columns in the search results object.
+ *
+ * @param results The search results object.
+ *
+ * @return Number of the columns. Or -1 if an error occurrs.
+ */
+int gaim_notify_searchresults_get_columns_count(GaimNotifySearchResults *results);
+
+/**
+ * Returns a row of the results from the search results object.
+ *
+ * @param results The search results object.
+ * @param row_id  Index of the row to be returned.
+ *
+ * @return Row of the results.
+ */
+GList *gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
+										 unsigned int row_id);
+
+/**
+ * Returns a title of the search results object's column.
+ * 
+ * @param results   The search results object.
+ * @param column_id Index of the column.
+ *
+ * @return Title of the column.
+ */
+char *gaim_notify_searchresults_column_get_title(GaimNotifySearchResults *results,
+												 unsigned int column_id);
+
+/*@}*/
 
 /**************************************************************************/
 /** @name Notification API                                                */
@@ -179,28 +352,6 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 void *gaim_notify_formatted(void *handle, const char *title,
 							const char *primary, const char *secondary,
 							const char *text, GCallback cb, void *user_data);
-
-/**
- * Displays results from a buddy search.  This can be, for example,
- * a window with a list of all found buddies, where you are given the
- * option of adding buddies to your buddy list.
- *
- * @param gc        The GaimConnection handle associated with the information.
- * @param title     The title of the message.  If this is NULL, the title
- *                  will be "Search	Results."
- * @param primary   The main point of the message.
- * @param secondary The secondary information.
- * @param results   An null-terminated array of null-terminated buddy names.
- * @param cb        The callback to call when the user closes
- *                  the notification.
- * @param user_data The data to pass to the callback.
- *
- * @return A UI-specific handle.
- */
-void *gaim_notify_searchresults(GaimConnection *gc, const char *title,
-								const char *primary, const char *secondary,
-								const char **results, GCallback cb,
-								void *user_data);
 
 /**
  * Displays user information with formatted text, passing information giving

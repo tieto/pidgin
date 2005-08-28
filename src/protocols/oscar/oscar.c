@@ -5449,11 +5449,18 @@ static int gaim_popup(aim_session_t *sess, aim_frame_t *fr, ...)
 	return 1;
 }
 
+static void oscar_searchresults_add_buddy_cb(GaimConnection *gc, GList *row)
+{
+	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
+								 g_list_nth_data(row, 0), NULL, NULL);
+}
+
 static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
+	GaimNotifySearchResults *results;
+	GaimNotifySearchColumn *column;
 	gchar *secondary;
-	gchar **screennames;
 	int i, num;
 	va_list ap;
 	char *email, *SNs;
@@ -5467,16 +5474,20 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 	/* TODO: Need to use ngettext() here */
 	secondary = g_strdup_printf(_("The following screen names are associated with %s"), email);
 
-	screennames = g_malloc((num + 1) * sizeof(gchar *));
-	for (i = 0; i < num; i++)
-		screennames[i] = g_strdup(&SNs[i * (MAXSNLEN + 1)]);
-	screennames[num] = NULL;
+	results = gaim_notify_searchresults_new();
+	column = gaim_notify_searchresults_column_new("Screen name");
+	gaim_notify_searchresults_column_add(results, column);
 
-	gaim_notify_searchresults(gc, NULL, NULL, secondary,
-							  (const char **)screennames, NULL, NULL);
+	for (i = 0; i < num; i++) {
+		GList *row = NULL;
+		row = g_list_append(row, g_strdup(&SNs[i * (MAXSNLEN + 1)]));
+		gaim_notify_searchresults_row_add(results, row);
+	}
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY,
+										 oscar_searchresults_add_buddy_cb);
+	gaim_notify_searchresults(gc, NULL, NULL, secondary, results, NULL, NULL);
 
 	g_free(secondary);
-	g_strfreev(screennames);
 
 	return 1;
 }

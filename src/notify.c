@@ -158,7 +158,7 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 void *
 gaim_notify_searchresults(GaimConnection *gc, const char *title,
 						  const char *primary, const char *secondary,
-						  const char **results, GCallback cb, void *user_data)
+						  GaimNotifySearchResults *results, GCallback cb, void *user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -180,6 +180,151 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 	}
 
 	return NULL;
+}
+
+void
+gaim_notify_searchresults_free(GaimNotifySearchResults *results)
+{
+	GList *l, *m;
+
+	g_return_if_fail(results != NULL);
+
+	for (l = results->buttons; l != NULL; l = l->next) {
+		GaimNotifySearchButton *button = l->data;
+
+		results->buttons = g_list_remove(results->buttons, button);
+		g_free(button);
+	}
+	g_list_free(results->buttons);
+
+	for (l = results->rows; l != NULL; l = l->next) {
+		GList *row = l->data;
+
+		for (m = row; m != NULL; m = m->next) {
+			gchar *str = m->data;
+
+			m = g_list_remove(m, str);
+			g_free(str);
+		}
+
+		results->rows = g_list_remove(results->rows, row);
+		g_list_free(row);
+	}
+	g_list_free(results->rows);
+
+	for (l = results->columns; l != NULL; l = l->next) {
+		GaimNotifySearchColumn *column = l->data;
+
+		results->columns = g_list_remove(results->columns, column);
+		g_free(column->title);
+		g_free(column);
+	}
+	g_list_free(results->columns);
+}
+
+void
+gaim_notify_searchresults_new_rows(GaimConnection *gc,
+		GaimNotifySearchResults *results,
+		void *data, void *user_data)
+{
+	GaimNotifyUiOps *ops;
+
+	ops = gaim_notify_get_ui_ops();
+
+	if (ops != NULL && ops->notify_searchresults != NULL) {
+		ops->notify_searchresults_new_rows(gc, results, data, user_data);
+	}
+}
+
+void
+gaim_notify_searchresults_button_add(GaimNotifySearchResults *results,
+									 GaimNotifySearchButtonType type,
+									 GaimNotifySearchResultsCallback cb)
+{
+	GaimNotifySearchButton *button;
+
+	g_return_if_fail(results != NULL);
+	g_return_if_fail(cb != NULL);
+
+	button = g_new0(GaimNotifySearchButton, 1);
+	button->callback = cb;
+	button->type = type;
+
+	results->buttons = g_list_append(results->buttons, button);
+}
+
+GaimNotifySearchResults *
+gaim_notify_searchresults_new()
+{
+	GaimNotifySearchResults *rs = g_new0(GaimNotifySearchResults, 1);
+
+	return rs;
+}
+
+void
+gaim_notify_searchresults_column_add(GaimNotifySearchResults *results,
+									 GaimNotifySearchColumn *column)
+{
+	g_return_if_fail(results != NULL);
+	g_return_if_fail(column  != NULL);
+
+	results->columns = g_list_append(results->columns, column);
+}
+
+void gaim_notify_searchresults_row_add(GaimNotifySearchResults *results,
+									   GList *row)
+{
+	g_return_if_fail(results != NULL);
+	g_return_if_fail(row     != NULL);
+
+	results->rows = g_list_append(results->rows, row);
+}
+
+GaimNotifySearchColumn *
+gaim_notify_searchresults_column_new(const char *title)
+{
+	GaimNotifySearchColumn *sc;
+
+	g_return_val_if_fail(title != NULL, NULL);
+
+	sc = g_new0(GaimNotifySearchColumn, 1);
+	sc->title = g_strdup(title);
+
+	return sc;
+}
+
+int
+gaim_notify_searchresults_get_columns_count(GaimNotifySearchResults *results)
+{
+	g_return_val_if_fail(results != NULL, -1);
+
+	return g_list_length(results->columns);
+}
+
+int
+gaim_notify_searchresults_get_rows_count(GaimNotifySearchResults *results)
+{
+	g_return_val_if_fail(results != NULL, -1);
+
+	return g_list_length(results->rows);
+}
+
+char *
+gaim_notify_searchresults_column_get_title(GaimNotifySearchResults *results,
+										   unsigned int column_id)
+{
+	g_return_val_if_fail(results != NULL, NULL);
+
+	return ((GaimNotifySearchColumn *)g_list_nth_data(results->columns, column_id))->title;
+}
+
+GList *
+gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
+								  unsigned int row_id)
+{
+	g_return_val_if_fail(results != NULL, NULL);
+
+	return g_list_nth_data(results->rows, row_id);
 }
 
 void *
