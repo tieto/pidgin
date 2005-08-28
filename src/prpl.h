@@ -153,7 +153,14 @@ typedef enum
 	 *
 	 * Probably just Jabber and Y!M
 	 */
-	OPT_PROTO_USE_POINTSIZE = 0x00000100
+	OPT_PROTO_USE_POINTSIZE = 0x00000100,
+
+	/**
+	 * Set the Register button active when screenname is not given.
+	 *
+	 * Gadu-Gadu doesn't need a screenname to register new account.
+	 */
+	OPT_PROTO_REGISTER_NOSCREENNAME = 0x00000200,
 
 } GaimProtocolOptions;
 

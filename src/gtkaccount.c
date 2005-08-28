@@ -233,10 +233,17 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 	add_user_options(dialog,     dialog->top_vbox);
 	add_protocol_options(dialog, dialog->bottom_vbox);
 
-	if (!dialog->prpl_info || !dialog->prpl_info->register_user)
+	if (!dialog->prpl_info || !dialog->prpl_info->register_user) {
 		gtk_widget_hide(dialog->register_button);
-	else
+	} else {
+		if (dialog->prpl_info != NULL &&
+		   (dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME)) {
+			gtk_widget_set_sensitive(dialog->register_button, TRUE);
+		} else {
+			gtk_widget_set_sensitive(dialog->register_button, FALSE);
+		}
 		gtk_widget_show(dialog->register_button);
+	}
 }
 
 static void
@@ -245,10 +252,13 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 	if (dialog->ok_button)
 		gtk_widget_set_sensitive(dialog->ok_button,
 				*gtk_entry_get_text(entry) != '\0');
-	if (dialog->register_button)
-		gtk_widget_set_sensitive(dialog->register_button,
-				*gtk_entry_get_text(entry) != '\0');
-
+	if (dialog->register_button) {
+		if (dialog->prpl_info != NULL && (dialog->prpl_info->options & OPT_PROTO_REGISTER_NOSCREENNAME))
+			gtk_widget_set_sensitive(dialog->register_button, TRUE);
+		else
+			gtk_widget_set_sensitive(dialog->register_button,
+					*gtk_entry_get_text(entry) != '\0');
+	}
 }
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
