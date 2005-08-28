@@ -48,6 +48,7 @@ include $(GAIM_TOP)/src/win32/global.mak
 ##
 
 INCLUDE_PATHS +=	-I$(GG_ROOT) \
+			-I$(GG_ROOT)/lib \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
@@ -68,9 +69,18 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			libgg.c \
-		  	common.c \
-		  	gg.c
+C_SRC =	\
+	lib/common.c \
+	lib/dcc.c \
+	lib/events.c \
+	lib/http.c \
+	lib/libgadu.c \
+	lib/obsolete.c \
+	lib/pubdir.c \
+	lib/pubdir50.c \
+	lib/compat.h \
+	lib/libgadu.h \
+	gg.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
