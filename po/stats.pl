@@ -48,12 +48,9 @@ die "unable to get total: $!" unless (/(\d+) untranslated messages/);
 
 $total = $1;
 
-print "<html>\n";
-print "<head><title>$PACKAGE i18n statistics</title></head>\n";
-print "<body>\n";
-print "<table cellspacing='0' cellpadding='0' border='0' bgcolor='#888888' width='100%'><tr><td><table cellspacing='1' cellpadding='2' border='0' width='100%'>\n";
-
-print"<tr bgcolor='#e0e0e0'><th>language</th><th style='background: #339933;'>trans</th><th style='background: #339933;'>%</th><th style='background: #333399;'>fuzzy</th><th style='background: #333399;'>%</th><th style='background: #dd3333;'>untrans</th><th style='background: #dd3333;'>%</th><th>&nbsp;</th></tr>\n";
+print "<?xml version='1.0'?>\n";
+print "<?xml-stylesheet type='text/xsl' href='l10n.xsl'?>\n";
+print "<project version='1.0' xmlns:l10n='http://faceprint.com/code/l10n' name='$PACKAGE' pofile='$PACKAGE.pot' strings='$total'>\n";
 
 foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
@@ -65,32 +62,11 @@ foreach $index (0 .. $#pos) {
 	if(/(\d+) translated message/) { $trans = $1; }
 	if(/(\d+) fuzzy translation/) { $fuzz = $1; }
 	if(/(\d+) untranslated message/) { $untrans = $1; }
-	$transp = 100 * $trans / $total;
-	$fuzzp = 100 * $fuzz / $total;
-	$untransp = 100 * $untrans / $total;
-	if($index % 2) {
-		$color = " bgcolor='#e0e0e0'";
-	} else {
-		$color = " bgcolor='#d0e0ff'";
-	}
-	$name = "";
-	$name = $lang{$po};
-	$name = code2language($po) unless $name ne "";
-	$name = "???" unless $name ne "";
-	printf "<tr$color><td>%s(%s.po)</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>%d</td><td>%0.2f</td><td>",
-	$name, $po, $trans, $transp, $fuzz, $fuzzp, $untrans, $untransp;
-	printf "<img src='bar_g.gif' height='15' width='%0.0f' />", $transp*2
-	unless $transp*2 < 0.5;
-	printf "<img src='bar_b.gif' height='15' width='%0.0f' />", $fuzzp*2
-	unless $fuzzp*2 < 0.5;
-	printf "<img src='bar_r.gif' height='15' width='%0.0f' />", $untransp*2
-	unless $untransp*2 < 0.5;
-	print "</tr>\n";
 	unlink("$po.new");
+
+	print "<lang code='$po' translated='$trans' fuzzy='$fuzz' />\n";
 	print STDERR "done ($untrans untranslated strings).\n" if($ARGV[0] eq '-v');
 }
-print "</table></td></tr></table>\n";
-print "Latest $PACKAGE.pot generated $now: <a href='$PACKAGE.pot'>$PACKAGE.pot</a><br />\n";
-print "</body>\n";
-print "</html>\n";
+
+print "</project>\n";
 

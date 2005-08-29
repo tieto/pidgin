@@ -221,8 +221,9 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 	if((vcard = xmlnode_get_child(packet, "vCard")) ||
 			(vcard = xmlnode_get_child_with_namespace(packet, "query", "vcard-temp"))) {
 		if((photo = xmlnode_get_child(vcard, "PHOTO")) &&
-				(binval = xmlnode_get_child(photo, "BINVAL")) &&
-				(text = xmlnode_get_data(binval))) {
+				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
+				(text = xmlnode_get_data(binval))) ||
+				(text = xmlnode_get_data(photo)))) {
 			data = gaim_base64_decode(text, &size);
 
 			gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);

@@ -1895,6 +1895,9 @@ void gaim_util_set_user_dir(const char *dir)
 
 int gaim_build_dir (const char *path, int mode)
 {
+#if GLIB_CHECK_VERSION(2,8,0)
+	return g_mkdir_with_parents(path, mode);
+#else
 	char *dir, **components, delim[] = { G_DIR_SEPARATOR, '\0' };
 	int cur, len;
 
@@ -1941,6 +1944,7 @@ int gaim_build_dir (const char *path, int mode)
 	g_strfreev(components);
 	g_free(dir);
 	return 0;
+#endif
 }
 
 /*

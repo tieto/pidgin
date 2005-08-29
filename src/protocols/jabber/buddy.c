@@ -256,8 +256,8 @@ struct vcard_template {
 	{N_("Region"),             NULL, TRUE, TRUE, "REGION",    "ADR", NULL},
 	{N_("Postal Code"),        NULL, TRUE, TRUE, "PCODE",     "ADR", NULL},
 	{N_("Country"),            NULL, TRUE, TRUE, "COUNTRY",   "ADR", NULL},
-	{N_("Telephone"),          NULL, TRUE, TRUE, "TEL",       NULL,  NULL},
-	{N_("Email"),              NULL, TRUE, TRUE, "EMAIL",     NULL,  "<A HREF=\"mailto:%s\">%s</A>"},
+	{N_("Telephone"),          NULL, TRUE, TRUE, "NUMBER",    "TEL",  NULL},
+	{N_("Email"),              NULL, TRUE, TRUE, "USERID",    "EMAIL",  "<A HREF=\"mailto:%s\">%s</A>"},
 	{N_("Organization Name"),  NULL, TRUE, TRUE, "ORGNAME",   "ORG", NULL},
 	{N_("Organization Unit"),  NULL, TRUE, TRUE, "ORGUNIT",   "ORG", NULL},
 	{N_("Title"),              NULL, TRUE, TRUE, "TITLE",     NULL,  NULL},
@@ -598,6 +598,9 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	if(!from)
 		return;
 
+	if(!(jb = jabber_buddy_find(js, from, TRUE)))
+		return;
+
 	/* XXX: handle the error case */
 
 	resource_name = jabber_get_resource(from);
@@ -605,7 +608,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 	b = gaim_find_buddy(js->gc->account, bare_jid);
 
-	jb = jabber_buddy_find(js, from, TRUE);
+
 	info_text = g_string_new("");
 
 	g_string_append_printf(info_text, "<b>%s:</b> %s<br/>", _("Jabber ID"),
@@ -808,8 +811,10 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					!strcmp(child->name, "LOGO")) {
 				char *bintext = NULL;
 				xmlnode *binval;
-				if((binval = xmlnode_get_child(child, "BINVAL")) &&
-						(bintext = xmlnode_get_data(binval))) {
+
+				if( ((binval = xmlnode_get_child(child, "BINVAL")) &&
+						(bintext = xmlnode_get_data(binval))) ||
+						(bintext = xmlnode_get_data(child))) {
 					gsize size;
 					guchar *data;
 					int i;
@@ -817,7 +822,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					char *p, hash[41];
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
-					data = gaim_base64_decode(text, &size);
+					data = gaim_base64_decode(bintext, &size);
 
 					imgids = g_slist_prepend(imgids, GINT_TO_POINTER(gaim_imgstore_add(data, size, "logo.png")));
 					g_string_append_printf(info_text,
