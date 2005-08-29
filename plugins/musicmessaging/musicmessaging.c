@@ -40,7 +40,8 @@
 
 #define MUSICMESSAGING_PLUGIN_ID "gtk-hazure-musicmessaging"
 #define MUSICMESSAGING_PREFIX "##MM##"
-#define MUSICMESSAGING_START_TAG "<a href=mm-plugin>"
+#define MUSICMESSAGING_START_MSG "A music messaging session has been requested. Please click the MM icon to accept."
+#define MUSICMESSAGING_CONFIRM_MSG "Music messaging session confirmed."
 
 /* Globals */
 /* List of sessions */
@@ -106,8 +107,8 @@ static void add_button (MMConversation *mmconv);
 static void remove_widget (GtkWidget *button);
 static void init_conversation (GaimConversation *conv);
 static void conv_destroyed(GaimConversation *conv);
-static void intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData);
-static void intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags);
+static gboolean intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData);
+static gboolean intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags);
 
 
 /* DBus commands that can be sent to the editor */
@@ -117,33 +118,50 @@ G_END_DECLS
 
 void send_change_request (const char *id, const char *command, const char *parameters)
 {
-	DBusMessage *signal;
-	signal = dbus_message_new_signal("/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_request");
+	DBusMessage *method_call;
+	method_call = dbus_message_new_method_call(NULL, "/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_request");
 	
-	dbus_message_append_args(signal,
+	dbus_message_append_args(method_call,
 			DBUS_TYPE_STRING, &id,
 			DBUS_TYPE_STRING, &command,
 			DBUS_TYPE_STRING, &parameters,
 			DBUS_TYPE_INVALID);
 	
-	dbus_connection_send(gaim_dbus_get_connection(), signal, NULL);
-	dbus_message_unref(signal);
+	dbus_connection_send(gaim_dbus_get_connection(), method_call, NULL);
+	dbus_message_unref(method_call);
 }
 
 void send_change_confirmed (const char *command, const char *parameters)
 {
-	DBusMessage *signal;
-	signal = dbus_message_new_signal("/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_confirmed");
+	DBusMessage *method_call;
+	method_call = dbus_message_new_method_call(NULL, "/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_confirmed");
 	
-	dbus_message_append_args(signal,
+	dbus_message_append_args(method_call,
 			DBUS_TYPE_STRING, &command,
 			DBUS_TYPE_STRING, &parameters,
 			DBUS_TYPE_INVALID);
 	
-	dbus_connection_send(gaim_dbus_get_connection(), signal, NULL);
-	dbus_message_unref(signal);
+	dbus_connection_send(gaim_dbus_get_connection(), method_call, NULL);
+	dbus_message_unref(method_call);
 }
 
+
+static MMConversation*
+mmconv_from_conv(GaimConversation *conv)
+{
+	MMConversation *mmconv_current = NULL;
+	guint i;
+	
+	for (i = 0; i < g_list_length(conversations); i++)
+	{
+		mmconv_current = (MMConversation *)g_list_nth_data(conversations, i);
+		if (conv == mmconv_current->conv)
+		{
+			return mmconv_current;
+		}
+	}
+	return NULL;
+}
 
 static gboolean
 plugin_load(GaimPlugin *plugin) {
@@ -194,43 +212,102 @@ plugin_unload(GaimPlugin *plugin) {
 	return TRUE;
 }
 
-static void intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData)
-{    
-	GaimConvIm *imData = gaim_conversation_get_im_data(conv);
-	GaimConnection *connection = gaim_conversation_get_gc(conv);
-	const char *convName = gaim_conversation_get_name(conv);
-	/* const char *who = gaim_account_get_username(account); */
-	
-	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
-	{
-		message = 0;
-		gaim_debug(GAIM_DEBUG_MISC, "gaim-musicmessaging", "Received MM Message\n");
-	}
-	else if (0 == strncmp(*message, MUSICMESSAGING_START_TAG, strlen(MUSICMESSAGING_START_TAG)))
-	{
-		
-	}
-	else
-	{
-		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
-		gaim_conv_im_write (imData, NULL, *message, GAIM_MESSAGE_SEND, time(NULL));
-	}
-}
-
-static void intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags)
-{
-	
-}
 
 
 static gboolean
-start_session(MMConversation *mmconv)
+intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, void* pData)
 {
-	if (!mmconv->requested)
-	{
-		mmconv->originator = TRUE;
-	}
+	GaimConnection *connection = gaim_conversation_get_gc(conv);
+	const char *convName = gaim_conversation_get_name(conv);
 	
+	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
+	{
+		gaim_debug_misc("gaim-musicmessaging", "Sent MM Message: %s\n", *message);
+		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
+		message = 0;
+	}
+	else if (0 == strncmp(*message, MUSICMESSAGING_START_MSG, strlen(MUSICMESSAGING_START_MSG)))
+	{
+		gaim_debug_misc("gaim-musicmessaging", "Sent MM request.\n");
+		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
+		message = 0;
+	}
+	else if (0 == strncmp(*message, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
+	{
+		gaim_debug_misc("gaim-musicmessagin", "Sent MM confirm.\n");
+		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
+		message = 0;
+	}
+	else
+	{
+		return FALSE;
+		/* Do nothing...procceed as normal */
+	}
+	return TRUE;
+}
+
+static gboolean
+intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags)
+{
+	MMConversation *mmconv = mmconv_from_conv(conv);
+	
+	gaim_debug_misc("gaim-musicmessaging", "Intercepted: %s\n", *message);
+	if (strstr(*message, MUSICMESSAGING_PREFIX))
+	{
+		gaim_debug_misc("gaim-musicmessaging", "Received MM Message: %s\n", 
+					strtok(strstr(*message, MUSICMESSAGING_PREFIX), "<"));
+				
+		/* DEAL WITH A MM MESSAGE */
+		
+		message = 0;
+	}
+	else if (strstr(*message, MUSICMESSAGING_START_MSG))
+	{
+		message = 0;
+		gaim_debug_misc("gaim-musicmessaging", "Received MM request.\n");
+		if (!(mmconv->originator))
+		{
+			mmconv->requested = TRUE;
+			return FALSE;
+		}
+		
+	}
+	else if (strstr(*message, MUSICMESSAGING_CONFIRM_MSG))
+	{
+		message = 0;
+		gaim_debug_misc("gaim-musicmessagin", "Received MM confirm.\n");
+		
+		if (mmconv->originator)
+		{
+			start_session(mmconv);
+		}
+	}
+	else
+	{
+		return FALSE;
+		/* Do nothing. */
+	}
+	return TRUE;
+}
+
+static void send_request(MMConversation *mmconv)
+{
+	GaimConnection *connection = gaim_conversation_get_gc(mmconv->conv);
+	const char *convName = gaim_conversation_get_name(mmconv->conv);
+	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, GAIM_MESSAGE_SEND);
+}
+
+static void send_request_confirmed(MMConversation *mmconv)
+{
+	GaimConnection *connection = gaim_conversation_get_gc(mmconv->conv);
+	const char *convName = gaim_conversation_get_name(mmconv->conv);
+	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, GAIM_MESSAGE_SEND);
+}
+	
+
+static gboolean
+start_session(MMConversation *mmconv)
+{	
 	run_editor(mmconv);
 	return TRUE;
 }
@@ -239,9 +316,20 @@ static void music_button_toggled (GtkWidget *widget, gpointer data)
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) 
     {
-		start_session((MMConversation *) data);
+		if (((MMConversation *) data)->requested)
+		{
+			start_session((MMConversation *) data);
+			send_request_confirmed((MMConversation *) data);
+		}
+		else
+		{
+			((MMConversation *) data)->originator = TRUE;
+			send_request((MMConversation *) data);
+		}
     } else {
         ((MMConversation *)data)->started = FALSE;
+		((MMConversation *)data)->originator = FALSE;
+		((MMConversation *)data)->requested = FALSE;
 		kill_editor((MMConversation *) data);
     }
 }
@@ -297,18 +385,7 @@ static void init_conversation (GaimConversation *conv)
 
 static void conv_destroyed (GaimConversation *conv)
 {
-	MMConversation *mmconv_current = NULL;
-	MMConversation *mmconv = NULL;
-	guint i;
-	
-	for (i = 0; i < g_list_length(conversations); i++)
-	{
-		mmconv_current = (MMConversation *)g_list_nth_data(conversations, i);
-		if (conv == mmconv_current->conv)
-		{
-			mmconv = mmconv_current;
-		}
-	}
+	MMConversation *mmconv = mmconv_from_conv(conv);
 	
 	remove_widget(mmconv->button);
 	remove_widget(mmconv->seperator);
