@@ -10,3 +10,4 @@ common.lo
 *.def
 *.lib
 *.dll
+*.lo
