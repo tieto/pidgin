@@ -32,6 +32,14 @@ struct srv_response {
 
 typedef void (*SRVCallback)(struct srv_response *resp, int results);
 
+/**
+ * Queries an SRV record.
+ *
+ * @param protocol Name of the protocol (e.g. "sip")
+ * @param transport Name of the transport ("tcp" or "udp")
+ * @param domain Domainname to query (e.g. "blubb.com")
+ * @cb A callback which will be called with the results
+ */
 void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb);
 
 #endif /* _GAIM_DNSSRV_H */
