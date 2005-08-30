@@ -78,6 +78,7 @@ gaim_coresources = \
 	log.c \
 	mime.c \
 	network.c \
+	ntlm.c \
 	notify.c \
 	plugin.c \
 	pluginpref.c \
@@ -122,6 +123,7 @@ gaim_coreheaders = \
 	mime.h \
 	network.h \
 	notify.h \
+	ntlm.h \
 	plugin.h \
 	pluginpref.h \
 	pounce.h \
