@@ -3,7 +3,7 @@
 @section Introduction
 Gaim Perl Plugins are setup very similarly to their C counterparts.  Most of the API calls are implemented and are divided into pacakges.  There are some significant differences between the Perl and C API.  Much like the C API, the best place to seek guidances is the source located in the plugins/perl/common directory.  The tutorial that follows will be example based and attempt to touch on the salient features of the embedded perl interpreter.  It is also important to note that some of the C API is missing in Gaim's perl API.  
 
-It is possible to get Gtk2-Perl to work with Gaim's perl API, but only by encasing it in @c eval blocks for the time being until a better workaround comes up.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use any perl modules that are dynamically loaded (i.e. @c use @c Math; ).  Eventually this should be corrected.
+It is possible to get Gtk2-Perl to work with Gaim's perl API, however you must not load the module with @c use but with @require.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use certain perl modules that are dynamically loaded.  By always using @c require instead of @c use the problem is avoided. 
 
 @section first-script Writing your first script
 
@@ -61,12 +61,6 @@ sub plugin_load {
 	# Testing was done using Oscar, but this should work regardless of the protocol chosen
 	my $protocol = "prpl-oscar";
 
-        #################################
-        #                               #
-        #       Gaim::Account           #
-        #                               #
-        #################################
-
 	# Create a new Account
         print "Testing: Gaim::Account::new()...";
         $account = Gaim::Account::new("TEST_NAME", $protocol);
@@ -122,12 +116,6 @@ sub plugin_load {
 	# This is how we get an account to use in the following tests.  You should replace the username 
 	#  with an existent user
         $account = Gaim::Accounts::find("USERNAME", $protocol);
-
-        #################################
-        #                               #
-        #       Gaim::BuddyList         #
-        #                               #
-        #################################
 
 	# Testing a find function: Note Gaim::Find not Gaim::Buddy:find!
 	#  Furthermore, this should work the same for chats and groups
@@ -192,12 +180,6 @@ sub plugin_load {
         my $protocol = "prpl-oscar";
 
         $account = Gaim::Accounts::find("USERNAME", $protocol);
-
-        #################################
-        #                               #
-        #       Gaim::Conv		#
-        #                               #
-        #################################
 
 	# First we create two new conversations.
         print "Testing Gaim::Conv::new()...";
@@ -312,7 +294,7 @@ sub prefs_info_cb {
 }
 @endcode
 
-Using the Gtk2-Perl module for Perl it is possible to create tailored @c GtkFrame elements and display them in a preference window.  Currently it is required that all dynamically loaded modules be encased in @c eval blocks otherwise the Gaim perl plugin will crash.  A work around is in progress, but for the time being a perl Gtk::Frame can be created and used as the plugin preference tab.  The first step is to create the proper key/value pairs in the @c \%PLUGIN_INFO hash noting that the @c prefs_info key is no longer valid. Instead the keys @c GTK_UI and @c gtk_prefs_info must be set as follows.
+Using the Gtk2-Perl module for Perl it is possible to create tailored @c GtkFrame elements and display them in a preference window.  Note that Gtk2-Perl must be loaded with @c require and not @c use .  The first step is to create the proper key/value pairs in the @c \%PLUGIN_INFO hash noting that the @c prefs_info key is no longer valid. Instead the keys @c GTK_UI and @c gtk_prefs_info must be set as follows.
 
 @code
 %PLUGIN_INFO = {
@@ -334,23 +316,21 @@ sub button_cb {
 }
 
 sub gtk_prefs_info_cb {
-	# For now it is necessary to encase this code in an eval block.
-	#  All it does is create a button that prints a message to the console and places it in the frame.
-        eval '
-                use Glib;
-                use Gtk2 \'-init\';
+	#  Create a button that prints a message to the console and places it in the frame.
+	use Glib; 
+	require Gtk2;
 
-                $frame = Gtk2::Frame->new(\'Gtk Test Frame\');
-                $button = Gtk2::Button->new(\'Print Message\');
+	$frame = Gtk2::Frame->new(\'Gtk Test Frame\');
+	$button = Gtk2::Button->new(\'Print Message\');
 
-                $frame->set_border_width(10);
-                $button->set_border_width(150);
-                $button->signal_connect("clicked" => \&button_cb, "Message Text");
-                $frame->add($button);
+	$frame->set_border_width(10);
+	$button->set_border_width(150);
+	$button->signal_connect("clicked" => \&button_cb, "Message Text");
+	$frame->add($button);
 
-                $button->show();
-                $frame->show();
-        ';
+        $button->show();
+        $frame->show();
+
         return $frame;
 }
 @endcode
