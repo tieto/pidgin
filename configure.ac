@@ -63,6 +63,7 @@ AC_CHECK_FUNCS(getopt_long,,
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
 				         [AC_ERROR(inet_aton not found)])])
+AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_FUNC(socket, , 
               [AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])

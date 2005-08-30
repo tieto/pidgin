@@ -92,6 +92,7 @@ gaim_coresources = \
 	savedstatuses.c \
 	server.c \
 	signals.c \
+	dnssrv.c\
 	status.c \
 	stringref.c \
 	stun.c \
@@ -134,6 +135,7 @@ gaim_coreheaders = \
 	savedstatuses.h \
 	server.h \
 	signals.h \
+	dnssrv.h \
 	status.h \
 	stringref.h \
 	stun.h \
