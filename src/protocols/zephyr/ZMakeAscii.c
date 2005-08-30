@@ -9,7 +9,6 @@
  */
 
 #include "internal.h"
-#include <assert.h>
 
 static char *itox_chars = "0123456789ABCDEF";
 
