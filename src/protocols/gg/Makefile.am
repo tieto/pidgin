@@ -13,6 +13,7 @@ GGSOURCES = \
 	lib/pubdir50.c \
 	lib/compat.h \
 	lib/libgadu.h \
+	lib/libgadu-config.h \
 	gg.c
 
 AM_CFLAGS = $(st)
