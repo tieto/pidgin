@@ -37,6 +37,7 @@
 #include "dbus-maybe.h"
 #include "dbus-bindings.h"
 #include "dbus-server.h"
+#include "dbus-gaim.h"
 
 #define MUSICMESSAGING_PLUGIN_ID "gtk-hazure-musicmessaging"
 #define MUSICMESSAGING_PREFIX "##MM##"
@@ -51,6 +52,11 @@ GList *conversations;
 GaimPlugin *plugin_pointer;
 
 /* Define types needed for DBus */
+DBusGConnection *connection;
+DBusGProxy *proxy;
+#define DBUS_SERVICE_GSCORE "org.gscore.GScoreService"
+#define DBUS_PATH_GSCORE "/org/gscore/GScoreObject"
+#define DBUS_INTERFACE_GSCORE "org.gscore.GScoreInterface"
 
 /* Define the functions to export for use with DBus */
 DBUS_EXPORT void music_messaging_change_request (const char *command, const char *parameters);
@@ -112,37 +118,22 @@ static gboolean intercept_received(GaimAccount *account, char **sender, char **m
 
 
 /* DBus commands that can be sent to the editor */
-G_BEGIN_DECLS
-DBusConnection *gaim_dbus_get_connection(void);
-G_END_DECLS
 
 void send_change_request (const char *id, const char *command, const char *parameters)
 {
-	DBusMessage *method_call;
-	method_call = dbus_message_new_method_call(NULL, "/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_request");
-	
-	dbus_message_append_args(method_call,
-			DBUS_TYPE_STRING, &id,
-			DBUS_TYPE_STRING, &command,
-			DBUS_TYPE_STRING, &parameters,
-			DBUS_TYPE_INVALID);
-	
-	dbus_connection_send(gaim_dbus_get_connection(), method_call, NULL);
-	dbus_message_unref(method_call);
+	dbus_g_proxy_call_no_reply(proxy, "GscoreChangeRequest", 
+								G_TYPE_STRING, &id,
+								G_TYPE_STRING, &command,
+								G_TYPE_STRING, &parameters,
+								G_TYPE_INVALID);
 }
 
 void send_change_confirmed (const char *command, const char *parameters)
 {
-	DBusMessage *method_call;
-	method_call = dbus_message_new_method_call(NULL, "/org/gscore/GScoreObject", "org.gscore.GScoreInterface", "gscore_change_confirmed");
-	
-	dbus_message_append_args(method_call,
-			DBUS_TYPE_STRING, &command,
-			DBUS_TYPE_STRING, &parameters,
-			DBUS_TYPE_INVALID);
-	
-	dbus_connection_send(gaim_dbus_get_connection(), method_call, NULL);
-	dbus_message_unref(method_call);
+	dbus_g_proxy_call_no_reply(proxy, "GscoreChangeConfirmed", 
+								G_TYPE_STRING, &command,
+								G_TYPE_STRING, &parameters,
+								G_TYPE_INVALID);
 }
 
 
@@ -164,11 +155,41 @@ mmconv_from_conv(GaimConversation *conv)
 }
 
 static gboolean
+init_mm_dbus_connection()
+{
+	GError *error = NULL;
+	g_type_init ();
+	
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
+    if (!connection)
+    {
+        g_printerr ("Failed to open connection to bus: %s\n", error->message);
+        g_error_free (error);
+        return FALSE;
+    }
+    
+    proxy = dbus_g_proxy_new_for_name (connection,
+										DBUS_SERVICE_GSCORE,
+										DBUS_PATH_GSCORE,
+										DBUS_INTERFACE_GSCORE);
+	if (!proxy)
+	{
+		g_printerr("Failed to create the proxy: %s\n", error->message);
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+static gboolean
 plugin_load(GaimPlugin *plugin) {
     /* First, we have to register our four exported functions with the
        main gaim dbus loop.  Without this statement, the gaim dbus
        code wouldn't know about our functions. */
     GAIM_DBUS_REGISTER_BINDINGS(plugin);
+	
+	/* We need to initialize the dbus stuff */
+	init_mm_dbus_connection();
 	
 	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Welcome",
                         "Welcome to music messaging.", NULL, NULL, NULL);
@@ -234,9 +255,21 @@ intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, voi
 	}
 	else if (0 == strncmp(*message, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
 	{
-		gaim_debug_misc("gaim-musicmessagin", "Sent MM confirm.\n");
+		gaim_debug_misc("gaim-musicmessaging", "Sent MM confirm.\n");
 		serv_send_im(connection, convName, *message, GAIM_MESSAGE_SEND);
 		message = 0;
+	}
+	else if (0 == strncmp(*message, "test1", strlen("test1")))
+	{
+		gaim_debug_misc("gaim-musicmessaging", "\n\nTEST 1\n\n");
+		send_change_request("test-id", "test-command", "test-parameters");
+		return FALSE;
+	}
+	else if (0 == strncmp(*message, "test2", strlen("test2")))
+	{
+		gaim_debug_misc("gaim-musicmessaging", "\n\nTEST 2\n\n");
+		send_change_confirmed("test-command", "test-parameters");
+		return FALSE;
 	}
 	else
 	{
