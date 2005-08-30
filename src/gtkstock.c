@@ -38,11 +38,15 @@ static struct StockIcon
 {
 	{ GAIM_STOCK_ABOUT,           "buttons", "about_menu.png"           },
 	{ GAIM_STOCK_ACCOUNTS,        "buttons", "accounts.png"             },
+#if GTK_CHECK_VERSION(2,6,0)
+	{ GAIM_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
+#else
 	{ GAIM_STOCK_ALIAS,           "buttons", "edit.png"                 },
+#endif
 	{ GAIM_STOCK_BGCOLOR,         "buttons", "change-bgcolor-small.png" },
 	{ GAIM_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
 	{ GAIM_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
-	{ GAIM_STOCK_CLEAR,           "buttons", "clear.png"                },
+	{ GAIM_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
 	{ GAIM_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
 	{ GAIM_STOCK_DIALOG_AUTH,     "dialogs", "gaim_auth.png"            },
 	{ GAIM_STOCK_DIALOG_COOL,     "dialogs", "gaim_cool.png"            },
@@ -51,7 +55,11 @@ static struct StockIcon
 	{ GAIM_STOCK_DIALOG_QUESTION, "dialogs", "gaim_question.png"        },
 	{ GAIM_STOCK_DIALOG_WARNING,  "dialogs", "gaim_warning.png"         },
 	{ GAIM_STOCK_FGCOLOR,         "buttons", "change-fgcolor-small.png" },
+#if GTK_CHECK_VERSION(2,6,0)
+	{ GAIM_STOCK_EDIT,            NULL,      GTK_STOCK_EDIT             },
+#else
 	{ GAIM_STOCK_EDIT,            "buttons", "edit.png"                 },
+#endif
 	{ GAIM_STOCK_FILE_CANCELED,   NULL,      GTK_STOCK_CANCEL           },
 	{ GAIM_STOCK_FILE_DONE,       NULL,      GTK_STOCK_APPLY            },
 	{ GAIM_STOCK_FILE_TRANSFER,   NULL,      GTK_STOCK_REVERT_TO_SAVED  },
@@ -64,12 +72,20 @@ static struct StockIcon
 	{ GAIM_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
 	{ GAIM_STOCK_IM,              "buttons", "send-im.png"		    },
 	{ GAIM_STOCK_IMAGE,           "buttons", "insert-image-small.png"   },
-	{ GAIM_STOCK_INFO,            "icons",   "info.png",                },
+#if GTK_CHECK_VERSION(2,8,0)
+	{ GAIM_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
+#else
+	{ GAIM_STOCK_INFO,            "icons",   "info.png"                 },
+#endif
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
+#if GTK_CHECK_VERSION(2,6,0)
+	{ GAIM_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
+#else
 	{ GAIM_STOCK_PAUSE,           "buttons", "pause.png"                },
+#endif
 	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
