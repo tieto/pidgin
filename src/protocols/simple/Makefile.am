@@ -7,12 +7,10 @@ SIMPLESOURCES = \
 	sipmsg.h \
 	digcalc.c \
 	digcalc.h \
-	ntlm.c \
-	ntlm.h \
 	srvresolve.h \
 	srvresolve.c
 
-AM_CFLAGS = $(st) -lresolv
+AM_CFLAGS = $(st) 
 
 libsimple_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 
