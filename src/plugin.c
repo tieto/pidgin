@@ -212,8 +212,15 @@ gaim_plugin_probe(const char *filename)
 		/*
 		 * We pass G_MODULE_BIND_LOCAL here to prevent symbols from
 		 * plugins being added to the global name space.
+		 *
+		 * G_MODULE_BIND_LOCAL was added in glib 2.3.3.
+		 * TODO: What are we going to do about that?
 		 */
+#if GLIB_CHECK_VERSION(2,3,3)
 		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
+#else
+		plugin->handle = g_module_open(filename, 0);
+#endif
 
 		if (plugin->handle == NULL)
 		{
