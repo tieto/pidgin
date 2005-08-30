@@ -55,7 +55,7 @@ typedef guint16 flap_seqnum_t;
  */
 #ifdef WIN32_INDLL
 #define faim_export __declspec(dllexport)
-#else
+#else 
 #define faim_export __declspec(dllimport)
 #endif /* WIN32_INDLL */
 #define faim_internal
@@ -293,8 +293,53 @@ struct client_info_s {
 #define AIM_CONN_TYPE_EMAIL		0x0018
 
 /* they start getting arbitrary for rendezvous stuff =) */
+#define AIM_CONN_TYPE_RENDEZVOUS_PROXY	0xfffd /* these speak a strange language */
 #define AIM_CONN_TYPE_RENDEZVOUS	0xfffe /* these do not speak FLAP! */
 #define AIM_CONN_TYPE_LISTENER		0xffff /* socket waiting for accept() */
+
+/* Command types for doing a rendezvous proxy login
+ * Thanks to Keith Lea and the Joust project for documenting these commands well */
+#define AIM_RV_PROXY_PACKETVER_DFLT	0x044a
+#define AIM_RV_PROXY_ERROR		0x0001
+#define AIM_RV_PROXY_INIT_SEND		0x0002 /* First command sent when creating a connection */
+#define AIM_RV_PROXY_INIT_RECV		0x0004 /* First command sent when receiving existing connection */
+#define AIM_RV_PROXY_ACK		0x0003
+#define AIM_RV_PROXY_READY		0x0005
+
+/* Number of bytes expected in each of the above packets, including the 2 bytes specifying length */
+#define AIM_RV_PROXY_ERROR_LEN		14
+#define AIM_RV_PROXY_INIT_SEND_LEN	55
+#define AIM_RV_PROXY_INIT_RECV_LEN	57
+#define AIM_RV_PROXY_ACK_LEN		18
+#define AIM_RV_PROXY_READY_LEN		12
+#define AIM_RV_PROXY_HDR_LEN		12	/* Bytes in just the header alone */
+
+/* Default values for unknown/unused values in rendezvous proxy negotiation packets */
+#define AIM_RV_PROXY_SERVER_FLAGS	0x0220		/* Default flags sent by proxy server */
+#define AIM_RV_PROXY_CLIENT_FLAGS	0x0000		/* Default flags sent by client */
+#define AIM_RV_PROXY_UNKNOWNA_DFLT	0x00000000	/* Default value for an unknown block */
+#define AIM_RV_PROXY_SERVER_URL		"ars.oscar.aol.com"
+#define AIM_RV_PROXY_CONNECT_PORT	5190		/* The port we should always connect to */
+
+/* What is the purpose of this transfer? (Who will end up with a new file?)
+ * These values are used in oft_info->send_or_recv */
+#define AIM_XFER_SEND			0x0001
+#define AIM_XFER_RECV			0x0002
+
+/* Via what method is the data getting routed?
+ * These values are used in oft_info->method */
+#define AIM_XFER_DIRECT			0x0001	/* Direct connection; receiver connects to sender */
+#define AIM_XFER_REDIR			0x0002	/* Redirected connection; sender connects to receiver */
+#define AIM_XFER_PROXY			0x0003	/* Proxied connection */
+
+/* Who requested the proxy?
+ * The difference between a stage 2 and stage 3 proxied transfer is that the receiver does the
+ * initial login for a stage 2, but the sender must do it for a stage 3.
+ * These values are used in oft_info->stage */
+#define AIM_XFER_PROXY_NONE		0x0001
+#define AIM_XFER_PROXY_STG1		0x0002	/* Sender requested a proxy be used (stage1) */
+#define AIM_XFER_PROXY_STG2		0x0003	/* Receiver requested a proxy be used (stage2) */
+#define AIM_XFER_PROXY_STG3		0x0004	/* Receiver requested a proxy be used (stage3) */
 
 /*
  * Subtypes, we need these for OFT stuff.
@@ -303,7 +348,7 @@ struct client_info_s {
 #define AIM_CONN_SUBTYPE_OFT_GETFILE	0x0002
 #define AIM_CONN_SUBTYPE_OFT_SENDFILE	0x0003
 #define AIM_CONN_SUBTYPE_OFT_BUDDYICON	0x0004
-#define AIM_CONN_SUBTYPE_OFT_VOICE		0x0005
+#define AIM_CONN_SUBTYPE_OFT_VOICE	0x0005
 
 /*
  * Status values returned from aim_conn_new().  ORed together.
@@ -326,7 +371,7 @@ typedef struct aim_conn_s {
 	void *priv; /* misc data the client may want to store */
 	void *internal; /* internal conn-specific libfaim data */
 	time_t lastactivity; /* time of last transmit */
-	int forcedlatency;
+	int forcedlatency; 
 	void *handlerlist;
 	void *sessv; /* pointer to parent session */
 	void *inside; /* only accessible from inside libfaim */
@@ -356,7 +401,7 @@ typedef struct aim_bstream_s {
 typedef struct aim_frame_s {
 	fu8_t hdrtype; /* defines which piece of the union to use */
 	union {
-		struct {
+		struct { 
 			fu8_t channel;
 			flap_seqnum_t seqnum;
 		} flap;
@@ -412,7 +457,7 @@ typedef struct aim_session_s {
 	 * These are only used when you don't use your own lowlevel
 	 * I/O.  I don't suggest that you use libfaim's internal I/O.
 	 * Its really bad and the API/event model is quirky at best.
-	 *
+	 *  
 	 */
 	aim_frame_t *queue_outgoing;
 	aim_frame_t *queue_incoming;
@@ -471,22 +516,20 @@ typedef struct aim_session_s {
 } aim_session_t;
 
 /* Valid for calling aim_icq_setstatus() and for aim_userinfo_t->icqinfo.status */
-#define AIM_ICQ_STATE_NORMAL			0x00000000
-#define AIM_ICQ_STATE_AWAY				0x00000001
-#define AIM_ICQ_STATE_DND				0x00000002
-#define AIM_ICQ_STATE_OUT				0x00000004
-#define AIM_ICQ_STATE_BUSY				0x00000010
-#define AIM_ICQ_STATE_CHAT				0x00000020
-#define AIM_ICQ_STATE_INVISIBLE			0x00000100
-#define AIM_ICQ_STATE_WEBAWARE			0x00010000
-#define AIM_ICQ_STATE_HIDEIP			0x00020000
-#define AIM_ICQ_STATE_BIRTHDAY			0x00080000
+#define AIM_ICQ_STATE_NORMAL		0x00000000
+#define AIM_ICQ_STATE_AWAY		0x00000001
+#define AIM_ICQ_STATE_DND		0x00000002
+#define AIM_ICQ_STATE_OUT		0x00000004
+#define AIM_ICQ_STATE_BUSY		0x00000010
+#define AIM_ICQ_STATE_CHAT		0x00000020
+#define AIM_ICQ_STATE_INVISIBLE		0x00000100
+#define AIM_ICQ_STATE_WEBAWARE		0x00010000
+#define AIM_ICQ_STATE_HIDEIP		0x00020000
+#define AIM_ICQ_STATE_BIRTHDAY		0x00080000
 #define AIM_ICQ_STATE_DIRECTDISABLED	0x00100000
-#define AIM_ICQ_STATE_ICQHOMEPAGE		0x00200000
+#define AIM_ICQ_STATE_ICQHOMEPAGE	0x00200000
 #define AIM_ICQ_STATE_DIRECTREQUIREAUTH	0x10000000
 #define AIM_ICQ_STATE_DIRECTCONTACTLIST	0x20000000
-
-
 
 /*
  * Get command from connections
@@ -587,13 +630,9 @@ faim_export aim_conn_t *aim_getconn_type(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
-
-
 /* 0x0001 - service.c */
 faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg);
 faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime);
-
-
 
 /* misc.c */
 
@@ -684,7 +723,7 @@ struct aim_chat_roominfo {
 #define AIM_IMFLAGS_BUDDYREQ			0x0010 /* buddy icon requested */
 #define AIM_IMFLAGS_HASICON				0x0020 /* already has icon */
 #define AIM_IMFLAGS_SUBENC_MACINTOSH	0x0040 /* damn that Steve Jobs! */
-#define AIM_IMFLAGS_CUSTOMFEATURES		0x0080 /* features field present */
+#define AIM_IMFLAGS_CUSTOMFEATURES 		0x0080 /* features field present */
 #define AIM_IMFLAGS_EXTDATA				0x0100
 #define AIM_IMFLAGS_X					0x0200
 #define AIM_IMFLAGS_MULTIPART			0x0400 /* ->mpmsg section valid */
@@ -778,7 +817,7 @@ struct aim_incomingim_ch1_args {
 	/* Always provided */
 	aim_mpmsg_t mpmsg;
 	fu32_t icbmflags; /* some flags apply only to ->msg, not all mpmsg */
-
+	
 	/* Only provided if message has a human-readable section */
 	gchar *msg;
 	int msglen;
@@ -840,6 +879,9 @@ struct aim_incomingim_ch2_args {
 			fu16_t totfiles;
 			fu32_t totsize;
 			char *filename;
+			/* reqnum: 0x0001 usually; 0x0002 = reply request for stage 2 proxy transfer */
+			fu16_t reqnum;
+			fu8_t use_proxy; /* Did the user request that we use a rv proxy? */
 		} sendfile;
 	} info;
 	void *destructor; /* used internally only */
@@ -875,43 +917,56 @@ struct aim_incomingim_ch4_args {
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
 /* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const fu8_t *cookie, fu16_t code);
 /* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn, fu16_t type2);
-
+faim_export void aim_im_makecookie(char* cookie);
 
 
 /* ft.c */
 struct aim_fileheader_t {
 #if 0
-	char magic[4];			/* 0 */
-	fu16_t hdrlen;			/* 4 */
-	fu16_t hdrtype;			/* 6 */
+	char magic[4];		/* 0 */
+	fu16_t hdrlen;		/* 4 */
+	fu16_t hdrtype;		/* 6 */
 #endif
-	guchar bcookie[8];		/* 8 */
-	fu16_t encrypt;			/* 16 */
-	fu16_t compress;		/* 18 */
-	fu16_t totfiles;		/* 20 */
-	fu16_t filesleft;		/* 22 */
-	fu16_t totparts;		/* 24 */
-	fu16_t partsleft;		/* 26 */
-	fu32_t totsize;			/* 28 */
-	fu32_t size;			/* 32 */
-	fu32_t modtime;			/* 36 */
-	fu32_t checksum;		/* 40 */
-	fu32_t rfrcsum;			/* 44 */
-	fu32_t rfsize;			/* 48 */
-	fu32_t cretime;			/* 52 */
-	fu32_t rfcsum;			/* 56 */
-	fu32_t nrecvd;			/* 60 */
-	fu32_t recvcsum;		/* 64 */
-	char idstring[32];		/* 68 */
-	fu8_t flags;			/* 100 */
-	fu8_t lnameoffset;		/* 101 */
-	fu8_t lsizeoffset;		/* 102 */
-	guchar dummy[69];		/* 103 */
-	guchar macfileinfo[16];	/* 172 */
-	fu16_t nencode;			/* 188 */
-	fu16_t nlanguage;		/* 190 */
-	char name[64];			/* 192 */
-							/* 256 */
+	char bcookie[8];	/* 8 */
+	fu16_t encrypt;		/* 16 */
+	fu16_t compress;	/* 18 */
+	fu16_t totfiles;	/* 20 */
+	fu16_t filesleft;	/* 22 */
+	fu16_t totparts;	/* 24 */
+	fu16_t partsleft;	/* 26 */
+	fu32_t totsize;		/* 28 */
+	fu32_t size;		/* 32 */
+	fu32_t modtime;		/* 36 */
+	fu32_t checksum;	/* 40 */
+	fu32_t rfrcsum;		/* 44 */
+	fu32_t rfsize;		/* 48 */
+	fu32_t cretime;		/* 52 */
+	fu32_t rfcsum;		/* 56 */
+	fu32_t nrecvd;		/* 60 */
+	fu32_t recvcsum;	/* 64 */
+	fu8_t idstring[32];	/* 68 */
+	fu8_t flags;		/* 100 */
+	fu8_t lnameoffset;	/* 101 */
+	fu8_t lsizeoffset;	/* 102 */
+	char dummy[69];		/* 103 */
+	char macfileinfo[16];	/* 172 */
+	fu16_t nencode;		/* 188 */
+	fu16_t nlanguage;	/* 190 */
+	char name[64];		/* 192 */
+				/* 256 */
+};
+
+struct aim_rv_proxy_info {
+	fu16_t packet_ver;
+	fu16_t cmd_type;
+	fu16_t flags;
+	char* ip; /* IP address sent along with this packet */
+	fu16_t port; /* This is NOT the port we should use to connect. Always connect to 5190 */
+	fu8_t cookie[8];
+	fu32_t unknownA;
+	fu16_t err_code; /* Valid only for cmd_type of AIM_RV_PROXY_ERROR */
+	aim_conn_t *conn;
+	aim_session_t *sess;
 };
 
 struct aim_oft_info {
@@ -921,11 +976,19 @@ struct aim_oft_info {
 	char *clientip;
 	char *verifiedip;
 	fu16_t port;
+	
+	int send_or_recv; /* Send or receive */
+	int method; /* What method is being used to transfer this file? DIRECT, REDIR, or PROXY */
+	int stage; /* At what stage was a proxy requested? NONE, STG1, STG2*/
+	int xfer_reffed; /* There are many timers, but we should only ref the xfer once */
+	fu32_t res_bytes; /* The bytes already received for resuming a transfer */
+	
 	aim_conn_t *conn;
 	aim_session_t *sess;
 	int success; /* Was the connection successful? Used for timing out the transfer. */
 	struct aim_fileheader_t fh;
 	struct aim_oft_info *next;
+	struct aim_rv_proxy_info *proxy_info;
 };
 
 faim_export fu32_t aim_oft_checksum_chunk(const fu8_t *buffer, int bufferlen, fu32_t prevcheck);
@@ -940,12 +1003,21 @@ faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, in
                                          const fu8_t *localip, fu16_t port, const fu8_t *mycookie);
 faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
 
-faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn, const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename);
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn,
+	const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename, int send_or_recv,
+	int method, int stage);
 faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info);
+faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const fu8_t *cookie, fu16_t port);
 faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd);
 faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
 
+faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info);
+faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info);
 
+faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd);
+faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
+int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count);
+faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, aim_conn_t *conn);
 
 /* 0x0002 - locate.c */
 /*
@@ -1081,8 +1153,8 @@ faim_export aim_userinfo_t *aim_locate_finduserinfo(aim_session_t *sess, const c
 faim_export void aim_locate_dorequest(aim_session_t *sess);
 
 /* 0x0002 */ faim_export int aim_locate_reqrights(aim_session_t *sess);
-/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
 /* 0x0004 */ faim_export int aim_locate_setcaps(aim_session_t *sess, fu32_t caps);
+/* 0x0004 */ faim_export int aim_locate_setprofile(aim_session_t *sess, const char *profile_encoding, const gchar *profile, const int profile_len, const char *awaymsg_encoding, const gchar *awaymsg, const int awaymsg_len);
 /* 0x0005 */ faim_export int aim_locate_getinfo(aim_session_t *sess, const char *, fu16_t);
 /* 0x0009 */ faim_export int aim_locate_setdirinfo(aim_session_t *sess, const char *first, const char *middle, const char *last, const char *maiden, const char *nickname, const char *street, const char *city, const char *state, const char *zip, int country, fu16_t privacy);
 /* 0x000b */ faim_export int aim_locate_000b(aim_session_t *sess, const char *sn);
