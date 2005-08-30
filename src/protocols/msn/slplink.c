@@ -665,14 +665,16 @@ typedef struct
 
 #define MAX_FILE_NAME_LEN 0x226
 
-static char *
+static gchar *
 gen_context(const char *file_name, const char *file_path)
 {
 	struct stat st;
 	gsize size = 0;
 	MsnContextHeader header;
 	gchar *u8 = NULL;
-	guchar *base, *n, *ret;
+	guchar *base;
+	guchar *n;
+	gchar *ret;
 	gunichar2 *uni = NULL;
 	glong currentChar = 0;
 	glong uni_len = 0;
