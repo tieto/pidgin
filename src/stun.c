@@ -117,8 +117,8 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	len = recv(source, buffer, 1024, 0);
 
 	hdr = (struct stun_header*)buffer;
-	if(hdr->transid[0]!=packet->transid[0] || hdr->transid[1]!=packet->transid[1] || hdr->transid[2]!=packet->transid[2] || hdr->transid[3]!=packet->transid[3]) { // wrong transaction
-		gaim_debug_info("simple", "got wrong transid\n");
+	if(hdr->transid[0]!=packet->transid[0] || hdr->transid[1]!=packet->transid[1] || hdr->transid[2]!=packet->transid[2] || hdr->transid[3]!=packet->transid[3]) { /* wrong transaction */
+		gaim_debug_info("stun", "got wrong transid\n");
 		return;
 	}
 	if(test==1) {	
@@ -132,11 +132,11 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 			}
 			tmp += sizeof(struct stun_attrib) + attrib->len;
 		}
-		gaim_debug_info("simple", "got public ip %s\n",nattype.publicip);
+		gaim_debug_info("stun", "got public ip %s\n", nattype.publicip);
 		nattype.status = 2;
 		nattype.type = 1;
 
-		// is it a NAT?
+		/* is it a NAT? */
 
 		ifc.ifc_len = sizeof(buffer);
 		ifc.ifc_req = (struct ifreq *) buffer;
@@ -149,11 +149,11 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 			tmp += sizeof(struct ifreq);
 
 			if(ifr->ifr_addr.sa_family == AF_INET) {
-				// we only care about ipv4 interfaces
+				/* we only care about ipv4 interfaces */
 				sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
 				if(sinptr->sin_addr.s_addr == in.s_addr) {
-					// no NAT
-					gaim_debug_info("simple","no nat");
+					/* no NAT */
+					gaim_debug_info("stun", "no nat");
 					nattype.type = 0;
 				}
 			}
@@ -184,11 +184,11 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 		return &nattype;
 	}
 	
-	if(nattype.status == 1) { // currently discovering
+	if(nattype.status == 1) { /* currently discovering */
 		if(cb) callbacks = g_slist_append(callbacks, cb);
 		return NULL;
 	}
-	if(nattype.status != -1) { // already discovered
+	if(nattype.status != -1) { /* already discovered */
 		if(cb) cb(&nattype);
 		return &nattype;
 	}
