@@ -187,6 +187,41 @@ int wgaim_ioctl(int fd, int command, void* val) {
 		}
 		return 0;
 	}
+	case SIOCGIFCONF:
+	{
+		INTERFACE_INFO InterfaceList[20];
+		unsigned long nBytesReturned;
+		if (WSAIoctl(fd, SIO_GET_INTERFACE_LIST,
+				0, 0, &InterfaceList,
+				sizeof(InterfaceList), &nBytesReturned,
+				0, 0) == SOCKET_ERROR) {
+			errno = WSAGetLastError();
+			return -1;
+		} else {
+			int i;
+			struct ifconf *ifc = val;
+			char *tmp = ifc->ifc_buf;
+			int nNumInterfaces =
+				nBytesReturned / sizeof(INTERFACE_INFO);
+			for (i = 0; i < nNumInterfaces; i++) {
+				INTERFACE_INFO ii = InterfaceList[i];
+				struct ifreq *ifr = (struct ifreq *) tmp;
+				struct sockaddr_in *sa = (struct sockaddr_in *) &ifr->ifr_addr;
+
+				sa->sin_family = ii.iiAddress.AddressIn.sin_family;
+				sa->sin_port = ii.iiAddress.AddressIn.sin_port;
+				sa->sin_addr.s_addr = ii.iiAddress.AddressIn.sin_addr.s_addr;
+				tmp += sizeof(struct ifreq);
+
+				/* Make sure that we can fit in the original buffer */
+				if (tmp >= (ifc->ifc_buf + ifc->ifc_len + sizeof(struct ifreq))) {
+					break;
+				}
+			}
+			/* Replace the length with the actually used length */
+			ifc->ifc_len = ifc->ifc_len - (ifc->ifc_buf - tmp);
+		}
+	}
 	default:
 		errno = EINVAL;
 		return -1;

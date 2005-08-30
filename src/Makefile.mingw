@@ -143,6 +143,7 @@ DLL_C_SRC =	\
 			sslconn.c \
 			status.c \
 			stringref.c \
+			stun.c \
 			upnp.c \
 			util.c \
 			value.c \

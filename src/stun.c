@@ -26,11 +26,15 @@
  *
  */
 
+#ifndef _WIN32
 #include <sys/socket.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <resolv.h>
+#else
+#include "libc_interface.h"
+#endif
 
 #include "internal.h"
 
@@ -141,9 +145,8 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 		tmp = buffer;
 		while(tmp < buffer + ifc.ifc_len) {
 			ifr = (struct ifreq *) tmp;
-			len = sizeof(struct sockaddr);
 
-			tmp += sizeof(ifr->ifr_name) + len;
+			tmp += sizeof(struct ifreq);
 
 			if(ifr->ifr_addr.sa_family == AF_INET) {
 				// we only care about ipv4 interfaces
