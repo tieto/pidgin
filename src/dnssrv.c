@@ -87,8 +87,8 @@ static void resolve(int in, int out) {
 	int size;
 	int qdcount;
 	int ancount;
-	gchar *end;
-	gchar *cp;
+	guchar *end;
+	guchar *cp;
 	gchar name[256];
 	int type, dlen, pref, weight, port;
 	gchar query[256];
@@ -102,18 +102,18 @@ static void resolve(int in, int out) {
 	ancount = ntohs(answer.hdr.ancount);
 
 	
-	cp = (char*)&answer + sizeof(HEADER);
-	end = (char*)&answer + size;
+	cp = (guchar*)&answer + sizeof(HEADER);
+	end = (guchar*)&answer + size;
 
 	/* skip over unwanted stuff */
 	while (qdcount-- > 0 && cp < end) {
-		size = dn_expand( (char*)&answer, end, cp, name, 256);
+		size = dn_expand( (unsigned char*)&answer, end, cp, name, 256);
 		if(size < 0) goto end;
 		cp += size + QFIXEDSZ;
 	}
 
 	while (ancount-- > 0 && cp < end) {
-		size = dn_expand((char*)&answer, end, cp, name, 256);
+		size = dn_expand((unsigned char*)&answer, end, cp, name, 256);
 		if(size < 0)
 			goto end;
 
@@ -131,7 +131,7 @@ static void resolve(int in, int out) {
 
 			NS_GET16(port, cp);
 
-			size = dn_expand( (char*)&answer, end, cp, name, 256);
+			size = dn_expand( (unsigned char*)&answer, end, cp, name, 256);
 			if(size < 0 )
 				goto end;
 
