@@ -38,6 +38,7 @@
 struct sipmsg *sipmsg_parse_msg(gchar *msg) {
 	char *tmp = strstr(msg, "\r\n\r\n");
 	struct sipmsg *smsg;
+	if(!tmp) return NULL;
 	tmp[0]=0;
 	smsg = sipmsg_parse_header(msg);
 	tmp[0]='\r';
