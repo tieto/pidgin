@@ -1,5 +1,5 @@
 /**
- * @file srvresolve.c
+ * @file dnssrv.c
  *
  * gaim
  *
@@ -20,11 +20,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <glib.h>
+#ifndef _WIN32
 #include <resolv.h>
 #include <stdlib.h>
 #include <arpa/nameser_compat.h>
 #ifndef T_SRV
 #define T_SRV	33
+#endif
+#else
+#include "win32dep.h"
+#include <windns.h>
+/* Missing from the mingw headers */
+#ifndef DNS_TYPE_SRV
+# define DNS_TYPE_SRV 33
+#endif
 #endif
 
 #include "dnssrv.h"
@@ -34,14 +43,25 @@
 #include "eventloop.h"
 #include "debug.h"
 
+#ifndef _WIN32
 typedef union {
 	HEADER hdr;
 	u_char buf[1024];
 } queryans;
+#endif
 
 struct resdata {
 	SRVCallback cb;
+#ifndef _WIN32
 	guint handle;
+#else
+	DNS_STATUS (*DnsQuery) (PCSTR lpstrName, WORD wType, DWORD fOptions,
+		PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet, PVOID* pReserved);
+	void (*DnsRecordListFree) (PDNS_RECORD pRecordList, DNS_FREE_TYPE FreeType);
+	char *query;
+	char *errmsg;
+	GSList *results;
+#endif
 };
 
 static gint responsecompare(gconstpointer ar, gconstpointer br) {
@@ -59,7 +79,7 @@ static gint responsecompare(gconstpointer ar, gconstpointer br) {
 		return -1;
 	return 1;
 }
-
+#ifndef _WIN32
 static void resolve(int in, int out) {
 	GList *ret = NULL;
 	struct srv_response *srvres;
@@ -161,12 +181,97 @@ static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 	g_free(rdata);
 }
 
+#else /* _WIN32 */
+
+/** The Jabber Server code was inspiration for parts of this. */
+
+static gboolean res_main_thread_cb(gpointer data) {
+	struct srv_response *srvres = NULL;
+	int size = 0;
+	struct resdata *rdata = data;
+
+	if (rdata->errmsg != NULL) {
+		gaim_debug_error("srv", rdata->errmsg);
+		g_free(rdata->errmsg);
+	} else {
+		struct srv_response *srvres_tmp;
+		GSList *lst = rdata->results;
+
+		size = g_slist_length(rdata->results);
+
+		gaim_debug_info("srv","found %d SRV entries\n", size);
+
+		srvres_tmp = srvres = g_malloc0(sizeof(struct srv_response) * size);
+		while (lst) {
+			memcpy(srvres_tmp++, lst->data, sizeof(struct srv_response));
+			g_free(lst->data);
+			lst = g_slist_remove(lst, lst->data);
+		}
+
+		rdata->results = lst;
+	}
+
+	rdata->cb(srvres, size);
+
+	g_free(rdata->query);
+	g_free(rdata);
+
+	return FALSE;
+}
+
+static gpointer res_thread(gpointer data) {
+	DNS_RECORD *dr = NULL, *dr_tmp;
+	GSList *lst = NULL;
+	struct srv_response *srvres;
+	DNS_SRV_DATA *srv_data;
+	int type = DNS_TYPE_SRV;
+	DNS_STATUS ds;
+	struct resdata *rdata = data;
+
+	ds = rdata->DnsQuery(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
+	if (ds != ERROR_SUCCESS) {
+		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. Error = %d\n", (int) ds);
+	} else {
+		dr_tmp = dr;
+		while (dr_tmp != NULL) {
+
+			/* Discard any incorrect entries. I'm not sure if this is necessary */
+			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, rdata->query) != 0) {
+				continue;
+			}
+
+			srv_data = &dr_tmp->Data.SRV;
+			srvres = g_new0(struct srv_response, 1);
+			strncpy(srvres->hostname, srv_data->pNameTarget, 255);
+			srvres->hostname[255] = '\0';
+			srvres->pref = srv_data->wPriority;
+			srvres->port = srv_data->wPort;
+			srvres->weight = srv_data->wWeight;
+
+			lst = g_slist_insert_sorted(lst, srvres, responsecompare);
+
+			dr_tmp = dr->pNext;
+		}
+
+		rdata->DnsRecordListFree(dr, DnsFreeRecordList);
+		rdata->results = lst;
+	}
+
+	/* back to main thread */
+	g_idle_add(res_main_thread_cb, rdata);
+
+	return 0;
+}
+
+#endif
+
 void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb) {
 	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
+	struct resdata *rdata;
+#ifndef _WIN32
 	int in[2], out[2];
 	int pid;
-	struct resdata *rdata;
-	gaim_debug_info("dnssrv","querying SRV record for %s\n",query);
+	gaim_debug_info("srv","querying SRV record for %s\n", query);
 	if(pipe(in) || pipe(out)) {
 		gaim_debug_error("srv", "Could not create pipe\n");
 		g_free(query);
@@ -198,5 +303,46 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 	rdata = g_new0(struct resdata,1);
 	rdata->cb = cb;
 	rdata->handle = gaim_input_add(out[0], GAIM_INPUT_READ, resolved, rdata);
+
 	g_free(query);
+#else
+	GError* err = NULL;
+
+	static gboolean initialized = FALSE;
+
+	static DNS_STATUS (*MyDnsQuery_UTF) (
+		PCSTR lpstrName, WORD wType, DWORD fOptions, PIP4_ARRAY aipServers,
+		PDNS_RECORD* ppQueryResultsSet, PVOID* pReserved) = NULL;
+	static void (*MyDnsRecordListFree) (PDNS_RECORD pRecordList, DNS_FREE_TYPE FreeType) = NULL;
+
+	gaim_debug_info("srv","querying SRV record for %s\n", query);
+
+	if (!initialized) {
+		MyDnsQuery_UTF = (void*) wgaim_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF");
+		MyDnsRecordListFree = (void*) wgaim_find_and_loadproc(
+			"dnsapi.dll", "DnsRecordListFree");
+		initialized = TRUE;
+	}
+
+
+	if (!MyDnsQuery_UTF || !MyDnsRecordListFree) {
+		gaim_debug_error("srv", "System missing DNS API (Requires W2K+)\n");
+		g_free(query);
+		cb(NULL, 0);
+		return;
+	}
+
+	rdata = g_new0(struct resdata, 1);
+	rdata->DnsQuery = MyDnsQuery_UTF;
+	rdata->DnsRecordListFree = MyDnsRecordListFree;
+	rdata->cb = cb;
+	rdata->query = query;
+
+	if (!g_thread_create(res_thread, rdata, FALSE, &err)) {
+		rdata->errmsg = g_strdup_printf("SRV thread create failure: %s\n", err ? err->message : "");
+		g_error_free(err);
+		res_main_thread_cb(rdata);
+	}
+#endif
 }
+

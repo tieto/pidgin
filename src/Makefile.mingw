@@ -89,6 +89,7 @@ DLL_C_SRC =	\
 			conversation.c \
 			core.c \
 			debug.c \
+			dnssrv.c \
 			eventloop.c \
 			ft.c \
 			gtkaccount.c \
@@ -127,6 +128,7 @@ DLL_C_SRC =	\
 			mime.c \
 			network.c \
 			notify.c \
+			ntlm.c \
 			plugin.c \
 			pluginpref.c \
 			pounce.c \

@@ -1,5 +1,5 @@
 /**
- * @file srvresolve.h
+ * @file dnssrv.h
  * 
  * gaim
  *
