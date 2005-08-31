@@ -532,7 +532,7 @@ static void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
 		gchar **data_tbl;
-		gchar *name, *show;
+		gchar *name, *show, *g;
 
 		if (strlen(users_tbl[i]) == 0)
 			continue;
@@ -550,7 +550,7 @@ static void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 			continue;
 		}
 
-		gchar *g = g_strdup("Gadu-Gadu");
+		g = g_strdup("Gadu-Gadu");
 
 		if (strlen(data_tbl[5])) {
 			/* Hard limit to at most 50 groups */
@@ -993,6 +993,8 @@ static char *ggp_buddylist_dump(GaimAccount *account)
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+				gchar *newdata, *name, *show, *gname;
+
 				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 
@@ -1000,13 +1002,12 @@ static char *ggp_buddylist_dump(GaimAccount *account)
 				if (buddy->account != account)
 					continue;
 
-				gchar *newdata;
 				/* GG Number */
-				gchar *name = buddy->name;
+				name = buddy->name;
 				/* GG Pseudo */
-				gchar *show = buddy->alias ? buddy->alias : buddy->name;
+				show = buddy->alias ? buddy->alias : buddy->name;
 				/* Group Name */
-				gchar *gname = group->name;
+				gname = group->name;
 
 				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
 						show, show, show, show, "", gname, name, "", "");
@@ -1858,7 +1859,7 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	GaimStatusPrimitive prim;
 	GaimConnection *gc;
 	GGPInfo *info;
-	const char *status_id;
+	const char *status_id, *msg;
 	int new_status, new_status_descr;
 
 	prim = gaim_status_type_get_primitive(gaim_status_get_type(status));
@@ -1898,7 +1899,7 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 		gaim_debug_info("gg", "ggp_set_status: uknown status requested (status_id=%s)\n", status_id);
 	}
 
-	const char *msg = gaim_status_get_attr_string(status, "message");
+	msg = gaim_status_get_attr_string(status, "message");
 
 	if (msg == NULL) {
 		gaim_debug_info("gg", "ggp_set_status: msg == NULL\n");
