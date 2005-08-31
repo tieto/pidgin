@@ -85,6 +85,8 @@ struct simple_account_data {
 	gboolean udp;
 	struct sockaddr_in serveraddr;
 	int registerexpire;
+	gchar *realhostname;
+	int realport; /* port and hostname from SRV record */
 };
 
 struct sip_connection {

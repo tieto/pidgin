@@ -6,9 +6,7 @@ SIMPLESOURCES = \
 	sipmsg.c \
 	sipmsg.h \
 	digcalc.c \
-	digcalc.h \
-	srvresolve.h \
-	srvresolve.c
+	digcalc.h 
 
 AM_CFLAGS = $(st) 
 

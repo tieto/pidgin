@@ -41,7 +41,7 @@
 
 #include "simple.h"
 #include "sipmsg.h"
-#include "srvresolve.h"
+#include "dnssrv.h"
 
 static char *gentag() {
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
@@ -318,13 +318,11 @@ static void send_later_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 
 static void sendlater(GaimConnection *gc, const char *buf) {
-	struct getserver_return *serveradr;
 	struct simple_account_data *sip = gc->proto_data;
 	int error = 0;
 	if(!sip->connecting) {
-	        serveradr = getserver(sip->servername, "_sip._tcp");
-	        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
-	        error = gaim_proxy_connect(sip->account, serveradr->name, serveradr->port, send_later_cb, gc);
+	        gaim_debug_info("simple","connecting to %s port %d\n", sip->realhostname, sip->realport);
+	        error = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
 	        if(error) {
 	                gaim_connection_error(gc, _("Couldn't create socket"));
 	        }
@@ -1122,19 +1120,83 @@ static gboolean simple_ht_equals_nick(const char *nick1, const char *nick2) {
 	return (gaim_utf8_strcasecmp(nick1, nick2) == 0);
 }
 
+static void srvresolved(struct srv_response *resp, int results, gpointer data) {
+	struct simple_account_data *sip = (struct simple_account_data*) data;
+
+	gchar *hostname;
+	int port = 5060;
+
+	int error = 0;
+	struct sockaddr_in addr;
+	struct hostent *h;
+
+	/* find the host to connect to */
+	if(results) {
+		hostname = g_strdup(resp->hostname);
+		port = resp->port;
+		g_free(resp);
+	} else {
+		if(!gaim_account_get_bool(sip->account, "useproxy", FALSE)) {
+			hostname = g_strdup(sip->servername);
+		} else {
+			hostname = g_strdup(gaim_account_get_string(sip->account, "proxy", sip->servername));
+		}
+	}
+	
+	sip->realhostname = hostname;
+	sip->realport = port;	
+	/* TCP case */
+	if(! sip->udp) {	
+	        gaim_debug_info("simple","connecting to %s port %d\n", hostname, port);
+		/* open tcp connection to the server */
+		error = gaim_proxy_connect(sip->account, hostname, port, login_cb, sip->gc);
+		if(error) {
+			gaim_connection_error(sip->gc, _("Couldn't create socket"));
+		}
+
+		/* create socket for incoming connections */
+		sip->listenfd = gaim_network_listen_range(5060, 5080);
+		if(sip->listenfd == -1) {
+			gaim_connection_error(sip->gc, _("Could not create listen socket"));
+			return;
+		}
+		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
+		gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, sip->gc);
+	} else { /* UDP */
+		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
+		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(5060);
+		addr.sin_addr.s_addr = INADDR_ANY;
+		while((bind(sip->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) <0) && ntohs(addr.sin_port)<5160) {
+			addr.sin_port = htons(ntohs(addr.sin_port)+1);
+		}
+		sip->listenport = ntohs(addr.sin_port);
+		sip->listenfd = sip->fd;
+
+		gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
+		sip->serveraddr.sin_family = AF_INET;
+		sip->serveraddr.sin_port = htons(port);
+		
+		h = gethostbyname(hostname);
+		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
+	        sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
+		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
+	        do_register(sip);
+	}
+}
+
 static void simple_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	struct simple_account_data *sip;
 	gchar **userserver;
-	int error=0;
-	struct getserver_return *serveradr;
 	gchar *hosttoconnect;
 	       
 	const char *username = gaim_account_get_username(account);
 
 	gc = gaim_account_get_connection(account);
-	
 	gc->proto_data = sip = g_new0(struct simple_account_data,1);
 	sip->gc=gc;
 	sip->account = account;
@@ -1146,7 +1208,6 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
         }
 
 	userserver = g_strsplit(username, "@", 2);
-	
 	gaim_connection_set_display_name(gc,userserver[0]);
 	sip->username = g_strdup(userserver[0]);
 	sip->servername = g_strdup(userserver[1]);
@@ -1167,53 +1228,9 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	
 	/* TCP case */
 	if(! sip->udp) {	
-		/* search for SRV record */
-		serveradr = getserver(hosttoconnect, "_sip._tcp");
-	        gaim_debug_info("simple","connecting to %s port %d", serveradr->name, serveradr->port);
-
-		/* open tcp connection to the server */
-		error = gaim_proxy_connect(account, serveradr->name, serveradr->port, login_cb, gc);
-		if(error) {
-			gaim_connection_error(gc, _("Couldn't create socket"));
-		}
-
-		/* create socket for incoming connections */
-		sip->listenfd = gaim_network_listen_range(5060, 5080);
-		if(sip->listenfd == -1) {
-			gaim_connection_error(gc, _("Could not create listen socket"));
-			return;
-		}
-		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
-		gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, gc);
+		gaim_srv_resolve("sip","tcp",hosttoconnect,srvresolved, sip);
 	} else { /* UDP */
-		/* search for SRV record */
-		struct sockaddr_in addr;
-		struct hostent *h;
-		
-		serveradr = getserver(hosttoconnect, "_sip._udp");
-		gaim_debug_info("simple", "using udp with server %s and port %d", serveradr->name, serveradr->port);
-		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
-
-		addr.sin_family = AF_INET;
-		addr.sin_port = htons(5060);
-		addr.sin_addr.s_addr = INADDR_ANY;
-		while((bind(sip->fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_in)) <0) && ntohs(addr.sin_port)<5160) {
-			addr.sin_port = htons(ntohs(addr.sin_port)+1);
-		}
-		sip->listenport = ntohs(addr.sin_port);
-		sip->listenfd = sip->fd;
-
-		gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, gc);
-		/* TODO - change to new SRV impl. */
-		sip->serveraddr.sin_family = AF_INET;
-		sip->serveraddr.sin_port = htons(serveradr->port);
-		
-		h = gethostbyname(serveradr->name);
-		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
-	        sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
-		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
-	        do_register(sip);
-		
+		gaim_srv_resolve("sip","udp",hosttoconnect,srvresolved, sip);	
 	}
 	g_free(hosttoconnect);
 		
@@ -1238,8 +1255,9 @@ static void simple_close(GaimConnection *gc)
 		if(sip->proxy.realm) g_free(sip->proxy.realm);
 		if(sip->sendlater) g_free(sip->sendlater);
 		if(sip->ip) g_free(sip->ip);
+		if(sip->realhostname) g_free(sip->realhostname);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
-		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = NULL;
+		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = sip->realhostname = NULL;
 	}
 	if(gc->proto_data) g_free(gc->proto_data);
 	gc->proto_data = 0;
