@@ -48,6 +48,13 @@ typedef union {
 	HEADER hdr;
 	u_char buf[1024];
 } queryans;
+#else
+static DNS_STATUS (*MyDnsQuery_UTF8) (
+	PCSTR lpstrName, WORD wType, DWORD fOptions,
+	PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet,
+	PVOID* pReserved) = NULL;
+static void (*MyDnsRecordListFree) (PDNS_RECORD pRecordList,
+	DNS_FREE_TYPE FreeType) = NULL;
 #endif
 
 struct resdata {
@@ -56,9 +63,6 @@ struct resdata {
 #ifndef _WIN32
 	guint handle;
 #else
-	DNS_STATUS (*DnsQuery) (PCSTR lpstrName, WORD wType, DWORD fOptions,
-		PIP4_ARRAY aipServers, PDNS_RECORD* ppQueryResultsSet, PVOID* pReserved);
-	void (*DnsRecordListFree) (PDNS_RECORD pRecordList, DNS_FREE_TYPE FreeType);
 	char *query;
 	char *errmsg;
 	GSList *results;
@@ -102,7 +106,7 @@ static void resolve(int in, int out) {
 	qdcount = ntohs(answer.hdr.qdcount);
 	ancount = ntohs(answer.hdr.ancount);
 
-	
+
 	cp = (guchar*)&answer + sizeof(HEADER);
 	end = (guchar*)&answer + size;
 
@@ -119,7 +123,7 @@ static void resolve(int in, int out) {
 			goto end;
 
 		cp += size;
-	
+
 		NS_GET16(type,cp);
 		cp += 6; /* skip ttl and class since we already know it */
 
@@ -143,7 +147,7 @@ static void resolve(int in, int out) {
 			srvres->pref = pref;
 			srvres->port = port;
 			srvres->weight = weight;
-			
+
 			ret = g_list_insert_sorted(ret, srvres, responsecompare);
 		} else {
 			cp += dlen;
@@ -160,7 +164,7 @@ end:	size = g_list_length(ret);
 	/* Should the resolver be reused?
 	 * There is most likely only 1 SRV queries per prpl...
 	 */
-	_exit(0);	
+	_exit(0);
 }
 
 static void resolved(gpointer data, gint source, GaimInputCondition cond) {
@@ -200,8 +204,6 @@ static gboolean res_main_thread_cb(gpointer data) {
 
 		size = g_slist_length(rdata->results);
 
-		gaim_debug_info("srv","found %d SRV entries\n", size);
-
 		srvres_tmp = srvres = g_malloc0(sizeof(struct srv_response) * size);
 		while (lst) {
 			memcpy(srvres_tmp++, lst->data, sizeof(struct srv_response));
@@ -212,6 +214,8 @@ static gboolean res_main_thread_cb(gpointer data) {
 		rdata->results = lst;
 	}
 
+	gaim_debug_info("srv", "found %d SRV entries\n", size);
+
 	rdata->cb(srvres, size, rdata->extradata);
 
 	g_free(rdata->query);
@@ -221,7 +225,7 @@ static gboolean res_main_thread_cb(gpointer data) {
 }
 
 static gpointer res_thread(gpointer data) {
-	DNS_RECORD *dr = NULL, *dr_tmp;
+	DNS_RECORD *dr = NULL;
 	GSList *lst = NULL;
 	struct srv_response *srvres;
 	DNS_SRV_DATA *srv_data;
@@ -229,15 +233,15 @@ static gpointer res_thread(gpointer data) {
 	DNS_STATUS ds;
 	struct resdata *rdata = data;
 
-	ds = rdata->DnsQuery(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
+	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. Error = %d\n", (int) ds);
 	} else {
-		dr_tmp = dr;
+		DNS_RECORD *dr_tmp = dr;
 		while (dr_tmp != NULL) {
-
 			/* Discard any incorrect entries. I'm not sure if this is necessary */
 			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, rdata->query) != 0) {
+				dr_tmp = dr_tmp->pNext;
 				continue;
 			}
 
@@ -251,10 +255,10 @@ static gpointer res_thread(gpointer data) {
 
 			lst = g_slist_insert_sorted(lst, srvres, responsecompare);
 
-			dr_tmp = dr->pNext;
+			dr_tmp = dr_tmp->pNext;
 		}
 
-		rdata->DnsRecordListFree(dr, DnsFreeRecordList);
+		MyDnsRecordListFree(dr, DnsFreeRecordList);
 		rdata->results = lst;
 	}
 
@@ -297,7 +301,7 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 
 	close(out[1]);
 	close(in[0]);
-	 
+
 	if(write(in[1], query, strlen(query)+1)<0) {
 		gaim_debug_error("srv", "Could not write to SRV resolver\n");
 	}
@@ -312,22 +316,16 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 
 	static gboolean initialized = FALSE;
 
-	static DNS_STATUS (*MyDnsQuery_UTF) (
-		PCSTR lpstrName, WORD wType, DWORD fOptions, PIP4_ARRAY aipServers,
-		PDNS_RECORD* ppQueryResultsSet, PVOID* pReserved) = NULL;
-	static void (*MyDnsRecordListFree) (PDNS_RECORD pRecordList, DNS_FREE_TYPE FreeType) = NULL;
-
 	gaim_debug_info("srv","querying SRV record for %s\n", query);
 
 	if (!initialized) {
-		MyDnsQuery_UTF = (void*) wgaim_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF");
+		MyDnsQuery_UTF8 = (void*) wgaim_find_and_loadproc("dnsapi.dll", "DnsQuery_UTF8");
 		MyDnsRecordListFree = (void*) wgaim_find_and_loadproc(
 			"dnsapi.dll", "DnsRecordListFree");
 		initialized = TRUE;
 	}
 
-
-	if (!MyDnsQuery_UTF || !MyDnsRecordListFree) {
+	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree) {
 		gaim_debug_error("srv", "System missing DNS API (Requires W2K+)\n");
 		g_free(query);
 		cb(NULL, 0, extradata);
@@ -335,10 +333,9 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 	}
 
 	rdata = g_new0(struct resdata, 1);
-	rdata->DnsQuery = MyDnsQuery_UTF;
-	rdata->DnsRecordListFree = MyDnsRecordListFree;
 	rdata->cb = cb;
 	rdata->query = query;
+	rdata->extradata = extradata;
 
 	if (!g_thread_create(res_thread, rdata, FALSE, &err)) {
 		rdata->errmsg = g_strdup_printf("SRV thread create failure: %s\n", err ? err->message : "");
