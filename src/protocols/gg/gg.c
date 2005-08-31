@@ -1,3 +1,30 @@
+/**
+ * @file gg.c Gadu-Gadu protocol plugin
+ *
+ * gaim
+ *
+ * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
+ *
+ * Some parts of the code are adapted or taken for the previous implementation
+ * of this plugin written by Arkadiusz Miskiewicz <misiek@pld.org.pl>
+ *
+ * Thanks to Google's Summer of Code Program.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 
 /*
  * NOTES
@@ -22,6 +49,13 @@
 #include "lib/libgadu.h"
 
 static GaimPlugin *my_protocol = NULL;
+
+typedef struct
+{
+	char *name;
+	GList *participants;
+
+} GGPChat;
 
 typedef struct
 {
@@ -51,7 +85,11 @@ typedef struct {
 	GGPSearchForm *search_form;
 	GGPToken *register_token;
 	GGPToken *chpasswd_token;
+	GList *chats;
 	void *searchresults_window;
+
+	char *tmp_buddy;
+	int chats_count;
 
 } GGPInfo;
 
@@ -159,14 +197,271 @@ GGPSearchForm *ggp_searchform_new()
 }
 /* }}} */
 
+/**
+ * Returns the best name of a buddy from the buddylist.
+ *
+ * @param gc  GaimConnection instance.
+ * @param uin UIN of the buddy.
+ *
+ * @return Name of the buddy, or UIN converted to string.
+ */
+/* static const *char ggp_buddy_get_name(GaimConnection *gc, const uin_t uin) {{{ */
+static const char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
+{
+	GaimBuddy *buddy;
+	gchar *str_uin;
+
+	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
+
+	buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
+	if (buddy != NULL) {
+		g_free(str_uin);
+		return gaim_buddy_get_alias(buddy);
+	} else {
+		return str_uin;
+	}
+}
+/* }}} */
+
+/* ---------------------------------------------------------------------- */
+/* ----- CONFERENCES ---------------------------------------------------- */
+/* ---------------------------------------------------------------------- */
+
+/**
+ * Finds a CHAT conversation for the current account with the specified name.
+ *
+ * @param gc   GaimConnection instance.
+ * @param name Name of the conversation.
+ *
+ * @return GaimConversation or NULL if not found.
+ */
+/* static GaimConversation *ggp_chat_find_conversation(GaimConnection *gc, const gchar *name) {{{ */
+static GaimConversation *ggp_chat_find_conversation(GaimConnection *gc, const gchar *name)
+{
+	g_return_val_if_fail(gc   != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+
+	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, name,
+				gaim_connection_get_account(gc));
+}
+/* }}} */
+
+/**
+ * Adds the specified UIN to the specified conversation.
+ * 
+ * @param gc        GaimConnection.
+ * @param chat_name Name of the conversation.
+ */
+/* static void ggp_chat_participants_add_uin(GaimConnection *gc, const gchar *chat_name, const uin_t uin) {{{ */
+static void ggp_chat_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
+										  const uin_t uin)
+{
+	GaimConversation *conv;
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat;
+	GList *l;
+	gchar *str_uin;
+
+	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		chat = l->data;
+
+		if (g_utf8_collate(chat->name, chat_name) == 0) {
+			if (g_list_find(chat->participants, str_uin) == NULL) {
+				chat->participants = g_list_append(chat->participants, str_uin);
+				conv = ggp_chat_find_conversation(gc, chat_name);
+
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+						ggp_buddy_get_name(gc, uin), NULL, GAIM_CBFLAGS_NONE, TRUE);
+			}
+			break;
+		}
+	}
+}
+/* }}} */
+
+/**
+ * Add the specified UINs to the specified conversation.
+ *
+ * @param gc         GaimConnection.
+ * @param chat_name  Name of the conversation.
+ * @param recipients List of the UINs.
+ * @param count      Number of the UINs.
+ */
+/* static void ggp_chat_participants_add(GaimConnection *gc, const gchar *chat_name, const uin_t *recipients, int count) {{{ */
+static void ggp_chat_participants_add(GaimConnection *gc, const gchar *chat_name,
+									  const uin_t *recipients, int count)
+{
+	GaimConversation *conv;
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat;
+	GList *l;
+	int i;
+	gchar *uin;
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		chat = l->data;
+
+		if (g_utf8_collate(chat->name, chat_name) == 0) {
+
+			for (i = 0; i < count; i++) {
+				uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
+				if (g_list_find(chat->participants, uin) == NULL) {
+					chat->participants = g_list_append(chat->participants, uin);
+					conv = ggp_chat_find_conversation(gc, chat_name);
+
+					gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+							ggp_buddy_get_name(gc, recipients[i]),
+							NULL, GAIM_CBFLAGS_NONE, TRUE);
+				}
+				g_free(uin);
+			}
+			break;
+		}
+	}
+}
+/* }}} */
+
+/**
+ * Finds a conversation in which all the specified recipients participate.
+ * 
+ * TODO: This function should be rewritten to better handle situations when
+ * somobody adds more people to the converation.
+ *
+ * @param gc         GaimConnection.
+ * @param recipients List of the people in the conversation.
+ * @param count      Number of people.
+ *
+ * @return Name of the conversation.
+ */
+/* static const char *ggp_find_chat_by_recipients(GaimConnection *gc, const uin_t *recipients, int count) {{{ */
+static const char *ggp_find_chat_by_recipients(GaimConnection *gc,
+											   const uin_t *recipients, int count)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat = NULL;
+	GList *l, *m;
+	int i;
+	int maches;
+
+	g_return_val_if_fail(info->chats != NULL, NULL);
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		chat = l->data;
+		maches = 0;
+
+		for (m = chat->participants; m != NULL; m = m->next) {
+			uin_t p = ggp_str_to_uin(m->data);
+
+			for (i = 0; i < count; i++)
+				if (p == recipients[i])
+					maches++;
+		}
+
+		if (maches == count)
+			break;
+
+		chat = NULL;
+	}
+
+	if (chat == NULL)
+		return NULL;
+	else
+		return chat->name;
+}
+/* }}} */
+
+/**
+ * Adds a new conversation to the internal list of conversations.
+ * If name is NULL then it will be automagically generated.
+ *
+ * @param gc   GaimConnection.
+ * @param name Name of the conversation.
+ * 
+ * @return Name of the conversation.
+ */
+/* static const char *ggp_chat_add_new(GaimConnection *gc, const char *name) {{{ */
+static const char *ggp_chat_add_new(GaimConnection *gc, const char *name)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat;
+
+	chat = g_new0(GGPChat, 1);
+
+	if (name == NULL)
+		chat->name = g_strdup_printf("conf#%d", info->chats_count++);
+	else
+		chat->name = g_strdup(name);
+
+	chat->participants = NULL;
+
+	info->chats = g_list_append(info->chats, chat);
+
+	return chat->name;
+}
+/* }}} */
+
+/**
+ * Dispatch a message received from a buddy.
+ *
+ * @param gc GaimConnection.
+ * @param ev Gadu-Gadu event structure.
+ */
+/* static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev) {{{ */
+static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev)
+{
+	GGPInfo *info = gc->proto_data;
+	GaimConversation *conv;
+	gchar *from;
+	gchar *msg;
+	gchar *tmp;
+	const char *chat_name;
+	int chat_id;
+
+	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
+
+	msg = charset_convert((const char *)ev->event.msg.message,
+						  "CP1250", "UTF-8");
+	gaim_str_strip_cr(msg);
+	tmp = g_markup_escape_text(msg, -1);
+
+	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
+			from, tmp, ev->event.msg.msgclass, ev->event.msg.recipients_count);
+
+	/*
+	 * Chat between only two presons will be treated as a private message.
+	 * It's due to some broken clients that send private messages
+	 * with msgclass == CHAT
+	 */
+	if (ev->event.msg.recipients_count == 0) {
+		serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
+	} else {
+		chat_name = ggp_find_chat_by_recipients(gc,
+									ev->event.msg.recipients,
+									ev->event.msg.recipients_count);
+		if (chat_name == NULL) {
+			chat_name = ggp_chat_add_new(gc, NULL);
+			serv_got_joined_chat(gc, info->chats_count, chat_name);
+			ggp_chat_participants_add_uin(gc, chat_name, ev->event.msg.sender);
+			ggp_chat_participants_add(gc, chat_name, ev->event.msg.recipients,
+									  ev->event.msg.recipients_count);
+		}
+		conv = ggp_chat_find_conversation(gc, chat_name);
+		chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+		serv_got_chat_in(gc, chat_id, ggp_buddy_get_name(gc, ev->event.msg.sender),
+						 0, msg, ev->event.msg.time);
+	}
+	g_free(msg);
+	g_free(tmp);
+	g_free(from);
+}
+/* }}} */
+
 /* ---------------------------------------------------------------------- */
 /* ----- BUDDYLIST STUFF ------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-/*
- * Adapted from the previous GG implementation in Gaim
- * by Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- */
 /* static void ggp_buddylist_send(GaimConnection *gc) {{{ */
 static void ggp_buddylist_send(GaimConnection *gc)
 {
@@ -286,7 +581,13 @@ static void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 }
 /* }}} */
 
-/*
+/**
+ * Handle change of the status of the buddy.
+ *
+ * @param gc     GaimConnection
+ * @param uin    UIN of the buddy.
+ * @param status ID of the status.
+ * @param descr  Description.
  */
 /* static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr) {{{ */
 static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr)
@@ -327,7 +628,11 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status
 }
 /* }}} */
 
-/*
+/**
+ * Initiate a search in the public directory.
+ *
+ * @param gc   GaimConnection.
+ * @param form Filled in GGPSearchForm.
  */
 /* static void ggp_pubdir_start_search(GaimConnection *gc, GGPSearchForm *form) {{{ */
 static void ggp_pubdir_start_search(GaimConnection *gc, GGPSearchForm *form)
@@ -414,21 +719,28 @@ static char *ggp_get_pubdir_info(gg_pubdir50_t res, int num, const char *field)
 }
 /* }}} */
 
+/*
+ */
+/* static void ggp_callback_show_next(GaimConnection *gc, GList *row) {{{ */
 static void ggp_callback_show_next(GaimConnection *gc, GList *row)
 {
 	GGPInfo *info = gc->proto_data;
 
 	g_free(info->search_form->offset);
 	info->search_form->offset = g_strdup(info->search_form->last_uin);
-	gaim_debug_info("gg", "london calling... offset = %s\n", info->search_form->offset);
 	ggp_pubdir_start_search(gc, info->search_form);
 }
+/* }}} */
 
+/*
+ */
+/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row) {{{ */
 static void ggp_callback_add_buddy(GaimConnection *gc, GList *row)
 {
 	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
 			g_list_nth_data(row, 0), NULL, NULL);
 }
+/* }}} */
 
 /*
  */
@@ -451,23 +763,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			/* Nothing happened. */
 			break;
 		case GG_EVENT_MSG:
-			{
-				gchar *from;
-				gchar *msg;
-				gchar *tmp;
-
-				from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
-
-				msg = charset_convert((const char *)ev->event.msg.message,
-									  "CP1250", "UTF-8");
-				gaim_str_strip_cr(msg);
-				tmp = g_markup_escape_text(msg, -1);
-				gaim_debug_info("gg", "msg form (%s): %s (class = %d)\n", from, tmp, ev->event.msg.msgclass);
-				serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
-				g_free(msg);
-				g_free(tmp);
-				g_free(from);
-			}
+			ggp_recv_message_handler(gc, ev);
 			break;
 		case GG_EVENT_ACK:
 			gaim_debug_info("gg", "message sent to: %ld, delivery status=%d, seq=%d\n",
@@ -1199,6 +1495,77 @@ static void ggp_change_passwd(GaimPluginAction *action)
 }
 /* }}} */
 
+/*
+ */
+/* static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
+static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *fields)
+{
+	GGPInfo *info = gc->proto_data;
+	GaimRequestField *field;
+	const GList *sel, *l;
+
+	field = gaim_request_fields_get_field(fields, "name");
+	sel = gaim_request_field_list_get_selected(field);
+	gaim_debug_info("gg", "selected chat %s for buddy %s\n", sel->data, info->tmp_buddy);
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		GGPChat *chat = l->data;
+
+		if (g_utf8_collate(chat->name, sel->data) == 0) {
+			chat->participants = g_list_append(chat->participants, info->tmp_buddy);
+			break;
+		}
+	}
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored) {{{ */
+static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
+{
+	GaimBuddy *buddy;
+	GaimConnection *gc;
+	GGPInfo *info;
+
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	GList *l;
+	gchar *msg;
+
+	buddy = (GaimBuddy *)node;
+	gc = gaim_account_get_connection(gaim_buddy_get_account(buddy));
+	info = gc->proto_data;
+
+	/* TODO: It tmp_buddy != NULL then stop! */
+	info->tmp_buddy = g_strdup(gaim_buddy_get_name(buddy));
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_list_new("name", "Chat name");
+	for (l = info->chats; l != NULL; l = l->next) {
+		GGPChat *chat = l->data;
+		gaim_debug_info("gg", "adding chat %s\n", chat->name);
+		gaim_request_field_list_add(field, g_strdup(chat->name), g_strdup(chat->name));
+	}
+	gaim_request_field_group_add_field(group, field);
+
+	msg = g_strdup_printf(_("Select a chat for buddy: %s"), gaim_buddy_get_name(buddy));
+	gaim_request_fields(gc,
+			_("Add to chat..."),
+			_("Add to chat..."),
+			msg,
+			fields,
+			_("Add"), G_CALLBACK(ggp_callback_add_to_chat_ok),
+			_("Cancel"), NULL, gc);
+	g_free(msg);
+}
+/* }}} */
+
 /* ---------------------------------------------------------------------- */
 /* ----- GaimPluginProtocolInfo ----------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -1212,8 +1579,6 @@ static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy)
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne) {{{ */
 static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw, const char **nw, const char **ne)
 {
@@ -1245,8 +1610,6 @@ static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 }
 /* }}} */
 
-/*
- */
 /* static char *ggp_status_text(GaimBuddy *b) {{{ */
 static char *ggp_status_text(GaimBuddy *b)
 {
@@ -1275,8 +1638,6 @@ static char *ggp_status_text(GaimBuddy *b)
 }
 /* }}} */
 
-/*
- */
 /* static char *ggp_tooltip_text(GaimBuddy *b) {{{ */
 static char *ggp_tooltip_text(GaimBuddy *b)
 {
@@ -1307,8 +1668,6 @@ static char *ggp_tooltip_text(GaimBuddy *b)
 }
 /* }}} */
 
-/*
- */
 /* static GList *ggp_status_types(GaimAccount *account) {{{ */
 static GList *ggp_status_types(GaimAccount *account)
 {
@@ -1358,25 +1717,38 @@ static GList *ggp_status_types(GaimAccount *account)
 }
 /* }}} */
 
-/*
- */
 /* static GList *ggp_blist_node_menu(GaimBlistNode *node) {{{ */
 static GList *ggp_blist_node_menu(GaimBlistNode *node)
 {
+	GaimBlistNodeAction *act;
 	GList *m = NULL;
 
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return NULL;
 
-	/* act = gaim_blist_node_action_new("Change Password", ggp_bmenu_change_passwd, NULL, NULL); */
-	/* m = g_list_append(m, act);                                                                */
+	act = gaim_blist_node_action_new("Add to chat", ggp_bmenu_add_to_chat, NULL, NULL);
+	m = g_list_append(m, act);
 
 	return m;
 }
 /* }}} */
 
-/*
- */
+/* static GList *ggp_chat_info(GaimConnection *gc) {{{ */
+static GList *ggp_chat_info(GaimConnection *gc)
+{
+	GList *m = NULL;
+	struct proto_chat_entry *pce;
+
+	pce = g_new0(struct proto_chat_entry, 1);
+	pce->label = _("Chat _name:");
+	pce->identifier = "name";
+	pce->required = TRUE;
+	m = g_list_append(m, pce);
+
+	return m;
+}
+/* }}} */
+
 /* static void ggp_login(GaimAccount *account, GaimStatus *status) {{{ */
 static void ggp_login(GaimAccount *account, GaimStatus *status)
 {
@@ -1384,8 +1756,11 @@ static void ggp_login(GaimAccount *account, GaimStatus *status)
 	struct gg_login_params *glp = g_new0(struct gg_login_params, 1);
 	GGPInfo *info = g_new0(GGPInfo, 1);
 
+	/* Probably this should be move to some *_new() function. */
 	info->session = NULL;
 	info->searchresults_window = NULL;
+	info->chats = NULL;
+	info->chats_count = 0;
 
 	gc->proto_data = info;
 
@@ -1412,8 +1787,6 @@ static void ggp_login(GaimAccount *account, GaimStatus *status)
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_close(GaimConnection *gc) {{{ */
 static void ggp_close(GaimConnection *gc)
 {
@@ -1441,13 +1814,11 @@ static void ggp_close(GaimConnection *gc)
 }
 /* }}} */
 
-/*
- */
 /* static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, GaimConvImFlags flags) {{{ */
 static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, GaimConvImFlags flags)
 {
 	GGPInfo *info = gc->proto_data;
-	const char *tmp;
+	char *tmp;
 
 	if (strlen(msg) == 0)
 		return 1;
@@ -1455,7 +1826,7 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, Gai
 	tmp = charset_convert(msg, "UTF-8", "CP1250");
 
 	if (tmp != NULL && strlen(tmp) > 0) {
-		if (gg_send_message(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who), tmp) < 0) {
+		if (gg_send_message(info->session, GG_CLASS_MSG, ggp_str_to_uin(who), (unsigned char *)tmp) < 0) {
 			return -1;
 		}
 	}
@@ -1464,8 +1835,6 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, Gai
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_get_info(GaimConnection *gc, const char *name) { {{{ */
 static void ggp_get_info(GaimConnection *gc, const char *name)
 {
@@ -1483,8 +1852,6 @@ static void ggp_get_info(GaimConnection *gc, const char *name)
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_set_status(GaimAccount *account, GaimStatus *status) {{{ */
 static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 {
@@ -1547,8 +1914,6 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {{{ */
 static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
@@ -1558,8 +1923,6 @@ static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {{{ */
 static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 {
@@ -1569,8 +1932,93 @@ static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 }
 /* }}} */
 
-/*
- */
+/* static void ggp_join_chat(GaimConnection *gc, GHashTable *data) {{{ */
+static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat;
+	char *chat_name;
+	GList *l;
+
+	chat_name = g_hash_table_lookup(data, "name");
+
+	if (chat_name == NULL)
+		return;
+
+	gaim_debug_info("gg", "joined %s chat\n", chat_name);
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		 chat = l->data;
+
+		 if (chat != NULL && g_utf8_collate(chat->name, chat_name) == 0) {
+			 gaim_notify_error(gc, _("Chat error"),
+					 _("This chat name is already in use"), NULL);
+			 return;
+		 }
+	}
+
+	ggp_chat_add_new(gc, chat_name);
+	serv_got_joined_chat(gc, info->chats_count, chat_name);
+}
+/* }}} */
+
+/* static char *ggp_get_chat_name(GHashTable *data) { {{{ */
+static char *ggp_get_chat_name(GHashTable *data) {
+	return g_strdup(g_hash_table_lookup(data, "name"));
+}
+/* }}} */
+
+/* static int ggp_chat_send(GaimConnection *gc, int id, const char *message) {{{ */
+static int ggp_chat_send(GaimConnection *gc, int id, const char *message)
+{
+	GaimConversation *conv;
+	GGPInfo *info = gc->proto_data;
+	GGPChat *chat = NULL;
+	GList *l;
+	char *msg;
+	uin_t *uins;
+	int count = 0;
+
+	if ((conv = gaim_find_chat(gc, id)) == NULL)
+		return -EINVAL;
+
+	for (l = info->chats; l != NULL; l = l->next) {
+		chat = l->data;
+
+		if (g_utf8_collate(chat->name, conv->name) == 0) {
+			gaim_debug_info("gg", "found conv!\n");
+			break;
+		}
+
+		chat = NULL;
+	}
+
+	if (chat == NULL) {
+		gaim_debug_error("gg", "ggp_chat_send: Hm... that's strange. No such chat?\n");
+		return -EINVAL;
+	}
+
+	uins = g_new0(uin_t, g_list_length(chat->participants));
+	for (l = chat->participants; l != NULL; l = l->next) {
+		gchar *name = l->data;
+		uin_t uin;
+
+		if ((uin = ggp_str_to_uin(name)) != 0)
+			uins[count++] = uin;
+	}
+
+	msg = charset_convert(message, "UTF-8", "CP1250");
+	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins, (unsigned char *)msg);
+	g_free(msg);
+	g_free(uins);
+
+	serv_got_chat_in(gc, id, gaim_account_get_username(gaim_connection_get_account(gc)),
+					 0, message, time(NULL));
+
+	return 0;
+}
+/* }}} */
+
 /* static void ggp_keepalive(GaimConnection *gc) {{{ */
 static void ggp_keepalive(GaimConnection *gc)
 {
@@ -1586,8 +2034,6 @@ static void ggp_keepalive(GaimConnection *gc)
 }
 /* }}} */
 
-/*
- */
 /* static void ggp_register_user(GaimAccount *account) {{{ */
 static void ggp_register_user(GaimAccount *account)
 {
@@ -1655,8 +2101,6 @@ static void ggp_register_user(GaimAccount *account)
 }
 /* }}} */
 
-/*
- */
 /* static GList *ggp_actions(GaimPlugin *plugin, gpointer context) {{{ */
 static GList *ggp_actions(GaimPlugin *plugin, gpointer context)
 {
@@ -1705,7 +2149,7 @@ static GaimPluginProtocolInfo prpl_info =
 	ggp_tooltip_text,		/* tooltip_text */
 	ggp_status_types,		/* status_types */
 	ggp_blist_node_menu,	/* blist_node_menu */
-	NULL,					/* chat_info */
+	ggp_chat_info,			/* chat_info */
 	NULL,					/* chat_info_defaults */
 	ggp_login,				/* login */
 	ggp_close,				/* close */
@@ -1725,13 +2169,13 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* rem_permit */
 	NULL,					/* rem_deny */
 	NULL,					/* set_permit_deny */
-	NULL,					/* join_chat */
+	ggp_join_chat,			/* join_chat */
 	NULL,					/* reject_chat */
-	NULL,					/* get_chat_name */
+	ggp_get_chat_name,		/* get_chat_name */
 	NULL,					/* chat_invite */
 	NULL,					/* chat_leave */
 	NULL,					/* chat_whisper */
-	NULL,					/* chat_send */
+	ggp_chat_send,			/* chat_send */
 	ggp_keepalive,			/* keepalive */
 	ggp_register_user,		/* register_user */
 	NULL,					/* get_cb_info */
@@ -1803,3 +2247,4 @@ static void init_plugin(GaimPlugin *plugin)
 GAIM_INIT_PLUGIN(gadu-gadu, init_plugin, info);
 
 /* vim: set ts=4 sts=0 sw=4 noet: */
+
