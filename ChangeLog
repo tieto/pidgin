@@ -51,6 +51,7 @@ version 2.0.0:
 	* Added support for sending (with the /nudge command) and reciving MSN
 	  "nudges" (Julien Cegarra, Martin Bayard)
 	* Added an account action to open your Hotmail inbox from MSN
+	* Jabber support for SRV lookups
 
 	Bug fixes:
 	* People using input methods can now use Enter again.

@@ -26,6 +26,7 @@
 #include "cmds.h"
 #include "connection.h"
 #include "debug.h"
+#include "dnssrv.h"
 #include "message.h"
 #include "notify.h"
 #include "pluginpref.h"
@@ -347,15 +348,38 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
 }
 
+static void jabber_login_connect(JabberStream *js, const char *server, int port)
+{
+	int rc;
+
+	rc = gaim_proxy_connect(js->gc->account, server,
+			port, jabber_login_callback, js->gc);
+
+	if (rc != 0)
+		gaim_connection_error(js->gc, _("Unable to create socket"));
+}
+
+static void srv_resolved_cb(struct srv_response *resp, int results, gpointer data)
+{
+	JabberStream *js = (JabberStream*)data;
+	int config_port = gaim_account_get_int(js->gc->account, "port", 0);
+
+	if(results) {
+		jabber_login_connect(js, resp->hostname, config_port ? config_port : resp->port);
+		g_free(resp);
+	} else {
+		jabber_login_connect(js, js->user->domain, config_port);
+	}
+}
+
+
 
 static void
 jabber_login(GaimAccount *account, GaimStatus *status)
 {
-	int rc;
 	GaimConnection *gc = gaim_account_get_connection(account);
 	const char *connect_server = gaim_account_get_string(account,
 			"connect_server", "");
-	const char *server;
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
@@ -396,30 +420,31 @@ jabber_login(GaimAccount *account, GaimStatus *status)
 	if((my_jb = jabber_buddy_find(js, gaim_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
-	server = connect_server[0] ? connect_server : js->user->domain;
-
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-
-	if(gaim_account_get_bool(account, "old_ssl", FALSE)) {
+	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
+	if(gaim_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
 		if(gaim_ssl_is_supported()) {
-			js->gsc = gaim_ssl_connect(account, server,
-					gaim_account_get_int(account, "port", 5222),
-					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
+			js->gsc = gaim_ssl_connect(js->gc->account,
+					connect_server[0] ? connect_server : js->user->domain,
+					gaim_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
+					jabber_ssl_connect_failure, js->gc);
 		} else {
-			gaim_connection_error(gc, _("SSL support unavailable"));
+			gaim_connection_error(js->gc, _("SSL support unavailable"));
 		}
 	}
 
+	/* no old-ssl, so if they've specified a connect server, we'll use that, otherwise we'll
+	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
-		rc = gaim_proxy_connect(account, server,
-				gaim_account_get_int(account, "port", 5222),
-				jabber_login_callback, gc);
-
-		if (rc != 0)
-			gaim_connection_error(gc, _("Unable to create socket"));
+		if(connect_server[0]) {
+			jabber_login_connect(js, connect_server, gaim_account_get_int(account, "port", 5222));
+		} else {
+			gaim_srv_resolve("xmpp-client", "tcp", js->user->domain, srv_resolved_cb, js);
+		}
 	}
 }
+
 
 static gboolean
 conn_close_cb(gpointer data)
@@ -1633,7 +1658,7 @@ init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
-	option = gaim_account_option_int_new(_("Port"), "port", 5222);
+	option = gaim_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
