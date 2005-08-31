@@ -895,15 +895,18 @@ static void jabber_chat_disco_traffic_cb(JabberStream *js, xmlnode *packet, gpoi
 	if(!(chat = jabber_chat_find_by_id(js, id)))
 		return;
 
+	/* defaults, in case the conference server doesn't
+	 * support this request */
+	chat->xhtml = TRUE;
+
 	if((error = xmlnode_get_child(packet, "error"))) {
-		/* defaults, in case the conference server doesn't
-		 * support this request */
-		chat->xhtml = TRUE;
 		return;
 	}
 
 	if(!(query = xmlnode_get_child(packet, "query")))
 		return;
+
+	chat->xhtml = FALSE;
 
 	for(x = xmlnode_get_child(query, "feature"); x; x = xmlnode_get_next_twin(x)) {
 		const char *var = xmlnode_get_attrib(x, "var");
@@ -918,9 +921,14 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 {
 	JabberIq *iq;
 	xmlnode *query;
+	char *room_jid;
+
+	room_jid = g_strdup_printf("%s@%s", chat->room, chat->server);
 
 	iq = jabber_iq_new_query(chat->js, JABBER_IQ_GET,
 			"http://jabber.org/protocol/disco#info");
+
+	xmlnode_set_attrib(iq->node, "to", room_jid); 
 
 	query = xmlnode_get_child(iq->node, "query");
 
@@ -929,6 +937,8 @@ void jabber_chat_disco_traffic(JabberChat *chat)
 	jabber_iq_set_callback(iq, jabber_chat_disco_traffic_cb, GINT_TO_POINTER(chat->id));
 
 	jabber_iq_send(iq);
+
+	g_free(room_jid);
 }
 
 
