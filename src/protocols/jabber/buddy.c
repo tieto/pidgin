@@ -369,7 +369,7 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 	/*
 	 * Send only if there's actually any *information* to send
 	 */
-	vc_node = xmlnode_from_str(info, -1);
+	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
 	avatar_file = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(gc->account));
 
 	if(!vc_node && avatar_file) {
