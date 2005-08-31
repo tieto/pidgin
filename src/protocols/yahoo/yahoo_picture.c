@@ -263,7 +263,7 @@ void yahoo_send_picture_checksum(GaimConnection *gc)
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_CHECKSUM, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssd", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "ssi", 1, gaim_connection_get_display_name(gc),
 			  212, "1", 192, yd->picture_checksum);
 	yahoo_packet_send_and_free(pkt, yd);
 }
@@ -274,7 +274,7 @@ void yahoo_send_picture_update_to_user(GaimConnection *gc, const char *who, int 
 	struct yahoo_packet *pkt;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_PICTURE_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssd", 1, gaim_connection_get_display_name(gc), 5, who, 206, type);
+	yahoo_packet_hash(pkt, "ssi", 1, gaim_connection_get_display_name(gc), 5, who, 206, type);
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
