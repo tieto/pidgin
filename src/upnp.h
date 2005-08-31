@@ -26,6 +26,14 @@
 #ifndef _GAIM_UPNP_H_
 #define _GAIM_UPNP_H_
 
+
+typedef struct
+{
+  gchar* controlURL;
+  gchar* serviceType;
+} GaimUPnPControlInfo;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -44,7 +52,7 @@ extern "C" {
  *
  * @return The control URL for the IGD we'll use to use the IGD services
  */
-char* gaim_upnp_discover(void);
+GaimUPnPControlInfo* gaim_upnp_discover(void);
 
 
 
@@ -57,7 +65,7 @@ char* gaim_upnp_discover(void);
  *
  * @return The IP address of the network, or NULL if something went wrong
  */
-char* gaim_upnp_get_public_ip(const char* controlURL);
+gchar* gaim_upnp_get_public_ip(const GaimUPnPControlInfo* controlInfo);
 
 
 /**
@@ -71,9 +79,9 @@ char* gaim_upnp_get_public_ip(const char* controlURL);
  *
  * @return TRUE if success, FALSE if something went wrong.
  */
-gboolean gaim_upnp_set_port_mapping(const char* controlURL, 
+gboolean gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo, 
                                     unsigned short portMap,
-                                    const char* protocol);
+                                    const gchar* protocol);
 
 /**
  * Deletes a port mapping in a UPnP enabled IGD that sits on the local network
@@ -88,8 +96,9 @@ gboolean gaim_upnp_set_port_mapping(const char* controlURL,
  * @return TRUE if success, FALSE if something went wrong.
  */
 gboolean 
-gaim_upnp_remove_port_mapping(const char* controlURL, unsigned short portMap,
-                           const char* protocol);
+gaim_upnp_remove_port_mapping(const GaimUPnPControlInfo* controlURL, 
+                              unsigned short portMap,
+                              const gchar* protocol);
 /*@}*/
 
 

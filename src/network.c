@@ -29,8 +29,8 @@
 #include "account.h"
 #include "network.h"
 #include "prefs.h"
-#include "stun.h"
 #include "upnp.h"
+
 
 const unsigned char *
 gaim_network_ip_atoi(const char *ip)
@@ -68,17 +68,11 @@ const char *
 gaim_network_get_public_ip(void)
 {
 	const char *ip;
-	struct stun_nattype *stun;
-	
+
 	ip = gaim_prefs_get_string("/core/network/public_ip");
 
-	if (ip == NULL || *ip == '\0') {
-		/* Check if STUN discovery was already done */
-		stun = gaim_stun_discover(NULL);
-		if(stun && stun->status>1)
-			return stun->publicip;
+	if (ip == NULL || *ip == '\0')
 		return NULL;
-	}
 
 	return ip;
 }
@@ -142,7 +136,7 @@ const char *
 gaim_network_get_my_ip(int fd)
 {
   const char *ip = NULL;
-  char *controlURL = NULL;
+  GaimUPnPControlInfo* controlInfo = NULL;
 
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -152,23 +146,27 @@ gaim_network_get_my_ip(int fd)
 	}
 
   /* attempt to get the ip from a NAT device */
-  if ((controlURL = gaim_upnp_discover()) != NULL) {
-    ip = gaim_upnp_get_public_ip(controlURL);
-    free(controlURL);
-    if (ip != NULL)
+  if ((controlInfo = gaim_upnp_discover()) != NULL) {
+    ip = gaim_upnp_get_public_ip(controlInfo);
+    g_free(controlInfo->controlURL);
+    g_free(controlInfo->serviceType);
+    g_free(controlInfo);
+    if (ip != NULL) {
       return ip;
+    }
   }
 
 	/* Just fetch the IP of the local system */
 	return gaim_network_get_local_system_ip(fd);
 }
 
+
 static int
 gaim_network_do_listen(unsigned short port)
 {
 	int listenfd = -1;
 	const int on = 1;
-  char *controlURL = NULL;
+  GaimUPnPControlInfo* controlInfo = NULL;
 #if HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
@@ -243,12 +241,19 @@ gaim_network_do_listen(unsigned short port)
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
-  if((controlURL = gaim_upnp_discover()) != NULL) {
-    if(!gaim_upnp_set_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP")) {
-      gaim_upnp_remove_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP");
-      gaim_upnp_set_port_mapping(controlURL, gaim_network_get_port_from_fd(listenfd), "TCP");
-    }
-    free(controlURL);
+  if((controlInfo = gaim_upnp_discover()) != NULL) {
+    if(!gaim_upnp_set_port_mapping(controlInfo, 
+                    gaim_network_get_port_from_fd(listenfd), 
+                    "TCP")) {
+      gaim_upnp_remove_port_mapping(controlInfo, 
+                gaim_network_get_port_from_fd(listenfd), "TCP");
+      gaim_upnp_set_port_mapping(controlInfo, 
+                gaim_network_get_port_from_fd(listenfd), "TCP");
+
+    } 
+    g_free(controlInfo->serviceType);
+    g_free(controlInfo->controlURL);
+    g_free(controlInfo);
   }
 
 	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));
