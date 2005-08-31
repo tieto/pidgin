@@ -817,6 +817,8 @@ static void jabber_close(GaimConnection *gc)
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
 	g_free(js);
+
+	gc->proto_data = NULL;
 }
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
