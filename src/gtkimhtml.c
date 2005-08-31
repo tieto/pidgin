@@ -1230,7 +1230,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					      G_TYPE_INT);
 	signals[CLEAR_FORMAT] = g_signal_new("format_function_clear",
 					      G_TYPE_FROM_CLASS(gobject_class),
-					      G_SIGNAL_RUN_FIRST,
+					      G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
 					      G_STRUCT_OFFSET(GtkIMHtmlClass, clear_format),
 					      NULL,
 					      0,
@@ -1275,6 +1275,7 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_equal, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_GROW);
 	gtk_binding_entry_add_signal (binding_set, GDK_minus, GDK_CONTROL_MASK, "format_function_toggle", 1, G_TYPE_INT, GTK_IMHTML_SHRINK);
 	binding_set = gtk_binding_set_by_class(klass);
+	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
 }
