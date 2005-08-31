@@ -795,10 +795,10 @@ void irc_msg_nickused(struct irc_conn *irc, const char *name, const char *from, 
 
 	newnick = strdup(args[1]);
 	end = newnick + strlen(newnick) - 1;
-	/* try three fallbacks */
-	if (*end == 2) *end = '3';
-	else if (*end == 1) *end = '2';
-	else *end = '1';
+	/* try fallbacks */
+	if((*end < '9') && (*end >= '1')) {
+			*end = *end + 1;
+	} else *end = '1';
 
 	buf = irc_format(irc, "vn", "NICK", newnick);
 	irc_send(irc, buf);
