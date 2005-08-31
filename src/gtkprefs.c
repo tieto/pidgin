@@ -2107,7 +2107,12 @@ int prefs_notebook_add_page(const char *text,
 	if (icon)
 		g_object_unref(icon);
 
+#if GTK_CHECK_VERSION(2,4,0)
 	return gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
+#else
+	gtk_notebook_append_page(GTK_NOTEBOOK(prefsnotebook), page, gtk_label_new(text));
+	return gtk_notebook_page_num(GTK_NOTEBOOK(prefsnotebook), page);
+#endif
 }
 
 static void prefs_notebook_init() {
