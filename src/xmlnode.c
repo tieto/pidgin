@@ -405,11 +405,15 @@ static GMarkupParser xmlnode_parser = {
 xmlnode *
 xmlnode_from_str(const char *str, gssize size)
 {
-	struct _xmlnode_parser_data *xpd = g_new0(struct _xmlnode_parser_data, 1);
+	struct _xmlnode_parser_data *xpd;
 	xmlnode *ret;
 	GMarkupParseContext *context;
-	gsize real_size = size == -1 ? strlen(str) : size;
+	gsize real_size;
 
+	g_return_val_if_fail(str != NULL, NULL);
+
+	real_size = size == -1 ? strlen(str) : size;
+	xpd = g_new0(struct _xmlnode_parser_data, 1);
 	context = g_markup_parse_context_new(&xmlnode_parser, 0, xpd, NULL);
 
 	if(!g_markup_parse_context_parse(context, str, real_size, NULL)) {
