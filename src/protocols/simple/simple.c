@@ -4,7 +4,7 @@
  * gaim
  *
  * Copyright (C) 2005 Thomas Butter <butter@uni-mannheim.de>
- * 
+ *
  * ***
  * Thanks to Google's Summer of Code Program and the helpful mentors
  * ***
@@ -48,7 +48,7 @@ static char *gentag() {
 }
 
 static char *genbranch() {
-	        return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
+	return g_strdup_printf("z9hG4bK%04X%04X%04X%04X%04X",
                         rand() & 0xFFFF,
                         rand() & 0xFFFF,
                         rand() & 0xFFFF,
@@ -57,7 +57,7 @@ static char *genbranch() {
 }
 
 static char *gencallid() {
-	        return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
+	return g_strdup_printf("%04Xg%04Xa%04Xi%04Xm%04Xt%04Xb%04Xx%04Xx",
                         rand() & 0xFFFF,
                         rand() & 0xFFFF,
                         rand() & 0xFFFF,
@@ -69,7 +69,7 @@ static char *gencallid() {
 }
 
 static const char *simple_list_icon(GaimAccount *a, GaimBuddy *b) {
-	        return "simple";
+	return "simple";
 }
 
 static void simple_keep_alive(GaimConnection *gc) {
@@ -80,7 +80,7 @@ static void simple_keep_alive(GaimConnection *gc) {
 		gaim_debug_info("simple", "sending keep alive\n");
 		sendto(sip->fd, buf, 1, 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in));
 	}
-	return; 
+	return;
 }
 
 static gboolean process_register_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc);
@@ -92,7 +92,7 @@ static void do_notifies(struct simple_account_data *sip) {
 	GSList *tmp = sip->watcher;
 	gaim_debug_info("simple", "do_notifies()\n");
 	if((sip->republish != -1) || sip->republish < time(NULL)) {
-	        if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
+		if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
 			send_publish(sip);
 		}
 	}
@@ -105,7 +105,7 @@ static void do_notifies(struct simple_account_data *sip) {
 }
 
 static void simple_set_status(GaimAccount *account, GaimStatus *status) {
-        GaimStatusPrimitive primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+	GaimStatusPrimitive primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
 	struct simple_account_data *sip = NULL;
 	if (!gaim_status_is_active(status))
 		return;
@@ -118,7 +118,7 @@ static void simple_set_status(GaimAccount *account, GaimStatus *status) {
 
 		do_notifies(sip);
 	}
-	if ((primitive != GAIM_STATUS_OFFLINE) 
+	if ((primitive != GAIM_STATUS_OFFLINE)
 			&& (!gaim_account_is_connected(account))) {
 		gaim_account_connect(account);
 	}
@@ -202,9 +202,9 @@ static void simple_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *gr
 		gaim_blist_remove_buddy(buddy);
 		return;
 	}
-       	if(!g_hash_table_lookup(sip->buddies, buddy->name)) {
+	if(!g_hash_table_lookup(sip->buddies, buddy->name)) {
 		b = g_new0(struct simple_buddy, 1);
-	        gaim_debug_info("simple","simple_add_buddy %s\n",buddy->name);
+		gaim_debug_info("simple","simple_add_buddy %s\n",buddy->name);
 		b->name = g_strdup(buddy->name);
 		g_hash_table_insert(sip->buddies, b->name, b);
 	} else {
@@ -216,7 +216,7 @@ static void simple_get_buddies(GaimConnection *gc) {
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	gaim_debug_info("simple","simple_get_buddies\n");
-	
+
 	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode)) continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
@@ -249,21 +249,21 @@ static GList *simple_status_types(GaimAccount *acc) {
 	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE);
 	types = g_list_append(types, type);
 
-        type = gaim_status_type_new_with_attrs(
-	                GAIM_STATUS_AVAILABLE, "available", _("Available"),
-		                TRUE, TRUE, FALSE,
-                "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
-        types = g_list_append(types, type);
-	
+	type = gaim_status_type_new_with_attrs(
+		GAIM_STATUS_AVAILABLE, "available", _("Available"),
+		TRUE, TRUE, FALSE,
+		"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+	types = g_list_append(types, type);
+
 	return types;
 }
 
 static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth, gchar *method, gchar *target) {
 	gchar noncecount[9];
-        HASHHEX HA2;
+	HASHHEX HA2;
 	HASHHEX response;
 	gchar *ret;
-	
+
 	sprintf(noncecount, "%08d", auth->nc++);
 	DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
@@ -287,9 +287,9 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		}
 		i++;
 	}
-	
+
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
-	
+
 	DigestCalcHA1("md5", sip->username, auth->realm, sip->password, auth->nonce, "", auth->HA1);
 
 	auth->nc=1;
@@ -321,11 +321,11 @@ static void sendlater(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	int error = 0;
 	if(!sip->connecting) {
-	        gaim_debug_info("simple","connecting to %s port %d\n", sip->realhostname, sip->realport);
-	        error = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
-	        if(error) {
-	                gaim_connection_error(gc, _("Couldn't create socket"));
-	        }
+		gaim_debug_info("simple","connecting to %s port %d\n", sip->realhostname ? sip->realhostname : "{NULL}", sip->realport);
+		error = gaim_proxy_connect(sip->account, sip->realhostname, sip->realport, send_later_cb, gc);
+		if(error) {
+			gaim_connection_error(gc, _("Couldn't create socket"));
+		}
 		sip->connecting = 1;
 	}
 	if(sip->sendlater) {
@@ -340,7 +340,7 @@ static int sendout_pkt(GaimConnection *gc, const char *buf) {
 	struct simple_account_data *sip = gc->proto_data;
 	time_t currtime = time(NULL);
 	int ret = 0;
-	
+
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "\n\nsending - %s\n######\n%s\n######\n\n", ctime(&currtime), buf);
 	if(sip->udp) {
 		if(sendto(sip->fd, buf, strlen(buf), 0, (struct sockaddr*)&sip->serveraddr, sizeof(struct sockaddr_in)) < strlen(buf)) {
@@ -349,7 +349,7 @@ static int sendout_pkt(GaimConnection *gc, const char *buf) {
 	} else {
 		if(sip->fd <0 ) {
 			sendlater(gc, buf);
-		      	return 0;
+			return 0;
 		}
 		ret = write(sip->fd, buf, strlen(buf));
 		if(ret < 0) {
@@ -368,9 +368,9 @@ static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) 
 	GSList *tmp = msg->headers;
 	while(tmp) {
 		oldstr = outstr;
-                name = ((struct siphdrelement*)(tmp->data))->name;
-                value = ((struct siphdrelement*)(tmp->data))->value;
-                outstr = g_strdup_printf("%s%s: %s\r\n",oldstr, name, value);
+		name = ((struct siphdrelement*)(tmp->data))->name;
+		value = ((struct siphdrelement*)(tmp->data))->value;
+		outstr = g_strdup_printf("%s%s: %s\r\n",oldstr, name, value);
 		g_free(oldstr);
 		tmp = g_slist_next(tmp);
 	}
@@ -379,7 +379,7 @@ static void sendout_sipmsg(struct simple_account_data *sip, struct sipmsg *msg) 
 	else outstr = g_strdup_printf("%s\r\n", outstr);
 	g_free(oldstr);
 	sendout_pkt(sip->gc, outstr);
-        g_free(outstr);
+	g_free(outstr);
 }
 
 static void send_sip_response(GaimConnection *gc, struct sipmsg *msg, int code, char *text, char *body) {
@@ -431,7 +431,7 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 		}
 		transactions = transactions->next;
 	}
-	
+
 	return (struct transaction *)NULL;
 }
 
@@ -442,10 +442,10 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	char *addh="";
 	gchar *branch = genbranch();
 	char *buf;
-       
+
 	if(addheaders) addh=addheaders;
 	if(sip->registrar.nonce && !strcmp(method,"REGISTER")) {
-		buf = auth_header(sip, &sip->registrar, method, url);	
+		buf = auth_header(sip, &sip->registrar, method, url);
 		auth = g_strdup_printf("Authorization: %s",buf);
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
@@ -458,7 +458,6 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
-	
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			"From: <sip:%s@%s>;tag=%s\r\n"
@@ -472,7 +471,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 			method,
 			url,
 			sip->udp ? "UDP" : "TCP",
-			sip->ip,	
+			sip->ip ? sip->ip : "",
 			sip->listenport,
 			branch,
 			sip->username,
@@ -492,21 +491,21 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	g_free(callid);
 
 	/* add to ongoing transactions */
-	
+
 	transactions_add_buf(sip, buf, tc);
-	
+
 	sendout_pkt(gc,buf);
-	
+
 	g_free(buf);
 }
 
 static void do_register_exp(struct simple_account_data *sip, int expire) {
 	sip->registerstatus = 1;
-	
+
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
-	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip, sip->listenport, sip->udp ? "udp" : "tcp", expire);
-	
+	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip ? sip->ip : "", sip->listenport, sip->udp ? "udp" : "tcp", expire);
+
 	if(expire) {
 		sip->reregister = time(NULL) + expire - 50;
 	} else {
@@ -527,7 +526,7 @@ static gchar *parse_from(gchar *hdr) {
 	gchar *tmp;
 
 	if(!from) return NULL;
-	gaim_debug_info("simple", "parsing address out of %s\n",from);	
+	gaim_debug_info("simple", "parsing address out of %s\n",from);
 	tmp = strchr(from, '<');
 
 	/* i hate the different SIP UA behaviours... */
@@ -552,14 +551,13 @@ static gchar *parse_from(gchar *hdr) {
 
 static gboolean process_subscribe_response(struct simple_account_data *sip, struct sipmsg *msg, struct transaction *tc) {
 	gchar *to = parse_from(sipmsg_find_header(tc->msg,"To")); /* cant be NULL since it is our own msg */
-	
-	
+
 	if(msg->response==200 || msg->response==202) {
 		return TRUE;
 	}
 
 	/* we can not subscribe -> user is offline (TODO unknown status?) */
-	
+
 	gaim_prpl_got_user_status(sip->account, to, "offline", NULL);
 	g_free(to);
 	return TRUE;
@@ -568,17 +566,17 @@ static gboolean process_subscribe_response(struct simple_account_data *sip, stru
 static void simple_subscribe(struct simple_account_data *sip, struct simple_buddy *buddy) {
 	gchar *contact = "Expires: 300\r\nAccept: application/pidf+xml\r\nEvent: presence\r\n";
 	gchar *to;
-       	if(strstr(buddy->name,"sip:")) to = g_strdup(buddy->name);
+	if(strstr(buddy->name,"sip:")) to = g_strdup(buddy->name);
 	else to = g_strdup_printf("sip:%s",buddy->name);
 	contact = g_strdup_printf("%sContact: <%s@%s>\r\n", contact, sip->username, sip->servername);
 	/* subscribe to buddy presence
 	 * we dont need to know the status so we do not need a callback */
-	 
+
 	send_sip_request(sip->gc, "SUBSCRIBE",to, to, contact, "", NULL, process_subscribe_response);
-	
+
 	g_free(to);
 	g_free(contact);
-	
+
 	/* resubscribe before subscription expires */
 	/* add some jitter */
 	buddy->resubscribe = time(NULL)+250+(rand()%50);
@@ -588,7 +586,7 @@ static void simple_buddy_resub(char *name, struct simple_buddy *buddy, struct si
 	time_t curtime = time(NULL);
 	gaim_debug_info("simple","buddy resub\n");
 	if(buddy->resubscribe < curtime) {
-        	gaim_debug(GAIM_DEBUG_MISC, "simple", "simple_buddy_resub %s\n",name);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "simple_buddy_resub %s\n",name);
 		simple_subscribe(sip, buddy);
 	}
 }
@@ -624,7 +622,7 @@ static gboolean register_timeout(struct simple_account_data *sip) {
 	g_hash_table_foreach(sip->buddies, (GHFunc)simple_buddy_resub, (gpointer)sip);
 
 	/* remove a timed out suscriber */
-	
+
 	tmp = sip->watcher;
 	while(tmp) {
 		struct simple_watcher *watcher = tmp->data;
@@ -634,13 +632,13 @@ static gboolean register_timeout(struct simple_account_data *sip) {
 		}
 		if(tmp) tmp = tmp->next;
 	}
-	
+
 	return TRUE;
 }
 
 static void simple_send_message(struct simple_account_data *sip, char *to, char *msg, char *type) {
 	gchar *hdr;
-       	if(type) {
+	if(type) {
 		hdr = g_strdup_printf("Content-Type: %s\r\n",type);
 	} else {
 		hdr = g_strdup("Content-Type: text/plain\r\n");
@@ -667,39 +665,39 @@ static void process_incoming_message(struct simple_account_data *sip, struct sip
 	from = parse_from(sipmsg_find_header(msg, "From"));
 
 	if(!from) return;
-	
+
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "got message from %s: %s\n", from, msg->body);
 
 	contenttype = sipmsg_find_header(msg, "Content-Type");
-	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {	
+	if(!contenttype || !strncmp(contenttype, "text/plain", 10) || !strncmp(contenttype, "text/html", 9)) {
 		serv_got_im(sip->gc, from, msg->body, 0, time(NULL));
 		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
-	if(!strncmp(contenttype, "application/im-iscomposing+xml",30)) {	
-	        xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
+	if(!strncmp(contenttype, "application/im-iscomposing+xml",30)) {
+		xmlnode *isc = xmlnode_from_str(msg->body, msg->bodylen);
 		xmlnode *state;
 		gchar *statedata;
 
 		if(!isc) {
-	                gaim_debug_info("simple","process_incoming_message: can not parse iscomposing\n");
-	                return;
-	        }
+			gaim_debug_info("simple","process_incoming_message: can not parse iscomposing\n");
+			return;
+		}
 
-	        state = xmlnode_get_child(isc, "state");
+		state = xmlnode_get_child(isc, "state");
 
-	        if(!state) {
-	                gaim_debug_info("simple","process_incoming_message: no state found\n");
-	                return;
-	        }
+		if(!state) {
+			gaim_debug_info("simple","process_incoming_message: no state found\n");
+			return;
+		}
 
-	        statedata = xmlnode_get_data(state);
+		statedata = xmlnode_get_data(state);
 		if(statedata) {
-	                if(strstr(statedata,"active")) serv_got_typing(sip->gc, from, 0, GAIM_TYPING);
+			if(strstr(statedata,"active")) serv_got_typing(sip->gc, from, 0, GAIM_TYPING);
 			else serv_got_typing_stopped(sip->gc, from);
 		}
 		xmlnode_free(isc);
-                send_sip_response(sip->gc, msg, 200, "OK", NULL);
+		send_sip_response(sip->gc, msg, 200, "OK", NULL);
 		found = TRUE;
 	}
 	if(!found) {
@@ -716,7 +714,7 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 	switch (msg->response) {
 		case 200:
 			if(sip->registerstatus<3) { /* registered */
-			        if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
+				if(gaim_account_get_bool(sip->account, "dopublish", TRUE)) {
 					send_publish(sip);
 				}
 			}
@@ -725,14 +723,14 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 
 			/* get buddies from blist */
 			simple_get_buddies(sip->gc);
-			
+
 			register_timeout(sip);
 			break;
 		case 401:
 			if(sip->registerstatus!=2) {
 				gaim_debug_info("simple","REGISTER retries %d\n",sip->registrar.retries);
 				if(sip->registrar.retries>3) {
-			                gaim_connection_error(sip->gc,"Wrong Password");
+					gaim_connection_error(sip->gc,"Wrong Password");
 					return TRUE;
 				}
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
@@ -759,27 +757,26 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 	if(!from) return;
 
 	pidf = xmlnode_from_str(msg->body, msg->bodylen);
-	
+
 	if(!pidf) {
 		gaim_debug_info("simple","process_incoming_notify: no parseable pidf\n");
 		return;
 	}
 
-	
 	basicstatus = xmlnode_get_child(xmlnode_get_child(xmlnode_get_child(pidf,"tuple"),"status"), "basic");
 
 	if(!basicstatus) {
 		gaim_debug_info("simple","process_incoming_notify: no basic found\n");
 		return;
 	}
-	
+
 	tmp2 = xmlnode_get_data(basicstatus);
-	
+
 	if(!tmp2) {
 		gaim_debug_info("simple","process_incoming_notify: no basic data found\n");
 		return;
 	}
-	
+
 	if(strstr(tmp2, "open")) {
 		isonline = TRUE;
 	}
@@ -789,7 +786,7 @@ static void process_incoming_notify(struct simple_account_data *sip, struct sipm
 
 	xmlnode_free(pidf);
 
-	g_free(from);	
+	g_free(from);
 	send_sip_response(sip->gc, msg, 200, "OK", NULL);
 }
 
@@ -834,10 +831,10 @@ static gchar *find_tag(gchar *hdr) {
 
 static gchar* gen_pidf(struct simple_account_data *sip) {
 	gchar *doc = g_strdup_printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-		   "<presence xmlns=\"urn:ietf:params:xml:ns:pidf\"\n"
-		   "xmlns:im=\"urn:ietf:params:xml:ns:pidf:im\"\n"
-		   "entity=\"sip:%s@%s\">\n"
-		   "<tuple id=\"bs35r9f\">\n"
+			"<presence xmlns=\"urn:ietf:params:xml:ns:pidf\"\n"
+			"xmlns:im=\"urn:ietf:params:xml:ns:pidf:im\"\n"
+			"entity=\"sip:%s@%s\">\n"
+			"<tuple id=\"bs35r9f\">\n"
 			"<status>\n"
 			"<basic>open</basic>\n"
 			"<im:im>%s</im:im>\n"
@@ -932,7 +929,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 			found = 1;
 		}
 		if(!found) {
-	                send_sip_response(sip->gc, msg, 501, "Not implemented", NULL);
+			send_sip_response(sip->gc, msg, 501, "Not implemented", NULL);
 		}
 	} else { /* response */
 		struct transaction *trans = transactions_find(sip, msg);
@@ -945,7 +942,7 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				gchar *ptmp = sipmsg_find_header(msg,"Proxy-Authenticate");
 				gchar *resend;
 				gchar *auth;
-					
+
 				fill_auth(sip, ptmp, &sip->proxy);
 				auth = auth_header(sip, &sip->proxy, trans->msg->method, trans->msg->target);
 				sipmsg_remove_header(msg, "Proxy-Authorization");
@@ -981,7 +978,6 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 	char *dummy;
 	struct sipmsg *msg;
 	int restlen;
-	
 	cur = conn->inbuf;
 
 	/* according to the RFC remove CRLF at the beginning */
@@ -1015,7 +1011,7 @@ static void process_input(struct simple_account_data *sip, struct sip_connection
 			sipmsg_free(msg);
 			return;
 		}
-        	gaim_debug(GAIM_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "in process response response: %d\n", msg->response);
 		process_input_message(sip,msg);
 	} else {
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "received a incomplete sip msg: %s\n", conn->inbuf);
@@ -1067,7 +1063,7 @@ static void simple_input_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	conn->inbufused += len;
 	conn->inbuf[conn->inbufused]='\0';
-	
+
 	process_input(sip, conn);
 }
 
@@ -1077,11 +1073,10 @@ static void simple_newconn_cb(gpointer data, gint source, GaimInputCondition con
 	struct simple_account_data *sip = gc->proto_data;
 	struct sip_connection *conn;
 
-
 	int newfd = accept(source, NULL, NULL);
 
 	conn = connection_create(sip, newfd);
-	
+
 	conn->inputhandler = gaim_input_add(newfd, GAIM_INPUT_READ, simple_input_cb, gc);
 }
 
@@ -1097,14 +1092,13 @@ static void login_cb(gpointer data, gint source, GaimInputCondition cond) {
 
 	sip->fd = source;
 
-
 	conn = connection_create(sip, source);
-	
+
 	/* get the local ip */
 	sip->ip = g_strdup(gaim_network_get_my_ip(source));
-	
+
 	do_register(sip);
-	
+
 	conn->inputhandler = gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_input_cb, gc);
 }
 
@@ -1112,7 +1106,7 @@ static guint simple_ht_hash_nick(const char *nick) {
 	char *lc = g_utf8_strdown(nick, -1);
 	guint bucket = g_str_hash(lc);
 	g_free(lc);
-	
+
 	return bucket;
 }
 
@@ -1142,12 +1136,12 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 			hostname = g_strdup(gaim_account_get_string(sip->account, "proxy", sip->servername));
 		}
 	}
-	
+
 	sip->realhostname = hostname;
-	sip->realport = port;	
+	sip->realport = port;
 	/* TCP case */
-	if(! sip->udp) {	
-	        gaim_debug_info("simple","connecting to %s port %d\n", hostname, port);
+	if(! sip->udp) {
+		gaim_debug_info("simple","connecting to %s port %d\n", hostname, port);
 		/* open tcp connection to the server */
 		error = gaim_proxy_connect(sip->account, hostname, port, login_cb, sip->gc);
 		if(error) {
@@ -1178,12 +1172,12 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 		gaim_input_add(sip->fd, GAIM_INPUT_READ, simple_udp_process, sip->gc);
 		sip->serveraddr.sin_family = AF_INET;
 		sip->serveraddr.sin_port = htons(port);
-		
+
 		h = gethostbyname(hostname);
 		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
-	        sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
+		sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
 		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
-	        do_register(sip);
+		do_register(sip);
 	}
 }
 
@@ -1193,7 +1187,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	struct simple_account_data *sip;
 	gchar **userserver;
 	gchar *hosttoconnect;
-	       
+
 	const char *username = gaim_account_get_username(account);
 
 	gc = gaim_account_get_connection(account);
@@ -1201,11 +1195,11 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	sip->gc=gc;
 	sip->account = account;
 	sip->registerexpire = 900;
-	sip->udp = gaim_account_get_bool(account, "udp", FALSE);	
-        if (strpbrk(username, " \t\v\r\n") != NULL) {
-                gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
-       	        return;
-        }
+	sip->udp = gaim_account_get_bool(account, "udp", FALSE);
+	if (strpbrk(username, " \t\v\r\n") != NULL) {
+		gaim_connection_error(gc, _("SIP usernames may not contain whitespaces or @ symbols"));
+		return;
+	}
 
 	userserver = g_strsplit(username, "@", 2);
 	gaim_connection_set_display_name(gc,userserver[0]);
@@ -1215,8 +1209,8 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	g_strfreev(userserver);
 
 	sip->buddies = g_hash_table_new((GHashFunc)simple_ht_hash_nick, (GEqualFunc)simple_ht_equals_nick);
-	
-        gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
+
+	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
 	sip->status = g_strdup("available");
 
@@ -1225,15 +1219,15 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 	} else {
 		hosttoconnect = g_strdup(gaim_account_get_string(account, "proxy", sip->servername));
 	}
-	
+
 	/* TCP case */
-	if(! sip->udp) {	
+	if(! sip->udp) {
 		gaim_srv_resolve("sip","tcp",hosttoconnect,srvresolved, sip);
 	} else { /* UDP */
-		gaim_srv_resolve("sip","udp",hosttoconnect,srvresolved, sip);	
+		gaim_srv_resolve("sip","udp",hosttoconnect,srvresolved, sip);
 	}
 	g_free(hosttoconnect);
-		
+
 	/* register timeout callback for register / subscribe renewal */
 	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)register_timeout, sip);
 }
@@ -1363,11 +1357,11 @@ static GaimPluginInfo info =
 
 static void _init_plugin(GaimPlugin *plugin)
 {
-        GaimAccountUserSplit *split;
+	GaimAccountUserSplit *split;
 	GaimAccountOption *option;
 
-        split = gaim_account_user_split_new(_("Server"), "", '@');
-        prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
+	split = gaim_account_user_split_new(_("Server"), "", '@');
+	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	option = gaim_account_option_bool_new(_("Publish Status (note: everyone may watch you)"), "dopublish", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
