@@ -52,6 +52,7 @@ typedef union {
 
 struct resdata {
 	SRVCallback cb;
+	gpointer extradata;
 #ifndef _WIN32
 	guint handle;
 #else
@@ -176,7 +177,7 @@ static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 		read(source, tmp++, sizeof(struct srv_response));
 		size--;
 	}
-	cb(res, size);
+	cb(res, size, rdata->extradata);
 	gaim_input_remove(rdata->handle);
 	g_free(rdata);
 }
@@ -211,7 +212,7 @@ static gboolean res_main_thread_cb(gpointer data) {
 		rdata->results = lst;
 	}
 
-	rdata->cb(srvres, size);
+	rdata->cb(srvres, size, rdata->extradata);
 
 	g_free(rdata->query);
 	g_free(rdata);
@@ -265,7 +266,7 @@ static gpointer res_thread(gpointer data) {
 
 #endif
 
-void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb) {
+void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb, gpointer extradata) {
 	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
 	struct resdata *rdata;
 #ifndef _WIN32
@@ -275,7 +276,7 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 	if(pipe(in) || pipe(out)) {
 		gaim_debug_error("srv", "Could not create pipe\n");
 		g_free(query);
-		cb(NULL, 0);
+		cb(NULL, 0, extradata);
 		return;
 	}
 
@@ -283,7 +284,7 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 
 	if(pid == -1) {
 		gaim_debug_error("srv","Could not create process!\n");
-		cb(NULL, 0);
+		cb(NULL, 0, extradata);
 		g_free(query);
 		return;
 	}
@@ -302,6 +303,7 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 	}
 	rdata = g_new0(struct resdata,1);
 	rdata->cb = cb;
+	rdata->extradata = extradata;
 	rdata->handle = gaim_input_add(out[0], GAIM_INPUT_READ, resolved, rdata);
 
 	g_free(query);
@@ -328,7 +330,7 @@ void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback
 	if (!MyDnsQuery_UTF || !MyDnsRecordListFree) {
 		gaim_debug_error("srv", "System missing DNS API (Requires W2K+)\n");
 		g_free(query);
-		cb(NULL, 0);
+		cb(NULL, 0, extradata);
 		return;
 	}
 

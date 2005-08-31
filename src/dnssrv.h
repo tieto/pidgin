@@ -30,7 +30,7 @@ struct srv_response {
 	int pref;
 };
 
-typedef void (*SRVCallback)(struct srv_response *resp, int results);
+typedef void (*SRVCallback)(struct srv_response *resp, int results, gpointer data);
 
 /**
  * Queries an SRV record.
@@ -40,6 +40,6 @@ typedef void (*SRVCallback)(struct srv_response *resp, int results);
  * @param domain Domainname to query (e.g. "blubb.com")
  * @cb A callback which will be called with the results
  */
-void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb);
+void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb, gpointer extradata);
 
 #endif /* _GAIM_DNSSRV_H */
