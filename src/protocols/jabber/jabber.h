@@ -38,6 +38,7 @@ typedef enum {
 	JABBER_CAP_SI_FILE_XFER   = 1 << 3,
 	JABBER_CAP_BYTESTREAMS    = 1 << 4,
 	JABBER_CAP_IBB            = 1 << 5,
+	JABBER_CAP_CHAT_STATES    = 1 << 6,
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 

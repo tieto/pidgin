@@ -1410,6 +1410,33 @@ static GaimCmdRet jabber_cmd_chat_ban(GaimConversation *conv,
 	return GAIM_CMD_RET_OK;
 }
 
+static GaimCmdRet jabber_cmd_chat_affiliate(GaimConversation *conv,
+		const char *cmd, char **args, char **error, void *data)
+{
+	JabberChat *chat = jabber_chat_find_by_conv(conv);
+
+	if (!args || !args[0] || !args[1])
+		return GAIM_CMD_RET_FAILED;
+
+	if (
+		strcmp(args[1], "owner") != 0 && 
+		strcmp(args[1], "admin") != 0 &&
+		strcmp(args[1], "member") != 0 &&
+		strcmp(args[1], "outcast") != 0 &&
+		strcmp(args[1], "none") != 0
+	) {
+		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[1]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	if (!jabber_chat_affiliate_user(chat, args[0], args[1])) {
+		*error = g_strdup_printf(_("Unable to affiliate user %s as \"%s\""), args[0], args[1]);
+		return GAIM_CMD_RET_FAILED;
+	}
+
+	return GAIM_CMD_RET_OK;
+}
+
 static GaimCmdRet jabber_cmd_chat_invite(GaimConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
@@ -1513,6 +1540,12 @@ static void jabber_register_commands(void)
 	                  jabber_cmd_chat_ban,
 	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
 	                  NULL);
+	gaim_cmd_register("affiliate", "ws", GAIM_CMD_P_PRPL,
+					  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
+					  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_affiliate,
+					  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
+					  NULL);
 	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
 	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",

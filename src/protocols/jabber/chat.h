@@ -77,6 +77,8 @@ void jabber_chat_track_handle(JabberChat *chat, const char *handle,
 void jabber_chat_remove_handle(JabberChat *chat, const char *handle);
 gboolean jabber_chat_ban_user(JabberChat *chat, const char *who,
 		const char *why);
+gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who,
+		const char *affiliation);
 gboolean jabber_chat_kick_user(JabberChat *chat, const char *who,
 		const char *why);
 

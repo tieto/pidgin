@@ -854,6 +854,32 @@ gboolean jabber_chat_ban_user(JabberChat *chat, const char *who, const char *why
 	return TRUE;
 }
 
+gboolean jabber_chat_affiliate_user(JabberChat *chat, const char *who, const char *affiliation)
+{
+	JabberIq *iq;
+	JabberChatMember *jcm = g_hash_table_lookup(chat->members, who);
+	char *to;
+	xmlnode *query, *item;
+
+	if (!jcm || !jcm->jid)
+		return FALSE;
+
+	iq = jabber_iq_new_query(chat->js, JABBER_IQ_SET,
+			"http://jabber.org/protocol/muc#admin");
+
+	to = g_strdup_printf("%s@%s", chat->room, chat->server);
+	xmlnode_set_attrib(iq->node, "to", to);
+	g_free(to);
+
+	query = xmlnode_get_child(iq->node, "query");
+	item = xmlnode_new_child(query, "item");
+	xmlnode_set_attrib(item, "jid", jcm->jid);
+	xmlnode_set_attrib(item, "affiliation", affiliation);
+
+	jabber_iq_send(iq);
+
+	return TRUE;
+}
 
 gboolean jabber_chat_kick_user(JabberChat *chat, const char *who, const char *why)
 {
