@@ -1,4 +1,4 @@
-man_MANS = gaim.1 gaim-remote.1
+man_MANS = gaim.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
@@ -12,7 +12,6 @@ EXTRA_DIST = \
 	connection-signals.dox \
 	conversation-signals.dox \
 	gaim.1.in \
-	gaim-remote.1.in \
 	gaims_funniest_home_convos.txt \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
