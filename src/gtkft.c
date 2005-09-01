@@ -135,10 +135,7 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
-		if (gaim_xfer_is_completed(xfer))
-			*kbsec = g_strdup("");
-		else
-			*kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
+		*kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
 	}
 
 	if (time_elapsed != NULL) {
