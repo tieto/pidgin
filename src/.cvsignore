@@ -2,8 +2,7 @@ Makefile.in
 Makefile
 .deps
 .libs
-gaim  
-gaim-remote
+gaim
 gaim.def
 gaim.lib
 gaim.dll

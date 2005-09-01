@@ -48,7 +48,6 @@ require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @moz
 [Install]
 # Put your installation script here
 installExe ./bin/*
-installLib ./lib/libgaim-remote.so.0.0.0
 # do the plugins
 copyFiles ./lib/gaim "$PREFIX/lib"
 installMan 1 ./man/man1/gaim.1

@@ -1319,7 +1319,6 @@ AC_OUTPUT([Makefile
 		   gaim.apspec
 		   doc/Makefile
 		   doc/gaim.1
-		   doc/gaim-remote.1
 		   intl/Makefile
 		   m4macros/Makefile
 		   pixmaps/Makefile
@@ -1331,7 +1330,6 @@ AC_OUTPUT([Makefile
 		   plugins/Makefile
 		   plugins/docklet/Makefile
 		   plugins/gevolution/Makefile
-		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
 		   plugins/musicmessaging/Makefile
 		   plugins/perl/Makefile

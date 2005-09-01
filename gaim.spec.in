@@ -26,14 +26,14 @@ Requires: perl
 %if "%{_vendor}" == "MandrakeSoft"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
-Provides:  libgaim-remote0
+Obsoletes:  libgaim-remote0
 %else
 
 # Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "Mandrakesoft"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
-Provides:  libgaim-remote0
+Obsoletes:  libgaim-remote0
 %else
 
 # SuSE & Red Hat / Fedora requirements
@@ -152,7 +152,6 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
-%attr(755, root, root) %{_libdir}/libgaim-remote.so.*
 %attr(755, root, root) %{_libdir}/libgaimperl.so
 %attr(755, root, root) %{perl_vendorlib}
 
@@ -183,8 +182,6 @@ rm -rf %{buildroot}
 %doc plugins/HOWTO
 %doc HACKING PROGRAMMING_NOTES
 
-%attr(755, root, root) %{_libdir}/libgaim-remote.so
-%attr(755, root, root) %{_libdir}/libgaim-remote.la
 %dir %{_includedir}/gaim
 %{_includedir}/gaim/*.h
 %{_libdir}/pkgconfig/gaim.pc

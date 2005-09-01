@@ -201,7 +201,7 @@ $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 
 gaim_client_example_SOURCES = gaim-client-example.c
 
-gaim_client_example_DEPENDENCIES = @LIBOBJS@ libgaim-client.la 
+gaim_client_example_DEPENDENCIES = @LIBOBJS@ libgaim-client.la
 
 gaim_client_example_LDADD = \
 	@LIBOBJS@ \
@@ -211,7 +211,7 @@ gaim_client_example_LDADD = \
 
 gaim_clientbP = gaim-client-example
 
-gaim-client-example.$(OBJEXT): gaim-client-bindings.h 
+gaim-client-example.$(OBJEXT): gaim-client-bindings.h
 
 # scripts
 
@@ -232,7 +232,7 @@ dbus_session_DATA = gaim.service
 
 endif
 
-bin_PROGRAMS = gaim gaim-remote $(gaim_clientbP)
+bin_PROGRAMS = gaim $(gaim_clientbP)
 
 gaim_SOURCES = \
 	$(gaim_coresources) \
@@ -332,16 +332,6 @@ gaim_LDADD = \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
 	$(STARTUP_NOTIFICATION_LIBS)
-
-gaim_remote_SOURCES = \
-	gaim-remote.c \
-	prefix.c \
-	prefix.h
-
-gaim_remote_DEPENDENCIES = @LIBOBJS@
-gaim_remote_LDADD = \
-	@LIBOBJS@ $(GLIB_LIBS) $(INTLLIBS) \
-	$(top_builddir)/plugins/gaim-remote/libgaim-remote.la
 
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \

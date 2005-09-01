@@ -1,4 +1,4 @@
-DIST_SUBDIRS = docklet gevolution gaim-remote gestures musicmessaging perl ssl tcl ticker
+DIST_SUBDIRS = docklet gevolution gestures musicmessaging perl ssl tcl ticker
 
 if BUILD_GEVOLUTION
 GEVOLUTION_DIR = gevolution
@@ -13,7 +13,7 @@ TCL_DIR = tcl
 endif
 
 SUBDIRS = \
-	docklet gaim-remote $(GEVOLUTION_DIR) gestures \
+	docklet $(GEVOLUTION_DIR) gestures \
 	$(PERL_DIR) ssl $(TCL_DIR) ticker
 
 plugindir = $(libdir)/gaim
