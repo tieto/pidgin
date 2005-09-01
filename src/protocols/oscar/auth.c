@@ -1,15 +1,15 @@
 /*
  * Family 0x0017 - Authentication.
  *
- * Deals with the authorizer for SNAC-based login, and also old-style 
+ * Deals with the authorizer for SNAC-based login, and also old-style
  * non-SNAC login.
  *
  */
 
 #define FAIM_INTERNAL
-#include <aim.h>
+#include "aim.h"
 
-#include "md5.h"
+#include "cipher.c"
 
 #include <ctype.h>
 
@@ -24,7 +24,7 @@
  * the null.  The encoded password buffer /is not %NULL terminated/.
  *
  * The encoding_table seems to be a fixed set of values.  We'll
- * hope it doesn't change over time!  
+ * hope it doesn't change over time!
  *
  * This is only used for the XOR method, not the better MD5 method.
  *
@@ -58,39 +58,48 @@ static int aim_encode_password(const char *password, fu8_t *encoded)
 #ifdef USE_OLD_MD5
 static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
 {
-	md5_state_t state;
+	GaimCipher *cipher;
+	GaimCipherContext *context;
 
-	md5_init(&state);
-	md5_append(&state, (const md5_byte_t *)key, strlen(key));
-	md5_append(&state, (const md5_byte_t *)password, strlen(password));
-	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	md5_finish(&state, (md5_byte_t *)digest);
+	cipher = gaim_ciphers_find_cipher("md5");
+
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, (const guchar *)key, strlen(key));
+	gaim_cipher_context_append(context, (const guchar *)password, strlen(password));
+	gaim_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	gaim_cipher_context_digest(context, 16, digest, NULL);
+	gaim_cipher_context_destroy(context);
 
 	return 0;
 }
 #else
 static int aim_encode_password_md5(const char *password, const char *key, fu8_t *digest)
 {
-	md5_state_t state;
-	fu8_t passdigest[16];
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	guchar passdigest[16];
 
-	md5_init(&state);
-	md5_append(&state, (const md5_byte_t *)password, strlen(password));
-	md5_finish(&state, (md5_byte_t *)&passdigest);
+	cipher = gaim_ciphers_find_cipher("md5");
 
-	md5_init(&state);
-	md5_append(&state, (const md5_byte_t *)key, strlen(key));
-	md5_append(&state, (const md5_byte_t *)&passdigest, 16);
-	md5_append(&state, (const md5_byte_t *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	md5_finish(&state, (md5_byte_t *)digest);
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, (const guchar *)password, strlen(password));
+	gaim_cipher_context_digest(context, 16, passdigest, NULL);
+	gaim_cipher_context_destroy(context);
+
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, (const guchar *)key, strlen(key));
+	gaim_cipher_context_append(context, passdigest, 16);
+	gaim_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	gaim_cipher_context_digest(context, 16, digest, NULL);
+	gaim_cipher_context_destroy(context);
 
 	return 0;
 }
 #endif
 
 /*
- * The FLAP version is sent by itself at the beginning of authorization 
- * connections.  The FLAP version is also sent before the cookie when connecting 
+ * The FLAP version is sent by itself at the beginning of authorization
+ * connections.  The FLAP version is also sent before the cookie when connecting
  * for other services (BOS, chatnav, chat, etc.).
  */
 faim_export int aim_sendflapver(aim_session_t *sess, aim_conn_t *conn)

@@ -5,9 +5,9 @@
 
 #define FAIM_INTERNAL
 #define FAIM_NEED_CONN_INTERNAL
-#include <aim.h>
+#include "aim.h"
 
-#include "md5.h"
+#include "cipher.h"
 
 /* Subtype 0x0002 - Client Online */
 faim_export int aim_clientready(aim_session_t *sess, aim_conn_t *conn)
@@ -967,34 +967,41 @@ faim_export int aim_sendmemblock(aim_session_t *sess, aim_conn_t *conn, fu32_t o
 		aimbs_putraw(&fr->data, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
-		md5_state_t state;
-		md5_byte_t digest[0x10];
+		GaimCipher *cipher;
+		GaimCipherContext *context;
+		guchar digest[16];
 
-		md5_init(&state);
-		md5_append(&state, (const md5_byte_t *)buf, len);
-		md5_finish(&state, digest);
+		cipher = gaim_ciphers_find_cipher("md5");
 
-		aimbs_putraw(&fr->data, (fu8_t *)digest, 0x10);
+		context = gaim_cipher_context_new(cipher, NULL);
+		gaim_cipher_context_append(context, buf, len);
+		gaim_cipher_context_digest(context, 16, digest, NULL);
+		gaim_cipher_context_destroy(context);
+
+		aimbs_putraw(&fr->data, digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
-		md5_state_t state;
+		GaimCipher *cipher;
+		GaimCipherContext *context;
+		guchar digest[16];
 		fu8_t nil = '\0';
-		md5_byte_t digest[0x10];
 
 		/*
-		 * These MD5 routines are stupid in that you have to have
-		 * at least one append.  So thats why this doesn't look 
-		 * real logical.
+		 * I'm not sure if we really need the empty append with the
+		 * new MD5 functions, so I'll leave it in, just in case.
 		 */
-		md5_init(&state);
-		md5_append(&state, (const md5_byte_t *)&nil, 0);
-		md5_finish(&state, digest);
+		cipher = gaim_ciphers_find_cipher("md5");
 
-		aimbs_putraw(&fr->data, (fu8_t *)digest, 0x10);
+		context = gaim_cipher_context_new(cipher, NULL);
+		gaim_cipher_context_append(context, &nil, 0);
+		gaim_cipher_context_digest(context, 16, digest, NULL);
+		gaim_cipher_context_destroy(context);
+
+		aimbs_putraw(&fr->data, digest, 0x10);
 
 	} else {
 
-		/* 
+		/*
 		 * This data is correct for AIM 3.5.1670.
 		 *
 		 * Using these blocks is as close to "legal" as you can get

@@ -28,10 +28,10 @@ DEFINES =
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
-  DLL_INSTALL_DIR = 	$(GAIM_INSTALL_DIR)
-else 
+  DLL_INSTALL_DIR =		$(GAIM_INSTALL_DIR)
+else
   ifeq ($(TYPE),PLUGIN)
-    DLL_INSTALL_DIR = 	$(GAIM_INSTALL_DIR)/plugins
+    DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
   endif
 endif
 
@@ -67,11 +67,11 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			admin.c		\
+C_SRC =		admin.c		\
 			adverts.c	\
-			auth.c 		\
+			auth.c		\
 			bart.c		\
-			bos.c 		\
+			bos.c		\
 			bstream.c	\
 			buddylist.c	\
 			chat.c		\
@@ -84,7 +84,6 @@ C_SRC =			admin.c		\
 			invite.c	\
 			locate.c	\
 			misc.c		\
-			md5.c		\
 			msgcookie.c	\
 			odir.c		\
 			popups.c	\

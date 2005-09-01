@@ -30,6 +30,7 @@
 #include "account.h"
 #include "accountopt.h"
 #include "buddyicon.h"
+#include "cipher.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -45,7 +46,6 @@
 #include "version.h"
 
 #include "aim.h"
-#include "md5.h"
 
 #define OSCAR_STATUS_ID_INVISIBLE	"invisible"
 #define OSCAR_STATUS_ID_OFFLINE		"offline"
@@ -7610,7 +7610,6 @@ static int oscar_icon_req(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu8_t flags = 0, length = 0;
 	guchar *md5 = NULL;
 
-
 	va_start(ap, fr);
 	type = va_arg(ap, int);
 
@@ -8168,17 +8167,23 @@ static void oscar_set_icon(GaimConnection *gc, const char *iconfile)
 	} else if (!g_stat(iconfile, &st)) {
 		guchar *buf = g_malloc(st.st_size);
 		file = g_fopen(iconfile, "rb");
-		if (file) {
-			md5_state_t *state;
+		if (file)
+		{
+			GaimCipher *cipher;
+			GaimCipherContext *context;
 			guchar md5[16];
+			int len;
+
 			/* XXX - Use g_file_get_contents()? */
-			int len = fread(buf, 1, st.st_size, file);
+			len = fread(buf, 1, st.st_size, file);
 			fclose(file);
-			state = g_malloc(sizeof(md5_state_t));
-			md5_init(state);
-			md5_append(state, buf, len);
-			md5_finish(state, md5);
-			g_free(state);
+
+			cipher = gaim_ciphers_find_cipher("md5");
+			context = gaim_cipher_context_new(cipher, NULL);
+			gaim_cipher_context_append(context, buf, len);
+			gaim_cipher_context_digest(context, 16, md5, NULL);
+			gaim_cipher_context_destroy(context);
+
 			aim_ssi_seticon(sess, md5, 16);
 		} else
 			gaim_debug_error("oscar",
