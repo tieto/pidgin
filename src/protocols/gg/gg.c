@@ -48,982 +48,17 @@
 
 #include "lib/libgadu.h"
 
+#include "gg.h"
+#include "confer.h"
+#include "search.h"
+#include "buddylist.h"
+#include "utils.h"
+
 static GaimPlugin *my_protocol = NULL;
 
-typedef struct
-{
-	char *name;
-	GList *participants;
-
-} GGPChat;
-
-typedef struct
-{
-	char *token_id;
-
-} GGPToken;
-
-typedef struct {
-
-	char *uin;
-	char *lastname;
-	char *firstname;
-	char *nickname;
-	char *city;
-	char *birthyear;
-	char *gender;
-	char *active;
-	char *offset;
-
-	char *last_uin;
-
-} GGPSearchForm;
-
-typedef struct {
-
-	struct gg_session *session;
-	GGPSearchForm *search_form;
-	GGPToken *register_token;
-	GGPToken *chpasswd_token;
-	GList *chats;
-	void *searchresults_window;
-
-	char *tmp_buddy;
-	int chats_count;
-
-} GGPInfo;
-
-/**
- * Convert enconding of a given string.
- *
- * @param locstr Input string.
- * @param encsrc Current encoding of the string.
- * @param encdst Target encoding of the string.
- *
- * @return Converted string (it must be g_free()ed when not used. Or NULL if
- * locstr is NULL.
- */
-/* static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst) {{{ */
-static gchar *charset_convert(const gchar *locstr, const char *encsrc, const char *encdst)
-{
-	gchar *msg;
-	GError *err = NULL;
-
-	if (locstr == NULL)
-		return NULL;
-
-	msg = g_convert_with_fallback(locstr, strlen(locstr), encdst, encsrc, "?", NULL, NULL, &err);
-	if (err != NULL) {
-		gaim_debug_error("gg", "Error converting from %s to %s: %s\n",
-						 encsrc, encdst, err->message);
-		g_error_free(err);
-	}
-
-	/* Just in case? */
-	if (msg == NULL)
-		msg = g_strdup(locstr);
-
-	return msg;
-}
-/* }}} */
-
-/*
- * Convert string to number. Check wheter a given
- * string is a correct UIN.
- *
- * Return UIN or 0 if an error occurred.
- */
-/* static uin_t ggp_str_to_uin(const char *text) {{{ */
-static uin_t ggp_str_to_uin(const char *text)
-{
-	char *tmp;
-	long num;
-
-	if (!text)
-		return 0;
-
-	errno = 0;
-	num = strtol(text, &tmp, 0);
-
-	if (*text == '\0' || *tmp != '\0')
-		return 0;
-
-	if ((errno == ERANGE || (num == LONG_MAX || num == LONG_MIN)) || num > UINT_MAX || num < 0)
-		return 0;
-
-	return (uin_t) num;
-}
-/* }}} */
-
-/**
- * Get UIN of a given account.
- *
- * @param account Current account.
- *
- * @return UIN of an account.
- */
-/* static ggp_get_uin(GaimAccount *account) {{{ */
-static uin_t ggp_get_uin(GaimAccount *account)
-{
-	return ggp_str_to_uin(gaim_account_get_username(account));
-}
-/* }}} */
-
-/**
- * Create a new GGPSearchForm structure, and set the fields
- * to the sane defaults.
- *
- * @return Newly allocated GGPSearchForm.
- */
-/* GGPSearchForm *ggp_searchform_new() {{{ */
-GGPSearchForm *ggp_searchform_new()
-{
-	GGPSearchForm *form;
-
-	form = g_new0(GGPSearchForm, 1);
-	form->uin = NULL;
-	form->lastname = NULL;
-	form->firstname = NULL;
-	form->nickname = NULL;
-	form->city = NULL;
-	form->birthyear = NULL;
-	form->gender = NULL;
-	form->active = NULL;
-	form->offset = NULL;
-
-	form->last_uin = NULL;
-
-	return form;
-}
-/* }}} */
-
-/**
- * Returns the best name of a buddy from the buddylist.
- *
- * @param gc  GaimConnection instance.
- * @param uin UIN of the buddy.
- *
- * @return Name of the buddy, or UIN converted to string.
- */
-/* static const *char ggp_buddy_get_name(GaimConnection *gc, const uin_t uin) {{{ */
-static const char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
-{
-	GaimBuddy *buddy;
-	gchar *str_uin;
-
-	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
-
-	buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
-	if (buddy != NULL) {
-		g_free(str_uin);
-		return gaim_buddy_get_alias(buddy);
-	} else {
-		return str_uin;
-	}
-}
-/* }}} */
-
 /* ---------------------------------------------------------------------- */
-/* ----- CONFERENCES ---------------------------------------------------- */
+/* ----- EXTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
-
-/**
- * Finds a CHAT conversation for the current account with the specified name.
- *
- * @param gc   GaimConnection instance.
- * @param name Name of the conversation.
- *
- * @return GaimConversation or NULL if not found.
- */
-/* static GaimConversation *ggp_chat_find_conversation(GaimConnection *gc, const gchar *name) {{{ */
-static GaimConversation *ggp_chat_find_conversation(GaimConnection *gc, const gchar *name)
-{
-	g_return_val_if_fail(gc   != NULL, NULL);
-	g_return_val_if_fail(name != NULL, NULL);
-
-	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, name,
-				gaim_connection_get_account(gc));
-}
-/* }}} */
-
-/**
- * Adds the specified UIN to the specified conversation.
- * 
- * @param gc        GaimConnection.
- * @param chat_name Name of the conversation.
- */
-/* static void ggp_chat_participants_add_uin(GaimConnection *gc, const gchar *chat_name, const uin_t uin) {{{ */
-static void ggp_chat_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
-										  const uin_t uin)
-{
-	GaimConversation *conv;
-	GGPInfo *info = gc->proto_data;
-	GGPChat *chat;
-	GList *l;
-	gchar *str_uin;
-
-	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
-
-	for (l = info->chats; l != NULL; l = l->next) {
-		chat = l->data;
-
-		if (g_utf8_collate(chat->name, chat_name) == 0) {
-			if (g_list_find(chat->participants, str_uin) == NULL) {
-				chat->participants = g_list_append(chat->participants, str_uin);
-				conv = ggp_chat_find_conversation(gc, chat_name);
-
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-						ggp_buddy_get_name(gc, uin), NULL, GAIM_CBFLAGS_NONE, TRUE);
-			}
-			break;
-		}
-	}
-}
-/* }}} */
-
-/**
- * Add the specified UINs to the specified conversation.
- *
- * @param gc         GaimConnection.
- * @param chat_name  Name of the conversation.
- * @param recipients List of the UINs.
- * @param count      Number of the UINs.
- */
-/* static void ggp_chat_participants_add(GaimConnection *gc, const gchar *chat_name, const uin_t *recipients, int count) {{{ */
-static void ggp_chat_participants_add(GaimConnection *gc, const gchar *chat_name,
-									  const uin_t *recipients, int count)
-{
-	GaimConversation *conv;
-	GGPInfo *info = gc->proto_data;
-	GGPChat *chat;
-	GList *l;
-	int i;
-	gchar *uin;
-
-	for (l = info->chats; l != NULL; l = l->next) {
-		chat = l->data;
-
-		if (g_utf8_collate(chat->name, chat_name) == 0) {
-
-			for (i = 0; i < count; i++) {
-				uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
-				if (g_list_find(chat->participants, uin) == NULL) {
-					chat->participants = g_list_append(chat->participants, uin);
-					conv = ggp_chat_find_conversation(gc, chat_name);
-
-					gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							ggp_buddy_get_name(gc, recipients[i]),
-							NULL, GAIM_CBFLAGS_NONE, TRUE);
-				}
-				g_free(uin);
-			}
-			break;
-		}
-	}
-}
-/* }}} */
-
-/**
- * Finds a conversation in which all the specified recipients participate.
- * 
- * TODO: This function should be rewritten to better handle situations when
- * somobody adds more people to the converation.
- *
- * @param gc         GaimConnection.
- * @param recipients List of the people in the conversation.
- * @param count      Number of people.
- *
- * @return Name of the conversation.
- */
-/* static const char *ggp_find_chat_by_recipients(GaimConnection *gc, const uin_t *recipients, int count) {{{ */
-static const char *ggp_find_chat_by_recipients(GaimConnection *gc,
-											   const uin_t *recipients, int count)
-{
-	GGPInfo *info = gc->proto_data;
-	GGPChat *chat = NULL;
-	GList *l, *m;
-	int i;
-	int maches;
-
-	g_return_val_if_fail(info->chats != NULL, NULL);
-
-	for (l = info->chats; l != NULL; l = l->next) {
-		chat = l->data;
-		maches = 0;
-
-		for (m = chat->participants; m != NULL; m = m->next) {
-			uin_t p = ggp_str_to_uin(m->data);
-
-			for (i = 0; i < count; i++)
-				if (p == recipients[i])
-					maches++;
-		}
-
-		if (maches == count)
-			break;
-
-		chat = NULL;
-	}
-
-	if (chat == NULL)
-		return NULL;
-	else
-		return chat->name;
-}
-/* }}} */
-
-/**
- * Adds a new conversation to the internal list of conversations.
- * If name is NULL then it will be automagically generated.
- *
- * @param gc   GaimConnection.
- * @param name Name of the conversation.
- * 
- * @return Name of the conversation.
- */
-/* static const char *ggp_chat_add_new(GaimConnection *gc, const char *name) {{{ */
-static const char *ggp_chat_add_new(GaimConnection *gc, const char *name)
-{
-	GGPInfo *info = gc->proto_data;
-	GGPChat *chat;
-
-	chat = g_new0(GGPChat, 1);
-
-	if (name == NULL)
-		chat->name = g_strdup_printf("conf#%d", info->chats_count++);
-	else
-		chat->name = g_strdup(name);
-
-	chat->participants = NULL;
-
-	info->chats = g_list_append(info->chats, chat);
-
-	return chat->name;
-}
-/* }}} */
-
-/**
- * Dispatch a message received from a buddy.
- *
- * @param gc GaimConnection.
- * @param ev Gadu-Gadu event structure.
- */
-/* static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev) {{{ */
-static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev)
-{
-	GGPInfo *info = gc->proto_data;
-	GaimConversation *conv;
-	gchar *from;
-	gchar *msg;
-	gchar *tmp;
-	const char *chat_name;
-	int chat_id;
-
-	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
-
-	msg = charset_convert((const char *)ev->event.msg.message,
-						  "CP1250", "UTF-8");
-	gaim_str_strip_cr(msg);
-	tmp = g_markup_escape_text(msg, -1);
-
-	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
-			from, tmp, ev->event.msg.msgclass, ev->event.msg.recipients_count);
-
-	/*
-	 * Chat between only two presons will be treated as a private message.
-	 * It's due to some broken clients that send private messages
-	 * with msgclass == CHAT
-	 */
-	if (ev->event.msg.recipients_count == 0) {
-		serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
-	} else {
-		chat_name = ggp_find_chat_by_recipients(gc,
-									ev->event.msg.recipients,
-									ev->event.msg.recipients_count);
-		if (chat_name == NULL) {
-			chat_name = ggp_chat_add_new(gc, NULL);
-			serv_got_joined_chat(gc, info->chats_count, chat_name);
-			ggp_chat_participants_add_uin(gc, chat_name, ev->event.msg.sender);
-			ggp_chat_participants_add(gc, chat_name, ev->event.msg.recipients,
-									  ev->event.msg.recipients_count);
-		}
-		conv = ggp_chat_find_conversation(gc, chat_name);
-		chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
-		serv_got_chat_in(gc, chat_id, ggp_buddy_get_name(gc, ev->event.msg.sender),
-						 0, msg, ev->event.msg.time);
-	}
-	g_free(msg);
-	g_free(tmp);
-	g_free(from);
-}
-/* }}} */
-
-/* ---------------------------------------------------------------------- */
-/* ----- BUDDYLIST STUFF ------------------------------------------------ */
-/* ---------------------------------------------------------------------- */
-
-/* static void ggp_buddylist_send(GaimConnection *gc) {{{ */
-static void ggp_buddylist_send(GaimConnection *gc)
-{
-	GGPInfo *info = gc->proto_data;
-
-	GaimBuddyList *blist;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimBuddy *buddy;
-	uin_t *userlist = NULL;
-	gchar *types = NULL;
-	int userlist_size = 0;
-
-	if ((blist = gaim_get_blist()) != NULL)
-	{
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-				{
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					buddy = (GaimBuddy *)bnode;
-
-					if (buddy->account != gc->account)
-						continue;
-
-					userlist_size++;
-					userlist = (uin_t *) g_renew(uin_t, userlist, userlist_size);
-					types = (gchar *) g_renew(gchar, types, userlist_size);
-					userlist[userlist_size - 1] = ggp_str_to_uin(buddy->name);
-					types[userlist_size - 1] = GG_USER_NORMAL;
-					gaim_debug_info("gg", "ggp_buddylist_send: adding %d\n", userlist[userlist_size - 1]);
-				}
-			}
-		}
-	}
-
-	if (userlist) {
-		int ret = gg_notify_ex(info->session, userlist, types, userlist_size);
-		g_free(userlist);
-		g_free(types);
-
-		gaim_debug_info("gg", "send: ret=%d; size=%d\n", ret, userlist_size);
-	}
-}
-/* }}} */
-
-/**
- * Load buddylist from server into the rooster.
- *
- * @param gc GaimConnection
- * @param buddylist Pointer to the buddylist that will be loaded.
- */
-/* static void ggp_buddylist_load(GaimConnection *gc, char *buddylist) {{{ */
-static void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
-{
-	GaimBuddy *buddy;
-	GaimGroup *group;
-	gchar **users_tbl;
-	int i;
-
-	users_tbl = g_strsplit(buddylist, "\r\n", 200);
-
-	for (i = 0; users_tbl[i] != NULL; i++) {
-		gchar **data_tbl;
-		gchar *name, *show, *g;
-
-		if (strlen(users_tbl[i]) == 0)
-			continue;
-
-		data_tbl = g_strsplit(users_tbl[i], ";", 8);
-
-		show = charset_convert(data_tbl[3], "CP1250", "UTF-8");
-		name = data_tbl[6];
-
-		gaim_debug_info("gg", "got buddy: name=%s show=%s\n", name, show);
-
-		if (gaim_find_buddy(gaim_connection_get_account(gc), name)) {
-			g_free(show);
-			g_strfreev(data_tbl);
-			continue;
-		}
-
-		g = g_strdup("Gadu-Gadu");
-
-		if (strlen(data_tbl[5])) {
-			/* Hard limit to at most 50 groups */
-			gchar **group_tbl = g_strsplit(data_tbl[5], ",", 50);
-			if (strlen(group_tbl[0]) > 0) {
-				g_free(g);
-				g = g_strdup(group_tbl[0]);
-			}
-			g_strfreev(group_tbl);
-		}
-
-		buddy = gaim_buddy_new(gaim_connection_get_account(gc), name, strlen(show) ? show : NULL);
-		if (!(group = gaim_find_group(g))) {
-			group = gaim_group_new(g);
-			gaim_blist_add_group(group, NULL);
-		}
-
-		gaim_blist_add_buddy(buddy, NULL, group, NULL);
-		g_free(g);
-
-		g_free(show);
-		g_strfreev(data_tbl);
-	}
-	g_strfreev(users_tbl);
-
-	ggp_buddylist_send(gc);
-
-}
-/* }}} */
-
-/**
- * Handle change of the status of the buddy.
- *
- * @param gc     GaimConnection
- * @param uin    UIN of the buddy.
- * @param status ID of the status.
- * @param descr  Description.
- */
-/* static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr) {{{ */
-static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr)
-{
-	gchar *from;
-	const char *st;
-	gchar *msg;
-
-	from = g_strdup_printf("%ld", (unsigned long int)uin);
-	switch (status) {
-		case GG_STATUS_NOT_AVAIL:
-		case GG_STATUS_NOT_AVAIL_DESCR:
-			st = "offline";
-			break;
-		case GG_STATUS_AVAIL:
-		case GG_STATUS_AVAIL_DESCR:
-			st = "online";
-			break;
-		case GG_STATUS_BUSY:
-		case GG_STATUS_BUSY_DESCR:
-			st = "away";
-			break;
-		case GG_STATUS_BLOCKED:
-			/* user is blocking us.... */
-			st = "blocked";
-			break;
-		default:
-			st = "online";
-			gaim_debug_info("gg", "GG_EVENT_NOTIFY: Unknown status: %d\n", status);
-			break;
-	}
-
-	gaim_debug_info("gg", "st = %s\n", st);
-	msg = charset_convert(descr, "CP1250", "UTF-8");
-	gaim_prpl_got_user_status(gaim_connection_get_account(gc), from, st, "message", msg, NULL);
-	g_free(from);
-	g_free(msg);
-}
-/* }}} */
-
-/**
- * Initiate a search in the public directory.
- *
- * @param gc   GaimConnection.
- * @param form Filled in GGPSearchForm.
- */
-/* static void ggp_pubdir_start_search(GaimConnection *gc, GGPSearchForm *form) {{{ */
-static void ggp_pubdir_start_search(GaimConnection *gc, GGPSearchForm *form)
-{
-	GGPInfo *info = gc->proto_data;
-	gg_pubdir50_t req;
-
-	gaim_debug_info("gg", "It's time to perform a search...\n");
-
-	if ((req = gg_pubdir50_new(GG_PUBDIR50_SEARCH)) == NULL) {
-		gaim_debug_error("gg", "ggp_bmenu_show_details: Unable to create req variable.\n");
-		return;
-	}
-
-	if (form->uin != NULL) {
-		gaim_debug_info("gg", "    uin: %s\n", form->uin);
-		gg_pubdir50_add(req, GG_PUBDIR50_UIN, form->uin);
-	} else {
-		if (form->lastname != NULL) {
-			gaim_debug_info("gg", "    lastname: %s\n", form->lastname);
-			gg_pubdir50_add(req, GG_PUBDIR50_LASTNAME, form->lastname);
-		}
-
-		if (form->firstname != NULL) {
-			gaim_debug_info("gg", "    firstname: %s\n", form->firstname);
-			gg_pubdir50_add(req, GG_PUBDIR50_FIRSTNAME, form->firstname);
-		}
-
-		if (form->nickname != NULL) {
-			gaim_debug_info("gg", "    nickname: %s\n", form->nickname);
-			gg_pubdir50_add(req, GG_PUBDIR50_NICKNAME, form->nickname);
-		}
-
-		if (form->city != NULL) {
-			gaim_debug_info("gg", "    city: %s\n", form->city);
-			gg_pubdir50_add(req, GG_PUBDIR50_CITY, form->city);
-		}
-
-		if (form->birthyear != NULL) {
-			gaim_debug_info("gg", "    birthyear: %s\n", form->birthyear);
-			gg_pubdir50_add(req, GG_PUBDIR50_BIRTHYEAR, form->birthyear);
-		}
-
-		if (form->gender != NULL) {
-			gaim_debug_info("gg", "    gender: %s\n", form->gender);
-			gg_pubdir50_add(req, GG_PUBDIR50_GENDER, form->gender);
-		}
-
-		if (form->active != NULL) {
-			gaim_debug_info("gg", "    active: %s\n", form->active);
-			gg_pubdir50_add(req, GG_PUBDIR50_ACTIVE, form->active);
-		}
-	}
-
-	gaim_debug_info("gg", "offset: %s\n", form->offset);
-	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup(form->offset));
-
-	if (gg_pubdir50(info->session, req) == 0) {
-		gaim_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
-		return;
-	}
-
-	gg_pubdir50_free(req);
-}
-/* }}} */
-
-/*
- * Return converted to the UTF-8 value of the specified field.
- *
- * @param res    Public directory look-up result
- * @param num    Id of the record
- * @param fileld Name of the field
- * 
- * @return UTF-8 encoded value of the field
- */
-/* static char *ggp_get_pubdir_info(gg_pubdir50_t res, int num, const char *field) {{{ */
-static char *ggp_get_pubdir_info(gg_pubdir50_t res, int num, const char *field)
-{
-	char *tmp;
-
-	tmp = charset_convert(gg_pubdir50_get(res, num, field), "CP1250", "UTF-8");
-
-	return (tmp == NULL) ? g_strdup("") : tmp;
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_callback_show_next(GaimConnection *gc, GList *row) {{{ */
-static void ggp_callback_show_next(GaimConnection *gc, GList *row)
-{
-	GGPInfo *info = gc->proto_data;
-
-	g_free(info->search_form->offset);
-	info->search_form->offset = g_strdup(info->search_form->last_uin);
-	ggp_pubdir_start_search(gc, info->search_form);
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row) {{{ */
-static void ggp_callback_add_buddy(GaimConnection *gc, GList *row)
-{
-	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
-			g_list_nth_data(row, 0), NULL, NULL);
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
-static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
-{
-	GaimConnection *gc = _gc;
-	GGPInfo *info = gc->proto_data;
-	struct gg_event *ev;
-	int i;
-
-	if (!(ev = gg_watch_fd(info->session))) {
-		gaim_debug_error("gg", "ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
-		gaim_connection_error(gc, _("Unable to read socket"));
-		return;
-	}
-
-	switch (ev->type) {
-		case GG_EVENT_NONE:
-			/* Nothing happened. */
-			break;
-		case GG_EVENT_MSG:
-			ggp_recv_message_handler(gc, ev);
-			break;
-		case GG_EVENT_ACK:
-			gaim_debug_info("gg", "message sent to: %ld, delivery status=%d, seq=%d\n",
-					ev->event.ack.recipient, ev->event.ack.status, ev->event.ack.seq);
-			break;
-		case GG_EVENT_NOTIFY:
-		case GG_EVENT_NOTIFY_DESCR:
-			{
-				struct gg_notify_reply *n;
-				char *descr;
-
-				gaim_debug_info("gg", "notify_pre: (%d) status: %d\n",
-						ev->event.notify->uin,
-						ev->event.notify->status);
-
-				n = (ev->type == GG_EVENT_NOTIFY) ? ev->event.notify
-								  : ev->event.notify_descr.notify;
-
-				for (; n->uin; n++) {
-					descr = (ev->type == GG_EVENT_NOTIFY) ? NULL
-					      				      : ev->event.notify_descr.descr;
-					gaim_debug_info("gg", "notify: (%d) status: %d; descr: %s\n",
-							n->uin, n->status, descr);
-
-					ggp_generic_status_handler(gc,
-							n->uin, n->status, descr);
-				}
-			}
-			break;
-		case GG_EVENT_NOTIFY60:
-			gaim_debug_info("gg", "notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
-					ev->event.notify60->uin, ev->event.notify60->status,
-					ev->event.notify60->version, ev->event.notify60->descr);
-
-			for (i = 0; ev->event.notify60[i].uin; i++) {
-				gaim_debug_info("gg", "notify60: (%d) status=%d; version=%d; descr=%s\n",
-						ev->event.notify60[i].uin, ev->event.notify60[i].status,
-						ev->event.notify60[i].version, ev->event.notify60[i].descr);
-
-				ggp_generic_status_handler(gc,
-						ev->event.notify60[i].uin,
-						ev->event.notify60[i].status,
-						ev->event.notify60[i].descr);
-			}
-			break;
-		case GG_EVENT_STATUS:
-			gaim_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
-					ev->event.status.uin, ev->event.status.status,
-					ev->event.status.descr);
-
-			ggp_generic_status_handler(gc,
-						   ev->event.status.uin,
-						   ev->event.status.status,
-						   ev->event.status.descr);
-			break;
-		case GG_EVENT_STATUS60:
-			gaim_debug_info("gg", "status60: (%d) status=%d; version=%d; descr=%s\n",
-					ev->event.status60.uin,
-					ev->event.status60.status,
-					ev->event.status60.version,
-					ev->event.status60.descr);
-
-			ggp_generic_status_handler(gc,
-						   ev->event.status60.uin,
-						   ev->event.status60.status,
-						   ev->event.status60.descr);
-			break;
-		case GG_EVENT_USERLIST:
-	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
-				gaim_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
-				if (ev->event.userlist.reply != NULL) {
-				    ggp_buddylist_load(gc, ev->event.userlist.reply);
-				}
-			break;
-			} else {
-				gaim_debug_info("gg", "GG_USERLIST_PUT_REPLY. Userlist stored on the server.\n");
-			}
-			break;
-		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
-			{
-				GaimNotifySearchResults *results;
-				GaimNotifySearchColumn *column;
-				gg_pubdir50_t req = ev->event.pubdir50;
-				int res_count = 0;
-				int start;
-				int i;
-
-				res_count = gg_pubdir50_count(req);
-				if (res_count < 1) {
-					gaim_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
-					return;
-				}
-				res_count = (res_count > 20) ? 20 : res_count;
-
-				results = gaim_notify_searchresults_new();
-
-				column = gaim_notify_searchresults_column_new("UIN");
-				gaim_notify_searchresults_column_add(results, column);
-
-				column = gaim_notify_searchresults_column_new("First name");
-				gaim_notify_searchresults_column_add(results, column);
-
-				column = gaim_notify_searchresults_column_new("Nick name");
-				gaim_notify_searchresults_column_add(results, column);
-
-				column = gaim_notify_searchresults_column_new("City");
-				gaim_notify_searchresults_column_add(results, column);
-
-				column = gaim_notify_searchresults_column_new("Birth year");
-				gaim_notify_searchresults_column_add(results, column);
-
-				gaim_debug_info("gg", "Going with %d entries\n", res_count);
-
-				start = (int)ggp_str_to_uin(gg_pubdir50_get(req, 0, GG_PUBDIR50_START));
-				gaim_debug_info("gg", "start = %d\n", start);
-
-				for (i = 0; i < res_count; i++) {
-					GList *row = NULL;
-					char *birth = ggp_get_pubdir_info(req, i, GG_PUBDIR50_BIRTHYEAR);
-					
-					/* TODO: Status will be displayed as an icon. */
-					/* row = g_list_append(row, ggp_get_pubdir_info(req, i, GG_PUBDIR50_STATUS)); */
-					row = g_list_append(row, ggp_get_pubdir_info(req, i, GG_PUBDIR50_UIN));
-					row = g_list_append(row, ggp_get_pubdir_info(req, i, GG_PUBDIR50_FIRSTNAME));
-					row = g_list_append(row, ggp_get_pubdir_info(req, i, GG_PUBDIR50_NICKNAME));
-					row = g_list_append(row, ggp_get_pubdir_info(req, i, GG_PUBDIR50_CITY));
-					row = g_list_append(row, (birth && strncmp(birth, "0", 1)) ? birth : g_strdup("-"));
-					gaim_notify_searchresults_row_add(results, row);
-					if (i == res_count - 1) {
-						g_free(info->search_form->last_uin);
-						info->search_form->last_uin = ggp_get_pubdir_info(req, i, GG_PUBDIR50_UIN);
-					}
-				}
-
-				gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_CONTINUE, ggp_callback_show_next);
-				gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY, ggp_callback_add_buddy);
-				if (info->searchresults_window == NULL) {
-					void *h = gaim_notify_searchresults(gc, _("Gadu-Gadu Public Directory"),
-											  _("Search results"), NULL, results, NULL, NULL);
-					info->searchresults_window = h;
-				} else {
-					gaim_notify_searchresults_new_rows(gc, results, info->searchresults_window, NULL);
-				}
-			}
-			break;
-		default:
-			gaim_debug_error("gg", "unsupported event type=%d\n", ev->type);
-			break;
-	}
-
-	gg_free_event(ev);
-}
-/* }}} */
-
-/**
- * Set offline status for all buddies.
- *
- * @param gc Connection handler
- */
-/* static void ggp_buddylist_offline(GaimConnection *gc) {{{ */
-static void ggp_buddylist_offline(GaimConnection *gc)
-{
-	GaimBuddyList *blist;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimBuddy *buddy;
-
-	if ((blist = gaim_get_blist()) != NULL)
-	{
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-				{
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-
-					buddy = (GaimBuddy *)bnode;
-
-					if (buddy->account != gc->account)
-						continue;
-
-					gaim_prpl_got_user_status(
-						gaim_connection_get_account(gc),
-						buddy->name, "offline", NULL);
-					gaim_debug_info("gg", "ggp_buddylist_offline: gone: %s\n", buddy->name);
-				}
-			}
-		}
-	}
-}
-/* }}} */
-
-/**
- * Get all the buddies in the current account.
- *
- * @param account Current account.
- * 
- * @return List of buddies.
- */
-/* static char *ggp_buddylist_dump(GaimAccount *account) {{{ */
-static char *ggp_buddylist_dump(GaimAccount *account)
-{
-	GaimBuddyList *blist;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimGroup *group;
-	GaimBuddy *buddy;
-
-	char *buddylist = g_strdup("");
-	char *ptr;
-
-	if ((blist = gaim_get_blist()) == NULL)
-		return NULL;
-
-	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-
-		group = (GaimGroup *)gnode;
-
-		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-
-			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *newdata, *name, *show, *gname;
-
-				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-
-				buddy = (GaimBuddy *)bnode;
-				if (buddy->account != account)
-					continue;
-
-				/* GG Number */
-				name = buddy->name;
-				/* GG Pseudo */
-				show = buddy->alias ? buddy->alias : buddy->name;
-				/* Group Name */
-				gname = group->name;
-
-				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						show, show, show, show, "", gname, name, "", "");
-
-				ptr = buddylist;
-				buddylist = g_strconcat(ptr, newdata, NULL);
-
-				g_free(newdata);
-				g_free(ptr);
-			}
-		}
-	}
-
-	return buddylist;
-}
-/* }}} */
 
 /**
  * Request buddylist from the server.
@@ -1192,6 +227,193 @@ static void ggp_action_buddylist_load(GaimPluginAction *action)
 
 /*
  */
+/* static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
+static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFields *fields)
+{
+	GaimAccount *account;
+	GGPInfo *info = gc->proto_data;
+	struct gg_http *h = NULL;
+	struct gg_pubdir *s;
+	uin_t uin;
+	gchar *email, *p1, *p2, *t;
+
+	email = charset_convert(gaim_request_fields_get_string(fields, "email"),
+			     "UTF-8", "CP1250");
+	p1  = charset_convert(gaim_request_fields_get_string(fields, "password1"),
+			     "UTF-8", "CP1250");
+	p2  = charset_convert(gaim_request_fields_get_string(fields, "password2"),
+			     "UTF-8", "CP1250");
+	t   = charset_convert(gaim_request_fields_get_string(fields, "token"),
+			     "UTF-8", "CP1250");
+
+	account = gaim_connection_get_account(gc);
+
+	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
+	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
+		gaim_notify_error(account, NULL, _("Fill in the fields."), NULL);
+		goto exit_err;
+	}
+
+	if (g_utf8_collate(p1, p2) != 0) {
+		gaim_notify_error(account, NULL, _("Passwords do not match."), NULL);
+		goto exit_err;
+	}
+
+	h = gg_register3(email, p1, info->register_token->token_id, t, 0);
+	if (h == NULL || !(s = h->data) || !s->success) {
+		gaim_notify_error(account, NULL,
+			_("Unable to register new account. Error occured.\n"),
+			NULL);
+		goto exit_err;
+	}
+
+	uin = s->uin;
+	gaim_debug_info("gg", "registered uin: %d\n", uin);
+
+	gaim_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
+			 _("Registration completed successfully!"), NULL);
+
+exit_err:
+	gg_register_free(h);
+	g_free(email);
+	g_free(p1);
+	g_free(p2);
+	g_free(t);
+	g_free(info->register_token->token_id);
+	g_free(info->register_token);
+}
+/* }}} */
+
+/* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
+
+/*
+ */
+/* static void ggp_callback_show_next(GaimConnection *gc, GList *row) {{{ */
+static void ggp_callback_show_next(GaimConnection *gc, GList *row)
+{
+	GGPInfo *info = gc->proto_data;
+
+	g_free(info->search_form->offset);
+	info->search_form->offset = g_strdup(info->search_form->last_uin);
+	ggp_search_start(gc, info->search_form);
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row) {{{ */
+static void ggp_callback_add_buddy(GaimConnection *gc, GList *row)
+{
+	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
+			g_list_nth_data(row, 0), NULL, NULL);
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields) {{{ */
+static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPSearchForm *form;
+
+	form = ggp_search_form_new();
+	/*
+	 * TODO: Fail if we have already a form attached. Only one search
+	 * at a time will be allowed for now.
+	 */
+	info->search_form = form;
+
+	form->lastname  = charset_convert(gaim_request_fields_get_string(fields, "lastname"),
+									 "UTF-8", "CP1250");
+	form->firstname = charset_convert(gaim_request_fields_get_string(fields, "firstname"),
+									 "UTF-8", "CP1250");
+	form->nickname  = charset_convert(gaim_request_fields_get_string(fields, "nickname"),
+									 "UTF-8", "CP1250");
+	form->city      = charset_convert(gaim_request_fields_get_string(fields, "city"),
+									 "UTF-8", "CP1250");
+	form->birthyear = charset_convert(gaim_request_fields_get_string(fields, "year"),
+								     "UTF-8", "CP1250");
+
+	switch (gaim_request_fields_get_choice(fields, "gender")) {
+		case 1:
+			form->gender = g_strdup(GG_PUBDIR50_GENDER_MALE);
+			break;
+		case 2:
+			form->gender = g_strdup(GG_PUBDIR50_GENDER_FEMALE);
+			break;
+		default:
+			form->gender = NULL;
+			break;
+	}
+
+	form->active = gaim_request_fields_get_bool(fields, "active")
+				   ? g_strdup(GG_PUBDIR50_ACTIVE_TRUE) : NULL;
+
+	form->offset = g_strdup("0");
+
+	ggp_search_start(gc, form);
+}
+/* }}} */
+
+/*
+ */
+/* static void ggp_find_buddies(GaimPluginAction *action) {{{ */
+static void ggp_find_buddies(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *)action->context;
+
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *group;
+	GaimRequestField *field;
+
+	fields = gaim_request_fields_new();
+	group = gaim_request_field_group_new(NULL);
+	gaim_request_fields_add_group(fields, group);
+
+	field = gaim_request_field_string_new("lastname", _("Last name"), NULL, FALSE);
+	gaim_request_field_string_set_masked(field, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("firstname", _("First name"), NULL, FALSE);
+	gaim_request_field_string_set_masked(field, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("nickname", _("Nickname"), NULL, FALSE);
+	gaim_request_field_string_set_masked(field, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("city", _("City"), NULL, FALSE);
+	gaim_request_field_string_set_masked(field, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_string_new("year", _("Year of birth"), NULL, FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_choice_new("gender", "Gender", 0);
+	gaim_request_field_choice_add(field, "Male or female");
+	gaim_request_field_choice_add(field, "Male");
+	gaim_request_field_choice_add(field, "Female");
+	gaim_request_field_group_add_field(group, field);
+
+	field = gaim_request_field_bool_new("active", _("Only online"), FALSE);
+	gaim_request_field_group_add_field(group, field);
+
+	gaim_request_fields(gc,
+		_("Find buddies"),
+		_("Find buddies"),
+		_("Please, enter your search criteria below"),
+		fields,
+		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
+		_("Cancel"), NULL,
+		gc);
+}
+/* }}} */
+
+/* ----- CHANGE PASSWORD ------------------------------------------------ */
+
+/*
+ */
 /* static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
 static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields *fields)
 {
@@ -1258,166 +480,6 @@ exit_err:
 	g_free(t);
 	g_free(info->chpasswd_token->token_id);
 	g_free(info->chpasswd_token);
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFields *fields)
-{
-	GaimAccount *account;
-	GGPInfo *info = gc->proto_data;
-	struct gg_http *h = NULL;
-	struct gg_pubdir *s;
-	uin_t uin;
-	gchar *email, *p1, *p2, *t;
-
-	email = charset_convert(gaim_request_fields_get_string(fields, "email"),
-			     "UTF-8", "CP1250");
-	p1  = charset_convert(gaim_request_fields_get_string(fields, "password1"),
-			     "UTF-8", "CP1250");
-	p2  = charset_convert(gaim_request_fields_get_string(fields, "password2"),
-			     "UTF-8", "CP1250");
-	t   = charset_convert(gaim_request_fields_get_string(fields, "token"),
-			     "UTF-8", "CP1250");
-
-	account = gaim_connection_get_account(gc);
-
-	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
-	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		gaim_notify_error(account, NULL, _("Fill in the fields."), NULL);
-		goto exit_err;
-	}
-
-	if (g_utf8_collate(p1, p2) != 0) {
-		gaim_notify_error(account, NULL, _("Passwords do not match."), NULL);
-		goto exit_err;
-	}
-
-	h = gg_register3(email, p1, info->register_token->token_id, t, 0);
-	if (h == NULL || !(s = h->data) || !s->success) {
-		gaim_notify_error(account, NULL,
-			_("Unable to register new account. Error occured.\n"),
-			NULL);
-		goto exit_err;
-	}
-
-	uin = s->uin;
-	gaim_debug_info("gg", "registered uin: %d\n", uin);
-
-	gaim_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
-			 _("Registration completed successfully!"), NULL);
-
-exit_err:
-	gg_register_free(h);
-	g_free(email);
-	g_free(p1);
-	g_free(p2);
-	g_free(t);
-	g_free(info->register_token->token_id);
-	g_free(info->register_token);
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields)
-{
-	GGPInfo *info = gc->proto_data;
-	GGPSearchForm *form;
-
-	form = ggp_searchform_new();
-	/*
-	 * TODO: Fail if we have already a form attached. Only one search
-	 * at a time will be allowed for now.
-	 */
-	info->search_form = form;
-
-	form->lastname  = charset_convert(gaim_request_fields_get_string(fields, "lastname"),
-									 "UTF-8", "CP1250");
-	form->firstname = charset_convert(gaim_request_fields_get_string(fields, "firstname"),
-									 "UTF-8", "CP1250");
-	form->nickname  = charset_convert(gaim_request_fields_get_string(fields, "nickname"),
-									 "UTF-8", "CP1250");
-	form->city      = charset_convert(gaim_request_fields_get_string(fields, "city"),
-									 "UTF-8", "CP1250");
-	form->birthyear = charset_convert(gaim_request_fields_get_string(fields, "year"),
-								     "UTF-8", "CP1250");
-
-	switch (gaim_request_fields_get_choice(fields, "gender")) {
-		case 1:
-			form->gender = g_strdup(GG_PUBDIR50_GENDER_MALE);
-			break;
-		case 2:
-			form->gender = g_strdup(GG_PUBDIR50_GENDER_FEMALE);
-			break;
-		default:
-			form->gender = NULL;
-			break;
-	}
-
-	form->active = gaim_request_fields_get_bool(fields, "active")
-				   ? g_strdup(GG_PUBDIR50_ACTIVE_TRUE) : NULL;
-
-	form->offset = g_strdup("0");
-
-	ggp_pubdir_start_search(gc, form);
-}
-/* }}} */
-
-/*
- */
-/* static void ggp_find_buddies(GaimPluginAction *action) {{{ */
-static void ggp_find_buddies(GaimPluginAction *action)
-{
-	GaimConnection *gc = (GaimConnection *)action->context;
-
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
-
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
-
-	field = gaim_request_field_string_new("lastname", _("Last name"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("firstname", _("First name"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("nickname", _("Nickname"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("city", _("City"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_string_new("year", _("Year of birth"), NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_choice_new("gender", "Gender", 0);
-	gaim_request_field_choice_add(field, "Male or female");
-	gaim_request_field_choice_add(field, "Male");
-	gaim_request_field_choice_add(field, "Female");
-	gaim_request_field_group_add_field(group, field);
-
-	field = gaim_request_field_bool_new("active", _("Only online"), FALSE);
-	gaim_request_field_group_add_field(group, field);
-
-	gaim_request_fields(gc,
-		_("Find buddies"),
-		_("Find buddies"),
-		_("Please, enter your search criteria below"),
-		fields,
-		_("OK"), G_CALLBACK(ggp_callback_find_buddies),
-		_("Cancel"), NULL,
-		gc);
 }
 /* }}} */
 
@@ -1496,6 +558,8 @@ static void ggp_change_passwd(GaimPluginAction *action)
 }
 /* }}} */
 
+/* ----- CONFERENCES ---------------------------------------------------- */
+
 /*
  */
 /* static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
@@ -1567,6 +631,8 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 }
 /* }}} */
 
+/* ----- BLOCK BUDDIES -------------------------------------------------- */
+
 /*
  */
 /* static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored) {{{ */
@@ -1598,11 +664,292 @@ static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored)
 /* }}} */
 
 /* ---------------------------------------------------------------------- */
-/* ----- GaimPluginProtocolInfo ----------------------------------------- */
+/* ----- INTERNAL CALLBACKS --------------------------------------------- */
 /* ---------------------------------------------------------------------- */
+
+/**
+ * Handle change of the status of the buddy.
+ *
+ * @param gc     GaimConnection
+ * @param uin    UIN of the buddy.
+ * @param status ID of the status.
+ * @param descr  Description.
+ */
+/* static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr) {{{ */
+static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr)
+{
+	gchar *from;
+	const char *st;
+	gchar *msg;
+
+	from = g_strdup_printf("%ld", (unsigned long int)uin);
+	switch (status) {
+		case GG_STATUS_NOT_AVAIL:
+		case GG_STATUS_NOT_AVAIL_DESCR:
+			st = "offline";
+			break;
+		case GG_STATUS_AVAIL:
+		case GG_STATUS_AVAIL_DESCR:
+			st = "online";
+			break;
+		case GG_STATUS_BUSY:
+		case GG_STATUS_BUSY_DESCR:
+			st = "away";
+			break;
+		case GG_STATUS_BLOCKED:
+			/* user is blocking us.... */
+			st = "blocked";
+			break;
+		default:
+			st = "online";
+			gaim_debug_info("gg", "GG_EVENT_NOTIFY: Unknown status: %d\n", status);
+			break;
+	}
+
+	gaim_debug_info("gg", "st = %s\n", st);
+	msg = charset_convert(descr, "CP1250", "UTF-8");
+	gaim_prpl_got_user_status(gaim_connection_get_account(gc), from, st, "message", msg, NULL);
+	g_free(from);
+	g_free(msg);
+}
+/* }}} */
+
+/**
+ * Dispatch a message received from a buddy.
+ *
+ * @param gc GaimConnection.
+ * @param ev Gadu-Gadu event structure.
+ */
+/* static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev) {{{ */
+static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev)
+{
+	GGPInfo *info = gc->proto_data;
+	GaimConversation *conv;
+	gchar *from;
+	gchar *msg;
+	gchar *tmp;
+	const char *chat_name;
+	int chat_id;
+
+	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
+
+	msg = charset_convert((const char *)ev->event.msg.message,
+						  "CP1250", "UTF-8");
+	gaim_str_strip_cr(msg);
+	tmp = g_markup_escape_text(msg, -1);
+
+	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
+			from, tmp, ev->event.msg.msgclass, ev->event.msg.recipients_count);
+
+	/*
+	 * Chat between only two presons will be treated as a private message.
+	 * It's due to some broken clients that send private messages
+	 * with msgclass == CHAT
+	 */
+	if (ev->event.msg.recipients_count == 0) {
+		serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
+	} else {
+		chat_name = ggp_confer_find_by_participants(gc,
+									ev->event.msg.recipients,
+									ev->event.msg.recipients_count);
+		if (chat_name == NULL) {
+			chat_name = ggp_confer_add_new(gc, NULL);
+			serv_got_joined_chat(gc, info->chats_count, chat_name);
+			ggp_confer_participants_add_uin(gc, chat_name, ev->event.msg.sender);
+			ggp_confer_participants_add(gc, chat_name, ev->event.msg.recipients,
+									  ev->event.msg.recipients_count);
+		}
+		conv = ggp_confer_find_by_name(gc, chat_name);
+		chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+		serv_got_chat_in(gc, chat_id, ggp_buddy_get_name(gc, ev->event.msg.sender),
+						 0, msg, ev->event.msg.time);
+	}
+	g_free(msg);
+	g_free(tmp);
+	g_free(from);
+}
+/* }}} */
 
 /*
  */
+/* static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
+static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
+{
+	GaimConnection *gc = _gc;
+	GGPInfo *info = gc->proto_data;
+	struct gg_event *ev;
+	int i;
+
+	if (!(ev = gg_watch_fd(info->session))) {
+		gaim_debug_error("gg", "ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
+		gaim_connection_error(gc, _("Unable to read socket"));
+		return;
+	}
+
+	switch (ev->type) {
+		case GG_EVENT_NONE:
+			/* Nothing happened. */
+			break;
+		case GG_EVENT_MSG:
+			ggp_recv_message_handler(gc, ev);
+			break;
+		case GG_EVENT_ACK:
+			gaim_debug_info("gg", "message sent to: %ld, delivery status=%d, seq=%d\n",
+					ev->event.ack.recipient, ev->event.ack.status, ev->event.ack.seq);
+			break;
+		case GG_EVENT_NOTIFY:
+		case GG_EVENT_NOTIFY_DESCR:
+			{
+				struct gg_notify_reply *n;
+				char *descr;
+
+				gaim_debug_info("gg", "notify_pre: (%d) status: %d\n",
+						ev->event.notify->uin,
+						ev->event.notify->status);
+
+				n = (ev->type == GG_EVENT_NOTIFY) ? ev->event.notify
+								  : ev->event.notify_descr.notify;
+
+				for (; n->uin; n++) {
+					descr = (ev->type == GG_EVENT_NOTIFY) ? NULL
+					      				      : ev->event.notify_descr.descr;
+					gaim_debug_info("gg", "notify: (%d) status: %d; descr: %s\n",
+							n->uin, n->status, descr);
+
+					ggp_generic_status_handler(gc,
+							n->uin, n->status, descr);
+				}
+			}
+			break;
+		case GG_EVENT_NOTIFY60:
+			gaim_debug_info("gg", "notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
+					ev->event.notify60->uin, ev->event.notify60->status,
+					ev->event.notify60->version, ev->event.notify60->descr);
+
+			for (i = 0; ev->event.notify60[i].uin; i++) {
+				gaim_debug_info("gg", "notify60: (%d) status=%d; version=%d; descr=%s\n",
+						ev->event.notify60[i].uin, ev->event.notify60[i].status,
+						ev->event.notify60[i].version, ev->event.notify60[i].descr);
+
+				ggp_generic_status_handler(gc,
+						ev->event.notify60[i].uin,
+						ev->event.notify60[i].status,
+						ev->event.notify60[i].descr);
+			}
+			break;
+		case GG_EVENT_STATUS:
+			gaim_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
+					ev->event.status.uin, ev->event.status.status,
+					ev->event.status.descr);
+
+			ggp_generic_status_handler(gc,
+						   ev->event.status.uin,
+						   ev->event.status.status,
+						   ev->event.status.descr);
+			break;
+		case GG_EVENT_STATUS60:
+			gaim_debug_info("gg", "status60: (%d) status=%d; version=%d; descr=%s\n",
+					ev->event.status60.uin,
+					ev->event.status60.status,
+					ev->event.status60.version,
+					ev->event.status60.descr);
+
+			ggp_generic_status_handler(gc,
+						   ev->event.status60.uin,
+						   ev->event.status60.status,
+						   ev->event.status60.descr);
+			break;
+		case GG_EVENT_USERLIST:
+	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
+				gaim_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
+				if (ev->event.userlist.reply != NULL) {
+				    ggp_buddylist_load(gc, ev->event.userlist.reply);
+				}
+			break;
+			} else {
+				gaim_debug_info("gg", "GG_USERLIST_PUT_REPLY. Userlist stored on the server.\n");
+			}
+			break;
+		case GG_EVENT_PUBDIR50_SEARCH_REPLY:
+			{
+				GaimNotifySearchResults *results;
+				GaimNotifySearchColumn *column;
+				gg_pubdir50_t req = ev->event.pubdir50;
+				int res_count = 0;
+				int start;
+				int i;
+
+				res_count = gg_pubdir50_count(req);
+				if (res_count < 1) {
+					gaim_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
+					return;
+				}
+				res_count = (res_count > 20) ? 20 : res_count;
+
+				results = gaim_notify_searchresults_new();
+
+				column = gaim_notify_searchresults_column_new("UIN");
+				gaim_notify_searchresults_column_add(results, column);
+
+				column = gaim_notify_searchresults_column_new("First name");
+				gaim_notify_searchresults_column_add(results, column);
+
+				column = gaim_notify_searchresults_column_new("Nick name");
+				gaim_notify_searchresults_column_add(results, column);
+
+				column = gaim_notify_searchresults_column_new("City");
+				gaim_notify_searchresults_column_add(results, column);
+
+				column = gaim_notify_searchresults_column_new("Birth year");
+				gaim_notify_searchresults_column_add(results, column);
+
+				gaim_debug_info("gg", "Going with %d entries\n", res_count);
+
+				start = (int)ggp_str_to_uin(gg_pubdir50_get(req, 0, GG_PUBDIR50_START));
+				gaim_debug_info("gg", "start = %d\n", start);
+
+				for (i = 0; i < res_count; i++) {
+					GList *row = NULL;
+					char *birth = ggp_search_get_result(req, i, GG_PUBDIR50_BIRTHYEAR);
+					
+					/* TODO: Status will be displayed as an icon. */
+					/* row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_STATUS)); */
+					row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_UIN));
+					row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_FIRSTNAME));
+					row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_NICKNAME));
+					row = g_list_append(row, ggp_search_get_result(req, i, GG_PUBDIR50_CITY));
+					row = g_list_append(row, (birth && strncmp(birth, "0", 1)) ? birth : g_strdup("-"));
+					gaim_notify_searchresults_row_add(results, row);
+					if (i == res_count - 1) {
+						g_free(info->search_form->last_uin);
+						info->search_form->last_uin = ggp_search_get_result(req, i, GG_PUBDIR50_UIN);
+					}
+				}
+
+				gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_CONTINUE, ggp_callback_show_next);
+				gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY, ggp_callback_add_buddy);
+				if (info->searchresults_window == NULL) {
+					void *h = gaim_notify_searchresults(gc, _("Gadu-Gadu Public Directory"),
+											  _("Search results"), NULL, results, NULL, NULL);
+					info->searchresults_window = h;
+				} else {
+					gaim_notify_searchresults_new_rows(gc, results, info->searchresults_window, NULL);
+				}
+			}
+			break;
+		default:
+			gaim_debug_error("gg", "unsupported event type=%d\n", ev->type);
+			break;
+	}
+
+	gg_free_event(ev);
+}
+/* }}} */
+
+/* ---------------------------------------------------------------------- */
+/* ----- GaimPluginProtocolInfo ----------------------------------------- */
+/* ---------------------------------------------------------------------- */
+
 /* static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy) {{{ */
 static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy)
 {
@@ -1878,14 +1225,14 @@ static void ggp_get_info(GaimConnection *gc, const char *name)
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
 
-	form = ggp_searchform_new();
+	form = ggp_search_form_new();
 	info->search_form = form;
 
 	form->uin = g_strdup(name);
 	form->offset = g_strdup("0");
 	form->last_uin = g_strdup("0");
 
-	ggp_pubdir_start_search(gc, form);
+	ggp_search_start(gc, form);
 }
 /* }}} */
 
@@ -1994,7 +1341,7 @@ static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
 		 }
 	}
 
-	ggp_chat_add_new(gc, chat_name);
+	ggp_confer_add_new(gc, chat_name);
 	serv_got_joined_chat(gc, info->chats_count, chat_name);
 }
 /* }}} */

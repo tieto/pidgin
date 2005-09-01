@@ -14,6 +14,15 @@ GGSOURCES = \
 	lib/compat.h \
 	lib/libgadu.h \
 	lib/libgadu-config.h \
+	utils.h \
+	utils.c \
+	confer.h \
+	confer.c \
+	search.h \
+	search.c \
+	buddylist.h \
+	buddylist.c \
+	gg.h \
 	gg.c
 
 AM_CFLAGS = $(st)
