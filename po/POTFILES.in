@@ -4,7 +4,6 @@ plugins/docklet/docklet-win32.c
 plugins/docklet/docklet.c
 plugins/extplacement.c
 plugins/filectl.c
-plugins/gaim-remote/remote.c
 plugins/gaiminc.c
 plugins/gaimrc.c
 plugins/gestures/gestures.c
@@ -40,7 +39,6 @@ src/blist.c
 src/connection.c
 src/conversation.c
 src/ft.c
-src/gaim-remote.c
 src/gtkaccount.c
 src/gtkblist.c
 src/gtkconn.c
