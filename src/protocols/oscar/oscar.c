@@ -2701,7 +2701,7 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 
 	/* Setup our I/O op functions */
 	if (use_rv_proxy)
-		gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_recv); 
+		gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_recv);
 	else
 		gaim_xfer_set_init_fnc(xfer, oscar_xfer_init_send);
 	gaim_xfer_set_end_fnc(xfer, oscar_xfer_end);
@@ -6180,7 +6180,7 @@ static int gaim_info_change(aim_session_t *sess, aim_frame_t *fr, ...) {
 				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name differs from the original."), err);
 			} break;
 			case 0x0006: {
-				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name ends in a space."), err);
+				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because it is invalid."), err);
 			} break;
 			case 0x000b: {
 				dialog_msg = g_strdup_printf(_("Error 0x%04x: Unable to format screen name because the requested screen name is too long."), err);

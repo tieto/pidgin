@@ -823,8 +823,8 @@ static struct aim_fileheader_t *aim_oft_getheader(aim_bstream_t *bs)
 	fh->flags = aimbs_get8(bs);
 	fh->lnameoffset = aimbs_get8(bs);
 	fh->lsizeoffset = aimbs_get8(bs);
-	aimbs_getrawbuf(bs, fh->dummy, 69);
-	aimbs_getrawbuf(bs, fh->macfileinfo, 16);
+	aimbs_getrawbuf(bs, (guchar *)fh->dummy, 69);
+	aimbs_getrawbuf(bs, (guchar *)fh->macfileinfo, 16);
 	fh->nencode = aimbs_get16(bs);
 	fh->nlanguage = aimbs_get16(bs);
 	aimbs_getrawbuf(bs, (guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
@@ -868,15 +868,15 @@ static int aim_oft_buildheader(aim_bstream_t *bs, struct aim_fileheader_t *fh)
 	aimbs_put32(bs, fh->rfcsum);
 	aimbs_put32(bs, fh->nrecvd);
 	aimbs_put32(bs, fh->recvcsum);
-	aimbs_putraw(bs, (const guchar *)fh->idstring, 32);
+	aimbs_putraw(bs, (guchar *)fh->idstring, 32);
 	aimbs_put8(bs, fh->flags);
 	aimbs_put8(bs, fh->lnameoffset);
 	aimbs_put8(bs, fh->lsizeoffset);
-	aimbs_putraw(bs, fh->dummy, 69);
-	aimbs_putraw(bs, fh->macfileinfo, 16);
+	aimbs_putraw(bs, (guchar *)fh->dummy, 69);
+	aimbs_putraw(bs, (guchar *)fh->macfileinfo, 16);
 	aimbs_put16(bs, fh->nencode);
 	aimbs_put16(bs, fh->nlanguage);
-	aimbs_putraw(bs, (const guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
+	aimbs_putraw(bs, (guchar *)fh->name, 64); /* XXX - filenames longer than 64B */
 
 	return 0;
 }
@@ -946,9 +946,9 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 	fu16_t packet_len;
 	fu8_t sn_len;
 	int err;
-	
+
 	err = 0;
-	
+
 	if (!proxy_info)
 		return -EINVAL;
 
@@ -960,10 +960,10 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 		+ 8		/* ICBM Cookie */
 		+ 2		/* port */
 		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
-	
+
 	if (!(bs_raw = malloc(packet_len)))
 		return -ENOMEM;
-		
+
 	aim_bstream_init(&bs, bs_raw, packet_len);
 	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
 	aimbs_put16(&bs, proxy_info->packet_ver);
@@ -971,23 +971,23 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 	aimbs_put32(&bs, proxy_info->unknownA);
 	aimbs_put16(&bs, proxy_info->flags);
 	aimbs_put8(&bs, sn_len);
-	aimbs_putraw(&bs, proxy_info->sess->sn, sn_len);
+	aimbs_putraw(&bs, (const guchar *)proxy_info->sess->sn, sn_len);
 	aimbs_put16(&bs, proxy_info->port);
 	aimbs_putraw(&bs, proxy_info->cookie, 8);
-	
+
 	aimbs_put16(&bs, 0x0001);		/* Type */
 	aimbs_put16(&bs, 16);			/* Length */
 	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
-	
+
 	// TODO: Use built-in TLV 
 	//aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
 	//aim_tlvlist_write(&bs, &tlvlist_sendfile);
-	
+
 	aim_bstream_rewind(&bs);
 	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
 		err = errno;
 	proxy_info->conn->lastactivity = time(NULL);
-	
+
 	//aim_tlvlist_free(tlvlist_sendfile);
 	free(bs_raw);
 
@@ -1012,9 +1012,9 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 	fu16_t packet_len;
 	fu8_t sn_len;
 	int err;
-	
+
 	err = 0;
-	
+
 	if (!proxy_info)
 		return -EINVAL;
 
@@ -1025,10 +1025,10 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 		+ 1 + sn_len	/* Length/value pair for screenname */
 		+ 8		/* ICBM Cookie */
 		+ 2 + 2 + 16;	/* TLV for Filesend capability block */
-	
+
 	if (!(bs_raw = malloc(packet_len)))
 		return -ENOMEM;
-		
+
 	aim_bstream_init(&bs, bs_raw, packet_len);
 	aimbs_put16(&bs, packet_len - 2); /* Length includes only packets after length marker */
 	aimbs_put16(&bs, proxy_info->packet_ver);
@@ -1036,22 +1036,22 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 	aimbs_put32(&bs, proxy_info->unknownA);
 	aimbs_put16(&bs, proxy_info->flags);
 	aimbs_put8(&bs, sn_len);
-	aimbs_putraw(&bs, proxy_info->sess->sn, sn_len);
+	aimbs_putraw(&bs, (const guchar *)proxy_info->sess->sn, sn_len);
 	aimbs_putraw(&bs, proxy_info->cookie, 8);
-	
+
 	aimbs_put16(&bs, 0x0001);		/* Type */
 	aimbs_put16(&bs, 16);			/* Length */
 	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
-	
-	// TODO: Use built-in TLV 
+
+	// TODO: Use built-in TLV
 	//aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
 	//aim_tlvlist_write(&bs, &tlvlist_sendfile);
-	
+
 	aim_bstream_rewind(&bs);
 	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
 		err = errno;
 	proxy_info->conn->lastactivity = time(NULL);
-	
+
 	//aim_tlvlist_free(tlvlist_sendfile);
 	free(bs_raw);
 
@@ -1059,13 +1059,13 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 }
 
 /**
- * Handle incoming data on a rendezvous connection.  This is analogous to the 
- * consumesnac function in rxhandlers.c, and I really think this should probably 
+ * Handle incoming data on a rendezvous connection.  This is analogous to the
+ * consumesnac function in rxhandlers.c, and I really think this should probably
  * be in rxhandlers.c as well, but I haven't finished cleaning everything up yet.
  *
  * @param sess The session.
  * @param fr The frame allocated for the incoming data.
- * @return Return 0 if the packet was handled correctly, otherwise return the 
+ * @return Return 0 if the packet was handled correctly, otherwise return the
  *         error number.
  */
 faim_internal int aim_rxdispatch_rendezvous(aim_session_t *sess, aim_frame_t *fr)
@@ -1158,9 +1158,9 @@ faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, a
 				body_buf = malloc(body_len);
 				aim_bstream_init(&bs_body, body_buf, body_len);
 				if (aim_bstream_recv(&bs_body, conn->fd, body_len) == body_len) {
+					int i;
 					aim_bstream_rewind(&bs_body);
 					proxy_info->port = aimbs_get16(&bs_body);
-					int i;
 					for(i=0; i<4; i++)
 						ip_temp[i] = aimbs_get8(&bs_body);
 					snprintf(str_ip, sizeof(str_ip), "%hhu.%hhu.%hhu.%hhu",

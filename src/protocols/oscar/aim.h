@@ -55,7 +55,7 @@ typedef guint16 flap_seqnum_t;
  */
 #ifdef WIN32_INDLL
 #define faim_export __declspec(dllexport)
-#else 
+#else
 #define faim_export __declspec(dllimport)
 #endif /* WIN32_INDLL */
 #define faim_internal
@@ -98,7 +98,7 @@ typedef guint16 flap_seqnum_t;
  * with utterly oversized instant messages!
  *
  * XXX: the real limit is the total SNAC size at 8192. Fix this.
- * 
+ *
  */
 #define MAXMSGLEN 7987
 
@@ -418,7 +418,7 @@ typedef struct aim_frame_s {
 } aim_frame_t;
 
 typedef struct aim_msgcookie_s {
-	fu8_t cookie[8];
+	guchar cookie[8];
 	int type;
 	void *data;
 	time_t addtime;
@@ -426,7 +426,7 @@ typedef struct aim_msgcookie_s {
 } aim_msgcookie_t;
 
 /*
- * AIM Session: The main client-data interface.  
+ * AIM Session: The main client-data interface.
  *
  */
 typedef struct aim_session_s {
@@ -847,7 +847,7 @@ struct aim_incomingim_ch1_args {
 
 struct aim_incomingim_ch2_args {
 	fu16_t status;
-	fu8_t cookie[8];
+	guchar cookie[8];
 	int reqclass;
 	const char *proxyip;
 	const char *clientip;
@@ -908,16 +908,16 @@ struct aim_incomingim_ch4_args {
 /* 0x0006 */ faim_export int aim_im_sendch2_chatinvite(aim_session_t *sess, const char *sn, const char *msg, fu16_t exchange, const char *roomname, fu16_t instance);
 /* 0x0006 */ faim_export int aim_im_sendch2_icon(aim_session_t *sess, const char *sn, const fu8_t *icon, int iconlen, time_t stamp, fu16_t iconsum);
 /* 0x0006 */ faim_export int aim_im_sendch2_rtfmsg(aim_session_t *sess, struct aim_sendrtfmsg_args *args);
-/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, fu8_t *cookie, fu8_t usecookie, const char *sn, const fu8_t *ip, fu16_t port);
+/* 0x0006 */ faim_export int aim_im_sendch2_odcrequest(aim_session_t *sess, guchar *cookie, gboolean usecookie, const char *sn, const fu8_t *ip, fu16_t port);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_ask(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_accept(aim_session_t *sess, struct aim_oft_info *info);
 /* 0x0006 */ faim_export int aim_im_sendch2_sendfile_cancel(aim_session_t *sess, struct aim_oft_info *oft_info);
 /* 0x0006 */ faim_export int aim_im_sendch2_geticqaway(aim_session_t *sess, const char *sn, int type);
 /* 0x0006 */ faim_export int aim_im_sendch4(aim_session_t *sess, const char *sn, fu16_t type, const char *message);
 /* 0x0008 */ faim_export int aim_im_warn(aim_session_t *sess, aim_conn_t *conn, const char *destsn, fu32_t flags);
-/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const fu8_t *cookie, fu16_t code);
+/* 0x000b */ faim_export int aim_im_denytransfer(aim_session_t *sess, const char *sender, const guchar *cookie, fu16_t code);
 /* 0x0014 */ faim_export int aim_im_sendmtn(aim_session_t *sess, fu16_t type1, const char *sn, fu16_t type2);
-faim_export void aim_im_makecookie(char* cookie);
+faim_export void aim_im_makecookie(guchar* cookie);
 
 
 /* ft.c */
@@ -927,7 +927,7 @@ struct aim_fileheader_t {
 	fu16_t hdrlen;		/* 4 */
 	fu16_t hdrtype;		/* 6 */
 #endif
-	char bcookie[8];	/* 8 */
+	guchar bcookie[8];	/* 8 */
 	fu16_t encrypt;		/* 16 */
 	fu16_t compress;	/* 18 */
 	fu16_t totfiles;	/* 20 */
@@ -944,7 +944,7 @@ struct aim_fileheader_t {
 	fu32_t rfcsum;		/* 56 */
 	fu32_t nrecvd;		/* 60 */
 	fu32_t recvcsum;	/* 64 */
-	fu8_t idstring[32];	/* 68 */
+	char idstring[32];	/* 68 */
 	fu8_t flags;		/* 100 */
 	fu8_t lnameoffset;	/* 101 */
 	fu8_t lsizeoffset;	/* 102 */
@@ -962,7 +962,7 @@ struct aim_rv_proxy_info {
 	fu16_t flags;
 	char* ip; /* IP address sent along with this packet */
 	fu16_t port; /* This is NOT the port we should use to connect. Always connect to 5190 */
-	fu8_t cookie[8];
+	guchar cookie[8];
 	fu32_t unknownA;
 	fu16_t err_code; /* Valid only for cmd_type of AIM_RV_PROXY_ERROR */
 	aim_conn_t *conn;
@@ -970,19 +970,19 @@ struct aim_rv_proxy_info {
 };
 
 struct aim_oft_info {
-	fu8_t cookie[8];
+	guchar cookie[8];
 	char *sn;
 	char *proxyip;
 	char *clientip;
 	char *verifiedip;
 	fu16_t port;
-	
+
 	int send_or_recv; /* Send or receive */
 	int method; /* What method is being used to transfer this file? DIRECT, REDIR, or PROXY */
 	int stage; /* At what stage was a proxy requested? NONE, STG1, STG2*/
 	int xfer_reffed; /* There are many timers, but we should only ref the xfer once */
 	fu32_t res_bytes; /* The bytes already received for resuming a transfer */
-	
+
 	aim_conn_t *conn;
 	aim_session_t *sess;
 	int success; /* Was the connection successful? Used for timing out the transfer. */
@@ -1000,14 +1000,14 @@ faim_export const char *aim_odc_getsn(aim_conn_t *conn);
 faim_export const guchar *aim_odc_getcookie(aim_conn_t *conn);
 faim_export aim_conn_t *aim_odc_getconn(aim_session_t *sess, const char *sn);
 faim_export aim_conn_t *aim_odc_initiate(aim_session_t *sess, const char *sn, int listenfd,
-                                         const fu8_t *localip, fu16_t port, const fu8_t *mycookie);
-faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const fu8_t *cookie);
+                                         const fu8_t *localip, fu16_t port, const guchar *mycookie);
+faim_export aim_conn_t *aim_odc_connect(aim_session_t *sess, const char *sn, const char *addr, const guchar *cookie);
 
-faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const fu8_t *cookie, const char *sn,
+faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const guchar *cookie, const char *sn,
 	const char *ip, fu16_t port, fu32_t size, fu32_t modtime, char *filename, int send_or_recv,
 	int method, int stage);
 faim_export int aim_oft_destroyinfo(struct aim_oft_info *oft_info);
-faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const fu8_t *cookie, fu16_t port);
+faim_export struct aim_rv_proxy_info *aim_rv_proxy_createinfo(aim_session_t *sess, const guchar *cookie, fu16_t port);
 faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd);
 faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
 
