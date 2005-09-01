@@ -44,6 +44,11 @@
 		  or define sounds on a per-group basis.
 		* we could look at replacing the UI ops with signals/call backs
 	* bugs
+		* buddy shows as group on add until gaim restart
+		* buddy shows as online when offline
+		* buddy shows as offline when online
+		* wrong buddy given priority
+		* so on and so forth
 }}}
 * build targets {{{
   * this is not a blocker
@@ -69,6 +74,8 @@
 		* status is handled as per the new api, status stuff need not go here beyond enabled.
 		* the account modify dialog is already too big.  this would let us split it, for instance
 		  buddy icon need not be in it this way.  Similarly, alias need not be in it.
+			* splitting the account modify dialog to tabs seems to work nicely.  Still, I think
+			  that the menu would be nicer.
 	}}}
 }}}
 * Privacy {{{
@@ -84,8 +91,9 @@
 	  to the defaults.
 }}}
 * Perl {{{
-	* Update to match as much as possible of the C api
 	* Block for 2.0.0 or remove perl:
+		* Summer of Code seems to have largely solved this.
+		* Extended testing and resolving the inevitable bugs remains.
 		* Test each call to make sure it actually works
 		* Make it work with G_MODULE_BIND_LOCAL
 }}}
