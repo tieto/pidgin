@@ -2900,6 +2900,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		return;
 	}
 
+	/* Read in data, one byte at a time */
 	if (read(sock, &data, 1) > 0 || errno == EWOULDBLOCK)
 	{
 		if (errno == EWOULDBLOCK)
@@ -2911,7 +2912,8 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 
 		gfud->len++;
 
-		if (gfud->len == gfud->data_len + 1)
+		/* If we've filled up our buffer then make it bigger */
+		if (gfud->len == gfud->data_len)
 		{
 			gfud->data_len += (gfud->data_len) / 2;
 
@@ -2919,6 +2921,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		}
 
 		gfud->webdata[gfud->len - 1] = data;
+		gfud->webdata[gfud->len] = '\0';
 
 		if (!gfud->startsaving)
 		{
