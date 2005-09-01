@@ -165,11 +165,15 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
-	GtkCellRenderer *text_rend = gtk_cell_renderer_text_new();
-	GtkCellRenderer *icon_rend = gtk_cell_renderer_pixbuf_new();
+	GtkCellRenderer *text_rend;
+	GtkCellRenderer *icon_rend;
 	GtkTextBuffer *buffer;
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
-	GtkIconSize icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+	GtkIconSize icon_size;
+
+	text_rend = gtk_cell_renderer_text_new();
+	icon_rend = gtk_cell_renderer_pixbuf_new();
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 
 	status_box->imhtml_visible = FALSE;
 	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
@@ -278,7 +282,10 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 								  GtkAllocation *allocation)
 {
 	GtkRequisition req = {0,0};
-	GtkAllocation parent_alc = *allocation, box_alc = *allocation ;
+	GtkAllocation parent_alc, box_alc;
+
+	parent_alc = *allocation;
+	box_alc = *allocation;
 	combo_box_size_request(widget, &req);
 
 	/* EVIL XXX */
@@ -423,12 +430,14 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
 {
-	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(box);
+	GtkGaimStatusBox *status_box;
 	GtkTreeIter iter;
 	char *text, *sec_text;
 	GdkPixbuf *pixbuf;
 	gchar *status_type_id;
 	GList *l;
+
+	status_box = GTK_GAIM_STATUS_BOX(box);
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter, TITLE_COLUMN, &text,
