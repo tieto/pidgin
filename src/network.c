@@ -29,6 +29,7 @@
 #include "account.h"
 #include "network.h"
 #include "prefs.h"
+#include "stun.h"
 #include "upnp.h"
 
 
@@ -68,11 +69,17 @@ const char *
 gaim_network_get_public_ip(void)
 {
 	const char *ip;
+	struct stun_nattype *stun;
 
 	ip = gaim_prefs_get_string("/core/network/public_ip");
 
-	if (ip == NULL || *ip == '\0')
+	if (ip == NULL || *ip == '\0') {
+		/* Check if STUN discovery was already done */
+		stun = gaim_stun_discover(NULL);
+		if(stun && stun->status>1)
+			return stun->publicip;
 		return NULL;
+	}	
 
 	return ip;
 }
