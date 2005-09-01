@@ -1567,6 +1567,36 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 }
 /* }}} */
 
+/*
+ */
+/* static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored) {{{ */
+static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored)
+{
+	GaimConnection *gc;
+	GaimBuddy *buddy;
+	GGPInfo *info;
+	uin_t uin;
+
+	buddy = (GaimBuddy *)node;
+	gc = gaim_account_get_connection(gaim_buddy_get_account(buddy));
+	info = gc->proto_data;
+
+	uin = ggp_str_to_uin(gaim_buddy_get_name(buddy));
+
+	if (gaim_blist_node_get_bool(node, "blocked")) {
+		gaim_blist_node_set_bool(node, "blocked", FALSE);
+		gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
+		gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
+		gaim_debug_info("gg", "send: uin=%d; mode=NORMAL\n", uin);
+	} else {
+		gaim_blist_node_set_bool(node, "blocked", TRUE);
+		gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
+		gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
+		gaim_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
+	}
+}
+/* }}} */
+
 /* ---------------------------------------------------------------------- */
 /* ----- GaimPluginProtocolInfo ----------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -1727,7 +1757,13 @@ static GList *ggp_blist_node_menu(GaimBlistNode *node)
 	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
 		return NULL;
 
-	act = gaim_blist_node_action_new("Add to chat", ggp_bmenu_add_to_chat, NULL, NULL);
+	act = gaim_blist_node_action_new(_("Add to chat"), ggp_bmenu_add_to_chat, NULL, NULL);
+	m = g_list_append(m, act);
+
+	if (gaim_blist_node_get_bool(node, "blocked"))
+		act = gaim_blist_node_action_new(_("Unblock"), ggp_bmenu_block, NULL, NULL);
+	else
+		act = gaim_blist_node_action_new(_("Block"), ggp_bmenu_block, NULL, NULL);
 	m = g_list_append(m, act);
 
 	return m;
