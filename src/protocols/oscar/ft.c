@@ -668,7 +668,7 @@ faim_export struct aim_oft_info *aim_oft_createinfo(aim_session_t *sess, const f
 	if (cookie)
 		memcpy(new->cookie, cookie, 8);
 	else
-		aim_im_makecookie(new->cookie);
+		aim_icbm_makecookie(new->cookie);
 	if (ip)
 		new->clientip = strdup(ip);
 	else

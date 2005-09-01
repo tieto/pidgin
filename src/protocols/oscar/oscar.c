@@ -2661,7 +2661,7 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 
 /*
  * Called by the Gaim core when the user indicates that a file is to be sent to
- * a special someone. 
+ * a special someone.
  */
 static void oscar_send_file(GaimConnection *gc, const char *who, const char *file) {
 	OscarData *od;
@@ -2671,9 +2671,9 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 	gboolean use_rv_proxy;
 
 	use_rv_proxy = gaim_prefs_get_bool("/plugins/prpl/oscar/use_rv_proxy");
-	if(use_rv_proxy) 
+	if(use_rv_proxy)
 		gaim_debug_info("oscar","using stage 1 proxied transfer\n");
-	
+
 	od = (OscarData *)gc->proto_data;
 
 	/* You want to send a file to someone else, you're so generous */
@@ -2691,7 +2691,7 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 		oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess, NULL, 0);
 		/* We must create a cookie before the request is sent
 		* so that it can be sent to the proxy */
-		aim_im_makecookie(oft_info->cookie);
+		aim_icbm_makecookie(oft_info->cookie);
 	} else {
 		ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
 		oft_info = aim_oft_createinfo(od->sess, NULL, who, ip, 0, 0, 0, NULL,
