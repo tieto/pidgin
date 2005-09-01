@@ -332,6 +332,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		GtkCellRenderer *rend;
 		GtkTreeViewColumn *col;
 		GtkTreeSelection *sel;
+		GtkTreePath *path_to_first_log;
 		GtkWidget *vbox;
 		GtkWidget *frame;
 		GtkWidget *hbox;
@@ -354,9 +355,9 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
 		gtk_container_add (GTK_CONTAINER (sw), lv->treeview);
-	
+
 		populate_log_tree(lv);
-	
+
 		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
 		g_signal_connect (G_OBJECT (sel), "changed",
 				G_CALLBACK (log_select_cb),
@@ -365,18 +366,18 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 				G_CALLBACK(log_row_activated_cb),
 				lv);
 		gaim_set_accessible_label(lv->treeview, lv->label);
-	
+
 		/* A fancy little box ************/
 		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_paned_add2(GTK_PANED(pane), vbox);
-	
+
 		/* Viewer ************/
 		frame = gaim_gtk_create_imhtml(FALSE, &lv->imhtml, NULL);
 		gtk_widget_set_name(lv->imhtml, "gaim_gtklog_imhtml");
 		gtk_widget_set_size_request(lv->imhtml, 320, 200);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 		gtk_widget_show(frame);
-	
+
 		/* Search box **********/
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -387,10 +388,20 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
 		g_signal_connect(GTK_BUTTON(button), "activate", G_CALLBACK(search_cb), lv);
 		g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
+
+		/* Show most recent log **********/
+		path_to_first_log = gtk_tree_path_new_from_string("0:0");
+		if (path_to_first_log)
+		{
+			gtk_tree_view_expand_to_path(GTK_TREE_VIEW(lv->treeview), path_to_first_log);
+			gtk_tree_selection_select_path(sel, path_to_first_log);
+			gtk_tree_path_free(path_to_first_log);
+		}
+
 	} else {
 		/* No logs were found. */
 		const char *log_preferences = NULL;
-  GtkWidget *label;
+		GtkWidget *label;
 
 		if (ht == NULL) {
 			if (!gaim_prefs_get_bool("/core/logging/log_system"))
