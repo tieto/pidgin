@@ -678,7 +678,8 @@ int main(int argc, char *argv[])
 		gaim_accounts_restore_previous_statuses();
 	}
 
-	if (opt_acct || (gaim_accounts_get_all() == NULL)) {
+	if (opt_acct || (gaim_accounts_get_all_active() == NULL))
+	{
 		gaim_gtk_accounts_window_show();
 	}
 
