@@ -42,6 +42,7 @@
 #include "simple.h"
 #include "sipmsg.h"
 #include "dnssrv.h"
+#include "ntlm.h"
 
 static char *gentag() {
 	return g_strdup_printf("%04d%04d", rand() & 0xFFFF, rand() & 0xFFFF);
@@ -263,6 +264,26 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	HASHHEX HA2;
 	HASHHEX response;
 	gchar *ret;
+	gchar *tmp;
+
+	if(auth->type == 1) { /* Digest */
+		sprintf(noncecount, "%08d", auth->nc++);
+		DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
+		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, auth->realm, auth->nonce, target, noncecount, response);
+		return ret;
+	} else if(auth->type == 2) { /* NTLM */
+		if(auth->nc == 3) {
+			ret = gaim_ntlm_gen_type3(sip->username, sip->password, "gaim", sip->servername, auth->nonce);
+			tmp = g_strdup_printf("NTLM %s\r\n",ret);
+			g_free(ret);
+			return tmp;
+		}
+		ret = gaim_ntlm_gen_type1("gaim", sip->servername);
+		tmp = g_strdup_printf("NTLM %s\r\n", ret);
+		g_free(ret);
+		return tmp;
+	}
 
 	sprintf(noncecount, "%08d", auth->nc++);
 	DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
@@ -272,11 +293,26 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 }
 
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
+	int i=0;
 	if(!hdr) {
-		gaim_debug_info("simple", "fill_auth: hdr==NULL\n");
+		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
 		return;
 	}
-	int i=0;
+
+	if(!g_strncasecmp(hdr, "NTLM", 4)) {
+		gaim_debug_info("simple", "found NTLM\n");
+		auth->type = 2;
+		if(!auth->nonce && !auth->nc) {
+			auth->nc = 1;
+		}
+		if(!auth->nonce && auth->nc==2) {
+			auth->nc = 3;
+			auth->nonce = gaim_ntlm_parse_type2(hdr+5);
+		}
+		return;
+	}
+
+	auth->type = 1;
 	gchar **parts = g_strsplit(hdr, " ", 0);
 	while(parts[i]) {
 		if(!strncmp(parts[i],"nonce",5)) {
@@ -444,14 +480,14 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	char *buf;
 
 	if(addheaders) addh=addheaders;
-	if(sip->registrar.nonce && !strcmp(method,"REGISTER")) {
+	if(sip->registrar.type && !strcmp(method,"REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
 		auth = g_strdup_printf("Authorization: %s",buf);
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
-	if(sip->proxy.nonce && strcmp(method,"REGISTER")) {
+	if(sip->proxy.type && strcmp(method,"REGISTER")) {
 		buf = auth_header(sip, &sip->proxy, method, url);
 		auth = g_strdup_printf("Proxy-Authorization: %s",buf);
 		g_free(buf);
@@ -736,7 +772,6 @@ gboolean process_register_response(struct simple_account_data *sip, struct sipms
 				tmp = sipmsg_find_header(msg, "WWW-Authenticate");
 				fill_auth(sip, tmp, &sip->registrar);
 				sip->registerstatus=2;
-				gaim_debug(GAIM_DEBUG_MISC, "simple", "HA1: %s\n",sip->registrar.HA1);
 				do_register(sip);
 			}
 			break;
@@ -1141,6 +1176,15 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 	sip->realport = port;
 	/* TCP case */
 	if(! sip->udp) {
+		/* create socket for incoming connections */
+		sip->listenfd = gaim_network_listen_range(5060, 5160);
+		if(sip->listenfd == -1) {
+			gaim_connection_error(sip->gc, _("Could not create listen socket"));
+			return;
+		}
+		gaim_debug_info("simple", "listenfd: %d\n", sip->listenfd);
+		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
+		sip->listenpa = gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, sip->gc);
 		gaim_debug_info("simple","connecting to %s port %d\n", hostname, port);
 		/* open tcp connection to the server */
 		error = gaim_proxy_connect(sip->account, hostname, port, login_cb, sip->gc);
@@ -1148,14 +1192,6 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 			gaim_connection_error(sip->gc, _("Couldn't create socket"));
 		}
 
-		/* create socket for incoming connections */
-		sip->listenfd = gaim_network_listen_range(5060, 5080);
-		if(sip->listenfd == -1) {
-			gaim_connection_error(sip->gc, _("Could not create listen socket"));
-			return;
-		}
-		sip->listenport = gaim_network_get_port_from_fd(sip->listenfd);
-		gaim_input_add(sip->listenfd, GAIM_INPUT_READ, simple_newconn_cb, sip->gc);
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
 		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -1250,6 +1286,7 @@ static void simple_close(GaimConnection *gc)
 		if(sip->sendlater) g_free(sip->sendlater);
 		if(sip->ip) g_free(sip->ip);
 		if(sip->realhostname) g_free(sip->realhostname);
+		if(sip->listenpa) gaim_input_remove(sip->listenpa);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
 		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = sip->realhostname = NULL;
 	}

@@ -71,6 +71,7 @@ struct simple_account_data {
 	struct sip_auth proxy;
 	int listenfd;
 	int listenport;
+	int listenpa;
 	gchar *ip;
 	gchar *status;
 	GHashTable *buddies;
