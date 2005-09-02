@@ -185,11 +185,12 @@ static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
 		port = resp[0].port;
 	}
 	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n", results, servername, port);
+
+	host = gethostbyname(servername);
 	if(!host->h_addr_list) {
 		return;
 	}
-	host = gethostbyname(servername);
-	
+
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		nattype.status = 0;
 		do_callbacks();
