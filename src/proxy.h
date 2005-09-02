@@ -228,6 +228,19 @@ int gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 int gaim_proxy_connect_socks5(GaimProxyInfo *gpi, const char *host, int port,
 					   GaimInputFunction func, gpointer data);
 
+typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
+		const char *error_message);
+/**
+ * Do an async dns query
+ *
+ * @param hostname The hostname to resolve
+ * @param port A portnumber which is stored in the struct sockaddr
+ * @param callback Callback to call after resolving
+ * @param data Extra data for the callback function
+ * @return a GSList containing the size of followed by the struct sockaddr for any returned IP
+ */
+int gaim_gethostbyname_async(const char *hostname, int port, dns_callback_t callback, gpointer data);
+
 /*@}*/
 
 #ifdef __cplusplus

@@ -186,8 +186,6 @@ gaim_global_proxy_get_info(void)
 /**************************************************************************
  * Proxy API
  **************************************************************************/
-typedef void (*dns_callback_t)(GSList *hosts, gpointer data,
-		const char *error_message);
 
 #ifdef __unix__ 
 
