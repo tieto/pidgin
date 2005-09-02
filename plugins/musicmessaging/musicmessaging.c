@@ -482,17 +482,16 @@ static void music_button_toggled (GtkWidget *widget, gpointer data)
 	MMConversation *mmconv = mmconv_from_conv(((MMConversation *) data)->conv);
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) 
     {
-		//if (((MMConversation *) data)->requested)
-		//{
-			if (!mmconv){ g_printerr("DEBUG: About to bust\n"); }
+		if (((MMConversation *) data)->requested)
+		{
 			start_session(mmconv);
 			send_request_confirmed(mmconv);
-		/*}
+		}
 		else
 		{
 			((MMConversation *) data)->originator = TRUE;
 			send_request((MMConversation *) data);
-		}*/
+		}
     } else {
 		session_end((MMConversation *)data);
     }
