@@ -127,13 +127,13 @@ gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain) {
 	memcpy(msg+sizeof(struct type1_message),hostname,strlen(hostname));
 	memcpy(msg+sizeof(struct type1_message)+strlen(hostname),domain,strlen(domain));
 
-	return gaim_base64_encode(msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
+	return gaim_base64_encode((guchar*)msg, sizeof(struct type1_message) + strlen(hostname) + strlen(domain));
 }
 
 gchar *gaim_ntlm_parse_type2(gchar *type2) {
-	int retlen;
+	guint retlen;
 	static gchar nonce[8];
-	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode(type2, &retlen);
+	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode((char*)type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
 	g_free(tmsg);
 	return nonce;
@@ -157,12 +157,12 @@ static void setup_des_key(unsigned char key_56[], char *key)
 static void des_ecb_encrypt(char *plaintext, char *result, char *key) {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	int outlen;
+	guint outlen;
 	
 	cipher = gaim_ciphers_find_cipher("des");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_set_key(context, key);
-	gaim_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
+	gaim_cipher_context_set_key(context, (guchar*)key);
+	gaim_cipher_context_encrypt(context, (guchar*)plaintext, 8, (guchar*)result, &outlen);
 	gaim_cipher_context_destroy(context);
 }
 
@@ -173,15 +173,15 @@ static void des_ecb_encrypt(char *plaintext, char *result, char *key) {
  */
 static void calc_resp(unsigned char *keys, unsigned char *plaintext, unsigned char *results)
 {
-	gchar key[8];
-	setup_des_key(keys, key);
-	des_ecb_encrypt(plaintext, results, key);
+	guchar key[8];
+	setup_des_key(keys, (char*)key);
+	des_ecb_encrypt((char*)plaintext, (char*)results, (char*)key);
 
-	setup_des_key(keys+7, key);
-	des_ecb_encrypt(plaintext, (results+8), key);
+	setup_des_key(keys+7, (char*)key);
+	des_ecb_encrypt((char*)plaintext, (char*)(results+8), (char*)key);
 
-	setup_des_key(keys+14, key);
-	des_ecb_encrypt(plaintext, (results+16), key);
+	setup_des_key(keys+14, (char*)key);
+	des_ecb_encrypt((char*)plaintext, (char*)(results+16), (char*)key);
 }
 
 gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar *domain, gchar *nonce) {
@@ -242,11 +242,11 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 	for (; idx<14; idx++)
 		lm_pw[idx] = 0;
 
-	setup_des_key(lm_pw, key);
-	des_ecb_encrypt(magic, lm_hpw, key);
+	setup_des_key((unsigned char*)lm_pw, (char*)key);
+	des_ecb_encrypt((char*)magic, (char*)lm_hpw, (char*)key);
 
-	setup_des_key(lm_pw+7, key);
-	des_ecb_encrypt(magic, lm_hpw+8, key);
+	setup_des_key((unsigned char*)(lm_pw+7), (char*)key);
+	des_ecb_encrypt((char*)magic, (char*)lm_hpw+8, (char*)key);
 
 	memset(lm_hpw+16, 0, 5);
 
@@ -260,15 +260,15 @@ gchar *gaim_ntlm_gen_type3(gchar *username, gchar *passw, gchar *hostname, gchar
 
 	cipher = gaim_ciphers_find_cipher("md4");
 	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, nt_pw, 2*lennt);
-	gaim_cipher_context_digest(context, 21, nt_hpw, NULL);
+	gaim_cipher_context_append(context, (guchar*)nt_pw, 2*lennt);
+	gaim_cipher_context_digest(context, 21, (guchar*)nt_hpw, NULL);
 	gaim_cipher_context_destroy(context);
 
 	memset(nt_hpw+16, 0, 5);
 
 
-	calc_resp(lm_hpw, nonce, lm_resp);
-	calc_resp(nt_hpw, nonce, nt_resp);
+	calc_resp(lm_hpw, (guchar*)nonce, lm_resp);
+	calc_resp(nt_hpw, (guchar*)nonce, nt_resp);
 	memcpy(tmp, lm_resp, 0x18);
 	memcpy(tmp+0x18, nt_resp, 0x18);
 	tmp = gaim_base64_encode((guchar*) tmsg, tmsg->msg_len);
