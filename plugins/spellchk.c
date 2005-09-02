@@ -1590,6 +1590,7 @@ static void load_conf()
 			"COMPLETE 0\nBAD will of had\nGOOD will have had\n"
 			"BAD windoes\nGOOD windows\n"
 			"BAD witha\nGOOD with a\n"
+			"BAD withdrawl\nGOOD withdrawal\n"
 			"BAD withe\nGOOD with\n"
 			"COMPLETE 0\nBAD withthe\nGOOD with the\n"
 			"BAD witht he\nGOOD with the\n"
