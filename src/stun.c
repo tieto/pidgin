@@ -41,6 +41,7 @@
 #include "debug.h"
 #include "account.h"
 #include "dnssrv.h"
+#include "proxy.h"
 #include "stun.h"
 #include "prefs.h"
 
@@ -173,23 +174,12 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	}
 }
 
-static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
-	char *servername = (char*)sdata;
+static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 	static struct stun_header data;
-	int port = 3478;
 	int ret;
-	struct hostent *host;
-	
-	if(results) {
-		servername = resp[0].hostname;
-		port = resp[0].port;
-	}
-	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n", results, servername, port);
 
-	host = gethostbyname(servername);
-	if(!host->h_addr_list) {
-		return;
-	}
+	if(!hosts) return;
+	if(!hosts->data) return;
 
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		nattype.status = 0;
@@ -209,11 +199,18 @@ static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
 		return;
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
-	
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	memcpy(&addr.sin_addr.s_addr,*(host->h_addr_list),4);
 
+	ret = GPOINTER_TO_INT(hosts->data);
+	hosts = g_slist_remove(hosts, hosts->data);
+	memcpy(&addr, hosts->data, sizeof(struct sockaddr_in));
+	g_free(hosts->data);
+	hosts = g_slist_remove(hosts, hosts->data);
+	while(hosts) {
+		hosts = g_slist_remove(hosts, hosts->data);
+		g_free(hosts->data);
+		hosts = g_slist_remove(hosts, hosts->data);
+	}
+		
 	data.type = htons(0x0001);
 	data.len = 0;
 	data.transid[0] = rand();
@@ -230,11 +227,24 @@ static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
 	packet = &data;
 	packetsize = sizeof(struct stun_header);
 	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
+}
+
+static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
+	char *servername = (char*)sdata;
+	int port = 3478;
+	
+	if(results) {
+		servername = resp[0].hostname;
+		port = resp[0].port;
+	}
+	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n", results, servername, port);
+
+	gaim_gethostbyname_async(servername, port, hbn_cb, NULL);
 	g_free(resp);
 }
 
 struct stun_nattype *gaim_stun_discover(StunCallback cb) {
-	const char *servername = gaim_prefs_get_string("/core/network/stun_server");
+	char *servername = (char*)gaim_prefs_get_string("/core/network/stun_server");
 
 	gaim_debug_info("stun", "using server %s\n", servername);
 	if(nattype.status == 1) { /* currently discovering */
