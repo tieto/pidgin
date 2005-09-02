@@ -154,7 +154,7 @@ static void resolve(int in, int out) {
 		}
 	}
 end:	size = g_list_length(ret);
-	write(out, &size, 4);
+	write(out, &size, sizeof(int));
 	while(g_list_first(ret)) {
 		write(out, g_list_first(ret)->data, sizeof(struct srv_response));
 		g_free(g_list_first(ret)->data);
@@ -175,7 +175,7 @@ static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 	int i;
 	SRVCallback cb = rdata->cb;
 
-	read(source, &size, 4);
+	read(source, &size, sizeof(int));
 	gaim_debug_info("srv","found %d SRV entries\n", size);
 	tmp = res = g_malloc0(sizeof(struct srv_response)*size);
 	i = size;
