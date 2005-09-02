@@ -172,14 +172,16 @@ static void resolved(gpointer data, gint source, GaimInputCondition cond) {
 	struct resdata *rdata = (struct resdata*)data;
 	struct srv_response *res;
 	struct srv_response *tmp;
+	int i;
 	SRVCallback cb = rdata->cb;
 
 	read(source, &size, 4);
 	gaim_debug_info("srv","found %d SRV entries\n", size);
 	tmp = res = g_malloc0(sizeof(struct srv_response)*size);
-	while(size) {
+	i = size;
+	while(i) {
 		read(source, tmp++, sizeof(struct srv_response));
-		size--;
+		i--;
 	}
 	cb(res, size, rdata->extradata);
 	gaim_input_remove(rdata->handle);
