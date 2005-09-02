@@ -58,6 +58,10 @@ extern int wgaim_listen(int socket, unsigned int n);
 #define listen( socket, n ) \
 wgaim_listen( socket, n )
 
+extern int wgaim_sendto(int socket, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen);
+#define sendto(socket, buf, len, flags, to, tolen) \
+wgaim_sendto(socket, buf, len, flags, to, tolen)
+
 /* sys/ioctl.h */
 extern int wgaim_ioctl(int fd, int command, void* opt);
 #define ioctl( fd, command, val ) \

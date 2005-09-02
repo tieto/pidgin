@@ -139,6 +139,16 @@ int wgaim_listen(int socket, unsigned int n) {
         return 0;
 }
 
+int wgaim_sendto(int socket, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen) {
+	int ret;
+	if ((ret = sendto(socket, buf, len, flags, to, tolen)
+			) == SOCKET_ERROR) {
+		errno = WSAGetLastError();
+		return -1;
+	}
+	return ret;
+}
+
 /* fcntl.h */
 /* This is not a full implementation of fcntl. Update as needed.. */
 int wgaim_fcntl(int socket, int command, int val) {

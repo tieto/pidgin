@@ -71,7 +71,7 @@ static gboolean timeoutfunc(void *blah) {
 		if(test == 2) nattype.type = 5;
 		/* remove input */
 		gaim_input_remove(incb);
-	
+
 		/* set unknown */
 		nattype.status = 0;
 
@@ -88,12 +88,13 @@ static gboolean timeoutfunc(void *blah) {
 #ifdef NOTYET
 static void do_test2() {
 	struct stun_change data;
-        data.hdr.type = htons(0x0001);
-        data.hdr.len = 0;
-        data.hdr.transid[0] = rand();
-        data.hdr.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
-        data.hdr.transid[2] = rand();
-        data.hdr.transid[3] = rand();							data.attrib.type = htons(0x003);
+	data.hdr.type = htons(0x0001);
+	data.hdr.len = 0;
+	data.hdr.transid[0] = rand();
+	data.hdr.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
+	data.hdr.transid[2] = rand();
+	data.hdr.transid[3] = rand();
+	data.attrib.type = htons(0x003);
 	data.attrib.len = htons(4);
 	data.value[3] = 6;
 	packet = (struct stun_header*)&data;
@@ -101,7 +102,7 @@ static void do_test2() {
 	retry = 0;
 	test = 2;
 	sendto(fd, packet, packetsize, 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in));
-        timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
+	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
 }
 #endif
 
@@ -115,7 +116,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 	struct ifconf ifc;
 	struct ifreq *ifr;
 	struct sockaddr_in *sinptr;
-	
+
 	len = recv(source, buffer, 1024, 0);
 
 	hdr = (struct stun_header*)buffer;
@@ -123,7 +124,7 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 		gaim_debug_info("stun", "got wrong transid\n");
 		return;
 	}
-	if(test==1) {	
+	if(test==1) {
 		tmp = buffer + sizeof(struct stun_header);
 		while(buffer+len > tmp) {
 
@@ -195,7 +196,7 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 	}
 	if( ret < 0 ) {
 		nattype.status = 0;
-                do_callbacks();
+		do_callbacks();
 		return;
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
@@ -210,18 +211,18 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 		g_free(hosts->data);
 		hosts = g_slist_remove(hosts, hosts->data);
 	}
-		
+
 	data.type = htons(0x0001);
 	data.len = 0;
 	data.transid[0] = rand();
 	data.transid[1] = ntohl(((int)'g' << 24) + ((int)'a' << 16) + ((int)'i' << 8) + (int)'m');
 	data.transid[2] = rand();
 	data.transid[3] = rand();
-	
+
 	if( sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
-			nattype.status = 0;
-	                do_callbacks();
-			return;
+		nattype.status = 0;
+		do_callbacks();
+		return;
 	}
 	test = 1;
 	packet = &data;
@@ -230,9 +231,9 @@ static void hbn_cb(GSList *hosts, gpointer edata, const char *error_message) {
 }
 
 static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
-	char *servername = (char*)sdata;
+	const char *servername = sdata;
 	int port = 3478;
-	
+
 	if(results) {
 		servername = resp[0].hostname;
 		port = resp[0].port;
@@ -244,7 +245,7 @@ static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
 }
 
 struct stun_nattype *gaim_stun_discover(StunCallback cb) {
-	char *servername = (char*)gaim_prefs_get_string("/core/network/stun_server");
+	const char *servername = gaim_prefs_get_string("/core/network/stun_server");
 
 	gaim_debug_info("stun", "using server %s\n", servername);
 	if(nattype.status == 1) { /* currently discovering */
@@ -262,7 +263,8 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 		return &nattype;
 	}
 	callbacks = g_slist_append(callbacks, cb);
-	gaim_srv_resolve("stun","udp",servername, do_test1, servername);
+	gaim_srv_resolve("stun","udp",servername, do_test1,
+		(gpointer) servername);
 	return &nattype;
 }
 
