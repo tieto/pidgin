@@ -75,11 +75,13 @@ gaim_buddy_icon_new(GaimAccount *account, const char *username,
 
 	gaim_buddy_icon_ref(icon);
 	gaim_buddy_icon_set_data(icon, icon_data, icon_len);
-	gaim_buddy_icon_unref(icon);
 
-	/* We don't take a reference here. gaim_buddy_icon_set_data() makes blist.c or
-	   conversation.c, or both, do that for us.
+	/* gaim_buddy_icon_set_data() makes blist.c or
+	 * conversation.c, or both, take a reference.
+	 *
+	 * Plus, we leave one for the caller of this function.
 	 */
+
 	return icon;
 }
 
@@ -412,7 +414,8 @@ gaim_buddy_icons_set_for_user(GaimAccount *account, const char *username,
 	}
 	else
 	{
-		gaim_buddy_icon_new(account, username, icon_data, icon_len);
+		GaimBuddyIcon *icon = gaim_buddy_icon_new(account, username, icon_data, icon_len);
+		gaim_buddy_icon_unref(icon);
 	}
 }
 

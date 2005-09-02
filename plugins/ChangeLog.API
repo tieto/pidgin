@@ -78,6 +78,9 @@ version 2.0.0:
 	* Changed: gaim_log_new(), added conv parameter
 	* Added:   gaim_buddy_icons_get_full_path(), to get the full path
 	           of a buddy icon setting
+	* Changed: gaim_buddy_icon_new(), leaves a reference which the caller
+	           owns. Use gaim_buddy_icon_unref() immediately if you don't
+	           want a reference (the old behavior).
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
