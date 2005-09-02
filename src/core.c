@@ -39,6 +39,7 @@
 #include "signals.h"
 #include "sslconn.h"
 #include "status.h"
+#include "stun.h"
 #include "sound.h"
 
 #ifdef HAVE_DBUS
@@ -121,6 +122,7 @@ gaim_core_init(const char *ui)
 	gaim_proxy_init();
 	gaim_sound_init();
 	gaim_ssl_init();
+	gaim_stun_init();
 	gaim_xfers_init();
 
 	if (ops != NULL && ops->ui_init != NULL)

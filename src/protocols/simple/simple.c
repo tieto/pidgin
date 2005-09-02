@@ -275,12 +275,13 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	} else if(auth->type == 2) { /* NTLM */
 		if(auth->nc == 3) {
 			ret = gaim_ntlm_gen_type3(sip->username, sip->password, "gaim", sip->servername, auth->nonce);
-			tmp = g_strdup_printf("NTLM %s\r\n",ret);
+			tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n",auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
 		}
 		ret = gaim_ntlm_gen_type1("gaim", sip->servername);
-		tmp = g_strdup_printf("NTLM %s\r\n", ret);
+/*		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret); */
+		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"010000003134303017f6dcfb4531f92f\"\r\n", auth->realm, auth->target);
 		g_free(ret);
 		return tmp;
 	}
@@ -294,6 +295,8 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 
 static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_auth *auth) {
 	int i=0;
+	char *tmp;
+	char *tmp2;
 	if(!hdr) {
 		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
 		return;
@@ -303,6 +306,21 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		gaim_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		if(!auth->nonce && !auth->nc) {
+			gchar **parts = g_strsplit(hdr, " ", 0);
+			while(parts[i]) {
+				if(!strncmp(parts[i],"targetname",10)) {
+					auth->target = g_strndup(parts[i]+12,strlen(parts[i]+12)-1);
+				}
+				if(!strncmp(parts[i],"realm",5)) {
+					tmp = strstr(hdr, "realm=");
+					tmp += 7;
+					tmp2 = strchr(tmp, '"');
+					*tmp2 = 0;
+					auth->realm = g_strdup(tmp);
+					*tmp2 = '"';
+				}
+				i++;
+			}
 			auth->nc = 1;
 		}
 		if(!auth->nonce && auth->nc==2) {

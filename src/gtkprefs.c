@@ -1022,7 +1022,7 @@ network_page()
 {
 	GtkWidget *ret;
 	GtkWidget *vbox, *hbox, *entry;
-	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
+	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button, *stun_server_entry;
 	GtkSizeGroup *sg;
 	GaimProxyInfo *proxy_info;
 
@@ -1033,6 +1033,7 @@ network_page()
 
 	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP Address"),
 			"/core/network/auto_ip", vbox);
+	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("STUN Server"), "/core/network/stun_server", NULL);
 
 	table = gtk_table_new(2, 1, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 5);

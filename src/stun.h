@@ -71,4 +71,5 @@ typedef void (*StunCallback) (struct stun_nattype *);
  */
 struct stun_nattype *gaim_stun_discover(StunCallback cb);
 
+void gaim_stun_init();
 #endif /* _GAIM_STUN_H_ */

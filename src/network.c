@@ -144,6 +144,7 @@ gaim_network_get_my_ip(int fd)
 {
   const char *ip = NULL;
   GaimUPnPControlInfo* controlInfo = NULL;
+	struct stun_nattype *stun;
 
 	/* Check if the user specified an IP manually */
 	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -151,6 +152,14 @@ gaim_network_get_my_ip(int fd)
 		if (ip != NULL)
 			return ip;
 	}
+
+	if (ip == NULL || *ip == '\0') {
+		/* Check if STUN discovery was already done */
+		stun = gaim_stun_discover(NULL);
+		if(stun && stun->status>1)
+			return stun->publicip;
+	}	
+
 
   /* attempt to get the ip from a NAT device */
   if ((controlInfo = gaim_upnp_discover()) != NULL) {

@@ -40,6 +40,7 @@
 
 #include "debug.h"
 #include "account.h"
+#include "dnssrv.h"
 #include "stun.h"
 #include "prefs.h"
 
@@ -171,31 +172,28 @@ static void reply_cb(gpointer data, gint source, GaimInputCondition cond) {
 		nattype.type = 2;
 	}
 }
-	
-struct stun_nattype *gaim_stun_discover(StunCallback cb) {
-	static struct stun_header data;
-	int ret = 0;
-	const char *ip = gaim_prefs_get_string("/core/network/stun_ip");
-	int port = gaim_prefs_get_int("/core/network/stun_port");
 
-	if(!ip || !port) {
-		nattype.status = 0;
-		if(cb) cb(&nattype);
-		return &nattype;
-	}
+static void do_test1(struct srv_response *resp, int results, gpointer sdata) {
+	char *servername = (char*)sdata;
+	static struct stun_header data;
+	int port = 3478;
+	int ret;
+	struct hostent *host;
 	
-	if(nattype.status == 1) { /* currently discovering */
-		if(cb) callbacks = g_slist_append(callbacks, cb);
-		return NULL;
+	if(results) {
+		servername = resp[0].hostname;
+		port = resp[0].port;
 	}
-	if(nattype.status != -1) { /* already discovered */
-		if(cb) cb(&nattype);
-		return &nattype;
+	gaim_debug_info("stun", "got %d SRV responses, server: %s, port: %d\n", results, servername, port);
+	if(!host->h_addr_list) {
+		return;
 	}
+	host = gethostbyname(servername);
+	
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
 		nattype.status = 0;
-		if(cb) cb(&nattype);
-		return &nattype;
+		do_callbacks();
+		return;
 	}
 
 	addr.sin_family = AF_INET;
@@ -206,16 +204,14 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	}
 	if( ret < 0 ) {
 		nattype.status = 0;
-		if(cb) cb(&nattype);
-		return &nattype;
+                do_callbacks();
+		return;
 	}
 	incb = gaim_input_add(fd, GAIM_INPUT_READ, reply_cb, NULL);
 	
-	if(port == 0 || ip == NULL || ip[0] == '\0') return NULL;
-	
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(ip);
+	memcpy(&addr.sin_addr.s_addr,*(host->h_addr_list),4);
 
 	data.type = htons(0x0001);
 	data.len = 0;
@@ -226,13 +222,39 @@ struct stun_nattype *gaim_stun_discover(StunCallback cb) {
 	
 	if( sendto(fd, &data, sizeof(struct stun_header), 0, (struct sockaddr *)&addr, sizeof(struct sockaddr_in)) < sizeof(struct stun_header)) {
 			nattype.status = 0;
-			if(cb) cb(&nattype);
-			return &nattype;
+	                do_callbacks();
+			return;
 	}
 	test = 1;
 	packet = &data;
 	packetsize = sizeof(struct stun_header);
-	if(cb) callbacks = g_slist_append(callbacks, cb);
 	timeout = gaim_timeout_add(500, (GSourceFunc)timeoutfunc, NULL);
-	return NULL;
+	g_free(resp);
+}
+
+struct stun_nattype *gaim_stun_discover(StunCallback cb) {
+	const char *servername = gaim_prefs_get_string("/core/network/stun_server");
+
+	gaim_debug_info("stun", "using server %s\n", servername);
+	if(nattype.status == 1) { /* currently discovering */
+		if(cb) callbacks = g_slist_append(callbacks, cb);
+		return NULL;
+	}
+	if(nattype.status != -1) { /* already discovered */
+		if(cb) cb(&nattype);
+		return &nattype;
+	}
+
+	if(!servername || (strlen(servername)<2)) {
+		nattype.status = 0;
+		if(cb) cb(&nattype);
+		return &nattype;
+	}
+	callbacks = g_slist_append(callbacks, cb);
+	gaim_srv_resolve("stun","udp",servername, do_test1, servername);
+	return &nattype;
+}
+
+void gaim_stun_init() {
+	gaim_prefs_add_string("/core/network/stun_server", "");
 }

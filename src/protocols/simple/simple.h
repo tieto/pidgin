@@ -52,6 +52,7 @@ struct sip_auth {
 	int type; /* 1 = Digest / 2 = NTLM */
         gchar *nonce;
         gchar *realm;
+	gchar *target;
 	int nc;
         HASHHEX HA1;
 	int retries;
