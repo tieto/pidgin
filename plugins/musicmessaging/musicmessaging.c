@@ -121,8 +121,6 @@ void music_messaging_change_request(const int session, const char *command, cons
 
 void music_messaging_change_confirmed(const int session, const char *command, const char *parameters)
 {
-	gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_INFO, command,
-                        parameters, NULL, NULL, NULL);
 	
 	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 	
@@ -134,7 +132,6 @@ void music_messaging_change_confirmed(const int session, const char *command, co
 			g_string_append_printf(to_send, "##MM## confirm %s %s##MM##", command, parameters);
 			
 			gaim_conv_im_send(GAIM_CONV_IM(mmconv->conv), to_send->str);
-			send_change_confirmed(session, command, parameters);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -322,12 +319,12 @@ intercept_sent(GaimAccount *account, GaimConversation *conv, char **message, voi
 	else if (0 == strncmp(*message, MUSICMESSAGING_START_MSG, strlen(MUSICMESSAGING_START_MSG)))
 	{
 		gaim_debug_misc("gaim-musicmessaging", "Sent MM request.\n");
-		message = 0;
+		return FALSE;
 	}
 	else if (0 == strncmp(*message, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
 	{
 		gaim_debug_misc("gaim-musicmessaging", "Sent MM confirm.\n");
-		message = 0;
+		return FALSE;
 	}
 	else if (0 == strncmp(*message, "test1", strlen("test1")))
 	{
@@ -420,7 +417,6 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 	}
 	else if (strstr(*message, MUSICMESSAGING_START_MSG))
 	{
-		message = 0;
 		gaim_debug_misc("gaim-musicmessaging", "Received MM request.\n");
 		if (!(mmconv->originator))
 		{
@@ -431,12 +427,12 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 	}
 	else if (strstr(*message, MUSICMESSAGING_CONFIRM_MSG))
 	{
-		message = 0;
 		gaim_debug_misc("gaim-musicmessagin", "Received MM confirm.\n");
 		
 		if (mmconv->originator)
 		{
 			start_session(mmconv);
+			return FALSE;
 		}
 	}
 	else
