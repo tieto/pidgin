@@ -762,6 +762,7 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 		!gaim_status_is_online(old_status)) {
 		int old_present = buddy->present;
 
+		buddy->present = GAIM_BUDDY_SIGNING_ON;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
 		if (old_present != GAIM_BUDDY_SIGNING_OFF) {
 			((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;

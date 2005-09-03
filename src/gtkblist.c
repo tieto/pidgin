@@ -4007,6 +4007,7 @@ static void gaim_gtk_blist_update_contact(GaimBuddyList *list, GaimBlistNode *no
 	buddy = gaim_contact_get_priority_buddy(contact);
 
 	if (buddy && (gaim_presence_is_online(buddy->presence) ||
+		buddy->present == GAIM_BUDDY_SIGNING_OFF ||
 		(gaim_account_is_connected(buddy->account) &&
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
 			gaim_blist_node_get_bool(node, "show_offline")))
@@ -4064,6 +4065,7 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 
 	if (gtkparentnode->contact_expanded &&
 		(gaim_presence_is_online(buddy->presence) ||
+		buddy->present == GAIM_BUDDY_SIGNING_OFF ||
 			(gaim_account_is_connected(buddy->account) &&
 				gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
 			gaim_blist_node_get_bool(node->parent, "show_offline")))
