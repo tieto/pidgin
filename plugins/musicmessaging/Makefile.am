@@ -3,7 +3,7 @@ EXTRA_DIST = \
 
 plugindir = $(libdir)/gaim
 
-musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+musicmessaging_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(DBUS_LIBS)
 
 if PLUGINS
 
@@ -18,7 +18,6 @@ musicmessaging_la_SOURCES = \
 
 
 CLEANFILES              = music-messaging-bindings.c
-musicmessaging_la_LDFLAGS += $(DBUS_LIBS)
 
 .PHONY: always
 

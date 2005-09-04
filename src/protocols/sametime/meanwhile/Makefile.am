@@ -17,7 +17,7 @@ noinst_HEADERS = \
 	mw_util.h 
 
 
-meanwhile_SOURCES = \
+MEANWHILESOURCES = \
 	channel.c \
 	cipher.c \
 	common.c \
@@ -40,7 +40,7 @@ AM_CFLAGS = \
 	$(DEBUG_CFLAGS) \
 	-I$(top_srcdir)/src 
 
-libmeanwhile_la_SOURCES = $(meanwhile_SOURCES)
+libmeanwhile_la_SOURCES = $(MEANWHILESOURCES)
 st =
 noinst_LTLIBRARIES = libmeanwhile.la
 

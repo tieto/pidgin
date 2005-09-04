@@ -8,21 +8,21 @@ pkgdir = $(libdir)/gaim
 
 noinst_HEADERS = sametime.h
 
-sametime_SOURCES = sametime.c
+SAMETIMESOURCES = sametime.c
 
 
 if STATIC_SAMETIME
 
 st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES   = libsametime.a
-libsametime_a_SOURCES = $(sametime_SOURCES)
+libsametime_a_SOURCES = $(SAMETIMESOURCES)
 libsametime_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
 pkg_LTLIBRARIES     = libsametime.la
-libsametime_la_SOURCES = $(sametime_SOURCES)
+libsametime_la_SOURCES = $(SAMETIMESOURCES)
 
 
 endif

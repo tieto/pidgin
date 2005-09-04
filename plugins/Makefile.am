@@ -12,9 +12,17 @@ if USE_TCL
 TCL_DIR = tcl
 endif
 
+if ENABLE_DBUS
+DBUS_LTLIB = dbus-example.la
+
+# Only use music messaging if dbus is enabled
+MUSICMESSAGING_DIR = musicmessaging
+endif
+
 SUBDIRS = \
 	docklet $(GEVOLUTION_DIR) gestures \
-	$(PERL_DIR) ssl $(TCL_DIR) ticker
+	$(PERL_DIR) ssl $(TCL_DIR) ticker \
+	$(MUSICMESSAGING_DIR)
 
 plugindir = $(libdir)/gaim
 
@@ -43,7 +51,8 @@ plugin_LTLIBRARIES = \
 	relnot.la        \
 	spellchk.la      \
 	statenotify.la   \
-	timestamp.la
+	timestamp.la     \
+	$(DBUS_LTLIB)
 
 autorecon_la_SOURCES    = autorecon.c
 
@@ -60,13 +69,9 @@ timestamp_la_SOURCES    = timestamp.c
 
 if ENABLE_DBUS
 
-# Only use music messaging if dbus is enabled
-SUBDIRS += musicmessaging
-
 CLEANFILES              = dbus-example-bindings.c
 dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 dbus_example_la_SOURCES = dbus-example.c
-plugin_LTLIBRARIES     += dbus-example.la
 
 .PHONY: always
 
