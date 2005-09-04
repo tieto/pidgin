@@ -2857,7 +2857,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		}
 
 		/* Last Seen */
-		if (!GAIM_BUDDY_IS_ONLINE(b) || b->present == GAIM_BUDDY_SIGNING_ON)
+		if ((!GAIM_BUDDY_IS_ONLINE(b) && b->present != GAIM_BUDDY_SIGNING_OFF) ||
+			b->present == GAIM_BUDDY_SIGNING_ON)
 		{
 			struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode *)c)->ui_data;
 			GaimBlistNode *bnode;
@@ -2865,8 +2866,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 
 			if (!gtknode->contact_expanded || GAIM_BLIST_NODE_IS_CONTACT(node))
 			{
-				/* We're either looking at buddy for a collapsed contact or
-				 * a contact (which is expanded) so we show the most recent
+				/* We're either looking at a buddy for a collapsed contact or
+				 * an exanded contact itself so we show the most recent
 				 * (largest) last_seen time for any of the buddies under
 				 * the contact. */
 				for (bnode = ((GaimBlistNode *)c)->child ; bnode != NULL ; bnode = bnode->next)
