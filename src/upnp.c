@@ -856,7 +856,7 @@ gaim_upnp_get_local_system_ip(gpointer data,
                               GaimInputCondition cond)
 {
   NetResponseData* nrd = data;
-  nrd->recvBuffer = gaim_network_get_local_system_ip(sock);
+  nrd->recvBuffer = g_strdup(gaim_network_get_local_system_ip(sock));
 
   gaim_timeout_remove(nrd->tima);
   nrd->done = TRUE;
