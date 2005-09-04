@@ -282,20 +282,23 @@ halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
 static void
 wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flags)
 {
+	GaimConversation *conv;
+	GaimConvWindow *win;
+	GtkWidget *window;
 	if (gaim_prefs_get_bool(PREF_IM_BLINK) == FALSE)
 		return;
 
-	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sender, account);
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sender, account);
 	if (conv == NULL) {
 	  gaim_debug_info("winprefs", "gar!\n");
 	  return;
 	}
-	GaimConvWindow *win = gaim_conversation_get_window(conv);
+	win = gaim_conversation_get_window(conv);
 	if (win == NULL) {
 	  gaim_debug_info("winprefs", "gar2!\n");
 	  return;
 	}
-	GtkWidget *window = GAIM_GTK_WINDOW(win)->window;
+	window = GAIM_GTK_WINDOW(win)->window;
 
 	if (MyFlashWindowEx) {
 		FLASHWINFO info;
