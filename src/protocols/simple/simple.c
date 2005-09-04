@@ -297,6 +297,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	int i=0;
 	char *tmp;
 	char *tmp2;
+	gchar **parts;
 	if(!hdr) {
 		gaim_debug_error("simple", "fill_auth: hdr==NULL\n");
 		return;
@@ -306,7 +307,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		gaim_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		if(!auth->nonce && !auth->nc) {
-			gchar **parts = g_strsplit(hdr, " ", 0);
+			parts = g_strsplit(hdr, " ", 0);
 			while(parts[i]) {
 				if(!strncmp(parts[i],"targetname",10)) {
 					auth->target = g_strndup(parts[i]+12,strlen(parts[i]+12)-1);
@@ -321,6 +322,8 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 				}
 				i++;
 			}
+			g_strfreev(parts);
+			parts = NULL;
 			auth->nc = 1;
 		}
 		if(!auth->nonce && auth->nc==2) {
@@ -331,7 +334,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	}
 
 	auth->type = 1;
-	gchar **parts = g_strsplit(hdr, " ", 0);
+	parts = g_strsplit(hdr, " ", 0);
 	while(parts[i]) {
 		if(!strncmp(parts[i],"nonce",5)) {
 			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-1);
@@ -341,6 +344,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		}
 		i++;
 	}
+	g_strfreev(parts);
 
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
 
@@ -554,11 +558,11 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 }
 
 static void do_register_exp(struct simple_account_data *sip, int expire) {
-	sip->registerstatus = 1;
-
 	char *uri = g_strdup_printf("sip:%s",sip->servername);
 	char *to = g_strdup_printf("sip:%s@%s",sip->username,sip->servername);
 	char *contact = g_strdup_printf("Contact: <sip:%s@%s:%d;transport=%s>;methods=\"MESSAGE, SUBSCRIBE, NOTIFY\"\r\nExpires: %d\r\n", sip->username, sip->ip ? sip->ip : "", sip->listenport, sip->udp ? "udp" : "tcp", expire);
+
+	sip->registerstatus = 1;
 
 	if(expire) {
 		sip->reregister = time(NULL) + expire - 50;
@@ -988,13 +992,13 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 		struct transaction *trans = transactions_find(sip, msg);
 		if(trans) {
 			if(msg->response == 407) {
+				gchar *resend, *auth, *ptmp;
+
 				if(sip->proxy.retries>3) return;
 				sip->proxy.retries++;
 				/* do proxy authentication */
 
-				gchar *ptmp = sipmsg_find_header(msg,"Proxy-Authenticate");
-				gchar *resend;
-				gchar *auth;
+				ptmp = sipmsg_find_header(msg, "Proxy-Authenticate");
 
 				fill_auth(sip, ptmp, &sip->proxy);
 				auth = auth_header(sip, &sip->proxy, trans->msg->method, trans->msg->target);

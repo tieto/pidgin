@@ -56,6 +56,8 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 	int i=1;
 	parts = g_strsplit(lines[0], " ", 3);
 	if(!parts[0] || !parts[1] || !parts[2]) {
+		g_strfreev(parts);
+		g_strfreev(lines);
 		g_free(msg);
 		return NULL;
 	}
@@ -71,6 +73,8 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 	for(i=1; lines[i] && strlen(lines[i])>2; i++) {
 		parts = g_strsplit(lines[i], ":", 2);
 		if(!parts[0] || !parts[1]) {
+			g_strfreev(parts);
+			g_strfreev(lines);
 			g_free(msg);
 			return NULL;
 		}
@@ -89,6 +93,7 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 		sipmsg_add_header(msg, parts[0], dummy2);
 		g_strfreev(parts);
 	}
+	g_strfreev(lines);
 	msg->bodylen = strtol(sipmsg_find_header(msg, "Content-Length"),NULL,10);
 	if(msg->response) {
 		tmp = sipmsg_find_header(msg, "CSeq");
@@ -113,11 +118,11 @@ void sipmsg_print(struct sipmsg *msg) {
 	cur = msg->headers;
 	while(cur) {
 		elem = cur->data;
-	        gaim_debug(GAIM_DEBUG_MISC, "simple", "name: %s value: %s\n",elem->name, elem->value);
+		gaim_debug(GAIM_DEBUG_MISC, "simple", "name: %s value: %s\n",elem->name, elem->value);
 		cur = g_slist_next(cur);
 	}
 }
-	
+
 char *sipmsg_to_string(struct sipmsg *msg) {
 	gchar *out;
 	gchar *old;
@@ -129,7 +134,7 @@ char *sipmsg_to_string(struct sipmsg *msg) {
 	while(cur) {
 		elem = cur->data;
 		old = out;
-	        out = g_strdup_printf("%s%s: %s\r\n", out, elem->name, elem->value);
+		out = g_strdup_printf("%s%s: %s\r\n", out, elem->name, elem->value);
 		g_free(old);
 		cur = g_slist_next(cur);
 	}
@@ -150,7 +155,7 @@ void sipmsg_add_header(struct sipmsg *msg, gchar *name, gchar *value) {
 	element->value = g_strdup(value);
 	msg->headers = g_slist_append(msg->headers, element);
 }
-			
+
 void sipmsg_free(struct sipmsg *msg) {
 	struct siphdrelement *elem;
 	while(msg->headers) {
