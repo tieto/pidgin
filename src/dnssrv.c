@@ -272,7 +272,7 @@ static gpointer res_thread(gpointer data) {
 
 #endif
 
-void gaim_srv_resolve(char *protocol, char *transport, char *domain, SRVCallback cb, gpointer extradata) {
+void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, SRVCallback cb, gpointer extradata) {
 	char *query = g_strdup_printf("_%s._%s.%s",protocol, transport, domain);
 	struct resdata *rdata;
 #ifndef _WIN32
