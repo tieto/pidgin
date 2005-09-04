@@ -1031,12 +1031,13 @@ network_page()
 
 	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
 
+	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("STUN Server:"), "/core/network/stun_server", NULL);
+
 	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP Address"),
 			"/core/network/auto_ip", vbox);
-	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("STUN Server"), "/core/network/stun_server", NULL);
 
 	table = gtk_table_new(2, 1, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
 	gtk_container_add(GTK_CONTAINER(vbox), table);
@@ -1108,7 +1109,7 @@ network_page()
 								proxy_changed_cb, prefs_proxy_frame);
 
 	table = gtk_table_new(4, 2, FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 5);
+	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 5);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 10);
 	gtk_container_add(GTK_CONTAINER(prefs_proxy_frame), table);
@@ -1588,12 +1589,12 @@ sound_page()
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
@@ -1602,9 +1603,8 @@ sound_page()
 	cmd = gaim_prefs_get_string("/gaim/gtk/sound/command");
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(entry), cmd);
-	gtk_widget_set_size_request(entry, 75, -1);
 
-	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 5);
+	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
 
