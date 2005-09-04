@@ -40,7 +40,6 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "MinimizeToTray.h"
-#include "winuser_extra.h"
 #include "idletrack.h"
 #include "zlib.h"
 #include "untar.h"

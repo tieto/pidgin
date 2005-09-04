@@ -23,7 +23,6 @@ EXTRA_DIST = \
 		win32/win32dep.h \
 		win32/wspell.c \
 		win32/wspell.h \
-		win32/mingw_plus/winuser_extra.h \
 		win32/nsis/gaim-header.bmp \
 		win32/nsis/gaim-intro.bmp \
 		win32/nsis/langmacros.nsh \

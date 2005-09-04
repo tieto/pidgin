@@ -16,7 +16,6 @@ ASPELL_TOP :=		../../win32-dev/aspell-dev-0-50-3-3
 GTKSPELL_TOP :=		../../win32-dev/gtkspell-2.0.6
 IDLETRACK_TOP :=	$(GAIM_TOP)/src/win32/IdleTracker
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
-MINGW_PLUS_DIR :=	$(GAIM_SRC)/win32/mingw_plus
 NSS_DIR :=		../../win32-dev/nss-3.9
 NSPR_DIR :=		../../win32-dev/nspr-4.4.1
 
@@ -30,7 +29,7 @@ TARGET = gaim
 
 CFLAGS =
 
-DEFINES =
+DEFINES = -D_WIN32_WINNT=0x0501
 
 LDFLAGS = -mwindows
 
@@ -51,7 +50,6 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS =		-I$(INCLUDE_DIR) \
 			-I$(INCLUDE_DIR)/win32 \
-			-I$(MINGW_PLUS_DIR) \
 			-I$(IDLETRACK_TOP) \
 			-I$(GAIM_TOP) \
 			-I$(GTK_TOP)/include \

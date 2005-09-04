@@ -25,19 +25,11 @@
  *
  */
 
-#ifndef _WIN32_WINNT
-# define _WIN32_WINNT 0x0501
-#endif
 #include <windows.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-
-/** Currently missing from win32-api */
-#ifndef ATTACH_PARENT_PROCESS
-# define ATTACH_PARENT_PROCESS -1
-#endif
 
 #define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
