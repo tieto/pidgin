@@ -2,6 +2,7 @@
 	* need to handle: {{{
 		* unnamed chats
 		* chats with the same name as a buddy
+			* this should be working now, but it needs to be kept in mind when (re-)designing
 		* jabber Messages (one off messages vrs a conversation with a backlog)
 		* multiple conversations with a single buddy (jabber, with thread tag)
 		* bugs
@@ -10,22 +11,15 @@
 		* (12:58:39) Robot101: user list always|auto|never
 		* topic only where supported by the protocol
 		* how do we log this? {{{
-			* rlaager's proposal: {{{
-				* the goal of logging is to be able to find something again.
-				* you expect to see the logs for a person IFF they are in that conversation
-				* you don't really need to see the log of a chat before or after said person joined it
-					*if you did, you'd be looking at some other person(s)'s log
-				* so:
-					* each conversation has 1 or more logs associated with it.
-					* when someone joins, a new log is opened to log everything that happens in the
-					  conversation, but to that person's logs.
-					* when someone parts, that one persons' log is closed
-					* this causes some duplication, the way to avoid this would be to close everyone's
-					  log on a join/part and use a new file.  we could then use links of some sort (hard
-					  or soft) to "put" that one file in each user's directory.  but this would
-					  needlessly split the logs of someone who had been there all along.  I think this
-					  duplication is acceptable.
-					* this would not solve the problem of chats with the same name as a buddy.
+			* rlaager's (NEW) proposal: {{{
+				* each conversation has 1 or more logs associated with it.
+				* when someone joins, a new log is opened
+					* file based loggers should try to use hard-links in a smart way
+					  to avoid duplicating data on disk as much as possible...
+					* this needs to be designed in such a way that a database logger
+					  can handle it w/o duplication...
+					* TO SOLVE THESE CONCERNS, a link and/or copy function callback
+					  will likely need to be added
 			}}}
 		}}}
 	}}}
