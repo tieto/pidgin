@@ -56,8 +56,8 @@ blist_drawing_tooltip_cb(GaimBlistNode *node, char **text, void *data) {
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static void
-conversation_drag_end_cb(GaimConvWindow *source, GaimConvWindow *destination) {
-	gaim_debug_info("gtk-signal-test", "conversation drag ended cb\n");
+conversation_dragging_cb(GaimConvWindow *source, GaimConvWindow *destination) {
+	gaim_debug_info("gtk-signal-test", "conversation dragging cb\n");
 }
 
 /**************************************************************************
@@ -81,8 +81,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(blist_drawing_tooltip_cb), NULL);
 
 	/* Conversations subsystem signals */
-	gaim_signal_connect(conv_handle, "conversation-drag-ended",
-						plugin, GAIM_CALLBACK(conversation_drag_end_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-dragging",
+						plugin, GAIM_CALLBACK(conversation_dragging_cb), NULL);
 
 	return TRUE;
 }

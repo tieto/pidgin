@@ -427,7 +427,7 @@ deleting_conv(GaimConversation *conv)
 
 #if 0
 static void
-conversation_drag_ended(GaimConversation *active_conv,
+conversation_dragging(GaimConversation *active_conv,
                         GaimConvWindow *old_gaimwin,
                         GaimConvWindow *new_gaimwin)
 {
@@ -792,8 +792,8 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(conv_handle, "conversation-switched", plugin,
 	                    GAIM_CALLBACK(conv_switched), NULL);
 #if 0
-	gaim_signal_connect(gtk_conv_handle, "conversation-drag-ended", plugin,
-	                    GAIM_CALLBACK(conversation_drag_ended), NULL);
+	gaim_signal_connect(gtk_conv_handle, "conversation-dragging", plugin,
+	                    GAIM_CALLBACK(conversation_dragging), NULL);
 #endif
 
 	while (convs) {

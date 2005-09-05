@@ -81,6 +81,11 @@ version 2.0.0:
 	* Changed: gaim_buddy_icon_new(), leaves a reference which the caller
 	           owns. Use gaim_buddy_icon_unref() immediately if you don't
 	           want a reference (the old behavior).
+	* Changed: GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
+	* Changed: GAIM_CONV_IM to GAIM_CONV_TYPE_IM.
+	* Changed: GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
+	* Changed: GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
+	* Changed: GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
@@ -100,11 +105,9 @@ version 2.0.0:
 	           "file-recv-complete", "file-send-accept", "file-send-start",
 	           "file-send-cancel", and "file-send-complete" signals.  See
 	           the Doxygen documentation for the details.
-	* Changed: GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
-	* Changed: GAIM_CONV_IM to GAIM_CONV_TYPE_IM.
-	* Changed: GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
-	* Changed: GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
-	* Changed: GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
+	* Changed: Renamed "conversation-drag-end" to "conversation-dragging"
+	           and emit before the conv. window swap happens. This prevents
+	           the old conv window from being freed before the signal emits.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

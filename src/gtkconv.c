@@ -2271,10 +2271,10 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 {
 	GaimConvWindow *dest_win;
 	GaimGtkWindow *gtkwin;
-	GaimGtkWindow *dest_gtkwin;
 	GaimConversation *conv;
-	GtkNotebook *dest_notebook;
-	gint dest_page_num;
+	GaimGtkConversation *gtkconv;
+	gint dest_page_num = 0;
+	gboolean new_window = FALSE;
 
 	/*
 	 * Don't check to make sure that the event's window matches the
@@ -2297,7 +2297,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	/* Disconnect the motion signal. */
 	if (gtkwin->drag_motion_signal) {
 		g_signal_handler_disconnect(G_OBJECT(widget),
-									gtkwin->drag_motion_signal);
+			gtkwin->drag_motion_signal);
 
 		gtkwin->drag_motion_signal = 0;
 	}
@@ -2311,7 +2311,7 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 
 		if (gtkwin->drag_leave_signal) {
 			g_signal_handler_disconnect(G_OBJECT(widget),
-										gtkwin->drag_leave_signal);
+				gtkwin->drag_leave_signal);
 
 			gtkwin->drag_leave_signal = 0;
 		}
@@ -2331,61 +2331,52 @@ notebook_release_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	conv = gaim_conv_window_get_active_conversation(win);
 
 	if (dest_win == NULL) {
-		if (gaim_conv_window_get_conversation_count(win) < 2)
-			return FALSE;
-
+		/* If the current window doesn't have any other conversations,
+		 * there isn't much point transferring the conv to a new window. */
 		if (gaim_conv_window_get_conversation_count(win) > 1) {
 			/* Make a new window to stick this to. */
-			GaimGtkConversation *gtkconv;
+			dest_win = gaim_conv_window_new();
+			new_window = TRUE;
+		}
+	}
+
+	if (dest_win == NULL)
+		return FALSE;
+
+	gaim_signal_emit(gaim_gtk_conversations_get_handle(),
+		"conversation-dragging", win, dest_win);
+
+	/* Get the destination page number. */
+	if (!new_window)
+		dest_page_num = gaim_gtkconv_get_tab_at_xy(dest_win,
+			e->x_root, e->y_root);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (win == dest_win) {
+		gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook), gtkconv->tab_cont, dest_page_num);
+	}
+	else {
+		gaim_conv_window_remove_conversation(win, conv);
+		gaim_conv_window_add_conversation(dest_win, conv);
+		gtk_notebook_reorder_child(GTK_NOTEBOOK(GAIM_GTK_WINDOW(dest_win)->notebook), gtkconv->tab_cont, dest_page_num);
+		gaim_conv_window_switch_conversation(dest_win, conv);
+		if (new_window) {
+			GaimGtkWindow *dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
 			gint win_width, win_height;
 
-			gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-			dest_win = gaim_conv_window_new();
-
-			gaim_conv_window_add_conversation(dest_win,
-			                                  gaim_conv_window_remove_conversation(win,
-			                                  conv));
-
-			dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
-
 			gtk_window_get_size(GTK_WINDOW(dest_gtkwin->window),
-								&win_width, &win_height);
+				&win_width, &win_height);
 
 			gtk_window_move(GTK_WINDOW(dest_gtkwin->window),
-							e->x_root - (win_width  / 2),
-							e->y_root - (win_height / 2));
+				e->x_root - (win_width  / 2),
+				e->y_root - (win_height / 2));
 
 			gaim_conv_window_show(dest_win);
 		}
-	} else {
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-		dest_gtkwin = GAIM_GTK_WINDOW(dest_win);
-
-		/* Get the destination notebook. */
-		dest_notebook = GTK_NOTEBOOK(gtkwin->notebook);
-
-		/* Get the destination page number. */
-		dest_page_num = gaim_gtkconv_get_tab_at_xy(dest_win,
-								e->x_root, e->y_root);
-
-		if (win == dest_win) {
-			gtk_notebook_reorder_child(GTK_NOTEBOOK(gtkwin->notebook), gtkconv->tab_cont, dest_page_num);
-		}
-		else {
-			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-			gaim_conv_window_remove_conversation(win, conv);
-			gaim_conv_window_add_conversation(dest_win, conv);
-			gtk_notebook_reorder_child(GTK_NOTEBOOK(GAIM_GTK_WINDOW(dest_win)->notebook), gtkconv->tab_cont, dest_page_num);
-			gaim_conv_window_switch_conversation(dest_win, gtkconv->active_conv);
-		}
-
-		gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 	}
 
-	gaim_signal_emit(gaim_gtk_conversations_get_handle(), "conversation-drag-ended",
-	                 win, dest_win);
+	gtk_widget_grab_focus(GAIM_GTK_CONVERSATION(conv)->entry);
 
 	return TRUE;
 }
@@ -6171,7 +6162,7 @@ gaim_gtk_conversations_init(void)
 	/**********************************************************************
 	 * Register signals
 	 **********************************************************************/
-	gaim_signal_register(handle, "conversation-drag-ended",
+	gaim_signal_register(handle, "conversation-dragging",
 	                     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONV_WINDOW),

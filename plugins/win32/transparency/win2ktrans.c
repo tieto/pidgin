@@ -357,7 +357,7 @@ gboolean plugin_load(GaimPlugin *plugin) {
 	gaim_signal_connect((void*)gaim_connections_get_handle(), "signed-on", plugin, GAIM_CALLBACK(blist_created), NULL);
 	MySetLayeredWindowAttributes = (void*)wgaim_find_and_loadproc("user32.dll", "SetLayeredWindowAttributes" );
 
-	gaim_signal_connect((void*)gaim_gtk_conversations_get_handle(), "conversation-drag-ended", plugin, GAIM_CALLBACK(set_window_trans), NULL);
+	gaim_signal_connect((void*)gaim_gtk_conversations_get_handle(), "conversation-dragging", plugin, GAIM_CALLBACK(set_window_trans), NULL);
 
 	update_convs_wintrans(NULL, NULL);
 
