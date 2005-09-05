@@ -9,7 +9,7 @@
 #define FAIM_INTERNAL
 #include "aim.h"
 
-#include "cipher.c"
+#include "cipher.h"
 
 #include <ctype.h>
 
