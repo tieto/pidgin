@@ -560,6 +560,20 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 }
 
 static void
+regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
+	/**
+	 * GDK_Return is defined in gdkkeysyms.h as 0xFF0D, but this file is not
+	 * included by default, so we just use that value here directly.
+	 */
+	if(e->keyval == 0xFF0D &&
+	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
+	   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
+	{
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter), TRUE);
+	}
+}
+
+static void
 regex_menu_cb(GtkWidget *item, const gchar *pref) {
 	gboolean active;
 
@@ -713,6 +727,12 @@ debug_window_new(void)
 									   NULL, NULL,
 									   G_CALLBACK(regex_filter_toggled_cb),
 									   win);
+		/* we purposely disable the toggle button here in case
+		 * /gaim/gtk/debug/expression has an empty string.  If it does not have
+		 * an empty string, the change signal will get called and make the
+		 * toggle button sensitive.
+		 */
+		gtk_widget_set_sensitive(win->filter, FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
 									 gaim_prefs_get_bool("/gaim/gtk/debug/filter"));
 		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/filter",
@@ -733,6 +753,8 @@ debug_window_new(void)
 						   gaim_prefs_get_string("/gaim/gtk/debug/regex"));
 		g_signal_connect(G_OBJECT(win->expression), "populate-popup",
 						 G_CALLBACK(regex_popup_cb), win);
+		g_signal_connect(G_OBJECT(win->expression), "key-release-event",
+						 G_CALLBACK(regex_key_release_cb), win);
 		gaim_prefs_connect_callback(handle, "/gaim/gtk/debug/regex",
 									regex_pref_expression_cb, win);
 
