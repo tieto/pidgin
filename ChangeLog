@@ -48,7 +48,7 @@ version 2.0.0:
 	  authorization.
 	* Conversation buffer scrollback limited to avoid large memory
 	  usage in active conversations.
-	* Added support for sending (with the /nudge command) and reciving MSN
+	* Added support for sending (with the /nudge command) and receiving MSN
 	  "nudges" (Julien Cegarra, Martin Bayard)
 	* Added an account action to open your Hotmail inbox from MSN
 	* Jabber support for SRV lookups
