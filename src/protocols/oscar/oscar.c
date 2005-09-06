@@ -7349,13 +7349,13 @@ static void oscar_join_chat(GaimConnection *gc, GHashTable *data) {
 	name = g_hash_table_lookup(data, "room");
 	exchange = g_hash_table_lookup(data, "exchange");
 
-	gaim_debug_info("oscar",
-			   "Attempting to join chat room %s.\n", name);
-
 	if ((name == NULL) || (*name == '\0')) {
 		gaim_notify_error(gc, NULL, _("Invalid chat name specified."), NULL);
 		return;
 	}
+
+	gaim_debug_info("oscar",
+			   "Attempting to join chat room %s.\n", name);
 
 	if ((cur = aim_getconn_type(od->sess, AIM_CONN_TYPE_CHATNAV))) {
 		gaim_debug_info("oscar",
