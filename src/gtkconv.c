@@ -266,24 +266,18 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the tab bar
 	 * will fit, but then I don't want new windows taking up the entire screen.  I check to see if there is only one
 	 * conversation in the window.  This way we'll be setting new windows to the size of the last resized new window. */
-
+	/* I think that the above justification is not the majority, and that the new tab resizing should negate it anyway.  --luke*/
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 	{
-		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
-		{
-			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
-			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
-		}
+		gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
+		gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 	{
-		if (w == gtkconv->imhtml && (gaim_conv_window_get_conversation_count(win) == 1))
-		{
-			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
-			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
-		}
+		gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
+		gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
 	}
