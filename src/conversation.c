@@ -626,9 +626,10 @@ gaim_conversation_chat_cleanup_for_rejoin(GaimConversation *conv)
 
 	account = gaim_conversation_get_account(conv);
 
-	gaim_log_free(conv->log);
-	conv->log = gaim_log_new(GAIM_LOG_CHAT, gaim_conversation_get_name(conv),
-							 account, conv, time(NULL));
+	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
+	g_list_free(conv->logs);
+	conv->logs = g_list_append(NULL, gaim_log_new(GAIM_LOG_CHAT, gaim_conversation_get_name(conv),
+							 account, conv, time(NULL)));
 
 	gc = gaim_account_get_connection(account);
 
@@ -684,9 +685,9 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->send_history = g_list_append(NULL, NULL);
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
-	conv->log          = gaim_log_new(type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
+	conv->logs         = g_list_append(NULL, gaim_log_new(type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
 									  GAIM_LOG_IM, conv->name, account,
-									  conv, time(NULL));
+									  conv, time(NULL)));
 	/* copy features from the connection. */
 	conv->features = gc->flags;
 	
@@ -929,7 +930,9 @@ gaim_conversation_destroy(GaimConversation *conv)
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
 
-	gaim_log_free(conv->log);
+	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
+	g_list_free(conv->logs);
+
 	GAIM_DBUS_UNREGISTER_POINTER(conv);
 	g_free(conv);
 	conv = NULL;
@@ -1273,6 +1276,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	GaimConnection *gc = NULL;
 	GaimAccount *account;
 	GaimConversationUiOps *ops;
+	const char *alias = NULL;
 	GaimConvWindow *win;
 	GaimBuddy *b;
 	GaimUnseenState unseen;
@@ -1305,45 +1309,42 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM ||
 			!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 
-			if (who == NULL) {
-				if (flags & GAIM_MESSAGE_SEND) {
-					b = gaim_find_buddy(account,
-							    gaim_account_get_username(account));
-					if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) {
-						if (gaim_account_get_alias(account) != NULL)
-							who = account->alias;
-						else if (b != NULL && strcmp(b->name, gaim_buddy_get_contact_alias(b)))
-							who = gaim_buddy_get_contact_alias(b);
-						else if (gaim_connection_get_display_name(gc) != NULL)
-							who = gaim_connection_get_display_name(gc);
-						else
-							who = gaim_account_get_username(account);
-					}
-					else
-						who = gaim_account_get_username(account);
-				}
-				else {
-					b = gaim_find_buddy(account,
-							    gaim_conversation_get_name(conv));
+			if (flags & GAIM_MESSAGE_SEND) {
+				b = gaim_find_buddy(account,
+							gaim_account_get_username(account));
 
-					if (b != NULL && gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT)
-						who = gaim_buddy_get_contact_alias(b);
-					else
-						who = gaim_conversation_get_name(conv);
-				}
+				if (gaim_account_get_alias(account) != NULL)
+					alias = account->alias;
+				else if (b != NULL && strcmp(b->name, gaim_buddy_get_contact_alias(b)))
+					alias = gaim_buddy_get_contact_alias(b);
+				else if (gaim_connection_get_display_name(gc) != NULL)
+					alias = gaim_connection_get_display_name(gc);
+				else
+					alias = gaim_account_get_username(account);
 			}
-			else if ((who != NULL) && (*who != '\0') && gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) {
+			else
+			{
+				if (who == NULL || *who == '\0')
+					who = gaim_conversation_get_name(conv);
+
 				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
-					who = gaim_buddy_get_contact_alias(b);
+					alias = gaim_buddy_get_contact_alias(b);
+				else
+					alias = who;
 			}
 		}
 	}
 
-	if (gaim_conversation_is_logging(conv))
-		gaim_log_write(conv->log, flags, who, mtime, message);
-	ops->write_conv(conv, who, message, flags, mtime);
+	if (gaim_conversation_is_logging(conv)) {
+		GList *log = conv->logs;
+		while (log != NULL) {
+			gaim_log_write((GaimLog *)log->data, flags, alias, mtime, message);
+			log = log->next;
+		}
+	}
+	ops->write_conv(conv, who, alias, message, flags, mtime);
 
 	win = gaim_conversation_get_window(conv);
 
@@ -1881,14 +1882,16 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 	GaimAccount *account;
 	GaimConversation *conv;
 	GaimConnection *gc;
+	GaimPluginProtocolInfo *prpl_info;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(who != NULL);
 	g_return_if_fail(message != NULL);
 
-	conv    = gaim_conv_chat_get_conversation(chat);
-	gc      = gaim_conversation_get_gc(conv);
-	account = gaim_connection_get_account(gc);
+	conv      = gaim_conv_chat_get_conversation(chat);
+	gc        = gaim_conversation_get_gc(conv);
+	account   = gaim_connection_get_account(gc);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	/* Don't display this if the person who wrote it is ignored. */
 	if (gaim_conv_chat_is_user_ignored(chat, who))
@@ -1899,7 +1902,11 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 		const char *nick;
 
 		str = g_strdup(gaim_normalize(account, who));
-		nick = gaim_conv_chat_get_nick(chat);
+
+		if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
+			nick = account->gc->display_name;
+		else
+			nick = account->username;
 
 		if (!g_utf8_collate(str, gaim_normalize(account, nick))) {
 			flags |= GAIM_MESSAGE_SEND;
@@ -1930,55 +1937,32 @@ gaim_conv_chat_send(GaimConvChat *chat, const char *message)
 }
 
 void
-gaim_conv_chat_add_user(GaimConvChat *chat, const char *user, const char *extra_msg,
-						GaimConvChatBuddyFlags flags, gboolean new_arrival)
+gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
+						const char *extra_msg, GaimConvChatBuddyFlags flags,
+						gboolean new_arrival)
 {
-	GaimConversation *conv;
-	GaimConversationUiOps *ops;
-	GaimConvChatBuddy *cb;
-	char tmp[BUF_LONG];
-	gboolean quiet;
+	GList *users = g_list_append(NULL, (char *)user);
+	GList *extra_msgs = g_list_append(NULL, (char *)extra_msg);
+	GList *flags2 = g_list_append(NULL, GINT_TO_POINTER(flags));
+	
+	gaim_conv_chat_add_users(chat, users, extra_msgs, flags2, new_arrival);
 
-	g_return_if_fail(chat != NULL);
-	g_return_if_fail(user != NULL);
-
-	conv = gaim_conv_chat_get_conversation(chat);
-	ops  = gaim_conversation_get_ui_ops(conv);
-
-	quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
-					 "chat-buddy-joining", conv, user, flags)) |
-			gaim_conv_chat_is_user_ignored(chat, user);
-
-	cb = gaim_conv_chat_cb_new(user, flags);
-
-	gaim_conv_chat_set_users(chat,
-		g_list_append(gaim_conv_chat_get_users(chat), cb));
-
-	if (ops != NULL && ops->chat_add_user != NULL)
-		ops->chat_add_user(conv, user, new_arrival);
-
-	if (!quiet && new_arrival) {
-		if (extra_msg == NULL)
-			g_snprintf(tmp, sizeof(tmp), _("%s entered the room."), user);
-		else
-			g_snprintf(tmp, sizeof(tmp),
-					   _("%s [<I>%s</I>] entered the room."),
-					   user, extra_msg);
-
-		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
-	}
-
-	gaim_signal_emit(gaim_conversations_get_handle(),
-					 "chat-buddy-joined", conv, user, flags);
+	g_list_free(users);
+	g_list_free(extra_msgs);
+	g_list_free(flags2);
 }
 
 void
-gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *flags)
+gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
+						 GList *flags, gboolean new_arrivals)
 {
 	GaimConversation *conv;
 	GaimConversationUiOps *ops;
 	GaimConvChatBuddy *cb;
+	GaimConnection *gc;
+	GaimPluginProtocolInfo *prpl_info;
 	GList *ul, *fl;
+	GList *aliases = NULL;
 
 	g_return_if_fail(chat  != NULL);
 	g_return_if_fail(users != NULL);
@@ -1986,32 +1970,78 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *flags)
 	conv = gaim_conv_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
+	gc = gaim_conversation_get_gc(conv);
+	if (!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+		return;
+
 	ul = users;
 	fl = flags;
 	while ((ul != NULL) && (fl != NULL)) {
 		const char *user = (const char *)ul->data;
-		GaimConvChatBuddyFlags f = GPOINTER_TO_INT(fl->data);
+		const char *alias = user;
+		gboolean quiet;
+		GaimConvChatBuddyFlags flags = GPOINTER_TO_INT(fl->data);
+		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
-		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "chat-buddy-joining", conv, user, f);
+		if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			char *tmp;
+			GaimBuddy *buddy;
 
-		cb = gaim_conv_chat_cb_new(user, f);
+			if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
+				tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
+			else
+				tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
+
+			if (!strcmp(tmp, gaim_normalize(conv->account, user))) {
+				alias = gaim_account_get_alias(conv->account);
+				if (alias == NULL)
+					alias = gaim_connection_get_display_name(gc);
+			} else {
+				if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
+					alias = gaim_buddy_get_contact_alias(buddy);
+			}
+			g_free(tmp);
+		}
+
+		quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
+						 "chat-buddy-joining", conv, user, flags)) |
+				gaim_conv_chat_is_user_ignored(chat, user);
+
+		cb = gaim_conv_chat_cb_new(user, flags);
 		gaim_conv_chat_set_users(chat,
-				g_list_append(gaim_conv_chat_get_users(chat), cb));
+				g_list_prepend(gaim_conv_chat_get_users(chat), cb));
+		aliases = g_list_append(aliases, (char *)alias);
+
+		if (!quiet && new_arrivals) {
+			char *tmp;
+
+			if (extra_msg == NULL)
+				tmp = g_strdup_printf(_("%s entered the room."), alias);
+			else
+				tmp = g_strdup_printf(_("%s [<I>%s</I>] entered the room."),
+									  alias, extra_msg);
+
+			gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+			g_free(tmp);
+		}
 
 		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "chat-buddy-joined", conv, user, f);
+						 "chat-buddy-joined", conv, user, flags);
 		ul = ul->next;
 		fl = fl->next;
+		if (extra_msgs != NULL)
+			extra_msgs = extra_msgs->next;
 	}
 
 	if (ops != NULL && ops->chat_add_users != NULL)
-		ops->chat_add_users(conv, users);
+		ops->chat_add_users(conv, users, aliases);
+
+	g_list_free(aliases);
 }
 
 void
 gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
-					  const char *new_user)
+						   const char *new_user)
 {
 	GaimConversation *conv;
 	GaimConversationUiOps *ops;
@@ -2030,7 +2060,7 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	flags = gaim_conv_chat_user_get_flags(chat, old_user);
 	cb = gaim_conv_chat_cb_new(new_user, flags);
 	gaim_conv_chat_set_users(chat,
-		g_list_append(gaim_conv_chat_get_users(chat), cb));
+		g_list_prepend(gaim_conv_chat_get_users(chat), cb));
 
 	if (ops != NULL && ops->chat_rename_user != NULL)
 		ops->chat_rename_user(conv, old_user, new_user);
@@ -2061,8 +2091,25 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 			g_snprintf(tmp, sizeof(tmp),
 					_("You are now known as %s"), new_user);
 		} else {
+			GaimConnection *gc = gaim_conversation_get_gc(conv);
+			GaimPluginProtocolInfo *prpl_info;
+			const char *old_alias = old_user;
+			const char *new_alias = new_user;
+	
+			if (!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+				return;
+		
+			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+				GaimBuddy *buddy;
+	
+				if ((buddy = gaim_find_buddy(gc->account, old_user)) != NULL)
+					old_alias = gaim_buddy_get_contact_alias(buddy);
+				if ((buddy = gaim_find_buddy(gc->account, new_user)) != NULL)
+					new_alias = gaim_buddy_get_contact_alias(buddy);
+			}
+
 			g_snprintf(tmp, sizeof(tmp),
-					_("%s is now known as %s"), old_user, new_user);
+					_("%s is now known as %s"), old_alias, new_alias);
 		}
 
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -2077,6 +2124,7 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	GaimConvChatBuddy *cb;
 	char tmp[BUF_LONG];
 	gboolean quiet;
+	const char *alias = user;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(user != NULL);
@@ -2102,11 +2150,24 @@ gaim_conv_chat_remove_user(GaimConvChat *chat, const char *user, const char *rea
 	/* NOTE: Don't remove them from ignored in case they re-enter. */
 
 	if (!quiet) {
+		GaimConnection *gc = gaim_conversation_get_gc(conv);
+		GaimPluginProtocolInfo *prpl_info;
+
+		if (!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
+			return;
+
+		if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			GaimBuddy *buddy;
+
+			if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
+				alias = gaim_buddy_get_contact_alias(buddy);
+		}
+
 		if (reason != NULL && *reason != '\0')
 			g_snprintf(tmp, sizeof(tmp),
-					   _("%s left the room (%s)."), user, reason);
+					   _("%s left the room (%s)."), alias, reason);
 		else
-			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), user);
+			g_snprintf(tmp, sizeof(tmp), _("%s left the room."), alias);
 
 		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}

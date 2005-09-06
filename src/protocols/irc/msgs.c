@@ -401,7 +401,7 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 			if (users != NULL) {
 				GList *l;
 
-				gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, flags);
+				gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, NULL, flags, FALSE);
 
 				for (l = users; l != NULL; l = l->next)
 					g_free(l->data);

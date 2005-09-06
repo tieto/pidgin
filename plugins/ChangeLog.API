@@ -86,6 +86,21 @@ version 2.0.0:
 	* Changed: GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
 	* Changed: GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
 	* Changed: GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
+	* Changed: GaimConversationUiOps.write_conv, Replaced const char *who
+	           with const char *name, const char *alias
+	* Changed: gaim_conv_chat_add_users(), added extra_msgs and
+	           new_arrivals (pass NULL and FALSE respectively, to get the
+	           same behavior as before)
+	* Changed: chat_add_users in GaimConversationUiOps, added aliases list
+	* Removed: chat_add_user from GaimConversationUiOps
+	* Changed: GaimConversation.log became GList * GaimConversation.logs,
+	           so that a conversation can have multiple logs at once
+	* Changed: gaim_conv_chat_add_user, added extra_msgs list
+	* Added:   CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
+	           CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
+	           user list
+	* Added:   OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS, see the prpl.h
+	           documentation if you're writing a prpl
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
@@ -108,6 +123,9 @@ version 2.0.0:
 	* Changed: Renamed "conversation-drag-end" to "conversation-dragging"
 	           and emit before the conv. window swap happens. This prevents
 	           the old conv window from being freed before the signal emits.
+	* Added:   "buddy-added" and "buddy-removed", which are self-explanatory
+	* Added:   "blist-node-aliased", an alias was set for a buddy, chat or
+	           contact.  See the Doxygen documentation for the details.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

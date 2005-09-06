@@ -433,7 +433,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, flags);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, NULL, flags, FALSE);
 
 			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
 			gaim_conv_chat_write(GAIM_CONV_CHAT(c), "", tmpmsg, GAIM_MESSAGE_SYSTEM, time(NULL));
@@ -444,7 +444,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, flags);
+			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, NULL, flags, FALSE);
 		}
 	} else if (c) {
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);

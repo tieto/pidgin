@@ -850,10 +850,10 @@ void gaim_blist_rename_buddy(GaimBuddy *buddy, const char *name)
 void gaim_blist_alias_chat(GaimChat *chat, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	char *old_alias = chat->alias;
 
 	g_return_if_fail(chat != NULL);
 
-	g_free(chat->alias);
 	if ((alias != NULL) && (*alias != '\0'))
 		chat->alias = g_strdup(alias);
 	else
@@ -863,16 +863,20 @@ void gaim_blist_alias_chat(GaimChat *chat, const char *alias)
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)chat);
+
+	gaim_signal_emit(gaim_blist_get_handle(), "blist-node-aliased",
+					 chat, old_alias);
+	g_free(old_alias);
 }
 
 void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
+	char *old_alias = buddy->alias;
 
 	g_return_if_fail(buddy != NULL);
 
-	g_free(buddy->alias);
 	if ((alias != NULL) && (*alias != '\0'))
 		buddy->alias = g_strdup(alias);
 	else
@@ -887,16 +891,20 @@ void gaim_blist_alias_buddy(GaimBuddy *buddy, const char *alias)
 											   buddy->account);
 	if (conv)
 		gaim_conversation_autoset_title(conv);
+
+	gaim_signal_emit(gaim_blist_get_handle(), "blist-node-aliased",
+					 buddy, old_alias);
+	g_free(old_alias);
 }
 
 void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
 	GaimConversation *conv;
+	char *old_alias = buddy->server_alias;
 
 	g_return_if_fail(buddy != NULL);
 
-	g_free(buddy->server_alias);
 	if ((alias != NULL) && (*alias != '\0') && g_utf8_validate(alias, -1, NULL))
 		buddy->server_alias = g_strdup(alias);
 	else
@@ -911,6 +919,10 @@ void gaim_blist_server_alias_buddy(GaimBuddy *buddy, const char *alias)
 											   buddy->account);
 	if (conv)
 		gaim_conversation_autoset_title(conv);
+
+	gaim_signal_emit(gaim_blist_get_handle(), "blist-node-aliased",
+					 buddy, old_alias);
+	g_free(old_alias);
 }
 
 /*
@@ -1338,6 +1350,9 @@ void gaim_blist_add_buddy(GaimBuddy *buddy, GaimContact *contact, GaimGroup *gro
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
+
+	/* Signal that the buddy has been added */
+	gaim_signal_emit(gaim_blist_get_handle(), "buddy-added", buddy);
 }
 
 GaimContact *gaim_contact_new()
@@ -1361,11 +1376,9 @@ GaimContact *gaim_contact_new()
 void gaim_contact_set_alias(GaimContact *contact, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	char *old_alias = contact->alias;
 
 	g_return_if_fail(contact != NULL);
-
-	if (contact->alias != NULL)
-		g_free(contact->alias);
 
 	if ((alias != NULL) && (*alias != '\0'))
 		contact->alias = g_strdup(alias);
@@ -1376,6 +1389,10 @@ void gaim_contact_set_alias(GaimContact *contact, const char *alias)
 
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode*)contact);
+
+	gaim_signal_emit(gaim_blist_get_handle(), "blist-node-aliased",
+					 contact, old_alias);
+	g_free(old_alias);
 }
 
 const char *gaim_contact_get_alias(GaimContact* contact)
@@ -1670,7 +1687,7 @@ void gaim_blist_remove_contact(GaimContact *contact)
 		}
 		/*
 		 * Remove the last buddy and trigger the deletion of the contact.
-		 * It would probably be cleaner if contact-deletion was done after 
+		 * It would probably be cleaner if contact-deletion was done after
 		 * a timeout?  Or if it had to be done manually, like below?
 		 */
 		gaim_blist_remove_buddy((GaimBuddy*)node->child);
@@ -1756,6 +1773,9 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	if (ops && ops->remove)
 		ops->remove(gaimbuddylist, node);
 
+	/* Signal that the buddy has been removed before freeing the memory for it */
+	gaim_signal_emit(gaim_blist_get_handle(), "buddy-removed", buddy);
+
 	/* Delete the node */
 	if (buddy->timer > 0)
 		gaim_timeout_remove(buddy->timer);
@@ -1839,7 +1859,7 @@ void gaim_blist_remove_group(GaimGroup *group)
 		buf = g_strdup_printf(ngettext("%d buddy from group %s was not removed "
 									   "because its account was not logged in."
 									   "  This buddy and the group were not "
-									   "removed.\n", 
+									   "removed.\n",
 									   "%d buddies from group %s were not "
 									   "removed because their accounts were "
 									   "not logged in.  These buddies and "
@@ -2601,6 +2621,16 @@ gaim_blist_init(void)
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_BLIST_BUDDY));
 
+	gaim_signal_register(handle, "buddy-added",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
+	gaim_signal_register(handle, "buddy-removed",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
 	gaim_signal_register(handle, "update-idle", gaim_marshal_VOID, NULL, 0);
 
 	gaim_signal_register(handle, "blist-node-extended-menu",
@@ -2608,6 +2638,12 @@ gaim_blist_init(void)
 			     gaim_value_new(GAIM_TYPE_SUBTYPE,
 					    GAIM_SUBTYPE_BLIST_NODE),
 			     gaim_value_new(GAIM_TYPE_BOXED, "GList **"));
+
+	gaim_signal_register(handle, "blist-node-aliased",
+						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_NODE),
+						 gaim_value_new(GAIM_TYPE_STRING));
 }
 
 void

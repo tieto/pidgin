@@ -184,12 +184,11 @@ struct _GaimConversationUiOps
 	void (*write_im)(GaimConversation *conv, const char *who,
 	                 const char *message, GaimMessageFlags flags,
 	                 time_t mtime);
-	void (*write_conv)(GaimConversation *conv, const char *who,
+	void (*write_conv)(GaimConversation *conv, const char *name, const char *alias,
 	                   const char *message, GaimMessageFlags flags,
 	                   time_t mtime);
 
-	void (*chat_add_user)(GaimConversation *conv, const char *user, gboolean new_arrival);
-	void (*chat_add_users)(GaimConversation *conv, GList *users);
+	void (*chat_add_users)(GaimConversation *conv, GList *users, GList *aliases);
 	void (*chat_rename_user)(GaimConversation *conv,
 	                         const char *old_name, const char *new_name);
 	void (*chat_remove_user)(GaimConversation *conv, const char *user);
@@ -205,8 +204,6 @@ struct _GaimConversationUiOps
 	void (*custom_smiley_write)(GaimConversation *conv, const char *smile,
 	                            const guchar *data, gsize size);
 	void (*custom_smiley_close)(GaimConversation *conv, const char *smile);
-
-
 
 	/* Events */
 	void (*updated)(GaimConversation *conv, GaimConvUpdateType type);
@@ -287,7 +284,7 @@ struct _GaimConversation
 
 	gboolean logging;           /**< The status of logging.             */
 
-	GaimLog *log;               /**< This conversation's log            */
+	GList *logs;                /**< This conversation's logs           */
 
 	GList *send_history;        /**< The send history.                  */
 
@@ -1208,14 +1205,22 @@ void gaim_conv_chat_add_user(GaimConvChat *chat, const char *user,
 /**
  * Adds a list of users to a chat.
  *
- * The data is copied from @a users, so it is up to the developer to
- * free this list after calling this function.
+ * The data is copied from @a users, @a extra_msgs, and @a flags, so it is up to
+ * the caller to free this list after calling this function.
  *
- * @param chat      The chat.
- * @param users     The list of users to add.
- * @param flags     The list of flags for each user.
+ * @param chat         The chat.
+ * @param users        The list of users to add.
+ * @param extra_msgs   An extra message to display with the join message for each
+ *                     user.  This list may be shorter than @a users, in which
+ *                     case, the users after the end of extra_msgs will not have
+ *                     an extra message.  By extension, this means that extra_msgs
+ *                     can simply be @c NULL and none of the users will have an
+ *                     extra message.
+ * @param flags        The list of flags for each user.
+ * @param new_arrivals Decides whether or not to show join notices.
  */
-void gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *flags);
+void gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
+							  GList *flags, gboolean new_arrivals);
 
 /**
  * Renames a user in a chat.

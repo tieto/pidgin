@@ -162,6 +162,14 @@ typedef enum
 	 */
 	OPT_PROTO_REGISTER_NOSCREENNAME = 0x00000200,
 
+	/**
+	 * Chats use the display name for "my" nickname.
+	 *
+	 * IRC uses the user's current nickname in the chat list, not the
+	 * username that's been setup for the account.
+	 */
+	OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS = 0x00000200
+
 } GaimProtocolOptions;
 
 /**

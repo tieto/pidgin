@@ -9,6 +9,9 @@
   @signal buddy-signed-off
   @signal update-idle
   @signal blist-node-extended-menu
+  @signal buddy-added
+  @signal buddy-removed
+  @signal blist-node-aliased
  @endsignals
 
  <hr>
@@ -93,6 +96,30 @@ void (*blist_node_extended_menu)(GaimBlistNode *node, GList **menu)
    Emitted when a buddlist menu is being constructed @a menu is a pointer to
    a GList of GaimBlistNodeAction's allowing a plugin to add menu items
  @endsignaldef
+
+ @signaldef buddy-added
+  @signalproto
+void (*buddy_added)(GaimBuddy *buddy)
+  @endsignalproto
+  @signaldesc
+   Emitted when a new buddy is added to the buddy list.
+  @endsignaldef
+
+ @signaldef buddy-removed
+  @signalproto
+void (*buddy_removed)(GaimBuddy *buddy)
+  @endsignalproto
+  @signaldesc
+   Emitted when a buddy is removed from the buddy list.
+  @endsignaldef
+
+ @signaldef blist-node-aliased
+  @signalproto
+void (*blist_node_aliased)(GaimBlistNode *node, const char *old_alias)
+  @endsignalproto
+  @signaldesc
+   Emitted when a blist node (buddy, chat, or contact) is aliased.
+  @endsignaldef
 
  */
 // vim: syntax=c tw=75 et

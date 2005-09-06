@@ -1019,7 +1019,7 @@ void silcgaim_chat_join_done(SilcClient client,
 	}
 	silc_hash_table_list_reset(&htl);
 
-	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, flags);
+	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, NULL, flags, FALSE);
 	g_list_free(users);
 	g_list_free(flags);
 

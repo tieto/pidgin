@@ -123,6 +123,39 @@ buddy_signed_off_cb(GaimBuddy *buddy, void *data)
 }
 
 static void
+buddy_added_cb(GaimBuddy *buddy, void *data)
+{
+	gaim_debug_misc("signals test", "buddy_added_cb (%s)\n", gaim_buddy_get_name(buddy));
+}
+
+static void
+buddy_removed_cb(GaimBuddy *buddy, void *data)
+{
+	gaim_debug_misc("signals test", "buddy_removed_cb (%s)\n", gaim_buddy_get_name(buddy));
+}
+
+static void
+blist_node_aliased(GaimBlistNode *node, const char *old_alias)
+{
+	GaimContact *p = (GaimContact *)node;
+	GaimBuddy *b = (GaimBuddy *)node;
+	GaimChat *c = (GaimChat *)node;
+	GaimGroup *g = (GaimGroup *)node;
+
+	if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Contact: %s, %s)\n", p->alias, old_alias);
+	else if (GAIM_BLIST_NODE_IS_BUDDY(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Buddy: %s, %s)\n", b->name, old_alias);
+	else if (GAIM_BLIST_NODE_IS_CHAT(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Chat: %s, %s)\n", c->alias, old_alias);
+	else if (GAIM_BLIST_NODE_IS_GROUP(node))
+		gaim_debug_misc("signals test", "blist-node-extended-menu (Group: %s, %s)\n", g->name, old_alias);
+	else
+		gaim_debug_misc("signals test", "blist-node-extended-menu (UNKNOWN: %d, %s)\n", node->type, old_alias);
+
+}
+
+static void
 blist_node_extended_menu_cb(GaimBlistNode *node, void *data)
 {
 	GaimContact *p = (GaimContact *)node;
@@ -564,6 +597,12 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_signed_on_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, GAIM_CALLBACK(buddy_signed_off_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-added",
+						plugin, GAIM_CALLBACK(buddy_added_cb), NULL);
+	gaim_signal_connect(blist_handle, "blist-removed",
+						plugin, GAIM_CALLBACK(buddy_removed_cb), NULL);
+	gaim_signal_connect(blist_handle, "blist-node-aliased",
+						plugin, GAIM_CALLBACK(blist_node_aliased), NULL);
 	gaim_signal_connect(blist_handle, "blist-node-extended-menu",
 						plugin, GAIM_CALLBACK(blist_node_extended_menu_cb), NULL);
 
