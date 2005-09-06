@@ -269,15 +269,19 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 	/* I think that the above justification is not the majority, and that the new tab resizing should negate it anyway.  --luke*/
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 	{
-		gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
-		gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
+		if (w == gtkconv->imhtml) {
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_width", allocation->width);
+			gaim_prefs_set_int("/gaim/gtk/conversations/im/default_height", allocation->height);
+		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/im/entry_height", allocation->height);
 	}
 	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 	{
-		gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
-		gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
+		if (w == gtkconv->imhtml) {
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_width", allocation->width);
+			gaim_prefs_set_int("/gaim/gtk/conversations/chat/default_height", allocation->height);
+		}
 		if (w == gtkconv->entry)
 			gaim_prefs_set_int("/gaim/gtk/conversations/chat/entry_height", allocation->height);
 	}
