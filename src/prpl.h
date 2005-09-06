@@ -168,7 +168,7 @@ typedef enum
 	 * IRC uses the user's current nickname in the chat list, not the
 	 * username that's been setup for the account.
 	 */
-	OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS = 0x00000200
+	OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS = 0x00000400
 
 } GaimProtocolOptions;
 
