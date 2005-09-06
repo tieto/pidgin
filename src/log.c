@@ -649,7 +649,8 @@ static void log_get_log_sets_common(GHashTable *sets)
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
-				set->buddy = (gaim_find_buddy(account, name) != NULL);
+				if (account != NULL)
+					set->buddy = (gaim_find_buddy(account, name) != NULL);
 
 				log_add_log_set_to_hash(sets, set);
 			}

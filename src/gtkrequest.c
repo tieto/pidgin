@@ -730,16 +730,18 @@ destroy_completion_data(GtkWidget *w, GaimGtkCompletionData *data)
 
 #ifdef NEW_STYLE_COMPLETION
 static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
-		const gchar *key, GtkTreeIter *iter, gpointer user_data) {
-
+		const gchar *key, GtkTreeIter *iter, gpointer user_data)
+{
+	GtkTreeModel *model;
 	GValue val1 = { 0, };
 	GValue val2 = { 0, };
-	GtkTreeModel *model;
+	const char *tmp;
 
 	model = gtk_entry_completion_get_model (completion);
 
 	gtk_tree_model_get_value(model, iter, 2, &val1);
-	if (g_str_has_prefix(g_value_get_string(&val1), key))
+	tmp = g_value_get_string(&val1);
+	if (tmp != NULL && g_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val1);
 		return TRUE;
@@ -747,7 +749,8 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	g_value_unset(&val1);
 
 	gtk_tree_model_get_value(model, iter, 3, &val2);
-	if (g_str_has_prefix(g_value_get_string(&val2), key))
+	tmp = g_value_get_string(&val2);
+	if (tmp != NULL && g_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val2);
 		return TRUE;
@@ -758,8 +761,8 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 }
 
 static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *completion,
-		GtkTreeModel *model, GtkTreeIter *iter, gpointer *user_data) {
-
+		GtkTreeModel *model, GtkTreeIter *iter, gpointer *user_data)
+{
 	GValue val = { 0, };
 	GaimRequestField *screen_field = user_data[1];
 	GList *fields = screen_field->group->fields;
