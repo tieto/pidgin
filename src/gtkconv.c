@@ -3608,11 +3608,18 @@ tab_complete(GaimConversation *conv)
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(model), &iter))
 		{
 			do {
+				char *name;
 				char *alias;
 
-				gtk_tree_model_get(model, &iter, CHAT_USERS_ALIAS_COLUMN, &alias, -1);
-				tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
+				gtk_tree_model_get(model, &iter,
+						   CHAT_USERS_NAME_COLUMN, &name,
+						   CHAT_USERS_ALIAS_COLUMN, &alias,
+						   -1);
+
+				if (strcmp(name, alias))
+					tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
 										  &matches, FALSE, alias);
+				g_free(name);
 				g_free(alias);
 
 				f = gtk_tree_model_iter_next(model, &iter);
