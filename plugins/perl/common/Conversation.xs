@@ -437,12 +437,14 @@ gaim_conv_chat_send(chat, message)
 	const char * message
 
 void 
-gaim_conv_chat_add_users(chat, users, flags)
+gaim_conv_chat_add_users(chat, users, extra_msgs, flags, new_arrivals)
 	Gaim::Conversation::Chat chat
 	SV * users
+	SV * extra_msgs
 	SV * flags
+	gboolean new_arrivals
 PREINIT:
-	GList *t_GL_users, *t_GL_flags;
+	GList *t_GL_users, *t_GL_extra_msgs, *t_GL_flags;
 	int i, t_len;
 PPCODE:
 	t_GL_users = NULL;
@@ -461,7 +463,15 @@ PPCODE:
 		t_GL_flags = g_list_append(t_GL_flags, SvPV(*av_fetch((AV *)SvRV(flags), i, 0), t_sl));
 	}
 
-	gaim_conv_chat_add_users(chat, t_GL_users, t_GL_flags);
+	t_GL_extra_msgs = NULL;
+	t_len = av_len((AV *)SvRV(extra_msgs));
+
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL_extra_msgs = g_list_append(t_GL_extra_msgs, SvPV(*av_fetch((AV *)SvRV(extra_msgs), i, 0), t_sl));
+	}
+
+	gaim_conv_chat_add_users(chat, t_GL_users, t_GL_extra_msgs, t_GL_flags, new_arrivals);
 	
 
 gboolean 
