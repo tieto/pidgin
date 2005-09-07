@@ -76,7 +76,7 @@ static int ao_driver = -1;
 #endif /* USE_AO */
 
 static gboolean
-mute_login_sounds_cb(gpointer data)
+unmute_login_sounds_cb(gpointer data)
 {
 	mute_login_sounds = FALSE;
 	mute_login_sounds_timeout = 0;
@@ -94,7 +94,7 @@ account_signon_cb(GaimConnection *gc, gpointer data)
 	if (mute_login_sounds_timeout != 0)
 		g_source_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = gaim_timeout_add(10000, mute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = gaim_timeout_add(10000, unmute_login_sounds_cb, NULL);
 }
 
 static void
@@ -208,7 +208,7 @@ gaim_gtk_sound_uninit(void)
 	sound_initialized = FALSE;
 }
 
-#if defined(USE_AO)
+#ifdef USE_AO
 static gboolean
 expire_old_child(gpointer data)
 {
@@ -231,11 +231,9 @@ static void
 gaim_gtk_sound_play_file(const char *filename)
 {
 	const char *method;
-#if defined(USE_AO)
-	pid_t pid;
 #ifdef USE_AO
+	pid_t pid;
 	AFfilehandle file;
-#endif
 #endif
 
 	if (!sound_initialized)
@@ -291,12 +289,12 @@ gaim_gtk_sound_play_file(const char *filename)
 		g_free(command);
 		return;
 	}
-#if defined(USE_AO)
+#ifdef USE_AO
 	pid = fork();
 	if (pid < 0)
 		return;
 	else if (pid == 0) {
-#ifdef USE_AO
+		/* Child process */
 		file = afOpenFile(filename, "rb", NULL);
 		if(file) {
 			ao_device *device;
@@ -346,9 +344,9 @@ gaim_gtk_sound_play_file(const char *filename)
 			afCloseFile(file);
 		}
 		ao_shutdown();
-#endif /* USE_AO */
 		_exit(0);
 	} else {
+		/* Parent process */
 		gaim_timeout_add(PLAY_SOUND_TIMEOUT, expire_old_child, GINT_TO_POINTER(pid));
 	}
 #else /* USE_AO */
