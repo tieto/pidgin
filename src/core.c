@@ -157,7 +157,6 @@ gaim_core_quit(void)
 	gaim_savedstatuses_uninit();
 	gaim_status_uninit();
 	gaim_prefs_uninit();
-	gaim_sound_uninit();
 	gaim_xfers_uninit();
 
 	gaim_debug_info("main", "Unloading all plugins\n");
@@ -166,6 +165,19 @@ gaim_core_quit(void)
 	ops = gaim_core_get_ui_ops();
 	if (ops != NULL && ops->quit != NULL)
 		ops->quit();
+
+	/*
+	 * gaim_sound_uninit() should be called as close to
+	 * shutdown as possible.  This is because the call
+	 * to ao_shutdown() can sometimes leave our
+	 * environment variables in an unusable state, which
+	 * can cause a crash when getenv is called (by gettext
+	 * for example).  See the complete bug report at
+	 * http://trac.xiph.org/cgi-bin/trac.cgi/ticket/701
+	 *
+	 * TODO: Eventually move this call higher up with the others.
+	 */
+	gaim_sound_uninit();
 
 	gaim_plugins_uninit();
 	gaim_signals_uninit();
