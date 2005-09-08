@@ -1276,7 +1276,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	GaimConnection *gc = NULL;
 	GaimAccount *account;
 	GaimConversationUiOps *ops;
-	const char *alias = NULL;
+	const char *alias;
 	GaimConvWindow *win;
 	GaimBuddy *b;
 	GaimUnseenState unseen;
@@ -1303,6 +1303,11 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		!g_list_find(gaim_get_conversations(), conv))
 		return;
 
+	if (who == NULL || *who == '\0')
+		who = gaim_conversation_get_name(conv);
+
+	alias = who;
+
 	if (account != NULL) {
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)));
 
@@ -1324,15 +1329,10 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 			}
 			else
 			{
-				if (who == NULL || *who == '\0')
-					who = gaim_conversation_get_name(conv);
-
 				b = gaim_find_buddy(account, who);
 
 				if (b != NULL)
 					alias = gaim_buddy_get_contact_alias(b);
-				else
-					alias = who;
 			}
 		}
 	}
