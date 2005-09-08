@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright 2003-2004 Nathan Walp <faceprint@faceprint.com>
+# Copyright 2003-2005 Nathan Walp <faceprint@faceprint.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 50 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 #
+
+use POSIX qw(strftime);
 
 
 my $PACKAGE="gaim";
@@ -47,10 +49,11 @@ $_ = `msgfmt --statistics $PACKAGE.pot -o /dev/null 2>&1`;
 die "unable to get total: $!" unless (/(\d+) untranslated messages/);
 
 $total = $1;
+$generated = strftime "%Y-%m-%d %H:%M:%S", gmtime;
 
 print "<?xml version='1.0'?>\n";
 print "<?xml-stylesheet type='text/xsl' href='l10n.xsl'?>\n";
-print "<project version='1.0' xmlns:l10n='http://faceprint.com/code/l10n' name='$PACKAGE' pofile='$PACKAGE.pot' strings='$total'>\n";
+print "<project version='1.0' xmlns:l10n='http://faceprint.com/code/l10n' name='$PACKAGE' pofile='$PACKAGE.pot' strings='$total' generated='$generated'>\n";
 
 foreach $index (0 .. $#pos) {
 	$trans = $fuzz = $untrans = 0;
