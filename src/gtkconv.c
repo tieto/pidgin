@@ -1717,19 +1717,25 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 }
 
 static void
-move_to_next_unread_tab(GaimGtkConversation *gtkconv)
+move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 {
 	GaimGtkConversation *next_gtkconv = NULL;
 	GaimConvWindow *win;
 	GList *l;
-	int index, i, found = 0;
+	int index, i, total, found = 0;
 
 	win   = gaim_conversation_get_window(gtkconv->active_conv);
 	index = gtk_notebook_page_num(GTK_NOTEBOOK(GAIM_GTK_WINDOW(win)->notebook), gtkconv->tab_cont);
+	total = gaim_conv_window_get_conversation_count(win);
 
-	/* First check the tabs after this position. */
-	for (i = index; !found && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
-		for (l = next_gtkconv->convs; l; l = l->next) {
+	/* First check the tabs after (forward) or before (!forward) this position. */
+	for (i = index;
+		 !found && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i));
+		 forward ? i++ : i--) {
+		if (i == -1) {
+			break;
+		}
+		for (l = next_gtkconv->convs; l; l = forward ? l->next : l->prev) {
 			GaimConversation *c = l->data;
 			if (gaim_conversation_get_unseen(c) > 0)
 			{
@@ -1740,9 +1746,11 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 	}
 
 	if (!found) {
-		/* Now check from the beginning up to this position. */
-		for (i = 0; !found && i < index && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i)); i++) {
-			for (l = next_gtkconv->convs; l; l = l->next) {
+		/* Now check from the beginning up to (forward) or end back to (!forward) this position. */
+		for (i = forward ? 0 : total - 1;
+			 !found && (forward ? i < index : i >= 0) && (next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, i));
+			 forward ? i++ : i--) {
+			for (l = next_gtkconv->convs; l; l = forward ? l->next : l->prev) {
 				GaimConversation *c = l->data;
 				if (gaim_conversation_get_unseen(c) > 0) {
 					found = 1;
@@ -1752,8 +1760,14 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv)
 		}
 
 		if (!found) {
-			/* Okay, just grab the next conversation tab. */
-			if (!(next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index + 1)))
+			/* Okay, just grab the next (forward) or previous (!forward) conversation tab. */
+			if (forward) {
+				index++;
+			}
+			else {
+				index = (index == 0) ? total - 1 : index - 1;
+			}
+			if (!(next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, index)))
 				next_gtkconv = gaim_gtk_get_gtkconv_at_index(win, 0);
 		}
 	}
@@ -1888,7 +1902,12 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				break;
 
 			case GDK_Tab:
-				move_to_next_unread_tab(gtkconv);
+			case GDK_ISO_Left_Tab:
+				if (event->state & GDK_SHIFT_MASK) {
+					move_to_next_unread_tab(gtkconv, FALSE);
+				} else {
+					move_to_next_unread_tab(gtkconv, TRUE);
+				}
 
 				return TRUE;
 				break;
