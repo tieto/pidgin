@@ -28,6 +28,7 @@ use Locale::Language;
 $lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
+$lang{my_MM} = "Burmese (Myanmar)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
 $lang{'sr@Latn'} = "Serbian (Latin)";
 $lang{zh_CN} = "Chinese (Simplified)";
@@ -67,7 +68,12 @@ foreach $index (0 .. $#pos) {
 	if(/(\d+) untranslated message/) { $untrans = $1; }
 	unlink("$po.new");
 
-	print "<lang code='$po' translated='$trans' fuzzy='$fuzz' />\n";
+	$name = "";
+	$name = $lang{$po};
+	$name = code2language($po) unless $name ne "";
+	$name = "???" unless $name ne "";
+
+	print "<lang code='$po' name='$name' translated='$trans' fuzzy='$fuzz' />\n";
 	print STDERR "done ($untrans untranslated strings).\n" if($ARGV[0] eq '-v');
 }
 
