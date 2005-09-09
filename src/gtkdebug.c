@@ -40,6 +40,8 @@
 # include <regex.h>
 #endif /* HAVE_REGEX_H */
 
+#include <gdk/gdkkeysyms.h>
+
 typedef struct
 {
 	GtkWidget *window;
@@ -561,11 +563,7 @@ regex_changed_cb(GtkWidget *w, DebugWindow *win) {
 
 static void
 regex_key_release_cb(GtkWidget *w, GdkEventKey *e, DebugWindow *win) {
-	/**
-	 * GDK_Return is defined in gdkkeysyms.h as 0xFF0D, but this file is not
-	 * included by default, so we just use that value here directly.
-	 */
-	if(e->keyval == 0xFF0D &&
+	if(e->keyval == GDK_Return &&
 	   GTK_WIDGET_IS_SENSITIVE(win->filter) &&
 	   !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter)))
 	{
