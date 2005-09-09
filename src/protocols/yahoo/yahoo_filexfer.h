@@ -21,6 +21,11 @@
  */
 
 /**
+ * Process ymsg events, particular IMViroments like Doodle
+ */
+void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt );
+
+/**
  * Process ymsg file receive invites.
  */
 void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt);

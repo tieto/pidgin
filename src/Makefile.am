@@ -101,7 +101,8 @@ gaim_coresources = \
 	upnp.c \
 	util.c \
 	value.c \
-	xmlnode.c
+	xmlnode.c \
+	whiteboard.c
 
 gaim_coreheaders = \
 	account.h \
@@ -146,7 +147,8 @@ gaim_coreheaders = \
 	util.h \
 	value.h \
 	version.h \
-	xmlnode.h
+	xmlnode.h \
+	whiteboard.h
 
 
 
@@ -271,7 +273,8 @@ gaim_SOURCES = \
 	gtkthemes.c \
 	gtkutils.c \
 	idle.c \
-	session.c
+	session.c \
+	gtkwhiteboard.c
 
 gaim_headers = \
 	$(dbus_headers) \
@@ -311,7 +314,8 @@ gaim_headers = \
 	gtkstatusbox.h \
 	gtkstock.h \
 	gtkutils.h \
-	internal.h
+	internal.h \
+	gtkwhiteboard.h
 
 gaimincludedir=$(includedir)/gaim
 gaiminclude_HEADERS = \

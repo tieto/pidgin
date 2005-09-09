@@ -84,6 +84,7 @@ typedef struct {
 #include "plugin.h"
 #include "roomlist.h"
 #include "status.h"
+#include "whiteboard.h"
 
 struct proto_chat_entry {
 	char *label;
@@ -304,6 +305,8 @@ struct _GaimPluginProtocolInfo
 	/* file transfer callbacks */
 	gboolean (*can_receive_file)(GaimConnection *, const char *who);
 	void (*send_file)(GaimConnection *, const char *who, const char *filename);
+	
+	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

@@ -46,6 +46,7 @@
 #include "yahoo_auth.h"
 #include "yahoo_filexfer.h"
 #include "yahoo_picture.h"
+#include "yahoo_doodle.h"
 
 extern char *yahoo_crypt(const char *, const char *);
 
@@ -664,6 +665,8 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
+	
+	char imv[16];
 
 	if (pkt->status <= 1 || pkt->status == 5) {
 		while (l) {
@@ -687,11 +690,34 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 				if (im)
 					im->msg = pair->value;
 			}
+			// IMV key
+			if (pair->key == 63)
+			{
+				strcpy( imv, pair->value );
+			}
 			l = l->next;
 		}
 	} else if (pkt->status == 2) {
 		gaim_notify_error(gc, NULL,
 		                  _("Your Yahoo! message did not get sent."), NULL);
+	}
+	
+	// Check for the Doodle IMV
+	if( !strcmp( imv, "doodle;11" ) )
+	{
+		g_print( "'doodle;11' found in chat packet\n" );
+		
+		GaimWhiteboard *wb = gaim_whiteboard_get_session( gc->account, im->from );
+		
+		// If a Doodle session doesn't exist between this user
+		if( wb == NULL )
+		{
+			g_print( "Creating new whiteboard for chat packet request\n" );
+			wb = gaim_whiteboard_create( gc->account, im->from, DOODLE_STATE_REQUESTED );
+			
+			yahoo_doodle_command_send_request( gc, im->from );
+			yahoo_doodle_command_send_ready( gc, im->from );
+		}
 	}
 
 	for (l = list; l; l = l->next) {
@@ -2057,6 +2083,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_process_stealth(gc, pkt);
 		break;
 	case YAHOO_SERVICE_P2PFILEXFER:
+		yahoo_process_p2pfilexfer( gc, pkt ); // This case had no break and continued; thus keeping it this way.
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
@@ -2964,7 +2991,14 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash_str(pkt, 97, "1");
 	yahoo_packet_hash_str(pkt, 14, msg2);
 
-	yahoo_packet_hash_str(pkt,   63, ";0"); /* IMvironment */
+	// If this message is to a user who is also Doodling with the local user,
+	// format the chat packet with the correct IMV information (thanks Yahoo!)
+	GaimWhiteboard *wb = gaim_whiteboard_get_session(gc->account, (char*)who);
+	if (wb)
+		yahoo_packet_hash_str(pkt,   63, "doodle;11");
+	else
+		yahoo_packet_hash_str(pkt,   63, ";0"); // IMvironment
+	
 	yahoo_packet_hash_str(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash_str(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
 	if (!yd->picture_url)
@@ -3508,7 +3542,22 @@ yahoogaim_register_commands(void)
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_buzz,
 	                  _("buzz: Buzz a contact to get their attention"), NULL);
+	
+	gaim_cmd_register("doodle", "", GAIM_CMD_P_PRPL,
+			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
+			  "prpl-yahoo", yahoo_doodle_gaim_cmd_start,
+			  _("doodle: Request user to start a Doodle session"), NULL);
 }
+
+static GaimWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
+{
+	yahoo_doodle_start,
+	yahoo_doodle_end,
+	yahoo_doodle_get_dimensions,
+	NULL,
+	yahoo_doodle_send_draw_list,
+	yahoo_doodle_clear
+};
 
 static GaimPluginProtocolInfo prpl_info =
 {
@@ -3568,7 +3617,8 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_roomlist_cancel,
 	yahoo_roomlist_expand_category,
 	NULL, /* can_receive_file */
-	yahoo_send_file
+	yahoo_send_file,
+	&yahoo_whiteboard_prpl_ops
 };
 
 static GaimPluginInfo info =

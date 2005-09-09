@@ -38,6 +38,7 @@
 #include "sound.h"
 #include "status.h"
 #include "util.h"
+#include "whiteboard.h"
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
@@ -58,6 +59,7 @@
 #include "gtksound.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
+#include "gtkwhiteboard.h"
 
 #if HAVE_SIGNAL_H
 # include <signal.h>
@@ -256,6 +258,7 @@ gaim_gtk_ui_init(void)
 	gaim_request_set_ui_ops(gaim_gtk_request_get_ui_ops());
 	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
 	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
+	gaim_whiteboard_set_ui_ops(gaim_gtk_whiteboard_get_ui_ops());
 
 	gaim_gtk_stock_init();
 	gaim_gtk_prefs_init();
