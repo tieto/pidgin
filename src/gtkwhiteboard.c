@@ -89,7 +89,7 @@ void gaim_gtk_whiteboard_create( GaimWhiteboard *wb )
 	GtkWidget *save_button;
 	
 	GtkWidget *palette_color_box[PALETTE_NUM_COLORS];
-	GdkPixbuf *palette_color_area[PALETTE_NUM_COLORS];
+	/* GdkPixbuf *palette_color_area[PALETTE_NUM_COLORS]; */
 	
 	GaimGtkWhiteboard *gtkwb = g_new0( GaimGtkWhiteboard, 1 );
 	gtkwb->wb = wb;
