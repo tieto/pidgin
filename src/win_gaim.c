@@ -333,8 +333,8 @@ WinMain (struct HINSTANCE__ *hInstance,
         char gaimdir[MAX_PATH];
         HMODULE hmod;
 
-	/* If debug or help flag used, create console for output */
-	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h")) {
+	/* If debug or help or version flag used, create console for output */
+	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
 		LPFNATTACHCONSOLE MyAttachConsole = NULL;
 		if ((hmod = GetModuleHandle("kernel32.dll"))) {
 			MyAttachConsole =
@@ -371,8 +371,10 @@ WinMain (struct HINSTANCE__ *hInstance,
                 dll_prep();
 
 	wgaim_set_locale();
-	if(!getenv("GAIM_MULTI_INST") && !wgaim_set_running())
-		return 0;
+	/* If help or version flag used, do not check Mutex */
+	if(!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
+		if(!getenv("GAIM_MULTI_INST") && !wgaim_set_running())
+			return 0;
 
 	wgaim_set_proxy();
 
