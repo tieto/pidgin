@@ -71,6 +71,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 C_SRC =			yahoo.c \
 			yahoo_auth.c \
 			yahoochat.c \
+			yahoo_doodle.c \
 			yahoo_filexfer.c \
 			yahoo_packet.c \
 			yahoo_profile.c \
