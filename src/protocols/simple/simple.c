@@ -280,8 +280,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 			return tmp;
 		}
 		ret = gaim_ntlm_gen_type1("gaim", sip->servername);
-/*		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret); */
-		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"010000003134303017f6dcfb4531f92f\"\r\n", auth->realm, auth->target);
+		tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret);
 		g_free(ret);
 		return tmp;
 	}
@@ -601,6 +600,8 @@ static gchar *parse_from(gchar *hdr) {
 		tmp = strchr(from, ';');
 		if(tmp) {
 			from = g_strndup(from,tmp-from);
+		} else {
+			from = g_strdup(from);
 		}
 	}
 	gaim_debug_info("simple", "got %s\n",from);

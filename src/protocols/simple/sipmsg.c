@@ -54,6 +54,7 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 	gchar *dummy2;
 	gchar *tmp;
 	int i=1;
+	if(!lines[0]) return NULL;
 	parts = g_strsplit(lines[0], " ", 3);
 	if(!parts[0] || !parts[1] || !parts[2]) {
 		g_strfreev(parts);
@@ -128,7 +129,7 @@ char *sipmsg_to_string(struct sipmsg *msg) {
 	gchar *old;
 	GSList *cur;
 	struct siphdrelement *elem;
-	if(msg->response) out = g_strdup_printf("SIP/2.0 %d AAA\r\n", msg->response);
+	if(msg->response) out = g_strdup_printf("SIP/2.0 %d Unknown\r\n", msg->response);
 	else out = g_strdup_printf("%s %s SIP/2.0\r\n",msg->method, msg->target);
 	cur = msg->headers;
 	while(cur) {
