@@ -4,6 +4,7 @@
 		<html>
 			<head>
 				<title><xsl:value-of select='@name'/> translation statistics</title>
+				<link rel="Stylesheet" href="/gaim.css" type="text/css" media="screen" />
 				<style>
 					.bargraph {
 						width: 200px;
@@ -19,6 +20,7 @@
 				</style>
 			</head>
 			<body>
+				<div id="content">
 				<h1><xsl:value-of select='@name' /> translation statistics</h1>
 				<table>
 					<tr><th>Language</th><th colspan='2'>Translated</th><th colspan='2'>Fuzzy</th><th colspan='2'>Untranslated</th></tr>
@@ -40,6 +42,7 @@
 					</xsl:for-each>
 				</table>
 				<a><xsl:attribute name='href'><xsl:value-of select='@pofile'/></xsl:attribute><xsl:value-of select='@pofile'/></a> generated on <xsl:value-of select='@generated'/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>
