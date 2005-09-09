@@ -126,13 +126,13 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
 	GtkStyle *style = gtk_widget_get_style(gtkconv->imhtml);
-	float scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
-			   (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 
 	col = nick_colors[g_str_hash(name) % NUM_NICK_COLORS];
 
 	/* The colors are chosen to look fine on white; we should never have to darken */
 	if (scale > 1) {
+		float scale = ((1-(LUMINANCE(style->base[GTK_STATE_NORMAL]) / LUMINANCE(style->white))) *
+			       (LUMINANCE(style->white)/MAX(MAX(col.red, col.blue), col.green)));
 		col.red   *= scale;
 		col.green *= scale;
 		col.blue  *= scale;
