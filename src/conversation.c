@@ -1985,7 +1985,6 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 
 		if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 			char *tmp;
-			GaimBuddy *buddy;
 
 			if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
 				tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
@@ -1993,10 +1992,17 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 				tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
 
 			if (!strcmp(tmp, gaim_normalize(conv->account, user))) {
-				alias = gaim_account_get_alias(conv->account);
-				if (alias == NULL)
-					alias = gaim_connection_get_display_name(gc);
+				const char *alias2 = gaim_account_get_alias(conv->account);
+				if (alias2 != NULL)
+					alias = alias2;
+				else
+				{
+					const char *display_name = gaim_connection_get_display_name(gc);
+					if (display_name != NULL)
+						alias = display_name;
+				}
 			} else {
+				GaimBuddy *buddy;
 				if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
 					alias = gaim_buddy_get_contact_alias(buddy);
 			}
