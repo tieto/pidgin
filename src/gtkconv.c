@@ -211,7 +211,7 @@ static void build_warn_close_dialog(GaimConvWindow *win)
 /**************************************************************************
  * Callbacks
  **************************************************************************/
-static gint
+static gboolean
 close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	GaimConvWindow *win = (GaimConvWindow *)d;
