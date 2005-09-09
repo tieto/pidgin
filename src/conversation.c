@@ -2091,8 +2091,9 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 		its_me = TRUE;
 	}
 
-	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change") ||
-		gaim_conv_chat_is_user_ignored(chat, new_user)) {
+	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change") &&
+	    !gaim_conv_chat_is_user_ignored(chat, new_user)) {
+
 		if(its_me) {
 			g_snprintf(tmp, sizeof(tmp),
 					_("You are now known as %s"), new_user);
