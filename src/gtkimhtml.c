@@ -2367,60 +2367,71 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 				case 1:		/* B */
 				case 2:		/* BOLD */
 				case 54:	/* STRONG */
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-
-					if ((bold == 0) && (imhtml->format_functions & GTK_IMHTML_BOLD))
-						gtk_imhtml_toggle_bold(imhtml);
-					bold++;
-					ws[0] = '\0'; wpos = 0;
+						if ((bold == 0) && (imhtml->format_functions & GTK_IMHTML_BOLD))
+							gtk_imhtml_toggle_bold(imhtml);
+						bold++;
+						ws[0] = '\0'; wpos = 0;
+					}
 					break;
 				case 3:		/* /B */
 				case 4:		/* /BOLD */
 				case 55:	/* /STRONG */
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-					ws[0] = '\0'; wpos = 0;
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
 
-					if (bold)
-						bold--;
-					if ((bold == 0) && (imhtml->format_functions & GTK_IMHTML_BOLD) && !imhtml->wbfo)
-						gtk_imhtml_toggle_bold(imhtml);
+						if (bold)
+							bold--;
+						if ((bold == 0) && (imhtml->format_functions & GTK_IMHTML_BOLD) && !imhtml->wbfo)
+							gtk_imhtml_toggle_bold(imhtml);
+					}
 					break;
 				case 5:		/* I */
 				case 6:		/* ITALIC */
 				case 52:	/* EM */
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-					ws[0] = '\0'; wpos = 0;
-					if ((italics == 0) && (imhtml->format_functions & GTK_IMHTML_ITALIC))
-						gtk_imhtml_toggle_italic(imhtml);
-					italics++;
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						if ((italics == 0) && (imhtml->format_functions & GTK_IMHTML_ITALIC))
+							gtk_imhtml_toggle_italic(imhtml);
+						italics++;
+					}
 					break;
 				case 7:		/* /I */
 				case 8:		/* /ITALIC */
 				case 53:	/* /EM */
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-					ws[0] = '\0'; wpos = 0;
-					if (italics)
-						italics--;
-					if ((italics == 0) && (imhtml->format_functions & GTK_IMHTML_ITALIC) && !imhtml->wbfo)
-						gtk_imhtml_toggle_italic(imhtml);
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						if (italics)
+							italics--;
+						if ((italics == 0) && (imhtml->format_functions & GTK_IMHTML_ITALIC) && !imhtml->wbfo)
+							gtk_imhtml_toggle_italic(imhtml);
+					}
 					break;
 				case 9:		/* U */
 				case 10:	/* UNDERLINE */
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-					ws[0] = '\0'; wpos = 0;
-					if ((underline == 0) && (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
-						gtk_imhtml_toggle_underline(imhtml);
-					underline++;
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						if ((underline == 0) && (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
+							gtk_imhtml_toggle_underline(imhtml);
+						underline++;
+					}
 					break;
 				case 11:	/* /U */
 				case 12:	/* /UNDERLINE */
-					gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
-					ws[0] = '\0'; wpos = 0;
-					if (underline)
-						underline--;
-					if ((underline == 0) && (imhtml->format_functions & GTK_IMHTML_UNDERLINE) && !imhtml->wbfo)
-						gtk_imhtml_toggle_underline(imhtml);
+					if (!(options & GTK_IMHTML_NO_FORMATTING)) {
+						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+						ws[0] = '\0'; wpos = 0;
+						if (underline)
+							underline--;
+						if ((underline == 0) && (imhtml->format_functions & GTK_IMHTML_UNDERLINE) && !imhtml->wbfo)
+							gtk_imhtml_toggle_underline(imhtml);
+					}
 					break;
 				case 13:	/* S */
 				case 14:	/* STRIKE */

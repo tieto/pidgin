@@ -2051,10 +2051,13 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 {
 	GaimConversation *conv;
 	GaimConversationUiOps *ops;
+	GaimConnection *gc;
+	GaimPluginProtocolInfo *prpl_info;
 	GaimConvChatBuddy *cb;
 	GaimConvChatBuddyFlags flags;
+	const char *new_alias = new_user;
 	char tmp[BUF_LONG];
-	gboolean its_me = FALSE;
+	gboolean is_me = FALSE;
 
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(old_user != NULL);
@@ -2063,13 +2066,25 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	conv = gaim_conv_chat_get_conversation(chat);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
+	gc = gaim_conversation_get_gc(conv);
+	g_return_if_fail(gc != NULL);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	g_return_if_fail(prpl_info != NULL);
+
 	flags = gaim_conv_chat_user_get_flags(chat, old_user);
 	cb = gaim_conv_chat_cb_new(new_user, flags);
 	gaim_conv_chat_set_users(chat,
 		g_list_prepend(gaim_conv_chat_get_users(chat), cb));
 
+	if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		GaimBuddy *buddy;
+
+		if ((buddy = gaim_find_buddy(gc->account, new_user)) != NULL)
+			new_alias = gaim_buddy_get_contact_alias(buddy);
+	}
+
 	if (ops != NULL && ops->chat_rename_user != NULL)
-		ops->chat_rename_user(conv, old_user, new_user);
+		ops->chat_rename_user(conv, old_user, new_user, new_alias);
 
 	cb = gaim_conv_chat_cb_find(chat, old_user);
 
@@ -2086,25 +2101,21 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	else if (gaim_conv_chat_is_user_ignored(chat, new_user))
 		gaim_conv_chat_unignore(chat, new_user);
 
+	/* This should use gaim_normalize on the two values and strcmp them. */
 	if(!g_utf8_collate(old_user, chat->nick)) {
 		gaim_conv_chat_set_nick(chat, new_user);
-		its_me = TRUE;
+		is_me = TRUE;
 	}
 
 	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change") &&
 	    !gaim_conv_chat_is_user_ignored(chat, new_user)) {
 
-		if(its_me) {
+		if(is_me) {
 			g_snprintf(tmp, sizeof(tmp),
 					_("You are now known as %s"), new_user);
 		} else {
-			GaimConnection *gc = gaim_conversation_get_gc(conv);
-			GaimPluginProtocolInfo *prpl_info;
 			const char *old_alias = old_user;
 			const char *new_alias = new_user;
-	
-			if (!gc || !(prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)))
-				return;
 		
 			if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 				GaimBuddy *buddy;

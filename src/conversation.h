@@ -189,8 +189,8 @@ struct _GaimConversationUiOps
 	                   time_t mtime);
 
 	void (*chat_add_users)(GaimConversation *conv, GList *users, GList *aliases);
-	void (*chat_rename_user)(GaimConversation *conv,
-	                         const char *old_name, const char *new_name);
+	void (*chat_rename_user)(GaimConversation *conv, const char *old_name,
+	                         const char *new_name, const char *new_alias);
 	void (*chat_remove_user)(GaimConversation *conv, const char *user);
 	void (*chat_remove_users)(GaimConversation *conv, GList *users);
 	void (*chat_update_user)(GaimConversation *conv, const char *user);

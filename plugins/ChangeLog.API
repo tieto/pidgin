@@ -93,6 +93,7 @@ version 2.0.0:
 	           same behavior as before)
 	* Changed: chat_add_users in GaimConversationUiOps, added aliases list
 	* Removed: chat_add_user from GaimConversationUiOps
+	* Changed: chat_rename_user in GaimConversationUiOps, added new_alias
 	* Changed: GaimConversation.log became GList * GaimConversation.logs,
 	           so that a conversation can have multiple logs at once
 	* Changed: gaim_conv_chat_add_user, added extra_msgs list

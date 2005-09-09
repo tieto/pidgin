@@ -5219,6 +5219,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimGtkConversation *gtkconv;
 	GaimConvWindow *win;
 	GaimConnection *gc;
+	GaimAccount *account;
+	GaimPluginProtocolInfo *prpl_info;
 	int gtk_font_options = 0;
 	int max_scrollback_lines = gaim_prefs_get_int(
 		"/gaim/gtk/conversations/scrollback_lines");
@@ -5234,8 +5236,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkconv->active_conv = conv;
 	gc = gaim_conversation_get_gc(conv);
-
+	account = gaim_conversation_get_account(conv);
 	win = gaim_conversation_get_window(conv);
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	line_count = gtk_text_buffer_get_line_count(
 			gtk_text_view_get_buffer(GTK_TEXT_VIEW(
@@ -5270,7 +5273,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
 	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_incoming_formatting"))
-		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
+		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES | GTK_IMHTML_NO_FORMATTING;
 
 	/* this is gonna crash one day, I can feel it. */
 	if (GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(conv->account)))->options &
@@ -5375,10 +5378,31 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 		if(alias_escaped)
 			g_free(alias_escaped);
-		g_snprintf(buf2, BUF_LONG,
-			   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
-			   "<B>%s</B></FONT> ",
-			   color, sml_attrib ? sml_attrib : "", mdate, str);
+	
+		/* Are we in a chat where we can tell which users are buddies? */
+		if  (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
+		     gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
+
+			/* Bold buddies to make them stand out from non-buddies. */
+			if (gaim_find_buddy(account, name) != NULL) {
+				g_snprintf(buf2, BUF_LONG,
+					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+					   "<B>%s</B></FONT> ",
+					   color, sml_attrib ? sml_attrib : "", mdate, str);
+			} else {
+				g_snprintf(buf2, BUF_LONG,
+					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+					   "%s</FONT> ",
+					   color, sml_attrib ? sml_attrib : "", mdate, str);
+
+			}
+		} else {
+			/* Bold everyone's name to make the name stand out from the message. */
+			g_snprintf(buf2, BUF_LONG,
+				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+				   "<B>%s</B></FONT> ",
+				   color, sml_attrib ? sml_attrib : "", mdate, str);
+		}
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
 
@@ -5471,7 +5495,7 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *aliases
 
 static void
 gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
-							  const char *new_name)
+			      const char *new_name, const char *new_alias)
 {
 	GaimConvChat *chat;
 	GaimGtkConversation *gtkconv;
@@ -5479,7 +5503,6 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	int f = 1;
-	char *alias = NULL;
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -5496,7 +5519,6 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
 
 		if (!gaim_utf8_strcasecmp(old_name, val)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_ALIAS_COLUMN, &alias, -1);
 			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 			g_free(val);
 			break;
@@ -5510,10 +5532,9 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 	if (!gaim_conv_chat_find_user(chat, old_name))
 		return;
 
-	g_return_if_fail(alias != NULL);
+	g_return_if_fail(new_alias != NULL);
 
-	add_chat_buddy_common(conv, new_name, alias);
-	g_free(alias);
+	add_chat_buddy_common(conv, new_name, new_alias);
 }
 
 static void
