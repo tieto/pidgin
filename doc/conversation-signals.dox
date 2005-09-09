@@ -433,7 +433,7 @@ void (*chat_invited_user)(GaimConversation *conv, const char *name,
   @signalproto
 gint (*chat_invited)(GaimAccount *account, const char *inviter,
                      const char *chat, const char *invite_message
-                     const GHastTable *components);
+                     const GHashTable *components);
   @endsignalproto
   @signaldesc
    Emitted when an account was invited to a chat.
