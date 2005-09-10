@@ -29,6 +29,7 @@
 
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
+#include "account.h"
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeview.h>
 #if !GTK_CHECK_VERSION(2,6,0)
@@ -58,6 +59,8 @@ struct _GtkGaimStatusBox
 
 	GtkListStore *store;
 	GtkListStore *dropdown_store;
+
+	GaimAccount *account;
 
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
@@ -101,6 +104,7 @@ struct _GtkGaimStatusBoxClass
 
 GType         gtk_gaim_status_box_get_type         (void) G_GNUC_CONST;
 GtkWidget    *gtk_gaim_status_box_new              (void);
+GtkWidget    *gtk_gaim_status_box_new_with_account (GaimAccount *);
 
 void
 gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, char *edit);

@@ -51,6 +51,11 @@ enum {
 	NUM_COLUMNS
 };
 
+enum {
+	PROP_0,
+	PROP_ACCOUNT
+};
+
 static void gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass);
 static void gtk_gaim_status_box_init (GtkGaimStatusBox *status_box);
 
@@ -84,6 +89,39 @@ gtk_gaim_status_box_get_type (void)
 }
 
 static void
+gtk_gaim_status_box_get_property(GObject *object, guint param_id,
+                                 GValue *value, GParamSpec *psec)
+{
+	GtkGaimStatusBox *statusbox = GTK_GAIM_STATUS_BOX(object);
+
+	switch (param_id) {
+	case PROP_ACCOUNT:
+		g_value_set_pointer(value, statusbox->account);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, psec);
+		break;
+	}
+}
+
+static void
+gtk_gaim_status_box_set_property(GObject *object, guint param_id,
+                                 const GValue *value, GParamSpec *pspec)
+{
+	GtkGaimStatusBox *statusbox = GTK_GAIM_STATUS_BOX(object);
+
+	switch (param_id) {
+	case PROP_ACCOUNT:
+		statusbox->account = g_value_get_pointer(value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, pspec);
+		break;
+	}
+}
+
+
+static void
 gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 {
 	GObjectClass *object_class;
@@ -104,6 +142,18 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	container_class->forall = gtk_gaim_status_box_forall;
 
 	object_class = (GObjectClass *)klass;
+
+	object_class->get_property = gtk_gaim_status_box_get_property;
+	object_class->set_property = gtk_gaim_status_box_set_property;
+
+	g_object_class_install_property(object_class,
+	                                PROP_ACCOUNT,
+	                                g_param_spec_pointer("account",
+	                                                     "Account",
+	                                                     "The account, or NULL for all accounts",
+	                                                      G_PARAM_READWRITE
+	                                                     )
+	                               );
 }
 
 static void
@@ -125,7 +175,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		title = "";
 
 	if (status_box->error) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>", 
+		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
 							   title, status_box->error);
 	} else if (status_box->typing) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
@@ -223,7 +273,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box), text_rend, "markup", TEXT_COLUMN, NULL);
 
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE); 
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
 
@@ -335,6 +385,11 @@ gtk_gaim_status_box_new()
 	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, NULL);
 }
 
+GtkWidget *
+gtk_gaim_status_box_new_with_account(GaimAccount *account)
+{
+	return g_object_new(GTK_GAIM_TYPE_STATUS_BOX, "account", account, NULL);
+}
 
 void
 gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, char *edit)
