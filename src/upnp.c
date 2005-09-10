@@ -56,8 +56,8 @@ typedef struct
 #define DEFAULT_HTTP_PORT 80
 #define MAX_PORT_SIZE 6
 #define SIZEOF_HTTP 7         /* size of "http://" string */
-#define RECIEVE_TIMEOUT 10000
-#define CONSECUTIVE_RECIEVE_TIMEOUT 500
+#define RECEIVE_TIMEOUT 10000
+#define CONSECUTIVE_RECEIVE_TIMEOUT 500
 #define DISCOVERY_TIMEOUT 1000
 
 
@@ -81,8 +81,8 @@ typedef struct
                               "%s\r\n"                             \
                               "\r\n"
 
-#define MAX_DISCOVERY_RECIEVE_SIZE 400
-#define MAX_DESCRIPTION_RECIEVE_SIZE 7000
+#define MAX_DISCOVERY_RECEIVE_SIZE 400
+#define MAX_DESCRIPTION_RECEIVE_SIZE 7000
 #define MAX_DESCRIPTION_HTTP_HEADER_SIZE 100
 
 
@@ -163,7 +163,7 @@ gaim_upnp_http_read(gpointer data,
   NetResponseData* nrd = data;
 
   sizeRecv = recv(sock, &(nrd->recvBuffer[nrd->totalSizeRecv]),
-                 MAX_DESCRIPTION_RECIEVE_SIZE-nrd->totalSizeRecv, 0);
+                 MAX_DESCRIPTION_RECEIVE_SIZE-nrd->totalSizeRecv, 0);
   if(sizeRecv < 0 && errno != EINTR) {
     gaim_debug_error("upnp",
             "gaim_upnp_http_read(): recv < 0: %i!\n\n", errno);
@@ -193,7 +193,7 @@ gaim_upnp_http_read(gpointer data,
   } else {
     gaim_timeout_remove(nrd->tima);
     gaim_input_remove(nrd->inpa);
-    nrd->tima = gaim_timeout_add(CONSECUTIVE_RECIEVE_TIMEOUT,
+    nrd->tima = gaim_timeout_add(CONSECUTIVE_RECEIVE_TIMEOUT,
                                 (GSourceFunc)gaim_upnp_timeout, nrd);
     nrd->inpa = gaim_input_add(sock, GAIM_INPUT_READ,
                               gaim_upnp_http_read, nrd);
@@ -227,7 +227,7 @@ gaim_upnp_http_send(gpointer data,
     totalSizeSent += sizeSent;
   }
 
-  nrd->tima = gaim_timeout_add(RECIEVE_TIMEOUT,
+  nrd->tima = gaim_timeout_add(RECEIVE_TIMEOUT,
                                 (GSourceFunc)gaim_upnp_timeout, nrd);
   nrd->inpa = gaim_input_add(sock, GAIM_INPUT_READ,
                               gaim_upnp_http_read, nrd);
@@ -245,9 +245,9 @@ gaim_upnp_http_request(const gchar* address,
   gchar* recvBuffer;
   NetResponseData* nrd = (NetResponseData*)g_malloc0(sizeof(NetResponseData));
   nrd->sendBuffer = httpRequest;
-  nrd->recvBuffer = (gchar*)g_malloc(MAX_DESCRIPTION_RECIEVE_SIZE);
+  nrd->recvBuffer = (gchar*)g_malloc(MAX_DESCRIPTION_RECEIVE_SIZE);
 
-  nrd->tima = gaim_timeout_add(RECIEVE_TIMEOUT,
+  nrd->tima = gaim_timeout_add(RECEIVE_TIMEOUT,
                                (GSourceFunc)gaim_upnp_timeout, nrd);
 
   if(gaim_proxy_connect(NULL, address, port, 
@@ -577,7 +577,7 @@ gaim_upnp_discover_udp_read(gpointer data,
 
   do {
     sizeRecv = recvfrom(sock, nrd->recvBuffer,
-                        MAX_DISCOVERY_RECIEVE_SIZE, 0,
+                        MAX_DISCOVERY_RECEIVE_SIZE, 0,
                         (struct sockaddr*)&from, &length);
 
     if(sizeRecv > 0) {
@@ -612,7 +612,7 @@ gaim_upnp_discover(void)
   gchar* serviceToUse;
   gchar* sendMessage = NULL;
   
-  /* UDP RECIEVE VARIABLES */
+  /* UDP RECEIVE VARIABLES */
   GaimUPnPControlInfo* controlInfo = g_malloc(sizeof(GaimUPnPControlInfo));
   NetResponseData* nrd = g_malloc(sizeof(NetResponseData));
   
@@ -665,7 +665,7 @@ gaim_upnp_discover(void)
     }
     sendMessage = g_strdup_printf(SEARCH_REQUEST_STRING, serviceToUse);
 
-    nrd->recvBuffer = (char*)g_malloc(MAX_DISCOVERY_RECIEVE_SIZE);
+    nrd->recvBuffer = (char*)g_malloc(MAX_DISCOVERY_RECEIVE_SIZE);
 
     while(totalSizeSent < strlen(sendMessage)) {
       sizeSent = sendto(sock,(void*)&sendMessage[totalSizeSent],
@@ -864,10 +864,10 @@ gaim_upnp_get_local_system_ip(gpointer data,
   close(sock);
 }
 
-static const gchar*
+static gchar*
 gaim_upnp_get_local_ip_address(const gchar* address) 
 {
-  const gchar* ip;
+  gchar* ip;
   gchar* pathOfControl;
   gchar* addressOfControl;
   int port = 0;
@@ -883,7 +883,7 @@ gaim_upnp_get_local_ip_address(const gchar* address)
     port = DEFAULT_HTTP_PORT;
   }
 
-  nrd->tima = gaim_timeout_add(RECIEVE_TIMEOUT,
+  nrd->tima = gaim_timeout_add(RECEIVE_TIMEOUT,
                                (GSourceFunc)gaim_upnp_timeout, nrd);
 
   if(gaim_proxy_connect(NULL, addressOfControl, port, 
@@ -917,7 +917,7 @@ gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo,
   gchar* httpResponse;
   gchar actionName[] = "AddPortMapping";
   gchar* actionParams;
-  const gchar* internalIP;
+  gchar* internalIP;
 
   /* get the internal IP */
   if((internalIP = gaim_upnp_get_local_ip_address(controlInfo->controlURL))
@@ -938,6 +938,7 @@ gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo,
     gaim_debug_error("upnp",
           "gaim_upnp_set_port_mapping(): Failed In httpResponse\n\n");
     g_free(actionParams);
+    g_free(internalIP);
     return FALSE;
   }
 
@@ -947,6 +948,7 @@ gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo,
      "gaim_upnp_set_port_mapping(): Failed HTTP_OK\n\n%s\n\n", httpResponse);
     g_free(actionParams);
     g_free(httpResponse);
+    g_free(internalIP);
     return FALSE;
   }
 
@@ -954,6 +956,7 @@ gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo,
   g_free(httpResponse);
 
   gaim_debug_info("upnp", "NAT Added Port Forward On Port: %d: To IP: %s\n", portMap, internalIP);
+  g_free(internalIP);
   return TRUE;
 }
 
