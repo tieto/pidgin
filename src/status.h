@@ -30,7 +30,7 @@
  *
  * GaimStatusType's are created by each PRPL.  They outline the
  * available statuses of the protocol.  AIM, for example, supports
- * and available state with an optional available message, an away
+ * an available state with an optional available message, an away
  * state with a mandatory message, and an invisible state (which is
  * technically "independent" of the other two, but we'll get into
  * that later).  GaimStatusTypes are very permanent.  They are
