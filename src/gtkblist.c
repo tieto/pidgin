@@ -146,7 +146,7 @@ struct _gaim_gtk_blist_node {
 
 #ifdef WANT_DROP_SHADOW
 /**************************** Weird drop shadow stuff *******************/
-/* This is based on a patch for drop shadows in GTK+ menus available at 
+/* This is based on a patch for drop shadows in GTK+ menus available at
  * http://www.xfce.org/gtkmenu-shadow/
  */
 
@@ -572,7 +572,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	const char *text = NULL;
-	
+
 	if (!(get_iter_from_node(node, &iter))) {
 		/* This is either a bug, or the buddy is in a collapsed contact */
 		node = node->parent;
@@ -3552,7 +3552,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
 	gtkblist->treemodel = gtk_tree_store_new(BLIST_COLUMNS,
-			GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN, 
+			GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN,
                         G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_POINTER);
 
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
@@ -3648,7 +3648,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
 			gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
 	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
-		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE); 
+		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE);
 
 	/* Update some dynamic things */
 	update_menu_bar(gtkblist);
@@ -3768,7 +3768,7 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 
 	if (!gtknode->row)
 		return FALSE;
-	
+
 
 	if ((path = gtk_tree_row_reference_get_path(gtknode->row)) == NULL)
 		return FALSE;
@@ -3866,7 +3866,7 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 	gtknode->row =
 		gtk_tree_row_reference_new(GTK_TREE_MODEL(gtkblist->treemodel),
 				newpath);
-	
+
 	gtk_tree_path_free(newpath);
 
 	gtk_tree_store_set(gtkblist->treemodel, iter,
