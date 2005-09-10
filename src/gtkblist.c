@@ -3468,19 +3468,20 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	gchar *enteredstring;
 	gchar *withmarkup;
 	gchar *nomarkup;
-	const gchar *normalized;
+	gchar *normalized;
 
 	gtk_tree_model_get(model, iter, column, &withmarkup, -1);
 
-	enteredstring = g_strdup(gaim_normalize(NULL, key));
+	enteredstring = g_utf8_casefold(gaim_normalize(NULL, key), -1);
 	nomarkup = gaim_markup_strip_html(withmarkup);
-	normalized = gaim_normalize(NULL, nomarkup);
+	normalized = g_utf8_casefold(gaim_normalize(NULL, nomarkup), -1);
 
 	result = (g_strstr_len(normalized, strlen(normalized), enteredstring) == NULL);
 
 	g_free(withmarkup);
 	g_free(enteredstring);
 	g_free(nomarkup);
+	g_free(normalized);
 
 	return result;
 }

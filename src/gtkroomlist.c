@@ -496,6 +496,25 @@ static gint int_sort_func(GtkTreeModel *model, GtkTreeIter *a, GtkTreeIter *b, g
 		return 1;
 }
 
+static gboolean
+_search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
+{
+	gboolean result;
+	gchar *name, *fold, *fkey;
+
+	gtk_tree_model_get(model, iter, column, &name, -1);
+	fold = g_utf8_casefold(name, -1);
+	fkey = g_utf8_casefold(key, -1);
+
+	result = (g_strstr_len(fold, strlen(fold), fkey) == NULL);
+
+	g_free(fold);
+	g_free(fkey);
+	g_free(name);
+
+	return result;
+}
+
 static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 {
 	GaimGtkRoomlist *grl = list->ui_data;
@@ -585,6 +604,11 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	g_signal_connect(G_OBJECT(tree), "button-press-event", G_CALLBACK(room_click_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-expanded", G_CALLBACK(row_expanded_cb), list);
 	g_signal_connect(G_OBJECT(tree), "row-activated", G_CALLBACK(row_activated_cb), list);
+
+	/* Enable CTRL+F searching */
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(tree), NAME_COLUMN);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(tree), _search_func, NULL, NULL);
+
 }
 
 static gboolean gaim_gtk_progress_bar_pulse(gpointer data)
