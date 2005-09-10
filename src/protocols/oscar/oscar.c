@@ -6608,7 +6608,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if (!od)
 		return;
 
-	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_HIDDEN)
+	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) != GAIM_STATUS_HIDDEN)
 		account->perm_deny = 4;
 	else
 		account->perm_deny = 3;
@@ -6616,7 +6616,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_ONLINE))
+	if (!strcmp(status_id, OSCAR_STATUS_ID_ONLINE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
