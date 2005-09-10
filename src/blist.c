@@ -807,7 +807,7 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 	if (ops && ops->update)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 
-	if ((conv = gaim_find_conversation_with_account(GAIM_CONV_IM, buddy->name, buddy->account)))
+	if ((conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account)))
 		gaim_conversation_update(conv, GAIM_CONV_UPDATE_AWAY);
 }
 
