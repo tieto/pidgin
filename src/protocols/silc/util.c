@@ -300,7 +300,7 @@ void silcgaim_show_public_key(SilcGaim sg,
 	fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
 	babbleprint = silc_hash_babbleprint(NULL, pk, pk_len);
 
-	if (silc_pkcs_alloc(public_key->name, &pkcs)) {
+	if (silc_pkcs_alloc((unsigned char *)public_key->name, &pkcs)) {
 		key_len = silc_pkcs_public_key_set(pkcs, public_key);
 		silc_pkcs_free(pkcs);
 	}

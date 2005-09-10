@@ -762,7 +762,7 @@ silc_command(SilcClient client, SilcClientConnection conn,
 
 	case SILC_COMMAND_CMODE:
 		if (cmd_context->argc == 3 &&
-		    !strcmp(cmd_context->argv[2], "+C"))
+		    !strcmp((char *)cmd_context->argv[2], "+C"))
 			sg->chpk = TRUE;
 		else
 			sg->chpk = FALSE;
@@ -1045,7 +1045,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 							!= SILC_LIST_END) {
 						SilcUInt32 name_len;
 						char *m = silc_client_chumode_char(umodes[i++]);
-						char *name = silc_channel_get_name(entry, &name_len);
+						char *name = (char *)silc_channel_get_name(entry, &name_len);
 						if (m)
 							silc_strncat(tmp, sizeof(tmp) - 1, m, strlen(m));
 						silc_strncat(tmp, sizeof(tmp) - 1, name, name_len);
@@ -1618,7 +1618,7 @@ silc_get_auth_method(SilcClient client, SilcClientConnection conn,
 	}
 	password = gaim_connection_get_password(gc);
 	if (password && *password) {
-		completion(TRUE, SILC_AUTH_PASSWORD, password, strlen(password), context);
+		completion(TRUE, SILC_AUTH_PASSWORD, (unsigned char *)password, strlen(password), context);
 		return;
 	}
 
@@ -1832,7 +1832,7 @@ silc_detach(SilcClient client, SilcClientConnection conn,
 	/* Save the detachment data to file. */
 	file = silcgaim_session_file(gaim_account_get_username(sg->account));
 	g_unlink(file);
-	silc_file_writefile(file, detach_data, detach_data_len);
+	silc_file_writefile(file, (char *)detach_data, detach_data_len);
 }
 
 SilcClientOperations ops = {

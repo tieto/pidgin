@@ -858,7 +858,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 		unsigned char *verifyd;
 		SilcUInt32 verify_len;
 
-		silc_pkcs_alloc("rsa", &pkcs);
+		silc_pkcs_alloc((unsigned char*)"rsa", &pkcs);
 		verifyd = silc_attribute_get_verify_data(client_entry->attrs,
 							 FALSE, &verify_len);
 		if (verifyd && silc_pkcs_public_key_set(pkcs, client_entry->public_key)){
@@ -879,7 +879,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 
 		if (silc_pkcs_public_key_decode(serverpk.data, serverpk.data_len,
 						&public_key)) {
-			silc_pkcs_alloc("rsa", &pkcs);
+			silc_pkcs_alloc((unsigned char *)"rsa", &pkcs);
 			verifyd = silc_attribute_get_verify_data(client_entry->attrs,
 								 TRUE, &verify_len);
 			if (verifyd && silc_pkcs_public_key_set(pkcs, public_key)) {
@@ -928,7 +928,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 		g_snprintf(filename2, sizeof(filename2) - 1,
 			   "%s" G_DIR_SEPARATOR_S "vcard", filename);
 		if (vcard.full_name) {
-			tmp = silc_vcard_encode(&vcard, &len);
+			tmp = (char *)silc_vcard_encode(&vcard, &len);
 			silc_file_writefile(filename2, tmp, len);
 			silc_free(tmp);
 		}
@@ -939,7 +939,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 			g_snprintf(filename2, sizeof(filename2) - 1,
 				   "%s" G_DIR_SEPARATOR_S "status_message.mime",
 				   filename);
-			silc_file_writefile(filename2, message.mime,
+			silc_file_writefile(filename2, (char *)message.mime,
 					    message.mime_len);
 		}
 
@@ -949,7 +949,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 			g_snprintf(filename2, sizeof(filename2) - 1,
 				   "%s" G_DIR_SEPARATOR_S "extension.mime",
 				   filename);
-			silc_file_writefile(filename2, extension.mime,
+			silc_file_writefile(filename2, (char *)extension.mime,
 					    extension.mime_len);
 		}
 	}
