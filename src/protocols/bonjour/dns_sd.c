@@ -142,9 +142,8 @@ static sw_result HOWL_API _resolve_reply(sw_discovery discovery,
 		return SW_DISCOVERY_E_UNKNOWN;
 	}
 	
-	// Look for the buddy within the buddy list, if exist, change the status information, 
-	// else create a new buddy within the group Bonjour
-	bonjour_buddy_add_to_gaim(buddy, account);
+	/* Add or update the buddy in our buddy list */
+	bonjour_buddy_add_to_gaim(account, buddy);
 	
 	// Free all the temporal strings
 	g_free(txtvers);
@@ -305,16 +304,19 @@ BonjourDnsSd* bonjour_dns_sd_new()
 void bonjour_dns_sd_free(BonjourDnsSd* data)
 {
 	g_free(data->session);
+	g_free(data->first);
+	g_free(data->last);
+	g_free(data->email);
 	g_free(data);
 }
 
 /**
  * Send a new dns-sd packet updating our status.
  */
-void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status, const char* status_message)
+void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char* status_message)
 {
-	if (data->status) g_free(data->status);
-	if (data->msg) g_free(data->msg);
+	g_free(data->status);
+	g_free(data->msg);
 
 	data->status = g_strdup(status);
 	data->msg = g_strdup(status_message);
@@ -324,8 +326,8 @@ void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status, const char* st
 }
 
 /**
- * Advertise our presence within the dns-sd daemon and start browsing for other 
- * bonjour peers.
+ * Advertise our presence within the dns-sd daemon and start browsing
+ * for other bonjour peers.
  */
 void bonjour_dns_sd_start(BonjourDnsSd* data)
 {	

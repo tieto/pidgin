@@ -32,7 +32,7 @@
 #include "jabber.h"
 #include "buddy.h"
 
-void bonjour_login(GaimAccount* account)
+void bonjour_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimGroup* bonjour_group = NULL;
@@ -63,16 +63,16 @@ void bonjour_login(GaimAccount* account)
 	bd->dns_sd_data->name = (sw_string)gaim_account_get_username(account);
 	bd->dns_sd_data->txtvers = g_strdup("1");
 	bd->dns_sd_data->version = g_strdup("1");
-	bd->dns_sd_data->first = gaim_account_get_string(account, "first", "Juanjo");
-	bd->dns_sd_data->last = gaim_account_get_string(account, "last", "");
+	bd->dns_sd_data->first = g_strdup(gaim_account_get_string(account, "first", "TODO"));
+	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", ""));
 	bd->dns_sd_data->port_p2pj = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
 	bd->dns_sd_data->phsh = g_strdup("");
 	bd->dns_sd_data->status = g_strdup("avail"); //<-- Check the real status if different from avail
-	bd->dns_sd_data->email = gaim_account_get_string(account, "email", "");
+	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
 	bd->dns_sd_data->vc = g_strdup("");
 	bd->dns_sd_data->jid = g_strdup("");
 	bd->dns_sd_data->AIM = g_strdup("");
-	bd->dns_sd_data->msg = g_strdup(gc->away);
+	bd->dns_sd_data->msg = NULL; /* TODO */
 	
 	bd->dns_sd_data->account = account;
 	bonjour_dns_sd_start(bd->dns_sd_data);
@@ -134,104 +134,145 @@ int bonjour_send_im(GaimConnection* connection, const char* to, const char* msg,
 	return 1;
 }
 
-void bonjour_set_status(GaimConnection* connection, const char* state, const char* message)
+void bonjour_set_status(GaimAccount *account, GaimStatus *status)
 {
-	char* status_dns_sd = NULL;
-	char* stripped = NULL;
+	GaimConnection *gc;
+	BonjourData *bd;
+	gboolean disconnected;
+	GaimStatusType *type;
+	int primitive;
+	GaimPresence *presence;
+	const char *message, *bonjour_status;
 
-	if(message) {
-		stripped = g_strdup(message);
+	disconnected = gaim_account_is_disconnected(account);
+	type = gaim_status_get_type(status);
+	primitive = gaim_status_type_get_primitive(type);
+	presence = gaim_account_get_presence(account);
+
+	if (primitive != GAIM_STATUS_OFFLINE && disconnected)
+	{
+		gaim_account_connect(account);
+		return;
+	}
+	if (primitive == GAIM_STATUS_OFFLINE && !disconnected)
+	{
+		gaim_account_disconnect(account);
+		return;
+	}
+
+	if (!gaim_account_is_connected(account))
+		/* TODO: Does this mean we're connecting? */
+		return;
+
+	message = gaim_status_get_attr_string(status, "message");
+	if (message == NULL)
+		message = "";
+
+	/*
+	 * The three possible status for Bonjour are
+	 *   -available ("avail")
+	 *   -idle ("away")
+	 *   -away ("dnd")
+	 * Each of them can have an optional message.
+	 */
+	if (primitive == GAIM_STATUS_AVAILABLE) {
+		bonjour_status = "avail";
+	} else if (gaim_presence_is_idle(presence)) {
+		bonjour_status = "away";
 	} else {
-		stripped = g_strdup("");
+		bonjour_status = "dnd";
 	}
 
-	if(connection->away){
-		g_free(connection->away);
-	}
-	connection->away = stripped;
-	
-	if (g_ascii_strcasecmp(state, _("Online")) == 0) {
-		status_dns_sd = g_strdup("avail");
-	} else if (g_ascii_strcasecmp(state, _("Away")) == 0) {
-		status_dns_sd = g_strdup("away");
-	} else if (g_ascii_strcasecmp(state, _("Do Not Disturb")) == 0) {
-		status_dns_sd = g_strdup("dnd");
-	} else if (g_ascii_strcasecmp(state, _("Custom")) == 0) {
-		status_dns_sd = g_strdup("away");
-	}
-
-	if (status_dns_sd != NULL) {
-		bonjour_dns_sd_send_status(((BonjourData*)(connection->proto_data))->dns_sd_data, 
-			status_dns_sd, stripped);
-	}
+	gc = gaim_account_get_connection(account);
+	bd = gc->proto_data;
+	bonjour_dns_sd_send_status(bd->dns_sd_data, bonjour_status, message);
 }
 
-static GList* bonjour_status_types(GaimConnection* connection)
+static GList *
+bonjour_status_types(GaimAccount *account)
 {
-	GList *types = NULL;
+	GList *status_types = NULL;
+	GaimStatusType *type;
 
-	types = g_list_append(types, _("Online"));
-	types = g_list_append(types, _("Away"));
-	types = g_list_append(types, _("Do Not Disturb"));
-	types = g_list_append(types, GAIM_AWAY_CUSTOM);
+	g_return_val_if_fail(account != NULL, NULL);
 
-	return types;
+	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+									 BONJOUR_STATUS_ID_OFFLINE,
+									 _("Offline"), TRUE, TRUE, FALSE);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+										   BONJOUR_STATUS_ID_AVAILABLE,
+										   _("Available"), TRUE, TRUE, FALSE,
+										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+	status_types = g_list_append(status_types, type);
+
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
+										   BONJOUR_STATUS_ID_AWAY,
+										   _("Away"), TRUE, TRUE, FALSE,
+										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+	status_types = g_list_append(status_types, type);
+
+	return status_types;
 }
 
-static void bonjour_convo_closed(GaimConnection* connection, const char* who)
+static void bonjour_convo_closed(GaimConnection *connection, const char *who)
 {
 	GaimBuddy* buddy = gaim_find_buddy(connection->account, who);
 	
 	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
 }
 
-static void bonjour_list_emblems(GaimBuddy *b, char **se, char **sw,
-		char **nw, char **ne)
+static void bonjour_list_emblems(GaimBuddy *buddy,
+								 const char **se, const char **sw,
+								 const char **nw,const char **ne)
 {
-	switch (b->uc) {
-		case BONJOUR_STATE_AWAY:
-			*se = "away";
-			break;
-		case BONJOUR_STATE_DND:
-			*se = "dnd";
-			break;
-		case BONJOUR_STATE_ERROR:
-			*se = "error";
-			break;
-	}
+	GaimPresence *presence;
+
+	presence = gaim_buddy_get_presence(buddy);
+
+	if (!gaim_presence_is_available(presence))
+		*se = "away";
 }
 
-static char* bonjour_status_text(GaimBuddy *b)
+static char *bonjour_status_text(GaimBuddy *buddy)
 {
-	BonjourBuddy* bb = (BonjourBuddy*)b->proto_data;
-	
-	if (bb->msg != NULL) {
-		return g_strdup(bb->msg);
-	} else {
+	GaimPresence *presence;
+
+	presence = gaim_buddy_get_presence(buddy);
+
+	if (gaim_presence_is_available(presence))
 		return g_strdup("");
-	}
+	else
+		return g_strdup("Away");
 }
 
-static char* bonjour_tooltip_text(GaimBuddy *b)
+static char *bonjour_tooltip_text(GaimBuddy *buddy)
 {
-	char* status = NULL;
-	
-	switch (b->uc) {
-		case BONJOUR_STATE_AVAILABLE:
-			status = g_strdup(_("Online"));
-			break;
-		case BONJOUR_STATE_AWAY:
-			status = g_strdup(_("Away"));
-			break;
-		case BONJOUR_STATE_DND:
-			status = g_strdup(_("Do Not Disturb"));
-			break;
-		case BONJOUR_STATE_ERROR:
-			status = g_strdup("Error");
-			break;
-	}
-	
-	return g_strconcat("\n<b>Status: </b>", status, NULL);
+	GString *ret;
+	GaimPresence *presence;
+	GaimStatus *status;
+	const char *status_description;
+	const char *message;
+
+	presence = gaim_buddy_get_presence(buddy);
+	status = gaim_presence_get_active_status(presence);
+	message = gaim_status_get_attr_string(status, "message");
+
+	if (gaim_presence_is_available(presence))
+		status_description = gaim_status_get_name(status);
+	else if (gaim_presence_is_idle(presence))
+		status_description = _("Idle");
+	else
+		status_description = gaim_status_get_name(status);
+
+	ret = g_string_new("");
+	g_string_append_printf(ret, _("<b>Status:</b> %s"), status_description);
+	g_string_append_printf(ret, _("<b>Message:</b> %s"), message);
+
+	return g_string_free(ret, FALSE);
 }
 
 static GaimPlugin *my_protocol = NULL;

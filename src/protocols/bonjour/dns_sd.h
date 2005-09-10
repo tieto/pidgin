@@ -66,7 +66,7 @@ void bonjour_dns_sd_free(BonjourDnsSd* data);
 /**
  * Send a new dns-sd packet updating our status.
  */
-void bonjour_dns_sd_send_status(BonjourDnsSd* data, char* status, const char* status_message);
+void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *status_message);
 
 /**
  * Advertise our presence within the dns-sd daemon and start browsing for other 

@@ -35,10 +35,9 @@
 #define BONJOUR_PROTOCOL_NAME "bonjour"
 #define BONJOUR_ICON_NAME "bonjour"
 
-#define BONJOUR_STATE_AWAY  		(0x02 | UC_UNAVAILABLE)
-#define BONJOUR_STATE_AVAILABLE  	(0x04)
-#define BONJOUR_STATE_DND   		(0x10 | UC_UNAVAILABLE)
-#define BONJOUR_STATE_ERROR 		(0x20 | UC_UNAVAILABLE)
+#define BONJOUR_STATUS_ID_OFFLINE   "offline"
+#define BONJOUR_STATUS_ID_AVAILABLE "available"
+#define BONJOUR_STATUS_ID_AWAY      "away"
 
 typedef struct _bonjour_data{
 	BonjourDnsSd* dns_sd_data;

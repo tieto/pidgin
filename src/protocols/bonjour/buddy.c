@@ -79,46 +79,59 @@ gboolean bonjour_buddy_check(BonjourBuddy* buddy)
 }
 
 /**
- * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
+ * If the buddy does not yet exist, then create it and add it to
+ * our buddy list.  In either case we set the correct status for
+ * the buddy.
  */
-void bonjour_buddy_add_to_gaim(BonjourBuddy* buddy, GaimAccount* account)
+void
+bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *bonjour_buddy)
 {
-	GaimBuddy* gb = gaim_find_buddy(account, buddy->name);
-	GaimGroup* bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
-	gchar* buddy_alias = NULL;
-	gint buddy_status;
+	GaimBuddy *buddy;
+	GaimGroup *group;
+	const char *status_id, *first, *last;
+	char *alias;
 
-	// Create the alias for the buddy using the first and the last name
-	buddy_alias = g_strconcat(buddy->first, " ", buddy->last, NULL);
+	/* Translate between the Bonjour status and the Gaim status */
+	if (g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
+		status_id = BONJOUR_STATUS_ID_AWAY;
+	else
+		status_id = BONJOUR_STATUS_ID_AVAILABLE;
 
-	// Transformation between the bonjour status and Gaim status
-	if (g_ascii_strcasecmp("avail", buddy->status) == 0) {
-		buddy_status = BONJOUR_STATE_AVAILABLE;
-	} else if (g_ascii_strcasecmp("away", buddy->status) == 0) {
-		buddy_status = BONJOUR_STATE_AWAY;
-	} else if (g_ascii_strcasecmp("dnd", buddy->status) == 0) {
-		buddy_status = BONJOUR_STATE_DND;
-	} else {
-		buddy_status = BONJOUR_STATE_ERROR;
+	/*
+	 * TODO: Figure out the idle time by getting the "away"
+	 * field from the DNS SD.
+	 */
+
+	/* Create the alias for the buddy using the first and the last name */
+	first = bonjour_buddy->first;
+	last = bonjour_buddy->last;
+	alias = g_strdup_printf("%s%s%s",
+							(first && *first ? first : ""),
+							(first && *first && last && *last ? " " : ""),
+							(last && *last ? last : ""));
+
+	/* Make sure the Bonjour group exists in our buddy list */
+	group = gaim_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
+	if (group == NULL)
+	{
+		group = gaim_group_new(BONJOUR_GROUP_NAME);
+		gaim_blist_add_group(group, NULL);
 	}
-	
-	if (gb != NULL) {
-		// The buddy already exists
-		serv_got_update(account->gc, gb->name, TRUE, gb->evil, gb->signon, gb->idle, buddy_status);
-	} else {
-		// We have to create the buddy
-		gb = gaim_buddy_new(account, buddy->name, buddy_alias);
-		gb->node.flags = GAIM_BLIST_NODE_FLAG_NO_SAVE;
-		gb->proto_data = buddy;
-		gaim_blist_add_buddy(gb, NULL, bonjour_group, NULL);
-		gaim_blist_server_alias_buddy(gb, buddy_alias);
-		gaim_blist_update_buddy_status(gb, buddy_status);
-		gaim_blist_update_buddy_presence(gb, TRUE);
-		gaim_blist_update_buddy_signon(gb, 0);
-		gaim_blist_update_buddy_idle(gb, 0);
-		gaim_blist_update_buddy_evil(gb, 0);
-		g_free(buddy_alias);
+
+	/* Make sure the buddy exists in our buddy list */
+	buddy = gaim_find_buddy(account, bonjour_buddy->name);
+	if (buddy == NULL)
+	{
+		buddy = gaim_buddy_new(account, bonjour_buddy->name, alias);
+		gaim_blist_node_set_flags((GaimBlistNode *)buddy, GAIM_BLIST_NODE_FLAG_NO_SAVE);
+		gaim_blist_add_buddy(buddy, NULL, group, NULL);
 	}
+
+	/* Set the user's status */
+	gaim_prpl_got_user_status(account, buddy->name, status_id, NULL);
+	gaim_prpl_got_user_idle(account, buddy->name, FALSE, 0);
+
+	g_free(alias);
 }
 
 /**
