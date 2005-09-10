@@ -440,12 +440,34 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
+	GaimBlistNode *gnode, *cnode, *bnode;
 
 	gc = gaim_account_get_connection(irc->account);
 	if (!gc)
 		return;
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+	/* this used to be in the core, but it's not now */
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(b->account == gc->account) {
+					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
+					ib->name = g_strdup(b->name);
+					g_hash_table_insert(irc->buddies, ib->name, ib);
+				}
+			}
+		}
+	}
 
 	irc_blist_timeout(irc);
 	if (!irc->timer)
