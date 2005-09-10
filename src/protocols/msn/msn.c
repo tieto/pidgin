@@ -597,7 +597,7 @@ msn_status_types(GaimAccount *account)
 			_("Out To Lunch"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "hidden",
+	status = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "invisible",
 			_("Hidden"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
@@ -908,7 +908,7 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 		msnstatus = MSN_PHONE;
 	else if (!strcmp(state, "lunch"))
 		msnstatus = MSN_LUNCH;
-	else if (!strcmp(state, "hidden"))
+	else if (!strcmp(state, "invisible"))
 		msnstatus = MSN_HIDDEN;
 	else if (0) /* how do we detect idle with new status? */
 		msnstatus = MSN_IDLE;
