@@ -127,12 +127,12 @@ void _jabber_parse_and_write_message_to_ui(char* message, GaimConnection* connec
 	xmlnode* html_node = NULL;
 	gboolean isHTML = FALSE;
 	xmlnode* html_body_node = NULL;
-	char* ichat_balloon_color = NULL;
-	char* ichat_text_color = NULL;
+	const char* ichat_balloon_color = NULL;
+	const char* ichat_text_color = NULL;
 	xmlnode* html_body_font_node = NULL;
-	char* font_face = NULL;
-	char* font_size = NULL;
-	char* font_color = NULL;
+	const char* font_face = NULL;
+	const char* font_size = NULL;
+	const char* font_color = NULL;
 	char* html_body = NULL;
 	xmlnode* events_node = NULL;
 	gboolean composing_event = FALSE;
@@ -283,7 +283,6 @@ void _client_socket_handler(gpointer data, gint socket, GaimInputCondition condi
 	char* closed_conv_message;
 	BonjourBuddy* bb = (BonjourBuddy*)gb->proto_data;
 	gboolean closed_conversation = FALSE;
-	char* error_message;
 
 	// Read the data from the socket
 	if ((message_length = _read_data(socket, &message)) == -1) {
@@ -336,7 +335,7 @@ void _client_socket_handler(gpointer data, gint socket, GaimInputCondition condi
 		}
 		
 		// Inform the user that the conversation has been closed
-		conversation = gaim_find_conversation_with_account(gb->name, account);
+		conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, gb->name, account);
 		closed_conv_message = g_strconcat(gb->name, " has closed the conversation.", NULL);
 		gaim_conversation_write(conversation, NULL, closed_conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
 	} else {
@@ -520,7 +519,7 @@ void bonjour_jabber_send_message(BonjourJabber* data, const gchar* to, const gch
 				gaim_debug_error("bonjour", "Unable to start a conversation\n");
 				perror("send");
 				conv_message = g_strdup("Unable to send the message, the conversation couldn't be started.");
-				conversation = gaim_find_conversation_with_account(bb->name, data->account);
+				conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, bb->name, data->account);
 				gaim_conversation_write(conversation, NULL, conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
 				close(bb->conversation->socket);
 				gaim_input_remove(bb->conversation->watcher_id);
@@ -539,7 +538,7 @@ void bonjour_jabber_send_message(BonjourJabber* data, const gchar* to, const gch
 	if (_send_data(bb->conversation->socket, message) == -1) {
 		gaim_debug_error("bonjour", "Unable to send the message\n");
 		conv_message = g_strdup("Unable to send the message.");
-		conversation = gaim_find_conversation_with_account(bb->name, data->account);
+		conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, bb->name, data->account);
 		gaim_conversation_write(conversation, NULL, conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
 	}
 }

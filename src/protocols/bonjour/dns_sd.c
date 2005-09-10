@@ -89,8 +89,8 @@ static sw_result HOWL_API _resolve_reply(sw_discovery discovery,
 	gint address_length = 16;
 	gchar* ip = NULL;
 	sw_text_record_iterator iterator;
-	sw_int8 key[SW_TEXT_RECORD_MAX_LEN];
-	sw_int8 value[SW_TEXT_RECORD_MAX_LEN];
+	char key[SW_TEXT_RECORD_MAX_LEN];
+	char value[SW_TEXT_RECORD_MAX_LEN];
 	sw_uint32 value_length;
 
 	sw_discovery_cancel(discovery, oid);
