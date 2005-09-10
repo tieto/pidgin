@@ -2124,7 +2124,7 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 		title = g_strdup_printf(_("Error Reading %s"), filename);
 		msg = g_strdup_printf(_("An error was encountered reading your "
 					"%s.  They have not been loaded, and the old file "
-					"been renamed to %s~."), description, filename_full);
+					"has been renamed to %s~."), description, filename_full);
 		gaim_notify_error(NULL, NULL, title, msg);
 		g_free(title);
 		g_free(msg);
