@@ -269,8 +269,9 @@ static char *bonjour_tooltip_text(GaimBuddy *buddy)
 		status_description = gaim_status_get_name(status);
 
 	ret = g_string_new("");
-	g_string_append_printf(ret, _("<b>Status:</b> %s"), status_description);
-	g_string_append_printf(ret, _("<b>Message:</b> %s"), message);
+	g_string_append_printf(ret, _("\n<b>Status:</b> %s"), status_description);
+	if (message != NULL)
+		g_string_append_printf(ret, _("\n<b>Message:</b> %s"), message);
 
 	return g_string_free(ret, FALSE);
 }
@@ -397,11 +398,6 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Email"), "email", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	
-	/*
-	option = gaim_account_option_string_new(_("Status Message"), "message", "Available");
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	*/
 	
 	my_protocol = plugin;
 }

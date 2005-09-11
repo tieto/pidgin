@@ -123,12 +123,19 @@ bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *bonjour_buddy)
 	if (buddy == NULL)
 	{
 		buddy = gaim_buddy_new(account, bonjour_buddy->name, alias);
+		buddy->proto_data = bonjour_buddy;
 		gaim_blist_node_set_flags((GaimBlistNode *)buddy, GAIM_BLIST_NODE_FLAG_NO_SAVE);
 		gaim_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
 	/* Set the user's status */
-	gaim_prpl_got_user_status(account, buddy->name, status_id, NULL);
+	if (bonjour_buddy->msg != NULL)
+		gaim_prpl_got_user_status(account, buddy->name, status_id,
+								  "message", bonjour_buddy->msg,
+								  NULL);
+	else
+		gaim_prpl_got_user_status(account, buddy->name, status_id,
+								  NULL);
 	gaim_prpl_got_user_idle(account, buddy->name, FALSE, 0);
 
 	g_free(alias);
