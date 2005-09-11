@@ -1011,14 +1011,19 @@ static void process_input_message(struct simple_account_data *sip, struct sipmsg
 				sendout_pkt(sip->gc, resend);
 				g_free(resend);
 			} else {
-				sip->proxy.retries = 0;
-				if(msg->response == 401) sip->registrar.retries++;
-				else sip->registrar.retries = 0;
-				if(trans->callback) {
-					/* call the callback to process response*/
-					(trans->callback)(sip, msg, trans);
+				if(msg->response == 100) {
+					/* ignore provisional response */
+					gaim_debug_info("simple","got trying response\n");
+				} else {
+					sip->proxy.retries = 0;
+					if(msg->response == 401) sip->registrar.retries++;
+					else sip->registrar.retries = 0;
+					if(trans->callback) {
+						/* call the callback to process response*/
+						(trans->callback)(sip, msg, trans);
+					}
+					transactions_remove(sip, trans);
 				}
-				transactions_remove(sip, trans);
 			}
 			found = 1;
 		} else {
