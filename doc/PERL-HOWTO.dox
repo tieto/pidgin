@@ -3,7 +3,7 @@
 @section Introduction
 Gaim Perl Plugins are setup very similarly to their C counterparts.  Most of the API calls are implemented and are divided into pacakges.  There are some significant differences between the Perl and C API.  Much like the C API, the best place to seek guidances is the source located in the plugins/perl/common directory.  The tutorial that follows will be example based and attempt to touch on the salient features of the embedded perl interpreter.  It is also important to note that some of the C API is missing in Gaim's perl API.  
 
-It is possible to get Gtk2-Perl to work with Gaim's perl API, however you must not load the module with @c use but with @require.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use certain perl modules that are dynamically loaded.  By always using @c require instead of @c use the problem is avoided. 
+It is possible to get Gtk2-Perl to work with Gaim's perl API, however you must not load the module with @c use but with @c require.  If you are uninterested in using Gtk with your perl plugins than this still has bearing on you if you would like to use certain perl modules that are dynamically loaded.  By always using @c require instead of @c use the problem is avoided. 
 
 @section first-script Writing your first script
 
@@ -340,7 +340,6 @@ sub gtk_prefs_info_cb {
 The @c Gaim::Request package allows for plugins to have interactive dialog boxes without the need for creating them in Gtk creating a seperation between the user interfaace and the plugin.  The portion of the Request API available to perl scripts is listed below followed by an example illustrating their use.
 
 These arguments are the same for each of the three request types:
-@args
 	@arg @em handle 	- The plugin handle.
 	@arg @em title 	- String title for the dialog.
 	@arg @em primary	- The first sub-heading.
@@ -355,7 +354,6 @@ These arguments are the same for each of the three request types:
 	@arg @em hint 	- See source for more information - can be left blank.
 	@arg @em filename	- String defualt file name value.
 	@arg @em savedialog	- Boolean where true indicates use as a save file dialog and false indicates an open file dialog.
-@args
 
 @code
 # Create a simple text input box

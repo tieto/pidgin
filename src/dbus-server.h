@@ -38,11 +38,11 @@ G_BEGIN_DECLS
    proper as well as introduce their own types that will not conflict
    with those introduced by other plugins.
 
-   The structure GaimDbusType has only one element #parent, which
-   contains a pointer to the parent type, or #NULL if the type has no
-   parent.  Parent means the same as the base class is object oriented
+   The structure GaimDbusType has only one element (GaimDBusType::parent), a
+   contains a pointer to the parent type, or @c NULL if the type has no
+   parent.  Parent means the same as the base class in object oriented
    programming.  
-   */
+*/
 
 typedef struct _GaimDBusType GaimDBusType;
 
@@ -147,9 +147,9 @@ gboolean gaim_dbus_init(void);
 /**
 
  Macro #DBUS_EXPORT expands to nothing.  It is used to indicate to the
- #dbus-analize-functions.py script that the given function should be
+ dbus-analize-functions.py script that the given function should be
  available to other applications through DBUS.  If
- #dbus-analize-functions.py is run without the "--export-only" option,
+ dbus-analize-functions.py is run without the "--export-only" option,
  this prefix is ignored.
 
  */

@@ -64,7 +64,7 @@ typedef void (*StunCallback) (struct stun_nattype *);
  * is already done. Otherwise the callback is called when the discovery is over
  * and NULL is returned.
  *
- * @param A callback
+ * @param cb A callback
  *
  * @return a struct stun_nattype which includes the public IP and the type
  *         of NAT or NULL is discovery would block

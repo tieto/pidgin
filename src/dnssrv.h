@@ -38,7 +38,8 @@ typedef void (*SRVCallback)(struct srv_response *resp, int results, gpointer dat
  * @param protocol Name of the protocol (e.g. "sip")
  * @param transport Name of the transport ("tcp" or "udp")
  * @param domain Domainname to query (e.g. "blubb.com")
- * @cb A callback which will be called with the results
+ * @param cb A callback which will be called with the results
+ * @param extradata Extra data to be passed to the callback
  */
 void gaim_srv_resolve(const char *protocol, const char *transport, const char *domain, SRVCallback cb, gpointer extradata);
 

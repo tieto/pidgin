@@ -48,8 +48,6 @@ extern "C" {
  * contains the WANIPConnection service that will allow us to recieve the
  * public IP address of the IGD, and control it for forwarding ports.
  *
- * @param void
- *
  * @return The control URL for the IGD we'll use to use the IGD services
  */
 GaimUPnPControlInfo* gaim_upnp_discover(void);
@@ -61,7 +59,7 @@ GaimUPnPControlInfo* gaim_upnp_discover(void);
  * network, so when getting the network IP, instead of returning the
  * local network IP, the public IP is retrieved.
  *
- * @param controlURL The control URL retrieved from gaim_upnp_discover.
+ * @param controlInfo The control URL retrieved from gaim_upnp_discover.
  *
  * @return The IP address of the network, or NULL if something went wrong
  */
@@ -73,7 +71,7 @@ gchar* gaim_upnp_get_public_ip(const GaimUPnPControlInfo* controlInfo);
  * this gaim client. Essentially, this function takes care of the port
  * forwarding so things like file transfers can work behind NAT firewalls
  *
- * @param controlURL The control URL retrieved from gaim_upnp_discover.
+ * @param controlInfo The control URL retrieved from gaim_upnp_discover.
  * @param portMap The port to map to this client
  * @param protocol The protocol to map, either "TCP" or "UDP"
  *
@@ -89,14 +87,14 @@ gboolean gaim_upnp_set_port_mapping(const GaimUPnPControlInfo* controlInfo,
  * port forwarding after they have completed a connection so another client on
  * the local network can take advantage of the port forwarding
  *
- * @param controlURL The control URL retrieved from gaim_upnp_discover.
+ * @param controlInfo The control URL retrieved from gaim_upnp_discover.
  * @param portMap The port to delete the mapping for
  * @param protocol The protocol to map to. Either "TCP" or "UDP"
  *
  * @return TRUE if success, FALSE if something went wrong.
  */
 gboolean 
-gaim_upnp_remove_port_mapping(const GaimUPnPControlInfo* controlURL, 
+gaim_upnp_remove_port_mapping(const GaimUPnPControlInfo* controlInfo,
                               unsigned short portMap,
                               const gchar* protocol);
 /*@}*/

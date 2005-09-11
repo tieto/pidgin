@@ -1,5 +1,5 @@
 /**
- * @file dbus-server.h Gaim DBUS Server
+ * @file dbus-bindings.h Gaim DBUS Bindings
  * @ingroup core
  *
  * gaim

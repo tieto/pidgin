@@ -211,7 +211,7 @@ GaimNotifySearchColumn *gaim_notify_searchresults_column_new(const char *title);
  * Adds a new column to the search result object.
  *
  * @param results The result object to which the column will be added.
- * @param columnt The column that will be added to the result object.
+ * @param column The column that will be added to the result object.
  */
 void gaim_notify_searchresults_column_add(GaimNotifySearchResults *results,
 										  GaimNotifySearchColumn *column);

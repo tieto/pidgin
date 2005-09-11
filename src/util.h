@@ -125,14 +125,9 @@ guchar *gaim_base64_decode(const char *str, gsize *ret_len);
  * explanation.  Also see RFC 2045.
  *
  * @param str     The quoted printable ASCII string to convert to raw data.
- * @param ret_str The returned, readable string.
- * @param ret_len The length of the returned data.  You can
- *                pass in NULL if you're sure that you know
- *                the length of the decoded data, or if you
- *                know you'll be able to use strlen to
- *                determine the length, etc.
+ * @param ret_len The length of the returned data.
  *
- * @return The raw data.  Must be g_free'd when no longer needed.
+ * @return The readable string.  Must be g_free'd when no longer needed.
  */
 guchar *gaim_quotedp_decode(const char *str, gsize *ret_len);
 
