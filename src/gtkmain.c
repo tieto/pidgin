@@ -123,9 +123,15 @@ dologin_named(const char *name)
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		account = (GaimAccount *)gaim_accounts_get_all()->data;
-		ret = 0;
-		gaim_account_connect(account);
+		GList *accounts;
+
+		accounts = gaim_accounts_get_all();
+		if (accounts != NULL)
+		{
+			account = (GaimAccount *)accounts->data;
+			ret = 0;
+			gaim_account_connect(account);
+		}
 	}
 
 	return ret;
