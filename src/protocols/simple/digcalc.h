@@ -28,9 +28,9 @@
 */
 
 #define HASHLEN 16
-typedef char HASH[HASHLEN];
+typedef guchar HASH[HASHLEN];
 #define HASHHEXLEN 32
-typedef char HASHHEX[HASHHEXLEN+1];
+typedef guchar HASHHEX[HASHHEXLEN+1];
 #define IN
 #define OUT
 

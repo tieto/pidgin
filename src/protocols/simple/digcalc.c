@@ -71,19 +71,19 @@ void DigestCalcHA1(
 
       cipher = gaim_ciphers_find_cipher("md5");
       context = gaim_cipher_context_new(cipher, NULL);
-      gaim_cipher_context_append(context, pszUserName, strlen(pszUserName));
-      gaim_cipher_context_append(context, ":", 1);
-      gaim_cipher_context_append(context, pszRealm, strlen(pszRealm));
-      gaim_cipher_context_append(context, ":", 1);
-      gaim_cipher_context_append(context, pszPassword, strlen(pszPassword));
+      gaim_cipher_context_append(context, (guchar *)pszUserName, strlen(pszUserName));
+      gaim_cipher_context_append(context, (guchar *)":", 1);
+      gaim_cipher_context_append(context, (guchar *)pszRealm, strlen(pszRealm));
+      gaim_cipher_context_append(context, (guchar *)":", 1);
+      gaim_cipher_context_append(context, (guchar *)pszPassword, strlen(pszPassword));
       gaim_cipher_context_digest(context, sizeof(HA1), HA1, NULL);
       if (strcmp(pszAlg, "md5-sess") == 0) {
             context = gaim_cipher_context_new(cipher, NULL);
             gaim_cipher_context_append(context, HA1, HASHLEN);
-            gaim_cipher_context_append(context, ":", 1);
-            gaim_cipher_context_append(context, pszNonce, strlen(pszNonce));
-            gaim_cipher_context_append(context, ":", 1);
-            gaim_cipher_context_append(context, pszCNonce, strlen(pszCNonce));
+            gaim_cipher_context_append(context, (guchar *)":", 1);
+            gaim_cipher_context_append(context, (guchar *)pszNonce, strlen(pszNonce));
+            gaim_cipher_context_append(context, (guchar *)":", 1);
+            gaim_cipher_context_append(context, (guchar *)pszCNonce, strlen(pszCNonce));
             gaim_cipher_context_digest(context, sizeof(HA1), HA1, NULL);
       };
       CvtHex(HA1, SessionKey);
@@ -112,11 +112,11 @@ void DigestCalcResponse(
       // calculate H(A2)
       cipher = gaim_ciphers_find_cipher("md5");
       context = gaim_cipher_context_new(cipher, NULL);
-      gaim_cipher_context_append(context, pszMethod, strlen(pszMethod));
-      gaim_cipher_context_append(context, ":", 1);
-      gaim_cipher_context_append(context, pszDigestUri, strlen(pszDigestUri));
+      gaim_cipher_context_append(context, (guchar *)pszMethod, strlen(pszMethod));
+      gaim_cipher_context_append(context, (guchar *)":", 1);
+      gaim_cipher_context_append(context, (guchar *)pszDigestUri, strlen(pszDigestUri));
       if (strcmp(pszQop, "auth-int") == 0) {
-            gaim_cipher_context_append(context, ":", 1);
+            gaim_cipher_context_append(context, (guchar *)":", 1);
             gaim_cipher_context_append(context, HEntity, HASHHEXLEN);
       };
       gaim_cipher_context_digest(context, sizeof(HA2), HA2, NULL);
@@ -126,16 +126,16 @@ void DigestCalcResponse(
       // calculate response
       context = gaim_cipher_context_new(cipher, NULL);
       gaim_cipher_context_append(context, HA1, HASHHEXLEN);
-      gaim_cipher_context_append(context, ":", 1);
-      gaim_cipher_context_append(context, pszNonce, strlen(pszNonce));
-      gaim_cipher_context_append(context, ":", 1);
+      gaim_cipher_context_append(context, (guchar *)":", 1);
+      gaim_cipher_context_append(context, (guchar *)pszNonce, strlen(pszNonce));
+      gaim_cipher_context_append(context, (guchar *)":", 1);
       if (*pszQop) {
-          gaim_cipher_context_append(context, pszNonceCount, strlen(pszNonceCount));
-          gaim_cipher_context_append(context, ":", 1);
-          gaim_cipher_context_append(context, pszCNonce, strlen(pszCNonce));
-          gaim_cipher_context_append(context, ":", 1);
-          gaim_cipher_context_append(context, pszQop, strlen(pszQop));
-          gaim_cipher_context_append(context, ":", 1);
+          gaim_cipher_context_append(context, (guchar *)pszNonceCount, strlen(pszNonceCount));
+          gaim_cipher_context_append(context, (guchar *)":", 1);
+          gaim_cipher_context_append(context, (guchar *)pszCNonce, strlen(pszCNonce));
+          gaim_cipher_context_append(context, (guchar *)":", 1);
+          gaim_cipher_context_append(context, (guchar *)pszQop, strlen(pszQop));
+          gaim_cipher_context_append(context, (guchar *)":", 1);
       };
       gaim_cipher_context_append(context, HA2Hex, HASHHEXLEN);
       gaim_cipher_context_digest(context, sizeof(RespHash), RespHash, NULL);
