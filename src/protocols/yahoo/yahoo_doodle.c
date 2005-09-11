@@ -75,13 +75,18 @@ const int DefaultColorRGB24[]	=
 
 GaimCmdRet yahoo_doodle_gaim_cmd_start( GaimConversation *conv, const char *cmd, char **args, char **error, void *data )
 {
+	GaimAccount *account;
+	GaimConnection *gc;
+	char *to;
+	GaimWhiteboard *wb;
+
 	if( *args && args[0] )
 		return( GAIM_CMD_RET_FAILED );
 	
-	GaimAccount		*account	= gaim_conversation_get_account( conv );
-	GaimConnection		*gc		= gaim_account_get_connection( account );
-	char			*to		= ( char* )( gaim_conversation_get_name( conv ) );
-	GaimWhiteboard		*wb		= gaim_whiteboard_get_session( account, to );
+	account	= gaim_conversation_get_account( conv );
+	gc		= gaim_account_get_connection( account );
+	to		= ( char* )( gaim_conversation_get_name( conv ) );
+	wb		= gaim_whiteboard_get_session( account, to );
 	
 	// NOTE Functionalize this code?
 	
@@ -152,13 +157,16 @@ void yahoo_doodle_process( GaimConnection *gc, char *me, char *from, char *comma
 
 void yahoo_doodle_command_got_request( GaimConnection *gc, char *from )
 {	
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got REQUEST (%s)\n", from );
 	
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 	
 	// If a session with the remote user doesn't exist
 	if( wb == NULL )
@@ -186,13 +194,16 @@ void yahoo_doodle_command_got_request( GaimConnection *gc, char *from )
 
 void yahoo_doodle_command_got_ready( GaimConnection *gc, char *from )
 {
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got READY (%s)\n", from );
 	
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 							
 	if( wb == NULL )
 		return;
@@ -228,15 +239,24 @@ void yahoo_doodle_command_got_ready( GaimConnection *gc, char *from )
 
 void yahoo_doodle_command_got_draw( GaimConnection *gc, char *from, char *message )
 {
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+	int *token;
+	int length;
+	char *token_end;
+	GList *d_list;
+	int *n;
+	GList *l;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got DRAW (%s)\n", from );
 	
 	g_print( "Draw Message:  %s\n", message );
 	
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 	
 	if( wb == NULL )
 		return;
@@ -244,11 +264,10 @@ void yahoo_doodle_command_got_draw( GaimConnection *gc, char *from, char *messag
 	// TODO Functionalize
 	// Convert drawing packet message to an integer list
 	
-	int	*token		= NULL;
-	int	length		= strlen( message );
-	char	*token_end;
+	token		= NULL;
+	length		= strlen( message );
 	
-	GList	*d_list		= NULL;	// a local list of drawing info
+	d_list		= NULL;	// a local list of drawing info
 	
 	// Check to see if the message begans and ends with quotes
 	if( ( message[0] != '\"' ) || ( message[length - 1] != '\"' ) )
@@ -277,8 +296,8 @@ void yahoo_doodle_command_got_draw( GaimConnection *gc, char *from, char *messag
 	//goodle_doodle_session_set_canvas_as_icon( ds );
 	
 	// Remove that shit
-	int	*n = NULL;
-	GList	*l = d_list;
+	n = NULL;
+	l = d_list;
 	while( l )
 	{
 		n = l->data;
@@ -296,13 +315,16 @@ void yahoo_doodle_command_got_draw( GaimConnection *gc, char *from, char *messag
 
 void yahoo_doodle_command_got_clear( GaimConnection *gc, char *from )
 {
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got CLEAR (%s)\n", from );
 	
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 	
 	if( wb == NULL )
 		return;
@@ -332,14 +354,17 @@ void yahoo_doodle_command_got_extra( GaimConnection *gc, char *from, char *messa
 
 void yahoo_doodle_command_got_confirm( GaimConnection *gc, char *from )
 {	
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got CONFIRM (%s)\n", from );
 	
 	// Get the doodle session
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 	
 	if( wb == NULL )
 		return;
@@ -369,13 +394,16 @@ void yahoo_doodle_command_got_confirm( GaimConnection *gc, char *from )
 
 void yahoo_doodle_command_got_shutdown( GaimConnection *gc, char *from )
 {
+	GaimAccount *account;
+	GaimWhiteboard *wb;
+
 	g_print( "-----------------------------------------------\n" );
 	g_print( "Got SHUTDOWN (%s)\n", from );
 	
-	GaimAccount	*account	= gaim_connection_get_account( gc );
+	account	= gaim_connection_get_account( gc );
 	
 	// Only handle this if local client requested Doodle session (else local client would have sent one)
-	GaimWhiteboard	*wb		= gaim_whiteboard_get_session( account, from );
+	wb		= gaim_whiteboard_get_session( account, from );
 	
 	// TODO Ask if user wants to save picture before the session is closed
 	
@@ -394,11 +422,11 @@ void yahoo_doodle_command_got_shutdown( GaimConnection *gc, char *from )
 
 void yahoo_doodle_command_send_request( GaimConnection *gc, char *to )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent REQUEST (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
+
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent REQUEST (%s)\n", to );
 	
 	yd = gc->proto_data;
 
@@ -420,12 +448,12 @@ void yahoo_doodle_command_send_request( GaimConnection *gc, char *to )
 
 void yahoo_doodle_command_send_ready( GaimConnection *gc, char *to )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent READY (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent READY (%s)\n", to );
+	
 	yd = gc->proto_data;
 	
 	// Make and send a request to start a Doodle session
@@ -446,12 +474,12 @@ void yahoo_doodle_command_send_ready( GaimConnection *gc, char *to )
 
 void yahoo_doodle_command_send_draw( GaimConnection *gc, char *to, char *message )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent DRAW (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent DRAW (%s)\n", to );
+	
 	yd = gc->proto_data;
 	
 	// Make and send a drawing packet
@@ -472,12 +500,12 @@ void yahoo_doodle_command_send_draw( GaimConnection *gc, char *to, char *message
 
 void yahoo_doodle_command_send_clear( GaimConnection *gc, char *to )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent CLEAR (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent CLEAR (%s)\n", to );
+	
 	yd = gc->proto_data;
 	
 	// Make and send a request to clear packet
@@ -498,12 +526,12 @@ void yahoo_doodle_command_send_clear( GaimConnection *gc, char *to )
 
 void yahoo_doodle_command_send_extra( GaimConnection *gc, char *to, char *message )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent EXTRA (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent EXTRA (%s)\n", to );
+	
 	yd = gc->proto_data;
 		
 	// Send out a request to use a specified 'extra' feature (message)
@@ -524,12 +552,12 @@ void yahoo_doodle_command_send_extra( GaimConnection *gc, char *to, char *messag
 
 void yahoo_doodle_command_send_confirm( GaimConnection *gc, char *to )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent CONFIRM (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent CONFIRM (%s)\n", to );
+	
 	yd = gc->proto_data;
 	
 	// Send ready packet (that local client accepted and is ready)
@@ -550,12 +578,12 @@ void yahoo_doodle_command_send_confirm( GaimConnection *gc, char *to )
 
 void yahoo_doodle_command_send_shutdown( GaimConnection *gc, char *to )
 {
-	g_print( "-----------------------------------------------\n" );
-	g_print( "Sent SHUTDOWN (%s)\n", to );
-	
 	struct yahoo_data	*yd;
 	struct yahoo_packet	*pkt;
 
+	g_print( "-----------------------------------------------\n" );
+	g_print( "Sent SHUTDOWN (%s)\n", to );
+	
 	yd = gc->proto_data;
 	
 	// Declare that you are ending the Doodle session
@@ -576,10 +604,10 @@ void yahoo_doodle_command_send_shutdown( GaimConnection *gc, char *to )
 
 void yahoo_doodle_start( GaimWhiteboard *wb )
 {
-	//g_print( "yahoo_doodle_start()\n" );
-	
 	doodle_session *ds	= g_new0( doodle_session, 1 );
 
+	//g_print( "yahoo_doodle_start()\n" );
+	
 	// Set default brush size and color
 	ds->brush_size		= DOODLE_BRUSH_MEDIUM;
 	ds->brush_color		= 0;	// black
@@ -591,13 +619,14 @@ void yahoo_doodle_start( GaimWhiteboard *wb )
 
 void yahoo_doodle_end( GaimWhiteboard *wb )
 {
-	//g_print( "yahoo_doodle_end()\n" );
-	
 	GaimConnection *gc = gaim_account_get_connection( wb->account );
+	doodle_session *ds;
+	
+	//g_print( "yahoo_doodle_end()\n" );
 	
 	yahoo_doodle_command_send_shutdown( gc, wb->who );
 	
-	doodle_session *ds = wb->proto_data;
+	ds = wb->proto_data;
 	if( ds )
 		g_free( ds );
 }
@@ -615,10 +644,10 @@ void yahoo_doodle_get_dimensions( GaimWhiteboard *wb, int *width, int *height )
 
 void yahoo_doodle_send_draw_list( GaimWhiteboard *wb, GList *draw_list )
 {
-	//g_print( "yahoo_doodle_send_draw_list()\n" );
-	
 	doodle_session	*ds		= wb->proto_data;
 	char 		*message	= yahoo_doodle_build_draw_string( ds, draw_list );
+	
+	//g_print( "yahoo_doodle_send_draw_list()\n" );
 	
 	if( message )
 		yahoo_doodle_command_send_draw( wb->account->gc, wb->who, message );
@@ -638,8 +667,6 @@ void yahoo_doodle_draw_stroke( GaimWhiteboard *wb, GList *draw_list )
 {
 	// Traverse through the list and draw the points and lines
 	
-	//g_print( "Drawing: color=%d, size=%d, (%d,%d)\n", brush_color, brush_size, x, y );
-	
 	GList	*l = draw_list;
 	
 	int	*n = NULL;
@@ -651,12 +678,14 @@ void yahoo_doodle_draw_stroke( GaimWhiteboard *wb, GList *draw_list )
 	
 	int	dx, dy;
 	
+	int count = 0;
+	
+	//g_print( "Drawing: color=%d, size=%d, (%d,%d)\n", brush_color, brush_size, x, y );
+	
 	n = l->data; brush_color = *n; l = l->next;
 	n = l->data; brush_size	 = *n; l = l->next;
 	n = l->data; x		 = *n; l = l->next;
 	n = l->data; y		 = *n; l = l->next;
-	
-	int count = 0;
 	
 	// Pray this works and pray that the list has an even number of elements
 	while( l )
@@ -684,15 +713,15 @@ char *yahoo_doodle_build_draw_string( doodle_session *ds, GList *draw_list )
 {
 	//g_print( "yahoo_doodle_build_draw_string()\n" );
 	
-	if( draw_list == NULL )
-		return( NULL );	
-	
 	GList		*l = draw_list;
 	
 	int		*n = NULL;
 	
 	static char	message[1024];		// Hope that 1024 is enough
 	char		token_string[16];	// Token string extracted from draw list
+	
+	if( draw_list == NULL )
+		return( NULL );	
 	
 	strcpy( message, "\"" );
 	
