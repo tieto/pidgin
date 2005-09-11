@@ -1214,7 +1214,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 				if (!convo)
 					continue;
 				oldnick = gaim_conv_chat_get_nick(GAIM_CONV_CHAT(convo));
-				if (strcmp(oldnick, local_entry->nickname)) {
+				if (strcmp(oldnick, gaim_normalize(gaim_conversation_get_account(convo), local_entry->nickname))) {
 					gaim_conv_chat_rename_user(GAIM_CONV_CHAT(convo),
 							oldnick, local_entry->nickname);
 					gaim_conv_chat_set_nick(GAIM_CONV_CHAT(convo), local_entry->nickname);

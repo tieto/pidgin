@@ -117,7 +117,7 @@ static GtkWidget *warn_close_dialog = NULL;
 static void got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv, const char *name,
-								  const char *alias);
+								  const char *alias, const char *old_name);
 static gboolean tab_complete(GaimConversation *conv);
 static void update_typing_icon(GaimGtkConversation *gtkconv);
 static gboolean update_send_as_selection(GaimConvWindow *win);
@@ -1470,7 +1470,7 @@ ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 	else
 		gaim_conv_chat_ignore(chat, name);
 
-	add_chat_buddy_common(conv, name, alias);
+	add_chat_buddy_common(conv, name, alias, NULL);
 	g_free(name);
 	g_free(alias);
 }
@@ -1554,6 +1554,7 @@ create_chat_menu(GaimConversation *conv, const char *who,
 				 GaimPluginProtocolInfo *prpl_info, GaimConnection *gc)
 {
 	static GtkWidget *menu = NULL;
+	GaimConvChat *chat = GAIM_CONV_CHAT(conv);
 	gboolean is_me = FALSE;
 	GtkWidget *button;
 
@@ -1564,18 +1565,8 @@ create_chat_menu(GaimConversation *conv, const char *who,
 	if (menu)
 		gtk_widget_destroy(menu);
 
-	if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-		char *tmp;
-
-		if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
-			tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
-		else
-			tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
-
-		if (!strcmp(tmp, gaim_normalize(conv->account, who)))
-			is_me = TRUE;
-		g_free(tmp);
-	}
+	if (!strcmp(chat->nick, gaim_normalize(conv->account, who)))
+		is_me = TRUE;
 
 	menu = gtk_menu_new();
 
@@ -3443,7 +3434,7 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 }
 
 static void
-add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alias)
+add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alias, const char *old_name)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
@@ -3473,18 +3464,8 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alia
 	flags = gaim_conv_chat_user_get_flags(chat, name);
 	pixbuf = get_chat_buddy_status_icon(chat, name, flags);
 
-	if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-		char *tmp;
-		
-		if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
-			tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
-		else
-			tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
-		
-		if (!strcmp(tmp, gaim_normalize(conv->account, name)))
-			is_me = TRUE;
-		g_free(tmp);
-	}
+	if (!strcmp(chat->nick, gaim_normalize(conv->account, old_name != NULL ? old_name : name)))
+		is_me = TRUE;
 
 	is_buddy = (gaim_find_buddy(conv->account, name) != NULL);
 
@@ -3970,6 +3951,7 @@ static void
 update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, GaimPluginProtocolInfo *prpl_info)
 {
 	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+	GaimConvChat *chat = GAIM_CONV_CHAT(conv);
 	GtkTreeModel *model;
 	char *normalized_name;
 	GtkTreeIter iter;
@@ -3993,15 +3975,9 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 
 		if (!strcmp(normalized_name, gaim_normalize(conv->account, name))) {
 			const char *alias = name;
-			char *tmp;
 			GaimBuddy *buddy2;
 
-			if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
-				tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
-			else
-				tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
-
-			if (strcmp(tmp, gaim_normalize(conv->account, name))) {
+			if (strcmp(chat->nick, gaim_normalize(conv->account, name))) {
 				/* This user is not me, so look into updating the alias. */
 
 				if ((buddy2 = gaim_find_buddy(conv->account, name)) != NULL)
@@ -4012,7 +3988,6 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 								   CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, alias),
 								   -1);
 			}
-			g_free(tmp);
 			g_free(name);
 			break;
 		}
@@ -4023,7 +3998,6 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 	} while (f != 0);
 
 	g_free(normalized_name);
-
 }
 
 static void
@@ -5487,7 +5461,7 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *aliases
 	l = users;
 	ll = aliases;
 	while (l != NULL && ll != NULL) {
-		add_chat_buddy_common(conv, (const char *)l->data, (const char *)ll->data);
+		add_chat_buddy_common(conv, (const char *)l->data, (const char *)ll->data, NULL);
 		l = l->next;
 		ll = ll->next;
 	}
@@ -5534,7 +5508,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 
 	g_return_if_fail(new_alias != NULL);
 
-	add_chat_buddy_common(conv, new_name, new_alias);
+	add_chat_buddy_common(conv, new_name, new_alias, old_name);
 }
 
 static void
@@ -5669,7 +5643,7 @@ gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
 
 		if (!gaim_utf8_strcasecmp(user, val)) {
-			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &alias, -1);
+			gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_ALIAS_COLUMN, &alias, -1);
 			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 			g_free(val);
 			break;
@@ -5685,7 +5659,7 @@ gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 
 	g_return_if_fail(alias != NULL);
 
-	add_chat_buddy_common(conv, user, alias);
+	add_chat_buddy_common(conv, user, alias, NULL);
 	g_free(alias);
 }
 

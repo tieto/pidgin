@@ -1899,16 +1899,10 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 
 	if (!(flags & GAIM_MESSAGE_WHISPER)) {
 		char *str;
-		const char *nick;
 
 		str = g_strdup(gaim_normalize(account, who));
 
-		if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
-			nick = account->gc->display_name;
-		else
-			nick = account->username;
-
-		if (!g_utf8_collate(str, gaim_normalize(account, nick))) {
+		if (!strcmp(str, gaim_normalize(account, chat->nick))) {
 			flags |= GAIM_MESSAGE_SEND;
 		} else {
 			flags |= GAIM_MESSAGE_RECV;
@@ -1983,30 +1977,20 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		GaimConvChatBuddyFlags flags = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
-		if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-			char *tmp;
-
-			if (prpl_info->options & OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS)
-				tmp = g_strdup(gaim_normalize(conv->account, gc->display_name));
+		if (!strcmp(chat->nick, gaim_normalize(conv->account, user))) {
+			const char *alias2 = gaim_account_get_alias(conv->account);
+			if (alias2 != NULL)
+				alias = alias2;
 			else
-				tmp = g_strdup(gaim_normalize(conv->account, conv->account->username));
-
-			if (!strcmp(tmp, gaim_normalize(conv->account, user))) {
-				const char *alias2 = gaim_account_get_alias(conv->account);
-				if (alias2 != NULL)
-					alias = alias2;
-				else
-				{
-					const char *display_name = gaim_connection_get_display_name(gc);
-					if (display_name != NULL)
-						alias = display_name;
-				}
-			} else {
-				GaimBuddy *buddy;
-				if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
-					alias = gaim_buddy_get_contact_alias(buddy);
+			{
+				const char *display_name = gaim_connection_get_display_name(gc);
+				if (display_name != NULL)
+					alias = display_name;
 			}
-			g_free(tmp);
+		} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			GaimBuddy *buddy;
+			if ((buddy = gaim_find_buddy(gc->account, user)) != NULL)
+				alias = gaim_buddy_get_contact_alias(buddy);
 		}
 
 		quiet = GPOINTER_TO_INT(gaim_signal_emit_return_1(gaim_conversations_get_handle(),
@@ -2076,9 +2060,23 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	gaim_conv_chat_set_users(chat,
 		g_list_prepend(gaim_conv_chat_get_users(chat), cb));
 
-	if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-		GaimBuddy *buddy;
+	if (!strcmp(chat->nick, gaim_normalize(conv->account, old_user))) {
+		const char *alias;
 
+		/* Note this for later. */
+		is_me = TRUE;
+
+		alias = gaim_account_get_alias(conv->account);
+		if (alias != NULL)
+			new_alias = alias;
+		else
+		{
+			const char *display_name = gaim_connection_get_display_name(gc);
+			if (display_name != NULL)
+				alias = display_name;
+		}
+	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+		GaimBuddy *buddy;
 		if ((buddy = gaim_find_buddy(gc->account, new_user)) != NULL)
 			new_alias = gaim_buddy_get_contact_alias(buddy);
 	}
@@ -2101,16 +2099,13 @@ gaim_conv_chat_rename_user(GaimConvChat *chat, const char *old_user,
 	else if (gaim_conv_chat_is_user_ignored(chat, new_user))
 		gaim_conv_chat_unignore(chat, new_user);
 
-	/* This should use gaim_normalize on the two values and strcmp them. */
-	if(!g_utf8_collate(old_user, chat->nick)) {
+	if (is_me)
 		gaim_conv_chat_set_nick(chat, new_user);
-		is_me = TRUE;
-	}
 
 	if (gaim_prefs_get_bool("/core/conversations/chat/show_nick_change") &&
 	    !gaim_conv_chat_is_user_ignored(chat, new_user)) {
 
-		if(is_me) {
+		if (is_me) {
 			g_snprintf(tmp, sizeof(tmp),
 					_("You are now known as %s"), new_user);
 		} else {
@@ -2347,7 +2342,7 @@ gaim_conv_chat_user_set_flags(GaimConvChat *chat, const char *user,
 	ops = gaim_conversation_get_ui_ops(conv);
 
 	if (ops != NULL && ops->chat_update_user != NULL)
-			ops->chat_update_user(conv, user);
+		ops->chat_update_user(conv, user);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "chat-buddy-flags", conv, user, oldflags, flags);
@@ -2374,7 +2369,7 @@ void gaim_conv_chat_set_nick(GaimConvChat *chat, const char *nick) {
 
 	if(chat->nick)
 		g_free(chat->nick);
-	chat->nick = g_strdup(nick);
+	chat->nick = g_strdup(gaim_normalize(chat->conv->account, nick));
 }
 
 const char *gaim_conv_chat_get_nick(GaimConvChat *chat) {

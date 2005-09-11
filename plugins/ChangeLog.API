@@ -100,8 +100,6 @@ version 2.0.0:
 	* Added:   CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
 	           CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
 	           user list
-	* Added:   OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS, see the prpl.h
-	           documentation if you're writing a prpl
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

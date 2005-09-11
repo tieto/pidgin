@@ -751,7 +751,7 @@ static GaimPluginUiInfo prefs_info = {
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_USE_DISPLAY_NAME_FOR_ME_IN_CHATS,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,		/* icon_spec */
