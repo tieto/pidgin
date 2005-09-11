@@ -757,9 +757,8 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 	if (b != NULL) {
 		if (gaim_presence_is_online(presence)) {
 			if (aim_sn_is_icq(b->name)) {
-				tmp = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
-				oscar_string_append(str, newline, _("Status"), tmp);
-				g_free(tmp);
+				GaimStatus *status = gaim_presence_get_active_status(presence);
+				oscar_string_append(str, newline, _("Status"), gaim_status_get_name(status));
 			}
 		} else {
 			tmp = aim_ssi_itemlist_findparentname(od->sess->ssi.local, b->name);
@@ -3489,6 +3488,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	va_list ap;
 	aim_userinfo_t *info;
 	gboolean buddy_is_away = FALSE;
+	const char *status_id;
 
 	gc = sess->aux_data;
 	account = gaim_connection_get_account(gc);
@@ -3509,7 +3509,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 			buddy_is_away = TRUE;
 	}
 	if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS) {
-		type = (info->icqinfo.status << 16);
+		type = info->icqinfo.status;
 		if (!(info->icqinfo.status & AIM_ICQ_STATE_CHAT) &&
 		      (info->icqinfo.status != AIM_ICQ_STATE_NORMAL)) {
 			buddy_is_away = TRUE;
@@ -3600,11 +3600,28 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_free(b16);
 	}
 
-	/* XXX - Represent other ICQ statuses */
-	if (buddy_is_away == TRUE)
-		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AWAY, NULL);
-	else
-		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_AVAILABLE, NULL);
+	if (aim_sn_is_icq(info->sn)) {
+		if (type & AIM_ICQ_STATE_CHAT)
+			status_id = OSCAR_STATUS_ID_FREE4CHAT;
+		else if (type & AIM_ICQ_STATE_DND)
+			status_id = OSCAR_STATUS_ID_DND;
+		else if (type & AIM_ICQ_STATE_OUT)
+			status_id = OSCAR_STATUS_ID_NA;
+		else if (type & AIM_ICQ_STATE_BUSY)
+			status_id = OSCAR_STATUS_ID_OCCUPIED;
+		else if (type & AIM_ICQ_STATE_AWAY)
+			status_id = OSCAR_STATUS_ID_AWAY;
+		else if (type & AIM_ICQ_STATE_INVISIBLE)
+			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else
+			status_id = OSCAR_STATUS_ID_AVAILABLE;
+	} else {
+		if (buddy_is_away == TRUE)
+			status_id = OSCAR_STATUS_ID_AWAY;
+		else
+			status_id = OSCAR_STATUS_ID_AVAILABLE;
+	}
+	gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
 	//	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
 
@@ -7589,12 +7606,17 @@ static char *oscar_status_text(GaimBuddy *b)
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
 		if ((bi != NULL) && (bi->availmsg != NULL))
 			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+		else if (aim_sn_is_icq(b->name)) {
+			GaimStatus *status = gaim_presence_get_active_status(presence);
+			ret = g_strdup(gaim_status_get_name(status));
+		}
 	}
 	else
 	{
-		if (aim_sn_is_icq(b->name))
-			ret = oscar_icqstatus((b->uc & 0xffff0000) >> 16);
-		else
+		if (aim_sn_is_icq(b->name)) {
+			GaimStatus *status = gaim_presence_get_active_status(presence);
+			ret = g_strdup(gaim_status_get_name(status));
+		} else
 			ret = g_strdup(_("Away"));
 	}
 
