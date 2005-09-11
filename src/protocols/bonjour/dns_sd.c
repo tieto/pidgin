@@ -102,7 +102,7 @@ static sw_result HOWL_API _resolve_reply(sw_discovery discovery,
 	// Obtain the parameters from the text_record
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0')) {
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
-		while (sw_text_record_iterator_next(iterator, key, value, &value_length) == SW_OKAY) {
+		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY) {
 			// Compare the keys with the possible ones and save them on 
 			// the appropiate place of the buddy_list
 			if (strcmp(key, "txtvers") == 0) {

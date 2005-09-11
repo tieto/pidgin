@@ -348,7 +348,7 @@ void _server_socket_handler(gpointer data, int server_socket, GaimInputCondition
 {
 	GaimBuddy* gb = NULL;
 	struct sockaddr_in their_addr; // connector's address information
-	int sin_size = sizeof(struct sockaddr);
+	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
 	BonjourBuddy* bb = NULL;
 	char* address_text = NULL;
