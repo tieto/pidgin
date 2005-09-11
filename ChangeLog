@@ -19,7 +19,7 @@ version 2.0.0:
 	* Add a "Last Seen" field to tooltips for buddies in your buddy
 	  list (Richard Laager)
 	* Buddy icons in buddy list tooltips (Felipe Contreras)
-	* Custom smileys for MSN (Irving Cordova)
+	* Custom smileys for MSN (Irving Cordova & Francesco Fracassi)
 	* Entries in the text replacement plugin are now sorted alphabetically
 	  (Richard Laager)
 	* Ability to set ICQ "require authorization" and "web aware"

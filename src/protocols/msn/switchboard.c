@@ -1233,6 +1233,8 @@ msn_switchboard_init(void)
 						   msn_p2p_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-mms-emoticon",
 						   msn_emoticon_msg);
+	msn_table_add_msg_type(cbs_table, "text/x-mms-animemoticon",
+	                                           msn_emoticon_msg);
 	msn_table_add_msg_type(cbs_table, "text/x-msnmsgr-datacast",
 						   nudge_msg);
 #if 0

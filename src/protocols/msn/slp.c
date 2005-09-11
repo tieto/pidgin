@@ -789,36 +789,57 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	char **tokens;
 	char *smile, *body_str;
 	const char *body, *who, *sha1c;
+	guint tok;
 	size_t body_len;
 
-	GaimConversation *conversation;
-	GaimConnection *gc;
+	GaimConversation *conv;
 
 	session = cmdproc->servconn->session;
 
 	body = msn_message_get_bin_data(msg, &body_len);
 	body_str = g_strndup(body, body_len);
 
-	tokens = g_strsplit(body_str, "\t", 2);
+	/* MSN Messenger 7 may send more than one MSNObject in a single message...
+	 * Maybe 10 tokens is a reasonable max value. */
+	tokens = g_strsplit(body_str, "\t", 10);
 
 	g_free(body_str);
 
-	smile = tokens[0];
-	obj = msn_object_new_from_string(gaim_url_decode(tokens[1]));
+	for (tok = 0; tok < 9; tok += 2) {
+		if (tokens[tok] == NULL || tokens[tok + 1] == NULL) {
+			break;
+		}
 
-	who = msn_object_get_creator(obj);
-	sha1c = msn_object_get_sha1c(obj);
+		smile = tokens[tok];
+		obj = msn_object_new_from_string(gaim_url_decode(tokens[tok + 1]));
 
-	slplink = msn_session_get_slplink(session, who);
+		who = msn_object_get_creator(obj);
+		sha1c = msn_object_get_sha1c(obj);
 
-	gc = slplink->session->account->gc;
+		slplink = msn_session_get_slplink(session, who);
 
-	conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who, gc->account);
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who,
+												   session->account);
 
-	if (gaim_conv_custom_smiley_add(conversation, smile, "sha1", sha1c)) {
-		msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
+		/* If the conversation doesn't exist then this is a custom smiley
+		 * used in the first message in a MSN conversation: we need to create
+		 * the conversation now, otherwise the custom smiley won't be shown.
+		 * This happens because every GtkIMHtml has its own smiley tree: if
+		 * the conversation doesn't exist then we cannot associate the new
+		 * smiley with its GtkIMHtml widget. */
+		if (!conv) {
+			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, session->account, who);
+		}
+
+		if (gaim_conv_custom_smiley_add(conv, smile, "sha1", sha1c)) {
+			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
+		}
+
+		msn_object_destroy(obj);
+		obj =   NULL;
+		who =   NULL;
+		sha1c = NULL;
 	}
-
 	g_strfreev(tokens);
 }
 
