@@ -157,6 +157,7 @@ gaim_connection_destroy(GaimConnection *gc)
 	GList *wins;
 #endif
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	gboolean remove = FALSE;
 
 	g_return_if_fail(gc != NULL);
 
@@ -165,7 +166,7 @@ gaim_connection_destroy(GaimConnection *gc)
 	gaim_debug_info("connection", "Disconnecting connection %p\n", gc);
 
 	if (gaim_connection_get_state(gc) != GAIM_CONNECTING)
-		gaim_blist_remove_account(account);
+		remove = TRUE;
 
 	gaim_signal_emit(gaim_connections_get_handle(), "signing-off", gc);
 
@@ -194,6 +195,9 @@ gaim_connection_destroy(GaimConnection *gc)
 	connections = g_list_remove(connections, gc);
 
 	gaim_connection_set_state(gc, GAIM_DISCONNECTED);
+
+	if (remove)
+		gaim_blist_remove_account(account);
 
 	/* LOG	system_log(log_signoff, gc, NULL,
 	   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
