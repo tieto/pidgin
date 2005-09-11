@@ -142,7 +142,7 @@ struct _GaimLogSet {
 	char *name;                           /**< The name of the logs available */
 	GaimAccount *account;                 /**< The account the available logs
 	                                           took place on. This will be
-	                                           NULL if the account no longer
+	                                           @c NULL if the account no longer
 	                                           exists. (Depending on a
 	                                           logger's implementation of
 	                                           list, it may not be possible
@@ -190,7 +190,7 @@ void gaim_log_free(GaimLog *log);
  *
  * @param log          The log to write to
  * @param type         The type of message being logged
- * @param from         Whom this message is coming from, or NULL for
+ * @param from         Whom this message is coming from, or @c NULL for
  *                     system messages
  * @param time         A timestamp in UNIX time
  * @param message      The message to log
@@ -359,28 +359,23 @@ int gaim_log_common_sizer(GaimLog *log);
 /**
  * Creates a new logger
  *
- * @param create       The logger's new function.
- * @param write        The logger's write function.
- * @param finalize     The logger's finalize function.
- * @param list         The logger's list function.
- * @param read         The logger's read function.
- * @param size         The logger's size function.
- * @param total_size   The logger's total_size function.
- * @param list_syslog  The logger's list_syslog function.
- * @param get_log_sets The logger's get_log_sets function.
+ * @param id           The logger's id.
+ * @param name         The logger's name.
+ * @param functions    The number of functions being passed. The following
+ *                     functions are currently available (in order): @c create,
+ *                     @c write, @c finalize, @c list, @c read, @c size,
+ *                     @c total_size, @c list_syslog, @c get_log_sets. For
+ *                     details on these functions, see GaimLogLogger.
+ *                     Functions may not be skipped. For example, passing
+ *                     @c create and @c write is acceptable (for a total of
+ *                     two functions). Passing @c create and @c finalize,
+ *                     however, is not. To accomplish that, the caller must
+ *                     pass @c create, @c NULL (a placeholder for @c write),
+ *                     and @c finalize (for a total of 3 functions).
  *
  * @return The new logger
  */
-GaimLogLogger *gaim_log_logger_new(
-				void(*create)(GaimLog *),
-				void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
-				void(*finalize)(GaimLog *),
-				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
-				char*(*read)(GaimLog*, GaimLogReadFlags*),
-				int(*size)(GaimLog*),
-				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
-				GList*(*list_syslog)(GaimAccount *account),
-				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets));
+GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functions, ...);
 
 /**
  * Frees a logger

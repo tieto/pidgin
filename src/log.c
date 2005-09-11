@@ -33,9 +33,9 @@
 
 static GSList *loggers = NULL;
 
-static GaimLogLogger html_logger;
-static GaimLogLogger txt_logger;
-static GaimLogLogger old_logger;
+static GaimLogLogger *html_logger;
+static GaimLogLogger *txt_logger;
+static GaimLogLogger *old_logger;
 
 struct _gaim_logsize_user {
 	char *name;
@@ -44,6 +44,28 @@ struct _gaim_logsize_user {
 static GHashTable *logsize_users = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
+
+static void html_logger_write(GaimLog *log, GaimMessageFlags type,
+							  const char *from, time_t time, const char *message);
+static void html_logger_finalize(GaimLog *log);
+static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
+static GList *html_logger_list_syslog(GaimAccount *account);
+static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags);
+
+static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
+static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
+static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags);
+static int old_logger_size (GaimLog *log);
+static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets);
+static void old_logger_finalize(GaimLog *log);
+
+static void txt_logger_write(GaimLog *log,
+							 GaimMessageFlags type,
+							 const char *from, time_t time, const char *message);
+static void txt_logger_finalize(GaimLog *log);
+static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
+static GList *txt_logger_list_syslog(GaimAccount *account);
+static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags);
 
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
@@ -231,11 +253,13 @@ static void logger_pref_cb(const char *name, GaimPrefType type,
 		}
 		l = l->next;
 	}
-	gaim_log_logger_set(&txt_logger);
+	gaim_log_logger_set(txt_logger);
 }
 
 
-GaimLogLogger *gaim_log_logger_new(
+GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functions, ...)
+{
+#if 0
 				void(*create)(GaimLog *),
 				void(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
 				void(*finalize)(GaimLog *),
@@ -246,23 +270,51 @@ GaimLogLogger *gaim_log_logger_new(
 				GList*(*list_syslog)(GaimAccount *account),
 				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets))
 {
-	GaimLogLogger *logger = g_new0(GaimLogLogger, 1);
+#endif
+	GaimLogLogger *logger;
+	va_list args;
 
-	logger->create = create;
-	logger->write = write;
-	logger->finalize = finalize;
-	logger->list = list;
-	logger->read = read;
-	logger->size = size;
-	logger->total_size = total_size;
-	logger->list_syslog = list_syslog;
-	logger->get_log_sets = get_log_sets;
+	g_return_val_if_fail(id != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
+	g_return_val_if_fail(functions >= 1, NULL);
+
+	logger = g_new0(GaimLogLogger, 1);
+	logger->id = g_strdup(id);
+	logger->name = g_strdup(name);
+
+	va_start(args, functions);
+
+	if (functions >= 1)
+		logger->create = va_arg(args, void *);
+	if (functions >= 2)
+		logger->write = va_arg(args, void *);
+	if (functions >= 3)
+		logger->finalize = va_arg(args, void *);
+	if (functions >= 4)
+		logger->list = va_arg(args, void *);
+	if (functions >= 5)
+		logger->read = va_arg(args, void *);
+	if (functions >= 6)
+		logger->size = va_arg(args, void *);
+	if (functions >= 7)
+		logger->total_size = va_arg(args, void *);
+	if (functions >= 8)
+		logger->list_syslog = va_arg(args, void *);
+	if (functions >= 9)
+		logger->get_log_sets = va_arg(args, void *);
+
+	if (functions > 9)
+		gaim_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
+
+	va_end(args);
 
 	return logger;
 }
 
 void gaim_log_logger_free(GaimLogLogger *logger)
 {
+	g_free(logger->name);
+	g_free(logger->id);
 	g_free(logger);
 }
 
@@ -442,11 +494,43 @@ void gaim_log_init(void)
 	gaim_prefs_add_bool("/core/logging/log_own_states", FALSE);
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
-	gaim_log_logger_add(&html_logger);
-	gaim_log_logger_add(&txt_logger);
-	gaim_log_logger_add(&old_logger);
+
+	html_logger = gaim_log_logger_new("html", "HTML", 8,
+									  NULL,
+									  html_logger_write,
+									  html_logger_finalize,
+									  html_logger_list,
+									  html_logger_read,
+									  gaim_log_common_sizer,
+									  NULL,
+									  html_logger_list_syslog);
+	gaim_log_logger_add(html_logger);
+
+	txt_logger = gaim_log_logger_new("txt", "Plain text", 8,
+									 NULL,
+									 txt_logger_write,
+									 txt_logger_finalize,
+									 txt_logger_list,
+									 txt_logger_read,
+									 gaim_log_common_sizer,
+									 NULL,
+									 txt_logger_list_syslog);
+	gaim_log_logger_add(txt_logger);
+
+	old_logger = gaim_log_logger_new("old", "Old Gaim", 9,
+									 NULL,
+									 NULL,
+									 old_logger_finalize,
+									 old_logger_list,
+									 old_logger_read,
+									 old_logger_size,
+									 old_logger_total_size,
+									 NULL,
+									 old_logger_get_log_sets);
+	gaim_log_logger_add(old_logger);
+
 	gaim_prefs_connect_callback(NULL, "/core/logging/format",
-				    logger_pref_cb, NULL);
+							    logger_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/core/logging/format");
 
 	logsize_users = g_hash_table_new_full((GHashFunc)_gaim_logsize_user_hash,
@@ -769,7 +853,7 @@ static GaimLogLogger xml_logger =  {
  ****************************/
 
 static void html_logger_write(GaimLog *log, GaimMessageFlags type,
-		const char *from, time_t time, const char *message)
+							  const char *from, time_t time, const char *message)
 {
 	char *msg_fixed;
 	char date[64];
@@ -857,12 +941,12 @@ static void html_logger_finalize(GaimLog *log)
 
 static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return gaim_log_common_lister(type, sn, account, ".html", &html_logger);
+	return gaim_log_common_lister(type, sn, account, ".html", html_logger);
 }
 
 static GList *html_logger_list_syslog(GaimAccount *account)
 {
-	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".html", &html_logger);
+	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".html", html_logger);
 }
 
 static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -884,20 +968,6 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static GaimLogLogger html_logger = {
-	N_("HTML"), "html",
-	NULL,
-	html_logger_write,
-	html_logger_finalize,
-	html_logger_list,
-	html_logger_read,
-	gaim_log_common_sizer,
-	NULL,
-	html_logger_list_syslog,
-	NULL
-};
-
-
 
 
 /****************************
@@ -905,15 +975,15 @@ static GaimLogLogger html_logger = {
  ****************************/
 
 static void txt_logger_write(GaimLog *log,
-			     GaimMessageFlags type,
-			     const char *from, time_t time, const char *message)
+							 GaimMessageFlags type,
+							 const char *from, time_t time, const char *message)
 {
 	char date[64];
 	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
 	GaimLogCommonLoggerData *data = log->logger_data;
 	char *stripped = NULL;
 
-	if(!data) {
+	if (data == NULL) {
 		/* This log is new.  We could use the loggers 'new' function, but
 		 * creating a new file there would result in empty files in the case
 		 * that you open a convo with someone, but don't say anything.
@@ -988,12 +1058,12 @@ static void txt_logger_finalize(GaimLog *log)
 
 static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	return gaim_log_common_lister(type, sn, account, ".txt", &txt_logger);
+	return gaim_log_common_lister(type, sn, account, ".txt", txt_logger);
 }
 
 static GList *txt_logger_list_syslog(GaimAccount *account)
 {
-	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".txt", &txt_logger);
+	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".txt", txt_logger);
 }
 
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
@@ -1017,18 +1087,7 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static GaimLogLogger txt_logger = {
-	N_("Plain text"), "txt",
-	NULL,
-	txt_logger_write,
-	txt_logger_finalize,
-	txt_logger_list,
-	txt_logger_read,
-	gaim_log_common_sizer,
-	NULL,
-	txt_logger_list_syslog,
-	NULL
-};
+
 
 /****************
  * OLD LOGGER ***
@@ -1103,7 +1162,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 				if (newlen != 0) {
 					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
-					log->logger = &old_logger;
+					log->logger = old_logger;
 					log->time = lasttime;
 					data = g_new0(struct old_logger_data, 1);
 					data->offset = lastoff;
@@ -1154,7 +1213,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
 			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1);
-			log->logger = &old_logger;
+			log->logger = old_logger;
 			log->time = lasttime;
 			data = g_new0(struct old_logger_data, 1);
 			data->offset = lastoff;
@@ -1300,15 +1359,3 @@ static void old_logger_finalize(GaimLog *log)
 	gaim_stringref_unref(data->pathref);
 	g_free(data);
 }
-
-static GaimLogLogger old_logger = {
-	"old logger", "old",
-	NULL, NULL,
-	old_logger_finalize,
-	old_logger_list,
-	old_logger_read,
-	old_logger_size,
-	old_logger_total_size,
-	NULL,
-	old_logger_get_log_sets
-};

@@ -26,7 +26,9 @@
 #endif
 
 /* Where is the Windows partition mounted? */
-#define LOG_READER_WINDOWS_MOUNT_POINT "/mnt/windows"
+#ifndef GAIM_LOG_READER_WINDOWS_MOUNT_POINT
+#define GAIM_LOG_READER_WINDOWS_MOUNT_POINT "/mnt/windows"
+#endif
 
 enum name_guesses {
 	NAME_GUESS_UNKNOWN,
@@ -43,7 +45,7 @@ enum name_guesses {
  * Adium logs in the log viewer transparently.
  */
 
-static GaimLogLogger adium_logger;
+static GaimLogLogger *adium_logger;
 
 enum adium_log_type {
 	ADIUM_HTML,
@@ -155,7 +157,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					tm.tm_mon  -= 1;
 
 					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm));
-					log->logger = &adium_logger;
+					log->logger = adium_logger;
 					log->logger_data = data;
 
 					list = g_list_append(list, log);
@@ -215,7 +217,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					data->type = ADIUM_TEXT;
 
 					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm));
-					log->logger = &adium_logger;
+					log->logger = adium_logger;
 					log->logger_data = data;
 
 					list = g_list_append(list, log);
@@ -318,18 +320,6 @@ static void adium_logger_finalize(GaimLog *log)
 	g_free(data->path);
 }
 
-static GaimLogLogger adium_logger = {
-	N_("Adium Log Reader"), "adium",
-	NULL, NULL,
-	adium_logger_finalize,
-	adium_logger_list,
-	adium_logger_read,
-	adium_logger_size,
-	NULL,
-	NULL,
-	NULL
-};
-
 
 /*****************************************************************************
  * Fire Logger                                                               *
@@ -339,14 +329,14 @@ static GaimLogLogger adium_logger = {
  * Fire logs in the log viewer transparently.
  */
 
-static GaimLogLogger fire_logger;
+static GaimLogLogger *fire_logger;
 
 struct fire_logger_data {
 };
 
 static GList *fire_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return NULL;
 }
 
@@ -358,7 +348,7 @@ static char * fire_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 	data = log->logger_data;
 
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return g_strdup("");
 }
 
@@ -369,7 +359,7 @@ static int fire_logger_size (GaimLog *log)
 	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return 0;
 }
 
@@ -377,20 +367,8 @@ static void fire_logger_finalize(GaimLog *log)
 {
 	g_return_if_fail(log != NULL);
 
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 }
-
-static GaimLogLogger fire_logger = {
-	N_("Fire Log Reader"), "fire",
-	NULL, NULL,
-	fire_logger_finalize,
-	fire_logger_list,
-	fire_logger_read,
-	fire_logger_size,
-	NULL,
-	NULL,
-	NULL
-};
 
 
 /*****************************************************************************
@@ -401,14 +379,14 @@ static GaimLogLogger fire_logger = {
  * Messenger Plus! logs in the log viewer transparently.
  */
 
-static GaimLogLogger messenger_plus_logger;
+static GaimLogLogger *messenger_plus_logger;
 
 struct messenger_plus_logger_data {
 };
 
 static GList *messenger_plus_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
 {
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return NULL;
 }
 
@@ -420,7 +398,7 @@ static char * messenger_plus_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 	data = log->logger_data;
 	
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return g_strdup("");
 }
 
@@ -431,7 +409,7 @@ static int messenger_plus_logger_size (GaimLog *log)
 	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 	return 0;
 }
 
@@ -439,20 +417,8 @@ static void messenger_plus_logger_finalize(GaimLog *log)
 {
 	g_return_if_fail(log != NULL);
 
-	// TODO: Do something here.
+	/* TODO: Do something here. */
 }
-
-static GaimLogLogger messenger_plus_logger = {
-	N_("Messenger Plus Log Reader"), "messenger_plus",
-	NULL, NULL,
-	messenger_plus_logger_finalize,
-	messenger_plus_logger_list,
-	messenger_plus_logger_read,
-	messenger_plus_logger_size,
-	NULL,
-	NULL,
-	NULL
-};
 
 
 /*****************************************************************************
@@ -463,7 +429,7 @@ static GaimLogLogger messenger_plus_logger = {
  * MSN Messenger message histories in the log viewer transparently.
  */
 
-static GaimLogLogger msn_logger;
+static GaimLogLogger *msn_logger;
 
 struct msn_logger_data {
 	xmlnode *root;
@@ -765,7 +731,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			data->last_log = FALSE;
 
 			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, msn_logger_parse_timestamp(message));
-			log->logger = &msn_logger;
+			log->logger = msn_logger;
 			log->logger_data = data;
 
 			list = g_list_append(list, log);
@@ -1063,18 +1029,6 @@ static void msn_logger_finalize(GaimLog *log)
 		g_string_free(data->text, FALSE);
 }
 
-static GaimLogLogger msn_logger = {
-	N_("MSN Log Reader"), "msn",
-	NULL, NULL,
-	msn_logger_finalize,
-	msn_logger_list,
-	msn_logger_read,
-	msn_logger_size,
-	NULL,
-	NULL,
-	NULL
-};
-
 
 /*****************************************************************************
  * Trillian Logger                                                           *
@@ -1084,7 +1038,7 @@ static GaimLogLogger msn_logger = {
  * Trillian logs in the log viewer transparently.
  */
 
-static GaimLogLogger trillian_logger;
+static GaimLogLogger *trillian_logger;
 static void trillian_logger_finalize(GaimLog *log);
 
 struct trillian_logger_data {
@@ -1291,7 +1245,7 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 
 						log = gaim_log_new(GAIM_LOG_IM,
 							sn, account, NULL, mktime(&tm));
-						log->logger = &trillian_logger;
+						log->logger = trillian_logger;
 						log->logger_data = data;
 
 						list = g_list_append(list, log);
@@ -1432,7 +1386,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				if (*timestamp == ']') {
 					*timestamp = '\0';
 					line++;
-					// TODO: Parse the timestamp and convert it to Gaim's format.
+					/* TODO: Parse the timestamp and convert it to Gaim's format. */
 					g_string_append_printf(formatted,
 						"<font size=\"2\">(%s)</font> ", line);
 					line = timestamp;
@@ -1602,18 +1556,6 @@ static void trillian_logger_finalize(GaimLog *log)
 
 }
 
-static GaimLogLogger trillian_logger = {
-	N_("Trillian Log Reader"), "trillian",
-	NULL, NULL,
-	trillian_logger_finalize,
-	trillian_logger_list,
-	trillian_logger_read,
-	trillian_logger_size,
-	NULL,
-	NULL,
-	NULL
-};
-
 
 /*****************************************************************************
  * Plugin Code                                                               *
@@ -1686,7 +1628,7 @@ init_plugin(GaimPlugin *plugin)
 #ifdef _WIN32
 		folder,
 #else
-		LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
+		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
 		g_get_user_name(), "My Documents",
 #endif
 		"My Chat Logs", NULL);
@@ -1712,7 +1654,7 @@ init_plugin(GaimPlugin *plugin)
 #ifdef _WIN32
 		folder,
 #else
-		LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
+		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
 		g_get_user_name(), "My Documents",
 #endif
 		"My Received Files", NULL);
@@ -1865,7 +1807,7 @@ init_plugin(GaimPlugin *plugin)
 #ifdef _WIN32
 		folder,
 #else
-		LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
+		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
 #endif
 		"Trillian", "users", "default", "logs", NULL);
 #ifdef _WIN32
@@ -1887,11 +1829,50 @@ plugin_load(GaimPlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	gaim_log_logger_add(&adium_logger);
-	gaim_log_logger_add(&fire_logger);
-	gaim_log_logger_add(&messenger_plus_logger);
-	gaim_log_logger_add(&msn_logger);
-	gaim_log_logger_add(&trillian_logger);
+	adium_logger = gaim_log_logger_new("adium", "Adium", 6,
+									   NULL,
+									   NULL,
+									   adium_logger_finalize,
+									   adium_logger_list,
+									   adium_logger_read,
+									   adium_logger_size);
+	gaim_log_logger_add(adium_logger);
+
+	fire_logger = gaim_log_logger_new("fire", "Fire", 6,
+									  NULL,
+									  NULL,
+									  fire_logger_finalize,
+									  fire_logger_list,
+									  fire_logger_read,
+									  fire_logger_size);
+	gaim_log_logger_add(fire_logger);
+
+	messenger_plus_logger = gaim_log_logger_new("messenger_plus", "Messenger Plus!", 6,
+												NULL,
+												NULL,
+												messenger_plus_logger_finalize,
+												messenger_plus_logger_list,
+												messenger_plus_logger_read,
+												messenger_plus_logger_size);
+	gaim_log_logger_add(messenger_plus_logger);
+
+	msn_logger = gaim_log_logger_new("msn", "MSN Messenger", 6,
+									 NULL,
+									 NULL,
+									 msn_logger_finalize,
+									 msn_logger_list,
+									 msn_logger_read,
+									 msn_logger_size);
+	gaim_log_logger_add(msn_logger);
+
+	trillian_logger = gaim_log_logger_new("trillian", "Trillian", 6,
+										  NULL,
+										  NULL,
+										  trillian_logger_finalize,
+										  trillian_logger_list,
+										  trillian_logger_read,
+										  trillian_logger_size);
+	gaim_log_logger_add(trillian_logger);
 
 	return TRUE;
 }
@@ -1901,11 +1882,11 @@ plugin_unload(GaimPlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	gaim_log_logger_remove(&adium_logger);
-	gaim_log_logger_remove(&fire_logger);
-	gaim_log_logger_remove(&messenger_plus_logger);
-	gaim_log_logger_remove(&msn_logger);
-	gaim_log_logger_remove(&trillian_logger);
+	gaim_log_logger_remove(adium_logger);
+	gaim_log_logger_remove(fire_logger);
+	gaim_log_logger_remove(messenger_plus_logger);
+	gaim_log_logger_remove(msn_logger);
+	gaim_log_logger_remove(trillian_logger);
 
 	return TRUE;
 }
@@ -1991,7 +1972,7 @@ static GaimPluginInfo info =
 	   "includes Adium, Fire, Messenger Plus!, "
 	   "MSN Messenger, and Trillian."),
 
-	"Richard Laager <rlaager@bigfoot.com>",           /**< author         */
+	"Richard Laager <rlaager@users.sf.net>",          /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

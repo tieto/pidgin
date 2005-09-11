@@ -60,8 +60,7 @@ version 2.0.0:
 	           or is itself an expanded contact
 	* Added:   GaimLogSet struct, get_log_sets function to GaimLogLogger,
 	           gaim_log_get_log_sets, gaim_log_set_compare
-	* Changed: gaim_log_logger_new, added total_size, list_syslog, and get_log_sets
-	           parameters to bring the function up-to-date with GaimLogLogger
+	* Changed: gaim_log_logger_new, rewritten
 	* Changed: gaim_conv_window_remove_conversation()'s last argument to
 	           be a GaimConversation.
 	* Added:   gaim_privacy_check(), to check if a given user is allowed to
