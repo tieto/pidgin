@@ -257,16 +257,16 @@ static gint
 close_conv_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 {
 	GList *list = g_list_copy(gtkconv->convs), *l;
-	
+
 	l = list;
 	while (l) {
 		GaimConversation *conv = l->data;
 		gaim_conversation_destroy(conv);
 		l = l->next;
 	}
-	
+
 	g_list_free(list);
-	
+
 	return TRUE;
 }
 
@@ -274,7 +274,7 @@ static gboolean
 size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *gtkconv)
 {
 	GaimConversation *conv = gtkconv->active_conv;
-	
+
 	if (!GTK_WIDGET_VISIBLE(w))
 		return FALSE;
 
@@ -319,7 +319,7 @@ static void
 default_formatize(GaimGtkConversation *c)
 {
 	GaimConversation *conv = c->active_conv;
-		
+
 	if (conv->features & GAIM_CONNECTION_HTML)
 	{
 		char *color;
@@ -1577,7 +1577,7 @@ create_chat_menu(GaimConversation *conv, const char *who,
 
 		if (prpl_info && prpl_info->send_file
 				&& (!prpl_info->can_receive_file || prpl_info->can_receive_file(gc, who))) {
-			button = gaim_new_item_from_stock(menu, _("Send File"), 
+			button = gaim_new_item_from_stock(menu, _("Send File"),
 				GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 				GAIM_GTK_CONVERSATION(conv), 0, 0, NULL);
 			g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
@@ -2040,7 +2040,7 @@ insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 	GaimConversation *conv;
 
 	g_return_if_fail(gtkconv != NULL);
-	
+
 	conv = gtkconv->active_conv;
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
@@ -2059,7 +2059,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 	GaimConvIm *im;
 
 	g_return_if_fail(gtkconv != NULL);
-	
+
 	conv = gtkconv->active_conv;
 
 	if (!gaim_prefs_get_bool("/core/conversations/im/send_typing"))
@@ -2178,7 +2178,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 				arrow1_x += tab->allocation.width;
 				arrow2_x += tab->allocation.width;
 			}
-			
+
 			arrow1_y = nb_y + tab->allocation.y;
 			arrow2_y = nb_y + tab->allocation.y +
 							  tab->allocation.height;
@@ -2280,7 +2280,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, GaimConvWindow *win)
 	/* Find out which tab was dragged. */
 	page = gtk_notebook_get_nth_page(GTK_NOTEBOOK(gtkwin->notebook), tab_clicked);
 	tab = gtk_notebook_get_tab_label(GTK_NOTEBOOK(gtkwin->notebook), page);
-	
+
 	gtkwin->drag_min_x = tab->allocation.x      + nb_x;
 	gtkwin->drag_min_y = tab->allocation.y      + nb_y;
 	gtkwin->drag_max_x = tab->allocation.width  + gtkwin->drag_min_x;
@@ -3068,7 +3068,7 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 	GaimGtkWindow *gtkwin;
 	GaimConvIm *im = NULL;
 	GaimConversation *conv = gtkconv->active_conv;
-	
+
 	gtkwin = GAIM_GTK_WINDOW(gaim_conversation_get_window(conv));
 
 	if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
@@ -3448,7 +3448,7 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alia
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
 	GdkColor send_color;
- 
+
 	gdk_color_parse(SEND_COLOR, &send_color);
 
 	chat    = GAIM_CONV_CHAT(conv);
@@ -4684,6 +4684,7 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	gboolean new_ui;
 	GaimConversationType conv_type;
 	const char *name;
+	const gchar *tmp_lab;
 	gint close_button_width, close_button_height, focus_width, focus_pad;
 
 	name      = gaim_conversation_get_name(conv);
@@ -4826,9 +4827,10 @@ gaim_gtk_add_conversation(GaimConvWindow *win, GaimConversation *conv)
 	update_tab_icon(conv);
 
 	/* Tab label. */
-	gtkconv->tab_label = gtk_label_new(gaim_conversation_get_title(conv));
+	gtkconv->tab_label = gtk_label_new(tmp_lab = gaim_conversation_get_title(conv));
 #if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
 #endif
 	gtkconv->menu_label = gtk_label_new(gaim_conversation_get_title(conv));
 #if 0
@@ -5001,7 +5003,7 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 	/* Don't destroy ourselves until all our convos are gone */
 	if (gtkconv->convs)
 		return;
-	
+
 	/* If the "Save Conversation" or "Save Icon" dialogs are open then close them */
 	gaim_request_close_with_handle(conv);
 
@@ -5352,7 +5354,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 		if(alias_escaped)
 			g_free(alias_escaped);
-	
+
 		/* Are we in a chat where we can tell which users are buddies? */
 		if  (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME) &&
 		     gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
