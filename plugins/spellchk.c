@@ -1979,7 +1979,7 @@ get_config_frame(GaimPlugin *plugin)
 		NULL);
 	g_signal_connect(G_OBJECT(renderer), "toggled",
 		G_CALLBACK(on_toggled), GINT_TO_POINTER(2));
-	column = gtk_tree_view_column_new_with_attributes(_("Complete words"),
+	column = gtk_tree_view_column_new_with_attributes(_("Whole words only"),
 		renderer, "active", WORD_ONLY_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_FIXED);
 	gtk_tree_view_column_set_fixed_width(column, 130);
@@ -2043,7 +2043,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), good_entry);
 	gtk_widget_show(good_entry);
 
-	complete_toggle = gtk_check_button_new_with_mnemonic(_("Only replace _complete words"));
+	complete_toggle = gtk_check_button_new_with_mnemonic(_("Only replace _whole words"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(complete_toggle), TRUE);
 	gtk_widget_show(complete_toggle);
 	gtk_box_pack_start(GTK_BOX(vbox), complete_toggle, FALSE, FALSE, 0);
