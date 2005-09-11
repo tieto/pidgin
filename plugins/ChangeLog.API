@@ -124,6 +124,7 @@ version 2.0.0:
 	* Added:   "buddy-added" and "buddy-removed", which are self-explanatory
 	* Added:   "blist-node-aliased", an alias was set for a buddy, chat or
 	           contact.  See the Doxygen documentation for the details.
+	* Removed: gaim_debug_vargs()
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

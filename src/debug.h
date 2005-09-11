@@ -61,21 +61,6 @@ extern "C" {
 /**
  * Outputs debug information.
  *
- * This differs from gaim_debug() in that it takes a va_list.
- *
- * @param level    The debug level.
- * @param category The category (or @c NULL).
- * @param format   The format string.
- * @param args     The format parameters.
- *
- * @see gaim_debug()
- */
-void gaim_debug_vargs(GaimDebugLevel level, const char *category,
-					  const char *format, va_list args);
-
-/**
- * Outputs debug information.
- *
  * @param level    The debug level.
  * @param category The category (or @c NULL).
  * @param format   The format string.

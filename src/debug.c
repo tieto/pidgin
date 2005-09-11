@@ -40,9 +40,7 @@ static GaimDebugUiOps *debug_ui_ops = NULL;
  */
 static gboolean debug_enabled = FALSE;
 
-/* XXX I want to make this static but gg uses this for internal debug level
- * stuff and I don't really feel like unwrapping it right now. -Etan */
-void
+static void
 gaim_debug_vargs(GaimDebugLevel level, const char *category,
 				 const char *format, va_list args)
 {
