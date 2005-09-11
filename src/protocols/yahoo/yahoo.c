@@ -705,9 +705,11 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	// Check for the Doodle IMV
 	if( !strcmp( imv, "doodle;11" ) )
 	{
+		GaimWhiteboard *wb;
+
 		g_print( "'doodle;11' found in chat packet\n" );
 		
-		GaimWhiteboard *wb = gaim_whiteboard_get_session( gc->account, im->from );
+		wb = gaim_whiteboard_get_session( gc->account, im->from );
 		
 		// If a Doodle session doesn't exist between this user
 		if( wb == NULL )
@@ -2982,6 +2984,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
 	gboolean utf8 = TRUE;
+	GaimWhiteboard *wb;
 	int ret = 1;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
@@ -2993,7 +2996,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 
 	// If this message is to a user who is also Doodling with the local user,
 	// format the chat packet with the correct IMV information (thanks Yahoo!)
-	GaimWhiteboard *wb = gaim_whiteboard_get_session(gc->account, (char*)who);
+	wb = gaim_whiteboard_get_session(gc->account, (char*)who);
 	if (wb)
 		yahoo_packet_hash_str(pkt,   63, "doodle;11");
 	else

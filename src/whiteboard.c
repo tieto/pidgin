@@ -59,13 +59,14 @@ GaimWhiteboard *gaim_whiteboard_create( GaimAccount *account, char *who, int sta
 {
 	//g_print( "gaim_whiteboard_create()\n" );
 	
+	GaimPluginProtocolInfo *prpl_info;
 	GaimWhiteboard *wb	= g_new0( GaimWhiteboard, 1 );
-	
+
 	wb->account		= account;
 	wb->state		= state;
 	wb->who			= g_strdup( who );
 	
-	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO( account->gc->prpl );
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO( account->gc->prpl );
 	gaim_whiteboard_set_prpl_ops( wb, prpl_info->whiteboard_prpl_ops );
 	
 	// Start up protocol specifics

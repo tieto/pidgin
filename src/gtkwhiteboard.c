@@ -92,6 +92,9 @@ void gaim_gtk_whiteboard_create( GaimWhiteboard *wb )
 	/* GdkPixbuf *palette_color_area[PALETTE_NUM_COLORS]; */
 	
 	GaimGtkWhiteboard *gtkwb = g_new0( GaimGtkWhiteboard, 1 );
+
+	const char *window_title;
+
 	gtkwb->wb = wb;
 	wb->ui_data = gtkwb;
 	
@@ -104,7 +107,7 @@ void gaim_gtk_whiteboard_create( GaimWhiteboard *wb )
 	gtk_widget_set_name( window, wb->who );
 	
 	// Try and set window title as the name of the buddy, else just use their username
-	const char *window_title = gaim_contact_get_alias( gaim_buddy_get_contact( gaim_find_buddy( wb->account, wb->who ) ) );
+	window_title = gaim_contact_get_alias( gaim_buddy_get_contact( gaim_find_buddy( wb->account, wb->who ) ) );
 	if( window_title )
 		gtk_window_set_title( ( GtkWindow* )( window ), window_title );
 	else
@@ -454,6 +457,9 @@ gboolean gaim_gtk_whiteboard_brush_motion( GtkWidget *widget, GdkEventMotion *ev
 		// NOTE 100 is a temporary constant for how many deltas/motions in a stroke (needs UI Ops?)
 		if( MotionCount == 100 )
 		{
+			int *x0			= g_new0( int, 1 );
+			int *y0			= g_new0( int, 1 );
+
 			draw_list = g_list_append( draw_list, ( gpointer )( dx ) );
 			draw_list = g_list_append( draw_list, ( gpointer )( dy ) );
 			
@@ -464,9 +470,6 @@ gboolean gaim_gtk_whiteboard_brush_motion( GtkWidget *widget, GdkEventMotion *ev
 			// The brush stroke is finished, clear the list for another one
 			if( draw_list )
 				draw_list = gaim_whiteboard_draw_list_destroy( draw_list );
-			
-			int *x0			= g_new0( int, 1 );
-			int *y0			= g_new0( int, 1 );
 			
 			*x0			= LastX;
 			*y0			= LastY;
@@ -577,15 +580,15 @@ void gaim_gtk_whiteboard_draw_brush_point( GaimWhiteboard *wb, int x, int y, int
 			
 	GdkRectangle		update_rect;
 
+	GdkGC			*gfx_con = gdk_gc_new( pixmap );
+	GdkColor		col;
+
 	update_rect.x		= x - size / 2;
 	update_rect.y		= y - size / 2;
 	update_rect.width	= size;
 	update_rect.height	= size;
 	
 	// Interpret and convert color
-	GdkGC			*gfx_con = gdk_gc_new( pixmap );
-	GdkColor		col;
-	
 	gaim_gtk_whiteboard_rgb24_to_rgb48( color, &col );
 	
 	gdk_gc_set_rgb_fg_color( gfx_con, &col );
@@ -630,6 +633,15 @@ void gaim_gtk_whiteboard_draw_brush_line( GaimWhiteboard *wb, int x0, int y0, in
 	int xstep;
 	int ystep;
 	
+	int dx;
+	int dy;
+
+	int error;
+	int derror;
+
+	int x;
+	int y;
+
 	gboolean steep = abs( y1 - y0 ) > abs( x1 - x0 );
 	
 	if( steep )
@@ -638,14 +650,14 @@ void gaim_gtk_whiteboard_draw_brush_line( GaimWhiteboard *wb, int x0, int y0, in
 		temp = x1; x1 = y1; y1 = temp;	
 	}
 	
-	int dx		= abs( x1 - x0 );
-	int dy		= abs( y1 - y0 );
+	dx		= abs( x1 - x0 );
+	dy		= abs( y1 - y0 );
 	
-	int error	= 0;
-	int derror	= dy;
+	error	= 0;
+	derror	= dy;
 	
-	int x		= x0;
-	int y		= y0;
+	x		= x0;
+	y		= y0;
 	
 	if( x0 < x1 )
 		xstep = 1;
@@ -733,6 +745,8 @@ void gaim_gtk_whiteboard_button_save_press( GtkWidget *widget, gpointer data )
 	
 	GtkWidget *dialog;
 
+	int result;
+
 	dialog = gtk_file_chooser_dialog_new ("Save File",
 					      GTK_WINDOW(gtkwb->window),
 					      GTK_FILE_CHOOSER_ACTION_SAVE,
@@ -750,7 +764,7 @@ void gaim_gtk_whiteboard_button_save_press( GtkWidget *widget, gpointer data )
 //	else
 //		gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (dialog), filename_for_existing_document);
 
-	int result = gtk_dialog_run( GTK_DIALOG( dialog ) );
+	result = gtk_dialog_run( GTK_DIALOG( dialog ) );
 
 	if( result == GTK_RESPONSE_ACCEPT )
 	{
