@@ -970,7 +970,8 @@ GaimRequestField *gaim_request_field_label_new(const char *id,
  *
  * @param id   The field ID.
  * @param text The label of the field.
- * @param path Path to the image to be displayed.
+ * @param buf  The image data.
+ * @param size The size of the data in @a buffer.
  *
  * @return The new field.
  */
