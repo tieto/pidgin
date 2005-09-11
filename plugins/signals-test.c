@@ -64,14 +64,6 @@ account_set_info_cb(GaimAccount *account, const char *info, void *data)
 					gaim_account_get_username(account), info);
 }
 
-static void
-account_warned_cb(GaimAccount *account, const char *warner, int level,
-				  void *data)
-{
-	gaim_debug_misc("signals test", "account-warned (%s, %s, %d)\n",
-					gaim_account_get_username(account), warner, level);
-}
-
 /**************************************************************************
  * Buddy Icons signal callbacks
  **************************************************************************/
@@ -577,8 +569,6 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(account_setting_info_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-set-info",
 						plugin, GAIM_CALLBACK(account_set_info_cb), NULL);
-	gaim_signal_connect(accounts_handle, "account-warned",
-						plugin, GAIM_CALLBACK(account_warned_cb), NULL);
 
 	/* Buddy Icon subsystem signals */
 	gaim_signal_connect(buddy_icons_handle, "buddy-icon-cached",

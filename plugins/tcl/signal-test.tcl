@@ -14,10 +14,6 @@ gaim::signal connect [gaim::account handle] account-setting-info { account info 
 	gaim::debug -info "tcl signal" "account-set-info [gaim::account username $account] $info"
 }
 
-gaim::signal connect [gaim::account handle] account-warned { account who level } {
-	gaim::debug -info "tcl signal" "account-warned [gaim::account username $account] $who $level"
-}
-
 gaim::signal connect [gaim::buddy handle] buddy-away { buddy } {
 	gaim::debug -info "tcl signal" "buddy-away [gaim::account username [lindex $buddy 2]] [lindex $buddy 1]"
 }
