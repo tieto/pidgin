@@ -591,7 +591,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	GString *info_text;
 	char *resource_name;
 	char *bare_jid;
-	char *title;
 	char *text;
 	xmlnode *vcard;
 	GaimBuddy *b;
@@ -850,8 +849,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		}
 	}
 
-	title = g_strdup_printf("User info for %s", from);
-
 	text = gaim_strdup_withhtml(info_text->str);
 
 	gaim_notify_userinfo(js->gc, from, _("Jabber Profile"),
@@ -861,7 +858,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 		gaim_imgstore_unref(GPOINTER_TO_INT(imgids->data));
 		imgids = g_slist_delete_link(imgids, imgids);
 	}
-	g_free(title);
 	g_string_free(info_text, TRUE);
 	g_free(text);
 	g_free(bare_jid);

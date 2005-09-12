@@ -5047,7 +5047,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = gc->proto_data;
 	GString *str;
-	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL, *title = NULL;
+	gchar *tmp = NULL, *info_utf8 = NULL, *away_utf8 = NULL;
 	va_list ap;
 	aim_userinfo_t *userinfo;
 
@@ -5099,9 +5099,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
-	title = g_strdup_printf(_("Info for %s"), userinfo->sn);
 	gaim_notify_userinfo(gc, userinfo->sn, _("Buddy Information"), NULL, tmp, NULL, NULL);
-	g_free(title);
 	g_free(tmp);
 
 	return 1;
