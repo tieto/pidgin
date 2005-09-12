@@ -1196,7 +1196,6 @@ static void load_conf()
 			"BAD mysefl\nGOOD myself\n"
 			"BAD myu\nGOOD my\n"
 			"BAD naive\nGOOD naïve\n"
-			"COMPLETE 0\nBAD ne ways \nGOOD anyways \n"
 			"BAD ne1\nGOOD anyone\n"
 			"BAD neway\nGOOD anyway\n"
 			"BAD neways\nGOOD anyways\n"
