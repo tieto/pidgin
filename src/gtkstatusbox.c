@@ -190,12 +190,12 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		text = g_strdup_printf("%s", title);
 	}
 
-	if (status_box->error)
+	if (status_box->connecting)
+		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
+	else if (status_box->error)
 		pixbuf = status_box->error_pixbuf;
 	else if (status_box->typing)
 		pixbuf = status_box->typing_pixbufs[status_box->typing_index];
-	else if (status_box->connecting)
-		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
 	else
 		pixbuf = status_box->pixbuf;
 
@@ -421,6 +421,8 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const c
 void
 gtk_gaim_status_box_set_error(GtkGaimStatusBox *status_box, const gchar *error)
 {
+	if (status_box->error)
+		g_free(status_box->error);
 	status_box->error = g_strdup(error);
 	gtk_gaim_status_box_refresh(status_box);
 }
