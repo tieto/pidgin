@@ -727,7 +727,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 					ZGetLocations(&locs, &one);
 					g_string_append_printf(str, _("<br>At %s since %s"), locs.host, locs.time);
 				}
-				gaim_notify_userinfo(gc, b ? b->name : user, _("Buddy Information"), NULL, 
+				gaim_notify_userinfo(gc, b ? b->name : user, 
 						     str->str, NULL, NULL);
 				g_string_free(str, TRUE);
 			} else {
@@ -1142,7 +1142,7 @@ static gint check_notify_tzc(gpointer data)
 								       tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);
 					}
 
-					gaim_notify_userinfo(gc, b ? b->name : user, _("Buddy Information"), NULL, 
+					gaim_notify_userinfo(gc, b ? b->name : user,
 							     str->str, NULL, NULL);
 					g_string_free(str, TRUE);
 				} else {

@@ -68,7 +68,7 @@ gaim_notify_searchresults(gc, title, primary, secondary, results, cb, user_data)
 	const char *title
 	const char *primary
 	const char *secondary
-	const char **results
+	Gaim::NotifySearchResults results
 	GCallback cb
 	void * user_data
 
@@ -82,12 +82,9 @@ gaim_notify_uri(handle, uri)
 	const char *uri
 
 void *
-gaim_notify_userinfo(gc, who, title, primary, secondary, text, cb, user_data)
+gaim_notify_userinfo(gc, who, text, cb, user_data)
 	Gaim::Connection gc
 	const char *who
-	const char *title
-	const char *primary
-	const char *secondary
 	const char *text
 	GCallback cb
 	void * user_data

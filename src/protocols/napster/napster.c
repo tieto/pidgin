@@ -420,7 +420,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 		/* XXX - Format is:   "Elite" 37 " " "Active" 0 0 0 0 "gaim 0.63cvs" 0 0 192.168.1.41 32798 0 unknown flounder */
 		res = g_strsplit(buf, " ", 2);
 		/* res[0] == username */
-		gaim_notify_userinfo(gc, res[0], NULL, _("Buddy Information"), res[1], NULL, NULL);
+		gaim_notify_userinfo(gc, res[0], res[1], NULL, NULL);
 		g_strfreev(res);
 		break;
 

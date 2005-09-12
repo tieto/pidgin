@@ -252,7 +252,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	gc = gaim_account_get_connection(irc->account);
 	str = g_string_free(info, FALSE);
 
-	gaim_notify_userinfo(gc, irc->whois.nick, _("Buddy Information"), NULL, str, NULL, NULL);
+	gaim_notify_userinfo(gc, irc->whois.nick, str, NULL, NULL);
 
 	g_free(irc->whois.nick);
 	g_free(str);

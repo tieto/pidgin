@@ -1483,7 +1483,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
-		gaim_notify_userinfo(info_data->gc, info_data->name, title, NULL, buf, NULL, NULL);
+		gaim_notify_userinfo(info_data->gc, info_data->name, buf, NULL, NULL);
 
 		g_free(tooltip_text);
 		return;
@@ -1792,7 +1792,6 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 	GString *s = info2_data->s;
 	char *photo_url_text = info2_data->photo_url_text;
 	char *tooltip_text = info2_data->tooltip_text;
-	const char *title = info2_data->title;
 
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (data && url_text && len != 0)
@@ -1819,7 +1818,7 @@ msn_got_photo(void *data, const char *url_text, size_t len)
 #endif
 
 	g_string_prepend(s, tooltip_text);
-	gaim_notify_userinfo(info_data->gc, info_data->name, title, NULL, s->str, NULL, NULL);
+	gaim_notify_userinfo(info_data->gc, info_data->name, s->str, NULL, NULL);
 
 	g_free(stripped);
 	g_free(url_buffer);

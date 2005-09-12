@@ -161,7 +161,11 @@ typedef GaimLogReadFlags *              Gaim__Log__ReadFlags;
 
 	/* notify.h */
 typedef GaimNotifyType          	Gaim__NotifyType;
-typedef GaimNotifyMsgType               Gaim__NotifyMsgType;	
+typedef GaimNotifyMsgType               Gaim__NotifyMsgType;
+typedef GaimNotifySearchButtonType	Gaim__NotifySearchButtonType;
+typedef GaimNotifySearchResults *	Gaim__NotifySearchResults;
+typedef GaimNotifySearchColumn *	Gaim__NotifySearchColumn;
+typedef GaimNotifySearchButton *	Gaim__NotifySearchButton;
 typedef GaimNotifyUiOps *		Gaim__NotifyUiOps;
 
 	/* plugin.h */

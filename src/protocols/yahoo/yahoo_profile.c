@@ -764,8 +764,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 		g_snprintf(buf, 1024, "<html><body>%s<b>%s</b></body></html>",
 				tooltip_text, _("Error retrieving profile"));
 
-		gaim_notify_userinfo(info_data->gc, info_data->name, title,
-			NULL, buf, NULL, NULL);
+		gaim_notify_userinfo(info_data->gc, info_data->name, 
+			buf, NULL, NULL);
 
 		g_free(profile_url_text);
 		g_free(tooltip_text);
@@ -801,8 +801,8 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 				  "you will need to visit this link in your web browser"),
 				profile_url_text, profile_url_text);
 
-		gaim_notify_userinfo(info_data->gc, info_data->name, title, 
-				NULL, buf, NULL, NULL);
+		gaim_notify_userinfo(info_data->gc, info_data->name, 
+				buf, NULL, NULL);
 
 		g_free(profile_url_text);
 		g_free(tooltip_text);
@@ -917,7 +917,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	char *tooltip_text = info2_data->tooltip_text;
 	const profile_strings_node_t *strings = info2_data->strings;
 	const char *last_updated_string = info2_data->last_updated_string;
-	const char *title = info2_data->title;
 	profile_state_t profile_state = info2_data->profile_state;
 
 	/* We continue here from yahoo_got_info, as if nothing has happened */
@@ -1188,8 +1187,8 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	g_string_prepend(s, "<html><body>\n");
 
 	/* show it to the user */
-	gaim_notify_userinfo(info_data->gc, info_data->name,title,
-						  NULL, s->str, NULL, NULL);
+	gaim_notify_userinfo(info_data->gc, info_data->name,
+						  s->str, NULL, NULL);
 
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);

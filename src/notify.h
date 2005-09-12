@@ -126,8 +126,7 @@ typedef struct
 										  GaimNotifySearchResults *results,
 										  void *data, void *user_data);
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
-							  const char *title, const char *primary,
-							  const char *secondary, const char *text,
+							  const char *text,
 							  GCallback cb, void *user_data);
 	void *(*notify_uri)(const char *uri);
 
@@ -360,10 +359,8 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * The text is essentially a stripped-down format of HTML, the same that
  * IMs may send.
  *
- * @param gc		The GaimConnection handle associated with the information.
- * @param who		The username associated with the information.
- * @param primary   The main point of the message.
- * @param secondary The secondary information.
+ * @param gc	    The GaimConnection handle associated with the information.
+ * @param who	    The username associated with the information.
  * @param text      The formatted text.
  * @param cb        The callback to call when the user closes
  *                  the notification.
@@ -372,7 +369,6 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * @return A UI-specific handle.
  */
 void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *primary, const char *secondary,
 						   const char *text, GCallback cb,
 						   void *user_data);
 

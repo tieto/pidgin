@@ -99,6 +99,9 @@ version 2.0.0:
 	* Added:   CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
 	           CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
 	           user list
+	* Changed: gaim_notify_userinfo, removed primary and secondary args
+	* Changed: GaimNotifyUiOps::notify_userinfo, removed title, primary,
+	           and secondary args
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

@@ -1084,7 +1084,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("More..."), G_CALLBACK(silcgaim_whois_more));
 			else
 #endif
-			gaim_notify_userinfo(gc, client_entry->nickname, _("Buddy Information"), NULL, buf, NULL, NULL);
+			gaim_notify_userinfo(gc, client_entry->nickname, buf, NULL, NULL);
 			g_free(buf);
 		}
 		break;
@@ -1145,7 +1145,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 			}
 
 			buf = g_string_free(s, FALSE);
-			gaim_notify_userinfo(gc, client_entry->nickname, _("Buddy Information"), NULL, buf, NULL, NULL);
+			gaim_notify_userinfo(gc, client_entry->nickname, buf, NULL, NULL);
 			g_free(buf);
 		}
 		break;

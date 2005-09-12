@@ -851,8 +851,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 	text = gaim_strdup_withhtml(info_text->str);
 
-	gaim_notify_userinfo(js->gc, from, _("Jabber Profile"),
-			NULL, text, NULL, NULL);
+	gaim_notify_userinfo(js->gc, from, text, NULL, NULL);
 
 	while(imgids) {
 		gaim_imgstore_unref(GPOINTER_TO_INT(imgids->data));

@@ -100,6 +100,10 @@ Gaim::Log::ReadFlags              	T_GaimObj
 
 Gaim::NotifyType                	T_IV
 Gaim::NotifyMsgType            	 	T_IV
+Gaim::NotifySearchButtonType		T_IV
+Gaim::NotifySearchResults		T_GaimObj
+Gaim::NotifySearchColumn		T_GaimObj
+Gaim::NotifySearchButton		T_GaimObj
 Gaim::NotifyUiOps			T_GaimObj
 
 Gaim::Plugin             		T_GaimObj

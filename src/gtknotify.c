@@ -632,12 +632,17 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 static void *
 gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
-						 const char *title, const char *primary,
-						 const char *secondary, const char *text,
+						 const char *text,
 						 GCallback cb, void *user_data)
 {
-	return gaim_gtk_notify_formatted(title, primary, secondary,
+	char *primary;
+	void *ui_handle;
+
+	primary = g_strdup_printf(_("Info for %s"), who);
+	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL,
 									  text, cb, user_data);
+	g_free(primary);
+	return ui_handle;
 }
 
 static void
