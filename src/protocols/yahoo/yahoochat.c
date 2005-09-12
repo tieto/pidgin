@@ -351,7 +351,6 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l;
 	GList *members = NULL;
 	GList *roomies = NULL;
-	GaimConversationUiOps *ops;
 	char *room = NULL;
 	char *topic = NULL;
 	char *someid, *someotherid, *somebase64orhashosomething, *somenegativenumber;
@@ -450,22 +449,23 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
-	ops = gaim_conversation_get_ui_ops(c);
 
-	for (l = account->deny; l != NULL; l = l->next) {
-		for (roomies = members; roomies; roomies = roomies->next) {
-			if (!gaim_utf8_strcasecmp((char *)l->data, roomies->data)) {
-				gaim_debug_info("yahoo", "Ignoring room member %s in room %s\n" ,roomies->data, room);
-				gaim_conv_chat_ignore(GAIM_CONV_CHAT(c),roomies->data);
-				ops->chat_update_user((c), roomies->data);
+	if (account->deny && c) {
+		GaimConversationUiOps *ops = gaim_conversation_get_ui_ops(c);
+		for (l = account->deny; l != NULL; l = l->next) {
+			for (roomies = members; roomies; roomies = roomies->next) {
+				if (!gaim_utf8_strcasecmp((char *)l->data, roomies->data)) {
+					gaim_debug_info("yahoo", "Ignoring room member %s in room %s\n" , roomies->data, room ? room : "");
+					gaim_conv_chat_ignore(GAIM_CONV_CHAT(c),roomies->data);
+					ops->chat_update_user(c, roomies->data);
+				}
 			}
 		}
 	}
 	g_list_free(roomies);
 	g_list_free(members);
 	g_free(room);
-	if (topic)
-		g_free(topic);
+	g_free(topic);
 }
 
 void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
