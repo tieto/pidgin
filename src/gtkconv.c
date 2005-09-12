@@ -5361,7 +5361,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		     gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
 
 			/* Bold buddies to make them stand out from non-buddies. */
-			if (flags & GAIM_MESSAGE_SEND || gaim_find_buddy(account, name) != NULL) {
+			if (flags & GAIM_MESSAGE_SEND || 
+			    flags & GAIM_MESSAGE_NICK ||
+			    gaim_find_buddy(account, name) != NULL) {
 				g_snprintf(buf2, BUF_LONG,
 					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
 					   "<B>%s</B></FONT> ",
