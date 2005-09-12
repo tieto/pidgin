@@ -255,7 +255,7 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 
 	g_snprintf(buffer, sizeof(buffer),
 			   _("Buddy Information for %s"), irc->whois.nick);
-	gaim_notify_userinfo(gc, irc->whois.nick, NULL, buffer, NULL, str, NULL, NULL);
+	gaim_notify_userinfo(gc, irc->whois.nick, buffer, _("Buddy Information"), NULL, str, NULL, NULL);
 
 	g_free(irc->whois.nick);
 	g_free(str);
