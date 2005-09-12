@@ -3454,8 +3454,7 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
   /* @todo emit a signal to allow a plugin to override the display of
      this notification, so that it can create its own */
 
-  gaim_notify_userinfo(gc, who, "Buddy Information",
-		       "Meanwhile User Status", NULL, str->str, NULL, NULL);
+  gaim_notify_userinfo(gc, who, "Meanwhile User Status", NULL, str->str, NULL, NULL);
 
   g_string_free(str, TRUE);
 }

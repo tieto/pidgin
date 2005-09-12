@@ -22,6 +22,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
 #include "notify.h"
 
 static GaimNotifyUiOps *notify_ui_ops = NULL;
@@ -328,11 +329,14 @@ gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
 }
 
 void *
-gaim_notify_userinfo(GaimConnection *gc, const char *who, const char *title,
+gaim_notify_userinfo(GaimConnection *gc, const char *who,
 						   const char *primary, const char *secondary,
 						   const char *text, GCallback cb, void *user_data)
 {
 	GaimNotifyUiOps *ops;
+	char title[256];
+
+	g_snprintf(title, sizeof(title), _("Info for %s"), who);
 
 	g_return_val_if_fail(primary != NULL, NULL);
 

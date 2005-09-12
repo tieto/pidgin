@@ -4874,7 +4874,7 @@ static int gaim_parse_clientauto_ch4(aim_session_t *sess, char *who, fu16_t reas
 			g_free(statusmsg);
 			g_strfreev(splitmsg);
 
-			gaim_notify_userinfo(gc, who, title, _("Buddy Information"), NULL, dialogmsg, NULL, NULL);
+			gaim_notify_userinfo(gc, who, _("Buddy Information"), NULL, dialogmsg, NULL, NULL);
 
 			g_free(title);
 			g_free(dialogmsg);
@@ -5100,7 +5100,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
 	title = g_strdup_printf(_("Info for %s"), userinfo->sn);
-	gaim_notify_userinfo(gc, userinfo->sn, title, _("Buddy Information"), NULL, tmp, NULL, NULL);
+	gaim_notify_userinfo(gc, userinfo->sn, _("Buddy Information"), NULL, tmp, NULL, NULL);
 	g_free(title);
 	g_free(tmp);
 
@@ -6030,7 +6030,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		alias = who;
 	primary = g_strdup_printf(_("ICQ Info for %s"), alias);
-	gaim_notify_userinfo(gc, who, NULL, primary, NULL, str->str, NULL, NULL);
+	gaim_notify_userinfo(gc, who, primary, NULL, str->str, NULL, NULL);
 	g_free(primary);
 	g_string_free(str, TRUE);
 

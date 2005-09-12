@@ -362,7 +362,6 @@ void *gaim_notify_formatted(void *handle, const char *title,
  *
  * @param gc		The GaimConnection handle associated with the information.
  * @param who		The username associated with the information.
- * @param title     The title of the message.
  * @param primary   The main point of the message.
  * @param secondary The secondary information.
  * @param text      The formatted text.
@@ -373,9 +372,9 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * @return A UI-specific handle.
  */
 void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *title, const char *primary,
-						   const char *secondary, const char *text,
-						   GCallback cb, void *user_data);
+						   const char *primary, const char *secondary,
+						   const char *text, GCallback cb,
+						   void *user_data);
 
 /**
  * Opens a URI or somehow presents it to the user.

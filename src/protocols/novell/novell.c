@@ -1511,7 +1511,7 @@ _show_info(GaimConnection * gc, NMUserRecord * user_record)
 		}
 	}
 
-	gaim_notify_userinfo(gc, nm_user_record_get_userid(user_record), NULL,
+	gaim_notify_userinfo(gc, nm_user_record_get_userid(user_record), 
 						 _("User Properties"), NULL, info_text->str,
 						 NULL, NULL);
 
