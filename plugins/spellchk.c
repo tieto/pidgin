@@ -296,6 +296,10 @@ spellchk_inside_word(GtkTextIter *iter)
 	if (c == '.')
 		return TRUE;
 
+	/* Avoid problems with \r, for example (SF #1289031). */
+	if (c == '\\')
+		return TRUE;
+
 	if (gtk_text_iter_inside_word (iter) == TRUE)
 		return TRUE;
 
