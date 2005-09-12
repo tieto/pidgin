@@ -45,8 +45,6 @@ silcgaim_away_states(GaimAccount *account)
 
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, SILCGAIM_STATUS_ID_OFFLINE, _("Offline"), FALSE, FALSE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, SILCGAIM_STATUS_ID_ONLINE, _("Online"), FALSE, FALSE, FALSE);
-	types = g_list_append(types, type);
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_AVAILABLE, _("Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);

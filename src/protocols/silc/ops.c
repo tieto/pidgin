@@ -710,7 +710,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				     client_entry->mode & SILC_UMODE_PAGE ||
 				     client_entry->mode & SILC_UMODE_DETACHED)) {
 					client_entry->mode = mode;
-					gaim_prpl_got_user_status(gaim_buddy_get_account(b), gaim_buddy_get_name(b), SILCGAIM_STATUS_ID_ONLINE, NULL);
+					gaim_prpl_got_user_status(gaim_buddy_get_account(b), gaim_buddy_get_name(b), SILCGAIM_STATUS_ID_AVAILABLE, NULL);
 				}
 				else if ((mode & SILC_UMODE_GONE) ||
 					 (mode & SILC_UMODE_INDISPOSED) ||
@@ -727,7 +727,7 @@ silc_notify(SilcClient client, SilcClientConnection conn,
 				gaim_prpl_got_user_status(gaim_buddy_get_account(b), gaim_buddy_get_name(b), SILCGAIM_STATUS_ID_OFFLINE, NULL);
 			} else if (notify == SILC_NOTIFY_TYPE_NONE) {
 				client_entry->mode = mode;
-				gaim_prpl_got_user_status(gaim_buddy_get_account(b), gaim_buddy_get_name(b), SILCGAIM_STATUS_ID_ONLINE, NULL);
+				gaim_prpl_got_user_status(gaim_buddy_get_account(b), gaim_buddy_get_name(b), SILCGAIM_STATUS_ID_AVAILABLE, NULL);
 			}
 		}
 		break;

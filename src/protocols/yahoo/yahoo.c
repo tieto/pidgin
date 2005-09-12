@@ -2462,7 +2462,7 @@ static void yahoo_login(GaimAccount *account, GaimStatus *status) {
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
-	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE) || !strcmp(id, YAHOO_STATUS_TYPE_ONLINE)) {
+	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE)) {
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BRB)) {
 		yd->current_status = YAHOO_STATUS_BRB;
@@ -3205,9 +3205,6 @@ static GList *yahoo_status_types(GaimAccount *account)
 		yd = gc->proto_data;
 
 	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, _("Offline"), TRUE);
-	types = g_list_append(types, type);
-
-	type = gaim_status_type_new(GAIM_STATUS_ONLINE, YAHOO_STATUS_TYPE_ONLINE, _("Online"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE, _("Available"), TRUE);

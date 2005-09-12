@@ -2941,11 +2941,7 @@ novell_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	/* TODO: Do we need both an "online" and an "available" state? */
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE, "available", _("Available"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, "available", _("Available"), TRUE, TRUE, TRUE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, TRUE);

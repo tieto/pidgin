@@ -569,10 +569,6 @@ msn_status_types(GaimAccount *account)
 			"offline", _("Offline"), FALSE, FALSE, FALSE);
 	types = g_list_append(types, status);
 
-	status = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
-			"online", _("Online"), FALSE, FALSE, FALSE);
-	types = g_list_append(types, status);
-
 	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 			"available", _("Available"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);

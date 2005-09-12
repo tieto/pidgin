@@ -963,7 +963,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 	gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
 
 	/* Update online status */
-	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_ONLINE, NULL);
+	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_AVAILABLE, NULL);
 
 	/* Finally, start watching this user so we receive its status
 	   changes from the server */

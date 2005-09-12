@@ -88,7 +88,6 @@
 
 /* stages of conciousness */
 #define MW_STATE_OFFLINE  "offline"
-#define MW_STATE_ONLINE   "online"
 #define MW_STATE_ACTIVE   "available"
 #define MW_STATE_AWAY     "away"
 #define MW_STATE_BUSY     "busy"
@@ -2737,9 +2736,6 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
 			      _("Offline"), TRUE);
   types = g_list_append(types, type);
 
-  type = gaim_status_type_new(GAIM_STATUS_ONLINE, MW_STATE_ONLINE,
-			      _("Online"), TRUE);
-
   type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, MW_STATE_ACTIVE,
 			      _("Active"), TRUE);
   gaim_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
@@ -2760,20 +2756,6 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
 
   return types;
 }
-
-
-#if 0
-static GList *mw_prpl_away_states(GaimConnection *gc) {
-  GList *l = NULL;
-
-  l = g_list_append(l, MW_STATE_ACTIVE);
-  l = g_list_append(l, MW_STATE_AWAY);
-  l = g_list_append(l, MW_STATE_BUSY);
-  l = g_list_append(l, (char *) GAIM_AWAY_CUSTOM);
-
-  return l;
-}
-#endif
 
 
 static void conf_create_prompt_cancel(GaimBuddy *buddy,

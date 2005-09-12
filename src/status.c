@@ -152,7 +152,6 @@ static struct GaimStatusPrimitiveMap
 {
 	{ GAIM_STATUS_UNSET,           "unset",           N_("Unset")           },
 	{ GAIM_STATUS_OFFLINE,         "offline",         N_("Offline")         },
-	{ GAIM_STATUS_ONLINE,          "online",          N_("Online")          },
 	{ GAIM_STATUS_AVAILABLE,       "available",       N_("Available")       },
 	{ GAIM_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
 	{ GAIM_STATUS_HIDDEN,          "hidden",          N_("Hidden")          },

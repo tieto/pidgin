@@ -906,7 +906,7 @@ static void jabber_list_emblems(GaimBuddy *b, const char **se, const char **sw,
 	} else {
 		GaimStatusType *status_type = gaim_status_get_type(gaim_presence_get_active_status(gaim_buddy_get_presence(b)));
 
-		if(gaim_status_type_get_primitive(status_type) > GAIM_STATUS_ONLINE) {
+		if(gaim_status_type_get_primitive(status_type) > GAIM_STATUS_AVAILABLE) {
 			*se = gaim_status_type_get_id(status_type);
 			if(!strcmp(*se, "xa"))
 				*se = "extendedaway";
@@ -1002,12 +1002,6 @@ static GList *jabber_status_types(GaimAccount *account)
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline",
 			_("Offline"), FALSE, TRUE, FALSE, "message", _("Message"),
-			gaim_value_new(GAIM_TYPE_STRING), NULL);
-	types = g_list_append(types, type);
-
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_ONLINE, "online",
-			_("Online"), FALSE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 

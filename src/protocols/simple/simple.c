@@ -247,9 +247,6 @@ static GList *simple_status_types(GaimAccount *acc) {
 	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_ONLINE, "online", _("Online"), FALSE);
-	types = g_list_append(types, type);
-
 	type = gaim_status_type_new_with_attrs(
 		GAIM_STATUS_AVAILABLE, "available", _("Available"),
 		TRUE, TRUE, FALSE,

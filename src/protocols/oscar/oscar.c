@@ -49,7 +49,6 @@
 
 #define OSCAR_STATUS_ID_INVISIBLE	"invisible"
 #define OSCAR_STATUS_ID_OFFLINE		"offline"
-#define OSCAR_STATUS_ID_ONLINE		"online"
 #define OSCAR_STATUS_ID_AVAILABLE	"available"
 #define OSCAR_STATUS_ID_AWAY		"away"
 #define OSCAR_STATUS_ID_DND			"dnd"
@@ -6633,7 +6632,7 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
 
-	if (!strcmp(status_id, OSCAR_STATUS_ID_ONLINE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
+	if (!strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE) || !strcmp(status_id, OSCAR_STATUS_ID_AVAILABLE))
 		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
 
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_AWAY))
@@ -7760,11 +7759,6 @@ oscar_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
 									 _("Offline"), FALSE, TRUE, FALSE);
-	status_types = g_list_append(status_types, type);
-
-	type = gaim_status_type_new_full(GAIM_STATUS_ONLINE,
-									 OSCAR_STATUS_ID_ONLINE,
-									 _("Online"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
