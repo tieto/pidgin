@@ -387,11 +387,11 @@ void jabber_set_info(GaimConnection *gc, const char *info)
 			if(avatar_file && g_file_get_contents(avatar_file, &avatar_data_tmp, &avatar_len, &error)) {
 				xmlnode *photo, *binval;
 				gchar *enc;
-				avatar_data = (guchar *) avatar_data_tmp;
 				int i;
 				unsigned char hashval[20];
 				char *p, hash[41];
 
+				avatar_data = (guchar *) avatar_data_tmp;
 				photo = xmlnode_new_child(vc_node, "PHOTO");
 				binval = xmlnode_new_child(photo, "BINVAL");
 				enc = gaim_base64_encode(avatar_data, avatar_len);
