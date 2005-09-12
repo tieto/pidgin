@@ -67,31 +67,12 @@ struct queued_message {
 	GaimMessageFlags flags;
 };
 
-struct smiley_theme {
-	char *path;
-	char *name;
-	char *desc;
-	char *icon;
-	char *author;
-
-	struct smiley_list *list;
-};
-
 /* Globals in gtkmain.c */
 extern int docklet_count;
-
-/* Globals in gtkthemes.c */
-extern struct smiley_theme *current_smiley_theme;
-extern GSList *smiley_themes;
 
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();
 
-/* Functions in gtkthemes.c */
-extern void smiley_themeize(GtkWidget *);
-extern void smiley_theme_probe();
-extern void load_smiley_theme(const char *file, gboolean load);
-extern GSList *get_proto_smileys(const char *id);
 
 #endif /* _GAIM_GTKDIALOGS_H_ */

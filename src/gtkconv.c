@@ -60,6 +60,7 @@
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
+#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
 
@@ -5686,22 +5687,49 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 	GaimGtkConversation *gtkconv;
 	GtkIMHtmlSmiley *smiley;
 	GdkPixbufLoader *loader;
-	const char *sml;
+	struct smiley_list *list;
+	const char *sml = NULL, *conv_sml;
 
-	if (conv == NULL || smile == NULL) {
+	if (!conv || !smile || !*smile) {
 		return FALSE;
 	}
 
-	sml = gaim_account_get_protocol_name(conv->account); /* XXX this sucks */
+	/* If smileys are off, return false */
+	if (gaim_gtkthemes_smileys_disabled())
+		return FALSE;
+
+	/* If possible add this smiley to the current theme.
+	 * The addition is only temporary: custom smilies aren't saved to disk. */
+	conv_sml = gaim_account_get_protocol_name(conv->account);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	for (list = (struct smiley_list *)current_smiley_theme->list; list; list = list->next) {
+		if (!strcmp(list->sml, conv_sml)) {
+			sml = list->sml;
+			break;
+		}
+	}
+
 	smiley = gtk_imhtml_smiley_get(GTK_IMHTML(gtkconv->imhtml), sml, smile);
 
-	/* TODO: implement changing a custom smiley in the middle of a conversation */
-
 	if (smiley) {
-		return FALSE;
-	}
 
+		if (!(smiley->flags & GTK_IMHTML_SMILEY_CUSTOM)) {
+			return FALSE;
+		}
+
+		/* Close the old GdkPixbufAnimation, then create a new one for
+		 * the smiley we are about to receive */
+		g_object_unref(G_OBJECT(smiley->icon));
+
+		smiley->loader = gdk_pixbuf_loader_new();
+		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
+		if (smiley->icon)
+			g_object_ref(G_OBJECT(smiley->icon));
+
+		/* A custom smiley is already associated */
+		return TRUE;
+	}
 
 	loader = gdk_pixbuf_loader_new();
 
@@ -5712,10 +5740,12 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 	smiley->file   = NULL;
 	smiley->smile  = g_strdup(smile);
 	smiley->loader = loader;
+	smiley->flags  = smiley->flags | GTK_IMHTML_SMILEY_CUSTOM;
 
 	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
 	if (smiley->icon)
 		g_object_ref(G_OBJECT(smiley->icon));
+
 
 	gtk_imhtml_associate_smiley(GTK_IMHTML(gtkconv->imhtml), sml, smiley);
 
@@ -5752,6 +5782,11 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 	GtkIMHtmlSmiley *smiley;
 	GdkPixbufLoader *loader;
 	const char *sml;
+	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor = NULL;
+	GtkTextIter end;
+	GtkIMHtml *imhtml;
+	GSList *current = NULL;
 
 	g_return_if_fail(conv  != NULL);
 	g_return_if_fail(smile != NULL);
@@ -5767,6 +5802,36 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 
 	if (!loader)
 		return;
+
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+
+	for (current = smiley->anchors; current != NULL; current = g_slist_next(current)) {
+
+		icon = gtk_image_new_from_animation(smiley->icon);
+		gtk_widget_show(icon);
+
+		if (icon) {
+			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smile)), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smile), g_free);
+
+			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(gtkconv->imhtml), icon, anchor);
+		}
+
+	}
+
+	g_slist_free(smiley->anchors);
+	smiley->anchors = NULL;
+
+	/* Scroll to the end of the widget in case the smiley height was big... */
+	/* FIXME: need to test this actually works, previous dealings with scrolling
+	 * makes me question it */
+	imhtml = GTK_IMHTML(gtkconv->imhtml);
+	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(imhtml->text_buffer), &end);
+	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0, TRUE, 0, 0);
 
 	gaim_debug_info("gtkconv", "About to close the smiley pixbuf\n");
 
@@ -5803,7 +5868,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
 
-		smiley_themeize(gtkconv->imhtml);
+		gaim_gtkthemes_smiley_themeize(gtkconv->imhtml);
 
 		update_tab_icon(conv);
 	}

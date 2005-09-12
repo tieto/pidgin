@@ -57,6 +57,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
+#include "gtkthemes.h"
 #include "gtkutils.h"
 
 static guint accels_save_timer = 0;
@@ -93,7 +94,7 @@ gaim_setup_imhtml(GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
 					 G_CALLBACK(url_clicked_cb), NULL);
 
-	smiley_themeize(imhtml);
+	gaim_gtkthemes_smiley_themeize(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 }
@@ -241,7 +242,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_label_set_pattern(GTK_LABEL(label), "_");
 	gtk_container_add(GTK_CONTAINER(menuitem), label);
 	gtk_widget_show(label);
-/* FIXME: Go back and fix this 
+/* FIXME: Go back and fix this
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 */
@@ -1206,17 +1207,17 @@ gaim_gtk_menu_position_func(GtkMenu *menu,
 	monitor_num = gdk_screen_get_monitor_at_point (screen, *x, *y);
 
 	push_in = FALSE;
-  
+
 	/*
 	 * The placement of popup menus horizontally works like this (with
 	 * RTL in parentheses)
 	 *
 	 * - If there is enough room to the right (left) of the mouse cursor,
 	 *   position the menu there.
-	 * 
-	 * - Otherwise, if if there is enough room to the left (right) of the 
+	 *
+	 * - Otherwise, if if there is enough room to the left (right) of the
 	 *   mouse cursor, position the menu there.
-	 * 
+	 *
 	 * - Otherwise if the menu is smaller than the monitor, position it
 	 *   on the side of the mouse cursor that has the most space available
 	 *
@@ -1236,7 +1237,7 @@ gaim_gtk_menu_position_func(GtkMenu *menu,
 	/* position horizontally */
 
 	/* the amount of space we need to position the menu. Note the
-	 * menu is offset "xthickness" pixels 
+	 * menu is offset "xthickness" pixels
 	 */
 	needed_width = requisition.width - xthickness;
 
@@ -1300,7 +1301,7 @@ gaim_gtk_menu_position_func(GtkMenu *menu,
 			*y = *y - ythickness;
 		else
 			*y = *y + ythickness - requisition.height + 1;
- 
+
 		*y = CLAMP (*y, monitor.y,
 			   monitor.y + monitor.height - requisition.height);
 	}

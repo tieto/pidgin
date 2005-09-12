@@ -4311,6 +4311,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor;
 	char *unescaped = gaim_unescape_html(smiley);
+	GtkIMHtmlSmiley *imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
 		annipixbuf = gtk_smiley_tree_image(imhtml, sml, unescaped);
@@ -4345,6 +4346,9 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 
 		gtk_widget_show(icon);
 		gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), icon, anchor);
+	} else if (imhtml_smiley != NULL && (imhtml->format_functions & GTK_IMHTML_SMILEY)) {
+		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);
+		imhtml_smiley->anchors = g_slist_append(imhtml_smiley->anchors, anchor);
 	} else {
 		gtk_text_buffer_insert(imhtml->text_buffer, iter, smiley, -1);
 	}

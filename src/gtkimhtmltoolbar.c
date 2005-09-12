@@ -34,6 +34,7 @@
 
 #include "gtkdialogs.h"
 #include "gtkimhtmltoolbar.h"
+#include "gtkthemes.h"
 #include "gtkutils.h"
 
 static GtkHBoxClass *parent_class = NULL;
@@ -652,9 +653,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	if (toolbar->sml)
-		smileys = get_proto_smileys(toolbar->sml);
+		smileys = gaim_gtkthemes_get_proto_smileys(toolbar->sml);
 	else
-		smileys = get_proto_smileys(NULL);
+		smileys = gaim_gtkthemes_get_proto_smileys(NULL);
 
 	while(smileys) {
 		GtkIMHtmlSmiley *smiley = smileys->data;

@@ -4,7 +4,7 @@
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -31,22 +31,25 @@
 #include "gtkconv.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
-
-struct smiley_list {
-	char *sml;
-	GSList *smileys;
-	struct smiley_list *next;
-};
+#include "gtkthemes.h"
 
 GSList *smiley_themes = NULL;
 struct smiley_theme *current_smiley_theme;
 
-void smiley_themeize(GtkWidget *imhtml)
+gboolean gaim_gtkthemes_smileys_disabled()
+{
+	if (!current_smiley_theme)
+		return 1;
+
+	return strcmp(current_smiley_theme->name, "none") == 0;
+}
+
+void gaim_gtkthemes_smiley_themeize(GtkWidget *imhtml)
 {
 	struct smiley_list *list;
 	if (!current_smiley_theme)
 		return;
-	
+
 	gtk_imhtml_remove_smileys(GTK_IMHTML(imhtml));
 	list = current_smiley_theme->list;
 	while (list) {
@@ -60,7 +63,7 @@ void smiley_themeize(GtkWidget *imhtml)
 	}
 }
 
-void load_smiley_theme(const char *file, gboolean load)
+void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = g_fopen(file, "r");
 	char buf[256];
@@ -196,8 +199,8 @@ void load_smiley_theme(const char *file, gboolean load)
 			GaimConversation *conv = cnv->data;
 
 			if (GAIM_IS_GTK_CONVERSATION(conv)) {
-				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
-				smiley_themeize(GAIM_GTK_CONVERSATION(conv)->entry);
+				gaim_gtkthemes_smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
+				gaim_gtkthemes_smiley_themeize(GAIM_GTK_CONVERSATION(conv)->entry);
 			}
 		}
 	}
@@ -206,7 +209,7 @@ void load_smiley_theme(const char *file, gboolean load)
 	fclose(f);
 }
 
-void smiley_theme_probe()
+void gaim_gtkthemes_smiley_theme_probe()
 {
 	GDir *dir;
 	const gchar *file;
@@ -227,7 +230,7 @@ void smiley_theme_probe()
 				 * We set the second argument to FALSE so that it doesn't load
 				 * the theme yet.
 				 */
-				load_smiley_theme(path, FALSE);
+				gaim_gtkthemes_load_smiley_theme(path, FALSE);
 				g_free(path);
 			}
 			g_dir_close(dir);
@@ -238,7 +241,7 @@ void smiley_theme_probe()
 	}
 }
 
-GSList *get_proto_smileys(const char *id) {
+GSList *gaim_gtkthemes_get_proto_smileys(const char *id) {
 	GaimPlugin *proto;
 	struct smiley_list *list, *def;
 
@@ -262,4 +265,15 @@ GSList *get_proto_smileys(const char *id) {
 	}
 
 	return list ? list->smileys : def->smileys;
+}
+
+void gaim_gtkthemes_init()
+{
+	if (current_smiley_theme == NULL) {
+		gaim_gtkthemes_smiley_theme_probe();
+		if (smiley_themes != NULL) {
+			struct smiley_theme *smile = smiley_themes->data;
+			gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+		}
+	}
 }

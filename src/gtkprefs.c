@@ -46,6 +46,7 @@
 #include "gtkpluginpref.h"
 #include "gtkprefs.h"
 #include "gtksound.h"
+#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
 
@@ -478,12 +479,11 @@ static GtkTreePath *theme_refresh_theme_list()
 	int ind = 0;
 
 
-	smiley_theme_probe();
+	gaim_gtkthemes_smiley_theme_probe();
 
-	if (!smiley_themes)
+	if (!(themes = smiley_themes))
 		return NULL;
 
-	themes = smiley_themes;
 
 	gtk_list_store_clear(smiley_theme_store);
 
@@ -702,7 +702,7 @@ theme_page()
 
 	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
 
-	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te, 
+	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
 
 	g_signal_connect(G_OBJECT(view), "drag_data_received", G_CALLBACK(theme_dnd_recv), smiley_theme_store);
@@ -1832,7 +1832,7 @@ away_page()
 
 static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
 
-static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model) 
+static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	gchar *buf, *pname, *perr, *pdesc, *pauth, *pweb;
 	GtkTreeIter  iter;
@@ -1845,11 +1845,11 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	plug = g_value_get_pointer(&val);
 
 	pname = g_markup_escape_text(_(plug->info->name), -1);
-	pdesc = (plug->info->description) ? 
+	pdesc = (plug->info->description) ?
 			g_markup_escape_text(_(plug->info->description), -1) : NULL;
 	pauth = (plug->info->author) ?
 			g_markup_escape_text(_(plug->info->author), -1) : NULL;
-	pweb = (plug->info->homepage) ? 
+	pweb = (plug->info->homepage) ?
 		   g_markup_escape_text(_(plug->info->homepage), -1) : NULL;
 
 	if (plug->error != NULL) {
@@ -2229,7 +2229,7 @@ smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					 gpointer data)
 {
 	if (!strcmp(name, "/gaim/gtk/smileys/theme"))
-		load_smiley_theme((const char *)value, TRUE);
+		gaim_gtkthemes_load_smiley_theme((const char *)value, TRUE);
 }
 
 void

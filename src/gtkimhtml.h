@@ -72,6 +72,10 @@ typedef enum {
 	GTK_IMHTML_ALL =       -1
 } GtkIMHtmlButtons;
 
+typedef enum {
+	GTK_IMHTML_SMILEY_CUSTOM =	1 << 0
+} GtkIMHtmlSmileyFlags;
+
 struct _GtkIMHtml {
 	GtkTextView text_view;
 	GtkTextBuffer *text_buffer;
@@ -155,6 +159,8 @@ struct _GtkIMHtmlSmiley {
 	GdkPixbufAnimation *icon;
 	gboolean hidden;
 	GdkPixbufLoader *loader;
+	GSList *anchors;
+	GtkIMHtmlSmileyFlags flags; 
 };
 
 struct _GtkIMHtmlScalable {

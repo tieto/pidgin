@@ -57,6 +57,7 @@
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
+#include "gtkthemes.h"
 #include "gtkutils.h"
 #include "gtkstock.h"
 #include "gtkwhiteboard.h"
@@ -215,13 +216,7 @@ ui_main()
 	char *icon_path;
 #endif
 
-	if (current_smiley_theme == NULL) {
-		smiley_theme_probe();
-		if (smiley_themes != NULL) {
-			struct smiley_theme *smile = smiley_themes->data;
-			load_smiley_theme(smile->path, TRUE);
-		}
-	}
+	gaim_gtkthemes_init();
 
 	gaim_gtk_blist_setup_sort_methods();
 

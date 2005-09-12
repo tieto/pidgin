@@ -313,6 +313,7 @@ gaim_headers = \
 	gtksourceiter.h \
 	gtkstatusbox.h \
 	gtkstock.h \
+	gtkthemes.h \
 	gtkutils.h \
 	internal.h \
 	gtkwhiteboard.h
