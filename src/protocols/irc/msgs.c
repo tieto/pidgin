@@ -626,7 +626,7 @@ static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *
 		gaim_prpl_got_user_status(irc->account, name, "offline", NULL);
 		ib->online = FALSE;
 	} else if (!ib->online && ib->flag) {
-		gaim_prpl_got_user_status(irc->account, name, "online", NULL);
+		gaim_prpl_got_user_status(irc->account, name, "available", NULL);
 		ib->online = TRUE;
 	}
 }
