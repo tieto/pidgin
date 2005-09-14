@@ -22,11 +22,11 @@ TARGET = libgg
 
 # Compiler Options
 
-CFLAGS =
+CFLAGS = -include win32dep.h
 
 DEFINES =
 
-# Static or Plugin... 
+# Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
   DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
@@ -71,16 +71,17 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 
 C_SRC =	\
 	lib/common.c \
-	lib/dcc.c \
 	lib/events.c \
 	lib/http.c \
 	lib/libgadu.c \
 	lib/obsolete.c \
 	lib/pubdir.c \
 	lib/pubdir50.c \
-	lib/compat.h \
-	lib/libgadu.h \
-	gg.c
+	buddylist.c \
+	confer.c \
+	gg.c \
+	search.c \
+	utils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
@@ -89,9 +90,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =	\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
 			-lgmodule-2.0 \
 			-lgobject-2.0 \
 			-lintl \
@@ -140,5 +140,6 @@ $(TARGET).dll: $(OBJECTS) $(GAIM_TOP)/src/gaim.lib
 
 clean:
 	rm -rf *.o
+	rm -rf $(GG_ROOT)/lib/*.o
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib

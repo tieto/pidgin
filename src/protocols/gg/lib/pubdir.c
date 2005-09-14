@@ -1,4 +1,4 @@
-/* $Id: pubdir.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: pubdir.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -145,7 +145,7 @@ struct gg_http *gg_unregister3(uin_t uin, const char *password, const char *toke
 		errno = EFAULT;
 		return NULL;
 	}
-    
+
 	__pwd = gg_saprintf("%ld", random());
 	__fmpwd = gg_urlencode(password);
 	__tokenid = gg_urlencode(tokenid);

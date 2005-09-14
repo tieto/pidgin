@@ -1,4 +1,4 @@
-/* $Id: libgadu.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: libgadu.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -22,6 +22,7 @@
  */
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -29,11 +30,19 @@
 #ifdef sun
 #  include <sys/filio.h>
 #endif
+#else
+#include <io.h>
+#include <fcntl.h>
+#include <errno.h>
+#define SHUT_RDWR SD_BOTH
+#endif
 
 #include "libgadu-config.h"
 
 #include <errno.h>
+#ifndef _WIN32
 #include <netdb.h>
+#endif
 #ifdef __GG_LIBGADU_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
@@ -72,7 +81,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgadu.c 13582 2005-08-28 22:46:01Z boler $";
+= "$Id: libgadu.c 13801 2005-09-14 19:10:39Z datallah $";
 #endif 
 
 /*
@@ -169,6 +178,8 @@ unsigned int gg_login_hash(const unsigned char *password, unsigned int seed)
 	return y;
 }
 
+#ifndef _WIN32
+
 /*
  * gg_resolve() // funkcja wewnêtrzna
  *
@@ -231,6 +242,7 @@ int gg_resolve(int *fd, int *pid, const char *hostname)
 
 	return 0;
 }
+#endif
 
 #ifdef __GG_LIBGADU_HAVE_PTHREAD
 
@@ -355,6 +367,105 @@ cleanup:
 	return -1;
 }
 
+#elif defined _WIN32
+
+struct gg_resolve_win32thread_data {
+	char *hostname;
+	int fd;
+};
+
+static DWORD WINAPI gg_resolve_win32thread_thread(LPVOID arg)
+{
+	struct gg_resolve_win32thread_data *d = arg;
+	struct in_addr a;
+
+	if ((a.s_addr = inet_addr(d->hostname)) == INADDR_NONE) {
+		struct in_addr *hn;
+		
+		if (!(hn = gg_gethostbyname(d->hostname)))
+			a.s_addr = INADDR_NONE;
+		else {
+			a.s_addr = hn->s_addr;
+			free(hn);
+		}
+	}
+
+	write(d->fd, &a, sizeof(a));
+	close(d->fd);
+
+	free(d->hostname);
+	d->hostname = NULL;
+
+	free(d);
+
+	return 0;
+}
+
+
+int gg_resolve_win32thread(int *fd, void **resolver, const char *hostname)
+{
+	struct gg_resolve_win32thread_data *d = NULL;
+	HANDLE h;
+	DWORD dwTId;
+	int pipes[2], new_errno;
+
+	gg_debug(GG_DEBUG_FUNCTION, "** gg_resolve_win32thread(%p, %p, \"%s\");\n", fd, resolver, hostname);
+	
+	if (!resolver || !fd || !hostname) {
+		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() invalid arguments\n");
+		errno = EFAULT;
+		return -1;
+	}
+
+	if (pipe(pipes) == -1) {
+		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() unable to create pipes (errno=%d, %s)\n", errno, strerror(errno));
+		return -1;
+	}
+
+	if (!(d = malloc(sizeof(*d)))) {
+		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() out of memory\n");
+		new_errno = GetLastError();
+		goto cleanup;
+	}
+
+	d->hostname = NULL;
+
+	if (!(d->hostname = strdup(hostname))) {
+		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() out of memory\n");
+		new_errno = GetLastError();
+		goto cleanup;
+	}
+
+	d->fd = pipes[1];
+
+	h = CreateThread(NULL, 0, gg_resolve_win32thread_thread,
+		d, 0, &dwTId);
+
+	if (h == NULL) {
+		gg_debug(GG_DEBUG_MISC, "// gg_resolve_win32thread() unable to create thread\n");
+		new_errno = GetLastError();
+		goto cleanup;
+	}
+
+	*resolver = h;
+	*fd = pipes[0];
+
+	return 0;
+
+cleanup:
+	if (d) {
+		free(d->hostname);
+		free(d);
+	}
+
+	close(pipes[0]);
+	close(pipes[1]);
+
+	errno = new_errno;
+
+	return -1;
+
+}
 #endif
 
 /*
@@ -879,10 +990,12 @@ struct gg_session *gg_login(const struct gg_login_params *p)
 	}
 	
 	if (!sess->server_addr || gg_proxy_enabled) {
-#ifndef __GG_LIBGADU_HAVE_PTHREAD
-		if (gg_resolve(&sess->fd, &sess->pid, hostname)) {
-#else
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
 		if (gg_resolve_pthread(&sess->fd, &sess->resolver, hostname)) {
+#elif defined _WIN32
+		if (gg_resolve_win32thread(&sess->fd, &sess->resolver, hostname)) {
+#else
+		if (gg_resolve(&sess->fd, &sess->pid, hostname)) {
 #endif
 			gg_debug(GG_DEBUG_MISC, "// gg_login() resolving failed (errno=%d, %s)\n", errno, strerror(errno));
 			goto fail;
@@ -948,6 +1061,13 @@ void gg_free_session(struct gg_session *sess)
 	if (sess->resolver) {
 		pthread_cancel(*((pthread_t*) sess->resolver));
 		free(sess->resolver);
+		sess->resolver = NULL;
+	}
+#elif defined _WIN32
+	if (sess->resolver) {
+		HANDLE h = sess->resolver;
+		TerminateThread(h, 0);
+		CloseHandle(h);
 		sess->resolver = NULL;
 	}
 #else
@@ -1095,6 +1215,13 @@ void gg_logoff(struct gg_session *sess)
 	if (sess->resolver) {
 		pthread_cancel(*((pthread_t*) sess->resolver));
 		free(sess->resolver);
+		sess->resolver = NULL;
+	}
+#elif defined _WIN32
+	if (sess->resolver) {
+		HANDLE h = sess->resolver;
+		TerminateThread(h, 0);
+		CloseHandle(h);
 		sess->resolver = NULL;
 	}
 #else

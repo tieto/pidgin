@@ -1,4 +1,4 @@
-/* $Id: dcc.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: dcc.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -21,12 +21,14 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #ifdef sun
 #  include <sys/filio.h>
+#endif
 #endif
 
 #include <ctype.h>

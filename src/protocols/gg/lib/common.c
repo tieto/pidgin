@@ -1,4 +1,4 @@
-/* $Id: common.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: common.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -19,6 +19,7 @@
  *  USA.
  */
 
+#ifndef _WIN32
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
@@ -27,10 +28,13 @@
 #ifdef sun
 #  include <sys/filio.h>
 #endif
+#endif
 
 #include <errno.h>
 #include <fcntl.h>
+#ifndef _WIN32
 #include <netdb.h>
+#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

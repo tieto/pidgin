@@ -1,4 +1,4 @@
-/* $Id: events.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: events.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -21,11 +21,13 @@
  */
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
 
 #include "libgadu-config.h"
 
@@ -830,15 +832,22 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			close(sess->fd);
 			sess->fd = -1;
 
-#ifndef __GG_LIBGADU_HAVE_PTHREAD
-			waitpid(sess->pid, NULL, 0);
-			sess->pid = -1;
-#else
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
 			if (sess->resolver) {
 				pthread_cancel(*((pthread_t*) sess->resolver));
 				free(sess->resolver);
 				sess->resolver = NULL;
 			}
+#elif defined _WIN32
+			if (sess->resolver) {
+				HANDLE h = sess->resolver;
+				TerminateThread(h, 0);
+				CloseHandle(h);
+				sess->resolver = NULL;
+			}
+#else
+			waitpid(sess->pid, NULL, 0);
+			sess->pid = -1;
 #endif
 
 			if (failed) {

@@ -1,4 +1,4 @@
-/* $Id: http.c 13582 2005-08-28 22:46:01Z boler $ */
+/* $Id: http.c 13801 2005-09-14 19:10:39Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -19,16 +19,20 @@
  */
 
 #include <sys/types.h>
+#ifndef _WIN32
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
 
 #include "libgadu-config.h"
 
 #include <ctype.h>
 #include <errno.h>
+#ifndef _WIN32
 #include <netdb.h>
+#endif
 #ifdef __GG_LIBGADU_HAVE_PTHREAD
 #  include <pthread.h>
 #endif
@@ -101,10 +105,12 @@ struct gg_http *gg_http_connect(const char *hostname, int port, int async, const
 	gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-QUERY-----\n%s\n=> -----END-HTTP-QUERY-----\n", h->query);
 
 	if (async) {
-#ifndef __GG_LIBGADU_HAVE_PTHREAD
-		if (gg_resolve(&h->fd, &h->pid, hostname)) {
-#else
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
 		if (gg_resolve_pthread(&h->fd, &h->resolver, hostname)) {
+#elif defined _WIN32
+		if (gg_resolve_win32thread(&h->fd, &h->resolver, hostname)) {
+#else
+		if (gg_resolve(&h->fd, &h->pid, hostname)) {
 #endif
 			gg_debug(GG_DEBUG_MISC, "// gg_http_connect() resolver failed\n");
 			gg_http_free(h);
@@ -198,14 +204,21 @@ int gg_http_watch_fd(struct gg_http *h)
 		close(h->fd);
 		h->fd = -1;
 
-#ifndef __GG_LIBGADU_HAVE_PTHREAD
-		waitpid(h->pid, NULL, 0);
-#else
+#ifdef __GG_LIBGADU_HAVE_PTHREAD
 		if (h->resolver) {
 			pthread_cancel(*((pthread_t *) h->resolver));
 			free(h->resolver);
 			h->resolver = NULL;
 		}
+#elif defined _WIN32
+		if (h->resolver) {
+			HANDLE hnd = h->resolver;
+			TerminateThread(hnd, 0);
+			CloseHandle(hnd);
+			h->resolver = NULL;
+		}
+#else
+		waitpid(h->pid, NULL, 0);
 #endif
 
 		gg_debug(GG_DEBUG_MISC, "=> http, connecting to %s:%d\n", inet_ntoa(a), h->port);

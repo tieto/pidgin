@@ -1,6 +1,6 @@
 /* Local libgadu configuration. */
 
-#include "../../../config.h"
+/* #include "../../../config.h" */
 
 #ifndef __GG_LIBGADU_CONFIG_H
 #define __GG_LIBGADU_CONFIG_H
@@ -35,8 +35,16 @@
 #include <stdint.h>
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
+#ifndef _WIN32
 #define __GG_LIBGADU_HAVE_C99_VSNPRINTF
+#else
+#undef __GG_LIBGADU_HAVE_C99_VSNPRINTF
+#endif
 
 #define vnsprintf g_vnsprintf
+
+#ifdef _WIN32
+#define random (long) rand
+#endif
 
 #endif /* __GG_LIBGADU_CONFIG_H */
