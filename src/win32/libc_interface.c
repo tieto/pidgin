@@ -280,11 +280,13 @@ int wgaim_read(int fd, void *buf, unsigned int size) {
 			errno = WSAGetLastError();
 			return -1;
 		}
+#if 0
 		else if( ret == 0 ) {
 			/* connection has been gracefully closed */
 			errno = WSAENOTCONN;
 			return -1;
 		}
+#endif
 		else {
 			/* success reading socket */
 			return ret;
