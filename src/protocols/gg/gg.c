@@ -1174,24 +1174,25 @@ static void ggp_login(GaimAccount *account, GaimStatus *status)
 /* static void ggp_close(GaimConnection *gc) {{{ */
 static void ggp_close(GaimConnection *gc)
 {
-	GGPInfo *info;
 
 	if (gc == NULL) {
 		gaim_debug_info("gg", "gc == NULL\n");
 		return;
 	}
 
-	info = gc->proto_data;
-
-	/* XXX: Any way to pass description here? */
-	if (info->session != NULL)
-		gg_change_status(info->session, GG_STATUS_NOT_AVAIL);
+	if (gc->proto_data) {
+		GGPInfo *info = gc->proto_data;
+		/* XXX: Any way to pass description here? */
+		if (info->session != NULL) {
+			gg_change_status(info->session, GG_STATUS_NOT_AVAIL);
+			gg_logoff(info->session);
+			gg_free_session(info->session);
+		}
+	}
 
 	if (gc->inpa > 0)
 		gaim_input_remove(gc->inpa);
 
-	gg_logoff(info->session);
-	gg_free_session(info->session);
 	ggp_buddylist_offline(gc);
 
 	gaim_debug_info("gg", "Connection closed.\n");
