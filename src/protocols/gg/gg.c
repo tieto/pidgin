@@ -1615,6 +1615,29 @@ static GaimPluginInfo info = {
 };
 /* }}} */
 
+static void gaim_gg_debug_handler(int level, const char * format, va_list args) {
+	GaimDebugLevel gaim_level;
+	char *msg = g_strdup_vprintf(format, args);
+
+	/* This is pretty pointless since the GG_DEBUG levels don't correspond to
+	 * the gaim ones */
+	switch (level) {
+		case GG_DEBUG_FUNCTION:
+			gaim_level = GAIM_DEBUG_INFO;
+			break;
+		case GG_DEBUG_MISC:
+		case GG_DEBUG_NET:
+		case GG_DEBUG_DUMP:
+		case GG_DEBUG_TRAFFIC:
+		default:
+			gaim_level = GAIM_DEBUG_MISC;
+			break;
+	}
+
+	gaim_debug(gaim_level, "gg", msg);
+	g_free(msg);
+}
+
 /*
  */
 /* static void init_plugin(GaimPlugin *plugin) {{{ */
@@ -1626,6 +1649,8 @@ static void init_plugin(GaimPlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
+
+	gg_debug_handler = gaim_gg_debug_handler;
 }
 /* }}} */
 
