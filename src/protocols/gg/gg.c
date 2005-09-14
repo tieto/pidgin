@@ -236,6 +236,7 @@ static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFiel
 	struct gg_pubdir *s;
 	uin_t uin;
 	gchar *email, *p1, *p2, *t;
+	GGPToken *token = info->register_token;
 
 	email = charset_convert(gaim_request_fields_get_string(fields, "email"),
 			     "UTF-8", "CP1250");
@@ -250,28 +251,38 @@ static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFiel
 
 	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		gaim_notify_error(account, NULL, _("Fill in the fields."), NULL);
+		gaim_connection_error(gc, _("Fill in the registration fields."));
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
-		gaim_notify_error(account, NULL, _("Passwords do not match."), NULL);
+		gaim_connection_error(gc, _("Passwords do not match."));
 		goto exit_err;
 	}
 
-	h = gg_register3(email, p1, info->register_token->token_id, t, 0);
+	h = gg_register3(email, p1, token->token_id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
-		gaim_notify_error(account, NULL,
-			_("Unable to register new account. Error occured.\n"),
-			NULL);
+		gaim_connection_error(gc,
+			_("Unable to register new account. Error occurred.\n"));
 		goto exit_err;
 	}
 
 	uin = s->uin;
 	gaim_debug_info("gg", "registered uin: %d\n", uin);
 
+	g_free(t);
+	t = g_strdup_printf("%u", uin);
+	gaim_account_set_username(account, t);
+	/* Save the password if remembering passwords for the account */
+	gaim_account_set_password(account, p1);
+
 	gaim_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
+
+	/* TODO: the currently open Accounts Window will not be updated withthe new username and etc, we need to somehow have it refresh at this point */
+
+	/* Need to disconnect or actually log in. For now, we disconnect. */
+	gaim_connection_destroy(gc);
 
 exit_err:
 	gg_register_free(h);
@@ -279,10 +290,22 @@ exit_err:
 	g_free(p1);
 	g_free(p2);
 	g_free(t);
-	g_free(info->register_token->token_id);
-	g_free(info->register_token);
+	g_free(token->token_id);
+	g_free(token);
 }
 /* }}} */
+
+static void ggp_callback_register_account_cancel(GaimConnection *gc, GaimRequestFields *fields)
+{
+	GGPInfo *info = gc->proto_data;
+	GGPToken *token = info->register_token;
+
+	gaim_connection_destroy(gc);
+
+	g_free(token->token_id);
+	g_free(token);
+
+}
 
 /* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
 
@@ -1188,6 +1211,8 @@ static void ggp_close(GaimConnection *gc)
 			gg_logoff(info->session);
 			gg_free_session(info->session);
 		}
+		g_free(info);
+		gc->proto_data = NULL;
 	}
 
 	if (gc->inpa > 0)
@@ -1473,13 +1498,13 @@ static void ggp_register_user(GaimAccount *account)
 
 	gg_token_free(req);
 
-
 	gaim_request_fields(account,
 		_("Register New Gadu-Gadu Account"),
 		_("Register New Gadu-Gadu Account"),
 		_("Please, fill in the following fields"),
 		fields, _("OK"), G_CALLBACK(ggp_callback_register_account_ok),
-		_("Cancel"), NULL, gc);
+		_("Cancel"), G_CALLBACK(ggp_callback_register_account_cancel),
+		gc);
 }
 /* }}} */
 
