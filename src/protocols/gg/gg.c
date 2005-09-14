@@ -1435,7 +1435,7 @@ static void ggp_register_user(GaimAccount *account)
 	gaim_debug_info("gg", "token: requested.\n");
 
 	if ((req = gg_token(0)) == NULL) {
-		gaim_connection_error(gc, _("Token Error : Unable to fetch the token.\n"));
+		gaim_connection_error(gc, _("Token Error: Unable to fetch the token.\n"));
 		return;
 	}
 	t = req->data;
