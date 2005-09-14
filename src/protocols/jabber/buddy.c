@@ -1102,7 +1102,7 @@ jabber_buddy_state_get_name(JabberBuddyState state)
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id) {
 	if(!id)
 		return JABBER_BUDDY_STATE_UNKNOWN;
-	if(!strcmp(id, "online"))
+	if(!strcmp(id, "available"))
 		return JABBER_BUDDY_STATE_ONLINE;
 	if(!strcmp(id, "chat"))
 		return JABBER_BUDDY_STATE_CHAT;
@@ -1131,7 +1131,7 @@ const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
 		case JABBER_BUDDY_STATE_DND:
 			return "dnd";
 		case JABBER_BUDDY_STATE_ONLINE:
-			return "online";
+			return "available";
 		case JABBER_BUDDY_STATE_UNKNOWN:
 		case JABBER_BUDDY_STATE_ERROR:
 			return NULL;

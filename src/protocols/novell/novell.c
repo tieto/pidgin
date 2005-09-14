@@ -1178,7 +1178,7 @@ _update_buddy_status(GaimBuddy * buddy, int status, int gmt)
 	}
 
 	gaim_prpl_user_status(account, buddy->name,
-						  (loggedin ? "online" : "offline"), NULL);
+						  (loggedin ? "available" : "offline"), NULL);
 	if (time_idle > 0)
 		gaim_prpl_got_user_idle(account, buddy->name, TRUE, idle);
 	else
