@@ -23,33 +23,34 @@
 #include "account.h"
 #include "jabber.h"
 
-typedef struct _bonjour_buddy{
-	gchar* name;
-	gchar* first;
+typedef struct _BonjourBuddy
+{
+	gchar *name;
+	gchar *first;
 	gint port_p2pj;
-	gchar* phsh;
-	gchar* status;
-	gchar* email;
-	gchar* last;
-	gchar* jid;
-	gchar* AIM;
-	gchar* vc;
-	gchar* ip;
-	gchar* msg;
-	BonjourJabberConversation* conversation;
-}BonjourBuddy;
+	gchar *phsh;
+	gchar *status;
+	gchar *email;
+	gchar *last;
+	gchar *jid;
+	gchar *AIM;
+	gchar *vc;
+	gchar *ip;
+	gchar *msg;
+	BonjourJabberConversation *conversation;
+} BonjourBuddy;
 
 /**
  * Creates a new buddy.
  */
-BonjourBuddy* bonjour_buddy_new(gchar* name, gchar* first, gint port_p2pj,
-	gchar* phsh, gchar* status, gchar* email, gchar* last, gchar* jid, gchar* AIM,
-	gchar* vc, gchar* ip, gchar* msg);
+BonjourBuddy *bonjour_buddy_new(gchar *name, gchar *first, gint port_p2pj,
+	gchar *phsh, gchar *status, gchar *email, gchar *last, gchar *jid, gchar *AIM,
+	gchar *vc, gchar *ip, gchar *msg);
 
 /**
  * Check if all the compulsory buddy data is present.
  */
-gboolean bonjour_buddy_check(BonjourBuddy* buddy);
+gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 
 /**
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
@@ -59,6 +60,6 @@ void bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *buddy);
 /**
  * Deletes a buddy from memory.
  */
-void bonjour_buddy_delete(BonjourBuddy* buddy);
+void bonjour_buddy_delete(BonjourBuddy *buddy);
 
 #endif

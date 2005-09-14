@@ -32,32 +32,33 @@
 #include "jabber.h"
 #include "buddy.h"
 
-void bonjour_login(GaimAccount *account, GaimStatus *status)
+void
+bonjour_login(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
-	GaimGroup* bonjour_group = NULL;
-	BonjourData* bd = NULL;
-	
+	GaimGroup *bonjour_group = NULL;
+	BonjourData *bd = NULL;
+
 	gc->flags |= GAIM_CONNECTION_HTML;
 	gc->proto_data = g_new(BonjourData, 1);
 	bd = gc->proto_data;
-	
+
 	// Start waiting for jabber connections (iChat style)
 	bd->jabber_data = g_new(BonjourJabber, 1);
 	bd->jabber_data->name = gc->account->username;
 	bd->jabber_data->port = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
 	bd->jabber_data->account = account;
-	
+
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		// Send a message about the connection error
 		gaim_debug_error("bonjour", "Unable to listen to ichat connections");
-		
+
 		// Free the data
 		g_free(bd->jabber_data);
 		g_free(bd);
 		return;
 	}
-	
+
 	// Connect to the mDNS daemon looking for buddies in the LAN
 	bd->dns_sd_data = bonjour_dns_sd_new();
 	bd->dns_sd_data->name = (sw_string)gaim_account_get_username(account);
@@ -73,25 +74,26 @@ void bonjour_login(GaimAccount *account, GaimStatus *status)
 	bd->dns_sd_data->jid = g_strdup("");
 	bd->dns_sd_data->AIM = g_strdup("");
 	bd->dns_sd_data->msg = NULL; /* TODO */
-	
+
 	bd->dns_sd_data->account = account;
 	bonjour_dns_sd_start(bd->dns_sd_data);
-	
+
 	// Create a group for bonjour buddies
 	bonjour_group = gaim_group_new(BONJOUR_GROUP_NAME);
 	gaim_blist_add_group(bonjour_group, NULL);
-	
+
 	// Show the buddy list by telling Gaim we have already connected
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 }
 
-void bonjour_close(GaimConnection* connection)
+void
+bonjour_close(GaimConnection *connection)
 {
-	GaimGroup* bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
-	GSList* buddies;
-	GSList* l;
-	BonjourData* bd = (BonjourData*)connection->proto_data;
-	
+	GaimGroup *bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
+	GSList *buddies;
+	GSList *l;
+	BonjourData *bd = (BonjourData*)connection->proto_data;
+
 	// Stop looking for buddies in the LAN
 	if (connection != NULL) {
 		bonjour_dns_sd_stop(bd->dns_sd_data);
@@ -99,11 +101,11 @@ void bonjour_close(GaimConnection* connection)
 			bonjour_dns_sd_free(bd->dns_sd_data);
 		}
 	}
-	
+
 	// Stop waiting for conversations
 	bonjour_jabber_stop(bd->jabber_data);
 	g_free(bd->jabber_data);
-	
+
 	// Remove all the bonjour buddies
 	if(connection != NULL){
 		buddies = gaim_find_buddies(connection->account, connection->account->username);
@@ -113,28 +115,31 @@ void bonjour_close(GaimConnection* connection)
 		}
 		g_slist_free(buddies);
 	}
-	
+
 	// Delete the bonjour group
 	gaim_blist_remove_group(bonjour_group);
-	
+
 }
 
-const char* bonjour_list_icon(GaimAccount* account, GaimBuddy* buddy)
+const char *
+bonjour_list_icon(GaimAccount *account, GaimBuddy *buddy)
 {
 	return BONJOUR_ICON_NAME;
 }
 
-int bonjour_send_im(GaimConnection* connection, const char* to, const char* msg, GaimConvImFlags flags)
+int
+bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, GaimConvImFlags flags)
 {
 	if(!to || !msg)
 		return 0;
-		
+
 	bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
-		
+
 	return 1;
 }
 
-void bonjour_set_status(GaimAccount *account, GaimStatus *status)
+void
+bonjour_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	BonjourData *bd;
@@ -218,14 +223,16 @@ bonjour_status_types(GaimAccount *account)
 	return status_types;
 }
 
-static void bonjour_convo_closed(GaimConnection *connection, const char *who)
+static void
+bonjour_convo_closed(GaimConnection *connection, const char *who)
 {
-	GaimBuddy* buddy = gaim_find_buddy(connection->account, who);
-	
+	GaimBuddy *buddy = gaim_find_buddy(connection->account, who);
+
 	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
 }
 
-static void bonjour_list_emblems(GaimBuddy *buddy,
+static void
+bonjour_list_emblems(GaimBuddy *buddy,
 								 const char **se, const char **sw,
 								 const char **nw,const char **ne)
 {
@@ -237,7 +244,8 @@ static void bonjour_list_emblems(GaimBuddy *buddy,
 		*se = "away";
 }
 
-static char *bonjour_status_text(GaimBuddy *buddy)
+static char *
+bonjour_status_text(GaimBuddy *buddy)
 {
 	GaimPresence *presence;
 
@@ -249,7 +257,8 @@ static char *bonjour_status_text(GaimBuddy *buddy)
 		return g_strdup("Away");
 }
 
-static char *bonjour_tooltip_text(GaimBuddy *buddy)
+static char *
+bonjour_tooltip_text(GaimBuddy *buddy)
 {
 	GString *ret;
 	GaimPresence *presence;
@@ -385,7 +394,7 @@ init_plugin(GaimPlugin *plugin)
 	// Creating the user splits
 	split = gaim_account_user_split_new(_("Host name"), hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
-	
+
 	// Creating the options for the protocol
 	option = gaim_account_option_int_new(_("Port"), "port", 5298);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
@@ -398,7 +407,7 @@ init_plugin(GaimPlugin *plugin)
 
 	option = gaim_account_option_string_new(_("Email"), "email", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	
+
 	my_protocol = plugin;
 }
 

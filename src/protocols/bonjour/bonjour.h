@@ -39,9 +39,10 @@
 #define BONJOUR_STATUS_ID_AVAILABLE "available"
 #define BONJOUR_STATUS_ID_AWAY      "away"
 
-typedef struct _bonjour_data{
-	BonjourDnsSd* dns_sd_data;
-	BonjourJabber* jabber_data;
-}BonjourData;
+typedef struct _BonjourData
+{
+	BonjourDnsSd *dns_sd_data;
+	BonjourJabber *jabber_data;
+} BonjourData;
 
 #endif /* _BONJOUR_H_ */

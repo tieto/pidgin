@@ -33,15 +33,18 @@
 #define CONVERSATION_START "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
 #define STREAM_END "</stream:stream>"
 #define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\" >"
-typedef struct _bonjour_jabber{
+
+typedef struct _BonjourJabber
+{
 	gint port;
 	gint socket;
 	gint watcher_id;
 	char* name;
 	GaimAccount* account;
-}BonjourJabber;
+} BonjourJabber;
 
-typedef struct _bonjour_jabber_conversation{
+typedef struct _BonjourJabberConversation
+{
 	gint socket;
 	gint watcher_id;
 	gchar* buddy_name;
@@ -49,19 +52,18 @@ typedef struct _bonjour_jabber_conversation{
 	gboolean start_step_two;
 	gboolean stream_started;
 	gint message_id;
-}BonjourJabberConversation;
+} BonjourJabberConversation;
 
 /**
  * Start listening for jabber connections. Returns 0 if the connection could be
  * stablished, -1 if a problem appears.
  */
-gint bonjour_jabber_start(BonjourJabber* data);
+gint bonjour_jabber_start(BonjourJabber *data);
 
-void bonjour_jabber_send_message(BonjourJabber* data, const gchar* to, const gchar* body);
+void bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
-void bonjour_jabber_close_conversation(BonjourJabber* data, GaimBuddy* gb);
+void bonjour_jabber_close_conversation(BonjourJabber *data, GaimBuddy *gb);
 
-void bonjour_jabber_stop(BonjourJabber* data);
-
+void bonjour_jabber_stop(BonjourJabber *data);
 
 #endif /* _BONJOUR_JABBER_H_ */

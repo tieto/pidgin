@@ -13,7 +13,6 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
- 
 
 #include <glib.h>
 #include <stdlib.h>
@@ -27,11 +26,12 @@
 /**
  * Creates a new buddy.
  */
-BonjourBuddy* bonjour_buddy_new(gchar* name, gchar* first, gint port_p2pj,
-	gchar* phsh, gchar* status, gchar* email, gchar* last, gchar* jid, gchar* AIM,
-	gchar* vc, gchar* ip, gchar* msg)
+BonjourBuddy *
+bonjour_buddy_new(gchar *name, gchar *first, gint port_p2pj,
+	gchar *phsh, gchar *status, gchar *email, gchar *last, gchar *jid, gchar *AIM,
+	gchar *vc, gchar *ip, gchar *msg)
 {
-	BonjourBuddy* buddy = malloc(sizeof(BonjourBuddy));
+	BonjourBuddy *buddy = malloc(sizeof(BonjourBuddy));
 
 	buddy->name = g_strdup(name);
 	buddy->first = g_strdup(first);
@@ -46,35 +46,36 @@ BonjourBuddy* bonjour_buddy_new(gchar* name, gchar* first, gint port_p2pj,
 	buddy->ip = g_strdup(ip);
 	buddy->msg = g_strdup(msg);
 	buddy->conversation = NULL;
-	
+
 	return buddy;
 }
 
 /**
  * Check if all the compulsory buddy data is present.
  */
-gboolean bonjour_buddy_check(BonjourBuddy* buddy)
+gboolean
+bonjour_buddy_check(BonjourBuddy *buddy)
 {
-	if(buddy->name == NULL){
+	if (buddy->name == NULL) {
 		return FALSE;
 	}
-	
-	if(buddy->first == NULL){
+
+	if (buddy->first == NULL) {
 		return FALSE;
 	}
-	
-	if(buddy->last == NULL){
+
+	if (buddy->last == NULL) {
 		return FALSE;
 	}
-	
-	if(buddy->port_p2pj == -1){
+
+	if (buddy->port_p2pj == -1) {
 		return FALSE;
 	}
-	
-	if(buddy->status == NULL){
+
+	if (buddy->status == NULL) {
 		return FALSE;
 	}
-	
+
 	return TRUE;
 }
 
@@ -144,7 +145,8 @@ bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *bonjour_buddy)
 /**
  * Deletes a buddy from memory.
  */
-void bonjour_buddy_delete(BonjourBuddy* buddy)
+void
+bonjour_buddy_delete(BonjourBuddy *buddy)
 {
 	g_free(buddy->name);
 	g_free(buddy->first);
@@ -157,11 +159,12 @@ void bonjour_buddy_delete(BonjourBuddy* buddy)
 	g_free(buddy->vc);
 	g_free(buddy->ip);
 	g_free(buddy->msg);
-	
-	if (buddy->conversation != NULL) {
+
+	if (buddy->conversation != NULL)
+	{
 		g_free(buddy->conversation->buddy_name);
 		g_free(buddy->conversation);
 	}
-	
+
 	free(buddy);
 }
