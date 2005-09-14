@@ -2756,7 +2756,20 @@ novell_rename_group(GaimConnection * gc, const char *old_name,
 static void
 novell_list_emblems(GaimBuddy * buddy, const char **se, const char **sw, const char **nw, const char **ne)
 {
-	int status = buddy->uc >> 1;
+	NMUserRecord *user_record = NULL;
+	GaimConnection *gc;
+	NMUser *user;
+	int status = 0;
+
+	gc = gaim_account_get_connection(buddy->account);
+
+	if (gc == NULL || (user = gc->proto_data) == NULL)
+		return;
+
+	user_record = nm_find_user_record(user, buddy->name);
+
+	if (user_record)
+		status = nm_user_record_get_status(user_record);
 
 	switch (status) {
 		case NM_STATUS_AVAILABLE:

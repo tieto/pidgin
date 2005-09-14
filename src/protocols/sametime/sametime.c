@@ -2606,15 +2606,16 @@ static const char *mw_prpl_list_icon(GaimAccount *a, GaimBuddy *b) {
 static void mw_prpl_list_emblems(GaimBuddy *b,
 				 const char **se, const char **sw,
 				 const char **nw, const char **ne) {
-
-  /* we have to add the UC_UNAVAILABLE flag so that Gaim will recognie
-     certain away states as indicating the buddy is unavailable */
+  GaimPresence *presence = gaim_buddy_get_presence(b);
+  GaimStatus *status = gaim_presence_get_active_status(presence);
 
   if(! GAIM_BUDDY_IS_ONLINE(b)) {
     *se = "offline";
-  } else if(b->uc == (mwStatus_AWAY /* XXX | UC_UNAVAILABLE */)) {
+  } else if(!gaim_presence_is_available(presence) &&
+            !strcmp(gaim_status_get_id(status), MW_STATE_AWAY)) {
     *se = "away";
-  } else if(b->uc == (mwStatus_BUSY /* XXX | UC_UNAVAILABLE */)) {
+  } else if(!gaim_presence_is_available(presence) &&
+            !strcmp(gaim_status_get_id(status), MW_STATE_BUSY)) {
     *se = "dnd";
   }
 }
@@ -2635,6 +2636,15 @@ static char *mw_prpl_status_text(GaimBuddy *b) {
 
 
 static const char *status_text(GaimBuddy *b) {
+  GaimPresence *presence = gaim_buddy_get_presence(b);
+  GaimStatus *status = gaim_presence_get_active_status(presence);
+
+  return gaim_status_get_name(status);
+
+  /* I left this here in case it's more accurate than the status name.
+   * Stu. */
+#if 0
+
   guint status = b->uc;
 
   if(! GAIM_BUDDY_IS_ONLINE(b) ) {
@@ -2655,6 +2665,7 @@ static const char *status_text(GaimBuddy *b) {
   } else {
     return MW_STATE_UNKNOWN;
   }
+#endif
 }
 
 

@@ -69,7 +69,8 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 	account = gaim_connection_get_account(gc);
-	g_hash_table_remove(hash, account);
+	if (hash != NULL)
+		g_hash_table_remove(hash, account);
 	if (accountReconnecting == NULL)
 		return;
 	accountReconnecting = g_slist_remove(accountReconnecting, account);

@@ -102,6 +102,7 @@ version 2.0.0:
 	* Changed: gaim_notify_userinfo, removed primary and secondary args
 	* Changed: GaimNotifyUiOps::notify_userinfo, removed title, primary,
 	           and secondary args
+	* Removed: uc from the GaimBuddy struct
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
