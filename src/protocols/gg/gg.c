@@ -1422,7 +1422,7 @@ static void ggp_keepalive(GaimConnection *gc)
 /* static void ggp_register_user(GaimAccount *account) {{{ */
 static void ggp_register_user(GaimAccount *account)
 {
-	GaimConnection *gc;
+	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
@@ -1435,13 +1435,10 @@ static void ggp_register_user(GaimAccount *account)
 	gaim_debug_info("gg", "token: requested.\n");
 
 	if ((req = gg_token(0)) == NULL) {
-		gaim_notify_error(account, _("Token Error"),
-				_("Unable to fetch the token.\n"), NULL);
+		gaim_connection_error(gc, _("Token Error : Unable to fetch the token.\n"));
 		return;
 	}
 	t = req->data;
-
-	gc = gaim_account_get_connection(account);
 
 	info = g_new0(GGPInfo, 1);
 	gc->proto_data = info;
