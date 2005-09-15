@@ -1366,6 +1366,19 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 			old_idle, idle);
 		}
 	}
+	else if(gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_ACCOUNT)
+	{
+		GaimConnection *gc =
+			gaim_account_get_connection(gaim_presence_get_account(presence));
+		GaimPluginProtocolInfo *prpl_info = NULL;
+
+		if (gc != NULL && gc->prpl != NULL)
+			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (prpl_info && g_list_find(gaim_connections_get_all(), gc) &&
+				prpl_info->set_idle)
+			prpl_info->set_idle(gc, time(NULL) - idle_time);
+	}
 }
 
 void
