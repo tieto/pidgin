@@ -63,6 +63,8 @@ version 2.0.0:
 	  with the same name (Andrew Hart)
 	* Improved buddy list searching with CTRL+F
 	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
+	* Show smiley theme descriptions correctly for the highlighted
+	  smiley theme (Levi Bard)
 
 	Preference changes:
 	* Removed "Dim idle buddies" buddy list preference, default to "Yes."

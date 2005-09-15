@@ -66,6 +66,7 @@ static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
+GtkTreeRowReference *previous_smiley_row;
 
 /*
  * PROTOTYPES
@@ -460,14 +461,44 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
 	const char *filename;
+	char	*description;
 	GValue val = { 0, };
+	GtkTreePath	*path,
+				*oldpath;
+	struct smiley_theme	*new_theme,
+						*old_theme;
+
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
+
+	old_theme = current_smiley_theme;
 	gtk_tree_model_get_value (model, &iter, 2, &val);
+	path = gtk_tree_model_get_path(model, &iter);
 	filename = g_value_get_string(&val);
 	gaim_prefs_set_string("/gaim/gtk/smileys/theme", filename);
 	g_value_unset (&val);
+
+	new_theme = current_smiley_theme;
+	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
+								"<span size='smaller' foreground='white'>%s</span>",
+								new_theme->name, new_theme->author, new_theme->desc);
+	gtk_list_store_set(smiley_theme_store,&iter,1,description,-1);
+	g_free(description);
+
+	oldpath = gtk_tree_row_reference_get_path(previous_smiley_row);
+	if(gtk_tree_model_get_iter(model, &iter, oldpath)){
+		description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
+								"<span size='smaller' foreground='dim grey'>%s</span>",
+								old_theme->name, old_theme->author, old_theme->desc);
+		gtk_list_store_set(smiley_theme_store,&iter,1,description,-1);
+		g_free(description);
+	}
+	gtk_tree_path_free(oldpath);
+
+	gtk_tree_row_reference_free(previous_smiley_row);
+	previous_smiley_row = gtk_tree_row_reference_new(model, path);
+	gtk_tree_path_free(path);
 }
 
 static GtkTreePath *theme_refresh_theme_list()
@@ -478,6 +509,7 @@ static GtkTreePath *theme_refresh_theme_list()
 	GtkTreePath *path = NULL;
 	int ind = 0;
 
+	previous_smiley_row = NULL;
 
 	gaim_gtkthemes_smiley_theme_probe();
 
