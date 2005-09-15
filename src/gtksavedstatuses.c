@@ -313,6 +313,7 @@ create_saved_status_list(StatusWindow *dialog)
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Title"));
 	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_min_width(column, 100);
 	gtk_tree_view_column_set_sort_column_id(column,
 											STATUS_WINDOW_COLUMN_TITLE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
@@ -320,6 +321,9 @@ create_saved_status_list(StatusWindow *dialog)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   STATUS_WINDOW_COLUMN_TITLE);
+#if GTK_CHECK_VERSION(2,6,0)
+	g_object_set(renderer, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+#endif
 
 	column = gtk_tree_view_column_new();
 	gtk_tree_view_column_set_title(column, _("Type"));
