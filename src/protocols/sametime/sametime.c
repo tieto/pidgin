@@ -2108,7 +2108,6 @@ static void convo_do_psychic(struct mwConversation *conv) {
   struct mwIdBlock *idb;
 
   GaimConversation *gconv;
-  GaimConvWindow *win;
 
   srvc = mwConversation_getService(conv);
   session = mwService_getSession(MW_SERVICE(srvc));
@@ -2125,10 +2124,14 @@ static void convo_do_psychic(struct mwConversation *conv) {
 
   g_return_if_fail(gconv != NULL);
 
+
+#if 0
+  GaimConvWindow *win;
   win = gaim_conversation_get_window(gconv);
   g_return_if_fail(win != NULL);
 
   gaim_conv_window_show(win);
+#endif
 }
 
 
