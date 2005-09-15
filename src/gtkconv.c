@@ -6439,7 +6439,6 @@ gaim_gtk_conversations_init(void)
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/conversations/send_formatting", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_underline", FALSE);

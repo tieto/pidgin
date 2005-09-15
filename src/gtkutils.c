@@ -829,64 +829,65 @@ gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
 
 char *stylize(const gchar *text, int length)
 {
+	char *tmp;
 	gchar *buf;
-	char *tmp = g_malloc(length);
+	const char *font;
+	GdkColor fg_color, bg_color;
 
+	tmp = g_malloc(length);
 	buf = g_malloc(length);
 	g_snprintf(buf, length, "%s", text);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_formatting")) {
-		const char *font;
-		GdkColor fg_color, bg_color;
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold")) {
-			g_snprintf(tmp, length, "<B>%s</B>", buf);
-			strcpy(buf, tmp);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic")) {
-			g_snprintf(tmp, length, "<I>%s</I>", buf);
-			strcpy(buf, tmp);
-		}
-
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline")) {
-			g_snprintf(tmp, length, "<U>%s</U>", buf);
-			strcpy(buf, tmp);
-		}
-
-		font = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
-
-		if (strcmp(font, "") != 0) {
-			g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", font, buf);
-			strcpy(buf, tmp);
-		}
-
-		g_snprintf(tmp, length, "<FONT SIZE=\"%d\">%s</FONT>",
-			gaim_prefs_get_int("/gaim/gtk/conversations/font_size"), buf);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+	{
+		g_snprintf(tmp, length, "<B>%s</B>", buf);
 		strcpy(buf, tmp);
+	}
 
-		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
-		{
-			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
-							&fg_color);
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+	{
+		g_snprintf(tmp, length, "<I>%s</I>", buf);
+		strcpy(buf, tmp);
+	}
 
-			g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
-					   fg_color.red/256, fg_color.green/256,
-					   fg_color.blue/256, buf);
-			strcpy(buf, tmp);
-		}
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+	{
+		g_snprintf(tmp, length, "<U>%s</U>", buf);
+		strcpy(buf, tmp);
+	}
 
-		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
-		{
-			gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
-							&bg_color);
+	font = gaim_prefs_get_string("/gaim/gtk/conversations/font_face");
 
-			g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
-					   bg_color.red/256, bg_color.green/256,
-					   bg_color.blue/256, buf);
-			strcpy(buf, tmp);
-		}
+	if (strcmp(font, "") != 0)
+	{
+		g_snprintf(tmp, length, "<FONT FACE=\"%s\">%s</FONT>", font, buf);
+		strcpy(buf, tmp);
+	}
 
+	g_snprintf(tmp, length, "<FONT SIZE=\"%d\">%s</FONT>",
+		gaim_prefs_get_int("/gaim/gtk/conversations/font_size"), buf);
+	strcpy(buf, tmp);
+
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"), "") != 0)
+	{
+		gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"),
+						&fg_color);
+
+		g_snprintf(tmp, length, "<FONT COLOR=\"#%02X%02X%02X\">%s</FONT>",
+				   fg_color.red/256, fg_color.green/256,
+				   fg_color.blue/256, buf);
+		strcpy(buf, tmp);
+	}
+
+	if (strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"), "") != 0)
+	{
+		gdk_color_parse(gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"),
+						&bg_color);
+
+		g_snprintf(tmp, length, "<BODY BGCOLOR=\"#%02X%02X%02X\">%s</BODY>",
+				   bg_color.red/256, bg_color.green/256,
+				   bg_color.blue/256, buf);
+		strcpy(buf, tmp);
 	}
 
 	g_free(tmp);
