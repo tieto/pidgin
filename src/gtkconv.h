@@ -72,7 +72,6 @@ struct _GaimGtkWindow
 
 	struct
 	{
-		GtkWidget *menubox;
 		GtkWidget *menubar;
 
 		GtkWidget *view_log;
@@ -97,6 +96,8 @@ struct _GaimGtkWindow
 		GtkWidget *show_icon;
 
 		GtkWidget *send_as;
+
+		GtkWidget *tray;
 
 		GtkWidget *typing_icon;
 

@@ -57,6 +57,7 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtklog.h"
+#include "gtkmenutray.h"
 #include "gtkpounce.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
@@ -3093,8 +3094,8 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 
 	if(gtkwin->menu.typing_icon) {
 		gtk_widget_show(gtkwin->menu.typing_icon);
-		gtk_box_pack_end(GTK_BOX(gtkwin->menu.menubox), gtkwin->menu.typing_icon,
-						 FALSE, FALSE, 0);
+		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkwin->menu.tray),
+								  gtkwin->menu.typing_icon);
 	}
 }
 
@@ -3764,7 +3765,6 @@ setup_menubar(GaimConvWindow *win)
 {
 	GaimGtkWindow *gtkwin;
 	GtkAccelGroup *accel_group;
-	GtkWidget *box_item;
 
 	gtkwin = GAIM_GTK_WINDOW(win);
 
@@ -3861,15 +3861,10 @@ setup_menubar(GaimConvWindow *win)
 
 	generate_send_as_items(win, NULL);
 
-	box_item = gtk_menu_item_new();
-	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(box_item), TRUE);
-	gtk_menu_shell_append(GTK_MENU_SHELL(gtkwin->menu.menubar), box_item);
-	gtk_widget_show(box_item);
-	gtk_widget_set_size_request(box_item, -1, 16);
-
-	gtkwin->menu.menubox = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(box_item), gtkwin->menu.menubox);
-	gtk_widget_show(gtkwin->menu.menubox);
+	gtkwin->menu.tray = gaim_gtk_menu_tray_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(gtkwin->menu.menubar),
+						  gtkwin->menu.tray);
+	gtk_widget_show(gtkwin->menu.tray);
 
 	gtk_widget_show(gtkwin->menu.menubar);
 
