@@ -3373,6 +3373,31 @@ gaim_utf8_strcasecmp(const char *a, const char *b)
 	return ret;
 }
 
+/* previously conversation::find_nick() */
+gboolean 
+gaim_utf8_has_word(const char *haystack, const char *needle)
+{
+	char *hay, *pin, *p;
+	int n;
+	gboolean ret = FALSE;
+
+	hay = g_utf8_strdown(haystack, -1);
+
+	pin = g_utf8_strdown(needle, -1);
+	n = strlen(pin);
+
+	if ((p = strstr(hay, pin)) != NULL) {
+		if ((p == hay || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
+			ret = TRUE;
+		}
+	}
+
+	g_free(pin);
+	g_free(hay);
+
+	return ret;
+}
+
 gboolean gaim_message_meify(char *message, size_t len)
 {
 	char *c;

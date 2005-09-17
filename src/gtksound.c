@@ -42,6 +42,7 @@
 #include "sound.h"
 #include "util.h"
 
+#include "gtkconv.h"
 #include "gtksound.h"
 
 struct gaim_sound_event {
@@ -81,6 +82,136 @@ unmute_login_sounds_cb(gpointer data)
 	mute_login_sounds = FALSE;
 	mute_login_sounds_timeout = 0;
 	return FALSE;
+}
+
+static gboolean
+chat_nick_matches_name(GaimConversation *conv, const char *aname)
+{
+	GaimConvChat *chat = NULL;
+	char *nick = NULL;
+	char *name = NULL;
+	gboolean ret = FALSE;
+	chat = gaim_conversation_get_chat_data(conv);
+
+	if (chat==NULL)
+		return ret;
+
+	nick = g_strdup(gaim_normalize(conv->account, chat->nick));
+	name = g_strdup(gaim_normalize(conv->account, aname));
+
+	if (g_utf8_collate(nick, name) == 0)
+		ret = TRUE;
+
+	g_free(nick);
+	g_free(name);
+
+	return ret;
+}
+
+/*
+ * play a sound event for a conversation, honoring make_sound flag
+ * of conversation and checking for focus if conv_focus pref is set
+ */
+static void
+play_conv_event(GaimConversation *conv, GaimSoundEventID event)
+{
+	GaimGtkConversation *gtkconv;
+	GaimConvWindow *gaimwin;
+	GaimGtkWindow *gtkwin;
+	gboolean has_focus;
+
+	if (conv==NULL)
+		gaim_sound_play_event(event);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gaimwin = gaim_conversation_get_window(conv);
+	gtkwin = GAIM_GTK_WINDOW(gaimwin);
+
+	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", 
+				 &has_focus, NULL);
+
+	if (gtkconv->make_sound && 
+		!((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
+		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
+
+		gaim_sound_play_event(event);
+	}
+}
+
+static void
+buddy_state_cb(GaimBuddy *buddy, GaimSoundEventID event)
+{
+	gaim_sound_play_event(event);
+}
+
+static void
+im_msg_received_cb(GaimAccount *account, char *sender,
+				   char *message, GaimConversation *conv, 
+				   int flags, GaimSoundEventID event)
+{
+	if (conv==NULL)
+		gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE);
+	else
+		play_conv_event(conv, event);
+}
+
+static void
+im_msg_sent_cb(GaimAccount *account, const char *receiver,
+			   const char *message, GaimSoundEventID event)
+{
+	GaimConversation *conv = gaim_find_conversation_with_account(
+		GAIM_CONV_TYPE_ANY, receiver, account);
+	play_conv_event(conv, event);
+}
+
+static void
+chat_buddy_join_cb(GaimConversation *conv, const char *name,
+				   GaimConvChatBuddyFlags flags, GaimSoundEventID event)
+{
+	if (!chat_nick_matches_name(conv, name)) 
+		play_conv_event(conv, event);
+}
+
+static void
+chat_buddy_left_cb(GaimConversation *conv, const char *name,
+				   const char *reason, GaimSoundEventID event)
+{
+	if (!chat_nick_matches_name(conv, name)) 
+		play_conv_event(conv, event);
+}
+
+static void
+chat_msg_sent_cb(GaimAccount *account, const char *message,
+				 int id, GaimSoundEventID event)
+{
+	GaimConnection *conn = gaim_account_get_connection(account);
+	GaimConversation *conv = NULL;
+
+	if (conn!=NULL) 
+		conv = gaim_find_chat(conn,id);
+
+	play_conv_event(conv, event);
+}
+
+static void
+chat_msg_received_cb(GaimAccount *account, char *sender,
+					 char *message, GaimConversation *conv,
+					 int flags, GaimSoundEventID event)
+{
+	GaimConvChat *chat;
+
+	chat = gaim_conversation_get_chat_data(conv);
+
+	if (chat!=NULL && gaim_conv_chat_is_user_ignored(chat, sender))
+		return;
+
+	if (chat_nick_matches_name(conv, sender))
+		return;
+
+	if (flags & GAIM_CONV_CHAT_ALERT || gaim_utf8_has_word(message, chat->nick))
+		play_conv_event(conv, GAIM_SOUND_CHAT_NICK);
+	else
+		play_conv_event(conv, event);
 }
 
 /*
@@ -155,6 +286,8 @@ static void
 gaim_gtk_sound_init(void)
 {
 	void *gtk_sound_handle = gaim_gtk_sound_get_handle();
+	void *blist_handle = gaim_blist_get_handle();
+	void *conv_handle = gaim_conversations_get_handle();
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtk_sound_handle, GAIM_CALLBACK(account_signon_cb),
@@ -197,6 +330,31 @@ gaim_gtk_sound_init(void)
 
 	gaim_prefs_connect_callback(gaim_gtk_sound_get_handle(), "/gaim/gtk/sound/method",
 			_pref_sound_method_changed, NULL);
+
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						gtk_sound_handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_SOUND_BUDDY_ARRIVE));
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						gtk_sound_handle, GAIM_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(GAIM_SOUND_BUDDY_LEAVE));
+	gaim_signal_connect(conv_handle, "received-im-msg",
+						gtk_sound_handle, GAIM_CALLBACK(im_msg_received_cb),
+						GINT_TO_POINTER(GAIM_SOUND_RECEIVE));
+	gaim_signal_connect(conv_handle, "sent-im-msg",
+						gtk_sound_handle, GAIM_CALLBACK(im_msg_sent_cb),
+						GINT_TO_POINTER(GAIM_SOUND_SEND));
+	gaim_signal_connect(conv_handle, "chat-buddy-joined",
+						gtk_sound_handle, GAIM_CALLBACK(chat_buddy_join_cb),
+						GINT_TO_POINTER(GAIM_SOUND_CHAT_JOIN));
+	gaim_signal_connect(conv_handle, "chat-buddy-left",
+						gtk_sound_handle, GAIM_CALLBACK(chat_buddy_left_cb),
+						GINT_TO_POINTER(GAIM_SOUND_CHAT_LEAVE));
+	gaim_signal_connect(conv_handle, "sent-chat-msg",
+						gtk_sound_handle, GAIM_CALLBACK(chat_msg_sent_cb),
+						GINT_TO_POINTER(GAIM_SOUND_CHAT_YOU_SAY));
+	gaim_signal_connect(conv_handle, "received-chat-msg",
+						gtk_sound_handle, GAIM_CALLBACK(chat_msg_received_cb),
+						GINT_TO_POINTER(GAIM_SOUND_CHAT_SAY));
 }
 
 static void
@@ -206,6 +364,8 @@ gaim_gtk_sound_uninit(void)
 	ao_shutdown();
 #endif
 	sound_initialized = FALSE;
+
+	gaim_signals_disconnect_by_handle(gaim_gtk_sound_get_handle());
 }
 
 #ifdef USE_AO

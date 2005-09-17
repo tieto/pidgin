@@ -54,30 +54,6 @@ static void ensure_default_funcs(void);
 static void conv_placement_last_created_win(GaimConversation *conv);
 
 static gboolean
-find_nick(const char *nick, const char *message)
-{
-	char *msg, *who, *p;
-	int n;
-	gboolean ret = FALSE;
-
-	msg = g_utf8_strdown(message, -1);
-
-	who = g_utf8_strdown(nick, -1);
-	n = strlen(who);
-
-	if ((p = strstr(msg, who)) != NULL) {
-		if ((p == msg || !isalnum(*(p - 1))) && !isalnum(*(p + n))) {
-			ret = TRUE;
-		}
-	}
-
-	g_free(who);
-	g_free(msg);
-
-	return ret;
-}
-
-static gboolean
 reset_typing(gpointer data)
 {
 	GaimConversation *c = (GaimConversation *)data;
@@ -1907,7 +1883,7 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 		} else {
 			flags |= GAIM_MESSAGE_RECV;
 
-			if (find_nick(chat->nick, message))
+			if (gaim_utf8_has_word(message, chat->nick))
 				flags |= GAIM_MESSAGE_NICK;
 		}
 

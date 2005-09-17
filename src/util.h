@@ -796,6 +796,18 @@ gchar *gaim_utf8_salvage(const char *str);
 int gaim_utf8_strcasecmp(const char *a, const char *b);
 
 /**
+ * Case insensitive search for a word in a string. The needle string
+ * must be contained in the haystack string and not be immediately
+ * preceded or immediately followed by another alpha-numeric character.
+ *
+ * @param haystack The string to search in.
+ * @param needle   The substring to find.
+ *
+ * @return TRUE if haystack has the word, otherwise FALSE
+ */
+gboolean gaim_utf8_has_word(const char *haystack, const char *needle);
+
+/**
  * Checks for messages starting with "/me "
  *
  * @param message The message to check

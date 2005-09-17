@@ -54,12 +54,6 @@ gaim_sound_play_event(GaimSoundEventID event)
 		sound_ui_ops->play_event(event);
 }
 
-static void
-sound_triggered_cb(GaimBuddy *buddy, GaimSoundEventID event)
-{
-	gaim_sound_play_event(event);
-}
-
 void
 gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
 {
@@ -94,12 +88,6 @@ gaim_sound_init()
 	gaim_prefs_add_none("/core/sound");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 
-	gaim_signal_connect(blist_handle, "buddy-signed-on",
-						handle, GAIM_CALLBACK(sound_triggered_cb),
-						GINT_TO_POINTER(GAIM_SOUND_BUDDY_ARRIVE));
-	gaim_signal_connect(blist_handle, "buddy-signed-off",
-						handle, GAIM_CALLBACK(sound_triggered_cb),
-						GINT_TO_POINTER(GAIM_SOUND_BUDDY_LEAVE));
 }
 
 void

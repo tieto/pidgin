@@ -5036,33 +5036,9 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 					  time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
-	GaimConvWindow *gaimwin;
-	GaimGtkWindow *gtkwin;
-	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkconv->active_conv = conv;
-	gaimwin = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(gaimwin);
-
-	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
-
-	/* Play a sound, if specified in prefs. */
-	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
-		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
-		if (flags & GAIM_MESSAGE_RECV) {
-			if (gtkconv->u.im->a_virgin &&
-				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/first_im_recv")) {
-
-				gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE);
-			}
-			else
-				gaim_sound_play_event(GAIM_SOUND_RECEIVE);
-		}
-		else {
-			gaim_sound_play_event(GAIM_SOUND_SEND);
-		}
-	}
 
 	gtkconv->u.im->a_virgin = FALSE;
 
@@ -5074,35 +5050,9 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 						const char *message, GaimMessageFlags flags, time_t mtime)
 {
 	GaimGtkConversation *gtkconv;
-	GaimConvWindow *gaimwin;
-	GaimGtkWindow *gtkwin;
-	gboolean has_focus;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gtkconv->active_conv = conv;
-	gaimwin = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(gaimwin);
-
-	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", &has_focus, NULL);
-
-	/* Play a sound, if specified in prefs. */
-	if (gtkconv->make_sound && !((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
-		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus) &&
-		!(flags & GAIM_MESSAGE_DELAYED) &&
-		!(flags & GAIM_MESSAGE_SYSTEM)) {
-
-		if (!(flags & GAIM_MESSAGE_WHISPER) && (flags & GAIM_MESSAGE_SEND))
-			gaim_sound_play_event(GAIM_SOUND_CHAT_YOU_SAY);
-		else if (flags & GAIM_MESSAGE_RECV) {
-			if ((flags & GAIM_MESSAGE_NICK) &&
-				gaim_prefs_get_bool("/gaim/gtk/sound/enabled/nick_said")) {
-
-				gaim_sound_play_event(GAIM_SOUND_CHAT_NICK);
-			}
-			else
-				gaim_sound_play_event(GAIM_SOUND_CHAT_SAY);
-		}
-	}
 
 	flags |= GAIM_MESSAGE_COLORIZE;
 
@@ -5564,8 +5514,6 @@ gaim_gtkconv_chat_remove_user(GaimConversation *conv, const char *user)
 
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
-	if (gtkconv->make_sound)
-		gaim_sound_play_event(GAIM_SOUND_CHAT_LEAVE);
 }
 
 static void
