@@ -105,6 +105,7 @@ DLL_C_SRC =	\
 			gtkimhtmltoolbar.c \
 			gtklog.c \
 			gtkmain.c \
+			gtkmenutray.c \
 			gtknotify.c \
 			gtkplugin.c \
 			gtkpluginpref.c \

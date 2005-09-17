@@ -257,6 +257,7 @@ gaim_SOURCES = \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
 	gtkmain.c \
+	gtkmenutray.c \
 	gtknotify.c \
 	gtkplugin.c \
 	gtkpluginpref.c \
@@ -300,6 +301,7 @@ gaim_headers = \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
+	gtkmenutray.h \
 	gtknotify.h \
 	gtkplugin.h \
 	gtkpluginpref.h \
