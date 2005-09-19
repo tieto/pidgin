@@ -47,7 +47,6 @@
 #include "notify.h"
 #include "prpl.h"
 #include "request.h"
-#include "sound.h"
 #include "util.h"
 
 #include "gtkdnd-hints.h"

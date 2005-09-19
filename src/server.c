@@ -31,7 +31,6 @@
 #include "request.h"
 #include "signals.h"
 #include "server.h"
-#include "sound.h"
 #include "status.h"
 #include "util.h"
 

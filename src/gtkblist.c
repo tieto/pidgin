@@ -36,7 +36,6 @@
 #include "plugin.h"
 #include "request.h"
 #include "signals.h"
-#include "sound.h"
 #include "gtkstock.h"
 #include "util.h"
 
@@ -52,7 +51,6 @@
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
-#include "gtksound.h"
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
