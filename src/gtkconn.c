@@ -167,11 +167,33 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 
 		if (!listAccount)
 			accountReconnecting = g_slist_prepend(accountReconnecting, account);
-	} else if (info != NULL) {
-		g_hash_table_remove(hash, account);
-
-		if (listAccount)
-			accountReconnecting = g_slist_delete_link(accountReconnecting, listAccount);
+	} else {
+	  char *p, *s, *n=NULL ;
+	  if (info != NULL) 	    
+	    g_hash_table_remove(hash, account);
+	    
+	  if (listAccount)
+	      accountReconnecting = g_slist_delete_link(accountReconnecting, listAccount);
+	  
+	  if (gaim_account_get_alias(account)) {
+	    n = g_strdup_printf("%s (%s) (%s)",
+				  gaim_account_get_username(account),
+				  gaim_account_get_alias(account),
+				  gaim_account_get_protocol_name(account));
+	    } else {
+	      n = g_strdup_printf("%s (%s)",
+				  gaim_account_get_username(account),
+				  gaim_account_get_protocol_name(account));
+	    }
+	    
+	    p = g_strdup_printf(_("%s could not connect"), n);
+	    s = g_strdup_printf(_("%s was unable to connect do to an error. %s The account has been disabled. "
+				  "Correct the error and reenable to account to connect."), n, text);
+	    gaim_notify_error(NULL, NULL, p, s);
+	    g_free(p);
+	    g_free(s);
+	    g_free(n);
+	    gaim_account_set_enabled(account, GAIM_GTK_UI, FALSE);
 	}
 }
 
