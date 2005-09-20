@@ -42,7 +42,6 @@ struct smiley_theme {
 
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
-extern GtkTreeRowReference *previous_smiley_row;
 
 extern void gaim_gtkthemes_init();
 gboolean gaim_gtkthemes_smileys_disabled();

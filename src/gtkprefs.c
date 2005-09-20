@@ -66,7 +66,7 @@ static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
 static GtkTreeIter plugin_iter;
-GtkTreeRowReference *previous_smiley_row;
+static GtkTreeRowReference *previous_smiley_row = NULL;
 
 /*
  * PROTOTYPES
@@ -451,6 +451,9 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	debugbutton = NULL;
 	notebook_page = 0;
 	smiley_theme_store = NULL;
+	if (previous_smiley_row)
+		gtk_tree_row_reference_free(previous_smiley_row);
+	previous_smiley_row = NULL;
 
 	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next)
 	{
@@ -458,64 +461,65 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 	}
 }
 
-static void smiley_sel (GtkTreeSelection *sel, GtkTreeModel *model) {
+static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GtkTreeIter  iter;
-	const char *filename;
-	char	*description;
+	const char *themename;
+	char *description;
 	GValue val = { 0, };
-	GtkTreePath	*path,
-				*oldpath;
-	struct smiley_theme	*new_theme,
-						*old_theme;
+	GtkTreePath *path, *oldpath;
+	struct smiley_theme *new_theme, *old_theme;
 
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
 
 	old_theme = current_smiley_theme;
-	gtk_tree_model_get_value (model, &iter, 2, &val);
+	gtk_tree_model_get_value(model, &iter, 3, &val);
 	path = gtk_tree_model_get_path(model, &iter);
-	filename = g_value_get_string(&val);
-	gaim_prefs_set_string("/gaim/gtk/smileys/theme", filename);
+	themename = g_value_get_string(&val);
+	gaim_prefs_set_string("/gaim/gtk/smileys/theme", themename);
 	g_value_unset (&val);
 
+	/* current_smiley_theme is set in callback for the above pref change */
 	new_theme = current_smiley_theme;
 	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='white'>%s</span>",
 								new_theme->name, new_theme->author, new_theme->desc);
-	gtk_list_store_set(smiley_theme_store,&iter,1,description,-1);
+	gtk_list_store_set(smiley_theme_store, &iter, 1, description, -1);
 	g_free(description);
 
-	oldpath = gtk_tree_row_reference_get_path(previous_smiley_row);
-	if(gtk_tree_model_get_iter(model, &iter, oldpath)){
-		description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
+	if (new_theme != old_theme && previous_smiley_row) {
+		oldpath = gtk_tree_row_reference_get_path(previous_smiley_row);
+		if (gtk_tree_model_get_iter(model, &iter, oldpath)) {
+			description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='dim grey'>%s</span>",
 								old_theme->name, old_theme->author, old_theme->desc);
-		gtk_list_store_set(smiley_theme_store,&iter,1,description,-1);
-		g_free(description);
+			gtk_list_store_set(smiley_theme_store, &iter, 1,
+				description, -1);
+			g_free(description);
+		}
+		gtk_tree_path_free(oldpath);
 	}
-	gtk_tree_path_free(oldpath);
-
-	gtk_tree_row_reference_free(previous_smiley_row);
+	if (previous_smiley_row)
+		gtk_tree_row_reference_free(previous_smiley_row);
 	previous_smiley_row = gtk_tree_row_reference_new(model, path);
 	gtk_tree_path_free(path);
 }
 
-static GtkTreePath *theme_refresh_theme_list()
+static GtkTreeRowReference *theme_refresh_theme_list()
 {
 	GdkPixbuf *pixbuf;
 	GSList *themes;
 	GtkTreeIter iter;
-	GtkTreePath *path = NULL;
-	int ind = 0;
+	GtkTreeRowReference *row_ref = NULL;
 
+	if (previous_smiley_row)
+		gtk_tree_row_reference_free(previous_smiley_row);
 	previous_smiley_row = NULL;
 
 	gaim_gtkthemes_smiley_theme_probe();
 
 	if (!(themes = smiley_themes))
 		return NULL;
-
 
 	gtk_list_store_clear(smiley_theme_store);
 
@@ -544,16 +548,19 @@ static GtkTreePath *theme_refresh_theme_list()
 
 		g_free(description);
 		themes = themes->next;
-		if (current_smiley_theme && !strcmp(theme->path, current_smiley_theme->path)) {
-			/* path = gtk_tree_path_new_from_indices(ind); */
-			char *iwishihadgtk2_2 = g_strdup_printf("%d", ind);
-			path = gtk_tree_path_new_from_string(iwishihadgtk2_2);
-			g_free(iwishihadgtk2_2);
+
+		/* If this is the currently selected theme,
+		 * we will need to select it. Grab the row reference. */
+		if (theme == current_smiley_theme) {
+			GtkTreePath *path = gtk_tree_model_get_path(
+				GTK_TREE_MODEL(smiley_theme_store), &iter);
+			row_ref = gtk_tree_row_reference_new(
+				GTK_TREE_MODEL(smiley_theme_store), path);
+			gtk_tree_path_free(path);
 		}
-		ind++;
 	}
 
-	return path;
+	return row_ref;
 }
 
 static void theme_install_theme(char *path, char *extn) {
@@ -562,7 +569,7 @@ static void theme_install_theme(char *path, char *extn) {
 #endif
 	gchar *destdir;
 	gchar *tail;
-	GtkTreePath *themepath = NULL;
+	GtkTreeRowReference *theme_rowref;
 
 	/* Just to be safe */
 	g_strchomp(path);
@@ -602,9 +609,9 @@ static void theme_install_theme(char *path, char *extn) {
 #endif
 	g_free(destdir);
 
-	themepath = theme_refresh_theme_list();
-	if (themepath != NULL)
-		gtk_tree_path_free(themepath);
+	theme_rowref = theme_refresh_theme_list();
+	if (theme_rowref != NULL)
+		gtk_tree_row_reference_free(theme_rowref);
 }
 
 static void
@@ -707,7 +714,7 @@ theme_page()
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-	GtkTreePath *path = NULL;
+	GtkTreeRowReference *rowref;
 	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
@@ -730,7 +737,7 @@ theme_page()
 	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
 	smiley_theme_store = gtk_list_store_new (4, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
-	path = theme_refresh_theme_list();
+	rowref = theme_refresh_theme_list();
 
 	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
 
@@ -741,11 +748,6 @@ theme_page()
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-
-	if(path) {
-		gtk_tree_selection_select_path(sel, path);
-		gtk_tree_path_free(path);
-	}
 
 	/* Custom sort so "none" theme is at top of list */
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
@@ -770,6 +772,13 @@ theme_page()
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
+
+	if (rowref) {
+		GtkTreePath *path = gtk_tree_row_reference_get_path(rowref);
+		gtk_tree_row_reference_free(rowref);
+		gtk_tree_selection_select_path(sel, path);
+		gtk_tree_path_free(path);
+	}
 
 	gtk_widget_show_all(ret);
 
@@ -2260,8 +2269,16 @@ static void
 smiley_theme_pref_cb(const char *name, GaimPrefType type, gpointer value,
 					 gpointer data)
 {
-	if (!strcmp(name, "/gaim/gtk/smileys/theme"))
-		gaim_gtkthemes_load_smiley_theme((const char *)value, TRUE);
+	const char *themename = value;
+	GSList *themes;
+
+	for (themes = smiley_themes; themes; themes = themes->next) {
+		struct smiley_theme *smile = themes->data;
+		if (smile->name && strcmp(themename, smile->name) == 0) {
+			gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+			break;
+		}
+	}
 }
 
 void
@@ -2310,7 +2327,7 @@ gaim_gtk_prefs_init(void)
 
 	/* Smiley Themes */
 	gaim_prefs_add_none("/gaim/gtk/smileys");
-	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "default");
+	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
 	gaim_prefs_connect_callback(prefs, "/gaim/gtk/smileys/theme",

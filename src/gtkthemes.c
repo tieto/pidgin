@@ -269,11 +269,24 @@ GSList *gaim_gtkthemes_get_proto_smileys(const char *id) {
 
 void gaim_gtkthemes_init()
 {
-	if (current_smiley_theme == NULL) {
-		gaim_gtkthemes_smiley_theme_probe();
-		if (smiley_themes != NULL) {
-			struct smiley_theme *smile = smiley_themes->data;
+	GSList *l;
+	const char *current_theme =
+		gaim_prefs_get_string("/gaim/gtk/smileys/theme");
+
+	gaim_gtkthemes_smiley_theme_probe();
+
+	for (l = smiley_themes; l; l = l->next) {
+		struct smiley_theme *smile = l->data;
+		if (smile->name && strcmp(current_theme, smile->name) == 0) {
 			gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+			break;
 		}
 	}
+
+	/* If we still don't have a smiley theme, choose the first one */
+	if (!current_smiley_theme && smiley_themes) {
+		struct smiley_theme *smile = smiley_themes->data;
+		gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+	}
+
 }
