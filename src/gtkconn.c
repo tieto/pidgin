@@ -141,7 +141,6 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 	GaimAutoRecon *info;
 	GSList* listAccount;
 
-	gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(list->statusbox), text);
 	if (hash == NULL) {
 	       	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
 	       	free_auto_recon);
@@ -154,7 +153,9 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 		listAccount = NULL;
 
 	if (!gc->wants_to_die) {
-		if (info == NULL) {
+	  gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(list->statusbox), text);
+	  
+	  if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
 			info->delay = INITIAL_RECON_DELAY;
