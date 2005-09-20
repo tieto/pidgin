@@ -19,16 +19,6 @@
  */
 #include "gtkmenutray.h"
 
-#define GAIM_GTK_MENU_TRAY_GET_PRIVATE(obj)	\
-	(G_TYPE_INSTANCE_GET_PRIVATE((obj), GAIM_GTK_TYPE_MENU_TRAY, GaimGtkMenuTrayPriv))
-	
-/******************************************************************************
- * Structs
- *****************************************************************************/
-typedef struct {
-	GtkWidget *tray;
-} GaimGtkMenuTrayPriv;
-
 /******************************************************************************
  * Enums
  *****************************************************************************/
@@ -89,10 +79,9 @@ gaim_gtk_menu_tray_get_property(GObject *obj, guint param_id, GValue *value,
 
 static void
 gaim_gtk_menu_tray_finalize(GObject *obj) {
-	GaimGtkMenuTrayPriv *priv = GAIM_GTK_MENU_TRAY_GET_PRIVATE(obj);
-
-	if(GTK_IS_WIDGET(priv->tray))
-		gtk_widget_destroy(GTK_WIDGET(priv->tray));
+	GaimGtkMenuTray *tray = GAIM_GTK_MENU_TRAY(obj);
+	if(GTK_IS_WIDGET(tray->tray))
+		gtk_widget_destroy(GTK_WIDGET(tray->tray));
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -111,8 +100,6 @@ gaim_gtk_menu_tray_class_init(GaimGtkMenuTrayClass *klass) {
 	item_class->select = gaim_gtk_menu_tray_select;
 	item_class->deselect = gaim_gtk_menu_tray_deselect;
 
-	g_type_class_add_private(klass, sizeof(GaimGtkMenuTrayPriv));
-
 	pspec = g_param_spec_object("box", "The box",
 								"The box",
 								GTK_TYPE_BOX,
@@ -122,16 +109,14 @@ gaim_gtk_menu_tray_class_init(GaimGtkMenuTrayClass *klass) {
 
 static void
 gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
-	GaimGtkMenuTrayPriv *priv = GAIM_GTK_MENU_TRAY_GET_PRIVATE(menu_tray);
-
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
 	
-	if(!GTK_IS_WIDGET(priv->tray))
-		priv->tray = gtk_hbox_new(FALSE, 0);
+	if(!GTK_IS_WIDGET(menu_tray->tray))
+		menu_tray->tray = gtk_hbox_new(FALSE, 0);
 
-	gtk_container_add(GTK_CONTAINER(menu_tray), priv->tray);
+	gtk_container_add(GTK_CONTAINER(menu_tray), menu_tray->tray);
 
-	gtk_widget_show(priv->tray);
+	gtk_widget_show(menu_tray->tray);
 }
 
 /******************************************************************************
@@ -170,35 +155,22 @@ gaim_gtk_menu_tray_new() {
 
 GtkWidget *
 gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray) {
-	GaimGtkMenuTrayPriv *priv;
-	
 	g_return_val_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray), NULL);
-
-	priv = GAIM_GTK_MENU_TRAY_GET_PRIVATE(menu_tray);
-
-	return priv->tray;
+	return menu_tray->tray;
 }
 
 void
 gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget) {
-	GaimGtkMenuTrayPriv *priv;
-
 	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
-	priv = GAIM_GTK_MENU_TRAY_GET_PRIVATE(menu_tray);
-
-	gtk_box_pack_end(GTK_BOX(priv->tray), widget, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
 }
 
 void
 gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget) {
-	GaimGtkMenuTrayPriv *priv;
-
 	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
-	priv = GAIM_GTK_MENU_TRAY_GET_PRIVATE(menu_tray);
-
-	gtk_box_pack_start(GTK_BOX(priv->tray), widget, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
 }
