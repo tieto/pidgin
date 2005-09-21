@@ -67,11 +67,16 @@ static void load_gtkspell() {
 
 static char* lookup_aspell_path() {
 	char *path = NULL;
+	const char *tmp;
 	HKEY reg_key;
 	DWORD type;
 	DWORD nbytes;
 	gboolean found_reg_key;
 	LPCTSTR subkey = NULL;
+
+	if ((tmp = g_getenv("GAIM_ASPELL_DIR")))
+		return g_strdup(tmp);
+
 	if (G_WIN32_HAVE_WIDECHAR_API ()) {
 		if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"Software\\Aspell", 0,
 					KEY_QUERY_VALUE,

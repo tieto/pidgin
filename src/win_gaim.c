@@ -82,11 +82,53 @@ static BOOL read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data
 }
 
 static void dll_prep() {
-	char gtkpath[MAX_PATH + 1];
 	char path[MAX_PATH + 1];
-	DWORD plen;
-	HKEY hkey;
 	HMODULE hmod;
+	HKEY hkey;
+#ifdef PORTABLE
+	/* We assume that GTK+ is installed under \\path\to\Gaim\..\GTK
+	 * First we find \\path\to
+	 */
+	if (GetModuleFileName(NULL, path, MAX_PATH) != 0) {
+		char *tmp = path;
+		char *prev = NULL;
+		char *prev2 = NULL;
+
+		while ((tmp = strchr(tmp, '\\'))) {
+			prev2 = prev;
+			prev = tmp;
+			tmp++;
+		}
+
+		if (prev2) {
+			prev2[0] = '\0';
+		}
+	} else {
+		printf("Unable to determine current executable path. \n"
+			"This will prevent the settings dir from being set.\n"
+			"Assuming GTK+ is in the PATH.\n");
+	}
+
+	if (path) {
+		/* Set up the settings dir base to be \\path\to
+		 * The actual settings dir will be \\path\to\.gaim */
+		char settingsdir[strlen(path) + strlen("GAIMHOME=") + 1];
+		char aspelldir[strlen(path) + strlen("GAIM_ASPELL_DIR=\\Aspell\\bin") + 1];
+
+		snprintf(settingsdir, sizeof(settingsdir), "GAIMHOME=%s", path);
+		printf("Setting settings dir: %s\n", settingsdir);
+		putenv(settingsdir);
+
+		snprintf(aspelldir, sizeof(aspelldir), "GAIM_ASPELL_DIR=%s\\Aspell\\bin", path);
+		printf(aspelldir);
+
+		/* set the GTK+ path to be \\path\to\GTK\bin */
+		strcat(path, "\\GTK\\bin");
+	} else
+		return;
+#else /* PORTABLE */
+	char gtkpath[MAX_PATH + 1];
+	DWORD plen;
 
 	plen = sizeof(gtkpath);
 	hkey = HKEY_CURRENT_USER;
@@ -109,7 +151,7 @@ static void dll_prep() {
 		strcpy(path, gtkpath);
 		strcat(path, "\\bin");
 	}
-
+#endif
 	printf("GTK+ path found: %s\n", path);
 
 	if ((hmod = GetModuleHandle("kernel32.dll"))) {
@@ -236,19 +278,23 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 */
 static const char *wgaim_get_locale() {
 	const char *locale = NULL;
+	LCID lcid;
+#ifndef PORTABLE
 	char data[10];
 	DWORD datalen = 10;
-	LCID lcid;
+#endif
 
 	/* Check if user set GAIMLANG env var */
 	if ((locale = getenv("GAIMLANG")))
 		return locale;
 
+#ifndef PORTABLE
 	if (read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim",
 			"Installer Language", (LPBYTE) &data, &datalen)) {
 		if ((locale = wgaim_lcid_to_posix(atoi(data))))
 			return locale;
 	}
+#endif
 
 	lcid = GetUserDefaultLCID();
 	if ((locale = wgaim_lcid_to_posix(lcid)))
@@ -374,7 +420,9 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		MessageBox(NULL, errbuf, NULL, MB_OK | MB_TOPMOST);
 	}
 
+#ifndef PORTABLE
 	if (!getenv("GAIM_NO_DLL_CHECK"))
+#endif
 		dll_prep();
 
 	wgaim_set_locale();

@@ -31,6 +31,10 @@ CFLAGS =
 
 DEFINES = -D_WIN32_WINNT=0x0501
 
+ifeq ($(MAKECMDGOALS), $(TARGET)-portable.exe)
+DEFINES := $(DEFINES) -DPORTABLE
+endif
+
 LDFLAGS = -mwindows
 
 #-mconsole
@@ -231,6 +235,10 @@ $(TARGET).lib $(TARGET).dll: $(DLL_OBJECTS) $(IDLETRACK_TOP)/idletrack.dll
 $(TARGET).exe: $(TARGET).dll $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(TARGET).exe
 
+$(TARGET)-portable.exe: clean_exe $(EXE_OBJECTS)
+	$(CC) $(LDFLAGS) $(EXE_OBJECTS) $(LIB_PATHS) $(EXE_LIBS) -o $(TARGET)-portable.exe
+	rm win_gaim.o
+
 ##
 ## CLEAN RULES
 ##
@@ -241,3 +249,6 @@ clean:
 	rm -rf $(TARGET).dll
 	rm -rf $(TARGET).lib
 	rm -rf $(TARGET).exe
+
+clean_exe:
+	rm -rf win_gaim.o
