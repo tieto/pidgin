@@ -31,6 +31,7 @@
 #include "gtkstatusbox.h"
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
+static void remove_typing_cb(GtkGaimStatusBox *box);
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
@@ -281,6 +282,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
+	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	status_box->sw = gtk_scrolled_window_new(NULL, NULL);

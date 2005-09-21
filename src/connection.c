@@ -433,9 +433,10 @@ gboolean
 gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;
-
+	char *password = g_strdup(gaim_account_get_password(account));
 	gaim_account_disconnect(account);
-
+	gaim_account_set_password(account, password);
+	g_free(password);
 	return FALSE;
 }
 

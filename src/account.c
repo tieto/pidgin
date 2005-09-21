@@ -915,10 +915,9 @@ request_password_ok_cb(GaimAccount *account, GaimRequestFields *fields)
 	}
 
 	if(remember)
-		gaim_account_set_remember_password(account, TRUE);
+	  gaim_account_set_remember_password(account, TRUE);
 
-	if (gaim_account_get_remember_password(account))
-		gaim_account_set_password(account, entry);
+	gaim_account_set_password(account, entry);
 
 	gaim_connection_new(account, FALSE, entry);
 }
@@ -1010,6 +1009,8 @@ gaim_account_disconnect(GaimAccount *account)
 
 	gc = gaim_account_get_connection(account);
 	gaim_connection_destroy(gc);
+	if (!gaim_account_get_remember_password(account))
+	  gaim_account_set_password(account, NULL);
 	gaim_account_set_connection(account, NULL);
 
 	account->disconnecting = FALSE;
@@ -1168,10 +1169,6 @@ gaim_account_set_password(GaimAccount *account, const char *password)
 
 	g_free(account->password);
 	account->password = NULL;
-
-	if (!gaim_account_get_remember_password(account))
-		return;
-
 	account->password = (password == NULL ? NULL : g_strdup(password));
 
 	schedule_accounts_save();
