@@ -295,6 +295,9 @@ exit_err:
 }
 /* }}} */
 
+/*
+ */
+/* static void ggp_callback_register_account_cancel(GaimConnection *gc, GaimRequestFields *fields) {{{ */
 static void ggp_callback_register_account_cancel(GaimConnection *gc, GaimRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
@@ -306,6 +309,7 @@ static void ggp_callback_register_account_cancel(GaimConnection *gc, GaimRequest
 	g_free(token);
 
 }
+/* }}} */
 
 /* ----- PUBLIC DIRECTORY SEARCH ---------------------------------------- */
 
@@ -1233,13 +1237,16 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, Gai
 	if (strlen(msg) == 0)
 		return 1;
 
+	gaim_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
 	tmp = charset_convert(msg, "UTF-8", "CP1250");
 
 	if (tmp != NULL && strlen(tmp) > 0) {
-		if (gg_send_message(info->session, GG_CLASS_MSG, ggp_str_to_uin(who), (unsigned char *)tmp) < 0) {
+		if (gg_send_message(info->session, GG_CLASS_CHAT, ggp_str_to_uin(who),
+					        (unsigned char *)tmp) < 0) {
 			return -1;
 		}
 	}
+	g_free(tmp);
 
 	return 1;
 }
@@ -1637,6 +1644,7 @@ static GaimPluginInfo info = {
 };
 /* }}} */
 
+/* static void gaim_gg_debug_handler(int level, const char * format, va_list args) {{{ */
 static void gaim_gg_debug_handler(int level, const char * format, va_list args) {
 	GaimDebugLevel gaim_level;
 	char *msg = g_strdup_vprintf(format, args);
@@ -1659,6 +1667,7 @@ static void gaim_gg_debug_handler(int level, const char * format, va_list args) 
 	gaim_debug(gaim_level, "gg", msg);
 	g_free(msg);
 }
+/* }}} */
 
 /*
  */
