@@ -48,8 +48,6 @@ extern char*     wgaim_install_dir(void);
 extern char*     wgaim_lib_dir(void);
 extern char*     wgaim_locale_dir(void);
 extern char*     wgaim_data_dir(void);
-/* UI related */
-extern void      wgaim_gtk_window_move(GtkWindow *window, gint x, gint y);
 /* Utility */
 extern int       wgaim_gz_decompress(const char* in, const char* out);
 extern int       wgaim_gz_untar(const char* filename, const char* destdir);
