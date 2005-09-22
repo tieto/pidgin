@@ -72,19 +72,9 @@ gaim_sound_get_ui_ops(void)
 	return sound_ui_ops;
 }
 
-void *
-gaim_sound_get_handle() {
-	static int handle;
-
-	return &handle;
-}
-
 void
 gaim_sound_init()
 {
-	void *handle       = gaim_sound_get_handle();
-	void *blist_handle = gaim_blist_get_handle();
-
 	gaim_prefs_add_none("/core/sound");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 
@@ -93,8 +83,6 @@ gaim_sound_init()
 void
 gaim_sound_uninit()
 {
-	gaim_signals_disconnect_by_handle(gaim_sound_get_handle());
-
 	if(sound_ui_ops && sound_ui_ops->uninit)
 		sound_ui_ops->uninit();
 }
