@@ -7214,7 +7214,7 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 	char *msg;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	gchar *nombre;
-	gchar *reason;
+	gchar *reason = NULL;
 	gchar *dialog_msg;
 	struct name_data *data;
 	GaimBuddy *buddy;
@@ -7235,7 +7235,8 @@ static int gaim_ssi_authrequest(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	if (msg != NULL)
 		reason = gaim_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
-	else
+
+	if (reason == NULL)
 		reason = g_strdup(_("No reason given."));
 
 	dialog_msg = g_strdup_printf(
