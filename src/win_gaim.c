@@ -252,7 +252,8 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 		case 1042: return "ko"; /* korean */
 		case 1063: return "lt"; /* lithuanian */
 		case 1071: return "mk"; /* macedonian */
-		case 1044: return "no"; /* norwegian */
+		case 1044: return "nb"; /* norwegian (Bokmal)*/
+		case 2068: return "nn"; /* norwegian (Nynorsk)*/
 		case 1045: return "pl"; /* polish */
 		case 2070: return "pt"; /* portuguese - portugal */
 		case 1046: return "pt_BR"; /* portuguese - brazil */
