@@ -999,39 +999,50 @@ static GList *jabber_status_types(GaimAccount *account)
 {
 	GaimStatusType *type;
 	GList *types = NULL;
+	GaimValue *priority_value;
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE, "offline",
 			_("Offline"), FALSE, TRUE, FALSE, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	priority_value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(priority_value, 0);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available",
 			_("Available"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			priority_value, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	priority_value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(priority_value, 0);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "chat",
 			_("Chatty"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			priority_value, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	priority_value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(priority_value, 5);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away",
 			_("Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			priority_value, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	priority_value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(priority_value, 10);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY, "xa",
 			_("Extended Away"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			priority_value, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	priority_value = gaim_value_new(GAIM_TYPE_INT);
+	gaim_value_set_int(priority_value, 20);
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE, "dnd",
 			_("Do Not Disturb"), TRUE, TRUE, FALSE, "priority", _("Priority"),
-			gaim_value_new(GAIM_TYPE_INT), "message", _("Message"),
+			priority_value, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 

@@ -144,7 +144,7 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
 {
-	xmlnode *show, *status, *presence;
+	xmlnode *show, *status, *presence, *pri;
 	const char *show_string = NULL;
 
 
@@ -166,6 +166,13 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 	if(msg) {
 		status = xmlnode_new_child(presence, "status");
 		xmlnode_insert_data(status, msg, -1);
+	}
+
+	if(priority) {
+		char *pstr = g_strdup_printf("%d", priority);
+		pri = xmlnode_new_child(presence, "priority");
+		xmlnode_insert_data(pri, pstr, -1);
+		g_free(pstr);
 	}
 
 	return presence;
