@@ -550,7 +550,7 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	} else {
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
 	}
-	
+
 	if ((oldprelit_tag != NULL) && (GTK_IMHTML(imhtml)->prelit_tag != oldprelit_tag)) {
 		gtk_widget_style_get(GTK_WIDGET(imhtml), "hyperlink-color", &norm, NULL);
 		if (norm)
@@ -683,28 +683,27 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 	                                      event->area.x, event->area.y, &buf_x, &buf_y);
 
 	if (GTK_IMHTML(widget)->editable || GTK_IMHTML(widget)->wbfo) {
-		
+
 		if (GTK_IMHTML(widget)->edit.background) {
 			gdk_color_parse(GTK_IMHTML(widget)->edit.background, &gcolor);
 			gdk_gc_set_rgb_fg_color(gc, &gcolor);
 		} else {
 			gdk_gc_set_rgb_fg_color(gc, &(widget->style->base[GTK_WIDGET_STATE(widget)]));
 		}
-		
+
 		gdk_draw_rectangle(event->window,
 				   gc,
 				   TRUE,
 				   visible_rect.x, visible_rect.y, visible_rect.width, visible_rect.height);
 		gdk_gc_unref(gc);
-		
+
 		if (GTK_WIDGET_CLASS (parent_class)->expose_event)
 			return (* GTK_WIDGET_CLASS (parent_class)->expose_event)
 				(widget, event);
-		
 		return FALSE;
 
 	}
-	
+
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &start, buf_x, buf_y);
 	gtk_text_view_get_iter_at_location(GTK_TEXT_VIEW(widget), &end,
 	                                   buf_x + event->area.width, buf_y + event->area.height);
@@ -722,7 +721,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			GdkRectangle rect;
 			GdkRectangle tag_area;
 			const char *color;
-		
+
 			if (strncmp(tag->name, "BACKGROUND ", 11))
 				continue;
 
@@ -754,10 +753,10 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			rect.width = visible_rect.width;
 			if (gtk_text_iter_is_end(&cur))
 				rect.height = visible_rect.y + visible_rect.height - rect.y;
-			else 
+			else
 				rect.height = tag_area.y + tag_area.height - rect.y
 				              + gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
-			
+
 			color = tag->name + 11;
 
 			if (!gdk_color_parse(color, &gcolor)) {
@@ -770,7 +769,6 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			}
 			gdk_gc_set_rgb_fg_color(gc, &gcolor);
 
-	
 			gdk_draw_rectangle(event->window,
 			                   gc,
 			                   TRUE,
@@ -787,8 +785,8 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 		while (gtk_text_iter_forward_to_tag_toggle(&cur, NULL) &&
 		       !gtk_text_iter_is_end(&cur) &&
 		       !gtk_text_iter_begins_tag(&cur, NULL));
-	} 
-	
+	}
+
 	gdk_gc_unref(gc);
 
 	if (GTK_WIDGET_CLASS (parent_class)->expose_event)
@@ -825,6 +823,60 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 					 G_CALLBACK(paste_unformatted_cb), imhtml);
 }
+
+static char *
+ucs2_order(gboolean swap)
+{
+	gboolean be;
+
+	be = G_BYTE_ORDER == G_BIG_ENDIAN;
+	be = swap ? be : !be;
+
+	if (be)
+		return "UCS-2BE";
+	else
+		return "UCS-2LE";
+
+}
+
+/* Convert from UCS-2 to UTF-8, stripping the BOM if one is present.*/
+static gchar *
+ucs2_to_utf8_with_bom_check(guchar *data, guint len) {
+	char *fromcode = NULL;
+	GError *error = NULL;
+	guint16 c;
+	gchar *utf8_ret;
+
+	/*
+	 * Unicode Techinical Report 20
+	 * ( http://www.unicode.org/unicode/reports/tr20/ ) says to treat an
+	 * initial 0xfeff (ZWNBSP) as a byte order indicator so that is
+	 * what we do.  If there is no indicator assume it is in the default
+	 * order
+	 */
+
+	memcpy(&c, data, 2);
+	switch (c) {
+	case 0xfeff:
+	case 0xfffe:
+		fromcode = ucs2_order(c == 0xfeff);
+		data += 2;
+		len -= 2;
+		break;
+	default:
+		fromcode = "UCS-2";
+		break;
+	}
+
+	utf8_ret = g_convert(data, len, "UTF-8", fromcode, NULL, NULL, &error);
+
+	if (error) {
+		gaim_debug_warning("gtkimhtml", "g_convert error: %s\n", error->message);
+		g_error_free(error);
+	}
+	return utf8_ret;
+}
+
 
 static void gtk_imhtml_clipboard_get(GtkClipboard *clipboard, GtkSelectionData *selection_data, guint info, GtkIMHtml *imhtml) {
 	char *text;
@@ -1015,18 +1067,15 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 	if (selection_data->length >= 2 &&
 		(*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe)) {
 		/* This is UCS-2 */
-		char *tmp;
-		char *utf8 = g_convert(text, selection_data->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
+		char *utf8 = ucs2_to_utf8_with_bom_check(text, selection_data->length);
 		g_free(text);
 		text = utf8;
 		if (!text) {
 			gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
 			return;
 		}
-		tmp = g_utf8_next_char(text);
-		memmove(text, tmp, strlen(tmp) + 1);
 	}
-	
+
 	if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
 		gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in paste_received_cb\n");
 		g_free(text);
@@ -1363,11 +1412,11 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 	imhtml->edit.fontsize = 0;
 	imhtml->edit.link = NULL;
 
-	
+
 	imhtml->scalables = NULL;
 
 	gtk_imhtml_set_editable(imhtml, FALSE);
-	g_signal_connect(G_OBJECT(imhtml), "populate-popup", 
+	g_signal_connect(G_OBJECT(imhtml), "populate-popup",
 					 G_CALLBACK(hijack_menu_cb), NULL);
 
 #ifdef _WIN32
@@ -1534,10 +1583,10 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
                            gint              y,
                            guint             time)
 {
-	GdkDragAction suggested_action = 0;	
+	GdkDragAction suggested_action = 0;
 
 	if (gtk_drag_dest_find_target (widget, context, NULL) == GDK_NONE) {
-    		/* can't accept any of the offered targets */
+		/* can't accept any of the offered targets */
 	} else {
 		GtkWidget *source_widget;
 		suggested_action = context->suggested_action;
@@ -1549,10 +1598,10 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 			if ((context->actions & GDK_ACTION_MOVE) != 0)
 				suggested_action = GDK_ACTION_MOVE;
 		}
-	} 
-	
+	}
+
 	gdk_drag_status (context, suggested_action, time);
-	
+
   /* TRUE return means don't propagate the drag motion to parent
    * widgets that may also be drop sites.
    */
@@ -1563,7 +1612,7 @@ static void
 gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, gpointer user_data)
 {
 	GdkAtom target = gtk_drag_dest_find_target (widget, context, NULL);
-	
+
 	if (target != GDK_NONE)
 		gtk_drag_get_data (widget, context, target, time);
 	else
@@ -1634,17 +1683,11 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			 * http://mail.gnome.org/archives/gtk-devel-list/2001-September/msg00114.html
 			 */
 			if (sd->length >= 2 && !g_utf8_validate(text, sd->length - 1, NULL)) {
-				utf8 = g_convert(text, sd->length, "UTF-8", "UCS-2", NULL, NULL, NULL);
+				utf8 = ucs2_to_utf8_with_bom_check(text, sd->length);
 
 				if (!utf8) {
 					gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
 					return;
-				}
-
-				if (*(guint16 *)text == 0xfeff || *(guint16 *)text == 0xfffe || TRUE) {
-					char *tmp;
-					tmp = g_utf8_next_char(utf8);
-					memmove(utf8, tmp, strlen(tmp) + 1);
 				}
 			} else if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
 				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
@@ -1739,7 +1782,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 
 			pos = strchr (t->values->str, *amp);
 		}
-		else if (*x == '<') /* Because we're all WYSIWYG now, a '<' 
+		else if (*x == '<') /* Because we're all WYSIWYG now, a '<'
 				     * char should only appear as the start of a tag.  Perhaps a safer (but costlier)
 				     * check would be to call gtk_imhtml_is_tag on it */
 			break;
@@ -1856,7 +1899,7 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 
 	smiley = gtk_imhtml_smiley_get(imhtml,sml,text);
 
-	if (!smiley) 
+	if (!smiley)
 		return NULL;
 
 	if (!smiley->icon && smiley->file) {
@@ -1866,7 +1909,7 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		if (smiley->icon)
 			g_object_ref(G_OBJECT(smiley->icon));
 	}
-	
+
 	return smiley->icon;
 }
 
@@ -2181,7 +2224,7 @@ static const char *accepted_protocols[] = {
 	"https://",
 	"ftp://"
 };
-                                                                                                              
+
 static const int accepted_protocols_size = 3;
 
 /* returns if the beginning of the text is a protocol. If it is the protocol, returns the length so
@@ -2204,7 +2247,7 @@ int gtk_imhtml_is_protocol(const char *text)
 
 [19:58] <Robot101> marv: images go into the imgstore, a refcounted... well.. hash. :)
 [19:59] <KingAnt> marv: I think the image tag used by the core is something like <img id="#"/>
-[19:59] Ro0tSiEgE robert42 RobFlynn Robot101 ross22 roz 
+[19:59] Ro0tSiEgE robert42 RobFlynn Robot101 ross22 roz
 [20:00] <KingAnt> marv: Where the ID is the what is returned when you add the image to the imgstore using gaim_imgstore_add
 [20:00] <marv> Robot101: so how does the image get passed to serv_got_im() and serv_send_im()? just as the <img id="#" and then the prpl looks it up from the store?
 [20:00] <KingAnt> marv: Right
@@ -2771,8 +2814,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->face = g_strdup(oldfont->face);
 						if (font->face && (atoi(font->face) > 100)) {
 							/* WTF is this? */
-							/* Maybe it sets a max size on the font face?  I seem to 
-							 * remember bad things happening if the font size was 
+							/* Maybe it sets a max size on the font face?  I seem to
+							 * remember bad things happening if the font size was
 							 * 2 billion */
 							g_free(font->face);
 							font->face = g_strdup("100");
@@ -4532,7 +4575,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		tag = sl->data;
 		if (!gtk_text_iter_toggles_tag(start, GTK_TEXT_TAG(tag))) {
 			if (strlen(tag_to_html_end(tag)) > 0)
-		 		g_string_append(str, tag_to_html_start(tag));
+				g_string_append(str, tag_to_html_start(tag));
 			g_queue_push_tail(q, tag);
 		}
 	}
@@ -4546,7 +4589,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 			tag = sl->data;
 			if (gtk_text_iter_begins_tag(&iter, GTK_TEXT_TAG(tag))) {
 				if (strlen(tag_to_html_end(tag)) > 0)
-		 			g_string_append(str, tag_to_html_start(tag));
+					g_string_append(str, tag_to_html_start(tag));
 				g_queue_push_tail(q, tag);
 			}
 		}
@@ -4559,7 +4602,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 				if (text)
 					str = g_string_append(str, text);
 			}
-		} else 	if (c == '<') {
+		} else if (c == '<') {
 			str = g_string_append(str, "&lt;");
 		} else if (c == '>') {
 			str = g_string_append(str, "&gt;");
@@ -4587,12 +4630,12 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 					if (!tag_ends_here(tmp, &iter, &nextiter) && strlen(tag_to_html_end(tmp)) > 0)
 						g_queue_push_tail(r, tmp);
-		 			g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
+					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
 				}
 
 				if (tmp == NULL)
 					gaim_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
-		 		else
+				else
 					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
 
 				while ((tmp = g_queue_pop_head(r))) {
