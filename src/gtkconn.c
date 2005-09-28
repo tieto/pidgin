@@ -186,9 +186,9 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 				  gaim_account_get_username(account),
 				  gaim_account_get_protocol_name(account));
 	    }
-	    
+	
 	    p = g_strdup_printf(_("%s could not connect"), n);
-	    s = g_strdup_printf(_("%s was unable to connect do to an error. %s The account has been disabled. "
+	    s = g_strdup_printf(_("%s was unable to connect due to an error. %s The account has been disabled. "
 				  "Correct the error and reenable to account to connect."), n, text);
 	    gaim_notify_error(NULL, NULL, p, s);
 	    g_free(p);
