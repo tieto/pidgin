@@ -1149,8 +1149,6 @@ gaim_presence_new_for_buddy(GaimBuddy *buddy)
 	g_return_val_if_fail(buddy != NULL, NULL);
 	account = buddy->account;
 
-	account = buddy->account;
-
 	key = g_new0(GaimStatusBuddyKey, 1);
 	key->account = buddy->account;
 	key->name    = g_strdup(buddy->name);
