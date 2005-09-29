@@ -1,7 +1,8 @@
 ; Installer script for win32 Gaim
-; Herman Bloggs <hermanator12002@yahoo.com>
+; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
+; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.0 (final release).
+; NOTE: this .NSI script is intended for NSIS 2.08
 ;
 
 ;--------------------------------
@@ -12,6 +13,7 @@ Var GTK_THEME_SEL
 Var LANG_IS_SET
 Var ISSILENT
 Var STARTUP_RUN_KEY
+Var SPELLCHECK_SEL
 
 ;--------------------------------
 ;Configuration
@@ -29,7 +31,7 @@ OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
 !endif
 !endif
 
-SetCompressor lzma
+SetCompressor /SOLID lzma
 ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
@@ -52,7 +54,7 @@ SetDateSave on
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
 !define GAIM_REG_LANG				"Installer Language"
 
-!define GTK_VERSION				"2.6.2"
+!define GTK_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
@@ -62,12 +64,15 @@ SetDateSave on
 !define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
 !define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.4.0\engines"
 
+!define ASPELL_REG_KEY				"SOFTWARE\Aspell"
+!define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
+
 ;--------------------------------
 ;Modern UI Configuration
 
   !define MUI_ICON				".\pixmaps\gaim-install.ico"
   !define MUI_UNICON				".\pixmaps\gaim-install.ico"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP 		".\src\win32\nsis\gaim-intro.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\src\win32\nsis\gaim-intro.bmp"
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP		".\src\win32\nsis\gaim-header.bmp"
 
@@ -86,8 +91,10 @@ SetDateSave on
 
 ;--------------------------------
 ;Pages
-  
+
+!ifndef WITH_GTK
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
+!endif
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -113,7 +120,7 @@ SetDateSave on
 
 ;--------------------------------
 ;Languages
- 
+
   ;; English goes first because its the default. The rest are
   ;; in alphabetical order (at least the strings actually displayed
   ;; will be).
@@ -189,7 +196,7 @@ SetDateSave on
   ; Only need this if using bzip2 compression
 
   !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
-  !insertmacro MUI_RESERVEFILE_LANGDLL 
+  !insertmacro MUI_RESERVEFILE_LANGDLL
   ReserveFile "${NSISDIR}\Plugins\UserInfo.dll"
 
 
@@ -234,7 +241,7 @@ Section -SecUninstallOldGaim
   ; If previous version exists .. remove
   try_uninstall:
     StrCmp $R1 "" done
-      ; Version key started with 0.60a3. Prior versions can't be 
+      ; Version key started with 0.60a3. Prior versions can't be
       ; automaticlly uninstalled.
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
@@ -248,20 +255,20 @@ Section -SecUninstallOldGaim
           IfErrors uninstall_problem
             ; Ready to uninstall..
             ClearErrors
-	    ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
-	    IfErrors exec_error
+            ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
+            IfErrors exec_error
               Delete "$TEMP\${GAIM_UNINST_EXE}"
-	      Goto done
+            Goto done
 
-	    exec_error:
+            exec_error:
               Delete "$TEMP\${GAIM_UNINST_EXE}"
               Goto uninstall_problem
 
         uninstall_problem:
-	  ; In this case just wipe out previous Gaim install dir..
-	  ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
-	  ; and versions 0.60 and lower did not correctly set the uninstall reg string 
-	  ; (the string was set in quotes)
+          ; In this case just wipe out previous Gaim install dir..
+          ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
+          ; and versions 0.60 and lower did not correctly set the uninstall reg string
+          ; (the string was set in quotes)
           IfSilent do_wipeout
           MessageBox MB_YESNO $(GAIM_PROMPT_WIPEOUT) IDYES do_wipeout IDNO cancel_install
           cancel_install:
@@ -276,7 +283,7 @@ Section -SecUninstallOldGaim
               DeleteRegKey HKLM ${GAIM_REG_KEY}
 
             uninstall_prob_cont:
-	      RMDir /r "$R1"
+              RMDir /r "$R1"
 
   done:
 SectionEnd
@@ -436,7 +443,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
         Delete "$INSTDIR\plugins\perl.dll"
         RMDir /r "$INSTDIR\perlmod"
         Goto perl_done
- 
+
       perl_exists:
         IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_remove
         StrCmp $R0 "HKLM" 0 perl_done
@@ -450,12 +457,10 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
     Call GetWindowsVersion
     Pop $R2
-    StrCmp $R2 "NT 4.0" 0 nt4_done
+    StrCmp $R2 "NT 4.0" +1 +4
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\silcclient.dll"
     Delete "$INSTDIR\silc.dll"
-
-    nt4_done:
 
     SetOutPath "$INSTDIR"
 
@@ -559,6 +564,100 @@ SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
 SubSectionEnd
 
 ;--------------------------------
+;Spell Checking
+
+SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+  Section /o $(GAIM_SPELLCHECK_BRETON) SecSpellCheckBreton
+    Push ${SecSpellCheckBreton}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_CATALAN) SecSpellCheckCatalan
+    Push ${SecSpellCheckCatalan}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_CZECH) SecSpellCheckCzech
+    Push ${SecSpellCheckCzech}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_WELSH) SecSpellCheckWelsh
+    Push ${SecSpellCheckWelsh}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_DANISH) SecSpellCheckDanish
+    Push ${SecSpellCheckDanish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_GERMAN) SecSpellCheckGerman
+    Push ${SecSpellCheckGerman}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_GREEK) SecSpellCheckGreek
+    Push ${SecSpellCheckGreek}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ENGLISH) SecSpellCheckEnglish
+    Push ${SecSpellCheckEnglish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ESPERANTO) SecSpellCheckEsperanto
+    Push ${SecSpellCheckEsperanto}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SPANISH) SecSpellCheckSpanish
+    Push ${SecSpellCheckSpanish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_FAROESE) SecSpellCheckFaroese
+    Push ${SecSpellCheckFaroese}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_FRENCH) SecSpellCheckFrench
+    Push ${SecSpellCheckFrench}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ITALIAN) SecSpellCheckItalian
+    Push ${SecSpellCheckItalian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_DUTCH) SecSpellCheckDutch
+    Push ${SecSpellCheckDutch}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_NORWEGIAN) SecSpellCheckNorwegian
+    Push ${SecSpellCheckNorwegian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_POLISH) SecSpellCheckPolish
+    Push ${SecSpellCheckPolish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_PORTUGUESE) SecSpellCheckPortuguese
+    Push ${SecSpellCheckPortuguese}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_ROMANIAN) SecSpellCheckRomanian
+    Push ${SecSpellCheckRomanian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_RUSSIAN) SecSpellCheckRussian
+    Push ${SecSpellCheckRussian}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SLOVAK) SecSpellCheckSlovak
+    Push ${SecSpellCheckSlovak}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_SWEDISH) SecSpellCheckSwedish
+    Push ${SecSpellCheckSwedish}
+    Call InstallAspellAndDict
+  SectionEnd
+  Section /o $(GAIM_SPELLCHECK_UKRAINIAN) SecSpellCheckUkrainian
+    Push ${SecSpellCheckUkrainian}
+    Call InstallAspellAndDict
+  SectionEnd
+SubSectionEnd
+
+;--------------------------------
 ;Uninstaller Section
 
 
@@ -611,6 +710,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\liboscar.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
+    Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
     Delete "$INSTDIR\plugins\perl.dll"
@@ -678,22 +778,21 @@ SectionEnd ; end of uninstall section
 ;Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGaim} \
-	$(GAIM_SECTION_DESCRIPTION)
+        $(GAIM_SECTION_DESCRIPTION)
 !ifdef WITH_GTK
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
-	$(GTK_SECTION_DESCRIPTION)
+        $(GTK_SECTION_DESCRIPTION)
 !endif
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkThemes} \
         $(GTK_THEMES_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
         $(GTK_NO_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
-	$(GTK_WIMP_THEME_DESC)
+        $(GTK_WIMP_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkBluecurve} \
         $(GTK_BLUECURVE_THEME_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
         $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
-
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
         $(GAIM_SHORTCUTS_SECTION_DESCRIPTION)
@@ -701,6 +800,53 @@ SectionEnd ; end of uninstall section
         $(GAIM_DESKTOP_SHORTCUT_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
         $(GAIM_STARTMENU_SHORTCUT_DESC)
+
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheck} \
+        $(GAIM_SPELLCHECK_SECTION_DESCRIPTION)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckBreton} \
+        "$(GAIM_SPELLCHECK_BRETON) (862kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCatalan} \
+        "$(GAIM_SPELLCHECK_CATALAN) (3.9Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCzech} \
+        "$(GAIM_SPELLCHECK_CZECH) (17Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckWelsh} \
+        "$(GAIM_SPELLCHECK_WELSH) (4.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDanish} \
+        "$(GAIM_SPELLCHECK_DANISH) (6.9Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGerman} \
+        "$(GAIM_SPELLCHECK_GERMAN) (5.4Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGreek} \
+        "$(GAIM_SPELLCHECK_GREEK) (7.1Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEnglish} \
+        "$(GAIM_SPELLCHECK_ENGLISH) (2.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEsperanto} \
+        "$(GAIM_SPELLCHECK_ESPERANTO) (5.7Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSpanish} \
+        "$(GAIM_SPELLCHECK_SPANISH) (7.0Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFaroese} \
+        "$(GAIM_SPELLCHECK_FAROESE) (913kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFrench} \
+        "$(GAIM_SPELLCHECK_FRENCH) (9.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckItalian} \
+        "$(GAIM_SPELLCHECK_ITALIAN) (770kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDutch} \
+        "$(GAIM_SPELLCHECK_DUTCH) (3.7Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckNorwegian} \
+        "$(GAIM_SPELLCHECK_NORWEGIAN) (3.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPolish} \
+        "$(GAIM_SPELLCHECK_POLISH) (9.3Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPortuguese} \
+        "$(GAIM_SPELLCHECK_PORTUGUESE) (5.5Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRomanian} \
+        "$(GAIM_SPELLCHECK_ROMANIAN) (906kb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRussian} \
+        "$(GAIM_SPELLCHECK_RUSSIAN) (11Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSlovak} \
+        "$(GAIM_SPELLCHECK_SLOVAK) (8.0Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSwedish} \
+        "$(GAIM_SPELLCHECK_SWEDISH) (2.2Mb)"
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckUkrainian} \
+        "$(GAIM_SPELLCHECK_UKRAINIAN) (12Mb)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -730,7 +876,7 @@ Function CanWeInstallATheme
     StrCmp $0 "NONE" 0 themes_cont
       StrCmp $GTK_FOLDER $INSTDIR 0 no_rights
         StrCpy $1 $INSTDIR
-	Goto done
+        Goto done
     themes_cont:
 
     StrCmp $0 "HKCU" hkcu hklm
@@ -756,65 +902,73 @@ FunctionEnd
 
 
 Function CheckUserInstallRights
-	ClearErrors
-	UserInfo::GetName
-	IfErrors Win9x
-	Pop $0
-	UserInfo::GetAccountType
-	Pop $1
+  Push $0
+  Push $1
+  ClearErrors
+  UserInfo::GetName
+  IfErrors Win9x
+  Pop $0
+  UserInfo::GetAccountType
+  Pop $1
 
-	StrCmp $1 "Admin" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "Power" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "User" 0 +3
-		StrCpy $1 "HKCU"
-		Goto done
-	StrCmp $1 "Guest" 0 +3
-		StrCpy $1 "NONE"
-		Goto done
-	; Unknown error
-	StrCpy $1 "NONE"
-        Goto done
+  StrCmp $1 "Admin" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "Power" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "User" 0 +3
+    StrCpy $1 "HKCU"
+    Goto done
+  StrCmp $1 "Guest" 0 +3
+    StrCpy $1 "NONE"
+    Goto done
+  ; Unknown error
+  StrCpy $1 "NONE"
+  Goto done
 
-	Win9x:
-		StrCpy $1 "HKLM"
+  Win9x:
+    StrCpy $1 "HKLM"
 
-	done:
-        Push $1
+  done:
+    Exch $1
+    Exch
+    Pop $0
 FunctionEnd
 
 Function un.CheckUserInstallRights
-	ClearErrors
-	UserInfo::GetName
-	IfErrors Win9x
-	Pop $0
-	UserInfo::GetAccountType
-	Pop $1
+  Push $0
+  Push $1
+  ClearErrors
+  UserInfo::GetName
+  IfErrors Win9x
+  Pop $0
+  UserInfo::GetAccountType
+  Pop $1
 
-	StrCmp $1 "Admin" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "Power" 0 +3
-                StrCpy $1 "HKLM"
-		Goto done
-	StrCmp $1 "User" 0 +3
-		StrCpy $1 "HKCU"
-		Goto done
-	StrCmp $1 "Guest" 0 +3
-		StrCpy $1 "NONE"
-		Goto done
-	; Unknown error
-	StrCpy $1 "NONE"
-        Goto done
+  StrCmp $1 "Admin" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "Power" 0 +3
+    StrCpy $1 "HKLM"
+    Goto done
+  StrCmp $1 "User" 0 +3
+    StrCpy $1 "HKCU"
+    Goto done
+  StrCmp $1 "Guest" 0 +3
+    StrCpy $1 "NONE"
+    Goto done
+  ; Unknown error
+  StrCpy $1 "NONE"
+  Goto done
 
-	Win9x:
-		StrCpy $1 "HKLM"
+  Win9x:
+    StrCpy $1 "HKLM"
 
-	done:
-        Push $1
+  done:
+    Exch $1
+    Exch
+    Pop $0
 FunctionEnd
 
 ;
@@ -824,7 +978,9 @@ FunctionEnd
 ;   Pop $0 ; 0 - Bad path  1 - Good path
 ;
 Function VerifyDir
-  Pop $0
+  Exch $0
+  Push $1
+  Push $2
   Loop:
     IfFileExists $0 dir_exists
     StrCpy $1 $0 ; save last
@@ -865,7 +1021,7 @@ Function VerifyDir
       PathBad1:
       StrCpy $0 "0"
       Push $0
-      Return
+      Goto done
 
     PathGood:
       FileClose $1
@@ -873,15 +1029,24 @@ Function VerifyDir
       PathGood1:
       StrCpy $0 "1"
       Push $0
+
+  done:
+  Exch 3 ; The top of the stack contains the output variable
+  Pop $0
+  Pop $2
+  Pop $1
 FunctionEnd
 
 Function .onVerifyInstDir
+  Push $0
   Push $INSTDIR
   Call VerifyDir
   Pop $0
   StrCmp $0 "0" 0 dir_good
     Abort
+
   dir_good:
+  Pop $0
 FunctionEnd
 
 ; GetParent
@@ -918,7 +1083,7 @@ FunctionEnd
 ; be equal and the minor value needs to be greater or equal.
 ;
 ; Usage:
-;   Push "2.1.0"  ; Refrence version
+;   Push "2.1.0"  ; Reference version
 ;   Push "2.2.1"  ; Version to check
 ;   Call CheckGtkVersion
 ;   Pop $R0
@@ -926,33 +1091,39 @@ FunctionEnd
 ;
 Function CheckGtkVersion
   ; Version we want to check
-  Pop $6 
+  Exch $R0
+  Exch
   ; Reference version
-  Pop $8 
+  Exch $R1
+  Push $R2
+  Push $R3
 
   ; Check that the string to check is at least 5 chars long (i.e. x.x.x)
-  StrLen $7 $6
-  IntCmp $7 5 0 bad_version
+  StrLen $R2 $R0
+  IntCmp $R2 5 0 bad_version
 
   ; Major version check
-  StrCpy $7 $6 1
-  StrCpy $9 $8 1
-  IntCmp $7 $9 check_minor bad_version bad_version
+  StrCpy $R2 $R0 1
+  StrCpy $R3 $R1 1
+  IntCmp $R2 $R3 check_minor bad_version bad_version
 
   check_minor:
-    StrCpy $7 $6 1 2
-    StrCpy $9 $8 1 2
-    IntCmp $7 $9 good_version bad_version good_version
+    StrCpy $R2 $R0 1 2
+    StrCpy $R3 $R1 1 2
+    IntCmp $R2 $R3 good_version bad_version good_version
 
   bad_version:
-    StrCpy $6 "0"
-    Push $6
+    StrCpy $R0 "0"
     Goto done
 
   good_version:
-    StrCpy $6 "1"
-    Push $6
+    StrCpy $R0 "1"
+
   done:
+    Pop $R3
+    Pop $R2
+    Pop $R1
+    Exch $R0
 FunctionEnd
 
 ;
@@ -962,8 +1133,8 @@ FunctionEnd
 ;   0 - We have the correct version
 ;       Second Pop: Key where Version was found
 ;   1 - We have an old version that needs to be upgraded
-;       Second Pop: HKLM or HKCU depending on where GTK+ was found.
-;   2 - We don't have GTK+ at all
+;       Second Pop: HKLM or HKCU depending on where GTK was found.
+;   2 - We don't have Gtk+ at all
 ;       Second Pop: "NONE, HKLM or HKCU" depending on our rights..
 ;
 Function DoWeNeedGtk
@@ -979,6 +1150,11 @@ Function DoWeNeedGtk
   ;       - If HKLM ver exists but old, return as if no ver exits.
   ;   - If no rights
   ;     - Check HKLM
+  Push $0
+  Push $2
+  Push $3
+  Push $4
+  Push $5
 
   Call CheckUserInstallRights
   Pop $3
@@ -997,8 +1173,7 @@ Function DoWeNeedGtk
 
   have_gtk:
     ; GTK+ is already installed.. check version.
-    StrCpy $1 ${GTK_VERSION} ; Minimum GTK+ version needed
-    Push $1
+    Push ${GTK_VERSION} ; Minimum GTK+ version needed
     Push $0
     Call CheckGtkVersion
     Pop $2
@@ -1008,7 +1183,7 @@ Function DoWeNeedGtk
       StrCmp $3 "NONE" no_gtk  ; if no rights.. can't upgrade
       StrCmp $3 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
         StrCmp $5 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
-  
+
       upgrade_gtk:
         StrCpy $2 "1"
         Push $5
@@ -1039,25 +1214,38 @@ Function DoWeNeedGtk
     Goto done
 
   done:
+  ; The top two items on the stack are what we want to return
+  Exch 5
+  Pop $0
+  Exch 5
+  Pop $2
+  Pop $5
+  Pop $4
+  Pop $3
 FunctionEnd
 
 Function RunCheck
+  Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
   MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
     Abort
   done:
+  Pop $R0
 FunctionEnd
 
 Function un.RunCheck
+  Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
   MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
     Abort
   done:
+  Pop $R0
 FunctionEnd
 
 Function .onInit
+  Push $R0
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
@@ -1066,9 +1254,20 @@ Function .onInit
   Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
+  StrCpy $SPELLCHECK_SEL ""
+
+  !insertmacro SetSectionFlag ${SecGtkThemes} ${SF_RO}
+  !insertmacro UnselectSection ${SecGtkThemes}
+  !insertmacro SelectSection $GTK_THEME_SEL
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
+
+  ;Mark the dictionaries that are already installed as readonly
+  Call SelectAndDisableInstalledDictionaries
+
   StrCpy $ISSILENT "/NOUI"
 
-  ; GTK+ installer has two silent states.. one with Message boxes, one without
+  ; GTK installer has two silent states.. one with Message boxes, one without
   ; If gaim installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
       StrCpy $ISSILENT "/S"
@@ -1095,21 +1294,20 @@ Function .onInit
   StrCmp $INSTDIR "" 0 instdir_done
 
   Call CheckUserInstallRights
-  Pop $0
+  Pop $R0
 
-  StrCmp $0 "HKLM" 0 user_dir
+  StrCmp $R0 "HKLM" 0 user_dir
     StrCpy $INSTDIR "$PROGRAMFILES\Gaim"
     Goto instdir_done
   user_dir:
-    StrCpy $2 "$SMPROGRAMS"
-    Push $2
+    Push $SMPROGRAMS
     Call GetParent
     Call GetParent
-    Pop $2
-    StrCpy $INSTDIR "$2\Gaim"
+    Pop $R2
+    StrCpy $INSTDIR "$R2\Gaim"
 
   instdir_done:
-
+  Pop $R0
 FunctionEnd
 
 Function un.onInit
@@ -1118,89 +1316,111 @@ Function un.onInit
 
   ; Get stored language prefrence
   ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
-  
+
 FunctionEnd
+
+; This is a modified StartRadioButtons (from Sections.nsh)
+; The only difference is that it allows for nothing in the group to be selected
+; In that case, the default variable should be set to ""
+!macro StartRadioButtonsUnselectable var
+
+  !define StartRadioButtons_Var "${var}"
+
+  Push $R0
+  Push $R1
+
+   ;If we have no selection, don't try to unselect it
+   StrCmp "${StartRadioButtons_Var}" "" +4
+   SectionGetFlags "${StartRadioButtons_Var}" $R0
+   IntOp $R1 $R0 & ${SF_SELECTED}
+   IntOp $R0 $R0 & ${SECTION_OFF}
+   SectionSetFlags "${StartRadioButtons_Var}" $R0
+
+   ; If the previous value isn't currently selected,
+   ; we don't want to select it at the end
+   IntCmp $R1 ${SF_SELECTED} +2
+   StrCpy "${StartRadioButtons_Var}" ""
+
+   StrCpy $R1 "${StartRadioButtons_Var}"
+
+!macroend
 
 Function .onSelChange
   Push $0
+  Push $1
   Push $2
 
-  StrCpy $2 ${SF_SELECTED}
-  SectionGetFlags ${SecGtkNone} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkWimp} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkBluecurve} $0
-  IntOp $2 $2 & $0
-  SectionGetFlags ${SecGtkLighthouseblue} $0
-  IntOp $2 $2 & $0
-  StrCmp $2 0 skip
-    SectionSetFlags ${SecGtkNone} 0
-    SectionSetFlags ${SecGtkWimp} 0
-    SectionSetFlags ${SecGtkBluecurve} 0
-    SectionSetFlags ${SecGtkLighthouseblue} 0
-  skip:
+  !insertmacro StartRadioButtons $GTK_THEME_SEL
+    !insertmacro RadioButton ${SecGtkNone}
+    !insertmacro RadioButton ${SecGtkWimp}
+    !insertmacro RadioButton ${SecGtkBluecurve}
+    !insertmacro RadioButton ${SecGtkLighthouseblue}
+  !insertmacro EndRadioButtons
 
-  !insertmacro UnselectSection $GTK_THEME_SEL
- 
-  ; Remember old selection
-  StrCpy $2 $GTK_THEME_SEL
+  ; Check that at most one of the non-readonly spelling dictionaries are selected
+  ; We can't use $R0 or $R1 in this block since they're used in the macros
+  !insertmacro StartRadioButtonsUnselectable $SPELLCHECK_SEL
+    ; Start with the first language dictionary
+    IntOp $2 ${SecSpellCheck} + 1
 
-  ; Now go through and see who is checked..
-  SectionGetFlags ${SecGtkNone} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkNone}
-  SectionGetFlags ${SecGtkWimp} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkWimp}
-  SectionGetFlags ${SecGtkBluecurve} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkBluecurve}
-  SectionGetFlags ${SecGtkLighthouseblue} $0
-  IntOp $0 $0 & ${SF_SELECTED}
-  IntCmp $0 ${SF_SELECTED} 0 +2 +2
-    StrCpy $GTK_THEME_SEL ${SecGtkLighthouseblue}
+    start_spellcheck_radio:
+    SectionGetFlags $2 $0
 
-  StrCmp $2 $GTK_THEME_SEL 0 +2 ; selection hasn't changed
-    !insertmacro SelectSection $GTK_THEME_SEL
+    IntOp $1 $0 & ${SF_SECGRPEND}
+    ; If it is the end of the section group, stop
+    IntCmp $1 ${SF_SECGRPEND} end_spellcheck_radio
+
+    IntOp $0 $0 & ${SF_RO}
+    IntCmp $0 ${SF_RO} after_button_insert
+    ; If !readonly, then it is part of the radiobutton group
+    !insertmacro RadioButton $2
+    after_button_insert:
+
+    IntOp $2 $2 + 1 ;Advance to the next section
+    Goto start_spellcheck_radio
+
+    end_spellcheck_radio:
+  !insertmacro EndRadioButtons
 
   Pop $2
+  Pop $1
   Pop $0
 FunctionEnd
 
 ; Page enter and exit functions..
 
+!ifndef WITH_GTK
 Function preWelcomePage
   ; If this installer dosn't have GTK, check whether we need it.
   ; We do this here an not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
-  !ifndef WITH_GTK
+    Push $R0
     Call DoWeNeedGtk
-    Pop $0
+    Pop $R0
     Pop $GTK_FOLDER
 
-    StrCmp $0 "0" have_gtk need_gtk
+    StrCmp $R0 "0" have_gtk need_gtk
     need_gtk:
       IfSilent skip_mb
       MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
       skip_mb:
       Quit
     have_gtk:
-  !endif
+    Pop $R0
 FunctionEnd
+!endif
 
 !ifdef WITH_GTK
 Function preGtkDirPage
+  Push $R0
+  Push $R1
   Call DoWeNeedGtk
-  Pop $0
-  Pop $1
+  Pop $R0
+  Pop $R1
 
-  StrCmp $0 "0" have_gtk
-  StrCmp $0 "1" upgrade_gtk
-  StrCmp $0 "2" no_gtk no_gtk
+  StrCmp $R0 "0" have_gtk
+  StrCmp $R0 "1" upgrade_gtk
+  StrCmp $R0 "2" no_gtk no_gtk
 
   ; Don't show dir selector.. Upgrades are done to existing path..
   have_gtk:
@@ -1208,38 +1428,42 @@ Function preGtkDirPage
     Abort
 
   no_gtk:
-    StrCmp $1 "NONE" 0 no_gtk_cont
+    StrCmp $R1 "NONE" 0 no_gtk_cont
       ; Got no install rights..
       Abort
     no_gtk_cont:
       ; Suggest path..
-      StrCmp $1 "HKCU" 0 hklm1
-        StrCpy $2 "$SMPROGRAMS"
-        Push $2
+      StrCmp $R1 "HKCU" 0 hklm1
+        StrCpy $R0 "$SMPROGRAMS"
+        Push $R0
         Call GetParent
         Call GetParent
-        Pop $2
-        StrCpy $2 "$2\GTK\2.0"
+        Pop $R0
+        StrCpy $R0 "$R0\GTK\2.0"
         Goto got_path
       hklm1:
-        StrCpy $2 "${GTK_DEFAULT_INSTALL_PATH}"
+        StrCpy $R0 "${GTK_DEFAULT_INSTALL_PATH}"
 
    got_path:
      StrCpy $name "GTK+ ${GTK_VERSION}"
-     StrCpy $GTK_FOLDER $2
+     StrCpy $GTK_FOLDER $R0
+     Pop $R1
+     Pop $R0
 FunctionEnd
 
 Function postGtkDirPage
+  Push $R0
   StrCpy $name "Gaim ${GAIM_VERSION}"
   Push $GTK_FOLDER
   Call VerifyDir
-  Pop $0
-  StrCmp $0 "0" 0 done
+  Pop $R0
+  StrCmp $R0 "0" 0 done
     IfSilent skip_mb
     MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) IDOK
     skip_mb:
     Abort
   done:
+  Pop $R0
 FunctionEnd
 !endif
 
@@ -1247,42 +1471,41 @@ FunctionEnd
 ; input, none
 ; output, top of stack (replaces, with e.g. whatever)
 ; modifies no other variables.
- 
 Function GetParameters
- 
+
    Push $R0
    Push $R1
    Push $R2
    Push $R3
-   
+
    StrCpy $R2 1
    StrLen $R3 $CMDLINE
-   
+
    ;Check for quote or space
    StrCpy $R0 $CMDLINE $R2
    StrCmp $R0 '"' 0 +3
      StrCpy $R1 '"'
      Goto loop
    StrCpy $R1 " "
-   
+
    loop:
      IntOp $R2 $R2 + 1
      StrCpy $R0 $CMDLINE 1 $R2
      StrCmp $R0 $R1 get
      StrCmp $R2 $R3 get
      Goto loop
-   
+
    get:
      IntOp $R2 $R2 + 1
      StrCpy $R0 $CMDLINE 1 $R2
      StrCmp $R0 " " get
      StrCpy $R0 $CMDLINE "" $R2
-   
+
    Pop $R3
    Pop $R2
    Pop $R1
    Exch $R0
- 
+
 FunctionEnd
 
  ; StrStr
@@ -1334,18 +1557,20 @@ FunctionEnd
 ; /L=Language e.g.: /L=1033
 ;
 Function ParseParameters
+  Push $R0
   IntOp $LANG_IS_SET 0 + 0
   Call GetParameters
-  Pop $R0
-  Push $R0
+  ;Pop $R0
+  ;Push $R0
   Push "L="
   Call StrStr
-  Pop $R1
-  StrCmp $R1 "" next
-  StrCpy $R1 $R1 4 2 ; Strip first 2 chars of string
-  StrCpy $LANGUAGE $R1
+  Pop $R0
+  StrCmp $R0 "" next
+  StrCpy $R0 $R0 4 2 ; Strip first 2 chars of string
+  StrCpy $LANGUAGE $R0
   IntOp $LANG_IS_SET 0 + 1
   next:
+  Pop $R0
 FunctionEnd
 
 ; GetWindowsVersion
@@ -1429,8 +1654,236 @@ Function GetWindowsVersion
   lbl_error:
     Strcpy $R0 ''
   lbl_done:
- 
+
   Pop $R1
   Exch $R0
 FunctionEnd
 
+; SpellChecker Related Functions
+;-------------------------------
+
+; Convert the a Section index to the language code
+; Push the section index onto the stack and pop off the language code after the call
+; This will set the error code, if no match is found
+Function GetLangCodeForSection
+  ClearErrors
+  Push $R0
+  Exch
+  Pop $R0 ;This is the section index
+
+  IntCmp $R0 ${SecSpellCheckBreton} 0 +3 +3
+  StrCpy $R0 "br"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckCatalan} 0 +3 +3
+  StrCpy $R0 "ca"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckCzech} 0 +3 +3
+  StrCpy $R0 "cs"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckWelsh} 0 +3 +3
+  StrCpy $R0 "cy"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckDanish} 0 +3 +3
+  StrCpy $R0 "da"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckGerman} 0 +3 +3
+  StrCpy $R0 "de"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckGreek} 0 +3 +3
+  StrCpy $R0 "el"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckEnglish} 0 +3 +3
+  StrCpy $R0 "en"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckEsperanto} 0 +3 +3
+  StrCpy $R0 "eo"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSpanish} 0 +3 +3
+  StrCpy $R0 "es"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckFaroese} 0 +3 +3
+  StrCpy $R0 "fo"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckFrench} 0 +3 +3
+  StrCpy $R0 "fr"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckItalian} 0 +3 +3
+  StrCpy $R0 "it"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckDutch} 0 +3 +3
+  StrCpy $R0 "nl"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckNorwegian} 0 +3 +3
+  StrCpy $R0 "no"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckPolish} 0 +3 +3
+  StrCpy $R0 "pl"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckPortuguese} 0 +3 +3
+  StrCpy $R0 "pt"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckRomanian} 0 +3 +3
+  StrCpy $R0 "ro"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckRussian} 0 +3 +3
+  StrCpy $R0 "ru"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSlovak} 0 +3 +3
+  StrCpy $R0 "sk"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckSwedish} 0 +3 +3
+  StrCpy $R0 "sv"
+  Goto done
+  IntCmp $R0 ${SecSpellCheckUkrainian} 0 +3 +3
+  StrCpy $R0 "uk"
+  Goto done
+
+  SetErrors
+
+  done:
+  Exch $R0
+FunctionEnd ;GetLangCodeForSection
+
+; Select and Disable any Sections that have currently installed dictionaries
+Function SelectAndDisableInstalledDictionaries
+  Push $R0
+  Push $R1
+  Push $R2
+
+  ; Start with the first language dictionary
+  IntOp $R0 ${SecSpellCheck} + 1
+
+  start:
+  ; If it is the end of the section group, stop
+  SectionGetFlags $R0 $R1
+  IntOp $R2 $R1 & ${SF_SECGRPEND}
+  IntCmp $R2 ${SF_SECGRPEND} done
+
+  Push $R0
+  Call GetLangCodeForSection
+  Pop $R2
+  IfErrors end_loop
+  ReadRegStr $R2 HKLM "${ASPELL_REG_KEY}-$R2" "" ; Check that the dictionary is installed
+  StrCmp $R2 "" end_loop ; If it isn't installed, skip to the next item
+  IntOp $R1 $R1 | ${SF_RO} ; Mark Readonly
+  IntOp $R1 $R1 | ${SF_SELECTED} ; Select
+  SectionSetFlags $R0 $R1
+
+  end_loop:
+  IntOp $R0 $R0 + 1 ;Advance to the next section
+  Goto start
+
+  done:
+  Pop $R2
+  Pop $R1
+  Pop $R0
+FunctionEnd
+
+Function InstallAspellAndDict
+  Push $R0
+  Exch
+  Call GetLangCodeForSection
+  Pop $R0 ;This is the language code
+  Push $R1
+
+  IfErrors done ; We weren't able to convert the section to lang code
+
+  retry:
+    Call InstallAspell
+    Pop $R1
+    StrCmp $R1 "" +3
+    StrCmp $R1 "cancel" done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" IDRETRY retry IDCANCEL done
+
+  retry_dict:
+    Push $R0
+    Call InstallAspellDictionary
+    Pop $R1
+    StrCmp $R1 "" +3
+    StrCmp $R1 "cancel" done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" IDRETRY retry_dict
+
+  done:
+
+  Pop $R1
+  Pop $R0
+FunctionEnd
+
+Function InstallAspell
+  Push $R0
+  Push $R1
+  Push $R2
+
+  check:
+  ClearErrors
+  ReadRegDWORD $R0 HKLM ${ASPELL_REG_KEY} "AspellVersion"
+  IntCmp $R0 15 installed
+
+  ; If this is the check after installation, don't infinite loop on failure
+  StrCmp $R1 "$TEMP\aspell_installer.exe" 0 +3
+    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
+    Goto done
+
+  ; We need to download and install aspell
+  StrCpy $R1 "$TEMP\aspell_installer.exe"
+  StrCpy $R2 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=aspell_core"
+  DetailPrint "Downloading Aspell... ($R2)"
+  NSISdl::download $R2 $R1
+  Pop $R0
+  StrCmp $R0 "success" +2
+    Goto done
+  ExecWait '"$R1"'
+  Delete $R1
+  Goto check ; Check that it is now installed correctly
+
+  installed: ;Aspell is currently installed, no error message
+    DetailPrint "Aspell is installed"
+    StrCpy $R0 ''
+
+  done:
+  Pop $R2
+  Pop $R1
+  Exch $R0
+FunctionEnd
+
+Function InstallAspellDictionary
+  Push $R0
+  Exch
+  Pop $R0 ;This is the language code
+  Push $R1
+  Push $R2
+  Push $R3
+
+  check:
+  ClearErrors
+  ReadRegStr $R1 HKLM "${ASPELL_REG_KEY}-$R0" ""
+  StrCmp $R1 "" 0 installed
+
+  ; If this is the check after installation, don't infinite loop on failure
+  StrCmp $R1 "$TEMP\aspell_dict-$R0.exe" 0 +3
+    StrCpy $R0 $(ASPELL_INSTALL_FAILED)
+    Goto done
+
+  ; We need to download and install aspell
+  StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
+  StrCpy $R3 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=lang_$R0"
+  DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
+  NSISdl::download $R3 $R1
+  Pop $R3
+  StrCmp $R3 "success" +3
+    StrCpy $R0 $R3
+    Goto done
+  ExecWait '"$R1"'
+  Delete $R1
+  Goto check ; Check that it is now installed correctly
+
+  installed: ;The dictionary is currently installed, no error message
+    DetailPrint "Aspell $R0 Dictionary is installed"
+    StrCpy $R0 ''
+
+  done:
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0
+FunctionEnd

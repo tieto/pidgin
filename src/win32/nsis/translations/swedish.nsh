@@ -7,7 +7,6 @@
 ;;  Author: Tore Lundqvist <tlt@mima.x.se>, 2003.
 ;;  Author: Peter Hjalmarsson <xake@telia.com>, 2005.
 ;;  Version 3
-;;
 
 ; Make sure to update the GAIM_MACRO_LANGUAGEFILE_END macro in
 ; langmacros.nsh when updating this file
@@ -29,6 +28,9 @@
 !define GTK_WIMP_SECTION_TITLE		"Wimp-tema"
 !define GTK_BLUECURVE_SECTION_TITLE	"Bluecurve-tema"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue-tema"
+!define GAIM_SHORTCUTS_SECTION_TITLE "Genvägar"
+!define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE "Skrivbord"
+!define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE "Startmeny"
 !define GAIM_SECTION_DESCRIPTION		"Gaims kärnfiler och DLL:er"
 !define GTK_SECTION_DESCRIPTION		"En GUI-verktygsuppsättning för flera olika plattformar som Gaim använder."
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+-teman kan ändra känslan av och utseendet på GTK+-applikationer."
@@ -36,6 +38,9 @@
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) ett GTK-tema som smälter bra in i Windows-miljön."
 !define GTK_BLUECURVE_THEME_DESC		"The Bluecurve-tema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue-tema."
+!define GAIM_SHORTCUTS_SECTION_DESCRIPTION   "Genvägar för att starta Gaim"
+!define GAIM_DESKTOP_SHORTCUT_DESC   "Skapar en genväg till Gaim på skrivbordet"
+!define GAIM_STARTMENU_SHORTCUT_DESC   "Skapar ett tillägg i startmenyn för Gaim"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"En äldre version av GTK+ runtime hittades, vill du uppgradera den?$\rOBS! Gaim kommer kanske inte att fungera om du inte uppgraderar."

@@ -22,7 +22,7 @@
 !define GTK_SECTION_DESCRIPTION		"Skup oruða za grafièko okruženje, za više platformi, koristi ga Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ teme menjaju izgled i naèin rada GTK+ aplikacija."
 !define GTK_NO_THEME_DESC			"Ne instaliraj GTK+ temu"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows imitator) je GTK+ tema koja se dobro uklapa u Windows radno okruženje."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows imitator) je GTK tema koja se dobro uklapa u Windows radno okruženje."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve tema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue tema."
 

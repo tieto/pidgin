@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Një grup mjetesh shumëplatformësh për GUI, përdorur nga Gaim-i"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Temat GTK+ mund të ndryshojnë pamjen dhe sjelljen e zbatimeve GTK+."
 !define GTK_NO_THEME_DESC			"Mos instalo temë GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) është një temë GTK+ që ndërthuret mirë mjedisin Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) është një temë GTK që ndërthuret mirë mjedisin Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Tema Lighthouseblue."
 

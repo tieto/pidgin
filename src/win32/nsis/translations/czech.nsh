@@ -27,7 +27,7 @@
 !define GTK_SECTION_DESCRIPTION		"Multi-platform GUI toolkit používaný Gaimem"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ témata umožòují mìnit vzhled a zpùsob ovládání GTK+ aplikací."
 !define GTK_NO_THEME_DESC			"Neinstalovat GTK+ téma"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK+ téma které zapadne do Vašeho pracovního prostøedí ve Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK téma které zapadne do Vašeho pracovního prostøedí ve Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve téma."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue téma."
 

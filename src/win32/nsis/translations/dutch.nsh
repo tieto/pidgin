@@ -1,3 +1,4 @@
+;;  vim:syn=winbatch:encoding=cp1252
 ;;
 ;;  dutch.nsh
 ;;
@@ -7,9 +8,11 @@
 ;;  Author: Vincent van Adrighem <vincent@dirck.mine.nu>
 ;;  Version 2
 ;;
-
-; Startup GTK+ check
+; Startup Checks
+!define INSTALLER_IS_RUNNING			"Er is al een installatie actief."
+!define GAIM_IS_RUNNING			"Gaim wordt op dit moment uitgevoerd. Sluit Gaim af en start de installatie opnieuw."
 !define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_VERSION} of nieuwer van de GTK+ runtime-omgeving"
+
 
 ; License Page
 !define GAIM_LICENSE_BUTTON			"Volgende >"
@@ -50,5 +53,35 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"U heeft geen toestemming om een GTK+ thema te installeren."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1         "De uninstaller kon geen register-ingangen voor Gaim vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
+!define un.GAIM_UNINSTALL_ERROR_1         "Het verwijderingsprogramma voor Gaim kon geen register-ingangen voor Gaim vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
 !define un.GAIM_UNINSTALL_ERROR_2         "U mag dit programma niet verwijderen."
+
+
+; Spellcheck Section Prompts
+!define GAIM_SPELLCHECK_SECTION_TITLE		"Spellingscontrole"
+!define GAIM_SPELLCHECK_ERROR			"Fout bij installatie van spellingscontrole"
+!define GAIM_SPELLCHECK_DICT_ERROR		"Fout bij installatie van woordenboek voor spellingscontrole"
+!define GAIM_SPELLCHECK_SECTION_DESCRIPTION	"Ondersteuning voor spellingscontrole. (Internetverbinding nodig voor installatie)"
+!define ASPELL_INSTALL_FAILED			"Installatie mislukt"
+!define GAIM_SPELLCHECK_BRETON			"Bretons"
+!define GAIM_SPELLCHECK_CATALAN			"Catalaans"
+!define GAIM_SPELLCHECK_CZECH			"Tsjechisch"
+!define GAIM_SPELLCHECK_WELSH			"Welsh"
+!define GAIM_SPELLCHECK_DANISH			"Deens"
+!define GAIM_SPELLCHECK_GERMAN			"Duits"
+!define GAIM_SPELLCHECK_GREEK			"Grieks"
+!define GAIM_SPELLCHECK_ENGLISH			"Engels"
+!define GAIM_SPELLCHECK_ESPERANTO		"Esperanto"
+!define GAIM_SPELLCHECK_SPANISH			"Spaans"
+!define GAIM_SPELLCHECK_FAROESE			"Faroese"
+!define GAIM_SPELLCHECK_FRENCH			"Frans"
+!define GAIM_SPELLCHECK_ITALIAN			"Italiaans"
+!define GAIM_SPELLCHECK_DUTCH			"Nederlands"
+!define GAIM_SPELLCHECK_NORWEGIAN		"Noors"
+!define GAIM_SPELLCHECK_POLISH			"Pools"
+!define GAIM_SPELLCHECK_PORTUGUESE		"Portugees"
+!define GAIM_SPELLCHECK_ROMANIAN			"Roemeens"
+!define GAIM_SPELLCHECK_RUSSIAN			"Russisch"
+!define GAIM_SPELLCHECK_SLOVAK			"Slowaaks"
+!define GAIM_SPELLCHECK_SWEDISH			"Zweeds"
+!define GAIM_SPELLCHECK_UKRAINIAN		"Oekraïns"

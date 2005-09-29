@@ -4,8 +4,8 @@
 ;;  Portuguese (BR) language strings for the Windows Gaim NSIS installer.
 ;;  Windows Code page: 1252
 ;;
-;;  Author: Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>, 2003.
-;;  Version 2
+;;  Author: Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>, 2003-2005.
+;;  Version 3
 ;;
 
 ; Startup GTK+ check
@@ -23,13 +23,19 @@
 !define GTK_WIMP_SECTION_TITLE		"Tema 'Wimp'"
 !define GTK_BLUECURVE_SECTION_TITLE		"Tema 'Bluecurve'"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema 'Light House Blue'"
+!define GAIM_SHORTCUTS_SECTION_TITLE "Atalhos"
+!define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE "Área de Trabalho"
+!define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE "Menu Iniciar"
 !define GAIM_SECTION_DESCRIPTION		"Arquivos e bibliotecas principais do Gaim"
 !define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas multi-plataforma para interface do usuário, usado pelo Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Os temas do GTK+ podem mudar a aparência e o funcionamento dos aplicativos GTK+."
 !define GTK_NO_THEME_DESC			"Não instalar um tema do GTK+"
-!define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK+ que combina bem com o ambiente de área de trabalho do Windows."
+!define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK que combina bem com o ambiente de área de trabalho do Windows."
 !define GTK_BLUECURVE_THEME_DESC		"O tema 'Bluecurve'."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema 'Lighthouseblue'."
+!define GAIM_SHORTCUTS_SECTION_DESCRIPTION   "Atalhos para iniciar o Gaim"
+!define GAIM_DESKTOP_SHORTCUT_DESC   "Crie um atalho para o Gaim na Área de Trabalho"
+!define GAIM_STARTMENU_SHORTCUT_DESC   "Crie uma entrada no Menu Iniciar para o Gaim"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Uma versão antiga do ambiente de tempo de execução do GTK+ foi encontrada. Você deseja atualizá-lo?$\rNota: O Gaim poderá não funcionar a menos que você o faça."

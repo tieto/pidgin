@@ -1,3 +1,4 @@
+;;  vim:syn=winbatch:encoding=cp1250:
 ;;
 ;;  slovak.nsh
 ;;
@@ -7,7 +8,9 @@
 ;;  Author: dominik@internetkosice.sk
 ;;  Version 2
 
-; Startup GTK+ check
+; Startup Checks
+!define INSTALLER_IS_RUNNING			"Inštalácia je u spustená"
+!define GAIM_IS_RUNNING				"Gaim je práve spustenı. Vypnite ho a skúste znova."
 !define GTK_INSTALLER_NEEDED			"GTK+ runtime prostredie chıba alebo musí by upgradované.$\rNainštalujte, prosím, GTK+ runtime verziu v${GTK_VERSION}, alebo novšiu"
 
 ; License Page
@@ -19,16 +22,22 @@
 !define GTK_SECTION_TITLE			"GTK+ Runtime prostredie (nevyhnutné)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ témy"
 !define GTK_NOTHEME_SECTION_TITLE		"iadna grafická téma"
-!define GTK_WIMP_SECTION_TITLE		"Wimp grafická téma"
+!define GTK_WIMP_SECTION_TITLE			"Wimp grafická téma"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve grafická téma"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue grafická téma"
+!define GAIM_SHORTCUTS_SECTION_TITLE		"Zástupcovia"
+!define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE	"Plocha"
+!define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE	"Štart Menu"
 !define GAIM_SECTION_DESCRIPTION		"Jadro Gaim-u a nevyhnutné DLL súbory"
-!define GTK_SECTION_DESCRIPTION		"Multiplatformové GUI nástroje, pouívané Gaim-om"
-!define GTK_THEMES_SECTION_DESCRIPTION	"Pomocou GTK+ grafickıch tém môete zmeni vzh¾ad GTK+ aplikácií."
+!define GTK_SECTION_DESCRIPTION			"Multiplatformové GUI nástroje, pouívané Gaim-om"
+!define GTK_THEMES_SECTION_DESCRIPTION		"Pomocou GTK+ grafickıch tém môete zmeni vzh¾ad GTK+ aplikácií."
 !define GTK_NO_THEME_DESC			"Neinštalova GTK+ grafickú tému"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK+ grafická téma, ktorá pekne ladí s prostredím Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK grafická téma, ktorá pekne ladí s prostredím Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve grafická téma."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue grafická téma"
+!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue grafická téma"
+!define GAIM_SHORTCUTS_SECTION_DESCRIPTION	"Zástupcovia pre Gaim"
+!define GAIM_DESKTOP_SHORTCUT_DESC		"Vytvori zástupcu pre Gaim na pracovnej ploche"
+!define GAIM_STARTMENU_SHORTCUT_DESC		"Vytvori odkaz na Gaim v Štart Menu"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Bola nájdená staršia verzia GTK+ runtime. Prajete si upgradova súèasnú verziu?$\rPoznámka: Gaim nemusí po upgradovaní fungova správne."
@@ -39,7 +48,7 @@
 ; Gaim Section Prompts and Texts
 !define GAIM_UNINSTALL_DESC			"Gaim (len odstráni)"
 !define GAIM_PROMPT_WIPEOUT			"Váš adresár Gaim bude zmazanı. Chcete pokraèova?$\r$\rPoznámka: Všetky prídavne pluginy, ktoré ste nainštalovali budú tie zmazané.$\rNastavenia uivate¾ského úètu Gaim-u budú ponechané."
-!define GAIM_PROMPT_DIR_EXISTS		"Adresár, ktorı ste zadali, u existuje. Jeho obsah bude zmazanı. Chcete pokraèova?"
+!define GAIM_PROMPT_DIR_EXISTS			"Adresár, ktorı ste zadali, u existuje. Jeho obsah bude zmazanı. Chcete pokraèova?"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Chyba pri inštalácii GTK+ runtime."
@@ -51,3 +60,33 @@
 ; Uninstall Section Prompts
 !define un.GAIM_UNINSTALL_ERROR_1		"Inštalátoru sa nepodarilo nájs poloky v registri pre Gaim.$\rJe moné, e túto aplikáciu nainštaloval inı pouívate¾."
 !define un.GAIM_UNINSTALL_ERROR_2		"Nemáte oprávnenie na odinštaláciu tejto aplikácie."
+
+; Spellcheck Section Prompts
+!define GAIM_SPELLCHECK_SECTION_TITLE		"Podpora kontroly pravopisu"
+!define GAIM_SPELLCHECK_ERROR			"Chyba pri inštalácii kontroly pravopisu"
+!define GAIM_SPELLCHECK_DICT_ERROR		"Chyba pri inštalácii slovníka kontroly pravopisu"
+!define GAIM_SPELLCHECK_SECTION_DESCRIPTION	"Podpora kontroly pravopisu (Nutné pripojenie k Internetu)"
+!define ASPELL_INSTALL_FAILED			"Inštalácia zlyhala"
+!define GAIM_SPELLCHECK_BRETON			"Bretónsky"
+!define GAIM_SPELLCHECK_CATALAN			"Katalánsky"
+!define GAIM_SPELLCHECK_CZECH			"Èeskı"
+!define GAIM_SPELLCHECK_WELSH			"Welshskı"
+!define GAIM_SPELLCHECK_DANISH			"Dánsky"
+!define GAIM_SPELLCHECK_GERMAN			"Nemeckı"
+!define GAIM_SPELLCHECK_GREEK			"Grécky"
+!define GAIM_SPELLCHECK_ENGLISH			"Anglickı"
+!define GAIM_SPELLCHECK_ESPERANTO		"Esperantskı"
+!define GAIM_SPELLCHECK_SPANISH			"Španielskı"
+!define GAIM_SPELLCHECK_FAROESE			"Faroeskı"
+!define GAIM_SPELLCHECK_FRENCH			"Francúzsky"
+!define GAIM_SPELLCHECK_ITALIAN			"Talianskı"
+!define GAIM_SPELLCHECK_DUTCH			"Holandskı"
+!define GAIM_SPELLCHECK_NORWEGIAN		"Nórsky"
+!define GAIM_SPELLCHECK_POLISH			"Po¾skı"
+!define GAIM_SPELLCHECK_PORTUGUESE		"Portugalskı"
+!define GAIM_SPELLCHECK_ROMANIAN		"Rumunskı"
+!define GAIM_SPELLCHECK_RUSSIAN			"Ruskı"
+!define GAIM_SPELLCHECK_SLOVAK			"Slovenskı"
+!define GAIM_SPELLCHECK_SWEDISH			"Švédsky"
+!define GAIM_SPELLCHECK_UKRAINIAN		"Ukrajinskı"
+

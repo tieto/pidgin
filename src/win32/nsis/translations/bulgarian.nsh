@@ -23,7 +23,7 @@
 !define GTK_SECTION_DESCRIPTION		"Мултиплатфорен кит за графичен изглед, използван от Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ темите могат да променят Изгледа на GTK+ приложения."
 !define GTK_NO_THEME_DESC			"Не инсталирайте GTK+ тема"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) е GTK+ тема която се смесва добре със Windows."
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) е GTK тема която се смесва добре със Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve темата."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue темата."
 
