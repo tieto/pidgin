@@ -335,7 +335,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						g_free(jm->body);
 						jm->body = xmlnode_get_data(reason);
 					}
-					if((password = xmlnode_get_child(invite, "password")))
+					if((password = xmlnode_get_child(child, "password")))
 						jm->password = xmlnode_get_data(password);
 
 					jm->type = JABBER_MESSAGE_GROUPCHAT_INVITE;
