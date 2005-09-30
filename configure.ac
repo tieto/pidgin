@@ -101,10 +101,46 @@ dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
 
-dnl Check for SILC client includes and libraries
-AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
-                          Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
-AC_ARG_WITH(silc-libs, [  --with-silc-libs=DIR    Compile the SILC plugin against the SILC libs in DIR], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+
+
+dnl #######################################################################
+dnl # Check for Howl headers (for Bonjour)
+dnl #######################################################################
+AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [Compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
+AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [Compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
+HOWL_CFLAGS=""
+HOWL_LIBS=""
+
+dnl Attempt to autodetect Howl
+PKG_CHECK_MODULES(HOWL, howl,
+	[howlincludes="yes" howllibs="yes"],
+	[howlincludes="no" howllibs="no"])
+
+dnl Override HOWL_CFLAGS if the user specified an include dir
+if test "$ac_howl_includes" != "no"; then
+	HOWL_CFLAGS="-I$ac_howl_includes"
+fi
+CPPFLAGS_save="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $HOWL_CFLAGS"
+AC_CHECK_HEADER(howl.h, [howlincludes=yes], [howlincludes=no])
+CPPFLAGS="$CPPFLAGS_save"
+
+dnl Override HOWL_LIBS if the user specified a libs dir
+if test "$ac_howl_libs" != "no"; then
+	HOWL_LIBS="-L$ac_howl_libs"
+fi
+AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
+
+AC_SUBST(HOWL_CFLAGS)
+AC_SUBST(HOWL_LIBS)
+
+
+
+dnl #######################################################################
+dnl # Check for SILC client includes and libraries
+dnl #######################################################################
+AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [Compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
+AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [Compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
 if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
@@ -144,6 +180,8 @@ fi
 AC_SUBST(SILC_LIBS)
 AC_SUBST(SILC_CFLAGS)
 
+
+
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
@@ -154,7 +192,10 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+fi
+if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
@@ -168,6 +209,7 @@ for i in $STATIC_PRPLS ; do
 	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
+		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
@@ -185,6 +227,7 @@ for i in $STATIC_PRPLS ; do
 		*)			echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes" -a "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -203,9 +246,12 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
-AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
+AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+fi
+if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
@@ -213,6 +259,7 @@ fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
+		bonjour)	dynamic_bonjour=yes ;;
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
@@ -230,6 +277,7 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes" -a "x$bonjourincludes" = "xyes" -a "x$bonjourclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
@@ -1178,7 +1226,7 @@ else
 	enable_prpls=no
 fi
 
-dnl checks for icqlib
+dnl checks for icqlib--do we still need these?
 AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
 AC_CHECK_FUNCS(bswap_32 bswap_16)
 AC_C_BIGENDIAN
@@ -1341,6 +1389,7 @@ AC_OUTPUT([Makefile
 		   sounds/Makefile
 		   src/Makefile
 		   src/protocols/Makefile
+		   src/protocols/bonjour/Makefile
 		   src/protocols/gg/Makefile
 		   src/protocols/irc/Makefile
 		   src/protocols/jabber/Makefile
