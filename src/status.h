@@ -501,7 +501,7 @@ void gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active,
  *
  * @param status The status.
  * @param active The active state.
- * @param list   A list of attributes to set on the status.  This list is
+ * @param attrs  A list of attributes to set on the status.  This list is
  *               composed of key/value pairs, where each key is a valid
  *               attribute name for this GaimStatusType.
  */

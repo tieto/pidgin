@@ -1,5 +1,6 @@
 /**
- * @defgroup gtkui GTK+ User Interface
+ * @file gtkthemes.h GTK+ Smiley Theme API
+ * @ingroup gtkui
  *
  * gaim
  *
