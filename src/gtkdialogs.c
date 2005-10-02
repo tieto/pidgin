@@ -511,8 +511,7 @@ void
 gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 {
 	GaimConversation *conv;
-	GaimConvWindow *win;
-	GaimGtkWindow *gtkwin;
+	GaimGtkWindow *win;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
@@ -522,11 +521,10 @@ gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 	if (conv == NULL)
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
 
-	win = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(win);
+	win = GAIM_GTK_CONVERSATION(conv)->win;
 
-	gtk_window_present(GTK_WINDOW(gtkwin->window));
-	gaim_conv_window_switch_conversation(win, conv);
+	gtk_window_present(GTK_WINDOW(win->window));
+	gaim_gtk_conv_window_switch_gtkconv(win, GAIM_GTK_CONVERSATION(conv));
 }
 
 static gboolean

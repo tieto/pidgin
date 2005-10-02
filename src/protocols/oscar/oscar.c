@@ -962,7 +962,6 @@ static void oscar_direct_im_disconnect(OscarData *od, struct oscar_direct_im *di
         
 	if (conv) {
 		gaim_conversation_write(conv, NULL, buf, GAIM_MESSAGE_SYSTEM, time(NULL));
-		gaim_conversation_update_progress(conv, 0);
 	} else {
 		gaim_notify_error(dim->gc, NULL, _("Direct Connect failed"), buf);
 	}
@@ -1194,7 +1193,6 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 	double percent;
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimConversation *c;
 	struct oscar_direct_im *dim;
 
 	va_start(ap, fr);
@@ -1210,10 +1208,6 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
 		dim->watcher = 0;
 	}
 
-	c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, sn,
-		gaim_connection_get_account(gc));
-	if (c != NULL)
-		gaim_conversation_update_progress(c, percent);
 	dim->watcher = gaim_input_add(dim->conn->fd, GAIM_INPUT_READ,
 				      oscar_callback, dim->conn);
 

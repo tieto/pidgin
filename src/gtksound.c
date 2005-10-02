@@ -116,22 +116,20 @@ static void
 play_conv_event(GaimConversation *conv, GaimSoundEventID event)
 {
 	GaimGtkConversation *gtkconv;
-	GaimConvWindow *gaimwin;
-	GaimGtkWindow *gtkwin;
+	GaimGtkWindow *win;
 	gboolean has_focus;
 
 	if (conv==NULL)
 		gaim_sound_play_event(event);
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gaimwin = gaim_conversation_get_window(conv);
-	gtkwin = GAIM_GTK_WINDOW(gaimwin);
+	win = gtkconv->win;
 
-	g_object_get(G_OBJECT(gtkwin->window), "has-toplevel-focus", 
+	g_object_get(G_OBJECT(win->window), "has-toplevel-focus",
 				 &has_focus, NULL);
 
-	if (gtkconv->make_sound && 
-		!((gaim_conv_window_get_active_conversation(gaimwin) == conv) &&
+	if (gtkconv->make_sound &&
+		!((gaim_gtk_conv_window_get_active_conversation(win) == conv) &&
 		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
 
 		gaim_sound_play_event(event);
@@ -146,7 +144,7 @@ buddy_state_cb(GaimBuddy *buddy, GaimSoundEventID event)
 
 static void
 im_msg_received_cb(GaimAccount *account, char *sender,
-				   char *message, GaimConversation *conv, 
+				   char *message, GaimConversation *conv,
 				   int flags, GaimSoundEventID event)
 {
 	if (conv==NULL)
@@ -168,7 +166,7 @@ static void
 chat_buddy_join_cb(GaimConversation *conv, const char *name,
 				   GaimConvChatBuddyFlags flags, GaimSoundEventID event)
 {
-	if (!chat_nick_matches_name(conv, name)) 
+	if (!chat_nick_matches_name(conv, name))
 		play_conv_event(conv, event);
 }
 
@@ -176,7 +174,7 @@ static void
 chat_buddy_left_cb(GaimConversation *conv, const char *name,
 				   const char *reason, GaimSoundEventID event)
 {
-	if (!chat_nick_matches_name(conv, name)) 
+	if (!chat_nick_matches_name(conv, name))
 		play_conv_event(conv, event);
 }
 
@@ -187,7 +185,7 @@ chat_msg_sent_cb(GaimAccount *account, const char *message,
 	GaimConnection *conn = gaim_account_get_connection(account);
 	GaimConversation *conv = NULL;
 
-	if (conn!=NULL) 
+	if (conn!=NULL)
 		conv = gaim_find_chat(conn,id);
 
 	play_conv_event(conv, event);

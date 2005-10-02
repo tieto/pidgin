@@ -1018,7 +1018,7 @@ conv_page()
 			_("Right"), GTK_POS_RIGHT,
 			NULL);
 
-	names = gaim_conv_placement_get_options();
+	names = gaim_gtkconv_placement_get_options();
 	label = gaim_gtk_prefs_dropdown_from_list(hbox, _("N_ew conversations:"),
 			GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
 	g_list_free(names);

@@ -251,7 +251,6 @@ gaim_gtk_ui_init(void)
 {
 	/* Set the UI operation structures. */
 	gaim_accounts_set_ui_ops(gaim_gtk_accounts_get_ui_ops());
-	gaim_conversations_set_win_ui_ops(gaim_gtk_conversations_get_win_ui_ops());
 	gaim_xfers_set_ui_ops(gaim_gtk_xfers_get_ui_ops());
 	gaim_blist_set_ui_ops(gaim_gtk_blist_get_ui_ops());
 	gaim_notify_set_ui_ops(gaim_gtk_notify_get_ui_ops());

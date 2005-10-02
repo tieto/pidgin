@@ -25,7 +25,6 @@
 #ifndef _GAIM_GTKCONVERSATION_H_
 #define _GAIM_GTKCONVERSATION_H_
 
-typedef struct _GaimGtkWindow       GaimGtkWindow;
 typedef struct _GaimGtkImPane       GaimGtkImPane;
 typedef struct _GaimGtkChatPane     GaimGtkChatPane;
 typedef struct _GaimGtkConversation GaimGtkConversation;
@@ -40,14 +39,8 @@ enum {
 	CHAT_USERS_COLUMNS
 };
 
-#define GAIM_GTK_WINDOW(win) \
-	((GaimGtkWindow *)(win)->ui_data)
-
 #define GAIM_GTK_CONVERSATION(conv) \
 	((GaimGtkConversation *)(conv)->ui_data)
-
-#define GAIM_IS_GTK_WINDOW(win) \
-	(gaim_conv_window_get_ui_ops(win) == gaim_gtk_conversations_get_win_ui_ops())
 
 #define GAIM_IS_GTK_CONVERSATION(conv) \
 	(gaim_conversation_get_ui_ops(conv) == \
@@ -55,6 +48,7 @@ enum {
 
 #include "gtkgaim.h"
 #include "conversation.h"
+#include "gtkconvwin.h"
 
 /**************************************************************************
  * @name Structures
@@ -65,57 +59,6 @@ enum {
  * A GTK+ representation of a graphical window containing one or more
  * conversations.
  */
-struct _GaimGtkWindow
-{
-	GtkWidget *window;           /**< The window.                      */
-	GtkWidget *notebook;         /**< The notebook of conversations.   */
-
-	struct
-	{
-		GtkWidget *menubar;
-
-		GtkWidget *view_log;
-
-		GtkWidget *send_file;
-		GtkWidget *add_pounce;
-		GtkWidget *get_info;
-		GtkWidget *invite;
-
-		GtkWidget *alias;
-		GtkWidget *block;
-		GtkWidget *add;
-		GtkWidget *remove;
-
-		GtkWidget *insert_link;
-		GtkWidget *insert_image;
-
-		GtkWidget *logging;
-		GtkWidget *sounds;
-		GtkWidget *show_formatting_toolbar;
-		GtkWidget *show_timestamps;
-		GtkWidget *show_icon;
-
-		GtkWidget *send_as;
-
-		GtkWidget *tray;
-
-		GtkWidget *typing_icon;
-
-		GtkItemFactory *item_factory;
-
-	} menu;
-
-	/* Tab dragging stuff. */
-	gboolean in_drag;
-	gboolean in_predrag;
-
-	gint drag_tab;
-
-	gint drag_min_x, drag_max_x, drag_min_y, drag_max_y;
-
-	gint drag_motion_signal;
-	gint drag_leave_signal;
-};
 
 /**
  * A GTK+ Instant Message pane.
@@ -161,7 +104,9 @@ struct _GaimGtkConversation
 {
 	GaimConversation *active_conv;
 	GList *convs;
-	
+
+	GaimGtkWindow *win;
+
 	gboolean make_sound;
 	gboolean show_formatting_toolbar;
 	gboolean show_timestamps;
@@ -210,13 +155,6 @@ struct _GaimGtkConversation
 /*@{*/
 
 /**
- * Returns the UI operations structure for GTK+ windows.
- *
- * @return The GTK+ window operations structure.
- */
-GaimConvWindowUiOps *gaim_gtk_conversations_get_win_ui_ops(void);
-
-/**
  * Returns the UI operations structure for GTK+ conversations.
  *
  * @return The GTK+ conversation operations structure.
@@ -243,30 +181,9 @@ void gaim_gtkconv_update_tabs(void);
  */
 void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
 
-/**
- * Returns the window at the specified X, Y location.
- *
- * If the window is not a GTK+ window, @c NULL is returned.
- *
- * @param x The X coordinate.
- * @param y The Y coordinate.
- *
- * @return The GTK+ window at the location, if it exists, or @c NULL otherwise.
- */
-GaimConvWindow *gaim_gtkwin_get_at_xy(int x, int y);
-
-/**
- * Returns the index of the tab at the specified X, Y location in a notebook.
- *
- * @param win The GTK+ window containing the notebook.
- * @param x   The X coordinate.
- * @param y   The Y coordinate.
- *
- * @return The index of the tab at the location.
- */
-int gaim_gtkconv_get_tab_at_xy(GaimConvWindow *win, int x, int y);
-
-GaimGtkConversation *gaim_gtk_get_gtkconv_at_index(const GaimConvWindow *win, int index);
+GaimGtkWindow *gaim_gtkconv_get_window(GaimGtkConversation *gtkconv);
+GdkPixbuf *gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
+void gaim_gtkconv_new(GaimConversation *conv);
 /*@}*/
 
 /**************************************************************************/

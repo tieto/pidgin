@@ -56,23 +56,25 @@ static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimConvWindow *win;
+	GaimGtkConveration *gtkconv;
+	GaimGtkWindow *win;
 	GList *conversations;
 
 	conv  = (GaimConversation *)data;
-	win   = gaim_conversation_get_window(conv);
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	win   = gtkconv->win;
 
-	for (conversations = gaim_conv_window_get_conversations(win);
+	for (conversations = win->gtkconvs;
 			conversations != NULL;
 			conversations = conversations->next)
 	{
-		if (conversations->data == conv)
+		if (conversations->data == gtkconv)
 		{
 			if (conversations->prev != NULL) {
-				gaim_conv_window_switch_conversation(win,
+				gaim_gtk_conv_window_switch_gtkconv(win,
 						conversations->prev->data);
 			} else {
-				gaim_conv_window_switch_conversation(win,
+				gaim_gtk_conv_window_switch_gtkconv(win,
 						g_list_last(conversations)->data);
 			}
 
