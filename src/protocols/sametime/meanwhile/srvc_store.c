@@ -19,6 +19,7 @@
 */
 
 #include <glib/glist.h>
+#include <internal.h>
 
 #include "mw_channel.h"
 #include "mw_debug.h"

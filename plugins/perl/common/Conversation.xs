@@ -118,11 +118,6 @@ Gaim::ConnectionFlags
 gaim_conversation_get_features(conv)
 	Gaim::Conversation conv
 
-void
-gaim_conversation_update_progress(conv, percent)
-	Gaim::Conversation conv
-	float percent
-
 gboolean
 gaim_conversation_has_focus(conv)
 	Gaim::Conversation conv
