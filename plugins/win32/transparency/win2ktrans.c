@@ -164,10 +164,10 @@ static slider_win* find_slidwin( GtkWidget *win ) {
 }
 
 static void gaim_conversation_delete(GaimConversation *conv) {
-	GaimConvWindow *win = gaim_conversation_get_window(conv);
-	//If it is the last conversation in the window, get rid of the sliders
-	if (gaim_conv_window_get_conversation_count(win) == 1) {
-		GtkWidget *widget = GAIM_GTK_WINDOW(win)->window;
+	GaimGtkWindow  *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
+	/* If it is the last conversation in the window, get rid of the sliders */
+	if (gaim_gtk_conv_window_get_gtkconv_count(win) == 1) {
+		GtkWidget *widget = win->window;
 		slider_win *slidwin = NULL;
 
 		/* Remove window from the window list */
@@ -260,8 +260,11 @@ static void remove_sliders() {
 static void remove_convs_wintrans() {
 	GList *conv;
 
-	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
-		set_wintrans_off(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window);
+	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next) {
+		GaimConversation *c = conv->data;
+		GaimGtkWindow *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(c));
+		set_wintrans_off(win->window);
+	}
 }
 
 static void update_convs_wintrans(GtkWidget *w, const char *pref) {
@@ -271,23 +274,29 @@ static void update_convs_wintrans(GtkWidget *w, const char *pref) {
 		set_trans_option(w, pref);
 
 	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED)) {
-		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
-			set_wintrans(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window, gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA));
+		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next) {
+			GaimConversation *c = conv->data;
+			GaimGtkWindow *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(c));
+			set_wintrans(win->window, gaim_prefs_get_int(OPT_WINTRANS_IM_ALPHA));
+		}
 	}
 	else
 		remove_convs_wintrans();
 
 	if(gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)
 	   && gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED)) {
-		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
-			add_slider(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window);
+		for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next) {
+			GaimConversation *c = conv->data;
+			GaimGtkWindow *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(c));
+			add_slider(win->window);
+		}
 	}
 	else
 		remove_sliders();
 }
 
-static void set_window_trans(GaimConvWindow *oldwin, GaimConvWindow *newwin) {
-	GtkWidget *win = GAIM_GTK_WINDOW(newwin)->window;
+static void set_window_trans(GaimGtkWindow *oldwin, GaimGtkWindow *newwin) {
+	GtkWidget *win = newwin->window;
 
 	/* check prefs to see if we want trans */
 	if (gaim_prefs_get_bool(OPT_WINTRANS_IM_ENABLED) && gaim_prefs_get_bool(OPT_WINTRANS_IM_SLIDER)) {
@@ -301,7 +310,7 @@ static void set_window_trans(GaimConvWindow *oldwin, GaimConvWindow *newwin) {
 }
 
 static void gaim_new_conversation(GaimConversation *c) {
-	GaimConvWindow *win = gaim_conversation_get_window(c);
+	GaimGtkWindow *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(c));
 	set_window_trans(NULL, win);
 }
 
@@ -318,8 +327,11 @@ static void alpha_change(GtkWidget *w, gpointer data) {
 	GList *conv;
 	imalpha = gtk_range_get_value(GTK_RANGE(w));
 
-	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next)
-		set_wintrans(GAIM_GTK_WINDOW(gaim_conversation_get_window(conv->data))->window, imalpha);
+	for(conv = gaim_get_conversations(); conv != NULL; conv = conv->next) {
+		GaimConversation *c = conv->data;
+		GaimGtkWindow *win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(c));
+		set_wintrans(win->window, imalpha);
+	}
 }
 
 static void alpha_pref_set_int(GtkWidget *w, GdkEventFocus *e, const char *pref)
