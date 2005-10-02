@@ -258,6 +258,7 @@ gaim_headers = \
 	gtkblist.h \
 	gtkconn.h \
 	gtkconv.h \
+	gtkconvwin.h \
 	gtkdebug.h \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
