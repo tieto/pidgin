@@ -3939,9 +3939,6 @@ gaim_gtkconv_destroy(GaimConversation *conv)
 		return;
 
 	gaim_gtk_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
-	/* should we be doing this here or in gaim_gtk_conv_window_remove_gtkconv()? */
-	if (!gtkconv->win->gtkconvs)
-		gaim_gtk_conv_window_destroy(gtkconv->win);
 
 	/* If the "Save Conversation" or "Save Icon" dialogs are open then close them */
 	gaim_request_close_with_handle(conv);
@@ -6439,6 +6436,9 @@ gaim_gtk_conv_window_remove_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtk
 	    }
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
+
+	if (!win->gtkconvs)
+		gaim_gtk_conv_window_destroy(win);
 }
 
 GaimGtkConversation *
