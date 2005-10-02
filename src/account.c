@@ -782,6 +782,8 @@ load_accounts(void)
 		new_acct = parse_account(child);
 		gaim_accounts_add(new_acct);
 	}
+
+	xmlnode_free(node);
 }
 
 

@@ -553,6 +553,7 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	serv_got_chat_in(gc, YAHOO_CHAT_ID, who, 0, msg, time(NULL));
 	g_free(msg);
+	g_free(room);
 }
 
 void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)

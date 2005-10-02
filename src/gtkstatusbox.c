@@ -221,6 +221,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GtkTextBuffer *buffer;
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
+	GtkTreePath *path;
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
@@ -262,7 +263,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
 	gtk_list_store_append(status_box->store, &(status_box->iter));
 	gtk_gaim_status_box_refresh(status_box);
-	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), gtk_tree_path_new_from_string("0"));
+	path = gtk_tree_path_new_from_string("0");
+	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
+	gtk_tree_path_free(path);
 	gtk_container_add(GTK_CONTAINER(status_box), status_box->cell_view);
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();

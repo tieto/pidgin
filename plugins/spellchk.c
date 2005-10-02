@@ -168,13 +168,18 @@ substitute_simple_buffer(GtkTextBuffer *buffer)
 				g_value_unset(&val0);
 				g_value_unset(&val1);
 				g_value_unset(&val2);
+				g_free(text);
 
 				return TRUE;
 			}
 
+			g_value_unset(&val0);
+			g_value_unset(&val1);
+			g_value_unset(&val2);
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &treeiter));
 	}
 
+	g_free(text);
 	return FALSE;
 }
 
