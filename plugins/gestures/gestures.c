@@ -56,7 +56,7 @@ static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimGtkConveration *gtkconv;
+	GaimGtkConversation *gtkconv;
 	GaimGtkWindow *win;
 	GList *conversations;
 
@@ -87,23 +87,23 @@ static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimConvWindow *win;
+	GaimGtkWindow *win;
 	GList *conversations;
 
 	conv  = (GaimConversation *)data;
-	win   = gaim_conversation_get_window(conv);
+	win   = GAIM_GTK_CONVERSATION(conv)->win;
 
-	for (conversations = gaim_conv_window_get_conversations(win);
+	for (conversations = win->gtkconvs;
 			conversations != NULL;
 			conversations = conversations->next)
 	{
-		if (conversations->data == conv)
+		if (((GaimGtkConversation *)conversations->data)->active_conv == conv)
 		{
 			if (conversations->next != NULL) {
-				gaim_conv_window_switch_conversation(win,
+				gaim_gtk_conv_window_switch_gtkconv(win,
 						conversations->next->data);
 			} else {
-				gaim_conv_window_switch_conversation(win,
+				gaim_gtk_conv_window_switch_gtkconv(win,
 						g_list_first(conversations)->data);
 			}
 
@@ -115,21 +115,21 @@ stroke_next_tab(GtkWidget *widget, void *data)
 void
 stroke_new_win(GtkWidget *widget, void *data)
 {
-	GaimConvWindow *new_win, *old_win;
+	GaimGtkWindow *new_win, *old_win;
 	GaimConversation *conv;
 
 	conv    = (GaimConversation *)data;
-	old_win = gaim_conversation_get_window(conv);
+	old_win = GAIM_GTK_CONVERSATION(conv)->win;
 
-	if (gaim_conv_window_get_conversation_count(old_win) <= 1)
+	if (gaim_gtk_conv_window_get_gtkconv_count(old_win) <= 1)
 		return;
 
-	new_win = gaim_conv_window_new();
+	new_win = gaim_gtk_conv_window_new();
 
-	gaim_conv_window_remove_conversation(old_win, conv);
-	gaim_conv_window_add_conversation(new_win, conv);
+	gaim_gtk_conv_window_remove_gtkconv(old_win, GAIM_GTK_CONVERSATION(conv));
+	gaim_gtk_conv_window_add_gtkconv(new_win, GAIM_GTK_CONVERSATION(conv));
 
-	gaim_conv_window_show(new_win);
+	gaim_gtk_conv_window_show(new_win);
 }
 
 static void

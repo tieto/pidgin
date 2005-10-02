@@ -20,7 +20,7 @@ MUSICMESSAGING_DIR = musicmessaging
 endif
 
 SUBDIRS = \
-	docklet $(GEVOLUTION_DIR) \
+	docklet $(GEVOLUTION_DIR) gestures \
 	$(PERL_DIR) ssl $(TCL_DIR) ticker \
 	$(MUSICMESSAGING_DIR)
 
