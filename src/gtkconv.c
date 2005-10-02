@@ -52,7 +52,7 @@
 #include "gtkdnd-hints.h"
 #include "gtkblist.h"
 #include "gtkconv.h"
-#include "gtkconvwin.c"
+#include "gtkconvwin.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"

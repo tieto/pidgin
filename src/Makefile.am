@@ -242,7 +242,7 @@ gaim_SOURCES = $(gaim_coresources) 	$(dbus_sources) 	gtkcombobox.c \
 		gtkimhtmltoolbar.c 	gtklog.c 	gtkmain.c 	gtkmenutray.c 	gtknotify.c 	gtkplugin.c \
 		gtkpluginpref.c 	gtkprefs.c 	gtkprivacy.c 	gtkpounce.c 	gtkrequest.c 	gtkroomlist.c \
 		gtksavedstatuses.c 	gtksound.c 	gtksourceiter.c 	gtkstatusbox.c 	gtkstock.c 	gtkthemes.c \
-		gtkutils.c 	idle.c 	session.c 	gtkwhiteboard.c gtkconvwin.c
+		gtkutils.c 	idle.c 	session.c 	gtkwhiteboard.c
 
 gaim_headers = \
 	$(dbus_headers) \
