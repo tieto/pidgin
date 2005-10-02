@@ -1,5 +1,19 @@
 #include "module.h"
 
+/* This breaks on faceprint's amd64 box
+void *
+gaim_request_action_varg(handle, title, primary, secondary, default_action, user_data, action_count, actions)
+	void * handle
+	const char *title
+	const char *primary
+	const char *secondary
+	unsigned int default_action
+	void *user_data
+	size_t action_count
+	va_list actions
+	*/
+
+
 typedef struct {
 	char *cancel_cb;
 	char *ok_cb;
@@ -132,30 +146,19 @@ CODE:
 	gpr = g_new(GaimPerlRequestData, 1);
 	gpr->ok_cb = g_strdup_printf("%s::%s", package, SvPV(ok_cb, len));
 	gpr->cancel_cb = g_strdup_printf("%s::%s", package, SvPV(cancel_cb, len));
-	
+
 	RETVAL = gaim_request_fields(handle, title, primary, secondary, fields, ok_text, G_CALLBACK(gaim_perl_request_ok_cb), cancel_text, G_CALLBACK(gaim_perl_request_cancel_cb), gpr);
 OUTPUT:
 	RETVAL
 
-void *
-gaim_request_action_varg(handle, title, primary, secondary, default_action, user_data, action_count, actions)
- 	void * handle
-	const char *title
-	const char *primary
-	const char *secondary
-	unsigned int default_action
-	void *user_data 
-	size_t action_count
-	va_list actions
-
-void 
+void
 gaim_request_close(type, uihandle)
 	Gaim::RequestType type
-	void * uihandle 
+	void * uihandle
 
-void 
+void
 gaim_request_close_with_handle(handle)
-	void * handle 
+	void * handle
 
 Gaim::Account
 gaim_request_field_account_get_default_value(field)

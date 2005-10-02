@@ -27,6 +27,21 @@ gaim_status_type_new_with_attrs(primitive, id, name, saveable, user_settable, in
 
 */
 
+/* These break on faceprint's amd64 box
+void
+gaim_status_type_add_attrs_vargs(status_type, args)
+	Gaim::StatusType status_type
+	va_list args
+
+void
+gaim_status_set_active_with_attrs(status, active, args)
+	Gaim::Status status
+	gboolean active
+	va_list args
+
+	*/
+
+
 MODULE = Gaim::Status  PACKAGE = Gaim::Presence  PREFIX = gaim_presence_
 PROTOTYPES: ENABLE
 
@@ -300,12 +315,6 @@ gaim_status_set_active(status, active)
 	gboolean active
 
 void 
-gaim_status_set_active_with_attrs(status, active, args)
-	Gaim::Status status
-	gboolean active
-	va_list args
-
-void 
 gaim_status_set_attr_boolean(status, id, value)
 	Gaim::Status status
 	const char *id
@@ -324,11 +333,6 @@ gaim_status_type_add_attr(status_type, id, name, value)
 	const char *name
 	Gaim::Value value
 
-
-void 
-gaim_status_type_add_attrs_vargs(status_type, args)
-	Gaim::StatusType status_type
-	va_list args
 
 void 
 gaim_status_type_destroy(status_type)
