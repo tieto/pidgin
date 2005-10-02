@@ -167,7 +167,7 @@ static void request_trigger(struct mwServiceStorage *srvc,
 
   struct mwStorageUnit *item = req->item;
 
-  g_message("storage request %s: key = 0x%x, result = 0x%x, length = %u",
+  g_message("storage request %s: key = 0x%x, result = 0x%x, length = %" G_GSIZE_FORMAT,
 	    action_str(req->action),
 	    item->key, req->result_code, item->data.len);
   

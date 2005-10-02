@@ -92,14 +92,19 @@ silcgaim_buddy_keyagr_cb(SilcClient client,
 								NULL, NULL, key, a->responder);
 			silc_ske_free_key_material(key);
 
+			
 			/* Open IM window */
 			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 									client_entry->nickname, sg->account);
-			if (convo)
+			if (convo) {
+				/* we don't have windows in the core anymore...but we may want to
+				 * provide some method for asking the UI to show the window
 				gaim_conv_window_show(gaim_conversation_get_window(convo));
-			else
+				 */
+			} else {
 				convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, sg->account,
 							      client_entry->nickname);
+			}
 			g_snprintf(tmp, sizeof(tmp), "%s [private key]", client_entry->nickname);
 			gaim_conversation_set_title(convo, tmp);
 		}

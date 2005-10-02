@@ -131,7 +131,7 @@ gchar *gaim_ntlm_gen_type1(gchar *hostname, gchar *domain) {
 }
 
 gchar *gaim_ntlm_parse_type2(gchar *type2) {
-	guint retlen;
+	gsize retlen;
 	static gchar nonce[8];
 	struct type2_message *tmsg = (struct type2_message*)gaim_base64_decode((char*)type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
@@ -157,7 +157,7 @@ static void setup_des_key(unsigned char key_56[], char *key)
 static void des_ecb_encrypt(char *plaintext, char *result, char *key) {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	guint outlen;
+	gsize outlen;
 	
 	cipher = gaim_ciphers_find_cipher("des");
 	context = gaim_cipher_context_new(cipher, NULL);

@@ -826,7 +826,7 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 		}
 		else if (value->type == GAIM_TYPE_INT)
 		{
-			int int_data = (int)attrs->data;
+			int int_data = GPOINTER_TO_INT(attrs->data);
 			attrs = attrs->next;
 			if (int_data == value->data.int_data)
 				continue;
@@ -835,7 +835,7 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 		}
 		else if (value->type == GAIM_TYPE_BOOLEAN)
 		{
-			gboolean boolean_data = (gboolean)attrs->data;
+			gboolean boolean_data = GPOINTER_TO_INT(attrs->data);
 			attrs = attrs->next;
 			if (boolean_data == value->data.boolean_data)
 				continue;

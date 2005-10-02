@@ -841,7 +841,7 @@ ucs2_order(gboolean swap)
 
 /* Convert from UCS-2 to UTF-8, stripping the BOM if one is present.*/
 static gchar *
-ucs2_to_utf8_with_bom_check(guchar *data, guint len) {
+ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
 	char *fromcode = NULL;
 	GError *error = NULL;
 	guint16 c;

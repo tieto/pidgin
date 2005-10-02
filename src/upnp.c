@@ -95,7 +95,7 @@ typedef struct
                            "\"urn:schemas-upnp-org:"                       \
                            "service:%s#%s\"\r\n"                           \
                            "CONTENT-TYPE: text/xml ; charset=\"utf-8\"\r\n"\
-                           "Content-Length: %i\r\n\r\n"
+                           "Content-Length: %zi\r\n\r\n"
 
 #define SOAP_ACTION  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"     \
                      "<s:Envelope xmlns:s="                               \
@@ -205,13 +205,13 @@ gaim_upnp_http_send(gpointer data,
                     gint sock,
                     GaimInputCondition cond)
 {
-  int sizeSent, totalSizeSent = 0;
+  gsize sizeSent, totalSizeSent = 0;
   extern int errno;
   NetResponseData* nrd = data;
 
   gaim_timeout_remove(nrd->tima);
   while(totalSizeSent < strlen(nrd->sendBuffer)) {
-    sizeSent = send(sock,(gchar*)((int)nrd->sendBuffer+totalSizeSent),
+    sizeSent = send(sock,(gchar*)(nrd->sendBuffer+totalSizeSent),
                       strlen(nrd->sendBuffer)-totalSizeSent,0);
     if(sizeSent <= 0 && errno != EINTR) {
       gaim_debug_error("upnp",
