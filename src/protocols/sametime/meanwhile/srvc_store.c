@@ -331,7 +331,7 @@ static void recv_channelDestroy(struct mwService *srvc,
 }
 
 
-static void recv(struct mwService *srvc, struct mwChannel *chan,
+static void mwservice_recv(struct mwService *srvc, struct mwChannel *chan,
 		 guint16 type, struct mwOpaque *data) {
 
   /* process into results, trigger callbacks */
@@ -402,7 +402,7 @@ struct mwServiceStorage *mwServiceStorage_new(struct mwSession *session) {
   srvc->get_desc = get_desc;
   srvc->recv_accept = recv_channelAccept;
   srvc->recv_destroy = recv_channelDestroy;
-  srvc->recv = recv;
+  srvc->recv = mwservice_recv;
   srvc->start = start;
   srvc->stop = stop;
   srvc->clear = clear;
