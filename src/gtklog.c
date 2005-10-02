@@ -92,7 +92,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 	if (lv->search != NULL)
 		g_free(lv->search);
 
-       	gtk_tree_store_clear(lv->treestore);
+	gtk_tree_store_clear(lv->treestore);
 	if (strlen(search_term) == 0) {/* reset the tree */
 		populate_log_tree(lv);
 		lv->search = NULL;
@@ -236,7 +236,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
  * For now, I'll just make it a flat list.
  */
 static void populate_log_tree(GaimGtkLogViewer *lv)
-     /* Logs are made from trees in real life. 
+     /* Logs are made from trees in real life.
         This is a tree made from logs */
 {
 	char month[30];
@@ -277,7 +277,7 @@ static void populate_log_tree(GaimGtkLogViewer *lv)
 }
 
 static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *logs,
-						const char *title, GdkPixbuf *pixbuf)
+						const char *title, GdkPixbuf *pixbuf, int log_size)
 {
 	GaimGtkLogViewer *lv;
 	GtkWidget *title_box;
@@ -337,6 +337,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		GtkWidget *frame;
 		GtkWidget *hbox;
 		GtkWidget *button;
+		GtkWidget *size_label;
 
 		/* Pane *************/
 		pane = gtk_hpaned_new();
@@ -366,6 +367,19 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 				G_CALLBACK(log_row_activated_cb),
 				lv);
 		gaim_set_accessible_label(lv->treeview, lv->label);
+
+		/* Log size ************/
+		if(log_size) {
+			char *sz_txt = gaim_str_size_to_units(log_size);
+			text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), sz_txt);
+			size_label = gtk_label_new(NULL);
+			gtk_label_set_markup(GTK_LABEL(size_label), text);
+			/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
+			gtk_misc_set_alignment(GTK_MISC(size_label), 0, 0);
+			gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), size_label, TRUE, TRUE, 0);
+			g_free(sz_txt);
+			g_free(text);
+		}
 
 		/* A fancy little box ************/
 		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
@@ -475,7 +489,7 @@ void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *ac
 	}
 
 	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
-			title, gaim_gtk_create_prpl_icon(account));
+			title, gaim_gtk_create_prpl_icon(account), gaim_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
 
@@ -488,6 +502,7 @@ void gaim_gtk_log_show_contact(GaimContact *contact) {
 	GdkPixbuf *pixbuf;
 	const char *name = NULL;
 	char *title;
+	int total_log_size = 0;
 
 	g_return_if_fail(contact != NULL);
 
@@ -509,6 +524,7 @@ void gaim_gtk_log_show_contact(GaimContact *contact) {
 		logs = g_list_concat(logs,
 			gaim_log_get_logs(GAIM_LOG_IM, ((GaimBuddy *)child)->name,
 						((GaimBuddy *)child)->account));
+		total_log_size += gaim_log_get_total_size(GAIM_LOG_IM, ((GaimBuddy *)child)->name, ((GaimBuddy *)child)->account);
 	}
 	logs = g_list_sort(logs, gaim_log_compare);
 
@@ -522,7 +538,7 @@ void gaim_gtk_log_show_contact(GaimContact *contact) {
 		name = gaim_buddy_get_contact_alias(contact->priority);
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
-	display_log_viewer(ht, logs, title, pixbuf);
+	display_log_viewer(ht, logs, title, pixbuf, total_log_size);
 	g_free(title);
 }
 
@@ -546,5 +562,5 @@ void gaim_gtk_syslog_show()
 	}
 	logs = g_list_sort(logs, gaim_log_compare);
 
-	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL);
+	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
 }
