@@ -283,7 +283,7 @@ static void
 wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flags)
 {
 	GaimConversation *conv;
-	GaimConvWindow *win;
+	GaimGtkWindow *win;
 	GtkWidget *window;
 	if (gaim_prefs_get_bool(PREF_IM_BLINK) == FALSE)
 		return;
@@ -293,12 +293,12 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flag
 	  gaim_debug_info("winprefs", "gar!\n");
 	  return;
 	}
-	win = gaim_conversation_get_window(conv);
+	win = gaim_gtkconv_get_window(GAIM_GTK_CONVERSATION(conv));
 	if (win == NULL) {
 	  gaim_debug_info("winprefs", "gar2!\n");
 	  return;
 	}
-	window = GAIM_GTK_WINDOW(win)->window;
+	window = win->window;
 
 	if (MyFlashWindowEx) {
 		FLASHWINFO info;
