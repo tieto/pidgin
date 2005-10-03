@@ -39,7 +39,7 @@ typedef struct _GaimGtkMenuTrayClass		GaimGtkMenuTrayClass;
 /** A GaimGtkMenuTray */
 struct _GaimGtkMenuTray {
 	GtkMenuItem gparent;					/**< The parent instance */
-	GtkWidget *tray;					/**< The tray */
+	GtkWidget *tray;						/**< The tray */
 };
 
 /** A GaimGtkMenuTrayClass */
