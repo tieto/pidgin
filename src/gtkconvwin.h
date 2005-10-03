@@ -68,7 +68,7 @@ struct _GaimGtkWindow
 		GtkWidget *show_timestamps;
 		GtkWidget *show_icon;
 
-		GtkWidget *send_as;
+		GtkWidget *send_to;
 
 		GtkWidget *tray;
 

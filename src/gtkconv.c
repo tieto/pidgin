@@ -114,8 +114,8 @@ typedef struct {
 static GtkWidget *invite_dialog = NULL;
 static GtkWidget *warn_close_dialog = NULL;
 
-static gboolean update_send_as_selection(GaimGtkWindow *win);
-static void generate_send_as_items(GaimGtkWindow *win, GaimConversation *deleted_conv);
+static gboolean update_send_to_selection(GaimGtkWindow *win);
+static void generate_send_to_items(GaimGtkWindow *win);
 
 
 
@@ -1898,19 +1898,19 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 static void
 menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
-	GaimGtkWindow *win = g_object_get_data(m, "user_data");
 	GaimAccount *account = g_object_get_data(m, "gaim_account");
+	gchar *name = g_object_get_data(m, "gaim_buddy_name");
 	GaimConversation *conv;
 	GaimGtkConversation *gtkconv;
 
 	if (gtk_check_menu_item_get_active((GtkCheckMenuItem*) m) == FALSE)
 		return;
 
-	conv = gaim_gtk_conv_window_get_active_conversation(win);
-
-	gaim_conversation_set_account(conv, account);
-
+	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtkconv->active_conv = conv;
+
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 	                             gaim_account_get_protocol_name(conv->account));
 }
@@ -2473,7 +2473,6 @@ setup_menubar(GaimGtkWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Options/Show Buddy Icon"));
 
-	generate_send_as_items(win, NULL);
 
 	win->menu.tray = gaim_gtk_menu_tray_new();
 	gtk_menu_shell_append(GTK_MENU_SHELL(win->menu.menubar),
@@ -2558,18 +2557,13 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 }
 
 static gboolean
-update_send_as_selection(GaimGtkWindow *win)
+update_send_to_selection(GaimGtkWindow *win)
 {
 	GaimAccount *account;
 	GaimConversation *conv;
 	GtkWidget *menu;
 	GList *child;
-
-	/* what does this do again? */
-	/*
-	if (g_list_find(gaim_gtk_get_windows(), win) == NULL)
-		return FALSE;
-	*/
+	GaimBuddy *b;
 
 	conv = gaim_gtk_conv_window_get_active_conversation(win);
 
@@ -2578,23 +2572,30 @@ update_send_as_selection(GaimGtkWindow *win)
 
 	account = gaim_conversation_get_account(conv);
 
-	if (win->menu.send_as == NULL)
+	if (win->menu.send_to == NULL)
 		return FALSE;
 
-	gtk_widget_show(win->menu.send_as);
+	if (!(b = gaim_find_buddy(account, conv->name)))
+		return FALSE;
+
+
+	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_item_get_submenu(
-		GTK_MENU_ITEM(win->menu.send_as));
+		GTK_MENU_ITEM(win->menu.send_to));
 
 	for (child = gtk_container_get_children(GTK_CONTAINER(menu));
 		 child != NULL;
 		 child = child->next) {
 
 		GtkWidget *item = child->data;
-		GaimAccount *item_account = g_object_get_data(G_OBJECT(item),
-				"gaim_account");
+		GaimBuddy *item_buddy;
+		GaimAccount *item_account = g_object_get_data(G_OBJECT(item), "gaim_account");
+		gchar *buddy_name = g_object_get_data(G_OBJECT(item),
+		                                      "gaim_buddy_name");
+		item_buddy = gaim_find_buddy(item_account, buddy_name);
 
-		if (account == item_account) {
+		if (b == item_buddy) {
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
 			break;
 		}
@@ -2604,209 +2605,116 @@ update_send_as_selection(GaimGtkWindow *win)
 }
 
 static void
-generate_send_as_items(GaimGtkWindow *win, GaimConversation *deleted_conv)
+create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy *bud)
+{
+	GaimAccount *account;
+	GtkWidget *box;
+	GtkWidget *label;
+	GtkWidget *image;
+	GtkWidget *menuitem;
+	GdkPixbuf *pixbuf, *scale;
+
+
+	account = bud->account;
+
+	/* Create a pixmap for the protocol icon. */
+	pixbuf = gaim_gtk_create_prpl_icon(account);
+	scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
+
+	/* Now convert it to GtkImage */
+	if (pixbuf == NULL)
+		image = gtk_image_new();
+	else
+		image = gtk_image_new_from_pixbuf(scale);
+
+	gtk_size_group_add_widget(sg, image);
+
+	g_object_unref(G_OBJECT(scale));
+	g_object_unref(G_OBJECT(pixbuf));
+
+	/* Make our menu item */
+	menuitem = gtk_radio_menu_item_new_with_label(*group,
+	                                              gaim_buddy_get_name(bud));
+	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
+
+	/* Do some evil, see some evil, speak some evil. */
+	box = gtk_hbox_new(FALSE, 0);
+
+	label = gtk_bin_get_child(GTK_BIN(menuitem));
+	g_object_ref(label);
+	gtk_container_remove(GTK_CONTAINER(menuitem), label);
+
+	gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
+
+	g_object_unref(label);
+
+	gtk_container_add(GTK_CONTAINER(menuitem), box);
+
+	gtk_widget_show(label);
+	gtk_widget_show(image);
+	gtk_widget_show(box);
+
+	/* Set our data and callbacks. */
+	g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
+	g_object_set_data_full(G_OBJECT(menuitem), "gaim_buddy_name", g_strdup(gaim_buddy_get_name(bud)), g_free);
+
+	g_signal_connect(G_OBJECT(menuitem), "activate",
+	                 G_CALLBACK(menu_conv_sel_send_cb), NULL);
+
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+}
+
+static void
+generate_send_to_items(GaimGtkWindow *win)
 {
 	GtkWidget *menu;
-	GtkWidget *menuitem;
-	GList *gcs;
-	GList *convs;
 	GSList *group = NULL;
-	gboolean first_offline = TRUE;
-	gboolean found_online = FALSE;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	GaimGtkConversation *gtkconv;
+	GSList *l, *buds;
 
-	if (win->menu.send_as != NULL)
-		gtk_widget_destroy(win->menu.send_as);
+	g_return_if_fail(win != NULL);
 
-	/* See if we have > 1 connection active. */
-	if (g_list_length(gaim_connections_get_all()) < 2) {
-		/* Now make sure we don't have any Offline entries. */
-		gboolean found_offline = FALSE;
+	gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
 
-		for (convs = gaim_get_conversations();
-		     convs != NULL;
-		     convs = convs->next) {
+	if (win->menu.send_to != NULL)
+		gtk_widget_destroy(win->menu.send_to);
 
-			GaimConversation *conv;
-			GaimAccount *account;
-
-			conv = (GaimConversation *)convs->data;
-			account = gaim_conversation_get_account(conv);
-
-			if (account != NULL && account->gc == NULL) {
-				found_offline = TRUE;
-				break;
-			}
-		}
-
-		if (!found_offline) {
-			win->menu.send_as = NULL;
-			return;
-		}
-	}
 
 	/* Build the Send As menu */
-	win->menu.send_as = gtk_menu_item_new_with_mnemonic(_("_Send As"));
-	gtk_widget_show(win->menu.send_as);
+	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("_Send To"));
+	gtk_widget_show(win->menu.send_to);
 
 	menu = gtk_menu_new();
 	gtk_menu_shell_insert(GTK_MENU_SHELL(win->menu.menubar),
-	                      win->menu.send_as, 2);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.send_as), menu);
+	                      win->menu.send_to, 2);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(win->menu.send_to), menu);
 
 	gtk_widget_show(menu);
 
-	/* Fill it with entries. */
-	for (gcs = gaim_connections_get_all(); gcs != NULL; gcs = gcs->next) {
+	buds = gaim_find_buddies(gtkconv->active_conv->account, gtkconv->active_conv->name);
+	for (l = buds; l != NULL; l = l->next) {
+		GaimBuddy *b;
+		GaimBlistNode *node;
 
-		GaimConnection *gc;
-		GaimAccount *account;
-		GtkWidget *box;
-		GtkWidget *label;
-		GtkWidget *image;
-		GdkPixbuf *pixbuf, *scale;
+		b = l->data;
+		node =  (GaimBlistNode *) gaim_buddy_get_contact(b);
 
-		found_online = TRUE;
-
-		gc = (GaimConnection *)gcs->data;
-
-		/* Create a pixmap for the protocol icon. */
-		pixbuf = gaim_gtk_create_prpl_icon(gc->account);
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
-		/* Now convert it to GtkImage */
-		if (pixbuf == NULL)
-			image = gtk_image_new();
-		else
-			image = gtk_image_new_from_pixbuf(scale);
-
-		gtk_size_group_add_widget(sg, image);
-
-		g_object_unref(G_OBJECT(scale));
-		g_object_unref(G_OBJECT(pixbuf));
-
-		account = gaim_connection_get_account(gc);
-
-		/* Make our menu item */
-		menuitem = gtk_radio_menu_item_new_with_label(group,
-				gaim_account_get_username(account));
-		group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
-
-		/* Do some evil, see some evil, speak some evil. */
-		box = gtk_hbox_new(FALSE, 0);
-
-		label = gtk_bin_get_child(GTK_BIN(menuitem));
-		g_object_ref(label);
-		gtk_container_remove(GTK_CONTAINER(menuitem), label);
-
-		gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-		gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
-
-		g_object_unref(label);
-
-		gtk_container_add(GTK_CONTAINER(menuitem), box);
-
-		gtk_widget_show(label);
-		gtk_widget_show(image);
-		gtk_widget_show(box);
-
-		/* Set our data and callbacks. */
-		g_object_set_data(G_OBJECT(menuitem), "user_data", win);
-		g_object_set_data(G_OBJECT(menuitem), "gaim_account", gc->account);
-
-		g_signal_connect(G_OBJECT(menuitem), "activate",
-						 G_CALLBACK(menu_conv_sel_send_cb), NULL);
-
-		gtk_widget_show(menuitem);
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		for (node = node->child; node != NULL; node = node->next)
+			if (GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_account_is_connected(((GaimBuddy *)node)->account))
+				create_sendto_item(menu, sg, &group, (GaimBuddy *) node);
 	}
 
-	/*
-	 * Fill it with any accounts that still has an open (yet disabled) window
-	 * (signed off accounts with a window open).
-	 */
-	for (convs = gaim_get_conversations();
-		 convs != NULL;
-		 convs = convs->next) {
-
-		GaimConversation *conv;
-		GaimAccount *account;
-		GtkWidget *box;
-		GtkWidget *label;
-		GtkWidget *image;
-		GdkPixbuf *pixbuf, *scale;
-
-		conv = (GaimConversation *)convs->data;
-
-		if (conv == deleted_conv)
-			continue;
-
-		account = gaim_conversation_get_account(conv);
-
-		if (account != NULL && account->gc == NULL) {
-			if (first_offline && found_online) {
-				menuitem = gtk_separator_menu_item_new();
-				gtk_widget_show(menuitem);
-				gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-				first_offline = FALSE;
-			}
-
-			/* Create a pixmap for the protocol icon. */
-			pixbuf = gaim_gtk_create_prpl_icon(account);
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
-
-			/* Now convert it to GtkImage */
-			if (pixbuf == NULL)
-				image = gtk_image_new();
-			else
-				image = gtk_image_new_from_pixbuf(scale);
-
-			gtk_size_group_add_widget(sg, image);
-
-			if (scale  != NULL) g_object_unref(scale);
-			if (pixbuf != NULL) g_object_unref(pixbuf);
-
-			/* Make our menu item */
-			menuitem = gtk_radio_menu_item_new_with_label(group,
-														  account->username);
-			group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
-
-			/* Do some evil, see some evil, speak some evil. */
-			box = gtk_hbox_new(FALSE, 0);
-
-			label = gtk_bin_get_child(GTK_BIN(menuitem));
-			g_object_ref(label);
-			gtk_container_remove(GTK_CONTAINER(menuitem), label);
-
-			gtk_box_pack_start(GTK_BOX(box), image, FALSE, FALSE, 0);
-			gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 4);
-
-			g_object_unref(label);
-
-			gtk_container_add(GTK_CONTAINER(menuitem), box);
-
-			gtk_widget_show(label);
-			gtk_widget_show(image);
-			gtk_widget_show(box);
-
-			gtk_widget_set_sensitive(menuitem, FALSE);
-			g_object_set_data(G_OBJECT(menuitem), "user_data", win);
-			g_object_set_data(G_OBJECT(menuitem), "gaim_account", account);
-
-			g_signal_connect(G_OBJECT(menuitem), "activate",
-							 G_CALLBACK(menu_conv_sel_send_cb), NULL);
-
-			gtk_widget_show(menuitem);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-		}
-	}
+	g_slist_free(buds);
 
 	g_object_unref(sg);
 
-	gtk_widget_show(win->menu.send_as);
-	update_send_as_selection(win);
+	gtk_widget_show(win->menu.send_to);
+	if (!group)
+		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
+	update_send_to_selection(win);
 }
 
 static GList *
@@ -4750,8 +4658,8 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 	if (gc != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
-	if (win->menu.send_as != NULL)
-		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+	if (win->menu.send_to != NULL)
+		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
 
 	/*
 	 * Handle hiding and showing stuff based on what type of conv this is.
@@ -4940,7 +4848,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		gaim_gtkconv_update_buttons_by_protocol(conv);
 
-		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
 
 		gaim_gtkthemes_smiley_themeize(gtkconv->imhtml);
 
@@ -5033,7 +4941,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 			 type == GAIM_CONV_ACCOUNT_OFFLINE)
 	{
 		gray_stuff_out(GAIM_GTK_CONVERSATION(gaim_gtk_conv_window_get_active_conversation(win)));
-		generate_send_as_items(win, NULL);
+		generate_send_to_items(win);
 		update_tab_icon(conv);
 		gaim_conversation_autoset_title(conv);
 	}
@@ -6136,6 +6044,8 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	/* Update the menubar */
 	gray_stuff_out(gtkconv);
 
+	generate_send_to_items(win);
+
 	update_typing_icon(gtkconv);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.logging),
@@ -6404,7 +6314,7 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	gtk_widget_grab_focus(focus_gtkconv->entry);
 
 	if (gaim_gtk_conv_window_get_gtkconv_count(win) == 1)
-		g_timeout_add(0, (GSourceFunc)update_send_as_selection, win);
+		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
 }
 
 void
@@ -6426,14 +6336,6 @@ gaim_gtk_conv_window_remove_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtk
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
 		                           gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"));
 	}
-
-
-	/* If this window is setup with an inactive gc, regenerate the menu. */
-
-	if (conv_type == GAIM_CONV_TYPE_IM &&
-	    gaim_conversation_get_gc(gtkconv->active_conv) == NULL) {
-		    generate_send_as_items(win, gtkconv->active_conv);
-	    }
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
