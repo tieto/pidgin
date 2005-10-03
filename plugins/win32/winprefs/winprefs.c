@@ -250,7 +250,7 @@ static gboolean flash_window_cb (gpointer data) {
 static int
 halt_flash_filter (GtkWidget *widget, GdkEventFocus *event, gpointer data)
 {
- 	if (MyFlashWindowEx) {
+	if (MyFlashWindowEx) {
 		HWND hWnd = data;
 		FLASHWINFO info;
 
@@ -375,28 +375,9 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
 
-	while(hKey) {
-		char version[25];
-		DWORD vlen = 25;
-		if(wgaim_read_reg_string(hKey, "SOFTWARE\\GTK\\2.0", "Version", (LPBYTE)&version, &vlen)) {
-			char revision[25];
-			DWORD rlen = 25;
-			gboolean gotrev = FALSE;
-			if(wgaim_read_reg_string(hKey, "SOFTWARE\\GTK\\2.0", "Revision", (LPBYTE)&revision, &rlen)) {
-				revision[0] = g_ascii_toupper(revision[0]);
-				revision[1] = '\0';
-				gotrev = TRUE;
-			}
-			gtk_version = g_strdup_printf("%s%s%s", version,
-										  (gotrev ? " Revision " : ""),
-										  (gotrev ? revision : ""));
-			hKey = 0;
-		}
-		if(hKey == HKEY_CURRENT_USER)
-			hKey = HKEY_LOCAL_MACHINE;
-		else if(hKey == HKEY_LOCAL_MACHINE)
-			hKey = 0;
-	}
+	gtk_version = g_strdup_printf("GTK+ %u.%u.%u\nGlib %u.%u.%u",
+		gtk_major_version, gtk_minor_version, gtk_micro_version,
+		glib_major_version, glib_minor_version, glib_micro_version);
 
 	/* Display Installed GTK+ Runtime Version */
 	if(gtk_version) {
