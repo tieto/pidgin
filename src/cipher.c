@@ -811,7 +811,7 @@ data[6] = (right >> 8) &0xff; data[7] = right &0xff;
  *    		    with calculated subkeys.
  *     
  **/
-	static void
+static void
 des_key_schedule (const guint8 * rawkey, guint32 * subkey)
 {
 	guint32 left, right, work;
@@ -896,8 +896,8 @@ des_key_schedule (const guint8 * rawkey, guint32 * subkey)
  *  Does not check parity bits, but simply ignore them.
  *  Does not check for weak keys.
  **/
-void
-des_setkey (GaimCipherContext *context, guchar * key)
+static void
+des_set_key (GaimCipherContext *context, guchar * key)
 {
 	struct _des_ctx *ctx = gaim_cipher_context_get_data(context);
 	int i;
@@ -917,7 +917,7 @@ des_setkey (GaimCipherContext *context, guchar * key)
  *  Electronic Codebook Mode DES encryption/decryption of data according
  *  to 'mode'.
  **/
-int
+static int
 des_ecb_crypt (struct _des_ctx *ctx, const guint8 * from, guint8 * to, int mode)
 {
 	guint32 left, right, work;
@@ -943,7 +943,9 @@ des_ecb_crypt (struct _des_ctx *ctx, const guint8 * from, guint8 * to, int mode)
 		return 0;
 }
 
-gint des_encrypt(GaimCipherContext *context, const guchar data[],                       size_t len, guchar output[], size_t *outlen) {
+static gint
+des_encrypt(GaimCipherContext *context, const guchar data[],
+	    size_t len, guchar output[], size_t *outlen) {
 	int offset = 0;
 	int i = 0;
 	int tmp;
@@ -1002,7 +1004,7 @@ static GaimCipherOps DESOps = {
 	NULL,                   /* decrypt */
 	NULL,                   /* set salt */
 	NULL,                   /* get salt size */
-	des_setkey,		/* set key */
+	des_set_key,		/* set key */
 	NULL                    /* get key size */
 };
 
