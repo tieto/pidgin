@@ -3829,6 +3829,8 @@ gaim_gtkconv_new(GaimConversation *conv)
 
 	gtkconv->show_timestamps = TRUE;
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
+								 gaim_account_get_protocol_name(conv->account));
 
 	g_signal_connect_swapped(G_OBJECT(pane), "focus",
 	                         G_CALLBACK(gtk_widget_grab_focus),
