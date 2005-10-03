@@ -307,10 +307,6 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	/* copy features from the connection. */
 	conv->features = gc->flags;
 
-	ops  = conv->ui_ops = default_ops;
-	if (ops != NULL && ops->create_conversation != NULL)
-		ops->create_conversation(conv);
-
 	if (type == GAIM_CONV_TYPE_IM)
 	{
 		GaimBuddyIcon *icon;
@@ -344,6 +340,10 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		gaim_conversation_set_logging(conv,
 				gaim_prefs_get_bool("/core/logging/log_chats"));
 	}
+
+	ops  = conv->ui_ops = default_ops;
+	if (ops != NULL && ops->create_conversation != NULL)
+		ops->create_conversation(conv);
 
 	conversations = g_list_append(conversations, conv);
 
