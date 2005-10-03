@@ -341,14 +341,18 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 				gaim_prefs_get_bool("/core/logging/log_chats"));
 	}
 
-	ops  = conv->ui_ops = default_ops;
-	if (ops != NULL && ops->create_conversation != NULL)
-		ops->create_conversation(conv);
-
 	conversations = g_list_append(conversations, conv);
 
 	/* Auto-set the title. */
 	gaim_conversation_autoset_title(conv);
+
+	/* Don't move this.. it needs to be one of the last things done otherwise
+	 * it causes mysterious crashes on my system.
+	 *  -- Gary
+	 */
+	ops  = conv->ui_ops = default_ops;
+	if (ops != NULL && ops->create_conversation != NULL)
+		ops->create_conversation(conv);
 
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "conversation-created", conv);

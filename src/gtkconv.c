@@ -1906,6 +1906,7 @@ menu_conv_sel_send_cb(GObject *m, gpointer data)
 	if (gtk_check_menu_item_get_active((GtkCheckMenuItem*) m) == FALSE)
 		return;
 
+	/* I'm about 99.99% sure we're leaking a conversation here... */
 	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
