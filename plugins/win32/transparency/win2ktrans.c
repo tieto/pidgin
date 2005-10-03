@@ -20,6 +20,9 @@
  * foundation, inc., 59 temple place, suite 330, boston, ma  02111-1307  usa
  *
  */
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0500
+#endif
 #include <gdk/gdkwin32.h>
 #include "internal.h"
 
