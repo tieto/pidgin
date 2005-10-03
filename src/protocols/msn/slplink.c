@@ -278,13 +278,15 @@ msg_ack(MsnMessage *msg, void *data)
 	else
 	{
 		/* The whole message has been sent */
-
 		if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 		{
-			if ((slpmsg->slpcall != NULL) &&
-				(slpmsg->slpcall->cb != NULL))
+			if (slpmsg->slpcall != NULL)
 			{
-				slpmsg->slpcall->cb(slpmsg->slpcall, NULL, 0);
+				if (slpmsg->slpcall->cb)
+					slpmsg->slpcall->cb(slpmsg->slpcall,
+						NULL, 0);
+
+				msn_slp_call_destroy(slpmsg->slpcall);
 			}
 		}
 	}
