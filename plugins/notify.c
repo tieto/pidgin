@@ -310,11 +310,11 @@ attach_signals(GaimConversation *conv)
 		 * gtkwin->notebook->container? */
 		id = g_signal_connect(G_OBJECT(gtkconv->entry), "focus-in-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		window_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
+		entry_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
 
 		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "focus-in-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		window_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
+		imhtml_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click")) {
@@ -347,7 +347,7 @@ detach_signals(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = NULL;
 	GaimGtkWindow *gtkwin = NULL;
-	GSList *ids = NULL;
+	GSList *ids = NULL, *l;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	if (!gtkconv)
@@ -355,16 +355,19 @@ detach_signals(GaimConversation *conv)
 	gtkwin  = gtkconv->win;
 
 	ids = gaim_conversation_get_data(conv, "notify-window-signals");
-	for (; ids != NULL; ids = ids->next)
-		g_signal_handler_disconnect(gtkwin->window, GPOINTER_TO_INT(ids->data));
+	for (l = ids; l != NULL; l = l->next)
+		g_signal_handler_disconnect(gtkwin->window, GPOINTER_TO_INT(l->data));
+	g_slist_free(ids);
 
 	ids = gaim_conversation_get_data(conv, "notify-imhtml-signals");
-	for (; ids != NULL; ids = ids->next)
-		g_signal_handler_disconnect(gtkconv->imhtml, GPOINTER_TO_INT(ids->data));
+	for (l = ids; l != NULL; l = l->next)
+		g_signal_handler_disconnect(gtkconv->imhtml, GPOINTER_TO_INT(l->data));
+	g_slist_free(ids);
 
 	ids = gaim_conversation_get_data(conv, "notify-entry-signals");
-	for (; ids != NULL; ids = ids->next)
-		g_signal_handler_disconnect(gtkconv->entry, GPOINTER_TO_INT(ids->data));
+	for (l = ids; l != NULL; l = l->next)
+		g_signal_handler_disconnect(gtkconv->entry, GPOINTER_TO_INT(l->data));
+	g_slist_free(ids);
 
 	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
 
@@ -417,9 +420,15 @@ deleting_conv(GaimConversation *conv)
 
 	detach_signals(conv);
 
-	unnotify(conv, TRUE);
-
 	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
+
+
+	handle_urgent(gaimwin, FALSE);
+	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
+
+
+	return;
+
 #if 0
 	/* i think this line crashes */
 	if (count_messages(gaimwin))

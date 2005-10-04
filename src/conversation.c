@@ -437,8 +437,8 @@ gaim_conversation_destroy(GaimConversation *conv)
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "deleting-conversation", conv);
 
-	if (conv->name  != NULL) g_free(conv->name);
-	if (conv->title != NULL) g_free(conv->title);
+	g_free(conv->name);
+	g_free(conv->title);
 
 	conv->name = NULL;
 	conv->title = NULL;
