@@ -665,7 +665,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	GSList *list = NULL;
 	struct _yahoo_im *im = NULL;
-	
+
 	char imv[16];
 
 	if (pkt->status <= 1 || pkt->status == 5) {
@@ -701,22 +701,22 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		gaim_notify_error(gc, NULL,
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
-	
+
 	// Check for the Doodle IMV
 	if( !strcmp( imv, "doodle;11" ) )
 	{
 		GaimWhiteboard *wb;
 
 		g_print( "'doodle;11' found in chat packet\n" );
-		
+
 		wb = gaim_whiteboard_get_session( gc->account, im->from );
-		
+
 		// If a Doodle session doesn't exist between this user
 		if( wb == NULL )
 		{
 			g_print( "Creating new whiteboard for chat packet request\n" );
 			wb = gaim_whiteboard_create( gc->account, im->from, DOODLE_STATE_REQUESTED );
-			
+
 			yahoo_doodle_command_send_request( gc, im->from );
 			yahoo_doodle_command_send_ready( gc, im->from );
 		}
@@ -2524,6 +2524,9 @@ static void yahoo_close(GaimConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	GSList *l;
 
+	if (gc->inpa)
+		gaim_input_remove(gc->inpa);
+
 	for (l = yd->confs; l; l = l->next) {
 		GaimConversation *conv = l->data;
 
@@ -2554,8 +2557,7 @@ static void yahoo_close(GaimConnection *gc) {
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)
 		ycht_connection_close(yd->ycht);
-	if (gc->inpa)
-		gaim_input_remove(gc->inpa);
+
 	g_free(yd);
 }
 
@@ -3001,7 +3003,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash_str(pkt,   63, "doodle;11");
 	else
 		yahoo_packet_hash_str(pkt,   63, ";0"); // IMvironment
-	
+
 	yahoo_packet_hash_str(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash_str(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
 	if (!yd->picture_url)
@@ -3542,7 +3544,7 @@ yahoogaim_register_commands(void)
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_buzz,
 	                  _("buzz: Buzz a contact to get their attention"), NULL);
-	
+
 	gaim_cmd_register("doodle", "", GAIM_CMD_P_PRPL,
 			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 			  "prpl-yahoo", yahoo_doodle_gaim_cmd_start,
