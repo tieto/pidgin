@@ -285,8 +285,6 @@ msg_ack(MsnMessage *msg, void *data)
 				if (slpmsg->slpcall->cb)
 					slpmsg->slpcall->cb(slpmsg->slpcall,
 						NULL, 0);
-
-				msn_slp_call_destroy(slpmsg->slpcall);
 			}
 		}
 	}
