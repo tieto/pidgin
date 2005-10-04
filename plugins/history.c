@@ -45,7 +45,8 @@ static void historize(GaimConversation *c)
 	char *header;
 
 	convtype = gaim_conversation_get_type(c);
-	if (convtype == GAIM_CONV_TYPE_IM)
+	gtkconv = GAIM_GTK_CONVERSATION(c);
+	if (convtype == GAIM_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
 		GSList *buddies;
 		GSList *cur;
