@@ -121,10 +121,12 @@ static void generate_send_to_items(GaimGtkWindow *win);
 
 /* Prototypes. <-- because Paco-Paco hates this comment. */
 static void got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first);
+static void gray_stuff_out(GaimGtkConversation *gtkconv);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv, const char *name,
 								  const char *alias, const char *old_name);
 static gboolean tab_complete(GaimConversation *conv);
+static void gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type);
 static void update_typing_icon(GaimGtkConversation *gtkconv);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
@@ -1896,24 +1898,42 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 }
 
 static void
+gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+
+	g_return_if_fail(conv != NULL);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	gtkconv->active_conv = conv;
+
+	gray_stuff_out(gtkconv);
+	update_typing_icon(gtkconv);
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging),
+	                               gaim_conversation_is_logging(conv));
+
+	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
+	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+
+	gaim_gtkconv_updated(conv, GAIM_CONV_UPDATE_ACCOUNT);
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
+	                             gaim_account_get_protocol_name(conv->account));
+}
+
+static void
 menu_conv_sel_send_cb(GObject *m, gpointer data)
 {
 	GaimAccount *account = g_object_get_data(m, "gaim_account");
 	gchar *name = g_object_get_data(m, "gaim_buddy_name");
 	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
 
 	if (gtk_check_menu_item_get_active((GtkCheckMenuItem*) m) == FALSE)
 		return;
 
-	/* I'm about 99.99% sure we're leaking a conversation here... */
 	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-	gtkconv->active_conv = conv;
-
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-	                             gaim_account_get_protocol_name(conv->account));
+	gaim_gtkconv_switch_active_conversation(conv);
 }
 
 static void
@@ -2680,6 +2700,8 @@ generate_send_to_items(GaimGtkWindow *win)
 
 	gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
 
+	g_return_if_fail(gtkconv != NULL);
+
 	if (win->menu.send_to != NULL)
 		gtk_widget_destroy(win->menu.send_to);
 
@@ -2695,20 +2717,22 @@ generate_send_to_items(GaimGtkWindow *win)
 
 	gtk_widget_show(menu);
 
-	buds = gaim_find_buddies(gtkconv->active_conv->account, gtkconv->active_conv->name);
-	for (l = buds; l != NULL; l = l->next) {
-		GaimBuddy *b;
-		GaimBlistNode *node;
+	if (gtkconv->active_conv->type == GAIM_CONV_TYPE_IM) {
+		buds = gaim_find_buddies(gtkconv->active_conv->account, gtkconv->active_conv->name);
+		for (l = buds; l != NULL; l = l->next) {
+			GaimBuddy *b;
+			GaimBlistNode *node;
 
-		b = l->data;
-		node =  (GaimBlistNode *) gaim_buddy_get_contact(b);
+			b = l->data;
+			node =  (GaimBlistNode *) gaim_buddy_get_contact(b);
 
-		for (node = node->child; node != NULL; node = node->next)
-			if (GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_account_is_connected(((GaimBuddy *)node)->account))
-				create_sendto_item(menu, sg, &group, (GaimBuddy *) node);
+			for (node = node->child; node != NULL; node = node->next)
+				if (GAIM_BLIST_NODE_IS_BUDDY(node) && gaim_account_is_connected(((GaimBuddy *)node)->account))
+					create_sendto_item(menu, sg, &group, (GaimBuddy *) node);
+		}
+
+		g_slist_free(buds);
 	}
-
-	g_slist_free(buds);
 
 	g_object_unref(sg);
 
@@ -3751,9 +3775,9 @@ gaim_gtkconv_new(GaimConversation *conv)
 
 	if (conv_type == GAIM_CONV_TYPE_IM && (gtkconv = gaim_gtk_conv_find_gtkconv(conv))) {
 		conv->ui_data = gtkconv;
-		gtkconv->active_conv = conv;
 		if (!g_list_find(gtkconv->convs, conv))
 			gtkconv->convs = g_list_prepend(gtkconv->convs, conv);
+		gaim_gtkconv_switch_active_conversation(conv);
 		return;
 	}
 
@@ -5652,6 +5676,14 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	return TRUE;
 }
 
+static void
+gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
+{
+	GList *l;
+
+	for (l = gtkconv->convs; l != NULL; l = l->next)
+		gaim_conversation_set_unseen(l->data, state);
+}
 /*
  * When a conversation window is focused, we know the user
  * has looked at it so we know there are no longer unseen
@@ -5661,9 +5693,9 @@ static gint
 focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 {
 	GaimGtkWindow *win = d;
-	GaimConversation *conv = gaim_gtk_conv_window_get_active_conversation(win);
+	GaimGtkConversation *gtkconv = gaim_gtk_conv_window_get_active_gtkconv(win);
 
-	gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 
 	return FALSE;
 }
@@ -6042,17 +6074,13 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	 * Only set "unseen" to "none" if the window has focus
 	 */
 	if (gaim_gtk_conv_window_has_focus(win))
-		gaim_conversation_set_unseen(conv, GAIM_UNSEEN_NONE);
+		gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 
 	/* Update the menubar */
-	gray_stuff_out(gtkconv);
 
 	generate_send_to_items(win);
 
-	update_typing_icon(gtkconv);
-
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.logging),
-	                               gaim_conversation_is_logging(conv));
+	gaim_gtkconv_switch_active_conversation(conv);
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.sounds),
 	                               gtkconv->make_sound);
@@ -6066,6 +6094,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
 		                               gtkconv->u.im->show_icon);
+
 	/*
 	 * We pause icons when they are not visible.  If this icon should
 	 * be animated then start it back up again.
@@ -6073,9 +6102,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
 	    (gtkconv->u.im->animate))
 		start_anim(NULL, gtkconv);
-
-	gtk_window_set_title(GTK_WINDOW(win->window),
-	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 }
 
 /**************************************************************************
@@ -6354,7 +6380,7 @@ gaim_gtk_conv_window_get_gtkconv_at_index(const GaimGtkWindow *win, int index)
 	if (index == -1)
 		index = 0;
 	tab_cont = gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), index);
-	return g_object_get_data(G_OBJECT(tab_cont), "GaimGtkConversation");
+	return tab_cont ? g_object_get_data(G_OBJECT(tab_cont), "GaimGtkConversation") : NULL;
 }
 
 GaimGtkConversation *
