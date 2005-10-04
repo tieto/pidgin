@@ -994,7 +994,7 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 			}
 
 			if(jbr->name)
-				res = g_strdup_printf(" _(%s)", jbr->name);
+				res = g_strdup_printf(" (%s)", jbr->name);
 
 			g_string_append_printf(ret, "\n<b>%s%s:</b> %s%s%s",
 					_("Status"),
