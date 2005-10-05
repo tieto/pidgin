@@ -3496,7 +3496,7 @@ yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args, gchar **
 	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
 	gaim_conv_im_send(GAIM_CONV_IM(c), "<ding>");
-	gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_RECV, time(NULL));
+	gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_SEND, time(NULL));
 	return GAIM_CMD_RET_OK;
 }
 
