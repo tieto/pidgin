@@ -74,6 +74,7 @@ static struct developer developers[] = {
 
 static struct developer patch_writers[] = {
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
+	{"Sadrul Habib Chowdhury",      NULL,   NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
