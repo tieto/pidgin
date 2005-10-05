@@ -235,14 +235,47 @@ endif
 
 bin_PROGRAMS = gaim $(gaim_clientbP)
 
-gaim_SOURCES = $(gaim_coresources) 	$(dbus_sources) 	gtkcombobox.c \
-		gtkcelllayout.c 	gtkcellview.c 	gtkcellviewmenuitem.c 	gtkaccount.c \
-		gtkcellrendererprogress.c 	gtkblist.c 	gtkconn.c 	gtkconv.c 	gtkdebug.c 	gtkdialogs.c \
-		gtkdnd-hints.c 	gtkgaim-disclosure.c 	gtkeventloop.c 	gtkft.c 	gtkimhtml.c \
-		gtkimhtmltoolbar.c 	gtklog.c 	gtkmain.c 	gtkmenutray.c 	gtknotify.c 	gtkplugin.c \
-		gtkpluginpref.c 	gtkprefs.c 	gtkprivacy.c 	gtkpounce.c 	gtkrequest.c 	gtkroomlist.c \
-		gtksavedstatuses.c 	gtksound.c 	gtksourceiter.c 	gtkstatusbox.c 	gtkstock.c 	gtkthemes.c \
-		gtkutils.c 	idle.c 	session.c 	gtkwhiteboard.c
+gaim_SOURCES = \
+	$(gaim_coresources)
+	$(dbus_sources)
+	gtkblist.c \
+	gtkcombobox.c \
+	gtkcelllayout.c \
+	gtkcellview.c \
+	gtkcellviewmenuitem.c \
+	gtkaccount.c \
+	gtkcellrendererprogress.c \
+	gtkconn.c \
+	gtkconv.c \
+	gtkdebug.c \
+	gtkdialogs.c \
+	gtkdnd-hints.c \
+	gtkeventloop.c \
+	gtkft.c \
+	gtkgaim-disclosure.c \
+	gtkimhtml.c \
+	gtkimhtmltoolbar.c \
+	gtklog.c \
+	gtkmain.c \
+	gtkmenutray.c \
+	gtknotify.c \
+	gtkplugin.c \
+	gtkpluginpref.c \
+	gtkprefs.c \
+	gtkprivacy.c \
+	gtkpounce.c \
+	gtkrequest.c \
+	gtkroomlist.c \
+	gtksavedstatuses.c \
+	gtksound.c \
+	gtksourceiter.c \
+	gtkstatusbox.c \
+	gtkstock.c \
+	gtkthemes.c \
+	gtkutils.c \
+	gtkwhiteboard.c \
+	idle.c \
+	session.c
 
 gaim_headers = \
 	$(dbus_headers) \
