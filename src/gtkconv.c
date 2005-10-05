@@ -127,6 +127,7 @@ static void add_chat_buddy_common(GaimConversation *conv, const char *name,
 								  const char *alias, const char *old_name);
 static gboolean tab_complete(GaimConversation *conv);
 static void gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type);
+static void gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state);
 static void update_typing_icon(GaimGtkConversation *gtkconv);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 
@@ -538,6 +539,7 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	g_free(buf);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
+	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 }
 
 static void
