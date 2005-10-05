@@ -2634,6 +2634,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	GtkWidget *image;
 	GtkWidget *menuitem;
 	GdkPixbuf *pixbuf, *scale;
+	gchar *text;
 
 
 	account = bud->account;
@@ -2654,8 +2655,9 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	g_object_unref(G_OBJECT(pixbuf));
 
 	/* Make our menu item */
-	menuitem = gtk_radio_menu_item_new_with_label(*group,
-	                                              gaim_buddy_get_name(bud));
+	text = g_strdup_printf("%s (%s)", gaim_buddy_get_name(bud), gaim_account_get_username(bud->account));
+	menuitem = gtk_radio_menu_item_new_with_label(*group, text);
+	g_free(text);
 	*group = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
 
 	/* Do some evil, see some evil, speak some evil. */
