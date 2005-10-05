@@ -6191,6 +6191,20 @@ gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 {
 	window_list = g_list_remove(window_list, win);
 
+	if (win->gtkconvs) {
+		while (win->gtkconvs) {
+			GList *nextgtk = win->gtkconvs->next;
+			GaimGtkConversation *gtkconv = win->gtkconvs->data;
+			GList *nextcore = gtkconv->convs->next;
+			GaimConversation *conv = gtkconv->convs->data;
+			gaim_conversation_destroy(conv);
+			if (!nextgtk && !nextcore)
+			/* we'll end up invoking ourselves when we destroy our last child */
+			/* so don't destroy ourselves right now */
+				return;
+		}
+		return;
+	}
 	gtk_widget_destroy(win->window);
 
 	g_object_unref(G_OBJECT(win->menu.item_factory));
