@@ -236,8 +236,8 @@ endif
 bin_PROGRAMS = gaim $(gaim_clientbP)
 
 gaim_SOURCES = \
-	$(gaim_coresources)
-	$(dbus_sources)
+	$(gaim_coresources) \
+	$(dbus_sources) \
 	gtkblist.c \
 	gtkcombobox.c \
 	gtkcelllayout.c \
