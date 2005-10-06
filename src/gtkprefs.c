@@ -1016,6 +1016,10 @@ conv_page()
 			_("Bottom"), GTK_POS_BOTTOM,
 			_("Left"), GTK_POS_LEFT,
 			_("Right"), GTK_POS_RIGHT,
+#if GTK_CHECK_VERSION(2,6,0)
+	                _("Left Vertical"), GTK_POS_LEFT|8,
+	                _("Right Vertical"), GTK_POS_RIGHT|8,
+#endif
 			NULL);
 
 	names = gaim_gtkconv_placement_get_options();

@@ -5311,7 +5311,7 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 	for (l = gaim_gtk_conv_windows_get_list(); l != NULL; l = l->next) {
 		win = l->data;
 
-		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(win->notebook), pos);
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(win->notebook), pos&~8);
 	}
 }
 
@@ -6266,6 +6266,8 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	const char *name;
 	const gchar *tmp_lab;
 	gint close_button_width, close_button_height, focus_width, focus_pad;
+	gboolean tabs_side = FALSE;
+	gint angle = 0;
 
 	name      = gaim_conversation_get_name(conv);
 	conv_type = gaim_conversation_get_type(conv);
@@ -6274,7 +6276,18 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	win->gtkconvs = g_list_append(win->gtkconvs, gtkconv);
 	gtkconv->win = win;
 
-	gtkconv->tabby = tabby = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	if (gaim_prefs_get_int("/gaim/gtk/conversations/tab_side") == GTK_POS_LEFT ||
+	    gaim_prefs_get_int("/gaim/gtk/conversations/tab_side") == GTK_POS_RIGHT)
+		tabs_side = TRUE;
+	else if (gaim_prefs_get_int("/gaim/gtk/conversations/tab_side") == (GTK_POS_LEFT|8))
+		angle = 90;
+	else if (gaim_prefs_get_int("/gaim/gtk/conversations/tab_side") == (GTK_POS_RIGHT|8))
+		angle = 270;
+
+	if (angle)
+		gtkconv->tabby = tabby = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	else
+		gtkconv->tabby = tabby = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 
 	/* Close button. */
@@ -6316,9 +6329,16 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = gaim_conversation_get_title(conv));
+
 #if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+	if (!angle)
+		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
+	if (tabs_side) {
+		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), MIN(g_utf8_strlen(tmp_lab, -1), 18));
+	}
+	if (angle)
+		gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
 #endif
 	gtkconv->menu_label = gtk_label_new(gaim_conversation_get_title(conv));
 #if 0
@@ -6327,7 +6347,10 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 #endif
 
 	/* Pack it all together. */
-	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
+	if (angle == 90)
+		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
+	else
+		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_icon,
 	                   FALSE, FALSE, 0);
 
@@ -6340,7 +6363,10 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	gtk_widget_show(gtkconv->menu_label);
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
-	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
+	if (angle == 90)
+		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
+	else
+		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
 	if (gaim_prefs_get_bool("/gaim/gtk/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);
 
@@ -6352,7 +6378,7 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 
 	/* Add this pane to the conversation's notebook. */
 	gtk_notebook_append_page_menu(GTK_NOTEBOOK(win->notebook), tab_cont, tabby, menu_tabby);
-	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), tab_cont, TRUE, TRUE, GTK_PACK_START);
+	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
 
 
 	gtk_widget_show(tab_cont);
