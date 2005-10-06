@@ -180,10 +180,12 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return FALSE;
 
-	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the tab bar
-	 * will fit, but then I don't want new windows taking up the entire screen.  I check to see if there is only one
-	 * conversation in the window.  This way we'll be setting new windows to the size of the last resized new window. */
-	/* I think that the above justification is not the majority, and that the new tab resizing should negate it anyway.  --luke*/
+	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
+	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
+	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
+	 * size of the last resized new window. */
+	/* I think that the above justification is not the majority, and that the new tab resizing should
+	 * negate it anyway.  --luke */
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 	{
 		if (w == gtkconv->imhtml) {
@@ -1608,7 +1610,7 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 	total = gaim_gtk_conv_window_get_gtkconv_count(win);
 
 	/* First check the tabs after (forward) or before (!forward) this position. */
-	for (i = index;
+	for (i = forward ? index + 1 : index - 1;
 		 !found && (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
 		 forward ? i++ : i--) {
 		if (i == -1) {
@@ -1627,7 +1629,8 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 	if (!found) {
 		/* Now check from the beginning up to (forward) or end back to (!forward) this position. */
 		for (i = forward ? 0 : total - 1;
-			 !found && (forward ? i < index : i >= 0) && (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
+			 !found && (forward ? i < index : i >= 0) &&
+			 (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
 			 forward ? i++ : i--) {
 			for (l = next_gtkconv->convs; l; l = forward ? l->next : l->prev) {
 				GaimConversation *c = l->data;
