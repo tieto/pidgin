@@ -1,25 +1,14 @@
 /** @page account-signals Account Signals
 
  @signals
-  @signal account-away
   @signal account-connecting
   @signal account-setting-info
   @signal account-set-info
   @signal account-warned
+  @signal account-status-changed
  @endsignals
 
  <hr>
-
- @signaldef account-away
-  @signalproto
-void (*account_away)(GaimAccount *account, const char *state, const char *message);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account goes away.
-  @param account The account that went away.
-  @param state   The away state.
-  @param message The away message.
- @endsignaldef
 
  @signaldef account-connecting
   @signalproto
@@ -60,6 +49,17 @@ void (*account_warned)(GaimAccount *account, const char *warner, int level);
   @param account The account that was warned.
   @param warner  The screenname of the user that warned the account.
   @param level   The new warning level.
+ @endsignaldef
+
+ @signaldef account-status-changed
+  @signalproto
+void (*account_status_changed)(GaimAccount *account, GaimStatus *old, GaimStatus *new);
+  @endsignalproto
+  @signaldesc
+   Emitted when the status of an account changes (after the change).
+  @param account The account that changed status.
+  @param old     The status before change.
+  @param new     The status after change.
  @endsignaldef
 
  */

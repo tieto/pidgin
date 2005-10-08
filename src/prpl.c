@@ -297,7 +297,11 @@ gaim_prpl_change_account_status(GaimAccount *account,
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 	if (prpl_info->set_status != NULL)
+	{
 		prpl_info->set_status(account, new_status);
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-status-changed",
+						account, old_status, new_status);
+	}
 }
 
 GList *

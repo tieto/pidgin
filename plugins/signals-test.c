@@ -31,6 +31,7 @@
 #include "ft.h"
 #include "signals.h"
 #include "version.h"
+#include "status.h"
 
 /**************************************************************************
  * Account subsystem signal callbacks
@@ -40,14 +41,6 @@ account_connecting_cb(GaimAccount *account, void *data)
 {
 	gaim_debug_misc("signals test", "account-connecting (%s)\n",
 					gaim_account_get_username(account));
-}
-
-static void
-account_away_cb(GaimAccount *account, const char *state,
-				const char *message, void *data)
-{
-	gaim_debug_misc("signals test", "account-away (%s, %s, %s)\n",
-					gaim_account_get_username(account), state, message);
 }
 
 static void
@@ -62,6 +55,16 @@ account_set_info_cb(GaimAccount *account, const char *info, void *data)
 {
 	gaim_debug_misc("signals test", "account-set-info (%s, %s)\n",
 					gaim_account_get_username(account), info);
+}
+
+static void
+account_status_changed(GaimAccount *account, GaimStatus *old, GaimStatus *new,
+						gpointer data)
+{
+	gaim_debug_misc("signals test", "account-status-changed (%s, %s, %s)\n",
+					gaim_account_get_username(account),
+					gaim_status_get_name(old),
+					gaim_status_get_name(new));
 }
 
 /**************************************************************************
@@ -563,12 +566,12 @@ plugin_load(GaimPlugin *plugin)
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
 						plugin, GAIM_CALLBACK(account_connecting_cb), NULL);
-	gaim_signal_connect(accounts_handle, "account-away",
-						plugin, GAIM_CALLBACK(account_away_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-setting-info",
 						plugin, GAIM_CALLBACK(account_setting_info_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-set-info",
 						plugin, GAIM_CALLBACK(account_set_info_cb), NULL);
+	gaim_signal_connect(accounts_handle, "account-status-changed",
+						plugin, GAIM_CALLBACK(account_status_changed), NULL);
 
 	/* Buddy Icon subsystem signals */
 	gaim_signal_connect(buddy_icons_handle, "buddy-icon-cached",
