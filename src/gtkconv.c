@@ -2636,25 +2636,22 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	GtkWidget *label;
 	GtkWidget *image;
 	GtkWidget *menuitem;
-	GdkPixbuf *pixbuf, *scale;
+	GdkPixbuf *pixbuf;
 	gchar *text;
 
 
 	account = bud->account;
 
 	/* Create a pixmap for the protocol icon. */
-	pixbuf = gaim_gtk_create_prpl_icon(account);
-	scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
-
+	pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)bud, GAIM_STATUS_ICON_SMALL);
 	/* Now convert it to GtkImage */
 	if (pixbuf == NULL)
 		image = gtk_image_new();
 	else
-		image = gtk_image_new_from_pixbuf(scale);
+		image = gtk_image_new_from_pixbuf(pixbuf);
 
 	gtk_size_group_add_widget(sg, image);
 
-	g_object_unref(G_OBJECT(scale));
 	g_object_unref(G_OBJECT(pixbuf));
 
 	/* Make our menu item */
