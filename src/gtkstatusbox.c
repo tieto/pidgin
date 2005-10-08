@@ -23,9 +23,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "internal.h"
 #include "account.h"
+#include "internal.h"
+#include "savedstatuses.h"
 #include "status.h"
+
 #include "gtkgaim.h"
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
@@ -222,6 +224,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 	GtkTreePath *path;
+	const GList *list = NULL;
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
@@ -313,6 +316,14 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	 *       using "Available."
 	 */
 	/* gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0); */
+
+
+	for (list = gaim_savedstatuses_get_all(); list; list = list->next) {
+		GaimSavedStatus *status = list->data;
+
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2,
+		                        gaim_savedstatus_get_title(status), NULL, "saved");
+	}
 
 }
 
@@ -478,6 +489,20 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 			continue;
 
+		/* I am not very comfortable with this, but can't think of a better way. */
+		if (!strcmp(status_type_id, "saved"))
+		{
+			char *title;
+			GaimSavedStatus *saved = NULL;
+			GaimStatusPrimitive type;
+
+			gtk_tree_model_get(GTK_TREE_MODEL(box->dropdown_store),
+			                   &iter, TITLE_COLUMN, &title, -1);
+			saved = gaim_savedstatus_find(title);
+			type = gaim_savedstatus_get_type(saved);
+			status_type_id = (gchar *)gaim_primitive_get_id_from_type(type);
+		}
+
 		status_type = gaim_account_get_status_type(account, status_type_id);
 
 		if (status_type == NULL)
@@ -488,6 +513,10 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 	g_source_remove(box->typing);
 	box->typing = 0;
 	gtk_gaim_status_box_refresh(box);
+
+	/* How about saving the status here.. where title = first X characters of the message.
+	 * The user can alway edit the title later from Tools->Statuses if necessary
+	 */
 }
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
@@ -515,11 +544,18 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		g_object_unref(status_box->pixbuf);
 	status_box->pixbuf = pixbuf;
 
-	if (!strcmp(status_type_id, "away")) {
+	if (!strcmp(status_type_id, "away") || !strcmp(status_type_id, "saved")) {
 		gtk_widget_show_all(status_box->vbox);
 		status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		gtk_widget_grab_focus(status_box->imhtml);
+
+		/* If it's one of the saved statuses, then set the away message to that. */
+		if (!strcmp(status_type_id, "saved")) {
+			GaimSavedStatus *status = NULL;
+			status = gaim_savedstatus_find(text);
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), gaim_savedstatus_get_message(status), 0);
+		}
 	} else {
 		if (status_box->typing) {
 			g_source_remove(status_box->typing);
