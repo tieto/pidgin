@@ -240,7 +240,6 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 		if (group_id >= 0)
 		{
 			msn_user_add_group_id(user, group_id);
-			return;
 		}
 		else
 		{

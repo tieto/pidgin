@@ -1089,11 +1089,11 @@ GaimBuddy *gaim_buddy_new(GaimAccount *account, const char *screenname, const ch
 	buddy->name     = g_strdup(screenname);
 	buddy->alias    = g_strdup(alias);
 	buddy->presence = gaim_presence_new_for_buddy(buddy);
+	((GaimBlistNode *)buddy)->type = GAIM_BLIST_BUDDY_NODE;
 
 	gaim_presence_set_status_active(buddy->presence, "offline", TRUE);
 
 	gaim_blist_node_initialize_settings((GaimBlistNode *)buddy);
-	((GaimBlistNode *)buddy)->type = GAIM_BLIST_BUDDY_NODE;
 
 	if (ops && ops->new_node)
 		ops->new_node((GaimBlistNode *)buddy);

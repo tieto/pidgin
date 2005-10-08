@@ -4058,6 +4058,9 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 	buddy = (GaimBuddy*)node;
 	contact = (GaimContact*)node->parent;
 
+	if (contact == NULL)
+		return;
+
 	/* First things first, update the contact */
 	gaim_gtk_blist_update_contact(list, node->parent);
 
