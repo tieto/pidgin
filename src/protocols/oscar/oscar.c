@@ -5093,6 +5093,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
+	gaim_str_strip_cr(tmp);
 	gaim_notify_userinfo(gc, userinfo->sn, tmp, NULL, NULL);
 	g_free(tmp);
 
