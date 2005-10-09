@@ -27,11 +27,8 @@
  */
 
 #ifndef _WIN32
-#include <sys/socket.h>
-#include <ifaddrs.h>
 #include <net/if.h>
 #include <sys/ioctl.h>
-#include <resolv.h>
 #else
 #include "libc_interface.h"
 #endif
