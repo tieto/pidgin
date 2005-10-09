@@ -33,7 +33,7 @@
 #include "eggtrayicon.h"
 #include "docklet.h"
 
-#define EMBED_TIMEOUT 3000
+#define EMBED_TIMEOUT 10000
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
