@@ -827,6 +827,9 @@ gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel)
 	return FALSE;
 }
 
+/*
+ * TODO: Do we even need this?
+ */
 char *stylize(const gchar *text, int length)
 {
 	char *tmp;
