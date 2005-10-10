@@ -156,6 +156,7 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 			status = YAHOO_STATUS_TYPE_AWAY;
 		break;
 	case YAHOO_STATUS_IDLE:
+		status = YAHOO_STATUS_TYPE_AVAILABLE;
 		break;
 	default:
 		gaim_debug_warning("yahoo", "Warning, unknown status %d\n", f->status);
