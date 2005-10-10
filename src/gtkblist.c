@@ -2274,17 +2274,16 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	GtkStyle *style;
 	GdkPixbuf *pixbuf = gaim_gtk_blist_get_status_icon(node, GAIM_STATUS_ICON_LARGE);
 	PangoLayout *layout;
-	char *tooltiptext = gaim_get_tooltip_text(node);
 	GdkPixbuf *avatar = NULL;
 	int layout_width, layout_height;
 
-	if(!tooltiptext)
+	if(gtkblist->tooltiptext == NULL)
 		return;
 
 	avatar = gaim_gtk_blist_get_buddy_icon(node, FALSE, FALSE);
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
-	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
+	pango_layout_set_markup(layout, gtkblist->tooltiptext, strlen(gtkblist->tooltiptext));
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(layout, 300000);
 	{
@@ -2320,7 +2319,6 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 
 	g_object_unref (pixbuf);
 	g_object_unref (layout);
-	g_free(tooltiptext);
 
 #ifdef WANT_DROP_SHADOW
 	if (!xcomposite_is_present()) {
@@ -2334,11 +2332,15 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 
 static void gaim_gtk_blist_tooltip_destroy()
 {
+	g_free(gtkblist->tooltiptext);
+	gtkblist->tooltiptext = NULL;
+
 	if (gtkblist->tipwindow == NULL)
 		return;
 
 	gtk_widget_destroy(gtkblist->tipwindow);
 	gtkblist->tipwindow = NULL;
+
 #ifdef WANT_DROP_SHADOW
 	if (!xcomposite_is_present()) {
 		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
@@ -2351,7 +2353,6 @@ static void gaim_gtk_blist_tooltip_destroy()
 	}
 #endif
 }
-
 
 static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
 {
@@ -2407,12 +2408,17 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 #endif
 	PangoLayout *layout;
 	gboolean tooltip_top = FALSE;
-	char *tooltiptext = NULL;
 	struct _gaim_gtk_blist_node *gtknode;
 	GdkRectangle mon_size;
 #ifdef WANT_DROP_SHADOW
 	GdkWindowAttr attr;
 #endif
+
+	/*
+	 * Attempt to free the previous tooltip.  I have a feeling
+	 * this is never needed... but just in case.
+	 */
+	gaim_gtk_blist_tooltip_destroy();
 
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), gtkblist->tip_rect.x, gtkblist->tip_rect.y, &path, NULL, NULL, NULL))
 		return FALSE;
@@ -2428,13 +2434,10 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 	gtknode = node->ui_data;
 
-	tooltiptext = gaim_get_tooltip_text(node);
-
-	if(!tooltiptext)
+	gtkblist->tooltiptext = gaim_get_tooltip_text(node);
+	if (gtkblist->tooltiptext == NULL)
 		return FALSE;
 
-	if(gtkblist->tipwindow)
-		gtk_widget_destroy(gtkblist->tipwindow);
 	gtkblist->tipwindow = gtk_window_new(GTK_WINDOW_POPUP);
 	gtk_widget_set_app_paintable(gtkblist->tipwindow, TRUE);
 	gtk_window_set_resizable(GTK_WINDOW(gtkblist->tipwindow), FALSE);
@@ -2459,19 +2462,11 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 
 		attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
 				    GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
-		if(gtkblist->east_shadow) {
-			gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-			gdk_window_destroy (gtkblist->east_shadow);
-		}
 		gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 										   GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 		gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
 		gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
 
-		if(gtkblist->south_shadow) {
-			gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-			gdk_window_destroy (gtkblist->south_shadow);
-		}
 		gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
 											GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
 		gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
@@ -2482,7 +2477,7 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(layout, 300000);
-	pango_layout_set_markup(layout, tooltiptext, strlen(tooltiptext));
+	pango_layout_set_markup(layout, gtkblist->tooltiptext, strlen(gtkblist->tooltiptext));
 	pango_layout_get_size (layout, &w, &h);
 
 #if GTK_CHECK_VERSION(2,2,0)
@@ -2552,7 +2547,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	}
 
 	g_object_unref (layout);
-	g_free(tooltiptext);
 	gtk_widget_set_size_request(gtkblist->tipwindow, w, h);
 	gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 	gtk_widget_show(gtkblist->tipwindow);
