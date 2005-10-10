@@ -432,6 +432,7 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const c
 			   TITLE_COLUMN, text,
 			   DESC_COLUMN, sec_text,
 			   TYPE_COLUMN, edit, -1);
+	g_free(t);
 }
 
 void
@@ -476,39 +477,45 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 
 static void remove_typing_cb(GtkGaimStatusBox *box)
 {
-	gchar *status_type_id;
+	gchar *status_type_id, *title;
 	GList *l;
 	GtkTreeIter iter;
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(box), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(box->dropdown_store), &iter, TYPE_COLUMN, &status_type_id, -1);
+	gtk_tree_model_get(GTK_TREE_MODEL(box->dropdown_store), &iter,
+					   TYPE_COLUMN, &status_type_id,
+					   TITLE_COLUMN, &title, -1);
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		GaimAccount *account = (GaimAccount*)l->data;
 		GaimStatusType *status_type;
+		gchar *msg;
 
 		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 			continue;
 
 		/* I am not very comfortable with this, but can't think of a better way. */
+		/* XXX: this is definitely wrong - the specific account's saved status should
+		 * be looked for */
 		if (!strcmp(status_type_id, "saved"))
 		{
-			char *title;
 			GaimSavedStatus *saved = NULL;
 			GaimStatusPrimitive type;
 
-			gtk_tree_model_get(GTK_TREE_MODEL(box->dropdown_store),
-			                   &iter, TITLE_COLUMN, &title, -1);
 			saved = gaim_savedstatus_find(title);
 			type = gaim_savedstatus_get_type(saved);
-			status_type_id = (gchar *)gaim_primitive_get_id_from_type(type);
+			g_free(status_type_id);
+			status_type_id = g_strdup(gaim_primitive_get_id_from_type(type));
 		}
 
 		status_type = gaim_account_get_status_type(account, status_type_id);
 
 		if (status_type == NULL)
 			continue;
+
+		msg = gtk_imhtml_get_markup(GTK_IMHTML(box->imhtml));
 		gaim_account_set_status(account, status_type_id, TRUE,
-					"message",gtk_imhtml_get_markup(GTK_IMHTML(box->imhtml)), NULL);
+					"message", msg, NULL);
+		g_free(msg);
 	}
 	g_source_remove(box->typing);
 	box->typing = 0;
@@ -517,6 +524,8 @@ static void remove_typing_cb(GtkGaimStatusBox *box)
 	/* How about saving the status here.. where title = first X characters of the message.
 	 * The user can alway edit the title later from Tools->Statuses if necessary
 	 */
+	g_free(status_type_id);
+	g_free(title);
 }
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
@@ -536,13 +545,16 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 			   TYPE_COLUMN, &status_type_id, -1);
 	if (status_box->title)
 		g_free(status_box->title);
-	status_box->title = g_strdup(text);
+	status_box->title = text;
 	if (status_box->desc && sec_text)
- 		g_free(status_box->desc);
-	status_box->desc = g_strdup(sec_text);
+		g_free(status_box->desc);
+	status_box->desc = sec_text;
 	if (status_box->pixbuf)
 		g_object_unref(status_box->pixbuf);
 	status_box->pixbuf = pixbuf;
+	if (status_box->typing)
+		g_source_remove(status_box->typing);
+	status_box->typing = 0;
 
 	if (!strcmp(status_type_id, "away") || !strcmp(status_type_id, "saved")) {
 		gtk_widget_show_all(status_box->vbox);
@@ -557,10 +569,6 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), gaim_savedstatus_get_message(status), 0);
 		}
 	} else {
-		if (status_box->typing) {
-			g_source_remove(status_box->typing);
-			status_box->typing = 0;
-		}
 		gtk_widget_hide_all(status_box->vbox);
 		for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 			GaimAccount *account = (GaimAccount*)l->data;
@@ -576,6 +584,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 			gaim_account_set_status(account, status_type_id, TRUE, NULL);
 		}
 	}
+	g_free(status_type_id);
 	gtk_gaim_status_box_refresh(status_box);
 }
 
@@ -590,7 +599,7 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 	gtk_gaim_status_box_refresh(box);
 }
 
-const char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
+char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
 {
 	GtkTreeIter iter;
 	char *type;
@@ -600,7 +609,7 @@ const char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
 	return type;
 }
 
-const char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box)
+char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box)
 {
 	if (status_box->imhtml_visible)
 		return gtk_imhtml_get_markup(GTK_IMHTML(status_box->imhtml));

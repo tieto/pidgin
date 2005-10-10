@@ -1623,10 +1623,18 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", ret);
 
-	/* XXX: make the new account sign on with the currently active global status
-	 * instead of hardcoding "online" */
-	if (new)
-		gaim_presence_set_status_active(ret->presence, "online", TRUE);
+	if (new) {
+		GaimGtkBuddyList *gtkblist;
+		GtkGaimStatusBox *status_box;
+		char *status_type_id;
+
+		gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
+		status_box = GTK_GAIM_STATUS_BOX(gtkblist->statusbox);
+
+		status_type_id = gtk_gaim_status_box_get_active_type(status_box);
+		gaim_presence_set_status_active(ret->presence, status_type_id, TRUE);
+		g_free(status_type_id);
+	}
 
 	return ret;
 }
@@ -1717,6 +1725,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	notebook = gtk_notebook_new();
 	gtk_box_pack_start(GTK_BOX(main_vbox), notebook, FALSE, FALSE, 0);
+	gtk_widget_show(GTK_WIDGET(notebook));
 
 	/* Setup the inner vbox */
 	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
@@ -1734,10 +1743,10 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), GAIM_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
 			gtk_label_new_with_mnemonic("_Advanced"));
+	gtk_widget_show(dbox);
 
 	/** Setup the bottom frames. */
 	add_protocol_options(dialog, dbox);
-	gtk_widget_show_all(GTK_WIDGET(notebook));
 	add_proxy_options(dialog, dbox);
 
 	/* Setup the button box */

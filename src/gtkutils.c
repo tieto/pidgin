@@ -1352,12 +1352,14 @@ gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 gboolean
 gaim_running_gnome(void)
 {
+	gchar *tmp = g_find_program_in_path("gnome-open");
 	if ((g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL) &&
-		(g_find_program_in_path("gnome-open") != NULL))
+		(tmp != NULL))
 	{
+		g_free(tmp);
 		return TRUE;
 	}
-
+	g_free(tmp);
 	return FALSE;
 }
 

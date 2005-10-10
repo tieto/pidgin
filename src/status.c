@@ -598,7 +598,8 @@ gaim_status_destroy(GaimStatus *status)
 	g_return_if_fail(status != NULL);
 
 	/* TODO: Don't do this is if the status is exclusive */
-	gaim_status_set_active(status, FALSE);
+	/* XXX: why do this at all?
+	gaim_status_set_active(status, FALSE); */
 
 	g_hash_table_destroy(status->attr_values);
 
@@ -1107,7 +1108,7 @@ gaim_presence_new(GaimPresenceContext context)
 
 	presence->status_table =
 		g_hash_table_new_full(g_str_hash, g_str_equal,
-							  g_free, (GFreeFunc)gaim_status_destroy);
+							  g_free, NULL);
 
 	return presence;
 }
@@ -1203,8 +1204,10 @@ gaim_presence_destroy(GaimPresence *presence)
 			g_free(presence->u.chat.user);
 	}
 
-	if (presence->statuses != NULL)
+	if (presence->statuses != NULL) {
+		g_list_foreach(presence->statuses, (GFunc)gaim_status_destroy, NULL);
 		g_list_free(presence->statuses);
+	}
 
 	g_hash_table_destroy(presence->status_table);
 

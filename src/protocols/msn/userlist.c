@@ -651,10 +651,17 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	if (!gaim_email_is_valid(who))
 	{
-		char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
-		gaim_notify_error(NULL, NULL, str,
-						  _("The screen name specified is invalid."));
-		g_free(str);
+		/* only notify the user about problems adding to the friends list
+		 * maybe we should do something else for other lists, but it probably
+		 * won't cause too many problems if we just ignore it */
+		if (list_id == MSN_LIST_FL)
+		{
+			char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
+			gaim_notify_error(NULL, NULL, str,
+							  _("The screen name specified is invalid."));
+			g_free(str);
+		}
+
 		return;
 	}
 

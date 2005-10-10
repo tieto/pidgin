@@ -1114,11 +1114,12 @@ gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node)
 static void
 blist_node_menu_cb(GtkMenuItem *item, GaimBlistNode *node)
 {
-	GaimBlistNodeAction *act;
-	act = (GaimBlistNodeAction *) g_object_get_data(G_OBJECT(item),
-			"gaimcallback");
-	if(act->callback)
-		act->callback(node, act->data);
+	void (*callback)(GaimBlistNode *, gpointer);
+	gpointer data;
+	callback = g_object_get_data(G_OBJECT(item), "gaimcallback");
+	data = g_object_get_data(G_OBJECT(item), "gaimcallbackdata");
+	if (callback)
+		callback(node, data);
 }
 
 
@@ -1140,7 +1141,9 @@ append_blist_node_action(GtkWidget *menu, GaimBlistNodeAction *act,
 			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 			if (act->callback != NULL) {
 				g_object_set_data(G_OBJECT(menuitem), "gaimcallback",
-				                  act);
+				                  act->callback);
+				g_object_set_data(G_OBJECT(menuitem), "gaimcallbackdata",
+				                  act->data);
 				g_signal_connect(G_OBJECT(menuitem), "activate",
 				                 G_CALLBACK(blist_node_menu_cb), node);
 			} else {
@@ -1161,11 +1164,11 @@ append_blist_node_action(GtkWidget *menu, GaimBlistNodeAction *act,
 				GaimBlistNodeAction *act = (GaimBlistNodeAction *) l->data;
 
 				append_blist_node_action(submenu, act, node, dup_separator);
-
-				g_list_free(act->children);
-				act->children = NULL;
 			}
+			g_list_free(act->children);
+			act->children = NULL;
 		}
+		g_free(act);
 	}
 }
 

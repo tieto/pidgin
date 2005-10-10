@@ -1282,10 +1282,17 @@ void
 gaim_account_set_enabled(GaimAccount *account, const char *ui,
 			 gboolean value)
 {
+	GaimConnection *gc;
+
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
 
 	gaim_account_set_ui_bool(account, ui, "auto-login", value);
+	gc = gaim_account_get_connection(account);
+
+	if ((gc != NULL) && (gc->wants_to_die == TRUE))
+		return;
+
 	if (value && gaim_presence_is_online(account->presence))
 		gaim_account_connect(account);
 	else if (!value && !gaim_account_is_disconnected(account))

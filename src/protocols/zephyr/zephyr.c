@@ -732,7 +732,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 				g_string_free(str, TRUE);
 			} else {
 				if (nlocs>0) 
-					gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+					gaim_prpl_got_user_status(gc->account,b->name,"available",NULL);
 				else 
 					gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 			}
@@ -1147,7 +1147,7 @@ static gint check_notify_tzc(gpointer data)
 					g_string_free(str, TRUE);
 				} else {
 					if (nlocs>0) 
-						gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+						gaim_prpl_got_user_status(gc->account,b->name,"available",NULL);
 					else 
 						gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 				}
@@ -1286,7 +1286,7 @@ static gint check_loc(gpointer data)
 							for(i=0;i<numlocs;i++) {
 								ZGetLocations(&locations,&one);
 								if (nlocs>0) 
-									gaim_prpl_got_user_status(gc->account,b->name,"online",NULL);
+									gaim_prpl_got_user_status(gc->account,b->name,"available",NULL);
 								else 
 									gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 							}
@@ -2208,7 +2208,7 @@ static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 	if (!strcmp(status_id,"away")) {
 		zephyr->away = g_strdup(gaim_status_get_attr_string(status,"message"));
 	} 
-	else if (!strcmp(status_id,"online")) {
+	else if (!strcmp(status_id,"available")) {
 		if (use_zeph02(zephyr)) {
 			ZSetLocation(zephyr->exposure);
 		}
@@ -2249,7 +2249,7 @@ static GList *zephyr_status_types(GaimAccount *account)
 	   Away won't change their exposure but will set an auto away message (for IMs only)
 	*/
 	
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "online", _("Online"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available", _("Online"), FALSE);
 	types = g_list_append(types,type);
 
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, "hidden", _("Hidden"), FALSE);

@@ -304,7 +304,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 
 	case 201: /* MSG_SERVER_SEARCH_RESULT */
 		res = g_strsplit(buf, " ", 0);
-		gaim_prpl_got_user_status(account, res[0], "online", NULL);
+		gaim_prpl_got_user_status(account, res[0], "available", NULL);
 		g_strfreev(res);
 		break;
 
@@ -323,7 +323,7 @@ static void nap_callback(gpointer data, gint source, GaimInputCondition conditio
 	case 209: /* MSG_SERVER_USER_SIGNON */
 		/* USERNAME SPEED */
 		res = g_strsplit(buf, " ", 2);
-		gaim_prpl_got_user_status(account, res[0], "online", NULL);
+		gaim_prpl_got_user_status(account, res[0], "available", NULL);
 		g_strfreev(res);
 		break;
 
@@ -574,7 +574,7 @@ static GList *nap_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
-									 "online",
+									 "available",
 									 _("Online"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 

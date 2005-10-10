@@ -119,9 +119,9 @@ void
 gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
 
 
-const char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
+char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
 
-const char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
+char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
 
 G_END_DECLS
 

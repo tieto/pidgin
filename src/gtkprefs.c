@@ -1330,6 +1330,7 @@ browser_page()
 		label = gaim_gtk_prefs_dropdown_from_list(vbox,_("_Browser:"), GAIM_PREF_STRING,
 										 "/gaim/gtk/browsers/browser",
 										 browsers);
+		g_list_free(browsers);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(sg, label);
 
@@ -1387,6 +1388,7 @@ logging_page()
 	GList *names;
 	GtkWidget *sys_box;
 	GtkWidget *box;
+
 	int syslog_enabled = gaim_prefs_get_bool("/core/logging/log_system");
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
@@ -1397,6 +1399,8 @@ logging_page()
 
 	gaim_gtk_prefs_dropdown_from_list(vbox, _("Log _Format:"), GAIM_PREF_STRING,
 				 "/core/logging/format", names);
+
+	g_list_free(names);
 
 	gaim_gtk_prefs_checkbox(_("_Log all instant messages"),
 				  "/core/logging/log_ims", vbox);

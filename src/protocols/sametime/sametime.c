@@ -407,38 +407,37 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 				   struct mwAwareSnapshot *aware) {
 
   GaimConnection *gc;
+  GaimAccount *acct;
   struct mwGaimPluginData *pd;
+  const char *status_id = MW_STATE_ACTIVE;
+  gboolean idle = FALSE;
 
-  time_t idle = 0;
   guint stat = aware->status.status;
 
   const char *id = aware->id.user;
 
   gc = mwAwareList_getClientData(list);
   pd = gc->proto_data;
+  acct = gaim_connection_get_account(gc);
   
   switch(stat) {
   case mwStatus_IDLE:
-    idle = -1;
+    idle = TRUE;
     break;
     
   case mwStatus_AWAY:
+  	status_id = MW_STATE_AWAY;
+	break;
   case mwStatus_BUSY:
-    /* need to let gaim know that these are 'unavailable' states */
-
-    /* XXX */
-    /* stat |= UC_UNAVAILABLE; */
-
+    status_id = MW_STATE_BUSY;
     break;
   }
   
   if(aware->group) {
-    GaimAccount *acct;
     GaimGroup *group;
     GaimBuddy *buddy;
     GaimBlistNode *bnode;
 
-    acct = gaim_connection_get_account(gc);
     group = g_hash_table_lookup(pd->group_list_map, list);
     buddy = gaim_find_buddy_in_group(acct, id, group);
     bnode = (GaimBlistNode *) buddy;
@@ -467,8 +466,13 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
     gaim_blist_node_set_int(bnode, BUDDY_KEY_TYPE, mwSametimeUser_NORMAL);
   }
   
-  /* XXX */
-  /* serv_got_update(gc, id, aware->online, 0, 0, idle, stat); */
+  gaim_prpl_got_user_status(acct, id, status_id, NULL);
+  gaim_prpl_got_user_login_time(acct, id, aware->online - time(NULL));
+
+  if (idle)
+    gaim_prpl_got_user_idle(acct, id, TRUE, -1);
+  else
+    gaim_prpl_got_user_idle(acct, id, FALSE, 0);
 }
 
 
@@ -3474,17 +3478,31 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 }
 
 
-#if 0
-static void mw_prpl_set_away(GaimConnection *gc,
-			     const char *state,
-			     const char *message) {
-  GaimAccount *acct;
+static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
+  GaimConnection *gc;
+  const char *state;
+  char *message;
   struct mwSession *session;
   struct mwUserStatus stat;
-  
-  acct = gaim_connection_get_account(gc);
+
   g_return_if_fail(acct != NULL);
-    
+  gc = gaim_account_get_connection(acct);
+
+  state = gaim_status_get_id(status);
+
+  gaim_debug_info("meanwhile", "Set status to %s\n", gaim_status_get_name(status));
+
+  if (!strcmp(state, "offline") && (gc != NULL)) {
+     gaim_account_disconnect(acct);
+     return;
+  }
+  else if (strcmp(state, "offline") && (gc == NULL)) {
+     gaim_account_connect(acct);
+     return;
+  }
+
+  g_return_if_fail(gc != NULL);
+
   session = gc_to_session(gc);
   g_return_if_fail(session != NULL);
 
@@ -3492,47 +3510,24 @@ static void mw_prpl_set_away(GaimConnection *gc,
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
   /* determine the state */
-  if(state) {
-    if(! strcmp(state, GAIM_AWAY_CUSTOM)) {
-      if(message) {
-	stat.status = mwStatus_AWAY;
-      } else {
-	stat.status = mwStatus_ACTIVE;
-      }
-
-    } else if(! strcmp(state, MW_STATE_AWAY)) {
-      stat.status = mwStatus_AWAY;
-
-    } else if(! strcmp(state, MW_STATE_BUSY)) {
-      stat.status = mwStatus_BUSY;
-
-    } else if(! strcmp(state, MW_STATE_ACTIVE)) {
-      stat.status = mwStatus_ACTIVE;
-    }
-
-  } else {
+  if(! strcmp(state, MW_STATE_ACTIVE)) {
     stat.status = mwStatus_ACTIVE;
+
+  } else if(! strcmp(state, MW_STATE_AWAY)) {
+    stat.status = mwStatus_AWAY;
+
+  } else if(! strcmp(state, MW_STATE_BUSY)) {
+    stat.status = mwStatus_BUSY;
   }
 
   /* determine the message */
-  if(! message) {
-    switch(stat.status) {
-    case mwStatus_AWAY:
-      message = gaim_account_get_string(acct, MW_KEY_AWAY_MSG,
-					MW_PLUGIN_DEFAULT_AWAY_MSG);
-      break;
-
-    case mwStatus_BUSY:
-      message = gaim_account_get_string(acct, MW_KEY_BUSY_MSG,
-					MW_PLUGIN_DEFAULT_BUSY_MSG);
-      break;
-
-    case mwStatus_ACTIVE:
-      message = gaim_account_get_string(acct, MW_KEY_ACTIVE_MSG,
-					MW_PLUGIN_DEFAULT_ACTIVE_MSG);
-      stat.time = 0;
-      break;
-    }
+  switch(stat.status) {
+  case mwStatus_ACTIVE:
+    stat.time = 0;
+  case mwStatus_AWAY:
+  case mwStatus_BUSY:
+    message = (char *)gaim_status_get_attr_string(status, MW_STATE_MESSAGE);
+    break;
   }
 
   if(message) {
@@ -3543,16 +3538,13 @@ static void mw_prpl_set_away(GaimConnection *gc,
 
   /* out with the old */
   g_free(stat.desc);
-  g_free(gc->away);
 
   /* in with the new */
   stat.desc = (char *) message;
-  gc->away = g_strdup(message);
 
   mwSession_setUserStatus(session, &stat);
-  mwUserStatus_clear(&stat);  
+  mwUserStatus_clear(&stat);
 }
-#endif
 
 
 static void mw_prpl_set_idle(GaimConnection *gc, int time) {
@@ -4386,6 +4378,7 @@ static GaimPluginProtocolInfo mw_prpl_info = {
   .set_info                  = NULL,
   .send_typing               = mw_prpl_send_typing,
   .get_info                  = mw_prpl_get_info,
+  .set_status                = mw_prpl_set_status,
   .set_idle                  = mw_prpl_set_idle,
   .change_passwd             = NULL,
   .add_buddy                 = mw_prpl_add_buddy,

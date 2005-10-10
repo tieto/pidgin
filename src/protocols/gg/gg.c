@@ -717,7 +717,7 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status
 			break;
 		case GG_STATUS_AVAIL:
 		case GG_STATUS_AVAIL_DESCR:
-			st = "online";
+			st = "available";
 			break;
 		case GG_STATUS_BUSY:
 		case GG_STATUS_BUSY_DESCR:
@@ -728,7 +728,7 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status
 			st = "blocked";
 			break;
 		default:
-			st = "online";
+			st = "available";
 			gaim_debug_info("gg", "GG_EVENT_NOTIFY: Unknown status: %d\n", status);
 			break;
 	}
@@ -1002,7 +1002,7 @@ static void ggp_list_emblems(GaimBuddy *b, const char **se, const char **sw, con
 		*se = "offline";
 	} else if (gaim_presence_is_status_active(presence, "away")) {
 		*se = "away";
-	} else if (gaim_presence_is_status_active(presence, "online")) {
+	} else if (gaim_presence_is_status_active(presence, "available")) {
 		*se = "online";
 	} else if (gaim_presence_is_status_active(presence, "offline")) {
 		*se = "offline";
@@ -1084,20 +1084,15 @@ static GList *ggp_status_types(GaimAccount *account)
 					       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "online", _("Online"),
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available", _("Online"),
 	                                       TRUE, TRUE, FALSE, "message", _("Message"),
 					       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
 	/*
-	 * Without this selecting Available or Invisible as own status doesn't
+	 * Without this selecting Invisible as own status doesn't
 	 * work. It's not used and not needed to show status of buddies.
 	 */
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available", _("Available"),
-					       TRUE, TRUE, FALSE, "message", _("Message"),
-					       gaim_value_new(GAIM_TYPE_STRING), NULL);
-	types = g_list_append(types, type);
-
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_HIDDEN, "invisible", _("Invisible"),
 					       TRUE, TRUE, FALSE, "message", _("Message"),
 					       gaim_value_new(GAIM_TYPE_STRING), NULL);
