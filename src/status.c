@@ -1554,7 +1554,7 @@ gaim_presence_is_idle(const GaimPresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, FALSE);
 
-	return presence->idle;
+	return gaim_presence_is_online(presence) && presence->idle;
 }
 
 time_t

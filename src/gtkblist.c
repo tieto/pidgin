@@ -2909,7 +2909,8 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 				tmp = new;
 			}
 
-			g_string_append(str, tmp);
+			if (tmp != NULL)
+				g_string_append(str, tmp);
 			g_free(tmp);
 		}
 
