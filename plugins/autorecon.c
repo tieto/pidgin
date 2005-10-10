@@ -1,3 +1,13 @@
+/*
+ * TODO: Are we getting rid of this, now that this functionality
+ *       is in the core?  Can we get rid of those preferences?  I
+ *       think we should be ok with always attempting to reconnect
+ *       and never showing disconnected/reconnected messages.
+ *                             --KingAnt
+ *
+ * If we keep this file, we need to add the GPL header here.
+ */
+
 #include "internal.h"
 
 #include "connection.h"
