@@ -3481,7 +3481,7 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
   GaimConnection *gc;
   const char *state;
-  char *message;
+  char *message = NULL;
   struct mwSession *session;
   struct mwUserStatus stat;
 
