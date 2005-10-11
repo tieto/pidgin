@@ -3176,7 +3176,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		tmp = gaim_status_get_attr_string(status, "message");
 		if (tmp != NULL) {
 			msg = yahoo_string_encode(gc, tmp, NULL);
-			msg2 = gaim_unescape_html(msg);
+			msg2 = gaim_markup_strip_html(msg);
 			yahoo_packet_hash_str(pkt, 19, msg2);
 		} else {
 			yahoo_packet_hash_str(pkt, 19, "");
