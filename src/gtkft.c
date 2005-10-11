@@ -722,7 +722,7 @@ gaim_gtkxfer_dialog_new(void)
 
 	/* "Clear finished transfers" */
 	checkbox = gtk_check_button_new_with_mnemonic(
-			_("_Clear finished transfers"));
+			_("C_lear finished transfers"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox),
 								 dialog->auto_clear);
 	g_signal_connect(G_OBJECT(checkbox), "toggled",
