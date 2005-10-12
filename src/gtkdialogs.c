@@ -372,19 +372,6 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>GtkSpell:</b> Disabled<br/>");
 #endif
 
-#ifdef HAVE_VV
-	g_string_append_printf(str, "    <b>Video/Voice support:</b> Enabled<br/>");
-#else
-	g_string_append_printf(str, "    <b>Video/Voice support:</b> Disabled<br/>");
-#endif
-
-#ifdef HAVE_GST_08
-/* TODO: Make this intelligent to the gstreamer version*/
-	g_string_append_printf(str, "    <b>gstreamer 0.8 support:</b> Enabled<br/>");
-#else
-	g_string_append_printf(str, "    <b>gstreamer 0.8 support:</b> Disabled<br/>");
-#endif
-
 #ifdef HAVE_GNUTLS
 	g_string_append(str, "    <b>GnuTLS:</b> Enabled<br/>");
 #else
