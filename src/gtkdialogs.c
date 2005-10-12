@@ -81,6 +81,7 @@ static struct developer patch_writers[] = {
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
+	{"Sadrul Habib Chowdhury",   	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
@@ -369,6 +370,19 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>GtkSpell:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_VV
+	g_string_append_printf(str, "    <b>Video/Voice support:</b> Enabled<br/>");
+#else
+	g_string_append_printf(str, "    <b>Video/Voice support:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_GST_08
+/* TODO: Make this intelligent to the gstreamer version*/
+	g_string_append_printf(str, "    <b>gstreamer 0.8 support:</b> Enabled<br/>");
+#else
+	g_string_append_printf(str, "    <b>gstreamer 0.8 support:</b> Disabled<br/>");
 #endif
 
 #ifdef HAVE_GNUTLS
