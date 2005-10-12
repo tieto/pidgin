@@ -986,11 +986,12 @@ static char *jabber_tooltip_text(GaimBuddy *b)
 			jbr = l->data;
 
 			if(jbr->status) {
-				char *stripped;
-				stripped = gaim_markup_strip_html(jbr->status);
-				text = g_markup_escape_text(stripped, -1);
-				g_free(stripped);
-				/* XXX: need some nl to br love here */
+				char *tmp;
+				text = gaim_strreplace(jbr->status, "\n", "<br />\n");
+				tmp = gaim_markup_strip_html(text);
+				g_free(text);
+				text = g_markup_escape_text(tmp, -1);
+				g_free(tmp);
 			}
 
 			if(jbr->name)
