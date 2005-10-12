@@ -75,7 +75,7 @@ check_timeout(gpointer data)
 	}
 
 	if (count & NEW_MAIL)
-		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
+		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, NULL);
 
 	if (count & UNREAD_MAIL)
 		gtk_label_set_text(GTK_LABEL(mail), "You have new mail!");

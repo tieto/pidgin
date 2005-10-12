@@ -29,26 +29,32 @@
 static GaimSoundUiOps *sound_ui_ops = NULL;
 
 void
-gaim_sound_play_file(const char *filename)
+gaim_sound_play_file(const char *filename, const GaimAccount *account)
 {
-	/* FIXME */
-#if 0
-	if(awaymessage && !gaim_prefs_get_bool("/core/sound/while_away"))
-		return;
-#endif
+	GaimStatus *status;
+
+	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sounds/while_away")))
+	{
+		status = gaim_account_get_active_status(account);
+		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
+			return;
+	}
 
 	if(sound_ui_ops && sound_ui_ops->play_file)
 		sound_ui_ops->play_file(filename);
 }
 
 void
-gaim_sound_play_event(GaimSoundEventID event)
+gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
 {
-	/* FIXME */
-#if 0
-	if(awaymessage && !gaim_prefs_get_bool("/core/sound/while_away"))
-		return;
-#endif
+	GaimStatus *status;
+
+	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sounds/while_away")))
+	{
+		status = gaim_account_get_active_status(account);
+		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
+			return;
+	}
 
 	if(sound_ui_ops && sound_ui_ops->play_event)
 		sound_ui_ops->play_event(event);

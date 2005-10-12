@@ -12,12 +12,14 @@ gaim_sound_init()
  
 
 void 
-gaim_sound_play_event(event)
+gaim_sound_play_event(event, account)
 	Gaim::SoundEventID event
+	Gaim::Account account
 
 void 
-gaim_sound_play_file(filename)
+gaim_sound_play_file(filename, account)
 	const char *filename
+	Gaim::Account account
 
 void 
 gaim_sound_set_ui_ops(ops)

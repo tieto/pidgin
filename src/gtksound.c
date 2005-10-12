@@ -115,31 +115,33 @@ chat_nick_matches_name(GaimConversation *conv, const char *aname)
 static void
 play_conv_event(GaimConversation *conv, GaimSoundEventID event)
 {
-	GaimGtkConversation *gtkconv;
-	GaimGtkWindow *win;
-	gboolean has_focus;
+	/* If we should not play the sound for some reason, then exit early */
+	if (conv != NULL)
+	{
+		GaimGtkConversation *gtkconv;
+		GaimGtkWindow *win;
+		gboolean has_focus;
 
-	if (conv==NULL)
-		gaim_sound_play_event(event);
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		win = gtkconv->win;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	win = gtkconv->win;
+		has_focus = gaim_conversation_has_focus(conv);
 
-	g_object_get(G_OBJECT(win->window), "has-toplevel-focus",
-				 &has_focus, NULL);
-
-	if (gtkconv->make_sound &&
-		!((gaim_gtk_conv_window_get_active_conversation(win) == conv) &&
-		!gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus)) {
-
-		gaim_sound_play_event(event);
+		if (!gtkconv->make_sound ||
+			(gaim_gtk_conv_window_get_active_conversation(win) == conv) ||
+			(gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus))
+		{
+			return;
+		}
 	}
+
+	gaim_sound_play_event(event, conv ? gaim_conversation_get_account(conv) : NULL);
 }
 
 static void
 buddy_state_cb(GaimBuddy *buddy, GaimSoundEventID event)
 {
-	gaim_sound_play_event(event);
+	gaim_sound_play_event(event, gaim_buddy_get_account(buddy));
 }
 
 static void
@@ -148,7 +150,7 @@ im_msg_received_cb(GaimAccount *account, char *sender,
 				   int flags, GaimSoundEventID event)
 {
 	if (conv==NULL)
-		gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE);
+		gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE, account);
 	else
 		play_conv_event(conv, event);
 }
@@ -556,7 +558,7 @@ gaim_gtk_sound_play_event(GaimSoundEventID event)
 			filename = g_build_filename(DATADIR, "sounds", "gaim", sounds[event].def, NULL);
 		}
 
-		gaim_sound_play_file(filename);
+		gaim_sound_play_file(filename, NULL);
 		g_free(filename);
 	}
 

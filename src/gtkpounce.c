@@ -139,9 +139,9 @@ pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	if (filename != NULL && *filename != '\0')
-		gaim_sound_play_file((char *) filename);
+		gaim_sound_play_file(filename, NULL);
 	else
-		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
+		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, NULL);
 }
 
 static void
@@ -1102,9 +1102,9 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 												 "play-sound", "filename");
 
 		if (sound != NULL)
-			gaim_sound_play_file(sound);
+			gaim_sound_play_file(sound, account);
 		else
-			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT);
+			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, account);
 	}
 }
 
