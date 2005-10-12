@@ -120,5 +120,4 @@ void			yahoo_doodle_clear( GaimWhiteboard *wb );
 void			yahoo_doodle_draw_stroke( GaimWhiteboard *wb, GList *draw_list );
 char			*yahoo_doodle_build_draw_string( doodle_session *ds, GList *draw_list );
 
-
 #endif // _YAHOO_DOODLE_H_

@@ -118,7 +118,6 @@ struct yahoo_packet {
 
 #define YAHOO_PACKET_HDRLEN (4 + 2 + 2 + 2 + 2 + 4 + 4)
 
-
 struct yahoo_packet *yahoo_packet_new(enum yahoo_service service,
 				      enum yahoo_status status, int id);
 void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...);

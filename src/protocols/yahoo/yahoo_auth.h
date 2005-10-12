@@ -4,7 +4,6 @@
  * Copyright(c) 2003 Cerulean Studios
  */
 
-
 #ifndef _YAHOO_AUTH_H_
 #define _YAHOO_AUTH_H_ 
 
@@ -30,6 +29,5 @@ struct buffer_t {
 	unsigned int	buffer_start;
 	unsigned char	buffer[257];
 };
-
 
 #endif /* _YAHOO_AUTH_H_ */

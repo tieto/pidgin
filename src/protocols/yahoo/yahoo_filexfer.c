@@ -32,8 +32,6 @@
 #include "yahoo_filexfer.h"
 #include "yahoo_doodle.h"
 
-
-
 struct yahoo_xfer_data {
 	gchar *host;
 	gchar *path;
@@ -108,8 +106,6 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	account = gaim_connection_get_account(gc);
 	yd = gc->proto_data;
 
-
-
 	if (source < 0) {
 		gaim_xfer_error(GAIM_XFER_RECEIVE, gaim_xfer_get_account(xfer),
 				xfer->who, _("Unable to connect."));
@@ -120,13 +116,12 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	xfer->fd = source;
 	gaim_xfer_start(xfer, source, NULL, 0);
 
-
 	pkt = yahoo_packet_new(YAHOO_SERVICE_FILETRANSFER, YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 	size = g_strdup_printf("%" G_GSIZE_FORMAT, gaim_xfer_get_size(xfer));
 	filename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
 	encoded_filename = yahoo_string_encode(gc, filename, NULL);
-	
+
 	yahoo_packet_hash(pkt, "sssss", 0, gaim_connection_get_display_name(gc),
 	                  5, xfer->who, 14, "", 27, encoded_filename, 28, size);
 
@@ -141,7 +136,8 @@ static void yahoo_sendfile_connected(gpointer data, gint source, GaimInputCondit
 	                       "Host: %s:%d\r\n"
 	                       "Cookie: %s\r\n"
 	                       "\r\n",
-			       host, port, content_length + 4 + gaim_xfer_get_size(xfer), host, port, buf);
+			       host, port, content_length + 4 + gaim_xfer_get_size(xfer),
+			       host, port, buf);
 	write(xfer->fd, post, strlen(post));
 
 	yahoo_packet_send_special(pkt, xfer->fd, 8);
@@ -212,7 +208,6 @@ static void yahoo_xfer_end(GaimXfer *xfer)
 	account   = gaim_xfer_get_account(xfer);
 	xfer_data = xfer->data;
 
-
 	if (xfer_data)
 		yahoo_xfer_data_free(xfer_data);
 	xfer->data = NULL;
@@ -230,7 +225,6 @@ guint calculate_length(const gchar *l, size_t len)
 	}
 	return 0;
 }
-
 
 ssize_t yahoo_xfer_read(guchar **buffer, GaimXfer *xfer)
 {
@@ -256,7 +250,6 @@ ssize_t yahoo_xfer_read(guchar **buffer, GaimXfer *xfer)
 		} else
 			return -1;
 	}
-
 
 	if (!xd->started) {
 		xd->rxqueue = g_realloc(xd->rxqueue, len + xd->rxlen);
@@ -355,7 +348,7 @@ static void yahoo_xfer_cancel_recv(GaimXfer *xfer)
 void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt )
 {
 	GSList	*l		= pkt->hash;
-	
+
 	char	*me 		= NULL;
 	char	*from		= NULL;
 	char	*service	= NULL;
@@ -363,50 +356,49 @@ void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt )
 	char	*command	= NULL;
 	char	*imv		= NULL;
 	char	*unknown	= NULL;
-	
+
 	// Get all the necessary values from this new packet
 	while( l )
 	{
 		struct yahoo_pair *pair = l->data;
-		
+
 		if( pair->key == 5 )		// Get who the packet is for
 			me = pair->value;
-		
+
 		if( pair->key == 4 )		// Get who the packet is from
 			from = pair->value;
-		
+
 		if( pair->key == 49 )		// Get the type of service
 			service = pair->value;
-		
+
 		if( pair->key == 14 )		// Get the 'message' of the packet
 			message = pair->value;
-		
+
 		if( pair->key == 13 )		// Get the command associated with this packet
 			command = pair->value;
-		
+
 		if( pair->key == 63 )		// IMVironment name and version
 			imv = pair->value;
 
 		if( pair->key == 64 )		// Not sure, but it does vary with initialization of Doodle
 			unknown = pair->value;	// So, I'll keep it (for a little while atleast)
-		
+
 		l = l->next;
 	}
-	
+
 	// If this packet is an IMVIRONMENT, handle it accordingly
 	if( !strcmp( service, "IMVIRONMENT" ) )
 	{
 		// Check for a Doodle packet and handle it accordingly
 		if( !strcmp( imv, "doodle;11" ) )
 			yahoo_doodle_process( gc, me, from, command, message );
-		
+
 		// If an IMVIRONMENT packet comes without a specific imviroment name
 		if( !strcmp( imv, ";0" ) )
 		{
 			// It is unfortunately time to close all IMVironments with remote client
 			yahoo_doodle_command_got_shutdown( gc, from );
 		}
-			
 	}
 }
 
@@ -419,12 +411,9 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 	long expires = 0;
 	GaimXfer *xfer;
 	struct yahoo_xfer_data *xfer_data;
-
 	char *service = NULL;
-
 	char *filename = NULL;
 	unsigned long filesize = 0L;
-
 	GSList *l;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -440,12 +429,10 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 			url = pair->value;
 		if (pair->key == 38)
 			expires = strtol(pair->value, NULL, 10);
-
 		if (pair->key == 27)
 			filename = pair->value;
 		if (pair->key == 28)
 			filesize = atol(pair->value);
-
 		if (pair->key == 49)
 			service = pair->value;
 	}
@@ -466,7 +453,6 @@ void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	if (!url || !from)
 		return;
-
 
 	/* Setup the Yahoo-specific file transfer data */
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
@@ -530,7 +516,6 @@ void yahoo_send_file(GaimConnection *gc, const char *who, const char *file)
 
 	xfer_data = g_new0(struct yahoo_xfer_data, 1);
 	xfer_data->gc = gc;
-
 
 	/* Build the file transfer handle. */
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);

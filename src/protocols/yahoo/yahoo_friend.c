@@ -242,7 +242,6 @@ void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
 			yahoo_packet_send_and_free(pkt, yd);
 		}
 
-
 		pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_SESSION,
 				YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash(pkt, "ssss",
@@ -253,4 +252,3 @@ void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
 	if (pkt)
 		yahoo_packet_send_and_free(pkt, yd);
 }
-

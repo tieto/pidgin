@@ -283,7 +283,7 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 int yahoo_packet_send_and_free(struct yahoo_packet *pkt, struct yahoo_data *yd)
 {
 	int ret;
-	
+
 	ret = yahoo_packet_send(pkt, yd);
 	yahoo_packet_free(pkt);
 	return ret;
@@ -306,7 +306,6 @@ int yahoo_packet_send_special(struct yahoo_packet *pkt, int fd, int pad)
 	memcpy(data + pos, "YMSG", 4); pos += 4;
 
 	pos += yahoo_put16(data + pos, YAHOO_PROTO_VER);
-
 	pos += yahoo_put16(data + pos, 0x0000);
 	pos += yahoo_put16(data + pos, pktlen + pad);
 	pos += yahoo_put16(data + pos, pkt->service);

@@ -82,7 +82,6 @@ typedef struct {
 	GList *data;
 } YchtPkt;
 
-
 void ycht_connection_open(GaimConnection *gc);
 void ycht_connection_close(YchtConn *ycht);
 

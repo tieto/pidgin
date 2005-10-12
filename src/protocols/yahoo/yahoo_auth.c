@@ -730,7 +730,7 @@ static unsigned int yahoo_auth_fibonacci(unsigned int challenge, int divisor, in
 		auth_function_t		*ft;
 
 		int					remainder;
-				
+
 		hash = ((((hash ^ (hash >> 0x8)) >> 0x10) ^ hash) ^ (hash >> 0x8)) & 0xff;
 
 		remainder = hash % divisor;
@@ -821,8 +821,7 @@ static unsigned int yahoo_auth_typefourfive(unsigned int challenge, int divisor,
 
 	int				i;
 
-	/* Run through each bit.
-	 */
+	/* Run through each bit. */
 
 	for (i = 0; i < 32; i++)
 	{
@@ -876,7 +875,7 @@ static unsigned int yahoo_auth_typeone(unsigned int challenge, int divisor, int 
 unsigned int yahoo_auth_finalCountdown(unsigned int challenge, int divisor, int inner_loop, int outer_loop)
 {
 	auth_function_t		*ft;
-	
+
 	int					remainder = challenge % divisor;
 
 	ft = &main_function_list[inner_loop][remainder];

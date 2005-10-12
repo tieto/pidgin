@@ -34,12 +34,10 @@
 #include "yahoo.h"
 #include "yahoo_friend.h"
 
-
 typedef struct {
 	GaimConnection *gc;
 	char *name;
 } YahooGetInfoData;
-
 
 typedef enum profile_lang_id {
 	XX, DA, DE, EL, 
@@ -83,13 +81,11 @@ typedef struct profile_strings_node {
 	char *dummy;
 } profile_strings_node_t;
 
-
 typedef enum profile_state {
 	PROFILE_STATE_DEFAULT,
 	PROFILE_STATE_NOT_FOUND,
 	PROFILE_STATE_UNKNOWN_LANGUAGE
 } profile_state_t;
-
 
 typedef struct {
 	YahooGetInfoData *info_data;
@@ -103,7 +99,6 @@ typedef struct {
 	const char *title;
 	profile_state_t profile_state;
 } YahooGetInfoStepTwoData;
-
 
 /* Strings to determine the profile "language" (more accurately "locale").
  * Strings in this list must be in the original charset in the profile.
@@ -968,7 +963,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 	s = g_string_sized_new(strlen(url_buffer));
 
 	if (profile_state == PROFILE_STATE_DEFAULT) {
-
 #if 0
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
@@ -979,7 +973,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 #endif
 
 #if PHOTO_SUPPORT
-
 	/* Try to put the photo in there too, if there's one and is readable */
 	if (data && url_text && len != 0) {
 		if (strstr(url_text, "400 Bad Request")
@@ -994,7 +987,6 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 			g_string_append_printf(s, "<img id=\"%d\"><br>", id);
 		}
 	}
-
 #endif /* PHOTO_SUPPORT */
 
 	/* extract their Email address and put it in */

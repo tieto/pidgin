@@ -43,8 +43,6 @@ struct yahoo_fetch_picture_data {
 	int checksum;
 };
 
-
-
 void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
 {
 	struct yahoo_fetch_picture_data *d = user_data;
@@ -120,7 +118,6 @@ void yahoo_process_picture(GaimConnection *gc, struct yahoo_packet *pkt)
 	} else if (who && send_icon_info) {
 		yahoo_send_picture_info(gc, who);
 	}
-
 }
 
 void yahoo_process_picture_update(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -373,11 +370,9 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	if (!d)
 		return;
 
-
 	gc = d->gc;
 	account = gaim_connection_get_account(gc);
 	yd = gc->proto_data;
-
 
 	if (source < 0) {
 		gaim_debug_error("yahoo", "Buddy icon upload failed, no file desc.\n");
@@ -401,7 +396,6 @@ static void yahoo_buddy_icon_upload_connected(gpointer data, gint source, GaimIn
 	yahoo_packet_hash_str(pkt, 14, "");
 
 	content_length = YAHOO_PACKET_HDRLEN + yahoo_packet_length(pkt);
-
 	buf = g_strdup_printf("Y=%s; T=%s", yd->cookie_y, yd->cookie_t);
 
 	host = gaim_account_get_string(account, "xfer_host", YAHOO_XFER_HOST); 

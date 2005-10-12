@@ -100,8 +100,6 @@ char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
 		return g_strdup("");
 }
 
-
-
 /*
  * I found these on some website but i don't know that they actually
  * work (or are supposed to work). I didn't implement them yet.
@@ -122,9 +120,7 @@ char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
          * (shift+comma)lyellow(shift+period) ---light yellow
      * (shift+comma)lgreen(shift+period) ---light green
 [2;30m <--white out
-
 */
-
 
 static GHashTable *ht = NULL;
 
@@ -156,7 +152,6 @@ void yahoo_init_colorht()
 	 */
 	g_hash_table_insert(ht, "l", ""); /* link start */
 	g_hash_table_insert(ht, "xl", ""); /* link end */
-
 
 	g_hash_table_insert(ht, "<black>",  "<FONT COLOR=\"#000000\">");
 	g_hash_table_insert(ht, "<blue>",   "<FONT COLOR=\"#0000FF\">");
@@ -283,7 +278,6 @@ char *yahoo_codes_to_html(const char *x)
 				}
 			}
 
-
 		} else if (!nomoreendtags && (x[i] == '<')) {
 			j = i;
 
@@ -324,8 +318,6 @@ char *yahoo_codes_to_html(const char *x)
 				}
 
 			}
-
-
 
 		} else {
 			if (x[i] == '<')
@@ -476,8 +468,6 @@ static void _parse_font_tag(const char *src, GString *dest, int *i, int *j,
 		if (src[m] == ' ')
 			*j = m;
 
-
-
 		if (src[m] == '>') {
 			gboolean needendtag = 0;
 			fontattr *f;
@@ -560,10 +550,8 @@ char *yahoo_html_to_codes(const char *src)
 	GQueue *ftattr = NULL;
 	gboolean no_more_specials = FALSE;
 
-
 	colors = g_queue_new();
 	tags = g_queue_new();
-
 	dest = g_string_sized_new(strlen(src));
 
 	for (i = 0, len = strlen(src); i < len; i++) {

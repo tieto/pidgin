@@ -111,7 +111,6 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	GString *members = NULL;
 	GHashTable *components;
 
-
 	if (pkt->status == 2)
 		return; /* XXX */
 
@@ -407,7 +406,6 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-
 	if (room && yd->chat_name && gaim_utf8_strcasecmp(room, yd->chat_name))
 		yahoo_chat_leave(gc, room,
 				gaim_connection_get_display_name(gc), FALSE);
@@ -449,7 +447,6 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
 	}
 
-
 	if (account->deny && c) {
 		GaimConversationUiOps *ops = gaim_conversation_get_ui_ops(c);
 		for (l = account->deny; l != NULL; l = l->next) {
@@ -485,7 +482,6 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 		if (pair->key == 109)
 			who = pair->value;
 	}
-
 
 	if (who && room) {
 		GaimConversation *c = gaim_find_chat(gc, YAHOO_CHAT_ID);
@@ -527,7 +523,6 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-
 	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 	if (!who || !c) {
 		if (room)
@@ -562,7 +557,6 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 	char *room = NULL;
 	char *msg = NULL;
 	char *who = NULL;
-
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -615,7 +609,6 @@ void yahoo_process_chat_goto(GaimConnection *gc, struct yahoo_packet *pkt)
 						_("Maybe they're not in a chat?"));
 }
 
-
 /*
  * Functions dealing with conferences
  * I think conference names are always ascii.
@@ -637,7 +630,6 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 	}
 
 	yahoo_packet_hash_str(pkt, 57, room);
-
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
@@ -652,7 +644,6 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 
 	msg = yahoo_html_to_codes(what);
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
-
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFMSG, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -681,7 +672,6 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 
 	if (members)
 		memarr = g_strsplit(members, "\n", 0);
-
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGON, YAHOO_STATUS_AVAILABLE, 0);
 
@@ -749,10 +739,8 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 	eroom = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATEXIT, YAHOO_STATUS_AVAILABLE, 0);
-
 	yahoo_packet_hash(pkt, "sss", 104, eroom, 109, dn, 108, "1");
 	yahoo_packet_hash_str(pkt, 112, "0"); /* what does this one mean? */
-
 	yahoo_packet_send_and_free(pkt, yd);
 
 	yd->in_chat = 0;
@@ -766,7 +754,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 
 	if (!logout)
 		return;
-	
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATLOGOUT,
 			YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash_str(pkt, 1, dn);
@@ -808,7 +796,6 @@ meify(char *message, size_t len)
 
 	if (*c != '\0' && !g_ascii_strncasecmp(c, "/me ", 4)) {
 		memmove(c, c + 4, len - 3);
-
 		return TRUE;
 	}
 
@@ -867,7 +854,6 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
-
 		ycht_chat_join(yd->ycht, room);
 		return;
 	}
@@ -893,7 +879,6 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
-
 		ycht_chat_send_invite(yd->ycht, room, buddy, msg);
 		return;
 	}
@@ -901,7 +886,7 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	room2 = yahoo_string_encode(gc, room, &utf8);
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, NULL);
-	
+
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 118, buddy, 104, room2, 117, (msg2?msg2:""), 129, "0");
 	yahoo_packet_send_and_free(pkt, yd);
@@ -919,7 +904,6 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
 
 	if (yd->wm) {
 		g_return_if_fail(yd->ycht != NULL);
-
 		ycht_chat_goto_user(yd->ycht, name);
 		return;
 	}
@@ -943,7 +927,6 @@ void yahoo_c_leave(GaimConnection *gc, int id)
 
 	if (!yd)
 		return;
-
 
 	c = gaim_find_chat(gc, id);
 	if (!c)
@@ -1039,7 +1022,6 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 
 	members = g_hash_table_lookup(data, "members");
 
-
 	if ((type = g_hash_table_lookup(data, "type")) && !strcmp(type, "Conference")) {
 		id = yd->conf_id++;
 		c = serv_got_joined_chat(gc, id, room);
@@ -1076,7 +1058,6 @@ void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *nam
 	}
 }
 
-
 struct yahoo_roomlist {
 	int fd;
 	int inpa;
@@ -1089,7 +1070,6 @@ struct yahoo_roomlist {
 	GaimRoomlistRoom *cat;
 	GaimRoomlistRoom *ucat;
 	GMarkupParseContext *parse;
-
 };
 
 static void yahoo_roomlist_destroy(struct yahoo_roomlist *yrl)
@@ -1134,7 +1114,6 @@ static struct yahoo_chatxml_state *yahoo_chatxml_state_new(GaimRoomlist *list, s
 	struct yahoo_chatxml_state *s;
 
 	s = g_new0(struct yahoo_chatxml_state, 1);
-
 	s->list = list;
 	s->yrl = yrl;
 	s->q = g_queue_new();
@@ -1154,9 +1133,10 @@ static void yahoo_chatxml_state_destroy(struct yahoo_chatxml_state *s)
 	g_free(s);
 }
 
-static void yahoo_chatlist_start_element(GMarkupParseContext *context, const gchar *ename,
-                                  const gchar **anames, const gchar **avalues,
-                                  gpointer user_data, GError **error)
+static void yahoo_chatlist_start_element(GMarkupParseContext *context,
+                                  const gchar *ename, const gchar **anames,
+                                  const gchar **avalues, gpointer user_data,
+                                  GError **error)
 {
 	struct yahoo_chatxml_state *s = user_data;
 	GaimRoomlist *list = s->list;
@@ -1220,10 +1200,8 @@ static void yahoo_chatlist_start_element(GMarkupParseContext *context, const gch
 				s->room.webcams += lob->webcams = strtol(avalues[i], NULL, 10);
 			}
 		}
-
 		g_queue_push_head(s->q, lob);
 	}
-
 }
 
 static void yahoo_chatlist_end_element(GMarkupParseContext *context, const gchar *ename,
@@ -1267,9 +1245,7 @@ static void yahoo_chatlist_end_element(GMarkupParseContext *context, const gchar
 			g_free(name);
 			g_free(lob);
 		}
-
 	}
-
 }
 
 static GMarkupParser parser = {
@@ -1309,7 +1285,6 @@ static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputConditio
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
-
 
 	yrl->rxqueue = g_realloc(yrl->rxqueue, len + yrl->rxlen);
 	memcpy(yrl->rxqueue + yrl->rxlen, buf, len);

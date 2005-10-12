@@ -84,11 +84,14 @@ gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
 		switch (gc->account->perm_deny)
 		{
 			case GAIM_PRIVACY_DENY_ALL:
-				deb = "GAIM_PRIVACY_DENY_ALL";		break;
+				deb = "GAIM_PRIVACY_DENY_ALL";
+			break;
 			case GAIM_PRIVACY_DENY_USERS:
-				deb = "GAIM_PRIVACY_DENY_USERS";	break;
+				deb = "GAIM_PRIVACY_DENY_USERS";
+			break;
 			case GAIM_PRIVACY_ALLOW_BUDDYLIST:
-				deb = "GAIM_PRIVACY_ALLOW_BUDDYLIST"; break;
+				deb = "GAIM_PRIVACY_ALLOW_BUDDYLIST";
+			break;
 		}
 		if(deb)
 			gaim_debug_info("yahoo",
@@ -380,7 +383,6 @@ static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const cha
 	GSList *list, *i;
 	gboolean onlist = 0;
 	char *oname = NULL;
-
 	char **oname_p = &oname;
 	GSList **list_p = &list;
 
@@ -561,7 +563,6 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		g_hash_table_foreach(ht, yahoo_do_group_cleanup, NULL);
 		g_hash_table_destroy(ht);
 	}
-
 
 	if (yd->tmp_serv_ilist) {
 		buddies = g_strsplit(yd->tmp_serv_ilist->str, ",", -1);
@@ -878,7 +879,7 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 
 		/* TODO: this is almost exactly the same as what MSN does,
 		 * this should probably be moved to the core.
-		 * */
+		 */
 		prompt_msg = g_strdup_printf(_("The user %s wants to add %s to "
 					"his or her buddy list%s%s."),
 				add_req->who, add_req->id,
@@ -942,8 +943,6 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 
 static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-
-
 	switch (pkt->status) {
 	case 1:
 		yahoo_process_status(gc, pkt);
@@ -1287,16 +1286,14 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	while (*magic_ptr != (int)NULL) {
 		char   *loc;
 
-		/* Ignore parentheses.
-		 */
+		/* Ignore parentheses. */
 
 		if (*magic_ptr == '(' || *magic_ptr == ')') {
 			magic_ptr++;
 			continue;
 		}
 
-		/* Characters and digits verify against the challenge lookup.
-		 */
+		/* Characters and digits verify against the challenge lookup. */
 
 		if (isalpha(*magic_ptr) || isdigit(*magic_ptr)) {
 			loc = strchr(challenge_lookup, *magic_ptr);
@@ -1304,8 +1301,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 			  /* SME XXX Error - disconnect here */
 			}
 
-			/* Get offset into lookup table and shl 3.
-			 */
+			/* Get offset into lookup table and shl 3. */
 
 			magic_work = loc - challenge_lookup;
 			magic_work <<= 3;
@@ -1322,8 +1318,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 			local_store = loc - operand_lookup;
 
-			/* Oops; how did this happen?
-			 */
+			/* Oops; how did this happen? */
 
 			if (magic_cnt >= 64)
 				break;
@@ -1337,15 +1332,15 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	magic_len = magic_cnt;
 	magic_cnt = 0;
 
-	/* Magic: Phase 2.  Take generated magic value and sprinkle fairy dust on the values.
+	/* Magic: Phase 2.  Take generated magic value and sprinkle fairy
+	 * dust on the values.
 	 */
 
 	for (magic_cnt = magic_len-2; magic_cnt >= 0; magic_cnt--) {
 		unsigned char	byte1;
 		unsigned char	byte2;
 
-		/* Bad.  Abort.
-		 */
+		/* Bad.  Abort. */
 
 		if ((magic_cnt + 1 > magic_len) || (magic_cnt > magic_len))
 			break;
@@ -1509,8 +1504,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 		memset(&byte, 0, 6);
 
-		/* First two bytes of digest stuffed together.
-		 */
+		/* First two bytes of digest stuffed together. */
 
 		val = digest2[x];
 		val <<= 8;
@@ -1545,8 +1539,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		strcat(resp_6, byte);
 	}
 
-	/* Our second authentication response is based off of the crypto hash.
-	 */
+	/* Our second authentication response is based off of the crypto hash. */
 
 	cnt = 0;
 	memset(&digest1, 0, 20);
@@ -1604,8 +1597,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 		memset(&byte, 0, 6);
 
-		/* First two bytes of digest stuffed together.
-		 */
+		/* First two bytes of digest stuffed together. */
 
 		val = digest2[x];
 		val <<= 8;
@@ -1663,7 +1655,6 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	GSList *l = pkt->hash;
 	int m = 0;
 	gchar *buf;
-
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -2086,7 +2077,8 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_process_stealth(gc, pkt);
 		break;
 	case YAHOO_SERVICE_P2PFILEXFER:
-		yahoo_process_p2pfilexfer( gc, pkt ); // This case had no break and continued; thus keeping it this way.
+		/* This case had no break and continued; thus keeping it this way.*/
+		yahoo_process_p2pfilexfer( gc, pkt ); 
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
@@ -2925,7 +2917,6 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	return m;
 }
 
-
 static GList *yahoo_blist_node_menu(GaimBlistNode *node)
 {
 	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
@@ -2934,7 +2925,6 @@ static GList *yahoo_blist_node_menu(GaimBlistNode *node)
 		return NULL;
 	}
 }
-
 
 static void yahoo_act_id(GaimConnection *gc, const char *entry)
 {
@@ -2997,8 +2987,9 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 		yahoo_packet_hash_str(pkt, 97, "1");
 	yahoo_packet_hash_str(pkt, 14, msg2);
 
-	// If this message is to a user who is also Doodling with the local user,
-	// format the chat packet with the correct IMV information (thanks Yahoo!)
+	/* If this message is to a user who is also Doodling with the local user,
+	 * format the chat packet with the correct IMV information (thanks Yahoo!)
+	*/
 	wb = gaim_whiteboard_get_session(gc->account, (char*)who);
 	if (wb)
 		yahoo_packet_hash_str(pkt,   63, "doodle;11");
@@ -3166,7 +3157,6 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE)
 		yd->current_status = YAHOO_STATUS_AVAILABLE;
 
-
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
@@ -3189,7 +3179,6 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
 	else if (!gaim_presence_is_available(gaim_account_get_presence(gaim_connection_get_account(gc))))
 		yahoo_packet_hash_str(pkt, 47, "1");
-
 
 	yahoo_packet_send_and_free(pkt, yd);
 
@@ -3219,7 +3208,6 @@ static GList *yahoo_status_types(GaimAccount *account)
 		                                       "message", _("Message"),
 		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);
-
 
 		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
 		types = g_list_append(types, type);
@@ -3256,7 +3244,6 @@ static GList *yahoo_status_types(GaimAccount *account)
 	}
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, YAHOO_STATUS_TYPE_INVISIBLE, _("Invisible"), TRUE);
 	types = g_list_append(types, type);
-
 
 	return types;
 }
@@ -3503,7 +3490,6 @@ yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args, gchar **
 
 static GaimPlugin *my_protocol = NULL;
 
-
 static GaimCmdRet
 yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
                         char **args, char **error, void *data)
@@ -3634,7 +3620,6 @@ static GaimPluginInfo info =
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
-
 	"prpl-yahoo",                                     /**< id             */
 	"Yahoo",	                                      /**< name           */
 	VERSION,                                          /**< version        */
@@ -3644,11 +3629,9 @@ static GaimPluginInfo info =
 	N_("Yahoo Protocol Plugin"),
 	NULL,                                             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
-
 	NULL,                                             /**< load           */
 	yahoo_unload_plugin,                              /**< unload         */
 	NULL,                                             /**< destroy        */
-
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,

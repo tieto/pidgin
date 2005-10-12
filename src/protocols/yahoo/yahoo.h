@@ -50,8 +50,6 @@
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
 #define YAHOO_PICEXPIRE_SETTING "picture_expire"
 
-
-
 #define YAHOO_STATUS_TYPE_OFFLINE "offline"
 #define YAHOO_STATUS_TYPE_AVAILABLE "available"
 #define YAHOO_STATUS_TYPE_AVAILABLE_WM "available-wm"
@@ -127,9 +125,7 @@ struct yahoo_data {
 	struct _YchtConn *ycht;
 };
 
-
 #define YAHOO_MAX_STATUS_MESSAGE_LENGTH (255)
-
 
 /* sometimes i wish prpls could #include things from other prpls. then i could just
  * use the routines from libfaim and not have to admit to knowing how they work. */
@@ -148,8 +144,6 @@ struct yahoo_data {
 		(((*((buf)+1))<<16)&0x00ff0000) + \
 		(((*((buf)+2))<< 8)&0x0000ff00) + \
 		(((*((buf)+3)    )&0x000000ff)))
-
-
 
 /* util.c */
 void yahoo_init_colorht();

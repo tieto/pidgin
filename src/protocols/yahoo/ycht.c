@@ -99,7 +99,6 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 			*tmp = '\0';
 	}
 
-
 	if (g_list_length(pkt->data) > 5)
 		new_room = TRUE;
 
@@ -110,7 +109,6 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 	} else {
 		c = gaim_find_chat(gc, YAHOO_CHAT_ID);
 	}
-
 
 	if (topic)
 		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
