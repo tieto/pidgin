@@ -5,28 +5,6 @@ PROTOTYPES: ENABLE
 
 
 void 
-serv_add_buddies(con, list)
-	Gaim::Connection con
-	SV * list
-PREINIT:
-	GList *t_GL;
-	int i, t_len;
-PPCODE:
-	t_GL = NULL;
-	t_len = av_len((AV *)SvRV(list));
-
-	for (i = 0; i < t_len; i++) {
-		STRLEN t_sl;
-		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(list), i, 0), t_sl));
-	}
-	serv_add_buddies(con, t_GL);
-	
-void 
-serv_add_buddy(con, buddy)
-	Gaim::Connection 	con
-	Gaim::BuddyList::Buddy	buddy 
-
-void 
 serv_add_deny(con, a)
 	Gaim::Connection con
 	const char * a
@@ -39,12 +17,6 @@ serv_add_permit(a, b)
 void 
 serv_alias_buddy(buddy)
 	Gaim::BuddyList::Buddy buddy 
-
-void 
-serv_change_passwd(con, a, b)
-	Gaim::Connection con
-	const char *	a
-	const char *	b
 
 void 
 serv_chat_invite(con, a, b, c)
@@ -211,44 +183,7 @@ serv_rem_deny(con, a)
 void 
 serv_rem_permit(con, a)
 	Gaim::Connection con
-	const char * 	a
-
-void 
-serv_remove_buddies(con, A, B)
-	Gaim::Connection con
-	SV * A
-	SV * B
-PREINIT:
-	GList *t_GL1, *t_GL2;
-	int i, t_len;
-PPCODE:
-	t_GL1 = NULL;
-	t_len = av_len((AV *)SvRV(A));
-
-	for (i = 0; i < t_len; i++) {
-		STRLEN t_sl;
-		t_GL1 = g_list_append(t_GL1, SvPV(*av_fetch((AV *)SvRV(A), i, 0), t_sl));
-	}
-	
-	t_GL2 = NULL;
-	t_len = av_len((AV *)SvRV(B));
-
-	for (i = 0; i < t_len; i++) {
-		STRLEN t_sl;
-		t_GL2 = g_list_append(t_GL2, SvPV(*av_fetch((AV *)SvRV(B), i, 0), t_sl));
-	}
-	serv_remove_buddies(con, t_GL1, t_GL2);
-
-void 
-serv_remove_buddy(con, buddy, group)
-	Gaim::Connection con
-	Gaim::BuddyList::Buddy buddy
-	Gaim::BuddyList::Group group
-
-void 
-serv_remove_group(con, group)
-	Gaim::Connection con
-	Gaim::BuddyList::Group group 
+	const char *	a
 
 void 
 serv_send_file(gc, who, file)

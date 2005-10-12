@@ -188,6 +188,71 @@ void
 gaim_account_destroy_log(account)
 	Gaim::Account account
 
+void 
+gaim_account_add_buddies(account, list)
+	Gaim::Account account
+	SV * list
+PREINIT:
+	GList *t_GL;
+	int i, t_len;
+PPCODE:
+	t_GL = NULL;
+	t_len = av_len((AV *)SvRV(list));
+
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(list), i, 0), t_sl));
+	}
+	gaim_account_add_buddies(account, t_GL);
+	
+void 
+gaim_account_add_buddy(account, buddy)
+	Gaim::Account account
+	Gaim::BuddyList::Buddy	buddy
+
+void 
+gaim_account_change_password(account, a, b)
+	Gaim::Account account
+	const char *	a
+	const char *	b
+
+void 
+gaim_account_remove_buddies(account, A, B)
+	Gaim::Account account
+	SV * A
+	SV * B
+PREINIT:
+	GList *t_GL1, *t_GL2;
+	int i, t_len;
+PPCODE:
+	t_GL1 = NULL;
+	t_len = av_len((AV *)SvRV(A));
+
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL1 = g_list_append(t_GL1, SvPV(*av_fetch((AV *)SvRV(A), i, 0), t_sl));
+	}
+	
+	t_GL2 = NULL;
+	t_len = av_len((AV *)SvRV(B));
+
+	for (i = 0; i < t_len; i++) {
+		STRLEN t_sl;
+		t_GL2 = g_list_append(t_GL2, SvPV(*av_fetch((AV *)SvRV(B), i, 0), t_sl));
+	}
+	gaim_account_remove_buddies(account, t_GL1, t_GL2);
+
+void 
+gaim_account_remove_buddy(account, buddy, group)
+	Gaim::Account account
+	Gaim::BuddyList::Buddy buddy
+	Gaim::BuddyList::Group group
+
+void 
+gaim_account_remove_group(account, group)
+	Gaim::Account account
+	Gaim::BuddyList::Group group
+
 
 
 

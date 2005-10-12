@@ -682,6 +682,63 @@ GaimLog *gaim_account_get_log(GaimAccount *account);
  */
 void gaim_account_destroy_log(GaimAccount *account);
 
+/**
+ * Adds a buddy to the server-side buddy list for the specified account.
+ *
+ * @param account The account.
+ * @param buddy The buddy to add.
+ */
+void gaim_account_add_buddy(GaimAccount *account, GaimBuddy *buddy);
+/**
+ * Adds a list of buddies to the server-side buddy list.
+ *
+ * @param account The account.
+ * @param buddies The list of GaimBlistNodes representing the buddies to add.
+ */
+void gaim_account_add_buddies(GaimAccount *account, GList *buddies);
+
+/**
+ * Removes a buddy from the server-side buddy list.
+ *
+ * @param account The account.
+ * @param buddy The buddy to remove.
+ * @pararm group The group to remove the buddy from.
+ */
+void gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
+								GaimGroup *group);
+
+/**
+ * Removes a list of buddies from the server-side buddy list.
+ *
+ * @note The lists buddies and groups are parallel lists.  Be sure that node n of
+ *       groups matches node n of buddies.
+ *
+ * @param account The account.
+ * @param buddies The list of buddies to remove.
+ * @param groups The list of groups to remove buddies from.  Each node of this
+ *               list should match the corresponding node of buddies.
+ */
+void gaim_account_remove_buddies(GaimAccount *account, GList *buddies,
+									GList *groups);
+
+/**
+ * Removes a group from the server-side buddy list.
+ *
+ * @param account The account.
+ * @param group The group to remove.
+ */
+void gaim_account_remove_group(GaimAccount *account, GaimGroup *group);
+
+/**
+ * Changes the password on the specified account.
+ *
+ * @param account The account.
+ * @param orig_pw The old password.
+ * @param new_pw The new password.
+ */
+void gaim_account_change_password(GaimAccount *account, const char *orig_pw,
+									const char *new_pw);
+
 /*@}*/
 
 /**************************************************************************/

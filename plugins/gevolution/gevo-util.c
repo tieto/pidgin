@@ -43,7 +43,7 @@ gevo_add_buddy(GaimAccount *account, const char *group_name,
 
 	buddy = gaim_buddy_new(account, screenname, alias);
 	gaim_blist_add_buddy(buddy, NULL, group, NULL);
-	serv_add_buddy(gaim_account_get_connection(account), buddy);
+	gaim_account_add_buddy(account, buddy);
 
 	if (conv != NULL)
 	{

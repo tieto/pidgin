@@ -1039,9 +1039,9 @@ void gaim_blist_rename_group(GaimGroup *source, const char *new_name)
 					groups = g_list_append(groups, node->parent->parent);
 				}
 
-				serv_remove_buddies(account->gc, buddies, groups);
+				gaim_account_remove_buddies(account, buddies, groups);
 				g_list_free(groups);
-				serv_add_buddies(account->gc, buddies);
+				gaim_account_add_buddies(account, buddies);
 			}
 
 			g_list_free(buddies);
@@ -1520,7 +1520,7 @@ void gaim_blist_add_contact(GaimContact *contact, GaimGroup *group, GaimBlistNod
 					g_free(hb->name);
 					g_free(hb);
 					if (b->account->gc)
-						serv_remove_buddy(b->account->gc, b, (GaimGroup *)cnode->parent);
+						gaim_account_remove_buddy(b->account, b, (GaimGroup *)cnode->parent);
 
 					if (!cnode->child->next)
 						empty_contact = TRUE;
@@ -1894,7 +1894,7 @@ void gaim_blist_remove_group(GaimGroup *group)
 		GaimConnection *gc = (GaimConnection *)l->data;
 
 		if (gaim_connection_get_state(gc) == GAIM_CONNECTED)
-			serv_remove_group(gc, group);
+			gaim_account_remove_group(gaim_connection_get_account(gc), group);
 	}
 
 	/* Delete the node */

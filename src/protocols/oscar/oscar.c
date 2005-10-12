@@ -6754,6 +6754,7 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 	if (od->sess->ssi.received_data) {
 		if (aim_ssi_itemlist_finditem(od->sess->ssi.local, group->name, NULL, AIM_SSI_TYPE_GROUP)) {
 			GList *cur, *groups = NULL;
+			GaimAccount *account = gaim_connection_get_account(gc);
 
 			/* Make a list of what the groups each buddy is in */
 			for (cur = moved_buddies; cur != NULL; cur = cur->next) {
@@ -6764,8 +6765,8 @@ static void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGro
 						node->parent->parent);
 			}
 
-			serv_remove_buddies(gc, moved_buddies, groups);
-			serv_add_buddies(gc, moved_buddies);
+			gaim_account_remove_buddies(account, moved_buddies, groups);
+			gaim_account_add_buddies(account, moved_buddies);
 			g_list_free(groups);
 			gaim_debug_info("oscar",
 					   "ssi: moved all buddies from group %s to %s\n", old_name, group->name);

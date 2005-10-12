@@ -4276,19 +4276,21 @@ add_buddy_cb(GtkWidget *w, int resp, GaimGtkAddBuddyData *data)
 
 		b = gaim_buddy_new(data->account, who, whoalias);
 		gaim_blist_add_buddy(b, NULL, g, NULL);
-		serv_add_buddy(gaim_account_get_connection(data->account), b);
+		gaim_account_add_buddy(data->account, b);
 
 		/*
 		 * XXX
-		 * It really seems like it would be better if the call to serv_add_buddy()
-		 * and gaim_conversation_update() were done in blist.c, possibly in the
-		 * gaim_blist_add_buddy() function.  Maybe serv_add_buddy() should be
-		 * renamed to gaim_blist_add_new_buddy() or something, and have it call
+		 * It really seems like it would be better if the call to
+		 * gaim_account_add_buddy() and gaim_conversation_update() were done in
+		 * blist.c, possibly in the gaim_blist_add_buddy() function.  Maybe
+		 * gaim_account_add_buddy() should be renamed to
+		 * gaim_blist_add_new_buddy() or something, and have it call
 		 * gaim_blist_add_buddy() after it creates it.  --Mark
 		 *
 		 * No that's not good.  blist.c should only deal with adding nodes to the
-		 * local list.  We need a new, non-gtk file that calls both serv_add_buddy
-		 * and gaim_blist_add_buddy().  Or something.  --Mark
+		 * local list.  We need a new, non-gtk file that calls both
+		 * gaim_account_add_buddy and gaim_blist_add_buddy().
+		 * Or something.  --Mark
 		 */
 
 		c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, data->account);

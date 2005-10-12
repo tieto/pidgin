@@ -1711,7 +1711,7 @@ static void ignore_buddy(GaimBuddy *buddy) {
 
 	gaim_debug(GAIM_DEBUG_INFO, "blist",
 		"Removing '%s' from buddy list.\n", buddy->name);
-	serv_remove_buddy(account->gc, buddy, group);
+	gaim_account_remove_buddy(account, buddy, group);
 	gaim_blist_remove_buddy(buddy);
 
 	serv_add_deny(account->gc, name);

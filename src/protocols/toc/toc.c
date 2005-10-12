@@ -642,7 +642,7 @@ parse_toc_buddy_list(GaimAccount *account, char *config)
 
 	if (account->gc) {
 		if (buddies != NULL) {
-			serv_add_buddies(account->gc, buddies);
+			gaim_account_add_buddies(account, buddies);
 			g_list_free(buddies);
 		}
 		serv_set_permit_deny(account->gc);
@@ -741,7 +741,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		buddy = gaim_buddy_new(account, username, NULL);
 		/* XXX - Pick a group to add to */
 		/* gaim_blist_add(buddy, NULL, g, NULL); */
-		serv_add_buddy(gc, buddy);
+		gaim_account_add_buddy(gc, buddy);
 
 		/* Client sends TOC toc_init_done message */
 		gaim_debug(GAIM_DEBUG_INFO, "toc",

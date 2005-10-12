@@ -104,6 +104,19 @@ version 2.0.0:
 	           and secondary args
 	* Removed: uc from the GaimBuddy struct
 	* Removed: gaim_sound_get_handle()
+	* Removed: gaim_debug_vargs()
+	* Added:   gaim_account_add_buddy()
+	* Added:   gaim_account_add_buddies()
+	* Added:   gaim_account_remove_buddy()
+	* Added:   gaim_account_remove_buddies()
+	* Added:   gaim_account_change_password()
+	* Removed: serv_add_buddy(); use gaim_account_add_buddy() instead
+	* Removed: serv_add_buddies(); use gaim_account_add_buddies() instead
+	* Removed: serv_remove_buddy(); use gaim_account_remove_buddy() instead
+	* Removed: serv_remove_buddies(); use gaim_account_remove_buddies()
+	           instead
+	* Removed: serv_change_passwd(); use gaim_account_change_password()
+	           instead
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both
@@ -129,7 +142,6 @@ version 2.0.0:
 	* Added:   "buddy-added" and "buddy-removed", which are self-explanatory
 	* Added:   "blist-node-aliased", an alias was set for a buddy, chat or
 	           contact.  See the Doxygen documentation for the details.
-	* Removed: gaim_debug_vargs()
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct

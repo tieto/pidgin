@@ -776,7 +776,7 @@ gaim_gtkdialogs_remove_contact_cb(GaimContact *contact)
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
 		GaimBuddy *buddy = (GaimBuddy*)bnode;
 		if (gaim_account_is_connected(buddy->account))
-			serv_remove_buddy(buddy->account->gc, buddy, group);
+			gaim_account_remove_buddy(buddy->account, buddy, group);
 	}
 	gaim_blist_remove_contact(contact);
 }
@@ -833,7 +833,7 @@ gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
 															   buddy->name,
 															   buddy->account);
 					if (gaim_account_is_connected(buddy->account)) {
-						serv_remove_buddy(buddy->account->gc, buddy, group);
+						gaim_account_remove_buddy(buddy->account, buddy, group);
 						gaim_blist_remove_buddy(buddy);
 						if (conv)
 							gaim_conversation_update(conv,
@@ -887,8 +887,8 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 	account = buddy->account;
 
 	gaim_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
-	/* TODO - Should remove from blist first... then call serv_remove_buddy()? */
-	serv_remove_buddy(buddy->account->gc, buddy, group);
+	/* TODO - Should remove from blist first... then call gaim_account_remove_buddy()? */
+	gaim_account_remove_buddy(buddy->account, buddy, group);
 	gaim_blist_remove_buddy(buddy);
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);

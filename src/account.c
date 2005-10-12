@@ -1059,8 +1059,7 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 		return;
 	}
 
-	serv_change_passwd(gaim_account_get_connection(account),
-					   orig_pass, new_pass_1);
+	gaim_account_change_password(account, orig_pass, new_pass_1);
 	gaim_account_set_password(account, new_pass_1);
 }
 
@@ -1896,6 +1895,122 @@ gaim_account_destroy_log(GaimAccount *account)
 		account->system_log = NULL;
 	}
 }
+
+void
+gaim_account_add_buddy(GaimAccount *account, GaimBuddy *buddy)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info != NULL && g_list_find(gaim_connections_get_all(), gc) &&
+			prpl_info->add_buddy != NULL)
+		prpl_info->add_buddy(gc, buddy, gaim_find_buddys_group(buddy));
+}
+
+void
+gaim_account_add_buddies(GaimAccount *account, GList *buddies)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+		GList *cur, *groups = NULL;
+
+		/* Make a list of what group each buddy is in */
+		for (cur = buddies; cur != NULL; cur = cur->next) {
+			GaimBlistNode *node = cur->data;
+			groups = g_list_append(groups, node->parent->parent);
+		}
+
+		if (prpl_info->add_buddies != NULL)
+			prpl_info->add_buddies(gc, buddies, groups);
+		else if (prpl_info->add_buddy != NULL) {
+			GList *curb = buddies, *curg = groups;
+
+			while ((curb != NULL) && (curg != NULL)) {
+				prpl_info->add_buddy(gc, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+
+		g_list_free(groups);
+	}
+}
+
+void
+gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
+		GaimGroup *group)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->remove_buddy)
+		prpl_info->remove_buddy(gc, buddy, group);
+}
+
+void
+gaim_account_remove_buddies(GaimAccount *account, GList *buddies, GList *groups)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (!g_list_find(gaim_connections_get_all(), gc))
+		return;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc)) {
+		if (prpl_info->remove_buddies)
+			prpl_info->remove_buddies(gc, buddies, groups);
+		else {
+			GList *curb = buddies;
+			GList *curg = groups;
+			while ((curb != NULL) && (curg != NULL)) {
+				gaim_account_remove_buddy(account, curb->data, curg->data);
+				curb = curb->next;
+				curg = curg->next;
+			}
+		}
+	}
+}
+
+void
+gaim_account_remove_group(GaimAccount *account, GaimGroup *group)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->remove_group)
+		prpl_info->remove_group(gc, group);
+}
+
+void
+gaim_account_change_password(GaimAccount *account, const char *orig_pw,
+		const char *new_pw)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimConnection *gc = gaim_account_get_connection(account);
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->change_passwd)
+		prpl_info->change_passwd(gc, orig_pw, new_pw);
+}	
 
 void
 gaim_accounts_add(GaimAccount *account)
