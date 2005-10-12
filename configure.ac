@@ -192,7 +192,7 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
@@ -248,7 +248,7 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $l
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc simple yahoo zephyr"
 fi
 if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
