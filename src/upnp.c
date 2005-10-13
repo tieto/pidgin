@@ -95,7 +95,7 @@ typedef struct
                            "\"urn:schemas-upnp-org:"                       \
                            "service:%s#%s\"\r\n"                           \
                            "CONTENT-TYPE: text/xml ; charset=\"utf-8\"\r\n"\
-                           "Content-Length: %zi\r\n\r\n"
+                           "Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n"
 
 #define SOAP_ACTION  "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"     \
                      "<s:Envelope xmlns:s="                               \

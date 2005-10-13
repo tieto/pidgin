@@ -2018,8 +2018,8 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Ensure the file is the correct size */
 	if (byteswritten != real_size)
 	{
-		gaim_debug_error("util", "Error writing to file %s: Wrote %z bytes "
-						 "but should have written %z; is your disk full?\n",
+		gaim_debug_error("util", "Error writing to file %s: Wrote %" G_GSIZE_FORMAT " bytes "
+						 "but should have written %" G_GSIZE_FORMAT "; is your disk full?\n",
 						 filename_temp, byteswritten, real_size);
 		g_free(filename_full);
 		g_free(filename_temp);
@@ -2573,7 +2573,7 @@ gaim_str_size_to_units(size_t size)
 		}
 
 		if (size_index == 0) {
-			return g_strdup_printf("%zd %s", size, size_str[size_index]);
+			return g_strdup_printf("%" G_GSIZE_FORMAT " %s", size, size_str[size_index]);
 		} else {
 			return g_strdup_printf("%.2f %s", size_mag, size_str[size_index]);
 		}
@@ -2833,7 +2833,7 @@ parse_content_len(const char *data, size_t data_len)
 	 * if we make sure that there is indeed a \n in our header.
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
-		sscanf(p, "Content-Length: %zu", &content_len);
+		sscanf(p, "Content-Length: %" G_GSIZE_FORMAT, &content_len);
 		gaim_debug_misc("parse_content_len", "parsed %u\n", content_len);
 	}
 

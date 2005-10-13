@@ -286,7 +286,7 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	/* Send the intended recipient the DCC request */
 	arg[0] = xfer->who;
 	inet_aton(gaim_network_get_my_ip(irc->fd), &addr);
-	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %zu\001",
+	arg[1] = tmp = g_strdup_printf("\001DCC SEND \"%s\" %u %hu %" G_GSIZE_FORMAT "\001",
 	                         xfer->filename, ntohl(addr.s_addr),
 	                         port, xfer->size);
 
