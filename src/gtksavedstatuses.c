@@ -230,6 +230,9 @@ add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_stat
 	const char *type;
 	char *message;
 
+	if (gaim_savedstatus_is_transient(saved_status))
+		return;
+
 	title = gaim_savedstatus_get_title(saved_status);
 	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
 	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));

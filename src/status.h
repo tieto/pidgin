@@ -947,6 +947,8 @@ gboolean gaim_presence_is_status_primitive_active(
  * @param presence The presence.
  *
  * @return TRUE if the presence is idle, or FALSE otherwise.
+ *         If the presence is offline (gaim_presence_is_online()
+ *         returns FALSE) then FALSE is returned.
  */
 gboolean gaim_presence_is_idle(const GaimPresence *presence);
 

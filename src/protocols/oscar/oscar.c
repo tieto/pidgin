@@ -105,7 +105,7 @@ struct _OscarData {
 	gboolean chpass;
 	char *oldp;
 	char *newp;
-	
+
 	GSList *oscar_chats;
 	GSList *direct_ims;
 	GSList *file_transfers;
@@ -170,8 +170,10 @@ struct ask_direct {
 
 /*
  * Various PRPL-specific buddy info that we want to keep track of
- * Some other info is maintained by locate.c, and I'd like to move 
+ * Some other info is maintained by locate.c, and I'd like to move
  * the rest of this to libfaim, mostly im.c
+ *
+ * TODO: I think all of this should use the status API.
  */
 struct buddyinfo {
 	gboolean typingnot;

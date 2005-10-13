@@ -46,6 +46,15 @@
  */
 struct _GaimSavedStatus
 {
+	/**
+	 * A "transient" status is one that was used recently by
+	 * a Gaim user, but was not explicitly created using the
+	 * saved status UI.  For example, Gaim's previous status
+	 * is saved in the status.xml file, but should not show
+	 * up in the UI.
+	 */
+	gboolean transient;
+
 	char *title;
 	GaimStatusPrimitive type;
 	char *message;
@@ -133,16 +142,23 @@ static xmlnode *
 status_to_xmlnode(GaimSavedStatus *status)
 {
 	xmlnode *node, *child;
+	char transient[2];
 	GList *cur;
 
+	snprintf(transient, sizeof(transient), "%d", status->transient);
+
 	node = xmlnode_new("status");
+	xmlnode_set_attrib(node, "transient", transient);
 	xmlnode_set_attrib(node, "name", status->title);
 
 	child = xmlnode_new_child(node, "state");
 	xmlnode_insert_data(child, gaim_primitive_get_id_from_type(status->type), -1);
 
-	child = xmlnode_new_child(node, "message");
-	xmlnode_insert_data(child, status->message, -1);
+	if (status->message != NULL)
+	{
+		child = xmlnode_new_child(node, "message");
+		xmlnode_insert_data(child, status->message, -1);
+	}
 
 	for (cur = status->substatuses; cur != NULL; cur = cur->next)
 	{
@@ -293,6 +309,11 @@ parse_status(xmlnode *status)
 
 	ret = g_new0(GaimSavedStatus, 1);
 
+	/* Read the transient property */
+	attrib = xmlnode_get_attrib(status, "transient");
+	if ((attrib != NULL) && (attrib[0] == '1'))
+		ret->transient = TRUE;
+
 	/* Read the title */
 	attrib = xmlnode_get_attrib(status, "name");
 	if (attrib == NULL)
@@ -387,6 +408,16 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 }
 
 void
+gaim_savedstatus_set_type(GaimSavedStatus *status, GaimStatusPrimitive type)
+{
+	g_return_if_fail(status != NULL);
+
+	status->type = type;
+
+	schedule_save();
+}
+
+void
 gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
 {
 	g_return_if_fail(status != NULL);
@@ -437,6 +468,12 @@ gaim_savedstatus_find(const char *title)
 	return NULL;
 }
 
+gboolean
+gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
+{
+	return saved_status->transient;
+}
+
 const char *
 gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 {
@@ -453,6 +490,12 @@ const char *
 gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 {
 	return saved_status->message;
+}
+
+gboolean
+gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
+{
+	return (saved_status->substatuses != NULL);
 }
 
 void *

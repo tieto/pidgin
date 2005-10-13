@@ -32,6 +32,12 @@
  * to the settings of that state.
  */
 
+/*
+ * TODO: Hmm.  We should probably just be saving GaimPresences.  That's
+ *       something we should look into once the status box gets fleshed
+ *       out more.
+ */
+
 typedef struct _GaimSavedStatus     GaimSavedStatus;
 typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
 
@@ -46,14 +52,24 @@ typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
  * Create a new saved status.  This will add the saved status to the
  * list of saved statuses and writes the revised list to status.xml.
  *
- * @param title The title of the saved status.  This must be unique.
- * @param type  The type of saved status.
+ * @param title     The title of the saved status.  This must be
+ *                  unique.
+ * @param type      The type of saved status.
  *
  * @return The newly created saved status, or NULL if the title you
  *         used was already taken.
  */
 GaimSavedStatus *gaim_savedstatus_new(const char *title,
 									  GaimStatusPrimitive type);
+
+/**
+ * Set the type for the given saved status.
+ *
+ * @param status  The saved status.
+ * @param type    The type of saved status.
+ */
+void gaim_savedstatus_set_type(GaimSavedStatus *status,
+							   GaimStatusPrimitive type);
 
 /**
  * Set the message for the given saved status.
@@ -94,6 +110,25 @@ const GList *gaim_savedstatuses_get_all(void);
 GaimSavedStatus *gaim_savedstatus_find(const char *title);
 
 /**
+ * Determines if a given saved status is "transient."
+ * A transient saved status is one that was not
+ * explicitly added by the user.  Transient statuses
+ * are automatically removed if they are not used
+ * for a period of time.
+ *
+ * A transient saved statuses is automatically
+ * created by the status box when the user sets himself
+ * to one of the generic primitive statuses.  The reason
+ * we need to save this status information is so we can
+ * restore it when Gaim restarts.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return TRUE if the saved status is transient.
+ */
+gboolean gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status);
+
+/**
  * Return the name of a given saved status.
  *
  * @param saved_status The saved status.
@@ -119,6 +154,18 @@ GaimStatusPrimitive gaim_savedstatus_get_type(const GaimSavedStatus *saved_statu
  * @return The name.
  */
 const char *gaim_savedstatus_get_message(const GaimSavedStatus *saved_status);
+
+/**
+ * Determine if a given saved status has "substatuses,"
+ * or if it is a simple status (the same for all
+ * accounts).
+ *
+ * @param saved_status The saved status.
+ *
+ * @return TRUE if the saved_status has substatuses.
+ *         FALSE otherwise.
+ */
+gboolean gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status);
 
 /**
  * Get the handle for the status subsystem.
