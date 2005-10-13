@@ -107,8 +107,8 @@ gaim_core_init(const char *ui)
 	gaim_plugins_init();
 	gaim_plugins_probe(GAIM_PLUGIN_EXT);
 
-	gaim_status_init();
 	gaim_savedstatuses_init();
+	gaim_status_init();
 	gaim_accounts_init();
 	gaim_ciphers_init();
 	gaim_connections_init();

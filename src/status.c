@@ -597,10 +597,6 @@ gaim_status_destroy(GaimStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
-	/* TODO: Don't do this is if the status is exclusive */
-	/* XXX: why do this at all?
-	gaim_status_set_active(status, FALSE); */
-
 	g_hash_table_destroy(status->attr_values);
 
 	GAIM_DBUS_UNREGISTER_POINTER(status);
@@ -1699,6 +1695,9 @@ gaim_status_init(void)
 
 	gaim_prefs_add_none("/core/status");
 	gaim_prefs_add_none("/core/status/scores");
+
+	gaim_prefs_add_string("/core/status/current", _("Default"));
+	gaim_prefs_add_string("/core/status/idleaway", _("Default auto-away"));
 
 	gaim_prefs_add_int("/core/status/scores/offline",
 			primitive_scores[GAIM_STATUS_OFFLINE]);

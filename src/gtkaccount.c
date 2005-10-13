@@ -2136,6 +2136,20 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_ENABLED, &enabled,
 					   -1);
 
+	/* TODO: Set the statuses for this account to match the GtkStatusBox */
+	/*
+	GtkWidget *blist;
+	GtkWidget *statusbox;
+	GaimStatus *status;
+
+	blist = gaim_gtk_blist_get_default_gtk_blist();
+	statusbox = blist->statusbox;
+	status = gaim_gtk_status_box_get_current_status();
+
+	gaim_account_set_status(account, );
+	gaim_account_set_status_vargs(account, );
+	gaim_account_set_status_list(account, );
+	*/
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
 
 	gtk_list_store_set(dialog->model, &iter,

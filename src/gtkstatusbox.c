@@ -224,7 +224,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
 	GtkTreePath *path;
-	const GList *list = NULL;
+	const char *current_savedstatus_name;
+	GaimSavedStatus *saved_status;
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
@@ -309,22 +310,45 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2, _("Away"), NULL, "away");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
-	/*
-	 * TODO: This triggers a callback of gaim_gtk_status_box_changed().
-	 *       That's bad.  We should at least try not figure out what
-	 *       status the user's accounts are set to instead of always
-	 *       using "Available."
-	 */
-	/* gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0); */
+	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Custom..."), NULL, "custom");
 
-
-	for (list = gaim_savedstatuses_get_all(); list; list = list->next) {
-		GaimSavedStatus *status = list->data;
-
-		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2,
-		                        gaim_savedstatus_get_title(status), NULL, "saved");
+	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+	if (saved_status == NULL)
+	{
+		/* Default to "available" */
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
 	}
+	else
+	{
+		GaimStatusPrimitive primitive;
+		const char *message;
 
+		primitive = gaim_savedstatus_get_type(saved_status);
+		if (gaim_savedstatus_has_substatuses(saved_status) ||
+			((primitive != GAIM_STATUS_AVAILABLE) &&
+			(primitive != GAIM_STATUS_OFFLINE) &&
+			(primitive != GAIM_STATUS_AWAY) &&
+			(primitive != GAIM_STATUS_HIDDEN)))
+		{
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
+		}
+		else
+		{
+			if (primitive == GAIM_STATUS_AVAILABLE)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+			if (primitive == GAIM_STATUS_OFFLINE)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
+			else if (primitive == GAIM_STATUS_AWAY)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
+			else if (primitive == GAIM_STATUS_HIDDEN)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
+		}
+
+		message = gaim_savedstatus_get_message(saved_status);
+		if (message != NULL)
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+	}
 }
 
 
@@ -475,57 +499,63 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-static void remove_typing_cb(GtkGaimStatusBox *box)
+static void
+activate_currently_selected_status(GtkGaimStatusBox *status_box)
 {
 	gchar *status_type_id, *title;
 	GList *l;
 	GtkTreeIter iter;
+	GaimStatusPrimitive primitive;
+	char *message;
+	GaimSavedStatus *saved_status;
 
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(box), &iter);
-	gtk_tree_model_get(GTK_TREE_MODEL(box->dropdown_store), &iter,
+	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 					   TYPE_COLUMN, &status_type_id,
 					   TITLE_COLUMN, &title, -1);
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+	primitive = GAIM_STATUS_AWAY;
+	message = gtk_gaim_status_box_get_message(status_box);
+
+	/* TODO: Should save the previous status as a transient status? */
+
+	/* Save the newly selected status to prefs.xml and status.xml */
+	saved_status = gaim_savedstatus_find(_("Default"));
+	if (saved_status == NULL)
+		saved_status = gaim_savedstatus_new(_("Default"), primitive);
+	gaim_savedstatus_set_type(saved_status, primitive);
+	gaim_savedstatus_set_message(saved_status, message);
+	gaim_prefs_set_string("/core/status/current", _("Default"));
+
+	/* Set the status for each account */
+	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+	{
 		GaimAccount *account = (GaimAccount*)l->data;
 		GaimStatusType *status_type;
-		gchar *msg;
 
 		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 			continue;
-
-		/* I am not very comfortable with this, but can't think of a better way. */
-		/* XXX: this is definitely wrong - the specific account's saved status should
-		 * be looked for */
-		if (!strcmp(status_type_id, "saved"))
-		{
-			GaimSavedStatus *saved = NULL;
-			GaimStatusPrimitive type;
-
-			saved = gaim_savedstatus_find(title);
-			type = gaim_savedstatus_get_type(saved);
-			g_free(status_type_id);
-			status_type_id = g_strdup(gaim_primitive_get_id_from_type(type));
-		}
 
 		status_type = gaim_account_get_status_type(account, status_type_id);
 
 		if (status_type == NULL)
 			continue;
 
-		msg = gtk_imhtml_get_markup(GTK_IMHTML(box->imhtml));
 		gaim_account_set_status(account, status_type_id, TRUE,
-					"message", msg, NULL);
-		g_free(msg);
+								"message", message, NULL);
 	}
-	g_source_remove(box->typing);
-	box->typing = 0;
-	gtk_gaim_status_box_refresh(box);
 
-	/* How about saving the status here.. where title = first X characters of the message.
-	 * The user can alway edit the title later from Tools->Statuses if necessary
-	 */
 	g_free(status_type_id);
 	g_free(title);
+	g_free(message);
+}
+
+static void remove_typing_cb(GtkGaimStatusBox *status_box)
+{
+	activate_currently_selected_status(status_box);
+
+	g_source_remove(status_box->typing);
+	status_box->typing = 0;
+	gtk_gaim_status_box_refresh(status_box);
 }
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
@@ -535,7 +565,6 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	char *text, *sec_text;
 	GdkPixbuf *pixbuf;
 	gchar *status_type_id;
-	GList *l;
 
 	status_box = GTK_GAIM_STATUS_BOX(box);
 
@@ -556,33 +585,26 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		g_source_remove(status_box->typing);
 	status_box->typing = 0;
 
-	if (!strcmp(status_type_id, "away") || !strcmp(status_type_id, "saved")) {
+	/*
+	 * TODO: Should show the message box whenever status_type_id allows
+	 *       for a message attribute on any protocol that is enabled.
+	 */
+	if (!strcmp(status_type_id, "away"))
+		status_box->imhtml_visible = TRUE;
+	else
+		status_box->imhtml_visible = FALSE;
+
+	if (status_box->imhtml_visible)
+	{
 		gtk_widget_show_all(status_box->vbox);
 		status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		gtk_widget_grab_focus(status_box->imhtml);
-
-		/* If it's one of the saved statuses, then set the away message to that. */
-		if (!strcmp(status_type_id, "saved")) {
-			GaimSavedStatus *status = NULL;
-			status = gaim_savedstatus_find(text);
-			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), gaim_savedstatus_get_message(status), 0);
-		}
-	} else {
+	}
+	else
+	{
 		gtk_widget_hide_all(status_box->vbox);
-		for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-			GaimAccount *account = (GaimAccount*)l->data;
-			GaimStatusType *status_type;
-
-			if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
-				continue;
-
-			status_type = gaim_account_get_status_type(account, status_type_id);
-
-			if (status_type == NULL)
-				continue;
-			gaim_account_set_status(account, status_type_id, TRUE, NULL);
-		}
+		activate_currently_selected_status(status_box);
 	}
 	g_free(status_type_id);
 	gtk_gaim_status_box_refresh(status_box);

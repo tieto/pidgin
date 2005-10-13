@@ -1052,6 +1052,7 @@ gaim_prefs_update_old()
 	gaim_prefs_remove("/core/away/auto_response/in_active_conv");
 	gaim_prefs_remove("/core/away/auto_response/sec_before_resend");
 	gaim_prefs_remove("/core/away/auto_response");
+	gaim_prefs_remove("/core/away/default_message");
 	gaim_prefs_remove("/core/buddies/use_server_alias");
 	gaim_prefs_remove("/core/conversations/away_back_on_send");
 	gaim_prefs_remove("/core/conversations/send_urls_as_links");
@@ -1089,9 +1090,6 @@ gaim_prefs_init(void)
 	gaim_prefs_add_none("/core/away");
 	gaim_prefs_add_bool("/core/away/away_when_idle", TRUE);
 	gaim_prefs_add_int("/core/away/mins_before_away", 5);
-	/* XXX: internationalized string in prefs...evil */
-	gaim_prefs_add_string("/core/away/default_message",
-			_("Slightly less boring default"));
 
 	/* Away -> Auto-Reply */
 	if (!gaim_prefs_exists("/core/away/auto_response/enabled") ||

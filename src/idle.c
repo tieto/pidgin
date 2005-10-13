@@ -147,15 +147,14 @@ check_idle(gpointer data)
 
 		if (gaim_presence_is_available(presence))
 		{
-			const char *default_name;
+			const char *idleaway_name;
 
 			gaim_debug_info("idle", "Making %s auto-away\n",
 							gaim_account_get_username(account));
 
-			default_name = gaim_prefs_get_string("/core/away/default_message");
-
-			/* XXX STATUS AWAY CORE/UI */
-			/* Need to set the default_name away message for this connection here */
+			/* TODO XXX STATUS AWAY CORE/UI */
+			/* Mark our accounts "away" using the idleaway status */
+			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {
