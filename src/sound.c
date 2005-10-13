@@ -33,7 +33,7 @@ gaim_sound_play_file(const char *filename, const GaimAccount *account)
 {
 	GaimStatus *status;
 
-	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sounds/while_away")))
+	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sound/while_away")))
 	{
 		status = gaim_account_get_active_status(account);
 		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
@@ -49,7 +49,7 @@ gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
 {
 	GaimStatus *status;
 
-	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sounds/while_away")))
+	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sound/while_away")))
 	{
 		status = gaim_account_get_active_status(account);
 		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
