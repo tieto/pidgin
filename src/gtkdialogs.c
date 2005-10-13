@@ -81,7 +81,6 @@ static struct developer patch_writers[] = {
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
 	{"Kevin 'SimGuy' Stange",		NULL,	NULL},
-	{"Sadrul Habib Chowdhury",   	NULL, 	NULL},
 	{NULL, NULL, NULL}
 };
 
