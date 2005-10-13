@@ -54,6 +54,7 @@ extern char *yahoo_crypt(const char *, const char *);
 
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
 static void yahoo_login_page_cb(void *user_data, const char *buf, size_t len);
+static void yahoo_set_status(GaimAccount *account, GaimStatus *status);
 
 static void
 yahoo_add_permit(GaimConnection *gc, const char *who)
@@ -209,6 +210,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
 					yd->picture_upload_todo = NULL;
 				}
+				yahoo_set_status(account, gaim_account_get_active_status(account));
 
 				/* this requests the list. i have a feeling that this is very evil
 				 *
