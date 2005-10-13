@@ -113,7 +113,7 @@ static void simple_set_status(GaimAccount *account, GaimStatus *status) {
 
 	if(account->gc) sip = account->gc->proto_data;
 	if(sip) {
-		if(sip->status) g_free(sip->status);
+		g_free(sip->status);
 		if(primitive == GAIM_STATUS_AVAILABLE) sip->status = g_strdup("available");
 		else sip->status = g_strdup("busy");
 
@@ -178,7 +178,7 @@ static void connection_remove(struct simple_account_data *sip, int fd) {
 	struct sip_connection *conn = connection_find(sip, fd);
 	sip->openconns = g_slist_remove(sip->openconns, conn);
 	if(conn->inputhandler) gaim_input_remove(conn->inputhandler);
-	if(conn->inbuf) g_free(conn->inbuf);
+	g_free(conn->inbuf);
 	g_free(conn);
 }
 
@@ -1301,21 +1301,21 @@ static void simple_close(GaimConnection *gc)
 	do_register_exp(sip, 0);
 	connection_free_all(sip);
 	if(sip) {
-		if(sip->servername) g_free(sip->servername);
-		if(sip->username) g_free(sip->username);
-		if(sip->password) g_free(sip->password);
-		if(sip->registrar.nonce) g_free(sip->registrar.nonce);
-		if(sip->registrar.realm) g_free(sip->registrar.realm);
-		if(sip->proxy.nonce) g_free(sip->proxy.nonce);
-		if(sip->proxy.realm) g_free(sip->proxy.realm);
-		if(sip->sendlater) g_free(sip->sendlater);
-		if(sip->ip) g_free(sip->ip);
-		if(sip->realhostname) g_free(sip->realhostname);
+		g_free(sip->servername);
+		g_free(sip->username);
+		g_free(sip->password);
+		g_free(sip->registrar.nonce);
+		g_free(sip->registrar.realm);
+		g_free(sip->proxy.nonce);
+		g_free(sip->proxy.realm);
+		g_free(sip->sendlater);
+		g_free(sip->ip);
+		g_free(sip->realhostname);
 		if(sip->listenpa) gaim_input_remove(sip->listenpa);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
 		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = sip->realhostname = NULL;
 	}
-	if(gc->proto_data) g_free(gc->proto_data);
+	g_free(gc->proto_data);
 	gc->proto_data = 0;
 }
 
