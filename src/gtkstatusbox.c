@@ -508,13 +508,24 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	GaimStatusPrimitive primitive;
 	char *message;
 	GaimSavedStatus *saved_status;
+	int active_row;
 
 	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 					   TYPE_COLUMN, &status_type_id,
 					   TITLE_COLUMN, &title, -1);
-	primitive = GAIM_STATUS_AWAY;
 	message = gtk_gaim_status_box_get_message(status_box);
+	active_row = gtk_combo_box_get_active(GTK_COMBO_BOX(status_box));
+	if (active_row == 0)
+		primitive = GAIM_STATUS_AVAILABLE;
+	else if (active_row == 1)
+		primitive = GAIM_STATUS_AWAY;
+	else if (active_row == 2)
+		primitive = GAIM_STATUS_HIDDEN;
+	else if (active_row == 3)
+		primitive = GAIM_STATUS_OFFLINE;
+	else
+		primitive = GAIM_STATUS_AVAILABLE;
 
 	/* TODO: Should save the previous status as a transient status? */
 
