@@ -1000,8 +1000,6 @@ static void load_conf()
 			"COMPLETE 0\nBAD fromt he \nGOOD from the \n"
 			"BAD furneral\nGOOD funeral\n"
 			"BAD fwe\nGOOD few\n"
-			"COMPLETE 0\nBAD GAIM\nGOOD Gaim\n"
-			"COMPLETE 0\nBAD gAIM\nGOOD Gaim\n"
 			"BAD garantee\nGOOD guarantee\n"
 			"BAD gaurd\nGOOD guard\n"
 			"BAD gemeral\nGOOD general\n"
