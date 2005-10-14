@@ -521,7 +521,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 			"User-Agent: Gaim SIP/SIMPLE Plugin\r\n"
 			"Call-ID: %s\r\n"
 			"%s%s"
-			"Content-Length: %d\r\n\r\n%s",
+			"Content-Length: %" G_GSIZE_FORMAT "\r\n\r\n%s",
 			method,
 			url,
 			sip->udp ? "UDP" : "TCP",
