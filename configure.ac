@@ -576,14 +576,14 @@ dnl #######################################################################
 dnl # Check for Mono support
 dnl #######################################################################
 
-if test "$enable_mono" = yes ; then
+if test x"$enable_mono" = x"yes" ; then
 	AC_MSG_CHECKING(for Mono compile flags)
 	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
 	if test $? != 0 ; then
 		AC_MSG_RESULT([not found, building without mono.])
 		MONO_CFLAGS=
 		MONO_LIBS=
-		enable_mono = no
+		enable_mono=no
 	else
 		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
 		AC_MSG_RESULT(ok)
@@ -605,12 +605,12 @@ if test "$enable_mono" = yes ; then
 else
 	MONO_CFLAGS=
 	MONO_LIBS=
-	enable_mono = no
+	enable_mono=no
 fi
 
 AC_SUBST(MONO_CFLAGS)
 AC_SUBST(MONO_LIBS)
-AM_CONDITIONAL(USE_MONO, test "x$enable_mono" = "xyes")
+AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 
 dnl #######################################################################
 dnl # Check for Perl support
