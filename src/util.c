@@ -1856,10 +1856,7 @@ const char *
 gaim_home_dir(void)
 {
 #ifndef _WIN32
-	if(g_get_home_dir())
-		return g_get_home_dir();
-	else
-		return NULL;
+	return g_get_home_dir();
 #else
 	return wgaim_data_dir();
 #endif
