@@ -15,7 +15,7 @@ $(TARGET): $(SOURCES)
 
 .PHONY: install clean
 
-install:
+install: $(TARGET)
 	$(INSTALL) -m 644 $(TARGET) $(libdir)/gaim
 	
 clean:
