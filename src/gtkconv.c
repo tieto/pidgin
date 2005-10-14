@@ -94,7 +94,6 @@ static GdkColor nick_colors[] = {
 	{0, 33280, 26112, 18176},       /* Face Skin Shadow */
 	{0, 57088, 16896,  7680},       /* Accent Red */
 	{0, 39168,     0,     0},       /* Accent Red Dark */
-	{0, 60928, 54784, 32768},       /* Accent Yellow */
 	{0, 17920, 40960, 17920},       /* Accent Green */
 	{0,  9728, 50944,  9728}        /* Accent Green Dark */
 };
