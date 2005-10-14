@@ -52,18 +52,6 @@ typedef enum
 } GaimConversationType;
 
 /**
- * Unseen text states.
- */
-typedef enum
-{
-	GAIM_UNSEEN_NONE = 0,  /**< No unseen text in the conversation. */
-	GAIM_UNSEEN_TEXT,      /**< Unseen text in the conversation.    */
-	GAIM_UNSEEN_NICK,      /**< Unseen text and the nick was said.  */
-	GAIM_UNSEEN_EVENT      /**< Unseen events in the conversation.  */
-
-} GaimUnseenState;
-
-/**
  * Conversation update type.
  */
 typedef enum
@@ -246,8 +234,6 @@ struct _GaimConversation
 
 	GList *send_history;        /**< The send history.                  */
 
-	GaimUnseenState unseen;     /**< The unseen tab state.              */
-
 	union
 	{
 		GaimConvIm   *im;       /**< IM-specific data.                  */
@@ -395,24 +381,6 @@ const char *gaim_conversation_get_title(const GaimConversation *conv);
  * @param conv The conversation.
  */
 void gaim_conversation_autoset_title(GaimConversation *conv);
-
-/**
- * Sets the conversation's unseen state.
- *
- * @param conv  The conversation.
- * @param state The new unseen state.
- */
-void gaim_conversation_set_unseen(GaimConversation *conv,
-                                  GaimUnseenState state);
-
-/**
- * Returns the conversation's unseen state.
- *
- * @param conv The conversation.
- *
- * @return The conversation's unseen state.
- */
-GaimUnseenState gaim_conversation_get_unseen(const GaimConversation *conv);
 
 /**
  * Sets the specified conversation's name.

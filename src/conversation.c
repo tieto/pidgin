@@ -671,16 +671,6 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 }
 
 void
-gaim_conversation_set_unseen(GaimConversation *conv, GaimUnseenState state)
-{
-	g_return_if_fail(conv != NULL);
-
-	conv->unseen = state;
-
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_UNSEEN);
-}
-
-void
 gaim_conversation_foreach(void (*func)(GaimConversation *conv))
 {
 	GaimConversation *conv;
@@ -693,14 +683,6 @@ gaim_conversation_foreach(void (*func)(GaimConversation *conv))
 
 		func(conv);
 	}
-}
-
-GaimUnseenState
-gaim_conversation_get_unseen(const GaimConversation *conv)
-{
-	g_return_val_if_fail(conv != NULL, 0);
-
-	return conv->unseen;
 }
 
 void
@@ -854,7 +836,6 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	GaimConversationUiOps *ops;
 	const char *alias;
 	GaimBuddy *b;
-	GaimUnseenState unseen;
 	/* int logging_font_options = 0; */
 
 	g_return_if_fail(conv    != NULL);
@@ -922,28 +903,12 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	ops->write_conv(conv, who, alias, message, flags, mtime);
 
 
-	/* Tab highlighting */
-	if (!(flags & GAIM_MESSAGE_RECV) && !(flags & GAIM_MESSAGE_SYSTEM) && !(flags & GAIM_MESSAGE_ERROR))
-		return;
-
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
-		if ((flags & GAIM_MESSAGE_RECV) == GAIM_MESSAGE_RECV)
+		if ((flags & GAIM_MESSAGE_RECV) == GAIM_MESSAGE_RECV) {
 			gaim_conv_im_set_typing_state(GAIM_CONV_IM(conv), GAIM_NOT_TYPING);
+			gaim_conversation_update(conv, GAIM_CONV_UPDATE_TITLE);
+		}
 	}
-
-	{
-		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
-				gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
-			unseen = GAIM_UNSEEN_NICK;
-		else if ((((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
-			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR)) &&
-				 gaim_conversation_get_unseen(conv) != GAIM_UNSEEN_TEXT)
-			unseen = GAIM_UNSEEN_EVENT;
-		else
-			unseen = GAIM_UNSEEN_TEXT;
-	}
-
-	gaim_conversation_set_unseen(conv, unseen);
 }
 
 gboolean

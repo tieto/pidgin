@@ -29,6 +29,18 @@ typedef struct _GaimGtkImPane       GaimGtkImPane;
 typedef struct _GaimGtkChatPane     GaimGtkChatPane;
 typedef struct _GaimGtkConversation GaimGtkConversation;
 
+/**
+ * Unseen text states.
+ */
+typedef enum
+{
+	GAIM_UNSEEN_NONE = 0,  /**< No unseen text in the conversation. */
+	GAIM_UNSEEN_TEXT,      /**< Unseen text in the conversation.    */
+	GAIM_UNSEEN_NICK,      /**< Unseen text and the nick was said.  */
+	GAIM_UNSEEN_EVENT      /**< Unseen events in the conversation.  */
+
+} GaimUnseenState;
+
 enum {
 	CHAT_USERS_ICON_COLUMN,
 	CHAT_USERS_ALIAS_COLUMN,
@@ -131,6 +143,8 @@ struct _GaimGtkConversation
 	GtkWidget *lower_hbox;
 
 	GtkWidget *toolbar;
+
+	GaimUnseenState unseen_state;
 
 	struct
 	{

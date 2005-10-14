@@ -127,6 +127,7 @@ static void gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type
 static void gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state);
 static void update_typing_icon(GaimGtkConversation *gtkconv);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
+gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -1601,7 +1602,6 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 {
 	GaimGtkConversation *next_gtkconv = NULL;
 	GaimGtkWindow *win;
-	GList *l;
 	int index, i, total, found = 0;
 
 	win   = gtkconv->win;
@@ -1615,14 +1615,9 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 		if (i == -1) {
 			break;
 		}
-		for (l = next_gtkconv->convs; l; l = forward ? l->next : l->prev) {
-			GaimConversation *c = l->data;
-			if (gaim_conversation_get_unseen(c) > 0)
-			{
-				found = 1;
-				break;
-			}
-		}
+
+		if (next_gtkconv->unseen_state > 0)
+			found = 1;
 	}
 
 	if (!found) {
@@ -1631,13 +1626,9 @@ move_to_next_unread_tab(GaimGtkConversation *gtkconv, gboolean forward)
 			 !found && (forward ? i < index : i >= 0) &&
 			 (next_gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win, i));
 			 forward ? i++ : i--) {
-			for (l = next_gtkconv->convs; l; l = forward ? l->next : l->prev) {
-				GaimConversation *c = l->data;
-				if (gaim_conversation_get_unseen(c) > 0) {
-					found = 1;
-					break;
-				}
-			}
+
+			if (next_gtkconv->unseen_state > 0)
+				found = 1;
 		}
 
 		if (!found) {
@@ -4261,6 +4252,24 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	if(sml_attrib)
 		g_free(sml_attrib);
+
+	/* Tab highlighting stuff */
+	if (!gaim_gtkconv_has_focus(conv))
+	{
+		GaimUnseenState unseen = GAIM_UNSEEN_NONE;
+
+		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
+				gtkconv->unseen_state == GAIM_UNSEEN_NICK)
+			unseen = GAIM_UNSEEN_NICK;
+		else if ((((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
+			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR)) &&
+				 gtkconv->unseen_state != GAIM_UNSEEN_TEXT)
+			unseen = GAIM_UNSEEN_EVENT;
+		else
+			unseen = GAIM_UNSEEN_TEXT;
+
+		gtkconv_set_unseen(gtkconv, unseen);
+	}
 }
 
 static void
@@ -4914,15 +4923,15 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		{
 			strcpy(color, "#D1940C");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_NICK)
+		else if (gtkconv->unseen_state == GAIM_UNSEEN_NICK)
 		{
 			strcpy(color, "#0D4E91");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
+		else if (gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
 		{
 			strcpy(color, "#DF421E");
 		}
-		else if (gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_EVENT)
+		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
 		{
 			strcpy(color, "#868272");
 		}
@@ -5662,24 +5671,20 @@ static gboolean
 close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
 	GaimGtkWindow *win = d;
-	GList *l, *j;
+	GList *l;
 
 	/* If there are unread messages then show a warning dialog */
 	for (l = gaim_gtk_conv_window_get_gtkconvs(win);
 	     l != NULL; l = l->next)
 	{
 		GaimGtkConversation *gtkconv = l->data;
+		if (gaim_conversation_get_type(gtkconv->active_conv) == GAIM_CONV_TYPE_IM &&
+				gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
+		{
+			build_warn_close_dialog(win);
+			gtk_widget_show_all(warn_close_dialog);
 
-		for (j = gtkconv->convs; j != NULL; j = j->next) {
-			GaimConversation *conv = j->data;
-			if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM &&
-			    gaim_conversation_get_unseen(conv) == GAIM_UNSEEN_TEXT)
-			{
-				build_warn_close_dialog(win);
-				gtk_widget_show_all(warn_close_dialog);
-
-				return TRUE;
-			}
+			return TRUE;
 		}
 	}
 
@@ -5691,10 +5696,9 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void
 gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 {
-	GList *l;
+	gtkconv->unseen_state = state;
 
-	for (l = gtkconv->convs; l != NULL; l = l->next)
-		gaim_conversation_set_unseen(l->data, state);
+	gaim_gtkconv_updated(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
 }
 /*
  * When a conversation window is focused, we know the user
