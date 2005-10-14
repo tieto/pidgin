@@ -294,6 +294,7 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
+AC_ARG_ENABLE(mono,    [  --disable-mono		  compile without Mono runtime support],,enable_mono=yes)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
@@ -571,6 +572,45 @@ fi
 
 GC_TM_GMTOFF
 
+dnl #######################################################################
+dnl # Check for Mono support
+dnl #######################################################################
+
+if test "$enable_mono" = yes ; then
+	AC_MSG_CHECKING(for Mono compile flags)
+	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
+	if test $? != 0 ; then
+		AC_MSG_RESULT([not found, building without mono.])
+		MONO_CFLAGS=
+		MONO_LIBS=
+		enable_mono = no
+	else
+		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
+		AC_MSG_RESULT(ok)
+		
+		oldLIBS="$LIBS"
+		LIBS="$LIBS $MONO_LIBS"
+		AC_MSG_CHECKING(for libmono)
+		AC_CHECK_FUNCS(mono_jit_init, [], enable_mono=no)
+		LIBS="$oldLIBS"
+		
+		oldCPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $MONO_CFLAGS"
+		AC_CHECK_HEADERS(mono/jit/jit.h, [], enable_mono=no)
+		AC_CHECK_HEADERS(mono/metadata/object.h, [], enable_mono=no)
+		CPPFLAGS="$oldCPPFLAGS"
+		
+		AC_DEFINE(ENABLE_MONO, 1, [Define if mono enabled.])
+	fi
+else
+	MONO_CFLAGS=
+	MONO_LIBS=
+	enable_mono = no
+fi
+
+AC_SUBST(MONO_CFLAGS)
+AC_SUBST(MONO_LIBS)
+AM_CONDITIONAL(USE_MONO, test "x$enable_mono" = "xyes")
 
 dnl #######################################################################
 dnl # Check for Perl support
@@ -1379,6 +1419,9 @@ AC_OUTPUT([Makefile
 		   plugins/docklet/Makefile
 		   plugins/gevolution/Makefile
 		   plugins/gestures/Makefile
+		   plugins/mono/Makefile
+		   plugins/mono/api/Makefile
+		   plugins/mono/loader/Makefile
 		   plugins/musicmessaging/Makefile
 		   plugins/perl/Makefile
 		   plugins/perl/common/Makefile.PL
@@ -1421,6 +1464,7 @@ echo UI Library.................... : GTK+ 2.x
 echo SSL Library/Libraries......... : $msg_ssl
 echo
 echo Build with Plugin support..... : $enable_plugins
+echo Build with Mono support....... : $enable_mono
 echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk

@@ -19,6 +19,10 @@ DBUS_LTLIB = dbus-example.la
 MUSICMESSAGING_DIR = musicmessaging
 endif
 
+if USE_MONO
+MONO_DIR = mono
+endif
+
 SUBDIRS = \
 	docklet \
 	$(GEVOLUTION_DIR) \
@@ -27,7 +31,8 @@ SUBDIRS = \
 	ssl \
 	$(TCL_DIR) \
 	ticker \
-	$(MUSICMESSAGING_DIR)
+	$(MUSICMESSAGING_DIR) \
+	$(MONO_DIR)
 
 plugindir = $(libdir)/gaim
 
