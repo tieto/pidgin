@@ -573,9 +573,10 @@ static void add_button (MMConversation *mmconv)
 
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), mmconv);
 
-	/* gchar *file_path = g_build_filename (DATADIR, "pixmaps", "gaim", "buttons", "music.png", NULL); */
-	gchar *file_path = "/usr/local/share/pixmaps/gaim/buttons/music.png";
+	gchar *file_path = g_build_filename(DATADIR, "pixmaps", "gaim", "buttons",
+										"music.png", NULL);
 	image = gtk_image_new_from_file(file_path);
+	g_free(file_path);
 
 	gtk_container_add((GtkContainer *)button, image);
 	
