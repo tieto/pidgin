@@ -110,6 +110,10 @@
 # include <unistd.h>
 #endif
 
+#ifndef I_KNOW_I_SHOULD_NOT_SEEK_HELP_WITH_GAIM_CVS
+#error You are using Gaim CVS. Do not seek help. Do not pass Go. Do not collect Gaim 2.0.0.
+#endif
+
 #ifndef MAXPATHLEN
 # define MAXPATHLEN 1024
 #endif
