@@ -1910,7 +1910,7 @@ gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 
-	gaim_gtkconv_updated(conv, GAIM_CONV_UPDATE_ACCOUNT);
+	gaim_conversation_update(conv, GAIM_CONV_UPDATE_ACCOUNT);
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
 	                             gaim_account_get_protocol_name(conv->account));
 }
@@ -5698,7 +5698,7 @@ gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 {
 	gtkconv->unseen_state = state;
 
-	gaim_gtkconv_updated(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
+	gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
 }
 /*
  * When a conversation window is focused, we know the user
