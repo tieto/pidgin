@@ -5125,7 +5125,7 @@ static int gaim_reqinfo_timeout(aim_session_t *sess, aim_frame_t *fr, ...)
 	 * too quickly.
 	 */
 	if (od->getinfotimer == 0)
-		od->getinfotimer = gaim_timeout_add(1500, gaim_reqinfo_timeout_cb, sess);
+		od->getinfotimer = gaim_timeout_add(10000, gaim_reqinfo_timeout_cb, sess);
 
 	return 1;
 }
