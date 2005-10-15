@@ -532,7 +532,9 @@ gaim_conversation_set_features(GaimConversation *conv, GaimConnectionFlags featu
 
 	conv->features = features;
 
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_FEATURES);
+	ops = conv->ui_ops;
+	if(ops && ops->updated)
+		ops->updated(conv, GAIM_CONV_UPDATE_FEATURES);
 }
 
 
@@ -626,7 +628,10 @@ gaim_conversation_set_title(GaimConversation *conv, const char *title)
 
 	conv->title = g_strdup(title);
 
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_TITLE);
+	ops = gaim_conversation_get_ui_ops(conv);
+
+	if (ops != NULL && ops->updated != NULL)
+		ops->updated(conv, GAIM_CONV_UPDATE_TITLE);
 }
 
 const char *
