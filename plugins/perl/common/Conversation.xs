@@ -78,10 +78,6 @@ void
 gaim_conversation_autoset_title(conv)
 	Gaim::Conversation conv
 
-Gaim::UnseenState
-gaim_conversation_get_unseen(conv)
-	Gaim::Conversation conv
-
 void
 gaim_conversation_set_name(conv, name)
 	Gaim::Conversation conv
