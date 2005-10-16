@@ -229,6 +229,15 @@ common_send(GaimConversation *conv, const char *message)
 	g_free(sent);
 }
 
+static void
+open_log(GaimConversation *conv)
+{
+	conv->logs = g_list_append(NULL, gaim_log_new(conv->type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
+							   GAIM_LOG_IM, conv->name, conv->account,
+							   conv, time(NULL)));
+}
+
+
 /**************************************************************************
  * Conversation API
  **************************************************************************/
@@ -241,10 +250,8 @@ gaim_conversation_chat_cleanup_for_rejoin(GaimConversation *conv)
 
 	account = gaim_conversation_get_account(conv);
 
-	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
-	g_list_free(conv->logs);
-	conv->logs = g_list_append(NULL, gaim_log_new(GAIM_LOG_CHAT, gaim_conversation_get_name(conv),
-							 account, conv, time(NULL)));
+	gaim_conversation_close_logs(conv);
+	open_log(conv);
 
 	gc = gaim_account_get_connection(account);
 
@@ -301,9 +308,6 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 	conv->send_history = g_list_append(NULL, NULL);
 	conv->data         = g_hash_table_new_full(g_str_hash, g_str_equal,
 											   g_free, NULL);
-	conv->logs         = g_list_append(NULL, gaim_log_new(type == GAIM_CONV_TYPE_CHAT ? GAIM_LOG_CHAT :
-									  GAIM_LOG_IM, conv->name, account,
-									  conv, time(NULL)));
 	/* copy features from the connection. */
 	conv->features = gc->flags;
 
@@ -318,8 +322,11 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 		if ((icon = gaim_buddy_icons_find(account, name)))
 			gaim_conv_im_set_icon(conv->u.im, icon);
 
-		gaim_conversation_set_logging(conv,
-				gaim_prefs_get_bool("/core/logging/log_ims"));
+		if (gaim_prefs_get_bool("/core/logging/log_ims"))
+		{
+			gaim_conversation_set_logging(conv, TRUE);
+			open_log(conv);
+		}
 	}
 	else if (type == GAIM_CONV_TYPE_CHAT)
 	{
@@ -337,8 +344,11 @@ gaim_conversation_new(GaimConversationType type, GaimAccount *account,
 			gaim_conv_chat_set_nick(conv->u.chat,
 									gaim_account_get_username(account));
 
-		gaim_conversation_set_logging(conv,
-				gaim_prefs_get_bool("/core/logging/log_chats"));
+		if (gaim_prefs_get_bool("/core/logging/log_chats"))
+		{
+			gaim_conversation_set_logging(conv, TRUE);
+			open_log(conv);
+		}
 	}
 
 	conversations = g_list_append(conversations, conv);
@@ -514,8 +524,7 @@ gaim_conversation_destroy(GaimConversation *conv)
 	if (ops != NULL && ops->destroy_conversation != NULL)
 		ops->destroy_conversation(conv);
 
-	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
-	g_list_free(conv->logs);
+	gaim_conversation_close_logs(conv);
 
 	GAIM_DBUS_UNREGISTER_POINTER(conv);
 	g_free(conv);
@@ -706,9 +715,11 @@ gaim_conversation_set_logging(GaimConversation *conv, gboolean log)
 {
 	g_return_if_fail(conv != NULL);
 
-	conv->logging = log;
-
-	gaim_conversation_update(conv, GAIM_CONV_UPDATE_LOGGING);
+	if (conv->logging != log)
+	{
+		conv->logging = log;
+		gaim_conversation_update(conv, GAIM_CONV_UPDATE_LOGGING);
+	}
 }
 
 gboolean
@@ -717,6 +728,16 @@ gaim_conversation_is_logging(const GaimConversation *conv)
 	g_return_val_if_fail(conv != NULL, FALSE);
 
 	return conv->logging;
+}
+
+void
+gaim_conversation_close_logs(GaimConversation *conv)
+{
+	g_return_if_fail(conv != NULL);
+
+	g_list_foreach(conv->logs, (GFunc)gaim_log_free, NULL);
+	g_list_free(conv->logs);
+	conv->logs = NULL;
 }
 
 GList *
@@ -889,7 +910,12 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 	}
 
 	if (gaim_conversation_is_logging(conv)) {
-		GList *log = conv->logs;
+		GList *log;
+
+		if (conv->logs == NULL)
+			open_log(conv);
+
+		log = conv->logs;
 		while (log != NULL) {
 			gaim_log_write((GaimLog *)log->data, flags, alias, mtime, message);
 			log = log->next;

@@ -417,6 +417,17 @@ void gaim_conversation_set_logging(GaimConversation *conv, gboolean log);
 gboolean gaim_conversation_is_logging(const GaimConversation *conv);
 
 /**
+ * Closes any open logs for this conversation.
+ *
+ * Note that new logs will be opened as necessary (e.g. upon receipt of a
+ * message, if the conversation has logging enabled. To disable logging for
+ * the remainder of the conversation, use gaim_conversation_set_logging().
+ *
+ * @param conv The conversation.
+ */
+void gaim_conversation_close_logs(GaimConversation *conv);
+
+/**
  * Returns the specified conversation's send history.
  *
  * @param conv The conversation.

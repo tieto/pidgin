@@ -117,6 +117,8 @@ version 2.0.0:
 	           instead
 	* Removed: serv_change_passwd(); use gaim_account_change_password()
 	           instead
+	* Added:   gaim_conversation_close_logs(), to force a conversation's
+	           log(s) to be closed. New logs will be opened as necessary.
 
 	Signals:
 	* Changed: "received-im-msg" and "received-chat-msg" to match, both

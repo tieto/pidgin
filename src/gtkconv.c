@@ -1891,6 +1891,26 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 }
 
 static void
+gaim_gtkconv_set_active_conversation(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+
+	g_return_if_fail(conv != NULL);
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if (gtkconv->active_conv == conv)
+		return;
+
+	gaim_conversation_close_logs(gtkconv->active_conv);
+
+	gtkconv->active_conv = conv;
+
+	gaim_conversation_set_logging(conv,
+		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
+}
+
+static void
 gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;
@@ -1899,13 +1919,10 @@ gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtkconv->active_conv = conv;
+	gaim_gtkconv_set_active_conversation(conv);
 
 	gray_stuff_out(gtkconv);
 	update_typing_icon(gtkconv);
-
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging),
-	                               gaim_conversation_is_logging(conv));
 
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -3899,7 +3916,7 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkconv->active_conv = conv;
+	gaim_gtkconv_set_active_conversation(conv);
 
 	gtkconv->u.im->a_virgin = FALSE;
 
@@ -3913,7 +3930,7 @@ gaim_gtkconv_write_chat(GaimConversation *conv, const char *who,
 	GaimGtkConversation *gtkconv;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
-	gtkconv->active_conv = conv;
+	gaim_gtkconv_set_active_conversation(conv);
 
 	flags |= GAIM_MESSAGE_COLORIZE;
 
@@ -4025,7 +4042,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	/* Set the active conversation to the one that just messaged us. */
 	/* TODO: consider not doing this if the account is offline or something */
-	gtkconv->active_conv = conv;
+	gaim_gtkconv_set_active_conversation(conv);
 
 	gc = gaim_conversation_get_gc(conv);
 	account = gaim_conversation_get_account(conv);
@@ -6094,6 +6111,9 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
 
 	/* Update the menubar */
+
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging),
+	                               gaim_conversation_is_logging(conv));
 
 	generate_send_to_items(win);
 
