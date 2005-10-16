@@ -333,7 +333,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -h, --help          display this help and exit\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
-		       "                      account(s) to use, seperated by commas)\n"
+		       "                      account(s) to use, separated by commas)\n"
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
