@@ -33,6 +33,7 @@
 #include "jabber.h"
 #include "iq.h"
 #include "presence.h"
+#include "xdata.h"
 
 void jabber_buddy_free(JabberBuddy *jb)
 {
@@ -1139,4 +1140,254 @@ const char *jabber_buddy_state_get_status_id(JabberBuddyState state) {
 			return "offline";
 	}
 	return NULL;
+}
+
+static void user_search_result_add_buddy_cb(GaimConnection *gc, GList *row)
+{
+	/* XXX find out the jid */
+	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
+			g_list_nth_data(row, 0), NULL, NULL);
+}
+
+static void user_search_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	GaimNotifySearchResults *results;
+	GaimNotifySearchColumn *column;
+	xmlnode *x, *query, *item, *field;
+
+	/* XXX error checking? */
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	results = gaim_notify_searchresults_new();
+	if((x = xmlnode_get_child_with_namespace(query, "x", "jabber:x:data"))) {
+		xmlnode *reported;
+		gaim_debug_info("jabber", "new-skool\n");
+		if((reported = xmlnode_get_child(x, "reported"))) {
+			xmlnode *field = xmlnode_get_child(reported, "field");
+			while(field) {
+				/* XXX keep track of this order, use it below */
+				const char *var = xmlnode_get_attrib(field, "var");
+				const char *label = xmlnode_get_attrib(field, "label");
+				if(var) {
+					column = gaim_notify_searchresults_column_new(label ? label : var);
+					gaim_notify_searchresults_column_add(results, column);
+				}
+				field = xmlnode_get_next_twin(field);
+			}
+		}
+		item = xmlnode_get_child(x, "item");
+		while(item) {
+			GList *row = NULL;
+			field = xmlnode_get_child(item, "field");
+			while(field) {
+				xmlnode *valuenode = xmlnode_get_child(item, "value");
+				if(valuenode) {
+					char *value = xmlnode_get_data(valuenode);
+					row = g_list_append(row, value);
+				}
+				field = xmlnode_get_next_twin(field);
+			}
+			gaim_notify_searchresults_row_add(results, row);
+
+			item = xmlnode_get_next_twin(item);
+		}
+	} else {
+		/* old skool */
+		gaim_debug_info("jabber", "old-skool\n");
+
+		column = gaim_notify_searchresults_column_new("JID");
+		gaim_notify_searchresults_column_add(results, column);
+		column = gaim_notify_searchresults_column_new("First");
+		gaim_notify_searchresults_column_add(results, column);
+		column = gaim_notify_searchresults_column_new("Last");
+		gaim_notify_searchresults_column_add(results, column);
+		column = gaim_notify_searchresults_column_new("Nickname");
+		gaim_notify_searchresults_column_add(results, column);
+		column = gaim_notify_searchresults_column_new("E-Mail");
+		gaim_notify_searchresults_column_add(results, column);
+
+		for(item = xmlnode_get_child(query, "item"); item; item = xmlnode_get_next_twin(item)) {
+			const char *jid;
+			xmlnode *node;
+			GList *row = NULL;
+
+			if(!(jid = xmlnode_get_attrib(item, "jid")))
+				continue;
+
+			row = g_list_append(row, g_strdup(jid));
+			node = xmlnode_get_child(item, "first");
+			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
+			node = xmlnode_get_child(item, "last");
+			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
+			node = xmlnode_get_child(item, "nick");
+			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
+			node = xmlnode_get_child(item, "email");
+			row = g_list_append(row, node ? xmlnode_get_data(node) : NULL);
+			gaim_debug_info("jabber", "row=%d\n", row);
+			gaim_notify_searchresults_row_add(results, row);
+		}
+	}
+
+	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD_BUDDY,
+			user_search_result_add_buddy_cb);
+
+	gaim_notify_searchresults(js->gc, NULL, NULL, _("The following are the results of your search"), results, NULL, NULL);
+}
+
+static void user_search_x_data_cb(JabberStream *js, xmlnode *result, gpointer data)
+{
+	xmlnode *query;
+	JabberIq *iq;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:search");
+	query = xmlnode_get_child(iq->node, "query");
+
+	xmlnode_insert_child(query, result);
+
+	jabber_iq_set_callback(iq, user_search_result_cb, NULL);
+	jabber_iq_send(iq);
+}
+
+struct user_search_info {
+	JabberStream *js;
+	char *directory_server;
+};
+
+static void user_search_cancel_cb(struct user_search_info *usi, GaimRequestFields *fields)
+{
+	g_free(usi->directory_server);
+	g_free(usi);
+}
+
+static void user_search_cb(struct user_search_info *usi, GaimRequestFields *fields)
+{
+	JabberStream *js = usi->js;
+	JabberIq *iq;
+	xmlnode *query;
+	GList *groups, *flds;
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:search");
+	query = xmlnode_get_child(iq->node, "query");
+
+	for(groups = gaim_request_fields_get_groups(fields); groups; groups = groups->next) {
+		for(flds = gaim_request_field_group_get_fields(groups->data);
+				flds; flds = flds->next) {
+			GaimRequestField *field = flds->data;
+			const char *id = gaim_request_field_get_id(field);
+			const char *value = gaim_request_field_string_get_value(field);
+
+			if(value && (!strcmp(id, "first") || !strcmp(id, "last") || !strcmp(id, "nick") || !strcmp(id, "email"))) {
+				xmlnode *y = xmlnode_new_child(query, id);
+				xmlnode_insert_data(y, value, -1);
+			}
+		}
+	}
+
+	jabber_iq_set_callback(iq, user_search_result_cb, NULL);
+	xmlnode_set_attrib(iq->node, "to", usi->directory_server);
+	jabber_iq_send(iq);
+
+	g_free(usi->directory_server);
+	g_free(usi);
+}
+
+static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
+{
+	xmlnode *query, *x;
+	const char *from;
+
+	/* i forget, do i have to check for error? XXX */
+	if(!(from= xmlnode_get_attrib(packet, "from")))
+		return;
+
+
+	if(!(query = xmlnode_get_child(packet, "query")))
+		return;
+
+	if((x = xmlnode_get_child_with_namespace(packet, "x", "jabber:x:data"))) {
+		jabber_x_data_request(js, x, user_search_x_data_cb, NULL);
+		return;
+	} else {
+		struct user_search_info *usi;
+		xmlnode *instnode;
+		char *instructions;
+		GaimRequestFields *fields;
+		GaimRequestFieldGroup *group;
+		GaimRequestField *field;
+
+		/* old skool */
+		fields = gaim_request_fields_new();
+		group = gaim_request_field_group_new(NULL);
+		gaim_request_fields_add_group(fields, group);
+
+		if((instnode = xmlnode_get_child(query, "instructions")))
+			instructions = xmlnode_get_data(instnode);
+		else
+			instructions = g_strdup(_("Fill in one or more fields to search "
+						"for any matching Jabber users."));
+
+		if(xmlnode_get_child(query, "first")) {
+			field = gaim_request_field_string_new("first", _("First Name"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "last")) {
+			field = gaim_request_field_string_new("last", _("Last Name"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "nick")) {
+			field = gaim_request_field_string_new("nick", _("Nickname"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+		if(xmlnode_get_child(query, "email")) {
+			field = gaim_request_field_string_new("email", _("E-Mail Address"),
+					NULL, FALSE);
+			gaim_request_field_group_add_field(group, field);
+		}
+
+		usi = g_new0(struct user_search_info, 1);
+		usi->js = js;
+		usi->directory_server = g_strdup(from);
+
+		gaim_request_fields(js->gc, _("Search for Jabber users"),
+				_("Search for Jabber users"), instructions, fields,
+				_("Search"), G_CALLBACK(user_search_cb),
+				_("Cancel"), G_CALLBACK(user_search_cancel_cb), usi);
+
+		g_free(instructions);
+	}
+}
+
+static void jabber_user_search_ok(JabberStream *js, const char *directory)
+{
+	JabberIq *iq;
+
+	/* XXX: should probably better validate the directory we're given */
+	if(!directory || !*directory) {
+		gaim_notify_error(js->gc, _("Invalid Directory"), _("Invalid Directory"), NULL);
+		return;
+	}
+
+	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:search");
+	xmlnode_set_attrib(iq->node, "to", directory);
+
+	jabber_iq_set_callback(iq, user_search_fields_result_cb, NULL);
+
+	jabber_iq_send(iq);
+}
+
+void jabber_user_search_begin(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	JabberStream *js = gc->proto_data;
+
+	gaim_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
+			_("Select a user directory to search"),
+			js->user_directories ? js->user_directories->data : "users.jabber.org",
+			FALSE, FALSE, NULL,
+			_("Search Directory"), GAIM_CALLBACK(jabber_user_search_ok),
+			_("Cancel"), NULL, js);
 }

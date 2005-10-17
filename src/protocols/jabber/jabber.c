@@ -810,6 +810,10 @@ static void jabber_close(GaimConnection *gc)
 		g_free(js->chat_servers->data);
 		js->chat_servers = g_list_delete_link(js->chat_servers, js->chat_servers);
 	}
+	while(js->user_directories) {
+		g_free(js->user_directories->data);
+		js->user_directories = g_list_delete_link(js->user_directories, js->user_directories);
+	}
 	if(js->stream_id)
 		g_free(js->stream_id);
 	if(js->user)
@@ -1173,6 +1177,10 @@ static GList *jabber_actions(GaimPlugin *plugin, gpointer context)
 				jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
+
+	act = gaim_plugin_action_new(_("Search for users"),
+			jabber_user_search_begin);
+	m = g_list_append(m, act);
 
 	return m;
 }

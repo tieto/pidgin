@@ -87,4 +87,6 @@ const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
 
+void jabber_user_search_begin(GaimPluginAction *);
+
 #endif /* _GAIM_JABBER_BUDDY_H_ */

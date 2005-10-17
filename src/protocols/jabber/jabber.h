@@ -39,6 +39,8 @@ typedef enum {
 	JABBER_CAP_BYTESTREAMS    = 1 << 4,
 	JABBER_CAP_IBB            = 1 << 5,
 	JABBER_CAP_CHAT_STATES    = 1 << 6,
+	JABBER_CAP_IQ_SEARCH      = 1 << 7,
+	JABBER_CAP_IQ_REGISTER    = 1 << 8,
 	JABBER_CAP_RETRIEVED      = 1 << 31
 } JabberCapabilities;
 
@@ -80,6 +82,7 @@ typedef struct _JabberStream
 	GHashTable *chats;
 	GList *chat_servers;
 	GaimRoomlist *roomlist;
+	GList *user_directories;
 
 	GHashTable *iq_callbacks;
 	GHashTable *disco_callbacks;

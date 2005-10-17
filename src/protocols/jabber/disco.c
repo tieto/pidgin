@@ -106,10 +106,14 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 				if(!category || !type)
 					continue;
 
-				/* we found a groupchat or MUC server, add it to the list */
-				/* XXX: actually check for protocol/muc or gc-1.0 support */
-				if(!strcmp(category, "conference") && !strcmp(type, "text"))
+				if(!strcmp(category, "conference") && !strcmp(type, "text")) {
+					/* we found a groupchat or MUC server, add it to the list */
+					/* XXX: actually check for protocol/muc or gc-1.0 support */
 					js->chat_servers = g_list_append(js->chat_servers, g_strdup(from));
+				} else if(!strcmp(category, "directory") && !strcmp(type, "user")) {
+					/* we found a JUD */
+					js->user_directories = g_list_append(js->user_directories, g_strdup(from));
+				}
 
 			} else if(!strcmp(child->name, "feature")) {
 				const char *var = xmlnode_get_attrib(child, "var");
@@ -122,6 +126,10 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					capabilities |= JABBER_CAP_SI_FILE_XFER;
 				else if(!strcmp(var, "http://jabber.org/protocol/bytestreams"))
 					capabilities |= JABBER_CAP_BYTESTREAMS;
+				else if(!strcmp(var, "jabber:iq:search"))
+					capabilities |= JABBER_CAP_IQ_SEARCH;
+				else if(!strcmp(var, "jabber:iq:register"))
+					capabilities |= JABBER_CAP_IQ_REGISTER;
 			}
 		}
 
