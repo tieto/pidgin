@@ -13,12 +13,15 @@ GTK_TOP :=		../../../../win32-dev/gtk_2_0
 GAIM_TOP :=		../../..
 BONJOUR_ROOT :=		.
 GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+HOWL_DIR := $(GAIM_TOP)/../win32-dev/howl-1.0.0
 
 ##
 ## VARIABLE DEFINITIONS
 ##
 
 TARGET = libbonjour
+
+NEEDED_DLLS =		$(HOWL_DIR)/bin/libhowl-1.dll
 
 # Compiler Options
 
@@ -55,12 +58,14 @@ INCLUDE_PATHS +=	-I$(BONJOUR_ROOT) \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(HOWL_DIR)/include/howl \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP)
 
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(HOWL_DIR)/lib \
 			-L$(GAIM_TOP)/src
 
 
@@ -68,7 +73,10 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			rendezvous.c
+C_SRC =			bonjour.c \
+			buddy.c \
+			dns_sd.c \
+			jabber.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -85,6 +93,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
+			-lhowl \
 			-lgaim
 
 
@@ -107,6 +116,7 @@ all: $(TARGET).dll
 
 install:
 	cp $(BONJOUR_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 
 
 ##

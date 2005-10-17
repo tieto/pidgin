@@ -19,11 +19,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#ifndef _WIN32
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#else
+#include "libc_interface.h"
+#endif
+#include <sys/types.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <unistd.h>
