@@ -281,11 +281,10 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	return 0;
 }
 
-static gboolean
-_dns_sd_handle_packets(GIOChannel *source, GIOCondition condition, gpointer data)
+static void
+_dns_sd_handle_packets(gpointer data, gint source, GaimInputCondition condition)
 {
 	sw_discovery_read_socket(*((sw_discovery*)data));
-	return TRUE;
 }
 
 // End private functions
@@ -338,9 +337,13 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
 void
 bonjour_dns_sd_start(BonjourDnsSd *data)
 {
-	GIOChannel *io_channel;
+	GaimAccount *account;
+	GaimConnection *gc;
 	gint dns_sd_socket;
 	sw_discovery_oid session_id;
+
+	account = data->account;
+	gc = gaim_account_get_connection(account);
 
 	// Initilizations of the dns-sd data and session
 	data->session = malloc(sizeof(sw_discovery));
@@ -364,9 +367,8 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	// Get the socket that communicates with the mDNS daemon and bind it to a
 	// callback that will handle the dns_sd packets
 	dns_sd_socket = sw_discovery_socket(*(data->session));
-	io_channel = g_io_channel_unix_new(dns_sd_socket);
-	// Add more for other conditions like when the conn. has been broken
-	g_io_add_watch(io_channel, G_IO_IN, _dns_sd_handle_packets, data->session);
+	gc->inpa = gaim_input_add(dns_sd_socket, GAIM_INPUT_READ,
+									_dns_sd_handle_packets, data->session);
 }
 
 /**
@@ -375,7 +377,14 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 int
 bonjour_dns_sd_stop(BonjourDnsSd *data)
 {
+	GaimAccount *account;
+	GaimConnection *gc;
+
 	sw_discovery_cancel(*(data->session), data->session_id);
+
+	account = data->account;
+	gc = gaim_account_get_connection(account);
+	gaim_input_remove(gc->inpa);
 
 	return 0;
 }
