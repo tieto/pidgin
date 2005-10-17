@@ -128,8 +128,7 @@ play_conv_event(GaimConversation *conv, GaimSoundEventID event)
 		has_focus = gaim_conversation_has_focus(conv);
 
 		if (!gtkconv->make_sound ||
-			(gaim_gtk_conv_window_get_active_conversation(win) == conv) ||
-			(gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus") && has_focus))
+			(has_focus && !gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus")))
 		{
 			return;
 		}
