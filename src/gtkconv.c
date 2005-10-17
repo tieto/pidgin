@@ -2571,17 +2571,20 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 		im = GAIM_CONV_IM(conv);
 
 	if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		gtk_image_set_from_stock(gtkwin->menu.typing_icon, GAIM_STOCK_TYPING,
+		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
+					 GAIM_STOCK_TYPING,
 					 GTK_ICON_SIZE_MENU);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User is typing..."), NULL);
 	} else if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPED) {
-		gtk_image_set_from_stock(gtkwin->menu.typing_icon, GAIM_STOCK_TYPED,
+		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
+					 GAIM_STOCK_TYPED,
 					 GTK_ICON_SIZE_MENU);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User has typed something and paused"), NULL);
 	} else {
-		gtk_image_set_from_stock(gtkwin->menu.typing_icon, GAIM_STOCK_MENU_ICON_BLANK,
+		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
+					 GAIM_STOCK_MENU_ICON_BLANK,
 					 GTK_ICON_SIZE_MENU);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				     "", NULL);
