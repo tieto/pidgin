@@ -24,13 +24,6 @@
  *
  */
 
-/* TODO conversations have an a_virgin member which seems to be used to detect
- * when a conversation was created remotely as opposed to remotely, look at
- * code for sounds on first message to see how it's used and use it to allow
- * for notifying on first message I don't think this is going to work because
- * the check for this in the source comes after all the conversation signals
- * are fired. */
-
 /* TODO
  * 22:22:17 <seanegan> deryni: speaking of notify.c... you know what else
  * might be a neat feature?

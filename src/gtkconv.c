@@ -3805,7 +3805,6 @@ gaim_gtkconv_new(GaimConversation *conv)
 
 	if (conv_type == GAIM_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(GaimGtkImPane));
-		gtkconv->u.im->a_virgin = TRUE;
 
 		pane = setup_im_pane(gtkconv);
 	} else if (conv_type == GAIM_CONV_TYPE_CHAT) {
@@ -3921,8 +3920,6 @@ gaim_gtkconv_write_im(GaimConversation *conv, const char *who,
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	gaim_gtkconv_set_active_conversation(conv);
-
-	gtkconv->u.im->a_virgin = FALSE;
 
 	gaim_conversation_write(conv, who, message, flags, mtime);
 }

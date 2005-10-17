@@ -84,8 +84,6 @@ struct _GaimGtkImPane
 	GtkWidget *check;
 	GtkWidget *progress;
 
-	gboolean a_virgin;
-
 	/* Buddy icon stuff */
 	GtkWidget *icon_container;
 	GtkWidget *icon;
