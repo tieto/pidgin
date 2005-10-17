@@ -150,7 +150,7 @@ static gboolean unload_mono_plugin(GaimPlugin *plugin)
 
 /* Destroys a Mono Plugin by calling 'destroy' in the class,
    and cleaning up all the malloced memory */
-static gboolean destroy_mono_plugin(GaimPlugin *plugin)
+static void destroy_mono_plugin(GaimPlugin *plugin)
 {
 	GaimMonoPlugin *mplug;
 	
@@ -177,15 +177,11 @@ static gboolean destroy_mono_plugin(GaimPlugin *plugin)
 		g_free(mplug);
 		mplug = NULL;
 	}
-	
-	return TRUE;
 }
 
-gboolean plugin_destroy(GaimPlugin *plugin)
+static void plugin_destroy(GaimPlugin *plugin)
 {
 	mono_jit_cleanup(domain);	
-	
-	return TRUE;
 }
 
 static GaimPluginLoaderInfo loader_info =
