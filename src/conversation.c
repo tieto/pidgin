@@ -535,8 +535,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 void
 gaim_conversation_set_features(GaimConversation *conv, GaimConnectionFlags features)
 {
-	GaimConversationUiOps *ops;
-
 	g_return_if_fail(conv != NULL);
 
 	conv->features = features;
@@ -625,8 +623,6 @@ gaim_conversation_get_gc(const GaimConversation *conv)
 void
 gaim_conversation_set_title(GaimConversation *conv, const char *title)
 {
-	GaimConversationUiOps *ops;
-
 	g_return_if_fail(conv  != NULL);
 	g_return_if_fail(title != NULL);
 
