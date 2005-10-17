@@ -376,7 +376,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 			gtk_label_set_markup(GTK_LABEL(size_label), text);
 			/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
 			gtk_misc_set_alignment(GTK_MISC(size_label), 0, 0);
-			gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), size_label, TRUE, TRUE, 0);
+			gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), size_label, FALSE, FALSE, 0);
 			g_free(sz_txt);
 			g_free(text);
 		}
