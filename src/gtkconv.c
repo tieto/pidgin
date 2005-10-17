@@ -4527,7 +4527,13 @@ gaim_gtkconv_has_focus(GaimConversation *conv)
 
 	g_object_get(G_OBJECT(win->window), "has-toplevel-focus", &has_focus, NULL);
 
-	return has_focus;
+	if (has_focus)
+	{
+		GaimConversation *c = gaim_gtk_conv_window_get_active_conversation(win);
+		if (GAIM_GTK_CONVERSATION(c) == gtkconv)
+			return TRUE;
+	}
+	return FALSE;
 }
 
 static gboolean
