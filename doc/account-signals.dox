@@ -4,7 +4,6 @@
   @signal account-connecting
   @signal account-setting-info
   @signal account-set-info
-  @signal account-warned
   @signal account-status-changed
  @endsignals
 
@@ -38,17 +37,6 @@ void (*account_set_info)(GaimAccount *account, const char *new_info);
    Emitted when a user sent his new user info, or profile, to the server.
   @param account  The account that the info was set on.
   @param new_info The new information set.
- @endsignaldef
-
- @signaldef account-warned
-  @signalproto
-void (*account_warned)(GaimAccount *account, const char *warner, int level);
-  @endsignalproto
-  @signaldesc
-   Emitted when an account got warned.
-  @param account The account that was warned.
-  @param warner  The screenname of the user that warned the account.
-  @param level   The new warning level.
  @endsignaldef
 
  @signaldef account-status-changed
