@@ -4,7 +4,7 @@ TARGETS = MPlugin.dll GetBuddyBack.dll
 
 all: $(TARGETS)
 	
-install-exec-am:
+install-exec-am: $(TARGETS)
 	$(INSTALL) -m 644 $(TARGETS) $(libdir)/gaim
 
 clean-generic:
