@@ -406,7 +406,8 @@ gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
 	return (gint)b->type - (gint)a->type;
 }
 
-guint log_set_hash(gconstpointer key)
+static guint
+log_set_hash(gconstpointer key)
 {
 	const GaimLogSet *set = key;
 
@@ -416,7 +417,8 @@ guint log_set_hash(gconstpointer key)
 	return g_int_hash((gint *)&set->type) + g_str_hash(set->name);
 }
 
-gboolean log_set_equal(gconstpointer a, gconstpointer b)
+static gboolean
+log_set_equal(gconstpointer a, gconstpointer b)
 {
 	/* I realize that the choices made for GList and GHashTable
 	 * make sense for those data types, but I wish the comparison
@@ -424,7 +426,8 @@ gboolean log_set_equal(gconstpointer a, gconstpointer b)
 	return !gaim_log_set_compare(a, b);
 }
 
-void log_add_log_set_to_hash(GHashTable *sets, GaimLogSet *set)
+static void
+log_add_log_set_to_hash(GHashTable *sets, GaimLogSet *set)
 {
 	GaimLogSet *existing_set = g_hash_table_lookup(sets, set);
 

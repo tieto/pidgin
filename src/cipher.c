@@ -705,7 +705,7 @@ static guint32 sbox8[64] =
  *  * These two tables are part of the 'permuted choice 1' function.
  *   * In this implementation several speed improvements are done.
  *    */
-guint32 leftkey_swap[16] =
+static guint32 leftkey_swap[16] =
 {
 	0x00000000, 0x00000001, 0x00000100, 0x00000101,
 	0x00010000, 0x00010001, 0x00010100, 0x00010101,
@@ -713,7 +713,7 @@ guint32 leftkey_swap[16] =
 	0x01010000, 0x01010001, 0x01010100, 0x01010101
 };
 
-guint32 rightkey_swap[16] =
+static guint32 rightkey_swap[16] =
 {
 	0x00000000, 0x01000000, 0x00010000, 0x01010000,
 	0x00000100, 0x01000100, 0x00010100, 0x01010100,

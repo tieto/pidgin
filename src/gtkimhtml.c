@@ -362,7 +362,8 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 }
 
 
-void gtk_smiley_tree_destroy (GtkSmileyTree *tree)
+static void
+gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 {
 	GSList *list = g_slist_append (NULL, tree);
 
@@ -589,7 +590,8 @@ gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpoin
 	return FALSE;
 }
 
-gboolean gtk_enter_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
+static gboolean
+gtk_enter_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
 {
 	if (GTK_IMHTML(imhtml)->editable)
 		gdk_window_set_cursor(
@@ -606,7 +608,8 @@ gboolean gtk_enter_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpoi
 	return FALSE;
 }
 
-gboolean gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
+static gboolean
+gtk_leave_event_notify(GtkWidget *imhtml, GdkEventCrossing *event, gpointer data)
 {
 	/* when leaving the widget, clear any current & pending tooltips and restore the cursor */
 	if (GTK_IMHTML(imhtml)->prelit_tag) {
@@ -1889,7 +1892,7 @@ gtk_imhtml_smiley_get(GtkIMHtml *imhtml,
 	return t->image;
 }
 
-GdkPixbufAnimation *
+static GdkPixbufAnimation *
 gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 		       const gchar   *sml,
 		       const gchar   *text)

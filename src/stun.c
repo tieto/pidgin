@@ -42,7 +42,7 @@
 #include "stun.h"
 #include "prefs.h"
 
-struct stun_nattype nattype = {-1, 0, "\0"};
+static struct stun_nattype nattype = {-1, 0, "\0"};
 
 static GSList *callbacks = 0;
 static int fd = -1;

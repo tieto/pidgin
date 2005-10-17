@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include "account.h"
+#include "savedstatuses.h"
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeview.h>
 #if !GTK_CHECK_VERSION(2,6,0)
@@ -118,6 +119,7 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 void
 gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
 
+void gtk_gaim_status_box_activate_saved_status(GaimSavedStatus *saved_status);
 
 char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
 

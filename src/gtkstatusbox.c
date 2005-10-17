@@ -499,6 +499,11 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
+void
+gtk_gaim_status_box_activate_saved_status(GaimSavedStatus *saved_status)
+{
+}
+
 static void
 activate_currently_selected_status(GtkGaimStatusBox *status_box)
 {

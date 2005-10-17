@@ -229,7 +229,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-int
+static int
 _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 {
 	sw_text_record dns_data;
@@ -281,31 +281,11 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	return 0;
 }
 
-gboolean
+static gboolean
 _dns_sd_handle_packets(GIOChannel *source, GIOCondition condition, gpointer data)
 {
 	sw_discovery_read_socket(*((sw_discovery*)data));
 	return TRUE;
-}
-
-gpointer
-_dns_sd_wait_for_connections(gpointer data)
-{
-	sw_discovery_oid session_id;
-	BonjourDnsSd *dns_sd_data = (BonjourDnsSd*)data;
-
-	// Advise the daemon that we are waiting for connections
-	if (sw_discovery_browse(*(dns_sd_data->session), 0, ICHAT_SERVICE, NULL, _browser_reply,
-			dns_sd_data->account, &session_id) != SW_OKAY)
-	{
-		gaim_debug_error("bonjour", "Unable to get service.");
-		return NULL;
-	}
-
-	// Yields control of the cpu to the daemon
-	sw_discovery_run(*(dns_sd_data->session));
-
-	return NULL;
 }
 
 // End private functions

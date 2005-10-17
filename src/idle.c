@@ -35,11 +35,13 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "gtkstatusbox.h"
 #include "log.h"
 #include "prefs.h"
+#include "savedstatuses.h"
 #include "signals.h"
 
-#define IDLEMARK 600   	/* 10 minutes! */
+#define IDLEMARK 600	/* 10 minutes! */
 
 typedef enum
 {
@@ -110,6 +112,7 @@ get_idle_time_from_system()
  * 2. Set or unset your auto-away message.
  * 3. Report your current idle time to the IM server.
  */
+/* TODO: This needs to be namespaced or moved elsewhere. */
 gint
 check_idle(gpointer data)
 {
@@ -148,6 +151,7 @@ check_idle(gpointer data)
 		if (gaim_presence_is_available(presence))
 		{
 			const char *idleaway_name;
+			GaimSavedStatus *saved_status;
 
 			gaim_debug_info("idle", "Making %s auto-away\n",
 							gaim_account_get_username(account));
@@ -155,6 +159,8 @@ check_idle(gpointer data)
 			/* TODO XXX STATUS AWAY CORE/UI */
 			/* Mark our accounts "away" using the idleaway status */
 			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
+			saved_status = gaim_savedstatus_find(idleaway_name);
+			gtk_gaim_status_box_activate_saved_status(saved_status);
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {
