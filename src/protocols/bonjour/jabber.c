@@ -495,7 +495,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	return 0;
 }
 
-void
+int
 bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body)
 {
 	xmlnode *message_node = NULL;
@@ -506,12 +506,19 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	xmlnode *message_html_body_node = NULL;
 	xmlnode *message_html_body_font_node = NULL;
 	xmlnode *message_x_node = NULL;
-	GaimBuddy *gb = gaim_find_buddy(data->account, to);
-	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
+	GaimBuddy *gb = NULL;
+	BonjourBuddy *bb = NULL;
 	char *conv_message = NULL;
 	GaimConversation *conversation = NULL;
 	char *message_from_ui = NULL;
 	char *stripped_message = NULL;
+
+	gb = gaim_find_buddy(data->account, to);
+	if (gb == NULL)
+		/* You can not send a message to an offline buddy */
+		return -10000;
+
+	bb = (BonjourBuddy *)gb->proto_data;
 
 	// Enclose the message from the UI within a "font" node
 	message_body_node = xmlnode_new("body");
@@ -572,7 +579,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 				g_free(bb->conversation->buddy_name);
 				g_free(bb->conversation);
 				bb->conversation = NULL;
-				return;
+				return 0;
 		}
 
 		bb->conversation->stream_started = TRUE;
@@ -580,12 +587,9 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 
 	// Send the message
 	if (_send_data(bb->conversation->socket, message) == -1)
-	{
-		gaim_debug_error("bonjour", "Unable to send the message\n");
-		conv_message = g_strdup("Unable to send the message.");
-		conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, bb->name, data->account);
-		gaim_conversation_write(conversation, NULL, conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
-	}
+		return -10000;
+
+	return 1;
 }
 
 void

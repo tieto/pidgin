@@ -223,9 +223,20 @@ struct _GaimPluginProtocolInfo
 
 	/** This must be implemented. */
 	void (*close)(GaimConnection *);
+
+	/**
+	 * This PRPL function should return a positive value on success.
+	 * If the message is too big to be sent, return -E2BIG.  If
+	 * the account is not connected, return -ENOTCONN.  If the
+	 * PRPL is unable to send the message for another reason, return
+	 * some other negative value.  You can use one of the valid
+	 * errno values, or just big something.  If the message should
+	 * not be echoed to the conversation window, return 0.
+	 */
 	int  (*send_im)(GaimConnection *, const char *who,
 					const char *message,
 					GaimConvImFlags flags);
+
 	void (*set_info)(GaimConnection *, const char *info);
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
 	void (*get_info)(GaimConnection *, const char *who);

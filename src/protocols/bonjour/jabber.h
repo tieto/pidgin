@@ -60,7 +60,7 @@ typedef struct _BonjourJabberConversation
  */
 gint bonjour_jabber_start(BonjourJabber *data);
 
-void bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
+int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
 void bonjour_jabber_close_conversation(BonjourJabber *data, GaimBuddy *gb);
 

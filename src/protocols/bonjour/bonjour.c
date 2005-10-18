@@ -159,9 +159,7 @@ bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, Gai
 	if(!to || !msg)
 		return 0;
 
-	bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
-
-	return 1;
+	return bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
 }
 
 void
