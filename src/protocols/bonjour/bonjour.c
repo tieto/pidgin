@@ -32,6 +32,41 @@
 #include "jabber.h"
 #include "buddy.h"
 
+static void
+bonjour_removeallfromlocal(GaimConnection *gc)
+{
+	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimBuddyList *blist;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBuddy *buddy;
+
+	blist = gaim_get_blist();
+	if (blist == NULL)
+		return;
+
+	/* Go through and remove all buddies that belong to this account */
+	for (gnode = blist->root; gnode; gnode = gnode->next)
+	{
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for (cnode = gnode->child; cnode; cnode = cnode->next)
+		{
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for (bnode = cnode->child; bnode; bnode = bnode->next)
+			{
+				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				buddy = (GaimBuddy *)bnode;
+				if (buddy->account != account)
+					continue;
+				gaim_prpl_got_user_status(account, buddy->name, "offline", NULL);
+				gaim_blist_remove_buddy(buddy);
+			}
+		}
+	}
+}
+
 void
 bonjour_login(GaimAccount *account, GaimStatus *status)
 {
@@ -90,8 +125,6 @@ void
 bonjour_close(GaimConnection *connection)
 {
 	GaimGroup *bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
-	GSList *buddies;
-	GSList *l;
 	BonjourData *bd = (BonjourData*)connection->proto_data;
 
 	// Stop looking for buddies in the LAN
@@ -107,14 +140,7 @@ bonjour_close(GaimConnection *connection)
 	g_free(bd->jabber_data);
 
 	// Remove all the bonjour buddies
-	if(connection != NULL){
-		buddies = gaim_find_buddies(connection->account, connection->account->username);
-		for(l = buddies; l; l = l->next){
-			bonjour_buddy_delete(((GaimBuddy*)(l->data))->proto_data);
-			gaim_blist_remove_buddy(l->data);
-		}
-		g_slist_free(buddies);
-	}
+	bonjour_removeallfromlocal(connection);
 
 	// Delete the bonjour group
 	gaim_blist_remove_group(bonjour_group);
