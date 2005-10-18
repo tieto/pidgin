@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([gaim], [1.4.0], [gaim-devel@lists.sourceforge.net])
+AC_INIT([gaim], [2.0.0cvs], [gaim-devel@lists.sourceforge.net])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
@@ -67,7 +67,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="am az bg ca cs da de en_AU en_CA en_GB es et fi fr he hi hu it ja ka ko lt mk my_MM nb nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv tr uk vi zh_CN zh_TW"
+ALL_LINGUAS="am az bg ca cs da de en_AU en_CA en_GB es et fi fr gl gu he hi hu it ja ka ko lt mk my_MM nb nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv te tr uk vi xh zh_CN zh_TW"
 AM_GNU_GETTEXT_VERSION(0.10.40)
 AM_GNU_GETTEXT
 
@@ -77,7 +77,7 @@ dnl AC_CYGWIN
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h)
+AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h locale.h signal.h stdint.h regex.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -97,6 +97,7 @@ AC_CHECK_FUNCS(getopt_long,,
 dnl Check for inet_aton
 AC_CHECK_FUNC(inet_aton, , [AC_CHECK_LIB(resolv, inet_aton, , 
 				         [AC_ERROR(inet_aton not found)])])
+AC_CHECK_LIB(resolv, __res_query)
 AC_CHECK_LIB(nsl, gethostent)
 AC_CHECK_FUNC(socket, , 
               [AC_CHECK_LIB(socket, socket, , [AC_ERROR([socket not found])])])
@@ -130,14 +131,50 @@ AC_TRY_COMPILE([
 	])
 ])
 
-dnl to prevent the g_stat()/g_unlink() crash, 
-dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac 
+dnl to prevent the g_stat()/g_unlink() crash,
+dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
 
-dnl Check for SILC client includes and libraries
-AC_ARG_WITH(silc-includes, [  --with-silc-includes=DIR
-                          Compile the SILC plugin against includes in DIR ], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
-AC_ARG_WITH(silc-libs, [  --with-silc-libs=DIR    Compile the SILC plugin against the SILC libs in DIR], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
+
+
+dnl #######################################################################
+dnl # Check for Howl headers (for Bonjour)
+dnl #######################################################################
+AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [Compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
+AC_ARG_WITH(howl-libs, [AC_HELP_STRING([--with-howl-libs=DIR], [Compile the Bonjour plugin against the Howl libs in DIR])], [ac_howl_libs="$withval"], [ac_howl_libs="no"])
+HOWL_CFLAGS=""
+HOWL_LIBS=""
+
+dnl Attempt to autodetect Howl
+PKG_CHECK_MODULES(HOWL, howl,
+	[howlincludes="yes" howllibs="yes"],
+	[howlincludes="no" howllibs="no"])
+
+dnl Override HOWL_CFLAGS if the user specified an include dir
+if test "$ac_howl_includes" != "no"; then
+	HOWL_CFLAGS="-I$ac_howl_includes"
+fi
+CPPFLAGS_save="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $HOWL_CFLAGS"
+AC_CHECK_HEADER(howl.h, [howlincludes=yes], [howlincludes=no])
+CPPFLAGS="$CPPFLAGS_save"
+
+dnl Override HOWL_LIBS if the user specified a libs dir
+if test "$ac_howl_libs" != "no"; then
+	HOWL_LIBS="-L$ac_howl_libs"
+fi
+AC_CHECK_LIB(howl, sw_discovery_init, [howllibs=yes], [howllibs=no], $HOWL_LIBS)
+
+AC_SUBST(HOWL_CFLAGS)
+AC_SUBST(HOWL_LIBS)
+
+
+
+dnl #######################################################################
+dnl # Check for SILC client includes and libraries
+dnl #######################################################################
+AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [Compile the SILC plugin against includes in DIR])], [ac_silc_includes="$withval"], [ac_silc_includes="no"])
+AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [Compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
 if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
@@ -177,6 +214,8 @@ fi
 AC_SUBST(SILC_LIBS)
 AC_SUBST(SILC_CFLAGS)
 
+
+
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)
 AM_CONDITIONAL(DISTRIB, test "x$enable_distrib" = "xyes")
 AC_ARG_ENABLE(prpls,   [  --disable-prpls         don't build dynamic protocol plugins],,enable_prpls=yes)
@@ -187,7 +226,10 @@ if test "x$STATIC_PRPLS" != "x" -a "x$DYNAMIC_PRPLS" = "xall"; then
 fi
 
 if test "x$STATIC_PRPLS" = "xall" ; then
-	STATIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
+	STATIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc simple yahoo zephyr"
+fi
+if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
@@ -201,6 +243,7 @@ for i in $STATIC_PRPLS ; do
 	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
+		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
 		irc)		static_irc=yes ;;
 		jabber)		static_jabber=yes ;;
@@ -208,8 +251,9 @@ for i in $STATIC_PRPLS ; do
 		napster)	static_napster=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
-		rendezvous)	static_rendezvous=yes ;;
+		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
+		simple)		static_simple=yes ;;
 		toc)		static_toc=yes ;;
 		trepia)		static_trepia=yes ;;
 		yahoo)		static_yahoo=yes ;;
@@ -217,6 +261,7 @@ for i in $STATIC_PRPLS ; do
 		*)			echo "Invalid static protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(STATIC_BONJOUR, test "x$static_bonjour" = "xyes" -a "x$howlincludes" = "xyes" -a "x$howllibs" = "xyes")
 AM_CONDITIONAL(STATIC_GG, test "x$static_gg" = "xyes")
 AM_CONDITIONAL(STATIC_IRC, test "x$static_irc" = "xyes")
 AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
@@ -224,8 +269,9 @@ AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NAPSTER, test "x$static_napster" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_RENDEZVOUS, test "x$static_rendezvous" = "xyes")
+AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_TREPIA, test "x$static_trepia" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
@@ -234,9 +280,12 @@ AC_SUBST(STATIC_LINK_LIBS)
 AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
-AC_ARG_WITH(dynamic_prpls,   [  --with-dynamic-prpls    specify which protocols to build dynamically],[DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
+AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
-	DYNAMIC_PRPLS="gg irc jabber msn napster novell oscar silc yahoo zephyr"
+	DYNAMIC_PRPLS="bonjour gg irc jabber msn napster novell oscar sametime silc simple yahoo zephyr"
+fi
+if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
@@ -244,6 +293,7 @@ fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
 	case $i in
+		bonjour)	dynamic_bonjour=yes ;;
 		gg)			dynamic_gg=yes ;;
 		irc)		dynamic_irc=yes ;;
 		jabber)		dynamic_jabber=yes ;;
@@ -251,8 +301,9 @@ for i in $DYNAMIC_PRPLS ; do
 		napster)	dynamic_napster=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
-		rendezvous)	dynamic_rendezvous=yes ;;
+		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
+		simple)		dynamic_simple=yes ;;
 		toc)		dynamic_toc=yes ;;
 		trepia)		dynamic_trepia=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
@@ -260,6 +311,7 @@ for i in $DYNAMIC_PRPLS ; do
 		*)			echo "Invalid dynamic protocol $i!!" ; exit ;;
 	esac
 done
+AM_CONDITIONAL(DYNAMIC_BONJOUR, test "x$dynamic_bonjour" = "xyes" -a "x$bonjourincludes" = "xyes" -a "x$bonjourclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_GG, test "x$dynamic_gg" = "xyes")
 AM_CONDITIONAL(DYNAMIC_IRC, test "x$dynamic_irc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
@@ -267,15 +319,16 @@ AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NAPSTER, test "x$dynamic_napster" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_RENDEZVOUS, test "x$dynamic_rendezvous" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TREPIA, test "x$dynamic_trepia" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
-AC_ARG_ENABLE(nas,     [  --enable-nas            enable NAS (Network Audio System) support],,enable_nas=no)
+AC_ARG_ENABLE(mono,    [  --disable-mono		  compile without Mono runtime support],,enable_mono=yes)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
@@ -319,14 +372,14 @@ dnl charlie addition for crazychat
 AM_PATH_GTKGLEXT_1_0(1.0.0,[echo "$GTKGLEXT_LIBS"],AC_MSG_ERROR([
 *** gtkglext is required to build CrazyChat; please make sure you have the 
 *** gtkglext development headers installed.]))
+dnl endcharlie
 
 AC_PATH_PROG(gaimpath, gaim)
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GLIB_CFLAGS)
 dnl charlie, gtkglext
 AC_SUBST(GTKGLEXT_CFLAGS)
-
-dnl charlie
+dnl endcharlie
 
 AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
@@ -342,6 +395,108 @@ if test X"$x_includes" = X"" ; then
 else
 	x_incpath_add="-I$x_includes"
 fi
+dnl #######################################################################
+dnl # Check for DBUS libraries
+dnl #######################################################################
+
+AC_ARG_ENABLE(dbus,     [  --enable-dbus           enable DBUS support],,enable_dbus=no)
+
+if test "x$enable_dbus" = "xyes" ; then
+   AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
+fi
+
+if test "x$enable_dbus" = "xyes" ; then
+   	PKG_CHECK_MODULES(DBUS, [dbus-1 >= 0.35 dbus-glib-1 >= 0.35],
+	[
+		AC_SUBST(DBUS_CFLAGS)
+		AC_SUBST(DBUS_LIBS)
+		enable_dbus=yes
+	],
+	[
+		enable_dbus=no
+	])
+fi
+
+dnl  Why do we need python?  
+
+dnl  Python scripts are used to auto-generate about 3000 lines of C
+dnl  and XML code that wraps (part of) the existing Gaim API so that
+dnl  it is now accessible through DBUS.
+
+dnl  Python is only required if --enable-dbus is used, and only for
+dnl  the build process to generate the code, not for running gaim.
+dnl  This autogenerated code is system-independent, so in principle we
+dnl  can generate all of it before shipping.  But I thought adding
+dnl  auto-generated stuff to the CVS is inelegant.  Alternatively,
+dnl  these python scripts could be rewritten in C (brrrr ...).
+
+
+if test "x$enable_dbus" = "xyes" ; then
+        AC_PATH_PROG([PYTHON], [python], [no])
+	if test "x$PYTHON" = "xno" ; then
+		AC_MSG_WARN([python interpreter not found in your path])
+		enable_dbus=no
+	fi
+fi
+
+if test "x$enable_dbus" = "xyes" ; then
+	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
+		AC_MSG_WARN([python version >= 2.4 required])
+		enable_dbus=no
+	fi	
+fi
+
+dnl  Here we locate the directory containing DBus .service files for
+dnl  the session bus.  Adapted from the guifications project.
+
+AC_ARG_WITH(dbus-session-dir, [  --with-dbus-session-dir=<dir>   Location of the D-BUS session directory.])
+
+if test "x$enable_dbus" = "xyes" ; then
+    AC_MSG_CHECKING([location of the D-BUS session directory])
+    if ! test -z "$with_dbus_session_dir"; then
+      	if ! test -d "$with_dbus_session_dir"; then
+	    AC_MSG_WARN([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
+	    enable_dbus=no
+	fi
+
+	DBUS_SESSION_DIR="$with_dbus_session_dir"
+    else
+	dnl # add more to this as needed
+	servicesprefixes="$DATADIR $LIBDIR /usr/share /usr/local/share"
+	DBUS_SESSION_DIR=""
+
+	for p in $servicesprefixes; do
+	    dir="$p/dbus-1/services"
+	    if test -d $dir; then
+		DBUS_SESSION_DIR="$dir"
+		break
+	    fi
+	done
+
+	if test -z $DBUS_SESSION_DIR; then
+	    AC_MSG_WARN([D-BUS session directory was not found!  Please use --with-dbus-session-dir and specify its location.])
+	    enable_dbus=no
+	fi
+    fi
+
+
+fi
+
+if test "x$enable_dbus" = "xyes" ; then
+    AC_MSG_RESULT([$DBUS_SESSION_DIR])
+    AC_SUBST(DBUS_SESSION_DIR)
+    AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
+    echo "Building with DBUS support"
+else
+    echo "Building without DBUS support"
+fi
+
+AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
+
+
+
+
+
 
 dnl #######################################################################
 dnl # Check for startup notification
@@ -372,11 +527,17 @@ build_gevo=no
 AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
 
 if test "x$enable_gevolution" = "xyes"; then
-	evo_deps="libxml-2.0 libebook-1.2 libedata-book-1.2"
-	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+	evo_deps="libebook-1.2 libedata-book-1.2"
+	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
+		AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
+		build_gevo=yes
+	], build_gevo=no)
 	if test "x$build_gevo" = "xno"; then
-		evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
-		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, build_gevo=yes, build_gevo=no)
+		evo_deps="libebook-1.0 libedata-book-1.0"
+		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
+			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
+			build_gevo=yes
+		], build_gevo=no)
 	fi
 
 	AC_SUBST(EVOLUTION_ADDRESSBOOK_CFLAGS)
@@ -452,10 +613,53 @@ fi
 
 GC_TM_GMTOFF
 
+dnl #######################################################################
+dnl # Check for Mono support
+dnl #######################################################################
+
+if test x"$enable_mono" = x"yes" ; then
+	AC_MSG_CHECKING(for Mono compile flags)
+	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
+	if test $? != 0 ; then
+		AC_MSG_RESULT([not found, building without mono.])
+		MONO_CFLAGS=
+		MONO_LIBS=
+		enable_mono=no
+	else
+		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
+		AC_MSG_RESULT(ok)
+		
+		oldLIBS="$LIBS"
+		LIBS="$LIBS $MONO_LIBS"
+		AC_MSG_CHECKING(for libmono)
+		AC_CHECK_FUNCS(mono_jit_init, [], enable_mono=no)
+		LIBS="$oldLIBS"
+		
+		oldCPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $MONO_CFLAGS"
+		AC_CHECK_HEADERS(mono/jit/jit.h, [], enable_mono=no)
+		AC_CHECK_HEADERS(mono/metadata/object.h, [], enable_mono=no)
+		CPPFLAGS="$oldCPPFLAGS"
+		
+		AC_DEFINE(ENABLE_MONO, 1, [Define if mono enabled.])
+	fi
+else
+	MONO_CFLAGS=
+	MONO_LIBS=
+	enable_mono=no
+fi
+
+AC_SUBST(MONO_CFLAGS)
+AC_SUBST(MONO_LIBS)
+AM_CONDITIONAL(USE_MONO, test x"$enable_mono" = x"yes")
 
 dnl #######################################################################
 dnl # Check for Perl support
 dnl #######################################################################
+if test "$enable_plugins" = no ; then
+	enable_perl=no
+fi
+
 if test "$enable_perl" = yes ; then
 	AC_PATH_PROG(perlpath, perl)
 	AC_MSG_CHECKING(for Perl compile flags)
@@ -946,6 +1150,10 @@ elif test "x$msg_gnutls" != "x"; then
 fi
 
 dnl Check for Tcl
+if test "$enable_plugins" = no; then
+	enable_tcl=no
+fi
+
 if test "$enable_tcl" = yes; then
 	AC_MSG_CHECKING([for tclConfig.sh])
         TCLCONFIG=no
@@ -1057,11 +1265,6 @@ if test "$enable_gtkspell" = yes ; then
 	fi
 fi
 
-if test "$enable_nas" = yes ; then
-	AC_DEFINE(USE_NAS_AUDIO, 1, [Define if we have NAS sound support.])
-	SOUND_LIBS="$SOUND_LIBS -laudio -lXt"
-fi
-
 if test "$enable_audio" = yes ; then
 	GAIM_PATH_AO(found_ao_lib=true)
 
@@ -1104,7 +1307,7 @@ else
 	enable_prpls=no
 fi
 
-dnl checks for icqlib
+dnl checks for icqlib--do we still need these?
 AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
 AC_CHECK_FUNCS(bswap_32 bswap_16)
 AC_C_BIGENDIAN
@@ -1207,7 +1410,7 @@ if test "x$enable_doxygen" = xyes; then
 			AC_CHECK_PROG(DOT, dot, true, false)
 
 			if test $DOT = false; then
-				enable_dot = no;
+				enable_dot="no";
 				AC_MSG_WARN([*** dot not found, graphs will not be available])
 			else
 				AC_DEFINE_UNQUOTED(HAVE_DOT, 1, [whether or not we have dot])
@@ -1245,8 +1448,8 @@ AC_OUTPUT([Makefile
 		   gaim.apspec
 		   doc/Makefile
 		   doc/gaim.1
-		   doc/gaim-remote.1
 		   intl/Makefile
+		   m4macros/Makefile
 		   pixmaps/Makefile
 		   pixmaps/smileys/Makefile
 		   pixmaps/smileys/default/Makefile
@@ -1257,8 +1460,11 @@ AC_OUTPUT([Makefile
 		   plugins/docklet/Makefile
 		   plugins/crazychat/Makefile
 		   plugins/gevolution/Makefile
-		   plugins/gaim-remote/Makefile
 		   plugins/gestures/Makefile
+		   plugins/mono/Makefile
+		   plugins/mono/api/Makefile
+		   plugins/mono/loader/Makefile
+		   plugins/musicmessaging/Makefile
 		   plugins/perl/Makefile
 		   plugins/perl/common/Makefile.PL
 		   plugins/ssl/Makefile
@@ -1268,6 +1474,7 @@ AC_OUTPUT([Makefile
 		   sounds/Makefile
 		   src/Makefile
 		   src/protocols/Makefile
+		   src/protocols/bonjour/Makefile
 		   src/protocols/gg/Makefile
 		   src/protocols/irc/Makefile
 		   src/protocols/jabber/Makefile
@@ -1275,8 +1482,10 @@ AC_OUTPUT([Makefile
 		   src/protocols/napster/Makefile
 		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
-		   src/protocols/rendezvous/Makefile
+		   src/protocols/sametime/Makefile
+		   src/protocols/sametime/meanwhile/Makefile
 		   src/protocols/silc/Makefile
+		   src/protocols/simple/Makefile
 		   src/protocols/toc/Makefile
 		   src/protocols/trepia/Makefile
 		   src/protocols/yahoo/Makefile
@@ -1293,16 +1502,21 @@ echo Build Protocol Plugins........ : $enable_prpls
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo
-echo UI Library.................... : GTK 2.x
+echo UI Library.................... : GTK+ 2.x
 echo SSL Library/Libraries......... : $msg_ssl
 echo
 echo Build with Plugin support..... : $enable_plugins
+echo Build with Mono support....... : $enable_mono
 echo Build with Perl support....... : $enable_perl
 echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
-echo Build with NAS support........ : $enable_nas
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with DBUS support....... : $enable_dbus
+if test x$enable_dbus = xyes ; then
+echo DBUS session directory........ : $DBUS_SESSION_DIR
+fi
+echo Has you....................... : yes
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr
