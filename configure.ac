@@ -486,13 +486,13 @@ build_gevo=no
 AC_ARG_ENABLE(gevolution, [  --disable-gevolution    compile without the Gaim-Evolution plugin],,enable_gevolution=yes)
 
 if test "x$enable_gevolution" = "xyes"; then
-	evo_deps="libxml-2.0 libebook-1.2 libedata-book-1.2"
+	evo_deps="libebook-1.2 libedata-book-1.2"
 	PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 		AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 		build_gevo=yes
 	], build_gevo=no)
 	if test "x$build_gevo" = "xno"; then
-		evo_deps="libxml-2.0 libebook-1.0 libedata-book-1.0"
+		evo_deps="libebook-1.0 libedata-book-1.0"
 		PKG_CHECK_MODULES(EVOLUTION_ADDRESSBOOK, $evo_deps, [
 			AC_DEFINE(HAVE_EVOLUTION_ADDRESSBOOK, 1, [Define if we're using evolution addressbook.])
 			build_gevo=yes
