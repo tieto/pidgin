@@ -47,8 +47,8 @@
  * for the oscar PRPL.  The GaimStatus also contains the buddy's
  * away message.  GaimStatuses are sometimes saved, depending on
  * the context.  The current GaimStatuses associated with each of
- * your accounts is saved so that the next time you start Gaim,
- * your accounts will be set to their last know statuses.  There
+ * your accounts are saved so that the next time you start Gaim,
+ * your accounts will be set to their last known statuses.  There
  * is also a list of saved statuses that are written to the
  * status.xml file.  Also, each GaimStatus has a "savable" boolean.
  * If "savable" is set to FALSE then the status is NEVER saved.
@@ -58,7 +58,7 @@
  * A GaimStatus is either "indepedent" or "exclusive."
  * Independent statuses can be active or inactive and it doesn't
  * affect anything else.  However, you can only have one exclusive
- * status per GaimPresence.  If you active one exlusive status,
+ * status per GaimPresence.  If you activate one exlusive status,
  * then the previous exclusive status is automatically deactivated.
  *
  * A GaimPresence is like a collection of GaimStatuses (plus some
