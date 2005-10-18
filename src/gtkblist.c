@@ -58,14 +58,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-/* if someone explicitly asked for drop shadows, we also need to make
-   sure that their environment can support it. If not, tough */
-#ifdef WANT_DROP_SHADOW
-# if !GTK_CHECK_VERSION(2,2,0) || (defined(__APPLE__) && defined(__MACH__))
-#  undef WANT_DROP_SHADOW
-# endif
-#endif
-
 typedef struct
 {
 	GaimAccount *account;
@@ -140,285 +132,6 @@ struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
 };
-
-
-#ifdef WANT_DROP_SHADOW
-/**************************** Weird drop shadow stuff *******************/
-/* This is based on a patch for drop shadows in GTK+ menus available at
- * http://www.xfce.org/gtkmenu-shadow/
- */
-
-enum side {
-  EAST_SIDE,
-  SOUTH_SIDE
-};
-
-static const double shadow_strip_l[5] = {
-  .937, .831, .670, .478, .180
-};
-
-static const double bottom_left_corner[25] = {
-  1.00, .682, .423, .333, .258,
-  1.00, .898, .800, .682, .584,
-  1.00, .937, .874, .800, .737,
-  1.00, .968, .937, .898, .866,
-  1.00, .988, .976, .960, .945
-};
-
-static const double bottom_right_corner[25] = {
-  .258, .584, .737, .866, .945,
-  .584, .682, .800, .898, .960,
-  .737, .800, .874, .937, .976,
-  .866, .898, .937, .968, .988,
-  .945, .960, .976, .988, .996
-};
-
-static const double top_right_corner[25] = {
-  1.00, 1.00, 1.00, 1.00, 1.00,
-  .686, .898, .937, .968, .988,
-  .423, .803, .874, .937, .976,
-  .333, .686, .800, .898, .960,
-  .258, .584, .737, .866, .945
-};
-
-static const double top_left_corner[25] = {
-  .988, .968, .937, .898, .498,
-  .976, .937, .874, .803, .423,
-  .960, .898, .800, .686, .333,
-  .945, .866, .737, .584, .258,
-  .941, .847, .698, .521, .215
-};
-
-
-static gboolean xcomposite_is_present()
-{
-	static gboolean result = FALSE;
-#ifndef _WIN32
-	static gboolean known = FALSE;
-	int i, j, k;
-
-	if (!known) {
-		/* I don't actually care about versions/etc. */
-		if (XQueryExtension(GDK_DISPLAY(), "Composite", &i, &j, &k) == True)
-			result = TRUE;
-		known = TRUE;
-	}
-#endif
-
-	return result;
-}
-
-static GdkPixbuf *
-get_pixbuf(GtkWidget *menu, int x, int y, int width, int height)
-{
-	GdkPixbuf *dest, *src;
-	GdkScreen *screen = gtk_widget_get_screen (GTK_WIDGET(menu));
-	GdkWindow *root = gdk_screen_get_root_window (screen);
-	gint screen_height = gdk_screen_get_height (screen);
-	gint screen_width = gdk_screen_get_width (screen);
-	gint original_width = width;
-	gint original_height = height;
-
-	if (x < 0) {
-		width += x;
-		x = 0;
-	}
-
-	if (y < 0) {
-		height += y;
-		y = 0;
-	}
-
-	if (x + width > screen_width) {
-		width = screen_width - x;
-	}
-
-	if (y + height > screen_height) {
-		height = screen_height - y;
-	}
-
-	if (width <= 0 || height <= 0)
-		return NULL;
-
-	dest = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8,
-						  original_width, original_height);
-	src = gdk_pixbuf_get_from_drawable(NULL, root, NULL, x, y, 0, 0,
-									   width, height);
-	gdk_pixbuf_copy_area (src, 0, 0, width, height, dest, 0, 0);
-
-	g_object_unref (G_OBJECT (src));
-
-	return dest;
-}
-
-static void
-shadow_paint(GaimGtkBuddyList *blist, GdkRectangle *area, enum side shadow)
-{
-	gint width, height;
-	GdkGC *gc = gtkblist->tipwindow->style->black_gc;
-
-	switch (shadow) {
-		case EAST_SIDE:
-		if (gtkblist->east != NULL) {
-			if (area)
-				gdk_gc_set_clip_rectangle (gc, area);
-
-			width = gdk_pixbuf_get_width (gtkblist->east);
-			height = gdk_pixbuf_get_height (gtkblist->east);
-
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->east_shadow), gc,
-				gtkblist->east, 0, 0, 0, 0, width, height,
-				GDK_RGB_DITHER_NONE, 0, 0);
-
-			if (area)
-				gdk_gc_set_clip_rectangle (gc, NULL);
-		}
-		break;
-
-		case SOUTH_SIDE:
-		if (blist->south != NULL) {
-			if (area)
-				gdk_gc_set_clip_rectangle (gc, area);
-
-			width = gdk_pixbuf_get_width (gtkblist->south);
-			height = gdk_pixbuf_get_height (gtkblist->south);
-
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->south_shadow), gc,
-				gtkblist->south, 0, 0, 0, 0, width, height,
-				GDK_RGB_DITHER_NONE, 0, 0);
-
-			if (area)
-			gdk_gc_set_clip_rectangle (gc, NULL);
-		}
-		break;
-	}
-}
-
-static void
-pixbuf_add_shadow (GdkPixbuf *pb, enum side shadow)
-{
-	gint width, rowstride, height;
-	gint i;
-	guchar *pixels, *p;
-
-	width = gdk_pixbuf_get_width (pb);
-	height = gdk_pixbuf_get_height (pb);
-	rowstride = gdk_pixbuf_get_rowstride (pb);
-	pixels = gdk_pixbuf_get_pixels (pb);
-
-	switch (shadow) {
-		case EAST_SIDE:
-		if (height > 5) {
-			for (i = 0; i < width; i++) {
-				gint j, k;
-
-				p = pixels + (i * rowstride);
-				for (j = 0, k = 0; j < 3 * width; j += 3, k++) {
-					p[j] = (guchar) (p[j] * top_right_corner [i * width + k]);
-					p[j + 1] = (guchar) (p[j + 1] * top_right_corner [i * width + k]);
-					p[j + 2] = (guchar) (p[j + 2] * top_right_corner [i * width + k]);
-				}
-			}
-
-			i = 5;
-		} else {
-			i = 0;
-		}
-
-		for (; i < height; i++) {
-			gint j, k;
-
-			p = pixels + (i * rowstride);
-			for (j = 0, k = 0; j < 3 * width; j += 3, k++) {
-				p[j] = (guchar) (p[j] * shadow_strip_l[width - 1 - k]);
-				p[j + 1] = (guchar) (p[j + 1] * shadow_strip_l[width - 1 - k]);
-				p[j + 2] = (guchar) (p[j + 2] * shadow_strip_l[width - 1 - k]);
-			}
-		}
-		break;
-
-		case SOUTH_SIDE:
-			for (i = 0; i < height; i++) {
-				gint j, k;
-
-				p = pixels + (i * rowstride);
-				for (j = 0, k = 0; j < 3 * height; j += 3, k++) {
-					p[j] = (guchar) (p[j] * bottom_left_corner[i * height + k]);
-					p[j + 1] = (guchar) (p[j + 1] * bottom_left_corner[i * height + k]);
-					p[j + 2] = (guchar) (p[j + 2] * bottom_left_corner[i * height + k]);
-				}
-
-				p = pixels + (i * rowstride) + 3 * height;
-				for (j = 0, k = 0; j < (width * 3) - (6 * height); j += 3, k++) {
-					p[j] = (guchar) (p[j] * bottom_right_corner [i * height]);
-					p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner [i * height]);
-					p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner [i * height]);
-				}
-
-				p = pixels + (i * rowstride) + ((width * 3) - (3 * height));
-				for (j = 0, k = 0; j < 3 * height; j += 3, k++) {
-					p[j] = (guchar) (p[j] * bottom_right_corner[i * height + k]);
-					p[j + 1] = (guchar) (p[j + 1] * bottom_right_corner[i * height + k]);
-					p[j + 2] = (guchar) (p[j + 2] * bottom_right_corner[i * height + k]);
-				}
-			}
-		break;
-	}
-}
-
-static gboolean
-map_shadow_windows (gpointer data)
-{
-	GaimGtkBuddyList *blist = (GaimGtkBuddyList*)data;
-	GtkWidget *widget = blist->tipwindow;
-	GdkPixbuf *pixbuf;
-	int x, y;
-
-	gtk_window_get_position(GTK_WINDOW(widget), &x, &y);
-	pixbuf = get_pixbuf(widget,
-						x + widget->allocation.width, y,
-						5, widget->allocation.height + 5);
-	if (pixbuf != NULL)
-	{
-		pixbuf_add_shadow (pixbuf, EAST_SIDE);
-		if (blist->east != NULL)
-		{
-			g_object_unref (G_OBJECT (blist->east));
-		}
-		blist->east = pixbuf;
-	}
-
-	pixbuf = get_pixbuf (widget,
-			x, y + widget->allocation.height,
-			widget->allocation.width + 5, 5);
-	if (pixbuf != NULL)
-	{
-		pixbuf_add_shadow (pixbuf, SOUTH_SIDE);
-		if (blist->south != NULL)
-		{
-			g_object_unref (G_OBJECT (blist->south));
-		}
-		blist->south = pixbuf;
-	}
-
-	gdk_window_move_resize (blist->east_shadow,
-				x + widget->allocation.width, MAX(0,y),
-				5, MIN(widget->allocation.height, gdk_screen_height()));
-
-	gdk_window_move_resize (blist->south_shadow,
-				MAX(0,x), y + widget->allocation.height,
-				MIN(widget->allocation.width + 5, gdk_screen_width()), 5);
-
-	gdk_window_show (blist->east_shadow);
-	gdk_window_show (blist->south_shadow);
-	shadow_paint(blist, NULL, EAST_SIDE);
-	shadow_paint(blist, NULL, SOUTH_SIDE);
-
-	return FALSE;
-}
-
-/**************** END WEIRD DROP SHADOW STUFF ***********************************/
-#endif /* ifdef WANT_DROP_SHADOW */
 
 
 static char dim_grey_string[8] = "";
@@ -2323,13 +2036,6 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	g_object_unref (pixbuf);
 	g_object_unref (layout);
 
-#ifdef WANT_DROP_SHADOW
-	if (!xcomposite_is_present()) {
-		shadow_paint(gtkblist, NULL, EAST_SIDE);
-		shadow_paint(gtkblist, NULL, SOUTH_SIDE);
-	}
-#endif
-
 	return;
 }
 
@@ -2343,18 +2049,6 @@ static void gaim_gtk_blist_tooltip_destroy()
 
 	gtk_widget_destroy(gtkblist->tipwindow);
 	gtkblist->tipwindow = NULL;
-
-#ifdef WANT_DROP_SHADOW
-	if (!xcomposite_is_present()) {
-		gdk_window_set_user_data (gtkblist->east_shadow, NULL);
-		gdk_window_destroy (gtkblist->east_shadow);
-		gtkblist->east_shadow = NULL;
-
-		gdk_window_set_user_data (gtkblist->south_shadow, NULL);
-		gdk_window_destroy (gtkblist->south_shadow);
-		gtkblist->south_shadow = NULL;
-	}
-#endif
 }
 
 static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
@@ -2413,9 +2107,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gboolean tooltip_top = FALSE;
 	struct _gaim_gtk_blist_node *gtknode;
 	GdkRectangle mon_size;
-#ifdef WANT_DROP_SHADOW
-	GdkWindowAttr attr;
-#endif
 
 	/*
 	 * Attempt to free the previous tooltip.  I have a feeling
@@ -2448,34 +2139,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	g_signal_connect(G_OBJECT(gtkblist->tipwindow), "expose_event",
 			G_CALLBACK(gaim_gtk_blist_paint_tip), node);
 	gtk_widget_ensure_style (gtkblist->tipwindow);
-
-#ifdef WANT_DROP_SHADOW
-	if (!xcomposite_is_present()) {
-		attr.window_type = GDK_WINDOW_TEMP;
-		attr.override_redirect = TRUE;
-		attr.x = gtkblist->tipwindow->allocation.x;
-		attr.y = gtkblist->tipwindow->allocation.y;
-		attr.width = gtkblist->tipwindow->allocation.width;
-		attr.height = gtkblist->tipwindow->allocation.height;
-		attr.wclass = GDK_INPUT_OUTPUT;
-		attr.visual = gtk_widget_get_visual (gtkblist->window);
-		attr.colormap = gtk_widget_get_colormap (gtkblist->window);
-
-		attr.event_mask = gtk_widget_get_events (gtkblist->tipwindow);
-
-		attr.event_mask |= (GDK_EXPOSURE_MASK | GDK_KEY_PRESS_MASK |
-				    GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK );
-		gtkblist->east_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
-										   GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
-		gdk_window_set_user_data (gtkblist->east_shadow, gtkblist->tipwindow);
-		gdk_window_set_back_pixmap (gtkblist->east_shadow, NULL, FALSE);
-
-		gtkblist->south_shadow = gdk_window_new(gtk_widget_get_root_window(gtkblist->tipwindow), &attr,
-											GDK_WA_NOREDIR | GDK_WA_VISUAL | GDK_WA_COLORMAP);
-		gdk_window_set_user_data (gtkblist->south_shadow, gtkblist->tipwindow);
-		gdk_window_set_back_pixmap (gtkblist->south_shadow, NULL, FALSE);
-	}
-#endif /* ifdef WANT_DROP_SHADOW */
 
 	layout = gtk_widget_create_pango_layout (gtkblist->tipwindow, NULL);
 	pango_layout_set_wrap(layout, PANGO_WRAP_WORD);
@@ -2553,12 +2216,6 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	gtk_widget_set_size_request(gtkblist->tipwindow, w, h);
 	gtk_window_move(GTK_WINDOW(gtkblist->tipwindow), x, y);
 	gtk_widget_show(gtkblist->tipwindow);
-
-#ifdef WANT_DROP_SHADOW
-	if (!xcomposite_is_present()) {
-		map_shadow_windows(gtkblist);
-	}
-#endif
 
 	return FALSE;
 }
