@@ -365,7 +365,7 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 static void
 gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 {
-	GSList *list = g_slist_append (NULL, tree);
+	GSList *list = g_slist_prepend (NULL, tree);
 
 	while (list) {
 		GtkSmileyTree *t = list->data;
@@ -373,7 +373,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 		list = g_slist_remove(list, t);
 		if (t && t->values) {
 			for (i = 0; i < t->values->len; i++)
-				list = g_slist_append (list, t->children [i]);
+				list = g_slist_prepend (list, t->children [i]);
 			g_string_free (t->values, TRUE);
 			g_free (t->children);
 		}
