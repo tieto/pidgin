@@ -280,8 +280,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		/* Set the time the account came online */
 		time(&gc->login_time);
 
-		if (gaim_prefs_get_bool("/core/logging/log_system") &&
-		   gaim_prefs_get_bool("/core/logging/log_own_states")){
+		if (gaim_prefs_get_bool("/core/logging/log_system"))
+		{
 			GaimLog *log = gaim_account_get_log(account);
 			char *msg = g_strdup_printf("+++ %s signed on",
 										gaim_account_get_username(account));
@@ -328,8 +328,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 	else if (gc->state == GAIM_DISCONNECTED) {
 		GaimAccount *account = gaim_connection_get_account(gc);
 
-		if(gaim_prefs_get_bool("/core/logging/log_system") &&
-		   gaim_prefs_get_bool("/core/logging/log_own_states")){
+		if (gaim_prefs_get_bool("/core/logging/log_system"))
+		{
 			GaimLog *log = gaim_account_get_log(account);
 			char *msg = g_strdup_printf("+++ %s signed off",
 										gaim_account_get_username(account));

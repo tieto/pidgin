@@ -1386,15 +1386,11 @@ logging_page()
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GList *names;
-	GtkWidget *sys_box;
-	GtkWidget *box;
-
-	int syslog_enabled = gaim_prefs_get_bool("/core/logging/log_system");
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
 
-	vbox = gaim_gtk_make_frame (ret, _("Message Logs"));
+	vbox = gaim_gtk_make_frame (ret, _("Logging"));
 	names = gaim_log_logger_get_options();
 
 	gaim_gtk_prefs_dropdown_from_list(vbox, _("Log _Format:"), GAIM_PREF_STRING,
@@ -1402,41 +1398,15 @@ logging_page()
 
 	g_list_free(names);
 
-	gaim_gtk_prefs_checkbox(_("_Log all instant messages"),
+	gaim_gtk_prefs_checkbox(_("Log all _instant messages"),
 				  "/core/logging/log_ims", vbox);
 	gaim_gtk_prefs_checkbox(_("Log all c_hats"),
 				  "/core/logging/log_chats", vbox);
-
-	vbox = gaim_gtk_make_frame (ret, _("System Logs"));
-
-	sys_box = gaim_gtk_prefs_checkbox(_("_Enable system log"),
-									  "/core/logging/log_system", vbox);
-
-	box = gaim_gtk_prefs_checkbox(_("Log when buddies log in/log _out"),
-								  "/core/logging/log_signon_signoff", vbox);
-	g_signal_connect(G_OBJECT(sys_box), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
-	gtk_widget_set_sensitive(box, syslog_enabled);
-
-	box = gaim_gtk_prefs_checkbox(_("Log when buddies become _idle/un-idle"),
-								  "/core/logging/log_idle_state", vbox);
-	g_signal_connect(G_OBJECT(sys_box), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
-	gtk_widget_set_sensitive(box, syslog_enabled);
-
-	box = gaim_gtk_prefs_checkbox(_("Log when buddies go away/come _back"),
-								  "/core/logging/log_away_state", vbox);
-	g_signal_connect(G_OBJECT(sys_box), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
-	gtk_widget_set_sensitive(box, syslog_enabled);
-
-	box = gaim_gtk_prefs_checkbox(_("Log your own _signons/idleness/awayness"),
-								  "/core/logging/log_own_states", vbox);
-	g_signal_connect(G_OBJECT(sys_box), "clicked",
-					 G_CALLBACK(gaim_gtk_toggle_sensitive), box);
-	gtk_widget_set_sensitive(box, syslog_enabled);
+	gaim_gtk_prefs_checkbox(_("Log all _status changes"),
+				  "/core/logging/log_system", vbox);
 
 	gtk_widget_show_all(ret);
+
 	return ret;
 }
 

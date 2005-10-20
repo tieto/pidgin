@@ -609,8 +609,7 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 
-	if (gaim_prefs_get_bool("/core/logging/log_system") &&
-		gaim_prefs_get_bool("/core/logging/log_away_state"))
+	if (gaim_prefs_get_bool("/core/logging/log_system"))
 	{
 		time_t current_time = time(NULL);
 		const char *buddy_alias = gaim_buddy_get_alias(buddy);
@@ -1303,8 +1302,7 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", buddy);
 
-		if (gaim_prefs_get_bool("/core/logging/log_system") &&
-				gaim_prefs_get_bool("/core/logging/log_idle_state"))
+		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(buddy->account);
 			char *tmp = g_strdup_printf(_("%s became idle"),
@@ -1319,8 +1317,7 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 	{
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", buddy);
 
-		if (gaim_prefs_get_bool("/core/logging/log_system") &&
-				gaim_prefs_get_bool("/core/logging/log_idle_state"))
+		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(buddy->account);
 			char *tmp = g_strdup_printf(_("%s became unidle"),

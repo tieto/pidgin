@@ -491,10 +491,6 @@ void gaim_log_init(void)
 	gaim_prefs_add_bool("/core/logging/log_ims", FALSE);
 	gaim_prefs_add_bool("/core/logging/log_chats", FALSE);
 	gaim_prefs_add_bool("/core/logging/log_system", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_signon_signoff", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_idle_state", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_away_state", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_own_states", FALSE);
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
 
