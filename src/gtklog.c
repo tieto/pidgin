@@ -419,7 +419,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 
 		if (ht == NULL) {
 			if (!gaim_prefs_get_bool("/core/logging/log_system"))
-				log_preferences = _("System events will only be logged if the <span style=\"italic\">Enable system log preference</span> is set.");
+				log_preferences = _("System events will only be logged if the <span style=\"italic\">Log all status changes to system log</span> preference is enabled.");
 		} else {
 			if (ht->type == GAIM_LOG_IM) {
 				if (!gaim_prefs_get_bool("/core/logging/log_ims"))
