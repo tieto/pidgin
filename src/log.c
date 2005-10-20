@@ -376,7 +376,7 @@ GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *accoun
 		GaimLogLogger *logger = n->data;
 		if (!logger->list)
 			continue;
-		logs = g_list_concat(logs, logger->list(type, name, account));
+		logs = g_list_concat(logger->list(type, name, account), logs);
 	}
 
 	return g_list_sort(logs, gaim_log_compare);
@@ -479,7 +479,7 @@ GList *gaim_log_get_system_logs(GaimAccount *account)
 		GaimLogLogger *logger = n->data;
 		if (!logger->list_syslog)
 			continue;
-		logs = g_list_concat(logs, logger->list_syslog(account));
+		logs = g_list_concat(logger->list_syslog(account), logs);
 	}
 
 	return g_list_sort(logs, gaim_log_compare);
@@ -614,7 +614,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 			log->logger = logger;
 			log->logger_data = data = g_new0(GaimLogCommonLoggerData, 1);
 			data->path = g_build_filename(path, filename, NULL);
-			list = g_list_append(list, log);
+			list = g_list_prepend(list, log);
 		}
 	}
 	g_dir_close(dir);
@@ -674,7 +674,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 
 			if (!strcmp(protocol_unescaped, prpl_info->list_icon((GaimAccount *)account_iter->data, NULL)))
-				accounts = g_list_append(accounts, account_iter->data);
+				accounts = g_list_prepend(accounts, account_iter->data);
 		}
 		g_free(protocol_unescaped);
 
@@ -1168,7 +1168,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					data->length = newlen;
 					data->pathref = gaim_stringref_ref(pathref);
 					log->logger_data = data;
-					list = g_list_append(list, log);
+					list = g_list_prepend(list, log);
 				}
 			}
 
@@ -1219,7 +1219,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			data->length = newlen;
 			data->pathref = gaim_stringref_ref(pathref);
 			log->logger_data = data;
-			list = g_list_append(list, log);
+			list = g_list_prepend(list, log);
 		}
 	}
 
