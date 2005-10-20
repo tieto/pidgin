@@ -1778,7 +1778,6 @@ away_page()
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *select;
-	GtkWidget *dd;
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
@@ -1799,9 +1798,6 @@ away_page()
 
 	button = gaim_gtk_prefs_checkbox(_("_Report idle time"),
 			"/gaim/gtk/idle/report", vbox);
-
-	gtk_size_group_add_widget(sg, dd);
-	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
 	button = gaim_gtk_prefs_checkbox(_("Set away _when idle"),
