@@ -118,7 +118,6 @@ check_idle(gpointer data)
 {
 	GaimConnection *gc = data;
 	gboolean report_idle;
-	const char *idle_method;
 	GaimAccount *account;
 	time_t t;
 	int idle_time;
@@ -129,17 +128,20 @@ check_idle(gpointer data)
 
 	time(&t);
 
-	idle_method = gaim_prefs_get_string("/gaim/gtk/idle/method");
 	report_idle = gaim_prefs_get_bool("/gaim/gtk/idle/report");
 
 #ifdef USE_SCREENSAVER
-	if (idle_method != NULL && !strcmp(idle_method, "system"))
 		idle_time = get_idle_time_from_system();
-	else
-#endif /* USE_SCREENSAVER */
+#else
+		/*
+		 * If Gaim wasn't built with xscreensaver support, then
+		 * fallback to calculating our idle time based on when
+		 * we last sent a message.
+		 */
 		idle_time = t - gc->last_sent_time;
+#endif /* USE_SCREENSAVER */
 
-	/* Should be become auto-away? */
+	/* Should we become auto-away? */
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away))
