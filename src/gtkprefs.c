@@ -1402,7 +1402,7 @@ logging_page()
 				  "/core/logging/log_ims", vbox);
 	gaim_gtk_prefs_checkbox(_("Log all c_hats"),
 				  "/core/logging/log_chats", vbox);
-	gaim_gtk_prefs_checkbox(_("Log all _status changes"),
+	gaim_gtk_prefs_checkbox(_("Log all _status changes to system log"),
 				  "/core/logging/log_system", vbox);
 
 	gtk_widget_show_all(ret);
