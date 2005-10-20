@@ -839,41 +839,42 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 		their_name = from_name;
 		if (from_name && gaim_prefs_get_bool("/plugins/core/log_reader/use_name_heuristics")) {
 			const char *friendly_name = gaim_connection_get_display_name(log->account->gc);
-			int friendly_name_length = strlen(friendly_name);
-			int alias_length         = strlen(log->account->alias);
-			GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
-			gboolean from_name_matches;
-			gboolean to_name_matches;
 
-			if (buddy->alias)
-				their_name = buddy->alias;
+			if (friendly_name != NULL) {
+				int friendly_name_length = strlen(friendly_name);
+				int alias_length         = strlen(log->account->alias);
+				GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
+				gboolean from_name_matches;
+				gboolean to_name_matches;
 
-			/* Try to guess which user is me.
-			 * The first step is to determine if either of the names matches either my
-			 * friendly name or alias. For this test, "match" is defined as:
-			 * ^(friendly_name|alias)([^a-zA-Z0-9].*)?$
-			 */
-			from_name_matches = ((g_str_has_prefix(
-					from_name, friendly_name) &&
-					!isalnum(*(from_name + friendly_name_length))) ||
-					(g_str_has_prefix(from_name, log->account->alias) &&
-					!isalnum(*(from_name + alias_length))));
+				if (buddy && buddy->alias)
+					their_name = buddy->alias;
 
-			to_name_matches = ((g_str_has_prefix(
-					to_name, friendly_name) &&
-					!isalnum(*(to_name + friendly_name_length))) ||
-					(g_str_has_prefix(to_name, log->account->alias) &&
-					!isalnum(*(to_name + alias_length))));
+				/* Try to guess which user is me.
+				 * The first step is to determine if either of the names matches either my
+				 * friendly name or alias. For this test, "match" is defined as:
+				 * ^(friendly_name|alias)([^a-zA-Z0-9].*)?$
+				 */
+				from_name_matches = ((g_str_has_prefix(
+						from_name, friendly_name) &&
+						!isalnum(*(from_name + friendly_name_length))) ||
+						(g_str_has_prefix(from_name, log->account->alias) &&
+						!isalnum(*(from_name + alias_length))));
 
-			if (from_name_matches) {
-				if (!to_name_matches) {
-					name_guessed = NAME_GUESS_ME;
-				}
-			} else if (to_name_matches) {
-				name_guessed = NAME_GUESS_THEM;
-			} else {
-				if (buddy) {
-					if (buddy->alias) {
+				to_name_matches = ((g_str_has_prefix(
+						to_name, friendly_name) &&
+						!isalnum(*(to_name + friendly_name_length))) ||
+						(g_str_has_prefix(to_name, log->account->alias) &&
+						!isalnum(*(to_name + alias_length))));
+
+				if (from_name_matches) {
+					if (!to_name_matches) {
+						name_guessed = NAME_GUESS_ME;
+					}
+				} else if (to_name_matches) {
+					name_guessed = NAME_GUESS_THEM;
+				} else {
+					if (buddy && buddy->alias) {
 						char *alias = g_strdup(buddy->alias);
 
 						/* "Truncate" the string at the first non-alphanumeric
