@@ -412,7 +412,7 @@ xmlnode_from_str(const char *str, gssize size)
 
 	g_return_val_if_fail(str != NULL, NULL);
 
-	real_size = size == -1 ? strlen(str) : size;
+	real_size = size < 0 ? strlen(str) : size;
 	xpd = g_new0(struct _xmlnode_parser_data, 1);
 	context = g_markup_parse_context_new(&xmlnode_parser, 0, xpd, NULL);
 
