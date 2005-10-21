@@ -181,7 +181,8 @@ char *xmlnode_to_formatted_str(xmlnode *node, int *len);
  * into a tree of nodes, and return the xmlnode of the root.
  *
  * @param str  The string of xml.
- * @param size The size of the string.
+ * @param size The size of the string, or -1 if @a str is
+ *             NUL-terminated.
  *
  * @return The new node.
  */

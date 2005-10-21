@@ -317,20 +317,22 @@ void (*deleting_conversation)(GaimConversation *conv);
 
  @signaldef buddy-typing
   @signalproto
-void (*buddy_typing)(GaimConversation *conv);
+void (*buddy_typing)(GaimAccount *account, const char *name);
   @endsignalproto
   @signaldesc
    Emitted when a buddy starts typing in a conversation window.
-  @param conv The IM conversation a buddy is typing in.
+  @param account The account of the user which is typing.
+  @param name    The name of the user which is typing.
  @endsignaldef
 
  @signaldef buddy-typing-stopped
   @signalproto
-void (*buddy_typing)(GaimConversation *conv);
+void (*buddy_typing_stopped)(GaimAccount *account, const char *name);
   @endsignalproto
   @signaldesc
    Emitted when a buddy stops typing in a conversation window.
-  @param conv The IM conversation a buddy is typing in.
+  @param account The account of the user which stopped typing.
+  @param name    The name of the user which stopped typing.
  @endsignaldef
 
  @signaldef chat-buddy-joining
