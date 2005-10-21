@@ -787,67 +787,53 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state) {
-
-	GaimBuddy *b;
-	GaimConversation *cnv;
+	GaimConversation *conv;
 	GaimConvIm *im;
 
-	cnv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
-	if (!cnv)
-		return;
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
+	if (conv != NULL) {
+		im = GAIM_CONV_IM(conv);
 
-	im = GAIM_CONV_IM(cnv);
-
-	gaim_conversation_set_account(cnv, gc->account);
-	gaim_conv_im_set_typing_state(im, state);
-	gaim_conv_im_update_typing(im);
-
-	b = gaim_find_buddy(gc->account, name);
-
-	if (b != NULL)
-	{
-		if (state == GAIM_TYPING)
-		{
-			gaim_signal_emit(gaim_conversations_get_handle(),
-							 "buddy-typing", cnv);
-		}
-		else
-		{
-			gaim_signal_emit(gaim_conversations_get_handle(),
-							 "buddy-typing-stopped", cnv);
-		}
+		gaim_conversation_set_account(conv, gc->account);
+		gaim_conv_im_set_typing_state(im, state);
+		gaim_conv_im_update_typing(im);
 	}
 
-	if (timeout > 0)
+	if (state == GAIM_TYPING)
+	{
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "buddy-typing", gc->account, name);
+	}
+	else
+	{
+		gaim_signal_emit(gaim_conversations_get_handle(),
+						 "buddy-typing-stopped", gc->account, name);
+	}
+
+	if (conv != NULL && timeout > 0)
 		gaim_conv_im_start_typing_timeout(im, timeout);
 }
 
 void serv_got_typing_stopped(GaimConnection *gc, const char *name) {
 
-	GaimConversation *c;
+	GaimConversation *conv;
 	GaimConvIm *im;
-	GaimBuddy *b;
 
-	c = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
-	if (!c)
-		return;
-
-	im = GAIM_CONV_IM(c);
-
-	if (im->typing_state == GAIM_NOT_TYPING)
-		return;
-
-	gaim_conv_im_stop_typing_timeout(im);
-	gaim_conv_im_set_typing_state(im, GAIM_NOT_TYPING);
-	gaim_conv_im_update_typing(im);
-
-	b = gaim_find_buddy(gc->account, name);
-
-	if (b != NULL)
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
+	if (conv != NULL)
 	{
-		gaim_signal_emit(gaim_conversations_get_handle(),
-						 "buddy-typing-stopped", c);
+		im = GAIM_CONV_IM(conv);
+
+		if (im->typing_state == GAIM_NOT_TYPING)
+			return;
+
+		gaim_conv_im_stop_typing_timeout(im);
+		gaim_conv_im_set_typing_state(im, GAIM_NOT_TYPING);
+		gaim_conv_im_update_typing(im);
 	}
+
+	gaim_signal_emit(gaim_conversations_get_handle(),
+					 "buddy-typing-stopped", gc->account, name);
 }
 
 struct chat_invite_data {

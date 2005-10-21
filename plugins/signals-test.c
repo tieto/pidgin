@@ -380,10 +380,17 @@ deleting_conversation_cb(GaimConversation *conv, void *data)
 }
 
 static void
-buddy_typing_cb(GaimConversation *conv, void *data)
+buddy_typing_cb(GaimAccount *account, const char *name, void *data)
 {
-	gaim_debug_misc("signals test", "buddy-typing (%s)\n",
-					gaim_conversation_get_name(conv));
+	gaim_debug_misc("signals test", "buddy-typing (%s, %s)\n",
+					gaim_account_get_username(account), name);
+}
+
+static void
+buddy_typing_stopped_cb(GaimAccount *account, const char *name, void *data)
+{
+	gaim_debug_misc("signals test", "buddy-typing-stopped (%s, %s)\n",
+					gaim_account_get_username(account), name);
 }
 
 static gboolean
@@ -652,6 +659,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(deleting_conversation_cb), NULL);
 	gaim_signal_connect(conv_handle, "buddy-typing",
 						plugin, GAIM_CALLBACK(buddy_typing_cb), NULL);
+	gaim_signal_connect(conv_handle, "buddy-typing-stopped",
+						plugin, GAIM_CALLBACK(buddy_typing_stopped_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-buddy-joining",
 						plugin, GAIM_CALLBACK(chat_buddy_joining_cb), NULL);
 	gaim_signal_connect(conv_handle, "chat-buddy-joined",

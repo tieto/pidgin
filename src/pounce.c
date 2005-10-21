@@ -949,12 +949,12 @@ buddy_state_cb(GaimBuddy *buddy, GaimPounceEvent event)
 }
 
 static void
-buddy_typing_cb(GaimConversation *conv, void *data)
+buddy_typing_cb(GaimAccount *account, const char *name, void *data)
 {
-	GaimAccount *account = gaim_conversation_get_account(conv);
-	const char *name     = gaim_conversation_get_name(conv);
+	GaimConversation *conv;
 
-	if (gaim_find_buddy(account, name) != NULL)
+	conv == gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, account);
+	if (conv != NULL)
 	{
 		GaimPounceEvent event;
 

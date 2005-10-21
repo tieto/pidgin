@@ -145,6 +145,11 @@ version 2.0.0:
 	* Added:   "buddy-added" and "buddy-removed", which are self-explanatory
 	* Added:   "blist-node-aliased", an alias was set for a buddy, chat or
 	           contact.  See the Doxygen documentation for the details.
+	* Changed: "buddy-typing" and "buddy-typing-stopped", replaced the
+	           GaimConversation* with GaimAccount*, const char *name.  Also,
+	           the signal is now emitted regardless of whether a
+	           conversation exists and regardless of whether the user is on
+	           the buddy list.
 
 version 1.0.0 (09/17/2004):
 	* Added: get_chat_name to the GaimPluginProtocolInfo struct
