@@ -3,11 +3,9 @@ Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 version 2.0.0:
 	New Features:
 	* Insane rewrite of all code dealing with buddy and account status, away
-	  messages, away states, online/offline, etc.  Huge thanks to Christian,
-	  Dave West, and Daniel Atallah
+	  messages, away states, online/offline, etc.  Huge thanks to Christian
+	  Hammond, Dave West, and Daniel Atallah
 	* Beautiful new default sounds (Brad Turcotte)
-	* gaim-remote can send text (John B. Silvestri)
-	* Autoreconnect plugin can hide the reconnect dialog (François Gagné)
 	* Screenname colors in chats now chosen intelligently from GNOME color
 	  palette
 	* New "find buddy" results dialog (Alex Converse)
@@ -62,6 +60,7 @@ version 2.0.0:
 	* Many problems related to having an IM conversation and a chat open
 	  with the same name (Andrew Hart)
 	* Improved buddy list searching with CTRL+F
+	* Overhauled the system tray/docklet plugin (Casey Harkins)
 	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
 	* Show smiley theme descriptions correctly for the highlighted
 	  smiley theme (Levi Bard)
@@ -94,6 +93,11 @@ version 2.0.0:
 	* Removed protocol options.
 	* Consolidated three ignore formatting options into a single one.
 	* Removed "Escape closes windows," defaulted to Ctrl-W.
+	* Removed "Gaim usage" and the "Idle time reporting" selection,
+	  always use mouse/keyboard when available.
+	* Removed "Log when buddies sign on/sign off/become idle/
+	  become un-idle/go away/come back" and "Log your own actions",
+	  all of these will be logged when the system log is enabled
 
 version 1.1.5:
 	* Yahoo file receiving and buddy icon receiving work again.
