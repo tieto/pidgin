@@ -177,6 +177,7 @@ online_account_supports_chat()
 		GaimConnection *gc = c->data;
 		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
 			return TRUE;
+		c = c->next;
 	}
 
 	return FALSE;
