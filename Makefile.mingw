@@ -21,7 +21,6 @@ TOC = $(GAIM_PROTOS)/toc
 IRC = $(GAIM_PROTOS)/irc
 JABBER = $(GAIM_PROTOS)/jabber
 NAPSTER = $(GAIM_PROTOS)/napster
-TREPIA = $(GAIM_PROTOS)/trepia
 GG = $(GAIM_PROTOS)/gg
 NOVELL = $(GAIM_PROTOS)/novell
 SILC = $(GAIM_PROTOS)/silc

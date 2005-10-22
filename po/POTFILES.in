@@ -123,7 +123,6 @@ src/protocols/silc/pk.c
 src/protocols/silc/silc.c
 src/protocols/silc/util.c
 src/protocols/toc/toc.c
-src/protocols/trepia/trepia.c
 src/protocols/yahoo/yahoo.c
 src/protocols/yahoo/yahoo_filexfer.c
 src/protocols/yahoo/yahoo_profile.c
