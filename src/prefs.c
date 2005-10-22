@@ -991,7 +991,7 @@ disco_callback_helper(struct gaim_pref *pref, guint callback_id)
 	for(cbs = pref->callbacks; cbs; cbs = cbs->next) {
 		struct pref_cb *cb = cbs->data;
 		if(cb->id == callback_id) {
-			pref->callbacks = g_slist_remove(pref->callbacks, cb);
+			pref->callbacks = g_slist_delete_link(pref->callbacks, cbs);
 			g_free(cb);
 			return TRUE;
 		}
@@ -1024,7 +1024,7 @@ disco_callback_helper_handle(struct gaim_pref *pref, void *handle)
 	while (cbs != NULL) {
 		struct pref_cb *cb = cbs->data;
 		if(cb->handle == handle) {
-			pref->callbacks = g_slist_remove(pref->callbacks, cb);
+			pref->callbacks = g_slist_delete_link(pref->callbacks, cbs);
 			g_free(cb);
 			cbs = pref->callbacks;
 		} else

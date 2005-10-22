@@ -4628,7 +4628,7 @@ void gaim_gtk_blist_sort_method_unreg(const char *id){
 	while(l) {
 		struct gaim_gtk_blist_sort_method *method = l->data;
 		if(!strcmp(method->id, id)) {
-			gaim_gtk_blist_sort_methods = g_slist_remove(gaim_gtk_blist_sort_methods, method);
+			gaim_gtk_blist_sort_methods = g_slist_delete_link(gaim_gtk_blist_sort_methods, l);
 			g_free(method->id);
 			g_free(method->name);
 			g_free(method);

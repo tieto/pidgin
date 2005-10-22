@@ -85,8 +85,8 @@ gaim_privacy_permit_remove(GaimAccount *account, const char *who,
 	if (l == NULL)
 		return FALSE;
 
-	account->permit = g_slist_remove(account->permit, l->data);
 	g_free(l->data);
+	account->permit = g_slist_delete_link(account->permit, l);
 
 	if (!local_only && gaim_account_is_connected(account))
 		serv_rem_permit(gaim_account_get_connection(account), who);
@@ -156,8 +156,8 @@ gaim_privacy_deny_remove(GaimAccount *account, const char *who,
 	if (l == NULL)
 		return FALSE;
 
-	account->deny = g_slist_remove(account->deny, l->data);
 	g_free(l->data);
+	account->deny = g_slist_delete_link(account->deny, l);
 
 	if (!local_only && gaim_account_is_connected(account))
 		serv_rem_deny(gaim_account_get_connection(account), who);
