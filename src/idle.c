@@ -160,7 +160,8 @@ check_idle(gpointer data)
 			/* Mark our accounts "away" using the idleaway status */
 			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
 			saved_status = gaim_savedstatus_find(idleaway_name);
-			gaim_savedstatus_activate(saved_status);
+			if (saved_status)
+				gaim_savedstatus_activate(saved_status);
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {
