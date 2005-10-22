@@ -251,10 +251,10 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 			charset++;
 
 		if (!strcasecmp("UTF-8", charset)) {
-			if (g_utf8_validate(string, strlen(string), NULL))
+			if (g_utf8_validate(string, -1, NULL))
 				utf8 = g_strdup(string);
 		} else {
-			utf8 = g_convert(string, strlen(string), "UTF-8", charset, NULL, NULL, NULL);
+			utf8 = g_convert(string, -1, "UTF-8", charset, NULL, NULL, NULL);
 		}
 
 		if (utf8) {
