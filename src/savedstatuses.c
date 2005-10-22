@@ -503,6 +503,8 @@ gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 {
 	GList *accounts;
 
+	g_return_if_fail(saved_status != NULL);
+
 	accounts = gaim_accounts_get_all_active();
 
 	while (accounts != NULL)
@@ -521,6 +523,9 @@ gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
 {
 	const GList *status_types;
 	GaimStatusType *status_type;
+
+	g_return_if_fail(saved_status != NULL);
+	g_return_if_fail(account != NULL);
 
 	/* Find the status type that matches the given primitive */
 	status_types = gaim_account_get_status_types(account);
