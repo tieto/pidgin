@@ -1564,7 +1564,6 @@ static void load_conf()
 			"BAD watn\nGOOD want\n"
 			"COMPLETE 0\nBAD we;d \nGOOD we'd \n"
 			"BAD wednesday\nGOOD Wednesday\n"
-			"BAD wel\nGOOD we'll\n"
 			"BAD wehn\nGOOD when\n"
 			"COMPLETE 0\nBAD we'l \nGOOD we'll \n"
 			"COMPLETE 0\nBAD we;ll \nGOOD we'll \n"
