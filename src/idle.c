@@ -35,7 +35,6 @@
 
 #include "connection.h"
 #include "debug.h"
-#include "gtkstatusbox.h"
 #include "log.h"
 #include "prefs.h"
 #include "savedstatuses.h"
@@ -158,11 +157,10 @@ check_idle(gpointer data)
 			gaim_debug_info("idle", "Making %s auto-away\n",
 							gaim_account_get_username(account));
 
-			/* TODO XXX STATUS AWAY CORE/UI */
 			/* Mark our accounts "away" using the idleaway status */
 			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
 			saved_status = gaim_savedstatus_find(idleaway_name);
-			gtk_gaim_status_box_activate_saved_status(saved_status);
+			gaim_savedstatus_activate(saved_status);
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {

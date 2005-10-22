@@ -168,6 +168,24 @@ const char *gaim_savedstatus_get_message(const GaimSavedStatus *saved_status);
 gboolean gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status);
 
 /**
+ * Sets the statuses for all your accounts to those specified
+ * by the given saved_status.  This function calls
+ * gaim_savedstatus_activate_for_account() for all your accounts.
+ *
+ * @param saved_status The status you want to set your accounts to.
+ */
+void gaim_savedstatus_activate(const GaimSavedStatus *saved_status);
+
+/**
+ * Sets the statuses for a given account to those specified
+ * by the given saved_status.
+ *
+ * @param saved_status The status you want to set your accounts to.
+ * @param account      The account whose statuses you want to change.
+ */
+void gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status, GaimAccount *account);
+
+/**
  * Get the handle for the status subsystem.
  *
  * @return the handle to the status subsystem

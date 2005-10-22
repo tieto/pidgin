@@ -35,6 +35,7 @@
 #include "prefs.h"
 #include "prpl.h"
 #include "request.h"
+#include "savedstatuses.h"
 #include "signals.h"
 #include "util.h"
 
@@ -2129,6 +2130,8 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
 	gboolean enabled;
+	const char *current_savedstatus_name;
+	const GaimSavedStatus *saved_status;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter,
@@ -2136,20 +2139,11 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_ENABLED, &enabled,
 					   -1);
 
-	/* TODO: Set the statuses for this account to match the GtkStatusBox */
-	/*
-	GtkWidget *blist;
-	GtkWidget *statusbox;
-	GaimStatus *status;
+	/* Set the statuses for this account to the current status */
+	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+	gaim_savedstatus_activate_for_account(saved_status, account);
 
-	blist = gaim_gtk_blist_get_default_gtk_blist();
-	statusbox = blist->statusbox;
-	status = gaim_gtk_status_box_get_current_status();
-
-	gaim_account_set_status(account, );
-	gaim_account_set_status_vargs(account, );
-	gaim_account_set_status_list(account, );
-	*/
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
 
 	gtk_list_store_set(dialog->model, &iter,

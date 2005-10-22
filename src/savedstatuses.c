@@ -498,6 +498,49 @@ gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
 	return (saved_status->substatuses != NULL);
 }
 
+void
+gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
+{
+	GList *accounts;
+
+	accounts = gaim_accounts_get_all_active();
+
+	while (accounts != NULL)
+	{
+		GaimAccount *account;
+
+		account = accounts->data;
+		gaim_savedstatus_activate_for_account(saved_status, account);
+		accounts = accounts->next;
+	}
+}
+
+void
+gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
+									  GaimAccount *account)
+{
+	const GList *status_types;
+	GaimStatusType *status_type;
+
+	/* Find the status type that matches the given primitive */
+	status_types = gaim_account_get_status_types(account);
+	while (status_types != NULL)
+	{
+		status_type = status_types->data;
+		if (gaim_status_type_get_primitive(status_type) == saved_status->type)
+		{
+			if (saved_status->message != NULL)
+				gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+										TRUE, "message", saved_status->message, NULL);
+			else
+				gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+										TRUE, NULL);
+			return;
+		}
+		status_types = status_types->next;
+	}
+}
+
 void *
 gaim_savedstatuses_get_handle(void)
 {
