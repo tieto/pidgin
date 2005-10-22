@@ -156,7 +156,6 @@ DLL_C_SRC =	\
 			xmlnode.c \
 			whiteboard.c \
 			win32/win32dep.c \
-			win32/MinimizeToTray.c \
 			win32/libc_interface.c \
 			win32/wspell.c \
 			win32/untar.c

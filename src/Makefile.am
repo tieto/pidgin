@@ -7,8 +7,6 @@ EXTRA_DIST = \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
-		win32/MinimizeToTray.c \
-		win32/MinimizeToTray.h \
 		win32/gaimrc.rc \
 		win32/global.mak \
 		win32/libc_interface.c \

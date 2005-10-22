@@ -56,8 +56,9 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			docklet.c \
-			docklet-win32.c
+C_SRC =			docklet.c   \
+			docklet-win32.c \
+			MinimizeToTray.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)

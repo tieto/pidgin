@@ -28,10 +28,8 @@
 #include <stdio.h>
 #include <winuser.h>
 
-#include <gtk/gtk.h>
 #include <glib.h>
 #include <glib/gstdio.h>
-#include <gdk/gdkwin32.h>
 
 #include "gaim.h"
 #include "debug.h"
@@ -39,7 +37,6 @@
 
 #include "stdafx.h"
 #include "resource.h"
-#include "MinimizeToTray.h"
 #include "idletrack.h"
 #include "zlib.h"
 #include "untar.h"
@@ -364,15 +361,6 @@ int wgaim_gz_untar(const char* filename, const char* destdir) {
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim_gz_untar", "Failed to gz decompress %s\n", filename);
 		return 0;
 	}
-}
-
-/* Moved over from old systray.c */
-void wgaim_systray_minimize( GtkWidget *window ) {
-	MinimizeWndToTray(GDK_WINDOW_HWND(window->window));
-}
-
-void wgaim_systray_maximize( GtkWidget *window ) {
-	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
 
 void wgaim_notify_uri(const char *uri) {

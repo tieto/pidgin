@@ -35,9 +35,7 @@
 #include "util.h"
 
 /* XXX UI Stuff */
-#include "gtkdialogs.h"
 #include "gaim.h"
-#include "gtkimhtml.h"
 #include "gtkutils.h"
 
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
@@ -748,37 +746,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		 * then display it. Easy.
 		 */
 
-		/* XXX UGLY HACK OF THE YEAR
-		 * Robot101 will fix this after his exams. honest.
-		 * I guess he didn't specify WHICH exams, exactly...
-		 */
-/* XXX CORE/UI */
-#if 0
-		if (docklet_count &&
-		    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages") &&
-		    !gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account)) {
-			/*
-			 * We're gonna queue it up and wait for the user to ask for
-			 * it... probably by clicking the docklet or windows tray icon.
-			 */
-			struct queued_message *qm;
-			qm = g_new0(struct queued_message, 1);
-			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(message);
-			qm->account = gc->account;
-			qm->tm = mtime;
-			qm->flags = msgflags;
-			unread_message_queue = g_slist_append(unread_message_queue, qm);
-		}
-		else {
-#endif
-			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, name);
+		if (cnv == NULL)
+			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, name);
 
-			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
-#if 0
-		}
-#endif
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 	}
 
 	g_free(name);
@@ -788,7 +759,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 					 GaimTypingState state) {
 	GaimConversation *conv;
-	GaimConvIm *im;
+	GaimConvIm *im = NULL;
 
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 	if (conv != NULL) {

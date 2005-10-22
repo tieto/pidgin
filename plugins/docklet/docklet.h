@@ -25,23 +25,24 @@
 #ifndef _DOCKLET_H_
 #define _DOCKLET_H_
 
-enum docklet_status
+typedef enum
 {
-	offline,
-	offline_connecting,
-	online,
-	online_connecting,
-	online_pending,
-	away,
-	away_pending
-};
+	DOCKLET_STATUS_OFFLINE,
+	DOCKLET_STATUS_ONLINE,
+	DOCKLET_STATUS_ONLINE_PENDING,
+	DOCKLET_STATUS_AWAY,
+	DOCKLET_STATUS_AWAY_PENDING,
+	DOCKLET_STATUS_CONNECTING
+} DockletStatus;
 
 struct docklet_ui_ops
 {
 	void (*create)();
 	void (*destroy)();
-	void (*update_icon)(enum docklet_status);
+	void (*update_icon)(DockletStatus);
 	void (*blank_icon)();
+	void (*minimize)(GtkWidget *);
+	void (*maximize)(GtkWidget *);
 	GtkMenuPositionFunc position_menu;
 };
 

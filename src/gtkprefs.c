@@ -2246,10 +2246,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk");
 	gaim_prefs_add_none("/plugins/gtk");
 
-	/* XXX Move this! HACK! :( Aww... */
-	gaim_prefs_add_none("/plugins/gtk/docklet");
-	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
-
 	/* Away Queueing */
 	gaim_prefs_add_none("/gaim/gtk/away");
 	gaim_prefs_add_bool("/gaim/gtk/away/queue_messages", FALSE);

@@ -25,8 +25,6 @@
 #include <shlobj.h>
 #include <winsock2.h>
 #include <process.h>
-#include <gtk/gtk.h>
-#include <gdk/gdkevents.h>
 #include "wgaimerror.h"
 #include "libc_interface.h"
 
@@ -51,9 +49,6 @@ extern char*     wgaim_data_dir(void);
 /* Utility */
 extern int       wgaim_gz_decompress(const char* in, const char* out);
 extern int       wgaim_gz_untar(const char* filename, const char* destdir);
-/* Docklet */
-extern void      wgaim_systray_minimize( GtkWidget* );
-extern void      wgaim_systray_maximize( GtkWidget* );
 /* Misc */
 extern void      wgaim_notify_uri(const char *uri);
 /* init / cleanup */

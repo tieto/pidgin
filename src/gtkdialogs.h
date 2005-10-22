@@ -67,9 +67,6 @@ struct queued_message {
 	GaimMessageFlags flags;
 };
 
-/* Globals in gtkmain.c */
-extern int docklet_count;
-
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();

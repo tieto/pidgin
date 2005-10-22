@@ -155,10 +155,7 @@ static char *dim_grey()
 
 static gboolean gtk_blist_delete_cb(GtkWidget *w, GdkEventAny *event, gpointer data)
 {
-	if (docklet_count)
-		gaim_blist_set_visible(FALSE);
-	else
-		gaim_core_quit();
+	gaim_core_quit();
 
 	/* we handle everything, event should not propogate further */
 	return TRUE;
@@ -3157,7 +3154,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible") || docklet_count == 0)
+		if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
 			gtk_widget_show(gtkblist->window);
 		return;
 	}
@@ -3172,7 +3169,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_show(gtkblist->vbox);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
-	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
+	g_signal_connect_after(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "visibility_notify_event", G_CALLBACK(gtk_blist_visibility_cb), NULL);
 	gtk_widget_add_events(gtkblist->window, GDK_VISIBILITY_NOTIFY_MASK);
@@ -3308,7 +3305,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_update_plugin_actions();
 
 	/* OK... let's show this bad boy. */
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible") || docklet_count == 0) {
+	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible")) {
 		gaim_gtk_blist_refresh(list);
 		gaim_gtk_blist_restore_position();
 		gtk_widget_show(gtkblist->window);
@@ -3853,14 +3850,7 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 		gaim_gtk_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
 	} else {
-		if (!gaim_connections_get_all() || docklet_count) {
-#ifdef _WIN32
-			wgaim_systray_minimize(gtkblist->window);
-#endif
-			gtk_widget_hide(gtkblist->window);
-		} else {
-			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
-		}
+		gtk_window_iconify(GTK_WINDOW(gtkblist->window));
 	}
 }
 
@@ -4475,41 +4465,6 @@ gaim_gtk_blist_request_add_group(void)
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
 					   _("Cancel"), NULL, NULL);
-}
-
-void gaim_gtk_blist_docklet_toggle() {
-	/* Useful for the docklet plugin and also for the win32 tray icon*/
-	/* This is called when one of those is clicked--it will show/hide the
-	   buddy list/login window--depending on which is active */
-	if (gtkblist && gtkblist->window) {
-		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gaim_gtk_blist_obscured);
-		} else {
-#if _WIN32
-			wgaim_systray_maximize(gtkblist->window);
-#endif
-			gaim_blist_set_visible(TRUE);
-		}
-	} else {
-		/* we're logging in or something... do nothing */
-		/* or should I make the blist? */
-		gaim_debug_warning("gtkblist",
-				   "docklet_toggle called with gaim_connections_get_all() "
-				   "but no blist!\n");
-	}
-}
-
-void gaim_gtk_blist_docklet_add()
-{
-	docklet_count++;
-}
-
-void gaim_gtk_blist_docklet_remove()
-{
-	docklet_count--;
-	if (!docklet_count) {
-			gaim_blist_set_visible(TRUE);
-	}
 }
 
 static GaimBlistUiOps blist_ui_ops =

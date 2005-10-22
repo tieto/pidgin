@@ -114,7 +114,7 @@ static HWND systray_create_hiddenwin() {
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	wcex.style	        = 0;
+	wcex.style		= 0;
 	wcex.lpfnWndProc	= (WNDPROC)systray_mainmsg_handler;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
@@ -152,11 +152,11 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 static void systray_change_icon(HICON icon, char* text) {
 	char *locenc=NULL;
 	wgaim_nid.hIcon = icon;
-        if(text) {
-                locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
-                lstrcpy(wgaim_nid.szTip, locenc);
-                g_free(locenc);
-        }
+	if (text) {
+		locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
+		lstrcpy(wgaim_nid.szTip, locenc);
+		g_free(locenc);
+	}
 	Shell_NotifyIcon(NIM_MODIFY,&wgaim_nid);
 }
 
@@ -164,31 +164,30 @@ static void systray_remove_nid(void) {
 	Shell_NotifyIcon(NIM_DELETE,&wgaim_nid);
 }
 
-static void wgaim_tray_update_icon(enum docklet_status icon) {
+static void wgaim_tray_update_icon(DockletStatus icon) {
 	switch (icon) {
-		case offline:
+		case DOCKLET_STATUS_OFFLINE:
 			systray_change_icon(sysicon_disconn, GAIM_SYSTRAY_DISCONN_HINT);
 			break;
-		case offline_connecting:
-		case online_connecting:
+		case DOCKLET_STATUS_CONNECTING:
 			break;
-		case online:
+		case DOCKLET_STATUS_ONLINE:
 			systray_change_icon(sysicon_conn, GAIM_SYSTRAY_HINT);
 			break;
-		case online_pending:
+		case DOCKLET_STATUS_ONLINE_PENDING:
 			systray_change_icon(sysicon_pend, GAIM_SYSTRAY_HINT);
 			break;
-		case away:
+		case DOCKLET_STATUS_AWAY:
 			systray_change_icon(sysicon_away, GAIM_SYSTRAY_AWAY_HINT);
 			break;
-		case away_pending:
+		case DOCKLET_STATUS_AWAY_PENDING:
 			systray_change_icon(sysicon_awypend, GAIM_SYSTRAY_AWAY_HINT);
 			break;
 	}
 }
 
 static void wgaim_tray_blank_icon() {
-        systray_change_icon(sysicon_blank, NULL);
+	systray_change_icon(sysicon_blank, NULL);
 }
 
 static void wgaim_tray_create() {
@@ -230,12 +229,22 @@ static void wgaim_tray_destroy() {
 	docklet_remove(TRUE);
 }
 
+void wgaim_tray_minimize(GtkWidget *window) {
+	MinimizeWndToTray(GDK_WINDOW_HWND(window->window));
+}
+
+void wgaim_tray_maximize(GtkWidget *window) {
+	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
+}
+
 static struct docklet_ui_ops wgaim_tray_ops =
 {
 	wgaim_tray_create,
 	wgaim_tray_destroy,
 	wgaim_tray_update_icon,
 	wgaim_tray_blank_icon,
+	wgaim_tray_minimize,
+	wgaim_tray_maximize,
 	NULL
 };
 

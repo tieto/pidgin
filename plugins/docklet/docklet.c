@@ -21,19 +21,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  */
-
-/* TODO (in order of importance):
- * - unify the queue so we can have a global away without the dialog
- * - handle and update tooltips to show your current accounts/queued messages?
- * - show a count of queued messages in the unified queue
- * - dernyi's account status menu in the right click
- * - optional pop up notices when GNOME2's system-tray-applet supports it
- */
-
 #include "internal.h"
 #include "gtkgaim.h"
 
 #include "core.h"
+#include "conversation.h"
 #include "debug.h"
 #include "prefs.h"
 #include "signals.h"
@@ -42,6 +34,7 @@
 
 #include "gtkaccount.h"
 #include "gtkblist.h"
+#include "gtkconv.h"
 #include "gtkft.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
@@ -53,61 +46,319 @@
 #include "gaim.h"
 #include "gtkdialogs.h"
 
-/* globals */
+#define DOCKLET_PLUGIN_ID "gtk-docklet"
 
+/* globals */
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
-static enum docklet_status status = offline;
-gboolean online_account_supports_chat = FALSE;
-#if 0 /* XXX CUI */
-#ifdef _WIN32
-__declspec(dllimport) GSList *unread_message_queue;
-__declspec(dllimport) GSList *away_messages;
-__declspec(dllimport) struct away_message *awaymessage;
-__declspec(dllimport) GSList *message_queue;
-#endif
-#endif
+static DockletStatus status = DOCKLET_STATUS_OFFLINE;
+static gulong gtkblist_delete_cb_id = 0;
+static gboolean enable_join_chat = FALSE;
 
-/* private functions */
+/**************************************************************************
+ * docklet status and utility functions
+ **************************************************************************/
+static gboolean
+docklet_blink_icon()
+{
+	static gboolean blinked = FALSE;
+	gboolean ret = FALSE; /* by default, don't keep blinking */
 
+	blinked = !blinked;
+
+	switch (status) {
+		case DOCKLET_STATUS_ONLINE_PENDING:
+		case DOCKLET_STATUS_AWAY_PENDING:
+			if (blinked) {
+				if (ui_ops && ui_ops->blank_icon)
+					ui_ops->blank_icon();
+			} else {
+				if (ui_ops && ui_ops->update_icon)
+					ui_ops->update_icon(status);
+			}
+			ret = TRUE; /* keep blinking */
+			break;
+		default:
+			blinked = FALSE;
+			break;
+	}
+
+	return ret;
+}
+
+static gboolean
+docklet_update_status()
+{
+	GList *l;
+	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
+	gboolean pending = FALSE;
+
+	/* determine if any ims have unseen messages */
+	for(l = gaim_get_ims(); l!=NULL; l=l->next) {
+		GaimConversation *conv = (GaimConversation*)l->data;
+		if(GAIM_IS_GTK_CONVERSATION(conv)) {
+			if(GAIM_GTK_CONVERSATION(conv)->unseen_state!=GAIM_UNSEEN_NONE) {
+				pending = TRUE;
+				break;
+			}
+		}
+	}
+
+	/* iterate through all accounts and determine which
+	 * status to show in the tray icon based on the following
+	 * ranks (highest encountered rank will be used):
+	 *
+	 *     1) OFFLINE
+	 *     2) ONLINE
+	 *     3) ONLINE_PENDING
+	 *     4) AWAY
+	 *     5) AWAY_PENDING
+	 *     6) CONNECTING
+	 */
+	for(l = gaim_accounts_get_all(); l!=NULL; l=l->next) {
+		DockletStatus tmpstatus = DOCKLET_STATUS_OFFLINE;
+
+		GaimAccount *account = (GaimAccount*)l->data;
+		GaimStatus *account_status;
+
+		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
+			continue;
+
+		if(gaim_account_is_disconnected(account))
+			continue;
+
+		account_status = gaim_account_get_active_status(account);
+
+		if(gaim_account_is_connecting(account)) {
+			tmpstatus = DOCKLET_STATUS_CONNECTING;
+		}
+		else if(gaim_status_is_online(account_status)) {
+			if(!gaim_status_is_available(account_status)) {
+				if(pending)
+					tmpstatus = DOCKLET_STATUS_AWAY_PENDING;
+				else
+					tmpstatus = DOCKLET_STATUS_AWAY;
+			}
+			else {
+				if(pending)
+					tmpstatus = DOCKLET_STATUS_ONLINE_PENDING;
+				else
+					tmpstatus = DOCKLET_STATUS_ONLINE;
+			}
+		}
+
+		if(tmpstatus>newstatus) newstatus=tmpstatus;
+	}
+
+	/* update the icon if we changed status */
+	if (status != newstatus) {
+		status = newstatus;
+
+		if (ui_ops && ui_ops->update_icon)
+			ui_ops->update_icon(status);
+
+		/* and schedule the blinker function if messages are pending */
+		if (status == DOCKLET_STATUS_ONLINE_PENDING 
+				|| status == DOCKLET_STATUS_AWAY_PENDING) {
+			g_timeout_add(500, docklet_blink_icon, &handle);
+		}
+	}
+
+	return FALSE; /* for when we're called by the glib idle handler */
+}
+
+static gboolean
+online_account_supports_chat()
+{
+	GList *c = NULL;
+	c = gaim_connections_get_all();
+
+	while(c!=NULL) {
+		GaimConnection *gc = c->data;
+		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+focus_first_unseen_conv()
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+
+	/* find first im with unseen messages */
+	for(l = gaim_get_ims(); l!=NULL; l=l->next) {
+		conv = (GaimConversation*)l->data;
+		if(GAIM_IS_GTK_CONVERSATION(conv)) {
+			gtkconv=GAIM_GTK_CONVERSATION(conv);
+			if(gtkconv->unseen_state!=GAIM_UNSEEN_NONE) {
+				gtkconv->active_conv=conv;
+				gaim_gtk_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
+				gaim_gtk_conv_window_raise(gtkconv->win);
+				gtk_window_present(GTK_WINDOW(gtkconv->win->window));
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
+/**************************************************************************
+ * minimize to and unminimize from the tray icon
+ **************************************************************************/
+static void
+minimize_to_tray()
+{
+	GaimGtkBuddyList *blist = gaim_gtk_blist_get_default_gtk_blist();
+
+	if(!blist || !blist->window)
+		return;
+
+	if (ui_ops && ui_ops->minimize)
+		ui_ops->minimize(blist->window);
+
+	gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
+	gtk_widget_hide(blist->window);
+
+	docklet_update_status();
+}
+
+static void
+unminimize_from_tray()
+{
+	GaimGtkBuddyList *blist = gaim_gtk_blist_get_default_gtk_blist();
+
+	if(!blist || !blist->window)
+		return;
+
+	if (ui_ops && ui_ops->maximize)
+		ui_ops->maximize(blist->window);
+
+	gaim_blist_set_visible(TRUE);
+
+	docklet_update_status();
+}
+
+static void
+docklet_toggle_blist()
+{
+	if(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
+		minimize_to_tray();
+	else
+		unminimize_from_tray();
+}
+
+/**************************************************************************
+ * callbacks and signal handlers
+ **************************************************************************/
+/* catch delete events on gtkblist and hide it instead */
+static gboolean
+gtkblist_delete_cb(GtkWidget *widget) {
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "hiding buddy list\n");
+	minimize_to_tray(widget);
+	return TRUE;
+}
+
+/* connect to delete signal when gtkblist is created */
+static void
+gtkblist_created_cb(GaimBuddyList *list)
+{
+	if(list!=NULL && GAIM_IS_GTK_BLIST(list) && 
+			GAIM_GTK_BLIST(list)->window!=NULL && 
+			gtkblist_delete_cb_id==0) {
+
+		gtkblist_delete_cb_id = g_signal_connect(G_OBJECT(GAIM_GTK_BLIST(list)->window), 
+				"delete_event", G_CALLBACK(gtkblist_delete_cb), NULL);
+	}
+}
+
+static void 
+gaim_quit_cb() 
+{
+	/* TODO: confirm quit while pending */
+}
+
+static void
+docklet_update_status_cb(void *data, ...)
+{
+	/* The odd function arguments allow this callback to be used for
+	 * any signal which has a pointer as the first callback parameter.
+	 * Although ugly, it allows this single callback to be used instead
+	 * of multiple functions with different signatures that do the same 
+	 * thing.
+	 */
+	docklet_update_status();
+}
+
+static void
+docklet_conv_updated_cb(GaimConversation *conv, GaimConvUpdateType type)
+{
+	if(type==GAIM_CONV_UPDATE_UNSEEN)
+		docklet_update_status();
+}
+
+static void
+docklet_signed_on_cb(GaimConnection *gc)
+{
+	if(!enable_join_chat) {
+		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+			enable_join_chat = TRUE;
+	}
+	docklet_update_status();
+}
+
+static void
+docklet_signed_off_cb(GaimConnection *gc)
+{
+	if(enable_join_chat) {
+		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+			enable_join_chat = online_account_supports_chat();
+	}
+	docklet_update_status();
+}
+
+/**************************************************************************
+ * docklet pop-up menu
+ **************************************************************************/
 static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
 	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
-static void
-docklet_set_bool(GtkWidget *widget, const char *key)
-{
-	gaim_prefs_set_bool(key, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
-}
-
 #ifdef _WIN32
 /* This is a workaround for a bug in windows GTK+. Clicking outside of the
    menu does not get rid of it, so instead we get rid of it as soon as the
    pointer leaves the menu. */
-static gboolean hide_docklet_menu(gpointer data)
+static gboolean 
+hide_docklet_menu(gpointer data)
 {
 	if (data != NULL) {
 		gtk_menu_popdown(GTK_MENU(data));
 	}
 	return FALSE;
 }
+
 static gboolean
 docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 {
 	static guint hide_docklet_timer = 0;
 	if (event->type == GDK_LEAVE_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
-		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "menu leave-notify-event\n");
+		gaim_debug(GAIM_DEBUG_INFO, "docklet", "menu leave-notify-event\n");
 		/* Add some slop so that the menu doesn't annoyingly disappear when mousing around */
 		if (hide_docklet_timer == 0) {
 			hide_docklet_timer = gaim_timeout_add(500,
 					hide_docklet_menu, menu);
 		}
 	} else if (event->type == GDK_ENTER_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
-		gaim_debug(GAIM_DEBUG_INFO, "tray icon", "menu enter-notify-event\n");
+		gaim_debug(GAIM_DEBUG_INFO, "docklet", "menu enter-notify-event\n");
 		if (hide_docklet_timer != 0) {
 			/* Cancel the hiding if we reenter */
+
 			gaim_timeout_remove(hide_docklet_timer);
 			hide_docklet_timer = 0;
 		}
@@ -116,7 +367,8 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 }
 #endif
 
-static void docklet_menu() {
+static void 
+docklet_menu() {
 	static GtkWidget *menu = NULL;
 	GtkWidget *entry;
 	GtkWidget *menuitem;
@@ -127,66 +379,21 @@ static void docklet_menu() {
 
 	menu = gtk_menu_new();
 
-	switch (status) {
-		case offline:
-		case offline_connecting:
-			/* No special menu items right now */
-			break;
-		default:
-			gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
-			menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
-			gtk_widget_set_sensitive(menuitem, online_account_supports_chat);
+	entry = gtk_check_menu_item_new_with_label(_("Show Buddy List"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
 
-			gaim_separator(menu);
-			break;
-	}
+	gaim_separator(menu);
 
-	switch (status) {
-		case offline:
-		case offline_connecting:
-			break;
-		case online:
-		case online_connecting:
-		case online_pending: {
-#if 0 /* XXX NEW STATUS */
-			GtkWidget *docklet_awaymenu;
-			GSList *awy = NULL;
-			struct away_message *a = NULL;
+	menuitem = gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
+	if(status == DOCKLET_STATUS_OFFLINE)
+		gtk_widget_set_sensitive(menuitem, FALSE);
 
-			docklet_awaymenu = gtk_menu_new();
-			awy = away_messages;
+	menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
+	gtk_widget_set_sensitive(menuitem, enable_join_chat);
 
-			while (awy) {
-				a = (struct away_message *)awy->data;
-
-				entry = gtk_menu_item_new_with_label(a->name);
-				g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_away_message), a);
-				gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
-
-				awy = g_slist_next(awy);
-			}
-
-			if (away_messages)
-				gaim_separator(docklet_awaymenu);
-
-			entry = gtk_menu_item_new_with_label(_("New..."));
-			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(create_away_mess), NULL);
-			gtk_menu_shell_append(GTK_MENU_SHELL(docklet_awaymenu), entry);
-
-			entry = gtk_menu_item_new_with_label(_("Away"));
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(entry), docklet_awaymenu);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
-#endif
-			} break;
-		case away:
-		case away_pending:
-#if 0 /* XXX NEW STATUS */
-			entry = gtk_menu_item_new_with_label(_("Back"));
-			g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(do_im_back), NULL);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
-#endif
-			break;
-	}
+	gaim_separator(menu);
 
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
@@ -201,6 +408,10 @@ static void docklet_menu() {
 
 	gaim_separator(menu);
 
+	/* TODO: need a submenu to change status, this needs to "link" 
+	 * to the status in the buddy list gtkstatusbox
+	 */
+
 	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
@@ -213,136 +424,19 @@ static void docklet_menu() {
 				   NULL, 0, gtk_get_current_event_time());
 }
 
-static gboolean
-docklet_blink_icon()
-{
-	static gboolean blinked = FALSE;
-	gboolean ret = FALSE; /* by default, don't keep blinking */
-
-	blinked = !blinked;
-
-	switch (status) {
-		case online_pending:
-		case away_pending:
-			if (blinked) {
-				if (ui_ops && ui_ops->blank_icon)
-					ui_ops->blank_icon();
-			} else {
-				if (ui_ops && ui_ops->update_icon)
-					ui_ops->update_icon(status);
-			}
-			ret = TRUE; /* keep blinking */
-			break;
-		case offline:
-		case offline_connecting:
-		case online:
-		case online_connecting:
-		case away:
-			blinked = FALSE;
-			break;
-	}
-
-	return ret;
-}
-
-static gboolean
-docklet_update_status()
-{
-	GList *c;
-	enum docklet_status oldstatus;
-
-	oldstatus = status;
-
-	if ((c = gaim_connections_get_all())) {
-#if 0 /* XXX NEW STATUS */
-		if (unread_message_queue) {
-			status = online_pending;
-		} else if (awaymessage) {
-			if (message_queue) {
-				status = away_pending;
-			} else {
-				status = away;
-			}
-		} else if (gaim_connections_get_connecting()) {
-#else
-		if (gaim_connections_get_connecting()) {
-#endif
-			status = online_connecting;
-		} else {
-			status = online;
-		}
-		/* Check if any online accounts support chats */
-		while (c != NULL) {
-			GaimConnection *gc = c->data;
-			if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL) {
-				online_account_supports_chat = TRUE;
-				break;
-			}
-			c = c->next;
-		}
-	} else {
-		if (gaim_connections_get_connecting()) {
-			status = offline_connecting;
-		} else {
-			status = offline;
-		}
-	}
-
-	/* update the icon if we changed status */
-	if (status != oldstatus) {
-		if (ui_ops && ui_ops->update_icon)
-			ui_ops->update_icon(status);
-
-		/* and schedule the blinker function if messages are pending */
-		if (status == online_pending || status == away_pending) {
-			g_timeout_add(500, docklet_blink_icon, &handle);
-		}
-	}
-
-	return FALSE; /* for when we're called by the glib idle handler */
-}
-
-#if 0 /* XXX CUI */
-static void
-docklet_flush_queue()
-{
-	if (unread_message_queue) {
-		purge_away_queue(&unread_message_queue);
-	}
-}
-#endif
-
-static void
-docklet_remove_callbacks()
-{
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "removing callbacks");
-
-	while (g_source_remove_by_user_data(&handle)) {
-		gaim_debug(GAIM_DEBUG_INFO, NULL, ".");
-	}
-
-	gaim_debug(GAIM_DEBUG_INFO, NULL, "\n");
-}
-
-/* public code */
-
+/**************************************************************************
+ * public api for ui_ops
+ **************************************************************************/
 void
 docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-#if 0 /* XXX CUI */
-			if (unread_message_queue) {
-				docklet_flush_queue();
-			} else {
-#endif
-				gaim_gtk_blist_docklet_toggle();
-#if 0 /* XXX CUI */
-			}
-#endif
-			break;
-		case 2:
-			/* Don't do anything for middle click */
+			if(status==DOCKLET_STATUS_ONLINE_PENDING 
+					|| status==DOCKLET_STATUS_AWAY_PENDING)
+				focus_first_unseen_conv();
+			else
+				docklet_toggle_blist();
 			break;
 		case 3:
 			docklet_menu();
@@ -353,8 +447,6 @@ docklet_clicked(int button_type)
 void
 docklet_embedded()
 {
-	gaim_gtk_blist_docklet_add();
-
 	docklet_update_status();
 	if (ui_ops && ui_ops->update_icon)
 		ui_ops->update_icon(status);
@@ -363,12 +455,7 @@ docklet_embedded()
 void
 docklet_remove(gboolean visible)
 {
-	if (visible)
-		gaim_gtk_blist_docklet_remove();
-
-#if 0 /* XXX CUI */
-	docklet_flush_queue();
-#endif
+	unminimize_from_tray();
 }
 
 void
@@ -383,86 +470,9 @@ docklet_set_ui_ops(struct docklet_ui_ops *ops)
 	ui_ops = ops;
 }
 
-/* callbacks */
-
-static void
-gaim_login(GaimConnection *gc, void *data)
-{
-	docklet_update_status();
-}
-
-static void
-gaim_logout(GaimConnection *gc, void *data)
-{
-	/* do this when idle so that if the prpl was connecting
-	   and was cancelled, we register that connecting_count
-	   has returned to 0 */
-	/* no longer necessary because Chip decided that us plugins
-	   didn't need to know if an account was connecting or not
-	   g_idle_add(docklet_update_status, &docklet); */
-	docklet_update_status();
-}
-
-static void
-gaim_connecting(GaimAccount *account, void *data)
-{
-	docklet_update_status();
-}
-
-static void
-gaim_away(GaimAccount *account, char *state, char *message, void *data)
-{
-	/* we only support global away. this is the way it is, ok? */
-	docklet_update_status();
-}
-
-static gboolean
-gaim_conv_im_recv(GaimAccount *account, char *sender, char *message, 
-			 GaimConversation *conv, int flags, void *data)
-{
-	/* if message queuing while away is enabled, this event could be the first
-	   message so we need to see if the status (and hence icon) needs changing.
-	   do this when idle so that all message processing is completed, queuing
-	   etc, before we run. */
-	g_idle_add(docklet_update_status, &handle);
-
-	return FALSE;
-}
-
-static void
-gaim_new_conversation(GaimConversation *conv, void *data)
-{
-	/* queue a callback here so if the queue is being
-	   flushed, we stop flashing. thanks javabsp. */
-	g_idle_add(docklet_update_status, &handle);
-}
-
-/* We need this because the blist purge_away_queue cb won't be called before the
-   plugin is unloaded, when quitting */
-static void gaim_quit_cb() {
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "dealing with queued messages on exit\n");
-#if 0 /* XXX CUI */
-	docklet_flush_queue();
-#endif
-}
-
-
-/* static void gaim_buddy_signon(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_signoff(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_away(GaimConnection *gc, char *who, void *data) {
-}
-
-static void gaim_buddy_back(GaimConnection *gc, char *who, void *data) {
-} */
-
-/* plugin glue */
-
-#define DOCKLET_PLUGIN_ID "gtk-docklet"
-
+/**************************************************************************
+ * plugin glue
+ **************************************************************************/
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
@@ -471,7 +481,7 @@ plugin_load(GaimPlugin *plugin)
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *core_handle = gaim_get_core();
 
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin loaded\n");
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "plugin loaded\n");
 
 	handle = plugin;
 
@@ -480,24 +490,31 @@ plugin_load(GaimPlugin *plugin)
 		ui_ops->create();
 
 	gaim_signal_connect(conn_handle, "signed-on",
-						plugin, GAIM_CALLBACK(gaim_login), NULL);
+						plugin, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
-						plugin, GAIM_CALLBACK(gaim_logout), NULL);
+						plugin, GAIM_CALLBACK(docklet_signed_off_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-connecting",
-						plugin, GAIM_CALLBACK(gaim_connecting), NULL);
+						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-away",
-						plugin, GAIM_CALLBACK(gaim_away), NULL);
+						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",
-						plugin, GAIM_CALLBACK(gaim_conv_im_recv), NULL);
+						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-created",
-						plugin, GAIM_CALLBACK(gaim_new_conversation), NULL);
+						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
+	gaim_signal_connect(conv_handle, "conversation-updated",
+						plugin, GAIM_CALLBACK(docklet_conv_updated_cb), NULL);
+
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created",
+						plugin, GAIM_CALLBACK(gtkblist_created_cb), NULL);
+	gtkblist_created_cb(gaim_get_blist());
 
 	gaim_signal_connect(core_handle, "quitting",
 						plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
-/*	gaim_signal_connect(plugin, event_buddy_signon, gaim_buddy_signon, NULL);
-	gaim_signal_connect(plugin, event_buddy_signoff, gaim_buddy_signoff, NULL);
-	gaim_signal_connect(plugin, event_buddy_away, gaim_buddy_away, NULL);
-	gaim_signal_connect(plugin, event_buddy_back, gaim_buddy_back, NULL); */
+
+	enable_join_chat = online_account_supports_chat();
+
+	if(!gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
+		minimize_to_tray();
 
 	return TRUE;
 }
@@ -505,44 +522,22 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+
 	if (ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
 
-	docklet_remove_callbacks();
+	/* remove callbacks */
+    gaim_signals_disconnect_by_handle(handle);
+	if(gtkblist_delete_cb_id!=0)
+		g_signal_handler_disconnect(G_OBJECT(gtkblist->window), gtkblist_delete_cb_id);
 
-	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "plugin unloaded\n");
+	unminimize_from_tray();
+
+	gaim_debug(GAIM_DEBUG_INFO, "docklet", "plugin unloaded\n");
 
 	return TRUE;
 }
-
-static GtkWidget *
-plugin_config_frame(GaimPlugin *plugin)
-{
-	GtkWidget *frame;
-	GtkWidget *vbox, *hbox;
-	GtkWidget *toggle;
-	static const char *qmpref = "/plugins/gtk/docklet/queue_messages";
-
-	frame = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
-
-	vbox = gaim_gtk_make_frame(frame, _("Tray Icon Configuration"));
-	hbox = gtk_hbox_new(FALSE, 18);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	toggle = gtk_check_button_new_with_mnemonic(_("_Hide new messages until tray icon is clicked"));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle), gaim_prefs_get_bool(qmpref));
-	g_signal_connect(G_OBJECT(toggle), "clicked", G_CALLBACK(docklet_set_bool), (void *)qmpref);
-	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
-
-	gtk_widget_show_all(frame);
-	return frame;
-}
-
-static GaimGtkPluginUiInfo ui_info =
-{
-	plugin_config_frame
-};
 
 static GaimPluginInfo info =
 {
@@ -573,7 +568,7 @@ static GaimPluginInfo info =
 	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
-	&ui_info,                                         /**< ui_info        */
+	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,
 	NULL
@@ -582,6 +577,7 @@ static GaimPluginInfo info =
 static void
 plugin_init(GaimPlugin *plugin)
 {
+	/* TODO: these will be removed once queuing is working in the ui */
 	gaim_prefs_add_none("/plugins/gtk/docklet");
 	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 }

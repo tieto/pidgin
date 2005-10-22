@@ -84,30 +84,29 @@ docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 }
 
 static void
-docklet_x11_update_icon(enum docklet_status icon)
+docklet_x11_update_icon(DockletStatus icon)
 {
 	const gchar *icon_name = NULL;
 
 	g_return_if_fail(image != NULL);
 
 	switch (icon) {
-		case offline:
+		case DOCKLET_STATUS_OFFLINE:
 			icon_name = GAIM_STOCK_ICON_OFFLINE;
 			break;
-		case offline_connecting:
-		case online_connecting:
+		case DOCKLET_STATUS_CONNECTING:
 			icon_name = GAIM_STOCK_ICON_CONNECT;
 			break;
-		case online:
+		case DOCKLET_STATUS_ONLINE:
 			icon_name = GAIM_STOCK_ICON_ONLINE;
 			break;
-		case online_pending:
+		case DOCKLET_STATUS_ONLINE_PENDING:
 			icon_name = GAIM_STOCK_ICON_ONLINE_MSG;
 			break;
-		case away:
+		case DOCKLET_STATUS_AWAY:
 			icon_name = GAIM_STOCK_ICON_AWAY;
 			break;
-		case away_pending:
+		case DOCKLET_STATUS_AWAY_PENDING:
 			icon_name = GAIM_STOCK_ICON_AWAY_MSG;
 			break;
 	}
@@ -258,6 +257,8 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_destroy,
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
+	NULL,
+	NULL,
 #if GTK_CHECK_VERSION(2,2,0)
 	docklet_x11_position_menu
 #else
