@@ -39,7 +39,7 @@
 #include "gtkutils.h"
 
 #define INITIAL_RECON_DELAY 8000
-#define MAX_RECON_DELAY 2048000
+#define MAX_RECON_DELAY 600000
 
 typedef struct {
 	int delay;
@@ -142,8 +142,8 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 	GSList* listAccount;
 
 	if (hash == NULL) {
-	       	hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
-	       	free_auto_recon);
+		hash = g_hash_table_new_full(g_int_hash, g_int_equal, NULL,
+		free_auto_recon);
 	}
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
@@ -154,7 +154,7 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 
 	if (!gc->wants_to_die) {
 	  gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(list->statusbox), text);
-	  
+
 	  if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
@@ -170,12 +170,12 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 			accountReconnecting = g_slist_prepend(accountReconnecting, account);
 	} else {
 	  char *p, *s, *n=NULL ;
-	  if (info != NULL) 	    
+	  if (info != NULL)
 	    g_hash_table_remove(hash, account);
-	    
+
 	  if (listAccount)
 	      accountReconnecting = g_slist_delete_link(accountReconnecting, listAccount);
-	  
+
 	  if (gaim_account_get_alias(account)) {
 	    n = g_strdup_printf("%s (%s) (%s)",
 				  gaim_account_get_username(account),
@@ -186,7 +186,7 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 				  gaim_account_get_username(account),
 				  gaim_account_get_protocol_name(account));
 	    }
-	
+
 	    p = g_strdup_printf(_("%s disconnected"), n);
 	    s = g_strdup_printf(_("%s was disconnected due to an error. %s The account has been disabled. "
 				  "Correct the error and reenable the account to connect."), n, text);
