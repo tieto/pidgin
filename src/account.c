@@ -975,6 +975,9 @@ gaim_account_connect(GaimAccount *account)
 	gaim_debug_info("account", "Connecting to account %s\n",
 					gaim_account_get_username(account));
 
+	if (!gaim_account_get_enabled(account, gaim_core_get_ui()))
+		return;
+
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 	if (prpl == NULL)
 	{
