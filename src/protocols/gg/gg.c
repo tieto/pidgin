@@ -1278,16 +1278,6 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (prim == GAIM_STATUS_OFFLINE) {
-		gaim_account_disconnect(account);
-		return;
-	}
-
-	if (!gaim_account_is_connected(account)) {
-		gaim_account_connect(account);
-		return;
-	}
-
 	gc = gaim_account_get_connection(account);
 	info = gc->proto_data;
 

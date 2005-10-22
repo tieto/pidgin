@@ -178,17 +178,6 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	primitive = gaim_status_type_get_primitive(type);
 	presence = gaim_account_get_presence(account);
 
-	if (primitive != GAIM_STATUS_OFFLINE && disconnected)
-	{
-		gaim_account_connect(account);
-		return;
-	}
-	if (primitive == GAIM_STATUS_OFFLINE && !disconnected)
-	{
-		gaim_account_disconnect(account);
-		return;
-	}
-
 	if (!gaim_account_is_connected(account))
 		/* TODO: Does this mean we're connecting? */
 		return;

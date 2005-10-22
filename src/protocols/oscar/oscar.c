@@ -6653,29 +6653,19 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 static void
 oscar_set_status(GaimAccount *account, GaimStatus *status)
 {
-	gboolean disconnected = gaim_account_is_disconnected(account);
-	GaimStatusType *type = gaim_status_get_type(status);
-	int primitive = gaim_status_type_get_primitive(type);
-
 	gaim_debug_info("oscar", "Set status to %s\n", gaim_status_get_name(status));
 
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (primitive != GAIM_STATUS_OFFLINE && disconnected) {
-		gaim_account_connect(account);
-	} else if (primitive == GAIM_STATUS_OFFLINE && !disconnected) {
-		gaim_account_disconnect(account);
-	} else {
-		if (!gaim_account_is_connected(account))
-			return;
+	if (!gaim_account_is_connected(account))
+		return;
 
-		if (aim_sn_is_icq(gaim_account_get_username(account)))
-			oscar_set_status_icq(account, status);
-		else
-			/* QQQ - Should probably also set this for ICQ */
-			oscar_set_status_aim(account, status);
-	}
+	if (aim_sn_is_icq(gaim_account_get_username(account)))
+		oscar_set_status_icq(account, status);
+	else
+		/* QQQ - Should probably also set this for ICQ */
+		oscar_set_status_aim(account, status);
 }
 
 #ifdef CRAZY_WARN

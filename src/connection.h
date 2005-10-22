@@ -145,7 +145,11 @@ void gaim_connection_new(GaimAccount *account, gboolean regist,
 void gaim_connection_destroy(GaimConnection *gc);
 
 /**
- * Sets the connection state.
+ * Sets the connection state.  PRPLs should call this and pass in
+ * the state "GAIM_CONNECTED" when the account is completely
+ * signed on.  What does it mean to be completely signed on?  If
+ * the core can call prpl->set_status, and it successfully changes
+ * your status, then the account is online.
  *
  * @param gc    The connection.
  * @param state The connection state.

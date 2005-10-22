@@ -108,20 +108,22 @@ static void do_notifies(struct simple_account_data *sip) {
 static void simple_set_status(GaimAccount *account, GaimStatus *status) {
 	GaimStatusPrimitive primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
 	struct simple_account_data *sip = NULL;
+
 	if (!gaim_status_is_active(status))
 		return;
 
-	if(account->gc) sip = account->gc->proto_data;
-	if(sip) {
+	if (account->gc)
+		sip = account->gc->proto_data;
+
+	if (sip)
+	{
 		g_free(sip->status);
-		if(primitive == GAIM_STATUS_AVAILABLE) sip->status = g_strdup("available");
-		else sip->status = g_strdup("busy");
+		if (primitive == GAIM_STATUS_AVAILABLE)
+			sip->status = g_strdup("available");
+		else
+			sip->status = g_strdup("busy");
 
 		do_notifies(sip);
-	}
-	if ((primitive != GAIM_STATUS_OFFLINE)
-			&& (!gaim_account_is_connected(account))) {
-		gaim_account_connect(account);
 	}
 }
 

@@ -3492,15 +3492,6 @@ static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
 
   gaim_debug_info("meanwhile", "Set status to %s\n", gaim_status_get_name(status));
 
-  if (!strcmp(state, "offline") && (gc != NULL)) {
-     gaim_account_disconnect(acct);
-     return;
-  }
-  else if (strcmp(state, "offline") && (gc == NULL)) {
-     gaim_account_connect(acct);
-     return;
-  }
-
   g_return_if_fail(gc != NULL);
 
   session = gc_to_session(gc);

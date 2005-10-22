@@ -2987,16 +2987,10 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (primitive != GAIM_STATUS_OFFLINE && !connected) {
-		gaim_account_connect(account);
-	} else if (primitive == GAIM_STATUS_OFFLINE && connected) {
-		gaim_account_disconnect(account);
-	} else {
-		if (!connected)
-			return;
+	if (!connected)
+		return;
 
-		/* TODO: Need to do the same stuff that novell_set_away does here */
-	}
+	/* TODO: Need to do the same stuff that novell_set_away does here */
 }
 
 #if 0
