@@ -496,7 +496,7 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(docklet_signed_off_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-connecting",
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
-	gaim_signal_connect(accounts_handle, "account-away",
+	gaim_signal_connect(accounts_handle, "account-status-changed",
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
@@ -532,6 +532,7 @@ plugin_unload(GaimPlugin *plugin)
     gaim_signals_disconnect_by_handle(handle);
 	if(gtkblist_delete_cb_id!=0)
 		g_signal_handler_disconnect(G_OBJECT(gtkblist->window), gtkblist_delete_cb_id);
+	gtkblist_delete_cb_id = 0;
 
 	unminimize_from_tray();
 
