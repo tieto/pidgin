@@ -1718,6 +1718,24 @@ gaim_account_get_status_type(const GaimAccount *account, const char *id)
 	return NULL;
 }
 
+GaimStatusType *
+gaim_account_get_status_type_with_primitive(const GaimAccount *account, GaimStatusPrimitive primitive)
+{
+	const GList *l;
+
+	g_return_val_if_fail(account != NULL, NULL);
+
+	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
+	{
+		GaimStatusType *status_type = (GaimStatusType *)l->data;
+
+		if (gaim_status_type_get_primitive(status_type) == primitive)
+			return status_type;
+	}
+
+	return NULL;
+}
+
 GaimPresence *
 gaim_account_get_presence(const GaimAccount *account)
 {

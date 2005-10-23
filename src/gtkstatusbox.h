@@ -31,6 +31,7 @@
 #include "gtkimhtml.h"
 #include "account.h"
 #include "savedstatuses.h"
+#include "status.h"
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeview.h>
 #if !GTK_CHECK_VERSION(2,6,0)
@@ -51,6 +52,24 @@ G_BEGIN_DECLS
 #define GTK_GAIM_IS_STATUS_BOX_CLASS(vtable) (G_TYPE_CHECK_CLASS_TYPE ((vtable), GTK_GAIM_TYPE_STATUS_BOX))
 #define GTK_GAIM_STATUS_BOX_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), GTK_GAIM_TYPE_STATUS_BOX, GtkGaimStatusBoxClass))
 
+/**
+ * This is a hidden field in the GtkStatusBox that identifies the
+ * item in the list store.  The item could be a normal
+ * GaimStatusPrimitive, or it could be something special like the
+ * "Custom..." item, or "Saved..." or a GtkSeparator.
+ */
+typedef enum
+{
+	/*
+	 * The first 0 through GAIM_STATUS_NUM_PRIMITIVES
+	 * correspond to GaimStatusPrimitives.
+	 */
+	GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR = GAIM_STATUS_NUM_PRIMITIVES,
+	GTK_GAIM_STATUS_BOX_TYPE_CUSTOM,
+	GTK_GAIM_STATUS_BOX_TYPE_SAVED,
+	GTK_GAIM_STATUS_BOX_NUM_TYPES
+} GtkGaimStatusBoxItemType;
+
 typedef struct _GtkGaimStatusBox      GtkGaimStatusBox;
 typedef struct _GtkGaimStatusBoxClass GtkGaimStatusBoxClass;
 
@@ -58,7 +77,16 @@ struct _GtkGaimStatusBox
 {
 	GtkComboBox parent_instance;
 
+	/**
+	 * This GtkListStore contains only one row--the currently selected status.
+	 */
 	GtkListStore *store;
+
+	/**
+	 * This is the dropdown GtkListStore that contains the available statuses,
+	 * plus some recently used statuses, plus the "Custom..." and "Saved..."
+	 * options.
+	 */
 	GtkListStore *dropdown_store;
 
 	GaimAccount *account;
@@ -108,7 +136,7 @@ GtkWidget    *gtk_gaim_status_box_new              (void);
 GtkWidget    *gtk_gaim_status_box_new_with_account (GaimAccount *);
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, const char *edit);
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text);
 
 void
 gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box);
@@ -122,7 +150,7 @@ gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connec
 void
 gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
 
-char *gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
+GtkGaimStatusBoxItemType gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box);
 
 char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
 

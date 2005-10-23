@@ -551,12 +551,27 @@ GaimStatus *gaim_account_get_status(const GaimAccount *account,
  * Returns the account status type with the specified ID.
  *
  * @param account The account.
- * @param id      The ID of the status type.
+ * @param id      The ID of the status type to find.
  *
  * @return The status type if found, or NULL.
  */
 GaimStatusType *gaim_account_get_status_type(const GaimAccount *account,
 											 const char *id);
+
+/**
+ * Returns the account status type with the specified primitive.
+ * Note: It is possible for an account to have more than one
+ * GaimStatusType with the same primitive.  In this case, the
+ * first GaimStatusType is returned.
+ *
+ * @param account   The account.
+ * @param primitive The type of the status type to find.
+ *
+ * @return The status if found, or NULL.
+ */
+GaimStatusType *gaim_account_get_status_type_with_primitive(
+							const GaimAccount *account,
+							GaimStatusPrimitive primitive);
 
 /**
  * Returns the account's presence.

@@ -1428,53 +1428,54 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	size_t index;
 	gboolean new = FALSE;
 	GtkTreeIter iter;
-	GaimAccount *ret;
+	GaimAccount *account;
 
 	if (dialog->account == NULL)
 	{
 		const char *screenname;
 
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
-
-		dialog->account = gaim_account_new(screenname, dialog->protocol_id);
-		gaim_account_set_enabled(dialog->account, GAIM_GTK_UI, TRUE);
+		account = gaim_account_new(screenname, dialog->protocol_id);
+		gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 		new = TRUE;
 	}
 	else
 	{
+		account = dialog->account;
+
 		/* Protocol */
-		gaim_account_set_protocol_id(dialog->account, dialog->protocol_id);
+		gaim_account_set_protocol_id(account, dialog->protocol_id);
 	}
 
 	/* Alias */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
 
 	if (*value != '\0')
-		gaim_account_set_alias(dialog->account, value);
+		gaim_account_set_alias(account, value);
 	else
-		gaim_account_set_alias(dialog->account, NULL);
+		gaim_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	gaim_account_set_buddy_icon(dialog->account, dialog->icon_path);
+	gaim_account_set_buddy_icon(account, dialog->icon_path);
 
 	/* Remember Password */
-	gaim_account_set_remember_password(dialog->account,
+	gaim_account_set_remember_password(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
 
 	/* Check Mail */
 	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
-		gaim_account_set_check_mail(dialog->account,
+		gaim_account_set_check_mail(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
 
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
-	if (gaim_account_get_remember_password(dialog->account) && *value != '\0')
-		gaim_account_set_password(dialog->account, value);
+	if (gaim_account_get_remember_password(account) && *value != '\0')
+		gaim_account_set_password(account, value);
 	else
-		gaim_account_set_password(dialog->account, NULL);
+		gaim_account_set_password(account, NULL);
 
 	/* Build the username string. */
 	username =
@@ -1505,7 +1506,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		}
 	}
 
-	gaim_account_set_username(dialog->account, username);
+	gaim_account_set_username(account, username);
 	g_free(username);
 
 	/* Add the protocol settings */
@@ -1530,18 +1531,18 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			switch (type) {
 				case GAIM_PREF_STRING:
 					value = gtk_entry_get_text(GTK_ENTRY(widget));
-					gaim_account_set_string(dialog->account, setting, value);
+					gaim_account_set_string(account, setting, value);
 					break;
 
 				case GAIM_PREF_INT:
 					int_value = atoi(gtk_entry_get_text(GTK_ENTRY(widget)));
-					gaim_account_set_int(dialog->account, setting, int_value);
+					gaim_account_set_int(account, setting, int_value);
 					break;
 
 				case GAIM_PREF_BOOLEAN:
 					bool_value =
 						gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-					gaim_account_set_bool(dialog->account, setting, bool_value);
+					gaim_account_set_bool(account, setting, bool_value);
 					break;
 
 				default:
@@ -1552,15 +1553,15 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* Set the proxy stuff. */
 	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL) {
-		gaim_account_set_proxy_info(dialog->account, NULL);
+		gaim_account_set_proxy_info(account, NULL);
 	}
 	else {
-		proxy_info = gaim_account_get_proxy_info(dialog->account);
+		proxy_info = gaim_account_get_proxy_info(account);
 
 		/* Create the proxy info if it doesn't exist. */
 		if (proxy_info == NULL) {
 			proxy_info = gaim_proxy_info_new();
-			gaim_account_set_proxy_info(dialog->account, proxy_info);
+			gaim_account_set_proxy_info(account, proxy_info);
 		}
 
 		/* Set the proxy info type. */
@@ -1601,7 +1602,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* Adds the account to the list, or modify the existing entry. */
 	if (accounts_window != NULL) {
-		index = g_list_index(gaim_accounts_get_all(), dialog->account);
+		index = g_list_index(gaim_accounts_get_all(), account);
 
 		if (index != -1 &&
 			(gtk_tree_model_iter_nth_child(
@@ -1609,21 +1610,29 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					NULL, index))) {
 
 			set_account(accounts_window->model, &iter,
-						dialog->account);
+						account);
 		}
 		else {
-			add_account(accounts_window, dialog->account);
-			gaim_accounts_add(dialog->account);
+			add_account(accounts_window, account);
+			gaim_accounts_add(account);
 		}
 	}
 
-	ret = dialog->account;
-
 	account_win_destroy_cb(NULL, NULL, dialog);
 
-	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", ret);
+	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
 
+	/* TODO: This doesn't work quite right yet. */
 	if (new) {
+		const char *current_savedstatus_name;
+		const GaimSavedStatus *saved_status;
+
+		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+		saved_status = gaim_savedstatus_find(current_savedstatus_name);
+		gaim_savedstatus_activate_for_account(saved_status, account);
+
+/*
+		This is the old way.  The new way is an improvement.
 		GaimGtkBuddyList *gtkblist;
 		GtkGaimStatusBox *status_box;
 		char *status_type_id;
@@ -1632,11 +1641,12 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		status_box = GTK_GAIM_STATUS_BOX(gtkblist->statusbox);
 
 		status_type_id = gtk_gaim_status_box_get_active_type(status_box);
-		gaim_presence_set_status_active(ret->presence, status_type_id, TRUE);
+		gaim_presence_set_status_active(account->presence, status_type_id, TRUE);
 		g_free(status_type_id);
+*/
 	}
 
-	return ret;
+	return account;
 }
 
 static void
