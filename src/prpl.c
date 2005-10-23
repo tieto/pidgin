@@ -332,7 +332,7 @@ gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
 	GList *statuses = NULL;
-	GList *l;
+	GList *l, *list;
 	GaimStatus *status;
 
 	g_return_val_if_fail(account  != NULL, NULL);
@@ -347,11 +347,13 @@ gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
 	if (prpl_info == NULL || prpl_info->status_types == NULL)
 		return NULL;
 
-	for (l = prpl_info->status_types(account); l != NULL; l = l->next)
+	for (l = list = prpl_info->status_types(account); l != NULL; l = l->next)
 	{
 		status = gaim_status_new((GaimStatusType *)l->data, presence);
 		statuses = g_list_append(statuses, status);
 	}
+
+	g_list_free(list);
 
 	return statuses;
 }
