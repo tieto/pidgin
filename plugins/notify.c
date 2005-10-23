@@ -284,7 +284,7 @@ attach_signals(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv = NULL;
 	GaimGtkWindow *gtkwin = NULL;
-	GSList *window_ids = NULL, *imhtml_ids = NULL, *entry_ids = NULL;
+	GSList *imhtml_ids = NULL, *entry_ids = NULL;
 	guint id;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -303,11 +303,11 @@ attach_signals(GaimConversation *conv)
 		 * gtkwin->notebook->container? */
 		id = g_signal_connect(G_OBJECT(gtkconv->entry), "focus-in-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		entry_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
+		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 
 		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "focus-in-event",
 		                      G_CALLBACK(unnotify_cb), conv);
-		imhtml_ids = g_slist_append(window_ids, GUINT_TO_POINTER(id));
+		imhtml_ids = g_slist_append(imhtml_ids, GUINT_TO_POINTER(id));
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click")) {
@@ -328,7 +328,6 @@ attach_signals(GaimConversation *conv)
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
 	}
 
-	gaim_conversation_set_data(conv, "notify-window-signals", window_ids);
 	gaim_conversation_set_data(conv, "notify-imhtml-signals", imhtml_ids);
 	gaim_conversation_set_data(conv, "notify-entry-signals", entry_ids);
 
@@ -347,11 +346,6 @@ detach_signals(GaimConversation *conv)
 		return;
 	gtkwin  = gtkconv->win;
 
-	ids = gaim_conversation_get_data(conv, "notify-window-signals");
-	for (l = ids; l != NULL; l = l->next)
-		g_signal_handler_disconnect(gtkwin->window, GPOINTER_TO_INT(l->data));
-	g_slist_free(ids);
-
 	ids = gaim_conversation_get_data(conv, "notify-imhtml-signals");
 	for (l = ids; l != NULL; l = l->next)
 		g_signal_handler_disconnect(gtkconv->imhtml, GPOINTER_TO_INT(l->data));
@@ -364,7 +358,6 @@ detach_signals(GaimConversation *conv)
 
 	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
 
-	gaim_conversation_set_data(conv, "notify-window-signals", NULL);
 	gaim_conversation_set_data(conv, "notify-imhtml-signals", NULL);
 	gaim_conversation_set_data(conv, "notify-entry-signals", NULL);
 }
