@@ -936,14 +936,14 @@ gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname)
 {
 		struct gaim_pref *oldpref, *newpref;
 
-		gaim_debug_info("prefs", "Attempting to rename and toggle %s to %s\n", oldname, newname);
-
 		oldpref = find_pref(oldname);
 		newpref = find_pref(newname);
 
 		/* it's already been renamed, call off the cats */
 		if(!oldpref)
 			return;
+
+		gaim_debug_info("prefs", "Renaming and toggling %s to %s\n", oldname, newname);
 
 		g_return_if_fail(newpref != NULL); /* the new one needs to be created */
 		g_return_if_fail(oldpref->type == newpref->type);

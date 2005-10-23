@@ -1375,9 +1375,6 @@ gaim_account_set_status_list(GaimAccount *account, const char *status_id,
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(status_id != NULL);
 
-	gaim_debug_info("account", "Changing status for %s, setting %s to %d\n",
-					gaim_account_get_username(account), status_id, active);
-
 	status = gaim_account_get_status(account, status_id);
 	if (status == NULL)
 	{
