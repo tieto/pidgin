@@ -4944,9 +4944,13 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 			action->context = context;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
-			plugin_menu_items = g_list_append(plugin_menu_items, menuitem);
-			plugin_menu_index++;
-			gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, plugin_menu_index);
+			if (context) {
+				gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+			} else {
+				plugin_menu_items = g_list_append(plugin_menu_items, menuitem);
+				plugin_menu_index++;
+				gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, plugin_menu_index);
+			}
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 					G_CALLBACK(plugin_act), action);
 			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
