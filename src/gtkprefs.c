@@ -42,8 +42,6 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
-#include "gtkplugin.h"
-#include "gtkpluginpref.h"
 #include "gtkprefs.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
@@ -65,7 +63,6 @@ static GtkWidget *prefs_proxy_frame = NULL;
 static GtkWidget *prefs = NULL;
 static GtkWidget *debugbutton = NULL;
 static int notebook_page = 0;
-static GtkTreeIter plugin_iter;
 static GtkTreeRowReference *previous_smiley_row = NULL;
 
 /*
@@ -75,7 +72,6 @@ static int prefs_notebook_add_page(const char*, GdkPixbuf*,
 									GtkWidget*, GtkTreeIter*,
 									GtkTreeIter*, int);
 static void delete_prefs(GtkWidget *, void *);
-static void update_plugin_list(void *data);
 
 static void
 update_spin_value(GtkWidget *w, GtkWidget *spin)
@@ -345,103 +341,10 @@ gaim_gtk_prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
 }
 
 static void
-add_plugin_prefs(GaimPlugin *plugin)
-{
-	/*
-	 * NOTE: This is basically the same check as before
-	 *       (plug->type == plugin), but now there aren't plugin types.
-	 *       Not yet, anyway. I want to do a V2 of the plugin API.
-	 *       The thing is, we should have a flag specifying the UI type,
-	 *       or just whether it's a general plugin or a UI-specific
-	 *       plugin. We should only load this if it's UI-specific.
-	 *
-	 *         -- ChipX86
-	 */
-	if (GAIM_IS_GTK_PLUGIN(plugin))
-	{
-		GtkWidget *config_frame;
-		GaimGtkPluginUiInfo *ui_info;
-
-		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
-		config_frame = gaim_gtk_plugin_get_config_frame(plugin);
-
-		if (config_frame != NULL)
-		{
-			ui_info->page_num =
-				prefs_notebook_add_page(_(plugin->info->name), NULL,
-										config_frame, NULL,
-										&plugin_iter, notebook_page++);
-		}
-	}
-
-	if (GAIM_PLUGIN_HAS_PREF_FRAME(plugin))
-	{
-		GtkWidget *gtk_frame;
-		GaimPluginUiInfo *prefs_info;
-
-		prefs_info = GAIM_PLUGIN_UI_INFO(plugin);
-		prefs_info->frame = prefs_info->get_plugin_pref_frame(plugin);
-		gtk_frame = gaim_gtk_plugin_pref_create_frame(prefs_info->frame);
-
-		if (GTK_IS_WIDGET(gtk_frame))
-		{
-			prefs_info->page_num =
-				prefs_notebook_add_page(_(plugin->info->name), NULL,
-										gtk_frame, NULL,
-										(plugin->info->type == GAIM_PLUGIN_PROTOCOL) ?  NULL : &plugin_iter,
-										notebook_page++);
-		} else if(prefs_info->frame) {
-			/* in the event that there is a pref frame and we can
-			 * not make a widget out of it, we free the
-			 * pluginpref frame --Gary
-			 */
-			gaim_plugin_pref_frame_destroy(prefs_info->frame);
-		}
-	}
-}
-
-static void
-delete_plugin_prefs(GaimPlugin *plugin)
-{
-	if (GAIM_IS_GTK_PLUGIN(plugin))
-	{
-		GaimGtkPluginUiInfo *ui_info;
-
-		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
-
-		if (ui_info != NULL && ui_info->page_num > 0) {
-			gtk_notebook_remove_page(GTK_NOTEBOOK(prefsnotebook),
-									 ui_info->page_num);
-		}
-	}
-
-	if (GAIM_PLUGIN_HAS_PREF_FRAME(plugin))
-	{
-		GaimPluginUiInfo *prefs_info;
-
-		prefs_info = GAIM_PLUGIN_UI_INFO(plugin);
-
-		if (prefs_info->frame != NULL) {
-			gaim_plugin_pref_frame_destroy(prefs_info->frame);
-			prefs_info->frame = NULL;
-		}
-
-		if (prefs_info->page_num > 0) {
-			gtk_notebook_remove_page(GTK_NOTEBOOK(prefsnotebook),
-									 prefs_info->page_num);
-		}
-	}
-}
-
-static void
 delete_prefs(GtkWidget *asdf, void *gdsa)
 {
-	GList *l;
-
 	/* Close any "select sound" request dialogs */
 	gaim_request_close_with_handle(prefs);
-
-	gaim_plugins_unregister_probe_notify_cb(update_plugin_list);
 
 	/* Unregister callbacks. */
 	gaim_prefs_disconnect_by_handle(prefs);
@@ -455,10 +358,6 @@ delete_prefs(GtkWidget *asdf, void *gdsa)
 		gtk_tree_row_reference_free(previous_smiley_row);
 	previous_smiley_row = NULL;
 
-	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next)
-	{
-		delete_plugin_prefs(l->data);
-	}
 }
 
 static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
@@ -1045,9 +944,9 @@ proxy_changed_cb(const char *name, GaimPrefType type, gpointer value,
 	const char *proxy = value;
 
 	if (strcmp(proxy, "none") && strcmp(proxy, "envvar"))
-		gtk_widget_set_sensitive(frame, TRUE);
+		gtk_widget_show(frame);
 	else
-		gtk_widget_set_sensitive(frame, FALSE);
+		gtk_widget_hide(frame);
 }
 
 static void proxy_print_option(GtkEntry *entry, int entrynum)
@@ -1144,14 +1043,8 @@ network_page()
 	gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
 	proxy_info = gaim_global_proxy_get_info();
 
-	if (proxy_info == NULL ||
-		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE ||
-		gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_ENVVAR) {
-
-		gtk_widget_set_sensitive(GTK_WIDGET(prefs_proxy_frame), FALSE);
-	}
 	gaim_prefs_connect_callback(prefs, "/core/proxy/type",
-								proxy_changed_cb, prefs_proxy_frame);
+				    proxy_changed_cb, prefs_proxy_frame);
 
 	table = gtk_table_new(4, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
@@ -1232,6 +1125,10 @@ network_page()
 	gaim_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
+	if (proxy_info == NULL ||
+	    gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE ||
+	    gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_ENVVAR)
+		gtk_widget_hide(table);
 	return ret;
 }
 
@@ -1829,268 +1726,6 @@ away_page()
 	return ret;
 }
 
-static GtkWidget *plugin_description=NULL, *plugin_details=NULL;
-
-static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
-{
-	gchar *buf, *pname, *perr, *pdesc, *pauth, *pweb;
-	GtkTreeIter  iter;
-	GValue val = { 0, };
-	GaimPlugin *plug;
-
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
-		return;
-	gtk_tree_model_get_value (model, &iter, 3, &val);
-	plug = g_value_get_pointer(&val);
-
-	pname = g_markup_escape_text(_(plug->info->name), -1);
-	pdesc = (plug->info->description) ?
-			g_markup_escape_text(_(plug->info->description), -1) : NULL;
-	pauth = (plug->info->author) ?
-			g_markup_escape_text(_(plug->info->author), -1) : NULL;
-	pweb = (plug->info->homepage) ?
-		   g_markup_escape_text(_(plug->info->homepage), -1) : NULL;
-
-	if (plug->error != NULL) {
-		perr = g_markup_escape_text(_(plug->error), -1);
-		buf = g_strdup_printf(
-				"<span size=\"larger\">%s %s</span>\n\n"
-				"<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-				"%s",
-				pname, plug->info->version, perr, pdesc ? pdesc : "");
-		g_free(perr);
-	}
-	else {
-		buf = g_strdup_printf(
-				"<span size=\"larger\">%s %s</span>\n\n%s",
-				pname, plug->info->version, pdesc ? pdesc : "");
-	}
-	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	g_free(buf);
-
-	buf = g_strdup_printf(
-#ifndef _WIN32
-		   _("<span size=\"larger\">%s %s</span>\n\n"
-		     "<span weight=\"bold\">Written by:</span>\t%s\n"
-		     "<span weight=\"bold\">Web site:</span>\t\t%s\n"
-		     "<span weight=\"bold\">File name:</span>\t%s"),
-#else
-		   _("<span size=\"larger\">%s %s</span>\n\n"
-		     "<span weight=\"bold\">Written by:</span>  %s\n"
-		     "<span weight=\"bold\">URL:</span>  %s\n"
-		     "<span weight=\"bold\">File name:</span>  %s"),
-#endif
-		   pname, plug->info->version, pauth ? pauth : "", pweb ? pweb : "", plug->path);
-
-	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
-	g_value_unset(&val);
-	g_free(buf);
-	g_free(pname);
-	g_free(pdesc);
-	g_free(pauth);
-	g_free(pweb);
-}
-
-static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
-{
-	GtkTreeModel *model = (GtkTreeModel *)data;
-	GtkTreeIter iter;
-	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
-	GaimPlugin *plug;
-	gchar buf[1024];
-	gchar *name = NULL, *description = NULL;
-
-	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-	gdk_window_set_cursor(prefs->window, wait);
-	gdk_cursor_unref(wait);
-
-	gtk_tree_model_get_iter (model, &iter, path);
-	gtk_tree_model_get (model, &iter, 3, &plug, -1);
-
-	if (!gaim_plugin_is_loaded(plug)) {
-		gaim_plugin_load(plug);
-		add_plugin_prefs(plug);
-	}
-	else {
-		delete_plugin_prefs(plug);
-		gaim_plugin_unload(plug);
-	}
-
-	gdk_window_set_cursor(prefs->window, NULL);
-
-	name = g_markup_escape_text(_(plug->info->name), -1);
-	description = g_markup_escape_text(_(plug->info->description), -1);
-	if (plug->error != NULL) {
-		gchar *error = g_markup_escape_text(plug->error, -1);
-		g_snprintf(buf, sizeof(buf),
-				   "<span size=\"larger\">%s %s</span>\n\n"
-				   "<span weight=\"bold\" color=\"red\">%s</span>\n\n"
-				   "%s",
-				   name, plug->info->version, error, description);
-		g_free(error);
-	} else {
-		g_snprintf(buf, sizeof(buf),
-				   "<span size=\"larger\">%s %s</span>\n\n%s",
-				   name, plug->info->version, description);
-	}
-	g_free(name);
-	g_free(description);
-
-	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 0,
-						gaim_plugin_is_loaded(plug), -1);
-
-	gtk_label_set_markup(GTK_LABEL(plugin_description), buf);
-	gtk_tree_path_free(path);
-
-	gaim_gtk_plugins_save();
-}
-
-static void
-update_plugin_list(void *data)
-{
-	GtkListStore *ls = GTK_LIST_STORE(data);
-	GtkTreeIter iter;
-	GList *probes;
-	GaimPlugin *plug;
-
-	gtk_list_store_clear(ls);
-	gaim_plugins_probe(GAIM_PLUGIN_EXT);
-
-	for (probes = gaim_plugins_get_all();
-		 probes != NULL;
-		 probes = probes->next)
-	{
-		plug = probes->data;
-
-		if (plug->info->type != GAIM_PLUGIN_STANDARD ||
-			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE))
-		{
-			continue;
-		}
-
-		gtk_list_store_append (ls, &iter);
-		gtk_list_store_set(ls, &iter,
-				   0, gaim_plugin_is_loaded(plug),
-				   1, plug->info->name ? _(plug->info->name) : plug->path,
-				   2, _(plug->info->summary),
-				   3, plug, -1);
-	}
-}
-
-static GtkWidget *plugin_page ()
-{
-	GtkWidget *ret;
-	GtkWidget *sw, *vp;
-	GtkWidget *event_view;
-	GtkListStore *ls;
-	GtkCellRenderer *rend, *rendt;
-	GtkTreeViewColumn *col;
-	GtkTreeSelection *sel;
-	GtkTreePath *path;
-	GtkWidget *nb;
-
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
-
-	sw = gtk_scrolled_window_new(NULL,NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
-
-	gtk_box_pack_start(GTK_BOX(ret), sw, TRUE, TRUE, 0);
-
-	ls = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(ls),
-										 1, GTK_SORT_ASCENDING);
-
-	update_plugin_list(ls);
-
-	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
-
-	rend = gtk_cell_renderer_toggle_new();
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
-
-	col = gtk_tree_view_column_new_with_attributes (_("Load"),
-							rend,
-							"active", 0,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-
-	rendt = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes (_("Name"),
-							rendt,
-							"text", 1,
-							NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
-
-	rendt = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes(_("Summary"),
-							rendt,
-							"text", 2,
-							NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(event_view), col);
-
-	g_object_unref(G_OBJECT(ls));
-	gtk_container_add(GTK_CONTAINER(sw), event_view);
-
-
-	nb = gtk_notebook_new();
-	gtk_notebook_set_tab_pos (GTK_NOTEBOOK(nb), GTK_POS_BOTTOM);
-	gtk_notebook_popup_disable(GTK_NOTEBOOK(nb));
-
-	/* Description */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	plugin_description = gtk_label_new(NULL);
-
-	vp = gtk_viewport_new(NULL, NULL);
-	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
-
-	gtk_container_add(GTK_CONTAINER(vp), plugin_description);
-	gtk_container_add(GTK_CONTAINER(sw), vp);
-
-	gtk_label_set_selectable(GTK_LABEL(plugin_description), TRUE);
-	gtk_label_set_line_wrap(GTK_LABEL(plugin_description), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_description), 0, 0);
-	gtk_misc_set_padding(GTK_MISC(plugin_description), GAIM_HIG_BOX_SPACE, GAIM_HIG_BOX_SPACE);
-	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Description")));
-
-	/* Details */
-	sw = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-	plugin_details = gtk_label_new(NULL);
-
-	vp = gtk_viewport_new(NULL, NULL);
-	gtk_viewport_set_shadow_type(GTK_VIEWPORT(vp), GTK_SHADOW_NONE);
-	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_NONE);
-
-	gtk_container_add(GTK_CONTAINER(vp), plugin_details);
-	gtk_container_add(GTK_CONTAINER(sw), vp);
-
-	gtk_label_set_selectable(GTK_LABEL(plugin_details), TRUE);
-	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
-	gtk_misc_set_alignment(GTK_MISC(plugin_details), 0, 0);
-	gtk_misc_set_padding(GTK_MISC(plugin_details), GAIM_HIG_BOX_SPACE, GAIM_HIG_BOX_SPACE);
-	gtk_notebook_append_page(GTK_NOTEBOOK(nb), sw, gtk_label_new(_("Details")));
-	gtk_box_pack_start(GTK_BOX(ret), nb, TRUE, TRUE, 0);
-
-	g_signal_connect (G_OBJECT (sel), "changed",
-			  G_CALLBACK (prefs_plugin_sel),
-			  NULL);
-	g_signal_connect (G_OBJECT(rend), "toggled",
-			  G_CALLBACK(plugin_load), ls);
-
-	path = gtk_tree_path_new_first();
-	gtk_tree_selection_select_path(sel, path);
-	gtk_tree_path_free(path);
-
-	gaim_plugins_register_probe_notify_cb(update_plugin_list, ls);
-
-	gtk_widget_show_all(ret);
-	return ret;
-}
-
 int prefs_notebook_add_page(const char *text,
 				     GdkPixbuf *pixbuf,
 				     GtkWidget *page,
@@ -2117,7 +1752,6 @@ int prefs_notebook_add_page(const char *text,
 
 static void prefs_notebook_init() {
 	GtkTreeIter p, c, c2;
-	GList *l;
 	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
@@ -2132,14 +1766,6 @@ static void prefs_notebook_init() {
 #endif
 	prefs_notebook_add_page(_("Logging"), NULL, logging_page(), &p, NULL, notebook_page++);
 	prefs_notebook_add_page(_("Away / Idle"), NULL, away_page(), &p, NULL, notebook_page++);
-
-	if (gaim_plugins_enabled()) {
-		prefs_notebook_add_page(_("Plugins"), NULL, plugin_page(), &plugin_iter, NULL, notebook_page++);
-
-		for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
-			add_plugin_prefs(l->data);
-		}
-	}
 }
 
 void gaim_gtk_prefs_show(void)
@@ -2176,7 +1802,7 @@ void gaim_gtk_prefs_show(void)
 	/* The notebook */
 	prefsnotebook = notebook = gtk_notebook_new ();
 	gtk_box_pack_start (GTK_BOX (vbox), notebook, FALSE, FALSE, 0);
-
+	gtk_widget_show(prefsnotebook);
 
 	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
@@ -2194,7 +1820,7 @@ void gaim_gtk_prefs_show(void)
 	prefs_notebook_init();
 
 	/* Show everything. */
-	gtk_widget_show_all(prefs);
+	gtk_widget_show(prefs);
 }
 
 static void

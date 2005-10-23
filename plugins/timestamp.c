@@ -170,7 +170,7 @@ static void init_timer_list()
 
 
 
-static void set_timestamp(GtkWidget *button, GtkWidget *spinner) {
+static void set_timestamp(GtkWidget *spinner, void *null) {
 	int tm;
 
 	tm = 0;
@@ -194,7 +194,7 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *frame, *label;
 	GtkWidget *vbox, *hbox;
 	GtkAdjustment *adj;
-	GtkWidget *spinner, *button;
+	GtkWidget *spinner;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), 12);
@@ -212,17 +212,9 @@ get_config_frame(GaimPlugin *plugin)
 	adj = (GtkAdjustment *)gtk_adjustment_new(interval/(60*1000), 1, G_MAXINT, 1, 0, 0);
 	spinner = gtk_spin_button_new(adj, 0, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), spinner, TRUE, TRUE, 0);
-
+	g_signal_connect(G_OBJECT(spinner), "value-changed", G_CALLBACK(set_timestamp), NULL);
 	label = gtk_label_new(_("minutes."));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 5);
-
-	hbox = gtk_hbox_new(TRUE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 5);
-
-	button = gtk_button_new_with_mnemonic(_("_Apply"));
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 5);
-	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(set_timestamp), spinner);
 
 	gtk_widget_show_all(ret);
 	return ret;

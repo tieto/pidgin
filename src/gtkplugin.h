@@ -65,4 +65,9 @@ GtkWidget *gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin);
  */
 void gaim_gtk_plugins_save(void);
 
+/**
+ * Shows the Plugins dialog
+ */
+void gaim_gtk_plugin_dialog_show();
+
 #endif /* _GAIM_GTKPLUGIN_H_ */

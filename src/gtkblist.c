@@ -47,6 +47,7 @@
 #include "gtkft.h"
 #include "gtklog.h"
 #include "gtkpounce.h"
+#include "gtkplugin.h"
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
@@ -2338,10 +2339,10 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/Pl_ugin Actions"), NULL, NULL, 0, "<Branch>" },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
+	{ N_("/Tools/P_lugins"), NULL, gaim_gtk_plugin_dialog_show, 0, NULL },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
