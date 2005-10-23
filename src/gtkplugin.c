@@ -33,6 +33,7 @@
 static GtkWidget *plugin_dialog = NULL;
 static GtkWidget *plugin_details = NULL;
 static GtkWidget *pref_button = NULL;
+
 GtkWidget *
 gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 {
@@ -258,6 +259,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 						     NULL);
 		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), NULL);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
+		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 		gtk_widget_show_all(dialog);
 		break;
 	}
@@ -284,6 +286,7 @@ void gaim_gtk_plugin_dialog_show()
 						    NULL);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_PREFERENCES, 98121);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
