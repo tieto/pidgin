@@ -224,7 +224,6 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, void *null)
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
 		gtk_widget_destroy(d);
-		plugin_dialog = NULL;
 		break;
 	}
 }
