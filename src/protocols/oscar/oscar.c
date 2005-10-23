@@ -6617,10 +6617,10 @@ oscar_set_status_icq(GaimAccount *account, GaimStatus *status)
 	if (!od)
 		return;
 
-	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) != GAIM_STATUS_HIDDEN)
-		account->perm_deny = 4;
+	if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_HIDDEN)
+		account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
 	else
-		account->perm_deny = 3;
+		account->perm_deny = GAIM_PRIVACY_DENY_USERS;
 
 	if ((od->sess->ssi.received_data) && (aim_ssi_getpermdeny(od->sess->ssi.local) != account->perm_deny))
 		aim_ssi_setpermdeny(od->sess, account->perm_deny, 0xffffffff);
@@ -7029,8 +7029,8 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 						gaim_debug_info("oscar",
 								   "ssi: changing permdeny from %d to %hhu\n", account->perm_deny, permdeny);
 						account->perm_deny = permdeny;
-						if (od->icq && account->perm_deny == 0x03) {
-							gaim_presence_switch_status(account->presence, OSCAR_STATUS_ID_INVISIBLE);
+						if (od->icq && account->perm_deny == GAIM_PRIVACY_ALLOW_USERS) {
+							gaim_presence_set_status_active(account->presence, OSCAR_STATUS_ID_INVISIBLE, TRUE);
 						}
 					}
 				}
