@@ -218,11 +218,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(pweb);
 }
 
-static void pref_dialog_response_cb(GtkWidget *d, int response, void *null)
+static GSList *plugin_pref_dialogs = NULL;
+static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug)
 {
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
+		plugin_pref_dialogs = g_slist_remove(plugin_pref_dialogs, plug);
 		gtk_widget_destroy(d);
 		break;
 	}
@@ -248,6 +250,9 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		plug = g_value_get_pointer(&val);
 		if (plug == NULL)
 			break;
+		if (g_slist_find(plugin_pref_dialogs, plug))
+			break;
+		plugin_pref_dialogs = g_slist_prepend(plugin_pref_dialogs, plug);
 		box = gaim_gtk_plugin_get_config_frame(plug);
 		if (box == NULL)
 			break;
@@ -256,10 +261,11 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
-		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), NULL);
+		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
 		gtk_widget_show_all(dialog);
+		g_value_unset(&val);
 		break;
 	}
 }
