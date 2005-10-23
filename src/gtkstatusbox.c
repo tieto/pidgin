@@ -275,13 +275,13 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	account = GTK_GAIM_STATUS_BOX(status_box)->account;
 	if (account == NULL)
 	{
-		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_ONLINE,
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_ONLINE,
 		                                 icon_size, "GtkGaimStatusBox");
-		pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
+		pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_AWAY,
 		                                  icon_size, "GtkGaimStatusBox");
-		pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
+		pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
 		                                  icon_size, "GtkGaimStatusBox");
-		pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_INVISIBLE,
+		pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_INVISIBLE,
 		                                  icon_size, "GtkGaimStatusBox");
 		/* hacks */
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GAIM_STATUS_AVAILABLE, pixbuf, _("Available"), NULL);
@@ -389,27 +389,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 
 	status_box->imhtml_visible = FALSE;
-	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
-							   icon_size, "GtkGaimStatusBox");
-	status_box->connecting_index = 0;
-	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT0,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT1,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT2,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_CONNECT3,
-								     icon_size, "GtkGaimStatusBox");
-
-	status_box->typing_index = 0;
-	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_TYPING0,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_TYPING1,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_TYPING2,
-								     icon_size, "GtkGaimStatusBox");
-	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_TYPING3,
-								     icon_size, "GtkGaimStatusBox");
 	status_box->connecting = FALSE;
 	status_box->typing = FALSE;
 	status_box->title = NULL;
@@ -457,6 +436,28 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(status_box->sw), status_box->imhtml);
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
+
+	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
+							   icon_size, "GtkGaimStatusBox");
+	status_box->connecting_index = 0;
+	status_box->connecting_pixbufs[0] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT0,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->connecting_pixbufs[1] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT1,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->connecting_pixbufs[2] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT2,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_CONNECT3,
+								     icon_size, "GtkGaimStatusBox");
+
+	status_box->typing_index = 0;
+	status_box->typing_pixbufs[0] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING0,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->typing_pixbufs[1] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING1,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->typing_pixbufs[2] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING2,
+								     icon_size, "GtkGaimStatusBox");
+	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_TYPING3,
+								     icon_size, "GtkGaimStatusBox");
 
 	gtk_gaim_status_box_regenerate(status_box);
 }
@@ -573,12 +574,16 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType t
 void
 gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box)
 {
+	/* Don't do anything unless GTK actually supports
+	 * gtk_combo_box_set_row_separator_func */
+#if GTK_CHECK_VERSION(2,6,0)
 	GtkTreeIter iter;
 
 	gtk_list_store_append(status_box->dropdown_store, &iter);
 	gtk_list_store_set(status_box->dropdown_store, &iter,
 			   TYPE_COLUMN, GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR,
 			   -1);
+#endif
 }
 
 void
