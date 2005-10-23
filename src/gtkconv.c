@@ -4941,7 +4941,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		if (im != NULL &&
 		    gaim_conv_im_get_typing_state(im) == GAIM_TYPING)
 		{
-			strncpy(style, "color=\"#47A046\" style=\"italic\"", sizeof(style));
+			strncpy(style, "color=\"#47A046\", sizeof(style));
 		}
 		else if (im != NULL &&
 		         gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
@@ -4958,7 +4958,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
 		{
-			strncpy(style, "color=\"#868272\"", sizeof(style));
+			strncpy(style, "color=\"#868272\" style=\"italic\"", sizeof(style));
 		}
 
 		if (*style != '\0')
