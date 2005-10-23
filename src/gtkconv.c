@@ -67,8 +67,8 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define SEND_COLOR "#16569E"
-#define RECV_COLOR "#A82F2F"
+#define SEND_COLOR "#001f41"
+#define RECV_COLOR "#a63802"
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
