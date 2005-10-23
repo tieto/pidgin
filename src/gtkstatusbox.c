@@ -208,7 +208,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 		pixbuf = status_box->pixbuf;
 
 	gtk_list_store_set(status_box->store, &(status_box->iter),
-			   TYPE_COLUMN, -1, /* TODO: Should use something real here? */
+			   TYPE_COLUMN, -1, /* This field is not used in this list store */
 			   ICON_COLUMN, pixbuf,
 			   TEXT_COLUMN, text,
 			   TITLE_COLUMN, title,
@@ -239,8 +239,6 @@ load_icon(const char *basename)
 	 */
 	g_snprintf(basename2, sizeof(basename2), "%s.png",
 	           basename);
-
-
 	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "icons",
 	                            basename2, NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
@@ -695,6 +693,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	GtkGaimStatusBoxItemType type;
 	char *text, *sec_text;
 	GdkPixbuf *pixbuf;
+	GList *accounts, *node;
 
 	status_box = GTK_GAIM_STATUS_BOX(box);
 
@@ -730,13 +729,26 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	}
 
 	/*
-	 * TODO: Should show the message box whenever 'type' allows
-	 *       for a message attribute on any protocol that is enabled.
+	 * Show the message box whenever 'type' allows for a
+	 * message attribute on any protocol that is enabled.
 	 */
-	if (type == GAIM_STATUS_AWAY)
-		status_box->imhtml_visible = TRUE;
-	else
-		status_box->imhtml_visible = FALSE;
+	accounts = gaim_accounts_get_all_active();
+	status_box->imhtml_visible = FALSE;
+	for (node = accounts; node != NULL; node = node->next)
+	{
+		GaimAccount *account;
+		GaimStatusType *status_type;
+
+		account = node->data;
+		status_type = gaim_account_get_status_type_with_primitive(account, type);
+		if ((status_type != NULL) &&
+			(gaim_status_type_get_attr(status_type, "message") != NULL))
+		{
+			status_box->imhtml_visible = TRUE;
+			break;
+		}
+	}
+	g_list_free(accounts);
 
 	if (status_box->imhtml_visible)
 	{
