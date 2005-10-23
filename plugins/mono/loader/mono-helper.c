@@ -91,7 +91,7 @@ MonoObject* mono_loader_object_from_gaim_type(GaimType type, gpointer data)
 
 MonoObject* mono_loader_object_from_gaim_subtype(GaimSubType type, gpointer data)
 {
-	MonoObject *obj;
+	MonoObject *obj = NULL;
 	
 	switch (type) {
 		case GAIM_SUBTYPE_BLIST_BUDDY:
