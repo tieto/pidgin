@@ -118,6 +118,13 @@ version 2.0.0:
 	* gaim_account_change_password()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
 		be closed. New logs will be opened as necessary.
+	* gaim_plugin_get_id()
+	* gaim_plugin_get_name()
+	* gaim_plugin_get_version()
+	* gaim_plugin_get_summary()
+	* gaim_plugin_get_description()
+	* gaim_plugin_get_author()
+	* gaim_plugin_get_homepage()
 
 	Signals - Changed:
 	* "received-im-msg" and "received-chat-msg" to match, both now pass a
