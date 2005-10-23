@@ -20,10 +20,10 @@
  */
 #include "internal.h"
 #include "gtkblist.h"
+#include "gtkexpander.h"
 #include "gtkgaim.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
-#include "gtkgaim-disclosure.h"
 
 #include "debug.h"
 
@@ -315,7 +315,7 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 	GtkWidget *hbox;
 	GtkWidget *bbox;
 	GtkWidget *sep;
-	GtkWidget *disclosure;
+	GtkWidget *expander;
 	GtkTreeSelection *selection;
 	GtkCellRenderer *cell;
 
@@ -425,11 +425,10 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 					 G_CALLBACK(addrbook_change_cb), dialog);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->addrbooks_combo), 0);
 
-	/* Add the disclosure */
-	disclosure = gaim_disclosure_new(_("Show user details"),
-									 _("Hide user details"));
-	gtk_box_pack_start(GTK_BOX(vbox), disclosure, FALSE, FALSE, 0);
-	gtk_widget_show(disclosure);
+	/* Add the expander */
+	expander = gtk_expander_new_with_mnemonic(_("User _details"));
+	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
+	gtk_widget_show(expander);
 
 	/*
 	 * User details
@@ -442,8 +441,8 @@ gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
 								   GTK_POLICY_ALWAYS);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
 										GTK_SHADOW_IN);
-	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
-	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), sw);
+	gtk_container_add(GTK_CONTAINER(expander), sw);
+	gtk_widget_show(sw);
 
 	/* Textview */
 	dialog->imhtml = gtk_imhtml_new(NULL, NULL);

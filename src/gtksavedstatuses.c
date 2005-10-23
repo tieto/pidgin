@@ -32,8 +32,8 @@
 #include "util.h"
 
 #include "gtkblist.h"
+#include "gtkexpander.h"
 #include "gtkgaim.h"
-#include "gtkgaim-disclosure.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtksavedstatuses.h"
@@ -699,7 +699,7 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	GtkWidget *bbox;
 	GtkWidget *button;
 	GtkWidget *dbox;
-	GtkWidget *disclosure;
+	GtkWidget *expander;
 	GtkWidget *dropdown;
 	GtkWidget *entry;
 	GtkWidget *frame;
@@ -747,8 +747,6 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 	dialog->title = GTK_ENTRY(entry);
 	if (status != NULL)
 		gtk_entry_set_text(GTK_ENTRY(entry), dialog->original_title);
-	else
-		gtk_entry_set_text(GTK_ENTRY(entry), _("Out of the office"));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	gtk_widget_show(entry);
 	g_signal_connect(G_OBJECT(entry), "changed",
@@ -793,16 +791,15 @@ gaim_gtk_status_editor_show(GaimSavedStatus *status)
 		gtk_imhtml_append_text(GTK_IMHTML(text),
 							   gaim_savedstatus_get_message(status), 0);
 
-	/* Custom status message disclosure */
-	disclosure = gaim_disclosure_new(_("Use a different status for some accounts"),
-									 _("Use a different status for some accounts"));
-	gtk_box_pack_start(GTK_BOX(vbox), disclosure, FALSE, FALSE, 0);
-	gtk_widget_show(disclosure);
+	/* Custom status message expander */
+	expander = gtk_expander_new_with_mnemonic(_("Use a _different status for some accounts"));
+	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
+	gtk_widget_show(expander);
 
-	/* Setup the box that the disclosure will cover */
+	/* Setup the box that the expander will cover */
 	dbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), dbox, FALSE, FALSE, 0);
-	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), dbox);
+	gtk_container_add(GTK_CONTAINER(expander), dbox);
+	gtk_widget_show(dbox);
 
 	/* Custom status message treeview */
 	sw = gtk_scrolled_window_new(NULL, NULL);

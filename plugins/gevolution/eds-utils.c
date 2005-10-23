@@ -24,7 +24,6 @@
 #include "gtkgaim.h"
 #include "gtkutils.h"
 #include "gtkimhtml.h"
-#include "gtkgaim-disclosure.h"
 
 #include "debug.h"
 #include "gevolution.h"

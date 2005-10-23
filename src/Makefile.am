@@ -249,8 +249,8 @@ gaim_SOURCES = \
 	gtkdialogs.c \
 	gtkdnd-hints.c \
 	gtkeventloop.c \
+	gtkexpander.c \
 	gtkft.c \
-	gtkgaim-disclosure.c \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
@@ -294,9 +294,9 @@ gaim_headers = \
 	gtkdialogs.h \
 	gtkdnd-hints.h \
 	gtkeventloop.h \
+	gtkexpander.h \
 	gtkft.h \
 	gtkgaim.h \
-	gtkgaim-disclosure.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \

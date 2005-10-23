@@ -103,8 +103,8 @@ DLL_C_SRC =	\
 			gtkdialogs.c \
 			gtkdnd-hints.c \
 			gtkeventloop.c \
+			gtkexpander.c \
 			gtkft.c \
-			gtkgaim-disclosure.c \
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
 			gtklog.c \

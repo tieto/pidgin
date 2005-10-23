@@ -45,8 +45,8 @@ src/gtkconn.c
 src/gtkconv.c
 src/gtkdebug.c
 src/gtkdialogs.c
+src/gtkexpander.c
 src/gtkft.c
-src/gtkgaim-disclosure.c
 src/gtkimhtml.c
 src/gtkimhtmltoolbar.c
 src/gtklog.c

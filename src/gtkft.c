@@ -31,12 +31,12 @@
 #include "prpl.h"
 #include "util.h"
 
-#include "gtkgaim-disclosure.h"
 #include "gtkcellrendererprogress.h"
 #include "gtkft.h"
 #include "prefs.h"
-#include "gtkutils.h"
+#include "gtkexpander.h"
 #include "gtkstock.h"
+#include "gtkutils.h"
 
 #define GAIM_GTKXFER(xfer) \
 	(GaimGtkXferUiData *)(xfer)->ui_data
@@ -54,7 +54,7 @@ struct _GaimGtkXferDialog
 	GtkWidget *tree;
 	GtkListStore *model;
 
-	GtkWidget *disclosure;
+	GtkWidget *expander;
 
 	GtkWidget *table;
 
@@ -270,7 +270,7 @@ static void
 update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 {
 	if (dialog->selected_xfer == NULL) {
-		gtk_widget_set_sensitive(dialog->disclosure, FALSE);
+		gtk_widget_set_sensitive(dialog->expander, FALSE);
 		gtk_widget_set_sensitive(dialog->open_button, FALSE);
 		gtk_widget_set_sensitive(dialog->pause_button, FALSE);
 		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
@@ -385,7 +385,7 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		GValue val = {0, };
 
-		gtk_widget_set_sensitive(dialog->disclosure, TRUE);
+		gtk_widget_set_sensitive(dialog->expander, TRUE);
 
 		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
 								 &iter, COLUMN_DATA, &val);
@@ -397,10 +397,10 @@ selection_changed_cb(GtkTreeSelection *selection, GaimGtkXferDialog *dialog)
 		dialog->selected_xfer = xfer;
 	}
 	else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->disclosure),
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->expander),
 									 FALSE);
 
-		gtk_widget_set_sensitive(dialog->disclosure, FALSE);
+		gtk_widget_set_sensitive(dialog->expander, FALSE);
 
 		dialog->selected_xfer = NULL;
 	}
@@ -675,7 +675,7 @@ gaim_gtkxfer_dialog_new(void)
 	GtkWidget *bbox;
 	GtkWidget *sw;
 	GtkWidget *button;
-	GtkWidget *disclosure;
+	GtkWidget *expander;
 	GtkWidget *table;
 	GtkWidget *checkbox;
 
@@ -731,25 +731,17 @@ gaim_gtkxfer_dialog_new(void)
 	gtk_widget_show(checkbox);
 
 	/* "Download Details" arrow */
-	disclosure = gaim_disclosure_new(_("Show transfer details"),
-									 _("Hide transfer details"));
-	dialog->disclosure = disclosure;
-	gtk_box_pack_start(GTK_BOX(vbox2), disclosure, FALSE, FALSE, 0);
-	gtk_widget_show(disclosure);
+	expander = gtk_expander_new_with_mnemonic(_("File transfer _details"));
+	dialog->expander = expander;
+	gtk_box_pack_start(GTK_BOX(vbox2), expander, FALSE, FALSE, 0);
+	gtk_widget_show(expander);
 
-	gtk_widget_set_sensitive(disclosure, FALSE);
-
-#if 0
-	g_signal_connect(G_OBJECT(disclosure), "toggled",
-					 G_CALLBACK(toggle_details_cb), dialog);
-#endif
+	gtk_widget_set_sensitive(expander, FALSE);
 
 	/* The table of information. */
 	table = make_info_table(dialog);
-	gtk_box_pack_start(GTK_BOX(vbox2), table, TRUE, TRUE, 0);
-
-	/* Setup the disclosure for the table. */
-	gaim_disclosure_set_container(GAIM_DISCLOSURE(disclosure), table);
+	gtk_container_add(GTK_CONTAINER(expander), table);
+	gtk_widget_show(table);
 
 	/* Now the button box for the buttons */
 	bbox = gtk_hbutton_box_new();
