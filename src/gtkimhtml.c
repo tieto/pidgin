@@ -753,12 +753,9 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                                      &tag_area.x,
 			                                      &tag_area.y);
 
-			rect.width = visible_rect.width;
-			if (gtk_text_iter_is_end(&cur))
-				rect.height = visible_rect.y + visible_rect.height - rect.y;
-			else
-				rect.height = tag_area.y + tag_area.height - rect.y
-				              + gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
+		
+			rect.height = tag_area.y + tag_area.height - rect.y
+				+ gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(widget));
 
 			color = tag->name + 11;
 
