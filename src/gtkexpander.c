@@ -31,14 +31,12 @@
 
 #include <gtk/gtklabel.h>
 #include <gtk/gtkcontainer.h>
-#include <gtk/gtkmarshalers.h>
+#include <gtk/gtkmarshal.h>
 #include <gtk/gtkmain.h>
-#include <gtk/gtkintl.h>
 #include <gtk/gtkprivate.h>
 #include <gdk/gdkkeysyms.h>
-#include <gtk/gtkalias.h>
 
-#define GTK_EXPANDER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GTK_TYPE_EXPANDER, GtkExpanderPrivate))
+#define P_(x) (x)
 
 #define DEFAULT_EXPANDER_SIZE 10
 #define DEFAULT_EXPANDER_SPACING 2
@@ -81,6 +79,8 @@ static void gtk_expander_get_property (GObject          *object,
 				       guint             prop_id,
 				       GValue           *value,
 				       GParamSpec       *pspec);
+
+static void gtk_expander_finalize (GObject *object);
 
 static void gtk_expander_destroy (GtkObject *object);
 
@@ -170,6 +170,7 @@ gtk_expander_class_init (GtkExpanderClass *klass)
 
   gobject_class->set_property = gtk_expander_set_property;
   gobject_class->get_property = gtk_expander_get_property;
+  gobject_class->finalize     = gtk_expander_finalize;
 
   object_class->destroy = gtk_expander_destroy;
 
@@ -193,8 +194,6 @@ gtk_expander_class_init (GtkExpanderClass *klass)
   container_class->forall = gtk_expander_forall;
 
   klass->activate = gtk_expander_activate;
-
-  g_type_class_add_private (klass, sizeof (GtkExpanderPrivate));
 
   g_object_class_install_property (gobject_class,
 				   PROP_EXPANDED,
@@ -270,8 +269,18 @@ gtk_expander_class_init (GtkExpanderClass *klass)
 		  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
 		  G_STRUCT_OFFSET (GtkExpanderClass, activate),
 		  NULL, NULL,
-		  _gtk_marshal_VOID__VOID,
+		  gtk_marshal_VOID__VOID,
 		  G_TYPE_NONE, 0);
+}
+
+static void
+gtk_expander_finalize (GObject *obj)
+{
+	GtkExpander *self = (GtkExpander *)obj;
+
+	g_free(self->priv);
+
+	G_OBJECT_CLASS(parent_class)->finalize (obj);
 }
 
 static void
@@ -279,7 +288,7 @@ gtk_expander_init (GtkExpander *expander)
 {
   GtkExpanderPrivate *priv;
 
-  expander->priv = priv = GTK_EXPANDER_GET_PRIVATE (expander);
+  expander->priv = priv = g_new0(GtkExpanderPrivate, 1);
 
   GTK_WIDGET_SET_FLAGS (expander, GTK_CAN_FOCUS);
   GTK_WIDGET_SET_FLAGS (expander, GTK_NO_WINDOW);
@@ -379,7 +388,7 @@ gtk_expander_destroy (GtkObject *object)
       g_source_remove (priv->animation_timeout);
       priv->animation_timeout = 0;
     }
-  
+
   GTK_OBJECT_CLASS (parent_class)->destroy (object);
 }
 
@@ -1646,6 +1655,5 @@ gtk_expander_get_label_widget (GtkExpander *expander)
 }
 
 #define __GTK_EXPANDER_C__
-#include <gtk/gtkaliasdef.c>
 
 #endif /* Gtk 2.4 */
