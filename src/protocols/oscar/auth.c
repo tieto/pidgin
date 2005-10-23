@@ -154,7 +154,7 @@ static int goddamnicq2(aim_session_t *sess, aim_conn_t *conn, const char *sn, co
 	fu8_t *password_encoded;
 
 	passwdlen = strlen(password);
-	if (!(password_encoded = (char *)malloc(passwdlen+1)))
+	if (!(password_encoded = (fu8_t *)malloc(passwdlen+1)))
 		return -ENOMEM;
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
