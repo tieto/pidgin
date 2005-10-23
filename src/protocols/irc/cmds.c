@@ -365,7 +365,12 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 	char *buf;
 
 	if (!irc->quitting) {
-		buf = irc_format(irc, "v:", "QUIT", (args && args[0]) ? args[0] : gaim_prefs_get_string("/plugins/prpl/irc/quitmsg"));
+		/*
+		 * Use gaim_account_get_string(irc->account, "quitmsg", IRC_DEFAULT_QUIT)
+		 * and uncomment the appropriate account preference in irc.c if we
+		 * decide we want custom quit messages.
+		 */
+		buf = irc_format(irc, "v:", "QUIT", (args && args[0]) ? args[0] : IRC_DEFAULT_QUIT);
 		irc_send(irc, buf);
 		g_free(buf);
 
