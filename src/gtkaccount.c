@@ -39,7 +39,6 @@
 #include "signals.h"
 #include "util.h"
 
-#include "gtkgaim-disclosure.h"
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkdialogs.h"

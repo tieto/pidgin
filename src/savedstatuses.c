@@ -501,20 +501,21 @@ gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
 void
 gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 {
-	GList *accounts;
+	GList *accounts, *node;
 
 	g_return_if_fail(saved_status != NULL);
 
 	accounts = gaim_accounts_get_all_active();
 
-	while (accounts != NULL)
+	for (node = accounts; node != NULL; node = node->next)
 	{
 		GaimAccount *account;
 
-		account = accounts->data;
+		account = node->data;
 		gaim_savedstatus_activate_for_account(saved_status, account);
-		accounts = accounts->next;
 	}
+
+	g_list_free(accounts);
 }
 
 void
