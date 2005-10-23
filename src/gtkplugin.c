@@ -119,7 +119,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gchar *name = NULL, *description = NULL;
 
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-	gdk_window_set_cursor(plugin_dialog, wait);
+	gdk_window_set_cursor(GTK_WINDOW(plugin_dialog), wait);
 	gdk_cursor_unref(wait);
 
 	gtk_tree_model_get_iter (model, &iter, path);
@@ -131,7 +131,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 		gaim_plugin_unload(plug);
 
 
-	gdk_window_set_cursor(plugin_dialog, NULL);
+	gdk_window_set_cursor(GTK_WINDOW(plugin_dialog), NULL);
 
 	name = g_markup_escape_text(_(plug->info->name), -1);
 	description = g_markup_escape_text(_(plug->info->description), -1);
@@ -171,11 +171,10 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
-	gchar *buf, *pname, *perr, *pdesc, *pauth, *pweb;
+	gchar *buf, *pname, *pdesc, *pauth, *pweb;
 	GtkTreeIter  iter;
 	GValue val = { 0, };
 	GaimPlugin *plug;
-	GaimGtkPluginUiInfo *ui_info;
 
 	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 		return;
@@ -218,7 +217,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(pweb);
 }
 
-static void pref_dialog_response_cb(GtkDialog *d, int response, void *null)
+static void pref_dialog_response_cb(GtkWidget *d, int response, void *null)
 {
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
@@ -228,7 +227,7 @@ static void pref_dialog_response_cb(GtkDialog *d, int response, void *null)
 		break;
 	}
 }
-static void plugin_dialog_response_cb(GtkDialog *d, int response, GtkTreeSelection *sel)
+static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelection *sel)
 {
 	GaimPlugin *plug;
 	GtkWidget *dialog, *box;
@@ -253,7 +252,7 @@ static void plugin_dialog_response_cb(GtkDialog *d, int response, GtkTreeSelecti
 		if (box == NULL)
 			break;
 
-		dialog = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, d,
+		dialog = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(d),
 						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_MODAL,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
@@ -266,13 +265,12 @@ static void plugin_dialog_response_cb(GtkDialog *d, int response, GtkTreeSelecti
 
 void gaim_gtk_plugin_dialog_show()
 {
-	GtkWidget *sw, *vp;
+	GtkWidget *sw;
 	GtkWidget *event_view;
 	GtkListStore *ls;
 	GtkCellRenderer *rend, *rendt;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-	GtkTreePath *path;
 	GtkWidget *expander;
 
 	if (plugin_dialog != NULL) {
