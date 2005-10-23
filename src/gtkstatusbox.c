@@ -29,6 +29,7 @@
 #include "status.h"
 
 #include "gtkgaim.h"
+#include "gtksavedstatuses.h"
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
 
@@ -311,6 +312,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
 	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Custom..."), NULL, "custom");
+	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Saved..."), NULL, "saved");
 
 	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
 	saved_status = gaim_savedstatus_find(current_savedstatus_name);
@@ -595,6 +597,18 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	if (status_box->typing)
 		g_source_remove(status_box->typing);
 	status_box->typing = 0;
+
+	if (!strcmp(status_type_id, "custom"))
+	{
+		gaim_gtk_status_editor_show(NULL);
+		return;
+	}
+
+	if (!strcmp(status_type_id, "saved"))
+	{
+		gaim_gtk_status_window_show();
+		return;
+	}
 
 	/*
 	 * TODO: Should show the message box whenever status_type_id allows

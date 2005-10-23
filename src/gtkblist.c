@@ -50,7 +50,6 @@
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkroomlist.h"
-#include "gtksavedstatuses.h"
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
@@ -2341,7 +2340,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Pl_ugin Actions"), NULL, NULL, 0, "<Branch>" },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/_Statuses"), NULL, gaim_gtk_status_window_show, 0, "<StockItem>", GAIM_STOCK_ICON_AWAY },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
