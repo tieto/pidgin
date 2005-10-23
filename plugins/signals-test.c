@@ -138,15 +138,15 @@ blist_node_aliased(GaimBlistNode *node, const char *old_alias)
 	GaimGroup *g = (GaimGroup *)node;
 
 	if (GAIM_BLIST_NODE_IS_CONTACT(node))
-		gaim_debug_misc("signals test", "blist-node-extended-menu (Contact: %s, %s)\n", p->alias, old_alias);
+		gaim_debug_misc("signals test", "blist-node-aliased (Contact: %s, %s)\n", p->alias, old_alias);
 	else if (GAIM_BLIST_NODE_IS_BUDDY(node))
-		gaim_debug_misc("signals test", "blist-node-extended-menu (Buddy: %s, %s)\n", b->name, old_alias);
+		gaim_debug_misc("signals test", "blist-node-aliased (Buddy: %s, %s)\n", b->name, old_alias);
 	else if (GAIM_BLIST_NODE_IS_CHAT(node))
-		gaim_debug_misc("signals test", "blist-node-extended-menu (Chat: %s, %s)\n", c->alias, old_alias);
+		gaim_debug_misc("signals test", "blist-node-aliased (Chat: %s, %s)\n", c->alias, old_alias);
 	else if (GAIM_BLIST_NODE_IS_GROUP(node))
-		gaim_debug_misc("signals test", "blist-node-extended-menu (Group: %s, %s)\n", g->name, old_alias);
+		gaim_debug_misc("signals test", "blist-node-aliased (Group: %s, %s)\n", g->name, old_alias);
 	else
-		gaim_debug_misc("signals test", "blist-node-extended-menu (UNKNOWN: %d, %s)\n", node->type, old_alias);
+		gaim_debug_misc("signals test", "blist-node-aliased (UNKNOWN: %d, %s)\n", node->type, old_alias);
 
 }
 
