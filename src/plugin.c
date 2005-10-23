@@ -611,6 +611,62 @@ gaim_plugin_is_loaded(const GaimPlugin *plugin)
 	return plugin->loaded;
 }
 
+const gchar *
+gaim_plugin_get_id(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->id;
+}
+
+const gchar *
+gaim_plugin_get_name(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->name;
+}
+
+const gchar *
+gaim_plugin_get_version(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->version;
+}
+
+const gchar *
+gaim_plugin_get_summary(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->summary;
+}
+
+const gchar *
+gaim_plugin_get_description(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->description;
+}
+
+const gchar *
+gaim_plugin_get_author(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->author;
+}
+
+const gchar *
+gaim_plugin_get_homepage(const GaimPlugin *plugin) {
+	g_return_val_if_fail(plugin, NULL);
+	g_return_val_if_fail(plugin->info, NULL);
+
+	return plugin->info->homepage;
+}
+
 /**************************************************************************
  * Plugin IPC
  **************************************************************************/

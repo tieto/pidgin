@@ -300,6 +300,69 @@ void gaim_plugin_destroy(GaimPlugin *plugin);
  */
 gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
 
+/**
+ * Returns a plugin's id.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's id.
+ */
+const gchar *gaim_plugin_get_id(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's name.
+ *
+ * @param plugin The plugin.
+ * 
+ * @return THe name of the plugin, or @c NULL.
+ */
+const gchar *gaim_plugin_get_name(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's version.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's version or @c NULL.
+ */
+const gchar *gaim_plugin_get_version(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's summary.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's summary.
+ */
+const gchar *gaim_plugin_get_summary(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's description.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's description.
+ */
+const gchar *gaim_plugin_get_description(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's author.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's author.
+ */
+const gchar *gaim_plugin_get_author(const GaimPlugin *plugin);
+
+/**
+ * Returns a plugin's homepage.
+ *
+ * @param plugin The plugin.
+ *
+ * @return The plugin's homepage.
+ */
+const gchar *gaim_plugin_get_homepage(const GaimPlugin *plugin);
+
 /*@}*/
 
 /**************************************************************************/
