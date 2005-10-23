@@ -764,7 +764,7 @@ void gaim_accounts_remove(GaimAccount *account);
  * Deletes an account.
  *
  * This will remove any buddies from the buddy list that belong to this
- * account, buddy pounces that belong to this account, and will also 
+ * account, buddy pounces that belong to this account, and will also
  * destroy @a account.
  *
  * @param account The account.
@@ -789,7 +789,9 @@ GList *gaim_accounts_get_all(void);
 /**
  * Returns a list of all enabled accounts
  *
- * @return A list of all enabled accounts.
+ * @return A list of all enabled accounts. The list is owned
+ *         by the caller, and must be g_list_free()d to avoid
+ *         leaking the nodes.
  */
 GList *gaim_accounts_get_all_active(void);
 

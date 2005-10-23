@@ -3281,10 +3281,31 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
-	gtkblist->statusbox = gtk_gaim_status_box_new();
+	/* TODO: functionize this */
+	{
+		GList *accounts, *l;
 
-	gtk_widget_show(gtkblist->statusbox);
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
+		/* Set up some per account status boxes */
+		gtkblist->statusboxbox = gtk_vbox_new(FALSE, 0);
+		gtkblist->statusboxes = NULL;
+#if 0
+		for (l = accounts = gaim_accounts_get_all_active(); l; l = l->next) {
+			GtkWidget *statusbox = gtk_gaim_status_box_new_with_account(l->data);
+			gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, statusbox);
+			gtk_box_pack_start(GTK_BOX(gtkblist->statusboxbox), statusbox, FALSE, TRUE, 0);
+			gtk_widget_show(statusbox);
+		}
+		g_list_free(accounts);
+#endif
+		gtk_widget_show(gtkblist->statusboxbox);
+		gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusboxbox, FALSE, TRUE, 0);
+
+		gtkblist->statusbox = gtk_gaim_status_box_new();
+
+		gtk_widget_show(gtkblist->statusbox);
+		gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
+
+	}
 
 	/* set the Show Offline Buddies option. must be done
 	 * after the treeview or faceprint gets mad. -Robot101

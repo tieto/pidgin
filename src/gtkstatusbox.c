@@ -27,6 +27,7 @@
 #include "internal.h"
 #include "savedstatuses.h"
 #include "status.h"
+#include "debug.h"
 
 #include "gtkgaim.h"
 #include "gtksavedstatuses.h"
@@ -36,6 +37,7 @@
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
+static void gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_changed(GtkComboBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
 static void gtk_gaim_status_box_size_allocate (GtkWidget *widget, GtkAllocation *allocation);
@@ -117,6 +119,7 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 	switch (param_id) {
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
+		gtk_gaim_status_box_regenerate(statusbox);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, pspec);
@@ -216,17 +219,141 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	g_free(text);
 }
 
+static GdkPixbuf *
+load_icon(const char *basename)
+{
+	char basename2[BUFSIZ];
+	char *filename;
+	GdkPixbuf *pixbuf, *scale = NULL;
+
+	if (!strcmp(basename, "available"))
+		basename = "online";
+	else if (!strcmp(basename, "hidden"))
+		basename = "invisible";
+
+	/*
+	 * TODO: Find a way to fallback to the GaimStatusPrimitive
+	 * if an icon for this id does not exist.
+	 */
+	g_snprintf(basename2, sizeof(basename2), "%s.png",
+	           basename);
+
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "icons",
+	                            basename2, NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	if (pixbuf != NULL) {
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+		                                GDK_INTERP_BILINEAR);
+
+		g_object_unref(G_OBJECT(pixbuf));
+	} else {
+		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+		                            "default", basename, NULL);
+		scale = gdk_pixbuf_new_from_file(filename, NULL);
+		g_free(filename);
+	}
+
+	return scale;
+}
+
+static void
+gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
+{
+	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
+	GtkIconSize icon_size;
+	const char *current_savedstatus_name;
+	GaimSavedStatus *saved_status;
+
+
+	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
+
+	gtk_list_store_clear(status_box->dropdown_store);
+
+	if (!(GTK_GAIM_STATUS_BOX(status_box)->account)) {
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_ONLINE,
+		                                 icon_size, "GtkGaimStatusBox");
+		pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
+		                                  icon_size, "GtkGaimStatusBox");
+		pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
+		                                  icon_size, "GtkGaimStatusBox");
+		pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_INVISIBLE,
+		                                  icon_size, "GtkGaimStatusBox");
+		/* hacks */
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Available"), NULL, "available");
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2, _("Away"), NULL, "away");
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Custom..."), NULL, "custom");
+		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Saved..."), NULL, "saved");
+
+		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+		saved_status = gaim_savedstatus_find(current_savedstatus_name);
+		if (saved_status == NULL)
+		{
+		/* Default to "available" */
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+		}
+		else
+		{
+			GaimStatusPrimitive primitive;
+			const char *message;
+
+			primitive = gaim_savedstatus_get_type(saved_status);
+			if (gaim_savedstatus_has_substatuses(saved_status) ||
+			    ((primitive != GAIM_STATUS_AVAILABLE) &&
+			     (primitive != GAIM_STATUS_OFFLINE) &&
+			     (primitive != GAIM_STATUS_AWAY) &&
+			     (primitive != GAIM_STATUS_HIDDEN)))
+			{
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
+			}
+			else
+			{
+				if (primitive == GAIM_STATUS_AVAILABLE)
+					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+				if (primitive == GAIM_STATUS_OFFLINE)
+					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
+				else if (primitive == GAIM_STATUS_AWAY)
+					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
+				else if (primitive == GAIM_STATUS_HIDDEN)
+					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
+			}
+
+			message = gaim_savedstatus_get_message(saved_status);
+			if (message != NULL)
+				gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+		}
+
+
+	} else {
+		const GList *l;
+		for (l = gaim_account_get_status_types(GTK_GAIM_STATUS_BOX(status_box)->account); l != NULL; l = l->next) {
+			GaimStatusType *status_type = (GaimStatusType *)l->data;
+
+			if (!gaim_status_type_is_user_settable(status_type))
+				continue;
+
+			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), load_icon(gaim_status_type_get_id(status_type)),
+			                        gaim_status_type_get_name(status_type),
+			                        NULL,
+			                        gaim_status_type_get_id(status_type));
+
+		}
+	}
+
+}
+
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
 	GtkTextBuffer *buffer;
-	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
-	GtkIconSize icon_size;
 	GtkTreePath *path;
-	const char *current_savedstatus_name;
-	GaimSavedStatus *saved_status;
+	GtkIconSize icon_size;
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
@@ -298,59 +425,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(status_box->sw), status_box->imhtml);
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
-	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_ONLINE,
-					 icon_size, "GtkGaimStatusBox");
-	pixbuf2 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_AWAY,
-					 icon_size, "GtkGaimStatusBox");
-	pixbuf3 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_OFFLINE,
-					 icon_size, "GtkGaimStatusBox");
-	pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box), GAIM_STOCK_STATUS_INVISIBLE,
-					 icon_size, "GtkGaimStatusBox");
-	/* hacks */
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Available"), NULL, "available");
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2, _("Away"), NULL, "away");
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Custom..."), NULL, "custom");
-	gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Saved..."), NULL, "saved");
 
-	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
-	saved_status = gaim_savedstatus_find(current_savedstatus_name);
-	if (saved_status == NULL)
-	{
-		/* Default to "available" */
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
-	}
-	else
-	{
-		GaimStatusPrimitive primitive;
-		const char *message;
-
-		primitive = gaim_savedstatus_get_type(saved_status);
-		if (gaim_savedstatus_has_substatuses(saved_status) ||
-			((primitive != GAIM_STATUS_AVAILABLE) &&
-			(primitive != GAIM_STATUS_OFFLINE) &&
-			(primitive != GAIM_STATUS_AWAY) &&
-			(primitive != GAIM_STATUS_HIDDEN)))
-		{
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
-		}
-		else
-		{
-			if (primitive == GAIM_STATUS_AVAILABLE)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
-			if (primitive == GAIM_STATUS_OFFLINE)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
-			else if (primitive == GAIM_STATUS_AWAY)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
-			else if (primitive == GAIM_STATUS_HIDDEN)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
-		}
-
-		message = gaim_savedstatus_get_message(saved_status);
-		if (message != NULL)
-			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-	}
+	gtk_gaim_status_box_regenerate(status_box);
 }
 
 
@@ -434,7 +510,7 @@ gtk_gaim_status_box_new_with_account(GaimAccount *account)
 }
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, char *edit)
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, const char *edit)
 {
 	GtkTreeIter iter;
 	char *t;

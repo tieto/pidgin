@@ -87,6 +87,8 @@ struct _GaimGtkBuddyList {
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
         GtkWidget *statusbox;            /**< The status selector dropdown */
+	GtkWidget *statusboxbox;       /**< A box to hold per account status boxes */
+	GList *statusboxes;            /**< A list of the per account status boxes */
 	GdkPixbuf *east, *south;                 /**< Drop shadow stuff */
 	GdkWindow *east_shadow, *south_shadow;   /**< Drop shadow stuff */
 
@@ -126,11 +128,11 @@ GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
 
 /**
  * Returns the default gtk buddy list
- * 
+ *
  * There's normally only one buddy list window, but that isn't a necessity. This function
  * returns the GaimGtkBuddyList we're most likely wanting to work with. This is slightly
  * cleaner than an externed global.
- * 
+ *
  * @return The default GTK+ buddy list
  */
 GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();

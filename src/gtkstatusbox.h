@@ -108,7 +108,7 @@ GtkWidget    *gtk_gaim_status_box_new              (void);
 GtkWidget    *gtk_gaim_status_box_new_with_account (GaimAccount *);
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, char *edit);
+gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const char *text, const char *sec_text, const char *edit);
 
 void
 gtk_gaim_status_box_set_error(GtkGaimStatusBox *status_box, const gchar *error);
