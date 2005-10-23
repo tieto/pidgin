@@ -5,9 +5,13 @@ pkgdir = $(libdir)/gaim
 
 BONJOURSOURCES = \
 	bonjour.c \
+	bonjour.h \
 	buddy.c \
+	buddy.h \
 	dns_sd.c \
-	jabber.c
+	dns_sd.h \
+	jabber.c \
+	jabber.h
 
 AM_CFLAGS = $(st)
 
