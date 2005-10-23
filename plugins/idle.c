@@ -32,14 +32,15 @@
 #include "status.h"
 #include "version.h"
 
-#define IDLE_PLUGIN_ID "gtk-idle"
+/* This plugin no longer depends on gtk */
+#define IDLE_PLUGIN_ID "core-idle"
 
-static GList *idled_accts;
+static GList *idled_accts = NULL;
 
 static gboolean
 idle_filter(GaimAccount *acct)
 {
-	if(g_list_find(idled_accts, acct))
+	if (g_list_find(idled_accts, acct))
 		return TRUE;
 
 	return FALSE;
@@ -55,7 +56,7 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 	if (!gc)
 		return;
 
-	gaim_debug(GAIM_DEBUG_INFO, "idle",
+	gaim_debug_info("idle",
 			"setting idle time for %s to %d\n",
 			gaim_account_get_username(acct), mins_idle);
 
@@ -69,16 +70,12 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 static void
 idle_action_ok(void *ignored, GaimRequestFields *fields)
 {
-	GList *l = idled_accts;
-	gboolean acct_found = FALSE;
 	int tm = gaim_request_fields_get_integer(fields, "mins");
 	GaimAccount *acct = gaim_request_fields_get_account(fields, "acct");
 
 	/* only add the account to the GList if it's not already been idled */
-	if((l = g_list_find(idled_accts, acct)) && (GaimAccount *)(l->data) == acct)
-			acct_found = TRUE;
-	
-	if(!acct_found) {
+	if (!idle_filter(acct))
+	{
 		gaim_debug_misc("idle",
 				"%s hasn't been idled yet; adding to list.\n",
 				gaim_account_get_username(acct));
@@ -114,7 +111,7 @@ idle_action(GaimPluginAction *action)
 	field = gaim_request_field_account_new("acct", _("Account"), NULL);
 	gaim_request_field_account_set_show_all(field, FALSE);
 	gaim_request_field_group_add_field(group, field);
-	
+
 	field = gaim_request_field_int_new("mins", _("Minutes"), 10);
 	gaim_request_field_group_add_field(group, field);
 
@@ -162,16 +159,17 @@ static void
 unidle_all_action(GaimPluginAction *action)
 {
 	GList *l;
-	
+
 	/* freeing the list here will cause segfaults if the user idles an account
 	 * after the list is freed */
-	for (l = idled_accts; l; ) {
+	for (l = idled_accts; l; l = l->next)
+	{
 		GaimAccount *account = l->data;
 		set_idle_time(account, 0);
-		l = l->next;
-		idled_accts = g_list_remove(idled_accts, account);
 	}
-		
+
+	g_list_free(idled_accts);
+	idled_accts = NULL;
 }
 
 static GList *
@@ -198,12 +196,7 @@ actions(GaimPlugin *plugin, gpointer context)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	GList *l;
-	
-	for (l = idled_accts; l; l = l->next)
-		set_idle_time((GaimAccount *)(l->data), 0);
-
-	g_list_free(idled_accts);
+	unidle_all_action(NULL);
 
 	return TRUE;
 }
