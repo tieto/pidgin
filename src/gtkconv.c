@@ -2650,7 +2650,6 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	GdkPixbuf *pixbuf;
 	gchar *text;
 
-
 	account = bud->account;
 
 	/* Create a pixmap for the protocol icon. */
@@ -4922,7 +4921,8 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		char *title;
 		GaimConvIm *im = NULL;
 		GaimConnection *gc = gaim_conversation_get_gc(conv);
-		char color[8];
+		/* I think this is a little longer than it needs to be but I'm lazy. */
+		char style[51];
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 			im = GAIM_CONV_IM(conv);
@@ -4930,44 +4930,45 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 		if (!gc || ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 		                && gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv))))
 			title = g_strdup_printf("(%s)", gaim_conversation_get_title(conv));
-
 		else
 			title = g_strdup(gaim_conversation_get_title(conv));
 
-		*color = '\0';
+		*style = '\0';
 
 		if (!GTK_WIDGET_REALIZED(gtkconv->tab_label))
 			gtk_widget_realize(gtkconv->tab_label);
 
-		if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPING)
+		if (im != NULL &&
+		    gaim_conv_im_get_typing_state(im) == GAIM_TYPING)
 		{
-			strcpy(color, "#47A046");
+			strncpy(style, "color=\"#47A046\" style=\"italic\"", sizeof(style));
 		}
-		else if (im != NULL && gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
+		else if (im != NULL &&
+		         gaim_conv_im_get_typing_state(im) == GAIM_TYPED)
 		{
-			strcpy(color, "#D1940C");
+			strncpy(style, "color=\"#D1940C\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_NICK)
 		{
-			strcpy(color, "#0D4E91");
+			strncpy(style, "color=\"#0D4E91\" style=\"italic\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
 		{
-			strcpy(color, "#DF421E");
+			strncpy(style, "color=\"#DF421E\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
 		{
-			strcpy(color, "#868272");
+			strncpy(style, "color=\"#868272\"", sizeof(style));
 		}
 
-		if (*color != '\0')
+		if (*style != '\0')
 		{
 			char *html_title,*label;
 
 			html_title = g_markup_escape_text(title, -1);
 
-			label = g_strdup_printf("<span color=\"%s\">%s</span>",
-			                        color, html_title);
+			label = g_strdup_printf("<span %s>%s</span>",
+			                        style, html_title);
 			g_free(html_title);
 			gtk_label_set_markup(GTK_LABEL(gtkconv->tab_label), label);
 			g_free(label);
@@ -5617,10 +5618,6 @@ gaim_gtk_conversations_uninit(void)
 #include "gtkstock.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
-
-
-
-
 
 static void
 do_close(GtkWidget *w, int resp, GaimGtkWindow *win)
