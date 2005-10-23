@@ -46,10 +46,12 @@
  * This is backwards-compatibility code for older versions of GTK+ (< 2.4.x)
  * It defines the new wrap behavior (unknown in earlier versions)
  * as the old (slightly buggy) wrap behavior.
+ * It also includes our back-ported GtkExpander
  */
 /** @cond */
 #if (!GTK_CHECK_VERSION(2,4,0))
 #define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
+#include "gtkexpander.h"
 #endif
 /** @endcond */
 

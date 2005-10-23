@@ -353,6 +353,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 }
 
+#if GTK_CHECK_VERSION(2,6,0)
 static gboolean
 dropdown_store_row_separator_func(GtkTreeModel *model,
 								  GtkTreeIter *iter, gpointer data)
@@ -374,6 +375,7 @@ dropdown_store_row_separator_func(GtkTreeModel *model,
 
 	return FALSE;
 }
+#endif
 
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
@@ -419,7 +421,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
+#endif
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
