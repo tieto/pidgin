@@ -4344,6 +4344,9 @@ void gtk_imhtml_insert_smiley(GtkIMHtml *imhtml, const char *sml, char *smiley)
 	GtkTextMark *mark;
 	GtkTextIter iter;
 
+	if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, NULL, NULL))
+		gtk_text_buffer_delete_selection(imhtml->text_buffer, TRUE, TRUE);
+
 	mark = gtk_text_buffer_get_insert(imhtml->text_buffer);
 
 	gtk_text_buffer_get_iter_at_mark(imhtml->text_buffer, &iter, mark);
