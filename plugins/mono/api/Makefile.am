@@ -1,4 +1,4 @@
-SOURCES=\
+MONOSOURCES = \
 	GaimPlugin.cs \
 	Debug.cs \
 	BuddyList.cs \
@@ -10,8 +10,8 @@ TARGET=GaimAPI.dll
 
 all: $(TARGET)
 
-$(TARGET): $(SOURCES)
-	mcs -t:library -out:$(TARGET) $(SOURCES)
+$(TARGET): $(MONOSOURCES)
+	mcs -t:library -out:$(TARGET) $(MONOSOURCES)
 
 .PHONY: install clean
 
