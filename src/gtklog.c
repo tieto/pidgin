@@ -26,12 +26,12 @@
 #include "gtkgaim.h"
 
 #include "account.h"
-#include "util.h"
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkutils.h"
 #include "log.h"
+#include "notify.h"
 #include "util.h"
 
 static GHashTable *log_viewers = NULL;
@@ -282,9 +282,42 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	GaimGtkLogViewer *lv;
 	GtkWidget *title_box;
 	char *text;
+	GtkWidget *pane;
+	GtkWidget *sw;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	GtkTreeSelection *sel;
+	GtkTreePath *path_to_first_log;
+	GtkWidget *vbox;
+	GtkWidget *frame;
+	GtkWidget *hbox;
+	GtkWidget *button;
+	GtkWidget *size_label;
 
 	lv = g_new0(GaimGtkLogViewer, 1);
 	lv->logs = logs;
+
+	if (logs == NULL)
+	{
+		/* No logs were found. */
+		const char *log_preferences = NULL;
+
+		if (ht == NULL) {
+			if (!gaim_prefs_get_bool("/core/logging/log_system"))
+				log_preferences = _("System events will only be logged if the \"Log all status changes to system log\" preference is enabled.");
+		} else {
+			if (ht->type == GAIM_LOG_IM) {
+				if (!gaim_prefs_get_bool("/core/logging/log_ims"))
+					log_preferences = _("Instant messages will only be logged if the \"Log all instant messages\" preference is enabled.");
+			} else if (ht->type == GAIM_LOG_CHAT) {
+				if (!gaim_prefs_get_bool("/core/logging/log_chats"))
+					log_preferences = _("Chats will only be logged if the \"Log all chats preference\" is enabled.");
+			}
+		}
+
+		gaim_notify_info(NULL, title, _("No logs were found"), log_preferences);
+		return NULL;
+	}
 
 	if (ht != NULL)
 		g_hash_table_insert(log_viewers, ht, lv);
@@ -326,122 +359,77 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	gtk_box_pack_start(GTK_BOX(title_box), lv->label, FALSE, FALSE, 0);
 	g_free(text);
 
-	if (logs != NULL) {
-		GtkWidget *pane;
-		GtkWidget *sw;
-		GtkCellRenderer *rend;
-		GtkTreeViewColumn *col;
-		GtkTreeSelection *sel;
-		GtkTreePath *path_to_first_log;
-		GtkWidget *vbox;
-		GtkWidget *frame;
-		GtkWidget *hbox;
-		GtkWidget *button;
-		GtkWidget *size_label;
+	/* Pane *************/
+	pane = gtk_hpaned_new();
+	gtk_container_set_border_width(GTK_CONTAINER(pane), GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
 
-		/* Pane *************/
-		pane = gtk_hpaned_new();
-		gtk_container_set_border_width(GTK_CONTAINER(pane), GAIM_HIG_BOX_SPACE);
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
+	/* List *************/
+	sw = gtk_scrolled_window_new (NULL, NULL);
+	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+	gtk_paned_add1(GTK_PANED(pane), sw);
+	lv->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
+	lv->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (lv->treestore));
+	rend = gtk_cell_renderer_text_new();
+	col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
+	gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
+	gtk_container_add (GTK_CONTAINER (sw), lv->treeview);
 
-		/* List *************/
-		sw = gtk_scrolled_window_new (NULL, NULL);
-		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (sw), GTK_SHADOW_IN);
-		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-		gtk_paned_add1(GTK_PANED(pane), sw);
-		lv->treestore = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_POINTER);
-		lv->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (lv->treestore));
-		rend = gtk_cell_renderer_text_new();
-		col = gtk_tree_view_column_new_with_attributes ("time", rend, "markup", 0, NULL);
-		gtk_tree_view_append_column (GTK_TREE_VIEW(lv->treeview), col);
-		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (lv->treeview), FALSE);
-		gtk_container_add (GTK_CONTAINER (sw), lv->treeview);
+	populate_log_tree(lv);
 
-		populate_log_tree(lv);
+	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
+	g_signal_connect (G_OBJECT (sel), "changed",
+			G_CALLBACK (log_select_cb),
+			lv);
+	g_signal_connect (G_OBJECT(lv->treeview), "row-activated",
+			G_CALLBACK(log_row_activated_cb),
+			lv);
+	gaim_set_accessible_label(lv->treeview, lv->label);
 
-		sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (lv->treeview));
-		g_signal_connect (G_OBJECT (sel), "changed",
-				G_CALLBACK (log_select_cb),
-				lv);
-		g_signal_connect (G_OBJECT(lv->treeview), "row-activated",
-				G_CALLBACK(log_row_activated_cb),
-				lv);
-		gaim_set_accessible_label(lv->treeview, lv->label);
-
-		/* Log size ************/
-		if(log_size) {
-			char *sz_txt = gaim_str_size_to_units(log_size);
-			text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), sz_txt);
-			size_label = gtk_label_new(NULL);
-			gtk_label_set_markup(GTK_LABEL(size_label), text);
-			/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
-			gtk_misc_set_alignment(GTK_MISC(size_label), 0, 0);
-			gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), size_label, FALSE, FALSE, 0);
-			g_free(sz_txt);
-			g_free(text);
-		}
-
-		/* A fancy little box ************/
-		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-		gtk_paned_add2(GTK_PANED(pane), vbox);
-
-		/* Viewer ************/
-		frame = gaim_gtk_create_imhtml(FALSE, &lv->imhtml, NULL);
-		gtk_widget_set_name(lv->imhtml, "gaim_gtklog_imhtml");
-		gtk_widget_set_size_request(lv->imhtml, 320, 200);
-		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-		gtk_widget_show(frame);
-
-		/* Search box **********/
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		lv->entry = gtk_entry_new();
-		gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
-		button = gtk_button_new_from_stock(GTK_STOCK_FIND);
-		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-		g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
-		g_signal_connect(GTK_BUTTON(button), "activate", G_CALLBACK(search_cb), lv);
-		g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
-
-		/* Show most recent log **********/
-		path_to_first_log = gtk_tree_path_new_from_string("0:0");
-		if (path_to_first_log)
-		{
-			gtk_tree_view_expand_to_path(GTK_TREE_VIEW(lv->treeview), path_to_first_log);
-			gtk_tree_selection_select_path(sel, path_to_first_log);
-			gtk_tree_path_free(path_to_first_log);
-		}
-
-	} else {
-		/* No logs were found. */
-		const char *log_preferences = NULL;
-		GtkWidget *label;
-
-		if (ht == NULL) {
-			if (!gaim_prefs_get_bool("/core/logging/log_system"))
-				log_preferences = _("System events will only be logged if the <span style=\"italic\">Log all status changes to system log</span> preference is enabled.");
-		} else {
-			if (ht->type == GAIM_LOG_IM) {
-				if (!gaim_prefs_get_bool("/core/logging/log_ims"))
-					log_preferences = _("Instant messages will only be logged if the <span style=\"italic\">Log all instant messages</span> preference is enabled.");
-			} else if (ht->type == GAIM_LOG_CHAT) {
-				if (!gaim_prefs_get_bool("/core/logging/log_chats"))
-					log_preferences = _("Chats will only be logged if the <span style=\"italic\">Log all chats preference</span> is enabled.");
-			}
-		}
-
-		text = g_strdup_printf("\n<span weight=\"bold\">%s</span>%s%s\n",
-				_("No logs were found."),
-				log_preferences ? "\n" : "",
-				log_preferences ? log_preferences : "");
-
-		label = gtk_label_new(NULL);
-
-		gtk_label_set_markup(GTK_LABEL(label), text);
-		gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), label, FALSE, FALSE, 0);
+	/* Log size ************/
+	if(log_size) {
+		char *sz_txt = gaim_str_size_to_units(log_size);
+		text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), sz_txt);
+		size_label = gtk_label_new(NULL);
+		gtk_label_set_markup(GTK_LABEL(size_label), text);
+		/*		gtk_paned_add1(GTK_PANED(pane), size_label); */
+		gtk_misc_set_alignment(GTK_MISC(size_label), 0, 0);
+		gtk_box_pack_end(GTK_BOX(GTK_DIALOG(lv->window)->vbox), size_label, FALSE, FALSE, 0);
+		g_free(sz_txt);
 		g_free(text);
+	}
+
+	/* A fancy little box ************/
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_paned_add2(GTK_PANED(pane), vbox);
+
+	/* Viewer ************/
+	frame = gaim_gtk_create_imhtml(FALSE, &lv->imhtml, NULL);
+	gtk_widget_set_name(lv->imhtml, "gaim_gtklog_imhtml");
+	gtk_widget_set_size_request(lv->imhtml, 320, 200);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	gtk_widget_show(frame);
+
+	/* Search box **********/
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	lv->entry = gtk_entry_new();
+	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
+	button = gtk_button_new_from_stock(GTK_STOCK_FIND);
+	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
+	g_signal_connect(GTK_ENTRY(lv->entry), "activate", G_CALLBACK(search_cb), lv);
+	g_signal_connect(GTK_BUTTON(button), "activate", G_CALLBACK(search_cb), lv);
+	g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
+
+	/* Show most recent log **********/
+	path_to_first_log = gtk_tree_path_new_from_string("0:0");
+	if (path_to_first_log)
+	{
+		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(lv->treeview), path_to_first_log);
+		gtk_tree_selection_select_path(sel, path_to_first_log);
+		gtk_tree_path_free(path_to_first_log);
 	}
 
 	gtk_widget_show_all(lv->window);
