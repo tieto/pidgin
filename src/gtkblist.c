@@ -3282,8 +3282,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* TODO: functionize this */
 	{
+#if 0
 		GList *accounts, *l;
-
+#endif
 		/* Set up some per account status boxes */
 		gtkblist->statusboxbox = gtk_vbox_new(FALSE, 0);
 		gtkblist->statusboxes = NULL;

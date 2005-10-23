@@ -740,6 +740,7 @@ gtk_imhtml_expose_event (GtkWidget      *widget,
 			                                      &tag_area.y);
 			rect.x = visible_rect.x;
 			rect.y = tag_area.y;
+			rect.width = visible_rect.width;
 
 			do
 				gtk_text_iter_forward_to_tag_toggle(&cur, tag);
