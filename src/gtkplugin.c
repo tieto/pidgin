@@ -119,7 +119,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gchar *name = NULL, *description = NULL;
 
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
-	gdk_window_set_cursor(GTK_WINDOW(plugin_dialog), wait);
+	gdk_window_set_cursor(plugin_dialog->window, wait);
 	gdk_cursor_unref(wait);
 
 	gtk_tree_model_get_iter (model, &iter, path);
@@ -131,7 +131,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 		gaim_plugin_unload(plug);
 
 
-	gdk_window_set_cursor(GTK_WINDOW(plugin_dialog), NULL);
+	gdk_window_set_cursor(plugin_dialog->window, NULL);
 
 	name = g_markup_escape_text(_(plug->info->name), -1);
 	description = g_markup_escape_text(_(plug->info->description), -1);

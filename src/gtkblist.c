@@ -100,7 +100,6 @@ typedef struct
 
 
 static GtkWidget *protomenu = NULL;
-static GtkWidget *pluginmenu = NULL;
 
 GSList *gaim_gtk_blist_sort_methods = NULL;
 static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
@@ -3192,7 +3191,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
-	pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Plugin Actions"));
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -3853,7 +3851,6 @@ static void gaim_gtk_blist_destroy(GaimBuddyList *list)
         gtkblist->buddy_icon_column = NULL;
 	g_object_unref(G_OBJECT(gtkblist->ift));
 	protomenu = NULL;
-	pluginmenu = NULL;
 	gtkblist = NULL;
 
 	gaim_prefs_disconnect_by_handle(gaim_gtk_blist_get_handle());
@@ -4930,6 +4927,9 @@ plugin_act(GtkObject *obk, GaimPluginAction *pam)
 		pam->callback(pam);
 }
 
+static GList *plugin_menu_items = NULL;
+static int plugin_menu_index = 8;
+
 static void
 build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 {
@@ -4944,7 +4944,9 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 			action->context = context;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+			plugin_menu_items = g_list_append(plugin_menu_items, menuitem);
+			plugin_menu_index++;
+			gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, plugin_menu_index);
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 					G_CALLBACK(plugin_act), action);
 			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
@@ -5060,24 +5062,28 @@ gaim_gtk_blist_update_protocol_actions(void)
 void
 gaim_gtk_blist_update_plugin_actions(void)
 {
-	GtkWidget *menuitem, *submenu;
+	GtkWidget *menuitem;
 	GaimPlugin *plugin = NULL;
 	GList *l;
 	int count = 0;
+
+	GtkWidget *pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools"));
 
 	if (pluginmenu == NULL)
 		return;
 
 	/* Clear the old Account Actions menu */
-	for (l = gtk_container_get_children(GTK_CONTAINER(pluginmenu)); l; l = l->next) {
+	for (l = plugin_menu_items; l; l = l->next) {
 		GaimPluginAction *action;
-
+		plugin_menu_index--;
 		menuitem = l->data;
 		action = g_object_get_data(G_OBJECT(menuitem), "plugin_action");
 		g_free(action);
 
 		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(menuitem));
 	}
+	g_list_free(plugin_menu_items);
+	plugin_menu_items = NULL;
 
 	/* Count the number of plugins with actions */
 	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
@@ -5091,44 +5097,17 @@ gaim_gtk_blist_update_plugin_actions(void)
 			break;
 	}
 
-	if (count == 0) {
-		menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
-		gtk_widget_set_sensitive(menuitem, FALSE);
-		gtk_widget_show(menuitem);
-	}
+	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
+	  
+		plugin = (GaimPlugin *) l->data;
+	  
+		if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
+			continue;
 
-	else if (count == 1) {
-		/* Find the one plugin that has actions */
-		for (l = gaim_plugins_get_loaded(); l; l = l->next) {
-			plugin = (GaimPlugin *) l->data;
-
-			if (!GAIM_IS_PROTOCOL_PLUGIN(plugin) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
-				break;
-		}
+		if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
+			continue;
 
 		build_plugin_actions(pluginmenu, plugin, NULL);
-	}
-
-	else {
-		for (l = gaim_plugins_get_loaded(); l; l = l->next) {
-			plugin = (GaimPlugin *) l->data;
-
-			if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
-				continue;
-
-			if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
-				continue;
-
-			menuitem = gtk_image_menu_item_new_with_label(plugin->info->name);
-			gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
-			gtk_widget_show(menuitem);
-
-			submenu = gtk_menu_new();
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-			gtk_widget_show(submenu);
-
-			build_plugin_actions(submenu, plugin, NULL);
-		}
+		
 	}
 }
