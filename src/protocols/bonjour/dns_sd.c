@@ -233,7 +233,7 @@ static int
 _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 {
 	sw_text_record dns_data;
-	sw_result publish_result;
+	sw_result publish_result = SW_OKAY;
 
 	// Fill the data for the service
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
