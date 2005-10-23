@@ -49,11 +49,11 @@ static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocat
 static gboolean (*combo_box_expose_event)(GtkWidget *widget, GdkEventExpose *event);
 static void (*combo_box_forall) (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 enum {
-	ICON_COLUMN,
-	TEXT_COLUMN,
-	TITLE_COLUMN,
-	DESC_COLUMN,
-	TYPE_COLUMN,
+	ICON_COLUMN,  /* This is a GdkPixbuf (the other columns are strings) */
+	TEXT_COLUMN,  /* A string */
+	TITLE_COLUMN, /* The plain-English title of this item */
+	DESC_COLUMN,  /* A plain-English description of this item */
+	TYPE_COLUMN,  /* A text description of the GaimStatusPrimitive  */
 	NUM_COLUMNS
 };
 
@@ -286,6 +286,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf2, _("Away"), NULL, "away");
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf4, _("Invisible"), NULL, "invisible");
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf3, _("Offline"), NULL, "offline");
+		gtk_gaim_status_box_add_separator(GTK_GAIM_STATUS_BOX(status_box));
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Custom..."), NULL, "custom");
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), pixbuf, _("Saved..."), NULL, "saved");
 
@@ -346,6 +347,31 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 }
 
+static gboolean
+dropdown_store_row_separator_func(GtkTreeModel *model,
+								  GtkTreeIter *iter, gpointer data)
+{
+	GdkPixbuf *pixbuf;
+	gchar *text, *title, *description, *status_type_id;
+
+	gtk_tree_model_get(model, iter,
+				ICON_COLUMN, &pixbuf,
+				TEXT_COLUMN, &text,
+				TITLE_COLUMN, &title,
+				DESC_COLUMN, &description,
+				TYPE_COLUMN, &status_type_id,
+				-1);
+
+	if ((pixbuf == NULL) && (text == NULL) && (title == NULL) &&
+		(description == NULL) && (status_type_id != NULL) &&
+		!strcmp(status_type_id, "separator"))
+	{
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
@@ -390,6 +416,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
@@ -535,6 +562,20 @@ gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GdkPixbuf *pixbuf, const c
 			   DESC_COLUMN, sec_text,
 			   TYPE_COLUMN, edit, -1);
 	g_free(t);
+}
+
+void
+gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box)
+{
+	GtkTreeIter iter;
+
+	gtk_list_store_append(status_box->dropdown_store, &iter);
+	gtk_list_store_set(status_box->dropdown_store, &iter,
+			   ICON_COLUMN, NULL,
+			   TEXT_COLUMN, NULL,
+			   TITLE_COLUMN, NULL,
+			   DESC_COLUMN, NULL,
+			   TYPE_COLUMN, "separator", -1);
 }
 
 void
