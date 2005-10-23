@@ -52,6 +52,9 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 	GaimConnection *gc = gaim_account_get_connection(acct);
 	GaimPresence *presence = gaim_account_get_presence(acct);
 
+	if (!gc)
+		return;
+
 	gaim_debug(GAIM_DEBUG_INFO, "idle",
 			"setting idle time for %s to %d\n",
 			gaim_account_get_username(acct), mins_idle);
@@ -93,7 +96,7 @@ unidle_action_ok(void *ignored, GaimRequestFields *fields)
 	set_idle_time(acct, 0); /* unidle the account */
 
 	/* once the account has been unidled it shouldn't be in the list */
-	g_list_remove(idled_accts, acct);
+	idled_accts = g_list_remove(idled_accts, acct);
 }
 
 
@@ -162,9 +165,11 @@ unidle_all_action(GaimPluginAction *action)
 	
 	/* freeing the list here will cause segfaults if the user idles an account
 	 * after the list is freed */
-	for (l = idled_accts; l; l = l->next) {
-		set_idle_time((GaimAccount *)(l->data), 0);
-		g_list_remove(idled_accts, l->data);
+	for (l = idled_accts; l; ) {
+		GaimAccount *account = l->data;
+		set_idle_time(account, 0);
+		l = l->next;
+		idled_accts = g_list_remove(idled_accts, account);
 	}
 		
 }
