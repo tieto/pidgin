@@ -4720,7 +4720,7 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (win->menu.send_to != NULL)
-		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
+		update_send_to_selection(win);
 
 	/*
 	 * Handle hiding and showing stuff based on what type of conv this is.
@@ -4909,7 +4909,7 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 
 		gaim_gtkconv_update_buttons_by_protocol(conv);
 
-		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
+		update_send_to_selection(win);
 
 		gaim_gtkthemes_smiley_themeize(gtkconv->imhtml);
 
@@ -6427,7 +6427,7 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	gtk_widget_grab_focus(focus_gtkconv->entry);
 
 	if (gaim_gtk_conv_window_get_gtkconv_count(win) == 1)
-		g_timeout_add(0, (GSourceFunc)update_send_to_selection, win);
+		update_send_to_selection(win);
 }
 
 void
