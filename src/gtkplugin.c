@@ -232,7 +232,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	GaimPlugin *plug;
 	GtkWidget *dialog, *box;
 	GtkTreeModel *model;
-	GValue val;
+	GValue val = { 0, };
 	GtkTreeIter iter;
 
 	switch (response) {
