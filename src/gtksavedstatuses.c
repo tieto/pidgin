@@ -206,6 +206,15 @@ status_window_close_cb(GtkButton *button, gpointer user_data)
 	gaim_gtk_status_window_hide();
 }
 
+#if !GTK_CHECK_VERSION(2,2,0)
+static void
+get_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	*((gboolean *)user_data) = TRUE;
+}
+#endif
+
 static void
 status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 {

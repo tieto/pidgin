@@ -287,7 +287,9 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
+#if GTK_CHECK_VERSION(2,2,0)
 	GtkTreePath *path_to_first_log;
+#endif
 	GtkWidget *vbox;
 	GtkWidget *frame;
 	GtkWidget *hbox;
@@ -423,6 +425,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 	g_signal_connect(GTK_BUTTON(button), "activate", G_CALLBACK(search_cb), lv);
 	g_signal_connect(GTK_BUTTON(button), "clicked", G_CALLBACK(search_cb), lv);
 
+#if GTK_CHECK_VERSION(2,2,0)
 	/* Show most recent log **********/
 	path_to_first_log = gtk_tree_path_new_from_string("0:0");
 	if (path_to_first_log)
@@ -431,6 +434,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 		gtk_tree_selection_select_path(sel, path_to_first_log);
 		gtk_tree_path_free(path_to_first_log);
 	}
+#endif
 
 	gtk_widget_show_all(lv->window);
 

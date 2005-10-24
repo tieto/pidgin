@@ -43,6 +43,7 @@
 */
 #include <gtk/gtkvseparator.h>
 #include <gtk/gtkwindow.h>
+#include <gtk/gtkversion.h>
 
 #include <gdk/gdkkeysyms.h>
 
@@ -233,6 +234,7 @@ static void     gtk_combo_box_menu_hide            (GtkWidget        *menu,
 
 static void     gtk_combo_box_set_popup_widget     (GtkComboBox      *combo_box,
                                                     GtkWidget        *popup);
+#if GTK_CHECK_VERSION(2,2,0)
 static void     gtk_combo_box_menu_position_below  (GtkMenu          *menu,
                                                     gint             *x,
                                                     gint             *y,
@@ -248,6 +250,7 @@ static void     gtk_combo_box_menu_position        (GtkMenu          *menu,
                                                     gint             *y,
                                                     gint             *push_in,
                                                     gpointer          user_data);
+#endif
 
 static gint     gtk_combo_box_calc_requested_width (GtkComboBox      *combo_box,
                                                     GtkTreePath      *path);
@@ -292,11 +295,13 @@ static void     gtk_combo_box_model_row_changed    (GtkTreeModel     *model,
 						    gpointer          data);
 
 /* list */
+#if GTK_CHECK_VERSION(2,2,0)
 static void     gtk_combo_box_list_position        (GtkComboBox      *combo_box, 
 						    gint             *x, 
 						    gint             *y, 
 						    gint             *width,
 						    gint             *height);
+#endif
 static void     gtk_combo_box_list_setup           (GtkComboBox      *combo_box);
 static void     gtk_combo_box_list_destroy         (GtkComboBox      *combo_box);
 
@@ -909,8 +914,10 @@ gtk_combo_box_set_popup_widget (GtkComboBox *combo_box,
         {
           combo_box->priv->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
 	  gtk_window_set_resizable (GTK_WINDOW (combo_box->priv->popup_window), FALSE);
+#if GTK_CHECK_VERSION(2,2,0)
           gtk_window_set_screen (GTK_WINDOW (combo_box->priv->popup_window),
                                  gtk_widget_get_screen (GTK_WIDGET (combo_box)));
+#endif
 
           combo_box->priv->popup_frame = gtk_frame_new (NULL);
           gtk_frame_set_shadow_type (GTK_FRAME (combo_box->priv->popup_frame),
@@ -929,6 +936,7 @@ gtk_combo_box_set_popup_widget (GtkComboBox *combo_box,
     }
 }
 
+#if GTK_CHECK_VERSION(2,2,0)
 static void
 gtk_combo_box_menu_position_below (GtkMenu  *menu,
 				   gint     *x,
@@ -1133,6 +1141,7 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
   else
     *y -= *height;
 } 
+#endif /* Gtk 2.2 */
 
 /**
  * gtk_combo_box_popup:
@@ -1148,7 +1157,10 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
 void
 gtk_combo_box_popup (GtkComboBox *combo_box)
 {
-  gint x, y, width, height;
+  gint x, y, width;
+#if GTK_CHECK_VERSION(2,2,0)
+  gint height;
+#endif
   
   g_return_if_fail (GTK_IS_COMBO_BOX (combo_box));
 
@@ -1173,13 +1185,19 @@ gtk_combo_box_popup (GtkComboBox *combo_box)
       
       gtk_menu_popup (GTK_MENU (combo_box->priv->popup_widget),
 		      NULL, NULL,
-		      gtk_combo_box_menu_position, combo_box,
-		      0, 0);
+#if GTK_CHECK_VERSION(2,2,0)
+		      gtk_combo_box_menu_position,
+#else
+		      NULL,
+#endif
+		      combo_box, 0, 0);
       return;
     }
 
   gtk_widget_show_all (combo_box->priv->popup_frame);
+#if GTK_CHECK_VERSION(2,2,0)
   gtk_combo_box_list_position (combo_box, &x, &y, &width, &height);
+#endif
 
   gtk_widget_set_size_request (combo_box->priv->popup_window, width, -1);  
   gtk_window_move (GTK_WINDOW (combo_box->priv->popup_window), x, y);
@@ -1278,7 +1296,11 @@ gtk_combo_box_remeasure (GtkComboBox *combo_box)
 
   combo_box->priv->width = 0;
 
+#if GTK_CHECK_VERSION(2,2,0)
   path = gtk_tree_path_new_from_indices (0, -1);
+#else
+  path = gtk_tree_path_new_first();
+#endif
 
   if (combo_box->priv->cell_view)
     gtk_widget_style_get (combo_box->priv->cell_view,
@@ -1745,8 +1767,13 @@ gtk_combo_box_menu_fill (GtkComboBox *combo_box)
   for (i = 0; i < items; i++)
     {
       GtkTreePath *path;
-
+#if GTK_CHECK_VERSION(2,2,0)
       path = gtk_tree_path_new_from_indices (i, -1);
+#else
+      char buf[32];
+      g_snprintf(buf, sizeof(buf), "%d", i);
+      path = gtk_tree_path_new_from_string(buf);
+#endif
       tmp = gtk_cell_view_menu_item_new_from_model (combo_box->priv->model,
                                                     path);
       g_signal_connect (tmp, "activate",
@@ -1983,8 +2010,12 @@ gtk_combo_box_menu_button_press (GtkWidget      *widget,
 
       gtk_menu_popup (GTK_MENU (combo_box->priv->popup_widget),
                       NULL, NULL,
-                      gtk_combo_box_menu_position, combo_box,
-                      event->button, event->time);
+#if GTK_CHECK_VERSION(2,2,0)
+                      gtk_combo_box_menu_position,
+#else
+		      NULL,
+#endif
+		      combo_box, event->button, event->time);
 
       return TRUE;
     }
@@ -2291,7 +2322,13 @@ gtk_combo_box_list_setup (GtkComboBox *combo_box)
     {
       GtkTreePath *path;
 
+#if GTK_CHECK_VERSION(2,2,0)
       path = gtk_tree_path_new_from_indices (combo_box->priv->active_item, -1);
+#else
+      char buf[32];
+      g_snprintf(buf, sizeof(buf), "%d", combo_box->priv->active_item);
+      path = gtk_tree_path_new_from_string(buf);
+#endif
       if (path)
         {
           gtk_tree_view_set_cursor (GTK_TREE_VIEW (combo_box->priv->tree_view),
@@ -3195,7 +3232,13 @@ gtk_combo_box_set_active_internal (GtkComboBox *combo_box,
     }
   else
     {
+#if GTK_CHECK_VERSION(2,2,0)
       path = gtk_tree_path_new_from_indices (index, -1);
+#else
+      char buf[32];
+      g_snprintf(buf, sizeof(buf), "%d", index);
+      path = gtk_tree_path_new_from_string(buf);
+#endif
 
       if (combo_box->priv->tree_view)
 	gtk_tree_view_set_cursor (GTK_TREE_VIEW (combo_box->priv->tree_view), path, NULL, FALSE);
@@ -3235,6 +3278,9 @@ gtk_combo_box_get_active_iter (GtkComboBox     *combo_box,
   GtkTreePath *path;
   gint active;
   gboolean retval;
+#if !GTK_CHECK_VERSION(2,2,0)
+  char buf[32];
+#endif
 
   g_return_val_if_fail (GTK_IS_COMBO_BOX (combo_box), FALSE);
 
@@ -3242,7 +3288,12 @@ gtk_combo_box_get_active_iter (GtkComboBox     *combo_box,
   if (active < 0)
     return FALSE;
 
+#if GTK_CHECK_VERSION(2,2,0)
   path = gtk_tree_path_new_from_indices (active, -1);
+#else
+  g_snprintf(buf, sizeof(buf), "%d", active);
+  path = gtk_tree_path_new_from_string(buf);
+#endif
   retval = gtk_tree_model_get_iter (gtk_combo_box_get_model (combo_box),
                                     iter, path);
   gtk_tree_path_free (path);

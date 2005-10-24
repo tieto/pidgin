@@ -1791,7 +1791,11 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 			case GDK_period:
 				gtk_notebook_reorder_child(GTK_NOTEBOOK(win->notebook),
 						gtk_notebook_get_nth_page(GTK_NOTEBOOK(win->notebook), curconv),
+#if GTK_CHECK_VERSION(2,2,0)
 						(curconv + 1) % gtk_notebook_get_n_pages(GTK_NOTEBOOK(win->notebook)));
+#else
+						(curconv + 1) % g_list_length(GTK_NOTEBOOK(win->notebook)->children));
+#endif
 				break;
 
 		} /* End of switch */
@@ -5246,7 +5250,12 @@ gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right)
 	horiz = (gtk_notebook_get_tab_pos(notebook) == GTK_POS_TOP ||
 			gtk_notebook_get_tab_pos(notebook) == GTK_POS_BOTTOM);
 
+#if GTK_CHECK_VERSION(2,2,0)
 	count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(notebook));
+#else
+	/* this is hacky, but it's only for Gtk 2.0.0... */
+	count = g_list_length(GTK_NOTEBOOK(notebook)->children);
+#endif
 
 	for (i = 0; i < count; i++) {
 

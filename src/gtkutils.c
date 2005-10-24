@@ -1549,7 +1549,7 @@ gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who
 
 #ifndef _WIN32
 		/* Are we trying to send a .desktop file? */
-		else if (g_str_has_suffix(basename, ".desktop") && (item = gaim_desktop_item_new_from_file(filename))) {
+		else if (gaim_str_has_suffix(basename, ".desktop") && (item = gaim_desktop_item_new_from_file(filename))) {
 			GaimDesktopItemType dtype;
 			char key[64];
 			const char *itemname = NULL;

@@ -2388,21 +2388,29 @@ gaim_strdup_withhtml(const gchar *src)
 gboolean
 gaim_str_has_prefix(const char *s, const char *p)
 {
+#if GLIB_CHECK_VERSION(2,2,0)
+	return g_str_has_prefix(s, p);
+#else
 	if (!strncmp(s, p, strlen(p)))
 		return TRUE;
 
 	return FALSE;
+#endif
 }
 
 gboolean
 gaim_str_has_suffix(const char *s, const char *x)
 {
+#if GLIB_CHECK_VERSION(2,2,0)
+	return g_str_has_suffix(s, x);
+#else
 	int off = strlen(s) - strlen(x);
 
 	if (off >= 0 && !strcmp(s + off, x))
 		return TRUE;
 
 	return FALSE;
+#endif
 }
 
 char *

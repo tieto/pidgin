@@ -431,7 +431,7 @@ GaimMimeDocument *gaim_mime_document_parsen(const char *buf, gsize len) {
 
   {
     const char *ct = fields_get(&doc->fields, "content-type");
-    if(ct && g_str_has_prefix(ct, "multipart")) {
+    if(ct && gaim_str_has_prefix(ct, "multipart")) {
       char *bd = strrchr(ct, '=');
       if(bd++) {
 	doc_parts_load(doc, bd, b, n);
@@ -457,7 +457,7 @@ void gaim_mime_document_write(GaimMimeDocument *doc, GString *str) {
 
   {
     const char *ct = fields_get(&doc->fields, "content-type");
-    if(ct && g_str_has_prefix(ct, "multipart")) {
+    if(ct && gaim_str_has_prefix(ct, "multipart")) {
       char *b = strrchr(ct, '=');
       if(b++) bd = b;
     }

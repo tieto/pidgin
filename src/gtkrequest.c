@@ -26,6 +26,7 @@
 #include "gtkgaim.h"
 
 #include "prefs.h"
+#include "util.h"
 
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
@@ -741,7 +742,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 
 	gtk_tree_model_get_value(model, iter, 2, &val1);
 	tmp = g_value_get_string(&val1);
-	if (tmp != NULL && g_str_has_prefix(tmp, key))
+	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val1);
 		return TRUE;
@@ -750,7 +751,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 
 	gtk_tree_model_get_value(model, iter, 3, &val2);
 	tmp = g_value_get_string(&val2);
-	if (tmp != NULL && g_str_has_prefix(tmp, key))
+	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val2);
 		return TRUE;
