@@ -1819,15 +1819,15 @@ static void add_selected_row_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GtkTreeIter *iter, gpointer data)
 {
 	GSList **list = (GSList **)data;
-	*list = g_slist_append(*list, gtk_tree_path_copy(path) );
+	*list = g_slist_prepend(*list, gtk_tree_path_copy(path));
 }
 
 static void remove_row(void *data1, gpointer data2)
 {
 	GtkTreePath *path = (GtkTreePath*)data1;
 	GtkTreeIter iter;
-	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
-	gtk_list_store_remove(model, &iter);
+	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path))
+		gtk_list_store_remove(model, &iter);
 	gtk_tree_path_free(path);
 }
 
