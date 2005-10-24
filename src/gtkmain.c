@@ -327,7 +327,6 @@ show_usage(const char *name, gboolean terse)
 	} else {
 		text = g_strdup_printf(_("Gaim %s\n"
 		       "Usage: %s [OPTION]...\n\n"
-		       "  -a, --acct          display account editor window\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
@@ -445,7 +444,6 @@ int gaim_main(HINSTANCE hint, int argc, char *argv[])
 int main(int argc, char *argv[])
 #endif
 {
-	gboolean opt_acct = FALSE;
 	gboolean opt_help = FALSE;
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
@@ -468,7 +466,6 @@ int main(int argc, char *argv[])
 #endif
 
 	struct option long_options[] = {
-		{"acct",     no_argument,       NULL, 'a'},
 		{"config",   required_argument, NULL, 'c'},
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
@@ -553,9 +550,6 @@ int main(int argc, char *argv[])
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'a':	/* account editor */
-			opt_acct = TRUE;
-			break;
 		case 'c':	/* config dir */
 			g_free(opt_config_dir_arg);
 			opt_config_dir_arg = g_strdup(optarg);
@@ -675,13 +669,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (!opt_acct && !opt_nologin)
+	if (!opt_nologin)
 	{
 		/* Everything is good to go--sign on already */
 		gaim_accounts_restore_previous_statuses();
 	}
 
-	if (opt_acct || (gaim_accounts_get_all_active() == NULL))
+	if (gaim_accounts_get_all_active() == NULL)
 	{
 		gaim_gtk_accounts_window_show();
 	}
