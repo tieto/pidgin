@@ -327,6 +327,7 @@ void gaim_gtk_plugin_dialog_show()
 							"active", 0,
 							NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	gtk_tree_view_column_set_sort_column_id(col, 0);
 	g_signal_connect (G_OBJECT(rend), "toggled",
 			  G_CALLBACK(plugin_load), ls);
    
@@ -340,6 +341,7 @@ void gaim_gtk_plugin_dialog_show()
 	g_object_set(rendt, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 	gtk_tree_view_append_column (GTK_TREE_VIEW(event_view), col);
+	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 	
