@@ -3219,6 +3219,12 @@ static GList *yahoo_status_types(GaimAccount *account)
 		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);
 
+		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
+		                                       _("Away"), TRUE, TRUE, FALSE,
+		                                       "message", _("Message"),
+		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
+		types = g_list_append(types, type);
+
 		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
 		types = g_list_append(types, type);
 
@@ -3244,12 +3250,6 @@ static GList *yahoo_status_types(GaimAccount *account)
 		types = g_list_append(types, type);
 
 		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
-		types = g_list_append(types, type);
-
-		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
-		                                       _("Away"), TRUE, TRUE, FALSE,
-		                                       "message", _("Message"),
-		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 		types = g_list_append(types, type);
 	}
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, YAHOO_STATUS_TYPE_INVISIBLE, _("Invisible"), TRUE);
