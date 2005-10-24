@@ -772,40 +772,6 @@ formatting_clear_cb(GtkIMHtml *imhtml, void *data)
 	gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", "");
 }
 
-static GtkWidget *
-list_page()
-{
-	GtkWidget *ret;
-	GtkWidget *vbox;
-	GList *l= NULL;
-	GSList *sl;
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
-
-
-	vbox = gaim_gtk_make_frame (ret, _("Buddy List Sorting"));
-
-	for (sl = gaim_gtk_blist_sort_methods; sl != NULL; sl = sl->next) {
-		struct gaim_gtk_blist_sort_method *method = sl->data;
-
-		l = g_list_append(l, method->name);
-		l = g_list_append(l, method->id);
-	}
-
-	gaim_gtk_prefs_dropdown_from_list(vbox, _("_Sorting:"), GAIM_PREF_STRING,
-			"/gaim/gtk/blist/sort_type", l);
-
-	g_list_free(l);
-
-	vbox = gaim_gtk_make_frame (ret, _("Buddy Display"));
-	gaim_gtk_prefs_checkbox(_("Show more buddy details"),
-			"/gaim/gtk/blist/show_buddy_icons", vbox);
-
-	gtk_widget_show_all(ret);
-
-	return ret;
-}
-
 static void
 conversation_usetabs_cb(const char *name, GaimPrefType type, gpointer value,
                           gpointer data)
@@ -1752,7 +1718,6 @@ int prefs_notebook_add_page(const char *text,
 
 static void prefs_notebook_init() {
 	GtkTreeIter p, c, c2;
-	prefs_notebook_add_page(_("Buddy List"), NULL, list_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Conversations"), NULL, conv_page(), &c, &p, notebook_page++);
 	prefs_notebook_add_page(_("Smiley Themes"), NULL, theme_page(), &c2, &c, notebook_page++);
 	prefs_notebook_add_page(_("Sounds"), NULL, sound_page(), &c, &p, notebook_page++);

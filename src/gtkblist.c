@@ -101,7 +101,7 @@ typedef struct
 
 static GtkWidget *protomenu = NULL;
 
-GSList *gaim_gtk_blist_sort_methods = NULL;
+static GList *gaim_gtk_blist_sort_methods = NULL;
 static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
 static GtkTreeIter sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
 
@@ -1310,6 +1310,12 @@ gaim_gtk_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 	return handled;
 }
 
+static void gaim_gtk_blist_buddy_details_cb(gpointer data, guint action, GtkWidget *item)
+{
+	gaim_prefs_set_bool("/gaim/gtk/blist/show_buddy_icons",
+			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
+}
+
 static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, GtkWidget *item)
 {
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
@@ -2328,10 +2334,13 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
+	{ N_("/Buddies/Show Buddy _Details"), NULL, gaim_gtk_blist_buddy_details_cb, 1, "<CheckItem>"},
+	{ N_("/Buddies/Sorting"), NULL, NULL, 0, "<Branch>" },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
-	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Tools */
@@ -3316,12 +3325,15 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
 			gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Buddy Details"))),
+                	gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"));
 	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE);
 
 	/* Update some dynamic things */
 	update_menu_bar(gtkblist);
 	gaim_gtk_blist_update_plugin_actions();
+	gaim_gtk_blist_update_sort_methods();
 
 	/* OK... let's show this bad boy. */
 	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible")) {
@@ -4631,32 +4643,39 @@ gaim_gtk_create_prpl_icon(GaimAccount *account)
  * Buddy List sorting functions                                      *
  *********************************************************************/
 
+GList *gaim_gtk_blist_get_sort_methods()
+{
+	return gaim_gtk_blist_sort_methods;
+}
+
 void gaim_gtk_blist_sort_method_reg(const char *id, const char *name, gaim_gtk_blist_sort_function func)
 {
 	struct gaim_gtk_blist_sort_method *method = g_new0(struct gaim_gtk_blist_sort_method, 1);
 	method->id = g_strdup(id);
 	method->name = g_strdup(name);
 	method->func = func;
-	gaim_gtk_blist_sort_methods = g_slist_append(gaim_gtk_blist_sort_methods, method);
+	gaim_gtk_blist_sort_methods = g_list_append(gaim_gtk_blist_sort_methods, method);
+	gaim_gtk_blist_update_sort_methods();
 }
 
 void gaim_gtk_blist_sort_method_unreg(const char *id){
-	GSList *l = gaim_gtk_blist_sort_methods;
+	GList *l = gaim_gtk_blist_sort_methods;
 
 	while(l) {
 		struct gaim_gtk_blist_sort_method *method = l->data;
 		if(!strcmp(method->id, id)) {
-			gaim_gtk_blist_sort_methods = g_slist_delete_link(gaim_gtk_blist_sort_methods, l);
+			gaim_gtk_blist_sort_methods = g_list_delete_link(gaim_gtk_blist_sort_methods, l);
 			g_free(method->id);
 			g_free(method->name);
 			g_free(method);
 			break;
 		}
 	}
+	gaim_gtk_blist_update_sort_methods();
 }
 
 void gaim_gtk_blist_sort_method_set(const char *id){
-	GSList *l = gaim_gtk_blist_sort_methods;
+	GList *l = gaim_gtk_blist_sort_methods;
 
 	if(!id)
 		id = "none";
@@ -5115,4 +5134,50 @@ gaim_gtk_blist_update_plugin_actions(void)
 		build_plugin_actions(pluginmenu, plugin, NULL);
 		
 	}
+}
+
+void sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
+{
+	if (gtk_check_menu_item_get_active(checkmenuitem))
+		gaim_gtk_blist_sort_method_set(id);
+}
+
+void
+gaim_gtk_blist_update_sort_methods(void)
+{
+	GtkWidget *menuitem = NULL, *activeitem = NULL;
+	GaimGtkBlistSortMethod *method = NULL;
+	GList *l;
+	GSList *sl = NULL;
+	GtkWidget *sortmenu;
+	char *m = gaim_prefs_get_string("/gaim/gtk/blist/sort_type");
+
+	if (gtkblist == NULL)
+		return;
+
+	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sorting"));
+
+	if (sortmenu == NULL)
+		return;
+
+	/* Clear the old menu */
+	for (l = gtk_container_get_children(GTK_CONTAINER(sortmenu)); l; l = l->next) {
+		menuitem = l->data;
+		gtk_widget_destroy(GTK_WIDGET(menuitem));
+	}
+	
+	for (l = gaim_gtk_blist_sort_methods; l; l = l->next) {
+		method = (GaimGtkBlistSortMethod *) l->data;
+		menuitem = gtk_radio_menu_item_new_with_label(sl, _(method->name));
+		if (!strcmp(m, method->id))
+			activeitem = menuitem;
+		sl = gtk_radio_menu_item_get_group(GTK_RADIO_MENU_ITEM(menuitem));
+		gtk_menu_shell_append(GTK_MENU_SHELL(sortmenu), menuitem);
+		g_signal_connect(G_OBJECT(menuitem), "toggled",
+				 G_CALLBACK(sortmethod_act), method->id);
+		gtk_widget_show(menuitem);		
+	}
+	if (activeitem)
+		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(activeitem), TRUE);
+
 }

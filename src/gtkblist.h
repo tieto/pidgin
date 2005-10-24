@@ -195,13 +195,20 @@ gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node);
 
 typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur);
 
-extern GSList *gaim_gtk_blist_sort_methods;
+/**
+ * Gets the current list of sort methods.
+ *
+ * @return A GSlist of sort methods
+ */
+GList *gaim_gtk_blist_get_sort_methods();
 
 struct gaim_gtk_blist_sort_method {
 	char *id;
 	char *name;
 	gaim_gtk_blist_sort_function func;
 };
+
+typedef struct gaim_gtk_blist_sort_method GaimGtkBlistSortMethod;
 
 /**
  * Registers a buddy list sorting method.
@@ -241,6 +248,11 @@ void gaim_gtk_blist_update_protocol_actions();
  * Updates the plugin actions menu on the GTK+ buddy list window.
  */
 void gaim_gtk_blist_update_plugin_actions();
+
+/**
+ * Updates the Sorting menu on the GTK+ buddy list window.
+ */
+void gaim_gtk_blist_update_sort_methods();
 
 /**
  * Determines if showing the join chat dialog is a valid action.
