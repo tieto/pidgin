@@ -435,9 +435,7 @@ faim_export char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, 
  * @param list A pointer to the current list of items.
  * @param gn The group of the buddy.
  * @param sn The name of the buddy.
- * @return A pointer to a NULL terminated string that is the buddies 
- *         alias, or NULL if the buddy has no alias.  You should free
- *         this returned value!
+ * @return 1 if you are waiting for authorization; 0 if you are not
  */
 faim_export int aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn)
 {
