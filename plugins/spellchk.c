@@ -1818,17 +1818,26 @@ static void list_add_new()
 static void add_selected_row_to_list(GtkTreeModel *model, GtkTreePath *path,
 	GtkTreeIter *iter, gpointer data)
 {
+	GtkTreeRowReference *row_reference;
 	GSList **list = (GSList **)data;
-	*list = g_slist_prepend(*list, gtk_tree_path_copy(path));
+	row_reference = gtk_tree_row_reference_new(model, path);
+	*list = g_slist_prepend(*list, row_reference);
 }
 
 static void remove_row(void *data1, gpointer data2)
 {
-	GtkTreePath *path = (GtkTreePath*)data1;
+	GtkTreeRowReference *row_reference;
+	GtkTreePath *path;
 	GtkTreeIter iter;
+
+	row_reference = (GtkTreeRowReference *)data1;
+	path = gtk_tree_row_reference_get_path(row_reference);
+
 	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path))
 		gtk_list_store_remove(model, &iter);
+
 	gtk_tree_path_free(path);
+	gtk_tree_row_reference_free(row_reference);
 }
 
 static void list_delete()
