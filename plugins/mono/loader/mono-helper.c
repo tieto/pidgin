@@ -104,7 +104,7 @@ MonoObject* mono_loader_object_from_gaim_subtype(GaimSubType type, gpointer data
 	return obj;
 }
 
-static MonoDomain *_domain;
+static MonoDomain *_domain = NULL;
 
 MonoDomain* mono_loader_get_domain(void)
 {
