@@ -672,7 +672,7 @@ static GaimPluginProtocolInfo prpl_info =
 static GaimPluginInfo info =
 {
 	GAIM_PLUGIN_MAGIC,
-	0,
+	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
