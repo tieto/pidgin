@@ -2335,7 +2335,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show Buddy _Details"), NULL, gaim_gtk_blist_buddy_details_cb, 1, "<CheckItem>"},
-	{ N_("/Buddies/Sorting"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Buddies/Sort Buddies"), NULL, NULL, 0, "<Branch>" },
 	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
@@ -3082,9 +3082,9 @@ item_factory_translate_func (const char *path, gpointer func_data)
 
 void gaim_gtk_blist_setup_sort_methods()
 {
-	gaim_gtk_blist_sort_method_reg("none", _("None"), sort_method_none);
+	gaim_gtk_blist_sort_method_reg("none", _("Manually"), sort_method_none);
 #if GTK_CHECK_VERSION(2,2,1)
-	gaim_gtk_blist_sort_method_reg("alphabetical", _("Alphabetical"), sort_method_alphabetical);
+	gaim_gtk_blist_sort_method_reg("alphabetical", _("Alphabetically"), sort_method_alphabetical);
 	gaim_gtk_blist_sort_method_reg("status", _("By status"), sort_method_status);
 	gaim_gtk_blist_sort_method_reg("log_size", _("By log size"), sort_method_log);
 #endif
@@ -5155,7 +5155,7 @@ gaim_gtk_blist_update_sort_methods(void)
 	if (gtkblist == NULL)
 		return;
 
-	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sorting"));
+	sortmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Sort Buddies"));
 
 	if (sortmenu == NULL)
 		return;
