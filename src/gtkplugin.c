@@ -215,18 +215,10 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	pweb = (plug->info->homepage) ?
 		   g_markup_escape_text(_(plug->info->homepage), -1) : NULL;
 	buf = g_strdup_printf(
-#ifndef _WIN32
 		   _("%s%s"
 		     "<span weight=\"bold\">Written by:</span>\t%s\n"
 		     "<span weight=\"bold\">Web site:</span>\t\t%s\n"
 		     "<span weight=\"bold\">File name:</span>\t%s"),
-#else
-		   _("<span size=\"larger\">%s %s</span>\n\n"
-		     "%s%s"
-		     "<span weight=\"bold\">Written by:</span>  %s\n"
-		     "<span weight=\"bold\">Web site:</span>  %s\n"
-		     "<span weight=\"bold\">File name:</span>  %s"),
-#endif
 		   pdesc ? pdesc : "", pdesc ? "\n\n" : "",
 		   pauth ? pauth : "", pweb ? pweb : "", plug->path);
 
