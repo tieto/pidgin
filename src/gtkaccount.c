@@ -2471,10 +2471,6 @@ gaim_gtk_accounts_window_show(void)
 						dialog, GAIM_CALLBACK(signed_on_off_cb), dialog);
 
 	gtk_widget_show(win);
-
-	/* Display the add account window if no accounts exist. */
-	if (gaim_accounts_get_all() == NULL)
-		gaim_gtk_account_dialog_show(GAIM_GTK_ADD_ACCOUNT_DIALOG, NULL);
 }
 
 void
