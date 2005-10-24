@@ -2514,12 +2514,6 @@ setup_menubar(GaimGtkWindow *win)
 	                      win->menu.tray);
 	gtk_widget_show(win->menu.tray);
 
-	win->menu.typing_icon = gtk_image_new_from_stock(GAIM_STOCK_MENU_ICON_BLANK,
-							 GTK_ICON_SIZE_MENU);
-	gtk_widget_show(win->menu.typing_icon);
-	gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(win->menu.tray),
-				  win->menu.typing_icon);
-
 	gtk_widget_show(win->menu.menubar);
 
 	return win->menu.menubar;
@@ -2574,24 +2568,27 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 	if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		im = GAIM_CONV_IM(conv);
 
+	if(gtkwin->menu.typing_icon) {
+		gtk_widget_destroy(gtkwin->menu.typing_icon);
+		gtkwin->menu.typing_icon = NULL;
+	}
+
 	if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
-					 GAIM_STOCK_TYPING,
-					 GTK_ICON_SIZE_MENU);
+		gtkwin->menu.typing_icon =
+			gtk_image_new_from_stock(GAIM_STOCK_TYPING, GTK_ICON_SIZE_MENU);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User is typing..."), NULL);
 	} else if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPED) {
-		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
-					 GAIM_STOCK_TYPED,
-					 GTK_ICON_SIZE_MENU);
+		gtkwin->menu.typing_icon =
+			gtk_image_new_from_stock(GAIM_STOCK_TYPED, GTK_ICON_SIZE_MENU);
 		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
 				_("User has typed something and paused"), NULL);
-	} else {
-		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon),
-					 GAIM_STOCK_MENU_ICON_BLANK,
-					 GTK_ICON_SIZE_MENU);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
-				     "", NULL);
+	}
+	
+	if(gtkwin->menu.typing_icon) {
+		gtk_widget_show(gtkwin->menu.typing_icon);
+		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkwin->menu.tray),
+								  gtkwin->menu.typing_icon);
 	}
 }
 

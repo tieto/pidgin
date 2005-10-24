@@ -19,6 +19,9 @@
  */
 #include "gtkmenutray.h"
 
+#include <gtk/gtkiconfactory.h>
+#include <gtk/gtkversion.h>
+
 /******************************************************************************
  * Enums
  *****************************************************************************/
@@ -117,10 +120,27 @@ gaim_gtk_menu_tray_class_init(GaimGtkMenuTrayClass *klass) {
 
 static void
 gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
+	GtkWidget *widget = GTK_WIDGET(menu_tray);
+	GtkSettings *settings;
+	gint height = -1;
+
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
 	
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_hbox_new(FALSE, 0);
+
+#if GTK_CHECK_VERSION(2,2,0)
+	settings =
+		gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
+#else
+	settings = gtk_settings_get_default();
+#endif
+
+	if(gtk_icon_size_lookup_for_settings(settings, GTK_ICON_SIZE_MENU,
+										 NULL, &height))
+	{
+		gtk_widget_set_size_request(widget, -1, height);
+	}
 
 	gtk_container_add(GTK_CONTAINER(menu_tray), menu_tray->tray);
 

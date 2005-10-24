@@ -80,7 +80,6 @@ static struct StockIcon
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
-	{ GAIM_STOCK_MENU_ICON_BLANK, "gaim",    "menu-blank.png"           },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },

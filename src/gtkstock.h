@@ -62,7 +62,6 @@
 #define GAIM_STOCK_INVITE          "gaim-invite"
 #define GAIM_STOCK_LINK            "gaim-link"
 #define GAIM_STOCK_LOGO            "gaim-logo"
-#define GAIM_STOCK_MENU_ICON_BLANK "gaim-menu-icon-blank"
 #define GAIM_STOCK_MODIFY          "gaim-modify"
 #define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
 #define GAIM_STOCK_PAUSE           "gaim-pause"
