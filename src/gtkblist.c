@@ -5150,7 +5150,7 @@ gaim_gtk_blist_update_sort_methods(void)
 	GList *l;
 	GSList *sl = NULL;
 	GtkWidget *sortmenu;
-	char *m = gaim_prefs_get_string("/gaim/gtk/blist/sort_type");
+	const char *m = gaim_prefs_get_string("/gaim/gtk/blist/sort_type");
 
 	if (gtkblist == NULL)
 		return;
