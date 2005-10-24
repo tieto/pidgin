@@ -717,7 +717,7 @@ void gaim_account_add_buddies(GaimAccount *account, GList *buddies);
  *
  * @param account The account.
  * @param buddy The buddy to remove.
- * @pararm group The group to remove the buddy from.
+ * @param group The group to remove the buddy from.
  */
 void gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
 								GaimGroup *group);
