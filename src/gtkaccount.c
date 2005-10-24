@@ -80,8 +80,6 @@ typedef struct
 
 	GtkTreeViewColumn *screenname_col;
 
-	GHashTable *account_pref_wins;
-
 } AccountsWindow;
 
 typedef struct
@@ -155,8 +153,9 @@ typedef struct
 
 
 static AccountsWindow *accounts_window = NULL;
+static GHashTable *account_pref_wins;
 
-static void add_account(AccountsWindow *dialog, GaimAccount *account);
+static void add_account_to_liststore(GaimAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
 						  GaimAccount *account);
 static char*
@@ -1376,8 +1375,7 @@ static void
 account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 					   AccountPrefsDialog *dialog)
 {
-	if (accounts_window != NULL)
-		g_hash_table_remove(accounts_window->account_pref_wins, dialog->account);
+	g_hash_table_remove(account_pref_wins, dialog->account);
 
 	gtk_widget_destroy(dialog->window);
 
@@ -1425,9 +1423,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	const char *value;
 	char *username;
 	char *tmp;
-	size_t index;
 	gboolean new = FALSE;
-	GtkTreeIter iter;
 	GaimAccount *account;
 
 	if (dialog->account == NULL)
@@ -1510,8 +1506,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	g_free(username);
 
 	/* Add the protocol settings */
-
-	if(dialog->prpl_info) {
+	if (dialog->prpl_info) {
 		for (l = dialog->prpl_info->protocol_options,
 				l2 = dialog->protocol_opt_entries;
 				l != NULL && l2 != NULL;
@@ -1600,27 +1595,14 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			gaim_proxy_info_set_password(proxy_info, NULL);
 	}
 
-	/* Adds the account to the list, or modify the existing entry. */
-	if (accounts_window != NULL) {
-		index = g_list_index(gaim_accounts_get_all(), account);
-
-		if (index != -1 &&
-			(gtk_tree_model_iter_nth_child(
-					GTK_TREE_MODEL(accounts_window->model), &iter,
-					NULL, index))) {
-
-			set_account(accounts_window->model, &iter,
-						account);
-		}
-		else {
-			add_account(accounts_window, account);
-			gaim_accounts_add(account);
-		}
-	}
-
+	/* We no longer need the data from the dialog window */
 	account_win_destroy_cb(NULL, NULL, dialog);
 
-	gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
+	/* If this is a new account, add it to our list */
+	if (new)
+		gaim_accounts_add(account);
+	else
+		gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
 
 	/* TODO: This doesn't work quite right yet. */
 	if (new) {
@@ -1678,8 +1660,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	GtkWidget *button;
 
 	if (accounts_window != NULL && account != NULL &&
-		(dialog = g_hash_table_lookup(accounts_window->account_pref_wins,
-									  account)) != NULL)
+		(dialog = g_hash_table_lookup(account_pref_wins, account)) != NULL)
 	{
 		gtk_window_present(GTK_WINDOW(dialog->window));
 		return;
@@ -1689,8 +1670,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 
 	if (accounts_window != NULL && account != NULL)
 	{
-		g_hash_table_insert(accounts_window->account_pref_wins,
-							account, dialog);
+		g_hash_table_insert(account_pref_wins, account, dialog);
 	}
 
 	dialog->account = account;
@@ -1823,18 +1803,26 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
  * Accounts Dialog
  **************************************************************************/
 static void
-signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
+signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimAccount *account;
 	GaimGtkPulseData *pulse_data;
-	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	GtkTreeModel *model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf, *scale = NULL;
-	size_t index = g_list_index(gaim_accounts_get_all(), account);
+	size_t index;
+
+	/* Don't need to do anything if the accounts window is not visible */
+	if (accounts_window == NULL)
+		return;
+
+	account = gaim_connection_get_account(gc);
+	model = GTK_TREE_MODEL(accounts_window->model);
+	index = g_list_index(gaim_accounts_get_all(), account);
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
-		gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
+		gtk_tree_model_get(GTK_TREE_MODEL(accounts_window->model), &iter,
 						   COLUMN_PULSE_DATA, &pulse_data, -1);
 
 		if (pulse_data != NULL)
@@ -1857,7 +1845,7 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 			if (gaim_account_is_disconnected(account))
 				gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.0, FALSE);
 		}
-		gtk_list_store_set(dialog->model, &iter,
+		gtk_list_store_set(accounts_window->model, &iter,
 				   COLUMN_ICON, scale,
 				   COLUMN_PULSE_DATA, NULL,
 				   -1);
@@ -1866,6 +1854,56 @@ signed_on_off_cb(GaimConnection *gc, AccountsWindow *dialog)
 		if (pixbuf != NULL) g_object_unref(G_OBJECT(pixbuf));
 		if (scale  != NULL) g_object_unref(G_OBJECT(scale));
 	}
+}
+
+/*
+ * Get the GtkTreeIter of the specified account in the
+ * GtkListStore
+ */
+static gboolean
+accounts_window_find_account_in_treemodel(GtkTreeIter *iter, GaimAccount *account)
+{
+	GtkTreeModel *model;
+	GaimAccount *cur;
+
+	g_return_val_if_fail(account != NULL, FALSE);
+	g_return_val_if_fail(accounts_window != NULL, FALSE);
+
+	model = GTK_TREE_MODEL(accounts_window->model);
+
+	if (!gtk_tree_model_get_iter_first(model, iter))
+		return FALSE;
+
+	gtk_tree_model_get(model, iter, COLUMN_DATA, &cur, -1);
+	if (cur == account)
+		return TRUE;
+
+	while (gtk_tree_model_iter_next(model, iter))
+	{
+		gtk_tree_model_get(model, iter, COLUMN_DATA, &cur, -1);
+		if (cur == account)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static void
+account_removed_cb(GaimAccount *account, gpointer user_data)
+{
+	AccountPrefsDialog *dialog;
+	GtkTreeIter iter;
+
+	/* If the account was being modified, close the edit window */
+	if ((dialog = g_hash_table_lookup(account_pref_wins, account)) != NULL)
+		account_win_destroy_cb(NULL, NULL, dialog);
+
+	if (accounts_window == NULL)
+		return;
+
+	/* Remove the account from the GtkListStore */
+	if (accounts_window_find_account_in_treemodel(&iter, account))
+		gtk_list_store_remove(accounts_window->model, &iter);
 }
 
 static void
@@ -2063,28 +2101,6 @@ modify_account_cb(GtkWidget *w, AccountsWindow *dialog)
 static void
 delete_account_cb(GaimAccount *account)
 {
-	size_t index;
-	GtkTreeIter iter;
-
-	index = g_list_index(gaim_accounts_get_all(), account);
-
-	if (accounts_window != NULL)
-	{
-		AccountPrefsDialog *dialog;
-
-		if (gtk_tree_model_iter_nth_child(
-				GTK_TREE_MODEL(accounts_window->model), &iter, NULL, index))
-		{
-			gtk_list_store_remove(accounts_window->model, &iter);
-		}
-
-		if ((dialog = g_hash_table_lookup(accounts_window->account_pref_wins,
-										  account)) != NULL)
-		{
-			account_win_destroy_cb(NULL, NULL, dialog);
-		}
-	}
-
 	gaim_accounts_delete(account);
 }
 
@@ -2240,13 +2256,16 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account)
 }
 
 static void
-add_account(AccountsWindow *dialog, GaimAccount *account)
+add_account_to_liststore(GaimAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
 
-	gtk_list_store_append(dialog->model, &iter);
+	if (accounts_window == NULL)
+		return;
 
-	set_account(dialog->model, &iter, account);
+	gtk_list_store_append(accounts_window->model, &iter);
+
+	set_account(accounts_window->model, &iter, account);
 }
 
 static void
@@ -2257,7 +2276,7 @@ populate_accounts_list(AccountsWindow *dialog)
 	gtk_list_store_clear(dialog->model);
 
 	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
-		add_account(dialog, (GaimAccount *)l->data);
+		add_account_to_liststore((GaimAccount *)l->data, NULL);
 }
 
 #if !GTK_CHECK_VERSION(2,2,0)
@@ -2394,9 +2413,6 @@ gaim_gtk_accounts_window_show(void)
 
 	accounts_window = dialog = g_new0(AccountsWindow, 1);
 
-	accounts_window->account_pref_wins =
-		g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);
-
 	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
 	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
 
@@ -2464,11 +2480,6 @@ gaim_gtk_accounts_window_show(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_accounts_cb), dialog);
 
-	/* Setup some gaim signal handlers. */
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						dialog, GAIM_CALLBACK(signed_on_off_cb), dialog);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						dialog, GAIM_CALLBACK(signed_on_off_cb), dialog);
 
 	gtk_widget_show(win);
 }
@@ -2480,8 +2491,6 @@ gaim_gtk_accounts_window_hide(void)
 		return;
 
 	gaim_signals_disconnect_by_handle(accounts_window);
-
-	g_hash_table_destroy(accounts_window->account_pref_wins);
 
 	g_free(accounts_window);
 	accounts_window = NULL;
@@ -2600,10 +2609,36 @@ gaim_gtk_account_init(void)
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT));
+
+	/* Setup some gaim signal handlers. */
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(signed_on_off_cb), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(signed_on_off_cb), NULL);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(add_account_to_liststore), NULL);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(account_removed_cb), NULL);
+
+	account_pref_wins =
+		g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);
 }
 
 void
 gaim_gtk_account_uninit(void)
 {
+	/*
+	 * TODO: Need to free all the dialogs in here.  Could probably create
+	 *       a callback function to use for the free-some-data-function
+	 *       parameter of g_hash_table_new_full, above.
+	 */
+	g_hash_table_destroy(account_pref_wins);
+
+	gaim_signals_disconnect_by_handle(gaim_gtk_account_get_handle());
 	gaim_signals_unregister_by_instance(gaim_gtk_account_get_handle());
 }
+
