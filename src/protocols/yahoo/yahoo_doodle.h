@@ -25,13 +25,16 @@
 #ifndef _YAHOO_DOODLE_H_
 #define _YAHOO_DOODLE_H_
 
-// INCLUDES ============================================================================================
+/******************************************************************************
+ * Includes
+ *****************************************************************************/
 #include "whiteboard.h"
 #include "cmds.h"
 
-// DEFINES =============================================================================================
-
-// Doodle communication commands
+/******************************************************************************
+ * Defines
+ *****************************************************************************/
+/* Doodle communication commands */
 #define DOODLE_CMD_REQUEST		0
 #define DOODLE_CMD_READY		1
 #define DOODLE_CMD_CLEAR		2
@@ -39,23 +42,23 @@
 #define DOODLE_CMD_EXTRA		4
 #define DOODLE_CMD_CONFIRM		5
 
-// Doodle communication command for shutting down (also 0)
+/* Doodle communication command for shutting down (also 0) */
 #define DOODLE_CMD_SHUTDOWN		DOODLE_CMD_REQUEST
 
 #define DOODLE_EXTRA_NONE		"\"1\""
 #define DOODLE_EXTRA_TICTACTOE		"\"3\""
 #define DOODLE_EXTRA_DOTS		"\"2\""
 
-// Doodle session states
+/* Doodle session states */
 #define DOODLE_STATE_REQUESTING		0
 #define DOODLE_STATE_REQUESTED		1
 #define DOODLE_STATE_ESTABLISHED	2
 
-// Doodle canvas dimensions
+/* Doodle canvas dimensions */
 #define DOODLE_CANVAS_WIDTH		368
 #define DOODLE_CANVAS_HEIGHT		256
 
-// Doodle color codes (most likely RGB)
+/* Doodle color codes (most likely RGB) */
 #define	DOODLE_COLOR_RED		13369344
 #define	DOODLE_COLOR_ORANGE		16737792
 #define	DOODLE_COLOR_YELLOW		15658496
@@ -72,22 +75,25 @@
 
 #define PALETTE_NUM_OF_COLORS		12
 
-// Doodle brush sizes (most likely variable)
+/* Doodle brush sizes (most likely variable) */
 #define DOODLE_BRUSH_SMALL		2
 #define DOODLE_BRUSH_MEDIUM		5
 #define DOODLE_BRUSH_LARGE		10
 
 #define DOODLE_MAX_BRUSH_MOTIONS	100
 
-// DATATYPES ===========================================================================================
+/******************************************************************************
+ * Datatypes
+ *****************************************************************************/
 typedef struct _doodle_session
 {
-	int		brush_size;	// Size of drawing brush
-	int		brush_color;	// Color of drawing brush
+	int		brush_size;	/* Size of drawing brush */
+	int		brush_color;	/* Color of drawing brush */
 } doodle_session;
 
-// PROTOTYPES ==========================================================================================
-
+/******************************************************************************
+ * API
+ *****************************************************************************/
 void dummy_func( void );
 
 GaimCmdRet		yahoo_doodle_gaim_cmd_start( GaimConversation *conv, const char *cmd, char **args,
@@ -121,4 +127,4 @@ void			yahoo_doodle_clear( GaimWhiteboard *wb );
 void			yahoo_doodle_draw_stroke( GaimWhiteboard *wb, GList *draw_list );
 char			*yahoo_doodle_build_draw_string( doodle_session *ds, GList *draw_list );
 
-#endif // _YAHOO_DOODLE_H_
+#endif /* _YAHOO_DOODLE_H_ */

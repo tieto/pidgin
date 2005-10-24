@@ -357,46 +357,48 @@ void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt )
 	char	*imv		= NULL;
 	char	*unknown	= NULL;
 
-	// Get all the necessary values from this new packet
+	/* Get all the necessary values from this new packet */
 	while( l )
 	{
 		struct yahoo_pair *pair = l->data;
 
-		if( pair->key == 5 )		// Get who the packet is for
+		if( pair->key == 5 )		/* Get who the packet is for */
 			me = pair->value;
 
-		if( pair->key == 4 )		// Get who the packet is from
+		if( pair->key == 4 )		/* Get who the packet is from */
 			from = pair->value;
 
-		if( pair->key == 49 )		// Get the type of service
+		if( pair->key == 49 )		/* Get the type of service */
 			service = pair->value;
 
-		if( pair->key == 14 )		// Get the 'message' of the packet
+		if( pair->key == 14 )		/* Get the 'message' of the packet */
 			message = pair->value;
 
-		if( pair->key == 13 )		// Get the command associated with this packet
+		if( pair->key == 13 )		/* Get the command associated with this packet */
 			command = pair->value;
 
-		if( pair->key == 63 )		// IMVironment name and version
+		if( pair->key == 63 )		/* IMVironment name and version */
 			imv = pair->value;
 
-		if( pair->key == 64 )		// Not sure, but it does vary with initialization of Doodle
-			unknown = pair->value;	// So, I'll keep it (for a little while atleast)
+		if( pair->key == 64 )		/* Not sure, but it does vary with initialization of Doodle */
+			unknown = pair->value;	/* So, I'll keep it (for a little while atleast) */
 
 		l = l->next;
 	}
 
-	// If this packet is an IMVIRONMENT, handle it accordingly
+	/* If this packet is an IMVIRONMENT, handle it accordingly */
 	if( !strcmp( service, "IMVIRONMENT" ) )
 	{
-		// Check for a Doodle packet and handle it accordingly
+		/* Check for a Doodle packet and handle it accordingly */
 		if( !strcmp( imv, "doodle;11" ) )
 			yahoo_doodle_process( gc, me, from, command, message );
 
-		// If an IMVIRONMENT packet comes without a specific imviroment name
+		/* If an IMVIRONMENT packet comes without a specific imviroment name */
 		if( !strcmp( imv, ";0" ) )
 		{
-			// It is unfortunately time to close all IMVironments with remote client
+			/* It is unfortunately time to close all IMVironments with remote
+			 * client
+			 */
 			yahoo_doodle_command_got_shutdown( gc, from );
 		}
 	}

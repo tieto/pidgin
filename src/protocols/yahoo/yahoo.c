@@ -694,7 +694,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 				if (im)
 					im->msg = pair->value;
 			}
-			// IMV key
+			/* IMV key */
 			if (pair->key == 63)
 			{
 				strcpy( imv, pair->value );
@@ -706,23 +706,21 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
-	// Check for the Doodle IMV
+	/* Check for the Doodle IMV */
 	if( !strcmp( imv, "doodle;11" ) )
 	{
+		GaimWhiteboard *wb;
+
 		if (!yahoo_privacy_check(gc, im->from)) {
 			gaim_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 			return;
 		}
-		GaimWhiteboard *wb;
-
-		g_print( "'doodle;11' found in chat packet\n" );
 
 		wb = gaim_whiteboard_get_session( gc->account, im->from );
 
-		// If a Doodle session doesn't exist between this user
+		/* If a Doodle session doesn't exist between this user */
 		if( wb == NULL )
 		{
-			g_print( "Creating new whiteboard for chat packet request\n" );
 			wb = gaim_whiteboard_create( gc->account, im->from, DOODLE_STATE_REQUESTED );
 
 			yahoo_doodle_command_send_request( gc, im->from );
@@ -3014,7 +3012,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	if (wb)
 		yahoo_packet_hash_str(pkt,   63, "doodle;11");
 	else
-		yahoo_packet_hash_str(pkt,   63, ";0"); // IMvironment
+		yahoo_packet_hash_str(pkt,   63, ";0"); /* IMvironment */
 
 	yahoo_packet_hash_str(pkt,   64, "0"); /* no idea */
 	yahoo_packet_hash_str(pkt, 1002, "1"); /* no idea, Yahoo 6 or later only it seems */
