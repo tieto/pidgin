@@ -77,19 +77,38 @@ GaimCmdRet yahoo_doodle_gaim_cmd_start( GaimConversation *conv, const char *cmd,
 {
 	GaimAccount *account;
 	GaimConnection *gc;
-	char *to;
-	GaimWhiteboard *wb;
+	const gchar *name;
 
 	if( *args && args[0] )
 		return( GAIM_CMD_RET_FAILED );
 	
 	account	= gaim_conversation_get_account( conv );
 	gc		= gaim_account_get_connection( account );
-	to		= ( char* )( gaim_conversation_get_name( conv ) );
-	wb		= gaim_whiteboard_get_session( account, to );
+	name	= gaim_conversation_get_name(conv);
+	yahoo_doodle_initiate(gc, name);
+
+	// Write a local message to this conversation showing that
+	// a request for a Doodle session has been made
+	gaim_conv_im_write( GAIM_CONV_IM( conv ), "", _("Sent Doodle request."),
+			    GAIM_MESSAGE_NICK | GAIM_MESSAGE_RECV, time( NULL ) );
 	
-	// NOTE Functionalize this code?
-	
+	return( GAIM_CMD_RET_OK );
+}
+
+// ------------------------------------------------------------------------------------------------------
+
+void yahoo_doodle_initiate(GaimConnection *gc, const char *name)
+{
+	GaimAccount *account;
+	char *to;
+	GaimWhiteboard *wb;
+	g_return_if_fail(gc);
+	g_return_if_fail(name);
+
+	account = gaim_connection_get_account( gc );
+	to = (char* )name;
+	wb = gaim_whiteboard_get_session( account, to );
+
 	if( wb == NULL )
 	{
 		// Insert this 'session' in the list.  At this point, it's only a requested session.	
@@ -100,13 +119,7 @@ GaimCmdRet yahoo_doodle_gaim_cmd_start( GaimConversation *conv, const char *cmd,
 	
 	yahoo_doodle_command_send_request( gc, to );
 	yahoo_doodle_command_send_ready( gc, to );
-	
-	// Write a local message to this conversation showing that
-	// a request for a Doodle session has been made
-	gaim_conv_im_write( GAIM_CONV_IM( conv ), "", _("Sent Doodle request."),
-			    GAIM_MESSAGE_NICK | GAIM_MESSAGE_RECV, time( NULL ) );
-	
-	return( GAIM_CMD_RET_OK );
+
 }
 
 // ------------------------------------------------------------------------------------------------------
@@ -754,4 +767,3 @@ char *yahoo_doodle_build_draw_string( doodle_session *ds, GList *draw_list )
 }
 
 // ------------------------------------------------------------------------------------------------------
-

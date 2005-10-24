@@ -94,6 +94,7 @@ GaimCmdRet		yahoo_doodle_gaim_cmd_start( GaimConversation *conv, const char *cmd
 						     char **error, void *data );
 
 void			yahoo_doodle_process( GaimConnection *gc, char *me, char *from, char *command, char *message );
+void			yahoo_doodle_initiate( GaimConnection *gc, const char *to);
 
 void			yahoo_doodle_command_got_request( GaimConnection *gc, char *from );
 void			yahoo_doodle_command_got_ready( GaimConnection *gc, char *from );

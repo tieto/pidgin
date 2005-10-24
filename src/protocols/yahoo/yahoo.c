@@ -709,6 +709,10 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	// Check for the Doodle IMV
 	if( !strcmp( imv, "doodle;11" ) )
 	{
+		if (!yahoo_privacy_check(gc, im->from)) {
+			gaim_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
+			return;
+		}
 		GaimWhiteboard *wb;
 
 		g_print( "'doodle;11' found in chat packet\n" );
@@ -2858,6 +2862,14 @@ static GList *build_stealth_submenu(YahooFriend *f, GaimConnection *gc) {
 	return m;
 }
 
+static void yahoo_doodle_blist_node(GaimBlistNode *node, gpointer data)
+{
+	GaimBuddy *b = (GaimBuddy *)node;
+	GaimConnection *gc = b->account->gc;
+
+	yahoo_doodle_initiate(gc, b->name);
+}
+
 static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 {
 	GList *m = NULL;
@@ -2913,6 +2925,12 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	if (f) {
 		act = gaim_blist_node_action_new(_("Stealth Settings"),
 				NULL, NULL, build_stealth_submenu(f, gc));
+		m = g_list_append(m, act);
+	}
+
+	if (f) {
+		act = gaim_blist_node_action_new(_("Start Doodling"),
+				yahoo_doodle_blist_node, NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
