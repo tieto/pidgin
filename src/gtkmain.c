@@ -544,9 +544,9 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "ac:dhnl::s:v",
+				  "c:dhnl::s:v",
 #else
-				  "ac:dhnl::v",
+				  "c:dhnl::v",
 #endif
 				  long_options, NULL)) != -1) {
 		switch (opt) {
