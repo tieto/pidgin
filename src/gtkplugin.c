@@ -33,6 +33,7 @@
 static GtkWidget *plugin_dialog = NULL;
 static GtkWidget *plugin_details = NULL;
 static GtkWidget *pref_button = NULL;
+static GHashTable *plugin_pref_dialogs = NULL;
 
 GtkWidget *
 gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
@@ -110,6 +111,21 @@ update_plugin_list(void *data)
 	}
 }
 
+static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug)
+{
+	switch (response) {
+	case GTK_RESPONSE_CLOSE:
+	case GTK_RESPONSE_DELETE_EVENT:
+		g_hash_table_remove(plugin_pref_dialogs, plug);
+		if (g_hash_table_size(plugin_pref_dialogs) == 0) {
+			g_hash_table_destroy(plugin_pref_dialogs);
+			plugin_pref_dialogs = NULL;
+		}
+		gtk_widget_destroy(d);
+		break;
+	}
+}
+
 static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 {
 	GtkTreeModel *model = (GtkTreeModel *)data;
@@ -118,6 +134,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	GaimPlugin *plug;
 	gchar buf[1024];
 	gchar *name = NULL, *description = NULL;
+	GtkWidget *dialog = NULL;
 
 	GdkCursor *wait = gdk_cursor_new (GDK_WATCH);
 	gdk_window_set_cursor(plugin_dialog->window, wait);
@@ -128,15 +145,23 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 
 	if (!gaim_plugin_is_loaded(plug))
 		gaim_plugin_load(plug);
-	else 
+	else {
+		if (plugin_pref_dialogs != NULL &&
+			(dialog = g_hash_table_lookup(plugin_pref_dialogs, plug)))
+			pref_dialog_response_cb(dialog, GTK_RESPONSE_DELETE_EVENT, plug);
 		gaim_plugin_unload(plug);
+	}
 
+	gtk_widget_set_sensitive(pref_button,
+				 plug->info->ui_info != NULL &&
+				 GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame != NULL &&
+				 gaim_plugin_is_loaded(plug));
 
 	gdk_window_set_cursor(plugin_dialog->window, NULL);
 
 	name = g_markup_escape_text(_(plug->info->name), -1);
 	description = g_markup_escape_text(_(plug->info->description), -1);
-	
+
 	if (plug->error != NULL) {
 		gchar *error = g_markup_escape_text(plug->error, -1);
 		gchar *desc;
@@ -147,7 +172,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				   name, plug->info->version, error, description);
 		desc = g_strdup_printf("<b>%s</b> %s\n<span weight=\"bold\" color=\"red\"%s</span>",
 			       plug->info->name, plug->info->version, error);
-		gtk_list_store_set (GTK_LIST_STORE (model), &iter, 
+		gtk_list_store_set (GTK_LIST_STORE (model), &iter,
 				    1, desc,
 				    -1);
 		g_free(desc);
@@ -207,7 +232,8 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	gtk_widget_set_sensitive(pref_button, 
 				 plug->info->ui_info != NULL &&  
-				 GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame != NULL);
+				 GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame != NULL &&
+				 gaim_plugin_is_loaded(plug));
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	g_value_unset(&val);
 	g_free(buf);
@@ -217,17 +243,6 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	g_free(pweb);
 }
 
-static GSList *plugin_pref_dialogs = NULL;
-static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug)
-{
-	switch (response) {
-	case GTK_RESPONSE_CLOSE:
-	case GTK_RESPONSE_DELETE_EVENT:
-		plugin_pref_dialogs = g_slist_remove(plugin_pref_dialogs, plug);
-		gtk_widget_destroy(d);
-		break;
-	}
-}
 static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelection *sel)
 {
 	GaimPlugin *plug;
@@ -249,9 +264,9 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		plug = g_value_get_pointer(&val);
 		if (plug == NULL)
 			break;
-		if (g_slist_find(plugin_pref_dialogs, plug))
+		if (plugin_pref_dialogs != NULL &&
+			g_hash_table_lookup(plugin_pref_dialogs, plug))
 			break;
-		plugin_pref_dialogs = g_slist_prepend(plugin_pref_dialogs, plug);
 		box = gaim_gtk_plugin_get_config_frame(plug);
 		if (box == NULL)
 			break;
@@ -260,6 +275,11 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
+		if (plugin_pref_dialogs == NULL)
+			plugin_pref_dialogs = g_hash_table_new(NULL, NULL);
+
+		g_hash_table_insert(plugin_pref_dialogs, plug, dialog);
+
 		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
