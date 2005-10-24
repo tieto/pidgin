@@ -2097,13 +2097,6 @@ redraw_icon(gpointer data)
 	gint delay;
 	int scale_width, scale_height;
 
-	if (!g_list_find(gaim_get_ims(), conv)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "gtkconv",
-				   "Conversation not found in redraw_icon. I think this "
-				   "is a bug.\n");
-		return FALSE;
-	}
-
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 	account = gaim_conversation_get_account(conv);
 	if(account && account->gc)
@@ -2137,7 +2130,7 @@ redraw_icon(gpointer data)
 	if (delay < 100)
 		delay = 100;
 
-	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
+	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, gtkconv);
 
 	return FALSE;
 }
@@ -2145,7 +2138,6 @@ redraw_icon(gpointer data)
 static void
 start_anim(GtkObject *obj, GaimGtkConversation *gtkconv)
 {
-	GaimConversation *conv = gtkconv->active_conv;
 	int delay;
 
 	if (gtkconv->u.im->anim == NULL)
@@ -2162,7 +2154,7 @@ start_anim(GtkObject *obj, GaimGtkConversation *gtkconv)
 	if (delay < 100)
 		delay = 100;
 
-	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, conv);
+	gtkconv->u.im->icon_timer = g_timeout_add(delay, redraw_icon, gtkconv);
 }
 
 static void
@@ -2239,7 +2231,7 @@ icon_menu_save_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	buf = g_strdup_printf("%s.%s", gaim_normalize(conv->account, conv->name), ext);
 
 	gaim_request_file(conv, _("Save Icon"), buf, TRUE,
-					 G_CALLBACK(saveicon_writefile_cb), NULL, conv);
+					 G_CALLBACK(saveicon_writefile_cb), NULL, gtkconv);
 
 	g_free(buf);
 }
@@ -2269,7 +2261,6 @@ toggle_icon_animate_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 static gboolean
 icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 {
-	GaimConversation *conv = gtkconv->active_conv;
 	static GtkWidget *menu = NULL;
 	GtkWidget *button;
 
@@ -2289,7 +2280,7 @@ icon_menu(GtkObject *obj, GdkEventButton *e, GaimGtkConversation *gtkconv)
 		!(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
 	{
 		gaim_new_check_item(menu, _("Animate"),
-							G_CALLBACK(toggle_icon_animate_cb), conv,
+							G_CALLBACK(toggle_icon_animate_cb), gtkconv,
 							gtkconv->u.im->icon_timer);
 	}
 
