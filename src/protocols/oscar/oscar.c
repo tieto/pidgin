@@ -5831,6 +5831,8 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	status = gaim_account_get_active_status(account);
 	if (gaim_status_is_available(status))
 		message = gaim_status_get_attr_string(status, "message");
+	else
+		message = NULL;
 	aim_srv_setavailmsg(sess, message);
 
 	aim_srv_setidle(sess, 0);
