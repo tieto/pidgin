@@ -940,7 +940,9 @@ faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_
  */
 faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 {
-	//aim_tlvlist_t *tlvlist_sendfile;
+#if 0
+	aim_tlvlist_t *tlvlist_sendfile;
+#endif
 	aim_bstream_t bs;
 	fu8_t *bs_raw;
 	fu16_t packet_len;
@@ -979,16 +981,21 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
 	aimbs_put16(&bs, 16);			/* Length */
 	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
 
-	// TODO: Use built-in TLV 
-	//aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
-	//aim_tlvlist_write(&bs, &tlvlist_sendfile);
+
+#if 0
+	/* TODO: Use built-in TLV */
+	aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
+	aim_tlvlist_write(&bs, &tlvlist_sendfile);
+#endif
 
 	aim_bstream_rewind(&bs);
 	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
 		err = errno;
 	proxy_info->conn->lastactivity = time(NULL);
 
-	//aim_tlvlist_free(tlvlist_sendfile);
+#if 0
+	aim_tlvlist_free(tlvlist_sendfile);
+#endif
 	free(bs_raw);
 
 	return err;
@@ -1006,7 +1013,9 @@ faim_export int aim_rv_proxy_init_recv(struct aim_rv_proxy_info *proxy_info)
  */
 faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 {
-	//aim_tlvlist_t *tlvlist_sendfile;
+#if 0
+	aim_tlvlist_t *tlvlist_sendfile;
+#endif
 	aim_bstream_t bs;
 	fu8_t *bs_raw;
 	fu16_t packet_len;
@@ -1043,16 +1052,20 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info)
 	aimbs_put16(&bs, 16);			/* Length */
 	aimbs_putcaps(&bs, AIM_CAPS_SENDFILE);	/* Value */
 
-	// TODO: Use built-in TLV
-	//aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
-	//aim_tlvlist_write(&bs, &tlvlist_sendfile);
+	/* TODO: Use built-in TLV */
+#if 0
+	aim_tlvlist_add_caps(&tlvlist_sendfile, 0x0001, AIM_CAPS_SENDFILE);
+	aim_tlvlist_write(&bs, &tlvlist_sendfile);
+#endif
 
 	aim_bstream_rewind(&bs);
 	if (aim_bstream_send(&bs, proxy_info->conn, packet_len) != packet_len)
 		err = errno;
 	proxy_info->conn->lastactivity = time(NULL);
 
-	//aim_tlvlist_free(tlvlist_sendfile);
+#if 0
+	aim_tlvlist_free(tlvlist_sendfile);
+#endif
 	free(bs_raw);
 
 	return err;

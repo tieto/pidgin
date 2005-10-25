@@ -62,10 +62,10 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 		g_free(msg);
 		return NULL;
 	}
-	if(strstr(parts[0],"SIP")) { // numeric response
+	if(strstr(parts[0],"SIP")) { /* numeric response */
 		msg->method = g_strdup(parts[2]);
 		msg->response = strtol(parts[1],NULL,10);
-	} else { // request
+	} else { /* request */
 		msg->method = g_strdup(parts[0]);
 		msg->target = g_strdup(parts[1]);
 		msg->response = 0;
@@ -99,7 +99,7 @@ struct sipmsg *sipmsg_parse_header(gchar *header) {
 	if(msg->response) {
 		tmp = sipmsg_find_header(msg, "CSeq");
 		if(!tmp) {
-			// SHOULD NOT HAPPEN
+			/* SHOULD NOT HAPPEN */
 			msg->method = 0;
 		} else {
 			parts = g_strsplit(tmp, " ", 2);

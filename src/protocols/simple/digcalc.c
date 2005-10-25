@@ -109,7 +109,7 @@ void DigestCalcResponse(
       HASH RespHash;
        HASHHEX HA2Hex;
 
-      // calculate H(A2)
+      /* calculate H(A2) */
       cipher = gaim_ciphers_find_cipher("md5");
       context = gaim_cipher_context_new(cipher, NULL);
       gaim_cipher_context_append(context, (guchar *)pszMethod, strlen(pszMethod));
@@ -123,7 +123,7 @@ void DigestCalcResponse(
        CvtHex(HA2, HA2Hex);
 
       gaim_cipher_context_destroy(context);
-      // calculate response
+      /* calculate response */
       context = gaim_cipher_context_new(cipher, NULL);
       gaim_cipher_context_append(context, HA1, HASHHEXLEN);
       gaim_cipher_context_append(context, (guchar *)":", 1);

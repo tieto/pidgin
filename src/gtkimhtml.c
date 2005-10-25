@@ -1645,7 +1645,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			while((link = links[i]) != NULL){
 				if(gaim_str_has_prefix(link, "http://") ||
 				   gaim_str_has_prefix(link, "https://") ||
-                   gaim_str_has_prefix(link, "ftp://"))
+				   gaim_str_has_prefix(link, "ftp://"))
 				{
 					gchar *label;
 
@@ -2655,22 +2655,16 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							font->fore = color;
 							gtk_imhtml_toggle_forecolor(imhtml, font->fore);
 						}
-						//else if (oldfont && oldfont->fore)
-						//	font->fore = g_strdup(oldfont->fore);
 
 						if (back && !(options & GTK_IMHTML_NO_COLOURS) && (imhtml->format_functions & GTK_IMHTML_BACKCOLOR)) {
 							font->back = back;
 							gtk_imhtml_toggle_backcolor(imhtml, font->back);
 						}
-						//else if (oldfont && oldfont->back)
-						//	font->back = g_strdup(oldfont->back);
 
 						if (face && !(options & GTK_IMHTML_NO_FONTS) && (imhtml->format_functions & GTK_IMHTML_FACE)) {
 							font->face = face;
 							gtk_imhtml_toggle_fontface(imhtml, font->face);
 						}
-						//else if (oldfont && oldfont->face)
-						//		font->face = g_strdup(oldfont->face);
 
 						if (sml)
 							font->sml = sml;

@@ -3618,7 +3618,9 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	}
 	gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
-	//	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
+#if 0
+	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
+#endif
 
 	if (time_idle > 0)
 		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
