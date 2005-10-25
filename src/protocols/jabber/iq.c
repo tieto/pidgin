@@ -327,6 +327,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		xmlnode_free(iq->node);
 		iq->node = xmlnode_copy(packet);
 		xmlnode_set_attrib(iq->node, "to", from);
+		xmlnode_remove_attrib(node, "from");	
 		xmlnode_set_attrib(iq->node, "type", "error");
 		error = xmlnode_new_child(iq->node, "error");
 		xmlnode_set_attrib(error, "type", "cancel");
