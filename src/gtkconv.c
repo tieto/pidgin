@@ -3687,7 +3687,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		GaimBuddy *b;
 		GaimGtkConversation *gtkconv = NULL;
 
-		memcpy(&n, sd->data, sizeof(n));
+		n = *(GaimBlistNode **)sd->data;
 
 		if (GAIM_BLIST_NODE_IS_CONTACT(n))
 			b = gaim_contact_get_priority_buddy((GaimContact*)n);
@@ -3713,7 +3713,11 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		} else {
 			c = gaim_conversation_new(GAIM_CONV_TYPE_IM, b->account, b->name);
 			gtkconv = GAIM_GTK_CONVERSATION(c);
-			gaim_gtk_conv_window_add_gtkconv(win, gtkconv);
+			if (gtkconv->win != win)
+			{
+				gaim_gtk_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+				gaim_gtk_conv_window_add_gtkconv(win, gtkconv);
+			}
 		}
 
 		/* Make this conversation the active conversation */
@@ -3741,7 +3745,11 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			{
 				c = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
 				gtkconv = GAIM_GTK_CONVERSATION(c);
-				gaim_gtk_conv_window_add_gtkconv(win, gtkconv);
+				if (gtkconv->win != win)
+				{
+					gaim_gtk_conv_window_remove_gtkconv(gtkconv->win, gtkconv);
+					gaim_gtk_conv_window_add_gtkconv(win, gtkconv);
+				}
 			}
 		}
 
