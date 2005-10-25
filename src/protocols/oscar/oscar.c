@@ -5808,7 +5808,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	gc = sess->aux_data;
 	od = (OscarData *)gc->proto_data;
-	account = gaim_account_get_account(gc);
+	account = gaim_connection_get_account(gc);
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t) va_arg(ap, unsigned int);
