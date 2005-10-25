@@ -660,6 +660,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	GaimConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
+	int clientid;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
@@ -689,6 +690,9 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_object(user, NULL);
 		}
 	}
+
+	clientid = atoi(cmd->params[3]);
+	user->mobile = (clientid & MSN_CLIENT_CAP_MSNMOBILE);
 
 	msn_user_set_state(user, state);
 	msn_user_update(user);
