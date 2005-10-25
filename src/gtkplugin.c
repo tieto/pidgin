@@ -303,6 +303,7 @@ void gaim_gtk_plugin_dialog_show()
 						    NULL);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_PREFERENCES, 98121);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+	gtk_widget_set_sensitive(pref_button, FALSE);
 	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -316,7 +317,7 @@ void gaim_gtk_plugin_dialog_show()
 					     1, GTK_SORT_ASCENDING);
 
 	update_plugin_list(ls);
-	
+
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
 
 	rend = gtk_cell_renderer_toggle_new();
