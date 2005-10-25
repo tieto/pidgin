@@ -905,7 +905,7 @@ gaim_conversation_write(GaimConversation *conv, const char *who,
 		}
 	}
 
-	if (gaim_conversation_is_logging(conv)) {
+	if (!(flags & GAIM_MESSAGE_NO_LOG) && gaim_conversation_is_logging(conv)) {
 		GList *log;
 
 		if (conv->logs == NULL)
