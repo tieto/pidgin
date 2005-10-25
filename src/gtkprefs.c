@@ -1120,7 +1120,7 @@ static GList *get_available_browsers()
 		{N_("Firebird"), "mozilla-firebird"},
 		{N_("Firefox"), "firefox"},
 		{N_("Galeon"), "galeon"},
-		{N_("Gnome Default"), "gnome-open"},
+		{N_("GNOME Default"), "gnome-open"},
 		{N_("Konqueror"), "kfmclient"},
 		{N_("Mozilla"), "mozilla"},
 		{N_("Netscape"), "netscape"},
