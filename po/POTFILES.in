@@ -65,6 +65,8 @@ src/gtkutils.c
 src/log.c
 src/plugin.c
 src/prefs.c
+src/protocols/bonjour/bonjour.c
+src/protocols/bonjour/bonjour.h
 src/protocols/gg/gg.c
 src/protocols/irc/cmds.c
 src/protocols/irc/dcc_send.c
@@ -115,6 +117,8 @@ src/protocols/napster/napster.c
 src/protocols/novell/nmuser.c
 src/protocols/novell/novell.c
 src/protocols/oscar/oscar.c
+src/protocols/sametime/sametime.c
+src/protocols/simple/simple.c
 src/protocols/silc/buddy.c
 src/protocols/silc/chat.c
 src/protocols/silc/ft.c
