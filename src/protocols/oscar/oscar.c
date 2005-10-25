@@ -5798,11 +5798,17 @@ static int gaim_parse_buddyrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 }
 
 static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GaimConnection *gc = sess->aux_data;
-	OscarData *od = (OscarData *)gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	GaimConnection *gc;
+	OscarData *od;
+	GaimAccount *account;
+	GaimStatus *status;
+	const char *message;
 	va_list ap;
 	fu16_t maxpermits, maxdenies;
+
+	gc = sess->aux_data;
+	od = (OscarData *)gc->proto_data;
+	account = gaim_account_get_account(gc);
 
 	va_start(ap, fr);
 	maxpermits = (fu16_t) va_arg(ap, unsigned int);
@@ -5820,7 +5826,13 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_debug_info("oscar", "buddy list loaded\n");
 
 	aim_clientready(sess, fr->conn);
-	aim_srv_setavailmsg(sess, NULL);
+
+	/* Set our available message based on the current status */
+	status = gaim_account_get_active_status(account);
+	if (gaim_status_is_available(status))
+		message = gaim_status_get_attr_string(status, "message");
+	aim_srv_setavailmsg(sess, message);
+
 	aim_srv_setidle(sess, 0);
 
 	if (od->icq) {
@@ -6450,7 +6462,6 @@ oscar_set_info(GaimConnection *gc, const char *rawinfo)
 {
 	GaimAccount *account = gaim_connection_get_account(gc);
 	OscarData *od = (OscarData *)gc->proto_data;
-	GaimPresence *presence;
 	GaimStatus *status;
 	GaimStatusType *status_type;
 	GaimStatusPrimitive primitive;
@@ -6465,8 +6476,7 @@ oscar_set_info(GaimConnection *gc, const char *rawinfo)
 	char *away = NULL;
 	gsize awaylen = 0;
 
-	presence = gaim_account_get_presence(account);
-	status = gaim_presence_get_active_status(presence);
+	status = gaim_account_get_active_status(account);
 	status_type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(status_type);
 

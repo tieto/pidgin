@@ -847,7 +847,7 @@ faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg)
 	if (!sess || !(conn = aim_conn_findbygroup(sess, 0x0004)))
 		return -EINVAL;
 
-	if (msg != NULL) {
+	if ((msg != NULL) && *msg != '\0') {
 		if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 4 + strlen(msg) + 8)))
 			return -ENOMEM;
 
