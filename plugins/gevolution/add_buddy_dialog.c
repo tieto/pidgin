@@ -28,7 +28,6 @@
 #include "gevolution.h"
 
 #include <stdlib.h>
-#include <bonobo/bonobo-main.h>
 
 enum
 {
