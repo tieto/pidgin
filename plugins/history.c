@@ -43,6 +43,7 @@ static void historize(GaimConversation *c)
 	time_t tm;
 	char day[64];
 	char *header;
+	char *protocol;
 
 	convtype = gaim_conversation_get_type(c);
 	gtkconv = GAIM_GTK_CONVERSATION(c);
@@ -111,6 +112,10 @@ static void historize(GaimConversation *c)
 	if (flags & GAIM_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
 
+	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
+							      gaim_account_get_protocol_name(((GaimLog*)logs->data)->account));
+
 	tm = ((GaimLog *)logs->data)->time;
 	gaim_strftime(day, sizeof(day), "%c", localtime(&tm));
 	header = g_strdup_printf("<b>Conversation with %s on %s:</b><br>", alias, day);
@@ -121,6 +126,9 @@ static void historize(GaimConversation *c)
 	g_free(history);
 
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<hr>", options);
+
+	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml), protocol);
+	g_free(protocol);
 
 	g_object_ref(G_OBJECT(gtkconv->imhtml));
 	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);

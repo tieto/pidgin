@@ -3046,6 +3046,11 @@ void       gtk_imhtml_show_comments    (GtkIMHtml        *imhtml,
 	imhtml->show_comments = show;
 }
 
+const char *
+gtk_imhtml_get_protocol_name(GtkIMHtml *imhtml) {
+	return imhtml->protocol_name;
+}
+
 void
 gtk_imhtml_set_protocol_name(GtkIMHtml *imhtml, const gchar *protocol_name) {
 	if (imhtml->protocol_name)

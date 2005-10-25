@@ -303,6 +303,13 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f);
 void gtk_imhtml_show_comments(GtkIMHtml *imhtml, gboolean show);
 
 /**
+ * Gets the protocol name associated with this GTK+ IM/HTML.
+ *
+ * @param imhtml The GTK+ IM/HTML
+ */
+const char *gtk_imhtml_get_protocol_name(GtkIMHtml *imhtml);
+
+/**
  * Associates a protocol name with a GTK+ IM/HTML.
  *
  * @param imhtml        The GTK+ IM/HTML.

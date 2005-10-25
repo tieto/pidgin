@@ -106,6 +106,7 @@ version 2.0.0:
 		messages to the specified account
 	* gtk_imhtml_clear_formatting()
 	* gtk_imhtml_delete to clear out part of a imhtml buffer
+	* gtk_imhtml_get_protocol_name()
 	* gaim_buddy_icons_get_full_path(), to get the full path of a buddy
 		icon setting
 	* CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
