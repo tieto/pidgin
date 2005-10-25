@@ -314,7 +314,7 @@ if test "x$enable_deprecated" = no; then
 fi
 
 if test "x$GCC" = "xyes"; then
-	CFLAGS="$CFLAGS -Wall -g3"
+	CFLAGS="$CFLAGS -Wall "
 fi
 AC_SUBST(CFLAGS)
 
