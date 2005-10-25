@@ -765,7 +765,6 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 	if (conv != NULL) {
 		im = GAIM_CONV_IM(conv);
 
-		gaim_conversation_set_account(conv, gc->account);
 		gaim_conv_im_set_typing_state(im, state);
 		gaim_conv_im_update_typing(im);
 	}
