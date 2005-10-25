@@ -531,12 +531,17 @@ gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
 
 	if (status_type != NULL)
 	{
-		if (saved_status->message != NULL)
+		if ((saved_status->message != NULL) &&
+			(gaim_status_type_get_attr(status_type, "message")))
+		{
 			gaim_account_set_status(account, gaim_status_type_get_id(status_type),
 									TRUE, "message", saved_status->message, NULL);
+		}
 		else
+		{
 			gaim_account_set_status(account, gaim_status_type_get_id(status_type),
 									TRUE, NULL);
+		}
 	}
 }
 

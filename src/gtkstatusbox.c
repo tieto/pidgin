@@ -631,7 +631,6 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 {
 	GtkGaimStatusBoxItemType type;
 	gchar *title;
-	GList *l;
 	GtkTreeIter iter;
 	char *message;
 	GaimSavedStatus *saved_status;
@@ -660,23 +659,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	gaim_prefs_set_string("/core/status/current", _("Default"));
 
 	/* Set the status for each account */
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
-	{
-		GaimAccount *account = (GaimAccount*)l->data;
-		GaimStatusType *status_type;
-
-		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
-			continue;
-
-		status_type = gaim_account_get_status_type_with_primitive(account, type);
-
-		if (status_type == NULL)
-			continue;
-
-		gaim_account_set_status(account,
-								gaim_status_type_get_id(status_type),
-								TRUE, "message", message, NULL);
-	}
+	gaim_savedstatus_activate(saved_status);
 
 	g_free(title);
 	g_free(message);
