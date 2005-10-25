@@ -1206,14 +1206,40 @@ menu_logging_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	GaimGtkWindow *win = data;
 	GaimConversation *conv;
+	gboolean logging;
 
 	conv = gaim_gtk_conv_window_get_active_conversation(win);
 
 	if (conv == NULL)
 		return;
 
-	gaim_conversation_set_logging(conv,
-	                              gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
+	logging = gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
+
+	if (logging == gaim_conversation_is_logging(conv))
+		return;
+
+	if (logging)
+	{
+		/* Enable logging first so the message below can be logged. */
+		gaim_conversation_set_logging(conv, TRUE);
+
+		gaim_conversation_write(conv, NULL,
+								_("Logging started. Future messages in this conversation will be logged."),
+								conv->logs ? (GAIM_MESSAGE_SYSTEM) :
+								             (GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG),
+								time(NULL));
+	}
+	else
+	{
+		gaim_conversation_write(conv, NULL,
+								_("Logging stopped. Future messages in this conversation will not be logged."),
+								conv->logs ? (GAIM_MESSAGE_SYSTEM) :
+								             (GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG),
+								time(NULL));
+
+		/* Disable the logging second, so that the above message can be logged. */
+		gaim_conversation_set_logging(conv, FALSE);
+	}
 }
 
 static void
