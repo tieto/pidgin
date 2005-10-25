@@ -29,9 +29,10 @@
 #include <howl.h>
 
 #include "dns_sd.h"
+#include "internal.h"
 #include "jabber.h"
 
-#define BONJOUR_GROUP_NAME "Bonjour"
+#define BONJOUR_GROUP_NAME _("Bonjour")
 #define BONJOUR_PROTOCOL_NAME "bonjour"
 #define BONJOUR_ICON_NAME "bonjour"
 

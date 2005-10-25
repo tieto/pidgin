@@ -62,7 +62,7 @@ _connect_to_buddy(GaimBuddy *gb)
 
 	retorno = connect(socket_fd, (struct sockaddr*)&buddy_address, sizeof(struct sockaddr));
 	if (retorno == -1) {
-		perror("connect");
+		gaim_debug_warning("bonjour", "connect error: %s\n", strerror(errno));
 	}
 	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 
@@ -266,7 +266,7 @@ _read_data(gint socket, char **message)
 
 	if (parcial_message_length == -1)
 	{
-		perror("recv");
+		gaim_debug_warning("bonjour", "receive error: %s\n", strerror(errno));
 		if (total_message_length == 0) {
 			return -1;
 		}
@@ -568,7 +568,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
 		{
 				gaim_debug_error("bonjour", "Unable to start a conversation\n");
-				perror("send");
+				gaim_debug_warning("bonjour", "send error: %s\n", strerror(errno));
 				conv_message = g_strdup("Unable to send the message, the conversation couldn't be started.");
 				conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, bb->name, data->account);
 				gaim_conversation_write(conversation, NULL, conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
