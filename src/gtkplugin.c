@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "gtkgaim.h"
 #include "gtkplugin.h"
+#include "gtkpluginpref.h"
 #include "debug.h"
 #include "prefs.h"
 
@@ -38,20 +39,40 @@ static GHashTable *plugin_pref_dialogs = NULL;
 GtkWidget *
 gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin)
 {
-	GaimGtkPluginUiInfo *ui_info;
+	GtkWidget *config = NULL;
 
 	g_return_val_if_fail(plugin != NULL, NULL);
-	g_return_val_if_fail(GAIM_IS_GTK_PLUGIN(plugin), NULL);
 
-	if (plugin->info->ui_info == NULL)
-		return NULL;
+	if (GAIM_IS_GTK_PLUGIN(plugin) && plugin->info->ui_info
+		&& GAIM_GTK_PLUGIN_UI_INFO(plugin)->get_config_frame)
+	{
+		GaimGtkPluginUiInfo *ui_info;
 
-	ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
+		ui_info = GAIM_GTK_PLUGIN_UI_INFO(plugin);
 
-	if (ui_info->get_config_frame == NULL)
-		return NULL;
+		config = ui_info->get_config_frame(plugin);
 
-	return ui_info->get_config_frame(plugin);
+		if (plugin->info->prefs_info
+			&& plugin->info->prefs_info->get_plugin_pref_frame)
+		{
+			gaim_debug_warning("gtkplugin",
+				"Plugin %s contains both, ui_info and "
+				"prefs_info preferences; prefs_info will be "
+				"ignored.", plugin->info->name);
+		}
+	}
+
+	if (config == NULL && plugin->info->prefs_info
+		&& plugin->info->prefs_info->get_plugin_pref_frame)
+	{
+		GaimPluginPrefFrame *frame;
+
+		frame = plugin->info->prefs_info->get_plugin_pref_frame(plugin);
+
+		config = gaim_gtk_plugin_pref_create_frame(frame);
+	}
+
+	return config;
 }
 
 void
@@ -153,9 +174,11 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	}
 
 	gtk_widget_set_sensitive(pref_button,
-				 plug->info->ui_info != NULL &&
-				 GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame != NULL &&
-				 gaim_plugin_is_loaded(plug));
+		gaim_plugin_is_loaded(plug)
+		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+			&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+		 || (plug->info->prefs_info
+			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
 	gdk_window_set_cursor(plugin_dialog->window, NULL);
 
@@ -222,10 +245,13 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		   pdesc ? pdesc : "", pdesc ? "\n\n" : "",
 		   pauth ? pauth : "", pweb ? pweb : "", plug->path);
 
-	gtk_widget_set_sensitive(pref_button, 
-				 plug->info->ui_info != NULL &&  
-				 GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame != NULL &&
-				 gaim_plugin_is_loaded(plug));
+	gtk_widget_set_sensitive(pref_button,
+		gaim_plugin_is_loaded(plug)
+		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+			&& GAIM_GTK_PLUGIN_UI_INFO(plug)->get_config_frame)
+		 || (plug->info->prefs_info
+			&& plug->info->prefs_info->get_plugin_pref_frame)));
+
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	g_value_unset(&val);
 	g_free(buf);

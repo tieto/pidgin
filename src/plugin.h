@@ -106,9 +106,9 @@ struct _GaimPluginInfo
 	gboolean (*unload)(GaimPlugin *plugin);
 	void (*destroy)(GaimPlugin *plugin);
 
-	void *ui_info;
+	void *ui_info; /**< Used only by UI-specific plugins to build a preference screen with a custom UI */
 	void *extra_info;
-	GaimPluginUiInfo *prefs_info;
+	GaimPluginUiInfo *prefs_info; /**< Used by any plugin to display preferences.  If #ui_info has been specified, this will be ignored. */
 	GList *(*actions)(GaimPlugin *plugin, gpointer context);
 };
 
