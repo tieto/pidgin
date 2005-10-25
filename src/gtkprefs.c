@@ -1663,11 +1663,11 @@ away_page()
 			"/gaim/gtk/idle/report", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
-	button = gaim_gtk_prefs_checkbox(_("Set away _when idle"),
+	button = gaim_gtk_prefs_checkbox(_("Change status when _idle"),
 						   "/core/away/away_when_idle", vbox);
 
 	select = gaim_gtk_prefs_labeled_spin_button(vbox,
-			_("_Minutes before setting away:"), "/core/away/mins_before_away",
+			_("_Minutes before changing status:"), "/core/away/mins_before_away",
 			1, 24 * 60, sg);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), select);
@@ -1675,12 +1675,18 @@ away_page()
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-	label = gtk_label_new_with_mnemonic(_("Away m_essage:"));
+	label = gtk_label_new_with_mnemonic(_("Change _status to:"));
 	gtk_size_group_add_widget(sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+
+	/*
+	 * TODO: Need to allow users to choose a GaimSavedStatus
+	 *       to use when going idle-away.  Or figure out a
+	 *       better UI for this.
+	 */
 
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);

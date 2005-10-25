@@ -42,6 +42,9 @@
 
 enum
 {
+	/* A hidden column containing a pointer to the GaimStatusType */
+	STATUS_WINDOW_COLUMN_STATUS,
+
 	STATUS_WINDOW_COLUMN_TITLE,
 	STATUS_WINDOW_COLUMN_TYPE,
 	STATUS_WINDOW_COLUMN_MESSAGE,
@@ -61,6 +64,7 @@ typedef struct
 	GtkWidget *window;
 	GtkListStore *model;
 	GtkWidget *treeview;
+	GtkWidget *use_button;
 	GtkWidget *modify_button;
 	GtkWidget *delete_button;
 } StatusWindow;
@@ -128,6 +132,39 @@ status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 }
 
 static void
+status_window_use_cb(GtkButton *button, StatusWindow *dialog)
+{
+	GtkTreeSelection *selection;
+	GtkTreeIter iter;
+	GaimSavedStatus *saved_status;
+	GList *list;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	if (gtk_tree_selection_count_selected_rows(selection) != 1)
+		/*
+		 * This shouldn't happen because the "Use" button should have
+		 * been grayed out.  Oh well.
+		 */
+		return;
+
+	list = gtk_tree_selection_get_selected_rows(selection, NULL);
+
+	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model),
+								&iter, list->data))
+	{
+		gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
+						   STATUS_WINDOW_COLUMN_STATUS, &saved_status,
+						   -1);
+
+		gaim_savedstatus_activate(saved_status);
+	}
+
+	g_list_foreach(list, (GFunc)gtk_tree_path_free, NULL);
+	g_list_free(list);
+}
+
+static void
 status_window_add_cb(GtkButton *button, gpointer user_data)
 {
 	gaim_gtk_status_editor_show(NULL);
@@ -137,13 +174,9 @@ static void
 status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
-	char *title;
 	GaimSavedStatus *status;
 
-	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-
-	status = gaim_savedstatus_find(title);
-	g_free(title);
+	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_STATUS, &status, -1);
 	gaim_gtk_status_editor_show(status);
 }
 
@@ -211,7 +244,7 @@ static void
 get_selected_helper(GtkTreeModel *model, GtkTreePath *path,
 					GtkTreeIter *iter, gpointer user_data)
 {
-	*((gboolean *)user_data) = TRUE;
+	*((gboolean *)user_data)++;
 }
 #endif
 
@@ -219,16 +252,17 @@ static void
 status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 {
 	StatusWindow *dialog = user_data;
-	gboolean selected = FALSE;
+	int num_selected;
 
 #if GTK_CHECK_VERSION(2,2,0)
-	selected = (gtk_tree_selection_count_selected_rows(sel) > 0);
+	num_selected = gtk_tree_selection_count_selected_rows(sel);
 #else
-	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &selected);
+	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &num_selected);
 #endif
 
-	gtk_widget_set_sensitive(dialog->modify_button, selected);
-	gtk_widget_set_sensitive(dialog->delete_button, selected);
+	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1));
+	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
+	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
 }
 
 static void
@@ -248,6 +282,7 @@ add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_stat
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
+					   STATUS_WINDOW_COLUMN_STATUS, saved_status,
 					   STATUS_WINDOW_COLUMN_TITLE, title,
 					   STATUS_WINDOW_COLUMN_TYPE, type,
 					   STATUS_WINDOW_COLUMN_MESSAGE, message,
@@ -304,6 +339,7 @@ create_saved_status_list(StatusWindow *dialog)
 
 	/* Create the list model */
 	dialog->model = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
+									   G_TYPE_POINTER,
 									   G_TYPE_STRING,
 									   G_TYPE_STRING,
 									   G_TYPE_STRING);
@@ -435,6 +471,17 @@ gaim_gtk_status_window_show(void)
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
+
+	/* Use button */
+	/* TODO: It might be better if the button said "Use" or "Activate" */
+	button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	dialog->use_button = button;
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_window_use_cb), dialog);
 
 	/* Add button */
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
