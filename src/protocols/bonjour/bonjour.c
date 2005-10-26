@@ -181,8 +181,10 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	GaimStatusType *type;
 	int primitive;
 	GaimPresence *presence;
-	const char *message, *bonjour_status;
+	const char *message;
 
+	gc = gaim_account_get_connection(account);
+	bd = gc->proto_data;
 	disconnected = gaim_account_is_disconnected(account);
 	type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(type);
@@ -210,9 +212,7 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	else
 		bd->dns_sd_data->status = g_strdup("dnd");
 
-	gc = gaim_account_get_connection(account);
-	bd = gc->proto_data;
-	bonjour_dns_sd_send_status(bd->dns_sd_data, bonjour_status, message);
+	bonjour_dns_sd_send_status(bd->dns_sd_data, bd->dns_sd_data->status, message);
 }
 
 static GList *
