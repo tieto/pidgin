@@ -73,6 +73,7 @@ bonjour_login(GaimAccount *account, GaimStatus *status)
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimGroup *bonjour_group = NULL;
 	BonjourData *bd = NULL;
+	GaimPresence *presence;
 
 	gc->flags |= GAIM_CONNECTION_HTML;
 	gc->proto_data = g_new(BonjourData, 1);
@@ -86,7 +87,7 @@ bonjour_login(GaimAccount *account, GaimStatus *status)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		gaim_debug_error("bonjour", "Unable to listen to ichat connections");
+		gaim_debug_error("bonjour", "Unable to listen to iChat connections");
 
 		/* Free the data */
 		g_free(bd->jabber_data);
@@ -103,12 +104,20 @@ bonjour_login(GaimAccount *account, GaimStatus *status)
 	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", ""));
 	bd->dns_sd_data->port_p2pj = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
 	bd->dns_sd_data->phsh = g_strdup("");
-	bd->dns_sd_data->status = g_strdup("avail"); /* Check the real status if different from avail */
 	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
 	bd->dns_sd_data->vc = g_strdup("");
 	bd->dns_sd_data->jid = g_strdup("");
 	bd->dns_sd_data->AIM = g_strdup("");
-	bd->dns_sd_data->msg = NULL; /* TODO */
+
+	status = gaim_account_get_active_status(account);
+	presence = gaim_account_get_presence(account);
+	if (gaim_presence_is_available(presence))
+		bd->dns_sd_data->status = g_strdup("avail");
+	else if (gaim_presence_is_idle(presence))
+		bd->dns_sd_data->status = g_strdup("away");
+	else
+		bd->dns_sd_data->status = g_strdup("dnd");
+	bd->dns_sd_data->msg = g_strdup(gaim_status_get_attr_string(status, "message"));
 
 	bd->dns_sd_data->account = account;
 	bonjour_dns_sd_start(bd->dns_sd_data);
