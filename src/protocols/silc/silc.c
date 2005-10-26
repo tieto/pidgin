@@ -245,7 +245,7 @@ silcgaim_login_connected(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-silcgaim_login(GaimAccount *account, GaimStatus *status)
+silcgaim_login(GaimAccount *account)
 {
 	SilcGaim sg;
 	SilcClient client;

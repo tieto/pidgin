@@ -2444,9 +2444,10 @@ static void yahoo_picture_check(GaimAccount *account)
 }
 
 
-static void yahoo_login(GaimAccount *account, GaimStatus *status) {
+static void yahoo_login(GaimAccount *account) {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
+	GaimStatus *status = gaim_account_get_active_status(account);
 	const char *id = gaim_status_get_id(status);
 	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
 

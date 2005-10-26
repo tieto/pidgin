@@ -44,7 +44,7 @@ static void irc_blist_emblems(GaimBuddy *b, const char **se, const char **sw, co
 static GList *irc_status_types(GaimAccount *account);
 static GList *irc_actions(GaimPlugin *plugin, gpointer context);
 /* static GList *irc_chat_info(GaimConnection *gc); */
-static void irc_login(GaimAccount *account, GaimStatus *status);
+static void irc_login(GaimAccount *account);
 static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
 static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error, gpointer data);
@@ -223,7 +223,7 @@ GHashTable *irc_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 	return defaults;
 }
 
-static void irc_login(GaimAccount *account, GaimStatus *status)
+static void irc_login(GaimAccount *account)
 {
 	GaimConnection *gc;
 	struct irc_conn *irc;

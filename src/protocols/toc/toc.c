@@ -125,7 +125,7 @@ static void toc_callback(gpointer, gint, GaimInputCondition);
 /* ok. this function used to take username/password, and return 0 on success.
  * now, it takes username/password, and returns NULL on error or a new gaim_connection
  * on success. */
-static void toc_login(GaimAccount *account, GaimStatus *status)
+static void toc_login(GaimAccount *account)
 {
 	GaimConnection *gc;
 	struct toc_data *tdt;

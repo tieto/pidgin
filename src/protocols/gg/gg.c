@@ -1156,7 +1156,7 @@ static GList *ggp_chat_info(GaimConnection *gc)
 /* }}} */
 
 /* static void ggp_login(GaimAccount *account, GaimStatus *status) {{{ */
-static void ggp_login(GaimAccount *account, GaimStatus *status)
+static void ggp_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	struct gg_login_params *glp = g_new0(struct gg_login_params, 1);
@@ -1174,6 +1174,7 @@ static void ggp_login(GaimAccount *account, GaimStatus *status)
 	glp->password = (char *)gaim_account_get_password(account);
 
 	glp->async = 0;
+	/* TODO: Set the status correctly here. */
 	glp->status = GG_STATUS_AVAIL;
 	glp->tls = 0;
 

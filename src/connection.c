@@ -145,7 +145,7 @@ gaim_connection_new(GaimAccount *account, gboolean regist, const char *password)
 		gaim_debug_info("connection", "Connecting. gc = %p\n", gc);
 
 		gaim_signal_emit(gaim_accounts_get_handle(), "account-connecting", account);
-		prpl_info->login(account, gaim_account_get_active_status(account));
+		prpl_info->login(account);
 	}
 }
 

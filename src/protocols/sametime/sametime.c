@@ -3028,7 +3028,7 @@ static GHashTable *mw_prpl_chat_info_defaults(GaimConnection *gc,
 }
 
 
-static void mw_prpl_login(GaimAccount *acct, GaimStatus *stat);
+static void mw_prpl_login(GaimAccount *acct);
 
 
 static void prompt_host_cancel_cb(GaimConnection *gc) {
@@ -3039,16 +3039,11 @@ static void prompt_host_cancel_cb(GaimConnection *gc) {
 static void prompt_host_ok_cb(GaimConnection *gc, const char *host) {
   if(host && *host) {
     GaimAccount *acct;
-    GaimPresence *pres;
-    GaimStatus *stat;
 
     acct = gaim_connection_get_account(gc);
     gaim_account_set_string(acct, MW_KEY_HOST, host);
 
-    pres = gaim_account_get_presence(acct);
-    stat = gaim_presence_get_active_status(pres);
-
-    mw_prpl_login(acct, stat);
+    mw_prpl_login(acct);
 
   } else {
     prompt_host_cancel_cb(gc);
@@ -3077,7 +3072,7 @@ static void prompt_host(GaimConnection *gc) {
 }
 
 
-static void mw_prpl_login(GaimAccount *account, GaimStatus *stat) {
+static void mw_prpl_login(GaimAccount *account) {
   GaimConnection *gc;
   struct mwGaimPluginData *pd;
 

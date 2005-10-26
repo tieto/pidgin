@@ -375,7 +375,7 @@ static void srv_resolved_cb(struct srv_response *resp, int results, gpointer dat
 
 
 static void
-jabber_login(GaimAccount *account, GaimStatus *status)
+jabber_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	const char *connect_server = gaim_account_get_string(account,

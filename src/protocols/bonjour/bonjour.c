@@ -68,11 +68,12 @@ bonjour_removeallfromlocal(GaimConnection *gc)
 }
 
 void
-bonjour_login(GaimAccount *account, GaimStatus *status)
+bonjour_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
 	GaimGroup *bonjour_group = NULL;
 	BonjourData *bd = NULL;
+	GaimStatus *status;
 	GaimPresence *presence;
 
 	gc->flags |= GAIM_CONNECTION_HTML;

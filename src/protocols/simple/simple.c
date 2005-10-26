@@ -1244,7 +1244,7 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 	}
 }
 
-static void simple_login(GaimAccount *account, GaimStatus *status)
+static void simple_login(GaimAccount *account)
 {
 	GaimConnection *gc;
 	struct simple_account_data *sip;
@@ -1275,6 +1275,7 @@ static void simple_login(GaimAccount *account, GaimStatus *status)
 
 	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
 
+	/* TODO: Set the status correctly. */
 	sip->status = g_strdup("available");
 
 	if(!gaim_account_get_bool(account, "useproxy", FALSE)) {

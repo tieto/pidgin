@@ -1756,22 +1756,14 @@ static void oscar_login_connect(gpointer data, gint source, GaimInputCondition c
 }
 
 static void
-oscar_login(GaimAccount *account, GaimStatus *status)
+oscar_login(GaimAccount *account)
 {
 	aim_session_t *sess;
 	aim_conn_t *conn;
 	GaimConnection *gc = gaim_account_get_connection(account);
 	OscarData *od = gc->proto_data = g_new0(OscarData, 1);
-	GaimStatusType *status_type;
-	GaimStatusPrimitive primitive;
-
-	status_type = gaim_status_get_type(status);
-	primitive = gaim_status_type_get_primitive(status_type);
 
 	gaim_debug_misc("oscar", "oscar_login: gc = %p\n", gc);
-	
-	if (primitive == GAIM_STATUS_OFFLINE)
-		return;
 
 	if (!aim_snvalid(gaim_account_get_username(account))) {
 		gchar *buf;
@@ -1791,7 +1783,7 @@ oscar_login(GaimAccount *account, GaimStatus *status)
 	sess = g_new0(aim_session_t, 1);
 	aim_session_init(sess, TRUE);
 	/*
-	 * We need an immediate queue because we don't use a while-loop 
+	 * We need an immediate queue because we don't use a while-loop
 	 * to see if things need to be sent.
 	 */
 	aim_tx_setenqueue(sess, AIM_TX_IMMEDIATE, NULL);
