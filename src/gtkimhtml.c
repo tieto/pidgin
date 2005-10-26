@@ -381,7 +381,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 	}
 }
 
-static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data)
+static void gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gpointer user_data)
 {
 	GdkRectangle rect;
 	int xminus;
@@ -403,7 +403,7 @@ static gboolean gtk_size_allocate_cb(GtkIMHtml *widget, GtkAllocation *alloc, gp
 	}
 
 	widget->old_rect = rect;
-	return FALSE;
+	return;
 }
 
 static gint
@@ -3152,22 +3152,19 @@ void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
 
 	if(image->width > width || image->height > height){
+		double ratio_w, ratio_h, ratio;
+		int new_h, new_w;
 		GdkPixbuf *new_image = NULL;
-		float factor;
-		int new_width = image->width, new_height = image->height;
 
-		if(image->width > (width - 2)){
-			factor = (float)(width)/image->width;
-			new_width = width;
-			new_height = image->height * factor;
-		}
-		if(new_height >= (height - 2)){
-			factor = (float)(height)/new_height;
-			new_height = height;
-			new_width = new_width * factor;
-		}
+		ratio_w = ((double)width - 2) / image->width;
+		ratio_h = ((double)height - 2) / image->height;
 
-		new_image = gdk_pixbuf_scale_simple(image->pixbuf, new_width, new_height, GDK_INTERP_BILINEAR);
+		ratio = (ratio_w < ratio_h) ? ratio_w : ratio_h;
+
+		new_w = (int)(image->width * ratio);
+		new_h = (int)(image->height * ratio);
+
+		new_image = gdk_pixbuf_scale_simple(image->pixbuf, new_w, new_h, GDK_INTERP_BILINEAR);
 		gtk_image_set_from_pixbuf(image->image, new_image);
 		g_object_unref(G_OBJECT(new_image));
 	}
