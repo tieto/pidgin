@@ -14,7 +14,7 @@
  *
  * Copyright 2000 Matthew Ellis <m.t.ellis@bigfoot.com>
  */
-#include "stdafx.h"
+#include <windows.h>
 
 #ifndef IDANI_OPEN
 #define IDANI_OPEN 1
