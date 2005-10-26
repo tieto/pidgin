@@ -200,10 +200,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 				    -1);
 		g_free(desc);
 		g_free(error);
-	} else {
-		g_snprintf(buf, sizeof(buf),
-				   "<span size=\"larger\">%s %s</span>\n\n%s",
-				   name, plug->info->version, description);
+		gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	}
 	g_free(name);
 	g_free(description);
@@ -213,7 +210,6 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
  			    0, gaim_plugin_is_loaded(plug),
 			    -1);
 
-	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
 	gtk_tree_path_free(path);
 	gaim_gtk_plugins_save();
 }
