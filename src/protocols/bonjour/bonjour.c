@@ -202,13 +202,12 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	 *   -away ("dnd")
 	 * Each of them can have an optional message.
 	 */
-	if (primitive == GAIM_STATUS_AVAILABLE) {
-		bonjour_status = "avail";
-	} else if (gaim_presence_is_idle(presence)) {
-		bonjour_status = "away";
-	} else {
-		bonjour_status = "dnd";
-	}
+	if (gaim_presence_is_available(presence))
+		bd->dns_sd_data->status = g_strdup("avail");
+	else if (gaim_presence_is_idle(presence))
+		bd->dns_sd_data->status = g_strdup("away");
+	else
+		bd->dns_sd_data->status = g_strdup("dnd");
 
 	gc = gaim_account_get_connection(account);
 	bd = gc->proto_data;
