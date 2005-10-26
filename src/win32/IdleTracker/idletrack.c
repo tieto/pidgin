@@ -40,19 +40,12 @@ static DWORD* setup_shared_mem() {
 	BOOL fInit;
 
 	/* Set up the shared memory. */
-	/*hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,  // use paging file
-				       NULL,                // no security attributes
-				       PAGE_READWRITE,      // read/write access
-				       0,                   // size: high 32-bits
-				       sizeof(DWORD),       // size: low 32-bits
-				       "timermem");         // name of map object
-	*/
-	hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF,
-								   NULL,
-								   PAGE_READWRITE,
-								   0,
-								   sizeof(DWORD),
-								   "timermem");
+	hMapObject = CreateFileMapping((HANDLE) 0xFFFFFFFF, /* use paging file        */
+								   NULL,                /* no security attributes */
+								   PAGE_READWRITE,      /* read/write access      */
+								   0,                   /* size: high 32-bits     */
+								   sizeof(DWORD),       /* size: low 32-bits      */
+								   "timermem");         /* name of map object     */
 
 	if (hMapObject == NULL)
 		return NULL;
@@ -61,17 +54,11 @@ static DWORD* setup_shared_mem() {
 	fInit = (GetLastError() != ERROR_ALREADY_EXISTS);
 
 	/* Get a pointer to the file-mapped shared memory. */
-	/*lastTime = (DWORD*) MapViewOfFile(hMapObject,     // object to map view of
-	 *				  FILE_MAP_WRITE, // read/write access
-	 *				  0,              // high offset:  map from
-	 *				  0,              // low offset:   beginning
-	 *				  0);             // default: map entire file
-	 */
-	lastTime = (DWORD*) MapViewOfFile(hMapObject,
-									  FILE_MAP_WRITE,
-									  0,
-									  0,
-									  0);
+	lastTime = (DWORD*) MapViewOfFile(hMapObject,     /* object to map view of    */
+									  FILE_MAP_WRITE, /* read/write access        */
+									  0,              /* high offset:  map from   */
+									  0,              /* low offset:   beginning  */
+									  0);             /* default: map entire file */
 
 	if (lastTime == NULL)
 		return NULL;
