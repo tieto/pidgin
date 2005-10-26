@@ -206,7 +206,6 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 		body = g_strconcat("<font face='", font_face, "' size='", font_size, "' color='", ichat_text_color,
 							"' back='", ichat_balloon_color, "'>", html_body, "</font>", NULL);
 	}
-	g_free(font_size);
 
 	/* Send the message to the UI */
 	serv_got_im(connection, gb->name, body, 0, time(NULL));
