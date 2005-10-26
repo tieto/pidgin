@@ -52,7 +52,7 @@ _connect_to_buddy(GaimBuddy *gb)
 	gint retorno = 0;
 	struct sockaddr_in buddy_address;
 
-	// Create a socket and make it non-blocking
+	/* Create a socket and make it non-blocking */
 	socket_fd = socket(PF_INET, SOCK_STREAM, 0);
 
 	buddy_address.sin_family = PF_INET;
@@ -69,62 +69,47 @@ _connect_to_buddy(GaimBuddy *gb)
 	return socket_fd;
 }
 
-char *
+const char *
 _font_size_gaim_to_ichat(int size)
 {
-	GString *result = NULL;
-
-	switch(size) {
-		case 1 :
-			result = g_string_new("8");
-			break;
-		case 2 :
-			result = g_string_new("10");
-			break;
-		case 3 :
-			result = g_string_new("12");
-			break;
-		case 4 :
-			result = g_string_new("14");
-			break;
-		case 5 :
-			result = g_string_new("17");
-			break;
-		case 6 :
-			result = g_string_new("21");
-			break;
-		case 7 :
-			result = g_string_new("24");
-			break;
-		default:
-			result = g_string_new("12");
+	switch (size) {
+		case 1:
+			return "8";
+		case 2:
+			return "10";
+		case 3:
+			return "12";
+		case 4:
+			return "14";
+		case 5:
+			return "17";
+		case 6:
+			return "21";
+		case 7:
+			return "24";
 	}
 
-	return g_string_free(result, FALSE);
+	return "12";
 }
 
-char *
+const char *
 _font_size_ichat_to_gaim(int size)
 {
-	GString *result = NULL;
-
 	if (size > 24) {
-		result = g_string_new("7");
+		return "7";
 	} else if (size >= 21) {
-		result = g_string_new("6");
+		return "6";
 	} else if (size >= 17) {
-		result = g_string_new("5");
+		return "5";
 	} else if (size >= 14) {
-		result = g_string_new("4");
+		return "4";
 	} else if (size >= 12) {
-		result = g_string_new("3");
+		return "3";
 	} else if (size >= 10) {
-		result = g_string_new("2");
-	} else {
-		result = g_string_new("1");
+		return "2";
 	}
 
-	return g_string_free(result, FALSE);
+	return "1";
 }
 void
 _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection, GaimBuddy *gb)
@@ -146,7 +131,7 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 	gint garbage = -1;
 	xmlnode *message_node = NULL;
 
-	// Parsing of the message
+	/* Parsing of the message */
 	message_node = xmlnode_from_str(message, strlen(message));
 	if (message_node == NULL) {
 		return;
@@ -170,19 +155,19 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 			ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 			html_body_font_node = xmlnode_get_child(html_body_node, "font");
 			if (html_body_font_node != NULL)
-			{ // Types of messages sent by iChat
+			{ /* Types of messages sent by iChat */
 				font_face = xmlnode_get_attrib(html_body_font_node, "face");
-				// The absolute iChat font sizes should be converted to 1..7 range
+				/* The absolute iChat font sizes should be converted to 1..7 range */
 				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
 				{
-					font_size = _font_size_ichat_to_gaim(atoi(font_size)); //<-- This call will probably leak memory
+					font_size = _font_size_ichat_to_gaim(atoi(font_size));
 				}
 				font_color = xmlnode_get_attrib(html_body_font_node, "color");
 				html_body = xmlnode_get_data(html_body_font_node);
 				if (html_body == NULL)
 				{
-					// This is the kind of formated messages that Gaim creates
+					/* This is the kind of formated messages that Gaim creates */
 					html_body = xmlnode_to_str(html_body_font_node, &garbage);
 				}
 			} else {
@@ -203,7 +188,7 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 		}
 		if (xmlnode_get_child(events_node, "id") != NULL)
 		{
-			// The user is just typing
+			/* The user is just typing */
 			xmlnode_free(message_node);
 			g_free(body);
 			g_free(html_body);
@@ -211,7 +196,7 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 		}
 	}
 
-	// Compose the message
+	/* Compose the message */
 	if (isHTML)
 	{
 		if (font_face == NULL) font_face = "Helvetica";
@@ -221,11 +206,12 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 		body = g_strconcat("<font face='", font_face, "' size='", font_size, "' color='", ichat_text_color,
 							"' back='", ichat_balloon_color, "'>", html_body, "</font>", NULL);
 	}
+	g_free(font_size);
 
-	// Send the message to the UI
+	/* Send the message to the UI */
 	serv_got_im(connection, gb->name, body, 0, time(NULL));
 
-	// Free all the strings and nodes (the attributes are freed with their nodes)
+	/* Free all the strings and nodes (the attributes are freed with their nodes) */
 	xmlnode_free(message_node);
 	g_free(body);
 	g_free(html_body);
@@ -257,7 +243,7 @@ _read_data(gint socket, char **message)
 	gint total_message_length = 0;
 	gint parcial_message_length = 0;
 
-	// Read chunks of 512 bytes till the end of the data
+	/* Read chunks of 512 bytes till the end of the data */
 	while ((parcial_message_length = recv(socket, parcial_data, 512, 0)) > 0)
 	{
 			g_string_append_len(data, parcial_data, parcial_message_length);
@@ -312,11 +298,11 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
 	gboolean closed_conversation = FALSE;
 
-	// Read the data from the socket
+	/* Read the data from the socket */
 	if ((message_length = _read_data(socket, &message)) == -1) {
-		// There have been an error reading from the socket
+		/* There have been an error reading from the socket */
 		return;
-	} else if (message_length == 0) { // The other end has closed the socket
+	} else if (message_length == 0) { /* The other end has closed the socket */
 		closed_conversation = TRUE;
 	} else {
 		message[message_length] = '\0';
@@ -327,8 +313,8 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		}
 	}
 
-	// Check if the start of the doctype has been received, if not check that the current
-	// data is the doctype
+	/* Check if the start of the doctype has been received, if not check that the current */
+	/* data is the doctype */
 	if (!(bb->conversation->start_step_one))
 	{
 		if (g_str_has_prefix(message, DOCTYPE_DECLARATION))
@@ -337,14 +323,14 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		}
 	}
 
-	// Check if the start of the stream has been received, if not check that the current
-	// data is the start of the stream
+	/* Check if the start of the stream has been received, if not check that the current */
+	/* data is the start of the stream */
 	if (!(bb->conversation->start_step_two))
 	{
 		if (g_str_has_suffix(message, STREAM_START)) {
 			bb->conversation->start_step_two = TRUE;
 
-			// If we haven't done it yet, we have to sent the start of the stream to the other buddy
+			/* If we haven't done it yet, we have to sent the start of the stream to the other buddy */
 			if (!(bb->conversation->stream_started)) {
 				if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1) {
 					gaim_debug_error("bonjour", "Unable to start a conversation with %s\n", bb->name);
@@ -354,9 +340,9 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 		return;
 	}
 
-	// Check that this is not the end of the conversation
+	/* Check that this is not the end of the conversation */
 	if (g_str_has_prefix(message, STREAM_END) || (closed_conversation == TRUE)) {
-		// Close the socket, clear the watcher and free memory
+		/* Close the socket, clear the watcher and free memory */
 		if (bb->conversation != NULL) {
 			close(bb->conversation->socket);
 			gaim_input_remove(bb->conversation->watcher_id);
@@ -365,12 +351,12 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 			bb->conversation = NULL;
 		}
 
-		// Inform the user that the conversation has been closed
+		/* Inform the user that the conversation has been closed */
 		conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, gb->name, account);
 		closed_conv_message = g_strconcat(gb->name, " has closed the conversation.", NULL);
 		gaim_conversation_write(conversation, NULL, closed_conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
 	} else {
-		// Parse the message to get the data and send to the ui
+		/* Parse the message to get the data and send to the ui */
 		_jabber_parse_and_write_message_to_ui(message, account->gc, gb);
 	}
 }
@@ -379,14 +365,14 @@ void
 _server_socket_handler(gpointer data, int server_socket, GaimInputCondition condition)
 {
 	GaimBuddy *gb = NULL;
-	struct sockaddr_in their_addr; // connector's address information
+	struct sockaddr_in their_addr; /* connector's address information */
 	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
 	BonjourBuddy *bb = NULL;
 	char *address_text = NULL;
 	GaimBuddyList *bl = gaim_get_blist();
 
-	//Check that it is a read condition
+	/* Check that it is a read condition */
 	if (condition != GAIM_INPUT_READ) {
 		return;
 	}
@@ -397,7 +383,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	}
 	fcntl(client_socket, F_SETFL, O_NONBLOCK);
 
-	// Look for the buddy that has open the conversation and fill information
+	/* Look for the buddy that has open the conversation and fill information */
 	address_text = inet_ntoa(their_addr.sin_addr);
 	gb = (GaimBuddy*)g_hash_table_find(bl->buddies, _check_buddy_by_address, address_text);
 	if (gb == NULL)
@@ -408,7 +394,7 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 	}
 	bb = (BonjourBuddy*)gb->proto_data;
 
-	// Check if the conversation has been previously started
+	/* Check if the conversation has been previously started */
 	if (bb->conversation == NULL)
 	{
 		bb->conversation = g_new(BonjourJabberConversation, 1);
@@ -420,12 +406,12 @@ _server_socket_handler(gpointer data, int server_socket, GaimInputCondition cond
 		bb->conversation->message_id = 1;
 
 		if (bb->conversation->stream_started == FALSE) {
-			// Start the stream
+			/* Start the stream */
 			send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0);
 			bb->conversation->stream_started = TRUE;
 		}
 
-		// Open a watcher for the client socket
+		/* Open a watcher for the client socket */
 		bb->conversation->watcher_id = gaim_input_add(client_socket, GAIM_INPUT_READ,
 													_client_socket_handler, gb);
 	} else {
@@ -440,7 +426,7 @@ bonjour_jabber_start(BonjourJabber *data)
 	int yes = 1;
 	char *error_message = NULL;
 
-	// Open a listening socket for incoming conversations
+	/* Open a listening socket for incoming conversations */
 	if ((data->socket = socket(PF_INET, SOCK_STREAM, 0)) < 0)
 	{
 		gaim_debug_error("bonjour", "Cannot get socket\n");
@@ -450,7 +436,7 @@ bonjour_jabber_start(BonjourJabber *data)
 		return -1;
 	}
 
-	// Make the socket reusable
+	/* Make the socket reusable */
 	if (setsockopt(data->socket, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) != 0)
 	{
 		gaim_debug_error("bonjour", "Cannot make socket reusable\n");
@@ -482,14 +468,16 @@ bonjour_jabber_start(BonjourJabber *data)
 		return -1;
 	}
 
-	//data->socket = gaim_network_listen(data->port);
+#if 0
+	data->socket = gaim_network_listen(data->port);
 
-	//if (data->socket == -1)
-	//{
-	//	gaim_debug_error("bonjour", "No se ha podido crear el socket\n");
-	//}
+	if (data->socket == -1)
+	{
+		gaim_debug_error("bonjour", "No se ha podido crear el socket\n");
+	}
+#endif
 
-	// Open a watcher in the socket we have just opened
+	/* Open a watcher in the socket we have just opened */
 	data->watcher_id = gaim_input_add(data->socket, GAIM_INPUT_READ, _server_socket_handler, data);
 
 	return 0;
@@ -520,7 +508,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 
 	bb = (BonjourBuddy *)gb->proto_data;
 
-	// Enclose the message from the UI within a "font" node
+	/* Enclose the message from the UI within a "font" node */
 	message_body_node = xmlnode_new("body");
 	stripped_message = gaim_markup_strip_html(body);
 	xmlnode_insert_data(message_body_node, stripped_message, strlen(stripped_message));
@@ -548,7 +536,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 
 	message = xmlnode_to_str(message_node, &message_length);
 
-	// Check if there is a previously open conversation
+	/* Check if there is a previously open conversation */
 	if (bb->conversation == NULL)
 	{
 		bb->conversation = g_new(BonjourJabberConversation, 1);
@@ -561,10 +549,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 														GAIM_INPUT_READ, _client_socket_handler, gb);
 	}
 
-	// Check if the stream for the conversation has been started
+	/* Check if the stream for the conversation has been started */
 	if (bb->conversation->stream_started == FALSE)
 	{
-		// Start the stream
+		/* Start the stream */
 		if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
 		{
 				gaim_debug_error("bonjour", "Unable to start a conversation\n");
@@ -575,7 +563,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 				close(bb->conversation->socket);
 				gaim_input_remove(bb->conversation->watcher_id);
 
-				// Free all the data related to the conversation
+				/* Free all the data related to the conversation */
 				g_free(bb->conversation->buddy_name);
 				g_free(bb->conversation);
 				bb->conversation = NULL;
@@ -585,7 +573,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		bb->conversation->stream_started = TRUE;
 	}
 
-	// Send the message
+	/* Send the message */
 	if (_send_data(bb->conversation->socket, message) == -1)
 		return -10000;
 
@@ -599,14 +587,14 @@ bonjour_jabber_close_conversation(BonjourJabber *data, GaimBuddy *gb)
 
 	if (bb->conversation != NULL)
 	{
-		// Send the end of the stream to the other end of the conversation
+		/* Send the end of the stream to the other end of the conversation */
 		send(bb->conversation->socket, STREAM_END, strlen(STREAM_END), 0);
 
-		// Close the socket and remove the watcher
+		/* Close the socket and remove the watcher */
 		close(bb->conversation->socket);
 		gaim_input_remove(bb->conversation->watcher_id);
 
-		// Free all the data related to the conversation
+		/* Free all the data related to the conversation */
 		g_free(bb->conversation->buddy_name);
 		g_free(bb->conversation);
 		bb->conversation = NULL;
@@ -621,11 +609,11 @@ bonjour_jabber_stop(BonjourJabber *data)
 	GSList *buddies;
 	GSList *l;
 
-	// Close the server socket and remove all the watcher
+	/* Close the server socket and remove all the watcher */
 	close(data->socket);
 	gaim_input_remove(data->watcher_id);
 
-	// Close all the sockets and remove all the watchers after sending end streams
+	/* Close all the sockets and remove all the watchers after sending end streams */
 	if (data->account->gc != NULL)
 	{
 		buddies = gaim_find_buddies(data->account, data->account->username);
