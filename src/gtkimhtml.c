@@ -512,7 +512,8 @@ gtk_imhtml_tip (gpointer data)
 	return FALSE;
 }
 
-gboolean gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
+static gboolean
+gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 {
 	GtkTextIter iter;
 	GdkWindow *win = event->window;
