@@ -3280,6 +3280,10 @@ buddy_cb_common(GaimBuddy *buddy, GaimConversation *conv, gboolean is_buddy)
 	g_return_if_fail(buddy != NULL);
 	g_return_if_fail(conv != NULL);
 
+	/* Do nothing if the buddy does not belong to the conv's account */
+	if (gaim_buddy_get_account(buddy) != gaim_conversation_get_account(conv))
+		return;
+
 	/* This is safe because this callback is only used in chats, not IMs. */
 	model = gtk_tree_view_get_model(GTK_TREE_VIEW(GAIM_GTK_CONVERSATION(conv)->u.chat->list));
 
