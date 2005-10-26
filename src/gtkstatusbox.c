@@ -34,6 +34,13 @@
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
 
+/*
+ * TODO: The preference "/core/status/current" contains the name of
+ *       the GaimSavedStatus that is the current master status of all
+ *       enabled accounts.  We need to monitor this preference and
+ *       update ourself when the pref changes.
+ */
+
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
