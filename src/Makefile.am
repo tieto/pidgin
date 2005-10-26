@@ -13,7 +13,6 @@ EXTRA_DIST = \
 		win32/libc_interface.h \
 		win32/libc_internal.h \
 		win32/resource.h \
-		win32/stdafx.h \
 		win32/untar.c \
 		win32/untar.h \
 		win32/wgaimerror.h \

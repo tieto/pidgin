@@ -35,7 +35,6 @@
 #include "debug.h"
 #include "notify.h"
 
-#include "stdafx.h"
 #include "resource.h"
 #include "idletrack.h"
 #include "zlib.h"
