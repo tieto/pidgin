@@ -30,13 +30,17 @@
 /**************************************************************************/
 
 struct stun_nattype {
-	gint status;	// 0 - unknown (no STUN server reachable), 1 - discovering, 2 - discovered
-	gint type;	// 0 - public ip
-			// 1 - NAT (unknown type)
-			// 2 - full cone
-			// 3 - restricted cone
-			// 4 - port restricted cone
-			// 5 - symmetric
+	gint status;	/* 0 - unknown (no STUN server reachable) */
+			/* 1 - discovering                        */
+			/* 2 - discovered                         */
+
+	gint type;	/* 0 - public ip                          */
+			/* 1 - NAT (unknown type)                 */
+			/* 2 - full cone                          */
+			/* 3 - restricted cone                    */
+			/* 4 - port restricted cone               */
+			/* 5 - symmetric                          */
+
 	char publicip[16];
 };
 	

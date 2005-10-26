@@ -21,7 +21,7 @@
 #include "buddy.h"
 #include "debug.h"
 
-// Private data
+/* Private data */
 
 typedef struct _dns_sd_packet
 {
@@ -40,9 +40,9 @@ typedef struct _dns_sd_packet
 	gchar *AIM;
 } dns_sd_packet;
 
-// End private data
+/* End private data */
 
-// Private functions
+/* Private functions */
 
 static sw_result HOWL_API
 _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
@@ -50,7 +50,7 @@ _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 {
 	gaim_debug_warning("bonjour", "_publish_reply --> Start\n");
 
-	// Check the answer from the mDNS daemon
+	/* Check the answer from the mDNS daemon */
 	switch (status)
 	{
 		case SW_DISCOVERY_PUBLISH_STARTED :
@@ -101,18 +101,18 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 
 	sw_discovery_cancel(discovery, oid);
 
-	// Get the ip as a string
+	/* Get the ip as a string */
 	ip = malloc(address_length);
 	sw_ipv4_address_name(address, ip, address_length);
 
-	// Obtain the parameters from the text_record
+	/* Obtain the parameters from the text_record */
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0'))
 	{
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
 		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY)
 		{
-			// Compare the keys with the possible ones and save them on
-			// the appropiate place of the buddy_list
+			/* Compare the keys with the possible ones and save them on */
+			/* the appropiate place of the buddy_list */
 			if (strcmp(key, "txtvers") == 0) {
 				txtvers = g_strdup(value);
 			} else if (strcmp(key, "version") == 0) {
@@ -141,8 +141,8 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 		}
 	}
 
-	// Put the parameters of the text_record in a buddy and add the buddy to
-	// the buddy list
+	/* Put the parameters of the text_record in a buddy and add the buddy to */
+	/* the buddy list */
 	buddy = bonjour_buddy_new((gchar *)name, first, port_p2pj, phsh,
 							  status, email, last, jid, AIM, vc, ip, msg);
 
@@ -154,7 +154,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	/* Add or update the buddy in our buddy list */
 	bonjour_buddy_add_to_gaim(account, buddy);
 
-	// Free all the temporal strings
+	/* Free all the temporal strings */
 	g_free(txtvers);
 	g_free(version);
 	g_free(first);
@@ -199,7 +199,7 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			gaim_debug_warning("bonjour", "_browser_reply --> Remove domain\n");
 			break;
 		case SW_DISCOVERY_BROWSE_ADD_SERVICE:
-			// A new peer has join the network and uses iChat bonjour
+			/* A new peer has join the network and uses iChat bonjour */
 			gaim_debug_info("bonjour", "_browser_reply --> Add service\n");
 			if (g_ascii_strcasecmp(name, account->username) != 0)
 			{
@@ -235,7 +235,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
 
-	// Fill the data for the service
+	/* Fill the data for the service */
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
 	{
 		gaim_debug_error("bonjour", "Unable to initialize the data for the mDNS.");
@@ -246,7 +246,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	sw_text_record_add_key_and_string_value(dns_data, "version", data->version);
 	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
 	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
-	// sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", itoa(data->port_p2pj));
+	/* sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", itoa(data->port_p2pj)); */
 	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", BONJOUR_DEFAULT_PORT);
 	sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
 	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
@@ -256,7 +256,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	sw_text_record_add_key_and_string_value(dns_data, "jid", data->jid);
 	sw_text_record_add_key_and_string_value(dns_data, "AIM", data->AIM);
 
-	// Publish the service
+	/* Publish the service */
 	switch (type)
 	{
 		case PUBLISH_START:
@@ -275,7 +275,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 		return -1;
 	}
 
-	// Free the memory used by temp data
+	/* Free the memory used by temp data */
 	sw_text_record_fina(dns_data);
 
 	return 0;
@@ -287,7 +287,7 @@ _dns_sd_handle_packets(gpointer data, gint source, GaimInputCondition condition)
 	sw_discovery_read_socket(*((sw_discovery*)data));
 }
 
-// End private functions
+/* End private functions */
 
 /**
  * Allocate space for the dns-sd data.
@@ -326,8 +326,8 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
 	data->status = g_strdup(status);
 	data->msg = g_strdup(status_message);
 
-	// Update our text record with the new status
-	_dns_sd_publish(data, PUBLISH_UPDATE); // <--We must control the errors
+	/* Update our text record with the new status */
+	_dns_sd_publish(data, PUBLISH_UPDATE); /* <--We must control the errors */
 }
 
 /**
@@ -345,7 +345,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	account = data->account;
 	gc = gaim_account_get_connection(account);
 
-	// Initilizations of the dns-sd data and session
+	/* Initilizations of the dns-sd data and session */
 	data->session = malloc(sizeof(sw_discovery));
 	if (sw_discovery_init(data->session) != SW_OKAY)
 	{
@@ -353,10 +353,10 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 		return;
 	}
 
-	// Publish our bonjour IM client at the mDNS daemon
-	_dns_sd_publish(data, PUBLISH_START); // <--We must control the errors
+	/* Publish our bonjour IM client at the mDNS daemon */
+	_dns_sd_publish(data, PUBLISH_START); /* <--We must control the errors */
 
-	// Advise the daemon that we are waiting for connections
+	/* Advise the daemon that we are waiting for connections */
 	if (sw_discovery_browse(*(data->session), 0, ICHAT_SERVICE, NULL, _browser_reply,
 			data->account, &session_id) != SW_OKAY)
 	{
@@ -364,8 +364,8 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 		return;
 	}
 
-	// Get the socket that communicates with the mDNS daemon and bind it to a
-	// callback that will handle the dns_sd packets
+	/* Get the socket that communicates with the mDNS daemon and bind it to a */
+	/* callback that will handle the dns_sd packets */
 	dns_sd_socket = sw_discovery_socket(*(data->session));
 	gc->inpa = gaim_input_add(dns_sd_socket, GAIM_INPUT_READ,
 									_dns_sd_handle_packets, data->session);

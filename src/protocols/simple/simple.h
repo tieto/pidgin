@@ -67,7 +67,7 @@ struct simple_account_data {
 	int cseq;
 	time_t reregister;
 	time_t republish;
-	int registerstatus; // 0 nothing, 1 first registration send, 2 auth received, 3 registered
+	int registerstatus; /* 0 nothing, 1 first registration send, 2 auth received, 3 registered */
 	struct sip_auth registrar;
 	struct sip_auth proxy;
 	int listenfd;
@@ -106,7 +106,7 @@ typedef gboolean (*TransCallback) (struct simple_account_data *, struct sipmsg *
 struct transaction {
 	time_t time;
 	int retries;
-	int transport; // 0 = tcp, 1 = udp
+	int transport; /* 0 = tcp, 1 = udp */
 	int fd;
 	gchar *cseq;
 	struct sipmsg *msg;

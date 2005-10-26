@@ -26,7 +26,7 @@
 #include <glib.h>
 
 struct sipmsg {
-	int response; // 0 means request, otherwise response code
+	int response; /* 0 means request, otherwise response code */
 	gchar *method;
 	gchar *target;
 	GSList *headers;

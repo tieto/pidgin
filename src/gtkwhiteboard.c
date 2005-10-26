@@ -69,9 +69,9 @@ GdkColor			DefaultColor[PALETTE_NUM_COLORS];
 
 static gboolean			LocalShutdownRequest;
 
-static int			LastX;			// Tracks last position of the mouse when drawing
+static int			LastX;			/* Tracks last position of the mouse when drawing */
 static int			LastY;
-static int			MotionCount;		// Tracks how many brush motions made
+static int			MotionCount;		/* Tracks how many brush motions made */
 static int			BrushState		= BRUSH_STATE_UP;
 
 static GaimWhiteboardUiOps 	ui_ops			=

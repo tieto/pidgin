@@ -59,8 +59,8 @@ typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHA)(HWND, int, HANDLE, DWORD, LPSTR
 typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWSTR);
 
 typedef enum {
-    SHGFP_TYPE_CURRENT  = 0,   // current value for user, verify it exists
-    SHGFP_TYPE_DEFAULT  = 1,   // default value, may not exist
+    SHGFP_TYPE_CURRENT  = 0,   /* current value for user, verify it exists */
+    SHGFP_TYPE_DEFAULT  = 1,   /* default value, may not exist */
 } SHGFP_TYPE;
 
 /*
