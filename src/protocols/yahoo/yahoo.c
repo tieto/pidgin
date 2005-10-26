@@ -942,6 +942,7 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
 		gaim_prpl_got_user_status(gaim_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+		/* TODO: Shouldn't we remove the buddy from our local list? */
 	}
 }
 
