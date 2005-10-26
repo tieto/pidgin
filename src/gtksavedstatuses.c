@@ -474,7 +474,8 @@ gaim_gtk_status_window_show(void)
 
 	/* Use button */
 	/* TODO: It might be better if the button said "Use" or "Activate" */
-	button = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
+										  GAIM_BUTTON_HORIZONTAL);
 	dialog->use_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
