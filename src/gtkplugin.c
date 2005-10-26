@@ -225,8 +225,14 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	GValue val = { 0, };
 	GaimPlugin *plug;
 
-	if (! gtk_tree_selection_get_selected (sel, &model, &iter))
+	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
+	{
+		/* Clear the old plugin details */
+		gtk_label_set_markup(GTK_LABEL(plugin_details), "");
+		gtk_widget_set_sensitive(pref_button, FALSE);
 		return;
+	}
+
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
 
