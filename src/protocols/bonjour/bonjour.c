@@ -181,7 +181,7 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	GaimStatusType *type;
 	int primitive;
 	GaimPresence *presence;
-	const char *message;
+	const char *message, *bonjour_status;
 
 	gc = gaim_account_get_connection(account);
 	bd = gc->proto_data;
@@ -206,13 +206,13 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	 * Each of them can have an optional message.
 	 */
 	if (gaim_presence_is_available(presence))
-		bd->dns_sd_data->status = g_strdup("avail");
+		bonjour_status = "avail";
 	else if (gaim_presence_is_idle(presence))
-		bd->dns_sd_data->status = g_strdup("away");
+		bonjour_status = "away";
 	else
-		bd->dns_sd_data->status = g_strdup("dnd");
+		bonjour_status = "dnd";
 
-	bonjour_dns_sd_send_status(bd->dns_sd_data, bd->dns_sd_data->status, message);
+	bonjour_dns_sd_send_status(bd->dns_sd_data, bonjour_status, message);
 }
 
 static GList *
