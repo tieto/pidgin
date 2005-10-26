@@ -339,13 +339,17 @@ probe_perl_plugin(GaimPlugin *plugin)
 			/*		page.					*/
 			/********************************************************/
 			if ((key = hv_fetch(plugin_info, "prefs_info", strlen("prefs_info"), 0))) {
+				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
 				/* key now is the name of the Perl sub that will create a frame for us */
-				info->prefs_info = gaim_perl_plugin_pref(g_strdup_printf("%s::%s", gps->package, SvPV(*key, len)));
+				info->prefs_info = gaim_perl_plugin_pref(tmp);
+				g_free(tmp);
 			}
 			
 			if ((key = hv_fetch(plugin_info, "gtk_prefs_info", strlen("gtk_prefs_info"), 0))) {
+				char *tmp = g_strdup_printf("%s::%s", gps->package, SvPV(*key, len));
 				/* key now is the name of the Perl sub that will create a frame for us */
-				info->ui_info = gaim_perl_gtk_plugin_pref(g_strdup_printf("%s::%s", gps->package, SvPV(*key, len)));
+				info->ui_info = gaim_perl_gtk_plugin_pref(tmp);
+				g_free(tmp);
 			}
 
 			/********************************************************/
