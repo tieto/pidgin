@@ -866,9 +866,7 @@ gtk_imhtmltoolbar_finalize (GObject *object)
 	}
 
 	destroy_toolbar_font(NULL, NULL, toolbar);
-#if !GTK_CHECK_VERSION(2,4,0) /* Smiley selection menu */
 	destroy_smiley_dialog(toolbar);
-#endif
 	destroy_toolbar_bgcolor(NULL, NULL, toolbar);
 	destroy_toolbar_fgcolor(NULL, NULL, toolbar);
 	close_link_dialog(toolbar);
