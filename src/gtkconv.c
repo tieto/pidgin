@@ -3804,6 +3804,26 @@ gaim_gtk_conv_find_gtkconv(GaimConversation * conv)
 	return NULL;
 }
 
+static void
+buddy_update_cb(GaimBlistNode *bnode, gpointer null)
+{
+	GList *list;
+
+	g_return_if_fail(bnode);
+	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(bnode));
+
+	for (list = gaim_gtk_conv_windows_get_list(); list; list = list->next)
+	{
+		GaimGtkWindow *win = list->data;
+		GaimConversation *conv = gaim_gtk_conv_window_get_active_conversation(win);
+
+		if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_IM)
+			continue;
+
+		gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_ONLINE);
+	}
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -5572,6 +5592,11 @@ gaim_gtk_conversations_init(void)
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
 
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-added", handle,
+						G_CALLBACK(buddy_update_cb), NULL);
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-removed", handle,
+						G_CALLBACK(buddy_update_cb), NULL);
+
 	gaim_conversations_set_ui_ops(&conversation_ui_ops);
 }
 
@@ -5579,6 +5604,7 @@ void
 gaim_gtk_conversations_uninit(void)
 {
 	gaim_prefs_disconnect_by_handle(gaim_gtk_conversations_get_handle());
+	gaim_signals_disconnect_by_handle(gaim_gtk_conversations_get_handle());
 	gaim_signals_unregister_by_instance(gaim_gtk_conversations_get_handle());
 }
 
@@ -6182,24 +6208,6 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		start_anim(NULL, gtkconv);
 }
 
-static void
-buddy_update_cb(GaimBlistNode *bnode, void *data)
-{
-	GaimGtkWindow *win = (GaimGtkWindow *)data;
-	GaimConversation *conv;
-
-	g_return_if_fail(bnode);
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(bnode));
-
-	conv = gaim_gtk_conv_window_get_active_conversation(win);
-
-	if (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_IM)
-		return;
-
-	gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_ONLINE);
-}
-
-
 /**************************************************************************
  * GTK+ window ops
  **************************************************************************/
@@ -6267,11 +6275,6 @@ gaim_gtk_conv_window_new()
 	g_signal_connect(G_OBJECT(win->notebook), "button_release_event",
 	                 G_CALLBACK(notebook_release_cb), win);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-added", win,
-						G_CALLBACK(buddy_update_cb), win);
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-removed", win,
-						G_CALLBACK(buddy_update_cb), win);
-
 	testidea = gtk_vbox_new(FALSE, 0);
 
 	/* Setup the menubar. */
@@ -6306,7 +6309,6 @@ gaim_gtk_conv_window_destroy(GaimGtkWindow *win)
 		}
 		return;
 	}
-	gaim_signals_disconnect_by_handle(win);
 	gtk_widget_destroy(win->window);
 
 	g_object_unref(G_OBJECT(win->menu.item_factory));
