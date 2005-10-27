@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-23 16:42-0400\n"
+"POT-Creation-Date: 2005-10-27 15:05-0400\n"
 "PO-Revision-Date: 2005-06-08 15:51+0200\n"
 "Last-Translator: Kyrre Ness Sjobak <kyrre@solution-forge.net>\n"
 "Language-Team: Norsk bokmål <no@li.org>\n"
@@ -165,15 +165,15 @@ msgid "Mute Sounds"
 msgstr "Skru av lyder"
 
 #: plugins/docklet/docklet.c:406 src/gtkft.c:691
-#: src/protocols/oscar/oscar.c:8351
+#: src/protocols/oscar/oscar.c:8357
 msgid "File Transfers"
 msgstr "Filoverføringer"
 
-#: plugins/docklet/docklet.c:407 src/gtkaccount.c:2406
+#: plugins/docklet/docklet.c:407 src/gtkaccount.c:2422
 msgid "Accounts"
 msgstr "Kontoer"
 
-#: plugins/docklet/docklet.c:408 src/gtkprefs.c:1792
+#: plugins/docklet/docklet.c:408 src/gtkprefs.c:1763
 msgid "Preferences"
 msgstr "Innstillinger"
 
@@ -439,50 +439,50 @@ msgstr ""
 "Dra opp og deretter til venstre for å bytte til det forrige samtalevinduet.\n"
 "Dra opp og deretter til høyre for å bytte til det neste samtalevinduet."
 
-#: plugins/gevolution/add_buddy_dialog.c:132
-#: plugins/gevolution/assoc-buddy.c:120 src/gtkroomlist.c:572
+#: plugins/gevolution/add_buddy_dialog.c:131
+#: plugins/gevolution/assoc-buddy.c:119 src/gtkroomlist.c:572
 #: src/protocols/jabber/jabber.c:638 src/protocols/msn/msn.c:1539
 msgid "Name"
 msgstr "Navn"
 
-#: plugins/gevolution/add_buddy_dialog.c:143
+#: plugins/gevolution/add_buddy_dialog.c:142
 #, fuzzy
 msgid "Instant Messaging"
 msgstr "Direktemelding"
 
 #. Add the label.
-#: plugins/gevolution/add_buddy_dialog.c:459
+#: plugins/gevolution/add_buddy_dialog.c:458
 msgid "Select a person from your address book below, or add a new person."
 msgstr ""
 "Velg en person fra adresseboken som er vist under, eller legg til en ny "
 "person"
 
 #. "Search"
-#: plugins/gevolution/add_buddy_dialog.c:472
-#: plugins/gevolution/assoc-buddy.c:354 src/protocols/jabber/buddy.c:1357
-#: src/protocols/oscar/oscar.c:8122
+#: plugins/gevolution/add_buddy_dialog.c:471
+#: plugins/gevolution/assoc-buddy.c:353 src/protocols/jabber/buddy.c:1357
+#: src/protocols/oscar/oscar.c:8128
 msgid "Search"
 msgstr "Søk"
 
-#: plugins/gevolution/add_buddy_dialog.c:553
-#: plugins/gevolution/new_person_dialog.c:306 src/gtkblist.c:4069
-#: src/gtkblist.c:4446
+#: plugins/gevolution/add_buddy_dialog.c:552
+#: plugins/gevolution/new_person_dialog.c:306 src/gtkblist.c:4082
+#: src/gtkblist.c:4459
 msgid "Group:"
 msgstr "Gruppe:"
 
 #. "New Person" button
-#: plugins/gevolution/add_buddy_dialog.c:579
-#: plugins/gevolution/assoc-buddy.c:465
+#: plugins/gevolution/add_buddy_dialog.c:578
+#: plugins/gevolution/assoc-buddy.c:464
 msgid "New Person"
 msgstr "Ny person"
 
 #. "Select Buddy" button
-#: plugins/gevolution/add_buddy_dialog.c:596
+#: plugins/gevolution/add_buddy_dialog.c:595
 msgid "Select Buddy"
 msgstr "Velg kompis"
 
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:341
+#: plugins/gevolution/assoc-buddy.c:340
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
@@ -491,18 +491,18 @@ msgstr ""
 "ny kontakt."
 
 #. Add the expander
-#: plugins/gevolution/assoc-buddy.c:429
+#: plugins/gevolution/assoc-buddy.c:428
 #, fuzzy
 msgid "User _details"
 msgstr "Skjul brukerdetaljer"
 
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:482
+#: plugins/gevolution/assoc-buddy.c:481
 msgid "_Associate Buddy"
 msgstr "_Assosier kompis"
 
 #: plugins/gevolution/gevo-util.c:64 plugins/gevolution/gevolution.c:96
-#: src/blist.c:518 src/blist.c:1259 src/blist.c:1480 src/gtkblist.c:3884
+#: src/blist.c:518 src/blist.c:1259 src/blist.c:1480 src/gtkblist.c:3897
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
 msgstr "Kontakter"
@@ -588,8 +588,8 @@ msgid "Optional information:"
 msgstr "Tilleggsinformasjon"
 
 #. Label
-#: plugins/gevolution/new_person_dialog.c:337 src/gtkaccount.c:413
-#: src/gtkaccount.c:435 src/protocols/oscar/oscar.c:613
+#: plugins/gevolution/new_person_dialog.c:337 src/gtkaccount.c:412
+#: src/gtkaccount.c:434 src/protocols/oscar/oscar.c:613
 msgid "Buddy Icon"
 msgstr "Kontaktikon"
 
@@ -605,11 +605,11 @@ msgstr "Etternavn:"
 msgid "E-mail:"
 msgstr "E-post:"
 
-#: plugins/history.c:138
+#: plugins/history.c:146
 msgid "History Plugin Requires Logging"
 msgstr ""
 
-#: plugins/history.c:139
+#: plugins/history.c:147
 msgid ""
 "Logging can be enabled from Tools -> Preferences -> Logging.\n"
 "\n"
@@ -617,15 +617,15 @@ msgid ""
 "the same conversation type(s)."
 msgstr ""
 
-#: plugins/history.c:178
+#: plugins/history.c:186
 msgid "History"
 msgstr "Historikk"
 
-#: plugins/history.c:180
+#: plugins/history.c:188
 msgid "Shows recently logged conversations in new conversations."
 msgstr "Viser tidligere loggede samtaler i nye samtaler."
 
-#: plugins/history.c:181
+#: plugins/history.c:189
 msgid ""
 "When a new conversation is opened this plugin will insert the last "
 "conversation into the current conversation.\n"
@@ -857,14 +857,14 @@ msgstr "Lar deg bli varslet om uleste meldinger på flere vis."
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:583
+#: plugins/perl/perl.c:587
 msgid "Perl Plugin Loader"
 msgstr "Perl-tilleggslaster"
 
 #. *< name
 #. *< version
 #. *< summary
-#: plugins/perl/perl.c:585 plugins/perl/perl.c:586
+#: plugins/perl/perl.c:589 plugins/perl/perl.c:590
 msgid "Provides support for loading perl plugins."
 msgstr "Lar deg laste perl-tillegg."
 
@@ -981,43 +981,43 @@ msgstr ""
 msgid "The specified word already exists in the correction list."
 msgstr ""
 
-#: plugins/spellchk.c:1939
+#: plugins/spellchk.c:1948
 msgid "Text Replacements"
 msgstr "Teksterstatninger"
 
-#: plugins/spellchk.c:1963
+#: plugins/spellchk.c:1972
 msgid "You type"
 msgstr "Når du skriver"
 
-#: plugins/spellchk.c:1975
+#: plugins/spellchk.c:1984
 msgid "You send"
 msgstr "Erstatt det til"
 
-#: plugins/spellchk.c:1987
+#: plugins/spellchk.c:1996
 msgid "Whole words only"
 msgstr ""
 
-#: plugins/spellchk.c:2013
+#: plugins/spellchk.c:2022
 msgid "Add a new text replacement"
 msgstr "Legg til teksterstatning"
 
-#: plugins/spellchk.c:2023
+#: plugins/spellchk.c:2032
 msgid "You _type:"
 msgstr "Når du skriver:"
 
-#: plugins/spellchk.c:2039
+#: plugins/spellchk.c:2048
 msgid "You _send:"
 msgstr "Erstatt det til: "
 
-#: plugins/spellchk.c:2051
+#: plugins/spellchk.c:2060
 msgid "Only replace _whole words"
 msgstr ""
 
-#: plugins/spellchk.c:2088
+#: plugins/spellchk.c:2097
 msgid "Text replacement"
 msgstr "Teksterstatter"
 
-#: plugins/spellchk.c:2090 plugins/spellchk.c:2091
+#: plugins/spellchk.c:2099 plugins/spellchk.c:2100
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "Erstatter tekst i utgående beskjeder etter regler som du bestemmer."
 
@@ -1277,8 +1277,7 @@ msgid "_Start Gaim on Windows startup"
 msgstr "Start Gaim når Windows starter"
 
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:405 src/gtkblist.c:3164
-#: src/gtkprefs.c:1755
+#: plugins/win32/winprefs/winprefs.c:405 src/gtkblist.c:3173
 msgid "Buddy List"
 msgstr "Kontaktliste"
 
@@ -1292,7 +1291,7 @@ msgstr "Dockable kontaktliste"
 msgid "_Keep Buddy List window on top:"
 msgstr "Hold kontaktlistevinduet øverst"
 
-#: plugins/win32/winprefs/winprefs.c:412 src/gtkprefs.c:1691
+#: plugins/win32/winprefs/winprefs.c:412 src/gtkprefs.c:1657
 msgid "Never"
 msgstr "Aldri"
 
@@ -1307,8 +1306,8 @@ msgid "Only when docked"
 msgstr ""
 
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:837
-#: src/gtkprefs.c:1756
+#: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:803
+#: src/gtkprefs.c:1727
 msgid "Conversations"
 msgstr "Samtaler"
 
@@ -1361,50 +1360,51 @@ msgstr "Nytt passord"
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:960 src/account.c:1116 src/gtkdialogs.c:506
-#: src/gtkdialogs.c:647 src/gtkdialogs.c:703 src/gtkrequest.c:260
+#: src/gtkdialogs.c:647 src/gtkdialogs.c:703 src/gtkrequest.c:261
 #: src/protocols/gg/gg.c:434 src/protocols/gg/gg.c:581
-#: src/protocols/gg/gg.c:1497 src/protocols/jabber/jabber.c:1162
+#: src/protocols/gg/gg.c:1498 src/protocols/jabber/jabber.c:1162
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:250
 #: src/protocols/msn/msn.c:265 src/protocols/msn/msn.c:280
-#: src/protocols/msn/msn.c:295 src/protocols/oscar/oscar.c:2902
-#: src/protocols/oscar/oscar.c:4410 src/protocols/oscar/oscar.c:4491
-#: src/protocols/oscar/oscar.c:7851 src/protocols/oscar/oscar.c:7976
-#: src/protocols/oscar/oscar.c:8001 src/protocols/oscar/oscar.c:8053
-#: src/protocols/silc/buddy.c:465 src/protocols/silc/buddy.c:1137
-#: src/protocols/silc/chat.c:422 src/protocols/silc/chat.c:460
-#: src/protocols/silc/chat.c:723 src/protocols/silc/ops.c:1083
-#: src/protocols/silc/ops.c:1696 src/protocols/silc/silc.c:716
-#: src/protocols/yahoo/yahoo.c:2947 src/protocols/yahoo/yahoo.c:2956
-#: src/request.h:1331
+#: src/protocols/msn/msn.c:295 src/protocols/oscar/oscar.c:2894
+#: src/protocols/oscar/oscar.c:4404 src/protocols/oscar/oscar.c:4485
+#: src/protocols/oscar/oscar.c:7857 src/protocols/oscar/oscar.c:7982
+#: src/protocols/oscar/oscar.c:8007 src/protocols/oscar/oscar.c:8059
+#: src/protocols/sametime/sametime.c:4585 src/protocols/silc/buddy.c:465
+#: src/protocols/silc/buddy.c:1137 src/protocols/silc/chat.c:422
+#: src/protocols/silc/chat.c:460 src/protocols/silc/chat.c:723
+#: src/protocols/silc/ops.c:1083 src/protocols/silc/ops.c:1696
+#: src/protocols/silc/silc.c:716 src/protocols/yahoo/yahoo.c:2965
+#: src/protocols/yahoo/yahoo.c:2974 src/request.h:1331
 msgid "OK"
 msgstr "_OK"
 
 #: src/account.c:961 src/account.c:1117 src/account.c:1155
-#: src/gtkaccount.c:2108 src/gtkaccount.c:2570 src/gtkblist.c:4484
+#: src/gtkaccount.c:2124 src/gtkaccount.c:2575 src/gtkblist.c:4497
 #: src/gtkdialogs.c:507 src/gtkdialogs.c:648 src/gtkdialogs.c:704
 #: src/gtkdialogs.c:723 src/gtkdialogs.c:745 src/gtkdialogs.c:765
 #: src/gtkdialogs.c:809 src/gtkdialogs.c:871 src/gtkdialogs.c:913
 #: src/gtkdialogs.c:955 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:595
 #: src/gtkprivacy.c:608 src/gtkprivacy.c:633 src/gtkprivacy.c:644
-#: src/gtkrequest.c:261 src/gtksavedstatuses.c:188 src/protocols/gg/gg.c:435
+#: src/gtkrequest.c:262 src/gtksavedstatuses.c:221 src/protocols/gg/gg.c:435
 #: src/protocols/gg/gg.c:582 src/protocols/gg/gg.c:656
-#: src/protocols/gg/gg.c:1498 src/protocols/jabber/buddy.c:573
+#: src/protocols/gg/gg.c:1499 src/protocols/jabber/buddy.c:573
 #: src/protocols/jabber/buddy.c:1358 src/protocols/jabber/buddy.c:1392
 #: src/protocols/jabber/chat.c:780 src/protocols/jabber/jabber.c:707
 #: src/protocols/jabber/jabber.c:1163 src/protocols/jabber/xdata.c:338
 #: src/protocols/msn/msn.c:251 src/protocols/msn/msn.c:266
 #: src/protocols/msn/msn.c:281 src/protocols/msn/msn.c:296
 #: src/protocols/msn/msn.c:313 src/protocols/oscar/oscar.c:1596
-#: src/protocols/oscar/oscar.c:2903 src/protocols/oscar/oscar.c:4368
-#: src/protocols/oscar/oscar.c:4411 src/protocols/oscar/oscar.c:4448
-#: src/protocols/oscar/oscar.c:4492 src/protocols/oscar/oscar.c:7852
-#: src/protocols/oscar/oscar.c:7977 src/protocols/oscar/oscar.c:8002
-#: src/protocols/oscar/oscar.c:8054 src/protocols/oscar/oscar.c:8123
-#: src/protocols/silc/buddy.c:466 src/protocols/silc/buddy.c:1042
-#: src/protocols/silc/buddy.c:1138 src/protocols/silc/chat.c:595
-#: src/protocols/silc/chat.c:724 src/protocols/silc/ops.c:1697
-#: src/protocols/silc/silc.c:717 src/protocols/yahoo/yahoo.c:2948
-#: src/protocols/yahoo/yahoo.c:2957 src/request.h:1331 src/request.h:1341
+#: src/protocols/oscar/oscar.c:2895 src/protocols/oscar/oscar.c:4362
+#: src/protocols/oscar/oscar.c:4405 src/protocols/oscar/oscar.c:4442
+#: src/protocols/oscar/oscar.c:4486 src/protocols/oscar/oscar.c:7858
+#: src/protocols/oscar/oscar.c:7983 src/protocols/oscar/oscar.c:8008
+#: src/protocols/oscar/oscar.c:8060 src/protocols/oscar/oscar.c:8129
+#: src/protocols/sametime/sametime.c:4586 src/protocols/silc/buddy.c:466
+#: src/protocols/silc/buddy.c:1042 src/protocols/silc/buddy.c:1138
+#: src/protocols/silc/chat.c:595 src/protocols/silc/chat.c:724
+#: src/protocols/silc/ops.c:1697 src/protocols/silc/silc.c:717
+#: src/protocols/yahoo/yahoo.c:2966 src/protocols/yahoo/yahoo.c:2975
+#: src/request.h:1331 src/request.h:1341
 msgid "Cancel"
 msgstr "_Avbryt"
 
@@ -1456,7 +1456,7 @@ msgstr "Skriv inn ditt nåværende passord og ditt nye passord."
 msgid "Change user information for %s"
 msgstr "Endre brukerinformasjon for %s"
 
-#: src/account.c:1154 src/gtkdebug.c:684 src/gtkrequest.c:267
+#: src/account.c:1154 src/gtkdebug.c:684 src/gtkrequest.c:268
 #: src/protocols/jabber/buddy.c:572
 msgid "Save"
 msgstr "Lagre"
@@ -1684,7 +1684,7 @@ msgstr "Filoverføring til %s avbrutt.\n"
 msgid "File transfer from %s failed."
 msgstr "Filoverføring fra %s avbrutt.\n"
 
-#: src/gtkaccount.c:363
+#: src/gtkaccount.c:362
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -1696,154 +1696,154 @@ msgstr ""
 "<b>Bildestørrelse:</b> %dx%d"
 
 #. Build the login options frame.
-#: src/gtkaccount.c:731
+#: src/gtkaccount.c:730
 msgid "Login Options"
 msgstr "Innloggingsvalg"
 
-#: src/gtkaccount.c:748 src/gtkft.c:623
+#: src/gtkaccount.c:747 src/gtkft.c:623
 msgid "Protocol:"
 msgstr "Protokoll:"
 
-#: src/gtkaccount.c:753 src/gtkblist.c:4038
+#: src/gtkaccount.c:752 src/gtkblist.c:4051
 msgid "Screen Name:"
 msgstr "Skjermnavn:"
 
-#: src/gtkaccount.c:826
+#: src/gtkaccount.c:825
 msgid "Password:"
 msgstr "Passord:"
 
-#: src/gtkaccount.c:831 src/gtkblist.c:4052 src/gtkblist.c:4431
+#: src/gtkaccount.c:830 src/gtkblist.c:4065 src/gtkblist.c:4444
 msgid "Alias:"
 msgstr "Alias:"
 
-#: src/gtkaccount.c:835
+#: src/gtkaccount.c:834
 msgid "Remember password"
 msgstr "Husk passord"
 
 #. Build the user options frame.
-#: src/gtkaccount.c:880
+#: src/gtkaccount.c:879
 msgid "User Options"
 msgstr "Brukervalg"
 
-#: src/gtkaccount.c:893
+#: src/gtkaccount.c:892
 msgid "New mail notifications"
 msgstr "Varsling om ny e-post"
 
-#: src/gtkaccount.c:902
+#: src/gtkaccount.c:901
 msgid "Buddy icon:"
 msgstr "Kontaktikon:"
 
 #. Build the protocol options frame.
-#: src/gtkaccount.c:991
+#: src/gtkaccount.c:990
 #, c-format
 msgid "%s Options"
 msgstr "%s brukervalg"
 
 #. Use Global Proxy Settings
-#: src/gtkaccount.c:1129 src/gtkaccount.c:1176
+#: src/gtkaccount.c:1128 src/gtkaccount.c:1175
 msgid "Use Global Proxy Settings"
 msgstr "Bruk globale proxyinnstilinger"
 
 #. No Proxy
-#: src/gtkaccount.c:1135 src/gtkaccount.c:1183
+#: src/gtkaccount.c:1134 src/gtkaccount.c:1182
 msgid "No Proxy"
 msgstr "Ingen proxy"
 
 #. HTTP
-#: src/gtkaccount.c:1141 src/gtkaccount.c:1190
+#: src/gtkaccount.c:1140 src/gtkaccount.c:1189
 msgid "HTTP"
 msgstr "HTTP"
 
 #. SOCKS 4
-#: src/gtkaccount.c:1147 src/gtkaccount.c:1197
+#: src/gtkaccount.c:1146 src/gtkaccount.c:1196
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 #. SOCKS 5
-#: src/gtkaccount.c:1153 src/gtkaccount.c:1204
+#: src/gtkaccount.c:1152 src/gtkaccount.c:1203
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #
 #. Use Environmental Settings
-#: src/gtkaccount.c:1159 src/gtkaccount.c:1211 src/gtkprefs.c:1041
+#: src/gtkaccount.c:1158 src/gtkaccount.c:1210 src/gtkprefs.c:1007
 msgid "Use Environmental Settings"
 msgstr "Bruk innstillinger fra miljøet"
 
-#: src/gtkaccount.c:1250
+#: src/gtkaccount.c:1249
 msgid "you can see the butterflies mating"
 msgstr "sommerfugler svermer"
 
-#: src/gtkaccount.c:1254
+#: src/gtkaccount.c:1253
 msgid "If you look real closely"
 msgstr "hvis du ser virkelig godt etter"
 
-#: src/gtkaccount.c:1270
+#: src/gtkaccount.c:1269
 msgid "Proxy Options"
 msgstr "Proxyinnstillinger"
 
-#: src/gtkaccount.c:1288 src/gtkprefs.c:1035
+#: src/gtkaccount.c:1287 src/gtkprefs.c:1001
 msgid "Proxy _type:"
 msgstr "Proxytype:"
 
-#: src/gtkaccount.c:1297 src/gtkprefs.c:1056
+#: src/gtkaccount.c:1296 src/gtkprefs.c:1022
 msgid "_Host:"
 msgstr "Adresse:"
 
-#: src/gtkaccount.c:1301 src/gtkprefs.c:1074
+#: src/gtkaccount.c:1300 src/gtkprefs.c:1040
 msgid "_Port:"
 msgstr "_Port:"
 
-#: src/gtkaccount.c:1309
+#: src/gtkaccount.c:1308
 msgid "_Username:"
 msgstr "_Brukernavn:"
 
-#: src/gtkaccount.c:1314 src/gtkprefs.c:1111
+#: src/gtkaccount.c:1313 src/gtkprefs.c:1077
 msgid "Pa_ssword:"
 msgstr "Passord:"
 
-#: src/gtkaccount.c:1720
+#: src/gtkaccount.c:1700
 msgid "Add Account"
 msgstr "Legg til konto"
 
-#: src/gtkaccount.c:1722
+#: src/gtkaccount.c:1702
 msgid "Modify Account"
 msgstr "Endre konto"
 
 #. Register button
-#: src/gtkaccount.c:1770 src/protocols/jabber/jabber.c:706
+#: src/gtkaccount.c:1750 src/protocols/jabber/jabber.c:706
 msgid "Register"
 msgstr "Registrer"
 
-#: src/gtkaccount.c:2102 src/gtksavedstatuses.c:184
+#: src/gtkaccount.c:2118 src/gtksavedstatuses.c:217
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Er du sikker på at du vil slette %s?"
 
-#: src/gtkaccount.c:2107 src/gtkrequest.c:264 src/gtksavedstatuses.c:187
+#: src/gtkaccount.c:2123 src/gtkrequest.c:265 src/gtksavedstatuses.c:220
 msgid "Delete"
 msgstr "Slett"
 
-#: src/gtkaccount.c:2171 src/gtksavedstatuses.c:629
-#: src/protocols/oscar/oscar.c:5055
+#: src/gtkaccount.c:2187 src/gtksavedstatuses.c:686
+#: src/protocols/oscar/oscar.c:5049
 msgid "Screen Name"
 msgstr "Skjermnavn"
 
-#: src/gtkaccount.c:2194
+#: src/gtkaccount.c:2210
 #, fuzzy
 msgid "Enabled"
 msgstr "Feilet."
 
-#: src/gtkaccount.c:2202
+#: src/gtkaccount.c:2218
 msgid "Protocol"
 msgstr "Protokoll"
 
-#: src/gtkaccount.c:2545
+#: src/gtkaccount.c:2550
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s har lagt %s til i sin kontaktliste%s%s%s"
 
-#: src/gtkaccount.c:2559
+#: src/gtkaccount.c:2564
 msgid ""
 "\n"
 "\n"
@@ -1853,13 +1853,13 @@ msgstr ""
 "\n"
 "Ønsker du å legge vedkommende til i din kontaktliste?"
 
-#: src/gtkaccount.c:2567
+#: src/gtkaccount.c:2572
 msgid "Add buddy to your list?"
 msgstr "Legg til kontakten i listen din?"
 
-#: src/gtkaccount.c:2569 src/gtkblist.c:4483 src/gtkconv.c:1501
-#: src/gtkrequest.c:265 src/protocols/gg/gg.c:655
-#: src/protocols/oscar/oscar.c:4680 src/protocols/silc/chat.c:594
+#: src/gtkaccount.c:2574 src/gtkblist.c:4496 src/gtkconv.c:1527
+#: src/gtkrequest.c:266 src/protocols/gg/gg.c:655
+#: src/protocols/oscar/oscar.c:4674 src/protocols/silc/chat.c:594
 msgid "Add"
 msgstr "Legg til"
 
@@ -1944,7 +1944,7 @@ msgstr "End_re navn"
 
 #. join button
 #: src/gtkblist.c:1052 src/gtkroomlist.c:264 src/gtkroomlist.c:409
-#: src/gtkstock.c:119
+#: src/gtkstock.c:118
 msgid "_Join"
 msgstr "_Bli med i samtalegruppe"
 
@@ -1960,127 +1960,137 @@ msgstr "_Lukk"
 msgid "_Expand"
 msgstr "_Utvid"
 
-#: src/gtkblist.c:1347 src/gtkblist.c:1357 src/gtkblist.c:3316
-#: src/gtkblist.c:3319
+#: src/gtkblist.c:1353 src/gtkblist.c:1363 src/gtkblist.c:3326
+#: src/gtkblist.c:3331
 #, fuzzy
 msgid "/Tools/Mute Sounds"
 msgstr "Skru av lyder"
 
-#: src/gtkblist.c:1816 src/gtkconv.c:3719 src/gtkpounce.c:314
+#: src/gtkblist.c:1822 src/gtkconv.c:3745 src/gtkpounce.c:314
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "Du er ikke pålogget med noen kontoer som kan legge til den kontakten."
 
 #. Buddies menu
-#: src/gtkblist.c:2323
+#: src/gtkblist.c:2329
 msgid "/_Buddies"
 msgstr "/_Kontakter"
 
-#: src/gtkblist.c:2324
+#: src/gtkblist.c:2330
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Kontakter/_Ny direktemelding..."
 
-#: src/gtkblist.c:2325
+#: src/gtkblist.c:2331
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Kontakter/_Bli med i samtalegruppe..."
 
-#: src/gtkblist.c:2326
+#: src/gtkblist.c:2332
 msgid "/Buddies/Get User _Info..."
 msgstr "/Kontakter/_Hent brukerinfo..."
 
-#: src/gtkblist.c:2327
+#: src/gtkblist.c:2333
 msgid "/Buddies/View User _Log..."
 msgstr "/Kontakter/Hent bruker_logg..."
 
-#: src/gtkblist.c:2329
+#: src/gtkblist.c:2335
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Kontakter/_Vis avloggede kontakter"
 
-#: src/gtkblist.c:2330
+#: src/gtkblist.c:2336
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Kontakter/Vis _tomme grupper"
 
-#: src/gtkblist.c:2331
+#: src/gtkblist.c:2337
+#, fuzzy
+msgid "/Buddies/Show Buddy _Details"
+msgstr "/Kontakter/Vis _avloggede kontakter"
+
+#: src/gtkblist.c:2338 src/gtkblist.c:5158
+#, fuzzy
+msgid "/Buddies/Sort Buddies"
+msgstr "/Kontakter/Vis _avloggede kontakter"
+
+#: src/gtkblist.c:2340
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Kontakter/_Legg til kompis..."
 
-#: src/gtkblist.c:2332
+#: src/gtkblist.c:2341
 msgid "/Buddies/Add C_hat..."
 msgstr "/Kontakter/Legg til _samtalegruppe..."
 
-#: src/gtkblist.c:2333
+#: src/gtkblist.c:2342
 msgid "/Buddies/Add _Group..."
 msgstr "/Kontakter/Legg til _gruppe..."
 
-#: src/gtkblist.c:2335
+#: src/gtkblist.c:2344
 msgid "/Buddies/_Quit"
 msgstr "/Kontakter/_Avslutt"
 
 #. Tools
-#: src/gtkblist.c:2338
+#: src/gtkblist.c:2347
 msgid "/_Tools"
 msgstr "/_Verktøy"
 
-#: src/gtkblist.c:2339
+#: src/gtkblist.c:2348
 msgid "/Tools/Buddy _Pounce"
 msgstr "/Verktøy/_Kompisvarsling"
 
-#: src/gtkblist.c:2340
+#: src/gtkblist.c:2349
 msgid "/Tools/Account Ac_tions"
 msgstr "/Verktøy/_Handlinger for kontoer"
 
-#: src/gtkblist.c:2342
+#: src/gtkblist.c:2351
 msgid "/Tools/A_ccounts"
 msgstr "/Verktøy/K_ontoer"
 
-#: src/gtkblist.c:2343
+#: src/gtkblist.c:2352
 msgid "/Tools/Pr_eferences"
 msgstr "/Verktøy/_Innstillinger"
 
-#: src/gtkblist.c:2344
+#: src/gtkblist.c:2353
 #, fuzzy
 msgid "/Tools/P_lugins"
 msgstr "/Verktøy/Handlinger for tillegg"
 
-#: src/gtkblist.c:2345
+#: src/gtkblist.c:2354
 msgid "/Tools/Pr_ivacy"
 msgstr "/Verktøy/_Sikkerhet"
 
-#: src/gtkblist.c:2346
+#: src/gtkblist.c:2355
 msgid "/Tools/_File Transfers"
 msgstr "/Verktøy/_Filoverføringer..."
 
-#: src/gtkblist.c:2347
+#: src/gtkblist.c:2356
 msgid "/Tools/R_oom List"
 msgstr "/Verktøy/_Romliste"
 
-#: src/gtkblist.c:2349
+#: src/gtkblist.c:2358
 #, fuzzy
 msgid "/Tools/Mute _Sounds"
 msgstr "Skru av lyder"
 
-#: src/gtkblist.c:2350
+#: src/gtkblist.c:2359
 msgid "/Tools/View System _Log"
 msgstr "/Verktøy/_Vis systemlogg"
 
 #. Help
-#: src/gtkblist.c:2353
+#: src/gtkblist.c:2362
 msgid "/_Help"
 msgstr "/_Hjelp"
 
-#: src/gtkblist.c:2354
+#: src/gtkblist.c:2363
 msgid "/Help/Online _Help"
 msgstr "/Hjelp/Hjelp på _nettet"
 
-#: src/gtkblist.c:2355
+#: src/gtkblist.c:2364
 msgid "/Help/_Debug Window"
 msgstr "/Hjelp/_Avlusningsvindu"
 
-#: src/gtkblist.c:2356
+#: src/gtkblist.c:2365
 msgid "/Help/_About"
 msgstr "/Hjelp/_Om"
 
-#: src/gtkblist.c:2388 src/gtkblist.c:2455
+#: src/gtkblist.c:2397 src/gtkblist.c:2464
 #, c-format
 msgid ""
 "\n"
@@ -2090,7 +2100,7 @@ msgstr ""
 "<b>Konto:</b> %s"
 
 #
-#: src/gtkblist.c:2464
+#: src/gtkblist.c:2473
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2099,7 +2109,7 @@ msgstr ""
 "\n"
 "<b>Kontaktalias:</b>"
 
-#: src/gtkblist.c:2472
+#: src/gtkblist.c:2481
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2108,7 +2118,7 @@ msgstr ""
 "\n"
 "<b>Alias:</b>"
 
-#: src/gtkblist.c:2480
+#: src/gtkblist.c:2489
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2117,7 +2127,7 @@ msgstr ""
 "\n"
 "<b>Kallenavn:</b>"
 
-#: src/gtkblist.c:2489
+#: src/gtkblist.c:2498
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2126,7 +2136,7 @@ msgstr ""
 "\n"
 "<b>Pålogget:</b> "
 
-#: src/gtkblist.c:2501
+#: src/gtkblist.c:2510
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2135,7 +2145,7 @@ msgstr ""
 "\n"
 "<b>Inaktiv:</b>"
 
-#: src/gtkblist.c:2537
+#: src/gtkblist.c:2546
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2144,7 +2154,7 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/gtkblist.c:2545
+#: src/gtkblist.c:2554
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2152,7 +2162,7 @@ msgstr ""
 "\n"
 "<b>Status:</b> Avlogget"
 
-#: src/gtkblist.c:2568
+#: src/gtkblist.c:2577
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2160,7 +2170,7 @@ msgstr ""
 "\n"
 "<b>Beskrivelse:</b> Skummel"
 
-#: src/gtkblist.c:2570
+#: src/gtkblist.c:2579
 #, fuzzy
 msgid ""
 "\n"
@@ -2169,7 +2179,7 @@ msgstr ""
 "\n"
 "<b>Status:</b> Fantastisk"
 
-#: src/gtkblist.c:2572
+#: src/gtkblist.c:2581
 #, fuzzy
 msgid ""
 "\n"
@@ -2178,105 +2188,111 @@ msgstr ""
 "\n"
 "<b>Status:</b> Rockin'"
 
-#: src/gtkblist.c:2834
+#: src/gtkblist.c:2843
 #, fuzzy, c-format
 msgid "Idle (%dh %02dm) "
 msgstr "Inaktiv (%dt%02dm) "
 
-#: src/gtkblist.c:2836
+#: src/gtkblist.c:2845
 #, c-format
 msgid "Idle (%dm) "
 msgstr "Inaktiv (%dm) "
 
-#: src/gtkblist.c:2839
+#: src/gtkblist.c:2848
 #, fuzzy
 msgid "Idle "
 msgstr "Inaktiv"
 
-#: src/gtkblist.c:2843
+#: src/gtkblist.c:2852
 msgid "Offline "
 msgstr "Avlogget"
 
-#: src/gtkblist.c:2959
+#: src/gtkblist.c:2968
 #, fuzzy
 msgid "/Buddies/New Instant Message..."
 msgstr "/Kontakter/_Ny direktemelding..."
 
-#: src/gtkblist.c:2960 src/gtkblist.c:2994
+#: src/gtkblist.c:2969 src/gtkblist.c:3003
 msgid "/Buddies/Join a Chat..."
 msgstr "/Kontakter/_Bli med i samtalegruppe..."
 
-#: src/gtkblist.c:2961
+#: src/gtkblist.c:2970
 #, fuzzy
 msgid "/Buddies/Get User Info..."
 msgstr "/Kontakter/_Hent brukerinfo..."
 
-#: src/gtkblist.c:2962
+#: src/gtkblist.c:2971
 #, fuzzy
 msgid "/Buddies/Add Buddy..."
 msgstr "/Kontakter/_Legg til kompis..."
 
-#: src/gtkblist.c:2963
+#: src/gtkblist.c:2972
 #, fuzzy
 msgid "/Buddies/Add Chat..."
 msgstr "/Kontakter/Legg til _samtalegruppe..."
 
-#: src/gtkblist.c:2964
+#: src/gtkblist.c:2973
 #, fuzzy
 msgid "/Buddies/Add Group..."
 msgstr "/Kontakter/Legg til _gruppe..."
 
-#: src/gtkblist.c:2997
+#: src/gtkblist.c:3006
 msgid "/Tools/Room List"
 msgstr "/Verktøy/_Romliste"
 
-#: src/gtkblist.c:3000
+#: src/gtkblist.c:3009
 msgid "/Tools/Privacy"
 msgstr "/Verktøy/Blo_kkeringer"
 
-#: src/gtkblist.c:3076 src/protocols/jabber/jabber.c:982
-#: src/protocols/yahoo/yahoo.c:2776
-msgid "None"
-msgstr "Ingen"
+#: src/gtkblist.c:3085
+#, fuzzy
+msgid "Manually"
+msgstr "Egendefinert"
 
-#: src/gtkblist.c:3078
-msgid "Alphabetical"
+#: src/gtkblist.c:3087
+#, fuzzy
+msgid "Alphabetically"
 msgstr "Alfabetisk"
 
-#: src/gtkblist.c:3079
+#: src/gtkblist.c:3088
 msgid "By status"
 msgstr "Etter status"
 
-#: src/gtkblist.c:3080
+#: src/gtkblist.c:3089
 msgid "By log size"
 msgstr "Etter loggstørrelse"
 
-#: src/gtkblist.c:3192
+#: src/gtkblist.c:3201
 msgid "/Tools/Buddy Pounce"
 msgstr "/Verktøy/Kompisvarsel"
 
-#: src/gtkblist.c:3193
+#: src/gtkblist.c:3202
 msgid "/Tools/Account Actions"
 msgstr "/Verktøy/_Handlinger for kontoe"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3312
+#: src/gtkblist.c:3322
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Kontakter/Vis _avloggede kontakter"
 
-#: src/gtkblist.c:3314
+#: src/gtkblist.c:3324
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Kontakter/Vis tomme grupper"
 
-#: src/gtkblist.c:3992 src/protocols/silc/buddy.c:736
+#: src/gtkblist.c:3328
+#, fuzzy
+msgid "/Buddies/Show Buddy Details"
+msgstr "/Kontakter/Vis _avloggede kontakter"
+
+#: src/gtkblist.c:4005 src/protocols/silc/buddy.c:736
 #: src/protocols/silc/buddy.c:994 src/protocols/silc/buddy.c:1039
-#: src/protocols/silc/buddy.c:1129 src/protocols/yahoo/yahoo.c:2874
+#: src/protocols/silc/buddy.c:1129 src/protocols/yahoo/yahoo.c:2886
 msgid "Add Buddy"
 msgstr "Legg til kontakt"
 
-#: src/gtkblist.c:4016
+#: src/gtkblist.c:4029
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2288,44 +2304,44 @@ msgstr ""
 "mulig.\n"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4079 src/gtkblist.c:4411
+#: src/gtkblist.c:4092 src/gtkblist.c:4424
 msgid "Account:"
 msgstr "Konto:"
 
-#: src/gtkblist.c:4344
+#: src/gtkblist.c:4357
 msgid "This protocol does not support chat rooms."
 msgstr "Denne protokollversjonen støtter ikke samtalerom"
 
-#: src/gtkblist.c:4360
+#: src/gtkblist.c:4373
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "Du er ikke pålogget med noen protokoller som støtter samtalegrupper."
 
-#: src/gtkblist.c:4377
+#: src/gtkblist.c:4390
 msgid "Add Chat"
 msgstr "Legg til samtale"
 
-#: src/gtkblist.c:4401
+#: src/gtkblist.c:4414
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
 msgstr ""
 "Vennligst skriv inn et aliasnavn og annen informasjon for samtalegruppen.\n"
 
-#: src/gtkblist.c:4480
+#: src/gtkblist.c:4493
 msgid "Add Group"
 msgstr "Legg til gruppe"
 
-#: src/gtkblist.c:4481
+#: src/gtkblist.c:4494
 msgid "Please enter the name of the group to be added."
 msgstr "Vennligst skriv inn navnet på gruppen som skal legges til."
 
-#: src/gtkblist.c:5005
+#: src/gtkblist.c:5025
 msgid "No actions available"
 msgstr "Ingen handlinger tilgjengelig"
 
-#: src/gtkblist.c:5074
+#: src/gtkblist.c:5094
 #, fuzzy
 msgid "/Tools"
 msgstr "/_Verktøy"
@@ -2418,11 +2434,11 @@ msgstr ""
 msgid "_Buddy:"
 msgstr "Kontakt:"
 
-#: src/gtkconv.c:843 src/gtksavedstatuses.c:779
+#: src/gtkconv.c:843 src/gtksavedstatuses.c:836
 msgid "_Message:"
 msgstr "Beskjed:"
 
-#: src/gtkconv.c:900 src/gtkconv.c:2206 src/gtkdebug.c:217 src/gtkft.c:470
+#: src/gtkconv.c:900 src/gtkconv.c:2228 src/gtkdebug.c:217 src/gtkft.c:470
 msgid "Unable to open file."
 msgstr "Klarte ikke åpne fil."
 
@@ -2444,320 +2460,329 @@ msgstr "Finn"
 msgid "_Search for:"
 msgstr "_Søk etter:"
 
-#: src/gtkconv.c:1463
+#: src/gtkconv.c:1227
+msgid "Logging started. Future messages in this conversation will be logged."
+msgstr ""
+
+#: src/gtkconv.c:1235
+msgid ""
+"Logging stopped. Future messages in this conversation will not be logged."
+msgstr ""
+
+#: src/gtkconv.c:1489
 msgid "IM"
 msgstr "Direktemelding"
 
-#: src/gtkconv.c:1469 src/protocols/oscar/oscar.c:628
+#: src/gtkconv.c:1495 src/protocols/oscar/oscar.c:628
 msgid "Send File"
 msgstr "Send fil"
 
-#: src/gtkconv.c:1476
+#: src/gtkconv.c:1502
 msgid "Un-Ignore"
 msgstr "Fjern ignorer"
 
-#: src/gtkconv.c:1479
+#: src/gtkconv.c:1505
 msgid "Ignore"
 msgstr "Ignorer"
 
-#: src/gtkconv.c:1485
+#: src/gtkconv.c:1511
 msgid "Info"
 msgstr "Info"
 
-#: src/gtkconv.c:1491
+#: src/gtkconv.c:1517
 #, fuzzy
 msgid "Get Away Message"
 msgstr "Ny fraværsbeskjed"
 
-#: src/gtkconv.c:1498 src/gtkrequest.c:266
+#: src/gtkconv.c:1524 src/gtkrequest.c:267
 msgid "Remove"
 msgstr "Fjern"
 
-#: src/gtkconv.c:2214
+#: src/gtkconv.c:2236
 msgid "Unable to save icon file to disk."
 msgstr "Kan ikke lagre ikonfil."
 
-#: src/gtkconv.c:2237
+#: src/gtkconv.c:2259
 msgid "Save Icon"
 msgstr "Lagre ikon"
 
 #
-#: src/gtkconv.c:2287
+#: src/gtkconv.c:2308
 msgid "Animate"
 msgstr "Animer"
 
-#: src/gtkconv.c:2292
+#: src/gtkconv.c:2313
 msgid "Hide Icon"
 msgstr "Skjul ikon"
 
-#: src/gtkconv.c:2298
+#: src/gtkconv.c:2319
 msgid "Save Icon As..."
 msgstr "Lagre ikon som..."
 
 #. Conversation menu
-#: src/gtkconv.c:2346
+#: src/gtkconv.c:2367
 msgid "/_Conversation"
 msgstr "/_Samtale"
 
-#: src/gtkconv.c:2348
+#: src/gtkconv.c:2369
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Samtale/Ny direktemelding..."
 
-#: src/gtkconv.c:2353
+#: src/gtkconv.c:2374
 msgid "/Conversation/_Find..."
 msgstr "/Samtale/_Finn..."
 
 #
-#: src/gtkconv.c:2355
+#: src/gtkconv.c:2376
 msgid "/Conversation/View _Log"
 msgstr "/Samtale/_Vis logg..."
 
-#: src/gtkconv.c:2356
+#: src/gtkconv.c:2377
 msgid "/Conversation/_Save As..."
 msgstr "/Samtale/_Lagre som..."
 
-#: src/gtkconv.c:2358
+#: src/gtkconv.c:2379
 msgid "/Conversation/Clear"
 msgstr "/Samtale/Tøm"
 
-#: src/gtkconv.c:2362
+#: src/gtkconv.c:2383
 msgid "/Conversation/Se_nd File..."
 msgstr "/Samtale/Se_nd fil..."
 
-#: src/gtkconv.c:2363
+#: src/gtkconv.c:2384
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Samtale/Legg til _kompisvarsling"
 
-#: src/gtkconv.c:2365
+#: src/gtkconv.c:2386
 msgid "/Conversation/_Get Info"
 msgstr "/Samtale/_Hent info"
 
-#: src/gtkconv.c:2367
+#: src/gtkconv.c:2388
 msgid "/Conversation/In_vite..."
 msgstr "/Samtale/_Inviter..."
 
-#: src/gtkconv.c:2372
+#: src/gtkconv.c:2393
 #, fuzzy
 msgid "/Conversation/Al_ias..."
 msgstr "/Samtale/Alias..."
 
-#: src/gtkconv.c:2374
+#: src/gtkconv.c:2395
 msgid "/Conversation/_Block..."
 msgstr "/Samtale/_Blokker..."
 
-#: src/gtkconv.c:2376
+#: src/gtkconv.c:2397
 msgid "/Conversation/_Add..."
 msgstr "/Samtale/_Legg til..."
 
-#: src/gtkconv.c:2378
+#: src/gtkconv.c:2399
 msgid "/Conversation/_Remove..."
 msgstr "/Samtale/_Fjern..."
 
-#: src/gtkconv.c:2383
+#: src/gtkconv.c:2404
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Samtale/Sett inn len_ke..."
 
-#: src/gtkconv.c:2385
+#: src/gtkconv.c:2406
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Samtale/Sett inn bild_e..."
 
-#: src/gtkconv.c:2390
+#: src/gtkconv.c:2411
 msgid "/Conversation/_Close"
 msgstr "/Samtale/L_ukk"
 
 #. Options
-#: src/gtkconv.c:2394
+#: src/gtkconv.c:2415
 msgid "/_Options"
 msgstr "/_Brukervalg"
 
-#: src/gtkconv.c:2395
+#: src/gtkconv.c:2416
 msgid "/Options/Enable _Logging"
 msgstr "/Brukervalg/Slå på _logging"
 
-#: src/gtkconv.c:2396
+#: src/gtkconv.c:2417
 msgid "/Options/Enable _Sounds"
 msgstr "/Brukervalg/Slå på l_yder"
 
-#: src/gtkconv.c:2397
+#: src/gtkconv.c:2418
 #, fuzzy
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Brukervalg/Vis _formateringsverktøy"
 
-#: src/gtkconv.c:2398
+#: src/gtkconv.c:2419
 #, fuzzy
 msgid "/Options/Show Ti_mestamps"
 msgstr "/Brukervalg/Vis tidsstempler"
 
-#: src/gtkconv.c:2399
+#: src/gtkconv.c:2420
 #, fuzzy
 msgid "/Options/Show Buddy _Icon"
 msgstr "Vis kontaktikoner"
 
 #
-#: src/gtkconv.c:2439
+#: src/gtkconv.c:2460
 msgid "/Conversation/View Log"
 msgstr "/Samtale/Vis logg"
 
-#: src/gtkconv.c:2445
+#: src/gtkconv.c:2466
 msgid "/Conversation/Send File..."
 msgstr "/Samtale/Send fil..."
 
-#: src/gtkconv.c:2449
+#: src/gtkconv.c:2470
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Samtale/Legg til kompisvarsling..."
 
-#: src/gtkconv.c:2455
+#: src/gtkconv.c:2476
 msgid "/Conversation/Get Info"
 msgstr "/Samtale/Hent info"
 
-#: src/gtkconv.c:2459
+#: src/gtkconv.c:2480
 msgid "/Conversation/Invite..."
 msgstr "/Samtale/Inviter..."
 
-#: src/gtkconv.c:2465
+#: src/gtkconv.c:2486
 msgid "/Conversation/Alias..."
 msgstr "/Samtale/Alias..."
 
-#: src/gtkconv.c:2469
+#: src/gtkconv.c:2490
 msgid "/Conversation/Block..."
 msgstr "/Samtale/Blokker..."
 
-#: src/gtkconv.c:2473
+#: src/gtkconv.c:2494
 msgid "/Conversation/Add..."
 msgstr "/Samtale/Legg til..."
 
-#: src/gtkconv.c:2477
+#: src/gtkconv.c:2498
 msgid "/Conversation/Remove..."
 msgstr "/Samtale/Fjern..."
 
-#: src/gtkconv.c:2483
+#: src/gtkconv.c:2504
 msgid "/Conversation/Insert Link..."
 msgstr "/Samtale/Sett inn lenke"
 
-#: src/gtkconv.c:2487
+#: src/gtkconv.c:2508
 msgid "/Conversation/Insert Image..."
 msgstr "/Samtale/Sett inn bilde..."
 
-#: src/gtkconv.c:2493
+#: src/gtkconv.c:2514
 msgid "/Options/Enable Logging"
 msgstr "/Brukervalg/Slå på logging"
 
-#: src/gtkconv.c:2496
+#: src/gtkconv.c:2517
 msgid "/Options/Enable Sounds"
 msgstr "/Brukervalg/Slå på lyder"
 
-#: src/gtkconv.c:2499
+#: src/gtkconv.c:2520
 #, fuzzy
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Brukervalg/Vis formateringsverktøy"
 
-#: src/gtkconv.c:2502
+#: src/gtkconv.c:2523
 msgid "/Options/Show Timestamps"
 msgstr "/Brukervalg/Vis tidsstempler"
 
-#: src/gtkconv.c:2505
+#: src/gtkconv.c:2526
 #, fuzzy
 msgid "/Options/Show Buddy Icon"
 msgstr "Vis kontaktikoner"
 
-#: src/gtkconv.c:2578
+#: src/gtkconv.c:2597
 msgid "User is typing..."
 msgstr "Brukeren skriver en melding..."
 
-#: src/gtkconv.c:2584
+#: src/gtkconv.c:2602
 msgid "User has typed something and paused"
 msgstr "Brukeren har skrevet noe og tatt pause"
 
 #. Build the Send As menu
-#: src/gtkconv.c:2722
+#: src/gtkconv.c:2740
 #, fuzzy
 msgid "_Send To"
 msgstr "Send som"
 
-#: src/gtkconv.c:3351
+#: src/gtkconv.c:3373
 msgid "Topic:"
 msgstr "Tema:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3399
+#: src/gtkconv.c:3421
 msgid "0 people in room"
 msgstr "0 brukere i rommet"
 
-#: src/gtkconv.c:3478
+#: src/gtkconv.c:3500
 msgid "IM the user"
 msgstr "Send beskjed til bruker"
 
-#: src/gtkconv.c:3491
+#: src/gtkconv.c:3513
 msgid "Ignore the user"
 msgstr "Ignorer bruker"
 
-#: src/gtkconv.c:3503
+#: src/gtkconv.c:3525
 msgid "Get the user's information"
 msgstr "Hent brukerinformasjon"
 
-#: src/gtkconv.c:4310 src/gtkconv.c:4412 src/gtkconv.c:4467
+#: src/gtkconv.c:4368 src/gtkconv.c:4470 src/gtkconv.c:4525
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "%d person i rommet"
 msgstr[1] "%d personer i rommet"
 
-#: src/gtkconv.c:5526
+#: src/gtkconv.c:5589
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
 
-#: src/gtkconv.c:5529
+#: src/gtkconv.c:5592
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr ""
 
-#: src/gtkconv.c:5532
+#: src/gtkconv.c:5595
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr ""
 
-#: src/gtkconv.c:5535
+#: src/gtkconv.c:5598
 #, fuzzy
 msgid "clear: Clears the conversation scrollback."
 msgstr "%s har lukket samtalevinduet."
 
-#: src/gtkconv.c:5538
+#: src/gtkconv.c:5601
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr ""
 
-#: src/gtkconv.c:5643
+#: src/gtkconv.c:5706
 #, fuzzy
 msgid "Confirm close"
 msgstr "Bekrefte konto"
 
-#: src/gtkconv.c:5675
+#: src/gtkconv.c:5738
 #, fuzzy
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "Er du sikker på at du vil slette %s?"
 
-#: src/gtkconv.c:6340
+#: src/gtkconv.c:6403
 msgid "Close conversation"
 msgstr "Lukk samtalen"
 
-#: src/gtkconv.c:6801
+#: src/gtkconv.c:6864
 msgid "Last created window"
 msgstr "Sist lagde vindu"
 
-#: src/gtkconv.c:6803
+#: src/gtkconv.c:6866
 msgid "Separate IM and Chat windows"
 msgstr "Skill direktemeldings- og gruppesamtalevinduer."
 
-#: src/gtkconv.c:6805 src/gtkprefs.c:1239
+#: src/gtkconv.c:6868 src/gtkprefs.c:1205
 msgid "New window"
 msgstr "Nytt vindu"
 
-#: src/gtkconv.c:6807
+#: src/gtkconv.c:6870
 msgid "By group"
 msgstr "Etter gruppe"
 
-#: src/gtkconv.c:6809
+#: src/gtkconv.c:6872
 msgid "By account"
 msgstr "Etter konto"
 
@@ -3110,7 +3135,7 @@ msgid "Enter an alias for this contact."
 msgstr "Vennligst skriv inn aliasnavn for denne kontakten."
 
 #: src/gtkdialogs.c:722 src/gtkdialogs.c:744 src/gtkdialogs.c:764
-#: src/gtkrequest.c:268 src/protocols/silc/chat.c:585
+#: src/gtkrequest.c:269 src/protocols/silc/chat.c:585
 msgid "Alias"
 msgstr "Alias"
 
@@ -3295,7 +3320,7 @@ msgid "File transfer _details"
 msgstr "Skjul overføringsdetaljer"
 
 #. Pause button
-#: src/gtkft.c:764 src/gtkstock.c:123
+#: src/gtkft.c:764 src/gtkstock.c:122
 msgid "_Pause"
 msgstr "_Pause"
 
@@ -3308,56 +3333,56 @@ msgstr "_Fortsett"
 msgid "Failed"
 msgstr "Feilet."
 
-#: src/gtkimhtml.c:817
+#: src/gtkimhtml.c:816
 msgid "Pa_ste As Text"
 msgstr "Li_m inn som tekst"
 
-#: src/gtkimhtml.c:1314
+#: src/gtkimhtml.c:1313
 msgid "Hyperlink color"
 msgstr "Farge på lenke"
 
-#: src/gtkimhtml.c:1315
+#: src/gtkimhtml.c:1314
 msgid "Color to draw hyperlinks."
 msgstr "Farge på lenker"
 
-#: src/gtkimhtml.c:1318
+#: src/gtkimhtml.c:1317
 #, fuzzy
 msgid "Hyperlink prelight color"
 msgstr "Farge på lenke"
 
-#: src/gtkimhtml.c:1319
+#: src/gtkimhtml.c:1318
 #, fuzzy
 msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "Farge på lenker"
 
 #
-#: src/gtkimhtml.c:1538
+#: src/gtkimhtml.c:1537
 msgid "_Copy E-Mail Address"
 msgstr "Kopier e-postadresse"
 
-#: src/gtkimhtml.c:1550
+#: src/gtkimhtml.c:1549
 msgid "_Open Link in Browser"
 msgstr "Åpne i nettleser"
 
-#: src/gtkimhtml.c:1560
+#: src/gtkimhtml.c:1559
 msgid "_Copy Link Location"
 msgstr "Kopier snarvei"
 
-#: src/gtkimhtml.c:3239
+#: src/gtkimhtml.c:3234
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:3242
+#: src/gtkimhtml.c:3237
 msgid ""
 "Unrecognized file type\n"
 "\n"
 "Defaulting to PNG."
 msgstr ""
 
-#: src/gtkimhtml.c:3255
+#: src/gtkimhtml.c:3250
 #, fuzzy, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -3368,7 +3393,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtkimhtml.c:3258
+#: src/gtkimhtml.c:3253
 #, fuzzy, c-format
 msgid ""
 "Error saving image\n"
@@ -3376,11 +3401,11 @@ msgid ""
 "%s"
 msgstr "Feil under lagring av bilde: %s"
 
-#: src/gtkimhtml.c:3338 src/gtkimhtml.c:3350
+#: src/gtkimhtml.c:3333 src/gtkimhtml.c:3345
 msgid "Save Image"
 msgstr "Lagre bilde"
 
-#: src/gtkimhtml.c:3378
+#: src/gtkimhtml.c:3373
 msgid "_Save Image..."
 msgstr "Lagre bilde..."
 
@@ -3445,52 +3470,52 @@ msgstr "Dette temaet har ingen tilgjengelige smileys (fjesinger)."
 msgid "Smile!"
 msgstr "Smil!"
 
-#: src/gtkimhtmltoolbar.c:918
+#: src/gtkimhtmltoolbar.c:916
 msgid "Bold"
 msgstr "Fet"
 
-#: src/gtkimhtmltoolbar.c:929
+#: src/gtkimhtmltoolbar.c:927
 msgid "Italic"
 msgstr "Kursiv"
 
-#: src/gtkimhtmltoolbar.c:940
+#: src/gtkimhtmltoolbar.c:938
 msgid "Underline"
 msgstr "Understrek"
 
-#: src/gtkimhtmltoolbar.c:956
+#: src/gtkimhtmltoolbar.c:954
 msgid "Larger font size"
 msgstr "Større skrift"
 
-#: src/gtkimhtmltoolbar.c:968
+#: src/gtkimhtmltoolbar.c:966
 msgid "Smaller font size"
 msgstr "Mindre skrift"
 
-#: src/gtkimhtmltoolbar.c:985
+#: src/gtkimhtmltoolbar.c:983
 msgid "Font Face"
 msgstr "Skrifttype"
 
-#: src/gtkimhtmltoolbar.c:997
+#: src/gtkimhtmltoolbar.c:995
 msgid "Foreground font color"
 msgstr "Forgrunnsfarge"
 
-#: src/gtkimhtmltoolbar.c:1009
+#: src/gtkimhtmltoolbar.c:1007
 msgid "Background color"
 msgstr "Bakgrunnsfarge"
 
-#: src/gtkimhtmltoolbar.c:1025
+#: src/gtkimhtmltoolbar.c:1023
 #, fuzzy
 msgid "Clear formatting"
 msgstr "_Fjern formatering"
 
-#: src/gtkimhtmltoolbar.c:1040
+#: src/gtkimhtmltoolbar.c:1038
 msgid "Insert link"
 msgstr "Sett inn lenke"
 
-#: src/gtkimhtmltoolbar.c:1050
+#: src/gtkimhtmltoolbar.c:1048
 msgid "Insert image"
 msgstr "Sett inn bilde"
 
-#: src/gtkimhtmltoolbar.c:1061
+#: src/gtkimhtmltoolbar.c:1059
 msgid "Insert smiley"
 msgstr "Sett inn smilefjes"
 
@@ -3504,44 +3529,43 @@ msgstr "Samtaler med %s"
 msgid "Conversation with %s on %s"
 msgstr "Samtaler med %s"
 
-#: src/gtklog.c:374
+#: src/gtklog.c:309
+msgid ""
+"System events will only be logged if the \"Log all status changes to system "
+"log\" preference is enabled."
+msgstr ""
+
+#: src/gtklog.c:313
+msgid ""
+"Instant messages will only be logged if the \"Log all instant messages\" "
+"preference is enabled."
+msgstr ""
+
+#: src/gtklog.c:316
+msgid ""
+"Chats will only be logged if the \"Log all chats preference\" is enabled."
+msgstr ""
+
+#: src/gtklog.c:320
+msgid "No logs were found"
+msgstr ""
+
+#: src/gtklog.c:396
 #, fuzzy
 msgid "Total log size:"
 msgstr "Etter loggstørrelse"
 
-#: src/gtklog.c:422
-msgid ""
-"System events will only be logged if the <span style=\"italic\">Log all "
-"status changes to system log</span> preference is enabled."
-msgstr ""
-
-#: src/gtklog.c:426
-msgid ""
-"Instant messages will only be logged if the <span style=\"italic\">Log all "
-"instant messages</span> preference is enabled."
-msgstr ""
-
-#: src/gtklog.c:429
-msgid ""
-"Chats will only be logged if the <span style=\"italic\">Log all chats "
-"preference</span> is enabled."
-msgstr ""
-
-#: src/gtklog.c:434
-msgid "No logs were found."
-msgstr ""
-
-#: src/gtklog.c:480
+#: src/gtklog.c:472
 #, fuzzy, c-format
 msgid "Conversations in %s"
 msgstr "Samtaler med %s"
 
-#: src/gtklog.c:488 src/gtklog.c:539
+#: src/gtklog.c:480 src/gtklog.c:531
 #, c-format
 msgid "Conversations with %s"
 msgstr "Samtaler med %s"
 
-#: src/gtklog.c:564
+#: src/gtklog.c:556
 msgid "System Log"
 msgstr "Systemlogg"
 
@@ -3556,7 +3580,6 @@ msgid ""
 "Gaim %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -a, --acct          display account editor window\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
 "  -h, --help          display this help and exit\n"
@@ -3565,6 +3588,15 @@ msgid ""
 "                      account(s) to use, separated by commas)\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+
+#. TODO: Should save the previous status as a transient status?
+#. Save the newly selected status to prefs.xml and status.xml
+#: src/gtkmain.c:676 src/gtkmain.c:678 src/gtkmain.c:681
+#: src/gtkstatusbox.c:661 src/gtkstatusbox.c:663 src/gtkstatusbox.c:666
+#: src/status.c:1696
+#, fuzzy
+msgid "Default"
+msgstr "Gnome-standard"
 
 #. Descriptive label
 #: src/gtknotify.c:275
@@ -3610,7 +3642,7 @@ msgstr ""
 msgid "Search Results"
 msgstr "Søkeresultater"
 
-#: src/gtknotify.c:643 src/protocols/oscar/oscar.c:4864
+#: src/gtknotify.c:643 src/protocols/oscar/oscar.c:4858
 #, c-format
 msgid "Info for %s"
 msgstr "Info for %s"
@@ -3811,49 +3843,32 @@ msgstr "Ikon"
 msgid "Description"
 msgstr "Beskrivelse"
 
-#: src/gtkprefs.c:786
-msgid "Buddy List Sorting"
-msgstr "Kontaktlistesortering"
-
-#: src/gtkprefs.c:795
-msgid "_Sorting:"
-msgstr "_Sortering:"
-
-#: src/gtkprefs.c:800
-msgid "Buddy Display"
-msgstr "Kontaktvisning"
-
-#: src/gtkprefs.c:801
-#, fuzzy
-msgid "Show more buddy details"
-msgstr "Vis brukerdetaljer"
-
-#: src/gtkprefs.c:839
+#: src/gtkprefs.c:805
 msgid "Send unknown \"_slash\" commands as messages"
 msgstr "Send ukjente \"skråstreks\"-kommandoer som meldinger"
 
-#: src/gtkprefs.c:841
+#: src/gtkprefs.c:807
 #, fuzzy
 msgid "Show _formatting on incoming messages"
 msgstr "Vis formateringsverktøylinje"
 
-#: src/gtkprefs.c:843
+#: src/gtkprefs.c:809
 msgid "Show buddy _icons"
 msgstr "Vis kontaktikoner"
 
-#: src/gtkprefs.c:845
+#: src/gtkprefs.c:811
 msgid "Enable buddy ic_on animation"
 msgstr "Slå på _animasjoner i kontaktikoner"
 
-#: src/gtkprefs.c:847
+#: src/gtkprefs.c:813
 msgid "_Notify buddies that you are typing to them"
 msgstr "Varsle kontakter når skriver til dem"
 
-#: src/gtkprefs.c:850
+#: src/gtkprefs.c:816
 msgid "_Highlight misspelled words"
 msgstr "Marker stavefeil"
 
-#: src/gtkprefs.c:868
+#: src/gtkprefs.c:834
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting. :)"
@@ -3862,163 +3877,164 @@ msgstr ""
 "formatering :)"
 
 #. All the tab options!
-#: src/gtkprefs.c:890
+#: src/gtkprefs.c:856
 msgid "Tab Options"
 msgstr "Fanevalg"
 
-#: src/gtkprefs.c:892
+#: src/gtkprefs.c:858
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "Vis direktemeldinger og samtalegrupper i _faner"
 
-#: src/gtkprefs.c:906
+#: src/gtkprefs.c:872
 msgid "Show close b_utton on tabs"
 msgstr "Vis _lukkeknapp på faner"
 
-#: src/gtkprefs.c:912
+#: src/gtkprefs.c:878
 #, fuzzy
 msgid "_Placement:"
 msgstr "ExtPlacement"
 
-#: src/gtkprefs.c:914
+#: src/gtkprefs.c:880
 msgid "Top"
 msgstr "Øverst"
 
-#: src/gtkprefs.c:915
+#: src/gtkprefs.c:881
 msgid "Bottom"
 msgstr "Nederst"
 
-#: src/gtkprefs.c:916
+#: src/gtkprefs.c:882
 msgid "Left"
 msgstr "Venstre"
 
-#: src/gtkprefs.c:917
+#: src/gtkprefs.c:883
 msgid "Right"
 msgstr "Høyre"
 
-#: src/gtkprefs.c:919
+#: src/gtkprefs.c:885
 msgid "Left Vertical"
 msgstr ""
 
-#: src/gtkprefs.c:920
+#: src/gtkprefs.c:886
 msgid "Right Vertical"
 msgstr ""
 
-#: src/gtkprefs.c:925
+#: src/gtkprefs.c:891
 #, fuzzy
 msgid "N_ew conversations:"
 msgstr "Lukk samtalen"
 
-#: src/gtkprefs.c:976 src/protocols/oscar/oscar.c:779
-#: src/protocols/oscar/oscar.c:5951
+#: src/gtkprefs.c:942 src/protocols/oscar/oscar.c:779
+#: src/protocols/oscar/oscar.c:5959
 msgid "IP Address"
 msgstr "IP-adresse"
 
-#: src/gtkprefs.c:978
+#: src/gtkprefs.c:944
 #, fuzzy
 msgid "STUN Server:"
 msgstr "_Tjener:"
 
-#: src/gtkprefs.c:980
+#: src/gtkprefs.c:946
 msgid "_Autodetect IP Address"
 msgstr "Finn IP-adresse _automatisk"
 
-#: src/gtkprefs.c:989
+#: src/gtkprefs.c:955
 msgid "Public _IP:"
 msgstr "Offentlig _IP (ved NAT):"
 
-#: src/gtkprefs.c:1013
+#: src/gtkprefs.c:979
 msgid "Ports"
 msgstr "Porter"
 
-#: src/gtkprefs.c:1016
+#: src/gtkprefs.c:982
 msgid "_Manually specify range of ports to listen on"
 msgstr "_Manuellt spesifiser et intervall av porter å lytte på"
 
-#: src/gtkprefs.c:1019
+#: src/gtkprefs.c:985
 msgid "_Start Port:"
 msgstr "_Startport:"
 
-#: src/gtkprefs.c:1026
+#: src/gtkprefs.c:992
 msgid "_End Port:"
 msgstr "_Sluttport:"
 
-#: src/gtkprefs.c:1033
+#: src/gtkprefs.c:999
 msgid "Proxy Server"
 msgstr "Proxytjener"
 
-#: src/gtkprefs.c:1037
+#: src/gtkprefs.c:1003
 msgid "No proxy"
 msgstr "Ingen proxy"
 
-#: src/gtkprefs.c:1093
+#: src/gtkprefs.c:1059
 msgid "_User:"
 msgstr "_Bruker:"
 
-#: src/gtkprefs.c:1153
+#: src/gtkprefs.c:1119
 msgid "Epiphany"
 msgstr ""
 
-#: src/gtkprefs.c:1154
+#: src/gtkprefs.c:1120
 msgid "Firebird"
 msgstr ""
 
-#: src/gtkprefs.c:1155
+#: src/gtkprefs.c:1121
 msgid "Firefox"
 msgstr ""
 
-#: src/gtkprefs.c:1156
+#: src/gtkprefs.c:1122
 msgid "Galeon"
 msgstr ""
 
-#: src/gtkprefs.c:1157
-msgid "Gnome Default"
+#: src/gtkprefs.c:1123
+#, fuzzy
+msgid "GNOME Default"
 msgstr "Gnome-standard"
 
-#: src/gtkprefs.c:1158
+#: src/gtkprefs.c:1124
 msgid "Konqueror"
 msgstr ""
 
-#: src/gtkprefs.c:1159
+#: src/gtkprefs.c:1125
 msgid "Mozilla"
 msgstr ""
 
-#: src/gtkprefs.c:1160
+#: src/gtkprefs.c:1126
 msgid "Netscape"
 msgstr ""
 
-#: src/gtkprefs.c:1161
+#: src/gtkprefs.c:1127
 msgid "Opera"
 msgstr ""
 
-#: src/gtkprefs.c:1170
+#: src/gtkprefs.c:1136
 msgid "Manual"
 msgstr "Egendefinert"
 
-#: src/gtkprefs.c:1223
+#: src/gtkprefs.c:1189
 msgid "Browser Selection"
 msgstr "Valg av nettleser"
 
-#: src/gtkprefs.c:1227
+#: src/gtkprefs.c:1193
 msgid "_Browser:"
 msgstr "_Nettleser:"
 
-#: src/gtkprefs.c:1235
+#: src/gtkprefs.c:1201
 msgid "_Open link in:"
 msgstr "_Åpne lenke i:"
 
-#: src/gtkprefs.c:1237
+#: src/gtkprefs.c:1203
 msgid "Browser default"
 msgstr "Standard for nettleser"
 
-#: src/gtkprefs.c:1238
+#: src/gtkprefs.c:1204
 msgid "Existing window"
 msgstr "Eksisterende vindu"
 
-#: src/gtkprefs.c:1240
+#: src/gtkprefs.c:1206
 msgid "New tab"
 msgstr "Ny tab"
 
-#: src/gtkprefs.c:1254
+#: src/gtkprefs.c:1220
 #, c-format
 msgid ""
 "_Manual:\n"
@@ -4027,57 +4043,57 @@ msgstr ""
 "_Egendefinert:\n"
 "(%s for URL)"
 
-#: src/gtkprefs.c:1290 src/gtkprefs.c:1767
+#: src/gtkprefs.c:1256 src/gtkprefs.c:1738
 msgid "Logging"
 msgstr "Logging"
 
-#: src/gtkprefs.c:1293
+#: src/gtkprefs.c:1259
 msgid "Log _Format:"
 msgstr "Logg_format:"
 
-#: src/gtkprefs.c:1298
+#: src/gtkprefs.c:1264
 #, fuzzy
 msgid "Log all _instant messages"
 msgstr "Logg alle direktemeldinger"
 
-#: src/gtkprefs.c:1300
+#: src/gtkprefs.c:1266
 msgid "Log all c_hats"
 msgstr "Logg alle samtaler"
 
-#: src/gtkprefs.c:1302
+#: src/gtkprefs.c:1268
 msgid "Log all _status changes to system log"
 msgstr ""
 
-#: src/gtkprefs.c:1434
+#: src/gtkprefs.c:1400
 msgid "Sound Selection"
 msgstr "Lydvalg"
 
-#: src/gtkprefs.c:1488
+#: src/gtkprefs.c:1454
 msgid "Sound Method"
 msgstr "Lydtype"
 
-#: src/gtkprefs.c:1489
+#: src/gtkprefs.c:1455
 msgid "_Method:"
 msgstr "_Metode:"
 
-#: src/gtkprefs.c:1491
+#: src/gtkprefs.c:1457
 msgid "Console beep"
 msgstr "Konsollpip"
 
-#: src/gtkprefs.c:1493
+#: src/gtkprefs.c:1459
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: src/gtkprefs.c:1498
+#: src/gtkprefs.c:1464
 msgid "Command"
 msgstr "Kommando"
 
-#: src/gtkprefs.c:1499
+#: src/gtkprefs.c:1465
 #, fuzzy
 msgid "No sounds"
 msgstr "Lyder"
 
-#: src/gtkprefs.c:1507
+#: src/gtkprefs.c:1473
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -4086,111 +4102,115 @@ msgstr ""
 "_Program for lydavspilling\n"
 "(%s for filnavn)"
 
-#: src/gtkprefs.c:1533
+#: src/gtkprefs.c:1499
 msgid "Sound Options"
 msgstr "Lydinnstillinger"
 
 #
-#: src/gtkprefs.c:1534
+#: src/gtkprefs.c:1500
 msgid "Sounds when conversation has _focus"
 msgstr "Lyder når samtalevinduet har _fokus"
 
-#: src/gtkprefs.c:1536
+#: src/gtkprefs.c:1502
 msgid "_Sounds while away"
 msgstr "Lyder når du er fraværsmarkert"
 
-#: src/gtkprefs.c:1546
+#: src/gtkprefs.c:1512
 msgid "Sound Events"
 msgstr "Lydhendelser"
 
-#: src/gtkprefs.c:1597
+#: src/gtkprefs.c:1563
 msgid "Play"
 msgstr "Spill av"
 
-#: src/gtkprefs.c:1604
+#: src/gtkprefs.c:1570
 msgid "Event"
 msgstr "Hendelse"
 
-#: src/gtkprefs.c:1623
+#: src/gtkprefs.c:1589
 msgid "Test"
 msgstr "Test"
 
-#: src/gtkprefs.c:1627
+#: src/gtkprefs.c:1593
 msgid "Reset"
 msgstr "Nullstill"
 
-#: src/gtkprefs.c:1631
+#: src/gtkprefs.c:1597
 msgid "Choose..."
 msgstr "Bla gjennom..."
 
-#: src/gtkprefs.c:1685 src/gtkstatusbox.c:288 src/protocols/irc/irc.c:176
+#: src/gtkprefs.c:1651 src/gtkstatusbox.c:295
+#: src/protocols/bonjour/bonjour.c:240 src/protocols/irc/irc.c:176
 #: src/protocols/irc/msgs.c:221 src/protocols/jabber/buddy.c:1093
 #: src/protocols/jabber/jabber.c:1055 src/protocols/msn/msn.c:577
 #: src/protocols/novell/novell.c:2825 src/protocols/novell/novell.c:2959
 #: src/protocols/novell/novell.c:3041 src/protocols/oscar/oscar.c:707
-#: src/protocols/oscar/oscar.c:6510 src/protocols/oscar/oscar.c:6579
-#: src/protocols/oscar/oscar.c:7604 src/protocols/oscar/oscar.c:7758
-#: src/protocols/silc/buddy.c:1417 src/protocols/silc/silc.c:52
-#: src/protocols/yahoo/yahoo.c:3234 src/protocols/zephyr/zephyr.c:2259
-#: src/status.c:158
+#: src/protocols/oscar/oscar.c:6516 src/protocols/oscar/oscar.c:6585
+#: src/protocols/oscar/oscar.c:7610 src/protocols/oscar/oscar.c:7764
+#: src/protocols/sametime/sametime.c:2764 src/protocols/silc/buddy.c:1417
+#: src/protocols/silc/silc.c:52 src/protocols/yahoo/yahoo.c:3225
+#: src/protocols/zephyr/zephyr.c:2259 src/status.c:158
 msgid "Away"
 msgstr "Borte"
 
-#: src/gtkprefs.c:1686
+#: src/gtkprefs.c:1652
 msgid "_Queue new messages when away"
 msgstr "Når borte, legg nye beskjeder i kø"
 
-#: src/gtkprefs.c:1689
+#: src/gtkprefs.c:1655
 msgid "_Auto-reply:"
 msgstr "_Automatisk svar"
 
-#: src/gtkprefs.c:1692
+#: src/gtkprefs.c:1658
 msgid "When away"
 msgstr "Når fraværende"
 
-#: src/gtkprefs.c:1693
+#: src/gtkprefs.c:1659
 #, fuzzy
 msgid "When both away and idle"
 msgstr "Når fraværende og inaktiv"
 
-#: src/gtkprefs.c:1696
+#: src/gtkprefs.c:1662
 #, fuzzy
 msgid "_Report idle time"
 msgstr "Vis inaktiv tid"
 
-#: src/gtkprefs.c:1699
+#: src/gtkprefs.c:1665
 msgid "Auto-away"
 msgstr "Automatisk fraværsmarkering"
 
-#: src/gtkprefs.c:1700
-msgid "Set away _when idle"
+#: src/gtkprefs.c:1666
+#, fuzzy
+msgid "Change status when _idle"
 msgstr "Sett som borte når inaktiv"
 
-#: src/gtkprefs.c:1704
-msgid "_Minutes before setting away:"
+#: src/gtkprefs.c:1670
+#, fuzzy
+msgid "_Minutes before changing status:"
 msgstr "Antall minutter før fraværsmarkert:"
 
-#: src/gtkprefs.c:1712
-msgid "Away m_essage:"
-msgstr "Fraværsbeskjed:"
+#: src/gtkprefs.c:1678
+#, fuzzy
+msgid "Change _status to:"
+msgstr "Endre adresse til:"
 
-#: src/gtkprefs.c:1757
+#: src/gtkprefs.c:1728
 msgid "Smiley Themes"
 msgstr "Smilefjes-tema"
 
-#: src/gtkprefs.c:1758
+#: src/gtkprefs.c:1729
 msgid "Sounds"
 msgstr "Lyder"
 
-#: src/gtkprefs.c:1759 src/protocols/silc/silc.c:1589
+#: src/gtkprefs.c:1730 src/protocols/silc/silc.c:1589
 msgid "Network"
 msgstr "Nettverk"
 
-#: src/gtkprefs.c:1764
+#: src/gtkprefs.c:1735
 msgid "Browser"
 msgstr "Nettleser"
 
-#: src/gtkprefs.c:1768
+#: src/gtkprefs.c:1739
 msgid "Away / Idle"
 msgstr "Borte / inaktiv"
 
@@ -4283,42 +4303,42 @@ msgstr "Er du sikker på at du vil blokkere %s?"
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:258 src/protocols/msn/dialog.c:113
+#: src/gtkrequest.c:259 src/protocols/msn/dialog.c:113
 #: src/protocols/msn/msn.c:553 src/protocols/msn/msn.c:556
 #: src/protocols/novell/novell.c:1902 src/protocols/silc/buddy.c:312
 #: src/protocols/silc/pk.c:117 src/request.h:1322
 msgid "Yes"
 msgstr "Ja"
 
-#: src/gtkrequest.c:259 src/protocols/msn/dialog.c:114
+#: src/gtkrequest.c:260 src/protocols/msn/dialog.c:114
 #: src/protocols/msn/msn.c:553 src/protocols/msn/msn.c:556
 #: src/protocols/novell/novell.c:1903 src/protocols/silc/buddy.c:313
 #: src/protocols/silc/pk.c:118 src/request.h:1322
 msgid "No"
 msgstr "Nei"
 
-#: src/gtkrequest.c:262
+#: src/gtkrequest.c:263
 msgid "Apply"
 msgstr "Bruk"
 
-#: src/gtkrequest.c:263 src/protocols/msn/msn.c:357
+#: src/gtkrequest.c:264 src/protocols/msn/msn.c:357
 #: src/protocols/silc/util.c:335
 msgid "Close"
 msgstr "L_ukk"
 
-#: src/gtkrequest.c:1795
+#: src/gtkrequest.c:1796
 msgid "That file already exists"
 msgstr "Filen eksisterer allerede."
 
-#: src/gtkrequest.c:1796
+#: src/gtkrequest.c:1797
 msgid "Would you like to overwrite it?"
 msgstr "Ønsker du å overskrive den?"
 
-#: src/gtkrequest.c:1838 src/gtkrequest.c:1879
+#: src/gtkrequest.c:1839 src/gtkrequest.c:1880
 msgid "Save File..."
 msgstr "Lagre fil..."
 
-#: src/gtkrequest.c:1839 src/gtkrequest.c:1880
+#: src/gtkrequest.c:1840 src/gtkrequest.c:1881
 msgid "Open File..."
 msgstr "Åpne fil..."
 
@@ -4331,64 +4351,75 @@ msgstr "Romliste"
 msgid "_Get List"
 msgstr "Hent Liste"
 
-#: src/gtksavedstatuses.c:317 src/protocols/jabber/buddy.c:264
+#: src/gtksavedstatuses.c:362 src/protocols/jabber/buddy.c:264
 #: src/protocols/jabber/buddy.c:805 src/protocols/novell/novell.c:1460
 msgid "Title"
 msgstr "Tittel"
 
-#: src/gtksavedstatuses.c:332
+#: src/gtksavedstatuses.c:377
 msgid "Type"
 msgstr ""
 
-#: src/gtksavedstatuses.c:343 src/protocols/gg/gg.c:1083
+#: src/gtksavedstatuses.c:388 src/protocols/bonjour/bonjour.c:234
+#: src/protocols/bonjour/bonjour.c:241 src/protocols/gg/gg.c:1083
 #: src/protocols/gg/gg.c:1088 src/protocols/gg/gg.c:1097
 #: src/protocols/gg/gg.c:1107 src/protocols/gg/gg.c:1112
 #: src/protocols/irc/irc.c:177 src/protocols/jabber/jabber.c:1032
 #: src/protocols/jabber/jabber.c:1040 src/protocols/jabber/jabber.c:1048
 #: src/protocols/jabber/jabber.c:1056 src/protocols/jabber/jabber.c:1064
 #: src/protocols/jabber/jabber.c:1072 src/protocols/novell/novell.c:2845
-#: src/protocols/oscar/oscar.c:7752 src/protocols/oscar/oscar.c:7759
-#: src/protocols/yahoo/yahoo.c:3202 src/protocols/yahoo/yahoo.c:3235
+#: src/protocols/oscar/oscar.c:7758 src/protocols/oscar/oscar.c:7765
+#: src/protocols/sametime/sametime.c:2759
+#: src/protocols/sametime/sametime.c:2765
+#: src/protocols/sametime/sametime.c:2771 src/protocols/simple/simple.c:255
+#: src/protocols/yahoo/yahoo.c:3220 src/protocols/yahoo/yahoo.c:3226
 #: src/protocols/zephyr/zephyr.c:2260
 msgid "Message"
 msgstr "Beskjed:"
 
-#: src/gtksavedstatuses.c:406
+#: src/gtksavedstatuses.c:451
 #, fuzzy
 msgid "Saved Statuses"
 msgstr "Tjenerstatistikk"
 
-#: src/gtksavedstatuses.c:527
+#. Use button
+#. TODO: It might be better if the button said "Use" or "Activate"
+#: src/gtksavedstatuses.c:477
+#, fuzzy
+msgid "_Use"
+msgstr "Bruk"
+
+#: src/gtksavedstatuses.c:584
 msgid "Title already in use.  You must choose a unique title."
 msgstr ""
 
-#: src/gtksavedstatuses.c:618
+#: src/gtksavedstatuses.c:675
 #, fuzzy
 msgid "Custom status"
 msgstr "Etter status"
 
-#: src/gtksavedstatuses.c:721 src/protocols/gg/gg.c:1064
+#: src/gtksavedstatuses.c:778 src/protocols/gg/gg.c:1064
 #: src/protocols/gg/gg.c:1069 src/protocols/jabber/buddy.c:626
 #: src/protocols/jabber/buddy.c:633 src/protocols/jabber/buddy.c:644
 #: src/protocols/jabber/jabber.c:1005 src/protocols/msn/msn.c:544
 #: src/protocols/novell/novell.c:2844 src/protocols/novell/novell.c:2848
 #: src/protocols/oscar/oscar.c:762 src/protocols/oscar/oscar.c:767
-#: src/protocols/oscar/oscar.c:769 src/protocols/yahoo/yahoo.c:2783
+#: src/protocols/oscar/oscar.c:769 src/protocols/yahoo/yahoo.c:2787
 msgid "Status"
 msgstr "Status"
 
-#: src/gtksavedstatuses.c:740
+#: src/gtksavedstatuses.c:797
 #, fuzzy
 msgid "_Title:"
 msgstr "Tittel"
 
-#: src/gtksavedstatuses.c:760
+#: src/gtksavedstatuses.c:817
 #, fuzzy
 msgid "_Status:"
 msgstr "Status:"
 
 #. Custom status message expander
-#: src/gtksavedstatuses.c:795
+#: src/gtksavedstatuses.c:852
 msgid "Use a _different status for some accounts"
 msgstr ""
 
@@ -4454,29 +4485,30 @@ msgstr ""
 "Kunne ikke spille av lyd fordi det konfigurerte avspillingsprogrammet ikke "
 "kunne startes: %s"
 
-#: src/gtkstatusbox.c:190
+#: src/gtkstatusbox.c:197
 #, fuzzy
 msgid "Typing"
 msgstr "Ping"
 
 #. connect to the server
-#: src/gtkstatusbox.c:193 src/protocols/irc/irc.c:258
+#: src/gtkstatusbox.c:200 src/protocols/irc/irc.c:258
 #: src/protocols/jabber/jabber.c:838 src/protocols/msn/session.c:362
 #: src/protocols/napster/napster.c:525 src/protocols/novell/novell.c:2164
-#: src/protocols/oscar/oscar.c:1824 src/protocols/yahoo/yahoo.c:2451
-#: src/protocols/zephyr/zephyr.c:1546
+#: src/protocols/oscar/oscar.c:1816 src/protocols/simple/simple.c:1276
+#: src/protocols/yahoo/yahoo.c:2455 src/protocols/zephyr/zephyr.c:1546
 msgid "Connecting"
 msgstr "Kobler til"
 
 #. hacks
-#: src/gtkstatusbox.c:287 src/protocols/irc/irc.c:172
-#: src/protocols/jabber/jabber.c:1039 src/protocols/msn/msn.c:573
-#: src/protocols/msn/state.c:29 src/protocols/msn/state.c:30
-#: src/protocols/msn/state.c:37 src/protocols/msn/state.c:38
-#: src/protocols/novell/novell.c:2822 src/protocols/novell/novell.c:2956
-#: src/protocols/novell/novell.c:3039 src/protocols/oscar/oscar.c:808
-#: src/protocols/oscar/oscar.c:7751 src/protocols/silc/silc.c:48
-#: src/protocols/yahoo/yahoo.c:3196 src/status.c:155
+#: src/gtkstatusbox.c:294 src/protocols/bonjour/bonjour.c:233
+#: src/protocols/irc/irc.c:172 src/protocols/jabber/jabber.c:1039
+#: src/protocols/msn/msn.c:573 src/protocols/msn/state.c:29
+#: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
+#: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2822
+#: src/protocols/novell/novell.c:2956 src/protocols/novell/novell.c:3039
+#: src/protocols/oscar/oscar.c:808 src/protocols/oscar/oscar.c:7757
+#: src/protocols/simple/simple.c:253 src/protocols/silc/silc.c:48
+#: src/protocols/yahoo/yahoo.c:3214 src/status.c:155
 msgid "Available"
 msgstr "Tilgjengelig"
 
@@ -4484,58 +4516,52 @@ msgstr "Tilgjengelig"
 #. * Without this selecting Invisible as own status doesn't
 #. * work. It's not used and not needed to show status of buddies.
 #.
-#: src/gtkstatusbox.c:289 src/protocols/gg/gg.c:1096
-#: src/protocols/oscar/oscar.c:711 src/protocols/oscar/oscar.c:7765
-#: src/protocols/yahoo/yahoo.c:2629 src/protocols/yahoo/yahoo.c:3239
+#: src/gtkstatusbox.c:296 src/protocols/gg/gg.c:1096
+#: src/protocols/oscar/oscar.c:711 src/protocols/oscar/oscar.c:7771
+#: src/protocols/yahoo/yahoo.c:2633 src/protocols/yahoo/yahoo.c:3257
 msgid "Invisible"
 msgstr "Usynlig"
 
-#: src/gtkstatusbox.c:290 src/protocols/gg/gg.c:1082
-#: src/protocols/irc/irc.c:168 src/protocols/jabber/buddy.c:1087
-#: src/protocols/jabber/jabber.c:1032 src/protocols/msn/msn.c:569
-#: src/protocols/napster/napster.c:573 src/protocols/novell/novell.c:2834
-#: src/protocols/novell/novell.c:2953 src/protocols/oscar/oscar.c:769
-#: src/protocols/oscar/oscar.c:7585 src/protocols/oscar/oscar.c:7746
-#: src/protocols/silc/silc.c:46 src/protocols/yahoo/yahoo.c:2633
-#: src/protocols/yahoo/yahoo.c:3193 src/status.c:154
+#: src/gtkstatusbox.c:297 src/protocols/bonjour/bonjour.c:228
+#: src/protocols/gg/gg.c:1082 src/protocols/irc/irc.c:168
+#: src/protocols/jabber/buddy.c:1087 src/protocols/jabber/jabber.c:1032
+#: src/protocols/msn/msn.c:569 src/protocols/napster/napster.c:573
+#: src/protocols/novell/novell.c:2834 src/protocols/novell/novell.c:2953
+#: src/protocols/oscar/oscar.c:769 src/protocols/oscar/oscar.c:7591
+#: src/protocols/oscar/oscar.c:7752 src/protocols/sametime/sametime.c:2754
+#: src/protocols/simple/simple.c:249 src/protocols/silc/silc.c:46
+#: src/protocols/yahoo/yahoo.c:2637 src/protocols/yahoo/yahoo.c:3211
+#: src/status.c:154
 msgid "Offline"
 msgstr "Avlogget"
 
-#: src/gtkstatusbox.c:292
+#: src/gtkstatusbox.c:299
 #, fuzzy
 msgid "Custom..."
 msgstr "Egendefinert"
 
-#: src/gtkstatusbox.c:293
+#: src/gtkstatusbox.c:300
 #, fuzzy
 msgid "Saved..."
 msgstr "Lagre fil..."
 
-#. TODO: Should save the previous status as a transient status?
-#. Save the newly selected status to prefs.xml and status.xml
-#: src/gtkstatusbox.c:655 src/gtkstatusbox.c:657 src/gtkstatusbox.c:660
-#: src/status.c:1696
-#, fuzzy
-msgid "Default"
-msgstr "Gnome-standard"
-
-#: src/gtkstock.c:118
+#: src/gtkstock.c:117
 msgid "_Alias"
 msgstr "_Alias"
 
-#: src/gtkstock.c:120
+#: src/gtkstock.c:119
 msgid "_Invite"
 msgstr "_Inviter"
 
-#: src/gtkstock.c:121
+#: src/gtkstock.c:120
 msgid "_Modify"
 msgstr "_Endre"
 
-#: src/gtkstock.c:122
+#: src/gtkstock.c:121
 msgid "_Open Mail"
 msgstr "Åpne _e-post"
 
-#: src/gtkstock.c:124
+#: src/gtkstock.c:123
 msgid "_Warn"
 msgstr "Advar"
 
@@ -4681,6 +4707,80 @@ msgstr "Gaim klarte ikke å laste tillegget."
 msgid "The required plugin %s was unable to load."
 msgstr "Det nødvendige tillegget %s kunne ikke lastes."
 
+#: src/protocols/bonjour/bonjour.c:298 src/protocols/msn/msn.c:546
+#: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2831
+#: src/protocols/oscar/oscar.c:5064 src/protocols/yahoo/yahoo.c:2635
+#: src/protocols/yahoo/yahoo_profile.c:660
+msgid "Idle"
+msgstr "Inaktiv"
+
+#: src/protocols/bonjour/bonjour.c:303
+#, fuzzy, c-format
+msgid ""
+"\n"
+"<b>Status:</b> %s"
+msgstr ""
+"\n"
+"<b>Status:</b> Fantastisk"
+
+#: src/protocols/bonjour/bonjour.c:305
+#, fuzzy, c-format
+msgid ""
+"\n"
+"<b>Message:</b> %s"
+msgstr ""
+"\n"
+"<b>%s:</b> %s"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#: src/protocols/bonjour/bonjour.c:388 src/protocols/bonjour/bonjour.c:390
+#, fuzzy
+msgid "Bonjour Protocol Plugin"
+msgstr "Yahoo-protokolltillegg"
+
+#. Creating the user splits
+#: src/protocols/bonjour/bonjour.c:417
+#, fuzzy
+msgid "Host name"
+msgstr "Etternavn:"
+
+#. Creating the options for the protocol
+#: src/protocols/bonjour/bonjour.c:421 src/protocols/irc/irc.c:822
+#: src/protocols/msn/msn.c:1968 src/protocols/napster/napster.c:712
+#: src/protocols/silc/silc.c:1597
+msgid "Port"
+msgstr "Port"
+
+#: src/protocols/bonjour/bonjour.c:424 src/protocols/gg/gg.c:405
+#, fuzzy
+msgid "First name"
+msgstr "Fornavn:"
+
+#: src/protocols/bonjour/bonjour.c:427 src/protocols/gg/gg.c:401
+#, fuzzy
+msgid "Last name"
+msgstr "Etternavn:"
+
+#: src/protocols/bonjour/bonjour.c:430 src/protocols/jabber/buddy.c:261
+#: src/protocols/jabber/buddy.c:772 src/protocols/jabber/buddy.c:780
+#: src/protocols/silc/silc.c:661 src/protocols/silc/util.c:511
+#: src/protocols/yahoo/yahoo_profile.c:995
+msgid "Email"
+msgstr "E-post"
+
+#: src/protocols/bonjour/bonjour.h:35
+msgid "Bonjour"
+msgstr ""
+
 #: src/protocols/gg/gg.c:136 src/protocols/gg/gg.c:155
 #, fuzzy
 msgid "Save Buddylist..."
@@ -4744,17 +4844,7 @@ msgstr ""
 msgid "Registration completed successfully!"
 msgstr "Registreringen var vellykket!"
 
-#: src/protocols/gg/gg.c:401
-#, fuzzy
-msgid "Last name"
-msgstr "Etternavn:"
-
-#: src/protocols/gg/gg.c:405
-#, fuzzy
-msgid "First name"
-msgstr "Fornavn:"
-
-#: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1664
+#: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1665
 #: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:698
 #: src/protocols/jabber/buddy.c:1341 src/protocols/jabber/jabber.c:648
 #: src/protocols/msn/msn.c:1394 src/protocols/silc/buddy.c:1480
@@ -4764,7 +4854,7 @@ msgid "Nickname"
 msgstr "Kallenavn"
 
 #: src/protocols/gg/gg.c:413 src/protocols/jabber/jabber.c:668
-#: src/protocols/oscar/oscar.c:5998 src/protocols/oscar/oscar.c:6006
+#: src/protocols/oscar/oscar.c:6006 src/protocols/oscar/oscar.c:6014
 msgid "City"
 msgstr "By"
 
@@ -4778,7 +4868,7 @@ msgid "Only online"
 msgstr "Pålogget"
 
 #: src/protocols/gg/gg.c:430 src/protocols/gg/gg.c:431
-#: src/protocols/gg/gg.c:1509
+#: src/protocols/gg/gg.c:1510
 #, fuzzy
 msgid "Find buddies"
 msgstr "Dimme ned inaktive kontakter"
@@ -4826,23 +4916,23 @@ msgstr "Klarte ikke hente ned romliste."
 msgid "Current password"
 msgstr "Feil passord."
 
-#: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1475
+#: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1476
 #: src/protocols/jabber/jabber.c:632 src/protocols/jabber/jabber.c:1150
 msgid "Password"
 msgstr "Passord"
 
-#: src/protocols/gg/gg.c:559 src/protocols/gg/gg.c:1479
+#: src/protocols/gg/gg.c:559 src/protocols/gg/gg.c:1480
 #, fuzzy
 msgid "Password (retype)"
 msgstr "Passord sendt"
 
-#: src/protocols/gg/gg.c:563 src/protocols/gg/gg.c:1483
+#: src/protocols/gg/gg.c:563 src/protocols/gg/gg.c:1484
 #, fuzzy
 msgid "Enter current token"
 msgstr "%s er ikke pålogget."
 
 #. original size: 60x24
-#: src/protocols/gg/gg.c:568 src/protocols/gg/gg.c:1488
+#: src/protocols/gg/gg.c:568 src/protocols/gg/gg.c:1489
 #, fuzzy
 msgid "Current token"
 msgstr "Pålogget på"
@@ -4896,7 +4986,7 @@ msgstr "Søkeresultater"
 #.
 #: src/protocols/gg/gg.c:1087 src/protocols/jabber/buddy.c:1089
 #: src/protocols/napster/napster.c:578 src/protocols/oscar/oscar.c:713
-#: src/protocols/yahoo/yahoo.c:2635 src/protocols/zephyr/zephyr.c:2252
+#: src/protocols/yahoo/yahoo.c:2639 src/protocols/zephyr/zephyr.c:2252
 msgid "Online"
 msgstr "Pålogget"
 
@@ -4908,7 +4998,7 @@ msgstr "Pålogget"
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2828
 #: src/protocols/novell/novell.c:2962 src/protocols/novell/novell.c:3044
 #: src/protocols/silc/buddy.c:1421 src/protocols/silc/silc.c:54
-#: src/protocols/yahoo/yahoo.c:2613 src/protocols/yahoo/yahoo.c:3209
+#: src/protocols/yahoo/yahoo.c:2617 src/protocols/yahoo/yahoo.c:3233
 msgid "Busy"
 msgstr "Opptatt"
 
@@ -4931,69 +5021,69 @@ msgstr "Blokker"
 msgid "Chat _name:"
 msgstr "Etternavn:"
 
-#: src/protocols/gg/gg.c:1182
+#: src/protocols/gg/gg.c:1183
 #, fuzzy
 msgid "Connection failed."
 msgstr "Tilkopling feilet"
 
-#: src/protocols/gg/gg.c:1356
+#: src/protocols/gg/gg.c:1357
 #, fuzzy
 msgid "Chat error"
 msgstr "Lesefeil"
 
-#: src/protocols/gg/gg.c:1357
+#: src/protocols/gg/gg.c:1358
 #, fuzzy
 msgid "This chat name is already in use"
 msgstr "Filen eksisterer allerede."
 
-#: src/protocols/gg/gg.c:1434
+#: src/protocols/gg/gg.c:1435
 #, fuzzy
 msgid "Not connected to the server."
 msgstr "Du har blitt koblet fra tjeneren."
 
-#: src/protocols/gg/gg.c:1455
+#: src/protocols/gg/gg.c:1456
 msgid "Token Error: Unable to fetch the token.\n"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1471
+#: src/protocols/gg/gg.c:1472
 #, fuzzy
 msgid "e-Mail"
 msgstr "E-post"
 
-#: src/protocols/gg/gg.c:1494 src/protocols/gg/gg.c:1495
+#: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
 msgstr "Registrere ny jabber-konto"
 
-#: src/protocols/gg/gg.c:1496
+#: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1514
+#: src/protocols/gg/gg.c:1515
 #, fuzzy
 msgid "Change password"
 msgstr "Bytt passord"
 
-#: src/protocols/gg/gg.c:1519
+#: src/protocols/gg/gg.c:1520
 #, fuzzy
 msgid "Upload buddylist to Server"
 msgstr "Eksporter kontaktliste til tjener"
 
-#: src/protocols/gg/gg.c:1522
+#: src/protocols/gg/gg.c:1523
 #, fuzzy
 msgid "Download buddylist from Server"
 msgstr "Slett kontaktliste fra tjener"
 
-#: src/protocols/gg/gg.c:1525
+#: src/protocols/gg/gg.c:1526
 #, fuzzy
 msgid "Delete buddylist from Server"
 msgstr "Slett kontaktliste fra tjener"
 
-#: src/protocols/gg/gg.c:1528
+#: src/protocols/gg/gg.c:1529
 msgid "Save buddylist to file"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1531
+#: src/protocols/gg/gg.c:1532
 #, fuzzy
 msgid "Load buddylist from file"
 msgstr "Importer kontaktliste fra tjener"
@@ -5009,16 +5099,16 @@ msgstr "Importer kontaktliste fra tjener"
 #. id
 #. name
 #. version
-#: src/protocols/gg/gg.c:1616
+#: src/protocols/gg/gg.c:1617
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu protokolltillegg"
 
 #. summary
-#: src/protocols/gg/gg.c:1617
+#: src/protocols/gg/gg.c:1618
 msgid "Polish popular IM"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1664
+#: src/protocols/gg/gg.c:1665
 #, fuzzy
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu søkemotor"
@@ -5028,13 +5118,13 @@ msgstr "Gadu-Gadu søkemotor"
 msgid "Unknown command: %s"
 msgstr "Ukjent kommando: %s"
 
-#: src/protocols/irc/cmds.c:463 src/protocols/jabber/chat.c:592
+#: src/protocols/irc/cmds.c:468 src/protocols/jabber/chat.c:592
 #: src/protocols/silc/silc.c:1021
 #, c-format
 msgid "current topic is: %s"
 msgstr "gjeldende tema er: %s"
 
-#: src/protocols/irc/cmds.c:467 src/protocols/jabber/chat.c:596
+#: src/protocols/irc/cmds.c:472 src/protocols/jabber/chat.c:596
 #: src/protocols/silc/silc.c:1025
 msgid "No topic is set"
 msgstr "Intet tema for kanalen"
@@ -5093,12 +5183,13 @@ msgstr "IRC-kallenavn kan ikke inneholde mellomrom"
 msgid "SSL support unavailable"
 msgstr "SSL-støtte utilgjengelig"
 
-#: src/protocols/irc/irc.c:277
+#: src/protocols/irc/irc.c:277 src/protocols/simple/simple.c:383
+#: src/protocols/simple/simple.c:1219
 msgid "Couldn't create socket"
 msgstr "Kunne ikke opprette socket"
 
 #: src/protocols/irc/irc.c:348 src/protocols/jabber/jabber.c:306
-#: src/protocols/oscar/oscar.c:1744 src/protocols/oscar/oscar.c:1820
+#: src/protocols/oscar/oscar.c:1744 src/protocols/oscar/oscar.c:1812
 msgid "Couldn't connect to host"
 msgstr "Kunne ikke koble til"
 
@@ -5124,15 +5215,6 @@ msgstr "Brukere"
 msgid "Topic"
 msgstr "Tema:"
 
-#: src/protocols/irc/irc.c:730
-msgid "IRC"
-msgstr ""
-
-#: src/protocols/irc/irc.c:734
-#, fuzzy
-msgid "Quit message"
-msgstr "(1 beskjed)"
-
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -5141,42 +5223,42 @@ msgstr "(1 beskjed)"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:820
+#: src/protocols/irc/irc.c:799
 msgid "IRC Protocol Plugin"
 msgstr "IRC-protokolltillegg"
 
 #. *  summary
-#: src/protocols/irc/irc.c:821
+#: src/protocols/irc/irc.c:800
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr "IRC-protokolltillegg"
 
-#: src/protocols/irc/irc.c:840 src/protocols/irc/msgs.c:233
+#: src/protocols/irc/irc.c:819 src/protocols/irc/msgs.c:233
 #: src/protocols/jabber/jabber.c:1708 src/protocols/napster/napster.c:707
-#: src/protocols/silc/ops.c:1028 src/protocols/silc/ops.c:1130
+#: src/protocols/simple/simple.c:1428 src/protocols/silc/ops.c:1028
+#: src/protocols/silc/ops.c:1130
 msgid "Server"
 msgstr "Tjener"
 
-#: src/protocols/irc/irc.c:843 src/protocols/msn/msn.c:1968
-#: src/protocols/napster/napster.c:712 src/protocols/silc/silc.c:1597
-msgid "Port"
-msgstr "Port"
-
-#: src/protocols/irc/irc.c:846
+#: src/protocols/irc/irc.c:825
 msgid "Encodings"
 msgstr "Tegnkodinger:"
 
-#: src/protocols/irc/irc.c:849 src/protocols/irc/msgs.c:227
+#: src/protocols/irc/irc.c:828 src/protocols/irc/msgs.c:227
 #: src/protocols/jabber/jabber.c:628 src/protocols/silc/buddy.c:1483
 #: src/protocols/silc/ops.c:975 src/protocols/silc/ops.c:977
 #: src/protocols/silc/ops.c:1124 src/protocols/silc/ops.c:1126
 msgid "Username"
 msgstr "Brukernavn"
 
-#: src/protocols/irc/irc.c:852
+#: src/protocols/irc/irc.c:831
 msgid "Real name"
 msgstr "Virkelig navn"
 
-#: src/protocols/irc/irc.c:855
+#.
+#. option = gaim_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
+#. prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#.
+#: src/protocols/irc/irc.c:839
 #, fuzzy
 msgid "Use SSL"
 msgstr "SSL"
@@ -5205,7 +5287,7 @@ msgstr "Kan ikke bannlyse %s: Bannlysninslista er full."
 msgid "<b>%s:</b> %s"
 msgstr "<b>%s:</b> %s"
 
-#: src/protocols/irc/msgs.c:213 src/protocols/oscar/oscar.c:5944
+#: src/protocols/irc/msgs.c:213 src/protocols/oscar/oscar.c:5952
 #: src/protocols/silc/ops.c:1198
 msgid "Nick"
 msgstr "Kallenavn"
@@ -5646,12 +5728,6 @@ msgstr "Land"
 msgid "Telephone"
 msgstr "Telefonnummer"
 
-#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:772
-#: src/protocols/jabber/buddy.c:780 src/protocols/silc/silc.c:661
-#: src/protocols/silc/util.c:511 src/protocols/yahoo/yahoo_profile.c:995
-msgid "Email"
-msgstr "E-post"
-
 #: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:795
 msgid "Organization Name"
 msgstr "Organisasjonsnavn"
@@ -5665,7 +5741,7 @@ msgid "Role"
 msgstr "Rolle"
 
 #: src/protocols/jabber/buddy.c:266 src/protocols/jabber/buddy.c:701
-#: src/protocols/oscar/oscar.c:5979
+#: src/protocols/oscar/oscar.c:5987
 msgid "Birthday"
 msgstr "Fødselsdag"
 
@@ -5694,7 +5770,7 @@ msgid "Middle Name"
 msgstr "Mellomnavn"
 
 #: src/protocols/jabber/buddy.c:706 src/protocols/jabber/jabber.c:663
-#: src/protocols/oscar/oscar.c:5997 src/protocols/oscar/oscar.c:6005
+#: src/protocols/oscar/oscar.c:6005 src/protocols/oscar/oscar.c:6013
 #: src/protocols/silc/ops.c:850
 msgid "Address"
 msgstr "Adresse"
@@ -5751,7 +5827,8 @@ msgid "Extended Away"
 msgstr "Utvidet borte"
 
 #: src/protocols/jabber/buddy.c:1097 src/protocols/jabber/jabber.c:1071
-#: src/protocols/oscar/oscar.c:701 src/protocols/oscar/oscar.c:7785
+#: src/protocols/oscar/oscar.c:701 src/protocols/oscar/oscar.c:7791
+#: src/protocols/sametime/sametime.c:2770
 msgid "Do Not Disturb"
 msgstr "Ikke forstyrr"
 
@@ -5764,12 +5841,12 @@ msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
-#: src/protocols/oscar/oscar.c:5954 src/protocols/silc/ops.c:810
+#: src/protocols/oscar/oscar.c:5962 src/protocols/silc/ops.c:810
 msgid "First Name"
 msgstr "Fornavn"
 
 #: src/protocols/jabber/buddy.c:1336 src/protocols/jabber/jabber.c:658
-#: src/protocols/oscar/oscar.c:5955
+#: src/protocols/oscar/oscar.c:5963
 msgid "Last Name"
 msgstr "Etternavn"
 
@@ -5803,7 +5880,7 @@ msgstr "Velg en konferanseserver å spørre"
 msgid "Search Directory"
 msgstr "_Søk etter:"
 
-#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7312
+#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7318
 #: src/protocols/yahoo/yahoochat.c:979
 msgid "_Room:"
 msgstr "_Rom:"
@@ -5938,8 +6015,8 @@ msgstr "Du er allerede registrert"
 msgid "E-Mail"
 msgstr "E-post"
 
-#: src/protocols/jabber/jabber.c:673 src/protocols/oscar/oscar.c:5999
-#: src/protocols/oscar/oscar.c:6007
+#: src/protocols/jabber/jabber.c:673 src/protocols/oscar/oscar.c:6007
+#: src/protocols/oscar/oscar.c:6015
 msgid "State"
 msgstr "Fylke/stat"
 
@@ -5974,7 +6051,7 @@ msgstr "Nullstiller datastrøm på nytt"
 
 #: src/protocols/jabber/jabber.c:928 src/protocols/jabber/jabber.c:1277
 #: src/protocols/jabber/jabber.c:1318 src/protocols/jabber/jabber.c:1351
-#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:7583
+#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:7589
 msgid "Not Authorized"
 msgstr "Ikke godkjent"
 
@@ -6000,6 +6077,10 @@ msgstr "Til"
 #, fuzzy
 msgid "None (To pending)"
 msgstr "Ingen (til avventende)"
+
+#: src/protocols/jabber/jabber.c:982 src/protocols/yahoo/yahoo.c:2780
+msgid "None"
+msgstr "Ingen"
 
 #: src/protocols/jabber/jabber.c:984
 msgid "Subscription"
@@ -6404,14 +6485,14 @@ msgid "The user %s wants to add %s to his or her buddy list."
 msgstr "Brukeren %s ønsker å legge til %s i kontaktlisten sin."
 
 #: src/protocols/jabber/presence.c:297 src/protocols/msn/userlist.c:100
-#: src/protocols/oscar/oscar.c:4608 src/protocols/oscar/oscar.c:7242
-#: src/protocols/yahoo/yahoo.c:893
+#: src/protocols/oscar/oscar.c:4602 src/protocols/oscar/oscar.c:7248
+#: src/protocols/yahoo/yahoo.c:895
 msgid "Authorize"
 msgstr "Godkjenn"
 
 #: src/protocols/jabber/presence.c:298 src/protocols/msn/userlist.c:101
-#: src/protocols/oscar/oscar.c:4610 src/protocols/oscar/oscar.c:7243
-#: src/protocols/yahoo/yahoo.c:895
+#: src/protocols/oscar/oscar.c:4604 src/protocols/oscar/oscar.c:7249
+#: src/protocols/yahoo/yahoo.c:897
 msgid "Deny"
 msgstr "Nekt"
 
@@ -6667,7 +6748,7 @@ msgstr "Visningsnavnet endres for raskt"
 msgid "Server too busy"
 msgstr "Tjeneren er for opptatt"
 
-#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2764
+#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2756
 #: src/protocols/silc/ops.c:1503 src/protocols/toc/toc.c:722
 msgid "Authentication failed"
 msgstr "Autentisering feilet"
@@ -6762,8 +6843,8 @@ msgid "Page"
 msgstr "Send"
 
 #: src/protocols/msn/msn.c:544 src/protocols/msn/msn.c:551
-#: src/protocols/msn/msn.c:554 src/protocols/yahoo/yahoo.c:2783
-#: src/protocols/yahoo/yahoo.c:2789
+#: src/protocols/msn/msn.c:554 src/protocols/yahoo/yahoo.c:2787
+#: src/protocols/yahoo/yahoo.c:2793
 #, c-format
 msgid ""
 "\n"
@@ -6772,29 +6853,23 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/protocols/msn/msn.c:546 src/protocols/msn/state.c:32
-#: src/protocols/novell/novell.c:2831 src/protocols/oscar/oscar.c:5070
-#: src/protocols/yahoo/yahoo.c:2631 src/protocols/yahoo/yahoo_profile.c:660
-msgid "Idle"
-msgstr "Inaktiv"
-
 #: src/protocols/msn/msn.c:551
 #, fuzzy
 msgid "Has you"
 msgstr "Har deg"
 
 #: src/protocols/msn/msn.c:581 src/protocols/msn/state.c:33
-#: src/protocols/yahoo/yahoo.c:2611 src/protocols/yahoo/yahoo.c:3206
+#: src/protocols/yahoo/yahoo.c:2615 src/protocols/yahoo/yahoo.c:3230
 msgid "Be Right Back"
 msgstr "Straks tilbake"
 
 #: src/protocols/msn/msn.c:589 src/protocols/msn/state.c:35
-#: src/protocols/yahoo/yahoo.c:2621 src/protocols/yahoo/yahoo.c:3221
+#: src/protocols/yahoo/yahoo.c:2625 src/protocols/yahoo/yahoo.c:3245
 msgid "On The Phone"
 msgstr "I telefonen"
 
 #: src/protocols/msn/msn.c:593 src/protocols/msn/state.c:36
-#: src/protocols/yahoo/yahoo.c:2625 src/protocols/yahoo/yahoo.c:3227
+#: src/protocols/yahoo/yahoo.c:2629 src/protocols/yahoo/yahoo.c:3251
 msgid "Out To Lunch"
 msgstr "Ute til lunsj"
 
@@ -6873,12 +6948,12 @@ msgstr "MSN-profil"
 msgid "Error retrieving profile"
 msgstr "Klarte ikke hente profil"
 
-#: src/protocols/msn/msn.c:1546 src/protocols/oscar/oscar.c:5984
+#: src/protocols/msn/msn.c:1546 src/protocols/oscar/oscar.c:5992
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
 msgstr "Alder"
 
-#: src/protocols/msn/msn.c:1553 src/protocols/oscar/oscar.c:5971
+#: src/protocols/msn/msn.c:1553 src/protocols/oscar/oscar.c:5979
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
 msgstr "Kjønn"
@@ -7022,15 +7097,15 @@ msgstr ""
 msgid "%s is not a valid passport account."
 msgstr "%s er ikke et gyldig passport-konto"
 
-#: src/protocols/msn/notification.c:811
+#: src/protocols/msn/notification.c:815
 msgid "Unable to rename group"
 msgstr "Kunne ikke endre navn på gruppe"
 
-#: src/protocols/msn/notification.c:866
+#: src/protocols/msn/notification.c:870
 msgid "Unable to delete group"
 msgstr "Kunne ikke slette gruppe"
 
-#: src/protocols/msn/notification.c:1299
+#: src/protocols/msn/notification.c:1303
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -7066,7 +7141,7 @@ msgid "Reading error"
 msgstr "Feil ved lesing"
 
 #: src/protocols/msn/servconn.c:133 src/protocols/msn/session.c:339
-#: src/protocols/oscar/oscar.c:4931
+#: src/protocols/oscar/oscar.c:4925
 msgid "Unknown error"
 msgstr "Ukjent feil"
 
@@ -7090,7 +7165,7 @@ msgstr "Feil under tolkning av HTTP."
 #. MSG_SERVER_GHOST
 #. Looks like someone logged in as us! =-O
 #: src/protocols/msn/session.c:325 src/protocols/napster/napster.c:450
-#: src/protocols/oscar/oscar.c:5635 src/protocols/yahoo/yahoo.c:194
+#: src/protocols/oscar/oscar.c:5629 src/protocols/yahoo/yahoo.c:194
 msgid "You have signed on from another location."
 msgstr "Du ble logget av fordi du har logget på et annet sted."
 
@@ -7246,8 +7321,8 @@ msgstr "%s pinget deg"
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/napster/napster.c:501 src/protocols/napster/napster.c:532
-#: src/protocols/toc/toc.c:172 src/protocols/yahoo/yahoo.c:2209
-#: src/protocols/yahoo/yahoo.c:2236 src/protocols/yahoo/yahoo.c:2299
+#: src/protocols/toc/toc.c:172 src/protocols/yahoo/yahoo.c:2212
+#: src/protocols/yahoo/yahoo.c:2239 src/protocols/yahoo/yahoo.c:2302
 #: src/protocols/yahoo/yahoo_filexfer.c:69
 #: src/protocols/yahoo/yahoo_filexfer.c:111 src/protocols/yahoo/ycht.c:481
 msgid "Unable to connect."
@@ -7512,8 +7587,8 @@ msgstr "Tittel"
 msgid "Mailstop"
 msgstr ""
 
-#: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5957
-#: src/protocols/oscar/oscar.c:5964
+#: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5965
+#: src/protocols/oscar/oscar.c:5972
 msgid "Email Address"
 msgstr "E-postadresse"
 
@@ -7615,7 +7690,7 @@ msgstr ""
 "Denne konferansen har blitt stengt, ingen flere meldinger kan bli sendt."
 
 #: src/protocols/novell/novell.c:2965 src/protocols/novell/novell.c:3047
-#: src/protocols/yahoo/yahoo.c:2835
+#: src/protocols/yahoo/yahoo.c:2839
 msgid "Appear Offline"
 msgstr "Lat som avlogget"
 
@@ -7759,7 +7834,7 @@ msgstr "AIM direkte samtale"
 msgid "Chat"
 msgstr "Samtale"
 
-#: src/protocols/oscar/oscar.c:625 src/protocols/oscar/oscar.c:7892
+#: src/protocols/oscar/oscar.c:625 src/protocols/oscar/oscar.c:7898
 msgid "Get File"
 msgstr "Laste ned fil"
 
@@ -7831,15 +7906,15 @@ msgstr ""
 msgid "Camera"
 msgstr "Kamera"
 
-#: src/protocols/oscar/oscar.c:699 src/protocols/oscar/oscar.c:7775
+#: src/protocols/oscar/oscar.c:699 src/protocols/oscar/oscar.c:7781
 msgid "Free For Chat"
 msgstr "Tilgjengelig for samtale"
 
-#: src/protocols/oscar/oscar.c:703 src/protocols/oscar/oscar.c:7790
+#: src/protocols/oscar/oscar.c:703 src/protocols/oscar/oscar.c:7796
 msgid "Not Available"
 msgstr "Ikke tilgjengelig"
 
-#: src/protocols/oscar/oscar.c:705 src/protocols/oscar/oscar.c:7780
+#: src/protocols/oscar/oscar.c:705 src/protocols/oscar/oscar.c:7786
 msgid "Occupied"
 msgstr "Opptatt"
 
@@ -7848,7 +7923,7 @@ msgstr "Opptatt"
 msgid "Web Aware"
 msgstr "Web-oppmerksom"
 
-#: src/protocols/oscar/oscar.c:786 src/protocols/oscar/oscar.c:5056
+#: src/protocols/oscar/oscar.c:786 src/protocols/oscar/oscar.c:5050
 msgid "Warning Level"
 msgstr "Advarselsnivåer"
 
@@ -7907,7 +7982,7 @@ msgstr ""
 "Dette vil avsløre din IP-adresse til mottakeren, og medføre en (minimal) "
 "sikkerhetsrisiko. Ønsker du å fortsette?"
 
-#: src/protocols/oscar/oscar.c:1595 src/protocols/oscar/oscar.c:4367
+#: src/protocols/oscar/oscar.c:1595 src/protocols/oscar/oscar.c:4361
 msgid "Connect"
 msgstr "Koble til"
 
@@ -7924,7 +7999,7 @@ msgstr "Samtalegrupper er for tiden utilgjengelig"
 msgid "Screen name sent"
 msgstr "Skjermnavn sendt"
 
-#: src/protocols/oscar/oscar.c:1778
+#: src/protocols/oscar/oscar.c:1770
 #, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
@@ -7935,22 +8010,22 @@ msgstr ""
 "ugyldig. Skjermnavn må enten starte med en bokstav og kun inneholde tall, "
 "bokstaver, og mellomrom, eller bare inneholde tall."
 
-#: src/protocols/oscar/oscar.c:1807
+#: src/protocols/oscar/oscar.c:1799
 msgid "Unable to login to AIM"
 msgstr "Kunne ikke logge på AIM"
 
-#: src/protocols/oscar/oscar.c:1911 src/protocols/oscar/oscar.c:2854
+#: src/protocols/oscar/oscar.c:1903 src/protocols/oscar/oscar.c:2846
 msgid "Could Not Connect"
 msgstr "Kunne ikke koble til"
 
-#: src/protocols/oscar/oscar.c:1919
+#: src/protocols/oscar/oscar.c:1911
 msgid "Connection established, cookie sent"
 msgstr "Tilkoblet, informasjonskapsel sendt"
 
 #. clientip & verifiedip failed, request a redirect
 #. * that is, we want the sender to connect to us
 #. Let the user not to lose hope quite yet
-#: src/protocols/oscar/oscar.c:2071
+#: src/protocols/oscar/oscar.c:2063
 #, fuzzy
 msgid "Attempting connection redirect..."
 msgstr "Forsøker å kople til %s på %s:%hu for direktesamtale."
@@ -7959,7 +8034,7 @@ msgstr "Forsøker å kople til %s på %s:%hu for direktesamtale."
 #. * Yes, it's a bit odd to ask the user to enable proxied file transfers
 #. * when it's a proxied transfer that timed out. It is possible that a
 #. * stage 1/2 proxied transfer might work when a stage 3 will not.
-#: src/protocols/oscar/oscar.c:2116
+#: src/protocols/oscar/oscar.c:2108
 #, c-format
 msgid ""
 "Transfer of file %s timed out.\n"
@@ -7967,41 +8042,41 @@ msgid ""
 "ICQ."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:2214 src/protocols/yahoo/yahoo_filexfer.c:174
+#: src/protocols/oscar/oscar.c:2206 src/protocols/yahoo/yahoo_filexfer.c:174
 #: src/protocols/yahoo/yahoo_filexfer.c:183
 #: src/protocols/yahoo/yahoo_filexfer.c:192
 msgid "Unable to establish file descriptor."
 msgstr "Kunne ikke etablere fildeskriptor."
 
-#: src/protocols/oscar/oscar.c:2219
+#: src/protocols/oscar/oscar.c:2211
 msgid "Unable to create new connection."
 msgstr "Kunne ikke lage ny tilkobling."
 
-#: src/protocols/oscar/oscar.c:2453 src/protocols/oscar/oscar.c:2462
-#: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:2486
+#: src/protocols/oscar/oscar.c:2445 src/protocols/oscar/oscar.c:2454
+#: src/protocols/oscar/oscar.c:2468 src/protocols/oscar/oscar.c:2478
 #, fuzzy
 msgid "Unable to log into file transfer proxy."
 msgstr "Kunne ikke skrive fil %s."
 
-#: src/protocols/oscar/oscar.c:2540
+#: src/protocols/oscar/oscar.c:2532
 #, fuzzy
 msgid "Unable to establish listener socket or no AOL proxy connection present."
 msgstr "Kunne ikke etablere lytte-socket."
 
-#: src/protocols/oscar/oscar.c:2741 src/protocols/toc/toc.c:543
+#: src/protocols/oscar/oscar.c:2733 src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
 msgstr "Feil kallenavn eller passord."
 
-#: src/protocols/oscar/oscar.c:2746
+#: src/protocols/oscar/oscar.c:2738
 msgid "Your account is currently suspended."
 msgstr "Kontoen din er frosset."
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:2750
+#: src/protocols/oscar/oscar.c:2742
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL Instant Messenger-tjenesten er midlertidig utilgjengelig."
 
-#: src/protocols/oscar/oscar.c:2755
+#: src/protocols/oscar/oscar.c:2747
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -8009,34 +8084,34 @@ msgstr ""
 "Du har koblet til og koblet fra for hurtig. Vent ti minutter og prøv igjen. "
 "Hvis du fortsetter å prøve nå, vil du måtte vente enda lenger."
 
-#: src/protocols/oscar/oscar.c:2760
+#: src/protocols/oscar/oscar.c:2752
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr ""
 "Klientversjonen av programmet er for gammel. Vennligst oppgrader her: %s"
 
-#: src/protocols/oscar/oscar.c:2791
+#: src/protocols/oscar/oscar.c:2783
 msgid "Internal Error"
 msgstr "Intern feil"
 
-#: src/protocols/oscar/oscar.c:2861
+#: src/protocols/oscar/oscar.c:2853
 msgid "Received authorization"
 msgstr "Mottok godkjenning"
 
-#: src/protocols/oscar/oscar.c:2885
+#: src/protocols/oscar/oscar.c:2877
 msgid "The SecurID key entered is invalid."
 msgstr "Den inntastede SecurID-nøkkelen er ugyldig."
 
-#: src/protocols/oscar/oscar.c:2899
+#: src/protocols/oscar/oscar.c:2891
 msgid "Enter SecurID"
 msgstr "Tast inn SecurID"
 
-#: src/protocols/oscar/oscar.c:2900
+#: src/protocols/oscar/oscar.c:2892
 msgid "Enter the 6 digit number from the digital display."
 msgstr "Tast inn det sekssifrede tallet fra displayet."
 
-#: src/protocols/oscar/oscar.c:2940 src/protocols/oscar/oscar.c:2970
-#: src/protocols/oscar/oscar.c:3059
+#: src/protocols/oscar/oscar.c:2932 src/protocols/oscar/oscar.c:2962
+#: src/protocols/oscar/oscar.c:3051
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -8045,24 +8120,24 @@ msgstr ""
 "Du kan bli frakoblet ganske snart. Du vil kanskje bruke TOC inntil dette er "
 "ordnet. Sjekk %s for oppdateringer."
 
-#: src/protocols/oscar/oscar.c:2943 src/protocols/oscar/oscar.c:2973
+#: src/protocols/oscar/oscar.c:2935 src/protocols/oscar/oscar.c:2965
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "Gaim klarte ikke å motta gyldig AIM-påloggingshash."
 
-#: src/protocols/oscar/oscar.c:3062
+#: src/protocols/oscar/oscar.c:3054
 msgid "Gaim was unable to get a valid login hash."
 msgstr "Gaim klarte ikke å motta en gyldig påloggingshash."
 
-#: src/protocols/oscar/oscar.c:3093
+#: src/protocols/oscar/oscar.c:3085
 msgid "Password sent"
 msgstr "Passord sendt"
 
-#: src/protocols/oscar/oscar.c:4358
+#: src/protocols/oscar/oscar.c:4352
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s har akkurat spurt om direkte tilkobling til %s"
 
-#: src/protocols/oscar/oscar.c:4361
+#: src/protocols/oscar/oscar.c:4355
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -8072,20 +8147,20 @@ msgstr ""
 "datamaskinene, men er nødvendig for å sende bilder. Dette kan være en "
 "(minimal) sikkerhetsrisiko fordi mottakeren da ser IP-adressen din."
 
-#: src/protocols/oscar/oscar.c:4400
+#: src/protocols/oscar/oscar.c:4394
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr ""
 "Vennligst godkjenn meg slik at jeg kan legge deg til i kontaktlisten min."
 
-#: src/protocols/oscar/oscar.c:4408
+#: src/protocols/oscar/oscar.c:4402
 msgid "Authorization Request Message:"
 msgstr "Beskjed i godkjenningsforespørsel:"
 
-#: src/protocols/oscar/oscar.c:4409
+#: src/protocols/oscar/oscar.c:4403
 msgid "Please authorize me!"
 msgstr "Vennligst godkjenn meg!"
 
-#: src/protocols/oscar/oscar.c:4439
+#: src/protocols/oscar/oscar.c:4433
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -8094,21 +8169,21 @@ msgstr ""
 "Brukeren %s krever godkjenning før vedkommende legges til i kontaktlisten. "
 "Vil du sende en godkjenningsforespørsel?"
 
-#: src/protocols/oscar/oscar.c:4444 src/protocols/oscar/oscar.c:4446
+#: src/protocols/oscar/oscar.c:4438 src/protocols/oscar/oscar.c:4440
 msgid "Request Authorization"
 msgstr "Spør om godkjenning"
 
-#: src/protocols/oscar/oscar.c:4484 src/protocols/oscar/oscar.c:4490
-#: src/protocols/oscar/oscar.c:4594 src/protocols/oscar/oscar.c:4618
-#: src/protocols/oscar/oscar.c:7228 src/protocols/oscar/oscar.c:7280
+#: src/protocols/oscar/oscar.c:4478 src/protocols/oscar/oscar.c:4484
+#: src/protocols/oscar/oscar.c:4588 src/protocols/oscar/oscar.c:4612
+#: src/protocols/oscar/oscar.c:7234 src/protocols/oscar/oscar.c:7286
 msgid "No reason given."
 msgstr "Ingen grunn spesifisert."
 
-#: src/protocols/oscar/oscar.c:4489
+#: src/protocols/oscar/oscar.c:4483
 msgid "Authorization Denied Message:"
 msgstr "Godkjenning nektet, grunn:"
 
-#: src/protocols/oscar/oscar.c:4596
+#: src/protocols/oscar/oscar.c:4590
 #, fuzzy, c-format
 msgid ""
 "The user %u wants to add %s to their buddy list for the following reason:\n"
@@ -8118,11 +8193,11 @@ msgstr ""
 "grunn:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4606 src/protocols/oscar/oscar.c:7240
+#: src/protocols/oscar/oscar.c:4600 src/protocols/oscar/oscar.c:7246
 msgid "Authorization Request"
 msgstr "Godkjenningsforespørsel"
 
-#: src/protocols/oscar/oscar.c:4618
+#: src/protocols/oscar/oscar.c:4612
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -8133,19 +8208,19 @@ msgstr ""
 "med følgende grunn:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4619
+#: src/protocols/oscar/oscar.c:4613
 msgid "ICQ authorization denied."
 msgstr "ICQ-godkjenning avslått."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:4626
+#: src/protocols/oscar/oscar.c:4620
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr ""
 "Brukeren %u har godtatt din forespørsel om å bli lagt til i kontaktlisten "
 "din."
 
-#: src/protocols/oscar/oscar.c:4634
+#: src/protocols/oscar/oscar.c:4628
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -8158,7 +8233,7 @@ msgstr ""
 "Fra: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4642
+#: src/protocols/oscar/oscar.c:4636
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -8171,7 +8246,7 @@ msgstr ""
 "Fra: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4650
+#: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -8184,34 +8259,34 @@ msgstr ""
 "Beskjed:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4671
+#: src/protocols/oscar/oscar.c:4665
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "ICQ-brukeren %u har sent deg en kontakt: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:4677
+#: src/protocols/oscar/oscar.c:4671
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "Ønsker du å legge denne kontakten til i kontaktlisten din?"
 
-#: src/protocols/oscar/oscar.c:4681
+#: src/protocols/oscar/oscar.c:4675
 msgid "Decline"
 msgstr "Avslå"
 
-#: src/protocols/oscar/oscar.c:4765
+#: src/protocols/oscar/oscar.c:4759
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "Du har gått glipp av %hu beskjed fra %s fordi den var ugyldig."
 msgstr[1] "Du har gått glipp av %hu beskjeder fra %s fordi de var ugyldige."
 
-#: src/protocols/oscar/oscar.c:4774
+#: src/protocols/oscar/oscar.c:4768
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "Du har gått glipp av %hu beskjed fra %s fordi den var for stor."
 msgstr[1] "Du har gått glipp av %hu beskjeder fra %s fordi de var for store."
 
-#: src/protocols/oscar/oscar.c:4783
+#: src/protocols/oscar/oscar.c:4777
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -8224,7 +8299,7 @@ msgstr[1] ""
 "Du har gått glipp av %hu beskjeder fra %s fordi hastighetsgrensen har blitt "
 "overskredet."
 
-#: src/protocols/oscar/oscar.c:4792
+#: src/protocols/oscar/oscar.c:4786
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
@@ -8233,70 +8308,70 @@ msgstr[0] ""
 msgstr[1] ""
 "Du har gått glipp av %hu beskjeder fra %s fordi vedkommende var for ond."
 
-#: src/protocols/oscar/oscar.c:4801
+#: src/protocols/oscar/oscar.c:4795
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "Du har gått glipp av %hu beskjed fra %s fordi du er for ond."
 msgstr[1] "Du har gått glipp av %hu beskjeder fra %s fordi du er for ond."
 
-#: src/protocols/oscar/oscar.c:4810
+#: src/protocols/oscar/oscar.c:4804
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "Du har gått glipp av %hu beskjed fra %s, ingen grunn oppgitt."
 msgstr[1] "Du har gått glipp av %hu beskjeder fra %s, ingen grunn oppgitt."
 
-#: src/protocols/oscar/oscar.c:4869
+#: src/protocols/oscar/oscar.c:4863
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:4930
+#: src/protocols/oscar/oscar.c:4924
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC-feil: %s\n"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:4967
+#: src/protocols/oscar/oscar.c:4961
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "Kunne ikke sende beskjed: %s"
 
-#: src/protocols/oscar/oscar.c:4967 src/protocols/oscar/oscar.c:4972
-#: src/protocols/oscar/oscar.c:5030 src/protocols/oscar/oscar.c:5034
+#: src/protocols/oscar/oscar.c:4961 src/protocols/oscar/oscar.c:4966
+#: src/protocols/oscar/oscar.c:5024 src/protocols/oscar/oscar.c:5028
 msgid "Unknown reason."
 msgstr "Ukjent grunn."
 
-#: src/protocols/oscar/oscar.c:4970
+#: src/protocols/oscar/oscar.c:4964
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "Kunne ikke sende beskjed til %s."
 
-#: src/protocols/oscar/oscar.c:5030
+#: src/protocols/oscar/oscar.c:5024
 #, c-format
 msgid "User information not available: %s"
 msgstr "Brukerinformasjon er ikke tilgjengelig: %s"
 
-#: src/protocols/oscar/oscar.c:5033
+#: src/protocols/oscar/oscar.c:5027
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "Brukerinformasjon for %s er ikke tilgjengelig:"
 
-#: src/protocols/oscar/oscar.c:5060
+#: src/protocols/oscar/oscar.c:5054
 msgid "Online Since"
 msgstr "Pålogget siden"
 
-#: src/protocols/oscar/oscar.c:5065 src/protocols/yahoo/yahoo_profile.c:1118
+#: src/protocols/oscar/oscar.c:5059 src/protocols/yahoo/yahoo_profile.c:1118
 msgid "Member Since"
 msgstr "Medlem siden"
 
-#: src/protocols/oscar/oscar.c:5148
+#: src/protocols/oscar/oscar.c:5142
 msgid "Your AIM connection may be lost."
 msgstr "AIM-tilkoblingen kan være brutt."
 
 #. The conversion failed!
-#: src/protocols/oscar/oscar.c:5334
+#: src/protocols/oscar/oscar.c:5328
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
@@ -8304,11 +8379,11 @@ msgstr ""
 "[Klarte ikke vise en melding fra denne brukeren da den inneholdt ugyldige "
 "tegn.]"
 
-#: src/protocols/oscar/oscar.c:5560
+#: src/protocols/oscar/oscar.c:5554
 msgid "Rate limiting error."
 msgstr "Feil ved hastighetsbegrensning."
 
-#: src/protocols/oscar/oscar.c:5561
+#: src/protocols/oscar/oscar.c:5555
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -8316,105 +8391,105 @@ msgstr ""
 "Den siste kommandoen ble ikke utført fordi du har overskredet "
 "hastighetsgrensen. Vennligst vent 10 sekunder og prøv igjen."
 
-#: src/protocols/oscar/oscar.c:5637
+#: src/protocols/oscar/oscar.c:5631
 msgid "You have been signed off for an unknown reason."
 msgstr "Du har blitt logget av, årsak ukjent."
 
-#: src/protocols/oscar/oscar.c:5650 src/protocols/toc/toc.c:971
+#: src/protocols/oscar/oscar.c:5644 src/protocols/toc/toc.c:971
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "Du har blitt koblet fra samtalegruppen %s."
 
 #. XXX - Don't call this with ssi
-#: src/protocols/oscar/oscar.c:5675
+#: src/protocols/oscar/oscar.c:5669
 msgid "Finalizing connection"
 msgstr "Fullfører tilkobling"
 
-#: src/protocols/oscar/oscar.c:5943
+#: src/protocols/oscar/oscar.c:5951
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/oscar/oscar.c:5969 src/protocols/silc/util.c:541
+#: src/protocols/oscar/oscar.c:5977 src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "Mobiltelefon"
 
-#: src/protocols/oscar/oscar.c:5971
+#: src/protocols/oscar/oscar.c:5979
 msgid "Female"
 msgstr "Hunkjønn"
 
-#: src/protocols/oscar/oscar.c:5971
+#: src/protocols/oscar/oscar.c:5979
 msgid "Male"
 msgstr "Hankjønn"
 
-#: src/protocols/oscar/oscar.c:5987
+#: src/protocols/oscar/oscar.c:5995
 msgid "Personal Web Page"
 msgstr "Personlig hjemmeside"
 
-#: src/protocols/oscar/oscar.c:5991
+#: src/protocols/oscar/oscar.c:5999
 msgid "Additional Information"
 msgstr "Tilleggsinformasjon"
 
-#: src/protocols/oscar/oscar.c:5996
+#: src/protocols/oscar/oscar.c:6004
 msgid "Home Address"
 msgstr "Hjemstedsadresse"
 
-#: src/protocols/oscar/oscar.c:6000 src/protocols/oscar/oscar.c:6008
+#: src/protocols/oscar/oscar.c:6008 src/protocols/oscar/oscar.c:6016
 msgid "Zip Code"
 msgstr "Postnummer"
 
-#: src/protocols/oscar/oscar.c:6004
+#: src/protocols/oscar/oscar.c:6012
 msgid "Work Address"
 msgstr "Arbeidsadresse"
 
-#: src/protocols/oscar/oscar.c:6012
+#: src/protocols/oscar/oscar.c:6020
 msgid "Work Information"
 msgstr "Arbeid ekstra info"
 
-#: src/protocols/oscar/oscar.c:6013
+#: src/protocols/oscar/oscar.c:6021
 msgid "Company"
 msgstr "Firma"
 
-#: src/protocols/oscar/oscar.c:6014
+#: src/protocols/oscar/oscar.c:6022
 msgid "Division"
 msgstr "Avdeling"
 
-#: src/protocols/oscar/oscar.c:6015
+#: src/protocols/oscar/oscar.c:6023
 msgid "Position"
 msgstr "Stilling"
 
-#: src/protocols/oscar/oscar.c:6017
+#: src/protocols/oscar/oscar.c:6025
 msgid "Web Page"
 msgstr "Hjemmeside"
 
-#: src/protocols/oscar/oscar.c:6074
+#: src/protocols/oscar/oscar.c:6082
 msgid "Pop-Up Message"
 msgstr "Varslingsbeskjed"
 
 #. TODO: Need to use ngettext() here
-#: src/protocols/oscar/oscar.c:6103
+#: src/protocols/oscar/oscar.c:6111
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "De følgende skjermnavnene er assosierte med %s"
 
-#: src/protocols/oscar/oscar.c:6132
+#: src/protocols/oscar/oscar.c:6140
 #, c-format
 msgid "No results found for email address %s"
 msgstr "Ingen resultater funnet for e-postadresse %s"
 
-#: src/protocols/oscar/oscar.c:6153
+#: src/protocols/oscar/oscar.c:6161
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "Du vil motta en e-post hvor du blir bedt om å bekrefte %s."
 
-#: src/protocols/oscar/oscar.c:6155
+#: src/protocols/oscar/oscar.c:6163
 msgid "Account Confirmation Requested"
 msgstr "Kontobekreftelse forespurt"
 
-#: src/protocols/oscar/oscar.c:6186
+#: src/protocols/oscar/oscar.c:6194
 msgid "Error Changing Account Info"
 msgstr "Feil ved endring av kontoinformasjon"
 
-#: src/protocols/oscar/oscar.c:6189
+#: src/protocols/oscar/oscar.c:6197
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8423,14 +8498,14 @@ msgstr ""
 "Feil 0x%04x: Kunne ikke formatere skjermnavnet fordi det forespurte "
 "skjermnavnet er forskjellig fra det opprinnelige."
 
-#: src/protocols/oscar/oscar.c:6192
+#: src/protocols/oscar/oscar.c:6200
 #, fuzzy, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
 msgstr ""
 "Feil 0x%04x: Kunne ikke formatere skjermnavnet fordi det forespurte "
 "skjermnavnet er for langt."
 
-#: src/protocols/oscar/oscar.c:6195
+#: src/protocols/oscar/oscar.c:6203
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8439,7 +8514,7 @@ msgstr ""
 "Feil 0x%04x: Kunne ikke formatere skjermnavnet fordi det forespurte "
 "skjermnavnet er for langt."
 
-#: src/protocols/oscar/oscar.c:6198
+#: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -8448,7 +8523,7 @@ msgstr ""
 "Feil 0x%04x: Kunne ikke endre e-postadressen fordi det finnes en utestående "
 "forespørsel for dette skjermnavnet."
 
-#: src/protocols/oscar/oscar.c:6201
+#: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -8457,7 +8532,7 @@ msgstr ""
 "Feil 0x%04x: Kunne ikke endre e-postadressen fordi den gitte adressen har "
 "for mange skjermnavn assosiert ved seg."
 
-#: src/protocols/oscar/oscar.c:6204
+#: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
@@ -8466,12 +8541,12 @@ msgstr ""
 "Feil 0x%04x: Kunne ikke endre e-postadressen fordi den gitte adressen er "
 "ugyldig."
 
-#: src/protocols/oscar/oscar.c:6207
+#: src/protocols/oscar/oscar.c:6215
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "Feil 0x%04x: Ukjent feil."
 
-#: src/protocols/oscar/oscar.c:6217
+#: src/protocols/oscar/oscar.c:6225
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -8480,27 +8555,27 @@ msgstr ""
 "Skjermnavnet ditt er formatert slik:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:6218 src/protocols/oscar/oscar.c:6225
+#: src/protocols/oscar/oscar.c:6226 src/protocols/oscar/oscar.c:6233
 msgid "Account Info"
 msgstr "Kontoinformasjon"
 
-#: src/protocols/oscar/oscar.c:6223
+#: src/protocols/oscar/oscar.c:6231
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "E-postadressen for %s er %s"
 
-#: src/protocols/oscar/oscar.c:6290
+#: src/protocols/oscar/oscar.c:6298
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr ""
 "Ditt direktemeldingsbilde ble ikke sendt. Du må være direkte tilkoplet for å "
 "sende direktemeldingsbilder"
 
-#: src/protocols/oscar/oscar.c:6474
+#: src/protocols/oscar/oscar.c:6480
 msgid "Unable to set AIM profile."
 msgstr "Kunne ikke sette AIM-profil."
 
-#: src/protocols/oscar/oscar.c:6475
+#: src/protocols/oscar/oscar.c:6481
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -8510,7 +8585,7 @@ msgstr ""
 "innloggingsprosedyren var ferdig. Din profil er ennå ikke blitt lagret. Prøv "
 "å lagre den igjen når du er ferdig pålogget."
 
-#: src/protocols/oscar/oscar.c:6489
+#: src/protocols/oscar/oscar.c:6495
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -8525,11 +8600,11 @@ msgstr[1] ""
 "Maksimum profillengde på %d bytes har blitt overskredet. Gaim har avkortet "
 "den før den ble lagret."
 
-#: src/protocols/oscar/oscar.c:6494
+#: src/protocols/oscar/oscar.c:6500
 msgid "Profile too long."
 msgstr "Profilen er for stor."
 
-#: src/protocols/oscar/oscar.c:6517 src/protocols/oscar/oscar.c:6590
+#: src/protocols/oscar/oscar.c:6523 src/protocols/oscar/oscar.c:6596
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -8544,15 +8619,15 @@ msgstr[1] ""
 "Maksimumslengden på %d bytes for fraværsbeskjeder har blitt overskredet. "
 "Gaim har avkortet den."
 
-#: src/protocols/oscar/oscar.c:6522 src/protocols/oscar/oscar.c:6595
+#: src/protocols/oscar/oscar.c:6528 src/protocols/oscar/oscar.c:6601
 msgid "Away message too long."
 msgstr "Fraværsbeskjeden er for lang."
 
-#: src/protocols/oscar/oscar.c:6554
+#: src/protocols/oscar/oscar.c:6560
 msgid "Unable to set AIM away message."
 msgstr "Kunne ikke sette fraværsbeskjed for AIM."
 
-#: src/protocols/oscar/oscar.c:6555
+#: src/protocols/oscar/oscar.c:6561
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -8562,7 +8637,7 @@ msgstr ""
 "innloggingsprosedyren var ferdig. Du er fortsatt markert som til stede. Prøv "
 "å gjenta operasjonen når du er ferdig pålogget."
 
-#: src/protocols/oscar/oscar.c:6685
+#: src/protocols/oscar/oscar.c:6691
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
@@ -8573,16 +8648,16 @@ msgstr ""
 "må enten starte med en bokstav og inneholde kun bokstaver, tall, og "
 "mellomrom, eller bare inneholde nummer."
 
-#: src/protocols/oscar/oscar.c:6687 src/protocols/oscar/oscar.c:7086
-#: src/protocols/oscar/oscar.c:7100
+#: src/protocols/oscar/oscar.c:6693 src/protocols/oscar/oscar.c:7092
+#: src/protocols/oscar/oscar.c:7106 src/protocols/simple/simple.c:203
 msgid "Unable To Add"
 msgstr "Kunne ikke legge til"
 
-#: src/protocols/oscar/oscar.c:6792
+#: src/protocols/oscar/oscar.c:6798
 msgid "Unable To Retrieve Buddy List"
 msgstr "Kunne ikke hente kontaktliste"
 
-#: src/protocols/oscar/oscar.c:6793
+#: src/protocols/oscar/oscar.c:6799
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -8591,13 +8666,13 @@ msgstr ""
 "Gaim klarte ikke å hente kontaktlisten din fra AIM-tjenerne. Kontaktlisten "
 "er ikke tapt, og vil sannsynligvis bli tilgjengelig i løpet av få timer."
 
-#: src/protocols/oscar/oscar.c:6977 src/protocols/oscar/oscar.c:6978
-#: src/protocols/oscar/oscar.c:6983 src/protocols/oscar/oscar.c:7144
-#: src/protocols/oscar/oscar.c:7145 src/protocols/oscar/oscar.c:7150
+#: src/protocols/oscar/oscar.c:6983 src/protocols/oscar/oscar.c:6984
+#: src/protocols/oscar/oscar.c:6989 src/protocols/oscar/oscar.c:7150
+#: src/protocols/oscar/oscar.c:7151 src/protocols/oscar/oscar.c:7156
 msgid "Orphans"
 msgstr "Ugrupperte"
 
-#: src/protocols/oscar/oscar.c:7084
+#: src/protocols/oscar/oscar.c:7090
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -8606,11 +8681,11 @@ msgstr ""
 "Kunne ikke legge til kontakten %s fordi du har for mange kontakter i listen. "
 "Vennligst fjern en og prøv igjen."
 
-#: src/protocols/oscar/oscar.c:7084 src/protocols/oscar/oscar.c:7098
+#: src/protocols/oscar/oscar.c:7090 src/protocols/oscar/oscar.c:7104
 msgid "(no name)"
 msgstr "(uten navn)"
 
-#: src/protocols/oscar/oscar.c:7098
+#: src/protocols/oscar/oscar.c:7104
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -8621,7 +8696,7 @@ msgstr ""
 "til dette er at du har nådd maksimalgrensen for antall kontakter i "
 "kontaktlisten din."
 
-#: src/protocols/oscar/oscar.c:7181
+#: src/protocols/oscar/oscar.c:7187
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -8630,11 +8705,11 @@ msgstr ""
 "Brukeren %s har gitt deg tillatelse til å legge deg til i kontaktlisten sin. "
 "Ønsker du å legge til vedkommende?"
 
-#: src/protocols/oscar/oscar.c:7187
+#: src/protocols/oscar/oscar.c:7193
 msgid "Authorization Given"
 msgstr "Godkjent"
 
-#: src/protocols/oscar/oscar.c:7231
+#: src/protocols/oscar/oscar.c:7237
 #, fuzzy, c-format
 msgid ""
 "The user %s wants to add %s to their buddy list for the following reason:\n"
@@ -8644,19 +8719,19 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:7276
+#: src/protocols/oscar/oscar.c:7282
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr ""
 "Brukeren %s har akseptert din forespørsel om å bli lagt til i kontaktlisten "
 "din."
 
-#: src/protocols/oscar/oscar.c:7277
+#: src/protocols/oscar/oscar.c:7283
 msgid "Authorization Granted"
 msgstr "Godkjent"
 
 #. Denied
-#: src/protocols/oscar/oscar.c:7280
+#: src/protocols/oscar/oscar.c:7286
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -8667,99 +8742,99 @@ msgstr ""
 "med følgende grun:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:7281
+#: src/protocols/oscar/oscar.c:7287
 msgid "Authorization Denied"
 msgstr "Ikke godkjent"
 
-#: src/protocols/oscar/oscar.c:7318 src/protocols/toc/toc.c:1372
+#: src/protocols/oscar/oscar.c:7324 src/protocols/toc/toc.c:1372
 msgid "_Exchange:"
 msgstr "_Utveksling:"
 
-#: src/protocols/oscar/oscar.c:7354
+#: src/protocols/oscar/oscar.c:7360
 msgid "Invalid chat name specified."
 msgstr "Ugyldig gruppesamtalenavn oppgitt."
 
-#: src/protocols/oscar/oscar.c:7424
+#: src/protocols/oscar/oscar.c:7430
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr ""
 "Ditt direktemeldingsbilde ble ikke sendt. Du kan ikke sende "
 "direktemeldingsbilder i AIM-samtalegrupper."
 
-#: src/protocols/oscar/oscar.c:7559
+#: src/protocols/oscar/oscar.c:7565
 msgid "Away Message"
 msgstr "Fraværsbeskjed"
 
-#: src/protocols/oscar/oscar.c:7848
+#: src/protocols/oscar/oscar.c:7854
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "Kontaktkommentar for %s"
 
-#: src/protocols/oscar/oscar.c:7849
+#: src/protocols/oscar/oscar.c:7855
 msgid "Buddy Comment:"
 msgstr "Kontaktkommentar:"
 
-#: src/protocols/oscar/oscar.c:7868
+#: src/protocols/oscar/oscar.c:7874
 msgid "Edit Buddy Comment"
 msgstr "Rediger kontaktkommentar"
 
-#: src/protocols/oscar/oscar.c:7874
+#: src/protocols/oscar/oscar.c:7880
 msgid "Get Status Msg"
 msgstr "Hent statusbeskjed"
 
-#: src/protocols/oscar/oscar.c:7886
+#: src/protocols/oscar/oscar.c:7892
 msgid "Direct IM"
 msgstr "Direkte samtale"
 
-#: src/protocols/oscar/oscar.c:7903
+#: src/protocols/oscar/oscar.c:7909
 msgid "Re-request Authorization"
 msgstr "Spør på nytt om godkjenning"
 
-#: src/protocols/oscar/oscar.c:7963
+#: src/protocols/oscar/oscar.c:7969
 #, fuzzy
 msgid "Require authorization"
 msgstr "Spør om godkjenning"
 
-#: src/protocols/oscar/oscar.c:7966
+#: src/protocols/oscar/oscar.c:7972
 #, fuzzy
 msgid "Hide IP address"
 msgstr "IP-adresse"
 
-#: src/protocols/oscar/oscar.c:7969
+#: src/protocols/oscar/oscar.c:7975
 #, fuzzy
 msgid "Web aware"
 msgstr "Web-oppmerksom"
 
-#: src/protocols/oscar/oscar.c:7974
+#: src/protocols/oscar/oscar.c:7980
 #, fuzzy
 msgid "ICQ Privacy Options"
 msgstr "Proxyinnstillinger"
 
-#: src/protocols/oscar/oscar.c:7991
+#: src/protocols/oscar/oscar.c:7997
 msgid "The new formatting is invalid."
 msgstr "Den nye formateringen er ugyldig."
 
-#: src/protocols/oscar/oscar.c:7992
+#: src/protocols/oscar/oscar.c:7998
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr ""
 "Skjermnavn-formatering kan bare endre på store/små bokstaver og mellomrom."
 
-#: src/protocols/oscar/oscar.c:7999
+#: src/protocols/oscar/oscar.c:8005
 msgid "New screen name formatting:"
 msgstr "Ny skjermnavn-formatering:"
 
-#: src/protocols/oscar/oscar.c:8051
+#: src/protocols/oscar/oscar.c:8057
 msgid "Change Address To:"
 msgstr "Endre adresse til:"
 
-#: src/protocols/oscar/oscar.c:8096
+#: src/protocols/oscar/oscar.c:8102
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>du venter ikke på godkjenning</i>"
 
-#: src/protocols/oscar/oscar.c:8099
+#: src/protocols/oscar/oscar.c:8105
 msgid "You are awaiting authorization from the following buddies"
 msgstr "Du venter på godkjenning fra disse kontaktene"
 
-#: src/protocols/oscar/oscar.c:8100
+#: src/protocols/oscar/oscar.c:8106
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -8767,84 +8842,84 @@ msgstr ""
 "Du kan spørre om godkjenning på nytt hos disse kontaktene ved å høyreklikke "
 "på dem og velge \"Spør på nytt om godkjenning\"."
 
-#: src/protocols/oscar/oscar.c:8117
+#: src/protocols/oscar/oscar.c:8123
 msgid "Find Buddy by E-mail"
 msgstr "Finn kontakt etter e-post"
 
-#: src/protocols/oscar/oscar.c:8118
+#: src/protocols/oscar/oscar.c:8124
 msgid "Search for a buddy by e-mail address"
 msgstr "Kontaktsøk etter e-postadresse"
 
-#: src/protocols/oscar/oscar.c:8119
+#: src/protocols/oscar/oscar.c:8125
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "Skriv inn e-postadressen til den du søker etter."
 
-#: src/protocols/oscar/oscar.c:8206 src/protocols/silc/silc.c:817
+#: src/protocols/oscar/oscar.c:8212 src/protocols/silc/silc.c:817
 msgid "Set User Info..."
 msgstr "Sett brukerinfo..."
 
-#: src/protocols/oscar/oscar.c:8212
+#: src/protocols/oscar/oscar.c:8218
 msgid "Set User Info (URL)..."
 msgstr "Sett brukerinfo (URL)..."
 
-#: src/protocols/oscar/oscar.c:8217 src/protocols/silc/silc.c:813
+#: src/protocols/oscar/oscar.c:8223 src/protocols/silc/silc.c:813
 msgid "Change Password..."
 msgstr "Bytt passord..."
 
-#: src/protocols/oscar/oscar.c:8223
+#: src/protocols/oscar/oscar.c:8229
 msgid "Change Password (URL)"
 msgstr "Endre passord (URL)"
 
-#: src/protocols/oscar/oscar.c:8227
+#: src/protocols/oscar/oscar.c:8233
 msgid "Configure IM Forwarding (URL)"
 msgstr "Konfigurer beskjedvideresending (URL)"
 
 #. ICQ actions
-#: src/protocols/oscar/oscar.c:8237
+#: src/protocols/oscar/oscar.c:8243
 #, fuzzy
 msgid "Show privacy options..."
 msgstr "Vis flere valg"
 
 #. AIM actions
-#: src/protocols/oscar/oscar.c:8244
+#: src/protocols/oscar/oscar.c:8250
 msgid "Format Screen Name..."
 msgstr "Formatere skjermnavn..."
 
-#: src/protocols/oscar/oscar.c:8248
+#: src/protocols/oscar/oscar.c:8254
 msgid "Confirm Account"
 msgstr "Bekrefte konto"
 
-#: src/protocols/oscar/oscar.c:8252
+#: src/protocols/oscar/oscar.c:8258
 msgid "Display Currently Registered Address"
 msgstr "Vis nåværende registrert adresse"
 
-#: src/protocols/oscar/oscar.c:8256
+#: src/protocols/oscar/oscar.c:8262
 msgid "Change Currently Registered Address..."
 msgstr "Endre nåværende registrert adresse"
 
-#: src/protocols/oscar/oscar.c:8263
+#: src/protocols/oscar/oscar.c:8269
 msgid "Show Buddies Awaiting Authorization"
 msgstr "Vis kontakter som venter på godkjenning"
 
-#: src/protocols/oscar/oscar.c:8269
+#: src/protocols/oscar/oscar.c:8275
 msgid "Search for Buddy by Email..."
 msgstr "Vennesøk etter e-postadresse"
 
-#: src/protocols/oscar/oscar.c:8274
+#: src/protocols/oscar/oscar.c:8280
 msgid "Search for Buddy by Information"
 msgstr "Vennesøk etter informasjon"
 
-#: src/protocols/oscar/oscar.c:8344
+#: src/protocols/oscar/oscar.c:8350
 #, fuzzy
 msgid "Use recent buddies group"
 msgstr "Brukeren er ikke i gruppen"
 
-#: src/protocols/oscar/oscar.c:8347
+#: src/protocols/oscar/oscar.c:8353
 #, fuzzy
 msgid "Show how long you have been idle"
 msgstr "Lar deg manuelt sette hvor lenge du har vært borte."
 
-#: src/protocols/oscar/oscar.c:8356
+#: src/protocols/oscar/oscar.c:8362
 msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
 msgstr ""
 
@@ -8858,21 +8933,129 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:8470 src/protocols/oscar/oscar.c:8472
+#: src/protocols/oscar/oscar.c:8476 src/protocols/oscar/oscar.c:8478
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ-protokolltillegg"
 
-#: src/protocols/oscar/oscar.c:8491
+#: src/protocols/oscar/oscar.c:8497
 msgid "Auth host"
 msgstr "Autentiseringsadresse:"
 
-#: src/protocols/oscar/oscar.c:8494
+#: src/protocols/oscar/oscar.c:8500
 msgid "Auth port"
 msgstr "Autentiseringsport:"
 
-#: src/protocols/oscar/oscar.c:8497 src/protocols/zephyr/zephyr.c:2892
+#: src/protocols/oscar/oscar.c:8503 src/protocols/zephyr/zephyr.c:2892
 msgid "Encoding"
 msgstr "Tegnkoding:"
+
+#: src/protocols/sametime/sametime.c:1134
+#, fuzzy
+msgid "Sending Handshake"
+msgstr "Sender informasjonskapsel"
+
+#: src/protocols/sametime/sametime.c:1139
+#, fuzzy
+msgid "Waiting for Handshake Acknowledgement"
+msgstr "Venter på at overføringen skal starte"
+
+#: src/protocols/sametime/sametime.c:1144
+msgid "Handshake Acknowledged, Sending Login"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1149
+msgid "Waiting for Login Acknowledgement"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1154
+#, fuzzy
+msgid "Login Redirected"
+msgstr "Påloggingstjener"
+
+#: src/protocols/sametime/sametime.c:1159
+#, fuzzy
+msgid "Forcing Login"
+msgstr "Logger på"
+
+#: src/protocols/sametime/sametime.c:1163
+msgid "Login Acknowledged"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1168
+#, fuzzy
+msgid "Connected to Sametime Community Server"
+msgstr "Kobler til SILC-tjener"
+
+#. * @todo Admin alerts should probably be in a conversation window
+#. rather than a gaim_notify_message. Or in some sort of updating
+#. dialog, or something.
+#: src/protocols/sametime/sametime.c:1263
+msgid "Admin Alert"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:2758
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/protocols/simple/simple.c:202
+#, c-format
+msgid ""
+"Could not add the buddy %s because every simple user has to start with "
+"'sip:'."
+msgstr ""
+
+#: src/protocols/simple/simple.c:1209
+#, fuzzy
+msgid "Could not create listen socket"
+msgstr "Kunne ikke opprette socket"
+
+#: src/protocols/simple/simple.c:1263
+#, fuzzy
+msgid "SIP usernames may not contain whitespaces or @ symbols"
+msgstr "IRC-kallenavn kan ikke inneholde mellomrom"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#: src/protocols/simple/simple.c:1408
+#, fuzzy
+msgid "SIP/SIMPLE Protocol Plugin"
+msgstr "SILC-protokolltillegg"
+
+#. *  summary
+#: src/protocols/simple/simple.c:1409
+#, fuzzy
+msgid "The SIP/SIMPLE Protocol Plugin"
+msgstr "SILC-protokolltillegg"
+
+#. *  description
+#: src/protocols/simple/simple.c:1410
+msgid "Thomas Butter <butter@uni-mannheim.de>"
+msgstr ""
+
+#: src/protocols/simple/simple.c:1431
+msgid "Publish Status (note: everyone may watch you)"
+msgstr ""
+
+#: src/protocols/simple/simple.c:1434
+#, fuzzy
+msgid "Use UDP"
+msgstr "Brukerid"
+
+#: src/protocols/simple/simple.c:1436
+#, fuzzy
+msgid "Use Proxy"
+msgstr "Ingen proxy"
+
+#: src/protocols/simple/simple.c:1438
+#, fuzzy
+msgid "Proxy"
+msgstr "Ingen proxy"
 
 #: src/protocols/silc/buddy.c:51 src/protocols/silc/buddy.c:419
 #: src/protocols/silc/buddy.c:544 src/protocols/silc/buddy.c:711
@@ -10433,11 +10616,11 @@ msgstr "TOC-port:"
 msgid "Your Yahoo! message did not get sent."
 msgstr "Din Yahoo!-beskjed ble ikke sendt."
 
-#: src/protocols/yahoo/yahoo.c:750 src/protocols/yahoo/yahoo.c:3481
+#: src/protocols/yahoo/yahoo.c:752 src/protocols/yahoo/yahoo.c:3499
 msgid "Buzz!!"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:795
+#: src/protocols/yahoo/yahoo.c:797
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "Yahoo! systemmelding for %s:"
@@ -10445,24 +10628,24 @@ msgstr "Yahoo! systemmelding for %s:"
 #. TODO: this is almost exactly the same as what MSN does,
 #. * this should probably be moved to the core.
 #.
-#: src/protocols/yahoo/yahoo.c:885
+#: src/protocols/yahoo/yahoo.c:887
 #, fuzzy, c-format
 msgid "The user %s wants to add %s to his or her buddy list%s%s."
 msgstr "Brukeren %s ønsker å legge til %s i kontaktlisten sin."
 
-#: src/protocols/yahoo/yahoo.c:891
+#: src/protocols/yahoo/yahoo.c:893
 #, fuzzy
 msgid "Message (optional) :"
 msgstr "Beskjedvarsling"
 
-#: src/protocols/yahoo/yahoo.c:933
+#: src/protocols/yahoo/yahoo.c:935
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr ""
 "%s har (tilbakevirkende) avslått din forespørsel om å bli lagt til i "
 "kontaktlisten din."
 
-#: src/protocols/yahoo/yahoo.c:936
+#: src/protocols/yahoo/yahoo.c:938
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10471,11 +10654,11 @@ msgstr ""
 "%s har (tilbakevirkende) avslått din forespørsel om å bli lagt til i "
 "kontaktlisten med følgende grunn: %s."
 
-#: src/protocols/yahoo/yahoo.c:939
+#: src/protocols/yahoo/yahoo.c:941
 msgid "Add buddy rejected"
 msgstr "Legge til kontakt avslått"
 
-#: src/protocols/yahoo/yahoo.c:1681
+#: src/protocols/yahoo/yahoo.c:1684
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10486,11 +10669,11 @@ msgstr ""
 "versjonen av Gaim vil antakeligvis ikke være i stand til å logge på Yahoo. "
 "Sjekk %s for oppdateringer."
 
-#: src/protocols/yahoo/yahoo.c:1684
+#: src/protocols/yahoo/yahoo.c:1687
 msgid "Failed Yahoo! Authentication"
 msgstr "Yahoo!-autentisering feilet"
 
-#: src/protocols/yahoo/yahoo.c:1757
+#: src/protocols/yahoo/yahoo.c:1760
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -10499,19 +10682,19 @@ msgstr ""
 "Du forsøkte å ignorere %s, men vedkommende er i kontaktlisten din. Hvis du "
 "klikker på \"Ja\" vil kontakten fjernes og ignoreres."
 
-#: src/protocols/yahoo/yahoo.c:1760
+#: src/protocols/yahoo/yahoo.c:1763
 msgid "Ignore buddy?"
 msgstr "Ignorere kontakt?"
 
-#: src/protocols/yahoo/yahoo.c:1794
+#: src/protocols/yahoo/yahoo.c:1797
 msgid "Invalid username."
 msgstr "Ugyldig brukernavn,"
 
-#: src/protocols/yahoo/yahoo.c:1805
+#: src/protocols/yahoo/yahoo.c:1808
 msgid "Normal authentication failed!"
 msgstr "Normal autentisering feilet"
 
-#: src/protocols/yahoo/yahoo.c:1806
+#: src/protocols/yahoo/yahoo.c:1809
 msgid ""
 "The normal authentication method has failed. This means either your password "
 "is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
@@ -10524,126 +10707,130 @@ msgstr ""
 "autentifikasjon, noe som vil føre til redusert funksjonalitet og færre "
 "muligheter"
 
-#: src/protocols/yahoo/yahoo.c:1814
+#: src/protocols/yahoo/yahoo.c:1817
 msgid "Incorrect password."
 msgstr "Feil passord."
 
-#: src/protocols/yahoo/yahoo.c:1817
+#: src/protocols/yahoo/yahoo.c:1820
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "Din konto har blitt låst, vennligst logg inn på Yahoo! nettsiden"
 
-#: src/protocols/yahoo/yahoo.c:1820
+#: src/protocols/yahoo/yahoo.c:1823
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr ""
 "Ukjent feilkode %d.\n"
 "Om du logger inn på Yahoo! sin nettside, kan dette  kansje løse problemet"
 
-#: src/protocols/yahoo/yahoo.c:1874
+#: src/protocols/yahoo/yahoo.c:1877
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr ""
 "Kunne ikke legge til kontakt %s i gruppen %s i tjenerlisten på konto %s."
 
-#: src/protocols/yahoo/yahoo.c:1877
+#: src/protocols/yahoo/yahoo.c:1880
 msgid "Could not add buddy to server list"
 msgstr "Kunne ikke legge kontakt til tjenerens kontaktliste"
 
-#: src/protocols/yahoo/yahoo.c:2121 src/protocols/yahoo/yahoo.c:2267
+#: src/protocols/yahoo/yahoo.c:2124 src/protocols/yahoo/yahoo.c:2270
 #: src/protocols/yahoo/ycht.c:413
 msgid "Unable to read"
 msgstr "Kunne ikke lese"
 
-#: src/protocols/yahoo/yahoo.c:2289 src/protocols/yahoo/yahoo.c:2417
-#: src/protocols/yahoo/yahoo.c:2502 src/protocols/yahoo/yahoo.c:2512
+#: src/protocols/yahoo/yahoo.c:2292 src/protocols/yahoo/yahoo.c:2420
+#: src/protocols/yahoo/yahoo.c:2506 src/protocols/yahoo/yahoo.c:2516
 #: src/protocols/yahoo/yahoochat.c:1393 src/protocols/yahoo/yahoochat.c:1460
 #: src/protocols/yahoo/ycht.c:517
 msgid "Connection problem"
 msgstr "Problem ved tilkobling"
 
-#: src/protocols/yahoo/yahoo.c:2615 src/protocols/yahoo/yahoo.c:3212
+#: src/protocols/yahoo/yahoo.c:2619 src/protocols/yahoo/yahoo.c:3236
 msgid "Not At Home"
 msgstr "Ikke hjemme"
 
-#: src/protocols/yahoo/yahoo.c:2617 src/protocols/yahoo/yahoo.c:3215
+#: src/protocols/yahoo/yahoo.c:2621 src/protocols/yahoo/yahoo.c:3239
 msgid "Not At Desk"
 msgstr "Ikke ved skrivebordet"
 
-#: src/protocols/yahoo/yahoo.c:2619 src/protocols/yahoo/yahoo.c:3218
+#: src/protocols/yahoo/yahoo.c:2623 src/protocols/yahoo/yahoo.c:3242
 msgid "Not In Office"
 msgstr "Ikke på kontoret"
 
-#: src/protocols/yahoo/yahoo.c:2623 src/protocols/yahoo/yahoo.c:3224
+#: src/protocols/yahoo/yahoo.c:2627 src/protocols/yahoo/yahoo.c:3248
 msgid "On Vacation"
 msgstr "På ferie"
 
-#: src/protocols/yahoo/yahoo.c:2627 src/protocols/yahoo/yahoo.c:3230
+#: src/protocols/yahoo/yahoo.c:2631 src/protocols/yahoo/yahoo.c:3254
 msgid "Stepped Out"
 msgstr "Ute"
 
-#: src/protocols/yahoo/yahoo.c:2719 src/protocols/yahoo/yahoo.c:2746
+#: src/protocols/yahoo/yahoo.c:2723 src/protocols/yahoo/yahoo.c:2750
 msgid "Not on server list"
 msgstr "Ikke på tjenerlisten"
 
-#: src/protocols/yahoo/yahoo.c:2769 src/protocols/yahoo/yahoo.c:2829
+#: src/protocols/yahoo/yahoo.c:2773 src/protocols/yahoo/yahoo.c:2833
 #, fuzzy
 msgid "Appear Online"
 msgstr "Lat som avlogget"
 
-#: src/protocols/yahoo/yahoo.c:2772 src/protocols/yahoo/yahoo.c:2851
+#: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:2855
 #, fuzzy
 msgid "Appear Permanently Offline"
 msgstr "Lat som avlogget"
 
-#: src/protocols/yahoo/yahoo.c:2790
+#: src/protocols/yahoo/yahoo.c:2794
 #, fuzzy
 msgid "Stealth"
 msgstr "Fylke/stat"
 
-#: src/protocols/yahoo/yahoo.c:2845
+#: src/protocols/yahoo/yahoo.c:2849
 #, fuzzy
 msgid "Don't Appear Permanently Offline"
 msgstr "Lat som avlogget"
 
-#: src/protocols/yahoo/yahoo.c:2884
+#: src/protocols/yahoo/yahoo.c:2896
 msgid "Join in Chat"
 msgstr "Bli med i samtalegruppe"
 
-#: src/protocols/yahoo/yahoo.c:2889
+#: src/protocols/yahoo/yahoo.c:2901
 msgid "Initiate Conference"
 msgstr "Start konferanse"
 
-#: src/protocols/yahoo/yahoo.c:2914
+#: src/protocols/yahoo/yahoo.c:2926
 msgid "Stealth Settings"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:2945
+#: src/protocols/yahoo/yahoo.c:2932
+msgid "Start Doodling"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:2963
 msgid "Active which ID?"
 msgstr "Aktiver hvilken ID?"
 
-#: src/protocols/yahoo/yahoo.c:2954
+#: src/protocols/yahoo/yahoo.c:2972
 msgid "Join who in chat?"
 msgstr "Bli med hvem i samtalegruppe?"
 
-#: src/protocols/yahoo/yahoo.c:2964
+#: src/protocols/yahoo/yahoo.c:2982
 msgid "Activate ID..."
 msgstr "Aktiver ID..."
 
-#: src/protocols/yahoo/yahoo.c:2968
+#: src/protocols/yahoo/yahoo.c:2986
 msgid "Join user in chat..."
 msgstr "Bli med bruker i samtalegruppe..."
 
-#: src/protocols/yahoo/yahoo.c:3523
+#: src/protocols/yahoo/yahoo.c:3541
 #, fuzzy
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr ""
 "join: &lt;rom&gt; [vert]:  Bli med i en gruppesamtale på denne serveren"
 
-#: src/protocols/yahoo/yahoo.c:3527
+#: src/protocols/yahoo/yahoo.c:3545
 msgid "buzz: Buzz a contact to get their attention"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:3532
+#: src/protocols/yahoo/yahoo.c:3550
 msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
@@ -10657,53 +10844,53 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3621 src/protocols/yahoo/yahoo.c:3623
+#: src/protocols/yahoo/yahoo.c:3639 src/protocols/yahoo/yahoo.c:3641
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo-protokolltillegg"
 
-#: src/protocols/yahoo/yahoo.c:3640
+#: src/protocols/yahoo/yahoo.c:3658
 msgid "Yahoo Japan"
 msgstr "Yahoo Japan"
 
-#: src/protocols/yahoo/yahoo.c:3643
+#: src/protocols/yahoo/yahoo.c:3661
 msgid "Pager host"
 msgstr "Personsøker-adresse:"
 
-#: src/protocols/yahoo/yahoo.c:3646
+#: src/protocols/yahoo/yahoo.c:3664
 msgid "Japan Pager host"
 msgstr "Japansk personsøker-adresse:"
 
-#: src/protocols/yahoo/yahoo.c:3649
+#: src/protocols/yahoo/yahoo.c:3667
 msgid "Pager port"
 msgstr "Personsøker-port:"
 
-#: src/protocols/yahoo/yahoo.c:3652
+#: src/protocols/yahoo/yahoo.c:3670
 msgid "File transfer host"
 msgstr "Filoverføringsvert"
 
-#: src/protocols/yahoo/yahoo.c:3655
+#: src/protocols/yahoo/yahoo.c:3673
 msgid "Japan File transfer host"
 msgstr "Japansk filoverføringsvert"
 
-#: src/protocols/yahoo/yahoo.c:3658
+#: src/protocols/yahoo/yahoo.c:3676
 msgid "File transfer port"
 msgstr "Filoverføringsport"
 
-#: src/protocols/yahoo/yahoo.c:3661
+#: src/protocols/yahoo/yahoo.c:3679
 #, fuzzy
 msgid "Chat Room Locale"
 msgstr "Samtaleromslisteadresse"
 
-#: src/protocols/yahoo/yahoo.c:3664
+#: src/protocols/yahoo/yahoo.c:3682
 msgid "Chat Room List Url"
 msgstr "Samtaleromslisteadresse"
 
-#: src/protocols/yahoo/yahoo.c:3667
+#: src/protocols/yahoo/yahoo.c:3685
 #, fuzzy
 msgid "YCHT Host"
 msgstr "YCHT-vert"
 
-#: src/protocols/yahoo/yahoo.c:3670
+#: src/protocols/yahoo/yahoo.c:3688
 #, fuzzy
 msgid "YCHT Port"
 msgstr "YCHT-Port"
@@ -11054,19 +11241,19 @@ msgstr[1] "(%d beskjeder)"
 msgid "(1 message)"
 msgstr "(1 beskjed)"
 
-#: src/server.c:860
+#: src/server.c:859
 #, fuzzy, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr "Brukeren '%s' inviterer %s til samtalerom: '%s\n"
 
-#: src/server.c:865
+#: src/server.c:864
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
 msgstr "Brukeren '%s' inviterer %s til samtalerom: '%s\n"
 
-#: src/server.c:869
+#: src/server.c:868
 msgid "Accept chat invitation?"
 msgstr "Aksepter samtaleinvitasjon?"
 
@@ -11120,41 +11307,64 @@ msgstr ""
 "Det oppstod en feil under innlasting av kontaktlisten din. Den har ikke "
 "blitt lastet, og den gamle filen ble flyttet til blist.xml~."
 
-#: src/util.c:2559
+#: src/util.c:2567
 msgid "Calculating..."
 msgstr "Beregner..."
 
-#: src/util.c:2562
+#: src/util.c:2570
 msgid "Unknown."
 msgstr "Ukjent."
 
-#: src/util.c:2592
+#: src/util.c:2600
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "sekund"
 msgstr[1] "sekunder"
 
-#: src/util.c:2606
+#: src/util.c:2614
 msgid "day"
 msgid_plural "days"
 msgstr[0] "dag"
 msgstr[1] "dager"
 
-#: src/util.c:2614
+#: src/util.c:2622
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "time"
 msgstr[1] "timer"
 
-#: src/util.c:2622
+#: src/util.c:2630
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "minutt"
 msgstr[1] "minutter"
 
-#: src/util.c:3045
+#: src/util.c:3053
 msgid "g003: Error opening connection.\n"
 msgstr "g003: Feil ved tilkobling.\n"
+
+#~ msgid "Buddy List Sorting"
+#~ msgstr "Kontaktlistesortering"
+
+#~ msgid "_Sorting:"
+#~ msgstr "_Sortering:"
+
+#~ msgid "Buddy Display"
+#~ msgstr "Kontaktvisning"
+
+#, fuzzy
+#~ msgid "Show more buddy details"
+#~ msgstr "Vis brukerdetaljer"
+
+#~ msgid "Gnome Default"
+#~ msgstr "Gnome-standard"
+
+#~ msgid "Away m_essage:"
+#~ msgstr "Fraværsbeskjed:"
+
+#, fuzzy
+#~ msgid "Quit message"
+#~ msgstr "(1 beskjed)"
 
 #~ msgid "Restore Away State On Reconnect"
 #~ msgstr ""
@@ -11928,9 +12138,6 @@ msgstr "g003: Feil ved tilkobling.\n"
 #~ msgid "Couldn't get search results"
 #~ msgstr "Kunne ikke laste ned søkeresultater"
 
-#~ msgid "Active"
-#~ msgstr "Aktiv"
-
 #~ msgid "Birth Year"
 #~ msgstr "Fødselsår"
 
@@ -12161,9 +12368,6 @@ msgstr "g003: Feil ved tilkobling.\n"
 
 #~ msgid "Local Users"
 #~ msgstr "Lokale brukere"
-
-#~ msgid "Logging in"
-#~ msgstr "Logger på"
 
 #~ msgid "Trepia Protocol Plugin"
 #~ msgstr "Trepia-protokolltillegg"

@@ -57,7 +57,36 @@
  
 ; GTK+ Themes section
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Sie haben keine Berechtigung, um ein GTK+ Theme zu installieren."
- 
+
 ; Uninstall Section Prompts
 !define un.GAIM_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Gaim finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendunng installiert hat."
 !define un.GAIM_UNINSTALL_ERROR_2		"Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
+
+; Spellcheck Section Prompts
+!define GAIM_SPELLCHECK_SECTION_TITLE		"Unterstützung für Rechtschreibkontrolle"
+!define GAIM_SPELLCHECK_ERROR			"Fehler bei der Installation der Rechtschreibkontrolle"
+!define GAIM_SPELLCHECK_DICT_ERROR		"Fehler bei der Installation des Wörterbuches für die Rechtschreibkontrolle"
+!define GAIM_SPELLCHECK_SECTION_DESCRIPTION	"Unterstützung für Rechtschreibkontrolle.  (Für die Installation ist eine Internet-Verbindung nötig)"
+!define ASPELL_INSTALL_FAILED			"Installation gescheitert"
+!define GAIM_SPELLCHECK_BRETON			"Bretonisch"
+!define GAIM_SPELLCHECK_CATALAN			"Katalanisch"
+!define GAIM_SPELLCHECK_CZECH			"Tschechisch"
+!define GAIM_SPELLCHECK_WELSH			"Walisisch"
+!define GAIM_SPELLCHECK_DANISH			"Dänisch"
+!define GAIM_SPELLCHECK_GERMAN			"Deutsch"
+!define GAIM_SPELLCHECK_GREEK			"Griechisch"
+!define GAIM_SPELLCHECK_ENGLISH			"Englisch"
+!define GAIM_SPELLCHECK_ESPERANTO		"Esperanto"
+!define GAIM_SPELLCHECK_SPANISH			"Spanisch"
+!define GAIM_SPELLCHECK_FAROESE			"Faröersprache"
+!define GAIM_SPELLCHECK_FRENCH			"Französisch"
+!define GAIM_SPELLCHECK_ITALIAN			"Italienisch"
+!define GAIM_SPELLCHECK_DUTCH			"Holländisch"
+!define GAIM_SPELLCHECK_NORWEGIAN		"Norwegisch"
+!define GAIM_SPELLCHECK_POLISH			"Polnisch"
+!define GAIM_SPELLCHECK_PORTUGUESE		"Portuguese"
+!define GAIM_SPELLCHECK_ROMANIAN		"Rumänisch"
+!define GAIM_SPELLCHECK_RUSSIAN			"Russisch"
+!define GAIM_SPELLCHECK_SLOVAK			"Slowakisch"
+!define GAIM_SPELLCHECK_SWEDISH			"Schwedisch"
+!define GAIM_SPELLCHECK_UKRAINIAN		"Ukrainisch"

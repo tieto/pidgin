@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GAIM Telugu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-23 16:42-0400\n"
+"POT-Creation-Date: 2005-10-27 15:05-0400\n"
 "PO-Revision-Date: 2005-09-07 14:57+0530\n"
 "Last-Translator: Mr. Subbaramaih <info.gist@cdac.in>\n"
 "Language-Team: GIST CDAC Pune <info.gist@cdac.in>\n"
@@ -172,16 +172,16 @@ msgid "Mute Sounds"
 msgstr "మూగ శబ్దాలు "
 
 #: plugins/docklet/docklet.c:406 src/gtkft.c:691
-#: src/protocols/oscar/oscar.c:8351
+#: src/protocols/oscar/oscar.c:8357
 msgid "File Transfers"
 msgstr "ఫైల్‌ ట్రాన్స్‌ఫర్స్ "
 
 #  And now for the buttons
-#: plugins/docklet/docklet.c:407 src/gtkaccount.c:2406
+#: plugins/docklet/docklet.c:407 src/gtkaccount.c:2422
 msgid "Accounts"
 msgstr "ఖాతాలు"
 
-#: plugins/docklet/docklet.c:408 src/gtkprefs.c:1792
+#: plugins/docklet/docklet.c:408 src/gtkprefs.c:1763
 msgid "Preferences"
 msgstr "అభిరుచులు "
 
@@ -501,47 +501,47 @@ msgstr ""
 "మునుపటి సంభాషణకు మారాలంటే క్రిందకు లాగి తర్వాత ఎడమవైపుకు లాగండి.\n"
 "తదుపరి సంభాషణకు ఉపక్రమించుటకు ముందుగా పైకి లాగి ఆ తర్వాత ఎడమవైపుకు లాగండి."
 
-#: plugins/gevolution/add_buddy_dialog.c:132
-#: plugins/gevolution/assoc-buddy.c:120 src/gtkroomlist.c:572
+#: plugins/gevolution/add_buddy_dialog.c:131
+#: plugins/gevolution/assoc-buddy.c:119 src/gtkroomlist.c:572
 #: src/protocols/jabber/jabber.c:638 src/protocols/msn/msn.c:1539
 msgid "Name"
 msgstr "పేరు"
 
-#: plugins/gevolution/add_buddy_dialog.c:143
+#: plugins/gevolution/add_buddy_dialog.c:142
 msgid "Instant Messaging"
 msgstr "సత్వర సంభాషణ "
 
 #. Add the label.
-#: plugins/gevolution/add_buddy_dialog.c:459
+#: plugins/gevolution/add_buddy_dialog.c:458
 msgid "Select a person from your address book below, or add a new person."
 msgstr "ఈ క్రింది మీ అడ్రస్ బుక్ నుండి ఒక పేరును సెలక్ట్ చేయండి, లేదా కొత్త పేరును చేర్చండి."
 
 #. "Search"
-#: plugins/gevolution/add_buddy_dialog.c:472
-#: plugins/gevolution/assoc-buddy.c:354 src/protocols/jabber/buddy.c:1357
-#: src/protocols/oscar/oscar.c:8122
+#: plugins/gevolution/add_buddy_dialog.c:471
+#: plugins/gevolution/assoc-buddy.c:353 src/protocols/jabber/buddy.c:1357
+#: src/protocols/oscar/oscar.c:8128
 msgid "Search"
 msgstr "అన్వేషణ "
 
-#: plugins/gevolution/add_buddy_dialog.c:553
-#: plugins/gevolution/new_person_dialog.c:306 src/gtkblist.c:4069
-#: src/gtkblist.c:4446
+#: plugins/gevolution/add_buddy_dialog.c:552
+#: plugins/gevolution/new_person_dialog.c:306 src/gtkblist.c:4082
+#: src/gtkblist.c:4459
 msgid "Group:"
 msgstr "గ్రూప్:"
 
 #. "New Person" button
-#: plugins/gevolution/add_buddy_dialog.c:579
-#: plugins/gevolution/assoc-buddy.c:465
+#: plugins/gevolution/add_buddy_dialog.c:578
+#: plugins/gevolution/assoc-buddy.c:464
 msgid "New Person"
 msgstr "కొత్త వ్యక్తి "
 
 #. "Select Buddy" button
-#: plugins/gevolution/add_buddy_dialog.c:596
+#: plugins/gevolution/add_buddy_dialog.c:595
 msgid "Select Buddy"
 msgstr "మిత్రుని ఎంపిక చేయండి "
 
 #. Add the label.
-#: plugins/gevolution/assoc-buddy.c:341
+#: plugins/gevolution/assoc-buddy.c:340
 msgid ""
 "Select a person from your address book to add this buddy to, or create a new "
 "person."
@@ -550,18 +550,18 @@ msgstr ""
 "సృష్టించండి."
 
 #. Add the expander
-#: plugins/gevolution/assoc-buddy.c:429
+#: plugins/gevolution/assoc-buddy.c:428
 #, fuzzy
 msgid "User _details"
 msgstr "వినియోగదారుని వివరములు దాయుము. "
 
 #. "Associate Buddy" button
-#: plugins/gevolution/assoc-buddy.c:482
+#: plugins/gevolution/assoc-buddy.c:481
 msgid "_Associate Buddy"
 msgstr "_సహచర మిత్రుడు "
 
 #: plugins/gevolution/gevo-util.c:64 plugins/gevolution/gevolution.c:96
-#: src/blist.c:518 src/blist.c:1259 src/blist.c:1480 src/gtkblist.c:3884
+#: src/blist.c:518 src/blist.c:1259 src/blist.c:1480 src/gtkblist.c:3897
 #: src/protocols/jabber/roster.c:66
 msgid "Buddies"
 msgstr "మిత్రులు "
@@ -644,8 +644,8 @@ msgid "Optional information:"
 msgstr "ఇతర ఉపయుక్త సమాచారం :"
 
 #. Label
-#: plugins/gevolution/new_person_dialog.c:337 src/gtkaccount.c:413
-#: src/gtkaccount.c:435 src/protocols/oscar/oscar.c:613
+#: plugins/gevolution/new_person_dialog.c:337 src/gtkaccount.c:412
+#: src/gtkaccount.c:434 src/protocols/oscar/oscar.c:613
 msgid "Buddy Icon"
 msgstr "మిత్రుని ఐకన్ "
 
@@ -661,11 +661,11 @@ msgstr "చివరి పేరు:"
 msgid "E-mail:"
 msgstr "ఇ-మెయిల్:"
 
-#: plugins/history.c:138
+#: plugins/history.c:146
 msgid "History Plugin Requires Logging"
 msgstr ""
 
-#: plugins/history.c:139
+#: plugins/history.c:147
 msgid ""
 "Logging can be enabled from Tools -> Preferences -> Logging.\n"
 "\n"
@@ -673,15 +673,15 @@ msgid ""
 "the same conversation type(s)."
 msgstr ""
 
-#: plugins/history.c:178
+#: plugins/history.c:186
 msgid "History"
 msgstr "ఇతిహాసం "
 
-#: plugins/history.c:180
+#: plugins/history.c:188
 msgid "Shows recently logged conversations in new conversations."
 msgstr "కొత్త సంభాషణల్లో ఇటీవల లాగ్ చేసిన సంభాషణలను చూపును."
 
-#: plugins/history.c:181
+#: plugins/history.c:189
 msgid ""
 "When a new conversation is opened this plugin will insert the last "
 "conversation into the current conversation.\n"
@@ -954,7 +954,7 @@ msgstr "చదవని సందేశాలను సూచించుటక�
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/perl/perl.c:583
+#: plugins/perl/perl.c:587
 msgid "Perl Plugin Loader"
 msgstr "పెరల్ ప్లగ్‌ఇన్ లీడర్."
 
@@ -963,7 +963,7 @@ msgstr "పెరల్ ప్లగ్‌ఇన్ లీడర్."
 #. *< name
 #. *< version
 #. *< summary
-#: plugins/perl/perl.c:585 plugins/perl/perl.c:586
+#: plugins/perl/perl.c:589 plugins/perl/perl.c:590
 msgid "Provides support for loading perl plugins."
 msgstr "పెరల్ ప్లగ్‌ఇన్‌లు లోడ్ చేయడానికి సపోర్టును అందించును."
 
@@ -1092,43 +1092,43 @@ msgstr ""
 msgid "The specified word already exists in the correction list."
 msgstr ""
 
-#: plugins/spellchk.c:1939
+#: plugins/spellchk.c:1948
 msgid "Text Replacements"
 msgstr "టెక్స్‌ట్ రీప్లేస్‌మెంట్స్ "
 
-#: plugins/spellchk.c:1963
+#: plugins/spellchk.c:1972
 msgid "You type"
 msgstr "టైప్ చేయండి"
 
-#: plugins/spellchk.c:1975
+#: plugins/spellchk.c:1984
 msgid "You send"
 msgstr "పంపండి"
 
-#: plugins/spellchk.c:1987
+#: plugins/spellchk.c:1996
 msgid "Whole words only"
 msgstr ""
 
-#: plugins/spellchk.c:2013
+#: plugins/spellchk.c:2022
 msgid "Add a new text replacement"
 msgstr "కొత్త టెక్‌స్ట్ రీప్లేస్‌మెంటును చేర్చుము. "
 
-#: plugins/spellchk.c:2023
+#: plugins/spellchk.c:2032
 msgid "You _type:"
 msgstr "_టైప్ చేయండి:"
 
-#: plugins/spellchk.c:2039
+#: plugins/spellchk.c:2048
 msgid "You _send:"
 msgstr "_పంపండి:"
 
-#: plugins/spellchk.c:2051
+#: plugins/spellchk.c:2060
 msgid "Only replace _whole words"
 msgstr ""
 
-#: plugins/spellchk.c:2088
+#: plugins/spellchk.c:2097
 msgid "Text replacement"
 msgstr "టెక్‌స్ట్ రీప్లేస్‌మెంట్ "
 
-#: plugins/spellchk.c:2090 plugins/spellchk.c:2091
+#: plugins/spellchk.c:2099 plugins/spellchk.c:2100
 msgid "Replaces text in outgoing messages according to user-defined rules."
 msgstr "బయటకు పంపే సందేశాల్లో వినియోగదారుడు నిర్వచించిన నియమాల ననుసరించి టెక్‌స్ట్ రీప్లేస్ అగును. "
 
@@ -1407,8 +1407,7 @@ msgstr "_విండోస్ స్టార్టప్‌లో గెయి
 
 #  Buddy List
 #. Buddy List
-#: plugins/win32/winprefs/winprefs.c:405 src/gtkblist.c:3164
-#: src/gtkprefs.c:1755
+#: plugins/win32/winprefs/winprefs.c:405 src/gtkblist.c:3173
 msgid "Buddy List"
 msgstr "మిత్రుల లిస్ట్ "
 
@@ -1423,7 +1422,7 @@ msgstr "_కనిపించు మిత్రుల లిస్టు"
 msgid "_Keep Buddy List window on top:"
 msgstr "_నియంత్రించిన మిత్రుల లిస్టును పైభాగాన ఉంచుము."
 
-#: plugins/win32/winprefs/winprefs.c:412 src/gtkprefs.c:1691
+#: plugins/win32/winprefs/winprefs.c:412 src/gtkprefs.c:1657
 msgid "Never"
 msgstr "ఎప్పుడూ కాదు. "
 
@@ -1439,8 +1438,8 @@ msgstr ""
 
 #  Conversations
 #. Conversations
-#: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:837
-#: src/gtkprefs.c:1756
+#: plugins/win32/winprefs/winprefs.c:419 src/gtkprefs.c:803
+#: src/gtkprefs.c:1727
 msgid "Conversations"
 msgstr "సంభాషణలు "
 
@@ -1495,21 +1494,21 @@ msgstr "కొత్త పాస్‌వర్డ్ "
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
 #: src/account.c:960 src/account.c:1116 src/gtkdialogs.c:506
-#: src/gtkdialogs.c:647 src/gtkdialogs.c:703 src/gtkrequest.c:260
+#: src/gtkdialogs.c:647 src/gtkdialogs.c:703 src/gtkrequest.c:261
 #: src/protocols/gg/gg.c:434 src/protocols/gg/gg.c:581
-#: src/protocols/gg/gg.c:1497 src/protocols/jabber/jabber.c:1162
+#: src/protocols/gg/gg.c:1498 src/protocols/jabber/jabber.c:1162
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:250
 #: src/protocols/msn/msn.c:265 src/protocols/msn/msn.c:280
-#: src/protocols/msn/msn.c:295 src/protocols/oscar/oscar.c:2902
-#: src/protocols/oscar/oscar.c:4410 src/protocols/oscar/oscar.c:4491
-#: src/protocols/oscar/oscar.c:7851 src/protocols/oscar/oscar.c:7976
-#: src/protocols/oscar/oscar.c:8001 src/protocols/oscar/oscar.c:8053
-#: src/protocols/silc/buddy.c:465 src/protocols/silc/buddy.c:1137
-#: src/protocols/silc/chat.c:422 src/protocols/silc/chat.c:460
-#: src/protocols/silc/chat.c:723 src/protocols/silc/ops.c:1083
-#: src/protocols/silc/ops.c:1696 src/protocols/silc/silc.c:716
-#: src/protocols/yahoo/yahoo.c:2947 src/protocols/yahoo/yahoo.c:2956
-#: src/request.h:1331
+#: src/protocols/msn/msn.c:295 src/protocols/oscar/oscar.c:2894
+#: src/protocols/oscar/oscar.c:4404 src/protocols/oscar/oscar.c:4485
+#: src/protocols/oscar/oscar.c:7857 src/protocols/oscar/oscar.c:7982
+#: src/protocols/oscar/oscar.c:8007 src/protocols/oscar/oscar.c:8059
+#: src/protocols/sametime/sametime.c:4585 src/protocols/silc/buddy.c:465
+#: src/protocols/silc/buddy.c:1137 src/protocols/silc/chat.c:422
+#: src/protocols/silc/chat.c:460 src/protocols/silc/chat.c:723
+#: src/protocols/silc/ops.c:1083 src/protocols/silc/ops.c:1696
+#: src/protocols/silc/silc.c:716 src/protocols/yahoo/yahoo.c:2965
+#: src/protocols/yahoo/yahoo.c:2974 src/request.h:1331
 msgid "OK"
 msgstr "అలాగే"
 
@@ -1518,31 +1517,32 @@ msgstr "అలాగే"
 # gnome-session/session-properties.c:179
 #  Cancel button.
 #: src/account.c:961 src/account.c:1117 src/account.c:1155
-#: src/gtkaccount.c:2108 src/gtkaccount.c:2570 src/gtkblist.c:4484
+#: src/gtkaccount.c:2124 src/gtkaccount.c:2575 src/gtkblist.c:4497
 #: src/gtkdialogs.c:507 src/gtkdialogs.c:648 src/gtkdialogs.c:704
 #: src/gtkdialogs.c:723 src/gtkdialogs.c:745 src/gtkdialogs.c:765
 #: src/gtkdialogs.c:809 src/gtkdialogs.c:871 src/gtkdialogs.c:913
 #: src/gtkdialogs.c:955 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:595
 #: src/gtkprivacy.c:608 src/gtkprivacy.c:633 src/gtkprivacy.c:644
-#: src/gtkrequest.c:261 src/gtksavedstatuses.c:188 src/protocols/gg/gg.c:435
+#: src/gtkrequest.c:262 src/gtksavedstatuses.c:221 src/protocols/gg/gg.c:435
 #: src/protocols/gg/gg.c:582 src/protocols/gg/gg.c:656
-#: src/protocols/gg/gg.c:1498 src/protocols/jabber/buddy.c:573
+#: src/protocols/gg/gg.c:1499 src/protocols/jabber/buddy.c:573
 #: src/protocols/jabber/buddy.c:1358 src/protocols/jabber/buddy.c:1392
 #: src/protocols/jabber/chat.c:780 src/protocols/jabber/jabber.c:707
 #: src/protocols/jabber/jabber.c:1163 src/protocols/jabber/xdata.c:338
 #: src/protocols/msn/msn.c:251 src/protocols/msn/msn.c:266
 #: src/protocols/msn/msn.c:281 src/protocols/msn/msn.c:296
 #: src/protocols/msn/msn.c:313 src/protocols/oscar/oscar.c:1596
-#: src/protocols/oscar/oscar.c:2903 src/protocols/oscar/oscar.c:4368
-#: src/protocols/oscar/oscar.c:4411 src/protocols/oscar/oscar.c:4448
-#: src/protocols/oscar/oscar.c:4492 src/protocols/oscar/oscar.c:7852
-#: src/protocols/oscar/oscar.c:7977 src/protocols/oscar/oscar.c:8002
-#: src/protocols/oscar/oscar.c:8054 src/protocols/oscar/oscar.c:8123
-#: src/protocols/silc/buddy.c:466 src/protocols/silc/buddy.c:1042
-#: src/protocols/silc/buddy.c:1138 src/protocols/silc/chat.c:595
-#: src/protocols/silc/chat.c:724 src/protocols/silc/ops.c:1697
-#: src/protocols/silc/silc.c:717 src/protocols/yahoo/yahoo.c:2948
-#: src/protocols/yahoo/yahoo.c:2957 src/request.h:1331 src/request.h:1341
+#: src/protocols/oscar/oscar.c:2895 src/protocols/oscar/oscar.c:4362
+#: src/protocols/oscar/oscar.c:4405 src/protocols/oscar/oscar.c:4442
+#: src/protocols/oscar/oscar.c:4486 src/protocols/oscar/oscar.c:7858
+#: src/protocols/oscar/oscar.c:7983 src/protocols/oscar/oscar.c:8008
+#: src/protocols/oscar/oscar.c:8060 src/protocols/oscar/oscar.c:8129
+#: src/protocols/sametime/sametime.c:4586 src/protocols/silc/buddy.c:466
+#: src/protocols/silc/buddy.c:1042 src/protocols/silc/buddy.c:1138
+#: src/protocols/silc/chat.c:595 src/protocols/silc/chat.c:724
+#: src/protocols/silc/ops.c:1697 src/protocols/silc/silc.c:717
+#: src/protocols/yahoo/yahoo.c:2966 src/protocols/yahoo/yahoo.c:2975
+#: src/request.h:1331 src/request.h:1341
 msgid "Cancel"
 msgstr "క్యాన్సెల్ "
 
@@ -1590,7 +1590,7 @@ msgstr "దయచేసి మీ వర్తమాన పాస్‌వర్
 msgid "Change user information for %s"
 msgstr "వినియోగదారుని సమాచారాన్ని %s కోసం మార్చండి. "
 
-#: src/account.c:1154 src/gtkdebug.c:684 src/gtkrequest.c:267
+#: src/account.c:1154 src/gtkdebug.c:684 src/gtkrequest.c:268
 #: src/protocols/jabber/buddy.c:572
 msgid "Save"
 msgstr "సేవ్ "
@@ -1819,7 +1819,7 @@ msgstr "%s కు ఫైల్ ట్రాన్స్‌ఫర్ రద్ద
 msgid "File transfer from %s failed."
 msgstr "%s నుండి ఫైల్ ట్రాన్స్‌ఫర్ రద్దు అయినది.\n"
 
-#: src/gtkaccount.c:363
+#: src/gtkaccount.c:362
 #, c-format
 msgid ""
 "<b>File:</b> %s\n"
@@ -1831,155 +1831,155 @@ msgstr ""
 "<b>छवि आकार:</b> %dx%d"
 
 #. Build the login options frame.
-#: src/gtkaccount.c:731
+#: src/gtkaccount.c:730
 msgid "Login Options"
 msgstr "ఆప్షన్లను లాగిన్ చేయండి. "
 
-#: src/gtkaccount.c:748 src/gtkft.c:623
+#: src/gtkaccount.c:747 src/gtkft.c:623
 msgid "Protocol:"
 msgstr "ప్రొటోకాల్:"
 
-#: src/gtkaccount.c:753 src/gtkblist.c:4038
+#: src/gtkaccount.c:752 src/gtkblist.c:4051
 msgid "Screen Name:"
 msgstr "స్క్రీన్ పేరు:"
 
-#: src/gtkaccount.c:826
+#: src/gtkaccount.c:825
 msgid "Password:"
 msgstr "పాస్‌వర్డ్:"
 
-#: src/gtkaccount.c:831 src/gtkblist.c:4052 src/gtkblist.c:4431
+#: src/gtkaccount.c:830 src/gtkblist.c:4065 src/gtkblist.c:4444
 msgid "Alias:"
 msgstr "ఉపనామం:"
 
-#: src/gtkaccount.c:835
+#: src/gtkaccount.c:834
 msgid "Remember password"
 msgstr "పాస్‌వర్డ్‌ను గుర్తుంచుకోండి. "
 
 #. Build the user options frame.
-#: src/gtkaccount.c:880
+#: src/gtkaccount.c:879
 msgid "User Options"
 msgstr "వినియోగదారుని ఆప్షన్స్."
 
-#: src/gtkaccount.c:893
+#: src/gtkaccount.c:892
 msgid "New mail notifications"
 msgstr "న్యూ మెయిల్ నోటిఫికేషన్లు "
 
-#: src/gtkaccount.c:902
+#: src/gtkaccount.c:901
 msgid "Buddy icon:"
 msgstr "మిత్రుని ఐకన్:"
 
 #. Build the protocol options frame.
-#: src/gtkaccount.c:991
+#: src/gtkaccount.c:990
 #, c-format
 msgid "%s Options"
 msgstr "%s ఆప్షన్స్"
 
 #. Use Global Proxy Settings
-#: src/gtkaccount.c:1129 src/gtkaccount.c:1176
+#: src/gtkaccount.c:1128 src/gtkaccount.c:1175
 msgid "Use Global Proxy Settings"
 msgstr "గ్లోబల్ ప్రాక్సీ సెట్టింగులను వినియోగించండి. "
 
 #. No Proxy
-#: src/gtkaccount.c:1135 src/gtkaccount.c:1183
+#: src/gtkaccount.c:1134 src/gtkaccount.c:1182
 msgid "No Proxy"
 msgstr "ప్రాక్సీ లేదు "
 
 #. HTTP
-#: src/gtkaccount.c:1141 src/gtkaccount.c:1190
+#: src/gtkaccount.c:1140 src/gtkaccount.c:1189
 msgid "HTTP"
 msgstr "HTTP"
 
 #. SOCKS 4
-#: src/gtkaccount.c:1147 src/gtkaccount.c:1197
+#: src/gtkaccount.c:1146 src/gtkaccount.c:1196
 msgid "SOCKS 4"
 msgstr "SOCKS 4"
 
 #. SOCKS 5
-#: src/gtkaccount.c:1153 src/gtkaccount.c:1204
+#: src/gtkaccount.c:1152 src/gtkaccount.c:1203
 msgid "SOCKS 5"
 msgstr "SOCKS 5"
 
 #. Use Environmental Settings
-#: src/gtkaccount.c:1159 src/gtkaccount.c:1211 src/gtkprefs.c:1041
+#: src/gtkaccount.c:1158 src/gtkaccount.c:1210 src/gtkprefs.c:1007
 msgid "Use Environmental Settings"
 msgstr "ఎన్వైరాన్‌మెంటల్ సెట్టింగ్స్‌ను ఉపయోగించుము. "
 
-#: src/gtkaccount.c:1250
+#: src/gtkaccount.c:1249
 msgid "you can see the butterflies mating"
 msgstr "మీరు సీతకోకచిలుకల కలయికను చూశారు."
 
-#: src/gtkaccount.c:1254
+#: src/gtkaccount.c:1253
 msgid "If you look real closely"
 msgstr "మీరు పరిశీలనగా చూస్తే "
 
-#: src/gtkaccount.c:1270
+#: src/gtkaccount.c:1269
 msgid "Proxy Options"
 msgstr "ప్రాక్సీ ఆప్షన్లు "
 
-#: src/gtkaccount.c:1288 src/gtkprefs.c:1035
+#: src/gtkaccount.c:1287 src/gtkprefs.c:1001
 msgid "Proxy _type:"
 msgstr "ప్రాక్సీ _టైప్:"
 
-#: src/gtkaccount.c:1297 src/gtkprefs.c:1056
+#: src/gtkaccount.c:1296 src/gtkprefs.c:1022
 msgid "_Host:"
 msgstr "_హోస్ట్:"
 
-#: src/gtkaccount.c:1301 src/gtkprefs.c:1074
+#: src/gtkaccount.c:1300 src/gtkprefs.c:1040
 msgid "_Port:"
 msgstr "_పోర్ట్:"
 
-#: src/gtkaccount.c:1309
+#: src/gtkaccount.c:1308
 msgid "_Username:"
 msgstr "వినియోగదారుని పేరు:"
 
-#: src/gtkaccount.c:1314 src/gtkprefs.c:1111
+#: src/gtkaccount.c:1313 src/gtkprefs.c:1077
 msgid "Pa_ssword:"
 msgstr "పాస్‌వర్డ్:"
 
 #  And now for the buttons
-#: src/gtkaccount.c:1720
+#: src/gtkaccount.c:1700
 msgid "Add Account"
 msgstr "ఖాతాను చేర్చండి"
 
 #  And now for the buttons
-#: src/gtkaccount.c:1722
+#: src/gtkaccount.c:1702
 msgid "Modify Account"
 msgstr "ఖాతాను సవరించండి "
 
 #. Register button
-#: src/gtkaccount.c:1770 src/protocols/jabber/jabber.c:706
+#: src/gtkaccount.c:1750 src/protocols/jabber/jabber.c:706
 msgid "Register"
 msgstr "రిజిస్టర్ "
 
-#: src/gtkaccount.c:2102 src/gtksavedstatuses.c:184
+#: src/gtkaccount.c:2118 src/gtksavedstatuses.c:217
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "మీరు %sను తప్పకుండా తొలగించదల్చుకున్నారా?"
 
-#: src/gtkaccount.c:2107 src/gtkrequest.c:264 src/gtksavedstatuses.c:187
+#: src/gtkaccount.c:2123 src/gtkrequest.c:265 src/gtksavedstatuses.c:220
 msgid "Delete"
 msgstr "తొలగింపు "
 
-#: src/gtkaccount.c:2171 src/gtksavedstatuses.c:629
-#: src/protocols/oscar/oscar.c:5055
+#: src/gtkaccount.c:2187 src/gtksavedstatuses.c:686
+#: src/protocols/oscar/oscar.c:5049
 msgid "Screen Name"
 msgstr "స్క్రీన్ పేరు "
 
-#: src/gtkaccount.c:2194
+#: src/gtkaccount.c:2210
 #, fuzzy
 msgid "Enabled"
 msgstr "విఫలమైనది "
 
-#: src/gtkaccount.c:2202
+#: src/gtkaccount.c:2218
 msgid "Protocol"
 msgstr "ప్రొటోకాల్"
 
-#: src/gtkaccount.c:2545
+#: src/gtkaccount.c:2550
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s%s"
 msgstr "%s%s%s%s has made %s his or her buddy%s%s%s"
 
-#: src/gtkaccount.c:2559
+#: src/gtkaccount.c:2564
 msgid ""
 "\n"
 "\n"
@@ -1989,13 +1989,13 @@ msgstr ""
 "\n"
 "అతనిని లేక ఆమెను మీ మిత్రుల లిస్టులో చేర్చదల్చుకున్నారా?"
 
-#: src/gtkaccount.c:2567
+#: src/gtkaccount.c:2572
 msgid "Add buddy to your list?"
 msgstr "మీ లిస్టులో మిత్రుని చేర్చమంటారా?"
 
-#: src/gtkaccount.c:2569 src/gtkblist.c:4483 src/gtkconv.c:1501
-#: src/gtkrequest.c:265 src/protocols/gg/gg.c:655
-#: src/protocols/oscar/oscar.c:4680 src/protocols/silc/chat.c:594
+#: src/gtkaccount.c:2574 src/gtkblist.c:4496 src/gtkconv.c:1527
+#: src/gtkrequest.c:266 src/protocols/gg/gg.c:655
+#: src/protocols/oscar/oscar.c:4674 src/protocols/silc/chat.c:594
 msgid "Add"
 msgstr "చేర్చు "
 
@@ -2091,7 +2091,7 @@ msgstr "_కొత్తపేరు"
 
 #. join button
 #: src/gtkblist.c:1052 src/gtkroomlist.c:264 src/gtkroomlist.c:409
-#: src/gtkstock.c:119
+#: src/gtkstock.c:118
 msgid "_Join"
 msgstr "_జాయిన్ అగు"
 
@@ -2107,128 +2107,138 @@ msgstr "_కూలిపోవుట"
 msgid "_Expand"
 msgstr "_Expand"
 
-#: src/gtkblist.c:1347 src/gtkblist.c:1357 src/gtkblist.c:3316
-#: src/gtkblist.c:3319
+#: src/gtkblist.c:1353 src/gtkblist.c:1363 src/gtkblist.c:3326
+#: src/gtkblist.c:3331
 msgid "/Tools/Mute Sounds"
 msgstr "/औज़ार/आवाज़ बंद करें"
 
-#: src/gtkblist.c:1816 src/gtkconv.c:3719 src/gtkpounce.c:314
+#: src/gtkblist.c:1822 src/gtkconv.c:3745 src/gtkpounce.c:314
 msgid ""
 "You are not currently signed on with an account that can add that buddy."
 msgstr "మీరు ఏ ఖాతాను సైన్‌ఆన్ చేయలేదు. అందుచేత మీరు ఆ మిత్రుని చేర్చలేరు."
 
 #. Buddies menu
-#: src/gtkblist.c:2323
+#: src/gtkblist.c:2329
 msgid "/_Buddies"
 msgstr "/_మిత్రులు "
 
-#: src/gtkblist.c:2324
+#: src/gtkblist.c:2330
 msgid "/Buddies/New Instant _Message..."
 msgstr "/మిత్రులు/సరికొత్త సత్వర _సందేశం..."
 
-#: src/gtkblist.c:2325
+#: src/gtkblist.c:2331
 msgid "/Buddies/Join a _Chat..."
 msgstr "/మిత్రులు/ _సంభాషణలో ప్రవేశించండి ..."
 
-#: src/gtkblist.c:2326
+#: src/gtkblist.c:2332
 msgid "/Buddies/Get User _Info..."
 msgstr "/మిత్రులు/వినియోగదారుని _సమాచారం సేకరించండి..."
 
-#: src/gtkblist.c:2327
+#: src/gtkblist.c:2333
 msgid "/Buddies/View User _Log..."
 msgstr "/మిత్రులు/వినియోగదారుని దృశ్యం _లాగ్ ..."
 
-#: src/gtkblist.c:2329
+#: src/gtkblist.c:2335
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/మిత్రులు/_ఆఫ్‌లైన్ మిత్రులను చూపించుము "
 
-#: src/gtkblist.c:2330
+#: src/gtkblist.c:2336
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/మిత్రులు/ _కాళీ గ్రూపులను చూపించుము."
 
-#: src/gtkblist.c:2331
+#: src/gtkblist.c:2337
+#, fuzzy
+msgid "/Buddies/Show Buddy _Details"
+msgstr "/మిత్రులు/ఆఫ్‌లైన్‌ అయిన మిత్రులను చూపించండి. "
+
+#: src/gtkblist.c:2338 src/gtkblist.c:5158
+#, fuzzy
+msgid "/Buddies/Sort Buddies"
+msgstr "/మిత్రులు/ఆఫ్‌లైన్‌ అయిన మిత్రులను చూపించండి. "
+
+#: src/gtkblist.c:2340
 msgid "/Buddies/_Add Buddy..."
 msgstr "/మిత్రులు/ _మిత్రులను చేర్చుము... "
 
-#: src/gtkblist.c:2332
+#: src/gtkblist.c:2341
 msgid "/Buddies/Add C_hat..."
 msgstr "/మిత్రులు/సంభాషణ చేర్చండి ..."
 
-#: src/gtkblist.c:2333
+#: src/gtkblist.c:2342
 msgid "/Buddies/Add _Group..."
 msgstr "/మిత్రులు/ _గ్రూపును చేర్చండి..."
 
-#: src/gtkblist.c:2335
+#: src/gtkblist.c:2344
 msgid "/Buddies/_Quit"
 msgstr "/మిత్రులు/_వదిలేయండి"
 
 #. Tools
-#: src/gtkblist.c:2338
+#: src/gtkblist.c:2347
 msgid "/_Tools"
 msgstr "/_ఉపకరణాలు "
 
-#: src/gtkblist.c:2339
+#: src/gtkblist.c:2348
 msgid "/Tools/Buddy _Pounce"
 msgstr "/ఉపకరణాలు /స్నేహితుడు _హఠాత్తుగా మీదకు దుముకుట"
 
 #  And now for the buttons
-#: src/gtkblist.c:2340
+#: src/gtkblist.c:2349
 msgid "/Tools/Account Ac_tions"
 msgstr "/ఉపకరణాలు /ఖాతాలపై చర్యలు"
 
 #  And now for the buttons
-#: src/gtkblist.c:2342
+#: src/gtkblist.c:2351
 msgid "/Tools/A_ccounts"
 msgstr "/ఉపకరణాలు /ఖాతాలు "
 
-#: src/gtkblist.c:2343
+#: src/gtkblist.c:2352
 msgid "/Tools/Pr_eferences"
 msgstr "/ఉపకరణాలు/ప్రెఫరెన్సెస్ "
 
 #  And now for the buttons
-#: src/gtkblist.c:2344
+#: src/gtkblist.c:2353
 #, fuzzy
 msgid "/Tools/P_lugins"
 msgstr "/ఉపకరణాలు/ప్లగ్‌ఇన్ చర్యలు "
 
-#: src/gtkblist.c:2345
+#: src/gtkblist.c:2354
 msgid "/Tools/Pr_ivacy"
 msgstr "/ఉపకరణాలు/రహస్యము"
 
-#: src/gtkblist.c:2346
+#: src/gtkblist.c:2355
 msgid "/Tools/_File Transfers"
 msgstr "/ఉపకరణాలు/_ఫైల్ ట్రాన్స్‌ఫర్లు "
 
-#: src/gtkblist.c:2347
+#: src/gtkblist.c:2356
 msgid "/Tools/R_oom List"
 msgstr "/ఉపకరణాలు/గది లిస్టు "
 
-#: src/gtkblist.c:2349
+#: src/gtkblist.c:2358
 msgid "/Tools/Mute _Sounds"
 msgstr "/औज़ार/आवाज़ बंद करें(_S)"
 
-#: src/gtkblist.c:2350
+#: src/gtkblist.c:2359
 msgid "/Tools/View System _Log"
 msgstr "/ఉపకరణాలు/సిస్టం లాగ్‌ను చూడండి "
 
 #. Help
-#: src/gtkblist.c:2353
+#: src/gtkblist.c:2362
 msgid "/_Help"
 msgstr "/_సహాయం"
 
-#: src/gtkblist.c:2354
+#: src/gtkblist.c:2363
 msgid "/Help/Online _Help"
 msgstr "/సహాయం/ఆన్‌లైన్ _సహాయం"
 
-#: src/gtkblist.c:2355
+#: src/gtkblist.c:2364
 msgid "/Help/_Debug Window"
 msgstr "/సహాయం/విండోను _డీబగ్ చేయుము"
 
-#: src/gtkblist.c:2356
+#: src/gtkblist.c:2365
 msgid "/Help/_About"
 msgstr "/సహాయం/_గురించి"
 
-#: src/gtkblist.c:2388 src/gtkblist.c:2455
+#: src/gtkblist.c:2397 src/gtkblist.c:2464
 #, c-format
 msgid ""
 "\n"
@@ -2237,7 +2247,7 @@ msgstr ""
 "\n"
 "<b>ఖాతా:</b> %s"
 
-#: src/gtkblist.c:2464
+#: src/gtkblist.c:2473
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2246,7 +2256,7 @@ msgstr ""
 "\n"
 "<b>సంప్రదించుటకు ఉపనామము:</b>"
 
-#: src/gtkblist.c:2472
+#: src/gtkblist.c:2481
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2255,7 +2265,7 @@ msgstr ""
 "\n"
 "<b>ఉపనామం:</b>"
 
-#: src/gtkblist.c:2480
+#: src/gtkblist.c:2489
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2264,7 +2274,7 @@ msgstr ""
 "\n"
 "<b>ఉపనామం:</b>"
 
-#: src/gtkblist.c:2489
+#: src/gtkblist.c:2498
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2273,7 +2283,7 @@ msgstr ""
 "\n"
 "<b>ముందే లాగ్ అయివున్నది:</b>"
 
-#: src/gtkblist.c:2501
+#: src/gtkblist.c:2510
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2282,7 +2292,7 @@ msgstr ""
 "\n"
 "<b>సోమరి:</b>"
 
-#: src/gtkblist.c:2537
+#: src/gtkblist.c:2546
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -2291,7 +2301,7 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/gtkblist.c:2545
+#: src/gtkblist.c:2554
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2299,7 +2309,7 @@ msgstr ""
 "\n"
 "<b>స్టాటస్:</b> ఆఫ్‌లైన్ "
 
-#: src/gtkblist.c:2568
+#: src/gtkblist.c:2577
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2307,7 +2317,7 @@ msgstr ""
 "\n"
 "<b>వివరణ:</b> భయపెట్టు"
 
-#: src/gtkblist.c:2570
+#: src/gtkblist.c:2579
 #, fuzzy
 msgid ""
 "\n"
@@ -2316,7 +2326,7 @@ msgstr ""
 "\n"
 "<b>స్టాటస్</b>: గొప్పయైన"
 
-#: src/gtkblist.c:2572
+#: src/gtkblist.c:2581
 #, fuzzy
 msgid ""
 "\n"
@@ -2325,105 +2335,111 @@ msgstr ""
 "\n"
 "<b>స్టాటస్</b>: ఊగు "
 
-#: src/gtkblist.c:2834
+#: src/gtkblist.c:2843
 #, fuzzy, c-format
 msgid "Idle (%dh %02dm) "
 msgstr "సోమరి (%dh%02dm) "
 
-#: src/gtkblist.c:2836
+#: src/gtkblist.c:2845
 #, c-format
 msgid "Idle (%dm) "
 msgstr "సోమరి (%dm) "
 
-#: src/gtkblist.c:2839
+#: src/gtkblist.c:2848
 msgid "Idle "
 msgstr "बेकार"
 
-#: src/gtkblist.c:2843
+#: src/gtkblist.c:2852
 msgid "Offline "
 msgstr "ఆఫ్‌లైన్ "
 
-#: src/gtkblist.c:2959
+#: src/gtkblist.c:2968
 #, fuzzy
 msgid "/Buddies/New Instant Message..."
 msgstr "/మిత్రులు/సరికొత్త సత్వర _సందేశం..."
 
-#: src/gtkblist.c:2960 src/gtkblist.c:2994
+#: src/gtkblist.c:2969 src/gtkblist.c:3003
 msgid "/Buddies/Join a Chat..."
 msgstr "/మిత్రులు/సంభాషణలో చేరుము ..."
 
-#: src/gtkblist.c:2961
+#: src/gtkblist.c:2970
 #, fuzzy
 msgid "/Buddies/Get User Info..."
 msgstr "/మిత్రులు/వినియోగదారుని _సమాచారం సేకరించండి..."
 
-#: src/gtkblist.c:2962
+#: src/gtkblist.c:2971
 #, fuzzy
 msgid "/Buddies/Add Buddy..."
 msgstr "/మిత్రులు/ _మిత్రులను చేర్చుము... "
 
-#: src/gtkblist.c:2963
+#: src/gtkblist.c:2972
 #, fuzzy
 msgid "/Buddies/Add Chat..."
 msgstr "/మిత్రులు/సంభాషణ చేర్చండి ..."
 
-#: src/gtkblist.c:2964
+#: src/gtkblist.c:2973
 #, fuzzy
 msgid "/Buddies/Add Group..."
 msgstr "/మిత్రులు/ _గ్రూపును చేర్చండి..."
 
-#: src/gtkblist.c:2997
+#: src/gtkblist.c:3006
 msgid "/Tools/Room List"
 msgstr "ఉపకరణాలు/గది లిస్టు"
 
-#: src/gtkblist.c:3000
+#: src/gtkblist.c:3009
 msgid "/Tools/Privacy"
 msgstr "/ఉపకరణాలు/రహస్యము"
 
-#: src/gtkblist.c:3076 src/protocols/jabber/jabber.c:982
-#: src/protocols/yahoo/yahoo.c:2776
-msgid "None"
-msgstr "ఎవరూ లేరు."
+#: src/gtkblist.c:3085
+#, fuzzy
+msgid "Manually"
+msgstr "మాన్యుయల్ "
 
-#: src/gtkblist.c:3078
-msgid "Alphabetical"
+#: src/gtkblist.c:3087
+#, fuzzy
+msgid "Alphabetically"
 msgstr "వర్ణమాల క్రమంలో"
 
-#: src/gtkblist.c:3079
+#: src/gtkblist.c:3088
 msgid "By status"
 msgstr "వస్తుస్థితి (స్టాటస్) చేత "
 
-#: src/gtkblist.c:3080
+#: src/gtkblist.c:3089
 msgid "By log size"
 msgstr "లాగ్ సైజ్ వలన "
 
-#: src/gtkblist.c:3192
+#: src/gtkblist.c:3201
 msgid "/Tools/Buddy Pounce"
 msgstr "/ఉపకరణాలు/స్నేహితునిపై దుముకుట "
 
 #  And now for the buttons
-#: src/gtkblist.c:3193
+#: src/gtkblist.c:3202
 msgid "/Tools/Account Actions"
 msgstr "/ఉపకరణాలు/ఖాతాలపై చర్యలు"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3312
+#: src/gtkblist.c:3322
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/మిత్రులు/ఆఫ్‌లైన్‌ అయిన మిత్రులను చూపించండి. "
 
-#: src/gtkblist.c:3314
+#: src/gtkblist.c:3324
 msgid "/Buddies/Show Empty Groups"
 msgstr "/మిత్రులు/కాళీ గ్రూపులను చూపించుము"
 
-#: src/gtkblist.c:3992 src/protocols/silc/buddy.c:736
+#: src/gtkblist.c:3328
+#, fuzzy
+msgid "/Buddies/Show Buddy Details"
+msgstr "/మిత్రులు/ఆఫ్‌లైన్‌ అయిన మిత్రులను చూపించండి. "
+
+#: src/gtkblist.c:4005 src/protocols/silc/buddy.c:736
 #: src/protocols/silc/buddy.c:994 src/protocols/silc/buddy.c:1039
-#: src/protocols/silc/buddy.c:1129 src/protocols/yahoo/yahoo.c:2874
+#: src/protocols/silc/buddy.c:1129 src/protocols/yahoo/yahoo.c:2886
 msgid "Add Buddy"
 msgstr "మిత్రుని చేర్చుము "
 
-#: src/gtkblist.c:4016
+#: src/gtkblist.c:4029
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
@@ -2434,25 +2450,25 @@ msgstr ""
 
 #  And now for the buttons
 #. Set up stuff for the account box
-#: src/gtkblist.c:4079 src/gtkblist.c:4411
+#: src/gtkblist.c:4092 src/gtkblist.c:4424
 msgid "Account:"
 msgstr "ఖాతా:"
 
-#: src/gtkblist.c:4344
+#: src/gtkblist.c:4357
 msgid "This protocol does not support chat rooms."
 msgstr "ఈ ప్రొటోకాల్ సంభాషణ గదులను సపోర్ట్ చేయదు."
 
-#: src/gtkblist.c:4360
+#: src/gtkblist.c:4373
 msgid ""
 "You are not currently signed on with any protocols that have the ability to "
 "chat."
 msgstr "మీరు వర్తమాన కాలంలో సంభాషింప నేర్పుగల ప్రొటోకాల్స్‌తో సంతకంచేసి యుండలేదు."
 
-#: src/gtkblist.c:4377
+#: src/gtkblist.c:4390
 msgid "Add Chat"
 msgstr "సంభాషణ చేర్చండి."
 
-#: src/gtkblist.c:4401
+#: src/gtkblist.c:4414
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
 "would like to add to your buddy list.\n"
@@ -2460,19 +2476,19 @@ msgstr ""
 "ఒక ఉపనామాన్ని, దానితోపాటు మీ మిత్రుల లిస్టుకు చేర్చదల్చుకున్న సంభాషణ గురించిన సరైన సమాచారం  ఎంటర్ "
 "చేయండి. \n"
 
-#: src/gtkblist.c:4480
+#: src/gtkblist.c:4493
 msgid "Add Group"
 msgstr "గ్రూపును చేర్చండి."
 
-#: src/gtkblist.c:4481
+#: src/gtkblist.c:4494
 msgid "Please enter the name of the group to be added."
 msgstr "చేర్చదలచుకున్న గ్రూప్ పేరును ఎంటర్ చేయండి."
 
-#: src/gtkblist.c:5005
+#: src/gtkblist.c:5025
 msgid "No actions available"
 msgstr "ఏ పనులూ లభించవు."
 
-#: src/gtkblist.c:5074
+#: src/gtkblist.c:5094
 #, fuzzy
 msgid "/Tools"
 msgstr "/_ఉపకరణాలు "
@@ -2561,11 +2577,11 @@ msgstr "మీరు ఆహ్వానించదల్చుకున్న �
 msgid "_Buddy:"
 msgstr "_మిత్రుడు:"
 
-#: src/gtkconv.c:843 src/gtksavedstatuses.c:779
+#: src/gtkconv.c:843 src/gtksavedstatuses.c:836
 msgid "_Message:"
 msgstr "_సందేశం:"
 
-#: src/gtkconv.c:900 src/gtkconv.c:2206 src/gtkdebug.c:217 src/gtkft.c:470
+#: src/gtkconv.c:900 src/gtkconv.c:2228 src/gtkdebug.c:217 src/gtkft.c:470
 msgid "Unable to open file."
 msgstr "ఫైలు ఓపెన్ చేయ నలవి కాదు."
 
@@ -2588,346 +2604,355 @@ msgstr "కనుగొనుము"
 msgid "_Search for:"
 msgstr "_అన్వేషించుము :"
 
-#: src/gtkconv.c:1463
+#: src/gtkconv.c:1227
+msgid "Logging started. Future messages in this conversation will be logged."
+msgstr ""
+
+#: src/gtkconv.c:1235
+msgid ""
+"Logging stopped. Future messages in this conversation will not be logged."
+msgstr ""
+
+#: src/gtkconv.c:1489
 msgid "IM"
 msgstr "IM"
 
-#: src/gtkconv.c:1469 src/protocols/oscar/oscar.c:628
+#: src/gtkconv.c:1495 src/protocols/oscar/oscar.c:628
 msgid "Send File"
 msgstr "ఫైలును పంపుము."
 
-#: src/gtkconv.c:1476
+#: src/gtkconv.c:1502
 msgid "Un-Ignore"
 msgstr "అపేక్ష "
 
-#: src/gtkconv.c:1479
+#: src/gtkconv.c:1505
 msgid "Ignore"
 msgstr "ఉపేక్ష "
 
-#: src/gtkconv.c:1485
+#: src/gtkconv.c:1511
 msgid "Info"
 msgstr "సూచన "
 
-#: src/gtkconv.c:1491
+#: src/gtkconv.c:1517
 #, fuzzy
 msgid "Get Away Message"
 msgstr "కొత్త సుదూర సందేశం. "
 
-#: src/gtkconv.c:1498 src/gtkrequest.c:266
+#: src/gtkconv.c:1524 src/gtkrequest.c:267
 msgid "Remove"
 msgstr "తొలగించుము"
 
-#: src/gtkconv.c:2214
+#: src/gtkconv.c:2236
 msgid "Unable to save icon file to disk."
 msgstr "ఐకన్ ఫైలును డిస్క్‌పై సేవ్ చేయుట సాధ్యం కాదు."
 
-#: src/gtkconv.c:2237
+#: src/gtkconv.c:2259
 msgid "Save Icon"
 msgstr "ఐకన్‌ను సేవ్ చేయుము "
 
-#: src/gtkconv.c:2287
+#: src/gtkconv.c:2308
 msgid "Animate"
 msgstr "యానిమేట్ "
 
-#: src/gtkconv.c:2292
+#: src/gtkconv.c:2313
 msgid "Hide Icon"
 msgstr "ఐకన్‌ను దాయుము "
 
-#: src/gtkconv.c:2298
+#: src/gtkconv.c:2319
 msgid "Save Icon As..."
 msgstr "పేరుతో ఐకన్‌ను సేవ్ చేయుము..."
 
 #  Conversations
 #. Conversation menu
-#: src/gtkconv.c:2346
+#: src/gtkconv.c:2367
 msgid "/_Conversation"
 msgstr "/_సంభాషణ"
 
-#: src/gtkconv.c:2348
+#: src/gtkconv.c:2369
 msgid "/Conversation/New Instant _Message..."
 msgstr "/సంభాషణ/సరికొత్త సత్వర _సందేశం ..."
 
 #  Conversations
-#: src/gtkconv.c:2353
+#: src/gtkconv.c:2374
 msgid "/Conversation/_Find..."
 msgstr "/సంభాషణ/_కనుగొనుము..."
 
 #  Conversations
-#: src/gtkconv.c:2355
+#: src/gtkconv.c:2376
 msgid "/Conversation/View _Log"
 msgstr "/సంభాషణ/_లాగ్‌ను చూడండి."
 
 #  Conversations
-#: src/gtkconv.c:2356
+#: src/gtkconv.c:2377
 msgid "/Conversation/_Save As..."
 msgstr "/సంభాషణ/_పేరుతో సేవ్ చేయండి..."
 
 #  Conversations
-#: src/gtkconv.c:2358
+#: src/gtkconv.c:2379
 msgid "/Conversation/Clear"
 msgstr "/సంభాషణ/స్పష్టంగా"
 
 #  Conversations
-#: src/gtkconv.c:2362
+#: src/gtkconv.c:2383
 msgid "/Conversation/Se_nd File..."
 msgstr "/సంభాషణ/ఫైలును పంపుము..."
 
-#: src/gtkconv.c:2363
+#: src/gtkconv.c:2384
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/సంభాషణ/స్నేహితుడు _దుముకుటను చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2365
+#: src/gtkconv.c:2386
 msgid "/Conversation/_Get Info"
 msgstr "/సంభాషణ/_సమాచారం సేకరించుము. "
 
 #  Conversations
-#: src/gtkconv.c:2367
+#: src/gtkconv.c:2388
 msgid "/Conversation/In_vite..."
 msgstr "/సంభాషణ/ఆహ్వానించుము..."
 
 #  Conversations
-#: src/gtkconv.c:2372
+#: src/gtkconv.c:2393
 #, fuzzy
 msgid "/Conversation/Al_ias..."
 msgstr "/సంభాషణ/ఉపనామం..."
 
 #  Conversations
-#: src/gtkconv.c:2374
+#: src/gtkconv.c:2395
 msgid "/Conversation/_Block..."
 msgstr "/సంభాషణ/_అపుము..."
 
 #  Conversations
-#: src/gtkconv.c:2376
+#: src/gtkconv.c:2397
 msgid "/Conversation/_Add..."
 msgstr "/సంభాషణ/_చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2378
+#: src/gtkconv.c:2399
 msgid "/Conversation/_Remove..."
 msgstr "/సంభాషణ/_తొలగించుము..."
 
 #  Conversations
-#: src/gtkconv.c:2383
+#: src/gtkconv.c:2404
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/సంభాషణ/లింకును చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2385
+#: src/gtkconv.c:2406
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/సంభాషణ/సచిత్రమును చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2390
+#: src/gtkconv.c:2411
 msgid "/Conversation/_Close"
 msgstr "/సంభాషణ/_ముగించుము"
 
 #. Options
-#: src/gtkconv.c:2394
+#: src/gtkconv.c:2415
 msgid "/_Options"
 msgstr "/_ఆప్షన్స్ "
 
-#: src/gtkconv.c:2395
+#: src/gtkconv.c:2416
 msgid "/Options/Enable _Logging"
 msgstr "/ఆప్షన్స్/ఎనేబుల్ _లాగింగ్"
 
-#: src/gtkconv.c:2396
+#: src/gtkconv.c:2417
 msgid "/Options/Enable _Sounds"
 msgstr "/ఆప్షన్స్/ఎనేబుల్ _సౌండ్స్"
 
-#: src/gtkconv.c:2397
+#: src/gtkconv.c:2418
 #, fuzzy
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/ఆప్షన్స్/ఫార్మాటింగ్ _టూల్‌బార్‌ను చూపించుము "
 
-#: src/gtkconv.c:2398
+#: src/gtkconv.c:2419
 #, fuzzy
 msgid "/Options/Show Ti_mestamps"
 msgstr "/ఆప్షన్స్/టైమ్‌స్టాంప్స్ చూపించుము "
 
-#: src/gtkconv.c:2399
+#: src/gtkconv.c:2420
 #, fuzzy
 msgid "/Options/Show Buddy _Icon"
 msgstr "మిత్రుల _ఐకన్లను ప్రదర్శించుము."
 
 #  Conversations
-#: src/gtkconv.c:2439
+#: src/gtkconv.c:2460
 msgid "/Conversation/View Log"
 msgstr "/సంభాషణ/ వ్యూ లాగ్ "
 
 #  Conversations
-#: src/gtkconv.c:2445
+#: src/gtkconv.c:2466
 msgid "/Conversation/Send File..."
 msgstr "/సంభాషణ/ఫైలును పంపుము..."
 
-#: src/gtkconv.c:2449
+#: src/gtkconv.c:2470
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/సంభాషణ/మిత్రుని దూకుడును చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2455
+#: src/gtkconv.c:2476
 msgid "/Conversation/Get Info"
 msgstr "/సంభాషణ/సమాచారం సేకరింపుము."
 
 #  Conversations
-#: src/gtkconv.c:2459
+#: src/gtkconv.c:2480
 msgid "/Conversation/Invite..."
 msgstr "/సంభాషణ/ఆహ్వానం..."
 
 #  Conversations
-#: src/gtkconv.c:2465
+#: src/gtkconv.c:2486
 msgid "/Conversation/Alias..."
 msgstr "/సంభాషణ/ఉపనామం..."
 
 #  Conversations
-#: src/gtkconv.c:2469
+#: src/gtkconv.c:2490
 msgid "/Conversation/Block..."
 msgstr "/సంభాషణ/ఆపుము..."
 
 #  Conversations
-#: src/gtkconv.c:2473
+#: src/gtkconv.c:2494
 msgid "/Conversation/Add..."
 msgstr "/సంభాషణ/చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2477
+#: src/gtkconv.c:2498
 msgid "/Conversation/Remove..."
 msgstr "/సంభాషణ/తొలగించుము..."
 
 #  Conversations
-#: src/gtkconv.c:2483
+#: src/gtkconv.c:2504
 msgid "/Conversation/Insert Link..."
 msgstr "/సంభాషణ/లింకును చేర్చుము..."
 
 #  Conversations
-#: src/gtkconv.c:2487
+#: src/gtkconv.c:2508
 msgid "/Conversation/Insert Image..."
 msgstr "/సంభాషణ/సచిత్రమును చేర్చుము..."
 
-#: src/gtkconv.c:2493
+#: src/gtkconv.c:2514
 msgid "/Options/Enable Logging"
 msgstr "/ఆప్షన్స్/ఎనేబుల్ లాగింగ్ "
 
-#: src/gtkconv.c:2496
+#: src/gtkconv.c:2517
 msgid "/Options/Enable Sounds"
 msgstr "/ఆప్షన్స్/ఎనేబుల్ సౌండ్స్ "
 
-#: src/gtkconv.c:2499
+#: src/gtkconv.c:2520
 #, fuzzy
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/ఆప్షన్స్/ఫార్మాటింగ్ టూల్‌బార్‌ను చూపించుము "
 
-#: src/gtkconv.c:2502
+#: src/gtkconv.c:2523
 msgid "/Options/Show Timestamps"
 msgstr "/ఆప్షన్స్/టైమ్‌స్టాంప్స్ చూపించుము "
 
-#: src/gtkconv.c:2505
+#: src/gtkconv.c:2526
 #, fuzzy
 msgid "/Options/Show Buddy Icon"
 msgstr "మిత్రుల _ఐకన్లను ప్రదర్శించుము."
 
-#: src/gtkconv.c:2578
+#: src/gtkconv.c:2597
 msgid "User is typing..."
 msgstr "వినియోగదారుడు టైప్ చేస్తున్నాడు ... "
 
-#: src/gtkconv.c:2584
+#: src/gtkconv.c:2602
 msgid "User has typed something and paused"
 msgstr "వినియోగదారుడు కొంతవరకు టైప్ చేసి ఆగినారు."
 
 #. Build the Send As menu
-#: src/gtkconv.c:2722
+#: src/gtkconv.c:2740
 #, fuzzy
 msgid "_Send To"
 msgstr "_పేరుతో పంపుము"
 
-#: src/gtkconv.c:3351
+#: src/gtkconv.c:3373
 msgid "Topic:"
 msgstr "విషయము:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3399
+#: src/gtkconv.c:3421
 msgid "0 people in room"
 msgstr "గదిలో 0 మంది ఉన్నారు"
 
-#: src/gtkconv.c:3478
+#: src/gtkconv.c:3500
 msgid "IM the user"
 msgstr "నేను వినియోగదారుడను"
 
-#: src/gtkconv.c:3491
+#: src/gtkconv.c:3513
 msgid "Ignore the user"
 msgstr "వినియోగదారుని ఉపేక్షించుము"
 
-#: src/gtkconv.c:3503
+#: src/gtkconv.c:3525
 msgid "Get the user's information"
 msgstr "వినియోగదారుని సమాచారమును సేకరించుము "
 
-#: src/gtkconv.c:4310 src/gtkconv.c:4412 src/gtkconv.c:4467
+#: src/gtkconv.c:4368 src/gtkconv.c:4470 src/gtkconv.c:4525
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "గదిలో %d మనుషులున్నారు "
 msgstr[1] "कक्ष में 0 लोग हैं"
 
-#: src/gtkconv.c:5526
+#: src/gtkconv.c:5589
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr "చెప్పండి &lt;సందేశం&gt;:  మీరు కమాండ్ వాడడం లేదనుకొని సందేశాన్ని పంపండి."
 
-#: src/gtkconv.c:5529
+#: src/gtkconv.c:5592
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "నేను &lt;చర్య&gt;: ఒక మిత్రునికి గాని లేక కాలక్షేపంరాయుడికి గాని IRC style చర్యను పంపండి."
 
-#: src/gtkconv.c:5532
+#: src/gtkconv.c:5595
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr "డీబగ్ &lt;ఆప్షన్&gt;: ప్రస్తుత సంభాషణలో వివిధ డీబగ్ సమాచారములను పంపుము."
 
 #  Remove on type button
-#: src/gtkconv.c:5535
+#: src/gtkconv.c:5598
 #, fuzzy
 msgid "clear: Clears the conversation scrollback."
 msgstr "సంభాషణ విండోను %s క్లోజ్ చేశారు."
 
-#: src/gtkconv.c:5538
+#: src/gtkconv.c:5601
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "సహాయం &lt;కమాండ్&gt;: ఒకానొక నిర్దిష్ట కమాండ్‌కు సంబంధించి సహాయం."
 
 #  And now for the buttons
-#: src/gtkconv.c:5643
+#: src/gtkconv.c:5706
 #, fuzzy
 msgid "Confirm close"
 msgstr "ఎకౌంట్‌ను నిర్ధారించండి. "
 
-#: src/gtkconv.c:5675
+#: src/gtkconv.c:5738
 #, fuzzy
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "మీరు %sను తప్పకుండా తొలగించదల్చుకున్నారా?"
 
 #  Conversations
-#: src/gtkconv.c:6340
+#: src/gtkconv.c:6403
 msgid "Close conversation"
 msgstr "సంభాషణను క్లోజ్ చేయుము "
 
-#: src/gtkconv.c:6801
+#: src/gtkconv.c:6864
 msgid "Last created window"
 msgstr "చివరగా సృష్టించిన విండో."
 
-#: src/gtkconv.c:6803
+#: src/gtkconv.c:6866
 msgid "Separate IM and Chat windows"
 msgstr "IM మరియు Chat విండోలను వేరుచేయుము. "
 
-#: src/gtkconv.c:6805 src/gtkprefs.c:1239
+#: src/gtkconv.c:6868 src/gtkprefs.c:1205
 msgid "New window"
 msgstr "కొత్త విండో."
 
-#: src/gtkconv.c:6807
+#: src/gtkconv.c:6870
 msgid "By group"
 msgstr "గ్రూప్‌ చేత "
 
 #  And now for the buttons
-#: src/gtkconv.c:6809
+#: src/gtkconv.c:6872
 msgid "By account"
 msgstr "ఖాతా చేత "
 
@@ -3264,7 +3289,7 @@ msgid "Enter an alias for this contact."
 msgstr "ఈ సంప్రదింపుకు ఉపనామం ఎంటర్ చేయండి."
 
 #: src/gtkdialogs.c:722 src/gtkdialogs.c:744 src/gtkdialogs.c:764
-#: src/gtkrequest.c:268 src/protocols/silc/chat.c:585
+#: src/gtkrequest.c:269 src/protocols/silc/chat.c:585
 msgid "Alias"
 msgstr "ఉపనామం"
 
@@ -3462,7 +3487,7 @@ msgid "File transfer _details"
 msgstr "ట్రాన్స్‌ఫర్‌ డీటైల్స్‌ను చూపించుము."
 
 #. Pause button
-#: src/gtkft.c:764 src/gtkstock.c:123
+#: src/gtkft.c:764 src/gtkstock.c:122
 msgid "_Pause"
 msgstr "_ఆగుము "
 
@@ -3475,41 +3500,41 @@ msgstr "_పునఃప్రారంభించండి."
 msgid "Failed"
 msgstr "విఫలమైనది "
 
-#: src/gtkimhtml.c:817
+#: src/gtkimhtml.c:816
 msgid "Pa_ste As Text"
 msgstr "టెక్‌స్ట్‌గా పేస్ట్ చేయుము"
 
-#: src/gtkimhtml.c:1314
+#: src/gtkimhtml.c:1313
 msgid "Hyperlink color"
 msgstr "హైపర్‌లింక్ కలర్ "
 
-#: src/gtkimhtml.c:1315
+#: src/gtkimhtml.c:1314
 msgid "Color to draw hyperlinks."
 msgstr "హైపర్‌లింక్‌ను లాగడానికి కలర్ "
 
-#: src/gtkimhtml.c:1318
+#: src/gtkimhtml.c:1317
 #, fuzzy
 msgid "Hyperlink prelight color"
 msgstr "హైపర్‌లింక్ కలర్ "
 
-#: src/gtkimhtml.c:1319
+#: src/gtkimhtml.c:1318
 #, fuzzy
 msgid "Color to draw hyperlinks when mouse is over them."
 msgstr "హైపర్‌లింక్‌ను లాగడానికి కలర్ "
 
-#: src/gtkimhtml.c:1538
+#: src/gtkimhtml.c:1537
 msgid "_Copy E-Mail Address"
 msgstr "_ఇ-మెయిల్ అడ్రసును కాపీ చేయండి. "
 
-#: src/gtkimhtml.c:1550
+#: src/gtkimhtml.c:1549
 msgid "_Open Link in Browser"
 msgstr "_బ్రౌజర్‌లో లింక్‌ను ఓపెన్ చేయండి. "
 
-#: src/gtkimhtml.c:1560
+#: src/gtkimhtml.c:1559
 msgid "_Copy Link Location"
 msgstr "_లింక్ లొకేషన్‌ను కాపీ చేయండి. "
 
-#: src/gtkimhtml.c:3239
+#: src/gtkimhtml.c:3234
 msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
@@ -3519,7 +3544,7 @@ msgstr ""
 "\n"
 "Defaulting to PNG."
 
-#: src/gtkimhtml.c:3242
+#: src/gtkimhtml.c:3237
 msgid ""
 "Unrecognized file type\n"
 "\n"
@@ -3529,7 +3554,7 @@ msgstr ""
 "\n"
 "Defaulting to PNG."
 
-#: src/gtkimhtml.c:3255
+#: src/gtkimhtml.c:3250
 #, c-format
 msgid ""
 "<span size='larger' weight='bold'>Error saving image</span>\n"
@@ -3540,7 +3565,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtkimhtml.c:3258
+#: src/gtkimhtml.c:3253
 #, c-format
 msgid ""
 "Error saving image\n"
@@ -3551,11 +3576,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/gtkimhtml.c:3338 src/gtkimhtml.c:3350
+#: src/gtkimhtml.c:3333 src/gtkimhtml.c:3345
 msgid "Save Image"
 msgstr "సచిత్రమును సేవ్ చేయుము."
 
-#: src/gtkimhtml.c:3378
+#: src/gtkimhtml.c:3373
 msgid "_Save Image..."
 msgstr "_సచిత్రమును సేవ్ చేయుము."
 
@@ -3615,52 +3640,52 @@ msgstr "ఈ కథకు smileys లభించుటలేదు."
 msgid "Smile!"
 msgstr "చిరునవ్వు!"
 
-#: src/gtkimhtmltoolbar.c:918
+#: src/gtkimhtmltoolbar.c:916
 msgid "Bold"
 msgstr "బోల్డ్ "
 
-#: src/gtkimhtmltoolbar.c:929
+#: src/gtkimhtmltoolbar.c:927
 msgid "Italic"
 msgstr "ఇటాలిక్ అక్షరాలు "
 
-#: src/gtkimhtmltoolbar.c:940
+#: src/gtkimhtmltoolbar.c:938
 msgid "Underline"
 msgstr "అండర్‌లైన్ "
 
-#: src/gtkimhtmltoolbar.c:956
+#: src/gtkimhtmltoolbar.c:954
 msgid "Larger font size"
 msgstr "పెద్ద ఫాంట్ సైజ్ "
 
-#: src/gtkimhtmltoolbar.c:968
+#: src/gtkimhtmltoolbar.c:966
 msgid "Smaller font size"
 msgstr "చిన్న ఫాంట్ సైజ్ "
 
-#: src/gtkimhtmltoolbar.c:985
+#: src/gtkimhtmltoolbar.c:983
 msgid "Font Face"
 msgstr "ఫాంట్ ఫేస్ "
 
-#: src/gtkimhtmltoolbar.c:997
+#: src/gtkimhtmltoolbar.c:995
 msgid "Foreground font color"
 msgstr "ఉపరితల ఫాంట్ కలర్ "
 
-#: src/gtkimhtmltoolbar.c:1009
+#: src/gtkimhtmltoolbar.c:1007
 msgid "Background color"
 msgstr "నేపధ్య ఫాంట్ కలర్ "
 
-#: src/gtkimhtmltoolbar.c:1025
+#: src/gtkimhtmltoolbar.c:1023
 #, fuzzy
 msgid "Clear formatting"
 msgstr "_ఫార్మాటింగ్‌ను రద్దుచేయండి."
 
-#: src/gtkimhtmltoolbar.c:1040
+#: src/gtkimhtmltoolbar.c:1038
 msgid "Insert link"
 msgstr "లింకును చేర్చండి."
 
-#: src/gtkimhtmltoolbar.c:1050
+#: src/gtkimhtmltoolbar.c:1048
 msgid "Insert image"
 msgstr "సచిత్రమును చేర్చండి."
 
-#: src/gtkimhtmltoolbar.c:1061
+#: src/gtkimhtmltoolbar.c:1059
 msgid "Insert smiley"
 msgstr "స్మైలీని చేర్చండి."
 
@@ -3676,41 +3701,40 @@ msgstr "%s తో సంభాషణలు "
 msgid "Conversation with %s on %s"
 msgstr "%s తో సంభాషణలు "
 
-#: src/gtklog.c:374
+#: src/gtklog.c:309
+msgid ""
+"System events will only be logged if the \"Log all status changes to system "
+"log\" preference is enabled."
+msgstr ""
+
+#: src/gtklog.c:313
+msgid ""
+"Instant messages will only be logged if the \"Log all instant messages\" "
+"preference is enabled."
+msgstr ""
+
+#: src/gtklog.c:316
+msgid ""
+"Chats will only be logged if the \"Log all chats preference\" is enabled."
+msgstr ""
+
+#: src/gtklog.c:320
+msgid "No logs were found"
+msgstr ""
+
+#: src/gtklog.c:396
 #, fuzzy
 msgid "Total log size:"
 msgstr "లాగ్ సైజ్ వలన "
 
-#: src/gtklog.c:422
-msgid ""
-"System events will only be logged if the <span style=\"italic\">Log all "
-"status changes to system log</span> preference is enabled."
-msgstr ""
-
-#: src/gtklog.c:426
-msgid ""
-"Instant messages will only be logged if the <span style=\"italic\">Log all "
-"instant messages</span> preference is enabled."
-msgstr ""
-
-#: src/gtklog.c:429
-msgid ""
-"Chats will only be logged if the <span style=\"italic\">Log all chats "
-"preference</span> is enabled."
-msgstr ""
-
-#: src/gtklog.c:434
-msgid "No logs were found."
-msgstr ""
-
 #  Conversations
-#: src/gtklog.c:480
+#: src/gtklog.c:472
 #, fuzzy, c-format
 msgid "Conversations in %s"
 msgstr "%s తో సంభాషణలు "
 
 #  Conversations
-#: src/gtklog.c:488 src/gtklog.c:539
+#: src/gtklog.c:480 src/gtklog.c:531
 #, c-format
 msgid "Conversations with %s"
 msgstr "%s తో సంభాషణలు "
@@ -3722,7 +3746,7 @@ msgstr "%s తో సంభాషణలు "
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtklog.c:564
+#: src/gtklog.c:556
 msgid "System Log"
 msgstr "సిస్టం లాగ్"
 
@@ -3737,7 +3761,6 @@ msgid ""
 "Gaim %s\n"
 "Usage: %s [OPTION]...\n"
 "\n"
-"  -a, --acct          display account editor window\n"
 "  -c, --config=DIR    use DIR for config files\n"
 "  -d, --debug         print debugging messages to stdout\n"
 "  -h, --help          display this help and exit\n"
@@ -3746,6 +3769,15 @@ msgid ""
 "                      account(s) to use, separated by commas)\n"
 "  -v, --version       display the current version and exit\n"
 msgstr ""
+
+#. TODO: Should save the previous status as a transient status?
+#. Save the newly selected status to prefs.xml and status.xml
+#: src/gtkmain.c:676 src/gtkmain.c:678 src/gtkmain.c:681
+#: src/gtkstatusbox.c:661 src/gtkstatusbox.c:663 src/gtkstatusbox.c:666
+#: src/status.c:1696
+#, fuzzy
+msgid "Default"
+msgstr "గ్నోమ్ డిఫాల్ట్ "
 
 #. Descriptive label
 #: src/gtknotify.c:275
@@ -3791,7 +3823,7 @@ msgstr ""
 msgid "Search Results"
 msgstr "అన్వేషణ ఫలితాలు "
 
-#: src/gtknotify.c:643 src/protocols/oscar/oscar.c:4864
+#: src/gtknotify.c:643 src/protocols/oscar/oscar.c:4858
 #, c-format
 msgid "Info for %s"
 msgstr "%s కు వివరణ."
@@ -3990,213 +4022,197 @@ msgstr "ఐకన్ "
 msgid "Description"
 msgstr "వివరణ"
 
-#: src/gtkprefs.c:786
-msgid "Buddy List Sorting"
-msgstr "మిత్రుల లిస్టు సార్టింగ్ "
-
-#: src/gtkprefs.c:795
-msgid "_Sorting:"
-msgstr "_సార్టింగ్:"
-
-#: src/gtkprefs.c:800
-msgid "Buddy Display"
-msgstr "మిత్రుని ప్రదర్శన "
-
-#: src/gtkprefs.c:801
-#, fuzzy
-msgid "Show more buddy details"
-msgstr "వినియోగదారుని వివరములు చూపుము."
-
-#: src/gtkprefs.c:839
+#: src/gtkprefs.c:805
 msgid "Send unknown \"_slash\" commands as messages"
 msgstr "అజ్ఞాత \"_slash\"  కమాండ్స్‌ను సందేశములుగా పంపుము."
 
-#: src/gtkprefs.c:841
+#: src/gtkprefs.c:807
 #, fuzzy
 msgid "Show _formatting on incoming messages"
 msgstr "_ఫార్మాటింగ్ టూల్‌బార్‌ను చూపించుము."
 
-#: src/gtkprefs.c:843
+#: src/gtkprefs.c:809
 msgid "Show buddy _icons"
 msgstr "మిత్రుల _ఐకన్లను ప్రదర్శించుము."
 
-#: src/gtkprefs.c:845
+#: src/gtkprefs.c:811
 msgid "Enable buddy ic_on animation"
 msgstr "మిత్రుని ఐకన్ యానిమేషన్‌ను ఎనేబుల్ చేయుము. "
 
-#: src/gtkprefs.c:847
+#: src/gtkprefs.c:813
 msgid "_Notify buddies that you are typing to them"
 msgstr "మీ మిత్రులకు టైప్ చేస్తున్నట్లు వారికి _సూచించండి. "
 
-#: src/gtkprefs.c:850
+#: src/gtkprefs.c:816
 msgid "_Highlight misspelled words"
 msgstr "తప్పుగా రాసిన పదములను హైలైట్ చేయుము."
 
-#: src/gtkprefs.c:868
+#: src/gtkprefs.c:834
 msgid ""
 "This is how your outgoing message text will appear when you use protocols "
 "that support formatting. :)"
 msgstr "ఫార్మాటింగ్‌ను సపోర్టుచేసే ప్రొటోకాల్స్‌లో మీరు పంపే సందేశం ఇలా కనిపిస్తుంది. :)"
 
 #. All the tab options!
-#: src/gtkprefs.c:890
+#: src/gtkprefs.c:856
 msgid "Tab Options"
 msgstr "టాబ్ ఆప్షన్స్ "
 
-#: src/gtkprefs.c:892
+#: src/gtkprefs.c:858
 msgid "Show IMs and chats in _tabbed windows"
 msgstr "సత్వర విండోలను మరియు సంభాషణలను _టాబ్డ్ విండోస్‌లో చూపించుము. "
 
-#: src/gtkprefs.c:906
+#: src/gtkprefs.c:872
 msgid "Show close b_utton on tabs"
 msgstr "టాబ్స్‌పై క్లోజ్ బటన్‌ను చూపించుము."
 
-#: src/gtkprefs.c:912
+#: src/gtkprefs.c:878
 #, fuzzy
 msgid "_Placement:"
 msgstr "ExtPlacement"
 
-#: src/gtkprefs.c:914
+#: src/gtkprefs.c:880
 msgid "Top"
 msgstr "పైన "
 
-#: src/gtkprefs.c:915
+#: src/gtkprefs.c:881
 msgid "Bottom"
 msgstr "అడుగున"
 
-#: src/gtkprefs.c:916
+#: src/gtkprefs.c:882
 msgid "Left"
 msgstr "ఎడమ "
 
-#: src/gtkprefs.c:917
+#: src/gtkprefs.c:883
 msgid "Right"
 msgstr "కుడి "
 
-#: src/gtkprefs.c:919
+#: src/gtkprefs.c:885
 msgid "Left Vertical"
 msgstr ""
 
-#: src/gtkprefs.c:920
+#: src/gtkprefs.c:886
 msgid "Right Vertical"
 msgstr ""
 
 #  Conversations
-#: src/gtkprefs.c:925
+#: src/gtkprefs.c:891
 #, fuzzy
 msgid "N_ew conversations:"
 msgstr "సంభాషణను క్లోజ్ చేయుము "
 
-#: src/gtkprefs.c:976 src/protocols/oscar/oscar.c:779
-#: src/protocols/oscar/oscar.c:5951
+#: src/gtkprefs.c:942 src/protocols/oscar/oscar.c:779
+#: src/protocols/oscar/oscar.c:5959
 msgid "IP Address"
 msgstr "IP అడ్రస్ "
 
-#: src/gtkprefs.c:978
+#: src/gtkprefs.c:944
 #, fuzzy
 msgid "STUN Server:"
 msgstr "_సెర్వర్:"
 
-#: src/gtkprefs.c:980
+#: src/gtkprefs.c:946
 msgid "_Autodetect IP Address"
 msgstr "_ఆటోడిటెక్ట్ IP అడ్రస్  "
 
-#: src/gtkprefs.c:989
+#: src/gtkprefs.c:955
 msgid "Public _IP:"
 msgstr "పబ్లిక్ _IP:"
 
-#: src/gtkprefs.c:1013
+#: src/gtkprefs.c:979
 msgid "Ports"
 msgstr "పోర్ట్స్ "
 
-#: src/gtkprefs.c:1016
+#: src/gtkprefs.c:982
 msgid "_Manually specify range of ports to listen on"
 msgstr "వినుటకు పోర్టుల శ్రేణిని _మాన్యుయల్‌గా నోటిఫై చేయండి."
 
-#: src/gtkprefs.c:1019
+#: src/gtkprefs.c:985
 msgid "_Start Port:"
 msgstr "_పోర్టును ప్రారంభించండి:"
 
-#: src/gtkprefs.c:1026
+#: src/gtkprefs.c:992
 msgid "_End Port:"
 msgstr "_పోర్టును సమాప్తి చేయండి:"
 
-#: src/gtkprefs.c:1033
+#: src/gtkprefs.c:999
 msgid "Proxy Server"
 msgstr "ప్రాక్సీ సెర్వర్ "
 
-#: src/gtkprefs.c:1037
+#: src/gtkprefs.c:1003
 msgid "No proxy"
 msgstr "ప్రాక్సీ లేదు "
 
-#: src/gtkprefs.c:1093
+#: src/gtkprefs.c:1059
 msgid "_User:"
 msgstr "_వినియోగదారుడు:"
 
-#: src/gtkprefs.c:1153
+#: src/gtkprefs.c:1119
 msgid "Epiphany"
 msgstr "ఎపిఫానీ "
 
-#: src/gtkprefs.c:1154
+#: src/gtkprefs.c:1120
 msgid "Firebird"
 msgstr "ఫైర్‌బర్డ్"
 
-#: src/gtkprefs.c:1155
+#: src/gtkprefs.c:1121
 msgid "Firefox"
 msgstr "ఫైర్‌ఫాక్స్ "
 
-#: src/gtkprefs.c:1156
+#: src/gtkprefs.c:1122
 msgid "Galeon"
 msgstr "గాలియన్ "
 
-#: src/gtkprefs.c:1157
-msgid "Gnome Default"
+#: src/gtkprefs.c:1123
+#, fuzzy
+msgid "GNOME Default"
 msgstr "గ్నోమ్ డిఫాల్ట్ "
 
-#: src/gtkprefs.c:1158
+#: src/gtkprefs.c:1124
 msgid "Konqueror"
 msgstr "కాంకరర్ "
 
-#: src/gtkprefs.c:1159
+#: src/gtkprefs.c:1125
 msgid "Mozilla"
 msgstr "మొజిల్లా "
 
-#: src/gtkprefs.c:1160
+#: src/gtkprefs.c:1126
 msgid "Netscape"
 msgstr "నెట్‌స్కేప్ "
 
-#: src/gtkprefs.c:1161
+#: src/gtkprefs.c:1127
 msgid "Opera"
 msgstr "ఆపెరా "
 
-#: src/gtkprefs.c:1170
+#: src/gtkprefs.c:1136
 msgid "Manual"
 msgstr "మాన్యుయల్ "
 
-#: src/gtkprefs.c:1223
+#: src/gtkprefs.c:1189
 msgid "Browser Selection"
 msgstr "బ్రౌజర్ సెలక్షన్ "
 
-#: src/gtkprefs.c:1227
+#: src/gtkprefs.c:1193
 msgid "_Browser:"
 msgstr "_బ్రౌజర్:"
 
-#: src/gtkprefs.c:1235
+#: src/gtkprefs.c:1201
 msgid "_Open link in:"
 msgstr "_లింక్‌ను ఓపెన్ చేయండి:"
 
-#: src/gtkprefs.c:1237
+#: src/gtkprefs.c:1203
 msgid "Browser default"
 msgstr "బ్రౌజర్ డిఫాల్ట్ "
 
-#: src/gtkprefs.c:1238
+#: src/gtkprefs.c:1204
 msgid "Existing window"
 msgstr "అస్తిత్వంలోవున్న విండో "
 
-#: src/gtkprefs.c:1240
+#: src/gtkprefs.c:1206
 msgid "New tab"
 msgstr "కొత్త టాబ్ "
 
-#: src/gtkprefs.c:1254
+#: src/gtkprefs.c:1220
 #, c-format
 msgid ""
 "_Manual:\n"
@@ -4205,57 +4221,57 @@ msgstr ""
 "_మాన్యుయల్:\n"
 "(%s యూఆర్ఎల్ కోసం)"
 
-#: src/gtkprefs.c:1290 src/gtkprefs.c:1767
+#: src/gtkprefs.c:1256 src/gtkprefs.c:1738
 msgid "Logging"
 msgstr "లాగింగ్ "
 
-#: src/gtkprefs.c:1293
+#: src/gtkprefs.c:1259
 msgid "Log _Format:"
 msgstr "Log _ఫార్మాట్:"
 
-#: src/gtkprefs.c:1298
+#: src/gtkprefs.c:1264
 #, fuzzy
 msgid "Log all _instant messages"
 msgstr "అన్ని సత్వర సందేశములను _లాగ్ చేయండి."
 
-#: src/gtkprefs.c:1300
+#: src/gtkprefs.c:1266
 msgid "Log all c_hats"
 msgstr "చార్టుల నన్నింటిని లాగ్ చేయండి."
 
-#: src/gtkprefs.c:1302
+#: src/gtkprefs.c:1268
 msgid "Log all _status changes to system log"
 msgstr ""
 
-#: src/gtkprefs.c:1434
+#: src/gtkprefs.c:1400
 msgid "Sound Selection"
 msgstr "సౌండ్ సెలక్షన్ "
 
-#: src/gtkprefs.c:1488
+#: src/gtkprefs.c:1454
 msgid "Sound Method"
 msgstr "ధ్వని పద్ధతి "
 
-#: src/gtkprefs.c:1489
+#: src/gtkprefs.c:1455
 msgid "_Method:"
 msgstr "_పద్ధతి:"
 
-#: src/gtkprefs.c:1491
+#: src/gtkprefs.c:1457
 msgid "Console beep"
 msgstr "కన్సోల్ బీప్ "
 
-#: src/gtkprefs.c:1493
+#: src/gtkprefs.c:1459
 msgid "Automatic"
 msgstr "ఆటోమేటిక్ "
 
-#: src/gtkprefs.c:1498
+#: src/gtkprefs.c:1464
 msgid "Command"
 msgstr "కమాండ్ "
 
-#: src/gtkprefs.c:1499
+#: src/gtkprefs.c:1465
 #, fuzzy
 msgid "No sounds"
 msgstr "శబ్దాలు "
 
-#: src/gtkprefs.c:1507
+#: src/gtkprefs.c:1473
 #, c-format
 msgid ""
 "Sound c_ommand:\n"
@@ -4264,57 +4280,58 @@ msgstr ""
 "ధ్వని కమాండ్:\n"
 "(%s ఫైల్ పేరుకోసం)"
 
-#: src/gtkprefs.c:1533
+#: src/gtkprefs.c:1499
 msgid "Sound Options"
 msgstr "సౌండ్ ఆప్షన్స్ "
 
 #  Remove on focus button
-#: src/gtkprefs.c:1534
+#: src/gtkprefs.c:1500
 msgid "Sounds when conversation has _focus"
 msgstr "సంభాషణ _కేంద్రీకృతమైనప్పుడు ధ్వనించును."
 
-#: src/gtkprefs.c:1536
+#: src/gtkprefs.c:1502
 msgid "_Sounds while away"
 msgstr "_దూరంగా ఉన్నప్పుడు ధ్వనించును "
 
-#: src/gtkprefs.c:1546
+#: src/gtkprefs.c:1512
 msgid "Sound Events"
 msgstr "ధ్వని ఘటనలు "
 
-#: src/gtkprefs.c:1597
+#: src/gtkprefs.c:1563
 msgid "Play"
 msgstr "మోగించు "
 
-#: src/gtkprefs.c:1604
+#: src/gtkprefs.c:1570
 msgid "Event"
 msgstr "ఘటన"
 
-#: src/gtkprefs.c:1623
+#: src/gtkprefs.c:1589
 msgid "Test"
 msgstr "పరీక్ష"
 
-#: src/gtkprefs.c:1627
+#: src/gtkprefs.c:1593
 msgid "Reset"
 msgstr "పునఃస్థాపితం చేయు "
 
-#: src/gtkprefs.c:1631
+#: src/gtkprefs.c:1597
 msgid "Choose..."
 msgstr "ఎంపిక చేయండి..."
 
-#: src/gtkprefs.c:1685 src/gtkstatusbox.c:288 src/protocols/irc/irc.c:176
+#: src/gtkprefs.c:1651 src/gtkstatusbox.c:295
+#: src/protocols/bonjour/bonjour.c:240 src/protocols/irc/irc.c:176
 #: src/protocols/irc/msgs.c:221 src/protocols/jabber/buddy.c:1093
 #: src/protocols/jabber/jabber.c:1055 src/protocols/msn/msn.c:577
 #: src/protocols/novell/novell.c:2825 src/protocols/novell/novell.c:2959
 #: src/protocols/novell/novell.c:3041 src/protocols/oscar/oscar.c:707
-#: src/protocols/oscar/oscar.c:6510 src/protocols/oscar/oscar.c:6579
-#: src/protocols/oscar/oscar.c:7604 src/protocols/oscar/oscar.c:7758
-#: src/protocols/silc/buddy.c:1417 src/protocols/silc/silc.c:52
-#: src/protocols/yahoo/yahoo.c:3234 src/protocols/zephyr/zephyr.c:2259
-#: src/status.c:158
+#: src/protocols/oscar/oscar.c:6516 src/protocols/oscar/oscar.c:6585
+#: src/protocols/oscar/oscar.c:7610 src/protocols/oscar/oscar.c:7764
+#: src/protocols/sametime/sametime.c:2764 src/protocols/silc/buddy.c:1417
+#: src/protocols/silc/silc.c:52 src/protocols/yahoo/yahoo.c:3225
+#: src/protocols/zephyr/zephyr.c:2259 src/status.c:158
 msgid "Away"
 msgstr "దూరంగా "
 
-#: src/gtkprefs.c:1686
+#: src/gtkprefs.c:1652
 msgid "_Queue new messages when away"
 msgstr "_దూరంగా ఉన్నప్పుడు కొత్త సందేశములు వరుసలో ఉండును."
 
@@ -4325,57 +4342,60 @@ msgstr "_దూరంగా ఉన్నప్పుడు కొత్త స�
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkprefs.c:1689
+#: src/gtkprefs.c:1655
 msgid "_Auto-reply:"
 msgstr "_ఆటో-రిప్లై:"
 
-#: src/gtkprefs.c:1692
+#: src/gtkprefs.c:1658
 msgid "When away"
 msgstr "దూరంగా ఉన్నప్పుడు "
 
-#: src/gtkprefs.c:1693
+#: src/gtkprefs.c:1659
 #, fuzzy
 msgid "When both away and idle"
 msgstr "దూరంగానూ, సోమరిగానూ ఉన్నప్పుడు"
 
-#: src/gtkprefs.c:1696
+#: src/gtkprefs.c:1662
 #, fuzzy
 msgid "_Report idle time"
 msgstr "సోమరి _సమయములను చూపించుము. "
 
-#: src/gtkprefs.c:1699
+#: src/gtkprefs.c:1665
 msgid "Auto-away"
 msgstr "స్వతఃదూరం"
 
-#: src/gtkprefs.c:1700
-msgid "Set away _when idle"
+#: src/gtkprefs.c:1666
+#, fuzzy
+msgid "Change status when _idle"
 msgstr "_సోమరిగా నున్నప్పుడు దూరంగా ఉండుము."
 
-#: src/gtkprefs.c:1704
-msgid "_Minutes before setting away:"
+#: src/gtkprefs.c:1670
+#, fuzzy
+msgid "_Minutes before changing status:"
 msgstr "_దూరంగా పోవడానికి ముందుగా:"
 
-#: src/gtkprefs.c:1712
-msgid "Away m_essage:"
-msgstr "సుదూర సందేశము:"
+#: src/gtkprefs.c:1678
+#, fuzzy
+msgid "Change _status to:"
+msgstr "అడ్రసును మార్చండి:"
 
-#: src/gtkprefs.c:1757
+#: src/gtkprefs.c:1728
 msgid "Smiley Themes"
 msgstr "స్మైలీ కథలు "
 
-#: src/gtkprefs.c:1758
+#: src/gtkprefs.c:1729
 msgid "Sounds"
 msgstr "శబ్దాలు "
 
-#: src/gtkprefs.c:1759 src/protocols/silc/silc.c:1589
+#: src/gtkprefs.c:1730 src/protocols/silc/silc.c:1589
 msgid "Network"
 msgstr "నెట్‌వర్క్"
 
-#: src/gtkprefs.c:1764
+#: src/gtkprefs.c:1735
 msgid "Browser"
 msgstr "బ్రౌజర్ "
 
-#: src/gtkprefs.c:1768
+#: src/gtkprefs.c:1739
 msgid "Away / Idle"
 msgstr "దూరం / సోమరి"
 
@@ -4467,42 +4487,42 @@ msgstr "%sను మీరు నిజంగానే ఆపాలనుకు�
 #. *
 #. * A wrapper for gaim_request_action() that uses Yes and No buttons.
 #.
-#: src/gtkrequest.c:258 src/protocols/msn/dialog.c:113
+#: src/gtkrequest.c:259 src/protocols/msn/dialog.c:113
 #: src/protocols/msn/msn.c:553 src/protocols/msn/msn.c:556
 #: src/protocols/novell/novell.c:1902 src/protocols/silc/buddy.c:312
 #: src/protocols/silc/pk.c:117 src/request.h:1322
 msgid "Yes"
 msgstr "అవును."
 
-#: src/gtkrequest.c:259 src/protocols/msn/dialog.c:114
+#: src/gtkrequest.c:260 src/protocols/msn/dialog.c:114
 #: src/protocols/msn/msn.c:553 src/protocols/msn/msn.c:556
 #: src/protocols/novell/novell.c:1903 src/protocols/silc/buddy.c:313
 #: src/protocols/silc/pk.c:118 src/request.h:1322
 msgid "No"
 msgstr "కాదు"
 
-#: src/gtkrequest.c:262
+#: src/gtkrequest.c:263
 msgid "Apply"
 msgstr "అమలుపరచుము"
 
-#: src/gtkrequest.c:263 src/protocols/msn/msn.c:357
+#: src/gtkrequest.c:264 src/protocols/msn/msn.c:357
 #: src/protocols/silc/util.c:335
 msgid "Close"
 msgstr "క్లోజ్ "
 
-#: src/gtkrequest.c:1795
+#: src/gtkrequest.c:1796
 msgid "That file already exists"
 msgstr "ఫైలు అస్తిత్వంలో ఉంది. "
 
-#: src/gtkrequest.c:1796
+#: src/gtkrequest.c:1797
 msgid "Would you like to overwrite it?"
 msgstr "ఓవర్ రైట్ చేయదల్చుకున్నారా?"
 
-#: src/gtkrequest.c:1838 src/gtkrequest.c:1879
+#: src/gtkrequest.c:1839 src/gtkrequest.c:1880
 msgid "Save File..."
 msgstr "ఫైలును సేవ్ చేయుము..."
 
-#: src/gtkrequest.c:1839 src/gtkrequest.c:1880
+#: src/gtkrequest.c:1840 src/gtkrequest.c:1881
 msgid "Open File..."
 msgstr "ఫైలును ఓపెన్ చేయుము..."
 
@@ -4515,66 +4535,77 @@ msgstr "గది లిస్ట్ "
 msgid "_Get List"
 msgstr "_లిస్టును తీసుకురమ్ము "
 
-#: src/gtksavedstatuses.c:317 src/protocols/jabber/buddy.c:264
+#: src/gtksavedstatuses.c:362 src/protocols/jabber/buddy.c:264
 #: src/protocols/jabber/buddy.c:805 src/protocols/novell/novell.c:1460
 msgid "Title"
 msgstr "టైటిల్ "
 
-#: src/gtksavedstatuses.c:332
+#: src/gtksavedstatuses.c:377
 msgid "Type"
 msgstr ""
 
-#: src/gtksavedstatuses.c:343 src/protocols/gg/gg.c:1083
+#: src/gtksavedstatuses.c:388 src/protocols/bonjour/bonjour.c:234
+#: src/protocols/bonjour/bonjour.c:241 src/protocols/gg/gg.c:1083
 #: src/protocols/gg/gg.c:1088 src/protocols/gg/gg.c:1097
 #: src/protocols/gg/gg.c:1107 src/protocols/gg/gg.c:1112
 #: src/protocols/irc/irc.c:177 src/protocols/jabber/jabber.c:1032
 #: src/protocols/jabber/jabber.c:1040 src/protocols/jabber/jabber.c:1048
 #: src/protocols/jabber/jabber.c:1056 src/protocols/jabber/jabber.c:1064
 #: src/protocols/jabber/jabber.c:1072 src/protocols/novell/novell.c:2845
-#: src/protocols/oscar/oscar.c:7752 src/protocols/oscar/oscar.c:7759
-#: src/protocols/yahoo/yahoo.c:3202 src/protocols/yahoo/yahoo.c:3235
+#: src/protocols/oscar/oscar.c:7758 src/protocols/oscar/oscar.c:7765
+#: src/protocols/sametime/sametime.c:2759
+#: src/protocols/sametime/sametime.c:2765
+#: src/protocols/sametime/sametime.c:2771 src/protocols/simple/simple.c:255
+#: src/protocols/yahoo/yahoo.c:3220 src/protocols/yahoo/yahoo.c:3226
 #: src/protocols/zephyr/zephyr.c:2260
 msgid "Message"
 msgstr "సందేశం "
 
-#: src/gtksavedstatuses.c:406
+#: src/gtksavedstatuses.c:451
 #, fuzzy
 msgid "Saved Statuses"
 msgstr "సెర్వర్ స్టాటిస్టిక్స్ "
 
-#: src/gtksavedstatuses.c:527
+#. Use button
+#. TODO: It might be better if the button said "Use" or "Activate"
+#: src/gtksavedstatuses.c:477
+#, fuzzy
+msgid "_Use"
+msgstr "_ఉపయోగించుము,"
+
+#: src/gtksavedstatuses.c:584
 msgid "Title already in use.  You must choose a unique title."
 msgstr ""
 
-#: src/gtksavedstatuses.c:618
+#: src/gtksavedstatuses.c:675
 #, fuzzy
 msgid "Custom status"
 msgstr "వస్తుస్థితి (స్టాటస్) చేత "
 
 #  Autostart
-#: src/gtksavedstatuses.c:721 src/protocols/gg/gg.c:1064
+#: src/gtksavedstatuses.c:778 src/protocols/gg/gg.c:1064
 #: src/protocols/gg/gg.c:1069 src/protocols/jabber/buddy.c:626
 #: src/protocols/jabber/buddy.c:633 src/protocols/jabber/buddy.c:644
 #: src/protocols/jabber/jabber.c:1005 src/protocols/msn/msn.c:544
 #: src/protocols/novell/novell.c:2844 src/protocols/novell/novell.c:2848
 #: src/protocols/oscar/oscar.c:762 src/protocols/oscar/oscar.c:767
-#: src/protocols/oscar/oscar.c:769 src/protocols/yahoo/yahoo.c:2783
+#: src/protocols/oscar/oscar.c:769 src/protocols/yahoo/yahoo.c:2787
 msgid "Status"
 msgstr "స్టాటస్ "
 
-#: src/gtksavedstatuses.c:740
+#: src/gtksavedstatuses.c:797
 #, fuzzy
 msgid "_Title:"
 msgstr "టైటిల్ "
 
 #  Autostart
-#: src/gtksavedstatuses.c:760
+#: src/gtksavedstatuses.c:817
 #, fuzzy
 msgid "_Status:"
 msgstr "స్టాటస్ :"
 
 #. Custom status message expander
-#: src/gtksavedstatuses.c:795
+#: src/gtksavedstatuses.c:852
 msgid "Use a _different status for some accounts"
 msgstr ""
 
@@ -4639,29 +4670,30 @@ msgid ""
 "launched: %s"
 msgstr "కన్ఫిగర్ చేసిన సౌండ్ కమాండ్‌ను లాంచ్ చేయుటకు వీలుపడలేదు, అందుచేత శబ్దం వినిపించుటలేదు: %s"
 
-#: src/gtkstatusbox.c:190
+#: src/gtkstatusbox.c:197
 #, fuzzy
 msgid "Typing"
 msgstr "పింగ్ "
 
 #. connect to the server
-#: src/gtkstatusbox.c:193 src/protocols/irc/irc.c:258
+#: src/gtkstatusbox.c:200 src/protocols/irc/irc.c:258
 #: src/protocols/jabber/jabber.c:838 src/protocols/msn/session.c:362
 #: src/protocols/napster/napster.c:525 src/protocols/novell/novell.c:2164
-#: src/protocols/oscar/oscar.c:1824 src/protocols/yahoo/yahoo.c:2451
-#: src/protocols/zephyr/zephyr.c:1546
+#: src/protocols/oscar/oscar.c:1816 src/protocols/simple/simple.c:1276
+#: src/protocols/yahoo/yahoo.c:2455 src/protocols/zephyr/zephyr.c:1546
 msgid "Connecting"
 msgstr "కనెక్ట్ చేస్తున్నది."
 
 #. hacks
-#: src/gtkstatusbox.c:287 src/protocols/irc/irc.c:172
-#: src/protocols/jabber/jabber.c:1039 src/protocols/msn/msn.c:573
-#: src/protocols/msn/state.c:29 src/protocols/msn/state.c:30
-#: src/protocols/msn/state.c:37 src/protocols/msn/state.c:38
-#: src/protocols/novell/novell.c:2822 src/protocols/novell/novell.c:2956
-#: src/protocols/novell/novell.c:3039 src/protocols/oscar/oscar.c:808
-#: src/protocols/oscar/oscar.c:7751 src/protocols/silc/silc.c:48
-#: src/protocols/yahoo/yahoo.c:3196 src/status.c:155
+#: src/gtkstatusbox.c:294 src/protocols/bonjour/bonjour.c:233
+#: src/protocols/irc/irc.c:172 src/protocols/jabber/jabber.c:1039
+#: src/protocols/msn/msn.c:573 src/protocols/msn/state.c:29
+#: src/protocols/msn/state.c:30 src/protocols/msn/state.c:37
+#: src/protocols/msn/state.c:38 src/protocols/novell/novell.c:2822
+#: src/protocols/novell/novell.c:2956 src/protocols/novell/novell.c:3039
+#: src/protocols/oscar/oscar.c:808 src/protocols/oscar/oscar.c:7757
+#: src/protocols/simple/simple.c:253 src/protocols/silc/silc.c:48
+#: src/protocols/yahoo/yahoo.c:3214 src/status.c:155
 msgid "Available"
 msgstr "లభించును."
 
@@ -4669,58 +4701,52 @@ msgstr "లభించును."
 #. * Without this selecting Invisible as own status doesn't
 #. * work. It's not used and not needed to show status of buddies.
 #.
-#: src/gtkstatusbox.c:289 src/protocols/gg/gg.c:1096
-#: src/protocols/oscar/oscar.c:711 src/protocols/oscar/oscar.c:7765
-#: src/protocols/yahoo/yahoo.c:2629 src/protocols/yahoo/yahoo.c:3239
+#: src/gtkstatusbox.c:296 src/protocols/gg/gg.c:1096
+#: src/protocols/oscar/oscar.c:711 src/protocols/oscar/oscar.c:7771
+#: src/protocols/yahoo/yahoo.c:2633 src/protocols/yahoo/yahoo.c:3257
 msgid "Invisible"
 msgstr "అదృశ్య "
 
-#: src/gtkstatusbox.c:290 src/protocols/gg/gg.c:1082
-#: src/protocols/irc/irc.c:168 src/protocols/jabber/buddy.c:1087
-#: src/protocols/jabber/jabber.c:1032 src/protocols/msn/msn.c:569
-#: src/protocols/napster/napster.c:573 src/protocols/novell/novell.c:2834
-#: src/protocols/novell/novell.c:2953 src/protocols/oscar/oscar.c:769
-#: src/protocols/oscar/oscar.c:7585 src/protocols/oscar/oscar.c:7746
-#: src/protocols/silc/silc.c:46 src/protocols/yahoo/yahoo.c:2633
-#: src/protocols/yahoo/yahoo.c:3193 src/status.c:154
+#: src/gtkstatusbox.c:297 src/protocols/bonjour/bonjour.c:228
+#: src/protocols/gg/gg.c:1082 src/protocols/irc/irc.c:168
+#: src/protocols/jabber/buddy.c:1087 src/protocols/jabber/jabber.c:1032
+#: src/protocols/msn/msn.c:569 src/protocols/napster/napster.c:573
+#: src/protocols/novell/novell.c:2834 src/protocols/novell/novell.c:2953
+#: src/protocols/oscar/oscar.c:769 src/protocols/oscar/oscar.c:7591
+#: src/protocols/oscar/oscar.c:7752 src/protocols/sametime/sametime.c:2754
+#: src/protocols/simple/simple.c:249 src/protocols/silc/silc.c:46
+#: src/protocols/yahoo/yahoo.c:2637 src/protocols/yahoo/yahoo.c:3211
+#: src/status.c:154
 msgid "Offline"
 msgstr "ఆఫ్‌లైన్ "
 
-#: src/gtkstatusbox.c:292
+#: src/gtkstatusbox.c:299
 #, fuzzy
 msgid "Custom..."
 msgstr "ఇచ్ఛాపూర్వక "
 
-#: src/gtkstatusbox.c:293
+#: src/gtkstatusbox.c:300
 #, fuzzy
 msgid "Saved..."
 msgstr "ఫైలును సేవ్ చేయుము..."
 
-#. TODO: Should save the previous status as a transient status?
-#. Save the newly selected status to prefs.xml and status.xml
-#: src/gtkstatusbox.c:655 src/gtkstatusbox.c:657 src/gtkstatusbox.c:660
-#: src/status.c:1696
-#, fuzzy
-msgid "Default"
-msgstr "గ్నోమ్ డిఫాల్ట్ "
-
-#: src/gtkstock.c:118
+#: src/gtkstock.c:117
 msgid "_Alias"
 msgstr "_ఉపనామం"
 
-#: src/gtkstock.c:120
+#: src/gtkstock.c:119
 msgid "_Invite"
 msgstr "_ఆహ్వానించు "
 
-#: src/gtkstock.c:121
+#: src/gtkstock.c:120
 msgid "_Modify"
 msgstr "_మార్పుచేర్పులు చేయు"
 
-#: src/gtkstock.c:122
+#: src/gtkstock.c:121
 msgid "_Open Mail"
 msgstr "_మెయిల్‌ను ఓపెన్ చేయుము"
 
-#: src/gtkstock.c:124
+#: src/gtkstock.c:123
 msgid "_Warn"
 msgstr "_హెచ్చరించు"
 
@@ -4864,6 +4890,80 @@ msgstr "మీ ప్లగ్‌ఇన్‌ను గెయిమ్ లోడ
 msgid "The required plugin %s was unable to load."
 msgstr "కావలసిన ప్లగ్‌ఇన్ %s రీలోడ్ చేయలేకపోతున్నది."
 
+#: src/protocols/bonjour/bonjour.c:298 src/protocols/msn/msn.c:546
+#: src/protocols/msn/state.c:32 src/protocols/novell/novell.c:2831
+#: src/protocols/oscar/oscar.c:5064 src/protocols/yahoo/yahoo.c:2635
+#: src/protocols/yahoo/yahoo_profile.c:660
+msgid "Idle"
+msgstr " సోమరితనం"
+
+#: src/protocols/bonjour/bonjour.c:303
+#, fuzzy, c-format
+msgid ""
+"\n"
+"<b>Status:</b> %s"
+msgstr ""
+"\n"
+"<b>స్టాటస్</b>: గొప్పయైన"
+
+#: src/protocols/bonjour/bonjour.c:305
+#, fuzzy, c-format
+msgid ""
+"\n"
+"<b>Message:</b> %s"
+msgstr ""
+"\n"
+"<b>%s:</b> %s"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#. *  summary
+#. *  description
+#: src/protocols/bonjour/bonjour.c:388 src/protocols/bonjour/bonjour.c:390
+#, fuzzy
+msgid "Bonjour Protocol Plugin"
+msgstr "Yahoo Protocol Plugin"
+
+#. Creating the user splits
+#: src/protocols/bonjour/bonjour.c:417
+#, fuzzy
+msgid "Host name"
+msgstr "చివరి పేరు:"
+
+#. Creating the options for the protocol
+#: src/protocols/bonjour/bonjour.c:421 src/protocols/irc/irc.c:822
+#: src/protocols/msn/msn.c:1968 src/protocols/napster/napster.c:712
+#: src/protocols/silc/silc.c:1597
+msgid "Port"
+msgstr "పోర్ట్ "
+
+#: src/protocols/bonjour/bonjour.c:424 src/protocols/gg/gg.c:405
+#, fuzzy
+msgid "First name"
+msgstr "మొదటి పేరు:"
+
+#: src/protocols/bonjour/bonjour.c:427 src/protocols/gg/gg.c:401
+#, fuzzy
+msgid "Last name"
+msgstr "చివరి పేరు:"
+
+#: src/protocols/bonjour/bonjour.c:430 src/protocols/jabber/buddy.c:261
+#: src/protocols/jabber/buddy.c:772 src/protocols/jabber/buddy.c:780
+#: src/protocols/silc/silc.c:661 src/protocols/silc/util.c:511
+#: src/protocols/yahoo/yahoo_profile.c:995
+msgid "Email"
+msgstr "ఇ-మెయిల్ "
+
+#: src/protocols/bonjour/bonjour.h:35
+msgid "Bonjour"
+msgstr ""
+
 #  Buddy List
 #: src/protocols/gg/gg.c:136 src/protocols/gg/gg.c:155
 #, fuzzy
@@ -4929,17 +5029,7 @@ msgstr ""
 msgid "Registration completed successfully!"
 msgstr " రెజిస్ట్రేషన్ విజయవంతమైనది."
 
-#: src/protocols/gg/gg.c:401
-#, fuzzy
-msgid "Last name"
-msgstr "చివరి పేరు:"
-
-#: src/protocols/gg/gg.c:405
-#, fuzzy
-msgid "First name"
-msgstr "మొదటి పేరు:"
-
-#: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1664
+#: src/protocols/gg/gg.c:409 src/protocols/gg/gg.c:1665
 #: src/protocols/jabber/buddy.c:252 src/protocols/jabber/buddy.c:698
 #: src/protocols/jabber/buddy.c:1341 src/protocols/jabber/jabber.c:648
 #: src/protocols/msn/msn.c:1394 src/protocols/silc/buddy.c:1480
@@ -4949,7 +5039,7 @@ msgid "Nickname"
 msgstr "ఉపనామం "
 
 #: src/protocols/gg/gg.c:413 src/protocols/jabber/jabber.c:668
-#: src/protocols/oscar/oscar.c:5998 src/protocols/oscar/oscar.c:6006
+#: src/protocols/oscar/oscar.c:6006 src/protocols/oscar/oscar.c:6014
 msgid "City"
 msgstr "నగరం "
 
@@ -4963,7 +5053,7 @@ msgid "Only online"
 msgstr "ఆన్‌లైన్ "
 
 #: src/protocols/gg/gg.c:430 src/protocols/gg/gg.c:431
-#: src/protocols/gg/gg.c:1509
+#: src/protocols/gg/gg.c:1510
 #, fuzzy
 msgid "Find buddies"
 msgstr "సోమరి మిత్రులను కాంతిహీనులను చేయుము."
@@ -5015,23 +5105,23 @@ msgstr "గది లిస్టును తీసుకురావడంల�
 msgid "Current password"
 msgstr "తప్పు పాస్‌వర్డ్ "
 
-#: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1475
+#: src/protocols/gg/gg.c:555 src/protocols/gg/gg.c:1476
 #: src/protocols/jabber/jabber.c:632 src/protocols/jabber/jabber.c:1150
 msgid "Password"
 msgstr "పాస్‌వర్డ్"
 
-#: src/protocols/gg/gg.c:559 src/protocols/gg/gg.c:1479
+#: src/protocols/gg/gg.c:559 src/protocols/gg/gg.c:1480
 #, fuzzy
 msgid "Password (retype)"
 msgstr "పాస్‌వర్డ్ పంపబడింది."
 
-#: src/protocols/gg/gg.c:563 src/protocols/gg/gg.c:1483
+#: src/protocols/gg/gg.c:563 src/protocols/gg/gg.c:1484
 #, fuzzy
 msgid "Enter current token"
 msgstr "%s వర్తమానంలో లాగ్ ఇన్ చేయలేదు."
 
 #. original size: 60x24
-#: src/protocols/gg/gg.c:568 src/protocols/gg/gg.c:1488
+#: src/protocols/gg/gg.c:568 src/protocols/gg/gg.c:1489
 #, fuzzy
 msgid "Current token"
 msgstr "ప్రస్తుతం ఆన్‌లో ఉన్నది."
@@ -5084,7 +5174,7 @@ msgstr "అన్వేషణ ఫలితాలు "
 #.
 #: src/protocols/gg/gg.c:1087 src/protocols/jabber/buddy.c:1089
 #: src/protocols/napster/napster.c:578 src/protocols/oscar/oscar.c:713
-#: src/protocols/yahoo/yahoo.c:2635 src/protocols/zephyr/zephyr.c:2252
+#: src/protocols/yahoo/yahoo.c:2639 src/protocols/zephyr/zephyr.c:2252
 msgid "Online"
 msgstr "ఆన్‌లైన్ "
 
@@ -5096,7 +5186,7 @@ msgstr "ఆన్‌లైన్ "
 #: src/protocols/msn/state.c:31 src/protocols/novell/novell.c:2828
 #: src/protocols/novell/novell.c:2962 src/protocols/novell/novell.c:3044
 #: src/protocols/silc/buddy.c:1421 src/protocols/silc/silc.c:54
-#: src/protocols/yahoo/yahoo.c:2613 src/protocols/yahoo/yahoo.c:3209
+#: src/protocols/yahoo/yahoo.c:2617 src/protocols/yahoo/yahoo.c:3233
 msgid "Busy"
 msgstr "కాళీ లేదు."
 
@@ -5119,69 +5209,69 @@ msgstr "ఆపుము "
 msgid "Chat _name:"
 msgstr "చివరి పేరు:"
 
-#: src/protocols/gg/gg.c:1182
+#: src/protocols/gg/gg.c:1183
 #, fuzzy
 msgid "Connection failed."
 msgstr "కనెక్షన్ వైఫల్యం "
 
-#: src/protocols/gg/gg.c:1356
+#: src/protocols/gg/gg.c:1357
 #, fuzzy
 msgid "Chat error"
 msgstr "చదువుటలో పొరపాటు. "
 
-#: src/protocols/gg/gg.c:1357
+#: src/protocols/gg/gg.c:1358
 #, fuzzy
 msgid "This chat name is already in use"
 msgstr "ఫైలు అస్తిత్వంలో ఉంది. "
 
-#: src/protocols/gg/gg.c:1434
+#: src/protocols/gg/gg.c:1435
 #, fuzzy
 msgid "Not connected to the server."
 msgstr "మీరు సెర్వర్‌నుండి డిస్‌కనెక్ట్ అయినారు."
 
-#: src/protocols/gg/gg.c:1455
+#: src/protocols/gg/gg.c:1456
 msgid "Token Error: Unable to fetch the token.\n"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1471
+#: src/protocols/gg/gg.c:1472
 #, fuzzy
 msgid "e-Mail"
 msgstr "ఇ-మెయిల్ "
 
-#: src/protocols/gg/gg.c:1494 src/protocols/gg/gg.c:1495
+#: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
 msgstr "కొత్త జాబర్ ఎకౌంట్‌ను రిజిస్టర్ చేయండి."
 
-#: src/protocols/gg/gg.c:1496
+#: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1514
+#: src/protocols/gg/gg.c:1515
 #, fuzzy
 msgid "Change password"
 msgstr "పాస్‌వర్డ్‌ను మార్చండి."
 
-#: src/protocols/gg/gg.c:1519
+#: src/protocols/gg/gg.c:1520
 #, fuzzy
 msgid "Upload buddylist to Server"
 msgstr "సెర్వర్‌కు మిత్రుల లిస్టును ఎగుమతి చేయండి."
 
-#: src/protocols/gg/gg.c:1522
+#: src/protocols/gg/gg.c:1523
 #, fuzzy
 msgid "Download buddylist from Server"
 msgstr "సెర్వర్‌నుండి మిత్రుల లిస్టును తొలగించండి."
 
-#: src/protocols/gg/gg.c:1525
+#: src/protocols/gg/gg.c:1526
 #, fuzzy
 msgid "Delete buddylist from Server"
 msgstr "సెర్వర్‌నుండి మిత్రుల లిస్టును తొలగించండి."
 
-#: src/protocols/gg/gg.c:1528
+#: src/protocols/gg/gg.c:1529
 msgid "Save buddylist to file"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1531
+#: src/protocols/gg/gg.c:1532
 #, fuzzy
 msgid "Load buddylist from file"
 msgstr "సెర్వర్‌నుండి మిత్రుల లిస్టును దిగుమతి చేయండి."
@@ -5197,16 +5287,16 @@ msgstr "సెర్వర్‌నుండి మిత్రుల లిస�
 #. id
 #. name
 #. version
-#: src/protocols/gg/gg.c:1616
+#: src/protocols/gg/gg.c:1617
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Gadu-Gadu ప్రొటోకాల్ ప్లగ్‌ఇన్ "
 
 #. summary
-#: src/protocols/gg/gg.c:1617
+#: src/protocols/gg/gg.c:1618
 msgid "Polish popular IM"
 msgstr ""
 
-#: src/protocols/gg/gg.c:1664
+#: src/protocols/gg/gg.c:1665
 #, fuzzy
 msgid "Gadu-Gadu User"
 msgstr "Gadu-Gadu సెర్చ్ ఎంజిన్."
@@ -5216,13 +5306,13 @@ msgstr "Gadu-Gadu సెర్చ్ ఎంజిన్."
 msgid "Unknown command: %s"
 msgstr "అజ్ఞాత కమాండ్: %s"
 
-#: src/protocols/irc/cmds.c:463 src/protocols/jabber/chat.c:592
+#: src/protocols/irc/cmds.c:468 src/protocols/jabber/chat.c:592
 #: src/protocols/silc/silc.c:1021
 #, c-format
 msgid "current topic is: %s"
 msgstr "వర్తమాన విషయం: %s"
 
-#: src/protocols/irc/cmds.c:467 src/protocols/jabber/chat.c:596
+#: src/protocols/irc/cmds.c:472 src/protocols/jabber/chat.c:596
 #: src/protocols/silc/silc.c:1025
 msgid "No topic is set"
 msgstr "ఏ విషయమూ సెట్ చేయలేదు."
@@ -5285,12 +5375,13 @@ msgstr "IRC ఉపనామములలో తెల్లకాళీ లేద
 msgid "SSL support unavailable"
 msgstr "SSL సపోర్ట్ లభించలేదు."
 
-#: src/protocols/irc/irc.c:277
+#: src/protocols/irc/irc.c:277 src/protocols/simple/simple.c:383
+#: src/protocols/simple/simple.c:1219
 msgid "Couldn't create socket"
 msgstr "సాకెట్‌ను సృష్టించలేదు. "
 
 #: src/protocols/irc/irc.c:348 src/protocols/jabber/jabber.c:306
-#: src/protocols/oscar/oscar.c:1744 src/protocols/oscar/oscar.c:1820
+#: src/protocols/oscar/oscar.c:1744 src/protocols/oscar/oscar.c:1812
 msgid "Couldn't connect to host"
 msgstr "హోస్ట్‌కు కనెక్ట్ చేయలేదు."
 
@@ -5316,14 +5407,6 @@ msgstr "వినియోగదారులు "
 msgid "Topic"
 msgstr "విషయం "
 
-#: src/protocols/irc/irc.c:730
-msgid "IRC"
-msgstr "IRC"
-
-#: src/protocols/irc/irc.c:734
-msgid "Quit message"
-msgstr "సందేశమును వదలివేయుము."
-
 #. *< type
 #. *< ui_requirement
 #. *< flags
@@ -5332,42 +5415,42 @@ msgstr "సందేశమును వదలివేయుము."
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/irc/irc.c:820
+#: src/protocols/irc/irc.c:799
 msgid "IRC Protocol Plugin"
 msgstr "IRC ప్రొటోకాల్ ప్లగ్‌ఇన్. "
 
 #. *  summary
-#: src/protocols/irc/irc.c:821
+#: src/protocols/irc/irc.c:800
 msgid "The IRC Protocol Plugin that Sucks Less"
 msgstr " IRC ప్రొటోకాల్ ప్లగ్‌ఇన్ చాలా తక్కువగా Suck చేస్తుంది."
 
-#: src/protocols/irc/irc.c:840 src/protocols/irc/msgs.c:233
+#: src/protocols/irc/irc.c:819 src/protocols/irc/msgs.c:233
 #: src/protocols/jabber/jabber.c:1708 src/protocols/napster/napster.c:707
-#: src/protocols/silc/ops.c:1028 src/protocols/silc/ops.c:1130
+#: src/protocols/simple/simple.c:1428 src/protocols/silc/ops.c:1028
+#: src/protocols/silc/ops.c:1130
 msgid "Server"
 msgstr "సెర్వర్ "
 
-#: src/protocols/irc/irc.c:843 src/protocols/msn/msn.c:1968
-#: src/protocols/napster/napster.c:712 src/protocols/silc/silc.c:1597
-msgid "Port"
-msgstr "పోర్ట్ "
-
-#: src/protocols/irc/irc.c:846
+#: src/protocols/irc/irc.c:825
 msgid "Encodings"
 msgstr "ఎన్‌కోడింగులు "
 
-#: src/protocols/irc/irc.c:849 src/protocols/irc/msgs.c:227
+#: src/protocols/irc/irc.c:828 src/protocols/irc/msgs.c:227
 #: src/protocols/jabber/jabber.c:628 src/protocols/silc/buddy.c:1483
 #: src/protocols/silc/ops.c:975 src/protocols/silc/ops.c:977
 #: src/protocols/silc/ops.c:1124 src/protocols/silc/ops.c:1126
 msgid "Username"
 msgstr "వినియోగదారుని పేరు "
 
-#: src/protocols/irc/irc.c:852
+#: src/protocols/irc/irc.c:831
 msgid "Real name"
 msgstr "నిజమైన పేరు "
 
-#: src/protocols/irc/irc.c:855
+#.
+#. option = gaim_account_option_string_new(_("Quit message"), "quitmsg", IRC_DEFAULT_QUIT);
+#. prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+#.
+#: src/protocols/irc/irc.c:839
 #, fuzzy
 msgid "Use SSL"
 msgstr "SSL"
@@ -5396,7 +5479,7 @@ msgstr "%sను నిషేధించలేము: నిషేధితు�
 msgid "<b>%s:</b> %s"
 msgstr "<b>%s:</b> %s"
 
-#: src/protocols/irc/msgs.c:213 src/protocols/oscar/oscar.c:5944
+#: src/protocols/irc/msgs.c:213 src/protocols/oscar/oscar.c:5952
 #: src/protocols/silc/ops.c:1198
 msgid "Nick"
 msgstr "ఉప నామము "
@@ -5857,12 +5940,6 @@ msgstr "దేశం "
 msgid "Telephone"
 msgstr "టెలీఫోన్ "
 
-#: src/protocols/jabber/buddy.c:261 src/protocols/jabber/buddy.c:772
-#: src/protocols/jabber/buddy.c:780 src/protocols/silc/silc.c:661
-#: src/protocols/silc/util.c:511 src/protocols/yahoo/yahoo_profile.c:995
-msgid "Email"
-msgstr "ఇ-మెయిల్ "
-
 #: src/protocols/jabber/buddy.c:262 src/protocols/jabber/buddy.c:795
 msgid "Organization Name"
 msgstr "సంస్థ పేరు "
@@ -5876,7 +5953,7 @@ msgid "Role"
 msgstr "కార్య భాగం "
 
 #: src/protocols/jabber/buddy.c:266 src/protocols/jabber/buddy.c:701
-#: src/protocols/oscar/oscar.c:5979
+#: src/protocols/oscar/oscar.c:5987
 msgid "Birthday"
 msgstr "పుట్టినరోజు "
 
@@ -5903,7 +5980,7 @@ msgid "Middle Name"
 msgstr "మధ్యపేరు"
 
 #: src/protocols/jabber/buddy.c:706 src/protocols/jabber/jabber.c:663
-#: src/protocols/oscar/oscar.c:5997 src/protocols/oscar/oscar.c:6005
+#: src/protocols/oscar/oscar.c:6005 src/protocols/oscar/oscar.c:6013
 #: src/protocols/silc/ops.c:850
 msgid "Address"
 msgstr "అడ్రస్ "
@@ -5960,7 +6037,8 @@ msgid "Extended Away"
 msgstr "దూరమైపోయినది."
 
 #: src/protocols/jabber/buddy.c:1097 src/protocols/jabber/jabber.c:1071
-#: src/protocols/oscar/oscar.c:701 src/protocols/oscar/oscar.c:7785
+#: src/protocols/oscar/oscar.c:701 src/protocols/oscar/oscar.c:7791
+#: src/protocols/sametime/sametime.c:2770
 msgid "Do Not Disturb"
 msgstr "అంతరాయము కలిగించవద్దు."
 
@@ -5973,12 +6051,12 @@ msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
-#: src/protocols/oscar/oscar.c:5954 src/protocols/silc/ops.c:810
+#: src/protocols/oscar/oscar.c:5962 src/protocols/silc/ops.c:810
 msgid "First Name"
 msgstr "మొదటి పేరు "
 
 #: src/protocols/jabber/buddy.c:1336 src/protocols/jabber/jabber.c:658
-#: src/protocols/oscar/oscar.c:5955
+#: src/protocols/oscar/oscar.c:5963
 msgid "Last Name"
 msgstr "చివరి పేరు "
 
@@ -6011,7 +6089,7 @@ msgstr "ప్రశ్నించడానికి సమావేశ సె�
 msgid "Search Directory"
 msgstr "_అన్వేషించుము :"
 
-#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7312
+#: src/protocols/jabber/chat.c:41 src/protocols/oscar/oscar.c:7318
 #: src/protocols/yahoo/yahoochat.c:979
 msgid "_Room:"
 msgstr "_గది:"
@@ -6146,8 +6224,8 @@ msgstr "మునుపే రెజిస్టర్ ఐనది. "
 msgid "E-Mail"
 msgstr "ఇ-మెయిల్ "
 
-#: src/protocols/jabber/jabber.c:673 src/protocols/oscar/oscar.c:5999
-#: src/protocols/oscar/oscar.c:6007
+#: src/protocols/jabber/jabber.c:673 src/protocols/oscar/oscar.c:6007
+#: src/protocols/oscar/oscar.c:6015
 msgid "State"
 msgstr "స్థితి "
 
@@ -6182,7 +6260,7 @@ msgstr "ప్రవాహాన్ని పునఃప్రారంభస�
 
 #: src/protocols/jabber/jabber.c:928 src/protocols/jabber/jabber.c:1277
 #: src/protocols/jabber/jabber.c:1318 src/protocols/jabber/jabber.c:1351
-#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:7583
+#: src/protocols/oscar/oscar.c:767 src/protocols/oscar/oscar.c:7589
 msgid "Not Authorized"
 msgstr "అధికారము పొందని "
 
@@ -6205,6 +6283,10 @@ msgstr "కు "
 #: src/protocols/jabber/jabber.c:980
 msgid "None (To pending)"
 msgstr "ఎవరూ లేరు (To pending)"
+
+#: src/protocols/jabber/jabber.c:982 src/protocols/yahoo/yahoo.c:2780
+msgid "None"
+msgstr "ఎవరూ లేరు."
 
 #: src/protocols/jabber/jabber.c:984
 msgid "Subscription"
@@ -6622,14 +6704,14 @@ msgid "The user %s wants to add %s to his or her buddy list."
 msgstr "వినియోగదారుడు/రాలు %s %sను తన మిత్రుల జాబితాలో చేర్చదల్చుకున్నాడు/న్నది."
 
 #: src/protocols/jabber/presence.c:297 src/protocols/msn/userlist.c:100
-#: src/protocols/oscar/oscar.c:4608 src/protocols/oscar/oscar.c:7242
-#: src/protocols/yahoo/yahoo.c:893
+#: src/protocols/oscar/oscar.c:4602 src/protocols/oscar/oscar.c:7248
+#: src/protocols/yahoo/yahoo.c:895
 msgid "Authorize"
 msgstr "అనుమతి నిచ్చు "
 
 #: src/protocols/jabber/presence.c:298 src/protocols/msn/userlist.c:101
-#: src/protocols/oscar/oscar.c:4610 src/protocols/oscar/oscar.c:7243
-#: src/protocols/yahoo/yahoo.c:895
+#: src/protocols/oscar/oscar.c:4604 src/protocols/oscar/oscar.c:7249
+#: src/protocols/yahoo/yahoo.c:897
 msgid "Deny"
 msgstr "కాదను "
 
@@ -6883,7 +6965,7 @@ msgstr "స్నేహపాత్రమైన పేరు అతి త్వ
 msgid "Server too busy"
 msgstr "సెర్వర్‌కు కాళీ లేదు."
 
-#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2764
+#: src/protocols/msn/error.c:198 src/protocols/oscar/oscar.c:2756
 #: src/protocols/silc/ops.c:1503 src/protocols/toc/toc.c:722
 msgid "Authentication failed"
 msgstr "ప్రమాణీకరణ వైఫల్యం "
@@ -6979,8 +7061,8 @@ msgid "Page"
 msgstr "పేజీ "
 
 #: src/protocols/msn/msn.c:544 src/protocols/msn/msn.c:551
-#: src/protocols/msn/msn.c:554 src/protocols/yahoo/yahoo.c:2783
-#: src/protocols/yahoo/yahoo.c:2789
+#: src/protocols/msn/msn.c:554 src/protocols/yahoo/yahoo.c:2787
+#: src/protocols/yahoo/yahoo.c:2793
 #, c-format
 msgid ""
 "\n"
@@ -6989,28 +7071,22 @@ msgstr ""
 "\n"
 "<b>%s:</b> %s"
 
-#: src/protocols/msn/msn.c:546 src/protocols/msn/state.c:32
-#: src/protocols/novell/novell.c:2831 src/protocols/oscar/oscar.c:5070
-#: src/protocols/yahoo/yahoo.c:2631 src/protocols/yahoo/yahoo_profile.c:660
-msgid "Idle"
-msgstr " సోమరితనం"
-
 #: src/protocols/msn/msn.c:551
 msgid "Has you"
 msgstr "మీరు "
 
 #: src/protocols/msn/msn.c:581 src/protocols/msn/state.c:33
-#: src/protocols/yahoo/yahoo.c:2611 src/protocols/yahoo/yahoo.c:3206
+#: src/protocols/yahoo/yahoo.c:2615 src/protocols/yahoo/yahoo.c:3230
 msgid "Be Right Back"
 msgstr "కొద్ది సమయంలో మరలి వచ్చు "
 
 #: src/protocols/msn/msn.c:589 src/protocols/msn/state.c:35
-#: src/protocols/yahoo/yahoo.c:2621 src/protocols/yahoo/yahoo.c:3221
+#: src/protocols/yahoo/yahoo.c:2625 src/protocols/yahoo/yahoo.c:3245
 msgid "On The Phone"
 msgstr "ఫోనులో "
 
 #: src/protocols/msn/msn.c:593 src/protocols/msn/state.c:36
-#: src/protocols/yahoo/yahoo.c:2625 src/protocols/yahoo/yahoo.c:3227
+#: src/protocols/yahoo/yahoo.c:2629 src/protocols/yahoo/yahoo.c:3251
 msgid "Out To Lunch"
 msgstr " మధ్యాహ్న భోజనానికి వెళ్లినారు."
 
@@ -7089,12 +7165,12 @@ msgstr "MSN ప్రొఫైల్ "
 msgid "Error retrieving profile"
 msgstr "ప్రొఫైల్‌ను బయటకు తీసుకురావడంలో పొరపాటు."
 
-#: src/protocols/msn/msn.c:1546 src/protocols/oscar/oscar.c:5984
+#: src/protocols/msn/msn.c:1546 src/protocols/oscar/oscar.c:5992
 #: src/protocols/yahoo/yahoo_profile.c:1015
 msgid "Age"
 msgstr "వయసు "
 
-#: src/protocols/msn/msn.c:1553 src/protocols/oscar/oscar.c:5971
+#: src/protocols/msn/msn.c:1553 src/protocols/oscar/oscar.c:5979
 #: src/protocols/yahoo/yahoo_profile.c:1025
 msgid "Gender"
 msgstr "లింగము"
@@ -7239,15 +7315,15 @@ msgstr "%s ని చేర్చడం కుదరలేదు, ఎందు�
 msgid "%s is not a valid passport account."
 msgstr "%s విలువైన పాస్‌పోర్ట్ ఎకౌంట్ కాదు."
 
-#: src/protocols/msn/notification.c:811
+#: src/protocols/msn/notification.c:815
 msgid "Unable to rename group"
 msgstr "గ్రూపుకు కొత్తపేరు నివ్వడంలో అసమర్థత."
 
-#: src/protocols/msn/notification.c:866
+#: src/protocols/msn/notification.c:870
 msgid "Unable to delete group"
 msgstr "గ్రూపును తొలగించడంలో అసమర్థత. "
 
-#: src/protocols/msn/notification.c:1299
+#: src/protocols/msn/notification.c:1303
 #, c-format
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
@@ -7287,7 +7363,7 @@ msgstr "చదవడంలో పొరపాటు."
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
 #: src/protocols/msn/servconn.c:133 src/protocols/msn/session.c:339
-#: src/protocols/oscar/oscar.c:4931
+#: src/protocols/oscar/oscar.c:4925
 msgid "Unknown error"
 msgstr "తెలియని పొరపాటు."
 
@@ -7315,7 +7391,7 @@ msgstr "HTTP పదవిశ్లేషణ చేయుటలో పొరప�
 #. MSG_SERVER_GHOST
 #. Looks like someone logged in as us! =-O
 #: src/protocols/msn/session.c:325 src/protocols/napster/napster.c:450
-#: src/protocols/oscar/oscar.c:5635 src/protocols/yahoo/yahoo.c:194
+#: src/protocols/oscar/oscar.c:5629 src/protocols/yahoo/yahoo.c:194
 msgid "You have signed on from another location."
 msgstr "మీరు మరో ప్రదేశంనుండి సైన్ ఆన్ చేసినారు."
 
@@ -7468,8 +7544,8 @@ msgstr "%s ఒక పింగ్‌ను కోరినారు. "
 
 #. we didn't successfully connect. tdt->toc_fd is valid here
 #: src/protocols/napster/napster.c:501 src/protocols/napster/napster.c:532
-#: src/protocols/toc/toc.c:172 src/protocols/yahoo/yahoo.c:2209
-#: src/protocols/yahoo/yahoo.c:2236 src/protocols/yahoo/yahoo.c:2299
+#: src/protocols/toc/toc.c:172 src/protocols/yahoo/yahoo.c:2212
+#: src/protocols/yahoo/yahoo.c:2239 src/protocols/yahoo/yahoo.c:2302
 #: src/protocols/yahoo/yahoo_filexfer.c:69
 #: src/protocols/yahoo/yahoo_filexfer.c:111 src/protocols/yahoo/ycht.c:481
 msgid "Unable to connect."
@@ -7731,8 +7807,8 @@ msgstr "వ్యక్తిగత టైటిల్ "
 msgid "Mailstop"
 msgstr "మెయిల్‌స్టాప్ "
 
-#: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5957
-#: src/protocols/oscar/oscar.c:5964
+#: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5965
+#: src/protocols/oscar/oscar.c:5972
 msgid "Email Address"
 msgstr "ఇ-మెయిల్ అడ్రస్ "
 
@@ -7833,7 +7909,7 @@ msgid "This conference has been closed. No more messages can be sent."
 msgstr "ఈ సమావేశం ముగిసింది. ఇంకా సందేశాలు పంపడం సాధ్యం కాదు."
 
 #: src/protocols/novell/novell.c:2965 src/protocols/novell/novell.c:3047
-#: src/protocols/yahoo/yahoo.c:2835
+#: src/protocols/yahoo/yahoo.c:2839
 msgid "Appear Offline"
 msgstr "ఆఫ్‌లైన్ "
 
@@ -7976,7 +8052,7 @@ msgstr "AIM Direct IM"
 msgid "Chat"
 msgstr "సంభాషణ "
 
-#: src/protocols/oscar/oscar.c:625 src/protocols/oscar/oscar.c:7892
+#: src/protocols/oscar/oscar.c:625 src/protocols/oscar/oscar.c:7898
 msgid "Get File"
 msgstr "పైలును తీసుకొని రమ్ము. "
 
@@ -8050,15 +8126,15 @@ msgstr "ప్రత్యక్ష వీడియో "
 msgid "Camera"
 msgstr "కెమేరా "
 
-#: src/protocols/oscar/oscar.c:699 src/protocols/oscar/oscar.c:7775
+#: src/protocols/oscar/oscar.c:699 src/protocols/oscar/oscar.c:7781
 msgid "Free For Chat"
 msgstr "సంభాషించడానికి సమయం ఉంది."
 
-#: src/protocols/oscar/oscar.c:703 src/protocols/oscar/oscar.c:7790
+#: src/protocols/oscar/oscar.c:703 src/protocols/oscar/oscar.c:7796
 msgid "Not Available"
 msgstr "లభించదు."
 
-#: src/protocols/oscar/oscar.c:705 src/protocols/oscar/oscar.c:7780
+#: src/protocols/oscar/oscar.c:705 src/protocols/oscar/oscar.c:7786
 msgid "Occupied"
 msgstr "స్వాధీనం చేసుకొన్న"
 
@@ -8066,7 +8142,7 @@ msgstr "స్వాధీనం చేసుకొన్న"
 msgid "Web Aware"
 msgstr "వెబ్ అవగతం "
 
-#: src/protocols/oscar/oscar.c:786 src/protocols/oscar/oscar.c:5056
+#: src/protocols/oscar/oscar.c:786 src/protocols/oscar/oscar.c:5050
 msgid "Warning Level"
 msgstr "వార్నింగ్ లెవల్."
 
@@ -8131,7 +8207,7 @@ msgstr ""
 "ఎందుకంటే ఇది మీ IP అడ్రస్‌ను వెల్లడిస్తుంది, అది మీ రహస్యములను కాపాడుటకు ఇబ్బంది కావచ్చును. "
 "కొనసాగించదల్చుకున్నారా?"
 
-#: src/protocols/oscar/oscar.c:1595 src/protocols/oscar/oscar.c:4367
+#: src/protocols/oscar/oscar.c:1595 src/protocols/oscar/oscar.c:4361
 msgid "Connect"
 msgstr "కనెక్ట్ "
 
@@ -8148,7 +8224,7 @@ msgstr "సంభాషణ ఇప్పుడు లభ్యం కాదు. "
 msgid "Screen name sent"
 msgstr "స్క్రీన్ పేరు పంపబడింది. "
 
-#: src/protocols/oscar/oscar.c:1778
+#: src/protocols/oscar/oscar.c:1770
 #, c-format
 msgid ""
 "Unable to login: Could not sign on as %s because the screen name is "
@@ -8158,22 +8234,22 @@ msgstr ""
 "లాగిన్ చేయుట సాధ్యపడదు: మీరు %s సంతకం చేయలేరు. ఎందుకంటే స్క్రీన్‌పేరు పనికిరాదు. స్క్రీన్‌పేరు "
 "అక్షరంతోనే ప్రారంభించాలి. పేరులో అక్షరాలు, అంకెలు, స్పేసులు లేదా కేవలం అంకెలుమాత్రం ఉండవచ్చును. "
 
-#: src/protocols/oscar/oscar.c:1807
+#: src/protocols/oscar/oscar.c:1799
 msgid "Unable to login to AIM"
 msgstr "AIMకు లాగిన్ చేయుట అసాధ్యం."
 
-#: src/protocols/oscar/oscar.c:1911 src/protocols/oscar/oscar.c:2854
+#: src/protocols/oscar/oscar.c:1903 src/protocols/oscar/oscar.c:2846
 msgid "Could Not Connect"
 msgstr "కనెక్ట్ చేయుట సాధ్యం కాదు."
 
-#: src/protocols/oscar/oscar.c:1919
+#: src/protocols/oscar/oscar.c:1911
 msgid "Connection established, cookie sent"
 msgstr "కనెక్షన్ చేయడమైంది, కుకీ పంపబడింది."
 
 #. clientip & verifiedip failed, request a redirect
 #. * that is, we want the sender to connect to us
 #. Let the user not to lose hope quite yet
-#: src/protocols/oscar/oscar.c:2071
+#: src/protocols/oscar/oscar.c:2063
 #, fuzzy
 msgid "Attempting connection redirect..."
 msgstr "%s ను %s వద్ద కనెక్ట్ చేయడానికి ప్రయత్నిస్తోంది: %hu డైరెక్ట్ IM కోసం."
@@ -8182,7 +8258,7 @@ msgstr "%s ను %s వద్ద కనెక్ట్ చేయడానిక
 #. * Yes, it's a bit odd to ask the user to enable proxied file transfers
 #. * when it's a proxied transfer that timed out. It is possible that a
 #. * stage 1/2 proxied transfer might work when a stage 3 will not.
-#: src/protocols/oscar/oscar.c:2116
+#: src/protocols/oscar/oscar.c:2108
 #, c-format
 msgid ""
 "Transfer of file %s timed out.\n"
@@ -8190,41 +8266,41 @@ msgid ""
 "ICQ."
 msgstr ""
 
-#: src/protocols/oscar/oscar.c:2214 src/protocols/yahoo/yahoo_filexfer.c:174
+#: src/protocols/oscar/oscar.c:2206 src/protocols/yahoo/yahoo_filexfer.c:174
 #: src/protocols/yahoo/yahoo_filexfer.c:183
 #: src/protocols/yahoo/yahoo_filexfer.c:192
 msgid "Unable to establish file descriptor."
 msgstr "ఫైల్ డెస్క్రిప్టర్‌ను స్థాపించడంలో అసమర్థత."
 
-#: src/protocols/oscar/oscar.c:2219
+#: src/protocols/oscar/oscar.c:2211
 msgid "Unable to create new connection."
 msgstr "కొత్త కనెక్షన్ సృష్టించడంలో అసమర్థత. "
 
-#: src/protocols/oscar/oscar.c:2453 src/protocols/oscar/oscar.c:2462
-#: src/protocols/oscar/oscar.c:2476 src/protocols/oscar/oscar.c:2486
+#: src/protocols/oscar/oscar.c:2445 src/protocols/oscar/oscar.c:2454
+#: src/protocols/oscar/oscar.c:2468 src/protocols/oscar/oscar.c:2478
 #, fuzzy
 msgid "Unable to log into file transfer proxy."
 msgstr "%s ఫైలును వ్రాయడంలో అసమర్థత. "
 
-#: src/protocols/oscar/oscar.c:2540
+#: src/protocols/oscar/oscar.c:2532
 #, fuzzy
 msgid "Unable to establish listener socket or no AOL proxy connection present."
 msgstr "శ్రోతకు సాకెట్‌ను స్థాపించడంలో అసమర్థత. "
 
-#: src/protocols/oscar/oscar.c:2741 src/protocols/toc/toc.c:543
+#: src/protocols/oscar/oscar.c:2733 src/protocols/toc/toc.c:543
 msgid "Incorrect nickname or password."
 msgstr "ఉపనామం లేక పాస్‌వర్డ్ తప్పు. "
 
-#: src/protocols/oscar/oscar.c:2746
+#: src/protocols/oscar/oscar.c:2738
 msgid "Your account is currently suspended."
 msgstr "ప్రస్తుతానికి మీ ఎకౌంట్ సస్పెండ్ చేయబడింది. "
 
 #. service temporarily unavailable
-#: src/protocols/oscar/oscar.c:2750
+#: src/protocols/oscar/oscar.c:2742
 msgid "The AOL Instant Messenger service is temporarily unavailable."
 msgstr "AOL సత్వర మెసెంజర్ సర్వీస్ తాత్కాలికంగా అలభ్యం. "
 
-#: src/protocols/oscar/oscar.c:2755
+#: src/protocols/oscar/oscar.c:2747
 msgid ""
 "You have been connecting and disconnecting too frequently. Wait ten minutes "
 "and try again. If you continue to try, you will need to wait even longer."
@@ -8232,33 +8308,33 @@ msgstr ""
 "మీరు తరచుగా కనెక్ట్ చేస్తున్నారు, డిస్‌కనెక్ట్ చేస్తున్నారు. పది నిమిషాలు ఆగి మరల ప్రయత్నించండి. మీరు "
 "ప్రయత్నాన్ని కొనసాగిస్తే, మీరు ఇంకా ఎక్కువ కాలం ఆగవలసియుంటుంది."
 
-#: src/protocols/oscar/oscar.c:2760
+#: src/protocols/oscar/oscar.c:2752
 #, c-format
 msgid "The client version you are using is too old. Please upgrade at %s"
 msgstr "మీకు వాడుతున్న ఖాతాదారుని వెర్షన్ చాలా పాతది. దయచేసి  %s వద్ద అప్‌గ్రేడ్ చేయండి."
 
-#: src/protocols/oscar/oscar.c:2791
+#: src/protocols/oscar/oscar.c:2783
 msgid "Internal Error"
 msgstr "అంతర్గత పొరపాటు "
 
-#: src/protocols/oscar/oscar.c:2861
+#: src/protocols/oscar/oscar.c:2853
 msgid "Received authorization"
 msgstr "ప్రమాణీకరణ లభించింది. "
 
-#: src/protocols/oscar/oscar.c:2885
+#: src/protocols/oscar/oscar.c:2877
 msgid "The SecurID key entered is invalid."
 msgstr "ఎంటర్ చేసిన SecurID పనికిరాదు."
 
-#: src/protocols/oscar/oscar.c:2899
+#: src/protocols/oscar/oscar.c:2891
 msgid "Enter SecurID"
 msgstr "SecurIDని ఎంటర్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:2900
+#: src/protocols/oscar/oscar.c:2892
 msgid "Enter the 6 digit number from the digital display."
 msgstr "డిజిటల్ ప్రదర్శననుండి 6 అంకెల నెంబరును ఎంటర్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:2940 src/protocols/oscar/oscar.c:2970
-#: src/protocols/oscar/oscar.c:3059
+#: src/protocols/oscar/oscar.c:2932 src/protocols/oscar/oscar.c:2962
+#: src/protocols/oscar/oscar.c:3051
 #, c-format
 msgid ""
 "You may be disconnected shortly.  You may want to use TOC until this is "
@@ -8267,24 +8343,24 @@ msgstr ""
 "త్వరలో మీరు డిస్‌కనెక్ట్ చేయబడవచ్చు. ఇది ఫిక్స్ అయేంతవరకు మీరు TOC ని వాడాలని అనుకోవచ్చు. అప్‌డేట్స్ కోసం "
 "%s చెక్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:2943 src/protocols/oscar/oscar.c:2973
+#: src/protocols/oscar/oscar.c:2935 src/protocols/oscar/oscar.c:2965
 msgid "Gaim was unable to get a valid AIM login hash."
 msgstr "గెయిమ్‌కు విలువైన AIM లాగిన్ హాష్‌ లభించలేదు."
 
-#: src/protocols/oscar/oscar.c:3062
+#: src/protocols/oscar/oscar.c:3054
 msgid "Gaim was unable to get a valid login hash."
 msgstr "గెయిమ్‌కు విలువైన లాగిన్ హాష్‌ లభించలేదు."
 
-#: src/protocols/oscar/oscar.c:3093
+#: src/protocols/oscar/oscar.c:3085
 msgid "Password sent"
 msgstr "పాస్‌వర్డ్ పంపబడింది."
 
-#: src/protocols/oscar/oscar.c:4358
+#: src/protocols/oscar/oscar.c:4352
 #, c-format
 msgid "%s has just asked to directly connect to %s"
 msgstr "%s కు డైరెక్ట్‌గా కనెక్ట్ చేయడానికి %s ఇప్పుడే అడిగాడు."
 
-#: src/protocols/oscar/oscar.c:4361
+#: src/protocols/oscar/oscar.c:4355
 msgid ""
 "This requires a direct connection between the two computers and is necessary "
 "for IM Images.  Because your IP address will be revealed, this may be "
@@ -8293,19 +8369,19 @@ msgstr ""
 "దీనికి రెండు కంప్యూటర్లమధ్య డైరెక్ట్ కనెక్షన్ అవసరం మరియు IM సచిత్రాలకు అవసరం. మీ IP అడ్రస్ "
 "బహిర్గతమవుతుంది, కావున ఇది మీ వ్యక్తిగత రహస్యాలకు సంబంధించిన చిక్కు విషయం. "
 
-#: src/protocols/oscar/oscar.c:4400
+#: src/protocols/oscar/oscar.c:4394
 msgid "Please authorize me so I can add you to my buddy list."
 msgstr "నాకు అధికారమివ్వండి, తద్వారా మీ పేరును నా మిత్రుల లిస్టులో చేర్చుకుంటాను. "
 
-#: src/protocols/oscar/oscar.c:4408
+#: src/protocols/oscar/oscar.c:4402
 msgid "Authorization Request Message:"
 msgstr "ఆథరైజేషన్ కోసం విజ్ఞప్తి సందేశం: "
 
-#: src/protocols/oscar/oscar.c:4409
+#: src/protocols/oscar/oscar.c:4403
 msgid "Please authorize me!"
 msgstr "దయచేసి నన్ను ఆథరైజ్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:4439
+#: src/protocols/oscar/oscar.c:4433
 #, c-format
 msgid ""
 "The user %s requires authorization before being added to a buddy list.  Do "
@@ -8314,21 +8390,21 @@ msgstr ""
 "మిత్రుల లిస్టులో తన పేరును చేర్చేముందు వినియోగదారునికి ఆథరైజేషన్ %s అవసరం. మీరు ఆథరైజేషన్ కోసం "
 "మనవిచేయదల్చుకున్నారా?"
 
-#: src/protocols/oscar/oscar.c:4444 src/protocols/oscar/oscar.c:4446
+#: src/protocols/oscar/oscar.c:4438 src/protocols/oscar/oscar.c:4440
 msgid "Request Authorization"
 msgstr "ఆథరైజేషన్‌కోసం విజ్ఞప్తి చేయండి."
 
-#: src/protocols/oscar/oscar.c:4484 src/protocols/oscar/oscar.c:4490
-#: src/protocols/oscar/oscar.c:4594 src/protocols/oscar/oscar.c:4618
-#: src/protocols/oscar/oscar.c:7228 src/protocols/oscar/oscar.c:7280
+#: src/protocols/oscar/oscar.c:4478 src/protocols/oscar/oscar.c:4484
+#: src/protocols/oscar/oscar.c:4588 src/protocols/oscar/oscar.c:4612
+#: src/protocols/oscar/oscar.c:7234 src/protocols/oscar/oscar.c:7286
 msgid "No reason given."
 msgstr "కారణం ఇవ్వలేదు. "
 
-#: src/protocols/oscar/oscar.c:4489
+#: src/protocols/oscar/oscar.c:4483
 msgid "Authorization Denied Message:"
 msgstr "ఆథరైజేషన్ నిరాకరణ సందేశం:"
 
-#: src/protocols/oscar/oscar.c:4596
+#: src/protocols/oscar/oscar.c:4590
 #, fuzzy, c-format
 msgid ""
 "The user %u wants to add %s to their buddy list for the following reason:\n"
@@ -8337,11 +8413,11 @@ msgstr ""
 "వినియోగదారుడు %u మిమ్మల్ని ఈ కారణంచేత తన మిత్రుల లిస్టులో చేర్చాలని అనుకుంటున్నాడు:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4606 src/protocols/oscar/oscar.c:7240
+#: src/protocols/oscar/oscar.c:4600 src/protocols/oscar/oscar.c:7246
 msgid "Authorization Request"
 msgstr "ఆథరైజేషన్ విజ్ఞప్తి. "
 
-#: src/protocols/oscar/oscar.c:4618
+#: src/protocols/oscar/oscar.c:4612
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
@@ -8352,17 +8428,17 @@ msgstr ""
 "నిరాకరించారు.:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4619
+#: src/protocols/oscar/oscar.c:4613
 msgid "ICQ authorization denied."
 msgstr "ICQ ఆథరైజేషన్ నిరాకరింపబడింది."
 
 #. Someone has granted you authorization
-#: src/protocols/oscar/oscar.c:4626
+#: src/protocols/oscar/oscar.c:4620
 #, c-format
 msgid "The user %u has granted your request to add them to your buddy list."
 msgstr "వినియోగదారుడు %u తన పేరును మీ మిత్రుల లిస్టులో చేర్చుటకు మీ అభ్యర్థనను ఆమోదించారు."
 
-#: src/protocols/oscar/oscar.c:4634
+#: src/protocols/oscar/oscar.c:4628
 #, c-format
 msgid ""
 "You have received a special message\n"
@@ -8375,7 +8451,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4642
+#: src/protocols/oscar/oscar.c:4636
 #, c-format
 msgid ""
 "You have received an ICQ page\n"
@@ -8388,7 +8464,7 @@ msgstr ""
 "From: %s [%s]\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4650
+#: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
 "You have received an ICQ email from %s [%s]\n"
@@ -8401,34 +8477,34 @@ msgstr ""
 "సందేశ పాఠం:\n"
 "%s"
 
-#: src/protocols/oscar/oscar.c:4671
+#: src/protocols/oscar/oscar.c:4665
 #, c-format
 msgid "ICQ user %u has sent you a buddy: %s (%s)"
 msgstr "ICQ వినియోగదారుడు %u మీ కొక మిత్రుని పంపినారు: %s (%s)"
 
-#: src/protocols/oscar/oscar.c:4677
+#: src/protocols/oscar/oscar.c:4671
 msgid "Do you want to add this buddy to your buddy list?"
 msgstr "ఈ మిత్రుని మీ మిత్రుల లిస్టులో చేర్చదల్చుకున్నారా?"
 
-#: src/protocols/oscar/oscar.c:4681
+#: src/protocols/oscar/oscar.c:4675
 msgid "Decline"
 msgstr "క్షీణించు"
 
-#: src/protocols/oscar/oscar.c:4765
+#: src/protocols/oscar/oscar.c:4759
 #, c-format
 msgid "You missed %hu message from %s because it was invalid."
 msgid_plural "You missed %hu messages from %s because they were invalid."
 msgstr[0] "మీరు %hu సందేశాన్ని %s నుండి మిస్ అయినారు. ఎందుకంటే దానికి విలువ లేదు."
 msgstr[1] "మీరు %hu సందేశాన్ని %s నుండి మిస్ అయినారు. ఎందుకంటే దానికి విలువ లేదు."
 
-#: src/protocols/oscar/oscar.c:4774
+#: src/protocols/oscar/oscar.c:4768
 #, c-format
 msgid "You missed %hu message from %s because it was too large."
 msgid_plural "You missed %hu messages from %s because they were too large."
 msgstr[0] "మీరు %hu సందేశాన్ని %s నుండి కోల్పోయినారు. ఎందుకంటే అది చాలా పెద్దది కనుక. "
 msgstr[1] "మీరు %hu సందేశాన్ని %s నుండి కోల్పోయినారు. ఎందుకంటే అది చాలా పెద్దది కనుక. "
 
-#: src/protocols/oscar/oscar.c:4783
+#: src/protocols/oscar/oscar.c:4777
 #, c-format
 msgid ""
 "You missed %hu message from %s because the rate limit has been exceeded."
@@ -8437,39 +8513,39 @@ msgid_plural ""
 msgstr[0] "మీరు %hu సందేశాన్ని %s నుండి  కోల్పోయినారు. ఎందుకంటే రేట్ లిమిట్ ఎక్కువైనది."
 msgstr[1] "మీరు %hu సందేశాన్ని %s నుండి  కోల్పోయినారు. ఎందుకంటే రేట్ లిమిట్ ఎక్కువైనది."
 
-#: src/protocols/oscar/oscar.c:4792
+#: src/protocols/oscar/oscar.c:4786
 #, c-format
 msgid "You missed %hu message from %s because he/she was too evil."
 msgid_plural "You missed %hu messages from %s because he/she was too evil."
 msgstr[0] "మీరు %hu సందేశాన్ని %s నుండి కోల్పోయినారు. ఎందుకంటే అతడు/ఆమె బహు దుర్మార్గులు."
 msgstr[1] "మీరు %hu సందేశాన్ని %s నుండి కోల్పోయినారు. ఎందుకంటే అతడు/ఆమె బహు దుర్మార్గులు."
 
-#: src/protocols/oscar/oscar.c:4801
+#: src/protocols/oscar/oscar.c:4795
 #, c-format
 msgid "You missed %hu message from %s because you are too evil."
 msgid_plural "You missed %hu messages from %s because you are too evil."
 msgstr[0] "మీరు %hu  సందేశాన్ని  %s నుండి   కోల్పోయారు. ఎందుకంటే మీరు దుర్మార్గులు కనుక."
 msgstr[1] "మీరు %hu  సందేశాన్ని  %s నుండి   కోల్పోయారు. ఎందుకంటే మీరు దుర్మార్గులు కనుక."
 
-#: src/protocols/oscar/oscar.c:4810
+#: src/protocols/oscar/oscar.c:4804
 #, c-format
 msgid "You missed %hu message from %s for an unknown reason."
 msgid_plural "You missed %hu messages from %s for an unknown reason."
 msgstr[0] "అజ్ఞాత కారణములచేత మీరు %hu సందేశాలను %s నుండి  కోల్పోయినారు. "
 msgstr[1] "आपको अज्ञात कारनों से साइन-ऑफ करा गया है।"
 
-#: src/protocols/oscar/oscar.c:4869
+#: src/protocols/oscar/oscar.c:4863
 #, c-format
 msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
 msgstr "<B>UIN:</B> %s<BR><B>స్టాటస్:</B> %s<HR>%s"
 
-#: src/protocols/oscar/oscar.c:4930
+#: src/protocols/oscar/oscar.c:4924
 #, c-format
 msgid "SNAC threw error: %s\n"
 msgstr "SNAC పొరపాటు చేసింది: %s\n"
 
 #. Data is assumed to be the destination sn
-#: src/protocols/oscar/oscar.c:4967
+#: src/protocols/oscar/oscar.c:4961
 #, c-format
 msgid "Unable to send message: %s"
 msgstr "సందేశం పంపడం సాధ్యంకాదు: %s"
@@ -8478,50 +8554,50 @@ msgstr "సందేశం పంపడం సాధ్యంకాదు: %s"
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/protocols/oscar/oscar.c:4967 src/protocols/oscar/oscar.c:4972
-#: src/protocols/oscar/oscar.c:5030 src/protocols/oscar/oscar.c:5034
+#: src/protocols/oscar/oscar.c:4961 src/protocols/oscar/oscar.c:4966
+#: src/protocols/oscar/oscar.c:5024 src/protocols/oscar/oscar.c:5028
 msgid "Unknown reason."
 msgstr "కారణం తెలియదు. "
 
-#: src/protocols/oscar/oscar.c:4970
+#: src/protocols/oscar/oscar.c:4964
 #, c-format
 msgid "Unable to send message to %s:"
 msgstr "%s కి సందేశం పంపడం కష్టం."
 
-#: src/protocols/oscar/oscar.c:5030
+#: src/protocols/oscar/oscar.c:5024
 #, c-format
 msgid "User information not available: %s"
 msgstr "వినియోగదారుని జాడ లభించడంలేదు: %s"
 
-#: src/protocols/oscar/oscar.c:5033
+#: src/protocols/oscar/oscar.c:5027
 #, c-format
 msgid "User information for %s unavailable:"
 msgstr "వినియోగదారుని సమాచారం %s కు లభించలేదు."
 
-#: src/protocols/oscar/oscar.c:5060
+#: src/protocols/oscar/oscar.c:5054
 msgid "Online Since"
 msgstr "నుండి ఆన్‌లైన్. "
 
-#: src/protocols/oscar/oscar.c:5065 src/protocols/yahoo/yahoo_profile.c:1118
+#: src/protocols/oscar/oscar.c:5059 src/protocols/yahoo/yahoo_profile.c:1118
 msgid "Member Since"
 msgstr "నుండి సభ్యుడు."
 
-#: src/protocols/oscar/oscar.c:5148
+#: src/protocols/oscar/oscar.c:5142
 msgid "Your AIM connection may be lost."
 msgstr "మీరు AIM కనెక్షన్ కోల్పోవచ్చు."
 
 #. The conversion failed!
-#: src/protocols/oscar/oscar.c:5334
+#: src/protocols/oscar/oscar.c:5328
 msgid ""
 "[Unable to display a message from this user because it contained invalid "
 "characters.]"
 msgstr "[ఈ వినియోగదారుని సందేశంలో విలువలేని అక్షరాలున్నందువల్ల ప్రదర్శించుట  సాధ్యపడదు]"
 
-#: src/protocols/oscar/oscar.c:5560
+#: src/protocols/oscar/oscar.c:5554
 msgid "Rate limiting error."
 msgstr "పొరపాటును నియంత్రించు ధర."
 
-#: src/protocols/oscar/oscar.c:5561
+#: src/protocols/oscar/oscar.c:5555
 msgid ""
 "The last action you attempted could not be performed because you are over "
 "the rate limit. Please wait 10 seconds and try again."
@@ -8529,105 +8605,105 @@ msgstr ""
 "మీరు ప్రయత్నించిన చివరి చర్యను నెరవేర్చడం సాధ్యం కాదు ఎందుకంటే మీరు ధరయొక్క హద్దును దాటిపోయారు. పది "
 "సెకండ్లు ఆగి మరల ప్రయత్నించండి. "
 
-#: src/protocols/oscar/oscar.c:5637
+#: src/protocols/oscar/oscar.c:5631
 msgid "You have been signed off for an unknown reason."
 msgstr "అజ్ఞాత కారణములవల్ల మీరు సైన్-ఆఫ్ చేయబడినారు."
 
-#: src/protocols/oscar/oscar.c:5650 src/protocols/toc/toc.c:971
+#: src/protocols/oscar/oscar.c:5644 src/protocols/toc/toc.c:971
 #, c-format
 msgid "You have been disconnected from chat room %s."
 msgstr "సంభాషణ గది %s నుండి మీరు డిస్‌కనెక్ట్ చేయబడినారు "
 
 #. XXX - Don't call this with ssi
-#: src/protocols/oscar/oscar.c:5675
+#: src/protocols/oscar/oscar.c:5669
 msgid "Finalizing connection"
 msgstr "కనెక్షన్‌ను ఫైనలైజేషన్ జరుగుతున్నది."
 
-#: src/protocols/oscar/oscar.c:5943
+#: src/protocols/oscar/oscar.c:5951
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/oscar/oscar.c:5969 src/protocols/silc/util.c:541
+#: src/protocols/oscar/oscar.c:5977 src/protocols/silc/util.c:541
 msgid "Mobile Phone"
 msgstr "మొబైల్ ఫోన్"
 
-#: src/protocols/oscar/oscar.c:5971
+#: src/protocols/oscar/oscar.c:5979
 msgid "Female"
 msgstr "స్త్రీ "
 
-#: src/protocols/oscar/oscar.c:5971
+#: src/protocols/oscar/oscar.c:5979
 msgid "Male"
 msgstr "పురుష "
 
-#: src/protocols/oscar/oscar.c:5987
+#: src/protocols/oscar/oscar.c:5995
 msgid "Personal Web Page"
 msgstr "వ్యక్తిగత వెబ్ పేజీ "
 
-#: src/protocols/oscar/oscar.c:5991
+#: src/protocols/oscar/oscar.c:5999
 msgid "Additional Information"
 msgstr "అదనపు సమాచారం "
 
-#: src/protocols/oscar/oscar.c:5996
+#: src/protocols/oscar/oscar.c:6004
 msgid "Home Address"
 msgstr "ఇంటి అడ్రస్ "
 
-#: src/protocols/oscar/oscar.c:6000 src/protocols/oscar/oscar.c:6008
+#: src/protocols/oscar/oscar.c:6008 src/protocols/oscar/oscar.c:6016
 msgid "Zip Code"
 msgstr "జిప్ కోడ్ "
 
-#: src/protocols/oscar/oscar.c:6004
+#: src/protocols/oscar/oscar.c:6012
 msgid "Work Address"
 msgstr "పని అడ్రస్ "
 
-#: src/protocols/oscar/oscar.c:6012
+#: src/protocols/oscar/oscar.c:6020
 msgid "Work Information"
 msgstr "పని సమాచారం "
 
-#: src/protocols/oscar/oscar.c:6013
+#: src/protocols/oscar/oscar.c:6021
 msgid "Company"
 msgstr "సంస్థ"
 
-#: src/protocols/oscar/oscar.c:6014
+#: src/protocols/oscar/oscar.c:6022
 msgid "Division"
 msgstr "విభాగం "
 
-#: src/protocols/oscar/oscar.c:6015
+#: src/protocols/oscar/oscar.c:6023
 msgid "Position"
 msgstr "స్థానం "
 
-#: src/protocols/oscar/oscar.c:6017
+#: src/protocols/oscar/oscar.c:6025
 msgid "Web Page"
 msgstr "వెబ్ పేజీ "
 
-#: src/protocols/oscar/oscar.c:6074
+#: src/protocols/oscar/oscar.c:6082
 msgid "Pop-Up Message"
 msgstr "పాప్-అప్ సందేశం "
 
 #. TODO: Need to use ngettext() here
-#: src/protocols/oscar/oscar.c:6103
+#: src/protocols/oscar/oscar.c:6111
 #, c-format
 msgid "The following screen names are associated with %s"
 msgstr "ఈ క్రింది స్క్రీన్‌పేరులు %sతో అనుబంధమై ఉన్నాయి. "
 
-#: src/protocols/oscar/oscar.c:6132
+#: src/protocols/oscar/oscar.c:6140
 #, c-format
 msgid "No results found for email address %s"
 msgstr "%s ఇ-మెయిల్ అడ్రస్‌కు ఫలితాలు కనిపించలేదు. "
 
-#: src/protocols/oscar/oscar.c:6153
+#: src/protocols/oscar/oscar.c:6161
 #, c-format
 msgid "You should receive an email asking to confirm %s."
 msgstr "%s నిర్ధారించమని కోరుతూ మీరు ఒక ఇ-మెయిల్‌ను స్వీకరించాలి. "
 
-#: src/protocols/oscar/oscar.c:6155
+#: src/protocols/oscar/oscar.c:6163
 msgid "Account Confirmation Requested"
 msgstr "ఖాతా నిర్ధారణకు మనవి. "
 
-#: src/protocols/oscar/oscar.c:6186
+#: src/protocols/oscar/oscar.c:6194
 msgid "Error Changing Account Info"
 msgstr "ఖాతా సమాచారాన్ని మార్చడంలో పొరపాటు. "
 
-#: src/protocols/oscar/oscar.c:6189
+#: src/protocols/oscar/oscar.c:6197
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
@@ -8636,19 +8712,19 @@ msgstr ""
 "పొరపాటు 0x%04x: స్క్రీన్‌పేరును మార్చుట సాధ్యం కాదు. ఎందుకంటే కోరుకున్న స్క్రీన్‌పేరు అసలైనపేరుకు "
 "భిన్నంగా ఉంది. "
 
-#: src/protocols/oscar/oscar.c:6192
+#: src/protocols/oscar/oscar.c:6200
 #, fuzzy, c-format
 msgid "Error 0x%04x: Unable to format screen name because it is invalid."
 msgstr "పొరపాటు 0x%04x: స్క్రీన్‌పేరు  ఫార్మాట్ చేయడం సాధ్యం కాదు, ఎందుకంటే అది చాలా పొడవుగా ఉంది."
 
-#: src/protocols/oscar/oscar.c:6195
+#: src/protocols/oscar/oscar.c:6203
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to format screen name because the requested screen name "
 "is too long."
 msgstr "పొరపాటు 0x%04x: స్క్రీన్‌పేరు  ఫార్మాట్ చేయడం సాధ్యం కాదు, ఎందుకంటే అది చాలా పొడవుగా ఉంది."
 
-#: src/protocols/oscar/oscar.c:6198
+#: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because there is already a "
@@ -8657,7 +8733,7 @@ msgstr ""
 "పొరపాటు 0x%04x: ఇ-మెయిల్ అడ్రస్‌ను మార్చడం సాధ్యం కాదు, ఎందుకంటే ఇదే స్క్రీన్‌పేరును మరొకరు మీకంటే "
 "ముందే కోరినారు. అది పెండింగ్‌లో ఉంది. "
 
-#: src/protocols/oscar/oscar.c:6201
+#: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address has "
@@ -8666,19 +8742,19 @@ msgstr ""
 "పొరపాటు 0x%04x: ఇ-మెయిల్ అడ్రస్‌ను మార్చడం సాధ్యం కాదు, ఎందుకంటే ఇచ్చిన అడ్రసుకు చాలా స్క్రీన్‌పేరులు "
 "అనుబంధమై ఉన్నాయి. "
 
-#: src/protocols/oscar/oscar.c:6204
+#: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
 "Error 0x%04x: Unable to change email address because the given address is "
 "invalid."
 msgstr "పొరపాటు 0x%04x:  ఈ-మెయిల్ అడ్రసును మార్చలేము, ఎందుకంటే ఇచ్చిన అడ్రసుకు విలువ లేదు."
 
-#: src/protocols/oscar/oscar.c:6207
+#: src/protocols/oscar/oscar.c:6215
 #, c-format
 msgid "Error 0x%04x: Unknown error."
 msgstr "పొరపాటు 0x%04x: అజ్ఞాత పొరపాటు."
 
-#: src/protocols/oscar/oscar.c:6217
+#: src/protocols/oscar/oscar.c:6225
 #, c-format
 msgid ""
 "Your screen name is currently formatted as follows:\n"
@@ -8688,25 +8764,25 @@ msgstr ""
 "%s"
 
 #  And now for the buttons
-#: src/protocols/oscar/oscar.c:6218 src/protocols/oscar/oscar.c:6225
+#: src/protocols/oscar/oscar.c:6226 src/protocols/oscar/oscar.c:6233
 msgid "Account Info"
 msgstr "ఖాతా వివరణ"
 
-#: src/protocols/oscar/oscar.c:6223
+#: src/protocols/oscar/oscar.c:6231
 #, c-format
 msgid "The email address for %s is %s"
 msgstr "%s ఇ-మెయిల్ అడ్రస్ %s"
 
-#: src/protocols/oscar/oscar.c:6290
+#: src/protocols/oscar/oscar.c:6298
 msgid ""
 "Your IM Image was not sent. You must be Direct Connected to send IM Images."
 msgstr "IM సచిత్రాన్ని పంపలేదు. IM సచిత్రాలను పంపడానికి మీకు డైరెక్ట్ కనెక్షన్ అవసరం.  "
 
-#: src/protocols/oscar/oscar.c:6474
+#: src/protocols/oscar/oscar.c:6480
 msgid "Unable to set AIM profile."
 msgstr "AIM  ప్రొఫైల్‌ను సెట్ చేయడంలో అసమర్థత. "
 
-#: src/protocols/oscar/oscar.c:6475
+#: src/protocols/oscar/oscar.c:6481
 msgid ""
 "You have probably requested to set your profile before the login procedure "
 "completed.  Your profile remains unset; try setting it again when you are "
@@ -8715,7 +8791,7 @@ msgstr ""
 "లాగిన్ ప్రొసీజర్ పూర్తికాకముందే బహుశా మీరు మీ ప్రొఫైల్‌ను సెట్ చేయవలసిందిగా కోరియుండవచ్చు. మీ ప్రొఫైల్ "
 "సెట్‌చేయకుండా అలాగే ఉంది. మీకు పూర్తి కనెక్షన్ లభించిన తర్వాత మరల సెట్ చేయడానికి ప్రయత్నించండి. "
 
-#: src/protocols/oscar/oscar.c:6489
+#: src/protocols/oscar/oscar.c:6495
 #, c-format
 msgid ""
 "The maximum profile length of %d byte has been exceeded.  Gaim has truncated "
@@ -8727,11 +8803,11 @@ msgstr[0] ""
 "మీ ప్రొఫైల్‌కు గరిష్ట పొడవును %d బైట్స్‌ను అధిగమించింది. గెయిమ్ మీకోసం అదనపు పొడవును ఉత్తరించింది. "
 msgstr[1] "प्रोफाइल की अधिकतम लम्बाई %d बाइट पार हो गयी है।"
 
-#: src/protocols/oscar/oscar.c:6494
+#: src/protocols/oscar/oscar.c:6500
 msgid "Profile too long."
 msgstr "ప్రొఫైల్ చాలా పొడవుగా ఉంది. "
 
-#: src/protocols/oscar/oscar.c:6517 src/protocols/oscar/oscar.c:6590
+#: src/protocols/oscar/oscar.c:6523 src/protocols/oscar/oscar.c:6596
 #, c-format
 msgid ""
 "The maximum away message length of %d byte has been exceeded.  Gaim has "
@@ -8745,15 +8821,15 @@ msgstr[1] ""
 "अनुपस्थिति संदेश की अधिकतम लम्बाई %d बाइच पार हो गयी है। गेम ने इसे आपके लिए काट दिया "
 "है।"
 
-#: src/protocols/oscar/oscar.c:6522 src/protocols/oscar/oscar.c:6595
+#: src/protocols/oscar/oscar.c:6528 src/protocols/oscar/oscar.c:6601
 msgid "Away message too long."
 msgstr "దూరంగా ఉన్న సందేశం చాలా పొడవు."
 
-#: src/protocols/oscar/oscar.c:6554
+#: src/protocols/oscar/oscar.c:6560
 msgid "Unable to set AIM away message."
 msgstr "AIM కు దూరంగా ఉన్న సందేశాన్ని సెట్ చేయడం అసాధ్యం."
 
-#: src/protocols/oscar/oscar.c:6555
+#: src/protocols/oscar/oscar.c:6561
 msgid ""
 "You have probably requested to set your away message before the login "
 "procedure completed.  You remain in a \"present\" state; try setting it "
@@ -8762,7 +8838,7 @@ msgstr ""
 "లాగిన్ ప్రొసీజర్ పూర్తికాకముందే మీ సందేశాన్ని సెట్ చేయమని మీరు మనవిచేసి ఉంటారు. మీరు \"వర్తమాన\" స్థితిలో "
 "ఉండి; మీకు పూర్తి కనెక్షన్ లభించిన తర్వాత సెట్ చేయడానికి ప్రయత్నించండి. "
 
-#: src/protocols/oscar/oscar.c:6685
+#: src/protocols/oscar/oscar.c:6691
 #, c-format
 msgid ""
 "Could not add the buddy %s because the screen name is invalid.  Screen names "
@@ -8773,16 +8849,16 @@ msgstr ""
 "అక్షరంతో ప్రారంభమై తర్వాత అక్షరాలు, అంకెలు మరియు స్పేసులు ఉండవచ్చు, లేదా కేవలం అంకెలుమాత్రమే "
 "ఉండవచ్చు."
 
-#: src/protocols/oscar/oscar.c:6687 src/protocols/oscar/oscar.c:7086
-#: src/protocols/oscar/oscar.c:7100
+#: src/protocols/oscar/oscar.c:6693 src/protocols/oscar/oscar.c:7092
+#: src/protocols/oscar/oscar.c:7106 src/protocols/simple/simple.c:203
 msgid "Unable To Add"
 msgstr "చేర్చుట సాధ్యం కాదు. "
 
-#: src/protocols/oscar/oscar.c:6792
+#: src/protocols/oscar/oscar.c:6798
 msgid "Unable To Retrieve Buddy List"
 msgstr "మిత్రుల లిస్టును పొందుట సాధ్యంకాదు."
 
-#: src/protocols/oscar/oscar.c:6793
+#: src/protocols/oscar/oscar.c:6799
 msgid ""
 "Gaim was temporarily unable to retrieve your buddy list from the AIM "
 "servers.  Your buddy list is not lost, and will probably become available in "
@@ -8791,13 +8867,13 @@ msgstr ""
 "గెయిమ్ - AIM సెర్వర్లనుండి మీ మిత్రుల లిస్టును వెలికి తీసుకురాలేకపోతోంది. మీ మిత్రుల లిస్టు ఎటో పోలేదు. "
 "బహుశా కొన్ని గంటల్లో దొరకవచ్చు."
 
-#: src/protocols/oscar/oscar.c:6977 src/protocols/oscar/oscar.c:6978
-#: src/protocols/oscar/oscar.c:6983 src/protocols/oscar/oscar.c:7144
-#: src/protocols/oscar/oscar.c:7145 src/protocols/oscar/oscar.c:7150
+#: src/protocols/oscar/oscar.c:6983 src/protocols/oscar/oscar.c:6984
+#: src/protocols/oscar/oscar.c:6989 src/protocols/oscar/oscar.c:7150
+#: src/protocols/oscar/oscar.c:7151 src/protocols/oscar/oscar.c:7156
 msgid "Orphans"
 msgstr "అనాథలు "
 
-#: src/protocols/oscar/oscar.c:7084
+#: src/protocols/oscar/oscar.c:7090
 #, c-format
 msgid ""
 "Could not add the buddy %s because you have too many buddies in your buddy "
@@ -8806,11 +8882,11 @@ msgstr ""
 "మీ మిత్రుల లిస్టులో ఇప్పటికే చాలామంది ఉన్నందువల్ల ఈ మిత్రుని %s చేర్చడం సాధ్యంకాదు. ఒక పేరును తొలగించి "
 "మరల ప్రయత్నించండి.  "
 
-#: src/protocols/oscar/oscar.c:7084 src/protocols/oscar/oscar.c:7098
+#: src/protocols/oscar/oscar.c:7090 src/protocols/oscar/oscar.c:7104
 msgid "(no name)"
 msgstr "(పేరు లేదు)"
 
-#: src/protocols/oscar/oscar.c:7098
+#: src/protocols/oscar/oscar.c:7104
 #, c-format
 msgid ""
 "Could not add the buddy %s for an unknown reason.  The most common reason "
@@ -8820,7 +8896,7 @@ msgstr ""
 "అజ్ఞాత కారణంచేత %s మిత్రుని చేర్చడం సాధ్యంకాదు. దీనికి సామాన్య కారణం ఒకటే అయివుంటుంది. మీ మిత్రుల "
 "లిస్టు నిండిపోయి ఉంటుంది. "
 
-#: src/protocols/oscar/oscar.c:7181
+#: src/protocols/oscar/oscar.c:7187
 #, c-format
 msgid ""
 "The user %s has given you permission to add you to their buddy list.  Do you "
@@ -8828,11 +8904,11 @@ msgid ""
 msgstr ""
 "మిమ్ములను తన మిత్రుల లిస్టులో చేర్చుటకు వినియోగాదారుడు %s అనుమతించినాడు. వారిని కలవడం మీకు ఇష్టమేనా?"
 
-#: src/protocols/oscar/oscar.c:7187
+#: src/protocols/oscar/oscar.c:7193
 msgid "Authorization Given"
 msgstr "ఆథరైజేషన్ ఇవ్వబడింది. "
 
-#: src/protocols/oscar/oscar.c:7231
+#: src/protocols/oscar/oscar.c:7237
 #, fuzzy, c-format
 msgid ""
 "The user %s wants to add %s to their buddy list for the following reason:\n"
@@ -8842,17 +8918,17 @@ msgstr ""
 "%s"
 
 #. Granted
-#: src/protocols/oscar/oscar.c:7276
+#: src/protocols/oscar/oscar.c:7282
 #, c-format
 msgid "The user %s has granted your request to add them to your buddy list."
 msgstr "వారిని మీ మిత్రుల లిస్టులో చేర్చాలనే మీ మనవిని వినియోగదారుడు %s ఆమోదించినారు. "
 
-#: src/protocols/oscar/oscar.c:7277
+#: src/protocols/oscar/oscar.c:7283
 msgid "Authorization Granted"
 msgstr "ఆథరైజేషన్ గ్రాంట్ అయినది."
 
 #. Denied
-#: src/protocols/oscar/oscar.c:7280
+#: src/protocols/oscar/oscar.c:7286
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
@@ -8862,96 +8938,96 @@ msgstr ""
 "వారిని మీ మిత్రుల లిస్టులో చేర్చాలనే మీ మనవిని ఈక్రింది కారణంచేత వినియోగదారుడు %s నిరాకరించినారు\n"
 " %s. "
 
-#: src/protocols/oscar/oscar.c:7281
+#: src/protocols/oscar/oscar.c:7287
 msgid "Authorization Denied"
 msgstr "ఆథరైజేషన్ నిరాకరింపబడినది."
 
-#: src/protocols/oscar/oscar.c:7318 src/protocols/toc/toc.c:1372
+#: src/protocols/oscar/oscar.c:7324 src/protocols/toc/toc.c:1372
 msgid "_Exchange:"
 msgstr "_ఆదానప్రదానం:"
 
-#: src/protocols/oscar/oscar.c:7354
+#: src/protocols/oscar/oscar.c:7360
 msgid "Invalid chat name specified."
 msgstr "పనికిరాని సంభాషణ పేరును నిర్దేశించారు. "
 
-#: src/protocols/oscar/oscar.c:7424
+#: src/protocols/oscar/oscar.c:7430
 msgid "Your IM Image was not sent. You cannot send IM Images in AIM chats."
 msgstr "మీ IM సచిత్రాన్ని పంపలేదు. మీరు IM సచిత్రాలను AIM  సంభాషణల్లో పంపలేరు."
 
-#: src/protocols/oscar/oscar.c:7559
+#: src/protocols/oscar/oscar.c:7565
 msgid "Away Message"
 msgstr "దూరపు సందేశం "
 
-#: src/protocols/oscar/oscar.c:7848
+#: src/protocols/oscar/oscar.c:7854
 #, c-format
 msgid "Buddy Comment for %s"
 msgstr "%s పై మిత్రుని వ్యాఖ్య. "
 
-#: src/protocols/oscar/oscar.c:7849
+#: src/protocols/oscar/oscar.c:7855
 msgid "Buddy Comment:"
 msgstr "మిత్రుని కామెంట్:"
 
-#: src/protocols/oscar/oscar.c:7868
+#: src/protocols/oscar/oscar.c:7874
 msgid "Edit Buddy Comment"
 msgstr "మిత్రుని వ్యాఖ్యను ఎడిట్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:7874
+#: src/protocols/oscar/oscar.c:7880
 msgid "Get Status Msg"
 msgstr "స్టాటస్ సందేశాన్ని తీసుకురండి."
 
-#: src/protocols/oscar/oscar.c:7886
+#: src/protocols/oscar/oscar.c:7892
 msgid "Direct IM"
 msgstr "డైరెక్ట్ IM"
 
-#: src/protocols/oscar/oscar.c:7903
+#: src/protocols/oscar/oscar.c:7909
 msgid "Re-request Authorization"
 msgstr "ఆథరైజేషన్‌ కోసం మరోసారి మనవి."
 
-#: src/protocols/oscar/oscar.c:7963
+#: src/protocols/oscar/oscar.c:7969
 #, fuzzy
 msgid "Require authorization"
 msgstr "ఆథరైజేషన్‌కోసం విజ్ఞప్తి చేయండి."
 
-#: src/protocols/oscar/oscar.c:7966
+#: src/protocols/oscar/oscar.c:7972
 #, fuzzy
 msgid "Hide IP address"
 msgstr "IP అడ్రస్ "
 
-#: src/protocols/oscar/oscar.c:7969
+#: src/protocols/oscar/oscar.c:7975
 #, fuzzy
 msgid "Web aware"
 msgstr "వెబ్ అవగతం "
 
-#: src/protocols/oscar/oscar.c:7974
+#: src/protocols/oscar/oscar.c:7980
 #, fuzzy
 msgid "ICQ Privacy Options"
 msgstr "ప్రాక్సీ ఆప్షన్లు "
 
-#: src/protocols/oscar/oscar.c:7991
+#: src/protocols/oscar/oscar.c:7997
 msgid "The new formatting is invalid."
 msgstr "కొత్త ఫార్మాటింగ్‌కు విలువ లేదు."
 
-#: src/protocols/oscar/oscar.c:7992
+#: src/protocols/oscar/oscar.c:7998
 msgid "Screen name formatting can change only capitalization and whitespace."
 msgstr "స్క్రీన్‌పేరు ఫార్మాటింగ్  పెద్ద అక్షరాలను (ఇంగ్లీష్) మరియు తెల్లస్పేసులను మాత్రమే మారుస్తుంది."
 
-#: src/protocols/oscar/oscar.c:7999
+#: src/protocols/oscar/oscar.c:8005
 msgid "New screen name formatting:"
 msgstr "కొత్త స్క్రీన్‌పేరు ఫార్మాటింగ్:"
 
-#: src/protocols/oscar/oscar.c:8051
+#: src/protocols/oscar/oscar.c:8057
 msgid "Change Address To:"
 msgstr "అడ్రసును మార్చండి:"
 
-#: src/protocols/oscar/oscar.c:8096
+#: src/protocols/oscar/oscar.c:8102
 msgid "<i>you are not waiting for authorization</i>"
 msgstr "<i>మీరు ఆథరైజేషన్‌ కోసం ఎదురుచూడ్డంలేదు</i>"
 
-#: src/protocols/oscar/oscar.c:8099
+#: src/protocols/oscar/oscar.c:8105
 msgid "You are awaiting authorization from the following buddies"
 msgstr "ఈ క్రింది మిత్రులనుండి మీరు ఆథరైజేషన్‌కోసం ఎదురు చూస్తున్నారు."
 
-#: src/protocols/oscar/oscar.c:8100
+#: src/protocols/oscar/oscar.c:8106
 msgid ""
 "You can re-request authorization from these buddies by right-clicking on "
 "them and selecting \"Re-request Authorization.\""
@@ -8959,85 +9035,85 @@ msgstr ""
 "ఈ క్రింది మిత్రులనుండి ఆథరైజేషన్ కొసం మీరు మరల మనవి చేయవచ్చును. వారిపేరుపై రైట్‌క్లిక్ చేసి \"ఆథరైజేషన్ "
 "కోసం మరోసారి మనవి.\" ని సెలక్ట్ చేయండి. "
 
-#: src/protocols/oscar/oscar.c:8117
+#: src/protocols/oscar/oscar.c:8123
 msgid "Find Buddy by E-mail"
 msgstr "ఇ-మెయిల్ ద్వారా మిత్రుని కనుగొనండి. "
 
-#: src/protocols/oscar/oscar.c:8118
+#: src/protocols/oscar/oscar.c:8124
 msgid "Search for a buddy by e-mail address"
 msgstr "ఇ-మెయిల్ అడ్రస్‌తో మిత్రుని కనుగొనండి. "
 
-#: src/protocols/oscar/oscar.c:8119
+#: src/protocols/oscar/oscar.c:8125
 msgid "Type the e-mail address of the buddy you are searching for."
 msgstr "మీరు అన్వేషిస్తున్న మిత్రుని ఇ-మెయిల్ అడ్రసును టైప్ చేయండి."
 
-#: src/protocols/oscar/oscar.c:8206 src/protocols/silc/silc.c:817
+#: src/protocols/oscar/oscar.c:8212 src/protocols/silc/silc.c:817
 msgid "Set User Info..."
 msgstr "వినియోగదారుని సమాచారం సెట్ చేయుము ..."
 
-#: src/protocols/oscar/oscar.c:8212
+#: src/protocols/oscar/oscar.c:8218
 msgid "Set User Info (URL)..."
 msgstr "వినియోగదారుని సమాచారం (URL) ..."
 
-#: src/protocols/oscar/oscar.c:8217 src/protocols/silc/silc.c:813
+#: src/protocols/oscar/oscar.c:8223 src/protocols/silc/silc.c:813
 msgid "Change Password..."
 msgstr "పాస్‌వర్డ్‌ను మార్చండి ..."
 
-#: src/protocols/oscar/oscar.c:8223
+#: src/protocols/oscar/oscar.c:8229
 msgid "Change Password (URL)"
 msgstr "పాస్‌వర్డ్‌ను మార్చండి (URL)"
 
-#: src/protocols/oscar/oscar.c:8227
+#: src/protocols/oscar/oscar.c:8233
 msgid "Configure IM Forwarding (URL)"
 msgstr "Configure IM Forwarding (URL)"
 
 #. ICQ actions
-#: src/protocols/oscar/oscar.c:8237
+#: src/protocols/oscar/oscar.c:8243
 #, fuzzy
 msgid "Show privacy options..."
 msgstr "ఇంకా ఆప్షన్లను చూపుము."
 
 #. AIM actions
-#: src/protocols/oscar/oscar.c:8244
+#: src/protocols/oscar/oscar.c:8250
 msgid "Format Screen Name..."
 msgstr "స్క్రీన్‌పేరును ఫార్మాట్ చేయండి..."
 
 #  And now for the buttons
-#: src/protocols/oscar/oscar.c:8248
+#: src/protocols/oscar/oscar.c:8254
 msgid "Confirm Account"
 msgstr "ఎకౌంట్‌ను నిర్ధారించండి. "
 
-#: src/protocols/oscar/oscar.c:8252
+#: src/protocols/oscar/oscar.c:8258
 msgid "Display Currently Registered Address"
 msgstr "ప్రస్తుతం రిజిస్టర్ చేసిన అడ్రసును ప్రదర్శించుము."
 
-#: src/protocols/oscar/oscar.c:8256
+#: src/protocols/oscar/oscar.c:8262
 msgid "Change Currently Registered Address..."
 msgstr "ప్రస్తుతం రిజిస్టర్ చేసిన అడ్రసును మార్చుము..."
 
-#: src/protocols/oscar/oscar.c:8263
+#: src/protocols/oscar/oscar.c:8269
 msgid "Show Buddies Awaiting Authorization"
 msgstr "ఆథరైజేషన్‌ కోసం ఎదురుచూస్తూ మిత్రులను ప్రదర్శించుము."
 
-#: src/protocols/oscar/oscar.c:8269
+#: src/protocols/oscar/oscar.c:8275
 msgid "Search for Buddy by Email..."
 msgstr "ఇ-మెయిల్ ద్వారా మిత్రాన్వేషణ ..."
 
-#: src/protocols/oscar/oscar.c:8274
+#: src/protocols/oscar/oscar.c:8280
 msgid "Search for Buddy by Information"
 msgstr "సమాచారం ద్వారా మిత్రాన్వేషణ "
 
-#: src/protocols/oscar/oscar.c:8344
+#: src/protocols/oscar/oscar.c:8350
 #, fuzzy
 msgid "Use recent buddies group"
 msgstr "వినియోగదారుడు గ్రూపులో లేడు.  "
 
-#: src/protocols/oscar/oscar.c:8347
+#: src/protocols/oscar/oscar.c:8353
 #, fuzzy
 msgid "Show how long you have been idle"
 msgstr "మీరు ఎంతకాలం సోమరిగా ఉన్నారో సంకలనం చేయడానికి మీకు అవకాశం."
 
-#: src/protocols/oscar/oscar.c:8356
+#: src/protocols/oscar/oscar.c:8362
 msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
 msgstr ""
 
@@ -9051,21 +9127,129 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/oscar/oscar.c:8470 src/protocols/oscar/oscar.c:8472
+#: src/protocols/oscar/oscar.c:8476 src/protocols/oscar/oscar.c:8478
 msgid "AIM/ICQ Protocol Plugin"
 msgstr "AIM/ICQ ప్రొటోకాల్ ప్లగ్‌ఇన్ "
 
-#: src/protocols/oscar/oscar.c:8491
+#: src/protocols/oscar/oscar.c:8497
 msgid "Auth host"
 msgstr "Auth host"
 
-#: src/protocols/oscar/oscar.c:8494
+#: src/protocols/oscar/oscar.c:8500
 msgid "Auth port"
 msgstr "Auth port"
 
-#: src/protocols/oscar/oscar.c:8497 src/protocols/zephyr/zephyr.c:2892
+#: src/protocols/oscar/oscar.c:8503 src/protocols/zephyr/zephyr.c:2892
 msgid "Encoding"
 msgstr "ఎన్‌కోడింగ్ "
+
+#: src/protocols/sametime/sametime.c:1134
+#, fuzzy
+msgid "Sending Handshake"
+msgstr "కుకీని పంపుతున్నది. "
+
+#: src/protocols/sametime/sametime.c:1139
+#, fuzzy
+msgid "Waiting for Handshake Acknowledgement"
+msgstr "ట్రాన్స్‌ఫర్ అగుటకు ప్రతీక్షించుచున్నది."
+
+#: src/protocols/sametime/sametime.c:1144
+msgid "Handshake Acknowledged, Sending Login"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1149
+msgid "Waiting for Login Acknowledgement"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1154
+#, fuzzy
+msgid "Login Redirected"
+msgstr "లాగిన్ సెర్వర్ "
+
+#: src/protocols/sametime/sametime.c:1159
+#, fuzzy
+msgid "Forcing Login"
+msgstr "లాగిన్ చేయుచున్నాను "
+
+#: src/protocols/sametime/sametime.c:1163
+msgid "Login Acknowledged"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:1168
+#, fuzzy
+msgid "Connected to Sametime Community Server"
+msgstr "SILC సెర్వర్‌కు కనెక్ట్ చేయుచున్నది. "
+
+#. * @todo Admin alerts should probably be in a conversation window
+#. rather than a gaim_notify_message. Or in some sort of updating
+#. dialog, or something.
+#: src/protocols/sametime/sametime.c:1263
+msgid "Admin Alert"
+msgstr ""
+
+#: src/protocols/sametime/sametime.c:2758
+msgid "Active"
+msgstr "యాక్టివ్ "
+
+#: src/protocols/simple/simple.c:202
+#, c-format
+msgid ""
+"Could not add the buddy %s because every simple user has to start with "
+"'sip:'."
+msgstr ""
+
+#: src/protocols/simple/simple.c:1209
+#, fuzzy
+msgid "Could not create listen socket"
+msgstr "సాకెట్‌ను సృష్టించలేదు. "
+
+#: src/protocols/simple/simple.c:1263
+#, fuzzy
+msgid "SIP usernames may not contain whitespaces or @ symbols"
+msgstr "IRC ఉపనామములలో తెల్లకాళీ లేదు."
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#. *< name
+#. *< version
+#: src/protocols/simple/simple.c:1408
+#, fuzzy
+msgid "SIP/SIMPLE Protocol Plugin"
+msgstr "SILC Protocol Plugin"
+
+#. *  summary
+#: src/protocols/simple/simple.c:1409
+#, fuzzy
+msgid "The SIP/SIMPLE Protocol Plugin"
+msgstr "SILC Protocol Plugin"
+
+#. *  description
+#: src/protocols/simple/simple.c:1410
+msgid "Thomas Butter <butter@uni-mannheim.de>"
+msgstr ""
+
+#: src/protocols/simple/simple.c:1431
+msgid "Publish Status (note: everyone may watch you)"
+msgstr ""
+
+#: src/protocols/simple/simple.c:1434
+#, fuzzy
+msgid "Use UDP"
+msgstr "వినియోగదారుని ID"
+
+#: src/protocols/simple/simple.c:1436
+#, fuzzy
+msgid "Use Proxy"
+msgstr "ప్రాక్సీ లేదు "
+
+#: src/protocols/simple/simple.c:1438
+#, fuzzy
+msgid "Proxy"
+msgstr "ప్రాక్సీ లేదు "
 
 #: src/protocols/silc/buddy.c:51 src/protocols/silc/buddy.c:419
 #: src/protocols/silc/buddy.c:544 src/protocols/silc/buddy.c:711
@@ -10609,11 +10793,11 @@ msgstr "TOC పోర్ట్"
 msgid "Your Yahoo! message did not get sent."
 msgstr "మీ Yahoo! సందేశాన్ని పంపుట సాధ్యం కాలేదు. "
 
-#: src/protocols/yahoo/yahoo.c:750 src/protocols/yahoo/yahoo.c:3481
+#: src/protocols/yahoo/yahoo.c:752 src/protocols/yahoo/yahoo.c:3499
 msgid "Buzz!!"
 msgstr "బజ్!!"
 
-#: src/protocols/yahoo/yahoo.c:795
+#: src/protocols/yahoo/yahoo.c:797
 #, c-format
 msgid "Yahoo! system message for %s:"
 msgstr "%s కోసం యాహూ సందేశం."
@@ -10621,22 +10805,22 @@ msgstr "%s కోసం యాహూ సందేశం."
 #. TODO: this is almost exactly the same as what MSN does,
 #. * this should probably be moved to the core.
 #.
-#: src/protocols/yahoo/yahoo.c:885
+#: src/protocols/yahoo/yahoo.c:887
 #, fuzzy, c-format
 msgid "The user %s wants to add %s to his or her buddy list%s%s."
 msgstr "వినియోగదారుడు/రాలు %s %sను తన మిత్రుల జాబితాలో చేర్చదల్చుకున్నాడు/న్నది."
 
-#: src/protocols/yahoo/yahoo.c:891
+#: src/protocols/yahoo/yahoo.c:893
 #, fuzzy
 msgid "Message (optional) :"
 msgstr "సందేశ సూచన. "
 
-#: src/protocols/yahoo/yahoo.c:933
+#: src/protocols/yahoo/yahoo.c:935
 #, c-format
 msgid "%s has (retroactively) denied your request to add them to your list."
 msgstr "%s తమను మీ లిస్టులో చేర్చడానికిగాను మీరు చేసిన మనవిని (retroactively) త్రోసిపుచ్చారు."
 
-#: src/protocols/yahoo/yahoo.c:936
+#: src/protocols/yahoo/yahoo.c:938
 #, c-format
 msgid ""
 "%s has (retroactively) denied your request to add them to your list for the "
@@ -10645,11 +10829,11 @@ msgstr ""
 "%s తమను మీ లిస్టులో చేర్చడానికిగాను మీరు చేసిన మనవిని ఈ క్రింది కారణాల ననుసరించి (retroactively) "
 "త్రోసిపుచ్చారు: %s."
 
-#: src/protocols/yahoo/yahoo.c:939
+#: src/protocols/yahoo/yahoo.c:941
 msgid "Add buddy rejected"
 msgstr "మిత్రుని పేరును చేర్చడం నిరాకరించబడింది. "
 
-#: src/protocols/yahoo/yahoo.c:1681
+#: src/protocols/yahoo/yahoo.c:1684
 #, c-format
 msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
@@ -10659,11 +10843,11 @@ msgstr ""
 "యాహూ సెర్వర్ అజ్ఞాత ప్రమాణీకరణ విధానాన్ని సూచించింది. ఈ గెయిమ్ వెర్షన్ యాహూపై సైన్ చేయడం సాధ్యం కాదు.  "
 "అప్‌డేట్స్ కోసం %s చేయండి. "
 
-#: src/protocols/yahoo/yahoo.c:1684
+#: src/protocols/yahoo/yahoo.c:1687
 msgid "Failed Yahoo! Authentication"
 msgstr "యూహూ! ప్రమాణీకరణ వైఫల్యం."
 
-#: src/protocols/yahoo/yahoo.c:1757
+#: src/protocols/yahoo/yahoo.c:1760
 #, c-format
 msgid ""
 "You have tried to ignore %s, but the user is on your buddy list.  Clicking "
@@ -10672,19 +10856,19 @@ msgstr ""
 "మీరు %s ను అపేక్షించాలని ప్రయత్నించారు, కాని వినియోగదారుడు మీ లిస్టులో ఉన్నాడు. \"Yes\" క్లిక్ చేస్తే "
 "మీకు మిత్రుని బెడద ఉండదు.  "
 
-#: src/protocols/yahoo/yahoo.c:1760
+#: src/protocols/yahoo/yahoo.c:1763
 msgid "Ignore buddy?"
 msgstr "మిత్రుని అపేక్షిస్తారా?"
 
-#: src/protocols/yahoo/yahoo.c:1794
+#: src/protocols/yahoo/yahoo.c:1797
 msgid "Invalid username."
 msgstr "పనికిరాని వినియోగదారుని పేరు. "
 
-#: src/protocols/yahoo/yahoo.c:1805
+#: src/protocols/yahoo/yahoo.c:1808
 msgid "Normal authentication failed!"
 msgstr "సామాన్య ప్రమాణీకరణ వైఫల్యం!"
 
-#: src/protocols/yahoo/yahoo.c:1806
+#: src/protocols/yahoo/yahoo.c:1809
 msgid ""
 "The normal authentication method has failed. This means either your password "
 "is incorrect, or Yahoo!'s authentication scheme has changed. Gaim will now "
@@ -10695,121 +10879,125 @@ msgstr ""
 "ఉండాలి. గెయిమ్ ఇప్పుడు వెబ్ మెసెంజర్ ప్రమాణీకరణ నుపయోగించి ప్రయత్నిస్తుంది. ఈ పద్ధతి ఫంక్షన్ తీరును, "
 "ఇతర ఫీచర్లను తగ్గిస్తుంది."
 
-#: src/protocols/yahoo/yahoo.c:1814
+#: src/protocols/yahoo/yahoo.c:1817
 msgid "Incorrect password."
 msgstr "తప్పు పాస్‌వర్డ్ "
 
-#: src/protocols/yahoo/yahoo.c:1817
+#: src/protocols/yahoo/yahoo.c:1820
 msgid "Your account is locked, please log in to the Yahoo! website."
 msgstr "మీ ఎకౌంట్ లాక్ అయినది. దయచేసి యాహూ వెబ్‌సైట్‌లో లాగ్‌ఇన్ చేయండి. "
 
-#: src/protocols/yahoo/yahoo.c:1820
+#: src/protocols/yahoo/yahoo.c:1823
 #, c-format
 msgid "Unknown error number %d. Logging into the Yahoo! website may fix this."
 msgstr "అజ్ఞాత పొరపాటు సంఖ్య %d. యాహూ లోకి లాగ్-ఇన్ అవుతోంది. దీనిని వెబ్‌సైట్ సరిచేయగలదు."
 
-#: src/protocols/yahoo/yahoo.c:1874
+#: src/protocols/yahoo/yahoo.c:1877
 #, c-format
 msgid "Could not add buddy %s to group %s to the server list on account %s."
 msgstr "Could not add buddy %s to group %s to the server list on account %s."
 
-#: src/protocols/yahoo/yahoo.c:1877
+#: src/protocols/yahoo/yahoo.c:1880
 msgid "Could not add buddy to server list"
 msgstr "సెర్వర్ లిస్టులో మిత్రునిపేరు చేర్చడం సాధ్యం కాదు. "
 
-#: src/protocols/yahoo/yahoo.c:2121 src/protocols/yahoo/yahoo.c:2267
+#: src/protocols/yahoo/yahoo.c:2124 src/protocols/yahoo/yahoo.c:2270
 #: src/protocols/yahoo/ycht.c:413
 msgid "Unable to read"
 msgstr "చదవడానికి అసమర్థత. "
 
-#: src/protocols/yahoo/yahoo.c:2289 src/protocols/yahoo/yahoo.c:2417
-#: src/protocols/yahoo/yahoo.c:2502 src/protocols/yahoo/yahoo.c:2512
+#: src/protocols/yahoo/yahoo.c:2292 src/protocols/yahoo/yahoo.c:2420
+#: src/protocols/yahoo/yahoo.c:2506 src/protocols/yahoo/yahoo.c:2516
 #: src/protocols/yahoo/yahoochat.c:1393 src/protocols/yahoo/yahoochat.c:1460
 #: src/protocols/yahoo/ycht.c:517
 msgid "Connection problem"
 msgstr "కనెక్షన్ సమస్య"
 
-#: src/protocols/yahoo/yahoo.c:2615 src/protocols/yahoo/yahoo.c:3212
+#: src/protocols/yahoo/yahoo.c:2619 src/protocols/yahoo/yahoo.c:3236
 msgid "Not At Home"
 msgstr "ఇంట్లో లేరు."
 
-#: src/protocols/yahoo/yahoo.c:2617 src/protocols/yahoo/yahoo.c:3215
+#: src/protocols/yahoo/yahoo.c:2621 src/protocols/yahoo/yahoo.c:3239
 msgid "Not At Desk"
 msgstr "డెస్క్‌మీద లేదు. "
 
-#: src/protocols/yahoo/yahoo.c:2619 src/protocols/yahoo/yahoo.c:3218
+#: src/protocols/yahoo/yahoo.c:2623 src/protocols/yahoo/yahoo.c:3242
 msgid "Not In Office"
 msgstr "ఆఫీసులో లేరు."
 
-#: src/protocols/yahoo/yahoo.c:2623 src/protocols/yahoo/yahoo.c:3224
+#: src/protocols/yahoo/yahoo.c:2627 src/protocols/yahoo/yahoo.c:3248
 msgid "On Vacation"
 msgstr "సెలవులో ఉన్నారు. "
 
-#: src/protocols/yahoo/yahoo.c:2627 src/protocols/yahoo/yahoo.c:3230
+#: src/protocols/yahoo/yahoo.c:2631 src/protocols/yahoo/yahoo.c:3254
 msgid "Stepped Out"
 msgstr "బయటకు వెళ్లినారు. "
 
-#: src/protocols/yahoo/yahoo.c:2719 src/protocols/yahoo/yahoo.c:2746
+#: src/protocols/yahoo/yahoo.c:2723 src/protocols/yahoo/yahoo.c:2750
 msgid "Not on server list"
 msgstr "సెర్వర్ లిస్టులో లేరు."
 
-#: src/protocols/yahoo/yahoo.c:2769 src/protocols/yahoo/yahoo.c:2829
+#: src/protocols/yahoo/yahoo.c:2773 src/protocols/yahoo/yahoo.c:2833
 #, fuzzy
 msgid "Appear Online"
 msgstr "ఆఫ్‌లైన్ "
 
-#: src/protocols/yahoo/yahoo.c:2772 src/protocols/yahoo/yahoo.c:2851
+#: src/protocols/yahoo/yahoo.c:2776 src/protocols/yahoo/yahoo.c:2855
 #, fuzzy
 msgid "Appear Permanently Offline"
 msgstr "ఆఫ్‌లైన్ "
 
-#: src/protocols/yahoo/yahoo.c:2790
+#: src/protocols/yahoo/yahoo.c:2794
 #, fuzzy
 msgid "Stealth"
 msgstr "స్థితి "
 
-#: src/protocols/yahoo/yahoo.c:2845
+#: src/protocols/yahoo/yahoo.c:2849
 #, fuzzy
 msgid "Don't Appear Permanently Offline"
 msgstr "ఆఫ్‌లైన్ "
 
-#: src/protocols/yahoo/yahoo.c:2884
+#: src/protocols/yahoo/yahoo.c:2896
 msgid "Join in Chat"
 msgstr "సంభాషణలో చేరినారు "
 
-#: src/protocols/yahoo/yahoo.c:2889
+#: src/protocols/yahoo/yahoo.c:2901
 msgid "Initiate Conference"
 msgstr "సమావేశాన్ని ప్రారంభించారు."
 
-#: src/protocols/yahoo/yahoo.c:2914
+#: src/protocols/yahoo/yahoo.c:2926
 msgid "Stealth Settings"
 msgstr ""
 
-#: src/protocols/yahoo/yahoo.c:2945
+#: src/protocols/yahoo/yahoo.c:2932
+msgid "Start Doodling"
+msgstr ""
+
+#: src/protocols/yahoo/yahoo.c:2963
 msgid "Active which ID?"
 msgstr "ఏ  IDని యాక్టివ్ చేద్దాం?"
 
-#: src/protocols/yahoo/yahoo.c:2954
+#: src/protocols/yahoo/yahoo.c:2972
 msgid "Join who in chat?"
 msgstr "ఎవరితో మాట్లాడుదాం ?"
 
-#: src/protocols/yahoo/yahoo.c:2964
+#: src/protocols/yahoo/yahoo.c:2982
 msgid "Activate ID..."
 msgstr "IDని యాక్టివేట్ చేద్దాం..."
 
-#: src/protocols/yahoo/yahoo.c:2968
+#: src/protocols/yahoo/yahoo.c:2986
 msgid "Join user in chat..."
 msgstr "సంభాషణలో వినియోగదారుని చేర్చండి..."
 
-#: src/protocols/yahoo/yahoo.c:3523
+#: src/protocols/yahoo/yahoo.c:3541
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
 msgstr "join &lt;గది&gt;:  యాహు నెట్‌వర్క్‌లో సంభాషణ గదిలో చేరుదాం."
 
-#: src/protocols/yahoo/yahoo.c:3527
+#: src/protocols/yahoo/yahoo.c:3545
 msgid "buzz: Buzz a contact to get their attention"
 msgstr "బజ్: ఒక కాంటాక్ట్‌కు బజ్ శబ్దం పంపండి. వారిని లక్ష్యాన్ని మీ వైపు మరలించండి.  "
 
-#: src/protocols/yahoo/yahoo.c:3532
+#: src/protocols/yahoo/yahoo.c:3550
 msgid "doodle: Request user to start a Doodle session"
 msgstr ""
 
@@ -10823,51 +11011,51 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: src/protocols/yahoo/yahoo.c:3621 src/protocols/yahoo/yahoo.c:3623
+#: src/protocols/yahoo/yahoo.c:3639 src/protocols/yahoo/yahoo.c:3641
 msgid "Yahoo Protocol Plugin"
 msgstr "Yahoo Protocol Plugin"
 
-#: src/protocols/yahoo/yahoo.c:3640
+#: src/protocols/yahoo/yahoo.c:3658
 msgid "Yahoo Japan"
 msgstr "యూహూ జపాన్ "
 
-#: src/protocols/yahoo/yahoo.c:3643
+#: src/protocols/yahoo/yahoo.c:3661
 msgid "Pager host"
 msgstr "పేజర్ హోస్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3646
+#: src/protocols/yahoo/yahoo.c:3664
 msgid "Japan Pager host"
 msgstr "జపాన్ పేజర్ హోస్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3649
+#: src/protocols/yahoo/yahoo.c:3667
 msgid "Pager port"
 msgstr "పేజర్ పోర్ట్ "
 
-#: src/protocols/yahoo/yahoo.c:3652
+#: src/protocols/yahoo/yahoo.c:3670
 msgid "File transfer host"
 msgstr "ఫైల్ ట్రాన్స్‌ఫర్ హోస్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3655
+#: src/protocols/yahoo/yahoo.c:3673
 msgid "Japan File transfer host"
 msgstr "జపాన్ ఫైల్ ట్రాన్స్‌ఫర్ హోస్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3658
+#: src/protocols/yahoo/yahoo.c:3676
 msgid "File transfer port"
 msgstr "ఫైల్ ట్రాన్స్‌ఫర్ పోర్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3661
+#: src/protocols/yahoo/yahoo.c:3679
 msgid "Chat Room Locale"
 msgstr "సంభాషణ గది ప్రదేశం "
 
-#: src/protocols/yahoo/yahoo.c:3664
+#: src/protocols/yahoo/yahoo.c:3682
 msgid "Chat Room List Url"
 msgstr "సంభాషణ గది List Url"
 
-#: src/protocols/yahoo/yahoo.c:3667
+#: src/protocols/yahoo/yahoo.c:3685
 msgid "YCHT Host"
 msgstr "YCHT హోస్ట్"
 
-#: src/protocols/yahoo/yahoo.c:3670
+#: src/protocols/yahoo/yahoo.c:3688
 msgid "YCHT Port"
 msgstr "YCHT పోర్ట్ "
 
@@ -11218,7 +11406,7 @@ msgid "(1 message)"
 msgstr "(1 సందేశం)"
 
 #  Remove on type button
-#: src/server.c:860
+#: src/server.c:859
 #, fuzzy, c-format
 msgid ""
 "%s has invited %s to the chat room %s:\n"
@@ -11226,12 +11414,12 @@ msgid ""
 msgstr "%s has invited %s to the chat room %s\n"
 
 #  Remove on type button
-#: src/server.c:865
+#: src/server.c:864
 #, c-format
 msgid "%s has invited %s to the chat room %s\n"
 msgstr "%s has invited %s to the chat room %s\n"
 
-#: src/server.c:869
+#: src/server.c:868
 msgid "Accept chat invitation?"
 msgstr "సంభాషణ ఆహ్వానాన్ని అంగీకరించారా?"
 
@@ -11285,7 +11473,7 @@ msgstr ""
 "మీ మిత్రుల లిస్టును విశ్లేషణ చేయడంలో పొరపాటు జరిగింది. లిస్టు లోడ్ కాలేదు, అంతేగాక పాత ఫైల్ blist."
 "xml~లో చేరినది."
 
-#: src/util.c:2559
+#: src/util.c:2567
 msgid "Calculating..."
 msgstr "లెక్కిస్తూ..."
 
@@ -11293,37 +11481,62 @@ msgstr "లెక్కిస్తూ..."
 # gnome-session/gsm-client-row.c:43
 # #-#-#-#-#  gnome-session.gnome-2-2.hi.po (gnome-session VERSION)  #-#-#-#-#
 # gnome-session/gsm-client-row.c:43
-#: src/util.c:2562
+#: src/util.c:2570
 msgid "Unknown."
 msgstr "అజ్ఞాత"
 
-#: src/util.c:2592
+#: src/util.c:2600
 msgid "second"
 msgid_plural "seconds"
 msgstr[0] "సెకండ్లు"
 msgstr[1] "सेकंडों"
 
-#: src/util.c:2606
+#: src/util.c:2614
 msgid "day"
 msgid_plural "days"
 msgstr[0] "రోజు"
 msgstr[1] "दिनों"
 
-#: src/util.c:2614
+#: src/util.c:2622
 msgid "hour"
 msgid_plural "hours"
 msgstr[0] "గంట"
 msgstr[1] "घंटें"
 
-#: src/util.c:2622
+#: src/util.c:2630
 msgid "minute"
 msgid_plural "minutes"
 msgstr[0] "నిమిషం"
 msgstr[1] "मिनटों"
 
-#: src/util.c:3045
+#: src/util.c:3053
 msgid "g003: Error opening connection.\n"
 msgstr "g003: కనెక్ట్ చేయడంలో పొరపాటు.\n"
+
+#~ msgid "Buddy List Sorting"
+#~ msgstr "మిత్రుల లిస్టు సార్టింగ్ "
+
+#~ msgid "_Sorting:"
+#~ msgstr "_సార్టింగ్:"
+
+#~ msgid "Buddy Display"
+#~ msgstr "మిత్రుని ప్రదర్శన "
+
+#, fuzzy
+#~ msgid "Show more buddy details"
+#~ msgstr "వినియోగదారుని వివరములు చూపుము."
+
+#~ msgid "Gnome Default"
+#~ msgstr "గ్నోమ్ డిఫాల్ట్ "
+
+#~ msgid "Away m_essage:"
+#~ msgstr "సుదూర సందేశము:"
+
+#~ msgid "IRC"
+#~ msgstr "IRC"
+
+#~ msgid "Quit message"
+#~ msgstr "సందేశమును వదలివేయుము."
 
 #~ msgid "Restore Away State On Reconnect"
 #~ msgstr "రీకనెక్ట్ చేయడంవల్ల పూర్వస్థితి పునరుద్ధరణకు వచ్చును."
@@ -12145,9 +12358,6 @@ msgstr "g003: కనెక్ట్ చేయడంలో పొరపాటు.
 #~ msgid "Couldn't get search results"
 #~ msgstr "అన్వేషణ ఫలితాలను పొందలేము."
 
-#~ msgid "Active"
-#~ msgstr "యాక్టివ్ "
-
 #~ msgid "Birth Year"
 #~ msgstr "జన్మించిన సంవత్సరం "
 
@@ -12370,9 +12580,6 @@ msgstr "g003: కనెక్ట్ చేయడంలో పొరపాటు.
 
 #~ msgid "Local Users"
 #~ msgstr "స్థానిక వినియోగదారులు "
-
-#~ msgid "Logging in"
-#~ msgstr "లాగిన్ చేయుచున్నాను "
 
 #~ msgid "Trepia Protocol Plugin"
 #~ msgstr "Trepia Protocol Plugin"
