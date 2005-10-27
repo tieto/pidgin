@@ -405,9 +405,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-#if GTK_CHECK_VERSION(2,6,0)
-	gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
-#endif
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(status_box), 0);
@@ -443,6 +440,11 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(status_box->sw), status_box->imhtml);
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
+
+
+#if GTK_CHECK_VERSION(2,6,0)
+    gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
+#endif
 
 	status_box->error_pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), GAIM_STOCK_STATUS_OFFLINE,
 							   icon_size, "GtkGaimStatusBox");
