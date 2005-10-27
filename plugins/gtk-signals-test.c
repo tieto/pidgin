@@ -56,7 +56,7 @@ blist_drawing_tooltip_cb(GaimBlistNode *node, char **text, void *data) {
  * Conversation subsystem signal callbacks
  **************************************************************************/
 static void
-conversation_dragging_cb(GaimConvWindow *source, GaimConvWindow *destination) {
+conversation_dragging_cb(GaimGtkWindow *source, GaimGtkWindow *destination) {
 	gaim_debug_info("gtk-signal-test", "conversation dragging cb\n");
 }
 
