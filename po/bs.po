@@ -449,7 +449,7 @@ msgstr ""
 "\n"
 "Povucite prema dole, zatim desno, da zatvorite konverzaciju.\n"
 "Povucite prema gore, zatim lijevo, da prebacite prethodnu konverzaciju.\n"
-"Povucite prema gore, zatim desno, da prebacite na sljedecu konverzaciju.\n"
+"Povucite prema gore, zatim desno, da prebacite na sljedecu konverzaciju."
 
 #: plugins/gevolution/add_buddy_dialog.c:132
 #: plugins/gevolution/assoc-buddy.c:120 src/gtkprefs.c:2168
@@ -7168,14 +7168,6 @@ msgstr "Greška pri citanju"
 msgid "Unknown error"
 msgstr "Nepoznata greška"
 
-#: src/protocols/msn/servconn.c:136
-#, c-format
-msgid ""
-"Connection error from %s server (%s):\n"
-"%s"
-msgstr ""
-"Konekcijska greška sa %s servera (%s):\n"
-
 #: src/protocols/msn/session.c:319
 msgid "Our protocol is not supported by the server."
 msgstr "Naš protokol nije podržan od servera."
@@ -7619,10 +7611,6 @@ msgstr "Autenticiranje..."
 msgid "Waiting for response..."
 msgstr "Cekanje na odgovor..."
 
-#: src/protocols/novell/novell.c:1849
-#, c-format
-msgid "%s has been invited to this conversation."
-msgstr "%s je pozvan/a na ovu konverzaciju."
 
 #: src/protocols/novell/novell.c:1876
 msgid "Invitation to Conversation"
@@ -10150,14 +10138,6 @@ msgstr ""
 "Otisak javnog kljuca:\n"
 "%s\n"
 "\n"
-
-#: src/protocols/silc/util.c:328
-#, c-format
-msgid ""
-"Public Key Babbleprint:\n"
-"%s"
-msgstr ""
-"Javni kljuc babbleprint:\n"
 
 #: src/protocols/silc/util.c:332 src/protocols/silc/util.c:333
 msgid "Public Key Information"
