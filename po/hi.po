@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GAIM\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-27 15:05-0400\n"
+"POT-Creation-Date: 2005-10-27 16:12-0400\n"
 "PO-Revision-Date: 2005-05-29 20:43+0530\n"
 "Last-Translator: Akash <akash@ncb.ernet.in>\n"
 "Language-Team: Akash <matrubhasha@ncb.ernet.in>\n"
@@ -1493,8 +1493,8 @@ msgstr "नया पासवर्ड "
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
 #.
-#: src/account.c:960 src/account.c:1116 src/gtkdialogs.c:506
-#: src/gtkdialogs.c:647 src/gtkdialogs.c:703 src/gtkrequest.c:261
+#: src/account.c:960 src/account.c:1116 src/gtkdialogs.c:507
+#: src/gtkdialogs.c:648 src/gtkdialogs.c:704 src/gtkrequest.c:261
 #: src/protocols/gg/gg.c:434 src/protocols/gg/gg.c:581
 #: src/protocols/gg/gg.c:1498 src/protocols/jabber/jabber.c:1162
 #: src/protocols/jabber/xdata.c:337 src/protocols/msn/msn.c:250
@@ -1518,10 +1518,10 @@ msgstr "ठीक"
 #  Cancel button.
 #: src/account.c:961 src/account.c:1117 src/account.c:1155
 #: src/gtkaccount.c:2124 src/gtkaccount.c:2575 src/gtkblist.c:4497
-#: src/gtkdialogs.c:507 src/gtkdialogs.c:648 src/gtkdialogs.c:704
-#: src/gtkdialogs.c:723 src/gtkdialogs.c:745 src/gtkdialogs.c:765
-#: src/gtkdialogs.c:809 src/gtkdialogs.c:871 src/gtkdialogs.c:913
-#: src/gtkdialogs.c:955 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:595
+#: src/gtkdialogs.c:508 src/gtkdialogs.c:649 src/gtkdialogs.c:705
+#: src/gtkdialogs.c:724 src/gtkdialogs.c:746 src/gtkdialogs.c:766
+#: src/gtkdialogs.c:810 src/gtkdialogs.c:872 src/gtkdialogs.c:914
+#: src/gtkdialogs.c:956 src/gtkimhtmltoolbar.c:419 src/gtkprivacy.c:595
 #: src/gtkprivacy.c:608 src/gtkprivacy.c:633 src/gtkprivacy.c:644
 #: src/gtkrequest.c:262 src/gtksavedstatuses.c:221 src/protocols/gg/gg.c:435
 #: src/protocols/gg/gg.c:582 src/protocols/gg/gg.c:656
@@ -2061,7 +2061,7 @@ msgstr "संपर्क का उपनाम..."
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkblist.c:976 src/gtkdialogs.c:807 src/gtkdialogs.c:808
+#: src/gtkblist.c:976 src/gtkdialogs.c:808 src/gtkdialogs.c:809
 msgid "Remove Contact"
 msgstr "संपर्क निकालें"
 
@@ -2889,74 +2889,74 @@ msgstr "उपयोगकर्ता की उपेक्षा करें
 msgid "Get the user's information"
 msgstr "उपयोगकर्ता की जानकारी लायें"
 
-#: src/gtkconv.c:4368 src/gtkconv.c:4470 src/gtkconv.c:4525
+#: src/gtkconv.c:4360 src/gtkconv.c:4462 src/gtkconv.c:4517
 #, fuzzy, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
 msgstr[0] "कक्ष में 0 लोग हैं"
 msgstr[1] "कक्ष में 0 लोग हैं"
 
-#: src/gtkconv.c:5589
+#: src/gtkconv.c:5582
 msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
 "बोलें &lt;संदेश&gt;: सामान्य तरीके से संदेश भेजें जैसे कि आप कमांड का प्रयोग ना कर रहे हों।"
 
-#: src/gtkconv.c:5592
+#: src/gtkconv.c:5585
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "में &lt;क्रिया&gt;: किसी बड्डी या चैट को आइ आर सी रुपी क्रिया भेजें।"
 
-#: src/gtkconv.c:5595
+#: src/gtkconv.c:5588
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr "डीबग &lt;विकल्प&gt;: विस्तृत डीबग जानकारी वर्तमान वार्तालाप को भेजें।"
 
 #  Remove on type button
-#: src/gtkconv.c:5598
+#: src/gtkconv.c:5591
 #, fuzzy
 msgid "clear: Clears the conversation scrollback."
 msgstr "%s ने वार्तालाप विंडो को बंद कर दिया है ।"
 
-#: src/gtkconv.c:5601
+#: src/gtkconv.c:5594
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "मदद &lt;कमांड&gt;: किसी एक कमांड पर मदद।"
 
 #  And now for the buttons
-#: src/gtkconv.c:5706
+#: src/gtkconv.c:5709
 #, fuzzy
 msgid "Confirm close"
 msgstr "खाते को द्रढ़ करें"
 
-#: src/gtkconv.c:5738
+#: src/gtkconv.c:5741
 #, fuzzy
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "क्या आप निश्चिता से %s को मिटाना चाहते है?"
 
 #  Conversations
-#: src/gtkconv.c:6403
+#: src/gtkconv.c:6408
 msgid "Close conversation"
 msgstr "वार्तालाप बंद करें"
 
-#: src/gtkconv.c:6864
+#: src/gtkconv.c:6872
 msgid "Last created window"
 msgstr "अंतिम बनायी गयी विन्डो "
 
-#: src/gtkconv.c:6866
+#: src/gtkconv.c:6874
 msgid "Separate IM and Chat windows"
 msgstr "आईएम विंडो और चैट विंडो अलग करें"
 
-#: src/gtkconv.c:6868 src/gtkprefs.c:1205
+#: src/gtkconv.c:6876 src/gtkprefs.c:1205
 msgid "New window"
 msgstr "नया विन्डो"
 
-#: src/gtkconv.c:6870
+#: src/gtkconv.c:6878
 msgid "By group"
 msgstr "समूह से"
 
 #  And now for the buttons
-#: src/gtkconv.c:6872
+#: src/gtkconv.c:6880
 msgid "By account"
 msgstr "खाता से"
 
@@ -3044,160 +3044,165 @@ msgstr "मूल लेखक"
 msgid "hacker and designated driver [lazy bum]"
 msgstr "हेकर तथा ओहदेदार चालक [लेज़ी बम]"
 
-#: src/gtkdialogs.c:99 src/gtkdialogs.c:100 src/gtkdialogs.c:143
+#: src/gtkdialogs.c:99 src/gtkdialogs.c:100 src/gtkdialogs.c:144
 msgid "Bulgarian"
 msgstr "बुल्गारियाई"
 
-#: src/gtkdialogs.c:101 src/gtkdialogs.c:144 src/gtkdialogs.c:145
+#: src/gtkdialogs.c:101
+#, fuzzy
+msgid "Bosnian"
+msgstr "एसटोनियन"
+
+#: src/gtkdialogs.c:102 src/gtkdialogs.c:145 src/gtkdialogs.c:146
 msgid "Catalan"
 msgstr "केटालन"
 
-#: src/gtkdialogs.c:102 src/gtkdialogs.c:146
+#: src/gtkdialogs.c:103 src/gtkdialogs.c:147
 msgid "Czech"
 msgstr "चेक"
 
-#: src/gtkdialogs.c:103
+#: src/gtkdialogs.c:104
 msgid "Danish"
 msgstr "डेनिश"
 
-#: src/gtkdialogs.c:104 src/gtkdialogs.c:147
+#: src/gtkdialogs.c:105 src/gtkdialogs.c:148
 msgid "German"
 msgstr "जर्मनी"
 
-#: src/gtkdialogs.c:105
+#: src/gtkdialogs.c:106
 msgid "Australian English"
 msgstr "अंग्रेजी (AUS)"
 
-#: src/gtkdialogs.c:106
+#: src/gtkdialogs.c:107
 msgid "British English"
 msgstr "अंग्रेजी (UK)"
 
-#: src/gtkdialogs.c:107
+#: src/gtkdialogs.c:108
 msgid "Canadian English"
 msgstr "अंग्रेजी (CAN)"
 
-#: src/gtkdialogs.c:108 src/gtkdialogs.c:148
+#: src/gtkdialogs.c:109 src/gtkdialogs.c:149
 msgid "Spanish"
 msgstr "स्पेनी"
 
-#: src/gtkdialogs.c:109 src/gtkdialogs.c:149
+#: src/gtkdialogs.c:110 src/gtkdialogs.c:150
 msgid "Finnish"
 msgstr "फिनिश"
 
-#: src/gtkdialogs.c:110 src/gtkdialogs.c:150
+#: src/gtkdialogs.c:111 src/gtkdialogs.c:151
 msgid "French"
 msgstr "फ्रेंच"
 
-#: src/gtkdialogs.c:111
+#: src/gtkdialogs.c:112
 msgid "Hebrew"
 msgstr " हिब्रू"
 
-#: src/gtkdialogs.c:112
+#: src/gtkdialogs.c:113
 msgid "Hindi"
 msgstr "हिन्दी"
 
-#: src/gtkdialogs.c:113
+#: src/gtkdialogs.c:114
 msgid "Hungarian"
 msgstr "हंगेरियाई"
 
-#: src/gtkdialogs.c:114 src/gtkdialogs.c:151
+#: src/gtkdialogs.c:115 src/gtkdialogs.c:152
 msgid "Italian"
 msgstr "इतालवी"
 
-#: src/gtkdialogs.c:115 src/gtkdialogs.c:152
+#: src/gtkdialogs.c:116 src/gtkdialogs.c:153
 msgid "Japanese"
 msgstr "जापानी"
 
-#: src/gtkdialogs.c:116
+#: src/gtkdialogs.c:117
 msgid "Lithuanian"
 msgstr "लिथुवानियन"
 
-#: src/gtkdialogs.c:117
+#: src/gtkdialogs.c:118
 msgid "Georgian"
 msgstr "जौर्जियन"
 
-#: src/gtkdialogs.c:118 src/gtkdialogs.c:153
+#: src/gtkdialogs.c:119 src/gtkdialogs.c:154
 msgid "Korean"
 msgstr "कोरियाई"
 
-#: src/gtkdialogs.c:119
+#: src/gtkdialogs.c:120
 #, fuzzy
 msgid "Dutch, Flemish"
 msgstr "डच; फ्लेमिश"
 
-#: src/gtkdialogs.c:120
+#: src/gtkdialogs.c:121
 msgid "Macedonian"
 msgstr "मेसिडोनियन"
 
-#: src/gtkdialogs.c:121
+#: src/gtkdialogs.c:122
 msgid "Norwegian"
 msgstr "नारवेजियन "
 
-#: src/gtkdialogs.c:122 src/gtkdialogs.c:123 src/gtkdialogs.c:154
+#: src/gtkdialogs.c:123 src/gtkdialogs.c:124 src/gtkdialogs.c:155
 msgid "Polish"
 msgstr "पोलिष"
 
-#: src/gtkdialogs.c:124
+#: src/gtkdialogs.c:125
 msgid "Portuguese"
 msgstr "पुर्तगाली"
 
-#: src/gtkdialogs.c:125
+#: src/gtkdialogs.c:126
 msgid "Portuguese-Brazil"
 msgstr "पुर्तगाली (ब्राजीलीयाइ)"
 
-#: src/gtkdialogs.c:126
+#: src/gtkdialogs.c:127
 msgid "Romanian"
 msgstr "रोमानी"
 
-#: src/gtkdialogs.c:127 src/gtkdialogs.c:155 src/gtkdialogs.c:156
+#: src/gtkdialogs.c:128 src/gtkdialogs.c:156 src/gtkdialogs.c:157
 msgid "Russian"
 msgstr "रूसी"
 
-#: src/gtkdialogs.c:128 src/gtkdialogs.c:129
+#: src/gtkdialogs.c:129 src/gtkdialogs.c:130
 msgid "Serbian"
 msgstr "सर्बियाइ"
 
-#: src/gtkdialogs.c:130
+#: src/gtkdialogs.c:131
 msgid "Slovenian"
 msgstr "स्लोवाक"
 
-#: src/gtkdialogs.c:131 src/gtkdialogs.c:158
+#: src/gtkdialogs.c:132 src/gtkdialogs.c:159
 msgid "Swedish"
 msgstr "स्वीडिश"
 
-#: src/gtkdialogs.c:132
+#: src/gtkdialogs.c:133
 msgid "Telugu"
 msgstr ""
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:134
 msgid "Vietnamese"
 msgstr "वियतनामी"
 
-#: src/gtkdialogs.c:133
+#: src/gtkdialogs.c:134
 msgid "T.M.Thanh and the Gnome-Vi Team"
 msgstr "टी. एम. थान्ह और गह्नोम-वीआइ मण्डली"
 
-#: src/gtkdialogs.c:134 src/gtkdialogs.c:159
+#: src/gtkdialogs.c:135 src/gtkdialogs.c:160
 msgid "Simplified Chinese"
 msgstr "सरलीकृत चीनी"
 
-#: src/gtkdialogs.c:135 src/gtkdialogs.c:136 src/gtkdialogs.c:160
+#: src/gtkdialogs.c:136 src/gtkdialogs.c:137 src/gtkdialogs.c:161
 msgid "Traditional Chinese"
 msgstr "पारम्परिक चीनी"
 
-#: src/gtkdialogs.c:142
+#: src/gtkdialogs.c:143
 msgid "Amharic"
 msgstr "अम्हारिक"
 
-#: src/gtkdialogs.c:157
+#: src/gtkdialogs.c:158
 msgid "Slovak"
 msgstr "स्लोवाक"
 
-#: src/gtkdialogs.c:201
+#: src/gtkdialogs.c:202
 msgid "About Gaim"
 msgstr "गेम के बारे में"
 
-#: src/gtkdialogs.c:225
+#: src/gtkdialogs.c:226
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
@@ -3208,113 +3213,113 @@ msgstr ""
 "ज़ेबल, नेपस्टर, ज़ेफायर, तथा गडू-गडू इन सभी को एक साथ उपयोग में ला सकता है. इसे जीटीके+ के "
 "उपयोग से लिखा गया है और जीपीएल लाइसेंस के तहत है.<BR><BR>"
 
-#: src/gtkdialogs.c:234
+#: src/gtkdialogs.c:235
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim irc.freenode.net पर<BR><BR>"
 
-#: src/gtkdialogs.c:237
+#: src/gtkdialogs.c:238
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #gaim on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"3\">IRC:</FONT> #गेम irc.freenode.net पर<BR><BR>"
 
-#: src/gtkdialogs.c:243
+#: src/gtkdialogs.c:244
 msgid "Active Developers"
 msgstr "सक्रिय डेवलपर्स"
 
-#: src/gtkdialogs.c:258
+#: src/gtkdialogs.c:259
 msgid "Crazy Patch Writers"
 msgstr "क्रेजी पैच लेखकगण"
 
-#: src/gtkdialogs.c:273
+#: src/gtkdialogs.c:274
 msgid "Retired Developers"
 msgstr "सेवानिवृत्त डेवलपर्स"
 
-#: src/gtkdialogs.c:288
+#: src/gtkdialogs.c:289
 msgid "Current Translators"
 msgstr "वर्तमान अनुवादक - रविशंकर श्रीवास्तव (raviratlami@yahoo.com)"
 
-#: src/gtkdialogs.c:308
+#: src/gtkdialogs.c:309
 msgid "Past Translators"
 msgstr "पूर्व अनुवादकः रविशंकर श्रीवास्तव (raviratlami@yahoo.com)"
 
-#: src/gtkdialogs.c:326
+#: src/gtkdialogs.c:327
 #, fuzzy
 msgid "Debugging Information"
 msgstr "उपयोगकर्ता की जानकारी"
 
-#: src/gtkdialogs.c:488 src/gtkdialogs.c:629 src/gtkdialogs.c:684
+#: src/gtkdialogs.c:489 src/gtkdialogs.c:630 src/gtkdialogs.c:685
 #, fuzzy
 msgid "_Name"
 msgstr "ऩाम"
 
 #  And now for the buttons
-#: src/gtkdialogs.c:493 src/gtkdialogs.c:634 src/gtkdialogs.c:689
+#: src/gtkdialogs.c:494 src/gtkdialogs.c:635 src/gtkdialogs.c:690
 msgid "_Account"
 msgstr "खाता(_A)"
 
-#: src/gtkdialogs.c:501
+#: src/gtkdialogs.c:502
 msgid "New Instant Message"
 msgstr "नया इंस्टेंट संदेश"
 
-#: src/gtkdialogs.c:503
+#: src/gtkdialogs.c:504
 #, fuzzy
 msgid ""
 "Please enter the screen name or alias of the person you would like to IM."
 msgstr "कृप्या जिसे आप आइ एम करना चाहते हैं उसका स्क्रीन नाम भरें।"
 
-#: src/gtkdialogs.c:642
+#: src/gtkdialogs.c:643
 msgid "Get User Info"
 msgstr "उपयोगकर्ता की जानकारी लाऐं"
 
-#: src/gtkdialogs.c:644
+#: src/gtkdialogs.c:645
 #, fuzzy
 msgid ""
 "Please enter the screen name or alias of the person whose info you would "
 "like to view."
 msgstr "कृप्या उस व्यक्ति का स्क्रीन नाम भरें जिसके बारे में आप जानकारी देखना चाहतें हैं।"
 
-#: src/gtkdialogs.c:698
+#: src/gtkdialogs.c:699
 #, fuzzy
 msgid "View User Log"
 msgstr "उपयोगकर्ता का लॉग लाऐं"
 
-#: src/gtkdialogs.c:700
+#: src/gtkdialogs.c:701
 #, fuzzy
 msgid ""
 "Please enter the screen name or alias of the person whose log you would like "
 "to view."
 msgstr "कृप्या उस व्यक्ति का स्क्रीन नाम भरें जिसके लॉग आप देखना चाहतें हैं।"
 
-#: src/gtkdialogs.c:719
+#: src/gtkdialogs.c:720
 msgid "Alias Contact"
 msgstr "संपर्क का उपनाम..."
 
-#: src/gtkdialogs.c:720
+#: src/gtkdialogs.c:721
 msgid "Enter an alias for this contact."
 msgstr "इस संपर्क का उपनाम भरें।"
 
-#: src/gtkdialogs.c:722 src/gtkdialogs.c:744 src/gtkdialogs.c:764
+#: src/gtkdialogs.c:723 src/gtkdialogs.c:745 src/gtkdialogs.c:765
 #: src/gtkrequest.c:269 src/protocols/silc/chat.c:585
 msgid "Alias"
 msgstr "उपनाम:"
 
-#: src/gtkdialogs.c:740
+#: src/gtkdialogs.c:741
 #, c-format
 msgid "Enter an alias for %s."
 msgstr "%s का उपनाम भरें।"
 
-#: src/gtkdialogs.c:742
+#: src/gtkdialogs.c:743
 msgid "Alias Buddy"
 msgstr "बड्डी का उपनाम"
 
-#: src/gtkdialogs.c:761
+#: src/gtkdialogs.c:762
 msgid "Alias Chat"
 msgstr "चैट का उपनाम"
 
-#: src/gtkdialogs.c:762
+#: src/gtkdialogs.c:763
 msgid "Enter an alias for this chat."
 msgstr "इस चैट का उपनाम भरें।"
 
-#: src/gtkdialogs.c:799
+#: src/gtkdialogs.c:800
 #, fuzzy, c-format
 msgid ""
 "You are about to remove the contact containing %s and %d other buddy from "
@@ -3329,7 +3334,7 @@ msgstr[1] ""
 "आप अपनी बड्डी सूची उस संपर्क को, जिसमें %s है उसे और %d दूसरें मित्रों को मिटाने जा रहें हैं। "
 "क्या आप आगे बढ़ना चाहतें हैं?"
 
-#: src/gtkdialogs.c:866
+#: src/gtkdialogs.c:867
 #, c-format
 msgid ""
 "You are about to remove the group %s and all its members from your buddy "
@@ -3343,21 +3348,21 @@ msgstr "आप अपनी बड्डी सूची से %s समूह 
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkdialogs.c:869 src/gtkdialogs.c:870
+#: src/gtkdialogs.c:870 src/gtkdialogs.c:871
 msgid "Remove Group"
 msgstr "समूह मिटाओ"
 
-#: src/gtkdialogs.c:908
+#: src/gtkdialogs.c:909
 #, c-format
 msgid ""
 "You are about to remove %s from your buddy list.  Do you want to continue?"
 msgstr "आप अपनी बड्डी सूची से %s को मिटाने जा रहें हैं। क्या आप आगे बढ़ना चाहतें हैं?"
 
-#: src/gtkdialogs.c:911 src/gtkdialogs.c:912
+#: src/gtkdialogs.c:912 src/gtkdialogs.c:913
 msgid "Remove Buddy"
 msgstr "बड्डी निकालें"
 
-#: src/gtkdialogs.c:950
+#: src/gtkdialogs.c:951
 #, c-format
 msgid ""
 "You are about to remove the chat %s from your buddy list.  Do you want to "
@@ -3371,7 +3376,7 @@ msgstr "आप अपनी बड्डी सूची से %s चैट क
 #  *< dependencies
 #  *< priority
 #  *< id
-#: src/gtkdialogs.c:953 src/gtkdialogs.c:954
+#: src/gtkdialogs.c:954 src/gtkdialogs.c:955
 msgid "Remove Chat"
 msgstr "चैट हटाऐं"
 
@@ -3770,7 +3775,7 @@ msgstr ""
 #. TODO: Should save the previous status as a transient status?
 #. Save the newly selected status to prefs.xml and status.xml
 #: src/gtkmain.c:676 src/gtkmain.c:678 src/gtkmain.c:681
-#: src/gtkstatusbox.c:661 src/gtkstatusbox.c:663 src/gtkstatusbox.c:666
+#: src/gtkstatusbox.c:663 src/gtkstatusbox.c:665 src/gtkstatusbox.c:668
 #: src/status.c:1696
 #, fuzzy
 msgid "Default"
@@ -11993,9 +11998,6 @@ msgstr "g003: कनेक्शन करने में त्रुटी.\n
 
 #~ msgid "Vladimira Girginova and Vladimir (Kaladan) Petkov"
 #~ msgstr "व्लाडीमीरा गिरगीनोवा और व्लाडीमिर (कालाडान) पेटकोव"
-
-#~ msgid "Estonian"
-#~ msgstr "एसटोनियन"
 
 #~ msgid "Burmese"
 #~ msgstr "बर्मी"
