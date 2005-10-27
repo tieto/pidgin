@@ -3150,23 +3150,30 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, i
 
 void gtk_imhtml_image_scale(GtkIMHtmlScalable *scale, int width, int height)
 {
-	GtkIMHtmlImage *image = (GtkIMHtmlImage *)scale;
+	GtkIMHtmlImage *im_image = (GtkIMHtmlImage *)scale;
 
-	if(image->width > width || image->height > height){
+	if (im_image->width > width || im_image->height > height) {
 		double ratio_w, ratio_h, ratio;
 		int new_h, new_w;
 		GdkPixbuf *new_image = NULL;
 
-		ratio_w = ((double)width - 2) / image->width;
-		ratio_h = ((double)height - 2) / image->height;
+		ratio_w = ((double)width - 2) / im_image->width;
+		ratio_h = ((double)height - 2) / im_image->height;
 
 		ratio = (ratio_w < ratio_h) ? ratio_w : ratio_h;
 
-		new_w = (int)(image->width * ratio);
-		new_h = (int)(image->height * ratio);
+		new_w = (int)(im_image->width * ratio);
+		new_h = (int)(im_image->height * ratio);
 
-		new_image = gdk_pixbuf_scale_simple(image->pixbuf, new_w, new_h, GDK_INTERP_BILINEAR);
-		gtk_image_set_from_pixbuf(image->image, new_image);
+		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, new_w, new_h, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(im_image->image, new_image);
+		g_object_unref(G_OBJECT(new_image));
+	} else if (gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image)) != im_image->width) {
+		/* Enough space to show the full-size of the image. */
+		GdkPixbuf *new_image;
+
+		new_image = gdk_pixbuf_scale_simple(im_image->pixbuf, im_image->width, im_image->height, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(im_image->image, new_image);
 		g_object_unref(G_OBJECT(new_image));
 	}
 }
