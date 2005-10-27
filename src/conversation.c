@@ -1488,7 +1488,8 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		cb = gaim_conv_chat_cb_new(user, flags);
 		gaim_conv_chat_set_users(chat,
 				g_list_prepend(gaim_conv_chat_get_users(chat), cb));
-		aliases = g_list_append(aliases, (char *)alias);
+		/* We reverse this later to keep it in the same order as users. */
+		aliases = g_list_prepend(aliases, (char *)alias);
 
 		if (!quiet && new_arrivals) {
 			char *tmp;
@@ -1510,6 +1511,10 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 		if (extra_msgs != NULL)
 			extra_msgs = extra_msgs->next;
 	}
+
+	/* This needs to be in the same order as users, but it's faster
+	 * to prepend, so we do that above. */
+	aliases = g_list_reverse(aliases);
 
 	if (ops != NULL && ops->chat_add_users != NULL)
 		ops->chat_add_users(conv, users, aliases);
