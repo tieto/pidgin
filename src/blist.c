@@ -1734,7 +1734,7 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	group = (GaimGroup *)gnode;
 
 	/* Delete any buddy icon. */
-	gaim_buddy_set_icon(buddy, NULL);
+	gaim_buddy_icon_uncache(buddy);
 
 	/* Remove the node from its parent */
 	if (node->prev)
