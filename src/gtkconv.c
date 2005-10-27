@@ -5503,6 +5503,7 @@ void
 gaim_gtk_conversations_init(void)
 {
 	void *handle = gaim_gtk_conversations_get_handle();
+	void *blist_handle = gaim_blist_get_handle();
 
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
@@ -5553,7 +5554,7 @@ gaim_gtk_conversations_init(void)
 								tab_side_pref_cb, NULL);
 
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/placement",
-			conv_placement_pref_cb, NULL);
+								conv_placement_pref_cb, NULL);
 	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
 
 	/* IM callbacks */
@@ -5592,9 +5593,13 @@ gaim_gtk_conversations_init(void)
 	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-added", handle,
+	/**********************************************************************
+	 * UI operations
+	 **********************************************************************/
+
+	gaim_signal_connect(blist_handle, "buddy-added", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-removed", handle,
+	gaim_signal_connect(blist_handle, "buddy-removed", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
 
 	gaim_conversations_set_ui_ops(&conversation_ui_ops);
