@@ -579,7 +579,7 @@ struct smiley_button_list {
 	struct smiley_button_list *next;
 };
 
-struct smiley_button_list *
+static struct smiley_button_list *
 sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *width, char *filename, char *face)
 {
 	GtkWidget *image;

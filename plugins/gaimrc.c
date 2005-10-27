@@ -110,7 +110,7 @@ gaimrc_make_changes()
 		if (gaim_prefs_get_bool(widget_size_prefs_set[i])) {
 			prefbase = g_path_get_basename(widget_size_prefs[i]);
 			g_string_append_printf(style_string,
-			                       "%s = \"%d\"\n", prefbase,
+			                       "%s = %d\n", prefbase,
 			                       gaim_prefs_get_int(widget_size_prefs[i]));
 			g_free(prefbase);
 		}
@@ -166,6 +166,7 @@ gaimrc_pref_changed_cb(const char *name, GaimPrefType type, gpointer value,
 		if (value)
 			gaimrc_make_changes();
 		g_string_free(style_string, TRUE);
+		g_free(prefbase);
 
 		return;
 	} else {

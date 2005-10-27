@@ -165,7 +165,7 @@ static gchar **session_make_command(gchar *client_id, gchar *config_dir) {
 
 /* SM callback handlers */
 
-void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
+static void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
        Bool shutdown, int interact_style, Bool fast) {
 	if (had_first_save == FALSE && save_type == SmSaveLocal &&
 	      interact_style == SmInteractStyleNone && !shutdown &&
@@ -192,18 +192,18 @@ void session_save_yourself(SmcConn conn, SmPointer data, int save_type,
 	SmcSaveYourselfDone(conn, True);
 }
 
-void session_die(SmcConn conn, SmPointer data) {
+static void session_die(SmcConn conn, SmPointer data) {
 	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 			   "Received die\n");
 	gaim_core_quit();
 }
 
-void session_save_complete(SmcConn conn, SmPointer data) {
+static void session_save_complete(SmcConn conn, SmPointer data) {
 	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 			   "Received save_complete\n");
 }
 
-void session_shutdown_cancelled(SmcConn conn, SmPointer data) {
+static void session_shutdown_cancelled(SmcConn conn, SmPointer data) {
 	gaim_debug(GAIM_DEBUG_INFO, "Session Management",
 			   "Received shutdown_cancelled\n");
 }

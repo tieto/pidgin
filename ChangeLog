@@ -54,6 +54,7 @@ version 2.0.0:
 	  (Peter McCurdy)
 	* Control-Shift-Tab will reverse cycle through the conversation tabs
 	  (James Vega)
+	* Mono plugin loader (Eoin Coffey)
 
 	Bug fixes:
 	* People using input methods can now use Enter again.

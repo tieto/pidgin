@@ -239,7 +239,7 @@ AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
 AM_CONDITIONAL(STATIC_ZEPHYR, test "x$static_zephyr" = "xyes")
 AC_SUBST(STATIC_LINK_LIBS)
-AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init void static_proto_init() { $load_proto },
+AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init() { $load_proto },
 	[Loads static protocol plugin module initialization functions.])
 
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
@@ -307,6 +307,19 @@ AC_CHECK_FUNC(uname)
 
 if test "$enable_debug" = yes ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
+	for newflag in "-Werror-implicit-function-declaration" "-Wdeclaration-after-statement"; do
+		orig_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $newflag"
+		AC_MSG_CHECKING(for $newflag option to gcc)
+		AC_TRY_COMPILE([], [
+						void main() {};
+						], [
+							AC_MSG_RESULT(yes)
+						], [
+							AC_MSG_RESULT(no)
+							CFLAGS="$orig_CFLAGS"
+						])
+	done
 fi
 
 if test "x$enable_deprecated" = no; then

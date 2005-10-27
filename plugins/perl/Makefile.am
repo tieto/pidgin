@@ -2,10 +2,10 @@ plugindir = $(libdir)/gaim
 
 perl_dirs = common
 
-plugin_LTLIBRARIES = perl.la 
+plugin_LTLIBRARIES = perl.la libgaimperl.la
 
 perl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(PERL_LIBS)
-perl_la_LIBADD = $(PERL_LIBS) -L. -lgaimperl
+perl_la_LIBADD = $(PERL_LIBS) -L.libs -lgaimperl
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -16,10 +16,10 @@ perl_la_SOURCES = \
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \
 	.libs/DynaLoader.a \
-	libgaimperl.so
+	libgaimperl.la
 
-libgaimperl.so:
-	$(CC) -shared -fPIC -olibgaimperl.so libgaimperl.c	
+libgaimperl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libgaimperl_la_SOURCES = libgaimperl.c
 
 .libs/libperl_orig.a:
 	@mkdir -p .libs
@@ -114,9 +114,9 @@ install-exec-local:
 		$(MAKE) install; \
 		cd ..; \
 	done
-	cp libgaimperl.so $(libdir)
 
 # Evil Hack (TM)
+# ... which doesn't work with DESTDIR installs. FIXME?
 uninstall-local:
 	@for dir in $(perl_dirs); do \
 		cd $$dir && \

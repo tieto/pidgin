@@ -48,3 +48,9 @@ else
 	@echo "doxygen was not found during configure.  Aborting."
 	@echo;
 endif
+
+# perl's MakeMaker uninstall foo doesn't work well with DESTDIR set, which
+# breaks "make distcheck" unless we ignore perl things
+
+distuninstallcheck_listfiles = \
+	find . -type f -print | grep -v perl

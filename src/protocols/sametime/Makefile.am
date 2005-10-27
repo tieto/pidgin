@@ -36,7 +36,7 @@ AM_CFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	-I$(top_srcdir)/src \
-	-Imeanwhile
+	-I$(top_srcdir)/src/protocols/sametime/meanwhile
 
 
 AM_CPPFLAGS = \

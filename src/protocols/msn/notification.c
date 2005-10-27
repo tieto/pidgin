@@ -523,9 +523,13 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 			reason = g_strdup_printf(_("%s is not a valid passport account."),
 									 passport);
 		}
+		else if (error == 500)
+		{
+			reason = g_strdup(_("Service Temporarily Unavailable."));
+		}
 		else
 		{
-			reason = g_strdup_printf(_("Unknown error."));
+			reason = g_strdup(_("Unknown error."));
 		}
 	}
 

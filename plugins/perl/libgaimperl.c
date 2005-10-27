@@ -1,3 +1,4 @@
+#include <gmodule.h>
 void __attribute__ ((constructor)) my_init(void) {
 	/* Very evil hack...puts perl.so's symbols in the global table 		*/
 	/* but does not create a circular dependancy because g_module_open	*/

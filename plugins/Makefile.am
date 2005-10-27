@@ -27,12 +27,12 @@ SUBDIRS = \
 	docklet \
 	$(GEVOLUTION_DIR) \
 	gestures \
+	$(MONO_DIR) \
+	$(MUSICMESSAGING_DIR) \
 	$(PERL_DIR) \
 	ssl \
 	$(TCL_DIR) \
-	ticker \
-	$(MUSICMESSAGING_DIR) \
-	$(MONO_DIR)
+	ticker
 
 plugindir = $(libdir)/gaim
 
