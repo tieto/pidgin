@@ -5800,6 +5800,7 @@ focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 	return FALSE;
 }
 
+#if !GTK_CHECK_VERSION(2,6,0)
 /* Courtesy of Galeon! */
 static void
 tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
@@ -5807,6 +5808,7 @@ tab_close_button_state_changed_cb(GtkWidget *widget, GtkStateType prev_state)
 	if (GTK_WIDGET_STATE(widget) == GTK_STATE_ACTIVE)
 		gtk_widget_set_state(widget, GTK_STATE_NORMAL);
 }
+#endif
 
 static void
 notebook_init_grab(GaimGtkWindow *gtkwin, GtkWidget *widget)
@@ -6405,12 +6407,15 @@ gaim_gtk_conv_window_add_gtkconv(GaimGtkWindow *win, GaimGtkConversation *gtkcon
 	g_signal_connect(G_OBJECT(gtkconv->close), "clicked",
 	                 G_CALLBACK(close_conv_cb), gtkconv);
 
+#if !GTK_CHECK_VERSION(2,6,0)
 	/*
 	* I love Galeon. They have a fix for that stupid annoying visible
 	* border bug. I love you guys! -- ChipX86
 	*/
+	/* This is fixed properly in some version of Gtk before 2.6.0  */
 	g_signal_connect(G_OBJECT(gtkconv->close), "state_changed",
 	                 G_CALLBACK(tab_close_button_state_changed_cb), NULL);
+#endif
 
 	/* Status icon. */
 	gtkconv->icon = gtk_image_new();
