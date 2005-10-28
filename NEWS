@@ -1,5 +1,199 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+1.5.0 (8/11/2005):
+    Mark: No super crazy major changes here.  Just the usual bug
+    fixes and some pretty important security updates.
+
+    Stu: Buy Sean's book. He obviously needs the money. Other than that
+    we fixed some bugs with this release (I don't think we did much else).
+    SoC students are doing lots of cool stuff which we'll hopefully be
+    able to bring you in a future release.
+
+    Nathan: I've continued my streak of doing nothing useful lately.
+    However, I've now got a brand-spanking-new DSL line, so I might
+    actually get to contribute soon.  One way or another I'd like
+    to get HEAD into a more useable state in the next month or two.
+    Also, like Stu said, buy Sean's book.  I've been reading and
+    fixing it for the last umpteen months, so you had better enjoy
+    it.
+
+1.4.0 (7/7/2005):
+    Mark: The last month or four we've promoted a bunch of the Gaim
+    Crazy Patch Writers to developers, so there is now an even larger
+    team of brilliant and amazingly sexy committers working around
+    the globe for your instant messaging pleasure.  Also, we have
+    what I believe to be our first contribution from a Summer of Code
+    student in this release: Jonathan Clark enabled the sending of
+    files to certain ICQ users.  Support is still a bit rough, but
+    he'll be working on it throughout the summer.
+
+    Luke: Exciting times this summer as our Summer of Code interns
+    start their projects.  This is mostly a bug fix release, with the
+    ICQ file transfer that Mark mentioned and some buddy icon work
+    being the only real new code.  Hence the extra week delay.  A
+    big thanks to our translators who keep churning out updates even
+    when we give them short notice as well.  Enjoy!
+
+1.3.1 (6/9/2005):
+    Sean: It's been a while since I've done one of these. Welcome to
+    Gaim 1.3.1, "New Hyde Park." This is, again, another bugfix release
+    but it comes with two keen announcements. First, I'd like to welcome
+    Christopher O'Brien to the Gaim team. He has integrated his work on
+    the Meanwhile project into Gaim, ensuring that Gaim 2.0.0 will include
+    Sametime support. Also, we're participating in Google's Summer of
+    Code, which you all should check out at 
+    http://gaim.sourceforge.net/summerofcode/
+
+1.3.0 (5/10/2005):
+    Luke: This release fixes SILC for multiple accounts.  HOWEVER, you
+    may lose your buddy list (for SILC only) upgrading.  This is
+    rather unavoidable as the previous code did not keep track of
+    which account each buddy belonged to.
+
+    Stu: I'm glad we're finally getting this out, if fixes a number of bugs
+    ranging from minor to not so minor. I'd also like to welcome Gary to
+    the team - he's done a great job with Guifications, I'm sure he'll do
+    good stuff here too.
+
+    Gary: Well I got pretty much nothing done for this release.  Although I
+    do have quite a few things in the works that will come to fruition when
+    I find some more free time.
+
+1.2.1 (4/3/2005):
+    Luke:  Several important fixes this time around.  Big thanks to 
+    Robert McQueen, Stu, Nathan, Ethan, and everyone else who has helped 
+    with this effort.  Maybe next time we can get a decent chance to fix the 
+    problems *before* they go public to have a normal release process.
+
+    Nathan: Jabber got some updates this release (finally).  I've got
+    more planned, but simply haven't had the time to anything about it.
+
+1.2.0 (3/17/2005):
+    Luke: Happy St. Patrick's Day all.  Sean scheduled a release for
+    today, we'll see if we can pull it off. :-)  This release
+    features somewhat more than just bug fixes, some improvements
+    have been made to the conversation API which may affect plugin
+    developers.  Yahoo users should also thank Tim and Bleeter for
+    their efforts.
+    
+    Etan: I'm going to NEWS since I actually did something this time.
+    Jabber will allow you to unsubscribe to someone's presence
+    without logging out and in again, this does break seeing yourself
+    on your buddy list, but hopefully we'll fix that again for the
+    next release. 
+    
+    Stu: Happy St. Guinness^wPatrick's day.
+    
+1.1.4 (2/24/2005):
+    Sean: Another bug fix release. A big thanks to Rob McQueen, Ari
+    Pollak, Don Seiler, and Warren Togami: some packagers who helped
+    debug a nasty glib 2.6 problem. Also thanks to our own Stu who
+    found and destroyed an MSN crash and an HTML parsing error
+
+    Luke: Early release to handle the MSN and HTML crashes, as well
+    as the glib crash.  Maybe that makes up for having had a 4 week
+    period before the last release.  This one should be the nice
+    stable release we meant 1.1.3 to be. Enjoy!
+
+    Stu: I cleaned up the whitespace in this NEWS, it was bugging me.
+
+1.1.3 (2/17/2005):
+    Luke: Yet another bug fix release, many thanks to everyone who has
+    helped to make gaim more stable!
+
+    Stu: I fixed too many Yahoo HTTP proxy bugs, I should just go and
+    write some core HTTP support that works better. A good all round
+    bug fix release otherwise.
+
+1.1.2 (1/20/2005):
+    Luke: Another Bug fix release. This one featuring a fix to the HTTP
+    Method for MSN users and other MSN fixes. A big thanks to Stu and
+    Felipe Contreras for those. Stu also spent a long time in valgrind
+    and so this brings you a Gaim release with fewer memory leaks. This
+    release is on time primarily because I want to see the MSN fixes
+    make it into Debian and Fedora before freezes. Expect further bug
+    fix only releases to come at longer intervals, at Mark's request.
+
+    Daniel: This is my first NEWS! (YaY) I didn't really do too much for
+    this release.  There are a few bugfixes, mostly wingaim stuff. Oh, and
+    I like the new XP System Tray icons.
+
+    Sean: I'm down here today. I haven't really been paying too much
+    attention to these boring bugfix releases, but I'd like to thank
+    David and welcome him to the team. I'd also like to thank Steven
+    and Nathan from Silverorange who redid the webpage.
+
+    Tim: Another bug fix release. I didn't really fix any bugs, so
+    I didn't exactly do much for this one. The autopackage will now
+    work with mozilla-nss, if anyone has that, and not gnutls11. (It
+    works with either gnutls11 or mozilla-nss, but not gnutls10)
+    I started working on Gaim-vv again though, and I merged someone's
+    custom msn smiley patch into the 2.0.0 tree, so expect good things
+    whenever that's released (no, don't try it now, you won't like it).
+    Oh and welcome to the team Daniel. Of course, he was already on my
+    Gaim-vv team.
+
+    Stu: Welcome Daniel! you've done some good stuff already. Felipe did some
+    good work on MSN yet again, so you can all use the HTTP method now. I
+    didn't do all that much, other than let valgrind tell me what to fix, and
+    a couple of easy bug fixes from the bug tracker. Hopefully Ethan will get
+    well soon, so he can get back to merging patches and fixing things.
+
+    Nathan: I think I made some Jabber fixes, at least one of which is
+    ChangeLog'd.  I will continue to make empty promises about new features,
+    especially for 2.0.0.  Until then, welcome Daniel!
+
+1.1.1 (12/28/2004):
+    Luke: This bug fix release features msn improvements, drag and drop
+    improvements, and some translation stuff. Thanks for everone who has
+    helped with it, and hopefully we can get 2.0.0 out soon. On a side
+    note, i'm still looking for someone to look at the perl plugin loader.
+
+1.1.0 (12/02/2004):
+    Luke: Another in our series of bug fix releases, with a slight twist.
+    Everyone thank Ethan for implementing a fall back encoding for IRC,
+    it has been much requested and should make a number of users very
+    happy. See the ChangeLog for details on other fixes.
+
+    Stu: Much thanks to Miah Gregory and Felipe Contreras, a bunch of
+    memory leaks have been fixed. Felipe also fixed a good number of
+    other MSN bugs. I didn't do much except apply these guys fixes. It's
+    good to see fixes from Gary coming in again too ;-). I like the
+    docklet adjustments Christian made. Btw, we have a new MSN protocol
+    icon, and I think you'll love it.
+
+    Tim: I made Gaim binary relocatable this release, so Gaim can find
+    itself if it gets lost, and I'm going to try to make autopackages
+    for this release, if the autopackage guys release their new version
+    soon like they're talking. I also "fixed" a scrolling bug, by
+    realizing it was all Gentoo's fault. The IRC encoding thing Ethan
+    did is pretty nice, no more encoding error messages!
+
+    Ethan: Rumor has it that I did some work this release, but it's just
+    that, a rumor.  I think Luke started it.  I did lay the hammer  down
+    on  bogus  word  wrapping in the NEWS, so you can thank me for that.
+    Keep your powder dry.
+
+1.0.3 (11/11/2004):
+    Luke: Not much to see here, some bug fixes that you all will enjoy as
+    the semester draws to a close and everyone still in school gets bogged
+    down with projects, papers, and exams. Enjoy! Oh, and if you are interested
+    in the perl or gadu-gadu functionality, please step up to help write
+    patches, as both of these code blocks are currently unmaintained.
+
+    Tim: I fixed a couple bugs this time. In other news, Kim wants to get
+    a pet cockatiel or two.
+
+    Nathan: I was gonna put a new feature in this release, but decided
+    not to because I found a bug in it today, and I'm tired.  Also, I haven't
+    consulted the powers-that-be about putting new features into oldstatus.
+
+    Stu: I'm writing this at 11:11:11pm on 11/11. Eleven. It's 3 really. Or B.
+    It's the 5th smallest prime number. Himalia is the 11th moon of Jupiter.
+    Hendecagon. There are 1011 players on a football team. XI. 16 hours. Eleven
+    is the smallest positive integer requiring three syllables in English. This
+    entry is my 11th lie for today.
+
 1.0.2 (10/19/2004):
 	Stu: I'm new around here. I tried to reduce the number of bugs in the bug
 	tracker, but it turns out that the only way to achieve that is to actually
