@@ -214,6 +214,21 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	gaim_gtk_plugins_save();
 }
 
+static gboolean ensure_plugin_visible(void *data)
+{
+	GtkTreeSelection *sel = GTK_TREE_SELECTION(data);
+      	GtkTreeView *tv = gtk_tree_selection_get_tree_view(sel);
+	GtkTreeModel *model = gtk_tree_view_get_model(tv);
+	GtkTreePath *path;
+	GtkTreeIter iter;
+	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
+		return FALSE;
+	path = gtk_tree_model_get_path(model, &iter);
+	gtk_tree_view_scroll_to_cell(gtk_tree_selection_get_tree_view(sel), path, NULL, FALSE, 0, 0);
+	gtk_tree_path_free(path);
+	return FALSE;
+}
+
 static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 {
 	gchar *buf, *pname, *pdesc, *pauth, *pweb;
@@ -255,6 +270,11 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
 
 	gtk_label_set_markup(GTK_LABEL(plugin_details), buf);
+
+	/* Make sure the selected plugin is still visible */
+	g_idle_add(ensure_plugin_visible, sel);
+
+
 	g_value_unset(&val);
 	g_free(buf);
 	g_free(pname);
