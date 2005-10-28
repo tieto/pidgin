@@ -151,7 +151,7 @@ struct _GaimConversationUiOps
 	                   const char *message, GaimMessageFlags flags,
 	                   time_t mtime);
 
-	void (*chat_add_users)(GaimConversation *conv, GList *users, GList *aliases);
+	void (*chat_add_users)(GaimConversation *conv, GList *users, GList *flags, GList *aliases);
 	void (*chat_rename_user)(GaimConversation *conv, const char *old_name,
 	                         const char *new_name, const char *new_alias);
 	void (*chat_remove_user)(GaimConversation *conv, const char *user);

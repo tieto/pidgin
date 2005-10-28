@@ -313,7 +313,7 @@ static GaimGtkLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList 
 					log_preferences = _("Instant messages will only be logged if the \"Log all instant messages\" preference is enabled.");
 			} else if (ht->type == GAIM_LOG_CHAT) {
 				if (!gaim_prefs_get_bool("/core/logging/log_chats"))
-					log_preferences = _("Chats will only be logged if the \"Log all chats preference\" is enabled.");
+					log_preferences = _("Chats will only be logged if the \"Log all chats\" preference is enabled.");
 			}
 		}
 

@@ -121,7 +121,7 @@ static void got_typing_keypress(GaimGtkConversation *gtkconv, gboolean first);
 static void gray_stuff_out(GaimGtkConversation *gtkconv);
 static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv, const char *name,
-								  const char *alias, const char *old_name);
+								  GaimConvChatBuddyFlags flags, const char *alias, const char *old_name);
 static gboolean tab_complete(GaimConversation *conv);
 static void gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type);
 static void gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state);
@@ -1358,6 +1358,7 @@ ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 	GaimConversation *conv = gtkconv->active_conv;
 	GaimGtkChatPane *gtkchat;
 	GaimConvChat *chat;
+	GaimConvChatBuddyFlags flags;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *sel;
@@ -1374,6 +1375,7 @@ ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
 						   CHAT_USERS_NAME_COLUMN, &name,
 						   CHAT_USERS_ALIAS_COLUMN, &alias,
+						   CHAT_USERS_FLAGS_COLUMN, &flags,
 						   -1);
 		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
 	}
@@ -1385,7 +1387,7 @@ ignore_cb(GtkWidget *w, GaimGtkConversation *gtkconv)
 	else
 		gaim_conv_chat_ignore(chat, name);
 
-	add_chat_buddy_common(conv, name, alias, NULL);
+	add_chat_buddy_common(conv, name, flags, alias, NULL);
 	g_free(name);
 	g_free(alias);
 }
@@ -2855,14 +2857,13 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 }
 
 static void
-add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alias, const char *old_name)
+add_chat_buddy_common(GaimConversation *conv, const char *name, GaimConvChatBuddyFlags flags, const char *alias, const char *old_name)
 {
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GaimConvChat *chat;
 	GaimConnection *gc;
 	GaimPluginProtocolInfo *prpl_info;
-	GaimConvChatBuddyFlags flags;
 	GtkListStore *ls;
 	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;
@@ -2882,7 +2883,6 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, const char *alia
 
 	ls = GTK_LIST_STORE(gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list)));
 
-	flags = gaim_conv_chat_user_get_flags(chat, name);
 	pixbuf = get_chat_buddy_status_icon(chat, name, flags);
 
 	if (!strcmp(chat->nick, gaim_normalize(conv->account, old_name != NULL ? old_name : name)))
@@ -4340,13 +4340,14 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 }
 
 static void
-gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *aliases)
+gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *flags, GList *aliases)
 {
 	GaimConvChat *chat;
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GList *l;
 	GList *ll;
+	GList *lll;
 	char tmp[BUF_LONG];
 	int num_users;
 
@@ -4364,11 +4365,13 @@ gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *aliases
 	gtk_label_set_text(GTK_LABEL(gtkchat->count), tmp);
 
 	l = users;
-	ll = aliases;
-	while (l != NULL && ll != NULL) {
-		add_chat_buddy_common(conv, (const char *)l->data, (const char *)ll->data, NULL);
+	ll = flags;
+	lll = aliases;
+	while (l != NULL && ll != NULL && lll != NULL) {
+		add_chat_buddy_common(conv, (const char *)l->data, GPOINTER_TO_INT(ll->data), (const char *)lll->data, NULL);
 		l = l->next;
 		ll = ll->next;
+		lll = lll->next;
 	}
 }
 
@@ -4379,6 +4382,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 	GaimConvChat *chat;
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
+	GaimConvChatBuddyFlags flags;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	int f = 1;
@@ -4395,7 +4399,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 	while (f != 0) {
 		char *val;
 
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, -1);
+		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &val, CHAT_USERS_FLAGS_COLUMN, &flags, -1);
 
 		if (!gaim_utf8_strcasecmp(old_name, val)) {
 			gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
@@ -4413,7 +4417,7 @@ gaim_gtkconv_chat_rename_user(GaimConversation *conv, const char *old_name,
 
 	g_return_if_fail(new_alias != NULL);
 
-	add_chat_buddy_common(conv, new_name, new_alias, old_name);
+	add_chat_buddy_common(conv, new_name, flags, new_alias, old_name);
 }
 
 static void
@@ -4524,6 +4528,7 @@ static void
 gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 {
 	GaimConvChat *chat;
+	GaimConvChatBuddyFlags flags;
 	GaimGtkConversation *gtkconv;
 	GaimGtkChatPane *gtkchat;
 	GtkTreeIter iter;
@@ -4562,7 +4567,9 @@ gaim_gtkconv_chat_update_user(GaimConversation *conv, const char *user)
 
 	g_return_if_fail(alias != NULL);
 
-	add_chat_buddy_common(conv, user, alias, NULL);
+	flags = gaim_conv_chat_user_get_flags(chat, user);
+
+	add_chat_buddy_common(conv, user, flags, alias, NULL);
 	g_free(alias);
 }
 

@@ -388,8 +388,8 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 					cur++;
 				}
 				tmp = g_strndup(cur, end - cur);
-				users = g_list_append(users, tmp);
-				flags = g_list_append(flags, GINT_TO_POINTER(f));
+				users = g_list_prepend(users, tmp);
+				flags = g_list_prepend(flags, GINT_TO_POINTER(f));
 				cur = end;
 				if (*cur)
 					cur++;
