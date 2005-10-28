@@ -349,13 +349,6 @@ void gaim_gtk_treeview_popup_menu_position_func(GtkMenu *menu,
 												gpointer user_data);
 
 /**
- * Check if running Gnome.
- *
- * @return TRUE if running Gnome, FALSE otherwise.
- */
-gboolean gaim_running_gnome(void);
-
-/**
  * Manages drag'n'drop of files.
  *
  * @param sd GtkSelectionData for managing drag'n'drop
