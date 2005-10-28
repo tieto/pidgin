@@ -42,7 +42,7 @@ version 2.0.0:
 		const char *name, const char *alias
 	* gaim_conv_chat_add_users(), added extra_msgs and new_arrivals (pass NULL
 		and FALSE respectively, to get the same behavior as before)
-	* chat_add_users in GaimConversationUiOps, added aliases list
+	* chat_add_users in GaimConversationUiOps, added flags and aliases
 	* chat_rename_user in GaimConversationUiOps, added new_alias
 	* GaimConversation.log became GList * GaimConversation.logs, so that a
 		conversation can have multiple logs at once
