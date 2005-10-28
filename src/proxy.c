@@ -183,6 +183,67 @@ gaim_global_proxy_get_info(void)
 	return global_proxy_info;
 }
 
+GaimProxyInfo *
+gaim_gnome_proxy_get_info(void)
+{
+	static GaimProxyInfo info = {0, NULL, 0, NULL, NULL};
+	gchar *path;
+	if ((path = g_find_program_in_path("gconftool-2"))) {
+		gchar *tmp;
+		
+		/* See whether to use a proxy. */
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_http_proxy", &tmp,
+					       NULL, NULL, NULL))
+			return gaim_global_proxy_get_info();
+		if (strcmp(tmp, "true\n")) {
+			info.type = GAIM_PROXY_NONE;
+			g_free(tmp);
+			return gaim_global_proxy_get_info();
+		}
+			
+		g_free(tmp);
+		info.type = GAIM_PROXY_HTTP;
+		
+		/* Free the old fields */
+		if (info.host) {
+			g_free(info.host);
+			info.host = NULL;
+		}
+		if (info.username) {
+			g_free(info.username);
+			info.username = NULL;
+		}
+		if (info.password) {
+			g_free(info.password);
+			info.password = NULL;
+		}
+		
+		/* Get the new ones */
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
+					       NULL, NULL, NULL))
+			return gaim_global_proxy_get_info();
+		g_strchomp(info.host);
+		
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
+					       NULL, NULL, NULL))
+			return gaim_global_proxy_get_info();
+		g_strchomp(info.username);
+
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
+					       NULL, NULL, NULL))
+			return gaim_global_proxy_get_info();
+		g_strchomp(info.password);
+
+		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
+					       NULL, NULL, NULL))
+			return gaim_global_proxy_get_info();
+		info.port = atoi(tmp);
+
+		g_free(path);
+		return &info;
+	}
+	return gaim_global_proxy_get_info();
+}
 /**************************************************************************
  * Proxy API
  **************************************************************************/
@@ -1806,10 +1867,12 @@ gaim_proxy_connect(GaimAccount *account, const char *host, int port,
 
 	phb = g_new0(struct PHB, 1);
 
-	if (account == NULL || gaim_account_get_proxy_info(account) == NULL)
-		phb->gpi = gaim_global_proxy_get_info();
-	else
+	if (account && gaim_account_get_proxy_info(account) != NULL)
 		phb->gpi = gaim_account_get_proxy_info(account);
+	else if (gaim_running_gnome())
+		phb->gpi = gaim_gnome_proxy_get_info();
+	else
+		phb->gpi = gaim_global_proxy_get_info();
 
 	phb->func = func;
 	phb->data = data;

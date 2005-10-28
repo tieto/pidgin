@@ -464,6 +464,13 @@ FILE *gaim_mkstemp(char **path, gboolean binary);
 gboolean gaim_program_is_valid(const char *program);
 
 /**
+ * Check if running Gnome.
+ *
+ * @return TRUE if running Gnome, FALSE otherwise.
+ */
+gboolean gaim_running_gnome(void);
+
+/**
  * Returns the IP address from a socket file descriptor.
  *
  * @param fd The socket file descriptor.

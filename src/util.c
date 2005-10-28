@@ -2227,6 +2227,21 @@ gaim_program_is_valid(const char *program)
 	return is_valid;
 }
 
+
+gboolean
+gaim_running_gnome(void)
+{
+	gchar *tmp = g_find_program_in_path("gnome-open");
+	if ((g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL) &&
+		(tmp != NULL))
+	{
+		g_free(tmp);
+		return TRUE;
+	}
+	g_free(tmp);
+	return FALSE;
+}
+
 char *
 gaim_fd_get_ip(int fd)
 {
