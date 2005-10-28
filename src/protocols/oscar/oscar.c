@@ -7519,13 +7519,13 @@ static void oscar_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 	if (userinfo != NULL ) {
 	/*  if (userinfo->flags & AIM_FLAG_UNCONFIRMED)
 			emblems[i++] = "unconfirmed"; */
-		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
+		if ((i < 4) && userinfo->flags & AIM_FLAG_ADMINISTRATOR)
 			emblems[i++] = "admin";
-		if (userinfo->flags & AIM_FLAG_AOL)
+		if ((i < 4) && userinfo->flags & AIM_FLAG_AOL)
 			emblems[i++] = "aol";
-		if (userinfo->flags & AIM_FLAG_WIRELESS)
+		if ((i < 4) && userinfo->flags & AIM_FLAG_WIRELESS)
 			emblems[i++] = "wireless";
-		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
+		if ((i < 4) && userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			emblems[i++] = "activebuddy";
 
 		if ((i < 4) && (userinfo->capabilities & AIM_CAPS_HIPTOP))
