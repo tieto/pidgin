@@ -599,6 +599,10 @@ void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, co
 		if(msg)
 			*msg = gaim_status_get_attr_string(status, "message");
 
+		/* if the message is blank, then there really isn't a message */
+		if(*msg && !**msg)
+			*msg = NULL;
+
 		if(priority)
 			*priority = gaim_status_get_attr_int(status, "priority");
 	}
