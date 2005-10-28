@@ -178,8 +178,9 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	char aa_color[8];
 	GdkPixbuf *pixbuf;
 	GtkTreePath *path;
+	GtkStyle *style;
 
-	GtkStyle *style = gtk_widget_get_style(GTK_WIDGET(status_box));
+	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
 		 style->text_aa[GTK_STATE_NORMAL].green >> 8,
@@ -266,14 +267,71 @@ load_icon(const char *basename)
 	return scale;
 }
 
+/**
+ * This updates the GtkTreeView so that it correctly shows the state
+ * we are currently using.  It is used when the current state is
+ * updated from somewhere other than the GtkStatusBox (from a plugin,
+ * or when signing on with the "-n" option, for example).  It is
+ * also used when the user selects the "Custom..." option.
+ *
+ * TODO: It should ONLY update the appearance of the GtkStatusBox.  It
+ * should not trigger the text-input-typing-timer.  It should also
+ * not trigger a status change.
+ *
+ * Maybe we could accomplish this by triggering off the mouse and
+ * keyboard signals instead of the changed signal?
+ */
+static void
+update_to_reflect_current_status(GtkGaimStatusBox *status_box)
+{
+	const char *current_savedstatus_name;
+	GaimSavedStatus *saved_status;
+
+	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+	if (saved_status == NULL)
+	{
+		/* Default to "available" */
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+	}
+	else
+	{
+		GaimStatusPrimitive primitive;
+		const char *message;
+
+		primitive = gaim_savedstatus_get_type(saved_status);
+		if (gaim_savedstatus_has_substatuses(saved_status) ||
+		    ((primitive != GAIM_STATUS_AVAILABLE) &&
+		     (primitive != GAIM_STATUS_OFFLINE) &&
+		     (primitive != GAIM_STATUS_AWAY) &&
+		     (primitive != GAIM_STATUS_HIDDEN)))
+		{
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
+		}
+		else
+		{
+			if (primitive == GAIM_STATUS_AVAILABLE)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+			if (primitive == GAIM_STATUS_OFFLINE)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
+			else if (primitive == GAIM_STATUS_AWAY)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
+			else if (primitive == GAIM_STATUS_HIDDEN)
+				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
+		}
+
+		message = gaim_savedstatus_get_message(saved_status);
+		if (message != NULL)
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+	}
+}
+
 static void
 gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 {
 	GaimAccount *account;
 	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
 	GtkIconSize icon_size;
-	const char *current_savedstatus_name;
-	GaimSavedStatus *saved_status;
 
 	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 
@@ -299,44 +357,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("Custom..."), NULL);
 		gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box), GTK_GAIM_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL);
 
-		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
-		saved_status = gaim_savedstatus_find(current_savedstatus_name);
-		if (saved_status == NULL)
-		{
-		/* Default to "available" */
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
-		}
-		else
-		{
-			GaimStatusPrimitive primitive;
-			const char *message;
-
-			primitive = gaim_savedstatus_get_type(saved_status);
-			if (gaim_savedstatus_has_substatuses(saved_status) ||
-			    ((primitive != GAIM_STATUS_AVAILABLE) &&
-			     (primitive != GAIM_STATUS_OFFLINE) &&
-			     (primitive != GAIM_STATUS_AWAY) &&
-			     (primitive != GAIM_STATUS_HIDDEN)))
-			{
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
-			}
-			else
-			{
-				if (primitive == GAIM_STATUS_AVAILABLE)
-					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
-				if (primitive == GAIM_STATUS_OFFLINE)
-					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
-				else if (primitive == GAIM_STATUS_AWAY)
-					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
-				else if (primitive == GAIM_STATUS_HIDDEN)
-					gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
-			}
-
-			message = gaim_savedstatus_get_message(saved_status);
-			if (message != NULL)
-				gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-		}
-
+		update_to_reflect_current_status(status_box);
 
 	} else {
 		const GList *l;
@@ -716,12 +737,14 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
 	{
 		gaim_gtk_status_editor_show(NULL);
+		update_to_reflect_current_status(status_box);
 		return;
 	}
 
 	if (type == GTK_GAIM_STATUS_BOX_TYPE_SAVED)
 	{
 		gaim_gtk_status_window_show();
+		update_to_reflect_current_status(status_box);
 		return;
 	}
 
