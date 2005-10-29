@@ -131,6 +131,23 @@ status_window_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 	return FALSE;
 }
 
+#if !GTK_CHECK_VERSION(2,2,0)
+static void
+count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	(*(gint *)user_data)++;
+}
+
+static void
+list_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	GList *list = (GList *)user_data;
+	list = g_list_append(list, path);
+}
+#endif
+
 static void
 status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 {
@@ -138,17 +155,27 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 	GtkTreeIter iter;
 	GaimSavedStatus *saved_status;
 	GList *list;
+	int num_selected = 0;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 
-	if (gtk_tree_selection_count_selected_rows(selection) != 1)
+#if GTK_CHECK_VERSION(2,2,0)
+	num_selected = gtk_tree_selection_count_selected_rows(selection);
+#else
+	gtk_tree_selection_selected_foreach(selection, count_selected_helper, &num_selected);
+#endif
+	if (num_selected != 1)
 		/*
 		 * This shouldn't happen because the "Use" button should have
 		 * been grayed out.  Oh well.
 		 */
 		return;
 
+#if GTK_CHECK_VERSION(2,2,0)
 	list = gtk_tree_selection_get_selected_rows(selection, NULL);
+#else
+	gtk_tree_selection_selected_foreach(selection, list_selected_helper, &list);
+#endif
 
 	if (gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model),
 								&iter, list->data))
@@ -239,25 +266,16 @@ status_window_close_cb(GtkButton *button, gpointer user_data)
 	gaim_gtk_status_window_hide();
 }
 
-#if !GTK_CHECK_VERSION(2,2,0)
-static void
-get_selected_helper(GtkTreeModel *model, GtkTreePath *path,
-					GtkTreeIter *iter, gpointer user_data)
-{
-	*((gboolean *)user_data)++;
-}
-#endif
-
 static void
 status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 {
 	StatusWindow *dialog = user_data;
-	int num_selected;
+	int num_selected = 0;
 
 #if GTK_CHECK_VERSION(2,2,0)
 	num_selected = gtk_tree_selection_count_selected_rows(sel);
 #else
-	gtk_tree_selection_selected_foreach(sel, get_selected_helper, &num_selected);
+	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
 #endif
 
 	gtk_widget_set_sensitive(dialog->use_button, (num_selected == 1));

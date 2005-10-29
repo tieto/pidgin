@@ -934,7 +934,7 @@ network_page()
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button, *stun_server_entry;
 	GtkSizeGroup *sg;
-	GaimProxyInfo *proxy_info;
+	GaimProxyInfo *proxy_info = NULL;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
