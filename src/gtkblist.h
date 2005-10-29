@@ -83,7 +83,7 @@ struct _GaimGtkBuddyList {
 	GaimBlistNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
 
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
-	char *tooltiptext;               /**< The text displayed in tipwindow */
+	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
 	GaimBlistNode *selected_node;   /**< The currently selected node */
         GtkWidget *statusbox;            /**< The status selector dropdown */
