@@ -385,16 +385,8 @@ dropdown_store_row_separator_func(GtkTreeModel *model,
 								  GtkTreeIter *iter, gpointer data)
 {
 	GtkGaimStatusBoxItemType type;
-	GdkPixbuf *pixbuf;
-	gchar *text, *title, *description;
 
-	gtk_tree_model_get(model, iter,
-				TYPE_COLUMN, &type,
-				ICON_COLUMN, &pixbuf,
-				TEXT_COLUMN, &text,
-				TITLE_COLUMN, &title,
-				DESC_COLUMN, &description,
-				-1);
+	gtk_tree_model_get(model, iter, TYPE_COLUMN, &type, -1);
 
 	if (type == GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR)
 		return TRUE;
