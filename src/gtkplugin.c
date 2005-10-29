@@ -295,6 +295,8 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
 		gtk_widget_destroy(d);
+		g_hash_table_destroy(plugin_pref_dialogs);
+		plugin_pref_dialogs = NULL;
 		plugin_dialog = NULL;
 		break;
 	case 98121:
