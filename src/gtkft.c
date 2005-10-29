@@ -710,11 +710,11 @@ gaim_gtkxfer_dialog_new(void)
 	gtk_box_pack_start(GTK_BOX(vbox2), sw, TRUE, TRUE, 0);
 	gtk_widget_set_size_request(sw,-1, 140);
 
-	/* "Keep the dialog open" */
+	/* "Close this window when all transfers finish" */
 	checkbox = gtk_check_button_new_with_mnemonic(
-			_("_Keep the dialog open"));
+			_("_Close this window when all transfers finish"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox),
-								 dialog->keep_open);
+								 !dialog->keep_open);
 	g_signal_connect(G_OBJECT(checkbox), "toggled",
 					 G_CALLBACK(toggle_keep_open_cb), dialog);
 	gtk_box_pack_start(GTK_BOX(vbox2), checkbox, FALSE, FALSE, 0);
