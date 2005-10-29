@@ -143,8 +143,8 @@ static void
 list_selected_helper(GtkTreeModel *model, GtkTreePath *path,
 					GtkTreeIter *iter, gpointer user_data)
 {
-	GList *list = (GList *)user_data;
-	list = g_list_append(list, path);
+	GList **list = (GList **)user_data;
+	*list = g_list_append(*list, gtk_tree_path_copy(path));
 }
 #endif
 
@@ -154,7 +154,7 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 	GtkTreeSelection *selection;
 	GtkTreeIter iter;
 	GaimSavedStatus *saved_status;
-	GList *list;
+	GList *list = NULL;
 	int num_selected = 0;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
