@@ -48,6 +48,9 @@ spellchk_la_LDFLAGS     = -module -avoid-version $(GTK_LIBS)
 statenotify_la_LDFLAGS  = -module -avoid-version $(GLIB_LIBS)
 timestamp_la_LDFLAGS    = -module -avoid-version $(GTK_LIBS)
 
+# this can't be in a conditional otherwise automake 1.4 yells
+dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
+
 if PLUGINS
 
 plugin_LTLIBRARIES = \
@@ -80,7 +83,6 @@ timestamp_la_SOURCES    = timestamp.c
 if ENABLE_DBUS
 
 CLEANFILES              = dbus-example-bindings.c
-dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 dbus_example_la_SOURCES = dbus-example.c
 
 .PHONY: always
