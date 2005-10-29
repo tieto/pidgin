@@ -5,7 +5,7 @@ perl_dirs = common
 plugin_LTLIBRARIES = perl.la libgaimperl.la
 
 perl_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(PERL_LIBS)
-perl_la_LIBADD = $(PERL_LIBS) -L.libs -lgaimperl
+perl_la_LIBADD = $(PERL_LIBS) -L. -L.libs -lgaimperl
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
