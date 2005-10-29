@@ -53,4 +53,4 @@ endif
 # breaks "make distcheck" unless we ignore perl things
 
 distuninstallcheck_listfiles = \
-	find . -type f -print | grep -v perl
+	find . -type f -print | grep -v perl | grep -v Gaim.3pm
