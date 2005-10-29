@@ -1991,6 +1991,9 @@ struct tooltip_data {
 	PangoLayout *layout;
 	GdkPixbuf *status_icon;
 	GdkPixbuf *avatar;
+	int avatar_width;
+	int width;
+	int height;
 };
 
 static struct tooltip_data * create_tip_for_node(GaimBlistNode *node)
@@ -2005,6 +2008,16 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node)
 	pango_layout_set_markup(td->layout, tooltip_text, strlen(tooltip_text));
 	pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(td->layout, 300000);
+	
+	pango_layout_get_size (td->layout, &td->width, &td->height);
+	td->width = PANGO_PIXELS(td->width) + 38 + 8;
+	td->height = MAX(PANGO_PIXELS(td->height) + 8, 38);
+
+	if(td->avatar) {
+		td->avatar_width = gdk_pixbuf_get_width(td->avatar);
+		td->width += td->avatar_width + 8;
+		td->height = MAX(td->height, gdk_pixbuf_get_height(td->avatar) + 8);
+	}
 
 	return td;
 }
@@ -2012,7 +2025,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node)
 static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, GaimBlistNode *node)
 {
 	GtkStyle *style;
-	int current_height;
+	int current_height, max_width;
 	GList *l;
 
 	if(gtkblist->tooltipdata == NULL)
@@ -2022,37 +2035,37 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 	gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 			NULL, gtkblist->tipwindow, "tooltip", 0, 0, -1, -1);
 
+	max_width = 0;
+	for(l = gtkblist->tooltipdata; l; l = l->next)
+	{
+		struct tooltip_data *td = l->data;
+		max_width = MAX(max_width, td->width);
+	}
+
 	current_height = 0;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
 	{
 		struct tooltip_data *td = l->data;
-		int w, h;
-		int layout_width, layout_height;
-
-		pango_layout_get_size (td->layout, &w, &h);
-		layout_width = PANGO_PIXELS(w) + 8;
-		layout_height = PANGO_PIXELS(h) + 8;
-
-
 
 #if GTK_CHECK_VERSION(2,2,0)
 		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
 				0, 0, 4, current_height + 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		if(td->avatar)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-					td->avatar, 0, 0, layout_width + 38 + 4, current_height + 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+					td->avatar, 0, 0, max_width - (td->avatar_width + 4), current_height + 4, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 #else
 		gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 4, current_height + 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 		if(td->avatar)
 			gdk_pixbuf_render_to_drawable(td->avatar,
-					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, layout_width + 38 + 4,
+					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 
+					max_width - (td->avatar_width + 4),
 					current_height + 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
 
 		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				NULL, gtkblist->tipwindow, "tooltip", 38 + 4, current_height + 4, td->layout);
 
-		current_height += MAX(MAX(layout_height, 38), (td->avatar ? gdk_pixbuf_get_height(td->avatar) : 0));
+		current_height += td->height;
 	}
 }
 
@@ -2161,34 +2174,29 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 	if(GAIM_BLIST_NODE_IS_CHAT(node) || GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		struct tooltip_data *td = create_tip_for_node(node);
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-		pango_layout_get_size (td->layout, &w, &h);
-		w = PANGO_PIXELS(w) + 8 + 38;
-		h = MAX(PANGO_PIXELS(h) + 8, 38);
-		if(td->avatar) {
-			w += gdk_pixbuf_get_width(td->avatar) + 8;
-			h = MAX(h, gdk_pixbuf_get_width(td->avatar) + 8);
-		}
+		w = td->width;
+		h = td->height;
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
 		w = h = 0;
 		for(child = node->child; child; child = child->next)
 		{
 			if(GAIM_BLIST_NODE_IS_BUDDY(child) && buddy_is_displayable((GaimBuddy*)child)) {
-				int thisw, thish;
 				struct tooltip_data *td = create_tip_for_node(child);
 				gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
-				pango_layout_get_size (td->layout, &thisw, &thish);
-				w = MAX(w, PANGO_PIXELS(thisw) + 8 + 38 + (td->avatar ? gdk_pixbuf_get_width(td->avatar) + 8 : 0));
-				h += MAX(MAX(PANGO_PIXELS(thish) + 8, 38), (td->avatar ? gdk_pixbuf_get_height(td->avatar) + 8 : 0));
+				w = MAX(w, td->width);
+				h += td->height;
 			}
 		}
 	} else {
 		gtk_widget_destroy(gtkblist->tipwindow);
+		gtkblist->tipwindow = NULL;
 		return FALSE;
 	}
 
 	if (gtkblist->tooltipdata == NULL) {
 		gtk_widget_destroy(gtkblist->tipwindow);
+		gtkblist->tipwindow = NULL;
 		return FALSE;
 	}
 
