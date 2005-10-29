@@ -2065,6 +2065,9 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 				NULL, gtkblist->tipwindow, "tooltip", 38 + 4, current_height + 4, td->layout);
 
+		if(l->next)
+			gtk_paint_hline(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, NULL, NULL, NULL, 4, max_width - 4, td->height);
+
 		current_height += td->height;
 	}
 }
