@@ -1,4 +1,6 @@
 EXTRA_DIST = \
+		dbus-analyze-functions.py \
+		dbus-analyze-types.py \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
@@ -111,6 +113,7 @@ gaim_coreheaders = \
 	connection.h \
 	conversation.h \
 	core.h \
+	dbus-maybe.h \
 	debug.h \
 	desktopitem.h \
 	eventloop.h \
@@ -157,12 +160,12 @@ CLEANFILES = \
 	dbus-client-binding.h \
 	gaim.service \
 	dbus-types.c \
-	dbus-types.h 
+	dbus-types.h
 
 # gaim dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
-dbus_headers  = dbus-server.h dbus-useful.h dbus-maybe.h
+dbus_headers  = dbus-bindings.h dbus-gaim.h dbus-server.h dbus-useful.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 

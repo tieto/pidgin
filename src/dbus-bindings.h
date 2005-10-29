@@ -31,6 +31,10 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <glib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 gint gaim_dbus_pointer_to_id(gpointer node);
 gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusType *type);
 gint  gaim_dbus_pointer_to_id_error(gpointer ptr, DBusError *error);
@@ -47,7 +51,6 @@ gpointer gaim_dbus_id_to_pointer_error(gint id, GaimDBusType *type,
 	    (id, GAIM_DBUS_TYPE(type), #type, error);			\
 	CHECK_ERROR(error);						\
     } G_STMT_END
-	       
 
 
 #define GAIM_DBUS_POINTER_TO_ID(id, ptr, error)				\
@@ -102,5 +105,9 @@ typedef struct {
 void gaim_dbus_register_bindings(void *handle, GaimDBusBinding *bindings);
 
 DBusConnection *gaim_dbus_get_connection(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
