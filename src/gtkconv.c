@@ -1942,7 +1942,7 @@ gaim_gtkconv_set_active_conversation(GaimConversation *conv)
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(gtkconv->win->menu.logging)));
 }
 
-static void
+void
 gaim_gtkconv_switch_active_conversation(GaimConversation *conv)
 {
 	GaimGtkConversation *gtkconv;

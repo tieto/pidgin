@@ -181,6 +181,13 @@ GaimConversationUiOps *gaim_gtk_conversations_get_conv_ui_ops(void);
 void gaim_gtkconv_update_buddy_icon(GaimConversation *conv);
 
 /**
+ * Sets the active conversation within a GTK-conversation.
+ *
+ * @param conv The conversation
+ */
+void gaim_gtkconv_switch_active_conversation(GaimConversation *conv);
+
+/**
  * Updates the tab positions on all conversation windows to reflect any
  * changed preferences.
  */

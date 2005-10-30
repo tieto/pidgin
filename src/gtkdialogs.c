@@ -528,6 +528,7 @@ gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 	win = GAIM_GTK_CONVERSATION(conv)->win;
 
 	gtk_window_present(GTK_WINDOW(win->window));
+	gaim_gtkconv_switch_active_conversation(conv);
 	gaim_gtk_conv_window_switch_gtkconv(win, GAIM_GTK_CONVERSATION(conv));
 }
 
