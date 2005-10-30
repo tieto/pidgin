@@ -165,19 +165,21 @@ CLEANFILES = \
 # gaim dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
-dbus_headers  = dbus-bindings.h dbus-gaim.h dbus-server.h dbus-useful.h
+dbus_headers  = dbus-bindings.h dbus-gaim.h dbus-server.h dbus-useful.h dbus-define-api.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h connection.h conversation.h core.h roomlist.h status.h server.h
 
+gaim_build_coreheaders = $(addprefix $(srcdir)/, $(gaim_coreheaders))
+dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 
 dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DEFINE_TYPE\(%s\) > $@
+	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=GAIM_DBUS_DEFINE_TYPE\(%s\) > $@
 
 dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --pattern=GAIM_DBUS_DECLARE_TYPE\(%s\) > $@
+	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=GAIM_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py > $@
+	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
 
 dbus-server.$(OBJEXT): dbus-bindings.c dbus-types.c dbus-types.h
 $(gaim_OBJECTS): dbus-types.h
@@ -189,11 +191,11 @@ lib_LTLIBRARIES = libgaim-client.la
 libgaim_client_la_SOURCES = gaim-client.c
 
 gaim-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
-	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client > $@
+	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
 gaim-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(gaim_coreheaders) $(dbus_exported)
-	cat $(gaim_coreheaders) | $(PYTHON) dbus-analyze-types.py --keyword=enum --verbatim > $@
-	cat $(dbus_exported) | $(PYTHON) dbus-analyze-functions.py --client --headers >> $@
+	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
+	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
 $(libgaim_client_la_OBJECTS): gaim-client-bindings.h gaim-client-bindings.c
 

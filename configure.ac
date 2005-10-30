@@ -418,12 +418,11 @@ AC_ARG_WITH(dbus-session-dir, [  --with-dbus-session-dir=<dir>   Location of the
 if test "x$enable_dbus" = "xyes" ; then
     AC_MSG_CHECKING([location of the D-BUS session directory])
     if ! test -z "$with_dbus_session_dir"; then
-      	if ! test -d "$with_dbus_session_dir"; then
-	    AC_MSG_WARN([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
-	    enable_dbus=no
-	fi
-
-	DBUS_SESSION_DIR="$with_dbus_session_dir"
+		if ! test -d "$with_dbus_session_dir"; then
+			AC_MSG_WARN([$with_dbus_session_dir does not exist, if this is the correct location please make sure that it exists.])
+			enable_dbus=no
+		fi
+		DBUS_SESSION_DIR="$with_dbus_session_dir"
     else
 	dnl # add more to this as needed
 	servicesprefixes="$DATADIR $LIBDIR /usr/share /usr/local/share"
@@ -442,8 +441,6 @@ if test "x$enable_dbus" = "xyes" ; then
 	    enable_dbus=no
 	fi
     fi
-
-
 fi
 
 if test "x$enable_dbus" = "xyes" ; then

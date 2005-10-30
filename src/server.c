@@ -513,6 +513,8 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	char *angel, *buffy;
 	int plugin_return;
 
+	g_return_if_fail(msg != NULL);
+
 	account  = gaim_connection_get_account(gc);
 	presence = gaim_account_get_presence(account);
 

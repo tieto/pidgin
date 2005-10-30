@@ -564,6 +564,7 @@ gboolean gaim_dbus_dispatch_init(void)
     if (dbus_error_is_set (&error)) {
 	dbus_connection_unref(gaim_dbus_connection);
 	dbus_error_free(&error);
+	gaim_dbus_connection = NULL;
 	gaim_debug_error("dbus", "Failed to get serv name: %s\n", error.name);
 	return FALSE;
     }
@@ -668,14 +669,20 @@ static void gaim_dbus_message_append_gaim_values(DBusMessageIter *iter,
 
 #undef my_arg
 
-void gaim_dbus_signal_emit_gaim(char *name, int num_values, 
+void gaim_dbus_signal_emit_gaim(const char *name, int num_values, 
 				GaimValue **values, va_list vargs)
 {
     DBusMessage *signal;
     DBusMessageIter iter;
     char *newname;
 
+#if 0 /* this is noisy with no dbus connection */
     g_return_if_fail(gaim_dbus_connection);
+#else
+	if (gaim_dbus_connection == NULL)
+		return;
+#endif
+
     
     /* The test below is a hack that prevents our "dbus-method-called"
        signal from being propagated to dbus.  What we really need is a

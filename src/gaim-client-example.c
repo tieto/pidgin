@@ -21,7 +21,6 @@
 
 int main (int argc, char **argv)
 {
-    GaimAccount *account;
     GList *alist, *node;
 
     gaim_init();

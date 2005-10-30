@@ -13,7 +13,7 @@ all: $(mono_SCRIPTS)
 
 SUFFIXES = .cs .dll
 .cs.dll: api/GaimAPI.dll $(mono_build_sources)
-	mcs -t:library -lib:./api -out:$@ -r:GaimAPI.dll $(addprefix $(srcdir)/, $<)
+	mcs -t:library -lib:./api -out:$@ -r:GaimAPI.dll $<
 
 clean-local:
 	rm -f $(mono_SCRIPTS)

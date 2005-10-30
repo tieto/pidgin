@@ -90,8 +90,8 @@ dbus_example_la_SOURCES = dbus-example.c
 $(top_builddir)/src/dbus-types.h: always
 	cd $(@D) && $(MAKE) $(AM_MAKEFLAGS) $(@F)
 
-dbus-example-bindings.c: $(top_srcdir)/src/dbus-analyze-functions.py $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS)
-	cat $(dbus_example_la_SOURCES) $(dbus_example_la_HEADERS) | \
+dbus-example-bindings.c: $(top_srcdir)/src/dbus-analyze-functions.py $(dbus_example_la_SOURCES)
+	cat $(srcdir)/$(dbus_example_la_SOURCES) | \
 	$(PYTHON) $(top_srcdir)/src/dbus-analyze-functions.py --export-only > $@
 
 $(dbus_example_la_OBJECTS) dbus-example.so: dbus-example-bindings.c $(top_builddir)/src/dbus-types.h
@@ -105,9 +105,14 @@ EXTRA_DIST = \
 	ChangeLog HOWTO \
 	ChangeLog.API \
 	Makefile.mingw \
+	contact_priority.c \
 	filectl.c \
 	fortuneprofile.pl \
 	gaim.pl \
+	gaiminc.c \
+	gtk-signals-test.c \
+	ipc-test-client.c \
+	ipc-test-server.c \
 	mailchk.c \
 	pluginpref_example.c \
 	raw.c \
@@ -117,6 +122,7 @@ EXTRA_DIST = \
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
 	-DVERSION=\"$(VERSION)\" \
+	-I$(top_builddir)/src \
 	-I$(top_srcdir)/src \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \

@@ -10,7 +10,7 @@ GaimAccount *
 gaim_accounts_find_ext(const char *name, const char *protocol_id, 
 		       gboolean (*account_test)(const GaimAccount *account))
 {
-    GList *result = NULL;
+    GaimAccount *result = NULL;
     GList *l;
     char *who;
     

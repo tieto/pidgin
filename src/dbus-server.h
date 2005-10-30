@@ -131,7 +131,7 @@ void gaim_dbus_unregister_pointer(gpointer node);
                        the types of the parameters.
     @param vargs       A va_list containing the actual parameters.
   */
-void gaim_dbus_signal_emit_gaim(char *name, int num_values, 
+void gaim_dbus_signal_emit_gaim(const char *name, int num_values, 
 				GaimValue **values, va_list vargs);
 
 /**
