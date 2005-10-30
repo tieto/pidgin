@@ -114,9 +114,6 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 #endif
 static GaimGtkBuddyList *gtkblist = NULL;
 
-/* part of the best damn Docklet code this side of Tahiti */
-static gboolean gaim_gtk_blist_obscured = FALSE;
-
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node);
@@ -199,17 +196,6 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 	gaim_prefs_set_int("/gaim/gtk/blist/y",      y);
 	gaim_prefs_set_int("/gaim/gtk/blist/width",  event->width);
 	gaim_prefs_set_int("/gaim/gtk/blist/height", event->height);
-
-	/* continue to handle event normally */
-	return FALSE;
-}
-
-static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
-{
-	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
-		gaim_gtk_blist_obscured = TRUE;
-	else
-		gaim_gtk_blist_obscured = FALSE;
 
 	/* continue to handle event normally */
 	return FALSE;
@@ -3223,7 +3209,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	g_signal_connect_after(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkblist->window), "visibility_notify_event", G_CALLBACK(gtk_blist_visibility_cb), NULL);
 	gtk_widget_add_events(gtkblist->window, GDK_VISIBILITY_NOTIFY_MASK);
 
 	/******************************* Menu bar *************************************/

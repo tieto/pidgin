@@ -81,9 +81,6 @@ static SnLauncheeContext *sn_context = NULL;
 static SnDisplay *sn_display = NULL;
 #endif
 
-/* TODO: Get this out of here? */
-int docklet_count = 0;
-
 #if HAVE_SIGNAL_H
 /*
  * Lists of signals we wish to catch and those we wish to ignore.
