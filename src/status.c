@@ -659,35 +659,6 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 			ops->status_changed(account, new_status);
 		}
 	}
-	else if (context == GAIM_PRESENCE_CONTEXT_CONV)
-	{
-#if 0
-		GaimConversationUiOps *ops;
-		GaimConversation *conv;
-
-		conv = gaim_status_get_conversation(new_status);
-/*
- * TODO: Probably need to do some of the following here?  This is copied
- *       from some old status code that was removed.
- *
- *           char *tmp = g_strdup_printf(_("%s logged in."), alias);
- *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
- *           g_free(tmp);
- *
- *           char *tmp = g_strdup_printf(_("%s logged out."), alias);
- *           gaim_conversation_write(c, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
- *           g_free(tmp); 
- *
- *           char *tmp = g_strdup_printf(_("%s signed off"), alias);
- *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
- *           g_free(tmp);
- *
- *           serv_got_typing_stopped(gc, name);
- *
- *           gaim_conversation_update(c, GAIM_CONV_UPDATE_AWAY);
- */
-#endif
-	}
 	else if (context == GAIM_PRESENCE_CONTEXT_BUDDY)
 	{
 		const GList *l;
@@ -697,14 +668,6 @@ notify_status_update(GaimPresence *presence, GaimStatus *old_status,
 			notify_buddy_status_update((GaimBuddy *)l->data, presence,
 					old_status, new_status);
 		}
-
-/*
- * TODO: Maybe we should do this here?
- *           GaimLog *log = gaim_account_get_log(account);
- *           char *tmp = g_strdup_printf(_("%s signed on"), alias);
- *           gaim_log_write(log, GAIM_MESSAGE_SYSTEM, (alias ? alias : name), current_time, tmp);
- *           g_free(tmp);
- */
 	}
 }
 
