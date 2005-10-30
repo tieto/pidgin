@@ -261,7 +261,7 @@ receiving_im_msg_cb(GaimAccount *account, char **sender, char **buffer,
 {
 	gaim_debug_misc("signals test", "receiving-im-msg (%s, %s, %s, %s, %d)\n",
 					gaim_account_get_username(account), *sender, *buffer,
-					gaim_conversation_get_name(conv), *flags);
+					(conv != NULL) ? gaim_conversation_get_name(conv) : "(null)", *flags);
 
 	return FALSE;
 }
@@ -272,7 +272,7 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *buffer,
 {
 	gaim_debug_misc("signals test", "received-im-msg (%s, %s, %s, %s, %d)\n",
 					gaim_account_get_username(account), sender, buffer,
-					gaim_conversation_get_name(conv), flags);
+					(conv != NULL) ? gaim_conversation_get_name(conv) : "(null)", flags);
 }
 
 static gboolean
