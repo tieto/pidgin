@@ -142,10 +142,10 @@ void music_messaging_change_confirmed(const int session, const char *command, co
 
 void music_messaging_change_failed(const int session, const char *id, const char *command, const char *parameters)
 {
+	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
+	
 	gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_INFO, command,
                         parameters, NULL, NULL, NULL);
-	
-	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 	
 	if (mmconv->started)
 	{
@@ -164,10 +164,10 @@ void music_messaging_change_failed(const int session, const char *id, const char
 
 void music_messaging_done_session(const int session)
 {
+	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
+	
 	gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_INFO, "Session",
 						"Session Complete", NULL, NULL, NULL);
-	
-	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 	
 	session_end(mmconv);
 }
@@ -257,6 +257,8 @@ mmconv_from_conv(GaimConversation *conv)
 
 static gboolean
 plugin_load(GaimPlugin *plugin) {
+	void *conv_list_handle;
+
     /* First, we have to register our four exported functions with the
        main gaim dbus loop.  Without this statement, the gaim dbus
        code wouldn't know about our functions. */
@@ -272,7 +274,7 @@ plugin_load(GaimPlugin *plugin) {
 	gaim_conversation_foreach (init_conversation);
 	
 	/* Listen for any new conversations */
-	void *conv_list_handle = gaim_conversations_get_handle();
+	conv_list_handle = gaim_conversations_get_handle();
 	
 	gaim_signal_connect(conv_list_handle, "conversation-created", 
 					plugin, GAIM_CALLBACK(init_conversation), NULL);
@@ -292,11 +294,11 @@ plugin_load(GaimPlugin *plugin) {
 
 static gboolean
 plugin_unload(GaimPlugin *plugin) {
+	MMConversation *mmconv = NULL;
 	
 	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Unloaded",
 						DATADIR, NULL, NULL, NULL);
 	
-	MMConversation *mmconv = NULL;
 	while (g_list_length(conversations) > 0)
 	{
 		mmconv = g_list_first(conversations)->data;
@@ -363,17 +365,19 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 			{
 				if (mmconv->originator)
 				{
-					gaim_debug_misc("gaim-musicmessaging", "Sending request to gscore.\n");
-					
 					int session = mmconv_from_conv_loc(conv);
 					char *id = (mmconv->conv)->name;
+					char *command;
+					char *parameters;
+					
+					gaim_debug_misc("gaim-musicmessaging", "Sending request to gscore.\n");
 					
 					/* Get past the first two terms - '##MM##' and 'request' */
 					strtok(parsed_message, " "); /* '##MM##' */
 					strtok(NULL, " "); /* 'request' */
 					
-					char *command = strtok(NULL, " ");
-					char *parameters = strtok(NULL, "#");
+					command = strtok(NULL, " ");
+					parameters = strtok(NULL, "#");
 					
 					send_change_request (session, id, command, parameters);
 					
@@ -382,27 +386,32 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 			{
 				if (!mmconv->originator)
 				{
-					gaim_debug_misc("gaim-musicmessaging", "Sending confirmation to gscore.\n");
-					
 					int session = mmconv_from_conv_loc(conv);
+					char *command;
+					char *parameters;
+					
+					gaim_debug_misc("gaim-musicmessaging", "Sending confirmation to gscore.\n");
 					
 					/* Get past the first two terms - '##MM##' and 'confirm' */
 					strtok(parsed_message, " "); /* '##MM##' */
 					strtok(NULL, " "); /* 'confirm' */
 					
-					char *command = strtok(NULL, " ");
-					char *parameters = strtok(NULL, "#");
+					command = strtok(NULL, " ");
+					parameters = strtok(NULL, "#");
 					
 					send_change_confirmed (session, command, parameters);
 				}
 			} else if (strstr(parsed_message, "failed"))
 			{
+				char *id;
+				char *command;
+				
 				/* Get past the first two terms - '##MM##' and 'confirm' */
 				strtok(parsed_message, " "); /* '##MM##' */
 				strtok(NULL, " "); /* 'failed' */
 				
-				char *id = strtok(NULL, " ");
-				char *command = strtok(NULL, " ");
+				id = strtok(NULL, " ");
+				command = strtok(NULL, " ");
 				/* char *parameters = strtok(NULL, "#"); DONT NEED PARAMETERS */
 				
 				if ((mmconv->conv)->name == id)
@@ -503,11 +512,12 @@ static void set_editor_path (GtkWidget *button, GtkWidget *text_field)
 static void run_editor (MMConversation *mmconv)
 {
 	GError *spawn_error = NULL;
+	GString *session_id;
 	gchar * args[4];
 	args[0] = (gchar *)gaim_prefs_get_string("/plugins/gtk/musicmessaging/editor_path");
 	
 	args[1] = "-session_id";
-	GString *session_id = g_string_new("");
+	session_id = g_string_new("");
 	g_string_sprintfa(session_id, "%d", mmconv_from_conv_loc(mmconv->conv));
 	args[2] = session_id->str;
 	
@@ -567,13 +577,14 @@ static void add_button (MMConversation *mmconv)
 	GaimConversation *conv = mmconv->conv;
 	
 	GtkWidget *button, *image, *sep;
+	gchar *file_path;
 
 	button = gtk_toggle_button_new();
 	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
 
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), mmconv);
 
-	gchar *file_path = g_build_filename(DATADIR, "pixmaps", "gaim", "buttons",
+	file_path = g_build_filename(DATADIR, "pixmaps", "gaim", "buttons",
 										"music.png", NULL);
 	image = gtk_image_new_from_file(file_path);
 	g_free(file_path);
