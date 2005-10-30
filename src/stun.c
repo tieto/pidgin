@@ -26,14 +26,12 @@
  *
  */
 
+#include "internal.h"
+
 #ifndef _WIN32
 #include <net/if.h>
 #include <sys/ioctl.h>
-#else
-#include "libc_interface.h"
 #endif
-
-#include "internal.h"
 
 #include "debug.h"
 #include "account.h"

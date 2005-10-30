@@ -19,17 +19,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <glib.h>
+
+#include "internal.h"
+
 #ifndef _WIN32
 #include <resolv.h>
-#include <stdlib.h>
 #include <arpa/nameser.h>
 #include <arpa/nameser_compat.h>
 #ifndef T_SRV
 #define T_SRV	33
 #endif
 #else
-#include "win32dep.h"
 #include <windns.h>
 /* Missing from the mingw headers */
 #ifndef DNS_TYPE_SRV
@@ -38,9 +38,6 @@
 #endif
 
 #include "dnssrv.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
 #include "eventloop.h"
 #include "debug.h"
 
