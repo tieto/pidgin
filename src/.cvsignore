@@ -2,10 +2,15 @@ Makefile.in
 Makefile
 .deps
 .libs
+dbus-bindings.c
+dbus-server-bindings.c
+dbus-types.*
 gaim
 gaim.def
 gaim.lib
 gaim.dll
+gaim-client-bindings.*
+gaim-client-example
 .*.swp
 *.lo
 *.o
