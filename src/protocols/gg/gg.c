@@ -1671,7 +1671,7 @@ static void init_plugin(GaimPlugin *plugin)
 }
 /* }}} */
 
-GAIM_INIT_PLUGIN(gadu-gadu, init_plugin, info);
+GAIM_INIT_PLUGIN(gg, init_plugin, info);
 
 /* vim: set ts=4 sts=0 sw=4 noet: */
 
