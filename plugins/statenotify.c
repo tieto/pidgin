@@ -63,6 +63,20 @@ buddy_unidle_cb(GaimBuddy *buddy, void *data)
 		write_status(buddy, _("%s is no longer idle."));
 }
 
+static void
+buddy_signon_cb(GaimBuddy *buddy, void *data)
+{
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_signon"))
+		write_status(buddy, _("%s has signed on."));
+}
+
+static void
+buddy_signoff_cb(GaimBuddy *buddy, void *data)
+{
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_signon"))
+		write_status(buddy, _("%s has signed off."));
+}
+
 static GaimPluginPrefFrame *
 get_plugin_pref_frame(GaimPlugin *plugin)
 {
@@ -78,6 +92,9 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", _("Buddy Goes _Idle"));
+	gaim_plugin_pref_frame_add(frame, ppref);
+
+	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_signon", _("Buddy _Signs On/Off"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
@@ -96,6 +113,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_idle_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-unidle",
 						plugin, GAIM_CALLBACK(buddy_unidle_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-on",
+						plugin, GAIM_CALLBACK(buddy_signon_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-off",
+						plugin, GAIM_CALLBACK(buddy_signoff_cb), NULL);
 
 	return TRUE;
 }
@@ -144,6 +165,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_prefs_add_none("/plugins/core/statenotify");
 	gaim_prefs_add_bool("/plugins/core/statenotify/notify_away", TRUE);
 	gaim_prefs_add_bool("/plugins/core/statenotify/notify_idle", TRUE);
+	gaim_prefs_add_bool("/plugins/core/statenotify/notify_signon", TRUE);
 }
 
 GAIM_INIT_PLUGIN(statenotify, init_plugin, info)
