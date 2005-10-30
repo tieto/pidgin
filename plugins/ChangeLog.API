@@ -48,8 +48,10 @@ version 2.0.0:
 		conversation can have multiple logs at once
 	* gaim_conv_chat_add_user, added extra_msgs list
 	* gaim_notify_userinfo, removed primary and secondary parameters
-	* GaimNotifyUiOps.notify_userinfo: removed title, primary, and secondary
-		parameters
+	* GaimNotifyUiOps.notify_userinfo: removed title, primary, and
+	  secondary parameters
+	* Idle timers are now added and removed in gtkidle.c in response
+	  to the signed-on and signed-off signals
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -85,6 +87,7 @@ version 2.0.0:
 	* serv_remove_buddy(); use gaim_account_remove_buddy() instead
 	* serv_remove_buddies(); use gaim_account_remove_buddies() instead
 	* serv_change_passwd(); use gaim_account_change_password() instead
+	* serv_touch_idle(): use gaim_gtk_check_idle() instead
 	* GaimGtkImPane->a_virgin
 
 	Added:

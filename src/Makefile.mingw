@@ -105,6 +105,7 @@ DLL_C_SRC =	\
 			gtkeventloop.c \
 			gtkexpander.c \
 			gtkft.c \
+			gtkidle.c \
 			gtkimhtml.c \
 			gtkimhtmltoolbar.c \
 			gtklog.c \
@@ -126,7 +127,6 @@ DLL_C_SRC =	\
 			gtkthemes.c \
 			gtkutils.c \
 			gtkwhiteboard.c \
-			idle.c \
 			imgstore.c \
 			log.c \
 			mime.c \

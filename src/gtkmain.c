@@ -48,6 +48,7 @@
 #include "gtkdialogs.h"
 #include "gtkeventloop.h"
 #include "gtkft.h"
+#include "gtkidle.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
 #include "gtkpounce.h"
@@ -267,6 +268,7 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_privacy_init();
 	gaim_gtk_xfers_init();
 	gaim_gtk_roomlist_init();
+	gaim_gtk_idle_init();
 }
 
 static void
@@ -293,6 +295,7 @@ gaim_gtk_quit(void)
 	gaim_gtk_account_uninit();
 	gaim_gtk_xfers_uninit();
 	gaim_gtk_debug_uninit();
+	gaim_gtk_idle_uninit();
 
 	/* and end it all... */
 	gtk_main_quit();

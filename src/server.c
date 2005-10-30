@@ -41,18 +41,6 @@
 #define SECS_BEFORE_RESENDING_AUTORESPONSE 600
 #define SEX_BEFORE_RESENDING_AUTORESPONSE "Only after you're married"
 
-void serv_touch_idle(GaimConnection *gc)
-{
-	/* Are we idle?  If so, not anymore */
-	if (gc->is_idle > 0) {
-		gc->is_idle = 0;
-		serv_set_idle(gc, 0);
-	}
-	time(&gc->last_sent_time);
-	if (gc->is_auto_away)
-		check_idle(gc);
-}
-
 /* This should return the elapsed time in seconds in which Gaim will not send
  * typing notifications.
  * if it returns zero, it will not send any more typing notifications
@@ -149,8 +137,9 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, imflags);
 
+	/* Only update the last_sent_time if the user actually sent the message */
 	if (!(imflags & GAIM_CONV_IM_AUTO_RESP))
-		serv_touch_idle(gc);
+		time(&gc->last_sent_time);
 
 	/*
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
@@ -428,18 +417,18 @@ void serv_chat_whisper(GaimConnection *g, int id, const char *who, const char *m
 		prpl_info->chat_whisper(g, id, who, message);
 }
 
-int serv_chat_send(GaimConnection *g, int id, const char *message)
+int serv_chat_send(GaimConnection *gc, int id, const char *message)
 {
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 
-	if (g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
+	if (gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->chat_send)
-		val = prpl_info->chat_send(g, id, message);
+		val = prpl_info->chat_send(gc, id, message);
 
-	serv_touch_idle(g);
+	time(&gc->last_sent_time);
 
 	return val;
 }

@@ -255,6 +255,7 @@ gaim_SOURCES = \
 	gtkeventloop.c \
 	gtkexpander.c \
 	gtkft.c \
+	gtkidle.c \
 	gtkimhtml.c \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
@@ -276,7 +277,6 @@ gaim_SOURCES = \
 	gtkthemes.c \
 	gtkutils.c \
 	gtkwhiteboard.c \
-	idle.c \
 	session.c
 
 gaim_headers = \
@@ -301,6 +301,7 @@ gaim_headers = \
 	gtkexpander.h \
 	gtkft.h \
 	gtkgaim.h \
+	gtkidle.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \

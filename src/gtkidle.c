@@ -41,6 +41,7 @@
 #include "signals.h"
 
 #define IDLEMARK 600	/* 10 minutes! */
+#define IDLE_CHECK_INTERVAL 20000 /* 20 seconds */
 
 typedef enum
 {
@@ -111,11 +112,10 @@ get_idle_time_from_system()
  * 2. Set or unset your auto-away message.
  * 3. Report your current idle time to the IM server.
  */
-/* TODO: This needs to be namespaced or moved elsewhere. */
 gint
-check_idle(gpointer data)
+gaim_gtk_idle_check(gpointer data)
 {
-	GaimConnection *gc = data;
+	GaimConnection *gc = (GaimConnection *)data;
 	gboolean report_idle;
 	GaimAccount *account;
 	time_t t;
@@ -191,9 +191,75 @@ check_idle(gpointer data)
 	} else if ((!report_idle || idle_time < IDLEMARK) && gc->is_idle) {
 		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
-		serv_touch_idle(gc);
+		gc->is_idle = 0;
+		serv_set_idle(gc, 0);
 		/* LOG	system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
 	}
 
 	return TRUE;
+}
+
+static void
+im_msg_sent_cb(GaimAccount *account, const char *receiver,
+			   const char *message, void *data)
+{
+	GaimConnection	*gc = gaim_account_get_connection(account);
+
+	/* After an IM is sent, check our idle time */
+	gaim_gtk_idle_check(gc);
+}
+
+static void
+remove_idle_timer(GaimConnection *gc)
+{
+	/* Remove any existing idle_timer */
+	if (gc->idle_timer > 0)
+		gaim_timeout_remove(gc->idle_timer);
+	gc->idle_timer = 0;
+}
+
+static void
+connection_disconnected_cb(GaimConnection *gc, gpointer user_data)
+{
+	remove_idle_timer(gc);
+}
+
+static void
+connection_connected_cb(GaimConnection *gc, gpointer user_data)
+{
+	/* Now that we are connected, check for idleness every 20 seconds */
+	remove_idle_timer(gc);
+	gc->idle_timer = gaim_timeout_add(IDLE_CHECK_INTERVAL, gaim_gtk_idle_check, gc);
+
+	/* Immediately update our idleness, in case we connected while idle */
+	gaim_gtk_idle_check(gc);
+}
+
+void *
+gaim_gtk_idle_get_handle()
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_gtk_idle_init()
+{
+	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg",
+						gaim_gtk_idle_get_handle(),
+						GAIM_CALLBACK(im_msg_sent_cb), NULL);
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						gaim_gtk_idle_get_handle(),
+						GAIM_CALLBACK(connection_connected_cb), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						gaim_gtk_idle_get_handle(),
+						GAIM_CALLBACK(connection_disconnected_cb), NULL);
+}
+
+void
+gaim_gtk_idle_uninit()
+{
+	gaim_signals_disconnect_by_handle(gaim_gtk_idle_get_handle());
 }

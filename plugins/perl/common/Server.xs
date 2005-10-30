@@ -223,7 +223,3 @@ void
 serv_set_permit_deny(con)
 	Gaim::Connection con  
 
-void 
-serv_touch_idle(con)
-	Gaim::Connection con 
-

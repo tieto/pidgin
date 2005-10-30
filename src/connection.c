@@ -178,10 +178,6 @@ gaim_connection_destroy(GaimConnection *gc)
 		gaim_conv_chat_left(GAIM_CONV_CHAT(b));
 	}
 
-	if (gc->idle_timer > 0)
-		gaim_timeout_remove(gc->idle_timer);
-	gc->idle_timer = 0;
-
 	update_keepalive(gc, FALSE);
 
 	if (gc->prpl != NULL)
@@ -318,12 +314,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 
 		if (gaim_account_get_user_info(account) != NULL)
 			serv_set_info(gc, gaim_account_get_user_info(account));
-
-		if (gc->idle_timer > 0)
-			gaim_timeout_remove(gc->idle_timer);
-
-		gc->idle_timer = gaim_timeout_add(20000, check_idle, gc);
-		serv_touch_idle(gc);
 	}
 	else if (gc->state == GAIM_DISCONNECTED) {
 		GaimAccount *account = gaim_connection_get_account(gc);

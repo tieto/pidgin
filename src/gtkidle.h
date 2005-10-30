@@ -1,4 +1,7 @@
-/*
+/**
+ * @file gtkidle.h GTK+ Idle API
+ * @ingroup gtkui
+ *
  * gaim
  *
  * Gaim is the legal property of its developers, whose names are too numerous
@@ -18,11 +21,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-#ifndef _GAIM_H_
-#define _GAIM_H_
+#ifndef _GAIM_GTK_IDLE_H_
+#define _GAIM_GTK_IDLE_H_
 
-#define XPATCH BAD /* Because Kalla Said So */
+/**************************************************************************/
+/** @name GTK+ Idle API                                                  */
+/**************************************************************************/
+/*@{*/
 
-#endif /* _GAIM_H_ */
+
+/**
+ * Initializes the GTK+ idle system.
+ */
+void gaim_gtk_idle_init(void);
+
+/**
+ * Uninitializes the GTK+ idle system.
+ */
+void gaim_gtk_idle_uninit(void);
+
+/**
+ * Check the current idle time, reporting to the server or going auto-away as
+ * appropriate.
+ *
+ * @param gc The GaimConnection* to check
+ */
+gint gaim_gtk_idle_check(gpointer data);
+
+/*@}*/
+
+#endif /* _GAIM_GTK_IDLE_H_ */
