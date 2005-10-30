@@ -17,6 +17,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "debug.h"
+
 #include "gtkmenutray.h"
 
 #include <gtk/gtkiconfactory.h>
@@ -131,6 +133,8 @@ gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_hbox_new(FALSE, 0);
 
+	menu_tray->tooltips = gtk_tooltips_new();
+
 #if GTK_CHECK_VERSION(2,2,0)
 	settings =
 		gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
@@ -190,17 +194,36 @@ gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray) {
 }
 
 void
-gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget) {
+gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+{
 	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
+	gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip);
 	gtk_box_pack_end(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
 }
 
 void
-gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget) {
+gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+{
 	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
+	gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip);
 	gtk_box_pack_start(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
 }
+
+void
+gaim_gtk_menu_tray_set_tooltip(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+{
+	if (!menu_tray->tooltips)
+		return;
+
+	/* Should we check whether widget is a child of menu_tray? */
+	if (GTK_WIDGET_NO_WINDOW(widget))
+		gaim_debug_warning("GtkMenuTray",
+				"The widget does not have it's own window. Tooltip cannot be set for this widget.\n");
+	else
+		gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
+}
+

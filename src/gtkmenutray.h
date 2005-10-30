@@ -25,6 +25,7 @@
 
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkmenuitem.h>
+#include <gtk/gtktooltips.h>
 
 #define GAIM_GTK_TYPE_MENU_TRAY				(gaim_gtk_menu_tray_get_gtype())
 #define GAIM_GTK_MENU_TRAY(obj)				(GTK_CHECK_CAST((obj), GAIM_GTK_TYPE_MENU_TRAY, GaimGtkMenuTray))
@@ -40,6 +41,7 @@ typedef struct _GaimGtkMenuTrayClass		GaimGtkMenuTrayClass;
 struct _GaimGtkMenuTray {
 	GtkMenuItem gparent;					/**< The parent instance */
 	GtkWidget *tray;						/**< The tray */
+	GtkTooltips *tooltips;					/**< Tooltips */
 };
 
 /** A GaimGtkMenuTrayClass */
@@ -78,16 +80,27 @@ GtkWidget *gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray);
  *
  * @param menu_tray The tray
  * @param widget    The widget
+ * @param tooltip   The tooltip for this widget (widget requires its own X-window)
  */
-void gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget);
+void gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
  * Prepends a widget into the tray
  *
- * @param menu_tray The try
+ * @param menu_tray The tray
  * @param widget    The widget
+ * @param tooltip   The tooltip for this widget (widget requires its own X-window)
  */
-void gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget);
+void gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
+
+/**
+ * Set the tooltip for a widget
+ *
+ * @param menu_tray The tray
+ * @param widget    The widget
+ * @param tooltip   The tooltip to set for the widget (widget requires its own X-window)
+ */
+void gaim_gtk_menu_tray_set_tooltip(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 G_END_DECLS
 

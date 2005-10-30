@@ -2607,7 +2607,8 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 	if(gtkwin->menu.typing_icon) {
 		gtk_widget_show(gtkwin->menu.typing_icon);
 		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkwin->menu.tray),
-								  gtkwin->menu.typing_icon);
+								  gtkwin->menu.typing_icon,
+								  _("The buddy is typing a message"));
 	}
 }
 
