@@ -214,7 +214,7 @@ static void yahoo_xfer_end(GaimXfer *xfer)
 
 }
 
-guint calculate_length(const gchar *l, size_t len)
+static guint calculate_length(const gchar *l, size_t len)
 {
 	int i;
 

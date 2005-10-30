@@ -1067,7 +1067,7 @@ char base64digits[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234
 
 /* This is taken from Sylpheed by Hiroyuki Yamamoto.  We have our own tobase64 function
  * in util.c, but it has a bug I don't feel like finding right now ;) */
-void to_y64(char *out, const unsigned char *in, gsize inlen)
+static void to_y64(char *out, const unsigned char *in, gsize inlen)
      /* raw bytes in quasi-big-endian order to base 64 string (NUL-terminated) */
 {
 	for (; inlen >= 3; inlen -= 3)

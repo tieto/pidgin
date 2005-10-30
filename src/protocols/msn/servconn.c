@@ -133,8 +133,10 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 			reason = _("Unknown error"); break;
 	}
 
-	tmp = g_strdup_printf(_("Connection error from %s server (%s):\n%s"),
-						  name, servconn->host, reason);
+	gaim_debug_error("msn", "Connection error from %s server (%s): %s\n",
+					 name, servconn->host, reason);
+	tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
+						  name, reason);
 
 	if (servconn->type == MSN_SERVCONN_NS)
 	{

@@ -130,7 +130,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
  * We need this because we're only supposed to encode spaces in the font
  * names. gaim_url_encode() isn't acceptable.
  */
-const char *
+static const char *
 encode_spaces(const char *str)
 {
 	static char buf[BUF_LEN];

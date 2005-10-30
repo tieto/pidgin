@@ -24,7 +24,7 @@
 #include "msn.h"
 #include "command.h"
 
-gboolean
+static gboolean
 is_num(char *str)
 {
 	char *c;

@@ -43,7 +43,7 @@ void msn_request_user_display(MsnUser *user);
  * Util
  **************************************************************************/
 
-char *
+static char *
 get_token(const char *str, const char *start, const char *end)
 {
 	const char *c, *c2;
@@ -970,7 +970,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 	}
 }
 
-void
+static void
 got_user_display(MsnSlpCall *slpcall,
 				 const guchar *data, gsize size)
 {
@@ -1012,7 +1012,7 @@ got_user_display(MsnSlpCall *slpcall,
 #endif
 }
 
-void
+static void
 end_user_display(MsnSlpCall *slpcall)
 {
 	MsnUserList *userlist;

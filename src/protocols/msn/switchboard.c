@@ -931,7 +931,7 @@ clientcaps_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 #endif
 }
 
-void
+static void
 nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSwitchBoard *swboard;
