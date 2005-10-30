@@ -710,39 +710,6 @@ void gaim_blist_set_visible(gboolean show)
 		ops->set_visible(gaimbuddylist, show);
 }
 
-static gboolean presence_update_timeout_cb(GaimBuddy *buddy)
-{
-	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
-	GaimConversation *conv;
-
-	g_return_val_if_fail(buddy != NULL, FALSE);
-
-	if (buddy->present == GAIM_BUDDY_SIGNING_ON) {
-		buddy->present = GAIM_BUDDY_ONLINE;
-	} else if (buddy->present == GAIM_BUDDY_SIGNING_OFF) {
-		buddy->present = GAIM_BUDDY_OFFLINE;
-		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online--;
-		if (((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 0)
-			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online--;
-	}
-
-	buddy->timer = 0;
-
-	if (ops && ops->update)
-		ops->update(gaimbuddylist, (GaimBlistNode*)buddy);
-
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name,
-											   buddy->account);
-	if (conv) {
-		if (buddy->present == GAIM_BUDDY_ONLINE)
-			gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_ONLINE);
-		else if (buddy->present == GAIM_BUDDY_OFFLINE)
-			gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_OFFLINE);
-	}
-
-	return FALSE;
-}
-
 void
 gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 {
@@ -761,28 +728,19 @@ gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 
 	if (gaim_status_is_online(status) &&
 		!gaim_status_is_online(old_status)) {
-		int old_present = buddy->present;
 
-		buddy->present = GAIM_BUDDY_SIGNING_ON;
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-on", buddy);
-		if (old_present != GAIM_BUDDY_SIGNING_OFF) {
-			((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
-			if (((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
-				((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
-		}
-		if (buddy->timer > 0)
-			gaim_timeout_remove(buddy->timer);
-		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
 
+		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online++;
+		if (((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 1)
+			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online++;
 	} else if (!gaim_status_is_online(status) &&
 				gaim_status_is_online(old_status)) {
-		buddy->present = GAIM_BUDDY_SIGNING_OFF;
 		gaim_blist_node_set_int(&buddy->node, "last_seen", time(NULL));
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-signed-off", buddy);
-		if (buddy->timer > 0)
-			gaim_timeout_remove(buddy->timer);
-		buddy->timer = gaim_timeout_add(10000, (GSourceFunc)presence_update_timeout_cb, buddy);
-
+		((GaimContact*)((GaimBlistNode*)buddy)->parent)->online--;
+		if (((GaimContact*)((GaimBlistNode*)buddy)->parent)->online == 0)
+			((GaimGroup *)((GaimBlistNode *)buddy)->parent->parent)->online--;
 	} else if (gaim_status_is_available(status) &&
 			   !gaim_status_is_available(old_status)) {
 		gaim_signal_emit(gaim_blist_get_handle(), "buddy-back", buddy);
@@ -1781,8 +1739,6 @@ void gaim_blist_remove_buddy(GaimBuddy *buddy)
 	gaim_signal_emit(gaim_blist_get_handle(), "buddy-removed", buddy);
 
 	/* Delete the node */
-	if (buddy->timer > 0)
-		gaim_timeout_remove(buddy->timer);
 	if (buddy->icon != NULL)
 		gaim_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);

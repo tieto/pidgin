@@ -127,6 +127,8 @@ static void gaim_gtk_blist_tooltip_destroy();
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
 	gboolean contact_expanded;
+	gboolean recent_signonoff;
+	gint recent_signonoff_timer;
 };
 
 
@@ -2122,11 +2124,18 @@ static gboolean gaim_gtk_blist_expand_timeout(GtkWidget *tv)
 
 static gboolean buddy_is_displayable(GaimBuddy *buddy)
 {
-	return (buddy && gaim_account_is_connected(buddy->account) &&
+	struct _gaim_gtk_blist_node *gtknode;
+
+	if(!buddy)
+		return FALSE;
+
+	gtknode = ((GaimBlistNode*)buddy)->ui_data;
+
+	return (gaim_account_is_connected(buddy->account) &&
 			(gaim_presence_is_online(buddy->presence) ||
-		buddy->present == GAIM_BUDDY_SIGNING_OFF ||
-		gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies") ||
-			gaim_blist_node_get_bool((GaimBlistNode*)buddy, "show_offline")));
+			 (gtknode && gtknode->recent_signonoff) ||
+			 gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies") ||
+			 gaim_blist_node_get_bool((GaimBlistNode*)buddy, "show_offline")));
 }
 
 static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
@@ -2544,8 +2553,7 @@ static char *gaim_get_tooltip_text(GaimBlistNode *node)
 		}
 
 		/* Last Seen */
-		if ((!GAIM_BUDDY_IS_ONLINE(b) && b->present != GAIM_BUDDY_SIGNING_OFF) ||
-			b->present == GAIM_BUDDY_SIGNING_ON)
+		if (!GAIM_BUDDY_IS_ONLINE(b))
 		{
 			struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode *)c)->ui_data;
 			GaimBlistNode *bnode;
@@ -2632,6 +2640,7 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	char *filename;
 	const char *protoname = NULL;
 	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
+	struct _gaim_gtk_blist_node *gtkbuddynode = NULL;
 	struct _emblem_data emblems[4] = {{NULL, 15, 15}, {NULL, 0, 15},
 		{NULL, 0, 0}, {NULL, 15, 0}};
 	GaimPresence *presence = NULL;
@@ -2639,10 +2648,13 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	GaimChat *chat = NULL;
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
-		if(!gtknode->contact_expanded)
+		if(!gtknode->contact_expanded) {
 			buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
+			gtkbuddynode = ((GaimBlistNode*)buddy)->ui_data;
+		}
 	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (GaimBuddy*)node;
+		gtkbuddynode = node->ui_data;
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		chat = (GaimChat*)node;
 	} else {
@@ -2669,7 +2681,7 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 			protoname = prpl_info->list_icon(account, buddy);
 		}
 		if(prpl_info && prpl_info->list_emblems && buddy) {
-			if(buddy->present != GAIM_BUDDY_SIGNING_OFF)
+			if(!gtknode->recent_signonoff)
 				prpl_info->list_emblems(buddy, &emblems[0].filename,
 						&emblems[1].filename, &emblems[2].filename,
 						&emblems[3].filename);
@@ -2682,9 +2694,9 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		emblems[1].filename = emblems[2].filename = emblems[3].filename = NULL;
 	}
 
-	if(buddy && buddy->present == GAIM_BUDDY_SIGNING_ON) {
+	if(buddy && GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode->recent_signonoff) {
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
-	} else if(buddy && buddy->present == GAIM_BUDDY_SIGNING_OFF) {
+	} else if(buddy && !GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode->recent_signonoff) {
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "logout.png", NULL);
 	} else if(buddy || chat) {
 		char *image = g_strdup_printf("%s.png", protoname);
@@ -3494,6 +3506,8 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter) {
 
 static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 {
+	struct _gaim_gtk_blist_node *gtknode = node->ui_data;
+
 	gaim_request_close_with_handle(node);
 
 	gaim_gtk_blist_hide_node(list, node);
@@ -3509,6 +3523,10 @@ static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 	/* Of course it still causes problems - this breaks dragging buddies into
 	 * contacts, the dragged buddy mysteriously 'disappears'. Stu. */
 	/* I think it's fixed now. Stu. */
+
+	if(gtknode->recent_signonoff_timer > 0)
+		gaim_timeout_remove(gtknode->recent_signonoff_timer);
+
 	g_free(node->ui_data);
 	node->ui_data = NULL;
 }
@@ -3778,7 +3796,7 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 
 	if (gtkparentnode->contact_expanded &&
 		(gaim_presence_is_online(buddy->presence) ||
-		buddy->present == GAIM_BUDDY_SIGNING_OFF ||
+		(0 /* XXX: if we just signed off, need to show logout.png */) ||
 			(gaim_account_is_connected(buddy->account) &&
 				gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
 			gaim_blist_node_get_bool(node->parent, "show_offline")))
@@ -4585,6 +4603,39 @@ gaim_gtk_blist_get_handle() {
 	return &handle;
 }
 
+static gboolean buddy_signonoff_timeout_cb(GaimBuddy *buddy)
+{
+	struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode*)buddy)->ui_data;
+	GaimConversation *conv;
+
+	gtknode->recent_signonoff = FALSE;
+	gtknode->recent_signonoff_timer = 0;
+
+	gaim_gtk_blist_update(NULL, (GaimBlistNode*)buddy);
+
+	if((conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name, buddy->account))) {
+		if(GAIM_BUDDY_IS_ONLINE(buddy)) {
+			gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_ONLINE);
+		} else {
+			gaim_conversation_update(conv, GAIM_CONV_ACCOUNT_OFFLINE);
+		}
+	}
+
+	return FALSE;
+}
+
+static void buddy_signonoff_cb(GaimBuddy *buddy)
+{
+	struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode*)buddy)->ui_data;
+
+	gtknode->recent_signonoff = TRUE;
+
+	if(gtknode->recent_signonoff_timer > 0)
+		gaim_timeout_remove(gtknode->recent_signonoff_timer);
+	gtknode->recent_signonoff_timer = gaim_timeout_add(10000,
+			(GSourceFunc)buddy_signonoff_timeout_cb, buddy);
+}
+
 void gaim_gtk_blist_init(void)
 {
 	void *gtk_blist_handle = gaim_gtk_blist_get_handle();
@@ -4616,6 +4667,10 @@ void gaim_gtk_blist_init(void)
 						 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_BLIST_NODE),
 						 gaim_value_new_outgoing(GAIM_TYPE_BOXED, "GString *"));
+
+
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", gtk_blist_handle, GAIM_CALLBACK(buddy_signonoff_cb), NULL);
+	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off", gtk_blist_handle, GAIM_CALLBACK(buddy_signonoff_cb), NULL);
 }
 
 void

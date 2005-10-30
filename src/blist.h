@@ -58,15 +58,6 @@ typedef enum
 #define GAIM_BLIST_NODE_IS_CONTACT(n) ((n)->type == GAIM_BLIST_CONTACT_NODE)
 #define GAIM_BLIST_NODE_IS_GROUP(n)   ((n)->type == GAIM_BLIST_GROUP_NODE)
 
-typedef enum
-{
-	GAIM_BUDDY_SIGNING_OFF = -1,
-	GAIM_BUDDY_OFFLINE = 0,
-	GAIM_BUDDY_ONLINE,
-	GAIM_BUDDY_SIGNING_ON
-
-} GaimBuddyPresenceState;
-
 #define GAIM_BUDDY_IS_ONLINE(b) \
 	((b) != NULL && gaim_account_is_connected((b)->account) && \
 	 gaim_presence_is_online(gaim_buddy_get_presence(b)))
@@ -111,12 +102,9 @@ struct _GaimBuddy {
 	char *name;                             /**< The screenname of the buddy. */
 	char *alias;                            /**< The user-set alias of the buddy */
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
-	GaimBuddyPresenceState present;         /**< This is 0 if the buddy appears offline, 1 if he appears online, and 2 if
-						    he has recently signed on */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
 	GaimAccount *account;           	/**< the account this buddy belongs to */
-	guint timer;				/**< The timer handle. */
 	GaimPresence *presence;
 };
 

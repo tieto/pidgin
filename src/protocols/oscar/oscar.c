@@ -6315,7 +6315,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			   For more details, see SF issue 1179452.
 			*/
 			GaimBuddy *buddy = gaim_find_buddy(gc->account, name);
-			if (buddy && buddy->present != 0) {
+			if (buddy && GAIM_BUDDY_IS_ONLINE(buddy)) {
 				args.features = features_icq;
 				args.featureslen = sizeof(features_icq);
 			} else {
