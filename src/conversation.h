@@ -747,6 +747,15 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 void gaim_conv_im_send(GaimConvIm *im, const char *message);
 
 /**
+ * Sends a message to this IM conversation with specified flags.
+ *
+ * @param im      The IM.
+ * @param message The message to send.
+ * @param flags   The GaimMessageFlags flags to use in addition to GAIM_MESSAGE_SEND.
+ */
+void gaim_conv_im_send_with_flags(GaimConvIm *im, const char *message, GaimMessageFlags flags);
+
+/**
  * Adds a smiley to the conversation's smiley tree. If this returns
  * @c TRUE you should call gaim_conv_custom_smiley_write() one or more
  * times, and then gaim_conv_custom_smiley_close(). If this returns
@@ -952,6 +961,15 @@ void gaim_conv_chat_write(GaimConvChat *chat, const char *who,
  * @param message The message to send.
  */
 void gaim_conv_chat_send(GaimConvChat *chat, const char *message);
+
+/**
+ * Sends a message to this chat conversation with specified flags.
+ *
+ * @param chat    The chat.
+ * @param message The message to send.
+ * @param flags   The GaimMessageFlags flags to use.
+ */
+void gaim_conv_chat_send_with_flags(GaimConvChat *chat, const char *message, GaimMessageFlags flags);
 
 /**
  * Adds a user to a chat.

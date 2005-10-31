@@ -85,7 +85,7 @@ send_typed(gpointer data)
 }
 
 static void
-common_send(GaimConversation *conv, const char *message)
+common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgflags)
 {
 	GaimConversationType type;
 	GaimAccount *account;
@@ -107,8 +107,11 @@ common_send(GaimConversation *conv, const char *message)
 	type = gaim_conversation_get_type(conv);
 	ops  = gaim_conversation_get_ui_ops(conv);
 
-	if (conv->features & GAIM_CONNECTION_HTML)
+	if ((conv->features & GAIM_CONNECTION_HTML) &&
+		!(msgflags & GAIM_MESSAGE_RAW))
+	{
 		displayed = gaim_markup_linkify(message);
+	}
 	else
 		displayed = g_strdup(message);
 
@@ -155,15 +158,20 @@ common_send(GaimConversation *conv, const char *message)
 						 gaim_conversation_get_name(conv), &sent);
 
 		if (sent != NULL && sent[0] != '\0') {
-			GaimMessageFlags msgflags = GAIM_MESSAGE_SEND;
+			GaimConvImFlags imflags = 0;
+
+			msgflags |= GAIM_MESSAGE_SEND;
+
+			if (msgflags & GAIM_MESSAGE_AUTO_RESP)
+				imflags |= GAIM_CONV_IM_AUTO_RESP;
 
 			if (conv->features & GAIM_CONNECTION_HTML) {
 				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   sent, 0);
+				                   sent, imflags);
 			} else {
 				gchar *tmp = gaim_unescape_html(sent);
 				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   tmp, 0);
+				                   tmp, imflags);
 				g_free(tmp);
 			}
 
@@ -1147,10 +1155,16 @@ gboolean gaim_conv_present_error(const char *who, GaimAccount *account, const ch
 void
 gaim_conv_im_send(GaimConvIm *im, const char *message)
 {
+	gaim_conv_im_send_with_flags(im, message, 0);
+}
+
+void
+gaim_conv_im_send_with_flags(GaimConvIm *im, const char *message, GaimMessageFlags flags)
+{
 	g_return_if_fail(im != NULL);
 	g_return_if_fail(message != NULL);
 
-	common_send(gaim_conv_im_get_conversation(im), message);
+	common_send(gaim_conv_im_get_conversation(im), message, flags);
 }
 
 gboolean
@@ -1412,10 +1426,16 @@ gaim_conv_chat_write(GaimConvChat *chat, const char *who, const char *message,
 void
 gaim_conv_chat_send(GaimConvChat *chat, const char *message)
 {
+	gaim_conv_chat_send_with_flags(chat, message, 0);
+}
+
+void
+gaim_conv_chat_send_with_flags(GaimConvChat *chat, const char *message, GaimMessageFlags flags)
+{
 	g_return_if_fail(chat != NULL);
 	g_return_if_fail(message != NULL);
 
-	common_send(gaim_conv_chat_get_conversation(chat), message);
+	common_send(gaim_conv_chat_get_conversation(chat), message, flags);
 }
 
 void
