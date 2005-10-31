@@ -41,9 +41,6 @@ char *ZGetSender()
 	(void) sprintf(sender, "%s%s%s@%s", pname, (pinst[0]?".":""),
 		       pinst, prealm);
 	return (sender);
-    } else {
-	sprintf(sender,"%s@%s",(username?username:"unknown"),__Zephyr_realm);
-	return (sender);
     }
 #endif
 
