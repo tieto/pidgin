@@ -1,106 +1,150 @@
 Gaim: The Pimpin' Penguin IM Client that's good for the soul!
 
 version 2.0.0:
-	New Features:
-	* Insane rewrite of all code dealing with buddy and account status, away
-	  messages, away states, online/offline, etc.  Huge thanks to Christian
-	  Hammond, Dave West, and Daniel Atallah
-	* Beautiful new default sounds (Brad Turcotte)
-	* Screenname colors in chats now chosen intelligently from GNOME color
-	  palette
-	* New "find buddy" results dialog (Alex Converse)
-	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
-	* If Gaim is exited with the buddy list hidden in the docklet, it will
-	  remain hidden when Gaim is started again (Scott Shedden)
-	* Contacts will auto-expand when dragging into the buddy list
-	* SSL support for IRC connections (Daniel Atallah)
-	* Add a "Last Seen" field to tooltips for buddies in your buddy
-	  list (Richard Laager)
-	* Buddy icons in buddy list tooltips (Felipe Contreras)
-	* Custom smileys for MSN (Irving Cordova & Francesco Fracassi)
-	* Entries in the text replacement plugin are now sorted alphabetically
-	  (Richard Laager)
-	* Ability to set ICQ "require authorization" and "web aware"
-	  setting (Ettore Simone)
-	* Log viewer aggregates logs from the same "Person," (contact, meta-
-	  contact, whatever) (Richard Laager)
-	* Message formatting persists between messages (Igor Belyi)
-	* Show an error message when temporarily unable to join an IRC channel
-	  or change your nick (Richard Laager)
-	* Text Replacement Plugin rewritten, works in real time and far more
-	  intuitively (Benjamin Kahn with help from Richard Laager)
-	* Full message background colors are now supported
-	* Smooth scrolling when receiving a new message
-	* Themeable mouse-over hyperlink coloring
-	* Yahoo! Stealth Settings have been implemented.
-	* The modify account dialog now contains two tabs, which should display
-	  better at lower resolutions (Sadrul Habib Chowdhury)
-	* GNOME users can open received files by clicking on "Open" in the file
-	  transfer window
-	* Newly installed plugins can now be activated without restarting Gaim
-	  (Sadrul Habib Chowdhury)
-	* The Evolution Integration plugin now supports Groupwise contacts
-	* Use libao for playing sounds via NAS instead of accessing NAS
-	  directly
-	* Yahoo! buddy requests to add you to their buddy list now prompt for
-	  authorization.
-	* Conversation buffer scrollback limited to avoid large memory
-	  usage in active conversations.
-	* Added support for sending (with the /nudge command) and receiving MSN
-	  "nudges" (Julien Cegarra, Martin Bayard)
-	* Added an account action to open your Hotmail inbox from MSN
-	* Jabber support for SRV lookups
-	* When opening the log viewer, show the most recent log by default
-	  (Peter McCurdy)
-	* Control-Shift-Tab will reverse cycle through the conversation tabs
-	  (James Vega)
-	* Mono plugin loader (Eoin Coffey)
+	Status System:
+	* The code dealing with buddy and account status, away messages,
+	  away states, online/offline, etc has been completely rewritten.
+	  Huge thanks to Christian Hammond, Dave West, and Daniel Atallah.
+	* Your status can now be set from inside the buddy list using the
+	  selector at the bottom of the window.
 	* To see messages when a buddy signs on or off, goes away, or
 	  becomes idle, load the "Buddy State Notification" plugin
 
-	Bug fixes:
-	* People using input methods can now use Enter again.
-	* Many problems related to having an IM conversation and a chat open
-	  with the same name (Andrew Hart)
+	Buddy List:
+	* Buddy icons are now shown in tooltips (Felipe Contreras)
+	* Tooltips now contain additional information about a "Person" that
+	  contains multiple online buddies
+	* Added a "Last Seen" field to buddy tooltips (Richard Laager)
+	* Contacts will auto-expand when buddies are dragged around
+	* If Gaim is exited with the buddy list hidden in the docklet, it
+	  will remain hidden when Gaim is started again (Scott Shedden)
 	* Improved buddy list searching with CTRL+F
-	* Overhauled the system tray/docklet plugin (Casey Harkins)
-	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
-	* Show smiley theme descriptions correctly for the highlighted
-	  smiley theme (Levi Bard)
 
-	Preference changes:
-	* Removed "Dim idle buddies" buddy list preference, default to "Yes."
-	* Removed keyboard shortcut preferences for ctrl-b/i/u and made sure they
-	  won't interfere with bindings set by the GTK theme.
-	* Removed keyboard shortcuts preferences for ctrl-# to insert a smiley,
-	  default to "No"
-	* Removed preference for buddy list button type, defaulted to "None"
-	* Removed "Enter" vs. "Ctrl-Enter" to send, defaulted to "Enter" to send,
-	  made it possible to change this binding in your GTK theme.
-	* Removed "Show multi-colored screennames in chats," defaulted to "Yes."
-	  Made screenname colors automatically adjust themselves to compensate for
-	  background color.
-	* Removed "Raise Buddy List Window on Events" defaulted to "No"
+	Conversations and Chats:
+	* Messages from buddies in the same "Person" will automatically
+	  use the same conversation window.
+	* The "Send As" menu has been replaced with a more appropriate
+	  "Send To" menu based on "Persons" on your buddy list
+	* Message formatting persists between messages (Igor Belyi)
+	* Full message background colors are now supported
+	* Smooth scrolling when receiving a new message
+	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
+	* Screenname colors in chats now chosen intelligently from GNOME
+	  color palette
+	* Conversation buffer scrollback limited to avoid large memory
+	  usage in active conversations
+	* Control-Shift-Tab will reverse cycle through the conversation tabs
+	  (James Vega)
+	* Many problems related to having an IM conversation and a chat open
+	  with the same name are fixed (Andrew Hart)
+
+	Sounds:
+	* Beautiful new default sounds (Brad Turcotte)
+	* Use libao for playing sounds via NAS instead of accessing NAS directly
+
+	Log Viewer:
+	* Log viewer aggregates logs from the same "Person" (Richard Laager)
+	* When opening the log viewer, show the most recent log by default
+	  (Peter McCurdy)
+
+	Plugins:
+	* Plugins are now accessed through a separate dialog from the Tools
+	  menu of the Buddy List
+	* Newly installed plugins can now be activated without restarting
+	  Gaim (Sadrul Habib Chowdhury)
+	* Overhauled the system tray/docklet plugin (Casey Harkins)
+	* Text Replacement Plugin rewritten, works in real time and far more
+	  intuitively (Benjamin Kahn with help from Richard Laager)
+	* Entries in the text replacement plugin are now sorted
+	  alphabetically (Richard Laager)
+	* The Evolution Integration plugin now supports Groupwise contacts
+	* Mono plugin loader (Eoin Coffey)
+	* Perl plugin loader has been rewritten (John Kelm)
+	* New music messaging plugin (Christian Muise)
+	* gaim-remote has been superceded by new DBUS bindings within Gaim
+	  (Piotr Zielinski)
+
+	MSN Features:
+	* Custom smiley support (Irving Cordova & Francesco Fracassi)
+	* Added support for sending (with the /nudge command) and receiving
+	  "nudges" (Julien Cegarra, Martin Bayard)
+	* Added an account action to open your Hotmail inbox from MSN
+
+	Yahoo Features:
+	* Stealth Settings have been implemented
+	* Doodle is now supported (Andrew Dieffenbach)
+	* Buddies' requests to add you to their lists now prompt for
+	  authorization
+
+	AIM/ICQ Features:
+	* ICQ file transfer support with newer ICQ clients (Jonathan Clark)
+	* Many overall improvements to OSCAR file transfers (Jonathan Clark)
+	* Ability to set ICQ "require authorization" and "web aware"
+	  setting (Ettore Simone)
+	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
+
+	IRC Features:
+	* SSL support for IRC connections (Daniel Atallah)
+	* Show an error message when temporarily unable to join an IRC
+	  channel or change your nick (Richard Laager)
+
+	Other Protocol Changes:
+	* Jabber support for SRV lookups
+	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno)
+	* Updated Gadu-Gadu protocol support (Bartosz Oler)
+	* SIP/SIMPLE support (Thomas Butter)
+
+	Other Noteworthy Changes:
+	* UPNP and NAT traversal support (Adam J. Warrington)
+	* The modify account dialog now contains two tabs, which should display
+	  better at lower resolutions (Sadrul Habib Chowdhury)
+	* New "find buddy" results dialog (Alex Converse)
+	* People using input methods can now use Enter again
+	* GNOME users can open received files by clicking on "Open" in the
+	  file transfer window
+	* Mouse-over hyperlink coloring is now themeable
+
+	Preference Changes:
+	* Preferences have been substantially reorganized and cleaned up
+	* Smiley theme descriptions are now shown correctly for the highlighted
+	  smiley theme (Levi Bard)
+	* All Buddy List preferences have been moved to the Buddies menu of
+	  the buddy list window.
+	* Proxy settings will be taken from Gnome if it is running.  These may
+	  still be overridden on a per-account basis.
+	* Removed "Dim idle buddies;" behavior is now always enabled
+	* Removed keyboard shortcut preferences for ctrl-B/I/U; enabled by
+	  default, but won't interfere with bindings set by the GTK theme
+	* Removed keyboard shortcuts preferences for ctrl-# to insert a smiley;
+	  behavior removed from Gaim
+	* Removed "Enter" vs. "Ctrl-Enter" to send; "Enter" sends by default,
+	  but it is now possible to change this binding in your GTK theme
+	* Removed "Show multi-colored screennames in chats;" behavior is now
+	  always enabled and screenname colors automatically adjust themselves
+	  to compensate for background color.
+	* Removed "Raise Buddy List Window on Events" and the related behavior
 	* Removed "Display remote nicknames if no alias is set"
-	* Removed "Show idle times" and "Show warning levels" from the buddy list
-	  defaulted to "Yes".
-	* Removed "Auto-expand contacts" default to "No"
-	* Removed conversation buttons
-	* Removed "Raise conversation window" preferences, moved feature to notify
-	  plugin
-	* Removed "Show alias in tabs/titles," default to "Yes".
-	* Removed "Show formatting toolbars," made the option in the
-	  conversation menu affect the global preference.
-	* Removed "Show timestamps," defaulted to yes but made timestamp plugin
-	  override this.
-	* Removed protocol options.
-	* Consolidated three ignore formatting options into a single one.
-	* Removed "Escape closes windows," defaulted to Ctrl-W.
-	* Removed "Gaim usage" and the "Idle time reporting" selection,
-	  always use mouse/keyboard when available.
-	* Removed "Log when buddies sign on/sign off/become idle/
-	  become un-idle/go away/come back" and "Log your own actions",
-	  all of these will be logged when the system log is enabled
+	* Removed "Show idle times" and "Show warning levels" on the buddy
+	  list; behavior is now always enabled
+	* Removed "Auto-expand contacts;" contacts expand only when dragging
+	  buddies around the buddy list
+	* Removed conversation and buddy list buttons and related preferences
+	* Removed "Raise conversation window" preferences; moved feature to
+	  the notify plugin
+	* Removed "Show alias in tabs/titles;" behavior is now always enabled
+	* Removed "Show formatting toolbars;" the setting in conversations'
+	  "Options" menu now affects the global preference
+	* Removed "Show timestamps;" behavior is now enabled, but is overridden
+	  by the timestamp plugin
+	* Removed all protocol options pages
+	* Removed "Escape closes windows;" default key binding is now Ctrl-W
+	* Removed "Gaim usage" and "Idle time reporting" preferences; behavior
+	  now always uses mouse/keyboard when available
+	* Removed "Log when buddies sign on/sign off/become idle/become
+	  un-idle/go away/come back" and "Log your own actions;" all of these
+	  will be logged when the system log is enabled
+	* Removed the separate ignore formatting preferences; behavior has been
+	  consolidated into a single preference
 
 version 1.5.0 (8/11/2005):
 	* Ability to set IRC quit message (Lalo Martins)
