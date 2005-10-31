@@ -85,6 +85,7 @@ typedef struct
 {
 	GtkTreeIter iter;
 	time_t start_time;
+	time_t last_updated_time;
 	time_t end_time;
 	gboolean in_list;
 
@@ -877,6 +878,7 @@ gaim_gtkxfer_dialog_add_xfer(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 	gaim_gtkxfer_dialog_show(dialog);
 
 	data->start_time = time(NULL);
+	data->last_updated_time = 0;
 	data->end_time = -1;
 
 	type = gaim_xfer_get_type(xfer);
@@ -1004,6 +1006,7 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 	GaimGtkXferUiData *data;
 	char *size_str, *remaining_str;
 	GtkTreeSelection *selection;
+	time_t current_time;
 
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
@@ -1014,6 +1017,15 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 	if (data->in_list == FALSE)
 		return;
 
+	current_time = time(NULL);
+	if (((current_time - data->last_updated_time) == 0) &&
+		(!gaim_xfer_is_completed(xfer)))
+	{
+		/* Don't update the window more than once per second */
+		return;
+	}
+	data->last_updated_time = current_time;
+
 	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
 	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
 
@@ -1023,7 +1035,8 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);
 
-	if (gaim_xfer_is_completed(xfer)) {
+	if (gaim_xfer_is_completed(xfer))
+	{
 		GdkPixbuf *pixbuf;
 
 		pixbuf = gtk_widget_render_icon(dialog->window,
@@ -1036,7 +1049,7 @@ gaim_gtkxfer_dialog_update_xfer(GaimGtkXferDialog *dialog,
 						   -1);
 
 		g_object_unref(pixbuf);
-	} 
+	}
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(xfer_dialog->tree));
 
