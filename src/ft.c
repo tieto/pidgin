@@ -416,7 +416,11 @@ gaim_xfer_request_accepted(GaimXfer *xfer, const char *filename)
 
 	if (type == GAIM_XFER_SEND) {
 		/* Check the filename. */
-		if (g_strrstr(filename, "..")) {
+#ifdef _WIN32
+		if (g_strrstr(filename, "../") || g_strrstr(filename, "..\\")) {
+#else
+		if (g_strrstr(filename, "../")) {
+#endif
 			char *utf8 = g_filename_to_utf8(filename, -1, NULL, NULL, NULL);
 
 			msg = g_strdup_printf(_("%s is not a valid filename.\n"), utf8);
