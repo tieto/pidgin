@@ -36,31 +36,33 @@ write_status(GaimBuddy *buddy, const char *message)
 }
 
 static void
-buddy_away_cb(GaimBuddy *buddy, void *data)
+buddy_status_changed_cb(GaimBuddy *buddy, GaimStatus *old_status,
+                        GaimStatus *status, void *data)
 {
-	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_away"))
-		write_status(buddy, _("%s has gone away."));
+	gboolean available, old_available;
+
+	available = gaim_status_is_available(status);
+	old_available = gaim_status_is_available(old_status);
+
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_away")) {
+		if (available && !old_available)
+			write_status(buddy, _("%s is no longer away."));
+		else if (!available && old_available)
+			write_status(buddy, _("%s has gone away."));
+	}
 }
 
 static void
-buddy_unaway_cb(GaimBuddy *buddy, void *data)
+buddy_idle_changed_cb(GaimBuddy *buddy, gboolean old_idle, gboolean idle,
+                      void *data)
 {
-	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_away"))
-		write_status(buddy, _("%s is no longer away."));
-}
-
-static void
-buddy_idle_cb(GaimBuddy *buddy, void *data)
-{
-	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_idle"))
-		write_status(buddy, _("%s has become idle."));
-}
-
-static void
-buddy_unidle_cb(GaimBuddy *buddy, void *data)
-{
-	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_idle"))
-		write_status(buddy, _("%s is no longer idle."));
+	if (gaim_prefs_get_bool("/plugins/core/statenotify/notify_idle")) {
+		if (idle) {
+			write_status(buddy, _("%s has become idle."));
+		} else {
+			write_status(buddy, _("%s is no longer idle."));
+		}
+	}
 }
 
 static void
@@ -105,18 +107,14 @@ plugin_load(GaimPlugin *plugin)
 {
 	void *blist_handle = gaim_blist_get_handle();
 
-	gaim_signal_connect(blist_handle, "buddy-away",
-						plugin, GAIM_CALLBACK(buddy_away_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-back",
-						plugin, GAIM_CALLBACK(buddy_unaway_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-idle",
-						plugin, GAIM_CALLBACK(buddy_idle_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-unidle",
-						plugin, GAIM_CALLBACK(buddy_unidle_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-signed-on",
-						plugin, GAIM_CALLBACK(buddy_signon_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-signed-off",
-						plugin, GAIM_CALLBACK(buddy_signoff_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-status-changed", plugin,
+	                    GAIM_CALLBACK(buddy_status_changed_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-idle-changed", plugin,
+	                    GAIM_CALLBACK(buddy_idle_changed_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-on", plugin,
+	                    GAIM_CALLBACK(buddy_signon_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-signed-off", plugin,
+	                    GAIM_CALLBACK(buddy_signoff_cb), NULL);
 
 	return TRUE;
 }

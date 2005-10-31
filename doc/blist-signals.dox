@@ -1,10 +1,8 @@
 /** @page blist-signals Buddy List Signals
 
  @signals
-  @signal buddy-away
-  @signal buddy-back
-  @signal buddy-idle
-  @signal buddy-unidle
+  @signal buddy-status-changed
+  @signal buddy-idle-changed
   @signal buddy-signed-on
   @signal buddy-signed-off
   @signal update-idle
@@ -16,55 +14,31 @@
 
  <hr>
 
- @signaldef buddy-away
+ @signaldef buddy-status-changed
   @signalproto
-void (*buddy_away)(struct buddy *buddy);
+void (*buddy_away)(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list goes away.
-  @param buddy The buddy that went away.
+  @param buddy      The buddy that went away.
+  @param old_status The status that the buddy just changed from.
+  @param status     The status that the buddy just changed to.
  @endsignaldef
 
- @signaldef buddy-back
+ @signaldef buddy-idle-changed
   @signalproto
-void (*buddy_back)(struct buddy *buddy);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy on your buddy list comes back from being away.
-  @param buddy The buddy that came back from being away.
- @endsignaldef
-
- @signaldef buddy-idle
-  @signalproto
-void (*buddy_idle)(struct buddy *buddy);
+void (*buddy_idle)(GaimBuddy *buddy, gboolean old_idle, gboolean idle);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list becomes idle.
-  @param buddy The buddy that became idle.
- @endsignaldef
-
- @signaldef buddy-unidle
-  @signalproto
-void (*buddy_unidle)(struct buddy *buddy);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy on your buddy list returns from being idle.
-  @param buddy The buddy that returned from being idle.
- @endsignaldef
-
- @signaldef buddy-idle-updated
-  @signalproto
-void (*buddy_idle_updated)(struct buddy *buddy);
-  @endsignalproto
-  @signaldesc
-   Emitted when a buddy's idle time changes. The exceptions are when the
-   buddy goes from being idle to being unidle, or from unidle to idle.
-  @param buddy The buddy whose idle time changed.
+  @param buddy    The buddy that became idle.
+  @param old_idle Whether the buddy was idle.
+  @param idle     Whether the buddy is currently idle.
  @endsignaldef
 
  @signaldef buddy-signed-on
   @signalproto
-void (*buddy_signed_on)(struct buddy *buddy);
+void (*buddy_signed_on)(GaimBuddy *buddy);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list signs on.
@@ -73,7 +47,7 @@ void (*buddy_signed_on)(struct buddy *buddy);
 
  @signaldef buddy-signed-off
   @signalproto
-void (*buddy_signed_off)(struct buddy *buddy);
+void (*buddy_signed_off)(GaimBuddy *buddy);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list signs off.

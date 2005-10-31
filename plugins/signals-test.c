@@ -82,27 +82,20 @@ buddy_icon_cached_cb(GaimBuddyIcon *icon, GaimBuddy *buddy,
  * Buddy List subsystem signal callbacks
  **************************************************************************/
 static void
-buddy_away_cb(GaimBuddy *buddy, void *data)
+buddy_status_changed_cb(GaimBuddy *buddy, GaimStatus *old_status,
+                        GaimStatus *status, void *data)
 {
-	gaim_debug_misc("signals test", "buddy-away (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-status-changed (%s %s to %s)\n",
+	                buddy->name, gaim_status_get_id(old_status),
+	                gaim_status_get_id(status));
 }
 
 static void
-buddy_back_cb(GaimBuddy *buddy, void *data)
+buddy_idle_changed_cb(GaimBuddy *buddy, gboolean old_idle, gboolean idle,
+                      void *data)
 {
-	gaim_debug_misc("signals test", "buddy-back (%s)\n", buddy->name);
-}
-
-static void
-buddy_idle_cb(GaimBuddy *buddy, void *data)
-{
-	gaim_debug_misc("signals test", "buddy-idle (%s)\n", buddy->name);
-}
-
-static void
-buddy_unidle_cb(GaimBuddy *buddy, void *data)
-{
-	gaim_debug_misc("signals test", "buddy-unidle (%s)\n", buddy->name);
+	gaim_debug_misc("signals test", "buddy-idle-changed (%s %s)\n",
+	                buddy->name, old_idle ? "unidled" : "idled");
 }
 
 static void
@@ -585,14 +578,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_icon_cached_cb), NULL);
 
 	/* Buddy List subsystem signals */
-	gaim_signal_connect(blist_handle, "buddy-away",
-						plugin, GAIM_CALLBACK(buddy_away_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-back",
-						plugin, GAIM_CALLBACK(buddy_back_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-idle",
-						plugin, GAIM_CALLBACK(buddy_idle_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-unidle",
-						plugin, GAIM_CALLBACK(buddy_unidle_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-status-changed",
+						plugin, GAIM_CALLBACK(buddy_status_changed_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-idle-changed",
+						plugin, GAIM_CALLBACK(buddy_idle_changed_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-on",
 						plugin, GAIM_CALLBACK(buddy_signed_on_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-off",

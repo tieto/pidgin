@@ -228,7 +228,7 @@ buddy_signoff_cb(GaimBuddy *b)
 }
 
 static void
-away_cb(GaimBuddy *b)
+status_changed_cb(GaimBuddy *b, GaimStatus *os, GaimStatus *s)
 {
 	if(buddy_ticker_find_buddy(b))
 		buddy_ticker_set_pixmap(b);
@@ -279,10 +279,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_signon_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-off",
 						plugin, GAIM_CALLBACK(buddy_signoff_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-away",
-						plugin, GAIM_CALLBACK(away_cb), NULL);
-	gaim_signal_connect(blist_handle, "buddy-back",
-						plugin, GAIM_CALLBACK(away_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-status-changed",
+						plugin, GAIM_CALLBACK(status_changed_cb), NULL);
 
 	if (gaim_connections_get_all())
 		buddy_ticker_show();

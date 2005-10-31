@@ -949,6 +949,34 @@ buddy_state_cb(GaimBuddy *buddy, GaimPounceEvent event)
 }
 
 static void
+buddy_status_changed_cb(GaimBuddy *buddy, GaimStatus *old_status,
+                        GaimStatus *status)
+{
+	gboolean old_available, available;
+
+	available = gaim_status_is_available(status);
+	old_available = gaim_status_is_available(old_status);
+
+	if (available && !old_available)
+		gaim_pounce_execute(buddy->account, buddy->name,
+		                    GAIM_POUNCE_AWAY_RETURN);
+	else if (!available && old_available)
+		gaim_pounce_execute(buddy->account, buddy->name,
+		                    GAIM_POUNCE_AWAY);
+}
+
+static void
+buddy_idle_changed_cb(GaimBuddy *buddy, gboolean old_idle, gboolean idle)
+{
+	if (idle && !old_idle)
+		gaim_pounce_execute(buddy->account, buddy->name,
+		                    GAIM_POUNCE_IDLE);
+	else if (!idle && old_idle)
+		gaim_pounce_execute(buddy->account, buddy->name,
+		                    GAIM_POUNCE_IDLE_RETURN);
+}
+
+static void
 buddy_typing_cb(GaimAccount *account, const char *name, void *data)
 {
 	GaimConversation *conv;
@@ -983,18 +1011,10 @@ gaim_pounces_init(void)
 	pounce_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
 											g_free, free_pounce_handler);
 
-	gaim_signal_connect(blist_handle, "buddy-idle",
-						handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_POUNCE_IDLE));
-	gaim_signal_connect(blist_handle, "buddy-unidle",
-						handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_POUNCE_IDLE_RETURN));
-	gaim_signal_connect(blist_handle, "buddy-away",
-						handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_POUNCE_AWAY));
-	gaim_signal_connect(blist_handle, "buddy-back",
-						handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_POUNCE_AWAY_RETURN));
+	gaim_signal_connect(blist_handle, "buddy-idle-changed",
+	                    handle, GAIM_CALLBACK(buddy_idle_changed_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-status-changed",
+	                    handle, GAIM_CALLBACK(buddy_status_changed_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-signed-on",
 						handle, GAIM_CALLBACK(buddy_state_cb),
 						GINT_TO_POINTER(GAIM_POUNCE_SIGNON));

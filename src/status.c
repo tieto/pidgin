@@ -1263,8 +1263,6 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 
 	if (!old_idle && idle)
 	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle", buddy);
-
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(buddy->account);
@@ -1278,8 +1276,6 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 	}
 	else if (old_idle && !idle)
 	{
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-unidle", buddy);
-
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(buddy->account);
@@ -1291,6 +1287,10 @@ update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
 			g_free(tmp);
 		}
 	}
+
+	if (old_idle != idle)
+		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-changed", buddy,
+		                 old_idle, idle);
 
 	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
 

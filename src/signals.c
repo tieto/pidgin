@@ -639,6 +639,16 @@ gaim_marshal_VOID__POINTER_UINT(GaimCallback cb, va_list args,
 	((void (*)(void *, guint, void *))cb)(arg1, arg2, data);
 }
 
+void gaim_marshal_VOID__POINTER_INT_INT(GaimCallback cb, va_list args,
+                                        void *data, void **return_val)
+{
+	void *arg1 = va_arg(args, void *);
+	gint arg2 = va_arg(args, gint);
+	gint arg3 = va_arg(args, gint);
+
+	((void (*)(void *, gint, gint, void *))cb)(arg1, arg2, arg3, data);
+}
+
 void
 gaim_marshal_VOID__POINTER_POINTER(GaimCallback cb, va_list args,
 								   void *data, void **return_val)

@@ -168,8 +168,16 @@ version 2.0.0:
 	* "file-send-complete": See Doxygen docs for details.
 	* "buddy-added": Self explanatory; see Doxygen docs for full details.
 	* "buddy-removed": Self explanatory; see Doxygen docs for full details.
-	* "blist-node-aliased": an alias was set for a buddy, chat or contact.
+	* "blist-node-aliased": An alias was set for a buddy, chat or contact.
+	* "buddy-status-changed": A buddy changed status; see Doxygen docs for full details.
+	* "buddy-idle-changed": A buddy's idle status changed; see Doxygen docs for full details.
 		See Doxygen docs for details.
+
+	Signals - Removed:
+	* "buddy-away": replaced by buddy-status-changed
+	* "buddy-back": replaced by buddy-status-changed
+	* "buddy-idle": replaced by buddy-idle-changed
+	* "buddy-unidle": replaced by buddy-idle-changed
 
 version 1.5.0 (8/11/2005):
 	* Added: gaim_xfer_conversation_write
