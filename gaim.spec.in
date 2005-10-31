@@ -1,5 +1,6 @@
 # Older RPM doesn't define these by default
 %{!?perl_vendorlib: %define perl_vendorlib %(eval "`%{__perl} -V:installvendorlib`"; echo $installvendorlib)}
+%{!?perl_vendorarch: %define perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)}
 %{!?perl_archlib: %define perl_archlib %(eval "`%{__perl} -V:installarchlib`"; echo $installarchlib)}
 
 Summary:    A Gtk+ based multiprotocol instant messaging client
@@ -16,21 +17,16 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
+%{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
 %{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
+%{?_with_mono:BuildRequires: mono-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
-# Mandrake 10.1 and lower
-%if "%{_vendor}" == "MandrakeSoft"
-# Mandrake/Mandriva requirements
-BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
-Obsoletes:  libgaim-remote0
-%else
-
-# Mandrake 10.2 (and higher?)
-%if "%{_vendor}" == "Mandrakesoft"
+# Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
+%if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
@@ -45,6 +41,12 @@ BuildRequires: gnutls-devel
 BuildRequires: mozilla-nss-devel
 %endif
 %endif
+
+%if 0%{?_with_howl:1}
+%package bonjour
+Summary:	Bonjour plugin for Gaim
+Group:		Applications/Internet
+Requires:	gaim = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_silc:1}
@@ -57,6 +59,13 @@ Requires:   gaim = %{epoch}:%{version}
 %if 0%{?_with_tcl:1}
 %package tcl
 Summary:    Tcl scripting support for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
+%if 0%{?_with_mono:1}
+%package mono
+Summary:    Mono .NET plugin support for Gaim
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -79,6 +88,11 @@ unique features, such as perl scripting, TCL scripting and C plugins.
 Gaim is NOT affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
+%if 0%{?_with_howl:1}
+%description bonjour
+Bonjour plugin for Gaim
+%endif
+
 %if 0%{?_with_silc:1}
 %description silc
 SILC (Secure Internet Live Conferencing) plugin for Gaim
@@ -88,6 +102,12 @@ SILC (Secure Internet Live Conferencing) plugin for Gaim
 %description tcl
 Tcl plugin loader for Gaim.  This package will allow you to write or
 use Gaim plugins written in the Tcl programming language.
+%endif
+
+%if 0%{?_with_mono:1}
+%description mono
+Mono plugin loader for Gaim.  This package will allow you to write or
+use Gaim plugins written in the .NET programming language.
 %endif
 
 %description devel
@@ -111,6 +131,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
                                     %{!?_with_tcl:--disable-tcl} \
+									%{!?_with_mono:--disable-mono} \
                                     %{?_without_gtkspell:--disable-gtkspell}
 
 make %{?_smp_mflags}
@@ -123,8 +144,14 @@ make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
      sysconfdir=%{buildroot}%{_sysconfdir} \
      install
 
-rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
+rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
+find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
+find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
+
+%if 0%{!?_with_howl:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
+%endif
 
 %if 0%{!?_with_silc:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
@@ -134,10 +161,19 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
 %endif
 
+%if 0%{!?_with_mono:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/mono.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.dll
+%endif
+
+
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
-        grep -v libsilcgaim.so |
-        grep -v tcl.so |
+		grep -v libbonjour.so | \
+        grep -v libsilcgaim.so | \
+        grep -v tcl.so | \
+		grep -v mono.so | \
+		grep -v ".dll$" | \
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
 %clean
@@ -152,8 +188,8 @@ rm -rf %{buildroot}
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/gaim
-%attr(755, root, root) %{_libdir}/libgaimperl.so
-%attr(755, root, root) %{perl_vendorlib}
+%attr(755, root, root) %{perl_vendorarch}/Gaim*
+%attr(755, root, root) %{perl_vendorarch}/auto/Gaim
 
 %{_bindir}/*
 %{_datadir}/locale/*/*/*
@@ -161,6 +197,13 @@ rm -rf %{buildroot}
 %dir %{_datadir}/sounds/gaim
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
+
+%if 0%{?_with_howl:1}
+%files bonjour
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libbonjour.*
+%endif
 
 %if 0%{?_with_silc:1}
 %files silc
@@ -176,6 +219,14 @@ rm -rf %{buildroot}
 %{_libdir}/gaim/tcl.so
 %endif
 
+%if 0%{?_with_mono:1}
+%files mono
+%defattr(-, root, root)
+
+%{_libdir}/gaim/mono.so
+%{_libdir}/gaim/*.dll
+%endif
+
 %files devel
 %defattr(-, root, root)
 
@@ -188,6 +239,11 @@ rm -rf %{buildroot}
 %{_datadir}/aclocal/gaim.m4
 
 %changelog
+* Sun Oct 30 2005 <stu@nosnilmot.com>
+- Add separate gaim-bonjour package if built with --with-howl
+- Add separate gaim-mono package if built with --with-mono
+- Exclude some unwanted perl files
+
 * Sat Aug 20 2005 <stu@nosnilmot.com>
 - Include libgaimperl.so
 - Include gaim.m4 in gaim-devel
