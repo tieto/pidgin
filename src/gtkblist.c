@@ -3524,11 +3524,13 @@ static void gaim_gtk_blist_remove(GaimBuddyList *list, GaimBlistNode *node)
 	 * contacts, the dragged buddy mysteriously 'disappears'. Stu. */
 	/* I think it's fixed now. Stu. */
 
-	if(gtknode->recent_signonoff_timer > 0)
-		gaim_timeout_remove(gtknode->recent_signonoff_timer);
+	if(gtknode) {
+		if(gtknode->recent_signonoff_timer > 0)
+			gaim_timeout_remove(gtknode->recent_signonoff_timer);
 
-	g_free(node->ui_data);
-	node->ui_data = NULL;
+		g_free(node->ui_data);
+		node->ui_data = NULL;
+	}
 }
 
 static gboolean do_selection_changed(GaimBlistNode *new_selection)
@@ -4626,7 +4628,13 @@ static gboolean buddy_signonoff_timeout_cb(GaimBuddy *buddy)
 
 static void buddy_signonoff_cb(GaimBuddy *buddy)
 {
-	struct _gaim_gtk_blist_node *gtknode = ((GaimBlistNode*)buddy)->ui_data;
+	struct _gaim_gtk_blist_node *gtknode;
+
+	if(!((GaimBlistNode*)buddy)->ui_data) {
+		gaim_gtk_blist_new_node((GaimBlistNode*)buddy);
+	}
+
+	gtknode = ((GaimBlistNode*)buddy)->ui_data;
 
 	gtknode->recent_signonoff = TRUE;
 
