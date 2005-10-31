@@ -304,10 +304,10 @@ gaim_prpl_change_account_status(GaimAccount *account,
 		return;
 	}
 
-	if (!gaim_status_is_online(new_status) &&
-			 !gaim_account_is_disconnected(account))
+	if (!gaim_status_is_online(new_status))
 	{
-		gaim_account_disconnect(account);
+		if (!gaim_account_is_disconnected(account))
+			gaim_account_disconnect(account);
 		return;
 	}
 

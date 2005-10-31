@@ -88,7 +88,7 @@ bonjour_login(GaimAccount *account)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		gaim_debug_error("bonjour", "Unable to listen to iChat connections");
+		gaim_debug_error("bonjour", "Unable to listen for incoming IM connections");
 
 		/* Free the data */
 		g_free(bd->jabber_data);
@@ -121,7 +121,11 @@ bonjour_login(GaimAccount *account)
 	bd->dns_sd_data->msg = g_strdup(gaim_status_get_attr_string(status, "message"));
 
 	bd->dns_sd_data->account = account;
-	bonjour_dns_sd_start(bd->dns_sd_data);
+	if (!bonjour_dns_sd_start(bd->dns_sd_data))
+	{
+		gaim_connection_error(gc, _("Unable to establish connection with the local mDNS server.  Is it running?"));
+		return;
+	}
 
 	/* Create a group for bonjour buddies */
 	bonjour_group = gaim_group_new(BONJOUR_GROUP_NAME);

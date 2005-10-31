@@ -238,7 +238,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	/* Fill the data for the service */
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to initialize the data for the mDNS.");
+		gaim_debug_error("bonjour", "Unable to initialize the data for the mDNS.\n");
 		return -1;
 	}
 
@@ -334,7 +334,7 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
  * Advertise our presence within the dns-sd daemon and start browsing
  * for other bonjour peers.
  */
-void
+gboolean
 bonjour_dns_sd_start(BonjourDnsSd *data)
 {
 	GaimAccount *account;
@@ -345,12 +345,14 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	account = data->account;
 	gc = gaim_account_get_connection(account);
 
-	/* Initilizations of the dns-sd data and session */
+	/* Initialize the dns-sd data and session */
 	data->session = malloc(sizeof(sw_discovery));
 	if (sw_discovery_init(data->session) != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to initialize a mDNS session.");
-		return;
+		free(data->session);
+		data->session = NULL;
+		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
+		return FALSE;
 	}
 
 	/* Publish our bonjour IM client at the mDNS daemon */
@@ -361,7 +363,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 			data->account, &session_id) != SW_OKAY)
 	{
 		gaim_debug_error("bonjour", "Unable to get service.");
-		return;
+		return FALSE;
 	}
 
 	/* Get the socket that communicates with the mDNS daemon and bind it to a */
@@ -369,22 +371,25 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	dns_sd_socket = sw_discovery_socket(*(data->session));
 	gc->inpa = gaim_input_add(dns_sd_socket, GAIM_INPUT_READ,
 									_dns_sd_handle_packets, data->session);
+
+	return TRUE;
 }
 
 /**
  * Unregister the "_presence._tcp" service at the mDNS daemon.
  */
-int
+void
 bonjour_dns_sd_stop(BonjourDnsSd *data)
 {
 	GaimAccount *account;
 	GaimConnection *gc;
+
+	if (data->session == NULL)
+		return;
 
 	sw_discovery_cancel(*(data->session), data->session_id);
 
 	account = data->account;
 	gc = gaim_account_get_connection(account);
 	gaim_input_remove(gc->inpa);
-
-	return 0;
 }

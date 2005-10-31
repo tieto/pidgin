@@ -73,11 +73,11 @@ void bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const ch
  * Advertise our presence within the dns-sd daemon and start
  * browsing for other bonjour peers.
  */
-void bonjour_dns_sd_start(BonjourDnsSd *data);
+gboolean bonjour_dns_sd_start(BonjourDnsSd *data);
 
 /**
  * Unregister the "_presence._tcp" service at the mDNS daemon.
  */
-int bonjour_dns_sd_stop(BonjourDnsSd *data);
+void bonjour_dns_sd_stop(BonjourDnsSd *data);
 
 #endif
