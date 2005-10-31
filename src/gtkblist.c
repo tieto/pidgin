@@ -5212,9 +5212,9 @@ gaim_gtk_blist_update_plugin_actions(void)
 	}
 
 	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
-	  
+
 		plugin = (GaimPlugin *) l->data;
-	  
+
 		if (GAIM_IS_PROTOCOL_PLUGIN(plugin))
 			continue;
 
@@ -5222,14 +5222,16 @@ gaim_gtk_blist_update_plugin_actions(void)
 			continue;
 
 		build_plugin_actions(pluginmenu, plugin, NULL);
-		
 	}
 }
 
 void sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
 	if (gtk_check_menu_item_get_active(checkmenuitem))
+	{
 		gaim_gtk_blist_sort_method_set(id);
+		gaim_prefs_set_string("/gaim/gtk/blist/sort_type", id);
+	}
 }
 
 void
@@ -5255,7 +5257,7 @@ gaim_gtk_blist_update_sort_methods(void)
 		menuitem = l->data;
 		gtk_widget_destroy(GTK_WIDGET(menuitem));
 	}
-	
+
 	for (l = gaim_gtk_blist_sort_methods; l; l = l->next) {
 		method = (GaimGtkBlistSortMethod *) l->data;
 		menuitem = gtk_radio_menu_item_new_with_label(sl, _(method->name));
@@ -5265,7 +5267,7 @@ gaim_gtk_blist_update_sort_methods(void)
 		gtk_menu_shell_append(GTK_MENU_SHELL(sortmenu), menuitem);
 		g_signal_connect(G_OBJECT(menuitem), "toggled",
 				 G_CALLBACK(sortmethod_act), method->id);
-		gtk_widget_show(menuitem);		
+		gtk_widget_show(menuitem);
 	}
 	if (activeitem)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(activeitem), TRUE);
