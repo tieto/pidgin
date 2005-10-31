@@ -2694,9 +2694,9 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 		emblems[1].filename = emblems[2].filename = emblems[3].filename = NULL;
 	}
 
-	if(buddy && GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode->recent_signonoff) {
+	if(buddy && GAIM_BUDDY_IS_ONLINE(buddy) &&  gtkbuddynode && gtkbuddynode->recent_signonoff) {
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "login.png", NULL);
-	} else if(buddy && !GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode->recent_signonoff) {
+	} else if(buddy && !GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff) {
 			filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", "logout.png", NULL);
 	} else if(buddy || chat) {
 		char *image = g_strdup_printf("%s.png", protoname);
