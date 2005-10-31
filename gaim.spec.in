@@ -44,9 +44,9 @@ BuildRequires: mozilla-nss-devel
 
 %if 0%{?_with_howl:1}
 %package bonjour
-Summary:	Bonjour plugin for Gaim
-Group:		Applications/Internet
-Requires:	gaim = %{epoch}:%{version}
+Summary:    Bonjour plugin for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_silc:1}
@@ -131,7 +131,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
                                     %{!?_with_tcl:--disable-tcl} \
-									%{!?_with_mono:--disable-mono} \
+                                    %{!?_with_mono:--disable-mono} \
                                     %{?_without_gtkspell:--disable-gtkspell}
 
 make %{?_smp_mflags}
@@ -169,11 +169,11 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.dll
 
 find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
-		grep -v libbonjour.so | \
+        grep -v libbonjour.so | \
         grep -v libsilcgaim.so | \
         grep -v tcl.so | \
-		grep -v mono.so | \
-		grep -v ".dll$" | \
+        grep -v mono.so | \
+        grep -v ".dll$" | \
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
 
 %clean
