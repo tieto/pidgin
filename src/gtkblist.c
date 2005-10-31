@@ -2681,7 +2681,7 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 			protoname = prpl_info->list_icon(account, buddy);
 		}
 		if(prpl_info && prpl_info->list_emblems && buddy) {
-			if(!gtknode->recent_signonoff)
+			if(gtknode && !gtknode->recent_signonoff)
 				prpl_info->list_emblems(buddy, &emblems[0].filename,
 						&emblems[1].filename, &emblems[2].filename,
 						&emblems[3].filename);
