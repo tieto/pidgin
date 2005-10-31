@@ -294,6 +294,7 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 	}
 }
 
+/* TODO: Something in here leaks 1 reference to a bonobo object! */
 static gboolean
 load_timeout(gpointer data)
 {
@@ -302,11 +303,13 @@ load_timeout(gpointer data)
 
 	timer = 0;
 
+	/* Maybe this is it? */
 	if (!gevo_load_addressbook(NULL, &book, NULL))
 		return FALSE;
 
 	query = e_book_query_any_field_contains("");
 
+	/* Is it this? */
 	book_view_tag = e_book_async_get_book_view(book, query, NULL, -1,
 											   got_book_view_cb, NULL);
 
