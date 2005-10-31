@@ -16,43 +16,38 @@
 
 char *ZGetSender()
 {
-    struct passwd *pw;
+	struct passwd *pw;
 #ifdef ZEPHYR_USES_KERBEROS
-    char pname[ANAME_SZ], pinst[INST_SZ], prealm[REALM_SZ];
-    static char sender[ANAME_SZ+INST_SZ+REALM_SZ+3] = "";
+	char pname[ANAME_SZ];
+	char pinst[INST_SZ];
+	char prealm[REALM_SZ];
+	static char sender[ANAME_SZ+INST_SZ+REALM_SZ+3] = "";
 	long int kerror;
 #else
-    static char sender[128] = "";
+	static char sender[128] = "";
 #endif
 
 #ifdef WIN32
-	unsigned long sender_size = 127;
+	unsigned long sender_size = sizeof(sender) - 1;
 #endif
-
-    /* Return it if already cached */
-
-    /*    if (*sender)
-	return (sender);
-    */
 
 #ifdef ZEPHYR_USES_KERBEROS
 	if ((kerror = krb_get_tf_fullname((char *)TKT_FILE, pname, pinst, prealm)) == KSUCCESS)
-    {
-	(void) sprintf(sender, "%s%s%s@%s", pname, (pinst[0]?".":""),
-		       pinst, prealm);
-	return (sender);
-    }
+	{
+		sprintf(sender, "%s%s%s@%s", pname, (pinst[0] ? "." : ""), pinst, prealm);
+		return sender;
+	}
 #endif
 
-    /* XXX a uid_t is a u_short (now),  but getpwuid
-     * wants an int. AARGH! */
 #ifdef WIN32
-    GetUserName(sender, &sender_size);
+	GetUserName(sender, &sender_size);
 #else
-    pw = getpwuid((int) getuid());
-    if (!pw)
-	return ("unknown");
-    (void) sprintf(sender, "%s@%s", pw->pw_name, __Zephyr_realm);
+	/* XXX a uid_t is a u_short (now),  but getpwuid
+	 * wants an int. AARGH! */
+	pw = getpwuid((int) getuid());
+	if (!pw)
+		return ("unknown");
+	sprintf(sender, "%s@%s", pw->pw_name, __Zephyr_realm);
 #endif
-    return (sender);
+	return sender;
 }
