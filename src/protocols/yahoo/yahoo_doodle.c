@@ -285,7 +285,7 @@ void yahoo_doodle_command_got_draw(GaimConnection *gc, const char *from, const c
 	{
 		int last = strlen(tokens[i]) - 1;
 		if (tokens[i][last] == '"')
-			tokens[i][last] == '\0';
+			tokens[i][last] = '\0';
 
 		d_list = g_list_prepend(d_list, GINT_TO_POINTER(atoi(tokens[i])));
 	}
