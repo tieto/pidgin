@@ -5483,6 +5483,13 @@ show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
+conv_placement_usetabs_cb(const char *name, GaimPrefType type,
+						gpointer value, gpointer data)
+{
+	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
+}
+
+static void
 conv_placement_pref_cb(const char *name, GaimPrefType type,
 					   gpointer value, gpointer data)
 {
@@ -5560,6 +5567,9 @@ gaim_gtk_conversations_init(void)
 								spellcheck_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/tab_side",
 								tab_side_pref_cb, NULL);
+
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/tabs",
+								conv_placement_usetabs_cb, NULL);
 
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/placement",
 								conv_placement_pref_cb, NULL);
@@ -6971,7 +6981,11 @@ gaim_gtkconv_placement_set_current_func(GaimConvPlacementFunc func)
 {
 	g_return_if_fail(func != NULL);
 
-	place_conv = func;
+	/* If tabs are enabled, set the function, otherwise, NULL it out. */
+	if (gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
+		place_conv = func;
+	else
+		place_conv = NULL;
 }
 
 GaimConvPlacementFunc
@@ -6985,4 +6999,6 @@ gaim_gtkconv_placement_place(GaimGtkConversation *gtkconv)
 {
 	if (place_conv)
 		place_conv(gtkconv);
+	else
+		conv_placement_new_window(gtkconv);
 }
