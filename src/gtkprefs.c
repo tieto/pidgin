@@ -796,6 +796,8 @@ conv_page()
 	GtkWidget *toolbar;
 	GtkWidget *hbox;
 	GtkWidget *vbox2;
+	GtkWidget *iconpref1;
+	GtkWidget *iconpref2;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
@@ -806,10 +808,16 @@ conv_page()
 	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 	gaim_gtk_prefs_checkbox(_("Show _formatting on incoming messages"),
 				"/gaim/gtk/conversations/show_incoming_formatting", vbox);
-	gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
+
+	iconpref1 = gaim_gtk_prefs_checkbox(_("Show buddy _icons"),
 			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
-	gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
+	iconpref2 = gaim_gtk_prefs_checkbox(_("Enable buddy ic_on animation"),
 			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
+	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
+		gtk_widget_set_sensitive(iconpref2, FALSE);
+	g_signal_connect(G_OBJECT(iconpref1), "clicked",
+					 G_CALLBACK(gaim_gtk_toggle_sensitive), iconpref2);
+
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
 #ifdef USE_GTKSPELL
