@@ -659,8 +659,6 @@ int main(int argc, char *argv[])
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
 		gaim_gtk_debug_window_show();
 
-	gaim_blist_show();
-
 	if (opt_login) {
 		dologin_ret = dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
@@ -686,6 +684,8 @@ int main(int argc, char *argv[])
 		/* Everything is good to go--sign on already */
 		gaim_accounts_restore_previous_statuses();
 	}
+
+	gaim_blist_show();
 
 	if (gaim_accounts_get_all_active() == NULL)
 	{
