@@ -1513,7 +1513,7 @@ msn_got_info(void *data, const char *url_text, size_t len)
 	}
 
 	/* Nuke the nasty \r's that just get in the way */
-	gaim_str_strip_cr(url_buffer);
+	gaim_str_strip_char(url_buffer, '\r');
 
 	/* MSN always puts in &#39; for apostrophes...replace them */
 	while ((p = strstr(url_buffer, "&#39;")) != NULL)

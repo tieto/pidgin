@@ -338,7 +338,7 @@ account_to_xmlnode(GaimAccount *account)
 
 	if ((tmp = gaim_account_get_user_info(account)) != NULL)
 	{
-		/* TODO: Do we need to call gaim_str_strip_cr(tmp) here? */
+		/* TODO: Do we need to call gaim_str_strip_char(tmp, '\r') here? */
 		child = xmlnode_new_child(node, "userinfo");
 		xmlnode_insert_data(child, tmp, -1);
 	}

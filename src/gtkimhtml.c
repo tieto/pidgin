@@ -1640,7 +1640,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
 			/* TODO: Is it really ok to change sd->data...? */
-			gaim_str_strip_cr((char *)sd->data);
+			gaim_str_strip_char((char *)sd->data, '\r');
 
 			links = g_strsplit((char *)sd->data, "\n", 0);
 			while((link = links[i]) != NULL){

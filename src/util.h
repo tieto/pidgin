@@ -574,11 +574,30 @@ gchar *gaim_strdup_withhtml(const gchar *src);
 char *gaim_str_add_cr(const char *str);
 
 /**
- * Strips all carriage returns from a string.
+ * Strips all instances of the given character from the
+ * given string.  The string is modified in place.  This
+ * is useful for stripping new line characters, for example.
  *
- * @param str The string to strip carriage returns from.
+ * Example usage:
+ * gaim_str_strip_char(my_dumb_string, '\n');
+ *
+ * @param str     The string to strip characters from.
+ * @param thechar The character to strip from the given string.
  */
-void gaim_str_strip_cr(char *str);
+void gaim_str_strip_char(char *str, char thechar);
+
+/**
+ * Given a string, this replaces all instances of one character
+ * with another.  This happens inline (the original string IS
+ * modified).
+ *
+ * @param string The string from which to replace stuff.
+ * @param delimiter The character you want replaced.
+ * @param replacement The character you want inserted in place
+ *        of the delimiting character.
+ */
+void gaim_util_chrreplace(char *string, char delimiter,
+						  char replacement);
 
 /**
  * Given a string, this replaces one substring with another

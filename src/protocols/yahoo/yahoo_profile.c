@@ -861,7 +861,7 @@ static void yahoo_got_info(void *data, const char *url_text, size_t len)
 #endif
 
 	/* nuke the nasty \r's */
-	gaim_str_strip_cr(url_buffer);
+	gaim_str_strip_char(url_buffer, '\r');
 
 #if PHOTO_SUPPORT
 	/* Marshall the existing state */

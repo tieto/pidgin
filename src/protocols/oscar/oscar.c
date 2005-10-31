@@ -4524,7 +4524,7 @@ static int incomingim_chan4(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	for (numtoks=0; msg1[numtoks]; numtoks++);
 	msg2 = (gchar **)g_malloc((numtoks+1)*sizeof(gchar *));
 	for (i=0; msg1[i]; i++) {
-		gaim_str_strip_cr(msg1[i]);
+		gaim_str_strip_char(msg1[i], '\r');
 		msg2[i] = gaim_plugin_oscar_decode_im_part(account, "1", AIM_CHARSET_ASCII, 0x0000, msg1[i], strlen(msg1[i]));
 	}
 	msg2[i] = NULL;
@@ -5089,7 +5089,7 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	tmp = gaim_str_sub_away_formatters(str->str, gaim_account_get_username(account));
 	g_string_free(str, TRUE);
-	gaim_str_strip_cr(tmp);
+	gaim_str_strip_char(tmp, '\r');
 	gaim_notify_userinfo(gc, userinfo->sn, tmp, NULL, NULL);
 	g_free(tmp);
 

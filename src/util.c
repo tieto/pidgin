@@ -2465,17 +2465,33 @@ gaim_str_add_cr(const char *text)
 }
 
 void
-gaim_str_strip_cr(char *text)
+gaim_str_strip_char(char *text, char thechar)
 {
 	int i, j;
 
 	g_return_if_fail(text != NULL);
 
 	for (i = 0, j = 0; text[i]; i++)
-		if (text[i] != '\r')
+		if (text[i] != thechar)
 			text[j++] = text[i];
 
 	text[j++] = '\0';
+}
+
+void
+gaim_util_chrreplace(char *string, char delimiter,
+					 char replacement)
+{
+	int i = 0;
+
+	g_return_if_fail(string != NULL);
+
+	while (string[i] != '\0')
+	{
+		if (string[i] == delimiter)
+			string[i] = replacement;
+		i++;
+	}
 }
 
 gchar *

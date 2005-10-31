@@ -762,7 +762,7 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 
 	msg = charset_convert((const char *)ev->event.msg.message,
 						  "CP1250", "UTF-8");
-	gaim_str_strip_cr(msg);
+	gaim_str_strip_char(msg, '\r');
 	tmp = g_markup_escape_text(msg, -1);
 
 	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",

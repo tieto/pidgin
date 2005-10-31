@@ -169,8 +169,9 @@ gaim_str_size_to_units(size)
 	size_t size
 
 void 
-gaim_str_strip_cr(str)
+gaim_str_strip_char(str, thechar)
 	char *str
+	char thechar
 
 gchar *
 gaim_str_sub_away_formatters(str, name)

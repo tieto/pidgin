@@ -744,7 +744,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 
 		m = yahoo_string_decode(gc, im->msg, im->utf8);
-		gaim_str_strip_cr(m);
+		gaim_str_strip_char(m, '\r');
 
 		if (!strcmp(m, "<ding>")) {
 			GaimConversation *c = gaim_conversation_new(GAIM_CONV_TYPE_IM,
@@ -2717,6 +2717,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 {
 	YahooFriend *f = NULL;
 	const char *msg;
+	char *msg2;
 
 	f = yahoo_friend_find(b->account->gc, b->name);
 	if (!f)
@@ -2732,7 +2733,9 @@ static char *yahoo_status_text(GaimBuddy *b)
 	case YAHOO_STATUS_CUSTOM:
 		if (!(msg = yahoo_friend_get_status_message(f)))
 			return NULL;
-		return g_markup_escape_text(msg, strlen(msg));
+		msg2 = g_markup_escape_text(msg, strlen(msg));
+		gaim_util_chrreplace(msg2, '\n', ' ');
+		return msg2;
 
 	default:
 		return g_strdup(yahoo_get_status_string(f->status));

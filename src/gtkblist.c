@@ -2844,7 +2844,7 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			int length = 0, vis=0;
 			gboolean inside = FALSE;
 			g_strdelimit(tmp, "\n", ' ');
-			gaim_str_strip_cr(tmp);
+			gaim_str_strip_char(tmp, '\r');
 
 			while(*c && vis < 20) {
 				if(*c == '&')
@@ -3368,7 +3368,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Tools/Mute Sounds"))),
 			gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(gtk_item_factory_get_item (gtkblist->ift, N_("/Buddies/Show Buddy Details"))),
-                	gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"));
+			gaim_prefs_get_bool("/gaim/gtk/blist/show_buddy_icons"));
 	if(!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Mute Sounds")), FALSE);
 
