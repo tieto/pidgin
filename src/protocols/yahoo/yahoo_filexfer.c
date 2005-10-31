@@ -345,61 +345,59 @@ static void yahoo_xfer_cancel_recv(GaimXfer *xfer)
 	xfer->data = NULL;
 }
 
-void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt )
+void yahoo_process_p2pfilexfer(GaimConnection *gc, struct yahoo_packet *pkt)
 {
-	GSList	*l		= pkt->hash;
+	GSList *l = pkt->hash;
 
-	char	*me 		= NULL;
-	char	*from		= NULL;
-	char	*service	= NULL;
-	char	*message	= NULL;
-	char	*command	= NULL;
-	char	*imv		= NULL;
-	char	*unknown	= NULL;
+	char *me      = NULL;
+	char *from    = NULL;
+	char *service = NULL;
+	char *message = NULL;
+	char *command = NULL;
+	char *imv     = NULL;
+	char *unknown = NULL;
 
 	/* Get all the necessary values from this new packet */
-	while( l )
+	while(l != NULL)
 	{
 		struct yahoo_pair *pair = l->data;
 
-		if( pair->key == 5 )		/* Get who the packet is for */
+		if(pair->key == 5)         /* Get who the packet is for */
 			me = pair->value;
 
-		if( pair->key == 4 )		/* Get who the packet is from */
+		if(pair->key == 4)         /* Get who the packet is from */
 			from = pair->value;
 
-		if( pair->key == 49 )		/* Get the type of service */
+		if(pair->key == 49)        /* Get the type of service */
 			service = pair->value;
 
-		if( pair->key == 14 )		/* Get the 'message' of the packet */
+		if(pair->key == 14)        /* Get the 'message' of the packet */
 			message = pair->value;
 
-		if( pair->key == 13 )		/* Get the command associated with this packet */
+		if(pair->key == 13)        /* Get the command associated with this packet */
 			command = pair->value;
 
-		if( pair->key == 63 )		/* IMVironment name and version */
+		if(pair->key == 63)        /* IMVironment name and version */
 			imv = pair->value;
 
-		if( pair->key == 64 )		/* Not sure, but it does vary with initialization of Doodle */
-			unknown = pair->value;	/* So, I'll keep it (for a little while atleast) */
+		if(pair->key == 64)        /* Not sure, but it does vary with initialization of Doodle */
+			unknown = pair->value; /* So, I'll keep it (for a little while atleast) */
 
 		l = l->next;
 	}
 
 	/* If this packet is an IMVIRONMENT, handle it accordingly */
-	if( !strcmp( service, "IMVIRONMENT" ) )
+	if(!strcmp(service, "IMVIRONMENT"))
 	{
 		/* Check for a Doodle packet and handle it accordingly */
-		if( !strcmp( imv, "doodle;11" ) )
-			yahoo_doodle_process( gc, me, from, command, message );
+		if(!strcmp(imv, "doodle;11"))
+			yahoo_doodle_process(gc, me, from, command, message);
 
 		/* If an IMVIRONMENT packet comes without a specific imviroment name */
-		if( !strcmp( imv, ";0" ) )
+		if(!strcmp(imv, ";0"))
 		{
-			/* It is unfortunately time to close all IMVironments with remote
-			 * client
-			 */
-			yahoo_doodle_command_got_shutdown( gc, from );
+			/* It is unfortunately time to close all IMVironments with the remote client */
+			yahoo_doodle_command_got_shutdown(gc, from);
 		}
 	}
 }
@@ -533,7 +531,7 @@ void yahoo_send_file(GaimConnection *gc, const char *who, const char *file)
 	gaim_xfer_set_write_fnc(xfer,       yahoo_xfer_write);
 
 	/* Now perform the request */
-	if (file) 
+	if (file)
 		gaim_xfer_request_accepted(xfer, file);
 	else
 		gaim_xfer_request(xfer);

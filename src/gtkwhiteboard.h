@@ -29,28 +29,33 @@
 
 #include "whiteboard.h"
 
-#define FULL_CIRCLE_DEGREES		23040
+#define FULL_CIRCLE_DEGREES 23040
 
-#define BRUSH_STATE_UP			0
-#define BRUSH_STATE_DOWN		1
-#define BRUSH_STATE_MOTION		2
+/* TODO: Make into an enum. */
+#define BRUSH_STATE_UP      0
+#define BRUSH_STATE_DOWN    1
+#define BRUSH_STATE_MOTION  2
 
-#define PALETTE_NUM_COLORS		7
+/* XXX: This seems duplicated with the Yahoo! Doodle prpl code.
+ * XXX: How should they work together? */
+#define PALETTE_NUM_COLORS  7
 
 /**
  * A GaimGtkWhiteboard
  */
 typedef struct _GaimGtkWhiteboard
 {
-	GaimWhiteboard	*wb;		/**< backend data for this whiteboard */
+	GaimWhiteboard *wb;      /**< backend data for this whiteboard */
 
-	GtkWidget	*window;	/**< Window for the Doodle session */
-	GtkWidget	*drawing_area;	/**< Drawing area */
+	GtkWidget *window;       /**< Window for the Doodle session */
+	GtkWidget *drawing_area; /**< Drawing area */
 
-	GdkPixmap	*pixmap;	/**< Memory for drawing area */
+	GdkPixmap *pixmap;       /**< Memory for drawing area */
 
-	int		width;		/**< Canvas width */
-	int		height;		/**< Canvas height */
+	int  width;              /**< Canvas width */
+	int  height;             /**< Canvas height */
+	int brush_color;         /**< Foreground color */
+	int brush_size;          /**< Brush size */
 } GaimGtkWhiteboard;
 
 #ifdef __cplusplus
@@ -67,7 +72,7 @@ extern "C" {
  *
  * @return The GtkWhiteboard UI Operations.
  */
-GaimWhiteboardUiOps	*gaim_gtk_whiteboard_get_ui_ops( void );
+GaimWhiteboardUiOps *gaim_gtk_whiteboard_get_ui_ops( void );
 
 /*@}*/
 

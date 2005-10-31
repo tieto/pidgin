@@ -673,7 +673,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	char imv[16];
 
 	if (pkt->status <= 1 || pkt->status == 5) {
-		while (l) {
+		while (l != NULL) {
 			struct yahoo_pair *pair = l->data;
 			if (pair->key == 4) {
 				im = g_new0(struct _yahoo_im, 1);
@@ -697,7 +697,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			/* IMV key */
 			if (pair->key == 63)
 			{
-				strcpy( imv, pair->value );
+				strcpy(imv, pair->value);
 			}
 			l = l->next;
 		}
@@ -707,7 +707,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	/* Check for the Doodle IMV */
-	if( !strcmp( imv, "doodle;11" ) )
+	if(!strcmp(imv, "doodle;11"))
 	{
 		GaimWhiteboard *wb;
 
@@ -716,15 +716,15 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			return;
 		}
 
-		wb = gaim_whiteboard_get_session( gc->account, im->from );
+		wb = gaim_whiteboard_get_session(gc->account, im->from);
 
 		/* If a Doodle session doesn't exist between this user */
-		if( wb == NULL )
+		if(wb == NULL)
 		{
-			wb = gaim_whiteboard_create( gc->account, im->from, DOODLE_STATE_REQUESTED );
+			wb = gaim_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
 
-			yahoo_doodle_command_send_request( gc, im->from );
-			yahoo_doodle_command_send_ready( gc, im->from );
+			yahoo_doodle_command_send_request(gc, im->from);
+			yahoo_doodle_command_send_ready(gc, im->from);
 		}
 	}
 
@@ -2083,7 +2083,7 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		break;
 	case YAHOO_SERVICE_P2PFILEXFER:
 		/* This case had no break and continued; thus keeping it this way.*/
-		yahoo_process_p2pfilexfer( gc, pkt ); 
+		yahoo_process_p2pfilexfer(gc, pkt);
 	case YAHOO_SERVICE_FILETRANSFER:
 		yahoo_process_filetransfer(gc, pkt);
 		break;
@@ -3556,6 +3556,8 @@ static GaimWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 	yahoo_doodle_end,
 	yahoo_doodle_get_dimensions,
 	NULL,
+	yahoo_doodle_get_brush,
+	yahoo_doodle_set_brush,
 	yahoo_doodle_send_draw_list,
 	yahoo_doodle_clear
 };

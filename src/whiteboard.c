@@ -29,157 +29,130 @@
 /******************************************************************************
  * Globals
  *****************************************************************************/
-static GaimWhiteboardUiOps	*whiteboard_ui_ops	= NULL;
-/* static GaimWhiteboardPrplOps	*whiteboard_prpl_ops	= NULL; */
+static GaimWhiteboardUiOps *whiteboard_ui_ops = NULL;
+/* static GaimWhiteboardPrplOps *whiteboard_prpl_ops = NULL; */
 
-static GList			*wbList			= NULL;
+static GList *wbList = NULL;
 
-/*static gboolean		auto_accept		= TRUE; */
+/*static gboolean auto_accept = TRUE; */
 
 /******************************************************************************
  * API
  *****************************************************************************/
-void gaim_whiteboard_set_ui_ops( GaimWhiteboardUiOps *ops )
+void gaim_whiteboard_set_ui_ops(GaimWhiteboardUiOps *ops)
 {
 	whiteboard_ui_ops = ops;
 }
 
-void gaim_whiteboard_set_prpl_ops( GaimWhiteboard *wb, GaimWhiteboardPrplOps *ops )
+void gaim_whiteboard_set_prpl_ops(GaimWhiteboard *wb, GaimWhiteboardPrplOps *ops)
 {
 	wb->prpl_ops = ops;
 }
 
-GaimWhiteboard *gaim_whiteboard_create( GaimAccount *account, char *who, int state )
+GaimWhiteboard *gaim_whiteboard_create(GaimAccount *account, const char *who, int state)
 {
 	GaimPluginProtocolInfo *prpl_info;
-	GaimWhiteboard *wb	= g_new0( GaimWhiteboard, 1 );
+	GaimWhiteboard *wb = g_new0(GaimWhiteboard, 1);
 
-	wb->account		= account;
-	wb->state		= state;
-	wb->who			= g_strdup( who );
+	wb->account = account;
+	wb->state   = state;
+	wb->who     = g_strdup(who);
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO( account->gc->prpl );
-	gaim_whiteboard_set_prpl_ops( wb, prpl_info->whiteboard_prpl_ops );
+	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	gaim_whiteboard_set_prpl_ops(wb, prpl_info->whiteboard_prpl_ops);
 
 	/* Start up protocol specifics */
-	if( wb->prpl_ops && wb->prpl_ops->start )
-		wb->prpl_ops->start( wb );
+	if(wb->prpl_ops && wb->prpl_ops->start)
+		wb->prpl_ops->start(wb);
 
-	wbList			= g_list_append( wbList, ( gpointer )( wb ) );
+	wbList = g_list_append(wbList, wb);
 
-	return( wb );
+	return wb;
 }
 
-void gaim_whiteboard_destroy( GaimWhiteboard *wb )
+void gaim_whiteboard_destroy(GaimWhiteboard *wb)
 {
-	if( wb->ui_data )
+	if(wb->ui_data)
 	{
 		/* Destroy frontend */
-		if( whiteboard_ui_ops && whiteboard_ui_ops->destroy )
-			whiteboard_ui_ops->destroy( wb );
+		if(whiteboard_ui_ops && whiteboard_ui_ops->destroy)
+			whiteboard_ui_ops->destroy(wb);
 	}
 
 	/* Do protocol specific session ending procedures */
-	if( wb->prpl_ops && wb->prpl_ops->end )
-		wb->prpl_ops->end( wb );
+	if(wb->prpl_ops && wb->prpl_ops->end)
+		wb->prpl_ops->end(wb);
 
-	if( wb )
+	if(wb)
 	{
-		wb->account	= NULL;
-		wb->state	= 0;
+		if(wb->who)
+			g_free(wb->who);
 
-		if( wb->who )
-			g_free( wb->who );
+		wbList = g_list_remove(wbList, wb);
 
-		wbList = g_list_remove( wbList, wb );
-
-		g_free( wb );
-		wb = NULL;
+		g_free(wb);
 	}
 }
 
-void gaim_whiteboard_start( GaimWhiteboard *wb )
+void gaim_whiteboard_start(GaimWhiteboard *wb)
 {
 	/* Create frontend for whiteboard */
-	if( whiteboard_ui_ops && whiteboard_ui_ops->create )
-		whiteboard_ui_ops->create( wb );
+	if(whiteboard_ui_ops && whiteboard_ui_ops->create)
+		whiteboard_ui_ops->create(wb);
 }
 
 /* Looks through the list of whiteboard sessions for one that is between
  * usernames 'me' and 'who'.  Returns a pointer to a matching whiteboard
  * session; if none match, it returns NULL.
  */
-GaimWhiteboard *gaim_whiteboard_get_session( GaimAccount *account, char *who )
+GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *who)
 {
-	GaimWhiteboard	*wb	= NULL;
+	GaimWhiteboard *wb = NULL;
 
-	GList		*l	= wbList;
+	GList *l = wbList;
 
-	/* Look for a whiteboard session between the local user and the remote
-	 * user
+	/* Look for a whiteboard session between the local user and the remote user
 	 */
-	while( l )
+	while(l != NULL)
 	{
 		wb = l->data;
 
-		if( !strcmp( gaim_account_get_username( wb->account ),
-					 gaim_account_get_username( account ) ) &&
-			     !strcmp( wb->who, who ) )
-			return( wb );
+		if(wb->account == account && !strcmp(wb->who, who))
+			return wb;
 
 		l = l->next;
 	}
 
-	return( NULL );
+	return NULL;
 }
 
-GList *gaim_whiteboard_draw_list_destroy( GList *draw_list )
-{
-	if( draw_list == NULL )
-		return( NULL );
-	else
-	{
-		/* Destroy the contents of this list */
-		int	*n = NULL;
-		GList	*l = draw_list;
-		while( l )
+void gaim_whiteboard_draw_list_destroy(GList *draw_list)
 		{
-			n = l->data;
-
-			if( n )
-				g_free( n );
-
-			l = l->next;
-		}
-
-		g_list_free( draw_list );
-		draw_list = NULL;
-	}
-
-	return( draw_list );
+	if (draw_list)
+		g_list_free(draw_list);
 }
 
-void gaim_whiteboard_set_dimensions( GaimWhiteboard *wb, int width, int height )
+void gaim_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height)
 {
-	if( whiteboard_ui_ops && whiteboard_ui_ops->set_dimensions )
-		whiteboard_ui_ops->set_dimensions( wb, width, height );
+	if(whiteboard_ui_ops && whiteboard_ui_ops->set_dimensions)
+		whiteboard_ui_ops->set_dimensions(wb, width, height);
 }
 
-void gaim_whiteboard_draw_point( GaimWhiteboard *wb, int x, int y, int color, int size )
+void gaim_whiteboard_draw_point(GaimWhiteboard *wb, int x, int y, int color, int size)
 {
-	if( whiteboard_ui_ops && whiteboard_ui_ops->draw_point )
-		whiteboard_ui_ops->draw_point( wb, x, y, color, size );
+	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_point)
+		whiteboard_ui_ops->draw_point(wb, x, y, color, size);
 }
 
-void gaim_whiteboard_draw_line( GaimWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size )
+void gaim_whiteboard_draw_line(GaimWhiteboard *wb, int x1, int y1, int x2, int y2, int color, int size)
 {
-	if( whiteboard_ui_ops && whiteboard_ui_ops->draw_line )
-		whiteboard_ui_ops->draw_line( wb, x1, y1, x2, y2, color, size );
+	if(whiteboard_ui_ops && whiteboard_ui_ops->draw_line)
+		whiteboard_ui_ops->draw_line(wb, x1, y1, x2, y2, color, size);
 }
 
-void gaim_whiteboard_clear( GaimWhiteboard *wb )
+void gaim_whiteboard_clear(GaimWhiteboard *wb)
 {
-	if( whiteboard_ui_ops && whiteboard_ui_ops->clear )
-		whiteboard_ui_ops->clear( wb );
+	if(whiteboard_ui_ops && whiteboard_ui_ops->clear)
+		whiteboard_ui_ops->clear(wb);
 }
 
