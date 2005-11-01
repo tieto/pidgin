@@ -234,6 +234,7 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	g_signal_connect(G_OBJECT(save_button), "clicked",
 					 G_CALLBACK(gaim_gtk_whiteboard_button_save_press), gtkwb);
 
+#if 0
 	/* Add a color selector */
 	{
 		GdkColor color;
@@ -244,11 +245,10 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 		gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, 8);
 		gtk_widget_show(color_button);
 
-#if 0
 		g_signal_connect(G_OBJECT(color_button), "color-set",
 						G_CALLBACK(change_color_cb), gtkwb);
-#endif
 	}
+#endif
 
 	/* Make all this (window) visible */
 	gtk_widget_show(window);
