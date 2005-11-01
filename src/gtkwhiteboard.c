@@ -60,7 +60,9 @@ static void gaim_gtk_whiteboard_set_canvas_as_icon(GaimGtkWhiteboard *gtkwb);
 
 static void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color);
 
+#if 0
 static void change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb);
+#endif
 
 /******************************************************************************
  * Globals
@@ -242,8 +244,10 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 		gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, 8);
 		gtk_widget_show(color_button);
 
+#if 0
 		g_signal_connect(G_OBJECT(color_button), "color-set",
 						G_CALLBACK(change_color_cb), gtkwb);
+#endif
 	}
 
 	/* Make all this (window) visible */
@@ -820,6 +824,7 @@ void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 	color->blue  = ((color_rgb & 0xFF) << 8) | 0xFF;
 }
 
+#if 0
 static void
 change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
 {
@@ -843,4 +848,4 @@ change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
 			prpl->set_brush(wb, old_size, gtkwb->brush_color);
 	}
 }
-
+#endif
