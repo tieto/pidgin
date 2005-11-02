@@ -2663,8 +2663,8 @@ static void im_recv_mime(struct mwConversation *conv,
 
       gaim_mime_part_get_data_decoded(part, &data, &len);
 
-      txt = im_decode(pd->gc, data);
-      g_string_append(str, txt?txt:(char *)data);
+      txt = im_decode(pd->gc, (const char *)data);
+      g_string_append(str, txt?txt:(const char *)data);
 
       g_free(data);
       g_free(txt);
