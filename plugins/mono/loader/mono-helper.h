@@ -22,6 +22,10 @@ typedef struct {
 	MonoMethod *destroy;
 } GaimMonoPlugin;
 
+MonoObject* mono_loader_invoke(MonoMethod *method, void *obj, void **params);
+
+MonoObject* mono_loader_delegate_invoke(MonoObject *method, void **params);
+
 MonoClass* mono_loader_find_plugin_class(MonoImage *image);
 
 gchar* mono_loader_get_prop_string(MonoObject *obj, char *field);

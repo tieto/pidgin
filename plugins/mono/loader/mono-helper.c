@@ -15,6 +15,31 @@
 #include "mono-helper.h"
 #include "mono-glue.h"
 #include "value.h"
+#include "debug.h"
+
+MonoObject* mono_loader_delegate_invoke(MonoObject *method, void **params)
+{
+	MonoObject *ret, *exception;
+	
+	ret = mono_runtime_delegate_invoke(method, params, &exception);
+	if (exception) {
+		gaim_debug(GAIM_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+	}
+	
+	return ret;
+}
+
+MonoObject* mono_loader_invoke(MonoMethod *method, void *obj, void **params)
+{
+	MonoObject *ret, *exception;
+	
+	ret = mono_runtime_invoke(method, obj, params, &exception);
+	if (exception) {
+		gaim_debug(GAIM_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+	}
+	
+	return ret;
+}
 
 MonoClass* mono_loader_find_plugin_class(MonoImage *image)
 {

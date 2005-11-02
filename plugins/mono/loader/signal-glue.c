@@ -45,7 +45,7 @@ static gpointer dispatch_callback(SignalData *sig_data, int num_vals, ...)
 	
 	meth_args[0] = array;
 	
-	return mono_runtime_delegate_invoke(sig_data->func, meth_args, NULL);	
+	return mono_loader_delegate_invoke(sig_data->func, meth_args);	
 }
 
 static void cb_void__pointer(void *arg1, void *data)

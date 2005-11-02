@@ -18,9 +18,6 @@
 
 #define MONO_PLUGIN_ID "core-mono"
 
-/* This is where our code executes */
-static MonoDomain *domain = NULL;
-
 /******************************************************************************
  * Loader Stuff
  *****************************************************************************/
@@ -39,7 +36,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 
 	char *file = plugin->path;
 
-	assm = mono_domain_assembly_open(domain, file);
+	assm = mono_domain_assembly_open(mono_loader_get_domain(), file);
 
 	if (!assm) {
 		return FALSE;
@@ -63,7 +60,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	mplug->obj = mono_object_new(domain, mplug->klass);
+	mplug->obj = mono_object_new(mono_loader_get_domain(), mplug->klass);
 	if (!mplug->obj) {
 		gaim_debug(GAIM_DEBUG_ERROR, "mono", "obj not valid\n");
 		return FALSE;
@@ -92,7 +89,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	plugin_info = mono_runtime_invoke(info_method, mplug->obj, NULL, NULL);
+	plugin_info = mono_loader_invoke(info_method, mplug->obj, NULL);
 
 	/* now that the methods are filled out we can populate
 	   the info struct with all the needed info */
@@ -130,7 +127,7 @@ static gboolean load_mono_plugin(GaimPlugin *plugin)
 
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
-	mono_runtime_invoke(mplug->load, mplug->obj, NULL, NULL);
+	mono_loader_invoke(mplug->load, mplug->obj, NULL);
 
 	return TRUE;
 }
@@ -146,13 +143,11 @@ static gboolean unload_mono_plugin(GaimPlugin *plugin)
 
 	gaim_signals_disconnect_by_handle((gpointer)mplug->klass);
 
-	mono_runtime_invoke(mplug->unload, mplug->obj, NULL, NULL);
+	mono_loader_invoke(mplug->unload, mplug->obj, NULL);
 
 	return TRUE;
 }
 
-/* Destroys a Mono Plugin by calling 'destroy' in the class,
-   and cleaning up all the malloced memory */
 static void destroy_mono_plugin(GaimPlugin *plugin)
 {
 	GaimMonoPlugin *mplug;
@@ -161,7 +156,7 @@ static void destroy_mono_plugin(GaimPlugin *plugin)
 
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
-	mono_runtime_invoke(mplug->destroy, mplug->obj, NULL, NULL);
+	mono_loader_invoke(mplug->destroy, mplug->obj, NULL);
 
 	if (plugin->info) {
 		g_free(plugin->info->name);
@@ -187,7 +182,7 @@ static void destroy_mono_plugin(GaimPlugin *plugin)
  *****************************************************************************/
 static void plugin_destroy(GaimPlugin *plugin)
 {
-	mono_jit_cleanup(domain);
+	mono_jit_cleanup(mono_loader_get_domain());
 }
 
 static GaimPluginLoaderInfo loader_info =
@@ -225,13 +220,9 @@ static GaimPluginInfo info =
 	NULL
 };
 
-/* Creates the domain to execute in, and setups our CS Gaim API (note:
-   in the future the 'mono_add_internal_call' will be spread through out
-   the source to whatever module is exposing the API; this function will
-   simply call helper functions to do so) */
 static void init_plugin(GaimPlugin *plugin)
 {
-	domain = mono_jit_init("gaim");
+	MonoDomain *domain = mono_jit_init("gaim");
 
 	mono_loader_set_domain(domain);
 
