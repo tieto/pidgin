@@ -93,6 +93,7 @@ version 2.0.0:
 	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno)
 	* Updated Gadu-Gadu protocol support (Bartosz Oler)
 	* SIP/SIMPLE support (Thomas Butter)
+	* Sametime protocol support
 
 	Other Noteworthy Changes:
 	* UPNP and NAT traversal support (Adam J. Warrington)
