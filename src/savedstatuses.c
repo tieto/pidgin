@@ -516,6 +516,9 @@ gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 	}
 
 	g_list_free(accounts);
+
+	gaim_prefs_set_string("/core/status/current",
+						  gaim_savedstatus_get_title(saved_status));
 }
 
 void

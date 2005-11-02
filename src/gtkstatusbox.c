@@ -34,13 +34,6 @@
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
 
-/*
- * TODO: The preference "/core/status/current" contains the name of
- *       the GaimSavedStatus that is the current master status of all
- *       enabled accounts.  We need to monitor this preference and
- *       update ourself when the pref changes.
- */
-
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
@@ -274,10 +267,6 @@ load_icon(const char *basename)
  * or when signing on with the "-n" option, for example).  It is
  * also used when the user selects the "Custom..." option.
  *
- * TODO: It should ONLY update the appearance of the GtkStatusBox.  It
- * should not trigger the text-input-typing-timer.  It should also
- * not trigger a status change.
- *
  * Maybe we could accomplish this by triggering off the mouse and
  * keyboard signals instead of the changed signal?
  */
@@ -328,13 +317,21 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		}
 
 		message = gaim_savedstatus_get_message(saved_status);
-		if (message != NULL)
+		if (message == NULL)
 		{
+			status_box->imhtml_visible = FALSE;
+		}
+		else
+		{
+			status_box->imhtml_visible = TRUE;
+
 			/*
 			 * Suppress the "changed" signal because the status
 			 * was changed programmatically.
 			 */
 			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
+
+			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
 			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 		}
@@ -412,6 +409,13 @@ dropdown_store_row_separator_func(GtkTreeModel *model,
 	return FALSE;
 }
 #endif
+
+static void
+current_status_pref_changed_cb(const char *name, GaimPrefType type,
+							   gpointer val, gpointer data)
+{
+	update_to_reflect_current_status(data);
+}
 
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
@@ -500,8 +504,14 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 								     icon_size, "GtkGaimStatusBox");
 
 	gtk_gaim_status_box_regenerate(status_box);
-}
 
+	/* Monitor changes in the "/core/status/current" preference */
+	gaim_prefs_connect_callback(status_box, "/core/status/current",
+								current_status_pref_changed_cb, status_box);
+
+	/* TODO: Need to override the destroy method for this object and put the following line in it */
+	/* gaim_prefs_disconnect_by_handle(status_box); */
+}
 
 static void
 gtk_gaim_status_box_size_request(GtkWidget *widget,
@@ -686,7 +696,11 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 	/*
 	 * If the currently selected status is "Custom..." or
-	 * "Saved..." then do nothing.
+	 * "Saved..." then do nothing.  Custom statuses are
+	 * activated elsewhere, and we update the status_box
+	 * accordingly by monitoring the preference
+	 * "/core/status/current" and then calling
+	 * update_to_reflect_current_status()
 	 */
 	if ((type < 0) || (type >= GAIM_STATUS_NUM_PRIMITIVES))
 		return;
@@ -694,6 +708,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	/* TODO: Should save the previous status as a transient status? */
 
 	/* Save the newly selected status to prefs.xml and status.xml */
+	/* TODO: This should be saved as transient. */
 	saved_status = gaim_savedstatus_find(_("Default"));
 	if (saved_status == NULL)
 		saved_status = gaim_savedstatus_new(_("Default"), type);
