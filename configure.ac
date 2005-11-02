@@ -205,7 +205,12 @@ STATIC_LINK_LIBS=
 extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
-	STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+	dnl Ugly special case for "libsilcgaim.a":
+	if test "x$i" = "xsilc"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}gaim.a"
+	else
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+	fi
 	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
 	load_proto="$load_proto gaim_init_${i}_plugin();"
 	case $i in
