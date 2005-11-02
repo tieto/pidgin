@@ -8,6 +8,7 @@ EXTRA_DIST = \
 	bonjour.png \
 	dnd.png \
 	extendedaway.png \
+	external.png \
 	female.png \
 	founder.png \
 	freeforchat.png \
