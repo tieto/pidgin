@@ -24,7 +24,7 @@
 #include <glib.h>
 
 
-/** @file error.h
+/** @file mw_error.h
 
     Common error code constants used by Meanwhile.
 

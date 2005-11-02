@@ -28,11 +28,17 @@
 /** @file mw_srvc_aware.h
 
     The aware service...
+
+    @todo remove the whole idea of an instantiated mwAwareList and
+    instead use arbitrary pointers (including NULL) as keys to
+    internally stored lists. This removes the problem of the service
+    free'ing its lists and invalidating mwAwareList references from
+    client code.
 */
 
 
 /** Type identifier for the aware service */
-#define SERVICE_AWARE  0x00000011
+#define mwService_AWARE  0x00000011
 
 
 /** @struct mwServiceAware
@@ -50,6 +56,9 @@ struct mwServiceAware;
     Instance of an Aware List. The members of this structure are not
     made available. Access to the parts of an aware list should be
     handled through the appropriate functions.
+
+    Any references to an aware list are rendered invalid when the
+    parent service is free'd
 */
 struct mwAwareList;
 

@@ -569,15 +569,15 @@ static void get_user(const char *line, struct mwSametimeGroup *g) {
   str_replace(name, ';', ' ');
 
   if(idb.user && *idb.user) {
-    int l = strlen(idb.user) - 3;
-    type = idb.user[l];
-    idb.user[l] = '\0';
+    char *tmp = strstr(idb.user, "::");
+    if(tmp--) {
+      type = *(tmp);
+      *tmp = '\0';
+    }
   }
 
   if(name && *name) {
-    char *tmp;
-
-    tmp = strrchr(name, ',');
+    char *tmp = strrchr(name, ',');
     if(tmp) {
       *tmp++ = '\0';
       if(*tmp) alias = tmp;

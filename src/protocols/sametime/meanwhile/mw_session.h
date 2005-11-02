@@ -22,10 +22,7 @@
 #define _MW_SESSION_H
 
 
-#include "mw_common.h"
-
-
-/** @file session.h
+/** @file mw_session.h
 
     A client session with a Sametime server is encapsulated in the
     mwSession structure. The session controls channels, provides
@@ -47,8 +44,13 @@
 */
 
 
+#include "mw_common.h"
+
+
+struct mwChannelSet;
 struct mwCipher;
 struct mwMessage;
+struct mwService;
 
 
 /** default protocol major version */
@@ -60,7 +62,7 @@ struct mwMessage;
 
 
 /** @section Session Properties
-    ...
+    for use with mwSession_setProperty, et al.
 */
 /*@{*/
 
@@ -72,6 +74,12 @@ struct mwMessage;
 
 /** struct mwOpaque *, authentication token */
 #define mwSession_AUTH_TOKEN        "session.auth.token"
+
+/** char *, hostname of client */
+#define mwSession_CLIENT_HOST       "client.host"
+
+/** guint32, local IP of client */
+#define mwSession_CLIENT_IP         "client.ip"
 
 /** guint16, major version of client protocol */
 #define mwSession_CLIENT_VER_MAJOR  "client.version.major"
@@ -152,16 +160,13 @@ struct mwSessionHandler {
 
   /** Called when the session has changed status.
 
-      Uses of the info param:
-      - <code>STOPPING</code> error code causing the session to shut down
-
-      @todo change info to a gpointer
+      @see mwSession_getStateInfo for uses of info field
 
       @param s      the session
       @param state  the session's state
-      @param info   additional state info. */
+      @param info   additional state information */
   void (*on_stateChange)(struct mwSession *s,
-			 enum mwSessionState state, guint32 info);
+			 enum mwSessionState state, gpointer info);
 
   /** called when privacy information has been sent or received
 
@@ -177,11 +182,10 @@ struct mwSessionHandler {
   /** called when an admin messages has been received */
   void (*on_admin)(struct mwSession *, const char *text);
 
-  /** called when a login redirect message is received
+  /** called when an announcement arrives */
+  void (*on_announce)(struct mwSession *, struct mwLoginInfo *from,
+		      gboolean may_reply, const char *text);
 
-      @todo remove in favour of on_stateChange, passing host as a
-      gpointer in info */
-  void (*on_loginRedirect)(struct mwSession *, const char *host);
 };
 
 
@@ -229,11 +233,26 @@ int mwSession_sendKeepalive(struct mwSession *s);
 int mwSession_forceLogin(struct mwSession *s);
 
 
+/** send an announcement to a list of users/groups. Targets of
+    announcement must be in the same community as the session.
+
+    @param s          session to send announcement from
+    @param may_reply  permit clients to reply. Not all clients honor this.
+    @param text       text of announcement
+    @param recipients list of recipients. Each recipient is specified
+                      by a single string, prefix with "@U " for users
+                      and "@G " for Notes Address Book groups.
+*/
+int mwSession_sendAnnounce(struct mwSession *s, gboolean may_reply,
+			   const char *text, const GList *recipients);
+
+
 /** set the internal privacy information, and inform the server as
     necessary. Triggers the on_setPrivacyInfo call-back. */
 int mwSession_setPrivacyInfo(struct mwSession *, struct mwPrivacyInfo *);
 
 
+/** direct reference to the session's internal privacy structure */
 struct mwPrivacyInfo *mwSession_getPrivacyInfo(struct mwSession *);
 
 
@@ -253,8 +272,19 @@ struct mwUserStatus *mwSession_getUserStatus(struct mwSession *);
 enum mwSessionState mwSession_getState(struct mwSession *);
 
 
-/** additional status-specific information */
-guint32 mwSession_getStateInfo(struct mwSession *);
+/** additional status-specific information. Depending on the state of
+    the session, this value has different meaning.
+
+    @li @c mwSession_STOPPING guint32 error code causing
+    the session to shut down
+
+    @li @c mwSession_STOPPED guint32 error code causing
+    the session to shut down
+
+    @li @c mwSession_LOGIN_REDIR (char *) host to redirect
+    to
+*/
+gpointer mwSession_getStateInfo(struct mwSession *);
 
 
 struct mwChannelSet *mwSession_getChannels(struct mwSession *);

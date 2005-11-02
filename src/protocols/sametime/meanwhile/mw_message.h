@@ -49,6 +49,7 @@ enum mwMessageType {
   mwMessage_SET_PRIVACY_LIST  = 0x000b,  /**< mwMsgSetPrivacyList */
   mwMessage_SENSE_SERVICE     = 0x0011,  /**< mwMsgSenseService */
   mwMessage_ADMIN             = 0x0019,  /**< mwMsgAdmin */
+  mwMessage_ANNOUNCE          = 0x0022,  /**< mwMsgAnnounce */
 };
 
 
@@ -94,9 +95,12 @@ struct mwMsgHandshake {
   struct mwMessage head;
   guint16 major;          /**< client's major version number */
   guint16 minor;          /**< client's minor version number */
-  guint32 srvrcalc_addr;  /**<  */
+  guint32 srvrcalc_addr;  /**< 0.0.0.0 */
   guint16 login_type;     /**< @see mwLoginType */
-  guint32 loclcalc_addr;  /**<  */
+  guint32 loclcalc_addr;  /**< local public IP */
+  guint16 unknown_a;      /**< normally 0x0100 */
+  guint32 unknown_b;      /**< normally 0x00000000 */
+  char *local_host;       /**< name of client host */
 };
 
 
@@ -107,8 +111,8 @@ struct mwMsgHandshakeAck {
   guint16 major;          /**< server's major version number */
   guint16 minor;          /**< server's minor version number */
   guint32 srvrcalc_addr;  /**< server-calculated address */
-  guint32 unknown;        /**< four bytes of something */
-  struct mwOpaque data;   /**< some stuff */
+  guint32 magic;          /**< four bytes of something */
+  struct mwOpaque data;   /**< server's DH public key for auth */
 };
 
 
@@ -117,7 +121,9 @@ struct mwMsgHandshakeAck {
 enum mwAuthType {
   mwAuthType_PLAIN    = 0x0000,
   mwAuthType_TOKEN    = 0x0001,
-  mwAuthType_ENCRYPT  = 0x0002,
+  mwAuthType_ENCRYPT  = 0x0002, /**< @todo remove for 1.0 */
+  mwAuthType_RC2_40   = 0x0002,
+  mwAuthType_RC2_128  = 0x0004,
 };
 
 
@@ -264,6 +270,24 @@ struct mwMsgSenseService {
 struct mwMsgAdmin {
   struct mwMessage head;
   char *text;
+};
+
+
+/* Announce */
+
+/** An announcement between users */
+struct mwMsgAnnounce {
+  struct mwMessage head;
+  gboolean sender_present;    /**< indicates presence of sender data */
+  struct mwLoginInfo sender;  /**< who sent the announcement */
+  guint16 unknown_a;          /**< unknown A. Usually 0x00 */
+  gboolean may_reply;         /**< replies allowed */
+  char *text;                 /**< text of message */
+
+  /** list of (char *) indicating recipients. Recipient users are in
+      the format "@U username" and recipient NAB groups are in the
+      format "@G groupname" */
+  GList *recipients;
 };
 
 

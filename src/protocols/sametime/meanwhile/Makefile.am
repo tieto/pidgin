@@ -11,6 +11,7 @@ noinst_HEADERS = \
 	mw_srvc_conf.h \
 	mw_srvc_ft.h \
 	mw_srvc_im.h \
+	mw_srvc_place.h \
 	mw_srvc_resolve.h \
 	mw_srvc_store.h \
 	mw_st_list.h \
@@ -31,6 +32,7 @@ MEANWHILESOURCES = \
 	srvc_conf.c \
 	srvc_ft.c \
 	srvc_im.c \
+	srvc_place.c \
 	srvc_store.c \
 	srvc_resolve.c \
 	st_list.c

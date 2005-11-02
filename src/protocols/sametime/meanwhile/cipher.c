@@ -22,6 +22,9 @@
 #include <string.h>
 #include <time.h>
 
+#include <gmp.h>
+
+
 #include "mw_channel.h"
 #include "mw_cipher.h"
 #include "mw_debug.h"
@@ -65,7 +68,82 @@ static unsigned char PT[] = {
 };
 
 
-void rand_key(char *key, gsize keylen) {
+/** prime number used in DH exchange */
+static unsigned char dh_prime[] = {
+  0xCF, 0x84, 0xAF, 0xCE, 0x86, 0xDD, 0xFA, 0x52,
+  0x7F, 0x13, 0x6D, 0x10, 0x35, 0x75, 0x28, 0xEE,
+  0xFB, 0xA0, 0xAF, 0xEF, 0x80, 0x8F, 0x29, 0x17,
+  0x4E, 0x3B, 0x6A, 0x9E, 0x97, 0x00, 0x01, 0x71,
+  0x7C, 0x8F, 0x10, 0x6C, 0x41, 0xC1, 0x61, 0xA6,
+  0xCE, 0x91, 0x05, 0x7B, 0x34, 0xDA, 0x62, 0xCB,
+  0xB8, 0x7B, 0xFD, 0xC1, 0xB3, 0x5C, 0x1B, 0x91,
+  0x0F, 0xEA, 0x72, 0x24, 0x9D, 0x56, 0x6B, 0x9F
+};
+
+
+/** base used in DH exchange */
+#define DH_BASE  3
+
+
+void mwInitDHPrime(mpz_t z) {
+  mpz_init(z);
+  mpz_import(z, 64, 1, 1, 0, 0, dh_prime);
+}
+
+
+void mwInitDHBase(mpz_t z) {
+  mpz_init_set_ui(z, DH_BASE);
+}
+
+
+void mwDHRandKeypair(mpz_t private, mpz_t public) {
+  gmp_randstate_t rstate;
+  mpz_t prime, base;
+ 
+  mwInitDHPrime(prime);
+  mwInitDHBase(base);
+
+  gmp_randinit_default(rstate);
+  mpz_urandomb(private, rstate, 512);
+  mpz_powm(public, base, private, prime);
+
+  mpz_clear(prime);
+  mpz_clear(base);
+  gmp_randclear(rstate);
+}
+
+
+void mwDHCalculateShared(mpz_t shared, mpz_t remote, mpz_t private) {
+  mpz_t prime;
+ 
+  mwInitDHPrime(prime);
+  mpz_powm(shared, remote, private, prime);
+  mpz_clear(prime);
+}
+
+
+void mwDHImportKey(mpz_t key, struct mwOpaque *o) {
+  g_return_if_fail(o != NULL);
+  mpz_import(key, o->len, 1, 1, 1, 0, o->data);
+}
+
+
+void mwDHExportKey(mpz_t key, struct mwOpaque *o) {
+  gsize needed;
+
+  g_return_if_fail(o != NULL);
+
+  needed = (mpz_sizeinbase(key,2) + 7) / 8;
+  o->len = 65;
+  o->data = g_malloc0(o->len);
+
+  mpz_export(o->data+(o->len-needed), NULL, 1, 1, 1, 0, key);
+}
+
+
+void mwKeyRandom(char *key, gsize keylen) {
+  g_return_if_fail(key != NULL);
+
   srand(clock());
   while(keylen--) key[keylen] = rand() & 0xff;
 }
@@ -76,13 +154,6 @@ void mwIV_init(char *iv) {
     0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef
   };
   memcpy(iv, normal_iv, 8);
-
-  /*
-  *iv++ = 0x01; *iv++ = 0x23;
-  *iv++ = 0x45; *iv++ = 0x67;
-  *iv++ = 0x89; *iv++ = 0xab;
-  *iv++ = 0xcd; *iv   = 0xef;
-  */
 }
 
 
@@ -93,14 +164,15 @@ void mwKeyExpand(int *ekey, const char *key, gsize keylen) {
   char tmp[128];
   int i, j;
 
-  /*
-  g_message("expanding key from:");
-  pretty_print(key, keylen);
-  */
+  g_return_if_fail(keylen > 0);
+  g_return_if_fail(key != NULL);
 
   if(keylen > 128) keylen = 128;
+
+  /* fill the first chunk with what key bytes we have */
   memcpy(tmp, key, keylen);
 
+  /* build the remaining key from the given data */
   for(i = 0; keylen < 128; i++) {
     tmp[keylen] = PT[ (tmp[keylen - 1] + tmp[i]) & 0xff ];
     keylen++;
@@ -117,12 +189,14 @@ void mwKeyExpand(int *ekey, const char *key, gsize keylen) {
 
 /* normal RC2 encryption given a full 128-byte (as 64 ints) key */
 static void mwEncryptBlock(const int *ekey, char *out) {
-  int a = (out[7] << 8) | (out[6] & 0xff);
-  int b = (out[5] << 8) | (out[4] & 0xff);
-  int c = (out[3] << 8) | (out[2] & 0xff);
-  int d = (out[1] << 8) | (out[0] & 0xff);
 
+  int a, b, c, d;
   int i, j;
+
+  a = (out[7] << 8) | (out[6] & 0xff);
+  b = (out[5] << 8) | (out[4] & 0xff);
+  c = (out[3] << 8) | (out[2] & 0xff);
+  d = (out[1] << 8) | (out[0] & 0xff);
 
   for(i = 0; i < 16; i++) {
     j = i * 4;
@@ -204,12 +278,14 @@ void mwEncrypt(const char *key, gsize keylen, char *iv,
 
 
 static void mwDecryptBlock(const int *ekey, char *out) {
-  int a = (out[7] << 8) | (out[6] & 0xff);
-  int b = (out[5] << 8) | (out[4] & 0xff);
-  int c = (out[3] << 8) | (out[2] & 0xff);
-  int d = (out[1] << 8) | (out[0] & 0xff);
 
+  int a, b, c, d;
   int i, j;
+
+  a = (out[7] << 8) | (out[6] & 0xff);
+  b = (out[5] << 8) | (out[4] & 0xff);
+  c = (out[3] << 8) | (out[2] & 0xff);
+  d = (out[1] << 8) | (out[0] & 0xff);
 
   for(i = 16; i--; ) {
     j = i * 4 + 3;
@@ -293,6 +369,7 @@ void mwDecrypt(const char *key, gsize keylen, char *iv,
 }
 
 
+
 struct mwCipher_RC2_40 {
   struct mwCipher cipher;
   int session_key[64];
@@ -358,19 +435,15 @@ static int decrypt_RC2_40(struct mwCipherInstance *ci,
 }
 
 
-static struct mwCipherInstance *new_instance_RC2_40(struct mwCipher *cipher,
-						    struct mwChannel *chan) {
+static struct mwCipherInstance *
+new_instance_RC2_40(struct mwCipher *cipher,
+		    struct mwChannel *chan) {
+
   struct mwCipher_RC2_40 *cr;
   struct mwCipherInstance_RC2_40 *cir;
   struct mwCipherInstance *ci;
 
   cr = (struct mwCipher_RC2_40 *) cipher;
-
-  cir = g_new0(struct mwCipherInstance_RC2_40, 1);
-  ci = &cir->instance;
-
-  ci->cipher = cipher;
-  ci->channel = chan;
 
   /* a bit of lazy initialization here */
   if(! cr->ready) {
@@ -378,6 +451,12 @@ static struct mwCipherInstance *new_instance_RC2_40(struct mwCipher *cipher,
     mwKeyExpand(cr->session_key, info->login_id, 5);
     cr->ready = TRUE;
   }
+
+  cir = g_new0(struct mwCipherInstance_RC2_40, 1);
+  ci = &cir->instance;
+
+  ci->cipher = cipher;
+  ci->channel = chan;
 
   mwIV_init(cir->incoming_iv);
   mwIV_init(cir->outgoing_iv);
@@ -387,24 +466,40 @@ static struct mwCipherInstance *new_instance_RC2_40(struct mwCipher *cipher,
 
 
 static struct mwEncryptItem *new_item_RC2_40(struct mwCipherInstance *ci) {
-  struct mwEncryptItem *e = g_new0(struct mwEncryptItem, 1);
+  struct mwEncryptItem *e;
+
+  e = g_new0(struct mwEncryptItem, 1);
   e->id = mwCipher_RC2_40;
   return e;
 }
 
 
-static void accept_RC2_40(struct mwCipherInstance *ci) {
-  struct mwCipherInstance_RC2_40 *cir;
-  struct mwLoginInfo *info = mwChannel_getUser(ci->channel);
-
-  cir = (struct mwCipherInstance_RC2_40 *) ci;
-  mwKeyExpand(cir->incoming_key, info->login_id, 5);
+static struct mwEncryptItem *
+offer_RC2_40(struct mwCipherInstance *ci) {
+  return new_item_RC2_40(ci);
 }
 
 
 static void accepted_RC2_40(struct mwCipherInstance *ci,
 			    struct mwEncryptItem *item) {
-  accept_RC2_40(ci);
+
+  struct mwCipherInstance_RC2_40 *cir;
+  struct mwLoginInfo *info;
+
+  cir = (struct mwCipherInstance_RC2_40 *) ci;
+  info = mwChannel_getUser(ci->channel);
+
+  if(info->login_id) {
+    mwKeyExpand(cir->incoming_key, info->login_id, 5);
+  }
+}
+
+
+static struct mwEncryptItem *
+accept_RC2_40(struct mwCipherInstance *ci) {
+
+  accepted_RC2_40(ci, NULL);
+  return new_item_RC2_40(ci);
 }
 
 
@@ -417,13 +512,210 @@ struct mwCipher *mwCipher_new_RC2_40(struct mwSession *s) {
   c->get_name = get_name_RC2_40;
   c->get_desc = get_desc_RC2_40;
   c->new_instance = new_instance_RC2_40;
-  c->new_item = new_item_RC2_40;
+
+  c->offer = offer_RC2_40;
 
   c->accepted = accepted_RC2_40;
   c->accept = accept_RC2_40;
 
   c->encrypt = encrypt_RC2_40;
   c->decrypt = decrypt_RC2_40;
+
+  return c;
+}
+
+
+struct mwCipher_RC2_128 {
+  struct mwCipher cipher;
+  mpz_t private_key;
+  struct mwOpaque public_key;
+};
+
+
+struct mwCipherInstance_RC2_128 {
+  struct mwCipherInstance instance;
+  int shared[64];      /* shared secret determined via DH exchange */
+  char outgoing_iv[8];
+  char incoming_iv[8];
+};
+
+
+static const char *get_name_RC2_128() {
+  return "RC2/128 Cipher";
+}
+
+
+static const char *get_desc_RC2_128() {
+  return "RC2, DH shared secret key";
+}
+
+
+static struct mwCipherInstance *
+new_instance_RC2_128(struct mwCipher *cipher,
+		     struct mwChannel *chan) {
+
+  struct mwCipher_RC2_128 *cr;
+  struct mwCipherInstance_RC2_128 *cir;
+  struct mwCipherInstance *ci;
+
+  cr = (struct mwCipher_RC2_128 *) cipher;
+
+  cir = g_new0(struct mwCipherInstance_RC2_128, 1);
+  ci = &cir->instance;
+  
+  ci->cipher = cipher;
+  ci->channel = chan;
+
+  mwIV_init(cir->incoming_iv);
+  mwIV_init(cir->outgoing_iv);
+
+  return ci;
+}
+
+
+static void offered_RC2_128(struct mwCipherInstance *ci,
+			    struct mwEncryptItem *item) {
+  
+  mpz_t remote_key;
+  mpz_t shared;
+  struct mwOpaque sho = { 0, 0 };
+
+  struct mwCipher *c;
+  struct mwCipher_RC2_128 *cr;
+  struct mwCipherInstance_RC2_128 *cir;
+
+  c = ci->cipher;
+  cr = (struct mwCipher_RC2_128 *) c;
+  cir = (struct mwCipherInstance_RC2_128 *) ci;
+
+  mpz_init(remote_key);
+  mpz_init(shared);
+
+  mwDHImportKey(remote_key, &item->info);
+  mwDHCalculateShared(shared, remote_key, cr->private_key);
+  mwDHExportKey(shared, &sho);
+
+  /* key expanded from the last 16 bytes of the DH shared secret. This
+     took me forever to figure out. 16 bytes is 128 bit. */
+  /* the sh_len-16 is important, because the key len could
+     hypothetically start with 8bits or more unset, meaning the
+     exported key might be less than 64 bytes in length */
+  mwKeyExpand(cir->shared, sho.data+(sho.len-16), 16);
+  
+  mpz_clear(remote_key);
+  mpz_clear(shared);
+  mwOpaque_clear(&sho);
+}
+
+
+static struct mwEncryptItem *
+offer_RC2_128(struct mwCipherInstance *ci) {
+
+  struct mwCipher *c;
+  struct mwCipher_RC2_128 *cr;
+  struct mwEncryptItem *ei;
+
+  c = ci->cipher;
+  cr = (struct mwCipher_RC2_128 *) c;
+
+  ei = g_new0(struct mwEncryptItem, 1);
+  ei->id = mwCipher_RC2_128;
+  mwOpaque_clone(&ei->info, &cr->public_key);
+
+  return ei;
+}			  
+
+
+static void accepted_RC2_128(struct mwCipherInstance *ci,
+			     struct mwEncryptItem *item) {
+
+  return offered_RC2_128(ci, item);
+}
+
+
+static struct mwEncryptItem *
+accept_RC2_128(struct mwCipherInstance *ci) {
+
+  return offer_RC2_128(ci);
+}
+
+
+static int encrypt_RC2_128(struct mwCipherInstance *ci,
+			   struct mwOpaque *data) {
+
+  struct mwCipherInstance_RC2_128 *cir;
+  struct mwOpaque o = { 0, 0 };
+
+  cir = (struct mwCipherInstance_RC2_128 *) ci;
+
+  mwEncryptExpanded(cir->shared, cir->outgoing_iv, data, &o);
+
+  mwOpaque_clear(data);
+  data->data = o.data;
+  data->len = o.len;
+
+  return 0;
+}
+
+
+static int decrypt_RC2_128(struct mwCipherInstance *ci,
+			   struct mwOpaque *data) {
+
+  struct mwCipherInstance_RC2_128 *cir;
+  struct mwOpaque o = { 0, 0 };
+
+  cir = (struct mwCipherInstance_RC2_128 *) ci;
+
+  mwDecryptExpanded(cir->shared, cir->incoming_iv, data, &o);
+
+  mwOpaque_clear(data);
+  data->data = o.data;
+  data->len = o.len;
+
+  return 0;
+}
+
+
+static void clear_RC2_128(struct mwCipher *c) {
+  struct mwCipher_RC2_128 *cr;
+  cr = (struct mwCipher_RC2_128 *) c;
+
+  mpz_clear(cr->private_key);
+  mwOpaque_clear(&cr->public_key);
+}
+
+
+struct mwCipher *mwCipher_new_RC2_128(struct mwSession *s) {
+  struct mwCipher_RC2_128 *cr;
+  struct mwCipher *c;
+
+  mpz_t pubkey;
+
+  cr = g_new0(struct mwCipher_RC2_128, 1);
+  c = &cr->cipher;
+
+  c->session = s;
+  c->type = mwCipher_RC2_128;
+  c->get_name = get_name_RC2_128;
+  c->get_desc = get_desc_RC2_128;
+  c->new_instance = new_instance_RC2_128;
+
+  c->offered = offered_RC2_128;
+  c->offer = offer_RC2_128;
+
+  c->accepted = accepted_RC2_128;
+  c->accept = accept_RC2_128;
+
+  c->encrypt = encrypt_RC2_128;
+  c->decrypt = decrypt_RC2_128;
+
+  c->clear = clear_RC2_128;
+  
+  mpz_init(cr->private_key);
+  mpz_init(pubkey);
+  mwDHRandKeypair(cr->private_key, pubkey);
+  mwDHExportKey(pubkey, &cr->public_key);
+  mpz_clear(pubkey);
 
   return c;
 }
@@ -437,8 +729,8 @@ struct mwSession *mwCipher_getSession(struct mwCipher *cipher) {
 
 guint16 mwCipher_getType(struct mwCipher *cipher) {
   /* oh man, this is a bad failover... who the hell decided to make
-     zero a real cipher id?? */
-  g_return_val_if_fail(cipher != NULL, 0x00);
+     zero a real cipher id? */
+  g_return_val_if_fail(cipher != NULL, 0xffff);
   return cipher->type;
 }
 
@@ -514,15 +806,16 @@ void mwCipherInstance_offered(struct mwCipherInstance *ci,
 }
 
 
-void mwCipherInstance_offer(struct mwCipherInstance *ci) {
+struct mwEncryptItem *
+mwCipherInstance_offer(struct mwCipherInstance *ci) {
   struct mwCipher *cipher;
 
-  g_return_if_fail(ci != NULL);
+  g_return_val_if_fail(ci != NULL, NULL);
 
   cipher = ci->cipher;
-  g_return_if_fail(cipher != NULL);
+  g_return_val_if_fail(cipher != NULL, NULL);
 
-  if(cipher->offer) cipher->offer(ci);
+  return cipher->offer(ci);
 }
 
 
@@ -539,15 +832,16 @@ void mwCipherInstance_accepted(struct mwCipherInstance *ci,
 }
 
 
-void mwCipherInstance_accept(struct mwCipherInstance *ci) {
+struct mwEncryptItem *
+mwCipherInstance_accept(struct mwCipherInstance *ci) {
   struct mwCipher *cipher;
 
-  g_return_if_fail(ci != NULL);
+  g_return_val_if_fail(ci != NULL, NULL);
 
   cipher = ci->cipher;
-  g_return_if_fail(cipher != NULL);
+  g_return_val_if_fail(cipher != NULL, NULL);
 
-  if(cipher->accept) cipher->accept(ci);
+  return cipher->accept(ci);
 }
 
 

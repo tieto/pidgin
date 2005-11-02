@@ -50,6 +50,9 @@
 #define msg_MESSAGE  0x0064  /**< IM message */
 
 
+#define BREAKUP  2048
+
+
 /* which type of im? */
 enum mwImType {
   mwIm_TEXT  = 0x00000001,  /**< text message */
@@ -87,6 +90,8 @@ struct mwConversation {
   struct mwServiceIm *service;  /**< owning service */
   struct mwChannel *channel;    /**< channel */
   struct mwIdBlock target;      /**< conversation target */
+
+  gboolean ext_id;              /**< special treatment, external ID */
 
   /** state of the conversation, based loosely on the state of its
       underlying channel */
@@ -178,6 +183,9 @@ struct mwConversation *mwServiceIm_getConversation(struct mwServiceIm *srvc,
     c->state = mwConversation_CLOSED;
     c->features = srvc->features;
 
+    /* mark external users */
+    c->ext_id = g_str_has_prefix(to->user, "@E ");
+
     srvc->convs = g_list_prepend(srvc->convs, c);
   }
 
@@ -258,7 +266,7 @@ static void convo_free(struct mwConversation *conv) {
   mwConversation_removeClientData(conv);
 
   srvc = conv->service;
-  srvc->convs = g_list_remove(srvc->convs, conv);
+  srvc->convs = g_list_remove_all(srvc->convs, conv);
 
   mwIdBlock_clear(&conv->target);
   g_free(conv);
@@ -316,7 +324,7 @@ static void recv_channelCreate(struct mwService *srvc,
   y = mwChannel_getProtoType(chan);
   z = mwChannel_getProtoVer(chan);
 
-  if( (x != SERVICE_IM) || (y != PROTOCOL_TYPE) || (z != PROTOCOL_VER) ) {
+  if( (x != mwService_IM) || (y != PROTOCOL_TYPE) || (z != PROTOCOL_VER) ) {
     g_warning("unacceptable service, proto, ver:"
 	      " 0x%08x, 0x%08x, 0x%08x", x, y, z);
     mwChannel_destroy(chan, ERR_SERVICE_NO_SUPPORT, NULL);
@@ -432,7 +440,8 @@ static void recv_channelDestroy(struct mwService *srvc, struct mwChannel *chan,
        messages. Fail-over to a non-html format on a new channel for
        the convo */
     if(c->features != mwImClient_PLAIN
-       && msg->reason == ERR_IM_NOT_REGISTERED) {
+       && (msg->reason == ERR_IM_NOT_REGISTERED ||
+	   msg->reason == ERR_SERVICE_NO_SUPPORT)) {
 
       g_debug("falling back on a plaintext conversation");
       c->features = mwImClient_PLAIN;
@@ -611,8 +620,8 @@ static void recv_data(struct mwServiceIm *srvc, struct mwChannel *chan,
 
   default:
     
-    mw_debug_mailme(&o, "unknown data message type in IM service:"
-		    " (0x%08x, 0x%08x)", type, subtype);
+    mw_mailme_opaque(&o, "unknown data message type in IM service:"
+		     " (0x%08x, 0x%08x)", type, subtype);
   }
 
   mwOpaque_clear(&o);
@@ -708,9 +717,9 @@ struct mwServiceIm *mwServiceIm_new(struct mwSession *session,
   g_return_val_if_fail(hndl != NULL, NULL);
 
   srvc_im = g_new0(struct mwServiceIm, 1);
-  srvc = &srvc_im->service;
+  srvc = MW_SERVICE(srvc_im);
 
-  mwService_init(srvc, session, SERVICE_IM);
+  mwService_init(srvc, session, mwService_IM);
   srvc->recv_create = recv_channelCreate;
   srvc->recv_accept = recv_channelAccept;
   srvc->recv_destroy = recv_channelDestroy;
@@ -769,6 +778,85 @@ enum mwImClientType mwServiceIm_getClientType(struct mwServiceIm *srvc) {
 }
 
 
+static int convo_send_data(struct mwConversation *conv,
+			   guint32 type, guint32 subtype,
+			   struct mwOpaque *data) {
+  struct mwPutBuffer *b;
+  struct mwOpaque o;
+  struct mwChannel *chan;
+  int ret;
+
+  chan = conv->channel;
+  g_return_val_if_fail(chan != NULL, -1);
+
+  b = mwPutBuffer_new();
+
+  guint32_put(b, mwIm_DATA);
+  guint32_put(b, type);
+  guint32_put(b, subtype);
+  mwOpaque_put(b, data);
+
+  mwPutBuffer_finalize(&o, b);
+
+  ret = mwChannel_sendEncrypted(chan, msg_MESSAGE, &o, !conv->ext_id);
+  mwOpaque_clear(&o);
+
+  return ret;
+}
+
+
+static int convo_send_multi_start(struct mwConversation *conv) {
+  return convo_send_data(conv, mwImData_MULTI_START, 0x00, NULL);
+}
+
+
+static int convo_send_multi_stop(struct mwConversation *conv) {
+  return convo_send_data(conv, mwImData_MULTI_STOP, 0x00, NULL);
+}
+
+
+/* breaks up a large message into segments, sends a start_segment
+   message, then sends each segment in turn, then sends a stop_segment
+   message */
+static int
+convo_sendSegmented(struct mwConversation *conv, const char *message,
+		    int (*send)(struct mwConversation *conv,
+				const char *msg)) {
+  char *buf = (char *) message;
+  gsize len;
+  int ret = 0;
+
+  len = strlen(buf);
+  ret = convo_send_multi_start(conv);
+
+  while(len && !ret) {
+    char tail;
+    gsize seg;
+
+    seg = BREAKUP;
+    if(len < BREAKUP)
+      seg = len;
+
+    /* temporarily NUL-terminate this segment */
+    tail = buf[seg];
+    buf[seg] = 0x00;
+
+    ret = send(conv, buf);
+
+    /* restore this segment */
+    buf[seg] = tail;
+    
+    buf += seg;
+    len -= seg;
+  }
+
+  if(! ret)
+    ret = convo_send_multi_stop(conv);
+
+  return ret;
+}
+
+
 static int convo_sendText(struct mwConversation *conv, const char *text) {
   struct mwPutBuffer *b;
   struct mwOpaque o;
@@ -780,58 +868,7 @@ static int convo_sendText(struct mwConversation *conv, const char *text) {
   mwString_put(b, text);
 
   mwPutBuffer_finalize(&o, b);
-  ret = mwChannel_send(conv->channel, msg_MESSAGE, &o);
-  mwOpaque_clear(&o);
-
-  return ret;
-}
-
-
-static int convo_sendHtml(struct mwConversation *conv, const char *html) {
-  struct mwPutBuffer *b;
-  struct mwOpaque o;
-  int ret;
-  
-  b = mwPutBuffer_new();
-
-  guint32_put(b, mwIm_DATA);
-  guint32_put(b, mwImData_HTML);
-  guint32_put(b, 0x00);
-
-  /* use o first as a shell of an opaque for the text */
-  o.len = strlen(html);
-  o.data = (char *) html;
-  mwOpaque_put(b, &o);
-
-  /* use o again as the holder of the buffer's finalized data */
-  mwPutBuffer_finalize(&o, b);
-  ret = mwChannel_send(conv->channel, msg_MESSAGE, &o);
-  mwOpaque_clear(&o);
-
-  return ret;
-}
-
-
-static int convo_sendSubject(struct mwConversation *conv,
-			     const char *subject) {
-  struct mwPutBuffer *b;
-  struct mwOpaque o;
-  int ret;
-
-  b = mwPutBuffer_new();
-
-  guint32_put(b, mwIm_DATA);
-  guint32_put(b, mwImData_SUBJECT);
-  guint32_put(b, 0x00);
-
-  /* use o first as a shell of an opaque for the text */
-  o.len = strlen(subject);
-  o.data = (char *) subject;
-  mwOpaque_put(b, &o);
-
-  /* use o again as the holder of the buffer's finalized data */
-  mwPutBuffer_finalize(&o, b);
-  ret = mwChannel_send(conv->channel, msg_MESSAGE, &o);
+  ret = mwChannel_sendEncrypted(conv->channel, msg_MESSAGE, &o, !conv->ext_id);
   mwOpaque_clear(&o);
 
   return ret;
@@ -839,49 +876,46 @@ static int convo_sendSubject(struct mwConversation *conv,
 
 
 static int convo_sendTyping(struct mwConversation *conv, gboolean typing) {
-  struct mwPutBuffer *b;
-  struct mwOpaque o = { 0, NULL };
-  int ret;
-
-  b = mwPutBuffer_new();
-
-  guint32_put(b, mwIm_DATA);
-  guint32_put(b, mwImData_TYPING);
-  guint32_put(b, !typing);
-
-  /* not to be confusing, but we're re-using o first as an empty
-     opaque, and later as the contents of the finalized buffer */
-  mwOpaque_put(b, &o);
-
-  mwPutBuffer_finalize(&o, b);
-  ret = mwChannel_send(conv->channel, msg_MESSAGE, &o);
-  mwOpaque_clear(&o);
-
-  return ret;
+  return convo_send_data(conv, mwImData_TYPING, !typing, NULL);
 }
 
 
-static int convo_sendMime(struct mwConversation *conv,
-			  const char *mime) {
-  struct mwPutBuffer *b;
+static int convo_sendSubject(struct mwConversation *conv,
+			     const char *subject) {
   struct mwOpaque o;
-  int ret;
 
-  b = mwPutBuffer_new();
+  o.len = strlen(subject);
+  o.data = (char *) subject;
 
-  guint32_put(b, mwIm_DATA);
-  guint32_put(b, mwImData_MIME);
-  guint32_put(b, 0x00);
+  return convo_send_data(conv, mwImData_SUBJECT, 0x00, &o);
+}
+
+
+static int convo_sendHtml(struct mwConversation *conv, const char *html) {
+  struct mwOpaque o;
+
+  o.len = strlen(html);
+  o.data = (char *) html;
+
+  if(o.len > BREAKUP) {
+    return convo_sendSegmented(conv, html, convo_sendHtml);
+  } else {
+    return convo_send_data(conv, mwImData_HTML, 0x00, &o);
+  }
+}
+
+
+static int convo_sendMime(struct mwConversation *conv, const char *mime) {
+  struct mwOpaque o;
 
   o.len = strlen(mime);
   o.data = (char *) mime;
-  mwOpaque_put(b, &o);
 
-  mwPutBuffer_finalize(&o, b);
-  ret = mwChannel_send(conv->channel, msg_MESSAGE, &o);
-  mwOpaque_clear(&o);
-
-  return ret;
+  if(o.len > BREAKUP) {
+    return convo_sendSegmented(conv, mime, convo_sendMime);
+  } else {
+    return convo_send_data(conv, mwImData_MIME, 0x00, &o);
+  }
 }
 
 

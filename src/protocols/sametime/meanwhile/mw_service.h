@@ -304,12 +304,6 @@ struct mwSession *mwService_getSession(struct mwService *service);
 
 
 /** @returns the service's state
-    @relates MW_SERVICE_IS_STARTING
-    @relates MW_SERVICE_IS_STARTED
-    @relates MW_SERVICE_IS_STOPPING
-    @relates MW_SERVICE_IS_STOPPED
-    @relates MW_SERVICE_IS_LIVE
-    @relates MW_SERVICE_IS_DEAD
 */
 enum mwServiceState mwService_getState(struct mwService *service);
 

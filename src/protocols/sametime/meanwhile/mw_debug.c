@@ -18,112 +18,171 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+
 #include <glib/gstring.h>
 
 #include "mw_debug.h"
 
 
-#define FRM               "%02x"
-#define FRMT              "%02x%02x "
+
+#define FRMT1            "%02x"
+#define FRMT2            FRMT1 FRMT1 " "
+#define FRMT4            FRMT2 FRMT2
+#define FRMT8            FRMT4 FRMT4
+#define FRMT16           FRMT8 FRMT8
+
 #define BUF(n)            ((unsigned char) buf[n])
 #define ADVANCE(b, n, c)  {b += c; n -= c;}
 
 
-#ifdef DEBUG
+
 /** writes hex pairs of buf to str */
-static void t_pretty_print(GString *str, const char *buf, gsize len) {
+static void pretty_print(GString *str, const char *buf, gsize len) {
   while(len) {
     if(len >= 16) {
-      g_string_append_printf(str,
-			     FRMT FRMT FRMT FRMT FRMT FRMT FRMT FRMT "\n",
+      /* write a complete line */
+      g_string_append_printf(str, FRMT16,
 			     BUF(0),  BUF(1),  BUF(2),  BUF(3),
 			     BUF(4),  BUF(5),  BUF(6),  BUF(7),
 			     BUF(8),  BUF(9),  BUF(10), BUF(11),
 			     BUF(12), BUF(13), BUF(14), BUF(15));
       ADVANCE(buf, len, 16);
 
-    } else if(len == 2) {
-      g_string_append_printf(str, FRMT "\n", BUF(0), BUF(1));
-      ADVANCE(buf, len, 2);
-      
-    } else if(len > 1) {
-      g_string_append_printf(str, FRMT, BUF(0), BUF(1));
-      ADVANCE(buf, len, 2);
-
     } else {
-      g_string_append_printf(str, FRM "\n", BUF(0));
-      ADVANCE(buf, len, 1);
+      /* write an incomplete line */
+      if(len >= 8) {
+	g_string_append_printf(str, FRMT8,
+			       BUF(0), BUF(1), BUF(2), BUF(3),
+			       BUF(4), BUF(5), BUF(6), BUF(7));
+	ADVANCE(buf, len, 8);
+      }
+      
+      if(len >= 4) {
+	g_string_append_printf(str, FRMT4,
+			       BUF(0), BUF(1), BUF(2), BUF(3));
+	ADVANCE(buf, len, 4);
+      }
+
+      if(len >= 2) {
+	g_string_append_printf(str, FRMT2, BUF(0), BUF(1));
+	ADVANCE(buf, len, 2);
+      }
+
+      if(len >= 1) {
+	g_string_append_printf(str, FRMT1, BUF(0));
+	ADVANCE(buf, len, 1);
+      }
     }
+    
+    /* append \n to each line but the last */
+    if(len) g_string_append(str, "\n");
   }
 }
-#endif
 
 
-void pretty_print(const char *buf, gsize len) {
-#ifdef DEBUG
+
+void mw_debug_datav(const char *buf, gsize len,
+		    const char *msg, va_list args) {
   GString *str;
 
-  if(! len) return;
-
-  g_return_if_fail(buf != NULL);
+  g_return_if_fail(buf != NULL || len == 0);
 
   str = g_string_new(NULL);
-  t_pretty_print(str, buf, len);
+
+  if(msg) {
+    char *txt = g_strdup_vprintf(msg, args);
+    g_string_append_printf(str, "%s\n", txt);
+    g_free(txt);
+  }
+  pretty_print(str, buf, len);
+
   g_debug(str->str);
   g_string_free(str, TRUE);
-#endif
-  ;
 }
 
 
-void pretty_print_opaque(struct mwOpaque *o) {
-  if(! o) return;
-  pretty_print(o->data, o->len);
+
+void mw_debug_data(const char *buf, gsize len,
+		   const char *msg, ...) {
+  va_list args;
+  
+  g_return_if_fail(buf != NULL || len == 0);
+
+  va_start(args, msg);
+  mw_debug_datav(buf, len, msg, args);
+  va_end(args);
 }
 
 
-void mw_debug_mailme_v(struct mwOpaque *block,
-		       const char *info, va_list args) {
-  /*
-    MW_MAILME_MESSAGE
-    begin here
-    info % args
-    pretty_print
-    end here
-  */
 
-#ifdef DEBUG
+void mw_debug_opaquev(struct mwOpaque *o, const char *txt, va_list args) {
+  g_return_if_fail(o != NULL);
+  mw_debug_datav(o->data, o->len, txt, args);
+}
+
+
+
+void mw_debug_opaque(struct mwOpaque *o, const char *txt, ...) {
+  va_list args;
+
+  g_return_if_fail(o != NULL);
+
+  va_start(args, txt);
+  mw_debug_opaquev(o, txt, args);
+  va_end(args);
+}
+
+
+void mw_mailme_datav(const char *buf, gsize len,
+		     const char *info, va_list args) {
+
+#if MW_MAILME
   GString *str;
   char *txt;
 
   str = g_string_new(MW_MAILME_MESSAGE "\n"
 		     "  Please send mail to: " MW_MAILME_ADDRESS "\n"
 		     MW_MAILME_CUT_START "\n");
+  str = g_string_new(NULL);
 
   txt = g_strdup_vprintf(info, args);
-  g_string_append(str, txt);
+  g_string_append_printf(str, "%s\n", txt);
   g_free(txt);
 
-  g_string_append(str, "\n");
-
-  if(block) {
-    t_pretty_print(str, block->data, block->len);
-  }
+  if(buf && len) pretty_print(str, buf, len);
 
   g_string_append(str, MW_MAILME_CUT_STOP);
 
   g_debug(str->str);
   g_string_free(str, TRUE);
+
+#else
+  mw_debug_datav(buf, len, info, args);
+
 #endif
-  ;
 }
 
 
-void mw_debug_mailme(struct mwOpaque *block,
-		     const char *info, ...) {
+
+void mw_mailme_data(const char *buf, gsize len,
+		    const char *info, ...) {
   va_list args;
   va_start(args, info);
-  mw_debug_mailme_v(block, info, args);
+  mw_mailme_datav(buf, len, info, args);
   va_end(args);
 }
 
+
+
+void mw_mailme_opaquev(struct mwOpaque *o, const char *info, va_list args) {
+  mw_mailme_datav(o->data, o->len, info, args);
+}
+
+
+
+void mw_mailme_opaque(struct mwOpaque *o, const char *info, ...) {
+  va_list args;
+  va_start(args, info);
+  mw_mailme_opaquev(o, info, args);
+  va_end(args);
+}

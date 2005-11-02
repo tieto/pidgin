@@ -48,3 +48,9 @@
 /*  mwLogin_MEANWHILE */
 
 
+/** default encoding for the gaim plugin.*/
+#ifndef MW_PLUGIN_DEFAULT_ENCODING
+#define MW_PLUGIN_DEFAULT_ENCODING "ISO-8859-1"
+#endif
+/* ISO-8859-1 */
+

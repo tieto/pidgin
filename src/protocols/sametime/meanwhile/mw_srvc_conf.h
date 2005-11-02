@@ -27,7 +27,7 @@
 
 
 /** Type identifier for the conference service */
-#define SERVICE_CONFERENCE  0x80000010
+#define mwService_CONFERENCE  0x80000010
 
 
 enum mwConferenceState {
@@ -163,6 +163,7 @@ int mwConference_accept(struct mwConference *conf);
 
 
 /** invite another user to an ACTIVE conference
+    @param conf  conference
     @param who   user to invite
     @param text  invitation message
  */

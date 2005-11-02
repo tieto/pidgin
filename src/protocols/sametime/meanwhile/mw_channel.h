@@ -26,7 +26,7 @@
 #include "mw_common.h"
 
 
-/** @file channel.h
+/** @file mw_channel.h
     
 Life-cycle of an outgoing channel:
 
@@ -150,6 +150,20 @@ enum mwChannelStatField {
 };
 
 
+/** @enum mwEncryptPolicy
+
+    Policy for a channel, dictating what sort of encryption should be
+    used, if any, and when.
+*/
+enum mwEncryptPolicy {
+  mwEncrypt_NONE      = 0x0000, /**< encrypt none */
+  mwEncrypt_WHATEVER  = 0x0001, /**< encrypt whatever you want */
+  mwEncrypt_ALL       = 0x0002, /**< encrypt all, any cipher */
+  mwEncrypt_RC2_40    = 0x1000, /**< encrypt all, RC2/40 cipher */
+  mwEncrypt_RC2_128   = 0x2000, /**< encrypt all, RC2/128 cipher */
+};
+
+
 /** Allocate and initialize a channel set for a session */
 struct mwChannelSet *mwChannelSet_new(struct mwSession *);
 
@@ -223,6 +237,17 @@ guint32 mwChannel_getProtoVer(struct mwChannel *chan);
 
 
 void mwChannel_setProtoVer(struct mwChannel *chan, guint32 proto_ver);
+
+
+/** Channel encryption policy.
+
+    Cannot currently be set, used internally to automatically
+    negotiate ciphers. Future revisions may allow this to be specified
+    in a new channel to dictate channel encryption.
+
+    @see enum mwEncryptPolicy
+*/
+guint16 mwChannel_getEncryptPolicy(struct mwChannel *chan);
 
 
 guint32 mwChannel_getOptions(struct mwChannel *chan);

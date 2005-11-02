@@ -26,7 +26,7 @@
 #include "mw_common.h"
 
 
-/** @file srvc_im.h
+/** @file mw_srvc_im.h
 
     The IM service provides one-on-one communication between
     users. Messages sent over conversations may relay different types
@@ -38,7 +38,7 @@
 
 
 /** Type identifier for the IM service */
-#define SERVICE_IM  0x00001000
+#define mwService_IM  0x00001000
 
 
 /** @struct mwServiceIm
@@ -70,11 +70,11 @@ enum mwImClientType {
    conversation. At any point, the feature set for the service may
    change, without affecting any existing conversations.
 
-   @relates mwServiceIm_supports
-   @relates mwServiceIm_setSupported
-   @relates mwConversation_supports
-   @relates mwConversation_send
-   @relates mwServiceImHandler::conversation_recv
+   @see mwServiceIm_supports
+   @see mwServiceIm_setSupported
+   @see mwConversation_supports
+   @see mwConversation_send
+   @see mwServiceImHandler::conversation_recv
  */
 enum mwImSendType {
   mwImSend_PLAIN,   /**< char *, plain-text message */
@@ -86,7 +86,7 @@ enum mwImSendType {
 
 
 
-/** @relates mwConversation_getState */
+/** @see mwConversation_getState */
 enum mwConversationState {
   mwConversation_CLOSED,   /**< conversation is not open */
   mwConversation_PENDING,  /**< conversation is opening */
@@ -195,9 +195,9 @@ enum mwImClientType mwConversation_getClientType(struct mwConversation *conv);
 
 /** get the state of a conversation
 
-    @relates mwConversation_isOpen
-    @relates mwConversation_isClosed
-    @relates mwConversation_isPending
+    @see mwConversation_isOpen
+    @see mwConversation_isClosed
+    @see mwConversation_isPending
 */
 enum mwConversationState mwConversation_getState(struct mwConversation *conv);
 
@@ -233,8 +233,8 @@ gboolean mwConversation_isEncrypted(struct mwConversation *conv);
 /** Associates client data with a conversation. If there is existing data,
     it will not have its cleanup function called.
 
-    @relates mwConversation_getClientData
-    @relates mwConversation_removeClientData
+    @see mwConversation_getClientData
+    @see mwConversation_removeClientData
 */
 void mwConversation_setClientData(struct mwConversation *conv,
 				  gpointer data, GDestroyNotify clean);
@@ -242,8 +242,8 @@ void mwConversation_setClientData(struct mwConversation *conv,
 
 /** Reference associated client data
 
-    @relates mwConversation_setClientData
-    @relates mwConversation_removeClientData
+    @see mwConversation_setClientData
+    @see mwConversation_removeClientData
  */
 gpointer mwConversation_getClientData(struct mwConversation *conv);
 
@@ -251,8 +251,8 @@ gpointer mwConversation_getClientData(struct mwConversation *conv);
 /** Remove any associated client data, calling the optional cleanup
     function if one was provided
 
-    @relates mwConversation_setClientData
-    @relates mwConversation_getClientData
+    @see mwConversation_setClientData
+    @see mwConversation_getClientData
 */
 void mwConversation_removeClientData(struct mwConversation *conv);
 

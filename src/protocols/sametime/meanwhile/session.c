@@ -19,6 +19,7 @@
 */
 
 #include <glib.h>
+#include <gmp.h>
 #include <string.h>
 
 #include "mw_channel.h"
@@ -48,7 +49,7 @@ struct mwSession {
   struct mwSessionHandler *handler;
 
   enum mwSessionState state;  /**< session state */
-  guint32 state_info;         /**< additional state info */
+  gpointer state_info;        /**< additional state info */
 
   /* input buffering for an incoming message */
   char *buf;       /**< buffer for incoming message data */
@@ -218,16 +219,8 @@ static void io_close(struct mwSession *s) {
 }
 
 
-/** set the state of the session, and trigger the session handler's
-    on_stateChange function. Has no effect if the session is already
-    in the specified state (ignores additional state info)
-
-    @param s      the session
-    @param state  the state to set
-    @param info   additional state info
-*/
 static void state(struct mwSession *s, enum mwSessionState state,
-		  guint32 info) {
+		  gpointer info) {
 
   struct mwSessionHandler *sh;
 
@@ -239,14 +232,24 @@ static void state(struct mwSession *s, enum mwSessionState state,
   s->state = state;
   s->state_info = info;
 
-  if(info) {
-    g_message("session state: %s (0x%08x)", state_str(state), info);
-  } else {
+  switch(state) {
+  case mwSession_STOPPING:
+  case mwSession_STOPPED:
+    g_message("session state: %s (0x%08x)", state_str(state),
+	      GPOINTER_TO_UINT(info));
+    break;
+
+  case mwSession_LOGIN_REDIR:
+    g_message("session state: %s (%s)", state_str(state),
+	      (char *)info);
+    break;
+
+  default:
     g_message("session state: %s", state_str(state));
   }
 
   sh = s->handler;
-  if(sh->on_stateChange)
+  if(sh && sh->on_stateChange)
     sh->on_stateChange(s, state, info);
 }
 
@@ -258,12 +261,24 @@ void mwSession_start(struct mwSession *s) {
   g_return_if_fail(s != NULL);
   g_return_if_fail(mwSession_isStopped(s));
 
+  if(mwSession_isStarted(s) || mwSession_isStarting(s)) {
+    g_debug("attempted to start session that is already started/starting");
+    return;
+  }
+  
   state(s, mwSession_STARTING, 0);
 
   msg = (struct mwMsgHandshake *) mwMessage_new(mwMessage_HANDSHAKE);
   msg->major = GUINT(property_get(s, mwSession_CLIENT_VER_MAJOR));
   msg->minor = GUINT(property_get(s, mwSession_CLIENT_VER_MINOR));
   msg->login_type = GUINT(property_get(s, mwSession_CLIENT_TYPE_ID));
+
+  msg->loclcalc_addr = GUINT(property_get(s, mwSession_CLIENT_IP));
+
+  if(msg->major >= 0x001e && msg->minor >= 0x001d) {
+    msg->unknown_a = 0x0100;
+    msg->local_host = (char *) property_get(s, mwSession_CLIENT_HOST);
+  }
 
   ret = mwSession_send(s, MW_MESSAGE(msg));
   mwMessage_free(MW_MESSAGE(msg));
@@ -281,10 +296,13 @@ void mwSession_stop(struct mwSession *s, guint32 reason) {
   struct mwMsgChannelDestroy *msg;
 
   g_return_if_fail(s != NULL);
-  g_return_if_fail(! mwSession_isStopping(s));
-  g_return_if_fail(! mwSession_isStopped(s));
+  
+  if(mwSession_isStopped(s) || mwSession_isStopping(s)) {
+    g_debug("attempted to stop session that is already stopped/stopping");
+    return;
+  }
 
-  state(s, mwSession_STOPPING, reason);
+  state(s, mwSession_STOPPING, GUINT_TO_POINTER(reason));
 
   for(list = l = mwSession_getServices(s); l; l = l->next)
     mwService_stop(MW_SERVICE(l->data));
@@ -305,20 +323,20 @@ void mwSession_stop(struct mwSession *s, guint32 reason) {
   /* close the connection */
   io_close(s);
 
-  state(s, mwSession_STOPPED, reason);
+  state(s, mwSession_STOPPED, GUINT_TO_POINTER(reason));
 }
 
 
 /** compose authentication information into an opaque based on the
-    password */
-static void compose_auth(struct mwOpaque *auth, const char *pass) {
+    password, encrypted via RC2/40 */
+static void compose_auth_rc2_40(struct mwOpaque *auth, const char *pass) {
   char iv[8], key[5];
   struct mwOpaque a, b, z;
   struct mwPutBuffer *p;
 
   /* get an IV and a random five-byte key */
   mwIV_init((char *) iv);
-  rand_key((char *) key, 5);
+  mwKeyRandom((char *) key, 5);
 
   /* the opaque with the key */
   a.len = 5;
@@ -343,6 +361,63 @@ static void compose_auth(struct mwOpaque *auth, const char *pass) {
 
   /* this is the only one to clear, as the other uses a static buffer */
   mwOpaque_clear(&b);
+}
+
+
+static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
+				 guint32 magic, struct mwOpaque *rkey) {
+
+  char iv[8];
+  struct mwOpaque a, b, c;
+  struct mwPutBuffer *p;
+
+  mpz_t private, public;
+  mpz_t remote;
+  mpz_t shared;
+
+  mpz_init(private);
+  mpz_init(public);
+  mpz_init(remote);
+  mpz_init(shared);
+
+  mwIV_init(iv);
+
+  mwDHRandKeypair(private, public);
+  mwDHImportKey(remote, rkey);
+  mwDHCalculateShared(shared, remote, private);
+
+  /* put the password in opaque a */
+  p = mwPutBuffer_new();
+  guint32_put(p, magic);
+  mwString_put(p, pass);
+  mwPutBuffer_finalize(&a, p);
+
+  /* put the shared key in opaque b */
+  mwDHExportKey(shared, &b);
+
+  /* encrypt the password (a) using the shared key (b), put the result
+     in opaque c */
+  mwEncrypt(b.data+(b.len-16), 16, iv, &a, &c);
+
+  /* don't need the shared key anymore, re-use opaque (b) as the
+     export of the public key */
+  mwOpaque_clear(&b);
+  mwDHExportKey(public, &b);
+
+  p = mwPutBuffer_new();
+  guint16_put(p, 0x0001);  /* XXX: unknown */
+  mwOpaque_put(p, &b);
+  mwOpaque_put(p, &c);
+  mwPutBuffer_finalize(auth, p);
+
+  mwOpaque_clear(&a);
+  mwOpaque_clear(&b);
+  mwOpaque_clear(&c);
+
+  mpz_clear(private);
+  mpz_clear(public);
+  mpz_clear(remote);
+  mpz_clear(shared);
 }
 
 
@@ -380,8 +455,21 @@ static void HANDSHAKE_ACK_recv(struct mwSession *s,
   log->name = g_strdup(property_get(s, mwSession_AUTH_USER_ID));
 
   /** @todo default to password for now. later use token optionally */
-  log->auth_type = mwAuthType_ENCRYPT;
-  compose_auth(&log->auth_data, property_get(s, mwSession_AUTH_PASSWORD));
+  {
+    const char *pw;
+    pw = (const char *) property_get(s, mwSession_AUTH_PASSWORD);
+   
+    if(msg->data.len >= 64) {
+      /* good login encryption */
+      log->auth_type = mwAuthType_RC2_128;
+      compose_auth_rc2_128(&log->auth_data, pw, msg->magic, &msg->data);
+
+    } else {
+      /* BAD login encryption */
+      log->auth_type = mwAuthType_RC2_40;
+      compose_auth_rc2_40(&log->auth_data, pw);
+    }
+  }
   
   /* send the login message */
   ret = mwSession_send(s, MW_MESSAGE(log));
@@ -524,14 +612,18 @@ static void ADMIN_recv(struct mwSession *s, struct mwMsgAdmin *msg) {
 }
 
 
-static void LOGIN_REDIRECT_recv(struct mwSession *s,
-				struct mwMsgLoginRedirect *msg) {
+static void ANNOUNCE_recv(struct mwSession *s, struct mwMsgAnnounce *msg) {
   struct mwSessionHandler *sh = s->handler;
 
-  state(s, mwSession_LOGIN_REDIR, 0);
+  if(sh && sh->on_announce)
+    sh->on_announce(s, &msg->sender, msg->may_reply, msg->text);
+}
 
-  if(sh && sh->on_loginRedirect)
-    sh->on_loginRedirect(s, msg->host);
+
+static void LOGIN_REDIRECT_recv(struct mwSession *s,
+				struct mwMsgLoginRedirect *msg) {
+
+  state(s, mwSession_LOGIN_REDIR, msg->host);
 }
 
 
@@ -544,7 +636,7 @@ case mwMessage_ ## var: \
 static void session_process(struct mwSession *s,
 			    const char *buf, gsize len) {
 
-  struct mwOpaque o = { len, (char *) buf };
+  struct mwOpaque o = { .len = len, .data = (char *) buf };
   struct mwGetBuffer *b;
   struct mwMessage *msg;
 
@@ -559,6 +651,13 @@ static void session_process(struct mwSession *s,
 
   /* attempt to parse the message. */
   msg = mwMessage_get(b);
+
+  if(mwGetBuffer_error(b)) {
+    mw_mailme_opaque(&o, "parsing of message failed");
+  }
+
+  mwGetBuffer_free(b);
+
   g_return_if_fail(msg != NULL);
 
   /* handle each of the appropriate incoming types of mwMessage */
@@ -574,17 +673,12 @@ static void session_process(struct mwSession *s,
     CASE(SET_USER_STATUS, mwMsgSetUserStatus);
     CASE(SENSE_SERVICE, mwMsgSenseService);
     CASE(ADMIN, mwMsgAdmin);
+    CASE(ANNOUNCE, mwMsgAnnounce);
     
   default:
     g_warning("unknown message type 0x%04x, no handler", msg->type);
   }
 
-  if(mwGetBuffer_error(b)) {
-    struct mwOpaque o = { .data = (char *) buf, .len = len };
-    mw_debug_mailme(&o, "parsing of message type 0x%04x failed", msg->type);
-  }
-
-  mwGetBuffer_free(b);
   mwMessage_free(msg);
 }
 
@@ -592,7 +686,7 @@ static void session_process(struct mwSession *s,
 #undef CASE
 
 
-#define ADVANCE(b, n, count) (b += count, n -= count)
+#define ADVANCE(b, n, count) { b += count; n -= count; }
 
 
 /* handle input to complete an existing buffer */
@@ -739,9 +833,11 @@ static gsize session_recv(struct mwSession *s, const char *b, gsize n) {
   /* g_message(" session_recv: session = %p, b = %p, n = %u",
 	    s, b, n); */
   
-  if(n && (s->buf_len == 0) && (*b & 0x80)) {
-    /* keep-alive and series bytes are ignored */
-    ADVANCE(b, n, 1);
+  if(s->buf_len == 0) {
+    while(n && (*b & 0x80)) {
+      /* keep-alive and series bytes are ignored */
+      ADVANCE(b, n, 1);
+    }
   }
 
   if(n == 0) {
@@ -765,9 +861,6 @@ void mwSession_recv(struct mwSession *s, const char *buf, gsize n) {
 
   g_return_if_fail(s != NULL);
 
-  /* g_message(" mwSession_recv: session = %p, b = %p, n = %u",
-	    s, b, n); */
-
   while(n > 0) {
     remain = session_recv(s, b, n);
     b += (n - remain);
@@ -779,7 +872,6 @@ void mwSession_recv(struct mwSession *s, const char *buf, gsize n) {
 int mwSession_send(struct mwSession *s, struct mwMessage *msg) {
   struct mwPutBuffer *b;
   struct mwOpaque o;
-  gsize len;
   int ret = 0;
 
   g_return_val_if_fail(s != NULL, -1);
@@ -799,7 +891,6 @@ int mwSession_send(struct mwSession *s, struct mwMessage *msg) {
   mwPutBuffer_finalize(&o, b);
 
   /* then we use that opaque's data and length to write to the socket */
-  len = o.len;
   ret = io_write(s, o.data, o.len);
   mwOpaque_clear(&o);
 
@@ -841,6 +932,30 @@ int mwSession_forceLogin(struct mwSession *s) {
   ret = mwSession_send(s, MW_MESSAGE(msg));
   mwMessage_free(MW_MESSAGE(msg));
   
+  return ret;
+}
+
+
+int mwSession_sendAnnounce(struct mwSession *s, gboolean may_reply,
+			   const char *text, const GList *recipients) {
+
+  struct mwMsgAnnounce *msg;
+  int ret;
+
+  g_return_val_if_fail(s != NULL, -1);
+  g_return_val_if_fail(mwSession_isStarted(s), -1);
+  
+  msg = (struct mwMsgAnnounce *) mwMessage_new(mwMessage_ANNOUNCE);
+
+  msg->recipients = (GList *) recipients;
+  msg->may_reply = may_reply;
+  msg->text = g_strdup(text);
+
+  ret = mwSession_send(s, MW_MESSAGE(msg));
+
+  msg->recipients = NULL;  /* don't kill our recipients param */
+  mwMessage_free(MW_MESSAGE(msg));
+
   return ret;
 }
 
@@ -917,7 +1032,7 @@ enum mwSessionState mwSession_getState(struct mwSession *s) {
 }
 
 
-guint32 mwSession_getStateInfo(struct mwSession *s) {
+gpointer mwSession_getStateInfo(struct mwSession *s) {
   g_return_val_if_fail(s != NULL, 0);
   return s->state_info;
 }

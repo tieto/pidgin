@@ -27,7 +27,7 @@
 
 
 /** Type identifier for the storage service */
-#define SERVICE_STORAGE  0x00000018
+#define mwService_STORAGE  0x00000018
 
 
 /** @struct mwServiceStorage
@@ -154,6 +154,8 @@ void mwStorageUnit_free(struct mwStorageUnit *);
 /** Initiates a load call to the storage service. If the service is
     not currently available, the call will be cached and processed
     when the service is started.
+
+    @param srvc       the storage service
     @param item       storage unit to load
     @param cb         callback function when the load call completes
     @param data       user data for callback
@@ -168,6 +170,8 @@ void mwServiceStorage_load(struct mwServiceStorage *srvc,
 /** Initiates a store call to the storage service. If the service is
     not currently available, the call will be cached and processed
     when the service is started.
+
+    @param srvc       the storage service
     @param item       storage unit to save
     @param cb         callback function when the load call completes
     @param data       optional user data for callback

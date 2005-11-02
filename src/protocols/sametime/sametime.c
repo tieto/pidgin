@@ -21,8 +21,17 @@
   USA.
 */
 
-#include <stdlib.h>
 
+/* system includes */
+#include <stdlib.h>
+#include <time.h>
+
+/* glib includes */
+#include <glib.h>
+#include <glib/ghash.h>
+#include <glib/glist.h>
+
+/* gaim includes */
 #include <internal.h>
 #include <gaim.h>
 #include <config.h>
@@ -42,10 +51,7 @@
 #include <util.h>
 #include <version.h>
 
-#include <glib.h>
-#include <glib/ghash.h>
-#include <glib/glist.h>
-
+/* meanwhile includes */
 #include <mw_cipher.h>
 #include <mw_common.h>
 #include <mw_error.h>
@@ -55,10 +61,12 @@
 #include <mw_srvc_conf.h>
 #include <mw_srvc_ft.h>
 #include <mw_srvc_im.h>
+#include <mw_srvc_place.h>
 #include <mw_srvc_resolve.h>
 #include <mw_srvc_store.h>
 #include <mw_st_list.h>
 
+/* project includes */
 #include "sametime.h"
 
 
@@ -83,26 +91,24 @@
 
 
 /* stages of connecting-ness */
-#define MW_CONNECT_STEPS  10
+#define MW_CONNECT_STEPS  9
 
 
 /* stages of conciousness */
-#define MW_STATE_OFFLINE  "offline"
-#define MW_STATE_ACTIVE   "available"
-#define MW_STATE_AWAY     "away"
-#define MW_STATE_BUSY     "busy"
-#define MW_STATE_IDLE     "idle"
-#define MW_STATE_UNKNOWN  "unknown"
-#define MW_STATE_BUDHA    "enlightened"
-
-#define MW_STATE_MESSAGE  "message"
+#define MW_STATE_OFFLINE      "offline"
+#define MW_STATE_ACTIVE       "active"
+#define MW_STATE_AWAY         "away"
+#define MW_STATE_BUSY         "dnd"
+#define MW_STATE_MESSAGE      "message"
+#define MW_STATE_ENLIGHTENED  "buddha"
 
 
 /* keys to get/set chat information */
-#define CHAT_KEY_CREATOR  "chat.creator"
-#define CHAT_KEY_NAME     "chat.name"
-#define CHAT_KEY_TOPIC    "chat.topic"
-#define CHAT_KEY_INVITE   "chat.invite"
+#define CHAT_KEY_CREATOR   "chat.creator"
+#define CHAT_KEY_NAME      "chat.name"
+#define CHAT_KEY_TOPIC     "chat.topic"
+#define CHAT_KEY_INVITE    "chat.invite"
+#define CHAT_KEY_IS_PLACE  "chat.is_place"
 
 
 /* key for associating a mwLoginType with a buddy */
@@ -140,6 +146,8 @@
 #define MW_KEY_BUSY_MSG    "busy_msg"
 #define MW_KEY_MSG_PROMPT  "msg_prompt"
 #define MW_KEY_INVITE      "conf_invite"
+#define MW_KEY_ENCODING    "encoding"
+#define MW_KEY_FORCE       "force_login"
 
 
 /** number of seconds from the first blist change before a save to the
@@ -147,28 +155,25 @@
 #define BLIST_SAVE_SECONDS  15
 
 
-/** blist storage option, local only */
-#define BLIST_CHOICE_NONE    1
-
-/** blist storage option, load from server */
-#define BLIST_CHOICE_LOAD    2
-
-/** blist storage option, load and save to server */
-#define BLIST_CHOICE_SAVE    3
-
-/** blist storage option, server only */
-#define BLIST_CHOICE_SERVER  4
+/** the possible buddy list storage settings */
+enum blist_choice {
+  blist_choice_LOCAL = 1, /**< local only */
+  blist_choice_MERGE = 2, /**< merge from server */
+  blist_choice_STORE = 3, /**< merge from and save to server */
+  blist_choice_SYNCH = 4, /**< sync with server */
+};
 
 
 /** the default blist storage option */
-#define BLIST_CHOICE_DEFAULT BLIST_CHOICE_SAVE
+#define BLIST_CHOICE_DEFAULT  blist_choice_SYNCH
 
 
 /* testing for the above */
-#define BLIST_CHOICE_IS(n) (gaim_prefs_get_int(MW_PRPL_OPT_BLIST_ACTION)==(n))
-#define BLIST_CHOICE_IS_NONE() BLIST_CHOICE_IS(BLIST_CHOICE_NONE)
-#define BLIST_CHOICE_IS_LOAD() BLIST_CHOICE_IS(BLIST_CHOICE_LOAD)
-#define BLIST_CHOICE_IS_SAVE() BLIST_CHOICE_IS(BLIST_CHOICE_SAVE)
+#define BLIST_PREF_IS(n) (gaim_prefs_get_int(MW_PRPL_OPT_BLIST_ACTION)==(n))
+#define BLIST_PREF_IS_LOCAL()  BLIST_PREF_IS(blist_choice_LOCAL)
+#define BLIST_PREF_IS_MERGE()  BLIST_PREF_IS(blist_choice_MERGE)
+#define BLIST_PREF_IS_STORE()  BLIST_PREF_IS(blist_choice_STORE)
+#define BLIST_PREF_IS_SYNCH()  BLIST_PREF_IS(blist_choice_SYNCH)
 
 
 /* debugging output */
@@ -206,6 +211,7 @@ struct mwGaimPluginData {
   struct mwServiceConference *srvc_conf;
   struct mwServiceFileTransfer *srvc_ft;
   struct mwServiceIm *srvc_im;
+  struct mwServicePlace *srvc_place;
   struct mwServiceResolve *srvc_resolve;
   struct mwServiceStorage *srvc_store;
 
@@ -230,7 +236,11 @@ static void blist_store(struct mwGaimPluginData *pd);
 
 static void blist_schedule(struct mwGaimPluginData *pd);
 
-static void blist_import(GaimConnection *gc, struct mwSametimeList *stlist);
+static void blist_merge(GaimConnection *gc, struct mwSametimeList *stlist);
+
+static void blist_sync(GaimConnection *gc, struct mwSametimeList *stlist);
+
+static gboolean buddy_is_external(GaimBuddy *b);
 
 static void buddy_add(struct mwGaimPluginData *pd, GaimBuddy *buddy);
 
@@ -291,6 +301,15 @@ struct resolved_id {
   char *name;
 };
 
+static struct resolved_id *resolved_id_new(const char *id, const char *name);
+
+static void resolved_id_free(struct resolved_id *rid);
+
+
+/* connection functions */
+
+static void connect_cb(gpointer data, gint source, GaimInputCondition cond);
+
 
 /* ----- session ------ */
 
@@ -340,7 +359,7 @@ static int mw_session_io_write(struct mwSession *session,
 
   if(len > 0) {
     DEBUG_ERROR("write returned %i, %i bytes left unwritten\n", ret, len);
-    gaim_connection_error(pd->gc, "Connection closed (writing)");
+    gaim_connection_error(pd->gc, _("Connection closed (writing)"));
 
 #if 0
     close(pd->socket);
@@ -408,31 +427,51 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 
   GaimConnection *gc;
   GaimAccount *acct;
+    
   struct mwGaimPluginData *pd;
-  const char *status_id = MW_STATE_ACTIVE;
-  gboolean idle = FALSE;
-
-  guint stat = aware->status.status;
-
-  const char *id = aware->id.user;
+  time_t idle;
+  guint stat;
+  const char *id;
+  const char *status = MW_STATE_ACTIVE;
 
   gc = mwAwareList_getClientData(list);
-  pd = gc->proto_data;
   acct = gaim_connection_get_account(gc);
-  
+
+  pd = gc->proto_data;
+  idle = aware->status.time;
+  stat = aware->status.status;
+  id = aware->id.user;
+
+  /* not sure which client sends this yet */
+  if(idle == 0xdeadbeef) {
+    /* knock knock!
+       who's there?
+       rude interrupting cow.
+       rude interr...
+       MOO! */
+    idle = -1;
+  }
+
   switch(stat) {
+  case mwStatus_ACTIVE:
+    status = MW_STATE_ACTIVE;
+    idle = 0;
+    break;
+
   case mwStatus_IDLE:
-    idle = TRUE;
+    if(! idle) idle = -1;
     break;
     
   case mwStatus_AWAY:
-  	status_id = MW_STATE_AWAY;
-	break;
+    status = MW_STATE_AWAY;
+    break;
+    
   case mwStatus_BUSY:
-    status_id = MW_STATE_BUSY;
+    status = MW_STATE_BUSY;
     break;
   }
   
+  /* NAB group members */
   if(aware->group) {
     GaimGroup *group;
     GaimBuddy *buddy;
@@ -451,28 +490,19 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
 
       bnode = (GaimBlistNode *) buddy;
 
-      /* mark buddy as transient if preferences do not indicate that
-	 we should save the buddy between gaim sessions */
-      if(! gaim_prefs_get_bool(MW_PRPL_OPT_SAVE_DYNAMIC))
-	bnode->flags |= GAIM_BLIST_NODE_FLAG_NO_SAVE;
-
       srvc = pd->srvc_resolve;
       query = g_list_append(NULL, (char *) id);
 
       mwServiceResolve_resolve(srvc, query, mwResolveFlag_USERS,
 			       blist_resolve_alias_cb, buddy, NULL);
+      g_list_free(query);
     }
 
     gaim_blist_node_set_int(bnode, BUDDY_KEY_TYPE, mwSametimeUser_NORMAL);
   }
   
-  gaim_prpl_got_user_status(acct, id, status_id, NULL);
-  gaim_prpl_got_user_login_time(acct, id, aware->online - time(NULL));
-
-  if (idle)
-    gaim_prpl_got_user_idle(acct, id, TRUE, -1);
-  else
-    gaim_prpl_got_user_idle(acct, id, FALSE, 0);
+  gaim_prpl_got_user_status(acct, id, status, NULL);
+  gaim_prpl_got_user_idle(acct, id, !!idle, idle);
 }
 
 
@@ -633,17 +663,19 @@ static void blist_store(struct mwGaimPluginData *pd) {
 
   gc = pd->gc;
 
-  /* check if we should do this, according to user prefs */
-  if(! BLIST_CHOICE_IS_SAVE()) {
+  if(BLIST_PREF_IS_LOCAL() || BLIST_PREF_IS_MERGE()) {
     DEBUG_INFO("preferences indicate not to save remote blist\n");
     return;
 
   } else if(MW_SERVICE_IS_DEAD(srvc)) {
     DEBUG_INFO("aborting save of blist: storage service is not alive\n");
     return;
-  
-  } else {
+
+  } else if(BLIST_PREF_IS_STORE() || BLIST_PREF_IS_SYNCH()) {
     DEBUG_INFO("saving remote blist\n");
+
+  } else {
+    g_return_if_reached();
   }
 
   /* create and export to a list object */
@@ -680,6 +712,12 @@ static void blist_schedule(struct mwGaimPluginData *pd) {
 
   pd->save_event = gaim_timeout_add(BLIST_SAVE_SECONDS * 1000,
 				    blist_save_cb, pd);
+}
+
+
+static gboolean buddy_is_external(GaimBuddy *b) {
+  g_return_val_if_fail(b != NULL, FALSE);
+  return g_str_has_prefix(b->name, "@E ");
 }
 
 
@@ -802,7 +840,7 @@ static GaimGroup *group_ensure(GaimConnection *gc,
 
 
 /** merge the entries from a st list into the gaim blist */
-static void blist_import(GaimConnection *gc, struct mwSametimeList *stlist) {
+static void blist_merge(GaimConnection *gc, struct mwSametimeList *stlist) {
   struct mwSametimeGroup *stgroup;
   struct mwSametimeUser *stuser;
 
@@ -829,6 +867,214 @@ static void blist_import(GaimConnection *gc, struct mwSametimeList *stlist) {
 }
 
 
+/** remove all buddies on account from group. If del is TRUE and group
+    is left empty, remove group as well */
+static void group_clear(GaimGroup *group, GaimAccount *acct, gboolean del) {
+  GaimConnection *gc;
+  GList *prune = NULL;
+  GaimBlistNode *gn, *cn, *bn;
+
+  g_return_if_fail(group != NULL);
+
+  DEBUG_INFO("clearing members from pruned group %s\n", NSTR(group->name));
+
+  gc = gaim_account_get_connection(acct);
+  g_return_if_fail(gc != NULL);
+
+  gn = (GaimBlistNode *) group;
+
+  for(cn = gn->child; cn; cn = cn->next) {
+    if(! GAIM_BLIST_NODE_IS_CONTACT(cn)) continue;
+
+    for(bn = cn->child; bn; bn = bn->next) {
+      GaimBuddy *gb = (GaimBuddy *) bn;
+
+      if(! GAIM_BLIST_NODE_IS_BUDDY(bn)) continue;
+      
+      if(gb->account == acct) {
+	DEBUG_INFO("clearing %s from group\n", NSTR(gb->name));
+	prune = g_list_prepend(prune, gb);
+      }
+    }
+  }
+
+  /* quickly unsubscribe from presence for the entire group */
+  gaim_account_remove_group(acct, group);
+
+  /* remove blist entries that need to go */
+  while(prune) {
+    gaim_blist_remove_buddy(prune->data);
+    prune = g_list_delete_link(prune, prune);
+  }
+  DEBUG_INFO("cleared buddies\n");
+
+  /* optionally remove group from blist */
+  if(del && !gaim_blist_get_group_size(group, TRUE)) {
+    DEBUG_INFO("removing empty group\n");
+    gaim_blist_remove_group(group);
+  }
+}
+
+
+/** prune out group members that shouldn't be there */
+static void group_prune(GaimConnection *gc, GaimGroup *group,
+			struct mwSametimeGroup *stgroup) {
+
+  GaimAccount *acct;
+  GaimBlistNode *gn, *cn, *bn;
+  
+  GHashTable *stusers;
+  GList *prune = NULL;
+  GList *ul, *utl;
+
+  g_return_if_fail(group != NULL);
+
+  DEBUG_INFO("pruning membership of group %s\n", NSTR(group->name));
+
+  acct = gaim_connection_get_account(gc);
+  g_return_if_fail(acct != NULL);
+
+  stusers = g_hash_table_new(g_str_hash, g_str_equal);
+  
+  /* build a hash table for quick lookup while pruning the group
+     contents */
+  utl = mwSametimeGroup_getUsers(stgroup);
+  for(ul = utl; ul; ul = ul->next) {
+    const char *id = mwSametimeUser_getUser(ul->data);
+    g_hash_table_insert(stusers, (char *) id, ul->data);
+    DEBUG_INFO("server copy has %s\n", NSTR(id));
+  }
+  g_list_free(utl);
+
+  gn = (GaimBlistNode *) group;
+
+  for(cn = gn->child; cn; cn = cn->next) {
+    if(! GAIM_BLIST_NODE_IS_CONTACT(cn)) continue;
+
+    for(bn = cn->child; bn; bn = bn->next) {
+      GaimBuddy *gb = (GaimBuddy *) bn;
+
+      if(! GAIM_BLIST_NODE_IS_BUDDY(bn)) continue;
+
+      /* if the account is correct and they're not in our table, mark
+	 them for pruning */
+      if(gb->account == acct && !g_hash_table_lookup(stusers, gb->name)) {
+	DEBUG_INFO("marking %s for pruning\n", NSTR(gb->name));
+	prune = g_list_prepend(prune, gb);
+      }
+    }
+  }
+  DEBUG_INFO("done marking\n");
+
+  g_hash_table_destroy(stusers);
+
+  if(prune) {
+    gaim_account_remove_buddies(acct, prune, NULL);
+    while(prune) {
+      gaim_blist_remove_buddy(prune->data);
+      prune = g_list_delete_link(prune, prune);
+    }
+  }
+}
+
+
+/** synch the entries from a st list into the gaim blist, removing any
+    existing buddies that aren't in the st list */
+static void blist_sync(GaimConnection *gc, struct mwSametimeList *stlist) {
+
+  GaimAccount *acct;
+  GaimBuddyList *blist;
+  GaimBlistNode *gn;
+
+  GHashTable *stgroups;
+  GList *g_prune = NULL;
+
+  GList *gl, *gtl;
+
+  const char *acct_n;
+
+  DEBUG_INFO("synchronizing local buddy list from server list\n");
+
+  acct = gaim_connection_get_account(gc);
+  g_return_if_fail(acct != NULL);
+
+  acct_n = gaim_account_get_username(acct);
+
+  blist = gaim_get_blist();
+  g_return_if_fail(blist != NULL);
+
+  /* build a hash table for quick lookup while pruning the local
+     list, mapping group name to group structure */
+  stgroups = g_hash_table_new(g_str_hash, g_str_equal);
+
+  gtl = mwSametimeList_getGroups(stlist);
+  for(gl = gtl; gl; gl = gl->next) {
+    const char *name = mwSametimeGroup_getName(gl->data);
+    g_hash_table_insert(stgroups, (char *) name, gl->data);
+  }
+  g_list_free(gtl);
+
+  /* find all groups which should be pruned from the local list */
+  for(gn = blist->root; gn; gn = gn->next) {
+    GaimGroup *grp = (GaimGroup *) gn;
+    const char *gname, *owner;
+    struct mwSametimeGroup *stgrp;
+
+    if(! GAIM_BLIST_NODE_IS_GROUP(gn)) continue;
+
+    /* group not belonging to this account */
+    if(! gaim_group_on_account(grp, acct))
+      continue;
+
+    /* dynamic group belonging to this account. don't prune contents */
+    owner = gaim_blist_node_get_string(gn, GROUP_KEY_OWNER);
+    if(owner && !strcmp(owner, acct_n))
+       continue;
+
+    /* we actually are synching by this key as opposed to the group
+       title, which can be different things in the st list */
+    gname = gaim_blist_node_get_string(gn, GROUP_KEY_NAME);
+    if(! gname) gname = grp->name;
+
+    stgrp = g_hash_table_lookup(stgroups, gname);
+    if(! stgrp) {
+      /* remove the whole group */
+      DEBUG_INFO("marking group %s for pruning\n", grp->name);
+      g_prune = g_list_prepend(g_prune, grp);
+
+    } else {
+      /* synch the group contents */
+      group_prune(gc, grp, stgrp);
+    }
+  }
+  DEBUG_INFO("done marking groups\n");
+
+  /* don't need this anymore */
+  g_hash_table_destroy(stgroups);
+
+  /* prune all marked groups */
+  while(g_prune) {
+    GaimGroup *grp = g_prune->data;
+    GaimBlistNode *gn = (GaimBlistNode *) grp;
+    const char *owner;
+    gboolean del = TRUE;
+
+    owner = gaim_blist_node_get_string(gn, GROUP_KEY_OWNER);
+    if(owner && strcmp(owner, acct_n)) {
+      /* it's a specialty group belonging to another account with some
+	 of our members in it, so don't fully delete it */
+      del = FALSE;
+    }
+    
+    group_clear(g_prune->data, acct, del);
+    g_prune = g_list_delete_link(g_prune, g_prune);
+  }
+
+  /* done with the pruning, let's merge in the additions */
+  blist_merge(gc, stlist);
+}
+
+
 /** callback passed to the storage service when it's told to load the
     st list */
 static void fetch_blist_cb(struct mwServiceStorage *srvc,
@@ -844,7 +1090,7 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
   g_return_if_fail(result == ERR_SUCCESS);
 
   /* check our preferences for loading */
-  if(BLIST_CHOICE_IS_NONE()) {
+  if(BLIST_PREF_IS_LOCAL()) {
     DEBUG_INFO("preferences indicate not to load remote buddy list\n");
     return;
   }
@@ -855,7 +1101,14 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
   mwSametimeList_get(b, stlist);
 
   s = mwService_getSession(MW_SERVICE(srvc));
-  blist_import(pd->gc, stlist);
+
+  /* merge or synch depending on preferences */
+  if(BLIST_PREF_IS_MERGE() || BLIST_PREF_IS_STORE()) {
+    blist_merge(pd->gc, stlist);
+
+  } else if(BLIST_PREF_IS_SYNCH()) {
+    blist_sync(pd->gc, stlist);
+  }
 
   mwSametimeList_free(stlist);
 }
@@ -928,7 +1181,7 @@ static void fetch_msg_cb(struct mwServiceStorage *srvc,
   msg = NULL;
 
 #if 0
-  /* XXX */
+  /* XXX resets the status, thus updating the message */
   if(!gc->away_state || !strcmp(gc->away_state, MW_STATE_ACTIVE)) {
     msg = MW_STATE_ACTIVE;
   } else if(gc->away_state && !strcmp(gc->away_state, MW_STATE_AWAY)) {
@@ -937,8 +1190,7 @@ static void fetch_msg_cb(struct mwServiceStorage *srvc,
     msg = MW_STATE_BUSY;
   }
 
-  if(msg)
-    serv_set_away(gc, msg, NULL);
+  if(msg) serv_set_away(gc, msg, NULL);
 #endif
 }
 
@@ -954,7 +1206,7 @@ static void conversation_created_cb(GaimConversation *g_conv,
      channel to the other side and figure out what the target can
      handle. Unfortunately, this makes us vulnerable to Psychic Mode,
      whereas a more lazy negotiation based on the first message
-     isn't */
+     would not */
 
   GaimConnection *gc;
   struct mwIdBlock who = { 0, 0 };
@@ -997,12 +1249,12 @@ static void blist_menu_nab(GaimBlistNode *node, gpointer data) {
 
   tmp = (char *) gaim_blist_node_get_string(node, GROUP_KEY_NAME);
 
-  g_string_append_printf(str, "<b>Group Title:</b> %s<br>", group->name);
-  g_string_append_printf(str, "<b>Notes Group ID:</b> %s<br>", tmp);
+  g_string_append_printf(str, _("<b>Group Title:</b> %s<br>"), group->name);
+  g_string_append_printf(str, _("<b>Notes Group ID:</b> %s<br>"), tmp);
 
-  tmp = g_strdup_printf("Info for Group %s", group->name);
+  tmp = g_strdup_printf(_("Info for Group %s"), group->name);
 
-  gaim_notify_formatted(gc, tmp, "Notes Address Book Information",
+  gaim_notify_formatted(gc, tmp, _("Notes Address Book Information"),
 			NULL, str->str, NULL, NULL);
 
   g_free(tmp);
@@ -1029,7 +1281,7 @@ static void blist_node_menu_cb(GaimBlistNode *node,
     if(! gaim_account_is_connected(acct)) return;
     if(acct != gaim_connection_get_account(pd->gc)) return;
 
-    act = gaim_blist_node_action_new("Get Notes Address Book Info",
+    act = gaim_blist_node_action_new(_("Get Notes Address Book Info"),
 				     blist_menu_nab, pd, NULL);
 
     *menu = g_list_append(*menu, NULL);
@@ -1108,6 +1360,26 @@ static void services_starting(struct mwGaimPluginData *pd) {
 }
 
 
+static void session_loginRedirect(struct mwSession *session,
+				  const char *host) {
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+  GaimAccount *account;
+  guint port;
+
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+  account = gaim_connection_get_account(gc);
+  port = gaim_account_get_int(account, MW_KEY_PORT, MW_PLUGIN_DEFAULT_PORT);
+
+  if(gaim_account_get_bool(account, MW_KEY_FORCE, FALSE) ||
+     gaim_proxy_connect(account, host, port, connect_cb, pd)) {
+
+    mwSession_forceLogin(session);
+  }
+}
+
+
 /** called from mw_session_stateChange when the session's state is
     mwSession_STARTED. Any finalizing of start-up stuff should go
     here */
@@ -1121,7 +1393,8 @@ static void session_started(struct mwGaimPluginData *pd) {
 
 
 static void mw_session_stateChange(struct mwSession *session,
-				   enum mwSessionState state, guint32 info) {
+				   enum mwSessionState state,
+				   gpointer info) {
   struct mwGaimPluginData *pd;
   GaimConnection *gc;
   char *msg = NULL;
@@ -1153,6 +1426,7 @@ static void mw_session_stateChange(struct mwSession *session,
   case mwSession_LOGIN_REDIR:
     msg = _("Login Redirected");
     gaim_connection_update_progress(gc, msg, 6, MW_CONNECT_STEPS);
+    session_loginRedirect(session, info);
     break;
 
   case mwSession_LOGIN_CONT:
@@ -1168,14 +1442,13 @@ static void mw_session_stateChange(struct mwSession *session,
     msg = _("Connected to Sametime Community Server");
     gaim_connection_update_progress(gc, msg, 9, MW_CONNECT_STEPS);
     gaim_connection_set_state(gc, GAIM_CONNECTED);
-    /* XXX serv_finish_login(gc); */
 
     session_started(pd);
     break;
 
   case mwSession_STOPPING:
-    if(info & ERR_FAILURE) {
-      msg = mwError(info);
+    if(GPOINTER_TO_UINT(info) & ERR_FAILURE) {
+      msg = mwError(GPOINTER_TO_UINT(info));
       gaim_connection_error(gc, msg);
       g_free(msg);
     }
@@ -1287,6 +1560,8 @@ static void read_cb(gpointer data, gint source,
   struct mwGaimPluginData *pd = data;
   int ret = 0, err = 0;
 
+  /* How the heck can this happen? Fix submitted to Gaim so that it
+     won't happen anymore. */
   if(! cond) return;
 
   g_return_if_fail(pd != NULL);
@@ -1315,14 +1590,14 @@ static void read_cb(gpointer data, gint source,
 
   if(! ret) {
     DEBUG_INFO("connection reset\n");
-    gaim_connection_error(pd->gc, "Connection reset");
+    gaim_connection_error(pd->gc, _("Connection reset"));
 
   } else if(ret < 0) {
     char *msg = strerror(err);
 
     DEBUG_INFO("error in read callback: %s\n", msg);
 
-    msg = g_strdup_printf("Error reading from socket: %s", msg);
+    msg = g_strdup_printf(_("Error reading from socket: %s"), msg);
     gaim_connection_error(pd->gc, msg);
     g_free(msg);
   }
@@ -1351,7 +1626,7 @@ static void connect_cb(gpointer data, gint source,
 
     } else {
       /* this is a regular connect, error out */
-      gaim_connection_error(pd->gc, "Unable to connect to host");
+      gaim_connection_error(pd->gc, _("Unable to connect to host"));
     }
 
     return;
@@ -1369,24 +1644,34 @@ static void connect_cb(gpointer data, gint source,
 }
 
 
-static void mw_session_loginRedirect(struct mwSession *session,
-				     const char *host) {
-
+static void mw_session_announce(struct mwSession *s,
+				struct mwLoginInfo *from,
+				gboolean may_reply,
+				const char *text) {
   struct mwGaimPluginData *pd;
-  GaimConnection *gc;
-  GaimAccount *account;
-  guint port;
+  GaimAccount *acct;
+  GaimConversation *conv;
+  GSList *buddies;
+  char *who = from->user_id;
+  char *msg;
+  
+  pd = mwSession_getClientData(s);
+  acct = gaim_connection_get_account(pd->gc);
+  conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, acct);
+  if(! conv) conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, who);
 
-  pd = mwSession_getClientData(session);
-  gc = pd->gc;
-  account = gaim_connection_get_account(gc);
-  port = gaim_account_get_int(account, "port", MW_PLUGIN_DEFAULT_PORT);
-
-  if(gaim_prefs_get_bool(MW_PRPL_OPT_FORCE_LOGIN) ||
-     gaim_proxy_connect(account, host, port, connect_cb, pd)) {
-
-    mwSession_forceLogin(session);
+  buddies = gaim_find_buddies(acct, who);
+  if(buddies) {
+    who = (char *) gaim_buddy_get_contact_alias(buddies->data);
+    g_slist_free(buddies);
   }
+
+  who = g_strdup_printf(_("Announcement from %s"), who);
+  msg = gaim_markup_linkify(text);
+
+  gaim_conversation_write(conv, who, msg, GAIM_MESSAGE_RECV, time(NULL));
+  g_free(who);
+  g_free(msg);
 }
 
 
@@ -1398,7 +1683,7 @@ static struct mwSessionHandler mw_session_handler = {
   .on_setPrivacyInfo = mw_session_setPrivacyInfo,
   .on_setUserStatus = mw_session_setUserStatus,
   .on_admin = mw_session_admin,
-  .on_loginRedirect = mw_session_loginRedirect,
+  .on_announce = mw_session_announce,
 };
 
 
@@ -1552,7 +1837,7 @@ static void mw_conf_closed(struct mwConference *conf, guint32 reason) {
 
   serv_got_chat_left(gc, CONF_TO_ID(conf));
 
-  gaim_notify_error(gc, "Conference Closed", NULL, msg);
+  gaim_notify_error(gc, _("Conference Closed"), NULL, msg);
   g_free(msg);
 }
 
@@ -1971,7 +2256,8 @@ static GaimConversation *convo_get_gconv(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  return gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,idb->user, acct);
+  return gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+					     idb->user, acct);
 }
 
 
@@ -2012,13 +2298,13 @@ static void convo_error(struct mwConversation *conv, guint32 err) {
   idb = mwConversation_getTarget(conv);
   
   tmp = mwError(err);
-  text = g_strconcat("Unable to send message: ", tmp, NULL);
+  text = g_strconcat(_("Unable to send message: "), tmp, NULL);
   
   gconv = convo_get_gconv(conv);
   if(gconv && !gaim_conv_present_error(idb->user, gconv->account, text)) {
     
     g_free(text);
-    text = g_strdup_printf("Unable to send message to %s:",
+    text = g_strdup_printf(_("Unable to send message to %s:"),
 			   (idb->user)? idb->user: "(unknown)");
     gaim_notify_error(gaim_account_get_connection(gconv->account),
 		      NULL, text, tmp);
@@ -2099,6 +2385,7 @@ static void convo_features(struct mwConversation *conv) {
 }
 
 
+#if 0
 /** triggered from mw_conversation_opened if the appropriate plugin
     preference is set. This will open a window for the conversation
     before the first message is sent. */
@@ -2112,6 +2399,7 @@ static void convo_do_psychic(struct mwConversation *conv) {
   struct mwIdBlock *idb;
 
   GaimConversation *gconv;
+  GaimConvWindow *win;
 
   srvc = mwConversation_getService(conv);
   session = mwService_getSession(MW_SERVICE(srvc));
@@ -2121,22 +2409,20 @@ static void convo_do_psychic(struct mwConversation *conv) {
 
   idb = mwConversation_getTarget(conv);
 
-  gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, idb->user, acct);
+  gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+					      idb->user, acct);
   if(! gconv) {
     gconv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, idb->user);
   }
 
   g_return_if_fail(gconv != NULL);
 
-
-#if 0
-  GaimConvWindow *win;
   win = gaim_conversation_get_window(gconv);
   g_return_if_fail(win != NULL);
 
   gaim_conv_window_show(win);
-#endif
 }
+#endif
 
 
 static void mw_conversation_opened(struct mwConversation *conv) {
@@ -2167,9 +2453,11 @@ static void mw_conversation_opened(struct mwConversation *conv) {
   } else {
     convo_data_new(conv);
 
+#if 0
     if(gaim_prefs_get_bool(MW_PRPL_OPT_PSYCHIC)) {
       convo_do_psychic(conv);
     }
+#endif
   }
 
   { /* record the client key for the buddy */
@@ -2195,7 +2483,7 @@ static void mw_conversation_closed(struct mwConversation *conv,
 
   g_return_if_fail(conv != NULL);
 
-  /* if there's a error code and a non-typing message in the queue,
+  /* if there's an error code and a non-typing message in the queue,
      print an error message to the conversation */
   cd = mwConversation_getClientData(conv);
   if(reason && cd && cd->queue) {
@@ -2220,21 +2508,29 @@ static void mw_conversation_closed(struct mwConversation *conv,
 }
 
 
+
+static char *im_decode(GaimConnection *gc, const char *msg) {
+  return gaim_utf8_try_convert(msg);
+}
+
+
 static void im_recv_text(struct mwConversation *conv,
 			 struct mwGaimPluginData *pd,
 			 const char *msg) {
 
   struct mwIdBlock *idb;
-  char *txt, *esc;
+  char *txt, *esc, *t;
 
   idb = mwConversation_getTarget(conv);
-  txt = gaim_utf8_try_convert(msg);
-  esc = g_markup_escape_text(txt, -1);
+  txt = im_decode(pd->gc, msg);
 
+  t = txt? txt: (char *) msg;
+
+  esc = g_markup_escape_text(t, -1);
   serv_got_im(pd->gc, idb->user, esc, 0, time(NULL));
+  g_free(esc);
 
   g_free(txt);
-  g_free(esc);
 }
 
 
@@ -2255,12 +2551,14 @@ static void im_recv_html(struct mwConversation *conv,
 			 const char *msg) {
 
   struct mwIdBlock *idb;
-  char *txt;
+  char *txt, *t;
 
   idb = mwConversation_getTarget(conv);
-  txt = gaim_utf8_try_convert(msg);
+  txt = im_decode(pd->gc, msg);
   
-  serv_got_im(pd->gc, idb->user, txt, 0, time(NULL));
+  t = txt? txt: (char *) msg;
+
+  serv_got_im(pd->gc, idb->user, t, 0, time(NULL));
 
   g_free(txt);
 }
@@ -2365,16 +2663,17 @@ static void im_recv_mime(struct mwConversation *conv,
 
       gaim_mime_part_get_data_decoded(part, &data, &len);
 
-      txt = gaim_utf8_try_convert((const char *)data);
-      g_free(data);
+      txt = im_decode(pd->gc, data);
+      g_string_append(str, txt?txt:(char *)data);
 
-      g_string_append(str, txt);
+      g_free(data);
       g_free(txt);
     }
-  }
+  }  
 
   gaim_mime_document_free(doc);
 
+  /* @todo should put this in its own function */
   { /* replace each IMG tag's SRC attribute with an ID attribute. This
        actually modifies the contents of str */
     GData *attribs;
@@ -2469,8 +2768,6 @@ static void mw_conversation_recv(struct mwConversation *conv,
 }
 
 
-#if 0
-/* this will be appropriate when meanwhile supports the Place service */
 static void mw_place_invite(struct mwConversation *conv,
 			    const char *message,
 			    const char *title, const char *name) {
@@ -2492,10 +2789,13 @@ static void mw_place_invite(struct mwConversation *conv,
   g_hash_table_insert(ht, CHAT_KEY_NAME, g_strdup(name));
   g_hash_table_insert(ht, CHAT_KEY_TOPIC, g_strdup(title));
   g_hash_table_insert(ht, CHAT_KEY_INVITE, g_strdup(message));
+  g_hash_table_insert(ht, CHAT_KEY_IS_PLACE, g_strdup("")); /* ugh */
 
   serv_got_chat_invite(pd->gc, title, idb->user, message, ht);
+
+  mwConversation_close(conv, ERR_SUCCESS);
+  mwConversation_free(conv);
 }
-#endif
 
 
 static void mw_im_clear(struct mwServiceIm *srvc) {
@@ -2507,7 +2807,7 @@ static struct mwImHandler mw_im_handler = {
   .conversation_opened = mw_conversation_opened,
   .conversation_closed = mw_conversation_closed,
   .conversation_recv = mw_conversation_recv,
-  .place_invite = NULL, /* = mw_place_invite, */
+  .place_invite = mw_place_invite,
   .clear = mw_im_clear,
 };
 
@@ -2516,6 +2816,203 @@ static struct mwServiceIm *mw_srvc_im_new(struct mwSession *s) {
   struct mwServiceIm *srvc;
   srvc = mwServiceIm_new(s, &mw_im_handler);
   mwServiceIm_setClientType(srvc, mwImClient_NOTESBUDDY);
+  return srvc;
+}
+
+
+/* The following helps us relate a mwPlace to a GaimConvChat in the
+   various forms by which either may be indicated. Uses some of
+   the similar macros from the conference service above */
+
+#define PLACE_TO_ID(place)   (GPOINTER_TO_INT(place))
+#define ID_TO_PLACE(pd, id)  (place_find_by_id((pd), (id)))
+
+#define CHAT_TO_PLACE(pd, chat)  (ID_TO_PLACE((pd), CHAT_TO_ID(chat)))
+#define PLACE_TO_CHAT(place)     (ID_TO_CHAT(PLACE_TO_ID(place)))
+
+
+static struct mwPlace *
+place_find_by_id(struct mwGaimPluginData *pd, int id) {
+  struct mwServicePlace *srvc = pd->srvc_place;
+  struct mwPlace *place = NULL;
+  GList *l;
+
+  l = (GList *) mwServicePlace_getPlaces(srvc);
+  for(; l; l = l->next) {
+    struct mwPlace *p = l->data;
+    GaimConvChat *h = GAIM_CONV_CHAT(mwPlace_getClientData(p));
+
+    if(CHAT_TO_ID(h) == id) {
+      place = p;
+      break;
+    }
+  }
+
+  return place;
+}
+
+
+static void mw_place_opened(struct mwPlace *place) {
+  struct mwServicePlace *srvc;
+  struct mwSession *session;
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+  GaimConversation *gconf;
+
+  GList *members, *l;
+
+  const char *n = mwPlace_getName(place);
+
+  srvc = mwPlace_getService(place);
+  session = mwService_getSession(MW_SERVICE(srvc));
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+
+  members = mwPlace_getMembers(place);
+
+  DEBUG_INFO("place %s opened, %u initial members\n",
+	     NSTR(n), g_list_length(members));
+
+  gconf = serv_got_joined_chat(gc, PLACE_TO_ID(place),
+			       mwPlace_getTitle(place));
+
+  mwPlace_setClientData(place, gconf, NULL);
+
+  for(l = members; l; l = l->next) {
+    struct mwIdBlock *idb = l->data;
+    gaim_conv_chat_add_user(GAIM_CONV_CHAT(gconf), idb->user,
+			    NULL, GAIM_CBFLAGS_NONE, FALSE);
+  }
+  g_list_free(members);
+}
+
+
+static void mw_place_closed(struct mwPlace *place, guint32 code) {
+  struct mwServicePlace *srvc;
+  struct mwSession *session;
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+
+  const char *n = mwPlace_getName(place);
+  char *msg = mwError(code);
+
+  DEBUG_INFO("place %s closed, 0x%08x\n", NSTR(n), code);
+
+  srvc = mwPlace_getService(place);
+  session = mwService_getSession(MW_SERVICE(srvc));
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+
+  serv_got_chat_left(gc, PLACE_TO_ID(place));
+
+  gaim_notify_error(gc, _("Place Closed"), NULL, msg);
+  g_free(msg);
+}
+
+
+static void mw_place_peerJoined(struct mwPlace *place,
+				const struct mwIdBlock *peer) {
+  struct mwServicePlace *srvc;
+  struct mwSession *session;
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+  GaimConversation *gconf;
+
+  const char *n = mwPlace_getName(place);
+
+  DEBUG_INFO("%s joined place %s\n", NSTR(peer->user), NSTR(n));
+
+  srvc = mwPlace_getService(place);
+  session = mwService_getSession(MW_SERVICE(srvc));
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+
+  gconf = mwPlace_getClientData(place);
+  g_return_if_fail(gconf != NULL);
+
+  gaim_conv_chat_add_user(GAIM_CONV_CHAT(gconf), peer->user,
+			  NULL, GAIM_CBFLAGS_NONE, TRUE);
+}
+
+
+static void mw_place_peerParted(struct mwPlace *place,
+				const struct mwIdBlock *peer) {
+  struct mwServicePlace *srvc;
+  struct mwSession *session;
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+  GaimConversation *gconf;
+
+  const char *n = mwPlace_getName(place);
+
+  DEBUG_INFO("%s left place %s\n", NSTR(peer->user), NSTR(n));
+
+  srvc = mwPlace_getService(place);
+  session = mwService_getSession(MW_SERVICE(srvc));
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+
+  gconf = mwPlace_getClientData(place);
+  g_return_if_fail(gconf != NULL);
+
+  gaim_conv_chat_remove_user(GAIM_CONV_CHAT(gconf), peer->user, NULL);
+}
+
+
+static void mw_place_peerSetAttribute(struct mwPlace *place,
+				      const struct mwIdBlock *peer,
+				      guint32 attr, struct mwOpaque *o) {
+  ;
+}
+
+
+static void mw_place_peerUnsetAttribute(struct mwPlace *place,
+					const struct mwIdBlock *peer,
+					guint32 attr) {
+  ;
+}
+
+
+static void mw_place_message(struct mwPlace *place,
+			     const struct mwIdBlock *who,
+			     const char *msg) {
+  struct mwServicePlace *srvc;
+  struct mwSession *session;
+  struct mwGaimPluginData *pd;
+  GaimConnection *gc;
+  char *esc;
+
+  srvc = mwPlace_getService(place);
+  session = mwService_getSession(MW_SERVICE(srvc));
+  pd = mwSession_getClientData(session);
+  gc = pd->gc;
+
+  esc = g_markup_escape_text(msg, -1);
+  serv_got_chat_in(gc, PLACE_TO_ID(place), who->user, 0, esc, time(NULL));
+  g_free(esc);
+}
+
+
+static void mw_place_clear(struct mwServicePlace *srvc) {
+  ;
+}
+
+
+static struct mwPlaceHandler mw_place_handler = {
+  .opened = mw_place_opened,
+  .closed = mw_place_closed,
+  .peerJoined = mw_place_peerJoined,
+  .peerParted = mw_place_peerParted,
+  .peerSetAttribute = mw_place_peerSetAttribute,
+  .peerUnsetAttribute = mw_place_peerUnsetAttribute,
+  .message = mw_place_message,
+  .clear = mw_place_clear,
+};
+
+
+static struct mwServicePlace *mw_srvc_place_new(struct mwSession *s) {
+  struct mwServicePlace *srvc;
+  srvc = mwServicePlace_new(s, &mw_place_handler);
   return srvc;
 }
 
@@ -2547,6 +3044,7 @@ static struct mwGaimPluginData *mwGaimPluginData_new(GaimConnection *gc) {
   pd->srvc_conf = mw_srvc_conf_new(pd->session);
   pd->srvc_ft = mw_srvc_ft_new(pd->session);
   pd->srvc_im = mw_srvc_im_new(pd->session);
+  pd->srvc_place = mw_srvc_place_new(pd->session);
   pd->srvc_resolve = mw_srvc_resolve_new(pd->session);
   pd->srvc_store = mw_srvc_store_new(pd->session);
   pd->group_list_map = g_hash_table_new(g_direct_hash, g_direct_equal);
@@ -2555,10 +3053,12 @@ static struct mwGaimPluginData *mwGaimPluginData_new(GaimConnection *gc) {
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_conf));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_ft));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_im));
+  mwSession_addService(pd->session, MW_SERVICE(pd->srvc_place));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_resolve));
   mwSession_addService(pd->session, MW_SERVICE(pd->srvc_store));
 
   mwSession_addCipher(pd->session, mwCipher_new_RC2_40(pd->session));
+  mwSession_addCipher(pd->session, mwCipher_new_RC2_128(pd->session));
 
   mwSession_setClientData(pd->session, pd, NULL);
   gc->proto_data = pd;
@@ -2572,19 +3072,24 @@ static void mwGaimPluginData_free(struct mwGaimPluginData *pd) {
 
   pd->gc->proto_data = NULL;
 
-  mwSession_removeService(pd->session, SERVICE_AWARE);
-  mwSession_removeService(pd->session, SERVICE_CONFERENCE);
-  mwSession_removeService(pd->session, SERVICE_IM);
-  mwSession_removeService(pd->session, SERVICE_RESOLVE);
-  mwSession_removeService(pd->session, SERVICE_STORAGE);
+  mwSession_removeService(pd->session, mwService_AWARE);
+  mwSession_removeService(pd->session, mwService_CONFERENCE);
+  mwSession_removeService(pd->session, mwService_FILE_TRANSFER);
+  mwSession_removeService(pd->session, mwService_IM);
+  mwSession_removeService(pd->session, mwService_PLACE);
+  mwSession_removeService(pd->session, mwService_RESOLVE);
+  mwSession_removeService(pd->session, mwService_STORAGE);
 
   mwService_free(MW_SERVICE(pd->srvc_aware));
   mwService_free(MW_SERVICE(pd->srvc_conf));
+  mwService_free(MW_SERVICE(pd->srvc_ft));
   mwService_free(MW_SERVICE(pd->srvc_im));
+  mwService_free(MW_SERVICE(pd->srvc_place));
   mwService_free(MW_SERVICE(pd->srvc_resolve));
   mwService_free(MW_SERVICE(pd->srvc_store));
 
   mwCipher_free(mwSession_getCipher(pd->session, mwCipher_RC2_40));
+  mwCipher_free(mwSession_getCipher(pd->session, mwCipher_RC2_128));
 
   mwSession_free(pd->session);
 
@@ -2613,17 +3118,29 @@ static const char *mw_prpl_list_icon(GaimAccount *a, GaimBuddy *b) {
 static void mw_prpl_list_emblems(GaimBuddy *b,
 				 const char **se, const char **sw,
 				 const char **nw, const char **ne) {
-  GaimPresence *presence = gaim_buddy_get_presence(b);
-  GaimStatus *status = gaim_presence_get_active_status(presence);
+
+  /* speaking of custom icons, the external icon here is an ugly
+     little example of what happens when I use Gimp */
+
+  GaimPresence *presence;
+  GaimStatus *status;
+  const char *status_id;
+
+  presence = gaim_buddy_get_presence(b);
+  status = gaim_presence_get_active_status(presence);
+  status_id = gaim_status_get_id(status);
 
   if(! GAIM_BUDDY_IS_ONLINE(b)) {
     *se = "offline";
-  } else if(!gaim_presence_is_available(presence) &&
-            !strcmp(gaim_status_get_id(status), MW_STATE_AWAY)) {
+  } else if(!strcmp(status_id, MW_STATE_AWAY)) {
     *se = "away";
-  } else if(!gaim_presence_is_available(presence) &&
-            !strcmp(gaim_status_get_id(status), MW_STATE_BUSY)) {
+  } else if(!strcmp(status_id, MW_STATE_BUSY)) {
     *se = "dnd";
+  }  
+
+  if(buddy_is_external(b)) {
+    /* best assignment ever */
+    *(*se?sw:se) = "external";
   }
 }
 
@@ -2638,41 +3155,18 @@ static char *mw_prpl_status_text(GaimBuddy *b) {
   pd = gc->proto_data;
 
   ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  return (ret)? g_strdup(ret): NULL;
+  return g_strdup(ret);
 }
 
 
 static const char *status_text(GaimBuddy *b) {
-  GaimPresence *presence = gaim_buddy_get_presence(b);
-  GaimStatus *status = gaim_presence_get_active_status(presence);
+  GaimPresence *presence;
+  GaimStatus *status;
+
+  presence = gaim_buddy_get_presence(b);
+  status = gaim_presence_get_active_status(presence);
 
   return gaim_status_get_name(status);
-
-  /* I left this here in case it's more accurate than the status name.
-   * Stu. */
-#if 0
-
-  guint status = b->uc;
-
-  if(! GAIM_BUDDY_IS_ONLINE(b) ) {
-    return MW_STATE_OFFLINE;
-
-  } else if(status == (mwStatus_AWAY /* XXX | UC_UNAVAILABLE */)) {
-    return MW_STATE_AWAY;
-
-  } else if(status == (mwStatus_BUSY /* XXX | UC_UNAVAILABLE */)) {
-    return MW_STATE_BUSY;
-
-  } else if(status == mwStatus_IDLE) {
-    return MW_STATE_IDLE;
-
-  } else if(status == mwStatus_ACTIVE) {
-    return MW_STATE_ACTIVE;
-
-  } else {
-    return MW_STATE_UNKNOWN;
-  }
-#endif
 }
 
 
@@ -2698,13 +3192,13 @@ char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
       speak = user_supports(srvc, who, mwAttribute_SPEAKERS);
       video = user_supports(srvc, who, mwAttribute_VIDEO_CAMERA);
 
-      if(mic) *f++ = "Microphone";
-      if(speak) *f++ = "Speakers";
-      if(video) *f++ = "Video Camera";
+      if(mic) *f++ = _("Microphone");
+      if(speak) *f++ = _("Speakers");
+      if(video) *f++ = _("Video Camera");
     }
 
     if(user_supports(srvc, who, mwAttribute_FILE_TRANSFER))
-      *f++ = "File Transfer";
+      *f++ = _("File Transfer");
 
     return (*feat)? g_strjoinv(", ", feat): NULL;
     /* jenni loves siege */
@@ -2725,19 +3219,23 @@ static char *mw_prpl_tooltip_text(GaimBuddy *b) {
   str = g_string_new(NULL);
 
   tmp = status_text(b);
-  g_string_append_printf(str, "\n<b>Status</b>: %s", tmp);
+  g_string_append_printf(str, _("\n<b>Status</b>: %s"), tmp);
 
   tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
   if(tmp) {
     tmp = g_markup_escape_text(tmp, -1);
-    g_string_append_printf(str, "\n<b>Message</b>: %s", tmp);
+    g_string_append_printf(str, _("\n<b>Message</b>: %s"), tmp);
     g_free((char *) tmp);
   }
 
   tmp = user_supports_text(pd->srvc_aware, b->name);
   if(tmp) {
-    g_string_append_printf(str, "\n<b>Supports</b>: %s", tmp);
+    g_string_append_printf(str, _("\n<b>Supports</b>: %s"), tmp);
     g_free((char *) tmp);
+  }
+
+  if(buddy_is_external(b)) {
+    g_string_append(str, _("\n<b>External User</b>"));
   }
 
   tmp = str->str;
@@ -2765,20 +3263,20 @@ static GList *mw_prpl_status_types(GaimAccount *acct) {
   gaim_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
 			    gaim_value_new(GAIM_TYPE_STRING));
   types = g_list_append(types, type);
-
+  
   type = gaim_status_type_new(GAIM_STATUS_UNAVAILABLE, MW_STATE_BUSY,
 			      _("Do Not Disturb"), TRUE);
   gaim_status_type_add_attr(type, MW_STATE_MESSAGE, _("Message"),
 			    gaim_value_new(GAIM_TYPE_STRING));
   types = g_list_append(types, type);
-
+  
   return types;
 }
 
 
 static void conf_create_prompt_cancel(GaimBuddy *buddy,
 				      GaimRequestFields *fields) {
-  ;
+  ; /* nothing to do */
 }
 
 
@@ -2838,21 +3336,21 @@ static void blist_menu_conf_create(GaimBuddy *buddy, const char *msg) {
   g = gaim_request_field_group_new(NULL);
   gaim_request_fields_add_group(fields, g);
   
-  f = gaim_request_field_string_new(CHAT_KEY_TOPIC, "Topic", NULL, FALSE);
+  f = gaim_request_field_string_new(CHAT_KEY_TOPIC, _("Topic"), NULL, FALSE);
   gaim_request_field_group_add_field(g, f);
 
-  f = gaim_request_field_string_new(CHAT_KEY_INVITE, "Message", msg, FALSE);
+  f = gaim_request_field_string_new(CHAT_KEY_INVITE, _("Message"), msg, FALSE);
   gaim_request_field_group_add_field(g, f);
   
-  msgA = ("Create conference with user");
-  msgB = ("Please enter a topic for the new conference, and an invitation"
-	  " message to be sent to %s");
+  msgA = _("Create conference with user");
+  msgB = _("Please enter a topic for the new conference, and an invitation"
+	   " message to be sent to %s");
   msgB = g_strdup_printf(msgB, buddy->name);
 
-  gaim_request_fields(gc, "New Conference",
+  gaim_request_fields(gc, _("New Conference"),
 		      msgA, msgB, fields,
-		      "Create", G_CALLBACK(conf_create_prompt_join),
-		      "Cancel", G_CALLBACK(conf_create_prompt_cancel),
+		      _("Create"), G_CALLBACK(conf_create_prompt_join),
+		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
 		      buddy);
   g_free(msgB);
 }
@@ -2913,29 +3411,29 @@ static void blist_menu_conf_list(GaimBuddy *buddy,
   g = gaim_request_field_group_new(NULL);
   gaim_request_fields_add_group(fields, g);
 
-  f = gaim_request_field_list_new("conf", "Available Conferences");
+  f = gaim_request_field_list_new("conf", _("Available Conferences"));
   gaim_request_field_list_set_multi_select(f, FALSE);
   for(; confs; confs = confs->next) {
     struct mwConference *c = confs->data;
     gaim_request_field_list_add(f, mwConference_getTitle(c), c);
   }
-  gaim_request_field_list_add(f, "Create New Conference...",
+  gaim_request_field_list_add(f, _("Create New Conference..."),
 			      GINT_TO_POINTER(0x01));
   gaim_request_field_group_add_field(g, f);
   
   f = gaim_request_field_string_new(CHAT_KEY_INVITE, "Message", NULL, FALSE);
   gaim_request_field_group_add_field(g, f);
   
-  msgA = "Invite user to a conference";
-  msgB = ("Select a conference from the list below to send an invite to"
-	  " user %s. Select \"Create New Conference\" if you'd like to"
-	  " create a new conference to invite this user to.");
+  msgA = _("Invite user to a conference");
+  msgB = _("Select a conference from the list below to send an invite to"
+	   " user %s. Select \"Create New Conference\" if you'd like to"
+	   " create a new conference to invite this user to.");
   msgB = g_strdup_printf(msgB, buddy->name);
 
-  gaim_request_fields(gc, "Invite to Conference",
+  gaim_request_fields(gc, _("Invite to Conference"),
 		      msgA, msgB, fields,
-		      "Invite", G_CALLBACK(conf_select_prompt_invite),
-		      "Cancel", G_CALLBACK(conf_select_prompt_cancel),
+		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
+		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
 		      buddy);
   g_free(msgB);
 }
@@ -2986,7 +3484,7 @@ static GList *mw_prpl_blist_node_menu(GaimBlistNode *node) {
 
   l = g_list_append(l, NULL);
 
-  act = gaim_blist_node_action_new("Invite to Conference...",
+  act = gaim_blist_node_action_new(_("Invite to Conference..."),
 				   blist_menu_conf, NULL, NULL);
   l = g_list_append(l, act);
 
@@ -3004,7 +3502,7 @@ static GList *mw_prpl_chat_info(GaimConnection *gc) {
   struct proto_chat_entry *pce;
   
   pce = g_new0(struct proto_chat_entry, 1);
-  pce->label = "Topic:";
+  pce->label = _("Topic:");
   pce->identifier = CHAT_KEY_TOPIC;
   l = g_list_append(l, pce);
   
@@ -3032,17 +3530,14 @@ static void mw_prpl_login(GaimAccount *acct);
 
 
 static void prompt_host_cancel_cb(GaimConnection *gc) {
-  gaim_connection_error(gc, "No Sametime Community Server specified");
+  gaim_connection_error(gc, _("No Sametime Community Server specified"));
 }
 
 
 static void prompt_host_ok_cb(GaimConnection *gc, const char *host) {
   if(host && *host) {
-    GaimAccount *acct;
-
-    acct = gaim_connection_get_account(gc);
+    GaimAccount *acct = gaim_connection_get_account(gc);
     gaim_account_set_string(acct, MW_KEY_HOST, host);
-
     mw_prpl_login(acct);
 
   } else {
@@ -3056,16 +3551,16 @@ static void prompt_host(GaimConnection *gc) {
   char *msg;
   
   acct = gaim_connection_get_account(gc);
-  msg = ("No host or IP address has been configured for the"
-	 " Meanwhile account %s. Please enter one below to"
-	 " continue logging in.");
+  msg = _("No host or IP address has been configured for the"
+	  " Meanwhile account %s. Please enter one below to"
+	  " continue logging in.");
   msg = g_strdup_printf(msg, NSTR(gaim_account_get_username(acct)));
   
-  gaim_request_input(gc, "Meanwhile Connection Setup",
-		     "No Sametime Community Server Specified", msg,
+  gaim_request_input(gc, _("Meanwhile Connection Setup"),
+		     _("No Sametime Community Server Specified"), msg,
 		     MW_PLUGIN_DEFAULT_HOST, FALSE, FALSE, NULL,
-		     "Connect", G_CALLBACK(prompt_host_ok_cb),
-		     "Cancel", G_CALLBACK(prompt_host_cancel_cb),
+		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
+		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
 		     gc);
 
   g_free(msg);
@@ -3120,10 +3615,10 @@ static void mw_prpl_login(GaimAccount *account) {
   mwSession_setProperty(pd->session, mwSession_CLIENT_TYPE_ID,
 			GUINT_TO_POINTER(MW_CLIENT_TYPE_ID), NULL);
 
-  gaim_connection_update_progress(gc, "Connecting", 1, MW_CONNECT_STEPS);
+  gaim_connection_update_progress(gc, _("Connecting"), 1, MW_CONNECT_STEPS);
 
   if(gaim_proxy_connect(account, host, port, connect_cb, pd)) {
-    gaim_connection_error(gc, "Unable to connect to host");
+    gaim_connection_error(gc, _("Unable to connect to host"));
   }
 }
 
@@ -3177,6 +3672,8 @@ static char *im_mime_content_type() {
 }
 
 
+/** determine content type from extension. Not so happy about this,
+    but I don't want to actually write image type detection */
 static const char *im_mime_img_content_type(GaimStoredImage *img) {
   const char *fn = gaim_imgstore_get_filename(img);
 
@@ -3208,6 +3705,7 @@ static char *im_mime_img_content_disp(GaimStoredImage *img) {
 }
 
 
+/** turn an IM with embedded images into a multi-part mime document */
 static char *im_mime_convert(const char *message) {
   GString *str;
   GaimMimeDocument *doc;
@@ -3307,6 +3805,38 @@ static char *im_mime_convert(const char *message) {
 }
 
 
+static char *im_try_convert(const char *msg,
+			    const char *enc_to,
+			    const char *enc_from) {
+  char *ret;
+  GError *error = NULL;
+
+  ret = g_convert(msg, -1, enc_to, enc_from, NULL, NULL, &error);
+  if(error) {
+    /* if there's something that just won't convert, leave it as UTF-8 */
+    DEBUG_INFO("problem converting to %s, preserving %s: %s\n",
+	       NSTR(enc_to), NSTR(enc_from), NSTR(error->message));
+    g_error_free(error);
+  }
+
+  return ret;
+}
+
+
+static char *im_encode(GaimConnection *gc, const char *msg) {
+  GaimAccount *acct;
+  const char *enc;
+  
+  acct = gaim_connection_get_account(gc);
+  g_return_val_if_fail(acct != NULL, NULL);
+
+  enc = gaim_account_get_string(acct, MW_KEY_ENCODING,
+				MW_PLUGIN_DEFAULT_ENCODING);
+
+  return im_try_convert(msg, enc, "UTF-8");
+}
+
+
 static int mw_prpl_send_im(GaimConnection *gc,
 			   const char *name,
 			   const char *message,
@@ -3315,11 +3845,15 @@ static int mw_prpl_send_im(GaimConnection *gc,
   struct mwGaimPluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
   struct mwConversation *conv;
+  char *msg = NULL;
 
   g_return_val_if_fail(gc != NULL, 0);
   pd = gc->proto_data;
 
   g_return_val_if_fail(pd != NULL, 0);
+
+  msg = im_encode(gc, message);
+  if(!msg) msg = g_strdup(message);
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
@@ -3331,39 +3865,49 @@ static int mw_prpl_send_im(GaimConnection *gc,
      conversation will receive a plaintext message with html contents,
      which is bad. I'm not sure how to fix this correctly. */
 
-  if(strstr(message, "<img ") || strstr(message, "<IMG "))
+  if(strstr(msg, "<img ") || strstr(msg, "<IMG "))
     flags |= GAIM_CONV_IM_IMAGES;
 
   if(mwConversation_isOpen(conv)) {
-    char *msg = NULL;
+    char *tmp;
     int ret;
 
     if((flags & GAIM_CONV_IM_IMAGES) &&
        mwConversation_supports(conv, mwImSend_MIME)) {
+      /* send a MIME message */
 
-      msg = im_mime_convert(message);
-      ret = mwConversation_send(conv, mwImSend_MIME, msg);
+      tmp = im_mime_convert(msg);
+      g_free(msg);
+
+      ret = mwConversation_send(conv, mwImSend_MIME, tmp);
+      g_free(tmp);
       
     } else if(mwConversation_supports(conv, mwImSend_HTML)) {
+      /* send an HTML message */
 
       /* need to do this to get the \n to <br> conversion */
-      msg = gaim_strdup_withhtml(message);
-      ret = mwConversation_send(conv, mwImSend_HTML, msg);
+      tmp = gaim_strdup_withhtml(msg);
+      g_free(msg);
+
+      ret = mwConversation_send(conv, mwImSend_HTML, tmp);
+      g_free(tmp);
 
     } else {
-      ret = mwConversation_send(conv, mwImSend_PLAIN, message);
+      /* default to text */
+      ret = mwConversation_send(conv, mwImSend_PLAIN, msg);
+      g_free(msg);
     }
     
-    g_free(msg);
     return !ret;
 
   } else {
-    char *msg;
 
     /* queue up the message safely as plain text */
-    msg = gaim_markup_strip_html(message);
-    convo_queue(conv, mwImSend_PLAIN, msg);
+    char *tmp = gaim_markup_strip_html(msg);
     g_free(msg);
+
+    convo_queue(conv, mwImSend_PLAIN, tmp);
+    g_free(tmp);
 
     if(! mwConversation_isPending(conv))
       mwConversation_open(conv);
@@ -3410,59 +3954,69 @@ static int mw_prpl_send_typing(GaimConnection *gc, const char *name,
 
 static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 
-  struct mwGaimPluginData *pd;
   struct mwAwareIdBlock idb = { mwAware_USER, (char *) who, NULL };
 
+  struct mwGaimPluginData *pd;
   GaimAccount *acct;
   GaimBuddy *b;
   
   GString *str;
   const char *tmp;
-  guint32 type;
+
+  g_return_if_fail(who != NULL);
+  g_return_if_fail(*who != '\0');
 
   pd = gc->proto_data;
 
   acct = gaim_connection_get_account(gc);
   b = gaim_find_buddy(acct, who);
 
-  g_return_if_fail(b != NULL);
-
   str = g_string_new(NULL);
 
-  g_string_append_printf(str, "<b>User ID:</b> %s<br>", b->name);
-
-  if(b->server_alias) {
-    g_string_append_printf(str, "<b>Full Name:</b> %s<br>",
-			   b->server_alias);
+  if(g_str_has_prefix(who, "@E ")) {
+    g_string_append(str, _("<b>External User</b><br>"));
   }
 
-  type = gaim_blist_node_get_int((GaimBlistNode *) b, BUDDY_KEY_CLIENT);
-  if(type) {
-    g_string_append(str, "<b>Last Known Client:</b> ");
+  g_string_append_printf(str, _("<b>User ID:</b> %s<br>"), who);
 
-    tmp = mwLoginType_getName(type);
-    if(tmp) {
-      g_string_append(str, tmp);
-      g_string_append(str, "<br>");
+  if(b) {
+    guint32 type;
 
-    } else {
-      g_string_append_printf(str, "Unknown (0x%04x)<br>", type);
+    if(b->server_alias) {
+      g_string_append_printf(str, _("<b>Full Name:</b> %s<br>"),
+			     b->server_alias);
+    }
+
+    type = gaim_blist_node_get_int((GaimBlistNode *) b, BUDDY_KEY_CLIENT);
+    if(type) {
+      g_string_append(str, _("<b>Last Known Client:</b> "));
+
+      tmp = mwLoginType_getName(type);
+      if(tmp) {
+	g_string_append(str, tmp);
+	g_string_append(str, "<br>");
+	
+      } else {
+	g_string_append_printf(str, _("Unknown (0x%04x)<br>"), type);
+      }
     }
   }
 
   tmp = user_supports_text(pd->srvc_aware, who);
   if(tmp) {
-    g_string_append_printf(str, "<b>Supports:</b> %s<br>", tmp);
+    g_string_append_printf(str, _("<b>Supports:</b> %s<br>"), tmp);
     g_free((char *) tmp);
   }
 
-  tmp = status_text(b);
-  g_string_append_printf(str, "<b>Status:</b> %s", tmp);
+  if(b) {
+    tmp = status_text(b);
+    g_string_append_printf(str, _("<b>Status:</b> %s"), tmp);
 
-  g_string_append(str, "<hr>");
-
-  tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
-  g_string_append(str, tmp);
+    g_string_append(str, "<hr>");
+    
+    tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
+    if(tmp) g_string_append(str, tmp);
+  }
 
   /* @todo emit a signal to allow a plugin to override the display of
      this notification, so that it can create its own */
@@ -3471,41 +4025,42 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 
   g_string_free(str, TRUE);
 }
-
-
+ 
+ 
 static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
   GaimConnection *gc;
   const char *state;
   char *message = NULL;
   struct mwSession *session;
   struct mwUserStatus stat;
-
+  
   g_return_if_fail(acct != NULL);
   gc = gaim_account_get_connection(acct);
-
+  
   state = gaim_status_get_id(status);
-
-  gaim_debug_info("meanwhile", "Set status to %s\n", gaim_status_get_name(status));
-
+  
+  gaim_debug_info("meanwhile", "Set status to %s\n",
+		  gaim_status_get_name(status));
+  
   g_return_if_fail(gc != NULL);
-
+  
   session = gc_to_session(gc);
   g_return_if_fail(session != NULL);
-
+  
   /* get a working copy of the current status */
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
-
+  
   /* determine the state */
   if(! strcmp(state, MW_STATE_ACTIVE)) {
     stat.status = mwStatus_ACTIVE;
-
+    
   } else if(! strcmp(state, MW_STATE_AWAY)) {
     stat.status = mwStatus_AWAY;
-
+    
   } else if(! strcmp(state, MW_STATE_BUSY)) {
     stat.status = mwStatus_BUSY;
   }
-
+  
   /* determine the message */
   switch(stat.status) {
   case mwStatus_ACTIVE:
@@ -3515,44 +4070,64 @@ static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
     message = (char *)gaim_status_get_attr_string(status, MW_STATE_MESSAGE);
     break;
   }
-
+  
   if(message) {
     /* all the possible non-NULL values of message up to this point
        are const, so we don't need to free them */
     message = gaim_markup_strip_html(message);
   }
-
+  
   /* out with the old */
   g_free(stat.desc);
-
+  
   /* in with the new */
   stat.desc = (char *) message;
-
+  
   mwSession_setUserStatus(session, &stat);
   mwUserStatus_clear(&stat);
 }
 
-
-static void mw_prpl_set_idle(GaimConnection *gc, int time) {
+ 
+static void mw_prpl_set_idle(GaimConnection *gc, int t) {
   struct mwSession *session;
   struct mwUserStatus stat;
-
+  
   session = gc_to_session(gc);
   g_return_if_fail(session != NULL);
-
+  
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
-  if(time > 0 && stat.status == mwStatus_ACTIVE) {
+  if(t > 0 && stat.status == mwStatus_ACTIVE) {
+    time_t now = time(NULL);
+    stat.time = now - t;
     stat.status = mwStatus_IDLE;
-
-  } else if(time == 0 && stat.status == mwStatus_IDLE) {
+    
+  } else if(t == 0 && stat.status == mwStatus_IDLE) {
+    stat.time = 0;
     stat.status = mwStatus_ACTIVE;
   }
-
-  /** @todo actually put the idle time in the user status */
-
+  
   mwSession_setUserStatus(session, &stat);
   mwUserStatus_clear(&stat);
+ }
+
+
+static struct resolved_id *resolved_id_new(const char *id,
+					   const char *name) {
+
+  struct resolved_id *rid = g_new0(struct resolved_id, 1);
+  rid->id = g_strdup(id);
+  rid->name = g_strdup(name);
+  return rid;
+}
+
+
+static void resolved_id_free(struct resolved_id *rid) {
+  if(rid) {
+    g_free(rid->id);
+    g_free(rid->name);
+    g_free(rid);
+  }
 }
 
 
@@ -3583,7 +4158,6 @@ static void add_resolved_done(const char *id, const char *name,
 
 
 static void multi_resolved_cleanup(GaimRequestFields *fields) {
-
   GaimRequestField *f;
   const GList *l;
 
@@ -3595,10 +4169,7 @@ static void multi_resolved_cleanup(GaimRequestFields *fields) {
     struct resolved_id *res;
 
     res = gaim_request_field_list_get_data(f, i);
-
-    g_free(res->id);
-    g_free(res->name);
-    g_free(res);
+    resolved_id_free(res);
   }
 }
 
@@ -3641,11 +4212,23 @@ static void multi_resolved_cb(GaimBuddy *buddy,
 }
 
 
+static void foreach_resolved_id(char *key, char *val, GList **l) {
+  struct resolved_id *res = resolved_id_new(key, val);
+  *l = g_list_prepend(*l, res);
+}
+
+
+static gint resolved_id_comp(struct resolved_id *a, struct resolved_id *b) {
+  return g_ascii_strcasecmp(a->name, b->name);
+}
+
+
 static void multi_resolved_query(struct mwResolveResult *result,
 				 GaimBuddy *buddy) {
   GaimRequestFields *fields;
   GaimRequestFieldGroup *g;
   GaimRequestField *f;
+  GHashTable *hash;
   GList *l;
   char *msgA, *msgB;
 
@@ -3668,18 +4251,31 @@ static void multi_resolved_query(struct mwResolveResult *result,
      before you add a required field to the group. Feh. */
   gaim_request_fields_add_group(fields, g);
 
-  f = gaim_request_field_list_new("user", "Possible Matches");
+  f = gaim_request_field_list_new("user", _("Possible Matches"));
   gaim_request_field_list_set_multi_select(f, FALSE);
   gaim_request_field_set_required(f, TRUE);
 
+  /* collect results into a set of identities */
+  hash = g_hash_table_new(g_str_hash, g_str_equal);
   for(l = result->matches; l; l = l->next) {
     struct mwResolveMatch *match = l->data;
-    struct resolved_id *res = g_new0(struct resolved_id, 1);
+    
+    if(!match->id || !match->name)
+      continue;
+    
+    g_hash_table_insert(hash, match->id, match->name);
+  }
+  
+  /* collect set into a list of structures */
+  l = NULL;
+  g_hash_table_foreach(hash, (GHFunc) foreach_resolved_id, &l);
+  g_list_sort(l, (GCompareFunc) resolved_id_comp);
+
+  /* populate choices in request field */
+  for(; l; l = l->next) {
+    struct resolved_id *res = l->data;
     char *label;
-
-    res->id = g_strdup(match->id);
-    res->name = g_strdup(match->name);
-
+    
     /* fixes bug 1178603 by making the selection label a combination
        of the full name and the user id. Problems arrise when multiple
        entries have identical labels */
@@ -3688,18 +4284,20 @@ static void multi_resolved_query(struct mwResolveResult *result,
     g_free(label);
   }
 
+  g_list_free(l);
+
   gaim_request_field_group_add_field(g, f);
 
-  msgA = ("An ambiguous user ID was entered");
-  msgB = ("The identifier '%s' may possibly refer to any of the following"
-	  " users. Please select the correct user from the list below to"
-	  " add them to your buddy list.");
+  msgA = _("An ambiguous user ID was entered");
+  msgB = _("The identifier '%s' may possibly refer to any of the following"
+	   " users. Please select the correct user from the list below to"
+	   " add them to your buddy list.");
   msgB = g_strdup_printf(msgB, result->name);
 
-  gaim_request_fields(gc, "Select User to Add",
+  gaim_request_fields(gc, _("Select User to Add"),
 		      msgA, msgB, fields,
-		      "Add User", G_CALLBACK(multi_resolved_cb),
-		      "Cancel", G_CALLBACK(multi_resolved_cancel),
+		      _("Add User"), G_CALLBACK(multi_resolved_cb),
+		      _("Cancel"), G_CALLBACK(multi_resolved_cancel),
 		      buddy);
   g_free(msgB);
 }
@@ -3759,14 +4357,14 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
     /* compose and display an error message */
     char *msgA, *msgB;
 
-    msgA = "Unable to add user: user not found";
+    msgA = _("Unable to add user: user not found");
 
-    msgB = ("The identifier '%s' did not match any users in your"
-	   " Sametime community. This entry has been removed from"
-	   " your buddy list.");
+    msgB = _("The identifier '%s' did not match any users in your"
+	     " Sametime community. This entry has been removed from"
+	     " your buddy list.");
     msgB = g_strdup_printf(msgB, NSTR(res->name));
 
-    gaim_notify_error(gc, "Unable to add user", msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add user"), msgA, msgB);
 
     g_free(msgB);
   }
@@ -3786,6 +4384,12 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
   pd = gc->proto_data;
   srvc = pd->srvc_resolve;
 
+  /* catch external buddies. They won't be in the resolve service */
+  if(g_str_has_prefix(buddy->name, "@E ")) {
+    buddy_add(pd, buddy);
+    return;
+  }
+
   query = g_list_prepend(NULL, buddy->name);
   flags = mwResolveFlag_FIRST | mwResolveFlag_USERS;
 
@@ -3802,7 +4406,6 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
 
 static void foreach_add_buddies(GaimGroup *group, GList *buddies,
 				struct mwGaimPluginData *pd) {
-
   struct mwAwareList *list;
 
   list = list_ensure(pd, group);
@@ -3999,26 +4602,39 @@ static void mw_prpl_join_chat(GaimConnection *gc,
 			      GHashTable *components) {
 
   struct mwGaimPluginData *pd;
-  struct mwServiceConference *srvc;
-  struct mwConference *conf = NULL;
   char *c, *t;
-
+  
   pd = gc->proto_data;
-  srvc = pd->srvc_conf;
 
   c = g_hash_table_lookup(components, CHAT_KEY_NAME);
   t = g_hash_table_lookup(components, CHAT_KEY_TOPIC);
+  
+  if(g_hash_table_lookup(components, CHAT_KEY_IS_PLACE)) {
+    /* use place service */
+    struct mwServicePlace *srvc;
+    struct mwPlace *place = NULL;
 
-  if(c) conf = conf_find(srvc, c);
-
-  if(conf) {
-    DEBUG_INFO("accepting conference invitation\n");
-    mwConference_accept(conf);
-
+    srvc = pd->srvc_place;
+    place = mwPlace_new(srvc, c, t);
+    mwPlace_open(place);
+     
   } else {
-    DEBUG_INFO("creating new conference\n");
-    conf = mwConference_new(srvc, t);
-    mwConference_open(conf);
+    /* use conference service */
+    struct mwServiceConference *srvc;
+    struct mwConference *conf = NULL;
+
+    srvc = pd->srvc_conf;
+    if(c) conf = conf_find(srvc, c);
+
+    if(conf) {
+      DEBUG_INFO("accepting conference invitation\n");
+      mwConference_accept(conf);
+      
+    } else {
+      DEBUG_INFO("creating new conference\n");
+      conf = mwConference_new(srvc, t);
+      mwConference_open(conf);
+    }
   }
 }
 
@@ -4033,10 +4649,16 @@ static void mw_prpl_reject_chat(GaimConnection *gc,
   pd = gc->proto_data;
   srvc = pd->srvc_conf;
 
-  c = g_hash_table_lookup(components, CHAT_KEY_NAME);
-  if(c) {
-    struct mwConference *conf = conf_find(srvc, c);
-    if(conf) mwConference_reject(conf, ERR_SUCCESS, "Declined");
+  if(g_hash_table_lookup(components, CHAT_KEY_IS_PLACE)) {
+    ; /* nothing needs doing */
+
+  } else {
+    /* reject conference */
+    c = g_hash_table_lookup(components, CHAT_KEY_NAME);
+    if(c) {
+      struct mwConference *conf = conf_find(srvc, c);
+      if(conf) mwConference_reject(conf, ERR_SUCCESS, "Declined");
+    }
   }
 }
 
@@ -4063,6 +4685,8 @@ static void mw_prpl_chat_invite(GaimConnection *gc,
   g_return_if_fail(conf != NULL);
   
   mwConference_invite(conf, &idb, invitation);
+
+  /* @todo: use Place by default instead */
 }
 
 
@@ -4077,9 +4701,15 @@ static void mw_prpl_chat_leave(GaimConnection *gc,
   g_return_if_fail(pd != NULL);
   conf = ID_TO_CONF(pd, id);
 
-  g_return_if_fail(conf != NULL);
-  
-  mwConference_destroy(conf, ERR_SUCCESS, "Leaving");
+  if(conf) {
+    mwConference_destroy(conf, ERR_SUCCESS, "Leaving");
+
+  } else {
+    struct mwPlace *place = ID_TO_PLACE(pd, id);
+    g_return_if_fail(place != NULL);
+
+    mwPlace_destroy(place, ERR_SUCCESS);
+  }
 }
 
 
@@ -4104,9 +4734,15 @@ static int mw_prpl_chat_send(GaimConnection *gc,
   g_return_val_if_fail(pd != NULL, 0);
   conf = ID_TO_CONF(pd, id);
 
-  g_return_val_if_fail(conf != NULL, 0);
-  
-  return ! mwConference_sendText(conf, message);
+  if(conf) {
+    return ! mwConference_sendText(conf, message);
+
+  } else {
+    struct mwPlace *place = ID_TO_PLACE(pd, id);
+    g_return_val_if_fail(place != NULL, 0);
+
+    return ! mwPlace_sendText(place, message);
+  }
 }
 
 
@@ -4291,7 +4927,7 @@ static void ft_outgoing_init(GaimXfer *xfer) {
   /* test that we can actually send the file */
   fp = g_fopen(filename, "rb");
   if(! fp) {
-    char *msg = g_strdup_printf("Error reading %s: \n%s\n",
+    char *msg = g_strdup_printf(_("Error reading file %s: \n%s\n"),
 				filename, strerror(errno));
     gaim_xfer_error(gaim_xfer_get_type(xfer), acct, xfer->who, msg);
     g_free(msg);
@@ -4325,8 +4961,6 @@ static void mw_prpl_send_file(GaimConnection *gc,
 
   GaimAccount *acct;
   GaimXfer *xfer;
-
-  DEBUG_INFO("mw_prpl_send_file\n");
 
   acct = gaim_connection_get_account(gc);
 
@@ -4409,51 +5043,26 @@ static GaimPluginPrefFrame *
 mw_plugin_get_plugin_pref_frame(GaimPlugin *plugin) {
   GaimPluginPrefFrame *frame;
   GaimPluginPref *pref;
-  
+
   frame = gaim_plugin_pref_frame_new();
   
-  pref = gaim_plugin_pref_new_with_label("Remotely Stored Buddy List");
+  pref = gaim_plugin_pref_new_with_label(_("Remotely Stored Buddy List"));
   gaim_plugin_pref_frame_add(frame, pref);
   
 
   pref = gaim_plugin_pref_new_with_name(MW_PRPL_OPT_BLIST_ACTION);
-  gaim_plugin_pref_set_label(pref, "Buddy List Storage Mode");
+  gaim_plugin_pref_set_label(pref, _("Buddy List Storage Mode"));
 
   gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_CHOICE);
-  gaim_plugin_pref_add_choice(pref, "Local Buddy List Only",
-			      GINT_TO_POINTER(BLIST_CHOICE_NONE));
-  gaim_plugin_pref_add_choice(pref, "Merge List from Server",
-			      GINT_TO_POINTER(BLIST_CHOICE_LOAD));
-  gaim_plugin_pref_add_choice(pref, "Merge and Save List to Server",
-			      GINT_TO_POINTER(BLIST_CHOICE_SAVE));
+  gaim_plugin_pref_add_choice(pref, _("Local Buddy List Only"),
+			      GINT_TO_POINTER(blist_choice_LOCAL));
+  gaim_plugin_pref_add_choice(pref, _("Merge List from Server"),
+			      GINT_TO_POINTER(blist_choice_MERGE));
+  gaim_plugin_pref_add_choice(pref, _("Merge and Save List to Server"),
+			      GINT_TO_POINTER(blist_choice_STORE));
+  gaim_plugin_pref_add_choice(pref, _("Synchronize List with Server"),
+			      GINT_TO_POINTER(blist_choice_SYNCH));
 
-#if 0
-  /* possible ways to handle:
-     - mark all buddies as NO_SAVE
-     - load server list, delete all local buddies not in server list
-  */
-  gaim_plugin_pref_add_choice(pref, "Server Buddy List Only",
-			      GINT_TO_POINTER(BLIST_CHOISE_SERVER));
-#endif
-
-  gaim_plugin_pref_frame_add(frame, pref);
-
-  pref = gaim_plugin_pref_new_with_label("General Options");
-  gaim_plugin_pref_frame_add(frame, pref);
-
-  pref = gaim_plugin_pref_new_with_name(MW_PRPL_OPT_FORCE_LOGIN);
-  gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_NONE);
-  gaim_plugin_pref_set_label(pref, "Force Login (Ignore Login Redirects)");
-  gaim_plugin_pref_frame_add(frame, pref);
-
-  pref = gaim_plugin_pref_new_with_name(MW_PRPL_OPT_PSYCHIC);
-  gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_NONE);
-  gaim_plugin_pref_set_label(pref, "Enable Psychic Mode");
-  gaim_plugin_pref_frame_add(frame, pref);
-
-  pref = gaim_plugin_pref_new_with_name(MW_PRPL_OPT_SAVE_DYNAMIC);
-  gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_NONE);
-  gaim_plugin_pref_set_label(pref, "Save NAB group members locally");
   gaim_plugin_pref_frame_add(frame, pref);
 
   return frame;
@@ -4470,7 +5079,6 @@ static void status_msg_action_cb(GaimConnection *gc,
   GaimAccount *acct;
   GaimRequestField *f;
   const char *msg;
-  /* gboolean prompt; */
 
   struct mwGaimPluginData *pd;
   struct mwServiceStorage *srvc;
@@ -4498,15 +5106,6 @@ static void status_msg_action_cb(GaimConnection *gc,
   gaim_account_set_string(acct, MW_KEY_BUSY_MSG, msg);  
   unit = mwStorageUnit_newString(mwStore_BUSY_MESSAGES, msg);
   mwServiceStorage_save(srvc, unit, NULL, NULL, NULL);
-
-#if 0
-  /** @todo not yet used. It should be possible to prompt the user for
-      a message (ala the Sametime Connect client) when changing to one
-      of the default states, and that preference is here */
-  f = gaim_request_fields_get_field(fields, "prompt");
-  prompt = gaim_request_field_bool_get_value(f);
-  gaim_account_set_bool(acct, MW_KEY_MSG_PROMPT, prompt);
-#endif
 
 #if 0
   /* XXX */
@@ -4538,7 +5137,6 @@ static void status_msg_action(GaimPluginAction *act) {
   
   char *msgA, *msgB;
   const char *val;
-  /* gboolean prompt; */
 
   gc = act->context;
   acct = gaim_connection_get_account(gc);
@@ -4550,37 +5148,26 @@ static void status_msg_action(GaimPluginAction *act) {
 
   val = gaim_account_get_string(acct, MW_KEY_ACTIVE_MSG,
 				MW_PLUGIN_DEFAULT_ACTIVE_MSG);
-  f = gaim_request_field_string_new("active", "Active Message", val, FALSE);
+  f = gaim_request_field_string_new("active", _("Active Message"), val, FALSE);
   gaim_request_field_set_required(f, FALSE);
   gaim_request_field_group_add_field(g, f);
   
   val = gaim_account_get_string(acct, MW_KEY_AWAY_MSG,
 				MW_PLUGIN_DEFAULT_AWAY_MSG);
-  f = gaim_request_field_string_new("away", "Away Message", val, FALSE);
+  f = gaim_request_field_string_new("away", _("Away Message"), val, FALSE);
   gaim_request_field_set_required(f, FALSE);
   gaim_request_field_group_add_field(g, f);
 
   val = gaim_account_get_string(acct, MW_KEY_BUSY_MSG,
 				MW_PLUGIN_DEFAULT_BUSY_MSG);
-  f = gaim_request_field_string_new("busy", "Busy Message", val, FALSE);
+  f = gaim_request_field_string_new("busy", _("Busy Message"), val, FALSE);
   gaim_request_field_set_required(f, FALSE);
   gaim_request_field_group_add_field(g, f);
 
-#if 0
-  /** @todo not yet used. It should be possible to prompt the user for
-      a message (ala the Sametime Connect client) when changing to one
-      of the default states, and that preference is here */
-  prompt = gaim_account_get_bool(acct, MW_KEY_MSG_PROMPT, FALSE);
-  f = gaim_request_field_bool_new("prompt",
-				  ("Prompt for message when changing"
-				   " to one of these states?"), FALSE);
-  gaim_request_field_group_add_field(g, f);
-#endif
-
-  msgA = ("Default status messages");
+  msgA = _("Default status messages");
   msgB = ("");
 
-  gaim_request_fields(gc, "Edit Status Messages",
+  gaim_request_fields(gc, _("Edit Status Messages"),
 		      msgA, msgB, fields,
 		      _("OK"), G_CALLBACK(status_msg_action_cb),
 		      _("Cancel"), NULL,
@@ -4610,7 +5197,7 @@ static void st_import_action_cb(GaimConnection *gc, char *filename) {
   l = mwSametimeList_load(str->str);
   g_string_free(str, TRUE);
 
-  blist_import(gc, l);
+  blist_merge(gc, l);
   mwSametimeList_free(l);
 }
 
@@ -4623,7 +5210,7 @@ static void st_import_action(GaimPluginAction *act) {
 
   gc = act->context;
   account = gaim_connection_get_account(gc);
-  title = g_strdup_printf("Import Sametime List for Account %s",
+  title = g_strdup_printf(_("Import Sametime List for Account %s"),
 			  gaim_account_get_username(account));
 
   gaim_request_file(gc, title, NULL, FALSE,
@@ -4662,7 +5249,7 @@ static void st_export_action(GaimPluginAction *act) {
 
   gc = act->context;
   account = gaim_connection_get_account(gc);
-  title = g_strdup_printf("Export Sametime List for Account %s",
+  title = g_strdup_printf(_("Export Sametime List for Account %s"),
 			  gaim_account_get_username(account));
 
   gaim_request_file(gc, title, NULL, TRUE,
@@ -4713,11 +5300,11 @@ static void remote_group_done(struct mwGaimPluginData *pd,
   if(group) {
     char *msgA, *msgB;
 
-    msgA = "Unable to add group: group exists";
-    msgB = "A group named '%s' already exists in your buddy list.";
+    msgA = _("Unable to add group: group exists");
+    msgB = _("A group named '%s' already exists in your buddy list.");
     msgB = g_strdup_printf(msgB, name);
 
-    gaim_notify_error(gc, "Unable to add group", msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add group"), msgA, msgB);
 
     g_free(msgB);
     return;
@@ -4774,7 +5361,7 @@ static void remote_group_multi(struct mwResolveResult *result,
   g = gaim_request_field_group_new(NULL);
   gaim_request_fields_add_group(fields, g);
 
-  f = gaim_request_field_list_new("group", "Possible Matches");
+  f = gaim_request_field_list_new("group", _("Possible Matches"));
   gaim_request_field_list_set_multi_select(f, FALSE);
   gaim_request_field_set_required(f, TRUE);
 
@@ -4790,16 +5377,16 @@ static void remote_group_multi(struct mwResolveResult *result,
 
   gaim_request_field_group_add_field(g, f);
 
-  msgA = ("Notes Address Book group results");
-  msgB = ("The identifier '%s' may possibly refer to any of the following"
+  msgA = _("Notes Address Book group results");
+  msgB = _("The identifier '%s' may possibly refer to any of the following"
 	  " Notes Address Book groups. Please select the correct group from"
 	  " the list below to add it to your buddy list.");
   msgB = g_strdup_printf(msgB, result->name);
 
-  gaim_request_fields(gc, "Select Notes Address Book",
+  gaim_request_fields(gc, _("Select Notes Address Book"),
 		      msgA, msgB, fields,
-		      "Add Group", G_CALLBACK(remote_group_multi_cb),
-		      "Cancel", G_CALLBACK(remote_group_multi_cleanup),
+		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
+		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
 		      pd);
 
   g_free(msgB);
@@ -4836,13 +5423,13 @@ static void remote_group_resolved(struct mwServiceResolve *srvc,
   if(res && res->name) {
     char *msgA, *msgB;
 
-    msgA = "Unable to add group: group not found";
+    msgA = _("Unable to add group: group not found");
 
-    msgB = ("The identifier '%s' did not match any Notes Address Book"
+    msgB = _("The identifier '%s' did not match any Notes Address Book"
 	    " groups in your Sametime community.");
     msgB = g_strdup_printf(msgB, res->name);
 
-    gaim_notify_error(gc, "Unable to add group", msgA, msgB);
+    gaim_notify_error(gc, _("Unable to add group"), msgA, msgB);
 
     g_free(msgB);
   }
@@ -4878,14 +5465,14 @@ static void remote_group_action(GaimPluginAction *act) {
 
   gc = act->context;
 
-  msgA = "Notes Address Book Group";
-  msgB = ("Enter the name of a Notes Address Book group in the field below"
+  msgA = _("Notes Address Book Group");
+  msgB = _("Enter the name of a Notes Address Book group in the field below"
 	  " to add the group and its members to your buddy list.");
 
-  gaim_request_input(gc, "Add Group", msgA, msgB, NULL,
+  gaim_request_input(gc, _("Add Group"), msgA, msgB, NULL,
 		     FALSE, FALSE, NULL,
-		     "Add", G_CALLBACK(remote_group_action_cb),
-		     "Cancel", NULL,
+		     _("Add"), G_CALLBACK(remote_group_action_cb),
+		     _("Cancel"), NULL,
 		     gc);
 }
 
@@ -4894,16 +5481,19 @@ static GList *mw_plugin_actions(GaimPlugin *plugin, gpointer context) {
   GaimPluginAction *act;
   GList *l = NULL;
 
-  act = gaim_plugin_action_new("Set Status Messages...", status_msg_action);
+  act = gaim_plugin_action_new(_("Set Status Messages..."),
+			       status_msg_action);
   l = g_list_append(l, act);
 
-  act = gaim_plugin_action_new("Import Sametime List...", st_import_action);
+  act = gaim_plugin_action_new(_("Import Sametime List..."),
+			       st_import_action);
   l = g_list_append(l, act);
 
-  act = gaim_plugin_action_new("Export Sametime List...", st_export_action);
+  act = gaim_plugin_action_new(_("Export Sametime List..."),
+			       st_export_action);
   l = g_list_append(l, act);
 
-  act = gaim_plugin_action_new("Add Notes Address Book Group...",
+  act = gaim_plugin_action_new(_("Add Notes Address Book Group..."),
 			       remote_group_action);
   l = g_list_append(l, act);
 
@@ -4984,25 +5574,44 @@ static void mw_plugin_init(GaimPlugin *plugin) {
   GLogLevelFlags logflags =
     G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION;
 
+  /* set up the preferences */
+  gaim_prefs_add_none(MW_PRPL_OPT_BASE);
+  gaim_prefs_add_int(MW_PRPL_OPT_BLIST_ACTION, BLIST_CHOICE_DEFAULT);
+
+  /* remove dead preferences */
+  gaim_prefs_remove(MW_PRPL_OPT_PSYCHIC);
+  gaim_prefs_remove(MW_PRPL_OPT_SAVE_DYNAMIC);
+
   /* host to connect to */
-  opt = gaim_account_option_string_new("Server", MW_KEY_HOST,
+  opt = gaim_account_option_string_new(_("Server"), MW_KEY_HOST,
 				       MW_PLUGIN_DEFAULT_HOST);
   l = g_list_append(l, opt);
 
   /* port to connect to */
-  opt = gaim_account_option_int_new("Port", MW_KEY_PORT,
+  opt = gaim_account_option_int_new(_("Port"), MW_KEY_PORT,
 				    MW_PLUGIN_DEFAULT_PORT);
   l = g_list_append(l, opt);
 
+  /* default attempted encoding */
+  opt = gaim_account_option_string_new(_("Encoding"), MW_KEY_ENCODING,
+				       MW_PLUGIN_DEFAULT_ENCODING);
+  l = g_list_append(l, opt);
+
+  { /* copy the old force login setting from prefs if it's
+       there. Don't delete the preference, since there may be more
+       than one account that wants to check for it. */
+    gboolean b = FALSE;
+    const char *label = _("Force Login (Ignore Server Redirects)");
+
+    if(gaim_prefs_exists(MW_PRPL_OPT_FORCE_LOGIN))
+      b = gaim_prefs_get_bool(MW_PRPL_OPT_FORCE_LOGIN);
+
+    opt = gaim_account_option_bool_new(label, MW_KEY_FORCE, b);
+    l = g_list_append(l, opt);
+  }
+
   mw_prpl_info.protocol_options = l;
   l = NULL;
-
-  /* set up the prefs for blist options */
-  gaim_prefs_add_none(MW_PRPL_OPT_BASE);
-  gaim_prefs_add_int(MW_PRPL_OPT_BLIST_ACTION, BLIST_CHOICE_DEFAULT);
-  gaim_prefs_add_bool(MW_PRPL_OPT_PSYCHIC, FALSE);
-  gaim_prefs_add_bool(MW_PRPL_OPT_FORCE_LOGIN, FALSE);
-  gaim_prefs_add_bool(MW_PRPL_OPT_SAVE_DYNAMIC, TRUE);
 
   /* forward all our g_log messages to gaim. Generally all the logging
      calls are using gaim_log directly, but the g_return macros will

@@ -19,7 +19,6 @@
 */
 
 #include <glib/glist.h>
-#include <internal.h>
 
 #include "mw_channel.h"
 #include "mw_debug.h"
@@ -168,9 +167,9 @@ static void request_trigger(struct mwServiceStorage *srvc,
 
   struct mwStorageUnit *item = req->item;
 
-  g_message("storage request %s: key = 0x%x, result = 0x%x, length = %" G_GSIZE_FORMAT,
+  g_message("storage request %s: key = 0x%x, result = 0x%x, length = %u",
 	    action_str(req->action),
-	    item->key, req->result_code, item->data.len);
+	    item->key, req->result_code, (guint) item->data.len);
   
   if(req->cb)
     req->cb(srvc, req->result_code, item, req->data);
@@ -331,7 +330,7 @@ static void recv_channelDestroy(struct mwService *srvc,
 }
 
 
-static void mwservice_recv(struct mwService *srvc, struct mwChannel *chan,
+static void recv(struct mwService *srvc, struct mwChannel *chan,
 		 guint16 type, struct mwOpaque *data) {
 
   /* process into results, trigger callbacks */
@@ -363,7 +362,7 @@ static void mwservice_recv(struct mwService *srvc, struct mwChannel *chan,
   request_get(b, req);
 
   if(mwGetBuffer_error(b)) {
-    mw_debug_mailme(data, "storage request 0x%x, type: 0x%x", id, type);
+    mw_mailme_opaque(data, "storage request 0x%x, type: 0x%x", id, type);
 
   } else {
     request_trigger(srvc_stor, req);
@@ -397,12 +396,12 @@ struct mwServiceStorage *mwServiceStorage_new(struct mwSession *session) {
   srvc_store = g_new0(struct mwServiceStorage, 1);
   srvc = MW_SERVICE(srvc_store);
 
-  mwService_init(srvc, session, SERVICE_STORAGE);
+  mwService_init(srvc, session, mwService_STORAGE);
   srvc->get_name = get_name;
   srvc->get_desc = get_desc;
   srvc->recv_accept = recv_channelAccept;
   srvc->recv_destroy = recv_channelDestroy;
-  srvc->recv = mwservice_recv;
+  srvc->recv = recv;
   srvc->start = start;
   srvc->stop = stop;
   srvc->clear = clear;

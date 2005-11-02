@@ -27,7 +27,7 @@
 
 
 /** Type identifier for the conference service */
-#define SERVICE_RESOLVE  0x00000015
+#define mwService_RESOLVE  0x00000015
 
 
 /** Return value of mwServiceResolve_search indicating an error */
@@ -117,6 +117,7 @@ struct mwServiceResolve *mwServiceResolve_new(struct mwSession *);
 
 /** Inisitate a resolve request.
 
+    @param srvc     the resolve service
     @param queries  list query strings
     @param flags    search flags
     @param handler  result handling function

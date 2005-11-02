@@ -123,6 +123,10 @@ struct mwFileTransferHandler *
 mwServiceFileTransfer_getHandler(struct mwServiceFileTransfer *srvc);
 
 
+const GList *
+mwServiceFileTransfer_getTransfers(struct mwServiceFileTransfer *srvc);
+
+
 struct mwFileTransfer *
 mwFileTransfer_new(struct mwServiceFileTransfer *srvc,
 		   const struct mwIdBlock *who, const char *msg,
@@ -194,8 +198,8 @@ int mwFileTransfer_accept(struct mwFileTransfer *ft);
 /** Close a file transfer. This will trigger the ft_close function of the
     session's handler.
 
-    @relates mwFileTransfer_reject
-    @relates mwFileTransfer_cancel
+    @see mwFileTransfer_reject
+    @see mwFileTransfer_cancel
 */
 int mwFileTransfer_close(struct mwFileTransfer *ft, guint32 code);
 
@@ -204,7 +208,7 @@ int mwFileTransfer_close(struct mwFileTransfer *ft, guint32 code);
     the other end of the transfer should respond with an acknowledgement
     message, which can be caught in the service's handler.
 
-    @relates mwFileTransferHandler::ft_ack
+    @see mwFileTransferHandler::ft_ack
 */
 int mwFileTransfer_send(struct mwFileTransfer *ft,
 			struct mwOpaque *data);
@@ -217,7 +221,7 @@ int mwFileTransfer_send(struct mwFileTransfer *ft,
     possible to have the handler's ft_recv function triggered again
     even if no ack was sent.
 
-    @relates mwFileTransferHandler::ft_recv
+    @see mwFileTransferHandler::ft_recv
 */
 int mwFileTransfer_ack(struct mwFileTransfer *ft);
 

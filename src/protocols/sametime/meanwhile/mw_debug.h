@@ -45,14 +45,6 @@
 #endif
 
 
-/** logs buf as hex pairs. Requires DEBUG enabled during build */
-void pretty_print(const char *buf, gsize len);
-
-
-/** logs block as hex pairs. Requires DEBUG enabled during build */
-void pretty_print_opaque(struct mwOpaque *block);
-
-
 #ifndef MW_MAILME_ADDRESS
 /** email address used in mw_debug_mailme. */
 #define MW_MAILME_ADDRESS  "meanwhile-devel@lists.sourceforge.net"
@@ -82,15 +74,39 @@ void pretty_print_opaque(struct mwOpaque *block);
 #endif
 
 
+void mw_debug_datav(const char *buf, gsize len,
+		    const char *info, va_list args);
+
+
+void mw_debug_data(const char *buf, gsize len,
+		   const char *info, ...);
+
+
+void mw_debug_opaquev(struct mwOpaque *o, const char *info, va_list args);
+
+
+void mw_debug_opaque(struct mwOpaque *o, const char *info, ...);
+
+
+void mw_mailme_datav(const char *buf, gsize len,
+		     const char *info, va_list args);
+
+void mw_mailme_data(const char *buf, gsize len,
+		    const char *info, ...);
+
+
 /** Outputs a hex dump of a mwOpaque with debugging info and a
-    pre-defined message. Identical to mw_debug_mailme, but taking a
+    pre-defined message. Identical to mw_mailme_opaque, but taking a
     va_list argument */
-void mw_debug_mailme_v(struct mwOpaque *block,
-		       const char *info, va_list args);
+void mw_mailme_opaquev(struct mwOpaque *o, const char *info, va_list args);
+
 
 
 /** Outputs a hex dump of a mwOpaque with debugging info and a
     pre-defined message.
+
+    if MW_MAILME is undefined or false, this function acts the same as
+    mw_mailme_opaque.
 
     @arg block  data to be printed in a hex block
     @arg info   a printf-style format string
@@ -105,7 +121,7 @@ void mw_debug_mailme_v(struct mwOpaque *block,
     MW_MAILME_CUT_STOP
     @endcode
  */
-void mw_debug_mailme(struct mwOpaque *block, const char *info, ...);
+void mw_mailme_opaque(struct mwOpaque *o, const char *info, ...);
 
 
 #endif

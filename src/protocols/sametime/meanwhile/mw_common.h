@@ -25,7 +25,7 @@
 #include <glib.h>
 
 
-/** @file common.h
+/** @file mw_common.h
 
     Common data types and functions for handling those types.
 
@@ -87,19 +87,23 @@ struct mwOpaque {
 
     If you are using Meanwhile in your client code and would like to
     differentiate yourself, please email siege at preoccupied dot net
-    with all the relevant information you can think of. I intend to be
-    pretty liberal with 'em.
+    with all the relevant information you can think of and I'll add it
+    to the text mapping as well
+
+    @see mwLoginType_getName
 */
 enum mwLoginType {
   mwLogin_LIB           = 0x1000,  /**< official Lotus binary library */
   mwLogin_JAVA_WEB      = 0x1001,  /**< official Lotus Java applet */
   mwLogin_BINARY        = 0x1002,  /**< official Lotus binary application */
   mwLogin_JAVA_APP      = 0x1003,  /**< official Lotus Java application */
+  mwLogin_LINKS         = 0x100a,  /**< official Sametime Links toolkit */
 
   /* now we're getting crazy */
   mwLogin_NOTES_6_5        = 0x1200,
   mwLogin_NOTES_7_0        = 0x1210,
   mwLogin_ICT              = 0x1300,
+  mwLogin_ICT_1_7_8_2      = 0x1302,
   mwLogin_NOTESBUDDY       = 0x1400,  /**< 0xff00 mask? */
   mwLogin_NOTESBUDDY_4_15  = 0x1405,
   mwLogin_SANITY           = 0x1600,
@@ -108,13 +112,6 @@ enum mwLoginType {
   mwLogin_TRILLIAN         = 0x16aa,  /**< http://sf.net/st-plugin/ */
   mwLogin_TRILLIAN_IBM     = 0x16bb,
   mwLogin_MEANWHILE        = 0x1700,  /**< Meanwhile library */
-
-  /* these aren't ready for use yet, DO NOT USE WHILE THIS COMMENT
-     EXISTS HERE, it will only cause you trouble */
-  mwLogin_MW_PYTHON     = 0x1701,  /**< Meanwhile Python */
-  mwLogin_MW_GAIM       = 0x1702,  /**< gaim-meanwhile */
-  mwLogin_MW_ADIUM      = 0x1703,  /**< adium-meanwhile */
-  mwLogin_MW_KOPETE     = 0x1704,  /**< kopete-meanwhile */
 };
 
 
@@ -428,6 +425,8 @@ void mwEncryptItem_put(struct mwPutBuffer *b,
 void mwEncryptItem_get(struct mwGetBuffer *b, struct mwEncryptItem *item);
 
 void mwEncryptItem_clear(struct mwEncryptItem *item);
+
+void mwEncryptItem_free(struct mwEncryptItem *item);
 
 
 /*@}*/

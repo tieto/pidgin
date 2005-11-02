@@ -803,6 +803,12 @@ void mwEncryptItem_clear(struct mwEncryptItem *ei) {
 }
 
 
+void mwEncryptItem_free(struct mwEncryptItem *ei) {
+  mwEncryptItem_clear(ei);
+  g_free(ei);
+}
+
+
 /* 8.4.2.1 Awareness ID Block */
 
 
@@ -929,19 +935,21 @@ const char *mwLoginType_getName(enum mwLoginType type) {
     return "Lotus Java Client Applet";
 
   case mwLogin_BINARY:
-    return "Lotus Sametime";
+    return "Lotus Sametime Connect";
 
   case mwLogin_JAVA_APP:
     return "Lotus Java Client Application";
 
-  case mwLogin_NOTES_6_5:
-    return "Lotus Notes Client 6.5.2+";
+  case mwLogin_LINKS:
+    return "Lotus Sametime Links";
 
+  case mwLogin_NOTES_6_5:
   case mwLogin_NOTES_7_0:
-    return "Lotus Notes Client 7";
+    return "Lotus Notes Client";
 
   case mwLogin_ICT:
-    return "IBM Community Tools (ICT)";
+  case mwLogin_ICT_1_7_8_2:
+    return "IBM Community Tools";
 
   case mwLogin_NOTESBUDDY:
   case mwLogin_NOTESBUDDY_4_15:
@@ -962,18 +970,6 @@ const char *mwLoginType_getName(enum mwLoginType type) {
 
   case mwLogin_MEANWHILE:
     return "Meanwhile";
-
-  case mwLogin_MW_PYTHON:
-    return "Meanwhile Python";
-
-  case mwLogin_MW_GAIM:
-    return "Meanwhile Gaim";
-
-  case mwLogin_MW_ADIUM:
-    return "Meanwhile Adium";
-
-  case mwLogin_MW_KOPETE:
-    return "Meanwhile Kopete";
 
   default:
     return NULL;

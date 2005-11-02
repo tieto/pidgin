@@ -74,6 +74,7 @@ char* mwError(guint32 code) {
     CASE(GUEST_IN_USE, "The guest name is currently being used");
     CASE(MULTI_SERVER_LOGIN, "Login to two different servers concurrently");
     CASE(MULTI_SERVER_LOGIN2, "Login to two different servers concurrently");
+    CASE(SERVER_BROKEN, "Server misconfiguration");
 
     /* 8.3.1.3 Client error codes */
     CASE(ERR_CLIENT_USER_GONE, "User is not online");

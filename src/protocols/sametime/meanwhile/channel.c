@@ -59,6 +59,8 @@ struct mwChannel {
 
   /** all those supported ciphers */
   GHashTable *supported;
+  guint16 offered_policy;  /**< @see enum mwEncryptPolicy */
+  guint16 policy;          /**< @see enum mwEncryptPolicy */
 
   /** cipher information determined at channel acceptance */
   struct mwCipherInstance *cipher;
@@ -98,13 +100,21 @@ static const char *state_str(enum mwChannelState state) {
 }
 
 
-static void state(struct mwChannel *chan, enum mwChannelState state) {
+static void state(struct mwChannel *chan, enum mwChannelState state,
+		  guint32 err_code) {
+
   g_return_if_fail(chan != NULL);
 
   if(chan->state == state) return;
 
   chan->state = state;
-  g_message("channel 0x%08x state: %s", chan->id, state_str(state));
+
+  if(err_code) {
+    g_message("channel 0x%08x state: %s (0x%08x)",
+	      chan->id, state_str(state), err_code);
+  } else {
+    g_message("channel 0x%08x state: %s", chan->id, state_str(state));
+  }
 }
 
 
@@ -166,7 +176,7 @@ struct mwChannel *mwChannel_newIncoming(struct mwChannelSet *cs, guint32 id) {
 
   g_hash_table_insert(cs->map, GUINT_TO_POINTER(id), chan);
 
-  state(chan, mwChannel_WAIT);
+  state(chan, mwChannel_WAIT, 0);
 
   return chan;
 }
@@ -186,7 +196,7 @@ struct mwChannel *mwChannel_newOutgoing(struct mwChannelSet *cs) {
   } while(g_hash_table_lookup(cs->map, GUINT_TO_POINTER(id)));
   
   chan = mwChannel_newIncoming(cs, id);
-  state(chan, mwChannel_INIT);
+  state(chan, mwChannel_INIT, 0);
 
   return chan;
 }
@@ -270,6 +280,12 @@ void mwChannel_setProtoVer(struct mwChannel *chan, guint32 proto_ver) {
 }
 
 
+guint16 mwChannel_getEncryptPolicy(struct mwChannel *chan) {
+  g_return_val_if_fail(chan != NULL, 0x00);
+  return chan->policy;
+}
+
+
 guint32 mwChannel_getOptions(struct mwChannel *chan) {
   g_return_val_if_fail(chan != NULL, 0x00);
   return chan->options;
@@ -345,27 +361,37 @@ int mwChannel_create(struct mwChannel *chan) {
   msg->options = chan->options;
   mwOpaque_clone(&msg->addtl, &chan->addtl_create);
 
-  for(list = l = mwChannel_getSupportedCipherInstances(chan); l; l = l->next) {
-    struct mwEncryptItem *ei = mwCipherInstance_newItem(l->data);
-    msg->encrypt.items = g_list_append(msg->encrypt.items, ei);
-  }
+  list = mwChannel_getSupportedCipherInstances(chan);
   if(list) {
-    msg->encrypt.mode = 0x1000;
-    msg->encrypt.extra = 0x1000;
+    /* offer what we have */
+    for(l = list; l; l = l->next) {
+      struct mwEncryptItem *ei = mwCipherInstance_offer(l->data);
+      msg->encrypt.items = g_list_append(msg->encrypt.items, ei);
+    }
+
+    /* we're easy to get along with */
+    chan->offered_policy = mwEncrypt_WHATEVER;
+    g_list_free(list);
+
+  } else {
+    /* we apparently don't support anything */
+    chan->offered_policy = mwEncrypt_NONE;
   }
-  g_list_free(list);
+
+  msg->encrypt.mode = chan->offered_policy;
+  msg->encrypt.extra = chan->offered_policy;
   
   ret = mwSession_send(chan->session, MW_MESSAGE(msg));
   mwMessage_free(MW_MESSAGE(msg));
 
-  state(chan, (ret)? mwChannel_ERROR: mwChannel_WAIT);
+  state(chan, (ret)? mwChannel_ERROR: mwChannel_WAIT, ret);
 
   return ret;
 }
 
 
 static void channel_open(struct mwChannel *chan) {
-  state(chan, mwChannel_OPEN);
+  state(chan, mwChannel_OPEN, 0);
   timestamp_stat(chan, mwChannelStat_OPENED_AT);
   flush_channel(chan);
 }
@@ -374,6 +400,8 @@ static void channel_open(struct mwChannel *chan) {
 int mwChannel_accept(struct mwChannel *chan) {
   struct mwSession *session;
   struct mwMsgChannelAccept *msg;
+  struct mwCipherInstance *ci;
+
   int ret;
 
   g_return_val_if_fail(chan != NULL, -1);
@@ -392,33 +420,64 @@ int mwChannel_accept(struct mwChannel *chan) {
   msg->proto_ver = chan->proto_ver;
   mwOpaque_clone(&msg->addtl, &chan->addtl_accept);
 
-  /* if nobody selected a cipher, we'll just pick the first that comes
-     handy */
-  if(chan->supported) {
-    GList *l = mwChannel_getSupportedCipherInstances(chan);
-    if(l) {
-      mwChannel_selectCipherInstance(chan, l->data);
-      g_list_free(l);
-    } else {
+  ci = chan->cipher;
+
+  if(! ci) {
+    /* automatically select a cipher if one hasn't been already */
+
+    switch(chan->offered_policy) {
+    case mwEncrypt_NONE:
       mwChannel_selectCipherInstance(chan, NULL);
+      break;
+      
+    case mwEncrypt_RC2_40:
+      ci = get_supported(chan, mwCipher_RC2_40);
+      mwChannel_selectCipherInstance(chan, ci);
+      break;
+
+    case mwEncrypt_RC2_128:
+      ci = get_supported(chan, mwCipher_RC2_128);
+      mwChannel_selectCipherInstance(chan, ci);
+      break;
+      
+    case mwEncrypt_WHATEVER:
+    case mwEncrypt_ALL:
+    default:
+      {
+	GList *l, *ll;
+
+	l = mwChannel_getSupportedCipherInstances(chan);
+	if(l) {
+	  /* nobody selected a cipher, so we'll just pick the last in
+	     the list of available ones */
+	  for(ll = l; ll->next; ll = ll->next);
+	  ci = ll->data;
+	  g_list_free(l);
+	  
+	  mwChannel_selectCipherInstance(chan, ci);
+	  
+	} else {
+	  /* this may cause breakage, but there's really nothing else
+	     we can do. They want something we can't provide. If they
+	     don't like it, then they'll error the channel out */
+	  mwChannel_selectCipherInstance(chan, NULL);
+	}
+      }
     }
   }
 
+  msg->encrypt.mode = chan->policy; /* set in selectCipherInstance */
+  msg->encrypt.extra = chan->offered_policy;
+
   if(chan->cipher) {
-    mwCipherInstance_accept(chan->cipher);
-
-    msg->encrypt.item = mwCipherInstance_newItem(chan->cipher);
-
-    /** @todo figure out encrypt modes */
-    msg->encrypt.mode = 0x1000;
-    msg->encrypt.extra = 0x1000;
+    msg->encrypt.item = mwCipherInstance_accept(chan->cipher);
   }
 
   ret = mwSession_send(session, MW_MESSAGE(msg));
   mwMessage_free(MW_MESSAGE(msg));
 
   if(ret) {
-    state(chan, mwChannel_ERROR);
+    state(chan, mwChannel_ERROR, ret);
   } else {
     channel_open(chan);
   }
@@ -484,7 +543,7 @@ int mwChannel_destroy(struct mwChannel *chan,
   /* may make this not a warning in the future */
   g_return_val_if_fail(chan != NULL, 0);
 
-  state(chan, reason? mwChannel_ERROR: mwChannel_DESTROY);
+  state(chan, reason? mwChannel_ERROR: mwChannel_DESTROY, reason);
 
   session = chan->session;
   g_return_val_if_fail(session != NULL, -1);
@@ -691,6 +750,9 @@ void mwChannel_recvCreate(struct mwChannel *chan,
     return;
   }
 
+  chan->offered_policy = msg->encrypt.mode;
+  g_message("channel offered with encrypt policy 0x%04x", chan->policy);
+
   for(list = msg->encrypt.items; list; list = list->next) {
     struct mwEncryptItem *ei = list->data;
     struct mwCipher *cipher;
@@ -754,7 +816,11 @@ void mwChannel_recvAccept(struct mwChannel *chan,
     return;
   }
 
+  chan->policy = msg->encrypt.mode;
+  g_message("channel accepted with encrypt policy 0x%04x", chan->policy);
+
   if(! msg->encrypt.mode || ! msg->encrypt.item) {
+    /* no mode or no item means no encryption */
     mwChannel_selectCipherInstance(chan, NULL);
 
   } else {
@@ -772,7 +838,7 @@ void mwChannel_recvAccept(struct mwChannel *chan,
   }
 
   /* mark it as open for the service */
-  state(chan, mwChannel_OPEN);
+  state(chan, mwChannel_OPEN, 0);
 
   /* let the service know */
   mwService_recvAccept(srvc, chan, msg);
@@ -794,7 +860,7 @@ void mwChannel_recvDestroy(struct mwChannel *chan,
   g_return_if_fail(msg != NULL);
   g_return_if_fail(chan->id == msg->head.channel);
 
-  state(chan, msg->reason? mwChannel_ERROR: mwChannel_DESTROY);
+  state(chan, msg->reason? mwChannel_ERROR: mwChannel_DESTROY, msg->reason);
 
   srvc = mwChannel_getService(chan);
   if(srvc) mwService_recvDestroy(srvc, chan, msg);
@@ -865,9 +931,26 @@ void mwChannel_selectCipherInstance(struct mwChannel *chan,
 
     g_hash_table_steal(chan->supported, GUINT_TO_POINTER(cid));
 
+    switch(mwCipher_getType(c)) {
+    case mwCipher_RC2_40:
+      chan->policy = mwEncrypt_RC2_40;
+      break;
+
+    case mwCipher_RC2_128:
+      chan->policy = mwEncrypt_RC2_128;
+      break;
+
+    default:
+      /* unsure if this is bad */
+      chan->policy = mwEncrypt_WHATEVER;
+    }
+
     g_message("channel 0x%08x selected cipher %s",
 	      chan->id, NSTR(mwCipher_getName(c)));
+
   } else {
+
+    chan->policy = mwEncrypt_NONE;
     g_message("channel 0x%08x selected no cipher", chan->id);
   }
 
