@@ -374,11 +374,8 @@ gaim_find_prpl(const char *id)
 	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
 		plugin = (GaimPlugin *)l->data;
 
-		/* Just In Case (TM) */
-		if (GAIM_IS_PROTOCOL_PLUGIN(plugin)) {
-			if (!strcmp(plugin->info->id, id))
-				return plugin;
-		}
+		if (!strcmp(plugin->info->id, id))
+			return plugin;
 	}
 
 	return NULL;
