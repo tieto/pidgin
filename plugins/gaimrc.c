@@ -22,6 +22,7 @@
 #include "gtkplugin.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
+#include "util.c"
 #include "version.h"
 
 static guint pref_callback;
@@ -136,6 +137,75 @@ gaimrc_make_changes()
 	gtk_rc_parse_string(style_string->str);
 
 	g_string_free(style_string, TRUE);
+}
+
+static void
+gaimrc_write(GtkWidget *widget, gpointer data)
+{
+	int i;
+	GString *style_string = g_string_new("");
+	char *prefbase = NULL;
+
+	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name")) {
+		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-font-name");
+		g_string_append_printf(style_string, "gtk-font-name = \"%s\"\n", pref);
+	}
+
+	if (gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-key-theme-name")) {
+		const char *pref = gaim_prefs_get_string("/plugins/gtk/gaimrc/gtk-key-theme-name");
+		g_string_append_printf(style_string, "gtk-key-theme-name = \"%s\"\n", pref);
+	}
+
+	g_string_append(style_string, "style \"gaimrc_style\" {\n");
+
+	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
+		if (gaim_prefs_get_bool(color_prefs_set[i])) {
+			prefbase = g_path_get_basename(color_prefs[i]);
+			g_string_append_printf(style_string,
+			                       "%s = \"%s\"\n", prefbase,
+			                       gaim_prefs_get_string(color_prefs[i]));
+			g_free(prefbase);
+		}
+	}
+
+	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
+		if (gaim_prefs_get_bool(widget_size_prefs_set[i])) {
+			prefbase = g_path_get_basename(widget_size_prefs[i]);
+			g_string_append_printf(style_string,
+			                       "%s = %d\n", prefbase,
+			                       gaim_prefs_get_int(widget_size_prefs[i]));
+			g_free(prefbase);
+		}
+	}
+
+	g_string_append(style_string, "}");
+	g_string_append(style_string, "widget_class \"*\" style \"gaimrc_style\"\n");
+
+	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
+		if (gaim_prefs_get_bool(font_prefs_set[i])) {
+			prefbase = g_path_get_basename(font_prefs[i]);
+			g_string_append_printf(style_string,
+			                       "style \"%s_style\"\n"
+			                       "{font_name = \"%s\"}\n"
+			                       "widget \"%s\""
+			                       "style \"%s_style\"\n", prefbase,
+			                       gaim_prefs_get_string(font_prefs[i]),
+			                       prefbase, prefbase);
+			g_free(prefbase);
+		}
+	}
+
+	gaim_util_write_data_to_file(".gtkrc-2.0", style_string->str, -1);
+
+	g_string_free(style_string, TRUE);
+}
+
+static void
+gaimrc_reread(GtkWidget *widget, gpointer data)
+{
+	gtk_rc_reparse_all();
+	/* I don't know if this is necessary but it shouldn't hurt. */
+	gaimrc_make_changes();
 }
 
 static void
@@ -320,7 +390,7 @@ gaimrc_plugin_unload(GaimPlugin *plugin)
 static GtkWidget *
 gaimrc_get_config_frame(GaimPlugin *plugin)
 {
-	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL;
+	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL, *vbox = NULL;
 	/*
 	GtkWidget *check = NULL, *widget = NULL, *label = NULL;
 	*/
@@ -331,14 +401,14 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	*/
 	int i;
 
-	ret = gtk_vbox_new(FALSE, 18);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
+	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	frame = gaim_gtk_make_frame(ret, "General");
 	/* interface font */
-	hbox = gtk_hbox_new(FALSE, 18);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = gaim_gtk_prefs_checkbox(_("GTK+ Interface Font"),
@@ -357,7 +427,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(gaimrc_set_font_special), NULL);
 
 	/* key theme name */
-	hbox = gtk_hbox_new(FALSE, 18);
+	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = gaim_gtk_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
@@ -376,7 +446,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = gaim_gtk_make_frame(ret, "Interface colors");
 	/* imhtml stuff */
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, 18);
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = gaim_gtk_prefs_checkbox(_(color_names[i]),
@@ -400,7 +470,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = gaim_gtk_make_frame(ret, "Widget Sizes");
 	/* widget size stuff */
 	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, 18);
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = gaim_gtk_prefs_checkbox(_(widget_size_names[i]),
@@ -418,7 +488,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = gaim_gtk_make_frame(ret, "Fonts");
 	/* imhtml font stuff */
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, 18);
+		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = gaim_gtk_prefs_checkbox(_(font_names[i]),
@@ -437,6 +507,23 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		g_signal_connect(G_OBJECT(font_widgets[i]), "clicked",
 		                 G_CALLBACK(gaimrc_set_font), GINT_TO_POINTER(i));
 	}
+
+	frame = gaim_gtk_make_frame(ret, "General");
+
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
+
+	check = gtk_button_new_with_label(_("Write a gtkrc file with these settings"));
+	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(sg, check);
+	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(gaimrc_write),
+	                 NULL);
+
+	check = gtk_button_new_with_label(_("Re-read gtkrc files"));
+	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(sg, check);
+	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(gaimrc_reread),
+	                 NULL);
 
 	gtk_widget_show_all(ret);
 	return ret;
