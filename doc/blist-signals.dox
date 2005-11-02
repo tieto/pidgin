@@ -20,7 +20,7 @@ void (*buddy_away)(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status)
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list goes away.
-  @param buddy      The buddy that went away.
+  @param buddy      The buddy who's status changed.
   @param old_status The status that the buddy just changed from.
   @param status     The status that the buddy just changed to.
  @endsignaldef
@@ -31,7 +31,7 @@ void (*buddy_idle)(GaimBuddy *buddy, gboolean old_idle, gboolean idle);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list becomes idle.
-  @param buddy    The buddy that became idle.
+  @param buddy    The buddy who's idle status changed.
   @param old_idle Whether the buddy was idle.
   @param idle     Whether the buddy is currently idle.
  @endsignaldef
