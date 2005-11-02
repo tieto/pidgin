@@ -289,6 +289,13 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 
 	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
 	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+
+	/*
+	 * Suppress the "changed" signal because the status
+	 * was changed programmatically.
+	 */
+	gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
+
 	if (saved_status == NULL)
 	{
 		/* Default to "available" */
@@ -322,8 +329,19 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 
 		message = gaim_savedstatus_get_message(saved_status);
 		if (message != NULL)
+		{
+			/*
+			 * Suppress the "changed" signal because the status
+			 * was changed programmatically.
+			 */
+			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
+		}
 	}
+
+	/* Stop suppressing the "changed" signal. */
+	gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
 }
 
 static void
@@ -659,7 +677,8 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	char *message;
 	GaimSavedStatus *saved_status;
 
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
+		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 					   TYPE_COLUMN, &type,
 					   TITLE_COLUMN, &title, -1);
@@ -728,18 +747,21 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 		g_source_remove(status_box->typing);
 	status_box->typing = 0;
 
-	if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
+	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
-		gaim_gtk_status_editor_show(NULL);
-		update_to_reflect_current_status(status_box);
-		return;
-	}
+		if (type == GTK_GAIM_STATUS_BOX_TYPE_CUSTOM)
+		{
+			gaim_gtk_status_editor_show(NULL);
+			update_to_reflect_current_status(status_box);
+			return;
+		}
 
-	if (type == GTK_GAIM_STATUS_BOX_TYPE_SAVED)
-	{
-		gaim_gtk_status_window_show();
-		update_to_reflect_current_status(status_box);
-		return;
+		if (type == GTK_GAIM_STATUS_BOX_TYPE_SAVED)
+		{
+			gaim_gtk_status_window_show();
+			update_to_reflect_current_status(status_box);
+			return;
+		}
 	}
 
 	/*
@@ -767,14 +789,16 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	if (status_box->imhtml_visible)
 	{
 		gtk_widget_show_all(status_box->vbox);
-		status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
+		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+			status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
 		gtk_widget_grab_focus(status_box->imhtml);
 	}
 	else
 	{
 		gtk_widget_hide_all(status_box->vbox);
-		activate_currently_selected_status(status_box);
+		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+			activate_currently_selected_status(status_box);
 	}
 	gtk_gaim_status_box_refresh(status_box);
 }
@@ -782,11 +806,14 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 {
 	GtkGaimStatusBox *box = (GtkGaimStatusBox*)data;
-	if (box->typing) {
-		gtk_gaim_status_box_pulse_typing(box);
-		g_source_remove(box->typing);
+	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(box)))
+	{
+		if (box->typing) {
+			gtk_gaim_status_box_pulse_typing(box);
+			g_source_remove(box->typing);
+		}
+		box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
 	}
-	box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
 	gtk_gaim_status_box_refresh(box);
 }
 
