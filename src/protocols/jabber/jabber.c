@@ -406,7 +406,7 @@ jabber_login(GaimAccount *account)
 
 	if(!js->user->resource) {
 		char *me;
-		js->user->resource = g_strdup("Gaim");
+		js->user->resource = g_strdup("Home");
 		if(!js->user->node) {
 			js->user->node = js->user->domain;
 			js->user->domain = g_strdup("jabber.org");
@@ -743,7 +743,7 @@ static void jabber_register_account(GaimAccount *account)
 
 	if(!js->user->resource) {
 		char *me;
-		js->user->resource = g_strdup("Gaim");
+		js->user->resource = g_strdup("Home");
 		if(!js->user->node) {
 			js->user->node = js->user->domain;
 			js->user->domain = g_strdup("jabber.org");
@@ -1708,7 +1708,7 @@ init_plugin(GaimPlugin *plugin)
 	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	split = gaim_account_user_split_new(_("Resource"), "Gaim", '/');
+	split = gaim_account_user_split_new(_("Resource"), "Home", '/');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	option = gaim_account_option_bool_new(_("Use TLS if available"), "use_tls",
