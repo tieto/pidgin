@@ -5625,6 +5625,6 @@ static void mw_plugin_init(GaimPlugin *plugin) {
 }
 
 
-GAIM_INIT_PLUGIN(meanwhile, mw_plugin_init, mw_plugin_info);
+GAIM_INIT_PLUGIN(sametime, mw_plugin_init, mw_plugin_info);
 /* The End. */
 

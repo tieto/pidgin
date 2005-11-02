@@ -38,11 +38,14 @@ MEANWHILESOURCES = \
 	st_list.c
 
 AM_CFLAGS = \
-	$(GLIB_CFLAGS) \
+	$(GLIB_CFLAGS) $(GMP_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	-I$(top_srcdir)/src 
 
 libmeanwhile_la_SOURCES = $(MEANWHILESOURCES)
+
+libmeanwhile_la_LIBADD = $(GLIB_LIBS) $(GMP_LIBS)
+
 st =
 noinst_LTLIBRARIES = libmeanwhile.la
 

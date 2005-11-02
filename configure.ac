@@ -102,6 +102,51 @@ dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in co
 AC_SYS_LARGEFILE
 
 
+dnl # Check for GMP. If it's not there, Sametime won't build
+have_gmp=yes
+GMP_LIBS=
+GMP_CFLAGS=
+
+# either auto-detect or specify the libgmp.a file for static linking
+withval="auto"
+AC_ARG_WITH(gmp-prefix,
+        [  --with-gmp-prefix[=auto]  prefix gmp was installed to])
+
+if test "$withval" = "auto" ; then
+        found_prefix=no
+
+        if test $found_prefix = "no" ; then
+           try_prefix=/usr
+           AC_CHECK_HEADER([$try_prefix/include/gmp.h], found_prefix="yes")
+        fi
+
+        if test $found_prefix = "no" ; then
+           try_prefix=/usr/local
+           AC_CHECK_HEADER([$try_prefix/include/gmp.h], found_prefix="yes")
+        fi
+
+        if test $found_prefix = "no" ; then
+           dnl AC_MSG_ERROR([GNU MP headers not found])
+	   have_gmp=no
+        fi
+
+elif test -n "$withval" ; then
+        try_prefix=$withval
+
+        AC_CHECK_HEADER([$try_prefix/include/gmp.h],,
+                [AC_MSG_ERROR([GNU MP headers not found])])
+
+else
+        dnl AC_MSG_ERROR([GNU MP headers not found, $withval])
+	have_gmp=no
+fi
+
+GMP_CFLAGS=-I$try_prefix/include
+
+AC_SUBST(GMP_CFLAGS)
+AC_SUBST(GMP_LIBS)
+
+
 
 dnl #######################################################################
 dnl # Check for Howl headers (for Bonjour)
@@ -237,7 +282,7 @@ AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
+AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_gmp" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
@@ -283,7 +328,7 @@ AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_gmp" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
