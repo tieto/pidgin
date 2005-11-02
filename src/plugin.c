@@ -50,10 +50,12 @@ typedef struct
 
 static GList *search_paths     = NULL;
 static GList *plugins          = NULL;
-static GList *load_queue       = NULL;
 static GList *loaded_plugins   = NULL;
-static GList *plugin_loaders   = NULL;
 static GList *protocol_plugins = NULL;
+#ifdef GAIM_PLUGINS
+static GList *load_queue       = NULL;
+static GList *plugin_loaders   = NULL;
+#endif
 
 static void (*probe_cb)(void *) = NULL;
 static void *probe_cb_data = NULL;
@@ -63,6 +65,7 @@ static void (*unload_cb)(GaimPlugin *, void *) = NULL;
 static void *unload_cb_data = NULL;
 
 #ifdef GAIM_PLUGINS
+
 static gboolean
 has_file_extension(const char *filename, const char *ext)
 {
@@ -214,7 +217,7 @@ gaim_plugin_probe(const char *filename)
 		 * plugins being added to the global name space.
 		 *
 		 * G_MODULE_BIND_LOCAL was added in glib 2.3.3.
-		 * TODO: What are we going to do about that?
+		 * TODO: I guess there's nothing we can do about that?
 		 */
 #if GLIB_CHECK_VERSION(2,3,3)
 		plugin->handle = g_module_open(filename, G_MODULE_BIND_LOCAL);
@@ -236,12 +239,17 @@ gaim_plugin_probe(const char *filename)
 		if (!g_module_symbol(plugin->handle, "gaim_init_plugin",
 							 &unpunned))
 		{
-			g_module_close(plugin->handle);
-			plugin->handle = NULL;
+			gaim_debug_error("plugins", "%s is not usable because the "
+							 "'gaim_init_plugin' symbol could not be "
+							 "found.  Does the plugin call the "
+							 "GAIM_INIT_PLUGIN() macro?\n", plugin->path);
 
+			g_module_close(plugin->handle);
 			error = g_module_error();
-			gaim_debug_error("plugins", "%s is unloadable: %s\n",
-							 plugin->path, error ? error : "Unknown error.");
+			if (error != NULL)
+				gaim_debug_error("plugins", "Error closing module %s: %s\n",
+								 plugin->path, error);
+			plugin->handle = NULL;
 
 			gaim_plugin_destroy(plugin);
 
@@ -425,6 +433,8 @@ gaim_plugin_unload(GaimPlugin *plugin)
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	loaded_plugins = g_list_remove(loaded_plugins, plugin);
+	if ((plugin->info != NULL) && GAIM_IS_PROTOCOL_PLUGIN(plugin))
+		protocol_plugins = g_list_remove(protocol_plugins, plugin);
 
 	g_return_val_if_fail(gaim_plugin_is_loaded(plugin), FALSE);
 
@@ -1065,6 +1075,7 @@ gaim_plugins_probe(const char *ext)
 				continue;
 			}
 
+			/* Make sure we don't load two PRPLs with the same name? */
 			if (gaim_find_prpl(plugin->info->id))
 			{
 				/* Nothing to see here--move along, move along */
@@ -1080,20 +1091,6 @@ gaim_plugins_probe(const char *ext)
 
 	if (probe_cb != NULL)
 		probe_cb(probe_cb_data);
-
-#else /* GAIM_PLUGINS */
-	/* We just need to populate the protocol_plugins list with all the PRPLs */
-	GList *cur;
-	GaimPlugin *plugin;
-
-	for (cur = plugins; cur != NULL; cur = cur->next)
-	{
-		plugin = cur->data;
-		if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
-			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
-													(GCompareFunc)compare_prpl);
-	}
-
 #endif /* GAIM_PLUGINS */
 }
 
@@ -1134,8 +1131,14 @@ gaim_plugin_register(GaimPlugin *plugin)
 		}
 	}
 
+#ifdef GAIM_PLUGINS
 	/* This plugin should be probed and maybe loaded--add it to the queue */
 	load_queue = g_list_append(load_queue, plugin);
+#else
+	if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+		protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
+												(GCompareFunc)compare_prpl);
+#endif
 
 	plugins = g_list_append(plugins, plugin);
 
@@ -1237,6 +1240,7 @@ gaim_plugins_find_with_filename(const char *filename)
 GaimPlugin *
 gaim_plugins_find_with_basename(const char *basename)
 {
+#ifdef GAIM_PLUGINS
 	GaimPlugin *plugin;
 	GList *l;
 	char *basename_no_ext;
@@ -1263,6 +1267,7 @@ gaim_plugins_find_with_basename(const char *basename)
 	}
 
 	g_free(basename_no_ext);
+#endif /* GAIM_PLUGINS */
 
 	return NULL;
 }

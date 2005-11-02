@@ -573,7 +573,10 @@ GaimPlugin *gaim_plugins_find_with_id(const char *id);
 GList *gaim_plugins_get_loaded(void);
 
 /**
- * Returns a list of all protocol plugins.
+ * Returns a list of all valid protocol plugins.  A protocol
+ * plugin is considered invalid if it does not contain the call
+ * to the GAIM_INIT_PLUGIN() macro, or if it was compiled
+ * against an incompatable API version.
  *
  * @return A list of all protocol plugins.
  */
