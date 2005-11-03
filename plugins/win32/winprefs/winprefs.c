@@ -308,7 +308,7 @@ wgaim_conv_im_blink (GaimAccount *account, char *sender, char *message, int flag
 		memset(&info, 0, sizeof(FLASHWINFO));
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(window->window);
-		info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
+		info.dwFlags = FLASHW_ALL;
 		info.dwTimeout = 0;
 		MyFlashWindowEx(&info);
 		/* Stop flashing when window receives focus */
