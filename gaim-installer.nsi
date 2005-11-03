@@ -695,7 +695,6 @@ Section Uninstall
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
-    Delete "$INSTDIR\plugins\autorecon.dll"
     Delete "$INSTDIR\plugins\docklet.dll"
     Delete "$INSTDIR\plugins\extplacement.dll"
     Delete "$INSTDIR\plugins\history.dll"
