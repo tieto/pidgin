@@ -114,7 +114,6 @@ install:
 	$(CC) -shared $@.o $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $@
 
 plugins: \
-		autorecon.dll \
 		extplacement.dll \
 		history.dll \
 	 	iconaway.dll \

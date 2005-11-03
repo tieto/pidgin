@@ -36,7 +36,6 @@ SUBDIRS = \
 
 plugindir = $(libdir)/gaim
 
-autorecon_la_LDFLAGS    = -module -avoid-version $(GLIB_LIBS)
 extplacement_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
 gaimrc_la_LDFLAGS       = -module -avoid-version $(GTK_LIBS)
 history_la_LDFLAGS      = -module -avoid-version $(GTK_LIBS)
@@ -54,7 +53,6 @@ dbus_example_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(DBUS_LIBS)
 if PLUGINS
 
 plugin_LTLIBRARIES = \
-	autorecon.la     \
 	extplacement.la  \
 	gaimrc.la        \
 	history.la       \
@@ -67,7 +65,6 @@ plugin_LTLIBRARIES = \
 	timestamp.la     \
 	$(DBUS_LTLIB)
 
-autorecon_la_SOURCES    = autorecon.c
 
 extplacement_la_SOURCES = extplacement.c
 gaimrc_la_SOURCES       = gaimrc.c

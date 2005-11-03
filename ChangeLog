@@ -63,6 +63,9 @@ version 2.0.0:
 	* New music messaging plugin (Christian Muise)
 	* gaim-remote has been superceded by new DBUS bindings within Gaim
 	  (Piotr Zielinski)
+	* The functionality of the auto-reconnect plugin has been
+	  moved into the Gaim core, and the plugin itself has been
+	  removed.
 
 	MSN Features:
 	* Custom smiley support (Irving Cordova & Francesco Fracassi)

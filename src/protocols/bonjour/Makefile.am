@@ -23,6 +23,7 @@ st = -DGAIM_STATIC_PRPL
 noinst_LIBRARIES     = libbonjour.a
 libbonjour_a_SOURCES = $(BONJOURSOURCES)
 libbonjour_a_CFLAGS  = $(AM_CFLAGS)
+libbonjour_a_LIBADD  = $(HOWL_LIBS)
 
 else
 

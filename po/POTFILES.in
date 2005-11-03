@@ -1,4 +1,3 @@
-plugins/autorecon.c
 plugins/contact_priority.c
 plugins/docklet/docklet.c
 plugins/docklet/docklet-win32.c
