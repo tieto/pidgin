@@ -112,6 +112,12 @@ gtk_gaim_status_box_get_property(GObject *object, guint param_id,
 }
 
 static void
+account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatus *newstatus, GtkGaimStatusBox* status_box)
+{
+	/*update_to_reflect_current_status(status_box);*/
+}
+
+static void
 gtk_gaim_status_box_set_property(GObject *object, guint param_id,
                                  const GValue *value, GParamSpec *pspec)
 {
@@ -120,6 +126,14 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 	switch (param_id) {
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
+
+		/* FIXME: call this in the destroy function too, if we had one */
+		if (0 && statusbox->status_changed_signal)
+			;/*gaim_signals_disconnect_by_handle(statusbox->status_changed_signal);*/
+		if (statusbox->account)
+			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account_status_changed",
+			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
+			                                                       statusbox);
 		gtk_gaim_status_box_regenerate(statusbox);
 		break;
 	default:
@@ -183,6 +197,7 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	if (!title)
 		title = "";
 
+
 	if (status_box->error) {
 		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
 							   title, status_box->error);
@@ -198,6 +213,13 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	} else {
 		text = g_strdup_printf("%s", title);
 	}
+
+	if (status_box->account) {
+		char *text2 = g_strdup_printf("%s\n<span size=\"smaller\">%s</span>", gaim_account_get_username(status_box->account), text);
+		g_free(text);
+		text = text2;
+	}
+
 
 	if (status_box->connecting)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
@@ -390,6 +412,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 									gaim_status_type_get_name(status_type),
 									NULL);
 		}
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0); /* set something active to avoid blowing up */
 	}
 
 }
@@ -739,7 +762,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	GtkGaimStatusBoxItemType type;
 	char *text, *sec_text;
 	GdkPixbuf *pixbuf;
-	GList *accounts, *node;
+	GList *accounts = NULL, *node;
 
 	status_box = GTK_GAIM_STATUS_BOX(box);
 
@@ -781,9 +804,13 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 
 	/*
 	 * Show the message box whenever 'type' allows for a
-	 * message attribute on any protocol that is enabled.
+	 * message attribute on any protocol that is enabled,
+	 * or our protocol, if we have account set
 	 */
-	accounts = gaim_accounts_get_all_active();
+	if (status_box->account)
+		accounts = g_list_prepend(accounts, status_box->account);
+	else
+		accounts = gaim_accounts_get_all_active();
 	status_box->imhtml_visible = FALSE;
 	for (node = accounts; node != NULL; node = node->next)
 	{

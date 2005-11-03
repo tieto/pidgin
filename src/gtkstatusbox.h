@@ -114,6 +114,8 @@ struct _GtkGaimStatusBox
 	char *title;
 	char *desc;
 	char *error;
+
+	gulong status_changed_signal;
 };
 
 struct _GtkGaimStatusBoxClass
