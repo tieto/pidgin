@@ -1922,8 +1922,15 @@ static gboolean
 plugin_load(GaimPlugin *plugin)
 {
 	void *conv_handle = gaim_conversations_get_handle();
+	GList *convs;
 
 	load_conf();
+
+	/* Attach to existing conversations */
+	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
+	{
+		spellchk_new_attach((GaimConversation *)convs->data);
+	}
 
 	gaim_signal_connect(conv_handle, "conversation-created",
 			    plugin, GAIM_CALLBACK(spellchk_new_attach), NULL);
