@@ -35,7 +35,6 @@ extern "C" {
 
 int  serv_send_im(GaimConnection *, const char *, const char *, GaimConvImFlags);
 void serv_get_info(GaimConnection *, const char *);
-void serv_set_idle(GaimConnection *, int);
 void serv_set_info(GaimConnection *, const char *);
 int  serv_send_typing(GaimConnection *, const char *, int);
 void serv_move_buddy(GaimBuddy *, GaimGroup *, GaimGroup *);

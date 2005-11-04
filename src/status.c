@@ -1325,9 +1325,25 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 	}
 	else if(gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_ACCOUNT)
 	{
-		GaimConnection *gc =
-			gaim_account_get_connection(gaim_presence_get_account(presence));
+		GaimAccount *account;
+		GaimLog *log;
+		char *msg;
+		GaimConnection *gc;
 		GaimPluginProtocolInfo *prpl_info = NULL;
+
+		account = gaim_presence_get_account(presence);
+		log = gaim_account_get_log(account);
+
+		if (idle)
+			msg = g_strdup_printf(_("+++ %s became idle"), gaim_account_get_username(account));
+		else
+			msg = g_strdup_printf(_("+++ %s became unidle"), gaim_account_get_username(account));
+		gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
+					   gaim_account_get_username(account),
+					   idle_time, msg);
+		g_free(msg);
+
+		gc = gaim_account_get_connection(account);
 
 		if (gc != NULL && gc->prpl != NULL)
 			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
@@ -1657,7 +1673,7 @@ gaim_status_init(void)
 	gaim_prefs_add_none("/core/status/scores");
 
 	gaim_prefs_add_string("/core/status/current", _("Default"));
-	gaim_prefs_add_string("/core/status/idleaway", _("Default auto-away"));
+	gaim_prefs_add_string("/core/status/idleaway", _("Default when idle"));
 
 	gaim_prefs_add_int("/core/status/scores/offline",
 			primitive_scores[GAIM_STATUS_OFFLINE]);

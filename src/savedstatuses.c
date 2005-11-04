@@ -560,6 +560,21 @@ void
 gaim_savedstatuses_init(void)
 {
 	load_statuses();
+
+	if (saved_statuses == NULL)
+	{
+		/*
+		 * We don't have any saved statuses!  This is probably a new account,
+		 * so we add the "Default" status and the "Default when idle" status.
+		 */
+		GaimSavedStatus *saved_status;
+
+		saved_status = gaim_savedstatus_new(_("Default"), GAIM_STATUS_AVAILABLE);
+		gaim_savedstatus_set_message(saved_status, _("Hello!"));
+
+		saved_status = gaim_savedstatus_new(_("Default when idle"), GAIM_STATUS_AWAY);
+		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
+	}
 }
 
 void

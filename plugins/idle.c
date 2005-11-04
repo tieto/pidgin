@@ -26,6 +26,7 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "notify.h"
 #include "plugin.h"
 #include "request.h"
 #include "server.h"
@@ -134,6 +135,12 @@ unidle_action(GaimPluginAction *action)
 	GaimRequestFieldGroup *group;
 	GaimRequestField *field;
 
+	if (idled_accts == NULL)
+	{
+		gaim_notify_info(NULL, NULL, _("None of your accounts are idle."), NULL);
+		return;
+	}
+
 	group = gaim_request_field_group_new(NULL);
 
 	field = gaim_request_field_account_new("acct", _("Account"), NULL);
@@ -177,16 +184,16 @@ actions(GaimPlugin *plugin, gpointer context)
 	GList *l = NULL;
 	GaimPluginAction *act = NULL;
 
-	act = gaim_plugin_action_new(_("Set Account Idle Time"),
+	act = gaim_plugin_action_new(_("Set account idle time"),
 			idle_action);
 	l = g_list_append(l, act);
 
-	act = gaim_plugin_action_new(_("Unset Account Idle Time"),
+	act = gaim_plugin_action_new(_("Unset account idle time"),
 			unidle_action);
 	l = g_list_append(l, act);
 
 	act = gaim_plugin_action_new(
-			_("Unset Idle Time For All Idled Accounts"), unidle_all_action);
+			_("Unset idle time for all idled accounts"), unidle_all_action);
 	l = g_list_append(l, act);
 
 	return l;

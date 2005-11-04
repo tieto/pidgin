@@ -51,6 +51,15 @@ typedef enum
 
 } GaimAutoAwayState;
 
+/**
+ * This is needed for the I'dle Mak'er plugin to work correctly.  We
+ * use it to determine if we're the ones who set our accounts idle
+ * or if someone else did it (the I'dle Mak'er plugin, for example).
+ * If our accounts are marked as idle and have_set_idle is FALSE and
+ * the user moves the mouse, then we will NOT unidle our accounts.
+ */
+static gboolean have_set_idle = FALSE;
+
 #ifdef USE_SCREENSAVER
 /**
  * Get the number of seconds the user has been idle.  In Unix-world
@@ -181,18 +190,16 @@ gaim_gtk_idle_check(gpointer data)
 	}
 
 	/* Deal with reporting idleness to the server, if appropriate */
-	if (report_idle && idle_time >= IDLEMARK && !gaim_presence_is_idle(presence)) {
+	if (report_idle && idle_time >= IDLEMARK && !have_set_idle && !gaim_presence_is_idle(presence)) {
 		gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 				   gaim_account_get_username(account), idle_time);
-		serv_set_idle(gc, idle_time);
 		gaim_presence_set_idle(presence, TRUE, time(NULL));
-		/* LOG	system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
-	} else if ((!report_idle || idle_time < IDLEMARK) && gaim_presence_is_idle(presence)) {
+		have_set_idle = TRUE;
+	} else if ((!report_idle || idle_time < IDLEMARK) && have_set_idle && gaim_presence_is_idle(presence)) {
 		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
 		gaim_presence_set_idle(presence, FALSE, time(NULL));
-		serv_set_idle(gc, 0);
-		/* LOG	system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
+		have_set_idle = FALSE;
 	}
 
 	return TRUE;

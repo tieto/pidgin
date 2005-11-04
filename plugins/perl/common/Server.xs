@@ -210,11 +210,6 @@ serv_set_buddyicon(gc, filename)
 	const char *filename
 
 void 
-serv_set_idle(con, a)
-	Gaim::Connection con 
-	int a
-
-void 
 serv_set_info(con, a)
 	Gaim::Connection con 
 	const char * a

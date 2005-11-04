@@ -323,19 +323,6 @@ void serv_set_permit_deny(GaimConnection *g)
 		prpl_info->set_permit_deny(g);
 }
 
-
-void serv_set_idle(GaimConnection *g, int time)
-{
-	GaimPluginProtocolInfo *prpl_info = NULL;
-
-	if (g != NULL && g->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(g->prpl);
-
-	if (prpl_info && g_list_find(gaim_connections_get_all(), g) && prpl_info->set_idle)
-		prpl_info->set_idle(g, time);
-}
-
-
 void serv_join_chat(GaimConnection *g, GHashTable *data)
 {
 	GaimPluginProtocolInfo *prpl_info = NULL;

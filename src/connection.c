@@ -195,8 +195,6 @@ gaim_connection_destroy(GaimConnection *gc)
 	if (remove)
 		gaim_blist_remove_account(account);
 
-	/* LOG	system_log(log_signoff, gc, NULL,
-	   OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
 	gaim_signal_emit(gaim_connections_get_handle(), "signed-off", gc);
 
 #if 0
@@ -279,7 +277,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(account);
-			char *msg = g_strdup_printf("+++ %s signed on",
+			char *msg = g_strdup_printf(_("+++ %s signed on"),
 										gaim_account_get_username(account));
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
 						   gaim_account_get_username(account),
@@ -322,7 +320,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
 			GaimLog *log = gaim_account_get_log(account);
-			char *msg = g_strdup_printf("+++ %s signed off",
+			char *msg = g_strdup_printf(_("+++ %s signed off"),
 										gaim_account_get_username(account));
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
 						   gaim_account_get_username(account), time(NULL),
