@@ -57,6 +57,11 @@ static GList *load_queue       = NULL;
 static GList *plugin_loaders   = NULL;
 #endif
 
+/*
+ * TODO: I think the intention was to allow multiple load and unload
+ *       callback functions.  Perhaps using a GList instead of a
+ *       pointer to a single function.
+ */
 static void (*probe_cb)(void *) = NULL;
 static void *probe_cb_data = NULL;
 static void (*load_cb)(GaimPlugin *, void *) = NULL;

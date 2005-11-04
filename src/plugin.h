@@ -97,10 +97,9 @@ struct _GaimPluginInfo
 	char *author;
 	char *homepage;
 
-	/*
-	 * TODO: I think the intention was the allow multiple load and unload
-	 * callback functions.  Perhaps using a GList instead of a pointer to
-	 * 1 function.
+	/**
+	 * If a plugin defines a 'load' function, and it returns FALSE,
+	 * then the plugin will not be loaded.
 	 */
 	gboolean (*load)(GaimPlugin *plugin);
 	gboolean (*unload)(GaimPlugin *plugin);
