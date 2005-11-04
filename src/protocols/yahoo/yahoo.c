@@ -155,7 +155,7 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 		break;
 	case YAHOO_STATUS_CUSTOM:
 		if (!f->away)
-			status = YAHOO_STATUS_TYPE_AVAILABLE_WM;
+			status = YAHOO_STATUS_TYPE_AVAILABLE;
 		else
 			status = YAHOO_STATUS_TYPE_AWAY;
 		break;
@@ -2462,7 +2462,10 @@ static void yahoo_login(GaimAccount *account) {
 	yd->conf_id = 2;
 
 	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE)) {
-		yd->current_status = YAHOO_STATUS_AVAILABLE;
+		if (gaim_status_get_attr_string(status, "message") != NULL)
+			yd->current_status = YAHOO_STATUS_CUSTOM;
+		else
+			yd->current_status = YAHOO_STATUS_AVAILABLE;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BRB)) {
 		yd->current_status = YAHOO_STATUS_BRB;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BUSY)) {
@@ -2484,8 +2487,6 @@ static void yahoo_login(GaimAccount *account) {
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_INVISIBLE)) {
 		yd->current_status = YAHOO_STATUS_INVISIBLE;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AWAY)) {
-		yd->current_status = YAHOO_STATUS_CUSTOM;
-	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE_WM)) {
 		yd->current_status = YAHOO_STATUS_CUSTOM;
 	} else if (gc->is_idle) { /* i think this is broken */
 		yd->current_status = YAHOO_STATUS_IDLE;
@@ -3067,8 +3068,9 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	struct yahoo_packet *pkt;
 	int old_status;
 	const char *id;
+	const char *msg = NULL;
+	char *tmp = NULL;
 	char *conv_msg = NULL;
-	char *conv_msg2 = NULL;
 
 	id = gaim_status_get_id(status);
 	if (!gaim_status_is_active(status))
@@ -3081,7 +3083,15 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	old_status = yd->current_status;
 
 	if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE)) {
-		yd->current_status = YAHOO_STATUS_AVAILABLE;
+		msg = gaim_status_get_attr_string(status, "message");
+		if ((msg == NULL) || (*msg == '\0')) {
+			yd->current_status = YAHOO_STATUS_AVAILABLE;
+		} else {
+			yd->current_status = YAHOO_STATUS_CUSTOM;
+			tmp = yahoo_string_encode(gc, msg, NULL);
+			conv_msg = gaim_markup_strip_html(tmp);
+			g_free(tmp);
+		}
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BRB)) {
 		yd->current_status = YAHOO_STATUS_BRB;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_BUSY)) {
@@ -3104,8 +3114,13 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 		yd->current_status = YAHOO_STATUS_INVISIBLE;
 	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AWAY)) {
 		yd->current_status = YAHOO_STATUS_CUSTOM;
-	} else if (!strcmp(id, YAHOO_STATUS_TYPE_AVAILABLE_WM)) {
-		yd->current_status = YAHOO_STATUS_CUSTOM;
+
+		msg = gaim_status_get_attr_string(status, "message");
+		if ((msg == NULL) && (*msg == '\0'))
+			msg = _("Away");
+		tmp = yahoo_string_encode(gc, msg, NULL);
+		conv_msg = gaim_markup_strip_html(tmp);
+		g_free(tmp);
 	} else if (gc->is_idle) { /* i think this is broken */
 		yd->current_status = YAHOO_STATUS_IDLE;
 	} else {
@@ -3125,20 +3140,12 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	yahoo_packet_hash_int(pkt, 10, yd->current_status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
-		const char *msg = gaim_status_get_attr_string(status, "message");
-
-		if ((msg == NULL) || (*msg == '\0')) {
-			gaim_debug_info("yahoo", "Attempted to set an empty status message, using a default string.\n");
-			msg = _("Away");
-		}
-
-		conv_msg = yahoo_string_encode(gc, msg, NULL);
-		conv_msg2 = gaim_markup_strip_html(conv_msg);
-		yahoo_packet_hash_str(pkt, 19, conv_msg2);
-
+		yahoo_packet_hash_str(pkt, 19, conv_msg);
 	} else {
 		yahoo_packet_hash_str(pkt, 19, "");
 	}
+
+	g_free(conv_msg);
 
 	if (gc->is_idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
@@ -3146,9 +3153,6 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
-
-	g_free(conv_msg);
-	g_free(conv_msg2);
 
 	if (old_status == YAHOO_STATUS_INVISIBLE) {
 		pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_VISIBLE_TOGGLE, YAHOO_STATUS_AVAILABLE, 0);
@@ -3203,60 +3207,51 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 
 static GList *yahoo_status_types(GaimAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	struct yahoo_data *yd = NULL;
 	GaimStatusType *type;
 	GList *types = NULL;
-
-	if (gc)
-		yd = gc->proto_data;
 
 	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, _("Offline"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE, _("Available"), TRUE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
+	                                       "Available", TRUE, TRUE, FALSE,
+	                                       "message", _("Message"),
+	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	if (!yd || !yd->wm) {
-		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE_WM,
-		                                       "Available With Message", TRUE, TRUE, FALSE,
-		                                       "message", _("Message"),
-		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
+	                                       _("Away"), TRUE, TRUE, FALSE,
+	                                       "message", _("Message"),
+	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
-		                                       _("Away"), TRUE, TRUE, FALSE,
-		                                       "message", _("Message"),
-		                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not At Home"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not At Home"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATDESK, _("Not At Desk"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATDESK, _("Not At Desk"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not In Office"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not In Office"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONPHONE, _("On The Phone"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONPHONE, _("On The Phone"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out To Lunch"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out To Lunch"), TRUE);
-		types = g_list_append(types, type);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
+	types = g_list_append(types, type);
 
-		type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
-		types = g_list_append(types, type);
-	}
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, YAHOO_STATUS_TYPE_INVISIBLE, _("Invisible"), TRUE);
 	types = g_list_append(types, type);
 

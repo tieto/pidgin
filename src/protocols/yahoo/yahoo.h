@@ -52,7 +52,6 @@
 
 #define YAHOO_STATUS_TYPE_OFFLINE "offline"
 #define YAHOO_STATUS_TYPE_AVAILABLE "available"
-#define YAHOO_STATUS_TYPE_AVAILABLE_WM "available-wm"
 #define YAHOO_STATUS_TYPE_BRB "brb"
 #define YAHOO_STATUS_TYPE_BUSY "busy"
 #define YAHOO_STATUS_TYPE_NOTATHOME "notathome"
