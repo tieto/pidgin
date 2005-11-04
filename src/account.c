@@ -1891,13 +1891,15 @@ gaim_account_get_log(GaimAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	if(!account->system_log){
-		GaimConnection *gc;
+		GaimPresence *presence;
+		int login_time;
 
-		gc = gaim_account_get_connection(account);
+		presence = gaim_account_get_presence(account);
+		login_time = gaim_presence_get_login_time(presence);
 
 		account->system_log	 = gaim_log_new(GAIM_LOG_SYSTEM,
 				gaim_account_get_username(account), account, NULL,
-				(gc != NULL && gc->login_time != 0) ? gc->login_time : time(NULL));
+				(login_time != 0) ? login_time : time(NULL));
 	}
 
 	return account->system_log;

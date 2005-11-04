@@ -3468,6 +3468,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc;
 	GaimAccount *account;
+	GaimPresence *presence;
 	OscarData *od;
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
@@ -3480,12 +3481,13 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	gc = sess->aux_data;
 	account = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
 	od = gc->proto_data;
 
 	va_start(ap, fr);
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
-	
+
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->sn != NULL, 1);
 
@@ -3518,7 +3520,7 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 
 	if (!aim_sncmp(gaim_account_get_username(account), info->sn)) {
 		gaim_connection_set_display_name(gc, info->sn);
-		od->timeoffset = signon - gc->login_time;
+		od->timeoffset = signon - gaim_presence_get_login_time(presence);
 	}
 
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, info->sn));

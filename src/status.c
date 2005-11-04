@@ -1529,7 +1529,7 @@ gaim_presence_get_login_time(const GaimPresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, 0);
 
-	return presence->login_time;
+	return gaim_presence_is_online(presence) ? presence->login_time : 0;
 }
 
 gint

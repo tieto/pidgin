@@ -89,7 +89,6 @@ struct _GaimConnection
 	guint keepalive;             /**< Keep-alive.                        */
 
 	guint idle_timer;            /**< The idle timer.                    */
-	time_t login_time;           /**< Time of login.                     */
 	time_t last_sent_time;       /**< The time something was last sent.  */
 
 	gboolean is_auto_away;       /**< Whether or not it's auto-away.     */

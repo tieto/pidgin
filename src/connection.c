@@ -274,7 +274,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		presence = gaim_account_get_presence(account);
 
 		/* Set the time the account came online */
-		time(&gc->login_time);
+		gaim_presence_set_login_time(presence, time(NULL));
 
 		if (gaim_prefs_get_bool("/core/logging/log_system"))
 		{
@@ -282,7 +282,8 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 			char *msg = g_strdup_printf("+++ %s signed on",
 										gaim_account_get_username(account));
 			gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-						   gaim_account_get_username(account), gc->login_time,
+						   gaim_account_get_username(account),
+						   gaim_presence_get_login_time(presence),
 						   msg);
 			g_free(msg);
 		}
