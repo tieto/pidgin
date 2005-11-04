@@ -37,6 +37,7 @@
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
+static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_changed(GtkComboBox *box);
 static void gtk_gaim_status_box_size_request (GtkWidget *widget, GtkRequisition *requisition);
@@ -112,9 +113,39 @@ gtk_gaim_status_box_get_property(GObject *object, guint param_id,
 }
 
 static void
-account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatus *newstatus, GtkGaimStatusBox* status_box)
+update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *account, GaimStatus *newstatus)
 {
-	/*update_to_reflect_current_status(status_box);*/
+	const GList *l;
+	int status_no = -1;
+	const GaimStatusType *statustype = NULL;
+
+	statustype = gaim_status_type_find_with_id((GList *)gaim_account_get_status_types(account),
+	                                           (char *)gaim_status_type_get_id(gaim_status_get_type(newstatus)));
+
+	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next) {
+		GaimStatusType *status_type = (GaimStatusType *)l->data;
+
+		if (!gaim_status_type_is_user_settable(status_type))
+			continue;
+		status_no++;
+		if (statustype == status_type)
+			break;
+	}
+
+	if (status_no != -1) {
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), status_no);
+		gtk_gaim_status_box_refresh(status_box);
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
+	}
+
+}
+
+static void
+account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatus *newstatus, GtkGaimStatusBox *status_box)
+{
+	if (status_box->account == account)
+		update_to_reflect_account_status(status_box, account, newstatus);
 }
 
 static void
@@ -128,10 +159,13 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 		statusbox->account = g_value_get_pointer(value);
 
 		/* FIXME: call this in the destroy function too, if we had one */
-		if (0 && statusbox->status_changed_signal)
-			;/*gaim_signals_disconnect_by_handle(statusbox->status_changed_signal);*/
+		if (statusbox->status_changed_signal) {
+			gaim_signal_disconnect(gaim_accounts_get_handle(), "account-status-changed",
+			                        statusbox, GAIM_CALLBACK(account_status_changed_cb));
+			statusbox->status_changed_signal = 0;
+		}
 		if (statusbox->account)
-			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account_status_changed",
+			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
 			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
 			                                                       statusbox);
 		gtk_gaim_status_box_regenerate(statusbox);
@@ -412,7 +446,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 									gaim_status_type_get_name(status_type),
 									NULL);
 		}
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0); /* set something active to avoid blowing up */
+		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
 	}
 
 }
