@@ -49,7 +49,7 @@ idle_filter(GaimAccount *acct)
 static void
 set_idle_time(GaimAccount *acct, int mins_idle)
 {
-	time_t t = time(NULL); /* grab the current time */
+	time_t t;
 	GaimConnection *gc = gaim_account_get_connection(acct);
 	GaimPresence *presence = gaim_account_get_presence(acct);
 
@@ -60,9 +60,8 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 			"setting idle time for %s to %d\n",
 			gaim_account_get_username(acct), mins_idle);
 
-	t -= 60 * mins_idle; /* subtract seconds idle from current time */
+	t -= time(NULL) - (60 * mins_idle); /* subtract seconds idle from current time */
 	gc->last_sent_time = t;
-	gc->is_idle = 0;
 
 	gaim_presence_set_idle(presence, mins_idle ? TRUE : FALSE, t);
 }

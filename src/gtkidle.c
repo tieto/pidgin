@@ -118,10 +118,13 @@ gaim_gtk_idle_check(gpointer data)
 	GaimConnection *gc = (GaimConnection *)data;
 	gboolean report_idle;
 	GaimAccount *account;
+	GaimPresence *presence;
 	time_t t;
 	int idle_time;
 
 	account = gaim_connection_get_account(gc);
+
+	presence = gaim_account_get_presence(account);
 
 	gaim_signal_emit(gaim_blist_get_handle(), "update-idle");
 
@@ -130,14 +133,14 @@ gaim_gtk_idle_check(gpointer data)
 	report_idle = gaim_prefs_get_bool("/gaim/gtk/idle/report");
 
 #ifdef USE_SCREENSAVER
-		idle_time = get_idle_time_from_system();
+	idle_time = get_idle_time_from_system();
 #else
-		/*
-		 * If Gaim wasn't built with xscreensaver support, then
-		 * fallback to calculating our idle time based on when
-		 * we last sent a message.
-		 */
-		idle_time = t - gc->last_sent_time;
+	/*
+	 * If Gaim wasn't built with xscreensaver support, then
+	 * fallback to calculating our idle time based on when
+	 * we last sent a message.
+	 */
+	idle_time = t - gc->last_sent_time;
 #endif /* USE_SCREENSAVER */
 
 	/* Should we become auto-away? */
@@ -145,10 +148,6 @@ gaim_gtk_idle_check(gpointer data)
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away))
 	{
-		GaimPresence *presence;
-
-		presence = gaim_account_get_presence(account);
-
 		if (gaim_presence_is_available(presence))
 		{
 			const char *idleaway_name;
@@ -182,16 +181,16 @@ gaim_gtk_idle_check(gpointer data)
 	}
 
 	/* Deal with reporting idleness to the server, if appropriate */
-	if (report_idle && idle_time >= IDLEMARK && !gc->is_idle) {
+	if (report_idle && idle_time >= IDLEMARK && !gaim_presence_is_idle(presence)) {
 		gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 				   gaim_account_get_username(account), idle_time);
 		serv_set_idle(gc, idle_time);
-		gc->is_idle = 1;
+		gaim_presence_set_idle(presence, TRUE, time(NULL));
 		/* LOG	system_log(log_idle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
-	} else if ((!report_idle || idle_time < IDLEMARK) && gc->is_idle) {
+	} else if ((!report_idle || idle_time < IDLEMARK) && gaim_presence_is_idle(presence)) {
 		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
-		gc->is_idle = 0;
+		gaim_presence_set_idle(presence, FALSE, time(NULL));
 		serv_set_idle(gc, 0);
 		/* LOG	system_log(log_unidle, gc, NULL, OPT_LOG_BUDDY_IDLE | OPT_LOG_MY_SIGNON); */
 	}

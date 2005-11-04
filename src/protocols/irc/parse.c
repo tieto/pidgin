@@ -415,6 +415,7 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 		return buf;
 	} else if (!strncmp(cur, "PING ", 5)) {
 		if (notice) { /* reply */
+			/* TODO: Should this read in the timestamp as a double? */
 			sscanf(cur, "PING %lu", &timestamp);
 			gc = gaim_account_get_connection(irc->account);
 			if (!gc)

@@ -104,7 +104,7 @@ struct _GaimBuddy {
 	char *server_alias;                     /**< The server-specified alias of the buddy.  (i.e. MSN "Friendly Names") */
 	void *proto_data;                       /**< This allows the prpl to associate whatever data it wants with a buddy */
 	GaimBuddyIcon *icon;                    /**< The buddy icon. */
-	GaimAccount *account;           	/**< the account this buddy belongs to */
+	GaimAccount *account;					/**< the account this buddy belongs to */
 	GaimPresence *presence;
 };
 

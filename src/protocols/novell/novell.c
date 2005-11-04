@@ -2980,6 +2980,7 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
 	gboolean connected;
+	GaimPresence *presence;
 	GaimStatusType *type;
 	GaimStatusPrimitive primitive;
 	NMUser *user;
@@ -2989,6 +2990,7 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 	char *text = NULL;
 
 	connected = gaim_account_is_connected(account);
+	presence = gaim_status_get_presence(status);
 	type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(type);
 
@@ -3036,7 +3038,7 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 		novellstatus = NM_STATUS_BUSY;
 	} else if (primitive == GAIM_STATUS_HIDDEN) {
 		novellstatus = NM_STATUS_OFFLINE;
-	} else if (gc->is_idle) {
+	} else if (gaim_presence_is_idle(presence)) {
 		novellstatus = NM_STATUS_AWAY_IDLE;
 	} else {
 		novellstatus = NM_STATUS_AVAILABLE;
