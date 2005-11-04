@@ -254,6 +254,13 @@ bonjour_convo_closed(GaimConnection *connection, const char *who)
 {
 	GaimBuddy *buddy = gaim_find_buddy(connection->account, who);
 
+	if (buddy == NULL)
+		/*
+		 * This buddy is not in our buddy list, and therefore does not really
+		 * exist, so we won't have any data about them.
+		 */
+		return;
+
 	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
 }
 
