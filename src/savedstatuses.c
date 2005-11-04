@@ -458,6 +458,8 @@ gaim_savedstatus_find(const char *title)
 	GList *l;
 	GaimSavedStatus *status;
 
+	g_return_val_if_fail(title != NULL, NULL);
+
 	for (l = saved_statuses; l != NULL; l = g_list_next(l))
 	{
 		status = (GaimSavedStatus *)l->data;

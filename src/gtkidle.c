@@ -40,8 +40,8 @@
 #include "savedstatuses.h"
 #include "signals.h"
 
-#define IDLEMARK 600	/* 10 minutes! */
-#define IDLE_CHECK_INTERVAL 20000 /* 20 seconds */
+#define IDLEMARK 60	/* 10 minutes! */
+#define IDLE_CHECK_INTERVAL 20 /* 20 seconds */
 
 typedef enum
 {
@@ -152,7 +152,7 @@ gaim_gtk_idle_check(gpointer data)
 	idle_time = t - gc->last_sent_time;
 #endif /* USE_SCREENSAVER */
 
-	/* Should we become auto-away? */
+	/* Begining of auto-away stuff */
 	if (gaim_prefs_get_bool("/core/away/away_when_idle") &&
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away))
@@ -169,38 +169,52 @@ gaim_gtk_idle_check(gpointer data)
 			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
 			saved_status = gaim_savedstatus_find(idleaway_name);
 			if (saved_status)
-				gaim_savedstatus_activate(saved_status);
+				gaim_savedstatus_activate_for_account(saved_status, account);
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {
 			gc->is_auto_away = GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY;
 		}
 
-	/* Should we return from being auto-away? */
 	} else if (gc->is_auto_away &&
-			idle_time < 60 * gaim_prefs_get_int("/core/away/mins_before_away")) {
+			idle_time < 60 * gaim_prefs_get_int("/core/away/mins_before_away"))
+	{
+		/* Return from being idle */
+		const char *idleaway_name;
+		GaimSavedStatus *saved_status;
+
 		if (gc->is_auto_away == GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY) {
 			gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
-			return TRUE;
+		} else {
+			gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
+
+			gaim_debug_info("idle", "%s returning from auto-away\n",
+							gaim_account_get_username(account));
+
+			/* Return our account to its previous status */
+			idleaway_name = gaim_prefs_get_string("/core/status/current");
+			saved_status = gaim_savedstatus_find(idleaway_name);
+			if (saved_status)
+				gaim_savedstatus_activate_for_account(saved_status, account);
 		}
-		gc->is_auto_away = GAIM_IDLE_NOT_AWAY;
-
-		/* XXX STATUS AWAY CORE/UI */
-		/* Need to set this connection to available here */
 	}
+	/* End of auto-away stuff */
 
-	/* Deal with reporting idleness to the server, if appropriate */
-	if (report_idle && idle_time >= IDLEMARK && !have_set_idle && !gaim_presence_is_idle(presence)) {
+	/* Begining of idle reporting stuff */
+	if (report_idle && idle_time >= IDLEMARK && !have_set_idle && !gaim_presence_is_idle(presence))
+	{
 		gaim_debug_info("idle", "Setting %s idle %d seconds\n",
 				   gaim_account_get_username(account), idle_time);
-		gaim_presence_set_idle(presence, TRUE, time(NULL));
+		gaim_presence_set_idle(presence, TRUE, time(NULL) - idle_time);
 		have_set_idle = TRUE;
-	} else if ((!report_idle || idle_time < IDLEMARK) && have_set_idle && gaim_presence_is_idle(presence)) {
+	} else if ((!report_idle || idle_time < IDLEMARK) && have_set_idle && gaim_presence_is_idle(presence))
+	{
 		gaim_debug_info("idle", "Setting %s unidle\n",
 				   gaim_account_get_username(account));
 		gaim_presence_set_idle(presence, FALSE, time(NULL));
 		have_set_idle = FALSE;
 	}
+	/* End of idle reporting stuff */
 
 	return TRUE;
 }
@@ -235,7 +249,7 @@ connection_connected_cb(GaimConnection *gc, gpointer user_data)
 {
 	/* Now that we are connected, check for idleness every 20 seconds */
 	remove_idle_timer(gc);
-	gc->idle_timer = gaim_timeout_add(IDLE_CHECK_INTERVAL, gaim_gtk_idle_check, gc);
+	gc->idle_timer = gaim_timeout_add(IDLE_CHECK_INTERVAL * 1000, gaim_gtk_idle_check, gc);
 
 	/* Immediately update our idleness, in case we connected while idle */
 	gaim_gtk_idle_check(gc);
