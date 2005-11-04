@@ -3127,9 +3127,9 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *msg = gaim_status_get_attr_string(status, "message");
 
-		if (msg == NULL) {
-			gaim_debug_info("yahoo", "Attempted to set a NULL status message.\n");
-			msg = "";
+		if ((msg == NULL) || (*msg == '\0')) {
+			gaim_debug_info("yahoo", "Attempted to set an empty status message, using a default string.\n");
+			msg = _("Away");
 		}
 
 		conv_msg = yahoo_string_encode(gc, msg, NULL);
