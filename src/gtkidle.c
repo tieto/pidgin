@@ -40,7 +40,7 @@
 #include "savedstatuses.h"
 #include "signals.h"
 
-#define IDLEMARK 60	/* 10 minutes! */
+#define IDLEMARK 600 /* 10 minutes! */
 #define IDLE_CHECK_INTERVAL 20 /* 20 seconds */
 
 typedef enum
