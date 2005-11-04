@@ -309,6 +309,7 @@ static void oscar_xfer_init_send(GaimXfer *xfer);
 static void oscar_direct_im_initiate(GaimConnection *gc, const char *who, const guchar *cookie);
 static void recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer data);
 static void oscar_set_info(GaimConnection *gc, const char *info);
+static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
 
 static void oscar_free_name_data(struct name_data *data) {
 	g_free(data->name);
@@ -5766,7 +5767,8 @@ static int gaim_parse_locaterights(aim_session_t *sess, aim_frame_t *fr, ...)
 		aim_locate_setcaps(od->sess, caps_icq);
 	else
 		aim_locate_setcaps(od->sess, caps_aim);
-	oscar_set_info(gc, account->user_info);
+	oscar_set_info_and_status(account, TRUE, account->user_info, TRUE,
+							  gaim_account_get_active_status(account));
 
 	return 1;
 }
@@ -6450,17 +6452,48 @@ gchar *gaim_prpl_oscar_convert_to_infotext(const gchar *str, gsize *ret_len, cha
 	return encoded;
 }
 
-/*
- * If we're away, this will also send the away message to the server.
- */
 static void
 oscar_set_info(GaimConnection *gc, const char *rawinfo)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
-	OscarData *od = (OscarData *)gc->proto_data;
+	GaimAccount *account;
 	GaimStatus *status;
+
+	account = gaim_connection_get_account(gc);
+	status = gaim_account_get_active_status(account);
+	oscar_set_info_and_status(account, TRUE, rawinfo, FALSE, status);
+}
+
+static void
+oscar_set_extendedstatus(GaimConnection *gc)
+{
+	OscarData *od;
+	GaimAccount *account;
+	GaimPresence *presence;
+	gboolean invisible;
+
+	od = gc->proto_data;
+	account = gaim_connection_get_account(gc);
+	presence = gaim_account_get_presence(account);
+	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_HIDDEN);
+
+	if (invisible)
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
+	else if (!gaim_presence_is_available(presence))
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
+	else
+		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+}
+
+static void
+oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo,
+						  gboolean setstatus, GaimStatus *status)
+{
+	GaimConnection *gc = gaim_account_get_connection(account);
+	OscarData *od = gc->proto_data;
+	GaimPresence *presence;
 	GaimStatusType *status_type;
 	GaimStatusPrimitive primitive;
+	gboolean invisible;
 
 	char *htmlinfo;
 	char *info_encoding = NULL;
@@ -6472,18 +6505,24 @@ oscar_set_info(GaimConnection *gc, const char *rawinfo)
 	char *away = NULL;
 	gsize awaylen = 0;
 
-	status = gaim_account_get_active_status(account);
 	status_type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(status_type);
+	presence = gaim_account_get_presence(account);
+	invisible = gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_HIDDEN);
 
-	if (od->rights.maxsiglen == 0)
+	if (!setinfo)
+	{
+		/* Do nothing! */
+	}
+	else if (od->rights.maxsiglen == 0)
+	{
 		gaim_notify_warning(gc, NULL, _("Unable to set AIM profile."),
 							_("You have probably requested to set your "
 							  "profile before the login procedure completed.  "
 							  "Your profile remains unset; try setting it "
 							  "again when you are fully connected."));
-
-	if (rawinfo != NULL)
+	}
+	else if (rawinfo != NULL)
 	{
 		htmlinfo = gaim_strdup_withhtml(rawinfo);
 		info = gaim_prpl_oscar_convert_to_infotext(htmlinfo, &infolen, &info_encoding);
@@ -6507,12 +6546,30 @@ oscar_set_info(GaimConnection *gc, const char *rawinfo)
 		info = g_strdup("");
 	}
 
-	if (primitive == GAIM_STATUS_AWAY)
+	if (!setstatus)
 	{
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
+		/* Do nothing! */
+	}
+	else if (primitive == GAIM_STATUS_AVAILABLE)
+	{
+		const char *avail_html;
+		char *avail_text;
 
+		avail_html = gaim_status_get_attr_string(status, "message");
+		if (avail_html != NULL)
+		{
+			avail_text = gaim_markup_strip_html(avail_html);
+			aim_srv_setavailmsg(od->sess, avail_text);
+			g_free(avail_text);
+		}
+
+		/* This is needed for us to un-set any previous away message. */
+		away = g_strdup("");
+	}
+	else if (primitive == GAIM_STATUS_AWAY)
+	{
 		htmlaway = gaim_status_get_attr_string(status, "message");
-		if (htmlaway == NULL)
+		if ((htmlaway == NULL) || (*htmlaway == '\0'))
 			htmlaway = _("Away");
 		away = gaim_prpl_oscar_convert_to_infotext(htmlaway, &awaylen, &away_encoding);
 
@@ -6530,85 +6587,13 @@ oscar_set_info(GaimConnection *gc, const char *rawinfo)
 		}
 	}
 
+	if (setstatus)
+		oscar_set_extendedstatus(gc);
+
 	aim_locate_setprofile(od->sess, info_encoding, info, MIN(infolen, od->rights.maxsiglen),
 									away_encoding, away, MIN(awaylen, od->rights.maxawaymsglen));
 	g_free(info);
 	g_free(away);
-}
-
-static void
-oscar_set_status_aim(GaimAccount *account, GaimStatus *status)
-{
-	GaimConnection *gc = gaim_account_get_connection(account);
-	OscarData *od = (OscarData *)gc->proto_data;
-	GaimPresence *presence;
-	GaimStatusType *status_type;
-	GaimStatusPrimitive primitive;
-	const gchar *status_id;
-
-	const gchar *text_html = NULL;
-	char *away_encoding = NULL;
-	char *away = NULL;
-	gsize awaylen = 0;
-
-	status_type = gaim_status_get_type(status);
-	primitive = gaim_status_type_get_primitive(status_type);
-	status_id = gaim_status_get_id(status);
-	presence = gaim_account_get_presence(account);
-
-	if ((od == NULL) || (od->rights.maxawaymsglen == 0)) {
-		gaim_notify_warning(gc, NULL, _("Unable to set AIM away message."),
-				    _("You have probably requested to set your "
-				      "away message before the login procedure "
-				      "completed.  You remain in a \"present\" "
-				      "state; try setting it again when you are "
-				      "fully connected."));
-		return;
-	}
-
-	if (primitive == GAIM_STATUS_AVAILABLE) {
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_NORMAL);
-
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, NULL, "", 0);
-
-		text_html = gaim_status_get_attr_string(status, "message");
-		if (text_html != NULL) {
-			aim_srv_setavailmsg(od->sess, text_html);
-		}
-
-	} else if (primitive == GAIM_STATUS_AWAY) {
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_AWAY);
-
-		text_html = gaim_status_get_attr_string(status, "message");
-
-		if ((text_html == NULL) || (*text_html == '\0')) {
-			text_html = _("Away");
-		}
-
-		away = gaim_prpl_oscar_convert_to_infotext(text_html, &awaylen, &away_encoding);
-		aim_locate_setprofile(od->sess, NULL, NULL, 0, away_encoding, away,
-				MIN(awaylen, od->rights.maxawaymsglen));
-		g_free(away);
-
-		if (awaylen > od->rights.maxawaymsglen) {
-			gchar *errstr;
-
-			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
-									 "has been exceeded.  Gaim has truncated it for you.",
-									 "The maximum away message length of %d bytes "
-									 "has been exceeded.  Gaim has truncated it for you.",
-									 od->rights.maxawaymsglen), od->rights.maxawaymsglen);
-			gaim_notify_warning(gc, NULL, _("Away message too long."), errstr);
-			g_free(errstr);
-		}
-
-	} else if (primitive == GAIM_STATUS_HIDDEN) {
-		aim_setextstatus(od->sess, AIM_ICQ_STATE_INVISIBLE);
-
-	} else {
-		gaim_debug_info("oscar", "Don't know what to do for this status\n");
-
-	}
 }
 
 static void
@@ -6671,7 +6656,7 @@ oscar_set_status(GaimAccount *account, GaimStatus *status)
 		oscar_set_status_icq(account, status);
 	else
 		/* QQQ - Should probably also set this for ICQ */
-		oscar_set_status_aim(account, status);
+		oscar_set_info_and_status(account, FALSE, NULL, TRUE, status);
 }
 
 #ifdef CRAZY_WARN
@@ -6800,6 +6785,8 @@ static int gaim_ssi_parseerr(aim_session_t *sess, aim_frame_t *fr, ...) {
 		od->getblisttimer = gaim_timeout_add(300000, gaim_ssi_rerequestdata, od->sess);
 	}
 
+	oscar_set_extendedstatus(gc);
+
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
 	/* Make sure your privacy setting/invisibility is set how you want it before this! */
@@ -6842,11 +6829,11 @@ static int gaim_ssi_parserights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
-	GaimConnection *gc = sess->aux_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimStatus *status;
-	OscarData *od = (OscarData *)gc->proto_data;
+static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	GaimConnection *gc;
+	OscarData *od;
+	GaimAccount *account;
 	GaimGroup *g;
 	GaimBuddy *b;
 	struct aim_ssi_item *curitem;
@@ -6855,6 +6842,10 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 	fu16_t fmtver, numitems;
 	struct aim_ssi_item *items;
 	fu32_t timestamp;
+
+	gc = sess->aux_data;
+	od = gc->proto_data;
+	account = gaim_connection_get_account(gc);
 
 	va_start(ap, fr);
 	fmtver = (fu16_t)va_arg(ap, int);
@@ -7048,14 +7039,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...) {
 		} /* End of switch on curitem->type */
 	} /* End of for loop */
 
-	/*
-	 * XXX - STATUS - Set our ICQ status.  We probably don't want to do
-	 * this.  We probably want the SSI status setting to override the local
-	 * setting.
-	 */
-	status = gaim_presence_get_active_status(account->presence);
-	if (gaim_status_is_available(status))
-		aim_setextstatus(sess, AIM_ICQ_STATE_NORMAL);
+	oscar_set_extendedstatus(gc);
 
 	/* Activate SSI */
 	/* Sending the enable causes other people to be able to see you, and you to see them */
