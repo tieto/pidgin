@@ -4262,6 +4262,9 @@ void gtk_imhtml_font_grow(GtkIMHtml *imhtml)
 		if (imhtml->wbfo) { \
 			gtk_text_buffer_get_bounds(imhtml->text_buffer, &start, &end); \
 			remove_func(imhtml, &start, &end, TRUE); \
+		} else { \
+			if (gtk_text_buffer_get_selection_bounds(imhtml->text_buffer, &start, &end)) \
+				remove_func(imhtml, &start, &end, TRUE); \
 		} \
 	} \
 \
