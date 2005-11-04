@@ -1145,45 +1145,49 @@ _send_message(NMUser * user, NMMessage * message)
 	}
 }
 
-/* Update the status of the given buddy in the Gaim buddy list */
+/*
+ * Update the status of the given buddy in the Gaim buddy list
+ * TODO: This needs testing.  And we need to tell the core the
+ *       away message for the person.
+ */
 static void
-_update_buddy_status(GaimBuddy * buddy, int status, int gmt)
+_update_buddy_status(GaimBuddy * buddy, int novellstatus, int gmt)
 {
-#if 0
-	GaimConnection *gc = gaim_account_get_connection(buddy->account);
-	int gstatus = status << 1;
+	GaimAccount *account;
+	const char *status_id;
 	int idle = 0;
 	gboolean loggedin = TRUE;
 
-	switch (status) {
+	account = buddy->account;
+
+	switch (novellstatus) {
 		case NM_STATUS_AVAILABLE:
-			/*nothing to do */
+			status_id = "available";
 			break;
 		case NM_STATUS_AWAY:
+			status_id = "away";
+			break;
 		case NM_STATUS_BUSY:
-			gstatus |= UC_UNAVAILABLE;
+			status_id = "busy";
 			break;
 		case NM_STATUS_OFFLINE:
+			status_id = "appearoffline";
 			loggedin = FALSE;
-			gstatus |= UC_UNAVAILABLE;
 			break;
 		case NM_STATUS_AWAY_IDLE:
+			status_id = "away";
 			idle = gmt;
-			gstatus |= UC_UNAVAILABLE;
 			break;
 		default:
-			gstatus |= UC_UNAVAILABLE;
+			status_id = "away";
 			loggedin = FALSE;
 			break;
 	}
 
-	gaim_prpl_user_status(account, buddy->name,
-						  (loggedin ? "available" : "offline"), NULL);
-	if (time_idle > 0)
-		gaim_prpl_got_user_idle(account, buddy->name, TRUE, idle);
-	else
-		gaim_prpl_got_user_idle(account, buddy->name, FALSE, 0);
-#endif
+	gaim_prpl_got_user_status(account, buddy->name,
+							  status_id, NULL);
+	gaim_prpl_got_user_idle(account, buddy->name,
+							(novellstatus == NM_STATUS_AWAY_IDLE), idle);
 }
 
 /* Iterate through the cached Gaim buddy list and remove buddies
@@ -2953,16 +2957,19 @@ novell_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, "available", _("Available"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, "available", _("Available"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "away", _("Away"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, "away", _("Away"),
+										   TRUE, TRUE, FALSE,
+										   "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+										    NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "appearoffline", _("Appear Offline"), TRUE, TRUE, TRUE);
+	type = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "appearoffline", _("Appear Offline"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	return status_types;
@@ -2971,9 +2978,15 @@ novell_status_types(GaimAccount *account)
 static void
 novell_set_status(GaimAccount *account, GaimStatus *status)
 {
+	GaimConnection *gc;
 	gboolean connected;
 	GaimStatusType *type;
-	int primitive;
+	GaimStatusPrimitive primitive;
+	NMUser *user;
+	NMSTATUS_T novellstatus = NM_STATUS_AVAILABLE;
+	NMERR_T rc = NM_OK;
+	const char *msg = NULL;
+	char *text = NULL;
 
 	connected = gaim_account_is_connected(account);
 	type = gaim_status_get_type(status);
@@ -2990,81 +3003,51 @@ novell_set_status(GaimAccount *account, GaimStatus *status)
 	if (!connected)
 		return;
 
-	/* TODO: Need to do the same stuff that novell_set_away does here */
-}
-
-#if 0
-static void
-novell_set_away(GaimConnection * gc, const char *state, const char *msg)
-{
-	NMUser *user;
-	NMSTATUS_T status = NM_STATUS_AVAILABLE;
-	NMERR_T rc = NM_OK;
-	char *text = NULL;
-	char *tmp = NULL;
-	char *p = NULL;
-
-	if (gc == NULL)
-		return;
-
+	gc = gaim_account_get_connection(account);
 	user = gc->proto_data;
 	if (user == NULL)
 		return;
 
-	if (gc->away) {
-		g_free(gc->away);
-		gc->away = NULL;
-	}
+	if (primitive == GAIM_STATUS_AVAILABLE) {
+		novellstatus = NM_STATUS_AVAILABLE;
+	} else if (primitive == GAIM_STATUS_AWAY) {
+		novellstatus = NM_STATUS_AWAY;
 
-	if (msg != NULL) {
-		status = NM_STATUS_AWAY;
-		gc->away = g_strdup("");
+		msg = gaim_status_get_attr_string(status, "message");
 
-		/* Don't want newlines in status text */
-		tmp = g_strdup(msg);
-		if ((p = strchr(tmp, '\n'))) {
-			*p = '\0';
+		if ((msg != NULL) && (*msg != '\0')) {
+			/* Truncate the status text if necessary */
+			/*
+			 * TODO: I think this might not be correctly
+			 *       NULL-terminated..? And what if the string is
+			 *       61 characters?  Buffer overflow?
+			 */
+			text = g_strdup(msg);
+			if (g_utf8_strlen(msg, -1) > 60) {
+				g_utf8_strncpy(text, msg, 60);
+				strcat(text, "...");
+			}
+
+			/* Don't want newlines in status text */
+			gaim_util_chrreplace(text, '\n', ' ');
 		}
 
-		/* Truncate the status text if necessary */
-		text = g_strdup(tmp);
-		if (g_utf8_strlen(tmp, -1) > 60) {
-			g_utf8_strncpy(text, tmp, 60);
-			strcat(text, "...");
-		}
-
-		g_free(tmp);
-
-	} else if (state) {
-		if (!strcmp(state, _("Available"))) {
-			status = NM_STATUS_AVAILABLE;
-		} else if (!strcmp(state, _("Away"))) {
-			status = NM_STATUS_AWAY;
-			gc->away = g_strdup("");
-		} else if (!strcmp(state, _("Busy"))) {
-			status = NM_STATUS_BUSY;
-			gc->away = g_strdup("");
-		} else if (!strcmp(state, _("Appear Offline"))) {
-			status = NM_STATUS_OFFLINE;
-			gc->away = g_strdup("");
-		} else {
-			status = NM_STATUS_AVAILABLE;
-			g_free(gc->away);
-			gc->away = NULL;
-		}
+	} else if (primitive == GAIM_STATUS_UNAVAILABLE) {
+		novellstatus = NM_STATUS_BUSY;
+	} else if (primitive == GAIM_STATUS_HIDDEN) {
+		novellstatus = NM_STATUS_OFFLINE;
 	} else if (gc->is_idle) {
-		status = NM_STATUS_AWAY_IDLE;
+		novellstatus = NM_STATUS_AWAY_IDLE;
 	} else {
-		status = NM_STATUS_AVAILABLE;
+		novellstatus = NM_STATUS_AVAILABLE;
 	}
 
-	rc = nm_send_set_status(user, status, text, msg, NULL, NULL);
+	rc = nm_send_set_status(user, novellstatus, text, msg, NULL, NULL);
 	_check_for_disconnect(user, rc);
 
 	if (text)
 		g_free(text);
 }
-#endif
 
 static void
 novell_add_permit(GaimConnection *gc, const char *who)
