@@ -678,6 +678,7 @@ parse_account(xmlnode *node)
 	char *protocol_id = NULL;
 	char *name = NULL;
 	char *data;
+	gboolean upgrade = FALSE;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -728,6 +729,8 @@ parse_account(xmlnode *node)
 	if (child != NULL)
 	{
 		parse_statuses(child, ret);
+	} else {
+		upgrade = TRUE;
 	}
 
 	/* Read the userinfo */
@@ -758,6 +761,10 @@ parse_account(xmlnode *node)
 	if (child != NULL)
 	{
 		parse_proxy_info(child, ret);
+	}
+
+	if (upgrade && gaim_account_get_enabled(ret, gaim_core_get_ui())) {
+		gaim_presence_set_status_active(ret->presence, "available", TRUE);
 	}
 
 	return ret;
