@@ -264,6 +264,8 @@ spellchk_free(spellchk *spell)
 {
 	GtkTextBuffer *buffer;
 
+	g_return_if_fail(spell != NULL);
+
 	buffer = gtk_text_view_get_buffer(spell->view);
 
 	g_signal_handlers_disconnect_matched(spell->view,
@@ -579,6 +581,17 @@ spellchk_new_attach(GaimConversation *c) {
 			G_CALLBACK(insert_text_after), spell);
 
 	return;
+}
+
+static void
+spellchk_detach(GaimConversation *conv)
+{
+	GaimGtkConversation *gtkconv;
+	spellchk *spell;
+
+	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	spell = g_object_steal_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
+	spellchk_free(spell);
 }
 
 static int buf_get_line(char *ibuf, char **buf, int *position, int len)
@@ -1938,6 +1951,20 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	GList *convs;
+
+	/* Detach from existing conversations */
+	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
+	{
+		spellchk_detach((GaimConversation *)convs->data);
+	}
+
+	return TRUE;
+}
+
 static GtkWidget *
 get_config_frame(GaimPlugin *plugin)
 {
@@ -2108,7 +2135,7 @@ static GaimPluginInfo info =
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
 	plugin_load,
-	NULL,
+	plugin_unload,
 	NULL,
 	&ui_info,
 	NULL,

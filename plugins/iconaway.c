@@ -43,7 +43,7 @@ extern void applet_destroy_buddy();
 static void
 iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 {
-#if 0 /* STATUS */
+#if 0 /* XXX TODO STATUS */
 	GaimConvWindow *win;
 	GList *windows;
 	GaimConnection *gc;
@@ -70,7 +70,7 @@ iconify_windows(GaimAccount *account, char *state, char *message, void *data)
 			gtk_window_iconify(GTK_WINDOW(gtkwin->window));
 		}
 	}
-#endif /* STATUS */
+#endif /* XXX TODO STATUS */
 }
 
 /*
