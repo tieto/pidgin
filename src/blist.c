@@ -2548,8 +2548,10 @@ gaim_blist_init(void)
 	                     3,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_BLIST_BUDDY),
-	                     gaim_value_new(GAIM_TYPE_POINTER),
-	                     gaim_value_new(GAIM_TYPE_POINTER));
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                     				GAIM_SUBTYPE_STATUS),
+	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
+	                     				GAIM_SUBTYPE_STATUS));
 
 	gaim_signal_register(handle, "buddy-idle-changed",
 	                     gaim_marshal_VOID__POINTER_INT_INT, NULL,

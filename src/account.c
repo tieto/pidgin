@@ -2274,8 +2274,10 @@ gaim_accounts_init(void)
 						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT),
-						 gaim_value_new(GAIM_TYPE_POINTER),
-						 gaim_value_new(GAIM_TYPE_POINTER));
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_STATUS),
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_STATUS));
 	
 	load_accounts();
 
