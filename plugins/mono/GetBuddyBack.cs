@@ -14,7 +14,7 @@ public class GetBuddyBack : GaimPlugin
 		Debug.debug(Debug.INFO, "buddyback", "loading...\n");
 		
 		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-back", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyBack.connect(this, new Signal.Handler(HandleSig));
+		/*BuddyList.OnBuddyBack.connect(this, new Signal.Handler(HandleSig));*/
 	}
 	
 	public override void Unload()

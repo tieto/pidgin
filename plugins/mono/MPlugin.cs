@@ -5,8 +5,10 @@ public class MPlugin : GaimPlugin
 	public void HandleSig(object[] args)
 	{
 		Buddy buddy = (Buddy)args[0];
+		Status old_status = (Status)args[1];
+		Status status = (Status)args[2];
 		
-		Debug.debug(Debug.INFO, "mplug", "buddy " + buddy.Name + " went away\n");
+		Debug.debug(Debug.INFO, "mplug", "buddy " + buddy.Name + " went from " + old_status.Id + " to " + status.Id + "\n");
 	}
 	
 	public override void Load()
@@ -14,7 +16,7 @@ public class MPlugin : GaimPlugin
 		Debug.debug(Debug.INFO, "mplug", "loading...\n");
 		
 		/*Signal.connect(BuddyList.GetHandle(), this, "buddy-away", new Signal.Handler(HandleSig));*/
-		BuddyList.OnBuddyAway.connect(this, new Signal.Handler(HandleSig));
+		BuddyList.OnBuddyStatusChanged.connect(this, new Signal.Handler(HandleSig));
 	}
 	
 	public override void Unload()

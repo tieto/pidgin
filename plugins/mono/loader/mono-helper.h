@@ -13,51 +13,61 @@
 
 typedef struct {
 	GaimPlugin *plugin;
+	
 	MonoAssembly *assm;
 	MonoClass *klass;
 	MonoObject *obj;	
+	
 	MonoMethod *init;
 	MonoMethod *load;
 	MonoMethod *unload;
 	MonoMethod *destroy;
+	
+	GList *signal_data;
 } GaimMonoPlugin;
 
-MonoObject* mono_loader_invoke(MonoMethod *method, void *obj, void **params);
+gboolean ml_init();
 
-MonoObject* mono_loader_delegate_invoke(MonoObject *method, void **params);
+void ml_uninit();
 
-MonoClass* mono_loader_find_plugin_class(MonoImage *image);
+MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params);
 
-gchar* mono_loader_get_prop_string(MonoObject *obj, char *field);
+MonoObject* ml_delegate_invoke(MonoObject *method, void **params);
 
-void mono_loader_set_prop_string(MonoObject *obj, char *field, char *data);
+MonoClass* ml_find_plugin_class(MonoImage *image);
 
-gboolean mono_loader_is_api_dll(MonoImage *image);
+gchar* ml_get_prop_string(MonoObject *obj, char *field);
 
-MonoDomain* mono_loader_get_domain(void);
+void ml_set_prop_string(MonoObject *obj, char *field, char *data);
 
-void mono_loader_set_domain(MonoDomain *d);
+gboolean ml_is_api_dll(MonoImage *image);
 
-void mono_loader_init_internal_calls(void);
+MonoDomain* ml_get_domain(void);
 
-MonoObject* mono_loader_object_from_gaim_type(GaimType type, gpointer data);
+void ml_set_domain(MonoDomain *d);
 
-MonoObject* mono_loader_object_from_gaim_subtype(GaimSubType type, gpointer data);
+void ml_init_internal_calls(void);
 
-void mono_loader_set_api_image(MonoImage *image);
+MonoObject* ml_object_from_gaim_type(GaimType type, gpointer data);
 
-MonoImage* mono_loader_get_api_image();
+MonoObject* ml_object_from_gaim_subtype(GaimSubType type, gpointer data);
+
+void ml_set_api_image(MonoImage *image);
+
+MonoImage* ml_get_api_image();
+
+void ml_destroy_signal_data(gpointer data, gpointer user_data);
 
 /* hash table stuff; probably don't need it anymore */
 
-void mono_loader_add_plugin(GaimMonoPlugin *plugin);
+void ml_add_plugin(GaimMonoPlugin *plugin);
 
-gboolean mono_loader_remove_plugin(GaimMonoPlugin *plugin);
+gboolean ml_remove_plugin(GaimMonoPlugin *plugin);
 
-gpointer mono_loader_find_plugin(GaimMonoPlugin *plugin);
+gpointer ml_find_plugin(GaimMonoPlugin *plugin);
 
-gpointer mono_loader_find_plugin_by_class(MonoClass *klass);
+gpointer ml_find_plugin_by_class(MonoClass *klass);
 
-GHashTable* mono_loader_get_plugin_hash();
+GHashTable* ml_get_plugin_hash();
 
 #endif

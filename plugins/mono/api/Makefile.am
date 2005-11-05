@@ -5,7 +5,8 @@ mono_sources = \
 	BuddyList.cs \
 	Buddy.cs \
 	Signal.cs \
-	Event.cs
+	Event.cs \
+	Status.cs
 
 EXTRA_DIST = $(mono_sources)
 

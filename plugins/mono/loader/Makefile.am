@@ -9,7 +9,8 @@ mono_la_SOURCES	= \
 	mono-helper.h \
 	debug-glue.c \
 	signal-glue.c \
-	blist-glue.c
+	blist-glue.c \
+	status-glue.c 
 
 mono_la_LDFLAGS  = -module -avoid-version
 

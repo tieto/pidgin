@@ -14,4 +14,6 @@ MonoObject* gaim_blist_get_handle_glue(void);
 
 MonoObject* gaim_blist_build_buddy_object(void* buddy);
 
+MonoObject* gaim_status_build_status_object(void* data);
+
 #endif

@@ -36,7 +36,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 
 	char *file = plugin->path;
 
-	assm = mono_domain_assembly_open(mono_loader_get_domain(), file);
+	assm = mono_domain_assembly_open(ml_get_domain(), file);
 
 	if (!assm) {
 		return FALSE;
@@ -44,23 +44,25 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 
 	gaim_debug(GAIM_DEBUG_INFO, "mono", "Probing plugin\n");
 
-	if (mono_loader_is_api_dll(mono_assembly_get_image(assm))) {
+	if (ml_is_api_dll(mono_assembly_get_image(assm))) {
 		gaim_debug(GAIM_DEBUG_INFO, "mono", "Found our GaimAPI.dll\n");
 		return FALSE;
 	}
 
 	info = g_new0(GaimPluginInfo, 1);
 	mplug = g_new0(GaimMonoPlugin, 1);
+	
+	mplug->signal_data = NULL;
 
 	mplug->assm = assm;
 
-	mplug->klass = mono_loader_find_plugin_class(mono_assembly_get_image(mplug->assm));
+	mplug->klass = ml_find_plugin_class(mono_assembly_get_image(mplug->assm));
 	if (!mplug->klass) {
 		gaim_debug(GAIM_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
 		return FALSE;
 	}
 
-	mplug->obj = mono_object_new(mono_loader_get_domain(), mplug->klass);
+	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
 		gaim_debug(GAIM_DEBUG_ERROR, "mono", "obj not valid\n");
 		return FALSE;
@@ -89,17 +91,17 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	plugin_info = mono_loader_invoke(info_method, mplug->obj, NULL);
+	plugin_info = ml_invoke(info_method, mplug->obj, NULL);
 
 	/* now that the methods are filled out we can populate
 	   the info struct with all the needed info */
 
-	info->name = mono_loader_get_prop_string(plugin_info, "Name");
-	info->version = mono_loader_get_prop_string(plugin_info, "Version");
-	info->summary = mono_loader_get_prop_string(plugin_info, "Summary");
-	info->description = mono_loader_get_prop_string(plugin_info, "Description");
-	info->author = mono_loader_get_prop_string(plugin_info, "Author");
-	info->homepage = mono_loader_get_prop_string(plugin_info, "Homepage");
+	info->name = ml_get_prop_string(plugin_info, "Name");
+	info->version = ml_get_prop_string(plugin_info, "Version");
+	info->summary = ml_get_prop_string(plugin_info, "Summary");
+	info->description = ml_get_prop_string(plugin_info, "Description");
+	info->author = ml_get_prop_string(plugin_info, "Author");
+	info->homepage = ml_get_prop_string(plugin_info, "Homepage");
 
 	info->magic = GAIM_PLUGIN_MAGIC;
 	info->major_version = GAIM_MAJOR_VERSION;
@@ -113,7 +115,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 	plugin->info = info;
 	info->extra_info = mplug;
 
-	mono_loader_add_plugin(mplug);
+	ml_add_plugin(mplug);
 
 	return gaim_plugin_register(plugin);
 }
@@ -127,7 +129,7 @@ static gboolean load_mono_plugin(GaimPlugin *plugin)
 
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
-	mono_loader_invoke(mplug->load, mplug->obj, NULL);
+	ml_invoke(mplug->load, mplug->obj, NULL);
 
 	return TRUE;
 }
@@ -142,8 +144,10 @@ static gboolean unload_mono_plugin(GaimPlugin *plugin)
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
 	gaim_signals_disconnect_by_handle((gpointer)mplug->klass);
+	g_list_free(mplug->signal_data);
+	mplug->signal_data = NULL;
 
-	mono_loader_invoke(mplug->unload, mplug->obj, NULL);
+	ml_invoke(mplug->unload, mplug->obj, NULL);
 
 	return TRUE;
 }
@@ -156,7 +160,7 @@ static void destroy_mono_plugin(GaimPlugin *plugin)
 
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
-	mono_loader_invoke(mplug->destroy, mplug->obj, NULL);
+	ml_invoke(mplug->destroy, mplug->obj, NULL);
 
 	if (plugin->info) {
 		g_free(plugin->info->name);
@@ -182,7 +186,7 @@ static void destroy_mono_plugin(GaimPlugin *plugin)
  *****************************************************************************/
 static void plugin_destroy(GaimPlugin *plugin)
 {
-	mono_jit_cleanup(mono_loader_get_domain());
+	ml_uninit();
 }
 
 static GaimPluginLoaderInfo loader_info =
@@ -222,12 +226,8 @@ static GaimPluginInfo info =
 
 static void init_plugin(GaimPlugin *plugin)
 {
-	MonoDomain *domain = mono_jit_init("gaim");
-
-	mono_loader_set_domain(domain);
-
-	mono_loader_init_internal_calls();
-
+	ml_init();
+	
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
 }
 

@@ -10,8 +10,7 @@ namespace Gaim
 
 		private static IntPtr handle = _get_handle();
 		
-		public static Event OnBuddyAway = new Event(handle, "buddy-away");
-		public static Event OnBuddyBack = new Event(handle, "buddy-back");
+		public static Event OnBuddyStatusChanged = new Event(handle, "buddy-status-changed");
 		
 		public static IntPtr GetHandle()
 		{
