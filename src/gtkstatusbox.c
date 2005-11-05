@@ -764,17 +764,34 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 	/* TODO: Should save the previous status as a transient status? */
 
-	/* Save the newly selected status to prefs.xml and status.xml */
-	/* TODO: This should be saved as transient. */
-	saved_status = gaim_savedstatus_find(_("Default"));
-	if (saved_status == NULL)
-		saved_status = gaim_savedstatus_new(_("Default"), type);
-	gaim_savedstatus_set_type(saved_status, type);
-	gaim_savedstatus_set_message(saved_status, message);
-	gaim_prefs_set_string("/core/status/current", _("Default"));
+	if (status_box->account) {
+		const GList *l = gaim_account_get_status_types(status_box->account);
+		gint active;
+		GaimStatusType *status_type;
 
-	/* Set the status for each account */
-	gaim_savedstatus_activate(saved_status);
+		g_object_get(G_OBJECT(status_box), "active", &active, NULL);
+
+		status_type = g_list_nth_data((GList *)l, active);
+		if (message)
+			gaim_account_set_status(status_box->account, gaim_status_type_get_id(status_type),
+			                        TRUE, "message", message, NULL);
+		else
+			gaim_account_set_status(status_box->account, gaim_status_type_get_id(status_type),
+			                        TRUE, NULL);
+
+	} else {
+		/* Save the newly selected status to prefs.xml and status.xml */
+		/* TODO: This should be saved as transient. */
+		saved_status = gaim_savedstatus_find(_("Default"));
+		if (saved_status == NULL)
+			saved_status = gaim_savedstatus_new(_("Default"), type);
+		gaim_savedstatus_set_type(saved_status, type);
+		gaim_savedstatus_set_message(saved_status, message);
+		gaim_prefs_set_string("/core/status/current", _("Default"));
+
+		/* Set the status for each account */
+		gaim_savedstatus_activate(saved_status);
+	}
 
 	g_free(title);
 	g_free(message);
@@ -874,7 +891,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	{
 		gtk_widget_hide_all(status_box->vbox);
 		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
-			activate_currently_selected_status(status_box);
+			activate_currently_selected_status(status_box); /* This is where we actually set the status */
 	}
 	gtk_gaim_status_box_refresh(status_box);
 }
