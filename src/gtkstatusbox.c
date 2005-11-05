@@ -279,40 +279,62 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 }
 
 static GdkPixbuf *
-load_icon(const char *basename)
+load_icon(GaimAccount *account, GaimStatusType *status_type)
 {
 	char basename2[BUFSIZ];
 	char *filename;
-	GdkPixbuf *pixbuf, *scale = NULL;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimPlugin *plugin;
+	const char *proto_name, *type_name;
+	GdkPixbuf *pixbuf, *scale = NULL, *emblem;
 
-	if (!strcmp(basename, "available"))
-		basename = "online";
-	else if (!strcmp(basename, "hidden"))
-		basename = "invisible";
 
-	/*
-	 * TODO: Find a way to fallback to the GaimStatusPrimitive
-	 * if an icon for this id does not exist.
-	 */
+	plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
+
+	if (plugin != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+		proto_name = prpl_info->list_icon(account, NULL);
+	}
+
 	g_snprintf(basename2, sizeof(basename2), "%s.png",
-	           basename);
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "icons",
+	           proto_name);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",
 	                            basename2, NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
 	if (pixbuf != NULL) {
-		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+		scale = gdk_pixbuf_scale_simple(pixbuf, 32, 32,
 		                                GDK_INTERP_BILINEAR);
-
 		g_object_unref(G_OBJECT(pixbuf));
-	} else {
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-		                            "default", basename, NULL);
-		scale = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
 	}
 
+
+	/* TODO: let the prpl pick the emblem on a per status bases, and only
+	 * use the primitive as a fallback */
+	type_name = gaim_primitive_get_id_from_type(gaim_status_type_get_primitive(status_type));
+	if (!strcmp(type_name, "hidden"))
+		type_name = "invisible";
+	if (!strcmp(type_name, "unavailable"))
+		type_name = "na";
+	g_snprintf(basename2, sizeof(basename2), "%s.png",
+	           type_name);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",
+	                            basename2, NULL);
+	emblem = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	if (emblem) {
+		gdk_pixbuf_composite(emblem,
+		                     scale, 32-15, 32-15,
+		                     15, 15,
+		                     32-15, 32-15,
+		                     1, 1,
+		                     GDK_INTERP_BILINEAR,
+		                     255);
+
+		g_object_unref(emblem);
+	}
 	return scale;
 }
 
@@ -331,6 +353,10 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 {
 	const char *current_savedstatus_name;
 	GaimSavedStatus *saved_status;
+
+	/* this function is inappropriate for ones with accounts */
+	if (status_box->account)
+		return;
 
 	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
 	saved_status = gaim_savedstatus_find(current_savedstatus_name);
@@ -442,7 +468,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
 									gaim_status_type_get_primitive(status_type),
-									load_icon(gaim_status_type_get_id(status_type)),
+									load_icon(account, status_type),
 									gaim_status_type_get_name(status_type),
 									NULL);
 		}

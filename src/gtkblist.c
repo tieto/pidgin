@@ -1996,7 +1996,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node)
 	pango_layout_set_markup(td->layout, tooltip_text, strlen(tooltip_text));
 	pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);
 	pango_layout_set_width(td->layout, 300000);
-	
+
 	pango_layout_get_size (td->layout, &td->width, &td->height);
 	td->width = PANGO_PIXELS(td->width) + 38 + 8;
 	td->height = MAX(PANGO_PIXELS(td->height) + 8, 38);
@@ -2045,7 +2045,7 @@ static void gaim_gtk_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, G
 		gdk_pixbuf_render_to_drawable(td->status_icon, GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 4, current_height + 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 		if(td->avatar)
 			gdk_pixbuf_render_to_drawable(td->avatar,
-					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0, 
+					GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, 0, 0,
 					max_width - (td->avatar_width + 4),
 					current_height + 4, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
@@ -3193,6 +3193,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
 	GtkWidget *sw;
+	GtkWidget *vpane;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -3242,6 +3243,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
+
+	/****************************** GtkVPaned ************************************/
+	vpane = gtk_vpaned_new();
+	gtk_widget_show(vpane);
+	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), vpane, TRUE, TRUE, 0);
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -3327,19 +3333,19 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(gtkblist->treeview), NAME_COLUMN);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(gtkblist->treeview), _search_func, NULL, NULL);
 
-	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), sw, TRUE, TRUE, 0);
+	gtk_paned_pack1(GTK_PANED(vpane), sw, TRUE, FALSE);
 	gtk_container_add(GTK_CONTAINER(sw), gtkblist->treeview);
 	gaim_gtk_blist_update_columns();
 
 	/* TODO: functionize this */
 	{
-#if 0
 		GList *accounts, *l;
-#endif
+		GtkWidget *sw2 = gtk_scrolled_window_new(NULL, NULL);
+
 		/* Set up some per account status boxes */
 		gtkblist->statusboxbox = gtk_vbox_new(FALSE, 0);
 		gtkblist->statusboxes = NULL;
-#if 0
+
 		for (l = accounts = gaim_accounts_get_all_active(); l; l = l->next) {
 			GtkWidget *statusbox = gtk_gaim_status_box_new_with_account(l->data);
 			gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, statusbox);
@@ -3347,9 +3353,12 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gtk_widget_show(statusbox);
 		}
 		g_list_free(accounts);
-#endif
+
 		gtk_widget_show(gtkblist->statusboxbox);
-		gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusboxbox, FALSE, TRUE, 0);
+		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw2), gtkblist->statusboxbox);
+		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw2), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+		gtk_widget_show(sw2);
+		gtk_paned_pack2(GTK_PANED(vpane), sw2, FALSE, TRUE);
 
 		gtkblist->statusbox = gtk_gaim_status_box_new();
 
