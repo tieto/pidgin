@@ -20,6 +20,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <glib.h>
+#include <pwd.h>
 
 #include "internal.h"
 #include "account.h"
@@ -31,6 +32,10 @@
 #include "dns_sd.h"
 #include "jabber.h"
 #include "buddy.h"
+
+static char *default_firstname;
+static char *default_lastname;
+static char *default_hostname;
 
 static void
 bonjour_removeallfromlocal(GaimConnection *gc)
@@ -77,22 +82,21 @@ bonjour_login(GaimAccount *account)
 	GaimPresence *presence;
 
 	gc->flags |= GAIM_CONNECTION_HTML;
-	gc->proto_data = g_new(BonjourData, 1);
+	gc->proto_data = g_new0(BonjourData, 1);
 	bd = gc->proto_data;
 
 	/* Start waiting for jabber connections (iChat style) */
 	bd->jabber_data = g_new(BonjourJabber, 1);
-	bd->jabber_data->name = gc->account->username;
 	bd->jabber_data->port = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
 	bd->jabber_data->account = account;
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		gaim_debug_error("bonjour", "Unable to listen for incoming IM connections");
+		gaim_connection_error(gc, _("Unable to listen for incoming IM connections\n"));
 
 		/* Free the data */
 		g_free(bd->jabber_data);
-		g_free(bd);
+		bd->jabber_data = NULL;
 		return;
 	}
 
@@ -101,8 +105,8 @@ bonjour_login(GaimAccount *account)
 	bd->dns_sd_data->name = (sw_string)gaim_account_get_username(account);
 	bd->dns_sd_data->txtvers = g_strdup("1");
 	bd->dns_sd_data->version = g_strdup("1");
-	bd->dns_sd_data->first = g_strdup(gaim_account_get_string(account, "first", "TODO"));
-	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", ""));
+	bd->dns_sd_data->first = g_strdup(gaim_account_get_string(account, "first", default_firstname));
+	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", default_lastname));
 	bd->dns_sd_data->port_p2pj = gaim_account_get_int(account, "port", BONJOUR_DEFAULT_PORT_INT);
 	bd->dns_sd_data->phsh = g_strdup("");
 	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
@@ -142,16 +146,18 @@ bonjour_close(GaimConnection *connection)
 	BonjourData *bd = (BonjourData*)connection->proto_data;
 
 	/* Stop looking for buddies in the LAN */
-	if (connection != NULL) {
+	if (bd->dns_sd_data != NULL)
+	{
 		bonjour_dns_sd_stop(bd->dns_sd_data);
-		if (bd != NULL) {
-			bonjour_dns_sd_free(bd->dns_sd_data);
-		}
+		bonjour_dns_sd_free(bd->dns_sd_data);
 	}
 
-	/* Stop waiting for conversations */
-	bonjour_jabber_stop(bd->jabber_data);
-	g_free(bd->jabber_data);
+	if (bd->jabber_data != NULL)
+	{
+		/* Stop waiting for conversations */
+		bonjour_jabber_stop(bd->jabber_data);
+		g_free(bd->jabber_data);
+	}
 
 	/* Remove all the bonjour buddies */
 	bonjour_removeallfromlocal(connection);
@@ -193,10 +199,6 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	type = gaim_status_get_type(status);
 	primitive = gaim_status_type_get_primitive(type);
 	presence = gaim_account_get_presence(account);
-
-	if (!gaim_account_is_connected(account))
-		/* TODO: Does this mean we're connecting? */
-		return;
 
 	message = gaim_status_get_attr_string(status, "message");
 	if (message == NULL)
@@ -318,6 +320,16 @@ bonjour_tooltip_text(GaimBuddy *buddy)
 	return g_string_free(ret, FALSE);
 }
 
+static gboolean
+plugin_unload(GaimPlugin *plugin)
+{
+	g_free(default_firstname);
+	g_free(default_lastname);
+	g_free(default_hostname);
+
+	return TRUE;
+}
+
 static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info =
@@ -403,7 +415,7 @@ static GaimPluginInfo info =
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
-	NULL,                                             /**< unload         */
+	plugin_unload,                                             /**< unload         */
 	NULL,                                             /**< destroy        */
 
 	NULL,                                             /**< ui_info        */
@@ -413,29 +425,66 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+initialize_default_account_values()
 {
-	GaimAccountUserSplit *split;
-	GaimAccountOption *option;
+	struct passwd *info;
+	char *fullname = NULL;
+	char *splitpoint = NULL;
 	char hostname[255];
 
+	/* Try to figure out the user's real name */
+	info = getpwuid(getuid());
+	if ((info != NULL) && (info->pw_gecos != NULL) && (info->pw_gecos[0] != '\0'))
+		fullname = info->pw_gecos;
+	else if ((info != NULL) && (info->pw_name != NULL) && (info->pw_name[0] != '\0'))
+		fullname = info->pw_name;
+	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
+		;
+	else
+		fullname = _("Gaim User");
+
+	/* Split the real name into a first and last name */
+	splitpoint = strchr(fullname, ' ');
+	if (splitpoint != NULL)
+	{
+		default_firstname = g_strndup(fullname, splitpoint - fullname);
+		default_lastname = g_strdup(&splitpoint[1]);
+	}
+	else
+	{
+		default_firstname = g_strdup(fullname);
+		default_lastname = g_strdup("");
+	}
+
+	/* Try to figure out a good host name to use */
+	/* TODO: Avoiding 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
 		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
 	}
+	default_hostname = g_strdup(hostname);
+}
+
+static void
+init_plugin(GaimPlugin *plugin)
+{
+	GaimAccountUserSplit *split;
+	GaimAccountOption *option;
+
+	initialize_default_account_values();
 
 	/* Creating the user splits */
-	split = gaim_account_user_split_new(_("Host name"), hostname, '@');
+	split = gaim_account_user_split_new(_("Host name"), default_hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
 	option = gaim_account_option_int_new(_("Port"), "port", 5298);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("First name"), "first", "Gaim");
+	option = gaim_account_option_string_new(_("First name"), "first", default_firstname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Last name"), "last", "User");
+	option = gaim_account_option_string_new(_("Last name"), "last", default_lastname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_string_new(_("Email"), "email", "");

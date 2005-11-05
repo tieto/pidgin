@@ -39,7 +39,6 @@ typedef struct _BonjourJabber
 	gint port;
 	gint socket;
 	gint watcher_id;
-	char* name;
 	GaimAccount* account;
 } BonjourJabber;
 
