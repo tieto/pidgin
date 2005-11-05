@@ -1468,7 +1468,13 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->password_entry));
 
-	if (gaim_account_get_remember_password(account) && *value != '\0')
+	/*
+	 * We set the password if this is a new account because new accounts
+	 * will be set to online, and if the user has entered a password into
+	 * the account editor (but has not checked the 'save' box), then we
+	 * don't want to prompt them.
+	 */
+	if ((gaim_account_get_remember_password(account) || new) && (*value != '\0'))
 		gaim_account_set_password(account, value);
 	else
 		gaim_account_set_password(account, NULL);
@@ -1604,7 +1610,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	else
 		gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
 
-	/* TODO: This doesn't work quite right yet. */
 	if (new) {
 		const char *current_savedstatus_name;
 		const GaimSavedStatus *saved_status;
@@ -1612,20 +1617,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
 		saved_status = gaim_savedstatus_find(current_savedstatus_name);
 		gaim_savedstatus_activate_for_account(saved_status, account);
-
-/*
-		This is the old way.  The new way is an improvement.
-		GaimGtkBuddyList *gtkblist;
-		GtkGaimStatusBox *status_box;
-		char *status_type_id;
-
-		gtkblist = GAIM_GTK_BLIST(gaim_get_blist());
-		status_box = GTK_GAIM_STATUS_BOX(gtkblist->statusbox);
-
-		status_type_id = gtk_gaim_status_box_get_active_type(status_box);
-		gaim_presence_set_status_active(account->presence, status_type_id, TRUE);
-		g_free(status_type_id);
-*/
 	}
 
 	return account;

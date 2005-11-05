@@ -878,11 +878,11 @@ gaim_account_destroy(GaimAccount *account)
 			gaim_conversation_set_account(conv, NULL);
 	}
 
-	if (account->username    != NULL) g_free(account->username);
-	if (account->alias       != NULL) g_free(account->alias);
-	if (account->password    != NULL) g_free(account->password);
-	if (account->user_info   != NULL) g_free(account->user_info);
-	if (account->protocol_id != NULL) g_free(account->protocol_id);
+	g_free(account->username);
+	g_free(account->alias);
+	g_free(account->password);
+	g_free(account->user_info);
+	g_free(account->protocol_id);
 
 	g_hash_table_destroy(account->settings);
 	g_hash_table_destroy(account->ui_settings);
@@ -914,10 +914,10 @@ request_password_ok_cb(GaimAccount *account, GaimRequestFields *fields)
 {
 	const char *entry;
 	gboolean remember;
-	
+
 	entry = gaim_request_fields_get_string(fields, "password");
 	remember = gaim_request_fields_get_bool(fields, "remember");
-	
+
 	if (!entry || !*entry)
 	{
 		gaim_notify_error(account, NULL, _("Password is required to sign on."), NULL);
@@ -1071,7 +1071,6 @@ change_password_cb(GaimAccount *account, GaimRequestFields *fields)
 	}
 
 	gaim_account_change_password(account, orig_pass, new_pass_1);
-	gaim_account_set_password(account, new_pass_1);
 }
 
 void
@@ -2033,12 +2032,14 @@ gaim_account_change_password(GaimAccount *account, const char *orig_pw,
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimConnection *gc = gaim_account_get_connection(account);
 
+	gaim_account_set_password(account, new_pw);
+
 	if (gc != NULL && gc->prpl != NULL)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && g_list_find(gaim_connections_get_all(), gc) && prpl_info->change_passwd)
 		prpl_info->change_passwd(gc, orig_pw, new_pw);
-}	
+}
 
 void
 gaim_accounts_add(GaimAccount *account)

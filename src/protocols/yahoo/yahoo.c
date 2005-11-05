@@ -3087,9 +3087,6 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	if (!gaim_status_is_active(status))
 		return;
 
-	if (!gaim_account_is_connected(account))
-		return;
-
 	gc = gaim_account_get_connection(account);
 	presence = gaim_status_get_presence(status);
 	yd = (struct yahoo_data *)gc->proto_data;
