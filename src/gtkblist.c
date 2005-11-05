@@ -491,7 +491,10 @@ rebuild_joinchat_entries(GaimGtkJoinChatData *data)
 			if (value != NULL)
 				gtk_entry_set_text(GTK_ENTRY(input), value);
 			if (pce->secret)
+			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+				gtk_entry_set_invisible_char(GTK_ENTRY(input), GAIM_INVISIBLE_CHAR);
+			}
 			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
 			g_signal_connect(G_OBJECT(input), "changed",
 							 G_CALLBACK(joinchat_set_sensitive_if_input_cb), data);
@@ -4345,7 +4348,10 @@ rebuild_addchat_entries(GaimGtkAddChatData *data)
 			if (value != NULL)
 				gtk_entry_set_text(GTK_ENTRY(input), value);
 			if (pce->secret)
+			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
+				gtk_entry_set_invisible_char(GTK_ENTRY(input), GAIM_INVISIBLE_CHAR);
+			}
 			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
 			g_signal_connect(G_OBJECT(input), "changed",
 							 G_CALLBACK(addchat_set_sensitive_if_input_cb), data);

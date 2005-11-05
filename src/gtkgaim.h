@@ -63,5 +63,7 @@
 #define GAIM_HIG_BORDER        12
 #define GAIM_HIG_BOX_SPACE      6
 
+#define GAIM_INVISIBLE_CHAR (gunichar)0x25cf
+
 #endif /* _GAIM_GTKGAIM_H_ */
 

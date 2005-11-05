@@ -81,8 +81,11 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 			gtk_entry_set_text(GTK_ENTRY(entry), gaim_prefs_get_string(pref_name));
 			gtk_entry_set_max_length(GTK_ENTRY(entry),
 									 gaim_plugin_pref_get_max_length(pref));
-			gtk_entry_set_visibility(GTK_ENTRY(entry),
-									 !gaim_plugin_pref_get_masked(pref));
+			if (gaim_plugin_pref_get_masked(pref))
+			{
+				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+				gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+			}
 			g_signal_connect(G_OBJECT(entry), "changed",
 							 G_CALLBACK(entry_cb),
 							 (gpointer)pref_name);
