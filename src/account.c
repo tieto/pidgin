@@ -678,7 +678,6 @@ parse_account(xmlnode *node)
 	char *protocol_id = NULL;
 	char *name = NULL;
 	char *data;
-	gboolean upgrade = FALSE;
 
 	child = xmlnode_get_child(node, "protocol");
 	if (child != NULL)
@@ -729,8 +728,6 @@ parse_account(xmlnode *node)
 	if (child != NULL)
 	{
 		parse_statuses(child, ret);
-	} else {
-		upgrade = TRUE;
 	}
 
 	/* Read the userinfo */
@@ -761,10 +758,6 @@ parse_account(xmlnode *node)
 	if (child != NULL)
 	{
 		parse_proxy_info(child, ret);
-	}
-
-	if (upgrade && gaim_account_get_enabled(ret, gaim_core_get_ui())) {
-		gaim_presence_set_status_active(ret->presence, "available", TRUE);
 	}
 
 	return ret;
@@ -814,6 +807,7 @@ gaim_account_new(const char *username, const char *protocol_id)
 	GaimAccount *account = NULL;
 	GaimPlugin *prpl = NULL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
+	GaimStatusType *status_type;
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(protocol_id != NULL, NULL);
@@ -845,12 +839,19 @@ gaim_account_new(const char *username, const char *protocol_id)
 	if (prpl == NULL)
 		return account;
 
-	/* TODO: Should maybe use gaim_prpl_get_statuses()? */
 	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info != NULL && prpl_info->status_types != NULL)
 		gaim_account_set_status_types(account, prpl_info->status_types(account));
 
-	gaim_presence_set_status_active(account->presence, "offline", TRUE);
+	status_type = gaim_account_get_status_type_with_primitive(account, GAIM_STATUS_AVAILABLE);
+	if (status_type != NULL)
+		gaim_presence_set_status_active(account->presence,
+										gaim_status_type_get_id(status_type),
+										TRUE);
+	else
+		gaim_presence_set_status_active(account->presence,
+										"offline",
+										TRUE);
 
 	return account;
 }
