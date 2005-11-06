@@ -285,7 +285,7 @@ load_icon(GaimAccount *account, GaimStatusType *status_type)
 	char *filename;
 	GaimPluginProtocolInfo *prpl_info = NULL;
 	GaimPlugin *plugin;
-	const char *proto_name, *type_name;
+	const char *proto_name = NULL, *type_name;
 	GdkPixbuf *pixbuf, *scale = NULL, *emblem;
 
 
@@ -294,6 +294,8 @@ load_icon(GaimAccount *account, GaimStatusType *status_type)
 	if (plugin != NULL) {
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
 		proto_name = prpl_info->list_icon(account, NULL);
+	} else {
+		return NULL;
 	}
 
 	g_snprintf(basename2, sizeof(basename2), "%s.png",
