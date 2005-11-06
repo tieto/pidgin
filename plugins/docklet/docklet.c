@@ -54,6 +54,7 @@ static struct docklet_ui_ops *ui_ops = NULL;
 static DockletStatus status = DOCKLET_STATUS_OFFLINE;
 static gulong gtkblist_delete_cb_id = 0;
 static gboolean enable_join_chat = FALSE;
+static guint docklet_blinking_timer = 0;
 
 /**************************************************************************
  * docklet status and utility functions
@@ -79,6 +80,7 @@ docklet_blink_icon()
 			ret = TRUE; /* keep blinking */
 			break;
 		default:
+			docklet_blinking_timer = 0;
 			blinked = FALSE;
 			break;
 	}
@@ -158,9 +160,10 @@ docklet_update_status()
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
-		if (status == DOCKLET_STATUS_ONLINE_PENDING 
-				|| status == DOCKLET_STATUS_AWAY_PENDING) {
-			g_timeout_add(500, docklet_blink_icon, &handle);
+		if ((status == DOCKLET_STATUS_ONLINE_PENDING
+				|| status == DOCKLET_STATUS_AWAY_PENDING)
+			&& docklet_blinking_timer == 0) {
+				docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, &handle);
 		}
 	}
 
