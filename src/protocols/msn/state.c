@@ -39,8 +39,9 @@ static const char *away_text[] =
 };
 
 void
-msn_change_status(MsnSession *session, MsnAwayType state)
+msn_change_status(MsnSession *session)
 {
+	GaimAccount *account = session->account;
 	MsnCmdProc *cmdproc;
 	MsnUser *user;
 	MsnObject *msnobj;
@@ -51,8 +52,7 @@ msn_change_status(MsnSession *session, MsnAwayType state)
 
 	cmdproc = session->notification->cmdproc;
 	user = session->user;
-	state_text = msn_state_get_text(state);
-	session->state = state;
+	state_text = msn_state_get_text(msn_state_from_account(account));
 
 	/* If we're not logged in yet, don't send the status to the server,
 	 * it will be sent when login completes
@@ -95,4 +95,37 @@ msn_state_get_text(MsnAwayType state)
 	{ "NLN", "NLN", "BSY", "IDL", "BRB", "AWY", "PHN", "LUN", "HDN", "HDN" };
 
 	return status_text[state];
+}
+
+MsnAwayType
+msn_state_from_account(GaimAccount *account)
+{
+	MsnAwayType msnstatus;
+	GaimPresence *presence;
+	GaimStatus *status;
+	const char *status_id;
+
+	presence = gaim_account_get_presence(account);
+	status = gaim_presence_get_active_status(presence);
+	status_id = gaim_status_get_id(status);
+
+	if (!strcmp(status_id, "away"))
+		msnstatus = MSN_AWAY;
+	else if (!strcmp(status_id, "brb"))
+		msnstatus = MSN_BRB;
+	else if (!strcmp(status_id, "busy"))
+		msnstatus = MSN_BUSY;
+	else if (!strcmp(status_id, "phone"))
+		msnstatus = MSN_PHONE;
+	else if (!strcmp(status_id, "lunch"))
+		msnstatus = MSN_LUNCH;
+	else if (!strcmp(status_id, "invisible"))
+		msnstatus = MSN_HIDDEN;
+	else
+		msnstatus = MSN_ONLINE;
+
+	if ((msnstatus == MSN_ONLINE) && gaim_presence_is_idle(presence))
+		msnstatus = MSN_IDLE;
+
+	return msnstatus;
 }

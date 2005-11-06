@@ -47,9 +47,8 @@ typedef enum
  * Changes the status of the user.
  *
  * @param session The MSN session.
- * @param state   The new state.
  */
-void msn_change_status(MsnSession *session, MsnAwayType state);
+void msn_change_status(MsnSession *session);
 
 /**
  * Returns the string representation of an away type.
@@ -61,5 +60,7 @@ void msn_change_status(MsnSession *session, MsnAwayType state);
 const char *msn_away_get_text(MsnAwayType type);
 
 const char *msn_state_get_text(MsnAwayType state);
+
+MsnAwayType msn_state_from_account(GaimAccount *account);
 
 #endif /* _MSN_STATE_H_ */

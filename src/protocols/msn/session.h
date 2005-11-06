@@ -80,7 +80,6 @@ struct _MsnSession
 {
 	GaimAccount *account;
 	MsnUser *user;
-	int state;
 
 	guint protocol_ver;
 
@@ -96,7 +95,6 @@ struct _MsnSession
 	MsnSync *sync;
 
 	MsnUserList *userlist;
-	MsnUserList *sync_userlist;
 
 	int servconns_count; /**< The count of server connections. */
 	GList *switches; /**< The list of all the switchboards. */

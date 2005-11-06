@@ -39,7 +39,6 @@ msn_session_new(GaimAccount *account)
 	session->account = account;
 	session->notification = msn_notification_new(session);
 	session->userlist = msn_userlist_new(session);
-	session->sync_userlist = msn_userlist_new(session);
 
 	session->user = msn_user_new(session->userlist,
 								 gaim_account_get_username(account), NULL);
@@ -70,9 +69,6 @@ msn_session_destroy(MsnSession *session)
 		msn_slplink_destroy(session->slplinks->data);
 
 	msn_userlist_destroy(session->userlist);
-
-	if (session->sync_userlist != NULL)
-		msn_userlist_destroy(session->sync_userlist);
 
 	if (session->passport_info.kv != NULL)
 		g_free(session->passport_info.kv);
@@ -231,72 +227,63 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 static void
 msn_session_sync_users(MsnSession *session)
 {
-	GList *l;
+	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimConnection *gc = gaim_account_get_connection(session->account);
 
-	l = session->sync_userlist->users;
+	g_return_if_fail(gc != NULL);
 
-	while (l != NULL)
-	{
-		MsnUser *local_user;
+	/* The core used to use msn_add_buddy to add all buddies before
+	 * being logged in. This no longer happens, so we manually iterate
+	 * over the whole buddy list to identify sync issues. */
 
-		local_user = (MsnUser *)l->data;
-
-		if (local_user->passport != NULL)
-		{
-			MsnUser *remote_user;
-
-			remote_user = msn_userlist_find_user(session->userlist,
-												 local_user->passport);
-
-			if (remote_user == NULL ||
-				((local_user->list_op & ( 1 << MSN_LIST_FL)) &&
-				 !(remote_user->list_op & ( 1 << MSN_LIST_FL))))
-			{
-				/* The user was not on the server list */
-				msn_show_sync_issue(session, local_user->passport, NULL);
-			}
-			else
-			{
-				GList *l;
-
-				for (l = local_user->group_ids; l != NULL; l = l->next)
-				{
-					const char *group_name;
-					int gid;
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+		GaimGroup *group = (GaimGroup *)gnode;
+		const char *group_name = group->name;
+		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				GaimBuddy *b;
+				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (GaimBuddy *)bnode;
+				if(b->account == gc->account) {
+					MsnUser *remote_user;
 					gboolean found = FALSE;
-					GList *l2;
 
-					group_name =
-						msn_userlist_find_group_name(local_user->userlist,
-													 GPOINTER_TO_INT(l->data));
+					remote_user = msn_userlist_find_user(session->userlist, b->name);
 
-					gid = msn_userlist_find_group_id(remote_user->userlist,
-													 group_name);
-
-					for (l2 = remote_user->group_ids; l2 != NULL; l2 = l2->next)
+					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
 					{
-						if (GPOINTER_TO_INT(l2->data) == gid)
+						int group_id;
+						GList *l;
+
+						group_id = msn_userlist_find_group_id(remote_user->userlist,
+								group_name);
+
+						for (l = remote_user->group_ids; l != NULL; l = l->next)
 						{
-							found = TRUE;
-							break;
+							if (group_id == GPOINTER_TO_INT(l->data))
+							{
+								found = TRUE;
+								break;
+							}
 						}
+
 					}
 
 					if (!found)
 					{
-						/* The user was not on that group on the server list */
-						msn_show_sync_issue(session, local_user->passport,
-											group_name);
+						/* The user was not on the server list or not in that group
+						 * on the server list */
+						msn_show_sync_issue(session, b->name, group_name);
 					}
 				}
 			}
 		}
-
-		l = l->next;
 	}
-
-	msn_userlist_destroy(session->sync_userlist);
-	session->sync_userlist = NULL;
 }
 
 void
@@ -416,7 +403,7 @@ msn_session_finish_login(MsnSession *session)
 
 	session->logged_in = TRUE;
 
-	msn_change_status(session, session->state == 0 ? MSN_ONLINE : session->state);
+	msn_change_status(session);
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 

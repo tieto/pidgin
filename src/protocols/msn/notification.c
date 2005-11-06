@@ -702,6 +702,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	msn_user_update(user);
 }
 
+#if 0
 static void
 chg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
@@ -727,6 +728,7 @@ chg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	cmdproc->session->state = state_id;
 }
+#endif
 
 
 static void
@@ -1379,7 +1381,7 @@ msn_notification_init(void)
 	cbs_table = msn_table_new();
 
 	/* Synchronous */
-	msn_table_add_cmd(cbs_table, "CHG", "CHG", chg_cmd);
+	msn_table_add_cmd(cbs_table, "CHG", "CHG", NULL);
 	msn_table_add_cmd(cbs_table, "CHG", "ILN", iln_cmd);
 	msn_table_add_cmd(cbs_table, "ADD", "ADD", add_cmd);
 	msn_table_add_cmd(cbs_table, "ADD", "ILN", iln_cmd);

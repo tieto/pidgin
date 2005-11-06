@@ -566,7 +566,7 @@ msn_status_types(GaimAccount *account)
 	GList *types = NULL;
 
 	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
-			"offline", _("Offline"), FALSE, FALSE, FALSE);
+			"offline", _("Offline"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
@@ -873,37 +873,15 @@ static void
 msn_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
-	MsnSession *session = NULL;
-	const char *state;
-	int msnstatus;
+	MsnSession *session;
 
 	gc = gaim_account_get_connection(account);
 
 	if (gc != NULL)
+	{
 		session = gc->proto_data;
-
-	state = gaim_status_get_id(status);
-
-	gaim_debug_info("msn", "Set status to %s\n", gaim_status_get_name(status));
-
-	if (!strcmp(state, "away"))
-		msnstatus = MSN_AWAY;
-	else if (!strcmp(state, "brb"))
-		msnstatus = MSN_BRB;
-	else if (!strcmp(state, "busy"))
-		msnstatus = MSN_BUSY;
-	else if (!strcmp(state, "phone"))
-		msnstatus = MSN_PHONE;
-	else if (!strcmp(state, "lunch"))
-		msnstatus = MSN_LUNCH;
-	else if (!strcmp(state, "invisible"))
-		msnstatus = MSN_HIDDEN;
-	else if (0) /* how do we detect idle with new status? */
-		msnstatus = MSN_IDLE;
-	else
-		msnstatus = MSN_ONLINE;
-	if (gc)
-		msn_change_status(session, msnstatus);
+		msn_change_status(session);
+	}
 }
 
 static void
@@ -913,9 +891,10 @@ msn_set_idle(GaimConnection *gc, int idle)
 
 	session = gc->proto_data;
 
-	msn_change_status(session, (idle ? MSN_IDLE : MSN_ONLINE));
+	msn_change_status(session);
 }
 
+#if 0
 static void
 fake_userlist_add_buddy(MsnUserList *userlist,
 					   const char *who, int list_id,
@@ -963,6 +942,7 @@ fake_userlist_add_buddy(MsnUserList *userlist,
 
 	user->list_op |= (1 << list_id);
 }
+#endif
 
 static void
 msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
@@ -977,8 +957,12 @@ msn_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 
 	if (!session->logged_in)
 	{
+#if 0
 		fake_userlist_add_buddy(session->sync_userlist, who, MSN_LIST_FL,
 								group ? group->name : NULL);
+#else
+		gaim_debug_error("msn", "msn_add_buddy called before connected\n");
+#endif
 
 		return;
 	}
@@ -1326,7 +1310,7 @@ msn_set_buddy_icon(GaimConnection *gc, const char *filename)
 
 	msn_user_set_buddy_icon(user, filename);
 
-	msn_change_status(session, session->state);
+	msn_change_status(session);
 }
 
 static void
