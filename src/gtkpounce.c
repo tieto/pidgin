@@ -919,10 +919,12 @@ gaim_gtkpounce_menu_build(GtkWidget *menu)
 	gtk_widget_show(item);
 
 	/* Separator */
-	item = gtk_separator_menu_item_new();
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
+	if (has_items)
+	{
+		item = gtk_separator_menu_item_new();
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+	}
 	fill_menu(menu, G_CALLBACK(edit_pounce_cb));
 }
 
