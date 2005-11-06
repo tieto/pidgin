@@ -167,6 +167,28 @@ MonoObject* ml_object_from_gaim_subtype(GaimSubType type, gpointer data)
 	return obj;
 }
 
+MonoObject* ml_create_api_object(char *class_name)
+{
+	MonoObject *obj = NULL;
+	MonoClass *klass = NULL;
+		
+	klass = mono_class_from_name(ml_get_api_image(), "Gaim", class_name);
+	if (!klass) {
+		gaim_debug(GAIM_DEBUG_FATAL, "mono", "couldn't find the '%s' class\n", class_name);
+		return NULL;
+	}
+	
+	obj = mono_object_new(ml_get_domain(), klass);
+	if (!obj) {
+		gaim_debug(GAIM_DEBUG_FATAL, "mono", "couldn't create the object from class '%s'\n", class_name);
+		return NULL;
+	}
+	
+	mono_runtime_object_init(obj);
+	
+	return obj;
+}
+
 static MonoDomain *_domain = NULL;
 
 MonoDomain* ml_get_domain(void)
@@ -196,11 +218,6 @@ void ml_init_internal_calls(void)
 	mono_add_internal_call("Gaim.Debug::_debug", gaim_debug_glue);
 	mono_add_internal_call("Gaim.Signal::_connect", gaim_signal_connect_glue);
 	mono_add_internal_call("Gaim.BuddyList::_get_handle", gaim_blist_get_handle_glue);
-}
-
-void ml_destroy_signal_data(gpointer data, gpointer user_data)
-{
-	g_free(data);
 }
 
 static GHashTable *plugins_hash = NULL;

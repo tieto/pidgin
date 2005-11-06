@@ -144,6 +144,7 @@ static gboolean unload_mono_plugin(GaimPlugin *plugin)
 	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
 
 	gaim_signals_disconnect_by_handle((gpointer)mplug->klass);
+	g_list_foreach(mplug->signal_data, (GFunc)g_free, NULL);
 	g_list_free(mplug->signal_data);
 	mplug->signal_data = NULL;
 

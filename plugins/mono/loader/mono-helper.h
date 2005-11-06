@@ -52,11 +52,11 @@ MonoObject* ml_object_from_gaim_type(GaimType type, gpointer data);
 
 MonoObject* ml_object_from_gaim_subtype(GaimSubType type, gpointer data);
 
+MonoObject* ml_create_api_object(char *class_name);
+
 void ml_set_api_image(MonoImage *image);
 
 MonoImage* ml_get_api_image();
-
-void ml_destroy_signal_data(gpointer data, gpointer user_data);
 
 /* hash table stuff; probably don't need it anymore */
 
