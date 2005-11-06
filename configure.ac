@@ -1201,7 +1201,7 @@ if test "$enable_tcl" = yes; then
 			oldLIBS=$LIBS
 			LIBS="$LIBS $TCL_LIB_SPEC"
 			AC_TRY_LINK([#include <tcl.h>],
-				    [Tcl_Interp *interp; Tcl_Init(interp)],
+				    [Tcl_Interp *interp=NULL; Tcl_Init(interp)],
 				    [AC_MSG_RESULT([yes]);enable_tcl=yes],
 				    [AC_MSG_RESULT([no]);enable_tcl=no])
 			CPPFLAGS="$oldCPPFLAGS"
@@ -1250,7 +1250,8 @@ if test "$enable_tcl" = yes -a "$enable_tk" = yes; then
 		CPPFLAGS="$CPPFLAGS $TCL_CFLAGS"
 		oldLIBS=$LIBS
 		LIBS="$LIBS $TCL_LIB_SPEC $TK_LIB_SPEC"
-		AC_TRY_LINK([#include <tk.h>], [Tcl_Interp *interp; Tcl_Init(interp); Tk_Init(interp);],
+		AC_TRY_LINK([#include <tk.h>],
+			    [Tcl_Interp *interp=NULL; Tcl_Init(interp); Tk_Init(interp);],
 			    [AC_MSG_RESULT([yes]);enable_tk=yes],
 			    [AC_MSG_RESULT([no]);enable_tk=no])
 		CPPFLAGS="$oldCPPFLAGS"
