@@ -1437,7 +1437,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
 		account = gaim_account_new(screenname, dialog->protocol_id);
-		gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 		new = TRUE;
 	}
 	else
@@ -1615,10 +1614,12 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	else
 		gaim_signal_emit(gaim_gtk_account_get_handle(), "account-modified", account);
 
+	/* If this is a new account, then sign on! */
 	if (new) {
 		const char *current_savedstatus_name;
 		const GaimSavedStatus *saved_status;
 
+		gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
 		saved_status = gaim_savedstatus_find(current_savedstatus_name);
 		gaim_savedstatus_activate_for_account(saved_status, account);
