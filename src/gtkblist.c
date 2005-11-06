@@ -1014,12 +1014,14 @@ static GtkWidget *
 create_group_menu (GaimBlistNode *node, GaimGroup *g)
 {
 	GtkWidget *menu;
+	GtkWidget *item;
 
 	menu = gtk_menu_new();
 	gaim_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
 				 G_CALLBACK(gaim_gtk_blist_add_buddy_cb), node, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
+	item = gaim_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
 				 G_CALLBACK(gaim_gtk_blist_add_chat_cb), node, 0, 0, NULL);
+	gtk_widget_set_sensitive(item, gaim_gtk_blist_joinchat_is_showable());
 	gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(gaim_gtk_blist_remove_cb), node, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("_Rename"), NULL,
@@ -2179,12 +2181,17 @@ static gboolean gaim_gtk_blist_tooltip_timeout(GtkWidget *tv)
 		h = td->height;
 	} else if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		GaimBlistNode *child;
+		GaimBuddy *b = gaim_contact_get_priority_buddy((GaimContact *)node);
 		w = h = 0;
 		for(child = node->child; child; child = child->next)
 		{
 			if(GAIM_BLIST_NODE_IS_BUDDY(child) && buddy_is_displayable((GaimBuddy*)child)) {
 				struct tooltip_data *td = create_tip_for_node(child);
-				gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
+				if (b == (GaimBuddy *)child) {
+					gtkblist->tooltipdata = g_list_prepend(gtkblist->tooltipdata, td);
+				} else {
+					gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
+				}
 				w = MAX(w, td->width);
 				h += td->height;
 			}
@@ -3047,6 +3054,9 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 	}
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Join a Chat..."));
+	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
+
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Add Chat..."));
 	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
