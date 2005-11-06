@@ -194,7 +194,8 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
-	status = g_strdup_printf("%ld of %ld",
+	status = g_strdup_printf("%ld%% (%ld of %ld bytes)",
+							 (unsigned long)(gaim_xfer_get_progress(xfer)*100),
 							 (unsigned long)gaim_xfer_get_bytes_sent(xfer),
 							 (unsigned long)gaim_xfer_get_size(xfer));
 
