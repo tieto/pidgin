@@ -760,6 +760,25 @@ gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
+static GaimStatusType
+*find_status_type_by_index(const GaimAccount *account, gint active)
+{
+	const GList *l = gaim_account_get_status_types(account);
+	gint i;
+
+	for (i = 0; l; l = l->next) {
+		GaimStatusType *status_type = l->data;
+		if (!gaim_status_type_is_user_settable(status_type))
+			continue;
+
+		if (active == i)
+			return status_type;
+		i++;
+	}
+
+	return NULL;
+}
+
 static void
 activate_currently_selected_status(GtkGaimStatusBox *status_box)
 {
@@ -790,13 +809,12 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	/* TODO: Should save the previous status as a transient status? */
 
 	if (status_box->account) {
-		const GList *l = gaim_account_get_status_types(status_box->account);
 		gint active;
 		GaimStatusType *status_type;
 
 		g_object_get(G_OBJECT(status_box), "active", &active, NULL);
 
-		status_type = g_list_nth_data((GList *)l, active);
+		status_type = find_status_type_by_index(status_box->account, active);
 		if (message)
 			gaim_account_set_status(status_box->account, gaim_status_type_get_id(status_type),
 			                        TRUE, "message", message, NULL);
