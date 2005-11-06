@@ -622,8 +622,7 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	box_alc = *allocation;
 	combo_box_size_request(widget, &req);
 
-	/* EVIL XXX */
-	box_alc.height = 80;
+	box_alc.height = allocation->height - req.height;
 	/* box_alc.height = MAX(1,box_alc.height - req.height - 6); */
 
 	box_alc.y = box_alc.y + req.height + 6;
