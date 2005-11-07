@@ -20,7 +20,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <glib.h>
+#ifndef _WIN32
 #include <pwd.h>
+#else
+#define UNICODE
+#include <windows.h>
+#include <lm.h>
+#endif
 
 #include "internal.h"
 #include "account.h"
@@ -427,10 +433,11 @@ static GaimPluginInfo info =
 static void
 initialize_default_account_values()
 {
-	struct passwd *info;
 	char *fullname = NULL;
 	char *splitpoint = NULL;
 	char hostname[255];
+#ifndef _WIN32
+	struct passwd *info;
 
 	/* Try to figure out the user's real name */
 	info = getpwuid(getuid());
@@ -442,6 +449,64 @@ initialize_default_account_values()
 		;
 	else
 		fullname = _("Gaim User");
+
+#else
+	FARPROC myNetUserGetInfo = wgaim_find_and_loadproc("Netapi32.dll",
+		"NetUserGetInfo");
+
+	if (myNetUserGetInfo) {
+		LPUSER_INFO_10 user_info = NULL;
+		LPSERVER_INFO_100 server_info = NULL;
+		wchar_t *servername = NULL;
+		wchar_t username[UNLEN + 1] = {'\0'};
+		DWORD dwLenUsername = sizeof(username);
+		FARPROC myNetServerEnum = wgaim_find_and_loadproc(
+			"Netapi32.dll", "NetServerEnum");
+		FARPROC myNetApiBufferFree = wgaim_find_and_loadproc(
+			"Netapi32.dll", "NetApiBufferFree");
+
+		if (myNetServerEnum && myNetApiBufferFree) {
+			DWORD dwEntriesRead = 0;
+			DWORD dwTotalEntries = 0;
+			DWORD dwResumeHandle = 0;
+
+			NET_API_STATUS nStatus = (myNetServerEnum)(NULL, 100,
+				&server_info, MAX_PREFERRED_LENGTH,
+				&dwEntriesRead, &dwTotalEntries,
+				SV_TYPE_DOMAIN_CTRL, NULL, &dwResumeHandle);
+
+			if ((nStatus == NERR_Success
+					|| nStatus == ERROR_MORE_DATA)
+					&& dwEntriesRead > 0) {
+				servername = server_info->sv100_name;
+			} else {
+				gaim_debug_warning("bonjour", "Unable to look up domain controller. NET_API_STATUS = %d, Entries Read = %d, Total Entries = %d\n", nStatus, dwEntriesRead, dwTotalEntries);
+			}
+		}
+
+		if (!GetUserNameW(&username, &dwLenUsername)) {
+			gaim_debug_warning("bonjour",
+				"Unable to look up username\n");
+		}
+
+		if (username != NULL && *username != '\0'
+				&& (myNetUserGetInfo)(servername, username, 10,
+					&user_info) == NERR_Success) {
+			if (user_info != NULL) {
+				fullname = g_utf16_to_utf8(
+					user_info->usri10_full_name,
+					-1, NULL, NULL, NULL);
+			}
+		}
+		if (user_info != NULL)
+			(myNetApiBufferFree)(user_info);
+		if (server_info != NULL)
+			(myNetApiBufferFree)(server_info);
+	}
+
+	if (!fullname)
+		fullname = g_strdup(_("Gaim User"));
+#endif
 
 	/* Split the real name into a first and last name */
 	splitpoint = strchr(fullname, ' ');
@@ -456,10 +521,14 @@ initialize_default_account_values()
 		default_lastname = g_strdup("");
 	}
 
+#ifdef _WIN32
+	g_free(fullname);
+#endif
+
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoiding 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
-		gaim_debug_warning("rendezvous", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
+		gaim_debug_warning("bonjour", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
 	}
 	default_hostname = g_strdup(hostname);
