@@ -6542,11 +6542,6 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 			g_free(errstr);
 		}
 	}
-	else
-	{
-		/* TODO: It's very possible that this isn't necessary */
-		info = g_strdup("");
-	}
 
 	if (!setstatus)
 	{
