@@ -430,6 +430,11 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		if (account == NULL) {
 			gaim_debug(GAIM_DEBUG_ERROR, "pounce",
 					   "Account for pounce not found!\n");
+			/*
+			 * This pounce has effectively been removed, so make
+			 * sure that we save the changes to pounces.xml
+			 */
+			schedule_pounces_save();
 		}
 		else {
 			gaim_debug(GAIM_DEBUG_INFO, "pounce",
@@ -444,7 +449,8 @@ end_element_handler(GMarkupParseContext *context, const gchar *element_name,
 		data->pouncee = NULL;
 	}
 	else if (!strcmp(element_name, "save")) {
-		gaim_pounce_set_save(data->pounce, TRUE);
+		if (data->pounce != NULL)
+			gaim_pounce_set_save(data->pounce, TRUE);
 	}
 	else if (!strcmp(element_name, "pounce")) {
 		data->pounce = NULL;
