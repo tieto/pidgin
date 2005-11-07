@@ -437,6 +437,7 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	GaimConnection *gc;
+	GaimStatus *status;
 	GaimBlistNode *gnode, *cnode, *bnode;
 
 	gc = gaim_account_get_connection(irc->account);
@@ -444,6 +445,14 @@ void irc_msg_endmotd(struct irc_conn *irc, const char *name, const char *from, c
 		return;
 
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
+
+	/* If we're away then set our away message */
+	status = gaim_account_get_active_status(irc->account);
+	if (!gaim_status_get_type(status) != GAIM_STATUS_AVAILABLE)
+	{
+		GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info->set_status(irc->account, status);
+	}
 
 	/* this used to be in the core, but it's not now */
 	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {

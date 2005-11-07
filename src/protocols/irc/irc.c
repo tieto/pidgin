@@ -450,6 +450,8 @@ static void irc_set_status(GaimAccount *account, GaimStatus *status)
 
 	if (!strcmp(status_id, "away")) {
 		args[0] = gaim_status_get_attr_string(status, "message");
+		if ((args[0] == NULL) || (*args[0] == '\0'))
+			args[0] = _("Away");
 		irc_cmd_away(irc, "away", NULL, args);
 	}
 }
