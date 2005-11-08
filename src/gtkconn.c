@@ -136,7 +136,7 @@ do_signon(gpointer data)
 
 static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
-	GaimGtkBuddyList *list = gaim_gtk_blist_get_default_gtk_blist();
+	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
 	GaimAccount *account = NULL;
 	GaimAutoRecon *info;
 	GSList* listAccount;
@@ -153,9 +153,10 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 		listAccount = NULL;
 
 	if (!gc->wants_to_die) {
-	  gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(list->statusbox), text);
+		if (gtkblist != NULL)
+			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), text);
 
-	  if (info == NULL) {
+		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
 			info->delay = INITIAL_RECON_DELAY;
