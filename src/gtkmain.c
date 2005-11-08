@@ -656,6 +656,12 @@ int main(int argc, char *argv[])
 		opt_config_dir_arg = NULL;
 	}
 
+	/*
+	 * We want to show the blist early in the init process so the
+	 * user feels warm and fuzzy (not cold and prickley).
+	 */
+	gaim_blist_show();
+
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
 		gaim_gtk_debug_window_show();
 
@@ -684,8 +690,6 @@ int main(int argc, char *argv[])
 		/* Everything is good to go--sign on already */
 		gaim_accounts_restore_previous_statuses();
 	}
-
-	gaim_blist_show();
 
 	if (gaim_accounts_get_all_active() == NULL)
 	{
