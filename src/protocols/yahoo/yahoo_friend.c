@@ -34,7 +34,7 @@ static YahooFriend *yahoo_friend_new(void)
 
 	ret = g_new0(YahooFriend, 1);
 	ret->status = YAHOO_STATUS_OFFLINE;
-	ret->stealth = YAHOO_STEALTH_DEFAULT;
+	ret->presence = YAHOO_PRESENCE_DEFAULT;
 
 	return ret;
 }
@@ -137,7 +137,7 @@ void yahoo_friend_free(gpointer p)
 	g_free(f);
 }
 
-void yahoo_process_stealth(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	YahooFriend *f;
@@ -160,7 +160,7 @@ void yahoo_process_stealth(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (value != 1 && value != 2) {
-		gaim_debug_error("yahoo", "Received unknown value for stealth key: %d\n", value);
+		gaim_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
 		return;
 	}
 
@@ -170,28 +170,28 @@ void yahoo_process_stealth(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (!f)
 		return;
 
-	if (pkt->service == YAHOO_SERVICE_STEALTH_PERM) {
-		gaim_debug_info("yahoo", "Setting permanent stealth for %s to %d.\n", who, (value == 1));
+	if (pkt->service == YAHOO_SERVICE_PRESENCE_PERM) {
+		gaim_debug_info("yahoo", "Setting permanent presence for %s to %d.\n", who, (value == 1));
 		/* If setting from perm offline to online when in invisible status,
 		 * this has already been taken care of (when the temp status changed) */
-		if (value == 2 && f->stealth == YAHOO_STEALTH_ONLINE) {
+		if (value == 2 && f->presence == YAHOO_PRESENCE_ONLINE) {
 		} else {
 			if (value == 1) /* Setting Perm offline */
-				f->stealth = YAHOO_STEALTH_PERM_OFFLINE;
+				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 			else
-				f->stealth = YAHOO_STEALTH_DEFAULT;
+				f->presence = YAHOO_PRESENCE_DEFAULT;
 		}
 	} else {
-		gaim_debug_info("yahoo", "Setting session stealth for %s to %d.\n", who, (value == 1));
+		gaim_debug_info("yahoo", "Setting session presence for %s to %d.\n", who, (value == 1));
 		if (value == 1)
-			f->stealth = YAHOO_STEALTH_ONLINE;
+			f->presence = YAHOO_PRESENCE_ONLINE;
 		else
-			f->stealth = YAHOO_STEALTH_DEFAULT;
+			f->presence = YAHOO_PRESENCE_DEFAULT;
 	}
 }
 
-void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
-		YahooStealthVisibility stealth)
+void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
+		YahooPresenceVisibility presence)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
@@ -205,36 +205,36 @@ void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
 		return;
 
 	/* No need to change the value if it is already correct */
-	if (f->stealth == stealth) {
-		gaim_debug_info("yahoo", "Not setting stealth because there are no changes.\n");
+	if (f->presence == presence) {
+		gaim_debug_info("yahoo", "Not setting presence because there are no changes.\n");
 		return;
 	}
 
-	if (stealth == YAHOO_STEALTH_PERM_OFFLINE) {
-		pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_PERM,
+	if (presence == YAHOO_PRESENCE_PERM_OFFLINE) {
+		pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
 				YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 		yahoo_packet_hash(pkt, "ssss",
 				1, gaim_connection_get_display_name(gc),
 				31, "1", 13, "2", 7, name);
-	} else if (stealth == YAHOO_STEALTH_DEFAULT) {
-		if (f->stealth == YAHOO_STEALTH_PERM_OFFLINE) {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_PERM,
+	} else if (presence == YAHOO_PRESENCE_DEFAULT) {
+		if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 			yahoo_packet_hash(pkt, "ssss",
 					1, gaim_connection_get_display_name(gc),
 					31, "2", 13, "2", 7, name);
 		} else if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_SESSION,
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_hash(pkt, "ssss",
 				1, gaim_connection_get_display_name(gc),
 				31, "2", 13, "1", 7, name);
 		}
-	} else if (stealth == YAHOO_STEALTH_ONLINE) {
-		if (f->stealth == YAHOO_STEALTH_PERM_OFFLINE) {
-			pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_PERM,
+	} else if (presence == YAHOO_PRESENCE_ONLINE) {
+		if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
+			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_hash(pkt, "ssss",
 					1, gaim_connection_get_display_name(gc),
@@ -242,7 +242,7 @@ void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
 			yahoo_packet_send_and_free(pkt, yd);
 		}
 
-		pkt = yahoo_packet_new(YAHOO_SERVICE_STEALTH_SESSION,
+		pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
 				YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash(pkt, "ssss",
 				1, gaim_connection_get_display_name(gc),

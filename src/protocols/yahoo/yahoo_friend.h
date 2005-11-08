@@ -29,10 +29,10 @@
 #include "yahoo_packet.h"
 
 typedef enum {
-	YAHOO_STEALTH_DEFAULT = 0,
-	YAHOO_STEALTH_ONLINE,
-	YAHOO_STEALTH_PERM_OFFLINE
-} YahooStealthVisibility;
+	YAHOO_PRESENCE_DEFAULT = 0,
+	YAHOO_PRESENCE_ONLINE,
+	YAHOO_PRESENCE_PERM_OFFLINE
+} YahooPresenceVisibility;
 
 /* these are called friends instead of buddies mainly so I can use variables
  * named f and not confuse them with variables named b
@@ -46,7 +46,7 @@ typedef struct _YahooFriend {
 	gboolean sms;
 	char *ip;
 	gboolean bicon_sent_request;
-	YahooStealthVisibility stealth;
+	YahooPresenceVisibility presence;
 } YahooFriend;
 
 YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
@@ -66,8 +66,8 @@ gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f);
 
 void yahoo_friend_free(gpointer p);
 
-void yahoo_process_stealth(GaimConnection *gc, struct yahoo_packet *pkt);
-void yahoo_friend_update_stealth(GaimConnection *gc, const char *name,
-		YahooStealthVisibility stealth);
+void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt);
+void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
+		YahooPresenceVisibility presence);
 
 #endif /* _YAHOO_FRIEND_H_ */
