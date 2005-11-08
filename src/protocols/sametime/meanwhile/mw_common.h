@@ -100,12 +100,16 @@ enum mwLoginType {
   mwLogin_LINKS         = 0x100a,  /**< official Sametime Links toolkit */
 
   /* now we're getting crazy */
-  mwLogin_NOTES_6_5        = 0x1200,
-  mwLogin_NOTES_7_0        = 0x1210,
-  mwLogin_ICT              = 0x1300,
+  mwLogin_NOTES_6_5        = 0x1200,  /**< 0xff00 mask? */
+  mwLogin_NOTES_6_5_3      = 0x1203,
+  mwLogin_NOTES_7_0_beta   = 0x1210,
+  mwLogin_NOTES_7_0        = 0x1214,
+  mwLogin_ICT              = 0x1300,  /**< 0xff00 mask? */
   mwLogin_ICT_1_7_8_2      = 0x1302,
-  mwLogin_NOTESBUDDY       = 0x1400,  /**< 0xff00 mask? */
+  mwLogin_ICT_SIP          = 0x1303,
+  mwLogin_NOTESBUDDY_4_14  = 0x1400,  /**< 0xff00 mask? */
   mwLogin_NOTESBUDDY_4_15  = 0x1405,
+  mwLogin_NOTESBUDDY_4_16  = 0x1406,
   mwLogin_SANITY           = 0x1600,
   mwLogin_ST_PERL          = 0x1625,
   mwLogin_PMR_ALERT        = 0x1650,

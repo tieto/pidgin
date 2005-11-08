@@ -944,15 +944,19 @@ const char *mwLoginType_getName(enum mwLoginType type) {
     return "Lotus Sametime Links";
 
   case mwLogin_NOTES_6_5:
+  case mwLogin_NOTES_6_5_3:
+  case mwLogin_NOTES_7_0_beta:
   case mwLogin_NOTES_7_0:
     return "Lotus Notes Client";
 
   case mwLogin_ICT:
   case mwLogin_ICT_1_7_8_2:
+  case mwLogin_ICT_SIP:
     return "IBM Community Tools";
 
-  case mwLogin_NOTESBUDDY:
+  case mwLogin_NOTESBUDDY_4_14:
   case mwLogin_NOTESBUDDY_4_15:
+  case mwLogin_NOTESBUDDY_4_16:
     return "Alphaworks NotesBuddy";
 
   case mwLogin_SANITY:

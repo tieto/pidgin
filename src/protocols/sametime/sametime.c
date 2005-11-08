@@ -808,6 +808,7 @@ static GaimGroup *group_ensure(GaimConnection *gc,
 			       struct mwSametimeGroup *stgroup) {
   GaimAccount *acct;
   GaimGroup *group;
+  GaimBuddyList *blist;
   GaimBlistNode *gn;
   const char *name, *alias, *owner;
   enum mwSametimeGroupType type;
@@ -815,18 +816,35 @@ static GaimGroup *group_ensure(GaimConnection *gc,
   acct = gaim_connection_get_account(gc);
   owner = gaim_account_get_username(acct);
 
+  blist = gaim_get_blist();
+  g_return_val_if_fail(blist != NULL, NULL);
+
   name = mwSametimeGroup_getName(stgroup);
   alias = mwSametimeGroup_getAlias(stgroup);
   type = mwSametimeGroup_getType(stgroup);
 
+  /* first attempt at finding the group, by the name key */
+  for(gn = blist->root; gn; gn = gn->next) {
+    const char *n;
+    if(! GAIM_BLIST_NODE_IS_GROUP(gn)) continue;
+    n = gaim_blist_node_get_string(gn, GROUP_KEY_NAME);
+
+    if(n && !strcmp(n, name)) {
+      group = (GaimGroup *) gn;
+      break;
+    }
+  }  
+
+  /* try again, by alias */
   group = gaim_find_group(alias);
+
+  /* oh well, no such group. Let's create it! */
   if(! group) {
     group = gaim_group_new(alias);
     gaim_blist_add_group(group, NULL);
   }
 
   gn = (GaimBlistNode *) group;
-
   gaim_blist_node_set_string(gn, GROUP_KEY_NAME, name);
   gaim_blist_node_set_int(gn, GROUP_KEY_TYPE, type);
 
@@ -3823,17 +3841,43 @@ static char *im_try_convert(const char *msg,
 }
 
 
-static char *im_encode(GaimConnection *gc, const char *msg) {
+static char *nb_im_encode(GaimConnection *gc, const char *message) {
   GaimAccount *acct;
   const char *enc;
+  char *ret;
+  GError *error = NULL;
   
   acct = gaim_connection_get_account(gc);
   g_return_val_if_fail(acct != NULL, NULL);
 
   enc = gaim_account_get_string(acct, MW_KEY_ENCODING,
 				MW_PLUGIN_DEFAULT_ENCODING);
+  g_return_val_if_fail(enc != NULL, NULL);
 
-  return im_try_convert(msg, enc, "UTF-8");
+  ret = g_convert_with_fallback(message, -1, enc, "UTF-8",
+				"?", NULL, NULL, &error);
+  if(error) {
+    DEBUG_INFO("problem converting to %s: %s\n",
+	       enc, NSTR(error->message));
+    g_error_free(error);
+  }
+  return ret;
+}
+
+
+static gboolean is_nb(struct mwConversation *conv) {
+  struct mwLoginInfo *info;
+
+  info = mwConversation_getTargetInfo(conv);
+  if(! info) return FALSE;
+
+  /* NotesBuddy can be at least three different type IDs (all in the
+     0x1400 range), or it can show up as 0x1002. However, if we're
+     calling this check, then we're already in HTML or MIME mode, so
+     we can discount the real 0x1002 */
+  /* I tried to avoid having any client-type-dependant code in here, I
+     really did. Oh well. CURSE YOU NOTESBUDDY */
+  return ((info->type == 0x1002) || (info->type & 0x1400));
 }
 
 
@@ -3852,8 +3896,7 @@ static int mw_prpl_send_im(GaimConnection *gc,
 
   g_return_val_if_fail(pd != NULL, 0);
 
-  msg = im_encode(gc, message);
-  if(!msg) msg = g_strdup(message);
+  msg = g_strdup(message);
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
@@ -3876,6 +3919,12 @@ static int mw_prpl_send_im(GaimConnection *gc,
        mwConversation_supports(conv, mwImSend_MIME)) {
       /* send a MIME message */
 
+      /* mime messages need the notesbuddy hack */
+      if(is_nb(conv)) {
+	g_free(msg);
+	msg = nb_im_encode(gc, message);
+      }
+
       tmp = im_mime_convert(msg);
       g_free(msg);
 
@@ -3884,6 +3933,12 @@ static int mw_prpl_send_im(GaimConnection *gc,
       
     } else if(mwConversation_supports(conv, mwImSend_HTML)) {
       /* send an HTML message */
+
+      /* html messages need the notesbuddy hack */
+      if(is_nb(conv)) {
+	g_free(msg);
+	msg = nb_im_encode(gc, message);
+      }
 
       /* need to do this to get the \n to <br> conversion */
       tmp = gaim_strdup_withhtml(msg);
@@ -5545,25 +5600,19 @@ static GaimPluginInfo mw_plugin_info = {
 
 static void mw_log_handler(const gchar *domain, GLogLevelFlags flags,
 			   const gchar *msg, gpointer data) {
-  char *nl;
 
-  if(! msg) return;
-
-  /* annoying! */
-  nl = g_strdup_printf("%s\n", msg);
+  if(! (msg && *msg)) return;
 
   /* handle g_log requests via gaim's built-in debug logging */
   if(flags & G_LOG_LEVEL_ERROR) {
-    gaim_debug_error(domain, nl);
+    gaim_debug_error(domain, "%s\n", msg);
 
   } else if(flags & G_LOG_LEVEL_WARNING) {
-    gaim_debug_warning(domain, nl);
+    gaim_debug_warning(domain, "%s\n", msg);
 
   } else {
-    gaim_debug_info(domain, nl);
+    gaim_debug_info(domain, "%s\n", msg);
   }
-
-  g_free(nl);
 }
 
 
@@ -5592,8 +5641,9 @@ static void mw_plugin_init(GaimPlugin *plugin) {
 				    MW_PLUGIN_DEFAULT_PORT);
   l = g_list_append(l, opt);
 
-  /* default attempted encoding */
-  opt = gaim_account_option_string_new(_("Encoding"), MW_KEY_ENCODING,
+  /* notesbuddy hack encoding */
+  opt = gaim_account_option_string_new(_("NotesBuddy Encoding"),
+				       MW_KEY_ENCODING,
 				       MW_PLUGIN_DEFAULT_ENCODING);
   l = g_list_append(l, opt);
 
