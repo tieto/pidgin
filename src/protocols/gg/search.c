@@ -57,7 +57,8 @@ void ggp_search_start(GaimConnection *gc, GGPSearchForm *form)
 	gaim_debug_info("gg", "It's time to perform a search...\n");
 
 	if ((req = gg_pubdir50_new(GG_PUBDIR50_SEARCH)) == NULL) {
-		gaim_debug_error("gg", "ggp_bmenu_show_details: Unable to create req variable.\n");
+		gaim_debug_error("gg",
+			"ggp_bmenu_show_details: Unable to create req variable.\n");
 		return;
 	}
 
@@ -125,4 +126,4 @@ char *ggp_search_get_result(gg_pubdir50_t res, int num, const char *field)
 /* }}} */
 
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

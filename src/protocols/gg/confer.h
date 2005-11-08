@@ -44,7 +44,8 @@ ggp_confer_find_by_name(GaimConnection *gc, const gchar *name);
  * @param chat_name Name of the conversation.
  */
 void
-ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name, const uin_t uin);
+ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
+						    const uin_t uin);
 
 /**
  * Add the specified UINs to the specified conversation.
@@ -56,7 +57,7 @@ ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name, cons
  */
 void
 ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
-						  const uin_t *recipients, int count);
+			    const uin_t *recipients, int count);
 
 /**
  * Finds a conversation in which all the specified recipients participate.
@@ -71,7 +72,8 @@ ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
  * @return Name of the conversation.
  */
 const char*
-ggp_confer_find_by_participants(GaimConnection *gc, const uin_t *recipients, int count);
+ggp_confer_find_by_participants(GaimConnection *gc, const uin_t *recipients,
+						    int count);
 
 /**
  * Adds a new conversation to the internal list of conversations.
@@ -88,4 +90,4 @@ ggp_confer_add_new(GaimConnection *gc, const char *name);
 
 #endif /* _GAIM_GG_CONFER_H */
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

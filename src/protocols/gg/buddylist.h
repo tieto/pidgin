@@ -61,4 +61,5 @@ ggp_buddylist_dump(GaimAccount *account);
 
 #endif /* _GAIM_GG_BUDDYLIST_H */
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+
+/* vim: set ts=8 sts=0 sw=8 noet: */

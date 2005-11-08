@@ -67,11 +67,11 @@ ggp_search_start(GaimConnection *gc, GGPSearchForm *form);
 /*
  * Return converted to the UTF-8 value of the specified field.
  *
- * @param res    Public directory look-up result
- * @param num    Id of the record
- * @param fileld Name of the field
+ * @param res    Public directory look-up result.
+ * @param num    Id of the record.
+ * @param fileld Name of the field.
  * 
- * @return UTF-8 encoded value of the field
+ * @return UTF-8 encoded value of the field.
  */
 char *
 ggp_search_get_result(gg_pubdir50_t res, int num, const char *field);
@@ -79,4 +79,4 @@ ggp_search_get_result(gg_pubdir50_t res, int num, const char *field);
 
 #endif /* _GAIM_GG_SEARCH_H */
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

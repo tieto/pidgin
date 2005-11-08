@@ -32,50 +32,52 @@
 void ggp_buddylist_send(GaimConnection *gc)
 {
 	GGPInfo *info = gc->proto_data;
+	GaimAccount *account = gaim_connection_get_account(gc);
 
 	GaimBuddyList *blist;
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GaimBuddy *buddy;
 	uin_t *userlist = NULL;
 	gchar *types = NULL;
-	int userlist_size = 0;
+	int size = 0;
 
-	if ((blist = gaim_get_blist()) != NULL)
-	{
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+	if ((blist = gaim_get_blist()) == NULL)
+	    return;
+
+	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-				{
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					buddy = (GaimBuddy *)bnode;
 
-					if (buddy->account != gc->account)
-						continue;
+				buddy = (GaimBuddy *)bnode;
 
-					userlist_size++;
-					userlist = (uin_t *) g_renew(uin_t, userlist, userlist_size);
-					types = (gchar *) g_renew(gchar, types, userlist_size);
-					userlist[userlist_size - 1] = ggp_str_to_uin(buddy->name);
-					types[userlist_size - 1] = GG_USER_NORMAL;
-					gaim_debug_info("gg", "ggp_buddylist_send: adding %d\n", userlist[userlist_size - 1]);
-				}
+				if (buddy->account != account)
+					continue;
+
+				size++;
+				userlist = (uin_t *) g_renew(uin_t, userlist, size);
+				types    = (gchar *) g_renew(gchar, types, size);
+				userlist[size - 1] = ggp_str_to_uin(buddy->name);
+				types[size - 1]    = GG_USER_NORMAL;
+				gaim_debug_info("gg", "ggp_buddylist_send: adding %d\n",
+						userlist[size - 1]);
 			}
 		}
 	}
 
 	if (userlist) {
-		int ret = gg_notify_ex(info->session, userlist, types, userlist_size);
+		int ret = gg_notify_ex(info->session, userlist, types, size);
 		g_free(userlist);
 		g_free(types);
 
-		gaim_debug_info("gg", "send: ret=%d; size=%d\n", ret, userlist_size);
+		gaim_debug_info("gg", "send: ret=%d; size=%d\n", ret, size);
 	}
 }
 /* }}} */
@@ -88,6 +90,9 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 	gchar **users_tbl;
 	int i;
 
+	/*
+	 * XXX: Limit of entries in a buddylist that will be imported.
+	 */
 	users_tbl = g_strsplit(buddylist, "\r\n", 200);
 
 	for (i = 0; users_tbl[i] != NULL; i++) {
@@ -122,7 +127,9 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 			g_strfreev(group_tbl);
 		}
 
-		buddy = gaim_buddy_new(gaim_connection_get_account(gc), name, strlen(show) ? show : NULL);
+		buddy = gaim_buddy_new(gaim_connection_get_account(gc), name,
+				       strlen(show) ? show : NULL);
+
 		if (!(group = gaim_find_group(g))) {
 			group = gaim_group_new(g);
 			gaim_blist_add_group(group, NULL);
@@ -144,35 +151,38 @@ void ggp_buddylist_load(GaimConnection *gc, char *buddylist)
 /* void ggp_buddylist_offline(GaimConnection *gc) {{{ */
 void ggp_buddylist_offline(GaimConnection *gc)
 {
+	GaimAccount *account = gaim_connection_get_account(gc);
 	GaimBuddyList *blist;
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GaimBuddy *buddy;
 
-	if ((blist = gaim_get_blist()) != NULL)
-	{
-		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
-		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+	if ((blist = gaim_get_blist()) == NULL)
+		return;
+
+	for (gnode = blist->root; gnode != NULL; gnode = gnode->next) {
+		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+
+		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next) {
+			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
-			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+
+			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
+				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
-				{
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
 
-					buddy = (GaimBuddy *)bnode;
+				buddy = (GaimBuddy *)bnode;
 
-					if (buddy->account != gc->account)
-						continue;
+				if (buddy->account != account)
+					continue;
 
-					gaim_prpl_got_user_status(
-						gaim_connection_get_account(gc),
-						buddy->name, "offline", NULL);
-					gaim_debug_info("gg", "ggp_buddylist_offline: gone: %s\n", buddy->name);
-				}
+				gaim_prpl_got_user_status(
+					gaim_connection_get_account(gc),
+					buddy->name, "offline", NULL);
+
+				gaim_debug_info("gg",
+					"ggp_buddylist_offline: gone: %s\n",
+					buddy->name);
 			}
 		}
 	}
@@ -204,7 +214,8 @@ char *ggp_buddylist_dump(GaimAccount *account)
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next) {
-				gchar *newdata, *name, *show, *gname;
+				gchar *newdata, *name, *alias, *gname;
+				gchar *cp_alias, *cp_gname;
 
 				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
@@ -214,17 +225,23 @@ char *ggp_buddylist_dump(GaimAccount *account)
 					continue;
 
 				name = buddy->name;
-				show = buddy->alias ? buddy->alias : buddy->name;
+				alias = buddy->alias ? buddy->alias : buddy->name;
 				gname = group->name;
 
-				newdata = g_strdup_printf("%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
-						show, show, show, show, "", gname, name, "", "");
+				cp_gname = charset_convert(gname, "UTF-8", "CP1250");
+				cp_alias = charset_convert(alias, "UTF-8", "CP1250");
+				newdata = g_strdup_printf(
+						"%s;%s;%s;%s;%s;%s;%s;%s%s\r\n",
+						cp_alias, cp_alias, cp_alias, cp_alias,
+						"", cp_gname, name, "", "");
 
 				ptr = buddylist;
 				buddylist = g_strconcat(ptr, newdata, NULL);
 
 				g_free(newdata);
 				g_free(ptr);
+				g_free(cp_gname);
+				g_free(cp_alias);
 			}
 		}
 	}
@@ -234,4 +251,4 @@ char *ggp_buddylist_dump(GaimAccount *account)
 /* }}} */
 
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

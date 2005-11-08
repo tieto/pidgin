@@ -39,7 +39,8 @@ uin_t ggp_str_to_uin(const char *text)
 	if (*text == '\0' || *tmp != '\0')
 		return 0;
 
-	if ((errno == ERANGE || (num == LONG_MAX || num == LONG_MIN)) || num > UINT_MAX || num < 0)
+	if ((errno == ERANGE || (num == LONG_MAX || num == LONG_MIN))
+	    || num > UINT_MAX || num < 0)
 		return 0;
 
 	return (uin_t) num;
@@ -55,10 +56,11 @@ char *charset_convert(const gchar *locstr, const char *encsrc, const char *encds
 	if (locstr == NULL)
 		return NULL;
 
-	msg = g_convert_with_fallback(locstr, strlen(locstr), encdst, encsrc, "?", NULL, NULL, &err);
+	msg = g_convert_with_fallback(locstr, strlen(locstr), encdst, encsrc,
+				      "?", NULL, NULL, &err);
 	if (err != NULL) {
 		gaim_debug_error("gg", "Error converting from %s to %s: %s\n",
-						 encsrc, encdst, err->message);
+				 encsrc, encdst, err->message);
 		g_error_free(err);
 	}
 
@@ -96,4 +98,4 @@ const char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
 /* }}} */
 
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

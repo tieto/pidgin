@@ -33,13 +33,13 @@ GaimConversation *ggp_confer_find_by_name(GaimConnection *gc, const gchar *name)
 	g_return_val_if_fail(name != NULL, NULL);
 
 	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, name,
-				gaim_connection_get_account(gc));
+			gaim_connection_get_account(gc));
 }
 /* }}} */
 
 /* void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name, const uin_t uin) {{{ */
 void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
-								   const uin_t uin)
+							 const uin_t uin)
 {
 	GaimConversation *conv;
 	GGPInfo *info = gc->proto_data;
@@ -52,23 +52,27 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 	for (l = info->chats; l != NULL; l = l->next) {
 		chat = l->data;
 
-		if (g_utf8_collate(chat->name, chat_name) == 0) {
-			if (g_list_find(chat->participants, str_uin) == NULL) {
-				chat->participants = g_list_append(chat->participants, str_uin);
-				conv = ggp_confer_find_by_name(gc, chat_name);
+		if (g_utf8_collate(chat->name, chat_name) != 0)
+			continue;
 
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-						ggp_buddy_get_name(gc, uin), NULL, GAIM_CBFLAGS_NONE, TRUE);
-			}
-			break;
+		if (g_list_find(chat->participants, str_uin) == NULL) {
+			chat->participants = g_list_append(
+						chat->participants, str_uin);
+
+			conv = ggp_confer_find_by_name(gc, chat_name);
+
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+				ggp_buddy_get_name(gc, uin), NULL,
+				GAIM_CBFLAGS_NONE, TRUE);
 		}
+		break;
 	}
 }
 /* }}} */
 
 /* void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name, const uin_t *recipients, int count) {{{ */
 void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
-							   const uin_t *recipients, int count)
+				 const uin_t *recipients, int count)
 {
 	GaimConversation *conv;
 	GGPInfo *info = gc->proto_data;
@@ -80,28 +84,34 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 	for (l = info->chats; l != NULL; l = l->next) {
 		chat = l->data;
 
-		if (g_utf8_collate(chat->name, chat_name) == 0) {
+		if (g_utf8_collate(chat->name, chat_name) != 0)
+			continue;
 
-			for (i = 0; i < count; i++) {
-				uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
-				if (g_list_find(chat->participants, uin) == NULL) {
-					chat->participants = g_list_append(chat->participants, uin);
-					conv = ggp_confer_find_by_name(gc, chat_name);
+		for (i = 0; i < count; i++) {
+			uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
 
-					gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-							ggp_buddy_get_name(gc, recipients[i]),
-							NULL, GAIM_CBFLAGS_NONE, TRUE);
-				}
+			if (g_list_find(chat->participants, uin) != NULL) {
 				g_free(uin);
+				continue;
 			}
-			break;
+
+			chat->participants = g_list_append(chat->participants, uin);
+			conv = ggp_confer_find_by_name(gc, chat_name);
+
+			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+				ggp_buddy_get_name(gc, recipients[i]),
+				NULL, GAIM_CBFLAGS_NONE, TRUE);
+
+			g_free(uin);
 		}
+		break;
 	}
 }
 /* }}} */
 
 /* const char *ggp_confer_find_by_participants(GaimConnection *gc, const uin_t *recipients, int count) {{{ */
-const char *ggp_confer_find_by_participants(GaimConnection *gc, const uin_t *recipients, int count)
+const char *ggp_confer_find_by_participants(GaimConnection *gc,
+					    const uin_t *recipients, int count)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat = NULL;
@@ -157,4 +167,4 @@ const char *ggp_confer_add_new(GaimConnection *gc, const char *name)
 }
 /* }}} */
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */

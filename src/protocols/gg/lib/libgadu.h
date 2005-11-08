@@ -1,4 +1,4 @@
-/* $Id: libgadu.h 13801 2005-09-14 19:10:39Z datallah $ */
+/* $Id: libgadu.h 14300 2005-11-08 19:45:09Z datallah $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -896,7 +896,7 @@ int gg_thread_socket(int thread_id, int socket);
 
 int gg_resolve(int *fd, int *pid, const char *hostname);
 
-#ifdef __GNUC__
+#if defined __GNUC__ && !defined _WIN32
 char *gg_saprintf(const char *format, ...) __attribute__ ((format (printf, 1, 2)));
 #else
 char *gg_saprintf(const char *format, ...);

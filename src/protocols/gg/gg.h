@@ -26,6 +26,7 @@
 
 #include "lib/libgadu.h"
 #include "search.h"
+#include "connection.h"
 
 typedef struct
 {
@@ -34,9 +35,18 @@ typedef struct
 
 } GGPChat;
 
+typedef void (*GGPTokenCallback)(GaimConnection *);
+
 typedef struct
 {
-	char *token_id;
+	char *id;
+	char *data;
+	unsigned int size;
+
+	struct gg_http *req;
+	guint inpa;
+
+	GGPTokenCallback cb;
 
 } GGPToken;
 
@@ -44,8 +54,7 @@ typedef struct {
 
 	struct gg_session *session;
 	GGPSearchForm *search_form;
-	GGPToken *register_token;
-	GGPToken *chpasswd_token;
+	GGPToken *token;
 	GList *chats;
 	void *searchresults_window;
 
@@ -57,4 +66,4 @@ typedef struct {
 
 #endif /* _GAIM_GG_H */
 
-/* vim: set ts=4 sts=0 sw=4 noet: */
+/* vim: set ts=8 sts=0 sw=8 noet: */
