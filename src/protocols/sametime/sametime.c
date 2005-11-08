@@ -807,7 +807,7 @@ static void group_add(struct mwGaimPluginData *pd,
 static GaimGroup *group_ensure(GaimConnection *gc,
 			       struct mwSametimeGroup *stgroup) {
   GaimAccount *acct;
-  GaimGroup *group;
+  GaimGroup *group = NULL;
   GaimBuddyList *blist;
   GaimBlistNode *gn;
   const char *name, *alias, *owner;
@@ -836,7 +836,7 @@ static GaimGroup *group_ensure(GaimConnection *gc,
   }  
 
   /* try again, by alias */
-  group = gaim_find_group(alias);
+  if(! group) group = gaim_find_group(alias);
 
   /* oh well, no such group. Let's create it! */
   if(! group) {
@@ -3823,24 +3823,6 @@ static char *im_mime_convert(const char *message) {
 }
 
 
-static char *im_try_convert(const char *msg,
-			    const char *enc_to,
-			    const char *enc_from) {
-  char *ret;
-  GError *error = NULL;
-
-  ret = g_convert(msg, -1, enc_to, enc_from, NULL, NULL, &error);
-  if(error) {
-    /* if there's something that just won't convert, leave it as UTF-8 */
-    DEBUG_INFO("problem converting to %s, preserving %s: %s\n",
-	       NSTR(enc_to), NSTR(enc_from), NSTR(error->message));
-    g_error_free(error);
-  }
-
-  return ret;
-}
-
-
 static char *nb_im_encode(GaimConnection *gc, const char *message) {
   GaimAccount *acct;
   const char *enc;
@@ -3877,7 +3859,7 @@ static gboolean is_nb(struct mwConversation *conv) {
      we can discount the real 0x1002 */
   /* I tried to avoid having any client-type-dependant code in here, I
      really did. Oh well. CURSE YOU NOTESBUDDY */
-  return ((info->type == 0x1002) || (info->type & 0x1400));
+  return ((info->type == 0x1002) || ((info->type & 0xff00) == 0x1400));
 }
 
 
