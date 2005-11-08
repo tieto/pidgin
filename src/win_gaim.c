@@ -228,52 +228,140 @@ static void dll_prep() {
 }
 
 static char* wgaim_lcid_to_posix(LCID lcid) {
-	switch(lcid) {
-		case 1026: return "bg"; /* bulgarian */
-		case 2125: return "my_MM"; /* burmese (Myanmar) */
-		case 1027: return "ca"; /* catalan */
-		case 1050: return "hr"; /* croatian */
-		case 1029: return "cs"; /* czech */
-		case 1030: return "da"; /* danish */
-		case 1043: return "nl"; /* dutch - netherlands */
-		case 1033: return "en"; /* english - us */
-		case 3081: return "en_AU"; /* english - australia */
-		case 4105: return "en_CA"; /* english - canada */
-		case 2057: return "en_GB"; /* english - great britain */
-		case 1035: return "fi"; /* finnish */
-		case 1036: return "fr"; /* french - france */
-		case 1031: return "de"; /* german - germany */
-		case 1032: return "el"; /* greek */
-		case 1037: return "he"; /* hebrew */
-		case 1081: return "hi"; /* hindi */
-		case 1038: return "hu"; /* hungarian */
-		case 1040: return "it"; /* italian - italy */
-		case 1041: return "ja"; /* japanese */
-		case 1042: return "ko"; /* korean */
-		case 1063: return "lt"; /* lithuanian */
-		case 1071: return "mk"; /* macedonian */
-		case 1044: return "nb"; /* norwegian (Bokmal)*/
-		case 2068: return "nn"; /* norwegian (Nynorsk)*/
-		case 1045: return "pl"; /* polish */
-		case 2070: return "pt"; /* portuguese - portugal */
-		case 1046: return "pt_BR"; /* portuguese - brazil */
-		case 1048: return "ro"; /* romanian - romania */
-		case 1049: return "ru"; /* russian - russia */
-		case 2074: return "sr@Latn"; /* serbian - latin */
-		case 3098: return "sr"; /* serbian - cyrillic */
-		case 2052: return "zh_CN"; /* chinese - china (simple) */
-		case 1051: return "sk"; /* slovak */
-		case 1060: return "sl"; /* slovenian */
-		case 1034: return "es"; /* spanish */
-		case 1052: return "sq"; /* albanian */
-		case 1053: return "sv"; /* swedish */
-		case 1054: return "th"; /* thai */
-		case 1028: return "zh_TW"; /* chinese - taiwan (traditional) */
-		case 1055: return "tr"; /* turkish */
-		case 1058: return "uk"; /* ukrainian */
-		case 1066: return "vi"; /* vietnamese */
-		default: return NULL;
+	char *posix = NULL;
+	int lang_id = PRIMARYLANGID(lcid);
+	int sub_id = SUBLANGID(lcid);
+
+	switch (lang_id) {
+		case LANG_ARABIC: break;
+		case LANG_BULGARIAN: posix = "bg"; break;
+		case LANG_CATALAN: posix = "ca"; break;
+		case LANG_CHINESE:
+			switch (sub_id) {
+				case SUBLANG_CHINESE_SIMPLIFIED:
+					posix = "zh_CN"; break;
+				case SUBLANG_CHINESE_TRADITIONAL:
+					posix = "zh_TW"; break;
+				default:
+					posix = "zh"; break;
+			}
+			break;
+		case LANG_CZECH: posix = "cs"; break;
+		case LANG_DANISH: posix = "da"; break;
+		case LANG_GERMAN: posix = "de"; break;
+		case LANG_GREEK: posix = "el"; break;
+		case LANG_ENGLISH:
+			switch (sub_id) {
+				case SUBLANG_ENGLISH_UK:
+					posix = "en_GB"; break;
+				case SUBLANG_ENGLISH_AUS:
+					posix = "en_AU"; break;
+				case SUBLANG_ENGLISH_CAN:
+					posix = "en_CA"; break;
+				default:
+					posix = "en"; break;
+			}
+			break;
+		case LANG_SPANISH: posix = "es"; break;
+		case LANG_FINNISH: posix = "fi"; break;
+		case LANG_FRENCH: posix = "fr"; break;
+		case LANG_HEBREW: posix = "he"; break;
+		case LANG_HUNGARIAN: posix = "hu"; break;
+		case LANG_ICELANDIC: break;
+		case LANG_ITALIAN: posix = "it"; break;
+		case LANG_JAPANESE: posix = "ja"; break;
+		case LANG_KOREAN: posix = "ko"; break;
+		case LANG_DUTCH: posix = "nl"; break;
+		case LANG_NORWEGIAN:
+			switch (sub_id) {
+				case SUBLANG_NORWEGIAN_BOKMAL:
+					posix = "nb"; break;
+				case SUBLANG_NORWEGIAN_NYNORSK:
+					posix = "nn"; break;
+			}
+			break;
+		case LANG_POLISH: posix = "pl"; break;
+		case LANG_PORTUGUESE:
+			switch (sub_id) {
+				case SUBLANG_PORTUGUESE_BRAZILIAN:
+					posix = "pt_BR"; break;
+				default:
+				posix = "pt"; break;
+			}
+			break;
+		case LANG_ROMANIAN: posix = "ro"; break;
+		case LANG_RUSSIAN: posix = "ru"; break;
+		/* LANG_CROATIAN == LANG_SERBIAN for some reason
+		 * We'll need to do something here if we ever get a croatian translation */
+		/* case LANG_CROATIAN: posix = "hr"; break;*/
+		case LANG_SERBIAN:
+			switch (sub_id) {
+				case SUBLANG_SERBIAN_LATIN:
+					posix = "sr@Latn"; break;
+				case SUBLANG_SERBIAN_CYRILLIC:
+					posix = "sr"; break;
+			}
+			break;
+		case LANG_SLOVAK: posix = "sk"; break;
+		case LANG_ALBANIAN: posix = "sq"; break;
+		case LANG_SWEDISH: posix = "sv"; break;
+		case LANG_THAI: posix = "th"; break;
+		case LANG_TURKISH: posix = "tr"; break;
+		case LANG_URDU: break;
+		case LANG_INDONESIAN: break;
+		case LANG_UKRAINIAN: posix = "uk"; break;
+		case LANG_BELARUSIAN: break;
+		case LANG_SLOVENIAN: posix = "sl"; break;
+		case LANG_ESTONIAN: posix = "et"; break;
+		case LANG_LATVIAN: break;
+		case LANG_LITHUANIAN: posix = "lt"; break;
+		case LANG_FARSI: break;
+		case LANG_VIETNAMESE: posix = "vi"; break;
+		case LANG_ARMENIAN: break;
+		case LANG_AZERI: posix = "az"; break;
+		case LANG_BASQUE: break;
+		case LANG_MACEDONIAN: posix = "mk"; break;
+		case LANG_AFRIKAANS: break;
+		case LANG_GEORGIAN: posix = "ka"; break;
+		case LANG_FAEROESE: break;
+		case LANG_HINDI: posix = "hi"; break;
+		case LANG_MALAY: break;
+		case LANG_KAZAK: break;
+		case LANG_KYRGYZ: break;
+		case LANG_SWAHILI: break;
+		case LANG_UZBEK: break;
+		case LANG_TATAR: break;
+		case LANG_BENGALI: break;
+		case LANG_PUNJABI: posix = "pa"; break;
+		case LANG_GUJARATI: posix = "gu"; break;
+		case LANG_ORIYA: break;
+		case LANG_TAMIL: break;
+		case LANG_TELUGU: break;
+		case LANG_KANNADA: break;
+		case LANG_MALAYALAM: break;
+		case LANG_ASSAMESE: break;
+		case LANG_MARATHI: break;
+		case LANG_SANSKRIT: break;
+		case LANG_MONGOLIAN: break;
+		case LANG_GALICIAN: posix = "gl"; break;
+		case LANG_KONKANI: break;
+		case LANG_MANIPURI: break;
+		case LANG_SINDHI: break;
+		case LANG_SYRIAC: break;
+		case LANG_KASHMIRI: break;
+		case LANG_NEPALI: break;
+		case LANG_DIVEHI: break;
 	}
+
+	/* Deal with exceptions */
+	if (posix == NULL) {
+		switch (lcid) {
+			case 2125: posix = "my_MM"; break; /* Myanmar (Burmese) */
+			case 1076: posix = "xh"; break; /* Xhosa */
+		}
+	}
+
+	return posix;
 }
 
 /* Determine and set Gaim locale as follows (in order of priority):
