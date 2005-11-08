@@ -2581,35 +2581,44 @@ update_typing_icon(GaimGtkConversation *gtkconv)
 	GaimGtkWindow *gtkwin;
 	GaimConvIm *im = NULL;
 	GaimConversation *conv = gtkconv->active_conv;
+	char *stock_id, *tooltip;
 
 	gtkwin = gtkconv->win;
 
-	if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		im = GAIM_CONV_IM(conv);
 
-	if(gtkwin->menu.typing_icon) {
-		gtk_widget_destroy(gtkwin->menu.typing_icon);
-		gtkwin->menu.typing_icon = NULL;
+	if (gtkwin->menu.typing_icon) {
+		gtk_widget_hide(gtkwin->menu.typing_icon);
 	}
 
-	if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		gtkwin->menu.typing_icon =
-			gtk_image_new_from_stock(GAIM_STOCK_TYPING, GTK_ICON_SIZE_MENU);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
-				_("User is typing..."), NULL);
-	} else if(im && gaim_conv_im_get_typing_state(im) == GAIM_TYPED) {
-		gtkwin->menu.typing_icon =
-			gtk_image_new_from_stock(GAIM_STOCK_TYPED, GTK_ICON_SIZE_MENU);
-		gtk_tooltips_set_tip(gtkconv->tooltips, gtkwin->menu.typing_icon,
-				_("User has typed something and paused"), NULL);
+	if (!im || (gaim_conv_im_get_typing_state(im) == GAIM_NOT_TYPING))
+		return;
+
+	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
+		stock_id = GAIM_STOCK_TYPING;
+		tooltip = _("User is typing...");
+	} else {
+		stock_id = GAIM_STOCK_TYPED;
+		tooltip = _("User has typed something and stopped");
 	}
-	
-	if(gtkwin->menu.typing_icon) {
-		gtk_widget_show(gtkwin->menu.typing_icon);
+
+	if (gtkwin->menu.typing_icon == NULL)
+	{
+		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
 		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkwin->menu.tray),
 								  gtkwin->menu.typing_icon,
-								  _("The buddy is typing a message"));
+								  tooltip);
 	}
+	else
+	{
+		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon), stock_id, GTK_ICON_SIZE_MENU);
+		gaim_gtk_menu_tray_set_tooltip(GAIM_GTK_MENU_TRAY(gtkwin->menu.tray),
+									   gtkwin->menu.typing_icon,
+									   tooltip);
+	}
+
+	gtk_widget_show(gtkwin->menu.typing_icon);
 }
 
 static gboolean

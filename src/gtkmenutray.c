@@ -21,6 +21,7 @@
 
 #include "gtkmenutray.h"
 
+#include <gtk/gtkeventbox.h>
 #include <gtk/gtkiconfactory.h>
 #include <gtk/gtkversion.h>
 
@@ -129,7 +130,7 @@ gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
 	gint height = -1;
 
 	gtk_menu_item_set_right_justified(GTK_MENU_ITEM(menu_tray), TRUE);
-	
+
 	if(!GTK_IS_WIDGET(menu_tray->tray))
 		menu_tray->tray = gtk_hbox_new(FALSE, 0);
 
@@ -193,24 +194,41 @@ gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray) {
 	return menu_tray->tray;
 }
 
-void
-gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+static void
+gaim_gtk_menu_tray_add(GaimGtkMenuTray *menu_tray, GtkWidget *widget,
+					   const char *tooltip, gboolean prepend)
 {
 	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
+	if (GTK_WIDGET_NO_WINDOW(widget))
+	{
+		GtkWidget *event;
+
+		event = gtk_event_box_new();
+		gtk_container_add(GTK_CONTAINER(event), widget);
+		gtk_widget_show(event);
+		widget = event;
+	}
+
 	gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip);
-	gtk_box_pack_end(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
+
+	if (prepend)
+		gtk_box_pack_start(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
+	else
+		gtk_box_pack_end(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
+}
+
+void
+gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+{
+	gaim_gtk_menu_tray_add(menu_tray, widget, tooltip, FALSE);
 }
 
 void
 gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
-	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
-	g_return_if_fail(GTK_IS_WIDGET(widget));
-
-	gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip);
-	gtk_box_pack_start(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
+	gaim_gtk_menu_tray_add(menu_tray, widget, tooltip, TRUE);
 }
 
 void
@@ -220,10 +238,17 @@ gaim_gtk_menu_tray_set_tooltip(GaimGtkMenuTray *menu_tray, GtkWidget *widget, co
 		return;
 
 	/* Should we check whether widget is a child of menu_tray? */
+
+	/*
+	 * If the widget does not have it's own window, then it
+	 * must have automatically been added to an event box
+	 * when it was added to the menu tray.  If this is the
+	 * case, we want to set the tooltip on the widget's parent,
+	 * not on the widget itself.
+	 */
 	if (GTK_WIDGET_NO_WINDOW(widget))
-		gaim_debug_warning("GtkMenuTray",
-				"The widget does not have it's own window. Tooltip cannot be set for this widget.\n");
-	else
-		gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
+		widget = widget->parent;
+
+	gtk_tooltips_set_tip(menu_tray->tooltips, widget, tooltip, NULL);
 }
 
