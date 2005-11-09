@@ -189,6 +189,30 @@ GdkPixbuf *gaim_gtk_blist_get_status_icon(GaimBlistNode *node,
  */
 gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node);
 
+/**
+ * Intelligently toggles the visibility of the buddy list. If the buddy
+ * list is obscured, it is brought to the front. If it is not obscured,
+ * it is hidden. If it is hidden it is shown.
+ */
+void gaim_gtk_blist_toggle_visibility();
+
+/**
+ * Increases the reference count of visibility managers. Callers should 
+ * call the complementary remove function when no longer managing 
+ * visibility. 
+ *
+ * A visibility manager is something that provides some method for
+ * showing the buddy list after it is hidden (e.g. docklet plugin).
+ */
+void gaim_gtk_blist_visibility_manager_add();
+
+/**
+ * Decreases the reference count of visibility managers. If the count
+ * drops below zero, the buddy list is shown.
+ */
+void gaim_gtk_blist_visibility_manager_remove();
+
+
 /**************************************************************************
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
