@@ -50,4 +50,4 @@ libmediastreamer_la_LIBADD= $(GLIB_LIBS) $(VV_LIBS)
 AM_CFLAGS=$(GLIB_CFLAGS) -DG_LOG_DOMAIN=\"MediaStreamer\" $(VV_CFLAGS) $(IPV6_CFLAGS) -DHAVE_GLIB
 
 
-INCLUDES=  -I$(top_srcdir) -I$(top_srcdir)/mediastreamer $(VV_CFLAGS) \
+INCLUDES=  -I$(top_srcdir) -I$(top_srcdir)/mediastreamer $(VV_CFLAGS) 
