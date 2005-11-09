@@ -341,7 +341,7 @@ MS_LIBS=$(top_srcdir)/src/mediastreamer/libmediastreamer.la
 MS_INCLUDES=-I$(top_srcdir)/src/mediastreamer
 endif
 
-gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) mediastreamer/libmediastreamer.la
+gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) $(MS_LIBS)
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
 	@LIBOBJS@ \
