@@ -140,8 +140,11 @@ else
         dnl AC_MSG_ERROR([GNU MP headers not found, $withval])
 	have_gmp=no
 fi
-
-GMP_CFLAGS=-I$try_prefix/include
+if test "$have_gmp" = "yes" ; then
+	GMP_CFLAGS=-I$try_prefix/include
+	dnl XXX: shouldn't we be checking where the libs are and adding -L if necessary?
+	GMP_LIBS="-lgmp"
+fi
 
 AC_SUBST(GMP_CFLAGS)
 AC_SUBST(GMP_LIBS)
@@ -1450,7 +1453,7 @@ AC_SUBST(enable_dot)
 dnl ##############################################################################
 dnl ## Mediastreamer stuff #######################################################
 dnl ##############################################################################
-AC_ARG_ENABLE(vv,     [  --enable-vv         enable Voice and Video support],,enable_vv=yes)
+AC_ARG_ENABLE(vv,     [  --enable-vv         disable Voice and Video support],,enable_vv=no)
 if test "x$enable_vv" = xyes; then
     AC_DEFINE(HAVE_GLIB, 1, [Gaim always has GLib, but Linphone can be built without it])
     AM_CONDITIONAL(HAVE_VV, true)
@@ -1609,6 +1612,7 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
+echo Build with Voice/Video support : $enable_vv
 echo Build with DBUS support....... : $enable_dbus
 if test x$enable_dbus = xyes ; then
 echo DBUS session directory........ : $DBUS_SESSION_DIR
