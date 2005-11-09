@@ -257,8 +257,6 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_destroy,
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
-	NULL,
-	NULL,
 #if GTK_CHECK_VERSION(2,2,0)
 	docklet_x11_position_menu
 #else
