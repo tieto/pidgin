@@ -1,9 +1,5 @@
 /*
- * Gaim - Replace certain misspelled words with their correct form.
- *
- * Signification changes were made by Benjamin Kahn ("xkahn") and
- * Richard Laager ("rlaager") in April 2005--you may want to contact
- * them if you have questions.
+ * Gaim - Send raw data across the connections of some protocols.
  *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -35,6 +31,9 @@
 
 #include "gtkplugin.h"
 #include "gtkutils.h"
+
+#include "protocols/jabber/jabber.h"
+#include "protocols/msn/session.h"
 
 #ifdef MAX
 # undef MAX
@@ -83,10 +82,20 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, txt, ntohs(len));
 		gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
 
+	} else if (strcmp(prpl_id, "prpl-msn") == 0) {
+		MsnSession *session = gc->proto_data;
+		char buf[strlen(txt) + 3];
+
+		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
+		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
+
 	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
 		write(*(int *)gc->proto_data, txt, strlen(txt));
 		write(*(int *)gc->proto_data, "\r\n", 2);
 		gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
+
+	} else if (strcmp(prpl_id, "prpl-jabber") == 0) {
+		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
 
 	} else {
 		gaim_debug_error("raw", "Unknown protocol ID %s\n", prpl_id);
@@ -166,7 +175,7 @@ static GaimPluginInfo info =
 	N_("Raw"),
 	VERSION,
 	N_("Lets you send raw input to text-based protocols."),
-	N_("Lets you send raw input to text-based protocols (IRC, "
+	N_("Lets you send raw input to text-based protocols (Jabber, MSN, IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
