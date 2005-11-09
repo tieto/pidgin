@@ -1,10 +1,38 @@
-#define GAIM_PLUGINS
+/*
+ * Gaim - Replace certain misspelled words with their correct form.
+ *
+ * Signification changes were made by Benjamin Kahn ("xkahn") and
+ * Richard Laager ("rlaager") in April 2005--you may want to contact
+ * them if you have questions.
+ *
+ * Gaim is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ */
+
+#include "internal.h"
+#include "gtkgaim.h"
+
 #include "conversation.h"
 #include "debug.h"
 #include "prpl.h"
 #include "version.h"
 
-#include "gtkgaim.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 
@@ -12,10 +40,6 @@
 # undef MAX
 # undef MIN
 #endif
-
-#include "protocols/jabber/jabber.h"
-#undef GAIM_PLUGINS
-#include "protocols/msn/session.h"
 
 #define RAW_PLUGIN_ID "gtk-raw"
 
@@ -46,9 +70,9 @@ text_sent_cb(GtkEntry *entry)
 	txt = gtk_entry_get_text(entry);
 
 	prpl_id = gaim_account_get_protocol_id(account);
-	
+
 	gaim_debug_misc("raw", "prpl_id = %s\n", prpl_id);
-	
+
 	if (strcmp(prpl_id, "prpl-toc") == 0) {
 		int *a = (int *)gc->proto_data;
 		unsigned short seqno = htons(a[1]++ & 0xffff);
@@ -58,21 +82,12 @@ text_sent_cb(GtkEntry *entry)
 		write(*a, &len, 2);
 		write(*a, txt, ntohs(len));
 		gaim_debug(GAIM_DEBUG_MISC, "raw", "TOC C: %s\n", txt);
-		
-	} else if (strcmp(prpl_id, "prpl-msn") == 0) {
-		MsnSession *session = gc->proto_data;
-		char buf[strlen(txt) + 3];
 
-		g_snprintf(buf, sizeof(buf), "%s\r\n", txt);
-		msn_servconn_write(session->notification->servconn, buf, strlen(buf));
-		
 	} else if (strcmp(prpl_id, "prpl-irc") == 0) {
 		write(*(int *)gc->proto_data, txt, strlen(txt));
 		write(*(int *)gc->proto_data, "\r\n", 2);
 		gaim_debug(GAIM_DEBUG_MISC, "raw", "IRC C: %s\n", txt);
 
-	} else if (strcmp(prpl_id, "prpl-jabber") == 0) {
-		jabber_send_raw((JabberStream *)gc->proto_data, txt, -1);
 	} else {
 		gaim_debug_error("raw", "Unknown protocol ID %s\n", prpl_id);
 	}
@@ -151,7 +166,7 @@ static GaimPluginInfo info =
 	N_("Raw"),
 	VERSION,
 	N_("Lets you send raw input to text-based protocols."),
-	N_("Lets you send raw input to text-based protocols (Jabber, MSN, IRC, "
+	N_("Lets you send raw input to text-based protocols (IRC, "
 	   "TOC). Hit 'Enter' in the entry box to send. Watch the debug window."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
 	GAIM_WEBSITE,
