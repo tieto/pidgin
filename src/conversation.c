@@ -452,6 +452,14 @@ gaim_conversation_destroy(GaimConversation *conv)
 		}
 	}
 
+	/* remove from conversations and im/chats lists prior to emit */
+	conversations = g_list_remove(conversations, conv);
+
+	if(conv->type==GAIM_CONV_TYPE_IM)
+		ims = g_list_remove(ims, conv);
+	else if(conv->type==GAIM_CONV_TYPE_CHAT)
+		chats = g_list_remove(chats, conv);
+
 	gaim_signal_emit(gaim_conversations_get_handle(),
 					 "deleting-conversation", conv);
 
@@ -472,8 +480,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 
 	g_list_free(g_list_first(conv->send_history));
 
-	conversations = g_list_remove(conversations, conv);
-
 	if (conv->type == GAIM_CONV_TYPE_IM) {
 		gaim_conv_im_stop_typing_timeout(conv->u.im);
 		gaim_conv_im_stop_type_again_timeout(conv->u.im);
@@ -485,8 +491,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 		GAIM_DBUS_UNREGISTER_POINTER(conv->u.im);
 		g_free(conv->u.im);
 		conv->u.im = NULL;
-
-		ims = g_list_remove(ims, conv);
 	}
 	else if (conv->type == GAIM_CONV_TYPE_CHAT) {
 
@@ -522,8 +526,6 @@ gaim_conversation_destroy(GaimConversation *conv)
 		GAIM_DBUS_UNREGISTER_POINTER(conv->u.chat);
 		g_free(conv->u.chat);
 		conv->u.chat = NULL;
-
-		chats = g_list_remove(chats, conv);
 	}
 
 	g_hash_table_destroy(conv->data);

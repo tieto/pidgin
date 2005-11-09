@@ -445,6 +445,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-created",
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
+	gaim_signal_connect(conv_handle, "deleting-conversation",
+						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "conversation-updated",
 						plugin, GAIM_CALLBACK(docklet_conv_updated_cb), NULL);
 
