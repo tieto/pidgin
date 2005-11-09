@@ -29,6 +29,5 @@ confdefs.h
 *.swp
 win32-install-dir
 .temp-gettextize
-m4
 gaim.pc
 *.apspec
