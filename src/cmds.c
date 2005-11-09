@@ -331,6 +331,8 @@ GList *gaim_cmd_list(GaimConversation *conv)
 		ret = g_list_append(ret, c->cmd);
 	}
 
+	ret = g_list_sort(ret, (GCompareFunc)strcmp);
+
 	return ret;
 }
 
@@ -360,6 +362,8 @@ GList *gaim_cmd_help(GaimConversation *conv, const gchar *cmd)
 
 		ret = g_list_append(ret, c->help);
 	}
+
+	ret = g_list_sort(ret, (GCompareFunc)strcmp);
 
 	return ret;
 }
