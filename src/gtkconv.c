@@ -4851,91 +4851,97 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 	 * and what features that account supports.
 	 */
 	if ((gc != NULL) &&
-	    ( (gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) ||
-	      !gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)) )) {
+		((gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_CHAT) ||
+		 !gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv)) ))
+	{
 		/* Account is online */
 		/* Deal with the toolbar */
-		      if (conv->features & GAIM_CONNECTION_HTML) {
-			      buttons = GTK_IMHTML_ALL;    /* Everything on */
-			      if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
-			          conv->features & GAIM_CONNECTION_NO_IMAGES)
-				      buttons &= ~GTK_IMHTML_IMAGE;
-			      if (conv->features & GAIM_CONNECTION_NO_BGCOLOR)
-				      buttons &= ~GTK_IMHTML_BACKCOLOR;
-			      if (conv->features & GAIM_CONNECTION_NO_FONTSIZE) {
-				      buttons &= ~GTK_IMHTML_GROW;
-				      buttons &= ~GTK_IMHTML_SHRINK;
-			      }
-			      if (conv->features & GAIM_CONNECTION_NO_URLDESC)
-				      buttons &= ~GTK_IMHTML_LINKDESC;
-		      } else {
-			      buttons = GTK_IMHTML_SMILEY;
-		      }
-		      gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
-		      gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(account));
+		if (conv->features & GAIM_CONNECTION_HTML)
+		{
+			buttons = GTK_IMHTML_ALL; /* Everything on */
+			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
+					conv->features & GAIM_CONNECTION_NO_IMAGES)
+				buttons &= ~GTK_IMHTML_IMAGE;
+			if (conv->features & GAIM_CONNECTION_NO_BGCOLOR)
+				buttons &= ~GTK_IMHTML_BACKCOLOR;
+			if (conv->features & GAIM_CONNECTION_NO_FONTSIZE)
+			{
+				buttons &= ~GTK_IMHTML_GROW;
+				buttons &= ~GTK_IMHTML_SHRINK;
+			}
+			if (conv->features & GAIM_CONNECTION_NO_URLDESC)
+				buttons &= ~GTK_IMHTML_LINKDESC;
+		} else {
+			buttons = GTK_IMHTML_SMILEY;
+		}
+		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
+		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(account));
 
 		/* Deal with menu items */
-		      gtk_widget_set_sensitive(win->menu.view_log, TRUE);
-		      gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
-		      gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
-		      gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		      gtk_widget_set_sensitive(win->menu.block, (prpl_info->add_deny != NULL));
-		      gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
-		      gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE));
+		gtk_widget_set_sensitive(win->menu.view_log, TRUE);
+		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
+		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
+		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
+		gtk_widget_set_sensitive(win->menu.block, (prpl_info->add_deny != NULL));
+		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
+		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE));
 
-		      if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
-			      gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
-			      gtk_widget_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
-			      gtk_widget_set_sensitive(win->menu.send_file,
-			                               (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
-				                               prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
-			      gtk_widget_set_sensitive(win->menu.alias,
-			                               (gaim_find_buddy(account, gaim_conversation_get_name(conv)) != NULL));
-		      } else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
-			      gtk_widget_set_sensitive(win->menu.add, (prpl_info->join_chat != NULL));
-			      gtk_widget_set_sensitive(win->menu.remove, (prpl_info->join_chat != NULL));
-			      gtk_widget_set_sensitive(win->menu.alias,
-			                               (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
-		      }
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+		{
+			gtk_widget_set_sensitive(win->menu.add, (prpl_info->add_buddy != NULL));
+			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->remove_buddy != NULL));
+			gtk_widget_set_sensitive(win->menu.send_file,
+									 (prpl_info->send_file != NULL && (!prpl_info->can_receive_file ||
+									  prpl_info->can_receive_file(gc, gaim_conversation_get_name(conv)))));
+			gtk_widget_set_sensitive(win->menu.alias,
+									 (gaim_find_buddy(account, gaim_conversation_get_name(conv)) != NULL));
+		}
+		else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		{
+			gtk_widget_set_sensitive(win->menu.add, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(win->menu.remove, (prpl_info->join_chat != NULL));
+			gtk_widget_set_sensitive(win->menu.alias,
+									 (gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) != NULL));
+		}
 
 		/* Deal with chat userlist buttons */
-		      if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-		      {
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, TRUE);
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, TRUE);
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, (prpl_info->get_info != NULL));
-		      }
-	      } else {
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		{
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, TRUE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, TRUE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, (prpl_info->get_info != NULL));
+		}
+	} else {
 		/* Account is offline */
 		/* Or it's a chat that we've left. */
 
 		/* Then deal with menu items */
-		      gtk_widget_set_sensitive(win->menu.view_log, TRUE);
-		      gtk_widget_set_sensitive(win->menu.send_file, FALSE);
-		      gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
-		      gtk_widget_set_sensitive(win->menu.get_info, FALSE);
-		      gtk_widget_set_sensitive(win->menu.invite, FALSE);
-		      gtk_widget_set_sensitive(win->menu.alias, FALSE);
-		      gtk_widget_set_sensitive(win->menu.block, FALSE);
-		      gtk_widget_set_sensitive(win->menu.add, FALSE);
-		      gtk_widget_set_sensitive(win->menu.remove, FALSE);
-		      gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
-		      gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
+		gtk_widget_set_sensitive(win->menu.view_log, TRUE);
+		gtk_widget_set_sensitive(win->menu.send_file, FALSE);
+		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
+		gtk_widget_set_sensitive(win->menu.get_info, FALSE);
+		gtk_widget_set_sensitive(win->menu.invite, FALSE);
+		gtk_widget_set_sensitive(win->menu.alias, FALSE);
+		gtk_widget_set_sensitive(win->menu.block, FALSE);
+		gtk_widget_set_sensitive(win->menu.add, FALSE);
+		gtk_widget_set_sensitive(win->menu.remove, FALSE);
+		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
+		gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
 
 		/* Deal with chat userlist buttons */
-		      if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-		      {
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, FALSE);
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, FALSE);
-			      gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, FALSE);
-		      }
-	      }
+		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		{
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_im, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_ignore, FALSE);
+			gtk_widget_set_sensitive(gtkconv->u.chat->userlist_info, FALSE);
+		}
+	}
 
 	/*
 	 * Update the window's icon
 	 */
 	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
-	    (gtkconv->u.im->anim))
+		(gtkconv->u.im->anim))
 	{
 		window_icon =
 			gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
