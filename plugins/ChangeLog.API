@@ -135,6 +135,12 @@ version 2.0.0:
 	  a given string
 	* gaim_util_chrreplace() to replace a given character with a
 	  different character
+	* gaim_gtk_blist_toggle_visibility() to intelligently toggle the
+	  visiblity of the buddy list
+	* gaim_gtk_blist_visibility_manager_add() to indicate the addition of a
+	  visibility manager - see the docs for more information
+	* gaim_gtk_blist_visibility_manager_remove() to indicate the removal of
+	  a visibility manager - see the docs for more information
 
 	Signals - Changed:
 	* "received-im-msg" and "received-chat-msg" to match, both now pass a
@@ -172,6 +178,8 @@ version 2.0.0:
 	* "buddy-status-changed": A buddy changed status; see Doxygen docs for full details.
 	* "buddy-idle-changed": A buddy's idle status changed; see Doxygen docs for full details.
 		See Doxygen docs for details.
+	* "gtkblist-hiding": See Doxygen docs for details.
+	* "gtkblist-unhiding": See Doxygen docs for details.
 
 	Signals - Removed:
 	* "buddy-away": replaced by buddy-status-changed

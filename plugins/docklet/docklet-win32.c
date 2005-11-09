@@ -190,6 +190,15 @@ static void wgaim_tray_blank_icon() {
 	systray_change_icon(sysicon_blank, NULL);
 }
 
+void wgaim_tray_minimize(GaimGtkBuddyList *gtkblist) {
+	MinimizeWndToTray(GDK_WINDOW_HWND(gtkblist->window->window));
+}
+
+void wgaim_tray_maximize(GaimGtkBuddyList *gtkblist) {
+	RestoreWndFromTray(GDK_WINDOW_HWND(gtkblist->window->window));
+}
+
+
 static void wgaim_tray_create() {
 	OSVERSIONINFO osinfo;
 	/* dummy window to process systray messages */
@@ -220,21 +229,20 @@ static void wgaim_tray_create() {
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
+
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-hiding", 
+			&handle, GAIM_CALLBACK(wgaim_tray_minimize), NULL);
+	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-unhiding", 
+			&handle, GAIM_CALLBACK(wgaim_tray_maximize), NULL);
+
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "created\n");
 }
 
 static void wgaim_tray_destroy() {
+	gaim_signals_disconnect_by_handle(&handle);
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
 	docklet_remove(TRUE);
-}
-
-void wgaim_tray_minimize(GtkWidget *window) {
-	MinimizeWndToTray(GDK_WINDOW_HWND(window->window));
-}
-
-void wgaim_tray_maximize(GtkWidget *window) {
-	RestoreWndFromTray(GDK_WINDOW_HWND(window->window));
 }
 
 static struct docklet_ui_ops wgaim_tray_ops =
@@ -243,8 +251,6 @@ static struct docklet_ui_ops wgaim_tray_ops =
 	wgaim_tray_destroy,
 	wgaim_tray_update_icon,
 	wgaim_tray_blank_icon,
-	wgaim_tray_minimize,
-	wgaim_tray_maximize,
 	NULL
 };
 

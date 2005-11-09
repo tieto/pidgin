@@ -101,6 +101,9 @@ typedef struct
 
 static GtkWidget *protomenu = NULL;
 
+static guint visibility_manager_count = 0;
+static gboolean gtk_blist_obscured = FALSE;
+
 static GList *gaim_gtk_blist_sort_methods = NULL;
 static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
 static GtkTreeIter sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
@@ -150,10 +153,42 @@ static char *dim_grey()
 /***************************************************
  *              Callbacks                          *
  ***************************************************/
+static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event, gpointer data)
+{
+	if (event->state == GDK_VISIBILITY_FULLY_OBSCURED)
+		gtk_blist_obscured = TRUE;
+	else
+		gtk_blist_obscured = FALSE;
+
+	/* continue to handle event normally */
+	return FALSE;
+}
+
+static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *event, gpointer data)
+{
+	if(event->changed_mask & GDK_WINDOW_STATE_WITHDRAWN) {
+		if(event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
+		else
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
+	}
+
+	if(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
+		if(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
+		else
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
+	}
+
+	return FALSE;
+}
 
 static gboolean gtk_blist_delete_cb(GtkWidget *w, GdkEventAny *event, gpointer data)
 {
-	gaim_core_quit();
+	if(visibility_manager_count)
+		gaim_blist_set_visible(FALSE);
+	else
+		gaim_core_quit();
 
 	/* we handle everything, event should not propogate further */
 	return TRUE;
@@ -3218,8 +3253,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
-			gtk_widget_show(gtkblist->window);
+		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 		return;
 	}
 
@@ -3233,8 +3267,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_show(gtkblist->vbox);
 	gtk_container_add(GTK_CONTAINER(gtkblist->window), gtkblist->vbox);
 
-	g_signal_connect_after(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "delete_event", G_CALLBACK(gtk_blist_delete_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "visibility_notify_event", G_CALLBACK(gtk_blist_visibility_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "window_state_event", G_CALLBACK(gtk_blist_window_state_cb), NULL);
 	gtk_widget_add_events(gtkblist->window, GDK_VISIBILITY_NOTIFY_MASK);
 
 	/******************************* Menu bar *************************************/
@@ -3400,11 +3436,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_gtk_blist_update_sort_methods();
 
 	/* OK... let's show this bad boy. */
-	if (gaim_prefs_get_bool("/gaim/gtk/blist/list_visible")) {
-		gaim_gtk_blist_refresh(list);
-		gaim_gtk_blist_restore_position();
-		gtk_widget_show(gtkblist->window);
-	}
+	gaim_gtk_blist_refresh(list);
+	gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 
 	/* start the refresh timer */
 	gtkblist->refresh_timer = g_timeout_add(30000, (GSourceFunc)gaim_gtk_blist_refresh_timer, list);
@@ -3943,13 +3976,20 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 	if (!(gtkblist && gtkblist->window))
 		return;
 
-	gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", show);
+	//gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", show);
 
 	if (show) {
+		if(!GAIM_WINDOW_ICONIFIED(gtkblist->window) && !GTK_WIDGET_VISIBLE(gtkblist->window))
+			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-unhiding", gtkblist);
 		gaim_gtk_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
 	} else {
-		gtk_window_iconify(GTK_WINDOW(gtkblist->window));
+		if(visibility_manager_count) {
+			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-hiding", gtkblist);
+			gtk_widget_hide(gtkblist->window);
+		} else {
+			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
+		}
 	}
 }
 
@@ -4569,6 +4609,34 @@ gaim_gtk_blist_request_add_group(void)
 					   _("Cancel"), NULL, NULL);
 }
 
+void
+gaim_gtk_blist_toggle_visibility()
+{
+	if (gtkblist && gtkblist->window) {
+		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
+			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gtk_blist_obscured);
+		} else {
+			gaim_blist_set_visible(TRUE);
+		}
+	}
+}
+
+void
+gaim_gtk_blist_visibility_manager_add()
+{
+	visibility_manager_count++;
+}
+
+void
+gaim_gtk_blist_visibility_manager_remove()
+{
+	if (visibility_manager_count)
+		visibility_manager_count--;
+	if (!visibility_manager_count)
+		gaim_blist_set_visible(TRUE);
+}
+
+
 static GaimBlistUiOps blist_ui_ops =
 {
 	gaim_gtk_blist_new_list,
@@ -4691,6 +4759,14 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
+	gaim_signal_register(gtk_blist_handle, "gtkblist-hiding",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_POINTER));
+
+	gaim_signal_register(gtk_blist_handle, "gtkblist-unhiding",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE));
+
 	gaim_signal_register(gtk_blist_handle, "gtkblist-created",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,

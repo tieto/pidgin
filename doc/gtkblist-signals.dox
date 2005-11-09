@@ -1,11 +1,31 @@
 /** @page gtkblist-signals GtkBlist Signals
 
  @signals
+  @signal gtkblist-hiding
+  @signal gtkblist-unhiding
   @signal gtkblist-created
   @signal drawing-tooltip
  @endsignals
 
  <hr>
+
+ @signaldef gtkblist-hiding
+  @signalproto
+void (*gtkblist-hiding)(GaimBuddyList *blist);
+  @endsignalproto
+  @signaldesc
+   Emitted when the buddy list is about to be hidden.
+  @param blist The buddy list.
+ @endsignaldef
+
+ @signaldef gtkblist-unhiding
+  @signalproto
+void (*gtkblist-unhiding)(GaimBuddyList *blist);
+  @endsignalproto
+  @signaldesc
+   Emitted when the buddy list is about to be unhidden.
+  @param blist The buddy list.
+ @endsignaldef
 
  @signaldef gtkblist-created
   @signalproto

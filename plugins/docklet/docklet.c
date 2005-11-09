@@ -52,7 +52,6 @@
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
 static DockletStatus status = DOCKLET_STATUS_OFFLINE;
-static gulong gtkblist_delete_cb_id = 0;
 static gboolean enable_join_chat = FALSE;
 static guint docklet_blinking_timer = 0;
 
@@ -212,74 +211,8 @@ focus_first_unseen_conv()
 }
 
 /**************************************************************************
- * minimize to and unminimize from the tray icon
- **************************************************************************/
-static void
-minimize_to_tray()
-{
-	GaimGtkBuddyList *blist = gaim_gtk_blist_get_default_gtk_blist();
-
-	if(!blist || !blist->window)
-		return;
-
-	if (ui_ops && ui_ops->minimize)
-		ui_ops->minimize(blist->window);
-
-	gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
-	gtk_widget_hide(blist->window);
-
-	docklet_update_status();
-}
-
-static void
-unminimize_from_tray()
-{
-	GaimGtkBuddyList *blist = gaim_gtk_blist_get_default_gtk_blist();
-
-	if(!blist || !blist->window)
-		return;
-
-	if (ui_ops && ui_ops->maximize)
-		ui_ops->maximize(blist->window);
-
-	gaim_blist_set_visible(TRUE);
-
-	docklet_update_status();
-}
-
-static void
-docklet_toggle_blist()
-{
-	if(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
-		minimize_to_tray();
-	else
-		unminimize_from_tray();
-}
-
-/**************************************************************************
  * callbacks and signal handlers
  **************************************************************************/
-/* catch delete events on gtkblist and hide it instead */
-static gboolean
-gtkblist_delete_cb(GtkWidget *widget) {
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "hiding buddy list\n");
-	minimize_to_tray(widget);
-	return TRUE;
-}
-
-/* connect to delete signal when gtkblist is created */
-static void
-gtkblist_created_cb(GaimBuddyList *list)
-{
-	if(list!=NULL && GAIM_IS_GTK_BLIST(list) && 
-			GAIM_GTK_BLIST(list)->window!=NULL && 
-			gtkblist_delete_cb_id==0) {
-
-		gtkblist_delete_cb_id = g_signal_connect(G_OBJECT(GAIM_GTK_BLIST(list)->window), 
-				"delete_event", G_CALLBACK(gtkblist_delete_cb), NULL);
-	}
-}
-
 static void 
 gaim_quit_cb() 
 {
@@ -332,6 +265,12 @@ static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
 	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
+}
+
+static void
+docklet_toggle_blist(GtkWidget *toggle, void *data)
+{
+	gaim_blist_set_visible(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 #ifdef _WIN32
@@ -440,7 +379,7 @@ docklet_clicked(int button_type)
 					|| status==DOCKLET_STATUS_AWAY_PENDING)
 				focus_first_unseen_conv();
 			else
-				docklet_toggle_blist();
+				gaim_gtk_blist_toggle_visibility();
 			break;
 		case 3:
 			docklet_menu();
@@ -451,6 +390,7 @@ docklet_clicked(int button_type)
 void
 docklet_embedded()
 {
+	gaim_gtk_blist_visibility_manager_add();
 	docklet_update_status();
 	if (ui_ops && ui_ops->update_icon)
 		ui_ops->update_icon(status);
@@ -459,7 +399,7 @@ docklet_embedded()
 void
 docklet_remove(gboolean visible)
 {
-	unminimize_from_tray();
+	gaim_gtk_blist_visibility_manager_remove();
 }
 
 void
@@ -508,17 +448,10 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(conv_handle, "conversation-updated",
 						plugin, GAIM_CALLBACK(docklet_conv_updated_cb), NULL);
 
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created",
-						plugin, GAIM_CALLBACK(gtkblist_created_cb), NULL);
-	gtkblist_created_cb(gaim_get_blist());
-
 	gaim_signal_connect(core_handle, "quitting",
 						plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
 
 	enable_join_chat = online_account_supports_chat();
-
-	if(!gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"))
-		minimize_to_tray();
 
 	return TRUE;
 }
@@ -526,18 +459,11 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
-	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
-
 	if (ui_ops && ui_ops->destroy)
 		ui_ops->destroy();
 
 	/* remove callbacks */
-    gaim_signals_disconnect_by_handle(handle);
-	if(gtkblist_delete_cb_id!=0)
-		g_signal_handler_disconnect(G_OBJECT(gtkblist->window), gtkblist_delete_cb_id);
-	gtkblist_delete_cb_id = 0;
-
-	unminimize_from_tray();
+	gaim_signals_disconnect_by_handle(handle);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "plugin unloaded\n");
 

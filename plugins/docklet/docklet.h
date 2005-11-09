@@ -41,8 +41,6 @@ struct docklet_ui_ops
 	void (*destroy)();
 	void (*update_icon)(DockletStatus);
 	void (*blank_icon)();
-	void (*minimize)(GtkWidget *);
-	void (*maximize)(GtkWidget *);
 	GtkMenuPositionFunc position_menu;
 };
 
