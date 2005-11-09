@@ -57,6 +57,7 @@ typedef struct _GaimWhiteboardUiOps
 	void (*create)(GaimWhiteboard *wb);                                 /**< create function */
 	void (*destroy)(GaimWhiteboard *wb);                               /**< destory function */
 	void (*set_dimensions)(GaimWhiteboard *wb, int width, int height); /**< set_dimensions function */
+	void (*set_brush) (GaimWhiteboard *wb, int size, int color);		/**< set the size and color of the brush */
 	void (*draw_point)(GaimWhiteboard *wb, int x, int y,
 					   int color, int size);                           /**< draw_point function */
 	void (*draw_line)(GaimWhiteboard *wb, int x1, int y1,
@@ -139,6 +140,17 @@ GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *wh
 void gaim_whiteboard_draw_list_destroy(GList *draw_list);
 
 /**
+ * Gets the dimension of a whiteboard.
+ *
+ * @param wb		The whiteboard.
+ * @param width		The width to be set.
+ * @param height	The height to be set.
+ *
+ * @return TRUE if the values of width and height were set.
+ */
+gboolean gaim_whiteboard_get_dimensions(GaimWhiteboard *wb, int *width, int *height);
+
+/**
  * Sets the dimensions for a whiteboard.
  *
  * @param wb     The whiteboard.
@@ -159,6 +171,14 @@ void gaim_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height);
 void gaim_whiteboard_draw_point(GaimWhiteboard *wb, int x, int y, int color, int size);
 
 /**
+ * Send a list of points to draw to the buddy.
+ *
+ * @param wb	The whiteboard
+ * @param list	A GList of points
+ */
+void gaim_whiteboard_send_draw_list(GaimWhiteboard *wb, GList *list);
+
+/**
  * Draws a line on a whiteboard
  *
  * @param wb    The whiteboard.
@@ -177,6 +197,42 @@ void gaim_whiteboard_draw_line(GaimWhiteboard *wb, int x1, int y1, int x2, int y
  * @param wb The whiteboard.
  */
 void gaim_whiteboard_clear(GaimWhiteboard *wb);
+
+/**
+ * Sends a request to the buddy to clear the whiteboard.
+ *
+ * @param wb The whiteboard
+ */
+void gaim_whiteboard_send_clear(GaimWhiteboard *wb);
+
+/**
+ * Sends a request to change the size and color of the brush.
+ *
+ * @param wb	The whiteboard
+ * @param size	The size of the brush
+ * @param color	The color of the brush
+ */
+void gaim_whiteboard_send_brush(GaimWhiteboard *wb, int size, int color);
+
+/**
+ * Gets the size and color of the brush.
+ *
+ * @param wb	The whiteboard
+ * @param size	The size of the brush
+ * @param color	The color of the brush
+ *
+ * @return	TRUE if the size and color were set.
+ */
+gboolean gaim_whiteboard_get_brush(GaimWhiteboard *wb, int *size, int *color);
+
+/**
+ * Sets the size and color of the brush.
+ *
+ * @param wb	The whiteboard
+ * @param size	The size of the brush
+ * @param color	The color of the brush
+ */
+void gaim_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color);
 
 /*@}*/
 

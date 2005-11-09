@@ -127,15 +127,36 @@ GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *wh
 }
 
 void gaim_whiteboard_draw_list_destroy(GList *draw_list)
-		{
+{
 	if (draw_list)
 		g_list_free(draw_list);
+}
+
+gboolean gaim_whiteboard_get_dimensions(GaimWhiteboard *wb, int *width, int *height)
+{
+	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
+	if (prpl_ops && prpl_ops->get_dimensions)
+	{
+		prpl_ops->get_dimensions(wb, width, height);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 void gaim_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->set_dimensions)
 		whiteboard_ui_ops->set_dimensions(wb, width, height);
+}
+
+void gaim_whiteboard_send_draw_list(GaimWhiteboard *wb, GList *list)
+{
+	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
+	if (prpl_ops && prpl_ops->send_draw_list)
+		prpl_ops->send_draw_list(wb, list);
 }
 
 void gaim_whiteboard_draw_point(GaimWhiteboard *wb, int x, int y, int color, int size)
@@ -154,5 +175,39 @@ void gaim_whiteboard_clear(GaimWhiteboard *wb)
 {
 	if(whiteboard_ui_ops && whiteboard_ui_ops->clear)
 		whiteboard_ui_ops->clear(wb);
+}
+
+void gaim_whiteboard_send_clear(GaimWhiteboard *wb)
+{
+	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
+	if (prpl_ops && prpl_ops->clear)
+		prpl_ops->clear(wb);
+}
+
+void gaim_whiteboard_send_brush(GaimWhiteboard *wb, int size, int color)
+{
+	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
+	if (prpl_ops && prpl_ops->set_brush)
+		prpl_ops->set_brush(wb, size, color);
+}
+
+gboolean gaim_whiteboard_get_brush(GaimWhiteboard *wb, int *size, int *color)
+{
+	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
+
+	if (prpl_ops && prpl_ops->get_brush)
+	{
+		prpl_ops->get_brush(wb, size, color);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+void gaim_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
+{
+	if (whiteboard_ui_ops && whiteboard_ui_ops->set_brush)
+		whiteboard_ui_ops->set_brush(wb, size, color);
 }
 

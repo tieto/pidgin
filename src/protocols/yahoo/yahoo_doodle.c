@@ -581,16 +581,19 @@ void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
 }
 
 void yahoo_doodle_get_brush(GaimWhiteboard *wb, int *size, int *color)
-	{
+{
 	doodle_session *ds = (doodle_session *)wb->proto_data;
 	*size = ds->brush_size;
 	*color = ds->brush_color;
-	}
+}
 
 void yahoo_doodle_set_brush(GaimWhiteboard *wb, int size, int color)
 {
 	doodle_session *ds = (doodle_session *)wb->proto_data;
 	ds->brush_size = size;
 	ds->brush_color = color;
+
+	/* Notify the core about the changes */
+	gaim_whiteboard_set_brush(wb, size, color);
 }
 

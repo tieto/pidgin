@@ -51,6 +51,7 @@ static void gaim_gtk_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int 
 												int x1, int y1, int color, int size);
 
 static void gaim_gtk_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height);
+static void gaim_gtk_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color);
 static void gaim_gtk_whiteboard_clear(GaimWhiteboard *wb);
 
 static void gaim_gtk_whiteboard_button_clear_press(GtkWidget *widget, gpointer data);
@@ -84,6 +85,7 @@ static GaimWhiteboardUiOps ui_ops =
 	gaim_gtk_whiteboard_create,
 	gaim_gtk_whiteboard_destroy,
 	gaim_gtk_whiteboard_set_dimensions,
+	gaim_gtk_whiteboard_set_brush,
 	gaim_gtk_whiteboard_draw_brush_point,
 	gaim_gtk_whiteboard_draw_brush_line,
 	gaim_gtk_whiteboard_clear
@@ -130,14 +132,22 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	const char *window_title;
 
 	gtkwb->wb = wb;
-	/* TODO: Make these prefs. */
-	gtkwb->brush_size = 2;
-	gtkwb->brush_color = 0xff0000;
 	wb->ui_data = gtkwb;
 
 	/* Get dimensions (default?) for the whiteboard canvas */
-	if(wb->prpl_ops && wb->prpl_ops->get_dimensions)
-		wb->prpl_ops->get_dimensions(wb, &gtkwb->width, &gtkwb->height);
+	if (!gaim_whiteboard_get_dimensions(wb, &gtkwb->width, &gtkwb->height))
+	{
+		/* Give some initial board-size */
+		gtkwb->width = 300;
+		gtkwb->height = 250;
+	}
+
+	if (!gaim_whiteboard_get_brush(wb, &gtkwb->brush_size, &gtkwb->brush_color))
+	{
+		/* Give some initial brush-info */
+		gtkwb->brush_size = 2;
+		gtkwb->brush_color = 0xff0000;
+	}
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtkwb->window = window;
@@ -480,9 +490,8 @@ gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *eve
 			draw_list = g_list_append(draw_list, GINT_TO_POINTER(dx));
 			draw_list = g_list_append(draw_list, GINT_TO_POINTER(dy));
 
-			/* Send draw list to prpl draw_list handler */
-			if(gtkwb->wb->prpl_ops && gtkwb->wb->prpl_ops->send_draw_list)
-				gtkwb->wb->prpl_ops->send_draw_list(gtkwb->wb, draw_list);
+			/* Send draw list to the draw_list handler */
+			gaim_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 			/* The brush stroke is finished, clear the list for another one */
 			if(draw_list)
@@ -561,8 +570,7 @@ gboolean gaim_gtk_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, 
 		*/
 
 		/* Send draw list to prpl draw_list handler */
-		if(gtkwb->wb->prpl_ops && gtkwb->wb->prpl_ops->send_draw_list)
-			gtkwb->wb->prpl_ops->send_draw_list(gtkwb->wb, draw_list);
+		gaim_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 		gaim_gtk_whiteboard_set_canvas_as_icon(gtkwb);
 
@@ -703,6 +711,14 @@ void gaim_gtk_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int heigh
 	gtkwb->height = height;
 }
 
+void gaim_gtk_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
+{
+	GaimGtkWhiteboard *gtkwb = wb->ui_data;
+
+	gtkwb->brush_size = size;
+	gtkwb->brush_color = color;
+}
+
 void gaim_gtk_whiteboard_clear(GaimWhiteboard *wb)
 {
 	GaimGtkWhiteboard *gtkwb = wb->ui_data;
@@ -731,8 +747,7 @@ void gaim_gtk_whiteboard_button_clear_press(GtkWidget *widget, gpointer data)
 	gaim_gtk_whiteboard_set_canvas_as_icon(gtkwb);
 
 	/* Do protocol specific clearing procedures */
-	if(gtkwb->wb->prpl_ops && gtkwb->wb->prpl_ops->clear)
-		gtkwb->wb->prpl_ops->clear(gtkwb->wb);
+	gaim_whiteboard_send_clear(gtkwb->wb);
 }
 
 void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
@@ -831,21 +846,15 @@ change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
 	GdkColor color;
 	int old_size = 5;
 	int old_color = 0;
+	int new_color;
 	GaimWhiteboard *wb = gtkwb->wb;
-	GaimWhiteboardPrplOps *prpl = wb->prpl_ops;
 
 	gtk_color_button_get_color(w, &color);
-	gtkwb->brush_color = (color.red & 0xFF00) << 8;
-	gtkwb->brush_color |= (color.green & 0xFF00);
-	gtkwb->brush_color |= (color.blue & 0xFF00) >> 8;
+	new_color = (color.red & 0xFF00) << 8;
+	new_color |= (color.green & 0xFF00);
+	new_color |= (color.blue & 0xFF00) >> 8;
 
-	if (prpl)
-	{
-		if (prpl->get_brush)
-			prpl->get_brush(wb, &old_size, &old_color);
-
-		if (prpl->set_brush)
-			prpl->set_brush(wb, old_size, gtkwb->brush_color);
-	}
+	gaim_whiteboard_get_brush(wb, &old_size, &old_color);
+	gaim_whiteboard_send_brush(wb, old_size, new_color);
 }
 #endif
