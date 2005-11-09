@@ -90,6 +90,8 @@ version 2.0.0:
 	* SSL support for IRC connections (Daniel Atallah)
 	* Show an error message when temporarily unable to join an IRC
 	  channel or change your nick (Richard Laager)
+	* Added /nickserv, /memoserv, /chanserv and /operserv
+	  commands (Joao Luís Marques Pinto)
 
 	Other Protocol Changes:
 	* Jabber support for SRV lookups

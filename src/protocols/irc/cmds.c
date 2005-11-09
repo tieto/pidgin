@@ -434,6 +434,23 @@ int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, co
 	return 0;
 }
 
+int irc_cmd_service(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *capital_cmd, *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	/* cmd will be one of nickserv, chanserv, memoserv or operserv */
+	capital_cmd = g_ascii_strup(cmd, -1);
+	buf = irc_format(irc, "v:", capital_cmd, args[0]);
+	irc_send(irc, buf);
+	g_free(capital_cmd);
+	g_free(buf);
+
+	return 0;
+}
+
 int irc_cmd_time(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
 {
 	char *buf;
