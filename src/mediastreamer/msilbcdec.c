@@ -83,10 +83,15 @@ int ms_ilbc_decoder_set_property(MSILBCDecoder *obj, MSFilterProperty prop, char
 {
 	switch(prop){
 		case MS_FILTER_PROPERTY_FMTP:
-			if (!value) return;
+			if (!value) return 0;
 			if (strstr(value,"ptime=20")!=NULL) obj->ms_per_frame=20;
 			else if (strstr(value,"ptime=30")!=NULL) obj->ms_per_frame=30;
 			else g_warning("Unrecognized fmtp parameter for ilbc encoder!");
+		break;
+		case MS_FILTER_PROPERTY_FREQ:
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		default:
 		break;
 	}
 	return 0;
@@ -98,13 +103,17 @@ int ms_ilbc_decoder_get_property(MSILBCDecoder *obj, MSFilterProperty prop, char
 			if (obj->ms_per_frame==20) strncpy(value,"ptime=20",MS_FILTER_PROPERTY_STRING_MAX_SIZE);
 			if (obj->ms_per_frame==30) strncpy(value,"ptime=30",MS_FILTER_PROPERTY_STRING_MAX_SIZE);
 		break;
+		case MS_FILTER_PROPERTY_FREQ:
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		default:
+		break;
 	}
 	return 0;
 }
 
 void ms_ilbc_decoder_setup(MSILBCDecoder *r) 
 {
-	MSFilterClass *klass = NULL;
 	switch (r->ms_per_frame) {
 	case 20:
 		r->samples_per_frame = BLOCKL_20MS;
@@ -157,7 +166,6 @@ void ms_ilbc_decoder_process(MSILBCDecoder *r)
 {
 	MSFifo *fo;
 	MSQueue *qi;
-	int err1;
 	void *dst=NULL;
 	float speech[ILBC_MAX_SAMPLES_PER_FRAME];
 	MSMessage *m;

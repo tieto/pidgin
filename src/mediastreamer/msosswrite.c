@@ -72,6 +72,10 @@ gint ms_oss_write_set_property(MSOssWrite *f,MSFilterProperty prop, void *value)
 		case MS_FILTER_PROPERTY_CHANNELS:
 			f->channels=((gint*)value)[0];
 		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
+		break;
 	}
 	return 0;
 }
@@ -131,15 +135,17 @@ void ms_oss_write_process(MSOssWrite *f)
 
 void ms_oss_write_start(MSOssWrite *w)
 {
-	gint bsize;
+	/* gint bsize; */
 	g_return_if_fail(w->devid!=-1);
 	w->sndcard=snd_card_manager_get_card(snd_card_manager,w->devid);
 	g_return_if_fail(w->sndcard!=NULL);
 	/* open the device for an audio telephony signal with minimum latency */
 	snd_card_open_w(w->sndcard,16,w->channels==2,w->freq);
 	w->bsize=snd_card_get_bsize(w->sndcard);
-	//MS_FILTER(w)->r_mingran=w->bsize;
-	//ms_sync_set_samples_per_tick(MS_FILTER(w)->sync,bsize);
+	/*
+	MS_FILTER(w)->r_mingran=w->bsize;
+	ms_sync_set_samples_per_tick(MS_FILTER(w)->sync,bsize);
+	 */
 }
 
 void ms_oss_write_stop(MSOssWrite *w)

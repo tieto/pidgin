@@ -30,7 +30,6 @@ void ms_sound_read_init(MSSoundRead *w)
 
 void ms_sound_read_class_init(MSSoundReadClass *klass)
 {
-	int i;
 	ms_filter_class_init(MS_FILTER_CLASS(klass));
 	MS_FILTER_CLASS(klass)->max_foutputs=1;  /* one fifo output only */
 	

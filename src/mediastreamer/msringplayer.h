@@ -73,6 +73,7 @@ gint ms_ring_player_get_sample_freq(MSRingPlayer *obj);
 
 /* FOR INTERNAL USE*/
 void ms_ring_player_init(MSRingPlayer *r);
+gint ms_ring_player_set_property(MSRingPlayer *f, MSFilterProperty prop, void *value);
 void ms_ring_player_class_init(MSRingPlayerClass *klass);
 void ms_ring_player_destroy( MSRingPlayer *obj);
 void ms_ring_player_process(MSRingPlayer *r);

@@ -30,7 +30,6 @@ void ms_sound_write_init(MSSoundWrite *w)
 
 void ms_sound_write_class_init(MSSoundWriteClass *klass)
 {
-	int i;
 	ms_filter_class_init(MS_FILTER_CLASS(klass));
 	MS_FILTER_CLASS(klass)->max_finputs=1;  /* one fifo output only */
 	

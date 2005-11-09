@@ -69,6 +69,11 @@ gint ms_oss_read_set_property(MSOssRead *f,MSFilterProperty prop, void *value)
 		case MS_FILTER_PROPERTY_FREQ:
 			f->freq=((gint*)value)[0];
 		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
+		break;
 	}
 	return 0;
 }

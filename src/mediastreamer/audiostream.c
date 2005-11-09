@@ -18,7 +18,6 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-
 #include "mediastream.h"
 #ifdef INET6
 	#include <sys/types.h>
@@ -88,7 +87,6 @@ const char *get_local_addr_for(const char *remote)
 {
 	const char *ret;
 #ifdef INET6
-	char num[8];
 	struct addrinfo hints, *res0;
 	int err;
 	memset(&hints, 0, sizeof(hints));
@@ -129,7 +127,6 @@ void create_rtp_sessions(RtpProfile *profile, int locport,char *remip,int rempor
 				int payload,int jitt_comp,
 			RtpSession **recv, RtpSession **send){
 	RtpSession *rtps,*rtpr;
-	PayloadType *pt;
 	/* creates two rtp filters to recv send streams (remote part)*/
 	
 	rtps=rtp_session_new(RTP_SESSION_SENDONLY);
@@ -338,4 +335,9 @@ gint audio_stream_send_dtmf(AudioStream *stream, gchar dtmf)
 {
 	ms_rtp_send_dtmf(MS_RTP_SEND(stream->rtpsend), dtmf);
 	ms_oss_write_play_dtmf(MS_OSS_WRITE(stream->soundwrite),dtmf);
+
+	/* not sure what this should be returning, nothing in mediastreamer calls
+	 * it directly, assuming 0 is okay here. -- Gary
+	 */
+	return 0;
 }

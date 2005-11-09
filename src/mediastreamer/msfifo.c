@@ -54,7 +54,6 @@ MSFifo * ms_fifo_new_with_buffer(gint r_gran, gint w_gran, gint r_offset, gint w
 	MSBuffer *buf;
 	gint saved_offset=MAX(r_gran+r_offset,w_offset);
 	gint fifo_size;
-	gint tmp;
 	if (min_fifo_size==0) min_fifo_size=w_gran;
 	
 	/* we must allocate a fifo with a size multiple of min_fifo_size,

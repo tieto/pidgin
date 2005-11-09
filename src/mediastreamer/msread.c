@@ -31,7 +31,6 @@ static MSReadClass *ms_read_class=NULL;
 MSFilter * ms_read_new(char *name)
 {
 	MSRead *r;
-	int fd=-1;
 	
 	r=g_new(MSRead,1);
 	ms_read_init(r);
@@ -91,6 +90,11 @@ gint ms_read_set_property(MSRead *f,MSFilterProperty prop, void *value)
 	switch(prop){
 		case MS_FILTER_PROPERTY_FREQ:
 			f->rate=((gint*)value)[0];
+		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
 		break;
 	}
 	return 0;
@@ -172,6 +176,11 @@ gint ms_read_close(MSRead *obj)
 		obj->fd=-1;
 		obj->state=MS_READ_STATE_STOPPED;
 	}
+
+	/* No idea if this is correct, but again nothing is calling it and it's not
+	 * even declared in the header file so this should be fine. -- Gary
+	 */
+	return 0;
 }
 
 

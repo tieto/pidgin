@@ -23,6 +23,9 @@
 #include "msossread.h"
 #include "msosswrite.h"
 
+#include <sys/ioctl.h>
+#include <unistd.h>
+
 #ifdef HAVE_SYS_SOUNDCARD_H
 #include <sys/soundcard.h>
 
@@ -227,7 +230,6 @@ int oss_card_open(OssCard *obj,int bits,int stereo,int rate)
 
 void oss_card_close(OssCard *obj)
 {
-	int i;
 	obj->ref--;
 	if (obj->ref==0) {
 		close(obj->fd);
@@ -342,7 +344,7 @@ gint oss_card_get_level(OssCard *obj,gint way)
 {
 	int p=0,mix_fd;
 	int osscmd;
-	g_return_if_fail(obj->mixdev_name!=NULL);
+	g_return_val_if_fail(obj->mixdev_name!=NULL, -1);
 #ifdef HAVE_SYS_SOUNDCARD_H
 	switch(way){
 		case SND_CARD_LEVEL_GENERAL:

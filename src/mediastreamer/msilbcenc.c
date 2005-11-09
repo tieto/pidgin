@@ -53,7 +53,6 @@ int
 ilbc_write_16bit_samples(gint16 int16samples[], float speech[], int n)
 {
 	int i;
-	float real_sample;
 
 	/* Convert floating point samples in range [-1,+1] to 16 bit
 	   integers. */
@@ -139,6 +138,11 @@ int ms_ilbc_encoder_set_property(MSILBCEncoder *obj, MSFilterProperty prop, char
 			else g_warning("Unrecognized fmtp parameter for ilbc encoder!");
 #endif
 		break;
+		case MS_FILTER_PROPERTY_FREQ:
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		default:
+		break;
 	}
 	return 0;
 }
@@ -151,13 +155,17 @@ int ms_ilbc_encoder_get_property(MSILBCEncoder *obj, MSFilterProperty prop, char
 			if (obj->ms_per_frame==20) strncpy(value,"ptime=20",MS_FILTER_PROPERTY_STRING_MAX_SIZE);
 			if (obj->ms_per_frame==30) strncpy(value,"ptime=30",MS_FILTER_PROPERTY_STRING_MAX_SIZE);
 		break;
+		case MS_FILTER_PROPERTY_FREQ:
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		default:
+		break;
 	}
 	return 0;
 }
 
 void ms_ilbc_encoder_setup(MSILBCEncoder *r) 
 {
-	MSFilterClass *klass = NULL;
 	switch (r->ms_per_frame) {
 	case 20:
 		r->samples_per_frame = BLOCKL_20MS;

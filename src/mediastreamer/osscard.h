@@ -44,4 +44,6 @@ SndCard * oss_card_new(char *devname, char *mixdev_name);
 
 typedef OssCard HpuxSndCard;
 
+gint oss_card_manager_init(SndCardManager *manager, gint tabindex);
+
 #endif

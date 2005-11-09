@@ -118,7 +118,6 @@ int ms_speex_enc_set_property(MSSpeexEnc *obj,int property,int *value)
 void ms_speex_enc_setup(MSSpeexEnc *obj)
 {
 	const SpeexMode *mode;
-	int quality;
 	g_message("Speex encoder setup: freq=%i",obj->frequency);
 	if ( obj->frequency< 16000) mode=&speex_nb_mode;
 	else mode=&speex_wb_mode;
@@ -171,7 +170,6 @@ void ms_speex_enc_process(MSSpeexEnc *obj)
 	MSQueue *outq=obj->outq[0];
 	gint16 *input;
 	gint gran=MS_FILTER(obj)->r_mingran;
-	gint i;
 	MSMessage *m;
 	
 	g_return_if_fail(inf!=NULL);

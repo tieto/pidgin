@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "waveheader.h"
 
@@ -134,6 +135,11 @@ gint ms_ring_player_set_property(MSRingPlayer *f,MSFilterProperty prop, void *va
 			if (f->sync!=NULL)
 				f->gran=(f->rate*f->sync->interval/1000)*2;
 		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
+		break;
 	}
 	return 0;
 }
@@ -147,6 +153,10 @@ gint ms_ring_player_get_property(MSRingPlayer *f,MSFilterProperty prop, void *va
 		break;
 		case MS_FILTER_PROPERTY_CHANNELS:
 			((gint*)value)[0]=f->channel;
+		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
 		break;
 	}
 	return 0;

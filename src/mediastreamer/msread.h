@@ -66,6 +66,7 @@ MSFilter * ms_read_new(char *name);
 #define ms_read_set_bufsize(filter,sz) (filter)->gran=(sz)
 
 /* FOR INTERNAL USE*/
+gint ms_read_open(MSRead *r, gchar *name);
 void ms_read_init(MSRead *r);
 void ms_read_class_init(MSReadClass *klass);
 void ms_read_destroy( MSRead *obj);

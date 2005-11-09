@@ -189,5 +189,10 @@ int ms_sync_uninit(MSSync *sync)
 	g_mutex_free(sync->lock);
 	g_cond_free(sync->thread_cond);
 	g_cond_free(sync->stop_cond);
+
+	/* I have no idea if this is right, but nothing in media streamer is
+	 * calling this, so it should be ok. -- Gary
+	 */
+	return 0;
 }
 

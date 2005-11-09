@@ -127,6 +127,11 @@ int ms_speex_dec_set_property(MSSpeexDec *obj, MSFilterProperty prop, int *value
 		case MS_FILTER_PROPERTY_FREQ:
 			obj->frequency=value[0];
 		break;
+		case MS_FILTER_PROPERTY_BITRATE:
+		case MS_FILTER_PROPERTY_CHANNELS:
+		case MS_FILTER_PROPERTY_FMTP:
+		default:
+		break;
 	}
 	return 0;
 }
@@ -188,7 +193,6 @@ void ms_speex_dec_process(MSSpeexDec *obj)
 	MSQueue *inq=obj->inq[0];
 	gint16 *output;
 	gint gran=obj->frame_size*2;
-	gint i;
 	MSMessage *m;
 	
 	g_return_if_fail(inq!=NULL);

@@ -2,7 +2,8 @@
 .libs
 Makefile
 Makefile.in
-*.lo
-*.loT
 *.a
 *.dll
+*.la
+*.lo
+*.loT
