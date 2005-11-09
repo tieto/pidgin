@@ -34,11 +34,11 @@ typedef struct _GaimGtkConversation GaimGtkConversation;
  */
 typedef enum
 {
-	GAIM_UNSEEN_NONE = 0,  /**< No unseen text in the conversation. */
-	GAIM_UNSEEN_TEXT,      /**< Unseen text in the conversation.    */
-	GAIM_UNSEEN_NICK,      /**< Unseen text and the nick was said.  */
-	GAIM_UNSEEN_EVENT      /**< Unseen events in the conversation.  */
-
+	GAIM_UNSEEN_NONE  = 0, /**< No unseen text in the conversation. */
+	GAIM_UNSEEN_EVENT = 1, /**< Unseen events in the conversation.  */
+	GAIM_UNSEEN_NOLOG = 2, /**< Unseen text with NO_LOG flag.       */
+	GAIM_UNSEEN_TEXT  = 3, /**< Unseen text in the conversation.    */
+	GAIM_UNSEEN_NICK  = 4  /**< Unseen text and the nick was said.  */
 } GaimUnseenState;
 
 enum {
@@ -199,6 +199,18 @@ void gaim_gtkconv_update_tabs(void);
  * @param conv The conversation.
  */
 void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
+
+/**
+ * Finds the first conversation of the given type which has an unseen
+ * state greater than or equal to the specified minimum state.
+ *
+ * @param type      The type of conversation.
+ * @param min_state The minimum unseen state.
+ * @return          First conversation matching criteria, or NULL.
+ */
+GaimConversation *
+gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
+                                        GaimUnseenState min_state);
 
 GaimGtkWindow *gaim_gtkconv_get_window(GaimGtkConversation *gtkconv);
 GdkPixbuf *gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);

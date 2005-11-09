@@ -95,15 +95,8 @@ docklet_update_status()
 	gboolean pending = FALSE;
 
 	/* determine if any ims have unseen messages */
-	for(l = gaim_get_ims(); l!=NULL; l=l->next) {
-		GaimConversation *conv = (GaimConversation*)l->data;
-		if(GAIM_IS_GTK_CONVERSATION(conv)) {
-			if(GAIM_GTK_CONVERSATION(conv)->unseen_state!=GAIM_UNSEEN_NONE) {
-				pending = TRUE;
-				break;
-			}
-		}
-	}
+	if(gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT))
+		pending = TRUE;
 
 	/* iterate through all accounts and determine which
 	 * status to show in the tray icon based on the following

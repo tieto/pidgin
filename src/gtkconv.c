@@ -2355,6 +2355,31 @@ menu_buddyicon_cb(gpointer data, guint action, GtkWidget *widget)
 /**************************************************************************
  * End of the bunch of buddy icon functions
  **************************************************************************/
+GaimConversation *
+gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
+                                        GaimUnseenState min_state)
+{
+	GList *l;
+
+	if(type==GAIM_CONV_TYPE_IM) {
+		l = gaim_get_ims();
+	} else if(type==GAIM_CONV_TYPE_CHAT) {
+		l = gaim_get_chats();
+	} else {
+		l = gaim_get_conversations();
+	}
+
+	for(; l!=NULL; l=l->next) {
+		GaimConversation *conv = (GaimConversation*)l->data;
+		if(GAIM_IS_GTK_CONVERSATION(conv)) {
+			if(GAIM_GTK_CONVERSATION(conv)->unseen_state>=min_state) {
+				return conv;
+			}
+		}
+	}
+
+	return NULL;
+}
 
 GaimGtkWindow *
 gaim_gtkconv_get_window(GaimGtkConversation *gtkconv)
@@ -4335,13 +4360,13 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	{
 		GaimUnseenState unseen = GAIM_UNSEEN_NONE;
 
-		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK ||
-				gtkconv->unseen_state == GAIM_UNSEEN_NICK)
+		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK)
 			unseen = GAIM_UNSEEN_NICK;
-		else if ((((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
-			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR)) &&
-				 gtkconv->unseen_state != GAIM_UNSEEN_TEXT)
+		else if (((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
+			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR))
 			unseen = GAIM_UNSEEN_EVENT;
+		else if ((flags & GAIM_MESSAGE_NO_LOG) == GAIM_MESSAGE_NO_LOG)
+			unseen = GAIM_UNSEEN_NOLOG;
 		else
 			unseen = GAIM_UNSEEN_TEXT;
 
@@ -5816,10 +5841,14 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void
 gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 {
-	gtkconv->unseen_state = state;
-
-	gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
+	/* only allow NONE or higher priority unseen state */
+	if((state==GAIM_UNSEEN_NONE && gtkconv->unseen_state!=GAIM_UNSEEN_NONE)
+			|| state > gtkconv->unseen_state) {
+		gtkconv->unseen_state = state;
+		gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
+	}
 }
+
 /*
  * When a conversation window is focused, we know the user
  * has looked at it so we know there are no longer unseen
