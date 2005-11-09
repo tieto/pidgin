@@ -82,6 +82,7 @@ typedef struct {
 #include "blist.h"
 #include "proxy.h"
 #include "plugin.h"
+#include "media.h"
 #include "roomlist.h"
 #include "status.h"
 #include "whiteboard.h"
@@ -310,6 +311,7 @@ struct _GaimPluginProtocolInfo
 	void (*send_file)(GaimConnection *, const char *who, const char *filename);
 	
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
+	GaimMediaPrplOps *media_prpl_ops;
 };
 
 #define GAIM_IS_PROTOCOL_PLUGIN(plugin) \

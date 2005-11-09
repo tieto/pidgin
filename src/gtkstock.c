@@ -96,6 +96,7 @@ static struct StockIcon
 	{ GAIM_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
 	{ GAIM_STOCK_TYPED,           "gaim",    "typed.png"                },
 	{ GAIM_STOCK_TYPING,          "gaim",    "typing.png"               },
+	{ GAIM_STOCK_VOICE_CHAT,      "gaim",    "phone.png"                },
 	{ GAIM_STOCK_STATUS_ONLINE,   "gaim",    "status-online.png"        },
 	{ GAIM_STOCK_STATUS_OFFLINE,  "gaim",    "status-offline.png"       },
 	{ GAIM_STOCK_STATUS_AWAY,     "gaim",    "status-away.png"          },

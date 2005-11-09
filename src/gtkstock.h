@@ -87,6 +87,7 @@
 #define GAIM_STOCK_TYPED           "gaim-typed"
 #define GAIM_STOCK_TYPING          "gaim-typing"
 #define GAIM_STOCK_UPLOAD          "gaim-upload"
+#define GAIM_STOCK_VOICE_CHAT      "gaim-voice-chat"
 #define GAIM_STOCK_WARN            "gaim-warn"
 /*@}*/
 

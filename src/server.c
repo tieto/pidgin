@@ -995,3 +995,14 @@ void serv_send_file(GaimConnection *gc, const char *who, const char *file)
 		}
 	}
 }
+
+void serv_voice_chat(GaimConnection *gc, const char *who)
+{
+	GaimPluginProtocolInfo *prpl_info = NULL;
+
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	
+	if (prpl_info && prpl_info->media_prpl_ops && prpl_info->media_prpl_ops->call) 
+		prpl_info->media_prpl_ops->call(gc, who);
+}

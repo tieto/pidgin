@@ -55,8 +55,11 @@ EXTRA_DIST = \
 		win32/nsis/translations/trad-chinese.nsh \
 		win32/nsis/translations/vietnamese.nsh
 
-
+if HAVE_VV
+SUBDIRS = protocols mediastreamer 
+else
 SUBDIRS = protocols
+endif
 
 gaim_coresources = \
 	account.c \
@@ -74,6 +77,7 @@ gaim_coresources = \
 	ft.c \
 	imgstore.c \
 	log.c \
+	media.c \
 	mime.c \
 	network.c \
 	ntlm.c \
@@ -120,6 +124,7 @@ gaim_coreheaders = \
 	ft.h \
 	imgstore.h \
 	log.h \
+	media.h \
 	mime.h \
 	network.h \
 	notify.h \
@@ -260,6 +265,7 @@ gaim_SOURCES = \
 	gtkimhtmltoolbar.c \
 	gtklog.c \
 	gtkmain.c \
+	gtkmedia.c \
 	gtkmenutray.c \
 	gtknotify.c \
 	gtkplugin.c \
@@ -305,6 +311,7 @@ gaim_headers = \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \
+	gtkmedia.h \
 	gtkmenutray.h \
 	gtknotify.h \
 	gtkplugin.h \
@@ -329,7 +336,12 @@ gaiminclude_HEADERS = \
 	$(gaim_coreheaders) \
 	$(gaim_headers)
 
-gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS)
+if HAVE_VV
+MS_LIBS=$(top_srcdir)/src/mediastreamer/libmediastreamer.la
+MS_INCLUDES=-I$(top_srcdir)/src/mediastreamer
+endif
+
+gaim_DEPENDENCIES = @LIBOBJS@ $(STATIC_LINK_LIBS) mediastreamer/libmediastreamer.la
 gaim_LDFLAGS = -export-dynamic
 gaim_LDADD = \
 	@LIBOBJS@ \
@@ -341,7 +353,9 @@ gaim_LDADD = \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
 	$(GTKSPELL_LIBS) \
-	$(STARTUP_NOTIFICATION_LIBS)
+	$(STARTUP_NOTIFICATION_LIBS) \
+	$(VV_LIBS) \
+	$(MS_LIBS)
 
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
@@ -350,6 +364,8 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/plugins \
+	$(MS_INCLUDES) \
+	$(VV_CFLAGS) \
 	$(AUDIOFILE_CFLAGS) \
 	$(AO_CFLAGS) \
 	$(DEBUG_CFLAGS) \

@@ -58,7 +58,7 @@ do
 	fi
 done
 
-aclocal $ACLOCAL_FLAGS || exit;
+aclocal $ACLOCAL_FLAGS -I ./m4 || exit;
 autoheader || exit;
 automake --add-missing --copy;
 autoconf || exit;

@@ -346,7 +346,6 @@ clear_command_cb(GaimConversation *conv,
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
-
 	return GAIM_CMD_STATUS_OK;
 }
 

@@ -48,6 +48,7 @@
 #include "gtkdialogs.h"
 #include "gtkeventloop.h"
 #include "gtkft.h"
+#include "gtkmedia.h"
 #include "gtkidle.h"
 #include "gtknotify.h"
 #include "gtkplugin.h"
@@ -268,6 +269,9 @@ gaim_gtk_ui_init(void)
 	gaim_gtk_privacy_init();
 	gaim_gtk_xfers_init();
 	gaim_gtk_roomlist_init();
+#ifdef HAEV_VV
+	gaim_gtk_media_init();
+#endif
 	gaim_gtk_idle_init();
 }
 

@@ -253,6 +253,11 @@ static void gtk_blist_menu_send_file_cb(GtkWidget *w, GaimBuddy *b)
 	serv_send_file(b->account->gc, b->name, NULL);
 }
 
+static void gtk_blist_menu_voice_chat_cb(GtkWidget *w, GaimBuddy *b)
+{
+	serv_voice_chat(b->account->gc, b->name);
+}
+
 static void gtk_blist_menu_autojoin_cb(GtkWidget *w, GaimChat *chat)
 {
 	gaim_blist_node_set_bool((GaimBlistNode*)chat, "gtk-autojoin",
@@ -973,6 +978,14 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 									 buddy, 0, 0, NULL);
 		}
 	}
+
+	if (prpl_info && prpl_info->media_prpl_ops && prpl_info->media_prpl_ops->call) {
+		gaim_new_item_from_stock(menu, _("Start _Voice Chat"),
+					 GAIM_STOCK_VOICE_CHAT,
+					 G_CALLBACK(gtk_blist_menu_voice_chat_cb),
+					 buddy, 0, 0, NULL);
+	}
+
 	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
