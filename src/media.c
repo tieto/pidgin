@@ -23,6 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
+
 #ifdef HAVE_VV
 
 #include "media.h"
@@ -180,7 +182,7 @@ void gaim_voice_chat_terminate(GaimVoiceChat *vc)
 void gaim_voice_chat_set_state(GaimVoiceChat *vc, GaimMediaState state)
 {
 	vc->state = state;
-	printf("State: %d\n",vc);
+	printf("State: %d\n",state);
 	if (media_ui_ops)
 		media_ui_ops->state_change(vc, state);
 }
@@ -196,7 +198,7 @@ MSSync *gaim_voice_chat_get_timer(GaimVoiceChat *vc)
 	return vc->timer;
 }
 
-void *gaim_voice_chat_start_streams(GaimVoiceChat *vc)
+void gaim_voice_chat_start_streams(GaimVoiceChat *vc)
 {
 	GaimConnection *gc = gaim_voice_chat_get_connection(vc);
 	GaimPluginProtocolInfo *prpl_info = NULL;

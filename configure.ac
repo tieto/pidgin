@@ -342,7 +342,7 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
-AC_ARG_ENABLE(mono,    [  --disable-mono		  compile without Mono runtime support],,enable_mono=yes)
+AC_ARG_ENABLE(mono,    [  --disable-mono          compile without Mono runtime support],,enable_mono=yes)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
@@ -354,8 +354,8 @@ AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support
 AC_ARG_ENABLE(deprecated,    [  --disable-deprecated    compile without deprecated API usage],,enable_deprecated=yes)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
-AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      Compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
-AC_ARG_WITH(zephyr,    [  --with-zephyr=PREFIX    Compile Zephyr plugin against external libzephyr],zephyr="$withval",zephyr="no")
+AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
+AC_ARG_WITH(zephyr,    [  --with-zephyr=PREFIX    compile Zephyr plugin against external libzephyr],zephyr="$withval",zephyr="no")
 AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 
 AC_CHECK_HEADER(sys/utsname.h)
@@ -746,8 +746,8 @@ if test "$enable_perl" = yes ; then
 		fi
 
 		AC_ARG_WITH(perl-lib,
-		[  --with-perl-lib=[site|vendor|DIR]  Specify where to install the
-								   Perl libraries for gaim. Default is site.],
+		[  --with-perl-lib=[site|vendor|DIR] Specify where to install the
+                                  Perl libraries for gaim. Default is site.],
 		[
 			if test "x$withval" = xsite; then
 				PERL_MM_PARAMS=""
@@ -812,7 +812,7 @@ dnl #######################################################################
 dnl These two are inverses of each other <-- stolen from evolution!
 
 AC_ARG_ENABLE(gnutls,
-	[  --enable-gnutls=[yes,no]    Attempt to use GNUTLS for SSL support (preferred) [default=yes]],
+	[  --enable-gnutls=[yes,no]  Attempt to use GNUTLS for SSL support (preferred) [default=yes]],
 	[enable_gnutls="$enableval"],
 	[enable_gnutls="yes"])
 
@@ -1381,9 +1381,9 @@ if test "$zephyr" != "no" ; then
 	elif test -d /usr/athena/include/zephyr ; then
 		ZEPHYR_CFLAGS="-I/usr/athena/include"
 	elif test -d /usr/include/zephyr ; then
- 		ZEPHYR_CFLAGS="-I/usr/include"
- 	elif test -d /usr/local/include/zephyr ; then
- 		ZEPHYR_CFLAGS="-I/usr/local/include"
+		ZEPHYR_CFLAGS="-I/usr/include"
+	elif test -d /usr/local/include/zephyr ; then
+		ZEPHYR_CFLAGS="-I/usr/local/include"
 	fi
 	AC_DEFINE(LIBZEPHYR_EXT, 1 , [Define if external libzephyr should be used.]) 
 	AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
@@ -1455,79 +1455,73 @@ dnl ## Mediastreamer stuff #####################################################
 dnl ##############################################################################
 AC_ARG_ENABLE(vv,     [  --enable-vv         disable Voice and Video support],,enable_vv=no)
 if test "x$enable_vv" = xyes; then
-    AC_DEFINE(HAVE_GLIB, 1, [Gaim always has GLib, but Linphone can be built without it])
-    AM_CONDITIONAL(HAVE_VV, true)
-    
-    dnl enable truespeech codec support
-    AC_ARG_ENABLE(truespeech,
-              [  --enable-truespeech    Turn on TrueSpeech support (x86 only)],
-              [case "${enableval}" in
-              yes)  truespeech=true;;
-              no)   truespeech=false;;
-              *) AC_MSG_ERROR(bad value ${enableval} for --enable-truespeech) ;;
-              esac],[truespeech=false])
-    TRUESPEECH_CFLAGS=
-    if test x$truespeech = xtrue ; then
+	AC_DEFINE(HAVE_GLIB, 1, [Gaim always has GLib, but Linphone can be built without it])
+
+	dnl enable truespeech codec support
+	AC_ARG_ENABLE(truespeech, [  --enable-truespeech       Turn on TrueSpeech support (x86 only)],,enable_truespeech=no)
+	TRUESPEECH_CFLAGS=
+	if test x$enable_truespeech = xyes ; then
 	TRUESPEECH_CFLAGS=-DTRUESPEECH
-    fi
-    VV_CFLAGS="$VV_CFLAGS $TRUESPEECH_CFLAGS"
-    
-    found_sound=no
-    AC_CHECK_HEADERS(soundcard.h sys/soundcard.h machine/soundcard.h sys/audio.h)
-        if test "${ac_cv_header_sys_soundcard_h}" = "yes" || \
-        test "${ac_cv_header_soundcard_h}" = "yes" || \
-              test "${ac_cv_header_sys_audio_h}" = "yes" || \
-        test "${ac_cv_header_machine_soundcard_h}" = "yes"; then
-    	found_sound=yes
-        fi
-	if test "$found_sound" = "no"; then
-           AC_MSG_ERROR([Could not find a support sound driver])
 	fi
-    if test "$alsa" = "true"; then
-	    AC_CHECK_HEADERS(alsa/asoundlib.h,
-                [ AC_CHECK_LIB(asound,snd_pcm_open, 
-	        [ALSA_LIBS="-lasound" ; AC_DEFINE(__ALSA_ENABLED__,1,[Defined when alsa support is enabled]) ])
-	        ]
-          )	
-    fi
-    dnl Check for samplerate libraries
-    dnl Check for jack libraries (sound output plugin)
-    PKG_CHECK_MODULES(JACK,jack >= 0.15.0, 
-    [ 
-         dnl we've found jack devel files
-         PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.13, [AC_DEFINE(__JACK_ENABLED__,1,[Jack support])] ,
-                  [echo "libsamplerate not found, jack support disabled."])
-         VV_CFLAGS="$VV_CFLAGS $SAMPLERATE_CFLAGS"
+	VV_CFLAGS="$VV_CFLAGS $TRUESPEECH_CFLAGS"
+
+	found_sound=no
+	AC_CHECK_HEADERS(soundcard.h sys/soundcard.h machine/soundcard.h sys/audio.h)
+		if test "${ac_cv_header_sys_soundcard_h}" = "yes" || \
+		test "${ac_cv_header_soundcard_h}" = "yes" || \
+			  test "${ac_cv_header_sys_audio_h}" = "yes" || \
+		test "${ac_cv_header_machine_soundcard_h}" = "yes"; then
+		found_sound=yes
+		fi
+	if test "$found_sound" = "no"; then
+		   AC_MSG_ERROR([Could not find a support sound driver])
+	fi
+	if test "$alsa" = "true"; then
+		AC_CHECK_HEADERS(alsa/asoundlib.h,
+				[ AC_CHECK_LIB(asound,snd_pcm_open,
+			[ALSA_LIBS="-lasound" ; AC_DEFINE(__ALSA_ENABLED__,1,[Defined when alsa support is enabled]) ])
+			]
+		  )
+	fi
+	dnl Check for samplerate libraries
+	dnl Check for jack libraries (sound output plugin)
+	PKG_CHECK_MODULES(JACK,jack >= 0.15.0,
+	[
+		 dnl we've found jack devel files
+		 PKG_CHECK_MODULES(SAMPLERATE, samplerate >= 0.0.13, [AC_DEFINE(__JACK_ENABLED__,1,[Jack support])] ,
+				  [echo "libsamplerate not found, jack support disabled."])
+		 VV_CFLAGS="$VV_CFLAGS $SAMPLERATE_CFLAGS"
 	 VV_LIBS="$VV_LIBS   $SAMPLERATE_LIBS"
-    ], 
-    [echo "No jack support."] )
-    VV_CFLAGS="$VV_CFLAGS $JACK_CFLAGS"
-    VV_LIBS="$VV_LIBS $JACK_LIBS"
-    
-    dnl check for installed version of speex
-    LP_CHECK_SPEEX
-    VV_CFLAGS="$VV_CFLAGS $SPEEX_CFLAGS"
-    VV_LIBS="$VV_LIBS   $SPEEX_LIBS"
-    
-    dnl check for installed ilbc codec
-    LP_CHECK_ILBC
-    VV_CFLAGS="$VV_CFLAGS $ILBC_CFLAGS"
-    VV_LIBS="$VV_LIBS   $ILBC_LIBS"
-    
-    PKG_CHECK_MODULES(ORTP, ortp, enable_ortp=yes, enable_ortp=no)
-    VV_CFLAGS="$VV_CFLAGS $ORTP_CFLAGS"
-    VV_LIBS="$VV_LIBS   $ORTP_LIBS"
-    if test x$enable_ortp = xno; then
-	enable_vv=no
-    fi
+	],
+	[echo "No jack support."] )
+	VV_CFLAGS="$VV_CFLAGS $JACK_CFLAGS"
+	VV_LIBS="$VV_LIBS $JACK_LIBS"
+
+	dnl check for installed version of speex
+	LP_CHECK_SPEEX
+	VV_CFLAGS="$VV_CFLAGS $SPEEX_CFLAGS"
+	VV_LIBS="$VV_LIBS   $SPEEX_LIBS"
+
+	dnl check for installed ilbc codec
+	LP_CHECK_ILBC
+	VV_CFLAGS="$VV_CFLAGS $ILBC_CFLAGS"
+	VV_LIBS="$VV_LIBS   $ILBC_LIBS"
+
+	PKG_CHECK_MODULES(ORTP, ortp >= 0.7.1, enable_ortp=yes, enable_ortp=no)
+	VV_CFLAGS="$VV_CFLAGS $ORTP_CFLAGS"
+	VV_LIBS="$VV_LIBS   $ORTP_LIBS"
+	if test x$enable_ortp = xno; then
+	AC_MSG_ERROR([Could not find a suitable version of oRTP. Please install oRTP >= 0.7.1])
+	fi
 else
-    enable_vv=no
+	enable_vv=no
 fi
 
 if test x$enable_vv = xyes; then
-    AM_CONDITIONAL(HAVE_VV, true)
+	AM_CONDITIONAL(HAVE_VV, true)
+	AC_DEFINE(HAVE_VV, [1], [Compile with Voice/Video support])
 else
-    AM_CONDITIONAL(HAVE_VV, false)
+	AM_CONDITIONAL(HAVE_VV, false)
 fi
 
 AC_SUBST(VV_CFLAGS)
