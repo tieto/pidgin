@@ -130,7 +130,7 @@ const char *gaim_primitive_get_id_from_type(GaimStatusPrimitive type);
 /**
  * Lookup the name of a primitive status type based on the type.  This
  * name is the plain-English name of the status type.  It is usually one
- * or two works.
+ * or two words.
  *
  * @param type A primitive status type.
  *
