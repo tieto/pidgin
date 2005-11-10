@@ -1453,7 +1453,7 @@ AC_SUBST(enable_dot)
 dnl ##############################################################################
 dnl ## Mediastreamer stuff #######################################################
 dnl ##############################################################################
-AC_ARG_ENABLE(vv,     [  --enable-vv         disable Voice and Video support],,enable_vv=no)
+AC_ARG_ENABLE(vv,     [  --enable-vv         enable Voice and Video support],,enable_vv=no)
 if test "x$enable_vv" = xyes; then
 	AC_DEFINE(HAVE_GLIB, 1, [Gaim always has GLib, but Linphone can be built without it])
 
