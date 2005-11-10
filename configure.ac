@@ -101,6 +101,8 @@ dnl to prevent the g_stat()/g_unlink() crash,
 dnl (09:50:07) Robot101: LSchiere2: it's easy. +LC_SYS_LARGEFILE somewhere in configure.ac
 AC_SYS_LARGEFILE
 
+dnl FreeBSD doesn't have libdl, dlopen is provided by libc
+AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 dnl # Check for GMP. If it's not there, Sametime won't build
 have_gmp=yes
@@ -222,7 +224,7 @@ else
 	if test "$ac_silc_libs" != "no"; then
 		SILC_LIBS="-L$ac_silc_libs"
 	fi
-	SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread -ldl"
+	SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
 	AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
 fi
 AC_SUBST(SILC_LIBS)
@@ -1001,10 +1003,10 @@ if test "x$enable_nss" != "xno"; then
 
 					enable_nss="no"
 				else
-					nsprlibs="-ldl $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
+					nsprlibs="$LIBDL $with_nspr_libs/libplc4.a $with_nspr_libs/libplds4.a $with_nspr_libs/libnspr4.a $PTHREAD_LIB"
 				fi
 			else
-				nsprlibs="-ldl -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
+				nsprlibs="$LIBDL -lplc4 -lplds4 -lnspr4 $PTHREAD_LIB"
 			fi
 
 			AC_CACHE_CHECK([for Mozilla nspr libraries], moz_nspr_libs,
