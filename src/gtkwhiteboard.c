@@ -61,9 +61,7 @@ static void gaim_gtk_whiteboard_set_canvas_as_icon(GaimGtkWhiteboard *gtkwb);
 
 static void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color);
 
-#if 0
-static void change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb);
-#endif
+static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb);
 
 /******************************************************************************
  * Globals
@@ -101,15 +99,10 @@ GaimWhiteboardUiOps *gaim_gtk_whiteboard_get_ui_ops(void)
 
 void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 {
-	int i;
-
 	GtkWidget *window;
 	GtkWidget *drawing_area;
-
-	GtkWidget *hbox_palette;
-	GtkWidget *vbox_palette_above_canvas_and_controls;
-	GtkWidget *hbox_canvas_and_controls;
 	GtkWidget *vbox_controls;
+	GtkWidget *hbox_canvas_and_controls;
 
 	/*
 		--------------------------
@@ -124,8 +117,7 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	*/
 	GtkWidget *clear_button;
 	GtkWidget *save_button;
-
-	GtkWidget *palette_color_box[PALETTE_NUM_COLORS];
+	GtkWidget *color_button;
 
 	GaimGtkWhiteboard *gtkwb = g_new0(GaimGtkWhiteboard, 1);
 
@@ -167,6 +159,13 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	g_signal_connect(G_OBJECT(window), "destroy",
 					 G_CALLBACK(gaim_gtk_whiteboard_exit), gtkwb);
 
+#if 0
+	int i;
+
+	GtkWidget *hbox_palette;
+	GtkWidget *vbox_palette_above_canvas_and_controls;
+	GtkWidget *palette_color_box[PALETTE_NUM_COLORS];
+
 	/* Create vertical box to place palette above the canvas and controls */
 	vbox_palette_above_canvas_and_controls = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(window), vbox_palette_above_canvas_and_controls);
@@ -174,12 +173,14 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 
 	/* Create horizontal box for the palette and all its entries */
 	hbox_palette = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(vbox_palette_above_canvas_and_controls), hbox_palette);
+	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
+			hbox_palette, FALSE, FALSE, GAIM_HIG_BORDER);
 	gtk_widget_show(hbox_palette);
 
 	/* Create horizontal box to seperate the canvas from the controls */
 	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(vbox_palette_above_canvas_and_controls), hbox_canvas_and_controls);
+	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
+			hbox_canvas_and_controls, FALSE, FALSE, GAIM_HIG_BORDER);
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	for(i = 0; i < PALETTE_NUM_COLORS; i++)
@@ -190,12 +191,19 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 
 		gtk_widget_show(palette_color_box[i]);
 	}
+#endif
+
+	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
+	gtk_widget_show(hbox_canvas_and_controls);
+
+	gtk_container_add(GTK_CONTAINER(window), hbox_canvas_and_controls);
+	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
 
 	/* Create the drawing area */
 	drawing_area = gtk_drawing_area_new();
 	gtkwb->drawing_area = drawing_area;
 	gtk_widget_set_size_request(GTK_WIDGET(drawing_area), gtkwb->width, gtkwb->height);
-	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, 8);
+	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, GAIM_HIG_BOX_SPACE);
 
 	gtk_widget_show(drawing_area);
 
@@ -226,39 +234,31 @@ void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 
 	/* Create vertical box to contain the controls */
 	vbox_controls = gtk_vbox_new(FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(hbox_canvas_and_controls), vbox_controls);
+	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls),
+					vbox_controls, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_widget_show(vbox_controls);
 
 	/* Add a clear button */
 	clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_widget_show(clear_button);
 	g_signal_connect(G_OBJECT(clear_button), "clicked",
 					 G_CALLBACK(gaim_gtk_whiteboard_button_clear_press), gtkwb);
 
 	/* Add a save button */
 	save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, 8);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_widget_show(save_button);
 
 	g_signal_connect(G_OBJECT(save_button), "clicked",
 					 G_CALLBACK(gaim_gtk_whiteboard_button_save_press), gtkwb);
 
-#if 0
 	/* Add a color selector */
-	{
-		GdkColor color;
-		GtkWidget *color_button;
-
-		gaim_gtk_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
-		color_button = gtk_color_button_new_with_color(&color);
-		gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, 8);
-		gtk_widget_show(color_button);
-
-		g_signal_connect(G_OBJECT(color_button), "color-set",
-						G_CALLBACK(change_color_cb), gtkwb);
-	}
-#endif
+	color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_widget_show(color_button);
+	g_signal_connect(G_OBJECT(color_button), "clicked",
+					 G_CALLBACK(color_select_dialog), gtkwb);
 
 	/* Make all this (window) visible */
 	gtk_widget_show(window);
@@ -839,9 +839,8 @@ void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 	color->blue  = ((color_rgb & 0xFF) << 8) | 0xFF;
 }
 
-#if 0
 static void
-change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
+change_color_cb(GtkColorSelection *selection, GaimGtkWhiteboard *gtkwb)
 {
 	GdkColor color;
 	int old_size = 5;
@@ -849,7 +848,7 @@ change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
 	int new_color;
 	GaimWhiteboard *wb = gtkwb->wb;
 
-	gtk_color_button_get_color(w, &color);
+	gtk_color_selection_get_current_color(selection, &color);
 	new_color = (color.red & 0xFF00) << 8;
 	new_color |= (color.green & 0xFF00);
 	new_color |= (color.blue & 0xFF00) >> 8;
@@ -857,4 +856,33 @@ change_color_cb(GtkColorButton *w, GaimGtkWhiteboard *gtkwb)
 	gaim_whiteboard_get_brush(wb, &old_size, &old_color);
 	gaim_whiteboard_send_brush(wb, old_size, new_color);
 }
-#endif
+
+static void color_selection_dialog_destroy(GtkWidget *w, GtkWidget *destroy)
+{
+	gtk_widget_destroy(destroy);
+}
+
+static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb)
+{
+	GdkColor color;
+	GtkColorSelectionDialog *dialog;
+	
+	dialog = (GtkColorSelectionDialog *)gtk_color_selection_dialog_new("Select color");
+
+	g_signal_connect(G_OBJECT(dialog->colorsel), "color-changed",
+					G_CALLBACK(change_color_cb), gtkwb);
+
+	gtk_widget_destroy(dialog->cancel_button);
+	gtk_widget_destroy(dialog->help_button);
+
+	g_signal_connect(G_OBJECT(dialog->ok_button), "clicked",
+					G_CALLBACK(color_selection_dialog_destroy), dialog);
+
+	gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(dialog->colorsel), TRUE);
+
+	gaim_gtk_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
+	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(dialog->colorsel), &color);
+
+	gtk_widget_show_all(GTK_WIDGET(dialog));
+}
+
