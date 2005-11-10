@@ -295,8 +295,7 @@ _dns_sd_handle_packets(gpointer data, gint source, GaimInputCondition condition)
 BonjourDnsSd *
 bonjour_dns_sd_new()
 {
-	BonjourDnsSd *data = g_new(BonjourDnsSd, 1);
-	data->session = g_malloc(sizeof(sw_discovery));
+	BonjourDnsSd *data = g_new0(BonjourDnsSd, 1);
 
 	return data;
 }
@@ -307,7 +306,6 @@ bonjour_dns_sd_new()
 void
 bonjour_dns_sd_free(BonjourDnsSd *data)
 {
-	g_free(data->session);
 	g_free(data->first);
 	g_free(data->last);
 	g_free(data->email);
@@ -346,10 +344,8 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	gc = gaim_account_get_connection(account);
 
 	/* Initialize the dns-sd data and session */
-	data->session = malloc(sizeof(sw_discovery));
 	if (sw_discovery_init(data->session) != SW_OKAY)
 	{
-		free(data->session);
 		data->session = NULL;
 		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
 		return FALSE;
