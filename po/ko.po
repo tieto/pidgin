@@ -1971,7 +1971,7 @@ msgstr "/도구(T)/기본설정"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/도구(T)/프로토콜 명령"
 
 #: src/gtkblist.c:2354

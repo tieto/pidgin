@@ -2023,7 +2023,7 @@ msgstr "/Eszközök/_Beállítások"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Eszközök/Bővítményműveletek"
 
 #: src/gtkblist.c:2354

@@ -2198,7 +2198,7 @@ msgstr "/औज़ार/पसंदें(_e)"
 #  And now for the buttons
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/औज़ार/पल्ग-ईन क्रियाऐं"
 
 #: src/gtkblist.c:2354

@@ -2009,7 +2009,7 @@ msgstr "/ツール/設定(_E)"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/ツール/プロトコル別の動作"
 
 #: src/gtkblist.c:2354

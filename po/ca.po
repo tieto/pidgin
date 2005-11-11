@@ -2030,7 +2030,7 @@ msgstr "/Eines/Pr_eferències"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Eines/Accions del connector"
 
 #: src/gtkblist.c:2354

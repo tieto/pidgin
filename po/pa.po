@@ -1979,7 +1979,7 @@ msgstr "/ਸੰਦ/ਮੇਰੀ ਪਸੰਦ(_e)"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/ਸੰਦ/ਪਲੱਗਿੰਨ ਕਾਰਵਾਈ"
 
 #: src/gtkblist.c:2354

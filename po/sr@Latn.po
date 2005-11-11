@@ -2016,7 +2016,7 @@ msgstr "/Alati/_Postavke"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Alati/Akcije po protokolu"
 
 #: src/gtkblist.c:2354

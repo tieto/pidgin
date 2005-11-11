@@ -1995,7 +1995,7 @@ msgstr "/Työkalut/A_setukset"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Työkalut/Liitännäistoiminnot"
 
 #: src/gtkblist.c:2354

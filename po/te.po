@@ -2198,7 +2198,7 @@ msgstr "/ఉపకరణాలు/ప్రెఫరెన్సెస్ "
 #  And now for the buttons
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/ఉపకరణాలు/ప్లగ్‌ఇన్ చర్యలు "
 
 #: src/gtkblist.c:2354

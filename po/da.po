@@ -2022,7 +2022,7 @@ msgstr "/Værktøjer/_Indstillinger"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Værktøjer/_Modul handlinger"
 
 #: src/gtkblist.c:2354

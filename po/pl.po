@@ -2050,7 +2050,7 @@ msgstr "/Narzêdzia/_Ustawienia"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Narzêdzia/Funkcje wtyczek"
 
 #: src/gtkblist.c:2354

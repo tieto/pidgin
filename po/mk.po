@@ -1961,7 +1961,7 @@ msgstr "/Алатки/Пара_метри"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Алатки/Дејствија на протокол"
 
 #: src/gtkblist.c:2354

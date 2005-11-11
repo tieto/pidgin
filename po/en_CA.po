@@ -2007,7 +2007,7 @@ msgstr "/Tools/Pr_eferences"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Tools/Plugin Actions"
 
 #: src/gtkblist.c:2354

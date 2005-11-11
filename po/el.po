@@ -2045,7 +2045,7 @@ msgid "/Tools/Pr_eferences"
 msgstr "/Εργαλεία/_Προτιμήσεις"
 
 #: src/gtkblist.c:2353
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Εργαλεία/_Πρόσθετα"
 
 #: src/gtkblist.c:2354

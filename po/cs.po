@@ -2012,7 +2012,7 @@ msgstr "/Nástroje/_Nastavení"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Nástroje/Akce zásuvných modulů"
 
 #: src/gtkblist.c:2354

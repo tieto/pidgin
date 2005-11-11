@@ -2022,8 +2022,8 @@ msgid "/Tools/Pr_eferences"
 msgstr "/Tools/Pr_eferences"
 
 #: src/gtkblist.c:2353
-msgid "/Tools/P_lugins"
-msgstr "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
+msgstr "/Tools/Plu_gins"
 
 #: src/gtkblist.c:2354
 msgid "/Tools/Pr_ivacy"

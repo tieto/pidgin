@@ -2034,7 +2034,7 @@ msgstr "/Werkzeuge/_Einstellungen"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Werkzeuge/Konto-Aktionen"
 
 #: src/gtkblist.c:2354

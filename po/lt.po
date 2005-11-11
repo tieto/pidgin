@@ -2153,7 +2153,7 @@ msgstr "/Įrankiai/Nus_tatymai"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Įrankiai/Įskiepių nustatymai"
 
 #: src/gtkblist.c:2354

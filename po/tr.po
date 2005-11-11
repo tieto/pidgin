@@ -1995,7 +1995,7 @@ msgstr "/_Araçlar/_Tercihler"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Araçlar/Eklentilerle Ýlgili"
 
 #: src/gtkblist.c:2354

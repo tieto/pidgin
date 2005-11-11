@@ -2013,7 +2013,7 @@ msgstr "/Алати/_Поставке"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Алати/Акције по протоколу"
 
 #: src/gtkblist.c:2354

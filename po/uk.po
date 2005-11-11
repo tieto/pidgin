@@ -2022,7 +2022,7 @@ msgstr "/Сервіс/П_араметри"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Сервіс/Дії над модулями"
 
 #: src/gtkblist.c:2354

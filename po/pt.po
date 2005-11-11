@@ -2024,7 +2024,7 @@ msgstr "/Ferramentas/_Preferências"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Ferramentas/Acções de Plugins"
 
 #: src/gtkblist.c:2354

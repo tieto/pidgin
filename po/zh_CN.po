@@ -1983,7 +1983,7 @@ msgstr "/工具(T)/首选项(_E)"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/工具(T)/插件操作(U)"
 
 #: src/gtkblist.c:2354

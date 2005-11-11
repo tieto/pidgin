@@ -1994,7 +1994,7 @@ msgstr "/સાધનો/પસંદગીઓ (_e)"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/સાધનો/પ્લગઈન ક્રિયાઓ"
 
 #: src/gtkblist.c:2354

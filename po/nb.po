@@ -2049,7 +2049,7 @@ msgstr "/Verktøy/_Innstillinger"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Verktøy/Handlinger for tillegg"
 
 #: src/gtkblist.c:2354

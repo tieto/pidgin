@@ -2273,7 +2273,7 @@ msgstr "/Mjete/Par_apëlqime"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Mjete/Veprime Shtojcash"
 
 #: src/gtkblist.c:2354

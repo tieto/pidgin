@@ -2036,7 +2036,7 @@ msgstr "/Công cụ/Tùy _chỉnh"
 
 #: src/gtkblist.c:2353
 #, fuzzy
-msgid "/Tools/P_lugins"
+msgid "/Tools/Plu_gins"
 msgstr "/Công cụ/Hoạt động giao thức"
 
 #: src/gtkblist.c:2354
