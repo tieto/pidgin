@@ -400,6 +400,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	char sample[7] = "Sample";
 	*/
 	int i;
+	char *tmp;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
@@ -513,7 +514,9 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
-	check = gtk_button_new_with_label(_("Write a gtkrc file to ~/.gaim/ with these settings"));
+	tmp = g_strdup_printf(_("Write a gtkrc file with these settings to: %s"), gaim_user_dir());
+	check = gtk_button_new_with_label(tmp);
+	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(sg, check);
 	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(gaimrc_write),
