@@ -34,6 +34,12 @@
 
 #include "xmlnode.h"
 
+#ifdef _WIN32
+# define NEWLINE_S "\r\n"
+#else
+# define NEWLINE_S "\n"
+#endif
+
 static xmlnode*
 new_node(const char *name, XMLNodeType type)
 {
@@ -252,11 +258,6 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	xmlnode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
 	gboolean need_end = FALSE, pretty = formatting;
-#ifdef _WIN32
-	static const char *newline = "\r\n";
-#else
-	static const char *newline = "\n";
-#endif
 
 	if(pretty && depth) {
 		tab = g_strnfill(depth, '\t');
@@ -282,7 +283,7 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	}
 
 	if(need_end) {
-		g_string_append_printf(text, ">%s", pretty ? newline : "");
+		g_string_append_printf(text, ">%s", pretty ? NEWLINE_S : "");
 
 		for(c = node->child; c; c = c->next)
 		{
@@ -300,9 +301,9 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 
 		if(tab && pretty)
 			text = g_string_append(text, tab);
-		g_string_append_printf(text, "</%s>%s", node_name, formatting ? newline : "");
+		g_string_append_printf(text, "</%s>%s", node_name, formatting ? NEWLINE_S : "");
 	} else {
-		g_string_append_printf(text, "/>%s", formatting ? newline : "");
+		g_string_append_printf(text, "/>%s", formatting ? NEWLINE_S : "");
 	}
 
 	g_free(node_name);
@@ -329,7 +330,7 @@ xmlnode_to_formatted_str(xmlnode *node, int *len)
 
 	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
 	xml_with_declaration =
-		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>\n\n%s", xml);
+		g_strdup_printf("<?xml version='1.0' encoding='UTF-8' ?>" NEWLINE_S NEWLINE_S "%s", xml);
 	g_free(xml);
 
 	return xml_with_declaration;
