@@ -2,7 +2,7 @@ EXTRA_DIST = README TODO Makefile.mingw
 
 pkgdir = $(libdir)/gaim
 
-SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c
+SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c wb.c wb.h
 
 AM_CFLAGS = $(st)
 
