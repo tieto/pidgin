@@ -151,36 +151,9 @@ struct _GaimChat {
 struct _GaimBuddyList {
 	GaimBlistNode *root;          /**< The first node in the buddy list */
 	GHashTable *buddies;          /**< Every buddy in this list */
-	GaimBlistUiOps *ui_ops;       /**< The UI operations for the buddy list */
 
 	void *ui_data;                /**< UI-specific data. */
 };
-
-/**
- * Buddy list UI operations.
- *
- * Any UI representing a buddy list must assign a filled-out GaimBlistUiOps
- * structure to the buddy list core.
- */
-struct _GaimBlistUiOps
-{
-	void (*new_list)(GaimBuddyList *list); /**< Sets UI-specific data on a buddy list. */
-	void (*new_node)(GaimBlistNode *node); /**< Sets UI-specific data on a node. */
-	void (*show)(GaimBuddyList *list);     /**< The core will call this when it's finished doing its core stuff */
-	void (*update)(GaimBuddyList *list,
-		       GaimBlistNode *node);       /**< This will update a node in the buddy list. */
-	void (*remove)(GaimBuddyList *list,
-		       GaimBlistNode *node);       /**< This removes a node from the list */
-	void (*destroy)(GaimBuddyList *list);  /**< When the list gets destroyed, this gets called to destroy the UI. */
-	void (*set_visible)(GaimBuddyList *list,
-			    gboolean show);            /**< Hides or unhides the buddy list */
-	void (*request_add_buddy)(GaimAccount *account, const char *username,
-							  const char *group, const char *alias);
-	void (*request_add_chat)(GaimAccount *account, GaimGroup *group,
-							 const char *alias, const char *name);
-	void (*request_add_group)(void);
-};
-
 
 struct _GaimBlistNodeAction {
 	char *label;
@@ -852,27 +825,6 @@ GaimBlistNodeAction *gaim_blist_node_action_new(char *label,
 		void (*callback)(GaimBlistNode *, gpointer), gpointer data,
 		GList *children);
 
-
-/**************************************************************************/
-/** @name UI Registration Functions                                       */
-/**************************************************************************/
-/*@{*/
-
-/**
- * Sets the UI operations structure to be used for the buddy list.
- *
- * @param ops The ops struct.
- */
-void gaim_blist_set_ui_ops(GaimBlistUiOps *ops);
-
-/**
- * Returns the UI operations structure to be used for the buddy list.
- *
- * @return The UI operations structure.
- */
-GaimBlistUiOps *gaim_blist_get_ui_ops(void);
-
-/*@}*/
 
 /**************************************************************************/
 /** @name Buddy List Subsystem                                            */

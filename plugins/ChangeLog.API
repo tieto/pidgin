@@ -166,6 +166,12 @@ version 2.0.0:
 		the user is on the buddy list.
 
 	Signals - Added:
+	* "account-status-changed": Account status changed; see Doxygen docs for full details.
+	* "cipher-added": Cipher was added; see Doxygen docs for full details.
+	* "cipher-removed": Cipher was removed; see Doxygen docs for full details.
+	* "dbus-method-called": See Doxygen docs for full details.
+	* "dbus-introspect": See Doxygen docs for full details.
+	* "cipher-removed": Cipher was removed; see Doxygen docs for full details.
 	* "file-recv-accept": See Doxygen docs for details.
 	* "file-recv-start": See Doxygen docs for details.
 	* "file-recv-cancel": See Doxygen docs for details.
@@ -180,10 +186,13 @@ version 2.0.0:
 	* "buddy-status-changed": A buddy changed status; see Doxygen docs for full details.
 	* "buddy-idle-changed": A buddy's idle status changed; see Doxygen docs for full details.
 		See Doxygen docs for details.
+	* "buddy-icon-cached": A buddy icon was cached; see Doxygen docs for full details.
 	* "gtkblist-hiding": See Doxygen docs for details.
 	* "gtkblist-unhiding": See Doxygen docs for details.
 
 	Signals - Removed:
+	* "account-away": replaced by account-status-changed
+	* "account-warned": ???
 	* "buddy-away": replaced by buddy-status-changed
 	* "buddy-back": replaced by buddy-status-changed
 	* "buddy-idle": replaced by buddy-idle-changed

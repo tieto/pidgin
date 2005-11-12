@@ -1,13 +1,24 @@
 /** @page account-signals Account Signals
 
  @signals
+  @signal account-added
   @signal account-connecting
+  @signal account-removed
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
  @endsignals
 
  <hr>
+
+ @signaldef account-added
+  @signalproto
+void (*account_added)(GaimAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is added.
+  @param account The account that was added.
+ @endsignaldef
 
  @signaldef account-connecting
   @signalproto
@@ -16,6 +27,15 @@ void (*account_connecting)(GaimAccount *account);
   @signaldesc
    This is called when an account is in the process of connecting.
   @param account The account in the process of connecting.
+ @endsignaldef
+
+ @signaldef account-removed
+  @signalproto
+void (*account_removed)(GaimAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is removed.
+  @param account The account that was removed.
  @endsignaldef
 
  @signaldef account-setting-info

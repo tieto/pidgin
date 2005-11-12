@@ -20,11 +20,13 @@
   @signal conversation-switching
   @signal conversation-switched
   @signal conversation-created
+  @signal conversation-updated
   @signal deleting-conversation
   @signal buddy-typing
   @signal buddy-typing-stopped
   @signal chat-buddy-joining
   @signal chat-buddy-joined
+  @signal chat-buddy-flags
   @signal chat-buddy-leaving
   @signal chat-buddy-left
   @signal chat-inviting-user
@@ -304,6 +306,17 @@ void (*conversation_created)(GaimConversation *conv);
   @signaldesc
    Emitted when a new conversation is created.
   @param conv The new conversation.
+ @endsignaldef
+
+ @signaldef conversation-updated
+  @signalproto
+void (*conversation_updated)(GaimConversation *conv, 
+                             GaimConvUpdateType type);
+  @endsignalproto
+  @signaldesc
+   Emitted when a conversation is updated.
+  @param conv The conversation that was updated.
+  @param type The type of update that was made.
  @endsignaldef
 
  @signaldef deleting-conversation

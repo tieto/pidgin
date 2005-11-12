@@ -1,18 +1,18 @@
 /** @page gtkconv-signals GtkConv Signals
 
  @signals
-  @signal conversation-drag-ended
+  @signal conversation-dragging
  @endsignals
 
  <hr>
 
- @signaldef conversation-drag-ended
+ @signaldef conversation-dragging
   @signalproto
-void (*conversation-drag-ended)(GaimConvWindow *source, GaimConvWindow *destination);
+void (*conversation_dragging)(GaimGtkWindow *source, GaimGtkWindow *destination);
   @endsignalproto
   @signaldesc
-   Emitted when a conversation drag and drop has finished.
-  @param source The conversation that has been moved.
-  @param destination Where the conversation is now.
+   Emitted when a conversation is being drag and dropped between windows.
+  @param source The window where the conversation is.
+  @param destination The window where the conversation will be moved to.
  @endsignaldef
 */

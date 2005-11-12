@@ -1,0 +1,18 @@
+/** @page core-signals Core Signals
+
+ @signals
+  @signal quitting
+ @endsignals
+
+ <hr>
+
+ @signaldef quitting
+  @signalproto
+void (*quitting)();
+  @endsignalproto
+  @signaldesc
+   Emitted when gaim is quitting.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et

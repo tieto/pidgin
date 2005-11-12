@@ -9,8 +9,12 @@ EXTRA_DIST = \
 	account-signals.dox \
 	blist-signals.dox \
 	buddyicon-signals.dox \
+	cipher-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \
+	core-signals.dox \
+	dbus-server-signals.dox \
+	file-transfer-signals.dox \
 	gaim.1.in \
 	gaims_funniest_home_convos.txt \
 	gtkaccount-signals.dox \
@@ -18,5 +22,6 @@ EXTRA_DIST = \
 	gtkconv-signals.dox \
 	gtkimhtml-signals.dox \
 	plugin-ids.dox \
+	plugin-signals.dox \
 	the_penguin.txt \
 	xfer-signals.dox

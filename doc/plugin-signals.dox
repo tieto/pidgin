@@ -1,0 +1,29 @@
+/** @page plugin-signals Plugin Signals
+
+ @signals
+  @signal plugin-load
+  @signal plugin-unload
+ @endsignals
+
+ <hr>
+
+ @signaldef plugin-load
+  @signalproto
+void (*plugin_load)(GaimPlugin *plugin);
+  @endsignalproto
+  @signaldesc
+   Emitted when a plugin is loaded.
+  @param plugin The plugin that was loaded.
+ @endsignaldef
+
+ @signaldef plugin-unload
+  @signalproto
+void (*plugin_unload)(GaimPlugin *plugin);
+  @endsignalproto
+  @signaldesc
+   Emitted when a plugin is unloaded.
+  @param plugin The plugin that was unloaded.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et
