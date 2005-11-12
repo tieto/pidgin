@@ -1151,7 +1151,6 @@ static void load_conf()
 			"BAD iwth\nGOOD with\n"
 			"BAD jsut\nGOOD just\n"
 			"BAD jugment\nGOOD judgment\n"
-			"BAD k\nGOOD okay\n"
 			"BAD kno\nGOOD know\n"
 			"BAD knowldge\nGOOD knowledge\n"
 			"BAD knowlege\nGOOD knowledge\n"
