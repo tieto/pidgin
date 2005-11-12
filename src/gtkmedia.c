@@ -23,9 +23,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
+
 #ifdef HAVE_VV
 
-#include "internal.h"
+#include "debug.h"
 #include "gtkconv.h"
 #include "gtkmedia.h"
 
@@ -46,8 +48,8 @@ static void gaim_gtk_media_destroy(GaimVoiceChat *vc)
 {
 	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gaim_connection_get_account(gaim_voice_chat_get_connection(vc)),
 						       gaim_voice_chat_get_name(vc));
-	gaim_conversation_write(conv, NULL, _("Call ended."), GAIM_MESSAGE_SYSTEM, time(NULL));
 	GaimGtkVoiceChat *gvc = (GaimGtkVoiceChat*)gaim_voice_chat_get_ui_data(vc);
+	gaim_conversation_write(conv, NULL, _("Call ended."), GAIM_MESSAGE_SYSTEM, time(NULL));
 	gtk_widget_destroy(gvc->call_pane);
 	g_free(gvc);
 }
