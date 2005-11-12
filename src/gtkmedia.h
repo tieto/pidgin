@@ -1,6 +1,6 @@
 /**
- * @file media.h Voice and Video API
- * @ingroup core
+ * @file gtkmedia.h Voice and Video UI
+ * @ingroup gtkui
  *
  * gaim
  *

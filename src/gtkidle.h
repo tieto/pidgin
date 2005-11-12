@@ -45,7 +45,7 @@ void gaim_gtk_idle_uninit(void);
  * Check the current idle time, reporting to the server or going auto-away as
  * appropriate.
  *
- * @param gc The GaimConnection* to check
+ * @param data A pointer to the GaimConnection* to check
  */
 gint gaim_gtk_idle_check(gpointer data);
 

@@ -1,5 +1,5 @@
 /**
- * @file media.h Voice and Video API
+ * @file media.c Voice and Video API
  * @ingroup core
  *
  * gaim

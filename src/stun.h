@@ -28,6 +28,7 @@
 /**************************************************************************/
 /** @name STUN API                                                        */
 /**************************************************************************/
+/*@{*/
 
 struct stun_nattype {
 	gint status;	/* 0 - unknown (no STUN server reachable) */
@@ -43,7 +44,7 @@ struct stun_nattype {
 
 	char publicip[16];
 };
-	
+
 struct stun_header {
 	short	type;
 	short	len;
@@ -76,4 +77,8 @@ typedef void (*StunCallback) (struct stun_nattype *);
 struct stun_nattype *gaim_stun_discover(StunCallback cb);
 
 void gaim_stun_init();
+
+/*@}*/
+
 #endif /* _GAIM_STUN_H_ */
+

@@ -30,7 +30,7 @@ typedef struct _GaimMediaPrplOps GaimMediaPrplOps;
 
 #include "connection.h"
 
-/* Forward declarations so I needn't #include mediastreamer headers in 
+/* Forward declarations so I needn't #include mediastreamer headers in
  * nearly every single file */
 struct _MSFilter;
 struct _MSSync;
@@ -156,7 +156,7 @@ GaimMediaState gaim_voice_chat_get_state(GaimVoiceChat *vc);
  * Mutator for the state
  *
  * @param vc    The voice chat
- * @param state The state 
+ * @param state The state
  */
 void gaim_voice_chat_set_state(GaimVoiceChat *vc, GaimMediaState state);
 
