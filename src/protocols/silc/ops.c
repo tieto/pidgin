@@ -20,6 +20,7 @@
 #include "silcincludes.h"
 #include "silcclient.h"
 #include "silcgaim.h"
+#include "wb.h"
 
 /* Message sent to the application by library. `conn' associates the
    message to a specific connection.  `conn', however, may be NULL.
@@ -80,7 +81,23 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
-		/* XXX */
+		char type[128], enc[128];
+		unsigned char *data;
+		SilcUInt32 data_len;
+
+		memset(type, 0, sizeof(type));
+		memset(enc, 0, sizeof(enc));
+
+		if (!silc_mime_parse(message, message_len, NULL, 0,
+		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data, 
+		    &data_len))
+			return;
+
+		if (!strcmp(type, "application/x-wb") &&
+		    !strcmp(enc, "binary"))
+			silcgaim_wb_receive_ch(client, conn, sender, channel,
+					       payload, flags, data, data_len);
+
 		return;
 	}
 
@@ -159,7 +176,23 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
-		/* XXX */
+		char type[128], enc[128];
+		unsigned char *data;
+		SilcUInt32 data_len;
+
+		memset(type, 0, sizeof(type));
+		memset(enc, 0, sizeof(enc));
+
+		if (!silc_mime_parse(message, message_len, NULL, 0,
+		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data, 
+		    &data_len))
+			return;
+
+		if (!strcmp(type, "application/x-wb") &&
+		    !strcmp(enc, "binary"))
+			silcgaim_wb_receive(client, conn, sender, payload,
+					    flags, data, data_len);
+
 		return;
 	}
 

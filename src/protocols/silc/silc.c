@@ -21,6 +21,7 @@
 #include "silcclient.h"
 #include "silcgaim.h"
 #include "version.h"
+#include "wb.h"
 
 extern SilcClientOperations ops;
 static GaimPlugin *silc_plugin = NULL;
@@ -1484,6 +1485,18 @@ static GaimPluginUiInfo prefs_info =
 	silcgaim_pref_frame,
 };
 
+static GaimWhiteboardPrplOps silcgaim_wb_ops =
+{
+	silcgaim_wb_start,
+	silcgaim_wb_end,
+	silcgaim_wb_get_dimensions,
+	silcgaim_wb_set_dimensions,
+	silcgaim_wb_get_brush,
+	silcgaim_wb_set_brush,
+	silcgaim_wb_send,
+	silcgaim_wb_clear,
+};
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
@@ -1543,7 +1556,8 @@ static GaimPluginProtocolInfo prpl_info =
 	silcgaim_roomlist_cancel,	/* roomlist_cancel */
 	NULL,						/* roomlist_expand_category */
 	NULL,						/* can_receive_file */
-	silcgaim_ftp_send_file		/* send_file */
+	silcgaim_ftp_send_file,		/* send_file */
+	&silcgaim_wb_ops,		/* whiteboard operations */
 };
 
 static GaimPluginInfo info =

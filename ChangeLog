@@ -99,6 +99,7 @@ version 2.0.0:
 	* Updated Gadu-Gadu protocol support (Bartosz Oler)
 	* SIP/SIMPLE support (Thomas Butter)
 	* Sametime protocol support
+	* SILC whiteboard support (Pekka Riikonen)
 
 	Other Noteworthy Changes:
 	* UPNP and NAT traversal support (Adam J. Warrington)

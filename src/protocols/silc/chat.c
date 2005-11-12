@@ -20,6 +20,7 @@
 #include "silcincludes.h"
 #include "silcclient.h"
 #include "silcgaim.h"
+#include "wb.h"
 
 /***************************** Channel Routines ******************************/
 
@@ -832,6 +833,19 @@ silcgaim_chat_setsecret(GaimBlistNode *node, gpointer data)
 				 "+s", NULL);
 }
 
+typedef struct {
+	SilcGaim sg;
+	SilcChannelEntry channel;
+} *SilcGaimChatWb;
+
+static void
+silcgaim_chat_wb(GaimBlistNode *node, gpointer data)
+{
+	SilcGaimChatWb wb = data;
+	silcgaim_wb_init_ch(wb->sg, wb->channel);
+	silc_free(wb);
+}
+
 GList *silcgaim_chat_menu(GaimChat *chat)
 {
 	GHashTable *components = chat->components;
@@ -947,6 +961,16 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 			                                 NULL, NULL);
 			m = g_list_append(m, act);
 		}
+	}
+
+	if (channel) {
+		SilcGaimChatWb wb;
+	        wb = silc_calloc(1, sizeof(*wb));
+        	wb->sg = sg;
+        	wb->channel = channel;
+        	act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
+                                         silcgaim_chat_wb, (void *)wb, NULL);
+	        m = g_list_append(m, act);
 	}
 
 	return m;

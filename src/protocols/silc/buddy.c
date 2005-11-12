@@ -20,6 +20,7 @@
 #include "silcincludes.h"
 #include "silcclient.h"
 #include "silcgaim.h"
+#include "wb.h"
 
 /***************************** Key Agreement *********************************/
 
@@ -1547,9 +1548,21 @@ silcgaim_buddy_kill(GaimBlistNode *node, gpointer data)
 				 b->name, "Killed by operator", NULL);
 }
 
+typedef struct {
+	SilcGaim sg;
+	SilcClientEntry client_entry;
+} *SilcGaimBuddyWb;
+
+static void
+silcgaim_buddy_wb(GaimBlistNode *node, gpointer data)
+{
+	SilcGaimBuddyWb wb = data;
+	silcgaim_wb_init(wb->sg, wb->client_entry);
+	silc_free(wb);
+}
+
 GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 {
-
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	SilcGaim sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
@@ -1557,6 +1570,7 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 	SilcClientEntry client_entry = NULL;
 	GaimBlistNodeAction *act;
 	GList *m = NULL;
+	SilcGaimBuddyWb wb;
 
 	pkfile = gaim_blist_node_get_string((GaimBlistNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
@@ -1596,6 +1610,13 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 		                                 silcgaim_buddy_kill, NULL, NULL);
 		m = g_list_append(m, act);
 	}
+
+	wb = silc_calloc(1, sizeof(*wb));
+	wb->sg = sg;
+	wb->client_entry = client_entry;
+	act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
+	                                 silcgaim_buddy_wb, (void *)wb, NULL);
+	m = g_list_append(m, act);
 
 	return m;
 }
