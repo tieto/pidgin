@@ -277,11 +277,20 @@ struct client_info_s {
 	"us", "en", \
 }
 
+#define CLIENTINFO_GAIM { \
+	"Gaim", \
+	0xf001, \
+	GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION, \
+	GAIM_MINOR_VERSION, 0x0000, \
+	0x00000000, \
+	"us", "en", \
+}
+
 #define CLIENTINFO_AIM_KNOWNGOOD CLIENTINFO_AIM_5_1_3036
 #define CLIENTINFO_ICQ_KNOWNGOOD CLIENTINFO_ICQ_5_45_3777
 
-/* 
- * These could be arbitrary, but its easier to use the actual AIM values 
+/*
+ * These could be arbitrary, but its easier to use the actual AIM values
  */
 #define AIM_CONN_TYPE_BOS		0x0002
 #define AIM_CONN_TYPE_ADS		0x0005
