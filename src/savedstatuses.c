@@ -31,6 +31,10 @@
 #include "util.h"
 #include "xmlnode.h"
 
+/*
+ * TODO: Need to allow transient statuses to have empty titles.
+ */
+
 /**
  * The information of a snap-shot of the statuses of all
  * your accounts.  Basically these are your saved away messages.
@@ -41,8 +45,6 @@
  * The changes to status.xml caused by the new status API
  * are fully backward compatible.  The new status API just
  * adds the optional sub-statuses to the XML file.
- *
- * TODO: This should probably just use a GaimStatus...
  */
 struct _GaimSavedStatus
 {
@@ -344,13 +346,13 @@ parse_status(xmlnode *status)
 	}
 
 	/* Read substatuses */
-	for (node = xmlnode_get_child(status, "status"); node != NULL;
+	for (node = xmlnode_get_child(status, "substatus"); node != NULL;
 			node = xmlnode_get_next_twin(node))
 	{
 		GaimSavedStatusSub *new;
 		new = parse_substatus(node);
 		if (new != NULL)
-			ret->substatuses = g_list_append(ret->substatuses, new);
+			ret->substatuses = g_list_prepend(ret->substatuses, new);
 	}
 
 	return ret;
@@ -379,7 +381,7 @@ load_statuses(void)
 	{
 		GaimSavedStatus *new;
 		new = parse_status(status);
-		saved_statuses = g_list_append(saved_statuses, new);
+		saved_statuses = g_list_prepend(saved_statuses, new);
 	}
 
 	xmlnode_free(statuses);
@@ -394,17 +396,32 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 {
 	GaimSavedStatus *status;
 
+	/* Make sure we don't already have a saved status with this title. */
 	g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
 
 	status = g_new0(GaimSavedStatus, 1);
 	status->title = g_strdup(title);
 	status->type = type;
 
-	saved_statuses = g_list_append(saved_statuses, status);
+	saved_statuses = g_list_prepend(saved_statuses, status);
 
 	schedule_save();
 
 	return status;
+}
+
+void
+gaim_savedstatus_set_title(GaimSavedStatus *status, const char *title)
+{
+	g_return_if_fail(status != NULL);
+
+	/* Make sure we don't already have a saved status with this title. */
+	g_return_if_fail(gaim_savedstatus_find(title) == NULL);
+
+	g_free(status->title);
+	status->title = g_strdup(title);
+
+	schedule_save();
 }
 
 void
@@ -426,6 +443,57 @@ gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
 	status->message = g_strdup(message);
 
 	schedule_save();
+}
+
+void
+gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *saved_status,
+										   const GaimAccount *account,
+										   const GaimStatusType *type,
+										   const char *message)
+{
+	GaimSavedStatusSub *substatus;
+
+	g_return_if_fail(saved_status != NULL);
+	g_return_if_fail(account      != NULL);
+	g_return_if_fail(type         != NULL);
+
+	/* Find an existing substatus or create a new one */
+	substatus = gaim_savedstatus_get_substatus_for_account(saved_status, account);
+	if (substatus == NULL)
+	{
+		substatus = g_new0(GaimSavedStatusSub, 1);
+		substatus->account = (GaimAccount *)account;
+		saved_status->substatuses = g_list_prepend(saved_status->substatuses, substatus);
+	}
+
+	substatus->type = type;
+	g_free(substatus->message);
+	substatus->message = g_strdup(message);
+
+	schedule_save();
+}
+
+void
+gaim_savedstatus_unset_substatus_for_account(GaimSavedStatus *saved_status,
+											 const GaimAccount *account)
+{
+	GList *iter;
+	GaimSavedStatusSub *substatus;
+
+	g_return_if_fail(saved_status != NULL);
+	g_return_if_fail(account      != NULL);
+
+	for (iter = saved_status->substatuses; iter != NULL; iter = iter->next)
+	{
+		substatus = iter->data;
+		if (substatus->account == account)
+		{
+			saved_status->substatuses = g_list_delete_link(saved_status->substatuses, iter);
+			g_free(substatus->message);
+			g_free(substatus);
+			return;
+		}
+	}
 }
 
 gboolean
@@ -455,14 +523,14 @@ gaim_savedstatuses_get_all(void)
 GaimSavedStatus *
 gaim_savedstatus_find(const char *title)
 {
-	GList *l;
+	GList *iter;
 	GaimSavedStatus *status;
 
 	g_return_val_if_fail(title != NULL, NULL);
 
-	for (l = saved_statuses; l != NULL; l = g_list_next(l))
+	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
-		status = (GaimSavedStatus *)l->data;
+		status = (GaimSavedStatus *)iter->data;
 		if (!strcmp(status->title, title))
 			return status;
 	}
@@ -500,6 +568,42 @@ gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
 	return (saved_status->substatuses != NULL);
 }
 
+GaimSavedStatusSub *
+gaim_savedstatus_get_substatus_for_account(const GaimSavedStatus *saved_status,
+										   const GaimAccount *account)
+{
+	GList *iter;
+	GaimSavedStatusSub *substatus;
+
+	g_return_val_if_fail(saved_status != NULL, NULL);
+	g_return_val_if_fail(account      != NULL, NULL);
+
+	for (iter = saved_status->substatuses; iter != NULL; iter = iter->next)
+	{
+		substatus = iter->data;
+		if (substatus->account == account)
+			return substatus;
+	}
+
+	return NULL;
+}
+
+const GaimStatusType *
+gaim_savedstatus_substatus_get_type(const GaimSavedStatusSub *substatus)
+{
+	g_return_val_if_fail(substatus != NULL, NULL);
+
+	return substatus->type;
+}
+
+const char *
+gaim_savedstatus_substatus_get_message(const GaimSavedStatusSub *substatus)
+{
+	g_return_val_if_fail(substatus != NULL, NULL);
+
+	return substatus->message;
+}
+
 void
 gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 {
@@ -527,26 +631,37 @@ void
 gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
 									  GaimAccount *account)
 {
-	GaimStatusType *status_type;
+	const GaimStatusType *status_type;
+	const GaimSavedStatusSub *substatus;
+	const char *message = NULL;
 
 	g_return_if_fail(saved_status != NULL);
 	g_return_if_fail(account != NULL);
 
-	status_type = gaim_account_get_status_type_with_primitive(account, saved_status->type);
-
-	if (status_type != NULL)
+	substatus = gaim_savedstatus_get_substatus_for_account(saved_status, account);
+	if (substatus != NULL)
 	{
-		if ((saved_status->message != NULL) &&
-			(gaim_status_type_get_attr(status_type, "message")))
-		{
-			gaim_account_set_status(account, gaim_status_type_get_id(status_type),
-									TRUE, "message", saved_status->message, NULL);
-		}
-		else
-		{
-			gaim_account_set_status(account, gaim_status_type_get_id(status_type),
-									TRUE, NULL);
-		}
+		status_type = substatus->type;
+		message = substatus->message;
+	}
+	else
+	{
+		status_type = gaim_account_get_status_type_with_primitive(account, saved_status->type);
+		if (status_type == NULL)
+			return;
+		message = saved_status->message;
+	}
+
+	if ((message != NULL) &&
+		(gaim_status_type_get_attr(status_type, "message")))
+	{
+		gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+								TRUE, "message", message, NULL);
+	}
+	else
+	{
+		gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+								TRUE, NULL);
 	}
 }
 
@@ -590,8 +705,9 @@ gaim_savedstatuses_uninit(void)
 	}
 
 	while (saved_statuses != NULL) {
-		GaimSavedStatus *status = saved_statuses->data;
-		saved_statuses = g_list_remove(saved_statuses, status);
-		free_statussaved(status);
+		GaimSavedStatus *saved_status = saved_statuses->data;
+		saved_statuses = g_list_remove(saved_statuses, saved_status);
+		free_statussaved(saved_status);
 	}
 }
+
