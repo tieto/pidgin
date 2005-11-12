@@ -326,7 +326,7 @@ class ServerBinding (Binding):
         self.addintype("i", name)
 
     def inputvalist(self, type, name):
-        self.cdecls.append("va_list %s;" % name);
+        self.cdecls.append("void * %s;" % name);
         self.ccode.append("%s = NULL;" % name);
 
     def inputstring(self, type, name):
