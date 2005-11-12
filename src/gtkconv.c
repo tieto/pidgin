@@ -5518,7 +5518,7 @@ show_buddy_icons_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		GaimConversation *conv = l->data;
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
-			gaim_conversation_foreach(gaim_gtkconv_update_buddy_icon);
+			gaim_gtkconv_update_buddy_icon(conv);
 	}
 }
 
