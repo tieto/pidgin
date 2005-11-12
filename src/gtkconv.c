@@ -4756,9 +4756,10 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 	for (current = smiley->anchors; current != NULL; current = g_slist_next(current)) {
 
 		icon = gtk_image_new_from_animation(smiley->icon);
-		gtk_widget_show(icon);
 
 		if (icon) {
+			gtk_widget_show(icon);
+
 			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
 
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smile)), g_free);
