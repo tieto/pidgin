@@ -22,7 +22,7 @@
 #include "gtkplugin.h"
 #include "gtkprefs.h"
 #include "gtkutils.h"
-#include "util.c"
+#include "util.h"
 #include "version.h"
 
 static guint pref_callback;
