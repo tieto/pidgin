@@ -130,9 +130,6 @@ typedef struct
 	GtkWidget *proxy_frame;
 	GtkWidget *proxy_vbox;
 	GtkWidget *proxy_dropdown;
-#if !GTK_CHECK_VERSION(2,4,0)
-	GtkWidget *proxy_menu;
-#endif
 	GtkWidget *proxy_host_entry;
 	GtkWidget *proxy_port_entry;
 	GtkWidget *proxy_user_entry;
@@ -1118,8 +1115,6 @@ static GtkWidget *
 make_proxy_dropdown(void)
 {
 	GtkWidget *dropdown;
-
-#if GTK_CHECK_VERSION(2,4,0)
 	GtkListStore *model;
 	GtkTreeIter iter;
 	GtkCellRenderer *renderer;
@@ -1168,71 +1163,14 @@ make_proxy_dropdown(void)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(dropdown), renderer,
 			"text", 0, NULL);
 
-#else
-	GtkWidget *menu;
-	GtkWidget *item;
-
-	dropdown = gtk_option_menu_new();
-	menu = gtk_menu_new();
-
-	/* Use Global Proxy Settings */
-	item = gtk_menu_item_new_with_label(_("Use Global Proxy Settings"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_USE_GLOBAL));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* No Proxy */
-	item = gtk_menu_item_new_with_label(_("No Proxy"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_NONE));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* HTTP */
-	item = gtk_menu_item_new_with_label(_("HTTP"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_HTTP));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* SOCKS 4 */
-	item = gtk_menu_item_new_with_label(_("SOCKS 4"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_SOCKS4));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* SOCKS 5 */
-	item = gtk_menu_item_new_with_label(_("SOCKS 5"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_SOCKS5));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	/* Use Environmental Settings */
-	item = gtk_menu_item_new_with_label(_("Use Environmental Settings"));
-	g_object_set_data(G_OBJECT(item), "proxytype",
-					  GINT_TO_POINTER(GAIM_PROXY_USE_ENVVAR));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
-#endif
-
 	return dropdown;
 }
 
 static void
 proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 {
-#if GTK_CHECK_VERSION(2,4,0)
 	dialog->new_proxy_type =
 		gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) - 1;
-#else
-	dialog->new_proxy_type =
-		gtk_option_menu_get_history(GTK_OPTION_MENU(menu)) - 1;
-#endif
 
 	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL ||
 		dialog->new_proxy_type == GAIM_PROXY_NONE ||
@@ -1283,10 +1221,6 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Proxy Type drop-down. */
 	dialog->proxy_dropdown = make_proxy_dropdown();
-#if !GTK_CHECK_VERSION(2,4,0)
-	dialog->proxy_menu =
-		gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->proxy_dropdown));
-#endif
 
 	add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
 
@@ -1325,13 +1259,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Hah! */
 		/* I dunno what you're laughing about, fuzz ball. */
 		dialog->new_proxy_type = type;
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
 				type + 1);
-#else
-		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
-				(int)type + 1);
-#endif
 
 		if (type == GAIM_PROXY_USE_GLOBAL || type == GAIM_PROXY_NONE ||
 			type == GAIM_PROXY_USE_ENVVAR) {
@@ -1361,13 +1290,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 	else {
 		dialog->new_proxy_type = GAIM_PROXY_USE_GLOBAL;
-#if GTK_CHECK_VERSION(2,4,0)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
 				dialog->new_proxy_type + 1);
-#else
-		gtk_option_menu_set_history(GTK_OPTION_MENU(dialog->proxy_dropdown),
-									dialog->new_proxy_type + 1);
-#endif
 		gtk_widget_hide_all(vbox2);
 	}
 
