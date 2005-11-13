@@ -38,6 +38,24 @@ void (*account_removed)(GaimAccount *account);
   @param account The account that was removed.
  @endsignaldef
 
+ @signaldef account-disabled
+  @signalproto
+void (*account_disabled)(GaimAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is disabled.
+  @param account The account that was disabled.
+ @endsignaldef
+
+ @signaldef account-enabled
+  @signalproto
+void (*account_enabled)(GaimAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when an account is enabled.
+  @param account The account that was enabled.
+ @endsignaldef
+
  @signaldef account-setting-info
   @signalproto
 void (*account_setting_info)(GaimAccount *account, const char *new_info);

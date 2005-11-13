@@ -1904,6 +1904,21 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 }
 
 static void
+account_abled_cb(GaimAccount *account, gpointer user_data)
+{
+	GtkTreeIter iter;
+
+	if (accounts_window == NULL)
+		return;
+
+	/* update the account in the GtkListStore */
+	if (accounts_window_find_account_in_treemodel(&iter, account))
+		gtk_list_store_set(accounts_window->model, &iter,
+						   COLUMN_ENABLED, GPOINTER_TO_INT(user_data),
+						   -1);
+}
+
+static void
 drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
@@ -2167,10 +2182,6 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 	gaim_savedstatus_activate_for_account(saved_status, account);
 
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);
-
-	gtk_list_store_set(dialog->model, &iter,
-					   COLUMN_ENABLED, !enabled,
-					   -1);
 }
 
 static void
@@ -2620,6 +2631,12 @@ gaim_gtk_account_init(void)
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
 						gaim_gtk_account_get_handle(),
 						GAIM_CALLBACK(account_removed_cb), NULL);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
+						gaim_gtk_account_get_handle(),
+						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
 	account_pref_wins =
 		g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);

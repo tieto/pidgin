@@ -3247,6 +3247,41 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	return result;
 }
 
+static void account_enabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
+{
+	GtkWidget *box;
+	
+	if (!gtkblist)
+		return;
+	
+	box = gtk_gaim_status_box_new_with_account(account);
+	gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, box);
+	gtk_box_pack_start(GTK_BOX(gtkblist->statusboxbox), box, FALSE, TRUE, 0);
+	gtk_widget_show(box);
+}
+
+static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
+{
+	GList *iter;
+
+	if (!gtkblist)
+		return;
+
+	for (iter = gtkblist->statusboxes; iter; iter = iter->next)
+	{
+		GtkWidget *box = iter->data;
+		GaimAccount *ac = NULL;
+
+		g_object_get(G_OBJECT(box), "account", &ac, NULL);
+		if (ac == account)
+		{
+			gtkblist->statusboxes = g_list_remove_link(gtkblist->statusboxes, iter);
+			gtk_widget_destroy(box);
+			break;
+		}
+	}
+}
+
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
 	void *handle;
@@ -3480,6 +3515,11 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gaim_gtk_blist_sound_method_pref_cb, NULL);
 
 	/* Setup some gaim signal handlers. */
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
+			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
+			gtkblist, GAIM_CALLBACK(account_enabled), gtkblist);
+
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtkblist, GAIM_CALLBACK(sign_on_off_cb), list);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",

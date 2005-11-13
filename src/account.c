@@ -1292,12 +1292,20 @@ gaim_account_set_enabled(GaimAccount *account, const char *ui,
 			 gboolean value)
 {
 	GaimConnection *gc;
+	gboolean was_enabled = FALSE;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(ui      != NULL);
 
+	was_enabled = gaim_account_get_enabled(account, ui);
+
 	gaim_account_set_ui_bool(account, ui, "auto-login", value);
 	gc = gaim_account_get_connection(account);
+
+	if(was_enabled && !value)
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-disabled", account);
+	else if(!was_enabled && value)
+		gaim_signal_emit(gaim_accounts_get_handle(), "account-enabled", account);
 
 	if ((gc != NULL) && (gc->wants_to_die == TRUE))
 		return;
@@ -2248,6 +2256,16 @@ gaim_accounts_init(void)
 	void *handle = gaim_accounts_get_handle();
 
 	gaim_signal_register(handle, "account-connecting",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT));
+
+	gaim_signal_register(handle, "account-disabled",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT));
+
+	gaim_signal_register(handle, "account-enabled",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_ACCOUNT));
