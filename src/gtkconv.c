@@ -4165,7 +4165,8 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 
 	gtk_font_options |= GTK_IMHTML_NO_COMMENTS;
 
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_incoming_formatting"))
+	if ((flags & GAIM_MESSAGE_RECV) &&
+			!gaim_prefs_get_bool("/gaim/gtk/conversations/show_incoming_formatting"))
 		gtk_font_options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES | GTK_IMHTML_NO_FORMATTING;
 
 	/* this is gonna crash one day, I can feel it. */
