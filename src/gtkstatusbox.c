@@ -118,6 +118,7 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 	const GList *l;
 	int status_no = -1;
 	const GaimStatusType *statustype = NULL;
+	const char *message;
 
 	statustype = gaim_status_type_find_with_id((GList *)gaim_account_get_status_types(account),
 	                                           (char *)gaim_status_type_get_id(gaim_status_get_type(newstatus)));
@@ -136,9 +137,23 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), status_no);
 		gtk_gaim_status_box_refresh(status_box);
+
+		message = gaim_status_get_attr_string(newstatus, "message");
+
+		if (!message || !*message)
+		{
+			gtk_widget_hide_all(status_box->vbox);
+			status_box->imhtml_visible = FALSE;
+		}
+		else
+		{
+			gtk_widget_show_all(status_box->vbox);
+			status_box->imhtml_visible = TRUE;
+			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+		}
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
 	}
-
 }
 
 static void
