@@ -1280,7 +1280,6 @@ if test "$enable_gtkspell" = yes ; then
 	PKG_CHECK_MODULES(GTKSPELL, gtkspell-2.0 >= 2.0.2, , enable_gtkspell=no)
 	if test "$enable_gtkspell" = "yes" ; then
 		AC_SUBST(GTKSPELL_CFLAGS)
-		AC_SUBST(GTKSPELL_LIBS)
 		AC_DEFINE(USE_GTKSPELL,,[do we have gtkspell?])
 	fi
 fi

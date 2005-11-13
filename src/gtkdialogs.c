@@ -370,9 +370,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 #endif
 
 #ifdef USE_GTKSPELL
-	g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
+	if (gaim_gtk_gtkspell_is_available())
+		g_string_append(str, "    <b>GtkSpell:</b> Enabled<br/>");
+	else
+		g_string_append(str, "    <b>GtkSpell:</b> Disabled (Library Not Found)<br/>");
 #else
-	g_string_append(str, "    <b>GtkSpell:</b> Disabled<br/>");
+	g_string_append(str, "    <b>GtkSpell:</b> Disabled (Not Compiled)<br/>");
 #endif
 
 #ifdef HAVE_GNUTLS

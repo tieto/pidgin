@@ -5425,11 +5425,9 @@ spellcheck_pref_cb(const char *name, GaimPrefType type, gpointer value,
 		gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if (value)
-			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(gtkconv->entry));
-		else {
-			spell = gtkspell_get_from_text_view(GTK_TEXT_VIEW(gtkconv->entry));
-			gtkspell_detach(spell);
-		}
+			gaim_gtk_gtkspell_setup(GTK_TEXT_VIEW(gtkconv->entry));
+		else
+			gaim_gtk_gtkspell_unsetup(GTK_TEXT_VIEW(gtkconv->entry));
 	}
 #endif
 }

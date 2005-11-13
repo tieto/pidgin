@@ -110,6 +110,7 @@ version 2.0.0:
 	* GNOME users can open received files by clicking on "Open" in the
 	  file transfer window
 	* Mouse-over hyperlink coloring is now themeable
+	* GtkSpell is now loaded dynamically at runtime (Michael Hearn)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up

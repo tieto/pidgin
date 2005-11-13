@@ -352,7 +352,6 @@ gaim_LDADD = \
 	$(XSS_LIBS) \
 	$(SM_LIBS) \
 	$(INTLLIBS) \
-	$(GTKSPELL_LIBS) \
 	$(STARTUP_NOTIFICATION_LIBS) \
 	$(VV_LIBS) \
 	$(MS_LIBS)

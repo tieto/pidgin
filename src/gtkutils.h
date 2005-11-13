@@ -259,14 +259,32 @@ void gaim_gtk_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *
 gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
 
 /**
+ * Returns @c TRUE if Gaim was compiled with GtkSpell support and the
+ * library is available at runtime.
+ */
+gboolean gaim_gtk_gtkspell_is_available();
+
+/**
  * Sets up GtkSpell for the given GtkTextView, reporting errors
  * if encountered.
  *
- * This does nothing if Gaim is not compiled with GtkSpell support.
+ * This does nothing if Gaim is not compiled with GtkSpell support, or
+ * the GtkSpell library cannot be located at runtime.
  *
  * @param textview The textview widget to setup spellchecking for.
  */
-void gaim_gtk_setup_gtkspell(GtkTextView *textview);
+void gaim_gtk_gtkspell_setup(GtkTextView *textview);
+
+/**
+ * Does the inverse of gaim_gtk_setup_gtkspell, detaching the spelling
+ * checker from the text view widget.
+ *
+ * This does nothing if Gaim is not compiled with GtkSpell support, or
+ * the GtkSpell library cannot be located at runtime.
+ *
+ * @param textview The textview widget to unsetup spellchecking for.
+ */
+void gaim_gtk_gtkspell_unsetup(GtkTextView *textview);
 
 /**
  * Stylizes the specified text using HTML, according to the current
