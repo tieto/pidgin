@@ -813,7 +813,7 @@ static void hijack_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 {
 	GtkWidget *menuitem;
 
-	menuitem = gtk_menu_item_new_with_mnemonic(_("Pa_ste As Plain Text"));
+	menuitem = gtk_menu_item_new_with_mnemonic(_("Pa_ste as Plain Text"));
 	gtk_widget_show(menuitem);
 	gtk_widget_set_sensitive(menuitem,
 	                        (imhtml->editable &&
