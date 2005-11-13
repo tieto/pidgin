@@ -55,23 +55,25 @@ struct translator {
 	char *email;
 };
 
+/* Order: Lead Developer, then Alphabetical by Last Name */
 static struct developer developers[] = {
 	{"Sean Egan",					N_("lead developer"), "sean.egan@binghamton.edu"},
 	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
-	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
-	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
-	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
-	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
+	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
+	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
+	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
+	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
+	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
 	{"Etan 'deryni' Reisner",       N_("developer"), NULL},
 	{"Tim 'marv' Ringenbach",		N_("developer"), NULL},
 	{"Luke 'LSchiere' Schierer",	N_("support"), "lschiere@users.sf.net"},
 	{"Stu 'nosnilmot' Tomlinson",	N_("developer"), NULL},
-	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
-	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
+	{"Nathan 'faceprint' Walp",		N_("developer"), NULL},
 	{NULL, NULL, NULL}
 };
 
+/* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Sadrul Habib Chowdhury",      NULL,   NULL},
@@ -84,17 +86,19 @@ static struct developer patch_writers[] = {
 	{NULL, NULL, NULL}
 };
 
+/* Order: Alphabetical by Last Name */
 static struct developer retired_developers[] = {
+	{"Jim Duchek",			N_("maintainer"), NULL},
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
-	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
-	{"Jim Duchek",			N_("maintainer"), NULL},
+	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
 	{"Jim Seymour",			N_("Jabber developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
-	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
+	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
 };
 
+/* Order: Code, then Alphabetical by Last Name */
 static struct translator current_translators[] = {
 	{N_("Bulgarian"),           "bg", "Vladimira Girginova", "missing@here.is"},
 	{N_("Bulgarian"),           "bg", "Vladimir (Kaladan) Petkov", "vpetkov@i-space.org"},
