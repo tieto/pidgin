@@ -80,7 +80,8 @@ C_SRC =			silc.c \
 			ft.c \
 			ops.c \
 			pk.c \
-			util.c
+			util.c \
+			wb.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
