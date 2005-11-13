@@ -153,7 +153,7 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 
 	escaped = (args[3] != NULL) ? g_markup_escape_text(args[3], -1) : NULL;
 	buf = g_strdup_printf("mode for %s: %s %s", args[1], args[2], escaped ? escaped : "");
-	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+	gaim_conv_chat_write(GAIM_CONV_CHAT(convo), "", buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 	g_free(escaped);
 	g_free(buf);
 
@@ -728,7 +728,7 @@ void irc_msg_mode(struct irc_conn *irc, const char *name, const char *from, char
 		}
 		escaped = (args[2] != NULL) ? g_markup_escape_text(args[2], -1) : NULL;
 		buf = g_strdup_printf(_("mode (%s %s) by %s"), args[1], escaped ? escaped : "", nick);
-		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		gaim_conv_chat_write(GAIM_CONV_CHAT(convo), args[0], buf, GAIM_MESSAGE_SYSTEM, time(NULL));
 		g_free(escaped);
 		g_free(buf);
 		if(args[2]) {
