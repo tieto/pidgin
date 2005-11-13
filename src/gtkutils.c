@@ -903,14 +903,17 @@ static void (*gtkspell_detach_ptr)(GtkSpell *spell);
 static GtkSpell* (*gtkspell_new_attach_ptr)(GtkTextView *view, const gchar *lang, GError **error);
 static int gtkspell_available = -1; /* -1 unknown, 0 false, 1 true */
 
+#define GTKSPELL_SONAME "libgtkspell." G_MODULE_SUFFIX ".0"
+
 static void
 setup_gtkspell()
 {
 #if GLIB_CHECK_VERSION(2,3,3)
-	GModule *handle = g_module_open("libgtkspell", G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
+	GModule *handle = g_module_open(GTKSPELL_SONAME, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
 #else
-	GModule *handle = g_module_open("libgtkspell", G_MODULE_BIND_LAZY);
+	GModule *handle = g_module_open(GTKSPELL_SONAME, G_MODULE_BIND_LAZY);
 #endif
+
 	if (handle != NULL)
 	{
 		gpointer ptr; /* squash GCC strict aliasing warnings */
@@ -928,7 +931,7 @@ setup_gtkspell()
 	}
 	else
 	{
-		gaim_debug_warning("gtkspell", "Failed to load libgtkspell.so.0: %s\n", dlerror());
+		gaim_debug_warning("gtkspell", "Failed to load %s: %s\n", GTKSPELL_SONAME, g_module_error());
 		gtkspell_available = FALSE;
 	}
 }
