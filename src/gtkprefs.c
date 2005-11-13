@@ -798,7 +798,6 @@ conv_page()
 	GtkWidget *vbox2;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
-	GtkWidget *spellpref;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
@@ -821,21 +820,10 @@ conv_page()
 
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
-	
-	spellpref = gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
-					    "/gaim/gtk/conversations/spellcheck", vbox);
-	
-	if (!gaim_gtk_gtkspell_is_available())
-	{
-		gboolean gtkspell_enabled = gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck");
-
-		gtk_widget_set_sensitive(spellpref, FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(spellpref), FALSE);
-
-		/* Preserve the preference. If the user had it enabled, we want it to
-		 * stay enabled if they install gtkspell again. */
-		gaim_prefs_set_bool("/gaim/gtk/conversations/spellcheck", gtkspell_enabled);
-	}
+#ifdef USE_GTKSPELL
+	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
+			"/gaim/gtk/conversations/spellcheck", vbox);
+#endif
 
 	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
 	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");

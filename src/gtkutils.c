@@ -147,7 +147,7 @@ gaim_gtk_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **to
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
 	if (editable && gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-		gaim_gtk_gtkspell_setup(GTK_TEXT_VIEW(imhtml));
+		gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
 	gtk_widget_show(imhtml);
 
 	if (editable) {
@@ -897,104 +897,24 @@ char *stylize(const gchar *text, int length)
 	return buf;
 }
 
-#ifdef USE_GTKSPELL
-static GtkSpell* (*gtkspell_get_from_text_view_ptr)(GtkTextView *view);
-static void (*gtkspell_detach_ptr)(GtkSpell *spell);
-static GtkSpell* (*gtkspell_new_attach_ptr)(GtkTextView *view, const gchar *lang, GError **error);
-static int gtkspell_available = -1; /* -1 unknown, 0 false, 1 true */
-
-#define GTKSPELL_SONAME "libgtkspell." G_MODULE_SUFFIX ".0"
-
-static void
-setup_gtkspell()
-{
-#if GLIB_CHECK_VERSION(2,3,3)
-	GModule *handle = g_module_open(GTKSPELL_SONAME, G_MODULE_BIND_LAZY | G_MODULE_BIND_LOCAL);
-#else
-	GModule *handle = g_module_open(GTKSPELL_SONAME, G_MODULE_BIND_LAZY);
-#endif
-
-	if (handle != NULL)
-	{
-		gpointer ptr; /* squash GCC strict aliasing warnings */
-
-		g_module_symbol(handle, "gtkspell_new_attach", &ptr);
-		gtkspell_new_attach_ptr = ptr;
-
-		g_module_symbol(handle, "gtkspell_detach", &ptr);
-		gtkspell_detach_ptr = ptr;
-
-		g_module_symbol(handle, "gtkspell_get_from_text_view", &ptr);
-		gtkspell_get_from_text_view_ptr = ptr;
-
-		gtkspell_available = TRUE;
-	}
-	else
-	{
-		gaim_debug_warning("gtkspell", "Failed to load %s: %s\n", GTKSPELL_SONAME, g_module_error());
-		gtkspell_available = FALSE;
-	}
-}
-
-gboolean
-gaim_gtk_gtkspell_is_available()
-{
-	if (gtkspell_available == -1)
-		setup_gtkspell();
-
-	return gtkspell_available;
-}
-
 void
-gaim_gtk_gtkspell_setup(GtkTextView *textview)
+gaim_gtk_setup_gtkspell(GtkTextView *textview)
 {
+#ifdef USE_GTKSPELL
 	GError *error = NULL;
 	char *locale = NULL;
 
 	g_return_if_fail(textview != NULL);
 	g_return_if_fail(GTK_IS_TEXT_VIEW(textview));
 
-	if (!gaim_gtk_gtkspell_is_available())
-		return;
-
-	if (gtkspell_new_attach_ptr(textview, locale, &error) == NULL && error)
+	if (gtkspell_new_attach(textview, locale, &error) == NULL && error)
 	{
-		gaim_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n", error->message);
+		gaim_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
+						   error->message);
 		g_error_free(error);
 	}
+#endif /* USE_GTKSPELL */
 }
-
-void
-gaim_gtk_gtkspell_unsetup(GtkTextView *textview)
-{
-	GtkSpell *spell;
-
-	if (!gtkspell_available)
-		return;
-
-	spell = gtkspell_get_from_text_view_ptr(textview);
-	gtkspell_detach_ptr(spell);
-}
-
-#else  /* !USE_GTKSPELL */
-
-gboolean
-gaim_gtk_gtkspell_is_available()
-{
-	return FALSE;
-}
-
-void
-gaim_gtk_gtkspell_setup(GtkTextView *textview)
-{
-}
-
-void
-gaim_gtk_gtkspell_unsetup(GtkTextView *textview)
-{
-}
-
-#endif /* !USE_GTKSPELL */
 
 void
 gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,

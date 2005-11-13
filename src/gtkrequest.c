@@ -398,7 +398,7 @@ gaim_gtk_request_input(const char *title, const char *primary,
 			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
 			if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-				gaim_gtk_gtkspell_setup(GTK_TEXT_VIEW(entry));
+				gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 			gtk_container_add(GTK_CONTAINER(sw), entry);
 		}
@@ -1085,7 +1085,7 @@ create_string_field(GaimRequestField *field)
 									GTK_WRAP_WORD_CHAR);
 
 		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
-			gaim_gtk_gtkspell_setup(GTK_TEXT_VIEW(textview));
+			gaim_gtk_setup_gtkspell(GTK_TEXT_VIEW(textview));
 
 		gtk_container_add(GTK_CONTAINER(widget), textview);
 		gtk_widget_show(textview);
