@@ -104,7 +104,7 @@ gaim_core_init(const char *ui)
 	 * subsystem right away too.
 	 */
 	gaim_plugins_init();
-	gaim_plugins_probe(GAIM_PLUGIN_EXT);
+	gaim_plugins_probe(G_MODULE_SUFFIX);
 
 	gaim_savedstatuses_init();
 	gaim_status_init();

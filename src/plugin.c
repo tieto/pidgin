@@ -97,9 +97,7 @@ is_native(const char *filename)
 	if (last_period == NULL)
 		return FALSE;
 
-	return !(strcmp(last_period, GAIM_PLUGIN_EXT_WIN32) &
-	         strcmp(last_period, GAIM_PLUGIN_EXT_HPUX) &
-	         strcmp(last_period, GAIM_PLUGIN_EXT_UNIX));
+	return !(strcmp(last_period + 1, G_MODULE_SUFFIX));
 }
 
 static char *
@@ -213,7 +211,7 @@ gaim_plugin_probe(const char *filename)
 	if (plugin != NULL)
 		return plugin;
 
-	plugin = gaim_plugin_new(has_file_extension(filename, GAIM_PLUGIN_EXT), filename);
+	plugin = gaim_plugin_new(has_file_extension(filename, G_MODULE_SUFFIX), filename);
 
 	if (plugin->native_plugin) {
 		const char *error;
