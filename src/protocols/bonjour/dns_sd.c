@@ -347,7 +347,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	data->session = g_malloc(sizeof(sw_discovery));
 	if (sw_discovery_init(data->session) != SW_OKAY)
 	{
-		free(data->session);
+		g_free(data->session);
 		data->session = NULL;
 		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
 		return FALSE;
