@@ -6224,6 +6224,122 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	stop_anim(NULL, gtkconv);
 }
+static void
+close_window(GtkWidget *w, GaimGtkWindow *win)
+{
+	close_win_cb(w, NULL, win);
+}
+
+static void
+detach_tab_cb(GtkWidget *w, GObject *menu)
+{
+	GaimGtkWindow *win, *new_window;
+	GaimGtkConversation *gtkconv;
+
+	gtkconv = g_object_get_data(menu, "clicked_tab");
+
+	if (!gtkconv)
+		return;
+
+	win = gaim_gtkconv_get_window(gtkconv);
+	/* Nothing to do if there's only one tab in the window */
+	if (gaim_gtk_conv_window_get_gtkconv_count(win) == 1)
+		return;
+
+	gaim_gtk_conv_window_remove_gtkconv(win, gtkconv);
+
+	new_window = gaim_gtk_conv_window_new();
+	gaim_gtk_conv_window_add_gtkconv(new_window, gtkconv);
+	gaim_gtk_conv_window_show(new_window);
+}
+
+static void
+close_others_cb(GtkWidget *w, GObject *menu)
+{
+	GList *iter;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *win;
+
+	gtkconv = g_object_get_data(menu, "clicked_tab");
+
+	if (!gtkconv)
+		return;
+
+	win = gaim_gtkconv_get_window(gtkconv);
+
+	for (iter = gaim_gtk_conv_window_get_gtkconvs(win); iter; )
+	{
+		GaimGtkConversation *gconv = iter->data;
+		iter = iter->next;
+
+		if (gconv != gtkconv)
+		{
+			close_conv_cb(NULL, gconv);
+		}
+	}
+}
+
+static void close_tab_cb(GtkWidget *w, GObject *menu)
+{
+	GaimGtkConversation *gtkconv;
+
+	gtkconv = g_object_get_data(menu, "clicked_tab");
+
+	if (gtkconv)
+		close_conv_cb(NULL, gtkconv);
+}
+
+static gboolean
+right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, GaimGtkWindow *win)
+{
+	GtkWidget *item, *menu;
+	GaimGtkConversation *gtkconv;
+
+	if (event->type != GDK_BUTTON_PRESS || event->button != 3)
+		return FALSE;
+
+	gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win,
+			gaim_gtkconv_get_tab_at_xy(win, event->x, event->y, NULL));
+
+	if (g_object_get_data(G_OBJECT(notebook->menu), "clicked_tab"))
+	{
+		g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
+		return FALSE;
+	}
+	
+	g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
+
+	menu = notebook->menu;
+	gaim_separator(GTK_WIDGET(menu));
+
+	item = gtk_menu_item_new_with_label("Detach this tab");
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(detach_tab_cb), menu);
+
+	item = gtk_menu_item_new_with_label("Close this tab");
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_tab_cb), menu);
+
+	gaim_separator(menu);
+
+	item = gtk_menu_item_new_with_label("Close other tabs");
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_others_cb), menu);
+
+	item = gtk_menu_item_new_with_label("Close all tabs");
+	gtk_widget_show(item);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	g_signal_connect(G_OBJECT(item), "activate",
+					G_CALLBACK(close_window), win);
+
+	return FALSE;
+}
 
 static void
 switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
@@ -6327,6 +6443,9 @@ gaim_gtk_conv_window_new()
 	gtk_notebook_popup_enable(GTK_NOTEBOOK(win->notebook));
 	gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
 	gtk_notebook_set_show_border(GTK_NOTEBOOK(win->notebook), FALSE);
+
+	g_signal_connect(G_OBJECT(win->notebook), "button-press-event",
+					G_CALLBACK(right_click_menu_cb), win);
 
 	gtk_widget_show(win->notebook);
 
