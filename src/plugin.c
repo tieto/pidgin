@@ -1140,9 +1140,15 @@ gaim_plugin_register(GaimPlugin *plugin)
 	/* This plugin should be probed and maybe loaded--add it to the queue */
 	load_queue = g_list_append(load_queue, plugin);
 #else
-	if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
-		protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
-												(GCompareFunc)compare_prpl);
+	if (plugin->info != NULL)
+	{
+		if (plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+			protocol_plugins = g_list_insert_sorted(protocol_plugins, plugin,
+													(GCompareFunc)compare_prpl);
+		if (plugin->info->load != NULL)
+			if (!plugin->info->load(plugin))
+				return FALSE;
+	}
 #endif
 
 	plugins = g_list_append(plugins, plugin);
