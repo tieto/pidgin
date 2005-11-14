@@ -6399,7 +6399,7 @@ gaim_gtk_conv_window_hide(GaimGtkWindow *win)
 void
 gaim_gtk_conv_window_raise(GaimGtkWindow *win)
 {
-	gtk_window_present(win->window);
+	gtk_window_present(GTK_WINDOW(win->window));
 /*
 	gtk_widget_show(win->window);
 	gtk_window_deiconify(GTK_WINDOW(win->window));
