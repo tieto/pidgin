@@ -281,7 +281,7 @@ struct client_info_s {
 	"Gaim", \
 	0xf001, \
 	GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION, \
-	GAIM_MINOR_VERSION, 0x0000, \
+	GAIM_MICRO_VERSION, 0x0000, \
 	0x00000000, \
 	"us", "en", \
 }
