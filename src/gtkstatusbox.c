@@ -33,6 +33,7 @@
 #include "gtksavedstatuses.h"
 #include "gtkstock.h"
 #include "gtkstatusbox.h"
+#include "gtkutils.h"
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
@@ -292,68 +293,6 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	g_free(text);
 }
 
-static GdkPixbuf *
-load_icon(GaimAccount *account, GaimStatusType *status_type)
-{
-	char basename2[BUFSIZ];
-	char *filename;
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimPlugin *plugin;
-	const char *proto_name = NULL, *type_name;
-	GdkPixbuf *pixbuf, *scale = NULL, *emblem;
-
-
-	plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
-
-	if (plugin != NULL) {
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
-		proto_name = prpl_info->list_icon(account, NULL);
-	} else {
-		return NULL;
-	}
-
-	g_snprintf(basename2, sizeof(basename2), "%s.png",
-	           proto_name);
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",
-	                            basename2, NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
-	if (pixbuf != NULL) {
-		scale = gdk_pixbuf_scale_simple(pixbuf, 32, 32,
-		                                GDK_INTERP_BILINEAR);
-		g_object_unref(G_OBJECT(pixbuf));
-	}
-
-
-	/* TODO: let the prpl pick the emblem on a per status bases, and only
-	 * use the primitive as a fallback */
-	type_name = gaim_primitive_get_id_from_type(gaim_status_type_get_primitive(status_type));
-	if (!strcmp(type_name, "hidden"))
-		type_name = "invisible";
-	if (!strcmp(type_name, "unavailable"))
-		type_name = "na";
-	g_snprintf(basename2, sizeof(basename2), "%s.png",
-	           type_name);
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",
-	                            basename2, NULL);
-	emblem = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
-	if (emblem) {
-		gdk_pixbuf_composite(emblem,
-		                     scale, 32-15, 32-15,
-		                     15, 15,
-		                     32-15, 32-15,
-		                     1, 1,
-		                     GDK_INTERP_BILINEAR,
-		                     255);
-
-		g_object_unref(emblem);
-	}
-	return scale;
-}
-
 /**
  * This updates the GtkTreeView so that it correctly shows the state
  * we are currently using.  It is used when the current state is
@@ -400,7 +339,7 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		     (primitive != GAIM_STATUS_AWAY) &&
 		     (primitive != GAIM_STATUS_HIDDEN)))
 		{
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 4);
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 5);
 		}
 		else
 		{
@@ -486,7 +425,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 			gtk_gaim_status_box_add(GTK_GAIM_STATUS_BOX(status_box),
 									gaim_status_type_get_primitive(status_type),
-									load_icon(account, status_type),
+									gaim_gtk_create_prpl_icon_with_status(account, status_type),
 									gaim_status_type_get_name(status_type),
 									NULL);
 		}

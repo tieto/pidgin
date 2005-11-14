@@ -138,15 +138,6 @@ GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
 GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();
 
 /**
- * Returns the base image to represent the account, based on the currently selected theme
- *
- * @param account  The account.
- *
- * @return         The icon
- */
-GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account);
-
-/**
  * Populates a menu with the items shown on the buddy list for a buddy.
  *
  * @param menu  The menu to populate

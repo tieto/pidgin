@@ -1609,3 +1609,88 @@ void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec,
 	if(*height > 100)
 		*height = 100;
 }
+
+GdkPixbuf *
+gaim_gtk_create_prpl_icon(GaimAccount *account)
+{
+	GaimPlugin *prpl;
+	GaimPluginProtocolInfo *prpl_info = NULL;
+	GdkPixbuf *status = NULL;
+	char *filename = NULL;
+	const char *protoname = NULL;
+	char buf[256]; /* TODO: We should use a define for max file length */
+
+	g_return_val_if_fail(account != NULL, NULL);
+
+	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+
+	if (prpl != NULL) {
+		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+
+		if (prpl_info->list_icon != NULL)
+			protoname = prpl_info->list_icon(account, NULL);
+	}
+
+	if (protoname == NULL)
+		return NULL;
+
+	/*
+	 * Status icons will be themeable too, and then it will look up
+	 * protoname from the theme
+	 */
+	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
+								"default", buf, NULL);
+	status = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	return status;
+}
+
+GdkPixbuf *
+gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type)
+{
+	char basename2[BUFSIZ];
+	char *filename;
+	const char *type_name;
+	GdkPixbuf *pixbuf, *scale = NULL, *emblem;
+
+	pixbuf = gaim_gtk_create_prpl_icon(account);
+
+	if (pixbuf != NULL) {
+		scale = gdk_pixbuf_scale_simple(pixbuf, 32, 32,
+		                                GDK_INTERP_BILINEAR);
+		g_object_unref(G_OBJECT(pixbuf));
+	} else {
+		return NULL;
+	}
+
+	/* TODO: let the prpl pick the emblem on a per status basis, and only
+	 * use the primitive as a fallback */
+	type_name = gaim_primitive_get_id_from_type(gaim_status_type_get_primitive(status_type));
+	if (!strcmp(type_name, "hidden"))
+		type_name = "invisible";
+	else if (!strcmp(type_name, "unavailable"))
+		type_name = "na";
+	g_snprintf(basename2, sizeof(basename2), "%s.png",
+	           type_name);
+	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default",
+	                            basename2, NULL);
+	emblem = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	if (emblem) {
+		gdk_pixbuf_composite(emblem,
+		                     scale, 32-15, 32-15,
+		                     15, 15,
+		                     32-15, 32-15,
+		                     1, 1,
+		                     GDK_INTERP_BILINEAR,
+		                     255);
+
+		g_object_unref(emblem);
+	}
+	return scale;
+}
+

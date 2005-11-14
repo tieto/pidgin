@@ -362,5 +362,24 @@ void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char
  */
 void gaim_gtk_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, int *width, int *height);
 
+/**
+ * Returns the base image to represent the account, based on
+ * the currently selected theme.
+ *
+ * @param account The account.
+ *
+ * @return The icon.
+ */
+GdkPixbuf *gaim_gtk_create_prpl_icon(GaimAccount *account);
+
+/**
+ * Create a protocol-icon with the status emblem.
+ *
+ * @param account     The account.
+ * @param status_type The status type to set the emblem for.
+ *
+ * @return The icon.
+ */
+GdkPixbuf * gaim_gtk_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type);
 
 #endif /* _GAIM_GTKUTILS_H_ */

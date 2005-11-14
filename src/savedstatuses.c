@@ -65,8 +65,6 @@ struct _GaimSavedStatus
 };
 
 /*
- * TODO: If an account is deleted, need to also delete any associated
- *       GaimSavedStatusSub's.
  * TODO: If a GaimStatusType is deleted, need to also delete any
  *       associated GaimSavedStatusSub's?
  */
@@ -446,10 +444,10 @@ gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
 }
 
 void
-gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *saved_status,
-										   const GaimAccount *account,
-										   const GaimStatusType *type,
-										   const char *message)
+gaim_savedstatus_set_substatus(GaimSavedStatus *saved_status,
+							   const GaimAccount *account,
+							   const GaimStatusType *type,
+							   const char *message)
 {
 	GaimSavedStatusSub *substatus;
 
@@ -458,7 +456,7 @@ gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *saved_status,
 	g_return_if_fail(type         != NULL);
 
 	/* Find an existing substatus or create a new one */
-	substatus = gaim_savedstatus_get_substatus_for_account(saved_status, account);
+	substatus = gaim_savedstatus_get_substatus(saved_status, account);
 	if (substatus == NULL)
 	{
 		substatus = g_new0(GaimSavedStatusSub, 1);
@@ -474,8 +472,8 @@ gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *saved_status,
 }
 
 void
-gaim_savedstatus_unset_substatus_for_account(GaimSavedStatus *saved_status,
-											 const GaimAccount *account)
+gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
+								 const GaimAccount *account)
 {
 	GList *iter;
 	GaimSavedStatusSub *substatus;
@@ -569,8 +567,8 @@ gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
 }
 
 GaimSavedStatusSub *
-gaim_savedstatus_get_substatus_for_account(const GaimSavedStatus *saved_status,
-										   const GaimAccount *account)
+gaim_savedstatus_get_substatus(const GaimSavedStatus *saved_status,
+							   const GaimAccount *account)
 {
 	GList *iter;
 	GaimSavedStatusSub *substatus;
@@ -638,7 +636,7 @@ gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
 	g_return_if_fail(saved_status != NULL);
 	g_return_if_fail(account != NULL);
 
-	substatus = gaim_savedstatus_get_substatus_for_account(saved_status, account);
+	substatus = gaim_savedstatus_get_substatus(saved_status, account);
 	if (substatus != NULL)
 	{
 		status_type = substatus->type;

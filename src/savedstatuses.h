@@ -99,10 +99,10 @@ void gaim_savedstatus_set_message(GaimSavedStatus *status,
  *                  status.
  * @param message	The message for the account in the substatus.
  */
-void gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *status,
-												const GaimAccount *account,
-												const GaimStatusType *type,
-												const char *message);
+void gaim_savedstatus_set_substatus(GaimSavedStatus *status,
+									const GaimAccount *account,
+									const GaimStatusType *type,
+									const char *message);
 
 /**
  * Unset a substatus for an account in a saved status.  This clears
@@ -113,7 +113,7 @@ void gaim_savedstatus_set_substatus_for_account(GaimSavedStatus *status,
  * @param status	The saved status.
  * @param account	The account.
 */
-void gaim_savedstatus_unset_substatus_for_account(GaimSavedStatus *saved_status,
+void gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
 												  const GaimAccount *account);
 
 /**
@@ -212,7 +212,7 @@ gboolean gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status);
  *         the given account does not have a substatus that
  *         differs from the default status of this GaimSavedStatus.
  */
-GaimSavedStatusSub *gaim_savedstatus_get_substatus_for_account(
+GaimSavedStatusSub *gaim_savedstatus_get_substatus(
 									const GaimSavedStatus *saved_status,
 									const GaimAccount *account);
 
