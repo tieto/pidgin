@@ -93,6 +93,7 @@ struct _GtkGaimStatusBox
 
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
+	GtkWidget *event;
 	gboolean imhtml_visible;
 
 	GtkWidget *cell_view;

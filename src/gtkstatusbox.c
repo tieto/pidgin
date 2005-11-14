@@ -191,7 +191,6 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 	}
 }
 
-
 static void
 gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 {
@@ -416,13 +415,15 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		}
 
 		message = gaim_savedstatus_get_message(saved_status);
-		if (message == NULL)
+		if (!message || !*message)
 		{
 			status_box->imhtml_visible = FALSE;
+			gtk_widget_hide_all(status_box->vbox);
 		}
 		else
 		{
 			status_box->imhtml_visible = TRUE;
+			gtk_widget_show_all(status_box->vbox);
 
 			/*
 			 * Suppress the "changed" signal because the status
@@ -517,6 +518,13 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 	update_to_reflect_current_status(data);
 }
 
+static void status_box_clicked_cb(GtkWidget *w, GdkEventButton *event, GtkGaimStatusBox *box)
+{
+	if (box->imhtml_visible)
+		return;
+	g_signal_emit_by_name(G_OBJECT(box), "changed", NULL, NULL);
+}
+
 static void
 gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 {
@@ -548,7 +556,13 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	path = gtk_tree_path_new_from_string("0");
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
 	gtk_tree_path_free(path);
-	gtk_container_add(GTK_CONTAINER(status_box), status_box->cell_view);
+
+	status_box->event = gtk_event_box_new();
+	gtk_widget_show(status_box->event);
+	g_signal_connect(G_OBJECT(status_box->event), "button_press_event", G_CALLBACK(status_box_clicked_cb), status_box);
+	gtk_container_add(GTK_CONTAINER(status_box->event), status_box->cell_view);
+	
+	gtk_container_add(GTK_CONTAINER(status_box), status_box->event);
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
@@ -811,6 +825,12 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 					   TITLE_COLUMN, &title, -1);
 	message = gtk_gaim_status_box_get_message(status_box);
 
+	if (!message || !*message)
+	{
+		gtk_widget_hide_all(status_box->vbox);
+		status_box->imhtml_visible = FALSE;
+	}
+
 	/*
 	 * If the currently selected status is "Custom..." or
 	 * "Saved..." then do nothing.  Custom statuses are
@@ -876,7 +896,8 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 
 	status_box = GTK_GAIM_STATUS_BOX(box);
 
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter);
+	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
+		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
 			   TITLE_COLUMN, &text,
