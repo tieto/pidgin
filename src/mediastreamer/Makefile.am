@@ -1,4 +1,4 @@
-EXTRA_DIST=Makefile.ms 
+EXTRA_DIST= 
 
 noinst_LTLIBRARIES = libmediastreamer.la 
 
