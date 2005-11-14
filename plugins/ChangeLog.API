@@ -90,6 +90,7 @@ version 2.0.0:
 	* serv_touch_idle(): use gaim_gtk_check_idle() instead
 	* GaimGtkImPane->a_virgin
 	* gaim_str_strip_cr(); use gaim_str_strip_char(str, '\r') instead
+	* gaim_find_buddys_group renamed to gaim_buddy_get_group
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
