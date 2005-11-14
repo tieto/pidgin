@@ -821,6 +821,18 @@ static GaimStatusType
 	return NULL;
 }
 
+static gboolean
+message_changed(const char *one, const char *two)
+{
+	if (one == NULL && two == NULL)
+		return FALSE;
+
+	if (one == NULL || two == NULL)
+		return TRUE;
+
+	return (g_utf8_collate(one, two) != 0);
+}
+
 static void
 activate_currently_selected_status(GtkGaimStatusBox *status_box)
 {
@@ -829,6 +841,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	GtkTreeIter iter;
 	char *message;
 	GaimSavedStatus *saved_status;
+	gboolean changed = TRUE;
 
 	if (!gtk_combo_box_get_active_iter(GTK_COMBO_BOX(status_box), &iter))
 		return;
@@ -859,29 +872,58 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	if (status_box->account) {
 		gint active;
 		GaimStatusType *status_type;
+		GaimStatus *status;
+		const char *id = NULL;
+
+		status = gaim_account_get_active_status(status_box->account);
 
 		g_object_get(G_OBJECT(status_box), "active", &active, NULL);
 
 		status_type = find_status_type_by_index(status_box->account, active);
-		if (message)
-			gaim_account_set_status(status_box->account, gaim_status_type_get_id(status_type),
-			                        TRUE, "message", message, NULL);
-		else
-			gaim_account_set_status(status_box->account, gaim_status_type_get_id(status_type),
-			                        TRUE, NULL);
+		id = gaim_status_type_get_id(status_type);
 
+		if (strncmp(id, gaim_status_get_id(status), strlen(id)) == 0)
+		{
+			/* Selected status and previous status is the same */
+			if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
+				changed = FALSE;
+		}
+		
+		if (changed)
+		{
+			if (message)
+				gaim_account_set_status(status_box->account, id,
+										TRUE, "message", message, NULL);
+			else
+				gaim_account_set_status(status_box->account, id,
+										TRUE, NULL);
+		}
 	} else {
 		/* Save the newly selected status to prefs.xml and status.xml */
 		/* TODO: This should be saved as transient. */
-		saved_status = gaim_savedstatus_find(_("Default"));
-		if (saved_status == NULL)
-			saved_status = gaim_savedstatus_new(_("Default"), type);
-		gaim_savedstatus_set_type(saved_status, type);
-		gaim_savedstatus_set_message(saved_status, message);
-		gaim_prefs_set_string("/core/status/current", _("Default"));
+		const char *current = NULL;
 
-		/* Set the status for each account */
-		gaim_savedstatus_activate(saved_status);
+		/* Has the status been really changed? */
+		current = gaim_prefs_get_string("/core/status/current");
+		saved_status = gaim_savedstatus_find(current);
+		if (saved_status && gaim_savedstatus_get_type(saved_status) == type)
+		{
+			if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
+				changed = FALSE;
+		}
+
+		if (changed)
+		{
+			saved_status = gaim_savedstatus_find(_("Default"));
+			if (saved_status == NULL)
+				saved_status = gaim_savedstatus_new(_("Default"), type);
+			gaim_savedstatus_set_type(saved_status, type);
+			gaim_savedstatus_set_message(saved_status, message);
+			gaim_prefs_set_string("/core/status/current", _("Default"));
+
+			/* Set the status for each account */
+			gaim_savedstatus_activate(saved_status);
+		}
 	}
 
 	g_free(title);
