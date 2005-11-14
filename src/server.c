@@ -681,6 +681,9 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		away_msg = gaim_value_get_string(
 			gaim_status_get_attr_value(status, "message"));
 
+		if ((away_msg == NULL) || (*away_msg == '\0'))
+			return;
+
 		/* apply default fonts and colors */
 		/* TODO: Do we even need this? */
 		tmpmsg = stylize(away_msg, MSG_LEN);
