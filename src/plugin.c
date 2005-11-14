@@ -97,7 +97,9 @@ is_native(const char *filename)
 	if (last_period == NULL)
 		return FALSE;
 
-	return !(strcmp(last_period + 1, G_MODULE_SUFFIX));
+	return !(strcmp(last_period, ".dll") &
+			 strcmp(last_period, ".sl") &
+			 strcmp(last_period, ".so"));
 }
 
 static char *
