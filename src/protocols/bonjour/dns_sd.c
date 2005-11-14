@@ -344,8 +344,10 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	gc = gaim_account_get_connection(account);
 
 	/* Initialize the dns-sd data and session */
+	data->session = g_malloc(sizeof(sw_discovery));
 	if (sw_discovery_init(data->session) != SW_OKAY)
 	{
+		free(data->session);
 		data->session = NULL;
 		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
 		return FALSE;
@@ -388,4 +390,7 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	account = data->account;
 	gc = gaim_account_get_connection(account);
 	gaim_input_remove(gc->inpa);
+
+	g_free(data->session);
+	data->session = NULL;
 }
