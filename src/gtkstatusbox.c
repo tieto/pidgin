@@ -495,6 +495,15 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 }
 
+static gboolean scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
+{
+	if (event->direction == GDK_SCROLL_UP)
+		gtk_imhtml_page_up(imhtml);
+	else if (event->direction == GDK_SCROLL_DOWN)
+		gtk_imhtml_page_down(imhtml);
+	return TRUE;
+}
+
 #if GTK_CHECK_VERSION(2,6,0)
 static gboolean
 dropdown_store_row_separator_func(GtkTreeModel *model,
@@ -589,6 +598,9 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
 	gtk_container_add(GTK_CONTAINER(status_box->sw), status_box->imhtml);
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
+
+	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",	
+					G_CALLBACK(scroll_event_cb), status_box->imhtml);
 
 
 #if GTK_CHECK_VERSION(2,6,0)
