@@ -305,6 +305,7 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 									 GAIM_CONV_ACCOUNT_ONLINE);
 		}
 #endif
+		time(&gc->last_sent_time); /* Start the idle count from here */
 		gaim_signal_emit(gaim_connections_get_handle(), "signed-on", gc);
 
 		serv_set_permit_deny(gc);
