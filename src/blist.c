@@ -2121,7 +2121,7 @@ GaimPresence *gaim_buddy_get_presence(const GaimBuddy *buddy)
 	return buddy->presence;
 }
 
-GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy)
+GaimGroup *gaim_buddy_get_group(GaimBuddy *buddy)
 {
 	g_return_val_if_fail(buddy != NULL, NULL);
 

@@ -891,7 +891,7 @@ gaim_gtkdialogs_remove_buddy_cb(GaimBuddy *buddy)
 	gchar *name;
 	GaimAccount *account;
 
-	group = gaim_find_buddys_group(buddy);
+	group = gaim_buddy_get_group(buddy);
 	name = g_strdup(buddy->name); /* b->name is a crasher after remove_buddy */
 	account = buddy->account;
 

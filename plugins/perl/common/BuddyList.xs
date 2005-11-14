@@ -36,10 +36,6 @@ Gaim::BuddyList::Group
 gaim_find_group(name)
 	const char *name
 
-Gaim::BuddyList::Group  
-gaim_find_buddys_group(buddy)
-	Gaim::BuddyList::Buddy buddy
-
 
 
 
@@ -361,6 +357,10 @@ gaim_buddy_set_icon(buddy, icon)
 
 Gaim::Account 
 gaim_buddy_get_account(buddy)
+	Gaim::BuddyList::Buddy buddy
+
+Gaim::BuddyList::Group
+gaim_buddy_get_group(buddy)
 	Gaim::BuddyList::Buddy buddy
 
 const char *

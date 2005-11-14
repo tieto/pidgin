@@ -6519,11 +6519,6 @@ void
 gaim_gtk_conv_window_raise(GaimGtkWindow *win)
 {
 	gtk_window_present(GTK_WINDOW(win->window));
-/*
-	gtk_widget_show(win->window);
-	gtk_window_deiconify(GTK_WINDOW(win->window));
-	gdk_window_raise(win->window->window);
-*/
 }
 
 void
@@ -6928,7 +6923,7 @@ conv_get_group(GaimGtkConversation *conv)
 		                        gaim_conversation_get_name(conv->active_conv));
 
 		if (buddy != NULL)
-			group = gaim_find_buddys_group(buddy);
+			group = gaim_buddy_get_group(buddy);
 
 	} else if (gaim_conversation_get_type(conv->active_conv) == GAIM_CONV_TYPE_CHAT) {
 		GaimChat *chat;

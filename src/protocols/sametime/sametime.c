@@ -734,7 +734,7 @@ static void buddy_add(struct mwGaimPluginData *pd,
 
   add = g_list_prepend(NULL, &idb);
 
-  group = gaim_find_buddys_group(buddy);
+  group = gaim_buddy_get_group(buddy);
   list = list_ensure(pd, group);
 
   if(mwAwareList_addAware(list, add)) {
@@ -4484,7 +4484,7 @@ static void mw_prpl_add_buddies(GaimConnection *gc,
     idb->community = NULL;
 
     /* put idb into the list associated with the buddy's group */
-    g = gaim_find_buddys_group(b);
+    g = gaim_buddy_get_group(b);
     l = g_hash_table_lookup(group_sets, g);
     l = g_list_prepend(l, idb++);
     g_hash_table_insert(group_sets, g, l);
@@ -4511,7 +4511,7 @@ static void mw_prpl_remove_buddy(GaimConnection *gc,
   GList *rem = g_list_prepend(NULL, &idb);
 
   pd = gc->proto_data;
-  group = gaim_find_buddys_group(buddy);
+  group = gaim_buddy_get_group(buddy);
   list = list_ensure(pd, group);
 
   mwAwareList_removeAware(list, rem);

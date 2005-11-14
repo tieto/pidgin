@@ -395,7 +395,7 @@ static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const cha
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
-		g = gaim_find_buddys_group(b);
+		g = gaim_buddy_get_group(b);
 		if (!gaim_utf8_strcasecmp(group, g->name)) {
 			gaim_debug(GAIM_DEBUG_MISC, "yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
@@ -433,7 +433,7 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
-		g = gaim_find_buddys_group(b);
+		g = gaim_buddy_get_group(b);
 		gaim_debug(GAIM_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name, g->name);
 		gaim_blist_remove_buddy(b);
 	}
@@ -1701,7 +1701,7 @@ static void ignore_buddy(GaimBuddy *buddy) {
 	if (!buddy)
 		return;
 
-	group = gaim_find_buddys_group(buddy);
+	group = gaim_buddy_get_group(buddy);
 	name = g_strdup(buddy->name);
 	account = buddy->account;
 
@@ -3278,7 +3278,7 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 	if (foo)
 		group = foo->name;
 	if (!group) {
-		g = gaim_find_buddys_group(gaim_find_buddy(gc->account, buddy->name));
+		g = gaim_buddy_get_group(gaim_find_buddy(gc->account, buddy->name));
 		if (g)
 			group = g->name;
 		else
@@ -3308,7 +3308,7 @@ static void yahoo_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *
 
 	buddies = gaim_find_buddies(gaim_connection_get_account(gc), buddy->name);
 	for (l = buddies; l; l = l->next) {
-		g = gaim_find_buddys_group(l->data);
+		g = gaim_buddy_get_group(l->data);
 		if (gaim_utf8_strcasecmp(group->name, g->name)) {
 			remove = FALSE;
 			break;

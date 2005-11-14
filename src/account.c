@@ -1942,7 +1942,7 @@ gaim_account_add_buddy(GaimAccount *account, GaimBuddy *buddy)
 
 	if (prpl_info != NULL && g_list_find(gaim_connections_get_all(), gc) &&
 			prpl_info->add_buddy != NULL)
-		prpl_info->add_buddy(gc, buddy, gaim_find_buddys_group(buddy));
+		prpl_info->add_buddy(gc, buddy, gaim_buddy_get_group(buddy));
 }
 
 void

@@ -634,7 +634,7 @@ GaimGroup *gaim_chat_get_group(GaimChat *chat);
  * @param buddy   The buddy
  * @return        The group or NULL if the buddy is not in a group
  */
-GaimGroup *gaim_find_buddys_group(GaimBuddy *buddy);
+GaimGroup *gaim_buddy_get_group(GaimBuddy *buddy);
 
 
 /**

@@ -74,7 +74,7 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 
 	while(buddies) {
 		GaimBuddy *b = buddies->data;
-		GaimGroup *g = gaim_find_buddys_group(b);
+		GaimGroup *g = gaim_buddy_get_group(b);
 
 		buddies = g_slist_remove(buddies, b);
 
@@ -213,7 +213,7 @@ static void jabber_roster_update(JabberStream *js, const char *name,
 			return;
 		while(buddies) {
 			b = buddies->data;
-			g = gaim_find_buddys_group(b);
+			g = gaim_buddy_get_group(b);
 			groups = g_slist_append(groups, g->name);
 			buddies = g_slist_remove(buddies, b);
 		}
@@ -312,7 +312,7 @@ void jabber_roster_group_change(GaimConnection *gc, const char *name,
 	buddies = gaim_find_buddies(gc->account, name);
 	while(buddies) {
 		b = buddies->data;
-		g = gaim_find_buddys_group(b);
+		g = gaim_buddy_get_group(b);
 		if(!strcmp(g->name, old_group))
 			groups = g_slist_append(groups, (char*)new_group); /* ick */
 		else
@@ -345,7 +345,7 @@ void jabber_roster_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
 
 		while(buddies) {
 			tmpbuddy = buddies->data;
-			tmpgroup = gaim_find_buddys_group(tmpbuddy);
+			tmpgroup = gaim_buddy_get_group(tmpbuddy);
 			groups = g_slist_append(groups, tmpgroup->name);
 			buddies = g_slist_remove(buddies, tmpbuddy);
 		}

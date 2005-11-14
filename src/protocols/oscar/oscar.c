@@ -748,7 +748,7 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		b = gaim_find_buddy(account, userinfo->sn);
 
 	if (b != NULL) {
-		g = gaim_find_buddys_group(b);
+		g = gaim_buddy_get_group(b);
 		presence = gaim_buddy_get_presence(b);
 		status = gaim_presence_get_active_status(presence);
 	}
@@ -4379,7 +4379,7 @@ static void gaim_auth_request(struct name_data *data, char *msg) {
 	if (g_list_find(gaim_connections_get_all(), gc)) {
 		OscarData *od = gc->proto_data;
 		GaimBuddy *buddy = gaim_find_buddy(gc->account, data->name);
-		GaimGroup *group = gaim_find_buddys_group(buddy);
+		GaimGroup *group = gaim_buddy_get_group(buddy);
 		if (buddy && group) {
 			gaim_debug_info("oscar",
 					   "ssi: adding buddy %s to group %s\n",
@@ -7781,7 +7781,7 @@ static void oscar_ssi_editcomment(struct name_data *data, const char *text) {
 		return;
 	}
 
-	if (!(g = gaim_find_buddys_group(b))) {
+	if (!(g = gaim_buddy_get_group(b))) {
 		oscar_free_name_data(data);
 		return;
 	}
@@ -7813,7 +7813,7 @@ static void oscar_buddycb_edit_comment(GaimBlistNode *node, gpointer ignore) {
 
 	data = g_new(struct name_data, 1);
 
-	if (!(g = gaim_find_buddys_group(buddy)))
+	if (!(g = gaim_buddy_get_group(buddy)))
 		return;
 	comment = aim_ssi_getcomment(od->sess->ssi.local, g->name, buddy->name);
 	comment_utf8 = comment ? gaim_utf8_try_convert(comment) : NULL;
