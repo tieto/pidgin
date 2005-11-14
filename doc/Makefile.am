@@ -14,7 +14,6 @@ EXTRA_DIST = \
 	conversation-signals.dox \
 	core-signals.dox \
 	dbus-server-signals.dox \
-	file-transfer-signals.dox \
 	gaim.1.in \
 	gaims_funniest_home_convos.txt \
 	gtkaccount-signals.dox \
