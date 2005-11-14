@@ -4,7 +4,8 @@ version 2.0.0:
 	Status System:
 	* The code dealing with buddy and account status, away messages,
 	  away states, online/offline, etc has been completely rewritten.
-	  Huge thanks to Christian Hammond, Dave West, and Daniel Atallah.
+	  Huge thanks to Christian Hammond, Dave West, and Daniel Atallah,
+	  Sadrul Habib Chowdhury.
 	* Your status can now be set from inside the buddy list using the
 	  selector at the bottom of the window.
 	* To see messages when a buddy signs on or off, goes away, or
@@ -28,7 +29,6 @@ version 2.0.0:
 	* Message formatting persists between messages (Igor Belyi)
 	* Full message background colors are now supported
 	* Smooth scrolling when receiving a new message
-	* Smiley selection dialog rewritten to look nicer (Nathan Fredrickson)
 	* Screenname colors in chats now chosen intelligently from GNOME
 	  color palette
 	* Conversation buffer scrollback limited to avoid large memory
@@ -61,10 +61,11 @@ version 2.0.0:
 	  alphabetically (Richard Laager)
 	* The Evolution Integration plugin now supports Groupwise contacts
 	* Mono plugin loader (Eoin Coffey)
-	* Perl plugin loader has been rewritten (John Kelm)
-	* New music messaging plugin (Christian Muise)
+	* Perl plugin loader has been rewritten (John Kelm, Google Summer
+	  of Code)
+	* New music messaging plugin (Christian Muise, Google Summer of Code)
 	* gaim-remote has been superceded by new DBUS bindings within Gaim
-	  (Piotr Zielinski)
+	  (Piotr Zielinski, Google Summer of Code)
 	* The functionality of the auto-reconnect plugin has been
 	  moved into the Gaim core, and the plugin itself has been
 	  removed.
@@ -77,13 +78,15 @@ version 2.0.0:
 
 	Yahoo Features:
 	* Stealth Settings have been implemented
-	* Doodle is now supported (Andrew Dieffenbach)
+	* Doodle is now supported (Andrew Dieffenbach, Google Summer of Code)
 	* Buddies' requests to add you to their lists now prompt for
 	  authorization
 
 	AIM/ICQ Features:
-	* ICQ file transfer support with newer ICQ clients (Jonathan Clark)
-	* Many overall improvements to OSCAR file transfers (Jonathan Clark)
+	* ICQ file transfer support with newer ICQ clients (Jonathan Clark,
+	  Google Summer of Code)
+	* Many overall improvements to OSCAR file transfers (Jonathan Clark,
+	  Google Summer of Code)
 	* Ability to set ICQ "require authorization" and "web aware"
 	  setting (Ettore Simone)
 	* ICQ encoding fix for offline buddies (Ilya Konstantinov)
@@ -97,14 +100,17 @@ version 2.0.0:
 
 	Other Protocol Changes:
 	* Jabber support for SRV lookups
-	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno)
-	* Updated Gadu-Gadu protocol support (Bartosz Oler)
-	* SIP/SIMPLE support (Thomas Butter)
+	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google
+	  Summer of Code)
+	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
+	  Code)
+	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	* SILC whiteboard support (Pekka Riikonen)
 
 	Other Noteworthy Changes:
-	* UPNP and NAT traversal support (Adam J. Warrington)
+	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
+	  Code)
 	* The modify account dialog now contains two tabs, which should display
 	  better at lower resolutions (Sadrul Habib Chowdhury)
 	* New "find buddy" results dialog (Alex Converse)
