@@ -56,6 +56,20 @@
 /** @endcond */
 
 /*
+ * We include the sources for GtkComboBox and GtkCellView because
+ * they don't exist in older version of Gtk+, and we use them
+ * in a few places.
+ */
+#if !GTK_CHECK_VERSION(2,6,0)
+#   include "gtkcellview.h"
+#   include "gtkcellviewmenuitem.h"
+#   if !GTK_CHECK_VERSION(2,4,0)
+#       include "gtkcelllayout.h"
+#       include "gtkcombobox.h"
+#   endif /* Gtk 2.4 */
+#endif /* Gtk 2.6 */
+
+/*
  * Spacings between components, as defined by the
  * Gnome Human Interface Guidelines.
  */
