@@ -3430,8 +3430,6 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
-	gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->imhtml),
-			gtk_imhtml_get_format_functions(GTK_IMHTML(gtkconv->imhtml)) | GTK_IMHTML_IMAGE);
 	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
 	gtk_widget_show(frame);
 
@@ -3896,6 +3894,9 @@ gaim_gtkconv_new(GaimConversation *conv)
 		gtkconv->u.chat = g_malloc0(sizeof(GaimGtkChatPane));
 		pane = setup_chat_pane(gtkconv);
 	}
+
+	gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->imhtml),
+			gtk_imhtml_get_format_functions(GTK_IMHTML(gtkconv->imhtml)) | GTK_IMHTML_IMAGE);
 
 	if (pane == NULL) {
 		if (conv_type == GAIM_CONV_TYPE_CHAT)
