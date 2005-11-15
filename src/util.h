@@ -37,6 +37,22 @@
 extern "C" {
 #endif
 
+
+/**
+ * A key-value pair.
+ *
+ * This is used by, among other things, gaim_gtk_combo* functions to pass in a
+ * list of key-value pairs so it can display a user-friendly value.
+ */
+typedef struct _GaimKeyValuePair
+{
+	gchar *key;
+	void *value;
+
+} GaimKeyValuePair;
+
+
+
 /**************************************************************************/
 /** @name Base16 Functions                                                */
 /**************************************************************************/

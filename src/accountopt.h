@@ -133,8 +133,8 @@ GaimAccountOption *gaim_account_option_string_new(const char *text,
  * The list passed will be owned by the account option, and the
  * strings inside will be freed automatically.
  *
- * The list is in key, value pairs. The key is the ID stored and used
- * internally, and the value is the label displayed.
+ * The list is a list of GaimKeyValuePair items. The key is the ID stored and
+ * used internally, and the value is the label displayed.
  *
  * @param text      The text of the option.
  * @param pref_name The account preference name for the option.

@@ -964,6 +964,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *vbox;
 	GtkWidget *check;
 	GtkWidget *entry;
+	GtkWidget *combo;
+	GList *list;
+	GList *node;
+	gint i, idx;
+	GtkListStore *model;
+	GtkTreeIter iter;
+	GtkCellRenderer *renderer;
+	GaimKeyValuePair *kvp;
 	GList *l;
 	char buf[1024];
 	char *title;
@@ -1104,6 +1112,73 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					g_list_append(dialog->protocol_opt_entries, entry);
 
 				break;
+
+			case GAIM_PREF_STRING_LIST:
+				i = 0;
+				idx = -1;
+
+				if (account == NULL ||
+					strcmp(gaim_account_get_protocol_id(account),
+						   dialog->protocol_id))
+				{
+					str_value = gaim_account_option_get_default_string(option);
+				}
+				else
+				{
+					str_value = gaim_account_get_string(account,
+						gaim_account_option_get_setting(option),
+						gaim_account_option_get_default_string(option));
+				}
+
+
+				list = gaim_account_option_get_list(option);
+				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
+				combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
+
+				//if (gaim_account_option_get_masked(option))
+					//gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
+
+				/* Loop through list of GaimKeyValuePair items */
+				for (node = list; node != NULL; node = node->next) {
+					if (node->data != NULL) {
+						kvp = (GaimKeyValuePair *) node->data;
+						if ((idx < 0) && (kvp->value != NULL) && (str_value != NULL))
+							if (!g_utf8_collate(kvp->value, str_value))
+								idx = i;
+
+						gtk_list_store_append(model, &iter);
+						gtk_list_store_set(model, &iter,
+								0, kvp->key,
+								1, kvp->value,
+								-1);
+					}
+
+					i++;
+				}
+
+				/* Set default */
+				if (idx >= 0)
+					gtk_combo_box_set_active(GTK_COMBO_BOX(combo), idx);
+
+				/* Define renderer */
+				renderer = gtk_cell_renderer_text_new();
+				gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combo), renderer,
+						TRUE);
+				gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo),
+						renderer, "text", 0, NULL);
+
+				title = g_strdup_printf("%s:",
+						gaim_account_option_get_text(option));
+
+				add_pref_box(dialog, vbox, title, combo);
+
+				g_free(title);
+
+				dialog->protocol_opt_entries =
+					g_list_append(dialog->protocol_opt_entries, combo);
+
+				break;
+
 
 			default:
 				break;
@@ -1449,6 +1524,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			GaimPrefType type;
 			GaimAccountOption *option = l->data;
 			GtkWidget *widget = l2->data;
+			GtkTreeIter iter;
 			const char *setting;
 			int int_value;
 			gboolean bool_value;
@@ -1472,6 +1548,12 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 					bool_value =
 						gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 					gaim_account_set_bool(account, setting, bool_value);
+					break;
+
+				case GAIM_PREF_STRING_LIST:
+					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
+					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value, -1);
+					gaim_account_set_string(dialog->account, setting, value);
 					break;
 
 				default:
