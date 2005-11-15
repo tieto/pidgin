@@ -3692,28 +3692,31 @@ static char *im_mime_content_type() {
 
 /** determine content type from extension. Not so happy about this,
     but I don't want to actually write image type detection */
-static const char *im_mime_img_content_type(GaimStoredImage *img) {
+static char *im_mime_img_content_type(GaimStoredImage *img) {
   const char *fn = gaim_imgstore_get_filename(img);
+  const char *ct = NULL;
 
-  fn = strrchr(fn, '.');
-  if(! fn) {
-    return "image";
+  ct = strrchr(fn, '.');
+  if(! ct) {
+    ct = "image";
 
-  } else if(! strcmp(".png", fn)) {
-    return "image/png";
+  } else if(! strcmp(".png", ct)) {
+    ct = "image/png";
 
-  } else if(! strcmp(".jpg", fn)) {
-    return "image/jpeg";
+  } else if(! strcmp(".jpg", ct)) {
+    ct = "image/jpeg";
 
-  } else if(! strcmp(".jpeg", fn)) {
-    return "image/jpeg";
+  } else if(! strcmp(".jpeg", ct)) {
+    ct = "image/jpeg";
 
-  } else if(! strcmp(".gif", fn)) {
-    return "image/gif";
+  } else if(! strcmp(".gif", ct)) {
+    ct = "image/gif";
 
   } else {
-    return "image";
+    ct = "image";
   }
+
+  return g_strdup_printf("%s; name=\"%s\"", ct, fn);
 }
 
 
@@ -3723,8 +3726,56 @@ static char *im_mime_img_content_disp(GaimStoredImage *img) {
 }
 
 
+static char *nb_im_encode(GaimConnection *gc, const char *message) {
+  GaimAccount *acct;
+  const char *enc;
+  char *ret;
+  GError *error = NULL;
+  
+  acct = gaim_connection_get_account(gc);
+  g_return_val_if_fail(acct != NULL, NULL);
+
+  enc = gaim_account_get_string(acct, MW_KEY_ENCODING,
+				MW_PLUGIN_DEFAULT_ENCODING);
+  g_return_val_if_fail(enc != NULL, NULL);
+
+  ret = g_convert_with_fallback(message, strlen(message),
+				enc, "UTF-8", "?",
+				NULL, NULL, &error);
+ 
+ if(error) {
+    DEBUG_INFO("problem converting to %s: %s\n",
+	       enc, NSTR(error->message));
+    g_error_free(error);
+ }
+ 
+ /* something went so wrong that not even the fallback worked */
+ if(! ret) ret = g_strdup(message);
+
+ return ret;
+}
+
+
+static gboolean is_nb(struct mwConversation *conv) {
+  struct mwLoginInfo *info;
+
+  info = mwConversation_getTargetInfo(conv);
+  if(! info) return FALSE;
+
+  /* NotesBuddy can be at least three different type IDs (all in the
+     0x1400 range), or it can show up as 0x1002. However, if we're
+     calling this check, then we're already in HTML or MIME mode, so
+     we can discount the real 0x1002 */
+  /* I tried to avoid having any client-type-dependant code in here, I
+     really did. Oh well. CURSE YOU NOTESBUDDY */
+  return ((info->type == 0x1002) || ((info->type & 0xff00) == 0x1400));
+}
+
+
 /** turn an IM with embedded images into a multi-part mime document */
-static char *im_mime_convert(const char *message) {
+static char *im_mime_convert(GaimConnection *gc,
+			     struct mwConversation *conv,
+			     const char *message) {
   GString *str;
   GaimMimeDocument *doc;
   GaimMimePart *part;
@@ -3770,15 +3821,16 @@ static char *im_mime_convert(const char *message) {
       gaim_mime_part_set_field(part, "Content-Disposition", data);
       g_free(data);
 
+      data = im_mime_img_content_type(img);
+      gaim_mime_part_set_field(part, "Content-Type", data);
+      g_free(data);
+
       cid = im_mime_content_id();
       data = g_strdup_printf("<%s>", cid);
       gaim_mime_part_set_field(part, "Content-ID", data);
       g_free(data);
 
       gaim_mime_part_set_field(part, "Content-transfer-encoding", "base64");
-      gaim_mime_part_set_field(part, "Content-Type",
-			       im_mime_img_content_type(img));
-
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
@@ -3806,12 +3858,31 @@ static char *im_mime_convert(const char *message) {
   /* append left-overs */
   g_string_append(str, tmp);
 
+  /* add the text/html part */
   part = gaim_mime_part_new(doc);
-  gaim_mime_part_set_field(part, "Content-Type", "text/html");
   gaim_mime_part_set_field(part, "Content-Disposition", "inline");
-  gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "8bit");
 
-  gaim_mime_part_set_data(part, str->str);
+  if(is_nb(conv)) {
+    GaimAccount *acct = gaim_connection_get_account(gc);
+
+    tmp = (char *) gaim_account_get_string(acct, MW_KEY_ENCODING,
+					   MW_PLUGIN_DEFAULT_ENCODING);
+    tmp = g_strdup_printf("text/html; charset=\"%s\"", tmp);
+    gaim_mime_part_set_field(part, "Content-Type", tmp);
+    g_free(tmp);
+    
+    gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "7bit");
+
+    tmp = nb_im_encode(gc, str->str);
+    gaim_mime_part_set_data(part, tmp);
+    g_free(tmp);
+
+  } else {
+    gaim_mime_part_set_field(part, "Content-Type", "text/html");
+    gaim_mime_part_set_field(part, "Content-Transfer-Encoding", "8bit");
+    gaim_mime_part_set_data(part, str->str);
+  }
+
   g_string_free(str, TRUE);
 
   str = g_string_new(NULL);
@@ -3823,46 +3894,6 @@ static char *im_mime_convert(const char *message) {
 }
 
 
-static char *nb_im_encode(GaimConnection *gc, const char *message) {
-  GaimAccount *acct;
-  const char *enc;
-  char *ret;
-  GError *error = NULL;
-  
-  acct = gaim_connection_get_account(gc);
-  g_return_val_if_fail(acct != NULL, NULL);
-
-  enc = gaim_account_get_string(acct, MW_KEY_ENCODING,
-				MW_PLUGIN_DEFAULT_ENCODING);
-  g_return_val_if_fail(enc != NULL, NULL);
-
-  ret = g_convert_with_fallback(message, -1, enc, "UTF-8",
-				"?", NULL, NULL, &error);
-  if(error) {
-    DEBUG_INFO("problem converting to %s: %s\n",
-	       enc, NSTR(error->message));
-    g_error_free(error);
-  }
-  return ret;
-}
-
-
-static gboolean is_nb(struct mwConversation *conv) {
-  struct mwLoginInfo *info;
-
-  info = mwConversation_getTargetInfo(conv);
-  if(! info) return FALSE;
-
-  /* NotesBuddy can be at least three different type IDs (all in the
-     0x1400 range), or it can show up as 0x1002. However, if we're
-     calling this check, then we're already in HTML or MIME mode, so
-     we can discount the real 0x1002 */
-  /* I tried to avoid having any client-type-dependant code in here, I
-     really did. Oh well. CURSE YOU NOTESBUDDY */
-  return ((info->type == 0x1002) || ((info->type & 0xff00) == 0x1400));
-}
-
-
 static int mw_prpl_send_im(GaimConnection *gc,
 			   const char *name,
 			   const char *message,
@@ -3871,14 +3902,11 @@ static int mw_prpl_send_im(GaimConnection *gc,
   struct mwGaimPluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
   struct mwConversation *conv;
-  char *msg = NULL;
 
   g_return_val_if_fail(gc != NULL, 0);
   pd = gc->proto_data;
 
   g_return_val_if_fail(pd != NULL, 0);
-
-  msg = g_strdup(message);
 
   conv = mwServiceIm_getConversation(pd->srvc_im, &who);
 
@@ -3890,7 +3918,7 @@ static int mw_prpl_send_im(GaimConnection *gc,
      conversation will receive a plaintext message with html contents,
      which is bad. I'm not sure how to fix this correctly. */
 
-  if(strstr(msg, "<img ") || strstr(msg, "<IMG "))
+  if(strstr(message, "<img ") || strstr(message, "<IMG "))
     flags |= GAIM_CONV_IM_IMAGES;
 
   if(mwConversation_isOpen(conv)) {
@@ -3901,38 +3929,31 @@ static int mw_prpl_send_im(GaimConnection *gc,
        mwConversation_supports(conv, mwImSend_MIME)) {
       /* send a MIME message */
 
-      /* mime messages need the notesbuddy hack */
-      if(is_nb(conv)) {
-	g_free(msg);
-	msg = nb_im_encode(gc, message);
-      }
-
-      tmp = im_mime_convert(msg);
-      g_free(msg);
-
+      tmp = im_mime_convert(gc, conv, message);
       ret = mwConversation_send(conv, mwImSend_MIME, tmp);
       g_free(tmp);
       
     } else if(mwConversation_supports(conv, mwImSend_HTML)) {
       /* send an HTML message */
 
-      /* html messages need the notesbuddy hack */
-      if(is_nb(conv)) {
-	g_free(msg);
-	msg = nb_im_encode(gc, message);
-      }
-
       /* need to do this to get the \n to <br> conversion */
-      tmp = gaim_strdup_withhtml(msg);
-      g_free(msg);
+      if(is_nb(conv)) {
+
+	/* html messages need the notesbuddy hack */
+	char *msg = nb_im_encode(gc, message);
+	tmp = gaim_strdup_withhtml(msg);	
+	g_free(msg);
+
+      } else {
+	tmp = gaim_strdup_withhtml(message);
+      }
 
       ret = mwConversation_send(conv, mwImSend_HTML, tmp);
       g_free(tmp);
 
     } else {
       /* default to text */
-      ret = mwConversation_send(conv, mwImSend_PLAIN, msg);
-      g_free(msg);
+      ret = mwConversation_send(conv, mwImSend_PLAIN, message);
     }
     
     return !ret;
@@ -3940,9 +3961,7 @@ static int mw_prpl_send_im(GaimConnection *gc,
   } else {
 
     /* queue up the message safely as plain text */
-    char *tmp = gaim_markup_strip_html(msg);
-    g_free(msg);
-
+    char *tmp = gaim_markup_strip_html(message);
     convo_queue(conv, mwImSend_PLAIN, tmp);
     g_free(tmp);
 
@@ -4076,8 +4095,7 @@ static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
   
   state = gaim_status_get_id(status);
   
-  gaim_debug_info("meanwhile", "Set status to %s\n",
-		  gaim_status_get_name(status));
+  DEBUG_INFO("Set status to %s\n", gaim_status_get_name(status));
   
   g_return_if_fail(gc != NULL);
   
@@ -4099,14 +4117,7 @@ static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
   }
   
   /* determine the message */
-  switch(stat.status) {
-  case mwStatus_ACTIVE:
-    stat.time = 0;
-  case mwStatus_AWAY:
-  case mwStatus_BUSY:
-    message = (char *)gaim_status_get_attr_string(status, MW_STATE_MESSAGE);
-    break;
-  }
+  message = (char *) gaim_status_get_attr_string(status, MW_STATE_MESSAGE);
   
   if(message) {
     /* all the possible non-NULL values of message up to this point
@@ -4128,22 +4139,30 @@ static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status) {
 static void mw_prpl_set_idle(GaimConnection *gc, int t) {
   struct mwSession *session;
   struct mwUserStatus stat;
-  
+ 
+
   session = gc_to_session(gc);
   g_return_if_fail(session != NULL);
-  
+
   mwUserStatus_clone(&stat, mwSession_getUserStatus(session));
 
-  if(t > 0 && stat.status == mwStatus_ACTIVE) {
+  if(t) {
     time_t now = time(NULL);
     stat.time = now - t;
-    stat.status = mwStatus_IDLE;
-    
-  } else if(t == 0 && stat.status == mwStatus_IDLE) {
+
+  } else {
     stat.time = 0;
+  }
+
+  if(t > 0 && stat.status == mwStatus_ACTIVE) {
+    /* we were active and went idle, so change the status to IDLE. */
+    stat.status = mwStatus_IDLE;
+
+  } else if(t == 0 && stat.status == mwStatus_IDLE) {
+    /* we only become idle automatically, so change back to ACTIVE */
     stat.status = mwStatus_ACTIVE;
   }
-  
+
   mwSession_setUserStatus(session, &stat);
   mwUserStatus_clear(&stat);
  }

@@ -216,7 +216,7 @@ static GaimMimePart *part_new(GaimMimeDocument *doc) {
   part->doc = doc;
   part->data = g_string_new(NULL);
 
-  doc->parts = g_list_append(doc->parts, part);
+  doc->parts = g_list_prepend(doc->parts, part);
 
   return part;
 }
