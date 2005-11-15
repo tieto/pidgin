@@ -260,12 +260,12 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	switch (type)
 	{
 		case PUBLISH_START:
-			publish_result = sw_discovery_publish(*(data->session), 0, data->name, ICHAT_SERVICE, NULL,
+			publish_result = sw_discovery_publish(data->session, 0, data->name, ICHAT_SERVICE, NULL,
 								NULL, data->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data),
-								_publish_reply, NULL, &(data->session_id));
+								_publish_reply, NULL, &data->session_id);
 			break;
 		case PUBLISH_UPDATE:
-			publish_result = sw_discovery_publish_update(*(data->session),data->session_id,
+			publish_result = sw_discovery_publish_update(data->session, data->session_id,
 								sw_text_record_bytes(dns_data), sw_text_record_len(dns_data));
 			break;
 	}
@@ -284,7 +284,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 static void
 _dns_sd_handle_packets(gpointer data, gint source, GaimInputCondition condition)
 {
-	sw_discovery_read_socket(*((sw_discovery*)data));
+	sw_discovery_read_socket((sw_discovery)data);
 }
 
 /* End private functions */
@@ -344,11 +344,8 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	gc = gaim_account_get_connection(account);
 
 	/* Initialize the dns-sd data and session */
-	data->session = g_malloc(sizeof(sw_discovery));
-	if (sw_discovery_init(data->session) != SW_OKAY)
+	if (sw_discovery_init(&data->session) != SW_OKAY)
 	{
-		g_free(data->session);
-		data->session = NULL;
 		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
 		return FALSE;
 	}
@@ -357,7 +354,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	_dns_sd_publish(data, PUBLISH_START); /* <--We must control the errors */
 
 	/* Advise the daemon that we are waiting for connections */
-	if (sw_discovery_browse(*(data->session), 0, ICHAT_SERVICE, NULL, _browser_reply,
+	if (sw_discovery_browse(data->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
 			data->account, &session_id) != SW_OKAY)
 	{
 		gaim_debug_error("bonjour", "Unable to get service.");
@@ -366,7 +363,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 
 	/* Get the socket that communicates with the mDNS daemon and bind it to a */
 	/* callback that will handle the dns_sd packets */
-	dns_sd_socket = sw_discovery_socket(*(data->session));
+	dns_sd_socket = sw_discovery_socket(data->session);
 	gc->inpa = gaim_input_add(dns_sd_socket, GAIM_INPUT_READ,
 									_dns_sd_handle_packets, data->session);
 
@@ -385,7 +382,7 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	if (data->session == NULL)
 		return;
 
-	sw_discovery_cancel(*(data->session), data->session_id);
+	sw_discovery_cancel(data->session, data->session_id);
 
 	account = data->account;
 	gc = gaim_account_get_connection(account);
