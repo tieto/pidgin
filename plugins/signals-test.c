@@ -71,9 +71,9 @@ account_status_changed(GaimAccount *account, GaimStatus *old, GaimStatus *new,
  * Buddy Icons signal callbacks
  **************************************************************************/
 static void
-buddy_icon_cchanged_cb(GaimBuddyIcon *icon, GaimBuddy *buddy)
+buddy_icon_changed_cb(GaimBuddyIcon *icon, GaimBuddy *buddy)
 {
-	gaim_debug_misc("signals test", "buddy icon cached (%s)\n",
+	gaim_debug_misc("signals test", "buddy icon changed (%s)\n",
 					gaim_buddy_get_name(buddy));
 }
 
