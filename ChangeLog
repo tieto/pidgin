@@ -4,7 +4,7 @@ version 2.0.0:
 	Status System:
 	* The code dealing with buddy and account status, away messages,
 	  away states, online/offline, etc has been completely rewritten.
-	  Huge thanks to Christian Hammond, Dave West, and Daniel Atallah,
+	  Huge thanks to Christian Hammond, Dave West, Daniel Atallah and
 	  Sadrul Habib Chowdhury.
 	* Your status can now be set from inside the buddy list using the
 	  selector at the bottom of the window.
