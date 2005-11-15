@@ -3430,6 +3430,8 @@ setup_chat_pane(GaimGtkConversation *gtkconv)
 	frame = gaim_gtk_create_imhtml(FALSE, &gtkconv->imhtml, NULL);
 	gtk_widget_set_name(gtkconv->imhtml, "gaim_gtkconv_imhtml");
 	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
+	gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->imhtml),
+			gtk_imhtml_get_format_functions(GTK_IMHTML(gtkconv->imhtml)) | GTK_IMHTML_IMAGE);
 	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
 	gtk_widget_show(frame);
 
@@ -4910,7 +4912,7 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
 		gtk_widget_set_sensitive(win->menu.block, (prpl_info->add_deny != NULL));
 		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
-		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE));
+		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE) && !(conv->features & GAIM_CONNECTION_NO_IMAGES));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		{
