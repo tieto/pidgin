@@ -607,13 +607,16 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	box_alc.height = MAX(1, ((allocation->height) - (req.height) - (12)));
 	box_alc.y = box_alc.y + req.height + 9;
 
-	box_alc.width -= 6; box_alc.x += 3;
+	box_alc.width -= 6;
+	box_alc.x += 3;
 
 
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
 
 	parent_alc.height = MAX(1,req.height);
-	parent_alc.width -= 6; parent_alc.x += 3; parent_alc.y += 3;
+	parent_alc.width -= 6;
+	parent_alc.x += 3;
+	parent_alc.y += 3;
 
 	combo_box_size_allocate(widget, &parent_alc);
 	widget->allocation = *allocation;
