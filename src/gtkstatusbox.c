@@ -584,6 +584,7 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 {
 	GtkRequisition box_req;
 	combo_box_size_request(widget, requisition);
+	requisition->height += 6;
 
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
