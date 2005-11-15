@@ -1285,24 +1285,36 @@ static void blist_menu_nab(GaimBlistNode *node, gpointer data) {
     handler */
 static void blist_node_menu_cb(GaimBlistNode *node,
 			       GList **menu, struct mwGaimPluginData *pd) {
+  const char *owner;
+  GaimGroup *group;
+  GaimAccount *acct;
   GaimBlistNodeAction *act;
 
-  if(GAIM_BLIST_NODE_IS_GROUP(node)) { 
-    const char *owner;
-    GaimAccount *acct;
-    
-    owner = gaim_blist_node_get_string(node, GROUP_KEY_OWNER);
-    if(! owner) return;
+  /* we only want groups */
+  if(! GAIM_BLIST_NODE_IS_GROUP(node)) return;
+  group = (GaimGroup *) node;
 
-    acct = gaim_accounts_find(owner, PLUGIN_ID);
-    if(! acct) return;
-    if(! gaim_account_is_connected(acct)) return;
-    if(acct != gaim_connection_get_account(pd->gc)) return;
+  acct = gaim_connection_get_account(pd->gc);
+  g_return_if_fail(acct != NULL);
 
+  /* better make sure we're connected */
+  if(! gaim_account_is_connected(acct)) return;
+
+#if 0
+  /* if there's anyone in the group for this acct, offer to invite
+     them all to a conference */
+  if(gaim_group_on_account(group, acct)) {
+    act = gaim_blist_node_action_new(_("Invite Group to Conference..."),
+				     blist_menu_group_invite, pd, NULL);
+    *menu = g_list_append(*menu, NULL);
+  }
+#endif
+
+  /* check if it's a NAB group for this account */
+  owner = gaim_blist_node_get_string(node, GROUP_KEY_OWNER);
+  if(owner && !strcmp(owner, gaim_account_get_username(acct))) {
     act = gaim_blist_node_action_new(_("Get Notes Address Book Info"),
 				     blist_menu_nab, pd, NULL);
-
-    *menu = g_list_append(*menu, NULL);
     *menu = g_list_append(*menu, act);
   }
 }
@@ -4731,18 +4743,24 @@ static void mw_prpl_chat_invite(GaimConnection *gc,
 
   struct mwGaimPluginData *pd;
   struct mwConference *conf;
+  struct mwPlace *place;
   struct mwIdBlock idb = { (char *) who, NULL };
 
   pd = gc->proto_data;
-
   g_return_if_fail(pd != NULL);
+
   conf = ID_TO_CONF(pd, id);
 
-  g_return_if_fail(conf != NULL);
-  
-  mwConference_invite(conf, &idb, invitation);
+  if(conf) {
+    mwConference_invite(conf, &idb, invitation);
+    return;
+  }
 
-  /* @todo: use Place by default instead */
+  place = ID_TO_PLACE(pd, id);
+  g_return_if_fail(place != NULL);
+
+  /* @todo: use the IM service for invitation */
+  mwPlace_legacyInvite(place, &idb, invitation);
 }
 
 

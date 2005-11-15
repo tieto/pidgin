@@ -109,6 +109,14 @@ GList *mwPlace_getMembers(struct mwPlace *place);
 int mwPlace_sendText(struct mwPlace *place, const char *msg);
 
 
+/** send a legacy invitation for this place to a user. The user will
+    receive an apparent invitation from a Conference (rather than a
+    Place) */
+int mwPlace_legacyInvite(struct mwPlace *place,
+			 struct mwIdBlock *idb,
+			 const char *message);
+
+
 int mwPlace_setAttribute(struct mwPlace *place, guint32 attrib,
 			 struct mwOpaque *data);
 

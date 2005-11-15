@@ -991,6 +991,28 @@ int mwPlace_sendText(struct mwPlace *place, const char *msg) {
 }
 
 
+int mwPlace_legacyInvite(struct mwPlace *place,
+			 struct mwIdBlock *idb,
+			 const char *message) {
+
+  struct mwOpaque o = {0,0};
+  struct mwPutBuffer *b;
+  int ret;
+
+  b = mwPutBuffer_new();
+  mwIdBlock_put(b, idb);
+  mwString_put(b, idb->user);
+  mwString_put(b, idb->user);
+  mwString_put(b, message);
+  gboolean_put(b, FALSE);
+  mwPutBuffer_finalize(&o, b);
+
+  ret = mwChannel_send(place->channel, msg_out_OLD_INVITE, &o);
+  mwOpaque_clear(&o);
+  return ret;
+}
+
+
 int mwPlace_setAttribute(struct mwPlace *place, guint32 attrib,
 			 struct mwOpaque *data) {
 
