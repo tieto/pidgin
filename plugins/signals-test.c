@@ -71,11 +71,10 @@ account_status_changed(GaimAccount *account, GaimStatus *old, GaimStatus *new,
  * Buddy Icons signal callbacks
  **************************************************************************/
 static void
-buddy_icon_cached_cb(GaimBuddyIcon *icon, GaimBuddy *buddy,
-		     const char *filename, const char *old_icon)
+buddy_icon_cchanged_cb(GaimBuddyIcon *icon, GaimBuddy *buddy)
 {
-	gaim_debug_misc("signals test", "buddy icon cached (%s, %s, %s)\n",
-					gaim_buddy_get_name(buddy), filename, old_icon);
+	gaim_debug_misc("signals test", "buddy icon cached (%s)\n",
+					gaim_buddy_get_name(buddy));
 }
 
 /**************************************************************************
@@ -573,10 +572,6 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(accounts_handle, "account-status-changed",
 						plugin, GAIM_CALLBACK(account_status_changed), NULL);
 
-	/* Buddy Icon subsystem signals */
-	gaim_signal_connect(buddy_icons_handle, "buddy-icon-cached",
-						plugin, GAIM_CALLBACK(buddy_icon_cached_cb), NULL);
-
 	/* Buddy List subsystem signals */
 	gaim_signal_connect(blist_handle, "buddy-status-changed",
 						plugin, GAIM_CALLBACK(buddy_status_changed_cb), NULL);
@@ -590,6 +585,8 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_added_cb), NULL);
 	gaim_signal_connect(blist_handle, "blist-removed",
 						plugin, GAIM_CALLBACK(buddy_removed_cb), NULL);
+	gaim_signal_connect(blist_handle, "buddy-icon-changed",
+						plugin, GAIM_CALLBACK(buddy_icon_changed_cb), NULL);
 	gaim_signal_connect(blist_handle, "blist-node-aliased",
 						plugin, GAIM_CALLBACK(blist_node_aliased), NULL);
 	gaim_signal_connect(blist_handle, "blist-node-extended-menu",

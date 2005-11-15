@@ -1061,13 +1061,14 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 {
 	g_return_if_fail(buddy != NULL);
 
-	if (buddy->icon != icon)
-	{
-		if (buddy->icon != NULL)
-			gaim_buddy_icon_unref(buddy->icon);
+	if (buddy->icon == icon)
+		/* Don't need to do anything */
+		return;
 
-		buddy->icon = (icon == NULL ? NULL : gaim_buddy_icon_ref(icon));
-	}
+	if (buddy->icon != NULL)
+		gaim_buddy_icon_unref(buddy->icon);
+
+	buddy->icon = (icon != NULL ? gaim_buddy_icon_ref(icon) : NULL);
 
 	if (buddy->icon)
 		gaim_buddy_icon_cache(icon, buddy);
@@ -1075,6 +1076,8 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 		gaim_buddy_icon_uncache(buddy);
 
 	gaim_blist_schedule_save();
+
+	gaim_signal_emit(gaim_blist_get_handle(), "buddy-icon-changed", buddy);
 
 	gaim_blist_update_buddy_icon(buddy);
 }
@@ -2549,9 +2552,9 @@ gaim_blist_init(void)
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_BLIST_BUDDY),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                     				GAIM_SUBTYPE_STATUS),
+										GAIM_SUBTYPE_STATUS),
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                     				GAIM_SUBTYPE_STATUS));
+										GAIM_SUBTYPE_STATUS));
 
 	gaim_signal_register(handle, "buddy-idle-changed",
 	                     gaim_marshal_VOID__POINTER_INT_INT, NULL,
@@ -2578,6 +2581,11 @@ gaim_blist_init(void)
 										GAIM_SUBTYPE_BLIST_BUDDY));
 
 	gaim_signal_register(handle, "buddy-removed",
+						 gaim_marshal_VOID__POINTER, NULL, 1,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_BLIST_BUDDY));
+
+	gaim_signal_register(handle, "buddy-icon-changed",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
 						 gaim_value_new(GAIM_TYPE_SUBTYPE,
 										GAIM_SUBTYPE_BLIST_BUDDY));

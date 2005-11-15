@@ -189,7 +189,7 @@ version 2.0.0:
 	* "buddy-status-changed": A buddy changed status; see Doxygen docs for full details.
 	* "buddy-idle-changed": A buddy's idle status changed; see Doxygen docs for full details.
 		See Doxygen docs for details.
-	* "buddy-icon-cached": A buddy icon was cached; see Doxygen docs for full details.
+	* "buddy-icon-changed": See Doxygen docs for details.
 	* "gtkblist-hiding": See Doxygen docs for details.
 	* "gtkblist-unhiding": See Doxygen docs for details.
 
@@ -200,6 +200,7 @@ version 2.0.0:
 	* "buddy-back": replaced by buddy-status-changed
 	* "buddy-idle": replaced by buddy-idle-changed
 	* "buddy-unidle": replaced by buddy-idle-changed
+	* "buddy-icon-cached": replaced by buddy-icon-changed
 
 version 1.5.0 (8/11/2005):
 	* Added: gaim_xfer_conversation_write
