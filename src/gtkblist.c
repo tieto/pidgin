@@ -173,13 +173,6 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
 	}
 
-	if(event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
-		if(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
-			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", FALSE);
-		else
-			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
-	}
-
 	return FALSE;
 }
 
@@ -3301,7 +3294,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+		if(!GTK_WIDGET_VISIBLE(gtkblist->window))
+			gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 		return;
 	}
 
@@ -4010,8 +4004,6 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 	if (!(gtkblist && gtkblist->window))
 		return;
 
-	//gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", show);
-
 	if (show) {
 		if(!GAIM_WINDOW_ICONIFIED(gtkblist->window) && !GTK_WIDGET_VISIBLE(gtkblist->window))
 			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-unhiding", gtkblist);
@@ -4022,6 +4014,8 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-hiding", gtkblist);
 			gtk_widget_hide(gtkblist->window);
 		} else {
+			gaim_gtk_blist_restore_position();
+			gtk_widget_show_all(GTK_WIDGET(gtkblist->window));
 			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
 		}
 	}
@@ -4667,7 +4661,7 @@ gaim_gtk_blist_visibility_manager_remove()
 	if (visibility_manager_count)
 		visibility_manager_count--;
 	if (!visibility_manager_count)
-		gaim_blist_set_visible(TRUE);
+		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 }
 
 
