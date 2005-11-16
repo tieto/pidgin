@@ -289,14 +289,6 @@ gaim_prpl_change_account_status(GaimAccount *account,
 	g_return_if_fail(old_status != NULL);
 	g_return_if_fail(new_status != NULL);
 
-	if (gaim_account_is_connecting(account))
-		/*
-		 * We don't need to call the set_status PRPL function because
-		 * the PRPL will take care of setting its status during the
-		 * connection process.
-		 */
-		return;
-
 	if (gaim_status_is_online(new_status) &&
 		gaim_account_is_disconnected(account))
 	{
@@ -310,6 +302,14 @@ gaim_prpl_change_account_status(GaimAccount *account,
 			gaim_account_disconnect(account);
 		return;
 	}
+
+	if (gaim_account_is_connecting(account))
+		/*
+		 * We don't need to call the set_status PRPL function because
+		 * the PRPL will take care of setting its status during the
+		 * connection process.
+		 */
+		return;
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
 
