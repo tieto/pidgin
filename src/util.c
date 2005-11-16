@@ -52,7 +52,6 @@ typedef struct
 	int inpa;
 
 	gboolean sentreq;
-	gboolean newline;
 	gboolean startsaving;
 	gboolean has_explicit_data_len;
 	char *webdata;
@@ -2880,7 +2879,10 @@ static void
 url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 {
 	GaimFetchUrlData *gfud = url_data;
-	char data;
+/*	char data;*/
+	int len;
+	char buf[4096];
+	char *data_cursor;
 	gboolean got_eof = FALSE;
 
 	if (sock == -1)
@@ -2905,6 +2907,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 			 */
 			g_snprintf(buf, sizeof(buf),
 					   "GET %s%s HTTP/%s\r\n"
+					   "Connection: close\r\n"
 					   "User-Agent: %s\r\n"
 					   "Host: %s\r\n\r\n",
 					   (gfud->full ? "" : "/"),
@@ -2916,6 +2919,7 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		{
 			g_snprintf(buf, sizeof(buf),
 					   "GET %s%s HTTP/%s\r\n"
+					   "Connection: close\r\n"
 					   "Host: %s\r\n\r\n",
 					   (gfud->full ? "" : "/"),
 					   (gfud->full ? gfud->url : gfud->website.page),
@@ -2936,106 +2940,117 @@ url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 		return;
 	}
 
-	/* Read in data, one byte at a time */
-	if (read(sock, &data, 1) > 0 || errno == EWOULDBLOCK)
+	while ((len = read(sock, buf, sizeof(buf))) > 0)
 	{
-		if (errno == EWOULDBLOCK)
+		/* If we've filled up our butfer, make it bigger */
+		if ((gfud->len + len) >= gfud->data_len)
 		{
-			errno = 0;
-
-			return;
-		}
-
-		gfud->len++;
-
-		/* If we've filled up our buffer then make it bigger */
-		if (gfud->len == gfud->data_len)
-		{
-			gfud->data_len += (gfud->data_len) / 2;
+			gfud->data_len += MAX(((gfud->data_len) / 2), sizeof(buf));
 
 			gfud->webdata = g_realloc(gfud->webdata, gfud->data_len);
 		}
 
-		gfud->webdata[gfud->len - 1] = data;
+		data_cursor = gfud->webdata + gfud->len;
+
+		gfud->len += len;
+
+		memcpy(data_cursor, buf, len);
+
 		gfud->webdata[gfud->len] = '\0';
 
 		if (!gfud->startsaving)
 		{
-			if (data == '\r')
-				return;
+			char *tmp;
 
-			if (data == '\n')
-			{
-				if (gfud->newline)
+			/** See if we've reached the end of the headers yet */
+			if ((tmp = strstr(gfud->webdata, "\r\n\r\n"))) {
+				char * new_data;
+				guint header_len = (tmp + 4 - gfud->webdata);
+				size_t content_len, body_len = 0;
+
+				gaim_debug_misc("gaim_url_fetch", "Response headers: '%.*s'\n",
+					header_len, gfud->webdata);
+
+				/* See if we can find a redirect. */
+				if (parse_redirect(gfud->webdata, header_len, sock, gfud))
+					return;
+
+				gfud->startsaving = TRUE;
+
+				/* No redirect. See if we can find a content length. */
+				content_len = parse_content_len(gfud->webdata, header_len);
+
+				if (content_len == 0)
 				{
-					size_t content_len;
-					gfud->startsaving = TRUE;
-
-					gaim_debug_misc("gaim_url_fetch", "Response headers: '%*.*s'\n", gfud->len, gfud->len, gfud->webdata);
-
-					/* See if we can find a redirect. */
-					if (parse_redirect(gfud->webdata, gfud->len, sock, gfud))
-						return;
-
-					/* No redirect. See if we can find a content length. */
-					content_len = parse_content_len(gfud->webdata, gfud->len);
-
-					if (content_len == 0)
-					{
-						/* We'll stick with an initial 8192 */
-						content_len = 8192;
-					}
-					else
-					{
-						gfud->has_explicit_data_len = TRUE;
-					}
-
-					/* Out with the old... */
-					gfud->len = 0;
-					g_free(gfud->webdata);
-					gfud->webdata = NULL;
-
-					/* In with the new. */
-					gfud->data_len = content_len;
-					gfud->webdata = g_try_malloc(gfud->data_len);
-					if (gfud->webdata == NULL) {
-						gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n", gfud->data_len, strerror(errno));
-						gaim_input_remove(gfud->inpa);
-						close(sock);
-						gfud->callback(gfud->user_data, NULL, 0);
-						destroy_fetch_url_data(gfud);
-					}
+					/* We'll stick with an initial 8192 */
+					content_len = 8192;
 				}
 				else
-					gfud->newline = TRUE;
+				{
+					gfud->has_explicit_data_len = TRUE;
+				}
 
-				return;
+				if (gfud->len > (header_len + 1))
+					body_len = (gfud->len - header_len);
+
+				content_len = MAX(content_len, body_len);
+
+				new_data = g_try_malloc(content_len);
+				if (new_data == NULL) {
+					gaim_debug_error("gaim_url_fetch", "Failed to allocate %u bytes: %s\n",
+						content_len, strerror(errno));
+					gaim_input_remove(gfud->inpa);
+					close(sock);
+					gfud->callback(gfud->user_data, NULL, 0);
+					destroy_fetch_url_data(gfud);
+
+					return;
+				}
+
+				/* We may have read part of the body when reading the headers, don't lose it */
+				if (body_len > 0) {
+					tmp += 4;
+					memcpy(new_data, tmp, body_len);
+				}
+
+				/* Out with the old... */
+				g_free(gfud->webdata);
+				gfud->webdata = NULL;
+
+				/* In with the new. */
+				gfud->len = body_len;
+				gfud->data_len = content_len;
+				gfud->webdata = new_data;
 			}
-
-			gfud->newline = FALSE;
 		}
-		else if (gfud->has_explicit_data_len && gfud->len == gfud->data_len)
+
+		if (gfud->has_explicit_data_len && gfud->len >= gfud->data_len)
 		{
 			got_eof = TRUE;
+			break;
 		}
 	}
-	else if (errno != ETIMEDOUT)
-	{
-		got_eof = TRUE;
-	}
-	else
-	{
-		gaim_input_remove(gfud->inpa);
-		close(sock);
 
-		gfud->callback(gfud->user_data, NULL, 0);
+	if (len <= 0) {
+		if (errno == EWOULDBLOCK) {
+			errno = 0;
+			return;
+		} else if (errno != ETIMEDOUT) {
+			got_eof = TRUE;
+		} else {
+			gaim_input_remove(gfud->inpa);
+			close(sock);
 
-		destroy_fetch_url_data(gfud);
+			gfud->callback(gfud->user_data, NULL, 0);
+
+			destroy_fetch_url_data(gfud);
+			return;
+		}
 	}
 
 	if (got_eof) {
 		gfud->webdata = g_realloc(gfud->webdata, gfud->len + 1);
-		gfud->webdata[gfud->len] = 0;
+		gfud->webdata[gfud->len] = '\0';
 
 		/* gaim_debug_misc("gaim_url_fetch", "Received: '%s'\n", gfud->webdata); */
 
