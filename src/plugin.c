@@ -467,11 +467,15 @@ gaim_plugin_unload(GaimPlugin *plugin)
 			for (l = prpl_info->protocol_options; l != NULL; l = l->next)
 				gaim_account_option_destroy(l->data);
 
-			if (prpl_info->user_splits != NULL)
+			if (prpl_info->user_splits != NULL) {
 				g_list_free(prpl_info->user_splits);
+				prpl_info->user_splits = NULL;
+			}
 
-			if (prpl_info->protocol_options != NULL)
+			if (prpl_info->protocol_options != NULL) {
 				g_list_free(prpl_info->protocol_options);
+				prpl_info->protocol_options = NULL;
+			}
 		}
 	}
 	else {

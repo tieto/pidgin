@@ -39,6 +39,7 @@ version 2.0.0:
 	  with the same name are fixed (Andrew Hart)
 	* Added tab management options to the tab right-click menu (Sadrul Habib
 	  Chowdhury)
+	* Brand new message queueing system (Casey Harkins)
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
