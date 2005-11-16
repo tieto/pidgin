@@ -710,6 +710,33 @@ void gaim_blist_set_visible(gboolean show)
 		ops->set_visible(gaimbuddylist, show);
 }
 
+static GaimBlistNode *get_next_node(GaimBlistNode *node, gboolean godeep)
+{
+	if (node == NULL)
+		return NULL;
+
+	if (godeep && node->child)
+		return node->child;
+
+	if (node->next)
+		return node->next;
+
+	return get_next_node(node->parent, FALSE);
+}
+
+GaimBlistNode *gaim_blist_node_next(GaimBlistNode *node, gboolean offline)
+{
+	GaimBlistNode *ret = node;
+	
+	do
+	{
+		ret = get_next_node(ret, TRUE);
+	} while (ret && !offline && GAIM_BLIST_NODE_IS_BUDDY(ret) &&
+			!gaim_account_is_connected(gaim_buddy_get_account((GaimBuddy *)ret)));
+	
+	return ret;
+}
+
 void
 gaim_blist_update_buddy_status(GaimBuddy *buddy, GaimStatus *old_status)
 {

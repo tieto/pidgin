@@ -3534,36 +3534,17 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gaim_signal_emit(handle, "gtkblist-created", list);
 }
 
-/* XXX: does this need fixing? */
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
+	GaimBlistNode *node = list->root;
 
-	for(gnode = list->root; gnode; gnode = gnode->next) {
-		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			if(GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
-				if(remove)
-					gaim_gtk_blist_hide_node(list, cnode);
+	while (node)
+	{
+		if (!GAIM_BLIST_NODE_IS_GROUP(node) && remove)
+			gaim_gtk_blist_hide_node(list, node);
 
-				for(bnode = cnode->child; bnode; bnode = bnode->next) {
-					if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					if(remove)
-						gaim_gtk_blist_hide_node(list, bnode);
-					gaim_gtk_blist_update(list, bnode);
-				}
-
-				gaim_gtk_blist_update(list, cnode);
-			} else if(GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-				if(remove)
-					gaim_gtk_blist_hide_node(list, cnode);
-
-				gaim_gtk_blist_update(list, cnode);
-			}
-		}
-		gaim_gtk_blist_update(list, gnode);
+		gaim_gtk_blist_update(list, node);
+		node = gaim_blist_node_next(node, FALSE);
 	}
 }
 

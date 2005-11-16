@@ -221,6 +221,16 @@ void gaim_set_blist(GaimBuddyList *blist);
 GaimBuddyList *gaim_get_blist(void);
 
 /**
+ * Returns the next node of a given node. This function is to be used to iterate
+ * over the tree returned by gaim_get_blist.
+ *
+ * @param node		A node.
+ * @param offline	Whether to include nodes for offline accounts
+ * @return	The next node
+ */
+GaimBlistNode *gaim_blist_node_next(GaimBlistNode *node, gboolean offline);
+
+/**
  * Shows the buddy list, creating a new one if necessary.
  */
 void gaim_blist_show();
