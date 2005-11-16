@@ -269,18 +269,6 @@ gboolean gaim_gtk_check_if_dir(const char *path, GtkFileSelection *filesel);
 void gaim_gtk_setup_gtkspell(GtkTextView *textview);
 
 /**
- * Stylizes the specified text using HTML, according to the current
- * font options.
- *
- * @param text The text to stylize.
- * @param len  The intended length of the new buffer.
- *
- * @return A newly allocated string of length @a len, containing the
- *         stylized version of @a text.
- */
-char *stylize(const gchar *text, int len);
-
-/**
  * Save menu accelerators callback
  */
 void gaim_gtk_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
