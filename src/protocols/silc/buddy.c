@@ -1341,6 +1341,9 @@ void silcgaim_send_buddylist(GaimConnection *gc)
 	GaimBuddyList *blist;
 	GaimBlistNode *gnode, *cnode, *bnode;
 	GaimBuddy *buddy;
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(gc);
 
 	if ((blist = gaim_get_blist()) != NULL)
 	{
@@ -1357,7 +1360,8 @@ void silcgaim_send_buddylist(GaimConnection *gc)
 					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
 						continue;
 					buddy = (GaimBuddy *)bnode;
-					silcgaim_add_buddy_i(gc, buddy, TRUE);
+					if (gaim_buddy_get_account(buddy) == account)
+						silcgaim_add_buddy_i(gc, buddy, TRUE);
 				}
 			}
 		}
