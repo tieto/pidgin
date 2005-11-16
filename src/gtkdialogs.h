@@ -54,19 +54,6 @@ void gaim_gtkdialogs_remove_contact(GaimContact *);
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
 #define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
-
-/* this is used for queuing messages received while away. This is really a UI function
- * which is why the struct is here. */
-
-struct queued_message {
-	char name[80];
-	char alias[80];
-	char *message;
-	time_t tm;
-	GaimAccount *account;
-	GaimMessageFlags flags;
-};
-
 /* Functions in session.c */
 extern void session_init(gchar *, gchar *, gchar *);
 extern void session_end();

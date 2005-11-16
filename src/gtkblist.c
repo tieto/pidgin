@@ -46,6 +46,7 @@
 #include "gtkdialogs.h"
 #include "gtkft.h"
 #include "gtklog.h"
+#include "gtkmenutray.h"
 #include "gtkpounce.h"
 #include "gtkplugin.h"
 #include "gtkprefs.h"
@@ -117,6 +118,7 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 #endif
 static GaimGtkBuddyList *gtkblist = NULL;
 
+static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node);
 static void gaim_gtk_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void gaim_gtk_blist_update(GaimBuddyList *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node);
@@ -3121,6 +3123,39 @@ plugin_changed_cb(GaimPlugin *p, gpointer *data)
 	gaim_gtk_blist_update_plugin_actions();
 }
 
+static gboolean
+menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
+{
+	gaim_gtkconv_present_conversation(gaim_gtk_conversations_get_first_unseen(
+			GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
+	return TRUE;
+}
+
+static void 
+conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
+                        GaimGtkBuddyList *gtkblist)
+{
+	GtkWidget *img = NULL;
+
+	if(gtkblist->menutrayicon) {
+		gtk_widget_destroy(gtkblist->menutrayicon);
+		gtkblist->menutrayicon = NULL;
+	}
+
+	if(gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT))
+		img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
+
+	if(img) {
+		gtkblist->menutrayicon = gtk_event_box_new();
+		gtk_container_add(GTK_CONTAINER(gtkblist->menutrayicon), img);
+		gtk_widget_show(img);
+		gtk_widget_show(gtkblist->menutrayicon);
+		g_signal_connect(G_OBJECT(gtkblist->menutrayicon), "button-press-event", G_CALLBACK(menutray_press_cb), NULL);
+		
+		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, NULL);
+	}
+}
+
 /**********************************************************************************
  * Public API Functions                                                           *
  **********************************************************************************/
@@ -3329,6 +3364,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(accel_group), "accel-changed",
 														G_CALLBACK(gaim_gtk_save_accels_cb), NULL);
 	menu = gtk_item_factory_get_widget(gtkblist->ift, "<GaimMain>");
+	gtkblist->menutray = gaim_gtk_menu_tray_new();
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtkblist->menutray);
+	gtk_widget_show(gtkblist->menutray);
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
@@ -3523,6 +3561,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gtkblist, GAIM_CALLBACK(plugin_changed_cb), NULL);
 	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-unload",
 			gtkblist, GAIM_CALLBACK(plugin_changed_cb), NULL);
+
+	gaim_signal_connect(gaim_conversations_get_handle(), "conversation-updated",
+						gtkblist, GAIM_CALLBACK(conversation_updated_cb),
+						gtkblist);
 
 	/* emit our created signal */
 	gaim_signal_emit(handle, "gtkblist-created", list);

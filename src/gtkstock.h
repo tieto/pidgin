@@ -65,6 +65,7 @@
 #define GAIM_STOCK_MODIFY          "gaim-modify"
 #define GAIM_STOCK_OPEN_MAIL       "gaim-stock-open-mail"
 #define GAIM_STOCK_PAUSE           "gaim-pause"
+#define GAIM_STOCK_PENDING         "gaim-pending"
 #define GAIM_STOCK_SEND            "gaim-send"
 #define GAIM_STOCK_SIGN_OFF        "gaim-sign-off"
 #define GAIM_STOCK_SIGN_ON         "gaim-sign-on"

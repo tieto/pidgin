@@ -804,6 +804,13 @@ conv_page()
 
 	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
 
+	gaim_gtk_prefs_dropdown(vbox, _("_Hide new IM conversations"),
+		GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
+		_("Never"), "never",
+		_("When away"), "away",
+		_("Always"), "always",
+		NULL);
+
 	gaim_gtk_prefs_checkbox(_("Send unknown \"_slash\" commands as messages"),
 	                        "/gaim/gtk/conversations/passthrough_unknown_commands", vbox);
 	gaim_gtk_prefs_checkbox(_("Show _formatting on incoming messages"),
@@ -1660,8 +1667,6 @@ away_page()
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = gaim_gtk_make_frame (ret, _("Away"));
-	gaim_gtk_prefs_checkbox(_("_Queue new messages when away"),
-				   "/gaim/gtk/away/queue_messages", vbox);
 
 	label = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
 		GAIM_PREF_STRING, "/core/away/auto_reply",
@@ -1857,10 +1862,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_none("/gaim/gtk");
 	gaim_prefs_add_none("/plugins/gtk");
 
-	/* Away Queueing */
-	gaim_prefs_add_none("/gaim/gtk/away");
-	gaim_prefs_add_bool("/gaim/gtk/away/queue_messages", FALSE);
-
 #ifndef _WIN32
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
@@ -1943,4 +1944,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
+	gaim_prefs_remove("/gaim/gtk/away/queue_messages");
+	gaim_prefs_remove("/plugins/gtk/docklet/queue_messages");
 }

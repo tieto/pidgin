@@ -86,6 +86,7 @@ static struct StockIcon
 #else
 	{ GAIM_STOCK_PAUSE,           "buttons", "pause.png"                },
 #endif
+	{ GAIM_STOCK_PENDING,         "gaim",    "envelope.png"             },
 	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },

@@ -428,47 +428,6 @@ void serv_set_buddyicon(GaimConnection *gc, const char *filename)
 
 }
 
-#if 0
-int find_queue_row_by_name(char *name)
-{
-	gchar *temp;
-	gint i = 0;
-	gboolean valid;
-	GtkTreeIter iter;
-
-	valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore), &iter);
-	while(valid) {
-		gtk_tree_model_get(GTK_TREE_MODEL(awayqueuestore), &iter, 0, &temp, -1);
-		if(!strcmp(name, temp))
-			return i;
-		g_free(temp);
-
-		i++;
-		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(awayqueuestore), &iter);
-	}
-
-	return -1;
-}
-
-int find_queue_total_by_name(char *name)
-{
-	GSList *templist;
-	int i = 0;
-
-	templist = message_queue;
-
-	while (templist) {
-		struct queued_message *qm = (struct queued_message *)templist->data;
-		if ((qm->flags & GAIM_MESSAGE_RECV) && !strcmp(name, qm->name))
-			i++;
-
-		templist = templist->next;
-	}
-
-	return i;
-}
-#endif
-
 /*
  * woo. i'm actually going to comment this function. isn't that fun. make
  * sure to follow along, kids
@@ -553,84 +512,13 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		struct last_auto_response *lar;
 		const gchar *auto_reply_pref;
 		const char *away_msg;
-#if 0
-		int row;
-#endif
+
+		if (cnv == NULL)
+			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
+
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
 
 		/*
-		 * Either we're going to queue it or not. Because of the way
-		 * awayness currently works, this is fucked up. It's possible
-		 * for an account to be away without the imaway dialog being
-		 * shown. In fact, it's possible for *all* the accounts to be
-		 * away without the imaway dialog being shown. So in order for
-		 * this to be queued properly, we have to make sure that the
-		 * imaway dialog actually exists, first.
-		 */
-#if 0
-		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
-			/*
-			 * Alright, so we're going to queue it. Neat, eh? :)
-			 * So first we create something to store the message, and add
-			 * it to our queue. Then we update the away dialog to indicate
-			 * that we've queued something.
-			 */
-			struct queued_message *qm;
-			GtkTreeIter iter;
-			gchar path[10];
-
-			qm = g_new0(struct queued_message, 1);
-			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			if(strcmp(alias, name) != 0)
-			    g_snprintf(qm->alias, sizeof(qm->alias), "(%s)", alias);
-			qm->message = g_strdup(message);
-			qm->account = gc->account;
-			qm->tm = mtime;
-			qm->flags = msgflags;
-			message_queue = g_slist_append(message_queue, qm);
-
-			row = find_queue_row_by_name(qm->name);
-			if (row >= 0) {
-				char number[32];
-				int qtotal;
-
-				qtotal = find_queue_total_by_name(qm->name);
-				g_snprintf(number, 32, ngettext("(%d message)",
-						   "(%d messages)", qtotal), qtotal);
-				g_snprintf(path, 10, "%d", row);
-				gtk_tree_model_get_iter_from_string(
-								GTK_TREE_MODEL(awayqueuestore), &iter, path);
-				gtk_list_store_set(awayqueuestore, &iter,
-								2, number, -1);
-			} else {
-				gtk_tree_model_get_iter_first(GTK_TREE_MODEL(awayqueuestore),
-								&iter);
-				gtk_list_store_append(awayqueuestore, &iter);
-				gtk_list_store_set(awayqueuestore, &iter,
-								0, qm->name,
-								1, qm->alias,
-								2, _("(1 message)"),
-								-1);
-			}
-		}
-		else
-#endif
-		{
-			/*
-			 * Make sure the conversation
-			 * exists and is updated (partly handled above already), play
-			 * the receive sound (sound.c will take care of not playing
-			 * while away), and then write it to the convo window.
-			 */
-			if (cnv == NULL)
-				cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
-
-			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
-		}
-
-		/*
-		 * Regardless of whether we queue it or not, we should send an
-		 * auto-response. That is, of course, unless the horse.... no wait.
 		 * Don't autorespond if:
 		 *
 		 *  - it's not supported on this connection

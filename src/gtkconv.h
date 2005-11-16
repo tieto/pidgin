@@ -212,6 +212,25 @@ GaimConversation *
 gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
                                         GaimUnseenState min_state);
 
+/**
+ * Presents a gaim conversation to the user.
+ *
+ * @param conv The conversation.
+ */
+void gaim_gtkconv_present_conversation(GaimConversation *conv);
+
+/**
+ * Finds the first conversations of the given type which has an
+ * unseen state greater than or equal to the given minimum
+ * state.
+ *
+ * @param type      The type of conversation.
+ * @param min_state The minimum unseen state.
+ * @return          First conversation matching critera, or NULL.
+ */
+GaimConversation * gaim_gtk_conversations_get_first_unseen(
+		GaimConversationType type, GaimUnseenState min_state);
+
 GaimGtkWindow *gaim_gtkconv_get_window(GaimGtkConversation *gtkconv);
 GdkPixbuf *gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
 void gaim_gtkconv_new(GaimConversation *conv);

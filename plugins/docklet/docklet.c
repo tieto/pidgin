@@ -178,31 +178,6 @@ online_account_supports_chat()
 	return FALSE;
 }
 
-static gboolean
-focus_first_unseen_conv()
-{
-	GList *l;
-	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-
-	/* find first im with unseen messages */
-	for(l = gaim_get_ims(); l!=NULL; l=l->next) {
-		conv = (GaimConversation*)l->data;
-		if(GAIM_IS_GTK_CONVERSATION(conv)) {
-			gtkconv=GAIM_GTK_CONVERSATION(conv);
-			if(gtkconv->unseen_state!=GAIM_UNSEEN_NONE) {
-				gtkconv->active_conv=conv;
-				gaim_gtk_conv_window_switch_gtkconv(gtkconv->win, gtkconv);
-				gaim_gtk_conv_window_raise(gtkconv->win);
-				gtk_window_present(GTK_WINDOW(gtkconv->win->window));
-				return TRUE;
-			}
-		}
-	}
-
-	return FALSE;
-}
-
 /**************************************************************************
  * callbacks and signal handlers
  **************************************************************************/
@@ -369,9 +344,10 @@ docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if(status==DOCKLET_STATUS_ONLINE_PENDING 
-					|| status==DOCKLET_STATUS_AWAY_PENDING)
-				focus_first_unseen_conv();
+			if(status==DOCKLET_STATUS_ONLINE_PENDING || status==DOCKLET_STATUS_AWAY_PENDING)
+				gaim_gtkconv_present_conversation(
+						gaim_gtk_conversations_get_first_unseen(
+						GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
 			else
 				gaim_gtk_blist_toggle_visibility();
 			break;
