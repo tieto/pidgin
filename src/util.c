@@ -2879,7 +2879,6 @@ static void
 url_fetched_cb(gpointer url_data, gint sock, GaimInputCondition cond)
 {
 	GaimFetchUrlData *gfud = url_data;
-/*	char data;*/
 	int len;
 	char buf[4096];
 	char *data_cursor;
