@@ -391,28 +391,28 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>libao:</b> Disabled<br/>");
 #endif
 
-#ifdef HAVE_NSS
-	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
-#endif
-
-#ifdef HAVE_STARTUP_NOTIFICATION
-	g_string_append(str, "    <b>Startup Notification:</b> Enabled<br/>");
-#else
-	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
-#endif
-
 #ifdef ENABLE_MONO
 	g_string_append(str, "    <b>Mono:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Mono:</b> Disabled<br/>");
 #endif
 
+#ifdef HAVE_NSS
+	g_string_append(str, "    <b>Network Security Services (NSS):</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Network Security Services (NSS):</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_PERL
 	g_string_append(str, "    <b>Perl:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_STARTUP_NOTIFICATION
+	g_string_append(str, "    <b>Startup Notification:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
 #endif
 
 #ifdef HAVE_TCL
