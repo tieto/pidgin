@@ -289,7 +289,6 @@ gaim_connection_set_state(GaimConnection *gc, GaimConnectionState state)
 		if (ops != NULL && ops->connected != NULL)
 			ops->connected(gc);
 
-		gaim_blist_show();
 		gaim_blist_add_account(account);
 
 		/*

@@ -3344,8 +3344,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		if(!GTK_WIDGET_VISIBLE(gtkblist->window))
-			gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 		return;
 	}
 
@@ -3532,6 +3531,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* OK... let's show this bad boy. */
 	gaim_gtk_blist_refresh(list);
+	gaim_gtk_blist_restore_position();
+	gtk_widget_show_all(GTK_WIDGET(gtkblist->window));
 	gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
 
 	/* start the refresh timer */
@@ -4071,8 +4072,6 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-hiding", gtkblist);
 			gtk_widget_hide(gtkblist->window);
 		} else {
-			gaim_gtk_blist_restore_position();
-			gtk_widget_show_all(GTK_WIDGET(gtkblist->window));
 			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
 		}
 	}
