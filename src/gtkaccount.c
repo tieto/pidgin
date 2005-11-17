@@ -965,8 +965,8 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *check;
 	GtkWidget *entry;
 	GtkWidget *combo;
-	GList *list;
-	GList *node;
+	const GList *list;
+	const GList *node;
 	gint i, idx;
 	GtkListStore *model;
 	GtkTreeIter iter;
@@ -1623,12 +1623,16 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	/* If this is a new account, then sign on! */
 	if (new) {
 		const char *current_savedstatus_name;
-		const GaimSavedStatus *saved_status;
+		const GaimSavedStatus *saved_status = NULL;
 
-		gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
-		saved_status = gaim_savedstatus_find(current_savedstatus_name);
-		gaim_savedstatus_activate_for_account(saved_status, account);
+		if (current_savedstatus_name)
+			saved_status = gaim_savedstatus_find(current_savedstatus_name);
+
+		if (saved_status) {
+			gaim_savedstatus_activate_for_account(saved_status, account);
+			gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
+		}
 	}
 
 	return account;
@@ -2339,7 +2343,7 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter, COLUMN_DATA, &account, -1);
 
 	if ((account != NULL) && (event->button == 1) &&
-		(event->type == GDK_2BUTTON_PRESS) && 
+		(event->type == GDK_2BUTTON_PRESS) &&
 		(strcmp(gtk_tree_view_column_get_title(column), title)))
 	{
 		gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, account);
