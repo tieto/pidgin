@@ -403,6 +403,18 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
 #endif
 
+#ifdef ENABLE_MONO
+	g_string_append(str, "    <b>Mono:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Mono:</b> Disabled<br/>");
+#endif
+
+#ifdef HAVE_PERL
+	g_string_append(str, "    <b>Perl:</b> Enabled<br/>");
+#else
+	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_TCL
 	g_string_append(str, "    <b>Tcl:</b> Enabled<br/>");
 #else

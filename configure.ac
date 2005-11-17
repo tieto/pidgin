@@ -726,7 +726,8 @@ if test "$enable_perl" = yes ; then
 	else
 		AC_SUBST(PERL_CFLAGS)
 		AC_SUBST(PERL_LIBS)
-		AM_CONDITIONAL(USE_PERL, test "x$enable_perl" = "xyes")
+		AM_CONDITIONAL(USE_PERL, true)
+		AC_DEFINE(HAVE_PERL, [1], [Compile with support for perl])
 
 		dnl This is almost definitely wrong, but in case there's
 		dnl something I'm missing, I'll leave it in.
