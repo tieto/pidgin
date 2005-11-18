@@ -6453,7 +6453,7 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, GaimGtkWindow 
 		return FALSE;
 
 	gtkconv = gaim_gtk_conv_window_get_gtkconv_at_index(win,
-			gaim_gtkconv_get_tab_at_xy(win, event->x, event->y, NULL));
+			gaim_gtkconv_get_tab_at_xy(win, event->x_root, event->y_root, NULL));
 
 	if (g_object_get_data(G_OBJECT(notebook->menu), "clicked_tab"))
 	{
