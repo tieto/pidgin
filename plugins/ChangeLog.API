@@ -169,6 +169,8 @@ version 2.0.0:
 		the user is on the buddy list.
 
 	Signals - Added:
+	* "account-disabled": Account was enabled; see Doxygen docs for full details.
+	* "account-enabled": Account was disabled; see Doxygen docs for full details.
 	* "account-status-changed": Account status changed; see Doxygen docs for full details.
 	* "cipher-added": Cipher was added; see Doxygen docs for full details.
 	* "cipher-removed": Cipher was removed; see Doxygen docs for full details.

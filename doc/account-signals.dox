@@ -4,6 +4,8 @@
   @signal account-added
   @signal account-connecting
   @signal account-removed
+  @signal account-disabled
+  @signal account-enabled
   @signal account-setting-info
   @signal account-set-info
   @signal account-status-changed
