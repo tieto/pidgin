@@ -1682,8 +1682,8 @@ static void mw_session_announce(struct mwSession *s,
   GaimAccount *acct;
   GaimConversation *conv;
   GaimBuddy *buddy;
-  char *who = from->user_id;
-  char *msg;
+  const char *who = from->user_id;
+  char *tmp, *msg;
   
   pd = mwSession_getClientData(s);
   acct = gaim_connection_get_account(pd->gc);
@@ -1692,14 +1692,14 @@ static void mw_session_announce(struct mwSession *s,
 
   buddy = gaim_find_buddy(acct, who);
   if(buddy) {
-    who = g_strdup(gaim_buddy_get_contact_alias(buddy));
+    who = gaim_buddy_get_contact_alias(buddy);
   }
 
-  who = g_strdup_printf(_("Announcement from %s"), who);
+  tmp = g_strdup_printf(_("Announcement from %s"), who);
   msg = gaim_markup_linkify(text);
 
-  gaim_conversation_write(conv, who, msg, GAIM_MESSAGE_RECV, time(NULL));
-  g_free(who);
+  gaim_conversation_write(conv, tmp, msg, GAIM_MESSAGE_RECV, time(NULL));
+  g_free(tmp);
   g_free(msg);
 }
 
