@@ -34,15 +34,25 @@
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
-void gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
+void gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 								GaimPounce *cur_pounce);
 
 /**
- * Displays all registered buddy pounces in a menu.
- *
- * @param menu The menu to add to.
+ * Shows the pounces manager window.
  */
-void gaim_gtkpounce_menu_build(GtkWidget *menu);
+void gaim_gtk_pounces_manager_show(void);
+
+/**
+ * Hides the pounces manager window.
+ */
+void gaim_gtk_pounces_manager_hide(void);
+
+/**
+ * Returns the gtkaccounts handle
+ *
+ * @return The handle to the GTK+ account system
+ */
+void *gaim_gtk_pounces_get_handle(void);
 
 /**
  * Initializes the GTK+ pounces subsystem.

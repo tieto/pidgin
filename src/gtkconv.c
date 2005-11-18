@@ -1093,8 +1093,8 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 
 	conv = gaim_gtk_conv_window_get_active_gtkconv(win)->active_conv;
 
-	gaim_gtkpounce_dialog_show(gaim_conversation_get_account(conv),
-	                           gaim_conversation_get_name(conv), NULL);
+	gaim_gtk_pounce_editor_show(gaim_conversation_get_account(conv),
+								gaim_conversation_get_name(conv), NULL);
 }
 
 static void

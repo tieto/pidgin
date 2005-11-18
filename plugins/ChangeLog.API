@@ -91,6 +91,9 @@ version 2.0.0:
 	* GaimGtkImPane->a_virgin
 	* gaim_str_strip_cr(); use gaim_str_strip_char(str, '\r') instead
 	* gaim_find_buddys_group renamed to gaim_buddy_get_group
+	* gaim_gtkpounce_menu_build()
+	* gaim_gtkpounce_dialog_show()
+	* GaimGtkBuddyList->bpmenu
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -146,6 +149,9 @@ version 2.0.0:
 	  with an "unseen" state >= to the specified state
 	* gaim_gtk_create_prpl_icon()
 	* gaim_gtk_create_prpl_icon_with_status()
+	* gaim_gtk_pounces_manager_show()
+	* gaim_gtk_pounces_manager_hide()
+	* gaim_gtk_pounce_editor_show()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

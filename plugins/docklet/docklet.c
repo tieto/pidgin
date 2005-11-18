@@ -306,17 +306,20 @@ docklet_menu() {
 
 	gaim_separator(menu);
 
+	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(gaim_gtk_accounts_window_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Plugins"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_plugin_dialog_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
+
+	gaim_separator(menu);
+
+	gaim_new_item_from_stock(menu, _("File Transfers"), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
+
 	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(entry), FALSE);
 	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
-
-	gaim_new_item_from_stock(menu, _("File Transfers"), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(gaim_gtk_accounts_window_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Plugins"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_plugin_dialog_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
 

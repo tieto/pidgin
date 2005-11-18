@@ -68,7 +68,6 @@ struct _GaimGtkBuddyList {
 	GtkCellRenderer *text_rend;
 
 	GtkItemFactory *ift;
-	GtkWidget *bpmenu;              /**< The buddy pounce menu. */
 	GtkWidget *menutray;            /**< The menu tray widget. */
 	GtkWidget *menutrayicon;        /**< The menu tray icon. */
 

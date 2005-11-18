@@ -340,7 +340,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 
 static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
 {
-	gaim_gtkpounce_dialog_show(b->account, b->name, NULL);
+	gaim_gtk_pounce_editor_show(b->account, b->name, NULL);
 }
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
@@ -2438,18 +2438,19 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/Buddy _Pounce"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
-	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
+	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, NULL },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, NULL },
+	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
+	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
-	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
+	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
@@ -3086,7 +3087,6 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 	g_return_if_fail(gtkblist != NULL);
 
 	gaim_gtk_blist_update_protocol_actions();
-	gaim_gtkpounce_menu_build(gtkblist->bpmenu);
 
 	sensitive = (gaim_connections_get_all() != NULL);
 
@@ -3102,11 +3102,14 @@ update_menu_bar(GaimGtkBuddyList *gtkblist)
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Add Chat..."));
 	gtk_widget_set_sensitive(widget, gaim_gtk_blist_joinchat_is_showable());
 
-	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
-	gtk_widget_set_sensitive(widget, gaim_gtk_roomlist_is_showable());
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounces"));
+	gtk_widget_set_sensitive(widget, (gaim_connections_get_all() != NULL));
 
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, gaim_gtk_privacy_is_showable());
+
+	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Room List"));
+	gtk_widget_set_sensitive(widget, gaim_gtk_roomlist_is_showable());
 }
 
 static void
@@ -3448,7 +3451,6 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
-	gtkblist->bpmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounce"));
 	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
 
 	/****************************** GtkVPaned ************************************/
@@ -5249,7 +5251,7 @@ plugin_act(GtkObject *obk, GaimPluginAction *pam)
 }
 
 static GList *plugin_menu_items = NULL;
-static int plugin_menu_index = 8;
+static int plugin_menu_index = 10;
 
 static void
 build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)

@@ -39,7 +39,23 @@
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkpounce.h"
+#include "gtkstock.h"
 #include "gtkutils.h"
+
+/**
+ * These are used for the GtkTreeView when you're scrolling through
+ * all your saved pounces.
+ */
+enum
+{
+	/* Hidden column containing the GaimPounce */
+	POUNCES_MANAGER_COLUMN_POUNCE,
+	POUNCES_MANAGER_COLUMN_ICON,
+	POUNCES_MANAGER_COLUMN_TARGET,
+	POUNCES_MANAGER_COLUMN_ACCOUNT,
+	POUNCES_MANAGER_COLUMN_PERSISTENCE,
+	POUNCES_MANAGER_NUM_COLUMNS
+};
 
 typedef struct
 {
@@ -83,6 +99,17 @@ typedef struct
 	GtkWidget *save_button;
 
 } GaimGtkPounceDialog;
+
+typedef struct
+{
+	GtkWidget *window;
+	GtkListStore *model;
+	GtkWidget *treeview;
+	GtkWidget *modify_button;
+	GtkWidget *delete_button;
+} PouncesManager;
+
+static PouncesManager *pounces_manager = NULL;
 
 /**************************************************************************
  * Callbacks
@@ -145,12 +172,78 @@ pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 }
 
 static void
+add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
+{
+	GtkTreeIter iter;
+	GaimAccount *account;
+	GaimPounceEvent events;
+	gboolean persists;
+	const char *pouncer;
+	const char *pouncee;
+	GdkPixbuf *pixbuf, *scale = NULL;
+
+	account = gaim_pounce_get_pouncer(pounce);
+
+	if (gaim_account_is_disconnected(account))
+		return;
+
+	events = gaim_pounce_get_events(pounce);
+
+	pixbuf = gaim_gtk_create_prpl_icon(account);
+
+	if (pixbuf != NULL)
+		scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+										GDK_INTERP_BILINEAR);
+
+	pouncer = gaim_account_get_username(account);
+	pouncee = gaim_pounce_get_pouncee(pounce);
+	persists = gaim_pounce_get_save(pounce);
+
+	gtk_list_store_append(model, &iter);
+	gtk_list_store_set(model, &iter,
+					   POUNCES_MANAGER_COLUMN_POUNCE, pounce,
+					   POUNCES_MANAGER_COLUMN_ICON, scale,
+					   POUNCES_MANAGER_COLUMN_TARGET, pouncee,
+					   POUNCES_MANAGER_COLUMN_ACCOUNT, pouncer,
+					   POUNCES_MANAGER_COLUMN_PERSISTENCE, persists,
+					   -1);
+}
+
+static void
+populate_pounces_list(PouncesManager *dialog)
+{
+	const GList *pounces;
+
+	gtk_list_store_clear(dialog->model);
+
+	for (pounces = gaim_pounces_get_all(); pounces != NULL;
+			pounces = g_list_next(pounces))
+	{
+		add_pounce_to_treeview(dialog->model, pounces->data);
+	}
+}
+
+static void
+update_pounces(void)
+{
+	/* Rebuild the pounces list if the pounces manager is open */
+	if (pounces_manager != NULL)
+	{
+		populate_pounces_list(pounces_manager);
+	}
+}
+
+static void
+signed_on_off_cb(GaimConnection *gc, gpointer user_data)
+{
+	update_pounces();
+}
+
+static void
 save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *sound;
-	GaimBuddyList *blist;
-	GaimGtkBuddyList *gtkblist;
 	GaimPounceEvent events = GAIM_POUNCE_NONE;
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
@@ -241,17 +334,9 @@ save_pounce_cb(GtkWidget *w, GaimGtkPounceDialog *dialog)
 	gaim_pounce_set_save(dialog->pounce,
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce)));
 
+	update_pounces();
+
 	delete_win_cb(NULL, NULL, dialog);
-
-	/* Rebuild the pounce menu */
-	blist = gaim_get_blist();
-
-	if (GAIM_IS_GTK_BLIST(blist))
-	{
-		gtkblist = GAIM_GTK_BLIST(blist);
-
-		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
-	}
 }
 
 static void
@@ -338,8 +423,8 @@ static const GtkTargetEntry dnd_targets[] =
 };
 
 void
-gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
-						   GaimPounce *cur_pounce)
+gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
+							GaimPounce *cur_pounce)
 {
 	GaimGtkPounceDialog *dialog;
 	GtkWidget *window;
@@ -797,135 +882,399 @@ gaim_gtkpounce_dialog_show(GaimAccount *account, const char *name,
 	gtk_widget_show(window);
 }
 
-static void
-new_pounce_cb(GtkWidget *w, GaimBuddy *b)
+static gboolean
+pounces_manager_configure_cb(GtkWidget *widget, GdkEventConfigure *event, PouncesManager *dialog)
 {
-	if (b == NULL)
-		gaim_gtkpounce_dialog_show(NULL, NULL, NULL);
-	else
-		gaim_gtkpounce_dialog_show(b->account, b->name, NULL);
+	if (GTK_WIDGET_VISIBLE(widget)) {
+		gaim_prefs_set_int("/gaim/gtk/pounces/dialog/width",  event->width);
+		gaim_prefs_set_int("/gaim/gtk/pounces/dialog/height", event->height);
+	}
+
+	return FALSE;
+}
+
+static gboolean
+pounces_manager_find_pounce(GtkTreeIter *iter, GaimPounce *pounce)
+{
+	GtkTreeModel *model = GTK_TREE_MODEL(pounces_manager->model);
+	GaimPounce *p;
+
+	if (!gtk_tree_model_get_iter_first(model, iter))
+		return FALSE;
+
+	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &p, -1);
+	if (pounce == p)
+		return TRUE;
+
+	while (gtk_tree_model_iter_next(model, iter))
+	{
+		gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &p, -1);
+		if (pounce == p)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean
+pounces_manager_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+	PouncesManager *dialog = user_data;
+
+	dialog->window = NULL;
+	gaim_gtk_pounces_manager_hide();
+
+	return FALSE;
+}
+
+#if !GTK_CHECK_VERSION(2,2,0)
+static void
+count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
+					GtkTreeIter *iter, gpointer user_data)
+{
+	(*(gint *)user_data)++;
+}
+#endif
+
+static void
+pounces_manager_connection_cb(GaimConnection *gc, GtkWidget *add_button)
+{
+	gtk_widget_set_sensitive(add_button, (gaim_connections_get_all() != NULL));
 }
 
 static void
-delete_pounce_cb(GtkWidget *w, GaimPounce *pounce)
+pounces_manager_add_cb(GtkButton *button, gpointer user_data)
 {
+	gaim_gtk_pounce_editor_show(NULL, NULL, NULL);
+}
+
+static void
+pounces_manager_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
+							 GtkTreeIter *iter, gpointer user_data)
+{
+	GaimPounce *pounce;
+
+	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
+	gaim_gtk_pounce_editor_show(NULL, NULL, pounce);
+}
+
+static void
+pounces_manager_modify_cb(GtkButton *button, gpointer user_data)
+{
+	PouncesManager *dialog = user_data;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, pounces_manager_modify_foreach, user_data);
+}
+
+static void
+pounces_manager_delete_confirm_cb(GaimPounce *pounce)
+{
+	GtkTreeIter iter;
+
+	if (pounces_manager_find_pounce(&iter, pounce))
+		gtk_list_store_remove(pounces_manager->model, &iter);
+
 	gaim_pounce_destroy(pounce);
 }
 
 static void
-edit_pounce_cb(GtkWidget *w, GaimPounce *pounce)
+pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
+							   GtkTreeIter *iter, gpointer user_data)
 {
-	gaim_gtkpounce_dialog_show(NULL, NULL, pounce);
+	GaimPounce *pounce;
+	GaimAccount *account;
+	const char *pouncer, *pouncee;
+	char *buf;
+
+	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
+	account = gaim_pounce_get_pouncer(pounce);
+	pouncer = gaim_account_get_username(account);
+	pouncee = gaim_pounce_get_pouncee(pounce);
+
+	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
+	gaim_request_action(NULL, NULL, buf, NULL, 0, pounce, 2,
+						_("Delete"), pounces_manager_delete_confirm_cb,
+						_("Cancel"), g_free);
+	g_free(buf);
+}
+
+static void
+pounces_manager_delete_cb(GtkButton *button, gpointer user_data)
+{
+	PouncesManager *dialog = user_data;
+	GtkTreeSelection *selection;
+
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
+
+	gtk_tree_selection_selected_foreach(selection, pounces_manager_delete_foreach, user_data);
+}
+
+static void
+pounces_manager_close_cb(GtkButton *button, gpointer user_data)
+{
+	gaim_gtk_pounces_manager_hide();
+}
+
+static void
+pounce_selected_cb(GtkTreeSelection *sel, gpointer user_data)
+{
+	PouncesManager *dialog = user_data;
+	int num_selected = 0;
+
+#if GTK_CHECK_VERSION(2,2,0)
+	num_selected = gtk_tree_selection_count_selected_rows(sel);
+#else
+	gtk_tree_selection_selected_foreach(sel, count_selected_helper, &num_selected);
+#endif
+
+	gtk_widget_set_sensitive(dialog->modify_button, (num_selected > 0));
+	gtk_widget_set_sensitive(dialog->delete_button, (num_selected > 0));
+}
+
+static void
+pounces_manager_persists_cb(GtkCellRendererToggle *renderer, gchar *path_str,
+							gpointer user_data)
+{
+	PouncesManager *dialog = user_data;
+	GaimPounce *pounce;
+	gboolean persists;
+	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
+	GtkTreeIter iter;
+
+	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
+	gtk_tree_model_get(model, &iter,
+					   POUNCES_MANAGER_COLUMN_POUNCE, &pounce,
+					   POUNCES_MANAGER_COLUMN_PERSISTENCE, &persists,
+					   -1);
+
+	gaim_pounce_set_save(pounce, !persists);
+
+	update_pounces();
 }
 
 static gboolean
-fill_menu(GtkWidget *menu, GCallback cb)
+search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *iter, gpointer search_data)
 {
-	GtkWidget *image;
-	GtkWidget *item;
-	GdkPixbuf *pixbuf, *scale;
-	GaimPounce *pounce;
-	GaimBuddy *buddy;
-	const char *buddyname;
-	gboolean has_items = FALSE;
-	GList *bp;
+	gboolean result;
+	char *haystack;
 
-	for (bp = gaim_pounces_get_all(); bp != NULL; bp = bp->next)
-	{
-		pounce = (GaimPounce *)bp->data;
+	gtk_tree_model_get(model, iter, column, &haystack, -1);
 
-		/* Check if account is online, if not skip it */
-		if (!gaim_account_is_connected(gaim_pounce_get_pouncer(pounce)))
-			continue;
+	result = (gaim_strcasestr(haystack, key) == NULL);
 
-		buddy = gaim_find_buddy(gaim_pounce_get_pouncer(pounce), gaim_pounce_get_pouncee(pounce));
+	g_free(haystack);
 
-		if (buddy != NULL)
-			buddyname = gaim_buddy_get_contact_alias(buddy);
-		else
-			buddyname = gaim_pounce_get_pouncee(pounce);
+	return result;
+}
 
-		has_items = TRUE;
+static GtkWidget *
+create_pounces_list(PouncesManager *dialog)
+{
+	GtkWidget *sw;
+	GtkWidget *treeview;
+	GtkTreeSelection *sel;
+	GtkTreeViewColumn *column;
+	GtkCellRenderer *renderer;
 
-		/* Build the menu item */
-		item = gtk_image_menu_item_new_with_label(buddyname);
+	/* Create the scrolled window */
+	sw = gtk_scrolled_window_new(0, 0);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw),
+								   GTK_POLICY_AUTOMATIC,
+								   GTK_POLICY_ALWAYS);
+	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(sw),
+										GTK_SHADOW_IN);
+	gtk_widget_show(sw);
 
-		/* Create a pixmap for the protocol icon. */
-		pixbuf = gaim_gtk_create_prpl_icon(gaim_pounce_get_pouncer(pounce));
-		if (pixbuf != NULL)
-		{
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-											GDK_INTERP_BILINEAR);
+	/* Create the list model */
+	dialog->model = gtk_list_store_new(POUNCES_MANAGER_NUM_COLUMNS,
+									   G_TYPE_POINTER,
+									   GDK_TYPE_PIXBUF,
+									   G_TYPE_STRING,
+									   G_TYPE_STRING,
+									   G_TYPE_BOOLEAN
+									   );
 
-			/* Now convert it to GtkImage */
-			image = gtk_image_new_from_pixbuf(scale);
-			g_object_unref(G_OBJECT(scale));
-			g_object_unref(G_OBJECT(pixbuf));
-			gtk_widget_show(image);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), image);
-		}
+	/* Create the treeview */
+	treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dialog->model));
+	dialog->treeview = treeview;
+	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 
-		/* Put the item in the menu */
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
+	g_signal_connect(G_OBJECT(sel), "changed",
+					 G_CALLBACK(pounce_selected_cb), dialog);
 
-		/* Set our callbacks. */
-		g_signal_connect(G_OBJECT(item), "activate", cb, pounce);
-	}
+	gtk_container_add(GTK_CONTAINER(sw), treeview);
+	gtk_widget_show(treeview);
 
-	return has_items;
+	/* Pouncee Column */
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Pounce Target"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_min_width(column, 200);
+	gtk_tree_view_column_set_sort_column_id(column,
+											POUNCES_MANAGER_COLUMN_TARGET);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+
+	/* Icon */
+	renderer = gtk_cell_renderer_pixbuf_new();
+	gtk_tree_view_column_pack_start(column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute(column, renderer, "pixbuf",
+									   POUNCES_MANAGER_COLUMN_ICON);
+
+	/* Pouncee */
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   POUNCES_MANAGER_COLUMN_TARGET);
+
+
+	/* Account Column */
+	column = gtk_tree_view_column_new();
+	gtk_tree_view_column_set_title(column, _("Account"));
+	gtk_tree_view_column_set_resizable(column, TRUE);
+	gtk_tree_view_column_set_min_width(column, 200);
+	gtk_tree_view_column_set_sort_column_id(column,
+											POUNCES_MANAGER_COLUMN_ACCOUNT);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	renderer = gtk_cell_renderer_text_new();
+	gtk_tree_view_column_pack_start(column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute(column, renderer, "text",
+									   POUNCES_MANAGER_COLUMN_ACCOUNT);
+
+	/* Persistence Column */
+	renderer = gtk_cell_renderer_toggle_new();
+	column = gtk_tree_view_column_new_with_attributes(_("Persists"), renderer,
+						"active", POUNCES_MANAGER_COLUMN_PERSISTENCE, NULL);
+	gtk_tree_view_column_set_sort_column_id(column,
+											POUNCES_MANAGER_COLUMN_PERSISTENCE);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
+	g_signal_connect(G_OBJECT(renderer), "toggled",
+			 G_CALLBACK(pounces_manager_persists_cb), dialog);
+
+	/* Enable CTRL+F searching */
+	gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), POUNCES_MANAGER_COLUMN_TARGET);
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), search_func, NULL, NULL);
+
+	/* Sort the pouncee column by default */
+	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(dialog->model),
+										 POUNCES_MANAGER_COLUMN_TARGET,
+										 GTK_SORT_ASCENDING);
+
+	/* Populate list */
+	populate_pounces_list(dialog);
+
+	return sw;
 }
 
 void
-gaim_gtkpounce_menu_build(GtkWidget *menu)
+gaim_gtk_pounces_manager_show(void)
 {
-	GtkWidget *remmenu;
-	GtkWidget *item;
-	GList *children, *l;
-	gboolean has_items;
+	PouncesManager *dialog;
+	GtkWidget *bbox;
+	GtkWidget *button;
+	GtkWidget *list;
+	GtkWidget *vbox;
+	GtkWidget *win;
+	int width, height;
 
-	g_return_if_fail(menu != NULL);
-
-	if ((children = gtk_container_get_children(GTK_CONTAINER(menu))) != NULL)
-	{
-		for (l = children; l != NULL; l = l->next)
-			gtk_widget_destroy(GTK_WIDGET(l->data));
-
-		g_list_free(children);
+	if (pounces_manager != NULL) {
+		gtk_window_present(GTK_WINDOW(pounces_manager->window));
+		return;
 	}
 
-	/* "New Buddy Pounce" */
-	item = gtk_menu_item_new_with_label(_("New Buddy Pounce"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_set_sensitive(item, (gaim_connections_get_all() != NULL));
-	gtk_widget_show(item);
-	g_signal_connect(G_OBJECT(item), "activate",
-					 G_CALLBACK(new_pounce_cb), NULL);
+	pounces_manager = dialog = g_new0(PouncesManager, 1);
 
-	/* "Remove Buddy Pounce" */
-	item = gtk_menu_item_new_with_label(_("Remove Buddy Pounce"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	width  = gaim_prefs_get_int("/gaim/gtk/pounces/dialog/width");
+	height = gaim_prefs_get_int("/gaim/gtk/pounces/dialog/height");
 
-	/* "Remove Buddy Pounce" menu */
-	remmenu = gtk_menu_new();
+	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
+	gtk_window_set_role(GTK_WINDOW(win), "pounces");
+	gtk_window_set_title(GTK_WINDOW(win), _("Buddy Pounces"));
+	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
 
-	has_items = fill_menu(remmenu, G_CALLBACK(delete_pounce_cb));
+	g_signal_connect(G_OBJECT(win), "delete_event",
+					 G_CALLBACK(pounces_manager_destroy_cb), dialog);
+	g_signal_connect(G_OBJECT(win), "configure_event",
+					 G_CALLBACK(pounces_manager_configure_cb), dialog);
 
-	if (!has_items)
-		gtk_widget_set_sensitive(item, FALSE);
+	/* Setup the vbox */
+	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	gtk_container_add(GTK_CONTAINER(win), vbox);
+	gtk_widget_show(vbox);
 
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(item), remmenu);
-	gtk_widget_show(remmenu);
-	gtk_widget_show(item);
+	/* List of saved buddy pounces */
+	list = create_pounces_list(dialog);
+	gtk_box_pack_start(GTK_BOX(vbox), list, TRUE, TRUE, 0);
 
-	/* Separator */
-	if (has_items)
-	{
-		item = gtk_separator_menu_item_new();
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-	}
-	fill_menu(menu, G_CALLBACK(edit_pounce_cb));
+	/* Button box. */
+	bbox = gtk_hbutton_box_new();
+	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
+	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
+	gtk_widget_show(bbox);
+
+	/* Add button */
+	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, (gaim_connections_get_all() != NULL));
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						pounces_manager, GAIM_CALLBACK(pounces_manager_connection_cb), button);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						pounces_manager, GAIM_CALLBACK(pounces_manager_connection_cb), button);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(pounces_manager_add_cb), dialog);
+
+	/* Modify button */
+	button = gtk_button_new_from_stock(GAIM_STOCK_MODIFY);
+	dialog->modify_button = button;
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(pounces_manager_modify_cb), dialog);
+
+	/* Delete button */
+	button = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	dialog->delete_button = button;
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(pounces_manager_delete_cb), dialog);
+
+	/* Close button */
+	button = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(pounces_manager_close_cb), dialog);
+
+	gtk_widget_show(win);
+}
+
+void
+gaim_gtk_pounces_manager_hide(void)
+{
+	if (pounces_manager == NULL)
+		return;
+
+	if (pounces_manager->window != NULL)
+		gtk_widget_destroy(pounces_manager->window);
+
+	gaim_signals_disconnect_by_handle(pounces_manager);
+
+	g_free(pounces_manager);
+	pounces_manager = NULL;
 }
 
 static void
@@ -1113,18 +1462,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 static void
 free_pounce(GaimPounce *pounce)
 {
-	GaimBuddyList *blist;
-	GaimGtkBuddyList *gtkblist;
-
-	/* Rebuild the pounce menu */
-	blist = gaim_get_blist();
-
-	if (GAIM_IS_GTK_BLIST(blist))
-	{
-		gtkblist = GAIM_GTK_BLIST(blist);
-
-		gaim_gtkpounce_menu_build(gtkblist->bpmenu);
-	}
+	update_pounces();
 }
 
 static void
@@ -1135,6 +1473,15 @@ new_pounce(GaimPounce *pounce)
 	gaim_pounce_action_register(pounce, "send-message");
 	gaim_pounce_action_register(pounce, "execute-command");
 	gaim_pounce_action_register(pounce, "play-sound");
+
+	update_pounces();
+}
+
+void *
+gaim_gtk_pounces_get_handle() {
+	static int handle;
+
+	return &handle;
 }
 
 void
@@ -1155,4 +1502,14 @@ gaim_gtk_pounces_init(void)
 						FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/play-sound",
 						FALSE);
+	gaim_prefs_add_none("/gaim/gtk/pounces/dialog");
+	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/width",  550);
+	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/height", 250);
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+						gaim_gtk_pounces_get_handle(),
+						GAIM_CALLBACK(signed_on_off_cb), NULL);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						gaim_gtk_pounces_get_handle(),
+						GAIM_CALLBACK(signed_on_off_cb), NULL);
 }
