@@ -464,7 +464,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 
 static void theme_install_theme(char *path, char *extn) {
 #ifndef _WIN32
-	gchar *command, *escaped;
+	gchar *command;
 #endif
 	gchar *destdir;
 	gchar *tail;
@@ -485,9 +485,11 @@ static void theme_install_theme(char *path, char *extn) {
 	 * other platforms, if need be */
 	if (!g_ascii_strcasecmp(tail, ".gz") || !g_ascii_strcasecmp(tail, ".tgz")) {
 #ifndef _WIN32
-		escaped = g_shell_quote(path);
-		command = g_strdup_printf("tar > /dev/null xzf %s -C %s", escaped, destdir);
-		g_free(escaped);
+		gchar *path_escaped = g_shell_quote(path);
+		gchar *destdir_escaped = g_shell_quote(destdir);
+		command = g_strdup_printf("tar > /dev/null xzf %s -C %s", path_escaped, destdir_escaped);
+		g_free(path_escaped);
+		g_free(destdir_escaped);
 #else
 		if(!wgaim_gz_untar(path, destdir)) {
 			g_free(destdir);
@@ -502,7 +504,10 @@ static void theme_install_theme(char *path, char *extn) {
 
 #ifndef _WIN32
 	/* Fire! */
-	system(command);
+	if (system(command))
+	{
+		gaim_notify_error(NULL, NULL, _("Smiley theme failed to unpack."), NULL);
+	}
 
 	g_free(command);
 #endif
