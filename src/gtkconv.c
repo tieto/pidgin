@@ -5058,14 +5058,15 @@ gaim_gtkconv_updated(GaimConversation *conv, GaimConvUpdateType type)
 	{
 		char *title;
 		GaimConvIm *im = NULL;
-		GaimConnection *gc = gaim_conversation_get_gc(conv);
+		GaimAccount *account = gaim_conversation_get_account(conv);
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char style[51];
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 			im = GAIM_CONV_IM(conv);
 
-		if (!gc || ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+		if (!gaim_account_is_connected(account)
+				|| ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
 		                && gaim_conv_chat_has_left(GAIM_CONV_CHAT(conv))))
 			title = g_strdup_printf("(%s)", gaim_conversation_get_title(conv));
 		else
@@ -5652,6 +5653,23 @@ conv_placement_pref_cb(const char *name, GaimPrefType type,
 	gaim_gtkconv_placement_set_current_func(func);
 }
 
+static void
+account_signed_off_cb(GaimConnection *gc, gpointer event)
+{
+	GList *iter;
+	GaimAccount *account;
+
+	account = gaim_connection_get_account(gc);
+
+	for (iter = gaim_get_conversations(); iter; iter = iter->next)
+	{
+		GaimConversation *conv = iter->data;
+
+		if (gaim_conversation_get_account(conv) == account)
+			gaim_conversation_update(conv, GPOINTER_TO_INT(event));
+	}
+}
+
 void *
 gaim_gtk_conversations_get_handle(void)
 {
@@ -5777,6 +5795,13 @@ gaim_gtk_conversations_init(void)
 	 * UI operations
 	 **********************************************************************/
 
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", handle,
+						G_CALLBACK(account_signed_off_cb),
+						GINT_TO_POINTER(GAIM_CONV_ACCOUNT_ONLINE));
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", handle,
+						G_CALLBACK(account_signed_off_cb),
+						GINT_TO_POINTER(GAIM_CONV_ACCOUNT_OFFLINE));
+	
 	gaim_signal_connect(blist_handle, "buddy-added", handle,
 						G_CALLBACK(buddy_update_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-removed", handle,
