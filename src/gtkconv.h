@@ -34,11 +34,11 @@ typedef struct _GaimGtkConversation GaimGtkConversation;
  */
 typedef enum
 {
-	GAIM_UNSEEN_NONE  = 0, /**< No unseen text in the conversation. */
-	GAIM_UNSEEN_EVENT = 1, /**< Unseen events in the conversation.  */
-	GAIM_UNSEEN_NOLOG = 2, /**< Unseen text with NO_LOG flag.       */
-	GAIM_UNSEEN_TEXT  = 3, /**< Unseen text in the conversation.    */
-	GAIM_UNSEEN_NICK  = 4  /**< Unseen text and the nick was said.  */
+	GAIM_UNSEEN_NONE,   /**< No unseen text in the conversation. */
+	GAIM_UNSEEN_EVENT,  /**< Unseen events in the conversation.  */
+	GAIM_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
+	GAIM_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
+	GAIM_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
 } GaimUnseenState;
 
 enum {

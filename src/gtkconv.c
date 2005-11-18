@@ -4408,7 +4408,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR))
 			unseen = GAIM_UNSEEN_EVENT;
 		else if ((flags & GAIM_MESSAGE_NO_LOG) == GAIM_MESSAGE_NO_LOG)
-			unseen = GAIM_UNSEEN_NOLOG;
+			unseen = GAIM_UNSEEN_NO_LOG;
 		else
 			unseen = GAIM_UNSEEN_TEXT;
 
