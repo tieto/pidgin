@@ -164,7 +164,7 @@ static GList *irc_status_types(GaimAccount *account)
 	GList *types = NULL;
 
 	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline",
-								_("Offline"), FALSE);
+								_("Offline"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available",
