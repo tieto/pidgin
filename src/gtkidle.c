@@ -166,7 +166,7 @@ gaim_gtk_idle_check(gpointer data)
 							gaim_account_get_username(account));
 
 			/* Mark our accounts "away" using the idleaway status */
-			idleaway_name = gaim_prefs_get_string("/core/status/idleaway");
+			idleaway_name = gaim_prefs_get_string("/core/savedstatus/idleaway");
 			saved_status = gaim_savedstatus_find(idleaway_name);
 			if (saved_status)
 				gaim_savedstatus_activate_for_account(saved_status, account);
@@ -192,7 +192,7 @@ gaim_gtk_idle_check(gpointer data)
 							gaim_account_get_username(account));
 
 			/* Return our account to its previous status */
-			idleaway_name = gaim_prefs_get_string("/core/status/current");
+			idleaway_name = gaim_prefs_get_string("/core/savedstatus/current");
 			saved_status = gaim_savedstatus_find(idleaway_name);
 			if (saved_status)
 				gaim_savedstatus_activate_for_account(saved_status, account);

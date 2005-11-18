@@ -1570,7 +1570,7 @@ AC_OUTPUT([Makefile
 		   po/Makefile.in
 		   sounds/Makefile
 		   src/Makefile
-                   src/mediastreamer/Makefile
+		   src/mediastreamer/Makefile
 		   src/protocols/Makefile
 		   src/protocols/bonjour/Makefile
 		   src/protocols/gg/Makefile

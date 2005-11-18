@@ -313,7 +313,7 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	if (status_box->account)
 		return;
 
-	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+	current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
 	saved_status = gaim_savedstatus_find(current_savedstatus_name);
 
 	/*
@@ -570,8 +570,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	gtk_gaim_status_box_regenerate(status_box);
 
-	/* Monitor changes in the "/core/status/current" preference */
-	gaim_prefs_connect_callback(status_box, "/core/status/current",
+	/* Monitor changes in the "/core/savedstatus/current" preference */
+	gaim_prefs_connect_callback(status_box, "/core/savedstatus/current",
 								current_status_pref_changed_cb, status_box);
 
 	/* TODO: Need to override the destroy method for this object and put the following line in it */
@@ -809,7 +809,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	 * "Saved..." then do nothing.  Custom statuses are
 	 * activated elsewhere, and we update the status_box
 	 * accordingly by monitoring the preference
-	 * "/core/status/current" and then calling
+	 * "/core/savedstatus/current" and then calling
 	 * update_to_reflect_current_status()
 	 */
 	if ((type < 0) || (type >= GAIM_STATUS_NUM_PRIMITIVES))
@@ -836,7 +836,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 			if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
 				changed = FALSE;
 		}
-		
+
 		if (changed)
 		{
 			if (message)
@@ -852,7 +852,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 		const char *current = NULL;
 
 		/* Has the status been really changed? */
-		current = gaim_prefs_get_string("/core/status/current");
+		current = gaim_prefs_get_string("/core/savedstatus/current");
 		saved_status = gaim_savedstatus_find(current);
 		if (saved_status && gaim_savedstatus_get_type(saved_status) == type)
 		{
@@ -867,7 +867,6 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 				saved_status = gaim_savedstatus_new(_("Default"), type);
 			gaim_savedstatus_set_type(saved_status, type);
 			gaim_savedstatus_set_message(saved_status, message);
-			gaim_prefs_set_string("/core/status/current", _("Default"));
 
 			/* Set the status for each account */
 			gaim_savedstatus_activate(saved_status);

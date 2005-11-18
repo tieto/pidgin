@@ -1702,7 +1702,7 @@ away_page()
 	 * TODO: Need to allow users to choose a GaimSavedStatus
 	 *       to use when going idle-away.  Or figure out a
 	 *       better UI for this.  Set the preference
-	 *       "/core/status/idleaway" to the name of the
+	 *       "/core/savedstatus/idleaway" to the name of the
 	 *       GaimSavedStatus to use.
 	 *
 	 */

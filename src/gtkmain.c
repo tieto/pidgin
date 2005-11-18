@@ -686,7 +686,6 @@ int main(int argc, char *argv[])
 			saved_status = gaim_savedstatus_new(_("Default"), GAIM_STATUS_OFFLINE);
 		else
 			gaim_savedstatus_set_type(saved_status, GAIM_STATUS_OFFLINE);
-		gaim_prefs_set_string("/core/status/current", _("Default"));
 		gaim_savedstatus_activate(saved_status);
 	}
 	else

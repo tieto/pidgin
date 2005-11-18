@@ -621,7 +621,7 @@ gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	gaim_prefs_set_string("/core/status/current",
+	gaim_prefs_set_string("/core/savedstatus/current",
 						  gaim_savedstatus_get_title(saved_status));
 }
 
@@ -690,6 +690,9 @@ gaim_savedstatuses_init(void)
 		saved_status = gaim_savedstatus_new(_("Default when idle"), GAIM_STATUS_AWAY);
 		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
 	}
+
+	gaim_prefs_add_string("/core/savedstatus/current", _("Default"));
+	gaim_prefs_add_string("/core/savedstatus/idleaway", _("Default when idle"));
 }
 
 void

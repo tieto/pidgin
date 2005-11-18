@@ -1625,7 +1625,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		const char *current_savedstatus_name;
 		const GaimSavedStatus *saved_status = NULL;
 
-		current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+		current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
 		if (current_savedstatus_name)
 			saved_status = gaim_savedstatus_find(current_savedstatus_name);
 
@@ -2187,7 +2187,7 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   -1);
 
 	/* Set the statuses for this account to the current status */
-	current_savedstatus_name = gaim_prefs_get_string("/core/status/current");
+	current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
 	saved_status = gaim_savedstatus_find(current_savedstatus_name);
 	gaim_savedstatus_activate_for_account(saved_status, account);
 

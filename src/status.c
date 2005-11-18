@@ -1688,9 +1688,6 @@ gaim_status_init(void)
 	gaim_prefs_add_none("/core/status");
 	gaim_prefs_add_none("/core/status/scores");
 
-	gaim_prefs_add_string("/core/status/current", _("Default"));
-	gaim_prefs_add_string("/core/status/idleaway", _("Default when idle"));
-
 	gaim_prefs_add_int("/core/status/scores/offline",
 			primitive_scores[GAIM_STATUS_OFFLINE]);
 	gaim_prefs_add_int("/core/status/scores/available",
