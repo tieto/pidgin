@@ -159,17 +159,14 @@ gaim_gtk_idle_check(gpointer data)
 	{
 		if (gaim_presence_is_available(presence))
 		{
-			const char *idleaway_name;
 			GaimSavedStatus *saved_status;
 
 			gaim_debug_info("idle", "Making %s auto-away\n",
 							gaim_account_get_username(account));
 
 			/* Mark our accounts "away" using the idleaway status */
-			idleaway_name = gaim_prefs_get_string("/core/savedstatus/idleaway");
-			saved_status = gaim_savedstatus_find(idleaway_name);
-			if (saved_status)
-				gaim_savedstatus_activate_for_account(saved_status, account);
+			saved_status = gaim_savedstatus_get_idleaway();
+			gaim_savedstatus_activate_for_account(saved_status, account);
 
 			gc->is_auto_away = GAIM_IDLE_AUTO_AWAY;
 		} else {
@@ -180,7 +177,6 @@ gaim_gtk_idle_check(gpointer data)
 			idle_time < 60 * gaim_prefs_get_int("/core/away/mins_before_away"))
 	{
 		/* Return from being idle */
-		const char *idleaway_name;
 		GaimSavedStatus *saved_status;
 
 		if (gc->is_auto_away == GAIM_IDLE_AWAY_BUT_NOT_AUTO_AWAY) {
@@ -192,10 +188,8 @@ gaim_gtk_idle_check(gpointer data)
 							gaim_account_get_username(account));
 
 			/* Return our account to its previous status */
-			idleaway_name = gaim_prefs_get_string("/core/savedstatus/current");
-			saved_status = gaim_savedstatus_find(idleaway_name);
-			if (saved_status)
-				gaim_savedstatus_activate_for_account(saved_status, account);
+			saved_status = gaim_savedstatus_get_idleaway();
+			gaim_savedstatus_activate_for_account(saved_status, account);
 		}
 	}
 	/* End of auto-away stuff */

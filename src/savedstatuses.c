@@ -31,12 +31,8 @@
 #include "util.h"
 #include "xmlnode.h"
 
-/*
- * TODO: Need to allow transient statuses to have empty titles.
- */
-
 /**
- * The information of a snap-shot of the statuses of all
+ * The information stores a snap-shot of the statuses of all
  * your accounts.  Basically these are your saved away messages.
  * There is an overall status and message that applies to
  * all your accounts, and then each individual account can
@@ -48,18 +44,14 @@
  */
 struct _GaimSavedStatus
 {
-	/**
-	 * A "transient" status is one that was used recently by
-	 * a Gaim user, but was not explicitly created using the
-	 * saved status UI.  For example, Gaim's previous status
-	 * is saved in the status.xml file, but should not show
-	 * up in the UI.
-	 */
-	gboolean transient;
-
 	char *title;
 	GaimStatusPrimitive type;
 	char *message;
+
+	/** The timestamp when this saved status was created. This must be unique. */
+	time_t creation_time;
+
+	time_t lastused;
 
 	GList *substatuses;      /**< A list of GaimSavedStatusSub's. */
 };
@@ -75,9 +67,20 @@ struct _GaimSavedStatusSub
 	char *message;
 };
 
-static GList   *saved_statuses = NULL;
-static guint    save_timer = 0;
-static gboolean statuses_loaded = FALSE;
+static GList      *saved_statuses = NULL;
+static guint       save_timer = 0;
+static gboolean    statuses_loaded = FALSE;
+
+/*
+ * This hash table keeps track of which timestamps we've
+ * used so that we don't have two saved statuses with the
+ * same 'creation_time' timestamp.  The 'created' timestamp
+ * is used as a unique identifier.
+ *
+ * So the key in this hash table is the creation_time and
+ * the value is a pointer to the GaimSavedStatus.
+ */
+static GHashTable *creation_times;
 
 
 /*********************************************************************
@@ -111,6 +114,26 @@ free_statussaved(GaimSavedStatus *status)
 	g_free(status);
 }
 
+/*
+ * Set the timestamp for when this saved status was created, and
+ * make sure it is unique.
+ */
+static void
+set_creation_time(GaimSavedStatus *status, time_t creation_time)
+{
+	g_return_if_fail(status != NULL);
+
+	/* Avoid using 0 because it's an invalid hash key */
+	status->creation_time = creation_time != 0 ? creation_time : 1;
+
+	while (g_hash_table_lookup(creation_times, &status->creation_time) != NULL)
+		status->creation_time++;
+
+	g_hash_table_insert(creation_times,
+						&status->creation_time,
+						status);
+}
+
 /*********************************************************************
  * Writing to disk                                                   *
  *********************************************************************/
@@ -142,14 +165,18 @@ static xmlnode *
 status_to_xmlnode(GaimSavedStatus *status)
 {
 	xmlnode *node, *child;
-	char transient[2];
+	char buf[21];
 	GList *cur;
 
-	snprintf(transient, sizeof(transient), "%d", status->transient);
-
 	node = xmlnode_new("status");
-	xmlnode_set_attrib(node, "transient", transient);
-	xmlnode_set_attrib(node, "name", status->title);
+	if (status->title != NULL)
+		xmlnode_set_attrib(node, "name", status->title);
+
+	snprintf(buf, sizeof(buf), "%lu", status->creation_time);
+	xmlnode_set_attrib(node, "created", buf);
+
+	snprintf(buf, sizeof(buf), "%lu", status->lastused);
+	xmlnode_set_attrib(node, "lastused", buf);
 
 	child = xmlnode_new_child(node, "state");
 	xmlnode_insert_data(child, gaim_primitive_get_id_from_type(status->type), -1);
@@ -309,24 +336,29 @@ parse_status(xmlnode *status)
 
 	ret = g_new0(GaimSavedStatus, 1);
 
-	/* Read the transient property */
-	attrib = xmlnode_get_attrib(status, "transient");
-	if ((attrib != NULL) && (attrib[0] == '1'))
-		ret->transient = TRUE;
-
 	/* Read the title */
 	attrib = xmlnode_get_attrib(status, "name");
-	if (attrib == NULL)
-		attrib = "No Title";
-	/* Ensure the title is unique */
 	ret->title = g_strdup(attrib);
-	i = 2;
-	while (gaim_savedstatus_find(ret->title) != NULL)
+
+	if (ret->title != NULL)
 	{
-		g_free(ret->title);
-		ret->title = g_strdup_printf("%s %d", attrib, i);
-		i++;
+		/* Ensure the title is unique */
+		i = 2;
+		while (gaim_savedstatus_find(ret->title) != NULL)
+		{
+			g_free(ret->title);
+			ret->title = g_strdup_printf("%s %d", attrib, i);
+			i++;
+		}
 	}
+
+	/* Read the creation time */
+	attrib = xmlnode_get_attrib(status, "created");
+	set_creation_time(ret, (attrib != NULL ? atol(attrib) : 0));
+
+	/* Read the last used time */
+	attrib = xmlnode_get_attrib(status, "lastused");
+	ret->lastused = (attrib != NULL ? atol(attrib) : 0);
 
 	/* Read the primitive status type */
 	node = xmlnode_get_child(status, "state");
@@ -395,11 +427,13 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 	GaimSavedStatus *status;
 
 	/* Make sure we don't already have a saved status with this title. */
-	g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
+	if (title != NULL)
+		g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
 
 	status = g_new0(GaimSavedStatus, 1);
 	status->title = g_strdup(title);
 	status->type = type;
+	set_creation_time(status, time(NULL));
 
 	saved_statuses = g_list_prepend(saved_statuses, status);
 
@@ -498,6 +532,7 @@ gboolean
 gaim_savedstatus_delete(const char *title)
 {
 	GaimSavedStatus *status;
+	time_t creation_time, current, idleaway;
 
 	status = gaim_savedstatus_find(title);
 
@@ -505,9 +540,23 @@ gaim_savedstatus_delete(const char *title)
 		return FALSE;
 
 	saved_statuses = g_list_remove(saved_statuses, status);
+	creation_time = gaim_savedstatus_get_creation_time(status);
+	g_hash_table_remove(creation_times, &creation_time);
 	free_statussaved(status);
 
 	schedule_save();
+
+	/*
+	 * If we just deleted our current status or our idleaway status,
+	 * then set the appropriate pref back to 0.
+	 */
+	current = gaim_prefs_get_int("/core/savedstatus/current");
+	if (current == creation_time)
+		gaim_prefs_set_int("/core/savedstatus/current", 0);
+
+	idleaway = gaim_prefs_get_int("/core/savedstatus/idleaway");
+	if (idleaway == creation_time)
+		gaim_prefs_set_int("/core/savedstatus/idleaway", 0);
 
 	return TRUE;
 }
@@ -516,6 +565,58 @@ const GList *
 gaim_savedstatuses_get_all(void)
 {
 	return saved_statuses;
+}
+
+GaimSavedStatus *
+gaim_savedstatus_get_current()
+{
+	int creation_time;
+	GaimSavedStatus *saved_status;
+
+	creation_time = gaim_prefs_get_int("/core/savedstatus/current");
+
+	if (creation_time == 0)
+	{
+		/*
+		 * We don't have a current saved statuses!  This is either a new
+		 * Gaim user or someone upgrading from Gaim 1.5.0 or older.  Add
+		 * a default status.
+		 */
+		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
+		gaim_savedstatus_set_message(saved_status, _("Hello!"));
+	}
+	else
+	{
+		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+	}
+
+	return saved_status;
+}
+
+GaimSavedStatus *
+gaim_savedstatus_get_idleaway()
+{
+	int creation_time;
+	GaimSavedStatus *saved_status;
+
+	creation_time = gaim_prefs_get_int("/core/savedstatus/idleaway");
+
+	if (creation_time == 0)
+	{
+		/*
+		 * We don't have a current saved statuses!  This is either a new
+		 * Gaim user or someone upgrading from Gaim 1.5.0 or older.  Add
+		 * a default status.
+		 */
+		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AWAY);
+		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
+	}
+	else
+	{
+		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+	}
+
+	return saved_status;
 }
 
 GaimSavedStatus *
@@ -529,7 +630,7 @@ gaim_savedstatus_find(const char *title)
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
 		status = (GaimSavedStatus *)iter->data;
-		if (!strcmp(status->title, title))
+		if ((status->title != NULL) && !strcmp(status->title, title))
 			return status;
 	}
 
@@ -539,7 +640,7 @@ gaim_savedstatus_find(const char *title)
 gboolean
 gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 {
-	return saved_status->transient;
+	return (saved_status->title == NULL);
 }
 
 const char *
@@ -558,6 +659,12 @@ const char *
 gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 {
 	return saved_status->message;
+}
+
+time_t
+gaim_savedstatus_get_creation_time(const GaimSavedStatus *saved_status)
+{
+	return saved_status->creation_time;
 }
 
 gboolean
@@ -603,7 +710,7 @@ gaim_savedstatus_substatus_get_message(const GaimSavedStatusSub *substatus)
 }
 
 void
-gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
+gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 {
 	GList *accounts, *node;
 
@@ -621,8 +728,13 @@ gaim_savedstatus_activate(const GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	gaim_prefs_set_string("/core/savedstatus/current",
-						  gaim_savedstatus_get_title(saved_status));
+	/*
+	 * TODO: Need to rotate the old status out of here so we
+	 *       can keep track of recently used statuses.
+	 */
+	saved_status->lastused = time(NULL);
+	gaim_prefs_set_int("/core/savedstatus/current",
+					   gaim_savedstatus_get_creation_time(saved_status));
 }
 
 void
@@ -674,25 +786,20 @@ gaim_savedstatuses_get_handle(void)
 void
 gaim_savedstatuses_init(void)
 {
+	creation_times = g_hash_table_new(g_int_hash, g_int_equal);
+
+	/*
+	 * Using 0 as the creation_time is a special case.
+	 * If someone calls gaim_savedstatus_get_current() or
+	 * gaim_savedstatus_get_idleaway() and either of those functions
+	 * sees a creation_time of 0, then it will create a default
+	 * saved status and return that to the user.
+	 */
+	gaim_prefs_add_none("/core/savedstatus");
+	gaim_prefs_add_int("/core/savedstatus/current", 0);
+	gaim_prefs_add_int("/core/savedstatus/idleaway", 0);
+
 	load_statuses();
-
-	if (saved_statuses == NULL)
-	{
-		/*
-		 * We don't have any saved statuses!  This is probably a new account,
-		 * so we add the "Default" status and the "Default when idle" status.
-		 */
-		GaimSavedStatus *saved_status;
-
-		saved_status = gaim_savedstatus_new(_("Default"), GAIM_STATUS_AVAILABLE);
-		gaim_savedstatus_set_message(saved_status, _("Hello!"));
-
-		saved_status = gaim_savedstatus_new(_("Default when idle"), GAIM_STATUS_AWAY);
-		gaim_savedstatus_set_message(saved_status, _("I'm not here right now"));
-	}
-
-	gaim_prefs_add_string("/core/savedstatus/current", _("Default"));
-	gaim_prefs_add_string("/core/savedstatus/idleaway", _("Default when idle"));
 }
 
 void
@@ -710,5 +817,7 @@ gaim_savedstatuses_uninit(void)
 		saved_statuses = g_list_remove(saved_statuses, saved_status);
 		free_statussaved(saved_status);
 	}
+
+	g_hash_table_destroy(creation_times);
 }
 

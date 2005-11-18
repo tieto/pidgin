@@ -30,6 +30,21 @@
  * could really be a plugin.  It's just a list of away states.  When
  * a user chooses one of the saved states, their Gaim accounts are set
  * to the settings of that state.
+ *
+ * In the savedstatus API, there is the concept of a 'transient'
+ * saved status.  A transient saved status is one that is not
+ * permanent.  Gaim will removed it automatically if it isn't
+ * used for a period of time.  Transient saved statuses don't
+ * have titles and they don't show up in the list of saved
+ * statuses.  In fact, if a saved status does not have a title
+ * then it is transient.  If it does have a title, then it is not
+ * transient.
+ *
+ * What good is a transient status, you ask?  They can be used to
+ * keep track of the user's 5 most recently used statuses, for
+ * example.  Basically if they just set a message on the fly,
+ * we'll cache it for them in case they want to use it again.  If
+ * they don't use it again, we'll just delete it.
  */
 
 /*
@@ -53,7 +68,8 @@ typedef struct _GaimSavedStatusSub  GaimSavedStatusSub;
  * list of saved statuses and writes the revised list to status.xml.
  *
  * @param title     The title of the saved status.  This must be
- *                  unique.
+ *                  unique.  Or, if you want to create a transient
+ *                  saved status, then pass in NULL.
  * @param type      The type of saved status.
  *
  * @return The newly created saved status, or NULL if the title you
@@ -136,6 +152,21 @@ gboolean gaim_savedstatus_delete(const char *title);
 const GList *gaim_savedstatuses_get_all(void);
 
 /**
+ * Returns the currently selected saved status.
+ *
+ * @return A pointer to the in-use GaimSavedStatus.
+ */
+GaimSavedStatus *gaim_savedstatus_get_current();
+
+/**
+ * Returns the saved status that gets used when your
+ * accounts become idle-away.
+ *
+ * @return A pointer to the idle-away GaimSavedStatus.
+ */
+GaimSavedStatus *gaim_savedstatus_get_idleaway();
+
+/**
  * Finds a saved status with the specified title.
  *
  * @param title The name of the saved status.
@@ -191,6 +222,23 @@ GaimStatusPrimitive gaim_savedstatus_get_type(const GaimSavedStatus *saved_statu
 const char *gaim_savedstatus_get_message(const GaimSavedStatus *saved_status);
 
 /**
+ * Return the time in seconds-since-the-epoch when this
+ * saved status was created.  Note: For any status created
+ * by Gaim 1.5.0 or older this value will be invalid and
+ * very small (close to 0).  This is because Gaim 1.5.0
+ * and older did not record the timestamp when the status
+ * was created.
+ *
+ * However, this value is guaranteed to be a unique
+ * identifier for the given saved status.
+ *
+ * @param saved_status The saved status.
+ *
+ * @return The timestamp when this saved status was created.
+ */
+time_t gaim_savedstatus_get_creation_time(const GaimSavedStatus *saved_status);
+
+/**
  * Determine if a given saved status has "substatuses,"
  * or if it is a simple status (the same for all
  * accounts).
@@ -242,7 +290,7 @@ const char *gaim_savedstatus_substatus_get_message(const GaimSavedStatusSub *sub
  *
  * @param saved_status The status you want to set your accounts to.
  */
-void gaim_savedstatus_activate(const GaimSavedStatus *saved_status);
+void gaim_savedstatus_activate(GaimSavedStatus *saved_status);
 
 /**
  * Sets the statuses for a given account to those specified

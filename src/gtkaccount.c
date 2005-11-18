@@ -1622,14 +1622,10 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* If this is a new account, then sign on! */
 	if (new) {
-		const char *current_savedstatus_name;
-		const GaimSavedStatus *saved_status = NULL;
+		const GaimSavedStatus *saved_status;
 
-		current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
-		if (current_savedstatus_name)
-			saved_status = gaim_savedstatus_find(current_savedstatus_name);
-
-		if (saved_status) {
+		saved_status = gaim_savedstatus_get_current();
+		if (saved_status != NULL) {
 			gaim_savedstatus_activate_for_account(saved_status, account);
 			gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 		}
@@ -2177,7 +2173,6 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
 	gboolean enabled;
-	const char *current_savedstatus_name;
 	const GaimSavedStatus *saved_status;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
@@ -2187,8 +2182,7 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   -1);
 
 	/* Set the statuses for this account to the current status */
-	current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
-	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+	saved_status = gaim_savedstatus_get_current();
 	gaim_savedstatus_activate_for_account(saved_status, account);
 
 	gaim_account_set_enabled(account, GAIM_GTK_UI, !enabled);

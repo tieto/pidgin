@@ -306,15 +306,15 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 static void
 update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 {
-	const char *current_savedstatus_name;
 	GaimSavedStatus *saved_status;
+	GaimStatusPrimitive primitive;
+	const char *message;
 
 	/* this function is inappropriate for ones with accounts */
 	if (status_box->account)
 		return;
 
-	current_savedstatus_name = gaim_prefs_get_string("/core/savedstatus/current");
-	saved_status = gaim_savedstatus_find(current_savedstatus_name);
+	saved_status = gaim_savedstatus_get_current();
 
 	/*
 	 * Suppress the "changed" signal because the status
@@ -322,58 +322,47 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 	 */
 	gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 
-	if (saved_status == NULL)
+	primitive = gaim_savedstatus_get_type(saved_status);
+	if (gaim_savedstatus_has_substatuses(saved_status) ||
+	    ((primitive != GAIM_STATUS_AVAILABLE) &&
+	     (primitive != GAIM_STATUS_OFFLINE) &&
+	     (primitive != GAIM_STATUS_AWAY) &&
+	     (primitive != GAIM_STATUS_HIDDEN)))
 	{
-		/* Default to "available" */
-		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 5);
 	}
 	else
 	{
-		GaimStatusPrimitive primitive;
-		const char *message;
+		if (primitive == GAIM_STATUS_AVAILABLE)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
+		if (primitive == GAIM_STATUS_OFFLINE)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
+		else if (primitive == GAIM_STATUS_AWAY)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
+		else if (primitive == GAIM_STATUS_HIDDEN)
+			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
+	}
 
-		primitive = gaim_savedstatus_get_type(saved_status);
-		if (gaim_savedstatus_has_substatuses(saved_status) ||
-		    ((primitive != GAIM_STATUS_AVAILABLE) &&
-		     (primitive != GAIM_STATUS_OFFLINE) &&
-		     (primitive != GAIM_STATUS_AWAY) &&
-		     (primitive != GAIM_STATUS_HIDDEN)))
-		{
-			gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 5);
-		}
-		else
-		{
-			if (primitive == GAIM_STATUS_AVAILABLE)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 0);
-			if (primitive == GAIM_STATUS_OFFLINE)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 3);
-			else if (primitive == GAIM_STATUS_AWAY)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 1);
-			else if (primitive == GAIM_STATUS_HIDDEN)
-				gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), 2);
-		}
+	message = gaim_savedstatus_get_message(saved_status);
+	if (!message || !*message)
+	{
+		status_box->imhtml_visible = FALSE;
+		gtk_widget_hide_all(status_box->vbox);
+	}
+	else
+	{
+		status_box->imhtml_visible = TRUE;
+		gtk_widget_show_all(status_box->vbox);
 
-		message = gaim_savedstatus_get_message(saved_status);
-		if (!message || !*message)
-		{
-			status_box->imhtml_visible = FALSE;
-			gtk_widget_hide_all(status_box->vbox);
-		}
-		else
-		{
-			status_box->imhtml_visible = TRUE;
-			gtk_widget_show_all(status_box->vbox);
+		/*
+		 * Suppress the "changed" signal because the status
+		 * was changed programmatically.
+		 */
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
 
-			/*
-			 * Suppress the "changed" signal because the status
-			 * was changed programmatically.
-			 */
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
-
-			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
-			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
-			gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
-		}
+		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+		gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 	}
 
 	/* Stop suppressing the "changed" signal. */
@@ -815,8 +804,6 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	if ((type < 0) || (type >= GAIM_STATUS_NUM_PRIMITIVES))
 		return;
 
-	/* TODO: Should save the previous status as a transient status? */
-
 	if (status_box->account) {
 		gint active;
 		GaimStatusType *status_type;
@@ -848,13 +835,10 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 		}
 	} else {
 		/* Save the newly selected status to prefs.xml and status.xml */
-		/* TODO: This should be saved as transient. */
-		const char *current = NULL;
 
 		/* Has the status been really changed? */
-		current = gaim_prefs_get_string("/core/savedstatus/current");
-		saved_status = gaim_savedstatus_find(current);
-		if (saved_status && gaim_savedstatus_get_type(saved_status) == type)
+		saved_status = gaim_savedstatus_get_current();
+		if (gaim_savedstatus_get_type(saved_status) == type)
 		{
 			if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
 				changed = FALSE;
@@ -862,9 +846,8 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 
 		if (changed)
 		{
-			saved_status = gaim_savedstatus_find(_("Default"));
-			if (saved_status == NULL)
-				saved_status = gaim_savedstatus_new(_("Default"), type);
+			/* Create a new transient saved status */
+			saved_status = gaim_savedstatus_new(NULL, type);
 			gaim_savedstatus_set_type(saved_status, type);
 			gaim_savedstatus_set_message(saved_status, message);
 
