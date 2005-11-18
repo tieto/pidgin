@@ -3123,11 +3123,64 @@ plugin_changed_cb(GaimPlugin *p, gpointer *data)
 	gaim_gtk_blist_update_plugin_actions();
 }
 
+static void
+unseen_conv_menu_cb(GtkMenuItem *item, GaimConversation *conv)
+{
+	g_return_if_fail(conv != NULL);
+	gaim_gtkconv_present_conversation(conv);
+}
+
+static void
+unseen_conv_menu()
+{
+	static GtkWidget *menu = NULL;
+	GList *convs;
+
+	if (menu)
+		gtk_widget_destroy(menu);
+
+	if (!gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT))
+		return;
+
+	menu = gtk_menu_new();
+
+	for (convs = gaim_get_ims(); convs != NULL ; convs = convs->next) {
+		GaimConversation *conv = convs->data;
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
+			GtkWidget *icon = gtk_image_new();
+			GdkPixbuf *pbuf = gaim_gtkconv_get_tab_icon(conv, TRUE);
+			GtkWidget *item;
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pbuf);
+			g_object_unref(pbuf);
+
+			item = gtk_image_menu_item_new_with_label(
+					gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), icon);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(unseen_conv_menu_cb), conv);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		}
+	}
+
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3,
+			gtk_get_current_event_time());
+}
+
 static gboolean
 menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 {
-	gaim_gtkconv_present_conversation(gaim_gtk_conversations_get_first_unseen(
-			GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
+	switch (event->button) {
+		case 1:
+			gaim_gtkconv_present_conversation(gaim_gtk_conversations_get_first_unseen(
+					GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
+			break;
+		case 3:
+			unseen_conv_menu();
+			break;
+	}
 	return TRUE;
 }
 
