@@ -188,40 +188,43 @@ void
 gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {
-	GSList *l;
+	GSList *list, *iter;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next)
+	list = gaim_find_buddies(account, name);
+	for (iter = list; iter != NULL; iter = iter->next)
 	{
 		GaimBuddy *buddy;
 		GaimPresence *presence;
 
-		buddy = (GaimBuddy *)l->data;
+		buddy = (GaimBuddy *)iter->data;
 
 		presence = gaim_buddy_get_presence(buddy);
 
 		gaim_presence_set_idle(presence, idle, idle_time);
 	}
+	g_slist_free(list);
 }
 
 void
 gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 		time_t login_time)
 {
-	GSList *l;
+	GSList *list, *iter;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next)
+	list = gaim_find_buddies(account, name);
+	for (iter = list; iter != NULL; iter = iter->next)
 	{
 		GaimBuddy *buddy;
 		GaimPresence *presence;
 
-		buddy = (GaimBuddy *)l->data;
+		buddy = (GaimBuddy *)iter->data;
 
 		if (login_time == 0)
 			login_time = time(NULL);
@@ -230,27 +233,29 @@ gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 
 		gaim_presence_set_login_time(presence, login_time);
 	}
+	g_slist_free(list);
 }
 
 void
 gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		const char *status_id, const char *attr_id, ...)
 {
-	GSList *l;
+	GSList *list, *iter;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next)
+	list = gaim_find_buddies(account, name);
+	for (iter = list; iter != NULL; iter = iter->next)
 	{
 		GaimBuddy *buddy;
 		GaimPresence *presence;
 		GaimStatus *status;
 		GaimStatus *old_status;
 
-		buddy = (GaimBuddy *)l->data;
+		buddy = (GaimBuddy *)iter->data;
 		presence = gaim_buddy_get_presence(buddy);
 		status   = gaim_presence_get_status(presence, status_id);
 
@@ -276,6 +281,7 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		gaim_presence_set_status_active(presence, status_id, TRUE);
 		gaim_blist_update_buddy_status(buddy, old_status);
 	}
+	g_slist_free(list);
 }
 
 void

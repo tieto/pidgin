@@ -1681,7 +1681,7 @@ static void mw_session_announce(struct mwSession *s,
   struct mwGaimPluginData *pd;
   GaimAccount *acct;
   GaimConversation *conv;
-  GSList *buddies;
+  GaimBuddy *buddy;
   char *who = from->user_id;
   char *msg;
   
@@ -1690,10 +1690,9 @@ static void mw_session_announce(struct mwSession *s,
   conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, acct);
   if(! conv) conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, who);
 
-  buddies = gaim_find_buddies(acct, who);
-  if(buddies) {
-    who = (char *) gaim_buddy_get_contact_alias(buddies->data);
-    g_slist_free(buddies);
+  buddy = gaim_find_buddy(acct, who);
+  if(buddy) {
+    who = g_strdup(gaim_buddy_get_contact_alias(buddy));
   }
 
   who = g_strdup_printf(_("Announcement from %s"), who);

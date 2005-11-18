@@ -848,7 +848,6 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 {
 	GaimAccount *account;
 	GaimBuddy *buddy;
-	GSList *sl;
 	const char *old;
 	const char *new;
 
@@ -856,12 +855,9 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 
 	account = gaim_connection_get_account(gc);
 
-	sl = gaim_find_buddies(account, msn_object_get_creator(obj));
-
-	if (sl == NULL)
+	buddy = gaim_find_buddy(account, msn_object_get_creator(obj));
+	if (buddy == NULL)
 		return FALSE;
-
-	buddy = (GaimBuddy *)sl->data;
 
 	old = gaim_blist_node_get_string((GaimBlistNode *)buddy, "icon_checksum");
 	new = msn_object_get_sha1c(obj);
@@ -930,18 +926,19 @@ msn_queue_buddy_icon_request(MsnUser *user)
 	if (obj == NULL)
 	{
 		/* It seems the user has not set a msnobject */
-		GSList *sl;
+		GSList *sl, *list;
 
 		/* TODO: I think we need better buddy icon core functions. */
 		gaim_buddy_icons_set_for_user(account, user->passport, NULL, -1);
 
-		sl = gaim_find_buddies(account, user->passport);
+		list = gaim_find_buddies(account, user->passport);
 
-		for (; sl != NULL; sl = sl->next)
+		for (sl = list; sl != NULL; sl = sl->next)
 		{
 			GaimBuddy *buddy = (GaimBuddy *)sl->data;
 			gaim_blist_node_remove_setting((GaimBlistNode*)buddy, "icon_checksum");
 		}
+		g_slist_free(list);
 
 		return;
 	}
@@ -977,7 +974,7 @@ got_user_display(MsnSlpCall *slpcall,
 	MsnUserList *userlist;
 	const char *info;
 	GaimAccount *account;
-	GSList *sl;
+	GSList *sl, *list;
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -993,13 +990,14 @@ got_user_display(MsnSlpCall *slpcall,
 	gaim_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
 								  (void *)data, size);
 
-	sl = gaim_find_buddies(account, slpcall->slplink->remote_user);
+	list = gaim_find_buddies(account, slpcall->slplink->remote_user);
 
-	for (; sl != NULL; sl = sl->next)
+	for (sl = list; sl != NULL; sl = sl->next)
 	{
 		GaimBuddy *buddy = (GaimBuddy *)sl->data;
 		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
 	}
+	g_slist_free(list);
 
 #if 0
 	/* Free one window slot */
@@ -1075,7 +1073,7 @@ msn_request_user_display(MsnUser *user)
 		gchar *data = NULL;
 		gsize len = 0;
 		const char *my_info = NULL;
-		GSList *sl;
+		GSList *sl, *list;
 
 #ifdef MSN_DEBUG_UD
 		gaim_debug_info("msn", "Requesting our own user display\n");
@@ -1096,13 +1094,14 @@ msn_request_user_display(MsnUser *user)
 		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
 		g_free(data);
 
-		sl = gaim_find_buddies(account, user->passport);
+		list = gaim_find_buddies(account, user->passport);
 
-		for (; sl != NULL; sl = sl->next)
+		for (sl = list; sl != NULL; sl = sl->next)
 		{
 			GaimBuddy *buddy = (GaimBuddy *)sl->data;
 			gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
 		}
+		g_slist_free(list);
 
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;

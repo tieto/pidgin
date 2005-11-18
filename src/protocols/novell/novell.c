@@ -151,6 +151,7 @@ _get_status_resp_cb(NMUser * user, NMERR_T ret_code,
 					_update_buddy_status(buddy, status, time(0));
 				}
 			}
+			g_slist_free(buddies);
 		}
 
 	} else {
