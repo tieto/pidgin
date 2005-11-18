@@ -585,7 +585,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		(gc->account->perm_deny != GAIM_PRIVACY_ALLOW_USERS)))
 	{
 		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
-		gaim_debug_info("yahoo", "Privacy defaulting to GAIM_PRIVACY_DENY_USERS.\n",
+		gaim_debug_info("yahoo", "%s privacy defaulting to GAIM_PRIVACY_DENY_USERS.\n",
 		      gc->account->username);
 	}
 
@@ -593,8 +593,11 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		buddies = g_strsplit(perm_presence_buddies, ",", -1);
 		for (bud = buddies; bud && *bud; bud++) {
 			f = yahoo_friend_find(gc, *bud);
-			if (f)
+			if (f) {
+				gaim_debug_info("yahoo", "%s setting presence for %s to PERM_OFFLINE\n",
+								 gc->account->username, *bud);
 				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
+			}
 		}
 		g_strfreev(buddies);
 
