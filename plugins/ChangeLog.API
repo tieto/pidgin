@@ -147,62 +147,58 @@ version 2.0.0:
 	* gaim_gtk_create_prpl_icon()
 	* gaim_gtk_create_prpl_icon_with_status()
 
-	Signals - Changed:
+	Signals - Changed:  (See the Doxygen docs for details on all signals.)
+	* Signal propagation now stops after a handler returns a non-NULL value.
+		This value is now returned. Previously, all registered handlers were
+		called and the value from the last handler was used.
 	* "received-im-msg" and "received-chat-msg" to match, both now pass a
 		conversation pointer and flags
 	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
 		conversation pointer and a pointer to the flags.
 	* "drawing-tooltip": the second argument is now a GString* instead of
 		a char**
-	* Signal propagation now stops after a handler returns a non-NULL value.
-		This value is now returned. Previously, all registered handlers were
-		called and the value from the last handler was used.
 	* "chat-invited" handlers can now return a value to control what happens
-		to the invite (accept, reject, prompt the user).  See the Doxygen
-		documentation for the details.
-	* Renamed "conversation-drag-end" to "conversation-dragging" and emit
-		before the conv. window swap happens. This prevents the old conv window
-		from being freed before the signal emits.
+		to the invite (accept, reject, prompt the user).
 	* "buddy-typing" and "buddy-typing-stopped": replaced the GaimConversation*
 		with GaimAccount*, const char *name.  Also, the signal is now emitted
-		regardless of whether a conversation exists	and regardless of whether
+		regardless of whether a conversation exists and regardless of whether
 		the user is on the buddy list.
 
-	Signals - Added:
-	* "account-disabled": Account was enabled; see Doxygen docs for full details.
-	* "account-enabled": Account was disabled; see Doxygen docs for full details.
-	* "account-status-changed": Account status changed; see Doxygen docs for full details.
-	* "cipher-added": Cipher was added; see Doxygen docs for full details.
-	* "cipher-removed": Cipher was removed; see Doxygen docs for full details.
-	* "dbus-method-called": See Doxygen docs for full details.
-	* "dbus-introspect": See Doxygen docs for full details.
-	* "cipher-removed": Cipher was removed; see Doxygen docs for full details.
-	* "file-recv-accept": See Doxygen docs for details.
-	* "file-recv-start": See Doxygen docs for details.
-	* "file-recv-cancel": See Doxygen docs for details.
-	* "file-recv-complete": See Doxygen docs for details.
-	* "file-send-accept": See Doxygen docs for details.
-	* "file-send-start": See Doxygen docs for details.
-	* "file-send-cancel": See Doxygen docs for details.
-	* "file-send-complete": See Doxygen docs for details.
-	* "buddy-added": Self explanatory; see Doxygen docs for full details.
-	* "buddy-removed": Self explanatory; see Doxygen docs for full details.
-	* "blist-node-aliased": An alias was set for a buddy, chat or contact.
-	* "buddy-status-changed": A buddy changed status; see Doxygen docs for full details.
-	* "buddy-idle-changed": A buddy's idle status changed; see Doxygen docs for full details.
-		See Doxygen docs for details.
-	* "buddy-icon-changed": See Doxygen docs for details.
-	* "gtkblist-hiding": See Doxygen docs for details.
-	* "gtkblist-unhiding": See Doxygen docs for details.
+	Signals - Added:  (See the Doxygen docs for details on all signals.)
+	* "account-disabled"
+	* "account-status-changed"
+	* "cipher-added"
+	* "cipher-removed"
+	* "conversation-dragging"
+	* "dbus-method-called"
+	* "dbus-introspect"
+	* "cipher-removed"
+	* "file-recv-accept"
+	* "file-recv-start"
+	* "file-recv-cancel"
+	* "file-recv-complete"
+	* "file-send-accept"
+	* "file-send-start"
+	* "file-send-cancel"
+	* "file-send-complete"
+	* "buddy-added"
+	* "buddy-removed"
+	* "blist-node-aliased"
+	* "buddy-status-changed"
+	* "buddy-idle-changed": A buddy's idle status changed.
+	* "buddy-icon-changed"
+	* "gtkblist-hiding"
+	* "gtkblist-unhiding"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed
-	* "account-warned": ???
+	* "account-warned"
 	* "buddy-away": replaced by buddy-status-changed
 	* "buddy-back": replaced by buddy-status-changed
 	* "buddy-idle": replaced by buddy-idle-changed
 	* "buddy-unidle": replaced by buddy-idle-changed
 	* "buddy-icon-cached": replaced by buddy-icon-changed
+	* "conversation-drag-end": replaced by "conversation-dragging"
 
 version 1.5.0 (8/11/2005):
 	* Added: gaim_xfer_conversation_write
