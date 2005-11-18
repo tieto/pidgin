@@ -3325,6 +3325,17 @@ static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 	}
 }
 
+static gboolean
+pane_position_cb(GtkPaned *paned, GParamSpec *param_spec, gpointer data)
+{
+	if (!strcmp(g_param_spec_get_name(param_spec), "position")) {
+		gaim_prefs_set_int("/gaim/gtk/blist/pane",
+		                   gtk_paned_get_position(paned));
+	}
+
+	return FALSE;
+}
+
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
 	void *handle;
@@ -3391,6 +3402,10 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	vpane = gtk_vpaned_new();
 	gtk_widget_show(vpane);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), vpane, TRUE, TRUE, 0);
+	gtk_paned_set_position(GTK_PANED(vpane),
+	                       gaim_prefs_get_int("/gaim/gtk/blist/pane"));
+	g_signal_connect(G_OBJECT(vpane), "notify",
+	                 G_CALLBACK(pane_position_cb), NULL);
 
 	/****************************** GtkTreeView **********************************/
 	sw = gtk_scrolled_window_new(NULL,NULL);
@@ -4840,6 +4855,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/width", 309); /* Golden ratio, baby */
 	gaim_prefs_add_int("/gaim/gtk/blist/height", 500); /* Golden ratio, baby */
+	gaim_prefs_add_int("/gaim/gtk/blist/pane", 300);
 	gaim_prefs_add_int("/gaim/gtk/blist/tooltip_delay", 500);
 
 	/* Register our signals */
