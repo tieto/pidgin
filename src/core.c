@@ -30,6 +30,7 @@
 #include "debug.h"
 #include "ft.h"
 #include "network.h"
+#include "notify.h"
 #include "plugin.h"
 #include "pounce.h"
 #include "prefs.h"
@@ -110,6 +111,7 @@ gaim_core_init(const char *ui)
 	gaim_accounts_init();
 	gaim_savedstatuses_init();
 	gaim_ciphers_init();
+	gaim_notify_init();
 	gaim_connections_init();
 	gaim_conversations_init();
 	gaim_blist_init();
@@ -152,6 +154,7 @@ gaim_core_quit(void)
 	gaim_pounces_uninit();
 	gaim_blist_uninit();
 	gaim_ciphers_uninit();
+	gaim_notify_uninit();
 	gaim_conversations_uninit();
 	gaim_connections_uninit();
 	gaim_buddy_icons_uninit();

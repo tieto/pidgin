@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
 	gtkimhtml-signals.dox \
+	notify-signals.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \
 	the_penguin.txt \

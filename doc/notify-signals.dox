@@ -1,0 +1,23 @@
+/** @page conversation-signals Notification Signals
+
+ @signals
+  @signal displaying-userinfo
+ @endsignals
+
+ @signaldef displaying-userinfo
+  @signalproto
+void (*displaying_userinfo)(GaimAccount *account, const char *who, char **infotext);
+  @endsignalproto
+  @signaldesc
+   Emitted before userinfo is handed to the UI to display.
+   @a infotext is a pointer to a string, so a plugin can replace the text that
+   will be displayed.
+  @note
+   Make sure to free @a *infotext before you replace it!
+  @param account  The account on which the info was obtained.
+  @param who      The screen name of the user whose info is to be displayed.
+  @param infotext A pointer to the userinfo text to be displayed.
+ @endsignaldef
+
+*/
+// vim: syntax=c tw=75 et

@@ -339,15 +339,21 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 
 	if (ops != NULL && ops->notify_userinfo != NULL) {
 		GaimNotifyInfo *info;
+		char *infotext = g_strdup(text);
 
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_USERINFO;
 		info->handle    = gc;
+
+		gaim_signal_emit(gaim_notify_get_handle(), "displaying-userinfo",
+						 gaim_connection_get_account(gc), who, &infotext);
+
 		info->ui_handle = ops->notify_userinfo(gc, who,
-											   text, cb, user_data);
+											   infotext, cb, user_data);
 
 		handles = g_list_append(handles, info);
 
+		g_free(infotext);
 		return info->ui_handle;
 	}
 
@@ -441,4 +447,31 @@ GaimNotifyUiOps *
 gaim_notify_get_ui_ops(void)
 {
 	return notify_ui_ops;
+}
+
+void *
+gaim_notify_get_handle(void)
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+gaim_notify_init(void)
+{
+	gpointer handle = gaim_notify_get_handle();
+
+	gaim_signal_register(handle, "displaying-userinfo",
+						 gaim_marshal_VOID__POINTER_POINTER_POINTER, NULL, 3,
+						 gaim_value_new(GAIM_TYPE_SUBTYPE,
+										GAIM_SUBTYPE_ACCOUNT),
+						 gaim_value_new(GAIM_TYPE_STRING),
+						 gaim_value_new_outgoing(GAIM_TYPE_STRING));
+}
+
+void
+gaim_notify_uninit(void)
+{
+	gaim_signals_unregister_by_instance(gaim_notify_get_handle());
 }

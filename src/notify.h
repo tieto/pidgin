@@ -448,6 +448,31 @@ GaimNotifyUiOps *gaim_notify_get_ui_ops(void);
 
 /*@}*/
 
+/**************************************************************************/
+/** @name Notify Subsystem                                         */
+/**************************************************************************/
+/*@{*/
+
+/**
+ * Returns the notify subsystem handle.
+ *
+ * @return The notify subsystem handle.
+ */
+void *gaim_notify_get_handle(void);
+
+/**
+ * Initializes the notify subsystem.
+ */
+void gaim_notify_init(void);
+
+/**
+ * Uninitializes the notify subsystem.
+ */
+void gaim_notify_uninit(void);
+
+/*@}*/
+
+
 #ifdef __cplusplus
 }
 #endif
