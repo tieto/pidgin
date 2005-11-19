@@ -428,17 +428,17 @@ msn_new_xfer(GaimConnection *gc, const char *who)
 	MsnSession *session;
 	MsnSlpLink *slplink;
 	GaimXfer *xfer;
-	
+
 	session = gc->proto_data;
-	
+
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
-	
+
 	slplink = msn_session_get_slplink(session, who);
-	
+
 	xfer->data = slplink;
-	
-	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);	
-	
+
+	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+
 	return xfer;
 }
 
