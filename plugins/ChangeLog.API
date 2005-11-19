@@ -155,6 +155,8 @@ version 2.0.0:
 	* gaim_gtk_pounces_manager_show()
 	* gaim_gtk_pounces_manager_hide()
 	* gaim_gtk_pounce_editor_show()
+	* GAIM_STOCK_CONNECT, GAIM_STOCK_DISCONNECT
+	* GAIM_STOCK_PLUGIN
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

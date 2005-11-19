@@ -307,7 +307,7 @@ docklet_menu() {
 	gaim_separator(menu);
 
 	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(gaim_gtk_accounts_window_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Plugins"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_plugin_dialog_show), NULL, 0, 0, NULL);
+	gaim_new_item_from_stock(menu, _("Plugins"), GAIM_STOCK_PLUGIN, G_CALLBACK(gaim_gtk_plugin_dialog_show), NULL, 0, 0, NULL);
 	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(gaim_gtk_prefs_show), NULL, 0, 0, NULL);
 
 	gaim_separator(menu);
