@@ -961,9 +961,9 @@ network_page()
 
 	vbox = gaim_gtk_make_frame (ret, _("IP Address"));
 
-	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("STUN Server:"), "/core/network/stun_server", NULL);
+	stun_server_entry = gaim_gtk_prefs_labeled_entry(vbox,_("ST_UN server:"), "/core/network/stun_server", NULL);
 
-	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP Address"),
+	auto_ip_checkbox = gaim_gtk_prefs_checkbox(_("_Autodetect IP address"),
 			"/core/network/auto_ip", vbox);
 
 	table = gtk_table_new(2, 1, FALSE);
@@ -1002,14 +1002,14 @@ network_page()
 	ports_checkbox = gaim_gtk_prefs_checkbox(_("_Manually specify range of ports to listen on"),
 			"/core/network/ports_range_use", vbox);
 
-	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_Start Port:"),
+	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_Start port:"),
 			"/core/network/ports_range_start", 0, 65535, sg);
 	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), spin_button);
 
-	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_End Port:"),
+	spin_button = gaim_gtk_prefs_labeled_spin_button(vbox, _("_End port:"),
 			"/core/network/ports_range_end", 0, 65535, sg);
 	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
@@ -1279,7 +1279,7 @@ logging_page()
 	vbox = gaim_gtk_make_frame (ret, _("Logging"));
 	names = gaim_log_logger_get_options();
 
-	gaim_gtk_prefs_dropdown_from_list(vbox, _("Log _Format:"), GAIM_PREF_STRING,
+	gaim_gtk_prefs_dropdown_from_list(vbox, _("Log _format:"), GAIM_PREF_STRING,
 				 "/core/logging/format", names);
 
 	g_list_free(names);

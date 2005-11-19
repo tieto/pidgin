@@ -743,10 +743,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
 
-	/* Screen Name */
+	/* Screen name */
 	dialog->screenname_entry = gtk_entry_new();
 
-	add_pref_box(dialog, vbox, _("Screen Name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("Screen name:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
