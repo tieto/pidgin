@@ -5,25 +5,25 @@ version 2.0.0:
 	* All the status stuff. Yay!
 	* gaim_prefs_connect_callback(), added handle parameter
 	* gtk_imhtml_toolbar now descends from GtkHBox making it easier to add your
-		own widgets to it
+	  own widgets to it
 	* gaim_find_conversation_with_account, added a "type" parameter
 	* gaim_gtk_prefs_labeled_spin_button, the "key" parameter is now a
-		const char* instead of just a char*
+	  const char* instead of just a char*
 	* gaim_gtk_prefs_labeled_entry, the "key" parameter is now a const char*
-		instead of just a char*
+	  instead of just a char*
 	* the add_buddy perl sub.  The sub now takes the account as the first
-		argument, and buddy and group as the second and third.  It also adds
-		the buddy to the server-side buddy list of the given account.
+	  argument, and buddy and group as the second and third.  It also adds
+	  the buddy to the server-side buddy list of the given account.
 	* gaim_blist_node_action_new, added a fourth argument, a GList of
-		GaimBlistNodeActions to be created as a submenu of the item.
+	  GaimBlistNodeActions to be created as a submenu of the item.
 	* gaim_connection_new, gaim_account_connect and gaim_account_register no
-		longer return a GaimConnection
+	  longer return a GaimConnection
 	* keep_alive in GaimConnection is renamed to keepalive
 	* gaim_mkstemp, added a second argument, a boolean, of whether or not the
-		file is binary
+	  file is binary
 	* gaim_log_logger_new, rewritten
 	* gaim_conv_window_remove_conversation()'s last argument to be a
-		GaimConversation.
+	  GaimConversation.
 	* A new blocked icon: pixmaps/status/default/blocked.png
 	* gtk_imhtml_toggle_bold(): No longer returns a value
 	* gtk_imhtml_toggle_italic(): No longer returns a value
@@ -31,21 +31,21 @@ version 2.0.0:
 	* gtk_imhtml_toggle_strike(): No longer returns a value
 	* gaim_log_new(), added conv parameter
 	* gaim_buddy_icon_new(), leaves a reference which the caller owns. Use
-		gaim_buddy_icon_unref() immediately if you don't want a reference (the
-		old behavior).
+	  gaim_buddy_icon_unref() immediately if you don't want a reference (the
+	  old behavior).
 	* GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
 	* GAIM_CONV_IM to GAIM_CONV_TYPE_IM.
 	* GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
 	* GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
 	* GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
 	* GaimConversationUiOps.write_conv, Replaced const char *who with
-		const char *name, const char *alias
+	  const char *name, const char *alias
 	* gaim_conv_chat_add_users(), added extra_msgs and new_arrivals (pass NULL
-		and FALSE respectively, to get the same behavior as before)
+	  and FALSE respectively, to get the same behavior as before)
 	* chat_add_users in GaimConversationUiOps, added flags and aliases
 	* chat_rename_user in GaimConversationUiOps, added new_alias
 	* GaimConversation.log became GList * GaimConversation.logs, so that a
-		conversation can have multiple logs at once
+	  conversation can have multiple logs at once
 	* gaim_conv_chat_add_user, added extra_msgs list
 	* gaim_notify_userinfo, removed primary and secondary parameters
 	* GaimNotifyUiOps.notify_userinfo: removed title, primary, and
@@ -58,11 +58,11 @@ version 2.0.0:
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
-		preference)
+	  preference)
 	* gaim_escape_html(const char *html) (use g_markup_escape_text(html, -1)
-		instead)
+	  instead)
 	* gaim_accounts_sync, account changes are now scheduled to be saved
-		automatically
+	  automatically
 	* gaim_connection_connect
 	* gaim_connection_disconnect
 	* gaim_connection_register
@@ -73,12 +73,12 @@ version 2.0.0:
 	* serv_finish_login
 	* gaim_chat_get_display_name
 	* gaim_conversation_set_history, gaim_conversation_get_history, and
-		GaimConversation->history.  Use gtk_imhtml_get_markup instead.
+	  GaimConversation->history.  Use gtk_imhtml_get_markup instead.
 	* serv_rename_group
 	* set_gaim_user_dir to gaim_util_set_user_dir
 	* create_prpl_icon to gaim_gtk_create_prpl_icon
 	* Window flashing support in the core: gaim_conv_window_flash, and flash UI
-		operation for conversations.  Use signal "received-im-msg" or similar.
+	  operation for conversations.  Use signal "received-im-msg" or similar.
 	* All warning stuff from the core.
 	* gaim_gtkconv_get_dest_tab_at_xy(), instead use gaim_gtkconv_get_tab_at_xy()
 	* chat_add_user from GaimConversationUiOps
@@ -101,35 +101,35 @@ version 2.0.0:
 	Added:
 	* gaim_prefs_disconnect_by_handle()
 	* a password field to GaimConnection, which only persists for the
-		session (when "remember password" is false, account->password is
-		NEVER set) Use gaim_connection_get_password(GaimConnection *gc)
+	  session (when "remember password" is false, account->password is
+	  NEVER set) Use gaim_connection_get_password(GaimConnection *gc)
 	* gaim_log_common_writer, gaim_log_common_lister, gaim_log_common_sizer,
-		and gaim_log_get_log_dir to allow log formats that use standard Gaim
-		log directory to use Gaim's built-in code for these purposes.
+	  and gaim_log_get_log_dir to allow log formats that use standard Gaim
+	  log directory to use Gaim's built-in code for these purposes.
 	* GaimLogCommonLoggerData struct for a basic logger_data struct to be
-		used with "common" logger functions.
+	  used with "common" logger functions.
 	* gaim_gtk_blist_node_is_contact_expanded, returns TRUE if the given
-		blist node is a buddy inside an expanded contact, or is itself an
-		expanded contact
+	  blist node is a buddy inside an expanded contact, or is itself an
+	  expanded contact
 	* GaimLogSet struct, get_log_sets function to GaimLogLogger,
-		gaim_log_get_log_sets, gaim_log_set_compare
+	  gaim_log_get_log_sets, gaim_log_set_compare
 	* gaim_privacy_check(), to check if a given user is allowed to send
-		messages to the specified account
+	  messages to the specified account
 	* gtk_imhtml_clear_formatting()
 	* gtk_imhtml_delete to clear out part of a imhtml buffer
 	* gtk_imhtml_get_protocol_name()
 	* gaim_buddy_icons_get_full_path(), to get the full path of a buddy
-		icon setting
+	  icon setting
 	* CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
-		CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
-		user list
+	  CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
+	  user list
 	* gaim_account_add_buddy()
 	* gaim_account_add_buddies()
 	* gaim_account_remove_buddy()
 	* gaim_account_remove_buddies()
 	* gaim_account_change_password()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
-		be closed. New logs will be opened as necessary.
+	  be closed. New logs will be opened as necessary.
 	* gaim_plugin_get_id()
 	* gaim_plugin_get_name()
 	* gaim_plugin_get_version()
@@ -158,20 +158,20 @@ version 2.0.0:
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
-		This value is now returned. Previously, all registered handlers were
-		called and the value from the last handler was used.
+	  This value is now returned. Previously, all registered handlers were
+	  called and the value from the last handler was used.
 	* "received-im-msg" and "received-chat-msg" to match, both now pass a
-		conversation pointer and flags
+	  conversation pointer and flags
 	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
-		conversation pointer and a pointer to the flags.
+	  conversation pointer and a pointer to the flags.
 	* "drawing-tooltip": the second argument is now a GString* instead of
-		a char**
+	  a char**
 	* "chat-invited" handlers can now return a value to control what happens
-		to the invite (accept, reject, prompt the user).
+	  to the invite (accept, reject, prompt the user).
 	* "buddy-typing" and "buddy-typing-stopped": replaced the GaimConversation*
-		with GaimAccount*, const char *name.  Also, the signal is now emitted
-		regardless of whether a conversation exists and regardless of whether
-		the user is on the buddy list.
+	  with GaimAccount*, const char *name.  Also, the signal is now emitted
+	  regardless of whether a conversation exists and regardless of whether
+	  the user is on the buddy list.
 
 	Signals - Added:  (See the Doxygen docs for details on all signals.)
 	* "account-disabled"
