@@ -5029,7 +5029,7 @@ static void ft_outgoing_cancel(GaimXfer *xfer) {
 }
 
 
-static GaimXfer *mw_prpl_new_xfer(GaimConnect *gc, const char *who) {
+static GaimXfer *mw_prpl_new_xfer(GaimConnection *gc, const char *who) {
   GaimAccount *acct;
   GaimXfer *xfer;
 
