@@ -52,6 +52,9 @@ version 2.0.0:
 	  secondary parameters
 	* Idle timers are now added and removed in gtkidle.c in response
 	  to the signed-on and signed-off signals
+	* GaimXfer->ops.read, GaimXfer->ops.write, gaim_xfer_set_read_fnc(),
+	  gaim_xfer_set_write_fnc(), gaim_xfer_read(), gaim_xfer_write():
+	  Changed ssize_t to gssize
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

@@ -85,7 +85,7 @@ static void jabber_oob_xfer_start(GaimXfer *xfer)
 	g_free(buf);
 }
 
-static ssize_t jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
+static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
 	JabberOOBXfer *jox = xfer->data;
 	char test;
 	int size;

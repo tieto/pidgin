@@ -693,7 +693,7 @@ void gaim_xfer_set_request_denied_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 }
 
 void
-gaim_xfer_set_read_fnc(GaimXfer *xfer, ssize_t (*fnc)(guchar **, GaimXfer *))
+gaim_xfer_set_read_fnc(GaimXfer *xfer, gssize (*fnc)(guchar **, GaimXfer *))
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -702,7 +702,7 @@ gaim_xfer_set_read_fnc(GaimXfer *xfer, ssize_t (*fnc)(guchar **, GaimXfer *))
 
 void
 gaim_xfer_set_write_fnc(GaimXfer *xfer,
-						ssize_t (*fnc)(const guchar *, size_t, GaimXfer *))
+						gssize (*fnc)(const guchar *, size_t, GaimXfer *))
 {
 	g_return_if_fail(xfer != NULL);
 
@@ -750,10 +750,10 @@ gaim_xfer_set_cancel_recv_fnc(GaimXfer *xfer, void (*fnc)(GaimXfer *))
 	xfer->ops.cancel_recv = fnc;
 }
 
-ssize_t
+gssize
 gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 {
-	ssize_t s, r;
+	gssize s, r;
 
 	g_return_val_if_fail(xfer   != NULL, 0);
 	g_return_val_if_fail(buffer != NULL, 0);
@@ -779,10 +779,10 @@ gaim_xfer_read(GaimXfer *xfer, guchar **buffer)
 	return r;
 }
 
-ssize_t
+gssize
 gaim_xfer_write(GaimXfer *xfer, const guchar *buffer, size_t size)
 {
-	ssize_t r, s;
+	gssize r, s;
 
 	g_return_val_if_fail(xfer   != NULL, 0);
 	g_return_val_if_fail(buffer != NULL, 0);
@@ -807,7 +807,7 @@ transfer_cb(gpointer data, gint source, GaimInputCondition condition)
 	GaimXferUiOps *ui_ops;
 	GaimXfer *xfer = (GaimXfer *)data;
 	guchar *buffer = NULL;
-	ssize_t r = 0;
+	gssize r = 0;
 
 	if (condition & GAIM_INPUT_READ) {
 		r = gaim_xfer_read(xfer, &buffer);
