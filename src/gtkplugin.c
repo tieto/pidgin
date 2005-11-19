@@ -334,6 +334,34 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	}
 }
 
+static void
+show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer null)
+{
+	GtkTreeSelection *sel;
+	GtkTreeIter iter;
+	GaimPlugin *plugin;
+	GtkTreeModel *model;
+
+	sel = gtk_tree_view_get_selection(view);
+
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+		return;
+	
+	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
+
+	/* If the plugin is not loaded, then load it first. */
+	if (!gaim_plugin_is_loaded(plugin))
+	{
+		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+		gchar *pth = gtk_tree_path_to_string(path);
+		gtk_tree_path_free(path);
+		plugin_load(NULL, pth, model);
+		g_free(pth);
+	}
+	/* Now show the pref-dialog for the plugin */
+	plugin_dialog_response_cb(NULL, 98121, sel);
+}
+
 void gaim_gtk_plugin_dialog_show()
 {
 	GtkWidget *sw;
@@ -371,6 +399,9 @@ void gaim_gtk_plugin_dialog_show()
 	update_plugin_list(ls);
 
 	event_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(ls));
+
+	g_signal_connect(G_OBJECT(event_view), "row-activated",
+				G_CALLBACK(show_plugin_prefs_cb), event_view);
 
 	rend = gtk_cell_renderer_toggle_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));
