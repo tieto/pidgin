@@ -284,7 +284,7 @@ char *irc_mirc2html(const char *string)
 	const char *cur, *end;
 	char fg[3] = "\0\0", bg[3] = "\0\0";
 	int fgnum, bgnum;
-	int font = 0, bold = 0, underline = 0;
+	int font = 0, bold = 0, underline = 0, italic = 0;
 	GString *decoded = g_string_sized_new(strlen(string));
 
 	cur = string;
@@ -338,6 +338,16 @@ char *irc_mirc2html(const char *string)
 				decoded = g_string_append_c(decoded, '>');
 			}
 			break;
+		case '\011':
+			cur++;
+			if (!italic) {
+				decoded = g_string_append(decoded, "<I>");
+				italic = TRUE;
+			} else {
+				decoded = g_string_append(decoded, "</I>");
+				italic = FALSE;
+			}
+			break;
 		case '\037':
 			cur++;
 			if (!underline) {
@@ -358,6 +368,8 @@ char *irc_mirc2html(const char *string)
 		case '\000':
 			if (bold)
 				decoded = g_string_append(decoded, "</B>");
+			if (italic)
+				decoded = g_string_append(decoded, "</I>");
 			if (underline)
 				decoded = g_string_append(decoded, "</U>");
 			if (font)
