@@ -327,3 +327,31 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
 (16:35:01) noname2: hello gaim is new port ?
 (16:35:08) noname2: msn
 (16:35:17) LSchiere2: what in the world are you trying to ask
+
+---
+
+(00:22:45) user:         hi
+(00:22:47) user:         can you help me?
+(00:22:56) richielaager: I don't know.
+(00:23:02) user:         can i borrow a pencil?
+(00:24:13) richielaager: Only if you're willing to pay transportation costs
+                         to get you the pencil, plus $60/hour for the time it
+                         takes me to transport said pencil to you, plus a pencil
+                         rental fee of $1/day, plus a one time pencil sharpening
+                         service charge of $5.
+(00:24:37) user:         I have a 100$ in paypal, where do i send it to?
+(00:25:10) richielaager: I hear some guys in Nigeria are looking for account
+                         information?
+(00:25:32) user:         or can you put a pencil feature into gaim? to create a
+                         physical pencil out of a rubber reconstruction machine?
+(00:25:50) user:         those guys only sent wood- no lead :(
+(00:26:10) user:         they told me it was "invisible" lead.
+(00:28:27) richielaager: Interesting... They sent me plenty of visible lead,
+                         they said, it's just waiting for me at a holding company
+                         in Moscow or some place like that.
+(00:28:53) user:         Seems you've been had.
+(00:29:09) user:         The invisible lead works quite well.
+(00:29:28) user:         Anyways, I'm here to ask a question.
+(00:29:29) richielaager: Damn!
+(00:29:42) richielaager: Damn to that too. :)
+
