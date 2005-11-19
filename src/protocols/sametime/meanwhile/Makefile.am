@@ -40,6 +40,7 @@ MEANWHILESOURCES = \
 AM_CFLAGS = \
 	$(GLIB_CFLAGS) $(GMP_CFLAGS) \
 	$(DEBUG_CFLAGS) \
+	-DG_LOG_DOMAIN=\"meanwhile\"
 	-I$(top_srcdir)/src 
 
 libmeanwhile_la_SOURCES = $(MEANWHILESOURCES)
