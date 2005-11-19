@@ -124,7 +124,6 @@ static int primitive_scores[] =
 {
 	0,      /* unset                    */
 	-500,   /* offline                  */
-	0,      /* online                   */
 	100,    /* available                */
 	-75,    /* unavailable              */
 	-50,    /* hidden                   */
@@ -136,8 +135,8 @@ static int primitive_scores[] =
 
 static GHashTable *buddy_presences = NULL;
 
-#define SCORE_IDLE      8
-#define SCORE_IDLE_TIME 9
+#define SCORE_IDLE      7
+#define SCORE_IDLE_TIME 8
 
 /**************************************************************************
  * GaimStatusPrimitive API
@@ -1576,7 +1575,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 	int score1 = 0, score2 = 0;
 	const GList *l;
 
-	if ((presence1 == NULL && presence2 == NULL) || (presence1 == presence2))
+	if (presence1 == presence2)
 		return 0;
 	else if (presence1 == NULL)
 		return 1;
@@ -1592,6 +1591,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 		if (gaim_status_is_active(status))
 			score1 += primitive_scores[gaim_status_type_get_primitive(type)];
 	}
+	score1 += gaim_account_get_int(gaim_presence_get_account(presence1), "score", 0);
 
 	/* Compute the score of the second set of statuses. */
 	for (l = gaim_presence_get_statuses(presence2); l != NULL; l = l->next)
@@ -1602,6 +1602,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 		if (gaim_status_is_active(status))
 			score2 += primitive_scores[gaim_status_type_get_primitive(type)];
 	}
+	score2 += gaim_account_get_int(gaim_presence_get_account(presence2), "score", 0);
 
 	idle1 = gaim_presence_is_idle(presence1);
 	idle2 = gaim_presence_is_idle(presence2);

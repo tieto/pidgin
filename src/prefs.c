@@ -1122,9 +1122,9 @@ gaim_prefs_init(void)
 	/* Contact Priority Settings */
 	gaim_prefs_add_none("/core/contact");
 	gaim_prefs_add_bool("/core/contact/last_match", FALSE);
-	gaim_prefs_add_int("/core/contact/offline_score", 4);
-	gaim_prefs_add_int("/core/contact/away_score", 2);
-	gaim_prefs_add_int("/core/contact/idle_score", 1);
+	gaim_prefs_remove("/core/contact/offline_score");
+	gaim_prefs_remove("/core/contact/away_score");
+	gaim_prefs_remove("/core/contact/idle_score");
 }
 
 void

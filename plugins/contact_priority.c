@@ -44,17 +44,26 @@ account_update(GtkWidget *widget, GtkOptionMenu *optmenu)
 }
 
 static void
-pref_update(GtkWidget *widget, gpointer data)
+pref_update(GtkWidget *widget, char *pref)
 {
-	gchar pref[256];
-
-	g_snprintf(pref, sizeof(pref), "/core/contact/%s", (gchar *)data);
-
 	if (gaim_prefs_get_type(pref) == GAIM_PREF_INT)
 		gaim_prefs_set_int(pref, gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
 	if (gaim_prefs_get_type(pref) == GAIM_PREF_BOOLEAN)
 		gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
+
+static struct GaimContactPriorityStatuses
+{
+	const char *id;
+	const char *description;
+} const statuses[] =
+{
+	{ "idle",          N_("Buddy is idle") },
+	{ "away",          N_("Buddy is away") },
+	{ "extended_away", N_("Buddy is \"extended\" away") },
+	{ "offline",       N_("Buddy is offline") },
+	{ NULL, NULL }
+};
 
 static GtkWidget *
 get_config_frame(GaimPlugin *plugin)
@@ -65,15 +74,8 @@ get_config_frame(GaimPlugin *plugin)
 	GtkObject *adj = NULL;
 	GtkSizeGroup *sg = NULL;
 	GaimAccount *account = NULL;
-/*
-	GList *accounts = NULL;
- */
-	int offline = gaim_prefs_get_int("/core/contact/offline_score");
-	int away = gaim_prefs_get_int("/core/contact/away_score");
-	int idle = gaim_prefs_get_int("/core/contact/idle_score");
-	/*
-	int score;
-	*/
+	int i;
+
 	gboolean last_match = gaim_prefs_get_bool("/core/contact/last_match");
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -86,60 +88,40 @@ get_config_frame(GaimPlugin *plugin)
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 
-	/* Offline */
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	/* Status Spinboxes */
+	for (i = 0 ; statuses[i].id != NULL && statuses[i].description != NULL ; i++)
+	{
+		char *pref = g_strconcat("/core/status/scores/", statuses[i].id, NULL);
 
-	label = gtk_label_new_with_mnemonic(_("Buddy is offline:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+		hbox = gtk_hbox_new(FALSE, 5);
+		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	
+		label = gtk_label_new_with_mnemonic(_(statuses[i].description));
+		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+		gtk_size_group_add_widget(sg, label);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	
+		adj = gtk_adjustment_new(gaim_prefs_get_int(pref), -500, 500, 1, 1, 1);
+		spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
+		g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), pref);
+		gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
 
-	adj = gtk_adjustment_new(offline, -20, 20, 1, 1, 1);
-	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
-	g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), "offline_score");
-	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
+		g_free(pref);
+	}
 
-	/* Away */
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("Buddy is away:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-	adj = gtk_adjustment_new(away, -20, 20, 1, 1, 1);
-	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
-	g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), "away_score");
-	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
-
-	/* Idle */
-	hbox = gtk_hbox_new(FALSE, 5);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-
-	label = gtk_label_new_with_mnemonic(_("Buddy is idle:"));
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, label);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-
-	adj = gtk_adjustment_new(idle, -20, 20, 1, 1, 1);
-	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
-	g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), "idle_score");
-	gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
+	/* Explanation */
+	label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(label), _("The buddy with the <i>largest score</i> is the buddy who will have priority in the contact.\n"));
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	/* Last match */
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-	check = gtk_check_button_new_with_label(_("Use last matching buddy"));
+	check = gtk_check_button_new_with_label(_("Use last buddy when scores are equal"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), last_match);
-	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(pref_update), "last_match");
+	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(pref_update), "/core/contact/last_match");
 	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
-
-	/* Explanation */
-	label = gtk_label_new(_("The buddy with the lowest score is the buddy who will have priority in the contact.\nThe default values (offline = 4, away = 2, and idle = 1) will use what used to be\nthe built-in order: active, idle, away, away + idle, offline."));
-	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	frame = gaim_gtk_make_frame(ret, _("Point values to use for account..."));
 
@@ -152,7 +134,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	/* make this here so I can use it in the option menu callback, we'll
 	 * actually set it up later */
-	adj = gtk_adjustment_new(0, -20, 20, 1, 1, 1);
+	adj = gtk_adjustment_new(0, -500, 500, 1, 1, 1);
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
 
 	optmenu = gaim_gtk_account_option_menu_new(NULL, TRUE,
