@@ -37,6 +37,9 @@ version 2.0.0:
 	  (James Vega)
 	* Many problems related to having an IM conversation and a chat open
 	  with the same name are fixed (Andrew Hart)
+	* Warning dialog when closing a window with unread IM messages
+	* In chats right-click on names in the conversation window to
+	  IM/Send File/Get info/ignore the user
 	* Added tab management options to the tab right-click menu (Sadrul Habib
 	  Chowdhury)
 	* Brand new message queueing system (Casey Harkins)
@@ -46,7 +49,7 @@ version 2.0.0:
 	* Use libao for playing sounds via NAS instead of accessing NAS directly
 
 	Log Viewer:
-	* Log viewer aggregates logs from the same "Person" (Richard Laager)
+	* Log viewer aggregates logs from the same Contact (Richard Laager)
 	* When opening the log viewer, show the most recent log by default
 	  (Peter McCurdy)
 
@@ -72,7 +75,7 @@ version 2.0.0:
 	  removed.
 
 	MSN Features:
-	* Custom smiley support (Irving Cordova & Francesco Fracassi)
+	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
 	* Added support for sending (with the /nudge command) and receiving
 	  "nudges" (Julien Cegarra, Martin Bayard)
 	* Added an account action to open your Hotmail inbox from MSN
@@ -99,8 +102,12 @@ version 2.0.0:
 	* Added /nickserv, /memoserv, /chanserv and /operserv
 	  commands (Joao Luís Marques Pinto)
 
+	Jabber Features:
+	* Support for SRV lookups
+	* Support for buddy icons
+	* Jabber User Directory searching
+
 	Other Protocol Changes:
-	* Jabber support for SRV lookups
 	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google
 	  Summer of Code)
 	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
