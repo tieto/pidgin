@@ -8,7 +8,6 @@ EXTRA_DIST = \
 	TCL-HOWTO.dox \
 	account-signals.dox \
 	blist-signals.dox \
-	buddyicon-signals.dox \
 	cipher-signals.dox \
 	connection-signals.dox \
 	conversation-signals.dox \

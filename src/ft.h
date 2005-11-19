@@ -31,7 +31,6 @@
 typedef struct _GaimXfer GaimXfer;
 
 #include "account.h"
-#include "internal.h"
 
 /**
  * Types of file transfers.
