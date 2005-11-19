@@ -48,9 +48,9 @@ void gaim_gtk_pounces_manager_show(void);
 void gaim_gtk_pounces_manager_hide(void);
 
 /**
- * Returns the gtkaccounts handle
+ * Returns the gtkpounces handle
  *
- * @return The handle to the GTK+ account system
+ * @return The handle to the GTK+ pounces system
  */
 void *gaim_gtk_pounces_get_handle(void);
 
