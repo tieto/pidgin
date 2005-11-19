@@ -109,6 +109,7 @@ char *silcgaim_tooltip_text(GaimBuddy *b);
 char *silcgaim_status_text(GaimBuddy *b);
 gboolean silcgaim_ip_is_private(const char *ip);
 void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file);
+GaimXfer *silcgaim_ftp_new_xfer(GaimConnection *gc, const char *name);
 void silcgaim_ftp_request(SilcClient client, SilcClientConnection conn,
 			  SilcClientEntry client_entry, SilcUInt32 session_id,
 			  const char *hostname, SilcUInt16 port);

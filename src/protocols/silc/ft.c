@@ -395,7 +395,7 @@ GaimXfer *silcgaim_ftp_new_xfer(GaimConnection *gc, const char *name)
 	silc_free(clients);
 	silc_free(nickname);
 
-	return xfer;
+	return xfer->xfer;
 }
 
 void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file)
@@ -406,7 +406,7 @@ void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *fi
 
 	/* Choose file to send */
 	if (file)
-		gaim_xfer_request_accepted(xfer->xfer, file);
+		gaim_xfer_request_accepted(xfer, file);
 	else
-		gaim_xfer_request(xfer->xfer);
+		gaim_xfer_request(xfer);
 }

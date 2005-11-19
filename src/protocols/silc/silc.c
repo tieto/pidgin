@@ -1557,7 +1557,6 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* roomlist_expand_category */
 	NULL,						/* can_receive_file */
 	silcgaim_ftp_send_file,		/* send_file */
-	silcgaim_ftp_send_file,		/* send_file */
 	silcgaim_ftp_new_xfer,		/* new_xfer */
 	&silcgaim_wb_ops,			/* whiteboard operations */
 };
