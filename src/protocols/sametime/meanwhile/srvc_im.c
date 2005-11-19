@@ -184,7 +184,7 @@ struct mwConversation *mwServiceIm_getConversation(struct mwServiceIm *srvc,
     c->features = srvc->features;
 
     /* mark external users */
-    c->ext_id = g_str_has_prefix(to->user, "@E ");
+    c->ext_id = mw_str_has_prefix(to->user, "@E ");
 
     srvc->convs = g_list_prepend(srvc->convs, c);
   }

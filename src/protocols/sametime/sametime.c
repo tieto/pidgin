@@ -717,7 +717,7 @@ static void blist_schedule(struct mwGaimPluginData *pd) {
 
 static gboolean buddy_is_external(GaimBuddy *b) {
   g_return_val_if_fail(b != NULL, FALSE);
-  return g_str_has_prefix(b->name, "@E ");
+  return gaim_str_has_prefix(b->name, "@E ");
 }
 
 
@@ -2658,7 +2658,7 @@ static void im_recv_mime(struct mwConversation *conv,
     if(! type) {
       ; /* feh */
       
-    } else if(g_str_has_prefix(type, "image")) {
+    } else if(gaim_str_has_prefix(type, "image")) {
       /* put images into the image store */
 
       guchar *d_dat;
@@ -2683,7 +2683,7 @@ static void im_recv_mime(struct mwConversation *conv,
       /* recall the image for dereferencing later */
       images = g_list_append(images, GINT_TO_POINTER(img));
       
-    } else if(g_str_has_prefix(type, "text")) {
+    } else if(gaim_str_has_prefix(type, "text")) {
 
       /* concatenate all the text parts together */
       guchar *data;
@@ -4040,7 +4040,7 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
 
   str = g_string_new(NULL);
 
-  if(g_str_has_prefix(who, "@E ")) {
+  if(gaim_str_has_prefix(who, "@E ")) {
     g_string_append(str, _("<b>External User</b><br>"));
   }
 
@@ -4452,7 +4452,7 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
   srvc = pd->srvc_resolve;
 
   /* catch external buddies. They won't be in the resolve service */
-  if(g_str_has_prefix(buddy->name, "@E ")) {
+  if(gaim_str_has_prefix(buddy->name, "@E ")) {
     buddy_add(pd, buddy);
     return;
   }
