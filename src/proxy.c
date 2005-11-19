@@ -190,7 +190,9 @@ gaim_gnome_proxy_get_info(void)
 	gchar *path;
 	if ((path = g_find_program_in_path("gconftool-2"))) {
 		gchar *tmp;
-		
+
+		g_free(path);
+
 		/* See whether to use a proxy. */
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_http_proxy", &tmp,
 					       NULL, NULL, NULL))
@@ -200,10 +202,10 @@ gaim_gnome_proxy_get_info(void)
 			g_free(tmp);
 			return gaim_global_proxy_get_info();
 		}
-			
+
 		g_free(tmp);
 		info.type = GAIM_PROXY_HTTP;
-		
+
 		/* Free the old fields */
 		if (info.host) {
 			g_free(info.host);
@@ -217,13 +219,13 @@ gaim_gnome_proxy_get_info(void)
 			g_free(info.password);
 			info.password = NULL;
 		}
-		
+
 		/* Get the new ones */
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
 					       NULL, NULL, NULL))
 			return gaim_global_proxy_get_info();
 		g_strchomp(info.host);
-		
+
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
 					       NULL, NULL, NULL))
 			return gaim_global_proxy_get_info();
@@ -238,8 +240,8 @@ gaim_gnome_proxy_get_info(void)
 					       NULL, NULL, NULL))
 			return gaim_global_proxy_get_info();
 		info.port = atoi(tmp);
+		g_free(tmp);
 
-		g_free(path);
 		return &info;
 	}
 	return gaim_global_proxy_get_info();
