@@ -1334,21 +1334,21 @@ static GaimPluginProtocolInfo prpl_info =
 	0,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-	NO_BUDDY_ICONS,		/* icon_spec */
+	NO_BUDDY_ICONS,			/* icon_spec */
 	simple_list_icon,		/* list_icon */
-	NULL,	/* list_emblems */
+	NULL,					/* list_emblems */
 	NULL,					/* status_text */
 	NULL,					/* tooltip_text */
 	simple_status_types,	/* away_states */
 	NULL,					/* blist_node_menu */
-	NULL,	/* chat_info */
-	NULL,	/* chat_info_defaults */
-	simple_login,		/* login */
-	simple_close,		/* close */
-	simple_im_send,		/* send_im */
+	NULL,					/* chat_info */
+	NULL,					/* chat_info_defaults */
+	simple_login,			/* login */
+	simple_close,			/* close */
+	simple_im_send,			/* send_im */
 	NULL,					/* set_info */
-	simple_typing,					/* send_typing */
-	NULL,		/* get_info */
+	simple_typing,			/* send_typing */
+	NULL,					/* get_info */
 	simple_set_status,		/* set_status */
 	NULL,					/* set_idle */
 	NULL,					/* change_passwd */
@@ -1356,19 +1356,19 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* add_buddies */
 	simple_remove_buddy,	/* remove_buddy */
 	NULL,					/* remove_buddies */
-	dummy_add_deny,					/* add_permit */
-	dummy_add_deny,					/* add_deny */
-	dummy_add_deny,					/* rem_permit */
-	dummy_add_deny,					/* rem_deny */
-	dummy_permit_deny,					/* set_permit_deny */
-	NULL,		/* join_chat */
+	dummy_add_deny,			/* add_permit */
+	dummy_add_deny,			/* add_deny */
+	dummy_add_deny,			/* rem_permit */
+	dummy_add_deny,			/* rem_deny */
+	dummy_permit_deny,		/* set_permit_deny */
+	NULL,					/* join_chat */
 	NULL,					/* reject_chat */
-	NULL,	/* get_chat_name */
-	NULL,	/* chat_invite */
-	NULL,		/* chat_leave */
+	NULL,					/* get_chat_name */
+	NULL,					/* chat_invite */
+	NULL,					/* chat_leave */
 	NULL,					/* chat_whisper */
-	NULL,		/* chat_send */
-	simple_keep_alive,					/* keepalive */
+	NULL,					/* chat_send */
+	simple_keep_alive,		/* keepalive */
 	NULL,					/* register_user */
 	NULL,					/* get_cb_info */
 	NULL,					/* get_cb_away */
@@ -1381,13 +1381,14 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */
-	NULL,	/* set_chat_topic */
+	NULL,					/* set_chat_topic */
 	NULL,					/* find_blist_chat */
-	NULL,	/* roomlist_get_list */
-	NULL,	/* roomlist_cancel */
+	NULL,					/* roomlist_get_list */
+	NULL,					/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
 	NULL,					/* can_receive_file */
-	NULL	/* send_file */
+	NULL,					/* send_file */
+	NULL					/* new_xfer */
 };
 
 

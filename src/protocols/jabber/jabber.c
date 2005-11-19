@@ -1665,7 +1665,9 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roomlist_cancel,			/* roomlist_cancel */
 	NULL,							/* roomlist_expand_category */
 	NULL,							/* can_receive_file */
-	jabber_si_xfer_send				/* send_file */
+	jabber_si_xfer_send,			/* send_file */
+	jabber_si_new_xfer,				/* new_xfer */
+	NULL							/* whiteboard operations */
 };
 
 static GaimPluginInfo info =

@@ -396,7 +396,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,                                                    /* roomlist_cancel */
 	NULL,                                                    /* roomlist_expand_category */
 	NULL,                                                    /* can_receive_file */
-	NULL                                                     /* send_file */
+	NULL,                                                    /* send_file */
+	NULL                                                     /* new_xfer */
 };
 
 static GaimPluginInfo info =

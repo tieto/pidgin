@@ -769,7 +769,8 @@ static GaimPluginProtocolInfo prpl_info =
 	irc_roomlist_cancel,	/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
 	NULL,					/* can_receive_file */
-	irc_dccsend_send_file	/* send_file */
+	irc_dccsend_send_file,	/* send_file */
+	irc_dccsend_new_xfer	/* new_xfer */
 };
 
 

@@ -5029,9 +5029,7 @@ static void ft_outgoing_cancel(GaimXfer *xfer) {
 }
 
 
-static void mw_prpl_send_file(GaimConnection *gc,
-			      const char *who, const char *file) {
-
+static GaimXfer *mw_prpl_new_xfer(GaimConnect *gc, const char *who) {
   GaimAccount *acct;
   GaimXfer *xfer;
 
@@ -5040,6 +5038,14 @@ static void mw_prpl_send_file(GaimConnection *gc,
   xfer = gaim_xfer_new(acct, GAIM_XFER_SEND, who);
   gaim_xfer_set_init_fnc(xfer, ft_outgoing_init);
   gaim_xfer_set_cancel_send_fnc(xfer, ft_outgoing_cancel);
+
+  return xfer;
+}
+
+static void mw_prpl_send_file(GaimConnection *gc,
+			      const char *who, const char *file) {
+
+  GaimXfer *xfer = mw_prpl_new_xfer(gc, who);
 
   if(file) {
     DEBUG_INFO("file != NULL\n");
@@ -5109,6 +5115,7 @@ static GaimPluginProtocolInfo mw_prpl_info = {
   .roomlist_expand_category  = NULL,
   .can_receive_file          = mw_prpl_can_receive_file,
   .send_file                 = mw_prpl_send_file,
+  .new_xfer                  = mw_prpl_new_xfer,
 };
 
 

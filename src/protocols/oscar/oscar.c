@@ -2646,11 +2646,8 @@ static gboolean oscar_can_receive_file(GaimConnection *gc, const char *who) {
 	return can_receive;
 }
 
-/*
- * Called by the Gaim core when the user indicates that a file is to be sent to
- * a special someone.
- */
-static void oscar_send_file(GaimConnection *gc, const char *who, const char *file) {
+static GaimXfer*
+oscar_new_xfer(GaimConnection *gc, const char *who) {
 	OscarData *od;
 	GaimXfer *xfer;
 	struct aim_oft_info *oft_info;
@@ -2677,7 +2674,7 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 			AIM_XFER_SEND, AIM_XFER_PROXY, AIM_XFER_PROXY_STG1);
 		oft_info->proxy_info = aim_rv_proxy_createinfo(oft_info->sess, NULL, 0);
 		/* We must create a cookie before the request is sent
-		* so that it can be sent to the proxy */
+		 * so that it can be sent to the proxy */
 		aim_icbm_makecookie(oft_info->cookie);
 	} else {
 		ip = gaim_network_get_my_ip(od->conn ? od->conn->fd : -1);
@@ -2698,6 +2695,16 @@ static void oscar_send_file(GaimConnection *gc, const char *who, const char *fil
 
 	/* Keep track of this transfer for later */
 	od->file_transfers = g_slist_append(od->file_transfers, xfer);
+
+	return xfer;
+}
+
+/*
+ * Called by the Gaim core when the user indicates that a file is to be sent to
+ * a special someone.
+ */
+static void oscar_send_file(GaimConnection *gc, const char *who, const char *file) {
+	GaimXfer *xfer = oscar_new_xfer(gc, who);
 
 	/* Now perform the request */
 	if (file)
@@ -8422,7 +8429,10 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
 	oscar_can_receive_file,	/* can_receive_file */
-	oscar_send_file			/* send_file */
+	oscar_send_file,		/* send_file */
+	oscar_new_xfer,			/* new_xfer */
+	NULL,					/* whiteboard ops */
+ 	NULL					/* media ops */
 };
 
 static GaimPluginUiInfo prefs_info = {

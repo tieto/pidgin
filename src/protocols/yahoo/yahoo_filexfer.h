@@ -31,6 +31,14 @@ void yahoo_process_p2pfilexfer( GaimConnection *gc, struct yahoo_packet *pkt );
 void yahoo_process_filetransfer(GaimConnection *gc, struct yahoo_packet *pkt);
 
 /**
+ * Create a new GaimXfer
+ *
+ * @param gc The GaimConnection handle.
+ * @param who Who will we be sending it to?
+ */
+GaimXfer *yahoo_new_xfer(GaimConnection *gc, const char *who);
+
+/**
  * Send a file.
  *
  * @param gc The GaimConnection handle.

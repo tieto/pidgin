@@ -347,7 +347,7 @@ silcgaim_ftp_send_file_resolved(SilcClient client,
 	silc_free(context);
 }
 
-void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file)
+GaimXfer *silcgaim_ftp_new_xfer(GaimConnection *gc, const char *name)
 {
 	SilcGaim sg = gc->proto_data;
 	SilcClient client = sg->client;
@@ -357,47 +357,56 @@ void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *fi
 	SilcGaimXfer xfer;
 	char *nickname;
 
-	if (!name)
-		return;
+	g_return_val_if_fail(name != NULL, NULL);
 
 	if (!silc_parse_userfqdn(name, &nickname, NULL))
-		return;
+		return NULL;
 
 	/* Find client entry */
 	clients = silc_client_get_clients_local(client, conn, nickname, name,
-						&clients_count);
+											&clients_count);
 	if (!clients) {
 		silc_client_get_clients(client, conn, nickname, NULL,
-					silcgaim_ftp_send_file_resolved,
-					strdup(name));
+								silcgaim_ftp_send_file_resolved,
+								strdup(name));
 		silc_free(nickname);
-		return;
+		return NULL;
 	}
 
 	xfer = silc_calloc(1, sizeof(*xfer));
-	if (!xfer)
-		return;
+
+	g_return_val_if_fail(xfer != NULL, NULL);
+
 	xfer->sg = sg;
 	xfer->client_entry = clients[0];
 	xfer->xfer = gaim_xfer_new(xfer->sg->account, GAIM_XFER_SEND,
-				   xfer->client_entry->nickname);
+							   xfer->client_entry->nickname);
 	if (!xfer->xfer) {
 		silc_client_file_close(xfer->sg->client, xfer->sg->conn, xfer->session_id);
 		g_free(xfer->hostname);
 		silc_free(xfer);
-		return;
+		return NULL;
 	}
 	gaim_xfer_set_init_fnc(xfer->xfer, silcgaim_ftp_send);
 	gaim_xfer_set_request_denied_fnc(xfer->xfer, silcgaim_ftp_request_denied);
 	gaim_xfer_set_cancel_send_fnc(xfer->xfer, silcgaim_ftp_send_cancel);
 	xfer->xfer->data = xfer;
 
+	silc_free(clients);
+	silc_free(nickname);
+
+	return xfer;
+}
+
+void silcgaim_ftp_send_file(GaimConnection *gc, const char *name, const char *file)
+{
+	GaimXfer *xfer = silcgaim_ftp_new_xfer(gc, name);
+
+	g_return_if_fail(xfer != NULL);
+
 	/* Choose file to send */
 	if (file)
 		gaim_xfer_request_accepted(xfer->xfer, file);
 	else
 		gaim_xfer_request(xfer->xfer);
-
-	silc_free(clients);
-	silc_free(nickname);
 }

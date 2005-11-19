@@ -28,6 +28,7 @@
 
 void jabber_bytestreams_parse(JabberStream *js, xmlnode *packet);
 void jabber_si_parse(JabberStream *js, xmlnode *packet);
+GaimXfer *jabber_si_new_xfer(GaimConnection *gc, const char *who);
 void jabber_si_xfer_send(GaimConnection *gc, const char *who, const char *file);
 
 #endif /* _GAIM_JABBER_SI_H_ */

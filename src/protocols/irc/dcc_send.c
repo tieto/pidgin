@@ -294,30 +294,36 @@ static void irc_dccsend_send_init(GaimXfer *xfer) {
 	g_free(tmp);
 }
 
-/**
- * Gaim calls this function when the user selects Send File from the
- * buddy menu
- * It sets up the GaimXfer struct and tells Gaim to go ahead
- */
-void irc_dccsend_send_file(GaimConnection *gc, const char *who, const char *file) {
+GaimXfer *irc_dccsend_new_xfer(GaimConnection *gc, const char *who) {
 	GaimXfer *xfer;
 	struct irc_xfer_send_data *xd;
 
 	/* Build the file transfer handle */
 	xfer = gaim_xfer_new(gaim_connection_get_account(gc), GAIM_XFER_SEND, who);
 
-
 	xd = g_new0(struct irc_xfer_send_data, 1);
 	xd->fd = -1;
 	xfer->data = xd;
 
-	 /* Setup our I/O op functions */
+	/* Setup our I/O op functions */
 	gaim_xfer_set_init_fnc(xfer, irc_dccsend_send_init);
 	gaim_xfer_set_write_fnc(xfer, irc_dccsend_send_write);
 	gaim_xfer_set_end_fnc(xfer, irc_dccsend_send_destroy);
 	gaim_xfer_set_request_denied_fnc(xfer, irc_dccsend_send_destroy);
 	gaim_xfer_set_cancel_send_fnc(xfer, irc_dccsend_send_destroy);
-	/* Now perform the request */
+
+	return xfer;
+}
+
+/**
+ * Gaim calls this function when the user selects Send File from the
+ * buddy menu
+ * It sets up the GaimXfer struct and tells Gaim to go ahead
+ */
+void irc_dccsend_send_file(GaimConnection *gc, const char *who, const char *file) {
+	GaimXfer *xfer = irc_dccsend_new_xfer(gc, who);
+
+	/* Perform the request */
 	if (file)
 		gaim_xfer_request_accepted(xfer, file);
 	else

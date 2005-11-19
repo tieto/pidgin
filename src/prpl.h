@@ -80,6 +80,7 @@ typedef struct {
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}
 
 #include "blist.h"
+#include "ft.h"
 #include "proxy.h"
 #include "plugin.h"
 #include "media.h"
@@ -309,7 +310,8 @@ struct _GaimPluginProtocolInfo
 	/* file transfer callbacks */
 	gboolean (*can_receive_file)(GaimConnection *, const char *who);
 	void (*send_file)(GaimConnection *, const char *who, const char *filename);
-	
+	GaimXfer *(*new_xfer)(GaimConnection *, const char *who);
+
 	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
 	GaimMediaPrplOps *media_prpl_ops;
 };

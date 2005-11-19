@@ -3605,6 +3605,7 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_roomlist_expand_category,
 	NULL, /* can_receive_file */
 	yahoo_send_file,
+	yahoo_new_xfer,
 	&yahoo_whiteboard_prpl_ops
 };
 

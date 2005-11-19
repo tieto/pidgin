@@ -422,22 +422,30 @@ t_msn_xfer_init(GaimXfer *xfer)
 	msn_slplink_request_ft(slplink, xfer);
 }
 
-static void
-msn_send_file(GaimConnection *gc, const char *who, const char *file)
+static GaimXfer*
+msn_new_xfer(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;
 	MsnSlpLink *slplink;
 	GaimXfer *xfer;
-
+	
 	session = gc->proto_data;
-
+	
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
-
+	
 	slplink = msn_session_get_slplink(session, who);
-
+	
 	xfer->data = slplink;
+	
+	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);	
+	
+	return xfer;
+}
 
-	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+static void
+msn_send_file(GaimConnection *gc, const char *who, const char *file)
+{
+	GaimXfer *xfer = msn_new_xfer(gc, who);
 
 	if (file)
 		gaim_xfer_request_accepted(xfer, file);
@@ -1905,7 +1913,8 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
 	msn_can_receive_file,	/* can_receive_file */
-	msn_send_file			/* send_file */
+	msn_send_file,			/* send_file */
+	msn_new_xfer			/* new_xfer */
 };
 
 static GaimPluginInfo info =

@@ -2772,42 +2772,42 @@ static GaimPlugin *my_protocol = NULL;
 
 static GaimPluginProtocolInfo prpl_info = {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
-	NULL, /* ??? user_splits */
-	NULL,  /* ??? protocol_options */
+	NULL,					/* ??? user_splits */
+	NULL,					/* ??? protocol_options */
 	NO_BUDDY_ICONS,
 	zephyr_list_icon,
-	NULL, /* ??? list_emblems */
-	NULL, /* ??? status_text */
-	NULL, /* ??? tooltip_text */
-	zephyr_status_types, /* status_types */
-	NULL, /* ??? blist_node_menu - probably all useful actions are already handled*/
+	NULL,					/* ??? list_emblems */
+	NULL,					/* ??? status_text */
+	NULL,					/* ??? tooltip_text */
+	zephyr_status_types,	/* status_types */
+	NULL,					/* ??? blist_node_menu - probably all useful actions are already handled*/
 	zephyr_chat_info,		/* chat_info */
 	NULL,					/* chat_info_defaults */
 	zephyr_login,			/* login */
 	zephyr_close,			/* close */
 	zephyr_send_im,			/* send_im */
-	NULL,	/* XXX set info (Location?) */
-	zephyr_send_typing,  /* send_typing */
+	NULL,					/* XXX set info (Location?) */
+	zephyr_send_typing,		/* send_typing */
 	zephyr_zloc,			/* get_info */
-	zephyr_set_status, /* set_status */
-	NULL, /* ??? set idle */
-	NULL, /* change password */
+	zephyr_set_status,		/* set_status */
+	NULL,					/* ??? set idle */
+	NULL,					/* change password */
 	NULL,					/* add_buddy */
 	NULL,					/* add_buddies */
 	NULL,					/* remove_buddy */
 	NULL,					/* remove_buddies */
-	zephyr_add_permit,			/* add_permit */
-	zephyr_add_deny,			/* add_deny */
-	zephyr_remove_permit,			/* remove_permit */
-	zephyr_remove_deny,			/* remove_deny */
-	zephyr_set_permit_deny,			/* set_permit_deny */
-	zephyr_join_chat,			/* join_chat */
+	zephyr_add_permit,		/* add_permit */
+	zephyr_add_deny,		/* add_deny */
+	zephyr_remove_permit,	/* remove_permit */
+	zephyr_remove_deny,		/* remove_deny */
+	zephyr_set_permit_deny,	/* set_permit_deny */
+	zephyr_join_chat,		/* join_chat */
 	NULL,					/* reject_chat -- No chat invites*/
-	zephyr_get_chat_name,			/* get_chat_name */
+	zephyr_get_chat_name,	/* get_chat_name */
 	NULL,					/* chat_invite -- No chat invites*/
-	zephyr_chat_leave,			/* chat_leave */
+	zephyr_chat_leave,		/* chat_leave */
 	NULL,					/* chat_whisper -- No "whispering"*/
-	zephyr_chat_send,			/* chat_send */
+	zephyr_chat_send,		/* chat_send */
 	NULL,					/* keepalive -- Not necessary*/
 	NULL,					/* register_user -- Not supported*/
 	NULL,					/* XXX get_cb_info */
@@ -2821,13 +2821,14 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* XXX set_buddy_icon */
 	NULL,					/* remove_group */
 	NULL,					/* XXX get_cb_real_name */
-	zephyr_chat_set_topic,			/* set_chat_topic */
-	zephyr_find_blist_chat,			/* find_blist_chat */
+	zephyr_chat_set_topic,	/* set_chat_topic */
+	zephyr_find_blist_chat,	/* find_blist_chat */
 	NULL,					/* roomlist_get_list */
 	NULL,					/* roomlist_cancel */
 	NULL,					/* roomlist_expand_category */
 	NULL,					/* can_receive_file */
-	NULL					/* send_file */
+	NULL,					/* send_file */
+	NULL					/* new_xfer */
 };
 
 static GaimPluginInfo info = {
