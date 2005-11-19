@@ -211,7 +211,7 @@ Gaim::BrowserPlace              T_IV
 INPUT
 
 T_GaimObj
-	$var = gaim_perl_ref_object($arg);
+	$var = gaim_perl_ref_object($arg)
 
 
 OUTPUT

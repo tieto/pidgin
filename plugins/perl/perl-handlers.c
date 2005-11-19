@@ -11,6 +11,11 @@ static char *perl_plugin_pref_cb;
 static char *perl_gtk_plugin_pref_cb;
 extern PerlInterpreter *my_perl;
 
+/* perl < 5.8.0 doesn't define PERL_MAGIC_ext */
+#ifndef PERL_MAGIC_ext
+#define PERL_MAGIC_ext '~'
+#endif
+
 /* For now a plugin can only have one action */
 void gaim_perl_plugin_action_cb(GaimPluginAction * gpa) {
 
