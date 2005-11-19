@@ -1899,6 +1899,7 @@ gaim_gtk_prefs_init(void)
 }
 
 void gaim_gtk_prefs_update_old() {
+	const char *tmp;
 	/* Rename some old prefs */
 	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
 	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
@@ -1914,6 +1915,12 @@ void gaim_gtk_prefs_update_old() {
 									 "/gaim/gtk/conversations/show_incoming_formatting");
 	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_formatting",
 									 "/gaim/gtk/conversations/show_incoming_formatting");
+
+	/* this string pref turned into a boolean, try to be friendly */
+	tmp = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
+	if (tmp != NULL && !strcmp(tmp, "none")) {
+		gaim_prefs_set_bool("/gaim/gtk/idle/report", FALSE);
+	}
 
 	/* Remove some no-longer-used prefs */
 	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
@@ -1945,7 +1952,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
-	gaim_prefs_remove("/gaim/gtk/idle/method");
+	gaim_prefs_remove("/gaim/gtk/idle/reporting_method");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
