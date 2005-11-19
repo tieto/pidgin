@@ -583,7 +583,7 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(buddy_signed_off_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-added",
 						plugin, GAIM_CALLBACK(buddy_added_cb), NULL);
-	gaim_signal_connect(blist_handle, "blist-removed",
+	gaim_signal_connect(blist_handle, "buddy-removed",
 						plugin, GAIM_CALLBACK(buddy_removed_cb), NULL);
 	gaim_signal_connect(blist_handle, "buddy-icon-changed",
 						plugin, GAIM_CALLBACK(buddy_icon_changed_cb), NULL);
