@@ -551,7 +551,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	dialog->signon =
 		gtk_check_button_new_with_mnemonic(_("Si_gns on"));
 	dialog->signoff =
-		gtk_check_button_new_with_mnemonic(_("Signs _off"));
+		gtk_check_button_new_with_mnemonic(_("Signs o_ff"));
 	dialog->away =
 		gtk_check_button_new_with_mnemonic(_("Goes a_way"));
 	dialog->away_return =
@@ -612,9 +612,9 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	dialog->send_msg_entry    = gtk_entry_new();
 	dialog->exec_cmd_entry    = gtk_entry_new();
-	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("B_rowse..."));
+	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("Br_owse..."));
 	dialog->play_sound_entry  = gtk_entry_new();
-	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Bro_wse..."));
+	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Brow_se..."));
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
 
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
@@ -698,7 +698,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	/* Now the last part, where we have the Save checkbox */
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
-		_("K_eep this pounce after the first time it runs"));
+		_("_Keep this pounce after the first time it runs"));
 
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->save_pounce, FALSE, FALSE, 0);
 
