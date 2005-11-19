@@ -555,7 +555,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	dialog->away =
 		gtk_check_button_new_with_mnemonic(_("Goes a_way"));
 	dialog->away_return =
-		gtk_check_button_new_with_mnemonic(_("_Returns from away"));
+		gtk_check_button_new_with_mnemonic(_("Ret_urns from away"));
 	dialog->idle =
 		gtk_check_button_new_with_mnemonic(_("Becomes _Idle"));
 	dialog->idle_return =
@@ -612,9 +612,9 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	dialog->send_msg_entry    = gtk_entry_new();
 	dialog->exec_cmd_entry    = gtk_entry_new();
-	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("Br_owse..."));
+	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("B_rowse..."));
 	dialog->play_sound_entry  = gtk_entry_new();
-	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Brow_se..."));
+	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Br_owse..."));
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
 
 	gtk_widget_set_sensitive(dialog->send_msg_entry,   FALSE);
