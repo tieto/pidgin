@@ -96,7 +96,7 @@ static struct StockIcon
 #else
 	{ GAIM_STOCK_PAUSE,           "buttons", "pause.png"                },
 #endif
-	{ GAIM_STOCK_PENDING,         "gaim",    "envelope.png"             },
+	{ GAIM_STOCK_PENDING,         "buttons", "send-im.png"              },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_PLUGIN,          NULL,      GTK_STOCK_DISCONNECT       },
 #else
