@@ -5005,18 +5005,21 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 	/*
 	 * Update the window's icon
 	 */
-	if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
-		(gtkconv->u.im->anim))
+	if (gaim_gtk_conv_window_is_active_conversation(conv))
 	{
-		window_icon =
-			gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
-		g_object_ref(window_icon);
-	} else {
-		window_icon = gaim_gtkconv_get_tab_icon(conv, FALSE);
+		if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
+				(gtkconv->u.im->anim))
+		{
+			window_icon =
+				gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+			g_object_ref(window_icon);
+		} else {
+			window_icon = gaim_gtkconv_get_tab_icon(conv, FALSE);
+		}
+		gtk_window_set_icon(GTK_WINDOW(win->window), window_icon);
+		if (window_icon != NULL)
+			g_object_unref(G_OBJECT(window_icon));
 	}
-	gtk_window_set_icon(GTK_WINDOW(win->window), window_icon);
-	if (window_icon != NULL)
-		g_object_unref(G_OBJECT(window_icon));
 }
 
 
