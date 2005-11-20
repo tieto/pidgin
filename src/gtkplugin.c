@@ -349,15 +349,9 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 	
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
 
-	/* If the plugin is not loaded, then load it first. */
 	if (!gaim_plugin_is_loaded(plugin))
-	{
-		GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
-		gchar *pth = gtk_tree_path_to_string(path);
-		gtk_tree_path_free(path);
-		plugin_load(NULL, pth, model);
-		g_free(pth);
-	}
+		return;
+
 	/* Now show the pref-dialog for the plugin */
 	plugin_dialog_response_cb(NULL, 98121, sel);
 }
