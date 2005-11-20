@@ -388,9 +388,9 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 }
 
 static void
-use_savedstatus_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, StatusWindow *dialog)
+savedstatus_activated_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *column, StatusWindow *dialog)
 {
-	status_window_use_cb(NULL, dialog);
+	status_window_modify_cb(NULL, dialog);
 }
 
 static GtkWidget *
@@ -422,7 +422,7 @@ create_saved_status_list(StatusWindow *dialog)
 	dialog->treeview = treeview;
 	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(treeview), TRUE);
 	g_signal_connect(G_OBJECT(treeview), "row-activated",
-						G_CALLBACK(use_savedstatus_cb), dialog);
+						G_CALLBACK(savedstatus_activated_cb), dialog);
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 	gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
