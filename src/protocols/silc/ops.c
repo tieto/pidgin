@@ -76,7 +76,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		return;
 
 	if (flags & SILC_MESSAGE_FLAG_SIGNED &&
-	    gaim_prefs_get_bool("/plugins/prpl/silc/verify_chat")) {
+	    gaim_account_get_bool(sg->account, "sign-verify", FALSE)) {
 		/* XXX */
 	}
 
@@ -94,7 +94,8 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 			return;
 
 		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary"))
+		    !strcmp(enc, "binary") &&
+		    !gaim_account_get_bool(sg->account, "block-wb", FALSE))
 			silcgaim_wb_receive_ch(client, conn, sender, channel,
 					       payload, flags, data, data_len);
 
@@ -171,7 +172,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 								sender->nickname, sg->account);
 
 	if (flags & SILC_MESSAGE_FLAG_SIGNED &&
-	    gaim_prefs_get_bool("/plugins/prpl/silc/verify_im")) {
+	    gaim_account_get_bool(sg->account, "sign-verify", FALSE)) {
 		/* XXX */
 	}
 
@@ -189,7 +190,8 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 			return;
 
 		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary"))
+		    !strcmp(enc, "binary") &&
+		    !gaim_account_get_bool(sg->account, "block-wb", FALSE))
 			silcgaim_wb_receive(client, conn, sender, payload,
 					    flags, data, data_len);
 

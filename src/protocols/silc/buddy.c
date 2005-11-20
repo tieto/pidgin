@@ -1109,8 +1109,9 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 	GaimRequestFields *fields;
 	GaimRequestFieldGroup *g;
 	GaimRequestField *f;
-	char tmp[512];
+	char tmp[512], tmp2[128];
 	int i;
+	char *fingerprint;
 
 	fields = gaim_request_fields_new();
 	g = gaim_request_field_group_new(NULL);
@@ -1120,11 +1121,19 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 	gaim_request_fields_add_group(fields, g);
 
 	for (i = 0; i < clients_count; i++) {
-		g_snprintf(tmp, sizeof(tmp), "%s - %s (%s@%s)",
+		fingerprint = NULL;
+		if (clients[i]->fingerprint) {
+			fingerprint = silc_fingerprint(clients[i]->fingerprint,
+						       clients[i]->fingerprint_len);
+			g_snprintf(tmp2, sizeof(tmp2), "\n%s", fingerprint);
+		}
+		g_snprintf(tmp, sizeof(tmp), "%s - %s (%s@%s)%s",
 			   clients[i]->realname, clients[i]->nickname,
 			   clients[i]->username, clients[i]->hostname ?
-			   clients[i]->hostname : "");
+			   clients[i]->hostname : "",
+			   fingerprint ? tmp2 : "");
 		gaim_request_field_list_add(f, tmp, clients[i]);
+		silc_free(fingerprint);
 	}
 
 	gaim_request_fields(r->client->application, _("Add Buddy"),
@@ -1615,12 +1624,13 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 		m = g_list_append(m, act);
 	}
 
-	wb = silc_calloc(1, sizeof(*wb));
-	wb->sg = sg;
-	wb->client_entry = client_entry;
-	act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
-	                                 silcgaim_buddy_wb, (void *)wb, NULL);
-	m = g_list_append(m, act);
-
+	if (client_entry) {
+		wb = silc_calloc(1, sizeof(*wb));
+		wb->sg = sg;
+		wb->client_entry = client_entry;
+		act = gaim_blist_node_action_new(_("Draw On Whiteboard"),
+		                                 silcgaim_buddy_wb, (void *)wb, NULL);
+		m = g_list_append(m, act);
+	}
 	return m;
 }

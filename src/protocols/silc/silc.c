@@ -316,7 +316,8 @@ silcgaim_login(GaimAccount *account)
 							(char *)gaim_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
-		gaim_connection_error(gc, ("Could not load SILC key pair"));
+		g_snprintf(pkd, sizeof(pkd), ("Could not load SILC key pair: %s"), strerror(errno));
+		gaim_connection_error(gc, pkd);
 		return;
 	}
 
@@ -512,7 +513,7 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 	if (f)
 		val = gaim_request_field_string_get_value(f);
 	if (val && *val) {
-		gaim_prefs_set_string("/plugins/prpl/silc/vcard", val);
+		gaim_account_set_string(sg->account, "vcard", val);
 		tmp = silc_file_readfile(val, &tmp_len);
 		if (tmp) {
 			tmp[tmp_len] = 0;
@@ -524,6 +525,8 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 		}
 		silc_vcard_free(&vcard);
 		silc_free(tmp);
+	} else {
+		gaim_account_set_string(sg->account, "vcard", "");
 	}
 
 #ifdef HAVE_SYS_UTSNAME_H
@@ -696,7 +699,7 @@ silcgaim_attrs(GaimPluginAction *action)
 
 	g = gaim_request_field_group_new(NULL);
 	f = gaim_request_field_string_new("vcard", _("Your VCard File"),
-					  gaim_prefs_get_string("/plugins/prpl/silc/vcard"),
+					  gaim_account_get_string(sg->account, "vcard", ""),
 					  FALSE);
 	gaim_request_field_group_add_field(g, f);
 #ifdef _WIN32
@@ -706,7 +709,6 @@ silcgaim_attrs(GaimPluginAction *action)
 #endif
 	gaim_request_field_group_add_field(g, f);
 	gaim_request_fields_add_group(fields, g);
-
 
 	gaim_request_fields(gc, _("User Online Status Attributes"),
 			    _("User Online Status Attributes"),
@@ -762,6 +764,171 @@ silcgaim_view_motd(GaimPluginAction *action)
 }
 
 static void
+silcgaim_create_keypair_cancel(GaimConnection *gc, GaimRequestFields *fields)
+{
+	/* Nothing */
+}
+
+static void
+silcgaim_create_keypair_cb(GaimConnection *gc, GaimRequestFields *fields)
+{
+	SilcGaim sg = gc->proto_data;
+	GaimRequestField *f;
+	const char *val, *pkfile = NULL, *prfile = NULL;
+	const char *pass1 = NULL, *pass2 = NULL, *un = NULL, *hn = NULL;
+	const char *rn = NULL, *e = NULL, *o = NULL, *c = NULL;
+	char *identifier;
+	int keylen = SILCGAIM_DEF_PKCS_LEN;
+	SilcPublicKey public_key;
+
+	sg = gc->proto_data;
+	if (!sg)
+		return;
+
+	val = NULL;
+	f = gaim_request_fields_get_field(fields, "pass1");
+	if (f)
+		val = gaim_request_field_string_get_value(f);
+	if (val && *val)
+		pass1 = val;
+	else
+		pass1 = "";
+	val = NULL;
+	f = gaim_request_fields_get_field(fields, "pass2");
+	if (f)
+		val = gaim_request_field_string_get_value(f);
+	if (val && *val)
+		pass2 = val;
+	else
+		pass2 = "";
+
+	if (strcmp(pass1, pass2)) {
+		gaim_notify_error(
+		     gc, _("Create New SILC Key Pair"), _("Passphrases do not match"), NULL);
+		return;
+	}
+
+	val = NULL;
+	f = gaim_request_fields_get_field(fields, "key");
+	if (f)
+		val = gaim_request_field_string_get_value(f);
+	if (val && *val)
+		keylen = atoi(val);
+	f = gaim_request_fields_get_field(fields, "pkfile");
+	if (f)
+		pkfile = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "prfile");
+	if (f)
+		prfile = gaim_request_field_string_get_value(f);
+
+	f = gaim_request_fields_get_field(fields, "un");
+	if (f)
+		un = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "hn");
+	if (f)
+		hn = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "rn");
+	if (f)
+		rn = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "e");
+	if (f)
+		e = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "o");
+	if (f)
+		o = gaim_request_field_string_get_value(f);
+	f = gaim_request_fields_get_field(fields, "c");
+	if (f)
+		c = gaim_request_field_string_get_value(f);
+
+	identifier = silc_pkcs_encode_identifier((char *)un, (char *)hn, 
+						 (char *)rn, (char *)e, (char *)o, (char *)c);
+
+	/* Create the key pair */
+	if (!silc_create_key_pair(SILCGAIM_DEF_PKCS, keylen, pkfile, prfile,
+				  identifier, pass1, NULL, &public_key, NULL, 
+				  FALSE)) {
+		gaim_notify_error(
+		     gc, _("Create New SILC Key Pair"), _("Key Pair Generation failed"), NULL);
+		return;
+	}
+
+	silcgaim_show_public_key(sg, NULL, public_key, NULL, NULL);
+
+	silc_pkcs_public_key_free(public_key);
+	silc_free(identifier);
+}
+
+static void
+silcgaim_create_keypair(GaimPluginAction *action)
+{
+	GaimConnection *gc = (GaimConnection *) action->context;
+	SilcGaim sg = gc->proto_data;
+	GaimRequestFields *fields;
+	GaimRequestFieldGroup *g;
+	GaimRequestField *f;
+	const char *username, *realname;
+	char *hostname, **u;
+	char tmp[256], pkd[256], pkd2[256], prd[256], prd2[256];
+
+	username = gaim_account_get_username(sg->account);
+	u = g_strsplit(username, "@", 2);
+	username = u[0];
+	realname = gaim_account_get_user_info(sg->account);
+	hostname = silc_net_localhost();
+	g_snprintf(tmp, sizeof(tmp), "%s@%s", username, hostname);
+
+	g_snprintf(pkd2, sizeof(pkd2), "%s" G_DIR_SEPARATOR_S"public_key.pub", silcgaim_silcdir());
+	g_snprintf(prd2, sizeof(prd2), "%s" G_DIR_SEPARATOR_S"private_key.prv", silcgaim_silcdir());
+	g_snprintf(pkd, sizeof(pkd) - 1, "%s",
+		   gaim_account_get_string(gc->account, "public-key", pkd2));
+	g_snprintf(prd, sizeof(prd) - 1, "%s",
+		   gaim_account_get_string(gc->account, "private-key", prd2));
+
+	fields = gaim_request_fields_new();
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_string_new("key", _("Key Length"), "2048", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("pkfile", _("Public Key File"), pkd, FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("prfile", _("Private Key File"), prd, FALSE);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_string_new("un", _("Username"), username ? username : "", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("hn", _("Hostname"), hostname ? hostname : "", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("rn", _("Real Name"), realname ? realname : "", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("e", _("Email"), tmp, FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("o", _("Organization"), "", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("c", _("Country"), "", FALSE);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	g = gaim_request_field_group_new(NULL);
+	f = gaim_request_field_string_new("pass1", _("Passphrase"), "", FALSE);
+	gaim_request_field_string_set_masked(f, TRUE);
+	gaim_request_field_group_add_field(g, f);
+	f = gaim_request_field_string_new("pass2", _("Re-type Passphrase"), "", FALSE);
+	gaim_request_field_string_set_masked(f, TRUE);
+	gaim_request_field_group_add_field(g, f);
+	gaim_request_fields_add_group(fields, g);
+
+	gaim_request_fields(gc, _("Create New SILC Key Pair"),
+			    _("Create New SILC Key Pair"), NULL, fields,
+			    _("Generate Key Pair"), G_CALLBACK(silcgaim_create_keypair_cb),
+			    _("Cancel"), G_CALLBACK(silcgaim_create_keypair_cancel), gc);
+
+	g_strfreev(u);
+	silc_free(hostname);
+}
+
+static void
 silcgaim_change_pass(GaimPluginAction *action)
 {
 	GaimConnection *gc = (GaimConnection *) action->context;
@@ -809,6 +976,10 @@ silcgaim_actions(GaimPlugin *plugin, gpointer context)
 
 	act = gaim_plugin_action_new(_("View Message of the Day"),
 			silcgaim_view_motd);
+	list = g_list_append(list, act);
+
+	act = gaim_plugin_action_new(_("Create SILC Key Pair..."),
+			silcgaim_create_keypair);
 	list = g_list_append(list, act);
 
 	act = gaim_plugin_action_new(_("Change Password..."),
@@ -901,7 +1072,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 	SilcUInt32 clients_count, mflags;
 	char *nickname;
 	int ret;
-	gboolean sign = gaim_prefs_get_bool("/plugins/prpl/silc/sign_im");
+	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
 
 	if (!who || !msg)
 		return 0;
@@ -1443,48 +1614,6 @@ silcgaim_register_commands(void)
 #endif
 }
 
-static GaimPluginPrefFrame *
-silcgaim_pref_frame(GaimPlugin *plugin)
-{
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
-
-	frame = gaim_plugin_pref_frame_new();
-
-	ppref = gaim_plugin_pref_new_with_label(_("Instant Messages"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/sign_im",
-			    _("Digitally sign all IM messages"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/verify_im",
-			    _("Verify all IM message signatures"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_label(_("Channel Messages"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/sign_chat",
-			    _("Digitally sign all channel messages"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	ppref = gaim_plugin_pref_new_with_name_and_label(
-			    "/plugins/prpl/silc/verify_chat",
-			    _("Verify all channel message signatures"));
-	gaim_plugin_pref_frame_add(frame, ppref);
-
-	return frame;
-}
-
-static GaimPluginUiInfo prefs_info =
-{
-	silcgaim_pref_frame,
-};
-
 static GaimWhiteboardPrplOps silcgaim_wb_ops =
 {
 	silcgaim_wb_start,
@@ -1588,7 +1717,7 @@ static GaimPluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
-	&prefs_info,                                      /**< prefs_info     */
+	NULL,                                             /**< prefs_info     */
 	silcgaim_actions
 };
 
@@ -1635,14 +1764,17 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_bool_new(_("Reject online status attribute requests"),
 					      "reject-attrs", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_bool_new(_("Block messages to whiteboard"),
+					      "block-wb", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_bool_new(_("Automatically open whiteboard"),
+					      "open-wb", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	option = gaim_account_option_bool_new(_("Digitally sign and verify all messages"),
+					      "sign-verify", FALSE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	/* Preferences */
-	gaim_prefs_add_none("/plugins/prpl/silc");
-	gaim_prefs_add_bool("/plugins/prpl/silc/sign_im", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/silc/verify_im", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/silc/sign_chat", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/silc/verify_chat", FALSE);
-	gaim_prefs_add_string("/plugins/prpl/silc/vcard", "");
+	gaim_prefs_remove("/plugins/prpl/silc");
 
 	silcgaim_register_commands();
 

@@ -1271,7 +1271,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 	const char *msg2;
 	char *tmp;
 	gboolean found = FALSE;
-	gboolean sign = gaim_prefs_get_bool("/plugins/prpl/silc/sign_chat");
+	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
 
 	if (!msg || !conn)
 		return 0;

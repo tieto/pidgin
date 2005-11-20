@@ -111,25 +111,26 @@ GaimWhiteboard *silcgaim_wb_init(SilcGaim sg, SilcClientEntry client_entry)
 	conn = sg->conn;
 	wb = gaim_whiteboard_get_session(sg->account, client_entry->nickname);
 	if (!wb)
-		wb = gaim_whiteboard_create(sg->account, client_entry->nickname,
-					    0);
+		wb = gaim_whiteboard_create(sg->account, client_entry->nickname, 0);
 	if (!wb)
 		return NULL;
 
-	wbs = silc_calloc(1, sizeof(*wbs));
-	if (!wbs)
-		return NULL;
-	wbs->type = 0;
-	wbs->u.client = client_entry;
-	wbs->width = SILCGAIM_WB_WIDTH;
-	wbs->height = SILCGAIM_WB_HEIGHT;
-	wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
-	wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
-	wb->proto_data = wbs;
+	if (!wb->proto_data) {
+		wbs = silc_calloc(1, sizeof(*wbs));
+		if (!wbs)
+			return NULL;
+		wbs->type = 0;
+		wbs->u.client = client_entry;
+		wbs->width = SILCGAIM_WB_WIDTH;
+		wbs->height = SILCGAIM_WB_HEIGHT;
+		wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
+		wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
+		wb->proto_data = wbs;
 
-	/* Start the whiteboard */
-	gaim_whiteboard_start(wb);
-	gaim_whiteboard_clear(wb);
+		/* Start the whiteboard */
+		gaim_whiteboard_start(wb);
+		gaim_whiteboard_clear(wb);
+	}
 
 	return wb;
 }
@@ -141,25 +142,26 @@ GaimWhiteboard *silcgaim_wb_init_ch(SilcGaim sg, SilcChannelEntry channel)
 
 	wb = gaim_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb)
-		wb = gaim_whiteboard_create(sg->account, channel->channel_name,
-					    0);
+		wb = gaim_whiteboard_create(sg->account, channel->channel_name, 0);
 	if (!wb)
 		return NULL;
 
-	wbs = silc_calloc(1, sizeof(*wbs));
-	if (!wbs)
-		return NULL;
-	wbs->type = 1;
-	wbs->u.channel = channel;
-	wbs->width = SILCGAIM_WB_WIDTH;
-	wbs->height = SILCGAIM_WB_HEIGHT;
-	wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
-	wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
-	wb->proto_data = wbs;
+	if (!wb->proto_data) {
+		wbs = silc_calloc(1, sizeof(*wbs));
+		if (!wbs)
+			return NULL;
+		wbs->type = 1;
+		wbs->u.channel = channel;
+		wbs->width = SILCGAIM_WB_WIDTH;
+		wbs->height = SILCGAIM_WB_HEIGHT;
+		wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
+		wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
+		wb->proto_data = wbs;
 
-	/* Start the whiteboard */
-	gaim_whiteboard_start(wb);
-	gaim_whiteboard_clear(wb);
+		/* Start the whiteboard */
+		gaim_whiteboard_start(wb);
+		gaim_whiteboard_clear(wb);
+	}
 
 	return wb;
 }
@@ -260,6 +262,23 @@ silcgaim_wb_request(SilcClient client, const unsigned char *message,
 	GaimConnection *gc;
 	SilcGaim sg;
 
+	gc = client->application;
+        sg = gc->proto_data;
+
+	/* Open whiteboard automatically if requested */
+	if (gaim_account_get_bool(sg->account, "open-wb", FALSE)) {
+		GaimWhiteboard *wb;
+
+		if (!channel)
+			wb = silcgaim_wb_init(sg, sender);
+		else
+			wb = silcgaim_wb_init_ch(sg, channel);
+
+		silcgaim_wb_parse(wb->proto_data, wb, (unsigned char *)message,
+				  message_len);
+		return;
+	}
+
 	if (!channel) {
 		g_snprintf(tmp, sizeof(tmp),
 			_("%s sent message to whiteboard. Would you like "
@@ -270,9 +289,6 @@ silcgaim_wb_request(SilcClient client, const unsigned char *message,
 			  "Would you like to open the whiteboard?"),
 			sender->nickname, channel->channel_name);
 	}
-
-	gc = client->application;
-        sg = gc->proto_data;
 
 	req = silc_calloc(1, sizeof(*req));
 	if (!req)
@@ -394,7 +410,7 @@ void silcgaim_wb_send(GaimWhiteboard *wb, GList *draw_list)
 						 SILC_MESSAGE_FLAG_DATA,
 						 packet->head, len, TRUE);
 	} else if (wbs->type == 1) {
-		/* Channel message */
+		/* Channel message. Channel private keys are not supported. */
 		silc_client_send_channel_message(sg->client, sg->conn,
 						 wbs->u.channel, NULL,
 						 SILC_MESSAGE_FLAG_DATA,
@@ -433,7 +449,7 @@ void silcgaim_wb_set_dimensions(GaimWhiteboard *wb, int width, int height)
 			height;
 
 	/* Update whiteboard */
-	gaim_whiteboard_set_dimensions(wb, width, height);
+	gaim_whiteboard_set_dimensions(wb, wbs->width, wbs->height);
 }
 
 void silcgaim_wb_get_brush(GaimWhiteboard *wb, int *size, int *color)
