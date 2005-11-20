@@ -32,11 +32,12 @@ static void
 conv_placement_by_number(GaimGtkConversation *conv)
 {
 	GaimGtkWindow *win = NULL;
+	GList *wins = NULL;
 
 	if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
 		win = gaim_gtk_conv_window_last_with_type(gaim_conversation_get_type(conv->active_conv));
-	else
-		win = g_list_last(gaim_gtk_conv_windows_get_list())->data;
+	else if ((wins = gaim_gtk_conv_windows_get_list()) != NULL)
+		win = g_list_last(wins)->data;
 
 	if (win == NULL) {
 		win = gaim_gtk_conv_window_new();
