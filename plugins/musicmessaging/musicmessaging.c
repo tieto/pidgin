@@ -264,9 +264,6 @@ plugin_load(GaimPlugin *plugin) {
        code wouldn't know about our functions. */
     GAIM_DBUS_REGISTER_BINDINGS(plugin);
 	
-	
-	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Welcome",
-                        "Welcome to music messaging.", NULL, NULL, NULL);
 	/* Keep the plugin for reference (needed for notify's) */
 	plugin_pointer = plugin;
 	
@@ -295,9 +292,6 @@ plugin_load(GaimPlugin *plugin) {
 static gboolean
 plugin_unload(GaimPlugin *plugin) {
 	MMConversation *mmconv = NULL;
-	
-	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Unloaded",
-						DATADIR, NULL, NULL, NULL);
 	
 	while (g_list_length(conversations) > 0)
 	{
