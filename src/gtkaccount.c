@@ -1115,36 +1115,32 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 			case GAIM_PREF_STRING_LIST:
 				i = 0;
-				idx = -1;
+				idx = 0;
 
 				if (account == NULL ||
 					strcmp(gaim_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
-					str_value = gaim_account_option_get_default_string(option);
+					str_value = gaim_account_option_get_default_list_value(option);
 				}
 				else
 				{
 					str_value = gaim_account_get_string(account,
 						gaim_account_option_get_setting(option),
-						gaim_account_option_get_default_string(option));
+						gaim_account_option_get_default_list_value(option));
 				}
-
 
 				list = gaim_account_option_get_list(option);
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
 
-				//if (gaim_account_option_get_masked(option))
-					//gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
-
 				/* Loop through list of GaimKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {
 					if (node->data != NULL) {
 						kvp = (GaimKeyValuePair *) node->data;
-						if ((idx < 0) && (kvp->value != NULL) && (str_value != NULL))
-							if (!g_utf8_collate(kvp->value, str_value))
-								idx = i;
+						if ((kvp->value != NULL) && (str_value != NULL) &&
+							!g_utf8_collate(kvp->value, str_value))
+							idx = i;
 
 						gtk_list_store_append(model, &iter);
 						gtk_list_store_set(model, &iter,
@@ -1157,8 +1153,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				}
 
 				/* Set default */
-				if (idx >= 0)
-					gtk_combo_box_set_active(GTK_COMBO_BOX(combo), idx);
+				gtk_combo_box_set_active(GTK_COMBO_BOX(combo), idx);
 
 				/* Define renderer */
 				renderer = gtk_cell_renderer_text_new();

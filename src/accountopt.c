@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "accountopt.h"
+#include "util.h"
 
 GaimAccountOption *
 gaim_account_option_new(GaimPrefType type, const char *text,
@@ -197,15 +198,19 @@ void
 gaim_account_option_add_list_item(GaimAccountOption *option,
 								  const char *key, const char *value)
 {
+	GaimKeyValuePair *kvp;
+
 	g_return_if_fail(option != NULL);
 	g_return_if_fail(key    != NULL);
 	g_return_if_fail(value  != NULL);
 	g_return_if_fail(option->type == GAIM_PREF_STRING_LIST);
 
+	kvp = g_new0(GaimKeyValuePair, 1);
+	kvp->key = g_strdup(key);
+	kvp->value = g_strdup(value);
+
 	option->default_value.list = g_list_append(option->default_value.list,
-											   g_strdup(key));
-	option->default_value.list = g_list_append(option->default_value.list,
-											   g_strdup(value));
+											   kvp);
 }
 
 GaimPrefType
@@ -257,6 +262,22 @@ gaim_account_option_get_default_string(const GaimAccountOption *option)
 	g_return_val_if_fail(option->type == GAIM_PREF_STRING, NULL);
 
 	return option->default_value.string;
+}
+
+const char *
+gaim_account_option_get_default_list_value(const GaimAccountOption *option)
+{
+	GaimKeyValuePair *kvp;
+
+	g_return_val_if_fail(option != NULL, NULL);
+	g_return_val_if_fail(option->type == GAIM_PREF_STRING_LIST, NULL);
+
+	if (option->default_value.list == NULL)
+		return NULL;
+
+	kvp = option->default_value.list->data;
+
+	return (kvp ? kvp->value : NULL);
 }
 
 gboolean

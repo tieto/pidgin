@@ -269,6 +269,16 @@ const char *gaim_account_option_get_default_string(
 	const GaimAccountOption *option);
 
 /**
+ * Returns the default string value for a list account option.
+ *
+ * @param option The account option.
+ *
+ * @return The default list string value.
+ */
+const char *gaim_account_option_get_default_list_value(
+	const GaimAccountOption *option);
+
+/**
  * Returns the masking for an account option.
  *
  * @param option The account option.
