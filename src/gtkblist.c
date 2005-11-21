@@ -3359,10 +3359,8 @@ static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 static gboolean
 pane_position_cb(GtkPaned *paned, GParamSpec *param_spec, gpointer data)
 {
-	if (!strcmp(g_param_spec_get_name(param_spec), "position")) {
-		gaim_prefs_set_int("/gaim/gtk/blist/pane",
-		                   gtk_paned_get_position(paned));
-	}
+	gaim_prefs_set_int("/gaim/gtk/blist/pane",
+	                   gtk_paned_get_position(paned));
 
 	return FALSE;
 }
@@ -3434,7 +3432,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), vpane, TRUE, TRUE, 0);
 	gtk_paned_set_position(GTK_PANED(vpane),
 	                       gaim_prefs_get_int("/gaim/gtk/blist/pane"));
-	g_signal_connect(G_OBJECT(vpane), "notify",
+	g_signal_connect(G_OBJECT(vpane), "notify::position",
 	                 G_CALLBACK(pane_position_cb), NULL);
 
 	/****************************** GtkTreeView **********************************/
