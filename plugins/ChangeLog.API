@@ -150,6 +150,8 @@ version 2.0.0:
 	  a visibility manager - see the docs for more information
 	* gaim_gtk_conversations_get_first_unseen() to find the first conv
 	  with an "unseen" state >= to the specified state
+	* gaim_gtk_conversations_fill_unseen_menu() to fill a menu with a list of
+	  conversations with an "unseen" state >= to the specified state
 	* gaim_gtk_create_prpl_icon()
 	* gaim_gtk_create_prpl_icon_with_status()
 	* gaim_gtk_pounces_manager_show()

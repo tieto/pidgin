@@ -143,6 +143,7 @@ struct _GaimGtkConversation
 	GtkWidget *toolbar;
 
 	GaimUnseenState unseen_state;
+	guint unseen_count;
 
 	struct
 	{
@@ -210,6 +211,21 @@ void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
  */
 GaimConversation *
 gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
+                                        GaimUnseenState min_state);
+/**
+ * Adds an item to a menu for each conversation of the given type
+ * with an unseen state greater than or equal to the specified minimum 
+ * state. The menu item will present the conversation to the user
+ * when activated.
+ *
+ * @param menu      Menu widget to add items to.
+ * @param type      The type of conversation.
+ * @param min_state The minimum unseen state.
+ * @return          Number of conversations added to menu.
+ */
+guint
+gaim_gtk_conversations_fill_unseen_menu(GtkWidget *menu,
+                                        GaimConversationType type,
                                         GaimUnseenState min_state);
 
 /**

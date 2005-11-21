@@ -3127,46 +3127,19 @@ plugin_changed_cb(GaimPlugin *p, gpointer *data)
 }
 
 static void
-unseen_conv_menu_cb(GtkMenuItem *item, GaimConversation *conv)
-{
-	g_return_if_fail(conv != NULL);
-	gaim_gtkconv_present_conversation(conv);
-}
-
-static void
 unseen_conv_menu()
 {
 	static GtkWidget *menu = NULL;
-	GList *convs;
 
 	if (menu)
 		gtk_widget_destroy(menu);
 
-	if (!gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT))
-		return;
-
 	menu = gtk_menu_new();
-
-	for (convs = gaim_get_ims(); convs != NULL ; convs = convs->next) {
-		GaimConversation *conv = convs->data;
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-
-		if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
-			GtkWidget *icon = gtk_image_new();
-			GdkPixbuf *pbuf = gaim_gtkconv_get_tab_icon(conv, TRUE);
-			GtkWidget *item;
-
-			gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pbuf);
-			g_object_unref(pbuf);
-
-			item = gtk_image_menu_item_new_with_label(
-					gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), icon);
-			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(unseen_conv_menu_cb), conv);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		}
+	if (!gaim_gtk_conversations_fill_unseen_menu(menu, GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT)) {
+		/* no conversations added, don't show the menu */
+		gtk_widget_destroy(menu);
+		return;
 	}
-
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3,
 			gtk_get_current_event_time());
@@ -3194,22 +3167,24 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 	GtkWidget *img = NULL;
 	GString *tooltip_text = NULL;
 
-	if(gtkblist->menutrayicon) {
+	if (type != GAIM_CONV_UPDATE_UNSEEN)
+		return;
+
+	if (gtkblist->menutrayicon) {
 		gtk_widget_destroy(gtkblist->menutrayicon);
 		gtkblist->menutrayicon = NULL;
 	}
 
-	if(gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT)) {
+	if (gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT)) {
 		GList *convs = gaim_get_ims();
 		tooltip_text = g_string_new("");
-		while(convs) {
-			conv = convs->data;
-			if(GAIM_IS_GTK_CONVERSATION(conv)) {
-				GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-				if(gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
-					g_string_append_printf(tooltip_text,
-							_("Unread messages from %s\n"), gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-				}
+		while (convs) {
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+
+			if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
+				g_string_append_printf(tooltip_text,
+						_("%d unread message(s) from %s\n"), gtkconv->unseen_count,
+						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 			}
 			convs = convs->next;
 		}

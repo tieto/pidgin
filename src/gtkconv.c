@@ -2392,14 +2392,63 @@ gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
 
 	for(; l!=NULL; l=l->next) {
 		GaimConversation *conv = (GaimConversation*)l->data;
-		if(GAIM_IS_GTK_CONVERSATION(conv)) {
-			if(GAIM_GTK_CONVERSATION(conv)->unseen_state>=min_state) {
-				return conv;
-			}
-		}
+		if (GAIM_GTK_CONVERSATION(conv)->unseen_state >= min_state)
+			return conv;
 	}
 
 	return NULL;
+}
+
+static void
+unseen_conv_menu_cb(GtkMenuItem *item, GaimConversation *conv)
+{
+	g_return_if_fail(conv != NULL);
+	gaim_gtkconv_present_conversation(conv);
+}
+
+guint
+gaim_gtk_conversations_fill_unseen_menu(GtkWidget *menu,
+                                        GaimConversationType type,
+                                        GaimUnseenState min_state)
+{
+	GList *l;
+	guint ret = 0;
+
+	g_return_val_if_fail(menu != NULL, 0);
+
+	if (type == GAIM_CONV_TYPE_IM) {
+		l = gaim_get_ims();
+	} else if (type == GAIM_CONV_TYPE_CHAT) {
+		l = gaim_get_chats();
+	} else {
+		l = gaim_get_conversations();
+	}
+
+	for (; l != NULL ; l = l->next) {
+		GaimConversation *conv = (GaimConversation*)l->data;
+		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+		if (gtkconv->unseen_state >= min_state) {
+			GtkWidget *icon = gtk_image_new();
+			GdkPixbuf *pbuf = gaim_gtkconv_get_tab_icon(conv, TRUE);
+			GtkWidget *item;
+			gchar *text = g_strdup_printf("%s (%d)", 
+					gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)),
+					gtkconv->unseen_count);
+
+			gtk_image_set_from_pixbuf(GTK_IMAGE(icon), pbuf);
+			g_object_unref(pbuf);
+
+			item = gtk_image_menu_item_new_with_label(text);
+			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), icon);
+			g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(unseen_conv_menu_cb), conv);
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+			g_free(text);
+			ret++;
+		}
+	}
+
+	return ret;
 }
 
 GaimGtkWindow *
@@ -3907,6 +3956,8 @@ gaim_gtkconv_new(GaimConversation *conv)
 	/* Setup some initial variables. */
 	gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkconv->tooltips = gtk_tooltips_new();
+	gtkconv->unseen_state = GAIM_UNSEEN_NONE;
+	gtkconv->unseen_count = 0;
 
 	if (conv_type == GAIM_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(GaimGtkImPane));
@@ -5982,7 +6033,7 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	{
 		GaimGtkConversation *gtkconv = l->data;
 		if (gaim_conversation_get_type(gtkconv->active_conv) == GAIM_CONV_TYPE_IM &&
-				gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
+				gtkconv->unseen_state >= GAIM_UNSEEN_TEXT)
 		{
 			build_warn_close_dialog(win);
 			gtk_widget_show_all(warn_close_dialog);
@@ -5999,12 +6050,21 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void
 gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState state)
 {
-	/* only allow NONE or higher priority unseen state */
-	if((state==GAIM_UNSEEN_NONE && gtkconv->unseen_state!=GAIM_UNSEEN_NONE)
-			|| state > gtkconv->unseen_state) {
-		gtkconv->unseen_state = state;
-		gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
+	if (state == GAIM_UNSEEN_NONE)
+	{
+		gtkconv->unseen_count = 0;
+		gtkconv->unseen_state = GAIM_UNSEEN_NONE;
 	}
+	else
+	{
+		gtkconv->unseen_count++;
+
+		if (state > gtkconv->unseen_state)
+			gtkconv->unseen_state = state;
+	}
+
+	/* emit update signal to notify of count and possible unseen state change */
+	gaim_conversation_update(gtkconv->active_conv, GAIM_CONV_UPDATE_UNSEEN);
 }
 
 /*
