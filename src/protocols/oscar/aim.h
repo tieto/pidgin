@@ -278,11 +278,11 @@ struct client_info_s {
 }
 
 #define CLIENTINFO_GAIM { \
-	"Gaim", \
-	0x00f1, \
-	GAIM_MAJOR_VERSION, GAIM_MINOR_VERSION, \
-	GAIM_MICRO_VERSION, 0x0000, \
-	0x00000000, \
+	"Gaim, version " VERSION, \
+	0x0109, \
+	0x0005, 0x0001, \
+	0x0000, 0x0bdc, \
+	0x000000d2, \
 	"us", "en", \
 }
 
