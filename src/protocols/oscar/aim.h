@@ -278,7 +278,7 @@ struct client_info_s {
 }
 
 #define CLIENTINFO_GAIM { \
-	"Gaim, version " VERSION, \
+	"Gaim/" VERSION, \
 	0x0109, \
 	0x0005, 0x0001, \
 	0x0000, 0x0bdc, \
