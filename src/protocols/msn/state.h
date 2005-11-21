@@ -41,8 +41,6 @@ typedef enum
 
 } MsnAwayType;
 
-#define MSN_AWAY_TYPE(x)   (((x) >> 1) & 0x0F)
-
 /**
  * Changes the status of the user.
  *
