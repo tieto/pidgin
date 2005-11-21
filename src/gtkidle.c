@@ -188,7 +188,7 @@ gaim_gtk_idle_check(gpointer data)
 							gaim_account_get_username(account));
 
 			/* Return our account to its previous status */
-			saved_status = gaim_savedstatus_get_idleaway();
+			saved_status = gaim_savedstatus_get_current();
 			gaim_savedstatus_activate_for_account(saved_status, account);
 		}
 	}
