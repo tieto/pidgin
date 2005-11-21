@@ -188,52 +188,40 @@ void
 gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
 		gboolean idle, time_t idle_time)
 {
-	GSList *list, *iter;
+	GaimBuddy *buddy;
+	GaimPresence *presence;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
-	list = gaim_find_buddies(account, name);
-	for (iter = list; iter != NULL; iter = iter->next)
-	{
-		GaimBuddy *buddy;
-		GaimPresence *presence;
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
 
-		buddy = (GaimBuddy *)iter->data;
+	presence = gaim_buddy_get_presence(buddy);
 
-		presence = gaim_buddy_get_presence(buddy);
-
-		gaim_presence_set_idle(presence, idle, idle_time);
-	}
-	g_slist_free(list);
+	gaim_presence_set_idle(presence, idle, idle_time);
 }
 
 void
 gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 		time_t login_time)
 {
-	GSList *list, *iter;
+	GaimBuddy *buddy;
+	GaimPresence *presence;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(name    != NULL);
 
-	list = gaim_find_buddies(account, name);
-	for (iter = list; iter != NULL; iter = iter->next)
-	{
-		GaimBuddy *buddy;
-		GaimPresence *presence;
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
 
-		buddy = (GaimBuddy *)iter->data;
+	if (login_time == 0)
+		login_time = time(NULL);
 
-		if (login_time == 0)
-			login_time = time(NULL);
+	presence = gaim_buddy_get_presence(buddy);
 
-		presence = gaim_buddy_get_presence(buddy);
-
-		gaim_presence_set_login_time(presence, login_time);
-	}
-	g_slist_free(list);
+	gaim_presence_set_login_time(presence, login_time);
 }
 
 void
@@ -241,44 +229,47 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		const char *status_id, const char *attr_id, ...)
 {
 	GSList *list, *iter;
+	GaimBuddy *buddy;
+	GaimPresence *presence;
+	GaimStatus *status;
+	GaimStatus *old_status;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
 	g_return_if_fail(status_id != NULL);
 	g_return_if_fail(gaim_account_is_connected(account));
 
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	presence = gaim_buddy_get_presence(buddy);
+	status   = gaim_presence_get_status(presence, status_id);
+
+	g_return_if_fail(status != NULL);
+
+	if (attr_id != NULL)
+	{
+		va_list args;
+
+		va_start(args, attr_id);
+
+		while (attr_id != NULL)
+		{
+			set_value_from_arg(status, attr_id, &args);
+
+			attr_id = va_arg(args, char *);
+		}
+
+		va_end(args);
+	}
+
+	old_status = gaim_presence_get_active_status(presence);
+	gaim_presence_set_status_active(presence, status_id, TRUE);
+
 	list = gaim_find_buddies(account, name);
 	for (iter = list; iter != NULL; iter = iter->next)
 	{
-		GaimBuddy *buddy;
-		GaimPresence *presence;
-		GaimStatus *status;
-		GaimStatus *old_status;
-
 		buddy = (GaimBuddy *)iter->data;
-		presence = gaim_buddy_get_presence(buddy);
-		status   = gaim_presence_get_status(presence, status_id);
-
-		g_return_if_fail(status != NULL);
-
-		if (attr_id != NULL)
-		{
-			va_list args;
-
-			va_start(args, attr_id);
-
-			while (attr_id != NULL)
-			{
-				set_value_from_arg(status, attr_id, &args);
-
-				attr_id = va_arg(args, char *);
-			}
-
-			va_end(args);
-		}
-
-		old_status = gaim_presence_get_active_status(presence);
-		gaim_presence_set_status_active(presence, status_id, TRUE);
 		gaim_blist_update_buddy_status(buddy, old_status);
 	}
 	g_slist_free(list);
