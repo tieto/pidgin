@@ -29,10 +29,8 @@ typedef struct _MsnCommand MsnCommand;
 #include "cmdproc.h"
 #include "transaction.h"
 
-#if 1
 typedef void (*MsnPayloadCb)(MsnCmdProc *cmdproc, MsnCommand *cmd,
 							 char *payload, size_t len);
-#endif
 
 /**
  * A received command.
