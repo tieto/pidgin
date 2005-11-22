@@ -46,8 +46,6 @@
 #include "gtkstatusbox.h"
 #include "gtkstock.h"
 
-
-
 enum
 {
 	COLUMN_ICON,
@@ -960,14 +958,9 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GaimAccountOption *option;
 	GaimAccount *account;
-	GtkWidget *frame;
-	GtkWidget *vbox;
-	GtkWidget *check;
-	GtkWidget *entry;
-	GtkWidget *combo;
-	const GList *list;
-	const GList *node;
-	gint i, idx;
+	GtkWidget *frame, *vbox, *check, *entry, *combo;
+	const GList *list, *node;
+	gint i, idx, int_value;
 	GtkListStore *model;
 	GtkTreeIter iter;
 	GtkCellRenderer *renderer;
@@ -977,7 +970,6 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	char *title;
 	const char *str_value;
 	gboolean bool_value;
-	int int_value;
 
 	if (dialog->protocol_frame != NULL) {
 		gtk_widget_destroy(dialog->protocol_frame);
