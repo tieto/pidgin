@@ -557,9 +557,9 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	dialog->away_return =
 		gtk_check_button_new_with_mnemonic(_("Ret_urns from away"));
 	dialog->idle =
-		gtk_check_button_new_with_mnemonic(_("Becomes _Idle"));
+		gtk_check_button_new_with_mnemonic(_("Becomes _idle"));
 	dialog->idle_return =
-		gtk_check_button_new_with_mnemonic(_("Is _no longer idle"));
+		gtk_check_button_new_with_mnemonic(_("Is no longer i_dle"));
 	dialog->typing =
 		gtk_check_button_new_with_mnemonic(_("Starts _typing"));
 	dialog->stop_typing =
@@ -600,7 +600,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_widget_show(table);
 
 	dialog->open_win
-		= gtk_check_button_new_with_mnemonic(_("Op_en an IM window"));
+		= gtk_check_button_new_with_mnemonic(_("Ope_n an IM window"));
 	dialog->popup
 		= gtk_check_button_new_with_mnemonic(_("_Pop up a notification"));
 	dialog->send_msg
@@ -612,7 +612,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	dialog->send_msg_entry    = gtk_entry_new();
 	dialog->exec_cmd_entry    = gtk_entry_new();
-	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("B_rowse..."));
+	dialog->exec_cmd_browse   = gtk_button_new_with_mnemonic(_("Brows_e..."));
 	dialog->play_sound_entry  = gtk_entry_new();
 	dialog->play_sound_browse = gtk_button_new_with_mnemonic(_("Br_owse..."));
 	dialog->play_sound_test   = gtk_button_new_with_mnemonic(_("Pre_view"));
