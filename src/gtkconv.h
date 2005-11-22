@@ -118,8 +118,6 @@ struct _GaimGtkConversation
 	GaimGtkWindow *win;
 
 	gboolean make_sound;
-	gboolean show_formatting_toolbar;
-	gboolean show_timestamps;
 
 	GtkTooltips *tooltips;
 

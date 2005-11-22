@@ -1938,7 +1938,6 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
 	gaim_prefs_remove("/gaim/gtk/conversations/send_formatting");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
-	gaim_prefs_remove("/gaim/gtk/conversations/show_timestamps");
 	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
 	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
 	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_bgcolor");

@@ -1297,9 +1297,7 @@ menu_timestamps_cb(gpointer data, guint action, GtkWidget *widget)
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-	gtkconv->show_timestamps =
-		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget));
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+	gaim_prefs_set_bool("/gaim/gtk/conversations/show_timestamps",
 		gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(widget)));
 }
 
@@ -4022,8 +4020,8 @@ gaim_gtkconv_new(GaimConversation *conv)
 	else
 		gtk_widget_hide(gtkconv->toolbar);
 
-	gtkconv->show_timestamps = TRUE;
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+		gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
 								 gaim_account_get_protocol_name(conv->account));
 
@@ -4037,7 +4035,7 @@ gaim_gtkconv_new(GaimConversation *conv)
 			gaim_gtk_conv_window_add_gtkconv(hidden_convwin, gtkconv);
 			return;
 		}
- 
+
 		/* put conv in hidden_convwin if hide_new pref is away and account is away */
 		if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away")==0
 				&& gaim_status_type_get_primitive(
@@ -5547,6 +5545,34 @@ tab_side_pref_cb(const char *name, GaimPrefType type, gpointer value,
 }
 
 static void
+show_timestamps_pref_cb(const char *name, GaimPrefType type,
+								gpointer value, gpointer data)
+{
+	GList *l;
+	GaimConversation *conv;
+	GaimGtkConversation *gtkconv;
+	GaimGtkWindow *win;
+
+	for (l = gaim_get_conversations(); l != NULL; l = l->next)
+	{
+		conv = (GaimConversation *)l->data;
+
+		if (!GAIM_IS_GTK_CONVERSATION(conv))
+			continue;
+
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		win     = gtkconv->win;
+
+		gtk_check_menu_item_set_active(
+		        GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
+		        (gboolean)GPOINTER_TO_INT(value));
+
+		gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),
+			(gboolean)GPOINTER_TO_INT(value));
+	}
+}
+
+static void
 show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 								gpointer value, gpointer data)
 {
@@ -5747,6 +5773,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_incoming_formatting", TRUE);
 
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 
@@ -5792,6 +5819,8 @@ gaim_gtk_conversations_init(void)
 	/* Connect callbacks. */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/close_on_tabs",
 								close_on_tabs_pref_cb, NULL);
+	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_timestamps",
+								show_timestamps_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/show_formatting_toolbar",
 								show_formatting_toolbar_pref_cb, NULL);
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/conversations/spellcheck",
@@ -6523,7 +6552,7 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, GaimGtkWindow 
 		g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
 		return FALSE;
 	}
-	
+
 	g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
 
 	menu = notebook->menu;
@@ -6594,7 +6623,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 	                               gaim_prefs_get_bool("/gaim/gtk/conversations/show_formatting_toolbar"));
 
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_timestamps),
-	                               gtkconv->show_timestamps);
+	                               gaim_prefs_get_bool("/gaim/gtk/conversations/show_timestamps"));
 
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(win->menu.show_icon),
