@@ -53,7 +53,7 @@ enum
 	POUNCES_MANAGER_COLUMN_ICON,
 	POUNCES_MANAGER_COLUMN_TARGET,
 	POUNCES_MANAGER_COLUMN_ACCOUNT,
-	POUNCES_MANAGER_COLUMN_PERSISTENCE,
+	POUNCES_MANAGER_COLUMN_RECURRING,
 	POUNCES_MANAGER_NUM_COLUMNS
 };
 
@@ -177,7 +177,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 	GtkTreeIter iter;
 	GaimAccount *account;
 	GaimPounceEvent events;
-	gboolean persists;
+	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf, *scale = NULL;
@@ -197,7 +197,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 
 	pouncer = gaim_account_get_username(account);
 	pouncee = gaim_pounce_get_pouncee(pounce);
-	persists = gaim_pounce_get_save(pounce);
+	recurring = gaim_pounce_get_save(pounce);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -205,7 +205,7 @@ add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
 					   POUNCES_MANAGER_COLUMN_ICON, scale,
 					   POUNCES_MANAGER_COLUMN_TARGET, pouncee,
 					   POUNCES_MANAGER_COLUMN_ACCOUNT, pouncer,
-					   POUNCES_MANAGER_COLUMN_PERSISTENCE, persists,
+					   POUNCES_MANAGER_COLUMN_RECURRING, recurring,
 					   -1);
 }
 
@@ -1060,22 +1060,22 @@ pounce_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer us
 }
 
 static void
-pounces_manager_persists_cb(GtkCellRendererToggle *renderer, gchar *path_str,
+pounces_manager_recurring_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 							gpointer user_data)
 {
 	PouncesManager *dialog = user_data;
 	GaimPounce *pounce;
-	gboolean persists;
+	gboolean recurring;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter,
 					   POUNCES_MANAGER_COLUMN_POUNCE, &pounce,
-					   POUNCES_MANAGER_COLUMN_PERSISTENCE, &persists,
+					   POUNCES_MANAGER_COLUMN_RECURRING, &recurring,
 					   -1);
 
-	gaim_pounce_set_save(pounce, !persists);
+	gaim_pounce_set_save(pounce, !recurring);
 
 	update_pounces();
 }
@@ -1175,15 +1175,15 @@ create_pounces_list(PouncesManager *dialog)
 	gtk_tree_view_column_add_attribute(column, renderer, "text",
 									   POUNCES_MANAGER_COLUMN_ACCOUNT);
 
-	/* Persistence Column */
+	/* Recurring Column */
 	renderer = gtk_cell_renderer_toggle_new();
-	column = gtk_tree_view_column_new_with_attributes(_("Persists"), renderer,
-						"active", POUNCES_MANAGER_COLUMN_PERSISTENCE, NULL);
+	column = gtk_tree_view_column_new_with_attributes(_("Recurring"), renderer,
+						"active", POUNCES_MANAGER_COLUMN_RECURRING, NULL);
 	gtk_tree_view_column_set_sort_column_id(column,
-											POUNCES_MANAGER_COLUMN_PERSISTENCE);
+											POUNCES_MANAGER_COLUMN_RECURRING);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 	g_signal_connect(G_OBJECT(renderer), "toggled",
-			 G_CALLBACK(pounces_manager_persists_cb), dialog);
+			 G_CALLBACK(pounces_manager_recurring_cb), dialog);
 
 	/* Enable CTRL+F searching */
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(treeview), POUNCES_MANAGER_COLUMN_TARGET);
