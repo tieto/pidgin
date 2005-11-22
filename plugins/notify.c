@@ -515,6 +515,8 @@ handle_urgent(GaimGtkWindow *win, gboolean add)
 
 	hints = XGetWMHints(GDK_WINDOW_XDISPLAY(win->window->window),
 	                    GDK_WINDOW_XWINDOW(win->window->window));
+	if(!hints)
+		hints = XAllocWMHints();
 	if (add)
 		hints->flags |= XUrgencyHint;
 	else
