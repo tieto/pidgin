@@ -241,6 +241,7 @@ static int gaim_parse_misses     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_clientauto (aim_session_t *, aim_frame_t *, ...);
 static int gaim_parse_userinfo   (aim_session_t *, aim_frame_t *, ...);
 static int gaim_reqinfo_timeout  (aim_session_t *, aim_frame_t *, ...);
+static int gaim_got_infoblock    (aim_session_t *sess, aim_frame_t *fr, ...);
 static int gaim_parse_motd       (aim_session_t *, aim_frame_t *, ...);
 static int gaim_chatnav_info     (aim_session_t *, aim_frame_t *, ...);
 static int gaim_conv_chat_join        (aim_session_t *, aim_frame_t *, ...);
@@ -2814,6 +2815,7 @@ static int gaim_parse_auth_resp(aim_session_t *sess, aim_frame_t *fr, ...) {
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_MTN, gaim_parse_mtn, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_USERINFO, gaim_parse_userinfo, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_REQUESTINFOTIMEOUT, gaim_reqinfo_timeout, 0);
+	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_LOC, AIM_CB_LOC_GOTINFOBLOCK, gaim_got_infoblock, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_MSG, AIM_CB_MSG_ACK, gaim_parse_msgack, 0);
 	aim_conn_addhandler(sess, bosconn, AIM_CB_FAM_GEN, AIM_CB_GEN_MOTD, gaim_parse_motd, 0);
 	aim_conn_addhandler(sess, bosconn, 0x0004, 0x0005, gaim_icbm_param_info, 0);
@@ -5092,6 +5094,52 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	gaim_str_strip_char(tmp, '\r');
 	gaim_notify_userinfo(gc, userinfo->sn, tmp, NULL, NULL);
 	g_free(tmp);
+
+	return 1;
+}
+
+static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
+{
+	GaimConnection *gc = sess->aux_data;
+	OscarData *od = gc->proto_data;
+	GaimBuddy *b;
+	GaimPresence *presence;
+	GaimStatus *active_status;
+	gchar *message = NULL;
+
+	va_list ap;
+	aim_userinfo_t *userinfo;
+
+	va_start(ap, fr);
+	userinfo = va_arg(ap, aim_userinfo_t *);
+	va_end(ap);
+
+	b = gaim_find_buddy(gaim_connection_get_account(gc), userinfo->sn);
+	if (b == NULL)
+		return 1;
+
+	presence = gaim_buddy_get_presence(b);
+	active_status = gaim_presence_get_active_status(presence);
+
+	if (gaim_status_type_get_primitive(gaim_status_get_type(active_status)) == GAIM_STATUS_AVAILABLE) {
+		struct buddyinfo *bi;
+
+		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
+		if ((bi != NULL) && (bi->availmsg != NULL))
+			message = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
+	} else {
+		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) &&
+			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
+			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
+			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+			g_free(charset);
+		}
+	}
+
+	gaim_status_set_attr_string(active_status, "message", message);
+	g_free(message);
+
+	gaim_blist_update_buddy_status(b, active_status);
 
 	return 1;
 }
@@ -7526,16 +7574,24 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 	GString *str = g_string_new("");
 
 	if (GAIM_BUDDY_IS_ONLINE(b)) {
+		GaimPresence *presence;
+		GaimStatus *status;
+		const char *message;
+
 		oscar_string_append_info(gc, str, "\n", b, userinfo);
 
-		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
-			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			gchar *away_utf8 = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
-			g_free(charset);
-			if (away_utf8 != NULL) {
+		presence = gaim_buddy_get_presence(b);
+		status = gaim_presence_get_active_status(presence);
+		message = gaim_status_get_attr_string(status, "message");
+
+		if (message != NULL) {
+			if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_AVAILABLE) {
+				/* Available status messages are plain text */
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Status Message"), message);
+			} else {
+				/* Away messages are HTML */
 				gchar *tmp1, *tmp2;
-				tmp2 = gaim_markup_strip_html(away_utf8);
-				g_free(away_utf8);
+				tmp2 = gaim_markup_strip_html(message);
 				tmp1 = g_markup_escape_text(tmp2, -1);
 				g_free(tmp2);
 				tmp2 = gaim_str_sub_away_formatters(tmp1, gaim_account_get_username(gaim_connection_get_account(gc)));
