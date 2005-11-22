@@ -38,6 +38,7 @@ static struct StockIcon
 {
 	{ GAIM_STOCK_ABOUT,           "buttons", "about_menu.png"           },
 	{ GAIM_STOCK_ACCOUNTS,        "buttons", "accounts.png"             },
+	{ GAIM_STOCK_ACTION,          NULL,      GTK_STOCK_EXECUTE          },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ GAIM_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
 #else
@@ -52,6 +53,7 @@ static struct StockIcon
 #else
 	{ GAIM_STOCK_CONNECT,         "icons",   "stock_connect_16.png"     },
 #endif
+	{ GAIM_STOCK_DEBUG,           NULL,      GTK_STOCK_PROPERTIES       },
 	{ GAIM_STOCK_DOWNLOAD,        NULL,      GTK_STOCK_GO_DOWN          },
 	{ GAIM_STOCK_DIALOG_AUTH,     "dialogs", "gaim_auth.png"            },
 	{ GAIM_STOCK_DIALOG_COOL,     "dialogs", "gaim_cool.png"            },
@@ -89,6 +91,7 @@ static struct StockIcon
 #endif
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
+	{ GAIM_STOCK_LOG,             NULL,      GTK_STOCK_DND_MULTIPLE     },
 	{ GAIM_STOCK_LOGO,            "gaim",    "logo.png"                 },
 	{ GAIM_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 #if GTK_CHECK_VERSION(2,6,0)
@@ -102,6 +105,7 @@ static struct StockIcon
 #else
 	{ GAIM_STOCK_PLUGIN,          "icons",   "stock_disconnect_16.png"  },
 #endif
+	{ GAIM_STOCK_POUNCE,          NULL,      GTK_STOCK_REDO             },
 	{ GAIM_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ GAIM_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },

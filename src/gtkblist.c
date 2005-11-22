@@ -981,15 +981,15 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 					 buddy, 0, 0, NULL);
 	}
 
-	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
+	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), GAIM_STOCK_POUNCE,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+		gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub) {
-		gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+		gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
@@ -1089,7 +1089,7 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 	gaim_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
-	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+	gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 	gaim_gtk_append_blist_node_proto_menu(menu, c->account->gc, node);
@@ -1112,7 +1112,7 @@ create_contact_menu (GaimBlistNode *node)
 
 	menu = gtk_menu_new();
 
-	gaim_new_item_from_stock(menu, _("View _Log"), NULL,
+	gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				 G_CALLBACK(gtk_blist_menu_showlog_cb),
 				 node, 0, 0, NULL);
 
@@ -2423,7 +2423,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", gaim_gtkdialogs_im, 0, "<StockItem>", GAIM_STOCK_IM },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", gaim_gtk_blist_joinchat_show, 0, "<StockItem>", GAIM_STOCK_CHAT },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", gaim_gtkdialogs_info, 0, "<StockItem>", GAIM_STOCK_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", gaim_gtkdialogs_log, 0, NULL },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", gaim_gtkdialogs_log, 0, "<StockItem>", GAIM_STOCK_LOG },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, gaim_gtk_blist_edit_mode_cb, 1, "<CheckItem>"},
 	{ N_("/Buddies/Show _Empty Groups"), NULL, gaim_gtk_blist_show_empty_groups_cb, 1, "<CheckItem>"},
@@ -2438,24 +2438,24 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Tools/Account Ac_tions"), NULL, NULL, 0, "<StockItem>", GAIM_STOCK_ACTION },
 	{ "/Tools/sep1", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
-	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, NULL },
+	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
-	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, NULL },
+	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, NULL },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Help/_About"), NULL, gaim_gtkdialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
@@ -3371,6 +3371,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *column;
 	GtkWidget *menu;
+	GtkWidget *account_actions_menu;
 	GtkWidget *sw;
 	GtkWidget *vpane;
 	GtkAccelGroup *accel_group;
@@ -3424,7 +3425,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtk_widget_show(menu);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), menu, FALSE, FALSE, 0);
 
-	protomenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Account Actions"));
+	protomenu = gtk_menu_new();
+	account_actions_menu = gtk_item_factory_get_item(gtkblist->ift, N_("/Tools/Account Actions"));
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(account_actions_menu), protomenu);
 
 	/****************************** GtkVPaned ************************************/
 	vpane = gtk_vpaned_new();

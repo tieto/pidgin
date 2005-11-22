@@ -2468,7 +2468,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/_Find..."), NULL, menu_find_cb, 0,
 			"<StockItem>", GTK_STOCK_FIND },
-	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, NULL },
+	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 			"<StockItem>", GTK_STOCK_SAVE_AS },
 	{ N_("/Conversation/Clear"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
@@ -2477,7 +2477,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
-			0, NULL },
+			0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
 			"<StockItem>", GAIM_STOCK_INFO },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
