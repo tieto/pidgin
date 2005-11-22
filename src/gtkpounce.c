@@ -698,7 +698,7 @@ gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
 
 	/* Now the last part, where we have the Save checkbox */
 	dialog->save_pounce = gtk_check_button_new_with_mnemonic(
-		_("_Keep this pounce after the first time it runs"));
+		_("_Recurring"));
 
 	gtk_box_pack_start(GTK_BOX(vbox2), dialog->save_pounce, FALSE, FALSE, 0);
 
