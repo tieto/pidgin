@@ -278,12 +278,6 @@ gaim_gtk_ui_init(void)
 static void
 gaim_gtk_quit(void)
 {
-	/* XXX? */
-	/* YYY is there an XXX here? */
-
-	/* captain's log, stardate... */
-	/* LOG system_log(log_quit, NULL, NULL, OPT_LOG_BUDDY_SIGNON | OPT_LOG_MY_SIGNON); */
-
 #ifdef USE_SM
 	/* unplug */
 	session_end();
