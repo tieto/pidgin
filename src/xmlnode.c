@@ -292,7 +292,7 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 				esc = xmlnode_to_str_helper(c, &esc_len, pretty, depth+1);
 				text = g_string_append_len(text, esc, esc_len);
 				g_free(esc);
-			} else if(c->type == XMLNODE_TYPE_DATA) {
+			} else if(c->type == XMLNODE_TYPE_DATA && c->data_sz > 0) {
 				esc = g_markup_escape_text(c->data, c->data_sz);
 				text = g_string_append(text, esc);
 				g_free(esc);
