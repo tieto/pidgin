@@ -81,6 +81,7 @@ struct simple_account_data {
 	int connecting;
 	GaimAccount *account;
 	gchar *sendlater;
+	gchar *regcallid;
 	GSList *transactions;
 	GSList *watcher;
 	GSList *openconns;

@@ -494,6 +494,10 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gchar *to, gchar *addheaders, gchar *body, struct sip_dialog *dialog, TransCallback tc) {
 	struct simple_account_data *sip = gc->proto_data;
 	char *callid= dialog ? g_strdup(dialog->callid) : gencallid();
+	if(!strcmp(method,"REGISTER")) {
+		if(sip->regcallid) callid = g_strdup(sip->regcallid);
+		else sip->regcallid = g_strdup(callid);
+	}
 	char *auth="";
 	char *addh="";
 	gchar *branch = genbranch();
@@ -514,6 +518,10 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
+	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0")) { // if there was no known ip retry now
+		g_free(sip->ip);
+		sip->ip = g_strdup(gaim_network_get_public_ip());
+	}
 	buf = g_strdup_printf("%s %s SIP/2.0\r\n"
 			"Via: SIP/2.0/%s %s:%d;branch=%s\r\n"
 			"From: <sip:%s@%s>;tag=%s\r\n"
