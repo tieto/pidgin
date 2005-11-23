@@ -526,6 +526,10 @@ int main(int argc, char *argv[])
 	}
 #endif
 
+	search_path = g_build_filename(gaim_user_dir(), "gtkrc-2.0", NULL);
+	gtk_rc_add_default_file(search_path);
+	g_free(search_path);
+
 	gui_check = gtk_init_check(&argc, &argv);
 	if (!gui_check) {
 		char *display = gdk_get_display();

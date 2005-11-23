@@ -201,7 +201,7 @@ gaimrc_write(GtkWidget *widget, gpointer data)
 		}
 	}
 
-	gaim_util_write_data_to_file(".gtkrc-2.0", style_string->str, -1);
+	gaim_util_write_data_to_file("gtkrc-2.0", style_string->str, -1);
 
 	g_string_free(style_string, TRUE);
 }
