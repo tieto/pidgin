@@ -368,7 +368,7 @@ populate_saved_status_list(StatusWindow *dialog)
 	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
 			saved_statuses = g_list_next(saved_statuses))
 	{
-		add_status_to_saved_status_list(dialog->model, saved_statuses->data);
+	  add_status_to_saved_status_list(dialog->model, saved_statuses->data);
 	}
 }
 
@@ -749,7 +749,7 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 	g_free(dialog);
 
 	if (status_window != NULL)
-		add_status_to_saved_status_list(status_window->model, saved_status);
+	  add_status_to_saved_status_list(status_window->model, saved_status);
 }
 
 static void
@@ -1456,44 +1456,30 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 
 void status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 {
-	GtkTreeIter iter;
-	char *title;
-	gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
-	gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter,
-			   STATUS_WINDOW_COLUMN_TITLE, &title,
-			   -1);	
-	callback(gaim_savedstatus_find(title));
+	callback(gaim_savedstatus_find(gtk_combo_box_get_active_text(widget)));
 }
 
 GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callback)
 {
 	GtkWidget *combobox;
 	const GList *saved_statuses;
-	GtkCellRenderer *rend;
 	int i;
 	int index = -1;
-	GtkListStore *ls = gtk_list_store_new(STATUS_WINDOW_NUM_COLUMNS,
-					      G_TYPE_STRING,
-					      G_TYPE_STRING,
-					      G_TYPE_STRING);
 	
+	combobox = gtk_combo_box_new_text();
 	
 	for (saved_statuses = gaim_savedstatuses_get_all(), i = 0;
 	     saved_statuses != NULL;
-	     saved_statuses = g_list_next(saved_statuses), i++) {
-		add_status_to_saved_status_list(ls, saved_statuses->data);
-		if (saved_statuses->data == current_status)
-			index = i;
+	     saved_statuses = g_list_next(saved_statuses)) {
+		GaimSavedStatus *status = (GaimSavedStatus*)saved_statuses->data;
+		if (!gaim_savedstatus_is_transient(status)) {
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combobox), 
+						  gaim_savedstatus_get_title(status));
+			if (status == current_status)
+				index = i;
+			i++;
+		}
 	}
-	
-	combobox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(ls));
-	rend = gtk_cell_renderer_text_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), rend, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(combobox), rend, "text",
-					   STATUS_WINDOW_COLUMN_TITLE);
-#if GTK_CHECK_VERSION(2,6,0)
-	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-#endif
 	
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
