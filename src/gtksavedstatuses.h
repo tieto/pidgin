@@ -64,4 +64,13 @@ void gaim_gtk_status_init(void);
  */
 void gaim_gtk_status_uninit(void);
 
+/**
+ * Creates a dropdown menu of saved statuses and calls a callback
+ * when one is selected
+ *
+ * @param callback The callback to call when the selection changes
+ * @return         The menu widget
+ */
+GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *status, GCallback callback);
+
 #endif /* _GAIM_GTKSAVEDSTATUSES_H_ */

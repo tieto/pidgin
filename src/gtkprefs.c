@@ -32,6 +32,7 @@
 #include "proxy.h"
 #include "prpl.h"
 #include "request.h"
+#include "savedstatuses.h"
 #include "sound.h"
 #include "util.h"
 #include "network.h"
@@ -43,6 +44,7 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtkprefs.h"
+#include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -1632,28 +1634,12 @@ sound_page()
 	return ret;
 }
 
-/* XXX CORE/UI */
-#if 0
+
 static void
-set_default_away(GtkWidget *w, gpointer data)
+set_idle_away(GaimSavedStatus *status)
 {
-	struct away_message *default_away = NULL;
-	int length = g_slist_length(away_messages);
-	int i = GPOINTER_TO_INT(data);
-
-	if (away_messages == NULL)
-		default_away = NULL;
-	else if (i >= length)
-		default_away = g_slist_nth_data(away_messages, length - 1);
-	else
-		default_away = g_slist_nth_data(away_messages, i);
-
-	if(default_away)
-		gaim_prefs_set_string("/core/away/default_message", default_away->name);
-	else
-		gaim_prefs_set_string("/core/away/default_message", "");
+	gaim_prefs_set_int("/core/savedstatus/idleaway", gaim_savedstatus_get_creation_time(status));
 }
-#endif
 
 static GtkWidget *
 away_page()
@@ -1664,6 +1650,7 @@ away_page()
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *select;
+	GtkWidget *menu;
 	GtkSizeGroup *sg;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
@@ -1702,6 +1689,10 @@ away_page()
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(gaim_gtk_toggle_sensitive), label);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	menu = gaim_gtk_status_menu(gaim_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
+	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(gaim_gtk_toggle_sensitive), menu);
 
 	/*
 	 * TODO: Need to allow users to choose a GaimSavedStatus
@@ -1713,6 +1704,7 @@ away_page()
 	 */
 
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
+		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
