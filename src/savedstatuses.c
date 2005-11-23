@@ -571,23 +571,23 @@ GaimSavedStatus *
 gaim_savedstatus_get_current()
 {
 	int creation_time;
-	GaimSavedStatus *saved_status;
+	GaimSavedStatus *saved_status = NULL;
 
 	creation_time = gaim_prefs_get_int("/core/savedstatus/current");
 
-	if (creation_time == 0)
+	if (creation_time != 0)
+		saved_status = g_hash_table_lookup(creation_times, &creation_time);
+
+	if (saved_status == NULL)
 	{
 		/*
 		 * We don't have a current saved statuses!  This is either a new
-		 * Gaim user or someone upgrading from Gaim 1.5.0 or older.  Add
-		 * a default status.
+		 * Gaim user or someone upgrading from Gaim 1.5.0 or older, or
+		 * possibly someone who deleted the status they were currently
+		 * using?  In any case, add a default status.
 		 */
 		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
 		gaim_savedstatus_set_message(saved_status, _("Hello!"));
-	}
-	else
-	{
-		saved_status = g_hash_table_lookup(creation_times, &creation_time);
 	}
 
 	return saved_status;
@@ -640,36 +640,48 @@ gaim_savedstatus_find(const char *title)
 gboolean
 gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, TRUE);
+
 	return (saved_status->title == NULL);
 }
 
 const char *
 gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, NULL);
+
 	return saved_status->title;
 }
 
 GaimStatusPrimitive
 gaim_savedstatus_get_type(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, GAIM_STATUS_OFFLINE);
+
 	return saved_status->type;
 }
 
 const char *
 gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, NULL);
+
 	return saved_status->message;
 }
 
 time_t
 gaim_savedstatus_get_creation_time(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, 0);
+
 	return saved_status->creation_time;
 }
 
 gboolean
 gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
 {
+	g_return_val_if_fail(saved_status != NULL, FALSE);
+
 	return (saved_status->substatuses != NULL);
 }
 
