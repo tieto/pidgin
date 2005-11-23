@@ -45,13 +45,19 @@ static const char *color_names[] = {
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
 static const char *widget_size_prefs[] = {
-	"/plugins/gtk/gaimrc/size/GtkTreeView::expander_size"
+	"/plugins/gtk/gaimrc/size/GtkTreeView::expander_size",
+	"/plugins/gtk/gaimrc/size/GtkTreeView::indent_expanders",
+	"/plugins/gtk/gaimrc/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_prefs_set[] = {
-	"/plugins/gtk/gaimrc/set/size/GtkTreeView::expander_size"
+	"/plugins/gtk/gaimrc/set/size/GtkTreeView::expander_size",
+	"/plugins/gtk/gaimrc/set/size/GtkTreeView::indent_expanders",
+	"/plugins/gtk/gaimrc/set/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_names[] = {
-	N_("GtkTreeView Expander Size")
+	N_("GtkTreeView Expander Size"),
+	N_("GtkTreeView Expander Indentation"),
+	N_("GtkTreeView Horizontal Separation")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 
