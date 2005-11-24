@@ -159,7 +159,6 @@ gaim_upnp_http_read(gpointer data,
                     GaimInputCondition cond)
 {
   int sizeRecv;
-  extern int errno;
   NetResponseData* nrd = data;
 
   sizeRecv = recv(sock, &(nrd->recvBuffer[nrd->totalSizeRecv]),
@@ -206,7 +205,6 @@ gaim_upnp_http_send(gpointer data,
                     GaimInputCondition cond)
 {
   gsize sizeSent, totalSizeSent = 0;
-  extern int errno;
   NetResponseData* nrd = data;
 
   gaim_timeout_remove(nrd->tima);
@@ -567,7 +565,6 @@ gaim_upnp_discover_udp_read(gpointer data,
                             GaimInputCondition cond)
 {
   unsigned int length;
-  extern int errno;
   struct sockaddr_in from;
   int sizeRecv;
   NetResponseData* nrd = data;
@@ -600,13 +597,13 @@ gaim_upnp_discover(void)
 {
   /* Socket Setup Variables */
   int sock, i;
-  extern int errno;
   struct sockaddr_in server;
   struct hostent* hp;
 
   /* UDP SEND VARIABLES */
   gboolean sentSuccess, recvSuccess;
-  int sizeSent, totalSizeSent;
+  ssize_t sizeSent;
+  ssize_t totalSizeSent;
   gchar wanIP[] = "WANIPConnection:1";
   gchar wanPPP[] = "WANPPPConnection:1";
   gchar* serviceToUse;
@@ -667,7 +664,7 @@ gaim_upnp_discover(void)
 
     nrd->recvBuffer = (char*)g_malloc(MAX_DISCOVERY_RECEIVE_SIZE);
 
-    while(totalSizeSent < strlen(sendMessage)) {
+    while(totalSizeSent < (ssize_t)strlen(sendMessage)) {
       sizeSent = sendto(sock,(void*)&sendMessage[totalSizeSent],
                         strlen(&sendMessage[totalSizeSent]),0,
                         (struct sockaddr*)&server,
