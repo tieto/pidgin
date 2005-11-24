@@ -99,8 +99,12 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 
 	g_queue_free(swboard->msg_queue);
 
-	for (l = swboard->ack_list; l != NULL; l = l->next)
-		msn_message_unref(l->data);
+	while((l = swboard->ack_list) != NULL)
+	{
+		msg = l->data;
+		msg_error_helper(swboard->cmdproc, msg, MSN_MSG_ERROR_SB);
+		msn_message_unref(msg);
+	}
 
 	if (swboard->im_user != NULL)
 		g_free(swboard->im_user);
