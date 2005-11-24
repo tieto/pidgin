@@ -20,6 +20,7 @@
 #include "silcincludes.h"
 #include "silcclient.h"
 #include "silcgaim.h"
+#include "imgstore.h"
 
 /**************************** Utility Routines *******************************/
 
@@ -569,3 +570,163 @@ silcgaim_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 				geo.altitude ? geo.altitude : "",
 				geo.accuracy ? geo.accuracy : "");
 }
+
+#ifdef HAVE_SILCMIME_H
+/* Returns MIME type of filetype */
+
+char *silcgaim_file2mime(const char *filename)
+{
+	const char *ct;
+
+	ct = strrchr(filename, '.');
+	if (!ct)
+		return NULL;
+	else if (!strcasecmp(".png", ct))
+		return strdup("image/png");
+	else if (!strcasecmp(".jpg", ct))
+		return strdup("image/jpeg");
+	else if (!strcasecmp(".jpeg", ct))
+		return strdup("image/jpeg");
+	else if (!strcasecmp(".gif", ct))
+		return strdup("image/gif");
+	else if (!strcasecmp(".tiff", ct))
+		return strdup("image/tiff");
+	
+	return NULL;
+}
+
+/* Checks if message has images, and assembles MIME message if it has. 
+   If only one image is present, creates simple MIME image message.  If 
+   there are multiple images and/or text with images multipart MIME 
+   message is created. */
+
+SilcDList silcgaim_image_message(const char *msg, SilcUInt32 *mflags)
+{
+	SilcMime mime = NULL, p;
+	SilcDList list, parts = NULL;
+	const char *start, *end, *last;
+	GData *attribs;
+	char *type;
+	gboolean images = FALSE;
+
+	last = msg;
+	while (last && *last && gaim_markup_find_tag("img", last, &start,
+						     &end, &attribs)) {
+		GaimStoredImage *image = NULL;
+		const char *id;
+
+		/* Check if there is text before image */
+		if (start - last) {
+			char *text, *tmp;
+			p = silc_mime_alloc();
+
+			/* Add content type */
+			silc_mime_add_field(p, "Content-Type",
+					    "text/plain; charset=utf-8");
+
+			tmp = g_strndup(last, start - last);
+			text = gaim_unescape_html(tmp);
+			g_free(tmp);
+			/* Add text */
+			silc_mime_add_data(p, text, strlen(text));
+			g_free(text);
+
+			if (!parts)
+				parts = silc_dlist_init();
+			silc_dlist_add(parts, p);
+		}
+
+		id = g_datalist_get_data(&attribs, "id");
+		if (id && (image = gaim_imgstore_get(atoi(id)))) {
+			unsigned long imglen = gaim_imgstore_get_size(image);
+			gpointer img = gaim_imgstore_get_data(image);
+
+			p = silc_mime_alloc();
+
+			/* Add content type */
+			type = silcgaim_file2mime(gaim_imgstore_get_filename(image));
+			if (!type) {
+				g_datalist_clear(&attribs);
+				last = end + 1;
+				continue;
+			}
+			silc_mime_add_field(p, "Content-Type", type);
+			silc_free(type);
+
+			/* Add content transfer encoding */
+			silc_mime_add_field(p, "Content-Transfer-Encoding", "binary");
+
+			/* Add image data */
+			silc_mime_add_data(p, img, imglen);
+
+			if (!parts)
+				parts = silc_dlist_init();
+			silc_dlist_add(parts, p);
+			images = TRUE;
+		}
+
+		g_datalist_clear(&attribs);
+
+		/* Continue after tag */
+		last = end + 1;
+	}
+
+	/* Check for text after the image(s) */
+	if (images && last && *last) {
+		char *tmp = gaim_unescape_html(last);
+		p = silc_mime_alloc();
+
+		/* Add content type */
+		silc_mime_add_field(p, "Content-Type",
+				    "text/plain; charset=utf-8");
+
+		/* Add text */
+		silc_mime_add_data(p, tmp, strlen(tmp));
+		g_free(tmp);
+
+		if (!parts)
+			parts = silc_dlist_init();
+		silc_dlist_add(parts, p);
+	}
+
+	/* If there weren't any images, don't return anything. */
+	if (!images) {
+		if (parts)
+			silc_dlist_uninit(parts);
+		return NULL;
+	}
+
+	if (silc_dlist_count(parts) > 1) {
+		/* Multipart MIME message */
+		char b[32];
+		mime = silc_mime_alloc();
+		silc_mime_add_field(mime, "MIME-Version", "1.0");
+		g_snprintf(b, sizeof(b), "b%4X%4X",
+			   (unsigned int)time(NULL),
+			   silc_dlist_count(parts)); 
+		silc_mime_set_multipart(mime, "mixed", b);
+		silc_dlist_start(parts);
+		while ((p = silc_dlist_get(parts)) != SILC_LIST_END)
+			silc_mime_add_multipart(mime, p);
+	} else {
+		/* Simple MIME message */
+		silc_dlist_start(parts);
+		mime = silc_dlist_get(parts);
+		silc_mime_add_field(mime, "MIME-Version", "1.0");
+	}
+
+	*mflags &= ~SILC_MESSAGE_FLAG_UTF8;
+	*mflags |= SILC_MESSAGE_FLAG_DATA;
+
+	/* Encode message. Fragment if it is too large */
+	list = silc_mime_encode_partial(mime, 0xfc00);
+
+	silc_dlist_uninit(parts);
+
+	/* Added multiparts gets freed here */
+	silc_mime_free(mime);
+
+	return list;
+}
+
+#endif /* HAVE_SILCMIME_H */

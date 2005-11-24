@@ -253,6 +253,8 @@ silcgaim_login(GaimAccount *account)
 	SilcClientParams params;
 	GaimConnection *gc;
 	char pkd[256], prd[256];
+	const char *cipher, *hmac;
+	int i;
 
 	gc = account->gc;
 	if (!gc)
@@ -291,6 +293,20 @@ silcgaim_login(GaimAccount *account)
 	client->hostname = silc_net_localhost();
 
 	gaim_connection_set_display_name(gc, client->username);
+
+	/* Register requested cipher and HMAC */
+	cipher = gaim_account_get_string(account, "cipher", SILC_DEFAULT_CIPHER);
+	for (i = 0; silc_default_ciphers[i].name; i++)
+		if (!strcmp(silc_default_ciphers[i].name, cipher)) {
+			silc_cipher_register(&(silc_default_ciphers[i]));
+			break;
+		}
+	hmac = gaim_account_get_string(account, "hmac", SILC_DEFAULT_HMAC);
+	for (i = 0; silc_default_hmacs[i].name; i++)
+		if (!strcmp(silc_default_hmacs[i].name, hmac)) {
+			silc_hmac_register(&(silc_default_hmacs[i]));
+			break;
+		}
 
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
@@ -354,6 +370,10 @@ silcgaim_close_final(gpointer *context)
 	SilcGaim sg = (SilcGaim)context;
 	silc_client_stop(sg->client);
 	silc_client_free(sg->client);
+#ifdef HAVE_SILCMIME_H
+	if (sg->mimeass)
+		silc_mime_assembler_free(sg->mimeass);
+#endif
 	silc_free(sg);
 	return 0;
 }
@@ -1016,6 +1036,9 @@ silcgaim_send_im_resolved(SilcClient client,
 	GaimConversation *convo;
 	char tmp[256], *nickname = NULL;
 	SilcClientEntry client_entry;
+#ifdef HAVE_SILCMIME_H
+	SilcDList list;
+#endif
 
 	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, im->nick,
 							sg->account);
@@ -1041,12 +1064,31 @@ silcgaim_send_im_resolved(SilcClient client,
 		client_entry = clients[0];
 	}
 
-	/* Send the message */
-	silc_client_send_private_message(client, conn, client_entry, im->flags,
-					 (unsigned char *)im->message, im->message_len, TRUE);
+#ifdef HAVE_SILCMIME_H
+	/* Check for images */
+	list = silcgaim_image_message(im->message, (SilcUInt32 *)&im->flags);
+	if (list) {
+		/* Send one or more MIME message.  If more than one, they
+		   are MIME fragments due to over large message */
+		SilcBuffer buf;
+
+		silc_dlist_start(list);
+		while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
+			silc_client_send_private_message(client, conn, 
+							 client_entry, im->flags,
+							 buf->data, buf->len,
+							 TRUE);
+		silc_mime_partial_free(list);
+	} else
+#endif
+	{
+		/* Send the message */
+		silc_client_send_private_message(client, conn, client_entry, im->flags,
+						 (unsigned char *)im->message, im->message_len, TRUE);
+	}
+
 	gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
 			   im->message, 0, time(NULL));
-
 	goto out;
 
  err:
@@ -1071,8 +1113,11 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count, mflags;
 	char *nickname, *msg, *tmp;
-	int ret;
+	int ret = 0;
 	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
+#ifdef HAVE_SILCMIME_H
+	SilcDList list;
+#endif
 
 	if (!who || !message)
 		return 0;
@@ -1116,7 +1161,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 			return 0;
 		}
 		im->nick = g_strdup(who);
-		im->message = g_strdup(msg);
+		im->message = g_strdup(message);
 		im->message_len = strlen(im->message);
 		im->flags = mflags;
 		silc_client_get_clients(client, conn, nickname, NULL,
@@ -1126,10 +1171,31 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 		return 0;
 	}
 
-	/* Send private message directly */
-	ret = silc_client_send_private_message(client, conn, clients[0],
-					       mflags, (unsigned char *)msg,
-					       strlen(msg), TRUE);
+#ifdef HAVE_SILCMIME_H
+	/* Check for images */
+	list = silcgaim_image_message(message, &mflags);
+	if (list) {
+		/* Send one or more MIME message.  If more than one, they
+		   are MIME fragments due to over large message */
+		SilcBuffer buf;
+
+		silc_dlist_start(list);
+		while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
+			ret =
+			 silc_client_send_private_message(client, conn, 
+							  clients[0], mflags,
+							  buf->data, buf->len,
+							  TRUE);
+		silc_mime_partial_free(list);
+	} else
+#endif
+	{
+		/* Send private message directly */
+		ret = silc_client_send_private_message(client, conn, clients[0],
+						       mflags,
+						       (unsigned char *)msg,
+						       strlen(msg), TRUE);
+	}
 
 	g_free(tmp);
 	silc_free(nickname);
@@ -1639,8 +1705,13 @@ static GaimWhiteboardPrplOps silcgaim_wb_ops =
 
 static GaimPluginProtocolInfo prpl_info =
 {
+#ifdef HAVE_SILCMIME_H
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE,
+#else
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	OPT_PROTO_PASSWORD_OPTIONAL,
+#endif
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
 	NO_BUDDY_ICONS,				/* icon_spec */
@@ -1738,6 +1809,9 @@ init_plugin(GaimPlugin *plugin)
 	GaimAccountOption *option;
 	GaimAccountUserSplit *split;
 	char tmp[256];
+	int i;
+	GaimKeyValuePair *kvp;
+	GList *list = NULL;
 
 	silc_plugin = plugin;
 
@@ -1759,10 +1833,29 @@ init_plugin(GaimPlugin *plugin)
 	option = gaim_account_option_string_new(_("Private Key file"),
 						"private-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	for (i = 0; silc_default_ciphers[i].name; i++) {
+		kvp = silc_calloc(1, sizeof(*kvp));
+		kvp->key = strdup(silc_default_ciphers[i].name);
+		kvp->value = strdup(silc_default_ciphers[i].name);
+		list = g_list_append(list, kvp);
+	}
+	option = gaim_account_option_list_new(_("Cipher"), "cipher", list);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	list = NULL;
+	for (i = 0; silc_default_hmacs[i].name; i++) {
+		kvp = silc_calloc(1, sizeof(*kvp));
+		kvp->key = strdup(silc_default_hmacs[i].name);
+		kvp->value = strdup(silc_default_hmacs[i].name);
+		list = g_list_append(list, kvp);
+	}
+	option = gaim_account_option_list_new(_("HMAC"), "hmac", list);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
 	option = gaim_account_option_bool_new(_("Public key authentication"),
 					      "pubkey-auth", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
 	option = gaim_account_option_bool_new(_("Reject watching by other users"),
 					      "reject-watch", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

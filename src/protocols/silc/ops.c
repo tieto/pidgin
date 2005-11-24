@@ -20,7 +20,20 @@
 #include "silcincludes.h"
 #include "silcclient.h"
 #include "silcgaim.h"
+#include "imgstore.h"
 #include "wb.h"
+
+static void
+silc_channel_message(SilcClient client, SilcClientConnection conn,
+		     SilcClientEntry sender, SilcChannelEntry channel,
+		     SilcMessagePayload payload, SilcChannelPrivateKey key,
+		     SilcMessageFlags flags, const unsigned char *message,
+		     SilcUInt32 message_len);
+static void
+silc_private_message(SilcClient client, SilcClientConnection conn,
+		     SilcClientEntry sender, SilcMessagePayload payload,
+		     SilcMessageFlags flags, const unsigned char *message,
+		     SilcUInt32 message_len);
 
 /* Message sent to the application by library. `conn' associates the
    message to a specific connection.  `conn', however, may be NULL.
@@ -35,6 +48,158 @@ silc_say(SilcClient client, SilcClientConnection conn,
 	/* Nothing */
 }
 
+#ifdef HAVE_SILCMIME_H
+/* Processes incoming MIME message.  Can be private message or channel
+   message. */
+
+static void
+silcgaim_mime_message(SilcClient client, SilcClientConnection conn,
+		      SilcClientEntry sender, SilcChannelEntry channel,
+		      SilcMessagePayload payload, SilcChannelPrivateKey key,
+		      SilcMessageFlags flags, SilcMime mime,
+		      gboolean recursive)
+{
+	GaimConnection *gc = client->application;
+	SilcGaim sg = gc->proto_data;
+	const char *type;
+	const unsigned char *data;
+	SilcUInt32 data_len;
+	GaimMessageFlags cflags = 0;
+	GaimConversation *convo = NULL;
+
+	if (!mime)
+		return;
+
+	/* Check for fragmented MIME message */
+	if (silc_mime_is_partial(mime)) {
+		if (!sg->mimeass)
+			sg->mimeass = silc_mime_assembler_alloc();
+
+		/* Defragment */
+		mime = silc_mime_assemble(sg->mimeass, mime);
+		if (!mime)
+			/* More fragments to come */
+			return;
+
+		/* Process the complete message */
+		silcgaim_mime_message(client, conn, sender, channel,
+				      payload, key, flags, mime, FALSE);
+		return;
+	}
+
+	/* Check for multipart message */
+	if (silc_mime_is_multipart(mime)) {
+		SilcMime p;
+		const char *mtype;
+		SilcDList parts = silc_mime_get_multiparts(mime, &mtype);
+
+		/* Only "mixed" type supported */
+		if (strcmp(mtype, "mixed"))
+			goto out;
+
+		silc_dlist_start(parts);
+		while ((p = silc_dlist_get(parts)) != SILC_LIST_END) {
+			/* Recursively process parts */
+			silcgaim_mime_message(client, conn, sender, channel,
+					      payload, key, flags, p, TRUE);
+		}
+		goto out;
+	}
+
+	/* Get content type and MIME data */
+	type = silc_mime_get_field(mime, "Content-Type");
+	if (!type)
+		goto out;
+	data = silc_mime_get_data(mime, &data_len);
+	if (!data)
+		goto out;
+
+	/* Process according to content type */
+
+	/* Plain text */
+	if (strstr(type, "text/plain")) {
+		/* Default is UTF-8, don't check for other charsets */
+		if (!strstr(type, "utf-8"))
+			goto out;
+
+		if (channel)
+			silc_channel_message(client, conn, sender, channel,
+					     payload, key, 
+					     SILC_MESSAGE_FLAG_UTF8, data,
+					     data_len);
+		else
+			silc_private_message(client, conn, sender, payload,
+					     SILC_MESSAGE_FLAG_UTF8, data,
+					     data_len);
+		goto out;
+	}
+
+	/* Image */
+	if (strstr(type, "image/png") ||
+	    strstr(type, "image/jpeg") ||
+	    strstr(type, "image/gif") ||
+	    strstr(type, "image/tiff")) {
+		char tmp[32];
+		int imgid;
+
+		/* Get channel convo (if message is for channel) */
+		if (key && channel) {
+			GList *l;
+			SilcGaimPrvgrp prv;
+
+			for (l = sg->grps; l; l = l->next)
+				if (((SilcGaimPrvgrp)l->data)->key == key) {
+					prv = l->data;
+					convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+							prv->channel, sg->account);
+					break;
+				}
+		}
+		if (channel && !convo)
+			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+								    channel->channel_name, sg->account);
+		if (channel && !convo)
+			goto out;
+
+		imgid = gaim_imgstore_add(data, data_len, "");
+		if (imgid) {
+			cflags |= GAIM_MESSAGE_IMAGES | GAIM_MESSAGE_RECV;
+			g_snprintf(tmp, sizeof(tmp), "<IMG ID=\"%d\">", imgid);
+		  
+			if (channel)
+				serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo)),
+				 		 sender->nickname ?
+				 		  sender->nickname : 
+						 "<unknown>", cflags,
+						 tmp, time(NULL));
+			else
+				serv_got_im(gc, sender->nickname ?
+					    sender->nickname : "<unknown>",
+					    tmp, cflags, time(NULL));
+
+			gaim_imgstore_unref(imgid);
+			cflags = 0;
+		}
+		goto out;
+	}
+
+	/* Whiteboard message */
+	if (strstr(type, "application/x-wb") &&
+	    !gaim_account_get_bool(sg->account, "block-wb", FALSE)) {
+		if (channel)
+			silcgaim_wb_receive_ch(client, conn, sender, channel,
+					       payload, flags, data, data_len);
+		else
+			silcgaim_wb_receive(client, conn, sender, payload,
+					    flags, data, data_len);
+		goto out;
+	}
+
+ out:
+	if (!recursive)
+		silc_mime_free(mime);
+}
+#endif /* HAVE_SILCMIME_H */
 
 /* Message for a channel. The `sender' is the sender of the message
    The `channel' is the channel. The `message' is the message.  Note
@@ -81,6 +246,13 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
+		/* Process MIME message */
+#ifdef HAVE_SILCMIME_H
+		SilcMime mime;
+		mime = silc_mime_decode(message, message_len);
+		silcgaim_mime_message(client, conn, sender, channel, payload,
+				      key, flags, mime, FALSE);
+#else
 		char type[128], enc[128];
 		unsigned char *data;
 		SilcUInt32 data_len;
@@ -89,7 +261,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		memset(enc, 0, sizeof(enc));
 
 		if (!silc_mime_parse(message, message_len, NULL, 0,
-		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data, 
+		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data,
 		    &data_len))
 			return;
 
@@ -98,7 +270,7 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 		    !gaim_account_get_bool(sg->account, "block-wb", FALSE))
 			silcgaim_wb_receive_ch(client, conn, sender, channel,
 					       payload, flags, data, data_len);
-
+#endif
 		return;
 	}
 
@@ -177,6 +349,13 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
+#ifdef HAVE_SILCMIME_H
+		/* Process MIME message */
+		SilcMime mime;
+		mime = silc_mime_decode(message, message_len);
+		silcgaim_mime_message(client, conn, sender, NULL, payload,
+				      NULL, flags, mime, FALSE);
+#else
 		char type[128], enc[128];
 		unsigned char *data;
 		SilcUInt32 data_len;
@@ -194,7 +373,7 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 		    !gaim_account_get_bool(sg->account, "block-wb", FALSE))
 			silcgaim_wb_receive(client, conn, sender, payload,
 					    flags, data, data_len);
-
+#endif
 		return;
 	}
 

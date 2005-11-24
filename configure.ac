@@ -229,7 +229,22 @@ else
 fi
 AC_SUBST(SILC_LIBS)
 AC_SUBST(SILC_CFLAGS)
-
+dnl SILC Toolkit >= 1.0.1 has a new MIME API
+if test "x$silcclient" = "xyes"; then
+	CPPFLAGS_save="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
+		AC_MSG_CHECKING(for silcmime.h)
+		AC_TRY_COMPILE([
+#include <silcincludes.h>
+#include <silcmime.h>
+		], [], [
+		AC_MSG_RESULT(yes)
+		AC_DEFINE(HAVE_SILCMIME_H, 1, [define if we have silcmime.h])
+		], [
+		AC_MSG_RESULT(no)
+		])
+	CPPFLAGS="$CPPFLAGS_save"
+fi
 
 
 AC_ARG_ENABLE(distrib,,,enable_distrib=no)

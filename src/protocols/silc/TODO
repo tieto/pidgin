@@ -2,8 +2,6 @@ Features TODO (maybe)
 =====================
 
 Sending images
-	- PROTO_IM_IMAGES flag support.  We need easy way to map the
-	  image filenames to their MIME types to do this.
 	- Sending images to channel too, if Gaim allows it.
 
 Preferences

@@ -75,7 +75,9 @@ typedef struct SilcGaimStruct {
 
 	char *motd;
 	GaimRoomlist *roomlist;
-
+#ifdef HAVE_SILCMIME_H
+	SilcMimeAssembler mimeass;
+#endif
 	unsigned int detaching            : 1;
 	unsigned int resuming             : 1;
 	unsigned int roomlist_canceled    : 1;
@@ -133,8 +135,7 @@ char *silcgaim_get_chat_name(GHashTable *data);
 void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 			  const char *name);
 void silcgaim_chat_leave(GaimConnection *gc, int id);
-int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg,
-					GaimMessageFlags flags);
+int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageFlags flags);
 void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 GaimRoomlist *silcgaim_roomlist_get_list(GaimConnection *gc);
 void silcgaim_roomlist_cancel(GaimRoomlist *list);
@@ -143,6 +144,10 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 void silcgaim_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
+#ifdef HAVE_SILCMIME_H
+char *silcgaim_file2mime(const char *filename);
+SilcDList silcgaim_image_message(const char *msg, SilcUInt32 *mflags);
+#endif
 
 #ifdef _WIN32
 typedef int uid_t;
