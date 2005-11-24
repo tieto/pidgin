@@ -806,7 +806,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			message++;
 		message++;
 
-		a = (away && (*away == 'T')) ? GAIM_CONV_IM_AUTO_RESP : 0;
+		a = (away && (*away == 'T')) ? GAIM_MESSAGE_AUTO_RESP : 0;
 
 		serv_got_im(gc, c, message, a, time(NULL));
 	} else if (!g_ascii_strcasecmp(c, "UPDATE_BUDDY")) {
@@ -890,7 +890,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 		serv_got_joined_chat(gc, id, name);
 	} else if (!g_ascii_strcasecmp(c, "CHAT_IN")) {
 		int id;
-		GaimConvChatFlags flags;
+		GaimMessageFlags flags;
 		char *m, *who, *whisper;
 
 		sscanf(strtok(NULL, ":"), "%d", &id);
@@ -901,7 +901,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 			m++;
 		m++;
 
-		flags = (whisper && (*whisper == 'T')) ? GAIM_CONV_CHAT_WHISPER : 0;
+		flags = (whisper && (*whisper == 'T')) ? GAIM_MESSAGE_WHISPER : 0;
 
 		serv_got_chat_in(gc, id, who, flags, m, time((time_t)NULL));
 	} else if (!g_ascii_strcasecmp(c, "CHAT_UPDATE_BUDDY")) {
@@ -1142,7 +1142,7 @@ static void toc_callback(gpointer data, gint source, GaimInputCondition conditio
 	}
 }
 
-static int toc_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags flags)
+static int toc_send_im(GaimConnection *gc, const char *name, const char *message, GaimMessageFlags flags)
 {
 	char *buf1, *buf2;
 
@@ -1154,7 +1154,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 		return -E2BIG;
 	}
 	buf2 = g_strdup_printf("toc_send_im %s \"%s\"%s", gaim_normalize(gc->account, name), buf1,
-						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? " auto" : ""));
+						   ((flags & GAIM_MESSAGE_AUTO_RESP) ? " auto" : ""));
 	g_free(buf1);
 #else
 	/* This doesn't work yet.  See the comments below for details */
@@ -1178,7 +1178,7 @@ static int toc_send_im(GaimConnection *gc, const char *name, const char *message
 	}
 
 	buf2 = g_strdup_printf("toc2_send_im_enc %s F U en \"%s\" %s", gaim_normalize(gc->account, name), buf1, 
-						   ((flags & GAIM_CONV_IM_AUTO_RESP) ? "auto" : ""));
+						   ((flags & GAIM_MESSAGE_AUTO_RESP) ? "auto" : ""));
 	g_free(buf1);
 #endif
 
@@ -1455,7 +1455,7 @@ static void toc_chat_whisper(GaimConnection *gc, int id, const char *who, const 
 	g_free(buf2);
 }
 
-static int toc_chat_send(GaimConnection *g, int id, const char *message)
+static int toc_chat_send(GaimConnection *g, int id, const char *message, GaimMessageFlags flags)
 {
 	char *buf1, *buf2;
 	buf1 = escape_text(message);

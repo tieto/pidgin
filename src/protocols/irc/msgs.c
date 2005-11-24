@@ -90,7 +90,7 @@ void irc_msg_away(struct irc_conn *irc, const char *name, const char *from, char
 	gc = gaim_account_get_connection(irc->account);
 	if (gc) {
 		msg = g_markup_escape_text(args[2], -1);
-		serv_got_im(gc, args[1], msg, GAIM_CONV_IM_AUTO_RESP, time(NULL));
+		serv_got_im(gc, args[1], msg, GAIM_MESSAGE_AUTO_RESP, time(NULL));
 		g_free(msg);
 	}
 }

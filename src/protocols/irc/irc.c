@@ -49,8 +49,8 @@ static void irc_login_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCon
 static void irc_login_cb(gpointer data, gint source, GaimInputCondition cond);
 static void irc_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error, gpointer data);
 static void irc_close(GaimConnection *gc);
-static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags);
-static int irc_chat_send(GaimConnection *gc, int id, const char *what);
+static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags);
+static int irc_chat_send(GaimConnection *gc, int id, const char *what, GaimMessageFlags flags);
 static void irc_chat_join (GaimConnection *gc, GHashTable *data);
 static void irc_input_cb(gpointer data, gint source, GaimInputCondition cond);
 static void irc_input_cb_ssl(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
@@ -408,18 +408,22 @@ static void irc_close(GaimConnection *gc)
 	g_free(irc);
 }
 
-static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags)
+static int irc_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags)
 {
 	struct irc_conn *irc = gc->proto_data;
+	char *plain;
 	const char *args[2];
 
 	if (strchr(status_chars, *who) != NULL)
 		args[0] = who + 1;
 	else
 		args[0] = who;
-	args[1] = what;
+
+	plain = gaim_unescape_html(what);
+	args[1] = plain;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
+	g_free(plain);
 	return 1;
 }
 
@@ -596,7 +600,7 @@ static void irc_chat_leave (GaimConnection *gc, int id)
 	serv_got_chat_left(gc, id);
 }
 
-static int irc_chat_send(GaimConnection *gc, int id, const char *what)
+static int irc_chat_send(GaimConnection *gc, int id, const char *what, GaimMessageFlags flags)
 {
 	struct irc_conn *irc = gc->proto_data;
 	GaimConversation *convo = gaim_find_chat(gc, id);
@@ -612,13 +616,13 @@ static int irc_chat_send(GaimConnection *gc, int id, const char *what)
 		return irc_parse_cmd(irc, convo->name, what + 1);
 	}
 #endif
+	tmp = gaim_unescape_html(what);
 	args[0] = convo->name;
-	args[1] = what;
+	args[1] = tmp;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
 
-	tmp = g_markup_escape_text(what, -1);
-	serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp, time(NULL));
+	serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, what, time(NULL));
 	g_free(tmp);
 	return 0;
 }

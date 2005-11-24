@@ -749,7 +749,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		char *sendertmp = g_strdup_printf("%s", zephyr->username);
 		int signature_length = strlen(notice.z_message);
 		int message_has_no_body = 0;
-		GaimConvImFlags flags = 0;
+		GaimMessageFlags flags = 0;
 		gchar *tmpescape;
 
 		/* Need to deal with 0 length  messages to handle typing notification (OPCODE) ping messages */
@@ -778,7 +778,7 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		    && !g_ascii_strcasecmp(notice.z_recipient,zephyr->username)) {
 			gchar* stripped_sender;
 			if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
-				flags |= GAIM_CONV_IM_AUTO_RESP;
+				flags |= GAIM_MESSAGE_AUTO_RESP;
 			stripped_sender = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
@@ -1991,7 +1991,7 @@ const char * zephyr_get_signature()
 	return sig;
 }
 
-static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
+static int zephyr_chat_send(GaimConnection * gc, int id, const char *im, GaimMessageFlags flags)
 {
 	zephyr_triple *zt;
 	const char *sig;
@@ -2025,11 +2025,11 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im)
 }
 
 
-static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, GaimConvImFlags flags)
+static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, GaimMessageFlags flags)
 {
 	const char *sig;
 	zephyr_account *zephyr = gc->proto_data;
-	if (flags & GAIM_CONV_IM_AUTO_RESP)
+	if (flags & GAIM_MESSAGE_AUTO_RESP)
 		sig = "Automated reply:";
 	else {
 		sig = zephyr_get_signature();

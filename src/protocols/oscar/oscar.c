@@ -1249,7 +1249,7 @@ static int gaim_odc_update_ui(aim_session_t *sess, aim_frame_t *fr, ...) {
  */
 static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimConnection *gc = sess->aux_data;
-	GaimConvImFlags imflags = 0;
+	GaimMessageFlags imflags = 0;
 	gchar *utf8;
 	GString *newmsg = g_string_new("");
 	GSList *images = NULL;
@@ -1271,7 +1271,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 			   "Got DirectIM message from %s\n", sn);
 
 	if (isawaymsg)
-		imflags |= GAIM_CONV_IM_AUTO_RESP;
+		imflags |= GAIM_MESSAGE_AUTO_RESP;
 
 	/* message has a binary trailer */
 	if ((binary = gaim_strcasestr(msg, "<binary>"))) {
@@ -1350,7 +1350,7 @@ static int gaim_odc_incoming(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 		/* set the flag if we caught any images */
 		if (images)
-			imflags |= GAIM_CONV_IM_IMAGES;
+			imflags |= GAIM_MESSAGE_IMAGES;
 	} else {
 		g_string_append_len(newmsg, msg, len);
 	}
@@ -1405,7 +1405,7 @@ static int gaim_odc_typing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	return 1;
 }
 
-static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *message, GaimConvImFlags imflags) {
+static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *message, GaimMessageFlags imflags) {
 	char *buf;
 	size_t len;
 	int ret;
@@ -1478,7 +1478,7 @@ static int gaim_odc_send_im(aim_session_t *sess, aim_conn_t *conn, const char *m
 
 
 	/* XXX - The last parameter below is the encoding.  Let Paco-Paco do something with it. */
-	if (imflags & GAIM_CONV_IM_AUTO_RESP)
+	if (imflags & GAIM_MESSAGE_AUTO_RESP)
 		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 1);
 	else
 		ret =  aim_odc_send_im(sess, conn, buf, len, 0, 0);
@@ -3892,7 +3892,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	GaimConnection *gc = sess->aux_data;
 	OscarData *od = gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimConvImFlags flags = 0;
+	GaimMessageFlags flags = 0;
 	struct buddyinfo *bi;
 	char *iconfile;
 	GString *message;
@@ -3912,7 +3912,7 @@ static int incomingim_chan1(aim_session_t *sess, aim_conn_t *conn, aim_userinfo_
 	}
 
 	if (args->icbmflags & AIM_IMFLAGS_AWAY)
-		flags |= GAIM_CONV_IM_AUTO_RESP;
+		flags |= GAIM_MESSAGE_AUTO_RESP;
 
 	if (args->icbmflags & AIM_IMFLAGS_TYPINGNOT)
 		bi->typingnot = TRUE;
@@ -6320,9 +6320,9 @@ static int oscar_send_typing(GaimConnection *gc, const char *name, int typing) {
 	return 0;
 }
 
-static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimConvImFlags);
+static int gaim_odc_send_im(aim_session_t *, aim_conn_t *, const char *, GaimMessageFlags);
 
-static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimConvImFlags imflags) {
+static int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMessageFlags imflags) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimAccount *account = gaim_connection_get_account(gc);
 	struct oscar_direct_im *dim = oscar_direct_im_find(od, name);
@@ -6376,7 +6376,7 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 			args.features = features_aim;
 			args.featureslen = sizeof(features_aim);
 
-			if (imflags & GAIM_CONV_IM_AUTO_RESP)
+			if (imflags & GAIM_MESSAGE_AUTO_RESP)
 				args.flags |= AIM_IMFLAGS_AWAY;
 		}
 
@@ -6428,10 +6428,10 @@ static int oscar_send_im(GaimConnection *gc, const char *name, const char *messa
 		if (aim_sn_is_icq(gaim_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
-				tmpmsg = g_strdup(message);
+				tmpmsg = gaim_unescape_html(message);
 			else
 				/* From ICQ to AIM */
-				tmpmsg = g_markup_escape_text(message, -1);
+				tmpmsg = g_strdup(message);
 		} else {
 			/* From AIM to AIM and AIM to ICQ */
 			tmpmsg = g_strdup(message);
@@ -7433,7 +7433,7 @@ oscar_chat_leave(GaimConnection *gc, int id)
 	oscar_chat_kill(gc, cc);
 }
 
-static int oscar_send_chat(GaimConnection *gc, int id, const char *message) {
+static int oscar_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags) {
 	OscarData *od = (OscarData *)gc->proto_data;
 	GaimConversation *conv = NULL;
 	struct chat_connection *c = NULL;

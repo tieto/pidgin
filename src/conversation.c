@@ -150,6 +150,8 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 			account, conv, displayed);
 	}
 
+	msgflags |= GAIM_MESSAGE_SEND;
+
 	if (type == GAIM_CONV_TYPE_IM) {
 		GaimConvIm *im = GAIM_CONV_IM(conv);
 
@@ -158,22 +160,9 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 						 gaim_conversation_get_name(conv), &sent);
 
 		if (sent != NULL && sent[0] != '\0') {
-			GaimConvImFlags imflags = 0;
 
-			msgflags |= GAIM_MESSAGE_SEND;
-
-			if (msgflags & GAIM_MESSAGE_AUTO_RESP)
-				imflags |= GAIM_CONV_IM_AUTO_RESP;
-
-			if (conv->features & GAIM_CONNECTION_HTML) {
-				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   sent, imflags);
-			} else {
-				gchar *tmp = gaim_unescape_html(sent);
-				err = serv_send_im(gc, gaim_conversation_get_name(conv),
-				                   tmp, imflags);
-				g_free(tmp);
-			}
+			err = serv_send_im(gc, gaim_conversation_get_name(conv),
+			                   sent, msgflags);
 
 			if ((err > 0) && (displayed != NULL))
 				gaim_conv_im_write(im, NULL, displayed, msgflags, time(NULL));
@@ -189,13 +178,7 @@ common_send(GaimConversation *conv, const char *message, GaimMessageFlags msgfla
 						 gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)));
 
 		if (sent != NULL && sent[0] != '\0') {
-			if (conv->features & GAIM_CONNECTION_HTML) {
-				err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent);
-			} else {
-				gchar *tmp = gaim_unescape_html(sent);
-				err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), tmp);
-				g_free(tmp);
-			}
+			err = serv_chat_send(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), sent, msgflags);
 
 			gaim_signal_emit(gaim_conversations_get_handle(), "sent-chat-msg",
 							 account, sent,

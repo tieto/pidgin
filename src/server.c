@@ -113,7 +113,7 @@ get_last_auto_response(GaimConnection *gc, const char *name)
 }
 
 int serv_send_im(GaimConnection *gc, const char *name, const char *message,
-				 GaimConvImFlags imflags)
+				 GaimMessageFlags flags)
 {
 	GaimConversation *conv;
 	GaimAccount *account;
@@ -131,10 +131,10 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 
 	if (prpl_info && prpl_info->send_im)
-		val = prpl_info->send_im(gc, name, message, imflags);
+		val = prpl_info->send_im(gc, name, message, flags);
 
 	/* Only update the last_sent_time if the user actually sent the message */
-	if (!(imflags & GAIM_CONV_IM_AUTO_RESP))
+	if (!(flags & GAIM_MESSAGE_AUTO_RESP))
 		time(&gc->last_sent_time);
 
 	/*
@@ -400,7 +400,7 @@ void serv_chat_whisper(GaimConnection *g, int id, const char *who, const char *m
 		prpl_info->chat_whisper(g, id, who, message);
 }
 
-int serv_chat_send(GaimConnection *gc, int id, const char *message)
+int serv_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags)
 {
 	int val = -EINVAL;
 	GaimPluginProtocolInfo *prpl_info = NULL;
@@ -409,7 +409,7 @@ int serv_chat_send(GaimConnection *gc, int id, const char *message)
 		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->chat_send)
-		val = prpl_info->chat_send(gc, id, message);
+		val = prpl_info->chat_send(gc, id, message, flags);
 
 	time(&gc->last_sent_time);
 
@@ -433,13 +433,12 @@ void serv_set_buddyicon(GaimConnection *gc, const char *filename)
  * sure to follow along, kids
  */
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 GaimConvImFlags imflags, time_t mtime)
+				 GaimMessageFlags flags, time_t mtime)
 {
 	GaimAccount *account;
 	GaimConversation *cnv;
 	GaimPresence *presence;
 	GaimStatus *status;
-	GaimMessageFlags msgflags;
 	char *message, *name;
 	char *angel, *buffy;
 	int plugin_return;
@@ -467,7 +466,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 								  "receiving-im-msg", gc->account,
-								  &angel, &buffy, cnv, &imflags));
+								  &angel, &buffy, cnv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -481,7 +480,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	message = buffy;
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-im-msg", gc->account,
-					 name, message, cnv, imflags);
+					 name, message, cnv, flags);
 
 	/* Make sure URLs are clickable */
 	buffy = gaim_markup_linkify(message);
@@ -489,14 +488,9 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	message = buffy;
 
 	/*
-	 * Um. When we call gaim_conversation_write with the message we received,
-	 * it's nice to pass whether or not it was an auto-response. So if it
-	 * was an auto-response, we set the appropriate flag. This is just so
-	 * prpls don't have to know about GAIM_MESSAGE_* (though some do anyway).
+	 * XXX: Should we be setting this here, or relying on prpls to set it?
 	 */
-	msgflags = GAIM_MESSAGE_RECV;
-	if (imflags & GAIM_CONV_IM_AUTO_RESP)
-		msgflags |= GAIM_MESSAGE_AUTO_RESP;
+	flags |= GAIM_MESSAGE_RECV;
 
 	/*
 	 * Alright. Two cases for how to handle this. Either we're away or
@@ -516,7 +510,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		if (cnv == NULL)
 			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
 
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, flags, mtime);
 
 		/*
 		 * Don't autorespond if:
@@ -569,7 +563,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 
 		/* Move this to oscar.c! */
 		buffy = gaim_str_sub_away_formatters(away_msg, alias);
-		serv_send_im(gc, name, buffy, GAIM_CONV_IM_AUTO_RESP);
+		serv_send_im(gc, name, buffy, GAIM_MESSAGE_AUTO_RESP);
 
 #if 0
 		if (!cnv && awayqueue &&
@@ -607,7 +601,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		if (cnv == NULL)
 			cnv = gaim_conversation_new(GAIM_CONV_TYPE_IM, gc->account, name);
 
-		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, msgflags, mtime);
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, message, flags, mtime);
 	}
 
 	g_free(name);
@@ -791,9 +785,8 @@ void serv_got_chat_left(GaimConnection *g, int id)
 }
 
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
-					  GaimConvChatFlags chatflags, const char *message, time_t mtime)
+					  GaimMessageFlags flags, const char *message, time_t mtime)
 {
-	GaimMessageFlags msgflags = 0;
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimConvChat *chat = NULL;
@@ -830,7 +823,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	plugin_return = GPOINTER_TO_INT(
 		gaim_signal_emit_return_1(gaim_conversations_get_handle(),
 								  "receiving-chat-msg", g->account,
-								  &angel, &buffy, conv, &chatflags));
+								  &angel, &buffy, conv, &flags));
 
 	if (!buffy || !angel || plugin_return) {
 		if (buffy)
@@ -843,19 +836,12 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	message = buffy;
 
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-chat-msg", g->account,
-					 who, message, conv, chatflags);
+					 who, message, conv, flags);
 
 	/* Make sure URLs are clickable */
 	buf = gaim_markup_linkify(message);
 
-	if (chatflags & GAIM_CONV_CHAT_WHISPER)
-		msgflags |= GAIM_MESSAGE_WHISPER;
-	if (chatflags & GAIM_CONV_CHAT_DELAYED)
-		msgflags |= GAIM_MESSAGE_DELAYED;
-	if (chatflags & GAIM_CONV_CHAT_ALERT)
-		msgflags |= GAIM_MESSAGE_NICK;
-
-	gaim_conv_chat_write(chat, who, buf, msgflags, mtime);
+	gaim_conv_chat_write(chat, who, buf, flags, mtime);
 
 	g_free(angel);
 	g_free(buf);

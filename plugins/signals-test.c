@@ -559,7 +559,6 @@ plugin_load(GaimPlugin *plugin)
 	void *conv_handle = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
 	void *ciphers_handle = gaim_ciphers_get_handle();
-	void *buddy_icons_handle = gaim_buddy_icons_get_handle();
 	void *ft_handle = gaim_xfers_get_handle();
 
 	/* Accounts subsystem signals */

@@ -490,6 +490,7 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	GaimConversation *conv = gtkconv->active_conv;
 	GaimAccount *account;
 	GaimConnection *gc;
+	GaimMessageFlags flags = 0;
 	char *buf, *clean;
 
 	account = gaim_conversation_get_account(conv);
@@ -516,6 +517,10 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		return;
 	}
 
+	/* XXX: is there a better way to tell if the message has images? */
+	if (GTK_IMHTML(gtkconv->entry)->im_images != NULL)
+		flags |= GAIM_MESSAGE_IMAGES;
+
 	gc = gaim_account_get_connection(account);
 	if (gc && (conv->features & GAIM_CONNECTION_NO_NEWLINES)) {
 		char **bufs;
@@ -525,9 +530,9 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		for (i = 0; bufs[i]; i++) {
 			send_history_add(conv, bufs[i]);
 			if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
-				gaim_conv_im_send(GAIM_CONV_IM(conv), bufs[i]);
+				gaim_conv_im_send_with_flags(GAIM_CONV_IM(conv), bufs[i], flags);
 			else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-				gaim_conv_chat_send(GAIM_CONV_CHAT(conv), bufs[i]);
+				gaim_conv_chat_send_with_flags(GAIM_CONV_CHAT(conv), bufs[i], flags);
 		}
 
 		g_strfreev(bufs);
@@ -535,9 +540,9 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 	} else {
 		send_history_add(conv, buf);
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
-			gaim_conv_im_send(GAIM_CONV_IM(conv), buf);
+			gaim_conv_im_send_with_flags(GAIM_CONV_IM(conv), buf, flags);
 		else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
-			gaim_conv_chat_send(GAIM_CONV_CHAT(conv), buf);
+			gaim_conv_chat_send_with_flags(GAIM_CONV_CHAT(conv), buf, flags);
 	}
 
 	g_free(clean);
@@ -4973,9 +4978,6 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		if (conv->features & GAIM_CONNECTION_HTML)
 		{
 			buttons = GTK_IMHTML_ALL; /* Everything on */
-			if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
-					conv->features & GAIM_CONNECTION_NO_IMAGES)
-				buttons &= ~GTK_IMHTML_IMAGE;
 			if (conv->features & GAIM_CONNECTION_NO_BGCOLOR)
 				buttons &= ~GTK_IMHTML_BACKCOLOR;
 			if (conv->features & GAIM_CONNECTION_NO_FONTSIZE)
@@ -4986,8 +4988,13 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 			if (conv->features & GAIM_CONNECTION_NO_URLDESC)
 				buttons &= ~GTK_IMHTML_LINKDESC;
 		} else {
-			buttons = GTK_IMHTML_SMILEY;
+			buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		}
+
+		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
+				conv->features & GAIM_CONNECTION_NO_IMAGES)
+			buttons &= ~GTK_IMHTML_IMAGE;
+
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
 		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(gtkconv->toolbar), gaim_account_get_protocol_id(account));
 

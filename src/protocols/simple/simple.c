@@ -494,14 +494,15 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gchar *to, gchar *addheaders, gchar *body, struct sip_dialog *dialog, TransCallback tc) {
 	struct simple_account_data *sip = gc->proto_data;
 	char *callid= dialog ? g_strdup(dialog->callid) : gencallid();
-	if(!strcmp(method,"REGISTER")) {
-		if(sip->regcallid) callid = g_strdup(sip->regcallid);
-		else sip->regcallid = g_strdup(callid);
-	}
 	char *auth="";
 	char *addh="";
 	gchar *branch = genbranch();
 	char *buf;
+
+	if(!strcmp(method,"REGISTER")) {
+		if(sip->regcallid) callid = g_strdup(sip->regcallid);
+		else sip->regcallid = g_strdup(callid);
+	}
 
 	if(addheaders) addh=addheaders;
 	if(sip->registrar.type && !strcmp(method,"REGISTER")) {
@@ -713,10 +714,10 @@ static void simple_send_message(struct simple_account_data *sip, char *to, char 
 	g_free(hdr);
 }
 
-static int simple_im_send(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags) {
+static int simple_im_send(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags) {
 	struct simple_account_data *sip = gc->proto_data;
 	char *to = g_strdup(who);
-	char *text = g_strdup(what);
+	char *text = gaim_unescape_html(what);
 	simple_send_message(sip, to, text, NULL);
 	g_free(to);
 	g_free(text);

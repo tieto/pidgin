@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-int  serv_send_im(GaimConnection *, const char *, const char *, GaimConvImFlags);
+int  serv_send_im(GaimConnection *, const char *, const char *, GaimMessageFlags flags);
 void serv_get_info(GaimConnection *, const char *);
 void serv_set_info(GaimConnection *, const char *);
 int  serv_send_typing(GaimConnection *, const char *, int);
@@ -48,7 +48,7 @@ void serv_reject_chat(GaimConnection *, GHashTable *);
 void serv_chat_invite(GaimConnection *, int, const char *, const char *);
 void serv_chat_leave(GaimConnection *, int);
 void serv_chat_whisper(GaimConnection *, int, const char *, const char *);
-int  serv_chat_send(GaimConnection *, int, const char *);
+int  serv_chat_send(GaimConnection *, int, const char *, GaimMessageFlags flags);
 void serv_alias_buddy(GaimBuddy *);
 void serv_got_alias(GaimConnection *gc, const char *who, const char *alias);
 void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
@@ -56,7 +56,7 @@ void serv_got_typing(GaimConnection *gc, const char *name, int timeout,
 void serv_set_buddyicon(GaimConnection *gc, const char *filename);
 void serv_got_typing_stopped(GaimConnection *gc, const char *name);
 void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
-				 GaimConvImFlags imflags, time_t mtime);
+				 GaimMessageFlags flags, time_t mtime);
 void serv_got_chat_invite(GaimConnection *gc, const char *name,
 						  const char *who, const char *message,
 						  GHashTable *data);
@@ -64,7 +64,7 @@ GaimConversation *serv_got_joined_chat(GaimConnection *gc,
 									   int id, const char *name);
 void serv_got_chat_left(GaimConnection *g, int id);
 void serv_got_chat_in(GaimConnection *g, int id, const char *who,
-					  GaimConvChatFlags chatflags, const char *message, time_t mtime);
+					  GaimMessageFlags flags, const char *message, time_t mtime);
 void serv_send_file(GaimConnection *gc, const char *who, const char *file);
 void serv_voice_chat(GaimConnection *gc, const char *who);
 

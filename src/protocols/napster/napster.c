@@ -126,16 +126,19 @@ static int nap_do_irc_style(GaimConnection *gc, const char *message, const char 
 }
 
 /* 205 - MSG_CLIENT_PRIVMSG */
-static int nap_send_im(GaimConnection *gc, const char *who, const char *message, GaimConvImFlags flags)
+static int nap_send_im(GaimConnection *gc, const char *who, const char *message, GaimMessageFlags flags)
 {
+	char *tmp = gaim_unescape_html(message);
 
-	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
+	if ((strlen(tmp) < 2) || (tmp[0] != '/' ) || (tmp[1] == '/')) {
 		/* Actually send a chat message */
-		nap_write_packet(gc, 205, "%s %s", who, message);
+		nap_write_packet(gc, 205, "%s %s", who, tmp);
 	} else {
 		/* user typed an IRC-style command */
-		nap_do_irc_style(gc, message, who);
+		nap_do_irc_style(gc, tmp, who);
 	}
+
+	g_free(tmp);
 
 	return 1;
 }
@@ -220,20 +223,23 @@ static void nap_chat_leave(GaimConnection *gc, int id)
 }
 
 /* 402 - MSG_CLIENT_PUBLIC */
-static int nap_chat_send(GaimConnection *gc, int id, const char *message)
+static int nap_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags)
 {
 	GaimConversation *c = gaim_find_chat(gc, id);
+	char *tmp = gaim_unescape_html(message);
 
 	if (!c)
 		return -EINVAL;
 
-	if ((strlen(message) < 2) || (message[0] != '/' ) || (message[1] == '/')) {
+	if ((strlen(tmp) < 2) || (tmp[0] != '/' ) || (tmp[1] == '/')) {
 		/* Actually send a chat message */
-		nap_write_packet(gc, 402, "%s %s", c->name, message);
+		nap_write_packet(gc, 402, "%s %s", c->name, tmp);
 	} else {
 		/* user typed an IRC-style command */
-		nap_do_irc_style(gc, message, c->name);
+		nap_do_irc_style(gc, tmp, c->name);
 	}
+
+	g_free(tmp);
 
 	return 0;
 }

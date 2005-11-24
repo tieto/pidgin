@@ -201,8 +201,6 @@ typedef GaimProxyInfo *		Gaim__ProxyInfo;
 	/* prpl.h */
 typedef GaimBuddyIconSpec *				Gaim__Buddy__Icon__Spec;
 typedef GaimPluginProtocolInfo *		Gaim__PluginProtocolInfo;
-typedef GaimConvImFlags         		Gaim__ConvImFlags;
-typedef GaimConvChatFlags               Gaim__ConvChatFlags;
 typedef GaimIconScaleRules              Gaim__IconScaleRules;
 typedef GaimProtocolOptions             Gaim__ProtocolOptions;
 

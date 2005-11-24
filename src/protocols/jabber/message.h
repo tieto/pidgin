@@ -58,8 +58,8 @@ void jabber_message_send(JabberMessage *jm);
 
 void jabber_message_parse(JabberStream *js, xmlnode *packet);
 int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
-		GaimConvImFlags flags);
-int jabber_message_send_chat(GaimConnection *gc, int id, const char *message);
+		GaimMessageFlags flags);
+int jabber_message_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags);
 
 int jabber_send_typing(GaimConnection *gc, const char *who, int typing);
 

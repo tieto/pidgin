@@ -3908,7 +3908,7 @@ static char *im_mime_convert(GaimConnection *gc,
 static int mw_prpl_send_im(GaimConnection *gc,
 			   const char *name,
 			   const char *message,
-			   GaimConvImFlags flags) {
+			   GaimMessageFlags flags) {
 
   struct mwGaimPluginData *pd;
   struct mwIdBlock who = { (char *) name, NULL };
@@ -3930,13 +3930,13 @@ static int mw_prpl_send_im(GaimConnection *gc,
      which is bad. I'm not sure how to fix this correctly. */
 
   if(strstr(message, "<img ") || strstr(message, "<IMG "))
-    flags |= GAIM_CONV_IM_IMAGES;
+    flags |= GAIM_MESSAGE_IMAGES;
 
   if(mwConversation_isOpen(conv)) {
     char *tmp;
     int ret;
 
-    if((flags & GAIM_CONV_IM_IMAGES) &&
+    if((flags & GAIM_MESSAGE_IMAGES) &&
        mwConversation_supports(conv, mwImSend_MIME)) {
       /* send a MIME message */
 
@@ -3964,7 +3964,9 @@ static int mw_prpl_send_im(GaimConnection *gc,
 
     } else {
       /* default to text */
-      ret = mwConversation_send(conv, mwImSend_PLAIN, message);
+	  tmp = gaim_unescape_html(message);
+      ret = mwConversation_send(conv, mwImSend_PLAIN, tmp);
+	  g_free(tmp);
     }
     
     return !ret;
@@ -4797,7 +4799,8 @@ static void mw_prpl_chat_whisper(GaimConnection *gc,
 
 static int mw_prpl_chat_send(GaimConnection *gc,
 			     int id,
-			     const char *message) {
+			     const char *message,
+				 GaimMessageFlags flags) {
 
   struct mwGaimPluginData *pd;
   struct mwConference *conf;

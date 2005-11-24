@@ -55,6 +55,11 @@ version 2.0.0:
 	* GaimXfer->ops.read, GaimXfer->ops.write, gaim_xfer_set_read_fnc(),
 	  gaim_xfer_set_write_fnc(), gaim_xfer_read(), gaim_xfer_write():
 	  Changed ssize_t to gssize
+	* serv_got_im, serv_got_chat_in, serv_send_im and serv_chat_send all use
+	  GaimMessageFlags instead of GaimConvImFlags / GaimConvChatFlags
+	* All core<->prpl message passing now uses html. This was previously true
+	  for receiving messages, it's now also true for sending them. prpls that
+	  don't support html need to gaim_unescape_html() the message.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -97,6 +102,7 @@ version 2.0.0:
 	* gaim_gtkpounce_menu_build()
 	* gaim_gtkpounce_dialog_show()
 	* GaimGtkBuddyList->bpmenu
+	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

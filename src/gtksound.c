@@ -195,7 +195,7 @@ chat_msg_sent_cb(GaimAccount *account, const char *message,
 static void
 chat_msg_received_cb(GaimAccount *account, char *sender,
 					 char *message, GaimConversation *conv,
-					 int flags, GaimSoundEventID event)
+					 GaimMessageFlags flags, GaimSoundEventID event)
 {
 	GaimConvChat *chat;
 
@@ -207,7 +207,7 @@ chat_msg_received_cb(GaimAccount *account, char *sender,
 	if (chat_nick_matches_name(conv, sender))
 		return;
 
-	if (flags & GAIM_CONV_CHAT_ALERT || gaim_utf8_has_word(message, chat->nick))
+	if (flags & GAIM_MESSAGE_NICK || gaim_utf8_has_word(message, chat->nick))
 		play_conv_event(conv, GAIM_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);

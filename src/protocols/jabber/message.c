@@ -188,7 +188,7 @@ static void handle_groupchat(JabberMessage *jm)
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
 			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
-							jm->delayed ? GAIM_CONV_CHAT_DELAYED : 0,
+							jm->delayed ? GAIM_MESSAGE_DELAYED : 0,
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
 			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
@@ -444,7 +444,7 @@ void jabber_message_send(JabberMessage *jm)
 }
 
 int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
-		GaimConvImFlags flags)
+		GaimMessageFlags flags)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -486,7 +486,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	return 1;
 }
 
-int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg)
+int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg, GaimMessageFlags flags)
 {
 	JabberChat *chat;
 	JabberMessage *jm;

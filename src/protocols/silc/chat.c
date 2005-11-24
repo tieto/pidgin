@@ -1257,7 +1257,7 @@ void silcgaim_chat_leave(GaimConnection *gc, int id)
 		}
 }
 
-int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
+int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageFlags msgflags)
 {
 	SilcGaim sg = gc->proto_data;
 	SilcClient client = sg->client;
@@ -1268,8 +1268,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 	SilcChannelPrivateKey key = NULL;
 	SilcUInt32 flags;
 	int ret;
-	const char *msg2;
-	char *tmp;
+	char *msg2, *tmp;
 	gboolean found = FALSE;
 	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
 
@@ -1278,18 +1277,21 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 
 	flags = SILC_MESSAGE_FLAG_UTF8;
 
-	msg2 = msg;
+	tmp = msg2 = gaim_unescape_html(msg);
 
 	if (!g_ascii_strncasecmp(msg2, "/me ", 4))
 	{
 		msg2 += 4;
-		if (!msg2)
+		if (!*msg2) {
+			g_free(tmp);
 			return 0;
+		}
 		flags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
 							  _("Unknown command"));
+		g_free(tmp);
 		return 0;
 	}
 
@@ -1306,13 +1308,17 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 		for (l = sg->grps; l; l = l->next)
 			if (((SilcGaimPrvgrp)l->data)->id == id)
 				break;
-		if (!l)
+		if (!l) {
+			g_free(tmp);
 			return 0;
+		}
 		prv = l->data;
 		channel = silc_client_get_channel(sg->client, sg->conn,
 						  (char *)prv->parentch);
-		if (!channel)
+		if (!channel) {
+			g_free(tmp);
 			return 0;
+		}
 		key = prv->key;
 	}
 
@@ -1326,8 +1332,10 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 			}
 		}
 		silc_hash_table_list_reset(&htl);
-		if (!found)
+		if (!found) {
+			g_free(tmp);
 			return 0;
+		}
 		channel = chu->channel;
 	}
 
@@ -1336,11 +1344,10 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg)
 					       flags, (unsigned char *)msg2,
 					       strlen(msg2), TRUE);
 	if (ret) {
-		tmp = g_markup_escape_text(msg, -1);
-		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, tmp,
+		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, msg,
 				 time(NULL));
-		g_free(tmp);
 	}
+	g_free(tmp);
 
 	return ret;
 }

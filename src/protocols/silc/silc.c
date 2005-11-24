@@ -1062,38 +1062,45 @@ silcgaim_send_im_resolved(SilcClient client,
 }
 
 static int
-silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
-		 GaimConvImFlags flags)
+silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
+		 GaimMessageFlags flags)
 {
 	SilcGaim sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count, mflags;
-	char *nickname;
+	char *nickname, *msg, *tmp;
 	int ret;
 	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
 
-	if (!who || !msg)
+	if (!who || !message)
 		return 0;
 
 	mflags = SILC_MESSAGE_FLAG_UTF8;
 
+	tmp = msg = gaim_unescape_html(message);
+
 	if (!g_ascii_strncasecmp(msg, "/me ", 4)) {
 		msg += 4;
-		if (!msg)
+		if (!*msg) {
+			g_free(tmp);
 			return 0;
+		}
 		mflags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
 			gaim_notify_error(gc, ("Call Command"), _("Cannot call command"),
 					_("Unknown command"));
+		g_free(tmp);
 		return 0;
 	}
 
 
-	if (!silc_parse_userfqdn(who, &nickname, NULL))
+	if (!silc_parse_userfqdn(who, &nickname, NULL)) {
+		g_free(tmp);
 		return 0;
+	}
 
 	if (sign)
 		mflags |= SILC_MESSAGE_FLAG_SIGNED;
@@ -1104,8 +1111,10 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 	if (!clients) {
 		/* Resolve unknown user */
 		SilcGaimIM im = silc_calloc(1, sizeof(*im));
-		if (!im)
+		if (!im) {
+			g_free(tmp);
 			return 0;
+		}
 		im->nick = g_strdup(who);
 		im->message = g_strdup(msg);
 		im->message_len = strlen(im->message);
@@ -1113,6 +1122,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 		silc_client_get_clients(client, conn, nickname, NULL,
 					silcgaim_send_im_resolved, im);
 		silc_free(nickname);
+		g_free(tmp);
 		return 0;
 	}
 
@@ -1121,6 +1131,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *msg,
 					       mflags, (unsigned char *)msg,
 					       strlen(msg), TRUE);
 
+	g_free(tmp);
 	silc_free(nickname);
 	silc_free(clients);
 	return ret;

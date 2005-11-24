@@ -3007,7 +3007,7 @@ static GList *yahoo_actions(GaimPlugin *plugin, gpointer context) {
 	return m;
 }
 
-static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, GaimConvImFlags flags)
+static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);

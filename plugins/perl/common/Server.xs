@@ -31,10 +31,11 @@ serv_chat_leave(a, b)
 	int b
 
 int  
-serv_chat_send(con, a, b)
+serv_chat_send(con, a, b, flags)
 	Gaim::Connection con 
 	int a
 	const char * b
+	Gaim::MessageFlags flags
 
 void 
 serv_chat_whisper(con, a, b, c)
@@ -59,7 +60,7 @@ serv_got_chat_in(g, id, who, chatflags, message, mtime)
 	Gaim::Connection g
 	int id
 	const char *who
-	Gaim::ConvChatFlags chatflags
+	Gaim::MessageFlags chatflags
 	const char *message
 	time_t mtime
 
@@ -100,7 +101,7 @@ serv_got_im(gc, who, msg, imflags, mtime)
 	Gaim::Connection gc
 	const char *who
 	const char *msg
-	Gaim::ConvImFlags imflags
+	Gaim::MessageFlags imflags
 	time_t mtime
 
 Gaim::Conversation
@@ -196,7 +197,7 @@ serv_send_im(con, a, b, flags )
 	Gaim::Connection con
 	const char * a
 	const char * b
-	Gaim::ConvImFlags flags
+	Gaim::MessageFlags flags
 
 int  
 serv_send_typing(con, a, b)

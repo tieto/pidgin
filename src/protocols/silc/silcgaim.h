@@ -133,7 +133,8 @@ char *silcgaim_get_chat_name(GHashTable *data);
 void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 			  const char *name);
 void silcgaim_chat_leave(GaimConnection *gc, int id);
-int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg);
+int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg,
+					GaimMessageFlags flags);
 void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic);
 GaimRoomlist *silcgaim_roomlist_get_list(GaimConnection *gc);
 void silcgaim_roomlist_cancel(GaimRoomlist *list);

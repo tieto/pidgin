@@ -35,22 +35,6 @@ typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
 /** @name Basic Protocol Information                                      */
 /**************************************************************************/
 
-/**
- * Flags applicable to outgoing/incoming IMs from prpls.
- */
-typedef enum
-{
-	GAIM_CONV_IM_AUTO_RESP = 0x0001,    /**< Auto response.    */
-	GAIM_CONV_IM_IMAGES    = 0x0002     /**< Contains images.  */
-} GaimConvImFlags;
-
-typedef enum
-{
-	GAIM_CONV_CHAT_WHISPER = 0x0001,    /**< Whispered message.*/
-	GAIM_CONV_CHAT_DELAYED = 0x0002,    /**< Delayed message.  */
-	GAIM_CONV_CHAT_ALERT   = 0x0004     /**< Alert message.    */
-} GaimConvChatFlags;
-
 typedef enum {
 	GAIM_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */
 	GAIM_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
@@ -80,6 +64,7 @@ typedef struct {
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0}
 
 #include "blist.h"
+#include "conversation.h"
 #include "ft.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -237,7 +222,7 @@ struct _GaimPluginProtocolInfo
 	 */
 	int  (*send_im)(GaimConnection *, const char *who,
 					const char *message,
-					GaimConvImFlags flags);
+					GaimMessageFlags flags);
 
 	void (*set_info)(GaimConnection *, const char *info);
 	int  (*send_typing)(GaimConnection *, const char *name, int typing);
@@ -264,7 +249,7 @@ struct _GaimPluginProtocolInfo
 	void (*chat_leave)(GaimConnection *, int id);
 	void (*chat_whisper)(GaimConnection *, int id,
 						 const char *who, const char *message);
-	int  (*chat_send)(GaimConnection *, int id, const char *message);
+	int  (*chat_send)(GaimConnection *, int id, const char *message, GaimMessageFlags flags);
 	void (*keepalive)(GaimConnection *);
 
 	/* new user registration */

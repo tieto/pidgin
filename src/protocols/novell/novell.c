@@ -1741,7 +1741,7 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 	NMContact *contact = NULL;
 	GaimConversation *gconv;
 	NMConference *conference;
-	GaimConvImFlags imflags;
+	GaimMessageFlags flags;
 	char *text = NULL;
 
 	text = g_markup_escape_text(nm_event_get_text(event), -1);
@@ -1757,13 +1757,13 @@ _evt_receive_message(NMUser * user, NMEvent * event)
 			user_record = nm_find_user_record(user, nm_event_get_source(event));
 			if (user_record) {
 
-				imflags = 0;
+				flags = 0;
 				if (nm_event_get_type(event) == NMEVT_RECEIVE_AUTOREPLY)
-					imflags |= GAIM_CONV_IM_AUTO_RESP;
+					flags |= GAIM_MESSAGE_AUTO_RESP;
 
 				serv_got_im(gaim_account_get_connection(user->client_data),
 							nm_user_record_get_display_id(user_record),
-							text, imflags,
+							text, flags,
 							nm_event_get_gmt(event));
 
 				gconv =	gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
@@ -2201,13 +2201,14 @@ novell_close(GaimConnection * gc)
 
 static int
 novell_send_im(GaimConnection * gc, const char *name,
-			   const char *message_body, GaimConvImFlags flags)
+			   const char *message_body, GaimMessageFlags flags)
 {
 	NMUserRecord *user_record = NULL;
 	NMConference *conf = NULL;
 	NMMessage *message;
 	NMUser *user;
 	const char *dn = NULL;
+	char *plain;
 	gboolean done = TRUE, created_conf = FALSE;
 	NMERR_T rc = NM_OK;
 
@@ -2220,7 +2221,9 @@ novell_send_im(GaimConnection * gc, const char *name,
 		return 0;
 
 	/* Create a new message */
-	message = nm_create_message(message_body);
+	plain = gaim_unescape_html(message_body);
+	message = nm_create_message(plain);
+	g_free(plain);
 
 	/* Need to get the DN for the buddy so we can look up the convo */
 	dn = nm_lookup_dn(user, name);
@@ -2412,7 +2415,7 @@ novell_chat_invite(GaimConnection *gc, int id,
 }
 
 static int
-novell_chat_send(GaimConnection * gc, int id, const char *text)
+novell_chat_send(GaimConnection * gc, int id, const char *text, GaimMessageFlags flags)
 {
 	NMConference *conference;
 	GaimConversation *chat;
@@ -2421,7 +2424,7 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 	NMUser *user;
 	NMERR_T rc = NM_OK;
 	const char *name;
-	char *str;
+	char *str, *plain;
 
 	if (gc == NULL || text == NULL)
 		return -1;
@@ -2430,7 +2433,9 @@ novell_chat_send(GaimConnection * gc, int id, const char *text)
 	if (user == NULL)
 		return -1;
 
-	message = nm_create_message(text);
+	plain = gaim_unescape_html(text);
+	message = nm_create_message(plain);
+	g_free(plain);
 
 	for (cnode = user->conferences; cnode != NULL; cnode = cnode->next) {
 		conference = cnode->data;

@@ -802,7 +802,7 @@ meify(char *message, size_t len)
 	return FALSE;
 }
 
-static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room, const char *what)
+static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room, const char *what, GaimMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -943,7 +943,7 @@ void yahoo_c_leave(GaimConnection *gc, int id)
 	serv_got_chat_left(gc, id);
 }
 
-int yahoo_c_send(GaimConnection *gc, int id, const char *what)
+int yahoo_c_send(GaimConnection *gc, int id, const char *what, GaimMessageFlags flags)
 {
 	GaimConversation *c;
 	int ret;
@@ -962,7 +962,7 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what)
 				gaim_conversation_get_name(c), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)), what);
 	} else {
 		ret = yahoo_chat_send(gc, gaim_connection_get_display_name(gc),
-						gaim_conversation_get_name(c), what);
+						gaim_conversation_get_name(c), what, flags);
 		if (!ret)
 			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)),
 					gaim_connection_get_display_name(gc), 0, what, time(NULL));

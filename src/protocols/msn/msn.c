@@ -769,7 +769,7 @@ msn_close(GaimConnection *gc)
 
 static int
 msn_send_im(GaimConnection *gc, const char *who, const char *message,
-			GaimConvImFlags flags)
+			GaimMessageFlags flags)
 {
 	GaimAccount *account;
 	MsnMessage *msg;
@@ -1174,7 +1174,7 @@ msn_chat_leave(GaimConnection *gc, int id)
 }
 
 static int
-msn_chat_send(GaimConnection *gc, int id, const char *message)
+msn_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags)
 {
 	GaimAccount *account;
 	MsnSession *session;

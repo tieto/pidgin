@@ -1501,18 +1501,20 @@ static void ggp_close(GaimConnection *gc)
 }
 /* }}} */
 
-/* static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, GaimConvImFlags flags) {{{ */
+/* static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, GaimMessageFlags flags) {{{ */
 static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg,
-		       GaimConvImFlags flags)
+		       GaimMessageFlags flags)
 {
 	GGPInfo *info = gc->proto_data;
-	char *tmp;
+	char *tmp, *plain;
 
 	if (strlen(msg) == 0)
 		return 1;
 
+	plain = gaim_unescape_html(msg);
 	gaim_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
-	tmp = charset_convert(msg, "UTF-8", "CP1250");
+	tmp = charset_convert(plain, "UTF-8", "CP1250");
+	g_free(plain);
 
 	if (tmp != NULL && strlen(tmp) > 0) {
 		if (gg_send_message(info->session, GG_CLASS_CHAT,
@@ -1655,14 +1657,14 @@ static char *ggp_get_chat_name(GHashTable *data) {
 }
 /* }}} */
 
-/* static int ggp_chat_send(GaimConnection *gc, int id, const char *message) {{{ */
-static int ggp_chat_send(GaimConnection *gc, int id, const char *message)
+/* static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags) {{{ */
+static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags)
 {
 	GaimConversation *conv;
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat = NULL;
 	GList *l;
-	char *msg;
+	char *msg, *plain;
 	uin_t *uins;
 	int count = 0;
 
@@ -1695,7 +1697,9 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message)
 			uins[count++] = uin;
 	}
 
-	msg = charset_convert(message, "UTF-8", "CP1250");
+	plain = gaim_unescape_html(message);
+	msg = charset_convert(plain, "UTF-8", "CP1250");
+	g_free(plain);
 	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
 			       (unsigned char *)msg);
 	g_free(msg);

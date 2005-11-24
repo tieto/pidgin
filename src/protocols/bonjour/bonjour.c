@@ -180,7 +180,7 @@ bonjour_list_icon(GaimAccount *account, GaimBuddy *buddy)
 }
 
 int
-bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, GaimConvImFlags flags)
+bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, GaimMessageFlags flags)
 {
 	if(!to || !msg)
 		return 0;
