@@ -1344,16 +1344,18 @@ GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)
 {
 	struct yahoo_roomlist *yrl;
 	GaimRoomlist *rl;
+	const char *rll;
 	char *url;
 	GList *fields = NULL;
 	GaimRoomlistField *f;
 
-	if (YAHOO_ROOMLIST_LOCALE) {
+	rll = gaim_account_get_string(gaim_connection_get_account(gc),
+								  "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+
+	if (rll != NULL && *rll != '\0') {
 		url = g_strdup_printf("%s?chatcat=0&intl=%s",
 	        gaim_account_get_string(gaim_connection_get_account(gc),
-	        "room_list", YAHOO_ROOMLIST_URL),
-	        gaim_account_get_string(gaim_connection_get_account(gc),
-	        "room_list_locale", YAHOO_ROOMLIST_LOCALE));
+	        "room_list", YAHOO_ROOMLIST_URL), rll);
 	} else {
 		url = g_strdup_printf("%s?chatcat=0",
 	        gaim_account_get_string(gaim_connection_get_account(gc),
@@ -1422,6 +1424,7 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	struct yahoo_roomlist *yrl;
 	char *url;
 	char *id;
+	const char *rll;
 
 	if (category->type != GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
 		return;
@@ -1431,11 +1434,13 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 		return;
 	}
 
-	if (YAHOO_ROOMLIST_LOCALE) {
+	rll = gaim_account_get_string(list->account, "room_list_locale",
+								  YAHOO_ROOMLIST_LOCALE);
+
+	if (rll != NULL && *rll != '\0') {
 		url = g_strdup_printf("%s?chatroom_%s=0&intl=%s",
-	       gaim_account_get_string(list->account,"room_list", 
-	       YAHOO_ROOMLIST_URL), id, gaim_account_get_string(list->account,
-	       "room_list_locale", YAHOO_ROOMLIST_LOCALE));
+	       gaim_account_get_string(list->account,"room_list",
+	       YAHOO_ROOMLIST_URL), id, rll);
 	} else {
 		url = g_strdup_printf("%s?chatroom_%s=0",
 	       gaim_account_get_string(list->account,"room_list",
