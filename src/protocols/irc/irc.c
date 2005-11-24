@@ -452,6 +452,8 @@ static void irc_set_status(GaimAccount *account, GaimStatus *status)
 		if ((args[0] == NULL) || (*args[0] == '\0'))
 			args[0] = _("Away");
 		irc_cmd_away(irc, "away", NULL, args);
+	} else if (!strcmp(status_id, "available")) {
+		irc_cmd_away(irc, "back", NULL, args);
 	}
 }
 

@@ -163,7 +163,7 @@ int irc_cmd_quit(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_quote(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_query(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_remove(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
-int irc_cmd_service(struct irc_conn *irc, const char *cmd, const char *Target, const char **args);
+int irc_cmd_service(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_time(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
