@@ -173,14 +173,10 @@ static void init_timer_list()
 static void set_timestamp(GtkWidget *spinner, void *null) {
 	int tm;
 
-	tm = 0;
-
-	tm = CLAMP(gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner)), 1, G_MAXINT);
+	tm = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spinner));
 	gaim_debug(GAIM_DEBUG_MISC, "timestamp", "setting time to %d mins\n", tm);
 
-	tm = tm * 60 * 1000;
-
-	interval = tm;
+	interval = tm * 60 * 1000;
 	gaim_prefs_set_int("/plugins/gtk/timestamp/interval", interval);
 
 	destroy_timer_list();

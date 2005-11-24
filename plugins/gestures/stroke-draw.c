@@ -194,9 +194,9 @@ process_event (GtkWidget *widget, GdkEvent *event, gpointer data G_GNUC_UNUSED)
 
 	_gstroke_canonical (result, metrics);
 	gstroke_execute (widget, result);
-	return FALSE;
       }
-      return TRUE;
+      return FALSE;
+
     default:
       break;
   }
