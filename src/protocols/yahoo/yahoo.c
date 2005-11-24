@@ -2631,16 +2631,24 @@ static void yahoo_list_emblems(GaimBuddy *b, const char **se, const char **sw, c
 static char *yahoo_get_status_string(enum yahoo_status a)
 {
 	switch (a) {
-	case YAHOO_STATUS_BUSY:
-		return _("Busy");
-	case YAHOO_STATUS_STEPPEDOUT:
-		return _("Stepped Out");
 	case YAHOO_STATUS_BRB:
 		return _("Be Right Back");
+	case YAHOO_STATUS_BUSY:
+		return _("Busy");
+	case YAHOO_STATUS_NOTATHOME:
+		return _("Not At Home");
 	case YAHOO_STATUS_NOTATDESK:
 		return _("Not At Desk");
+	case YAHOO_STATUS_NOTINOFFICE:
+		return _("Not In Office");
 	case YAHOO_STATUS_ONPHONE:
 		return _("On The Phone");
+	case YAHOO_STATUS_ONVACATION:
+		return _("On Vacation");
+	case YAHOO_STATUS_OUTTOLUNCH:
+		return _("Out To Lunch");
+	case YAHOO_STATUS_STEPPEDOUT:
+		return _("Stepped Out");
 	case YAHOO_STATUS_INVISIBLE:
 		return _("Invisible");
 	case YAHOO_STATUS_IDLE:
@@ -3201,20 +3209,33 @@ static GList *yahoo_status_types(GaimAccount *account)
 	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
+	types = g_list_append(types, type);
+
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
-	types = g_list_append(types, type);
-
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not At Home"), TRUE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATDESK, _("Not At Desk"), TRUE);
 	types = g_list_append(types, type);
 
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not In Office"), TRUE);
+	types = g_list_append(types, type);
+
 	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONPHONE, _("On The Phone"), TRUE);
 	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out To Lunch"), TRUE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
+	types = g_list_append(types, type);
+
 
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, YAHOO_STATUS_TYPE_INVISIBLE, _("Invisible"), TRUE);
 	types = g_list_append(types, type);
