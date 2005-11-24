@@ -646,7 +646,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	body_start = s;
 	body_len = size - (body_start - buf);
 
-	if ((s = strstr(header, "Content-Length: ")) != NULL)
+	if ((s = gaim_strcasestr(header, "Content-Length: ")) != NULL)
 	{
 		int tmp_len;
 
@@ -686,7 +686,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 #endif
 
 	/* Now we should be able to process the data. */
-	if ((s = strstr(header, "X-MSN-Messenger: ")) != NULL)
+	if ((s = gaim_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
 	{
 		char *full_session_id, *gw_ip, *session_action;
 		char *t, *session_id;

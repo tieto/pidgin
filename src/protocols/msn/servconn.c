@@ -334,7 +334,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (len <= 0)
 	{
-		gaim_debug_error("msn", "servconn read error, len: %d\n", len);
+		gaim_debug_error("msn", "servconn read error, len: %d error: %s\n", len, strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
