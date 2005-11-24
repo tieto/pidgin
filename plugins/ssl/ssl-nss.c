@@ -138,7 +138,7 @@ ssl_bad_cert(void *arg, PRFileDesc *socket)
 			break;
 	}
 
-	gaim_debug_error("nss", "Bad certificate: %d\n");
+	gaim_debug_error("nss", "Bad certificate: %d\n", err);
 
 	return status;
 }
