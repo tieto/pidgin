@@ -29,7 +29,9 @@
 
 #include "media.h"
 #include "mediastream.h"
+#ifdef HAVE_ILBC
 #include "msilbcdec.h"
+#endif
 
 
 /* msrtpsend.o and msrtprecv.o aren't used within the core, so
@@ -57,7 +59,9 @@ static GaimMediaUiOps *media_ui_ops = NULL;
 void gaim_media_init()
 {
 	ms_init();
+#ifdef HAVE_ILBC
 	ms_ilbc_codec_init();
+#endif
 	ms_speex_codec_init();
 	ortp_init();
 }
