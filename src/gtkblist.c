@@ -3148,10 +3148,13 @@ unseen_conv_menu()
 static gboolean
 menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 {
+	GaimConversation *conv;
+
 	switch (event->button) {
 		case 1:
-			gaim_gtkconv_present_conversation(gaim_gtk_conversations_get_first_unseen(
-					GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
+			conv = gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT);
+			if (conv != NULL)
+				gaim_gtkconv_present_conversation(conv);
 			break;
 		case 3:
 			unseen_conv_menu();
@@ -3183,7 +3186,8 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 
 			if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
 				g_string_append_printf(tooltip_text,
-						_("%d unread message(s) from %s\n"), gtkconv->unseen_count,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+						gtkconv->unseen_count,
 						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 			}
 			convs = convs->next;
@@ -3200,6 +3204,12 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 
 		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, g_string_free(tooltip_text, FALSE));
 	}
+}
+
+static void
+conversation_deleting_cb(GaimConversation *conv, GaimGtkBuddyList *gtkblist)
+{
+	conversation_updated_cb(conv, GAIM_CONV_UPDATE_UNSEEN, gtkblist);
 }
 
 /**********************************************************************************
@@ -3626,6 +3636,9 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	gaim_signal_connect(gaim_conversations_get_handle(), "conversation-updated",
 						gtkblist, GAIM_CALLBACK(conversation_updated_cb),
+						gtkblist);
+	gaim_signal_connect(gaim_conversations_get_handle(), "deleting-conversation",
+						gtkblist, GAIM_CALLBACK(conversation_deleting_cb),
 						gtkblist);
 
 	/* emit our created signal */
