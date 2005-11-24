@@ -205,9 +205,11 @@ forward_chars_with_skipping (GtkTextIter *iter,
 		if (skip_nontext && gtk_text_iter_get_char (iter) == GTK_TEXT_UNKNOWN_CHAR)
 			ignored = TRUE;
 
+#if 0
 		if (!ignored && skip_invisible &&
-		    /* _gtk_text_btree_char_is_invisible (iter)*/ FALSE)
+		    _gtk_text_btree_char_is_invisible (iter))
 			ignored = TRUE;
+#endif
 
 		gtk_text_iter_forward_char (iter);
 
