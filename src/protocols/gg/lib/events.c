@@ -1,4 +1,4 @@
-/* $Id: events.c 13801 2005-09-14 19:10:39Z datallah $ */
+/* $Id: events.c 14520 2005-11-25 00:32:45Z rlaager $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -194,7 +194,7 @@ static void gg_image_queue_parse(struct gg_event *e, char *p, unsigned int len, 
 	}
 
 	if (p[0] == 0x05) {
-		int i, ok = 0;
+		unsigned int i, ok = 0;
 		
 		q->done = 0;
 
@@ -420,7 +420,7 @@ static int gg_handle_recv_msg(struct gg_header *h, struct gg_event *e, struct gg
 	e->event.msg.msgclass = gg_fix32(r->msgclass);
 	e->event.msg.sender = gg_fix32(r->sender);
 	e->event.msg.time = gg_fix32(r->time);
-	e->event.msg.message = strdup((char*) r + sizeof(*r));
+	e->event.msg.message = (unsigned char *)strdup((char*) r + sizeof(*r));
 
 	return 0;
 
@@ -895,7 +895,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 		case GG_STATE_CONNECTING_HUB:
 		{
 			char buf[1024], *client, *auth;
-			int res = 0, res_size = sizeof(res);
+			int res = 0;
+			socklen_t res_size = sizeof(res);
 			const char *host, *appmsg;
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_HUB\n");
@@ -1079,7 +1080,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 				e->type = GG_EVENT_MSG;
 				e->event.msg.msgclass = atoi(buf);
 				e->event.msg.sender = 0;
-				e->event.msg.message = sysmsg_buf;
+				e->event.msg.message = (unsigned char *)sysmsg_buf;
 			}
 	
 			close(sess->fd);
@@ -1146,7 +1147,8 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 
 		case GG_STATE_CONNECTING_GG:
 		{
-			int res = 0, res_size = sizeof(res);
+			int res = 0;
+			socklen_t res_size = sizeof(res);
 
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_CONNECTING_GG\n");
 
@@ -1337,7 +1339,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			struct gg_welcome *w;
 			struct gg_login60 l;
 			unsigned int hash;
-			unsigned char *password = sess->password;
+			char *password = sess->password;
 			int ret;
 			
 			gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() GG_STATE_READING_KEY\n");
@@ -1398,7 +1400,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			w = (struct gg_welcome*) ((char*) h + sizeof(struct gg_header));
 			w->key = gg_fix32(w->key);
 
-			hash = gg_login_hash(password, w->key);
+			hash = gg_login_hash((unsigned char *)password, w->key);
 	
 			gg_debug(GG_DEBUG_DUMP, "// gg_watch_fd() challenge %.4x --> hash %.8x\n", w->key, hash);
 	
@@ -1415,7 +1417,7 @@ struct gg_event *gg_watch_fd(struct gg_session *sess)
 			
 			if (gg_dcc_ip == (unsigned long) inet_addr("255.255.255.255")) {
 				struct sockaddr_in sin;
-				int sin_len = sizeof(sin);
+				socklen_t sin_len = sizeof(sin);
 
 				gg_debug(GG_DEBUG_MISC, "// gg_watch_fd() detecting address\n");
 

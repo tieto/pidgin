@@ -1,4 +1,4 @@
-/* $Id: libgadu.c 14300 2005-11-08 19:45:09Z datallah $ */
+/* $Id: libgadu.c 14520 2005-11-25 00:32:45Z rlaager $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -81,7 +81,7 @@ static char rcsid[]
 #ifdef __GNUC__
 __attribute__ ((unused))
 #endif
-= "$Id: libgadu.c 14300 2005-11-08 19:45:09Z datallah $";
+= "$Id: libgadu.c 14520 2005-11-25 00:32:45Z rlaager $";
 #endif 
 
 #ifdef _WIN32
@@ -699,8 +699,7 @@ void *gg_recv_packet(struct gg_session *sess)
 {
 	struct gg_header h;
 	char *buf = NULL;
-	int ret = 0;
-	unsigned int offset, size = 0;
+	int ret = 0, offset, size = 0;
 
 	gg_debug(GG_DEBUG_FUNCTION, "** gg_recv_packet(%p);\n", sess);
 	
@@ -853,7 +852,7 @@ int gg_send_packet(struct gg_session *sess, int type, ...)
 {
 	struct gg_header *h;
 	char *tmp;
-	unsigned int tmp_length;
+	int tmp_length;
 	void *payload;
 	unsigned int payload_length;
 	va_list ap;
@@ -899,7 +898,7 @@ int gg_send_packet(struct gg_session *sess, int type, ...)
 	h->length = gg_fix32(tmp_length - sizeof(struct gg_header));
 
 	if ((gg_debug_level & GG_DEBUG_DUMP)) {
-		unsigned int i;
+		int i;
 
 		gg_debug(GG_DEBUG_DUMP, "// gg_send_packet(0x%.2x)", gg_fix32(h->type));
 		for (i = 0; i < tmp_length; ++i)
@@ -1461,7 +1460,7 @@ int gg_image_request(struct gg_session *sess, uin_t recipient, int size, uint32_
  *
  * 0/-1
  */
-int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const char *image, int size)
+int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const unsigned char *image, int size)
 {
 	struct gg_msg_image_reply *r;
 	struct gg_send_msg s;
@@ -1507,7 +1506,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 	r->crc32 = gg_fix32(gg_crc32(0, image, size));
 
 	while (size > 0) {
-		int buflen, chunklen;
+		size_t buflen, chunklen;
 		
 		/* \0 + struct gg_msg_image_reply */
 		buflen = sizeof(struct gg_msg_image_reply) + 1;
@@ -1518,7 +1517,7 @@ int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filenam
 			buflen += strlen(filename) + 1;
 		}
 
-		chunklen = (size >= sizeof(buf) - buflen) ? (sizeof(buf) - buflen) : size;
+		chunklen = ((size_t)size >= sizeof(buf) - buflen) ? (sizeof(buf) - buflen) : (size_t)size;
 
 		memcpy(buf + buflen, image, chunklen);
 		size -= chunklen;
@@ -1635,7 +1634,7 @@ int gg_send_message_richtext(struct gg_session *sess, int msgclass, uin_t recipi
 	s.msgclass = gg_fix32(msgclass);
 	sess->seq += (rand() % 0x300) + 0x300;
 	
-	if (gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), message, strlen(message) + 1, format, formatlen, NULL) == -1)
+	if (gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), message, strlen((const char *)message) + 1, format, formatlen, NULL) == -1)
 		return -1;
 
 	return gg_fix32(s.seq);
@@ -1728,7 +1727,7 @@ int gg_send_message_confer_richtext(struct gg_session *sess, int msgclass, int r
 		if (!i)
 			sess->seq += (rand() % 0x300) + 0x300;
 		
-		if (gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), message, strlen(message) + 1, &r, sizeof(r), recps, (recipients_count - 1) * sizeof(uin_t), format, formatlen, NULL) == -1) {
+		if (gg_send_packet(sess, GG_SEND_MSG, &s, sizeof(s), message, strlen((const char *)message) + 1, &r, sizeof(r), recps, (recipients_count - 1) * sizeof(uin_t), format, formatlen, NULL) == -1) {
 			free(recps);
 			return -1;
 		}

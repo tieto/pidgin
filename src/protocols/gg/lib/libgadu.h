@@ -1,4 +1,4 @@
-/* $Id: libgadu.h 14300 2005-11-08 19:45:09Z datallah $ */
+/* $Id: libgadu.h 14520 2005-11-25 00:32:45Z rlaager $ */
 
 /*
  *  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -214,7 +214,7 @@ struct gg_dcc {
 	struct gg_file_info file_info;
 				/* informacje o pliku */
 	int established;	/* po³±czenie ustanowione */
-	char *voice_buf;	/* bufor na pakiet po³±czenia g³osowego */
+	uint8_t *voice_buf;	/* bufor na pakiet po³±czenia g³osowego */
 	int incoming;		/* po³±czenie przychodz±ce */
 	char *chunk_buf;	/* bufor na kawa³ek danych */
 	uint32_t remote_addr;	/* adres drugiej strony */
@@ -367,7 +367,7 @@ int gg_send_message_ctcp(struct gg_session *sess, int msgclass, uin_t recipient,
 int gg_ping(struct gg_session *sess);
 int gg_userlist_request(struct gg_session *sess, char type, const char *request);
 int gg_image_request(struct gg_session *sess, uin_t recipient, int size, uint32_t crc32);
-int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const char *image, int size);
+int gg_image_reply(struct gg_session *sess, uin_t recipient, const char *filename, const unsigned char *image, int size);
 
 uint32_t gg_crc32(uint32_t crc, const unsigned char *buf, int len);
 

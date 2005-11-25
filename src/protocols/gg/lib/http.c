@@ -1,4 +1,4 @@
-/* $Id: http.c 13801 2005-09-14 19:10:39Z datallah $ */
+/* $Id: http.c 14520 2005-11-25 00:32:45Z rlaager $ */
 
 /*
  *  (C) Copyright 2001-2002 Wojtek Kaniewski <wojtekka@irc.pl>
@@ -237,7 +237,7 @@ int gg_http_watch_fd(struct gg_http *h)
 
 	if (h->state == GG_STATE_CONNECTING) {
 		int res = 0;
-		unsigned int res_size = sizeof(res);
+		socklen_t res_size = sizeof(res);
 
 		if (h->async && (getsockopt(h->fd, SOL_SOCKET, SO_ERROR, &res, &res_size) || res)) {
 			gg_debug(GG_DEBUG_MISC, "=> http, async connection failed (errno=%d, %s)\n", (res) ? res : errno , strerror((res) ? res : errno));
@@ -256,14 +256,14 @@ int gg_http_watch_fd(struct gg_http *h)
 	}
 
 	if (h->state == GG_STATE_SENDING_QUERY) {
-		int res;
+		ssize_t res;
 
 		if ((res = write(h->fd, h->query, strlen(h->query))) < 1) {
 			gg_debug(GG_DEBUG_MISC, "=> http, write() failed (len=%d, res=%d, errno=%d)\n", strlen(h->query), res, errno);
 			gg_http_error(GG_ERROR_WRITING);
 		}
 
-		if (res < strlen(h->query)) {
+		if (res < 0 || (size_t)res < strlen(h->query)) {
 			gg_debug(GG_DEBUG_MISC, "=> http, partial header sent (led=%d, sent=%d)\n", strlen(h->query), res);
 
 			memmove(h->query, h->query + res, strlen(h->query) - res + 1);
