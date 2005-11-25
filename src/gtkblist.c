@@ -3621,6 +3621,8 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	/* Setup some gaim signal handlers. */
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
 			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
 			gtkblist, GAIM_CALLBACK(account_enabled), gtkblist);
 
