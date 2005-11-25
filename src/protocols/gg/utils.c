@@ -40,7 +40,10 @@ uin_t ggp_str_to_uin(const char *text)
 		return 0;
 
 	if ((errno == ERANGE || (num == LONG_MAX || num == LONG_MIN))
-	    || num > (long)UINT_MAX || num < 0)
+#if (LONG_MAX > UINT_MAX)
+	    || num > (long)UINT_MAX
+#endif
+	    || num < 0)
 		return 0;
 
 	return (uin_t) num;
