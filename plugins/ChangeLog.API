@@ -60,6 +60,7 @@ version 2.0.0:
 	* All core<->prpl message passing now uses html. This was previously true
 	  for receiving messages, it's now also true for sending them. prpls that
 	  don't support html need to gaim_unescape_html() the message.
+	* Notify API: GCallback -> GHookFunc, void *user_data -> gpointer user_data
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

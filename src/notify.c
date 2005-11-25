@@ -38,7 +38,7 @@ typedef struct
 void *
 gaim_notify_message(void *handle, GaimNotifyMsgType type,
 					const char *title, const char *primary,
-					const char *secondary, GCallback cb, void *user_data)
+					const char *secondary, GHookFunc cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -65,8 +65,8 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 
 void *
 gaim_notify_email(void *handle, const char *subject, const char *from,
-				  const char *to, const char *url, GCallback cb,
-				  void *user_data)
+				  const char *to, const char *url, GHookFunc cb,
+				  gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -93,7 +93,7 @@ void *
 gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 				   const char **subjects, const char **froms,
 				   const char **tos, const char **urls,
-				   GCallback cb, void *user_data)
+				   GHookFunc cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -130,7 +130,7 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 void *
 gaim_notify_formatted(void *handle, const char *title, const char *primary,
 					  const char *secondary, const char *text,
-					  GCallback cb, void *user_data)
+					  GHookFunc cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -158,7 +158,7 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 void *
 gaim_notify_searchresults(GaimConnection *gc, const char *title,
 						  const char *primary, const char *secondary,
-						  GaimNotifySearchResults *results, GCallback cb, void *user_data)
+						  GaimNotifySearchResults *results, GHookFunc cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -225,7 +225,7 @@ gaim_notify_searchresults_free(GaimNotifySearchResults *results)
 void
 gaim_notify_searchresults_new_rows(GaimConnection *gc,
 		GaimNotifySearchResults *results,
-		void *data, void *user_data)
+		void *data, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -329,7 +329,7 @@ gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
 
 void *
 gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *text, GCallback cb, void *user_data)
+						   const char *text, GHookFunc cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
