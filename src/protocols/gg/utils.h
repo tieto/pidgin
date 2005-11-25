@@ -39,13 +39,13 @@
 
 
 /*
- * Convert string to number. Check wheter a given
- * string is a correct UIN.
+ * Convert a base 10 string to a UIN.
  *
- * Return UIN or 0 if an error occurred.
+ * @param str The string to convert
+ * @return    UIN or 0 if an error occurred.
  */
 uin_t
-ggp_str_to_uin(const char *text);
+ggp_str_to_uin(const char *str);
 
 /**
  * Convert enconding of a given string.

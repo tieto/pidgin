@@ -24,8 +24,8 @@
 #include "utils.h"
 
 
-/* static uin_t ggp_str_to_uin(const char *text) {{{ */
-uin_t ggp_str_to_uin(const char *text)
+/* uin_t ggp_str_to_uin(const char *str) {{{ */
+uin_t ggp_str_to_uin(const char *str)
 {
 	char *tmp;
 	long num;
@@ -34,7 +34,7 @@ uin_t ggp_str_to_uin(const char *text)
 		return 0;
 
 	errno = 0;
-	num = strtol(text, &tmp, 0);
+	num = strtol(text, &tmp, 10);
 
 	if (*text == '\0' || *tmp != '\0')
 		return 0;
