@@ -85,7 +85,8 @@ gtk_gaim_status_box_get_type (void)
 			NULL, /* class_data */
 			sizeof (GtkGaimStatusBox),
 			0,
-			(GInstanceInitFunc) gtk_gaim_status_box_init
+			(GInstanceInitFunc) gtk_gaim_status_box_init,
+			NULL  /* value_table */
 		};
 
 		status_box_type = g_type_register_static(GTK_TYPE_COMBO_BOX,
@@ -801,7 +802,7 @@ activate_currently_selected_status(GtkGaimStatusBox *status_box)
 	 * "/core/savedstatus/current" and then calling
 	 * update_to_reflect_current_status()
 	 */
-	if ((type < 0) || (type >= GAIM_STATUS_NUM_PRIMITIVES))
+	if (type >= GAIM_STATUS_NUM_PRIMITIVES)
 		return;
 
 	if (status_box->account) {
