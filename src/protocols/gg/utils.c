@@ -30,13 +30,13 @@ uin_t ggp_str_to_uin(const char *str)
 	char *tmp;
 	long num;
 
-	if (!text)
+	if (!str)
 		return 0;
 
 	errno = 0;
-	num = strtol(text, &tmp, 10);
+	num = strtol(str, &tmp, 10);
 
-	if (*text == '\0' || *tmp != '\0')
+	if (*str == '\0' || *tmp != '\0')
 		return 0;
 
 	if ((errno == ERANGE || (num == LONG_MAX || num == LONG_MIN))
