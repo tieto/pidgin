@@ -464,7 +464,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 		gtk_list_store_set(model, &iter, 0, scaled, -1);
 
 		for (j = 1; j < col_num; j++) {
-			GValue v;
+			GValue v = {0, };
 			char *escaped = g_markup_escape_text(g_list_nth_data(row, j - 1), -1);
 
 			g_value_init(&v, G_TYPE_STRING);
