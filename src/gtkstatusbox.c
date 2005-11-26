@@ -231,7 +231,7 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 static void
 gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 {
-	char *text, *title;
+	char *text = NULL, *title;
 	char aa_color[8];
 	GdkPixbuf *pixbuf;
 	GtkTreePath *path;
@@ -247,29 +247,33 @@ gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box)
 	if (!title)
 		title = "";
 
-
 	if (status_box->error) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
-							   title, status_box->error);
+		text = g_strdup_printf("<span size=\"smaller\" weight=\"bold\" color=\"red\">%s</span>",
+							   status_box->error);
 	} else if (status_box->typing) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
-							   title, aa_color, _("Typing"));
+		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
+							   aa_color, _("Typing"));
 	} else if (status_box->connecting) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
-							   title, aa_color, _("Connecting"));
+		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
+							   aa_color, _("Connecting"));
 	} else if (status_box->desc) {
-		text = g_strdup_printf("%s\n<span size=\"smaller\" color=\"%s\">%s</span>",
-							   title, aa_color, status_box->desc);
-	} else {
-		text = g_strdup_printf("%s", title);
+		text = g_strdup_printf("<span size=\"smaller\" color=\"%s\">%s</span>",
+							   aa_color, status_box->desc);
 	}
 
 	if (status_box->account) {
-		char *text2 = g_strdup_printf("%s\n<span size=\"smaller\">%s</span>", gaim_account_get_username(status_box->account), text);
+		char *text2 = g_strdup_printf("%s\n<span size=\"smaller\">%s</span>",
+						gaim_account_get_username(status_box->account),
+						text ? text : title);
 		g_free(text);
 		text = text2;
+	} else if (text) {
+		char *text2 = g_strdup_printf("%s\n%s", title, text);
+		g_free(text);
+		text = text2;
+	} else {
+		text = g_strdup(title);
 	}
-
 
 	if (status_box->connecting)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];

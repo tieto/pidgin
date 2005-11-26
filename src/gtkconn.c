@@ -49,26 +49,61 @@ typedef struct {
 static GHashTable *hash = NULL;
 static GSList *accountReconnecting = NULL;
 
+static GtkGaimStatusBox *
+find_status_box_for_account(GaimAccount *account)
+{
+	GaimGtkBuddyList *gtkblist;
+	GList *iter;
+
+	gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	if (!gtkblist)
+		return NULL;
+
+	for (iter = gtkblist->statusboxes; iter; iter=iter->next)
+	{
+		GtkGaimStatusBox *box = iter->data;
+		if (box->account == account)
+			return box;
+	}
+	return NULL;
+}
+
 static void gaim_gtk_connection_connect_progress(GaimConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	GtkGaimStatusBox *box;
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 	gtk_gaim_status_box_pulse_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox));
+
+	if ((box = find_status_box_for_account(gc->account)) != NULL)
+	{
+		gtk_gaim_status_box_set_error(box, NULL);
+		gtk_gaim_status_box_set_connecting(box, TRUE);
+		gtk_gaim_status_box_pulse_connecting(box);
+	}
 }
 
 static void gaim_gtk_connection_connected(GaimConnection *gc)
 {
 	GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	GtkGaimStatusBox *box;
 	GaimAccount *account = NULL;
 	if (!gtkblist)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
 	account = gaim_connection_get_account(gc);
+	
+	if ((box = find_status_box_for_account(account)) != NULL)
+	{
+		gtk_gaim_status_box_set_connecting(box, FALSE);
+		gtk_gaim_status_box_set_error(box, NULL);
+	}
+
 	if (hash != NULL)
 		g_hash_table_remove(hash, account);
 	if (accountReconnecting == NULL)
@@ -86,6 +121,8 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 		return;
 	gtk_gaim_status_box_set_connecting(GTK_GAIM_STATUS_BOX(gtkblist->statusbox),
 					   (gaim_connections_get_connecting() != NULL));
+	gtk_gaim_status_box_set_connecting(find_status_box_for_account(gc->account),
+									FALSE);
 	gaim_gtk_blist_update_protocol_actions();
 
 	if (gaim_connections_get_all() != NULL)
@@ -155,6 +192,7 @@ static void gaim_gtk_connection_report_disconnect(GaimConnection *gc, const char
 	if (!gc->wants_to_die) {
 		if (gtkblist != NULL)
 			gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), text);
+			gtk_gaim_status_box_set_error(find_status_box_for_account(account), text);
 
 		if (info == NULL) {
 			info = g_new0(GaimAutoRecon, 1);
