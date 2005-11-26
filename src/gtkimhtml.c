@@ -334,10 +334,10 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 	GtkSmileyTree *t = tree;
 	const gchar *x = smiley->smile;
 
-	if (!strlen (x))
+	if (!(*x))
 		return;
 
-	while (*x) {
+	do {
 		gchar *pos;
 		gint index;
 
@@ -356,7 +356,7 @@ gtk_smiley_tree_insert (GtkSmileyTree *tree,
 		t = t->children [index];
 
 		x++;
-	}
+	} while (*x);
 
 	t->image = smiley;
 }
@@ -369,7 +369,7 @@ gtk_smiley_tree_destroy (GtkSmileyTree *tree)
 
 	while (list) {
 		GtkSmileyTree *t = list->data;
-		gint i;
+		gsize i;
 		list = g_slist_remove(list, t);
 		if (t && t->values) {
 			for (i = 0; i < t->values->len; i++)
