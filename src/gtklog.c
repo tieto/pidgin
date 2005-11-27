@@ -87,13 +87,14 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 {
 	const char *search_term = gtk_entry_get_text(GTK_ENTRY(lv->entry));
 	GList *logs;
-	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+	GdkCursor *cursor;
 
 	if (lv->search != NULL)
 		g_free(lv->search);
 
 	gtk_tree_store_clear(lv->treestore);
-	if (strlen(search_term) == 0) {/* reset the tree */
+	if (!(*search_term)) {
+		/* reset the tree */
 		populate_log_tree(lv);
 		lv->search = NULL;
 		gtk_imhtml_search_clear(GTK_IMHTML(lv->imhtml));
@@ -102,22 +103,25 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 
 	lv->search = g_strdup(search_term);
 
+	cursor = gdk_cursor_new(GDK_WATCH);
 	gdk_window_set_cursor(lv->window->window, cursor);
+	gdk_cursor_unref(cursor);
 	while (gtk_events_pending())
 		gtk_main_iteration();
-	gdk_cursor_unref(cursor);
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
 		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
-		if (gaim_strcasestr(read, search_term)) {
+		if (read && *read && gaim_strcasestr(read, search_term)) {
 			GtkTreeIter iter;
 			GaimLog *log = logs->data;
 			char title[64];
 			char *title_utf8; /* temporary variable for utf8 conversion */
+
 			gaim_strftime(title, sizeof(title), "%c", localtime(&log->time));
 			title_utf8 = gaim_utf8_try_convert(title);
 			strncpy(title, title_utf8, sizeof(title));
 			g_free(title_utf8);
+
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
 					   0, title,
@@ -126,10 +130,7 @@ static void search_cb(GtkWidget *button, GaimGtkLogViewer *lv)
 		g_free(read);
 	}
 
-
-	cursor = gdk_cursor_new(GDK_LEFT_PTR);
-	gdk_window_set_cursor(lv->window->window, cursor);
-	gdk_cursor_unref(cursor);
+	gdk_window_set_cursor(lv->window->window, NULL);
 }
 
 static gboolean destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
@@ -177,6 +178,7 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	GValue val = { 0, };
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
 	GaimLog *log = NULL;
+	GdkCursor *cursor;
 	GaimLogReadFlags flags;
 	char *read = NULL;
 	char time[64];
@@ -189,6 +191,16 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 
 	if (log == NULL)
 		return;
+
+	/* When we set the initial log, this gets called and the window is still NULL. */
+	if (viewer->window->window != NULL)
+	{
+		cursor = gdk_cursor_new(GDK_WATCH);
+		gdk_window_set_cursor(viewer->window->window, cursor);
+		gdk_cursor_unref(cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+	}
 
 	if (log->type != GAIM_LOG_SYSTEM) {
 		char *title;
@@ -220,13 +232,16 @@ static void log_select_cb(GtkTreeSelection *sel, GaimGtkLogViewer *viewer) {
 	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
 			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
+	g_free(read);
 
 	if (viewer->search != NULL) {
 		gtk_imhtml_search_clear(GTK_IMHTML(viewer->imhtml));
 		gtk_imhtml_search_find(GTK_IMHTML(viewer->imhtml), viewer->search);
 	}
 
-	g_free(read);
+	/* When we set the initial log, this gets called and the window is still NULL. */
+	if (viewer->window->window != NULL)
+		gdk_window_set_cursor(viewer->window->window, NULL);
 }
 
 /* I want to make this smarter, but haven't come up with a cool algorithm to do so, yet.

@@ -31,6 +31,7 @@
 #include "request.h"
 #include "util.h"
 
+#include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
@@ -676,8 +677,20 @@ gaim_gtkdialogs_log_cb(gpointer data, GaimRequestFields *fields)
 	username = g_strdup(gaim_normalize(account,
 		gaim_request_fields_get_string(fields,  "screenname")));
 
-	if(username != NULL && *username != '\0' && account != NULL )
+	if (username != NULL && *username != '\0' && account != NULL)
+	{
+		GaimGtkBuddyList *gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		gdk_cursor_unref(cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
 		gaim_gtk_log_show(GAIM_LOG_IM, username, account);
+
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
+	}
 
 	g_free(username);
 }

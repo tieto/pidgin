@@ -949,9 +949,12 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 	GaimGtkWindow *win = data;
 	GaimConversation *conv;
 	GaimLogType type;
+	GaimGtkBuddyList *gtkblist;
+	GdkCursor *cursor;
 	const char *name;
 	GaimAccount *account;
-	GSList *buddies, *cur;
+	GSList *buddies;
+	GSList *cur;
 
 	conv = gaim_gtk_conv_window_get_active_conversation(win);
 
@@ -961,6 +964,15 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		type = GAIM_LOG_CHAT;
 	else
 		return;
+
+	gtkblist = gaim_gtk_blist_get_default_gtk_blist();
+	cursor = gdk_cursor_new(GDK_WATCH);
+
+	gdk_window_set_cursor(gtkblist->window->window, cursor);
+	gdk_window_set_cursor(win->window->window, cursor);
+	gdk_cursor_unref(cursor);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
 	name = gaim_conversation_get_name(conv);
 	account = gaim_conversation_get_account(conv);
@@ -973,12 +985,17 @@ menu_view_log_cb(gpointer data, guint action, GtkWidget *widget)
 		{
 			gaim_gtk_log_show_contact((GaimContact *)node->parent);
 			g_slist_free(buddies);
+			gdk_window_set_cursor(gtkblist->window->window, NULL);
+			gdk_window_set_cursor(win->window->window, NULL);
 			return;
 		}
 	}
 	g_slist_free(buddies);
 
 	gaim_gtk_log_show(type, name, account);
+
+	gdk_window_set_cursor(gtkblist->window->window, NULL);
+	gdk_window_set_cursor(win->window->window, NULL);
 }
 
 static void
@@ -1842,7 +1859,7 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 	{
 		if (event->keyval > '0' && event->keyval <= '9')
 		{
-			int switchto = event->keyval - '1';
+			guint switchto = event->keyval - '1';
 			if (switchto < gaim_gtk_conv_window_get_gtkconv_count(win))
 				gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), switchto);
 

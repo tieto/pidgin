@@ -345,9 +345,15 @@ static void gtk_blist_menu_bp_cb(GtkWidget *w, GaimBuddy *b)
 
 static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 {
+	GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
 	GaimLogType type;
 	GaimAccount *account;
 	char *name = NULL;
+
+	gdk_window_set_cursor(gtkblist->window->window, cursor);
+	gdk_cursor_unref(cursor);
+	while (gtk_events_pending())
+		gtk_main_iteration();
 
 	if (GAIM_BLIST_NODE_IS_BUDDY(node)) {
 		GaimBuddy *b = (GaimBuddy*) node;
@@ -365,13 +371,21 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, GaimBlistNode *node)
 		}
 	} else if (GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		gaim_gtk_log_show_contact((GaimContact *)node);
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 		return;
-	} else
-		return;
+	} else {
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
+
+		/* This callback should not have been registered for a node
+		 * that doesn't match the type of one of the blocks above. */
+		g_return_if_reached();
+	}
 
 	if (name && account) {
 		gaim_gtk_log_show(type, name, account);
 		g_free(name);
+
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 	}
 }
 
@@ -1372,9 +1386,7 @@ static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_a
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(checkitem)));
 
 	if(gtkblist->window->window) {
-		GdkCursor *cursor = gdk_cursor_new(GDK_LEFT_PTR);
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		gdk_cursor_unref(cursor);
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 	}
 }
 
