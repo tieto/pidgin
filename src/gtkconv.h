@@ -237,6 +237,7 @@ GaimGtkWindow *gaim_gtkconv_get_window(GaimGtkConversation *gtkconv);
 GdkPixbuf *gaim_gtkconv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
 void gaim_gtkconv_new(GaimConversation *conv);
 int gaim_gtkconv_get_tab_at_xy(GaimGtkWindow *win, int x, int y, gboolean *to_right);
+gboolean gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv);
 /*@}*/
 
 /**************************************************************************/

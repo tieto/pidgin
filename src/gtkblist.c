@@ -3194,16 +3194,19 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		GList *convs = gaim_get_ims();
 		tooltip_text = g_string_new("");
 		while (convs) {
-			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+			if(GAIM_IS_GTK_CONVERSATION(convs->data)) {
+				GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
 
-			if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT) {
-				g_string_append_printf(tooltip_text,
-						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-						gtkconv->unseen_count,
-						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+				if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT && gaim_gtkconv_is_hidden(gtkconv)) {
+					g_string_append_printf(tooltip_text,
+							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+							gtkconv->unseen_count,
+							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+				}
 			}
 			convs = convs->next;
 		}
+		if(tooltip_text->len > 0) {
 		/* get rid of the last newline */
 		tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len -1);
 		img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
@@ -3214,7 +3217,9 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		gtk_widget_show(gtkblist->menutrayicon);
 		g_signal_connect(G_OBJECT(gtkblist->menutrayicon), "button-press-event", G_CALLBACK(menutray_press_cb), NULL);
 
-		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, g_string_free(tooltip_text, FALSE));
+		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, tooltip_text->str);
+		}
+		g_string_free(tooltip_text, FALSE);
 	}
 }
 

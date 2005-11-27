@@ -2448,7 +2448,7 @@ gaim_gtk_conversations_fill_unseen_menu(GtkWidget *menu,
 		GaimConversation *conv = (GaimConversation*)l->data;
 		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
-		if (gtkconv->unseen_state >= min_state) {
+		if (gtkconv->unseen_state >= min_state && gtkconv->win == hidden_convwin) {
 			GtkWidget *icon = gtk_image_new();
 			GdkPixbuf *pbuf = gaim_gtkconv_get_tab_icon(conv, TRUE);
 			GtkWidget *item;
@@ -5698,7 +5698,7 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 
 		if(gaim_status_type_get_primitive(
 					gaim_status_get_type(gaim_account_get_active_status(
-					gaim_conversation_get_account(conv)))) == GAIM_STATUS_AWAY)
+							gaim_conversation_get_account(conv)))) == GAIM_STATUS_AWAY)
 			continue;
 
 		private_remove_gtkconv(hidden_convwin, gtkconv, FALSE);
@@ -7436,4 +7436,12 @@ gaim_gtkconv_placement_place(GaimGtkConversation *gtkconv)
 		place_conv(gtkconv);
 	else
 		conv_placement_new_window(gtkconv);
+}
+
+gboolean
+gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv)
+{
+	g_return_val_if_fail(gtkconv != NULL, FALSE);
+
+	return (gtkconv->win == hidden_convwin);
 }
