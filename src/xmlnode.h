@@ -46,6 +46,7 @@ typedef struct _xmlnode
 	size_t data_sz;				/**< The size of the data. */
 	struct _xmlnode *parent;	/**< The parent node or @c NULL.*/
 	struct _xmlnode *child;		/**< The child node or @c NULL.*/
+	struct _xmlnode *lastchild;	/**< The last child node or @c NULL.*/
 	struct _xmlnode *next;		/**< The next node or @c NULL. */
 } xmlnode;
 

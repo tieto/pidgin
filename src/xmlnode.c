@@ -83,13 +83,13 @@ xmlnode_insert_child(xmlnode *parent, xmlnode *child)
 
 	child->parent = parent;
 
-	if(parent->child) {
-		xmlnode *x;
-		for(x = parent->child; x->next; x = x->next);
-		x->next = child;
+	if(parent->lastchild) {
+		parent->lastchild->next = child;
 	} else {
 		parent->child = child;
 	}
+
+	parent->lastchild = child;
 }
 
 void
@@ -126,6 +126,8 @@ xmlnode_remove_attrib(xmlnode *node, const char *attr)
 				!strcmp(attr_node->name, attr)) {
 			if(node->child == attr_node) {
 				node->child = attr_node->next;
+			} else if (node->lastchild == attr_node) {
+				node->lastchild = sibling;
 			} else {
 				sibling->next = attr_node->next;
 			}
@@ -205,6 +207,7 @@ xmlnode_get_child_with_namespace(const xmlnode *parent, const char *name, const 
 	char *parent_name, *child_name;
 
 	g_return_val_if_fail(parent != NULL, NULL);
+	g_return_val_if_fail(name != NULL, NULL);
 
 	names = g_strsplit(name, "/", 2);
 	parent_name = names[0];
@@ -258,6 +261,8 @@ xmlnode_to_str_helper(xmlnode *node, int *len, gboolean formatting, int depth)
 	xmlnode *c;
 	char *node_name, *esc, *esc2, *tab = NULL;
 	gboolean need_end = FALSE, pretty = formatting;
+
+	g_return_val_if_fail(node != NULL, NULL);
 
 	if(pretty && depth) {
 		tab = g_strnfill(depth, '\t');
@@ -327,6 +332,8 @@ char *
 xmlnode_to_formatted_str(xmlnode *node, int *len)
 {
 	char *xml, *xml_with_declaration;
+
+	g_return_val_if_fail(node != NULL, NULL);
 
 	xml = xmlnode_to_str_helper(node, len, TRUE, 0);
 	xml_with_declaration =
@@ -438,8 +445,7 @@ xmlnode_copy(xmlnode *src)
 	xmlnode *child;
 	xmlnode *sibling = NULL;
 
-	if(!src)
-		return NULL;
+	g_return_val_if_fail(src != NULL, NULL);
 
 	ret = new_node(src->name, src->type);
 	if(src->data) {
@@ -461,6 +467,8 @@ xmlnode_copy(xmlnode *src)
 		}
 		sibling->parent = ret;
 	}
+
+	ret->lastchild = sibling;
 
 	return ret;
 }
