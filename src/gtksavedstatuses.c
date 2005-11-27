@@ -295,7 +295,6 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	gaim_request_action(NULL, NULL, buf, NULL, 0, title, 2,
 						_("Delete"), status_window_delete_confirm_cb,
 						_("Cancel"), g_free);
-	g_free(title);
 	g_free(buf);
 }
 
