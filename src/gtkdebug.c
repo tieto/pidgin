@@ -347,7 +347,7 @@ regex_match(DebugWindow *win, const gchar *text) {
 		 * if necessary...
 		 */
 		do {
-			gint m;
+			size_t m;
 
 			for(m = 0; m < n_matches; m++) {
 				GtkTextIter ms, me;
