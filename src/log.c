@@ -494,7 +494,7 @@ void gaim_log_init(void)
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
 
-	html_logger = gaim_log_logger_new("html", "HTML", 8,
+	html_logger = gaim_log_logger_new("html", _("HTML"), 8,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -505,7 +505,7 @@ void gaim_log_init(void)
 									  html_logger_list_syslog);
 	gaim_log_logger_add(html_logger);
 
-	txt_logger = gaim_log_logger_new("txt", "Plain text", 8,
+	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 8,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -516,7 +516,7 @@ void gaim_log_init(void)
 									 txt_logger_list_syslog);
 	gaim_log_logger_add(txt_logger);
 
-	old_logger = gaim_log_logger_new("old", "Old Gaim", 9,
+	old_logger = gaim_log_logger_new("old", _("Old Gaim"), 9,
 									 NULL,
 									 NULL,
 									 old_logger_finalize,

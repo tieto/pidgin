@@ -123,7 +123,7 @@ update_plugin_list(void *data)
 		gtk_list_store_append (ls, &iter);
 		desc = g_strdup_printf("<b>%s</b> %s\n%s", plug->info->name ? _(plug->info->name) : g_basename(plug->path),
 				       plug->info->version,
-				       plug->info->summary);
+				       _(plug->info->summary));
 		gtk_list_store_set(ls, &iter,
 				   0, gaim_plugin_is_loaded(plug),
 				   1, desc,

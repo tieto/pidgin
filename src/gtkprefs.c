@@ -835,7 +835,7 @@ conv_page()
 	gaim_gtk_prefs_checkbox(_("_Notify buddies that you are typing to them"),
 			"/core/conversations/im/send_typing", vbox);
 #ifdef USE_GTKSPELL
-	gaim_gtk_prefs_checkbox(_("_Highlight misspelled words"),
+	gaim_gtk_prefs_checkbox(_("Highlight _misspelled words"),
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
 

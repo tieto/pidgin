@@ -2493,7 +2493,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 			"<StockItem>", GTK_STOCK_SAVE_AS },
-	{ N_("/Conversation/Clear"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
+	{ N_("/Conversation/Clea_r"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>" },
 

@@ -1711,7 +1711,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox,
-			gtk_label_new_with_mnemonic("_Basic"));
+			gtk_label_new_with_mnemonic(_("_Basic")));
 	gtk_widget_show(vbox);
 
 	/* Setup the top frames. */
@@ -1722,7 +1722,7 @@ gaim_gtk_account_dialog_show(GaimGtkAccountDialogType type,
 	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
 	gtk_container_set_border_width(GTK_CONTAINER(dbox), GAIM_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
-			gtk_label_new_with_mnemonic("_Advanced"));
+			gtk_label_new_with_mnemonic(_("_Advanced")));
 	gtk_widget_show(dbox);
 
 	/** Setup the bottom frames. */
