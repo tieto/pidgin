@@ -91,10 +91,27 @@ typedef struct
 #endif
 
 static void
+generic_response_start(GaimGtkRequestData *data)
+{
+	GdkWindow *window = GTK_WIDGET(data->dialog)->window;
+	GdkCursor *cursor;
+
+	/* Tell the user we're doing something. */
+	cursor = gdk_cursor_new(GDK_WATCH);
+	gdk_window_set_cursor(window, cursor);
+	gdk_cursor_unref(cursor);
+	while (gtk_events_pending())
+		gtk_main_iteration();
+
+}
+
+static void
 input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
 	const char *value;
 	char *multiline_value = NULL;
+
+	generic_response_start(data);
 
 	if (data->u.input.multiline) {
 		GtkTextIter start_iter, end_iter;
@@ -129,6 +146,8 @@ input_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 static void
 action_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
+	generic_response_start(data);
+
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		((GaimRequestActionCb)data->cbs[id])(data->user_data, id);
 
@@ -141,6 +160,9 @@ choice_response_cb(GtkDialog *dialog, gint id, GaimGtkRequestData *data)
 {
 	GtkWidget *radio = g_object_get_data(G_OBJECT(dialog), "radio");
 	GSList *group = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio));
+
+	generic_response_start(data);
+
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
@@ -221,6 +243,8 @@ field_account_cb(GObject *w, GaimAccount *account, GaimRequestField *field)
 static void
 multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
+	generic_response_start(data);
+
 	if (!GTK_WIDGET_HAS_FOCUS(button))
 		gtk_widget_grab_focus(button);
 
@@ -234,6 +258,8 @@ multifield_ok_cb(GtkWidget *button, GaimGtkRequestData *data)
 static void
 multifield_cancel_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
+	generic_response_start(data);
+
 	if (data->cbs[1] != NULL)
 		((GaimRequestFieldsCb)data->cbs[1])(data->user_data,
 											data->u.multifield.fields);
@@ -1751,6 +1777,8 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, GaimGtkRequestData 
 {
 	gchar *current_folder;
 
+	generic_response_start(data);
+
 	if (response != GTK_RESPONSE_ACCEPT) {
 		if (data->cbs[0] != NULL)
 			((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
@@ -1776,6 +1804,8 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 {
 	const gchar *name;
 	gchar *current_folder;
+
+	generic_response_start(data);
 
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
 
@@ -1811,6 +1841,8 @@ file_ok_check_if_exists_cb(GtkWidget *button, GaimGtkRequestData *data)
 static void
 file_cancel_cb(GaimGtkRequestData *data)
 {
+	generic_response_start(data);
+
 	if (data->cbs[0] != NULL)
 		((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
 
