@@ -287,16 +287,15 @@ status_window_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
 	char *title;
-	char *title_escaped, *buf;
+	char *buf;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
 
-	title_escaped = g_markup_escape_text(title, -1);
-	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title_escaped);
-	free(title_escaped);
+	buf = g_strdup_printf(_("Are you sure you want to delete %s?"), title);
 	gaim_request_action(NULL, NULL, buf, NULL, 0, title, 2,
 						_("Delete"), status_window_delete_confirm_cb,
 						_("Cancel"), g_free);
+	g_free(title);
 	g_free(buf);
 }
 
@@ -1456,7 +1455,16 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 
 void status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 {
-	callback(gaim_savedstatus_find(gtk_combo_box_get_active_text(widget)));
+	GtkTreeIter iter;
+	gchar *title = NULL;
+
+	if (!gtk_combo_box_get_active_iter(widget, &iter))
+		return;
+
+	gtk_tree_model_get(gtk_combo_box_get_model(widget), &iter,
+					   STATUS_WINDOW_COLUMN_TITLE, &title, -1);
+	callback(gaim_savedstatus_find(title));
+	g_free(title);
 }
 
 GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callback)
