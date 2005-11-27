@@ -99,12 +99,10 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 
 	g_queue_free(swboard->msg_queue);
 
-	while((l = swboard->ack_list) != NULL)
-	{
-		msg = l->data;
-		msg_error_helper(swboard->cmdproc, msg, MSN_MSG_ERROR_SB);
-		msn_message_unref(msg);
-	}
+	/* msg_error_helper will both remove the msg from ack_list and
+	   unref it, so we don't need to do either here */
+	while ((l = swboard->ack_list) != NULL)
+		msg_error_helper(swboard->cmdproc, l->data, MSN_MSG_ERROR_SB);
 
 	if (swboard->im_user != NULL)
 		g_free(swboard->im_user);
