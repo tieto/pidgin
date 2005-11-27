@@ -19,7 +19,7 @@ gaim_notify_email(handle, subject, from, to, url, cb, user_data)
 	const char *from
 	const char *to
 	const char *url
-	GCallback cb
+	GHookFunc cb
 	void * user_data
  
 
@@ -32,7 +32,7 @@ gaim_notify_emails(handle, count, detailed, subjects, froms, tos, urls, cb, user
 	const char **froms
 	const char **tos
 	const char **urls
-	GCallback cb
+	GHookFunc cb
 	void * user_data
  
 
@@ -43,7 +43,7 @@ gaim_notify_formatted(handle, title, primary, secondary, text, cb, user_data)
 	const char *primary
 	const char *secondary
 	const char *text
-	GCallback cb
+	GHookFunc cb
 	void * user_data
  
 
@@ -58,7 +58,7 @@ gaim_notify_message(handle, type, title, primary, secondary, cb, user_data)
 	const char *title
 	const char *primary
 	const char *secondary
-	GCallback cb
+	GHookFunc cb
 	void * user_data
  
 
@@ -69,7 +69,7 @@ gaim_notify_searchresults(gc, title, primary, secondary, results, cb, user_data)
 	const char *primary
 	const char *secondary
 	Gaim::NotifySearchResults results
-	GCallback cb
+	GHookFunc cb
 	void * user_data
 
 void 
@@ -86,7 +86,7 @@ gaim_notify_userinfo(gc, who, text, cb, user_data)
 	Gaim::Connection gc
 	const char *who
 	const char *text
-	GCallback cb
+	GHookFunc cb
 	void * user_data
  
 

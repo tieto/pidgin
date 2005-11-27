@@ -25,6 +25,7 @@ int *					T_PTR
 size_t *				T_PTR
 Gaim::GTK::Widget *			T_PTR
 GCallback				T_PTR
+GHookFunc				T_PTR
 va_list					T_PTR
 GString *					T_PTR
 GData *					T_PTR
