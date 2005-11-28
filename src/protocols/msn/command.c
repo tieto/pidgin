@@ -106,9 +106,7 @@ MsnCommand *
 msn_command_unref(MsnCommand *cmd)
 {
 	g_return_val_if_fail(cmd != NULL, NULL);
-
-	if (cmd->ref_count <= 0)
-		return NULL;
+	g_return_val_if_fail(cmd->ref_count > 0, NULL);
 
 	cmd->ref_count--;
 

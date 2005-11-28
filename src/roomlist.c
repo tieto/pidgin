@@ -124,6 +124,7 @@ static void gaim_roomlist_destroy(GaimRoomlist *list)
 void gaim_roomlist_unref(GaimRoomlist *list)
 {
 	g_return_if_fail(list != NULL);
+	g_return_if_fail(list->ref > 0);
 
 	list->ref--;
 

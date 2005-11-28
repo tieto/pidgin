@@ -98,6 +98,7 @@ void
 gaim_xfer_unref(GaimXfer *xfer)
 {
 	g_return_if_fail(xfer != NULL);
+	g_return_if_fail(xfer->ref > 0);
 
 	xfer->ref--;
 

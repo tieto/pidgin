@@ -153,9 +153,7 @@ GaimBuddyIcon *
 gaim_buddy_icon_unref(GaimBuddyIcon *icon)
 {
 	g_return_val_if_fail(icon != NULL, NULL);
-
-	if (icon->ref_count <= 0)
-		return NULL;
+	g_return_val_if_fail(icon->ref_count > 0, NULL);
 
 	icon->ref_count--;
 

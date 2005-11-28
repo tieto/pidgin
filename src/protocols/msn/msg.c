@@ -96,9 +96,7 @@ MsnMessage *
 msn_message_unref(MsnMessage *msg)
 {
 	g_return_val_if_fail(msg != NULL, NULL);
-
-	if (msg->ref_count <= 0)
-		return NULL;
+	g_return_val_if_fail(msg->ref_count > 0, NULL);
 
 	msg->ref_count--;
 
