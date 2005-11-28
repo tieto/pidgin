@@ -353,7 +353,7 @@ GList *gaim_log_logger_get_options(void)
 		data = n->data;
 		if (!data->write)
 			continue;
-		list = g_list_append(list, _(data->name));
+		list = g_list_append(list, data->name);
 		list = g_list_append(list, data->id);
 	}
 
