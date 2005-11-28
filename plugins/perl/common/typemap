@@ -25,7 +25,6 @@ int *					T_PTR
 size_t *				T_PTR
 Gaim::GTK::Widget *			T_PTR
 GCallback				T_PTR
-GHookFunc				T_PTR
 va_list					T_PTR
 GString *					T_PTR
 GData *					T_PTR
@@ -99,6 +98,7 @@ Gaim::LogType           		T_IV
 Gaim::Log::ReadFlags              	T_GaimObj
 
 
+Gaim::NotifyCloseCallback		T_PTR
 Gaim::NotifyType                	T_IV
 Gaim::NotifyMsgType            	 	T_IV
 Gaim::NotifySearchButtonType		T_IV

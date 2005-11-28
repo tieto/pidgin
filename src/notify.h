@@ -32,6 +32,11 @@
 #include "connection.h"
 
 /**
+ * Notification close callbacks.
+ */
+typedef void  (*GaimNotifyCloseCallback) (gpointer user_data);
+
+/**
  * Notification types.
  */
 typedef enum
@@ -106,28 +111,22 @@ typedef struct
 typedef struct
 {
 	void *(*notify_message)(GaimNotifyMsgType type, const char *title,
-							const char *primary, const char *secondary,
-							GHookFunc cb, gpointer user_data);
+							const char *primary, const char *secondary);
 	void *(*notify_email)(const char *subject, const char *from,
-						  const char *to, const char *url,
-						  GHookFunc cb, gpointer user_data);
+						  const char *to, const char *url);
 	void *(*notify_emails)(size_t count, gboolean detailed,
 						   const char **subjects, const char **froms,
-						   const char **tos, const char **urls,
-						   GHookFunc cb, gpointer user_data);
+						   const char **tos, const char **urls);
 	void *(*notify_formatted)(const char *title, const char *primary,
-							  const char *secondary, const char *text,
-							  GHookFunc cb, gpointer user_data);
+							  const char *secondary, const char *text);
 	void *(*notify_searchresults)(GaimConnection *gc, const char *title,
 								  const char *primary, const char *secondary,
-								  GaimNotifySearchResults *results, GHookFunc cb,
-								  gpointer user_data);
+								  GaimNotifySearchResults *results);
 	void (*notify_searchresults_new_rows)(GaimConnection *gc,
 										  GaimNotifySearchResults *results,
 										  void *data, gpointer user_data);
 	void *(*notify_userinfo)(GaimConnection *gc, const char *who,
-							  const char *text,
-							  GHookFunc cb, gpointer user_data);
+							  const char *text);
 	void *(*notify_uri)(const char *uri);
 
 	void (*close_notify)(GaimNotifyType type, void *ui_handle);
@@ -162,7 +161,7 @@ extern "C" {
  */
 void *gaim_notify_searchresults(GaimConnection *gc, const char *title,
 								const char *primary, const char *secondary,
-								GaimNotifySearchResults *results, GHookFunc cb,
+								GaimNotifySearchResults *results, GaimNotifyCloseCallback cb,
 								gpointer user_data);
 
 void gaim_notify_searchresults_free(GaimNotifySearchResults *results);
@@ -287,7 +286,7 @@ char *gaim_notify_searchresults_column_get_title(GaimNotifySearchResults *result
  */
 void *gaim_notify_message(void *handle, GaimNotifyMsgType type,
 						  const char *title, const char *primary,
-						  const char *secondary, GHookFunc cb,
+						  const char *secondary, GaimNotifyCloseCallback cb,
 						  gpointer user_data);
 
 /**
@@ -306,7 +305,7 @@ void *gaim_notify_message(void *handle, GaimNotifyMsgType type,
  */
 void *gaim_notify_email(void *handle, const char *subject,
 						const char *from, const char *to,
-						const char *url, GHookFunc cb,
+						const char *url, GaimNotifyCloseCallback cb,
 						gpointer user_data);
 
 /**
@@ -329,7 +328,7 @@ void *gaim_notify_email(void *handle, const char *subject,
 void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 						 const char **subjects, const char **froms,
 						 const char **tos, const char **urls,
-						 GHookFunc cb, gpointer user_data);
+						 GaimNotifyCloseCallback cb, gpointer user_data);
 
 /**
  * Displays a notification with formatted text.
@@ -350,7 +349,7 @@ void *gaim_notify_emails(void *handle, size_t count, gboolean detailed,
  */
 void *gaim_notify_formatted(void *handle, const char *title,
 							const char *primary, const char *secondary,
-							const char *text, GHookFunc cb, gpointer user_data);
+							const char *text, GaimNotifyCloseCallback cb, gpointer user_data);
 
 /**
  * Displays user information with formatted text, passing information giving
@@ -369,7 +368,7 @@ void *gaim_notify_formatted(void *handle, const char *title,
  * @return A UI-specific handle.
  */
 void *gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *text, GHookFunc cb,
+						   const char *text, GaimNotifyCloseCallback cb,
 						   gpointer user_data);
 
 /**

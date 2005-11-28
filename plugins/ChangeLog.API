@@ -60,7 +60,8 @@ version 2.0.0:
 	* All core<->prpl message passing now uses html. This was previously true
 	  for receiving messages, it's now also true for sending them. prpls that
 	  don't support html need to gaim_unescape_html() the message.
-	* Notify API: GCallback -> GHookFunc, void *user_data -> gpointer user_data
+	* Notify API: GCallback -> GaimNotifyCloseCallback,
+	              void *user_data -> gpointer user_data
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -104,6 +105,8 @@ version 2.0.0:
 	* gaim_gtkpounce_dialog_show()
 	* GaimGtkBuddyList->bpmenu
 	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
+	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
+	  by the notify API in the core.
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()

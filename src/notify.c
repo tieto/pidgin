@@ -32,13 +32,14 @@ typedef struct
 	GaimNotifyType type;
 	void *handle;
 	void *ui_handle;
-
+	GaimNotifyCloseCallback cb;
+	gpointer cb_user_data;
 } GaimNotifyInfo;
 
 void *
 gaim_notify_message(void *handle, GaimNotifyMsgType type,
 					const char *title, const char *primary,
-					const char *secondary, GHookFunc cb, gpointer user_data)
+					const char *secondary, GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -53,7 +54,9 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 		info->type      = GAIM_NOTIFY_MESSAGE;
 		info->handle    = handle;
 		info->ui_handle = ops->notify_message(type, title, primary,
-											  secondary, cb, user_data);
+											  secondary);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -65,7 +68,7 @@ gaim_notify_message(void *handle, GaimNotifyMsgType type,
 
 void *
 gaim_notify_email(void *handle, const char *subject, const char *from,
-				  const char *to, const char *url, GHookFunc cb,
+				  const char *to, const char *url, GaimNotifyCloseCallback cb,
 				  gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
@@ -78,8 +81,9 @@ gaim_notify_email(void *handle, const char *subject, const char *from,
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_EMAIL;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_email(subject, from, to, url, cb,
-											user_data);
+		info->ui_handle = ops->notify_email(subject, from, to, url);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -93,7 +97,7 @@ void *
 gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 				   const char **subjects, const char **froms,
 				   const char **tos, const char **urls,
-				   GHookFunc cb, gpointer user_data)
+				   GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -117,7 +121,9 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 		info->type      = GAIM_NOTIFY_EMAILS;
 		info->handle    = handle;
 		info->ui_handle = ops->notify_emails(count, detailed, subjects,
-											 froms, tos, urls, cb, user_data);
+											 froms, tos, urls);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -130,7 +136,7 @@ gaim_notify_emails(void *handle, size_t count, gboolean detailed,
 void *
 gaim_notify_formatted(void *handle, const char *title, const char *primary,
 					  const char *secondary, const char *text,
-					  GHookFunc cb, gpointer user_data)
+					  GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -144,8 +150,9 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 		info            = g_new0(GaimNotifyInfo, 1);
 		info->type      = GAIM_NOTIFY_FORMATTED;
 		info->handle    = handle;
-		info->ui_handle = ops->notify_formatted(title, primary, secondary,
-												text, cb, user_data);
+		info->ui_handle = ops->notify_formatted(title, primary, secondary, text);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -158,7 +165,7 @@ gaim_notify_formatted(void *handle, const char *title, const char *primary,
 void *
 gaim_notify_searchresults(GaimConnection *gc, const char *title,
 						  const char *primary, const char *secondary,
-						  GaimNotifySearchResults *results, GHookFunc cb, gpointer user_data)
+						  GaimNotifySearchResults *results, GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -171,8 +178,9 @@ gaim_notify_searchresults(GaimConnection *gc, const char *title,
 		info->type      = GAIM_NOTIFY_SEARCHRESULTS;
 		info->handle    = gc;
 		info->ui_handle = ops->notify_searchresults(gc, title, primary,
-													secondary, results,
-													cb, user_data);
+													secondary, results);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -329,7 +337,7 @@ gaim_notify_searchresults_row_get(GaimNotifySearchResults *results,
 
 void *
 gaim_notify_userinfo(GaimConnection *gc, const char *who,
-						   const char *text, GHookFunc cb, gpointer user_data)
+						   const char *text, GaimNotifyCloseCallback cb, gpointer user_data)
 {
 	GaimNotifyUiOps *ops;
 
@@ -348,8 +356,9 @@ gaim_notify_userinfo(GaimConnection *gc, const char *who,
 		gaim_signal_emit(gaim_notify_get_handle(), "displaying-userinfo",
 						 gaim_connection_get_account(gc), who, &infotext);
 
-		info->ui_handle = ops->notify_userinfo(gc, who,
-											   infotext, cb, user_data);
+		info->ui_handle = ops->notify_userinfo(gc, who, infotext);
+		info->cb = cb;
+		info->cb_user_data = user_data;
 
 		handles = g_list_append(handles, info);
 
@@ -404,6 +413,9 @@ gaim_notify_close(GaimNotifyType type, void *ui_handle)
 			if (ops != NULL && ops->close_notify != NULL)
 				ops->close_notify(info->type, ui_handle);
 
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
+
 			g_free(info);
 
 			break;
@@ -431,6 +443,9 @@ gaim_notify_close_with_handle(void *handle)
 
 			if (ops != NULL && ops->close_notify != NULL)
 				ops->close_notify(info->type, info->ui_handle);
+
+			if (info->cb != NULL)
+				info->cb(info->cb_user_data);
 
 			g_free(info);
 		}

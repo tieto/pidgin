@@ -160,6 +160,7 @@ typedef GaimLogType             	Gaim__LogType;
 typedef GaimLogReadFlags *              Gaim__Log__ReadFlags;
 
 	/* notify.h */
+typedef GaimNotifyCloseCallback		Gaim__NotifyCloseCallback;
 typedef GaimNotifyType          	Gaim__NotifyType;
 typedef GaimNotifyMsgType               Gaim__NotifyMsgType;
 typedef GaimNotifySearchButtonType	Gaim__NotifySearchButtonType;

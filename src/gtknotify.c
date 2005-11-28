@@ -53,9 +53,6 @@ typedef struct
 	GtkListStore *model;
 	GtkWidget *treeview;
 	GtkWidget *window;
-	GHookFunc close_cb;
-	gpointer close_cb_data;
-
 } GaimNotifySearchResultsData;
 
 typedef struct
@@ -68,8 +65,7 @@ typedef struct
 static void *gaim_gtk_notify_emails(size_t count, gboolean detailed,
 									const char **subjects,
 									const char **froms, const char **tos,
-									const char **urls, GHookFunc cb,
-									gpointer user_data);
+									const char **urls);
 
 static void
 message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
@@ -129,8 +125,7 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButt
 
 static void *
 gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
-						const char *primary, const char *secondary,
-						GHookFunc cb, gpointer user_data)
+						const char *primary, const char *secondary)
 {
 	GtkWidget *dialog;
 	GtkWidget *hbox;
@@ -208,22 +203,19 @@ gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
 
 static void *
 gaim_gtk_notify_email(const char *subject, const char *from,
-					  const char *to, const char *url,
-					  GHookFunc cb, gpointer user_data)
+					  const char *to, const char *url)
 {
 	return gaim_gtk_notify_emails(1, TRUE,
 								  (subject == NULL ? NULL : &subject),
 								  (from    == NULL ? NULL : &from),
 								  (to      == NULL ? NULL : &to),
-								  (url     == NULL ? NULL : &url),
-								  cb, user_data);
+								  (url     == NULL ? NULL : &url));
 }
 
 static void *
 gaim_gtk_notify_emails(size_t count, gboolean detailed,
 					   const char **subjects, const char **froms,
-					   const char **tos, const char **urls,
-					   GHookFunc cb, gpointer user_data)
+					   const char **tos, const char **urls)
 {
 	GaimNotifyMailData *data;
 	GtkWidget *dialog;
@@ -354,8 +346,7 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 
 static void *
 gaim_gtk_notify_formatted(const char *title, const char *primary,
-						  const char *secondary, const char *text,
-						  GHookFunc cb, gpointer user_data)
+						  const char *secondary, const char *text)
 {
 	GtkWidget *window;
 	GtkWidget *vbox;
@@ -478,8 +469,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 static void *
 gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 							  const char *primary, const char *secondary,
-							  GaimNotifySearchResults *results, GHookFunc cb,
-							  gpointer user_data)
+							  GaimNotifySearchResults *results)
 {
 	GtkWidget *window;
 	GtkWidget *treeview;
@@ -614,8 +604,6 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	data->model = model;
 	data->treeview = treeview;
 	data->window = window;
-	data->close_cb = cb;
-	data->close_cb_data = user_data;
 
 	/* Insert rows. */
 	gaim_gtk_notify_searchresults_new_rows(gc, results, data, NULL);
@@ -639,15 +627,13 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 
 static void *
 gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
-						 const char *text,
-						 GHookFunc cb, gpointer user_data)
+						 const char *text)
 {
 	char *primary;
 	void *ui_handle;
 
 	primary = g_strdup_printf(_("Info for %s"), who);
-	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL,
-									  text, cb, user_data);
+	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL, text);
 	g_free(primary);
 	return ui_handle;
 }
@@ -669,9 +655,6 @@ gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
 		GaimNotifySearchResultsData *data = (GaimNotifySearchResultsData *)ui_handle;
 
 		gtk_widget_destroy(data->window);
-
-		if (data->close_cb != NULL)
-			data->close_cb(data->close_cb_data);
 
 		g_free(data);
 	}
