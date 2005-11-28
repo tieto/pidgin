@@ -1,5 +1,6 @@
 /*
- * session management for Gaim
+ * @file gtksession.c X Windows session management API
+ * @ingroup gtkui
  *
  * Gaim is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -40,7 +41,7 @@ static IceIOErrorHandler ice_installed_io_error_handler;
 static SmcConn session = NULL;
 static gchar *myself = NULL;
 static gboolean had_first_save = FALSE;
-gboolean session_managed = FALSE;
+static gboolean session_managed = FALSE;
 
 /* ICE belt'n'braces stuff */
 
@@ -276,7 +277,9 @@ static void session_set_array(SmcConn conn, gchar *name, gchar *array[]) {
 
 /* setup functions */
 
-void session_init(gchar *argv0, gchar *previous_id, gchar *config_dir) {
+void
+gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
+{
 #ifdef USE_SM
 	SmcCallbacks callbacks;
 	gchar *client_id = NULL;
@@ -287,7 +290,7 @@ void session_init(gchar *argv0, gchar *previous_id, gchar *config_dir) {
 	if (session != NULL) {
 		/* session is already established, what the hell is going on? */
 		gaim_debug(GAIM_DEBUG_WARNING, "Session Management",
-				   "Duplicated call to session_init!\n");
+				   "Duplicated call to gaim_gtk_session_init!\n");
 		return;
 	}
 
@@ -381,7 +384,9 @@ void session_init(gchar *argv0, gchar *previous_id, gchar *config_dir) {
 #endif /* USE_SM */
 }
 
-void session_end() {
+void
+gaim_gtk_session_end()
+{
 #ifdef USE_SM
 	if (session == NULL) /* no session to close */
 		return;

@@ -1194,7 +1194,7 @@ substatus_editor_destroy_cb(GtkWidget *widget, GdkEvent *event, gpointer user_da
 	return FALSE;
 }
 
-void
+static void
 substatus_editor_cancel_cb(GtkButton *button, gpointer user_data)
 {
 	SubStatusEditor *dialog = user_data;
@@ -1234,7 +1234,7 @@ status_editor_find_account_in_treemodel(GtkTreeIter *iter,
 	return FALSE;
 }
 
-void
+static void
 substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 {
 	SubStatusEditor *dialog = user_data;
@@ -1452,7 +1452,8 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
  * Utilities                                                              *
  **************************************************************************/
 
-void status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
+static void
+status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 {
 	GtkTreeIter iter;
 	gchar *title = NULL;
@@ -1487,7 +1488,7 @@ GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callb
 			i++;
 		}
 	}
-	
+
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
 	return combobox;

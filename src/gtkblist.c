@@ -5446,7 +5446,8 @@ gaim_gtk_blist_update_plugin_actions(void)
 	}
 }
 
-void sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
+static void
+sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
 	if (gtk_check_menu_item_get_active(checkmenuitem))
 	{

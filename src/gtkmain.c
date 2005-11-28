@@ -58,6 +58,7 @@
 #include "gtkrequest.h"
 #include "gtkroomlist.h"
 #include "gtksavedstatuses.h"
+#include "gtksession.h"
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
@@ -280,7 +281,7 @@ gaim_gtk_quit(void)
 {
 #ifdef USE_SM
 	/* unplug */
-	session_end();
+	gaim_gtk_session_end();
 #endif
 
 	/* Save the plugins we have loaded for next time. */
@@ -647,7 +648,7 @@ int main(int argc, char *argv[])
 	ui_main();
 
 #ifdef USE_SM
-	session_init(argv[0], opt_session_arg, opt_config_dir_arg);
+	gaim_gtk_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
 #endif
 	if (opt_session_arg != NULL) {
 		g_free(opt_session_arg);

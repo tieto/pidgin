@@ -31,6 +31,8 @@
 
 #include <string.h>
 
+#define GAIM_RESPONSE_CONFIGURE 98121
+
 static GtkWidget *plugin_dialog = NULL;
 static GtkWidget *plugin_details = NULL;
 static GtkWidget *pref_button = NULL;
@@ -206,8 +208,8 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 	g_free(description);
 
 
-	gtk_list_store_set (GTK_LIST_STORE (model), &iter, 
- 			    0, gaim_plugin_is_loaded(plug),
+	gtk_list_store_set (GTK_LIST_STORE (model), &iter,
+			    0, gaim_plugin_is_loaded(plug),
 			    -1);
 
 	gtk_tree_path_free(path);
@@ -217,7 +219,7 @@ static void plugin_load (GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 static gboolean ensure_plugin_visible(void *data)
 {
 	GtkTreeSelection *sel = GTK_TREE_SELECTION(data);
-      	GtkTreeView *tv = gtk_tree_selection_get_tree_view(sel);
+	GtkTreeView *tv = gtk_tree_selection_get_tree_view(sel);
 	GtkTreeModel *model = gtk_tree_view_get_model(tv);
 	GtkTreePath *path;
 	GtkTreeIter iter;
@@ -301,7 +303,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		}
 		plugin_dialog = NULL;
 		break;
-	case 98121:
+	case GAIM_RESPONSE_CONFIGURE:
 		if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 			return;
 		gtk_tree_model_get_value (model, &iter, 2, &val);
@@ -346,14 +348,14 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
-	
+
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
 
 	if (!gaim_plugin_is_loaded(plugin))
 		return;
 
 	/* Now show the pref-dialog for the plugin */
-	plugin_dialog_response_cb(NULL, 98121, sel);
+	plugin_dialog_response_cb(NULL, GAIM_RESPONSE_CONFIGURE, sel);
 }
 
 void gaim_gtk_plugin_dialog_show()
@@ -375,8 +377,10 @@ void gaim_gtk_plugin_dialog_show()
 						    NULL,
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
-	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_PREFERENCES, 98121);
-	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
+						_("_Configure Plugin"), GAIM_RESPONSE_CONFIGURE);
+	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
+						GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 	gtk_widget_set_sensitive(pref_button, FALSE);
 	gtk_window_set_role(GTK_WINDOW(plugin_dialog), "plugins");
 
@@ -408,7 +412,7 @@ void gaim_gtk_plugin_dialog_show()
 	gtk_tree_view_column_set_sort_column_id(col, 0);
 	g_signal_connect (G_OBJECT(rend), "toggled",
 			  G_CALLBACK(plugin_load), ls);
-   
+
 	rendt = gtk_cell_renderer_text_new();
 	col = gtk_tree_view_column_new_with_attributes (_("Name"),
 							rendt,
@@ -422,7 +426,7 @@ void gaim_gtk_plugin_dialog_show()
 	gtk_tree_view_column_set_sort_column_id(col, 1);
 	g_object_unref(G_OBJECT(ls));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
-	
+
 	expander = gtk_expander_new(_("<b>Plugin Details</b>"));
 	gtk_expander_set_use_markup(GTK_EXPANDER(expander), TRUE);
 	plugin_details = gtk_label_new(NULL);

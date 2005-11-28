@@ -52,7 +52,7 @@ struct PHB {
 
 static void try_connect(struct PHB *);
 
-const char* socks5errors[] = {
+static const char *socks5errors[] = {
 	"succeeded\n",
 	"general SOCKS server failure\n",
 	"connection not allowed by ruleset\n",
@@ -271,7 +271,7 @@ static GQueue *queued_requests = NULL;
 
 static int number_of_dns_children = 0;
 
-const int MAX_DNS_CHILDREN = 2;
+static const int MAX_DNS_CHILDREN = 2;
 
 typedef struct {
 	char hostname[512];
