@@ -58,7 +58,7 @@ struct translator {
 
 /* Order: Lead Developer, then Alphabetical by Last Name */
 static struct developer developers[] = {
-	{"Sean Egan",					N_("lead developer"), "sean.egan@binghamton.edu"},
+	{"Sean Egan",					N_("lead developer"), "sean.egan@gmail.com"},
 	{"Daniel 'datallah' Atallah",	N_("developer"),	NULL},
 	{"Ethan 'Paco-Paco' Blanton",	N_("developer"), NULL},
 	{"Herman Bloggs",				N_("win32 port"), "herman@bluedigits.com"},
