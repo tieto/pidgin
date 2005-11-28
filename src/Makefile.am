@@ -276,14 +276,14 @@ gaim_SOURCES = \
 	gtkrequest.c \
 	gtkroomlist.c \
 	gtksavedstatuses.c \
+	gtksession.c \
 	gtksound.c \
 	gtksourceiter.c \
 	gtkstatusbox.c \
 	gtkstock.c \
 	gtkthemes.c \
 	gtkutils.c \
-	gtkwhiteboard.c \
-	session.c
+	gtkwhiteboard.c
 
 gaim_headers = \
 	$(dbus_headers) \
