@@ -457,7 +457,12 @@ static void
 current_status_pref_changed_cb(const char *name, GaimPrefType type,
 							   gpointer val, gpointer data)
 {
-	update_to_reflect_current_status(data);
+	GtkGaimStatusBox *box = data;
+	if (box->account)
+		update_to_reflect_account_status(box, box->account,
+						gaim_account_get_active_status(box->account));
+	else
+		update_to_reflect_current_status(box);
 }
 
 static void status_box_clicked_cb(GtkWidget *w, GdkEventButton *event, GtkGaimStatusBox *box)
