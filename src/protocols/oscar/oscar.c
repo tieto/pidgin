@@ -8274,7 +8274,7 @@ static GList *oscar_actions(GaimPlugin *plugin, gpointer context)
 	if (od->icq)
 	{
 		/* ICQ actions */
-		act = gaim_plugin_action_new(_("Show privacy options..."),
+		act = gaim_plugin_action_new(_("Show Privacy Options..."),
 				oscar_show_icq_privacy_opts);
 		m = g_list_append(m, act);
 	}

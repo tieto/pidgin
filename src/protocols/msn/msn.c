@@ -618,31 +618,31 @@ msn_actions(GaimPlugin *plugin, gpointer context)
 	GList *m = NULL;
 	GaimPluginAction *act;
 
-	act = gaim_plugin_action_new(_("Set Friendly Name"),
+	act = gaim_plugin_action_new(_("Set Friendly Name..."),
 								 msn_show_set_friendly_name);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
-	act = gaim_plugin_action_new(_("Set Home Phone Number"),
+	act = gaim_plugin_action_new(_("Set Home Phone Number..."),
 								 msn_show_set_home_phone);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Set Work Phone Number"),
+	act = gaim_plugin_action_new(_("Set Work Phone Number..."),
 			msn_show_set_work_phone);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Set Mobile Phone Number"),
+	act = gaim_plugin_action_new(_("Set Mobile Phone Number..."),
 			msn_show_set_mobile_phone);
 	m = g_list_append(m, act);
 	m = g_list_append(m, NULL);
 
 #if 0
-	act = gaim_plugin_action_new(_("Enable/Disable Mobile Devices"),
+	act = gaim_plugin_action_new(_("Enable/Disable Mobile Devices..."),
 			msn_show_set_mobile_support);
 	m = g_list_append(m, act);
 #endif
 
-	act = gaim_plugin_action_new(_("Allow/Disallow Mobile Pages"),
+	act = gaim_plugin_action_new(_("Allow/Disallow Mobile Pages..."),
 			msn_show_set_mobile_pages);
 	m = g_list_append(m, act);
 

@@ -3000,7 +3000,7 @@ static GList *yahoo_actions(GaimPlugin *plugin, gpointer context) {
 			yahoo_show_act_id);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Join user in chat..."),
+	act = gaim_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
 
