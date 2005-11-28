@@ -68,6 +68,7 @@ void gaim_gtk_status_uninit(void);
  * Creates a dropdown menu of saved statuses and calls a callback
  * when one is selected
  *
+ * @param status   The default saved_status to show as 'selected'
  * @param callback The callback to call when the selection changes
  * @return         The menu widget
  */

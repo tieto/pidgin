@@ -126,8 +126,8 @@ void gaim_savedstatus_set_substatus(GaimSavedStatus *status,
  * saved status is activated then this account will use the default
  * status type and message.
  *
- * @param status	The saved status.
- * @param account	The account.
+ * @param saved_status The saved status.
+ * @param account      The account.
 */
 void gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
 												  const GaimAccount *account);
@@ -253,8 +253,8 @@ gboolean gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status);
 /**
  * Get the substatus for an account in a saved status.
  *
- * @param status  The saved status.
- * @param account The account.
+ * @param saved_status The saved status.
+ * @param account      The account.
  *
  * @return The GaimSavedStatusSub for the account, or NULL if
  *         the given account does not have a substatus that
