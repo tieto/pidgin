@@ -322,6 +322,7 @@ gaim_headers = \
 	gtkrequest.h \
 	gtkroomlist.h \
 	gtksavedstatuses.h \
+	gtksession.h \
 	gtksound.h \
 	gtksourceiter.h \
 	gtkstatusbox.h \
