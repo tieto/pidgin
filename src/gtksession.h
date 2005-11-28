@@ -31,12 +31,20 @@
 /*@{*/
 
 /**
- * TODO
+ * Register this instance of Gaim with the user's current session
+ * manager.
+ *
+ * @param argv0       The first argument passed into the program.  This
+ *                    will be the name of the executable, e.g. 'gaim'
+ * @param previous_id An optional session ID to use.  This can be NULL.
+ * @param config_dir  The path to the configuration directory used by
+ *                    this instance of this program, e.g. '/home/user/.gaim'
  */
 void gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
 
 /**
- * TODO
+ * Unregister this instance of Gaim with the user's current session
+ * manager.
  */
 void gaim_gtk_session_end();
 
