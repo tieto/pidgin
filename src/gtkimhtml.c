@@ -547,7 +547,7 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 			if (pre)
 				g_object_set(G_OBJECT(tag), "foreground-gdk", pre, NULL);
 			else
-				g_object_set(G_OBJECT(tag), "foreground", "light blue", NULL);
+				g_object_set(G_OBJECT(tag), "foreground", "#70a0ff", NULL);
 		}
 	} else {
 		GTK_IMHTML(imhtml)->prelit_tag = NULL;
