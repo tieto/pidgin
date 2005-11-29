@@ -85,7 +85,6 @@ struct _GtkGaimStatusBox
 
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
-	GtkWidget *event;
 	gboolean imhtml_visible;
 
 	GtkWidget *cell_view;
@@ -109,6 +108,12 @@ struct _GtkGaimStatusBox
 	char *error;
 
 	gulong status_changed_signal;
+	
+	/* Widgets for renderin' */
+	GtkWidget *hbox;
+	GtkWidget *toggle_button;
+	GtkWidget *vsep;
+	GtkWidget *arrow;
 };
 
 struct _GtkGaimStatusBoxClass

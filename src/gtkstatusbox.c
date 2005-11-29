@@ -48,7 +48,6 @@ static void gtk_gaim_status_box_forall (GtkContainer *container, gboolean includ
 
 static void (*combo_box_size_request)(GtkWidget *widget, GtkRequisition *requisition);
 static void (*combo_box_size_allocate)(GtkWidget *widget, GtkAllocation *allocation);
-static gboolean (*combo_box_expose_event)(GtkWidget *widget, GdkEventExpose *event);
 static void (*combo_box_forall) (GtkContainer *container, gboolean include_internals, GtkCallback callback, gpointer callback_data);
 
 enum {
@@ -209,7 +208,6 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	widget_class->size_request = gtk_gaim_status_box_size_request;
 	combo_box_size_allocate = widget_class->size_allocate;
 	widget_class->size_allocate = gtk_gaim_status_box_size_allocate;
-	combo_box_expose_event = widget_class->expose_event;
 	widget_class->expose_event = gtk_gaim_status_box_expose_event;
 
 	combo_box_forall = container_class->forall;
@@ -469,11 +467,20 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 		update_to_reflect_current_status(box);
 }
 
-static void status_box_clicked_cb(GtkWidget *w, GdkEventButton *event, GtkGaimStatusBox *box)
+static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
-	if (box->imhtml_visible)
-		return;
-	g_signal_emit_by_name(G_OBJECT(box), "changed", NULL, NULL);
+	gtk_combo_box_popdown(GTK_COMBO_BOX(box));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
+	if (!box->imhtml_visible)
+		g_signal_emit_by_name(G_OBJECT(box), "changed", NULL, NULL);
+	return TRUE;
+}
+
+static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
+{
+	gtk_combo_box_popup(GTK_COMBO_BOX(box));
+	// released_cb is getting short-circuited gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+	return TRUE;
 }
 
 static void
@@ -494,9 +501,12 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->typing = FALSE;
 	status_box->title = NULL;
 	status_box->pixbuf = NULL;
+	status_box->toggle_button = gtk_toggle_button_new();
+	status_box->hbox = gtk_hbox_new(FALSE, 6);
 	status_box->cell_view = gtk_cell_view_new();
-	gtk_widget_show (status_box->cell_view);
-
+	status_box->vsep = gtk_vseparator_new();
+	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+	
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
@@ -508,12 +518,15 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(status_box->cell_view), path);
 	gtk_tree_path_free(path);
 
-	status_box->event = gtk_event_box_new();
-	gtk_widget_show(status_box->event);
-	g_signal_connect(G_OBJECT(status_box->event), "button_press_event", G_CALLBACK(status_box_clicked_cb), status_box);
-	gtk_container_add(GTK_CONTAINER(status_box->event), status_box->cell_view);
-	
-	gtk_container_add(GTK_CONTAINER(status_box), status_box->event);
+	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
+	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->cell_view, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->vsep, FALSE, 0, 0);
+	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->arrow, FALSE, 0, 0);
+	gtk_widget_show_all(status_box->toggle_button);
+#if GTK_CHECK_VERSION(2,4,0)
+	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
+#endif
+	gtk_container_add(GTK_CONTAINER(status_box), status_box->toggle_button);
 
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
@@ -528,13 +541,18 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(status_box->cell_view), status_box->text_rend, "markup", TEXT_COLUMN, NULL);
 
+	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 6, NULL);
+
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event", G_CALLBACK(button_pressed_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event", G_CALLBACK(button_released_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
+	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
 	status_box->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(status_box->sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
@@ -623,19 +641,18 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	parent_alc.y += 3;
 
 	combo_box_size_allocate(widget, &parent_alc);
+	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
 }
 
 
 static gboolean
 gtk_gaim_status_box_expose_event(GtkWidget *widget,
-								 GdkEventExpose *event)
+				 GdkEventExpose *event)
 {
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
-	combo_box_expose_event(widget, event);
-
-	gtk_container_propagate_expose(GTK_CONTAINER(widget),
-								   status_box->vbox, event);
+	gtk_widget_send_expose(status_box->toggle_button, (GdkEvent*)(event));
+	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
 	return FALSE;
 }
 
