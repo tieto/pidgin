@@ -971,6 +971,16 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 
 	results = gaim_notify_searchresults_new();
 
+	if (results == NULL) {
+		gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
+				 "Unable to display the search results.\n");
+		gaim_notify_error(gc, NULL,
+				  _("Unable to display the search results."),
+				  NULL);
+		ggp_sr_close_cb(gaim_connection_get_account(gc));
+		return;
+	}
+
 	column = gaim_notify_searchresults_column_new(_("UIN"));
 	gaim_notify_searchresults_column_add(results, column);
 
@@ -1025,8 +1035,19 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 		void *h = gaim_notify_searchresults(gc,
 				_("Gadu-Gadu Public Directory"),
 				_("Search results"), NULL, results,
-				(GHookFunc)ggp_sr_close_cb,
+				(GaimNotifyCloseCallback)ggp_sr_close_cb,
 				gaim_connection_get_account(gc));
+
+		if (h == NULL) {
+			gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
+					 "Unable to display the search results.\n");
+			gaim_notify_error(gc, NULL,
+					  _("Unable to display the search results."),
+					  NULL);
+			ggp_sr_close_cb(gaim_connection_get_account(gc));
+			return;
+		}
+
 		info->searchresults_window = h;
 	} else {
 		gaim_notify_searchresults_new_rows(gc, results,

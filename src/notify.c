@@ -301,18 +301,18 @@ gaim_notify_searchresults_column_new(const char *title)
 	return sc;
 }
 
-int
+guint
 gaim_notify_searchresults_get_columns_count(GaimNotifySearchResults *results)
 {
-	g_return_val_if_fail(results != NULL, -1);
+	g_return_val_if_fail(results != NULL, 0);
 
 	return g_list_length(results->columns);
 }
 
-int
+guint
 gaim_notify_searchresults_get_rows_count(GaimNotifySearchResults *results)
 {
-	g_return_val_if_fail(results != NULL, -1);
+	g_return_val_if_fail(results != NULL, 0);
 
 	return g_list_length(results->rows);
 }

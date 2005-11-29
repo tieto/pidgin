@@ -62,6 +62,8 @@ version 2.0.0:
 	  don't support html need to gaim_unescape_html() the message.
 	* Notify API: GCallback -> GaimNotifyCloseCallback,
 	              void *user_data -> gpointer user_data
+	* gaim_notify_searchresults_get_rows_count,
+	  gaim_notify_searchresults_get_columns_count: return type now guint
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

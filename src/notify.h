@@ -228,18 +228,18 @@ void gaim_notify_searchresults_row_add(GaimNotifySearchResults *results,
  * 
  * @param results The search results object.
  *
- * @return Number of the result rows. Or -1 if an error occurrs.
+ * @return Number of the result rows.
  */
-int gaim_notify_searchresults_get_rows_count(GaimNotifySearchResults *results);
+guint gaim_notify_searchresults_get_rows_count(GaimNotifySearchResults *results);
 
 /**
  * Returns a number of the columns in the search results object.
  *
  * @param results The search results object.
  *
- * @return Number of the columns. Or -1 if an error occurrs.
+ * @return Number of the columns.
  */
-int gaim_notify_searchresults_get_columns_count(GaimNotifySearchResults *results);
+guint gaim_notify_searchresults_get_columns_count(GaimNotifySearchResults *results);
 
 /**
  * Returns a row of the results from the search results object.

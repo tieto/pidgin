@@ -437,8 +437,9 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 	GtkListStore *model = data->model;
 	GtkTreeIter iter;
 	GdkPixbuf *icon, *scaled;
-	int col_num;
-	int i, j;
+	guint col_num;
+	guint i;
+	guint j;
 	
 	gtk_list_store_clear(data->model);
 
@@ -477,9 +478,8 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	GType *col_types;
 	GtkListStore *model;
 	GtkCellRenderer *renderer;
-	int col_num;
-	int i;
-	guint j;
+	guint col_num;
+	guint i;
 	GList *buttons = NULL;
 
 	GtkWidget *vbox;
@@ -489,6 +489,9 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	GaimNotifySearchResultsData *data;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
+
+	g_return_val_if_fail(gc != NULL, NULL);
+	g_return_val_if_fail(results != NULL, NULL);
 
 	data = g_malloc(sizeof(GaimNotifySearchResultsData));
 
@@ -575,8 +578,8 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	gtk_box_set_spacing(GTK_BOX(button_area), GAIM_HIG_BORDER);
 	gtk_widget_show(button_area);
 
-	for (j = 0; j < g_list_length(results->buttons); j++) {
-		GaimNotifySearchButton *b = g_list_nth_data(results->buttons, j);
+	for (i = 0; i < g_list_length(results->buttons); i++) {
+		GaimNotifySearchButton *b = g_list_nth_data(results->buttons, i);
 		button = NULL;
 		switch (b->type) {
 			case GAIM_NOTIFY_BUTTON_CONTINUE:
@@ -609,7 +612,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	gaim_gtk_notify_searchresults_new_rows(gc, results, data, NULL);
 
 	/* Connect Signals */
-	for (j = 0; j < g_list_length(results->buttons); j++) {
+	for (i = 0; i < g_list_length(results->buttons); i++) {
 		GaimNotifySearchResultsButtonData *bd = g_new0(GaimNotifySearchResultsButtonData, 1);
 		bd->button = g_list_nth_data(results->buttons, i);
 		bd->data = data;

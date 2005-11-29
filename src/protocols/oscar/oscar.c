@@ -6156,13 +6156,23 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
+	results = gaim_notify_searchresults_new();
+
+	if (results == NULL) {
+		gaim_debug_error("oscar", "gaim_parse_searchreply: "
+						 "Unable to display the search results.\n");
+		gaim_notify_error(gc, NULL,
+						  _("Unable to display the search results."),
+						  NULL);
+		return 0;
+	}
+
 	secondary = g_strdup_printf(
 					ngettext("The following screen name is associated with %s",
 						 "The following screen names are associated with %s",
 						 num),
 					email);
 
-	results = gaim_notify_searchresults_new();
 	column = gaim_notify_searchresults_column_new("Screen name");
 	gaim_notify_searchresults_column_add(results, column);
 
