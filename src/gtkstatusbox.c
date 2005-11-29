@@ -181,11 +181,13 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 			                        statusbox, GAIM_CALLBACK(account_status_changed_cb));
 			statusbox->status_changed_signal = 0;
 		}
+		
 		if (statusbox->account)
 			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
 			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
 			                                                       statusbox);
 		gtk_gaim_status_box_regenerate(statusbox);
+
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, param_id, pspec);
@@ -383,8 +385,11 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 
 	icon_size = gtk_icon_size_from_name(GAIM_ICON_SIZE_STATUS);
 
+	/* Unset the model while clearing it */
+	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), NULL);
 	gtk_list_store_clear(status_box->dropdown_store);
-
+	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
+	
 	account = GTK_GAIM_STATUS_BOX(status_box)->account;
 	if (account == NULL)
 	{
@@ -425,7 +430,6 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 		}
 		update_to_reflect_account_status(status_box, account, gaim_account_get_active_status(account));
 	}
-
 }
 
 static gboolean scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *imhtml)
