@@ -87,7 +87,7 @@ static struct StockIcon
 #if GTK_CHECK_VERSION(2,8,0)
 	{ GAIM_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
 #else
-	{ GAIM_STOCK_INFO,            "icons",   "info.png"                 },
+	{ GAIM_STOCK_INFO,            "buttons", "info.png"                 },
 #endif
 	{ GAIM_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
 	{ GAIM_STOCK_LINK,            "buttons", "insert-link-small.png"    },
@@ -213,7 +213,7 @@ gaim_gtk_stock_init(void)
 {
 	static gboolean stock_initted = FALSE;
 	GtkIconFactory *icon_factory;
-	int i;
+	size_t i;
 	GtkWidget *win;
 
 	if (stock_initted)
