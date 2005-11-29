@@ -121,19 +121,23 @@ get_idle_time_from_system()
  * 2. Set or unset your auto-away message.
  * 3. Report your current idle time to the IM server.
  */
-gint
+/*
+ * TODO: Make this loop so it's only called once, and handles all accounts?
+ */
+static gint
 gaim_gtk_idle_check(gpointer data)
 {
 	GaimConnection *gc = (GaimConnection *)data;
 	gboolean report_idle;
 	GaimAccount *account;
 	GaimPresence *presence;
+	GaimStatus *status;
 	time_t t;
 	int idle_time;
 
 	account = gaim_connection_get_account(gc);
-
 	presence = gaim_account_get_presence(account);
+	status = gaim_presence_get_active_status(presence);
 
 	gaim_signal_emit(gaim_blist_get_handle(), "update-idle");
 
@@ -157,7 +161,7 @@ gaim_gtk_idle_check(gpointer data)
 		(idle_time > (60 * gaim_prefs_get_int("/core/away/mins_before_away")))
 		&& (!gc->is_auto_away))
 	{
-		if (gaim_presence_is_available(presence))
+		if (gaim_status_is_available(status))
 		{
 			GaimSavedStatus *saved_status;
 
@@ -263,7 +267,6 @@ gaim_gtk_idle_init()
 	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg",
 						gaim_gtk_idle_get_handle(),
 						GAIM_CALLBACK(im_msg_sent_cb), NULL);
-
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gaim_gtk_idle_get_handle(),
 						GAIM_CALLBACK(connection_connected_cb), NULL);
