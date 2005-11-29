@@ -5797,7 +5797,7 @@ gaim_gtk_conversations_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/conversations/spellcheck", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_incoming_formatting", TRUE);
 
-	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", FALSE);
+	gaim_prefs_add_bool("/gaim/gtk/conversations/show_timestamps", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/show_formatting_toolbar", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/passthrough_unknown_commands", FALSE);
 
