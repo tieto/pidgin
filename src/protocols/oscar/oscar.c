@@ -6164,7 +6164,7 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 		gaim_notify_error(gc, NULL,
 						  _("Unable to display the search results."),
 						  NULL);
-		return 0;
+		return 1;
 	}
 
 	secondary = g_strdup_printf(
