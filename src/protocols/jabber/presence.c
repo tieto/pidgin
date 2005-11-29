@@ -119,14 +119,14 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	presence = jabber_presence_create(state, stripped, priority);
 	g_free(stripped);
 
-	jabber_send(js, presence);
-
 	if(js->avatar_hash) {
 		x = xmlnode_new_child(presence, "x");
 		xmlnode_set_attrib(x, "xmlns", "vcard-temp:x:update");
 		photo = xmlnode_new_child(x, "photo");
 		xmlnode_insert_data(photo, js->avatar_hash, -1);
 	}
+
+	jabber_send(js, presence);
 
 	g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
 	xmlnode_free(presence);
