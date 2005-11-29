@@ -149,7 +149,7 @@ extern "C" {
  *
  * @param gc        The GaimConnection handle associated with the information.
  * @param title     The title of the message.  If this is NULL, the title
- *                  will be "Search	Results."
+ *                  will be "Search Results."
  * @param primary   The main point of the message.
  * @param secondary The secondary information.
  * @param results   The GaimNotifySearchResults instance.
