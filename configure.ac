@@ -104,53 +104,6 @@ AC_SYS_LARGEFILE
 dnl FreeBSD doesn't have libdl, dlopen is provided by libc
 AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
-dnl # Check for GMP. If it's not there, Sametime won't build
-have_gmp=yes
-GMP_LIBS=
-GMP_CFLAGS=
-
-# either auto-detect or specify the libgmp.a file for static linking
-withval="auto"
-AC_ARG_WITH(gmp-prefix,
-        [  --with-gmp-prefix[=auto]  prefix gmp was installed to])
-
-if test "$withval" = "auto" ; then
-        found_prefix=no
-
-        if test $found_prefix = "no" ; then
-           try_prefix=/usr
-           AC_CHECK_HEADER([$try_prefix/include/gmp.h], found_prefix="yes")
-        fi
-
-        if test $found_prefix = "no" ; then
-           try_prefix=/usr/local
-           AC_CHECK_HEADER([$try_prefix/include/gmp.h], found_prefix="yes")
-        fi
-
-        if test $found_prefix = "no" ; then
-           dnl AC_MSG_ERROR([GNU MP headers not found])
-	   have_gmp=no
-        fi
-
-elif test -n "$withval" ; then
-        try_prefix=$withval
-
-        AC_CHECK_HEADER([$try_prefix/include/gmp.h],,
-                [AC_MSG_ERROR([GNU MP headers not found])])
-
-else
-        dnl AC_MSG_ERROR([GNU MP headers not found, $withval])
-	have_gmp=no
-fi
-if test "$have_gmp" = "yes" ; then
-	GMP_CFLAGS=-I$try_prefix/include
-	dnl XXX: shouldn't we be checking where the libs are and adding -L if necessary?
-	GMP_LIBS="-lgmp"
-fi
-
-AC_SUBST(GMP_CFLAGS)
-AC_SUBST(GMP_LIBS)
-
 
 
 dnl #######################################################################
@@ -302,7 +255,7 @@ AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_gmp" = "xyes")
+AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
@@ -321,9 +274,6 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
-fi
-if test "x$have_gmp" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -351,7 +301,7 @@ AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_gmp" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
@@ -1597,6 +1547,7 @@ AC_OUTPUT([Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/sametime/Makefile
 		   src/protocols/sametime/meanwhile/Makefile
+		   src/protocols/sametime/meanwhile/mpi/Makefile
 		   src/protocols/silc/Makefile
 		   src/protocols/simple/Makefile
 		   src/protocols/toc/Makefile

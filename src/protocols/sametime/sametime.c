@@ -501,8 +501,13 @@ static void mw_aware_list_on_aware(struct mwAwareList *list,
     gaim_blist_node_set_int(bnode, BUDDY_KEY_TYPE, mwSametimeUser_NORMAL);
   }
   
-  gaim_prpl_got_user_status(acct, id, status, NULL);
-  gaim_prpl_got_user_idle(acct, id, !!idle, idle);
+  if(aware->online) {
+    gaim_prpl_got_user_status(acct, id, status, NULL);
+    gaim_prpl_got_user_idle(acct, id, !!idle, idle);
+
+  } else {
+    gaim_prpl_got_user_status(acct, id, MW_STATE_OFFLINE, NULL);
+  }
 }
 
 
@@ -1682,8 +1687,8 @@ static void mw_session_announce(struct mwSession *s,
   GaimAccount *acct;
   GaimConversation *conv;
   GaimBuddy *buddy;
-  const char *who = from->user_id;
-  char *tmp, *msg;
+  char *who = from->user_id;
+  char *msg;
   
   pd = mwSession_getClientData(s);
   acct = gaim_connection_get_account(pd->gc);
@@ -1691,15 +1696,13 @@ static void mw_session_announce(struct mwSession *s,
   if(! conv) conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, who);
 
   buddy = gaim_find_buddy(acct, who);
-  if(buddy) {
-    who = gaim_buddy_get_contact_alias(buddy);
-  }
+  if(buddy) who = (char *) gaim_buddy_get_contact_alias(buddy);
 
-  tmp = g_strdup_printf(_("Announcement from %s"), who);
+  who = g_strdup_printf(_("Announcement from %s"), who);
   msg = gaim_markup_linkify(text);
 
-  gaim_conversation_write(conv, tmp, msg, GAIM_MESSAGE_RECV, time(NULL));
-  g_free(tmp);
+  gaim_conversation_write(conv, who, msg, GAIM_MESSAGE_RECV, time(NULL));
+  g_free(who);
   g_free(msg);
 }
 
