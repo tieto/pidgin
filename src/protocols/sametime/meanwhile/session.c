@@ -19,7 +19,6 @@
 */
 
 #include <glib.h>
-#include <gmp.h>
 #include <string.h>
 
 #include "mw_channel.h"
@@ -371,20 +370,20 @@ static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
   struct mwOpaque a, b, c;
   struct mwPutBuffer *p;
 
-  mpz_t private, public;
-  mpz_t remote;
-  mpz_t shared;
+  struct mwMpi *private, *public;
+  struct mwMpi *remote;
+  struct mwMpi *shared;
 
-  mpz_init(private);
-  mpz_init(public);
-  mpz_init(remote);
-  mpz_init(shared);
+  private = mwMpi_new();
+  public = mwMpi_new();
+  remote = mwMpi_new();
+  shared = mwMpi_new();
 
   mwIV_init(iv);
 
-  mwDHRandKeypair(private, public);
-  mwDHImportKey(remote, rkey);
-  mwDHCalculateShared(shared, remote, private);
+  mwMpi_randDHKeypair(private, public);
+  mwMpi_import(remote, rkey);
+  mwMpi_calculateDHShared(shared, remote, private);
 
   /* put the password in opaque a */
   p = mwPutBuffer_new();
@@ -393,7 +392,7 @@ static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
   mwPutBuffer_finalize(&a, p);
 
   /* put the shared key in opaque b */
-  mwDHExportKey(shared, &b);
+  mwMpi_export(shared, &b);
 
   /* encrypt the password (a) using the shared key (b), put the result
      in opaque c */
@@ -402,7 +401,7 @@ static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
   /* don't need the shared key anymore, re-use opaque (b) as the
      export of the public key */
   mwOpaque_clear(&b);
-  mwDHExportKey(public, &b);
+  mwMpi_export(public, &b);
 
   p = mwPutBuffer_new();
   guint16_put(p, 0x0001);  /* XXX: unknown */
@@ -414,10 +413,10 @@ static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
   mwOpaque_clear(&b);
   mwOpaque_clear(&c);
 
-  mpz_clear(private);
-  mpz_clear(public);
-  mpz_clear(remote);
-  mpz_clear(shared);
+  mwMpi_free(private);
+  mwMpi_free(public);
+  mwMpi_free(remote);
+  mwMpi_free(shared);
 }
 
 

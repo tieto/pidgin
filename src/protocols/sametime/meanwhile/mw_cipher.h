@@ -85,11 +85,6 @@ struct mwCipher {
       @see mwCipher_newInstance */
   mwCipherInstantiator new_instance;
 
-  /** @see mwCipher_newItem
-      @todo remove for 1.0
-   */
-  mwCipherDescriptor new_item;
-
   void (*offered)(struct mwCipherInstance *ci, struct mwEncryptItem *item);
   struct mwEncryptItem *(*offer)(struct mwCipherInstance *ci);
   void (*accepted)(struct mwCipherInstance *ci, struct mwEncryptItem *item);
@@ -153,13 +148,6 @@ void mwCipher_free(struct mwCipher* cipher);
 struct mwCipher *mwCipherInstance_getCipher(struct mwCipherInstance *ci);
 
 
-/**
-   Deprecated in favor of the methods mwCipherInstance_offer and
-   mwCipherInstance_accept
-*/
-struct mwEncryptItem *mwCipherInstance_newItem(struct mwCipherInstance *ci);
-
-
 /** Indicates a cipher has been offered to our channel */
 void mwCipherInstance_offered(struct mwCipherInstance *ci,
 			      struct mwEncryptItem *item);
@@ -207,11 +195,11 @@ void mwCipherInstance_free(struct mwCipherInstance *ci);
     @param keylen  count of bytes to write into key
     @param key     buffer to write keys into
 */
-void mwKeyRandom(char *key, gsize keylen);
+void mwKeyRandom(unsigned char *key, gsize keylen);
 
 
 /** Setup an Initialization Vector. IV must be at least 8 bytes */
-void mwIV_init(char *iv);
+void mwIV_init(unsigned char *iv);
 
 
 /** Expand a variable-length key into a 128-byte key (represented as
@@ -220,24 +208,24 @@ void mwKeyExpand(int *ekey, const char *key, gsize keylen);
 
 
 /** Encrypt data using an already-expanded key */
-void mwEncryptExpanded(const int *ekey, char *iv,
+void mwEncryptExpanded(const int *ekey, unsigned char *iv,
 		       struct mwOpaque *in,
 		       struct mwOpaque *out);
 
 
 /** Encrypt data using an expanded form of the given key */
-void mwEncrypt(const char *key, gsize keylen, char *iv,
+void mwEncrypt(const char *key, gsize keylen, unsigned char *iv,
 	       struct mwOpaque *in, struct mwOpaque *out);
 
 
 /** Decrypt data using an already expanded key */
-void mwDecryptExpanded(const int *ekey, char *iv,
+void mwDecryptExpanded(const int *ekey, unsigned char *iv,
 		       struct mwOpaque *in,
 		       struct mwOpaque *out);
 
 
 /** Decrypt data using an expanded form of the given key */
-void mwDecrypt(const char *key, gsize keylen, char *iv,
+void mwDecrypt(const char *key, gsize keylen, unsigned char *iv,
 	       struct mwOpaque *in, struct mwOpaque *out);
 
 
@@ -248,40 +236,56 @@ void mwDecrypt(const char *key, gsize keylen, char *iv,
   @section Diffie-Hellman Functions
 
   These functions are reused where DH Key negotiation is necessary
-  outside of a channel (eg. session authentication). You'll need to
-  include <gmp.h> in order to use these functions.
+  outside of a channel (eg. session authentication). These are
+  wrapping a full multiple-precision integer math library, but most of
+  the functionality there-of is not exposed. Currently, the math is
+  provided by a copy of the public domain libmpi.
+
+  for more information on the used MPI Library, visit
+  http://www.cs.dartmouth.edu/~sting/mpi/
 */
 /* @{ */
-#ifdef __GMP_H__
+
+
+/** @struct mwMpi */
+struct mwMpi;
+
+
+/** prepare a new mpi value */
+struct mwMpi *mwMpi_new();
+
+
+/** destroy an mpi value */
+void mwMpi_free(struct mwMpi *i);
+
+
+/** Import a value from an opaque */
+void mwMpi_import(struct mwMpi *i, struct mwOpaque *o);
+
+
+/** Export a value into an opaque */
+void mwMpi_export(struct mwMpi *i, struct mwOpaque *o);
 
 
 /** initialize and set a big integer to the Sametime Prime value */
-void mwInitDHPrime(mpz_t z);
+void mwMpi_setDHPrime(struct mwMpi *i);
 
 
 /** initialize and set a big integer to the Sametime Base value */
-void mwInitDHBase(mpz_t z);
+void mwMpi_setDHBase(struct mwMpi *i);
 
 
 /** sets private to a randomly generated value, and calculates public
     using the Sametime Prime and Base */
-void mwDHRandKeypair(mpz_t private, mpz_t public);
+void mwMpi_randDHKeypair(struct mwMpi *private, struct mwMpi *public);
 
 
 /** sets the shared key value based on the remote and private keys,
     using the Sametime Prime and Base */
-void mwDHCalculateShared(mpz_t shared, mpz_t remote, mpz_t private);
+void mwMpi_calculateDHShared(struct mwMpi *shared, struct mwMpi *remote,
+			     struct mwMpi *private);
 
 
-/** Import a DH key from an opaque */
-void mwDHImportKey(mpz_t key, struct mwOpaque *o);
-
-
-/** Export a DH key into an opaque */
-void mwDHExportKey(mpz_t key, struct mwOpaque *o);
-
-
-#endif
 /* @} */
 
 

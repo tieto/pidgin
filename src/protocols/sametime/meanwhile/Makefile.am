@@ -1,3 +1,5 @@
+SUBDIRS = mpi
+
 noinst_HEADERS = \
 	mw_channel.h \
 	mw_cipher.h \
@@ -38,14 +40,14 @@ MEANWHILESOURCES = \
 	st_list.c
 
 AM_CFLAGS = \
-	$(GLIB_CFLAGS) $(GMP_CFLAGS) \
+	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	-DG_LOG_DOMAIN=\"meanwhile\"
 	-I$(top_srcdir)/src 
 
 libmeanwhile_la_SOURCES = $(MEANWHILESOURCES)
 
-libmeanwhile_la_LIBADD = $(GLIB_LIBS) $(GMP_LIBS)
+libmeanwhile_la_LIBADD = $(GLIB_LIBS) mpi/libmpi.la
 
 st =
 noinst_LTLIBRARIES = libmeanwhile.la

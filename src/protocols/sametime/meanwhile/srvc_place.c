@@ -95,7 +95,6 @@ enum out_section_subtype {
 
   : msg_in_JOIN_RESPONSE (contains our place member ID and section ID)
   : msg_in_INFO (for place, not peer)
-  : msg_in_UNKNOWNa
   : state = JOINED
 
   : msg_out_SECTION_LIST (asking for all sections) (optional)
@@ -109,7 +108,6 @@ enum out_section_subtype {
 
   : msg_out_UNKNOWNb
   : msg_in_SECTION_PEER_JOINED (empty, with our place member ID)
-  : msg_in_UNKNOWNa
   : state = OPEN
 
   : stuff... (invites, joins, parts, messages, attr)
@@ -273,6 +271,25 @@ static int recv_JOIN_RESPONSE(struct mwPlace *place,
 }
 
 
+static int send_SECTION_LIST(struct mwPlace *place, guint32 section) {
+  int ret = 0;
+  struct mwOpaque o = {0, 0};
+  struct mwPutBuffer *b;
+
+  b = mwPutBuffer_new();
+  guint16_put(b, msg_out_SECTION_LIST);
+  guint32_put(b, section);
+  gboolean_put(b, FALSE);
+  guint32_put(b, ++place->requests);
+  mwPutBuffer_finalize(&o, b);
+
+  ret = mwChannel_send(place->channel, msg_out_SECTION, &o);
+  mwOpaque_clear(&o);
+
+  return ret;
+}
+
+
 static int recv_INFO(struct mwPlace *place,
 		     struct mwGetBuffer *b) {
 
@@ -289,6 +306,9 @@ static int recv_INFO(struct mwPlace *place,
     if(place->title) g_free(place->title);
     mwGetBuffer_advance(b, 2);
     mwString_get(b, &place->title);
+
+    place_state(place, mwPlace_JOINED);
+    ret = send_SECTION_LIST(place, place->section);
   }
 
   return ret;
@@ -306,6 +326,9 @@ static int recv_MESSAGE(struct mwPlace *place,
   int ret = 0;
 
   srvc = place->service;
+
+  /* no messages before becoming fully open, please */
+  g_return_val_if_fail(place->state == mwPlace_OPEN, -1);
 
   /* regarding unkn_a and unkn_b:
 
@@ -331,6 +354,17 @@ static int recv_MESSAGE(struct mwPlace *place,
   g_free(msg);
 
   return ret;
+}
+
+
+static void place_opened(struct mwPlace *place) {
+    struct mwServicePlace *srvc;
+
+    place_state(place, mwPlace_OPEN);
+
+    srvc = place->service;
+    if(srvc->handler && srvc->handler->opened)
+      srvc->handler->opened(place);
 }
 
 
@@ -364,6 +398,9 @@ static int recv_SECTION_PEER_JOIN(struct mwPlace *place,
   PUT_MEMBER(place, pm);
   if(srvc->handler && srvc->handler->peerJoined)
     srvc->handler->peerJoined(place, &pm->idb);
+
+  if(pm->place_id == place->our_id)
+    place_opened(place);
 
   return ret;
 }
@@ -480,18 +517,6 @@ static int recv_SECTION_PEER(struct mwPlace *place,
 }
 
 
-static void place_opened(struct mwPlace *place) {
-    struct mwServicePlace *srvc;
-
-    place_state(place, mwPlace_OPEN);
-
-    srvc = place->service;
-    if(srvc->handler && srvc->handler->opened)
-      srvc->handler->opened(place);
-}
-
-
-
 static int recv_SECTION_LIST(struct mwPlace *place,
 			     struct mwGetBuffer *b) {
   int ret = 0;
@@ -586,35 +611,18 @@ static int recv_SECTION(struct mwPlace *place, struct mwGetBuffer *b) {
 }
 
 
-static int send_SECTION_LIST(struct mwPlace *place, guint32 section) {
-  int ret = 0;
-  struct mwOpaque o = {0, 0};
-  struct mwPutBuffer *b;
-
-  b = mwPutBuffer_new();
-  guint16_put(b, msg_out_SECTION_LIST);
-  guint32_put(b, section);
-  gboolean_put(b, FALSE);
-  guint32_put(b, ++place->requests);
-  mwPutBuffer_finalize(&o, b);
-
-  ret = mwChannel_send(place->channel, msg_out_SECTION, &o);
-  mwOpaque_clear(&o);
-
-  return ret;
-}
-
-
 static int recv_UNKNOWNa(struct mwPlace *place, struct mwGetBuffer *b) {
   int res = 0;
 
   if(place->state == mwPlace_JOINING) {
-    place_state(place, mwPlace_JOINED);
-    res = send_SECTION_LIST(place, place->section);
+    ;
+    /* place_state(place, mwPlace_JOINED);
+       res = send_SECTION_LIST(place, place->section); */
   
   } else if(place->state == mwPlace_JOINED) {
-    if(GET_MEMBER(place, place->our_id))
-      place_opened(place);
+    ;
+    /* if(GET_MEMBER(place, place->our_id))
+       place_opened(place); */
   }
 
   return res;
@@ -659,7 +667,7 @@ static void recv(struct mwService *service, struct mwChannel *chan,
   }
 
   if(res) {
-    mw_mailme_opaque(data, "Troubling parsing message type 0x0x on place %s",
+    mw_mailme_opaque(data, "Troubling parsing message type 0x0%x on place %s",
 		     type, NSTR(place->name));
   }
 
