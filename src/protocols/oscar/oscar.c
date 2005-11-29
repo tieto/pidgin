@@ -6156,8 +6156,11 @@ static int gaim_parse_searchreply(aim_session_t *sess, aim_frame_t *fr, ...)
 	SNs = va_arg(ap, char *);
 	va_end(ap);
 
-	/* TODO: Need to use ngettext() here */
-	secondary = g_strdup_printf(_("The following screen names are associated with %s"), email);
+	secondary = g_strdup_printf(
+					ngettext("The following screen name is associated with %s",
+						 "The following screen names are associated with %s",
+						 num),
+					email);
 
 	results = gaim_notify_searchresults_new();
 	column = gaim_notify_searchresults_column_new("Screen name");
