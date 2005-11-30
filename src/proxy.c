@@ -1177,8 +1177,8 @@ proxy_connect_http(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 
 	gaim_debug_info("http proxy",
 			   "Connecting to %s:%d via %s:%d using HTTP\n",
-			   phb->host, phb->port,
-			   gaim_proxy_info_get_host(phb->gpi),
+			   (phb->host ? phb->host : "(null)"), phb->port,
+			   (gaim_proxy_info_get_host(phb->gpi) ? gaim_proxy_info_get_host(phb->gpi) : "(null)"),
 			   gaim_proxy_info_get_port(phb->gpi));
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0) {
