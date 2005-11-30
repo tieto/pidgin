@@ -804,12 +804,6 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 			g_free(tmp2);
 		}
 	}
-
-	if ((bi != NULL) && (bi->availmsg != NULL) && gaim_status_is_available(status)) {
-		tmp = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-		oscar_string_append(str, newline, _("Available"), tmp);
-		g_free(tmp);
-	}
 }
 
 static char *extract_name(const char *name) {
@@ -5069,6 +5063,11 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 
 	oscar_string_append_info(gc, str, "\n<br>", NULL, userinfo);
 
+	/*
+	 * TODO: Need to duplicate what oscar_tooltip_text() does here so that
+	 *       we show the available message in the buddy info.
+	 */
+
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->away_encoding);
 		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
@@ -5121,7 +5120,8 @@ static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
 	presence = gaim_buddy_get_presence(b);
 	active_status = gaim_presence_get_active_status(presence);
 
-	if (gaim_status_type_get_primitive(gaim_status_get_type(active_status)) == GAIM_STATUS_AVAILABLE) {
+	if (gaim_status_is_available(active_status))
+	{
 		struct buddyinfo *bi;
 
 		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
@@ -7600,7 +7600,7 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		if (message != NULL) {
 			if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_AVAILABLE) {
 				/* Available status messages are plain text */
-				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Status Message"), message);
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Available Message"), message);
 			} else {
 				/* Away messages are HTML */
 				gchar *tmp1, *tmp2;
