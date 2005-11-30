@@ -29,6 +29,7 @@
 #include "core.h"
 #include "debug.h"
 #include "ft.h"
+#include "idle.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -128,6 +129,7 @@ gaim_core_init(const char *ui)
 	gaim_ssl_init();
 	gaim_stun_init();
 	gaim_xfers_init();
+	gaim_idle_init();
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
@@ -150,6 +152,7 @@ gaim_core_quit(void)
 	gaim_connections_disconnect_all();
 
 	/* Save .xml files, remove signals, etc. */
+	gaim_idle_uninit();
 	gaim_ssl_uninit();
 	gaim_pounces_uninit();
 	gaim_blist_uninit();

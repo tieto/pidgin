@@ -75,6 +75,7 @@ gaim_coresources = \
 	desktopitem.c \
 	eventloop.c \
 	ft.c \
+	idle.c \
 	imgstore.c \
 	log.c \
 	media.c \
@@ -122,6 +123,7 @@ gaim_coreheaders = \
 	desktopitem.h \
 	eventloop.h \
 	ft.h \
+	idle.h \
 	imgstore.h \
 	log.h \
 	media.h \

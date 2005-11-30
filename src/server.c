@@ -133,10 +133,6 @@ int serv_send_im(GaimConnection *gc, const char *name, const char *message,
 	if (prpl_info && prpl_info->send_im)
 		val = prpl_info->send_im(gc, name, message, flags);
 
-	/* Only update the last_sent_time if the user actually sent the message */
-	if (!(flags & GAIM_MESSAGE_AUTO_RESP))
-		time(&gc->last_sent_time);
-
 	/*
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
 	 * this only reset lar->sent if we're away AND idle?
@@ -410,8 +406,6 @@ int serv_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageF
 
 	if (prpl_info && prpl_info->chat_send)
 		val = prpl_info->chat_send(gc, id, message, flags);
-
-	time(&gc->last_sent_time);
 
 	return val;
 }

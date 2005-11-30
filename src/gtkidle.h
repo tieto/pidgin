@@ -25,21 +25,19 @@
 #ifndef _GAIM_GTK_IDLE_H_
 #define _GAIM_GTK_IDLE_H_
 
+#include "idle.h"
+
 /**************************************************************************/
 /** @name GTK+ Idle API                                                  */
 /**************************************************************************/
 /*@{*/
 
-
 /**
- * Initializes the GTK+ idle system.
+ * Returns the GTK+ idle UI ops.
+ *
+ * @return The UI operations structure.
  */
-void gaim_gtk_idle_init(void);
-
-/**
- * Uninitializes the GTK+ idle system.
- */
-void gaim_gtk_idle_uninit(void);
+GaimIdleUiOps *gaim_gtk_idle_get_ui_ops(void);
 
 /*@}*/
 

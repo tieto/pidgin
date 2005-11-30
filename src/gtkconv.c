@@ -42,6 +42,7 @@
 #include "account.h"
 #include "cmds.h"
 #include "debug.h"
+#include "idle.h"
 #include "imgstore.h"
 #include "log.h"
 #include "notify.h"
@@ -516,6 +517,8 @@ send_cb(GtkWidget *widget, GaimGtkConversation *gtkconv)
 		g_free(clean);
 		return;
 	}
+
+	gaim_idle_touch();
 
 	/* XXX: is there a better way to tell if the message has images? */
 	if (GTK_IMHTML(gtkconv->entry)->im_images != NULL)

@@ -1668,7 +1668,7 @@ away_page()
 		NULL);
 
 	button = gaim_gtk_prefs_checkbox(_("_Report idle time"),
-			"/gaim/gtk/idle/report", vbox);
+			"/core/away/report_idle", vbox);
 
 	vbox = gaim_gtk_make_frame (ret, _("Auto-away"));
 	button = gaim_gtk_prefs_checkbox(_("Change status when _idle"),
@@ -1867,10 +1867,6 @@ gaim_gtk_prefs_init(void)
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 #endif
 
-	/* Idle */
-	gaim_prefs_add_none("/gaim/gtk/idle");
-	gaim_prefs_add_bool("/gaim/gtk/idle/report", TRUE);
-
 	/* Plugins */
 	gaim_prefs_add_none("/gaim/gtk/plugins");
 	gaim_prefs_add_string_list("/gaim/gtk/plugins/loaded", NULL);
@@ -1909,9 +1905,11 @@ void gaim_gtk_prefs_update_old() {
 									 "/gaim/gtk/conversations/show_incoming_formatting");
 
 	/* this string pref turned into a boolean, try to be friendly */
-	tmp = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
-	if (tmp != NULL && !strcmp(tmp, "none")) {
-		gaim_prefs_set_bool("/gaim/gtk/idle/report", FALSE);
+	if (gaim_prefs_exists("/gaim/gtk/idle/reporting_method"))
+	{
+		tmp = gaim_prefs_get_string("/gaim/gtk/idle/reporting_method");
+		if (tmp != NULL && !strcmp(tmp, "none"))
+			gaim_prefs_set_bool("/core/away/report_idle", FALSE);
 	}
 
 	/* Remove some no-longer-used prefs */
@@ -1944,6 +1942,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
 	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
 	gaim_prefs_remove("/gaim/gtk/idle/reporting_method");
+	gaim_prefs_remove("/gaim/gtk/idle");
 	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");

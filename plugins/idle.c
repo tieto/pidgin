@@ -26,6 +26,7 @@
 
 #include "connection.h"
 #include "debug.h"
+#include "idle.h"
 #include "notify.h"
 #include "plugin.h"
 #include "request.h"
@@ -62,7 +63,7 @@ set_idle_time(GaimAccount *acct, int mins_idle)
 			gaim_account_get_username(acct), mins_idle);
 
 	t = time(NULL) - (60 * mins_idle); /* subtract seconds idle from current time */
-	gc->last_sent_time = t;
+	gaim_idle_set(t);
 
 	gaim_presence_set_idle(presence, mins_idle ? TRUE : FALSE, t);
 }

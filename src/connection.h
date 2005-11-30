@@ -88,8 +88,6 @@ struct _GaimConnection
 	char *display_name;          /**< The name displayed.                */
 	guint keepalive;             /**< Keep-alive.                        */
 
-	guint idle_timer;            /**< The idle timer.                    */
-	time_t last_sent_time;       /**< The time something was last sent.  */
 
 	gboolean is_auto_away;       /**< Whether or not it's auto-away.     */
 

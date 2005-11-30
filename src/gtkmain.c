@@ -259,6 +259,9 @@ gaim_gtk_ui_init(void)
 	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
 	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
 	gaim_whiteboard_set_ui_ops(gaim_gtk_whiteboard_get_ui_ops());
+#ifdef USE_SCREENSAVER
+	gaim_idle_set_ui_ops(gaim_gtk_idle_get_ui_ops());
+#endif
 
 	gaim_gtk_stock_init();
 	gaim_gtk_prefs_init();
@@ -273,7 +276,6 @@ gaim_gtk_ui_init(void)
 #ifdef HAVE_VV
 	gaim_gtk_media_init();
 #endif
-	gaim_gtk_idle_init();
 }
 
 static void
@@ -294,7 +296,6 @@ gaim_gtk_quit(void)
 	gaim_gtk_account_uninit();
 	gaim_gtk_xfers_uninit();
 	gaim_gtk_debug_uninit();
-	gaim_gtk_idle_uninit();
 
 	/* and end it all... */
 	gtk_main_quit();
