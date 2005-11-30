@@ -72,8 +72,8 @@ struct mwGetBuffer;
 
 /** A length of binary data, not null-terminated. */
 struct mwOpaque {
-  gsize len;   /**< length of data. */
-  char *data;  /**< data, normally with no NULL termination */
+  gsize len;            /**< length of data. */
+  unsigned char *data;  /**< data, normally with no NULL termination */
 };
 
 
@@ -100,11 +100,11 @@ enum mwLoginType {
   mwLogin_LINKS         = 0x100a,  /**< official Sametime Links toolkit */
 
   /* now we're getting crazy */
-  mwLogin_NOTES_6_5        = 0x1200,  /**< 0xff00 mask? */
+  mwLogin_NOTES_6_5        = 0x1200,
   mwLogin_NOTES_6_5_3      = 0x1203,
   mwLogin_NOTES_7_0_beta   = 0x1210,
   mwLogin_NOTES_7_0        = 0x1214,
-  mwLogin_ICT              = 0x1300,  /**< 0xff00 mask? */
+  mwLogin_ICT              = 0x1300,
   mwLogin_ICT_1_7_8_2      = 0x1302,
   mwLogin_ICT_SIP          = 0x1303,
   mwLogin_NOTESBUDDY_4_14  = 0x1400,  /**< 0xff00 mask? */
