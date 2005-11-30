@@ -562,8 +562,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
 #endif
-	gtk_container_add(GTK_CONTAINER(status_box), status_box->toggle_button);
-
 	status_box->icon_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->text_rend = gtk_cell_renderer_text_new();
 
@@ -598,6 +596,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
 	gtk_widget_set_parent(status_box->toggle_button, GTK_WIDGET(status_box));
+	GTK_BIN(status_box)->child = status_box->toggle_button;
 	status_box->sw = gtk_scrolled_window_new(NULL, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(status_box->sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type(GTK_SCROLLED_WINDOW(status_box->sw), GTK_SHADOW_IN);
@@ -705,8 +704,8 @@ gtk_gaim_status_box_expose_event(GtkWidget *widget,
 				 GdkEventExpose *event)
 {
 	GtkGaimStatusBox *status_box = GTK_GAIM_STATUS_BOX(widget);
-	gtk_widget_send_expose(status_box->toggle_button, (GdkEvent*)(event));
 	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->vbox, event);
+	gtk_container_propagate_expose(GTK_CONTAINER(widget), status_box->toggle_button, event);
 	return FALSE;
 }
 
@@ -721,6 +720,8 @@ gtk_gaim_status_box_forall(GtkContainer *container,
 	if (include_internals)
 	{
 		(* callback) (status_box->vbox, callback_data);
+		(* callback) (status_box->toggle_button, callback_data);
+		(* callback) (status_box->arrow, callback_data);
 	}
 
 	combo_box_forall(container, include_internals, callback, callback_data);
