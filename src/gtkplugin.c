@@ -378,7 +378,7 @@ void gaim_gtk_plugin_dialog_show()
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
-						_("_Configure Plugin"), GAIM_RESPONSE_CONFIGURE);
+						_("Configure Pl_ugin"), GAIM_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 	gtk_widget_set_sensitive(pref_button, FALSE);
