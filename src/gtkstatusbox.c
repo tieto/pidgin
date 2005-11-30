@@ -23,6 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <gdk/gdkkeysyms.h>
+
 #include "account.h"
 #include "internal.h"
 #include "savedstatuses.h"
@@ -39,6 +41,7 @@
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
+static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_refresh(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box);
 static void gtk_gaim_status_box_changed(GtkComboBox *box);
@@ -138,8 +141,7 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 	if (status_no != -1) {
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), status_no);
-		gtk_gaim_status_box_refresh(status_box);
-
+		
 		message = gaim_status_get_attr_string(newstatus, "message");
 
 		if (!message || !*message)
@@ -152,9 +154,13 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 			gtk_widget_show_all(status_box->vbox);
 			status_box->imhtml_visible = TRUE;
 			gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+			gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 			gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+			gtk_widget_hide(status_box->toolbar);
+			gtk_widget_hide(status_box->hsep);
 		}
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), TRUE);
+		gtk_gaim_status_box_refresh(status_box);
 	}
 }
 
@@ -367,7 +373,10 @@ update_to_reflect_current_status(GtkGaimStatusBox *status_box)
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), FALSE);
 
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 		gtk_imhtml_append_text(GTK_IMHTML(status_box->imhtml), message, 0);
+		gtk_widget_hide(status_box->toolbar);
+		gtk_widget_hide(status_box->hsep);
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box->imhtml), TRUE);
 	}
 
@@ -440,6 +449,25 @@ static gboolean scroll_event_cb(GtkWidget *w, GdkEventScroll *event, GtkIMHtml *
 	return TRUE;
 }
 
+static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBox *box)
+{
+	if (event->keyval == GDK_Tab || event->keyval == GDK_KP_Tab)
+	{
+		/* If last inserted character is a tab, then remove the focus from here */
+		GtkWidget *top = gtk_widget_get_toplevel(w);
+		g_signal_emit_by_name(G_OBJECT(top), "move_focus",
+				(event->state & GDK_SHIFT_MASK) ?
+				                  GTK_DIR_TAB_BACKWARD: GTK_DIR_TAB_FORWARD);
+		return TRUE;
+	}
+	if (!box->typing)
+		return FALSE;
+	gtk_gaim_status_box_pulse_typing(box);
+	g_source_remove(box->typing);
+	box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
+	return FALSE;
+}
+
 #if GTK_CHECK_VERSION(2,6,0)
 static gboolean
 dropdown_store_row_separator_func(GtkTreeModel *model,
@@ -470,6 +498,9 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
+	
+	if (event->button != 1)
+		return FALSE;
 	gtk_combo_box_popdown(GTK_COMBO_BOX(box));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
 	if (!box->imhtml_visible)
@@ -479,8 +510,11 @@ static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, Gtk
 
 static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
+	if (event->button != 1)
+		return FALSE;
 	gtk_combo_box_popup(GTK_COMBO_BOX(box));
-	// released_cb is getting short-circuited gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+	// Disabled until button_released_cb works
+	// gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
 	return TRUE;
 }
 
@@ -522,8 +556,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	gtk_container_add(GTK_CONTAINER(status_box->toggle_button), status_box->hbox);
 	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->cell_view, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->vsep, FALSE, 0, 0);
-	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->arrow, FALSE, 0, 0);
+	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->vsep, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(status_box->hbox), status_box->arrow, FALSE, FALSE, 0);
 	gtk_widget_show_all(status_box->toggle_button);
 #if GTK_CHECK_VERSION(2,4,0)
 	gtk_button_set_focus_on_click(GTK_BUTTON(status_box->toggle_button), FALSE);
@@ -547,15 +581,19 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	status_box->vbox = gtk_vbox_new(0, FALSE);
 	vbox = gtk_vbox_new(0,FALSE);
-       	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
+	status_box->imhtml = gtk_imhtml_new(NULL, NULL);
 	status_box->toolbar = gtk_imhtmltoolbar_new();
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(status_box->toolbar), status_box->imhtml);
 	status_box->hsep = gtk_hseparator_new();
 	
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
-	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event", G_CALLBACK(button_pressed_cb), status_box);
-	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event", G_CALLBACK(button_released_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
+			 G_CALLBACK(button_pressed_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event",
+			 G_CALLBACK(button_released_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->imhtml), "key_press_event",
+			 G_CALLBACK(imhtml_remove_focus), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
@@ -776,7 +814,7 @@ gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box)
 	gtk_gaim_status_box_refresh(status_box);
 }
 
-void
+static void
 gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box)
 {
 	if (status_box->typing_index == 3)
@@ -914,8 +952,6 @@ static void remove_typing_cb(GtkGaimStatusBox *status_box)
 	g_source_remove(status_box->typing);
 	status_box->typing = 0;
 	gtk_gaim_status_box_refresh(status_box);
-	gtk_widget_hide(status_box->toolbar);
-	gtk_widget_hide(status_box->hsep);
 }
 
 static void gtk_gaim_status_box_changed(GtkComboBox *box)
@@ -997,9 +1033,14 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	if (status_box->imhtml_visible)
 	{
 		gtk_widget_show_all(status_box->vbox);
-	       	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
+		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
 			status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
+		} else {
+			gtk_widget_hide(status_box->toolbar);
+			gtk_widget_hide(status_box->hsep);
+		}
 		gtk_imhtml_clear(GTK_IMHTML(status_box->imhtml));
+		gtk_imhtml_clear_formatting(GTK_IMHTML(status_box->imhtml));
 		gtk_widget_grab_focus(status_box->imhtml);
 	}
 	else
