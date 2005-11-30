@@ -1325,6 +1325,38 @@ static void blist_node_menu_cb(GaimBlistNode *node,
 }
 
 
+/* lifted this from oldstatus, since HEAD doesn't do this at login
+   anymore. */
+static void blist_init(GaimAccount *acct) {
+  GaimBlistNode *gnode, *cnode, *bnode;
+  GList *add_buds = NULL;
+
+  for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+    if(! GAIM_BLIST_NODE_IS_GROUP(gnode)) continue;
+
+    for(cnode = gnode->child; cnode; cnode = cnode->next) {
+      if(! GAIM_BLIST_NODE_IS_CONTACT(cnode))
+	continue;
+      for(bnode = cnode->child; bnode; bnode = bnode->next) {
+	GaimBuddy *b;
+	if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+	  continue;
+	
+	b = (GaimBuddy *)bnode;
+	if(b->account == acct) {
+	  add_buds = g_list_append(add_buds, b);
+	}
+      }
+    }
+  }
+  
+  if(add_buds) {
+    gaim_account_add_buddies(acct, add_buds);
+    g_list_free(add_buds);
+  }
+}
+
+
 /** Last thing to happen from a started session */
 static void services_starting(struct mwGaimPluginData *pd) {
 
@@ -1392,6 +1424,8 @@ static void services_starting(struct mwGaimPluginData *pd) {
   /* ... but we can do file transfers! */
   mwServiceAware_setAttributeBoolean(pd->srvc_aware,
 				     mwAttribute_FILE_TRANSFER, TRUE);
+
+  blist_init(acct);
 }
 
 
@@ -1415,12 +1449,19 @@ static void session_loginRedirect(struct mwSession *session,
 }
 
 
+static void mw_prpl_set_status(GaimAccount *acct, GaimStatus *status);
+
+
 /** called from mw_session_stateChange when the session's state is
     mwSession_STARTED. Any finalizing of start-up stuff should go
     here */
 static void session_started(struct mwGaimPluginData *pd) {
+  GaimStatus *status;
+  GaimAccount *acct;
 
-  /* XXX setup status */
+  acct = gaim_connection_get_account(pd->gc);
+  status = gaim_account_get_active_status(acct);
+  mw_prpl_set_status(acct, status);
 
   /* use our services to do neat things */
   services_starting(pd);
