@@ -114,6 +114,9 @@ struct _GtkGaimStatusBox
 	GtkWidget *toggle_button;
 	GtkWidget *vsep;
 	GtkWidget *arrow;
+
+	GtkWidget *toolbar;
+	GtkWidget *hsep;
 };
 
 struct _GtkGaimStatusBoxClass
