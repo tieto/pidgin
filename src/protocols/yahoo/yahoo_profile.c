@@ -663,8 +663,12 @@ static char *yahoo_tooltip_info_text(YahooGetInfoData *info_data) {
 		}
 		#endif
 		if (statustext) {
-			g_string_append_printf(s, "%s<br>", statustext);
+			char *tmp;
+			g_strstrip(statustext);
+			tmp = gaim_strreplace(statustext, "\n", "<br>");
 			g_free(statustext);
+			g_string_append_printf(s, "%s<br>", tmp);
+			g_free(tmp);
 		}
 		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
 			const char *ip;
