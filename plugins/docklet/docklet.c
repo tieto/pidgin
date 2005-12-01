@@ -483,9 +483,6 @@ static GaimPluginInfo info =
 static void
 plugin_init(GaimPlugin *plugin)
 {
-	/* TODO: these will be removed once queuing is working in the ui */
-	gaim_prefs_add_none("/plugins/gtk/docklet");
-	gaim_prefs_add_bool("/plugins/gtk/docklet/queue_messages", FALSE);
 }
 
 GAIM_INIT_PLUGIN(docklet, plugin_init, info)
