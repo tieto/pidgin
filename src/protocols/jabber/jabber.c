@@ -1169,17 +1169,17 @@ static GList *jabber_actions(GaimPlugin *plugin, gpointer context)
 	GaimPluginAction *act;
 
 	act = gaim_plugin_action_new(_("Set User Info..."),
-			jabber_setup_set_info);
+	                jabber_setup_set_info);
 	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
 		act = gaim_plugin_action_new(_("Change Password..."),
-				jabber_password_change);
+		                jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
 	act = gaim_plugin_action_new(_("Search for Users..."),
-			jabber_user_search_begin);
+	                jabber_user_search_begin);
 	m = g_list_append(m, act);
 
 	return m;

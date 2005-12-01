@@ -318,9 +318,7 @@ void jabber_iq_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 
-
 	/* If we get here, send the default error reply mandated by XMPP-CORE */
-
 	if(type && (!strcmp(type, "set") || !strcmp(type, "get"))) {
 		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_ERROR);
 

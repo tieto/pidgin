@@ -1298,7 +1298,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 	const char *from;
 
 	/* i forget, do i have to check for error? XXX */
-	if(!(from= xmlnode_get_attrib(packet, "from")))
+	if(!(from = xmlnode_get_attrib(packet, "from")))
 		return;
 
 
