@@ -170,7 +170,22 @@ status_to_xmlnode(GaimSavedStatus *status)
 
 	node = xmlnode_new("status");
 	if (status->title != NULL)
+	{
 		xmlnode_set_attrib(node, "name", status->title);
+	}
+	else
+	{
+		/*
+		 * Gaim 1.5.0 and earlier require a name to be set, so we
+		 * do this little hack to maintain backward compatability
+		 * in the status.xml file.  Eventually this should be used
+		 * and we should determine if a status is transient by
+		 * whether the "name" attribute is set to something or if
+		 * it does not exist at all.
+		 */
+		xmlnode_set_attrib(node, "name", "Auto-Cached");
+		xmlnode_set_attrib(node, "transient", "true");
+	}
 
 	snprintf(buf, sizeof(buf), "%lu", status->creation_time);
 	xmlnode_set_attrib(node, "created", buf);
@@ -336,9 +351,13 @@ parse_status(xmlnode *status)
 
 	ret = g_new0(GaimSavedStatus, 1);
 
-	/* Read the title */
-	attrib = xmlnode_get_attrib(status, "name");
-	ret->title = g_strdup(attrib);
+	attrib = xmlnode_get_attrib(status, "transient");
+	if ((attrib == NULL) || (strcmp(attrib, "true")))
+	{
+		/* Read the title */
+		attrib = xmlnode_get_attrib(status, "name");
+		ret->title = g_strdup(attrib);
+	}
 
 	if (ret->title != NULL)
 	{
