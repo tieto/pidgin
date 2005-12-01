@@ -1030,8 +1030,8 @@ gaim_account_disconnect(GaimAccount *account)
 }
 
 void
-gaim_account_notify_added(GaimAccount *account, const char *id,
-                          const char *remote_user, const char *alias,
+gaim_account_notify_added(GaimAccount *account, const char *remote_user,
+                          const char *id, const char *alias,
                           const char *message)
 {
 	GaimAccountUiOps *ui_ops;
