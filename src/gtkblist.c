@@ -175,6 +175,13 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 			gaim_prefs_set_bool("/gaim/gtk/blist/list_visible", TRUE);
 	}
 
+	if(event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
+		if(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_maximized", TRUE);
+		else
+			gaim_prefs_set_bool("/gaim/gtk/blist/list_maximized", FALSE);
+	}
+
 	return FALSE;
 }
 
@@ -222,6 +229,10 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 		return FALSE; /* carry on normally */
 	}
+
+	/* ignore changes when maximized */
+	if(gaim_prefs_get_bool("/gaim/gtk/blist/list_maximized"))
+		return FALSE;
 
 	/* store the position */
 	gaim_prefs_set_int("/gaim/gtk/blist/x",      x);
@@ -3023,6 +3034,8 @@ static void gaim_gtk_blist_restore_position()
 		/* ...and move it back. */
 		gtk_window_move(GTK_WINDOW(gtkblist->window), blist_x, blist_y);
 		gtk_window_resize(GTK_WINDOW(gtkblist->window), blist_width, blist_height);
+		if (gaim_prefs_get_bool("/gaim/gtk/blist/list_maximized"))
+			gtk_window_maximize(GTK_WINDOW(gtkblist->window));
 	}
 }
 
@@ -4913,6 +4926,7 @@ void gaim_gtk_blist_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_empty_groups", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/show_offline_buddies", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/blist/list_visible", TRUE);
+	gaim_prefs_add_bool("/gaim/gtk/blist/list_maximized", FALSE);
 	gaim_prefs_add_string("/gaim/gtk/blist/sort_type", "alphabetical");
 	gaim_prefs_add_int("/gaim/gtk/blist/x", 0);
 	gaim_prefs_add_int("/gaim/gtk/blist/y", 0);
