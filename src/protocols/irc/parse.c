@@ -355,7 +355,7 @@ char *irc_mirc2html(const char *string)
 				underline = TRUE;
 			} else {
 				decoded = g_string_append(decoded, "</U>");
-				underline = TRUE;
+				underline = FALSE;
 			}
 			break;
 		case '\007':
