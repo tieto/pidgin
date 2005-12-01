@@ -57,10 +57,10 @@
  *
  * @return The number of seconds the user has been idle.
  */
+#ifdef USE_SCREENSAVER
 static time_t
 gaim_gtk_get_time_idle()
 {
-#ifdef USE_SCREENSAVER
 # ifndef _WIN32
 	/* Query xscreensaver */
 	static XScreenSaverInfo *mit_info = NULL;
@@ -77,12 +77,16 @@ gaim_gtk_get_time_idle()
 	/* Query windows */
 	return (GetTickCount() - wgaim_get_lastactive()) / 1000;
 # endif /* _WIN32 */
-#endif /* USE_SCREENSAVER */
 }
+#endif /* USE_SCREENSAVER */
 
 static GaimIdleUiOps ui_ops =
 {
+#ifdef USE_SCREENSAVER
 	gaim_gtk_get_time_idle
+#else
+	NULL
+#endif /* USE_SCREENSAVER */
 };
 
 GaimIdleUiOps *
