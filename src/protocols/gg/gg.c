@@ -1038,6 +1038,16 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 				(GaimNotifyCloseCallback)ggp_sr_close_cb,
 				gaim_connection_get_account(gc));
 
+		if (h == NULL) {
+			gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
+					 "Unable to display the search results.\n");
+			gaim_notify_error(gc, NULL,
+					  _("Unable to display the search results."),
+					  NULL);
+			ggp_sr_close_cb(gaim_connection_get_account(gc));
+			return;
+		}
+
 		info->searchresults_window = h;
 	} else {
 		gaim_notify_searchresults_new_rows(gc, results,
