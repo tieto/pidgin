@@ -559,27 +559,9 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 		buffy = gaim_str_sub_away_formatters(away_msg, alias);
 		serv_send_im(gc, name, buffy, GAIM_MESSAGE_AUTO_RESP);
 
-#if 0
-		if (!cnv && awayqueue &&
-			gaim_prefs_get_bool("/gaim/gtk/away/queue_messages")) {
-
-			struct queued_message *qm;
-
-			qm = g_new0(struct queued_message, 1);
-			g_snprintf(qm->name, sizeof(qm->name), "%s", name);
-			qm->message = g_strdup(buffy);
-			qm->account = gc->account;
-			qm->tm = mtime;
-			qm->flags = GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP;
-			message_queue = g_slist_append(message_queue, qm);
-		}
-		else if (cnv != NULL)
-#endif
-		{
-			gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, buffy,
-							   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
-							   mtime);
-		}
+		gaim_conv_im_write(GAIM_CONV_IM(cnv), NULL, buffy,
+						   GAIM_MESSAGE_SEND | GAIM_MESSAGE_AUTO_RESP,
+						   mtime);
 
 		g_free(buffy);
 	}

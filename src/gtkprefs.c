@@ -1947,5 +1947,7 @@ void gaim_gtk_prefs_update_old() {
 	gaim_prefs_remove("/gaim/gtk/sound/signon");
 	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
 	gaim_prefs_remove("/gaim/gtk/away/queue_messages");
+	gaim_prefs_remove("/gaim/gtk/away");
 	gaim_prefs_remove("/plugins/gtk/docklet/queue_messages");
+	gaim_prefs_remove("/plugins/gtk/docklet");
 }
