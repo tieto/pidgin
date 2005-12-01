@@ -42,10 +42,15 @@ typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
 
 struct _GaimAccountUiOps
 {
+	/* A buddy we already have added us to their buddy list. */
 	void (*notify_added)(GaimAccount *account, const char *remote_user,
-						 const char *id, const char *alias,
-						 const char *message);
+	                     const char *id, const char *alias,
+	                     const char *message);
 	void (*status_changed)(GaimAccount *account, GaimStatus *status);
+	/* Someone we don't have on our list added us. Will prompt to add them. */
+	void (*request_add)(GaimAccount *account, const char *remote_user,
+	                    const char *id, const char *alis,
+	                    const char *message);
 };
 
 struct _GaimAccount
@@ -134,8 +139,8 @@ void gaim_account_disconnect(GaimAccount *account);
  * Notifies the user that the account was added to a remote user's
  * buddy list.
  *
- * This will present a dialog so that the local user can add the buddy,
- * if not already added.
+ * This will present a dialog informing the user that he was added to the
+ * remote user's buddy list.
  *
  * @param account The account that was added.
  * @param remote_user The name of the user that added this account.
@@ -144,9 +149,27 @@ void gaim_account_disconnect(GaimAccount *account);
  * @param message     The optional message sent from the user adding you.
  */
 void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
-							   const char *id, const char *alias,
-							   const char *message);
+                               const char *id, const char *alias,
+                               const char *message);
 
+/**
+ * Notifies the user that the account was addded to a remote user's buddy
+ * list and asks ther user if they want to add the remote user to their buddy
+ * list.
+ *
+ * This will present a dialog informing the local user that the remote user
+ * added them to the remote user's buddy list and will ask if they want to add
+ * the remote user to the buddy list.
+ *
+ * @param account     The account that was added.
+ * @param remote_user The name of the user that added this account.
+ * @param id          The optional ID of the local account. Rarely used.
+ * @param alias       The optional alias of the user.
+ * @param message     The optional message sent from the user adding you.
+ */
+void gaim_account_request_add(GaimAccount *account, const char *remote_user,
+                              const char *id, const char *alias,
+                              const char *message);
 /**
  * Requests information from the user to change the account's password.
  *

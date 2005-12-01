@@ -171,6 +171,7 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 }
 
 struct _jabber_add_permit {
+	JabberStream *js;
 	GaimConnection *gc;
 	char *who;
 };
@@ -178,11 +179,31 @@ struct _jabber_add_permit {
 static void authorize_add_cb(struct _jabber_add_permit *jap)
 {
 	if(g_list_find(gaim_connections_get_all(), jap->gc)) {
+		GaimBuddy *buddy = NULL;
+
 		jabber_presence_subscription_set(jap->gc->proto_data, jap->who,
 				"subscribed");
 
-		if(!gaim_find_buddy(jap->gc->account, jap->who))
-			gaim_account_notify_added(jap->gc->account, NULL, jap->who, NULL, NULL);
+		buddy = gaim_find_buddy(jap->gc->account, jap->who);
+
+		if (buddy) {
+			JabberBuddy *jb = NULL;
+
+			jb = jabber_buddy_find(jap->js, jap->who, TRUE);
+
+			if ((jb->subscription & JABBER_SUB_TO) == 0) {
+				gaim_account_request_add(jap->gc->account,
+				                         jap->who, NULL,
+				                         NULL, NULL);
+			} else {
+				gaim_account_notify_added(jap->gc->account,
+				                          jap->who, NULL,
+				                          NULL, NULL);
+			}
+		} else {
+			gaim_account_request_add(jap->gc->account, jap->who,
+			                         NULL, NULL, NULL);
+		}
 	}
 
 	g_free(jap->who);
@@ -291,6 +312,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							  from, gaim_account_get_username(js->gc->account));
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
+		jap->js = js;
 
 		gaim_request_action(js->gc, NULL, msg, NULL, GAIM_DEFAULT_ACTION_NONE,
 				jap, 2,
@@ -301,6 +323,15 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
 		/* we've been allowed to see their presence, but we don't care */
+		jabber_id_free(jid);
+		return;
+	} else if(type && !strcmp(type, "unsubscribe")) {
+		/* XXX I'm not sure this is the right way to handle this, it
+		 * might be better to add "unsubscribe" to the presence status
+		 * if lower down, but I'm not sure. */
+		/* they are unsubscribing from our presence, we don't care */
+		/* Well, maybe just a little, we might want/need to start
+		 * acknowledging this (and the others) at some point. */
 		jabber_id_free(jid);
 		return;
 	} else {
@@ -493,16 +524,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 		g_free(room_jid);
 	} else {
-		if(state != JABBER_BUDDY_STATE_ERROR && !(jb->subscription & JABBER_SUB_TO || jb->subscription & JABBER_SUB_PENDING)) {
-			gaim_debug(GAIM_DEBUG_INFO, "jabber",
-					"got unexpected presence from %s, ignoring\n", from);
-			jabber_id_free(jid);
-			g_free(status);
-			if(avatar_hash)
-				g_free(avatar_hash);
-			return;
-		}
-
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 				jid->node ? "@" : "", jid->domain);
 		if((b = gaim_find_buddy(js->gc->account, buddy_name)) == NULL) {

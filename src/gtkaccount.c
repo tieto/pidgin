@@ -2527,52 +2527,70 @@ add_user_cb(GaimGtkAccountAddUserData *data)
 	free_add_user_data(data);
 }
 
+static char *
+make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
+          const char *id, const char *alias, const char *msg)
+{
+	return g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s."),
+	                       remote_user,
+	                       (alias != NULL ? " ("  : ""),
+	                       (alias != NULL ? alias : ""),
+	                       (alias != NULL ? ")"   : ""),
+	                       (id != NULL
+	                        ? id
+	                        : (gaim_connection_get_display_name(gc) != NULL
+	                           ? gaim_connection_get_display_name(gc)
+	                           : gaim_account_get_username(account))),
+	                       (msg != NULL ? ": " : "."),
+	                       (msg != NULL ? msg  : ""));
+}
+
 static void
 gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
-							   const char *id, const char *alias,
-							   const char *msg)
+                               const char *id, const char *alias,
+                               const char *msg)
 {
 	char *buffer;
 	GaimConnection *gc;
 	GaimGtkAccountAddUserData *data;
-	GaimBuddy *buddy;
 
 	gc = gaim_account_get_connection(account);
-
-	buddy = gaim_find_buddy(account, remote_user);
 
 	data = g_new0(GaimGtkAccountAddUserData, 1);
 	data->account  = account;
 	data->username = g_strdup(remote_user);
 	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
 
-	buffer = g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s%s"),
-		remote_user,
-		(alias != NULL ? " ("  : ""),
-		(alias != NULL ? alias : ""),
-		(alias != NULL ? ")"   : ""),
-		(id != NULL
-		 ? id
-		 : (gaim_connection_get_display_name(gc) != NULL
-			? gaim_connection_get_display_name(gc)
-			: gaim_account_get_username(account))),
-		(msg != NULL ? ": " : "."),
-		(msg != NULL ? msg  : ""),
-		(buddy != NULL
-		 ? ""
-		 : _("\n\nDo you wish to add him or her to your buddy list?")));
+	buffer = make_info(account, gc, remote_user, id, alias, msg);
 
-	if (buddy != NULL)
-	{
-		gaim_notify_info(NULL, NULL, buffer, NULL);
-	}
-	else
-	{
-		gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
-							buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
-							_("Add"),    G_CALLBACK(add_user_cb),
-							_("Cancel"), G_CALLBACK(free_add_user_data));
-	}
+	gaim_notify_info(NULL, NULL, buffer, NULL);
+
+	g_free(buffer);
+}
+
+
+static void
+gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
+                              const char *id, const char *alias,
+                              const char *msg)
+{
+	char *buffer;
+	GaimConnection *gc;
+	GaimGtkAccountAddUserData *data;
+
+	gc = gaim_account_get_connection(account);
+
+	data = g_new0(GaimGtkAccountAddUserData, 1);
+	data->account  = account;
+	data->username = g_strdup(remote_user);
+	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
+
+	buffer = make_info(account, gc, remote_user, id, alias, msg);
+
+	gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
+	                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
+	                    _("Add"),    G_CALLBACK(add_user_cb),
+	                    _("Cancel"), G_CALLBACK(free_add_user_data));
 
 	g_free(buffer);
 }
@@ -2580,7 +2598,8 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 static GaimAccountUiOps ui_ops =
 {
 	gaim_gtk_accounts_notify_added,
-	NULL
+	NULL,
+	gaim_gtk_accounts_request_add
 };
 
 GaimAccountUiOps *

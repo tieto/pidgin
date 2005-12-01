@@ -54,7 +54,6 @@ static void remove_gaim_buddies(JabberStream *js, const char *jid)
 static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
-	GaimPresence *presence = NULL;
 	GSList *buddies, *g2, *l;
 
 	buddies = gaim_find_buddies(js->gc->account, jid);
@@ -66,10 +65,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 			g2 = g_slist_append(g2, g_strdup(_("Buddies")));
 		else
 			return;
-	}
-
-	if(buddies) {
-		presence = gaim_buddy_get_presence((GaimBuddy*)buddies->data);
 	}
 
 	while(buddies) {
@@ -101,10 +96,6 @@ static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
 			g = gaim_group_new(g2->data);
 			gaim_blist_add_group(g, NULL);
 		}
-
-		/* XXX: this hack may need to change */
-		/* Is this change better? */
-		b->presence = presence;
 
 		gaim_blist_add_buddy(b, NULL, g, NULL);
 		gaim_blist_alias_buddy(b, alias);
@@ -162,7 +153,21 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			continue;
 
 		if(subscription) {
-			if(!strcmp(subscription, "to"))
+			gint me = -1;
+			char *jid_norm;
+			const char *username;
+
+			jid_norm = g_strdup(jabber_normalize(js->gc->account, jid));
+			username = gaim_account_get_username(js->gc->account);
+			me = g_utf8_collate(jid_norm,
+			                    jabber_normalize(js->gc->account,
+			                                     username));
+
+			if(me == 0)
+				jb->subscription = JABBER_SUB_BOTH;
+			else if(!strcmp(subscription, "none"))
+				jb->subscription = JABBER_SUB_NONE;
+			else if(!strcmp(subscription, "to"))
 				jb->subscription = JABBER_SUB_TO;
 			else if(!strcmp(subscription, "from"))
 				jb->subscription = JABBER_SUB_FROM;
@@ -173,6 +178,14 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			/* XXX: if subscription is now "from" or "none" we need to
 			 * fake a signoff, since we won't get any presence from them
 			 * anymore */
+			/* YYY: I was going to use this, but I'm not sure it's necessary
+			 * anymore, but it's here in case it is. */
+			/*
+			if ((jb->subscription & JABBER_SUB_FROM) ||
+					(jb->subscription & JABBER_SUB_NONE)) {
+				gaim_prpl_got_user_status(js->gc->account, jid, "offline", NULL);
+			}
+			*/
 		}
 
 		if(ask && !strcmp(ask, "subscribe"))
