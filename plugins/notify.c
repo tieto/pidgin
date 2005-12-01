@@ -313,13 +313,13 @@ attach_signals(GaimConversation *conv)
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_click")) {
 		/* TODO similarly should really find a way to allow for clicking in other
 		 * places of the window */
-		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "button-press-event",
-		                               G_CALLBACK(unnotify_cb), conv);
-		imhtml_ids = g_slist_append(imhtml_ids, GUINT_TO_POINTER(id));
-
 		id = g_signal_connect(G_OBJECT(gtkconv->entry), "button-press-event",
 		                      G_CALLBACK(unnotify_cb), conv);
 		entry_ids = g_slist_append(entry_ids, GUINT_TO_POINTER(id));
+
+		id = g_signal_connect(G_OBJECT(gtkconv->imhtml), "button-press-event",
+		                      G_CALLBACK(unnotify_cb), conv);
+		imhtml_ids = g_slist_append(imhtml_ids, GUINT_TO_POINTER(id));
 	}
 
 	if (gaim_prefs_get_bool("/plugins/gtk/X11/notify/notify_type")) {
@@ -408,10 +408,8 @@ deleting_conv(GaimConversation *conv)
 
 	gaimwin = GAIM_GTK_CONVERSATION(conv)->win;
 
-
 	handle_urgent(gaimwin, FALSE);
 	gaim_conversation_set_data(conv, "notify-message-count", GINT_TO_POINTER(0));
-
 
 	return;
 
@@ -517,6 +515,7 @@ handle_urgent(GaimGtkWindow *win, gboolean add)
 	                    GDK_WINDOW_XWINDOW(win->window->window));
 	if(!hints)
 		hints = XAllocWMHints();
+
 	if (add)
 		hints->flags |= XUrgencyHint;
 	else

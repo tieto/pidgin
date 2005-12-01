@@ -49,7 +49,7 @@ struct _GaimAccountUiOps
 	void (*status_changed)(GaimAccount *account, GaimStatus *status);
 	/* Someone we don't have on our list added us. Will prompt to add them. */
 	void (*request_add)(GaimAccount *account, const char *remote_user,
-	                    const char *id, const char *alis,
+	                    const char *id, const char *alias,
 	                    const char *message);
 };
 
@@ -142,7 +142,7 @@ void gaim_account_disconnect(GaimAccount *account);
  * This will present a dialog informing the user that he was added to the
  * remote user's buddy list.
  *
- * @param account The account that was added.
+ * @param account     The account that was added.
  * @param remote_user The name of the user that added this account.
  * @param id          The optional ID of the local account. Rarely used.
  * @param alias       The optional alias of the user.

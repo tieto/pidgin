@@ -841,9 +841,9 @@ GaimBlistNodeFlags gaim_blist_node_get_flags(GaimBlistNode *node);
 
 /**
  * Retrieves the extended menu items for a buddy list node.
- * @param n	The blist node for which to obtain the extended menu items.
- * @return	list of GaimBlistNodeAction items, as harvested by the
- *		blist-node-extended-menu signal.
+ * @param n The blist node for which to obtain the extended menu items.
+ * @return  A list of GaimBlistNodeAction items, as harvested by the
+ *          blist-node-extended-menu signal.
  */
 GList *gaim_blist_node_get_extended_menu(GaimBlistNode *n);
 

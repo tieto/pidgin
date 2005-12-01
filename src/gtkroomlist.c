@@ -629,7 +629,7 @@ static gboolean gaim_gtk_progress_bar_pulse(gpointer data)
 
 static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 {
-	GaimGtkRoomlist *rl= list->ui_data;
+	GaimGtkRoomlist *rl = list->ui_data;
 	GtkTreeRowReference *rr, *parentrr = NULL;
 	GtkTreePath *path;
 	GtkTreeIter iter, parent, child;

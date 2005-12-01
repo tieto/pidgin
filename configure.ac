@@ -312,7 +312,7 @@ AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudio
 AC_ARG_ENABLE(mono,    [  --disable-mono          compile without Mono runtime support],,enable_mono=yes)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
-AC_ARG_ENABLE(tcl,     [  --disable-tcl	          compile without Tcl scripting],,enable_tcl=yes)
+AC_ARG_ENABLE(tcl,     [  --disable-tcl           compile without Tcl scripting],,enable_tcl=yes)
 AC_ARG_WITH(tclconfig, [  --with-tclconfig=DIR    directory containing tclConfig.sh])
 AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support for Tk],,enable_tk=yes)
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])

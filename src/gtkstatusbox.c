@@ -141,7 +141,7 @@ update_to_reflect_account_status(GtkGaimStatusBox *status_box, GaimAccount *acco
 	if (status_no != -1) {
 		gtk_widget_set_sensitive(GTK_WIDGET(status_box), FALSE);
 		gtk_combo_box_set_active(GTK_COMBO_BOX(status_box), status_no);
-		
+
 		message = gaim_status_get_attr_string(newstatus, "message");
 
 		if (!message || !*message)
@@ -187,7 +187,7 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 			                        statusbox, GAIM_CALLBACK(account_status_changed_cb));
 			statusbox->status_changed_signal = 0;
 		}
-		
+
 		if (statusbox->account)
 			statusbox->status_changed_signal = gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed",
 			                                                       statusbox, GAIM_CALLBACK(account_status_changed_cb),
@@ -397,7 +397,7 @@ gtk_gaim_status_box_regenerate(GtkGaimStatusBox *status_box)
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), NULL);
 	gtk_list_store_clear(status_box->dropdown_store);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
-	
+
 	account = GTK_GAIM_STATUS_BOX(status_box)->account;
 	if (account == NULL)
 	{
@@ -498,7 +498,7 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
-	
+
 	if (event->button != 1)
 		return FALSE;
 	gtk_combo_box_popdown(GTK_COMBO_BOX(box));
@@ -542,7 +542,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->cell_view = gtk_cell_view_new();
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
-	
+
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 	gtk_combo_box_set_model(GTK_COMBO_BOX(status_box), GTK_TREE_MODEL(status_box->dropdown_store));
@@ -583,7 +583,7 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->toolbar = gtk_imhtmltoolbar_new();
 	gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(status_box->toolbar), status_box->imhtml);
 	status_box->hsep = gtk_hseparator_new();
-	
+
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
 			 G_CALLBACK(button_pressed_cb), status_box);
@@ -607,9 +607,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 
 	gtk_box_pack_start(GTK_BOX(status_box->vbox), status_box->sw, TRUE, TRUE, 0);
 
-	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",	
+	g_signal_connect(G_OBJECT(status_box->imhtml), "scroll_event",
 					G_CALLBACK(scroll_event_cb), status_box->imhtml);
-
 
 #if GTK_CHECK_VERSION(2,6,0)
     gtk_combo_box_set_row_separator_func(GTK_COMBO_BOX(status_box), dropdown_store_row_separator_func, NULL, NULL);
@@ -658,14 +657,13 @@ gtk_gaim_status_box_size_request(GtkWidget *widget,
 	gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->vbox, &box_req);
 	if (box_req.height > 1)
 		requisition->height = requisition->height + box_req.height + 6;
-	
+
 	if (GTK_GAIM_STATUS_BOX(widget)->typing) {
 		gtk_widget_size_request(GTK_GAIM_STATUS_BOX(widget)->toolbar, &box_req);
 		requisition->height = requisition->height + box_req.height;
 	}
-	
-	requisition->width = 1;
 
+	requisition->width = 1;
 }
 
 static void
@@ -685,7 +683,6 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	box_alc.width -= 6;
 	box_alc.x += 3;
 
-
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->vbox, &box_alc);
 
 	parent_alc.height = MAX(1,req.height);
@@ -697,7 +694,6 @@ gtk_gaim_status_box_size_allocate(GtkWidget *widget,
 	gtk_widget_size_allocate((GTK_GAIM_STATUS_BOX(widget))->toggle_button, &parent_alc);
 	widget->allocation = *allocation;
 }
-
 
 static gboolean
 gtk_gaim_status_box_expose_event(GtkWidget *widget,

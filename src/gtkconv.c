@@ -2865,8 +2865,7 @@ generate_send_to_items(GaimGtkWindow *win)
 	if (win->menu.send_to != NULL)
 		gtk_widget_destroy(win->menu.send_to);
 
-
-	/* Build the Send As menu */
+	/* Build the Send To menu */
 	win->menu.send_to = gtk_menu_item_new_with_mnemonic(_("_Send To"));
 	gtk_widget_show(win->menu.send_to);
 

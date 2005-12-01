@@ -2531,7 +2531,7 @@ static char *
 make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
           const char *id, const char *alias, const char *msg)
 {
-	return g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s."),
+	return g_strdup_printf(_("%s%s%s%s has made %s his or her buddy%s%s"),
 	                       remote_user,
 	                       (alias != NULL ? " ("  : ""),
 	                       (alias != NULL ? alias : ""),
@@ -2567,7 +2567,6 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 
 	g_free(buffer);
 }
-
 
 static void
 gaim_gtk_accounts_request_add(GaimAccount *account, const char *remote_user,
