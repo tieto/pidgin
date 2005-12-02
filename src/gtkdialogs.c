@@ -541,6 +541,8 @@ gaim_gtkdialogs_im_with_user(GaimAccount *account, const char *username)
 
 	if (conv == NULL)
 		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
+
+	gaim_gtkconv_present_conversation(conv);
 }
 
 static gboolean
