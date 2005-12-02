@@ -16,3 +16,4 @@ void (*conversation_dragging)(GaimGtkWindow *source, GaimGtkWindow *destination)
   @param destination The window where the conversation will be moved to.
  @endsignaldef
 */
+// vim: syntax=c tw=75 et

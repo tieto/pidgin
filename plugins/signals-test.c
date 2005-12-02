@@ -32,6 +32,7 @@
 #include "signals.h"
 #include "version.h"
 #include "status.h"
+#include "sound.h"
 
 /**************************************************************************
  * Account subsystem signal callbacks
@@ -548,18 +549,30 @@ ft_send_complete_cb(GaimXfer *xfer, gpointer data) {
 }
 
 /**************************************************************************
+ * Sound signal callbacks
+ **************************************************************************/
+static int
+sound_playing_event_cb(GaimSoundEventID event, const GaimAccount *account) {
+	gaim_debug_misc("signals test", "sound playing event: %d for account: %s\n",
+	                event, gaim_account_get_username(account));
+
+	return 0;
+}
+
+/**************************************************************************
  * Plugin stuff
  **************************************************************************/
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	void *core_handle = gaim_get_core();
-	void *blist_handle = gaim_blist_get_handle();
-	void *conn_handle = gaim_connections_get_handle();
-	void *conv_handle = gaim_conversations_get_handle();
+	void *core_handle     = gaim_get_core();
+	void *blist_handle    = gaim_blist_get_handle();
+	void *conn_handle     = gaim_connections_get_handle();
+	void *conv_handle     = gaim_conversations_get_handle();
 	void *accounts_handle = gaim_accounts_get_handle();
-	void *ciphers_handle = gaim_ciphers_get_handle();
-	void *ft_handle = gaim_xfers_get_handle();
+	void *ciphers_handle  = gaim_ciphers_get_handle();
+	void *ft_handle       = gaim_xfers_get_handle();
+	void *sound_handle    = gaim_sounds_get_handle();
 
 	/* Accounts subsystem signals */
 	gaim_signal_connect(accounts_handle, "account-connecting",
@@ -679,7 +692,7 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(core_handle, "quitting",
 						plugin, GAIM_CALLBACK(quitting_cb), NULL);
 
-	/* file transfer signals */
+	/* File transfer signals */
 	gaim_signal_connect(ft_handle, "file-recv-accept",
 						plugin, GAIM_CALLBACK(ft_recv_accept_cb), NULL);
 	gaim_signal_connect(ft_handle, "file-recv-start",
@@ -696,6 +709,10 @@ plugin_load(GaimPlugin *plugin)
 						plugin, GAIM_CALLBACK(ft_send_cancel_cb), NULL);
 	gaim_signal_connect(ft_handle, "file-send-complete",
 						plugin, GAIM_CALLBACK(ft_send_complete_cb), NULL);
+
+	/* Sound signals */
+	gaim_signal_connect(sound_handle, "playing-sound-event", plugin,
+	                    GAIM_CALLBACK(sound_playing_event_cb), NULL);
 
 	return TRUE;
 }

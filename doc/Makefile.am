@@ -22,5 +22,6 @@ EXTRA_DIST = \
 	notify-signals.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \
+	sound-signals.dox \
 	the_penguin.txt \
 	xfer-signals.dox

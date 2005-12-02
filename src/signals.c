@@ -931,3 +931,17 @@ gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER(
 	if (return_val != NULL)
 		*return_val = GINT_TO_POINTER(ret_val);
 }
+
+void
+gaim_marshal_BOOLEAN__INT_POINTER(GaimCallback cb, va_list args, void *data,
+                                  void **return_val)
+{
+	gboolean ret_val;
+	gint arg1 = va_arg(args, gint);
+	void *arg2 = va_arg(args, void *);
+
+	ret_val = ((gboolean (*)(gint, void *, void *))cb)(arg1, arg2, data);
+
+	if (return_val != NULL)
+		*return_val = GINT_TO_POINTER(ret_val);
+}

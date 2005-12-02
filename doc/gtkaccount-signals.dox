@@ -15,3 +15,4 @@ void (*account-modified)(GaimAccount *account);
   @param account The account that has been modified.
  @endsignaldef
 */
+// vim: syntax=c tw=75 et

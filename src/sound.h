@@ -117,6 +117,13 @@ void gaim_sound_init(void);
  */
 void gaim_sound_uninit(void);
 
+/**
+ * Returns the sound subsystem handle.
+ *
+ * @return The sound subsystem handle.
+ */
+void *gaim_sounds_get_handle(void);
+
 /*@}*/
 
 #ifdef __cplusplus

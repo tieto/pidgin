@@ -49,15 +49,27 @@ gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
 {
 	GaimStatus *status;
 
-	if ((account != NULL) && (!gaim_prefs_get_bool("/core/sound/while_away")))
+	if ((account != NULL) &&
+	    (!gaim_prefs_get_bool("/core/sound/while_away")))
 	{
 		status = gaim_account_get_active_status(account);
-		if (gaim_status_is_online(status) && !gaim_status_is_available(status))
+		if (gaim_status_is_online(status) &&
+		    !gaim_status_is_available(status))
 			return;
 	}
 
-	if(sound_ui_ops && sound_ui_ops->play_event)
-		sound_ui_ops->play_event(event);
+	if(sound_ui_ops && sound_ui_ops->play_event) {
+		int plugin_return;
+
+		plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
+			gaim_sounds_get_handle(), "playing-sound-event",
+			event, account));
+
+		if (plugin_return)
+			return;
+		else
+			sound_ui_ops->play_event(event);
+	}
 }
 
 void
@@ -81,6 +93,18 @@ gaim_sound_get_ui_ops(void)
 void
 gaim_sound_init()
 {
+	void *handle = gaim_sounds_get_handle();
+
+	/**********************************************************************
+	 * Register signals
+	**********************************************************************/
+
+	gaim_signal_register(handle, "playing-sound-event",
+	                     gaim_marshal_BOOLEAN__INT_POINTER,
+	                     gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
+	                     gaim_value_new(GAIM_TYPE_INT),
+	                     gaim_value_new(GAIM_TYPE_POINTER));
+
 	gaim_prefs_add_none("/core/sound");
 	gaim_prefs_add_bool("/core/sound/while_away", FALSE);
 
@@ -91,4 +115,14 @@ gaim_sound_uninit()
 {
 	if(sound_ui_ops && sound_ui_ops->uninit)
 		sound_ui_ops->uninit();
+
+	gaim_signals_unregister_by_instance(gaim_sounds_get_handle());
+}
+
+void *
+gaim_sounds_get_handle()
+{
+	static int handle;
+
+	return &handle;
 }
