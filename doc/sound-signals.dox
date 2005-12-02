@@ -1,0 +1,21 @@
+/** @page sound-signals Sound Signals
+
+ @signals
+  @signal playing-sound-event
+ @endsignals
+
+ <hr>
+
+ @signaldef playing-sound-event
+  @signalproto
+gboolean (*playing_sound_event)(GaimSoundEventID event, GaimAccount *account);
+  @endsignalproto
+  @signaldesc
+   Emitted when gaim is going to play a sound event. This can be used to cancel playing sound by returning TRUE.
+  @param event   The event this sound represents.
+  @param account The account the sound is being played for.
+  @return @c TRUE if the sound should not be played, or @c FALSE otherwise.
+ @endsignaldef
+
+ */
+// vim: syntax=c tw=75 et
