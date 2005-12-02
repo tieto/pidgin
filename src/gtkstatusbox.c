@@ -496,6 +496,7 @@ current_status_pref_changed_cb(const char *name, GaimPrefType type,
 		update_to_reflect_current_status(box);
 }
 
+#if 0
 static gboolean button_released_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *box)
 {
 
@@ -516,6 +517,14 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, GtkG
 	// Disabled until button_released_cb works
 	// gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
 	return TRUE;
+}
+#endif
+
+static void
+toggled_cb(GtkWidget *widget, GtkGaimStatusBox *box)
+{
+	gtk_combo_box_popup(GTK_COMBO_BOX(box));
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), FALSE);
 }
 
 static void
@@ -585,10 +594,14 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	status_box->hsep = gtk_hseparator_new();
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
+#if 0
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-press-event",
 			 G_CALLBACK(button_pressed_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "button-release-event",
 			 G_CALLBACK(button_released_cb), status_box);
+#endif
+	g_signal_connect(G_OBJECT(status_box->toggle_button), "toggled",
+	                 G_CALLBACK(toggled_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "key_press_event",
 			 G_CALLBACK(imhtml_remove_focus), status_box);
