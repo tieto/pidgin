@@ -5445,7 +5445,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 				gtk_widget_show(menuitem);
 			}
 		} else {
-			menuitem = gtk_menu_item_new_with_label(_("No action available"));
+			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_set_sensitive(menuitem, FALSE);
 			gtk_widget_show(menuitem);
