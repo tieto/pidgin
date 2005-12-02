@@ -111,7 +111,6 @@ static void gaim_gtk_connection_connected(GaimConnection *gc)
 	accountReconnecting = g_slist_remove(accountReconnecting, account);
 	if (accountReconnecting == NULL)
 		gtk_gaim_status_box_set_error(GTK_GAIM_STATUS_BOX(gtkblist->statusbox), NULL);
-	gaim_gtk_blist_update_protocol_actions();
 }
 
 static void gaim_gtk_connection_disconnected(GaimConnection *gc)
@@ -123,7 +122,6 @@ static void gaim_gtk_connection_disconnected(GaimConnection *gc)
 					   (gaim_connections_get_connecting() != NULL));
 	gtk_gaim_status_box_set_connecting(find_status_box_for_account(gc->account),
 									FALSE);
-	gaim_gtk_blist_update_protocol_actions();
 
 	if (gaim_connections_get_all() != NULL)
 		return;

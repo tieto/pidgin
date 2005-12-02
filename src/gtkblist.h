@@ -256,9 +256,9 @@ void gaim_gtk_blist_sort_method_set(const char *id);
 void gaim_gtk_blist_setup_sort_methods();
 
 /**
- * Updates the protocol actions menu on the GTK+ buddy list window.
+ * Updates the accounts menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_protocol_actions();
+void gaim_gtk_blist_update_accounts_menu();
 
 /**
  * Updates the plugin actions menu on the GTK+ buddy list window.
