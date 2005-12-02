@@ -476,6 +476,10 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-im-msg", gc->account,
 					 name, message, cnv, flags);
 
+	/* search for conversation again in case it was created by received-im-msg handler */
+	if (cnv == NULL)
+		cnv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
+
 	/* Make sure URLs are clickable */
 	buffy = gaim_markup_linkify(message);
 	g_free(message);
