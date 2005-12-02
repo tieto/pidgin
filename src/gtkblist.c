@@ -5360,7 +5360,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 		}
 	}
 
-	menuitem = gtk_menu_item_new_with_label(_("Add Account"));
+	menuitem = gtk_menu_item_new_with_label(_("Add Account..."));
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 	                 G_CALLBACK(add_account_cb), NULL);
 	gtk_menu_shell_insert(GTK_MENU_SHELL(accountmenu), menuitem, count++);
