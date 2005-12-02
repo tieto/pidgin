@@ -329,7 +329,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
-		gtk_window_set_title(GTK_WINDOW(dialog), gaim_plugin_get_name(plug));
+		gtk_window_set_title(GTK_WINDOW(dialog), _(gaim_plugin_get_name(plug)));
 		gtk_widget_show_all(dialog);
 		g_value_unset(&val);
 		break;
