@@ -2235,6 +2235,7 @@ void gaim_blist_remove_account(GaimAccount *account)
 	GaimChat *chat;
 	GaimContact *contact;
 	GaimGroup *group;
+	GList *list = NULL, *iter = NULL;
 
 	g_return_if_fail(gaimbuddylist != NULL);
 
@@ -2273,7 +2274,8 @@ void gaim_blist_remove_account(GaimAccount *account)
 						if (contact->currentsize == 0)
 							group->currentsize--;
 
-						gaim_presence_set_status_active(presence, "offline", TRUE);
+						if (!g_list_find(list, presence))
+							list = g_list_prepend(list, presence);
 
 						if (ops && ops->remove)
 							ops->remove(gaimbuddylist, bnode);
@@ -2297,6 +2299,12 @@ void gaim_blist_remove_account(GaimAccount *account)
 			}
 		}
 	}
+
+	for (iter = list; iter; iter = iter->next)
+	{
+		gaim_presence_set_status_active(iter->data, "offline", TRUE);
+	}
+	g_list_free(list);
 }
 
 gboolean gaim_group_on_account(GaimGroup *g, GaimAccount *account)
