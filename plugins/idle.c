@@ -185,16 +185,16 @@ actions(GaimPlugin *plugin, gpointer context)
 	GList *l = NULL;
 	GaimPluginAction *act = NULL;
 
-	act = gaim_plugin_action_new(_("Set account idle time"),
+	act = gaim_plugin_action_new(_("Set Account Idle Time"),
 			idle_action);
 	l = g_list_append(l, act);
 
-	act = gaim_plugin_action_new(_("Unset account idle time"),
+	act = gaim_plugin_action_new(_("Unset Account Idle Time"),
 			unidle_action);
 	l = g_list_append(l, act);
 
 	act = gaim_plugin_action_new(
-			_("Unset idle time for all idled accounts"), unidle_all_action);
+			_("Unset Idle Time for All Idled Accounts"), unidle_all_action);
 	l = g_list_append(l, act);
 
 	return l;
