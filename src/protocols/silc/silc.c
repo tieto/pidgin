@@ -1021,6 +1021,7 @@ typedef struct {
 	char *message;
 	SilcUInt32 message_len;
 	SilcMessageFlags flags;
+	GaimMessageFlags gflags;
 } *SilcGaimIM;
 
 static void
@@ -1066,27 +1067,30 @@ silcgaim_send_im_resolved(SilcClient client,
 
 #ifdef HAVE_SILCMIME_H
 	/* Check for images */
-	list = silcgaim_image_message(im->message, (SilcUInt32 *)&im->flags);
-	if (list) {
-		/* Send one or more MIME message.  If more than one, they
-		   are MIME fragments due to over large message */
-		SilcBuffer buf;
+	if (im->gflags & GAIM_MESSAGE_IMAGES) {
+		list = silcgaim_image_message(im->message, (SilcUInt32 *)&im->flags);
+		if (list) {
+			/* Send one or more MIME message.  If more than one, they
+			   are MIME fragments due to over large message */
+			SilcBuffer buf;
 
-		silc_dlist_start(list);
-		while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
-			silc_client_send_private_message(client, conn, 
-							 client_entry, im->flags,
-							 buf->data, buf->len,
-							 TRUE);
-		silc_mime_partial_free(list);
-	} else
-#endif
-	{
-		/* Send the message */
-		silc_client_send_private_message(client, conn, client_entry, im->flags,
-						 (unsigned char *)im->message, im->message_len, TRUE);
+			silc_dlist_start(list);
+			while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
+				silc_client_send_private_message(client, conn, 
+								 client_entry, im->flags,
+								 buf->data, buf->len,
+								 TRUE);
+			silc_mime_partial_free(list);
+			gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
+				   im->message, 0, time(NULL));
+			goto out;
+		}
 	}
+#endif
 
+	/* Send the message */
+	silc_client_send_private_message(client, conn, client_entry, im->flags,
+					 (unsigned char *)im->message, im->message_len, TRUE);
 	gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
 			   im->message, 0, time(NULL));
 	goto out;
@@ -1164,6 +1168,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 		im->message = g_strdup(message);
 		im->message_len = strlen(im->message);
 		im->flags = mflags;
+		im->gflags = flags;
 		silc_client_get_clients(client, conn, nickname, NULL,
 					silcgaim_send_im_resolved, im);
 		silc_free(nickname);
@@ -1173,29 +1178,34 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 
 #ifdef HAVE_SILCMIME_H
 	/* Check for images */
-	list = silcgaim_image_message(message, &mflags);
-	if (list) {
-		/* Send one or more MIME message.  If more than one, they
-		   are MIME fragments due to over large message */
-		SilcBuffer buf;
+	if (flags & GAIM_MESSAGE_IMAGES) {
+		list = silcgaim_image_message(message, &mflags);
+		if (list) {
+			/* Send one or more MIME message.  If more than one, they
+			   are MIME fragments due to over large message */
+			SilcBuffer buf;
 
-		silc_dlist_start(list);
-		while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
-			ret =
-			 silc_client_send_private_message(client, conn, 
-							  clients[0], mflags,
-							  buf->data, buf->len,
-							  TRUE);
-		silc_mime_partial_free(list);
-	} else
-#endif
-	{
-		/* Send private message directly */
-		ret = silc_client_send_private_message(client, conn, clients[0],
-						       mflags,
-						       (unsigned char *)msg,
-						       strlen(msg), TRUE);
+			silc_dlist_start(list);
+			while ((buf = silc_dlist_get(list)) != SILC_LIST_END)
+				ret =
+			 	silc_client_send_private_message(client, conn, 
+								 clients[0], mflags,
+								 buf->data, buf->len,
+								 TRUE);
+			silc_mime_partial_free(list);
+			g_free(tmp);
+			silc_free(nickname);
+			silc_free(clients);
+			return ret;
+		}
 	}
+#endif
+
+	/* Send private message directly */
+	ret = silc_client_send_private_message(client, conn, clients[0],
+					       mflags,
+					       (unsigned char *)msg,
+					       strlen(msg), TRUE);
 
 	g_free(tmp);
 	silc_free(nickname);

@@ -107,6 +107,11 @@ version 2.0.0:
 	* Support for buddy icons
 	* Jabber User Directory searching
 
+	SILC Features:
+	* Whiteboard support (Pekka Riikonen)
+	* Sending/receiving images in IMs (Pekka Riikonen)
+	* Cipher and HMAC selection support (Pekka Riikonen)
+
 	Other Protocol Changes:
 	* Bonjour (Rendezvous) protocol support (Juanjo Molinero Horno, Google
 	  Summer of Code)
@@ -114,7 +119,6 @@ version 2.0.0:
 	  Code)
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
-	* SILC whiteboard support (Pekka Riikonen)
 
 	Other Noteworthy Changes:
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
