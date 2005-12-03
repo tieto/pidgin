@@ -3220,19 +3220,19 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 			convs = convs->next;
 		}
 		if(tooltip_text->len > 0) {
-		/* get rid of the last newline */
-		tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len -1);
-		img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
+			/* get rid of the last newline */
+			tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len -1);
+			img = gtk_image_new_from_stock(GAIM_STOCK_PENDING, GTK_ICON_SIZE_MENU);
 
-		gtkblist->menutrayicon = gtk_event_box_new();
-		gtk_container_add(GTK_CONTAINER(gtkblist->menutrayicon), img);
-		gtk_widget_show(img);
-		gtk_widget_show(gtkblist->menutrayicon);
-		g_signal_connect(G_OBJECT(gtkblist->menutrayicon), "button-press-event", G_CALLBACK(menutray_press_cb), NULL);
+			gtkblist->menutrayicon = gtk_event_box_new();
+			gtk_container_add(GTK_CONTAINER(gtkblist->menutrayicon), img);
+			gtk_widget_show(img);
+			gtk_widget_show(gtkblist->menutrayicon);
+			g_signal_connect(G_OBJECT(gtkblist->menutrayicon), "button-press-event", G_CALLBACK(menutray_press_cb), NULL);
 
-		gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, tooltip_text->str);
+			gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, tooltip_text->str);
 		}
-		g_string_free(tooltip_text, FALSE);
+		g_string_free(tooltip_text, TRUE);
 	}
 }
 
