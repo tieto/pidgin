@@ -13,6 +13,8 @@
 
 #include <ctype.h>
 
+#define USE_XOR_FOR_ICQ
+
 #ifdef USE_XOR_FOR_ICQ
 /**
  * Encode a password using old XOR method
