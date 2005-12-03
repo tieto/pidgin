@@ -2441,11 +2441,6 @@ toggle_debug(void)
  ***************************************************/
 static GtkItemFactoryEntry blist_menu[] =
 {
-	/* Accounts menu */
-	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>" },
-	{ "/Accounts/sep1", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Accounts/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
-
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", gaim_gtkdialogs_im, 0, "<StockItem>", GAIM_STOCK_IM },
@@ -2461,15 +2456,21 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/_Add Buddy..."), "<CTL>B", gaim_gtk_blist_add_buddy_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add C_hat..."), NULL, gaim_gtk_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, gaim_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
+	{ "/Buddies/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Buddies/_Quit"), "<CTL>Q", gaim_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT }, 
+
+
+	/* Accounts menu */
+	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>" },
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
-	{ N_("/Tools/A_ccounts"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 	{ N_("/Tools/Buddy _Pounces"), NULL, gaim_gtk_pounces_manager_show, 0, "<StockItem>", GAIM_STOCK_POUNCE },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", gaim_gtk_plugin_dialog_show, 0, "<StockItem>", GAIM_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
+	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
@@ -2479,7 +2480,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Help/_About"), NULL, gaim_gtkdialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
@@ -5344,26 +5344,20 @@ gaim_gtk_blist_update_accounts_menu(void)
 {
 	GtkWidget *menuitem = NULL, *submenu = NULL;
 	GList *l = NULL, *accounts = NULL;
-	gint count = 0;
 
 	if (accountmenu == NULL)
 		return;
 
 	/* Clear the old Accounts menu */
 	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = l->next) {
-		menuitem = l->data;
-
-		if (menuitem != gtk_item_factory_get_item(gtkblist->ift, N_("/Accounts/Quit")) &&
-		    menuitem != gtk_item_factory_get_item(gtkblist->ift, "/Accounts/sep1")) {
-			gtk_container_remove(GTK_CONTAINER(accountmenu),
-			                     GTK_WIDGET(menuitem));
-		}
+		gtk_container_remove(GTK_CONTAINER(accountmenu),
+		                     GTK_WIDGET(l->data));
 	}
 
 	menuitem = gtk_menu_item_new_with_label(_("Add Account..."));
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 	                 G_CALLBACK(add_account_cb), NULL);
-	gtk_menu_shell_insert(GTK_MENU_SHELL(accountmenu), menuitem, count++);
+	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 	gtk_widget_show(menuitem);
 
 	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
@@ -5371,6 +5365,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 		GtkWidget *image = NULL;
 		GaimConnection *gc = NULL;
 		GaimAccount *account = NULL;
+		GaimStatus *status = NULL;
 		GdkPixbuf *pixbuf = NULL, *scale = NULL;
 
 		account = accounts->data;
@@ -5379,7 +5374,8 @@ gaim_gtk_blist_update_accounts_menu(void)
 		                  gaim_account_get_protocol_name(account), ")", NULL);
 		menuitem = gtk_image_menu_item_new_with_label(buf);
 		g_free(buf);
-		pixbuf = gaim_gtk_create_prpl_icon(account);
+		status = gaim_account_get_active_status(account);
+		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status));
 		if (pixbuf) {
 			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 			                                GDK_INTERP_BILINEAR);
@@ -5392,7 +5388,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 			gtk_widget_show(image);
 			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 		}
-		gtk_menu_shell_insert(GTK_MENU_SHELL(accountmenu), menuitem, count ++);
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 		gtk_widget_show(menuitem);
 
 		submenu = gtk_menu_new();
@@ -5461,7 +5457,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 	}
 
 	menuitem = gtk_menu_item_new_with_label(_("Remove Account"));
-	gtk_menu_shell_insert(GTK_MENU_SHELL(accountmenu), menuitem, count++);
+	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 	gtk_widget_show(menuitem);
 
 	submenu = gtk_menu_new();
