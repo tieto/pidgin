@@ -275,16 +275,12 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 	g_slist_free(list);
 }
 
-void
-gaim_prpl_change_account_status(GaimAccount *account,
+static void
+do_prpl_change_account_status(GaimAccount *account,
 								GaimStatus *old_status, GaimStatus *new_status)
 {
 	GaimPlugin *prpl;
 	GaimPluginProtocolInfo *prpl_info;
-
-	g_return_if_fail(account    != NULL);
-	g_return_if_fail(old_status != NULL);
-	g_return_if_fail(new_status != NULL);
 
 	if (gaim_status_is_online(new_status) &&
 		gaim_account_is_disconnected(account))
@@ -318,9 +314,21 @@ gaim_prpl_change_account_status(GaimAccount *account,
 	if (prpl_info->set_status != NULL)
 	{
 		prpl_info->set_status(account, new_status);
-		gaim_signal_emit(gaim_accounts_get_handle(), "account-status-changed",
-						account, old_status, new_status);
 	}
+}
+
+void
+gaim_prpl_change_account_status(GaimAccount *account,
+								GaimStatus *old_status, GaimStatus *new_status)
+{
+	g_return_if_fail(account    != NULL);
+	g_return_if_fail(old_status != NULL);
+	g_return_if_fail(new_status != NULL);
+
+	do_prpl_change_account_status(account, old_status, new_status);
+
+	gaim_signal_emit(gaim_accounts_get_handle(), "account-status-changed",
+					account, old_status, new_status);
 }
 
 GList *
