@@ -756,8 +756,9 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 					} break;
 
 					case 0x0002: { /* An available message */
+						free(outinfo->avail);
+						free(outinfo->avail_encoding);
 						if (length2 >= 4) {
-							free(outinfo->avail);
 							outinfo->avail_len = aimbs_get16(bs);
 							outinfo->avail = aimbs_getstr(bs, outinfo->avail_len);
 							if (aimbs_get16(bs) == 0x0001) { /* We have an encoding */
@@ -767,8 +768,12 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 								/* No explicit encoding, client should use UTF-8 */
 								outinfo->avail_encoding = NULL;
 							}
-						} else
+						} else {
 							aim_bstream_advance(bs, length2);
+							outinfo->avail_len = 0;
+							outinfo->avail = g_strdup("");
+							outinfo->avail_encoding = NULL;
+						}
 					} break;
 
 					default: {
