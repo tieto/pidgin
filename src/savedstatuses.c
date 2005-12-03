@@ -178,7 +178,7 @@ status_to_xmlnode(GaimSavedStatus *status)
 		/*
 		 * Gaim 1.5.0 and earlier require a name to be set, so we
 		 * do this little hack to maintain backward compatability
-		 * in the status.xml file.  Eventually this should be used
+		 * in the status.xml file.  Eventually this should be removed
 		 * and we should determine if a status is transient by
 		 * whether the "name" attribute is set to something or if
 		 * it does not exist at all.

@@ -38,6 +38,8 @@
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
+#define TYPING_TIMEOUT 4000
+
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
@@ -464,7 +466,7 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBo
 		return FALSE;
 	gtk_gaim_status_box_pulse_typing(box);
 	g_source_remove(box->typing);
-	box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
+	box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, box);
 	return FALSE;
 }
 
@@ -1044,7 +1046,7 @@ static void gtk_gaim_status_box_changed(GtkComboBox *box)
 	{
 		gtk_widget_show_all(status_box->vbox);
 		if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box))) {
-			status_box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, status_box);
+			status_box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, status_box);
 		} else {
 			gtk_widget_hide(status_box->toolbar);
 			gtk_widget_hide(status_box->hsep);
@@ -1071,7 +1073,7 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 			gtk_gaim_status_box_pulse_typing(box);
 			g_source_remove(box->typing);
 		}
-		box->typing = g_timeout_add(3000, (GSourceFunc)remove_typing_cb, box);
+		box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, box);
 		gtk_widget_show(box->hsep);
 		gtk_widget_show(box->toolbar);
 	}
