@@ -3292,6 +3292,13 @@ void gaim_gtk_blist_update_columns()
 	}
 }
 
+static void
+show_buddy_icons_pref_cb(const char *name, GaimPrefType type,
+						 gpointer val, gpointer data)
+{
+	gaim_gtk_blist_update_columns();
+}
+
 enum {
 	DRAG_BUDDY,
 	DRAG_ROW,
@@ -3646,7 +3653,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 
 	/* things that affect what columns are displayed */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/blist/show_buddy_icons",
-			gaim_gtk_blist_update_columns, NULL);
+			show_buddy_icons_pref_cb, NULL);
 
 	/* menus */
 	gaim_prefs_connect_callback(handle, "/gaim/gtk/sound/mute",
