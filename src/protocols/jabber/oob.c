@@ -25,6 +25,7 @@
 
 #include "jabber.h"
 #include "iq.h"
+#include "oob.h"
 
 typedef struct _JabberOOBXfer {
 	char *address;
@@ -149,7 +150,7 @@ static void jabber_oob_xfer_recv_canceled(GaimXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
-static void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
+void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	JabberOOBXfer *jox;
 	GaimXfer *xfer;
 	char *filename;

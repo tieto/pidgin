@@ -23,6 +23,7 @@
  */
 
 #include "msn.h"
+#include "dialog.h"
 
 typedef struct
 {
@@ -69,7 +70,7 @@ msn_rem_cb(MsnAddRemData *data)
 	g_free(data);
 }
 
-static void
+void
 msn_show_sync_issue(MsnSession *session, const char *passport,
 					const char *group_name)
 {
