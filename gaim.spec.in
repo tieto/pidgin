@@ -14,6 +14,7 @@ URL:        http://gaim.sourceforge.net/
 Packager:   %{packager}
 Source:     %{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
+Obsoletes:  gaim-meanwhile
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
@@ -239,6 +240,9 @@ rm -rf %{buildroot}
 %{_datadir}/aclocal/gaim.m4
 
 %changelog
+* Sun Dec 04 2005 <siege@preoccupied.net>
+- Added obsoletes gaim-meanwhile
+
 * Sun Oct 30 2005 <stu@nosnilmot.com>
 - Add separate gaim-bonjour package if built with --with-howl
 - Add separate gaim-mono package if built with --with-mono
