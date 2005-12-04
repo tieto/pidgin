@@ -3525,7 +3525,7 @@ yahoogaim_register_commands(void)
 	gaim_cmd_register("buzz", "", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-yahoo", yahoogaim_cmd_buzz,
-	                  _("buzz: Buzz a contact to get their attention"), NULL);
+	                  _("buzz: Buzz a user to get their attention"), NULL);
 
 	gaim_cmd_register("doodle", "", GAIM_CMD_P_PRPL,
 			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,

@@ -92,7 +92,7 @@ msn_error_get_text(unsigned int type)
 			break;
 		case 231:
 			g_snprintf(msg, sizeof(msg),
-					   _("Tried to add a contact to a group "
+					   _("Tried to add a user to a group "
 						 "that doesn't exist"));
 			break;
 		case 280:

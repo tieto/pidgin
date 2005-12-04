@@ -1970,7 +1970,7 @@ init_plugin(GaimPlugin *plugin)
 	gaim_cmd_register("nudge", "", GAIM_CMD_P_PRPL,
 	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
 	                 "prpl-msn", msn_cmd_nudge,
-	                  _("nudge: nudge a contact to get their attention"), NULL);
+	                  _("nudge: nudge a user to get their attention"), NULL);
 
 	gaim_prefs_remove("/plugins/prpl/msn");
 }
