@@ -185,7 +185,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 		if (msnobj == NULL)
 		{
-			msnobj = msn_object_new(TRUE);
+			msnobj = msn_object_new();
 			msn_object_set_local(msnobj);
 			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
 			msn_object_set_location(msnobj, "TFR2C2.tmp");
