@@ -873,7 +873,7 @@ gaim_gtk_save_accels(gpointer data)
 }
 
 void
-gaim_gtk_load_accels(gpointer data)
+gaim_gtk_load_accels()
 {
 	char *filename = NULL;
 
