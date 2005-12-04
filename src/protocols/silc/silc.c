@@ -1214,7 +1214,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 
-GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
+static GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 	/* split this single menu building function back into the two
 	   original: one for buddies and one for chats */
 
