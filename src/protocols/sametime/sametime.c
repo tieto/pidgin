@@ -5797,6 +5797,7 @@ static void mw_plugin_init(GaimPlugin *plugin) {
   /* pretend to be Sametime Connect */
   opt = gaim_account_option_bool_new(_("Hide Client Identity"),
 				     MW_KEY_FAKE_IT, FALSE);
+  l = g_list_append(l, opt);
 
   mw_prpl_info.protocol_options = l;
   l = NULL;
