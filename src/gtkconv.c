@@ -4087,9 +4087,7 @@ received_im_msg_cb(GaimAccount *account, char *sender, char *message,
 
 	/* create hidden conv if hide_new pref is away and account is away */
 	if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away")==0
-			&& gaim_status_type_get_primitive(
-			gaim_status_get_type(
-			gaim_account_get_active_status(account))) == GAIM_STATUS_AWAY) {
+			&& !gaim_status_is_available(gaim_account_get_active_status(account))) {
 		ui_ops->create_conversation = gaim_gtkconv_new_hidden;
 		gaim_conversation_new(GAIM_CONV_TYPE_IM, account, sender);
 		ui_ops->create_conversation = gaim_gtkconv_new;
@@ -5711,10 +5709,7 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 	if(strcmp(gaim_prefs_get_string("/gaim/gtk/conversations/im/hide_new"), "away")!=0)
 		return;
 
-	if(gaim_status_type_get_primitive(gaim_status_get_type(oldstatus))!=GAIM_STATUS_AWAY)
-		return;
-
-	if(gaim_status_type_get_primitive(gaim_status_get_type(newstatus))==GAIM_STATUS_AWAY)
+	if(gaim_status_is_available(oldstatus) || !gaim_status_is_available(newstatus))
 		return;
 
 	for (l = hidden_convwin->gtkconvs; l != NULL; l = l->next) {
@@ -5722,9 +5717,9 @@ account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus,
 
 		conv = gtkconv->active_conv;
 
-		if(gaim_status_type_get_primitive(
-					gaim_status_get_type(gaim_account_get_active_status(
-							gaim_conversation_get_account(conv)))) == GAIM_STATUS_AWAY)
+		if(!gaim_status_is_available(
+					gaim_account_get_active_status(
+					gaim_conversation_get_account(conv))))
 			continue;
 
 		gaim_gtk_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
@@ -5755,9 +5750,9 @@ hide_new_pref_cb(const char *name, GaimPrefType type, gpointer value,
 
 		conv = gtkconv->active_conv;
 
-		if(when_away && gaim_status_type_get_primitive(
-					gaim_status_get_type(gaim_account_get_active_status(
-					gaim_conversation_get_account(conv)))) == GAIM_STATUS_AWAY)
+		if(when_away && !gaim_status_is_available(
+							gaim_account_get_active_status(
+							gaim_conversation_get_account(conv))))
 			continue;
 
 		gaim_gtk_conv_window_remove_gtkconv(hidden_convwin, gtkconv);
