@@ -650,7 +650,7 @@ gaim_conversation_autoset_title(GaimConversation *conv)
 
 	if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		if(account && ((b = gaim_find_buddy(account, name)) != NULL))
-			text = gaim_buddy_get_alias(b);
+			text = gaim_buddy_get_contact_alias(b);
 	} else if(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
 		if(account && ((chat = gaim_blist_find_chat(account, name)) != NULL))
 			text = chat->alias;
