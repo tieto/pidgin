@@ -92,7 +92,7 @@ void mw_debug_datav(const guchar *buf, gsize len,
   }
   pretty_print(str, buf, len);
 
-  g_debug(str->str);
+  g_debug("%s", str->str);
   g_string_free(str, TRUE);
 }
 
@@ -132,7 +132,7 @@ void mw_debug_opaque(struct mwOpaque *o, const char *txt, ...) {
 void mw_mailme_datav(const guchar *buf, gsize len,
 		     const char *info, va_list args) {
 
-#if MW_MAILME
+#if defined(MW_MAILME) && MW_MAILME
   GString *str;
   char *txt;
 

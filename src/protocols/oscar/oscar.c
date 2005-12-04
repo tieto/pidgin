@@ -6892,7 +6892,7 @@ static int gaim_ssi_parselist(aim_session_t *sess, aim_frame_t *fr, ...)
 	GaimGroup *g;
 	GaimBuddy *b;
 	struct aim_ssi_item *curitem;
-	int tmp;
+	fu32_t tmp;
 	va_list ap;
 	fu16_t fmtver, numitems;
 	struct aim_ssi_item *items;
@@ -8393,7 +8393,7 @@ get_plugin_pref_frame(GaimPlugin *plugin)
 
 	frame = gaim_plugin_pref_frame_new();
 
-#if USE_PRPL_PREFERENCES
+#ifdef USE_PRPL_PREFERENCES
 	ppref = gaim_plugin_pref_new_with_name_and_label("/plugins/prpl/oscar/recent_buddies", _("Use recent buddies group"));
 	gaim_plugin_pref_frame_add(frame, ppref);
 

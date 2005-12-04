@@ -150,7 +150,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	if (channel->mode) {
 		g_string_append_printf(s, _("<br><b>Channel Modes:</b> "));
 		silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
-		g_string_append_printf(s, tmp);
+		g_string_append(s, tmp);
 	}
 
 	if (channel->founder_key) {
