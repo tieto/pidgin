@@ -3449,6 +3449,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
 
 	gtkblist->vbox = gtk_vbox_new(FALSE, 0);
 	gtk_widget_show(gtkblist->vbox);
