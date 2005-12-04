@@ -178,6 +178,7 @@ version 2.0.0:
 	* gaim_account_request_add: Notifies the user that they were added to
 	                            someone's buddy list, and offers them the choice
 	                            of adding that person to their buddy list.
+	* gaim_blist_alias_contact()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

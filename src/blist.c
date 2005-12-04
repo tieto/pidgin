@@ -832,6 +832,40 @@ void gaim_blist_rename_buddy(GaimBuddy *buddy, const char *name)
 		ops->update(gaimbuddylist, (GaimBlistNode *)buddy);
 }
 
+void gaim_blist_alias_contact(GaimContact *contact, const char *alias)
+{
+	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;
+	GaimConversation *conv;
+	char *old_alias = contact->alias;
+	GaimBlistNode *bnode;
+
+	g_return_if_fail(contact != NULL);
+
+	if ((alias != NULL) && (*alias != '\0'))
+		contact->alias = g_strdup(alias);
+	else
+		contact->alias = NULL;
+
+	gaim_blist_schedule_save();
+
+	if (ops && ops->update)
+		ops->update(gaimbuddylist, (GaimBlistNode *)contact);
+
+	for(bnode = ((GaimBlistNode *)contact)->child; bnode != NULL; bnode = bnode->next)
+	{
+		GaimBuddy *buddy = (GaimBuddy *)bnode;
+
+		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, buddy->name,
+												   buddy->account);
+		if (conv)
+			gaim_conversation_autoset_title(conv);
+	}
+
+	gaim_signal_emit(gaim_blist_get_handle(), "blist-node-aliased",
+					 contact, old_alias);
+	g_free(old_alias);
+}
+
 void gaim_blist_alias_chat(GaimChat *chat, const char *alias)
 {
 	GaimBlistUiOps *ops = gaimbuddylist->ui_ops;

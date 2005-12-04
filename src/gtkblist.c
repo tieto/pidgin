@@ -290,21 +290,32 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	node = g_value_get_pointer(&val);
 	gtk_tree_view_set_enable_search (GTK_TREE_VIEW(gtkblist->treeview), TRUE);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", FALSE, NULL);
-	switch (node->type){
-	case GAIM_BLIST_CONTACT_NODE:
-		gaim_blist_alias_buddy(gaim_contact_get_priority_buddy((GaimContact*)node), arg2);
-		break;
-	case GAIM_BLIST_BUDDY_NODE:
-		gaim_blist_alias_buddy((GaimBuddy*)node, arg2);
-		break;
-	case GAIM_BLIST_GROUP_NODE:
-		gaim_blist_rename_group((GaimGroup*)node, arg2);
-		break;
-	case GAIM_BLIST_CHAT_NODE:
-		gaim_blist_alias_chat((GaimChat*)node, arg2);
-		break;
-	default:
-		break;
+
+	switch (node->type)
+	{
+		case GAIM_BLIST_CONTACT_NODE:
+			{
+				GaimContact *contact = (GaimContact *)node;
+				struct _gaim_gtk_blist_node *gtknode = (struct _gaim_gtk_blist_node *)node->ui_data;
+
+				if (contact->alias || gtknode->contact_expanded)
+					gaim_blist_alias_contact(contact, arg2);
+				else
+					gaim_blist_alias_buddy(gaim_contact_get_priority_buddy(contact), arg2);
+			}
+			break;
+
+		case GAIM_BLIST_BUDDY_NODE:
+			gaim_blist_alias_buddy((GaimBuddy*)node, arg2);
+			break;
+		case GAIM_BLIST_GROUP_NODE:
+			gaim_blist_rename_group((GaimGroup*)node, arg2);
+			break;
+		case GAIM_BLIST_CHAT_NODE:
+			gaim_blist_alias_chat((GaimChat*)node, arg2);
+			break;
+		default:
+			break;
 	}
 }
 
@@ -327,7 +338,7 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, GaimBlistNode *node)
 		text = gaim_buddy_get_alias((GaimBuddy *)node);
 		break;
 	case GAIM_BLIST_CONTACT_NODE:
-		text = gaim_buddy_get_alias(gaim_contact_get_priority_buddy((GaimContact *)node));
+		text = gaim_contact_get_alias((GaimContact *)node);
 		break;
 	case GAIM_BLIST_GROUP_NODE:
 		text = ((GaimGroup *)node)->name;
@@ -1022,20 +1033,18 @@ gaim_gtk_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) 
 										  (GaimBlistNode *)buddy);
 	gaim_gtk_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
 
-	gaim_separator(menu);
+	if (((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
+		gaim_separator(menu);
 
-	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		gaim_new_item_from_stock(menu, _("_Alias Buddy..."), GAIM_STOCK_ALIAS,
-				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("_Remove Buddy"), GTK_STOCK_REMOVE,
-				G_CALLBACK(gaim_gtk_blist_remove_cb), buddy, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("Alias Contact..."), GAIM_STOCK_ALIAS,
+		gaim_new_item_from_stock(menu, _("Alias..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
 				contact, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("Remove Contact"), GTK_STOCK_REMOVE,
+		gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 				G_CALLBACK(gaim_gtk_blist_remove_cb),
 				contact, 0, 0, NULL);
-	} else {
+	} else if (!sub || contact_expanded) {
+		gaim_separator(menu);
+
 		gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 		gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,

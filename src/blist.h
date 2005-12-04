@@ -271,6 +271,13 @@ void gaim_blist_update_buddy_icon(GaimBuddy *buddy);
  */
 void gaim_blist_rename_buddy(GaimBuddy *buddy, const char *name);
 
+/**
+ * Aliases a contact in the buddy list.
+ *
+ * @param contact The contact whose alias will be changed.
+ * @param alias   The contact's alias.
+ */
+void gaim_blist_alias_contact(GaimContact *contact, const char *alias);
 
 /**
  * Aliases a buddy in the buddy list.
