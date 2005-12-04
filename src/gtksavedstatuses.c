@@ -108,7 +108,8 @@ typedef struct
 	GtkWidget *window;
 	GtkListStore *model;
 	GtkWidget *treeview;
-	GtkWidget *save_button;
+	GtkButton *saveanduse_button;
+	GtkButton *save_button;
 
 	gchar *original_title;
 	GtkEntry *title;
@@ -636,7 +637,7 @@ status_editor_cancel_cb(GtkButton *button, gpointer user_data)
 }
 
 static void
-status_editor_save_cb(GtkButton *button, gpointer user_data)
+status_editor_ok_cb(GtkButton *button, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
 	const char *title;
@@ -649,10 +650,11 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 	title = gtk_entry_get_text(dialog->title);
 
 	/*
-	 * If the title is already taken then show an error dialog and
-	 * don't do anything.
+	 * If we're saving this status, and the title is already taken
+	 * then show an error dialog and don't do anything.
 	 */
-	if ((gaim_savedstatus_find(title) != NULL) &&
+	if (((button == dialog->saveanduse_button) || (button == dialog->save_button)) &&
+		(gaim_savedstatus_find(title) != NULL) &&
 		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
 	{
 		gaim_notify_error(NULL, NULL, _("Title already in use.  You must "
@@ -684,7 +686,11 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 	if (saved_status == NULL)
 	{
 		/* This is a new status */
-		saved_status = gaim_savedstatus_new(title, type);
+		if ((button == dialog->saveanduse_button)
+				|| (button == dialog->save_button))
+			saved_status = gaim_savedstatus_new(title, type);
+		else
+			saved_status = gaim_savedstatus_new(NULL, type);
 	}
 	else
 	{
@@ -748,6 +754,10 @@ status_editor_save_cb(GtkButton *button, gpointer user_data)
 
 	if (status_window != NULL)
 	  add_status_to_saved_status_list(status_window->model, saved_status);
+
+	if ((button == dialog->saveanduse_button)
+			|| (button != dialog->save_button))
+		gaim_savedstatus_activate(saved_status);
 }
 
 static void
@@ -758,7 +768,8 @@ editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
 
 	text = gtk_entry_get_text(dialog->title);
 
-	gtk_widget_set_sensitive(dialog->save_button, (*text != '\0'));
+	gtk_widget_set_sensitive(GTK_WIDGET(dialog->saveanduse_button), (*text != '\0'));
+	gtk_widget_set_sensitive(GTK_WIDGET(dialog->save_button), (*text != '\0'));
 }
 
 static GtkWidget *
@@ -1135,16 +1146,37 @@ gaim_gtk_status_editor_show(GaimSavedStatus *saved_status)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_cancel_cb), dialog);
 
-	/* Save button */
-	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	dialog->save_button = button;
+	/* Use button */
+	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
+										   GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	if (dialog->title == NULL)
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_editor_ok_cb), dialog);
+
+	/* Save & Use button */
+	button = gaim_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK,
+										   GAIM_BUTTON_HORIZONTAL);
+	dialog->saveanduse_button = GTK_BUTTON(button);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (dialog->original_title == NULL)
 		gtk_widget_set_sensitive(button, FALSE);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
-					 G_CALLBACK(status_editor_save_cb), dialog);
+					 G_CALLBACK(status_editor_ok_cb), dialog);
+
+	/* Save button */
+	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+	dialog->save_button = GTK_BUTTON(button);
+	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
+	if (dialog->original_title == NULL)
+		gtk_widget_set_sensitive(button, FALSE);
+	gtk_widget_show(button);
+
+	g_signal_connect(G_OBJECT(button), "clicked",
+					 G_CALLBACK(status_editor_ok_cb), dialog);
 
 	gtk_widget_show(win);
 }
@@ -1448,6 +1480,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	gtk_widget_show(win);
 }
 
+
 /**************************************************************************
  * Utilities                                                              *
  **************************************************************************/
@@ -1473,15 +1506,16 @@ GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callb
 	const GList *saved_statuses;
 	int i;
 	int index = -1;
-	
+
 	combobox = gtk_combo_box_new_text();
-	
+
 	for (saved_statuses = gaim_savedstatuses_get_all(), i = 0;
 	     saved_statuses != NULL;
-	     saved_statuses = g_list_next(saved_statuses)) {
+	     saved_statuses = g_list_next(saved_statuses))
+	{
 		GaimSavedStatus *status = (GaimSavedStatus*)saved_statuses->data;
 		if (!gaim_savedstatus_is_transient(status)) {
-			gtk_combo_box_append_text(GTK_COMBO_BOX(combobox), 
+			gtk_combo_box_append_text(GTK_COMBO_BOX(combobox),
 						  gaim_savedstatus_get_title(status));
 			if (status == current_status)
 				index = i;
@@ -1491,6 +1525,7 @@ GtkWidget *gaim_gtk_status_menu(GaimSavedStatus *current_status, GCallback callb
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
+
 	return combobox;
 }
 
