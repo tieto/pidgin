@@ -32,6 +32,13 @@
 #include "xmlnode.h"
 
 /**
+ * The maximum number of transient statuses to save.  This
+ * is used during the shutdown process to clean out old
+ * transient statuses.
+ */
+#define MAX_TRANSIENTS 5
+
+/**
  * The information stores a snap-shot of the statuses of all
  * your accounts.  Basically these are your saved away messages.
  * There is an overall status and message that applies to
@@ -82,6 +89,7 @@ static gboolean    statuses_loaded = FALSE;
  */
 static GHashTable *creation_times;
 
+static void schedule_save(void);
 
 /*********************************************************************
  * Private utility functions                                         *
@@ -132,6 +140,77 @@ set_creation_time(GaimSavedStatus *status, time_t creation_time)
 	g_hash_table_insert(creation_times,
 						&status->creation_time,
 						status);
+}
+
+static gint
+compare_times(gconstpointer a, gconstpointer b)
+{
+	const time_t timea = *((time_t *)a);
+	const time_t timeb = *((time_t *)b);
+	if (timea > timeb)
+		return -1;
+	if (timea < timeb)
+		return 1;
+	return 0;
+}
+
+/**
+ * Transient statuses are added and removed automatically by
+ * Gaim.  If they're not used for a certain length of time then
+ * they'll expire and be automatically removed.  This function
+ * does the expiration.
+ */
+static void
+remove_old_transient_statuses()
+{
+	GList *lastused;
+	time_t threshold;
+	time_t creation_time;
+	GList *l, *next;
+	GaimSavedStatus *saved_status;
+	int i;
+
+	/* Construct a GList containing the lastused times from each transient status */
+	lastused = NULL;
+	for (l = saved_statuses; l != NULL; l = l->next)
+	{
+		saved_status = l->data;
+		if (gaim_savedstatus_is_transient(saved_status))
+			lastused = g_list_insert_sorted(lastused, &saved_status->lastused, compare_times);
+	}
+
+	/* Find the 5th most recently used transient status */
+	l = lastused;
+	i = 0;
+	while ((l != NULL) && (i < MAX_TRANSIENTS))
+	{
+		l = l->next;
+		i++;
+	}
+	if (l != NULL)
+		threshold = *((time_t *)l->data);
+	else
+		threshold = 0;
+	g_list_free(lastused);
+
+	if (threshold == 0)
+		/* We have 5 or fewer transient statuses, so there is nothing to delete */
+		return;
+
+	/* Delete all transient statuses older than the threshold */
+	for (l = saved_statuses; l != NULL; l = next)
+	{
+		next = l->next;
+		saved_status = l->data;
+		if (gaim_savedstatus_is_transient(saved_status) && (saved_status->lastused <= threshold))
+		{
+			saved_statuses = g_list_remove(saved_statuses, saved_status);
+			creation_time = gaim_savedstatus_get_creation_time(saved_status);
+			g_hash_table_remove(creation_times, &creation_time);
+			free_statussaved(saved_status);
+		}
+	}
+	schedule_save();
 }
 
 /*********************************************************************
@@ -759,10 +838,6 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	/*
-	 * TODO: Need to rotate the old status out of here so we
-	 *       can keep track of recently used statuses.
-	 */
 	saved_status->lastused = time(NULL);
 	gaim_prefs_set_int("/core/savedstatus/current",
 					   gaim_savedstatus_get_creation_time(saved_status));
@@ -836,6 +911,8 @@ gaim_savedstatuses_init(void)
 void
 gaim_savedstatuses_uninit(void)
 {
+	remove_old_transient_statuses();
+
 	if (save_timer != 0)
 	{
 		gaim_timeout_remove(save_timer);
