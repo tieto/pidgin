@@ -31,57 +31,53 @@
 #define FRMT8            FRMT4 FRMT4
 #define FRMT16           FRMT8 FRMT8
 
-#define BUF(n)            ((unsigned char) buf[n])
 #define ADVANCE(b, n, c)  {b += c; n -= c;}
 
 
 
 /** writes hex pairs of buf to str */
-static void pretty_print(GString *str, const char *buf, gsize len) {
-  while(len) {
-    if(len >= 16) {
-      /* write a complete line */
-      g_string_append_printf(str, FRMT16,
-			     BUF(0),  BUF(1),  BUF(2),  BUF(3),
-			     BUF(4),  BUF(5),  BUF(6),  BUF(7),
-			     BUF(8),  BUF(9),  BUF(10), BUF(11),
-			     BUF(12), BUF(13), BUF(14), BUF(15));
-      ADVANCE(buf, len, 16);
-
-    } else {
-      /* write an incomplete line */
-      if(len >= 8) {
-	g_string_append_printf(str, FRMT8,
-			       BUF(0), BUF(1), BUF(2), BUF(3),
-			       BUF(4), BUF(5), BUF(6), BUF(7));
-	ADVANCE(buf, len, 8);
-      }
-      
-      if(len >= 4) {
-	g_string_append_printf(str, FRMT4,
-			       BUF(0), BUF(1), BUF(2), BUF(3));
-	ADVANCE(buf, len, 4);
-      }
-
-      if(len >= 2) {
-	g_string_append_printf(str, FRMT2, BUF(0), BUF(1));
-	ADVANCE(buf, len, 2);
-      }
-
-      if(len >= 1) {
-	g_string_append_printf(str, FRMT1, BUF(0));
-	ADVANCE(buf, len, 1);
-      }
-    }
+static void pretty_print(GString *str, const guchar *buf, gsize len) {
+  while(len >= 16) {
+    /* write a complete line */
+    g_string_append_printf(str, FRMT16,
+			   buf[0],  buf[1],  buf[2],  buf[3],
+			   buf[4],  buf[5],  buf[6],  buf[7],
+			   buf[8],  buf[9],  buf[10], buf[11],
+			   buf[12], buf[13], buf[14], buf[15]);
+    ADVANCE(buf, len, 16);
     
     /* append \n to each line but the last */
     if(len) g_string_append(str, "\n");
+  }
+
+  /* write an incomplete line */
+  if(len >= 8) {
+    g_string_append_printf(str, FRMT8,
+			   buf[0], buf[1], buf[2], buf[3],
+			   buf[4], buf[5], buf[6], buf[7]);
+    ADVANCE(buf, len, 8);
+  }
+  
+  if(len >= 4) {
+    g_string_append_printf(str, FRMT4,
+			   buf[0], buf[1], buf[2], buf[3]);
+    ADVANCE(buf, len, 4);
+  }
+
+  if(len >= 2) {
+    g_string_append_printf(str, FRMT2, buf[0], buf[1]);
+    ADVANCE(buf, len, 2);
+  }
+
+  if(len >= 1) {
+    g_string_append_printf(str, FRMT1, buf[0]);
+    ADVANCE(buf, len, 1);
   }
 }
 
 
 
-void mw_debug_datav(const char *buf, gsize len,
+void mw_debug_datav(const guchar *buf, gsize len,
 		    const char *msg, va_list args) {
   GString *str;
 
@@ -102,7 +98,7 @@ void mw_debug_datav(const char *buf, gsize len,
 
 
 
-void mw_debug_data(const char *buf, gsize len,
+void mw_debug_data(const guchar *buf, gsize len,
 		   const char *msg, ...) {
   va_list args;
   
@@ -133,7 +129,7 @@ void mw_debug_opaque(struct mwOpaque *o, const char *txt, ...) {
 }
 
 
-void mw_mailme_datav(const char *buf, gsize len,
+void mw_mailme_datav(const guchar *buf, gsize len,
 		     const char *info, va_list args) {
 
 #if MW_MAILME
@@ -164,7 +160,7 @@ void mw_mailme_datav(const char *buf, gsize len,
 
 
 
-void mw_mailme_data(const char *buf, gsize len,
+void mw_mailme_data(const guchar *buf, gsize len,
 		    const char *info, ...) {
   va_list args;
   va_start(args, info);

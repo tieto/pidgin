@@ -150,7 +150,7 @@ struct mwSessionHandler {
   
   /** write data to the server connection. Required. Should return
       zero for success, non-zero for error */
-  int (*io_write)(struct mwSession *, const char *buf, gsize len);
+  int (*io_write)(struct mwSession *, const guchar *buf, gsize len);
   
   /** close the server connection. Required */
   void (*io_close)(struct mwSession *);
@@ -214,7 +214,7 @@ void mwSession_stop(struct mwSession *, guint32 reason);
 
 /** Data is buffered, unpacked, and parsed into a message, then
     processed accordingly. */
-void mwSession_recv(struct mwSession *, const char *, gsize);
+void mwSession_recv(struct mwSession *, const guchar *, gsize);
 
 
 /** primarily used by services to have messages serialized and sent

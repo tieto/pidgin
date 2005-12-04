@@ -72,8 +72,8 @@ struct mwGetBuffer;
 
 /** A length of binary data, not null-terminated. */
 struct mwOpaque {
-  gsize len;            /**< length of data. */
-  unsigned char *data;  /**< data, normally with no NULL termination */
+  gsize len;     /**< length of data. */
+  guchar *data;  /**< data, normally with no NULL termination */
 };
 
 
@@ -83,14 +83,7 @@ struct mwOpaque {
     used to login with.
 
     If you know of any additional client identifiers, please add them
-    below.
-
-    If you are using Meanwhile in your client code and would like to
-    differentiate yourself, please email siege at preoccupied dot net
-    with all the relevant information you can think of and I'll add it
-    to the text mapping as well
-
-    @see mwLoginType_getName
+    below or submit an RFE to the meanwhile tracker.
 */
 enum mwLoginType {
   mwLogin_LIB           = 0x1000,  /**< official Lotus binary library */
@@ -286,11 +279,6 @@ gboolean mwGetBuffer_error(struct mwGetBuffer *b);
 
 
 /*@}*/
-
-
-/** provides a textual name for a given login type. If the type is not
-    known by name, returns NULL */
-const char *mwLoginType_getName(enum mwLoginType type);
 
 
 /** @name Basic Data Type Marshalling

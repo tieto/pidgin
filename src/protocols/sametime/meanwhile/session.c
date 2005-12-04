@@ -51,9 +51,9 @@ struct mwSession {
   gpointer state_info;        /**< additional state info */
 
   /* input buffering for an incoming message */
-  char *buf;       /**< buffer for incoming message data */
-  gsize buf_len;   /**< length of buf */
-  gsize buf_used;  /**< offset to last-used byte of buf */
+  guchar *buf;  /**< buffer for incoming message data */
+  gsize buf_len;       /**< length of buf */
+  gsize buf_used;      /**< offset to last-used byte of buf */
   
   struct mwLoginInfo login;      /**< login information */
   struct mwUserStatus status;    /**< user status */
@@ -180,7 +180,7 @@ void mwSession_free(struct mwSession *s) {
   }
 
   h = s->handler;
-  if(h) h->clear(s);
+  if(h && h->clear) h->clear(s);
   s->handler = NULL;
 
   session_buf_free(s);
@@ -199,7 +199,7 @@ void mwSession_free(struct mwSession *s) {
 
 
 /** write data to the session handler */
-static int io_write(struct mwSession *s, const char *buf, gsize len) {
+static int io_write(struct mwSession *s, const guchar *buf, gsize len) {
   g_return_val_if_fail(s != NULL, -1);
   g_return_val_if_fail(s->handler != NULL, -1);
   g_return_val_if_fail(s->handler->io_write != NULL, -1);
@@ -329,13 +329,13 @@ void mwSession_stop(struct mwSession *s, guint32 reason) {
 /** compose authentication information into an opaque based on the
     password, encrypted via RC2/40 */
 static void compose_auth_rc2_40(struct mwOpaque *auth, const char *pass) {
-  char iv[8], key[5];
+  guchar iv[8], key[5];
   struct mwOpaque a, b, z;
   struct mwPutBuffer *p;
 
   /* get an IV and a random five-byte key */
-  mwIV_init((char *) iv);
-  mwKeyRandom((char *) key, 5);
+  mwIV_init(iv);
+  mwKeyRandom(key, 5);
 
   /* the opaque with the key */
   a.len = 5;
@@ -347,7 +347,7 @@ static void compose_auth_rc2_40(struct mwOpaque *auth, const char *pass) {
 
   /* the plain-text pass dressed up as an opaque */
   z.len = strlen(pass);
-  z.data = (char *) pass;
+  z.data = (guchar *) pass;
 
   /* the opaque with the encrypted pass */
   mwEncrypt(a.data, a.len, iv, &z, &b);
@@ -366,7 +366,7 @@ static void compose_auth_rc2_40(struct mwOpaque *auth, const char *pass) {
 static void compose_auth_rc2_128(struct mwOpaque *auth, const char *pass,
 				 guint32 magic, struct mwOpaque *rkey) {
 
-  char iv[8];
+  guchar iv[8];
   struct mwOpaque a, b, c;
   struct mwPutBuffer *p;
 
@@ -633,9 +633,9 @@ case mwMessage_ ## var: \
 
 
 static void session_process(struct mwSession *s,
-			    const char *buf, gsize len) {
+			    const guchar *buf, gsize len) {
 
-  struct mwOpaque o = { .len = len, .data = (char *) buf };
+  struct mwOpaque o = { .len = len, .data = (guchar *) buf };
   struct mwGetBuffer *b;
   struct mwMessage *msg;
 
@@ -689,7 +689,8 @@ static void session_process(struct mwSession *s,
 
 
 /* handle input to complete an existing buffer */
-static gsize session_recv_cont(struct mwSession *s, const char *b, gsize n) {
+static gsize session_recv_cont(struct mwSession *s,
+			       const guchar *b, gsize n) {
 
   /* determine how many bytes still required */
   gsize x = s->buf_len - s->buf_used;
@@ -721,9 +722,9 @@ static gsize session_recv_cont(struct mwSession *s, const char *b, gsize n) {
 	/* there isn't enough to meet the demands of the length, so
 	   we'll buffer it for next time */
 
-	char *t;
+	guchar *t;
 	x += 4;
-	t = (char *) g_malloc(x);
+	t = (guchar *) g_malloc(x);
 	memcpy(t, s->buf, 4);
 	memcpy(t+4, b, n);
 	
@@ -757,15 +758,17 @@ static gsize session_recv_cont(struct mwSession *s, const char *b, gsize n) {
 
 
 /* handle input when there's nothing previously buffered */
-static gsize session_recv_empty(struct mwSession *s, const char *b, gsize n) {
-  struct mwOpaque o = { n, (char *) b };
+static gsize session_recv_empty(struct mwSession *s,
+				const guchar *b, gsize n) {
+
+  struct mwOpaque o = { n, (guchar *) b };
   struct mwGetBuffer *gb;
   gsize x;
 
   if(n < 4) {
     /* uh oh. less than four bytes means we've got an incomplete
        length indicator. Have to buffer to get the rest of it. */
-    s->buf = (char *) g_malloc0(4);
+    s->buf = (guchar *) g_malloc0(4);
     memcpy(s->buf, b, n);
     s->buf_len = 4;
     s->buf_used = n;
@@ -786,7 +789,7 @@ static gsize session_recv_empty(struct mwSession *s, const char *b, gsize n) {
        session_recv takes place */
 
     x += 4;
-    s->buf = (char *) g_malloc(x);
+    s->buf = (guchar *) g_malloc(x);
     memcpy(s->buf, b, n);
     s->buf_len = x;
     s->buf_used = n;
@@ -806,7 +809,9 @@ static gsize session_recv_empty(struct mwSession *s, const char *b, gsize n) {
 }
 
 
-static gsize session_recv(struct mwSession *s, const char *b, gsize n) {
+static gsize session_recv(struct mwSession *s,
+			  const guchar *b, gsize n) {
+
   /* This is messy and kind of confusing. I'd like to simplify it at
      some point, but the constraints are as follows:
 
@@ -854,8 +859,8 @@ static gsize session_recv(struct mwSession *s, const char *b, gsize n) {
 #undef ADVANCE
 
 
-void mwSession_recv(struct mwSession *s, const char *buf, gsize n) {
-  char *b = (char *) buf;
+void mwSession_recv(struct mwSession *s, const guchar *buf, gsize n) {
+  guchar *b = (guchar *) buf;
   gsize remain = 0;
 
   g_return_if_fail(s != NULL);
@@ -909,7 +914,7 @@ int mwSession_send(struct mwSession *s, struct mwMessage *msg) {
 
 
 int mwSession_sendKeepalive(struct mwSession *s) {
-  const char b = 0x80;
+  const guchar b = 0x80;
 
   g_return_val_if_fail(s != NULL, -1);
   return io_write(s, &b, 1);

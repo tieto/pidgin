@@ -35,7 +35,7 @@ struct mwMpi {
 
 
 /** From RFC2268 */
-static unsigned char PT[] = {
+static guchar PT[] = {
   0xD9, 0x78, 0xF9, 0xC4, 0x19, 0xDD, 0xB5, 0xED,
   0x28, 0xE9, 0xFD, 0x79, 0x4A, 0xA0, 0xD8, 0x9D,
   0xC6, 0x7E, 0x37, 0x83, 0x2B, 0x76, 0x53, 0x8E,
@@ -72,7 +72,7 @@ static unsigned char PT[] = {
 
 
 /** prime number used in DH exchange */
-static unsigned char dh_prime[] = {
+static guchar dh_prime[] = {
   0xCF, 0x84, 0xAF, 0xCE, 0x86, 0xDD, 0xFA, 0x52,
   0x7F, 0x13, 0x6D, 0x10, 0x35, 0x75, 0x28, 0xEE,
   0xFB, 0xA0, 0xAF, 0xEF, 0x80, 0x8F, 0x29, 0x17,
@@ -129,7 +129,7 @@ void mwMpi_setDHBase(struct mwMpi *i) {
 
 static void mp_set_rand(mp_int *i, guint bits) {
   size_t len, l;
-  unsigned char *buf;
+  guchar *buf;
 
   l = len = (bits / 8) + 1;
   buf = g_malloc(len);
@@ -221,7 +221,7 @@ void mwMpi_export(struct mwMpi *i, struct mwOpaque *o) {
 }
 
 
-void mwKeyRandom(unsigned char *key, gsize keylen) {
+void mwKeyRandom(guchar *key, gsize keylen) {
   g_return_if_fail(key != NULL);
 
   srand(clock());
@@ -229,9 +229,9 @@ void mwKeyRandom(unsigned char *key, gsize keylen) {
 }
 
 
-void mwIV_init(unsigned char *iv) {
+void mwIV_init(guchar *iv) {
   int i;
-  static unsigned char normal_iv[] = {
+  static guchar normal_iv[] = {
     0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef
   };
   for(i = 8; i--; iv[i] = normal_iv[i]);
@@ -242,8 +242,8 @@ void mwIV_init(unsigned char *iv) {
 /* This does not seem to produce the same results as normal RC2 key
    expansion would, but it works, so eh. It might be smart to farm
    this out to mozilla or openssl */
-void mwKeyExpand(int *ekey, const char *key, gsize keylen) {
-  unsigned char tmp[128];
+void mwKeyExpand(int *ekey, const guchar *key, gsize keylen) {
+  guchar tmp[128];
   int i, j;
 
   g_return_if_fail(keylen > 0);
@@ -271,7 +271,7 @@ void mwKeyExpand(int *ekey, const char *key, gsize keylen) {
 
 
 /* normal RC2 encryption given a full 128-byte (as 64 ints) key */
-static void mwEncryptBlock(const int *ekey, char *out) {
+static void mwEncryptBlock(const int *ekey, guchar *out) {
 
   int a, b, c, d;
   int i, j;
@@ -315,14 +315,14 @@ static void mwEncryptBlock(const int *ekey, char *out) {
 }
 
 
-void mwEncryptExpanded(const int *ekey, unsigned char *iv,
+void mwEncryptExpanded(const int *ekey, guchar *iv,
 		       struct mwOpaque *in_data,
 		       struct mwOpaque *out_data) {
 
-  unsigned char *i = in_data->data;
+  guchar *i = in_data->data;
   gsize i_len = in_data->len;
 
-  unsigned char *o;
+  guchar *o;
   gsize o_len;
 
   int x, y;
@@ -354,7 +354,8 @@ void mwEncryptExpanded(const int *ekey, unsigned char *iv,
 }
 
 
-void mwEncrypt(const char *key, gsize keylen, unsigned char *iv,
+void mwEncrypt(const guchar *key, gsize keylen,
+	       guchar *iv,
 	       struct mwOpaque *in, struct mwOpaque *out) {
 
   int ekey[64];
@@ -363,7 +364,7 @@ void mwEncrypt(const char *key, gsize keylen, unsigned char *iv,
 }
 
 
-static void mwDecryptBlock(const int *ekey, unsigned char *out) {
+static void mwDecryptBlock(const int *ekey, guchar *out) {
 
   int a, b, c, d;
   int i, j;
@@ -407,14 +408,14 @@ static void mwDecryptBlock(const int *ekey, unsigned char *out) {
 }
 
 
-void mwDecryptExpanded(const int *ekey, unsigned char *iv,
+void mwDecryptExpanded(const int *ekey, guchar *iv,
 		       struct mwOpaque *in_data,
 		       struct mwOpaque *out_data) {
 
-  unsigned char *i = in_data->data;
+  guchar *i = in_data->data;
   gsize i_len = in_data->len;
 
-  unsigned char *o;
+  guchar *o;
   gsize o_len;
 
   int x, y;
@@ -448,7 +449,7 @@ void mwDecryptExpanded(const int *ekey, unsigned char *iv,
 }
 
 
-void mwDecrypt(const char *key, gsize keylen, unsigned char *iv,
+void mwDecrypt(const guchar *key, gsize keylen, guchar *iv,
 	       struct mwOpaque *in, struct mwOpaque *out) {
 
   int ekey[64];
@@ -468,8 +469,8 @@ struct mwCipher_RC2_40 {
 struct mwCipherInstance_RC2_40 {
   struct mwCipherInstance instance;
   int incoming_key[64];
-  unsigned char outgoing_iv[8];
-  unsigned char incoming_iv[8];
+  guchar outgoing_iv[8];
+  guchar incoming_iv[8];
 };
 
 
@@ -536,7 +537,7 @@ new_instance_RC2_40(struct mwCipher *cipher,
   /* a bit of lazy initialization here */
   if(! cr->ready) {
     struct mwLoginInfo *info = mwSession_getLoginInfo(cipher->session);
-    mwKeyExpand(cr->session_key, info->login_id, 5);
+    mwKeyExpand(cr->session_key, (guchar *) info->login_id, 5);
     cr->ready = TRUE;
   }
 
@@ -578,7 +579,7 @@ static void accepted_RC2_40(struct mwCipherInstance *ci,
   info = mwChannel_getUser(ci->channel);
 
   if(info->login_id) {
-    mwKeyExpand(cir->incoming_key, info->login_id, 5);
+    mwKeyExpand(cir->incoming_key, (guchar *) info->login_id, 5);
   }
 }
 
@@ -623,8 +624,8 @@ struct mwCipher_RC2_128 {
 struct mwCipherInstance_RC2_128 {
   struct mwCipherInstance instance;
   int shared[64];      /* shared secret determined via DH exchange */
-  unsigned char outgoing_iv[8];
-  unsigned char incoming_iv[8];
+  guchar outgoing_iv[8];
+  guchar incoming_iv[8];
 };
 
 

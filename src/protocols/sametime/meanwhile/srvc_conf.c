@@ -723,7 +723,7 @@ int mwConference_destroy(struct mwConference *conf,
   if(conf->channel) {
     if(text && *text) {
       info.len = strlen(text);
-      info.data = (char *) text;
+      info.data = (guchar *) text;
     }
 
     ret = mwChannel_destroy(conf->channel, reason, &info);

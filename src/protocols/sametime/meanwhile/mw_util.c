@@ -78,17 +78,3 @@ void mw_datum_free(struct mw_datum *d) {
   mw_datum_clear(d);
   g_free(d);
 }
-
-gboolean
-mw_str_has_prefix(const char *s, const char *p)
-{
-#if GLIB_CHECK_VERSION(2,2,0)
-	return g_str_has_prefix(s, p);
-#else
-	if (!strncmp(s, p, strlen(p)))
-		return TRUE;
-
-	return FALSE;
-#endif
-}
-

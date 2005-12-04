@@ -82,6 +82,7 @@ enum mwImSendType {
   mwImSend_HTML,    /**< char *, HTML formatted message (NOTESBUDDY) */
   mwImSend_SUBJECT, /**< char *, conversation subject (NOTESBUDDY) */
   mwImSend_MIME,    /**< char *, MIME-encoded message (NOTESBUDDY) */
+  mwImSend_TIMESTAMP, /**< char *, YYYY:MM:DD:HH:mm:SS format (NOTESBUDDY) */
 };
 
 

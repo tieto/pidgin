@@ -74,11 +74,11 @@
 #endif
 
 
-void mw_debug_datav(const char *buf, gsize len,
+void mw_debug_datav(const guchar *buf, gsize len,
 		    const char *info, va_list args);
 
 
-void mw_debug_data(const char *buf, gsize len,
+void mw_debug_data(const guchar *buf, gsize len,
 		   const char *info, ...);
 
 
@@ -88,10 +88,10 @@ void mw_debug_opaquev(struct mwOpaque *o, const char *info, va_list args);
 void mw_debug_opaque(struct mwOpaque *o, const char *info, ...);
 
 
-void mw_mailme_datav(const char *buf, gsize len,
+void mw_mailme_datav(const guchar *buf, gsize len,
 		     const char *info, va_list args);
 
-void mw_mailme_data(const char *buf, gsize len,
+void mw_mailme_data(const guchar *buf, gsize len,
 		    const char *info, ...);
 
 

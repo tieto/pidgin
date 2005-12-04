@@ -66,6 +66,7 @@ enum mwImDataType {
   mwImData_SUBJECT  = 0x00000003,  /**< notesbuddy IM topic */
   mwImData_HTML     = 0x00000004,  /**< notesbuddy HTML message */
   mwImData_MIME     = 0x00000005,  /**< notesbuddy MIME message, w/image */
+  mwImData_TIMESTAMP = 0x00000006, /**< notesbuddy timestamp */
 
   mwImData_INVITE   = 0x0000000a,  /**< Places invitation */
 
@@ -184,7 +185,7 @@ struct mwConversation *mwServiceIm_getConversation(struct mwServiceIm *srvc,
     c->features = srvc->features;
 
     /* mark external users */
-    c->ext_id = mw_str_has_prefix(to->user, "@E ");
+    /* c->ext_id = g_str_has_prefix(to->user, "@E "); */
 
     srvc->convs = g_list_prepend(srvc->convs, c);
   }
@@ -577,11 +578,11 @@ static void recv_data(struct mwServiceIm *srvc, struct mwChannel *chan,
   case mwImData_HTML:
     if(o.len) {
       if(conv->multi) {
-	g_string_append_len(conv->multi, o.data, o.len);
+	g_string_append_len(conv->multi, (char *) o.data, o.len);
 	conv->multi_type = mwImSend_HTML;
 
       } else {
-	x = g_strndup(o.data, o.len);
+	x = g_strndup((char *) o.data, o.len);
 	convo_recv(conv, mwImSend_HTML, x);
 	g_free(x);
       }
@@ -589,21 +590,25 @@ static void recv_data(struct mwServiceIm *srvc, struct mwChannel *chan,
     break;
 
   case mwImData_SUBJECT:
-    x = g_strndup(o.data, o.len);
+    x = g_strndup((char *) o.data, o.len);
     convo_recv(conv, mwImSend_SUBJECT, x);
     g_free(x);
     break;
 
   case mwImData_MIME:
     if(conv->multi) {
-      g_string_append_len(conv->multi, o.data, o.len);
+      g_string_append_len(conv->multi, (char *) o.data, o.len);
       conv->multi_type = mwImSend_MIME;
 
     } else {
-      x = g_strndup(o.data, o.len);
+      x = g_strndup((char *) o.data, o.len);
       convo_recv(conv, mwImSend_MIME, x);
       g_free(x);
     }
+    break;
+
+  case mwImData_TIMESTAMP:
+    /* todo */
     break;
 
   case mwImData_INVITE:
@@ -756,6 +761,7 @@ gboolean mwServiceIm_supports(struct mwServiceIm *srvc,
   case mwImSend_SUBJECT:
   case mwImSend_HTML:
   case mwImSend_MIME:
+  case mwImSend_TIMESTAMP:
     return srvc->features == mwImClient_NOTESBUDDY;
 
   default:
@@ -885,7 +891,7 @@ static int convo_sendSubject(struct mwConversation *conv,
   struct mwOpaque o;
 
   o.len = strlen(subject);
-  o.data = (char *) subject;
+  o.data = (guchar *) subject;
 
   return convo_send_data(conv, mwImData_SUBJECT, 0x00, &o);
 }
@@ -895,7 +901,7 @@ static int convo_sendHtml(struct mwConversation *conv, const char *html) {
   struct mwOpaque o;
 
   o.len = strlen(html);
-  o.data = (char *) html;
+  o.data = (guchar *) html;
 
   if(o.len > BREAKUP) {
     return convo_sendSegmented(conv, html, convo_sendHtml);
@@ -909,7 +915,7 @@ static int convo_sendMime(struct mwConversation *conv, const char *mime) {
   struct mwOpaque o;
 
   o.len = strlen(mime);
-  o.data = (char *) mime;
+  o.data = (guchar *) mime;
 
   if(o.len > BREAKUP) {
     return convo_sendSegmented(conv, mime, convo_sendMime);

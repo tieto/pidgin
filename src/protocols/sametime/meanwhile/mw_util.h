@@ -21,7 +21,7 @@
 #ifndef _MW_UTIL_H
 #define _MW_UTIL_H
 
-#include <string.h>
+
 #include <glib.h>
 #include <glib/ghash.h>
 #include <glib/glist.h>
@@ -81,6 +81,5 @@ void mw_datum_clear(struct mw_datum *d);
 
 void mw_datum_free(struct mw_datum *d);
 
-gboolean mw_str_has_prefix(const char *s, const char *p);
 
 #endif

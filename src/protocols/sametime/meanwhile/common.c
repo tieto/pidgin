@@ -53,20 +53,20 @@
 
 
 struct mwPutBuffer {
-  char *buf;  /**< head of buffer */
-  gsize len;  /**< length of buffer */
+  guchar *buf;  /**< head of buffer */
+  gsize len;    /**< length of buffer */
 
-  char *ptr;  /**< offset to first unused byte */
-  gsize rem;  /**< count of unused bytes remaining */
+  guchar *ptr;  /**< offset to first unused byte */
+  gsize rem;    /**< count of unused bytes remaining */
 };
 
 
 struct mwGetBuffer {
-  char *buf;  /**< head of buffer */
-  gsize len;  /**< length of buffer */
+  guchar *buf;  /**< head of buffer */
+  gsize len;    /**< length of buffer */
 
-  char *ptr;  /**< offset to first unused byte */
-  gsize rem;  /**< count of unused bytes remaining */
+  guchar *ptr;  /**< offset to first unused byte */
+  gsize rem;    /**< count of unused bytes remaining */
 
   gboolean wrap;   /**< TRUE to indicate buf shouldn't be freed */
   gboolean error;  /**< TRUE to indicate an error */
@@ -82,7 +82,7 @@ struct mwGetBuffer {
 static void ensure_buffer(struct mwPutBuffer *b, gsize needed) {
   if(b->rem < needed) {
     gsize len = b->len, use = BUFFER_USED(b);
-    char *buf;
+    guchar *buf;
 
     /* newly created buffers are empty until written to, and then they
        have 1024 available */
@@ -171,7 +171,7 @@ struct mwGetBuffer *mwGetBuffer_wrap(const struct mwOpaque *o) {
   struct mwGetBuffer *b = g_new0(struct mwGetBuffer, 1);
 
   if(o && o->len) {
-    b->buf = b->ptr = (char *) o->data;
+    b->buf = b->ptr = o->data;
     b->len = b->rem = o->len;
   }
   b->wrap = TRUE;
@@ -266,7 +266,7 @@ void guint16_get(struct mwGetBuffer *b, guint16 *val) {
 
 
 guint16 guint16_peek(struct mwGetBuffer *b) {
-  char *buf = b->buf;
+  guchar *buf = b->buf;
   guint16 r = 0;
   
   if(b->rem >= guint16_buflen())
@@ -300,7 +300,7 @@ void guint32_get(struct mwGetBuffer *b, guint32 *val) {
 
 
 guint32 guint32_peek(struct mwGetBuffer *b) {
-  char *buf = b->buf;
+  guchar *buf = b->buf;
   guint32 r = 0;
 
   if(b->rem >= guint32_buflen())
@@ -923,60 +923,5 @@ void mwAwareSnapshot_clear(struct mwAwareSnapshot *idb) {
   g_free(idb->name);
   g_free(idb->group);
   memset(idb, 0x00, sizeof(struct mwAwareSnapshot));
-}
-
-
-const char *mwLoginType_getName(enum mwLoginType type) {
-  switch(type) {
-  case mwLogin_LIB:
-    return "Lotus Binary Library";
-
-  case mwLogin_JAVA_WEB:
-    return "Lotus Java Client Applet";
-
-  case mwLogin_BINARY:
-    return "Lotus Sametime Connect";
-
-  case mwLogin_JAVA_APP:
-    return "Lotus Java Client Application";
-
-  case mwLogin_LINKS:
-    return "Lotus Sametime Links";
-
-  case mwLogin_NOTES_6_5:
-  case mwLogin_NOTES_6_5_3:
-  case mwLogin_NOTES_7_0_beta:
-  case mwLogin_NOTES_7_0:
-    return "Lotus Notes Client";
-
-  case mwLogin_ICT:
-  case mwLogin_ICT_1_7_8_2:
-  case mwLogin_ICT_SIP:
-    return "IBM Community Tools";
-
-  case mwLogin_NOTESBUDDY_4_14:
-  case mwLogin_NOTESBUDDY_4_15:
-  case mwLogin_NOTESBUDDY_4_16:
-    return "Alphaworks NotesBuddy";
-
-  case mwLogin_SANITY:
-    return "Sanity";
-
-  case mwLogin_ST_PERL:
-    return "ST-Send-Message";
-
-  case mwLogin_PMR_ALERT:
-    return "PMR Alert";
-
-  case mwLogin_TRILLIAN:
-  case mwLogin_TRILLIAN_IBM:
-    return "Trillian";
-
-  case mwLogin_MEANWHILE:
-    return "Meanwhile";
-
-  default:
-    return NULL;
-  }
 }
 
