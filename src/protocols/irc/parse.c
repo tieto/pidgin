@@ -172,7 +172,7 @@ static void irc_register_command(struct _irc_user_cmd *c)
 	GaimCmdFlag f;
 	char args[10];
 	char *format;
-	int i;
+	size_t i;
 
 	f = GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY
 	    | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS;
