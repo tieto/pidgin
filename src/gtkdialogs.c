@@ -187,7 +187,7 @@ static void destroy_about()
 	about = NULL;
 }
 
-void gaim_gtkdialogs_about(GtkWidget *w, void *data)
+void gaim_gtkdialogs_about()
 {
 	GtkWidget *hbox;
 	GtkWidget *vbox;
