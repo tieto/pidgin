@@ -64,7 +64,7 @@ GType gaim_gtk_menu_tray_get_gtype(void);
  *
  * @return A new GaimGtkMenuTray
  */
-GtkWidget *gaim_gtk_menu_tray_new();
+GtkWidget *gaim_gtk_menu_tray_new(void);
 
 /**
  * Gets the box for the GaimGtkMenuTray

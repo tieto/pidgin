@@ -185,7 +185,7 @@ gboolean gaim_ciphers_unregister_cipher(GaimCipher *cipher);
  * @return The list of available ciphers
  * @note This list should not be modified, it is owned by the cipher core
  */
-GList *gaim_ciphers_get_ciphers();
+GList *gaim_ciphers_get_ciphers(void);
 
 /*@}*/
 /******************************************************************************/
@@ -198,17 +198,17 @@ GList *gaim_ciphers_get_ciphers();
  *
  * @return The handle to the cipher subsystem
  */
-gpointer gaim_ciphers_get_handle();
+gpointer gaim_ciphers_get_handle(void);
 
 /**
  * Initializes the cipher core
  */
-void gaim_ciphers_init();
+void gaim_ciphers_init(void);
 
 /**
  * Uninitializes the cipher core
  */
-void gaim_ciphers_uninit();
+void gaim_ciphers_uninit(void);
 
 /*@}*/
 /******************************************************************************/

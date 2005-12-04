@@ -163,8 +163,8 @@ struct passwd {
 };
 
 struct passwd *getpwuid(int uid);
-int getuid();
-int geteuid();
+int getuid(void);
+int geteuid(void);
 #endif
 
 #endif /* SILCGAIM_H */

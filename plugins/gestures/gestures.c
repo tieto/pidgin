@@ -112,7 +112,7 @@ stroke_next_tab(GtkWidget *widget, void *data)
 	}
 }
 
-void
+static void
 stroke_new_win(GtkWidget *widget, void *data)
 {
 	GaimGtkWindow *new_win, *old_win;

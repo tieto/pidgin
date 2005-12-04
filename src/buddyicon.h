@@ -255,17 +255,17 @@ char *gaim_buddy_icons_get_full_path(const char *icon);
  *
  * @return The subsystem handle.
  */
-void *gaim_buddy_icons_get_handle();
+void *gaim_buddy_icons_get_handle(void);
 
 /**
  * Initializes the buddy icon subsystem.
  */
-void gaim_buddy_icons_init();
+void gaim_buddy_icons_init(void);
 
 /**
  * Uninitializes the buddy icon subsystem.
  */
-void gaim_buddy_icons_uninit();
+void gaim_buddy_icons_uninit(void);
 
 /*@}*/
 

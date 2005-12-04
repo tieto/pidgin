@@ -56,7 +56,7 @@ typedef struct _MSTrueSpeechEncoderClass
 MSFilter * ms_truespeechencoder_new(void);
 
 /* for internal use only */
-WAVEFORMATEX* ms_truespeechencoder_wf_create();
+WAVEFORMATEX* ms_truespeechencoder_wf_create(void);
 
 
 #endif

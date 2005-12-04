@@ -52,4 +52,4 @@ struct _GaimGtkLogViewer {
 void gaim_gtk_log_show(GaimLogType type, const char *screenname, GaimAccount *account);
 void gaim_gtk_log_show_contact(GaimContact *contact);
 
-void gaim_gtk_syslog_show();
+void gaim_gtk_syslog_show(void);

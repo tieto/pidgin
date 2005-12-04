@@ -23,7 +23,7 @@
 
 typedef struct _NMRtfContext NMRtfContext;
 
-NMRtfContext *nm_rtf_init();
+NMRtfContext *nm_rtf_init(void);
 char *nm_rtf_strip_formatting(NMRtfContext *ctx, const char *input);
 void nm_rtf_deinit(NMRtfContext *ctx);
 

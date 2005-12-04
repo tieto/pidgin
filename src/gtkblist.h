@@ -108,7 +108,7 @@ struct _GaimGtkBuddyList {
  *
  * @return the handle to the blist system
  */
-void *gaim_gtk_blist_get_handle();
+void *gaim_gtk_blist_get_handle(void);
 
 /**
  * Initializes the GTK+ blist system.
@@ -136,7 +136,7 @@ GaimBlistUiOps *gaim_gtk_blist_get_ui_ops(void);
  *
  * @return The default GTK+ buddy list
  */
-GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist();
+GaimGtkBuddyList *gaim_gtk_blist_get_default_gtk_blist(void);
 
 /**
  * Populates a menu with the items shown on the buddy list for a buddy.
@@ -159,10 +159,10 @@ void gaim_gtk_blist_refresh(GaimBuddyList *list);
  * Tells the buddy list to update its toolbar based on the preferences
  *
  */
-void gaim_gtk_blist_update_toolbar();
+void gaim_gtk_blist_update_toolbar(void);
 
-void gaim_gtk_blist_update_columns();
-void gaim_gtk_blist_update_refresh_timeout();
+void gaim_gtk_blist_update_columns(void);
+void gaim_gtk_blist_update_refresh_timeout(void);
 
 /**
  * Useful for the buddy ticker
@@ -186,7 +186,7 @@ gboolean gaim_gtk_blist_node_is_contact_expanded(GaimBlistNode *node);
  * list is obscured, it is brought to the front. If it is not obscured,
  * it is hidden. If it is hidden it is shown.
  */
-void gaim_gtk_blist_toggle_visibility();
+void gaim_gtk_blist_toggle_visibility(void);
 
 /**
  * Increases the reference count of visibility managers. Callers should 
@@ -196,13 +196,13 @@ void gaim_gtk_blist_toggle_visibility();
  * A visibility manager is something that provides some method for
  * showing the buddy list after it is hidden (e.g. docklet plugin).
  */
-void gaim_gtk_blist_visibility_manager_add();
+void gaim_gtk_blist_visibility_manager_add(void);
 
 /**
  * Decreases the reference count of visibility managers. If the count
  * drops below zero, the buddy list is shown.
  */
-void gaim_gtk_blist_visibility_manager_remove();
+void gaim_gtk_blist_visibility_manager_remove(void);
 
 
 /**************************************************************************
@@ -216,7 +216,7 @@ typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBudd
  *
  * @return A GSlist of sort methods
  */
-GList *gaim_gtk_blist_get_sort_methods();
+GList *gaim_gtk_blist_get_sort_methods(void);
 
 struct gaim_gtk_blist_sort_method {
 	char *id;
@@ -253,22 +253,22 @@ void gaim_gtk_blist_sort_method_set(const char *id);
 /**
  * Sets up the programs default sort methods
  */
-void gaim_gtk_blist_setup_sort_methods();
+void gaim_gtk_blist_setup_sort_methods(void);
 
 /**
  * Updates the accounts menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_accounts_menu();
+void gaim_gtk_blist_update_accounts_menu(void);
 
 /**
  * Updates the plugin actions menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_plugin_actions();
+void gaim_gtk_blist_update_plugin_actions(void);
 
 /**
  * Updates the Sorting menu on the GTK+ buddy list window.
  */
-void gaim_gtk_blist_update_sort_methods();
+void gaim_gtk_blist_update_sort_methods(void);
 
 /**
  * Determines if showing the join chat dialog is a valid action.

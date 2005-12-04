@@ -65,7 +65,7 @@ struct mwSametimeUser;
 
 
 /** Create a new list */
-struct mwSametimeList *mwSametimeList_new();
+struct mwSametimeList *mwSametimeList_new(void);
 
 
 /** Free the list, all of its groups, and all of the groups' members */

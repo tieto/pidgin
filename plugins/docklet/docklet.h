@@ -37,10 +37,10 @@ typedef enum
 
 struct docklet_ui_ops
 {
-	void (*create)();
-	void (*destroy)();
+	void (*create)(void);
+	void (*destroy)(void);
 	void (*update_icon)(DockletStatus);
-	void (*blank_icon)();
+	void (*blank_icon)(void);
 	GtkMenuPositionFunc position_menu;
 };
 
@@ -49,12 +49,12 @@ extern GaimPlugin *handle;
 
 /* functions in docklet.c */
 extern void docklet_clicked(int);
-extern void docklet_embedded();
+extern void docklet_embedded(void);
 extern void docklet_remove(gboolean);
 extern void docklet_set_ui_ops(struct docklet_ui_ops *);
-extern void docklet_unload();
+extern void docklet_unload(void);
 
 /* function in docklet-{x11,win32}.c */
-extern void docklet_ui_init();
+extern void docklet_ui_init(void);
 
 #endif /* _DOCKLET_H_ */

@@ -52,15 +52,15 @@ MSFilter * ms_decoder_new_with_string_id(gchar *id);
 /* return 0 if codec can be used with bandwidth, -1 else*/
 int ms_codec_is_usable(MSCodecInfo *codec,double bandwidth);
 
-GList * ms_codec_get_all_audio();
+GList * ms_codec_get_all_audio(void);
 
-GList * ms_codec_get_all_video();
+GList * ms_codec_get_all_video(void);
 
 MSCodecInfo * ms_audio_codec_info_get(gchar *name);
 MSCodecInfo * ms_video_codec_info_get(gchar *name);
 
 /* register all statically linked codecs */
-void ms_codec_register_all();
+void ms_codec_register_all(void);
 
 #define MS_CODEC_INFO(codinfo)	((MSCodecInfo*)codinfo)
 

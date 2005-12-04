@@ -71,7 +71,7 @@ void gaim_gtkxfer_dialog_hide(GaimGtkXferDialog *dialog);
 /**
  * Shows the file transfer dialog, creating a new one if necessary
  */
-void gaim_show_xfer_dialog();
+void gaim_show_xfer_dialog(void);
 
 /**
  * Adds a file transfer to the dialog.

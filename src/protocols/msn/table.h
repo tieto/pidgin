@@ -42,7 +42,7 @@ struct _MsnTable
 	GHashTable *fallback;
 };
 
-MsnTable *msn_table_new();
+MsnTable *msn_table_new(void);
 void msn_table_destroy(MsnTable *table);
 
 void msn_table_add_cmd(MsnTable *table, char *command, char *answer,

@@ -52,7 +52,7 @@ typedef struct _GaimMimePart GaimMimePart;
 
 
 /** Allocate an empty MIME document */
-GaimMimeDocument *gaim_mime_document_new();
+GaimMimeDocument *gaim_mime_document_new(void);
 
 
 /** Frees memory used in a MIME document and all of its parts and fields

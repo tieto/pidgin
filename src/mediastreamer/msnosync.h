@@ -57,4 +57,4 @@ void ms_nosync_synchronize(MSNoSync *nosync);
 /* casts a MSSync class into a MSNoSync class */
 #define MS_NOSYNC_CLASS(klass) ((MSNoSyncClass*)(klass))
 
-MSSync *ms_nosync_new();
+MSSync *ms_nosync_new(void);

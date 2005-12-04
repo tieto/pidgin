@@ -852,7 +852,7 @@ GaimAccount *gaim_accounts_find(const char *name, const char *protocol);
  * You probably shouldn't call this unless you really know
  * what you're doing.
  */
-void gaim_accounts_restore_previous_statuses();
+void gaim_accounts_restore_previous_statuses(void);
 
 /*@}*/
 

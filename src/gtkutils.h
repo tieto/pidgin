@@ -283,7 +283,7 @@ gboolean gaim_gtk_save_accels(gpointer data);
 /**
  * Load menu accelerators
  */
-void gaim_gtk_load_accels();
+void gaim_gtk_load_accels(void);
 
 /**
  * Parses an application/x-im-contact MIME message and returns the

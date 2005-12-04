@@ -52,10 +52,10 @@ typedef struct _MSSpeexDecClass MSSpeexDecClass;
 #define MS_SPEEX_DEC_CLASS(o)	((MSSpeexDecClass*)(o))
 
 /* call this before if don't load the plugin dynamically */
-void ms_speex_codec_init();
+void ms_speex_codec_init(void);
 
 /* mediastreamer compliant constructor */
-MSFilter * ms_speex_dec_new();
+MSFilter * ms_speex_dec_new(void);
 
 void ms_speex_dec_init(MSSpeexDec *obj);
 void ms_speex_dec_init_core(MSSpeexDec *obj,const SpeexMode *mode);

@@ -1077,7 +1077,7 @@ msn_rem_permit(GaimConnection *gc, const char *who)
 		msn_userlist_add_buddy(userlist, who, MSN_LIST_BL, NULL);
 }
 
-void
+static void
 msn_rem_deny(GaimConnection *gc, const char *who)
 {
 	MsnSession *session;

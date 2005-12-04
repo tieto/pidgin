@@ -109,6 +109,6 @@ GtkWidget *gaim_gtk_prefs_dropdown_from_list(GtkWidget *page,
 /**
  * Rename legacy prefs and delete some that no longer exist.
  */
-void gaim_gtk_prefs_update_old();
+void gaim_gtk_prefs_update_old(void);
 
 #endif /* _GAIM_GTKPREFS_H_ */

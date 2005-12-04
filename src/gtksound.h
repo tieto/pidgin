@@ -58,7 +58,7 @@ GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
  *
  * @return The handle to the sound system
  */
-void *gaim_gtk_sound_get_handle();
+void *gaim_gtk_sound_get_handle(void);
 
 /*@}*/
 

@@ -145,7 +145,7 @@ void gaim_debug_set_enabled(gboolean enabled);
  *
  * @return TRUE if debuggin is enabled, FALSE if it is not.
  */
-gboolean gaim_debug_is_enabled();
+gboolean gaim_debug_is_enabled(void);
 
 /*@}*/
 

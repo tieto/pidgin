@@ -1,8 +1,8 @@
 class Test {
 	public:
-		Test();
-		~Test();
-		void runTest();
+		Test(void);
+		~Test(void);
+		void runTest(void);
 	private:
 		asdfint fake;
 };

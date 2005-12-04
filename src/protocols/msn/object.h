@@ -57,7 +57,7 @@ typedef struct
  *
  * @return A new MsnObject structure.
  */
-MsnObject *msn_object_new();
+MsnObject *msn_object_new(void);
 
 /**
  * Creates a MsnObject structure from a string.

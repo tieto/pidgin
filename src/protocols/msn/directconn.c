@@ -160,7 +160,7 @@ create_listener(int port)
 	return fd;
 }
 
-size_t
+static size_t
 msn_directconn_write(MsnDirectConn *directconn,
 					 const char *data, size_t len)
 {
@@ -259,7 +259,7 @@ msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg)
 	msn_directconn_write(directconn, body, body_len);
 }
 
-void
+static void
 msn_directconn_process_msg(MsnDirectConn *directconn, MsnMessage *msg)
 {
 	gaim_debug_info("msn", "directconn: process_msg\n");

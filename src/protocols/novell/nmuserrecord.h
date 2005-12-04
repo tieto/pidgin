@@ -38,7 +38,7 @@ typedef struct _NMProperty NMProperty;
  * @return 			The new user record
  *
  */
-NMUserRecord *nm_create_user_record();
+NMUserRecord *nm_create_user_record(void);
 
 /**
  * Creates an NMUserRecord

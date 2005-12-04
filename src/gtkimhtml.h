@@ -396,7 +396,7 @@ void gtk_imhtml_page_down(GtkIMHtml *imhtml);
  *
  * @return A new IM/HTML Scalable object.
  */
-GtkIMHtmlScalable *gtk_imhtml_scalable_new();
+GtkIMHtmlScalable *gtk_imhtml_scalable_new(void);
 
 /**
  * Creates and returns an new GTK+ IM/HTML scalable object with an image.
@@ -439,7 +439,7 @@ void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTex
  *
  * @return A new IM/HTML Scalable object with an image.
  */
-GtkIMHtmlScalable *gtk_imhtml_hr_new();
+GtkIMHtmlScalable *gtk_imhtml_hr_new(void);
 
 /**
  * Destroys and frees a GTK+ IM/HTML scalable horizontal rule.

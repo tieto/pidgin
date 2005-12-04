@@ -70,6 +70,6 @@ void ms_message_destroy(MSMessage *m);
 MSMessage * ms_message_dup(MSMessage *m);
 
 /* allocate a single message without buffer */
-MSMessage *ms_message_alloc();
+MSMessage *ms_message_alloc(void);
 
 #endif

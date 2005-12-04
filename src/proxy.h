@@ -73,7 +73,7 @@ extern "C" {
  *
  * @return the handle to the proxy system
  */
-void *gaim_proxy_get_handle();
+void *gaim_proxy_get_handle(void);
 
 /**
  * Creates a proxy information structure.

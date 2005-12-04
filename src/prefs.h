@@ -67,7 +67,7 @@ void *gaim_prefs_get_handle(void);
 /**
  * Initialize core prefs
  */
-void gaim_prefs_init();
+void gaim_prefs_init(void);
 
 /**
  * Uninitializes the prefs subsystem.
@@ -139,7 +139,7 @@ void gaim_prefs_rename_boolean_toggle(const char *oldname, const char *newname);
 /**
  * Remove all prefs.
  */
-void gaim_prefs_destroy();
+void gaim_prefs_destroy(void);
 
 /**
  * Set raw pref value
@@ -253,12 +253,12 @@ void gaim_prefs_trigger_callback(const char *name);
 /**
  * Read preferences
  */
-gboolean gaim_prefs_load();
+gboolean gaim_prefs_load(void);
 
 /**
  * Rename legacy prefs and delete some that no longer exist.
  */
-void gaim_prefs_update_old();
+void gaim_prefs_update_old(void);
 
 /*@}*/
 

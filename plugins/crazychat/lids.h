@@ -1,3 +1,3 @@
-void initLids();
+void initLids(void);
 
 void drawLid(int num);

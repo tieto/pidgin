@@ -206,7 +206,7 @@ send_clientcaps(MsnSwitchBoard *swboard)
 	msn_message_destroy(msg);
 }
 
-void
+static void
 msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 {
 	MsnCmdProc *cmdproc;
@@ -302,7 +302,7 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 }
 
-GaimConversation *
+static GaimConversation *
 msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 {
 	GaimAccount *account;
@@ -321,7 +321,7 @@ msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 											   swboard->im_user, account);
 }
 
-void
+static void
 msn_switchboard_report_user(MsnSwitchBoard *swboard, GaimMessageFlags flags, const char *msg)
 {
 	GaimConversation *conv;

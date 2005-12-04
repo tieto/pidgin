@@ -38,7 +38,7 @@ typedef struct _NMFolder NMFolder;
  * @return 			The new NMContact
  *
  */
-NMContact *nm_create_contact();
+NMContact *nm_create_contact(void);
 
 /**
  * Creates a contact from a field array representing the

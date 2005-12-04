@@ -1016,7 +1016,7 @@ static void jabber_buddy_unsubscribe(GaimBlistNode *node, gpointer data)
 }
 
 
-GList *jabber_buddy_menu(GaimBuddy *buddy)
+static GList *jabber_buddy_menu(GaimBuddy *buddy)
 {
 	GaimConnection *gc = gaim_account_get_connection(buddy->account);
 	JabberStream *js = gc->proto_data;

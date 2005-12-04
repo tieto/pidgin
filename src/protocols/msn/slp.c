@@ -873,7 +873,7 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 	return FALSE;
 }
 
-void
+static void
 msn_release_buddy_icon_request(MsnUserList *userlist)
 {
 	MsnUser *user;

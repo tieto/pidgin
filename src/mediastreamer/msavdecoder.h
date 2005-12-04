@@ -66,9 +66,9 @@ typedef struct _MSAVDecoderClass MSAVDecoderClass;
 #define MS_AVDECODER(filter) ((MSAVDecoder*)(filter))
 #define MS_AVDECODER_CLASS(klass) ((MSAVDecoderClass*)(klass))
 
-MSFilter *ms_h263_decoder_new();
-MSFilter *ms_mpeg_decoder_new();
-MSFilter *ms_mpeg4_decoder_new();
+MSFilter *ms_h263_decoder_new(void);
+MSFilter *ms_mpeg_decoder_new(void);
+MSFilter *ms_mpeg4_decoder_new(void);
 MSFilter * ms_AVdecoder_new_with_codec(enum CodecID codec_id);
 
 gint ms_AVdecoder_set_format(MSAVDecoder *dec, gchar *fmt);
@@ -82,6 +82,6 @@ void ms_AVdecoder_class_init(MSAVDecoderClass *klass);
 void ms_AVdecoder_destroy( MSAVDecoder *obj);
 void ms_AVdecoder_process(MSAVDecoder *r);
 
-void ms_AVCodec_init();
+void ms_AVCodec_init(void);
 
 #endif

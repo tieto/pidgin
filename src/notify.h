@@ -194,7 +194,7 @@ void gaim_notify_searchresults_button_add(GaimNotifySearchResults *results,
  *
  * @return The new search results object.
  */
-GaimNotifySearchResults *gaim_notify_searchresults_new();
+GaimNotifySearchResults *gaim_notify_searchresults_new(void);
 
 /**
  * Returns a newly created search result column object.

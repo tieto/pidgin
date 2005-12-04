@@ -22,7 +22,7 @@
 #include "cc_interface.h"
 #include "filter.h"
 
-void Die();
+void Die(void);
 OSErr CamProc(struct input_instance *inst, filter_bank *bank);
 void QueryCam (void);
 

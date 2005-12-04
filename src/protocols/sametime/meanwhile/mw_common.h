@@ -219,7 +219,7 @@ struct mwEncryptItem {
 
 
 /** allocate a new empty buffer */
-struct mwPutBuffer *mwPutBuffer_new();
+struct mwPutBuffer *mwPutBuffer_new(void);
 
 
 /** write raw data to the put buffer */

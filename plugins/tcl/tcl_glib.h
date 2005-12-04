@@ -24,6 +24,6 @@
 #include <tcl.h>
 #include <glib.h>
 
-void tcl_glib_init();
+void tcl_glib_init(void);
 
 #endif /* _GAIM_TCL_GLIB_H_ */

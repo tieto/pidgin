@@ -42,7 +42,7 @@ void gaim_gtk_debug_uninit(void);
  *
  * @return the handle to the debug system
  */
-void *gaim_gtk_debug_get_handle();
+void *gaim_gtk_debug_get_handle(void);
 
 /**
  * Shows the debug window.

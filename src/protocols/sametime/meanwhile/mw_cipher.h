@@ -78,8 +78,8 @@ struct mwCipher {
   struct mwSession *session;
 
   guint16 type;               /**< @see mwCipher_getType */
-  const char *(*get_name)();  /**< @see mwCipher_getName */
-  const char *(*get_desc)();  /**< @see mwCipher_getDesc */
+  const char *(*get_name)(void);  /**< @see mwCipher_getName */
+  const char *(*get_desc)(void);  /**< @see mwCipher_getDesc */
 
   /** Generate a new Cipher Instance for use on a channel
       @see mwCipher_newInstance */
@@ -252,7 +252,7 @@ struct mwMpi;
 
 
 /** prepare a new mpi value */
-struct mwMpi *mwMpi_new();
+struct mwMpi *mwMpi_new(void);
 
 
 /** destroy an mpi value */

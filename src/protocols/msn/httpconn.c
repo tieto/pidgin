@@ -159,7 +159,7 @@ write_raw(MsnHttpConn *httpconn, const char *header,
 	return s;
 }
 
-void
+static void
 msn_httpconn_poll(MsnHttpConn *httpconn)
 {
 	char *header;

@@ -46,7 +46,7 @@ void gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
  * Unregister this instance of Gaim with the user's current session
  * manager.
  */
-void gaim_gtk_session_end();
+void gaim_gtk_session_end(void);
 
 /*@}*/
 

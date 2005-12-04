@@ -55,7 +55,7 @@ typedef struct _MSILBCDecoderClass
 /* PUBLIC */
 
 /* call this before if don't load the plugin dynamically */
-void ms_ilbc_codec_init();
+void ms_ilbc_codec_init(void);
 
 #define MS_ILBCDECODER(filter) ((MSILBCDecoder*)(filter))
 #define MS_ILBCDECODER_CLASS(klass) ((MSILBCDecoderClass*)(klass))

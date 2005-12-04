@@ -26,9 +26,9 @@ typedef struct {
 	GList *signal_data;
 } GaimMonoPlugin;
 
-gboolean ml_init();
+gboolean ml_init(void);
 
-void ml_uninit();
+void ml_uninit(void);
 
 MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params);
 
@@ -56,7 +56,7 @@ MonoObject* ml_create_api_object(char *class_name);
 
 void ml_set_api_image(MonoImage *image);
 
-MonoImage* ml_get_api_image();
+MonoImage* ml_get_api_image(void);
 
 /* hash table stuff; probably don't need it anymore */
 
@@ -68,6 +68,6 @@ gpointer ml_find_plugin(GaimMonoPlugin *plugin);
 
 gpointer ml_find_plugin_by_class(MonoClass *klass);
 
-GHashTable* ml_get_plugin_hash();
+GHashTable* ml_get_plugin_hash(void);
 
 #endif

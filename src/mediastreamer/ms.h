@@ -26,7 +26,7 @@
 #include "mssync.h"
 
 
-void ms_init();
+void ms_init(void);
 
 /* compile graphs attached to a sync source*/
 int ms_compile(MSSync *source);
@@ -73,8 +73,8 @@ void ms_stop(MSSync *sync);
 
 
 gchar * ms_proc_get_param(gchar *parameter);
-gint ms_proc_get_type();
-gint ms_proc_get_speed();
+gint ms_proc_get_type(void);
+gint ms_proc_get_speed(void);
 
 
 

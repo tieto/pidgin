@@ -113,7 +113,7 @@ gevo_addrbooks_model_populate(GtkTreeModel *model)
 	g_object_unref(addressbooks);
 }
 
-EContact * 
+static EContact * 
 gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 {
 	EBook *book;

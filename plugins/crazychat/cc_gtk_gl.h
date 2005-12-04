@@ -26,7 +26,7 @@ struct window_box {
  * Initialize the gtkglext framework for all our widgets.
  * @return		0 on success, non-zero on failure
  */
-int cc_init_gtk_gl();
+int cc_init_gtk_gl(void);
 
 /**
  * Create a new OpenGL enabled window

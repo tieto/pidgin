@@ -54,7 +54,7 @@ typedef struct _MSVideoSourceClass
 } MSVideoSourceClass;
 
 /* PUBLIC */
-void ms_video_source_register_all();
+void ms_video_source_register_all(void);
 int ms_video_source_set_device(MSVideoSource *f, const gchar *device);
 gchar* ms_video_source_get_device_name(MSVideoSource *f);
 void ms_video_source_start(MSVideoSource *f);

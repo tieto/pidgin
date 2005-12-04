@@ -97,9 +97,9 @@ struct _GaimGtkWindow
  **************************************************************************/
 /*@{*/
 
-GaimGtkWindow * gaim_gtk_conv_window_new();
+GaimGtkWindow * gaim_gtk_conv_window_new(void);
 void gaim_gtk_conv_window_destroy(GaimGtkWindow *win);
-GList *gaim_gtk_conv_windows_get_list();
+GList *gaim_gtk_conv_windows_get_list(void);
 void gaim_gtk_conv_window_show(GaimGtkWindow *win);
 void gaim_gtk_conv_window_hide(GaimGtkWindow *win);
 void gaim_gtk_conv_window_raise(GaimGtkWindow *win);

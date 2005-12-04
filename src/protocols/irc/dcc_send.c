@@ -214,7 +214,7 @@ static void irc_dccsend_send_read(gpointer data, int source, GaimInputCondition 
 	}
 }
 
-gssize irc_dccsend_send_write(const guchar *buffer, size_t size, GaimXfer *xfer)
+static gssize irc_dccsend_send_write(const guchar *buffer, size_t size, GaimXfer *xfer)
 {
 	gssize s;
 

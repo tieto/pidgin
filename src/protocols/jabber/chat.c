@@ -113,7 +113,7 @@ struct _find_by_id_data {
 	JabberChat *chat;
 };
 
-void find_by_id_foreach_cb(gpointer key, gpointer value, gpointer user_data)
+static void find_by_id_foreach_cb(gpointer key, gpointer value, gpointer user_data)
 {
 	JabberChat *chat = value;
 	struct _find_by_id_data *fbid = user_data;

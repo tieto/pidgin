@@ -35,7 +35,7 @@ typedef struct _MSQueue
 }MSQueue;
 
 
-MSQueue * ms_queue_new();
+MSQueue * ms_queue_new(void);
 
 MSMessage *ms_queue_get(MSQueue *q);
 

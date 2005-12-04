@@ -156,7 +156,7 @@ const GList *gaim_savedstatuses_get_all(void);
  *
  * @return A pointer to the in-use GaimSavedStatus.
  */
-GaimSavedStatus *gaim_savedstatus_get_current();
+GaimSavedStatus *gaim_savedstatus_get_current(void);
 
 /**
  * Returns the saved status that gets used when your
@@ -164,7 +164,7 @@ GaimSavedStatus *gaim_savedstatus_get_current();
  *
  * @return A pointer to the idle-away GaimSavedStatus.
  */
-GaimSavedStatus *gaim_savedstatus_get_idleaway();
+GaimSavedStatus *gaim_savedstatus_get_idleaway(void);
 
 /**
  * Finds a saved status with the specified title.
@@ -306,7 +306,7 @@ void gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status, 
  *
  * @return the handle to the status subsystem
  */
-void *gaim_savedstatuses_get_handle();
+void *gaim_savedstatuses_get_handle(void);
 
 /**
  * Initializes the status subsystem.

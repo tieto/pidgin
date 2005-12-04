@@ -52,7 +52,7 @@ extern "C" {
  *
  * @return a new GaimPluginPrefFrame
  */
-GaimPluginPrefFrame *gaim_plugin_pref_frame_new();
+GaimPluginPrefFrame *gaim_plugin_pref_frame_new(void);
 
 /**
  * Destroy a plugin preference frame
@@ -82,7 +82,7 @@ GList *gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame);
  *
  * @return a new GaimPluginPref
  */
-GaimPluginPref *gaim_plugin_pref_new();
+GaimPluginPref *gaim_plugin_pref_new(void);
 
 /**
  * Create a new plugin preference with name

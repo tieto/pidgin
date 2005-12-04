@@ -63,6 +63,6 @@ void ms_timer_set_interval(MSTimer *timer, gint milisec);
 /* casts a MSSync class into a MSTimer class */
 #define MS_TIMER_CLASS(klass) ((MSTimerClass*)(klass))
 
-MSSync *ms_timer_new();
+MSSync *ms_timer_new(void);
 
 #endif

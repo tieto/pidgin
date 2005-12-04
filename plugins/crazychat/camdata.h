@@ -45,19 +45,19 @@ void SetCurrentClamp(short index);
 //void BlitOneMungData(mungDataRecord *theMungData);
 
 //void AdjustColorClampEndpoints(short hMouseCoord);
-//void IncrementCurrentClamp();
-//void DecrementCurrentClamp();
-void SetMungDataColorDefaults();
-CGrafPtr GetMungDataWindowPort();
+//void IncrementCurrentClamp(void);
+//void DecrementCurrentClamp(void);
+void SetMungDataColorDefaults(void);
+CGrafPtr GetMungDataWindowPort(void);
 
 GWorldPtr GetMungDataOffscreen(void);
-//OSType GetMungDataEffectType();
+//OSType GetMungDataEffectType(void);
 
-//long GetCurrentClamp();
+//long GetCurrentClamp(void);
 //void SetCurrentClamp(short index);
 
 void GetMungDataBoundsRect(Rect *movieRect);
-//CGrafPtr GetMungDataWindowPort();
+//CGrafPtr GetMungDataWindowPort(void);
 
 void SetMungDataDrawSeq(ImageSequence theDrawSeq);
-//ImageSequence GetMungDataDrawSeq();
+//ImageSequence GetMungDataDrawSeq(void);

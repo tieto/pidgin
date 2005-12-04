@@ -1,1 +1,1 @@
-GLint Gen3DObjectList();
+GLint Gen3DObjectList(void);

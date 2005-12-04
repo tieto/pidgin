@@ -257,12 +257,12 @@ void *gaim_signal_emit_vargs_return_1(void *instance, const char *signal,
 /**
  * Initializes the signals subsystem.
  */
-void gaim_signals_init();
+void gaim_signals_init(void);
 
 /**
  * Uninitializes the signals subsystem.
  */
-void gaim_signals_uninit();
+void gaim_signals_uninit(void);
 
 /*@}*/
 

@@ -149,7 +149,7 @@ static void jabber_oob_xfer_recv_canceled(GaimXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
-void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
+static void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	JabberOOBXfer *jox;
 	GaimXfer *xfer;
 	char *filename;

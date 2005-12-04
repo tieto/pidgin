@@ -210,7 +210,7 @@ static GList *irc_chat_join_info(GaimConnection *gc)
 	return m;
 }
 
-GHashTable *irc_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+static GHashTable *irc_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 

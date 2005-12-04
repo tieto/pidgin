@@ -53,7 +53,7 @@ typedef struct {
  * @return Newly allocated GGPSearchForm.
  */
 GGPSearchForm *
-ggp_search_form_new();
+ggp_search_form_new(void);
 
 /**
  * Initiate a search in the public directory.

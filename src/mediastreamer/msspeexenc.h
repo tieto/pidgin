@@ -52,7 +52,7 @@ typedef struct _MSSpeexEncClass MSSpeexEncClass;
 #define MS_SPEEX_ENC_CLASS(o)	((MSSpeexEncClass*)(o))
 
 /* generic constructor */
-MSFilter * ms_speex_enc_new();
+MSFilter * ms_speex_enc_new(void);
 
 void ms_speex_enc_init_core(MSSpeexEnc *obj,const SpeexMode *mode, gint quality);
 void ms_speex_enc_uninit_core(MSSpeexEnc *obj);

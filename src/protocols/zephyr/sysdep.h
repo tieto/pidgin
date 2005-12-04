@@ -32,11 +32,11 @@
 # ifdef HAVE_MALLOC_H
 #  include <malloc.h>
 # else
-char *malloc(), *realloc();
+char *malloc(), *realloc(void);
 # endif
-char *getenv(), *strerror(), *ctime(), *strcpy();
-time_t time();
-ZEPHYR_INT32 random();
+char *getenv(), *strerror(), *ctime(), *strcpy(void);
+time_t time(void);
+ZEPHYR_INT32 random(void);
 #endif
 
 #ifndef HAVE_RANDOM
@@ -62,7 +62,7 @@ extern char *sys_errlist[];
 #  define strchr index
 #  define strrchr rindex
 # endif
-char *strchr(), *strrchr();
+char *strchr(), *strrchr(void);
 # ifndef HAVE_MEMCPY
 #  define memcpy(d, s, n) bcopy ((s), (d), (n))
 #  define memcmp bcmp
@@ -131,10 +131,10 @@ char *strchr(), *strrchr();
 # ifdef HAVE_SYS_FILE_H
 #  include <sys/file.h>
 # endif
-uid_t getuid();
-char *ttyname();
+uid_t getuid(void);
+char *ttyname(void);
 #ifdef HAVE_GETHOSTID
-ZEPHYR_INT32 gethostid();
+ZEPHYR_INT32 gethostid(void);
 #endif
 #endif
 

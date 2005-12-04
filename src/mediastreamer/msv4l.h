@@ -71,7 +71,7 @@ typedef struct _MSV4lClass MSV4lClass;
 /* PUBLIC API */
 #define MS_V4L(v)		((MSV4l*)(v))
 #define MS_V4L_CLASS(k)		((MSV4lClass*)(k))
-MSFilter * ms_v4l_new();
+MSFilter * ms_v4l_new(void);
 
 void ms_v4l_start(MSV4l *obj);
 void ms_v4l_stop(MSV4l *obj);

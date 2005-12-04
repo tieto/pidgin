@@ -48,7 +48,7 @@ extern GaimPlugin *_tcl_plugin;
 
 GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp);
 
-void tcl_signal_init();
+void tcl_signal_init(void);
 void tcl_signal_handler_free(struct tcl_signal_handler *handler);
 void tcl_signal_cleanup(Tcl_Interp *interp);
 gboolean tcl_signal_connect(struct tcl_signal_handler *handler);

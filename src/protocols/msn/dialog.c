@@ -69,7 +69,7 @@ msn_rem_cb(MsnAddRemData *data)
 	g_free(data);
 }
 
-void
+static void
 msn_show_sync_issue(MsnSession *session, const char *passport,
 					const char *group_name)
 {

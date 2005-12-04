@@ -44,10 +44,10 @@ struct smiley_theme {
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
-extern void gaim_gtkthemes_init();
-gboolean gaim_gtkthemes_smileys_disabled();
+extern void gaim_gtkthemes_init(void);
+gboolean gaim_gtkthemes_smileys_disabled(void);
 extern void gaim_gtkthemes_smiley_themeize(GtkWidget *);
-extern void gaim_gtkthemes_smiley_theme_probe();
+extern void gaim_gtkthemes_smiley_theme_probe(void);
 extern void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load);
 extern GSList *gaim_gtkthemes_get_proto_smileys(const char *id);
 #endif /* _GAIM_GTKDIALOGS_H_ */

@@ -57,7 +57,7 @@ typedef enum _PublishType {
 /**
  * Allocate space for the dns-sd data.
  */
-BonjourDnsSd *bonjour_dns_sd_new();
+BonjourDnsSd *bonjour_dns_sd_new(void);
 
 /**
  * Deallocate the space of the dns-sd data.

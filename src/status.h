@@ -995,7 +995,7 @@ gint gaim_presence_compare(const GaimPresence *presence1,
  *
  * @return the handle to the status subsystem
  */
-void *gaim_status_get_handle();
+void *gaim_status_get_handle(void);
 
 /**
  * Initializes the status subsystem.

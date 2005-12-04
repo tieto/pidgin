@@ -67,9 +67,9 @@ typedef struct _MSAVEncoderClass MSAVEncoderClass;
 #define MS_AVENCODER(filter) ((MSAVEncoder*)(filter))
 #define MS_AVENCODER_CLASS(klass) ((MSAVEncoderClass*)(klass))
 
-MSFilter *ms_h263_encoder_new();
-MSFilter *ms_mpeg_encoder_new();
-MSFilter *ms_mpeg4_encoder_new();
+MSFilter *ms_h263_encoder_new(void);
+MSFilter *ms_mpeg_encoder_new(void);
+MSFilter *ms_mpeg4_encoder_new(void);
 MSFilter * ms_AVencoder_new_with_codec(enum CodecID codec_id, MSCodecInfo *info);
 
 gint ms_AVencoder_set_format(MSAVEncoder *enc, gchar *fmt);

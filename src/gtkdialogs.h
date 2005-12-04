@@ -30,12 +30,12 @@
 #include "conversation.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
-void gaim_gtkdialogs_destroy_all();
-void gaim_gtkdialogs_about();
-void gaim_gtkdialogs_im();
+void gaim_gtkdialogs_destroy_all(void);
+void gaim_gtkdialogs_about(void);
+void gaim_gtkdialogs_im(void);
 void gaim_gtkdialogs_im_with_user(GaimAccount *, const char *);
-void gaim_gtkdialogs_info();
-void gaim_gtkdialogs_log();
+void gaim_gtkdialogs_info(void);
+void gaim_gtkdialogs_log(void);
 void gaim_gtkdialogs_alias_contact(GaimContact *);
 void gaim_gtkdialogs_alias_buddy(GaimBuddy *);
 void gaim_gtkdialogs_alias_chat(GaimChat *);
