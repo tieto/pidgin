@@ -3874,6 +3874,7 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 {
 	GaimGroup *group;
 	int count;
+	gboolean show = FALSE;
 
 	g_return_if_fail(GAIM_BLIST_NODE_IS_GROUP(node));
 
@@ -3883,7 +3884,24 @@ static void gaim_gtk_blist_update_group(GaimBuddyList *list, GaimBlistNode *node
 		count = gaim_blist_get_group_size(group, FALSE);
 	else
 		count = gaim_blist_get_group_online_count(group);
-	if(gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups") || count > 0) {
+	
+	if (count > 0 || gaim_prefs_get_bool("/gaim/gtk/blist/show_empty_groups"))
+		show = TRUE;
+	else {
+		GaimBlistNode *n;
+		n = node->child;
+		while (n && !GAIM_BLIST_NODE_IS_GROUP(n)) {
+			if (GAIM_BLIST_NODE_IS_BUDDY(n)) {
+				if (buddy_is_displayable((GaimBuddy*)n)) {
+					show = TRUE;
+					break;
+				}					
+			}
+			n = gaim_blist_node_next(n, FALSE);
+		}
+	}
+
+	if (show) {
 		char *mark, *esc;
 		GtkTreeIter iter;
 
@@ -4042,12 +4060,7 @@ static void gaim_gtk_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node
 
 	gtkparentnode = (struct _gaim_gtk_blist_node *)node->parent->ui_data;
 
-	if (gtkparentnode->contact_expanded &&
-		(gaim_presence_is_online(buddy->presence) ||
-		(0 /* XXX: if we just signed off, need to show logout.png */) ||
-			(gaim_account_is_connected(buddy->account) &&
-				gaim_prefs_get_bool("/gaim/gtk/blist/show_offline_buddies")) ||
-			gaim_blist_node_get_bool(node->parent, "show_offline")))
+	if (gtkparentnode->contact_expanded && buddy_is_displayable(buddy))
 	{
 		GtkTreeIter iter;
 
