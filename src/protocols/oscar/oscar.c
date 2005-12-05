@@ -7654,6 +7654,7 @@ static char *oscar_status_text(GaimBuddy *b)
 		{
 			gchar *tmp1, *tmp2;
 			tmp1 = gaim_markup_strip_html(message);
+			gaim_util_chrreplace(tmp1, '\n', ' ');
 			tmp2 = g_markup_escape_text(tmp1, -1);
 			ret = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(account));
 			g_free(tmp1);
