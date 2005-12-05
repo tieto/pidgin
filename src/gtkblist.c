@@ -5469,7 +5469,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 
 	if(disabled_accounts) {
 		gaim_separator(accountmenu);
-		menuitem = gtk_menu_item_new_with_label(_("Enable Accounts"));
+		menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 		gtk_widget_show(menuitem);
 
