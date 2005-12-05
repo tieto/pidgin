@@ -39,6 +39,12 @@
 #include "jabber.h"
 #include "buddy.h"
 
+/*
+ * TODO: Should implement an add_buddy callback that removes the buddy
+ *       from the local list.  Bonjour manages buddies for you, and
+ *       adding someone locally by hand is stupid.
+ */
+
 static char *default_firstname;
 static char *default_lastname;
 static char *default_hostname;
@@ -281,7 +287,7 @@ bonjour_list_emblems(GaimBuddy *buddy,
 
 	presence = gaim_buddy_get_presence(buddy);
 
-	if (!gaim_presence_is_available(presence))
+	if (gaim_presence_is_online(presence) && !gaim_presence_is_available(presence))
 		*se = "away";
 }
 
@@ -292,10 +298,10 @@ bonjour_status_text(GaimBuddy *buddy)
 
 	presence = gaim_buddy_get_presence(buddy);
 
-	if (gaim_presence_is_available(presence))
-		return g_strdup("");
-	else
+	if (gaim_presence_is_online(presence) && !gaim_presence_is_available(presence))
 		return g_strdup("Away");
+
+	return NULL;
 }
 
 static char *
