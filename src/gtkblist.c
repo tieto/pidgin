@@ -2478,7 +2478,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", gaim_gtk_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, gaim_gtk_privacy_dialog_show, 0, "<StockItem>", GTK_STOCK_DIALOG_ERROR },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
-	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
 	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
@@ -2488,6 +2487,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>" },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", GAIM_STOCK_DEBUG },
 	{ N_("/Help/_About"), NULL, gaim_gtkdialogs_about, 0,  "<StockItem>", GAIM_STOCK_ABOUT },
 };
 
@@ -5286,30 +5286,26 @@ plugin_act(GtkObject *obk, GaimPluginAction *pam)
 		pam->callback(pam);
 }
 
-static GList *plugin_menu_items = NULL;
-static int plugin_menu_index = 10;
-
 static void
-build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
+build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin)
 {
-	GtkWidget *menuitem = NULL;
+	GtkWidget *menuitem;
 	GaimPluginAction *action = NULL;
-	GList *l, *ll;
+	GList *actions, *l;
 
-	for (l = ll = GAIM_PLUGIN_ACTIONS(plugin, context); l; l = l->next) {
-		if (l->data) {
+	actions = GAIM_PLUGIN_ACTIONS(plugin, NULL);
+
+	for (l = actions; l != NULL; l = l->next)
+	{
+		if (l->data)
+		{
 			action = (GaimPluginAction *) l->data;
 			action->plugin = plugin;
-			action->context = context;
+			action->context = NULL;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
-			if (context) {
-				gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-			} else {
-				plugin_menu_items = g_list_append(plugin_menu_items, menuitem);
-				plugin_menu_index++;
-				gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, plugin_menu_index);
-			}
+			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 					G_CALLBACK(plugin_act), action);
 			g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
@@ -5319,7 +5315,7 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 			gaim_separator(menu);
 	}
 
-	g_list_free(ll);
+	g_list_free(actions);
 }
 
 static void
@@ -5509,44 +5505,42 @@ gaim_gtk_blist_update_accounts_menu(void)
 	}
 }
 
+static GList *plugin_submenus = NULL;
+
 void
 gaim_gtk_blist_update_plugin_actions(void)
 {
-	GtkWidget *menuitem;
+	GtkWidget *menuitem, *submenu;
 	GaimPlugin *plugin = NULL;
 	GList *l;
-	int count = 0;
 
 	GtkWidget *pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools"));
 
-	if (pluginmenu == NULL)
-		return;
+	g_return_if_fail(pluginmenu != NULL);
 
-	/* Clear the old Account Actions menu */
-	for (l = plugin_menu_items; l; l = l->next) {
-		GaimPluginAction *action;
-		plugin_menu_index--;
-		menuitem = l->data;
-		action = g_object_get_data(G_OBJECT(menuitem), "plugin_action");
-		g_free(action);
+	/* Remove old plugin action submenus from the Tools menu */
+	for (l = plugin_submenus; l; l = l->next)
+	{
+		GList *menuitems;
 
-		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(menuitem));
+		submenu = l->data;
+
+		menuitems = gtk_container_get_children(GTK_CONTAINER(submenu));
+		while (menuitems != NULL)
+		{
+			GaimPluginAction *action;
+			menuitem = menuitems->data;
+			action = g_object_get_data(G_OBJECT(menuitem), "plugin_action");
+			g_free(action);
+			menuitems = g_list_delete_link(menuitems, menuitems);
+		}
+
+		gtk_container_remove(GTK_CONTAINER(pluginmenu), GTK_WIDGET(submenu));
 	}
-	g_list_free(plugin_menu_items);
-	plugin_menu_items = NULL;
+	g_list_free(plugin_submenus);
+	plugin_submenus = NULL;
 
-	/* Count the number of plugins with actions */
-	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
-		plugin = (GaimPlugin *) l->data;
-
-		if (!GAIM_IS_PROTOCOL_PLUGIN(plugin) && GAIM_PLUGIN_HAS_ACTIONS(plugin))
-			count++;
-
-		/* no need to count past 2, so don't */
-		if (count > 1)
-			break;
-	}
-
+	/* Add a submenu for each plugin with custom actions */
 	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
 
 		plugin = (GaimPlugin *) l->data;
@@ -5557,7 +5551,17 @@ gaim_gtk_blist_update_plugin_actions(void)
 		if (!GAIM_PLUGIN_HAS_ACTIONS(plugin))
 			continue;
 
-		build_plugin_actions(pluginmenu, plugin, NULL);
+		menuitem = gtk_image_menu_item_new_with_label(plugin->info->name);
+		gtk_menu_shell_append(GTK_MENU_SHELL(pluginmenu), menuitem);
+		gtk_widget_show(menuitem);
+
+		plugin_submenus = g_list_append(plugin_submenus, menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+		build_plugin_actions(submenu, plugin);
 	}
 }
 
