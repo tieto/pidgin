@@ -147,8 +147,8 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
-GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
-gboolean color_is_visible(GdkColor foreground, GdkColor background);
+static GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
+static gboolean color_is_visible(GdkColor foreground, GdkColor background);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -7509,7 +7509,7 @@ gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv)
 
 
 /* Algorithm from http://www.w3.org/TR/AERT#color-contrast */
-gboolean
+static gboolean
 color_is_visible(GdkColor foreground, GdkColor background)
 {
 	gulong fg_brightness;
@@ -7527,7 +7527,7 @@ color_is_visible(GdkColor foreground, GdkColor background)
 }
 
 
-GdkColor*
+static GdkColor*
 generate_nick_colors(guint numcolors, GdkColor background)
 {
 	guint i;
