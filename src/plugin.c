@@ -200,6 +200,7 @@ gaim_plugin_probe(const char *filename)
 	GaimPlugin *plugin = NULL;
 	GaimPlugin *loader;
 	gpointer unpunned;
+	gchar *basename = NULL;
 	gboolean (*gaim_init_plugin)(GaimPlugin *);
 
 	gaim_debug_misc("plugins", "probing %s\n", filename);
@@ -209,9 +210,17 @@ gaim_plugin_probe(const char *filename)
 		return NULL;
 
 	/* If this plugin has already been probed then exit */
-	plugin = gaim_plugins_find_with_filename(filename);
+	basename = gaim_plugin_get_basename(filename);
+	plugin = gaim_plugins_find_with_basename(basename);
+	g_free(basename);
 	if (plugin != NULL)
+	{
+		if (strcmp(filename, plugin->path))
+			gaim_debug_info("plugins", "Not loading %s."
+							"Another plugin with the same name (%s) has already been loaded.\n",
+							filename, plugin->path);
 		return plugin;
+	}
 
 	plugin = gaim_plugin_new(has_file_extension(filename, G_MODULE_SUFFIX), filename);
 

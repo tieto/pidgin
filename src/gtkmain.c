@@ -618,11 +618,14 @@ int main(int argc, char *argv[])
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
 
-	/* Set plugin search directories */
-	gaim_plugins_add_search_path(LIBDIR);
+	/*
+	 * Set plugin search directories. Give priority to the plugins
+	 * in user's home directory.
+	 */
 	search_path = g_build_filename(gaim_user_dir(), "plugins", NULL);
 	gaim_plugins_add_search_path(search_path);
 	g_free(search_path);
+	gaim_plugins_add_search_path(LIBDIR);
 
 	if (!gaim_core_init(GAIM_GTK_UI)) {
 		fprintf(stderr,
