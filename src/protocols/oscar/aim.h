@@ -640,7 +640,7 @@ faim_export aim_conn_t *aim_getconn_type_all(aim_session_t *, int type);
 faim_export aim_conn_t *aim_getconn_fd(aim_session_t *, int fd);
 
 /* 0x0001 - service.c */
-faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg);
+faim_export int aim_srv_setstatusmsg(aim_session_t *sess, const char *msg);
 faim_export int aim_srv_setidle(aim_session_t *sess, fu32_t idletime);
 
 /* misc.c */
@@ -1088,9 +1088,9 @@ typedef struct aim_userinfo_s {
 	char *info_encoding;
 	fu16_t info_len;
 
-	char *avail;
-	char *avail_encoding;
-	fu16_t avail_len;
+	char *status;
+	char *status_encoding;
+	fu16_t status_len;
 
 	char *away;
 	char *away_encoding;

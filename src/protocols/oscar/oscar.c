@@ -177,7 +177,6 @@ struct ask_direct {
  */
 struct buddyinfo {
 	gboolean typingnot;
-	gchar *availmsg;
 	fu32_t ipaddr;
 
 	unsigned long ico_me_len;
@@ -320,7 +319,6 @@ static void oscar_free_name_data(struct name_data *data) {
 
 static void oscar_free_buddyinfo(void *data) {
 	struct buddyinfo *bi = data;
-	g_free(bi->availmsg);
 	g_free(bi);
 }
 
@@ -3467,10 +3465,12 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
 	int caps = 0;
-	va_list ap;
-	aim_userinfo_t *info;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
+	gboolean have_status_message = FALSE;
+	char *message = NULL;
+	va_list ap;
+	aim_userinfo_t *info;
 
 	gc = sess->aux_data;
 	account = gaim_connection_get_account(gc);
@@ -3484,9 +3484,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	g_return_val_if_fail(info != NULL, 1);
 	g_return_val_if_fail(info->sn != NULL, 1);
 
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
-		caps = info->capabilities;
-
 	if (info->present & AIM_USERINFO_PRESENT_FLAGS) {
 		if (info->flags & AIM_FLAG_AWAY)
 			buddy_is_away = TRUE;
@@ -3499,12 +3496,57 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		}
 	}
 
+	if (aim_sn_is_icq(info->sn)) {
+		if (type & AIM_ICQ_STATE_CHAT)
+			status_id = OSCAR_STATUS_ID_FREE4CHAT;
+		else if (type & AIM_ICQ_STATE_DND)
+			status_id = OSCAR_STATUS_ID_DND;
+		else if (type & AIM_ICQ_STATE_OUT)
+			status_id = OSCAR_STATUS_ID_NA;
+		else if (type & AIM_ICQ_STATE_BUSY)
+			status_id = OSCAR_STATUS_ID_OCCUPIED;
+		else if (type & AIM_ICQ_STATE_AWAY)
+			status_id = OSCAR_STATUS_ID_AWAY;
+		else if (type & AIM_ICQ_STATE_INVISIBLE)
+			status_id = OSCAR_STATUS_ID_INVISIBLE;
+		else
+			status_id = OSCAR_STATUS_ID_AVAILABLE;
+	} else {
+		if (buddy_is_away == TRUE)
+			status_id = OSCAR_STATUS_ID_AWAY;
+		else
+			status_id = OSCAR_STATUS_ID_AVAILABLE;
+	}
+
+	/*
+	 * Handle the available message.  If info->status is NULL then the user
+	 * may or may not have an available message, so don't do anything.  If
+	 * info->status is set to the empty string, then the user's client DOES
+	 * support available messages and the user DOES NOT have one set.
+	 * Otherwise info->status contains the available message.
+	 */
+	if (info->status != NULL)
+	{
+		have_status_message = TRUE;
+		if (info->status[0] != '\0')
+			message = oscar_encoding_to_utf8(info->status_encoding,
+											 info->status, info->status_len);
+	}
+
+	if (have_status_message)
+	{
+		gaim_prpl_got_user_status(account, info->sn, status_id,
+								  "message", message, NULL);
+		g_free(message);
+	}
+	else
+		gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
+
+	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
+		caps = info->capabilities;
+
 	if (caps & AIM_CAPS_ICQ_DIRECT)
 		caps ^= AIM_CAPS_ICQ_DIRECT;
-
-	/* info->idletime is the number of minutes that this user has been idle */
-	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		time_idle = time(NULL) - info->idletime * 60;
 
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		signon = info->onlinesince;
@@ -3524,22 +3566,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	bi->typingnot = FALSE;
 	bi->ico_informed = FALSE;
 	bi->ipaddr = info->icqinfo.ipaddr;
-
-	/*
-	 * Handle the available message.  If info->avail is NULL then the user
-	 * may or may not have an available message, so don't do anything.  If
-	 * info->avail is set to the empty string, then the user's client DOES
-	 * support available messages and the user DOES NOT have one set.
-	 * Otherwise info->avail contains the available message.
-	 */
-	if (info->avail != NULL)
-	{
-		free(bi->availmsg);
-		if (info->avail[0] != '\0')
-			bi->availmsg = oscar_encoding_to_utf8(info->avail_encoding, info->avail, info->avail_len);
-		else
-			bi->availmsg = NULL;
-	}
 
 	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
@@ -3583,32 +3609,11 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		g_free(b16);
 	}
 
-	if (aim_sn_is_icq(info->sn)) {
-		if (type & AIM_ICQ_STATE_CHAT)
-			status_id = OSCAR_STATUS_ID_FREE4CHAT;
-		else if (type & AIM_ICQ_STATE_DND)
-			status_id = OSCAR_STATUS_ID_DND;
-		else if (type & AIM_ICQ_STATE_OUT)
-			status_id = OSCAR_STATUS_ID_NA;
-		else if (type & AIM_ICQ_STATE_BUSY)
-			status_id = OSCAR_STATUS_ID_OCCUPIED;
-		else if (type & AIM_ICQ_STATE_AWAY)
-			status_id = OSCAR_STATUS_ID_AWAY;
-		else if (type & AIM_ICQ_STATE_INVISIBLE)
-			status_id = OSCAR_STATUS_ID_INVISIBLE;
-		else
-			status_id = OSCAR_STATUS_ID_AVAILABLE;
-	} else {
-		if (buddy_is_away == TRUE)
-			status_id = OSCAR_STATUS_ID_AWAY;
-		else
-			status_id = OSCAR_STATUS_ID_AVAILABLE;
-	}
-	gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
-#if 0
-	gaim_prpl_got_user_warning_level(account, info->sn, info->warnlevel/10.0 + 0.5);
-#endif
+
+	/* info->idletime is the number of minutes that this user has been idle */
+	if (info->present & AIM_USERINFO_PRESENT_IDLE)
+		time_idle = time(NULL) - info->idletime * 60;
 
 	if (time_idle > 0)
 		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
@@ -3636,7 +3641,7 @@ static int gaim_parse_offgoing(aim_session_t *sess, aim_frame_t *fr, ...) {
 	info = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_OFFLINE, NULL);	
+	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_OFFLINE, NULL);
 
 	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 
@@ -5100,10 +5105,9 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
 {
 	GaimConnection *gc = sess->aux_data;
-	OscarData *od = gc->proto_data;
 	GaimBuddy *b;
 	GaimPresence *presence;
-	GaimStatus *active_status;
+	GaimStatus *status;
 	gchar *message = NULL;
 
 	va_list ap;
@@ -5118,28 +5122,22 @@ static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
 		return 1;
 
 	presence = gaim_buddy_get_presence(b);
-	active_status = gaim_presence_get_active_status(presence);
+	status = gaim_presence_get_active_status(presence);
 
-	if (gaim_status_is_available(active_status))
+	if (!gaim_status_is_available(status))
 	{
-		struct buddyinfo *bi;
-
-		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
-		if ((bi != NULL) && (bi->availmsg != NULL))
-			message = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-	} else {
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) &&
 			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
 			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
 			g_free(charset);
 		}
+
+		gaim_status_set_attr_string(status, "message", message);
+		g_free(message);
+
+		gaim_blist_update_buddy_status(b, status);
 	}
-
-	gaim_status_set_attr_string(active_status, "message", message);
-	g_free(message);
-
-	gaim_blist_update_buddy_status(b, active_status);
 
 	return 1;
 }
@@ -5878,7 +5876,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	else
 		message = NULL;
 	tmp = gaim_markup_strip_html(message);
-	aim_srv_setavailmsg(sess, tmp);
+	aim_srv_setstatusmsg(sess, tmp);
 	free(tmp);
 
 	aim_srv_setidle(sess, 0);
@@ -6610,15 +6608,15 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 	}
 	else if (primitive == GAIM_STATUS_AVAILABLE)
 	{
-		const char *avail_html;
-		char *avail_text;
+		const char *status_html;
+		char *status_text;
 
-		avail_html = gaim_status_get_attr_string(status, "message");
-		if (avail_html != NULL)
+		status_html = gaim_status_get_attr_string(status, "message");
+		if (status_html != NULL)
 		{
-			avail_text = gaim_markup_strip_html(avail_html);
-			aim_srv_setavailmsg(od->sess, avail_text);
-			g_free(avail_text);
+			status_text = gaim_markup_strip_html(status_html);
+			aim_srv_setstatusmsg(od->sess, status_text);
+			g_free(status_text);
 		}
 
 		/* This is needed for us to un-set any previous away message. */

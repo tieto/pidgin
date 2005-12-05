@@ -490,8 +490,8 @@ faim_internal void aim_info_free(aim_userinfo_t *info)
 	free(info->iconcsum);
 	free(info->info);
 	free(info->info_encoding);
-	free(info->avail);
-	free(info->avail_encoding);
+	free(info->status);
+	free(info->status_encoding);
 	free(info->away);
 	free(info->away_encoding);
 }
@@ -718,18 +718,18 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 			/*
 			 * Type = 0x001d
 			 *
-			 * Buddy icon information and available messages.
+			 * Buddy icon information and status/available messages.
 			 *
-			 * This almost seems like the AIM protocol guys gave 
-			 * the iChat guys a Type, and the iChat guys tried to 
-			 * cram as much cool shit into it as possible.  Then 
-			 * the Windows AIM guys were like, "hey, that's 
+			 * This almost seems like the AIM protocol guys gave
+			 * the iChat guys a Type, and the iChat guys tried to
+			 * cram as much cool shit into it as possible.  Then
+			 * the Windows AIM guys were like, "hey, that's
 			 * pretty neat, let's copy those prawns."
 			 *
-			 * In that spirit, this can contain a custom message, 
-			 * kind of like an away message, but you're not away 
-			 * (it's called an "available" message).  Or it can 
-			 * contain information about the buddy icon the user 
+			 * In that spirit, this can contain a custom message,
+			 * kind of like an away message, but you're not away
+			 * (it's called an "available" message).  Or it can
+			 * contain information about the buddy icon the user
 			 * has stored on the server.
 			 */
 			int type2, number, length2;
@@ -755,24 +755,24 @@ faim_internal int aim_info_extract(aim_session_t *sess, aim_bstream_t *bs, aim_u
 							aim_bstream_advance(bs, length2);
 					} break;
 
-					case 0x0002: { /* An available message */
-						free(outinfo->avail);
-						free(outinfo->avail_encoding);
+					case 0x0002: { /* An status/available message */
+						free(outinfo->status);
+						free(outinfo->status_encoding);
 						if (length2 >= 4) {
-							outinfo->avail_len = aimbs_get16(bs);
-							outinfo->avail = aimbs_getstr(bs, outinfo->avail_len);
+							outinfo->status_len = aimbs_get16(bs);
+							outinfo->status = aimbs_getstr(bs, outinfo->status_len);
 							if (aimbs_get16(bs) == 0x0001) { /* We have an encoding */
 								aimbs_get16(bs);
-								outinfo->avail_encoding = aimbs_getstr(bs, aimbs_get16(bs));
+								outinfo->status_encoding = aimbs_getstr(bs, aimbs_get16(bs));
 							} else {
 								/* No explicit encoding, client should use UTF-8 */
-								outinfo->avail_encoding = NULL;
+								outinfo->status_encoding = NULL;
 							}
 						} else {
 							aim_bstream_advance(bs, length2);
-							outinfo->avail_len = 0;
-							outinfo->avail = g_strdup("");
-							outinfo->avail_encoding = NULL;
+							outinfo->status_len = 0;
+							outinfo->status = g_strdup("");
+							outinfo->status_encoding = NULL;
 						}
 					} break;
 

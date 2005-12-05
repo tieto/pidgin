@@ -793,7 +793,7 @@ static int hostversions(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx,
  * if your status is visible on ICQ web sites, and you can set
  * your IP address info and what not.
  *
- * These are the same TLVs seen in user info.  You can 
+ * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
  */
 faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
@@ -829,16 +829,16 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	return 0;
 }
 
-/* 
+/*
  * Subtype 0x001e - Extended Status.
  *
- * Sets your "available" message.  This is currently only supported by iChat 
+ * Sets your "available" message.  This is currently only supported by iChat
  * and Gaim.
  *
- * These are the same TLVs seen in user info.  You can 
+ * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
  */
-faim_export int aim_srv_setavailmsg(aim_session_t *sess, const char *msg)
+faim_export int aim_srv_setstatusmsg(aim_session_t *sess, const char *msg)
 {
 	aim_conn_t *conn;
 	aim_frame_t *fr;
