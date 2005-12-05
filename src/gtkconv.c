@@ -68,8 +68,9 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define SEND_COLOR "#204a87"
-#define RECV_COLOR "#cc0000"
+#define SEND_COLOR "#16569E"
+#define RECV_COLOR "#A82F2F"
+#define HIGHLIGHT_COLOR "#AF7F00"
 
 /* Undef this to turn off "custom-smiley" debug messages */
 #define DEBUG_CUSTOM_SMILEY
@@ -148,7 +149,7 @@ gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
 static GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
-static gboolean color_is_visible(GdkColor foreground, GdkColor background);
+static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -4392,7 +4393,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 				}
 
 				if (flags & GAIM_MESSAGE_NICK)
-					strcpy(color, "#AF7F00");
+					strcpy(color, HIGHLIGHT_COLOR);
 				else
 					strcpy(color, "#062585");
 			}
@@ -4407,7 +4408,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 					tag_end_offset = 1;
 				}
 				if (flags & GAIM_MESSAGE_NICK)
-					strcpy(color, "#AF7F00");
+					strcpy(color, HIGHLIGHT_COLOR);
 				else if (flags & GAIM_MESSAGE_RECV) {
 					if (flags & GAIM_MESSAGE_COLORIZE) {
 						GdkColor *col = get_nick_color(gtkconv, alias);
@@ -7510,7 +7511,7 @@ gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv)
 
 /* Algorithm from http://www.w3.org/TR/AERT#color-contrast */
 static gboolean
-color_is_visible(GdkColor foreground, GdkColor background)
+color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast)
 {
 	gulong fg_brightness;
 	gulong bg_brightness;
@@ -7538,7 +7539,7 @@ color_is_visible(GdkColor foreground, GdkColor background)
 
 	col_diff = abs(fred - bred) + abs(fgreen - bgreen) + abs(fblue - bblue);
 
-	return ((col_diff > MIN_COLOR_CONTRAST) && (br_diff > MIN_BRIGHTNESS_CONTRAST));
+	return ((col_diff > color_contrast) && (br_diff > brightness_contrast));
 }
 
 
@@ -7547,13 +7548,21 @@ generate_nick_colors(guint numcolors, GdkColor background)
 {
 	guint i;
 	GdkColor *colors = g_new(GdkColor, numcolors);
+	GdkColor nick_highlight;
+	GdkColor send_color;
+
+	gdk_color_parse(HIGHLIGHT_COLOR, &nick_highlight);
+	gdk_color_parse(SEND_COLOR, &send_color);
 
 	srand(background.red + background.green + background.blue + 1);
 
 	for (i = 0; i < numcolors; )
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
-		if (color_is_visible(color, background)){
+		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
+			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
+			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
+		{
 			colors[i] = color;
 			i++;
 		}
