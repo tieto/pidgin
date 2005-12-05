@@ -1,6 +1,6 @@
 #include "module.h"
 
-MODULE = Gaim::Conv  PACKAGE = Gaim::Conv  PREFIX = gaim_conversation_
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_conversation_
 PROTOTYPES: ENABLE
 
 void *
@@ -136,7 +136,7 @@ gaim_conversation_set_account(conv, account);
 
 
 
-MODULE = Gaim::Conv  PACKAGE = Gaim::Conv::IM  PREFIX = gaim_conv_im_
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation::IM  PREFIX = gaim_conv_im_
 PROTOTYPES: ENABLE
 
 Gaim::Conversation
@@ -215,7 +215,7 @@ gaim_conv_im_write(im, who, message, flags, mtime)
 	time_t mtime
 
 
-MODULE = Gaim::Conv  PACKAGE = Gaim::Conv  PREFIX = gaim_conv_
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation  PREFIX = gaim_conv_
 PROTOTYPES: ENABLE
 
 gboolean
@@ -234,7 +234,7 @@ gaim_conv_custom_smiley_close(conv, smile)
 
 
 
-MODULE = Gaim::Conv  PACKAGE = Gaim::Conv::Chat  PREFIX = gaim_conv_chat_
+MODULE = Gaim::Conversation  PACKAGE = Gaim::Conversation::Chat  PREFIX = gaim_conv_chat_
 PROTOTYPES: ENABLE
 
 Gaim::Conversation

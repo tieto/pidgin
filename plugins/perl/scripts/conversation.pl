@@ -5,10 +5,15 @@ use Gaim;
 # All the information Gaim gets about our nifty plugin
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
-	name => " Perl: $MODULE_NAME", 
+	name => "Perl: $MODULE_NAME", 
 	version => "0.1", 
 	summary => "Test plugin for the Perl interpreter.", 
-	description => "Implements a set of test proccedures to ensure all functions that work in the C API still work in the Perl plugin interface.  As XSUBs are added, this *should* be updated to test the changes.  Furthermore, this will function as the tutorial perl plugin.", 
+	description => "Implements a set of test proccedures to ensure all " .
+	               "functions that work in the C API still work in the " .
+		       "Perl plugin interface.  As XSUBs are added, this " .
+		       "*should* be updated to test the changes.  " .
+		       "Furthermore, this will function as the tutorial perl " .
+		       "plugin.", 
 	author => "John H. Kelm <johnhkelm\@gmail.com>", 
 	url => "http://sourceforge.net/users/johnhkelm/", 
 	
@@ -43,37 +48,54 @@ sub plugin_load {
 	$account = Gaim::Accounts::find($USERNAME, $PROTOCOL_ID);
 	
 	#########  TEST CODE HERE  ##########
-	print "Testing Gaim::Conv::new()...";
-	$conv1 = Gaim::Conv::new(1, $account, "Test Conv. 1");
-	if ($conv) { print "ok.\n"; } else { print "fail.\n"; }
+	# First we create two new conversations.
+	print "Testing Gaim::Conversation::new()...";
+	$conv1 = Gaim::Conversation::new(1, $account, "Test Conversation 1");
+	if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
 
-	print "Testing Gaim::Conv::new()...";
-	$conv2 = Gaim::Conv::new(1, $account, "Test Conv. 2");
-	if ($conv) { print "ok.\n"; } else { print "fail.\n"; }
+	print "Testing Gaim::Conversation::new()...";
+	$conv2 = Gaim::Conversation::new(1, $account, "Test Conversation 2");
+	if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
 	
-	print "Testing Gaim::Conv::Window::new()...\n";
-	$win = Gaim::Conv::Window::new();	
-	
-	print "Testing Gaim::Conv::Window::add_conversation()...";
-	$conv_count = Gaim::Conv::Window::add_conversation($win, $conv1);
-	if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
+	# Second we create a window to display the conversations in.
+	#  Note that the package here is Gaim::Conversation::Window
+	print "Testing Gaim::Conversation::Window::new()...\n";
+	$win = Gaim::Conversation::Window::new();
 
-	print "Testing Gaim::Conv::Window::add_conversation()...";
-	$conv_count = Gaim::Conv::Window::add_conversation($win, $conv2);
-	if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
-	
-	print "Testing Gaim::Conv::Window::show()...\n";
-	Gaim::Conv::Window::show($win);
-	
-	print "Testing Gaim::Conv::get_im_data()...\n";
-	$im = Gaim::Conv::get_im_data($conv1);	
+	# The third thing to do is to add the two conversations to the windows.
+	# The subroutine add_conversation() returns the number of conversations
+	# present in the window.
+	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	$conv_count = $conv1->add_conversation();
+	if ($conv_count) { 
+		print "ok..." . $conv_count . " conversations...\n";
+	} else {
+		print "fail.\n";
+	}
+
+	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	$conv_count = $win->add_conversation($conv2);
+	if ($conv_count) {
+		print "ok..." . $conv_count . " conversations...\n";
+	} else {
+		print "fail.\n";
+	}
+
+	# Now the window is displayed to the user.
+	print "Testing Gaim::Conversation::Window::show()...\n";
+	$win->show();
+
+	# Use get_im_data() to get a handle for the conversation	
+	print "Testing Gaim::Conversation::get_im_data()...\n";
+	$im = $conv1->get_im_data();
 	if ($im) { print "ok.\n"; } else { print "fail.\n"; }
-	
-	print "Testing Gaim::Conv::IM::send()...\n";
-	Gaim::Conv::IM::send($im, "Message Test.");
-	
-	print "Testing Gaim::Conv::IM::write()...\n";
-	Gaim::Conv::IM::write($im, "sendingUser", "<b>Message</b> Test.", 0, 0);
+
+	# Here we send messages to the conversation
+	print "Testing Gaim::Conversation::IM::send()...\n";
+	$im->send("Message Test.");
+
+	print "Testing Gaim::Conversation::IM::write()...\n";
+	$im->write("SENDER", "<b>Message</b> Test.", 0, 0);
 	
 	print "#" x 80 . "\n\n";
 } 
@@ -84,14 +106,12 @@ sub plugin_unload {
 	print "#" x 80 . "\n\n";
 	#########  TEST CODE HERE  ##########
 
-
-	
-	print "Testing Gaim::Conv::Window::get_conversation_count()...\n";
-	$conv_count = Gaim::Conv::Window::get_conversation_count($win);
-	print $conv_count;
+	print "Testing Gaim::Conversation::Window::get_conversation_count()...\n";
+	$conv_count = $win->get_conversation_count();
+	print "...and it returned $conv_count.\n";
 	if ($conv_count > 0) {
-		print "Testing Gaim::Conv::Window::destroy()...\n";
-		Gaim::Conv::Window::destroy($win);
+	        print "Testing Gaim::Conversation::Window::destroy()...\n";
+	        $win->destroy();
 	}
 	
 	print "\n\n" . "#" x 80 . "\n\n";

@@ -89,7 +89,7 @@ BOOT:
 	GAIM_PERL_BOOT(Cipher);
 	GAIM_PERL_BOOT(Cmds);
 	GAIM_PERL_BOOT(Connection);
-	GAIM_PERL_BOOT(Conv);
+	GAIM_PERL_BOOT(Conversation);
 	GAIM_PERL_BOOT(Xfer);
 	GAIM_PERL_BOOT(ImgStore);
 	GAIM_PERL_BOOT(Log);

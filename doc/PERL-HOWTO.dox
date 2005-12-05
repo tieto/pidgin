@@ -172,66 +172,83 @@ The @c Gaim::Connection API is one of the many packages that will not be covered
 
 @section conv-api Conversation API
 
-The Gaim perl API for @c gaim_conversation_ and @c gaim_conv_window_ allow plugins to interact with open conversations, create new conversations, and modify conversations at will.  The following example again replaces the @c plugin_load subroutine.  In the example script, a new window is created, displayed and a new conversation instant message is created.  The @c Gaim::Conv::Chat package handles the @c gaim_conv_chat_ portion of the API very similarly to the examples that follow.   
+The Gaim perl API for @c gaim_conversation_ and @c gaim_conv_window_ allow
+plugins to interact with open conversations, create new conversations, and
+modify conversations at will.  The following example again replaces the @c
+plugin_load subroutine.  In the example script, a new window is created,
+displayed and a new conversation instant message is created.  The @c
+Gaim::Conversation::Chat package handles the @c gaim_conv_chat_ portion of the
+API very similarly to the examples that follow.   
 
 @code
 sub plugin_load {
-        my $plugin = shift;
-        my $protocol = "prpl-oscar";
+	my $plugin = shift;
+	my $protocol = "prpl-oscar";
 
-        $account = Gaim::Accounts::find("USERNAME", $protocol);
+	$account = Gaim::Accounts::find("USERNAME", $protocol);
 
 	# First we create two new conversations.
-        print "Testing Gaim::Conv::new()...";
-        $conv1 = Gaim::Conv::new(1, $account, "Test Conv. 1");
-        if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
+	print "Testing Gaim::Conversation::new()...";
+	$conv1 = Gaim::Conversation::new(1, $account, "Test Conversation 1");
+	if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
 
-        print "Testing Gaim::Conv::new()...";
-        $conv2 = Gaim::Conv::new(1, $account, "Test Conv. 2");
-        if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
+	print "Testing Gaim::Conversation::new()...";
+	$conv2 = Gaim::Conversation::new(1, $account, "Test Conversation 2");
+	if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
 	
 	# Second we create a window to display the conversations in.
-	#  Note that the package here is Gaim::Conv::Window
-        print "Testing Gaim::Conv::Window::new()...\n";
-        $win = Gaim::Conv::Window::new();
+	#  Note that the package here is Gaim::Conversation::Window
+	print "Testing Gaim::Conversation::Window::new()...\n";
+	$win = Gaim::Conversation::Window::new();
 
 	# The third thing to do is to add the two conversations to the windows.
-	#  The subroutine add_conversation() returns the number of conversations present in the window.
-        print "Testing Gaim::Conv::Window::add_conversation()...";
-        $conv_count = Gaim::Conv::Window::add_conversation($win, $conv1);
-        if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
+	# The subroutine add_conversation() returns the number of conversations
+	# present in the window.
+	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	$conv_count = $conv1->add_conversation();
+	if ($conv_count) { 
+		print "ok..." . $conv_count . " conversations...\n";
+	} else {
+		print "fail.\n";
+	}
 
-        print "Testing Gaim::Conv::Window::add_conversation()...";
-        $conv_count = Gaim::Conv::Window::add_conversation($win, $conv2);
-        if ($conv_count) { print "ok..." . $conv_count . " conversations...\n"; } else { print "fail.\n"; }
+	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	$conv_count = $win->add_conversation($conv2);
+	if ($conv_count) {
+		print "ok..." . $conv_count . " conversations...\n";
+	} else {
+		print "fail.\n";
+	}
 
 	# Now the window is displayed to the user.
-        print "Testing Gaim::Conv::Window::show()...\n";
-        Gaim::Conv::Window::show($win);
+	print "Testing Gaim::Conversation::Window::show()...\n";
+	$win->show();
 
-	# Use Gaim::Conv::get_im_data to get a handle for the conversation	
-        print "Testing Gaim::Conv::get_im_data()...\n";
-        $im = Gaim::Conv::get_im_data($conv1);
-        if ($im) { print "ok.\n"; } else { print "fail.\n"; }
+	# Use get_im_data() to get a handle for the conversation	
+	print "Testing Gaim::Conversation::get_im_data()...\n";
+	$im = $conv1->get_im_data();
+	if ($im) { print "ok.\n"; } else { print "fail.\n"; }
 
 	# Here we send messages to the conversation
-        print "Testing Gaim::Conv::IM::send()...\n";
-        Gaim::Conv::IM::send($im, "Message Test.");
+	print "Testing Gaim::Conversation::IM::send()...\n";
+	$im->send("Message Test.");
 
-        print "Testing Gaim::Conv::IM::write()...\n";
-        Gaim::Conv::IM::write($im, "SENDER", "<b>Message</b> Test.", 0, 0);
+	print "Testing Gaim::Conversation::IM::write()...\n";
+	$im->write("SENDER", "<b>Message</b> Test.", 0, 0);
 }
 @endcode
 
-The next block of code shows how a script can close a known conversation window @c $win.
+The next block of code shows how a script can close a known conversation window
+@c $win.
 
 @code
-        print "Testing Gaim::Conv::Window::get_conversation_count()...\n";
-        $conv_count = Gaim::Conv::Window::get_conversation_count($win);
-        if ($conv_count > 0) {
-                print "Testing Gaim::Conv::Window::destroy()...\n";
-                Gaim::Conv::Window::destroy($win);
-        }
+	print "Testing Gaim::Conversation::Window::get_conversation_count()...\n";
+	$conv_count = $win->get_conversation_count();
+	print "...and it returned $conv_count.\n";
+	if ($conv_count > 0) {
+	        print "Testing Gaim::Conversation::Window::destroy()...\n";
+	        $win->destroy();
+	}
 @endcode
 
 @section plugin-pref-api Plugin Preference and Gtk Preference API
