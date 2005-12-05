@@ -1825,6 +1825,8 @@ gtk_imhtml_associate_smiley (GtkIMHtml       *imhtml,
 		g_hash_table_insert(imhtml->smiley_data, g_strdup(sml), tree);
 	}
 
+	smiley->imhtml = imhtml;
+
 	gtk_smiley_tree_insert (tree, smiley);
 }
 
@@ -4379,19 +4381,6 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			}
 		}
 	}
-#if 0
-	else {
-		GtkIMHtmlSmiley *imhtml_smiley;
-
-		if (imhtml_smiley->loader) { ; }
-		icon = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
-		imhtml_smiley = gtk_get_imhtml_smiley(imhtml, sml, unescaped);
-		if (!imhtml_smiley) {
-			gaim_debug_info("gtkimhtml", "geezz couldnt find smiley struct\n");
-		}
-		imhtml_smiley->orphan = g_slist_append(imhtml_smiley->orphan, icon);
-	}
-#endif
 
 	if (icon) {
 		anchor = gtk_text_buffer_create_child_anchor(imhtml->text_buffer, iter);

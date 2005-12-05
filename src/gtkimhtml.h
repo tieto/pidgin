@@ -160,7 +160,8 @@ struct _GtkIMHtmlSmiley {
 	gboolean hidden;
 	GdkPixbufLoader *loader;
 	GSList *anchors;
-	GtkIMHtmlSmileyFlags flags; 
+	GtkIMHtmlSmileyFlags flags;
+	GtkIMHtml *imhtml;
 };
 
 struct _GtkIMHtmlScalable {

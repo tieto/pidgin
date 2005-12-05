@@ -71,6 +71,9 @@
 #define SEND_COLOR "#204a87"
 #define RECV_COLOR "#cc0000"
 
+/* Undef this to turn off "custom-smiley" debug messages */
+#define DEBUG_CUSTOM_SMILEY
+
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
 /* These colors come from the default GNOME palette */
@@ -133,6 +136,8 @@ static void gtkconv_set_unseen(GaimGtkConversation *gtkconv, GaimUnseenState sta
 static void update_typing_icon(GaimGtkConversation *gtkconv);
 static char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
+static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
+static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -4762,6 +4767,66 @@ gaim_gtkconv_has_focus(GaimConversation *conv)
 	return FALSE;
 }
 
+static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkIMHtmlSmiley *smiley;
+	
+	smiley = (GtkIMHtmlSmiley *)user_data;
+	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
+	
+	if (smiley->icon)
+		g_object_ref(G_OBJECT(smiley->icon));
+#ifdef DEBUG_CUSTOM_SMILEY	
+	gaim_debug_info("custom-smiley", "%s(): got GdkPixbufAnimation %p for smiley '%s'\n", __FUNCTION__, smiley->icon, smiley->smile);
+#endif
+}
+
+static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data)
+{
+	GtkIMHtmlSmiley *smiley;
+	GtkWidget *icon = NULL;
+	GtkTextChildAnchor *anchor = NULL;
+	GSList *current = NULL;
+	
+	smiley = (GtkIMHtmlSmiley *)user_data;
+	if (!smiley->imhtml) {
+#ifdef DEBUG_CUSTOM_SMILEY
+		gaim_debug_error("custom-smiley", "%s(): orphan smiley found: %p\n", __FUNCTION__, smiley);
+#endif
+		g_object_unref(G_OBJECT(loader));
+		smiley->loader = NULL;
+		return;
+	}
+
+	for (current = smiley->anchors; current; current = g_slist_next(current)) {
+
+		icon = gtk_image_new_from_animation(smiley->icon);
+
+#ifdef DEBUG_CUSTOM_SMILEY		
+		gaim_debug_info("custom-smiley", "%s(): got GtkImage %p from GtkPixbufAnimation %p for smiley '%s'\n", 
+				__FUNCTION__, icon, smiley->icon, smiley->smile);
+#endif
+		if (icon) {
+			gtk_widget_show(icon);
+			
+			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smiley->smile)), g_free);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
+			
+			if (smiley->imhtml)
+				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+		}
+
+	}
+
+	g_slist_free(smiley->anchors);
+	smiley->anchors = NULL;
+	
+	g_object_unref(G_OBJECT(loader));
+	smiley->loader = NULL;
+}
+
 static gboolean
 gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 {
@@ -4804,11 +4869,11 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 		g_object_unref(G_OBJECT(smiley->icon));
 
 		smiley->loader = gdk_pixbuf_loader_new();
-		smiley->icon = gdk_pixbuf_loader_get_animation(smiley->loader);
-		if (smiley->icon)
-			g_object_ref(G_OBJECT(smiley->icon));
+		smiley->icon = NULL;
 
-		/* A custom smiley is already associated */
+		g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gaim_gtkconv_custom_smiley_allocated), smiley);
+		g_signal_connect(smiley->loader, "closed", G_CALLBACK(gaim_gtkconv_custom_smiley_closed), smiley);
+
 		return TRUE;
 	}
 
@@ -4823,10 +4888,8 @@ gaim_gtkconv_custom_smiley_add(GaimConversation *conv, const char *smile)
 	smiley->loader = loader;
 	smiley->flags  = smiley->flags | GTK_IMHTML_SMILEY_CUSTOM;
 
-	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-	if (smiley->icon)
-		g_object_ref(G_OBJECT(smiley->icon));
-
+	g_signal_connect(smiley->loader, "area_prepared", G_CALLBACK(gaim_gtkconv_custom_smiley_allocated), smiley);
+	g_signal_connect(smiley->loader, "closed", G_CALLBACK(gaim_gtkconv_custom_smiley_closed), smiley);
 
 	gtk_imhtml_associate_smiley(GTK_IMHTML(gtkconv->imhtml), sml, smiley);
 
@@ -4863,11 +4926,6 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 	GtkIMHtmlSmiley *smiley;
 	GdkPixbufLoader *loader;
 	const char *sml;
-	GtkWidget *icon = NULL;
-	GtkTextChildAnchor *anchor = NULL;
-	GtkTextIter end;
-	GtkIMHtml *imhtml;
-	GSList *current = NULL;
 
 	g_return_if_fail(conv  != NULL);
 	g_return_if_fail(smile != NULL);
@@ -4884,42 +4942,12 @@ gaim_gtkconv_custom_smiley_close(GaimConversation *conv, const char *smile)
 	if (!loader)
 		return;
 
-	smiley->icon = gdk_pixbuf_loader_get_animation(loader);
-	if (smiley->icon)
-		g_object_ref(G_OBJECT(smiley->icon));
 
-	for (current = smiley->anchors; current != NULL; current = g_slist_next(current)) {
-
-		icon = gtk_image_new_from_animation(smiley->icon);
-
-		if (icon) {
-			gtk_widget_show(icon);
-
-			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
-
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(gaim_unescape_html(smile)), g_free);
-			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smile), g_free);
-
-			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(gtkconv->imhtml), icon, anchor);
-		}
-
-	}
-
-	g_slist_free(smiley->anchors);
-	smiley->anchors = NULL;
-
-	/* Scroll to the end of the widget in case the smiley height was big... */
-	/* FIXME: need to test this actually works, previous dealings with scrolling
-	 * makes me question it */
-	imhtml = GTK_IMHTML(gtkconv->imhtml);
-	gtk_text_buffer_get_end_iter(GTK_TEXT_BUFFER(imhtml->text_buffer), &end);
-	gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW(gtkconv->imhtml), &end, 0, TRUE, 0, 0);
 
 	gaim_debug_info("gtkconv", "About to close the smiley pixbuf\n");
 
 	gdk_pixbuf_loader_close(loader, NULL);
-	g_object_unref(G_OBJECT(loader));
-	smiley->loader = NULL;
+
 }
 
 /*
