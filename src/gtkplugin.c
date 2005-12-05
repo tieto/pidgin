@@ -33,6 +33,7 @@
 
 #define GAIM_RESPONSE_CONFIGURE 98121
 
+static GtkWidget *expander = NULL;
 static GtkWidget *plugin_dialog = NULL;
 static GtkWidget *plugin_details = NULL;
 static GtkWidget *pref_button = NULL;
@@ -243,8 +244,15 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 		/* Clear the old plugin details */
 		gtk_label_set_markup(GTK_LABEL(plugin_details), "");
 		gtk_widget_set_sensitive(pref_button, FALSE);
+
+		/* Collapse and disable the expander widget */
+		gtk_expander_set_expanded(GTK_EXPANDER(expander), FALSE);
+		gtk_widget_set_sensitive(expander, FALSE);
+
 		return;
 	}
+
+	gtk_widget_set_sensitive(expander, TRUE);
 
 	gtk_tree_model_get_value (model, &iter, 2, &val);
 	plug = g_value_get_pointer(&val);
@@ -366,7 +374,6 @@ void gaim_gtk_plugin_dialog_show()
 	GtkCellRenderer *rend, *rendt;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
-	GtkWidget *expander;
 
 	if (plugin_dialog != NULL) {
 		gtk_window_present(GTK_WINDOW(plugin_dialog));
@@ -432,6 +439,7 @@ void gaim_gtk_plugin_dialog_show()
 	plugin_details = gtk_label_new(NULL);
 	gtk_label_set_line_wrap(GTK_LABEL(plugin_details), TRUE);
 	gtk_container_add(GTK_CONTAINER(expander), plugin_details);
+	gtk_widget_set_sensitive(expander, FALSE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(plugin_dialog)->vbox), expander, FALSE, FALSE, 0);
 
 	g_signal_connect (G_OBJECT (sel), "changed", G_CALLBACK (prefs_plugin_sel), NULL);
