@@ -7538,8 +7538,6 @@ color_is_visible(GdkColor foreground, GdkColor background)
 
 	col_diff = abs(fred - bred) + abs(fgreen - bgreen) + abs(fblue - bblue);
 
-	gaim_debug(GAIM_DEBUG_INFO, NULL, "\n\ntest color is %i,%i,%i\nback color is %i,%i,%i\ndifference is %i\ncontrast is %i\n",fred,fgreen,fblue,bred,bgreen,bblue,col_diff,br_diff);
-
 	return ((col_diff > MIN_COLOR_CONTRAST) && (br_diff > MIN_BRIGHTNESS_CONTRAST));
 }
 
