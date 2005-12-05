@@ -2480,7 +2480,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/_File Transfers"), "<CTL>T", gaim_show_xfer_dialog, 0, "<StockItem>", GAIM_STOCK_FILE_TRANSFER },
 	{ N_("/Tools/R_oom List"), NULL, gaim_gtk_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
-	{ N_("/Tools/View System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", GAIM_STOCK_LOG },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>" },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", gaim_gtk_blist_mute_sounds_cb, 0, "<CheckItem>"},
 
@@ -5360,7 +5360,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 		                     GTK_WIDGET(l->data));
 	}
 
-	menuitem = gtk_menu_item_new_with_label(_("Add/Edit..."));
+	menuitem = gtk_menu_item_new_with_label(_("Add/Edit"));
 	g_signal_connect(G_OBJECT(menuitem), "activate",
 	                 G_CALLBACK(gaim_gtk_accounts_window_show), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
@@ -5403,7 +5403,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 			gtk_widget_show(submenu);
 
 
-			menuitem = gtk_menu_item_new_with_mnemonic(_("_Modify Account"));
+			menuitem = gtk_menu_item_new_with_mnemonic(_("_Edit Account"));
 			g_signal_connect(G_OBJECT(menuitem), "activate",
 					G_CALLBACK(modify_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
