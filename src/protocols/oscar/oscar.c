@@ -5846,6 +5846,7 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 	GaimAccount *account;
 	GaimStatus *status;
 	const char *message;
+	char *tmp;
 	va_list ap;
 	fu16_t maxpermits, maxdenies;
 
@@ -5876,7 +5877,9 @@ static int gaim_bosrights(aim_session_t *sess, aim_frame_t *fr, ...) {
 		message = gaim_status_get_attr_string(status, "message");
 	else
 		message = NULL;
-	aim_srv_setavailmsg(sess, message);
+	tmp = gaim_markup_strip_html(message);
+	aim_srv_setavailmsg(sess, tmp);
+	free(tmp);
 
 	aim_srv_setidle(sess, 0);
 
