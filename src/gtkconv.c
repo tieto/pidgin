@@ -3011,9 +3011,6 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, GaimConvChatBudd
 	GtkTreeIter iter;
 	gboolean is_me = FALSE;
 	gboolean is_buddy;
-	GdkColor send_color;
-
-	gdk_color_parse(SEND_COLOR, &send_color);
 
 	chat    = GAIM_CONV_CHAT(conv);
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
@@ -3033,14 +3030,32 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, GaimConvChatBudd
 	is_buddy = (gaim_find_buddy(conv->account, name) != NULL);
 
 	gtk_list_store_append(ls, &iter);
-	gtk_list_store_set(ls, &iter,
-						CHAT_USERS_ICON_COLUMN,  pixbuf,
-						CHAT_USERS_ALIAS_COLUMN, alias,
-						CHAT_USERS_NAME_COLUMN,  name,
-						CHAT_USERS_FLAGS_COLUMN, flags,
-						CHAT_USERS_COLOR_COLUMN, is_me ? &send_color : get_nick_color(gtkconv, alias),
-						CHAT_USERS_BUDDY_COLUMN, is_buddy,
-						-1);
+
+	if (is_me)
+	{
+		GdkColor send_color;
+		gdk_color_parse(SEND_COLOR, &send_color);
+
+		gtk_list_store_set(ls, &iter,
+							CHAT_USERS_ICON_COLUMN,  pixbuf,
+							CHAT_USERS_ALIAS_COLUMN, alias,
+							CHAT_USERS_NAME_COLUMN,  name,
+							CHAT_USERS_FLAGS_COLUMN, flags,
+							CHAT_USERS_COLOR_COLUMN, &send_color,
+							CHAT_USERS_BUDDY_COLUMN, is_buddy,
+							-1);
+	}
+	else
+	{
+		gtk_list_store_set(ls, &iter,
+							CHAT_USERS_ICON_COLUMN,  pixbuf,
+							CHAT_USERS_ALIAS_COLUMN, alias,
+							CHAT_USERS_NAME_COLUMN,  name,
+							CHAT_USERS_FLAGS_COLUMN, flags,
+							CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, alias),
+							CHAT_USERS_BUDDY_COLUMN, is_buddy,
+							-1);
+	}
 
 	if (pixbuf)
 		g_object_unref(pixbuf);
