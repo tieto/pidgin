@@ -2470,6 +2470,7 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Accounts menu */
 	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>" },
+	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", gaim_gtk_accounts_window_show, 0, "<StockItem>", GAIM_STOCK_ACCOUNTS },
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>" },
@@ -5376,15 +5377,12 @@ gaim_gtk_blist_update_accounts_menu(void)
 
 	/* Clear the old Accounts menu */
 	for (l = gtk_container_get_children(GTK_CONTAINER(accountmenu)); l; l = l->next) {
-		gtk_container_remove(GTK_CONTAINER(accountmenu),
-		                     GTK_WIDGET(l->data));
-	}
+		menuitem = l->data;
 
-	menuitem = gtk_menu_item_new_with_label(_("Add/Edit"));
-	g_signal_connect(G_OBJECT(menuitem), "activate",
-	                 G_CALLBACK(gaim_gtk_accounts_window_show), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-	gtk_widget_show(menuitem);
+		if (menuitem != gtk_item_factory_get_widget(gtkblist->ift, N_("/Accounts/Add\\/Edit")))
+			gtk_container_remove(GTK_CONTAINER(accountmenu),
+			                     GTK_WIDGET(l->data));
+	}
 
 	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
 		char *buf = NULL;
