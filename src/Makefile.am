@@ -315,6 +315,7 @@ gaim_headers = \
 	gtklog.h \
 	gtkmedia.h \
 	gtkmenutray.h \
+	gtknickcolors.h \
 	gtknotify.h \
 	gtkplugin.h \
 	gtkpluginpref.h \

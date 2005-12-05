@@ -66,6 +66,8 @@
 #include "gtkutils.h"
 #include "gtkstock.h"
 
+#include "gtknickcolors.h"
+
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
 #define SEND_COLOR "#204a87"
@@ -7538,7 +7540,7 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 	 * GTK on the other hand has values between 0 and 65535
 	 * Err suggested I >> 8, which grabbed the high bits.
 	 */
-	
+
 	fred = foreground.red >> 8 ;
 	fgreen = foreground.green >> 8 ;
 	fblue = foreground.blue >> 8 ;
@@ -7561,7 +7563,7 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 static GdkColor*
 generate_nick_colors(guint numcolors, GdkColor background)
 {
-	guint i;
+	guint i = 0;
 	GdkColor *colors = g_new(GdkColor, numcolors);
 	GdkColor nick_highlight;
 	GdkColor send_color;
@@ -7571,9 +7573,23 @@ generate_nick_colors(guint numcolors, GdkColor background)
 
 	srand(background.red + background.green + background.blue + 1);
 
-	for (i = 0; i < numcolors; )
+	for (i ; i < numcolors; )
+	{
+		GdkColor color = nick_seed_colors[i];
+
+		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
+			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
+			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
+		{
+			colors[i] = color;
+			i++;
+		}
+	}
+
+	for (i ; i < numcolors; )
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
+
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
 			color_is_visible(color, send_color,     MIN_COLOR_CONTRAST / 4, 0))
