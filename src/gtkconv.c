@@ -7516,12 +7516,29 @@ color_is_visible(GdkColor foreground, GdkColor background)
 	gulong bg_brightness;
 	gulong br_diff;
 	gulong col_diff;
+	int fred, fgreen, fblue, bred, bgreen, bblue;
 
-	fg_brightness = (foreground.red * 299 + foreground.green * 587 + foreground.blue * 114) / 1000;
-	bg_brightness = (background.red * 299 + background.green * 587 + background.blue * 114) / 1000;
+	/* this algorithm expects colors between 0 and 255 for each of red green and blue.
+	 * GTK on the other hand has values between 0 and 65535
+	 * Err suggested I >> 8, which grabbed the high bits.
+	 */
+	
+	fred = foreground.red >> 8 ;
+	fgreen = foreground.green >> 8 ;
+	fblue = foreground.blue >> 8 ;
+
+
+	bred = background.red >> 8 ;
+	bgreen = background.green >> 8 ;
+	bblue = background.blue >> 8 ;
+
+	fg_brightness = (fred * 299 + fgreen * 587 + fblue * 114) / 1000;
+	bg_brightness = (bred * 299 + bgreen * 587 + bblue * 114) / 1000;
 	br_diff = abs(fg_brightness - bg_brightness);
 
-	col_diff = abs(foreground.red - background.red) + abs(foreground.green - background.green) + abs(foreground.blue - background.blue);
+	col_diff = abs(fred - bred) + abs(fgreen - bgreen) + abs(fblue - bblue);
+
+	gaim_debug(GAIM_DEBUG_INFO, NULL, "\n\ntest color is %i,%i,%i\nback color is %i,%i,%i\ndifference is %i\ncontrast is %i\n",fred,fgreen,fblue,bred,bgreen,bblue,col_diff,br_diff);
 
 	return ((col_diff > MIN_COLOR_CONTRAST) && (br_diff > MIN_BRIGHTNESS_CONTRAST));
 }
