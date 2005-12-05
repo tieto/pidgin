@@ -96,7 +96,7 @@ BOOT:
 	GAIM_PERL_BOOT(Network);
 	GAIM_PERL_BOOT(Notify);
 	GAIM_PERL_BOOT(Plugin);
-	GAIM_PERL_BOOT(Pref); 
+	GAIM_PERL_BOOT(PluginPref);
 	GAIM_PERL_BOOT(Pounce);
 	GAIM_PERL_BOOT(Prefs);
 	GAIM_PERL_BOOT(Privacy);

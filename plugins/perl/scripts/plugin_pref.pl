@@ -3,10 +3,15 @@ use Gaim;
 # All the information Gaim gets about our nifty plugin
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
-	name => " Perl: $MODULE_NAME", 
+	name => "Perl: $MODULE_NAME",
 	version => "0.1", 
 	summary => "Test plugin for the Perl interpreter.", 
-	description => "Implements a set of test proccedures to ensure all functions that work in the C API still work in the Perl plugin interface.  As XSUBs are added, this *should* be updated to test the changes.  Furthermore, this will function as the tutorial perl plugin.", 
+	description => "Implements a set of test proccedures to ensure all " .
+	               "functions that work in the C API still work in the " .
+		       "Perl plugin interface.  As XSUBs are added, this " .
+		       "*should* be updated to test the changes.  " .
+		       "Furthermore, this will function as the tutorial perl " .
+		       "plugin.",
 	author => "John H. Kelm <johnhkelm\@gmail.com>", 
 	url => "http://sourceforge.net/users/johnhkelm/", 
 	
@@ -26,24 +31,27 @@ use Gaim;
 	my $PROTOCOL_ID 	= "prpl-oscar";
 
 sub foo {
-	$frame = Gaim::Pref::frame_new();
+	$frame = Gaim::PluginPref::Frame->new();
 
-	$ppref = Gaim::Pref::new_with_label("boolean");
-	Gaim::Pref::frame_add($frame, $ppref);
+	$ppref = Gaim::PluginPref->new_with_label("boolean");
+	$frame->add($ppref);
 	
-	$ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/bool", "Boolean Preference");
-	Gaim::Pref::frame_add($frame, $ppref);	
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/bool", "Boolean Preference");
+	$frame->add($ppref);
 
 		
-	$ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/choice", "Choice Preference");
-	Gaim::Pref::set_type($ppref, 1);
-	Gaim::Pref::add_choice($ppref, "foo", $frame);
-	Gaim::Pref::add_choice($ppref, "bar", $frame);
-	Gaim::Pref::frame_add($frame, $ppref);
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/choice", "Choice Preference");
+	$ppref->set_type(1);
+	$ppref->add_choice("ch0", $frame);
+	$ppref->add_choice("ch1", $frame);
+	$frame->add($ppref);
 	
-	$ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/text", "Text Box Preference");
-	Gaim::Pref::set_max_length($ppref, 16);
-	Gaim::Pref::frame_add($frame, $ppref);
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/text", "Text Box Preference");
+	$ppref->set_max_length(16);
+	$frame->add($ppref);
 	
 	return $frame;
 }
@@ -65,8 +73,8 @@ sub plugin_load {
 
 	Gaim::Prefs::add_none("/plugins/core/perl_test");
 	Gaim::Prefs::add_bool("/plugins/core/perl_test/bool", 1);	
-	Gaim::Prefs::add_string("/plugins/core/perl_test/choice", "bar");	
-	Gaim::Prefs::add_string("/plugins/core/perl_test/text", "Foo");	
+	Gaim::Prefs::add_string("/plugins/core/perl_test/choice", "ch1");	
+	Gaim::Prefs::add_string("/plugins/core/perl_test/text", "Foobar");	
 	
 
 	print "\n\n" . "#" x 80 . "\n\n";

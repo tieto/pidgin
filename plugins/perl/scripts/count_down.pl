@@ -34,7 +34,7 @@ sub plugin_load {
 	# Search each account's user info for our tag
 	foreach $acc (@accounts) {
 		print "IN ACCOUNTS\n";
-		$user_info = Gaim::Account::get_user_info($acc);
+		$user_info = $acc->get_user_info();
 		print "USER INFO 1: " . $user_info . "\n";
 		# Find <countdown> and replace
 		$user_info =~ /countdown([0-9]+).([0-9]+).([0-9]+)/;
@@ -42,7 +42,7 @@ sub plugin_load {
 		$days = count_days($1, $2, $3);
 		$user_info =~ s/countdown(\d\d\d\d).(\d\d).(\d\d)/$days/;
 		print "USER INFO 2: " . $user_info . "\n";
-	#	Gaim::Account::set_user_info($acc, $user_info);
+	#	$acc->set_user_info($user_info);
 	
 	}
 	
@@ -70,7 +70,7 @@ sub hello {
 	print "Test var: " . $GLOBAL_TEST_VAR . " \n";
 	@accounts = Gaim::Accounts::get_all();
 	$acc = $accounts[0];
-	$user_info = Gaim::Account::get_user_info($acc);
+	$user_info = $acc->get_user_info();
 	print "USER INFO from sub hello: " . $user_info . "\n";
 	$window->destroy;
 }

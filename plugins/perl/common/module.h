@@ -178,7 +178,7 @@ typedef GaimPluginLoaderInfo *          Gaim__PluginLoaderInfo;
 typedef GaimPluginAction *              Gaim__Plugin__Action;
 
 	/* pluginpref.h */
-typedef GaimPluginPrefFrame *           Gaim__PluginPrefFrame;
+typedef GaimPluginPrefFrame *           Gaim__PluginPref__Frame;
 typedef GaimPluginPref *                Gaim__PluginPref;
 typedef GaimPluginPrefType              Gaim__PluginPrefType;
 
@@ -250,6 +250,7 @@ typedef GaimStringref *			Gaim__Stringref;
 typedef GaimValue *			Gaim__Value;
 
 	/* xmlnode.h */
+typedef	xmlnode *			Gaim__XMLNode;
 typedef XMLNodeType             XMLNode__Type;
 
 

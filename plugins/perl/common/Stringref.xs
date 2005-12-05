@@ -13,12 +13,16 @@ gaim_stringref_len(stringref)
 	Gaim::Stringref stringref
 
 Gaim::Stringref
-gaim_stringref_new(value)
+gaim_stringref_new(class, value)
 	const char *value
+    C_ARGS:
+	value
 
 Gaim::Stringref
-gaim_stringref_new_noref(value)
+gaim_stringref_new_noref(class, value)
 	const char *value
+    C_ARGS:
+	value
 
 
 

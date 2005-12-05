@@ -50,11 +50,11 @@ sub plugin_load {
 	#########  TEST CODE HERE  ##########
 	# First we create two new conversations.
 	print "Testing Gaim::Conversation::new()...";
-	$conv1 = Gaim::Conversation::new(1, $account, "Test Conversation 1");
+	$conv1 = Gaim::Conversation->new(1, $account, "Test Conversation 1");
 	if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
 
 	print "Testing Gaim::Conversation::new()...";
-	$conv2 = Gaim::Conversation::new(1, $account, "Test Conversation 2");
+	$conv2 = Gaim::Conversation->new(1, $account, "Test Conversation 2");
 	if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
 	
 	# Second we create a window to display the conversations in.

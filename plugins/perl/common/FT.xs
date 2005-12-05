@@ -3,6 +3,14 @@
 MODULE = Gaim::Xfer  PACKAGE = Gaim::Xfer  PREFIX = gaim_xfer_
 PROTOTYPES: ENABLE
 
+Gaim::Xfer
+gaim_xfer_new(class, account, type, who)
+	Gaim::Account account
+	Gaim::XferType type
+	const char *who
+    C_ARGS:
+	account, type, who
+
 void 
 gaim_xfer_add(xfer)
 	Gaim::Xfer xfer

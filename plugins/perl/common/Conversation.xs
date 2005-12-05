@@ -124,10 +124,12 @@ gaim_conversation_update(conv, type)
 	Gaim::ConvUpdateType type
 
 Gaim::Conversation
-gaim_conversation_new(type, account, name)
+gaim_conversation_new(class, type, account, name)
 	Gaim::ConversationType type
 	Gaim::Account account
 	const char *name
+    C_ARGS:
+	type, account, name
 
 void
 gaim_conversation_set_account(conv, account);

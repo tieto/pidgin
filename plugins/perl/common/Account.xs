@@ -8,9 +8,11 @@ gaim_account_get_presence(account)
 	Gaim::Account account
 
 Gaim::Account
-gaim_account_new(username, protocol_id)
+gaim_account_new(class, username, protocol_id)
 	const char * username
 	const char * protocol_id
+    C_ARGS:
+	username, protocol_id
 
 void 
 gaim_account_destroy(account)

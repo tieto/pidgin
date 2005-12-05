@@ -1,30 +1,20 @@
 #include "module.h"
 
-MODULE = Gaim::Pref  PACKAGE = Gaim::Pref  PREFIX = gaim_plugin_pref_
+MODULE = Gaim::PluginPref  PACKAGE = Gaim::PluginPref::Frame  PREFIX = gaim_plugin_pref_frame_
 PROTOTYPES: ENABLE
 
-void 
-gaim_plugin_pref_add_choice(pref, label, choice)
-	Gaim::PluginPref pref
-	char *label
-	gpointer choice
-
-void 
-gaim_plugin_pref_destroy(pref)
-	Gaim::PluginPref pref
-
-void 
+void
 gaim_plugin_pref_frame_add(frame, pref)
-	Gaim::PluginPrefFrame frame
+	Gaim::PluginPref::Frame frame
 	Gaim::PluginPref pref
 
 void 
 gaim_plugin_pref_frame_destroy(frame)
-	Gaim::PluginPrefFrame frame
+	Gaim::PluginPref::Frame frame
 
 void
 gaim_plugin_pref_frame_get_prefs(frame)
-	Gaim::PluginPrefFrame frame
+	Gaim::PluginPref::Frame frame
 PREINIT:
 	GList *l;
 PPCODE:
@@ -32,11 +22,26 @@ PPCODE:
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::ListItem")));
 	}
 	
-Gaim::PluginPrefFrame
-gaim_plugin_pref_frame_new()
+Gaim::PluginPref::Frame
+gaim_plugin_pref_frame_new(class)
+    C_ARGS: /* void */
 
 
-void 
+MODULE = Gaim::PluginPref  PACKAGE = Gaim::PluginPref  PREFIX = gaim_plugin_pref_
+PROTOTYPES: ENABLE
+
+void
+gaim_plugin_pref_add_choice(pref, label, choice)
+	Gaim::PluginPref pref
+	char *label
+	gpointer choice
+
+void
+gaim_plugin_pref_destroy(pref)
+	Gaim::PluginPref pref
+
+
+void
 gaim_plugin_pref_get_bounds(pref, min, max)
 	Gaim::PluginPref pref
 	int *min
@@ -73,21 +78,28 @@ gaim_plugin_pref_get_type(pref)
 	Gaim::PluginPref pref
 
 Gaim::PluginPref
-gaim_plugin_pref_new()
+gaim_plugin_pref_new(class)
+    C_ARGS: /* void */
 
 
 Gaim::PluginPref
-gaim_plugin_pref_new_with_label(label)
+gaim_plugin_pref_new_with_label(class, label)
 	char *label
+    C_ARGS:
+	label
 
 Gaim::PluginPref
-gaim_plugin_pref_new_with_name(name)
+gaim_plugin_pref_new_with_name(class, name)
 	char *name
+    C_ARGS:
+	name
 
 Gaim::PluginPref
-gaim_plugin_pref_new_with_name_and_label(name, label)
+gaim_plugin_pref_new_with_name_and_label(class, name, label)
 	char *name
 	char *label
+    C_ARGS:
+	name, label
 
 void 
 gaim_plugin_pref_set_bounds(pref, min, max)

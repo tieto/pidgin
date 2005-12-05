@@ -115,7 +115,7 @@ Gaim::Plugin::Action            	T_GaimObj
 Gaim::Plugin::Protocol::Info            T_GaimObj
 Gaim::PluginType                	T_IV
 Gaim::PrefType   			T_IV
-Gaim::PluginPrefFrame               	T_GaimObj
+Gaim::PluginPref::Frame               	T_GaimObj
 Gaim::PluginPref     		         T_GaimObj
 Gaim::PluginPrefType            	T_IV
 Gaim::Pounce            		T_GaimObj
@@ -169,6 +169,8 @@ Gaim::Xfer              		T_GaimObj
 Gaim::XferType          		T_IV
 Gaim::XferStatusType            	T_IV
 Gaim::XferUiOps				T_IV
+
+Gaim::XMLNode                                 T_GaimObj
 XMLNode::Type             		T_IV
 
 

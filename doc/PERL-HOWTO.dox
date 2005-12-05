@@ -48,11 +48,27 @@ The last step is to save the script with a .pl file extention in your ~/.gaim/pl
 
 @section account-api Account and Account Option Functions
 
-The Account API is in the @c Gaim::Account:: and @c Gaim::Accounts:: packages and both are nearly identical to their C counterparts @c gaim_account_ and @c gaim_accounts_.  The Account Option API is in the package @c Gaim::Account::Option and is identical to its C implementation @c gaim_account_option .  
+The Account API is in the @c Gaim::Account:: and @c Gaim::Accounts:: packages
+and both are nearly identical to their C counterparts @c gaim_account_ and @c
+gaim_accounts_.  The Account Option API is in the package @c
+Gaim::Account::Option and is identical to its C implementation @c
+gaim_account_option.
 
-The Account* APIs allow for scripts to create, remove, and edit accounts of the type GaimAccount. (Note: Gaim type have no real meaning in perl scripts other than the types of the arguments of the perl subroutines need to be of the expected type.)  This section will not go into detail about the @c Gaim::Account::Option package for its use in building protocol plugins which are outside the scope of this document.  However, most of the API calls for the @c Gaim::Account::Option package should function as expected so if there is a need to access any of the Account Options the function calls necessary are avaialbe in the Gaim perl API.
+The Account* APIs allow for scripts to create, remove, and edit accounts of the
+type GaimAccount. (Note: Gaim types have no real meaning in perl scripts other
+than the types of the arguments of the perl subroutines need to be of the
+expected type.)  This section will not go into detail about the @c
+Gaim::Account::Option package for its use in building protocol plugins which
+are outside the scope of this document.  However, most of the API calls for the
+@c Gaim::Account::Option package should function as expected so if there is a
+need to access any of the Account Options the function calls necessary are
+avaialbe in the Gaim perl API.
 
-To reduce redundant code the following code examples are going to use the template shown in the previous section.  To highlight some of the more useful features of the Account API we will be replacing the @c plugin_load perl subroutine.  For testing purposes we will display output on the command line by using perl @c print commands.   
+To reduce redundant code the following code examples are going to use the
+template shown in the previous section.  To highlight some of the more useful
+features of the Account API we will be replacing the @c plugin_load perl
+subroutine.  For testing purposes we will display output on the command line by
+using perl @c print commands.
 
 @code
 sub plugin_load {
@@ -62,9 +78,9 @@ sub plugin_load {
 	my $protocol = "prpl-oscar";
 
 	# Create a new Account
-        print "Testing: Gaim::Account::new()...";
-        $account = Gaim::Account::new("TEST_NAME", $protocol);
-        if ($account) { print "ok.\n"; } else { print "fail.\n"; }
+	print "Testing: Gaim::Account::new()... ";
+	$account = Gaim::Account->new($TEST_NAME, $PROTOCOL_ID);
+	if ($account) { print "ok.\n"; } else { print "fail.\n"; }
 
 	# Add a new Account
         print "Testing: Gaim::Account::add()...";
@@ -77,32 +93,51 @@ sub plugin_load {
         if ($account) { print "ok.\n"; } else { print "fail.\n"; }
 
 	# Return the username 
-        print "Testing: Gaim::Account::get_username()...";
-        $user_name = Gaim::Account::get_username($account);
-        if ($user_name) { print $user_name . "...ok.\n"; } else { print "fail.\n"; }
-
+	print "Testing: Gaim::Account::get_username()... ";
+	$user_name = $account->get_username();
+	if ($user_name) {
+		print "Success: $user_name.\n";
+	} else {
+		print "Failed!\n";
+	}
 	# Verify if the user is connected
-        print "Testing: Gaim::Account::is_connected()";
-        $user_connected = Gaim::Account::is_connected($account);
-        if (!($user_connected)) { print "...not connected...ok..\n"; } else { print "...connected...ok.\n"; }
+	print "Testing: Gaim::Account::is_connected()";
+	if ($account->is_connected()) {
+		print " Connected.\n";
+	} else {
+		print " Disconnected.\n";
+	}
 
-	# The status mechanism is how users are Connected, set Away, Disconnected (status set to Offline), etc
+	# The status mechanism is how users are Connected, set Away,
+	# Disconnected (status set to Offline), etc
 	#  $status is now a Gaim::Status perl type.
-        print "Testing: Gaim::Accounts::get_active_status()...";
-        $status = Gaim::Account::get_active_status($account);
-        if ($status) { print "ok.\n"; } else { print "fail.\n"; }
+	print "Testing: Gaim::Accounts::get_active_status()... ";
+	if ($account->get_active_status()) {
+		print "Okay.\n";
+	} else {
+		print "Failed!\n";
+	}
 
-	# It follows that to connect a user you mest set the account status to "available"
-	#  similarly we can disconnect a user by setting the account status to "offline"
+	# It follows that to connect a user you mest set the account status to
+	# "available" similarly we can disconnect a user by setting the account
+	# status to "offline"
+
         $account = Gaim::Accounts::find("TEST_NAME", $protocol);
         print "Testing: Gaim::Accounts::connect()...pending...\n";
 
-        Gaim::Account::set_status($account, "available", TRUE);
-        Gaim::Account::connect($account);
+	$account->set_status("available", TRUE);
+	$account->connect();
+
 }
 @endcode
 
-For the most part the code listed above is explained by the comments, however there are a few other points to make.  The variables above are all specialized Perl types that contain pointers to the actual Gaim types.  They can be reasigned at will just like any other variable in Perl.  The only way to edit the values of a Gaim type from within perl are through accessor methods such as @c Gaim::Account::get_username().  For arguments that you would make @c NULL in C should be set to @c undef in Perl.  
+For the most part the code listed above is explained by the comments, however
+there are a few other points to make.  The variables above are all specialized
+Perl types that contain pointers to the actual Gaim types.  They can be
+reasigned at will just like any other variable in Perl.  The only way to edit
+the values of a Gaim type from within perl are through accessor methods such as
+@c Gaim::Account::get_username().  For arguments that you would make @c NULL in
+C should be set to @c undef in Perl.
 
 @section buddylist-api Buddylist, Group and Chat API
 
@@ -284,28 +319,33 @@ Now we can add these preferences from inside our function specified in @c \%PLUG
 @code
 sub prefs_info_cb {
 	# The first step is to initialize the Gaim::Pref::Frame that will be returned
-        $frame = Gaim::Pref::frame_new();
+        $frame = Gaim::PluginPref::Frame->new();
 
-	# Create a new boolean option with a label "Boolean Label" and then add it to the frame
-        $ppref = Gaim::Pref::new_with_label("Boolean Label");
-        Gaim::Pref::frame_add($frame, $ppref);
+	# Create a new boolean option with a label "Boolean Label" and then add
+	# it to the frame
+        $ppref = Gaim::Pref->new_with_label("Boolean Label");
+	$frame->add($ppref);
 
-        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/bool", "Boolean Preference");
-        Gaim::Pref::frame_add($frame, $ppref);
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/bool", "Boolean Preference");
+	$frame->add($ppref);
 
-	# Create a set of choices.  To do so we must set the type to 1 which is the numerical equivelant of 
-	#  the GaimPrefType for choice.
-        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/choice", "Choice Preference");
-        Gaim::Pref::set_type($ppref, 1);
-        Gaim::Pref::add_choice($ppref, "ch0", $frame);
+	# Create a set of choices.  To do so we must set the type to 1 which is
+	# the numerical equivelant of the GaimPrefType for choice.
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/choice", "Choice Preference");
+	$ppref->set_type(1);
+	$ppref->add_choice("ch0", $frame);
 	# The following will be the default value as set from plugin_load
-        Gaim::Pref::add_choice($ppref, "ch1", $frame);
-        Gaim::Pref::frame_add($frame, $ppref);
+	$ppref->add_choice("ch1", $frame);
+	$frame->add($ppref);
 
-	# Create a text box.  The default value will be "Foobar" as set by plugin_load
-        $ppref = Gaim::Pref::new_with_name_and_label("/plugins/core/perl_test/text", "Text Box Preference");
-        Gaim::Pref::set_max_length($ppref, 16);
-        Gaim::Pref::frame_add($frame, $ppref);
+	# Create a text box.  The default value will be "Foobar" as set by
+	# plugin_load
+	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	    "/plugins/core/perl_test/text", "Text Box Preference");
+	$ppref->set_max_length(16);
+	$frame->add($ppref);
 
         return $frame;
 }
