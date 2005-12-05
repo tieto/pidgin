@@ -3464,7 +3464,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	struct buddyinfo *bi;
 	time_t time_idle = 0, signon = 0;
 	int type = 0;
-	int caps = 0;
 	gboolean buddy_is_away = FALSE;
 	const char *status_id;
 	gboolean have_status_message = FALSE;
@@ -3542,22 +3541,28 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	else
 		gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 
-	if (info->present & AIM_USERINFO_PRESENT_CAPABILITIES)
-		caps = info->capabilities;
-
-	if (caps & AIM_CAPS_ICQ_DIRECT)
-		caps ^= AIM_CAPS_ICQ_DIRECT;
-
+	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		signon = info->onlinesince;
 	else if (info->present & AIM_USERINFO_PRESENT_SESSIONLEN)
 		signon = time(NULL) - info->sessionlen;
-
 	if (!aim_sncmp(gaim_account_get_username(account), info->sn)) {
 		gaim_connection_set_display_name(gc, info->sn);
 		od->timeoffset = signon - gaim_presence_get_login_time(presence);
 	}
+	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
 
+	/* Idle time stuff */
+	/* info->idletime is the number of minutes that this user has been idle */
+	if (info->present & AIM_USERINFO_PRESENT_IDLE)
+		time_idle = time(NULL) - info->idletime * 60;
+
+	if (time_idle > 0)
+		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
+	else
+		gaim_prpl_got_user_idle(account, info->sn, FALSE, 0);
+
+	/* Server stored icon stuff */
 	bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(account, info->sn));
 	if (!bi) {
 		bi = g_new0(struct buddyinfo, 1);
@@ -3567,7 +3572,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 	bi->ico_informed = FALSE;
 	bi->ipaddr = info->icqinfo.ipaddr;
 
-	/* Server stored icon stuff */
 	if (info->iconcsumlen) {
 		const char *filename = NULL, *saved_b16 = NULL;
 		char *b16 = NULL, *filepath = NULL;
@@ -3608,17 +3612,6 @@ static int gaim_parse_oncoming(aim_session_t *sess, aim_frame_t *fr, ...)
 		}
 		g_free(b16);
 	}
-
-	gaim_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
-
-	/* info->idletime is the number of minutes that this user has been idle */
-	if (info->present & AIM_USERINFO_PRESENT_IDLE)
-		time_idle = time(NULL) - info->idletime * 60;
-
-	if (time_idle > 0)
-		gaim_prpl_got_user_idle(account, info->sn, TRUE, time_idle);
-	else
-		gaim_prpl_got_user_idle(account, info->sn, FALSE, 0);
 
 	return 1;
 }
