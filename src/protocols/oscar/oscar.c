@@ -7624,13 +7624,20 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 static char *oscar_status_text(GaimBuddy *b)
 {
 	GaimConnection *gc;
+	GaimAccount *account;
 	OscarData *od;
-	GaimPresence *presence;
+	const GaimPresence *presence;
+	const GaimStatus *status;
+	const char *id;
+	const char *message;
 	gchar *ret = NULL;
 
 	gc = gaim_account_get_connection(gaim_buddy_get_account(b));
+	account = gaim_connection_get_account(gc);
 	od = gc->proto_data;
 	presence = gaim_buddy_get_presence(b);
+	status = gaim_presence_get_active_status(presence);
+	id = gaim_status_get_id(status);
 
 	if (!gaim_presence_is_online(presence))
 	{
@@ -7640,25 +7647,34 @@ static char *oscar_status_text(GaimBuddy *b)
 		else
 			ret = g_strdup(_("Offline"));
 	}
-	else if (gaim_presence_is_available(presence))
+	else if (gaim_presence_is_available(presence) && !strcmp(id, OSCAR_STATUS_ID_AVAILABLE))
 	{
-		struct buddyinfo *bi;
-		bi = g_hash_table_lookup(od->buddyinfo, gaim_normalize(b->account, b->name));
-		if ((bi != NULL) && (bi->availmsg != NULL))
-			ret = g_markup_escape_text(bi->availmsg, strlen(bi->availmsg));
-		else if (aim_sn_is_icq(b->name)) {
-			GaimStatus *status = gaim_presence_get_active_status(presence);
-			ret = g_strdup(gaim_status_get_name(status));
+		message = gaim_status_get_attr_string(status, "message");
+		if (message != NULL)
+		{
+			ret = g_markup_escape_text(message, -1);
+			gaim_util_chrreplace(ret, '\n', ' ');
+		}
+	}
+	else if (!gaim_presence_is_available(presence) && !strcmp(id, OSCAR_STATUS_ID_AWAY))
+	{
+		message = gaim_status_get_attr_string(status, "message");
+		if (message != NULL)
+		{
+			gchar *tmp1, *tmp2;
+			tmp1 = gaim_markup_strip_html(message);
+			tmp2 = g_markup_escape_text(tmp1, -1);
+			ret = gaim_str_sub_away_formatters(tmp2, gaim_account_get_username(account));
+			g_free(tmp1);
+			g_free(tmp2);
+		}
+		else
+		{
+			ret = g_strdup(_("Away"));
 		}
 	}
 	else
-	{
-		if (aim_sn_is_icq(b->name)) {
-			GaimStatus *status = gaim_presence_get_active_status(presence);
-			ret = g_strdup(gaim_status_get_name(status));
-		} else
-			ret = g_strdup(_("Away"));
-	}
+		ret = g_strdup(gaim_status_get_name(status));
 
 	return ret;
 }
