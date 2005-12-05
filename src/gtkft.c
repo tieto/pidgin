@@ -714,7 +714,7 @@ gaim_gtkxfer_dialog_new(void)
 
 	/* "Close this window when all transfers finish" */
 	checkbox = gtk_check_button_new_with_mnemonic(
-			_("_Close this window when all transfers finish"));
+			_("Close this window when all transfers _finish"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbox),
 								 !dialog->keep_open);
 	g_signal_connect(G_OBJECT(checkbox), "toggled",
