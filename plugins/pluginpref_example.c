@@ -1,5 +1,5 @@
 /*
- * Release Notification Plugin
+ * PluginPref Example Plugin
  *
  * Copyright (C) 2004, Gary Kramlich <amc_grim@users.sf.net>
  *
