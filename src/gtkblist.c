@@ -3957,9 +3957,9 @@ static void buddy_node(GaimBuddy *buddy, GtkTreeIter *iter, GaimBlistNode *node)
 			imin = ((t - idle_secs) / 60) % 60;
 
 			if (ihrs > 0)
-				idle = g_strdup_printf("(%d:%02d)", ihrs, imin);
+				idle = g_strdup_printf("%d:%02d", ihrs, imin);
 			else
-				idle = g_strdup_printf("(%d)", imin);
+				idle = g_strdup_printf("%d", imin);
 		}
 	}
 
