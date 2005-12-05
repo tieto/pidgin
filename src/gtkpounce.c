@@ -1533,8 +1533,8 @@ gaim_gtk_pounces_init(void)
 	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/play-sound",
 						FALSE);
 	gaim_prefs_add_none("/gaim/gtk/pounces/dialog");
-	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/width",  550);
-	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/height", 250);
+	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/width",  520);
+	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/height", 321);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gaim_gtk_pounces_get_handle(),

@@ -2619,8 +2619,8 @@ gaim_gtk_account_init(void)
 {
 	gaim_prefs_add_none("/gaim/gtk/accounts");
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  550);
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 250);
+	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  520);
+	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
 
 	gaim_signal_register(gaim_gtk_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
