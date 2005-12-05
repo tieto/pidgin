@@ -311,6 +311,15 @@ gaim_plugin_probe(const char *filename)
 #endif /* !GAIM_PLUGINS */
 }
 
+static gint
+compare_plugins(gconstpointer a, gconstpointer b)
+{
+	const GaimPlugin *plugina = a;
+	const GaimPlugin *pluginb = b;
+
+	return strcmp(plugina->info->name, pluginb->info->name);
+}
+
 gboolean
 gaim_plugin_load(GaimPlugin *plugin)
 {
@@ -414,7 +423,7 @@ gaim_plugin_load(GaimPlugin *plugin)
 		}
 	}
 
-	loaded_plugins = g_list_append(loaded_plugins, plugin);
+	loaded_plugins = g_list_insert_sorted(loaded_plugins, plugin, compare_plugins);
 
 	plugin->loaded = TRUE;
 
