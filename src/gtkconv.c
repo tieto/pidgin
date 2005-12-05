@@ -107,8 +107,8 @@ static GdkColor nick_colors[] = {
 #endif
 
 /* From http://www.w3.org/TR/AERT#color-contrast */
-#define MIN_BRIGHTNESS_CONTRAST 125
-#define MIN_COLOR_CONTRAST 500
+#define MIN_BRIGHTNESS_CONTRAST 75
+#define MIN_COLOR_CONTRAST 200
 
 #define NUM_NICK_COLORS 220
 static GdkColor *nick_colors = NULL;
