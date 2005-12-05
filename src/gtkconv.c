@@ -76,6 +76,7 @@
 
 #define LUMINANCE(c) (float)((0.3*(c.red))+(0.59*(c.green))+(0.11*(c.blue)))
 
+#if 0
 /* These colors come from the default GNOME palette */
 static GdkColor nick_colors[] = {
 	{0, 47616, 46336, 43776},       /* Basic 3D Medium */
@@ -103,6 +104,14 @@ static GdkColor nick_colors[] = {
 };
 
 #define NUM_NICK_COLORS (sizeof(nick_colors) / sizeof(*nick_colors))
+#endif
+
+/* From http://www.w3.org/TR/AERT#color-contrast */
+#define MIN_BRIGHTNESS_CONTRAST 125
+#define MIN_COLOR_CONTRAST 500
+
+#define NUM_NICK_COLORS 220
+static GdkColor *nick_colors = NULL;
 
 typedef struct {
 	GtkWidget *window;
@@ -138,6 +147,8 @@ static char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean gaim_gtkconv_has_focus(GaimConversation *conv);
 static void gaim_gtkconv_custom_smiley_allocated(GdkPixbufLoader *loader, gpointer user_data);
 static void gaim_gtkconv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer user_data);
+GdkColor* generate_nick_colors(guint numcolors, GdkColor background);
+gboolean color_is_visible(GdkColor foreground, GdkColor background);
 
 static GdkColor *get_nick_color(GaimGtkConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -4060,6 +4071,9 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 		gaim_gtk_conv_window_add_gtkconv(hidden_convwin, gtkconv);
 	else
 		gaim_gtkconv_placement_place(gtkconv);
+
+	if(NULL == nick_colors)
+		nick_colors = generate_nick_colors(NUM_NICK_COLORS, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
 }
 
 static void
@@ -7491,4 +7505,43 @@ gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv)
 	g_return_val_if_fail(gtkconv != NULL, FALSE);
 
 	return (gtkconv->win == hidden_convwin);
+}
+
+
+/* Algorithm from http://www.w3.org/TR/AERT#color-contrast */
+gboolean
+color_is_visible(GdkColor foreground, GdkColor background)
+{
+	gulong	fg_brightness,
+		bg_brightness,
+		br_diff,
+		col_diff;
+
+	fg_brightness = (foreground.red * 299 + foreground.green * 587 + foreground.blue * 114) / 1000;
+	bg_brightness = (background.red * 299 + background.green * 587 + background.blue * 114) / 1000;
+	br_diff = abs(fg_brightness - bg_brightness);
+
+	col_diff = abs(foreground.red - background.red) + abs(foreground.green - background.green) + abs(foreground.blue - background.blue);
+
+	return ((col_diff > MIN_COLOR_CONTRAST) && (br_diff > MIN_BRIGHTNESS_CONTRAST));
+}
+
+
+GdkColor*
+generate_nick_colors(guint numcolors, GdkColor background)
+{
+	guint i;
+	GdkColor *colors = (GdkColor*)g_malloc(numcolors * sizeof(GdkColor));
+
+	srand(background.red + 1 * background.green + 1 * background.blue + 1);
+
+	for(i = 0; i < numcolors;){
+		GdkColor color = { 0, rand()%65536, rand()%65536, rand()%65536 };
+		if(color_is_visible(color, background)){
+			colors[i] = color;
+			i++;
+		}
+	}
+
+	return colors;
 }
