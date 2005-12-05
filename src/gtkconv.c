@@ -7563,7 +7563,7 @@ color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, i
 static GdkColor*
 generate_nick_colors(guint numcolors, GdkColor background)
 {
-	guint i = 0;
+	guint i = 0, j = 0;
 	GdkColor *colors = g_new(GdkColor, numcolors);
 	GdkColor nick_highlight;
 	GdkColor send_color;
@@ -7573,9 +7573,16 @@ generate_nick_colors(guint numcolors, GdkColor background)
 
 	srand(background.red + background.green + background.blue + 1);
 
-	for (i ; i < numcolors; )
+	/* first we look through the list of "good" colors: colors that differ from every other color in the
+	 * list.  only some of them will differ from the background color though. lets see if we can find
+	 * numcolors of them that do
+	 */
+	while (i < numcolors && j < NUM_NICK_SEED_COLORS )
 	{
-		GdkColor color = nick_seed_colors[i];
+		GdkColor color = nick_seed_colors[j];
+
+		gaim_debug(GAIM_DEBUG_INFO, NULL,
+				   "Looking for colors from safe list, I have found %i so far.\n",i);
 
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
@@ -7584,11 +7591,20 @@ generate_nick_colors(guint numcolors, GdkColor background)
 			colors[i] = color;
 			i++;
 		}
+		j++;
 	}
 
-	for (i ; i < numcolors; )
+	/* we might not have found numcolors in the last loop.  if we did, we'll never enter this one.
+	 * if we did not, lets just find some colors that don't conflict with the background.  its
+	 * expensive to find colors that not only don't conflict with the background, but also do not
+	 * conflict with each other.
+	 */
+	while(i < numcolors )
 	{
 		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
+
+		gaim_debug(GAIM_DEBUG_WARNING, NULL,
+				   "Looking for random colors to fill the list, I have found %i so far.\n",i);
 
 		if (color_is_visible(color, background,     MIN_COLOR_CONTRAST,     MIN_BRIGHTNESS_CONTRAST) &&
 			color_is_visible(color, nick_highlight, MIN_COLOR_CONTRAST / 2, 0) &&
