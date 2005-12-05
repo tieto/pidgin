@@ -5323,36 +5323,29 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin, gpointer context)
 }
 
 static void
-add_account_cb(GtkWidget *widget, gpointer data)
-{
-	gaim_gtk_account_dialog_show(GAIM_GTK_ADD_ACCOUNT_DIALOG, NULL);
-}
-
-static void
 modify_account_cb(GtkWidget *widget, gpointer data)
 {
 	gaim_gtk_account_dialog_show(GAIM_GTK_MODIFY_ACCOUNT_DIALOG, data);
 }
 
 static void
-ask_delete_account_cb(GtkWidget *widget, gpointer data)
+enable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 {
-	char *buf = NULL;
+	GaimAccount *account = data;
+	const GaimSavedStatus *saved_status;
 
-	buf = g_strdup_printf(_("Are you sure you want to delete %s?"),
-	                      gaim_account_get_username((GaimAccount *)data));
+	saved_status = gaim_savedstatus_get_current();
+	gaim_savedstatus_activate_for_account(saved_status, account);
 
-	gaim_request_action(data, NULL, buf, NULL, 0, data, 2,
-	                    _("Delete"), gaim_accounts_delete,
-	                    _("Cancel"), NULL);
-	g_free(buf);
+	gaim_account_set_enabled(account, GAIM_GTK_UI, TRUE);
 }
 
 static void
-enable_disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
+disable_account_cb(GtkCheckMenuItem *widget, gpointer data)
 {
-	gaim_account_set_enabled(data, GAIM_GTK_UI,
-	                         gtk_check_menu_item_get_active(widget));
+	GaimAccount *account = data;
+
+	gaim_account_set_enabled(account, GAIM_GTK_UI, FALSE);
 }
 
 void
@@ -5360,6 +5353,7 @@ gaim_gtk_blist_update_accounts_menu(void)
 {
 	GtkWidget *menuitem = NULL, *submenu = NULL;
 	GList *l = NULL, *accounts = NULL;
+	gboolean disabled_accounts = FALSE;
 
 	if (accountmenu == NULL)
 		return;
@@ -5370,9 +5364,9 @@ gaim_gtk_blist_update_accounts_menu(void)
 		                     GTK_WIDGET(l->data));
 	}
 
-	menuitem = gtk_menu_item_new_with_label(_("Add Account..."));
+	menuitem = gtk_menu_item_new_with_label(_("Add/Edit..."));
 	g_signal_connect(G_OBJECT(menuitem), "activate",
-	                 G_CALLBACK(add_account_cb), NULL);
+	                 G_CALLBACK(gaim_gtk_accounts_window_show), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 	gtk_widget_show(menuitem);
 
@@ -5386,69 +5380,70 @@ gaim_gtk_blist_update_accounts_menu(void)
 
 		account = accounts->data;
 
-		buf = g_strconcat(gaim_account_get_username(account), " (",
-		                  gaim_account_get_protocol_name(account), ")", NULL);
-		menuitem = gtk_image_menu_item_new_with_label(buf);
-		g_free(buf);
-		status = gaim_account_get_active_status(account);
-		pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status));
-		if (pixbuf) {
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-			                                GDK_INTERP_BILINEAR);
-			if (!gaim_account_is_connected(account))
-				gdk_pixbuf_saturate_and_pixelate(scale, scale,
-				                                 0.0, FALSE);
-			image = gtk_image_new_from_pixbuf(scale);
-			g_object_unref(G_OBJECT(pixbuf));
-			g_object_unref(G_OBJECT(scale));
-			gtk_widget_show(image);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		}
-		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-		gtk_widget_show(menuitem);
+		if(gaim_account_get_enabled(account, GAIM_GTK_UI)) {
+			buf = g_strconcat(gaim_account_get_username(account), " (",
+					gaim_account_get_protocol_name(account), ")", NULL);
+			menuitem = gtk_image_menu_item_new_with_label(buf);
+			g_free(buf);
+			status = gaim_account_get_active_status(account);
+			pixbuf = gaim_gtk_create_prpl_icon_with_status(account, gaim_status_get_type(status));
+			if (pixbuf) {
+				scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+						GDK_INTERP_BILINEAR);
+				if (!gaim_account_is_connected(account))
+					gdk_pixbuf_saturate_and_pixelate(scale, scale,
+							0.0, FALSE);
+				image = gtk_image_new_from_pixbuf(scale);
+				g_object_unref(G_OBJECT(pixbuf));
+				g_object_unref(G_OBJECT(scale));
+				gtk_widget_show(image);
+				gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+			}
+			gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
+			gtk_widget_show(menuitem);
 
-		submenu = gtk_menu_new();
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-		gtk_widget_show(submenu);
+			submenu = gtk_menu_new();
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+			gtk_widget_show(submenu);
 
-		menuitem = gtk_check_menu_item_new_with_mnemonic(_("_Enable"));
-		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_account_get_enabled(account, GAIM_GTK_UI));
-		g_signal_connect(G_OBJECT(menuitem), "toggled",
-		                 G_CALLBACK(enable_disable_account_cb), account);
-		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 
-		menuitem = gtk_menu_item_new_with_mnemonic(_("_Modify Account"));
-		g_signal_connect(G_OBJECT(menuitem), "activate",
-		                 G_CALLBACK(modify_account_cb), account);
-		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
+			menuitem = gtk_menu_item_new_with_mnemonic(_("_Modify Account"));
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(modify_account_cb), account);
+			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+			gtk_widget_show(menuitem);
 
-		gaim_separator(submenu);
+			gaim_separator(submenu);
 
-		gc = gaim_account_get_connection(account);
-		if (gc && GAIM_CONNECTION_IS_CONNECTED(gc)) {
-			GaimPlugin *plugin = NULL;
+			gc = gaim_account_get_connection(account);
+			if (gc && GAIM_CONNECTION_IS_CONNECTED(gc)) {
+				GaimPlugin *plugin = NULL;
 
-			plugin = gc->prpl;
-			if (GAIM_PLUGIN_HAS_ACTIONS(plugin)) {
-				GList *l, *ll = NULL;
-				GaimPluginAction *action = NULL;
+				plugin = gc->prpl;
+				if (GAIM_PLUGIN_HAS_ACTIONS(plugin)) {
+					GList *l, *ll = NULL;
+					GaimPluginAction *action = NULL;
 
-				for (l = ll = GAIM_PLUGIN_ACTIONS(plugin, gc); l; l = l->next) {
-					if (l->data) {
-						action = (GaimPluginAction *)l->data;
-						action->plugin = plugin;
-						action->context = gc;
+					for (l = ll = GAIM_PLUGIN_ACTIONS(plugin, gc); l; l = l->next) {
+						if (l->data) {
+							action = (GaimPluginAction *)l->data;
+							action->plugin = plugin;
+							action->context = gc;
 
-						menuitem = gtk_menu_item_new_with_label(action->label);
-						gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-						g_signal_connect(G_OBJECT(menuitem), "activate",
-						                 G_CALLBACK(plugin_act), action);
-						g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
-						gtk_widget_show(menuitem);
-					} else
-						gaim_separator(submenu);
+							menuitem = gtk_menu_item_new_with_label(action->label);
+							gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+							g_signal_connect(G_OBJECT(menuitem), "activate",
+									G_CALLBACK(plugin_act), action);
+							g_object_set_data(G_OBJECT(menuitem), "plugin_action", action);
+							gtk_widget_show(menuitem);
+						} else
+							gaim_separator(submenu);
+					}
+				} else {
+					menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+					gtk_widget_set_sensitive(menuitem, FALSE);
+					gtk_widget_show(menuitem);
 				}
 			} else {
 				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
@@ -5456,56 +5451,61 @@ gaim_gtk_blist_update_accounts_menu(void)
 				gtk_widget_set_sensitive(menuitem, FALSE);
 				gtk_widget_show(menuitem);
 			}
-		} else {
-			menuitem = gtk_menu_item_new_with_label(_("No actions available"));
+
+			gaim_separator(submenu);
+
+			menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+					G_CALLBACK(disable_account_cb), account);
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-			gtk_widget_set_sensitive(menuitem, FALSE);
 			gtk_widget_show(menuitem);
+		} else {
+			disabled_accounts = TRUE;
 		}
-
-		gaim_separator(submenu);
-
-		menuitem = gtk_menu_item_new_with_mnemonic(_("_Remove Account"));
-		g_signal_connect(G_OBJECT(menuitem), "activate",
-		                 G_CALLBACK(ask_delete_account_cb), account);
-		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-		gtk_widget_show(menuitem);
 	}
 
-	menuitem = gtk_menu_item_new_with_label(_("Remove Account"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
-	gtk_widget_show(menuitem);
-
-	submenu = gtk_menu_new();
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-	gtk_widget_show(submenu);
-
-	for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
-		char *buf = NULL;
-		GtkWidget *image = NULL;
-		GaimAccount *account = NULL;
-		GdkPixbuf *pixbuf = NULL, *scale = NULL;
-
-		account = accounts->data;
-
-		buf = g_strconcat(gaim_account_get_username(account), " (",
-		                  gaim_account_get_protocol_name(account), ")", NULL);
-		menuitem = gtk_image_menu_item_new_with_label(buf);
-		g_free(buf);
-		pixbuf = gaim_gtk_create_prpl_icon(account);
-		if (pixbuf) {
-			scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
-			                                GDK_INTERP_BILINEAR);
-			image = gtk_image_new_from_pixbuf(scale);
-			g_object_unref(G_OBJECT(pixbuf));
-			g_object_unref(G_OBJECT(scale));
-			gtk_widget_show(image);
-			gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
-		}
-		g_signal_connect(G_OBJECT(menuitem), "activate",
-		                 G_CALLBACK(ask_delete_account_cb), account);
-		gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+	if(disabled_accounts) {
+		gaim_separator(accountmenu);
+		menuitem = gtk_menu_item_new_with_label(_("Enable Accounts"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 		gtk_widget_show(menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		gtk_widget_show(submenu);
+
+		for (accounts = gaim_accounts_get_all(); accounts; accounts = accounts->next) {
+			char *buf = NULL;
+			GtkWidget *image = NULL;
+			GaimAccount *account = NULL;
+			GdkPixbuf *pixbuf = NULL, *scale = NULL;
+
+			account = accounts->data;
+
+			if(!gaim_account_get_enabled(account, GAIM_GTK_UI)) {
+
+				disabled_accounts = TRUE;
+
+				buf = g_strconcat(gaim_account_get_username(account), " (",
+						gaim_account_get_protocol_name(account), ")", NULL);
+				menuitem = gtk_image_menu_item_new_with_label(buf);
+				g_free(buf);
+				pixbuf = gaim_gtk_create_prpl_icon(account);
+				if (pixbuf) {
+					scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
+							GDK_INTERP_BILINEAR);
+					image = gtk_image_new_from_pixbuf(scale);
+					g_object_unref(G_OBJECT(pixbuf));
+					g_object_unref(G_OBJECT(scale));
+					gtk_widget_show(image);
+					gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
+				}
+				g_signal_connect(G_OBJECT(menuitem), "activate",
+						G_CALLBACK(enable_account_cb), account);
+				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
+				gtk_widget_show(menuitem);
+			}
+		}
 	}
 }
 
