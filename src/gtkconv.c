@@ -4072,7 +4072,7 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 	else
 		gaim_gtkconv_placement_place(gtkconv);
 
-	if(NULL == nick_colors)
+	if (nick_colors == NULL)
 		nick_colors = generate_nick_colors(NUM_NICK_COLORS, gtk_widget_get_style(gtkconv->imhtml)->base[GTK_STATE_NORMAL]);
 }
 
@@ -7512,10 +7512,10 @@ gaim_gtkconv_is_hidden(GaimGtkConversation *gtkconv)
 gboolean
 color_is_visible(GdkColor foreground, GdkColor background)
 {
-	gulong	fg_brightness,
-		bg_brightness,
-		br_diff,
-		col_diff;
+	gulong fg_brightness;
+	gulong bg_brightness;
+	gulong br_diff;
+	gulong col_diff;
 
 	fg_brightness = (foreground.red * 299 + foreground.green * 587 + foreground.blue * 114) / 1000;
 	bg_brightness = (background.red * 299 + background.green * 587 + background.blue * 114) / 1000;
@@ -7531,13 +7531,14 @@ GdkColor*
 generate_nick_colors(guint numcolors, GdkColor background)
 {
 	guint i;
-	GdkColor *colors = (GdkColor*)g_malloc(numcolors * sizeof(GdkColor));
+	GdkColor *colors = g_new(GdkColor, numcolors);
 
-	srand(background.red + 1 * background.green + 1 * background.blue + 1);
+	srand(background.red + background.green + background.blue + 1);
 
-	for(i = 0; i < numcolors;){
-		GdkColor color = { 0, rand()%65536, rand()%65536, rand()%65536 };
-		if(color_is_visible(color, background)){
+	for (i = 0; i < numcolors; )
+	{
+		GdkColor color = { 0, rand() % 65536, rand() % 65536, rand() % 65536 };
+		if (color_is_visible(color, background)){
 			colors[i] = color;
 			i++;
 		}
