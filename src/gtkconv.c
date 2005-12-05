@@ -68,8 +68,8 @@
 
 #define AUTO_RESPONSE "&lt;AUTO-REPLY&gt; : "
 
-#define SEND_COLOR "#16569E"
-#define RECV_COLOR "#A82F2F"
+#define SEND_COLOR "#204a87"
+#define RECV_COLOR "#cc0000"
 #define HIGHLIGHT_COLOR "#AF7F00"
 
 /* Undef this to turn off "custom-smiley" debug messages */
