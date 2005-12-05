@@ -4356,9 +4356,16 @@ gaim_gtk_blist_request_add_buddy(GaimAccount *account, const char *username,
 
 	if (username != NULL)
 		gtk_entry_set_text(GTK_ENTRY(data->entry), username);
+	else
+		gtk_dialog_set_response_sensitive(GTK_DIALOG(data->window),
+										  GTK_RESPONSE_OK, FALSE);
 
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry), TRUE);
 	gaim_set_accessible_label (data->entry, label);
+
+	g_signal_connect(G_OBJECT(data->entry), "changed",
+					 G_CALLBACK(gaim_gtk_set_sensitive_if_input),
+					 data->window);
 
 	label = gtk_label_new(_("Alias:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
