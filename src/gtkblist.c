@@ -3389,6 +3389,8 @@ static void account_enabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 	gtkblist->statusboxes = g_list_append(gtkblist->statusboxes, box);
 	gtk_box_pack_start(GTK_BOX(gtkblist->statusboxbox), box, FALSE, TRUE, 0);
 	gtk_widget_show(box);
+
+	update_menu_bar(gtkblist);
 }
 
 static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
@@ -3411,6 +3413,8 @@ static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 			break;
 		}
 	}
+
+	update_menu_bar(gtkblist);
 }
 
 static gboolean
