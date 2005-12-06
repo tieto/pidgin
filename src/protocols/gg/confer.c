@@ -56,17 +56,28 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 			continue;
 
 		if (g_list_find(chat->participants, str_uin) == NULL) {
+			GaimBuddy *buddy;
+
 			chat->participants = g_list_append(
 						chat->participants, str_uin);
 
 			conv = ggp_confer_find_by_name(gc, chat_name);
 
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-				ggp_buddy_get_name(gc, uin), NULL,
-				GAIM_CBFLAGS_NONE, TRUE);
+			buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
+			if (buddy != NULL) {
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+							gaim_buddy_get_alias(buddy), NULL,
+							GAIM_CBFLAGS_NONE, TRUE);
+			} else {
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+							str_uin, NULL,
+							GAIM_CBFLAGS_NONE, TRUE);
+			}
 		}
 		break;
 	}
+
+	g_free(str_uin);
 }
 /* }}} */
 
@@ -74,35 +85,40 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 				 const uin_t *recipients, int count)
 {
-	GaimConversation *conv;
 	GGPInfo *info = gc->proto_data;
-	GGPChat *chat;
 	GList *l;
-	int i;
-	gchar *uin;
 
 	for (l = info->chats; l != NULL; l = l->next) {
-		chat = l->data;
+		GGPChat *chat = l->data;
+		int i;
 
 		if (g_utf8_collate(chat->name, chat_name) != 0)
 			continue;
 
 		for (i = 0; i < count; i++) {
-			uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
+			gchar *str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
+			GaimConversation *conv;
+			GaimBuddy *buddy;
 
-			if (g_list_find(chat->participants, uin) != NULL) {
-				g_free(uin);
+			if (g_list_find(chat->participants, str_uin) != NULL) {
+				g_free(str_uin);
 				continue;
 			}
 
-			chat->participants = g_list_append(chat->participants, uin);
+			chat->participants = g_list_append(chat->participants, str_uin);
 			conv = ggp_confer_find_by_name(gc, chat_name);
 
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-				ggp_buddy_get_name(gc, recipients[i]),
-				NULL, GAIM_CBFLAGS_NONE, TRUE);
-
-			g_free(uin);
+			buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
+			if (buddy != NULL) {
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+							gaim_buddy_get_alias(buddy), NULL,
+							GAIM_CBFLAGS_NONE, TRUE);
+			} else {
+				gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+							str_uin, NULL,
+							GAIM_CBFLAGS_NONE, TRUE);
+			}
+			g_free(str_uin);
 		}
 		break;
 	}
@@ -115,25 +131,27 @@ const char *ggp_confer_find_by_participants(GaimConnection *gc,
 {
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat = NULL;
-	GList *l, *m;
-	int i;
-	int maches;
+	GList *l;
+	int matches;
 
 	g_return_val_if_fail(info->chats != NULL, NULL);
 
 	for (l = info->chats; l != NULL; l = l->next) {
+		GList *m;
+
 		chat = l->data;
-		maches = 0;
+		matches = 0;
 
 		for (m = chat->participants; m != NULL; m = m->next) {
 			uin_t p = ggp_str_to_uin(m->data);
+			int i;
 
 			for (i = 0; i < count; i++)
 				if (p == recipients[i])
-					maches++;
+					matches++;
 		}
 
-		if (maches == count)
+		if (matches == count)
 			break;
 
 		chat = NULL;

@@ -1070,8 +1070,6 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
-	const char *chat_name;
-	int chat_id;
 
 	from = g_strdup_printf("%lu", (unsigned long int)ev->event.msg.sender);
 
@@ -1079,6 +1077,7 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 			      "CP1250", "UTF-8");
 	gaim_str_strip_char(msg, '\r');
 	tmp = g_markup_escape_text(msg, -1);
+	g_free(msg);
 
 	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
 			from, tmp, ev->event.msg.msgclass,
@@ -1087,6 +1086,10 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 	if (ev->event.msg.recipients_count == 0) {
 		serv_got_im(gc, from, tmp, 0, ev->event.msg.time);
 	} else {
+		const char *chat_name;
+		int chat_id;
+		char *buddy_name;
+
 		chat_name = ggp_confer_find_by_participants(gc,
 				ev->event.msg.recipients,
 				ev->event.msg.recipients_count);
@@ -1103,11 +1106,12 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 		}
 		conv = ggp_confer_find_by_name(gc, chat_name);
 		chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
-		serv_got_chat_in(gc, chat_id,
-				 ggp_buddy_get_name(gc, ev->event.msg.sender),
+
+		buddy_name = ggp_buddy_get_name(gc, ev->event.msg.sender);
+		serv_got_chat_in(gc, chat_id, buddy_name,
 				 0, msg, ev->event.msg.time);
+		g_free(buddy_name);
 	}
-	g_free(msg);
 	g_free(tmp);
 	g_free(from);
 }

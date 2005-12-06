@@ -78,7 +78,7 @@ ggp_get_uin(GaimAccount *account);
  *
  * @return Name of the buddy, or UIN converted to string.
  */
-const char *
+char *
 ggp_buddy_get_name(GaimConnection *gc, const uin_t uin);
 
 #endif /* _GAIM_GG_UTILS_H */

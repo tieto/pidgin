@@ -82,8 +82,8 @@ uin_t ggp_get_uin(GaimAccount *account)
 }
 /* }}} */
 
-/* const *char ggp_buddy_get_name(GaimConnection *gc, const uin_t uin) {{{ */
-const char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
+/* char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin) {{{ */
+char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
 {
 	GaimBuddy *buddy;
 	gchar *str_uin;
@@ -93,7 +93,7 @@ const char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
 	buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
 	if (buddy != NULL) {
 		g_free(str_uin);
-		return gaim_buddy_get_alias(buddy);
+		return g_strdup(gaim_buddy_get_alias(buddy));
 	} else {
 		return str_uin;
 	}
