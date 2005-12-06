@@ -335,7 +335,7 @@ static char* wgaim_lcid_to_posix(LCID lcid) {
 		case LANG_PUNJABI: posix = "pa"; break;
 		case LANG_GUJARATI: posix = "gu"; break;
 		case LANG_ORIYA: break;
-		case LANG_TAMIL: break;
+		case LANG_TAMIL: posix = "ta"; break;
 		case LANG_TELUGU: break;
 		case LANG_KANNADA: break;
 		case LANG_MALAYALAM: break;
