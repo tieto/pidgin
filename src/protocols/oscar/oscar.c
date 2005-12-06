@@ -7638,8 +7638,9 @@ static char *oscar_status_text(GaimBuddy *b)
 		else
 			ret = g_strdup(_("Offline"));
 	}
-	else if (gaim_presence_is_available(presence) && !strcmp(id, OSCAR_STATUS_ID_AVAILABLE))
+	else if (gaim_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AVAILABLE))
 	{
+		/* Available */
 		message = gaim_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
@@ -7647,8 +7648,9 @@ static char *oscar_status_text(GaimBuddy *b)
 			gaim_util_chrreplace(ret, '\n', ' ');
 		}
 	}
-	else if (!gaim_presence_is_available(presence) && !strcmp(id, OSCAR_STATUS_ID_AWAY))
+	else if (!gaim_status_is_available(status) && !strcmp(id, OSCAR_STATUS_ID_AWAY))
 	{
+		/* Away */
 		message = gaim_status_get_attr_string(status, "message");
 		if (message != NULL)
 		{
