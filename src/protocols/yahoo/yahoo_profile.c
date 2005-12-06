@@ -1137,7 +1137,7 @@ static void yahoo_got_photo(void *data, const char *url_text, size_t len)
 		if (profile_state == PROFILE_STATE_UNKNOWN_LANGUAGE) {
 			g_string_append_printf(s, "%s<br><br>",
 					_("Sorry, this profile seems to be in a language "
-					  "that is not supported at this time."));
+					  "or format that is not supported at this time."));
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
 			GaimBuddy *b = gaim_find_buddy
