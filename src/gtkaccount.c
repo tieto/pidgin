@@ -2552,14 +2552,8 @@ gaim_gtk_accounts_notify_added(GaimAccount *account, const char *remote_user,
 {
 	char *buffer;
 	GaimConnection *gc;
-	GaimGtkAccountAddUserData *data;
 
 	gc = gaim_account_get_connection(account);
-
-	data = g_new0(GaimGtkAccountAddUserData, 1);
-	data->account  = account;
-	data->username = g_strdup(remote_user);
-	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 
