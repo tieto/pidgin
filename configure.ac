@@ -33,7 +33,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="am az bg bs ca cs da de el en_AU en_CA en_GB es et fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv te tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="am az bg bs ca cs da de el en_AU en_CA en_GB es et fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv ta te tr uk vi xh zh_CN zh_TW"
 AM_GNU_GETTEXT_VERSION(0.10.40)
 AM_GNU_GETTEXT
 
