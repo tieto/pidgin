@@ -2970,9 +2970,9 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			imin = ((t - idle_secs) / 60) % 60;
 
 			if (ihrs)
-				idletime = g_strdup_printf(_("Idle (%dh %02dm) "), ihrs, imin);
+				idletime = g_strdup_printf(_("Idle %dh %02dm "), ihrs, imin);
 			else
-				idletime = g_strdup_printf(_("Idle (%dm) "), imin);
+				idletime = g_strdup_printf(_("Idle %dm "), imin);
 		}
 		else
 			idletime = g_strdup(_("Idle "));
@@ -2985,25 +2985,25 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 		text =  g_strdup_printf("<span color='%s'>%s</span>\n"
 					"<span color='%s' size='smaller'>%s%s%s</span>",
 					dim_grey(), esc, dim_grey(),
-					statustext != NULL ? statustext : "",
+					idletime != NULL ? idletime : "",
 					(idletime != NULL && statustext != NULL) ? " - " : "",
-					idletime != NULL ? idletime : "");
+					statustext != NULL ? statustext : "");
 	} else if (statustext == NULL && idletime == NULL && GAIM_BUDDY_IS_ONLINE(b)) {
 		text = g_strdup(esc);
 	} else {
 		if (selected)
 			text = g_strdup_printf("%s\n"
 					       "<span size='smaller'>%s%s%s</span>", esc,
-					       statustext != NULL ? statustext :  "",
+					       idletime != NULL ? idletime : "",
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       idletime != NULL ? idletime : "");
+					       statustext != NULL ? statustext :  "");
 		else
 			text = g_strdup_printf("%s\n"
 					       "<span color='%s' size='smaller'>%s%s%s</span>", esc,
 					       dim_grey(),
-					       statustext != NULL ? statustext :  "",
+					       idletime != NULL ? idletime : "",
 					       (idletime != NULL && statustext != NULL) ? " - " : "",
-					       idletime != NULL ? idletime : "");
+					       statustext != NULL ? statustext :  "");
 	}
 	if (idletime)
 		g_free(idletime);
