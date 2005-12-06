@@ -95,7 +95,7 @@ GaimCore *gaim_get_core(void);
 /**
  * Sets the UI ops for the core.
  *
- * @param A UI ops structure for the core.
+ * @param ops A UI ops structure for the core.
  */
 void gaim_core_set_ui_ops(GaimCoreUiOps *ops);
 
