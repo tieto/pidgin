@@ -38,8 +38,8 @@
 #include "version.h"
 
 struct test {
-	const guchar *question;
-	const guchar *answer;
+	const gchar *question;
+	const gchar *answer;
 };
 
 /**************************************************************************
@@ -83,7 +83,7 @@ cipher_test_md5() {
 		gaim_debug_info("cipher-test", "Test %02d:\n", i);
 		gaim_debug_info("cipher-test", "Testing '%s'\n", md5_tests[i].question);
 
-		gaim_cipher_context_append(context, md5_tests[i].question,
+		gaim_cipher_context_append(context, (guchar *)md5_tests[i].question,
 								   strlen(md5_tests[i].question));
 
 		ret = gaim_cipher_context_digest_to_str(context, sizeof(digest),
@@ -143,7 +143,7 @@ cipher_test_sha1() {
 						sha1_tests[i].question : "'a'x1000, 1000 times");
 
 		if(sha1_tests[i].question) {
-			gaim_cipher_context_append(context, sha1_tests[i].question,
+			gaim_cipher_context_append(context, (guchar *)sha1_tests[i].question,
 									   strlen(sha1_tests[i].question));
 		} else {
 			gint j;
@@ -174,6 +174,65 @@ cipher_test_sha1() {
 
 	gaim_debug_info("cipher-test", "sha1 tests completed\n\n");
 }
+
+static void
+cipher_test_digest()
+{
+	const gchar *nonce = "dcd98b7102dd2f0e8b11d0f600bfb0c093";
+	const gchar *client_nonce = "0a4f113b";
+	const gchar *username = "Mufasa";
+	const gchar *realm = "testrealm@host.com";
+	const gchar *password = "Circle Of Life";
+	const gchar *algorithm = "md5";
+	const gchar nonce_count[] = "00000001";
+	const gchar *method = "GET";
+	const gchar *qop = "auth";
+	const gchar *digest_uri = "/dir/index.html";
+	const gchar *hashed_entity = "";
+	size_t hashed_entity_len = 0;
+
+	gchar *session_key;
+
+	gaim_debug_info("cipher-test", "Running HTTP Digest tests\n");
+
+	session_key = gaim_cipher_http_digest_calculate_session_key(
+						algorithm, username, realm, password,
+						nonce, client_nonce);
+
+	if (session_key == NULL)
+	{
+		gaim_debug_info("cipher-test",
+						"gaim_cipher_http_digest_calculate_session_key failed.\n");
+	}
+	else
+	{
+		gchar *response;
+
+		gaim_debug_info("cipher-test", "\tsession_key: Got:    %s\n", session_key);
+		gaim_debug_info("cipher-test", "\tsession_key: Wanted: %s\n", "939e7578ed9e3c518a452acee763bce9");
+
+		response = gaim_cipher_http_digest_calculate_response(
+				algorithm, method, digest_uri, qop,
+				hashed_entity, hashed_entity_len, nonce,
+				nonce_count, client_nonce, session_key);
+
+		g_free(session_key);
+
+		if (response == NULL)
+		{
+			gaim_debug_info("cipher-test",
+							"gaim_cipher_http_digest_calculate_session_key failed.\n");
+		}
+		else
+		{
+			gaim_debug_info("cipher-test", "\tresponse: Got:    %s\n", response);
+			gaim_debug_info("cipher-test", "\tresponse: Wanted: %s\n", "6629fae49393a05397450978507c4ef1");
+		}
+	}
+
+	gaim_debug_info("cipher-test", "HTTP Digest tests completed\n\n");
+}
+
 /**************************************************************************
  * Plugin stuff
  **************************************************************************/
@@ -181,6 +240,7 @@ static gboolean
 plugin_load(GaimPlugin *plugin) {
 	cipher_test_md5();
 	cipher_test_sha1();
+	cipher_test_digest();
 
 	return TRUE;
 }

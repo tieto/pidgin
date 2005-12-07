@@ -1780,3 +1780,165 @@ gaim_cipher_context_get_data(GaimCipherContext *context) {
 
 	return context->data;
 }
+
+gchar *gaim_cipher_http_digest_calculate_session_key(
+		const gchar *algorithm,
+		const gchar *username,
+		const gchar *realm,
+		const gchar *password,
+		const gchar *nonce,
+		const gchar *client_nonce)
+{
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	gchar hash[32]; /* We only support MD5. */
+
+	g_return_val_if_fail(username != NULL, NULL);
+	g_return_val_if_fail(realm    != NULL, NULL);
+	g_return_val_if_fail(password != NULL, NULL);
+	g_return_val_if_fail(nonce    != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 strcasecmp(algorithm, "MD5") ||
+						 strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	cipher = gaim_ciphers_find_cipher("md5");
+	g_return_val_if_fail(cipher != NULL, NULL);
+
+	context = gaim_cipher_context_new(cipher, NULL);
+
+	gaim_cipher_context_append(context, (guchar *)username, strlen(username));
+	gaim_cipher_context_append(context, (guchar *)":", 1);
+	gaim_cipher_context_append(context, (guchar *)realm, strlen(realm));
+	gaim_cipher_context_append(context, (guchar *)":", 1);
+	gaim_cipher_context_append(context, (guchar *)password, strlen(password));
+
+	if (algorithm != NULL && !strcasecmp(algorithm, "MD5-sess"))
+	{
+		guchar digest[16];
+
+		if (client_nonce == NULL)
+		{
+			gaim_cipher_context_destroy(context);
+			gaim_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.");
+			return NULL;
+		}
+
+		gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		gaim_cipher_context_destroy(context);
+
+		context = gaim_cipher_context_new(cipher, NULL);
+		gaim_cipher_context_append(context, digest, sizeof(digest));
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+		gaim_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+		gaim_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
+	}
+
+	gaim_cipher_context_digest_to_str(context, sizeof(hash), hash, NULL);
+	gaim_cipher_context_destroy(context);
+
+	return g_strdup(hash);
+}
+
+gchar *gaim_cipher_http_digest_calculate_response(
+		const gchar *algorithm,
+		const gchar *method,
+		const gchar *digest_uri,
+		const gchar *qop,
+		const gchar *hashed_entity,
+		size_t hashed_entity_len,
+		const gchar *nonce,
+		const gchar *nonce_count,
+		const gchar *client_nonce,
+		const gchar *session_key)
+{
+	GaimCipher *cipher;
+	GaimCipherContext *context;
+	gchar hash2[32]; /* We only support MD5. */
+
+	g_return_val_if_fail(method      != NULL, NULL);
+	g_return_val_if_fail(digest_uri  != NULL, NULL);
+	g_return_val_if_fail(nonce       != NULL, NULL);
+	g_return_val_if_fail(session_key != NULL, NULL);
+
+	/* Check for a supported algorithm. */
+	g_return_val_if_fail(algorithm == NULL ||
+						 *algorithm == '\0' ||
+						 strcasecmp(algorithm, "MD5") ||
+						 strcasecmp(algorithm, "MD5-sess"), NULL);
+
+	/* Check for a supported "quality of protection". */
+	g_return_val_if_fail(qop == NULL ||
+						 *qop == '\0' ||
+						 strcasecmp(qop, "auth") ||
+						 strcasecmp(qop, "auth-int"), NULL);
+
+	cipher = gaim_ciphers_find_cipher("md5");
+	g_return_val_if_fail(cipher != NULL, NULL);
+
+	context = gaim_cipher_context_new(cipher, NULL);
+
+	gaim_cipher_context_append(context, (guchar *)method, strlen(method));
+	gaim_cipher_context_append(context, (guchar *)":", 1);
+	gaim_cipher_context_append(context, (guchar *)digest_uri, strlen(digest_uri));
+
+	if (qop != NULL && !strcasecmp(qop, "auth-int"))
+	{
+		if (hashed_entity == NULL)
+		{
+			gaim_cipher_context_destroy(context);
+			gaim_debug_error("cipher", "Required hashed_entity missing for auth-int digest calculation.");
+			return NULL;
+		}
+
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+		gaim_cipher_context_append(context, (guchar *)hashed_entity, hashed_entity_len);
+	}
+
+	gaim_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	gaim_cipher_context_destroy(context);
+
+	context = gaim_cipher_context_new(cipher, NULL);
+	gaim_cipher_context_append(context, (guchar *)session_key, strlen(session_key));
+	gaim_cipher_context_append(context, (guchar *)":", 1);
+	gaim_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
+	gaim_cipher_context_append(context, (guchar *)":", 1);
+
+	if (qop != NULL && *qop != '\0')
+	{
+		if (nonce_count == NULL)
+		{
+			gaim_cipher_context_destroy(context);
+			gaim_debug_error("cipher", "Required nonce_count missing for digest calculation.");
+			return NULL;
+		}
+
+		if (client_nonce == NULL)
+		{
+			gaim_cipher_context_destroy(context);
+			gaim_debug_error("cipher", "Required client_nonce missing for digest calculation.");
+			return NULL;
+		}
+
+		gaim_cipher_context_append(context, (guchar *)nonce_count, strlen(nonce_count));
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+		gaim_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+
+		if (qop != NULL)
+			gaim_cipher_context_append(context, (guchar *)qop, strlen(qop));
+		else
+			gaim_cipher_context_append(context, (guchar *)"", 0);
+
+		gaim_cipher_context_append(context, (guchar *)":", 1);
+	}
+
+	gaim_cipher_context_append(context, (guchar *)hash2, strlen(hash2));
+	gaim_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	gaim_cipher_context_destroy(context);
+
+	return g_strdup(hash2);
+}

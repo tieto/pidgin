@@ -25,8 +25,10 @@
 
 #include <glib.h>
 #include <time.h>
+
+#include <cipher.h>
 #include <prpl.h>
-#include <digcalc.h>
+
 #include "sipmsg.h"
 
 #define SIMPLE_BUF_INC 1024
@@ -50,11 +52,11 @@ struct simple_buddy {
 
 struct sip_auth {
 	int type; /* 1 = Digest / 2 = NTLM */
-        gchar *nonce;
-        gchar *realm;
+	gchar *nonce;
+	gchar *realm;
 	gchar *target;
 	int nc;
-        HASHHEX HA1;
+	gchar *digest_session_key;
 	int retries;
 };
 

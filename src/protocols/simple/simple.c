@@ -260,21 +260,24 @@ static GList *simple_status_types(GaimAccount *acc) {
 
 static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth, gchar *method, gchar *target) {
 	gchar noncecount[9];
-	HASHHEX HA2;
-	HASHHEX response;
+	gchar *response;
 	gchar *ret;
 	gchar *tmp;
 
 	if(auth->type == 1) { /* Digest */
 		sprintf(noncecount, "%08d", auth->nc++);
-		DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
+		response = gaim_cipher_http_digest_calculate_response(
+							"md5", method, target, NULL, NULL, 0,
+							auth->nonce, noncecount, NULL, auth->digest_session_key);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
-		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, auth->realm, auth->nonce, target, noncecount, response);
+
+		ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", sip->username, auth->realm, auth->nonce, target, noncecount, response);
+		g_free(response);
 		return ret;
 	} else if(auth->type == 2) { /* NTLM */
 		if(auth->nc == 3) {
 			ret = gaim_ntlm_gen_type3(sip->username, sip->password, "gaim", sip->servername, auth->nonce);
-			tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n",auth->realm, auth->target, ret);
+			tmp = g_strdup_printf("NTLM qop=\"auth\" realm=\"%s\" targetname=\"%s\" response=\"%s\"\r\n", auth->realm, auth->target, ret);
 			g_free(ret);
 			return tmp;
 		}
@@ -285,9 +288,13 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	}
 
 	sprintf(noncecount, "%08d", auth->nc++);
-	DigestCalcResponse(auth->HA1, auth->nonce, noncecount, "", "", method, target, HA2, response);
+	response = gaim_cipher_http_digest_calculate_response(
+						"md5", method, target, NULL, NULL, 0,
+						auth->nonce, noncecount, NULL, auth->digest_session_key);
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
-	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n",sip->username, auth->realm, auth->nonce, target, noncecount, response);
+
+	ret = g_strdup_printf("Digest username=\"%s\", realm=\"%s\", nonce=\"%s\", uri=\"%s\", nc=\"%s\", response=\"%s\"\r\n", sip->username, auth->realm, auth->nonce, target, noncecount, response);
+	g_free(response);
 	return ret;
 }
 
@@ -346,7 +353,8 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "nonce: %s realm: %s ", auth->nonce, auth->realm);
 
-	DigestCalcHA1("md5", sip->username, auth->realm, sip->password, auth->nonce, "", auth->HA1);
+	auth->digest_session_key = gaim_cipher_http_digest_calculate_session_key(
+			"md5", sip->username, auth->realm, sip->password, auth->nonce, NULL);
 
 	auth->nc=1;
 }

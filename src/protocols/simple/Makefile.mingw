@@ -68,8 +68,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			digcalc.c \
-			simple.c \
+C_SRC =			simple.c \
 			sipmsg.c
 
 

@@ -4,9 +4,7 @@ SIMPLESOURCES = \
 	simple.c \
 	simple.h \
 	sipmsg.c \
-	sipmsg.h \
-	digcalc.c \
-	digcalc.h 
+	sipmsg.h
 
 AM_CFLAGS = $(st) 
 
