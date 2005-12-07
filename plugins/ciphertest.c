@@ -227,6 +227,7 @@ cipher_test_digest()
 		{
 			gaim_debug_info("cipher-test", "\tresponse: Got:    %s\n", response);
 			gaim_debug_info("cipher-test", "\tresponse: Wanted: %s\n", "6629fae49393a05397450978507c4ef1");
+			g_free(response);
 		}
 	}
 
