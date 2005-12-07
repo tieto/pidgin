@@ -64,7 +64,7 @@ static void
 cipher_test_md5() {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	gchar digest[32];
+	gchar digest[33];
 	gboolean ret;
 	gint i = 0;
 
@@ -121,7 +121,7 @@ static void
 cipher_test_sha1() {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	gchar digest[40];
+	gchar digest[41];
 	gint i = 0;
 	gboolean ret;
 

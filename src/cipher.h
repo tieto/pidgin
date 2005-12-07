@@ -386,6 +386,12 @@ void gaim_cipher_context_set_data(GaimCipherContext *context, gpointer data);
  */
 gpointer gaim_cipher_context_get_data(GaimCipherContext *context);
 
+/*@}*/
+/*****************************************************************************/
+/** @name Gaim Cipher HTTP Digest Helper Functions							 */
+/*****************************************************************************/
+/*@{*/
+
 /**
  * Calculates a session key for HTTP Digest authentation
  *

@@ -1635,7 +1635,8 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
 	if(!gaim_cipher_context_digest(context, sizeof(digest), digest, &dlen))
 		return FALSE;
 
-	if(in_len < dlen * 2)
+	/* in_len must be greater than dlen * 2 so we have room for the NUL. */
+	if(in_len <= dlen * 2)
 		return FALSE;
 
 	for(n = 0; n < dlen; n++)
@@ -1791,7 +1792,7 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	gchar hash[32]; /* We only support MD5. */
+	gchar hash[33]; /* We only support MD5. */
 
 	g_return_val_if_fail(username != NULL, NULL);
 	g_return_val_if_fail(realm    != NULL, NULL);
@@ -1857,7 +1858,7 @@ gchar *gaim_cipher_http_digest_calculate_response(
 {
 	GaimCipher *cipher;
 	GaimCipherContext *context;
-	gchar hash2[32]; /* We only support MD5. */
+	static gchar hash2[33]; /* We only support MD5. */
 
 	g_return_val_if_fail(method      != NULL, NULL);
 	g_return_val_if_fail(digest_uri  != NULL, NULL);
