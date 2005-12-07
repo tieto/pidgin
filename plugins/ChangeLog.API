@@ -179,6 +179,8 @@ version 2.0.0:
 	                            someone's buddy list, and offers them the choice
 	                            of adding that person to their buddy list.
 	* gaim_blist_alias_contact()
+	* gaim_cipher_http_digest_calculate_session_key()
+	* gaim_cipher_http_digest_calculate_response()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
