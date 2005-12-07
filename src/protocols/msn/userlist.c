@@ -30,6 +30,7 @@ typedef struct
 {
 	GaimConnection *gc;
 	char *who;
+	char *friendly;
 
 } MsnPermitAdd;
 
@@ -43,14 +44,22 @@ msn_accept_add_cb(MsnPermitAdd *pa)
 	{
 		MsnSession *session = pa->gc->proto_data;
 		MsnUserList *userlist = session->userlist;
+		GaimBuddy *buddy;
 
 		msn_userlist_add_buddy(userlist, pa->who, MSN_LIST_AL, NULL);
 
-		/* TODO: This ask for the alias, right? */
-		gaim_account_notify_added(pa->gc->account, NULL, pa->who, NULL, NULL);
+		buddy = gaim_find_buddy(pa->gc->account, pa->who);
+
+		if (buddy != NULL)
+			gaim_account_notify_added(pa->gc->account, pa->who,
+				NULL, pa->friendly, NULL);
+		else
+			gaim_account_request_add(pa->gc->account, pa->who,
+				NULL, pa->friendly, NULL);
 	}
 
 	g_free(pa->who);
+	g_free(pa->friendly);
 	g_free(pa);
 }
 
@@ -66,6 +75,7 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
 	}
 
 	g_free(pa->who);
+	g_free(pa->friendly);
 	g_free(pa);
 }
 
@@ -75,9 +85,10 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 	MsnPermitAdd *pa;
 	char *msg;
 
-	pa      = g_new0(MsnPermitAdd, 1);
+	pa = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
-	pa->gc  = gc;
+	pa->friendly = (friendly != NULL) ? g_strdup(friendly) : NULL;
+	pa->gc = gc;
 
 	if (friendly != NULL)
 	{
