@@ -817,8 +817,14 @@ struct yahoo_add_request {
 
 static void
 yahoo_buddy_add_authorize_cb(struct yahoo_add_request *add_req, const char *msg) {
-	gaim_account_notify_added(add_req->gc->account, add_req->id,
-			add_req->who, NULL, add_req->msg);
+	GaimBuddy *buddy = gaim_find_buddy(add_req->gc->account, add_req->who);
+
+	if (buddy != NULL)
+		gaim_account_notify_added(add_req->gc->account, add_req->who,
+			add_req->id, NULL, add_req->msg);
+	else
+		gaim_account_request_add(add_req->gc->account, add_req->who,
+			add_req->id, NULL, add_req->msg);
 
 	g_free(add_req->id);
 	g_free(add_req->who);
