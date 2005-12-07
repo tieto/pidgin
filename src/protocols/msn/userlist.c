@@ -87,7 +87,7 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 
 	pa = g_new0(MsnPermitAdd, 1);
 	pa->who = g_strdup(passport);
-	pa->friendly = (friendly != NULL) ? g_strdup(friendly) : NULL;
+	pa->friendly = g_strdup(friendly);
 	pa->gc = gc;
 
 	if (friendly != NULL)
