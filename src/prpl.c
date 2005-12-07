@@ -237,7 +237,7 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
 	g_return_if_fail(status_id != NULL);
-	g_return_if_fail(gaim_account_is_connected(account));
+	g_return_if_fail(gaim_account_is_connected(account) || gaim_account_is_connecting(account));
 
 	if ((buddy = gaim_find_buddy(account, name)) == NULL)
 		return;
