@@ -184,12 +184,11 @@ cipher_test_digest()
 	const gchar *realm = "testrealm@host.com";
 	const gchar *password = "Circle Of Life";
 	const gchar *algorithm = "md5";
-	const gchar nonce_count[] = "00000001";
+	const gchar *nonce_count = "00000001";
 	const gchar *method = "GET";
 	const gchar *qop = "auth";
 	const gchar *digest_uri = "/dir/index.html";
-	const gchar *hashed_entity = "";
-	size_t hashed_entity_len = 0;
+	const gchar *entity = NULL;
 
 	gchar *session_key;
 
@@ -212,9 +211,8 @@ cipher_test_digest()
 		gaim_debug_info("cipher-test", "\tsession_key: Wanted: %s\n", "939e7578ed9e3c518a452acee763bce9");
 
 		response = gaim_cipher_http_digest_calculate_response(
-				algorithm, method, digest_uri, qop,
-				hashed_entity, hashed_entity_len, nonce,
-				nonce_count, client_nonce, session_key);
+				algorithm, method, digest_uri, qop, entity,
+				nonce, nonce_count, client_nonce, session_key);
 
 		g_free(session_key);
 

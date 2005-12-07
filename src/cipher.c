@@ -1849,8 +1849,7 @@ gchar *gaim_cipher_http_digest_calculate_response(
 		const gchar *method,
 		const gchar *digest_uri,
 		const gchar *qop,
-		const gchar *hashed_entity,
-		size_t hashed_entity_len,
+		const gchar *entity,
 		const gchar *nonce,
 		const gchar *nonce_count,
 		const gchar *client_nonce,
@@ -1888,15 +1887,23 @@ gchar *gaim_cipher_http_digest_calculate_response(
 
 	if (qop != NULL && !strcasecmp(qop, "auth-int"))
 	{
-		if (hashed_entity == NULL)
+		GaimCipherContext *context2;
+		gchar entity_hash[33];
+
+		if (entity == NULL)
 		{
 			gaim_cipher_context_destroy(context);
-			gaim_debug_error("cipher", "Required hashed_entity missing for auth-int digest calculation.");
+			gaim_debug_error("cipher", "Required entity missing for auth-int digest calculation.");
 			return NULL;
 		}
 
+		context2 = gaim_cipher_context_new(cipher, NULL);
+		gaim_cipher_context_append(context2, (guchar *)entity, strlen(entity));
+		gaim_cipher_context_digest_to_str(context2, sizeof(entity_hash), entity_hash, NULL);
+		gaim_cipher_context_destroy(context2);
+
 		gaim_cipher_context_append(context, (guchar *)":", 1);
-		gaim_cipher_context_append(context, (guchar *)hashed_entity, hashed_entity_len);
+		gaim_cipher_context_append(context, (guchar *)entity_hash, strlen(entity_hash));
 	}
 
 	gaim_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);

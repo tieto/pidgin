@@ -267,7 +267,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 	if(auth->type == 1) { /* Digest */
 		sprintf(noncecount, "%08d", auth->nc++);
 		response = gaim_cipher_http_digest_calculate_response(
-							"md5", method, target, NULL, NULL, 0,
+							"md5", method, target, NULL, NULL,
 							auth->nonce, noncecount, NULL, auth->digest_session_key);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
 
@@ -289,7 +289,7 @@ static gchar *auth_header(struct simple_account_data *sip, struct sip_auth *auth
 
 	sprintf(noncecount, "%08d", auth->nc++);
 	response = gaim_cipher_http_digest_calculate_response(
-						"md5", method, target, NULL, NULL, 0,
+						"md5", method, target, NULL, NULL,
 						auth->nonce, noncecount, NULL, auth->digest_session_key);
 	gaim_debug(GAIM_DEBUG_MISC, "simple", "response %s\n", response);
 

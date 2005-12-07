@@ -419,8 +419,7 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
  * @param method            The HTTP method in use
  * @param digest_uri        The URI from the initial request
  * @param qop               The "quality of protection"
- * @param hashed_entity     The hashed entity body
- * @param hashed_entity_len The length of the data in @a hashed_entity
+ * @param entity            The entity body
  * @param nonce             The nonce provided by the server
  * @param nonce_count       The nonce count
  * @param client_nonce      The nonce provided by the client
@@ -431,9 +430,9 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
 gchar *gaim_cipher_http_digest_calculate_response(
 		const gchar *algorithm, const gchar *method,
 		const gchar *digest_uri, const gchar *qop,
-		const gchar *hashed_entity, size_t hashed_entity_len,
-		const gchar *nonce, const gchar *nonce_count,
-		const gchar *client_nonce, const gchar *session_key);
+		const gchar *entity, const gchar *nonce,
+		const gchar *nonce_count, const gchar *client_nonce,
+		const gchar *session_key);
 
 /*@}*/
 
