@@ -343,6 +343,8 @@ if test "$enable_debug" = yes ; then
 						void main() {};
 						], [
 							AC_MSG_RESULT(yes)
+							CFLAGS="$orig_CFLAGS"
+							DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
 						], [
 							AC_MSG_RESULT(no)
 							CFLAGS="$orig_CFLAGS"
@@ -351,7 +353,7 @@ if test "$enable_debug" = yes ; then
 fi
 
 if test "x$enable_deprecated" = "xno"; then
-	CFLAGS="$CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 fi
 
 if test "x$GCC" = "xyes"; then
