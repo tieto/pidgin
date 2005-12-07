@@ -318,7 +318,12 @@ AC_ARG_ENABLE(tk,      [  --disable-tk            compile without Tcl support fo
 AC_ARG_WITH(tkconfig,  [  --with-tkconfig=DIR     directory containing tkConfig.sh])
 AC_ARG_ENABLE(gtkspell, [  --disable-gtkspell      compile without GtkSpell automatic spell checking],,enable_gtkspell=yes)
 AC_ARG_ENABLE(debug,   [  --enable-debug          compile with debugging support],,enable_debug=no)
-AC_ARG_ENABLE(deprecated,    [  --disable-deprecated    compile without deprecated API usage],,enable_deprecated=yes)
+dnl We know Gaim won't compile with deprecated APIs disabled.
+dnl We have no desire to support two different versions of the
+dnl same code when it's not necessary, so we're sticking with
+dnl the deprecated APIs in many cases.
+dnl This option is being left in case things change.
+dnl AC_ARG_ENABLE(deprecated,    [  --disable-deprecated    compile without deprecated API usage],,enable_deprecated=yes)
 AC_ARG_ENABLE(screensaver,   [  --disable-screensaver   compile without X screensaver extension],,enable_xss=yes)
 AC_ARG_ENABLE(sm,      [  --disable-sm            compile without X session management support],,enable_sm=yes)
 AC_ARG_WITH(krb4,      [  --with-krb4=PREFIX      compile Zephyr plugin with Kerberos 4 support],kerberos="$withval",kerberos="no")
@@ -345,8 +350,8 @@ if test "$enable_debug" = yes ; then
 	done
 fi
 
-if test "x$enable_deprecated" = no; then
-	DEBUG_CFLAGS="$DEBUG_CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
+if test "x$enable_deprecated" = "xno"; then
+	CFLAGS="$CFLAGS -DG_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED -DGDK_PIXBUF_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
 fi
 
 if test "x$GCC" = "xyes"; then
