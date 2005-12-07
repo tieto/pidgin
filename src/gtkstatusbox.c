@@ -70,6 +70,8 @@ enum {
 	PROP_ACCOUNT
 };
 
+GtkComboBoxClass *parent_class = NULL;
+	
 static void gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass);
 static void gtk_gaim_status_box_init (GtkGaimStatusBox *status_box);
 
@@ -183,7 +185,6 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ACCOUNT:
 		statusbox->account = g_value_get_pointer(value);
 
-		/* FIXME: call this in the destroy function too, if we had one */
 		if (statusbox->status_changed_signal) {
 			gaim_signal_disconnect(gaim_accounts_get_handle(), "account-status-changed",
 			                        statusbox, GAIM_CALLBACK(account_status_changed_cb));
@@ -204,14 +205,33 @@ gtk_gaim_status_box_set_property(GObject *object, guint param_id,
 }
 
 static void
+gtk_gaim_status_box_finalize(GObject *obj)
+{
+	GtkGaimStatusBox *statusbox = GTK_GAIM_STATUS_BOX(obj);
+
+	if (statusbox->status_changed_signal) {
+		gaim_signal_disconnect(gaim_accounts_get_handle(), "account-status-changed",
+								statusbox, GAIM_CALLBACK(account_status_changed_cb));
+		statusbox->status_changed_signal = 0;
+	}
+	gaim_prefs_disconnect_by_handle(statusbox); 
+
+	G_OBJECT_CLASS(parent_class)->finalize(obj);
+}
+
+static void
 gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 {
 	GObjectClass *object_class;
+	GtkComboBoxClass *combo_class;
 	GtkWidgetClass *widget_class;
-	GtkComboBoxClass *parent_class = (GtkComboBoxClass*)klass;
 	GtkContainerClass *container_class = (GtkContainerClass*)klass;
 
-	parent_class->changed = gtk_gaim_status_box_changed;
+	parent_class = g_type_class_peek_parent(klass);
+	
+	combo_class = (GtkComboBoxClass*)klass;
+	combo_class->changed = gtk_gaim_status_box_changed;
+
 	widget_class = (GtkWidgetClass*)klass;
 	combo_box_size_request = widget_class->size_request;
 	widget_class->size_request = gtk_gaim_status_box_size_request;
@@ -223,6 +243,8 @@ gtk_gaim_status_box_class_init (GtkGaimStatusBoxClass *klass)
 	container_class->forall = gtk_gaim_status_box_forall;
 
 	object_class = (GObjectClass *)klass;
+
+	object_class->finalize = gtk_gaim_status_box_finalize;
 
 	object_class->get_property = gtk_gaim_status_box_get_property;
 	object_class->set_property = gtk_gaim_status_box_set_property;
@@ -656,9 +678,6 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	/* Monitor changes in the "/core/savedstatus/current" preference */
 	gaim_prefs_connect_callback(status_box, "/core/savedstatus/current",
 								current_status_pref_changed_cb, status_box);
-
-	/* TODO: Need to override the destroy method for this object and put the following line in it */
-	/* gaim_prefs_disconnect_by_handle(status_box); */
 }
 
 static void
