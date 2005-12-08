@@ -27,6 +27,7 @@
 #include <glib.h>
 
 #include "cipher.h"
+#include "yahoo_crypt.h"
 
 /* Define our magic string to mark salt for MD5 "encryption"
    replacement.  This is meant to be the same as for other MD5 based

@@ -4,22 +4,22 @@ EXTRA_DIST = \
 pkgdir = $(libdir)/gaim
 
 YAHOOSOURCES = \
-	crypt.c \
+	util.c \
+	yahoo.c \
 	yahoo.h \
+	yahoochat.h \
+	yahoochat.c \
 	yahoo_auth.c \
 	yahoo_auth.h \
-	yahoochat.h \
-	yahoo.c \
-	yahoochat.c \
-	util.c \
+	yahoo_crypt.c \
+	yahoo_doodle.h \
+	yahoo_doodle.c \
 	yahoo_filexfer.h \
 	yahoo_filexfer.c \
 	yahoo_friend.h \
 	yahoo_friend.c \
 	yahoo_packet.h \
 	yahoo_packet.c \
-	yahoo_doodle.h \
-	yahoo_doodle.c \
 	yahoo_picture.c \
 	yahoo_picture.h \
 	yahoo_profile.c \

@@ -68,18 +68,18 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =			yahoo.c \
-			yahoo_auth.c \
+C_SRC =			util.c \
+			yahoo.c
 			yahoochat.c \
+			yahoo_auth.c \
+			yahoo_crypt.c \
 			yahoo_doodle.c \
 			yahoo_filexfer.c \
-			yahoo_packet.c \
-			yahoo_profile.c \
-			yahoo_picture.c \
 			yahoo_friend.c \
+			yahoo_packet.c \
+			yahoo_picture.c \
+			yahoo_profile.c \
 			ycht.c \
-			crypt.c \
-			util.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
