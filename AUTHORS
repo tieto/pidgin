@@ -1,36 +1,39 @@
 gaim - the Pimpin' Penguin IM Clone that's Good for the Soul
 ============================================================
 
-We've got an IRC room now too, #gaim on irc.freenode.net. Come check us out.
+We've got an IRC room now too, #gaim on irc.freenode.net (#wingaim for Windows
+users). Come check us out.
 
-Active Developers:
+Current Developers:
 ------------------
 
-Sean Egan <bj91704@binghamton.edu> - Lead Developer
+Sean Egan <seanegan@gmail.com> - Lead Developer
 	AIM: SeanEgn
 	ICQ: 96642211
-	MSN: SeanEgn@hotmail.com
 	Yahoo:	SeanEgn
-	Jabber: SeanEgn@jabber.org
+	MSN:  seanegn@hotmail.com
+	Jabber:  seanegn@jabber.org
+	Gadu-Gadu:  1511497
 
 Daniel 'datallah' Atallah
-Christian 'ChipX86' Hammond - Developer & Webmaster
-Herman 'Hermanator' Bloggs - Win32 Port
-Nathan 'faceprint' Walp - Developer
-Mark 'KingAnt' Doliner - Developer
 Ethan 'Paco-Paco' Blanton - Developer
-Tim 'marv' Ringenbach - Developer
-Luke 'LSchiere' Schierer - Support
-Etan 'deryni' Reisner - Developer
-Stu 'nosnilmot' Tomlinson - Developer
+Herman Bloggs - Win32 Port
+Mark 'KingAnt' Doliner - Developer
+Christian 'ChipX86' Hammond - Developer & Webmaster
 Gary 'grim' Kramlich - Developer
 Richard 'rlaager' Laager
 Christopher 'siege' O'Brien - Developer
+Etan 'deryni' Reisner - Developer
+Tim 'marv' Ringenbach - Developer
+Luke 'LSchiere' Schierer - Support
+Stu 'nosnilmot' Tomlinson - Developer
+Nathan 'faceprint' Walp - Developer
 
 Crazy Patch Writers:
 --------------------
 
 Ka-Hing 'javabsp' Cheung
+Sadrul Habib Chowdhury
 Felipe 'shx' Contreras
 Decklin Foster
 Peter 'Bleeter' Lawler
@@ -38,12 +41,12 @@ Robert 'Robot101' McQueen
 Benjamin Miller
 Kevin 'SimGuy' Stange
 
-Retired:
+Retired Developers:
 --------
-Rob Flynn <gaim@robflynn.com> - Former Maintainer
-Adam Fritzler - Former libfaim Maintainer
-Eric Warmenhoven <eric@warmenhoven.org> - Former Lead Developer
-Jim Duchek <jimduchek@ou.edu> - Former Maintainer
-Jim Seymour - Former Jabber Developer
-Mark Spencer <markster@marko.net> - Original Author
-Syd Logan - Hacker and Designated Driver (lazy bum)
+Jim Duchek <jim@linuxpimps.com> - maintainer
+Rob Flynn <gaim@robflynn.com> - maintainer
+Adam Fritzler - libfaim maintainer
+Syd Logan - hacker and designated driver [lazy bum]
+Jim Seymour - Jabber developer
+Mark Spencer <markster@marko.net> - original author
+Eric Warmenhoven <eric@warmenhoven.org> - lead developer

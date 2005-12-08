@@ -5,7 +5,7 @@
 #
 
 # By Sean Egan
-# bj91704@binghamton.edu
+# seanegan@gmail.com
 # AIM: SeanEgn
 #
 # Updated by Nathan Conrad, 31 January 2002
@@ -50,7 +50,7 @@ use Gaim;
 	version          => "3.4",
 	summary          => "Sets your AIM profile to a fortune (with a header and footer of your choice).",
 	description      => "Sets your AIM profile to a fortune (with a header and footer of your choice).",
-	author           => "Sean Egan <bj91704\@binghamton.edu>",
+	author           => "Sean Egan <seanegan\@gmail.com>",
 	url              => "http://gaim.sf.net/",
 
 	load             => "plugin_load"

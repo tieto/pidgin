@@ -90,7 +90,7 @@ static struct developer patch_writers[] = {
 
 /* Order: Alphabetical by Last Name */
 static struct developer retired_developers[] = {
-	{"Jim Duchek",			N_("maintainer"), NULL},
+	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
 	{"Rob Flynn",					N_("maintainer"), "gaim@robflynn.com"},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
@@ -249,9 +249,9 @@ void gaim_gtkdialogs_about()
 						   "#gaim on irc.freenode.net<BR><BR>"));
 #endif
 
-	/* Active Developers */
+	/* Current Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
-						   _("Active Developers"));
+						   _("Current Developers"));
 	for (i = 0; developers[i].name != NULL; i++) {
 		if (developers[i].email != NULL) {
 			g_string_append_printf(str, "  %s (%s) &lt;<a href=\"mailto:%s\">%s</a>&gt;<br/>",
@@ -843,7 +843,7 @@ gaim_gtkdialogs_remove_contact(GaimContact *contact)
 	}
 }
 
-void
+static void
 gaim_gtkdialogs_remove_group_cb(GaimGroup *group)
 {
 	GaimBlistNode *cnode, *bnode;

@@ -546,58 +546,71 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 .SH AUTHORS
 \fBGaim\fR's active developers are:
 
- Rob Flynn (maintainer) <\fIgaim@robflynn.com\fR>
+ Sean Egan (lead developer) <\fIseanegan@gmail.com\fR>
 .br
- Sean Egan (lead developer) <\fIbj91704@binghamton.edu\fR>
-.br
- Christian 'ChipX86' Hammond (developer & webmaster)
-.br
- Herman Bloggs (win32 port) <\fIhermanator12002@yahoo.com\fR>
-.br
- Nathan 'faceprint' Walp (developer)
-.br
- Mark 'KingAnt' Doliner (developer)
+ Daniel 'datallah' Atallah
 .br
  Ethan 'Paco-Paco' Blanton (developer)
 .br
- Tim 'marv' Ringenbach (developer)
+ Herman Bloggs (win32 port) <\fIherman@bluedigits.com\fR>
+.br
+ Mark 'KingAnt' Doliner (developer) <\fIthekingant@users.sourceforge.net\fR>
+.br
+ Christian 'ChipX86' Hammond (developer & webmaster) <\fIchipx86@chipx86.com\fR>
+.br
+ Gary 'grim' Kramlich
+.br
+ Richard 'rlaager' Laager <\fIrlaager@users.sf.net\fR>
+.br
+ Christopher 'siege' O'Brien
+.br
+ Etan Reisner
+.br
+ Tim 'marv' Ringenbach <\fImarv_sf@users.sf.net\fR>
 .br
  Luke 'LSchiere' Schierer (support)
-
-Our crazy patch writers include:
-
- Benjamin Miller
-.br
- Decklin Foster
-.br
- Etan 'deryni' Reisner
-.br
- Robert 'Robot101' McQueen
-.br
- Kevin 'SimGuy' Stange
 .br
  Stu 'nosnilmot' Tomlinson
 .br
- Gary 'xgrimx' Kramlich
+ Nathan 'faceprint' Walp (developer)
 .br
- Ka-Hing 'javabsp' Cheung
+
+
+Our crazy patch writers include:
+
+Ka-Hing 'javabsp' Cheung
 .br
- Felipe 'shx' Contreras
+Sadrul Habib Chowdhury
 .br
- Daniel 'datallah' Atallah
+Felipe 'shx' Contreras
+.br
+Decklin Foster
+.br
+Peter 'Bleeter' Lawler
+.br
+Robert 'Robot101' McQueen
+.br
+Benjamin Miller
+.br
+Kevin 'SimGuy' Stange
+.br
+
 
 The retired developers of \fBgaim\fR are:
 
- Adam Fritzler (former libfaim maintainer)
+ Jim Duchek <\fIjim@linuxpimps.com\fR> (maintainer)
 .br
- Eric Warmenhoven (former lead developer) <\fIwarmenhoven@yahoo.com\fR>
+ Rob Flynn <\fIgaim@robflynn.com\fR> (maintainer)
 .br
- Jim Duchek (former maintainer)
+ Adam Fritzler (libfaim maintainer)
 .br
- Jim Seymour (former Jabber developer)
+ Syd Logan (hacker and designated driver [lazy bum])
+.br
+ Jim Seymour (Jabber developer)
 .br
  Mark Spencer (original author) <\fImarkster@marko.net\fR>
 .br
- Syd Logan (hacker and designated driver [lazy bum])
+ Eric Warmenhoven (former lead developer) <\fIeric@warmenhoven.org\fR>
+.br
 
-This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIbj91704@binghamton.edu\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.
+This manpage was originally written by Dennis Ristuccia <\fIdennis@dennisr.net\fR>.  It has been updated and largely rewritten by Sean Egan <\fIseanegan@gmail.com\fR> and Ben Tegarden <\fItegarden@uclink.berkeley.edu\fR>.

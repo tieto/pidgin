@@ -278,7 +278,7 @@ static GaimPluginInfo info =
 	N_("Adds iChat-style timestamps to conversations every N minutes."),
 	                                                  /**  description    */
 	N_("Adds iChat-style timestamps to conversations every N minutes."),
-	"Sean Egan <bj91704@binghamton.edu>",             /**< author         */
+	"Sean Egan <seanegan@gmail.com>",                 /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */

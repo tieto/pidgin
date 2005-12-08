@@ -193,7 +193,7 @@ static GaimPluginInfo info =
 	   "for instant messages and/or chats will activate history for "
 	   "the same conversation type(s)."
 	),
-	"Sean Egan <bj91704@binghamton.edu>",
+	"Sean Egan <seanegan@gmail.com>",
 	GAIM_WEBSITE,
 	plugin_load,
 	NULL,
