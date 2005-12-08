@@ -847,7 +847,7 @@ faim_internal int aim_putuserinfo(aim_bstream_t *bs, aim_userinfo_t *info)
 		aim_tlvlist_add_16(&tlvlist, 0x0004, info->idletime);
 
 /* XXX - So, ICQ_OSCAR_SUPPORT is never defined anywhere... */
-#if ICQ_OSCAR_SUPPORT
+#ifdef ICQ_OSCAR_SUPPORT
 	if (atoi(info->sn) != 0) {
 		if (info->present & AIM_USERINFO_PRESENT_ICQEXTSTATUS)
 			aim_tlvlist_add_16(&tlvlist, 0x0006, info->icqinfo.status);
