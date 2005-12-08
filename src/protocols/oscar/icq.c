@@ -336,6 +336,7 @@ faim_export int aim_icq_getsimpleinfo(aim_session_t *sess, const char *uin)
 	return 0;
 }
 
+#if 0
 faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 {
 	aim_conn_t *conn;
@@ -373,7 +374,9 @@ faim_export int aim_icq_sendxmlreq(aim_session_t *sess, const char *xml)
 
 	return 0;
 }
+#endif
 
+#if 0
 /*
  * Send an SMS message.  This is the non-US way.  The US-way is to IM 
  * their cell phone number (+19195551234).
@@ -466,6 +469,7 @@ faim_export int aim_icq_sendsms(aim_session_t *sess, const char *name, const cha
 
 	return 0;
 }
+#endif
 
 static void aim_icq_freeinfo(struct aim_icq_info *info) {
 	int i;
