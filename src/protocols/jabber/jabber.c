@@ -785,7 +785,6 @@ static void jabber_close(GaimConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
-	jabber_presence_send(gc->account, NULL);
 	jabber_send_raw(js, "</stream:stream>", -1);
 
 	if(js->gsc) {
