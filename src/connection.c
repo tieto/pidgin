@@ -417,7 +417,7 @@ gaim_connection_notice(GaimConnection *gc, const char *text)
 		ops->notice(gc, text);
 }
 
-gboolean
+static gboolean
 gaim_connection_disconnect_cb(gpointer data)
 {
 	GaimAccount *account = data;

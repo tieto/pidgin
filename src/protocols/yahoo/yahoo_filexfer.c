@@ -226,7 +226,7 @@ static guint calculate_length(const gchar *l, size_t len)
 	return 0;
 }
 
-gssize yahoo_xfer_read(guchar **buffer, GaimXfer *xfer)
+static gssize yahoo_xfer_read(guchar **buffer, GaimXfer *xfer)
 {
 	gchar buf[4096];
 	gssize len;
@@ -291,7 +291,7 @@ gssize yahoo_xfer_read(guchar **buffer, GaimXfer *xfer)
 	return len;
 }
 
-gssize yahoo_xfer_write(const guchar *buffer, size_t size, GaimXfer *xfer)
+static gssize yahoo_xfer_write(const guchar *buffer, size_t size, GaimXfer *xfer)
 {
 	gssize len;
 	struct yahoo_xfer_data *xd = xfer->data;

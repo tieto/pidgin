@@ -577,7 +577,7 @@ static void theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint
 }
 
 /* Does same as normal sort, except "none" is sorted first */
-gint gaim_sort_smileys (GtkTreeModel	*model,
+static gint gaim_sort_smileys (GtkTreeModel	*model,
 						GtkTreeIter		*a,
 						GtkTreeIter		*b,
 						gpointer		userdata)

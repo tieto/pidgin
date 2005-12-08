@@ -43,7 +43,7 @@ struct yahoo_fetch_picture_data {
 	int checksum;
 };
 
-void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
+static void yahoo_fetch_picture_cb(void *user_data, const char *pic_data, size_t len)
 {
 	struct yahoo_fetch_picture_data *d = user_data;
 	GaimBuddy *b;

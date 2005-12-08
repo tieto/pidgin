@@ -2233,7 +2233,7 @@ static const int accepted_protocols_size = 3;
 
 /* returns if the beginning of the text is a protocol. If it is the protocol, returns the length so
    the caller knows how long the protocol string is. */
-int gtk_imhtml_is_protocol(const char *text)
+static int gtk_imhtml_is_protocol(const char *text)
 {
 	gint i;
 

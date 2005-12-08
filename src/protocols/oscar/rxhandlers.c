@@ -206,7 +206,7 @@ static int negchan_middle(aim_session_t *sess, aim_frame_t *fr)
  * Bleck functions get called when there's no non-bleck functions
  * around to cleanup the mess...
  */
-faim_internal int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
+static int bleck(aim_session_t *sess, aim_frame_t *frame, ...)
 {
 	fu16_t family, subtype;
 	fu16_t maxf, maxs;

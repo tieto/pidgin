@@ -4,7 +4,7 @@ typedef struct {
 	char *cb;
 } GaimPerlUrlData;
 
-void gaim_perl_util_url_cb(void *data, const char *url_data, size_t size) {
+static void gaim_perl_util_url_cb(void *data, const char *url_data, size_t size) {
         GaimPerlUrlData *gpr = (GaimPerlUrlData *)data;
         dSP;
         ENTER;

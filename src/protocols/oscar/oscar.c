@@ -596,7 +596,7 @@ gaim_plugin_oscar_convert_to_best_encoding(GaimConnection *gc, const char *dests
 	return;
 }
 
-gchar *oscar_caps_to_string(guint caps)
+static gchar *oscar_caps_to_string(guint caps)
 {
 	GString *str;
 	gchar *tmp;
@@ -2247,7 +2247,7 @@ static void oscar_xfer_ack_recv(GaimXfer *xfer, const guchar *buffer, size_t siz
  * Called by oscar_send_proxylogin_cb when we receive a ready packet
  * BBB
  */
-void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
+static void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
 	
@@ -2299,7 +2299,7 @@ void oscar_xfer_proxylogin_ready(GaimXfer *xfer, gint fd) {
  * Called by oscar_sendfile_proxylogin_cb when we receive an ack packet in reply to an init_send
  * BBB
  */
-void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
+static void oscar_xfer_proxylogin_ack(GaimXfer *xfer) {
 	struct aim_oft_info *oft_info;
 	struct aim_rv_proxy_info *proxy_info;
 	
@@ -7364,7 +7364,7 @@ static GList *oscar_chat_info(GaimConnection *gc) {
 	return m;
 }
 
-GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+static GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 

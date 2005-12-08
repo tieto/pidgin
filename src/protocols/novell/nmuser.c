@@ -1535,7 +1535,7 @@ _handle_multiple_get_details_joinconf_cb(NMUser * user, NMERR_T ret_code,
 	}
 }
 
-NMERR_T
+static NMERR_T
 nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 {
 	NMERR_T rc = NM_OK, ret_code = NM_OK;

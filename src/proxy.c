@@ -184,7 +184,7 @@ gaim_global_proxy_get_info(void)
 	return global_proxy_info;
 }
 
-GaimProxyInfo *
+static GaimProxyInfo *
 gaim_gnome_proxy_get_info(void)
 {
 	static GaimProxyInfo info = {0, NULL, 0, NULL, NULL};

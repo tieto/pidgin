@@ -27,7 +27,7 @@ typedef struct {
 /* the perl sub's name in a GaimPerlRequestData		*/
 /*							*/
 /********************************************************/
-void gaim_perl_request_ok_cb(void * data, GaimRequestFields *fields) {
+static void gaim_perl_request_ok_cb(void * data, GaimRequestFields *fields) {
 
 	GaimPerlRequestData *gpr = (GaimPerlRequestData *)data;
 
@@ -47,7 +47,7 @@ void gaim_perl_request_ok_cb(void * data, GaimRequestFields *fields) {
 	LEAVE;
 }
 
-void gaim_perl_request_cancel_cb(void * data, GaimRequestFields *fields) {
+static void gaim_perl_request_cancel_cb(void * data, GaimRequestFields *fields) {
 
 	GaimPerlRequestData *gpr = (GaimPerlRequestData *)data;
 

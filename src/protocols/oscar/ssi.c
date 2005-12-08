@@ -232,7 +232,7 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 	return 0;
 }
 
-faim_export int aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
+static int aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
 {
 	struct aim_ssi_item *cur;
 	for (cur=list; cur; cur=cur->next)

@@ -251,7 +251,7 @@ gaim_idle_get_ui_ops(void)
 	return idle_ui_ops;
 }
 
-void *
+static void *
 gaim_idle_get_handle()
 {
 	static int handle;
