@@ -456,7 +456,7 @@ int main(int argc, char *argv[])
 #if HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
-	void (*prev_sig_disp)();
+	RETSIGTYPE (*prev_sig_disp)(int);
 #endif
 	int opt;
 	gboolean gui_check;
