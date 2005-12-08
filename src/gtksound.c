@@ -474,14 +474,16 @@ gaim_gtk_sound_play_file(const char *filename)
 			afSetVirtualSampleFormat(file, AF_DEFAULT_TRACK,
 					AF_SAMPFMT_TWOSCOMP, format.bits);
 
-#if __BYTE_ORDER == __BIG_ENDIAN
+#if G_BYTE_ORDER == G_BIG_ENDIAN
 			format.byte_format = AO_FMT_BIG;
 			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
 					AF_BYTEORDER_BIGENDIAN);
-#elif __BYTE_ORDER == __LITTLE_ENDIAN
+#elif G_BYTE_ORDER == G_LITTLE_ENDIAN
 			format.byte_format = AO_FMT_LITTLE;
 			afSetVirtualByteOrder(file, AF_DEFAULT_TRACK,
 					AF_BYTEORDER_LITTLEENDIAN);
+#else
+#warning Unknown endianness
 #endif
 
 			bytes_per_frame = format.bits * format.channels / 8;
