@@ -33,6 +33,7 @@
 #include "cipher.h"
 #include "debug.h"
 #include "notify.h"
+#include "ntlm.h"
 #include "prefs.h"
 #include "proxy.h"
 #include "util.h"
@@ -1051,11 +1052,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 {
 	int nlc = 0;
 	int pos = 0;
-	int minor, major, status, error=0;
+	int minor, major, status = 0, error=0;
 	struct PHB *phb = data;
 	char inputline[8192], *p;
 
-	gaim_input_remove(phb->inpa);
 
 	while ((pos < sizeof(inputline)-1) && (nlc != 2) && (read(source, &inputline[pos++], 1) == 1)) {
 		if (inputline[pos - 1] == '\n')
@@ -1082,6 +1082,19 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		}
 	}
 
+	/* Read the contents */
+	p = g_strrstr(inputline, "Content-Length: ");
+	if(p>0) {
+		gchar *tmp;
+		int len = 0;
+		char tmpc;
+		p += strlen("Content-Length: ");
+		tmp = strchr(p, '\r');
+		*tmp = 0;
+		len = atoi(p);
+		*tmp = '\r';
+		while(len--) read(source, &tmpc, 1);
+	}
 	if(error) {
 		gaim_debug_error("proxy",
 				   "Unable to parse proxy's response: %s\n", inputline);
@@ -1090,11 +1103,77 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 	else if(status!=200) {
 		gaim_debug_error("proxy",
-				   "Proxy server replied with:\n%s\n", p);
-		close(source);
-		source = -1;
+				   "Proxy server replied with:\n%s\n", inputline);
 
 		/* XXX: why in the hell are we calling gaim_connection_error() here? */
+		if ( status == 407 /* Proxy Auth */ ) {
+			gchar *ntlm;
+			if( (ntlm = g_strrstr(inputline, "Proxy-Authenticate: NTLM "))) { /* Check for Type-2 */
+				gchar *nonce = ntlm;
+				gchar *domain = (gchar*)gaim_proxy_info_get_username(phb->gpi);
+				gchar *username;
+				gchar *request;
+				gchar *response;
+				if(!(username = strchr(domain, '\\'))) {
+					char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
+					close(source);
+					source = -1;
+					gaim_connection_error(phb->account->gc, msg);
+					g_free(msg);
+				        gaim_input_remove(phb->inpa);
+					return;
+				}
+				*username = 0;
+				username ++;
+				ntlm += strlen("Proxy-Authenticate: NTLM ");
+				while(*nonce != '\r' && *nonce != '\0') nonce ++;
+				*nonce = 0;
+				nonce = gaim_ntlm_parse_type2(ntlm);
+				response = gaim_ntlm_gen_type3(username, (gchar*)gaim_proxy_info_get_password(phb->gpi), (gchar*)gaim_proxy_info_get_host(phb->gpi), domain, nonce);
+				username--;
+				*username = '\\';
+				request = g_strdup_printf("CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\nProxy-Authorization: NTLM %s\r\nProxy-Connection: Keep-Alive\r\n\r\n",
+						                                 phb->host, phb->port, phb->host, phb->port,
+										                                  response);
+				write(source, request, strlen(request));
+				g_free(request);
+				g_free(response);
+				return;
+			} else if((ntlm = g_strrstr(inputline, "Proxy-Authenticate: NTLM"))) { /* Empty message */
+				gchar request[2048];
+				gchar *domain = (gchar*)gaim_proxy_info_get_username(phb->gpi);
+				gchar *username;
+				int request_len;
+				if(!(username = strchr(domain, '\\'))) {
+					char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
+					close(source);
+					source = -1;
+					gaim_connection_error(phb->account->gc, msg);
+					g_free(msg);
+				        gaim_input_remove(phb->inpa);
+					return;
+				}
+				*username = 0;
+
+				request_len = g_snprintf(request, sizeof(request),
+						"CONNECT %s:%d HTTP/1.1\r\nHost: %s:%d\r\n",
+						phb->host, phb->port, phb->host, phb->port);
+
+				g_return_if_fail(request_len < sizeof(request));
+				request_len += g_snprintf(request + request_len,
+						sizeof(request) - request_len,
+						"Proxy-Authorization: NTLM %s\r\nProxy-Connection: Keep-Alive\r\n\r\n", gaim_ntlm_gen_type1((gchar*)gaim_proxy_info_get_host(phb->gpi),domain));
+				*username = '\\';
+				write(source, request, request_len);
+				return;
+			} else {
+				char *msg = g_strdup_printf(_("Proxy connection error %d"), status);
+				close(source);
+				source = -1;
+				gaim_connection_error(phb->account->gc, msg);
+				g_free(msg);
+			}
+		}
 		if ( status == 403 /* Forbidden */ ) {
 			gchar *msg = g_strdup_printf(_("Access denied: proxy server forbids port %d tunnelling."), phb->port);
 			gaim_connection_error(phb->account->gc, msg);
@@ -1104,11 +1183,11 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 			gaim_connection_error(phb->account->gc, msg);
 			g_free(msg);
 		}
-
 	} else {
 		http_complete(phb, source);
 	}
 
+	gaim_input_remove(phb->inpa);
 	return;
 }
 
@@ -1149,9 +1228,10 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		t2 = gaim_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 		g_return_if_fail(request_len < sizeof(request));
+		
 		request_len += g_snprintf(request + request_len,
 					  sizeof(request) - request_len,
-					  "Proxy-Authorization: Basic %s\r\n", t2);
+					  "Proxy-Authorization: NTLM %s\r\nProxy-Authorization: Basic %s\r\nProxy-Connection: Keep-Alive\r\n", gaim_ntlm_gen_type1((gchar*)gaim_proxy_info_get_host(phb->gpi),""), t2);
 		g_free(t2);
 	}
 
