@@ -26,6 +26,7 @@
 #include "core.h"
 #include "debug.h"
 #include "eventloop.h"
+#include "gtksession.h"
 
 #ifdef USE_SM
 

@@ -21,6 +21,7 @@
  *
  */
 #include "internal.h"
+#include "gtkidle.h"
 
 #ifdef USE_SCREENSAVER
 # ifndef _WIN32
