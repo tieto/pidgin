@@ -61,6 +61,7 @@ msn_slp_session_destroy(MsnSlpSession *slpsession)
 	g_free(slpsession);
 }
 
+#if 0
 static void
 msn_slp_session_send_slpmsg(MsnSlpSession *slpsession, MsnSlpMessage *slpmsg)
 {
@@ -73,3 +74,4 @@ msn_slp_session_send_slpmsg(MsnSlpSession *slpsession, MsnSlpMessage *slpmsg)
 
 	msn_slplink_send_slpmsg(slpsession->slpcall->slplink, slpmsg);
 }
+#endif
