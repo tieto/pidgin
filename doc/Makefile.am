@@ -19,6 +19,7 @@ EXTRA_DIST = \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
 	gtkimhtml-signals.dox \
+	gtkrc-2.0 \
 	notify-signals.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \

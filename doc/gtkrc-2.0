@@ -1,0 +1,79 @@
+# When turned on, this option causes gtk to select the contents of an entry field when it becomes focused.
+gtk-entry-select-on-focus = 1
+
+# Sets the font used by gtk
+gtk-font-name = "Verdana 9"
+
+# Controls the keybindings that gtk uses for text entry/editing/etc
+# The "emacs" theme turns on things like:
+# ctrl-a == move to beginning of line, ctrl-e == move to end of line, etc.
+gtk-key-theme-name = "Emacs"
+
+# The following section allows you to change the style of the conversation
+# window widgets, log viewer widget, and request and notify window widgets.
+# These only work in Gaim 0.78 or higher.
+style "imhtml-fix"
+{
+font_name = "Sans 10"
+}
+# Set the widget style for the conversation entry box
+widget "*gaim_gtkconv_entry" style "imhtml-fix"
+# Set the widget style for the conversation
+widget "*gaim_gtkconv_imhtml" style "imhtml-fix"
+
+# Set the widget style for the log viewer
+widget "*gaim_gtklog_imhtml" style "imhtml-fix"
+
+# Set the widget style for IMHtml input widgets in request dialogs
+widget "*gaim_gtkrequest_imhtml" style "imhtml-fix"
+# Set the widget style for IMHtml widgets in notify dialogs
+widget "*gaim_gtknotify_imhtml" style "imhtml-fix"
+
+# Uncommenting the line below sets all IMHtml widgets in Gaim to the same style
+# and will work in Gaim versions prior to 0.78
+#widget_class "*.GtkScrolledWindow.GtkIMHtml" style "imhtml-fix"
+
+# The following lets you customize the color of hyperlinks
+# and also the text cursors. The link color thing is Gaim specific
+# but the rest work for any Gtk2 program. You can search the Gtk2
+# docs for other style properties.
+style "my-style-name" {
+  GtkIMHtml::hyperlink-color = "#000080"
+  GtkWidget::cursor-color    = "#0000FF"
+  GtkWidget::secondary-cursor-color = "#00FF00" #for mixed ltr and rtl
+}
+widget_class "*" style "my-style-name"
+
+# This style sets the expander size on a treeview to 0, which has the result
+# of reducing the indent for items in the tree. This can be applied to the
+# Gaim buddy list to reduce it's width.
+# This only works in Gaim 0.79 and higher
+style "my-narrow-tree"
+{
+  GtkTreeView::expander_size = 0
+}
+
+# And apply the style to the buddy list:
+widget "*gaim_gtkblist_treeview" style "my-narrow-tree"
+
+# In Gaim 2.0.0 and later, you can set custom keybindings in your theme.  Here
+# is an example to follow
+
+binding "my-bindings"
+{
+# enter inserts a newline
+	bind "Return" { "insert-at-cursor" ("\n") }
+# ctrl-s sends message
+ 	bind "<ctrl>s" { "message_send" () }
+# shift-f1 toggles bold
+	bind "<shft>F1" { "format_toggle" (1) }
+# alt-f2 toggles italic
+	bind "<alt>F2" { "format_toggle" (2) }
+# Ctrl-alt-shift-f3 toggles underline
+	bind "<ctrl><alt><shift>F3" { "format_toggle" (4) }
+}
+  
+widget "*gaim_gtkconv_entry" binding "my-bindings"
+ 
+#to let you edit your gaim key bindings
+gtk-can-change-accels = 1
