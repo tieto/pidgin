@@ -979,6 +979,15 @@ GaimRequestField *gaim_request_field_image_new(const char *id, const char *text,
 											   const char *buf, gsize size);
 
 /**
+ * Sets the scale factors of an image field.
+ *
+ * @param field The image field.
+ * @param x     The x scale factor.
+ * @param y     The y scale factor.
+ */
+void gaim_request_field_image_set_scale(GaimRequestField *field, unsigned int x, unsigned int y);
+
+/**
  * Returns pointer to the image.
  *
  * @param field The image field.
