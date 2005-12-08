@@ -147,7 +147,7 @@ struct _zephyr_triple {
 extern const char *username;
 #endif
 
-Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, char *recipient, char* galaxy) {
+static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *instance, char *recipient, char* galaxy) {
 
 	if (use_tzc(zephyr)) {
 		/* ((tzcfodder . subscribe) ("class" "instance" "recipient")) */
@@ -175,7 +175,7 @@ char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
 static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic);
 char* zephyr_tzc_deescape_str(const char *message);
 
-char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
+static char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
 	/*
 	  Takes in a username of the form username or username@realm 
 	  and returns:
@@ -885,7 +885,8 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		
 	}
 }
-int  free_parse_tree(parse_tree* tree) {
+
+static int  free_parse_tree(parse_tree* tree) {
 	if (!tree) {
 		return 0;
 	}
@@ -906,7 +907,7 @@ int  free_parse_tree(parse_tree* tree) {
 	return 0;
 }
 
-parse_tree *tree_child(parse_tree* tree,int index) {
+static parse_tree *tree_child(parse_tree* tree,int index) {
 	if (index < tree->num_children) {
 		return tree->children[index];
 	} else {
@@ -914,7 +915,7 @@ parse_tree *tree_child(parse_tree* tree,int index) {
 	}
 }
 
-parse_tree *find_node(parse_tree* ptree,gchar* key)
+static parse_tree *find_node(parse_tree* ptree,gchar* key)
 {
 	gchar* tc = tree_child(ptree,0)->contents;
 
@@ -936,7 +937,7 @@ parse_tree *find_node(parse_tree* ptree,gchar* key)
 	}
 }
 
-parse_tree *parse_buffer(gchar* source, gboolean do_parse) {
+static parse_tree *parse_buffer(gchar* source, gboolean do_parse) {
 	
 	parse_tree *ptree = g_new0(parse_tree,1);
 	ptree->contents = NULL;
@@ -1026,7 +1027,7 @@ parse_tree *parse_buffer(gchar* source, gboolean do_parse) {
 	}
 }
 
-parse_tree  *read_from_tzc(zephyr_account* zephyr){
+static parse_tree  *read_from_tzc(zephyr_account* zephyr){
 	struct timeval tv;
 	fd_set rfds;
 	int bufsize = 2048;
@@ -1981,7 +1982,7 @@ static void zephyr_close(GaimConnection * gc)
 static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instance, char* recipient, const char *im, 
 			       const char *sig, char *opcode) ;
 
-const char * zephyr_get_signature()
+static const char * zephyr_get_signature()
 {
 	/* XXX add zephyr error reporting */
 	const char * sig =ZGetVariable("zwrite-signature");
@@ -2042,7 +2043,7 @@ static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, 
 /* Munge the outgoing zephyr so that any quotes or backslashes are
    escaped and do not confuse tzc: */
 
-char* zephyr_tzc_escape_msg(const char *message)
+static char* zephyr_tzc_escape_msg(const char *message)
 {
 	int pos = 0;
 	int pos2 = 0;

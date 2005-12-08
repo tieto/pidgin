@@ -10,6 +10,7 @@
 
 #include "internal.h"
 
+#if 0
 Code_t ZSendRawNotice(notice)
     ZNotice_t *notice;
 {
@@ -31,3 +32,4 @@ Code_t ZSendRawNotice(notice)
 
     return (retval);
 }
+#endif

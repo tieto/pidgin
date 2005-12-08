@@ -11,7 +11,7 @@
 
 #include "internal.h"
 
-static Code_t Z_RetSubs ();
+static Code_t Z_RetSubs(ZNotice_t *notice, int *nsubs, Z_AuthProc auth_routine);
 
 /* Need STDC definition when possible for unsigned short argument. */
 #ifdef __STDC__
@@ -41,6 +41,7 @@ Code_t ZRetrieveSubscriptions(port,nsubs)
 	return(Z_RetSubs(&notice, nsubs, ZAUTH));
 }
 
+#if 0
 Code_t ZRetrieveDefaultSubscriptions(nsubs)
 	int *nsubs;
 {
@@ -54,6 +55,7 @@ Code_t ZRetrieveDefaultSubscriptions(nsubs)
 	return(Z_RetSubs(&notice, nsubs, ZNOAUTH));
 
 }
+#endif
 
 static Code_t Z_RetSubs(notice, nsubs, auth_routine)
 	register ZNotice_t *notice;

@@ -10,6 +10,7 @@
 
 #include "internal.h"
 
+#if 0
 Code_t ZPeekIfNotice(notice, from, predicate, args)
     ZNotice_t *notice;
     struct sockaddr_in *from;
@@ -49,3 +50,4 @@ Code_t ZPeekIfNotice(notice, from, predicate, args)
 	    return (retval);
     }
 }
+#endif

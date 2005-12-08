@@ -97,7 +97,7 @@ typedef struct _ZNotice_t {
     int			z_authent_len;
     char		*z_ascii_authent;
     char		*z_class;
-    const char	*z_class_inst;
+    const char		*z_class_inst;
     char		*z_opcode;
     char		*z_sender;
     const char		*z_recipient;
@@ -177,8 +177,6 @@ Code_t ZSetServerState ZP((int));
 Code_t ZSetFD ZP((int));
 Code_t ZFormatSmallRawNotice ZP((ZNotice_t*, ZPacket_t, int*));
 int ZCompareUID ZP((ZUnique_Id_t*, ZUnique_Id_t*));
-Code_t ZSrvSendRawList ZP((ZNotice_t*, char*[], int,
-			   Code_t (*)(ZNotice_t *, char *, int, int)));
 Code_t ZMakeAscii ZP((char*, int, unsigned char*, int));
 Code_t ZMakeAscii32 ZP((char *, int, unsigned long));
 Code_t ZMakeAscii16 ZP((char *, int, unsigned int));

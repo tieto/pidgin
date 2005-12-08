@@ -144,7 +144,7 @@ static int find_or_insert_uid(uid, kind)
 
 /* Return 1 if there is a packet waiting, 0 otherwise */
 
-int Z_PacketWaiting()
+static int Z_PacketWaiting()
 {
     struct timeval tv;
     fd_set read;
@@ -195,7 +195,7 @@ Code_t Z_ReadEnqueue()
  * notices that haven't been touched in a while
  */
 
-struct _Z_InputQ *Z_SearchQueue(uid, kind)
+static struct _Z_InputQ *Z_SearchQueue(uid, kind)
     ZUnique_Id_t *uid;
     ZNotice_Kind_t kind;
 {

@@ -1,5 +1,5 @@
 /* This file is part of the Project Athena Zephyr Notification System.
- * It contains source for the ZSendRawNotice function.
+ * It contains source for the ZSendRawList function.
  *
  *	Created by:	John T. Kohl
  *
@@ -10,6 +10,7 @@
 
 #include "internal.h"
 
+#if 0
 Code_t ZSendRawList(notice, list, nitems)
     ZNotice_t *notice;
     char *list[];
@@ -42,3 +43,4 @@ Code_t ZSrvSendRawList(notice, list, nitems, send_routine)
 
     return (retval);
 }
+#endif

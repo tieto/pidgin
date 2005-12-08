@@ -10,6 +10,7 @@
 
 #include "internal.h"
 
+#if 0
 Code_t ZFormatSmallRawNoticeList(notice, list, nitems, buffer, ret_len)
     ZNotice_t *notice;
     char *list[];
@@ -44,3 +45,4 @@ Code_t ZFormatSmallRawNoticeList(notice, list, nitems, buffer, ret_len)
 
     return (ZERR_NONE);
 }
+#endif

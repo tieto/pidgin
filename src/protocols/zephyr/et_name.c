@@ -14,9 +14,11 @@
 static const char char_set[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_";
 
-const char * error_table_name_r(num, buf)
-    int num;
-    char *buf;
+/* Prototypes for -Wmissing-prototypes */
+const char * error_table_name(int num);
+const char * error_table_name_r(int num, char *buf);
+
+const char * error_table_name_r(int num, char *buf)
 {
     int ch;
     int i;
@@ -37,8 +39,7 @@ const char * error_table_name_r(num, buf)
     return(buf);
 }
 
-const char * error_table_name(num)
-    int num;
+const char * error_table_name(int num)
 {
     static char buf[6];
 

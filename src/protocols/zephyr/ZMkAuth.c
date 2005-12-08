@@ -24,12 +24,14 @@ static long last_authent_time = 0L;
 static KTEXT_ST last_authent;
 #endif
 
+#if 0
 Code_t ZResetAuthentication () {
 #ifdef ZEPHYR_USES_KERBEROS
     last_authent_time = 0L;
 #endif
     return ZERR_NONE;
 }
+#endif
 
 Code_t ZMakeAuthentication(notice, buffer, buffer_len, len)
     register ZNotice_t *notice;

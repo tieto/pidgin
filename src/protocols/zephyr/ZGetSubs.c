@@ -11,10 +11,11 @@
 #include "internal.h"
 
 #define min(a,b) ((a)<(b)?(a):(b))
-	
-Code_t ZGetSubscriptions(subscription, numsubs)
-    ZSubscription_t *subscription;
-    int *numsubs;
+
+/* Prototype for -Wmissing-prototypes */
+Code_t ZGetSubscriptions(ZSubscription_t *subscription, int *numsubs);
+
+Code_t ZGetSubscriptions(ZSubscription_t *subscription, int *numsubs)
 {
     int i;
 	
