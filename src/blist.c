@@ -328,7 +328,7 @@ blist_to_xmlnode()
 	return node;
 }
 
-void
+static void
 gaim_blist_sync()
 {
 	xmlnode *node;
