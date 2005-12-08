@@ -9,6 +9,10 @@
 #define FAIM_NEED_CONN_INTERNAL
 #include <aim.h> 
 
+/* This is defined in aim.h, but only when !FAIM_INTERNAL, since the rest of
+ * the library is not allowed to call it. */
+faim_export void aim_conn_kill(aim_session_t *sess, aim_conn_t **deadconn);
+
 #ifndef _WIN32
 #include <netdb.h>
 #include <sys/socket.h>
