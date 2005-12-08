@@ -1030,7 +1030,6 @@ _user_agent_string()
 
 	const char *sysname = "";
 	const char *release = "";
-	const char *template = "Gaim/%s (%s; %s)";
 	struct utsname u;
 
 	if (uname(&u) == 0) {
@@ -1041,12 +1040,11 @@ _user_agent_string()
 		release = "Unknown";
 	}
 
-	return g_strdup_printf(template, VERSION, sysname, release);
+	return g_strdup_printf("Gaim/%s (%s; %s)", VERSION, sysname, release);
 
 #else
 
 	const char *sysname = "";
-	const char *template = "Gaim/%s (%s; %d.%d)";
 	OSVERSIONINFO os_info;
 	SYSTEM_INFO sys_info;
 
@@ -1100,7 +1098,7 @@ _user_agent_string()
 		sysname = "Windows";
 	}
 
-	return g_strdup_printf(template, VERSION, sysname,
+	return g_strdup_printf("Gaim/%s (%s; %d.%d)", VERSION, sysname,
 						   os_info.dwMajorVersion, os_info.dwMinorVersion);
 
 #endif
@@ -1648,7 +1646,7 @@ _get_conference_name(int id)
 	return name;
 }
 
-void
+static void
 _show_privacy_locked_error(GaimConnection *gc, NMUser *user)
 {
 	char *err;
@@ -2392,7 +2390,7 @@ novell_chat_leave(GaimConnection * gc, int id)
 	serv_got_chat_left(gc, id);
 }
 
-void
+static void
 novell_chat_invite(GaimConnection *gc, int id,
 				   const char *message, const char *who)
 {
