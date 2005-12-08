@@ -49,6 +49,8 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_STRUCT_TM
 
+AC_C_BIGENDIAN
+
 dnl Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
@@ -1299,11 +1301,6 @@ else
 	AM_CONDITIONAL(PRPLS, false)
 	enable_prpls=no
 fi
-
-dnl checks for icqlib--do we still need these?
-AC_CHECK_HEADERS(asm/byteorder.h byteswap.h endian.h machine/endian.h arpa/nameser_compat.h)
-AC_CHECK_FUNCS(bswap_32 bswap_16)
-AC_C_BIGENDIAN
 
 dnl checks for jabber
 dnl AC_CHECK_SIZEOF(short)
