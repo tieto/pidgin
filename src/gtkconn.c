@@ -30,13 +30,12 @@
 #include "notify.h"
 #include "prefs.h"
 #include "gtkblist.h"
+#include "gtkconn.h"
+#include "gtkdialogs.h"
 #include "gtkstatusbox.h"
 #include "gtkstock.h"
-#include "util.h"
-
-#include "gtkblist.h"
-#include "gtkdialogs.h"
 #include "gtkutils.h"
+#include "util.h"
 
 #define INITIAL_RECON_DELAY 8000
 #define MAX_RECON_DELAY 600000
