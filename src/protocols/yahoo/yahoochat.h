@@ -26,6 +26,7 @@
 #define _YAHOOCHAT_H_
 
 #include "roomlist.h"
+#include "yahoo_packet.h"
 
 void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pkt);
 void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *pkt);
