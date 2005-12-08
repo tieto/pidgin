@@ -228,6 +228,17 @@ NMFolder *nm_create_folder(const char *name);
 NMFolder *nm_create_folder_from_fields(NMField * fields);
 
 /**
+ * Add a reference to an existing folder
+ *
+ * The reference should be released by calling
+ * nm_release_folder
+ *
+ * @param	folder	The folder
+ *
+ */
+void nm_folder_add_ref(NMFolder * folder);
+
+/**
  * Release a reference to a folder.
  *
  * @param	folder	The folder to release
