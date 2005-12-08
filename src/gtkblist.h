@@ -209,7 +209,7 @@ void gaim_gtk_blist_visibility_manager_remove(void);
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
 
-typedef GtkTreeIter (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur);
+typedef void (*gaim_gtk_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /**
  * Gets the current list of sort methods.

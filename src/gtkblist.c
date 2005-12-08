@@ -107,14 +107,14 @@ static gboolean gtk_blist_obscured = FALSE;
 
 static GList *gaim_gtk_blist_sort_methods = NULL;
 static struct gaim_gtk_blist_sort_method *current_sort_method = NULL;
-static GtkTreeIter sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
+static void sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /* The functions we use for sorting aren't available in gtk 2.0.x, and
  * segfault in 2.2.0.  2.2.1 is known to work, so I'll require that */
 #if GTK_CHECK_VERSION(2,2,1)
-static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
-static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
-static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur);
+static void sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
+static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
+static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter);
 #endif
 static GaimGtkBuddyList *gtkblist = NULL;
 
@@ -127,7 +127,7 @@ static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove);
 static void gaim_gtk_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node);
 
-static void gaim_gtk_blist_tooltip_destroy();
+static void gaim_gtk_blist_tooltip_destroy(void);
 
 struct _gaim_gtk_blist_node {
 	GtkTreeRowReference *row;
@@ -3831,9 +3831,9 @@ static gboolean insert_node(GaimBuddyList *list, GaimBlistNode *node, GtkTreeIte
 		curptr = &cur;
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node) || GAIM_BLIST_NODE_IS_CHAT(node)) {
-		*iter = current_sort_method->func(node, list, parent_iter, curptr);
+		current_sort_method->func(node, list, parent_iter, curptr, iter);
 	} else {
-		*iter = sort_method_none(node, list, parent_iter, curptr);
+		sort_method_none(node, list, parent_iter, curptr, iter);
 	}
 
 	if(gtknode != NULL) {
@@ -4662,7 +4662,7 @@ addchat_select_account_cb(GObject *w, GaimAccount *account,
 	}
 }
 
-void
+static void
 gaim_gtk_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 								const char *alias, const char *name)
 {
@@ -4813,7 +4813,7 @@ add_group_cb(GaimConnection *gc, const char *group_name)
 	gaim_blist_add_group(group, NULL);
 }
 
-void
+static void
 gaim_gtk_blist_request_add_group(void)
 {
 	gaim_request_input(NULL, _("Add Group"), NULL,
@@ -5061,31 +5061,30 @@ void gaim_gtk_blist_sort_method_set(const char *id){
  ** Sort Methods
  ******************************************/
 
-static GtkTreeIter sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter parent_iter, GtkTreeIter *cur)
+static void sort_method_none(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter parent_iter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
-	GtkTreeIter iter;
 	GaimBlistNode *sibling = node->prev;
 	GtkTreeIter sibling_iter;
 
-	if(cur)
-		return *cur;
+	if (cur != NULL) {
+		*iter = *cur;
+		return;
+	}
 
 	while (sibling && !get_iter_from_node(sibling, &sibling_iter)) {
 		sibling = sibling->prev;
 	}
 
-	gtk_tree_store_insert_after(gtkblist->treemodel, &iter,
+	gtk_tree_store_insert_after(gtkblist->treemodel, iter,
 			node->parent ? &parent_iter : NULL,
 			sibling ? &sibling_iter : NULL);
-
-	return iter;
 }
 
 #if GTK_CHECK_VERSION(2,2,1)
 
-static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+static void sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
-	GtkTreeIter more_z, iter;
+	GtkTreeIter more_z;
 	GaimBlistNode *n;
 	GValue val = {0,};
 
@@ -5096,13 +5095,14 @@ static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		my_name = gaim_chat_get_name((GaimChat*)node);
 	} else {
-		return sort_method_none(node, blist, groupiter, cur);
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
 	}
 
 
 	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
-		return iter;
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
 	}
 
 	do {
@@ -5125,11 +5125,12 @@ static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *
 		if(this_name && (cmp < 0 || (cmp == 0 && node < n))) {
 			if(cur) {
 				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				return *cur;
+				*iter = *cur;
+				return;
 			} else {
-				gtk_tree_store_insert_before(gtkblist->treemodel, &iter,
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
 						&groupiter, &more_z);
-				return iter;
+				return;
 			}
 		}
 		g_value_unset(&val);
@@ -5137,16 +5138,17 @@ static GtkTreeIter sort_method_alphabetical(GaimBlistNode *node, GaimBuddyList *
 
 	if(cur) {
 		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		return *cur;
+		*iter = *cur;
+		return;
 	} else {
-		gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
-		return iter;
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
 	}
 }
 
-static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+static void sort_method_status(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
-	GtkTreeIter more_z, iter;
+	GtkTreeIter more_z;
 	GaimBlistNode *n;
 	GValue val = {0,};
 
@@ -5155,19 +5157,22 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist,
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		my_buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
-		if(cur)
-			return *cur;
+		if (cur != NULL) {
+			*iter = *cur;
+			return;
+		}
 
-		gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
-		return iter;
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
 	} else {
-		return sort_method_none(node, blist, groupiter, cur);
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
 	}
 
 
 	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
-		return iter;
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
 	}
 
 	do {
@@ -5203,13 +5208,14 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist,
 			if (cur != NULL)
 			{
 				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				return *cur;
+				*iter = *cur;
+				return;
 			}
 			else
 			{
-				gtk_tree_store_insert_before(gtkblist->treemodel, &iter,
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
 											 &groupiter, &more_z);
-				return iter;
+				return;
 			}
 		}
 
@@ -5218,26 +5224,29 @@ static GtkTreeIter sort_method_status(GaimBlistNode *node, GaimBuddyList *blist,
 	while (gtk_tree_model_iter_next(GTK_TREE_MODEL(gtkblist->treemodel),
 									&more_z));
 
-	if(cur) {
+	if (cur) {
 		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		return *cur;
+		*iter = *cur;
+		return;
 	} else {
-		gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
-		return iter;
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
 	}
 }
 
-static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur)
+static void sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, GtkTreeIter groupiter, GtkTreeIter *cur, GtkTreeIter *iter)
 {
-	GtkTreeIter more_z, iter;
+	GtkTreeIter more_z;
 	GaimBlistNode *n = NULL, *n2;
 	GValue val = {0,};
 
 	int log_size = 0, this_log_size = 0;
 	const char *buddy_name, *this_buddy_name;
 
-	if(cur && (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter) == 1))
-		return *cur;
+	if(cur && (gtk_tree_model_iter_n_children(GTK_TREE_MODEL(gtkblist->treemodel), &groupiter) == 1)) {
+		*iter = *cur;
+		return;
+	}
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		for (n = node->child; n; n = n->next)
@@ -5246,19 +5255,22 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 	} else if(GAIM_BLIST_NODE_IS_CHAT(node)) {
 		/* we don't have a reliable way of getting the log filename
 		 * from the chat info in the blist, yet */
-		if(cur)
-			return *cur;
+		if (cur != NULL) {
+			*iter = *cur;
+			return;
+		}
 
-		gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
-		return iter;
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
 	} else {
-		return sort_method_none(node, blist, groupiter, cur);
+		sort_method_none(node, blist, groupiter, cur, iter);
+		return;
 	}
 
 
 	if (!gtk_tree_model_iter_children(GTK_TREE_MODEL(gtkblist->treemodel), &more_z, &groupiter)) {
-		gtk_tree_store_insert(gtkblist->treemodel, &iter, &groupiter, 0);
-		return iter;
+		gtk_tree_store_insert(gtkblist->treemodel, iter, &groupiter, 0);
+		return;
 	}
 
 	do {
@@ -5281,24 +5293,26 @@ static GtkTreeIter sort_method_log(GaimBlistNode *node, GaimBuddyList *blist, Gt
 		if (!GAIM_BLIST_NODE_IS_CONTACT(n) || log_size > this_log_size ||
 				((log_size == this_log_size) &&
 				 (cmp < 0 || (cmp == 0 && node < n)))) {
-			if(cur) {
+			if (cur != NULL) {
 				gtk_tree_store_move_before(gtkblist->treemodel, cur, &more_z);
-				return *cur;
+				*iter = *cur;
+				return;
 			} else {
-				gtk_tree_store_insert_before(gtkblist->treemodel, &iter,
+				gtk_tree_store_insert_before(gtkblist->treemodel, iter,
 						&groupiter, &more_z);
-				return iter;
+				return;
 			}
 		}
 		g_value_unset(&val);
 	} while (gtk_tree_model_iter_next (GTK_TREE_MODEL(gtkblist->treemodel), &more_z));
 
-	if(cur) {
+	if (cur != NULL) {
 		gtk_tree_store_move_before(gtkblist->treemodel, cur, NULL);
-		return *cur;
+		*iter = *cur;
+		return;
 	} else {
-		gtk_tree_store_append(gtkblist->treemodel, &iter, &groupiter);
-		return iter;
+		gtk_tree_store_append(gtkblist->treemodel, iter, &groupiter);
+		return;
 	}
 }
 
@@ -5592,8 +5606,17 @@ sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
 	if (gtk_check_menu_item_get_active(checkmenuitem))
 	{
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		gdk_cursor_unref(cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+
 		gaim_gtk_blist_sort_method_set(id);
 		gaim_prefs_set_string("/gaim/gtk/blist/sort_type", id);
+
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 	}
 }
 
