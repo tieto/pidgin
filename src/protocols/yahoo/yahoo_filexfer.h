@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#ifndef _YAHOO_FILEXFER_H_
+#define _YAHOO_FILEXFER_H_
 
 #include "ft.h"
 
@@ -48,3 +50,5 @@ GaimXfer *yahoo_new_xfer(GaimConnection *gc, const char *who);
  * @param file What file? If NULL, user will choose after this call.
  */
 void yahoo_send_file(GaimConnection *gc, const char *who, const char *file);
+
+#endif
