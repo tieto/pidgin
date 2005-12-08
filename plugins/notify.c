@@ -114,8 +114,8 @@ static void type_toggle_cb(GtkWidget *widget, gpointer data);
 static void method_toggle_cb(GtkWidget *widget, gpointer data);
 static void notify_toggle_cb(GtkWidget *widget, gpointer data);
 static gboolean options_entry_cb(GtkWidget *widget, GdkEventFocus *event, gpointer data);
-static void apply_method();
-static void apply_notify();
+static void apply_method(void);
+static void apply_notify(void);
 
 /* string function */
 static void handle_string(GaimGtkWindow *gaimwin);

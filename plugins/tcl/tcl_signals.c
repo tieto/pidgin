@@ -35,7 +35,7 @@
 static GList *tcl_callbacks;
 
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler);
-static Tcl_Obj *new_cb_namespace ();
+static Tcl_Obj *new_cb_namespace (void);
 
 void tcl_signal_init()
 {

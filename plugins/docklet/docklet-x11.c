@@ -42,7 +42,7 @@ static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
 
 /* protos */
-static void docklet_x11_create();
+static void docklet_x11_create(void);
 
 static gboolean
 docklet_x11_create_cb()

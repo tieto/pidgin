@@ -29,8 +29,8 @@
 static int check;
 static time_t mtime;
 
-static void init_file();
-static gboolean check_file();
+static void init_file(void);
+static gboolean check_file(void);
 
 /* parse char * as if were word array */
 char *getarg(char *, int, int);

@@ -1737,7 +1737,7 @@ static GtkWidget *bad_entry;
 static GtkWidget *good_entry;
 static GtkWidget *complete_toggle;
 
-static void save_list();
+static void save_list(void);
 
 static void on_edited(GtkCellRendererText *cellrenderertext,
 					  gchar *path, gchar *arg2, gpointer data)
