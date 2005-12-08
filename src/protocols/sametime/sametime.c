@@ -3255,7 +3255,7 @@ static gboolean user_supports(struct mwServiceAware *srvc,
 }
 
 
-char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
+static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
     char *feat[] = {NULL, NULL, NULL, NULL, NULL};
     char **f = feat;
 
@@ -3738,18 +3738,17 @@ static void mw_prpl_close(GaimConnection *gc) {
 
 /** generates a random-ish content id string */
 static char *im_mime_content_id() {
-  const char *c = "%03x@%05xmeanwhile";
-  srand(time(0) ^ rand());
-  return g_strdup_printf(c, rand() & 0xfff, rand() & 0xfffff);
+  srand(time(NULL));
+  return g_strdup_printf("%03x@%05xmeanwhile", rand() & 0xfff, rand() & 0xfffff);
 }
 
 
 /** generates a multipart/related content type with a random-ish
     boundary value */
 static char *im_mime_content_type() {
-  const char *c = "multipart/related; boundary=related_MW%03x_%04x";
-  srand(time(0) ^ rand());
-  return g_strdup_printf(c, rand() & 0xfff, rand() & 0xffff);
+  srand(time(NULL));
+  return g_strdup_printf("multipart/related; boundary=related_MW%03x_%04x",
+                         rand() & 0xfff, rand() & 0xffff);
 }
 
 
