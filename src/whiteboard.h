@@ -91,11 +91,19 @@ extern "C" {
 /*@{*/
 
 /**
- * Sets the UI Operations
+ * Sets the UI operations
  *
- * @param ops The UI Operations to set
+ * @param ops The UI operations to set
  */
 void gaim_whiteboard_set_ui_ops(GaimWhiteboardUiOps *ops);
+
+/**
+ * Sets the prpl operations for a whiteboard
+ *
+ * @param wb  The whiteboard for which to set the prpl operations
+ * @param ops The prpl operations to set
+ */
+void gaim_whiteboard_set_prpl_ops(GaimWhiteboard *wb, GaimWhiteboardPrplOps *ops);
 
 /**
  * Creates a whiteboard
