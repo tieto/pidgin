@@ -815,7 +815,7 @@ void gaim_accounts_delete(GaimAccount *account);
  * @param account   The account to reorder.
  * @param new_index The new index for the account.
  */
-void gaim_accounts_reorder(GaimAccount *account, size_t new_index);
+void gaim_accounts_reorder(GaimAccount *account, gint new_index);
 
 /**
  * Returns a list of all accounts.

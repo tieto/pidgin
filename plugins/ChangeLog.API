@@ -68,6 +68,7 @@ version 2.0.0:
 	                             the added user, that's left up to the prpls.
 	                             See the documentation for this function and
 	                             gaim_account_request_add.
+	* gaim_accounts_reorder: new_index is now a gint instead of a size_t
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

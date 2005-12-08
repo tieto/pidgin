@@ -2146,13 +2146,13 @@ gaim_accounts_delete(GaimAccount *account)
 }
 
 void
-gaim_accounts_reorder(GaimAccount *account, size_t new_index)
+gaim_accounts_reorder(GaimAccount *account, gint new_index)
 {
-	size_t index;
+	gint index;
 	GList *l;
 
 	g_return_if_fail(account != NULL);
-	g_return_if_fail(new_index >= 0 && new_index <= g_list_length(accounts));
+	g_return_if_fail(new_index <= g_list_length(accounts));
 
 	index = g_list_index(accounts, account);
 

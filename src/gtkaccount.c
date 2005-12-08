@@ -1987,7 +1987,7 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint info, guint t, AccountsWindow *dialog)
 {
 	if (sd->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE) && sd->data) {
-		size_t dest_index;
+		gint dest_index;
 		GaimAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
