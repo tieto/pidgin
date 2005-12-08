@@ -39,16 +39,15 @@
 #include "version.h"
 
 #include "yahoo.h"
-#include "yahoo_packet.h"
-#include "yahoo_friend.h"
 #include "yahoochat.h"
-#include "ycht.h"
 #include "yahoo_auth.h"
-#include "yahoo_filexfer.h"
-#include "yahoo_picture.h"
+#include "yahoo_crypt.h"
 #include "yahoo_doodle.h"
-
-extern char *yahoo_crypt(const char *, const char *);
+#include "yahoo_filexfer.h"
+#include "yahoo_friend.h"
+#include "yahoo_packet.h"
+#include "yahoo_picture.h"
+#include "ycht.h"
 
 /* #define YAHOO_DEBUG */
 
@@ -3060,7 +3059,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	return ret;
 }
 
-int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
+static int yahoo_send_typing(GaimConnection *gc, const char *who, int typ)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
