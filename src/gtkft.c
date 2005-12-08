@@ -199,8 +199,7 @@ update_detailed_info(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 							 (unsigned long)gaim_xfer_get_bytes_sent(xfer),
 							 (unsigned long)gaim_xfer_get_size(xfer));
 
-	if (gaim_xfer_get_size(xfer) >= 0 &&
-		gaim_xfer_is_completed(xfer)) {
+	if (gaim_xfer_is_completed(xfer)) {
 
 		GdkPixbuf *pixbuf = NULL;
 
