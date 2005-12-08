@@ -27,7 +27,7 @@
 #include <tk.h>
 #endif
 
-typedef Tcl_Interp* (CALLBACK* LPFNTCLCREATEINTERP)();
+typedef Tcl_Interp* (CALLBACK* LPFNTCLCREATEINTERP)(void);
 typedef void        (CALLBACK* LPFNTKINIT)(Tcl_Interp*);
 
 LPFNTCLCREATEINTERP wtcl_CreateInterp = NULL;
