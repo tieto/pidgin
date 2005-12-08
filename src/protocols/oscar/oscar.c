@@ -5124,10 +5124,9 @@ static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
 			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
 			g_free(charset);
+			gaim_status_set_attr_string(status, "message", message);
+			g_free(message);
 		}
-
-		gaim_status_set_attr_string(status, "message", message);
-		g_free(message);
 
 		gaim_blist_update_buddy_status(b, status);
 	}
