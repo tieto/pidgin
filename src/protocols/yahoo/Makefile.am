@@ -11,6 +11,7 @@ YAHOOSOURCES = \
 	yahoochat.c \
 	yahoo_auth.c \
 	yahoo_auth.h \
+	yahoo_crypt.h \
 	yahoo_crypt.c \
 	yahoo_doodle.h \
 	yahoo_doodle.c \
