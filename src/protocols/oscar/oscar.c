@@ -5117,7 +5117,7 @@ static int gaim_got_infoblock(aim_session_t *sess, aim_frame_t *fr, ...)
 	presence = gaim_buddy_get_presence(b);
 	status = gaim_presence_get_active_status(presence);
 
-	if (!gaim_status_is_available(status))
+	if (!gaim_status_is_available(status) && gaim_status_is_online(status))
 	{
 		if ((userinfo != NULL) && (userinfo->flags & AIM_FLAG_AWAY) &&
 			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
