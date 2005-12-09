@@ -71,13 +71,13 @@ EXTRA_DIST = \
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
-gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png info.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png stock_connect_16.png stock_disconnect_16.png text_bigger.png text_normal.png text_smaller.png send-im.png
+gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png info.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png
 
 gaimdialogpixdir = $(datadir)/pixmaps/gaim/dialogs
 gaimdialogpix_DATA = gaim_error.png gaim_info.png gaim_question.png gaim_warning.png gaim_cool.png gaim_auth.png
 
 gaimiconpixdir = $(datadir)/pixmaps/gaim/icons
-gaimiconpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png
+gaimiconpix_DATA = away.png connect.png msgpend.png offline.png online.png msgunread.png stock_connect_16.png stock_disconnect_16.png
 
 gaimdistpixdir = $(datadir)/pixmaps/gaim
 gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png status-online.png status-offline.png status-away.png status-invisible.png status-typing0.png status-typing1.png status-typing2.png status-typing3.png status-connect0.png status-connect1.png status-connect2.png status-connect3.png phone.png
