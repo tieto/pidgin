@@ -2955,7 +2955,8 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			g_free(tmp);
 		}
 #else
-		g_strdelimit(tmp, "\n", ' ');
+		if(tmp)
+			g_strdelimit(tmp, "\n", ' ');
 		statustext = tmp;
 #endif
 	}
