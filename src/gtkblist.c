@@ -5606,17 +5606,21 @@ sortmethod_act(GtkCheckMenuItem *checkmenuitem, char *id)
 {
 	if (gtk_check_menu_item_get_active(checkmenuitem))
 	{
-		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+		if (gtkblist->window->window != NULL)
+		{
+			GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+			gdk_window_set_cursor(gtkblist->window->window, cursor);
+			gdk_cursor_unref(cursor);
+		}
 
-		gdk_window_set_cursor(gtkblist->window->window, cursor);
-		gdk_cursor_unref(cursor);
 		while (gtk_events_pending())
 			gtk_main_iteration();
 
 		gaim_gtk_blist_sort_method_set(id);
 		gaim_prefs_set_string("/gaim/gtk/blist/sort_type", id);
 
-		gdk_window_set_cursor(gtkblist->window->window, NULL);
+		if (gtkblist->window->window != NULL)
+			gdk_window_set_cursor(gtkblist->window->window, NULL);
 	}
 }
 
