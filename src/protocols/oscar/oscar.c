@@ -7590,11 +7590,18 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 		status = gaim_presence_get_active_status(presence);
 		message = gaim_status_get_attr_string(status, "message");
 
-		if (message != NULL) {
-			if (gaim_status_type_get_primitive(gaim_status_get_type(status)) == GAIM_STATUS_AVAILABLE) {
+		if (gaim_status_is_available(status))
+		{
+			if (message != NULL)
+			{
 				/* Available status messages are plain text */
 				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Available Message"), message);
-			} else {
+			}
+		}
+		else
+		{
+			if (message != NULL)
+			{
 				/* Away messages are HTML */
 				gchar *tmp1, *tmp2;
 				tmp2 = gaim_markup_strip_html(message);
@@ -7604,6 +7611,10 @@ static char *oscar_tooltip_text(GaimBuddy *b) {
 				g_free(tmp1);
 				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), tmp2);
 				g_free(tmp2);
+			}
+			else
+			{
+				g_string_append_printf(str, "\n<b>%s:</b> %s", _("Away Message"), _("(pending)"));
 			}
 		}
 	}
