@@ -45,7 +45,7 @@
 #include "bonjour.h"
 #include "buddy.h"
 
-gint
+static gint
 _connect_to_buddy(GaimBuddy *gb)
 {
 	gint socket_fd;
@@ -69,7 +69,8 @@ _connect_to_buddy(GaimBuddy *gb)
 	return socket_fd;
 }
 
-const char *
+#if 0 /* this isn't used anywhere... */
+static const char *
 _font_size_gaim_to_ichat(int size)
 {
 	switch (size) {
@@ -91,8 +92,9 @@ _font_size_gaim_to_ichat(int size)
 
 	return "12";
 }
+#endif
 
-const char *
+static const char *
 _font_size_ichat_to_gaim(int size)
 {
 	if (size > 24) {
@@ -111,7 +113,7 @@ _font_size_ichat_to_gaim(int size)
 
 	return "1";
 }
-void
+static void
 _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection, GaimBuddy *gb)
 {
 	xmlnode *body_node = NULL;
@@ -216,7 +218,7 @@ _jabber_parse_and_write_message_to_ui(char *message, GaimConnection *connection,
 	g_free(html_body);
 }
 
-gboolean
+static gboolean
 _check_buddy_by_address(gpointer key, gpointer value, gpointer address)
 {
 	GaimBuddy *gb = (GaimBuddy*)value;
@@ -234,7 +236,7 @@ _check_buddy_by_address(gpointer key, gpointer value, gpointer address)
 	}
 }
 
-gint
+static gint
 _read_data(gint socket, char **message)
 {
 	GString *data = g_string_new("");
@@ -265,7 +267,7 @@ _read_data(gint socket, char **message)
 	return total_message_length;
 }
 
-gint
+static gint
 _send_data(gint socket, char *message)
 {
 	gint message_len = strlen(message);
@@ -285,7 +287,7 @@ _send_data(gint socket, char *message)
 	return strlen(message);
 }
 
-void
+static void
 _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 {
 	char *message = NULL;
@@ -360,7 +362,7 @@ _client_socket_handler(gpointer data, gint socket, GaimInputCondition condition)
 	}
 }
 
-void
+static void
 _server_socket_handler(gpointer data, int server_socket, GaimInputCondition condition)
 {
 	GaimBuddy *gb = NULL;

@@ -84,7 +84,7 @@ bonjour_removeallfromlocal(GaimConnection *gc)
 	}
 }
 
-void
+static void
 bonjour_login(GaimAccount *account)
 {
 	GaimConnection *gc = gaim_account_get_connection(account);
@@ -151,7 +151,7 @@ bonjour_login(GaimAccount *account)
 	gaim_connection_set_state(gc, GAIM_CONNECTED);
 }
 
-void
+static void
 bonjour_close(GaimConnection *connection)
 {
 	GaimGroup *bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
@@ -179,13 +179,13 @@ bonjour_close(GaimConnection *connection)
 
 }
 
-const char *
+static const char *
 bonjour_list_icon(GaimAccount *account, GaimBuddy *buddy)
 {
 	return BONJOUR_ICON_NAME;
 }
 
-int
+static int
 bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, GaimMessageFlags flags)
 {
 	if(!to || !msg)
@@ -194,7 +194,7 @@ bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, Gai
 	return bonjour_jabber_send_message(((BonjourData*)(connection->proto_data))->jabber_data, to, msg);
 }
 
-void
+static void
 bonjour_set_status(GaimAccount *account, GaimStatus *status)
 {
 	GaimConnection *gc;
