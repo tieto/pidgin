@@ -1,6 +1,7 @@
 #include <string.h>
 #include "blist.h"
 #include "mono-helper.h"
+#include "mono-glue.h"
 
 MonoObject* gaim_blist_get_handle_glue(void)
 {

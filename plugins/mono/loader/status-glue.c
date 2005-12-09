@@ -1,5 +1,6 @@
 #include "status.h"
 #include "mono-helper.h"
+#include "mono-glue.h"
 
 MonoObject* gaim_status_build_status_object(void* data)
 {
