@@ -708,6 +708,18 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 #endif
 }
 
+/* This function is required to toggle the usability of the password entry
+ * box - it is set as a callback for the "Save Password" checkbox */
+void toggle_password_visibility(GtkWidget *button, gpointer pwd_entry)
+{
+  if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button))) {
+    gtk_widget_set_sensitive(pwd_entry, TRUE);
+  } else {
+    gtk_widget_set_sensitive(pwd_entry, FALSE);
+  }
+  gtk_widget_show(pwd_entry);
+}
+
 static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
@@ -818,6 +830,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
 	gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), GAIM_INVISIBLE_CHAR);
+  gtk_widget_set_sensitive(dialog->password_entry, FALSE);
 	dialog->password_box = add_pref_box(dialog, vbox, _("Password:"),
 										  dialog->password_entry);
 
@@ -830,6 +843,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_check_button_new_with_label(_("Remember password"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
 								 FALSE);
+  g_signal_connect(G_OBJECT(dialog->remember_pass_check), "toggled",
+                 G_CALLBACK(toggle_password_visibility),
+                 (gpointer)dialog->password_entry);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
 					   FALSE, FALSE, 0);
 	gtk_widget_show(dialog->remember_pass_check);
