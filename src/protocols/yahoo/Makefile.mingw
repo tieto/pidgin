@@ -49,12 +49,8 @@ include $(GAIM_TOP)/src/win32/global.mak
 
 INCLUDE_PATHS +=	-I$(YAHOO_ROOT) \
 			-I$(GTK_TOP)/include \
-			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/glib-2.0 \
-			-I$(GTK_TOP)/include/pango-1.0 \
-			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
 			-I$(GAIM_TOP)
@@ -69,7 +65,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 
 C_SRC =			util.c \
-			yahoo.c
+			yahoo.c \
 			yahoochat.c \
 			yahoo_auth.c \
 			yahoo_crypt.c \
@@ -79,7 +75,7 @@ C_SRC =			util.c \
 			yahoo_packet.c \
 			yahoo_picture.c \
 			yahoo_profile.c \
-			ycht.c \
+			ycht.c
 
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -89,10 +85,8 @@ OBJECTS = $(C_SRC:%.c=%.o)
 ## LIBRARIES
 ##
 
-LIBS =			-lgtk-win32-2.0 \
+LIBS =			\
 			-lglib-2.0 \
-			-lgdk-win32-2.0 \
-			-lgmodule-2.0 \
 			-lgobject-2.0 \
 			-lws2_32 \
 			-lintl \
