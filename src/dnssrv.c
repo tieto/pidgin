@@ -225,7 +225,7 @@ static gboolean res_main_thread_cb(gpointer data) {
 }
 
 static gpointer res_thread(gpointer data) {
-	DNS_RECORD *dr = NULL;
+	PDNS_RECORD *dr = NULL;
 	GSList *lst = NULL;
 	struct srv_response *srvres;
 	DNS_SRV_DATA *srv_data;
@@ -233,11 +233,11 @@ static gpointer res_thread(gpointer data) {
 	DNS_STATUS ds;
 	struct resdata *rdata = data;
 
-	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
+	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. Error = %d\n", (int) ds);
 	} else {
-		DNS_RECORD *dr_tmp = dr;
+		DNS_RECORD *dr_tmp = *dr;
 		while (dr_tmp != NULL) {
 			/* Discard any incorrect entries. I'm not sure if this is necessary */
 			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, rdata->query) != 0) {
@@ -258,7 +258,7 @@ static gpointer res_thread(gpointer data) {
 			dr_tmp = dr_tmp->pNext;
 		}
 
-		MyDnsRecordListFree(dr, DnsFreeRecordList);
+		MyDnsRecordListFree(*dr, DnsFreeRecordList);
 		rdata->results = lst;
 	}
 
