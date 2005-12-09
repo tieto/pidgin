@@ -1436,12 +1436,20 @@ static int incomingim_ch1_parsemsgs(aim_session_t *sess, aim_userinfo_t *userinf
 			args->charsubset = sec->charsubset;
 
 			/* Set up the simple flags */
-			if (args->charsubset == 0x0000)
-				; /* standard subencoding? */
-			else if (args->charsubset == 0x000b)
-				args->icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
-			else if (args->charsubset == 0xffff)
-				; /* no subencoding */
+			switch (args->charsubset)
+			{
+				case 0x0000:
+					/* standard subencoding? */
+					break;
+				case 0x000b:
+					args->icbmflags |= AIM_IMFLAGS_SUBENC_MACINTOSH;
+					break;
+				case 0xffff:
+					/* no subencoding */
+					break;
+				default:
+					break;
+			}
 
 			args->msg = sec->data;
 			args->msglen = sec->datalen;
@@ -1934,6 +1942,7 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	if (aim_tlv_gettlv(list2, 0x000e, 1))
 		args.language = aim_tlv_getstr(list2, 0x000e, 1);
 
+#if 0
 	/*
 	 * Unknown -- no value
 	 *
@@ -1942,8 +1951,10 @@ static int incomingim_ch2(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 	 */
 	 /* I don't think this indicates a direct transfer; this flag is
 	  * also present in a stage 1 proxied file send request -- Jonathan */
-	if (aim_tlv_gettlv(list2, 0x000f, 1))
-		;
+	if (aim_tlv_gettlv(list2, 0x000f, 1)) {
+		/* Unhandled */
+	}
+#endif
 
 	/*
 	 * Flag meaning we should proxy the file transfer through an AIM server

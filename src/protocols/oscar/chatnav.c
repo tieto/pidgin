@@ -120,26 +120,31 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		exchanges[curexchange-1].number = aimbs_get16(&tbs);
 		innerlist = aim_tlvlist_read(&tbs);
 
+#if 0
 		/*
 		 * Type 0x000a: Unknown.
 		 *
 		 * Usually three bytes: 0x0114 (exchange 1) or 0x010f (others).
 		 *
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x000a, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x000a, 1)) {
+			/* Unhandled */
+		}
 
 		/*
 		 * Type 0x000d: Unknown.
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x000d, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x000d, 1)) {
+			/* Unhandled */
+		}
 
 		/*
 		 * Type 0x0004: Unknown
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x0004, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x0004, 1)) {
+			/* Unhandled */
+		}
+#endif
 
 		/*
 		 * Type 0x0002: Unknown
@@ -164,29 +169,35 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		if (aim_tlv_gettlv(innerlist, 0x00c9, 1))
 			exchanges[curexchange-1].flags = aim_tlv_get16(innerlist, 0x00c9, 1);
 
+#if 0
 		/*
 		 * Type 0x00ca: Creation Date
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00ca, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00ca, 1)) {
+			/* Unhandled */
+		}
 
 		/*
 		 * Type 0x00d0: Mandatory Channels?
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d0, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00d0, 1)) {
+			/* Unhandled */
+		}
 
 		/*
 		 * Type 0x00d1: Maximum Message length
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d1, 1))
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00d1, 1)) {
+			/* Unhandled */
+		}
 
 		/*
 		 * Type 0x00d2: Maximum Occupancy?
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d2, 1))	
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00d2, 1)) {	
+			/* Unhandled */
+		}
+#endif
 
 		/*
 		 * Type 0x00d3: Exchange Description
@@ -196,11 +207,14 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 		else
 			exchanges[curexchange-1].name = NULL;
 
+#if 0
 		/*
 		 * Type 0x00d4: Exchange Description URL
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00d4, 1))	
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00d4, 1)) {
+			/* Unhandled */
+		}
+#endif
 
 		/*
 		 * Type 0x00d5: Creation Permissions
@@ -247,12 +261,15 @@ static int parseinfo_perms(aim_session_t *sess, aim_module_t *mod, aim_frame_t *
 			exchanges[curexchange-1].lang2 = aim_tlv_getstr(innerlist, 0x00d9, 1);
 		else
 			exchanges[curexchange-1].lang2 = NULL;
-		      
+
+#if 0
 		/*
 		 * Type 0x00da: Unknown
 		 */
-		if (aim_tlv_gettlv(innerlist, 0x00da, 1))	
-			;
+		if (aim_tlv_gettlv(innerlist, 0x00da, 1)) {
+			/* Unhandled */
+		}
+#endif
 
 		aim_tlvlist_free(&innerlist);
 	}

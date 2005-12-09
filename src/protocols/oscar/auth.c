@@ -387,8 +387,12 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 		info->latestbeta.info = aim_tlv_getstr(tlvlist, 0x0042, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0043, 1))
 		info->latestbeta.name = aim_tlv_getstr(tlvlist, 0x0043, 1);
-	if (aim_tlv_gettlv(tlvlist, 0x0048, 1))
-		; /* beta serial */
+
+#if 0
+	if (aim_tlv_gettlv(tlvlist, 0x0048, 1)) {
+		/* beta serial */
+	}
+#endif
 
 	if (aim_tlv_gettlv(tlvlist, 0x0044, 1))
 		info->latestrelease.build = aim_tlv_get32(tlvlist, 0x0044, 1);
@@ -398,8 +402,12 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 		info->latestrelease.info = aim_tlv_getstr(tlvlist, 0x0046, 1);
 	if (aim_tlv_gettlv(tlvlist, 0x0047, 1))
 		info->latestrelease.name = aim_tlv_getstr(tlvlist, 0x0047, 1);
-	if (aim_tlv_gettlv(tlvlist, 0x0049, 1))
-		; /* lastest release serial */
+
+#if 0
+	if (aim_tlv_gettlv(tlvlist, 0x0049, 1)) {
+		/* lastest release serial */
+	}
+#endif
 
 	/*
 	 * URL to change password.
@@ -407,11 +415,14 @@ static int parse(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, aim_mo
 	if (aim_tlv_gettlv(tlvlist, 0x0054, 1))
 		info->chpassurl = aim_tlv_getstr(tlvlist, 0x0054, 1);
 
+#if 0
 	/*
 	 * Unknown.  Seen on an @mac.com screen name with value of 0x003f
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x0055, 1))
-		;
+	if (aim_tlv_gettlv(tlvlist, 0x0055, 1)) {
+		/* Unhandled */
+	}
+#endif
 
 	sess->authinfo = info;
 

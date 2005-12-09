@@ -214,11 +214,14 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	if (aim_tlv_gettlv(tlvlist, 0x00d3, 1))
 		roomdesc = aim_tlv_getstr(tlvlist, 0x00d3, 1);
 
+#if 0
 	/*
 	 * Type 0x000d4: Unknown (flag only)
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d4, 1))
-		;
+	if (aim_tlv_gettlv(tlvlist, 0x000d4, 1)) {
+		/* Unhandled */
+	}
+#endif
 
 	/* 
 	 * Type 0x00d5: Unknown. (1 byte)
@@ -226,30 +229,35 @@ static int infoupdate(aim_session_t *sess, aim_module_t *mod, aim_frame_t *rx, a
 	if (aim_tlv_gettlv(tlvlist, 0x00d5, 1))
 		unknown_d5 = aim_tlv_get8(tlvlist, 0x00d5, 1);
 
-
+#if 0
 	/*
 	 * Type 0x00d6: Encoding 1 ("us-ascii")
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d6, 1))
-		;
-	
+	if (aim_tlv_gettlv(tlvlist, 0x000d6, 1)) {
+		/* Unhandled */
+	}
+
 	/*
 	 * Type 0x00d7: Language 1 ("en")
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d7, 1))
-		;
+	if (aim_tlv_gettlv(tlvlist, 0x000d7, 1)) {
+		/* Unhandled */
+	}
 
 	/*
 	 * Type 0x00d8: Encoding 2 ("us-ascii")
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d8, 1))
-		;
+	if (aim_tlv_gettlv(tlvlist, 0x000d8, 1)) {
+		/* Unhandled */
+	}
 	
 	/*
 	 * Type 0x00d9: Language 2 ("en")
 	 */
-	if (aim_tlv_gettlv(tlvlist, 0x000d9, 1))
-		;
+	if (aim_tlv_gettlv(tlvlist, 0x000d9, 1)) {
+		/* Unhandled */
+	}
+#endif
 
 	/*
 	 * Type 0x00da: Maximum visible message length
@@ -491,12 +499,15 @@ static int incomingim_ch3(aim_session_t *sess, aim_module_t *mod, aim_frame_t *r
 		aim_info_extract(sess, &tbs, &userinfo);
 	}
 
+#if 0
 	/*
 	 * Type 0x0001: If present, it means it was a message to the 
 	 * room (as opposed to a whisper).
 	 */
-	if (aim_tlv_gettlv(otl, 0x0001, 1))
-		;
+	if (aim_tlv_gettlv(otl, 0x0001, 1)) {
+		/* Unhandled */
+	}
+#endif
 
 	/*
 	 * Type 0x0005: Message Block.  Conains more TLVs.
