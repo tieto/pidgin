@@ -787,12 +787,6 @@ static void oscar_string_append_info(GaimConnection *gc, GString *str, const cha
 		g_free(tmp);
 	}
 
-	if ((userinfo != NULL) && (userinfo->capabilities != 0)) {
-		tmp = oscar_caps_to_string(userinfo->capabilities);
-		oscar_string_append(str, newline, _("Capabilities"), tmp);
-		g_free(tmp);
-	}
-
 	if ((b != NULL) && (b->name != NULL) && (g != NULL) && (g->name != NULL)) {
 		tmp = aim_ssi_getcomment(od->sess->ssi.local, g->name, b->name);
 		if (tmp != NULL) {
@@ -5051,6 +5045,12 @@ static int gaim_parse_userinfo(aim_session_t *sess, aim_frame_t *fr, ...) {
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
 		time_t t = userinfo->membersince - od->timeoffset;
 		oscar_string_append(str, "\n<br>", _("Member Since"), ctime(&t));
+	}
+
+	if (userinfo->capabilities != 0) {
+		tmp = oscar_caps_to_string(userinfo->capabilities);
+		oscar_string_append(str, "\n<br>", _("Capabilities"), tmp);
+		g_free(tmp);
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_IDLE) {
