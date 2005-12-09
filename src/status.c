@@ -962,19 +962,8 @@ gaim_status_is_online(const GaimStatus *status)
 GaimValue *
 gaim_status_get_attr_value(const GaimStatus *status, const char *id)
 {
-	GaimStatusType *status_type;
-	GaimStatusAttr *attr;
-
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
-
-	status_type = gaim_status_get_type(status);
-
-	/* Make sure this attribute exists. */
-	attr = gaim_status_type_get_attr(status_type, id);
-
-	if (attr == NULL)
-		return NULL;
 
 	return (GaimValue *)g_hash_table_lookup(status->attr_values, id);
 }
