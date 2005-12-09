@@ -1025,7 +1025,6 @@ faim_export int aim_rv_proxy_init_send(struct aim_rv_proxy_info *proxy_info);
 
 faim_export int aim_sendfile_listen(aim_session_t *sess, struct aim_oft_info *oft_info, int listenfd);
 faim_export int aim_oft_sendheader(aim_session_t *sess, fu16_t type, struct aim_oft_info *oft_info);
-int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count);
 faim_internal struct aim_rv_proxy_info *aim_rv_proxy_read(aim_session_t *sess, aim_conn_t *conn);
 
 /* 0x0002 - locate.c */

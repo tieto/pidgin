@@ -213,7 +213,7 @@ static int aim_send(int fd, const void *buf, size_t count)
 	return cur;
 }
 
-int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
+faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 {
 	int wrote = 0;
 

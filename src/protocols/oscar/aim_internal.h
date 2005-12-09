@@ -112,6 +112,7 @@ faim_internal void aim_frame_destroy(aim_frame_t *);
 /* txqueue.c */
 faim_internal aim_frame_t *aim_tx_new(aim_session_t *sess, aim_conn_t *conn, fu8_t framing, fu16_t chan, int datalen);
 faim_internal int aim_tx_enqueue(aim_session_t *, aim_frame_t *);
+faim_internal int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count);
 faim_internal int aim_tx_sendframe(aim_session_t *sess, aim_frame_t *cur);
 faim_internal void aim_tx_cleanqueue(aim_session_t *, aim_conn_t *);
 
