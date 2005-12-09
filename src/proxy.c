@@ -1084,7 +1084,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	/* Read the contents */
 	p = g_strrstr(inputline, "Content-Length: ");
-	if(p>0) {
+	if(p != NULL) {
 		gchar *tmp;
 		int len = 0;
 		char tmpc;
