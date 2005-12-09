@@ -42,7 +42,7 @@ faim_internal int aim_bstream_recv(aim_bstream_t *bs, int fd, size_t count)
 {
 	int red = 0;
 
-	if (!bs || (fd < 0) || (count < 0))
+	if (!bs || (fd < 0))
 		return -1;
 
 	if (count > (bs->len - bs->offset))

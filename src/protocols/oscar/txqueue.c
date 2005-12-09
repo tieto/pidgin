@@ -217,7 +217,7 @@ int aim_bstream_send(aim_bstream_t *bs, aim_conn_t *conn, size_t count)
 {
 	int wrote = 0;
 
-	if (!bs || !conn || (count < 0))
+	if (!bs || !conn)
 		return -EINVAL;
 
 	/* Make sure we don't send past the end of the bs */
