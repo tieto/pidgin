@@ -972,7 +972,9 @@ gaim_status_get_attr_value(const GaimStatus *status, const char *id)
 
 	/* Make sure this attribute exists. */
 	attr = gaim_status_type_get_attr(status_type, id);
-	g_return_val_if_fail(attr != NULL, NULL);
+
+	if (attr == NULL)
+		return NULL;
 
 	return (GaimValue *)g_hash_table_lookup(status->attr_values, id);
 }
