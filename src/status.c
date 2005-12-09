@@ -865,7 +865,18 @@ gaim_status_set_attr_string(GaimStatus *status, const char *id,
 
 	/* Make sure this attribute exists and is the correct type. */
 	attr_value = gaim_status_get_attr_value(status, id);
-	g_return_if_fail(attr_value != NULL);
+	/* This used to be g_return_if_fail, but it's failing a LOT, so
+	 * let's generate a log error for now. */
+	/* g_return_if_fail(attr_value != NULL); */
+	if (attr_value == NULL) {
+		gaim_debug_error("status",
+				 "Attempted to set status attribute '%s' for "
+				 "status '%s', which is not legal.  Fix "
+                                 "this!\n", id,
+				 gaim_status_type_get_name(gaim_status_get_type(status)));
+		return;
+				 				 
+	}
 	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_STRING);
 
 	gaim_value_set_string(attr_value, value);
