@@ -337,21 +337,86 @@ AC_CHECK_FUNC(uname)
 
 if test "$enable_debug" = yes ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-	for newflag in "-Werror-implicit-function-declaration" "-Wdeclaration-after-statement"; do
-		orig_CFLAGS="$CFLAGS"
-		CFLAGS="$CFLAGS $newflag"
-		AC_MSG_CHECKING(for $newflag option to gcc)
-		AC_TRY_COMPILE([], [
-						void main() {};
-						], [
-							AC_MSG_RESULT(yes)
-							CFLAGS="$orig_CFLAGS"
-							DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
-						], [
-							AC_MSG_RESULT(no)
-							CFLAGS="$orig_CFLAGS"
-						])
-	done
+
+	if test "x$GCC" = "xyes"; then
+
+		dnl ENABLE WARNINGS SUPPORTED BY THE VERSION OF GCC IN USE
+		dnl
+		dnl Future Possibilities
+		dnl
+		dnl Consider adding -Wbad-function-cast.
+		dnl	This leads to spurious warnings using GPOINTER_TO_INT(), et al. directly on a function call.
+		dnl		We'd need an intermediate variable.
+		dnl
+		dnl Consider adding -Wfloat-equal.
+		dnl	This leads to warnings with Perl.
+		dnl 		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
+		dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
+		dnl
+		dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
+		dnl	This is likely non-trivial.
+		dnl
+		dnl Remove -Wno-missing-field-initializers (from the -Wextra set)
+		dnl	This leads to warnings with: GValue v = {0,}; that must be worked around.
+		dnl		Basically, instead of:
+		dnl			GValue v = {0,};
+		dnl			...
+		dnl			g_value_init(&v, G_TYPE_FOO);
+		dnl		We'd need to do:
+		dnl			GValue v;
+		dnl			...
+		dnl			v.g_type = 0;
+		dnl			g_value_init(&v, G_TYPE_FOO);
+		dnl
+		for newflag in \
+				"-Waggregate-return" \
+				"-Wcast-align" \
+				"-Wdeclaration-after-statement" \
+				"-Werror-implicit-function-declaration" \
+				"-Wextra -Wno-sign-compare -Wno-missing-field-initializers -Wno-unused-parameter" \
+				"-Winit-self" \
+				"-Wmissing-declarations" \
+				"-Wmissing-prototypes" \
+				"-Wnested-externs" \
+				"-Wpointer-arith" \
+				"-Wundef" \
+		; do
+			orig_CFLAGS="$CFLAGS"
+			CFLAGS="$CFLAGS $newflag"
+			AC_MSG_CHECKING(for $newflag option to gcc)
+			AC_TRY_COMPILE([], [
+				int main() {return 0;}
+			], [
+				AC_MSG_RESULT(yes)
+				CFLAGS="$orig_CFLAGS"
+				DEBUG_CFLAGS="$DEBUG_CFLAGS $newflag"
+			], [
+				AC_MSG_RESULT(no)
+				CFLAGS="$orig_CFLAGS"
+			])
+		done
+
+		AC_MSG_CHECKING(for FORTIFY_SOURCE support)
+		AC_TRY_COMPILE([#include <features.h>], [
+			int main() {
+			#if !(__GNUC_PREREQ (4, 1) \
+				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (4, 0)) \
+				|| (defined __GNUC_RH_RELEASE__ && __GNUC_PREREQ (3, 4) \
+					&& __GNUC_MINOR__ == 4 \
+					&& (__GNUC_PATCHLEVEL__ > 2 \
+						|| (__GNUC_PATCHLEVEL__ == 2 && __GNUC_RH_RELEASE__ >= 8))))
+			#error No FORTIFY_SOURCE support
+			#endif
+				return 0;
+			}
+		], [
+			AC_MSG_RESULT(yes)
+			DEBUG_CFLAGS="$DEBUG_CFLAGS -D_FORTIFY_SOURCE=2"
+		], [
+			AC_MSG_RESULT(no)
+		])
+
+	fi
 fi
 
 if test "x$enable_deprecated" = "xno"; then
@@ -359,7 +424,8 @@ if test "x$enable_deprecated" = "xno"; then
 fi
 
 if test "x$GCC" = "xyes"; then
-	CFLAGS="$CFLAGS -Wall -g"
+	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
+	CFLAGS="-g $CFLAGS"
 fi
 AC_SUBST(CFLAGS)
 
