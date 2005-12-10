@@ -91,6 +91,9 @@
 #define socklen_t int
 /* #undef HAVE_TM_GMTOFF */
 
+/* Compile with support for perl */
+#define HAVE_PERL 1
+
 /* Define if you have the Perl_eval_pv function.  */
 /* #undef HAVE_PERL_EVAL_PV */
 
