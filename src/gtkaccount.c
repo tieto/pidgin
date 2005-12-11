@@ -710,7 +710,8 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 /* This function is required to toggle the usability of the password entry
  * box - it is set as a callback for the "Save Password" checkbox */
-void toggle_password_visibility(GtkWidget *button, gpointer pwd_entry)
+static void
+toggle_password_visibility(GtkWidget *button, gpointer pwd_entry)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button))) {
 		gtk_widget_set_sensitive(pwd_entry, TRUE);
