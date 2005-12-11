@@ -225,23 +225,23 @@ static gboolean res_main_thread_cb(gpointer data) {
 }
 
 static gpointer res_thread(gpointer data) {
-	PDNS_RECORD *dr = NULL;
-	GSList *lst = NULL;
-	struct srv_response *srvres;
-	DNS_SRV_DATA *srv_data;
+	PDNS_RECORD dr = NULL;
 	int type = DNS_TYPE_SRV;
 	DNS_STATUS ds;
 	struct resdata *rdata = data;
 
-	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, dr, NULL);
+	ds = MyDnsQuery_UTF8(rdata->query, type, DNS_QUERY_STANDARD, NULL, &dr, NULL);
 	if (ds != ERROR_SUCCESS) {
 		rdata->errmsg = g_strdup_printf("Couldn't look up SRV record. Error = %d\n", (int) ds);
 	} else {
-		DNS_RECORD *dr_tmp = *dr;
-		while (dr_tmp != NULL) {
+		PDNS_RECORD dr_tmp;
+		GSList *lst = NULL;
+		DNS_SRV_DATA *srv_data;
+		struct srv_response *srvres;
+
+		for (dr_tmp = dr; dr_tmp != NULL; dr_tmp = dr_tmp->pNext) {
 			/* Discard any incorrect entries. I'm not sure if this is necessary */
 			if (dr_tmp->wType != type || strcmp(dr_tmp->pName, rdata->query) != 0) {
-				dr_tmp = dr_tmp->pNext;
 				continue;
 			}
 
@@ -254,11 +254,9 @@ static gpointer res_thread(gpointer data) {
 			srvres->weight = srv_data->wWeight;
 
 			lst = g_slist_insert_sorted(lst, srvres, responsecompare);
-
-			dr_tmp = dr_tmp->pNext;
 		}
 
-		MyDnsRecordListFree(*dr, DnsFreeRecordList);
+		MyDnsRecordListFree(dr, DnsFreeRecordList);
 		rdata->results = lst;
 	}
 
