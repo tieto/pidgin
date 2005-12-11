@@ -2972,12 +2972,12 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			imin = ((t - idle_secs) / 60) % 60;
 
 			if (ihrs)
-				idletime = g_strdup_printf(_("Idle %dh %02dm "), ihrs, imin);
+				idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
 			else
-				idletime = g_strdup_printf(_("Idle %dm "), imin);
+				idletime = g_strdup_printf(_("Idle %dm"), imin);
 		}
 		else
-			idletime = g_strdup(_("Idle "));
+			idletime = g_strdup(_("Idle"));
 	}
 
 	if(!GAIM_BUDDY_IS_ONLINE(b) && !statustext)
