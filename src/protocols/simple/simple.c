@@ -245,8 +245,9 @@ static void simple_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup 
 static GList *simple_status_types(GaimAccount *acc) {
 	GaimStatusType *type;
 	GList *types = NULL;
-	gaim_debug_info("simple","called simple_status_types\n");
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, "offline", _("Offline"), FALSE);
+
+	type = gaim_status_type_new_full(
+		GAIM_STATUS_OFFLINE, "offline", _("Offline"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(
