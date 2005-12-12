@@ -5570,6 +5570,7 @@ gaim_gtk_blist_update_plugin_actions(void)
 	GtkWidget *menuitem, *submenu;
 	GaimPlugin *plugin = NULL;
 	GList *l;
+	GtkAccelGroup *accel_group;
 
 	GtkWidget *pluginmenu = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools"));
 
@@ -5597,8 +5598,11 @@ gaim_gtk_blist_update_plugin_actions(void)
 	g_list_free(plugin_submenus);
 	plugin_submenus = NULL;
 
+	accel_group = gtk_menu_get_accel_group(GTK_MENU(pluginmenu));
+
 	/* Add a submenu for each plugin with custom actions */
 	for (l = gaim_plugins_get_loaded(); l; l = l->next) {
+		char *path;
 
 		plugin = (GaimPlugin *) l->data;
 
@@ -5617,6 +5621,11 @@ gaim_gtk_blist_update_plugin_actions(void)
 		submenu = gtk_menu_new();
 		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 		gtk_widget_show(submenu);
+		
+		gtk_menu_set_accel_group(GTK_MENU(submenu), accel_group);
+		path = g_strdup_printf("%s/Tools/%s", gtkblist->ift->path, plugin->info->name);
+		gtk_menu_set_accel_path(GTK_MENU(submenu), path);
+		g_free(path);
 
 		build_plugin_actions(submenu, plugin);
 	}
