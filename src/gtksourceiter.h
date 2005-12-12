@@ -5,6 +5,11 @@
  *  to list here.  Please refer to the COPYRIGHT file distributed with this
  *  source distribution.
  *
+ *  The following copyright notice applies to this file:
+ *
+ *  Copyright (C) 2000 - 2005 Paolo Maggi 
+ *  Copyright (C) 2002, 2003 Jeroen Zwartepoorte
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU Library General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +24,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
+
 #ifndef _GAIM_GTKSOURCEITER_H_
 #define _GAIM_GTKSOURCEITER_H_
 
@@ -28,9 +34,9 @@ G_BEGIN_DECLS
 
 typedef enum
 {
-	GTK_SOURCE_SEARCH_VISIBLE_ONLY,
-	GTK_SOURCE_SEARCH_TEXT_ONLY,
-	GTK_SOURCE_SEARCH_CASE_INSENSITIVE
+	GTK_SOURCE_SEARCH_VISIBLE_ONLY		 = 1 << 0,
+	GTK_SOURCE_SEARCH_TEXT_ONLY		 = 1 << 1,
+	GTK_SOURCE_SEARCH_CASE_INSENSITIVE	 = 1 << 2
 	/* Possible future plans: SEARCH_REGEXP */
 } GtkSourceSearchFlags;
 
