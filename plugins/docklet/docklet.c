@@ -285,7 +285,6 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 static void 
 docklet_menu() {
 	static GtkWidget *menu = NULL;
-	GtkWidget *entry;
 	GtkWidget *menuitem;
 
 	if (menu) {
@@ -294,10 +293,29 @@ docklet_menu() {
 
 	menu = gtk_menu_new();
 
-	entry = gtk_check_menu_item_new_with_label(_("Show Buddy List"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
-	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+	menuitem = gtk_check_menu_item_new_with_label(_("Show Buddy List"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+	menuitem = gtk_menu_item_new_with_label(_("Unread Messages"));
+
+	if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
+		GtkWidget *submenu = gtk_menu_new();
+		GList *l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, FALSE, 0);
+		if (l == NULL) {
+			gtk_widget_set_sensitive(menuitem, FALSE);
+			gaim_debug_warning("docklet",
+				"status indicates messages pending, but no conversations with unseen messages were found.");
+		} else {
+			gaim_gtk_conversations_fill_menu(submenu, l);
+			g_list_free(l);
+			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+		}
+	} else {
+		gtk_widget_set_sensitive(menuitem, FALSE);
+	}
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gaim_separator(menu);
 
@@ -318,12 +336,12 @@ docklet_menu() {
 
 	gaim_new_item_from_stock(menu, _("File Transfers"), GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(gaim_show_xfer_dialog), NULL, 0, 0, NULL);
 
-	entry = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(entry), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
+	menuitem = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
 	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
-		gtk_widget_set_sensitive(GTK_WIDGET(entry), FALSE);
-	g_signal_connect(G_OBJECT(entry), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), entry);
+		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
+	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	gaim_separator(menu);
 
