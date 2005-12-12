@@ -5547,6 +5547,8 @@ gaim_gtk_blist_update_accounts_menu(void)
 				if (pixbuf) {
 					scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16,
 							GDK_INTERP_BILINEAR);
+					if (gaim_account_is_disconnected(account))
+						gdk_pixbuf_saturate_and_pixelate(scale, scale, 0.00, FALSE);
 					image = gtk_image_new_from_pixbuf(scale);
 					g_object_unref(G_OBJECT(pixbuf));
 					g_object_unref(G_OBJECT(scale));
