@@ -1434,7 +1434,7 @@ static GList *ggp_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, "available",
-			_("Online"), TRUE, TRUE, FALSE, "message", _("Message"),
+			_("Available"), TRUE, TRUE, FALSE, "message", _("Message"),
 			gaim_value_new(GAIM_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 

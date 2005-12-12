@@ -2250,7 +2250,7 @@ static GList *zephyr_status_types(GaimAccount *account)
 	   Away won't change their exposure but will set an auto away message (for IMs only)
 	*/
 	
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available", _("Online"), FALSE);
+	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, "available", _("Available"), FALSE);
 	types = g_list_append(types,type);
 
 	type = gaim_status_type_new(GAIM_STATUS_HIDDEN, "hidden", _("Hidden"), FALSE);

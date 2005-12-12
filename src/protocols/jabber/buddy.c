@@ -1086,7 +1086,7 @@ jabber_buddy_state_get_name(JabberBuddyState state)
 		case JABBER_BUDDY_STATE_UNAVAILABLE:
 			return _("Offline");
 		case JABBER_BUDDY_STATE_ONLINE:
-			return _("Online");
+			return _("Available");
 		case JABBER_BUDDY_STATE_CHAT:
 			return _("Chatty");
 		case JABBER_BUDDY_STATE_AWAY:

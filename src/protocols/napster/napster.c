@@ -581,7 +581,7 @@ static GList *nap_status_types(GaimAccount *account)
 
 	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE,
 									 "available",
-									 _("Online"), TRUE, TRUE, FALSE);
+									 _("Available"), TRUE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	return types;

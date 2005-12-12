@@ -2641,17 +2641,17 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	case YAHOO_STATUS_BUSY:
 		return _("Busy");
 	case YAHOO_STATUS_NOTATHOME:
-		return _("Not At Home");
+		return _("Not at Home");
 	case YAHOO_STATUS_NOTATDESK:
-		return _("Not At Desk");
+		return _("Not at Desk");
 	case YAHOO_STATUS_NOTINOFFICE:
-		return _("Not In Office");
+		return _("Not in Office");
 	case YAHOO_STATUS_ONPHONE:
-		return _("On The Phone");
+		return _("On the Phone");
 	case YAHOO_STATUS_ONVACATION:
 		return _("On Vacation");
 	case YAHOO_STATUS_OUTTOLUNCH:
-		return _("Out To Lunch");
+		return _("Out to Lunch");
 	case YAHOO_STATUS_STEPPEDOUT:
 		return _("Stepped Out");
 	case YAHOO_STATUS_INVISIBLE:
@@ -2661,7 +2661,7 @@ static char *yahoo_get_status_string(enum yahoo_status a)
 	case YAHOO_STATUS_OFFLINE:
 		return _("Offline");
 	default:
-		return _("Online");
+		return _("Available");
 	}
 }
 
