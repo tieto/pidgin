@@ -4551,7 +4551,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 }
 
 static void
-gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *flags, GList *aliases)
+gaim_gtkconv_chat_add_users(GaimConversation *conv, GList *users, GList *flags, GList *aliases, gboolean new_arrivals)
 {
 	GaimConvChat *chat;
 	GaimGtkConversation *gtkconv;

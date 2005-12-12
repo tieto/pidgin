@@ -1522,7 +1522,7 @@ gaim_conv_chat_add_users(GaimConvChat *chat, GList *users, GList *extra_msgs,
 	aliases = g_list_reverse(aliases);
 
 	if (ops != NULL && ops->chat_add_users != NULL)
-		ops->chat_add_users(conv, users, flags, aliases);
+		ops->chat_add_users(conv, users, flags, aliases, new_arrivals);
 
 	g_list_free(aliases);
 }
