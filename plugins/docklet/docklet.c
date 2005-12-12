@@ -48,6 +48,10 @@
 
 #define DOCKLET_PLUGIN_ID "gtk-docklet"
 
+#ifndef DOCKLET_TOOLTIP_LINE_LIMIT
+#define DOCKLET_TOOLTIP_LINE_LIMIT 5
+#endif
+
 /* globals */
 GaimPlugin *handle = NULL;
 static struct docklet_ui_ops *ui_ops = NULL;
@@ -87,27 +91,67 @@ docklet_blink_icon()
 	return ret;
 }
 
+static GList *
+get_pending_list(guint max)
+{
+	const char *im = gaim_prefs_get_string("/plugins/gtk/docklet/blink_im");
+	const char *chat = gaim_prefs_get_string("/plugins/gtk/docklet/blink_chat");
+	GList *l_im = NULL;
+	GList *l_chat = NULL;
+
+	if (im != NULL && strcmp(im, "always") == 0) {
+		l_im = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+													   GAIM_UNSEEN_TEXT,
+													   FALSE, max);
+	} else if (im != NULL && strcmp(im, "hidden") == 0) {
+		l_im = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+													   GAIM_UNSEEN_TEXT,
+													   TRUE, max);
+	}
+
+	if (chat != NULL && strcmp(chat, "always") == 0) {
+		l_chat = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
+													   GAIM_UNSEEN_TEXT,
+													   FALSE, max);
+	} else if (chat != NULL && strcmp(chat, "nick") == 0) {
+		l_chat = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
+													   GAIM_UNSEEN_NICK,
+													   FALSE, max);
+	}
+
+	if (l_im != NULL && l_chat != NULL)
+		return g_list_concat(l_im, l_chat);
+	else if (l_im != NULL)
+		return l_im;
+	else
+		return l_chat;
+}
+
 static gboolean
 docklet_update_status()
 {
-	GList *l;
 	GList *convs;
+	GList *l;
+	int count;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
 	gboolean pending = FALSE;
 
 	/* determine if any ims have unseen messages */
-	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
-												GAIM_UNSEEN_TEXT, FALSE, 1);
+	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
+
 	if (convs != NULL) {
 		pending = TRUE;
 
 		/* set tooltip if messages are pending */
 		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
-			for (l = convs ; l != NULL ; l = l->next) {
+			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
 					GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)l->data);
-					g_string_append_printf(tooltip_text,
+					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
+						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
+					else
+						g_string_append_printf(tooltip_text,
 							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
 							gtkconv->unseen_count,
 							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -230,6 +274,13 @@ docklet_update_status_cb(void *data, ...)
 }
 
 static void
+docklet_prefs_cb(const char *name, GaimPrefType type,
+				 gpointer val, gpointer data)
+{
+	docklet_update_status();
+}
+
+static void
 docklet_conv_updated_cb(GaimConversation *conv, GaimConvUpdateType type)
 {
 	if (type == GAIM_CONV_UPDATE_UNSEEN)
@@ -328,7 +379,7 @@ docklet_menu() {
 
 	if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
 		GtkWidget *submenu = gtk_menu_new();
-		GList *l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, FALSE, 0);
+		GList *l = get_pending_list(0);
 		if (l == NULL) {
 			gtk_widget_set_sensitive(menuitem, FALSE);
 			gaim_debug_warning("docklet",
@@ -396,8 +447,7 @@ docklet_clicked(int button_type)
 	switch (button_type) {
 		case 1:
 			if (status==DOCKLET_STATUS_ONLINE_PENDING || status==DOCKLET_STATUS_AWAY_PENDING) {
-				GList *l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
-																   GAIM_UNSEEN_TEXT, FALSE, 1);
+				GList *l = get_pending_list(1);
 				if (l != NULL) {
 					gaim_gtkconv_present_conversation((GaimConversation *)l->data);
 					g_list_free(l);
@@ -478,6 +528,11 @@ plugin_load(GaimPlugin *plugin)
 	gaim_signal_connect(core_handle, "quitting",
 						plugin, GAIM_CALLBACK(gaim_quit_cb), NULL);
 
+	gaim_prefs_connect_callback(plugin, "/plugins/gtk/docklet/blink_im",
+								docklet_prefs_cb, NULL);
+	gaim_prefs_connect_callback(plugin, "/plugins/gtk/docklet/blink_chat",
+								docklet_prefs_cb, NULL);
+
 	enable_join_chat = online_account_supports_chat();
 
 	return TRUE;
@@ -491,11 +546,51 @@ plugin_unload(GaimPlugin *plugin)
 
 	/* remove callbacks */
 	gaim_signals_disconnect_by_handle(handle);
+	gaim_prefs_disconnect_by_handle(handle);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "plugin unloaded\n");
 
 	return TRUE;
 }
+
+static GtkWidget *
+plugin_config_frame(GaimPlugin *plugin)
+{
+	GtkWidget *frame;
+	GtkWidget *vbox;
+	GtkSizeGroup *sg;
+	GtkWidget *dd;
+
+	frame = gtk_vbox_new(FALSE, 18);
+	gtk_container_set_border_width(GTK_CONTAINER(frame), 12);
+
+	vbox = gaim_gtk_make_frame(frame, _("Blink tray icon for unread..."));
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	dd = gaim_gtk_prefs_dropdown(vbox, _("_Instant Messages:"),
+							GAIM_PREF_STRING, "/plugins/gtk/docklet/blink_im",
+							_("Never"), "never",
+							_("In hidden conversations"), "hidden",
+							_("Always"), "always",
+							NULL);
+	gtk_size_group_add_widget(sg, dd);
+
+	dd = gaim_gtk_prefs_dropdown(vbox, _("C_hat Messages:"),
+							GAIM_PREF_STRING, "/plugins/gtk/docklet/blink_chat",
+							_("Never"), "never",
+							_("When my nick is said"), "nick",
+							_("Always"), "always",
+							NULL);
+	gtk_size_group_add_widget(sg, dd);
+
+	gtk_widget_show_all(frame);
+	return frame;
+}
+
+static GaimGtkPluginUiInfo ui_info =
+{
+	plugin_config_frame
+};
 
 static GaimPluginInfo info =
 {
@@ -526,7 +621,7 @@ static GaimPluginInfo info =
 	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
 
-	NULL,                                             /**< ui_info        */
+	&ui_info,                                         /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,
 	NULL
@@ -535,6 +630,9 @@ static GaimPluginInfo info =
 static void
 plugin_init(GaimPlugin *plugin)
 {
+	gaim_prefs_add_none("/plugins/gtk/docklet");
+	gaim_prefs_add_string("/plugins/gtk/docklet/blink_im", "hidden");
+	gaim_prefs_add_string("/plugins/gtk/docklet/blink_chat", "never");
 }
 
 GAIM_INIT_PLUGIN(docklet, plugin_init, info)
