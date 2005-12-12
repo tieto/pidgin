@@ -112,7 +112,7 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	MsnNexus *nexus;
 	MsnSession *session;
 	char *username, *password;
-	char *request_str;
+	char *request_str, *head, *tail;
 	char *buffer = NULL;
 	guint32 ctint;
 	size_t s;
@@ -133,18 +133,19 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 	ctint = strtoul((char *)g_hash_table_lookup(nexus->challenge_data, "ct"), NULL, 10) + 200;
 
-	request_str = g_strdup_printf(
+	head = g_strdup_printf(
 		"GET %s HTTP/1.1\r\n"
-		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s,pwd=%s,"
+		"Authorization: Passport1.4 OrgVerb=GET,OrgURL=%s,sign-in=%s",
+		nexus->login_path,
+		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
+		username);
+
+	tail = g_strdup_printf(
 		"lc=%s,id=%s,tw=%s,fs=%s,ru=%s,ct=%" G_GUINT32_FORMAT ",kpp=%s,kv=%s,ver=%s,tpf=%s\r\n"
 		"User-Agent: MSMSGS\r\n"
 		"Host: %s\r\n"
 		"Connection: Keep-Alive\r\n"
-		"Cache-Control: no-cache\r\n"
-		"\r\n",
-		nexus->login_path,
-		(char *)g_hash_table_lookup(nexus->challenge_data, "ru"),
-		username, password,
+		"Cache-Control: no-cache\r\n",
 		(char *)g_hash_table_lookup(nexus->challenge_data, "lc"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "id"),
 		(char *)g_hash_table_lookup(nexus->challenge_data, "tw"),
@@ -157,8 +158,14 @@ login_connect_cb(gpointer data, GaimSslConnection *gsc,
 		(char *)g_hash_table_lookup(nexus->challenge_data, "tpf"),
 		nexus->login_host);
 
-	gaim_debug_misc("msn", "Sending: {%s}\n", request_str);
+	buffer = g_strdup_printf("%s,pwd=XXXXXXXX,%s\r\n", head, tail);
+	request_str = g_strdup_printf("%s,pwd=%s,%s\r\n", head, password, tail);
 
+	gaim_debug_misc("msn", "Sending: {%s}\n", buffer);
+
+	g_free(buffer);
+	g_free(head);
+	g_free(tail);
 	g_free(username);
 	g_free(password);
 

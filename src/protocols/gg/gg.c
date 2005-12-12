@@ -653,8 +653,7 @@ static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields 
 		goto exit_err;
 	}
 
-	gaim_debug_info("gg", "change_passwd: old=%s; p1=%s; token=%s\n",
-			cur, p1, info->token->id);
+	gaim_debug_info("gg", "Changing password\n");
 
 	/* XXX: this e-mail should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
