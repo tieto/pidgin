@@ -7819,7 +7819,7 @@ oscar_status_types(GaimAccount *account)
 	/* Oscar-common status types */
 	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 									 OSCAR_STATUS_ID_OFFLINE,
-									 _("Offline"), FALSE, TRUE, FALSE);
+									 _("Offline"), TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
 
 	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
