@@ -284,4 +284,4 @@ static void
 init_plugin(GaimPlugin *plugin) {
 }
 
-GAIM_INIT_PLUGIN(ciper_test, init_plugin, info)
+GAIM_INIT_PLUGIN(cipher_test, init_plugin, info)
