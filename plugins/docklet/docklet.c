@@ -95,8 +95,12 @@ docklet_update_status()
 	gboolean pending = FALSE;
 
 	/* determine if any ims have unseen messages */
-	if(gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT))
+	l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+												GAIM_UNSEEN_TEXT, FALSE, 1);
+	if (l != NULL) {
 		pending = TRUE;
+		g_list_free(l);
+	}
 
 	/* iterate through all accounts and determine which
 	 * status to show in the tray icon based on the following
@@ -118,30 +122,30 @@ docklet_update_status()
 		if (!gaim_account_get_enabled(account, GAIM_GTK_UI))
 			continue;
 
-		if(gaim_account_is_disconnected(account))
+		if (gaim_account_is_disconnected(account))
 			continue;
 
 		account_status = gaim_account_get_active_status(account);
 
-		if(gaim_account_is_connecting(account)) {
+		if (gaim_account_is_connecting(account)) {
 			tmpstatus = DOCKLET_STATUS_CONNECTING;
-		}
-		else if(gaim_status_is_online(account_status)) {
-			if(!gaim_status_is_available(account_status)) {
-				if(pending)
+		} else if (gaim_status_is_online(account_status)) {
+			if (!gaim_status_is_available(account_status)) {
+				if (pending)
 					tmpstatus = DOCKLET_STATUS_AWAY_PENDING;
 				else
 					tmpstatus = DOCKLET_STATUS_AWAY;
 			}
 			else {
-				if(pending)
+				if (pending)
 					tmpstatus = DOCKLET_STATUS_ONLINE_PENDING;
 				else
 					tmpstatus = DOCKLET_STATUS_ONLINE;
 			}
 		}
 
-		if(tmpstatus>newstatus) newstatus=tmpstatus;
+		if (tmpstatus > newstatus)
+			newstatus = tmpstatus;
 	}
 
 	/* update the icon if we changed status */
@@ -170,7 +174,7 @@ online_account_supports_chat()
 
 	while(c!=NULL) {
 		GaimConnection *gc = c->data;
-		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			return TRUE;
 		c = c->next;
 	}
@@ -202,15 +206,15 @@ docklet_update_status_cb(void *data, ...)
 static void
 docklet_conv_updated_cb(GaimConversation *conv, GaimConvUpdateType type)
 {
-	if(type==GAIM_CONV_UPDATE_UNSEEN)
+	if (type == GAIM_CONV_UPDATE_UNSEEN)
 		docklet_update_status();
 }
 
 static void
 docklet_signed_on_cb(GaimConnection *gc)
 {
-	if(!enable_join_chat) {
-		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+	if (!enable_join_chat) {
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			enable_join_chat = TRUE;
 	}
 	docklet_update_status();
@@ -219,8 +223,8 @@ docklet_signed_on_cb(GaimConnection *gc)
 static void
 docklet_signed_off_cb(GaimConnection *gc)
 {
-	if(enable_join_chat) {
-		if(GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info!=NULL)
+	if (enable_join_chat) {
+		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();
@@ -298,7 +302,7 @@ docklet_menu() {
 	gaim_separator(menu);
 
 	menuitem = gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(gaim_gtkdialogs_im), NULL, 0, 0, NULL);
-	if(status == DOCKLET_STATUS_OFFLINE)
+	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	menuitem = gaim_new_item_from_stock(menu, _("Join A Chat..."), GAIM_STOCK_CHAT, G_CALLBACK(gaim_gtk_blist_joinchat_show), NULL, 0, 0, NULL);
@@ -347,12 +351,16 @@ docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if(status==DOCKLET_STATUS_ONLINE_PENDING || status==DOCKLET_STATUS_AWAY_PENDING)
-				gaim_gtkconv_present_conversation(
-						gaim_gtk_conversations_get_first_unseen(
-						GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT));
-			else
+			if (status==DOCKLET_STATUS_ONLINE_PENDING || status==DOCKLET_STATUS_AWAY_PENDING) {
+				GList *l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+																   GAIM_UNSEEN_TEXT, FALSE, 1);
+				if (l != NULL) {
+					gaim_gtkconv_present_conversation((GaimConversation *)l->data);
+					g_list_free(l);
+				}
+			} else {
 				gaim_gtk_blist_toggle_visibility();
+			}
 			break;
 		case 3:
 			docklet_menu();

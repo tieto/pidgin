@@ -200,31 +200,36 @@ void gaim_gtkconv_update_tabs(void);
 void gaim_gtkconv_update_buttons_by_protocol(GaimConversation *conv);
 
 /**
- * Finds the first conversation of the given type which has an unseen
- * state greater than or equal to the specified minimum state.
+ * Returns a list of conversations of the given type which have an unseen
+ * state greater than or equal to the specified minimum state. Using the
+ * hidden_only parameter, this search can be limited to hidden
+ * conversations. The max_count parameter will limit the total number of
+ * converations returned if greater than zero. The returned list should
+ * be freed by the caller.
  *
- * @param type      The type of conversation.
- * @param min_state The minimum unseen state.
- * @return          First conversation matching criteria, or NULL.
+ * @param type         The type of conversation.
+ * @param min_state    The minimum unseen state.
+ * @param hidden_only  If TRUE, only consider hidden conversations.
+ * @param max_count    Maximum number of conversations to return, or 0 for
+ *                     no maximum.
+ * @return             List of GaimConversation matching criteria, or NULL.
  */
-GaimConversation *
-gaim_gtk_conversations_get_first_unseen(GaimConversationType type,
-                                        GaimUnseenState min_state);
+GList *
+gaim_gtk_conversations_find_unseen_list(GaimConversationType type,
+										GaimUnseenState min_state,
+										gboolean hidden_only,
+										guint max_count);
+
 /**
- * Adds an item to a menu for each conversation of the given type
- * with an unseen state greater than or equal to the specified minimum 
- * state. The menu item will present the conversation to the user
- * when activated.
+ * Fill a menu with a list of conversations. Clicking the conversation
+ * menu item will present that conversation to the user.
  *
- * @param menu      Menu widget to add items to.
- * @param type      The type of conversation.
- * @param min_state The minimum unseen state.
- * @return          Number of conversations added to menu.
+ * @param menu   Menu widget to add items to.
+ * @param convs  List of GaimConversation to add to menu.
+ * @return       Number of conversations added to menu.
  */
 guint
-gaim_gtk_conversations_fill_unseen_menu(GtkWidget *menu,
-                                        GaimConversationType type,
-                                        GaimUnseenState min_state);
+gaim_gtk_conversations_fill_menu(GtkWidget *menu, GList *convs);
 
 /**
  * Presents a gaim conversation to the user.

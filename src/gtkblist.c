@@ -3167,16 +3167,21 @@ static void
 unseen_conv_menu()
 {
 	static GtkWidget *menu = NULL;
+	GList *convs = NULL;
 
 	if (menu)
 		gtk_widget_destroy(menu);
 
 	menu = gtk_menu_new();
-	if (!gaim_gtk_conversations_fill_unseen_menu(menu, GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT)) {
+
+	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
+	if (!convs) {
 		/* no conversations added, don't show the menu */
 		gtk_widget_destroy(menu);
 		return;
 	}
+	gaim_gtk_conversations_fill_menu(menu, convs);
+	g_list_free(convs);
 	gtk_widget_show_all(menu);
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, 3,
 			gtk_get_current_event_time());
@@ -3185,13 +3190,16 @@ unseen_conv_menu()
 static gboolean
 menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 {
-	GaimConversation *conv;
+	GList *convs;
 
 	switch (event->button) {
 		case 1:
-			conv = gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT);
-			if (conv != NULL)
-				gaim_gtkconv_present_conversation(conv);
+			convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+															GAIM_UNSEEN_TEXT, TRUE, 1);
+			if (convs) {
+				gaim_gtkconv_present_conversation((GaimConversation*)convs->data);
+				g_list_free(convs);
+			}
 			break;
 		case 3:
 			unseen_conv_menu();
@@ -3204,8 +3212,8 @@ static void
 conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
                         GaimGtkBuddyList *gtkblist)
 {
-	GtkWidget *img = NULL;
-	GString *tooltip_text = NULL;
+	GList *convs = NULL;
+	GList *l = NULL;
 
 	if (type != GAIM_CONV_UPDATE_UNSEEN)
 		return;
@@ -3215,21 +3223,23 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		gtkblist->menutrayicon = NULL;
 	}
 
-	if (gaim_gtk_conversations_get_first_unseen(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT)) {
-		GList *convs = gaim_get_ims();
-		tooltip_text = g_string_new("");
-		while (convs) {
-			if(GAIM_IS_GTK_CONVERSATION(convs->data)) {
-				GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
+	if (convs) {
+		GtkWidget *img = NULL;
+		GString *tooltip_text = NULL;
 
-				if (gtkconv->unseen_state >= GAIM_UNSEEN_TEXT && gaim_gtkconv_is_hidden(gtkconv)) {
-					g_string_append_printf(tooltip_text,
-							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
-							gtkconv->unseen_count,
-							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
-				}
+		tooltip_text = g_string_new("");
+		l = convs;
+		while (l != NULL) {
+			if (GAIM_IS_GTK_CONVERSATION(l->data)) {
+				GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)l->data);
+
+				g_string_append_printf(tooltip_text,
+						ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+						gtkconv->unseen_count,
+						gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
 			}
-			convs = convs->next;
+			l = l->next;
 		}
 		if(tooltip_text->len > 0) {
 			/* get rid of the last newline */
@@ -3245,6 +3255,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 			gaim_gtk_menu_tray_append(GAIM_GTK_MENU_TRAY(gtkblist->menutray), gtkblist->menutrayicon, tooltip_text->str);
 		}
 		g_string_free(tooltip_text, TRUE);
+		g_list_free(convs);
 	}
 }
 
