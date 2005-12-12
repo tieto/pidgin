@@ -3428,6 +3428,21 @@ pane_position_cb(GtkPaned *paned, GParamSpec *param_spec, gpointer data)
 	return FALSE;
 }
 
+static gboolean
+gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, GaimGtkBuddyList *gtkblist)
+{
+	GtkWidget *imhtml;
+
+	if (!gtkblist)
+		return FALSE;
+
+	imhtml = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
+
+	if (GTK_IS_IMHTML(imhtml) && gtk_bindings_activate_event(GTK_OBJECT(imhtml), event))
+		return TRUE;
+	return FALSE;
+}
+
 static void gaim_gtk_blist_show(GaimBuddyList *list)
 {
 	void *handle;
@@ -3466,6 +3481,7 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 	g_signal_connect(G_OBJECT(gtkblist->window), "configure_event", G_CALLBACK(gtk_blist_configure_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "visibility_notify_event", G_CALLBACK(gtk_blist_visibility_cb), NULL);
 	g_signal_connect(G_OBJECT(gtkblist->window), "window_state_event", G_CALLBACK(gtk_blist_window_state_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkblist->window), "key_press_event", G_CALLBACK(gtk_blist_window_key_press_cb), gtkblist);
 	gtk_widget_add_events(gtkblist->window, GDK_VISIBILITY_NOTIFY_MASK);
 
 	/******************************* Menu bar *************************************/
