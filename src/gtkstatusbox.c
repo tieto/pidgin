@@ -41,6 +41,7 @@
 #define TYPING_TIMEOUT 4000
 
 static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
+static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
 static void remove_typing_cb(GtkGaimStatusBox *box);
 
 static void gtk_gaim_status_box_pulse_typing(GtkGaimStatusBox *status_box);
@@ -489,6 +490,7 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, GtkGaimStatusBo
 	gtk_gaim_status_box_pulse_typing(box);
 	g_source_remove(box->typing);
 	box->typing = g_timeout_add(TYPING_TIMEOUT, (GSourceFunc)remove_typing_cb, box);
+
 	return FALSE;
 }
 
@@ -627,6 +629,8 @@ gtk_gaim_status_box_init (GtkGaimStatusBox *status_box)
 	g_signal_connect(G_OBJECT(status_box->toggle_button), "toggled",
 	                 G_CALLBACK(toggled_cb), status_box);
 	g_signal_connect(G_OBJECT(buffer), "changed", G_CALLBACK(imhtml_changed_cb), status_box);
+	g_signal_connect(G_OBJECT(status_box->imhtml), "format_function_toggle",
+			 G_CALLBACK(imhtml_format_changed_cb), status_box);
 	g_signal_connect(G_OBJECT(status_box->imhtml), "key_press_event",
 			 G_CALLBACK(imhtml_remove_focus), status_box);
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
@@ -1097,6 +1101,11 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data)
 		gtk_widget_show(box->toolbar);
 	}
 	gtk_gaim_status_box_refresh(box);
+}
+
+static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data)
+{
+	imhtml_changed_cb(NULL, data);
 }
 
 GtkGaimStatusBoxItemType gtk_gaim_status_box_get_active_type(GtkGaimStatusBox *status_box)
