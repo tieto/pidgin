@@ -115,6 +115,7 @@ install:
 
 plugins: \
 		extplacement.dll \
+		gaimrc.dll \
 		history.dll \
 	 	iconaway.dll \
 		idle.dll \

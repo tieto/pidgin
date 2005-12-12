@@ -697,6 +697,7 @@ Section Uninstall
     RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\docklet.dll"
     Delete "$INSTDIR\plugins\extplacement.dll"
+    Delete "$INSTDIR\plugins\gaimrc.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
