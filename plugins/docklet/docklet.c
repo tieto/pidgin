@@ -91,15 +91,41 @@ static gboolean
 docklet_update_status()
 {
 	GList *l;
+	GList *convs;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
 	gboolean pending = FALSE;
 
 	/* determine if any ims have unseen messages */
-	l = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+	convs = gaim_gtk_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
 												GAIM_UNSEEN_TEXT, FALSE, 1);
-	if (l != NULL) {
+	if (convs != NULL) {
 		pending = TRUE;
-		g_list_free(l);
+
+		/* set tooltip if messages are pending */
+		if (ui_ops->set_tooltip) {
+			GString *tooltip_text = g_string_new("");
+			for (l = convs ; l != NULL ; l = l->next) {
+				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
+					GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)l->data);
+					g_string_append_printf(tooltip_text,
+							ngettext("%d unread message from %s\n", "%d unread messages from %s\n", gtkconv->unseen_count),
+							gtkconv->unseen_count,
+							gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+				}
+			}
+
+			/* get rid of the last newline */
+			if (tooltip_text->len > 0)
+				tooltip_text = g_string_truncate(tooltip_text, tooltip_text->len - 1);
+
+			ui_ops->set_tooltip(tooltip_text->str);
+
+			g_string_free(tooltip_text, TRUE);
+		} else {
+			ui_ops->set_tooltip(NULL);
+		}
+
+		g_list_free(convs);
 	}
 
 	/* iterate through all accounts and determine which

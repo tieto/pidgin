@@ -38,6 +38,7 @@
 /* globals */
 static EggTrayIcon *docklet = NULL;
 static GtkWidget *image = NULL;
+static GtkTooltips *tooltips = NULL;
 static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
 
@@ -157,6 +158,22 @@ docklet_x11_blank_icon()
 	gtk_image_set_from_pixbuf(GTK_IMAGE(image), blank_icon);
 }
 
+static void
+docklet_x11_set_tooltip(gchar *tooltip)
+{
+	if (!tooltips)
+		tooltips = gtk_tooltips_new();
+
+	/* image->parent is a GtkEventBox */
+	if (tooltip) {
+		gtk_tooltips_enable(tooltips);
+		gtk_tooltips_set_tip(tooltips, image->parent, tooltip, NULL);
+	} else {
+		gtk_tooltips_set_tip(tooltips, image->parent, "", NULL);
+		gtk_tooltips_disable(tooltips);
+	}
+}
+
 #if GTK_CHECK_VERSION(2,2,0)
 static void
 docklet_x11_position_menu(GtkMenu *menu, int *x, int *y, gboolean *push_in,
@@ -238,7 +255,7 @@ docklet_x11_create()
 	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 
-	if(!gtk_check_version(2,4,0))
+	if (!gtk_check_version(2,4,0))
 		g_object_set(G_OBJECT(box), "visible-window", FALSE, NULL);
 
 	gtk_widget_show_all(GTK_WIDGET(docklet));
@@ -257,6 +274,7 @@ static struct docklet_ui_ops ui_ops =
 	docklet_x11_destroy,
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
+	docklet_x11_set_tooltip,
 #if GTK_CHECK_VERSION(2,2,0)
 	docklet_x11_position_menu
 #else

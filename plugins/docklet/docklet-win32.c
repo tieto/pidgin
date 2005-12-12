@@ -41,9 +41,6 @@
 /*
  *  DEFINES, MACROS & DATA TYPES
  */
-#define GAIM_SYSTRAY_HINT _("Gaim")
-#define GAIM_SYSTRAY_DISCONN_HINT _("Gaim - Signed off")
-#define GAIM_SYSTRAY_AWAY_HINT _("Gaim - Away")
 #define WM_TRAYMESSAGE WM_USER /* User defined WM Message */
 
 /*
@@ -133,8 +130,6 @@ static HWND systray_create_hiddenwin() {
 }
 
 static void systray_init_icon(HWND hWnd, HICON icon) {
-	char* locenc=NULL;
-
 	ZeroMemory(&wgaim_nid,sizeof(wgaim_nid));
 	wgaim_nid.cbSize=sizeof(NOTIFYICONDATA);
 	wgaim_nid.hWnd=hWnd;
@@ -142,21 +137,13 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 	wgaim_nid.uFlags=NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	wgaim_nid.uCallbackMessage=WM_TRAYMESSAGE;
 	wgaim_nid.hIcon=icon;
-	locenc=g_locale_from_utf8(GAIM_SYSTRAY_DISCONN_HINT, -1, NULL, NULL, NULL);
-	strcpy(wgaim_nid.szTip, locenc);
-	g_free(locenc);
+	lstrcpy(wgaim_nid.szTip, "");
 	Shell_NotifyIcon(NIM_ADD,&wgaim_nid);
 	docklet_embedded();
 }
 
-static void systray_change_icon(HICON icon, char* text) {
-	char *locenc=NULL;
+static void systray_change_icon(HICON icon) {
 	wgaim_nid.hIcon = icon;
-	if (text) {
-		locenc = g_locale_from_utf8(text, -1, NULL, NULL, NULL);
-		lstrcpy(wgaim_nid.szTip, locenc);
-		g_free(locenc);
-	}
 	Shell_NotifyIcon(NIM_MODIFY,&wgaim_nid);
 }
 
@@ -167,27 +154,39 @@ static void systray_remove_nid(void) {
 static void wgaim_tray_update_icon(DockletStatus icon) {
 	switch (icon) {
 		case DOCKLET_STATUS_OFFLINE:
-			systray_change_icon(sysicon_disconn, GAIM_SYSTRAY_DISCONN_HINT);
+			systray_change_icon(sysicon_disconn);
 			break;
 		case DOCKLET_STATUS_CONNECTING:
 			break;
 		case DOCKLET_STATUS_ONLINE:
-			systray_change_icon(sysicon_conn, GAIM_SYSTRAY_HINT);
+			systray_change_icon(sysicon_conn);
 			break;
 		case DOCKLET_STATUS_ONLINE_PENDING:
-			systray_change_icon(sysicon_pend, GAIM_SYSTRAY_HINT);
+			systray_change_icon(sysicon_pend);
 			break;
 		case DOCKLET_STATUS_AWAY:
-			systray_change_icon(sysicon_away, GAIM_SYSTRAY_AWAY_HINT);
+			systray_change_icon(sysicon_away);
 			break;
 		case DOCKLET_STATUS_AWAY_PENDING:
-			systray_change_icon(sysicon_awypend, GAIM_SYSTRAY_AWAY_HINT);
+			systray_change_icon(sysicon_awypend);
 			break;
 	}
 }
 
 static void wgaim_tray_blank_icon() {
-	systray_change_icon(sysicon_blank, NULL);
+	systray_change_icon(sysicon_blank);
+}
+
+static void wgaim_tray_set_tooltip(gchar *tooltip) {
+	if (tooltip) {
+		char *locenc = NULL;
+		locenc = g_locale_from_utf8(tooltip, -1, NULL, NULL, NULL);
+		lstrcpyn(wgaim_nid.szTip, locenc, sizeof(wgaim_nid.szTip)/sizeof(TCHAR));
+		g_free(locenc);
+	} else {
+		lstrcpy(wgaim_nid.szTip, "");
+	}
+	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
 
 void wgaim_tray_minimize(GaimGtkBuddyList *gtkblist) {
@@ -251,6 +250,7 @@ static struct docklet_ui_ops wgaim_tray_ops =
 	wgaim_tray_destroy,
 	wgaim_tray_update_icon,
 	wgaim_tray_blank_icon,
+	wgaim_tray_set_tooltip,
 	NULL
 };
 
