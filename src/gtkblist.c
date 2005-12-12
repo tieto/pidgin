@@ -4811,6 +4811,9 @@ add_group_cb(GaimConnection *gc, const char *group_name)
 {
 	GaimGroup *group;
 
+	if ((group_name == NULL) || (*group_name == '\0'))
+		return;
+
 	group = gaim_group_new(group_name);
 	gaim_blist_add_group(group, NULL);
 }

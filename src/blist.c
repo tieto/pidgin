@@ -1457,8 +1457,12 @@ void gaim_contact_invalidate_priority_buddy(GaimContact *contact)
 GaimGroup *gaim_group_new(const char *name)
 {
 	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
-	GaimGroup *group = gaim_find_group(name);
+	GaimGroup *group;
 
+	g_return_val_if_fail(name  != NULL, NULL);
+	g_return_val_if_fail(*name != '\0', NULL);
+
+	group = gaim_find_group(name);
 	if (group != NULL)
 		return group;
 
