@@ -2426,23 +2426,24 @@ gaim_gtk_conversations_find_unseen_list(GaimConversationType type,
 	GList *r = NULL;
 	guint c = 0;
 
-	if (type==GAIM_CONV_TYPE_IM) {
+	if (type == GAIM_CONV_TYPE_IM) {
 		l = gaim_get_ims();
-	} else if (type==GAIM_CONV_TYPE_CHAT) {
+	} else if (type == GAIM_CONV_TYPE_CHAT) {
 		l = gaim_get_chats();
 	} else {
 		l = gaim_get_conversations();
 	}
 
-	for (; l!=NULL && (max_count==0 || c < max_count); l = l->next) {
+	for (; l != NULL && (max_count == 0 || c < max_count); l = l->next) {
 		GaimConversation *conv = (GaimConversation*)l->data;
 		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
 
 		if(gtkconv->active_conv != conv)
 			continue;
 
-		if (gtkconv->unseen_state >= min_state  && (!hidden_only ||
-				(hidden_only && gtkconv->win==hidden_convwin))) {
+		if (gtkconv->unseen_state >= min_state
+			&& (!hidden_only ||
+				(hidden_only && gtkconv->win == hidden_convwin))) {
 
 			r = g_list_prepend(r, conv);
 			c++;
