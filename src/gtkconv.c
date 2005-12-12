@@ -2914,6 +2914,7 @@ generate_send_to_items(GaimGtkWindow *win)
 	g_object_unref(sg);
 
 	gtk_widget_show(win->menu.send_to);
+	/* TODO: This should never be insensitive.  Possibly hidden or not. */
 	if (!group)
 		gtk_widget_set_sensitive(win->menu.send_to, FALSE);
 	update_send_to_selection(win);
