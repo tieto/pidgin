@@ -165,11 +165,12 @@ docklet_update_status()
 			ui_ops->set_tooltip(tooltip_text->str);
 
 			g_string_free(tooltip_text, TRUE);
-		} else {
-			ui_ops->set_tooltip(NULL);
 		}
 
 		g_list_free(convs);
+
+	} else if(ui_ops->set_tooltip) {
+		ui_ops->set_tooltip(NULL);
 	}
 
 	/* iterate through all accounts and determine which
