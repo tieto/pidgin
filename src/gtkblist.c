@@ -301,12 +301,17 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 				if (contact->alias || gtknode->contact_expanded)
 					gaim_blist_alias_contact(contact, arg2);
 				else
-					gaim_blist_alias_buddy(gaim_contact_get_priority_buddy(contact), arg2);
+				{
+					GaimBuddy *buddy = gaim_contact_get_priority_buddy(contact);
+					gaim_blist_alias_buddy(buddy, arg2);
+					serv_alias_buddy(buddy);
+				}
 			}
 			break;
 
 		case GAIM_BLIST_BUDDY_NODE:
 			gaim_blist_alias_buddy((GaimBuddy*)node, arg2);
+			serv_alias_buddy((GaimBuddy *)node);
 			break;
 		case GAIM_BLIST_GROUP_NODE:
 			gaim_blist_rename_group((GaimGroup*)node, arg2);
