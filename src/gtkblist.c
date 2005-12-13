@@ -4229,6 +4229,8 @@ static void gaim_gtk_blist_set_visible(GaimBuddyList *list, gboolean show)
 			gaim_signal_emit(gaim_gtk_blist_get_handle(), "gtkblist-hiding", gtkblist);
 			gtk_widget_hide(gtkblist->window);
 		} else {
+			if (!GTK_WIDGET_VISIBLE(gtkblist->window))
+				gtk_widget_show(gtkblist->window);
 			gtk_window_iconify(GTK_WINDOW(gtkblist->window));
 		}
 	}
@@ -4876,6 +4878,7 @@ void
 gaim_gtk_blist_visibility_manager_add()
 {
 	visibility_manager_count++;
+	gaim_debug_info("gtkblist", "added visibility manager: %d\n", visibility_manager_count);
 }
 
 void
@@ -4885,6 +4888,7 @@ gaim_gtk_blist_visibility_manager_remove()
 		visibility_manager_count--;
 	if (!visibility_manager_count)
 		gaim_blist_set_visible(gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+	gaim_debug_info("gtkblist", "removed visibility manager: %d\n", visibility_manager_count);
 }
 
 
