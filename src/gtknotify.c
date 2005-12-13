@@ -721,6 +721,7 @@ static void *
 gaim_gtk_notify_uri(const char *uri)
 {
 #ifndef _WIN32
+	char *escaped = g_shell_quote(uri);
 	char *command = NULL;
 	char *remote_command = NULL;
 	const char *web_browser;
@@ -732,25 +733,25 @@ gaim_gtk_notify_uri(const char *uri)
 	/* if they are running gnome, use the gnome web browser */
 	if (gaim_running_gnome() == TRUE)
 	{
-		command = g_strdup_printf("gnome-open \"%s\"", uri);
+		command = g_strdup_printf("gnome-open %s", escaped);
 	}
 	else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("%s -w \"%s\"", web_browser, uri);
+			command = g_strdup_printf("%s -w %s", web_browser, escaped);
 		else if (place == GAIM_BROWSER_NEW_TAB)
-			command = g_strdup_printf("%s -n \"%s\"", web_browser, uri);
+			command = g_strdup_printf("%s -n %s", web_browser, escaped);
 		else
-			command = g_strdup_printf("%s \"%s\"", web_browser, uri);
+			command = g_strdup_printf("%s %s", web_browser, escaped);
 	}
 	else if (!strcmp(web_browser, "gnome-open"))
 	{
-		command = g_strdup_printf("gnome-open \"%s\"", uri);
+		command = g_strdup_printf("gnome-open %s", escaped);
 	}
 	else if (!strcmp(web_browser, "kfmclient"))
 	{
-		command = g_strdup_printf("kfmclient openURL \"%s\"", uri);
+		command = g_strdup_printf("kfmclient openURL %s", escaped);
 		/*
 		 * Does Konqueror have options to open in new tab
 		 * and/or current window?
@@ -762,7 +763,7 @@ gaim_gtk_notify_uri(const char *uri)
 	{
 		char *args = "";
 
-		command = g_strdup_printf("%s \"%s\"", web_browser, uri);
+		command = g_strdup_printf("%s %s", web_browser, escaped);
 
 		/*
 		 * Firefox 0.9 and higher require a "-a firefox" option when
@@ -778,47 +779,47 @@ gaim_gtk_notify_uri(const char *uri)
 
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(%s,new-window)\"",
-											 web_browser, args, uri);
+											 "openURL(%s,new-window)",
+											 web_browser, args, escaped);
 		else if (place == GAIM_BROWSER_NEW_TAB)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(%s,new-tab)\"",
-											 web_browser, args, uri);
+											 "openURL(%s,new-tab)",
+											 web_browser, args, escaped);
 		else if (place == GAIM_BROWSER_CURRENT)
 			remote_command = g_strdup_printf("%s %s -remote "
-											 "\"openURL(%s)\"",
-											 web_browser, args, uri);
+											 "openURL(%s)",
+											 web_browser, args, escaped);
 	}
 	else if (!strcmp(web_browser, "netscape"))
 	{
-		command = g_strdup_printf("netscape \"%s\"", uri);
+		command = g_strdup_printf("netscape %s", escaped);
 
 		if (place == GAIM_BROWSER_NEW_WINDOW)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(%s,new-window)\"",
-											 uri);
+											 "openURL(%s,new-window)",
+											 escaped);
 		}
 		else if (place == GAIM_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
-											 "\"openURL(%s)\"", uri);
+											 "openURL(%s)", escaped);
 		}
 	}
 	else if (!strcmp(web_browser, "opera"))
 	{
 		if (place == GAIM_BROWSER_NEW_WINDOW)
-			command = g_strdup_printf("opera -newwindow \"%s\"", uri);
+			command = g_strdup_printf("opera -newwindow %s", escaped);
 		else if (place == GAIM_BROWSER_NEW_TAB)
-			command = g_strdup_printf("opera -newpage \"%s\"", uri);
+			command = g_strdup_printf("opera -newpage %s", escaped);
 		else if (place == GAIM_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("opera -remote "
-											 "\"openURL(%s)\"", uri);
-			command = g_strdup_printf("opera \"%s\"", uri);
+											 "openURL(%s)", escaped);
+			command = g_strdup_printf("opera %s", escaped);
 		}
 		else
-			command = g_strdup_printf("opera \"%s\"", uri);
+			command = g_strdup_printf("opera %s", escaped);
 
 	}
 	else if (!strcmp(web_browser, "custom"))
@@ -836,16 +837,18 @@ gaim_gtk_notify_uri(const char *uri)
 		}
 
 		if (strstr(web_command, "%s"))
-			command = gaim_strreplace(web_command, "%s", uri);
+			command = gaim_strreplace(web_command, "%s", escaped);
 		else
 		{
 			/*
 			 * There is no "%s" in the browser command.  Assume the user
 			 * wanted the URL tacked on to the end of the command.
 			 */
-			command = g_strdup_printf("%s %s", web_command, uri);
+			command = g_strdup_printf("%s %s", web_command, escaped);
 		}
 	}
+
+	g_free(escaped);
 
 	if (remote_command != NULL)
 	{
