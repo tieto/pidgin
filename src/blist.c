@@ -1122,14 +1122,12 @@ gaim_buddy_set_icon(GaimBuddy *buddy, GaimBuddyIcon *icon)
 {
 	g_return_if_fail(buddy != NULL);
 
-	if (buddy->icon == icon)
-		/* Don't need to do anything */
-		return;
-
-	if (buddy->icon != NULL)
-		gaim_buddy_icon_unref(buddy->icon);
-
-	buddy->icon = (icon != NULL ? gaim_buddy_icon_ref(icon) : NULL);
+	if (buddy->icon != icon) {
+		if (buddy->icon != NULL)
+			gaim_buddy_icon_unref(buddy->icon);
+		
+		buddy->icon = (icon != NULL ? gaim_buddy_icon_ref(icon) : NULL);
+	}
 
 	if (buddy->icon)
 		gaim_buddy_icon_cache(icon, buddy);
