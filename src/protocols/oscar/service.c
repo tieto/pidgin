@@ -811,7 +811,7 @@ faim_export int aim_setextstatus(aim_session_t *sess, fu32_t status)
 	 * 'AIM_ICQ_STATE_DIRECTREQUIREAUTH' was removed because setting it might
 	 * be the cause of people reciving many unsolicited authorization requests.
 	 */
-	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_WEBAWARE | status;
+	data = AIM_ICQ_STATE_HIDEIP | status;
 
 	if (!(fr = aim_tx_new(sess, conn, AIM_FRAMETYPE_FLAP, 0x02, 10 + 8)))
 		return -ENOMEM;
