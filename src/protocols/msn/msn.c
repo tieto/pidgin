@@ -1341,28 +1341,11 @@ static char *
 msn_tooltip_info_text(MsnGetInfoData *info_data)
 {
 	GString *s;
-	GString *name;
 	GaimBuddy *b;
 	const char *p;
 
 	s = g_string_sized_new(80); /* wild guess */
 
-	/* Try to not display the MSN screen name as an email address */
-	p = strrchr(info_data->name, '@');
-	if (p)
-	{
-		name = g_string_new_len(info_data->name, p - info_data->name);
-		g_string_append_printf(name, "&#64;%s", p + 1);
-	}
-	else
-	{
-		/* This should never happen */
-		name = g_string_new(info_data->name);
-	}
-
-	g_string_printf(s, "<span style=\"font-size: larger\"><b>%s</b></span><br>",
-					name->str);
-	g_string_free(name, TRUE);
 	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
 						info_data->name);
 
