@@ -8396,14 +8396,10 @@ recent_buddies_cb(const char *name, GaimPrefType type, gpointer value, gpointer 
 	presence = aim_ssi_getpresence(sess->ssi.local);
 
 	if (value) {
-		/* Based on the packet capture I thought it was the first one */
-		/* Stu thinks it's the second one. */
-		/* presence |= 0x00400000; */
-		presence &= ~0x00020000;
+		presence &= ~AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
 		aim_ssi_setpresence(sess, presence);
 	} else {
-		/* presence &= ~0x00400000; */
-		presence |= 0x00020000;
+		presence |= AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES;
 		aim_ssi_setpresence(sess, presence);
 	}
 }

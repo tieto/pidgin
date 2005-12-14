@@ -1266,6 +1266,10 @@ faim_export int aim_bart_request(aim_session_t *sess, const char *sn, fu8_t icon
 #define AIM_SSI_ACK_INVALIDNAME		0x000d
 #define AIM_SSI_ACK_AUTHREQUIRED	0x000e
 
+/* These flags are set in the 0x00c9 TLV of SSI teyp 0x0005 */
+#define AIM_SSI_PRESENCE_FLAG_SHOWIDLE        0x00000400
+#define AIM_SSI_PRESENCE_FLAG_NORECENTBUDDIES 0x00020000
+
 struct aim_ssi_item {
 	char *name;
 	fu16_t gid;
