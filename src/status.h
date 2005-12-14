@@ -176,7 +176,8 @@ GaimStatusType *gaim_status_type_new_full(GaimStatusPrimitive primitive,
 										  gboolean independent);
 
 /**
- * Creates a new status type with some default values.
+ * Creates a new status type with some default values (not
+ * savable and not independent).
  *
  * @param primitive     The primitive status type.
  * @param id            The ID of the status type.
