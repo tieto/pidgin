@@ -475,16 +475,23 @@ FILE *gaim_mkstemp(char **path, gboolean binary);
  *
  * @param program The file name of the application.
  *
- * @return True if the program is runable.
+ * @return TRUE if the program is runable.
  */
 gboolean gaim_program_is_valid(const char *program);
 
 /**
- * Check if running Gnome.
+ * Check if running GNOME.
  *
- * @return TRUE if running Gnome, FALSE otherwise.
+ * @return TRUE if running GNOME, FALSE otherwise.
  */
 gboolean gaim_running_gnome(void);
+
+/**
+ * Check if running KDE.
+ *
+ * @return TRUE if running KDE, FALSE otherwise.
+ */
+gboolean gaim_running_kde(void);
 
 /**
  * Returns the IP address from a socket file descriptor.

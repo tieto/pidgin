@@ -298,8 +298,7 @@ update_buttons(GaimGtkXferDialog *dialog, GaimXfer *xfer)
 			gtk_widget_set_sensitive(dialog->open_button, FALSE);
 		}
 #else
-		/* If using GNOME, use gnome-open */
-		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE && gaim_running_gnome()) {
+		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive (dialog->open_button, FALSE);
@@ -450,36 +449,52 @@ open_button_cb(GtkButton *button, GaimGtkXferDialog *dialog)
 				gaim_xfer_get_local_filename(dialog->selected_xfer), code);
 	}
 #else
-	/* If using GNOME, use gnome-open */
+	const char *filename = gaim_xfer_get_local_filename(dialog->selected_xfer);
+	char *command = NULL;
+	char *tmp = NULL;
+	GError *error = NULL;
+
 	if (gaim_running_gnome())
 	{
-		char *command = NULL;
-		char *tmp = NULL;
-		GError *error = NULL;
+		char *escaped = g_shell_quote(filename);
+		command = g_strdup_printf("gnome-open %s", escaped);
+		g_free(escaped);
+	}
+	else if (gaim_running_kde())
+	{
+		char *escaped = g_shell_quote(filename);
 
-		command = g_strdup_printf("gnome-open \"%s\"",
-				gaim_xfer_get_local_filename(dialog->selected_xfer));
+		if (gaim_str_has_suffix(filename, ".desktop"))
+			command = g_strdup_printf("kfmclient openURL %s 'text/plain'", escaped);
+		else
+			command = g_strdup_printf("kfmclient openURL %s", escaped);
+		g_free(escaped);
+	}
+	else
+	{
+		gaim_notify_uri(NULL, filename);
+		return;
+	}
 
-		if (gaim_program_is_valid(command))
+	if (gaim_program_is_valid(command))
+	{
+		gint exit_status;
+		if (!g_spawn_command_line_sync(command, NULL, NULL, &exit_status, &error))
 		{
-			gint exit_status;
-			if (!g_spawn_command_line_sync(command, NULL, NULL, &exit_status, &error))
-			{
-				tmp = g_strdup_printf(_("Error launching %s: %s"),
-								gaim_xfer_get_local_filename(dialog->selected_xfer),
-								error->message);
-				gaim_notify_error(dialog, NULL, _("Unable to open file."), tmp);
-				g_free(tmp);
-				g_error_free(error);
-			}
-			if (exit_status != 0)
-			{
-				char *primary = g_strdup_printf(_("Error running %s"), command);
-				char *secondary = g_strdup_printf(_("Process returned error code %d"),
-										exit_status);
-				gaim_notify_error(dialog, NULL, primary, secondary);
-				g_free(tmp);
-			}
+			tmp = g_strdup_printf(_("Error launching %s: %s"),
+							gaim_xfer_get_local_filename(dialog->selected_xfer),
+							error->message);
+			gaim_notify_error(dialog, NULL, _("Unable to open file."), tmp);
+			g_free(tmp);
+			g_error_free(error);
+		}
+		if (exit_status != 0)
+		{
+			char *primary = g_strdup_printf(_("Error running %s"), command);
+			char *secondary = g_strdup_printf(_("Process returned error code %d"),
+									exit_status);
+			gaim_notify_error(dialog, NULL, primary, secondary);
+			g_free(tmp);
 		}
 	}
 #endif

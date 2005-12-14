@@ -2231,14 +2231,33 @@ gboolean
 gaim_running_gnome(void)
 {
 	gchar *tmp = g_find_program_in_path("gnome-open");
-	if ((g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL) &&
-		(tmp != NULL))
-	{
-		g_free(tmp);
-		return TRUE;
-	}
+
+	if (tmp == NULL)
+		return FALSE;
 	g_free(tmp);
-	return FALSE;
+
+	return (g_getenv("GNOME_DESKTOP_SESSION_ID") != NULL);
+}
+
+gboolean
+gaim_running_kde(void)
+{
+	gchar *tmp = g_find_program_in_path("kfmclient");
+	const char *session;
+
+	if (tmp == NULL)
+		return FALSE;
+	g_free(tmp);
+
+	session = g_getenv("KDE_FULL_SESSION");
+	if (session != NULL && !strcmp(session, "true"))
+		return TRUE;
+
+	/* If you run Gaim from Konsole under !KDE, this will provide a
+	 * a false positive.  Since we do the GNOME checks first, this is
+	 * only a problem if you're running something !(KDE || GNOME) and
+	 * you run Gaim from Konsole. This really shouldn't be a problem. */
+	return ((g_getenv("KDEDIR") != NULL) || g_getenv("KDEDIRS") != NULL);
 }
 
 char *
