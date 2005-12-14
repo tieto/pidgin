@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Gaim 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-09-08 00:02-0400\n"
-"PO-Revision-Date: 2005-12-11 18:34+0100\n"
+"PO-Revision-Date: 2005-12-14 18:04+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: LUGOS <sl@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -136,7 +136,7 @@ msgstr "Kalibracija možnosti"
 
 #. add enabled / disabled
 #: plugins/crazychat/cc_gaim_plugin.c:345
-#: src/gtkaccount.c:2225
+#: src/gtkaccount.c:2226
 #: src/gtkplugin.c:414
 msgid "Enabled"
 msgstr "Omogočen"
@@ -164,64 +164,102 @@ msgstr "DBus"
 msgid "DBus Plugin Example"
 msgstr "Primer vstavka DBus"
 
-#.
-#. *  DEFINES, MACROS & DATA TYPES
-#.
-#: plugins/docklet/docklet-win32.c:44
-msgid "Gaim"
-msgstr "Gaim"
+#: plugins/docklet/docklet.c:152
+msgid "Right-click for more unread messages...\n"
+msgstr "Za več neprebranih sporočil kliknite na desni miškin gumb ...\n"
 
-#: plugins/docklet/docklet-win32.c:45
-msgid "Gaim - Signed off"
-msgstr "Gaim - Odjavljen"
+#: plugins/docklet/docklet.c:155
+#: src/gtkblist.c:3243
+#, c-format
+msgid "%d unread message from %s\n"
+msgid_plural "%d unread messages from %s\n"
+msgstr[0] "%d neprebranih sporočil od %s\n"
+msgstr[1] "%d neprebrano sporočilo od %s\n"
+msgstr[2] "%d neprebrani sporočili od %s\n"
+msgstr[3] "%d neprebrana sporočila od %s\n"
 
-#: plugins/docklet/docklet-win32.c:46
-msgid "Gaim - Away"
-msgstr "Gaim - Odsoten"
-
-#: plugins/docklet/docklet.c:293
+#: plugins/docklet/docklet.c:374
 msgid "Show Buddy List"
 msgstr "Pokaži seznam prijateljev"
 
-#: plugins/docklet/docklet.c:300
+#: plugins/docklet/docklet.c:379
+msgid "Unread Messages"
+msgstr "Neprebrana sporočila"
+
+#: plugins/docklet/docklet.c:400
 msgid "New Message..."
 msgstr "Novo sporočilo ..."
 
-#: plugins/docklet/docklet.c:304
+#: plugins/docklet/docklet.c:404
 msgid "Join A Chat..."
 msgstr "Pridruži se pomenku ..."
 
-#: plugins/docklet/docklet.c:309
-#: src/gtkaccount.c:2437
+#: plugins/docklet/docklet.c:409
+#: src/gtkaccount.c:2438
 msgid "Accounts"
 msgstr "Računi"
 
-#: plugins/docklet/docklet.c:310
+#: plugins/docklet/docklet.c:410
 #: src/gtkplugin.c:383
 msgid "Plugins"
 msgstr "Vstavki"
 
-#: plugins/docklet/docklet.c:311
+#: plugins/docklet/docklet.c:411
 #: src/gtkprefs.c:1779
 msgid "Preferences"
 msgstr "Nastavitve"
 
-#: plugins/docklet/docklet.c:315
+#: plugins/docklet/docklet.c:415
 #: src/gtkft.c:692
 #: src/protocols/oscar/oscar.c:8427
 msgid "File Transfers"
 msgstr "Prenosi datotek"
 
-#: plugins/docklet/docklet.c:317
+#: plugins/docklet/docklet.c:417
 msgid "Mute Sounds"
 msgstr "Utišaj zvoke"
 
 #. TODO: need a submenu to change status, this needs to "link"
 #. * to the status in the buddy list gtkstatusbox
 #.
-#: plugins/docklet/docklet.c:330
+#: plugins/docklet/docklet.c:430
 msgid "Quit"
 msgstr "Končaj"
+
+#: plugins/docklet/docklet.c:568
+msgid "Blink tray icon for unread..."
+msgstr "Utripaj ikono na pladnju za neprebrano ..."
+
+#: plugins/docklet/docklet.c:571
+msgid "_Instant Messages:"
+msgstr "_Neposredna sporočila:"
+
+#: plugins/docklet/docklet.c:573
+#: plugins/docklet/docklet.c:581
+#: plugins/win32/winprefs/winprefs.c:412
+#: src/gtkprefs.c:816
+#: src/gtkprefs.c:1665
+msgid "Never"
+msgstr "nikoli"
+
+#: plugins/docklet/docklet.c:574
+msgid "In hidden conversations"
+msgstr "V skritih pogovorih"
+
+#: plugins/docklet/docklet.c:575
+#: plugins/docklet/docklet.c:583
+#: plugins/win32/winprefs/winprefs.c:413
+#: src/gtkprefs.c:818
+msgid "Always"
+msgstr "vedno"
+
+#: plugins/docklet/docklet.c:579
+msgid "C_hat Messages:"
+msgstr "_Sporočila klepeta:"
+
+#: plugins/docklet/docklet.c:582
+msgid "When my nick is said"
+msgstr "Ko je vzdevek v sporočilu"
 
 #. *< type
 #. *< ui_requirement
@@ -229,19 +267,19 @@ msgstr "Končaj"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: plugins/docklet/docklet.c:460
+#: plugins/docklet/docklet.c:608
 msgid "System Tray Icon"
 msgstr "Ikona na pladnju"
 
 #. *< name
 #. *< version
 #. *  summary
-#: plugins/docklet/docklet.c:463
+#: plugins/docklet/docklet.c:611
 msgid "Displays an icon for Gaim in the system tray."
 msgstr "Prikaže ikono za Gaim v sistemskem pladnju."
 
 #. *  description
-#: plugins/docklet/docklet.c:465
+#: plugins/docklet/docklet.c:613
 msgid "Displays a system tray icon (in GNOME, KDE or Windows for example) to show the current status of Gaim, allow fast access to commonly used functions, and to toggle display of the buddy list or login window. Also allows messages to be queued until the icon is clicked, similar to ICQ."
 msgstr "Prikaže ikono v sistemskem pladnju (na primer v GNOME, KDE ali Windows) in s tem prikazuje trenutno stanje pogovorov ter omogoča lažji dostop do pogosto uporabljanih funkcij. S to ikono lahko tudi skrije oz. prikaže seznam stikov ali prijavni zaslon. Omogoča tudi čakanje sporočil, dokler ne kliknete ikone, podobno kot pri ICQ."
 
@@ -515,8 +553,8 @@ msgstr "Išči"
 
 #: plugins/gevolution/add_buddy_dialog.c:552
 #: plugins/gevolution/new_person_dialog.c:306
-#: src/gtkblist.c:4407
-#: src/gtkblist.c:4787
+#: src/gtkblist.c:4441
+#: src/gtkblist.c:4821
 msgid "Group:"
 msgstr "Skupina:"
 
@@ -556,9 +594,9 @@ msgstr "brez"
 #: plugins/gevolution/gevo-util.c:64
 #: plugins/gevolution/gevolution.c:96
 #: src/blist.c:518
-#: src/blist.c:1277
-#: src/blist.c:1498
-#: src/gtkblist.c:4215
+#: src/blist.c:1275
+#: src/blist.c:1500
+#: src/gtkblist.c:4249
 #: src/protocols/jabber/roster.c:65
 msgid "Buddies"
 msgstr "Prijatelji"
@@ -1488,7 +1526,7 @@ msgstr "Za_ženi Gaim ob zagonu Windows"
 
 #. Buddy List
 #: plugins/win32/winprefs/winprefs.c:405
-#: src/gtkblist.c:3458
+#: src/gtkblist.c:3489
 msgid "Buddy List"
 msgstr "Seznam prijateljev"
 
@@ -1500,17 +1538,6 @@ msgstr "Le_pljiv seznam prijateljev"
 #: plugins/win32/winprefs/winprefs.c:410
 msgid "_Keep Buddy List window on top:"
 msgstr "_Ohrani seznam prijateljev nad vrhu:"
-
-#: plugins/win32/winprefs/winprefs.c:412
-#: src/gtkprefs.c:816
-#: src/gtkprefs.c:1665
-msgid "Never"
-msgstr "nikoli"
-
-#: plugins/win32/winprefs/winprefs.c:413
-#: src/gtkprefs.c:818
-msgid "Always"
-msgstr "vedno"
 
 #. XXX: Did this ever work?
 #: plugins/win32/winprefs/winprefs.c:415
@@ -1572,7 +1599,7 @@ msgstr "Shrani geslo"
 #: src/gtkrequest.c:287
 #: src/protocols/gg/gg.c:463
 #: src/protocols/gg/gg.c:604
-#: src/protocols/gg/gg.c:741
+#: src/protocols/gg/gg.c:740
 #: src/protocols/jabber/jabber.c:1161
 #: src/protocols/jabber/xdata.c:337
 #: src/protocols/msn/msn.c:250
@@ -1604,9 +1631,9 @@ msgstr "V redu"
 #: src/account.c:969
 #: src/account.c:1140
 #: src/account.c:1178
-#: src/gtkaccount.c:2145
-#: src/gtkaccount.c:2602
-#: src/gtkblist.c:4825
+#: src/gtkaccount.c:2146
+#: src/gtkaccount.c:2603
+#: src/gtkblist.c:4862
 #: src/gtkdialogs.c:530
 #: src/gtkdialogs.c:667
 #: src/gtkdialogs.c:735
@@ -1627,8 +1654,8 @@ msgstr "V redu"
 #: src/gtksavedstatuses.c:298
 #: src/protocols/gg/gg.c:464
 #: src/protocols/gg/gg.c:605
-#: src/protocols/gg/gg.c:742
-#: src/protocols/gg/gg.c:831
+#: src/protocols/gg/gg.c:741
+#: src/protocols/gg/gg.c:830
 #: src/protocols/jabber/buddy.c:573
 #: src/protocols/jabber/buddy.c:1358
 #: src/protocols/jabber/buddy.c:1392
@@ -1741,11 +1768,11 @@ msgstr "Neznan"
 msgid "buddy list"
 msgstr "Seznam prijateljev"
 
-#: src/blist.c:1180
+#: src/blist.c:1178
 msgid "Chats"
 msgstr "Pomenki"
 
-#: src/blist.c:1879
+#: src/blist.c:1881
 #, c-format
 msgid "%d buddy from group %s was not removed because its account was not logged in.  This buddy and the group were not removed.\n"
 msgid_plural "%d buddies from group %s were not removed because their accounts were not logged in.  These buddies and the group were not removed.\n"
@@ -1754,7 +1781,7 @@ msgstr[1] "%d prijatelj iz skupine %s ni bil odstranjen, ker njegov račun ni bi
 msgstr[2] "%d prijatelja iz skupine %s nista bila odstranjena, ker njuna računa nista bila prijavljena.  Ta prijatelja in skupina niso bili odstranjeni.\n"
 msgstr[3] "%d prijatelji iz skupine %s niso bili odstranjeni, ker njihovi računi niso bili prijavljeni.  Ti prijatelji in skupine niso bili odstranjeni.\n"
 
-#: src/blist.c:1888
+#: src/blist.c:1890
 msgid "Group not removed"
 msgstr "Skupina ni bila odstranjena"
 
@@ -1972,410 +1999,410 @@ msgstr ""
 "<b>Velikost slike:</b> %dx%d"
 
 #. Build the login options frame.
-#: src/gtkaccount.c:737
+#: src/gtkaccount.c:738
 msgid "Login Options"
 msgstr "Možnosti prijave"
 
-#: src/gtkaccount.c:754
+#: src/gtkaccount.c:755
 #: src/gtkft.c:624
 msgid "Protocol:"
 msgstr "Protokol:"
 
-#: src/gtkaccount.c:759
+#: src/gtkaccount.c:760
 msgid "Screen name:"
 msgstr "Zaslonsko ime:"
 
-#: src/gtkaccount.c:834
+#: src/gtkaccount.c:835
 msgid "Password:"
 msgstr "Geslo:"
 
-#: src/gtkaccount.c:839
-#: src/gtkblist.c:4390
-#: src/gtkblist.c:4772
+#: src/gtkaccount.c:840
+#: src/gtkblist.c:4424
+#: src/gtkblist.c:4806
 msgid "Alias:"
 msgstr "Psevdonim:"
 
-#: src/gtkaccount.c:843
+#: src/gtkaccount.c:844
 msgid "Remember password"
 msgstr "Zapomni si geslo"
 
 #. Build the user options frame.
-#: src/gtkaccount.c:891
+#: src/gtkaccount.c:892
 msgid "User Options"
 msgstr "Možnosti uporabnika"
 
-#: src/gtkaccount.c:904
+#: src/gtkaccount.c:905
 msgid "New mail notifications"
 msgstr "Obveščanje o prispeli pošti"
 
-#: src/gtkaccount.c:913
+#: src/gtkaccount.c:914
 msgid "Buddy icon:"
 msgstr "Ikona prijatelja:"
 
 #. Build the protocol options frame.
-#: src/gtkaccount.c:1004
+#: src/gtkaccount.c:1005
 #, c-format
 msgid "%s Options"
 msgstr "%s Možnosti"
 
-#: src/gtkaccount.c:1205
+#: src/gtkaccount.c:1206
 msgid "Use Global Proxy Settings"
 msgstr "uporabljaj splošno nastavitev strežnikov proxy"
 
-#: src/gtkaccount.c:1211
+#: src/gtkaccount.c:1212
 msgid "No Proxy"
 msgstr "brez strežnika proxy"
 
-#: src/gtkaccount.c:1217
+#: src/gtkaccount.c:1218
 msgid "HTTP"
 msgstr "HTTP"
 
-#: src/gtkaccount.c:1223
+#: src/gtkaccount.c:1224
 msgid "SOCKS 4"
 msgstr "SOCKS4"
 
-#: src/gtkaccount.c:1229
+#: src/gtkaccount.c:1230
 msgid "SOCKS 5"
 msgstr "SOCKS5"
 
-#: src/gtkaccount.c:1235
+#: src/gtkaccount.c:1236
 #: src/gtkprefs.c:1030
 msgid "Use Environmental Settings"
 msgstr "uporabi nastavitve okolja"
 
-#: src/gtkaccount.c:1269
+#: src/gtkaccount.c:1270
 msgid "you can see the butterflies mating"
 msgstr "lahko opazite metulje, ki se parijo"
 
-#: src/gtkaccount.c:1273
+#: src/gtkaccount.c:1274
 msgid "If you look real closely"
 msgstr "Če pogledate zelo pozorno,"
 
-#: src/gtkaccount.c:1289
+#: src/gtkaccount.c:1290
 msgid "Proxy Options"
 msgstr "Možnosti strežnika proxy"
 
-#: src/gtkaccount.c:1303
+#: src/gtkaccount.c:1304
 #: src/gtkprefs.c:1024
 msgid "Proxy _type:"
 msgstr "Vrsta s_trežnika proxy:"
 
-#: src/gtkaccount.c:1312
+#: src/gtkaccount.c:1313
 #: src/gtkprefs.c:1045
 msgid "_Host:"
 msgstr "_Strežnik:"
 
-#: src/gtkaccount.c:1316
+#: src/gtkaccount.c:1317
 #: src/gtkprefs.c:1063
 msgid "_Port:"
 msgstr "_Vrata:"
 
-#: src/gtkaccount.c:1324
+#: src/gtkaccount.c:1325
 msgid "_Username:"
 msgstr "_Uporabniško ime:"
 
-#: src/gtkaccount.c:1330
+#: src/gtkaccount.c:1331
 #: src/gtkprefs.c:1100
 msgid "Pa_ssword:"
 msgstr "Ge_slo:"
 
-#: src/gtkaccount.c:1706
+#: src/gtkaccount.c:1707
 msgid "Add Account"
 msgstr "Dodaj račun"
 
-#: src/gtkaccount.c:1708
+#: src/gtkaccount.c:1709
 msgid "Modify Account"
 msgstr "Spremeni račun"
 
-#: src/gtkaccount.c:1730
+#: src/gtkaccount.c:1731
 msgid "_Basic"
 msgstr "_Osnovno"
 
-#: src/gtkaccount.c:1741
+#: src/gtkaccount.c:1742
 msgid "_Advanced"
 msgstr "N_apredno"
 
 #. Register button
-#: src/gtkaccount.c:1756
+#: src/gtkaccount.c:1757
 #: src/protocols/jabber/jabber.c:706
 msgid "Register"
 msgstr "Registriraj se"
 
-#: src/gtkaccount.c:2139
+#: src/gtkaccount.c:2140
 #: src/gtksavedstatuses.c:295
 #, c-format
 msgid "Are you sure you want to delete %s?"
 msgstr "Ste prepričani, da želite izbrisati %s?"
 
-#: src/gtkaccount.c:2144
+#: src/gtkaccount.c:2145
 #: src/gtkpounce.c:999
 #: src/gtkrequest.c:291
 #: src/gtksavedstatuses.c:297
 msgid "Delete"
 msgstr "Zbriši"
 
-#: src/gtkaccount.c:2202
+#: src/gtkaccount.c:2203
 #: src/gtksavedstatuses.c:873
 #: src/protocols/oscar/oscar.c:5037
 msgid "Screen Name"
 msgstr "Ime"
 
-#: src/gtkaccount.c:2233
+#: src/gtkaccount.c:2234
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/gtkaccount.c:2550
+#: src/gtkaccount.c:2551
 #, c-format
 msgid "%s%s%s%s has made %s his or her buddy%s%s"
 msgstr "%s%s%s%s je nastavil %s za svojega prijatelja%s%s"
 
-#: src/gtkaccount.c:2599
+#: src/gtkaccount.c:2600
 msgid "Add buddy to your list?"
 msgstr "Želite dodati prijatelja na seznam?"
 
-#: src/gtkaccount.c:2601
-#: src/gtkblist.c:4824
+#: src/gtkaccount.c:2602
+#: src/gtkblist.c:4861
 #: src/gtkconv.c:1574
 #: src/gtkrequest.c:292
-#: src/protocols/gg/gg.c:830
+#: src/protocols/gg/gg.c:829
 #: src/protocols/oscar/oscar.c:4662
 #: src/protocols/sametime/sametime.c:5660
 #: src/protocols/silc/chat.c:595
 msgid "Add"
 msgstr "Dodaj"
 
-#: src/gtkblist.c:657
+#: src/gtkblist.c:662
 msgid "Join a Chat"
 msgstr "Pridruži se pomenku"
 
-#: src/gtkblist.c:678
+#: src/gtkblist.c:683
 msgid "Please enter the appropriate information about the chat you would like to join.\n"
 msgstr "Vnesite ustrezne informacije o pomenku, ki se mu želite pridružiti.\n"
 
-#: src/gtkblist.c:689
+#: src/gtkblist.c:694
 #: src/gtkpounce.c:500
 #: src/gtkroomlist.c:354
 msgid "_Account:"
 msgstr "_Račun:"
 
-#: src/gtkblist.c:997
+#: src/gtkblist.c:1002
 msgid "Get _Info"
 msgstr "_Informacije"
 
-#: src/gtkblist.c:1000
+#: src/gtkblist.c:1005
 msgid "I_M"
 msgstr "_Sporoči"
 
-#: src/gtkblist.c:1006
+#: src/gtkblist.c:1011
 msgid "_Send File"
 msgstr "_Pošlji datoteko"
 
-#: src/gtkblist.c:1014
+#: src/gtkblist.c:1019
 msgid "Start _Voice Chat"
 msgstr "Začni glaso_vni klepet"
 
-#: src/gtkblist.c:1020
+#: src/gtkblist.c:1025
 msgid "Add Buddy _Pounce"
 msgstr "Dodaj _opozorilo prijatelja"
 
-#: src/gtkblist.c:1024
-#: src/gtkblist.c:1028
-#: src/gtkblist.c:1126
-#: src/gtkblist.c:1149
+#: src/gtkblist.c:1029
+#: src/gtkblist.c:1033
+#: src/gtkblist.c:1131
+#: src/gtkblist.c:1154
 msgid "View _Log"
 msgstr "Poglej _dnevnik"
 
-#: src/gtkblist.c:1039
+#: src/gtkblist.c:1044
 msgid "Alias..."
 msgstr "Psevdonim ..."
 
-#: src/gtkblist.c:1042
+#: src/gtkblist.c:1047
 #: src/gtkconv.c:1571
 #: src/gtkrequest.c:293
 msgid "Remove"
 msgstr "Odstrani"
 
-#: src/gtkblist.c:1048
-#: src/gtkblist.c:1134
-#: src/gtkblist.c:1155
+#: src/gtkblist.c:1053
+#: src/gtkblist.c:1139
+#: src/gtkblist.c:1160
 msgid "_Alias..."
 msgstr "_Psevdonim ..."
 
-#: src/gtkblist.c:1050
-#: src/gtkblist.c:1136
-#: src/gtkblist.c:1157
+#: src/gtkblist.c:1055
+#: src/gtkblist.c:1141
+#: src/gtkblist.c:1162
 msgid "_Remove"
 msgstr "Odst_rani"
 
-#: src/gtkblist.c:1097
+#: src/gtkblist.c:1102
 msgid "Add a _Buddy"
 msgstr "Dodaj _prijatelja"
 
-#: src/gtkblist.c:1099
+#: src/gtkblist.c:1104
 msgid "Add a C_hat"
 msgstr "Dodaj po_menek"
 
-#: src/gtkblist.c:1102
+#: src/gtkblist.c:1107
 msgid "_Delete Group"
 msgstr "_Zbriši skupino"
 
-#: src/gtkblist.c:1104
+#: src/gtkblist.c:1109
 msgid "_Rename"
 msgstr "P_reimenuj"
 
 #. join button
-#: src/gtkblist.c:1122
+#: src/gtkblist.c:1127
 #: src/gtkroomlist.c:264
 #: src/gtkroomlist.c:409
 #: src/gtkstock.c:139
 msgid "_Join"
 msgstr "_Pridruži se"
 
-#: src/gtkblist.c:1124
+#: src/gtkblist.c:1129
 msgid "Auto-Join"
 msgstr "Samodejno-pridruži"
 
-#: src/gtkblist.c:1162
-#: src/gtkblist.c:1185
+#: src/gtkblist.c:1167
+#: src/gtkblist.c:1190
 msgid "_Collapse"
 msgstr "_Strni"
 
-#: src/gtkblist.c:1190
+#: src/gtkblist.c:1195
 msgid "_Expand"
 msgstr "_Razširi"
 
-#: src/gtkblist.c:1421
-#: src/gtkblist.c:1431
-#: src/gtkblist.c:3627
-#: src/gtkblist.c:3632
+#: src/gtkblist.c:1426
+#: src/gtkblist.c:1436
+#: src/gtkblist.c:3659
+#: src/gtkblist.c:3664
 msgid "/Tools/Mute Sounds"
 msgstr "/Orodja/Utišaj zvoke"
 
-#: src/gtkblist.c:1890
-#: src/gtkconv.c:3905
+#: src/gtkblist.c:1895
+#: src/gtkconv.c:3909
 #: src/gtkpounce.c:399
 msgid "You are not currently signed on with an account that can add that buddy."
 msgstr "Trenutno niste prijavljeni z nobenim računom, ki lahko doda tega prijatelja."
 
 #. Buddies menu
-#: src/gtkblist.c:2454
+#: src/gtkblist.c:2459
 msgid "/_Buddies"
 msgstr "/_Prijatelji"
 
-#: src/gtkblist.c:2455
+#: src/gtkblist.c:2460
 msgid "/Buddies/New Instant _Message..."
 msgstr "/Prijatelji/Novo _neposredno sporočilo ..."
 
-#: src/gtkblist.c:2456
+#: src/gtkblist.c:2461
 msgid "/Buddies/Join a _Chat..."
 msgstr "/Prijatelji/Pridruži se _pomenku ..."
 
-#: src/gtkblist.c:2457
+#: src/gtkblist.c:2462
 msgid "/Buddies/Get User _Info..."
 msgstr "/Prijatelji/Informacije o _uporabniku ..."
 
-#: src/gtkblist.c:2458
+#: src/gtkblist.c:2463
 msgid "/Buddies/View User _Log..."
 msgstr "/Prijatelji/Pog_lej uporabnikov dnevnik ..."
 
-#: src/gtkblist.c:2460
+#: src/gtkblist.c:2465
 msgid "/Buddies/Show _Offline Buddies"
 msgstr "/Prijatelji/Prikaži prijatelje, ki niso na z_vezi"
 
-#: src/gtkblist.c:2461
+#: src/gtkblist.c:2466
 msgid "/Buddies/Show _Empty Groups"
 msgstr "/Prijatelji/Prikaži pra_zne skupine"
 
-#: src/gtkblist.c:2462
+#: src/gtkblist.c:2467
 msgid "/Buddies/Show Buddy _Details"
 msgstr "/Prijatelji/Pokaži p_odrobnosti prijateljev"
 
-#: src/gtkblist.c:2463
+#: src/gtkblist.c:2468
 msgid "/Buddies/_Sort Buddies"
 msgstr "/Prijatelji/Razvr_sti prijatelje"
 
-#: src/gtkblist.c:2465
+#: src/gtkblist.c:2470
 msgid "/Buddies/_Add Buddy..."
 msgstr "/Prijatelji/Dodaj p_rijatelja ..."
 
-#: src/gtkblist.c:2466
+#: src/gtkblist.c:2471
 msgid "/Buddies/Add C_hat..."
 msgstr "/Prijatelji/Dodaj p_omenek ..."
 
-#: src/gtkblist.c:2467
+#: src/gtkblist.c:2472
 msgid "/Buddies/Add _Group..."
 msgstr "/Prijatelji/Dodaj s_kupino ..."
 
-#: src/gtkblist.c:2469
+#: src/gtkblist.c:2474
 msgid "/Buddies/_Quit"
 msgstr "/Prijatelji/Iz_hod"
 
 #. Accounts menu
-#: src/gtkblist.c:2472
+#: src/gtkblist.c:2477
 msgid "/_Accounts"
 msgstr "/_Računi"
 
-#: src/gtkblist.c:2473
-#: src/gtkblist.c:5402
+#: src/gtkblist.c:2478
+#: src/gtkblist.c:5441
 msgid "/Accounts/Add\\/Edit"
 msgstr "/Računi/Dodaj\\/Uredi"
 
 #. Tools
-#: src/gtkblist.c:2476
+#: src/gtkblist.c:2481
 msgid "/_Tools"
 msgstr "/_Orodja"
 
-#: src/gtkblist.c:2477
+#: src/gtkblist.c:2482
 msgid "/Tools/Buddy _Pounces"
 msgstr "/Orodja/Opozorila pri_jateljev"
 
-#: src/gtkblist.c:2478
+#: src/gtkblist.c:2483
 msgid "/Tools/Plu_gins"
 msgstr "/Orodja/Vstav_ki"
 
-#: src/gtkblist.c:2479
+#: src/gtkblist.c:2484
 msgid "/Tools/Pr_eferences"
 msgstr "/Orodja/_Nastavitve"
 
-#: src/gtkblist.c:2480
+#: src/gtkblist.c:2485
 msgid "/Tools/Pr_ivacy"
 msgstr "/Orodja/_Zasebnost"
 
-#: src/gtkblist.c:2482
+#: src/gtkblist.c:2487
 msgid "/Tools/_File Transfers"
 msgstr "/Orodja/_Prenosi datotek"
 
-#: src/gtkblist.c:2483
+#: src/gtkblist.c:2488
 msgid "/Tools/R_oom List"
 msgstr "/Orodja/_Seznam sob"
 
-#: src/gtkblist.c:2484
+#: src/gtkblist.c:2489
 msgid "/Tools/System _Log"
 msgstr "/Orodja/Sistemski _dnevnik"
 
-#: src/gtkblist.c:2486
+#: src/gtkblist.c:2491
 msgid "/Tools/Mute _Sounds"
 msgstr "/Orodja/_Utišaj zvoke"
 
 #. Help
-#: src/gtkblist.c:2489
+#: src/gtkblist.c:2494
 msgid "/_Help"
 msgstr "/_Pomoč"
 
-#: src/gtkblist.c:2490
+#: src/gtkblist.c:2495
 msgid "/Help/Online _Help"
 msgstr "/Pomoč/Pomoč _na spletu"
 
-#: src/gtkblist.c:2491
+#: src/gtkblist.c:2496
 msgid "/Help/_Debug Window"
 msgstr "/Pomoč/Raz_hroščevalno okno"
 
-#: src/gtkblist.c:2492
+#: src/gtkblist.c:2497
 msgid "/Help/_About"
 msgstr "/Pomoč/_O programu"
 
-#: src/gtkblist.c:2524
-#: src/gtkblist.c:2591
+#: src/gtkblist.c:2529
+#: src/gtkblist.c:2596
 #, c-format
 msgid ""
 "\n"
@@ -2384,7 +2411,7 @@ msgstr ""
 "\n"
 "<b>Račun:</b> %s"
 
-#: src/gtkblist.c:2600
+#: src/gtkblist.c:2605
 #, c-format
 msgid ""
 "\n"
@@ -2393,7 +2420,7 @@ msgstr ""
 "\n"
 "<b>Psevdonim stika:</b> %s"
 
-#: src/gtkblist.c:2608
+#: src/gtkblist.c:2613
 #, c-format
 msgid ""
 "\n"
@@ -2402,7 +2429,7 @@ msgstr ""
 "\n"
 "<b>Psevdonim:</b> %s"
 
-#: src/gtkblist.c:2616
+#: src/gtkblist.c:2621
 #, c-format
 msgid ""
 "\n"
@@ -2411,7 +2438,7 @@ msgstr ""
 "\n"
 "<b>Vzdevek:</b> %s"
 
-#: src/gtkblist.c:2625
+#: src/gtkblist.c:2630
 #, c-format
 msgid ""
 "\n"
@@ -2420,7 +2447,7 @@ msgstr ""
 "\n"
 "<b>Prijavljen(i):</b> %s"
 
-#: src/gtkblist.c:2637
+#: src/gtkblist.c:2642
 #, c-format
 msgid ""
 "\n"
@@ -2429,7 +2456,7 @@ msgstr ""
 "\n"
 "<b>Nedejaven:</b> %s"
 
-#: src/gtkblist.c:2672
+#: src/gtkblist.c:2677
 #, c-format
 msgid ""
 "\n"
@@ -2438,7 +2465,7 @@ msgstr ""
 "\n"
 "<b>Zadnjič viden:</b> pred %s"
 
-#: src/gtkblist.c:2680
+#: src/gtkblist.c:2685
 msgid ""
 "\n"
 "<b>Status:</b> Offline"
@@ -2446,7 +2473,7 @@ msgstr ""
 "\n"
 "<b>Stanje:</b> Ni na zvezi"
 
-#: src/gtkblist.c:2703
+#: src/gtkblist.c:2708
 msgid ""
 "\n"
 "<b>Description:</b> Spooky"
@@ -2454,7 +2481,7 @@ msgstr ""
 "\n"
 "<b>Opis:</b> Strašljivo"
 
-#: src/gtkblist.c:2705
+#: src/gtkblist.c:2710
 msgid ""
 "\n"
 "<b>Status:</b> Awesome"
@@ -2462,7 +2489,7 @@ msgstr ""
 "\n"
 "<b>Stanje</b>: Neverjetno!"
 
-#: src/gtkblist.c:2707
+#: src/gtkblist.c:2712
 msgid ""
 "\n"
 "<b>Status:</b> Rockin'"
@@ -2470,107 +2497,105 @@ msgstr ""
 "\n"
 "<b>Stanje</b>: Kulsko"
 
-#: src/gtkblist.c:2975
+#: src/gtkblist.c:2980
 #, c-format
-msgid "Idle %dh %02dm "
+msgid "Idle %dh %02dm"
 msgstr "Nedejaven %dh %02dm"
 
-#: src/gtkblist.c:2977
+#: src/gtkblist.c:2982
 #, c-format
-msgid "Idle %dm "
-msgstr "Nedejaven %dm "
+msgid "Idle %dm"
+msgstr "Nedejaven %dm"
 
-#: src/gtkblist.c:2980
-msgid "Idle "
+#: src/gtkblist.c:2985
+#: src/protocols/bonjour/bonjour.c:323
+#: src/protocols/msn/msn.c:554
+#: src/protocols/msn/state.c:32
+#: src/protocols/novell/novell.c:2855
+#: src/protocols/oscar/oscar.c:5058
+#: src/protocols/yahoo/yahoo.c:2660
+#: src/protocols/yahoo/yahoo_profile.c:660
+msgid "Idle"
 msgstr "Nedejaven"
 
-#: src/gtkblist.c:2984
+#: src/gtkblist.c:2989
 msgid "Offline "
 msgstr "Ni na zvezi "
 
-#: src/gtkblist.c:3102
+#: src/gtkblist.c:3107
 msgid "/Buddies/New Instant Message..."
 msgstr "/Prijatelji/Novo neposredno sporočilo ..."
 
-#: src/gtkblist.c:3103
-#: src/gtkblist.c:3136
+#: src/gtkblist.c:3108
+#: src/gtkblist.c:3141
 msgid "/Buddies/Join a Chat..."
 msgstr "/Prijatelji/Pridruži se pomenku ..."
 
-#: src/gtkblist.c:3104
+#: src/gtkblist.c:3109
 msgid "/Buddies/Get User Info..."
 msgstr "/Prijatelji/Informacije o uporabniku ..."
 
-#: src/gtkblist.c:3105
+#: src/gtkblist.c:3110
 msgid "/Buddies/Add Buddy..."
 msgstr "/Prijatelji/Dodaj prijatelja ..."
 
-#: src/gtkblist.c:3106
-#: src/gtkblist.c:3139
+#: src/gtkblist.c:3111
+#: src/gtkblist.c:3144
 msgid "/Buddies/Add Chat..."
 msgstr "/Prijatelji/Dodaj pomenek ..."
 
-#: src/gtkblist.c:3107
+#: src/gtkblist.c:3112
 msgid "/Buddies/Add Group..."
 msgstr "/Prijatelji/Dodaj skupino ..."
 
-#: src/gtkblist.c:3142
+#: src/gtkblist.c:3147
 msgid "/Tools/Buddy Pounces"
 msgstr "/Orodja/Opozorila prijateljev"
 
-#: src/gtkblist.c:3145
+#: src/gtkblist.c:3150
 msgid "/Tools/Privacy"
 msgstr "/Orodja/Zasebnost"
 
-#: src/gtkblist.c:3148
+#: src/gtkblist.c:3153
 msgid "/Tools/Room List"
 msgstr "/Orodja/Seznam sob"
 
-#: src/gtkblist.c:3227
-#, c-format
-msgid "%d unread message from %s\n"
-msgid_plural "%d unread messages from %s\n"
-msgstr[0] "%d neprebranih sporočil od %s\n"
-msgstr[1] "%d neprebrano sporočilo od %s\n"
-msgstr[2] "%d neprebrani sporočili od %s\n"
-msgstr[3] "%d neprebrana sporočila od %s\n"
-
-#: src/gtkblist.c:3322
+#: src/gtkblist.c:3338
 msgid "Manually"
 msgstr "ročno"
 
-#: src/gtkblist.c:3324
+#: src/gtkblist.c:3340
 msgid "Alphabetically"
 msgstr "abecedno"
 
-#: src/gtkblist.c:3325
+#: src/gtkblist.c:3341
 msgid "By status"
 msgstr "po stanju"
 
-#: src/gtkblist.c:3326
+#: src/gtkblist.c:3342
 msgid "By log size"
 msgstr "po obsegu dnevnika"
 
-#: src/gtkblist.c:3491
+#: src/gtkblist.c:3523
 msgid "/Accounts"
 msgstr "/Računi"
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
 #.
-#: src/gtkblist.c:3623
+#: src/gtkblist.c:3655
 msgid "/Buddies/Show Offline Buddies"
 msgstr "/Prijatelji/Pokaži prijatelje, ki niso na zvezi"
 
-#: src/gtkblist.c:3625
+#: src/gtkblist.c:3657
 msgid "/Buddies/Show Empty Groups"
 msgstr "/Prijatelji/Pokaži prazne skupine"
 
-#: src/gtkblist.c:3629
+#: src/gtkblist.c:3661
 msgid "/Buddies/Show Buddy Details"
 msgstr "/Prijatelji/Pokaži podrobnosti prijatelja"
 
-#: src/gtkblist.c:4323
+#: src/gtkblist.c:4357
 #: src/protocols/silc/buddy.c:737
 #: src/protocols/silc/buddy.c:995
 #: src/protocols/silc/buddy.c:1040
@@ -2579,68 +2604,68 @@ msgstr "/Prijatelji/Pokaži podrobnosti prijatelja"
 msgid "Add Buddy"
 msgstr "Dodaj prijatelja"
 
-#: src/gtkblist.c:4347
+#: src/gtkblist.c:4381
 msgid "Please enter the screen name of the person you would like to add to your buddy list. You may optionally enter an alias, or nickname,  for the buddy. The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr "Prosim vnesite ime osebe, ki jo želite dodati vašemu seznamu prijateljev. Vnesete lahko tudi psevdonim ali vzdevek. Kjer bo izvedljivo, bo namesto vzdevka prikazan psevdonim.\n"
 
-#: src/gtkblist.c:4369
+#: src/gtkblist.c:4403
 msgid "Screen Name:"
 msgstr "Ime:"
 
 #. Set up stuff for the account box
-#: src/gtkblist.c:4417
-#: src/gtkblist.c:4752
+#: src/gtkblist.c:4451
+#: src/gtkblist.c:4786
 msgid "Account:"
 msgstr "Račun:"
 
-#: src/gtkblist.c:4685
+#: src/gtkblist.c:4719
 msgid "This protocol does not support chat rooms."
 msgstr "Ta protokol ne podpira klepetalnic."
 
-#: src/gtkblist.c:4701
+#: src/gtkblist.c:4735
 msgid "You are not currently signed on with any protocols that have the ability to chat."
 msgstr "Trenutno niste prijavljeni na nobenem izmed protokolov, ki podpirajo pomenke."
 
-#: src/gtkblist.c:4718
+#: src/gtkblist.c:4752
 msgid "Add Chat"
 msgstr "Dodaj pomenek"
 
-#: src/gtkblist.c:4742
+#: src/gtkblist.c:4776
 msgid "Please enter an alias, and the appropriate information about the chat you would like to add to your buddy list.\n"
 msgstr "Prosim vnesite psevdonim in ostale informacije za pomenek, ki ga želite dodati na seznam prijateljev.\n"
 
-#: src/gtkblist.c:4821
+#: src/gtkblist.c:4858
 #: src/protocols/sametime/sametime.c:5574
 #: src/protocols/sametime/sametime.c:5658
 msgid "Add Group"
 msgstr "Dodaj skupino"
 
-#: src/gtkblist.c:4822
+#: src/gtkblist.c:4859
 msgid "Please enter the name of the group to be added."
 msgstr "Prosimo vnesite ime skupine, ki jo želite dodati."
 
-#: src/gtkblist.c:5444
+#: src/gtkblist.c:5483
 msgid "_Edit Account"
 msgstr "_Uredi račun"
 
-#: src/gtkblist.c:5477
-#: src/gtkblist.c:5483
+#: src/gtkblist.c:5516
+#: src/gtkblist.c:5522
 msgid "No actions available"
 msgstr "Na voljo ni nobenega ukaza"
 
-#: src/gtkblist.c:5491
+#: src/gtkblist.c:5530
 msgid "_Disable"
 msgstr "_Onemogoči"
 
-#: src/gtkblist.c:5503
+#: src/gtkblist.c:5542
 msgid "Enable Account"
 msgstr "Omogoči račun"
 
-#: src/gtkblist.c:5555
+#: src/gtkblist.c:5597
 msgid "/Tools"
 msgstr "/Orodja"
 
-#: src/gtkblist.c:5642
+#: src/gtkblist.c:5692
 msgid "/Buddies/Sort Buddies"
 msgstr "/Prijatelji/Razvrsti prijatelje"
 
@@ -2881,201 +2906,201 @@ msgid "Save Icon As..."
 msgstr "Shrani ikono kot ..."
 
 #. Conversation menu
-#: src/gtkconv.c:2504
+#: src/gtkconv.c:2507
 msgid "/_Conversation"
 msgstr "/_Pogovor"
 
-#: src/gtkconv.c:2506
+#: src/gtkconv.c:2509
 msgid "/Conversation/New Instant _Message..."
 msgstr "/Pogovor/Novo neposredno sporočilo ..."
 
-#: src/gtkconv.c:2511
+#: src/gtkconv.c:2514
 msgid "/Conversation/_Find..."
 msgstr "/Pogovor/_Najdi ..."
 
-#: src/gtkconv.c:2513
+#: src/gtkconv.c:2516
 msgid "/Conversation/View _Log"
 msgstr "/Pogovor/Pog_lej dnevnik ..."
 
-#: src/gtkconv.c:2514
+#: src/gtkconv.c:2517
 msgid "/Conversation/_Save As..."
 msgstr "/Pogovor/_Shrani kot ..."
 
-#: src/gtkconv.c:2516
+#: src/gtkconv.c:2519
 msgid "/Conversation/Clea_r"
 msgstr "/Pogovor/Po_čisti"
 
-#: src/gtkconv.c:2520
+#: src/gtkconv.c:2523
 msgid "/Conversation/Se_nd File..."
 msgstr "/Pogovor/_Pošlji datoteko ..."
 
-#: src/gtkconv.c:2521
+#: src/gtkconv.c:2524
 msgid "/Conversation/Add Buddy _Pounce..."
 msgstr "/Pogovor/Dodaj _opozorilo prijatelja ..."
 
-#: src/gtkconv.c:2523
+#: src/gtkconv.c:2526
 msgid "/Conversation/_Get Info"
 msgstr "/Pogovor/_Informacije"
 
-#: src/gtkconv.c:2525
+#: src/gtkconv.c:2528
 msgid "/Conversation/In_vite..."
 msgstr "/Pogovor/Po_vabi ..."
 
-#: src/gtkconv.c:2530
+#: src/gtkconv.c:2533
 msgid "/Conversation/Al_ias..."
 msgstr "/Pogovor/Psevdon_im ..."
 
-#: src/gtkconv.c:2532
+#: src/gtkconv.c:2535
 msgid "/Conversation/_Block..."
 msgstr "/Pogovor/_Zavrni ..."
 
-#: src/gtkconv.c:2534
+#: src/gtkconv.c:2537
 msgid "/Conversation/_Add..."
 msgstr "/Pogovor/Dod_aj ..."
 
-#: src/gtkconv.c:2536
+#: src/gtkconv.c:2539
 msgid "/Conversation/_Remove..."
 msgstr "/Pogovor/Odst_rani ..."
 
-#: src/gtkconv.c:2541
+#: src/gtkconv.c:2544
 msgid "/Conversation/Insert Lin_k..."
 msgstr "/Pogovor/Vstavi _povezavo ..."
 
-#: src/gtkconv.c:2543
+#: src/gtkconv.c:2546
 msgid "/Conversation/Insert Imag_e..."
 msgstr "/Pogovor/Vstavi _sliko ..."
 
-#: src/gtkconv.c:2548
+#: src/gtkconv.c:2551
 msgid "/Conversation/_Close"
 msgstr "/Pogovor/_Zapri"
 
 #. Options
-#: src/gtkconv.c:2552
+#: src/gtkconv.c:2555
 msgid "/_Options"
 msgstr "/M_ožnosti"
 
-#: src/gtkconv.c:2553
+#: src/gtkconv.c:2556
 msgid "/Options/Enable _Logging"
 msgstr "/Možnosti/Vk_ljuči dnevnik"
 
-#: src/gtkconv.c:2554
+#: src/gtkconv.c:2557
 msgid "/Options/Enable _Sounds"
 msgstr "/Možnosti/Vključi _zvoke"
 
-#: src/gtkconv.c:2555
+#: src/gtkconv.c:2558
 msgid "/Options/Show Buddy _Icon"
 msgstr "/Možnosti/Prikaži ikono prijatelja"
 
-#: src/gtkconv.c:2557
+#: src/gtkconv.c:2560
 msgid "/Options/Show Formatting _Toolbars"
 msgstr "/Možnosti/Prikaži orodno vrstico za _oblikovanje"
 
-#: src/gtkconv.c:2558
+#: src/gtkconv.c:2561
 msgid "/Options/Show Ti_mestamps"
 msgstr "/Možnosti/Pr_ikaži časovne žige"
 
-#: src/gtkconv.c:2598
+#: src/gtkconv.c:2601
 msgid "/Conversation/View Log"
 msgstr "/Pogovor/Prikaži dnevnik ..."
 
-#: src/gtkconv.c:2604
+#: src/gtkconv.c:2607
 msgid "/Conversation/Send File..."
 msgstr "/Pogovor/Pošlji datoteko ..."
 
-#: src/gtkconv.c:2608
+#: src/gtkconv.c:2611
 msgid "/Conversation/Add Buddy Pounce..."
 msgstr "/Pogovor/Dodaj opozorilo prijatelja ..."
 
-#: src/gtkconv.c:2614
+#: src/gtkconv.c:2617
 msgid "/Conversation/Get Info"
 msgstr "/Pogovor/Informacije"
 
-#: src/gtkconv.c:2618
+#: src/gtkconv.c:2621
 msgid "/Conversation/Invite..."
 msgstr "/Pogovor/Povabi ..."
 
-#: src/gtkconv.c:2624
+#: src/gtkconv.c:2627
 msgid "/Conversation/Alias..."
 msgstr "/Pogovor/Psevdonim ..."
 
-#: src/gtkconv.c:2628
+#: src/gtkconv.c:2631
 msgid "/Conversation/Block..."
 msgstr "/Pogovor/Zavrni ..."
 
-#: src/gtkconv.c:2632
+#: src/gtkconv.c:2635
 msgid "/Conversation/Add..."
 msgstr "/Pogovor/Dodaj ..."
 
-#: src/gtkconv.c:2636
+#: src/gtkconv.c:2639
 msgid "/Conversation/Remove..."
 msgstr "/Pogovor/Odstrani ..."
 
-#: src/gtkconv.c:2642
+#: src/gtkconv.c:2645
 msgid "/Conversation/Insert Link..."
 msgstr "/Pogovor/Vstavi povezavo ..."
 
-#: src/gtkconv.c:2646
+#: src/gtkconv.c:2649
 msgid "/Conversation/Insert Image..."
 msgstr "/Pogovor/Vstavi sliko ..."
 
-#: src/gtkconv.c:2652
+#: src/gtkconv.c:2655
 msgid "/Options/Enable Logging"
 msgstr "/Možnosti/Vključi dnevnik"
 
-#: src/gtkconv.c:2655
+#: src/gtkconv.c:2658
 msgid "/Options/Enable Sounds"
 msgstr "/Možnosti/Vključi zvoke"
 
-#: src/gtkconv.c:2658
+#: src/gtkconv.c:2661
 msgid "/Options/Show Formatting Toolbars"
 msgstr "/Možnosti/Prikaži orodno vrstico za oblikovanje"
 
-#: src/gtkconv.c:2661
+#: src/gtkconv.c:2664
 msgid "/Options/Show Timestamps"
 msgstr "/Možnosti/Prikaži časovne žige"
 
-#: src/gtkconv.c:2664
+#: src/gtkconv.c:2667
 msgid "/Options/Show Buddy Icon"
 msgstr "/Možnosti/Prikaži ikono prijatelja"
 
-#: src/gtkconv.c:2736
+#: src/gtkconv.c:2739
 msgid "User is typing..."
 msgstr "Uporabnik tipka ..."
 
-#: src/gtkconv.c:2739
+#: src/gtkconv.c:2742
 msgid "User has typed something and stopped"
 msgstr "Uporabnik je napisal nekaj in se ustavil."
 
 #. Build the Send To menu
-#: src/gtkconv.c:2887
+#: src/gtkconv.c:2890
 msgid "_Send To"
 msgstr "_Pošlji k"
 
-#: src/gtkconv.c:3533
+#: src/gtkconv.c:3537
 #: src/protocols/sametime/sametime.c:3579
 msgid "Topic:"
 msgstr "Tema:"
 
 #. Setup the label telling how many people are in the room.
-#: src/gtkconv.c:3581
+#: src/gtkconv.c:3585
 msgid "0 people in room"
 msgstr "0 ljudi v sobi"
 
-#: src/gtkconv.c:3660
+#: src/gtkconv.c:3664
 msgid "IM the user"
 msgstr "Pošlji sporočilo uporabniku"
 
-#: src/gtkconv.c:3673
+#: src/gtkconv.c:3677
 msgid "Ignore the user"
 msgstr "Prezri uporabnika"
 
-#: src/gtkconv.c:3685
+#: src/gtkconv.c:3689
 msgid "Get the user's information"
 msgstr "Poizvedi o uporabniku"
 
-#: src/gtkconv.c:4571
-#: src/gtkconv.c:4676
-#: src/gtkconv.c:4731
+#: src/gtkconv.c:4575
+#: src/gtkconv.c:4680
+#: src/gtkconv.c:4735
 #, c-format
 msgid "%d person in room"
 msgid_plural "%d people in room"
@@ -3084,56 +3109,56 @@ msgstr[1] "%d oseba v sobi"
 msgstr[2] "%d osebi v sobi"
 msgstr[3] "%d osebe v sobi"
 
-#: src/gtkconv.c:5969
+#: src/gtkconv.c:5973
 msgid "say &lt;message&gt;:  Send a message normally as if you weren't using a command."
 msgstr "say &lt;sporočilo&gt;:  Pošlji sporočilo kot ponavadi, kot če ne bi uporabljal ukaza."
 
-#: src/gtkconv.c:5972
+#: src/gtkconv.c:5976
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
 msgstr "me &lt;dejanje&gt;:  Pošlji prijatelju ali klepetu dejanje v slogu IRC-a."
 
-#: src/gtkconv.c:5975
+#: src/gtkconv.c:5979
 msgid "debug &lt;option&gt;:  Send various debug information to the current conversation."
 msgstr "razrošči &lt;možnost&gt;:  Trenutnim pomenkom pošlji različne informacije o razhroščevanju."
 
-#: src/gtkconv.c:5978
+#: src/gtkconv.c:5982
 msgid "clear: Clears the conversation scrollback."
 msgstr "clear: Počisti izpisane replike pomenka."
 
-#: src/gtkconv.c:5981
+#: src/gtkconv.c:5985
 msgid "help &lt;command&gt;:  Help on a specific command."
 msgstr "pomoč &lt;ukaz&gt;:  Pomoč o določenem ukazu."
 
-#: src/gtkconv.c:6114
+#: src/gtkconv.c:6118
 msgid "Confirm close"
 msgstr "Potrdi zaprtje"
 
-#: src/gtkconv.c:6146
+#: src/gtkconv.c:6150
 msgid "You have unread messages. Are you sure you want to close the window?"
 msgstr "Imate neprebrana sporočila. Ste prepričani, da želite zapreti okno?"
 
-#: src/gtkconv.c:6941
+#: src/gtkconv.c:6946
 msgid "Close conversation"
 msgstr "Zapri pogovor"
 
-#: src/gtkconv.c:7405
+#: src/gtkconv.c:7410
 msgid "Last created window"
 msgstr "zadnje odprto okno"
 
-#: src/gtkconv.c:7407
+#: src/gtkconv.c:7412
 msgid "Separate IM and Chat windows"
 msgstr "loči okna za klepet in zasebni pomenek"
 
-#: src/gtkconv.c:7409
+#: src/gtkconv.c:7414
 #: src/gtkprefs.c:1230
 msgid "New window"
 msgstr "novo okno"
 
-#: src/gtkconv.c:7411
+#: src/gtkconv.c:7416
 msgid "By group"
 msgstr "po skupinah"
 
-#: src/gtkconv.c:7413
+#: src/gtkconv.c:7418
 msgid "By account"
 msgstr "po vrsti računa"
 
@@ -4054,7 +4079,7 @@ msgstr "Ukaz brskalnika <b>%s</b> ni veljaven."
 #: src/gtknotify.c:683
 #: src/gtknotify.c:695
 #: src/gtknotify.c:708
-#: src/gtknotify.c:832
+#: src/gtknotify.c:833
 msgid "Unable to open URL"
 msgstr "Ni bilo mogoče odprti URL"
 
@@ -4064,7 +4089,7 @@ msgstr "Ni bilo mogoče odprti URL"
 msgid "Error launching <b>%s</b>: %s"
 msgstr "Napaka pri zaganjanju <b>%s</b>: %s"
 
-#: src/gtknotify.c:833
+#: src/gtknotify.c:834
 msgid "The 'Manual' browser command has been chosen, but no command has been set."
 msgstr "Vašega brskalnika ni bilo mogoče zagnati, ker ste v nastavitvah izbrali poljuben brskalnik, a niste nastavili ukaza."
 
@@ -4566,7 +4591,7 @@ msgid "Choose..."
 msgstr "Izberi ..."
 
 #: src/gtkprefs.c:1661
-#: src/gtkstatusbox.c:438
+#: src/gtkstatusbox.c:439
 #: src/protocols/bonjour/bonjour.c:258
 #: src/protocols/irc/irc.c:175
 #: src/protocols/irc/irc.c:457
@@ -4715,7 +4740,7 @@ msgstr "Vnesite ime uporabnika, ki ga želite zavrniti."
 
 #: src/gtkprivacy.c:632
 #: src/gtkprivacy.c:643
-#: src/protocols/gg/gg.c:1482
+#: src/protocols/gg/gg.c:1481
 msgid "Block"
 msgstr "Zavrni"
 
@@ -4808,11 +4833,11 @@ msgstr "Vrsta"
 #: src/gtksavedstatuses.c:903
 #: src/protocols/bonjour/bonjour.c:252
 #: src/protocols/bonjour/bonjour.c:259
-#: src/protocols/gg/gg.c:1433
-#: src/protocols/gg/gg.c:1438
-#: src/protocols/gg/gg.c:1447
-#: src/protocols/gg/gg.c:1452
-#: src/protocols/gg/gg.c:1457
+#: src/protocols/gg/gg.c:1432
+#: src/protocols/gg/gg.c:1437
+#: src/protocols/gg/gg.c:1446
+#: src/protocols/gg/gg.c:1451
+#: src/protocols/gg/gg.c:1456
 #: src/protocols/irc/irc.c:176
 #: src/protocols/jabber/jabber.c:1031
 #: src/protocols/jabber/jabber.c:1039
@@ -4830,7 +4855,7 @@ msgstr "Vrsta"
 #: src/protocols/sametime/sametime.c:3337
 #: src/protocols/sametime/sametime.c:3343
 #: src/protocols/sametime/sametime.c:3416
-#: src/protocols/simple/simple.c:255
+#: src/protocols/simple/simple.c:256
 #: src/protocols/yahoo/yahoo.c:3207
 #: src/protocols/yahoo/yahoo.c:3213
 #: src/protocols/zephyr/zephyr.c:2261
@@ -4857,8 +4882,8 @@ msgstr "Razno"
 
 #: src/gtksavedstatuses.c:892
 #: src/gtksavedstatuses.c:1019
-#: src/protocols/gg/gg.c:1414
-#: src/protocols/gg/gg.c:1419
+#: src/protocols/gg/gg.c:1413
+#: src/protocols/gg/gg.c:1418
 #: src/protocols/jabber/buddy.c:626
 #: src/protocols/jabber/buddy.c:633
 #: src/protocols/jabber/buddy.c:644
@@ -4951,12 +4976,12 @@ msgstr "Ni bilo mogoče predvajati zvoka, ker ste izbrali ukaz za predvajanje zv
 msgid "Unable to play sound because the configured sound command could not be launched: %s"
 msgstr "Zvoka ni bilo mogoče predvajati, ker izbranega ukaza za zvok ni bilo mogoče pognati: %s"
 
-#: src/gtkstatusbox.c:286
+#: src/gtkstatusbox.c:287
 msgid "Typing"
 msgstr "Tipka"
 
 #. connect to the server
-#: src/gtkstatusbox.c:289
+#: src/gtkstatusbox.c:290
 #: src/protocols/irc/irc.c:257
 #: src/protocols/jabber/jabber.c:837
 #: src/protocols/msn/session.c:349
@@ -4964,33 +4989,51 @@ msgstr "Tipka"
 #: src/protocols/novell/novell.c:2183
 #: src/protocols/oscar/oscar.c:1804
 #: src/protocols/sametime/sametime.c:3699
-#: src/protocols/simple/simple.c:1293
+#: src/protocols/simple/simple.c:1294
 #: src/protocols/yahoo/yahoo.c:2510
 #: src/protocols/zephyr/zephyr.c:1547
 msgid "Connecting"
 msgstr "Povezovanje"
 
 #. hacks
-#: src/gtkstatusbox.c:437
+#. zephyr has several exposures
+#. NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
+#. OPSTAFF "hidden"
+#. REALM-VISIBLE visible to people in local realm
+#. REALM-ANNOUNCED REALM-VISIBLE+ plus your logins/logouts are announced to <login,username,*>
+#. NET-VISIBLE REALM-ANNOUNCED, plus visible to people in foreign realm
+#. NET-ANNOUNCED NET-VISIBLE, plus logins/logouts are announced	 to <login,username,*>
+#.
+#. Online will set the user to the exposure they have in their options (defaulting to REALM-VISIBLE),
+#. Hidden, will set the user's exposure to OPSTAFF
+#.
+#. Away won't change their exposure but will set an auto away message (for IMs only)
+#.
+#: src/gtkstatusbox.c:438
 #: src/protocols/bonjour/bonjour.c:251
+#: src/protocols/gg/gg.c:1437
 #: src/protocols/irc/irc.c:171
+#: src/protocols/jabber/buddy.c:1089
 #: src/protocols/jabber/jabber.c:1038
 #: src/protocols/msn/msn.c:581
 #: src/protocols/msn/state.c:29
 #: src/protocols/msn/state.c:30
 #: src/protocols/msn/state.c:37
 #: src/protocols/msn/state.c:38
+#: src/protocols/napster/napster.c:584
 #: src/protocols/novell/novell.c:2846
 #: src/protocols/novell/novell.c:2978
 #: src/protocols/oscar/oscar.c:7827
 #: src/protocols/silc/silc.c:49
-#: src/protocols/simple/simple.c:253
+#: src/protocols/simple/simple.c:254
+#: src/protocols/yahoo/yahoo.c:2664
+#: src/protocols/zephyr/zephyr.c:2253
 #: src/status.c:154
 msgid "Available"
 msgstr "Na voljo"
 
-#: src/gtkstatusbox.c:439
-#: src/protocols/gg/gg.c:1447
+#: src/gtkstatusbox.c:440
+#: src/protocols/gg/gg.c:1446
 #: src/protocols/oscar/oscar.c:711
 #: src/protocols/oscar/oscar.c:7841
 #: src/protocols/yahoo/yahoo.c:2658
@@ -4998,9 +5041,9 @@ msgstr "Na voljo"
 msgid "Invisible"
 msgstr "Neviden"
 
-#: src/gtkstatusbox.c:440
+#: src/gtkstatusbox.c:441
 #: src/protocols/bonjour/bonjour.c:246
-#: src/protocols/gg/gg.c:1433
+#: src/protocols/gg/gg.c:1432
 #: src/protocols/irc/irc.c:167
 #: src/protocols/jabber/buddy.c:1087
 #: src/protocols/jabber/jabber.c:1031
@@ -5013,18 +5056,18 @@ msgstr "Neviden"
 #: src/protocols/oscar/oscar.c:7822
 #: src/protocols/sametime/sametime.c:3326
 #: src/protocols/silc/silc.c:47
-#: src/protocols/simple/simple.c:249
+#: src/protocols/simple/simple.c:250
 #: src/protocols/yahoo/yahoo.c:2662
 #: src/protocols/yahoo/yahoo.c:3202
 #: src/status.c:153
 msgid "Offline"
 msgstr "Brez povezave"
 
-#: src/gtkstatusbox.c:442
+#: src/gtkstatusbox.c:443
 msgid "Custom..."
 msgstr "Po meri ..."
 
-#: src/gtkstatusbox.c:443
+#: src/gtkstatusbox.c:444
 msgid "Saved..."
 msgstr "Datoteka shranjena ..."
 
@@ -5200,16 +5243,6 @@ msgstr "Dohodnim povezavam IM ni mogoče prisluhniti\n"
 msgid "Unable to establish connection with the local mDNS server.  Is it running?"
 msgstr "Povezave s krajevnim strežnikom mDNS ni mogoče vzpostaviti. Ali je strežnik sploh zagnan?"
 
-#: src/protocols/bonjour/bonjour.c:323
-#: src/protocols/msn/msn.c:554
-#: src/protocols/msn/state.c:32
-#: src/protocols/novell/novell.c:2855
-#: src/protocols/oscar/oscar.c:5058
-#: src/protocols/yahoo/yahoo.c:2660
-#: src/protocols/yahoo/yahoo_profile.c:660
-msgid "Idle"
-msgstr "Nedejaven"
-
 #: src/protocols/bonjour/bonjour.c:328
 #, c-format
 msgid ""
@@ -5266,7 +5299,7 @@ msgstr "Vrata"
 
 #: src/protocols/bonjour/bonjour.c:560
 #: src/protocols/gg/gg.c:571
-#: src/protocols/gg/gg.c:987
+#: src/protocols/gg/gg.c:986
 msgid "First name"
 msgstr "Ime"
 
@@ -5362,24 +5395,24 @@ msgid "e-Mail"
 msgstr "E-pošta"
 
 #: src/protocols/gg/gg.c:439
-#: src/protocols/gg/gg.c:714
+#: src/protocols/gg/gg.c:713
 #: src/protocols/jabber/jabber.c:632
 #: src/protocols/jabber/jabber.c:1149
 msgid "Password"
 msgstr "Geslo"
 
 #: src/protocols/gg/gg.c:444
-#: src/protocols/gg/gg.c:719
+#: src/protocols/gg/gg.c:718
 msgid "Password (retype)"
 msgstr "Geslo (ponovno vtipkajte)"
 
 #: src/protocols/gg/gg.c:449
-#: src/protocols/gg/gg.c:724
+#: src/protocols/gg/gg.c:723
 msgid "Enter current token"
 msgstr "Vnesite trenutni žeton"
 
 #: src/protocols/gg/gg.c:455
-#: src/protocols/gg/gg.c:730
+#: src/protocols/gg/gg.c:729
 msgid "Current token"
 msgstr "Trenutni žeton"
 
@@ -5393,17 +5426,17 @@ msgid "Please, fill in the following fields"
 msgstr "Prosimo, izpolnite naslednja polja"
 
 #: src/protocols/gg/gg.c:556
-#: src/protocols/gg/gg.c:1606
+#: src/protocols/gg/gg.c:1605
 msgid "Unable to initiate a new search"
 msgstr "Novega iskanja ni mogoče začeti"
 
 #: src/protocols/gg/gg.c:557
-#: src/protocols/gg/gg.c:1607
+#: src/protocols/gg/gg.c:1606
 msgid "You have a pending search. Please wait for it to finish."
 msgstr "Imate iskanje na čakanju. Prosimo, da počakate na njegovo izvršitev."
 
 #: src/protocols/gg/gg.c:576
-#: src/protocols/gg/gg.c:1986
+#: src/protocols/gg/gg.c:1985
 #: src/protocols/jabber/buddy.c:252
 #: src/protocols/jabber/buddy.c:698
 #: src/protocols/jabber/buddy.c:1341
@@ -5418,7 +5451,7 @@ msgid "Nickname"
 msgstr "Vzdevek"
 
 #: src/protocols/gg/gg.c:581
-#: src/protocols/gg/gg.c:993
+#: src/protocols/gg/gg.c:992
 #: src/protocols/jabber/jabber.c:668
 #: src/protocols/oscar/oscar.c:6048
 #: src/protocols/oscar/oscar.c:6056
@@ -5471,125 +5504,103 @@ msgstr "Izpolnite polja."
 msgid "Your current password is different from the one that you specified."
 msgstr "Vaše veljavno geslo se razlikuje od navedenega."
 
-#: src/protocols/gg/gg.c:666
+#: src/protocols/gg/gg.c:665
 msgid "Unable to change password. Error occured.\n"
 msgstr "Gesla ni bilo mogoče spremeniti. Prišlo je do napake.\n"
 
-#: src/protocols/gg/gg.c:675
+#: src/protocols/gg/gg.c:674
 msgid "Change password for the Gadu-Gadu account"
 msgstr "Spremeni geslo za račun Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:676
+#: src/protocols/gg/gg.c:675
 msgid "Password was changed successfully!"
 msgstr "Geslo je bilo uspešno spremenjeno!"
 
-#: src/protocols/gg/gg.c:709
+#: src/protocols/gg/gg.c:708
 msgid "Current password"
 msgstr "Trenutno geslo"
 
-#: src/protocols/gg/gg.c:734
+#: src/protocols/gg/gg.c:733
 msgid "Please, enter your current password and your new password for UIN: "
 msgstr "Vnesite svoje obstoječe in novo geslo za UIN:"
 
+#: src/protocols/gg/gg.c:737
 #: src/protocols/gg/gg.c:738
-#: src/protocols/gg/gg.c:739
 msgid "Change Gadu-Gadu Password"
 msgstr "Spremeni geslo Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:823
+#: src/protocols/gg/gg.c:822
 #, c-format
 msgid "Select a chat for buddy: %s"
 msgstr "Izberite klepet za prijatelja: %s"
 
+#: src/protocols/gg/gg.c:825
 #: src/protocols/gg/gg.c:826
-#: src/protocols/gg/gg.c:827
 msgid "Add to chat..."
 msgstr "Dodaj k pomenku ..."
 
-#: src/protocols/gg/gg.c:966
+#: src/protocols/gg/gg.c:965
 msgid "No matching users found"
 msgstr "Ni najdenih uporabnikov"
 
-#: src/protocols/gg/gg.c:967
+#: src/protocols/gg/gg.c:966
 msgid "There are no users matching your search criteria."
 msgstr "Noben uporabnik ne ustreza iskalnim pogojem."
 
-#: src/protocols/gg/gg.c:978
-#: src/protocols/gg/gg.c:1045
+#: src/protocols/gg/gg.c:977
+#: src/protocols/gg/gg.c:1044
 #: src/protocols/oscar/oscar.c:6158
 msgid "Unable to display the search results."
 msgstr "Rezultatov iskanja ni mogoče izpisati."
 
-#: src/protocols/gg/gg.c:984
+#: src/protocols/gg/gg.c:983
 #: src/protocols/oscar/oscar.c:5993
 msgid "UIN"
 msgstr "UIN"
 
-#: src/protocols/gg/gg.c:990
+#: src/protocols/gg/gg.c:989
 msgid "Nick name"
 msgstr "Vzdevek"
 
-#: src/protocols/gg/gg.c:996
+#: src/protocols/gg/gg.c:995
 msgid "Birth year"
 msgstr "Leto rojstva"
 
-#: src/protocols/gg/gg.c:1036
+#: src/protocols/gg/gg.c:1035
 msgid "Gadu-Gadu Public Directory"
 msgstr "Javni imenik Gadu-Gadu"
 
-#: src/protocols/gg/gg.c:1037
+#: src/protocols/gg/gg.c:1036
 msgid "Search results"
 msgstr "Rezultati iskanja"
 
-#: src/protocols/gg/gg.c:1133
-#: src/protocols/gg/gg.c:1280
+#: src/protocols/gg/gg.c:1132
+#: src/protocols/gg/gg.c:1279
 msgid "Unable to read socket"
 msgstr "Ne morem brati vtičnice"
 
-#: src/protocols/gg/gg.c:1216
+#: src/protocols/gg/gg.c:1215
 msgid "Buddy list downloaded"
 msgstr "Seznam prijateljev prenesen"
 
-#: src/protocols/gg/gg.c:1217
+#: src/protocols/gg/gg.c:1216
 msgid "Your buddy list was downloaded from the server."
 msgstr "Vaš seznam prijateljev je bil prenesen s strežnika."
 
-#: src/protocols/gg/gg.c:1224
+#: src/protocols/gg/gg.c:1223
 msgid "Buddy list uploaded"
 msgstr "Seznam prijateljev prenesen"
 
-#: src/protocols/gg/gg.c:1225
+#: src/protocols/gg/gg.c:1224
 msgid "Your buddy list was stored on the server."
 msgstr "Seznam prijateljev je bil shranjen na strežniku."
 
-#: src/protocols/gg/gg.c:1314
-#: src/protocols/gg/gg.c:1532
+#: src/protocols/gg/gg.c:1313
+#: src/protocols/gg/gg.c:1531
 msgid "Connection failed."
 msgstr "Povezava ni uspela."
 
-#. zephyr has several exposures
-#. NONE (where you are hidden, and zephyrs to you are in practice silently dropped -- yes this is wrong)
-#. OPSTAFF "hidden"
-#. REALM-VISIBLE visible to people in local realm
-#. REALM-ANNOUNCED REALM-VISIBLE+ plus your logins/logouts are announced to <login,username,*>
-#. NET-VISIBLE REALM-ANNOUNCED, plus visible to people in foreign realm
-#. NET-ANNOUNCED NET-VISIBLE, plus logins/logouts are announced	 to <login,username,*>
-#.
-#. Online will set the user to the exposure they have in their options (defaulting to REALM-VISIBLE),
-#. Hidden, will set the user's exposure to OPSTAFF
-#.
-#. Away won't change their exposure but will set an auto away message (for IMs only)
-#.
-#: src/protocols/gg/gg.c:1438
-#: src/protocols/jabber/buddy.c:1089
-#: src/protocols/napster/napster.c:584
-#: src/protocols/oscar/oscar.c:713
-#: src/protocols/yahoo/yahoo.c:2664
-#: src/protocols/zephyr/zephyr.c:2253
-msgid "Online"
-msgstr "Prisoten"
-
-#: src/protocols/gg/gg.c:1452
+#: src/protocols/gg/gg.c:1451
 #: src/protocols/msn/msn.c:593
 #: src/protocols/msn/state.c:31
 #: src/protocols/novell/novell.c:2852
@@ -5601,60 +5612,60 @@ msgstr "Prisoten"
 msgid "Busy"
 msgstr "Zaposlen"
 
-#: src/protocols/gg/gg.c:1457
+#: src/protocols/gg/gg.c:1456
 #: src/protocols/msn/msn.c:562
 msgid "Blocked"
 msgstr "Zavrnjeno"
 
-#: src/protocols/gg/gg.c:1474
+#: src/protocols/gg/gg.c:1473
 msgid "Add to chat"
 msgstr "Dodaj k pomenku"
 
-#: src/protocols/gg/gg.c:1479
+#: src/protocols/gg/gg.c:1478
 msgid "Unblock"
 msgstr "Prekliči zavrnitev"
 
-#: src/protocols/gg/gg.c:1498
+#: src/protocols/gg/gg.c:1497
 msgid "Chat _name:"
 msgstr "_Ime za klepet:"
 
-#: src/protocols/gg/gg.c:1717
+#: src/protocols/gg/gg.c:1716
 msgid "Chat error"
 msgstr "Napaka pri pomenku"
 
-#: src/protocols/gg/gg.c:1718
+#: src/protocols/gg/gg.c:1717
 msgid "This chat name is already in use"
 msgstr "Ime za pomenek že obstaja"
 
-#: src/protocols/gg/gg.c:1800
+#: src/protocols/gg/gg.c:1799
 msgid "Not connected to the server."
 msgstr "S strežnikom niste povezani."
 
-#: src/protocols/gg/gg.c:1823
+#: src/protocols/gg/gg.c:1822
 msgid "Find buddies..."
 msgstr "Poišči prijatelje ..."
 
-#: src/protocols/gg/gg.c:1829
+#: src/protocols/gg/gg.c:1828
 msgid "Change password..."
 msgstr "Spremeni geslo ..."
 
-#: src/protocols/gg/gg.c:1835
+#: src/protocols/gg/gg.c:1834
 msgid "Upload buddylist to Server"
 msgstr "Izvozi seznam prijateljev na strežnik"
 
-#: src/protocols/gg/gg.c:1839
+#: src/protocols/gg/gg.c:1838
 msgid "Download buddylist from Server"
 msgstr "Uvozi seznam prijateljev s strežnika"
 
-#: src/protocols/gg/gg.c:1843
+#: src/protocols/gg/gg.c:1842
 msgid "Delete buddylist from Server"
 msgstr "Izbriši seznam prijateljev na strežniku"
 
-#: src/protocols/gg/gg.c:1847
+#: src/protocols/gg/gg.c:1846
 msgid "Save buddylist to file..."
 msgstr "Shrani seznam prijateljev v datoteko ..."
 
-#: src/protocols/gg/gg.c:1851
+#: src/protocols/gg/gg.c:1850
 msgid "Load buddylist from file..."
 msgstr "Uvozi seznam prijateljev iz datoteke ..."
 
@@ -5669,16 +5680,16 @@ msgstr "Uvozi seznam prijateljev iz datoteke ..."
 #. id
 #. name
 #. version
-#: src/protocols/gg/gg.c:1938
+#: src/protocols/gg/gg.c:1937
 msgid "Gadu-Gadu Protocol Plugin"
 msgstr "Dodatek za protokol Gadu-Gadu"
 
 #. summary
-#: src/protocols/gg/gg.c:1939
+#: src/protocols/gg/gg.c:1938
 msgid "Polish popular IM"
 msgstr "Olepšaj priljubljen program za neposredno sporočanje"
 
-#: src/protocols/gg/gg.c:1987
+#: src/protocols/gg/gg.c:1986
 msgid "Gadu-Gadu User"
 msgstr "Uporabnik Gadu-Gadu"
 
@@ -5760,8 +5771,8 @@ msgid "SSL support unavailable"
 msgstr "Podpora SSL ni na voljo"
 
 #: src/protocols/irc/irc.c:276
-#: src/protocols/simple/simple.c:391
-#: src/protocols/simple/simple.c:1236
+#: src/protocols/simple/simple.c:392
+#: src/protocols/simple/simple.c:1237
 msgid "Couldn't create socket"
 msgstr "Vtičnika ni bilo mogoče ustvariti"
 
@@ -5826,7 +5837,7 @@ msgstr "Vstavek za protokol IRC, ki je manj beden"
 #: src/protocols/sametime/sametime.c:5768
 #: src/protocols/silc/ops.c:1242
 #: src/protocols/silc/ops.c:1344
-#: src/protocols/simple/simple.c:1446
+#: src/protocols/simple/simple.c:1447
 msgid "Server"
 msgstr "Strežnik"
 
@@ -7464,14 +7475,12 @@ msgstr "Pridem precej nazaj"
 
 #: src/protocols/msn/msn.c:597
 #: src/protocols/msn/state.c:35
-#: src/protocols/yahoo/yahoo.c:2650
 #: src/protocols/yahoo/yahoo.c:3232
 msgid "On The Phone"
 msgstr "Na telefonu"
 
 #: src/protocols/msn/msn.c:601
 #: src/protocols/msn/state.c:36
-#: src/protocols/yahoo/yahoo.c:2654
 #: src/protocols/yahoo/yahoo.c:3238
 msgid "Out To Lunch"
 msgstr "Na kosilu"
@@ -8502,6 +8511,10 @@ msgstr "Zaseden"
 #: src/protocols/oscar/oscar.c:709
 msgid "Web Aware"
 msgstr "Zaveden interneta"
+
+#: src/protocols/oscar/oscar.c:713
+msgid "Online"
+msgstr "Prisoten"
 
 #: src/protocols/oscar/oscar.c:786
 #: src/protocols/oscar/oscar.c:5038
@@ -11215,11 +11228,11 @@ msgstr "Tabla"
 msgid "Could not add the buddy %s because every simple user has to start with 'sip:'."
 msgstr "Prijatelja %s ni mogoče dodati, kajti vsak enostaven uporabnik mora imeti na začetku imena 'sip:'."
 
-#: src/protocols/simple/simple.c:1226
+#: src/protocols/simple/simple.c:1227
 msgid "Could not create listen socket"
 msgstr "Vtičnika ni bilo mogoče ustvariti"
 
-#: src/protocols/simple/simple.c:1280
+#: src/protocols/simple/simple.c:1281
 msgid "SIP usernames may not contain whitespaces or @ symbols"
 msgstr "Uporabniška imena SIP ne smejo vsebovati presledka ali simbola @"
 
@@ -11231,33 +11244,33 @@ msgstr "Uporabniška imena SIP ne smejo vsebovati presledka ali simbola @"
 #. *< id
 #. *< name
 #. *< version
-#: src/protocols/simple/simple.c:1426
+#: src/protocols/simple/simple.c:1427
 msgid "SIP/SIMPLE Protocol Plugin"
 msgstr "Vstavek za protokol SIP/SIMPLE"
 
 #. *  summary
-#: src/protocols/simple/simple.c:1427
+#: src/protocols/simple/simple.c:1428
 msgid "The SIP/SIMPLE Protocol Plugin"
 msgstr "Vstavek za protokol SIP/SIMPLE"
 
 #. *  description
-#: src/protocols/simple/simple.c:1428
+#: src/protocols/simple/simple.c:1429
 msgid "Thomas Butter <butter@uni-mannheim.de>"
 msgstr "Thomas Butter <butter@uni-mannheim.de>"
 
-#: src/protocols/simple/simple.c:1449
+#: src/protocols/simple/simple.c:1450
 msgid "Publish Status (note: everyone may watch you)"
 msgstr "Stanje objave (opomba: vsakdo vas lahko opazuje)"
 
-#: src/protocols/simple/simple.c:1452
+#: src/protocols/simple/simple.c:1453
 msgid "Use UDP"
 msgstr "Uporabi UDP"
 
-#: src/protocols/simple/simple.c:1454
+#: src/protocols/simple/simple.c:1455
 msgid "Use Proxy"
 msgstr "Uporabi proxy"
 
-#: src/protocols/simple/simple.c:1456
+#: src/protocols/simple/simple.c:1457
 msgid "Proxy"
 msgstr "Proxy"
 
@@ -11602,24 +11615,29 @@ msgid "Connection problem"
 msgstr "Težava s povezavo"
 
 #: src/protocols/yahoo/yahoo.c:2644
-#: src/protocols/yahoo/yahoo.c:3223
-msgid "Not At Home"
+msgid "Not at Home"
 msgstr "Nisem doma"
 
 #: src/protocols/yahoo/yahoo.c:2646
-#: src/protocols/yahoo/yahoo.c:3226
-msgid "Not At Desk"
+msgid "Not at Desk"
 msgstr "Nisem za mizo"
 
 #: src/protocols/yahoo/yahoo.c:2648
-#: src/protocols/yahoo/yahoo.c:3229
-msgid "Not In Office"
+msgid "Not in Office"
 msgstr "Nisem v pisarni"
+
+#: src/protocols/yahoo/yahoo.c:2650
+msgid "On the Phone"
+msgstr "Na telefonu"
 
 #: src/protocols/yahoo/yahoo.c:2652
 #: src/protocols/yahoo/yahoo.c:3235
 msgid "On Vacation"
 msgstr "Na dopustu"
+
+#: src/protocols/yahoo/yahoo.c:2654
+msgid "Out to Lunch"
+msgstr "Na kosilu"
 
 #: src/protocols/yahoo/yahoo.c:2656
 #: src/protocols/yahoo/yahoo.c:3241
@@ -11680,6 +11698,18 @@ msgstr "Aktiviraj ID ..."
 #: src/protocols/yahoo/yahoo.c:3008
 msgid "Join User in Chat..."
 msgstr "Pridruži se uporabniku v pomenku ..."
+
+#: src/protocols/yahoo/yahoo.c:3223
+msgid "Not At Home"
+msgstr "Nisem doma"
+
+#: src/protocols/yahoo/yahoo.c:3226
+msgid "Not At Desk"
+msgstr "Nisem za mizo"
+
+#: src/protocols/yahoo/yahoo.c:3229
+msgid "Not In Office"
+msgstr "Nisem v pisarni"
 
 #: src/protocols/yahoo/yahoo.c:3529
 msgid "join &lt;room&gt;:  Join a chat room on the Yahoo network"
