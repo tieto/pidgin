@@ -230,6 +230,7 @@ int wgaim_ioctl(int fd, int command, void* val) {
 			}
 			/* Replace the length with the actually used length */
 			ifc->ifc_len = ifc->ifc_len - (ifc->ifc_buf - tmp);
+			return 0;
 		}
 	}
 	default:
