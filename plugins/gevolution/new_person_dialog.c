@@ -291,7 +291,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 
 		/* Screen Name */
 		dialog->screenname = gtk_entry_new();
-		add_pref_box(sg, vbox, _("Screenname:"), dialog->screenname);
+		add_pref_box(sg, vbox, _("Screen name:"), dialog->screenname);
 
 		if (username != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->screenname), username);

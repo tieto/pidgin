@@ -5775,7 +5775,7 @@ static void mw_plugin_init(GaimPlugin *plugin) {
   l = g_list_append(l, opt);
 
   /* notesbuddy hack encoding */
-  opt = gaim_account_option_string_new(_("NotesBuddy Encoding"),
+  opt = gaim_account_option_string_new(_("NotesBuddy encoding"),
 				       MW_KEY_ENCODING,
 				       MW_PLUGIN_DEFAULT_ENCODING);
   l = g_list_append(l, opt);
@@ -5784,7 +5784,7 @@ static void mw_plugin_init(GaimPlugin *plugin) {
        there. Don't delete the preference, since there may be more
        than one account that wants to check for it. */
     gboolean b = FALSE;
-    const char *label = _("Force Login (Ignore Server Redirects)");
+    const char *label = _("Force login (ignore server redirects)");
 
     if(gaim_prefs_exists(MW_PRPL_OPT_FORCE_LOGIN))
       b = gaim_prefs_get_bool(MW_PRPL_OPT_FORCE_LOGIN);
@@ -5794,7 +5794,7 @@ static void mw_plugin_init(GaimPlugin *plugin) {
   }
 
   /* pretend to be Sametime Connect */
-  opt = gaim_account_option_bool_new(_("Hide Client Identity"),
+  opt = gaim_account_option_bool_new(_("Hide client identity"),
 				     MW_KEY_FAKE_IT, FALSE);
   l = g_list_append(l, opt);
 

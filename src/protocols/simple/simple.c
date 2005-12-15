@@ -1311,6 +1311,7 @@ static void simple_login(GaimAccount *account)
 	g_free(hosttoconnect);
 
 	/* register timeout callback for register / subscribe renewal */
+	/* TODO: What if the timeout is called before gaim_srv_resolve() finishes?! */
 	sip->registertimeout = gaim_timeout_add((rand()%100)+10*1000, (GSourceFunc)register_timeout, sip);
 }
 
@@ -1421,12 +1422,12 @@ static GaimPluginInfo info =
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
 
-	"prpl-simple",                                       /**< id             */
-	"SIMPLE",                                            /**< name           */
+	"prpl-simple",                                    /**< id             */
+	"SIMPLE",                                         /**< name           */
 	VERSION,                                          /**< version        */
-	N_("SIP/SIMPLE Protocol Plugin"),                        /**  summary        */
-	N_("The SIP/SIMPLE Protocol Plugin"),    /**  description    */
-	N_("Thomas Butter <butter@uni-mannheim.de>"),         /**< author         */
+	N_("SIP/SIMPLE Protocol Plugin"),                 /**  summary        */
+	N_("The SIP/SIMPLE Protocol Plugin"),             /**  description    */
+	"Thomas Butter <butter@uni-mannheim.de>",         /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
@@ -1447,12 +1448,12 @@ static void _init_plugin(GaimPlugin *plugin)
 	split = gaim_account_user_split_new(_("Server"), "", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_bool_new(_("Publish Status (note: everyone may watch you)"), "dopublish", TRUE);
+	option = gaim_account_option_bool_new(_("Publish status (note: everyone may watch you)"), "dopublish", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = gaim_account_option_bool_new(_("Use UDP"), "udp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Use Proxy"), "useproxy", FALSE);
+	option = gaim_account_option_bool_new(_("Use proxy"), "useproxy", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = gaim_account_option_string_new(_("Proxy"), "proxy", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);

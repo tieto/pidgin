@@ -594,11 +594,11 @@ msn_status_types(GaimAccount *account)
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "phone",
-			_("On The Phone"), FALSE, TRUE, FALSE);
+			_("On the Phone"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_AWAY, "lunch",
-			_("Out To Lunch"), FALSE, TRUE, FALSE);
+			_("Out to Lunch"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
 
 	status = gaim_status_type_new_full(GAIM_STATUS_HIDDEN, "invisible",
@@ -1342,7 +1342,6 @@ msn_tooltip_info_text(MsnGetInfoData *info_data)
 {
 	GString *s;
 	GaimBuddy *b;
-	const char *p;
 
 	s = g_string_sized_new(80); /* wild guess */
 

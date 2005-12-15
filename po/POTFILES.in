@@ -2,7 +2,6 @@ plugins/ciphertest.c
 plugins/contact_priority.c
 plugins/crazychat/cc_gaim_plugin.c
 plugins/dbus-example.c
-plugins/docklet/docklet-win32.c
 plugins/docklet/docklet.c
 plugins/docklet/eggtrayicon.c
 plugins/extplacement.c

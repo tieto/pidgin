@@ -550,7 +550,7 @@ init_plugin(GaimPlugin *plugin)
 	initialize_default_account_values();
 
 	/* Creating the user splits */
-	split = gaim_account_user_split_new(_("Host name"), default_hostname, '@');
+	split = gaim_account_user_split_new(_("Hostname"), default_hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */

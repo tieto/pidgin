@@ -986,7 +986,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 	column = gaim_notify_searchresults_column_new(_("First name"));
 	gaim_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("Nick name"));
+	column = gaim_notify_searchresults_column_new(_("Nickname"));
 	gaim_notify_searchresults_column_add(results, column);
 
 	column = gaim_notify_searchresults_column_new(_("City"));
