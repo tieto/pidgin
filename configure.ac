@@ -484,7 +484,7 @@ dnl #######################################################################
 dnl # Check for DBUS libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus,     [  --enable-dbus           enable DBUS support],,enable_dbus=no)
+AC_ARG_ENABLE(dbus,     [  --enable-dbus           enable DBUS support],,enable_dbus=yes)
 
 if test "x$enable_dbus" = "xyes" ; then
    AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
