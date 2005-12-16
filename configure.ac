@@ -1007,11 +1007,19 @@ if test "x$enable_nss" != "xno"; then
 	enable_nss="no"
 
 	if test "x$nss_manual_check" = "xno"; then
-		PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes", have_nss="no")
-
-		if test "x$have_nss" = "xyes"; then
+		if `$PKG_CONFIG --exists mozilla-nss`; then
+			PKG_CHECK_MODULES(NSS, mozilla-nss, have_nss="yes", have_nss="no")
 			mozilla_nspr="mozilla-nspr"
 			mozilla_nss="mozilla-nss"
+		else
+			if `$PKG_CONFIG --exists nss`; then
+				PKG_CHECK_MODULES(NSS, nss, have_nss="yes")
+				mozilla_nspr="nspr"
+				mozilla_nss="nss"
+			fi
+		fi
+
+		if test "x$have_nss" = "xyes"; then
 
 			AC_DEFINE(HAVE_NSS, 1, [Define if you have Mozilla NSS])
 			AC_DEFINE(HAVE_SSL, 1, [Define if you have SSL])
