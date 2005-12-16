@@ -1,6 +1,10 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
+		gaim-notifications-example.py \
+		gaim-remote.py \
+		gaim-send \
+		gaim-send-async \
 		getopt.c \
 		getopt.h \
 		getopt1.c \
