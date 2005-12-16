@@ -182,7 +182,7 @@ if test "$GETTEXT_TOOL" = "autopoint"; then
 
 	if test $GETTEXT_MINOR_VERSION -ge 12; then
 		cp po/Makefile.in.in po/.tmp-Makefile.in.in
-		sed -e 's#echo "\$(top_builddir)/\$(MKINSTALLDIRS)" ;; esac#echo "\$(MKINSTALLDIRS)" ;; esac#1' < po/.tmp-Makefile.in.in > po/Makefile.in.in
+		sed -e 's#\*) echo "\$(top_builddir)/\$(MKINSTALLDIRS)" ;; esac#\.\/\*) echo "\$(top_builddir)/\$(MKINSTALLDIRS)" ;; \*) echo "\$(MKINSTALLDIRS)" ;; esac#1' < po/.tmp-Makefile.in.in > po/Makefile.in.in
 		rm po/.tmp-Makefile.in.in
 	fi
 else
