@@ -109,6 +109,18 @@ AC_CHECK_FUNC(dlopen, LIBDL="", [AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl")])
 
 
 dnl #######################################################################
+dnl # Check for Meanwhile headers (for Sametime)
+dnl #######################################################################
+PKG_CHECK_MODULES(MEANWHILE,
+	[meanwhile >= 1.0.0 meanwhile < 2.0.0],
+	[have_meanwhile="yes"],
+	[have_meanwhile="no"])
+AC_SUBST(MEANWHILE_CFLAGS)
+AC_SUBST(MEANWHILE_LIBS)
+
+
+
+dnl #######################################################################
 dnl # Check for Howl headers (for Bonjour)
 dnl #######################################################################
 AC_ARG_WITH(howl-includes, [AC_HELP_STRING([--with-howl-includes=DIR], [Compile the Bonjour plugin against the Howl includes in DIR])], [ac_howl_includes="$withval"], [ac_howl_includes="no"])
@@ -214,6 +226,9 @@ fi
 if test "x$STATIC_PRPLS" = "xall" ; then
 	STATIC_PRPLS="bonjour gg irc jabber msn novell oscar sametime silc simple yahoo zephyr"
 fi
+if test "x$have_meanwhile" != "xyes" ; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/sametime//'`
+fi
 if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
@@ -257,7 +272,7 @@ AM_CONDITIONAL(STATIC_JABBER, test "x$static_jabber" = "xyes")
 AM_CONDITIONAL(STATIC_MSN, test "x$static_msn" = "xyes")
 AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
-AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes")
+AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
@@ -270,6 +285,9 @@ AC_DEFINE_UNQUOTED(STATIC_PROTO_INIT, $extern_init static void static_proto_init
 AC_ARG_WITH(dynamic_prpls, [AC_HELP_STRING([--with-dynamic-prpls], [specify which protocols to build dynamically])], [DYNAMIC_PRPLS=`echo $withval | $sedpath 's/,/ /g'`])
 if test "x$DYNAMIC_PRPLS" = "xall" ; then
 	DYNAMIC_PRPLS="bonjour gg irc jabber msn novell oscar sametime silc simple yahoo zephyr"
+fi
+if test "x$have_meanwhile" != "xyes"; then
+        DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/sametime//'`
 fi
 if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
@@ -303,7 +321,7 @@ AM_CONDITIONAL(DYNAMIC_JABBER, test "x$dynamic_jabber" = "xyes")
 AM_CONDITIONAL(DYNAMIC_MSN, test "x$dynamic_msn" = "xyes")
 AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
@@ -1621,8 +1639,6 @@ AC_OUTPUT([Makefile
 		   src/protocols/novell/Makefile
 		   src/protocols/oscar/Makefile
 		   src/protocols/sametime/Makefile
-		   src/protocols/sametime/meanwhile/Makefile
-		   src/protocols/sametime/meanwhile/mpi/Makefile
 		   src/protocols/silc/Makefile
 		   src/protocols/simple/Makefile
 		   src/protocols/toc/Makefile

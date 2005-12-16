@@ -1,4 +1,3 @@
-SUBDIRS = meanwhile
 
 EXTRA_DIST = Makefile.mingw
 
@@ -29,17 +28,16 @@ endif
 
 
 libsametime_la_LDFLAGS = -module -avoid-version -no-undefined
-libsametime_la_LIBADD = $(GLIB_LIBS) meanwhile/libmeanwhile.la
+libsametime_la_LIBADD = $(GLIB_LIBS) $(MEANWHILE_LIBS)
 
 
 AM_CFLAGS = \
-	$(GLIB_CFLAGS) \
+	$(GLIB_CFLAGS) $(MEANWHILE_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	-I$(top_srcdir)/src \
-	-I$(top_srcdir)/src/protocols/sametime/meanwhile
+	-I$(top_srcdir)/src
 
 
 AM_CPPFLAGS = \
-	-DG_LOG_DOMAIN=\"meanwhile\" \
+	-DG_LOG_DOMAIN=\"sametime\" \
 	$(st)
 

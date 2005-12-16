@@ -47,14 +47,13 @@ include $(GAIM_TOP)/src/win32/global.mak
 ##
 
 INCLUDE_PATHS +=	-I$(SAMETIME_ROOT) \
-			-I$(SAMETIME_ROOT)/meanwhile \
-			-I$(SAMETIME_ROOT)/meanwhile/mpi \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GAIM_TOP)/src \
 			-I$(GAIM_TOP)/src/win32 \
-			-I$(GAIM_TOP)
+			-I$(GAIM_TOP) \
+			$(MEANWHILE_CFLAGS)
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(GAIM_TOP)/src
@@ -64,25 +63,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 
-C_SRC =		meanwhile/mpi/mpi.c \
-		meanwhile/channel.c \
-		meanwhile/cipher.c \
-		meanwhile/common.c \
-		meanwhile/error.c \
-		meanwhile/message.c \
-		meanwhile/mw_debug.c \
-		meanwhile/mw_util.c \
-		meanwhile/service.c \
-		meanwhile/session.c \
-		meanwhile/srvc_aware.c \
-		meanwhile/srvc_conf.c \
-		meanwhile/srvc_ft.c \
-		meanwhile/srvc_im.c \
-		meanwhile/srvc_place.c \
-		meanwhile/srvc_resolve.c \
-		meanwhile/srvc_store.c \
-		meanwhile/st_list.c \
-		sametime.c
+C_SRC =		sametime.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
@@ -96,8 +77,8 @@ LIBS =		\
 		-lgobject-2.0 \
 		-lintl \
 		-lws2_32 \
-		-lgaim
-
+		-lgaim \
+		$(MEANWHILE_LIBS)
 
 ##
 ## RULES

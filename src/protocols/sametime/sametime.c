@@ -3229,7 +3229,7 @@ static char *mw_prpl_status_text(GaimBuddy *b) {
   pd = gc->proto_data;
 
   ret = mwServiceAware_getText(pd->srvc_aware, &t);
-  return g_strdup(ret);
+  return ret? g_markup_escape_text(ret, -1): NULL;
 }
 
 
@@ -4187,7 +4187,11 @@ static void mw_prpl_get_info(GaimConnection *gc, const char *who) {
     g_string_append(str, "<hr>");
     
     tmp = mwServiceAware_getText(pd->srvc_aware, &idb);
-    if(tmp) g_string_append(str, tmp);
+    if(tmp) {
+      tmp = g_markup_escape_text(tmp, -1);
+      g_string_append(str, tmp);
+      g_free((char *) tmp);
+    }
   }
 
   /* @todo emit a signal to allow a plugin to override the display of
