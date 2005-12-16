@@ -528,7 +528,7 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
-	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0")) { // if there was no known ip retry now
+	if(!sip->ip || !strcmp(sip->ip,"0.0.0.0")) { /* if there was no known ip retry now */
 		g_free(sip->ip);
 		sip->ip = g_strdup(gaim_network_get_public_ip());
 	}
