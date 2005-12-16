@@ -6019,7 +6019,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 	oscar_string_append(str, "\n<br>", _("Mobile Phone"), info->mobile);
 	if (info->gender != 0)
 		oscar_string_append(str, "\n<br>", _("Gender"), info->gender == 1 ? _("Female") : _("Male"));
-	if (info->birthyear || info->birthmonth || info->birthday) {
+	if ((info->birthyear > 1900) && (info->birthmonth > 0) && (info->birthday > 0)) {
 		char date[30];
 		struct tm tm;
 		tm.tm_mday = (int)info->birthday;
@@ -6028,7 +6028,7 @@ static int gaim_icqinfo(aim_session_t *sess, aim_frame_t *fr, ...)
 		gaim_strftime(date, sizeof(date), "%x", &tm);
 		oscar_string_append(str, "\n<br>", _("Birthday"), date);
 	}
-	if (info->age) {
+	if ((info->age > 0) && (info->age < 255)) {
 		char age[5];
 		snprintf(age, sizeof(age), "%hhd", info->age);
 		oscar_string_append(str, "\n<br>", _("Age"), age);
