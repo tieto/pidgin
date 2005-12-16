@@ -33,7 +33,7 @@
 #include "eggtrayicon.h"
 #include "docklet.h"
 
-#define EMBED_TIMEOUT 10000
+#define EMBED_TIMEOUT 3000
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
@@ -60,6 +60,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 	
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
+	docklet_embedded();
 }
 
 static void
@@ -67,7 +68,7 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "tray icon", "destroyed\n");
 
-	docklet_remove(TRUE);
+	docklet_remove();
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
@@ -206,7 +207,7 @@ docklet_x11_destroy()
 {
 	g_return_if_fail(docklet != NULL);
 
-	docklet_remove(GTK_WIDGET_VISIBLE(docklet));
+	docklet_remove();
 
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));
@@ -226,7 +227,13 @@ docklet_x11_destroy()
 static gboolean
 docklet_x11_embed_timeout_cb()
 {
-	docklet_unload();
+	/* The docklet was not embedded within the timeout.
+	 * Remove it as a visibility manager, but leave the plugin
+	 * loaded so that it can embed automatically if/when a notification
+	 * area becomes available.
+	 */
+	gaim_debug_info("tray icon", "failed to embed within timeout\n");
+	docklet_remove();
 
 	return FALSE;
 }
@@ -262,6 +269,14 @@ docklet_x11_create()
 
 	/* ref the docklet before we bandy it about the place */
 	g_object_ref(G_OBJECT(docklet));
+
+	/* This is a hack to avoid a race condition between the docklet getting
+	 * embedded in the notification area and the gtkblist restoring its
+	 * previous visibility state.  If the docklet does not get embedded within
+	 * the timeout, it will be removed as a visibility manager until it does
+	 * get embedded.  Ideally, we would only call docklet_embedded() when the
+	 * icon was actually embedded.
+	 */
 	docklet_embedded();
 	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
 

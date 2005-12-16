@@ -58,6 +58,7 @@ static struct docklet_ui_ops *ui_ops = NULL;
 static DockletStatus status = DOCKLET_STATUS_OFFLINE;
 static gboolean enable_join_chat = FALSE;
 static guint docklet_blinking_timer = 0;
+static gboolean visibility_manager = FALSE;
 
 /**************************************************************************
  * docklet status and utility functions
@@ -169,7 +170,7 @@ docklet_update_status()
 
 		g_list_free(convs);
 
-	} else if(ui_ops->set_tooltip) {
+	} else if (ui_ops->set_tooltip) {
 		ui_ops->set_tooltip(NULL);
 	}
 
@@ -184,7 +185,7 @@ docklet_update_status()
 	 *     5) AWAY_PENDING
 	 *     6) CONNECTING
 	 */
-	for(l = gaim_accounts_get_all(); l!=NULL; l=l->next) {
+	for(l = gaim_accounts_get_all(); l != NULL; l = l->next) {
 		DockletStatus tmpstatus = DOCKLET_STATUS_OFFLINE;
 
 		GaimAccount *account = (GaimAccount*)l->data;
@@ -243,7 +244,7 @@ online_account_supports_chat()
 	GList *c = NULL;
 	c = gaim_connections_get_all();
 
-	while(c!=NULL) {
+	while(c != NULL) {
 		GaimConnection *gc = c->data;
 		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			return TRUE;
@@ -447,7 +448,7 @@ docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if (status==DOCKLET_STATUS_ONLINE_PENDING || status==DOCKLET_STATUS_AWAY_PENDING) {
+			if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
 					gaim_gtkconv_present_conversation((GaimConversation *)l->data);
@@ -466,16 +467,22 @@ docklet_clicked(int button_type)
 void
 docklet_embedded()
 {
-	gaim_gtk_blist_visibility_manager_add();
+	if (!visibility_manager) {
+		gaim_gtk_blist_visibility_manager_add();
+		visibility_manager = TRUE;
+	}
 	docklet_update_status();
 	if (ui_ops && ui_ops->update_icon)
 		ui_ops->update_icon(status);
 }
 
 void
-docklet_remove(gboolean visible)
+docklet_remove()
 {
-	gaim_gtk_blist_visibility_manager_remove();
+	if (visibility_manager) {
+		gaim_gtk_blist_visibility_manager_remove();
+		visibility_manager = FALSE;
+	}
 }
 
 void
@@ -610,12 +617,13 @@ static GaimPluginInfo info =
 	                                                  /**  summary        */
 	N_("Displays an icon for Gaim in the system tray."),
 	                                                  /**  description    */
-	N_("Displays a system tray icon (in GNOME, KDE or Windows for example) "
+	N_("Displays a system tray icon (in GNOME, KDE, or Windows for example) "
 	   "to show the current status of Gaim, allow fast access to commonly "
-	   "used functions, and to toggle display of the buddy list or login "
-	   "window. Also allows messages to be queued until the icon is "
-	   "clicked, similar to ICQ."),
-	"Robert McQueen <robot101@debian.org>",           /**< author         */
+	   "used functions, and to toggle display of the buddy list. "
+	   "Also provides options to blink for unread messages."),
+	                                                  /** author          */
+	"Robert McQueen <robot101@debian.org>"
+	"\n\t\t\tCasey Harkins <charkins@users.sf.net>",
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */

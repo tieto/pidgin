@@ -51,7 +51,7 @@ extern GaimPlugin *handle;
 /* functions in docklet.c */
 void docklet_clicked(int);
 void docklet_embedded(void);
-void docklet_remove(gboolean);
+void docklet_remove(void);
 void docklet_set_ui_ops(struct docklet_ui_ops *);
 void docklet_unload(void);
 

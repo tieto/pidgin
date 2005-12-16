@@ -241,7 +241,7 @@ static void wgaim_tray_destroy() {
 	gaim_signals_disconnect_by_handle(&handle);
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
-	docklet_remove(TRUE);
+	docklet_remove();
 }
 
 static struct docklet_ui_ops wgaim_tray_ops =
