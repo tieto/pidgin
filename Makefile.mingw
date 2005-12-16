@@ -72,7 +72,7 @@ all:
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw
 	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw
 	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw
+#	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_SRC) -f Makefile.mingw
 	$(MAKE) -C $(GAIM_PLUGINS) -f Makefile.mingw
 
@@ -94,7 +94,7 @@ install: all
 	$(MAKE) TYPE='$(NOVELL_TYPE)' -C $(NOVELL) -f Makefile.mingw install
 	$(MAKE) TYPE='$(SILC_TYPE)' -C $(SILC) -f Makefile.mingw install
 	$(MAKE) TYPE='$(SIMPLE_TYPE)' -C $(SIMPLE) -f Makefile.mingw install
-	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw install
+#	$(MAKE) TYPE='$(SAMETIME_TYPE)' -C $(SAMETIME) -f Makefile.mingw install
 	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
 	cp $(SOUNDS) $(GAIM_INSTALL_DIR)/sounds/gaim
 
