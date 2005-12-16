@@ -18,7 +18,7 @@
 	(is_hvref(o) ? (HV *)SvRV(o) : NULL);
 
 #define GAIM_PERL_BOOT_PROTO(x) \
-	extern void boot_Gaim__##x(pTHX_ CV *cv);
+	void boot_Gaim__##x(pTHX_ CV *cv);
 
 #define GAIM_PERL_BOOT(x) \
 	gaim_perl_callXS(boot_Gaim__##x, cv, mark)

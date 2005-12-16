@@ -25,7 +25,7 @@
 #define ZERR_NOMORESUBSCRIPTIONS                 (-772103660L)
 #define ZERR_TOOMANYSUBS                         (-772103659L)
 #define ZERR_EOF                                 (-772103658L)
-extern void initialize_zeph_error_table (void);
+void initialize_zeph_error_table (void);
 #define ERROR_TABLE_BASE_zeph (-772103680L)
 
 /* for compatibility with older versions... */

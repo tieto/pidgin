@@ -24,7 +24,7 @@
 #define _WSPELL_H_
 #include <gtkspell/gtkspell.h>
 
-extern void wgaim_gtkspell_init(void);
+void wgaim_gtkspell_init(void);
 
 extern GtkSpell* (*wgaim_gtkspell_new_attach)(GtkTextView*, const gchar*, GError**);
 #define gtkspell_new_attach( view, lang, error ) \

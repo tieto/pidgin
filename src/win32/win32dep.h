@@ -36,24 +36,29 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
-extern HINSTANCE wgaim_hinstance(void);
-extern FARPROC   wgaim_find_and_loadproc(char*, char*);
-extern gboolean  wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
-extern char*     wgaim_escape_dirsep(char*);
+HINSTANCE wgaim_hinstance(void);
+FARPROC   wgaim_find_and_loadproc(char*, char*);
+gboolean  wgaim_read_reg_string(HKEY key, char* sub_key, char* val_name, LPBYTE data, LPDWORD data_len);
+char*     wgaim_escape_dirsep(char*);
+
 /* Determine Gaim paths */
-extern char*     wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
-extern char*     wgaim_install_dir(void);
-extern char*     wgaim_lib_dir(void);
-extern char*     wgaim_locale_dir(void);
-extern char*     wgaim_data_dir(void);
+char*     wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
+char*     wgaim_install_dir(void);
+char*     wgaim_lib_dir(void);
+char*     wgaim_locale_dir(void);
+char*     wgaim_data_dir(void);
+
 /* Utility */
-extern int       wgaim_gz_decompress(const char* in, const char* out);
-extern int       wgaim_gz_untar(const char* filename, const char* destdir);
+int       wgaim_gz_decompress(const char* in, const char* out);
+int       wgaim_gz_untar(const char* filename, const char* destdir);
+
 /* Misc */
-extern void      wgaim_notify_uri(const char *uri);
+void      wgaim_notify_uri(const char *uri);
+
 /* init / cleanup */
-extern void      wgaim_init(HINSTANCE);
-extern void      wgaim_cleanup(void);
+void      wgaim_init(HINSTANCE);
+void      wgaim_cleanup(void);
+
 
 /*
  *  MACROS
