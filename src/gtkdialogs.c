@@ -235,7 +235,7 @@ void gaim_gtkdialogs_about()
 	g_string_append(str,
 					_("Gaim is a modular messaging client capable of using "
 					  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, "
-					  "Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
+					  "Novell GroupWise, Lotus Sametime, Napster, Zephyr, and Gadu-Gadu "
 					  "all at once.  It is written using "
 					  "GTK+ and is licensed under the GNU GPL.<BR><BR>"));
 
