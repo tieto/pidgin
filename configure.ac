@@ -469,12 +469,12 @@ AC_PATH_XTRA
 # We can't assume that $x_libraries will be set, because autoconf does not
 # set it in the case when the X libraries are in a standard place.
 # Ditto for $x_includes
-if test X"$x_libraries" = X"" ; then
+if test X"$x_libraries" = X"" || test X"$x_libraries" = XNONE; then
 	x_libpath_add=
 else
 	x_libpath_add="-L$x_libraries"
 fi
-if test X"$x_includes" = X"" ; then
+if test X"$x_includes" = X"" || test X"$x_includes" = XNONE; then
 	x_incpath_add=
 else
 	x_incpath_add="-I$x_includes"
