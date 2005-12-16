@@ -1,10 +1,11 @@
 ;;
-;;  spanish.nsh
+;;  galician.nsh
 ;;
 ;;  Galician language strings for the Windows Gaim NSIS installer.
-;;  Translator: Ignacio Casal Quinteiro 
+;;  Windows Code page: 1252
 ;;
-;; 
+;;  Translator: Ignacio Casal Quinteiro 
+;;  Version 1
 ;;
 
 ; Startup GTK+ check
