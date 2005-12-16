@@ -131,6 +131,9 @@ version 2.0.0:
 	  file transfer window
 	* Mouse-over hyperlink coloring is now themeable
 	* Buddy Pounces now have a proper management window. (Kevin Stange)
+	* Buddy icons maintain aspect ratio when resized
+	* The last used directory is remembered for opening or saving files and
+	  buddy icons
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
