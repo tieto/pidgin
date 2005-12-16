@@ -195,7 +195,7 @@ $(gaim_OBJECTS): dbus-types.h
 
 lib_LTLIBRARIES = libgaim-client.la
 
-libgaim_client_la_SOURCES = gaim-client.c
+libgaim_client_la_SOURCES = gaim-client.c gaim-client.h
 
 gaim-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
