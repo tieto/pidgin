@@ -295,13 +295,12 @@ static void     gtk_combo_box_model_row_changed    (GtkTreeModel     *model,
 						    gpointer          data);
 
 /* list */
-#if GTK_CHECK_VERSION(2,2,0)
 static void     gtk_combo_box_list_position        (GtkComboBox      *combo_box, 
 						    gint             *x, 
 						    gint             *y, 
 						    gint             *width,
 						    gint             *height);
-#endif
+
 static void     gtk_combo_box_list_setup           (GtkComboBox      *combo_box);
 static void     gtk_combo_box_list_destroy         (GtkComboBox      *combo_box);
 
@@ -1090,6 +1089,7 @@ gtk_combo_box_menu_position (GtkMenu  *menu,
     }
 
 }
+#endif /* Gtk 2.2 */
 
 static void
 gtk_combo_box_list_position (GtkComboBox *combo_box, 
@@ -1099,10 +1099,12 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
 			     gint        *height)
 {
   GtkWidget *sample;
+  GtkRequisition popup_req;
+#if GTK_CHECK_VERSION(2,2,0)
   GdkScreen *screen;
   gint monitor_num;
   GdkRectangle monitor;
-  GtkRequisition popup_req;
+#endif
   
   sample = GTK_BIN (combo_box)->child;
 
@@ -1126,6 +1128,7 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
       *y += sample->allocation.y;
     }
   
+#if GTK_CHECK_VERSION(2,2,0)
   screen = gtk_widget_get_screen (GTK_WIDGET (combo_box));
   monitor_num = gdk_screen_get_monitor_at_window (screen, 
 						  GTK_WIDGET (combo_box)->window);
@@ -1140,8 +1143,8 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
     *y += sample->allocation.height;
   else
     *y -= *height;
-} 
 #endif /* Gtk 2.2 */
+} 
 
 /**
  * gtk_combo_box_popup:
@@ -1157,10 +1160,7 @@ gtk_combo_box_list_position (GtkComboBox *combo_box,
 void
 gtk_combo_box_popup (GtkComboBox *combo_box)
 {
-  gint x, y, width;
-#if GTK_CHECK_VERSION(2,2,0)
-  gint height;
-#endif
+  gint x, y, width, height;
   
   g_return_if_fail (GTK_IS_COMBO_BOX (combo_box));
 
@@ -1195,9 +1195,7 @@ gtk_combo_box_popup (GtkComboBox *combo_box)
     }
 
   gtk_widget_show_all (combo_box->priv->popup_frame);
-#if GTK_CHECK_VERSION(2,2,0)
   gtk_combo_box_list_position (combo_box, &x, &y, &width, &height);
-#endif
 
   gtk_widget_set_size_request (combo_box->priv->popup_window, width, -1);  
   gtk_window_move (GTK_WINDOW (combo_box->priv->popup_window), x, y);
