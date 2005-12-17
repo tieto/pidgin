@@ -3,26 +3,37 @@
 %{!?perl_vendorarch: %define perl_vendorarch %(eval "`%{__perl} -V:installvendorarch`"; echo $installvendorarch)}
 %{!?perl_archlib: %define perl_archlib %(eval "`%{__perl} -V:installarchlib`"; echo $installarchlib)}
 
+# When not doing betas set this to 0
+%define beta 1
+
+%if 0%{beta}
+%define gaimver %(echo "@VERSION@"|sed -e 's/cvs//')
+%else
+%define gaimver @VERSION@
+%endif
+
 Summary:    A Gtk+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
-Version:    @VERSION@
-Release:    0
+Version:    %gaimver
+Release:    0%{?beta:.beta%{beta}}
 Epoch:      1
 License:    GPL
 Group:      Applications/Internet
 URL:        http://gaim.sourceforge.net/
 Packager:   %{packager}
-Source:     %{name}-%{version}.tar.gz
+Source:     %{name}-@VERSION@.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
-Obsoletes:  gaim-meanwhile
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
 %{?_with_howl:BuildRequires: howl-devel}
 %{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
+%{?_with_meanwhile:BuildRequires: meanwhile-devel}
 %{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{?_with_mono:BuildRequires: mono-devel}
+%{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
+%{!?_without_sasl:BuildRequires: cyrus-sasl-devel >= 2}
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
@@ -53,6 +64,13 @@ Requires:   gaim = %{epoch}:%{version}
 %if 0%{?_with_silc:1}
 %package silc
 Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
+Group:      Applications/Internet
+Requires:   gaim = %{epoch}:%{version}
+%endif
+
+%if 0%{?_with_meanwhile:1}
+%package meanwhile
+Summary:    Lotus Sametime plugin for Gaim using the Meanwhile library
 Group:      Applications/Internet
 Requires:   gaim = %{epoch}:%{version}
 %endif
@@ -99,6 +117,11 @@ Bonjour plugin for Gaim
 SILC (Secure Internet Live Conferencing) plugin for Gaim
 %endif
 
+%if 0%{?_with_meanwhile:1}
+%description meanwhile
+Lotus Sametime plugin for Gaim using the Meanwhile library
+%endif
+
 %if 0%{?_with_tcl:1}
 %description tcl
 Tcl plugin loader for Gaim.  This package will allow you to write or
@@ -117,7 +140,7 @@ documentation, and libraries required for development of gaim scripts
 and plugins.
 
 %prep
-%setup -q
+%setup -q -n %{name}-@VERSION@
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
@@ -128,24 +151,23 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     --mandir=%{_mandir} \
                                     --sysconfdir=%{_sysconfdir} \
                                     --with-ao=%{_libdir} \
-                                    --with-perl-lib=%{buildroot}%{_prefix} \
+                                    --with-perl-lib=%{_prefix} \
                                     %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
                                     %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
+                                    %{?_with_mono:--enable-mono} \
                                     %{!?_with_tcl:--disable-tcl} \
-                                    %{!?_with_mono:--disable-mono} \
-                                    %{?_without_gtkspell:--disable-gtkspell}
+                                    %{!?_with_dbus:--disable-dbus} \
+                                    %{?_without_gtkspell:--disable-gtkspell} \
+                                    %{!?_without_sasl:--enable-cyrus-sasl}
 
 make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
-make prefix=%{buildroot}%{_prefix} bindir=%{buildroot}%{_bindir} \
-     datadir=%{buildroot}%{_datadir} includedir=%{buildroot}%{_includedir} \
-     libdir=%{buildroot}%{_libdir} mandir=%{buildroot}%{_mandir} \
-     sysconfdir=%{buildroot}%{_sysconfdir} \
-     install
+make DESTDIR=$RPM_BUILD_ROOT install
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
@@ -156,6 +178,10 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
 
 %if 0%{!?_with_silc:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
+%endif
+
+%if 0%{!?_with_meanwhile:1}
+rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsametime.so
 %endif
 
 %if 0%{!?_with_tcl:1}
@@ -172,6 +198,7 @@ find $RPM_BUILD_ROOT%{_libdir}/gaim -type f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v libbonjour.so | \
         grep -v libsilcgaim.so | \
+        grep -v libsametime.so | \
         grep -v tcl.so | \
         grep -v mono.so | \
         grep -v ".dll$" | \
@@ -199,6 +226,11 @@ rm -rf %{buildroot}
 %{_datadir}/sounds/gaim/*
 %{_datadir}/applications/*
 
+%if 0%{?_with_dbus:1}
+%{_libdir}/libgaim-client.so.*
+%{_datadir}/dbus-1/services/gaim.service
+%endif
+
 %if 0%{?_with_howl:1}
 %files bonjour
 %defattr(-, root, root)
@@ -211,6 +243,13 @@ rm -rf %{buildroot}
 %defattr(-, root, root)
 
 %{_libdir}/gaim/libsilcgaim.*
+%endif
+
+%if 0%{?_with_meanwhile:1}
+%files meanwhile
+%defattr(-, root, root)
+
+%{_libdir}/gaim/libsametime.*
 %endif
 
 %if 0%{?_with_tcl:1}
@@ -238,8 +277,19 @@ rm -rf %{buildroot}
 %{_includedir}/gaim/*.h
 %{_libdir}/pkgconfig/gaim.pc
 %{_datadir}/aclocal/gaim.m4
+%if 0%{?_with_dbus:1}
+%{_libdir}/libgaim-client.so
+%endif
 
 %changelog
+* Sat Dec 17 2005 <stu@nosnilmot.com>
+- Add support for beta versions so the subsequent releases are seen as newer
+  by RPM
+- Split of sametime support to gaim-meanwhile
+- Use make DESTDIR=... instead of overloading prefix etc. when installing
+- Default build to include cyrus-sasl support in Jabber
+- Add --with dbus to build with DBUS support
+
 * Sun Dec 04 2005 <siege@preoccupied.net>
 - Added obsoletes gaim-meanwhile
 
