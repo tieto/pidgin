@@ -53,10 +53,15 @@
 
     Stu: Wow!
 
+
     Siege: Sametime accounts created with gaim-meanwhile should merge over
     for use in the beta just fine. Some of the familiar settings regarding
     the buddy list are gone, so I recommend backing up your Sametime blist
     before getting down and crazy. Have fun, and happy early Decemberween!
+
+    Daniel: Enjoy! In the hopes that this prevents someone pain... do not use
+    Glib/GTK+ 2.8.x with Wingaim - it will not work.  We're looking into the
+    problem and hope to have it resolved before the final release.
 
 1.5.0 (8/11/2005):
     Mark: No super crazy major changes here.  Just the usual bug
