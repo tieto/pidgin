@@ -58,6 +58,7 @@ EXTRA_DIST = \
 		status/Makefile.mingw		\
 		gaim-install.ico		\
 		gaim.ico			\
+		gaim_16.ico			\
 		gaim_4bit_16.ico		\
 		gaim_away_16.ico		\
 		gaim_away_4bit_16.ico		\
