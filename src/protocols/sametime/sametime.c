@@ -829,23 +829,36 @@ static GaimGroup *group_ensure(GaimConnection *gc,
   alias = mwSametimeGroup_getAlias(stgroup);
   type = mwSametimeGroup_getType(stgroup);
 
+  DEBUG_INFO("attempting to ensure group %s, called %s\n",
+	     NSTR(name), NSTR(alias));
+
   /* first attempt at finding the group, by the name key */
   for(gn = blist->root; gn; gn = gn->next) {
-    const char *n;
+    const char *n, *o;
     if(! GAIM_BLIST_NODE_IS_GROUP(gn)) continue;
     n = gaim_blist_node_get_string(gn, GROUP_KEY_NAME);
+    o = gaim_blist_node_get_string(gn, GROUP_KEY_OWNER);
+
+    DEBUG_INFO("found group named %s, owned by %s\n", NSTR(n), NSTR(o));
 
     if(n && !strcmp(n, name)) {
-      group = (GaimGroup *) gn;
-      break;
+      if(!o || !strcmp(o, owner)) {
+	DEBUG_INFO("that'll work\n");
+	group = (GaimGroup *) gn;
+	break;
+      }
     }
-  }  
+  }
 
   /* try again, by alias */
-  if(! group) group = gaim_find_group(alias);
+  if(! group) {
+    DEBUG_INFO("searching for group by alias %s\n", NSTR(alias));
+    group = gaim_find_group(alias);
+  }
 
   /* oh well, no such group. Let's create it! */
   if(! group) {
+    DEBUG_INFO("creating group\n");
     group = gaim_group_new(alias);
     gaim_blist_add_group(group, NULL);
   }
@@ -1138,87 +1151,6 @@ static void fetch_blist_cb(struct mwServiceStorage *srvc,
 }
 
 
-/** callback passed to the storage service when it's told to load one
-    of the default status messages */
-static void fetch_msg_cb(struct mwServiceStorage *srvc,
-			 guint32 result, struct mwStorageUnit *item,
-			 gpointer data) {
-
-  struct mwGaimPluginData *pd = data;
-  GaimConnection *gc;
-  GaimAccount *acct;
-  struct mwSession *session;
-  char *msg, *m;
-
-  /* it's no big deal if these entries don't exist on the server */
-  if(result != ERR_SUCCESS) return;
-
-  g_return_if_fail(pd != NULL);
-
-  gc = pd->gc;
-  g_return_if_fail(gc != NULL);
-
-  acct = gaim_connection_get_account(gc);
-  g_return_if_fail(acct != NULL);
-
-  session = pd->session;
-  g_return_if_fail(session != NULL);
-
-  m = msg = mwStorageUnit_asString(item);
-
-  /* only load the first (non-empty) line of the collection of
-     status messages */
-  if(m && *m) {
-    while(*m && isspace(*m)) m++;
-    if(*m) {
-      char *tail;
-
-      tail = strchr(m, '\r');
-      if(tail) *tail = '\0';
-      tail = strchr(m, '\n');
-      if(tail) *tail = '\0';
-    }
-  }
-
-  switch(mwStorageUnit_getKey(item)) {
-  case mwStore_AWAY_MESSAGES:
-    DEBUG_INFO("setting away message to \"%s\"\n", NSTR(m));
-    gaim_account_set_string(acct, MW_KEY_AWAY_MSG, m);
-    break;
-
-  case mwStore_BUSY_MESSAGES:
-    DEBUG_INFO("setting busy message to \"%s\"\n", NSTR(m));
-    gaim_account_set_string(acct, MW_KEY_BUSY_MSG, m);
-    break;
-
-  case mwStore_ACTIVE_MESSAGES:
-    DEBUG_INFO("setting active message to \"%s\"\n", NSTR(m));
-    gaim_account_set_string(acct, MW_KEY_ACTIVE_MSG, m);
-    break;
-
-  default:
-    g_free(msg);
-    g_return_if_reached();
-  }
-
-  g_free(msg);
-  msg = NULL;
-
-#if 0
-  /* XXX resets the status, thus updating the message */
-  if(!gc->away_state || !strcmp(gc->away_state, MW_STATE_ACTIVE)) {
-    msg = MW_STATE_ACTIVE;
-  } else if(gc->away_state && !strcmp(gc->away_state, MW_STATE_AWAY)) {
-    msg = MW_STATE_AWAY;
-  } else if(gc->away_state && !strcmp(gc->away_state, MW_STATE_BUSY)) {
-    msg = MW_STATE_BUSY;
-  }
-
-  if(msg) serv_set_away(gc, msg, NULL);
-#endif
-}
-
-
 /** signal triggered when a conversation is opened in Gaim */
 static void conversation_created_cb(GaimConversation *g_conv,
 				    struct mwGaimPluginData *pd) {
@@ -1374,16 +1306,6 @@ static void services_starting(struct mwGaimPluginData *pd) {
   unit = mwStorageUnit_new(mwStore_AWARE_LIST);
   mwServiceStorage_load(pd->srvc_store, unit, fetch_blist_cb, pd, NULL); 
   
-  /* fetch the away/busy/active messages from the server */
-  unit = mwStorageUnit_new(mwStore_AWAY_MESSAGES);
-  mwServiceStorage_load(pd->srvc_store, unit, fetch_msg_cb, pd, NULL);
-
-  unit = mwStorageUnit_new(mwStore_BUSY_MESSAGES);
-  mwServiceStorage_load(pd->srvc_store, unit, fetch_msg_cb, pd, NULL);
-
-  unit = mwStorageUnit_new(mwStore_ACTIVE_MESSAGES);
-  mwServiceStorage_load(pd->srvc_store, unit, fetch_msg_cb, pd, NULL);
-
   /* start watching for new conversations */
   gaim_signal_connect(gaim_conversations_get_handle(),
 		      "conversation-created", gc,
@@ -2526,12 +2448,6 @@ static void mw_conversation_opened(struct mwConversation *conv) {
 
   } else {
     convo_data_new(conv);
-
-#if 0
-    if(gaim_prefs_get_bool(MW_PRPL_OPT_PSYCHIC)) {
-      convo_do_psychic(conv);
-    }
-#endif
   }
 
   { /* record the client key for the buddy */
@@ -2582,23 +2498,18 @@ static void mw_conversation_closed(struct mwConversation *conv,
 }
 
 
-
-static char *im_decode(GaimConnection *gc, const char *msg) {
-  return gaim_utf8_try_convert(msg);
-}
-
-
 static void im_recv_text(struct mwConversation *conv,
 			 struct mwGaimPluginData *pd,
 			 const char *msg) {
 
   struct mwIdBlock *idb;
-  char *txt, *esc, *t;
+  char *txt, *esc;
+  const char *t;
 
   idb = mwConversation_getTarget(conv);
-  txt = im_decode(pd->gc, msg);
 
-  t = txt? txt: (char *) msg;
+  txt = gaim_utf8_try_convert(msg);
+  t = txt? txt: msg;
 
   esc = g_markup_escape_text(t, -1);
   serv_got_im(pd->gc, idb->user, esc, 0, time(NULL));
@@ -2623,18 +2534,24 @@ static void im_recv_typing(struct mwConversation *conv,
 static void im_recv_html(struct mwConversation *conv,
 			 struct mwGaimPluginData *pd,
 			 const char *msg) {
-
   struct mwIdBlock *idb;
-  char *txt, *t;
+  char *t1, *t2;
+  const char *t;
 
   idb = mwConversation_getTarget(conv);
-  txt = im_decode(pd->gc, msg);
-  
-  t = txt? txt: (char *) msg;
+
+  /* ensure we're receiving UTF8 */
+  t1 = gaim_utf8_try_convert(msg);
+  t = t1? t1: msg;
+
+  /* convert entities to UTF8 so they'll log correctly */
+  t2 = gaim_utf8_ncr_decode(t);
+  t = t2? t2: t;
 
   serv_got_im(pd->gc, idb->user, t, 0, time(NULL));
 
-  g_free(txt);
+  g_free(t1);
+  g_free(t2);
 }
 
 
@@ -2732,16 +2649,11 @@ static void im_recv_mime(struct mwConversation *conv,
 
       /* concatenate all the text parts together */
       guchar *data;
-      char *txt;
       gsize len;
 
       gaim_mime_part_get_data_decoded(part, &data, &len);
-
-      txt = im_decode(pd->gc, (const char *)data);
-      g_string_append(str, txt?txt:(const char *)data);
-
+      g_string_append(str, (const char *)data);
       g_free(data);
-      g_free(txt);
     }
   }  
 
@@ -2787,8 +2699,7 @@ static void im_recv_mime(struct mwConversation *conv,
     }
   }
 
-  /* actually display the message */
-  serv_got_im(pd->gc, idb->user, str->str, 0, time(NULL));
+  im_recv_html(conv, pd, str->str);
 
   g_string_free(str, TRUE);
   
@@ -3256,26 +3167,26 @@ static gboolean user_supports(struct mwServiceAware *srvc,
 
 
 static char *user_supports_text(struct mwServiceAware *srvc, const char *who) {
-    char *feat[] = {NULL, NULL, NULL, NULL, NULL};
-    char **f = feat;
-
-    if(user_supports(srvc, who, mwAttribute_AV_PREFS_SET)) {
-      gboolean mic, speak, video;
-
-      mic = user_supports(srvc, who, mwAttribute_MICROPHONE);
-      speak = user_supports(srvc, who, mwAttribute_SPEAKERS);
-      video = user_supports(srvc, who, mwAttribute_VIDEO_CAMERA);
-
-      if(mic) *f++ = _("Microphone");
-      if(speak) *f++ = _("Speakers");
-      if(video) *f++ = _("Video Camera");
-    }
-
-    if(user_supports(srvc, who, mwAttribute_FILE_TRANSFER))
-      *f++ = _("File Transfer");
-
-    return (*feat)? g_strjoinv(", ", feat): NULL;
-    /* jenni loves siege */
+  char *feat[] = {NULL, NULL, NULL, NULL, NULL};
+  char **f = feat;
+  
+  if(user_supports(srvc, who, mwAttribute_AV_PREFS_SET)) {
+    gboolean mic, speak, video;
+    
+    mic = user_supports(srvc, who, mwAttribute_MICROPHONE);
+    speak = user_supports(srvc, who, mwAttribute_SPEAKERS);
+    video = user_supports(srvc, who, mwAttribute_VIDEO_CAMERA);
+    
+    if(mic) *f++ = _("Microphone");
+    if(speak) *f++ = _("Speakers");
+    if(video) *f++ = _("Video Camera");
+  }
+  
+  if(user_supports(srvc, who, mwAttribute_FILE_TRANSFER))
+    *f++ = _("File Transfer");
+  
+  return (*feat)? g_strjoinv(", ", feat): NULL;
+  /* jenni loves siege */
 }
 
 
@@ -3655,7 +3566,7 @@ static void mw_prpl_login(GaimAccount *account) {
   gc->flags |= GAIM_CONNECTION_NO_IMAGES;
 
   user = g_strdup(gaim_account_get_username(account));
-  pass = (char *) gaim_account_get_password(account);
+  pass = g_strdup(gaim_account_get_password(account));
 
   host = strrchr(user, ':');
   if(host) {
@@ -3685,9 +3596,9 @@ static void mw_prpl_login(GaimAccount *account) {
   mwSession_setProperty(pd->session, mwSession_NO_SECRET,
 			(char *) no_secret, NULL);
   mwSession_setProperty(pd->session, mwSession_AUTH_USER_ID, user, g_free);
-  mwSession_setProperty(pd->session, mwSession_AUTH_PASSWORD, pass, NULL);
+  mwSession_setProperty(pd->session, mwSession_AUTH_PASSWORD, pass, g_free);
 
-  client = MW_CLIENT_TYPE_ID;
+  client = mwLogin_MEANWHILE;
   if(gaim_account_get_bool(account, MW_KEY_FAKE_IT, FALSE))
     client = mwLogin_BINARY;
 
@@ -3739,7 +3650,8 @@ static void mw_prpl_close(GaimConnection *gc) {
 /** generates a random-ish content id string */
 static char *im_mime_content_id() {
   srand(time(NULL));
-  return g_strdup_printf("%03x@%05xmeanwhile", rand() & 0xfff, rand() & 0xfffff);
+  return g_strdup_printf("%03x@%05xmeanwhile",
+			 rand() & 0xfff, rand() & 0xfffff);
 }
 
 
@@ -3825,12 +3737,12 @@ static gboolean is_nb(struct mwConversation *conv) {
   if(! info) return FALSE;
 
   /* NotesBuddy can be at least three different type IDs (all in the
-     0x1400 range), or it can show up as 0x1002. However, if we're
+     0x1400 range), or it can show up as 0x1000. However, if we're
      calling this check, then we're already in HTML or MIME mode, so
-     we can discount the real 0x1002 */
+     we can discount the real 0x1000 */
   /* I tried to avoid having any client-type-dependant code in here, I
      really did. Oh well. CURSE YOU NOTESBUDDY */
-  return ((info->type == 0x1002) || ((info->type & 0xff00) == 0x1400));
+  return ((info->type == 0x1000) || ((info->type & 0xff00) == 0x1400));
 }
 
 
@@ -3998,7 +3910,6 @@ static int mw_prpl_send_im(GaimConnection *gc,
     } else if(mwConversation_supports(conv, mwImSend_HTML)) {
       /* send an HTML message */
 
-      /* need to do this to get the \n to <br> conversion */
       if(is_nb(conv)) {
 
 	/* html messages need the notesbuddy hack */
@@ -4007,6 +3918,7 @@ static int mw_prpl_send_im(GaimConnection *gc,
 	g_free(msg);
 
       } else {
+	/* need to do this to get the \n to <br> conversion */
 	tmp = gaim_strdup_withhtml(message);
       }
 
@@ -4015,9 +3927,9 @@ static int mw_prpl_send_im(GaimConnection *gc,
 
     } else {
       /* default to text */
-	  tmp = gaim_unescape_html(message);
+      tmp = gaim_markup_strip_html(message);
       ret = mwConversation_send(conv, mwImSend_PLAIN, tmp);
-	  g_free(tmp);
+      g_free(tmp);
     }
     
     return !ret;
@@ -4435,7 +4347,10 @@ static void multi_resolved_query(struct mwResolveResult *result,
   hash = g_hash_table_new(g_str_hash, g_str_equal);
   for(l = result->matches; l; l = l->next) {
     struct mwResolveMatch *match = l->data;
-    
+        
+    DEBUG_INFO("multi resolve: %s, %s\n",
+	       NSTR(match->id), NSTR(match->name));
+
     if(!match->id || !match->name)
       continue;
     
@@ -4445,6 +4360,7 @@ static void multi_resolved_query(struct mwResolveResult *result,
   /* collect set into a list of structures */
   l = NULL;
   g_hash_table_foreach(hash, (GHFunc) foreach_resolved_id, &l);
+  g_hash_table_destroy(hash);
   g_list_sort(l, (GCompareFunc) resolved_id_comp);
 
   /* populate choices in request field */
@@ -4561,7 +4477,7 @@ static void mw_prpl_add_buddy(GaimConnection *gc,
   srvc = pd->srvc_resolve;
 
   /* catch external buddies. They won't be in the resolve service */
-  if(gaim_str_has_prefix(buddy->name, "@E ")) {
+  if(buddy_is_external(buddy)) {
     buddy_add(pd, buddy);
     return;
   }
@@ -5264,107 +5180,6 @@ static GaimPluginUiInfo mw_plugin_ui_info = {
 };
 
 
-#if 0
-static void status_msg_action_cb(GaimConnection *gc,
-				 GaimRequestFields *fields) {
-  GaimAccount *acct;
-  GaimRequestField *f;
-  const char *msg;
-
-  struct mwGaimPluginData *pd;
-  struct mwServiceStorage *srvc;
-  struct mwStorageUnit *unit;
-  
-  pd = gc->proto_data;
-  srvc = pd->srvc_store;
-  
-  acct = gaim_connection_get_account(gc);
-
-  f = gaim_request_fields_get_field(fields, "active");
-  msg = gaim_request_field_string_get_value(f);
-  gaim_account_set_string(acct, MW_KEY_ACTIVE_MSG, msg);
-  unit = mwStorageUnit_newString(mwStore_ACTIVE_MESSAGES, msg);
-  mwServiceStorage_save(srvc, unit, NULL, NULL, NULL);
-
-  f = gaim_request_fields_get_field(fields, "away");
-  msg = gaim_request_field_string_get_value(f);
-  gaim_account_set_string(acct, MW_KEY_AWAY_MSG, msg);
-  unit = mwStorageUnit_newString(mwStore_AWAY_MESSAGES, msg);
-  mwServiceStorage_save(srvc, unit, NULL, NULL, NULL);
-
-  f = gaim_request_fields_get_field(fields, "busy");
-  msg = gaim_request_field_string_get_value(f);
-  gaim_account_set_string(acct, MW_KEY_BUSY_MSG, msg);  
-  unit = mwStorageUnit_newString(mwStore_BUSY_MESSAGES, msg);
-  mwServiceStorage_save(srvc, unit, NULL, NULL, NULL);
-
-  /* XXX */
-  /* need to propagate the message change if we're in any of those
-     default states */
-  msg = NULL;
-  if(!gc->away_state || !strcmp(gc->away_state, MW_STATE_ACTIVE)) {
-    msg = MW_STATE_ACTIVE;
-  } else if(gc->away_state && !strcmp(gc->away_state, MW_STATE_AWAY)) {
-    msg = MW_STATE_AWAY;
-  } else if(gc->away_state && !strcmp(gc->away_state, MW_STATE_BUSY)) {
-    msg = MW_STATE_BUSY;
-  }
-  if(msg)
-    serv_set_away(gc, msg, NULL);
-}
-
-
-/** Prompt for messages for the three default status types. These
-    values should be mirrored as strings in the storage service */
-static void status_msg_action(GaimPluginAction *act) {
-  GaimConnection *gc;
-  GaimAccount *acct;
-
-  GaimRequestFields *fields;
-  GaimRequestFieldGroup *g;
-  GaimRequestField *f;
-  
-  char *msgA, *msgB;
-  const char *val;
-
-  gc = act->context;
-  acct = gaim_connection_get_account(gc);
-
-  fields = gaim_request_fields_new();
-
-  g = gaim_request_field_group_new(NULL);
-  gaim_request_fields_add_group(fields, g);
-
-  val = gaim_account_get_string(acct, MW_KEY_ACTIVE_MSG,
-				MW_PLUGIN_DEFAULT_ACTIVE_MSG);
-  f = gaim_request_field_string_new("active", _("Active Message"), val, FALSE);
-  gaim_request_field_set_required(f, FALSE);
-  gaim_request_field_group_add_field(g, f);
-  
-  val = gaim_account_get_string(acct, MW_KEY_AWAY_MSG,
-				MW_PLUGIN_DEFAULT_AWAY_MSG);
-  f = gaim_request_field_string_new("away", _("Away Message"), val, FALSE);
-  gaim_request_field_set_required(f, FALSE);
-  gaim_request_field_group_add_field(g, f);
-
-  val = gaim_account_get_string(acct, MW_KEY_BUSY_MSG,
-				MW_PLUGIN_DEFAULT_BUSY_MSG);
-  f = gaim_request_field_string_new("busy", _("Busy Message"), val, FALSE);
-  gaim_request_field_set_required(f, FALSE);
-  gaim_request_field_group_add_field(g, f);
-
-  msgA = _("Default status messages");
-  msgB = ("");
-
-  gaim_request_fields(gc, _("Edit Status Messages"),
-		      msgA, msgB, fields,
-		      _("OK"), G_CALLBACK(status_msg_action_cb),
-		      _("Cancel"), NULL,
-		      gc);
-}
-#endif
-
-
 static void st_import_action_cb(GaimConnection *gc, char *filename) {
   struct mwSametimeList *l;
 
@@ -5670,12 +5485,6 @@ static void remote_group_action(GaimPluginAction *act) {
 static GList *mw_plugin_actions(GaimPlugin *plugin, gpointer context) {
   GaimPluginAction *act;
   GList *l = NULL;
-
-#if 0
-  act = gaim_plugin_action_new(_("Set Status Messages..."),
-			       status_msg_action);
-  l = g_list_append(l, act);
-#endif
 
   act = gaim_plugin_action_new(_("Import Sametime List..."),
 			       st_import_action);
