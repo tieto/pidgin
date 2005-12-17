@@ -343,6 +343,7 @@ void gaim_gtkdialogs_about()
 	g_string_append(str, "  <b>Arguments to <i>./configure</i>:</b>  " CONFIG_ARGS "<br/>");
 #endif
 
+#ifndef _WIN32
 #ifdef DEBUG
 	g_string_append(str, "  <b>Print debugging messages:</b> Yes<br/>");
 #else
@@ -353,6 +354,7 @@ void gaim_gtkdialogs_about()
 	g_string_append(str, "  <b>Binary relocation:</b> Enabled<br/>");
 #else
 	g_string_append(str, "  <b>Binary relocation:</b> Disabled<br/>");
+#endif
 #endif
 
 #ifdef GAIM_PLUGINS
@@ -376,10 +378,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append_printf(str, "    <b>Cyrus SASL:</b> Disabled<br/>");
 #endif
 
+#ifndef _WIN32
 #ifdef HAVE_EVOLUTION_ADDRESSBOOK
 	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Enabled<br/>");
 #else
 	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Disabled<br/>");
+#endif
 #endif
 
 #ifdef USE_GTKSPELL
@@ -394,10 +398,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>GnuTLS:</b> Disabled<br/>");
 #endif
 
+#ifndef _WIN32
 #ifdef USE_AO
 	g_string_append(str, "    <b>libao:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>libao:</b> Disabled<br/>");
+#endif
 #endif
 
 #ifdef ENABLE_MONO
@@ -418,10 +424,12 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Perl:</b> Disabled<br/>");
 #endif
 
+#ifndef _WIN32
 #ifdef HAVE_STARTUP_NOTIFICATION
 	g_string_append(str, "    <b>Startup Notification:</b> Enabled<br/>");
 #else
 	g_string_append(str, "    <b>Startup Notification:</b> Disabled<br/>");
+#endif
 #endif
 
 #ifdef HAVE_TCL
@@ -436,6 +444,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Tk:</b> Disabled<br/>");
 #endif
 
+#ifndef _WIN32
 #ifdef USE_SM
 	g_string_append(str, "    <b>X Session Management:</b> Enabled<br/>");
 #else
@@ -458,6 +467,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> Yes<br/>");
 #else
 	g_string_append(str, "    <b>Zephyr uses Kerberos:</b> No<br/>");
+#endif
 #endif
 
 	/* End of not to be translated section */
