@@ -16,14 +16,14 @@
 	oldstatus branch because API changes.  We also have a new mono plugin
 	loader for even more plugin fun.
 
-        Richard: Thanks to all who wrote patches (big or small) for this beta.
+	Richard: Thanks to all who wrote patches (big or small) for this beta.
 
 	Tim: Well here it is, the first beta. There's a lot of cool things in
 	here, but not all of them are finished or debugged. But then that's
 	why it's called a beta. Conversations are now contact-aware, and
 	there's a new status selector. There's smooth scrolling on imcoming
 	messages as well. Our Crazy Patch Writers have been doing a good
-	job too, it seems like we're never lacking some patches to in the
+	job too, it seems like we're never lacking some patches  in the
 	tracker to review.
 
 
