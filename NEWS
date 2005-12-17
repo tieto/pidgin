@@ -1,5 +1,16 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
+2.0.0beta1 (12/16/2005):
+	Nathan: 15 months since we branched oldstatus, and started working on
+	the behemoth that is 2.0.0.  In that time, we've added a couple new 
+	protocols, we had a few crazy patch writers become developers, and
+	had a few more people step up to be crazy patch writers.  Sean wrote
+	a book, and we arbitrarily decided to make a version 1.0.0, and a
+	new versioning scheme.  We got new artwork, and added almost 200 lines
+	to the ChangeLog.  We've watched 2 major GTK+ releases, and added all
+	kinds of features using them.  OK, I've wasted enough bits here.  This
+	beta rocks, but it is a beta.  Treat it as such, and enjoy!
+
 1.5.0 (8/11/2005):
     Mark: No super crazy major changes here.  Just the usual bug
     fixes and some pretty important security updates.
