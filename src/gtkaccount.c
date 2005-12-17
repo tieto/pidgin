@@ -709,6 +709,23 @@ convert_buddy_icon(GaimPlugin *plugin, const char *path)
 }
 
 static void
+update_editable(GaimConnection *gc, AccountPrefsDialog *dialog)
+{
+	gboolean set;
+	GList *l;
+
+	if (gc != NULL && dialog->account != gaim_connection_get_account(gc))
+		return;
+
+	set = !gaim_account_is_connected(dialog->account);
+	gtk_widget_set_sensitive(dialog->protocol_menu, set);
+	gtk_widget_set_sensitive(dialog->screenname_entry, set);
+
+	for (l = dialog->user_split_entries ; l != NULL ; l = l->next)
+		gtk_widget_set_sensitive((GtkWidget *)l->data, set);
+}
+
+static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
@@ -748,6 +765,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
+
+	/* Do not let the user change the protocol/screenname while connected. */
+	update_editable(NULL, dialog);
 
 	/* Do the user split thang */
 	if (dialog->plugin == NULL) /* Yeah right. */
@@ -855,6 +875,11 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_hide(dialog->password_box);
 		gtk_widget_hide(dialog->remember_pass_check);
 	}
+
+	gaim_signal_connect(gaim_connections_get_handle(), "signing-on", dialog,
+					G_CALLBACK(update_editable), dialog);
+	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", dialog,
+					G_CALLBACK(update_editable), dialog);
 }
 
 static void
@@ -1396,6 +1421,8 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
+
+	gaim_signals_disconnect_by_handle(dialog);
 
 	g_free(dialog);
 }
@@ -2394,6 +2421,17 @@ create_accounts_list(AccountsWindow *dialog)
 	return sw;
 }
 
+static void
+account_modified_cb(GaimAccount *account, AccountsWindow *window)
+{
+	GtkTreeIter iter;
+
+	if (!accounts_window_find_account_in_treemodel(&iter, account))
+		return;
+
+	set_account(window->model, &iter, account);
+}
+
 void
 gaim_gtk_accounts_window_show(void)
 {
@@ -2479,6 +2517,9 @@ gaim_gtk_accounts_window_show(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_accounts_cb), dialog);
 
+	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
+	                    accounts_window,
+	                    GAIM_CALLBACK(account_modified_cb), accounts_window);
 
 	gtk_widget_show(win);
 }
