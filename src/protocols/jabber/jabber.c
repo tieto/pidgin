@@ -203,6 +203,42 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 		gaim_debug(GAIM_DEBUG_MISC, "jabber", "Sending%s: %s\n",
 				js->gsc ? " (ssl)" : "", data);
 
+	/* If we've got a security layer, we need to encode the data,
+	 * splitting it on the maximum buffer length negotiated */
+
+#ifdef HAVE_CYRUS_SASL
+	if (js->sasl_maxbuf>0) {
+		int pos;
+
+		if (!js->gsc && js->fd<0)
+			return;
+		pos = 0;
+		if (len == -1)
+			len = strlen(data);
+		while (pos < len) {
+			int towrite;
+			const char *out;
+			unsigned olen;
+
+			if ((len - pos) < js->sasl_maxbuf)
+				towrite = len - pos;
+			else
+				towrite = js->sasl_maxbuf;
+
+			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
+			pos += towrite;
+
+			if (js->gsc)
+				ret = gaim_ssl_write(js->gsc, out, olen);
+			else
+				ret = write(js->fd, out, olen);
+			if (ret < 0)
+				gaim_connection_error(js->gc, _("Write error"));
+		}
+		return;
+	}
+#endif
+	
 	if(js->gsc) {
 		ret = gaim_ssl_write(js->gsc, data, len == -1 ? strlen(data) : len);
 	} else {
@@ -266,6 +302,18 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
+#ifdef HAVE_CYRUS_SASL
+		if (js->sasl_maxbuf>0) {
+			const char *out;
+			int olen;
+			sasl_decode(js->sasl, buf, len, &out, &olen);
+			if (olen>0) {
+				gaim_debug(GAIM_DEBUG_INFO, "jabber", "RecvSASL (%d): %s\n", olen, out);
+				jabber_parser_process(js,out,olen);
+			}
+			return;
+		}
+#endif
 		buf[len] = '\0';
 		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
@@ -819,6 +867,14 @@ static void jabber_close(GaimConnection *gc)
 		jabber_id_free(js->user);
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
+#ifdef HAVE_CYRUS_SASL
+	if(js->sasl)
+		sasl_dispose(&js->sasl);
+	if(js->sasl_mechs)
+		g_string_free(js->sasl_mechs, TRUE);
+	if(js->sasl_cb)
+		g_free(js->sasl_cb);
+#endif
 	g_free(js);
 
 	gc->proto_data = NULL;
@@ -1608,7 +1664,8 @@ static void jabber_register_commands(void)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	OPT_PROTO_PASSWORD_OPTIONAL,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"jpeg,gif,png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
@@ -1743,6 +1800,10 @@ init_plugin(GaimPlugin *plugin)
 
 	gaim_prefs_remove("/plugins/prpl/jabber");
 
+	/* XXX - If any other plugin wants SASL this won't be good ... */
+#ifdef HAVE_CYRUS_SASL
+	sasl_client_init(NULL);
+#endif
 	jabber_register_commands();
 }
 

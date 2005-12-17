@@ -114,12 +114,188 @@ static void disallow_plaintext_auth(GaimAccount *account)
 	gaim_connection_error(account->gc, _("Server requires plaintext authentication over an unencrypted stream"));
 }
 
+#ifdef HAVE_CYRUS_SASL
+
+static void jabber_auth_start_cyrus(JabberStream *);
+
+/* Callbacks for Cyrus SASL */
+
+static int jabber_sasl_cb_realm(void *ctx, int id, const char **avail, const char **result)
+{
+	JabberStream *js = (JabberStream *)ctx;
+
+	if (id != SASL_CB_GETREALM || !result) return SASL_BADPARAM;
+
+	*result = js->user->domain;
+
+	return SASL_OK;
+}
+
+static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *len)
+{
+	JabberStream *js = (JabberStream *)ctx;
+
+	switch(id) {
+		case SASL_CB_AUTHNAME:
+			*res = js->user->node;
+			break;
+		case SASL_CB_USER:
+			*res = js->user->node;
+			break;
+		default:
+			return SASL_BADPARAM;
+	}
+	if (len) *len = strlen((char *)*res);
+	return SASL_OK;
+}
+
+static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
+{
+	JabberStream *js = (JabberStream *)ctx;
+	const char *pw = gaim_account_get_password(js->gc->account);
+	size_t len;
+	static sasl_secret_t *x = NULL;
+
+	if (!conn || !secret || id != SASL_CB_PASS)
+		return SASL_BADPARAM;
+
+	len = strlen(pw);
+	x = (sasl_secret_t *) realloc(x, sizeof(sasl_secret_t) + len);
+
+	if (!x)
+		return SASL_NOMEM;
+
+	x->len = len;
+	strcpy((char*)x->data, pw);
+
+	*secret = x;
+	return SASL_OK;
+}
+
+static void allow_cyrus_plaintext_auth(GaimAccount *account)
+{
+	gaim_account_set_bool(account, "auth_plain_in_clear", TRUE);
+
+	jabber_auth_start_cyrus(account->gc->proto_data);
+}
+
+static void jabber_auth_start_cyrus(JabberStream *js)
+{
+	const char *clientout, *mech;
+	char *enc_out;
+	unsigned coutlen;
+	xmlnode *auth;
+	sasl_security_properties_t secprops;
+	gboolean again;
+	gboolean plaintext = TRUE;
+
+	/* Set up security properties and options */
+	secprops.min_ssf = 0;
+	secprops.security_flags = SASL_SEC_NOANONYMOUS;
+
+	if (!js->gsc) {
+		plaintext = gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
+		if (!plaintext)
+			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
+		secprops.max_ssf = -1;
+		secprops.maxbufsize = 4096;
+	} else {
+		plaintext = FALSE;
+		secprops.max_ssf = 0;
+		secprops.maxbufsize = 0;
+	}
+	secprops.property_names = 0;
+	secprops.property_values = 0;
+
+	do {
+		again = FALSE;
+		/* Use the user's domain for compatibility with the old
+		 * DIGESTMD5 code. Note that this may cause problems where
+		 * the user's domain doesn't match the FQDN of the jabber
+		 * service
+		 */
+
+		js->sasl_state = sasl_client_new("xmpp", js->user->domain, NULL, NULL, js->sasl_cb, 0, &js->sasl);
+		if (js->sasl_state==SASL_OK) {
+			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
+			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &mech);
+		}
+		switch (js->sasl_state) {
+			/* Success */
+			case SASL_CONTINUE:
+				break;
+			case SASL_NOMECH:
+				/* No mechanisms do what we want. See if we can add
+				 * plaintext ones to the list. */
+
+				if (!gaim_account_get_password(js->gc->account)) {
+					gaim_connection_error(js->gc, _("Server couldn't authenticate you without a password"));
+					return;
+				} else if (!plaintext) {
+					gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+							_("Plaintext Authentication"),
+							_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
+							2, js->gc->account,
+							allow_cyrus_plaintext_auth,
+							disallow_plaintext_auth);
+					return;
+				} else {
+					gaim_connection_error(js->gc, _("Server does not use any supported authentication method"));
+					return;
+				}
+				/* not reached */
+				break;
+
+				/* Fatal errors. Give up and go home */
+			case SASL_BADPARAM:
+			case SASL_NOMEM:
+				break;
+
+				/* For everything else, fail the mechanism and try again */
+			default:
+				if (strlen(mech)>0) {
+					char *pos;
+					pos = strstr(js->sasl_mechs->str,mech);
+					g_assert(pos!=NULL);
+					g_string_erase(js->sasl_mechs, pos-js->sasl_mechs->str,strlen(mech));
+				}
+				sasl_dispose(&js->sasl);
+				again=TRUE;
+		}
+	} while (again);
+
+	if (js->sasl_state == SASL_CONTINUE) {
+		auth = xmlnode_new("auth");
+		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+		xmlnode_set_attrib(auth,"mechanism", mech);
+		if (clientout) {
+			if (coutlen == 0) {
+				xmlnode_insert_data(auth, "=", -1);
+			} else {
+				enc_out = gaim_base64_encode((unsigned char*)clientout, coutlen);
+				xmlnode_insert_data(auth, enc_out, -1);
+				g_free(enc_out);
+			}
+		}
+		jabber_send(js, auth);
+		xmlnode_free(auth);
+	} else {
+		gaim_connection_error(js->gc, "SASL authentication failed\n");
+	}
+}
+
+#endif
+
 void
 jabber_auth_start(JabberStream *js, xmlnode *packet)
 {
-	xmlnode *mechs, *mechnode;
-
+#ifdef HAVE_CYRUS_SASL
+	int id;
+#else
 	gboolean digest_md5 = FALSE, plain=FALSE;
+#endif
+
+	xmlnode *mechs, *mechnode;
 
 
 	if(js->registration) {
@@ -134,17 +310,59 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
+#ifdef HAVE_CYRUS_SASL
+	js->sasl_mechs = g_string_new("");
+#endif
+
 	for(mechnode = xmlnode_get_child(mechs, "mechanism"); mechnode;
 			mechnode = xmlnode_get_next_twin(mechnode))
 	{
 		char *mech_name = xmlnode_get_data(mechnode);
+#ifdef HAVE_CYRUS_SASL
+		g_string_append(js->sasl_mechs, mech_name);
+		g_string_append_c(js->sasl_mechs,' ');
+#else
 		if(mech_name && !strcmp(mech_name, "DIGEST-MD5"))
 			digest_md5 = TRUE;
 		else if(mech_name && !strcmp(mech_name, "PLAIN"))
 			plain = TRUE;
+#endif
 		g_free(mech_name);
 	}
 
+#ifdef HAVE_CYRUS_SASL
+	js->auth_type = JABBER_AUTH_CYRUS;
+
+	/* Set up our callbacks structure */
+	js->sasl_cb = g_new0(sasl_callback_t,5);
+
+	id = 0;
+	js->sasl_cb[id].id = SASL_CB_GETREALM;
+	js->sasl_cb[id].proc = jabber_sasl_cb_realm;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	js->sasl_cb[id].id = SASL_CB_AUTHNAME;
+	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	js->sasl_cb[id].id = SASL_CB_USER;
+	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	if (gaim_account_get_password(js->gc->account)) {
+		js->sasl_cb[id].id = SASL_CB_PASS;
+		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
+		js->sasl_cb[id].context = (void *)js;
+		id++;
+	}
+
+	js->sasl_cb[id].id = SASL_CB_LIST_END;
+
+	jabber_auth_start_cyrus(js);
+#else
 
 	if(digest_md5) {
 		xmlnode *auth;
@@ -172,6 +390,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		gaim_connection_error(js->gc,
 				_("Server does not use any supported authentication method"));
 	}
+#endif
 }
 
 static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
@@ -463,16 +682,69 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		g_free(dec_in);
 		g_hash_table_destroy(parts);
 	}
+#ifdef HAVE_CYRUS_SASL
+	else if (js->auth_type == JABBER_AUTH_CYRUS) {
+		char *enc_in = xmlnode_get_data(packet);
+		unsigned char *dec_in;
+		char *enc_out;
+		const char *c_out;
+		unsigned int clen,declen;
+		xmlnode *response;
+
+		dec_in = gaim_base64_decode(enc_in, &declen);
+
+		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen,
+						  NULL, &c_out, &clen);
+		g_free(dec_in);
+		if (js->sasl_state != SASL_CONTINUE && js->sasl_state != SASL_OK) {
+			gaim_debug_error("jabber", "Error is %d : %s\n",js->sasl_state,sasl_errdetail(js->sasl));
+			gaim_connection_error(js->gc, _("SASL error"));
+			return;
+		} else {
+			response = xmlnode_new("response");
+			xmlnode_set_attrib(response, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
+			if (c_out) {
+				enc_out = gaim_base64_encode((unsigned char*)c_out, clen);
+				xmlnode_insert_data(response, enc_out, -1);
+				g_free(enc_out);
+			}
+			jabber_send(js, response);
+			xmlnode_free(response);
+		}
+	}
+#endif
 }
 
 void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 {
 	const char *ns = xmlnode_get_attrib(packet, "xmlns");
+#ifdef HAVE_CYRUS_SASL
+	int *x;
+#endif
 
 	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
 		gaim_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	}
+
+#if HAVE_CYRUS_SASL
+	/* The SASL docs say that if the client hasn't returned OK yet, we
+	 * should try one more round against it
+	 */
+	if (js->sasl_state != SASL_OK) {
+		js->sasl_state = sasl_client_step(js->sasl, NULL, 0, NULL, NULL, NULL);
+		if (js->sasl_state != SASL_OK) {
+			/* This should never happen! */
+			gaim_connection_error(js->gc, _("Invalid response from server."));
+		}
+	}
+	/* If we've negotiated a security layer, we need to enable it */
+	sasl_getprop(js->sasl, SASL_SSF, (const void **)&x);
+	if (*x>0) {
+		sasl_getprop(js->sasl, SASL_MAXOUTBUF, (const void **)&x);
+		js->sasl_maxbuf = *x;
+	}
+#endif
 
 	jabber_stream_set_state(js, JABBER_STREAM_REINITIALIZING);
 }

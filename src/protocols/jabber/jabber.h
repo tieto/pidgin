@@ -30,6 +30,10 @@
 #include "jutil.h"
 #include "xmlnode.h"
 
+#ifdef HAVE_CYRUS_SASL
+#include <sasl/sasl.h>
+#endif
+
 typedef enum {
 	JABBER_CAP_NONE           = 0,
 	JABBER_CAP_XHTML          = 1 << 0,
@@ -68,7 +72,8 @@ typedef struct _JabberStream
 		JABBER_AUTH_UNKNOWN,
 		JABBER_AUTH_DIGEST_MD5,
 		JABBER_AUTH_PLAIN,
-		JABBER_AUTH_IQ_AUTH
+		JABBER_AUTH_IQ_AUTH,
+		JABBER_AUTH_CYRUS
 	} auth_type;
 	char *stream_id;
 	JabberStreamState state;
@@ -102,6 +107,18 @@ typedef struct _JabberStream
 
 	char *avatar_hash;
 	GSList *pending_avatar_requests;
+
+	/* OK, this stays at the end of the struct, so plugins can depend
+	 * on the rest of the stuff being in the right place
+	 */
+#ifdef HAVE_CYRUS_SASL
+	sasl_conn_t *sasl;
+	sasl_callback_t *sasl_cb;
+	int sasl_state;
+	int sasl_maxbuf;
+	GString *sasl_mechs;
+#endif
+
 } JabberStream;
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);

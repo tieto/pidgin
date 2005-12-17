@@ -1402,6 +1402,11 @@ fi
 dnl checks for jabber
 dnl AC_CHECK_SIZEOF(short)
 AC_CHECK_FUNCS(snprintf connect)
+AC_SUBST(SASL_LIBS)
+AC_ARG_ENABLE(cyrus-sasl, AC_HELP_STRING([--enable-cyrus-sasl], [enable Cyrus SASL support for jabberd (no)]), enable_cyrus_sasl=$enableval, enable_cyrus_sasl=no)
+if test "x-$enable_cyrus_sasl" = "x-yes" ; then
+  AC_CHECK_LIB(sasl2, sasl_client_init, [AC_DEFINE(HAVE_CYRUS_SASL, [1], [Define to 1 if Cyrus SASL is present]) SASL_LIBS=-"lsasl2"], [AC_ERROR(Cyrus SASL library not found)])
+fi
 
 dnl checks for zephyr
 AC_DEFINE(ZEPHYR_INT32, long, [Size of an int32.])
@@ -1676,10 +1681,12 @@ echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with Voice/Video support : $enable_vv
 echo Build with DBUS support....... : $enable_dbus
+echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 if test x$enable_dbus = xyes ; then
 echo DBUS session directory........ : $DBUS_SESSION_DIR
 fi
 echo Has you....................... : yes
+echo
 echo
 echo Use kerberos 4 with zephyr.... : $kerberos
 echo Use external libzephyr........ : $zephyr

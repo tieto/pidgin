@@ -36,7 +36,7 @@ JABBERSOURCES = auth.c \
 
 AM_CFLAGS = $(st)
 
-libjabber_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS)
+libjabber_la_LDFLAGS = -module -avoid-version $(GLIB_LIBS) $(SASL_LIBS)
 
 if STATIC_JABBER
 
