@@ -140,7 +140,7 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 			*res = js->user->node;
 			break;
 		case SASL_CB_USER:
-			*res = js->user->node;
+			*res = "";
 			break;
 		default:
 			return SASL_BADPARAM;
@@ -192,17 +192,15 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	/* Set up security properties and options */
 	secprops.min_ssf = 0;
 	secprops.security_flags = SASL_SEC_NOANONYMOUS;
+	secprops.max_ssf = -1;
+	secprops.maxbufsize = -1;
 
 	if (!js->gsc) {
 		plaintext = gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
 		if (!plaintext)
 			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
-		secprops.max_ssf = -1;
-		secprops.maxbufsize = 4096;
 	} else {
 		plaintext = TRUE;
-		secprops.max_ssf = 0;
-		secprops.maxbufsize = 0;
 	}
 	secprops.property_names = 0;
 	secprops.property_values = 0;
@@ -218,10 +216,12 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		js->sasl_state = sasl_client_new("xmpp", js->user->domain, NULL, NULL, js->sasl_cb, 0, &js->sasl);
 		if (js->sasl_state==SASL_OK) {
 			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
+			gaim_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
 			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &mech);
 		}
 		switch (js->sasl_state) {
 			/* Success */
+			case SASL_OK:
 			case SASL_CONTINUE:
 				break;
 			case SASL_NOMECH:
@@ -253,6 +253,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 
 				/* For everything else, fail the mechanism and try again */
 			default:
+				gaim_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
 				if (strlen(mech)>0) {
 					char *pos;
 					pos = strstr(js->sasl_mechs->str,mech);
@@ -264,7 +265,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		}
 	} while (again);
 
-	if (js->sasl_state == SASL_CONTINUE) {
+	if (js->sasl_state == SASL_CONTINUE || js->sasl_state == SASL_OK) {
 		auth = xmlnode_new("auth");
 		xmlnode_set_attrib(auth, "xmlns", "urn:ietf:params:xml:ns:xmpp-sasl");
 		xmlnode_set_attrib(auth,"mechanism", mech);
@@ -282,6 +283,15 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	} else {
 		gaim_connection_error(js->gc, "SASL authentication failed\n");
 	}
+}
+
+static int
+jabber_sasl_cb_log(void *context, int level, const char *message)
+{
+	if(level <= SASL_LOG_TRACE)
+		gaim_debug_info("sasl", "%s\n", message);
+
+	return SASL_OK;
 }
 
 #endif
@@ -334,7 +344,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	js->auth_type = JABBER_AUTH_CYRUS;
 
 	/* Set up our callbacks structure */
-	js->sasl_cb = g_new0(sasl_callback_t,5);
+	js->sasl_cb = g_new0(sasl_callback_t,6);
 
 	id = 0;
 	js->sasl_cb[id].id = SASL_CB_GETREALM;
@@ -358,6 +368,11 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		js->sasl_cb[id].context = (void *)js;
 		id++;
 	}
+
+	js->sasl_cb[id].id = SASL_CB_LOG;
+	js->sasl_cb[id].proc = jabber_sasl_cb_log;
+	js->sasl_cb[id].context = (void*)js;
+	id++;
 
 	js->sasl_cb[id].id = SASL_CB_LIST_END;
 
@@ -688,7 +703,8 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		unsigned char *dec_in;
 		char *enc_out;
 		const char *c_out;
-		unsigned int clen,declen;
+		unsigned int clen;
+		gsize declen;
 		xmlnode *response;
 
 		dec_in = gaim_base64_decode(enc_in, &declen);
