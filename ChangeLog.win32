@@ -1,5 +1,76 @@
 version 2.0.0:
+	* Updated GTK+ to 2.6.10 (rev.a)
+	* The transparency plugin has been rewritten and enhanced.
 	* MSN open email bug fixed.
+	* Lots of other things that I can't remember right now.
+
+version 1.5.0 (8/11/2005):
+	* The installer now supports downloading and installing
+	  spellchecking support.
+	* Environmental proxy settings will now default to the Internet Explorer
+	  http proxy, if one is present.
+	* Updated to GTK+ 2.6.9 (rev a).  This includes:
+	  GTK+ 2.6.9, Glib 2.6.6, Pango 1.8.2 and zlib 1.2.3
+	  Upgrading is recommended as zlib 1.2.3 contains security fixes
+
+version 1.4.0 (7/7/2005):
+	* On Windows XP or newer, the non-debug version of gaim will attempt
+	  to use the existing console, if one is present, for debug output.
+	* Updated to GTK+ 2.6.8 (rev a).  This partially fixes the famed "No
+	  Disk" error among other things.
+
+version 1.3.1 (6/9/2005):
+	* Installer allows you to choose whether or not to put shortcuts on
+	  the Desktop and Start Menu.  Uninstall icon is no longer placed
+	  in the Start Menu.
+	* Fixed logging where the gaim home directory path is a UNC path.
+
+version 1.3.0 (5/10/2005):
+	* Updated to GTK+ 2.6.7 (rev a).  This restores functionality on Windows
+	  98/ME/NT4.
+
+version 1.2.1 (4/3/2005):
+	* No changes
+
+version 1.2.0 (3/17/2005):
+	* No changes
+
+version 1.1.4 (2/24/2005):
+	* No changes
+
+version 1.1.3 (2/17/2005):
+	* SILC is currently no longer installed on Windows NT 4 systems.  There
+	  is an outstanding bug that causes no account to be able to connect.
+	  Thanks to Lorne Nicol for helping track the issue down.
+	* Updated GTK+ to 2.6.2 (rev a)
+	  GLib 2.6 introduces wrappers for stdio functions (fix to handle
+	  non-ascii paths).
+
+version 1.1.2 (01/20/2005):
+	* Updated GTK+ to 2.4.14 (rev a)
+	* Much prettier System Tray icons for Windows XP and greater.
+	  (Thanks Jérôme Poulin and Alex Converse)
+	* Docking now works with multiple monitors.
+
+version 1.1.1 (12/28/2004):
+
+version 1.1.0 (12/02/2004):
+	* SILC protocol plugin added.
+	* Now checking GAIMLANG and GAIMHOME instead of LANG and HOME env
+	  variables, to avoid conflicts with other apps that use them and
+	  to avoid HOME env variables intended for cygwin (using unix style
+	  path).
+	* Both the installer and gaim now perform checks to see if an instance
+	  of gaim is already running. Definition of GAIM_MULTI_INST env
+	  variable turns this check off.
+	* Asynchronous host name resolution (Fixes unresponsive UI during slow
+	  or unresponsive host name resolution).
+
+version 1.0.3 (11/11/2004):
+	* Updated GTK+ to 2.4.13 (rev a)
+	  Includes fix for pango bug affecting some character sets, such as
+	  Chinese.
+
 
 version 1.0.2 (10/20/2004):
 	* Updated GTK+ to 2.4.10 (rev b)
