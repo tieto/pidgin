@@ -329,7 +329,7 @@ AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
 AM_CONDITIONAL(DYNAMIC_ZEPHYR, test "x$dynamic_zephyr" = "xyes")
 
 AC_ARG_ENABLE(audio,   [  --disable-audio         compile without libao/libaudiofile for sound playing],,enable_audio=yes)
-AC_ARG_ENABLE(mono,    [  --enable-mono          compile without Mono runtime support],,enable_mono=no)
+AC_ARG_ENABLE(mono,    [  --enable-mono          compile with Mono runtime support],,enable_mono=no)
 AC_ARG_ENABLE(plugins, [  --disable-plugins       compile without plugin support],,enable_plugins=yes)
 AC_ARG_ENABLE(perl,    [  --disable-perl          compile without perl scripting],,enable_perl=yes)
 AC_ARG_ENABLE(tcl,     [  --disable-tcl           compile without Tcl scripting],,enable_tcl=yes)
