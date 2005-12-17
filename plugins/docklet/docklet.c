@@ -265,14 +265,8 @@ gaim_quit_cb()
 }
 
 static void
-docklet_update_status_cb(void *data, ...)
+docklet_update_status_cb(void *data)
 {
-	/* The odd function arguments allow this callback to be used for
-	 * any signal which has a pointer as the first callback parameter.
-	 * Although ugly, it allows this single callback to be used instead
-	 * of multiple functions with different signatures that do the same 
-	 * thing.
-	 */
 	docklet_update_status();
 }
 
