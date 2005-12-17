@@ -144,7 +144,7 @@ docklet_update_status()
 		pending = TRUE;
 
 		/* set tooltip if messages are pending */
-		if (ui_ops->set_tooltip) {
+		if (0 && ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
@@ -246,7 +246,8 @@ online_account_supports_chat()
 
 	while(c != NULL) {
 		GaimConnection *gc = c->data;
-		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		if (prpl_info != NULL && prpl_info->chat_info != NULL)
 			return TRUE;
 		c = c->next;
 	}
@@ -515,13 +516,10 @@ plugin_load(GaimPlugin *plugin)
 	docklet_ui_init();
 	if (ui_ops && ui_ops->create)
 		ui_ops->create();
-
 	gaim_signal_connect(conn_handle, "signed-on",
 						plugin, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
 	gaim_signal_connect(conn_handle, "signed-off",
 						plugin, GAIM_CALLBACK(docklet_signed_off_cb), NULL);
-	gaim_signal_connect(accounts_handle, "account-connecting",
-						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(accounts_handle, "account-status-changed",
 						plugin, GAIM_CALLBACK(docklet_update_status_cb), NULL);
 	gaim_signal_connect(conv_handle, "received-im-msg",

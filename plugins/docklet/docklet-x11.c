@@ -113,7 +113,8 @@ docklet_x11_update_icon(DockletStatus icon)
 			break;
 	}
 
-	gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+	if(icon_name)
+		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
 
 #if 0
 	GdkPixbuf *p;
