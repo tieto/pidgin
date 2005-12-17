@@ -1,3 +1,6 @@
+EXTRA_DIST = \
+		Makefile.mingw
+
 pkgdir = $(libdir)/gaim
 
 SIMPLESOURCES = \
