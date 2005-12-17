@@ -200,7 +200,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
 	} else {
-		plaintext = FALSE;
+		plaintext = TRUE;
 		secprops.max_ssf = 0;
 		secprops.maxbufsize = 0;
 	}
