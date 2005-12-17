@@ -1,30 +1,42 @@
 -=[ Gaim ]=-  The Pimpin' Penguin IM Client That's Good For The Soul!
 
 2.0.0beta1 (12/16/2005):
-	Nathan: 15 months since we branched oldstatus, and started working on
-	the behemoth that is 2.0.0.  In that time, we've added a couple new 
-	protocols, we had a few crazy patch writers become developers, and
-	had a few more people step up to be crazy patch writers.  Sean wrote
-	a book, and we arbitrarily decided to make a version 1.0.0, and a
-	new versioning scheme.  We got new artwork, and added almost 200 lines
-	to the ChangeLog.  We've watched 2 major GTK+ releases, and added all
-	kinds of features using them.  OK, I've wasted enough bits here.  This
-	beta rocks, but it is a beta.  Treat it as such, and enjoy!
+    Nathan: 15 months since we branched oldstatus, and started working on
+    the behemoth that is 2.0.0.  In that time, we've added a couple new
+    protocols, we had a few crazy patch writers become developers, and
+    had a few more people step up to be crazy patch writers.  Sean wrote
+    a book, and we arbitrarily decided to make a version 1.0.0, and a
+    new versioning scheme.  We got new artwork, and added almost 200 lines
+    to the ChangeLog.  We've watched 2 major GTK+ releases, and added all
+    kinds of features using them.  OK, I've wasted enough bits here.  This
+    beta rocks, but it is a beta.  Treat it as such, and enjoy!
 
-	Gary: Finally we have a beta.  There are a lot of new goodies, including
-	quite a few summer of code projects that couldn't get added into the
-	oldstatus branch because API changes.  We also have a new mono plugin
-	loader for even more plugin fun.
+    Gary: Finally we have a beta.  There are a lot of new goodies, including
+    quite a few summer of code projects that couldn't get added into the
+    oldstatus branch because API changes.  We also have a new mono plugin
+    loader for even more plugin fun.
 
-	Richard: Thanks to all who wrote patches (big or small) for this beta.
+    Richard: Thanks to all who wrote patches (big or small) for this beta.
 
-	Tim: Well here it is, the first beta. There's a lot of cool things in
-	here, but not all of them are finished or debugged. But then that's
-	why it's called a beta. Conversations are now contact-aware, and
-	there's a new status selector. There's smooth scrolling on imcoming
-	messages as well. Our Crazy Patch Writers have been doing a good
-	job too, it seems like we're never lacking some patches in the
-	tracker to review.
+    Tim: Well here it is, the first beta. There's a lot of cool things in
+    here, but not all of them are finished or debugged. But then that's
+    why it's called a beta. Conversations are now contact-aware, and
+    there's a new status selector. There's smooth scrolling on imcoming
+    messages as well. Our Crazy Patch Writers have been doing a good
+    job too, it seems like we're never lacking some patches in the
+    tracker to review.
+
+    Etan: I know I'm not going to be able to think of all the things I should
+    talk about here so I'll just go with the stuff I remember. Adding buddies
+    on ejabberd jabber servers should work more correctly now (it's possible
+    adding buddies on other servers is a bit broken currently I'm still
+    looking into it). There are still other jabber issues I'm looking into
+    with handling of buddies.
+    In other topics, I finally brought my Accounts menu into gaim, though the
+    current example of it isn't exactly what I had in mind, anyone with any
+    suggestions/comments/etc about it please speak up.
+    Other than the stuff I'm sure I'm forgetting to mention this beta should
+    be awesome as gaim 2.0.0 is going to be awesome. Have fun with it.
 
 
 1.5.0 (8/11/2005):
