@@ -3445,6 +3445,14 @@ static void account_disabled(GaimAccount *account, GaimGtkBuddyList *gtkblist)
 	update_menu_bar(gtkblist);
 }
 
+static void account_modified(GaimAccount *account, GaimGtkBuddyList *gtkblist)
+{
+	if (!gtkblist)
+		return;
+	
+	update_menu_bar(gtkblist);
+}
+
 static gboolean
 pane_position_cb(GtkPaned *paned, GParamSpec *param_spec, gpointer data)
 {
@@ -3712,12 +3720,15 @@ static void gaim_gtk_blist_show(GaimBuddyList *list)
 			gaim_gtk_blist_sound_method_pref_cb, NULL);
 
 	/* Setup some gaim signal handlers. */
+	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
+			gtkblist, GAIM_CALLBACK(account_enabled), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
 			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
 	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
 			gtkblist, GAIM_CALLBACK(account_disabled), gtkblist);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
-			gtkblist, GAIM_CALLBACK(account_enabled), gtkblist);
+
+	gaim_signal_connect(gaim_gtk_account_get_handle(), "account-modified",
+			gtkblist, GAIM_CALLBACK(account_modified), gtkblist);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
 						gtkblist, GAIM_CALLBACK(sign_on_off_cb), list);
