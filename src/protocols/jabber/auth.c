@@ -727,7 +727,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 		return;
 	}
 
-#if HAVE_CYRUS_SASL
+#ifdef HAVE_CYRUS_SASL
 	/* The SASL docs say that if the client hasn't returned OK yet, we
 	 * should try one more round against it
 	 */
