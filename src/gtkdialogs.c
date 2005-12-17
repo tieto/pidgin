@@ -370,6 +370,12 @@ void gaim_gtkdialogs_about()
 
 g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 
+#ifdef HAVE_CYRUS_SASL
+	g_string_append_printf(str, "    <b>Cyrus SASL:</b> Enabled<br/>");
+#else
+	g_string_append_printf(str, "    <b>Cyrus SASL:</b> Disabled<br/>");
+#endif
+
 #ifdef HAVE_EVOLUTION_ADDRESSBOOK
 	g_string_append_printf(str, "    <b>Evolution Addressbook:</b> Enabled<br/>");
 #else
