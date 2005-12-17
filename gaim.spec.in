@@ -33,7 +33,7 @@ BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
 %{?_with_mono:BuildRequires: mono-devel}
 %{?_with_dbus:BuildRequires: dbus-devel >= 0.35}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
-%{!?_without_sasl:BuildRequires: cyrus-sasl-devel >= 2}
+%{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
 
@@ -158,7 +158,7 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{!?_with_tcl:--disable-tcl} \
                                     %{!?_with_dbus:--disable-dbus} \
                                     %{?_without_gtkspell:--disable-gtkspell} \
-                                    %{!?_without_sasl:--enable-cyrus-sasl}
+                                    %{?_with_sasl:--enable-cyrus-sasl}
 
 make %{?_smp_mflags}
 
