@@ -144,7 +144,7 @@ docklet_update_status()
 		pending = TRUE;
 
 		/* set tooltip if messages are pending */
-		if (0 && ui_ops->set_tooltip) {
+		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
