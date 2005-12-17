@@ -71,6 +71,9 @@ typedef enum
 #define GAIM_BLIST_NODE_HAS_FLAG(b, f) ((b)->flags & (f))
 #define GAIM_BLIST_NODE_SHOULD_SAVE(b) (! GAIM_BLIST_NODE_HAS_FLAG(b, GAIM_BLIST_NODE_FLAG_NO_SAVE))
 
+#define GAIM_BLIST_NODE_NAME(n) ((n)->type == GAIM_BLIST_CHAT_NODE  ? gaim_chat_get_name((GaimChat*)n) :        \
+				     (n)->type == GAIM_BLIST_BUDDY_NODE ? gaim_buddy_get_name((GaimBuddy*)n) : NULL)
+
 #include "account.h"
 #include "buddyicon.h"
 #include "status.h"
