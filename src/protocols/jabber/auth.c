@@ -541,21 +541,21 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 	guchar result[16];
 	size_t a1len;
 
-	gchar *a1, *convnode, *convpasswd, *ha1, *ha2, *kd, *x, *z;
+	gchar *a1, *convnode=NULL, *convpasswd = NULL, *ha1, *ha2, *kd, *x, *z;
 
 	if((convnode = g_convert(jid->node, strlen(jid->node), "iso-8859-1", "utf-8",
 					NULL, NULL, NULL)) == NULL) {
 		convnode = g_strdup(jid->node);
 	}
-	if((convpasswd = g_convert(passwd, strlen(passwd), "iso-8859-1", "utf-8",
-					NULL, NULL, NULL)) == NULL) {
+	if(passwd && ((convpasswd = g_convert(passwd, strlen(passwd), "iso-8859-1",
+						"utf-8", NULL, NULL, NULL)) == NULL)) {
 		convpasswd = g_strdup(passwd);
 	}
 
 	cipher = gaim_ciphers_find_cipher("md5");
 	context = gaim_cipher_context_new(cipher, NULL);
 
-	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd);
+	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
 	gaim_cipher_context_append(context, (const guchar *)x, strlen(x));
 	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
 
