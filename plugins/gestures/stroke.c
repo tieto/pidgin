@@ -233,7 +233,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
 	  /* add the interpolated point */
 	  new_point_p->x = ix;
 	  new_point_p->y = iy;
-	  g_slist_append (metrics->pointList, new_point_p);
+	  metrics->pointList = g_slist_append (metrics->pointList, new_point_p);
 
 	  /* update metrics */
 	  if (((gint) ix) < metrics->min_x) metrics->min_x = (gint) ix;
@@ -257,7 +257,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
 	  /* add the interpolated point */
 	  new_point_p->y = iy;
 	  new_point_p->x = ix;
-	  g_slist_append(metrics->pointList, new_point_p);
+	  metrics->pointList = g_slist_append(metrics->pointList, new_point_p);
 
 	  /* update metrics */
 	  if (((gint) ix) < metrics->min_x) metrics->min_x = (gint) ix;
@@ -271,7 +271,7 @@ _gstroke_record (gint x, gint y, struct gstroke_metrics *metrics)
       }
 
       /* add the sampled point */
-      g_slist_append(metrics->pointList, new_point_p);
+      metrics->pointList = g_slist_append(metrics->pointList, new_point_p);
     }
 
     /* record the sampled point values */
