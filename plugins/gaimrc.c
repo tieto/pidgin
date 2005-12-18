@@ -396,22 +396,20 @@ gaimrc_plugin_unload(GaimPlugin *plugin)
 static GtkWidget *
 gaimrc_get_config_frame(GaimPlugin *plugin)
 {
-	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL, *vbox = NULL;
-	/*
-	GtkWidget *check = NULL, *widget = NULL, *label = NULL;
-	*/
-	GtkWidget *check = NULL, *widget = NULL;
-	GtkSizeGroup *sg = NULL;
-	/*
-	char sample[7] = "Sample";
-	*/
+	/* Note: Intentionally not using the size group argument to the
+	 * gaim_gtk_prefs_labeled_* functions they only add the text label to
+	 * the size group not the whole thing, which isn't what I want. */
 	int i;
 	char *tmp;
+	GtkWidget *check = NULL, *widget = NULL;
+	GtkSizeGroup *labelsg = NULL, *widgetsg = NULL;
+	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL, *vbox = NULL;
 
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	labelsg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+	widgetsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	frame = gaim_gtk_make_frame(ret, "General");
 	/* interface font */
@@ -421,11 +419,12 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	check = gaim_gtk_prefs_checkbox(_("GTK+ Interface Font"),
 	                                "/plugins/gtk/gaimrc/set/gtk-font-name",
 	                                hbox);
-	gtk_size_group_add_widget(sg, check);
+	gtk_size_group_add_widget(labelsg, check);
 
 	widget = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
 	                                       GAIM_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
+	gtk_size_group_add_widget(widgetsg, widget);
 	gtk_widget_set_sensitive(widget,
 	                         gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-font-name"));
 	g_signal_connect(G_OBJECT(check), "toggled",
@@ -440,11 +439,14 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	check = gaim_gtk_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
 	                                "/plugins/gtk/gaimrc/set/gtk-key-theme-name",
 	                                hbox);
-	gtk_size_group_add_widget(sg, check);
+	gtk_size_group_add_widget(labelsg, check);
 
 	widget = gaim_gtk_prefs_labeled_entry(hbox, "",
 	                                      "/plugins/gtk/gaimrc/gtk-key-theme-name",
 	                                      NULL);
+	/*
+	gtk_size_group_add_widget(widgetsg, widget);
+	*/
 	gtk_widget_set_sensitive(widget,
 	                         gaim_prefs_get_bool("/plugins/gtk/gaimrc/set/gtk-key-theme-name"));
 	g_signal_connect(G_OBJECT(check), "toggled",
@@ -458,10 +460,10 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 
 		check = gaim_gtk_prefs_checkbox(_(color_names[i]),
 		                                color_prefs_set[i], hbox);
-		gtk_size_group_add_widget(sg, check);
+		gtk_size_group_add_widget(labelsg, check);
 
 		color_widgets[i] = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR, GAIM_BUTTON_HORIZONTAL);
-		gtk_size_group_add_widget(sg, color_widgets[i]);
+		gtk_size_group_add_widget(widgetsg, color_widgets[i]);
 		gtk_box_pack_start(GTK_BOX(hbox), color_widgets[i], FALSE,
 		                   FALSE, 0);
 		gtk_widget_set_sensitive(color_widgets[i],
@@ -482,9 +484,12 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 
 		check = gaim_gtk_prefs_checkbox(_(widget_size_names[i]),
 		                                widget_size_prefs_set[i], hbox);
-		gtk_size_group_add_widget(sg, check);
+		gtk_size_group_add_widget(labelsg, check);
 
-		widget_size_widgets[i] = gaim_gtk_prefs_labeled_spin_button(hbox, "", widget_size_prefs[i], 0, 50, sg);
+		widget_size_widgets[i] = gaim_gtk_prefs_labeled_spin_button(hbox, "", widget_size_prefs[i], 0, 50, NULL);
+		/*
+		gtk_size_group_add_widget(widgetsg, widget_size_widgets[i]);
+		*/
 		gtk_widget_set_sensitive(widget_size_widgets[i],
 		                         gaim_prefs_get_bool(widget_size_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
@@ -500,10 +505,10 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 
 		check = gaim_gtk_prefs_checkbox(_(font_names[i]),
 		                                font_prefs_set[i], hbox);
-		gtk_size_group_add_widget(sg, check);
+		gtk_size_group_add_widget(labelsg, check);
 
 		font_widgets[i] = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT, GAIM_BUTTON_HORIZONTAL);
-		gtk_size_group_add_widget(sg, font_widgets[i]);
+		gtk_size_group_add_widget(widgetsg, font_widgets[i]);
 		gtk_box_pack_start(GTK_BOX(hbox), font_widgets[i], FALSE,
 		                   FALSE, 0);
 		gtk_widget_set_sensitive(font_widgets[i],
@@ -520,17 +525,17 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
-	tmp = g_strdup_printf(_("Write a gtkrc file with these settings to %s"), gaim_user_dir());
+	tmp = g_strdup_printf(_("Write settings to %s/gtkrc-2.0"), gaim_user_dir());
 	check = gtk_button_new_with_label(tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, check);
+	gtk_size_group_add_widget(labelsg, check);
 	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(gaimrc_write),
 	                 NULL);
 
 	check = gtk_button_new_with_label(_("Re-read gtkrc files"));
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
-	gtk_size_group_add_widget(sg, check);
+	gtk_size_group_add_widget(labelsg, check);
 	g_signal_connect(G_OBJECT(check), "clicked", G_CALLBACK(gaimrc_reread),
 	                 NULL);
 
