@@ -7,7 +7,7 @@
 %define beta 1
 
 %if 0%{beta}
-%define gaimver %(echo "@VERSION@"|sed -e 's/cvs//')
+%define gaimver %(echo "@VERSION@"|sed -e 's/cvs//; s/beta.*//')
 %else
 %define gaimver @VERSION@
 %endif
@@ -38,7 +38,7 @@ BuildRequires: libtool, pkgconfig, libao-devel, audiofile-devel
 Requires: perl
 
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
-%if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft"
+%if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
 # Mandrake/Mandriva requirements
 BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
