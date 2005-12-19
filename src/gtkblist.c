@@ -1387,19 +1387,45 @@ gaim_gtk_blist_popup_menu_cb(GtkWidget *tv, void *user_data)
 
 static void gaim_gtk_blist_buddy_details_cb(gpointer data, guint action, GtkWidget *item)
 {
+	if (gtkblist->window->window)
+	{
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+		gdk_cursor_unref(cursor);
+	}
+
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_buddy_icons",
 			    gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
+
+	if (gtkblist->window->window)
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 }
 
 static void gaim_gtk_blist_show_empty_groups_cb(gpointer data, guint action, GtkWidget *item)
 {
+	if (gtkblist->window->window)
+	{
+		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
+		gdk_window_set_cursor(gtkblist->window->window, cursor);
+		while (gtk_events_pending())
+			gtk_main_iteration();
+		gdk_cursor_unref(cursor);
+	}
+
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_empty_groups",
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(item)));
+
+	if (gtkblist->window->window)
+		gdk_window_set_cursor(gtkblist->window->window, NULL);
 }
 
 static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_action,
-		GtkWidget *checkitem) {
-	if(gtkblist->window->window) {
+		GtkWidget *checkitem)
+{
+	if (gtkblist->window->window)
+	{
 		GdkCursor *cursor = gdk_cursor_new(GDK_WATCH);
 		gdk_window_set_cursor(gtkblist->window->window, cursor);
 		while (gtk_events_pending())
@@ -1410,9 +1436,8 @@ static void gaim_gtk_blist_edit_mode_cb(gpointer callback_data, guint callback_a
 	gaim_prefs_set_bool("/gaim/gtk/blist/show_offline_buddies",
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(checkitem)));
 
-	if(gtkblist->window->window) {
+	if (gtkblist->window->window)
 		gdk_window_set_cursor(gtkblist->window->window, NULL);
-	}
 }
 
 static void gaim_gtk_blist_mute_sounds_cb(gpointer data, guint action, GtkWidget *item)
