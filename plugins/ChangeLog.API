@@ -29,6 +29,7 @@ version 2.0.0:
 	* gtk_imhtml_toggle_italic(): No longer returns a value
 	* gtk_imhtml_toggle_underline(): No longer returns a value
 	* gtk_imhtml_toggle_strike(): No longer returns a value
+	* gtk_imhtml_scroll_to_end(): Added the smooth paramter
 	* gaim_log_new(), added conv parameter
 	* gaim_buddy_icon_new(), leaves a reference which the caller owns. Use
 	  gaim_buddy_icon_unref() immediately if you don't want a reference (the

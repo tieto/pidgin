@@ -359,6 +359,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
  * Scrolls a GTK+ IM/HTML to the end of its contents.
  *
  * @param imhtml  The GTK+ IM/HTML.
+ * @param smooth  A boolean indicating if smooth scrolling should be used.
  */
 void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth);
 
