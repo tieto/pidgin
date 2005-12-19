@@ -1243,6 +1243,7 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 		/** TODO: this should probably be async, right? */
 		if (!(h = gethostbyname(hostname))) {
 			gaim_connection_error(sip->gc, _("Couldn't resolve host"));
+			return;
 		}
 
 		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
