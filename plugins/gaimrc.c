@@ -525,7 +525,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
-	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"), G_DIR_SEPARATOR_S, gaim_user_dir());
+	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"), gaim_user_dir(), G_DIR_SEPARATOR_S);
 	check = gtk_button_new_with_label(tmp);
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), check, FALSE, FALSE, 0);
