@@ -685,7 +685,6 @@ gaim_savedstatus_get_current()
 		 * using?  In any case, add a default status.
 		 */
 		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
-		gaim_savedstatus_set_message(saved_status, _("Hello!"));
 	}
 
 	return saved_status;
