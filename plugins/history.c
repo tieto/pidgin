@@ -24,7 +24,7 @@
 static gboolean _scroll_imhtml_to_end(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
-	gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml));
+	gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), FALSE);
 	g_object_unref(G_OBJECT(imhtml));
 	return FALSE;
 }
