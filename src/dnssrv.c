@@ -25,7 +25,9 @@
 #ifndef _WIN32
 #include <resolv.h>
 #include <arpa/nameser.h>
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
 #include <arpa/nameser_compat.h>
+#endif
 #ifndef T_SRV
 #define T_SRV	33
 #endif
