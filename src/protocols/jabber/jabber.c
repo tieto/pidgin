@@ -1664,8 +1664,7 @@ static void jabber_register_commands(void)
 
 static GaimPluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_PASSWORD_OPTIONAL,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"jpeg,gif,png", 0, 0, 96, 96, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
