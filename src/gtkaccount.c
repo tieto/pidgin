@@ -717,7 +717,7 @@ update_editable(GaimConnection *gc, AccountPrefsDialog *dialog)
 	if (gc != NULL && dialog->account != gaim_connection_get_account(gc))
 		return;
 
-	set = !gaim_account_is_connected(dialog->account);
+	set = !(gaim_account_is_connected(dialog->account) || gaim_account_is_connecting(dialog->account));
 	gtk_widget_set_sensitive(dialog->protocol_menu, set);
 	gtk_widget_set_sensitive(dialog->screenname_entry, set);
 
@@ -765,9 +765,6 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
-
-	/* Do not let the user change the protocol/screenname while connected. */
-	update_editable(NULL, dialog);
 
 	/* Do the user split thang */
 	if (dialog->plugin == NULL) /* Yeah right. */
@@ -876,6 +873,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_hide(dialog->remember_pass_check);
 	}
 
+	/* Do not let the user change the protocol/screenname while connected. */
+	update_editable(NULL, dialog);
 	gaim_signal_connect(gaim_connections_get_handle(), "signing-on", dialog,
 					G_CALLBACK(update_editable), dialog);
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", dialog,
