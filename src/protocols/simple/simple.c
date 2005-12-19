@@ -342,10 +342,10 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 	auth->type = 1;
 	parts = g_strsplit(hdr, " ", 0);
 	while(parts[i]) {
-		if(!strncmp(parts[i],"nonce",5)) {
-			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-1);
+		if(!strncmp(parts[i], "nonce", 5)) {
+			auth->nonce = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
 		}
-		if(!strncmp(parts[i],"realm",5)) {
+		else if(!strncmp(parts[i], "realm", 5)) {
 			auth->realm = g_strndup(parts[i]+7,strlen(parts[i]+7)-2);
 		}
 		i++;
@@ -516,14 +516,14 @@ static void send_sip_request(GaimConnection *gc, gchar *method, gchar *url, gcha
 	if(addheaders) addh=addheaders;
 	if(sip->registrar.type && !strcmp(method,"REGISTER")) {
 		buf = auth_header(sip, &sip->registrar, method, url);
-		auth = g_strdup_printf("Authorization: %s",buf);
+		auth = g_strdup_printf("Authorization: %s", buf);
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
 
 	if(sip->proxy.type && strcmp(method,"REGISTER")) {
 		buf = auth_header(sip, &sip->proxy, method, url);
-		auth = g_strdup_printf("Proxy-Authorization: %s",buf);
+		auth = g_strdup_printf("Proxy-Authorization: %s", buf);
 		g_free(buf);
 		gaim_debug(GAIM_DEBUG_MISC, "simple", "header %s", auth);
 	}
