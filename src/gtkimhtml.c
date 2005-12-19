@@ -2313,7 +2313,7 @@ void gtk_imhtml_append_text_with_images (GtkIMHtml        *imhtml,
 	}
 
 	if (!(options & GTK_IMHTML_NO_SCROLL)) {
-		gtk_imhtml_scroll_to_end(imhtml);
+		gtk_imhtml_scroll_to_end(imhtml, (options & GTK_IMHTML_USE_SMOOTHSCROLLING));
 	}
 }
 
@@ -2346,21 +2346,37 @@ static gboolean scroll_cb(gpointer data)
 	return TRUE;
 }
 
-static gboolean scroll_idle_cb(gpointer data)
+static gboolean smooth_scroll_idle_cb(gpointer data)
 {
 	GtkIMHtml *imhtml = data;
 	imhtml->scroll_src = g_timeout_add(SCROLL_DELAY, scroll_cb, imhtml);
 	return FALSE;
 }
 
-void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml)
+static gboolean scroll_idle_cb(gpointer data)
+{
+	GtkIMHtml *imhtml = data;
+	GtkAdjustment *adj = GTK_TEXT_VIEW(imhtml)->vadjustment;
+	if(adj) {
+		gtk_adjustment_set_value(adj, adj->upper - adj->page_size);
+	}
+	imhtml->scroll_src = 0;
+	return FALSE;
+}
+
+void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth)
 {
 	if (imhtml->scroll_time)
 		g_timer_destroy(imhtml->scroll_time);
-	imhtml->scroll_time = g_timer_new();
 	if (imhtml->scroll_src)
 		g_source_remove(imhtml->scroll_src);
-	imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
+	if(smooth) {
+		imhtml->scroll_time = g_timer_new();
+		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, smooth_scroll_idle_cb, imhtml, NULL);
+	} else {
+		imhtml->scroll_time = NULL;
+		imhtml->scroll_src = g_idle_add_full(G_PRIORITY_LOW, scroll_idle_cb, imhtml, NULL);
+	}
 }
 
 void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,

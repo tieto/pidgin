@@ -839,6 +839,8 @@ conv_page()
 			"/gaim/gtk/conversations/spellcheck", vbox);
 #endif
 
+	gaim_gtk_prefs_checkbox(_("Use smooth-scrolling"), "/gaim/gtk/conversations/use_smooth_scrolling", vbox);
+
 	frame = gaim_gtk_create_imhtml(TRUE, &imhtml, &toolbar);
 	gtk_widget_set_name(imhtml, "gaim_gtkprefs_font_imhtml");
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);

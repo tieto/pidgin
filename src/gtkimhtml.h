@@ -188,16 +188,17 @@ struct _GtkIMHtmlHr {
 };
 
 typedef enum {
-	GTK_IMHTML_NO_COLOURS    = 1 << 0,
-	GTK_IMHTML_NO_FONTS      = 1 << 1,
-	GTK_IMHTML_NO_COMMENTS   = 1 << 2, /* Remove */
-	GTK_IMHTML_NO_TITLE      = 1 << 3,
-	GTK_IMHTML_NO_NEWLINE    = 1 << 4,
-	GTK_IMHTML_NO_SIZES      = 1 << 5,
-	GTK_IMHTML_NO_SCROLL     = 1 << 6,
-	GTK_IMHTML_RETURN_LOG    = 1 << 7,
-	GTK_IMHTML_USE_POINTSIZE = 1 << 8,
-	GTK_IMHTML_NO_FORMATTING = 1 << 9
+	GTK_IMHTML_NO_COLOURS          = 1 << 0,
+	GTK_IMHTML_NO_FONTS            = 1 << 1,
+	GTK_IMHTML_NO_COMMENTS         = 1 << 2, /* Remove */
+	GTK_IMHTML_NO_TITLE            = 1 << 3,
+	GTK_IMHTML_NO_NEWLINE          = 1 << 4,
+	GTK_IMHTML_NO_SIZES            = 1 << 5,
+	GTK_IMHTML_NO_SCROLL           = 1 << 6,
+	GTK_IMHTML_RETURN_LOG          = 1 << 7,
+	GTK_IMHTML_USE_POINTSIZE       = 1 << 8,
+	GTK_IMHTML_NO_FORMATTING       = 1 << 9,
+	GTK_IMHTML_USE_SMOOTHSCROLLING = 1 << 10
 } GtkIMHtmlOptions;
 
 enum {
@@ -359,7 +360,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
  *
  * @param imhtml  The GTK+ IM/HTML.
  */
-void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml);
+void gtk_imhtml_scroll_to_end(GtkIMHtml *imhtml, gboolean smooth);
 
 /**
  * Delete the contents of a GTK+ IM/HTML between start and end.

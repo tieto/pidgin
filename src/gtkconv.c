@@ -4290,6 +4290,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	GaimAccount *account;
 	GaimPluginProtocolInfo *prpl_info;
 	int gtk_font_options = 0;
+	int gtk_font_options_all = 0;
 	int max_scrollback_lines = gaim_prefs_get_int(
 		"/gaim/gtk/conversations/scrollback_lines");
 	int line_count;
@@ -4302,6 +4303,9 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	size_t length = strlen(message) + 1;
 
 	gtkconv = GAIM_GTK_CONVERSATION(conv);
+
+	if(gaim_prefs_get_bool("/gaim/gtk/conversations/use_smooth_scrolling"))
+		gtk_font_options_all |= GTK_IMHTML_USE_SMOOTHSCROLLING;
 
 	/* Set the active conversation to the one that just messaged us. */
 	/* TODO: consider not doing this if the account is offline or something */
@@ -4331,7 +4335,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 	}
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", gtk_font_options_all);
 
 	if(time(NULL) > mtime + 20*60) /* show date if older than 20 minutes */
 		strftime(mdate, sizeof(mdate), "%Y-%m-%d %H:%M:%S", localtime(&mtime));
@@ -4354,29 +4358,30 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
+
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & GAIM_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 	} else if (flags & GAIM_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 	} else if (flags & GAIM_MESSAGE_NO_LOG) {
 		g_snprintf(buf2, BUF_LONG,
 			   "<B><FONT %s COLOR=\"#777777\">%s</FONT></B>",
 			   sml_attrib ? sml_attrib : "", message);
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 	} else if (flags & GAIM_MESSAGE_RAW) {
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, gtk_font_options_all);
 	} else {
 		char *new_message = g_memdup(message, length);
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
@@ -4479,7 +4484,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 				   color, sml_attrib ? sml_attrib : "", mdate, str);
 		}
 
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, 0);
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT &&
 		    !(flags & GAIM_MESSAGE_SEND)) {
@@ -4525,7 +4530,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 			with_font_tag = g_memdup(new_message, length);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
-							 with_font_tag, gtk_font_options);
+							 with_font_tag, gtk_font_options | gtk_font_options_all);
 
 		g_free(with_font_tag);
 		g_free(new_message);
@@ -5876,6 +5881,7 @@ gaim_gtk_conversations_init(void)
 
 	/* Conversations */
 	gaim_prefs_add_none("/gaim/gtk/conversations");
+	gaim_prefs_add_bool("/gaim/gtk/conversations/use_smooth_scrolling", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/close_on_tabs", TRUE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_bold", FALSE);
 	gaim_prefs_add_bool("/gaim/gtk/conversations/send_italic", FALSE);
