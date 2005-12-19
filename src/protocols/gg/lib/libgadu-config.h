@@ -1,6 +1,6 @@
 /* Local libgadu configuration. */
 
-/* #include "../../../config.h" */
+#include "config.h"
 
 #ifndef __GG_LIBGADU_CONFIG_H
 #define __GG_LIBGADU_CONFIG_H
@@ -32,7 +32,9 @@
 #undef __GG_LIBGADU_HAVE_OPENSSL
 
 /* Include file containing uintXX_t declarations. */
+#if HAVE_STDINT_H
 #include <stdint.h>
+#endif
 
 /* Defined if this machine has C99-compiliant vsnprintf(). */
 #ifndef _WIN32
