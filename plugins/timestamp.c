@@ -72,7 +72,7 @@ do_timestamp(gpointer data)
 		}
 		gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, mdate, strlen(mdate), "TIMESTAMP", NULL);
 		if (scroll)
-			gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), TRUE);
+			gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), gaim_prefs_get_bool("/gaim/gtk/conversations/use_smooth_scrolling"));
 	}
 	else
 		gaim_conversation_set_data(c, "timestamp-enabled", GINT_TO_POINTER(FALSE));
