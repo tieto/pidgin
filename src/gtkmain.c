@@ -719,7 +719,9 @@ int main(int argc, char *argv[])
 
 	gtk_main();
 
+#if HAVE_SIGNAL_H
 	g_free(segfault_message);
+#endif
 
 #ifdef _WIN32
 	wgaim_cleanup();
