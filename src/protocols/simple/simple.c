@@ -1239,6 +1239,12 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 
 	} else { /* UDP */
 		gaim_debug_info("simple", "using udp with server %s and port %d\n", hostname, port);
+
+		/** TODO: this should probably be async, right? */
+		if (!(h = gethostbyname(hostname))) {
+			gaim_connection_error(sip->gc, _("Couldn't resolve host"));
+		}
+
 		sip->fd = socket(AF_INET, SOCK_DGRAM, 0);
 
 		addr.sin_family = AF_INET;
@@ -1254,7 +1260,6 @@ static void srvresolved(struct srv_response *resp, int results, gpointer data) {
 		sip->serveraddr.sin_family = AF_INET;
 		sip->serveraddr.sin_port = htons(port);
 
-		h = gethostbyname(hostname);
 		sip->serveraddr.sin_addr.s_addr = ((struct in_addr*)h->h_addr)->s_addr;
 		sip->ip = g_strdup(gaim_network_get_my_ip(sip->listenfd));
 		sip->resendtimeout = gaim_timeout_add(2500, (GSourceFunc)resend_timeout, sip);
