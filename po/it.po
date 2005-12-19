@@ -7234,7 +7234,7 @@ msgstr "Il messaggio non è stato inviato poiché l'utente non è in linea:"
 
 #: src/protocols/msn/switchboard.c:419
 msgid "Message could not be sent because a connection error occurred:"
-msgstr "Il messaggio non è stato inviato a causa di un errore di conessione:"
+msgstr "Il messaggio non è stato inviato a causa di un errore di connessione:"
 
 #: src/protocols/msn/switchboard.c:423
 msgid ""
