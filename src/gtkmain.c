@@ -156,6 +156,8 @@ clean_pid(void)
 	}
 }
 
+char *segfault_message;
+
 static void
 sighandler(int sig)
 {
@@ -165,29 +167,7 @@ sighandler(int sig)
 		gaim_connections_disconnect_all();
 		break;
 	case SIGSEGV:
-#ifndef DEBUG
-		fprintf(stderr, "Gaim has segfaulted and attempted to dump a core file.\n"
-			"This is a bug in the software and has happened through\n"
-			"no fault of your own.\n\n"
-			"It is possible that this bug is already fixed in CVS.\n"
-			"If you can reproduce the crash, please notify the gaim\n"
-			"maintainers by reporting a bug at\n"
-			GAIM_WEBSITE "bug.php\n\n"
-			"Please make sure to specify what you were doing at the time,\n"
-			"and post the backtrace from the core file. If you do not know\n"
-			"how to get the backtrace, please get instructions at\n"
-			GAIM_WEBSITE "gdb.php. If you need further\n"
-			"assistance, please IM either SeanEgn or LSchiere and\n"
-			"they can help you.\n");
-#else
-		fprintf(stderr, "Hi, user.  We need to talk.\n"
-			"I think something's gone wrong here.  It's probably my fault.\n"
-			"No, really, it's not you... it's me... no no no, I think we get along well\n"
-			"it's just that.... well, I want to see other people.  I... what?!?  NO!  I haven't\n"
-			"been cheating on you!!  How many times do you want me to tell you?!  And for the\n"
-			"last time, it's just a rash!\n");
-		/*g_on_error_query (g_get_prgname());*/
-#endif
+		fprintf(stderr, segfault_message);
 		abort();
 		break;
 	case SIGCHLD:
@@ -493,6 +473,37 @@ int main(int argc, char *argv[])
 
 
 #if HAVE_SIGNAL_H
+
+#ifndef DEBUG
+		/* We translate this here in case the crash breaks gettext. */
+		segfault_message = g_strdup(_(
+			"Gaim has segfaulted and attempted to dump a core file.\n"
+			"This is a bug in the software and has happened through\n"
+			"no fault of your own.\n\n"
+			"It is possible that this bug is already fixed in CVS.\n"
+			"If you can reproduce the crash, please notify the gaim\n"
+			"developers by reporting a bug at\n"
+			GAIM_WEBSITE "bug.php\n\n"
+			"Please make sure to specify what you were doing at the time\n"
+			"and post the backtrace from the core file.  If you do not know\n"
+			"how to get the backtrace, please read the instructions at\n"
+			GAIM_WEBSITE "gdb.php.  If you need further\n"
+			"assistance, please IM either SeanEgn or LSchiere (via AIM).\n"
+			"Contact information for Sean and Luke on other protocols is at\n"
+			GAIM_WEBSITE "contactinfo.php.\n"
+		));
+#else
+		/* Don't mark this for translation. */
+		segfault_message = g_strdup(
+			"Hi, user.  We need to talk.\n"
+			"I think something's gone wrong here.  It's probably my fault.\n"
+			"No, really, it's not you... it's me... no no no, I think we get along well\n"
+			"it's just that.... well, I want to see other people.  I... what?!?  NO!  I haven't\n"
+			"been cheating on you!!  How many times do you want me to tell you?!  And for the\n"
+			"last time, it's just a rash!\n"
+		);
+#endif
+
 	/* Let's not violate any PLA's!!!! */
 	/* jseymour: whatever the fsck that means */
 	/* Robot101: for some reason things like gdm like to block     *
@@ -707,6 +718,8 @@ int main(int argc, char *argv[])
 #endif
 
 	gtk_main();
+
+	g_free(segfault_message);
 
 #ifdef _WIN32
 	wgaim_cleanup();
