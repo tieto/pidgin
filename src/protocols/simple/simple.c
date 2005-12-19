@@ -1340,11 +1340,12 @@ static void simple_close(GaimConnection *gc)
 		g_free(sip->ip);
 		g_free(sip->realhostname);
 		if(sip->listenpa) gaim_input_remove(sip->listenpa);
+		if(sip->resendtimeout) gaim_timeout_remove(sip->resendtimeout);
 		if(sip->registertimeout) gaim_timeout_remove(sip->registertimeout);
 		sip->servername = sip->username = sip->password = sip->registrar.nonce = sip->registrar.realm = sip->proxy.nonce = sip->proxy.realm = sip->sendlater = sip->ip = sip->realhostname = NULL;
 	}
 	g_free(gc->proto_data);
-	gc->proto_data = 0;
+	gc->proto_data = NULL;
 }
 
 /* not needed since privacy is checked for every subscribe */
