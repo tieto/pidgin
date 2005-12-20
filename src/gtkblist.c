@@ -270,9 +270,23 @@ static void gtk_blist_menu_autojoin_cb(GtkWidget *w, GaimChat *chat)
 			gtk_check_menu_item_get_active(GTK_CHECK_MENU_ITEM(w)));
 }
 
+static void gtk_blist_join_chat(GaimChat *chat)
+{
+	GaimConversation *conv;
+
+	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+											   gaim_chat_get_name(chat),
+											   chat->account);
+
+	if (conv != NULL)
+		gaim_gtkconv_present_conversation(conv);
+	else
+		serv_join_chat(chat->account->gc, chat->components);
+}
+
 static void gtk_blist_menu_join_cb(GtkWidget *w, GaimChat *chat)
 {
-	serv_join_chat(chat->account->gc, chat->components);
+	gtk_blist_join_chat(chat);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
@@ -434,6 +448,7 @@ do_join_chat(GaimGtkJoinChatData *data)
 		GHashTable *components =
 			g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		GList *tmp;
+		GaimChat *chat;
 
 		for (tmp = data->entries; tmp != NULL; tmp = tmp->next)
 		{
@@ -452,9 +467,9 @@ do_join_chat(GaimGtkJoinChatData *data)
 			}
 		}
 
-		serv_join_chat(gaim_account_get_connection(data->account), components);
-
-		g_hash_table_destroy(components);
+		chat = gaim_chat_new(data->account, NULL, components);
+		gtk_blist_join_chat(chat);
+		gaim_blist_remove_chat(chat);
 	}
 }
 
@@ -768,7 +783,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 
 		gaim_gtkdialogs_im_with_user(buddy->account, buddy->name);
 	} else if (GAIM_BLIST_NODE_IS_CHAT(node)) {
-		serv_join_chat(((GaimChat *)node)->account->gc, ((GaimChat *)node)->components);
+		gtk_blist_join_chat((GaimChat *)node);
 	} else if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		if (gtk_tree_view_row_expanded(tv, path))
 			gtk_tree_view_collapse_row(tv, path);
