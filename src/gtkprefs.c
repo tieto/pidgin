@@ -1649,6 +1649,7 @@ away_page()
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *hbox;
+	GtkWidget *dd;
 	GtkWidget *label;
 	GtkWidget *button;
 	GtkWidget *select;
@@ -1663,7 +1664,7 @@ away_page()
 	/* Idle stuff */
 	vbox = gaim_gtk_make_frame(ret, _("Idle"));
 
-	gaim_gtk_prefs_dropdown(vbox, _("Idle time _reporting:"),
+	dd = gaim_gtk_prefs_dropdown(vbox, _("Idle time _reporting:"),
 		GAIM_PREF_STRING, "/core/away/idle_reporting",
 		_("None"), "none",
 		_("Gaim usage"), "gaim",
@@ -1671,18 +1672,23 @@ away_page()
 		_("Mouse movement"), "system",
 #endif
 		NULL);
+	gtk_size_group_add_widget(sg, dd);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	/* Away stuff */
 	vbox = gaim_gtk_make_frame(ret, _("Away"));
 
-	label = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
+	dd = gaim_gtk_prefs_dropdown(vbox, _("_Auto-reply:"),
 		GAIM_PREF_STRING, "/core/away/auto_reply",
 		_("Never"), "never",
 		_("When away"), "away",
 		_("When both away and idle"), "awayidle",
 		NULL);
+	gtk_size_group_add_widget(sg, dd);
+	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
 	/* Auto-away stuff */
+	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = gaim_gtk_make_frame(ret, _("Auto-away"));
 
 	button = gaim_gtk_prefs_checkbox(_("Change status when _idle"),
@@ -1707,6 +1713,7 @@ away_page()
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(gaim_gtk_toggle_sensitive), menu);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
 
 	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
