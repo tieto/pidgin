@@ -77,6 +77,10 @@
 # include <gdk/gdkx.h>
 #endif
 
+#ifdef _WIN32
+# include "wspell.h"
+#endif
+
 
 
 #ifdef HAVE_STARTUP_NOTIFICATION
@@ -539,22 +543,6 @@ int main(int argc, char *argv[])
 	}
 #endif
 
-	search_path = g_build_filename(gaim_user_dir(), "gtkrc-2.0", NULL);
-	gtk_rc_add_default_file(search_path);
-	g_free(search_path);
-
-	gui_check = gtk_init_check(&argc, &argv);
-	if (!gui_check) {
-		char *display = gdk_get_display();
-
-		printf("Gaim %s\n", VERSION);
-
-		g_warning("cannot open display: %s", display ? display : "unset");
-		g_free(display);
-
-		return 1;
-	}
-
 	/* scan command-line options */
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
@@ -624,6 +612,28 @@ int main(int argc, char *argv[])
 
 #ifdef _WIN32
 	wgaim_init(hint);
+#endif
+
+	search_path = g_build_filename(gaim_user_dir(), "gtkrc-2.0", NULL);
+	gtk_rc_add_default_file(search_path);
+	g_free(search_path);
+
+
+	gui_check = gtk_init_check(&argc, &argv);
+	if (!gui_check) {
+		char *display = gdk_get_display();
+
+		printf("Gaim %s\n", VERSION);
+
+		g_warning("cannot open display: %s", display ? display : "unset");
+		g_free(display);
+
+		return 1;
+	}
+
+#ifdef _WIN32
+	/** TODO: Move this to a wgaim_gtk_init() if we need such a thing */
+	wgaim_gtkspell_init();
 #endif
 
 	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());

@@ -434,7 +434,6 @@ void wgaim_init(HINSTANCE hint) {
 	if(!wgaim_set_idlehooks())
 		gaim_debug(GAIM_DEBUG_ERROR, "wgaim", "Failed to initialize idle tracker\n");
 
-	wgaim_gtkspell_init();
 	gaim_debug(GAIM_DEBUG_INFO, "wgaim", "wgaim_init end\n");
 }
 
