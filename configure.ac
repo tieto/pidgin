@@ -515,10 +515,17 @@ dnl  can generate all of it before shipping.  But I thought adding
 dnl  auto-generated stuff to the CVS is inelegant.  Alternatively,
 dnl  these python scripts could be rewritten in C (brrrr ...).
 
+AC_ARG_WITH([python],
+			AC_HELP_STRING([--with-python],
+						   [Which python interpreter to use for dbus code generation]),
+			PYTHON=$withval)
 
 if test "x$enable_dbus" = "xyes" ; then
-        AC_PATH_PROG([PYTHON], [python], [no])
-	if test "x$PYTHON" = "xno" ; then
+	if test -z "$PYTHON" ; then
+		AC_PATH_PROG([PYTHON], [python], [no])
+	fi
+
+	if test x"$python" = x"no" ; then
 		AC_MSG_WARN([python interpreter not found in your path])
 		enable_dbus=no
 	fi
@@ -528,7 +535,7 @@ if test "x$enable_dbus" = "xyes" ; then
 	if $PYTHON -c "import sys; sys.exit(sys.version[[:3]] >= '2.4')" ; then
 		AC_MSG_WARN([python version >= 2.4 required])
 		enable_dbus=no
-	fi	
+	fi
 fi
 
 dnl  Here we locate the directory containing DBus .service files for
@@ -1681,10 +1688,10 @@ echo Build with Audio support...... : $enable_audio
 echo Build with GtkSpell support... : $enable_gtkspell
 echo Build with Voice/Video support : $enable_vv
 echo Build with DBUS support....... : $enable_dbus
-echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 if test x$enable_dbus = xyes ; then
 echo DBUS session directory........ : $DBUS_SESSION_DIR
 fi
+echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Has you....................... : yes
 echo
 echo
