@@ -1830,22 +1830,25 @@ void gaim_blist_remove_chat(GaimChat *chat)
 	gnode = node->parent;
 	group = (GaimGroup *)gnode;
 
-	/* Remove the node from its parent */
-	if (gnode->child == node)
-		gnode->child = node->next;
-	if (node->prev)
-		node->prev->next = node->next;
-	if (node->next)
-		node->next->prev = node->prev;
+	if (gnode != NULL)
+	{
+		/* Remove the node from its parent */
+		if (gnode->child == node)
+			gnode->child = node->next;
+		if (node->prev)
+			node->prev->next = node->next;
+		if (node->next)
+			node->next->prev = node->prev;
 
-	/* Adjust size counts */
-	if (gaim_account_is_connected(chat->account)) {
-		group->online--;
-		group->currentsize--;
+		/* Adjust size counts */
+		if (gaim_account_is_connected(chat->account)) {
+			group->online--;
+			group->currentsize--;
+		}
+		group->totalsize--;
+
+		gaim_blist_schedule_save();
 	}
-	group->totalsize--;
-
-	gaim_blist_schedule_save();
 
 	/* Update the UI */
 	if (ops && ops->remove)
