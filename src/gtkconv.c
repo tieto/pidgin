@@ -3059,7 +3059,7 @@ add_chat_buddy_common(GaimConversation *conv, const char *name, GaimConvChatBudd
 							CHAT_USERS_ALIAS_COLUMN, alias,
 							CHAT_USERS_NAME_COLUMN,  name,
 							CHAT_USERS_FLAGS_COLUMN, flags,
-							CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, alias),
+							CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, name),
 							CHAT_USERS_BUDDY_COLUMN, is_buddy,
 							-1);
 	}
@@ -3385,7 +3385,6 @@ update_chat_alias(GaimBuddy *buddy, GaimConversation *conv, GaimConnection *gc, 
 
 				gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 								   CHAT_USERS_ALIAS_COLUMN, alias,
-								   CHAT_USERS_COLOR_COLUMN, get_nick_color(gtkconv, alias),
 								   -1);
 			}
 			g_free(name);
@@ -4438,7 +4437,7 @@ gaim_gtkconv_write_conv(GaimConversation *conv, const char *name, const char *al
 					strcpy(color, HIGHLIGHT_COLOR);
 				else if (flags & GAIM_MESSAGE_RECV) {
 					if (flags & GAIM_MESSAGE_COLORIZE) {
-						GdkColor *col = get_nick_color(gtkconv, alias);
+						GdkColor *col = get_nick_color(gtkconv, name);
 
 						g_snprintf(color, sizeof(color), "#%02X%02X%02X",
 							   col->red >> 8, col->green >> 8, col->blue >> 8);
